@@ -2565,10 +2565,10 @@ void G_AddArtilleryToCounters(gentity_t *ent)
 #define BOMBSPREAD 150
 
 /**
- * @brief weapon_checkAirStrikeThink1
+ * @brief weapon_checkAirStrikeThink
  * @param[in,out] ent
  */
-void weapon_checkAirStrikeThink1(gentity_t *ent)
+void weapon_checkAirStrikeThink(gentity_t *ent)
 {
 	if (!weapon_checkAirStrike(ent))
 	{
@@ -2577,25 +2577,15 @@ void weapon_checkAirStrikeThink1(gentity_t *ent)
 		return;
 	}
 
-	ent->think     = weapon_callAirStrike;
+	if (ent->parent->client && ent->parent->client->sess.skill[SK_SIGNALS] >= 3)
+	{
+		ent->think = weapon_callSecondPlane;
+	}
+	else
+	{
+		ent->think = weapon_callAirStrike;
+	}
 	ent->nextthink = level.time + 1500;
-}
-
-/**
- * @brief weapon_checkAirStrikeThink2
- * @param[in,out] ent
- */
-void weapon_checkAirStrikeThink2(gentity_t *ent)
-{
-	if (!weapon_checkAirStrike(ent))
-	{
-		ent->think     = G_ExplodeMissile;
-		ent->nextthink = level.time + 1000;
-		return;
-	}
-
-	ent->think     = weapon_callSecondPlane;
-	ent->nextthink = level.time + 500;
 }
 
 /**

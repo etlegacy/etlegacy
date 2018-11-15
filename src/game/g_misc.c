@@ -2798,7 +2798,7 @@ qboolean G_FlingClient(gentity_t *vic, int flingType)
  * @param[in] clientNum
  * @param[in] parent
  */
-void G_PreFilledMissileEntity(gentity_t *ent, int weaponNum, int realWeapon, int ownerNum, int teamNum, int clientNum, gentity_t *parent, const vec3_t start, const vec3_t dir)
+void G_PreFilledMissileEntity(gentity_t *ent, int weaponNum, int realWeapon, int ownerNum, team_t teamNum, int clientNum, gentity_t *parent, const vec3_t start, const vec3_t dir)
 {
 	ammunitionType_t ammunType = GetWeaponTableData(weaponNum)->ammunType;
 
@@ -2832,16 +2832,16 @@ void G_PreFilledMissileEntity(gentity_t *ent, int weaponNum, int realWeapon, int
 	ent->nextthink  = GetAmmunitionTableData(ammunType)->nextThink ? level.time + GetAmmunitionTableData(ammunType)->nextThink : 0;
 	ent->clipmask   = GetAmmunitionTableData(ammunType)->clipMask;
 	ent->accuracy   = GetAmmunitionTableData(ammunType)->accuracy;
-    ent->takedamage = GetAmmunitionTableData(ammunType)->takedamage;
-    ent->health     = GetAmmunitionTableData(ammunType)->health;
-    ent->timestamp  = GetAmmunitionTableData(ammunType)->timeStamp;
+	ent->takedamage = GetAmmunitionTableData(ammunType)->takedamage;
+	ent->health     = GetAmmunitionTableData(ammunType)->health;
+	ent->timestamp  = GetAmmunitionTableData(ammunType)->timeStamp ? level.time + GetAmmunitionTableData(ammunType)->timeStamp : 0;
 
 	// state
 	ent->s.eFlags      = GetAmmunitionTableData(ammunType)->eFlags;
 	ent->s.pos.trType  = GetAmmunitionTableData(ammunType)->trType;
 	ent->s.pos.trTime  = GetAmmunitionTableData(ammunType)->trTime ? level.time + GetAmmunitionTableData(ammunType)->trTime : 0;          // move a bit on the very first frame
 	ent->s.eType       = GetAmmunitionTableData(ammunType)->eType;
-    ent->s.effect1Time = GetAmmunitionTableData(ammunType)->effect1Time;
+	ent->s.effect1Time = GetAmmunitionTableData(ammunType)->effect1Time;
 
 	// shared
 	ent->r.svFlags  = GetAmmunitionTableData(ammunType)->svFlags;
@@ -2855,7 +2855,7 @@ void G_PreFilledMissileEntity(gentity_t *ent, int weaponNum, int realWeapon, int
 		VectorCopy(GetAmmunitionTableData(ammunType)->boudingBox[1], ent->r.absmax);
 	}
 
-    VectorCopy(start, ent->r.currentOrigin);
+	VectorCopy(start, ent->r.currentOrigin);
 	VectorCopy(start, ent->s.pos.trBase);
 	VectorCopy(dir, ent->s.pos.trDelta);
 

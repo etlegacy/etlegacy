@@ -1542,7 +1542,7 @@ void aagun_stopusing(gentity_t *self);
 float AngleDifference(float ang1, float ang2);
 qboolean G_FlingClient(gentity_t *vic, int flingType);
 
-void G_PreFilledMissileEntity(gentity_t *ent, int weaponNum, int realWeapon, int ownerNum, int teamNum, int clientNum, gentity_t *parent, const vec3_t start, const vec3_t dir);
+void G_PreFilledMissileEntity(gentity_t *ent, int weaponNum, int realWeapon, int ownerNum, team_t teamNum, int clientNum, gentity_t *parent, const vec3_t start, const vec3_t dir);
 
 // g_weapon.c
 qboolean AccuracyHit(gentity_t *target, gentity_t *attacker);
@@ -2532,8 +2532,7 @@ fireteamData_t *G_FindFreePublicFireteam(team_t team);
 void G_RegisterFireteam(int entityNum);
 
 void weapon_callAirStrike(gentity_t *ent);
-void weapon_checkAirStrikeThink2(gentity_t *ent);
-void weapon_checkAirStrikeThink1(gentity_t *ent);
+void weapon_checkAirStrikeThink(gentity_t *ent);
 void weapon_callSecondPlane(gentity_t *ent);
 qboolean weapon_checkAirStrike(gentity_t *ent);
 void weapon_smokeBombExplode(gentity_t *ent);

@@ -1715,7 +1715,8 @@ qboolean G_LandmineSnapshotCallback(int entityNum, int clientNum)
  */
 gentity_t *fire_missile(gentity_t *self, vec3_t start, vec3_t dir, int weapon)
 {
-	gentity_t *bolt;
+	gentity_t        *bolt;
+	ammunitionType_t ammunType = GetWeaponTableData(weapon)->ammunType;
 
 	bolt = G_Spawn();
 	G_PreFilledMissileEntity(bolt, weapon, weapon,
@@ -1745,15 +1746,7 @@ gentity_t *fire_missile(gentity_t *self, vec3_t start, vec3_t dir, int weapon)
 	}
 	else if (weapon == WP_SMOKE_MARKER)
 	{
-		if (self->client && self->client->sess.skill[SK_SIGNALS] >= 3)
-		{
-			bolt->nextthink += 1000;
-			bolt->think      = weapon_checkAirStrikeThink2; // overwrite G_ExplodeMissile
-		}
-		else
-		{
-			bolt->think = weapon_checkAirStrikeThink1;     // overwrite G_ExplodeMissile
-		}
+		bolt->think = weapon_checkAirStrikeThink;     // overwrite G_ExplodeMissile
 	}
 	else if (weapon == WP_LANDMINE)
 	{
@@ -1768,15 +1761,10 @@ gentity_t *fire_missile(gentity_t *self, vec3_t start, vec3_t dir, int weapon)
 			// store team so we can generate red or blue smoke
 			bolt->s.otherEntityNum2 = (self->client->sess.sessionTeam == TEAM_AXIS);
 		}
-		else
-		{
-			bolt->s.otherEntityNum2 = 0;
-		}
 	}
 	if (weapon == WP_SATCHEL)
 	{
-		bolt->s.clientNum = self->s.clientNum;
-		bolt->free        = G_FreeSatchel;
+		bolt->free = G_FreeSatchel;
 		// is there think set for satchel?
 	}
 	else if (weapon == WP_DYNAMITE)
