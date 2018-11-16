@@ -1121,20 +1121,15 @@ gentity_t *fire_flamechunk(gentity_t *self, vec3_t start, vec3_t dir)
 	}
 
 	self->count2 = 1;
-	VectorNormalize(dir);
 
 	bolt = G_Spawn();
 	G_PreFilledMissileEntity(bolt, WP_FLAMETHROWER, self->s.weapon, self->s.number, TEAM_FREE, -1, self, start, dir);
 
-	bolt->timestamp        = level.time;
 	bolt->flameQuotaTime   = level.time + 50;
 	bolt->count2           = 0; // how often it bounced off of something
 	bolt->count            = 1; // this chunk can add hit
 	bolt->s.pos.trDuration = 800;
 	bolt->speed            = FLAME_START_SIZE; // 'speed' will be the current size radius of the chunk
-
-	VectorScale(bolt->s.pos.trDelta, FLAME_START_SPEED, bolt->s.pos.trDelta);
-	SnapVector(bolt->s.pos.trDelta);            // save net bandwidth
 
 	return bolt;
 }

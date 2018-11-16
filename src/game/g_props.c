@@ -1592,11 +1592,11 @@ void Props_Chair_Animate(gentity_t *ent)
 		}
 	}
 	else if (
-	    (!Q_stricmp(ent->classname, "props_chair_side")) ||
-	    (!Q_stricmp(ent->classname, "props_chair_chat")) ||
-	    (!Q_stricmp(ent->classname, "props_chair_chatarm")) ||
-	    (!Q_stricmp(ent->classname, "props_chair_hiback"))
-	    )
+		(!Q_stricmp(ent->classname, "props_chair_side")) ||
+		(!Q_stricmp(ent->classname, "props_chair_chat")) ||
+		(!Q_stricmp(ent->classname, "props_chair_chatarm")) ||
+		(!Q_stricmp(ent->classname, "props_chair_hiback"))
+		)
 	{
 		if (ent->s.frame >= 20)
 		{
@@ -4650,6 +4650,9 @@ void props_flamethrower_think(gentity_t *ent)
 
 		//      The flamethrower effect above is purely visual
 		//      we actual need to create an entity that is the fire and will do damage
+		VectorNormalize(flameDir);
+		VectorScale(flameDir, FLAME_START_SPEED, flameDir);
+
 		fire_flamechunk(ent, ent->r.currentOrigin, flameDir);
 
 		{

@@ -3789,7 +3789,7 @@ void G_BurnMeGood(gentity_t *self, gentity_t *body, gentity_t *chunk)
  */
 gentity_t *Weapon_FlamethrowerFire(gentity_t *ent)
 {
-	vec3_t  start;
+	vec3_t  start, dir;
 	vec3_t  trace_start;
 	vec3_t  trace_end;
 	trace_t trace;
@@ -3825,7 +3825,10 @@ gentity_t *Weapon_FlamethrowerFire(gentity_t *ent)
 	// flamethrower exploit fix
 	ent->client->flametime = level.time + 2500;
 
-	return fire_flamechunk(ent, start, forward);
+	VectorNormalize(dir);
+	VectorScale(forward, FLAME_START_SPEED, dir);
+
+	return fire_flamechunk(ent, start, dir);
 }
 
 //======================================================================
