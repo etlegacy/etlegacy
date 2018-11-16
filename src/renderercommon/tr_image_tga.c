@@ -125,19 +125,20 @@ void R_LoadTGA(const char *name, byte **pic, int *width, int *height, byte alpha
 	    && targa_header.image_type != 3)
 	{
 		ri.FS_FreeFile(buffer.v);
-		Ren_Drop("LoadTGA: Only type 2 (RGB), 3 (gray), and 10 (RGB) TGA images supported\n");
+		Ren_Drop("LoadTGA: Only type 2 (RGB), 3 (gray), and 10 (RGB) TGA images supported(%s)\n", name);
+
 	}
 
 	if (targa_header.colormap_type != 0)
 	{
 		ri.FS_FreeFile(buffer.v);
-		Ren_Drop("LoadTGA: colormaps not supported\n");
+		Ren_Drop("LoadTGA: colormaps not supported(%s)\n", name);
 	}
 
 	if ((targa_header.pixel_size != 32 && targa_header.pixel_size != 24) && targa_header.image_type != 3)
 	{
 		ri.FS_FreeFile(buffer.v);
-		Ren_Drop("LoadTGA: Only 32 or 24 bit images supported (no colormaps)\n");
+		Ren_Drop("LoadTGA: Only 32 or 24 bit images supported (no colormaps)(%s)\n", name);
 	}
 
 	columns   = targa_header.width;
