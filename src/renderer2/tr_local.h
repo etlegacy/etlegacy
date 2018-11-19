@@ -102,7 +102,7 @@ typedef enum
 	RSPEEDS_SHADING_TIMES,
 	RSPEEDS_CHC,
 	RSPEEDS_NEAR_FAR,
-	RSPEEDS_DECALS
+	RSPEEDS_DECALS // FIXME: sync debug with r1
 
 } renderSpeeds_t;
 
@@ -3329,6 +3329,7 @@ typedef struct
 	int c_occlusionQueriesSaved;
 	int c_CHCTime;
 
+	// debugging FIXME: debug only
 	int c_decalProjectors, c_decalTestSurfaces, c_decalClipSurfaces, c_decalSurfaces, c_decalSurfacesCreated;
 } frontEndCounters_t;
 
@@ -4462,7 +4463,7 @@ void RE_ProjectDecal(qhandle_t hShader, int numPoints, vec3_t *points, vec4_t pr
                      int fadeTime);
 void RE_ClearDecals(void);
 
-void R_AddModelShadow(refEntity_t *ent);
+//void R_AddModelShadow(refEntity_t *ent);
 
 void R_TransformDecalProjector(decalProjector_t * in, vec3_t axis[3], vec3_t origin, decalProjector_t * out);
 qboolean R_TestDecalBoundingBox(decalProjector_t *dp, vec3_t mins, vec3_t maxs);
@@ -4809,7 +4810,7 @@ typedef enum
 #define MAX_POLYVERTS   32768 ///< was 8192
 
 // max decal projectors per frame, each can generate lots of polys
-#define MAX_DECAL_PROJECTORS    128 ///< includes decal projectors that will be culled out, hard limited to 32 active projectors because of bitmasks.
+#define MAX_DECAL_PROJECTORS    32 ///< includes decal projectors that will be culled out, hard limited to 32 active projectors because of bitmasks.
 #define MAX_DECALS              1024
 #define DECAL_MASK              (MAX_DECALS - 1)
 
