@@ -326,7 +326,7 @@ void RE_ProjectDecal(qhandle_t hShader, int numPoints, vec3_t *points, vec4_t pr
 void R_AddModelShadow(const refEntity_t *ent)
 {
 	model_t *m;
-	vec4_t  projection, color = { 1, 1, 1, 1 };
+	vec4_t  projection;
 	vec3_t  pushedOrigin, points[4];
 
 	// shadows?
@@ -358,7 +358,7 @@ void R_AddModelShadow(const refEntity_t *ent)
 	VectorMA(points[0], m->shadowParms[3], ent->axis[0], points[3]);
 
 	// add the decal
-	RE_ProjectDecal(m->shadowShader, 4, points, projection, color, -1, -1);
+	RE_ProjectDecal(m->shadowShader, 4, points, projection, colorWhite, -1, -1);
 }
 
 /**
@@ -1014,7 +1014,7 @@ void R_CullDecalProjectors(void)
 		}
 
 		// put all active projectors at the beginning
-		if (tr.refdef.numDecalProjectors > 32 && dp != &tr.refdef.decalProjectors[numDecalProjectors])
+		if (tr.refdef.numDecalProjectors > MAX_DECAL_PROJECTORS && dp != &tr.refdef.decalProjectors[numDecalProjectors])
 		{
 			// swap them
 			temp                                          = tr.refdef.decalProjectors[numDecalProjectors];
@@ -1026,7 +1026,7 @@ void R_CullDecalProjectors(void)
 		numDecalProjectors++;
 
 		// bitmask limit
-		if (numDecalProjectors == 32)
+		if (numDecalProjectors == MAX_DECAL_PROJECTORS)
 		{
 			break;
 		}
