@@ -1014,7 +1014,7 @@ void R_CullDecalProjectors(void)
 		}
 
 		// put all active projectors at the beginning
-		if (tr.refdef.numDecalProjectors > MAX_DECAL_PROJECTORS && dp != &tr.refdef.decalProjectors[numDecalProjectors])
+		if (tr.refdef.numDecalProjectors > MAX_USED_DECAL_PROJECTORS && dp != &tr.refdef.decalProjectors[numDecalProjectors])
 		{
 			// swap them
 			temp                                          = tr.refdef.decalProjectors[numDecalProjectors];
@@ -1026,7 +1026,7 @@ void R_CullDecalProjectors(void)
 		numDecalProjectors++;
 
 		// bitmask limit
-		if (numDecalProjectors == MAX_DECAL_PROJECTORS)
+		if (numDecalProjectors == MAX_USED_DECAL_PROJECTORS)
 		{
 			break;
 		}
