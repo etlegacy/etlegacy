@@ -1131,7 +1131,7 @@ image_t *R_FindImageFile(const char *name, qboolean mipmap, qboolean allowPicmip
 	R_LoadImage(name, &pic, &width, &height);
 	if (pic == NULL)
 	{
-		Ren_Developer(("WARNING: Image '%s' not found. Note: This might be false positive for shaders w/o image.\n", name);
+		Ren_Developer("WARNING: Image '%s' not found. Note: This might be false positive for shaders w/o image.\n", name);
 		return NULL;
 	}
 
