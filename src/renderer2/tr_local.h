@@ -84,28 +84,6 @@ typedef enum
 	DS_STANDARD,                ///< deferred rendering like in Stalker
 } deferredShading_t;
 
-/**
- * @enum renderSpeeds_t
- * @brief
- */
-typedef enum
-{
-	RSPEEDS_GENERAL = 1,
-	RSPEEDS_CULLING,
-	RSPEEDS_VIEWCLUSTER,
-	RSPEEDS_LIGHTS,
-	RSPEEDS_SHADOWCUBE_CULLING,
-	RSPEEDS_FOG,
-	RSPEEDS_FLARES,
-	RSPEEDS_OCCLUSION_QUERIES,
-	RSPEEDS_DEPTH_BOUNDS_TESTS,
-	RSPEEDS_SHADING_TIMES,
-	RSPEEDS_CHC,
-	RSPEEDS_NEAR_FAR,
-	RSPEEDS_DECALS // FIXME: sync debug with r1
-
-} renderSpeeds_t;
-
 #define HDR_ENABLED() ((r_hdrRendering->integer && glConfig2.textureFloatAvailable && glConfig2.framebufferObjectAvailable && glConfig2.framebufferBlitAvailable))
 
 #define REF_CUBEMAP_SIZE        32
@@ -4810,8 +4788,9 @@ typedef enum
 #define MAX_POLYVERTS   32768 ///< was 8192
 
 // max decal projectors per frame, each can generate lots of polys
-#define MAX_DECAL_PROJECTORS    32 ///< includes decal projectors that will be culled out, hard limited to 32 active projectors because of bitmasks.
-#define MAX_DECALS              1024
+#define MAX_DECAL_PROJECTORS      128 ///< includes decal projectors that will be culled out, hard limited to 32 active projectors because of bitmasks.
+#define MAX_USED_DECAL_PROJECTORS 32
+#define MAX_DECALS                1024
 #define DECAL_MASK              (MAX_DECALS - 1)
 
 #define MAX_POLYBUFFERS 4096

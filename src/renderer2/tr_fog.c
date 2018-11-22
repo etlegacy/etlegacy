@@ -304,7 +304,7 @@ void R_SetFrameFog(void)
 		}
 	}
 
-	if (r_speeds->integer == 5)
+	if (r_speeds->integer == RSPEEDS_FOG)
 	{
 		if (!tr.glfogsettings[FOG_TARGET].registered)
 		{
@@ -397,7 +397,7 @@ void R_SetFrameFog(void)
 		}
 	}
 
-	if (r_speeds->integer == 5)
+	if (r_speeds->integer == RSPEEDS_FOG)
 	{
 		if (tr.glfogsettings[FOG_CURRENT].mode == GL_LINEAR)
 		{

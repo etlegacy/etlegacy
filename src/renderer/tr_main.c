@@ -656,7 +656,7 @@ void R_SetFrameFog(void)
 		}
 	}
 
-	if (r_speeds->integer == 5)
+	if (r_speeds->integer == RSPEEDS_FOG)
 	{
 		if (!glfogsettings[FOG_TARGET].registered)
 		{
@@ -737,7 +737,7 @@ void R_SetFrameFog(void)
 		}
 	}
 
-	if (r_speeds->integer == 5)
+	if (r_speeds->integer == RSPEEDS_FOG)
 	{
 		if (glfogsettings[FOG_CURRENT].mode == GL_LINEAR)
 		{
@@ -773,7 +773,7 @@ static void SetFarClip(void)
 		tr.viewParms.zFar = r_zFar->integer;
 		R_SetFrameFog();
 
-		if (r_speeds->integer == 5)
+		if (r_speeds->integer == RSPEEDS_FOG)
 		{
 			Ren_Print("r_zfar value forcing farclip at: %f\n", tr.viewParms.zFar);
 		}
@@ -1051,7 +1051,7 @@ void R_PlaneForSurface(surfaceType_t *surfType, cplane_t *plane)
  * @param[out] mirror
  * @return qtrue if it should be mirrored
  */
-qboolean R_GetPortalOrientations(drawSurf_t *drawSurf, int entityNum,
+static qboolean R_GetPortalOrientations(drawSurf_t *drawSurf, int entityNum,
                                  orientation_t *surface, orientation_t *camera,
                                  vec3_t pvsOrigin, qboolean *mirror)
 {
@@ -1566,7 +1566,7 @@ void R_DecomposeSort(unsigned sort, int *entityNum, shader_t **shader, int *fogN
  * @param[in] drawSurfs
  * @param[in] numDrawSurfs
  */
-void R_SortDrawSurfs(drawSurf_t *drawSurfs, int numDrawSurfs)
+static void R_SortDrawSurfs(drawSurf_t *drawSurfs, int numDrawSurfs)
 {
 	shader_t *shader;
 	int      fogNum;
@@ -1630,7 +1630,7 @@ void R_SortDrawSurfs(drawSurf_t *drawSurfs, int numDrawSurfs)
 /**
  * @brief R_AddEntitySurfaces
  */
-void R_AddEntitySurfaces(void)
+static void R_AddEntitySurfaces(void)
 {
 	trRefEntity_t *ent;
 	shader_t      *shader;
@@ -1730,7 +1730,7 @@ void R_AddEntitySurfaces(void)
 /**
  * @brief R_GenerateDrawSurfs
  */
-void R_GenerateDrawSurfs(void)
+static void R_GenerateDrawSurfs(void)
 {
 	// set the projection matrix (and view frustum) here
 	// first with max or fog distance so we can have proper
@@ -1837,7 +1837,7 @@ void R_DebugText(const vec3_t org, float r, float g, float b, const char *text, 
 /**
  * @brief Visualization aid for movement clipping debugging
  */
-void R_DebugGraphics(void)
+static void R_DebugGraphics(void)
 {
 	if (!r_debugSurface->integer)
 	{

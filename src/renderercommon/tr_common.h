@@ -75,7 +75,7 @@ extern int gl_NormalFontBase;
 #else
 #define RENLOG 0
 #define Ren_LogComment(...)
-#define Ren_Developer(...)
+#define Ren_Developer(...) ri.Printf(PRINT_DEVELOPER, __VA_ARGS__)
 #endif
 
 #define Ren_UpdateScreen() ri.Cmd_ExecuteText(EXEC_NOW, "updatescreen\n")
@@ -210,5 +210,29 @@ extern cvar_t *r_printShaders;
 
 extern cvar_t *r_maxPolys;
 extern cvar_t *r_maxPolyVerts;
+
+/**
+ * @enum renderSpeeds_t for r_speeds
+ * @brief
+ */
+typedef enum
+{
+	RSPEEDS_GENERAL = 1,
+	RSPEEDS_CULLING,
+	RSPEEDS_VIEWCLUSTER,
+	RSPEEDS_LIGHTS,
+	RSPEEDS_FOG,
+	RSPEEDS_FLARES,
+	RSPEEDS_DECALS, // r1 end
+	RSPEEDS_SHADOWCUBE_CULLING,
+	RSPEEDS_OCCLUSION_QUERIES,
+#if 0
+	RSPEEDS_DEPTH_BOUNDS_TESTS,
+#endif
+	RSPEEDS_SHADING_TIMES,
+	RSPEEDS_CHC,
+	RSPEEDS_NEAR_FAR
+
+} renderSpeeds_t;
 
 #endif  // INCLUDE_TR_COMMON_H

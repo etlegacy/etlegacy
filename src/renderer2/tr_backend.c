@@ -2348,7 +2348,7 @@ void RB_RenderGlobalFog()
 
 		SetUniformVec4(UNIFORM_FOGDISTANCEVECTOR, fogDistanceVector);
 		SetUniformVec4(UNIFORM_COLOR, fog->color);
-		SetUniformFloat(UNIFORM_FOGDENSITY, 0.6f);
+		SetUniformFloat(UNIFORM_FOGDENSITY, 0.6f); // FIXME: fog->fogParms.density?!
 	}
 
 	SetUniformMatrix16(UNIFORM_VIEWMATRIX, backEnd.viewParms.world.viewMatrix);
