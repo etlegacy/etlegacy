@@ -837,7 +837,7 @@ qboolean R_LoadMDM(model_t *mod, void *buffer, const char *name)
 				}
 			}
 
-#if 1
+#if 0
 			for (j = 0, v = surf->verts; j < surf->numVerts; j++, v++)
 			{
 				//VectorNormalize(v->tangent);
