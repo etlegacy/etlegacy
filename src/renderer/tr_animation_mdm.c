@@ -600,10 +600,10 @@ static float sp, sy, cp, cy, sr, cr;
  * @note Unused
 static ID_INLINE void LocalAngleVector(vec3_t angles, vec3_t forward)
 {
-    LAVangle = angles[YAW] * (M_PI * 2 / 360);
+    LAVangle = angles[YAW] * (M_TAU_F / 360);
     sy       = sin(LAVangle);
     cy       = cos(LAVangle);
-    LAVangle = angles[PITCH] * (M_PI * 2 / 360);
+    LAVangle = angles[PITCH] * (M_TAU_F / 360);
     sp       = sin(LAVangle);
     cp       = cos(LAVangle);
 
@@ -666,10 +666,10 @@ static ID_INLINE void LocalIngleVector(int ingles[3], vec3_t forward)
 	sp = SIN_TABLE(ingles[PITCH] & 65535);
 	cp = COS_TABLE(ingles[PITCH] & 65535);
 
-	// sy = sin( SHORT2ANGLE( ingles[ YAW ] ) * (M_PI*2 / 360) );
-	// cy = cos( SHORT2ANGLE( ingles[ YAW ] ) * (M_PI*2 / 360) );
-	// sp = sin( SHORT2ANGLE( ingles[ PITCH ] ) * (M_PI*2 / 360) );
-	// cp = cos( SHORT2ANGLE( ingles[ PITCH ] ) *  (M_PI*2 / 360) );
+	// sy = sin( SHORT2ANGLE( ingles[ YAW ] ) * (M_TAU_F / 360) );
+	// cy = cos( SHORT2ANGLE( ingles[ YAW ] ) * (M_TAU_F / 360) );
+	// sp = sin( SHORT2ANGLE( ingles[ PITCH ] ) * (M_TAU_F / 360) );
+	// cp = cos( SHORT2ANGLE( ingles[ PITCH ] ) *  (M_TAU_F / 360) );
 
 	forward[0] = cp * cy;
 	forward[1] = cp * sy;

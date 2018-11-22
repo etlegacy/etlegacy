@@ -1108,7 +1108,6 @@ const void *RB_RotatedPic(const void *data)
 	shader_t                  *shader;
 	int                       numVerts, numIndexes;
 	float                     angle;
-	float                     pi2 = M_PI * 2;
 
 	if (!backEnd.projection2D)
 	{
@@ -1145,7 +1144,7 @@ const void *RB_RotatedPic(const void *data)
 	        *( int * ) tess.vertexColors[numVerts + 2]     =
 	            *( int * ) tess.vertexColors[numVerts + 3] = *( int * ) backEnd.color2D;
 
-	angle                 = cmd->angle * pi2;
+	angle                 = cmd->angle * M_TAU_F;
 	tess.xyz[numVerts][0] = cmd->x + (cos(angle) * cmd->w);
 	tess.xyz[numVerts][1] = cmd->y + (sin(angle) * cmd->h);
 	tess.xyz[numVerts][2] = 0;
@@ -1153,7 +1152,7 @@ const void *RB_RotatedPic(const void *data)
 	tess.texCoords[numVerts][0][0] = cmd->s1;
 	tess.texCoords[numVerts][0][1] = cmd->t1;
 
-	angle                     = cmd->angle * pi2 + 0.25 * pi2;
+	angle                     = cmd->angle * M_TAU_F + 0.25 * M_TAU_F;
 	tess.xyz[numVerts + 1][0] = cmd->x + (cos(angle) * cmd->w);
 	tess.xyz[numVerts + 1][1] = cmd->y + (sin(angle) * cmd->h);
 	tess.xyz[numVerts + 1][2] = 0;
@@ -1161,7 +1160,7 @@ const void *RB_RotatedPic(const void *data)
 	tess.texCoords[numVerts + 1][0][0] = cmd->s2;
 	tess.texCoords[numVerts + 1][0][1] = cmd->t1;
 
-	angle                     = cmd->angle * pi2 + 0.50 * pi2;
+	angle                     = cmd->angle * M_TAU_F + 0.50 * M_TAU_F;
 	tess.xyz[numVerts + 2][0] = cmd->x + (cos(angle) * cmd->w);
 	tess.xyz[numVerts + 2][1] = cmd->y + (sin(angle) * cmd->h);
 	tess.xyz[numVerts + 2][2] = 0;
@@ -1169,7 +1168,7 @@ const void *RB_RotatedPic(const void *data)
 	tess.texCoords[numVerts + 2][0][0] = cmd->s2;
 	tess.texCoords[numVerts + 2][0][1] = cmd->t2;
 
-	angle                     = cmd->angle * pi2 + 0.75 * pi2;
+	angle                     = cmd->angle * M_TAU_F + 0.75 * M_TAU_F;
 	tess.xyz[numVerts + 3][0] = cmd->x + (cos(angle) * cmd->w);
 	tess.xyz[numVerts + 3][1] = cmd->y + (sin(angle) * cmd->h);
 	tess.xyz[numVerts + 3][2] = 0;

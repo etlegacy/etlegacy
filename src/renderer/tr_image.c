@@ -1131,7 +1131,7 @@ image_t *R_FindImageFile(const char *name, qboolean mipmap, qboolean allowPicmip
 	R_LoadImage(name, &pic, &width, &height);
 	if (pic == NULL)
 	{
-		Ren_Developer("WARNING: Image '%s' not found. Note: This might be false positive for shaders w/o image.\n", name);
+		Ren_Developer(("WARNING: Image '%s' not found. Note: This might be false positive for shaders w/o image.\n", name);
 		return NULL;
 	}
 
@@ -1150,7 +1150,7 @@ image_t *R_FindImageFile(const char *name, qboolean mipmap, qboolean allowPicmip
 
 	if (((width - 1) & width) || ((height - 1) & height))
 	{
-		Ren_Developer("WARNING: Image not power of 2 scaled: %s\n", name);
+		Ren_Developer("WARNING: Image not power of 2 scaled: %s (%i:%i)\n", name, width, height);
 		return NULL;
 	}
 
@@ -1671,7 +1671,8 @@ qhandle_t RE_GetShaderFromModel(qhandle_t modelid, int surfnum, int withlightmap
 			msurface_t *surf;
 			shader_t   *shd;
 
-			if (bmodel->numSurfaces == 0) {
+			if (bmodel->numSurfaces == 0)
+			{
 				return 0;
 			}
 
