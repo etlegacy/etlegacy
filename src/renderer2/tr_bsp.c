@@ -7844,6 +7844,8 @@ void R_BuildCubeMaps(void)
 	if (qtrue) // cubes based on nodes
 	{
 		bspNode_t *node;
+		qboolean  isCubeOK;
+		int       p;
 
 		Ren_Print("...trying to allocate %d cubemaps from world nodes\n", tr.world->numnodes);
 
@@ -7870,16 +7872,22 @@ void R_BuildCubeMaps(void)
 			if (FindVertexInHashTable(tr.cubeHashTable, node->origin, CUBES_MINIMUM_DISTANCE) == NULL)
 			{
 	#else
-			qboolean OK = qtrue;
-			for (int p = 0; p < tr.cubeProbes.currentElements; p++)
+				isCubeOK = qtrue;
+
+			for (p = 0; p < tr.cubeProbes.currentElements; p++)
 			{
 				cubeProbe = (cubemapProbe_t *)Com_GrowListElement(&tr.cubeProbes, p);
-				if (Distance(node->origin, cubeProbe->origin) > CUBES_MINIMUM_DISTANCE) continue;
-				OK = qfalse;
+
+				if (Distance(node->origin, cubeProbe->origin) > CUBES_MINIMUM_DISTANCE)
+				{
+				continue;
+				}
+
+				isCubeOK = qfalse;
 				break;
 			}
 
-			if (OK)
+			if (isCubeOK)
 			{
 	#endif
 				// create a new cubeProbe
