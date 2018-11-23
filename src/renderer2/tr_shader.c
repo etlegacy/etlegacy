@@ -1659,8 +1659,7 @@ qboolean ParseStage(shaderStage_t *stage, char **text)
 {
 	char *token;
 	int  colorMaskBits             = 0;
-	int  depthMaskBits             = GLS_DEPTHMASK_TRUE, blendSrcBits = 0, blendDstBits = 0, atestBits = 0, depthFuncBits =
-	    0, polyModeBits            = 0;
+	int  depthMaskBits             = GLS_DEPTHMASK_TRUE, blendSrcBits = 0, blendDstBits = 0, atestBits = 0, depthFuncBits = 0, polyModeBits = 0;
 	qboolean     depthMaskExplicit = qfalse;
 	int          imageBits         = 0;
 	filterType_t filterType;
@@ -2494,9 +2493,6 @@ qboolean ParseStage(shaderStage_t *stage, char **text)
 			{
 				stage->tcGen_Environment = qtrue;
 				stage->tcGen_Lightmap    = qfalse;
-				
-				// testing cube map reflection on osis water pump
-				//stage->type = ST_REFLECTIONMAP;
 			}
 			else if (!Q_stricmp(token, "lightmap"))
 			{
@@ -4629,8 +4625,7 @@ static void CollapseStages()
 	shaderStage_t tmpLiquidStage;
 
 	//int           idxColorStage;
-	shaderStage_t tmpColorStage;
-
+	//shaderStage_t tmpColorStage;
 	//int           idxLightmapStage;
 	//shaderStage_t tmpLightmapStage;
 
@@ -4651,6 +4646,8 @@ static void CollapseStages()
 	Com_Memset(&tmpStages[0], 0, sizeof(stages));
 	//Com_Memcpy(&tmpStages[0], &stages[0], sizeof(stages));
 
+	tmpShader.has_lightmapStage = qfalse;
+
 	for (j = 0; j < MAX_SHADER_STAGES; j++)
 	{
 		hasDiffuseStage    = qfalse;
@@ -4663,31 +4660,30 @@ static void CollapseStages()
 		Com_Memset(&tmpNormalStage, 0, sizeof(shaderStage_t));
 		Com_Memset(&tmpSpecularStage, 0, sizeof(shaderStage_t));
 		Com_Memset(&tmpLiquidStage, 0, sizeof(shaderStage_t));
+#if 0
+		idxColorStage = -1;
+		//Com_Memset(&tmpColorStage, 0, sizeof(shaderStage_t));
 
-		//idxColorStage = -1;
-		Com_Memset(&tmpColorStage, 0, sizeof(shaderStage_t));
-
-		//idxLightmapStage = -1;
+		idxLightmapStage = -1;
 		//Com_Memset(&tmpLightmapStage, 0, sizeof(shaderStage_t));
-
+#endif
 		if (!stages[j].active)
 		{
 			continue;
 		}
 
-		if (stages[j].type == ST_REFRACTIONMAP ||
-		    stages[j].type == ST_DISPERSIONMAP ||
-		    stages[j].type == ST_SKYBOXMAP ||
-		    stages[j].type == ST_SCREENMAP ||
-		    stages[j].type == ST_PORTALMAP ||
-		    stages[j].type == ST_HEATHAZEMAP ||
-		    //stages[j].type == ST_LIQUIDMAP ||
-		    stages[j].type == ST_ATTENUATIONMAP_XY ||
-		    stages[j].type == ST_ATTENUATIONMAP_Z
-		    // ||
-			//stages[j].type == ST_DIFFUSEMAP || // FIXME: inspect! ST_COLORMAP os creating
-			//stages[j].type == ST_COLORMAP      //                 nice reflections on radar puddles
-			)
+		if (stages[j].type == ST_LIGHTMAP)
+		{
+			tmpShader.has_lightmapStage = qtrue;
+		}
+		else if (stages[j].type == ST_REFRACTIONMAP ||
+			stages[j].type == ST_DISPERSIONMAP ||
+			stages[j].type == ST_SKYBOXMAP ||
+			stages[j].type == ST_SCREENMAP ||
+			stages[j].type == ST_PORTALMAP ||
+			stages[j].type == ST_HEATHAZEMAP ||
+			stages[j].type == ST_ATTENUATIONMAP_XY ||
+			stages[j].type == ST_ATTENUATIONMAP_Z)
 		{
 			// only merge lighting relevant stages
 			tmpStages[numStages] = stages[j];
@@ -4696,70 +4692,91 @@ static void CollapseStages()
 		}
 
 #if 0 //defined(COMPAT_Q3A) || defined(COMPAT_ET) FIXME?
-		for (i = 0; i < 2; i++)
+		//for (i = 0; i < 2; i++)
+/*		for (i = 0; i < MAX_SHADER_STAGES; i++)
 		{
-			if ((j + i) >= MAX_SHADER_STAGES)
+			if (i >= MAX_SHADER_STAGES)
 			{
-				continue; // break
+				break; //continue 
 			}
 
-			if (!stages[j + i].active)
+			if (!stages[i].active)
 			{
 				continue;
 			}
 
-			if (stages[j + i].type == ST_COLORMAP && idxColorStage == -1)
+			if (stages[i].type == ST_COLORMAP && idxColorStage == -1)
 			{
-				idxColorStage = j + i;
-				tmpColorStage = stages[j + i];
+				idxColorStage = i;
+				//tmpColorStage = stages[i];
 			}
-			else if (stages[j + i].type == ST_LIGHTMAP && idxLightmapStage == -1)
+			else
+			if (stages[i].type == ST_LIGHTMAP && idxLightmapStage == -1)
 			{
-				idxLightmapStage = j + i;
-				tmpLightmapStage = stages[j + i];
+				idxLightmapStage = i;
+				//tmpLightmapStage = stages[i];
+				break;
 			}
 		}
-
-		// try to merge color/lightmap to diffuse
-		if (idxColorStage != -1 &&
-		    idxLightmapStage != -1 &&
-		    // TODO check color stage no alphaGen  // | GLS_SRCBLEND_SRC_ALPHA | GLS_SRCBLEND_ONE_MINUS_SRC_ALPHA
-		    (tmpLightmapStage.stateBits & (GLS_SRCBLEND_DST_COLOR | GLS_DSTBLEND_ZERO))
-		    )
+*/		
+		// if there's a lightmapNum given, but there's no ST_LIGHTMAP stage: create a lightmap stage
+		if (!tmpShader.has_lightmapStage && tess.lightmapNum >= 0) //tess.lightmapNum >= 0 && tr.lightmaps.currentElements && tess.lightmapNum < tr.lightmaps.currentElements)
 		{
 			Ren_Print("color/lightmap combo\n");
 
-			tmpShader.collapseType = COLLAPSE_color_lightmap;
+//			if (numStages) tmpStages[numStages] = tmpStages[0];
 
-			tmpStages[numStages]            = tmpColorStage;
-			tmpStages[numStages].type       = ST_DIFFUSEMAP;
-			tmpStages[numStages].stateBits &= ~(GLS_DSTBLEND_BITS | GLS_SRCBLEND_BITS);
-			//tmpStages[numStages].stateBits |= GLS_DEPTHMASK_TRUE;
-
+			// create a new st_lightmap stage as the first stage
+			//tmpShader.collapseType = COLLAPSE_color_lightmap;
+//			tmpShader.defaultShader =
+			tmpShader.has_lightmapStage = qtrue;
+			tmpStages[j].type           = ST_LIGHTMAP;
+			tmpStages[j].alphaGen       = AGEN_IDENTITY;
+			tmpStages[j].rgbGen         = CGEN_IDENTITY;
+			tmpStages[j].stateBits      = (GLS_SRCBLEND_ZERO | GLS_SRCBLEND_DST_COLOR | GLS_DEPTHMASK_TRUE); // | GLS_SRCBLEND_BITS); //516;
+			//tmpStages[j].bundle[0].image[0] = tmpColorStage.bundle[0].image[0];
+			tmpStages[j].active = qtrue;
+/*
+			image_t *lightmap = tr.whiteImage;
+			if (tr.lightmaps.currentElements && tess.lightmapNum >= 0 && tess.lightmapNum < tr.lightmaps.currentElements) {
+				lightmap = (image_t *)Com_GrowListElement(&tr.lightmaps, tess.lightmapNum);
+				if (!lightmap) lightmap = tr.whiteImage;
+			}
+			tmpStages[numStages].bundle[0].image[0] = lightmap;
+*/
+/*
+//tmpStages[numStages] = tmpLightmapStage;
+			tmpStages[numStages].type = ST_LIGHTMAP;
+//tmpStages[numStages].type = ST_LIGHTMAP;
+//tmpStages[numStages].bundle[TB_DIFFUSEMAP] = tmpColorStage.bundle[0];
+			//			tmpStages[numStages].stateBits &= ~(GLS_DSTBLEND_BITS | GLS_SRCBLEND_BITS);
+//			tmpStages[numStages].stateBits |= GLS_DEPTHMASK_TRUE;
+//tmpStages[numStages].stateBits = (GLS_SRCBLEND_SRC_ALPHA | GLS_DSTBLEND_ONE_MINUS_SRC_ALPHA | GLS_DEPTHMASK_TRUE);
+//			tmpStages[numStages].tcGen_Lightmap = qtrue;
 			//tmpStages[numStages].bundle[TB_NORMALMAP] = tmpNormalStage.bundle[0];
-
+*/
 			numStages++;
-			j += 1;
+			//j += 1;
 			continue;
 		}
 		/*
 		else if(idxLightmapStage > idxColorStage)
 		{
-		    tmpStages[numStages] = tmpColorStage;
-		    numStages++;
+		tmpStages[numStages] = tmpColorStage;
+		numStages++;
 
-		    tmpStages[numStages] = tmpLightmapStage;
-		    numStages++;
-		    continue;
+		tmpStages[numStages] = tmpLightmapStage;
+		numStages++;
+		continue;
 		}
 		else
 		{
-		    tmpStages[numStages] = tmpLightmapStage;
-		    numStages++;
+		tmpStages[numStages] = tmpLightmapStage;
+		numStages++;
 
-		    tmpStages[numStages] = tmpColorStage;
-		    numStages++;
-		    continue;
+		tmpStages[numStages] = tmpColorStage;
+		numStages++;
+		continue;
 		}
 		*/
 #endif
@@ -4856,15 +4873,13 @@ static void CollapseStages()
 			j += 1;
 			continue;
 		}
-		// try to merge liquid/normal
+		// try to merge env/normal
 		else if (hasLiquidStage && hasNormalStage)
 		{
 			//Ren_Print("liquid_DB\n");
 
-			tmpShader.collapseType = COLLAPSE_none;
-
 			tmpStages[numStages]      = tmpLiquidStage;
-			tmpStages[numStages].type = ST_LIQUIDMAP;
+			tmpStages[numStages].type = ST_LIQUIDMAP; // no extra type, stage collapse for renderer_liquid
 
 			tmpStages[numStages].bundle[TB_NORMALMAP] = tmpNormalStage.bundle[0];
 

@@ -1521,7 +1521,7 @@ void R_Init(void)
 	// init function tables
 	for (i = 0; i < FUNCTABLE_SIZE; i++)
 	{
-		tr.sinTable[i]             = sin(DEG2RAD(i * 360.0 / ((double)(FUNCTABLE_SIZE - 1))));
+		tr.sinTable[i]             = sin((double)(i / FUNCTABLE_SIZE) * M_TAU_F);
 		tr.squareTable[i]          = (i < FUNCTABLE_SIZE / 2) ? 1.0f : -1.0f;
 		tr.sawToothTable[i]        = (float)i / FUNCTABLE_SIZE;
 		tr.inverseSawToothTable[i] = 1.0f - tr.sawToothTable[i];

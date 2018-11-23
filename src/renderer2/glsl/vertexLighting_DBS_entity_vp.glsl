@@ -16,15 +16,19 @@ attribute vec3 attr_Binormal;
 #if defined(USE_VERTEX_ANIMATION)
 attribute vec3 attr_Tangent2;
 attribute vec3 attr_Binormal2;
-#endif // USE_VERTEX_ANIMATION 
+#endif // USE_VERTEX_ANIMATION
 #endif // USE_NORMAL_MAPPING
 
 uniform mat4 u_ModelMatrix;
 uniform mat4 u_ModelViewProjectionMatrix;
 uniform mat4 u_DiffuseTextureMatrix;
 uniform vec3  u_LightColor;
+#if defined(USE_DEFORM_VERTEXES)
 uniform float u_Time;
+#endif // USE_DEFORM_VERTEXES
+#if defined(USE_VERTEX_ANIMATION)
 uniform float u_VertexInterpolation;
+#endif // USE_VERTEX_ANIMATION
 #if defined(USE_NORMAL_MAPPING)
 uniform mat4 u_NormalTextureMatrix;
 #if defined(USE_REFLECTIONS) || defined(USE_SPECULAR)
@@ -37,28 +41,31 @@ varying vec2 var_TexDiffuse;
 varying vec4 var_LightColor;
 varying vec3 var_Normal;
 #if defined(USE_NORMAL_MAPPING)
+varying vec3 var_Tangent;
+varying vec3 var_Binormal;
 varying vec2 var_TexNormal;
 #if defined(USE_REFLECTIONS) || defined(USE_SPECULAR)
 varying vec2 var_TexSpecular;
 #endif // USE_REFLECTIONS || USE_SPECULAR
-varying vec3 var_Tangent;
-varying vec3 var_Binormal;
 #endif // USE_NORMAL_MAPPING
 
 
 void main()
 {
 	vec4 position;
+	vec3 normal;
+#if defined(USE_NORMAL_MAPPING)
 	vec3 tangent;
 	vec3 binormal;
-	vec3 normal;
+#endif // USE_NORMAL_MAPPING
+
 
 #if defined(USE_VERTEX_SKINNING)
 
 #if defined(USE_NORMAL_MAPPING)
 	VertexSkinning_P_TBN(attr_Position, attr_Tangent, attr_Binormal, attr_Normal,
 	                     position, tangent, binormal, normal);
-	#else
+#else
 	VertexSkinning_P_N(attr_Position, attr_Normal,
 	                   position, normal);
 #endif // USE_NORMAL_MAPPING
@@ -106,6 +113,7 @@ void main()
 	// transform diffusemap texcoords
 	var_TexDiffuse = (u_DiffuseTextureMatrix * attr_TexCoord0).st;
 
+	// transform tangentspace axis
 	var_Normal.xyz = (u_ModelMatrix * vec4(normal, 0.0)).xyz;
 #if defined(USE_NORMAL_MAPPING)
 	var_Tangent.xyz  = (u_ModelMatrix * vec4(tangent, 0.0)).xyz;
@@ -120,6 +128,6 @@ void main()
 #endif // USE_REFLECTIONS || USE_SPECULAR
 #endif // USE_NORMAL_MAPPING
 
-
+	// assign color
 	var_LightColor = vec4(u_LightColor, 1.0);
 }

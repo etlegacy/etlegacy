@@ -97,7 +97,7 @@ vec3 RandomVec3(vec2 uv)
 
 #if 1
 	float r     = Rand(uv);
-	float angle = 2.0 * M_PI * r; // / 360.0;
+	float angle = M_TAU * r; // / 360.0;
 
 	dir = normalize(vec3(cos(angle), sin(angle), r));
 #else
@@ -940,7 +940,8 @@ void    main()
 	// invert tangent space for twosided surfaces
 	mat3 tangentToWorldMatrix;
 #if defined(TWOSIDED)
-	if (!gl_FrontFacing)
+	// positive check
+	if (gl_FrontFacing)
 	{
 		tangentToWorldMatrix = mat3(-var_Tangent.xyz, -var_Binormal.xyz, -var_Normal.xyz);
 	}

@@ -481,7 +481,40 @@ void RB_CalcDeformVertexes(deformStage_t *ds)
 	float        *normal = (float *)tess.normals;
 	float        *table;
 
-	if (ds->deformationWave.frequency < 0)
+	if (ds->deformationWave.frequency > 0)
+	{
+		float off;
+
+		table = TableForFunc(ds->deformationWave.func);
+
+		for (i = 0; i < tess.numVertexes; i++, xyz += 4, normal += 4)
+		{
+			off = (xyz[0] + xyz[1] + xyz[2]) * ds->deformationSpread;
+
+			scale = WAVEVALUE(table, ds->deformationWave.base,
+				ds->deformationWave.amplitude, ds->deformationWave.phase + off, ds->deformationWave.frequency);
+
+			VectorScale(normal, scale, offset);
+
+			xyz[0] += offset[0];
+			xyz[1] += offset[1];
+			xyz[2] += offset[2];
+		}
+	}
+	else if (ds->deformationWave.frequency == 0.f)
+	{
+		scale = RB_EvalWaveForm(&ds->deformationWave);
+
+		for (i = 0; i < tess.numVertexes; i++, xyz += 4, normal += 4)
+		{
+			VectorScale(normal, scale, offset);
+
+			xyz[0] += offset[0];
+			xyz[1] += offset[1];
+			xyz[2] += offset[2];
+		}
+	}
+	else //if (ds->deformationWave.frequency < 0)
 	{
 		float    off;
 		float    dot;
@@ -541,39 +574,6 @@ void RB_CalcDeformVertexes(deformStage_t *ds)
 		}
 		ds->deformationWave.frequency *= -1;
 	}
-	else if (ds->deformationWave.frequency == 0.f)
-	{
-		scale = RB_EvalWaveForm(&ds->deformationWave);
-
-		for (i = 0; i < tess.numVertexes; i++, xyz += 4, normal += 4)
-		{
-			VectorScale(normal, scale, offset);
-
-			xyz[0] += offset[0];
-			xyz[1] += offset[1];
-			xyz[2] += offset[2];
-		}
-	}
-	else
-	{
-		float off;
-
-		table = TableForFunc(ds->deformationWave.func);
-
-		for (i = 0; i < tess.numVertexes; i++, xyz += 4, normal += 4)
-		{
-			off = (xyz[0] + xyz[1] + xyz[2]) * ds->deformationSpread;
-
-			scale = WAVEVALUE(table, ds->deformationWave.base,
-			                  ds->deformationWave.amplitude, ds->deformationWave.phase + off, ds->deformationWave.frequency);
-
-			VectorScale(normal, scale, offset);
-
-			xyz[0] += offset[0];
-			xyz[1] += offset[1];
-			xyz[2] += offset[2];
-		}
-	}
 }
 
 /**
@@ -624,7 +624,7 @@ void RB_CalcBulgeVertexes(deformStage_t *ds)
 
 	for (i = 0; i < tess.numVertexes; i++, xyz += 4, st += 4, normal += 4)
 	{
-		off = (FUNCTABLE_SIZE / (M_PI * 2)) * (st[0] * ds->bulgeWidth + now);
+		off = (FUNCTABLE_SIZE / M_TAU_F) * (st[0] * ds->bulgeWidth + now);
 
 		scale = tr.sinTable[off & FUNCTABLE_MASK] * ds->bulgeHeight;
 
@@ -966,29 +966,26 @@ static void Autosprite2Deform(void)
  */
 qboolean ShaderRequiresCPUDeforms(const shader_t *shader)
 {
-	if (shader->numDeforms)
+	return qtrue; // !!! DBEUG !!!
+
+	if (shader->numDeforms == 0)
 	{
-		int i;
-
-		for (i = 0; i < shader->numDeforms; i++)
-		{
-			const deformStage_t *ds = &shader->deforms[0];
-
-			switch (ds->deformation)
-			{
-			case DEFORM_WAVE:
-			case DEFORM_BULGE:
-				// need CPU deforms at high level-times to avoid floating point percision loss
-				return (backEnd.refdef.floatTime != (float)backEnd.refdef.floatTime); // tess.shaderTime?!
-			case DEFORM_MOVE:
-				break;
-			default:
-				return qtrue;
-			}
-		}
+		return qfalse;
 	}
 
-	return qfalse;
+	if (shader->numDeforms == 1)
+	{
+		const deformStage_t *ds = &shader->deforms[0];
+
+		switch (ds->deformation)
+		{
+			case DEFORM_WAVE:
+			case DEFORM_BULGE:
+				return (backEnd.refdef.floatTime != tess.shaderTime); // seems both are always equal ..
+			default:
+				return qtrue;
+		}
+	}
 }
 
 /**
@@ -1105,8 +1102,8 @@ void RB_CalcTexMatrix(const textureBundle_t *bundle, mat4_t matrix)
 
 			// clamp so coordinates don't continuously get larger, causing problems
 			// with hardware limits
-			x = x - floor(x);
-			y = y - floor(y);
+			x = x - floor(bundle->texMods[j].scroll[0]);
+			y = y - floor(bundle->texMods[j].scroll[1]);
 
 			MatrixMultiplyTranslation(matrix, x, y, 0.0);
 			break;
@@ -1118,8 +1115,8 @@ void RB_CalcTexMatrix(const textureBundle_t *bundle, mat4_t matrix)
 
 			// clamp so coordinates don't continuously get larger, causing problems
 			// with hardware limits
-			x = x - floor(x);
-			y = y - floor(y);
+			x = x - floor(bundle->texMods[j].scroll[0]);
+			y = y - floor(bundle->texMods[j].scroll[1]);
 
 			MatrixMultiplyTranslation(matrix, x, y, 0.0);
 			break;
@@ -1166,8 +1163,8 @@ void RB_CalcTexMatrix(const textureBundle_t *bundle, mat4_t matrix)
 
 			// clamp so coordinates don't continuously get larger, causing problems
 			// with hardware limits
-			x = x - floor(x);
-			y = y - floor(y);
+			x = x - floor(bundle->texMods[j].scroll[0]);
+			y = y - floor(bundle->texMods[j].scroll[1]);
 
 			MatrixMultiplyTranslation(matrix, x, y, 0.0);
 			break;

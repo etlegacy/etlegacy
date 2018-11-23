@@ -2935,7 +2935,7 @@ static void R_CreateRandomNormalsImage(void)
 			float  r, angle;
 
 			r     = random();
-			angle = 2.0 * M_PI * r; // / 360.0;
+			angle = M_TAU_F * r; // / 360.0;
 
 			VectorSet(n, cos(angle), sin(angle), r);
 			VectorNormalize(n);
@@ -3709,8 +3709,10 @@ void R_ShutdownImages(void)
 	Com_DestroyGrowList(&tr.lightmaps);
 	Com_DestroyGrowList(&tr.deluxemaps);
 	Com_DestroyGrowList(&tr.cubeProbes);
-
+#if 0 // cubeProbe hash values
+	// the cubeProbe hash values can also be freed (the images have just been removed)
 	FreeVertexHashTable(tr.cubeHashTable);
+#endif
 }
 
 /**

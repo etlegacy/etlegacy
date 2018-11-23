@@ -12,6 +12,11 @@ float sawtooth(float x)
 	return x - floor(x);
 }
 
+float floatToRad(float f)
+{
+	return M_TAU * f;
+}
+
 vec4 DeformPosition(const int deformGen,
                     const vec4 wave,	// [base amplitude phase freq]
                     const vec3 bulge,	// [width height speed]
@@ -28,7 +33,7 @@ vec4 DeformPosition(const int deformGen,
 		case DGEN_WAVE_SIN:
 		{
 			float off = (pos.x + pos.y + pos.z) * spread;
-			float scale = wave.x  + sin(off + wave.z + (time * wave.w)) * wave.y;
+			float scale = wave.x  + sin(floatToRad(off + wave.z + (time * wave.w))) * wave.y;
 			vec3 offset = normal * scale;
 
 			deformed.xyz += offset;
@@ -37,7 +42,7 @@ vec4 DeformPosition(const int deformGen,
 		case DGEN_WAVE_SQUARE:
 		{
 			float off = (pos.x + pos.y + pos.z) * spread;
-			float scale = wave.x  + sign(sin(off + wave.z + (time * wave.w))) * wave.y;
+			float scale = wave.x  + sign(sin(floatToRad(off + wave.z + (time * wave.w)))) * wave.y;
 			vec3 offset = normal * scale;
 
 			deformed.xyz += offset;
@@ -95,9 +100,9 @@ float WaveValue(float func, float base, float amplitude, float phase, float freq
 	switch(int(func))
 	{
 		case GF_SIN:
-			return base  + sin(phase + (time * freq)) * amplitude;
+			return base  + sin(floatToRad(phase + (time * freq))) * amplitude;
 		case GF_SQUARE:
-			return base  + sign(sin(phase + (time * freq))) * amplitude;
+			return base  + sign(sin(floatToRad(phase + (time * freq)))) * amplitude;
 		case GF_TRIANGLE:
 			return base  + triangle(phase + (time * freq)) * amplitude;
 		case GF_SAWTOOTH:

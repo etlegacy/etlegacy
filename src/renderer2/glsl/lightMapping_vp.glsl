@@ -61,13 +61,20 @@ void main()
 	gl_Position.w  = 1.0;
 #endif // 1
 
+	// transform position into world space
+	var_Position = (u_ModelMatrix * position).xyz;
 
 	// transform diffusemap texcoords
 	var_TexDiffuseNormal.st = (u_DiffuseTextureMatrix * attr_TexCoord0).st;
 	// get lightmap texture coordinates
-	var_TexLight            = attr_TexCoord1.st;
+	var_TexLight = attr_TexCoord1.st;
 
+	// transform tangentspace axis
+	var_Normal.xyz = (u_ModelMatrix * vec4(attr_Normal, 0.0)).xyz;
 #if defined(USE_NORMAL_MAPPING)
+	var_Tangent.xyz  = (u_ModelMatrix * vec4(attr_Tangent, 0.0)).xyz;
+	var_Binormal.xyz = (u_ModelMatrix * vec4(attr_Binormal, 0.0)).xyz;
+
 	// transform normalmap texcoords
 	var_TexDiffuseNormal.pq = (u_NormalTextureMatrix * attr_TexCoord0).st;
 
@@ -77,26 +84,6 @@ void main()
 #endif // USE_REFLECTIONS || USE_SPECULAR
 #endif // USE_NORMAL_MAPPING
 
-
-#if 0
-	// transform position into world space
-	var_Position = (u_ModelMatrix * position).xyz;
-	var_Normal.xyz = (u_ModelMatrix * vec4(attr_Normal, 0.0)).xyz;
-#if defined(USE_NORMAL_MAPPING)
-	var_Tangent.xyz  = (u_ModelMatrix * vec4(attr_Tangent, 0.0)).xyz;
-	var_Binormal.xyz = (u_ModelMatrix * vec4(attr_Binormal, 0.0)).xyz;
-#endif // USE_NORMAL_MAPPING
-
-#else // 0
-
-	var_Position = position.xyz;
-	var_Normal   = attr_Normal.xyz;
-#if defined(USE_NORMAL_MAPPING)
-	var_Tangent  = attr_Tangent.xyz;
-	var_Binormal = attr_Binormal.xyz;
-#endif // USE_NORMAL_MAPPING
-
-#endif // 0
-
+	// assign color
 	var_Color = attr_Color * u_ColorModulate + u_Color;
 }

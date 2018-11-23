@@ -1098,16 +1098,16 @@ typedef struct
 	waveForm_t wave;
 
 	// used for TMOD_TRANSFORM
-	mat4_t matrix;            // s' = s * m[0][0] + t * m[1][0] + trans[0]
-	// t' = s * m[0][1] + t * m[0][1] + trans[1]
+	mat4_t matrix;  // s' = s * m[0][0] + t * m[1][0] + trans[0]
+                    // t' = s * m[0][1] + t * m[0][1] + trans[1]
 
 	// used for TMOD_SCALE
-	float scale[2];             // s *= scale[0]
-	// t *= scale[1]
+	float scale[2]; // s *= scale[0]
+                    // t *= scale[1]
 
 	// used for TMOD_SCROLL
-	float scroll[2];            // s' = s + scroll[0] * time
-	// t' = t + scroll[1] * time
+	float scroll[2]; // s' = s + scroll[0] * time
+                     // t' = t + scroll[1] * time
 
 	// + = clockwise
 	// - = counterclockwise
@@ -1472,6 +1472,8 @@ typedef struct shader_s
 
 	double clampTime;                                   ///< time this shader is clamped to // FIXME: double for time?
 	int timeOffset;                                     ///< current time offset for this shader
+
+	qboolean has_lightmapStage;
 
 	struct shader_s *remappedShader;    ///< current shader this one is remapped too
 
@@ -2395,13 +2397,16 @@ typedef struct
  */
 typedef struct
 {
+	// srfGeneric_t BEGIN
+
 	surfaceType_t surfaceType;
 
-	// culling information
 	vec3_t bounds[2];
 	vec3_t origin;
 	float radius;
 	cplane_t plane;
+
+	// srfGeneric_t END
 
 	// dynamic lighting information
 	//int dlightBits;
@@ -4566,7 +4571,6 @@ RENDERER IMAGE FUNCTIONS
 void R_LoadJPG(const char *filename, unsigned char **pic, int *width, int *height, byte alphaByte);
 size_t RE_SaveJPGToBuffer(byte *buffer, size_t bufSize, int quality, int image_width, int image_height, byte *image_buffer, int padding);
 void RE_SaveJPG(const char *filename, int quality, int image_width, int image_height, byte *image_buffer, int padding);
-void RE_SaveTGA(const char *filename, byte *data, int width, int height, qboolean withAlpha);
 
 void R_LoadPNG(const char *name, byte **pic, int *width, int *height, byte alphaByte);
 void R_LoadBMP(const char *name, byte **pic, int *width, int *height, byte alphaByte);
@@ -4844,7 +4848,7 @@ void RE_TakeVideoFrame(int width, int height, byte *captureBuffer, byte *encodeB
 
 // cubemap reflections stuff
 void R_BuildCubeMaps(void);
-void R_FindTwoNearestCubeMaps(const vec3_t position, cubemapProbe_t **cubeProbeNearest, cubemapProbe_t **cubeProbeSecondNearest);
+void R_FindTwoNearestCubeMaps(const vec3_t position, cubemapProbe_t **cubeProbe1, cubemapProbe_t **cubeProbe2, float *distance1, float *distance2);
 
 void FreeVertexHashTable(vertexHash_t **hashTable);
 

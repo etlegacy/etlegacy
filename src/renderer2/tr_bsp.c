@@ -3434,6 +3434,28 @@ static void R_CreateWorldVBO()
 		}
 	}
 
+#if 0
+	// assign the two nearest cubeProbes
+	if (tr.cubeProbes.currentElements > 0)
+	{
+		srfGeneric_t *srf;
+		cubemapProbe_t *cubeProbe1, *cubeProbe2;
+		float distance1, distance2;
+		for (s = 0, surface = &s_worldData.surfaces[0]; s < s_worldData.numWorldSurfaces; s++, surface++)
+		{
+			if (*surface->data == SF_FACE) srf = (srfGeneric_t *)surface->data;
+			else if (*surface->data == SF_GRID) srf = (srfGeneric_t *)surface->data;
+			else if (*surface->data == SF_TRIANGLES) srf = (srfGeneric_t *)surface->data;
+			else if (*surface->data == SF_FOLIAGE) srf = (srfGeneric_t *)surface->data;
+			else continue;
+
+			// find the two nearest cubeProbes
+			R_FindTwoNearestCubeMaps(srf->origin, &cubeProbe1, &cubeProbe2, &distance1, &distance2);
+			srf->cubemap1 = cubeProbe1->cubemap;
+			srf->cubemap2 = cubeProbe2->cubemap;
+		}
+	}
+#endif
 
 	s_worldData.vbo = R_CreateVBO2(va("staticBspModel0_VBO %i", 0), numVerts, verts,
 	                               ATTR_POSITION | ATTR_TEXCOORD | ATTR_LIGHTCOORD | ATTR_TANGENT | ATTR_BINORMAL |
@@ -7369,9 +7391,7 @@ vertexHash_t **NewVertexHashTable(void)
  */
 void FreeVertexHashTable(vertexHash_t **hashTable)
 {
-	int          i;
-	vertexHash_t *vertexHash;
-	vertexHash_t *nextVertexHash;
+	int i;
 
 	if (hashTable == NULL)
 	{
@@ -7380,25 +7400,10 @@ void FreeVertexHashTable(vertexHash_t **hashTable)
 
 	for (i = 0; i < HASHTABLE_SIZE; i++)
 	{
-		if (hashTable[i])
-		{
-			nextVertexHash = NULL;
-
-			for (vertexHash = hashTable[i]; vertexHash; vertexHash = nextVertexHash)
-			{
-				nextVertexHash = vertexHash->next;
-				/*
-				if(vertexHash->data != NULL)
-				{
-				    Com_Dealloc(vertexHash->data);
-				}
-				*/
-				//Com_Dealloc(vertexHash); // ... now in hunk
-			}
-		}
+		Com_Dealloc(hashTable[i]);
 	}
 
-	//Com_Dealloc(hashTable); // ... now in hunk
+	//Com_Dealloc(hashTable); // TODO: check this..
 }
 
 /**
@@ -7491,7 +7496,7 @@ vertexHash_t *AddVertexToHashTable(vertexHash_t **hashTable, vec3_t xyz, void *d
  */
 void GL_BindNearestCubeMap(const vec3_t xyz)
 {
-#if 0
+#if 1
 	int            j;
 	float          distance, maxDistance;
 	cubemapProbe_t *cubeProbe;
@@ -7511,7 +7516,7 @@ void GL_BindNearestCubeMap(const vec3_t xyz)
 			maxDistance      = distance;
 		}
 	}
-#else
+#else // cubeProbe hash values
 	float          distance, maxDistance;
 	cubemapProbe_t *cubeProbe;
 	unsigned int   hash;
@@ -7551,52 +7556,58 @@ void GL_BindNearestCubeMap(const vec3_t xyz)
 /**
  * @brief R_FindTwoNearestCubeMaps
  * @param[in] position
- * @param[out] cubeProbeNearest
- * @param[out] cubeProbeSecondNearest
+ * @param[out] cubeProbe1 // nearest
+ * @param[out] cubeProbe2 // 2nd nearest
  */
-void R_FindTwoNearestCubeMaps(const vec3_t position, cubemapProbe_t **cubeProbeNearest, cubemapProbe_t **cubeProbeSecondNearest)
+void R_FindTwoNearestCubeMaps(const vec3_t position, cubemapProbe_t **cubeProbe1, cubemapProbe_t **cubeProbe2, float *distance1, float *distance2)
 {
 	int            j;
-	float          distance, maxDistance, maxDistance2;
+	float          distance;
 	cubemapProbe_t *cubeProbe;
+#if 0
 	unsigned int   hash;
 	vertexHash_t   *vertexHash;
-
+#endif
 	Ren_LogComment("--- R_FindTwoNearestCubeMaps ---\n");
 
-	*cubeProbeNearest       = NULL;
-	*cubeProbeSecondNearest = NULL;
-
+	*cubeProbe1 = NULL;
+	*cubeProbe2 = NULL;
+#if 0 // cubeProbe hash values
 	if (tr.cubeHashTable == NULL || position == NULL)
+#else
+	if (tr.cubeProbes.currentElements == 0 || position == NULL)
+#endif
 	{
 		return;
 	}
-
-	hash        = VertexCoordGenerateHash(position);
-	maxDistance = maxDistance2 = 9999999.0f;
-
 #if 0
+	hash        = VertexCoordGenerateHash(position);
+#endif
+	*distance1 = *distance2 = 9999999.0f;
+
+#if 1
 	for (j = 0; j < tr.cubeProbes.currentElements; j++)
 	{
 		cubeProbe = Com_GrowListElement(&tr.cubeProbes, j);
-#else
+#else // cubeProbe hash values
 	for (j = 0, vertexHash = tr.cubeHashTable[hash]; vertexHash; vertexHash = vertexHash->next, j++)
 	{
 		cubeProbe = (cubemapProbe_t *)vertexHash->data;
 #endif
-		distance = Distance(cubeProbe->origin, position);
-		if (distance < maxDistance)
-		{
-			*cubeProbeSecondNearest = *cubeProbeNearest;
-			maxDistance2            = maxDistance;
 
-			*cubeProbeNearest = cubeProbe;
-			maxDistance       = distance;
-		}
-		else if (distance < maxDistance2 && distance > maxDistance)
+		distance = Distance(cubeProbe->origin, position);
+		if (distance < *distance1)
 		{
-			*cubeProbeSecondNearest = cubeProbe;
-			maxDistance2            = distance;
+			*cubeProbe2 = *cubeProbe1;
+			*distance2 = *distance1;
+
+			*cubeProbe1 = cubeProbe;
+			*distance1 = distance;
+		}
+		else if (distance < *distance2) // && distance > *distance1)
+		{
+			*cubeProbe2 = cubeProbe;
+			*distance2 = distance;
 		}
 	}
 
@@ -7692,7 +7703,7 @@ qboolean R_LoadCubeProbe(int cubeProbeNum, byte *cubeTemp[6])
 		// copy this cube map into buffer
 		R_SubImageCpy(pixeldata,
 			((insidePos + i) % REF_CUBEMAP_STORE_SIDE) * REF_CUBEMAP_SIZE, ((insidePos + i) / REF_CUBEMAP_STORE_SIDE) * REF_CUBEMAP_SIZE,
-			REF_CUBEMAP_SIZE, REF_CUBEMAP_SIZE,
+			REF_CUBEMAP_STORE_SIZE, REF_CUBEMAP_STORE_SIZE,
 			cubeTemp[i],
 			REF_CUBEMAP_SIZE, REF_CUBEMAP_SIZE,
 			4, qfalse);
@@ -7714,7 +7725,7 @@ qboolean R_LoadCubeProbe(int cubeProbeNum, byte *cubeTemp[6])
 			// copy this cube map into buffer
 			R_SubImageCpy(pixeldata,
 							(i % REF_CUBEMAP_STORE_SIDE) * REF_CUBEMAP_SIZE, (i / REF_CUBEMAP_STORE_SIDE) * REF_CUBEMAP_SIZE,
-							REF_CUBEMAP_SIZE, REF_CUBEMAP_SIZE,
+							REF_CUBEMAP_STORE_SIZE, REF_CUBEMAP_STORE_SIZE,
 							tr.cubeTemp[cubeSidesInFile1 + i],
 							REF_CUBEMAP_SIZE, REF_CUBEMAP_SIZE,
 							4, qfalse);
@@ -7725,6 +7736,8 @@ qboolean R_LoadCubeProbe(int cubeProbeNum, byte *cubeTemp[6])
 	return qtrue; // result is true if all the sides of the cube could be loaded, 
 }
 
+
+#define CUBES_MINIMUM_DISTANCE 200.0f
 
 /**
  * @brief R_BuildCubeMaps
@@ -7747,15 +7760,20 @@ void R_BuildCubeMaps(void)
 	qboolean	dirtyBuf	= qfalse; // true if there is something in the fileBuf, and the fileBuf has not been written to disk yet.
 	qboolean	createCM	= qfalse;
 
+#if 1
+	// the "progressbar" is 50 characters long
+	// there are n cubeProbes    (n == tr.cubeProbes.currentElements)
+	float ticsPerProbe; // 50 / tr.cubeProbes.currentElements;
+	int tics = 0; // the current number of tics that have been written
+#else
 	size_t tics         = 0;
 	size_t nextTicCount = 0;
-#ifdef LEGACY_DEBUG
-	int startTime, endTime;
-
-	startTime = ri.Milliseconds();
+	size_t ticsNeeded;
 #endif
 
-	size_t ticsNeeded;
+#ifdef LEGACY_DEBUG
+	int endTime, startTime = ri.Milliseconds();
+#endif
 
 	if (!r_reflectionMapping->integer)
 	{
@@ -7782,11 +7800,14 @@ void R_BuildCubeMaps(void)
 	//	Ren_Developer("Cubemaps found!\n");
 	//}
 
-	// calculate origins for our probes
+	// the cubeProbes list
 	Com_InitGrowList(&tr.cubeProbes, 5000);
+#if 0 // cubeProbe hash values
 	tr.cubeHashTable = NewVertexHashTable();
+#endif
 
-#if 0
+	// calculate origins for our probes
+#if 0 // cubeProbe hash values
 #if defined(USE_BSP_CLUSTERSURFACE_MERGING)
 	if (tr.world->vis)
 	{
@@ -7802,7 +7823,7 @@ void R_BuildCubeMaps(void)
 				continue;
 			}
 
-			if (FindVertexInHashTable(tr.cubeHashTable, cluster->origin, 256) == NULL)
+			if (FindVertexInHashTable(tr.cubeHashTable, cluster->origin, CUBES_MINIMUM_DISTANCE) == NULL)
 			{
 				cubeProbe = ri.Hunk_Alloc(sizeof(*cubeProbe), h_high);
 				Com_AddToGrowList(&tr.cubeProbes, cubeProbe);
@@ -7831,7 +7852,7 @@ void R_BuildCubeMaps(void)
 		for (i = 0; i < tr.world->numnodes; i++)
 		{
 			node = &tr.world->nodes[i];
-			
+
 			// check to see if this is a shit location
 			if (node->contents == CONTENTS_NODE)
 			{
@@ -7844,14 +7865,30 @@ void R_BuildCubeMaps(void)
 				continue;
 			}
 
-			if (FindVertexInHashTable(tr.cubeHashTable, node->origin, 256) == NULL)
+			// We don't want the cubeProbes to be too close to eachother
+	#if 0 // cubeProbe hash values
+			if (FindVertexInHashTable(tr.cubeHashTable, node->origin, CUBES_MINIMUM_DISTANCE) == NULL)
 			{
+	#else
+			qboolean OK = qtrue;
+			for (int p = 0; p < tr.cubeProbes.currentElements; p++)
+			{
+				cubeProbe = (cubemapProbe_t *)Com_GrowListElement(&tr.cubeProbes, p);
+				if (Distance(node->origin, cubeProbe->origin) > CUBES_MINIMUM_DISTANCE) continue;
+				OK = qfalse;
+				break;
+			}
+
+			if (OK)
+			{
+	#endif
+				// create a new cubeProbe
 				cubeProbe = (cubemapProbe_t *)ri.Hunk_Alloc(sizeof(*cubeProbe), h_high);
 				Com_AddToGrowList(&tr.cubeProbes, cubeProbe);
-
 				VectorCopy(node->origin, cubeProbe->origin);
-
+	#if 0 // cubeProbe hash values
 				AddVertexToHashTable(tr.cubeHashTable, cubeProbe->origin, cubeProbe);
+	#endif
 			}
 		}
 	}
@@ -7892,7 +7929,7 @@ void R_BuildCubeMaps(void)
 						continue;
 					}
 
-					if (FindVertexInHashTable(tr.cubeHashTable, posFloat, 256) == NULL)
+					if (FindVertexInHashTable(tr.cubeHashTable, posFloat, CUBES_MINIMUM_DISTANCE) == NULL)
 					{
 						cubeProbe = ri.Hunk_Alloc(sizeof(*cubeProbe), h_high);
 						Com_AddToGrowList(&tr.cubeProbes, cubeProbe);
@@ -7911,16 +7948,24 @@ void R_BuildCubeMaps(void)
 	}
 
 
-	// if we can't find one, fake one
 	if (tr.cubeProbes.currentElements == 0)
 	{
+#if 1
+		// if we could not even create one cubeProbe, we're done.. (don't fake one)
+		return;
+#else
+		// fake one
 		cubeProbe = (cubemapProbe_t *)ri.Hunk_Alloc(sizeof(*cubeProbe), h_low);
 		Com_AddToGrowList(&tr.cubeProbes, cubeProbe);
 
 		VectorClear(cubeProbe->origin);
+#endif
 	}
 
-	Ren_Print("...pre-rendering %d cubemaps\n", tr.cubeProbes.currentElements);
+#if 1
+	ticsPerProbe = 50 / tr.cubeProbes.currentElements; // currentElements is != 0 for sure
+#endif
+	Ren_Print("...creating %d cubemaps\n", tr.cubeProbes.currentElements);
 	ri.Cvar_Set("viewlog", "1");
 	Ren_Print("0%%  10   20   30   40   50   60   70   80   90   100%%\n");
 	Ren_Print("|----|----|----|----|----|----|----|----|----|----|\n");
@@ -7930,7 +7975,17 @@ void R_BuildCubeMaps(void)
 
 		//Ren_Print("rendering cubemap at (%i %i %i)\n", (int)cubeProbe->origin[0], (int)cubeProbe->origin[1],
 		//		  (int)cubeProbe->origin[2]);
-
+#if 1
+		// we are at probe j
+		int currentTics = j * ticsPerProbe; // implicit typecast from float to int. This will floor() the result (which is what we want)
+		
+		if (currentTics != tics)
+		{
+			tics = currentTics;
+			Ren_Print("*");
+			Ren_UpdateScreen();
+		}
+#else
 		if ((j + 1) >= nextTicCount)
 		{
 			ticsNeeded = (size_t)(((double)(j + 1) / tr.cubeProbes.currentElements) * 50.0);
@@ -7953,7 +8008,7 @@ void R_BuildCubeMaps(void)
 				Ren_Print("\n");
 			}
 		}
-
+#endif
 		// Load the cubemap from file if possible, else render a new cubemap
 		if (!createCM)
 		{
@@ -8084,10 +8139,9 @@ void R_BuildCubeMaps(void)
 				}
 		
 				tr.refdef.pixelTarget = tr.cubeTemp[i];
-				Com_Memset(tr.cubeTemp[i], 255, REF_CUBEMAP_SIZE * REF_CUBEMAP_SIZE * 4);
-
 				tr.refdef.pixelTargetWidth  = REF_CUBEMAP_SIZE;
 				tr.refdef.pixelTargetHeight = REF_CUBEMAP_SIZE;
+				Com_Memset(tr.cubeTemp[i], 255, REF_CUBEMAP_SIZE * REF_CUBEMAP_SIZE * 4);
 		
 				RE_BeginFrame();
 				RE_RenderScene(&rf);
@@ -8131,7 +8185,7 @@ void R_BuildCubeMaps(void)
 				// Copy this cube map into buffer
 				R_SubImageCpy(pixeldata,
 								sideX * REF_CUBEMAP_SIZE, sideY * REF_CUBEMAP_SIZE,
-								REF_CUBEMAP_SIZE, REF_CUBEMAP_SIZE,
+								REF_CUBEMAP_STORE_SIZE, REF_CUBEMAP_STORE_SIZE,
 								tr.cubeTemp[i],
 								REF_CUBEMAP_SIZE, REF_CUBEMAP_SIZE,
 								4, qtrue);
@@ -8181,7 +8235,7 @@ void R_BuildCubeMaps(void)
 
 		glBindTexture(cubeProbe->cubemap->type, 0);
 	}
-	Ren_Print("\n");
+	//Ren_Print("\n");
 
 	if (createCM)
 	{
@@ -8205,16 +8259,17 @@ void R_BuildCubeMaps(void)
 	tr.refdef.pixelTarget = NULL;
 
 	// assign the surfs a cubemap
+	// (that is done in R_CreateWorldVBO())
 #if 0
 	for (i = 0; i < tr.world->numnodes; i++)
 	{
-		msurface_t **mark;
-		msurface_t *surf;
+		bspSurface_t **mark; //	msurface_t **mark;
+		bspSurface_t *surf;  // msurface_t *surf;
 
 		if (tr.world->nodes[i].contents != CONTENTS_SOLID)
 		{
-			mark = tr.world->nodes[i].firstmarksurface;
-			j    = tr.world->nodes[i].nummarksurfaces;
+			mark = tr.world->nodes[i].markSurfaces; // .firstmarksurface;
+			j    = tr.world->nodes[i].numMarkSurfaces; // .nummarksurfaces;
 			while (j--)
 			{
 				int dist = 9999999;
@@ -8235,8 +8290,8 @@ void R_BuildCubeMaps(void)
 				{
 					continue;
 				}
-
-				for (x = 0; x < tr.cubeProbesCount; x++)
+//R_FindTwoNearestCubeMaps
+				for (x = 0; x < tr.cubeProbes.currentElements; x++)
 				{
 					vec3_t pos;
 
@@ -8290,7 +8345,7 @@ void RE_LoadWorldMap(const char *name)
 
 	VectorNormalize(tr.sunDirection);
 
-	// inalidate fogs (likely to be re-initialized to new values by the current map)
+	// invalidate fogs (likely to be re-initialized to new values by the current map)
 	// TODO: this is sort of silly.  I'm going to do a general cleanup on fog stuff
 	//          now that I can see how it's been used.  (functionality can narrow since
 	//          it's not used as much as it's designed for.)
@@ -8430,7 +8485,6 @@ void RE_LoadWorldMap(const char *name)
 	// FIXME: causes missing vbo error on radar (maps with portal sky or foliage )
 	// devmap oasis; set developer 1; set r_showcubeprobs 1
 	//
-	// one can always do it manually from console: buildcubemaps
 	R_BuildCubeMaps();
 
 	// never move this to RE_BeginFrame because we need it to set it here for the first frame

@@ -2,16 +2,17 @@
 #include "lib/deformVertexes"
 
 attribute vec4 attr_Position;
+attribute vec4 attr_Color;
 attribute vec4 attr_TexCoord0;
+attribute vec3 attr_Normal;
 #if defined(USE_NORMAL_MAPPING)
 attribute vec3 attr_Tangent;
 attribute vec3 attr_Binormal;
 #endif // USE_NORMAL_MAPPING
-attribute vec3 attr_Normal;
-attribute vec4 attr_Color;
 
 uniform mat4 u_DiffuseTextureMatrix;
 uniform mat4 u_ModelViewProjectionMatrix;
+uniform mat4 u_ModelMatrix;
 uniform float u_Time;
 uniform vec4 u_ColorModulate;
 uniform vec4 u_Color;
@@ -45,22 +46,24 @@ void main()
 {
 	vec4 position = attr_Position;
 #if defined(USE_DEFORM_VERTEXES)
-	position = DeformPosition2(position,
-	                           attr_Normal,
-	                           attr_TexCoord0.st,
-	                           u_Time);
+	position = DeformPosition2(position, attr_Normal, attr_TexCoord0.st, u_Time);
 #endif
 
 	// transform vertex position into homogenous clip-space
 	gl_Position = u_ModelViewProjectionMatrix * position;
 
-	// assign position in object space
-	var_Position = position.xyz;
-
 	// transform diffusemap texcoords
 	var_TexDiffuseNormal.st = (u_DiffuseTextureMatrix * attr_TexCoord0).st;
 
+	// transform position into world space
+	var_Position = (u_ModelMatrix * position).xyz;
+
+	// transform tangentspace axis
+	var_Normal.xyz = (u_ModelMatrix * vec4(attr_Normal, 0.0)).xyz;
 #if defined(USE_NORMAL_MAPPING)
+	var_Tangent.xyz  = (u_ModelMatrix * vec4(attr_Tangent, 0.0)).xyz;
+	var_Binormal.xyz = (u_ModelMatrix * vec4(attr_Binormal, 0.0)).xyz;
+
 	// transform normalmap texcoords
 	var_TexDiffuseNormal.pq = (u_NormalTextureMatrix * attr_TexCoord0).st;
 
@@ -68,12 +71,7 @@ void main()
 	// transform specularmap texture coords
 	var_TexSpecular = (u_SpecularTextureMatrix * attr_TexCoord0).st;
 #endif // USE_REFLECTIONS || USE_SPECULAR
-
-	var_Tangent  = attr_Tangent;
-	var_Binormal = attr_Binormal;
 #endif // USE_NORMAL_MAPPING
-
-	var_Normal = attr_Normal;
 
 	// assign color
 	var_LightColor = attr_Color * u_ColorModulate + u_Color;

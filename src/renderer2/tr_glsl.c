@@ -858,6 +858,7 @@ static void GLSL_BuildShaderExtraDef()
 	BUFFEXT("#ifndef r_NormalScale\n#define r_NormalScale %f\n#endif\n", r_normalScale->value);
 
 	BUFFEXT("#ifndef M_PI\n#define M_PI 3.14159265358979323846f\n#endif\n");
+	BUFFEXT("#ifndef M_TAU\n#define M_TAU 6.28318530717958647693f\n#endif\n");
 	BUFFEXT("#ifndef MAX_SHADOWMAPS\n#define MAX_SHADOWMAPS %i\n#endif\n", MAX_SHADOWMAPS);
 	BUFFEXT("#ifndef MAX_SHADER_DEFORM_PARMS\n#define MAX_SHADER_DEFORM_PARMS %i\n#endif\n", MAX_SHADER_DEFORM_PARMS);
 	BUFFEXT("#ifndef deform_t\n"

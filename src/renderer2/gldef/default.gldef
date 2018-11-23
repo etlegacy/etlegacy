@@ -25,11 +25,11 @@ generic
 lightMapping
 {
 	filename "lightMapping"
-	macros USE_PORTAL_CLIPPING USE_ALPHA_TESTING USE_DEFORM_VERTEXES USE_NORMAL_MAPPING USE_PARALLAX_MAPPING USE_DELUXE_MAPPING USE_REFLECTIONS USE_SPECULAR
+	macros USE_PORTAL_CLIPPING USE_ALPHA_TESTING USE_DEFORM_VERTEXES USE_NORMAL_MAPPING USE_PARALLAX_MAPPING USE_REFLECTIONS USE_SPECULAR
 	extramacros "TWOSIDED"
 	attribs ATTR_POSITION ATTR_TEXCOORD ATTR_LIGHTCOORD ATTR_NORMAL
 	vertexLibraries "lib/deformVertexes"
-	fragmentLibraries "lib/reliefMapping"
+	fragmentLibraries "lib/reliefMapping lib/normalMapping"
 }
 
 vertexLighting_DBS_entity
@@ -39,7 +39,7 @@ vertexLighting_DBS_entity
 	extramacros "TWOSIDED"
 	attribs ATTR_POSITION ATTR_TEXCOORD ATTR_NORMAL
 	vertexLibraries "lib/vertexSkinning lib/vertexAnimation lib/deformVertexes"
-	fragmentLibraries "lib/reliefMapping"
+	fragmentLibraries "lib/reliefMapping lib/normalMapping"
 }
 
 vertexLighting_DBS_world
@@ -49,7 +49,7 @@ vertexLighting_DBS_world
 	extramacros "TWOSIDED"
 	attribs ATTR_POSITION ATTR_TEXCOORD ATTR_NORMAL ATTR_COLOR
 	vertexLibraries "lib/deformVertexes"
-	fragmentLibraries "lib/reliefMapping"
+	fragmentLibraries "lib/reliefMapping lib/normalMapping"
 }
 
 forwardLighting_omniXYZ
@@ -185,7 +185,7 @@ debugShadowMap
 liquid
 {
 	filename "liquid"
-	macros USE_PORTAL_CLIPPING USE_NORMAL_MAPPING USE_PARALLAX_MAPPING
+	macros USE_PORTAL_CLIPPING USE_NORMAL_MAPPING USE_PARALLAX_MAPPING USE_SPECULAR USE_REFLECTIONS USE_WATER
 	attribs ATTR_POSITION ATTR_TEXCOORD ATTR_TANGENT ATTR_BINORMAL ATTR_NORMAL ATTR_COLOR
 }
 

@@ -3,7 +3,7 @@
 
 attribute vec4 attr_Position;
 attribute vec3 attr_Normal;
-#if defined(r_VertexSkinning)
+#if defined(r_VertexSkinning) // FIXME/REMOVE
 attribute vec4 attr_BoneIndexes;
 attribute vec4 attr_BoneWeights;
 uniform int    u_VertexSkinning;

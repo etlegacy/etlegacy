@@ -36,46 +36,43 @@ void    main()
 
 #if defined(USE_VERTEX_SKINNING)
 
-	#if defined(USE_NORMAL_MAPPING)
+#if defined(USE_NORMAL_MAPPING)
 	VertexSkinning_P_TBN(attr_Position, attr_Tangent, attr_Binormal, attr_Normal,
 	                     position, tangent, binormal, normal);
-	#else
+#else
 	VertexSkinning_P_N(attr_Position, attr_Normal,
 	                   position, normal);
-	#endif
+#endif
 
 #elif defined(USE_VERTEX_ANIMATION)
 
-	#if defined(USE_NORMAL_MAPPING)
+#if defined(USE_NORMAL_MAPPING)
 	VertexAnimation_P_TBN(attr_Position, attr_Position2,
 	                      attr_Tangent, attr_Tangent2,
 	                      attr_Binormal, attr_Binormal2,
 	                      attr_Normal, attr_Normal2,
 	                      u_VertexInterpolation,
 	                      position, tangent, binormal, normal);
-	#else
+#else
 	VertexAnimation_P_N(attr_Position, attr_Position2,
 	                    attr_Normal, attr_Normal2,
 	                    u_VertexInterpolation,
 	                    position, normal);
-	#endif
+#endif
 
 #else
 	position = attr_Position;
 
-	#if defined(USE_NORMAL_MAPPING)
+#if defined(USE_NORMAL_MAPPING)
 	tangent  = attr_Tangent;
 	binormal = attr_Binormal;
-	#endif
+#endif
 
 	normal = attr_Normal;
 #endif
 
 #if defined(USE_DEFORM_VERTEXES)
-	position = DeformPosition2(position,
-	                           normal,
-	                           attr_TexCoord0.st,
-	                           u_Time);
+	position = DeformPosition2(position, normal, attr_TexCoord0.st, u_Time);
 #endif
 
 	// transform vertex position into homogenous clip-space
@@ -84,15 +81,13 @@ void    main()
 	// transform position into world space
 	var_Position = (u_ModelMatrix * position).xyz;
 
-	#if defined(USE_NORMAL_MAPPING)
-	var_Tangent.xyz  = (u_ModelMatrix * vec4(tangent, 0.0)).xyz;
-	var_Binormal.xyz = (u_ModelMatrix * vec4(binormal, 0.0)).xyz;
-	#endif
-
-	var_Normal.xyz = (u_ModelMatrix * vec4(normal, 0.0)).xyz;
-
 #if defined(USE_NORMAL_MAPPING)
 	// transform normalmap texcoords
 	var_TexNormal = (u_NormalTextureMatrix * attr_TexCoord0).st;
+
+	var_Tangent.xyz  = (u_ModelMatrix * vec4(tangent, 0.0)).xyz;
+	var_Binormal.xyz = (u_ModelMatrix * vec4(binormal, 0.0)).xyz;
 #endif
+
+	var_Normal.xyz = (u_ModelMatrix * vec4(normal, 0.0)).xyz;
 }
