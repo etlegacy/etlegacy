@@ -833,10 +833,8 @@ static void ProjectDecalOntoGrid(decalProjector_t *dp, msurface_t *surf, bmodel_
  */
 void R_ProjectDecalOntoSurface(decalProjector_t *dp, msurface_t *surf, bmodel_t *bmodel)
 {
-	float        d;
 	srfGeneric_t *gen;
-	int          i, count;
-	decal_t      *decal;
+	int          i;
 
 	// early outs
 	if (dp->shader == NULL)
@@ -849,20 +847,6 @@ void R_ProjectDecalOntoSurface(decalProjector_t *dp, msurface_t *surf, bmodel_t 
 	{
 		return;
 	}
-
-	// check if this projector already has a decal on this surface
-	count = (bmodel == tr.world->bmodels ? MAX_WORLD_DECALS : MAX_ENTITY_DECALS);
-	decal = bmodel->decals;
-	for (i = 0; i < count; i++, decal++)
-	{
-		if (decal->parent == surf && decal->projectorNum == dp->projectorNum)
-		{
-			return;
-		}
-	}
-
-	// add to counts
-	tr.pc.c_decalTestSurfaces++;
 
 	// get generic surface
 	gen = (srfGeneric_t *) surf->data;
@@ -882,6 +866,8 @@ void R_ProjectDecalOntoSurface(decalProjector_t *dp, msurface_t *surf, bmodel_t 
 	// planar surface
 	if (gen->plane.normal[0] != 0.f || gen->plane.normal[1] != 0.f || gen->plane.normal[2] != 0.f)
 	{
+		float d;
+
 		// backface check
 		d = DotProduct(dp->planes[0], gen->plane.normal);
 		if (d < -0.0001f)
@@ -899,6 +885,22 @@ void R_ProjectDecalOntoSurface(decalProjector_t *dp, msurface_t *surf, bmodel_t 
 
 	// add to counts
 	tr.pc.c_decalClipSurfaces++;
+
+	// check if this projector already has a decal on this surface
+	{
+		int     count  = (bmodel == tr.world->bmodels ? MAX_WORLD_DECALS : MAX_ENTITY_DECALS);
+		decal_t *decal = bmodel->decals;
+
+		for (i = 0; i < count; i++, decal++)
+		{
+			if (decal->parent == surf && decal->projectorNum == dp->projectorNum)
+			{
+				return;
+			}
+		}
+		// add to counts
+		tr.pc.c_decalTestSurfaces++;
+	}
 
 	// switch on type
 	switch (gen->surfaceType)
