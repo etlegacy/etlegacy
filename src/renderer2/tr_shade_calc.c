@@ -966,8 +966,6 @@ static void Autosprite2Deform(void)
  */
 qboolean ShaderRequiresCPUDeforms(const shader_t *shader)
 {
-	return qtrue; // !!! DBEUG !!!
-
 	if (shader->numDeforms == 0)
 	{
 		return qfalse;
