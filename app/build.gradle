@@ -13,13 +13,14 @@ android {
         if (buildAsApplication) {
             applicationId "org.etlegacy.app"
         }
-        minSdkVersion 14
+        minSdkVersion 16
         targetSdkVersion 26
         versionCode 1
         versionName "1.0"
         externalNativeBuild {
             cmake {
-                arguments "-DCROSS_COMPILE32=OFF", "-DFEATURE_RENDERER2=OFF", "-DFEATURE_RENDERER_GLES=ON"
+                arguments "-DCROSS_COMPILE32=OFF", "-DFEATURE_RENDERER2=OFF", "-DFEATURE_RENDERER_GLES=ON", "-DBUILD_SERVER=OFF", "-DINSTALL_EXTRA=OFF", "-DCMAKE_BUILD_TYPE=Release", "-DBUNDLED_LIBS=ON", "-DBUNDLED_SDL=OFF", "-DFEATURE_LUA=OFF", "-DRENDERER_DYNAMIC=OFF", "-DCMAKE_C_FLAGS= -std=gnu99"
+                //"-DANDROID_ARM_NEON=OFF"
             }
         }
         ndk {
