@@ -349,7 +349,6 @@ void CG_PyroSmokeTrail(centity_t *ent, const weaponInfo_t *wi)
 	entityState_t *es;
 	int           t;
 	float         rnd;
-	team_t        team;
 
 	if (ent->currentState.weapon == WP_LANDMINE)
 	{
@@ -359,25 +358,20 @@ void CG_PyroSmokeTrail(centity_t *ent, const weaponInfo_t *wi)
 			return;
 		}
 
-		if (ent->currentState.teamNum < 12)
-		{
-			if (!ent->miscTime)
-			{
-				ent->trailTime = cg.time;
-				ent->miscTime  = cg.time;
+        if (!ent->miscTime)
+        {
+            ent->trailTime = cg.time;
+            ent->miscTime  = cg.time;
 
-				// play the armed sound - weird place to do it but saves us sending an event
-				trap_S_StartSound(NULL, ent->currentState.number, CHAN_WEAPON, cgs.media.minePrimedSound);
-			}
-		}
+            // play the armed sound - weird place to do it but saves us sending an event
+            trap_S_StartSound(NULL, ent->currentState.number, CHAN_WEAPON, cgs.media.minePrimedSound);
+        }
 
 		if (cg.time - ent->miscTime > 1000)
 		{
 			return;
 		}
 	}
-    
-    team = (team_t)ent->currentState.teamNum;
 
 	step      = 50;
 	es        = &ent->currentState;
@@ -430,7 +424,7 @@ void CG_PyroSmokeTrail(centity_t *ent, const weaponInfo_t *wi)
 
 		rnd = random();
 
-		if (team == TEAM_ALLIES)     // allied team, generate blue smoke
+		if (ent->currentState.teamNum == TEAM_ALLIES)     // allied team, generate blue smoke
 		{
 			CG_SmokePuff(origin, dir,
 			             25 + rnd * 110,       // width
