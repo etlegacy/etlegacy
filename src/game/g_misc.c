@@ -2398,9 +2398,7 @@ void landmine_setup(gentity_t *ent)
 	ent->s.time           = ent->s.angles[1] + 90;
 
 	// all fine
-	ent->takedamage    = qtrue;
-	ent->r.contents    = CONTENTS_CORPSE;       // (player can walk through)
-	ent->health        = 0;
+	ent->health        = 0;                      // overwrite
 	ent->s.modelindex2 = 0;
 	ent->nextthink     = level.time + FRAMETIME; // overwrite nextthink
 	ent->think         = G_LandmineThink;
@@ -2838,7 +2836,6 @@ void G_PreFilledMissileEntity(gentity_t *ent, int weaponNum, int realWeapon, int
 	ent->s.pos.trType  = GetAmmunitionTableData(ammunType)->trType;
 	ent->s.pos.trTime  = GetAmmunitionTableData(ammunType)->trTime ? level.time + GetAmmunitionTableData(ammunType)->trTime : 0;          // move a bit on the very first frame
 	ent->s.eType       = GetAmmunitionTableData(ammunType)->eType;
-	ent->s.effect1Time = GetAmmunitionTableData(ammunType)->effect1Time;
 
 	// shared
 	ent->r.svFlags  = GetAmmunitionTableData(ammunType)->svFlags;

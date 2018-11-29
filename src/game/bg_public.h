@@ -1176,7 +1176,6 @@ typedef struct ammunitionTable_s
 	int clipMask;                   ///< g -
 	int nextThink;                  ///< g -
 	int accuracy;                   ///< g - NOTE: unused ???
-	int effect1Time;                ///< g - (i.e) smoke grenade start at 16, until this value doesn't change we know the smoke doesn't start to appear
 	qboolean takedamage;            ///< g -
 	int health;                     ///< g -
 	int timeStamp;                  ///< g -
