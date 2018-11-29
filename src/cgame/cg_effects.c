@@ -109,7 +109,7 @@ void CG_BubbleTrail(vec3_t start, vec3_t end, float size, float spacing)
  * @param[in] fadeInTime
  * @param[in] leFlags
  * @param[in] hShader
- * @return 
+ * @return
  * @todo It would be nice to have an acceleration vector for this as well.
  * Big velocity vector with a negative acceleration for deceleration, etc.
  * (breath could then come out of a guys mouth at the rate he's walking/running and it
@@ -182,7 +182,7 @@ localEntity_t *CG_SmokePuff(const vec3_t p, const vec3_t vel,
  * @param[in] shader
  * @param[in] msec
  * @param[in] isSprite
- * @return 
+ * @return
  */
 localEntity_t *CG_MakeExplosion(vec3_t origin, vec3_t dir,
                                 qhandle_t hModel, qhandle_t shader,
@@ -243,10 +243,10 @@ localEntity_t *CG_MakeExplosion(vec3_t origin, vec3_t dir,
 	ex->pos.trTime = cg.time;
 	VectorCopy(newOrigin, ex->pos.trBase);
 
-    if (dir)
-    {
-        VectorScale(dir, 48, ex->pos.trDelta);
-    }
+	if (dir)
+	{
+		VectorScale(dir, 48, ex->pos.trDelta);
+	}
 
 	ex->color[0] = ex->color[1] = ex->color[2] = 1.0f;
 
@@ -458,7 +458,7 @@ void CG_LoseHat(centity_t *cent, vec3_t dir)
 {
 	clientInfo_t   *ci;
 	int            clientNum = cent->currentState.clientNum;
-	vec3_t         origin    = { 0 }, velocity = { 0 };
+	vec3_t         origin = { 0 }, velocity = { 0 };
 	bg_character_t *character;
 
 	if (clientNum < 0 || clientNum >= MAX_CLIENTS)
@@ -820,7 +820,7 @@ void CG_SparklerSparks(vec3_t origin, int count)
 void CG_RumbleEfx(float pitch, float yaw)
 {
 	float  pitchRecoilAdd = 0, pitchAdd = 0;
-	float  yawRandom      = 0;
+	float  yawRandom = 0;
 	vec3_t recoil;
 
 	if (pitch < 1)
@@ -891,6 +891,8 @@ void CG_RumbleEfx(float pitch, float yaw)
 //#define SMOKEBOMB_DISTANCEBETWEENSPRITES 16.f
 #define SMOKEBOMB_SPAWNRATE 10
 #define SMOKEBOMB_SMOKEVELOCITY ((640.f - 16.f) / 8) / 1000.f       // units per msec
+#define SMOKEBOMB_STARTRADIUS 16
+#define SMOKEBOMB_FINALRADIUS 640
 
 typedef struct smokesprite_s
 {
@@ -932,7 +934,7 @@ void InitSmokeSprites(void)
 
 /**
  * @brief AllocSmokeSprite
- * @return 
+ * @return
  */
 static smokesprite_t *AllocSmokeSprite(void)
 {
@@ -1001,7 +1003,7 @@ static smokesprite_t *DeAllocSmokeSprite(smokesprite_t *dealloc)
  * @brief CG_SmokeSpritePhysics
  * @param[in,out] smokesprite
  * @param[in] dist
- * @return 
+ * @return
  */
 static qboolean CG_SmokeSpritePhysics(smokesprite_t *smokesprite, const float dist)
 {
@@ -1049,7 +1051,7 @@ static qboolean CG_SmokeSpritePhysics(smokesprite_t *smokesprite, const float di
  * @brief CG_SpawnSmokeSprite
  * @param[in,out] cent
  * @param[in] dist
- * @return 
+ * @return
  */
 qboolean CG_SpawnSmokeSprite(centity_t *cent, float dist)
 {
@@ -1094,7 +1096,7 @@ void CG_RenderSmokeGrenadeSmoke(centity_t *cent, const weaponInfo_t *weapon)
 	//int numSpritesForRadius, numNewSpritesNeeded = 0;
 	float spawnrate = (1.f / SMOKEBOMB_SPAWNRATE) * 1000.f;
 
-	if (cent->currentState.effect1Time == 16)
+	if (!cent->currentState.effect1Time)
 	{
 		cent->miscTime          = 0;
 		cent->lastFuseSparkTime = 0;    // last spawn time
@@ -1103,9 +1105,9 @@ void CG_RenderSmokeGrenadeSmoke(centity_t *cent, const weaponInfo_t *weapon)
 		return;
 	}
 
-	if (cent->currentState.effect1Time > 16)
+	if (cent->currentState.effect1Time > SMOKEBOMB_STARTRADIUS)
 	{
-		int volume        = 16 + ((cent->currentState.effect1Time / 640) * (100 - 16));
+		int volume        = SMOKEBOMB_STARTRADIUS + ((cent->currentState.effect1Time / SMOKEBOMB_FINALRADIUS) * (100 - SMOKEBOMB_STARTRADIUS));
 		int spritesNeeded = 0;
 
 		if (!cent->dl_atten ||

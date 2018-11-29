@@ -3093,6 +3093,8 @@ void Weapon_Artillery(gentity_t *ent)
 #define SMOKEBOMB_GROWTIME 1000
 #define SMOKEBOMB_SMOKETIME 15000
 #define SMOKEBOMB_POSTSMOKETIME 2000
+#define SMOKEBOMB_STARTRADIUS 16
+#define SMOKEBOMB_FINALRADIUS 640
 
 /**
  * @brief Increases postsmoke time from 2000->32000, this way, the entity
@@ -3111,6 +3113,7 @@ void weapon_smokeBombExplode(gentity_t *ent)
 	if (!ent->grenadeExplodeTime)
 	{
 		ent->grenadeExplodeTime = level.time;
+		ent->s.effect1Time      = SMOKEBOMB_STARTRADIUS;
 	}
 
 	lived          = level.time - ent->grenadeExplodeTime;
@@ -3119,12 +3122,12 @@ void weapon_smokeBombExplode(gentity_t *ent)
 	if (lived < SMOKEBOMB_GROWTIME)
 	{
 		// Just been thrown, increase radius
-		ent->s.effect1Time = (int)(16 + lived * ((640 - 16) / (float)SMOKEBOMB_GROWTIME));
+		ent->s.effect1Time = (int)(SMOKEBOMB_STARTRADIUS + lived * ((SMOKEBOMB_FINALRADIUS - SMOKEBOMB_STARTRADIUS) / (float)SMOKEBOMB_GROWTIME));
 	}
 	else if (lived < SMOKEBOMB_SMOKETIME + SMOKEBOMB_GROWTIME)
 	{
 		// Smoking
-		ent->s.effect1Time = 640;
+		ent->s.effect1Time = SMOKEBOMB_FINALRADIUS;
 	}
 	else if (lived < SMOKEBOMB_SMOKETIME + SMOKEBOMB_GROWTIME + SMOKEBOMB_POSTSMOKETIME)
 	{
