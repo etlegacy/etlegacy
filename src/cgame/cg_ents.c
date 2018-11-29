@@ -927,7 +927,7 @@ static void CG_DrawMineMarkerFlag(centity_t *cent, refEntity_t *ent, const weapo
 {
 	entityState_t *s1 = &cent->currentState;
 
-	ent->hModel = cent->currentState.otherEntityNum2 ? weapon->modModels[1] : weapon->modModels[0];
+	ent->hModel = cent->currentState.teamNum == TEAM_AXIS ? weapon->modModels[1] : weapon->modModels[0];
 
 	ent->origin[2]    += 8;
 	ent->oldorigin[2] += 8;
@@ -1097,15 +1097,13 @@ static void CG_Missile(centity_t *cent)
 	}
 	else
 	{
-		team_t missileTeam = cent->currentState.weapon == WP_LANDMINE ? (team_t)(cent->currentState.teamNum % 4) : (team_t)cent->currentState.teamNum;
-
 		ent.hModel = weapon->missileModel;
 
-		if (missileTeam == TEAM_ALLIES)
+		if (cent->currentState.teamNum == TEAM_ALLIES)
 		{
 			ent.customSkin = weapon->missileAlliedSkin;
 		}
-		else if (missileTeam == TEAM_AXIS)
+		else if (cent->currentState.teamNum == TEAM_AXIS)
 		{
 			ent.customSkin = weapon->missileAxisSkin;
 		}
@@ -1118,12 +1116,12 @@ static void CG_Missile(centity_t *cent)
 		VectorCopy(ent.origin, ent.lightingOrigin);
 		ent.renderfx |= RF_LIGHTING_ORIGIN;
 
-		if (cent->currentState.teamNum < 4)
+		if (cent->currentState.effect1Time == 1)
 		{
 			ent.origin[2]    -= 8;
 			ent.oldorigin[2] -= 8;
 
-			if ((cgs.clientinfo[cg.snap->ps.clientNum].team != (!cent->currentState.otherEntityNum2 ? TEAM_ALLIES : TEAM_AXIS)))
+			if (cgs.clientinfo[cg.snap->ps.clientNum].team != cent->currentState.teamNum)
 			{
 				if (cent->currentState.density - 1 == cg.snap->ps.clientNum)
 				{
@@ -1163,7 +1161,7 @@ static void CG_Missile(centity_t *cent)
 			}
 		}
 
-		if (cent->currentState.teamNum >= 8)
+		if (cent->currentState.effect1Time == 2)
 		{
 			ent.origin[2]    -= 8;
 			ent.oldorigin[2] -= 8;

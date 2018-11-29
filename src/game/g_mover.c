@@ -585,7 +585,7 @@ qboolean G_MoverPush(gentity_t *pusher, vec3_t move, vec3_t amove, gentity_t **o
 		{
 			if (check->methodOfDeath == MOD_LANDMINE)
 			{
-				if (check->s.teamNum >= 0 && check->s.teamNum < 4)
+				if (check->s.effect1Time == 1)
 				{
 					LandMineTrigger(check);
 				}

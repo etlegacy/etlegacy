@@ -353,7 +353,7 @@ void CG_PyroSmokeTrail(centity_t *ent, const weaponInfo_t *wi)
 
 	if (ent->currentState.weapon == WP_LANDMINE)
 	{
-		if (ent->currentState.teamNum < 8)
+		if (ent->currentState.effect1Time != 2)
 		{
 			ent->miscTime = 0;
 			return;
@@ -375,20 +375,9 @@ void CG_PyroSmokeTrail(centity_t *ent, const weaponInfo_t *wi)
 		{
 			return;
 		}
-
-		if (ent->currentState.otherEntityNum2)
-		{
-			team = TEAM_AXIS;
-		}
-		else
-		{
-			team = TEAM_ALLIES;
-		}
 	}
-	else
-	{
-		team = (team_t)ent->currentState.teamNum;
-	}
+    
+    team = (team_t)ent->currentState.teamNum;
 
 	step      = 50;
 	es        = &ent->currentState;

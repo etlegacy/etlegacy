@@ -1276,7 +1276,7 @@ int G_CountTeamLandmines(team_t team)
 			continue;
 		}
 
-		if (e->s.teamNum % 4 == team && e->s.teamNum < 4)
+		if (e->s.teamNum == team && e->s.effect1Time == 1)
 		{
 			cnt++;
 		}
@@ -1317,7 +1317,7 @@ qboolean G_SweepForLandmines(vec3_t origin, float radius, int team)
 			continue;
 		}
 
-		if (e->s.teamNum % 4 != team && e->s.teamNum < 4)
+		if (e->s.teamNum != team && e->s.effect1Time == 1)
 		{
 			VectorSubtract(origin, e->r.currentOrigin, dist);
 			if (VectorLengthSquared(dist) > radius)
@@ -1477,9 +1477,9 @@ void LandMineTrigger(gentity_t *self)
 {
 	self->r.contents = CONTENTS_CORPSE;
 	trap_LinkEntity(self);
-	self->nextthink  = level.time + FRAMETIME;
-	self->think      = LandminePostThink;
-	self->s.teamNum += 8;
+	self->nextthink     = level.time + FRAMETIME;
+	self->think         = LandminePostThink;
+	self->s.effect1Time = 2;    // triggered
 	// communicate trigger time to client
 	self->s.time = level.time;
 }
@@ -1564,7 +1564,7 @@ void G_LandmineThink(gentity_t *self)
 #ifdef FEATURE_OMNIBOT
 		if (!(g_OmniBotFlags.integer & OBF_TRIGGER_MINES) && ent->r.svFlags & SVF_BOT)
 		{
-			if (G_LandmineTeam(self) == ent->client->sess.sessionTeam)
+			if (self->s.teamNum == ent->client->sess.sessionTeam)
 			{
 				continue;
 			}
@@ -1658,7 +1658,6 @@ qboolean G_LandmineSnapshotCallback(int entityNum, int clientNum)
 {
 	gentity_t *ent   = &g_entities[entityNum];
 	gentity_t *clEnt = &g_entities[clientNum];
-	team_t    team;
 
 	if (clEnt->client->sess.skill[SK_BATTLE_SENSE] >= 4)
 	{
@@ -1675,8 +1674,7 @@ qboolean G_LandmineSnapshotCallback(int entityNum, int clientNum)
 		return qtrue;
 	}
 
-	team = G_LandmineTeam(ent);
-	if (team == clEnt->client->sess.sessionTeam)
+	if (ent->s.teamNum == clEnt->client->sess.sessionTeam)
 	{
 		return qtrue;
 	}
@@ -1748,14 +1746,6 @@ gentity_t *fire_missile(gentity_t *self, vec3_t start, vec3_t dir, int weapon)
 		bolt->think = DynaSink;
 
 		bolt->r.snapshotCallback = qtrue;
-
-		if (self->client)
-		{
-			bolt->s.teamNum += 4;   // overwrite
-
-			// store team so we can generate red or blue smoke
-			bolt->s.otherEntityNum2 = (self->client->sess.sessionTeam == TEAM_AXIS);
-		}
 	}
 	if (weapon == WP_SATCHEL)
 	{

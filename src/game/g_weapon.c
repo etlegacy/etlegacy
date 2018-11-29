@@ -1531,7 +1531,7 @@ void AutoBuildConstruction(gentity_t *constructible)
  */
 qboolean G_LandmineTriggered(gentity_t *ent)
 {
-	return (ent->s.teamNum == (TEAM_AXIS + 8) || ent->s.teamNum == (TEAM_ALLIES + 8));
+	return ent->s.effect1Time == 2;
 }
 
 /**
@@ -1541,7 +1541,7 @@ qboolean G_LandmineTriggered(gentity_t *ent)
  */
 qboolean G_LandmineArmed(gentity_t *ent)
 {
-	return (ent->s.teamNum == TEAM_AXIS || ent->s.teamNum == TEAM_ALLIES);
+	return ent->s.effect1Time == 1;
 }
 
 /**
@@ -1552,16 +1552,6 @@ qboolean G_LandmineArmed(gentity_t *ent)
 qboolean G_LandmineUnarmed(gentity_t *ent)
 {
 	return (!G_LandmineArmed(ent) && !G_LandmineTriggered(ent));
-}
-
-/**
- * @brief G_LandmineTeam
- * @param[in] ent
- * @return
- */
-team_t G_LandmineTeam(gentity_t *ent)
-{
-	return (ent->s.teamNum % 4);
 }
 
 /**
@@ -1762,7 +1752,7 @@ weapengineergoto2:
 				// even if you're using all of yours :x
 			}
 
-			if (G_CountTeamLandmines(ent->client->sess.sessionTeam) >= team_maxLandmines.integer && G_LandmineTeam(traceEnt) == ent->client->sess.sessionTeam)
+			if (G_CountTeamLandmines(ent->client->sess.sessionTeam) >= team_maxLandmines.integer && traceEnt->s.teamNum == ent->client->sess.sessionTeam)
 			{
 				if (G_LandmineUnarmed(traceEnt))
 				{
@@ -1796,7 +1786,7 @@ weapengineergoto2:
 				if (G_LandmineUnarmed(traceEnt))
 				{
 					// opposing team cannot accidentally arm it
-					if (G_LandmineTeam(traceEnt) != ent->client->sess.sessionTeam)
+					if (traceEnt->s.teamNum != ent->client->sess.sessionTeam)
 					{
 						return NULL;
 					}
@@ -1840,7 +1830,7 @@ weapengineergoto2:
 					traceEnt->timestamp = level.time + 1000;
 					traceEnt->health    = 0;
 
-					traceEnt->s.teamNum     = ent->client->sess.sessionTeam;
+					traceEnt->s.effect1Time = 1; // armed
 					traceEnt->s.modelindex2 = 0;
 
 					traceEnt->nextthink = level.time + 2000;
@@ -1881,7 +1871,7 @@ weapengineergoto3:
 
 						Add_Ammo(ent, WP_LANDMINE, 1, qfalse);
 
-						if (G_LandmineTeam(traceEnt) != ent->client->sess.sessionTeam)
+						if (traceEnt->s.teamNum != ent->client->sess.sessionTeam)
 						{
 							G_AddSkillPoints(ent, SK_EXPLOSIVES_AND_CONSTRUCTION, 4.f);
 							G_DebugAddSkillPoints(ent, SK_EXPLOSIVES_AND_CONSTRUCTION, 4.f, "defusing an enemy landmine");
