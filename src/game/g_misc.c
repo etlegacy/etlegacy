@@ -2804,7 +2804,6 @@ void G_PreFilledMissileEntity(gentity_t *ent, int weaponNum, int realWeapon, int
 	// generic
 	ent->parent              = parent;
 	ent->classname           = GetWeaponTableData(weaponNum)->className;
-	ent->classname           = GetWeaponTableData(weaponNum)->className;
 	ent->damage              = GetWeaponTableData(weaponNum)->damage;
 	ent->splashDamage        = GetWeaponTableData(weaponNum)->splashDamage;
 	ent->methodOfDeath       = GetWeaponTableData(weaponNum)->mod;
@@ -2827,7 +2826,6 @@ void G_PreFilledMissileEntity(gentity_t *ent, int weaponNum, int realWeapon, int
 	ent->nextthink  = GetAmmunitionTableData(ammunType)->nextThink ? level.time + GetAmmunitionTableData(ammunType)->nextThink : 0;
 	ent->clipmask   = GetAmmunitionTableData(ammunType)->clipMask;
 	ent->accuracy   = GetAmmunitionTableData(ammunType)->accuracy;
-	ent->takedamage = GetAmmunitionTableData(ammunType)->takedamage;
 	ent->health     = GetAmmunitionTableData(ammunType)->health;
 	ent->timestamp  = GetAmmunitionTableData(ammunType)->timeStamp ? level.time + GetAmmunitionTableData(ammunType)->timeStamp : 0;
 

@@ -1176,7 +1176,6 @@ typedef struct ammunitionTable_s
 	int clipMask;                   ///< g -
 	int nextThink;                  ///< g -
 	int accuracy;                   ///< g - NOTE: unused ???
-	qboolean takedamage;            ///< g -
 	int health;                     ///< g -
 	int timeStamp;                  ///< g -
 

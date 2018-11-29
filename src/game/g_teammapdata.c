@@ -1218,6 +1218,8 @@ void G_CheckSpottedLandMines(void)
 
 										ent->client->landmineSpotted->s.modelindex2 = 1;
 
+										ent->client->landmineSpotted->takedamage = qtrue;
+
 										// for marker
 										// Landmine flags shouldn't block our view
 										// don't do this if the mine has been triggered.
