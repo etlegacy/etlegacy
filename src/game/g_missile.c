@@ -1475,7 +1475,8 @@ void LandminePostThink(gentity_t *self);
  */
 void LandMineTrigger(gentity_t *self)
 {
-	self->r.contents = CONTENTS_CORPSE;
+	self->r.snapshotCallback = qfalse;
+	self->r.contents         = CONTENTS_CORPSE;
 	trap_LinkEntity(self);
 	self->nextthink     = level.time + FRAMETIME;
 	self->think         = LandminePostThink;
