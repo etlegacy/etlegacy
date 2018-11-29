@@ -1551,7 +1551,7 @@ qboolean G_LandmineArmed(gentity_t *ent)
  */
 qboolean G_LandmineUnarmed(gentity_t *ent)
 {
-	return (!G_LandmineArmed(ent) && !G_LandmineTriggered(ent));
+	return ent->s.effect1Time == 0;
 }
 
 /**
