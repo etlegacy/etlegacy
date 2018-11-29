@@ -2716,4 +2716,34 @@ typedef struct weapFireFunction_s
 
 extern weapFireFunction_t weapFireTable[WP_NUM_WEAPONS];
 
+/**
+ * @struct ammunitionTable_s
+ * @typedef ammunitionTable_
+ * @brief
+ */
+typedef struct ammunitionTable_s
+{
+	ammunitionType_t ammunition;        ///< reference
+	int eType;                          ///< g -
+	int eFlags;                         ///< g -
+	int svFlags;                        ///< g -
+	int contents;                       ///< g -
+	int trType;                         ///< g -
+	int trTime;                         ///< g -
+	float boudingBox[2][3];             ///< g - mins / maxs bounding box vectors (for missile ent)
+	int clipMask;                       ///< g -
+	int nextThink;                      ///< g -
+	int accuracy;                       ///< g -
+	int health;                         ///< g -
+	int timeStamp;                      ///< g -
+    gentity_t* (*fire)(gentity_t *ent); ///< g -
+    void (*think)(gentity_t *ent);      ///< g -
+    void (*free)(gentity_t *ent);       ///< g -
+
+} ammunitionTable_t;
+
+// Lookup table to find ammunition properties
+extern ammunitionTable_t ammunitionTable[AMMUN_NUM_AMMUNITIONS];
+#define GetAmmunitionTableData(ammunitionIndex) ((ammunitionTable_t *)(&ammunitionTable[ammunitionIndex]))
+
 #endif // #ifndef INCLUDE_G_LOCAL_H

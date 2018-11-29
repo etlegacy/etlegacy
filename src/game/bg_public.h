@@ -1159,29 +1159,6 @@ typedef enum
 } weaponCardIconCoord_t;
 
 /**
- * @struct ammunitionTable_s
- * @typedef ammunitionTable_
- * @brief
- */
-typedef struct ammunitionTable_s
-{
-	ammunitionType_t ammunition;    ///< reference
-	int eType;                      ///< g -
-	int eFlags;                     ///< g -
-	int svFlags;                    ///< g -
-	int contents;                   ///< g -
-	int trType;                     ///< g -
-	int trTime;                     ///< g -
-	float boudingBox[2][3];         ///< g - mins / maxs bounding box vectors (for missile ent)
-	int clipMask;                   ///< g -
-	int nextThink;                  ///< g -
-	int accuracy;                   ///< g - NOTE: unused ???
-	int health;                     ///< g -
-	int timeStamp;                  ///< g -
-
-} ammunitionTable_t;
-
-/**
  * @struct weaponTable_s
  * @typedef weaponTable_t
  * @brief
@@ -2968,10 +2945,6 @@ extern weaponTable_t weaponTable[WP_NUM_WEAPONS];
 // Lookup table to find mod properties
 extern modTable_t modTable[MOD_NUM_MODS];
 #define GetMODTableData(modIndex) ((modTable_t *)(&modTable[modIndex]))
-
-// Lookup table to find ammunition properties
-extern ammunitionTable_t ammunitionTable[AMMUN_NUM_AMMUNITIONS];
-#define GetAmmunitionTableData(ammunitionIndex) ((ammunitionTable_t *)(&ammunitionTable[ammunitionIndex]))
 
 // Lookup table to find skill properties
 extern skilltable_t skillTable[SK_NUM_SKILLS];

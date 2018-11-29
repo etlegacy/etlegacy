@@ -376,34 +376,6 @@ modTable_t modTable[MOD_NUM_MODS] =
 	{ MOD_MP34,                               WP_MP34,                 qtrue,     qfalse,     WEAPON_CLASS_FOR_MOD_NO,        qfalse,      "was killed by",             "'s MP 34",                       "killed himself",                        NULL,                                     "MOD_MP34",                               SK_LIGHT_WEAPONS,                            3.f,             0.f,             {5.f, 3.f, 3.f, 3.f}, qtrue,       "",                    WS_MP34            },
 };
 
-/**
- * @var ammunitionTable
- * @brief New ammunition table to store common weapon properties:
- * 
- */   
-ammunitionTable_t ammunitionTable[AMMUN_NUM_AMMUNITIONS] =
-{
-    //ammunition          eType                  eFlags                      svFlags                       content          trType          trTime boundingsBox                                     clipMask          nextThink accuracy health timeStamp                                                                     
-    { AMMUN_NONE,         ET_GENERAL,            EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_STATIONARY,  0,     { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_ALL,         0,        0,       0,     0,        },
-    { AMMUN_MELEE,        ET_GENERAL,            EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_LINEAR,      0,     { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_SHOT,        0,        0,       0,     0,        },
-    { AMMUN_BULLET,       ET_GENERAL,            EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_LINEAR,      0,     { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_SHOT,        0,        0,       0,     0,        },      
-    { AMMUN_GRENADE,      ET_MISSILE,            EF_BOUNCE_HALF | EF_BOUNCE, SVF_BROADCAST,                CONTENTS_NONE,   TR_GRAVITY,     -50,   { { -4.f, -4.f, 0.f }, { 4.f, 4.f, 6.f } },      MASK_MISSILESHOT, 2500,     0,       0,     0,        }, 
-    { AMMUN_RIFLENADE,    ET_MISSILE,            EF_BOUNCE_HALF | EF_BOUNCE, SVF_BROADCAST,                CONTENTS_NONE,   TR_GRAVITY,     -50,   { { -4.f, -4.f, 0.f }, { 4.f, 4.f, 6.f } },      MASK_MISSILESHOT, 4000,     0,       0,     0,        },
-    { AMMUN_ROCKET,       ET_MISSILE,            EF_NONE,                    SVF_BROADCAST,                CONTENTS_NONE,   TR_LINEAR,      -50,   { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_MISSILESHOT, 20000,    4,       0,     0,        },  
-    { AMMUN_SHELL,        ET_MISSILE,            EF_NONE,                    SVF_BROADCAST,                CONTENTS_NONE,   TR_GRAVITY,     -50,   { { -4.f, -4.f, 0.f }, { 4.f, 4.f, 6.f } },      MASK_MISSILESHOT, 0,        0,       0,     0,        },   
-    { AMMUN_MAPMORTAR,    ET_MISSILE,            EF_NONE,                    SVF_BROADCAST,                CONTENTS_NONE,   TR_GRAVITY,     -50,   { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_MISSILESHOT, 20000,    4,       0,     0,        },     
-    { AMMUN_FLAME,        ET_FLAMETHROWER_CHUNK, EF_NONE,                    SVF_NOCLIENT | SVF_BROADCAST, CONTENTS_CORPSE, TR_DECCELERATE, -50,   { { -4, -4, -4 }, { 4, 4, 4 } },                 MASK_MISSILESHOT, 0,        0,       0,     1,        },
-    { AMMUN_ARTY,         ET_MISSILE,            EF_SMOKINGBLACK,            SVF_NOCLIENT,                 CONTENTS_NONE,   TR_STATIONARY,  1,     { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_MISSILESHOT, 8950,     2,       0,     0,        },     
-    { AMMUN_AIRSTRIKE,    ET_MISSILE,            EF_BOUNCE,                  SVF_NONE,                     CONTENTS_NONE,   TR_GRAVITY,     1,     { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_MISSILESHOT, 1000,     0,       0,     0,        },     
-    { AMMUN_CANISTER,     ET_MISSILE,            EF_BOUNCE_HALF | EF_BOUNCE, SVF_BROADCAST,                CONTENTS_NONE,   TR_GRAVITY,     -50,   { { -4.f, -4.f, 0.f }, { 4.f, 4.f, 6.f } },      MASK_MISSILESHOT, 2500,     0,       0,     0,        },  
-    { AMMUN_SMOKEGRENADE, ET_MISSILE,            EF_BOUNCE_HALF | EF_BOUNCE, SVF_BROADCAST,                CONTENTS_NONE,   TR_GRAVITY,     -50,   { { -4.f, -4.f, 0.f }, { 4.f, 4.f, 6.f } },      MASK_MISSILESHOT, 2500,     0,       0,     0,        },
-    { AMMUN_DYNAMITE,     ET_MISSILE,            EF_BOUNCE_HALF | EF_BOUNCE, SVF_BROADCAST,                CONTENTS_CORPSE, TR_GRAVITY,     -50,   { { -12.f, -12.f, 0.f }, { 12.f, 12.f, 20.f } }, MASK_MISSILESHOT, 15000,    0,       5,     16500,    },
-    { AMMUN_LANDMINE,     ET_MISSILE,            EF_BOUNCE_HALF | EF_BOUNCE, SVF_BROADCAST,                CONTENTS_CORPSE, TR_GRAVITY,     -50,   { { -16.f, -16.f, 0.f }, { 16.f, 16.f, 16.f } }, MASK_MISSILESHOT, 15000,    0,       5,     16500,    },
-    { AMMUN_SATCHEL,      ET_MISSILE,            EF_BOUNCE_HALF | EF_BOUNCE, SVF_BROADCAST,                CONTENTS_CORPSE, TR_GRAVITY,     -50,   { { -12.f, -12.f, 0.f }, { 12.f, 12.f, 20.f } }, MASK_MISSILESHOT, 0,        0,       5,     0,        },
-    { AMMUN_BOX,          ET_GENERAL,            EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_GRAVITY,     0,     { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_SHOT,        0,        0,       0,     0,        },     
-    { AMMUN_SYRINGUE,     ET_GENERAL,            EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_LINEAR,      0,     { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_SHOT,        0,        0,       0,     0,        },     
-};
-
 // *INDENT-ON*
 
 /*
