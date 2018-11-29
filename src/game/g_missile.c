@@ -1664,16 +1664,6 @@ qboolean G_LandmineSnapshotCallback(int entityNum, int clientNum)
 		return qtrue;
 	}
 
-	if (!G_LandmineArmed(ent))
-	{
-		return qtrue;
-	}
-
-	if (G_LandmineSpotted(ent))
-	{
-		return qtrue;
-	}
-
 	if (ent->s.teamNum == clEnt->client->sess.sessionTeam)
 	{
 		return qtrue;
@@ -1744,8 +1734,6 @@ gentity_t *fire_missile(gentity_t *self, vec3_t start, vec3_t dir, int weapon)
 	else if (weapon == WP_LANDMINE)
 	{
 		bolt->think = DynaSink;
-
-		bolt->r.snapshotCallback = qtrue;
 	}
 	if (weapon == WP_SATCHEL)
 	{

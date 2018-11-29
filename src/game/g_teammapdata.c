@@ -1220,6 +1220,8 @@ void G_CheckSpottedLandMines(void)
 
 										ent->client->landmineSpotted->takedamage = qtrue;
 
+										ent->client->landmineSpotted->r.snapshotCallback = qfalse;
+
 										// for marker
 										// Landmine flags shouldn't block our view
 										// don't do this if the mine has been triggered.

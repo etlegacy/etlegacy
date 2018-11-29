@@ -1823,7 +1823,8 @@ weapengineergoto2:
 						traceEnt->s.otherEntityNum = MAX_CLIENTS + 1;
 					}
 
-					traceEnt->r.contents = 0;   // (player can walk through)
+					traceEnt->r.snapshotCallback = qtrue;
+					traceEnt->r.contents         = 0; // (player can walk through)
 					trap_LinkEntity(traceEnt);
 
 					// don't allow disarming for sec (so guy that WAS arming doesn't start disarming it!
