@@ -1,5 +1,6 @@
 /* forwardLighting_fp.glsl */
 #include "lib/reliefMapping"
+#include "lib/normalMapping"
 
 uniform sampler2D u_DiffuseMap;
 uniform sampler2D u_NormalMap;
@@ -940,7 +941,7 @@ void    main()
 	// invert tangent space for twosided surfaces
 	mat3 tangentToWorldMatrix;
 #if defined(TWOSIDED)
-	// positive check
+	// positive check (don't use tangentToWorldMatrix function)
 	if (gl_FrontFacing)
 	{
 		tangentToWorldMatrix = mat3(-var_Tangent.xyz, -var_Binormal.xyz, -var_Normal.xyz);
@@ -982,15 +983,8 @@ void    main()
 	// compute half angle in world space
 	vec3 H = normalize(L + V);
 
-	// compute normal in tangent space from normalmap
-	vec3 N = normalize(2.0 * (texture2D(u_NormalMap, texNormal.st).xyz - 0.5));
-
-#if defined(r_NormalScale)
-	if (r_NormalScale != 1.0) N.z *= r_NormalScale;
-#endif
-
-	// transform normal into world space
-	N = normalize(tangentToWorldMatrix * N);
+	// compute normal
+	vec3 N = computeNormal(texture2D(u_NormalMap, texNormal).xyz, tangentToWorldMatrix);
 
 	vec3 R = reflect(-L, N);
 
