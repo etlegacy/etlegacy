@@ -7662,21 +7662,16 @@ void R_SaveCubeProbes(const char *filename, byte *pixeldata, int width, int heig
 }
 
 /**
- * @brief This is loading a single cube (6 probes) from our file into buffer.
- * 
- * Optimize: - Cube probe data is sequential so we don't have to open, (read) and close 
- *           the file each call. But this is muuuch faster than using TGA loader (or creating cubes on load).
- *           Pass pixeldata only or externalize read/close will again gain performance.
- *           
- *           - Remove the alpha channel (25% less data)? or use pixel intensity in the alpha channel?
+ * @brief This is loading a single cube (6 probes) from our file into cubeTemp.
  * 
  * @param[in] number of cube probe
- * @param[in, out] buffer 
+ * @param[in] total cube probes
+ * @param[in, out] cubeTemp
  */
-qboolean R_LoadCubeProbe(int cubeProbeNum, byte *cubeTemp[6])
+qboolean R_LoadCubeProbe(int cubeProbeNum, int totalCubeProbes, byte *cubeTemp[6])
 {
-	byte *buffer	= NULL; // pointer to the file buffer (including the 18 byte long header)
-	byte *pixeldata	= NULL; // the pointer to the actual pixel colors
+	static byte *buffer = NULL; // pointer to the file buffer (including the 18 byte long header)
+	byte *pixeldata     = NULL; // the pointer to the actual pixel colors
 
 	int i;
 	int totalPos = cubeProbeNum * 6;
@@ -7687,15 +7682,20 @@ qboolean R_LoadCubeProbe(int cubeProbeNum, byte *cubeTemp[6])
 	int cubeSidesInFile2 = 6 - cubeSidesInFile1;
 	char *filename;
 	int bytesRead;
-	
-	//Ren_Print("-> FileNum %i totalPos %i insidepos %i %i (%i)\n", fileNum, totalPos, insidePos , cubeSidesInThisFile, cubeSidesInNextFile);
+	static int lastFileNum = -1; // initialize with a value that fileNum will never have
 
-	filename = va("cm/%s/cm_%04d.tga", s_worldData.baseName, fileNum);
-	bytesRead = ri.FS_ReadFile(filename, (void **)&buffer); // this lso closes he file after reading the full file into the buffer
-	if (bytesRead <= 0)
+	if (fileNum != lastFileNum)
 	{
-		//Ren_Print("loadCubeProbes: %s not found", filename);
-		return qfalse;
+		lastFileNum = fileNum;
+		filename = va("cm/%s/cm_%04d.tga", s_worldData.baseName, fileNum);
+		bytesRead = ri.FS_ReadFile(filename, (void **)&buffer); // this lso closes he file after reading the full file into the buffer
+		if (bytesRead <= 0)
+		{
+			//Ren_Print("loadCubeProbes: %s not found", filename);
+			ri.FS_FreeFile(buffer);
+			buffer = NULL;
+			return qfalse;
+		}
 	}
 	pixeldata = buffer + 18; // +buffer[0]; // skip header + skip possibly given image identifier field (usually 0 length)
 	for (i = 0; i < cubeSidesInFile1; i++)
@@ -7708,15 +7708,27 @@ qboolean R_LoadCubeProbe(int cubeProbeNum, byte *cubeTemp[6])
 			REF_CUBEMAP_SIZE, REF_CUBEMAP_SIZE,
 			4, qfalse);
 	}
-	ri.FS_FreeFile(buffer);
+	if (cubeProbeNum == totalCubeProbes)
+	{
+		ri.FS_FreeFile(buffer);
+		buffer = NULL;
+	}
 
 	if (cubeSidesInFile2 > 0)
 	{
+		if (buffer)
+		{
+			ri.FS_FreeFile(buffer);
+			buffer = NULL;
+		}
+		lastFileNum = fileNum + 1;
 		filename = va("cm/%s/cm_%04d.tga", s_worldData.baseName, fileNum + 1);
 		bytesRead = ri.FS_ReadFile(filename, (void **)&buffer);
 		if (bytesRead <= 0)
 		{
 			//Ren_Print("loadCubeProbes: %s not found", filename);
+			ri.FS_FreeFile(buffer);
+			buffer = NULL;
 			return qfalse;
 		}
 		pixeldata = buffer + 18; // skip header
@@ -7730,12 +7742,15 @@ qboolean R_LoadCubeProbe(int cubeProbeNum, byte *cubeTemp[6])
 							REF_CUBEMAP_SIZE, REF_CUBEMAP_SIZE,
 							4, qfalse);
 		}
-		ri.FS_FreeFile(buffer);
+		if (cubeProbeNum == totalCubeProbes)
+		{
+			ri.FS_FreeFile(buffer);
+			buffer = NULL;
+		}
 	}
 
-	return qtrue; // result is true if all the sides of the cube could be loaded, 
+	return qtrue; // result is true if all the sides of the cube could be loaded,
 }
-
 
 #define CUBES_MINIMUM_DISTANCE 200.0f
 
@@ -8022,7 +8037,7 @@ void R_BuildCubeMaps(void)
 		{
 			// try to load the cubemap from file
 			// when loading failed, set a flag to render a new cubemap
-			createCM = !R_LoadCubeProbe(j, tr.cubeTemp);
+			createCM = !R_LoadCubeProbe(j, tr.cubeProbes.currentElements, tr.cubeTemp);
 		}
 
 		if (createCM)
