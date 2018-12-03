@@ -22,7 +22,7 @@
 	{
 		// texture values are in the range 0.0 to 1.0. We convert them into the range -1.0 to 1.0
 		vec3 N = textureNormal * 2.0 - 1.0;
-		N = normalize(tangentToWorldMatrix * N); // we must normalize to get a vector of unit-length..  reflect() needs it
+
 		// scaling the normal is for debugging only !!   this should be removed in a final version. (possible exploit)
 		#if defined(r_NormalScale)
 			if (r_NormalScale != 1.0)
@@ -30,6 +30,9 @@
 				N.z *= r_NormalScale;
 			}
 		#endif
+
+		N = normalize(tangentToWorldMatrix * N); // we must normalize to get a vector of unit-length..  reflect() needs it
+
 		return N;
 	}
 
