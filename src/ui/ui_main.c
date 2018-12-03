@@ -4919,6 +4919,10 @@ void UI_RunMenuScript(char **args)
 					Com_Printf(trap_TranslateString("Added favorite server %s\n"), addr);
 				}
 			}
+			else
+			{
+				Com_Printf(trap_TranslateString("Can't add localhost to favorites\n"));
+			}
 		}
 		else if (Q_stricmp(name, "orders") == 0)
 		{

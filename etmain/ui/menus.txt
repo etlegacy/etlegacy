@@ -49,6 +49,7 @@
 	loadMenu { "ui/popup_autoupdate.menu" }
 	loadMenu { "ui/popup_password.menu" }
 	loadMenu { "ui/popup_serverredirect.menu"}
+	loadMenu { "ui/popup_addfavs.menu"}
 
 	// video confirmation
 	loadMenu { "ui/vid_restart.menu" }
