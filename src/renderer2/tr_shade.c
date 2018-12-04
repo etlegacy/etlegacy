@@ -3244,7 +3244,7 @@ void Tess_StageIteratorGeneric()
 			}
 			else
 			{
-				Render_generic(stage); //doesnt do normalmapped stuff
+				Render_generic(stage); // doesn't do normalmapped stuff
 			}
 			break;
 		}
@@ -3441,14 +3441,13 @@ void Tess_StageIteratorShadowFill()
 			continue;
 		}
 
-		Tess_ComputeTexMatrices(pStage);
-
 		switch (pStage->type)
 		{
 		case ST_COLORMAP:
 		{
 			if (tess.surfaceShader->sort <= SS_OPAQUE)
 			{
+				Tess_ComputeTexMatrices(pStage);
 				Render_shadowFill(stage);
 			}
 			break;
@@ -3459,6 +3458,7 @@ void Tess_StageIteratorShadowFill()
 		case ST_COLLAPSE_lighting_DB:
 		case ST_COLLAPSE_lighting_DBS:
 		{
+			Tess_ComputeTexMatrices(pStage);
 			Render_shadowFill(stage);
 			break;
 		}
@@ -3559,9 +3559,6 @@ void Tess_StageIteratorLighting()
 				continue;
 			}
 
-			Tess_ComputeColor(attenuationXYStage);
-			R_ComputeFinalAttenuation(attenuationXYStage, light);
-
 			switch (diffuseStage->type)
 			{
 			case ST_DIFFUSEMAP:
@@ -3569,12 +3566,16 @@ void Tess_StageIteratorLighting()
 			case ST_COLLAPSE_lighting_DBS:
 				if (light->l.rlType == RL_OMNI)
 				{
+					Tess_ComputeColor(attenuationXYStage);
+					R_ComputeFinalAttenuation(attenuationXYStage, light);
 					Render_forwardLighting_DBS_omni(diffuseStage, attenuationXYStage, attenuationZStage, light);
 				}
 				else if (light->l.rlType == RL_PROJ)
 				{
 					if (!light->l.inverseShadows)
 					{
+						Tess_ComputeColor(attenuationXYStage);
+						R_ComputeFinalAttenuation(attenuationXYStage, light);
 						Render_forwardLighting_DBS_proj(diffuseStage, attenuationXYStage, attenuationZStage, light);
 					}
 				}
@@ -3582,6 +3583,8 @@ void Tess_StageIteratorLighting()
 				{
 					//if(!light->l.inverseShadows)
 					{
+						Tess_ComputeColor(attenuationXYStage);
+						R_ComputeFinalAttenuation(attenuationXYStage, light);
 						Render_forwardLighting_DBS_directional(diffuseStage, attenuationXYStage, attenuationZStage, light);
 					}
 				}
