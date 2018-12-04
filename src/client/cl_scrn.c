@@ -39,7 +39,6 @@
 qboolean scr_initialized;           // ready to draw
 
 cvar_t *cl_timegraph;
-cvar_t *cl_debuggraph;
 cvar_t *cl_graphheight;
 cvar_t *cl_graphscale;
 cvar_t *cl_graphshift;
@@ -322,11 +321,10 @@ void SCR_DrawDebugGraph(void)
  */
 void SCR_Init(void)
 {
-	cl_timegraph   = Cvar_Get("timegraph", "0", CVAR_CHEAT);
-	cl_debuggraph  = Cvar_Get("debuggraph", "0", CVAR_CHEAT);
-	cl_graphheight = Cvar_Get("graphheight", "32", CVAR_CHEAT);
-	cl_graphscale  = Cvar_Get("graphscale", "1", CVAR_CHEAT);
-	cl_graphshift  = Cvar_Get("graphshift", "0", CVAR_CHEAT);
+	cl_timegraph   = Cvar_Get("timegraph", "0", 0);
+	cl_graphheight = Cvar_Get("graphheight", "32", 0);
+	cl_graphscale  = Cvar_Get("graphscale", "1", 0);
+	cl_graphshift  = Cvar_Get("graphshift", "0", 0);
 
 	scr_initialized = qtrue;
 }
@@ -412,7 +410,7 @@ void SCR_DrawScreenField(void)
 	Con_DrawConsole();
 
 	// debug graph can be drawn on top of anything
-	if (cl_debuggraph->integer || cl_timegraph->integer || cl_debugMove->integer)
+	if (cl_timegraph->integer || cl_debugMove->integer)
 	{
 		SCR_DrawDebugGraph();
 	}
