@@ -3508,7 +3508,7 @@ gentity_t *weapon_gpg40_fire(gentity_t *ent)
 	VectorMA(viewpos, 32, forward, viewpos);
 
 	// to prevent nade-through-teamdoor sploit
-	trap_Trace(&tr, orig_viewpos, GetAmmunitionTableData(GetWeaponTableData(ent->s.weapon)->ammunType)->boudingBox[0], GetAmmunitionTableData(GetWeaponTableData(ent->s.weapon)->ammunType)->boudingBox[1], viewpos, ent->s.number, MASK_MISSILESHOT);
+	trap_Trace(&tr, orig_viewpos, GetWeaponFireTableData(GetWeaponTableData(ent->s.weapon)->ammoIndex)->boudingBox[0], GetWeaponFireTableData(GetWeaponTableData(ent->s.weapon)->ammoIndex)->boudingBox[1], viewpos, ent->s.number, MASK_MISSILESHOT);
 	if (tr.fraction < 1)     // oops, bad launch spot
 	{
 		VectorCopy(tr.endpos, tosspos);
@@ -3516,7 +3516,7 @@ gentity_t *weapon_gpg40_fire(gentity_t *ent)
 	}
 	else
 	{
-		trap_Trace(&tr, viewpos, GetAmmunitionTableData(GetWeaponTableData(ent->s.weapon)->ammunType)->boudingBox[0], GetAmmunitionTableData(GetWeaponTableData(ent->s.weapon)->ammunType)->boudingBox[1], tosspos, ent->s.number, MASK_MISSILESHOT);
+		trap_Trace(&tr, viewpos, GetWeaponFireTableData(GetWeaponTableData(ent->s.weapon)->ammoIndex)->boudingBox[0], GetWeaponFireTableData(GetWeaponTableData(ent->s.weapon)->ammoIndex)->boudingBox[1], tosspos, ent->s.number, MASK_MISSILESHOT);
 		if (tr.fraction < 1)     // oops, bad launch spot
 		{
 			VectorCopy(tr.endpos, tosspos);
@@ -3557,7 +3557,7 @@ gentity_t *weapon_mortar_fire(gentity_t *ent)
 	forward[1] *= 3000 * 1.1f;
 	forward[2] *= 1500 * 1.1f;
 
-	trap_Trace(&tr, testPos, GetAmmunitionTableData(GetWeaponTableData(ent->s.weapon)->ammunType)->boudingBox[0], GetAmmunitionTableData(GetWeaponTableData(ent->s.weapon)->ammunType)->boudingBox[1], launchPos, ent->s.number, MASK_MISSILESHOT);
+	trap_Trace(&tr, testPos, GetWeaponFireTableData(GetWeaponTableData(ent->s.weapon)->ammoIndex)->boudingBox[0], GetWeaponFireTableData(GetWeaponTableData(ent->s.weapon)->ammoIndex)->boudingBox[1], launchPos, ent->s.number, MASK_MISSILESHOT);
 
 	if (tr.fraction < 1)     // oops, bad launch spot
 	{
@@ -3641,7 +3641,7 @@ gentity_t *weapon_grenadelauncher_fire(gentity_t *ent)
 	VectorCopy(ent->s.pos.trBase, viewpos);
 	viewpos[2] += ent->client->ps.viewheight;
 
-	trap_Trace(&tr, viewpos, GetAmmunitionTableData(GetWeaponTableData(ent->s.weapon)->ammunType)->boudingBox[0], GetAmmunitionTableData(GetWeaponTableData(ent->s.weapon)->ammunType)->boudingBox[1], tosspos, ent->s.number, MASK_MISSILESHOT);
+	trap_Trace(&tr, viewpos, GetWeaponFireTableData(GetWeaponTableData(ent->s.weapon)->ammoIndex)->boudingBox[0], GetWeaponFireTableData(GetWeaponTableData(ent->s.weapon)->ammoIndex)->boudingBox[1], tosspos, ent->s.number, MASK_MISSILESHOT);
 
 	if (tr.startsolid)
 	{
@@ -3650,7 +3650,7 @@ gentity_t *weapon_grenadelauncher_fire(gentity_t *ent)
 		VectorNormalizeFast(viewpos);
 		VectorMA(ent->r.currentOrigin, -24.f, viewpos, viewpos);
 
-		trap_Trace(&tr, viewpos, GetAmmunitionTableData(GetWeaponTableData(ent->s.weapon)->ammunType)->boudingBox[0], GetAmmunitionTableData(GetWeaponTableData(ent->s.weapon)->ammunType)->boudingBox[1], tosspos, ent->s.number, MASK_MISSILESHOT);
+		trap_Trace(&tr, viewpos, GetWeaponFireTableData(GetWeaponTableData(ent->s.weapon)->ammoIndex)->boudingBox[0], GetWeaponFireTableData(GetWeaponTableData(ent->s.weapon)->ammoIndex)->boudingBox[1], tosspos, ent->s.number, MASK_MISSILESHOT);
 
 		VectorCopy(tr.endpos, tosspos);
 	}
@@ -3799,7 +3799,7 @@ gentity_t *Weapon_FlamethrowerFire(gentity_t *ent)
 	// prevent flame thrower cheat, run & fire while aiming at the ground, don't get hurt
 	// 72 total box height, 18 xy -> 77 trace radius (from view point towards the ground) is enough to cover the area around the feet
 	VectorMA(trace_start, 77.0f, forward, trace_end);
-	trap_Trace(&trace, trace_start, GetAmmunitionTableData(GetWeaponTableData(ent->s.weapon)->ammunType)->boudingBox[0], GetAmmunitionTableData(GetWeaponTableData(ent->s.weapon)->ammunType)->boudingBox[1], trace_end, ent->s.number, MASK_SHOT | MASK_WATER);
+	trap_Trace(&trace, trace_start, GetWeaponFireTableData(GetWeaponTableData(ent->s.weapon)->ammoIndex)->boudingBox[0], GetWeaponFireTableData(GetWeaponTableData(ent->s.weapon)->ammoIndex)->boudingBox[1], trace_end, ent->s.number, MASK_SHOT | MASK_WATER);
 	if (trace.fraction != 1.0f)
 	{
 		// additional checks to filter out false positives
@@ -4041,69 +4041,70 @@ qboolean G_PlayerCanBeSeenByOthers(gentity_t *ent)
 	return qfalse;
 }
 
-weapFireFunction_t weapFireTable[] =
+weapFireTable_t weapFireTable[] =
 {
-	{ WP_NONE,                 NULL,                        },
-	{ WP_KNIFE,                Weapon_Knife,                },
-	{ WP_LUGER,                Bullet_Fire,                 },
-	{ WP_MP40,                 Bullet_Fire,                 },
-	{ WP_GRENADE_LAUNCHER,     weapon_grenadelauncher_fire, },
-	{ WP_PANZERFAUST,          weapon_antitank_fire,        },
-	{ WP_FLAMETHROWER,         Weapon_FlamethrowerFire,     },  // this is done client-side only now // - um, no it isnt? FIXME
-	{ WP_COLT,                 Bullet_Fire,                 },
-	{ WP_THOMPSON,             Bullet_Fire,                 },
-	{ WP_GRENADE_PINEAPPLE,    weapon_grenadelauncher_fire, },
-
-	{ WP_STEN,                 Bullet_Fire,                 },
-	{ WP_MEDIC_SYRINGE,        Weapon_Syringe,              },
-	{ WP_AMMO,                 Weapon_MagicAmmo,            },
-	{ WP_ARTY,                 NULL,                        },
-	{ WP_SILENCER,             Bullet_Fire,                 },
-	{ WP_DYNAMITE,             weapon_grenadelauncher_fire, },
-	{ WP_SMOKETRAIL,           Bullet_Fire,                 },
-	{ WP_MAPMORTAR,            NULL,                        },
-	{ VERYBIGEXPLOSION,        NULL,                        },
-	{ WP_MEDKIT,               Weapon_Medic,                },
-
-	{ WP_BINOCULARS,           NULL,                        },
-	{ WP_PLIERS,               Weapon_Engineer,             },
-	{ WP_SMOKE_MARKER,         weapon_grenadelauncher_fire, },
-	{ WP_KAR98,                Bullet_Fire,                 },
-	{ WP_CARBINE,              Bullet_Fire,                 },
-	{ WP_GARAND,               Bullet_Fire,                 },
-	{ WP_LANDMINE,             weapon_grenadelauncher_fire, },
-	{ WP_SATCHEL,              weapon_grenadelauncher_fire, },
-	{ WP_SATCHEL_DET,          weapon_satcheldet_fire,      },
-	{ WP_SMOKE_BOMB,           weapon_grenadelauncher_fire, },
-
-	{ WP_MOBILE_MG42,          Bullet_Fire,                 },
-	{ WP_K43,                  Bullet_Fire,                 },
-	{ WP_FG42,                 Bullet_Fire,                 },
-	{ WP_DUMMY_MG42,           NULL,                        },
-	{ WP_MORTAR,               NULL,                        },
-	{ WP_AKIMBO_COLT,          Bullet_Fire,                 },
-	{ WP_AKIMBO_LUGER,         Bullet_Fire,                 },
-
-	{ WP_GPG40,                weapon_gpg40_fire,           },
-	{ WP_M7,                   weapon_gpg40_fire,           },
-	{ WP_SILENCED_COLT,        Bullet_Fire,                 },
-
-	{ WP_GARAND_SCOPE,         Bullet_Fire,                 },
-	{ WP_K43_SCOPE,            Bullet_Fire,                 },
-	{ WP_FG42SCOPE,            Bullet_Fire,                 },
-	{ WP_MORTAR_SET,           weapon_mortar_fire,          },
-	{ WP_MEDIC_ADRENALINE,     Weapon_AdrenalineSyringe,    },
-	{ WP_AKIMBO_SILENCEDCOLT,  Bullet_Fire,                 },
-	{ WP_AKIMBO_SILENCEDLUGER, Bullet_Fire,                 },
-	{ WP_MOBILE_MG42_SET,      Bullet_Fire,                 },
-	// legacy weapons
-	{ WP_KNIFE_KABAR,          Weapon_Knife,                },
-	{ WP_MOBILE_BROWNING,      Bullet_Fire,                 },
-	{ WP_MOBILE_BROWNING_SET,  Bullet_Fire,                 },
-	{ WP_MORTAR2,              NULL,                        },
-	{ WP_MORTAR2_SET,          weapon_mortar_fire,          },
-	{ WP_BAZOOKA,              weapon_antitank_fire,        },
-	{ WP_MP34,                 Bullet_Fire,                 },
+    // weapon                  fire                         think                       free           eType                  eFlags                      svFlags                       content          trType          trTime boundingsBox                                     clipMask          nextThink accuracy health timeStamp                                                                                 
+	{ WP_NONE,                 NULL,                        NULL,                       NULL,          ET_GENERAL,            EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_STATIONARY,  0,     { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_ALL,         0,        0,       0,     0,        },
+	{ WP_KNIFE,                Weapon_Knife,                NULL,                       NULL,          ET_GENERAL,            EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_LINEAR,      0,     { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_SHOT,        0,        0,       0,     0,        },
+	{ WP_LUGER,                Bullet_Fire,                 NULL,                       NULL,          ET_GENERAL,            EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_LINEAR,      0,     { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_SHOT,        0,        0,       0,     0,        },      
+	{ WP_MP40,                 Bullet_Fire,                 NULL,                       NULL,          ET_GENERAL,            EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_LINEAR,      0,     { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_SHOT,        0,        0,       0,     0,        },      
+	{ WP_GRENADE_LAUNCHER,     weapon_grenadelauncher_fire, G_ExplodeMissile,           NULL,          ET_MISSILE,            EF_BOUNCE_HALF | EF_BOUNCE, SVF_BROADCAST,                CONTENTS_NONE,   TR_GRAVITY,     -50,   { { -4.f, -4.f, 0.f }, { 4.f, 4.f, 6.f } },      MASK_MISSILESHOT, 2500,     0,       0,     0,        }, 
+	{ WP_PANZERFAUST,          weapon_antitank_fire,        G_ExplodeMissile,           NULL,          ET_MISSILE,            EF_NONE,                    SVF_BROADCAST,                CONTENTS_NONE,   TR_LINEAR,      -50,   { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_MISSILESHOT, 20000,    4,       0,     0,        },  
+	{ WP_FLAMETHROWER,         Weapon_FlamethrowerFire,     NULL,                       NULL,          ET_FLAMETHROWER_CHUNK, EF_NONE,                    SVF_NOCLIENT | SVF_BROADCAST, CONTENTS_CORPSE, TR_DECCELERATE, -50,   { { -4, -4, -4 }, { 4, 4, 4 } },                 MASK_MISSILESHOT, 0,        0,       0,     1,        },  // this is done client-side only now // - um, no it isnt? FIXME
+	{ WP_COLT,                 Bullet_Fire,                 NULL,                       NULL,          ET_GENERAL,            EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_LINEAR,      0,     { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_SHOT,        0,        0,       0,     0,        },      
+	{ WP_THOMPSON,             Bullet_Fire,                 NULL,                       NULL,          ET_GENERAL,            EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_LINEAR,      0,     { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_SHOT,        0,        0,       0,     0,        },      
+	{ WP_GRENADE_PINEAPPLE,    weapon_grenadelauncher_fire, G_ExplodeMissile,           NULL,          ET_MISSILE,            EF_BOUNCE_HALF | EF_BOUNCE, SVF_BROADCAST,                CONTENTS_NONE,   TR_GRAVITY,     -50,   { { -4.f, -4.f, 0.f }, { 4.f, 4.f, 6.f } },      MASK_MISSILESHOT, 2500,     0,       0,     0,        }, 
+    //                                                                                                 
+	{ WP_STEN,                 Bullet_Fire,                 NULL,                       NULL,          ET_GENERAL,            EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_LINEAR,      0,     { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_SHOT,        0,        0,       0,     0,        },      
+	{ WP_MEDIC_SYRINGE,        Weapon_Syringe,              NULL,                       NULL,          ET_GENERAL,            EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_LINEAR,      0,     { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_SHOT,        0,        0,       0,     0,        },     
+	{ WP_AMMO,                 Weapon_MagicAmmo,            MagicSink,                  NULL,          ET_ITEM,               EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_GRAVITY,     0,     { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_SHOT,        30000,    0,       0,     0,        },
+	{ WP_ARTY,                 NULL,                        G_AirStrikeExplode,         NULL,          ET_MISSILE,            EF_SMOKINGBLACK,            SVF_NOCLIENT,                 CONTENTS_NONE,   TR_STATIONARY,  1,     { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_MISSILESHOT, 8950,     2,       0,     0,        },     
+	{ WP_SILENCER,             Bullet_Fire,                 NULL,                       NULL,          ET_GENERAL,            EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_LINEAR,      0,     { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_SHOT,        0,        0,       0,     0,        },      
+	{ WP_DYNAMITE,             weapon_grenadelauncher_fire, DynaSink,                   DynaFree,      ET_MISSILE,            EF_BOUNCE_HALF | EF_BOUNCE, SVF_BROADCAST,                CONTENTS_CORPSE, TR_GRAVITY,     -50,   { { -12.f, -12.f, 0.f }, { 12.f, 12.f, 20.f } }, MASK_MISSILESHOT, 15000,    0,       5,     16500,    },
+	{ WP_SMOKETRAIL,           NULL,                        artilleryGoAway,            NULL,          ET_MISSILE,            EF_BOUNCE,                  SVF_NONE,                     CONTENTS_NONE,   TR_GRAVITY,     1,     { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_MISSILESHOT, 1000,     0,       0,     0,        },     
+	{ WP_MAPMORTAR,            NULL,                        NULL,                       NULL,          ET_MISSILE,            EF_NONE,                    SVF_BROADCAST,                CONTENTS_NONE,   TR_GRAVITY,     -50,   { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_MISSILESHOT, 20000,    4,       0,     0,        },     
+	{ VERYBIGEXPLOSION,        NULL,                        NULL,                       NULL,          ET_GENERAL,            EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_STATIONARY,  0,     { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_ALL,         0,        0,       0,     0,        },
+	{ WP_MEDKIT,               Weapon_Medic,                MagicSink,                  NULL,          ET_ITEM,               EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_GRAVITY,     0,     { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_SHOT,        30000,    0,       0,     0,        },
+    //                                                                                                 
+	{ WP_BINOCULARS,           NULL,                        NULL,                       NULL,          ET_GENERAL,            EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_STATIONARY,  0,     { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_ALL,         0,        0,       0,     0,        },
+	{ WP_PLIERS,               Weapon_Engineer,             NULL,                       NULL,          ET_GENERAL,            EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_STATIONARY,  0,     { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_ALL,         0,        0,       0,     0,        },
+	{ WP_SMOKE_MARKER,         weapon_grenadelauncher_fire, weapon_checkAirStrikeThink, NULL,          ET_MISSILE,            EF_BOUNCE_HALF | EF_BOUNCE, SVF_BROADCAST,                CONTENTS_NONE,   TR_GRAVITY,     -50,   { { -4.f, -4.f, 0.f }, { 4.f, 4.f, 6.f } },      MASK_MISSILESHOT, 2500,     0,       0,     0,        },  
+	{ WP_KAR98,                Bullet_Fire,                 NULL,                       NULL,          ET_GENERAL,            EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_LINEAR,      0,     { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_SHOT,        0,        0,       0,     0,        },      
+	{ WP_CARBINE,              Bullet_Fire,                 NULL,                       NULL,          ET_GENERAL,            EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_LINEAR,      0,     { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_SHOT,        0,        0,       0,     0,        },      
+	{ WP_GARAND,               Bullet_Fire,                 NULL,                       NULL,          ET_GENERAL,            EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_LINEAR,      0,     { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_SHOT,        0,        0,       0,     0,        },      
+	{ WP_LANDMINE,             weapon_grenadelauncher_fire, DynaSink,                   NULL,          ET_MISSILE,            EF_BOUNCE_HALF | EF_BOUNCE, SVF_BROADCAST,                CONTENTS_CORPSE, TR_GRAVITY,     -50,   { { -16.f, -16.f, 0.f }, { 16.f, 16.f, 16.f } }, MASK_MISSILESHOT, 15000,    0,       5,     16500,    },
+	{ WP_SATCHEL,              weapon_grenadelauncher_fire, NULL,                       G_FreeSatchel, ET_MISSILE,            EF_BOUNCE_HALF | EF_BOUNCE, SVF_BROADCAST,                CONTENTS_CORPSE, TR_GRAVITY,     -50,   { { -12.f, -12.f, 0.f }, { 12.f, 12.f, 20.f } }, MASK_MISSILESHOT, 0,        0,       5,     0,        },
+	{ WP_SATCHEL_DET,          weapon_satcheldet_fire,      NULL,                       NULL,          ET_GENERAL,            EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_STATIONARY,  0,     { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_ALL,         0,        0,       0,     0,        },
+	{ WP_SMOKE_BOMB,           weapon_grenadelauncher_fire, weapon_smokeBombExplode,    NULL,          ET_MISSILE,            EF_BOUNCE_HALF | EF_BOUNCE, SVF_BROADCAST,                CONTENTS_NONE,   TR_GRAVITY,     -50,   { { -4.f, -4.f, 0.f }, { 4.f, 4.f, 6.f } },      MASK_MISSILESHOT, 2500,     0,       0,     0,        },
+    //                                                                                                 
+	{ WP_MOBILE_MG42,          Bullet_Fire,                 NULL,                       NULL,          ET_GENERAL,            EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_LINEAR,      0,     { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_SHOT,        0,        0,       0,     0,        },      
+	{ WP_K43,                  Bullet_Fire,                 NULL,                       NULL,          ET_GENERAL,            EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_LINEAR,      0,     { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_SHOT,        0,        0,       0,     0,        },      
+	{ WP_FG42,                 Bullet_Fire,                 NULL,                       NULL,          ET_GENERAL,            EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_LINEAR,      0,     { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_SHOT,        0,        0,       0,     0,        },      
+	{ WP_DUMMY_MG42,           NULL,                        NULL,                       NULL,          ET_GENERAL,            EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_STATIONARY,  0,     { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_ALL,         0,        0,       0,     0,        },
+	{ WP_MORTAR,               NULL,                        NULL,                       NULL,          ET_GENERAL,            EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_STATIONARY,  0,     { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_ALL,         0,        0,       0,     0,        },
+	{ WP_AKIMBO_COLT,          Bullet_Fire,                 NULL,                       NULL,          ET_GENERAL,            EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_LINEAR,      0,     { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_SHOT,        0,        0,       0,     0,        },      
+	{ WP_AKIMBO_LUGER,         Bullet_Fire,                 NULL,                       NULL,          ET_GENERAL,            EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_LINEAR,      0,     { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_SHOT,        0,        0,       0,     0,        },      
+    //                                                                                                 
+	{ WP_GPG40,                weapon_gpg40_fire,           G_ExplodeMissile,           NULL,          ET_MISSILE,            EF_BOUNCE_HALF | EF_BOUNCE, SVF_BROADCAST,                CONTENTS_NONE,   TR_GRAVITY,     -50,   { { -4.f, -4.f, 0.f }, { 4.f, 4.f, 6.f } },      MASK_MISSILESHOT, 4000,     0,       0,     0,        },
+	{ WP_M7,                   weapon_gpg40_fire,           G_ExplodeMissile,           NULL,          ET_MISSILE,            EF_BOUNCE_HALF | EF_BOUNCE, SVF_BROADCAST,                CONTENTS_NONE,   TR_GRAVITY,     -50,   { { -4.f, -4.f, 0.f }, { 4.f, 4.f, 6.f } },      MASK_MISSILESHOT, 4000,     0,       0,     0,        },
+	{ WP_SILENCED_COLT,        Bullet_Fire,                 NULL,                       NULL,          ET_GENERAL,            EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_LINEAR,      0,     { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_SHOT,        0,        0,       0,     0,        },      
+    //                                                                                                 
+	{ WP_GARAND_SCOPE,         Bullet_Fire,                 NULL,                       NULL,          ET_GENERAL,            EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_LINEAR,      0,     { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_SHOT,        0,        0,       0,     0,        },      
+	{ WP_K43_SCOPE,            Bullet_Fire,                 NULL,                       NULL,          ET_GENERAL,            EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_LINEAR,      0,     { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_SHOT,        0,        0,       0,     0,        },      
+	{ WP_FG42SCOPE,            Bullet_Fire,                 NULL,                       NULL,          ET_GENERAL,            EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_LINEAR,      0,     { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_SHOT,        0,        0,       0,     0,        },      
+	{ WP_MORTAR_SET,           weapon_mortar_fire,          NULL,                       NULL,          ET_MISSILE,            EF_NONE,                    SVF_BROADCAST,                CONTENTS_NONE,   TR_GRAVITY,     -50,   { { -4.f, -4.f, 0.f }, { 4.f, 4.f, 6.f } },      MASK_MISSILESHOT, 0,        0,       0,     0,        },   
+	{ WP_MEDIC_ADRENALINE,     Weapon_AdrenalineSyringe,    NULL,                       NULL,          ET_GENERAL,            EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_LINEAR,      0,     { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_SHOT,        0,        0,       0,     0,        },     
+	{ WP_AKIMBO_SILENCEDCOLT,  Bullet_Fire,                 NULL,                       NULL,          ET_GENERAL,            EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_LINEAR,      0,     { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_SHOT,        0,        0,       0,     0,        },      
+	{ WP_AKIMBO_SILENCEDLUGER, Bullet_Fire,                 NULL,                       NULL,          ET_GENERAL,            EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_LINEAR,      0,     { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_SHOT,        0,        0,       0,     0,        },      
+	{ WP_MOBILE_MG42_SET,      Bullet_Fire,                 NULL,                       NULL,          ET_GENERAL,            EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_LINEAR,      0,     { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_SHOT,        0,        0,       0,     0,        },      
+	// legacy weapons                                                                                  
+	{ WP_KNIFE_KABAR,          Weapon_Knife,                NULL,                       NULL,          ET_GENERAL,            EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_LINEAR,      0,     { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_SHOT,        0,        0,       0,     0,        },
+	{ WP_MOBILE_BROWNING,      Bullet_Fire,                 NULL,                       NULL,          ET_GENERAL,            EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_LINEAR,      0,     { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_SHOT,        0,        0,       0,     0,        },      
+	{ WP_MOBILE_BROWNING_SET,  Bullet_Fire,                 NULL,                       NULL,          ET_GENERAL,            EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_LINEAR,      0,     { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_SHOT,        0,        0,       0,     0,        },      
+	{ WP_MORTAR2,              NULL,                        NULL,                       NULL,          ET_GENERAL,            EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_STATIONARY,  0,     { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_ALL,         0,        0,       0,     0,        },
+	{ WP_MORTAR2_SET,          weapon_mortar_fire,          NULL,                       NULL,          ET_MISSILE,            EF_NONE,                    SVF_BROADCAST,                CONTENTS_NONE,   TR_GRAVITY,     -50,   { { -4.f, -4.f, 0.f }, { 4.f, 4.f, 6.f } },      MASK_MISSILESHOT, 0,        0,       0,     0,        },   
+	{ WP_BAZOOKA,              weapon_antitank_fire,        G_ExplodeMissile,           NULL,          ET_MISSILE,            EF_NONE,                    SVF_BROADCAST,                CONTENTS_NONE,   TR_LINEAR,      -50,   { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_MISSILESHOT, 20000,    4,       0,     0,        },  
+	{ WP_MP34,                 Bullet_Fire,                 NULL,                       NULL,          ET_GENERAL,            EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_LINEAR,      0,     { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_SHOT,        0,        0,       0,     0,        },      
 };
 
 /**
@@ -4175,30 +4176,3 @@ void FireWeapon(gentity_t *ent)
 
 	ent->client->sess.aWeaponStats[GetWeaponTableData(ent->s.weapon)->indexWeaponStat].atts++;
 }
-
-/**
- * @var ammunitionTable
- * @brief New ammunition table to store common weapon properties
- */   
-ammunitionTable_t ammunitionTable[AMMUN_NUM_AMMUNITIONS] =
-{
-    //ammunition          eType                  eFlags                      svFlags                       content          trType          trTime boundingsBox                                     clipMask          nextThink accuracy health timeStamp fire                         think                       free                                                                    
-    { AMMUN_NONE,         ET_GENERAL,            EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_STATIONARY,  0,     { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_ALL,         0,        0,       0,     0,        NULL,                        NULL,                       NULL, },
-    { AMMUN_MELEE,        ET_GENERAL,            EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_LINEAR,      0,     { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_SHOT,        0,        0,       0,     0,        Weapon_Knife,                NULL,                       NULL, },
-    { AMMUN_BULLET,       ET_GENERAL,            EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_LINEAR,      0,     { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_SHOT,        0,        0,       0,     0,        Bullet_Fire,                 NULL,                       NULL, },      
-    { AMMUN_GRENADE,      ET_MISSILE,            EF_BOUNCE_HALF | EF_BOUNCE, SVF_BROADCAST,                CONTENTS_NONE,   TR_GRAVITY,     -50,   { { -4.f, -4.f, 0.f }, { 4.f, 4.f, 6.f } },      MASK_MISSILESHOT, 2500,     0,       0,     0,        weapon_grenadelauncher_fire, NULL,                       NULL, }, 
-    { AMMUN_RIFLENADE,    ET_MISSILE,            EF_BOUNCE_HALF | EF_BOUNCE, SVF_BROADCAST,                CONTENTS_NONE,   TR_GRAVITY,     -50,   { { -4.f, -4.f, 0.f }, { 4.f, 4.f, 6.f } },      MASK_MISSILESHOT, 4000,     0,       0,     0,        NULL,                        NULL,                       NULL, },
-    { AMMUN_ROCKET,       ET_MISSILE,            EF_NONE,                    SVF_BROADCAST,                CONTENTS_NONE,   TR_LINEAR,      -50,   { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_MISSILESHOT, 20000,    4,       0,     0,        NULL,                        NULL,                       NULL, },  
-    { AMMUN_SHELL,        ET_MISSILE,            EF_NONE,                    SVF_BROADCAST,                CONTENTS_NONE,   TR_GRAVITY,     -50,   { { -4.f, -4.f, 0.f }, { 4.f, 4.f, 6.f } },      MASK_MISSILESHOT, 0,        0,       0,     0,        NULL,                        NULL,                       NULL, },   
-    { AMMUN_MAPMORTAR,    ET_MISSILE,            EF_NONE,                    SVF_BROADCAST,                CONTENTS_NONE,   TR_GRAVITY,     -50,   { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_MISSILESHOT, 20000,    4,       0,     0,        NULL,                        NULL,                       NULL, },     
-    { AMMUN_FLAME,        ET_FLAMETHROWER_CHUNK, EF_NONE,                    SVF_NOCLIENT | SVF_BROADCAST, CONTENTS_CORPSE, TR_DECCELERATE, -50,   { { -4, -4, -4 }, { 4, 4, 4 } },                 MASK_MISSILESHOT, 0,        0,       0,     1,        NULL,                        NULL,                       NULL, },
-    { AMMUN_ARTY,         ET_MISSILE,            EF_SMOKINGBLACK,            SVF_NOCLIENT,                 CONTENTS_NONE,   TR_STATIONARY,  1,     { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_MISSILESHOT, 8950,     2,       0,     0,        NULL,                        NULL,                       NULL, },     
-    { AMMUN_AIRSTRIKE,    ET_MISSILE,            EF_BOUNCE,                  SVF_NONE,                     CONTENTS_NONE,   TR_GRAVITY,     1,     { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_MISSILESHOT, 1000,     0,       0,     0,        NULL,                        NULL,                       NULL, },     
-    { AMMUN_CANISTER,     ET_MISSILE,            EF_BOUNCE_HALF | EF_BOUNCE, SVF_BROADCAST,                CONTENTS_NONE,   TR_GRAVITY,     -50,   { { -4.f, -4.f, 0.f }, { 4.f, 4.f, 6.f } },      MASK_MISSILESHOT, 2500,     0,       0,     0,        NULL,                        weapon_checkAirStrikeThink, NULL, },  
-    { AMMUN_SMOKEGRENADE, ET_MISSILE,            EF_BOUNCE_HALF | EF_BOUNCE, SVF_BROADCAST,                CONTENTS_NONE,   TR_GRAVITY,     -50,   { { -4.f, -4.f, 0.f }, { 4.f, 4.f, 6.f } },      MASK_MISSILESHOT, 2500,     0,       0,     0,        NULL,                        NULL,                       NULL, },
-    { AMMUN_DYNAMITE,     ET_MISSILE,            EF_BOUNCE_HALF | EF_BOUNCE, SVF_BROADCAST,                CONTENTS_CORPSE, TR_GRAVITY,     -50,   { { -12.f, -12.f, 0.f }, { 12.f, 12.f, 20.f } }, MASK_MISSILESHOT, 15000,    0,       5,     16500,    NULL,                        NULL,                       NULL, },
-    { AMMUN_LANDMINE,     ET_MISSILE,            EF_BOUNCE_HALF | EF_BOUNCE, SVF_BROADCAST,                CONTENTS_CORPSE, TR_GRAVITY,     -50,   { { -16.f, -16.f, 0.f }, { 16.f, 16.f, 16.f } }, MASK_MISSILESHOT, 15000,    0,       5,     16500,    NULL,                        NULL,                       NULL, },
-    { AMMUN_SATCHEL,      ET_MISSILE,            EF_BOUNCE_HALF | EF_BOUNCE, SVF_BROADCAST,                CONTENTS_CORPSE, TR_GRAVITY,     -50,   { { -12.f, -12.f, 0.f }, { 12.f, 12.f, 20.f } }, MASK_MISSILESHOT, 0,        0,       5,     0,        NULL,                        NULL,                       NULL, },
-    { AMMUN_BOX,          ET_GENERAL,            EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_GRAVITY,     0,     { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_SHOT,        0,        0,       0,     0,        NULL,                        NULL,                       NULL, },     
-    { AMMUN_SYRINGUE,     ET_GENERAL,            EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_LINEAR,      0,     { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_SHOT,        0,        0,       0,     0,        NULL,                        NULL,                       NULL, },     
-};

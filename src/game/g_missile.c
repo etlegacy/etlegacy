@@ -38,7 +38,7 @@
 #include "g_etbot_interface.h"
 #endif
 
-#define MISSILE_PRESTEP_TIME    50   
+#define MISSILE_PRESTEP_TIME    50
 
 /**
  * @brief G_BounceMissile
@@ -1699,8 +1699,8 @@ qboolean G_LandmineSnapshotCallback(int entityNum, int clientNum)
  */
 gentity_t *fire_missile(gentity_t *self, vec3_t start, vec3_t dir, int weapon)
 {
-	gentity_t        *bolt;
-	ammunitionType_t ammunType = GetWeaponTableData(weapon)->ammunType;
+	gentity_t *bolt;
+	//ammunitionType_t ammunType = GetWeaponTableData(weapon)->ammunType;
 
 	bolt = G_Spawn();
 	G_PreFilledMissileEntity(bolt, weapon, weapon,
@@ -1716,36 +1716,11 @@ gentity_t *fire_missile(gentity_t *self, vec3_t start, vec3_t dir, int weapon)
 		self->client->ps.grenadeTimeLeft = 0;   // reset grenade timer
 	}
 
-	if (!GetWeaponTableData(weapon)->isExplosive)
-	{
-		G_Printf("WARNING: fire_grenade called for undefined weapon\n");
-	}
-	else if (GetWeaponTableData(weapon)->isRiflenade || GetWeaponTableData(weapon)->isGrenade || GetWeaponTableData(weapon)->isPanzer)
-	{
-		bolt->think = G_ExplodeMissile;
-	}
-	else if (weapon == WP_SMOKE_BOMB)
-	{
-		bolt->think = weapon_smokeBombExplode;         // overwrite G_ExplodeMissile
-	}
-	else if (weapon == WP_SMOKE_MARKER)
-	{
-		bolt->think = weapon_checkAirStrikeThink;     // overwrite G_ExplodeMissile
-	}
-	else if (weapon == WP_LANDMINE)
-	{
-		bolt->think = DynaSink;
-	}
-	if (weapon == WP_SATCHEL)
-	{
-		bolt->free = G_FreeSatchel;
-		// is there think set for satchel?
-	}
-	else if (weapon == WP_DYNAMITE)
-	{
-		bolt->think = DynaSink;
-		bolt->free  = DynaFree;
+	bolt->think = GetWeaponFireTableData(GetWeaponTableData(weapon)->ammoIndex)->think;
+	bolt->free  = GetWeaponFireTableData(GetWeaponTableData(weapon)->ammoIndex)->free;
 
+	if (weapon == WP_DYNAMITE)
+	{
 		trap_SendServerCommand(self - g_entities, "cp \"Dynamite is set, but NOT armed!\"");
 		// nope - this causes the dynamite to impact on the players bb when he throws it.
 		// will try setting it when it settles

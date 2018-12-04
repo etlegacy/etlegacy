@@ -1013,34 +1013,6 @@ typedef enum
 } meansOfDeath_t;
 
 /**
- * @enum ammunitionType_t
- * @brief Ammunition
- */
-typedef enum
-{
-	AMMUN_NONE,
-	AMMUN_MELEE,
-	AMMUN_BULLET,
-	AMMUN_GRENADE,
-	AMMUN_RIFLENADE,
-	AMMUN_ROCKET,
-	AMMUN_SHELL,
-	AMMUN_MAPMORTAR,
-	AMMUN_FLAME,
-	AMMUN_ARTY,
-	AMMUN_AIRSTRIKE,
-	AMMUN_CANISTER,
-	AMMUN_SMOKEGRENADE,
-	AMMUN_DYNAMITE,
-	AMMUN_LANDMINE,
-	AMMUN_SATCHEL,
-	AMMUN_BOX,
-	AMMUN_SYRINGUE,
-	AMMUN_NUM_AMMUNITIONS,
-
-} ammunitionType_t;
-
-/**
  * @struct weaponType_s
  * @typedef weaponType_t
  * @brief
@@ -1175,7 +1147,6 @@ typedef struct weapontable_s
 
 	weapon_t ammoIndex;             ///< bg - type of weapon ammo this uses.
 	weapon_t clipIndex;             ///< bg - which clip this weapon uses. This allows the sniper rifle to use the same clip as the garand, etc.
-	ammunitionType_t ammunType;     ///< g -  type of ammo fired by the weapon
 
 	qboolean isScoped;              ///< bg -
 

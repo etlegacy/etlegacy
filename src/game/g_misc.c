@@ -2373,15 +2373,15 @@ void landmine_setup(gentity_t *ent)
 	trace_t tr;
 	vec3_t  end;
 
-	VectorCopy(GetAmmunitionTableData(AMMUN_LANDMINE)->boudingBox[0], ent->r.mins);
+	VectorCopy(GetWeaponFireTableData(WP_LANDMINE)->boudingBox[0], ent->r.mins);
 	VectorCopy(ent->r.mins, ent->r.absmin);
-	VectorCopy(GetAmmunitionTableData(AMMUN_LANDMINE)->boudingBox[1], ent->r.maxs);
+	VectorCopy(GetWeaponFireTableData(WP_LANDMINE)->boudingBox[1], ent->r.maxs);
 	VectorCopy(ent->r.maxs, ent->r.absmax);
 
 	// drop to floor
 	VectorCopy(ent->s.origin, end);
 	end[2] -= 64;
-	trap_Trace(&tr, ent->s.origin, NULL, NULL, end, ent->s.number, GetAmmunitionTableData(AMMUN_LANDMINE)->clipMask);
+	trap_Trace(&tr, ent->s.origin, NULL, NULL, end, ent->s.number, GetWeaponFireTableData(WP_LANDMINE)->clipMask);
 
 	if (tr.startsolid || tr.fraction == 1.f || !(tr.surfaceFlags & (SURF_GRASS | SURF_SNOW | SURF_GRAVEL | SURF_LANDMINE)) ||
 	    (tr.entityNum != ENTITYNUM_WORLD && (!g_entities[tr.entityNum].inuse || g_entities[tr.entityNum].s.eType != ET_CONSTRUCTIBLE)))
@@ -2795,7 +2795,7 @@ qboolean G_FlingClient(gentity_t *vic, int flingType)
  */
 void G_PreFilledMissileEntity(gentity_t *ent, int weaponNum, int realWeapon, int ownerNum, team_t teamNum, int clientNum, gentity_t *parent, const vec3_t start, const vec3_t dir)
 {
-	ammunitionType_t ammunType = GetWeaponTableData(weaponNum)->ammunType;
+	weapon_t ammoIndex = GetWeaponTableData(weaponNum)->ammoIndex;
 
 	//
 	// weapon depend
@@ -2823,28 +2823,28 @@ void G_PreFilledMissileEntity(gentity_t *ent, int weaponNum, int realWeapon, int
 	//
 
 	// generic
-	ent->nextthink  = GetAmmunitionTableData(ammunType)->nextThink ? level.time + GetAmmunitionTableData(ammunType)->nextThink : 0;
-	ent->clipmask   = GetAmmunitionTableData(ammunType)->clipMask;
-	ent->accuracy   = GetAmmunitionTableData(ammunType)->accuracy;
-	ent->health     = GetAmmunitionTableData(ammunType)->health;
-	ent->timestamp  = GetAmmunitionTableData(ammunType)->timeStamp ? level.time + GetAmmunitionTableData(ammunType)->timeStamp : 0;
+	ent->nextthink  = GetWeaponFireTableData(ammoIndex)->nextThink ? level.time + GetWeaponFireTableData(ammoIndex)->nextThink : 0;
+	ent->clipmask   = GetWeaponFireTableData(ammoIndex)->clipMask;
+	ent->accuracy   = GetWeaponFireTableData(ammoIndex)->accuracy;
+	ent->health     = GetWeaponFireTableData(ammoIndex)->health;
+	ent->timestamp  = GetWeaponFireTableData(ammoIndex)->timeStamp ? level.time + GetWeaponFireTableData(ammoIndex)->timeStamp : 0;
 
 	// state
-	ent->s.eFlags      = GetAmmunitionTableData(ammunType)->eFlags;
-	ent->s.pos.trType  = GetAmmunitionTableData(ammunType)->trType;
-	ent->s.pos.trTime  = GetAmmunitionTableData(ammunType)->trTime ? level.time + GetAmmunitionTableData(ammunType)->trTime : 0;          // move a bit on the very first frame
-	ent->s.eType       = GetAmmunitionTableData(ammunType)->eType;
+	ent->s.eFlags      = GetWeaponFireTableData(ammoIndex)->eFlags;
+	ent->s.pos.trType  = GetWeaponFireTableData(ammoIndex)->trType;
+	ent->s.pos.trTime  = GetWeaponFireTableData(ammoIndex)->trTime ? level.time + GetWeaponFireTableData(ammoIndex)->trTime : 0;          // move a bit on the very first frame
+	ent->s.eType       = GetWeaponFireTableData(ammoIndex)->eType;
 
 	// shared
-	ent->r.svFlags  = GetAmmunitionTableData(ammunType)->svFlags;
-	ent->r.contents = GetAmmunitionTableData(ammunType)->contents;
+	ent->r.svFlags  = GetWeaponFireTableData(ammoIndex)->svFlags;
+	ent->r.contents = GetWeaponFireTableData(ammoIndex)->contents;
 
 	if (ent->r.contents == CONTENTS_CORPSE)
 	{
-		VectorCopy(GetAmmunitionTableData(ammunType)->boudingBox[0], ent->r.mins);
-		VectorCopy(GetAmmunitionTableData(ammunType)->boudingBox[0], ent->r.absmin);
-		VectorCopy(GetAmmunitionTableData(ammunType)->boudingBox[1], ent->r.maxs);
-		VectorCopy(GetAmmunitionTableData(ammunType)->boudingBox[1], ent->r.absmax);
+		VectorCopy(GetWeaponFireTableData(ammoIndex)->boudingBox[0], ent->r.mins);
+		VectorCopy(GetWeaponFireTableData(ammoIndex)->boudingBox[0], ent->r.absmin);
+		VectorCopy(GetWeaponFireTableData(ammoIndex)->boudingBox[1], ent->r.maxs);
+		VectorCopy(GetWeaponFireTableData(ammoIndex)->boudingBox[1], ent->r.absmax);
 	}
 
 	VectorCopy(start, ent->r.currentOrigin);
