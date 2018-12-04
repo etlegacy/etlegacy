@@ -713,6 +713,26 @@ static void Render_vertexLighting_DBS_entity(int stage)
 }
 
 /**
+ * @brief Sets light related uniforms (currently sun related only)
+ * @param[in]
+ * 
+ * @fixme this should set current light direction (and color) on not always the sun  
+ * @fixme deal with tess.svars.color?
+ */
+void SetLightUniforms(qboolean setLightColor)
+{
+	// note: there is always a default sunDirection set in RE_LoadWorldMap
+	//       but sunLight is depending on real sun shader 
+	{
+		SetUniformVec3(UNIFORM_LIGHTDIR, tr.sunDirection); // i need to provide _some_ direction.. not all world is lit by the sun..
+		if (setLightColor)
+		{
+			SetUniformVec3(UNIFORM_LIGHTCOLOR, tr.sunLight); // the sun again..
+		}
+	}
+}
+
+/**
  * @brief Render_vertexLighting_DBS_world
  * @param[in] stage
  */
@@ -763,28 +783,16 @@ static void Render_vertexLighting_DBS_world(int stage)
 
 	// SetUniformVec3(UNIFORM_LIGHTDIR, backEnd.currentEntity->lightDir);
 	// SetUniformVec3(UNIFORM_LIGHTCOLOR, backEnd.currentEntity->directedLight);
-	SetUniformVec3(UNIFORM_LIGHTDIR, tr.sunDirection); // i need to provide _some_ direction.. not all world is lit by the sun..
-	SetUniformVec3(UNIFORM_LIGHTCOLOR, tr.sunLight); // the sun again..
-/*SetUniformVec3(UNIFORM_LIGHTDIR, backEnd.currentLight->direction);
-vec4_t color;
-color[0] = backEnd.currentLight->l.color[0];
-color[1] = backEnd.currentLight->l.color[1];
-color[2] = backEnd.currentLight->l.color[2];
-color[3] = 1.0;
-SetUniformVec3(UNIFORM_LIGHTCOLOR, color);*/
-/*
-	vec3_t v;
-	v[0] = (tess.numVertexes) ? (float)tess.xyz[0][0] : backEnd.viewParms.orientation.origin[0];
-	v[1] = (tess.numVertexes) ? tess.xyz[0][1] : backEnd.viewParms.orientation.origin[1];
-	v[2] = (tess.numVertexes) ? tess.xyz[0][2] : backEnd.viewParms.orientation.origin[2];
-	//bspGridPoint_t *gridPoint = LightgridColor(backEnd.viewParms.orientation.origin);
-	bspGridPoint_t *gridPoint = LightgridColor(v);
-	SetUniformVec3(UNIFORM_LIGHTDIR, gridPoint->direction); // from the lightgrid (at the view origin :S)
-	v[0] = gridPoint->directedColor[0];
-	v[1] = gridPoint->directedColor[1];
-	v[2] = gridPoint->directedColor[2];
-	SetUniformVec3(UNIFORM_LIGHTCOLOR, v);
-*/
+
+	/*SetUniformVec3(UNIFORM_LIGHTDIR, backEnd.currentLight->direction);
+	vec4_t color;
+	color[0] = backEnd.currentLight->l.color[0];
+	color[1] = backEnd.currentLight->l.color[1];
+	color[2] = backEnd.currentLight->l.color[2];
+	color[3] = 1.0;
+	SetUniformVec3(UNIFORM_LIGHTCOLOR, color);*/
+
+	SetLightUniforms(qtrue);
 
 	if (r_wrapAroundLighting->integer)
 	{
@@ -1178,20 +1186,10 @@ static void Render_forwardLighting_DBS_omni(shaderStage_t *diffuseStage,
                                             shaderStage_t *attenuationZStage, trRefLight_t *light)
 {
 	float      shadowTexelSize;
-	qboolean   normalMapping;
 	qboolean   shadowCompare;
 	rgbaGen_t  rgbaGen;
 
 	Ren_LogComment("--- Render_forwardLighting_DBS_omni ---\n");
-	// let cvar decide
-	if (r_normalMapping->integer)
-	{
-		normalMapping = qtrue;
-	}
-	else
-	{
-		normalMapping = qfalse;
-	}
 
 	if (r_shadows->integer >= SHADOWING_ESM16 && !light->l.noShadows && light->shadowLOD >= 0)
 	{
@@ -1208,8 +1206,8 @@ static void Render_forwardLighting_DBS_omni(shaderStage_t *diffuseStage,
 	                          USE_VERTEX_SKINNING, glConfig2.vboVertexSkinningAvailable && tess.vboVertexSkinning,
 	                          USE_VERTEX_ANIMATION, glState.vertexAttribsInterpolation > 0,
 	                          USE_DEFORM_VERTEXES, tess.surfaceShader->numDeforms,
-	                          USE_NORMAL_MAPPING, normalMapping,
-	                          USE_PARALLAX_MAPPING, normalMapping && r_parallaxMapping->integer && tess.surfaceShader->parallax,
+	                          USE_NORMAL_MAPPING, r_normalMapping->integer,
+	                          USE_PARALLAX_MAPPING, r_normalMapping->integer && r_parallaxMapping->integer && tess.surfaceShader->parallax,
 	                          USE_SHADOWING, shadowCompare);
 	// end choose right shader program ------------------------------
 
@@ -1290,7 +1288,7 @@ static void Render_forwardLighting_DBS_omni(shaderStage_t *diffuseStage,
 
 	SetUniformMatrix16(UNIFORM_DIFFUSETEXTUREMATRIX, tess.svars.texMatrices[TB_DIFFUSEMAP]);
 
-	if (normalMapping)
+	if (r_normalMapping->integer)
 	{
 		// bind u_NormalMap
 		SelectTexture(TEX_NORMAL);
@@ -1348,16 +1346,10 @@ static void Render_forwardLighting_DBS_proj(shaderStage_t *diffuseStage,
                                             shaderStage_t *attenuationZStage, trRefLight_t *light)
 {
 	float      shadowTexelSize;
-	qboolean   normalMapping = qfalse;
 	qboolean   shadowCompare = qfalse;
 	rgbaGen_t  rgbaGen;
 
 	Ren_LogComment("--- Render_fowardLighting_DBS_proj ---\n");
-	// let cvar decide
-	if (r_normalMapping->integer)
-	{
-		normalMapping = qtrue;
-	}
 
 	if (r_shadows->integer >= SHADOWING_ESM16 && !light->l.noShadows && light->shadowLOD >= 0)
 	{
@@ -1371,8 +1363,8 @@ static void Render_forwardLighting_DBS_proj(shaderStage_t *diffuseStage,
 	                          USE_VERTEX_SKINNING, glConfig2.vboVertexSkinningAvailable && tess.vboVertexSkinning,
 	                          USE_VERTEX_ANIMATION, glState.vertexAttribsInterpolation > 0,
 	                          USE_DEFORM_VERTEXES, tess.surfaceShader->numDeforms,
-	                          USE_NORMAL_MAPPING, normalMapping,
-	                          USE_PARALLAX_MAPPING, normalMapping && r_parallaxMapping->integer && tess.surfaceShader->parallax,
+	                          USE_NORMAL_MAPPING, r_normalMapping->integer,
+	                          USE_PARALLAX_MAPPING, r_normalMapping->integer && r_parallaxMapping->integer && tess.surfaceShader->parallax,
 	                          USE_SHADOWING, shadowCompare);
 	// end choose right shader program ------------------------------
 
@@ -1456,7 +1448,7 @@ static void Render_forwardLighting_DBS_proj(shaderStage_t *diffuseStage,
 
 	SetUniformMatrix16(UNIFORM_DIFFUSETEXTUREMATRIX, tess.svars.texMatrices[TB_DIFFUSEMAP]);
 
-	if (normalMapping)
+	if (r_normalMapping->integer)
 	{
 		// bind u_NormalMap
 		SelectTexture(TEX_NORMAL);
@@ -1514,18 +1506,11 @@ static void Render_forwardLighting_DBS_directional(shaderStage_t *diffuseStage,
                                                    shaderStage_t *attenuationXYStage,
                                                    shaderStage_t *attenuationZStage, trRefLight_t *light)
 {
-	vec3_t     lightDirection;
 	float      shadowTexelSize;
-	qboolean   normalMapping = qfalse;
 	qboolean   shadowCompare = qfalse;
 	rgbaGen_t  rgbaGen;
 
 	Ren_LogComment("--- Render_forwardLighting_DBS_directional ---\n");
-	// let cvar decide
-	if (r_normalMapping->integer)
-	{
-		normalMapping = qtrue;
-	}
 
 	if (r_shadows->integer >= SHADOWING_ESM16 && !light->l.noShadows && light->shadowLOD >= 0)
 	{
@@ -1539,8 +1524,8 @@ static void Render_forwardLighting_DBS_directional(shaderStage_t *diffuseStage,
 	                          USE_VERTEX_SKINNING, glConfig2.vboVertexSkinningAvailable && tess.vboVertexSkinning,
 	                          USE_VERTEX_ANIMATION, glState.vertexAttribsInterpolation > 0,
 	                          USE_DEFORM_VERTEXES, tess.surfaceShader->numDeforms,
-	                          USE_NORMAL_MAPPING, normalMapping,
-	                          USE_PARALLAX_MAPPING, normalMapping && r_parallaxMapping->integer && tess.surfaceShader->parallax,
+	                          USE_NORMAL_MAPPING, r_normalMapping->integer,
+	                          USE_PARALLAX_MAPPING, r_normalMapping->integer && r_parallaxMapping->integer && tess.surfaceShader->parallax,
 	                          USE_SHADOWING, shadowCompare);
 
 	// end choose right shader program ------------------------------
@@ -1561,11 +1546,10 @@ static void Render_forwardLighting_DBS_directional(shaderStage_t *diffuseStage,
 	// set uniforms
 
 #if 1
-	VectorCopy(tr.sunDirection, lightDirection);
+	SetLightUniforms(qfalse);
 #else
-	VectorCopy(light->direction, lightDirection);
+	SetUniformVec3(UNIFORM_LIGHTDIR, light->direction);
 #endif
-
 
 	if (shadowCompare)
 	{
@@ -1577,7 +1561,7 @@ static void Render_forwardLighting_DBS_directional(shaderStage_t *diffuseStage,
 	}
 
 	SetUniformVec3(UNIFORM_VIEWORIGIN, backEnd.viewParms.orientation.origin);
-	SetUniformVec3(UNIFORM_LIGHTDIR, lightDirection);
+
 	SetUniformVec3(UNIFORM_LIGHTCOLOR, tess.svars.color);
 	SetUniformFloat(UNIFORM_LIGHTRADIUS, light->sphereRadius);
 	SetUniformFloat(UNIFORM_LIGHTSCALE, light->l.scale);
@@ -1634,7 +1618,7 @@ static void Render_forwardLighting_DBS_directional(shaderStage_t *diffuseStage,
 
 	SetUniformMatrix16(UNIFORM_DIFFUSETEXTUREMATRIX, tess.svars.texMatrices[TB_DIFFUSEMAP]);
 
-	if (normalMapping)
+	if (r_normalMapping->integer)
 	{
 		// bind u_NormalMap
 		SelectTexture(TEX_NORMAL);
@@ -1699,7 +1683,6 @@ static void Render_forwardLighting_DBS_directional(shaderStage_t *diffuseStage,
 static void Render_reflection_CB(int stage)
 {
 	shaderStage_t *pStage       = tess.surfaceStages[stage];
-	qboolean      normalMapping = (r_normalMapping->integer) ? qtrue : qfalse;
 
 	Ren_LogComment("--- Render_reflection_CB ---\n");
 
@@ -1711,7 +1694,7 @@ static void Render_reflection_CB(int stage)
 	                          USE_VERTEX_SKINNING, glConfig2.vboVertexSkinningAvailable && tess.vboVertexSkinning,
 	                          USE_VERTEX_ANIMATION, glState.vertexAttribsInterpolation > 0,
 	                          USE_DEFORM_VERTEXES, tess.surfaceShader->numDeforms,
-	                          USE_NORMAL_MAPPING, normalMapping);
+	                          USE_NORMAL_MAPPING, r_normalMapping->integer);
 
 	SetUniformVec3(UNIFORM_VIEWORIGIN, backEnd.viewParms.orientation.origin); // in world space
 	SetUniformMatrix16(UNIFORM_MODELMATRIX, backEnd.orientation.transformMatrix);
@@ -1753,7 +1736,7 @@ static void Render_reflection_CB(int stage)
 #endif
 
 	// bind u_NormalMap
-	if (normalMapping)
+	if (r_normalMapping->integer)
 	{
 		SelectTexture(TEX_NORMAL);
 		GL_Bind(pStage->bundle[TB_NORMALMAP].image[0]);
@@ -2201,11 +2184,13 @@ static void Render_liquid(int stage)
 	SetUniformVec3(UNIFORM_VIEWORIGIN, backEnd.viewParms.orientation.origin); // in world space
 	SetUniformFloat(UNIFORM_FOGDENSITY, RB_EvalExpression(&pStage->fogDensityExp, 0.0005f));
 	SetUniformVec3(UNIFORM_FOGCOLOR, tess.svars.color);
+
 #if 1
-	SetUniformVec3(UNIFORM_LIGHTDIR, tr.sunDirection);
+	SetLightUniforms(qfalse);
 #else
 	SetUniformVec3(UNIFORM_LIGHTDIR, light->direction);
 #endif
+
 	if (normalMapping)
 	{
 		SetUniformFloat(UNIFORM_REFRACTIONINDEX, RB_EvalExpression(&pStage->refractionIndexExp, 1.3f));
