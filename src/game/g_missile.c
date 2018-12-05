@@ -1700,7 +1700,6 @@ qboolean G_LandmineSnapshotCallback(int entityNum, int clientNum)
 gentity_t *fire_missile(gentity_t *self, vec3_t start, vec3_t dir, int weapon)
 {
 	gentity_t *bolt;
-	//ammunitionType_t ammunType = GetWeaponTableData(weapon)->ammunType;
 
 	bolt = G_Spawn();
 	G_PreFilledMissileEntity(bolt, weapon, weapon,

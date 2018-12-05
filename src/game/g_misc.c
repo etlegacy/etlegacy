@@ -2803,15 +2803,15 @@ void G_PreFilledMissileEntity(gentity_t *ent, int weaponNum, int realWeapon, int
 
 	// generic
 	ent->parent              = parent;
-	ent->classname           = GetWeaponTableData(weaponNum)->className;
-	ent->damage              = GetWeaponTableData(weaponNum)->damage;
-	ent->splashDamage        = GetWeaponTableData(weaponNum)->splashDamage;
-	ent->methodOfDeath       = GetWeaponTableData(weaponNum)->mod;
-	ent->splashMethodOfDeath = GetWeaponTableData(weaponNum)->splashMod;
-	ent->splashRadius        = GetWeaponTableData(weaponNum)->splashRadius;  // blast radius proportional to damage for ALL weapons
+	ent->classname           = GetWeaponTableData(realWeapon)->className;
+	ent->damage              = GetWeaponTableData(realWeapon)->damage;
+	ent->splashDamage        = GetWeaponTableData(realWeapon)->splashDamage;
+	ent->methodOfDeath       = GetWeaponTableData(realWeapon)->mod;
+	ent->splashMethodOfDeath = GetWeaponTableData(realWeapon)->splashMod;
+	ent->splashRadius        = GetWeaponTableData(realWeapon)->splashRadius;  // blast radius proportional to damage for ALL weapons
 
 	// state
-	ent->s.weapon    = realWeapon;
+	ent->s.weapon    = ammoIndex;   //realWeapon;
 	ent->s.teamNum   = teamNum;
 	ent->s.clientNum = clientNum;
 

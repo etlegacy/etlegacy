@@ -2749,15 +2749,13 @@ void weapon_callAirStrike(gentity_t *ent)
 		for (i = 0; i < NUMBOMBS; i++)
 		{
 			bomb = G_Spawn();
-			G_PreFilledMissileEntity(bomb, WP_ARTY, WP_SMOKE_MARKER,
+			G_PreFilledMissileEntity(bomb, WP_ARTY, ent->s.weapon,
 			                         ent->s.number, ent->s.teamNum, -1,
 			                         ent->parent, tv(0.f, 0.f, 0.f), tv(0.f, 0.f, 0.f));     // might wanna change this
 
 			bomb->nextthink           = (int)(level.time + i * 100 + crandom() * 50 + 1000 + (j * 2000)); // overwrite, 1000 for aircraft flyby, other term for tumble stagger
 			bomb->think               = G_AirStrikeExplode;
 			bomb->s.pos.trTime        = 0; // overwrite due to previous impl : //bomb->s.pos.trTime = level.time;      // move a bit on the very first frame
-			bomb->methodOfDeath       = GetWeaponTableData(WP_SMOKE_MARKER)->mod;        // overwrite
-			bomb->splashMethodOfDeath = GetWeaponTableData(WP_SMOKE_MARKER)->splashMod;  // overwrite
 
 			bomboffset[0] = crandom() * .5f * BOMBSPREAD;
 			bomboffset[1] = crandom() * .5f * BOMBSPREAD;
@@ -3706,7 +3704,7 @@ gentity_t *weapon_antitank_fire(gentity_t *ent)
 	VectorCopy(forward, dir);
 	VectorNormalize(dir);
 	VectorScale(dir, 2500, dir);
-
+    
 	rocket = fire_missile(ent, muzzleEffect, dir, ent->s.weapon);
 
 	if (ent->client)
@@ -4062,7 +4060,7 @@ weapFireTable_t weapFireTable[] =
 	{ WP_SILENCER,             Bullet_Fire,                 NULL,                       NULL,          ET_GENERAL,            EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_LINEAR,      0,     { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_SHOT,        0,        0,       0,     0,        },      
 	{ WP_DYNAMITE,             weapon_grenadelauncher_fire, DynaSink,                   DynaFree,      ET_MISSILE,            EF_BOUNCE_HALF | EF_BOUNCE, SVF_BROADCAST,                CONTENTS_CORPSE, TR_GRAVITY,     -50,   { { -12.f, -12.f, 0.f }, { 12.f, 12.f, 20.f } }, MASK_MISSILESHOT, 15000,    0,       5,     16500,    },
 	{ WP_SMOKETRAIL,           NULL,                        artilleryGoAway,            NULL,          ET_MISSILE,            EF_BOUNCE,                  SVF_NONE,                     CONTENTS_NONE,   TR_GRAVITY,     1,     { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_MISSILESHOT, 1000,     0,       0,     0,        },     
-	{ WP_MAPMORTAR,            NULL,                        NULL,                       NULL,          ET_MISSILE,            EF_NONE,                    SVF_BROADCAST,                CONTENTS_NONE,   TR_GRAVITY,     -50,   { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_MISSILESHOT, 20000,    4,       0,     0,        },     
+	{ WP_MAPMORTAR,            NULL,                        G_ExplodeMissile,           NULL,          ET_MISSILE,            EF_NONE,                    SVF_BROADCAST,                CONTENTS_NONE,   TR_GRAVITY,     -50,   { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_MISSILESHOT, 20000,    4,       0,     0,        },     
 	{ VERYBIGEXPLOSION,        NULL,                        NULL,                       NULL,          ET_GENERAL,            EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_STATIONARY,  0,     { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_ALL,         0,        0,       0,     0,        },
 	{ WP_MEDKIT,               Weapon_Medic,                MagicSink,                  NULL,          ET_ITEM,               EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_GRAVITY,     0,     { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_SHOT,        30000,    0,       0,     0,        },
     //                                                                                                 
@@ -4157,9 +4155,9 @@ void FireWeapon(gentity_t *ent)
 	}
 
 	// fire the specific weapon
-	if (weapFireTable[ent->s.weapon].fire)
+	if (weapFireTable[GetWeaponTableData(ent->s.weapon)->ammoIndex].fire)
 	{
-		pFiredShot = weapFireTable[ent->s.weapon].fire(ent);
+		pFiredShot = weapFireTable[GetWeaponTableData(ent->s.weapon)->ammoIndex].fire(ent);
 	}
 
 #ifdef FEATURE_OMNIBOT
