@@ -966,24 +966,29 @@ static void Autosprite2Deform(void)
  */
 qboolean ShaderRequiresCPUDeforms(const shader_t *shader)
 {
-	if (shader->numDeforms == 0)
+	if(shader->numDeforms)
 	{
-		return qfalse;
-	}
-
-	if (shader->numDeforms == 1)
-	{
-		const deformStage_t *ds = &shader->deforms[0];
-
-		switch (ds->deformation)
+		if (shader->numDeforms > 1)
 		{
-			case DEFORM_WAVE:
-			case DEFORM_BULGE:
-				return (backEnd.refdef.floatTime != tess.shaderTime); // seems both are always equal ..
-			default:
-				return qtrue;
+			return qtrue;
+		}
+		else
+		{
+			const deformStage_t *ds = &shader->deforms[0];
+
+			switch (ds->deformation)
+			{
+				case DEFORM_WAVE:
+				case DEFORM_BULGE:
+				case DEFORM_MOVE:
+					return qfalse;
+				default:
+					return qtrue;
+			}
 		}
 	}
+
+	return qfalse;
 }
 
 /**
