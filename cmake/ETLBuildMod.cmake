@@ -18,53 +18,55 @@ set_target_properties(cgame${LIB_SUFFIX}${ARCH}
 #
 # qagame
 #
-add_library(qagame${LIB_SUFFIX}${ARCH} MODULE ${QAGAME_SRC})
-if(FEATURE_LUASQL)
-	add_definitions(-DFEATURE_LUASQL)
+if(NOT ANDROID)
+	add_library(qagame${LIB_SUFFIX}${ARCH} MODULE ${QAGAME_SRC})
+	if(FEATURE_LUASQL)
+		add_definitions(-DFEATURE_LUASQL)
 
-	if(BUNDLED_SQLITE3)
-		add_dependencies(qagame${LIB_SUFFIX}${ARCH} bundled_sqlite3)
-		list(APPEND MOD_LIBRARIES ${SQLITE3_BUNDLED_LIBRARIES})
-		include_directories(SYSTEM ${SQLITE3_BUNDLED_INCLUDE_DIR})
-	else() # BUNDLED_SQLITE3
-		find_package(SQLite3 REQUIRED)
-		list(APPEND MOD_LIBRARIES ${SQLITE3_LIBRARY})
-		include_directories(SYSTEM ${SQLITE3_INCLUDE_DIR})
+		if(BUNDLED_SQLITE3)
+			add_dependencies(qagame${LIB_SUFFIX}${ARCH} bundled_sqlite3)
+			list(APPEND MOD_LIBRARIES ${SQLITE3_BUNDLED_LIBRARIES})
+			include_directories(SYSTEM ${SQLITE3_BUNDLED_INCLUDE_DIR})
+		else() # BUNDLED_SQLITE3
+			find_package(SQLite3 REQUIRED)
+			list(APPEND MOD_LIBRARIES ${SQLITE3_LIBRARY})
+			include_directories(SYSTEM ${SQLITE3_INCLUDE_DIR})
+		endif()
+
+		FILE(GLOB LUASQL_SRC
+			"src/luasql/luasql.c"
+			"src/luasql/luasql.h"
+			"src/luasql/ls_sqlite3.c"
+		)
+		set(QAGAME_SRC ${QAGAME_SRC} ${LUASQL_SRC})
+	endif(FEATURE_LUASQL)
+
+	if(FEATURE_LUA)
+		if(BUNDLED_LUA)
+			add_dependencies(qagame${LIB_SUFFIX}${ARCH} bundled_lua)
+		endif(BUNDLED_LUA)
+		target_link_libraries(qagame${LIB_SUFFIX}${ARCH} ${MOD_LIBRARIES})
+	endif(FEATURE_LUA)
+
+
+
+	if(FEATURE_SERVERMDX)
+		set(QAGAME_DEFINES "GAMEDLL;FEATURE_SERVERMDX")
+	else()
+		set(QAGAME_DEFINES "GAMEDLL")
 	endif()
 
-	FILE(GLOB LUASQL_SRC
-		"src/luasql/luasql.c"
-		"src/luasql/luasql.h"
-		"src/luasql/ls_sqlite3.c"
+	set_target_properties(qagame${LIB_SUFFIX}${ARCH}
+		PROPERTIES COMPILE_DEFINITIONS "${QAGAME_DEFINES}"
+		PREFIX ""
+		LIBRARY_OUTPUT_DIRECTORY "legacy"
+		LIBRARY_OUTPUT_DIRECTORY_DEBUG "legacy"
+		LIBRARY_OUTPUT_DIRECTORY_RELEASE "legacy"
+		RUNTIME_OUTPUT_DIRECTORY "legacy"
+		RUNTIME_OUTPUT_DIRECTORY_DEBUG "legacy"
+		RUNTIME_OUTPUT_DIRECTORY_RELEASE "legacy"
 	)
-	set(QAGAME_SRC ${QAGAME_SRC} ${LUASQL_SRC})
-endif(FEATURE_LUASQL)
-
-if(FEATURE_LUA)
-	if(BUNDLED_LUA)
-		add_dependencies(qagame${LIB_SUFFIX}${ARCH} bundled_lua)
-	endif(BUNDLED_LUA)
-	target_link_libraries(qagame${LIB_SUFFIX}${ARCH} ${MOD_LIBRARIES})
-endif(FEATURE_LUA)
-
-
-
-if(FEATURE_SERVERMDX)
-	set(QAGAME_DEFINES "GAMEDLL;FEATURE_SERVERMDX")
-else()
-	set(QAGAME_DEFINES "GAMEDLL")
-endif()
-
-set_target_properties(qagame${LIB_SUFFIX}${ARCH}
-	PROPERTIES COMPILE_DEFINITIONS "${QAGAME_DEFINES}"
-	PREFIX ""
-	LIBRARY_OUTPUT_DIRECTORY "legacy"
-	LIBRARY_OUTPUT_DIRECTORY_DEBUG "legacy"
-	LIBRARY_OUTPUT_DIRECTORY_RELEASE "legacy"
-	RUNTIME_OUTPUT_DIRECTORY "legacy"
-	RUNTIME_OUTPUT_DIRECTORY_DEBUG "legacy"
-	RUNTIME_OUTPUT_DIRECTORY_RELEASE "legacy"
-)
+endif(NOT ANDROID)
 
 #
 # ui
@@ -81,11 +83,13 @@ set_target_properties(ui${LIB_SUFFIX}${ARCH}
 
 # install bins of cgame, ui and qgame
 if(BUILD_MOD_PK3)
-	install(TARGETS qagame${LIB_SUFFIX}${ARCH}
-		RUNTIME DESTINATION "${INSTALL_DEFAULT_MODDIR}/legacy"
-		LIBRARY DESTINATION "${INSTALL_DEFAULT_MODDIR}/legacy"
-		ARCHIVE DESTINATION "${INSTALL_DEFAULT_MODDIR}/legacy"
-	)
+	if(NOT ANDROID)
+		install(TARGETS qagame${LIB_SUFFIX}${ARCH}
+			RUNTIME DESTINATION "${INSTALL_DEFAULT_MODDIR}/legacy"
+			LIBRARY DESTINATION "${INSTALL_DEFAULT_MODDIR}/legacy"
+			ARCHIVE DESTINATION "${INSTALL_DEFAULT_MODDIR}/legacy"
+		)
+	endif(NOT ANDROID)
 else()
 	install(TARGETS cgame${LIB_SUFFIX}${ARCH} qagame${LIB_SUFFIX}${ARCH} ui${LIB_SUFFIX}${ARCH}
 		RUNTIME DESTINATION "${INSTALL_DEFAULT_MODDIR}/legacy"
