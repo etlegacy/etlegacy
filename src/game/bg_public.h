@@ -1019,6 +1019,7 @@ typedef enum
  */
 typedef enum weaponType_s
 {
+    WEAPON_TYPE_NONE      = 0,
 	WEAPON_TYPE_MELEE     = BIT(0),
 	WEAPON_TYPE_PISTOL    = BIT(1),
 	WEAPON_TYPE_SMG       = BIT(2),
@@ -1028,7 +1029,7 @@ typedef enum weaponType_s
 	WEAPON_TYPE_MORTAR    = BIT(6),
 	WEAPON_TYPE_MG        = BIT(7),
 	WEAPON_TYPE_PANZER    = BIT(8),
-	WEAPON_TYPE_SYRINGUE  = BIT(9)
+	WEAPON_TYPE_SYRINGUE  = BIT(9),
 
 } weaponType_t;
 
@@ -1039,6 +1040,7 @@ typedef enum weaponType_s
  */
 typedef enum weaponFiringMode_s
 {
+    WEAPON_FIRING_MODE_NONE           = 0,
 	WEAPON_FIRING_MODE_THROWABLE      = BIT(0),
 	WEAPON_FIRING_MODE_ONE_SHOT       = BIT(1),
 	WEAPON_FIRING_MODE_MANUAL         = BIT(2),
@@ -1054,6 +1056,7 @@ typedef enum weaponFiringMode_s
  */
 typedef enum weaponAttribut_s
 {
+    WEAPON_ATTRIBUT_NONE                = 0,
 	WEAPON_ATTRIBUT_EXPLOSIVE           = BIT(0),
 	WEAPON_ATTRIBUT_SCOPABLE            = BIT(1),
 	WEAPON_ATTRIBUT_SCOPED              = BIT(2),
@@ -1148,54 +1151,19 @@ typedef struct weapontable_s
 	weapon_t ammoIndex;             ///< bg - type of weapon ammo this uses.
 	weapon_t clipIndex;             ///< bg - which clip this weapon uses. This allows the sniper rifle to use the same clip as the garand, etc.
 
-	qboolean isScoped;              ///< bg -
-
-	qboolean isLightWeaponSupportingFastReload; ///< bg -
-
 	int damage;                     ///< g -
-	qboolean canGib;                ///< g -
-	qboolean isReload;              ///< g - some weapons don't reload NOTE: unused ??
-
 	float spread;                   ///< bg -
 	float spreadScale;              ///< bg -
 	int splashDamage;               ///< g -
 	int splashRadius;               ///< g -
 
-	qboolean quickFireMode;         ///< bg -
-	qboolean firingAuto;            ///< bg -
+    int type;                       ///< bg -
+    int firingMode;                 ///< bg -
+    int attributs;                  ///< bg -
 
-	qboolean neverLoseDisguise;     ///< g -
-	qboolean keepDisguise;          ///< g -
-
-	qboolean isThrowable;           ///< bg -
-	qboolean isAutoReload;          ///< bg -
 	qboolean noAmmoSound;           ///< cg -
 	qboolean noAmmoAutoSwitch;      ///< cg -
-
-	qboolean isSMG;                 ///< bg -
-	qboolean isExplosive;           ///< bg -
-	qboolean isSyringe;             ///< bg -
-	qboolean isPistol;              ///< bg -
-	qboolean isAkimbo;              ///< bg -
-	qboolean isPanzer;              ///< bg -
-	qboolean isRiflenade;           ///< bg -
-	qboolean isRifle;               ///< bg -
-	qboolean isRifleWithScope;      ///< bg -
-	qboolean isMortar;              ///< bg -
-	qboolean isMortarSet;           ///< bg -
-	qboolean isMG;                  ///< bg -
-	qboolean isMGSet;               ///< bg -
-
-	qboolean isSetWeapon;           ///< bg -
-	qboolean isLightWeapon;         ///< g  -
-	qboolean isHeavyWeapon;         ///< bg -
-	qboolean isSilencedPistol;      ///< bg -
-	qboolean isMeleeWeapon;         ///< bg -
-	qboolean isGrenade;             ///< bg -
-
-	qboolean isUnderWaterFire;      ///< bg -
 	qboolean noMuzzleFlash;         ///< cg -
-	qboolean shakeEffect;           ///< g  -
 
 	int zoomOut;                    ///< cg -
 	int zoomIn;                     ///< cg -
@@ -1261,7 +1229,6 @@ typedef struct weapontable_s
 	int raiseAnim;                  ///< bg -
 	int dropAnim;                   ///< bg -
 
-	qboolean useChargeTime;                       ///< bg -
 	float chargeTimeCoeff[NUM_SKILL_LEVELS];      ///< bg -
 
 	meansOfDeath_t mod;                           ///< g - means of death
