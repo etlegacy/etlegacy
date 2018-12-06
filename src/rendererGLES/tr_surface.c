@@ -1335,7 +1335,7 @@ void RB_SurfaceFace(srfSurfaceFace_t *surf)
 	indices = ( unsigned * )((( char * ) surf) + surf->ofsIndices);
 
 	Bob         = tess.numVertexes;
-	tessIndexes = tess.indexes + tess.numIndexes;
+	tessIndexes = ( unsigned int * )( tess.indexes + tess.numIndexes);
 	for (i = surf->numIndices - 1 ; i >= 0  ; i--)
 	{
 		tessIndexes[i] = indices[i] + Bob;
