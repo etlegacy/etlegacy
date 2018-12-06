@@ -384,7 +384,7 @@ static void DynamicLightSinglePass(void)
 	int      i, l, a, b, c, color, *intColors;
 	vec3_t   origin;
 	byte     *colors;
-	unsigned hitIndexes[SHADER_MAX_INDEXES];
+	glIndex_t hitIndexes[SHADER_MAX_INDEXES];
 	int      numIndexes;
 	float    radius, radiusInverseCubed;
 	float    intensity, remainder, modulate;
