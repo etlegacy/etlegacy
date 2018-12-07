@@ -127,7 +127,7 @@ void PM_AddEventExt(int newEvent, int eventParm)
  */
 int PM_ReloadAnimForWeapon(int weapon)
 {
-	if (pm->skill[SK_LIGHT_WEAPONS] >= 2 && GetWeaponTableData(weapon)->isLightWeaponSupportingFastReload)
+	if (pm->skill[SK_LIGHT_WEAPONS] >= 2 && GetWeaponTableData(weapon)->attributs & WEAPON_ATTRIBUT_FAST_RELOAD)
 	{
 		return WEAP_RELOAD2;        // faster reload
 	}
@@ -604,7 +604,7 @@ static float PM_CmdScale(usercmd_t *cmd)
 	// full speed.  not completely realistic (well, sure, you can run faster with the weapon strapped to your
 	// back than in carry position) but more fun to play.  If it doesn't play well this way we'll bog down the
 	// player if the own the weapon at all.
-	if (GetWeaponTableData(pm->ps->weapon)->isHeavyWeapon && !GetWeaponTableData(pm->ps->weapon)->isMortarSet)
+	if (GetWeaponTableData(pm->ps->weapon)->skillBased == SK_HEAVY_WEAPONS && !CHECKBITWISE(GetWeaponTableData(pm->ps->weapon)->type, WEAPON_TYPE_MORTAR | WEAPON_TYPE_SET))
 	{
 		if (pm->ps->weapon == WP_FLAMETHROWER) // trying some different balance for the FT
 		{
@@ -3525,12 +3525,12 @@ static void PM_Weapon(void)
 		else if (pm->ps->eFlags & EF_PRONE)
 		{
 			BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, akimboFire ? ANIM_ET_FIREWEAPON2PRONE : ANIM_ET_FIREWEAPONPRONE,
-			                   GetWeaponTableData(pm->ps->weapon)->firingAuto, qtrue);
+			                   GetWeaponTableData(pm->ps->weapon)->firingMode & WEAPON_FIRING_MODE_AUTOMATIC, qtrue);
 		}
 		else
 		{
 			BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, akimboFire ? ANIM_ET_FIREWEAPON2 : ANIM_ET_FIREWEAPON,
-			                   GetWeaponTableData(pm->ps->weapon)->firingAuto, qtrue);
+			                   GetWeaponTableData(pm->ps->weapon)->firingMode & WEAPON_FIRING_MODE_AUTOMATIC, qtrue);
 		}
 	}
 
@@ -3588,7 +3588,7 @@ static void PM_Weapon(void)
 
 	// if this was the last round in the clip, play the 'lastshot' animation
 	// this animation has the weapon in a "ready to reload" state
-	if (GetWeaponTableData(pm->ps->weapon)->isAkimbo)
+	if (GetWeaponTableData(pm->ps->weapon)->attributs & WEAPON_ATTRIBUT_AKIMBO)
 	{
 		if (akimboFire)
 		{
@@ -3613,16 +3613,16 @@ static void PM_Weapon(void)
 
 	// weapon firing animation
 	// FG42 is exclude because the continue animation don't look great with it (no recoil, look stuck)
-	if (GetWeaponTableData(pm->ps->weapon)->firingAuto && pm->ps->weapon != WP_FG42 && pm->ps->weapon != WP_FG42SCOPE)
+	if ((GetWeaponTableData(pm->ps->weapon)->firingMode & WEAPON_FIRING_MODE_AUTOMATIC) && pm->ps->weapon != WP_FG42 && pm->ps->weapon != WP_FG42SCOPE)
 	{
 		PM_ContinueWeaponAnim(weapattackanim);
 	}
-	else if (!GetWeaponTableData(pm->ps->weapon)->isMortarSet)  // no animation for mortar set
+	else if (!CHECKBITWISE(GetWeaponTableData(pm->ps->weapon)->type, WEAPON_TYPE_MORTAR | WEAPON_TYPE_SET))  // no animation for mortar set
 	{
 		PM_StartWeaponAnim(weapattackanim);
 	}
 
-	if (GetWeaponTableData(pm->ps->weapon)->isAkimbo)
+	if (GetWeaponTableData(pm->ps->weapon)->attributs & WEAPON_ATTRIBUT_AKIMBO)
 	{
 		if (akimboFire)
 		{
@@ -3657,7 +3657,7 @@ static void PM_Weapon(void)
 	pm->pmext->weapRecoilPitch     = GetWeaponTableData(pm->ps->weapon)->weapRecoilPitch[0] * random() * GetWeaponTableData(pm->ps->weapon)->weapRecoilPitch[1];
 
 	// handle case depending of player skill and position for weapon recoil
-	if (GetWeaponTableData(pm->ps->weapon)->isScoped)
+	if (GetWeaponTableData(pm->ps->weapon)->type & WEAPON_TYPE_SCOPED)
 	{
 		if (pm->ps->weapon == WP_FG42SCOPE)
 		{
@@ -3678,7 +3678,7 @@ static void PM_Weapon(void)
 			}
 		}
 	}
-	else if (GetWeaponTableData(pm->ps->weapon)->isMG)
+	else if (CHECKBITWISE(GetWeaponTableData(pm->ps->weapon)->type, WEAPON_TYPE_MG | WEAPON_TYPE_SETTABLE))
 	{
 		if ((pm->ps->pm_flags & PMF_DUCKED) || (pm->ps->eFlags & EF_PRONE))
 		{
@@ -3686,7 +3686,7 @@ static void PM_Weapon(void)
 			pm->pmext->weapRecoilPitch = .45f * random() * .15f;
 		}
 	}
-	else if (GetWeaponTableData(pm->ps->weapon)->isPistol || GetWeaponTableData(pm->ps->weapon)->isSilencedPistol || GetWeaponTableData(pm->ps->weapon)->isAkimbo)
+	else if (GetWeaponTableData(pm->ps->weapon)->type & WEAPON_TYPE_PISTOL)
 	{
 		if (pm->skill[SK_LIGHT_WEAPONS] >= 3)
 		{
@@ -3697,7 +3697,7 @@ static void PM_Weapon(void)
 
 	// Aim Spread Scale handle
 	// add randomness
-	if (GetWeaponTableData(pm->ps->weapon)->isSMG || pm->ps->weapon == WP_STEN || pm->ps->weapon == WP_MP34)
+	if (GetWeaponTableData(pm->ps->weapon)->type & WEAPON_TYPE_SMG)
 	{
 		aimSpreadScaleAdd += rand() % 10;
 	}
@@ -3717,14 +3717,14 @@ static void PM_Weapon(void)
 
 	pm->ps->aimSpreadScale = (int)(pm->ps->aimSpreadScaleFloat);
 
-	if ((GetWeaponTableData(pm->ps->weapon)->isMG || GetWeaponTableData(pm->ps->weapon)->isMGSet))
+	if (GetWeaponTableData(pm->ps->weapon)->type & WEAPON_TYPE_MG)
 	{
 		if (weapattackanim == WEAP_ATTACK_LASTSHOT)
 		{
 			addTime = 0;
 		}
 	}
-	else if (GetWeaponTableData(pm->ps->weapon)->isAkimbo)
+	else if (GetWeaponTableData(pm->ps->weapon)->attributs & WEAPON_ATTRIBUT_AKIMBO)
 	{
 		// if you're firing an akimbo weapon, and your other gun is dry,
 		// nextshot needs to take 2x time

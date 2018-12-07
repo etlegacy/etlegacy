@@ -1387,7 +1387,7 @@ void CG_LimboPanel_SendSetupMsg(qboolean forceteam)
 	}
 	else
 	{
-		if (GetWeaponTableData(weap2)->isAkimbo)
+		if (GetWeaponTableData(weap2)->attributs & WEAPON_ATTRIBUT_AKIMBO)
 		{
 			CG_PriorityCenterPrint(va(CG_TranslateString("You will spawn as an %s %s with a %s and %s."), str, BG_ClassnameForNumber(CG_LimboPanel_GetClass()), GetWeaponTableData(weap1)->desc, GetWeaponTableData(weap2)->desc), 400, cg_fontScaleCP.value, -1);
 		}
@@ -3811,7 +3811,7 @@ qboolean CG_LimboPanel_RealWeaponIsDisabled(weapon_t weapon)
 	}
 
 	// never restrict normal weapons
-	if (!(GetWeaponTableData(weapon)->isHeavyWeapon || GetWeaponTableData(weapon)->isRifle))
+	if (!(GetWeaponTableData(weapon)->skillBased == SK_HEAVY_WEAPONS || GetWeaponTableData(weapon)->type & WEAPON_TYPE_RIFLENADE))
 	{
 		return qfalse;
 	}
@@ -3820,7 +3820,7 @@ qboolean CG_LimboPanel_RealWeaponIsDisabled(weapon_t weapon)
 	wcount = CG_LimboPanel_TeamCount(weapon);
 
 	// heavy weapon restriction
-	if (GetWeaponTableData(weapon)->isHeavyWeapon)
+	if (GetWeaponTableData(weapon)->skillBased == SK_HEAVY_WEAPONS)
 	{
 		if (wcount >= ceil(count * cgs.weaponRestrictions))
 		{
@@ -3828,19 +3828,19 @@ qboolean CG_LimboPanel_RealWeaponIsDisabled(weapon_t weapon)
 		}
 	}
 
-	if (GetWeaponTableData(weapon)->isPanzer)
+	if (GetWeaponTableData(weapon)->type & WEAPON_TYPE_PANZER)
 	{
 		maxCount = cg.maxPanzers;
 	}
-	else if (GetWeaponTableData(weapon)->isMortar || GetWeaponTableData(weapon)->isMortarSet)
+	else if (GetWeaponTableData(weapon)->type & WEAPON_TYPE_MORTAR)
 	{
 		maxCount = cg.maxMortars;
 	}
-	else if (GetWeaponTableData(weapon)->isMG || GetWeaponTableData(weapon)->isMGSet)
+	else if (GetWeaponTableData(weapon)->type & WEAPON_TYPE_MG)
 	{
 		maxCount = cg.maxMg42s;
 	}
-	else if (GetWeaponTableData(weapon)->isRifle || GetWeaponTableData(weapon)->isRiflenade)
+	else if (GetWeaponTableData(weapon)->type & (WEAPON_TYPE_RIFLE | WEAPON_TYPE_RIFLENADE))
 	{
 		maxCount = cg.maxRiflegrenades;
 	}

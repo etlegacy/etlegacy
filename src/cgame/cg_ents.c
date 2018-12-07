@@ -1035,7 +1035,7 @@ static void CG_Missile(centity_t *cent)
 	// add missile sound
 	if (weapon->missileSound)
 	{
-		if (GetWeaponTableData(cent->currentState.weapon)->isRiflenade)
+		if (GetWeaponTableData(cent->currentState.weapon)->type & WEAPON_TYPE_RIFLENADE)
 		{
 			if (!cent->currentState.effect1Time)
 			{
@@ -1169,8 +1169,8 @@ static void CG_Missile(centity_t *cent)
 	}
 
 	// convert direction of travel into axis
-	if (GetWeaponTableData(cent->currentState.weapon)->isExplosive
-	    && (GetWeaponTableData(cent->currentState.weapon)->isMortarSet      // TODO: once the the below FIXME solved, remove this
+	if (GetWeaponTableData(cent->currentState.weapon)->attributs & WEAPON_ATTRIBUT_EXPLOSIVE
+	    && (CHECKBITWISE(GetWeaponTableData(cent->currentState.weapon)->type, WEAPON_TYPE_MORTAR | WEAPON_TYPE_SET)      // TODO: once the the below FIXME solved, remove this
 	        || cent->currentState.weapon == WP_MAPMORTAR))                  // TODO: once the the below FIXME solved, remove this
 	// reverted to vanilla behaviour
 	// FIXME: check FEATURE_EDV weapon cam (see default case of switch)

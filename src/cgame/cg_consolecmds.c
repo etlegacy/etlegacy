@@ -1398,7 +1398,7 @@ static void CG_Class_f(void)
 	{
 		CG_PriorityCenterPrint(va(CG_TranslateString("You will spawn as an %s %s with a %s."), teamstring, BG_ClassnameForNumber(playerclass), GetWeaponTableData(weapon1)->desc), 400, cg_fontScaleCP.value, -1);
 	}
-	else if (GetWeaponTableData(weapon2)->isAkimbo)
+	else if (GetWeaponTableData(weapon2)->attributs & WEAPON_ATTRIBUT_AKIMBO)
 	{
 		CG_PriorityCenterPrint(va(CG_TranslateString("You will spawn as an %s %s with a %s and %s."), teamstring, BG_ClassnameForNumber(playerclass), GetWeaponTableData(weapon1)->desc, GetWeaponTableData(weapon2)->desc), 400, cg_fontScaleCP.value, -1);
 	}

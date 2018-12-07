@@ -4057,28 +4057,28 @@ int BG_MaxAmmoForWeapon(weapon_t weaponNum, const int *skill, int cls)
 {
 	int maxAmmo = GetWeaponTableData(weaponNum)->maxAmmo;
 
-	if (GetWeaponTableData(weaponNum)->isPistol || GetWeaponTableData(weaponNum)->isSilencedPistol || GetWeaponTableData(weaponNum)->isRifle || weaponNum == WP_STEN || weaponNum == WP_MP34)
+	if (GetWeaponTableData(weaponNum)->type & WEAPON_TYPE_PISTOL)
 	{
 		if (skill[SK_LIGHT_WEAPONS] >= 1)
 		{
 			maxAmmo += GetWeaponTableData(weaponNum)->maxClip;
 		}
 	}
-	else if (GetWeaponTableData(weaponNum)->isSMG)
+	else if (GetWeaponTableData(weaponNum)->type & WEAPON_TYPE_SMG)
 	{
 		if (skill[SK_LIGHT_WEAPONS] >= 1 || (cls == PC_MEDIC && skill[SK_FIRST_AID] >= 1))
 		{
 			maxAmmo += GetWeaponTableData(weaponNum)->maxClip;
 		}
 	}
-	else if (GetWeaponTableData(weaponNum)->isRiflenade)
+	else if (GetWeaponTableData(weaponNum)->type & WEAPON_TYPE_RIFLENADE)
 	{
 		if (skill[SK_EXPLOSIVES_AND_CONSTRUCTION] >= 1)
 		{
 			maxAmmo += 4;
 		}
 	}
-	else if (GetWeaponTableData(weaponNum)->isGrenade)
+	else if (GetWeaponTableData(weaponNum)->type & WEAPON_TYPE_GRENADE)
 	{
 		// FIXME: this is class dependant, not ammo table
 		maxAmmo = BG_GetPlayerClassInfo(GetWeaponTableData(weaponNum)->team, cls)->defaultGrenadeCount;
@@ -4117,9 +4117,9 @@ int BG_MaxAmmoForWeapon(weapon_t weaponNum, const int *skill, int cls)
 			maxAmmo += 2;
 		}
 	}
-	else if (GetWeaponTableData(GetWeaponTableData(weaponNum)->weapAlts)->isScoped || GetWeaponTableData(weaponNum)->isScoped)  // also received ammo when weapon is scoped
+	else if (GetWeaponTableData(weaponNum)->type & WEAPON_TYPE_RIFLE)  // also received ammo when weapon is scoped
 	{
-		if (skill[SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS] >= 1 || skill[SK_LIGHT_WEAPONS] >= 1)
+		if (skill[SK_LIGHT_WEAPONS] >= 1 || (skill[SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS] >= 1 && GetWeaponTableData(weaponNum)->type & (WEAPON_TYPE_SCOPED | WEAPON_TYPE_SCOPABLE)))
 		{
 			maxAmmo += GetWeaponTableData(weaponNum)->maxClip;
 		}

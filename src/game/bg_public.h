@@ -1019,7 +1019,7 @@ typedef enum
  */
 typedef enum weaponType_s
 {
-    WEAPON_TYPE_NONE      = 0,
+	WEAPON_TYPE_NONE      = 0,
 	WEAPON_TYPE_MELEE     = BIT(0),
 	WEAPON_TYPE_PISTOL    = BIT(1),
 	WEAPON_TYPE_SMG       = BIT(2),
@@ -1030,6 +1030,10 @@ typedef enum weaponType_s
 	WEAPON_TYPE_MG        = BIT(7),
 	WEAPON_TYPE_PANZER    = BIT(8),
 	WEAPON_TYPE_SYRINGUE  = BIT(9),
+	WEAPON_TYPE_SCOPABLE  = BIT(10),
+	WEAPON_TYPE_SCOPED    = BIT(11),
+	WEAPON_TYPE_SETTABLE  = BIT(12),
+	WEAPON_TYPE_SET       = BIT(13),
 
 } weaponType_t;
 
@@ -1040,7 +1044,7 @@ typedef enum weaponType_s
  */
 typedef enum weaponFiringMode_s
 {
-    WEAPON_FIRING_MODE_NONE           = 0,
+	WEAPON_FIRING_MODE_NONE           = 0,
 	WEAPON_FIRING_MODE_THROWABLE      = BIT(0),
 	WEAPON_FIRING_MODE_ONE_SHOT       = BIT(1),
 	WEAPON_FIRING_MODE_MANUAL         = BIT(2),
@@ -1056,21 +1060,17 @@ typedef enum weaponFiringMode_s
  */
 typedef enum weaponAttribut_s
 {
-    WEAPON_ATTRIBUT_NONE                = 0,
+	WEAPON_ATTRIBUT_NONE                = 0,
 	WEAPON_ATTRIBUT_EXPLOSIVE           = BIT(0),
-	WEAPON_ATTRIBUT_SCOPABLE            = BIT(1),
-	WEAPON_ATTRIBUT_SCOPED              = BIT(2),
-	WEAPON_ATTRIBUT_SILENCED            = BIT(3),
-	WEAPON_ATTRIBUT_SETTABLE            = BIT(4),
-	WEAPON_ATTRIBUT_SET                 = BIT(5),
-	WEAPON_ATTRIBUT_FAST_RELOAD         = BIT(6),
-	WEAPON_ATTRIBUT_AKIMBO              = BIT(7),
-	WEAPON_ATTRIBUT_FIRE_UNDERWATER     = BIT(8),
-	WEAPON_ATTRIBUT_NEVER_LOST_DESGUISE = BIT(9),
-	WEAPON_ATTRIBUT_KEEP_DESGUISE       = BIT(10),
-	WEAPON_ATTRIBUT_SHAKE               = BIT(11),
-	WEAPON_ATTRIBUT_GIB                 = BIT(12),
-	WEAPON_ATTRIBUT_CHARGE_TIME         = BIT(13)
+	WEAPON_ATTRIBUT_SILENCED            = BIT(1),
+	WEAPON_ATTRIBUT_FAST_RELOAD         = BIT(2),
+	WEAPON_ATTRIBUT_AKIMBO              = BIT(3),
+	WEAPON_ATTRIBUT_FIRE_UNDERWATER     = BIT(4),
+	WEAPON_ATTRIBUT_NEVER_LOST_DESGUISE = BIT(5),
+	WEAPON_ATTRIBUT_KEEP_DESGUISE       = BIT(6),
+	WEAPON_ATTRIBUT_SHAKE               = BIT(7),
+	WEAPON_ATTRIBUT_GIB                 = BIT(8),
+	WEAPON_ATTRIBUT_CHARGE_TIME         = BIT(9)
 
 } weaponAttribut_t;
 
@@ -1157,9 +1157,9 @@ typedef struct weapontable_s
 	int splashDamage;               ///< g -
 	int splashRadius;               ///< g -
 
-    int type;                       ///< bg -
-    int firingMode;                 ///< bg -
-    int attributs;                  ///< bg -
+	int type;                       ///< bg -
+	int firingMode;                 ///< bg -
+	int attributs;                  ///< bg -
 
 	qboolean noAmmoSound;           ///< cg -
 	qboolean noAmmoAutoSwitch;      ///< cg -

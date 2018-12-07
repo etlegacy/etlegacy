@@ -377,7 +377,7 @@ static void CG_ItemPickup(int itemNum)
 
 			// don't ever autoswitch to secondary fire weapons
 			// Leave autoswitch to secondary kar/carbine as they use alt ammo and arent zoomed: Note, not that it would do this anyway as it isnt in a bank....
-			if (!GetWeaponTableData(itemid)->isScoped && itemid != WP_AMMO)
+			if (!(GetWeaponTableData(itemid)->type & WEAPON_TYPE_SCOPED) && itemid != WP_AMMO)
 			{
 				// no weap currently selected, always just select the new one
 				if (!cg.weaponSelect)
@@ -2075,7 +2075,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 		break;
 	case EV_FILL_CLIP:
 		// IS_VALID_WEAPON(es->weapon) ?
-		if (cgs.clientinfo[cg.clientNum].skill[SK_LIGHT_WEAPONS] >= 2 && GetWeaponTableData(es->weapon)->isLightWeaponSupportingFastReload && cg_weapons[es->weapon].reloadFastSound)
+		if (cgs.clientinfo[cg.clientNum].skill[SK_LIGHT_WEAPONS] >= 2 && (GetWeaponTableData(es->weapon)->attributs & WEAPON_ATTRIBUT_FAST_RELOAD) && cg_weapons[es->weapon].reloadFastSound)
 		{
 			trap_S_StartSound(NULL, es->number, CHAN_WEAPON, cg_weapons[es->weapon].reloadFastSound);
 		}
@@ -2117,7 +2117,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 		{
 			// client will get this message if reloading while using an alternate weapon
 			// client should voluntarily switch back to primary at that point
-			if (GetWeaponTableData(es->weapon)->isScoped)
+			if (GetWeaponTableData(es->weapon)->type & WEAPON_TYPE_SCOPED)
 			{
 				CG_FinishWeaponChange(es->weapon, GetWeaponTableData(es->weapon)->weapAlts);
 			}
@@ -2229,7 +2229,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 
 		ByteToDir(es->eventParm, dir);
 		CG_MissileHitPlayer(cent, es->weapon, position, dir, es->otherEntityNum);
-		if (GetWeaponTableData(es->weapon)->isMortarSet)
+		if (CHECKBITWISE(GetWeaponTableData(es->weapon)->type, WEAPON_TYPE_MORTAR | WEAPON_TYPE_SET))
 		{
 			if (!es->legsAnim)
 			{
@@ -2257,7 +2257,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 
 		ByteToDir(es->eventParm, dir);
 		CG_MissileHitWall(es->weapon, PS_FX_NONE, position, dir, 0);         // modified to send missilehitwall surface parameters
-		if (GetWeaponTableData(es->weapon)->isMortarSet)
+		if (CHECKBITWISE(GetWeaponTableData(es->weapon)->type, WEAPON_TYPE_MORTAR | WEAPON_TYPE_SET))
 		{
 			if (!es->legsAnim)
 			{

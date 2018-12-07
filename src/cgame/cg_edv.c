@@ -255,7 +255,7 @@ void CG_EDV_WeaponCam(centity_t *cent, refEntity_t *ent)
 		return;
 	}
 
-	if ((demo_weaponcam.integer & DWC_PANZER) && GetWeaponTableData(cent->currentState.weapon)->isPanzer)
+	if ((demo_weaponcam.integer & DWC_PANZER) && GetWeaponTableData(cent->currentState.weapon)->type & WEAPON_TYPE_PANZER)
 	{
 		vec3_t delta;
 
@@ -271,7 +271,7 @@ void CG_EDV_WeaponCam(centity_t *cent, refEntity_t *ent)
 			trap_Cvar_Set("timescale", demo_autotimescale.string);
 		}
 	}
-	else if ((demo_weaponcam.integer & DWC_MORTAR) && GetWeaponTableData(cent->currentState.weapon)->isMortarSet)
+	else if ((demo_weaponcam.integer & DWC_MORTAR) && CHECKBITWISE(GetWeaponTableData(cent->currentState.weapon)->type, WEAPON_TYPE_MORTAR | WEAPON_TYPE_SET))
 	{
 		cgs.demoCamera.renderingWeaponCam = qtrue;
 
@@ -284,7 +284,7 @@ void CG_EDV_WeaponCam(centity_t *cent, refEntity_t *ent)
 		}
 
 	}
-	else if ((demo_weaponcam.integer & DWC_GRENADE) && (GetWeaponTableData(cent->currentState.weapon)->isGrenade || GetWeaponTableData(cent->currentState.weapon)->isRiflenade))
+	else if ((demo_weaponcam.integer & DWC_GRENADE) && (GetWeaponTableData(cent->currentState.weapon)->type & (WEAPON_TYPE_GRENADE | WEAPON_TYPE_RIFLENADE)))
 	{
 		cgs.demoCamera.renderingWeaponCam = qtrue;
 		// point camera in direction of travel (saved from cg_ents)
