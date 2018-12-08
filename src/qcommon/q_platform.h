@@ -344,21 +344,28 @@
 
 #ifdef __ANDROID__
 
-#define OS_STRING "android"
+#ifndef OS_STRING
+  #define OS_STRING "android"
+#endif
 #define ID_INLINE inline
 #define PATH_SEP '/'
 
 #if defined __arm__
   #if defined __ARM_ARCH_7A__
-    #if defined __ARM_NEON__
-      #define ARCH_STRING "armeabi_neon-v7a"
-    #else
+//    #if defined __ARM_NEON__
+//      #ifndef ARCH_STRING
+//        #define ARCH_STRING "armeabi_neon-v7a"
+//      #endif
+//    #else
+    #ifndef ARCH_STRING
       #define ARCH_STRING "armeabi-v7a"
     #endif
   #endif
 #elif defined __aarch64__
   #if defined __ARM_ARCH_ISA_A64
-    #define ARCH_STRING "arm64-v8a"
+    #ifndef ARCH_STRING
+      #define ARCH_STRING "arm64-v8a"
+    #endif
   #endif
 #endif
 
