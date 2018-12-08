@@ -157,8 +157,6 @@ static void SV_DemoCvarsRestore()
 			Cbuf_AddText(va("g_gametype %i\n", savedGametype)); // force gametype switching (NOTE: must be AFTER game_restart to work!)
 			savedGametype = -1;
 		}
-
-		Com_Printf("Demo changed CVARs restored.\n");
 	}
 }
 
@@ -229,7 +227,7 @@ static qboolean SV_CheckClientCommand(client_t *client, const char *cmd)
 }
 
 /**
- * @brief Check that the serverCommand is OK to save (or if we drop it because already handled somewhere else or it's unwanted to store)
+ * @brief Check that the serverCommand is OK to save (or if we drop it because already handled somewhere else)
  * @param[in] cmd
  * @return
  */
@@ -237,11 +235,7 @@ static qboolean SV_CheckServerCommand(const char *cmd)
 {
 	if (!Q_strncmp(cmd, "print", 5) || !Q_strncmp(cmd, "cp", 2) || !Q_strncmp(cmd, "disconnect", 10))
 	{
-		// If that's a print/cp command, it's already handled by gameCommand (here it's a redundancy).
-		// FIXME? possibly some print/cp are not handled by gameCommand? From my tests it was ok,
-		// but if someday a few prints are missing, try to delete this check...
-		// For security, we also drop disconnect (even if it should not be recorded anyway in the first place),
-		// because server commands will be sent to every connected clients, and so it will disconnect everyone.
+		// If that's a print/cp command, it's already handled by gameCommand (here it's a redundancy). FIXME? possibly some print/cp are not handled by gameCommand? From my tests it was ok, but if someday a few prints are missing, try to delete this check... For security, we also drop disconnect (even if it should not be recorded anyway in the first place), because server commands will be sent to every connected clients, and so it will disconnect everyone.
 		return qfalse; // we return false if the check wasn't right
 	}
 
@@ -921,7 +915,9 @@ static void SV_DemoPlaybackError(const char *message)
 
 	SV_DemoStopPlayback();
 
-	Com_Error(ERR_DROP, "SV_DemoPlaybackError: %s\n", message);
+#ifndef __ANDROID__
+	Com_Error(ERR_DROP, message); // This throws error: "format string is not a string literal (potentially insecure) [-Werror,-Wformat-security]"
+#endif
 }
 
 /**
@@ -1221,16 +1217,8 @@ static void SV_DemoStartPlayback(void)
 	Com_Memset(sv.demoPlayerStates, 0, sizeof(sv.demoPlayerStates));
 	Cvar_SetValue("sv_democlients", clients); // Note: we need SV_Startup() to NOT use SV_ChangeMaxClients for this to work without crashing when changing fs_game
 
-	// FIXME: omnibot - this bot stuff isn't tested well (but better than before)
-	// disable bots and ensure they don't connect again	
-	if (Cvar_Get("omnibot_enable", "0", 0)->integer > 0) // FIXME: and/or check for bot player count, omnibot_enable is latched !!!
-	{
-
-		Cbuf_ExecuteText(EXEC_NOW, "bot maxbots 0; bot kickall\n");
-		Cvar_SetValue("omnibot_enable", 0); // FIXME: restore value and bot players after demo play
-
-		Com_Printf("Bye bye omnibots - you are not allowed to view this demo.\n");
-	}
+	// FIXME: omnibot?
+	//Cvar_SetValue("bot_minplayers", 0); // if we have bots that autoconnect, this will make up for a very weird demo!
 
 	// Force all real clients already connected before the demo begins to be set to spectator team
 	for (i = sv_democlients->integer; i < sv_maxclients->integer; i++)
@@ -1322,8 +1310,7 @@ static void SV_DemoStartRecord(void)
 		{
 			// store client's userinfo (should be before clients configstrings since clients configstrings are derived from userinfo)
 			if (client->userinfo[0] != '\0')
-			{
-				// if player is connected and the configstring exists, we store it
+			{ // if player is connected and the configstring exists, we store it
 				SV_DemoWriteClientUserinfo(client, (const char *)client->userinfo);
 			}
 		}
@@ -1349,7 +1336,7 @@ static void SV_DemoStopRecord(void)
 	// End the demo
 	MSG_Init(&msg, buf, sizeof(buf));
 	MSG_WriteByte(&msg, demo_endDemo);
-	SV_DemoWriteMessage(&msg); // this also writes demo_EOF
+	SV_DemoWriteMessage(&msg);
 
 	FS_FCloseFile(sv.demoFile);
 	sv.demoState = DS_NONE;
@@ -1906,7 +1893,9 @@ read_next_demo_event: // used to read next demo event
 			    break;
 			*/
 			case -1: // no more chars in msg FIXME: inspect!
-				Com_DPrintf("SV_DemoReadFrame: no chars [%i %i:%i]", cmd, msg.readcount, msg.cursize);
+#ifndef __ANDROID__
+				Com_DPrintf((va("SV_DemoReadFrame: no chars [%i %i:%i]", cmd, msg.readcount, msg.cursize)));
+#endif
 				return;
 			case demo_endFrame:     // end of the frame - players and entities game status update: we commit every demo entity to the server, update the server time, then release the demo frame reading here to the next server (and demo) frame
 				Com_DPrintf(" END OF FRAME \n");
