@@ -538,7 +538,7 @@ static void ParseTriSurf(dsurface_t *ds, drawVert_t *verts, msurface_t *surf, in
 	tri->numVerts    = numVerts;
 	tri->numIndexes  = numIndexes;
 	tri->verts       = ( drawVert_t * )(tri + 1);
-	tri->indexes     = ( short * )(tri->verts + tri->numVerts);
+	tri->indexes     = ( int * )(tri->verts + tri->numVerts);
 
 	surf->data = (surfaceType_t *)tri;
 
