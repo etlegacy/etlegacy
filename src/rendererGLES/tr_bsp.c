@@ -538,7 +538,7 @@ static void ParseTriSurf(dsurface_t *ds, drawVert_t *verts, msurface_t *surf, in
 	tri->numVerts    = numVerts;
 	tri->numIndexes  = numIndexes;
 	tri->verts       = ( drawVert_t * )(tri + 1);
-	tri->indexes     = ( short * )(tri->verts + tri->numVerts);
+	tri->indexes     = ( int * )(tri->verts + tri->numVerts);
 
 	surf->data = (surfaceType_t *)tri;
 
@@ -628,7 +628,7 @@ static void ParseFoliage(dsurface_t *ds, drawVert_t *verts, msurface_t *surf, in
 	foliage->normal       = ( vec4_t * )(foliage->xyz + foliage->numVerts);
 	foliage->texCoords    = ( vec2_t * )(foliage->normal + foliage->numVerts);
 	foliage->lmTexCoords  = ( vec2_t * )(foliage->texCoords + foliage->numVerts);
-	foliage->indexes      = ( unsigned int * )(foliage->lmTexCoords + foliage->numVerts);
+	foliage->indexes      = ( glIndex_t * )(foliage->lmTexCoords + foliage->numVerts);
 	foliage->instances    = ( foliageInstance_t * )(foliage->indexes + foliage->numIndexes);
 
 	surf->data = (surfaceType_t *) foliage;
