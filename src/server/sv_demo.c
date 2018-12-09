@@ -915,11 +915,7 @@ static void SV_DemoPlaybackError(const char *message)
 
 	SV_DemoStopPlayback();
 
-#ifndef __ANDROID__
-	Com_Error(ERR_DROP, message);
-#else
 	Com_Error(ERR_DROP, "%s", message);
-#endif
 }
 
 /**
@@ -1895,11 +1891,7 @@ read_next_demo_event: // used to read next demo event
 			    break;
 			*/
 			case -1: // no more chars in msg FIXME: inspect!
-#ifndef __ANDROID__
-				Com_DPrintf((va("SV_DemoReadFrame: no chars [%i %i:%i]", cmd, msg.readcount, msg.cursize)));
-#else
-				Com_DPrintf("%s", (va("SV_DemoReadFrame: no chars [%i %i:%i]", cmd, msg.readcount, msg.cursize)));
-#endif
+				Com_DPrintf("%s, %i, %i:%i", "SV_DemoReadFrame: no chars ", cmd, msg.readcount, msg.cursize);
 				return;
 			case demo_endFrame:     // end of the frame - players and entities game status update: we commit every demo entity to the server, update the server time, then release the demo frame reading here to the next server (and demo) frame
 				Com_DPrintf(" END OF FRAME \n");
