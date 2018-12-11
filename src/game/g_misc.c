@@ -2809,7 +2809,7 @@ void G_PreFilledMissileEntity(gentity_t *ent, int weaponNum, int realWeapon, int
 	ent->splashRadius        = GetWeaponTableData(realWeapon)->splashRadius;  // blast radius proportional to damage for ALL weapons
 
 	// state
-	ent->s.weapon    = weaponNum;   //realWeapon;
+	ent->s.weapon    = realWeapon;
 	ent->s.teamNum   = teamNum;
 	ent->s.clientNum = clientNum;
 
@@ -2821,17 +2821,17 @@ void G_PreFilledMissileEntity(gentity_t *ent, int weaponNum, int realWeapon, int
 	//
 
 	// generic
-	ent->nextthink  = GetWeaponFireTableData(weaponNum)->nextThink ? level.time + GetWeaponFireTableData(weaponNum)->nextThink : 0;
-	ent->clipmask   = GetWeaponFireTableData(weaponNum)->clipMask;
-	ent->accuracy   = GetWeaponFireTableData(weaponNum)->accuracy;
-	ent->health     = GetWeaponFireTableData(weaponNum)->health;
-	ent->timestamp  = GetWeaponFireTableData(weaponNum)->timeStamp ? level.time + GetWeaponFireTableData(weaponNum)->timeStamp : 0;
+	ent->nextthink = GetWeaponFireTableData(weaponNum)->nextThink ? level.time + GetWeaponFireTableData(weaponNum)->nextThink : 0;
+	ent->clipmask  = GetWeaponFireTableData(weaponNum)->clipMask;
+	ent->accuracy  = GetWeaponFireTableData(weaponNum)->accuracy;
+	ent->health    = GetWeaponFireTableData(weaponNum)->health;
+	ent->timestamp = GetWeaponFireTableData(weaponNum)->timeStamp ? level.time + GetWeaponFireTableData(weaponNum)->timeStamp : 0;
 
 	// state
-	ent->s.eFlags      = GetWeaponFireTableData(weaponNum)->eFlags;
-	ent->s.pos.trType  = GetWeaponFireTableData(weaponNum)->trType;
-	ent->s.pos.trTime  = GetWeaponFireTableData(weaponNum)->trTime ? level.time + GetWeaponFireTableData(weaponNum)->trTime : 0;          // move a bit on the very first frame
-	ent->s.eType       = GetWeaponFireTableData(weaponNum)->eType;
+	ent->s.eFlags     = GetWeaponFireTableData(weaponNum)->eFlags;
+	ent->s.pos.trType = GetWeaponFireTableData(weaponNum)->trType;
+	ent->s.pos.trTime = GetWeaponFireTableData(weaponNum)->trTime ? level.time + GetWeaponFireTableData(weaponNum)->trTime : 0;           // move a bit on the very first frame
+	ent->s.eType      = GetWeaponFireTableData(weaponNum)->eType;
 
 	// shared
 	ent->r.svFlags  = GetWeaponFireTableData(weaponNum)->svFlags;
