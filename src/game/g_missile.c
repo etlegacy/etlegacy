@@ -53,7 +53,7 @@ void G_BounceMissile(gentity_t *ent, trace_t *trace)
 	gentity_t *ground;
 
 	// boom after 750 msecs
-	if (GetWeaponTableData(ent->s.weapon)->isRiflenade)
+	if (GetWeaponTableData(ent->s.weapon)->type & WEAPON_TYPE_RIFLENADE)
 	{
 		ent->s.effect1Time = qtrue; // has bounced
 
@@ -134,7 +134,7 @@ void G_BounceMissile(gentity_t *ent, trace_t *trace)
 
 			G_SetOrigin(ent, trace->endpos);
 			ent->s.time = level.time; // final rotation value
-			if (GetWeaponTableData(ent->s.weapon)->isRiflenade)
+			if (GetWeaponTableData(ent->s.weapon)->type & WEAPON_TYPE_RIFLENADE)
 			{
 				// explode one 750msecs after launchtime
 				ent->nextthink = level.time + (750 - (level.time + 4000 - ent->nextthink));
@@ -253,7 +253,7 @@ void G_MissileImpact(gentity_t *ent, trace_t *trace, int impactDamage)
 	temp->s.weapon    = ent->s.weapon;
 	temp->s.clientNum = ent->r.ownerNum;
 
-	if (GetWeaponTableData(ent->s.weapon)->isMortarSet)
+	if (CHECKBITWISE(GetWeaponTableData(ent->s.weapon)->type, WEAPON_TYPE_MORTAR | WEAPON_TYPE_SET))
 	{
 		temp->s.legsAnim = ent->s.legsAnim; // need this one as well
 		temp->r.svFlags |= SVF_BROADCAST;
@@ -424,7 +424,7 @@ void G_ExplodeMissile(gentity_t *ent)
 		}
 
 		// give big weapons the shakey shakey
-		if (GetWeaponTableData(ent->s.weapon)->shakeEffect)
+		if (GetWeaponTableData(ent->s.weapon)->attributs & WEAPON_ATTRIBUT_SHAKE)
 		{
 			gentity_t *tent;
 
@@ -490,7 +490,7 @@ void G_RunMissile(gentity_t *ent)
 	BG_EvaluateTrajectory(&ent->s.pos, level.time, origin, qfalse, ent->s.effect2Time);
 
 	// ignore body
-	if ((ent->clipmask & CONTENTS_BODY) && (GetWeaponTableData(ent->s.weapon)->isThrowable || ent->s.weapon == WP_ARTY))
+	if ((ent->clipmask & CONTENTS_BODY) && ((GetWeaponTableData(ent->s.weapon)->firingMode & WEAPON_FIRING_MODE_THROWABLE) || ent->s.weapon == WP_ARTY))
 	{
 		if (ent->s.pos.trDelta[0] == 0.f && ent->s.pos.trDelta[1] == 0.f && ent->s.pos.trDelta[2] == 0.f)
 		{
@@ -499,9 +499,8 @@ void G_RunMissile(gentity_t *ent)
 	}
 
 	if (level.tracemapLoaded &&
-	    (GetWeaponTableData(ent->s.weapon)->isMortarSet
-	     || GetWeaponTableData(ent->s.weapon)->isRiflenade
-	     || GetWeaponTableData(ent->s.weapon)->isGrenade))
+	    (CHECKBITWISE(GetWeaponTableData(ent->s.weapon)->type, WEAPON_TYPE_MORTAR | WEAPON_TYPE_SET)
+	     || (GetWeaponTableData(ent->s.weapon)->type & (WEAPON_TYPE_GRENADE | WEAPON_TYPE_RIFLENADE))))
 	{
 		if (ent->count)
 		{
@@ -579,7 +578,7 @@ void G_RunMissile(gentity_t *ent)
 	// ignoring interactions with the missile owner
 	trap_Trace(&tr, ent->r.currentOrigin, ent->r.mins, ent->r.maxs, origin, ent->r.ownerNum, ent->clipmask);
 
-	if (GetWeaponTableData(ent->s.weapon)->isMortarSet && ent->count2 == 1)
+	if (CHECKBITWISE(GetWeaponTableData(ent->s.weapon)->type, WEAPON_TYPE_MORTAR | WEAPON_TYPE_SET) && ent->count2 == 1)
 	{
 		if (ent->r.currentOrigin[2] > origin[2] && origin[2] - BG_GetGroundHeightAtPoint(origin) < 512)
 		{
@@ -633,9 +632,8 @@ void G_RunMissile(gentity_t *ent)
 		int impactDamage;
 
 		if (level.tracemapLoaded &&
-		    (GetWeaponTableData(ent->s.weapon)->isMortarSet
-		     || GetWeaponTableData(ent->s.weapon)->isRiflenade
-		     || GetWeaponTableData(ent->s.weapon)->isGrenade)
+		    (CHECKBITWISE(GetWeaponTableData(ent->s.weapon)->type, WEAPON_TYPE_MORTAR | WEAPON_TYPE_SET)
+		     || (GetWeaponTableData(ent->s.weapon)->type & (WEAPON_TYPE_GRENADE | WEAPON_TYPE_RIFLENADE)))
 		    && (tr.surfaceFlags & SURF_SKY))
 		{
 			// goes through sky
@@ -644,7 +642,8 @@ void G_RunMissile(gentity_t *ent)
 			G_RunThink(ent);
 			return; // keep flying
 		}
-		else if (tr.surfaceFlags & SURF_NOIMPACT) // never explode or bounce on sky
+
+		if (tr.surfaceFlags & SURF_NOIMPACT) // never explode or bounce on sky
 		{
 			G_FreeEntity(ent);
 			return;
@@ -652,7 +651,8 @@ void G_RunMissile(gentity_t *ent)
 
 		//      G_SetOrigin( ent, tr.endpos );
 
-		if (GetWeaponTableData(ent->s.weapon)->isPanzer || GetWeaponTableData(ent->s.weapon)->isMortarSet)
+		if (GetWeaponTableData(ent->s.weapon)->type & WEAPON_TYPE_PANZER
+		    || CHECKBITWISE(GetWeaponTableData(ent->s.weapon)->type, WEAPON_TYPE_MORTAR | WEAPON_TYPE_SET))
 		{
 			impactDamage = 999; // goes through pretty much any func_explosives
 		}

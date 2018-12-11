@@ -856,12 +856,7 @@ qboolean G_EmplacedGunIsMountable(gentity_t *ent, gentity_t *other)
 		return qfalse;
 	}
 
-	if (GetWeaponTableData(other->client->ps.weapon)->isScoped)
-	{
-		return qfalse;
-	}
-
-	if (GetWeaponTableData(other->client->ps.weapon)->isSetWeapon)
+	if (GetWeaponTableData(other->client->ps.weapon)->type & (WEAPON_TYPE_SCOPED | WEAPON_TYPE_SET))
 	{
 		return qfalse;
 	}
@@ -932,7 +927,7 @@ qboolean G_EmplacedGunIsRepairable(gentity_t *ent, gentity_t *other)
 		return qfalse;
 	}
 
-	if (GetWeaponTableData(other->client->ps.weapon)->isScoped)
+	if (GetWeaponTableData(other->client->ps.weapon)->type & (WEAPON_TYPE_SCOPED | WEAPON_TYPE_SET))
 	{
 		return qfalse;
 	}

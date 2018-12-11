@@ -559,13 +559,13 @@ void Use_Shooter(gentity_t *ent, gentity_t *other, gentity_t *activator)
 
 	VectorNormalize(dir);
 
-	if (GetWeaponTableData(ent->s.weapon)->isGrenade)
+	if (GetWeaponTableData(ent->s.weapon)->type & WEAPON_TYPE_GRENADE)
 	{
 		VectorScale(dir, 700, dir);                   // had to add this as fire_grenade now expects a non-normalized direction vector
 		                                              // FIXME: why we do normalize the vector before this switch? See comment of fire_grenade
 		fire_missile(ent, ent->s.origin, dir, ent->s.weapon);
 	}
-	else if (GetWeaponTableData(ent->s.weapon)->isPanzer)
+	else if (GetWeaponTableData(ent->s.weapon)->type & WEAPON_TYPE_PANZER)
 	{
 		VectorNormalize(dir);
 		VectorScale(dir, 5000, dir);

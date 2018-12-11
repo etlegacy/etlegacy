@@ -1707,7 +1707,7 @@ qboolean G_IsWeaponDisabled(gentity_t *ent, weapon_t weapon)
 		return qtrue;
 	}
 
-	if (!(GetWeaponTableData(weapon)->isHeavyWeapon || GetWeaponTableData(weapon)->isRifle))
+	if (!(GetWeaponTableData(weapon)->skillBased == SK_HEAVY_WEAPONS || GetWeaponTableData(weapon)->type & WEAPON_TYPE_RIFLE))
 	{
 		return qfalse;
 	}
@@ -1716,28 +1716,28 @@ qboolean G_IsWeaponDisabled(gentity_t *ent, weapon_t weapon)
 	weaponCount = G_TeamCount(ent, weapon);
 
 	// total percentage restriction
-	if (GetWeaponTableData(weapon)->isHeavyWeapon && weaponCount >= ceil(playerCount * g_heavyWeaponRestriction.integer * 0.01))
+	if (GetWeaponTableData(weapon)->skillBased == SK_HEAVY_WEAPONS && weaponCount >= ceil(playerCount * g_heavyWeaponRestriction.integer * 0.01))
 	{
 		return qtrue;
 	}
 
 	// single weapon restrictions
-	if (GetWeaponTableData(weapon)->isPanzer)
+	if (GetWeaponTableData(weapon)->type & WEAPON_TYPE_PANZER)
 	{
 		maxCount     = team_maxPanzers.integer;
 		weaponString = team_maxPanzers.string;
 	}
-	else if (GetWeaponTableData(weapon)->isMG || GetWeaponTableData(weapon)->isMGSet)
+	else if (GetWeaponTableData(weapon)->type & WEAPON_TYPE_MG)
 	{
 		maxCount     = team_maxMg42s.integer;
 		weaponString = team_maxMg42s.string;
 	}
-	else if (GetWeaponTableData(weapon)->isMortar || GetWeaponTableData(weapon)->isMortarSet)
+	else if (GetWeaponTableData(weapon)->type & WEAPON_TYPE_MORTAR)
 	{
 		maxCount     = team_maxMortars.integer;
 		weaponString = team_maxMortars.string;
 	}
-	else if (GetWeaponTableData(weapon)->isRifle || GetWeaponTableData(weapon)->isRiflenade)
+	else if (GetWeaponTableData(weapon)->type & (WEAPON_TYPE_RIFLE | WEAPON_TYPE_RIFLENADE))
 	{
 		maxCount     = team_maxRiflegrenades.integer;
 		weaponString = team_maxRiflegrenades.string;
@@ -3548,7 +3548,7 @@ qboolean G_TankIsMountable(gentity_t *ent, gentity_t *other)
 		return qfalse;
 	}
 
-	if (GetWeaponTableData(other->client->ps.weapon)->isSetWeapon)
+	if (GetWeaponTableData(other->client->ps.weapon)->type & WEAPON_TYPE_SET)
 	{
 		return qfalse;
 	}
@@ -3859,7 +3859,7 @@ void Cmd_Activate_f(gentity_t *ent)
 		return;
 	}
 
-	if (GetWeaponTableData(ent->s.weapon)->isSetWeapon)
+	if (GetWeaponTableData(ent->s.weapon)->type & WEAPON_TYPE_SET)
 	{
 		return;
 	}
@@ -4052,7 +4052,7 @@ void Cmd_Activate2_f(gentity_t *ent)
 		return;
 	}
 
-	if (GetWeaponTableData(ent->s.weapon)->isSetWeapon)
+	if (GetWeaponTableData(ent->s.weapon)->type & WEAPON_TYPE_SET)
 	{
 		return;
 	}

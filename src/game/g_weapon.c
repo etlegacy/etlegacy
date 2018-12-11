@@ -3214,7 +3214,7 @@ void EmitterCheck(gentity_t *ent, gentity_t *attacker, trace_t *tr)
  */
 void Bullet_Endpos(gentity_t *ent, float spread, vec3_t *end)
 {
-	if (GetWeaponTableData(ent->s.weapon)->isScoped)
+	if (GetWeaponTableData(ent->s.weapon)->type & WEAPON_TYPE_SCOPED)
 	{
 		// aim dir already accounted for sway of scoped weapons in CalcMuzzlePoints()
 		VectorMA(muzzleTrace, 2 * MAX_TRACE, forward, *end);
@@ -3260,14 +3260,14 @@ gentity_t *Bullet_Fire(gentity_t *ent)
 		aimSpreadScale = 2.f;
 	}
 
-	if (GetWeaponTableData(ent->s.weapon)->isRifle || GetWeaponTableData(ent->s.weapon)->isRifleWithScope)
+	if (GetWeaponTableData(ent->s.weapon)->type & WEAPON_TYPE_RIFLE)
 	{
 		aimSpreadScale = 1.f;
 	}
 
 	spread *= aimSpreadScale;
 
-	if (GetWeaponTableData(ent->s.weapon)->isLightWeapon)
+	if (GetWeaponTableData(ent->s.weapon)->skillBased == SK_LIGHT_WEAPONS)
 	{
 		// increase in accuracy (spread reduction) at level 3
 		if (ent->client->sess.skill[SK_LIGHT_WEAPONS] >= 3)
@@ -3275,13 +3275,16 @@ gentity_t *Bullet_Fire(gentity_t *ent)
 			spread *= .65f;
 		}
 	}
-	else if (GetWeaponTableData(ent->s.weapon)->isMGSet)
+	else if (GetWeaponTableData(ent->s.weapon)->type & WEAPON_TYPE_MG)
 	{
-		spread *= .05f;
-	}
-	else if (GetWeaponTableData(ent->s.weapon)->isMG && ((ent->client->ps.pm_flags & PMF_DUCKED) || (ent->client->ps.eFlags & EF_PRONE)))
-	{
-		spread *= .6f;
+        if ((GetWeaponTableData(ent->s.weapon)->type & WEAPON_TYPE_SETTABLE) && ((ent->client->ps.pm_flags & PMF_DUCKED) || (ent->client->ps.eFlags & EF_PRONE)))
+        {
+            spread *= .6f;
+        }
+        else
+        {
+            spread *= .05f;   
+        }
 	}
 
 	Bullet_Endpos(ent, spread, &end);
@@ -3325,7 +3328,7 @@ qboolean Bullet_Fire_Extended(gentity_t *source, gentity_t *attacker, vec3_t sta
 		waslinked                               = qtrue;
 	}
 
-	G_Trace(source, &tr, start, NULL, NULL, end, source->s.number, MASK_SHOT, !GetWeaponTableData(attacker->s.weapon)->canGib);
+	G_Trace(source, &tr, start, NULL, NULL, end, source->s.number, MASK_SHOT, !GetWeaponTableData(attacker->s.weapon)->splashDamage);
 
 	// prevent shooting ourselves in the head when prone, firing through a breakable
 	if (waslinked == qtrue)
@@ -3433,7 +3436,7 @@ qboolean Bullet_Fire_Extended(gentity_t *source, gentity_t *attacker, vec3_t sta
 
 		tent = G_TempEntity(tr.endpos, EV_BULLET_HIT_WALL);
 
-		G_Trace(source, &tr2, start, NULL, NULL, end, source->s.number, MASK_WATER | MASK_SHOT, !GetWeaponTableData(attacker->s.weapon)->canGib);
+		G_Trace(source, &tr2, start, NULL, NULL, end, source->s.number, MASK_WATER | MASK_SHOT, !GetWeaponTableData(attacker->s.weapon)->splashDamage);
 
 		if ((tr.entityNum != tr2.entityNum && tr2.fraction != 1.f))
 		{
@@ -3613,7 +3616,7 @@ gentity_t *weapon_grenadelauncher_fire(gentity_t *ent)
 		upangle = .1f;
 	}
 
-	if (GetWeaponTableData(ent->s.weapon)->isGrenade || ent->s.weapon == WP_SMOKE_MARKER || ent->s.weapon == WP_SMOKE_BOMB)
+	if ((GetWeaponTableData(ent->s.weapon)->type & WEAPON_TYPE_GRENADE) || ent->s.weapon == WP_SMOKE_MARKER || ent->s.weapon == WP_SMOKE_BOMB)
 	{
 		upangle *= 900;
 	}
@@ -3954,7 +3957,7 @@ void CalcMuzzlePoints(gentity_t *ent, int weapon)
 
 	// non ai's take into account scoped weapon 'sway' (just another way aimspread is visualized/utilized)
 
-	if (GetWeaponTableData(weapon)->isScoped)
+	if (GetWeaponTableData(weapon)->type & WEAPON_TYPE_SCOPED)
 	{
 		float pitchMinAmp, yawMinAmp, phase;
 
@@ -4144,9 +4147,9 @@ void FireWeapon(gentity_t *ent)
 	// covert ops disguise handling
 	if (ent->client->ps.powerups[PW_OPS_DISGUISED])
 	{
-		if (!GetWeaponTableData(ent->s.weapon)->neverLoseDisguise)
+		if (!(GetWeaponTableData(ent->s.weapon)->attributs & WEAPON_ATTRIBUT_NEVER_LOST_DESGUISE))
 		{
-			if (!GetWeaponTableData(ent->s.weapon)->keepDisguise || G_PlayerCanBeSeenByOthers(ent))
+			if (!(GetWeaponTableData(ent->s.weapon)->attributs & WEAPON_ATTRIBUT_KEEP_DESGUISE) || G_PlayerCanBeSeenByOthers(ent))
 			{
 				ent->client->ps.powerups[PW_OPS_DISGUISED] = 0;
 				ent->client->disguiseClientNum             = -1;

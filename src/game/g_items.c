@@ -133,7 +133,7 @@ int Add_Ammo(gentity_t *ent, weapon_t weapon, int count, qboolean fillClip)
 	int      maxammo       = BG_MaxAmmoForWeapon(ammoweap, ent->client->sess.skill, ent->client->ps.stats[STAT_PLAYER_CLASS]);
 	int      originalCount = ent->client->ps.ammo[ammoweap];
 
-	if (GetWeaponTableData(ammoweap)->isGrenade || ammoweap == WP_DYNAMITE || ammoweap == WP_SATCHEL_DET) // make sure if he picks it up that he get's the "launcher" too
+	if (GetWeaponTableData(ammoweap)->type & WEAPON_TYPE_GRENADE || ammoweap == WP_DYNAMITE || ammoweap == WP_SATCHEL_DET) // make sure if he picks it up that he get's the "launcher" too
 	{
 		COM_BitSet(ent->client->ps.weapons, ammoweap);
 		fillClip = qtrue;   // always filter into the "clip"
@@ -189,27 +189,12 @@ weapon_t G_GetPrimaryWeaponForClient(gclient_t *client)
 		return WP_NONE;
 	}
 
-	if (COM_BitCheck(client->ps.weapons, WP_THOMPSON))
-	{
-		return WP_THOMPSON;
-	}
-
-	if (COM_BitCheck(client->ps.weapons, WP_MP40))
-	{
-		return WP_MP40;
-	}
-
 	for (team = TEAM_AXIS; team <= TEAM_ALLIES; team++)
 	{
 		bg_playerclass_t *classInfo = GetPlayerClassesData(team, client->sess.playerType);
 
 		for (i = 0; i < MAX_WEAPS_PER_CLASS; i++)
 		{
-			if (GetWeaponTableData(classInfo->classPrimaryWeapons[i].weapon)->isSMG)
-			{
-				continue;
-			}
-
 			if (COM_BitCheck(client->ps.weapons, classInfo->classPrimaryWeapons[i].weapon))
 			{
 				return classInfo->classPrimaryWeapons[i].weapon;
@@ -301,17 +286,6 @@ weapon_t G_GetPrimaryWeaponForClientSoldier(weapon_t weapon, gclient_t *client)
 	    COM_BitCheck(client->ps.weapons, WP_MORTAR) ||
 	    COM_BitCheck(client->ps.weapons, WP_MORTAR2))
 	{
-		// if weapons are SMS & HW, return SMS if picking up SMS
-		if (COM_BitCheck(client->ps.weapons, WP_MP40) && weapon == WP_THOMPSON)
-		{
-			return WP_MP40;
-		}
-
-		if (COM_BitCheck(client->ps.weapons, WP_THOMPSON) && weapon == WP_MP40)
-		{
-			return WP_THOMPSON;
-		}
-
 		for (team = TEAM_AXIS; team <= TEAM_ALLIES; team++)
 		{
 			// if weapons are SMS & HW, return HW if picking up HW
@@ -319,11 +293,6 @@ weapon_t G_GetPrimaryWeaponForClientSoldier(weapon_t weapon, gclient_t *client)
 
 			for (i = 0; i < MAX_WEAPS_PER_CLASS; i++)
 			{
-				if (GetWeaponTableData(classInfo->classPrimaryWeapons[i].weapon)->isSMG)
-				{
-					continue;
-				}
-
 				if (COM_BitCheck(client->ps.weapons, classInfo->classPrimaryWeapons[i].weapon))
 				{
 					return classInfo->classPrimaryWeapons[i].weapon;
@@ -405,7 +374,7 @@ void G_DropWeapon(gentity_t *ent, weapon_t weapon)
 	{
 		weapon_t weapAlts = GetWeaponTableData(weapon)->weapAlts;
 
-		if (GetWeaponTableData(weapAlts)->isRiflenade || GetWeaponTableData(weapAlts)->isScoped || GetWeaponTableData(weapAlts)->isSetWeapon)
+		if (GetWeaponTableData(weapAlts)->type & (WEAPON_TYPE_RIFLENADE | WEAPON_TYPE_SCOPED | WEAPON_TYPE_SET))
 		{
 			COM_BitClear(client->ps.weapons, weapAlts);
 		}
@@ -539,7 +508,7 @@ int Pickup_Weapon(gentity_t *ent, gentity_t *other)
 		}
 
 		// don't pick up when MG or mortar is set
-		if (GetWeaponTableData(other->client->ps.weapon)->isSetWeapon)
+		if (GetWeaponTableData(other->client->ps.weapon)->type & WEAPON_TYPE_SET)
 		{
 			return 0;
 		}
@@ -575,7 +544,7 @@ int Pickup_Weapon(gentity_t *ent, gentity_t *other)
 				{
 					weapon_t weapAlts = GetWeaponTableData(ent->item->giWeapon)->weapAlts;
 
-					if (GetWeaponTableData(weapAlts)->isRiflenade || GetWeaponTableData(weapAlts)->isScoped || GetWeaponTableData(weapAlts)->isSetWeapon)
+					if (GetWeaponTableData(weapAlts)->type & (WEAPON_TYPE_RIFLENADE | WEAPON_TYPE_SCOPED | WEAPON_TYPE_SET))
 					{
 						COM_BitSet(other->client->ps.weapons, weapAlts);
 					}
@@ -584,7 +553,7 @@ int Pickup_Weapon(gentity_t *ent, gentity_t *other)
 				other->client->ps.ammoclip[GetWeaponTableData(ent->item->giWeapon)->clipIndex] = 0;
 				other->client->ps.ammo[GetWeaponTableData(ent->item->giWeapon)->ammoIndex]     = 0;
 
-				if (GetWeaponTableData(ent->item->giWeapon)->isMortar)
+				if (GetWeaponTableData(ent->item->giWeapon)->type & WEAPON_TYPE_MORTAR)
 				{
 					other->client->ps.ammo[GetWeaponTableData(ent->item->giWeapon)->clipIndex] = quantity;
 
