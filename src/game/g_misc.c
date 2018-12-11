@@ -2795,8 +2795,6 @@ qboolean G_FlingClient(gentity_t *vic, int flingType)
  */
 void G_PreFilledMissileEntity(gentity_t *ent, int weaponNum, int realWeapon, int ownerNum, team_t teamNum, int clientNum, gentity_t *parent, const vec3_t start, const vec3_t dir)
 {
-	weapon_t ammoIndex = GetWeaponTableData(weaponNum)->ammoIndex;
-
 	//
 	// weapon depend
 	//
@@ -2811,7 +2809,7 @@ void G_PreFilledMissileEntity(gentity_t *ent, int weaponNum, int realWeapon, int
 	ent->splashRadius        = GetWeaponTableData(realWeapon)->splashRadius;  // blast radius proportional to damage for ALL weapons
 
 	// state
-	ent->s.weapon    = ammoIndex;   //realWeapon;
+	ent->s.weapon    = weaponNum;   //realWeapon;
 	ent->s.teamNum   = teamNum;
 	ent->s.clientNum = clientNum;
 
@@ -2823,28 +2821,28 @@ void G_PreFilledMissileEntity(gentity_t *ent, int weaponNum, int realWeapon, int
 	//
 
 	// generic
-	ent->nextthink  = GetWeaponFireTableData(ammoIndex)->nextThink ? level.time + GetWeaponFireTableData(ammoIndex)->nextThink : 0;
-	ent->clipmask   = GetWeaponFireTableData(ammoIndex)->clipMask;
-	ent->accuracy   = GetWeaponFireTableData(ammoIndex)->accuracy;
-	ent->health     = GetWeaponFireTableData(ammoIndex)->health;
-	ent->timestamp  = GetWeaponFireTableData(ammoIndex)->timeStamp ? level.time + GetWeaponFireTableData(ammoIndex)->timeStamp : 0;
+	ent->nextthink  = GetWeaponFireTableData(weaponNum)->nextThink ? level.time + GetWeaponFireTableData(weaponNum)->nextThink : 0;
+	ent->clipmask   = GetWeaponFireTableData(weaponNum)->clipMask;
+	ent->accuracy   = GetWeaponFireTableData(weaponNum)->accuracy;
+	ent->health     = GetWeaponFireTableData(weaponNum)->health;
+	ent->timestamp  = GetWeaponFireTableData(weaponNum)->timeStamp ? level.time + GetWeaponFireTableData(weaponNum)->timeStamp : 0;
 
 	// state
-	ent->s.eFlags      = GetWeaponFireTableData(ammoIndex)->eFlags;
-	ent->s.pos.trType  = GetWeaponFireTableData(ammoIndex)->trType;
-	ent->s.pos.trTime  = GetWeaponFireTableData(ammoIndex)->trTime ? level.time + GetWeaponFireTableData(ammoIndex)->trTime : 0;          // move a bit on the very first frame
-	ent->s.eType       = GetWeaponFireTableData(ammoIndex)->eType;
+	ent->s.eFlags      = GetWeaponFireTableData(weaponNum)->eFlags;
+	ent->s.pos.trType  = GetWeaponFireTableData(weaponNum)->trType;
+	ent->s.pos.trTime  = GetWeaponFireTableData(weaponNum)->trTime ? level.time + GetWeaponFireTableData(weaponNum)->trTime : 0;          // move a bit on the very first frame
+	ent->s.eType       = GetWeaponFireTableData(weaponNum)->eType;
 
 	// shared
-	ent->r.svFlags  = GetWeaponFireTableData(ammoIndex)->svFlags;
-	ent->r.contents = GetWeaponFireTableData(ammoIndex)->contents;
+	ent->r.svFlags  = GetWeaponFireTableData(weaponNum)->svFlags;
+	ent->r.contents = GetWeaponFireTableData(weaponNum)->contents;
 
 	if (ent->r.contents == CONTENTS_CORPSE)
 	{
-		VectorCopy(GetWeaponFireTableData(ammoIndex)->boudingBox[0], ent->r.mins);
-		VectorCopy(GetWeaponFireTableData(ammoIndex)->boudingBox[0], ent->r.absmin);
-		VectorCopy(GetWeaponFireTableData(ammoIndex)->boudingBox[1], ent->r.maxs);
-		VectorCopy(GetWeaponFireTableData(ammoIndex)->boudingBox[1], ent->r.absmax);
+		VectorCopy(GetWeaponFireTableData(weaponNum)->boudingBox[0], ent->r.mins);
+		VectorCopy(GetWeaponFireTableData(weaponNum)->boudingBox[0], ent->r.absmin);
+		VectorCopy(GetWeaponFireTableData(weaponNum)->boudingBox[1], ent->r.maxs);
+		VectorCopy(GetWeaponFireTableData(weaponNum)->boudingBox[1], ent->r.absmax);
 	}
 
 	VectorCopy(start, ent->r.currentOrigin);

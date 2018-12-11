@@ -1715,8 +1715,8 @@ gentity_t *fire_missile(gentity_t *self, vec3_t start, vec3_t dir, int weapon)
 		self->client->ps.grenadeTimeLeft = 0;   // reset grenade timer
 	}
 
-	bolt->think = GetWeaponFireTableData(GetWeaponTableData(weapon)->ammoIndex)->think;
-	bolt->free  = GetWeaponFireTableData(GetWeaponTableData(weapon)->ammoIndex)->free;
+	bolt->think = GetWeaponFireTableData(weapon)->think;
+	bolt->free  = GetWeaponFireTableData(weapon)->free;
 
 	if (weapon == WP_DYNAMITE)
 	{
