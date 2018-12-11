@@ -2699,10 +2699,14 @@ static void PM_SwitchIfEmpty(void)
 
 	// In multiplayer, pfaust fires once then switches to pistol since it's useless for a while
 	// after throwing landmine, let switch to pliers
-	if (GetWeaponTableData(pm->ps->weapon)->useAmmo
-	    && !(GetWeaponTableData(pm->ps->weapon)->type & WEAPON_TYPE_PANZER)
-	    && pm->ps->weapon != WP_LANDMINE)
+	if (!(GetWeaponTableData(pm->ps->weapon)->firingMode & WEAPON_FIRING_MODE_ONE_SHOT))
 	{
+		// don't consumme ammo
+		if (!GetWeaponTableData(pm->ps->weapon)->useAmmo)
+		{
+			return;
+		}
+
 		// use clip and still got ammo in clip
 		if (GetWeaponTableData(pm->ps->weapon)->useClip && pm->ps->ammoclip[GetWeaponTableData(pm->ps->weapon)->clipIndex])
 		{
