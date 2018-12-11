@@ -2575,7 +2575,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 	// add the scope model to the rifle if you've got it
 	if (isFirstPerson)  // for now just do it on the first person weapons
 	{
-		if (GetWeaponTableData(weaponNum)->type & (WEAPON_TYPE_RIFLE | WEAPON_TYPE_RIFLENADE))
+		if (GetWeaponTableData(weaponNum)->type & (WEAPON_TYPE_RIFLE | WEAPON_TYPE_RIFLENADE) && !(GetWeaponTableData(weaponNum)->type & (WEAPON_TYPE_SCOPABLE)))
 		{
 			if ((cg.snap->ps.ammo[GetWeaponTableData(WP_GPG40)->ammoIndex] || cg.snap->ps.ammo[GetWeaponTableData(WP_M7)->ammoIndex] || cg.snap->ps.ammoclip[GetWeaponTableData(WP_GPG40)->ammoIndex] || cg.snap->ps.ammoclip[GetWeaponTableData(WP_M7)->ammoIndex]))
 			{
@@ -3410,7 +3410,7 @@ void CG_FinishWeaponChange(int lastWeapon, int newWeapon)
 
 	if (lastWeapon != GetWeaponTableData(newWeapon)->weapAlts)
 	{
-		if (((GetWeaponTableData(newWeapon)->type & WEAPON_TYPE_PISTOL)    && (cg.pmext.silencedSideArm & 1))
+		if (((GetWeaponTableData(newWeapon)->type & WEAPON_TYPE_PISTOL) && !(GetWeaponTableData(newWeapon)->attributs & WEAPON_ATTRIBUT_SILENCED) && (cg.pmext.silencedSideArm & 1))
 		    || ((GetWeaponTableData(newWeapon)->type & WEAPON_TYPE_PISTOL) && (GetWeaponTableData(newWeapon)->attributs & WEAPON_ATTRIBUT_SILENCED) && !(cg.pmext.silencedSideArm & 1))
 		    || ((GetWeaponTableData(newWeapon)->type & WEAPON_TYPE_RIFLE) && (cg.pmext.silencedSideArm & 2))
 		    || ((GetWeaponTableData(newWeapon)->type & WEAPON_TYPE_RIFLENADE) && !(cg.pmext.silencedSideArm & 2)))
@@ -3884,7 +3884,7 @@ void CG_PrevWeap(qboolean switchBanks)
 	qboolean prevbank = qfalse;     // need to switch to the next bank of weapons?
 	int      i;
 
-	if ((GetWeaponTableData(curweap)->type & WEAPON_TYPE_PISTOL && GetWeaponTableData(curweap)->attributs & WEAPON_ATTRIBUT_SILENCED)
+	if (((GetWeaponTableData(curweap)->type & WEAPON_TYPE_PISTOL) && (GetWeaponTableData(curweap)->attributs & WEAPON_ATTRIBUT_SILENCED))
             || GetWeaponTableData(curweap)->type & WEAPON_TYPE_RIFLENADE)
 	{
 		num = GetWeaponTableData(curweap)->weapAlts;
