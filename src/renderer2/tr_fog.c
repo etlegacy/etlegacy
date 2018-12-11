@@ -138,14 +138,6 @@ void RB_FogOn(void)
 		return;
 	}
 
-	if(backEnd.viewParms.isGLFogged)
-	{
-		if(!(backEnd.viewParms.glFog.registered))
-		{
-			return;
-		}
-	}
-
 	if (backEnd.refdef.rdflags & RDF_SKYBOXPORTAL)     // don't force world fog on portal sky
 	{
 		if (!(tr.glfogsettings[FOG_PORTALVIEW].registered))
