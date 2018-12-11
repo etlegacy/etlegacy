@@ -1069,8 +1069,7 @@ typedef enum weaponAttribut_s
 	WEAPON_ATTRIBUT_NEVER_LOST_DESGUISE = BIT(5),
 	WEAPON_ATTRIBUT_KEEP_DESGUISE       = BIT(6),
 	WEAPON_ATTRIBUT_SHAKE               = BIT(7),
-	WEAPON_ATTRIBUT_GIB                 = BIT(8),
-	WEAPON_ATTRIBUT_CHARGE_TIME         = BIT(9)
+	WEAPON_ATTRIBUT_CHARGE_TIME         = BIT(8)
 
 } weaponAttribut_t;
 
