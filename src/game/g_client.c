@@ -1061,7 +1061,7 @@ static void AddExtraSpawnAmmo(gclient_t *client, weapon_t weaponNum)
 	}
 	else if (GetWeaponTableData(weaponNum)->type & WEAPON_TYPE_RIFLE)
 	{
-		if (client->sess.skill[SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS] >= 1 || client->sess.skill[SK_LIGHT_WEAPONS] >= 1)
+		if (client->sess.skill[SK_LIGHT_WEAPONS] >= 1 || (client->sess.playerType == PC_COVERTOPS && client->sess.skill[SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS] >= 1))
 		{
 			client->ps.ammo[GetWeaponTableData(weaponNum)->ammoIndex] += GetWeaponTableData(weaponNum)->maxClip;
 		}
