@@ -3885,7 +3885,7 @@ void CG_PrevWeap(qboolean switchBanks)
 	int      i;
 
 	if (((GetWeaponTableData(curweap)->type & WEAPON_TYPE_PISTOL) && (GetWeaponTableData(curweap)->attributs & WEAPON_ATTRIBUT_SILENCED))
-            || GetWeaponTableData(curweap)->type & WEAPON_TYPE_RIFLENADE)
+	    || GetWeaponTableData(curweap)->type & WEAPON_TYPE_RIFLENADE)
 	{
 		num = GetWeaponTableData(curweap)->weapAlts;
 	}
@@ -4650,7 +4650,8 @@ void CG_FireWeapon(centity_t *cent)
 		return;
 	}
 
-	if ((GetWeaponTableData(ent->weapon)->firingMode & WEAPON_FIRING_MODE_THROWABLE) && (GetWeaponTableData(ent->weapon)->attributs & WEAPON_ATTRIBUT_EXPLOSIVE) && ent->apos.trBase[0] > 0)
+	// "throwing effort" when grenade is launched far enough
+	if ((GetWeaponTableData(ent->weapon)->type & WEAPON_TYPE_GRENADE) && ent->apos.trBase[0] > 0)
 	{
 		return;
 	}

@@ -1169,20 +1169,12 @@ static void CG_Missile(centity_t *cent)
 	}
 
 	// convert direction of travel into axis
-	if (GetWeaponTableData(cent->currentState.weapon)->attributs & WEAPON_ATTRIBUT_EXPLOSIVE
-	    && (CHECKBITWISE(GetWeaponTableData(cent->currentState.weapon)->type, WEAPON_TYPE_MORTAR | WEAPON_TYPE_SET)      // TODO: once the the below FIXME solved, remove this
-	        || cent->currentState.weapon == WP_MAPMORTAR))                  // TODO: once the the below FIXME solved, remove this
 	// reverted to vanilla behaviour
-	// FIXME: check FEATURE_EDV weapon cam (see default case of switch)
-	//case WP_PANZERFAUST:
-	//case WP_BAZOOKA:
-	//case WP_GPG40:
-	//case WP_M7:
-	//case WP_SMOKE_MARKER:
-	//case WP_SMOKE_BOMB:
-	//case WP_DYNAMITE:
-	//case WP_GRENADE_LAUNCHER:
-	//case WP_GRENADE_PINEAPPLE:
+	// FIXME: check FEATURE_EDV weapon cam (see else condition below)
+	if (/*GetWeaponTableData(cent->currentState.weapon)->type & (WEAPON_TYPE_RIFLENADE | WEAPON_TYPE_PANZER | WEAPON_TYPE_GRENADE)
+	    &&*/ (CHECKBITWISE(GetWeaponTableData(cent->currentState.weapon)->type, WEAPON_TYPE_MORTAR | WEAPON_TYPE_SET)
+	          || cent->currentState.weapon == WP_MAPMORTAR /*|| cent->currentState.weapon == WP_SMOKE_MARKER
+	        || cent->currentState.weapon == WP_SMOKE_BOMB || cent->currentState.weapon == WP_DYNAMITE*/))
 	{
 		vec3_t delta;
 
