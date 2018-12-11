@@ -829,7 +829,7 @@ static qboolean PM_CheckProne(void)
 			return qfalse;
 		}
 
-		if (CHECKBITWISE(GetWeaponTableData(pm->ps->weapon)->type, WEAPON_TYPE_MORTAR & WEAPON_TYPE_SET))
+		if (CHECKBITWISE(GetWeaponTableData(pm->ps->weapon)->type, WEAPON_TYPE_MORTAR | WEAPON_TYPE_SET))
 		{
 			return qfalse;
 		}
@@ -1858,7 +1858,7 @@ static void PM_CheckDuck(void)
 
 	// duck
 	if ((pm->cmd.upmove < 0 && !(pm->ps->eFlags & EF_MOUNTEDTANK) && !(pm->ps->pm_flags & PMF_LADDER))
-	    || CHECKBITWISE(GetWeaponTableData(pm->ps->weapon)->type, WEAPON_TYPE_MORTAR & WEAPON_TYPE_SET))
+	    || CHECKBITWISE(GetWeaponTableData(pm->ps->weapon)->type, WEAPON_TYPE_MORTAR | WEAPON_TYPE_SET))
 	{
 		pm->ps->pm_flags |= PMF_DUCKED;
 	}
@@ -2384,7 +2384,7 @@ static void PM_BeginWeaponChange(weapon_t oldWeapon, weapon_t newWeapon, qboolea
 			PM_AddEvent(EV_CHANGE_WEAPON);
 		}
 	}
-	else if (CHECKBITWISE(GetWeaponTableData(newWeapon)->type, WEAPON_TYPE_MORTAR & WEAPON_TYPE_SET))
+	else if (CHECKBITWISE(GetWeaponTableData(newWeapon)->type, WEAPON_TYPE_MORTAR | WEAPON_TYPE_SET))
 	{
 		if (pm->ps->eFlags & EF_PRONE)
 		{
