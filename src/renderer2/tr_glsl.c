@@ -1076,9 +1076,9 @@ static void GLSL_BuildShaderExtraDef()
 		BUFFEXT("#ifndef r_WrapAroundLighting\n#define r_WrapAroundLighting %i\n#endif\n", r_wrapAroundLighting->integer);
 	}
 
-	if (r_halfLambertLighting->integer)
+	if (r_diffuseLighting->value >= 0.0) // && r_diffuseLighting->value <= 1.0
 	{
-		BUFFEXT("#ifndef r_HalfLambertLighting\n#define r_HalfLambertLighting 1\n#endif\n");
+		BUFFEXT("#ifndef r_diffuseLighting\n#define r_diffuseLighting %f\n#endif\n", r_diffuseLighting->value);
 	}
 
 	if (r_rimLighting->integer)

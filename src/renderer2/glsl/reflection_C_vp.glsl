@@ -3,18 +3,20 @@
 
 attribute vec4 attr_Position;
 attribute vec3 attr_Normal;
-#if defined(r_VertexSkinning) // FIXME/REMOVE
+#if defined(r_VertexSkinning)
 attribute vec4 attr_BoneIndexes;
 attribute vec4 attr_BoneWeights;
+
 uniform int    u_VertexSkinning;
 uniform mat4   u_BoneMatrix[MAX_GLSL_BONES];
 #endif
-
 uniform mat4 u_ModelMatrix;
 uniform mat4 u_ModelViewProjectionMatrix;
+uniform vec3  u_ViewOrigin;
 
 varying vec3 var_Position;
 varying vec3 var_Normal;
+varying vec3 var_ViewOrigin; // position - vieworigin
 
 void main()
 {
@@ -55,4 +57,7 @@ void main()
 		// transform normal into world space
 		var_Normal = (u_ModelMatrix * vec4(attr_Normal, 0.0)).xyz;
 	}
+
+	// the vieworigin
+	var_ViewOrigin = normalize(var_Position - u_ViewOrigin);
 }

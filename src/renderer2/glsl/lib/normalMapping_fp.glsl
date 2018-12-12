@@ -6,7 +6,7 @@
 	// The matrix depends on how the surface is faced (front or back), and if the surface is rendered two-sided.
 	// In case the surface is two-sided, and we view the back-side of that surface, we flip tangentspace axis..
 	// ..that way, we handle the back-facing-side as if it's the front we're viewing (so the surface gets drawn, and not culled)
-	mat3 tangetToWorldMatrix(vec3 tangent, vec3 binormal, vec3 normal)
+	mat3 tangentToWorldMatrix(vec3 tangent, vec3 binormal, vec3 normal)
 	{
 		#if defined(TWOSIDED)
 			if (!gl_FrontFacing)
@@ -56,40 +56,51 @@
 #if defined(USE_SPECULAR)
 	// Compute the specular lighting
 	// Specular highlights are only visible if you look into the light.
-	vec3 computeSpecular(vec3 viewDir, vec3 normal, vec3 lightDir, float exponent)
+	vec3 computeSpecular2(float dotNL, vec3 viewDir, vec3 normal, vec3 lightDir, vec3 lightColor, float exponent)
+	{
+		if (dotNL <= 0.0) return vec3(0.0);
+		vec3 H = normalize(lightDir + viewDir); // the half-vector
+		float dotNH = max(0.0, dot(normal, H));
+		float intensity = pow(dotNH, exponent);
+		return vec3(intensity);
+	}
+	vec3 computeSpecular(vec3 viewDir, vec3 normal, vec3 lightDir, vec3 lightColor, float exponent)
 	{
 		float dotNL = dot(normal, lightDir);
-		if (dotNL > 0.0)
-		{
-			vec3 H = normalize(lightDir + viewDir); // the half-vector
-			float dotNH = max(0.0, dot(normal, H));
-			float intensity = pow(dotNH, exponent);
-			return vec3(intensity);
-		}
-		return vec3(0.0);
+		return computeSpecular2(dotNL, viewDir, normal, lightDir, lightColor, exponent);
 	}
 #endif // USE_SPECULAR
 
+#if defined(r_diffuseLighting)
 	// compute the diffuse light term
+	// https://en.wikipedia.org/wiki/Lambert%27s_cosine_law
 	// It renders surfaces darker when they are less facing the light.
 	// Diffuse lighting is very much visible: If the diffuse light value is 0, the surface will be rendered black.
 	// If we don't want pitch black surfaces, we must take care that this value is always >0.
 	// The half-Lambert method keeps the diffuse lighting value in the range 0.5 to 1.0
 	// You don't have to stick to half-Lambert; You can choose how dark your world should be..
 	// ..Just keep the value in a range 0.0 to 1.0 (0=black and dark, higher values = less dark, 1.0 = effectively disabling Lambertian.. the dark is gone)
-	float computeDiffuseLighting(vec3 normal, vec3 lightDir)
+	float computeDiffuseLighting2(float dotNL)
 	{
-		float dotNL = dot(normal, lightDir);
-		#if defined(r_HalfLambertLighting)
-			// half-Lambert starts at 0.5, and fills the range 0.5 to 1.0
-			// We want it a bit brighter, so we start at 0.875 (to 1.0)
-			float lambert = dotNL * 0.125 + 0.875;
-			return lambert*lambert; // square the result (this also makes the result always >0)
+		#if defined(r_diffuseLighting)
+			// half-Lambert starts at 0.5, and fills the range 0.5 to 1.0    (dotNL*0.5+0.5)
+			// example: We want it a bit brighter, so we start at 0.875 (to 1.0)   //float lambert = dotNL * 0.125 + 0.875;
+			float lambert = (1.0 - r_diffuseLighting) + (dotNL * r_diffuseLighting);
+
+			//return lambert*lambert; // square the result (this also makes the result always >0)
+			return abs(lambert); // don't square, but abs instead. (the most useful values are so low already. squaring them lowers them even more)
 		#elif defined(r_WrapAroundLighting)
 			return clamp(dotNL + u_LightWrapAround, 0.0, 1.0) / clamp(1.0 + u_LightWrapAround, 0.0, 1.0);
 		#else // r_WrapAroundLighting
-			return clamp(dotNL, 0.0, 1.0); // maximum Lambertian applied
-		#endif // r_WrapAroundLighting, r_HalfLambertLighting
+			//return clamp(dotNL, 0.0, 1.0); // maximum Lambertian applied
+			return 1.0; // effectively no diffuseLighting
+		#endif // r_WrapAroundLighting, r_diffuseLighting
 	}
+	float computeDiffuseLighting(vec3 normal, vec3 lightDir)
+	{
+		float dotNL = dot(normal, lightDir);
+		return computeDiffuseLighting2(dotNL);
+	}
+#endif // r_diffuseLighting
 
 #endif

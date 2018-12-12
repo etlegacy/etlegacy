@@ -1,16 +1,16 @@
 /* vertexLighting_DBS_entity_fp.glsl */
-#include "lib/reliefMapping"
+#if defined(USE_NORMAL_MAPPING)
 #include "lib/normalMapping"
+#if defined(USE_PARALLAX_MAPPING)
+#include "lib/reliefMapping"
+#endif // USE_PARALLAX_MAPPING
+#endif // USE_NORMAL_MAPPING
 
 uniform sampler2D u_DiffuseMap;
-uniform vec4  u_PortalPlane;
 uniform int   u_AlphaTest;
-uniform vec3  u_ViewOrigin;
-uniform vec3  u_LightDir;
 uniform vec3  u_LightColor;
 uniform float u_LightWrapAround;
 uniform vec3  u_AmbientColor;
-uniform float u_DepthScale;
 #if defined(USE_NORMAL_MAPPING)
 uniform sampler2D u_NormalMap;
 #if defined(USE_REFLECTIONS) || defined(USE_SPECULAR)
@@ -25,30 +25,35 @@ uniform float       u_EnvironmentInterpolation;
 
 varying vec3 var_Position;
 varying vec2 var_TexDiffuse;
-varying vec4 var_LightColor;
 varying vec3 var_Normal;
 #if defined(USE_NORMAL_MAPPING)
+varying mat3 var_tangentMatrix;
 varying vec2 var_TexNormal;
-varying vec3 var_Tangent;
-varying vec3 var_Binormal;
 #if defined(USE_REFLECTIONS) || defined(USE_SPECULAR)
 varying vec2 var_TexSpecular;
 #endif // USE_REFLECTIONS || USE_SPECULAR
+varying vec3 var_LightDirection;
+varying vec3 var_ViewOrigin; // position - vieworigin
+#if defined(USE_PARALLAX_MAPPING)
+varying vec2 var_S; // size and start position of search in texture space
+#endif // USE_PARALLAX_MAPPING
 #endif // USE_NORMAL_MAPPING
+#if defined(USE_PORTAL_CLIPPING)
+varying float var_BackSide; // in front, or behind, the portalplane
+#endif // USE_PORTAL_CLIPPING
 
 
 void main()
 {
 #if defined(USE_PORTAL_CLIPPING)
+	if (var_BackSide < 0.0)
 	{
-		float dist = dot(var_Position.xyz, u_PortalPlane.xyz) - u_PortalPlane.w;
-		if (dist < 0.0)
-		{
-			discard;
-			return;
-		}
+		discard;
+		return;
 	}
 #endif // end USE_PORTAL_CLIPPING
+
+
 
 	// compute the diffuse term
 	vec2 texDiffuse = var_TexDiffuse.st; // diffuse texture coordinates st
@@ -83,75 +88,64 @@ void main()
 	vec2 texSpecular = var_TexSpecular.st; // the current texture coordinates st for the specularmap
 #endif // USE_REFLECTIONS || USE_SPECULAR
 
-	// compute view direction in world space
-	//vec3 V = normalize(u_ViewOrigin - var_Position);
-	vec3 V = normalize(var_Position - u_ViewOrigin);
-
-	// compute light direction in world space
-	// invert the direction, so we end up with a vector that is pointing away from the surface.
-	// We must also normalize the vector, because the reflect() function needs it.
-	vec3 L = -normalize(u_LightDir);
-
-	// Create the matrix that will transform coordinates to worldspace.
-	mat3 tangentSpaceMatrix = tangetToWorldMatrix(var_Tangent.xyz, var_Binormal.xyz, var_Normal.xyz);
-
 
 #if defined(USE_PARALLAX_MAPPING)
-//!!!DEBUG!!! check this parallax stuff <-- todo
 	// ray intersect in view direction
-
-	// compute view direction in tangent space
-	vec3 Vts = normalize(tangentSpaceMatrix * V);
-
-
-	// size and start position of search in texture space
-	vec2 S = Vts.xy * -u_DepthScale / Vts.z;
-
-	float depth = RayIntersectDisplaceMap(texNormal, S, u_NormalMap);
-
+	float depth = RayIntersectDisplaceMap(texNormal, var_S, u_NormalMap);
 	// compute texcoords offset
-	vec2 texOffset = S * depth;
-
-	texDiffuse.st  += texOffset;
-	texNormal.st   += texOffset;
+	vec2 texOffset = var_S * depth;
+	texDiffuse  += texOffset;
+	texNormal   += texOffset;
 #if defined(USE_REFLECTIONS) || defined(USE_SPECULAR)
-	texSpecular.st += texOffset;
+	texSpecular += texOffset;
 #endif // USE_REFLECTIONS || USE_SPECULAR
 #endif // end USE_PARALLAX_MAPPING
 
 
+	// view direction
+	vec3 V = var_ViewOrigin;
 
-	// compute normal (from normalmap texture)
-	// N is the normal (at every .st of the normalmap texture)
-	// We convert normalmap texture values from range[0.0,1.0] to range[-1.0,1.0]
-	// and then tranform N into worldspace.
-	// compute normal (from tangentspace, to worldspace)
-	vec3 N = computeNormal(texture2D(u_NormalMap, texNormal).xyz, tangentSpaceMatrix);
+	// light direction
+	vec3 L = var_LightDirection;
+
+	// normal
+	vec3 Ntex = texture2D(u_NormalMap, texNormal).xyz * 2.0 - 1.0;
+	// transform normal from tangentspace to worldspace
+	vec3 N = normalize(var_tangentMatrix * Ntex); // we must normalize to get a vector of unit-length..  reflect() needs it
 
 	// the cosine of the angle N L
 	float dotNL = dot(N, L);
 
 
-#if defined(USE_REFLECTIONS) || defined(USE_SPECULAR)
 	// compute the specular term (and reflections)
-	vec3 reflections = vec3(0.0);
-	vec3 specular = vec3(0.0);
-#if defined(USE_REFLECTIONS)
-	// reflections
-	reflections = computeReflections(V, N, u_EnvironmentMap0, u_EnvironmentMap1, u_EnvironmentInterpolation);
-#endif // end USE_REFLECTIONS
-#if defined(USE_SPECULAR)
-	// the specular highlights
-	specular = computeSpecular(V, N, L, 64.0); //r_SpecularExponent
-#endif // USE_SPECULAR
-	specular += reflections;
-	specular *= texture2D(u_SpecularMap, texSpecular).rgb; // shininess factor
-#endif // USE_REFLECTIONS || USE_SPECULAR
+	//! https://en.wikipedia.org/wiki/Specular_highlight
+	//! "The number n is called the Phong exponent, and is a user-chosen value that controls the apparent smoothness of the surface"
+#if defined(USE_SPECULAR) && !defined(USE_REFLECTIONS)
+	vec4 map = texture2D(u_SpecularMap, texSpecular);
+	vec3 shininess = map.rgb;
+	// alpha values in range 0 to 1.0. exponent range is 0 to 256 (or whatever maximum value you want.  ..perhaps r_SpecularExponent?).
+	float exponent = map.a * r_SpecularExponent;
+	vec3 specular = computeSpecular2(dotNL, V, N, L, u_LightColor, exponent)
+					* shininess;
+#elif defined(USE_SPECULAR) && defined(USE_REFLECTIONS)
+	vec4 map = texture2D(u_SpecularMap, texSpecular);
+	vec3 shininess = map.rgb;
+	float exponent = map.a * r_SpecularExponent;
+	vec3 specular = (computeReflections(V, N, u_EnvironmentMap0, u_EnvironmentMap1, u_EnvironmentInterpolation)
+					+ computeSpecular2(dotNL, V, N, L, u_LightColor, exponent))
+					* shininess;
+#elif !defined(USE_SPECULAR) && defined(USE_REFLECTIONS)
+	vec4 map = texture2D(u_SpecularMap, texSpecular);
+	vec3 shininess = map.rgb;
+	vec3 specular  = computeReflections(V, N, u_EnvironmentMap0, u_EnvironmentMap1, u_EnvironmentInterpolation)
+					* shininess;
+#endif
 
 
+#if defined(r_diffuseLighting)
 	// compute the diffuse light term
-	// https://en.wikipedia.org/wiki/Lambert%27s_cosine_law
-	diffuse.rgb *= computeDiffuseLighting(N, L);
+	diffuse.rgb *= computeDiffuseLighting2(dotNL);
+#endif // r_diffuseLighting
 
 
 	// add Rim Lighting to highlight the edges
@@ -164,7 +158,7 @@ void main()
 
 
     // compute final color
-	vec4 color = vec4(diffuse.rgb, var_LightColor.a);
+	vec4 color = vec4(diffuse.rgb, 1.0);
 #if defined(USE_REFLECTIONS) || defined(USE_SPECULAR)
 	color.rgb += specular;
 #endif // end USE_REFLECTIONS || USE_SPECULAR
@@ -178,7 +172,7 @@ void main()
 
 #endif // end USE_NORMAL_MAPPING
 
-    //color.rgb *= (var_LightColor.rgb + u_AmbientColor); // i really think mapper's ambient values are too high..
-    color.rgb *= (var_LightColor.rgb);
+    //color.rgb *= (u_LightColor + u_AmbientColor); // i really think mapper's ambient values are too high..use this if you want "glowing" entities :P
+    color.rgb *= u_LightColor;
 	gl_FragColor = color;
 }

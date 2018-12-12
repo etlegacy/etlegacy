@@ -177,7 +177,7 @@ cvar_t *r_specularScale;
 cvar_t *r_normalScale;
 cvar_t *r_normalMapping;
 cvar_t *r_wrapAroundLighting;
-cvar_t *r_halfLambertLighting;
+cvar_t *r_diffuseLighting;
 cvar_t *r_rimLighting;
 cvar_t *r_rimExponent;
 cvar_t *r_gamma;
@@ -1240,7 +1240,8 @@ void R_Register(void)
 	r_drawSun       = ri.Cvar_Get("r_drawSun", "1", CVAR_ARCHIVE);
 	r_finish        = ri.Cvar_Get("r_finish", "0", CVAR_CHEAT);
 	r_textureMode   = ri.Cvar_Get("r_textureMode", "GL_LINEAR_MIPMAP_NEAREST", CVAR_ARCHIVE);
-	r_gamma         = ri.Cvar_Get("r_gamma", "1.3", CVAR_ARCHIVE);
+	// FIXME: r1 & r2 default values differ
+	r_gamma         = ri.Cvar_Get("r_gamma", "1.0", CVAR_ARCHIVE);
 	r_facePlaneCull = ri.Cvar_Get("r_facePlaneCull", "1", CVAR_ARCHIVE);
 
 	r_railWidth         = ri.Cvar_Get("r_railWidth", "96", CVAR_ARCHIVE);
@@ -1348,7 +1349,7 @@ void R_Register(void)
 	r_offsetUnits     = ri.Cvar_Get("r_offsetUnits", "-2", CVAR_CHEAT);
 	r_forceSpecular   = ri.Cvar_Get("r_forceSpecular", "0", CVAR_CHEAT);
 	//These makes the spec spot bigger or smaller, the higher the number the smaller the dot
-	r_specularExponent  = ri.Cvar_Get("r_specularExponent", "16", CVAR_CHEAT | CVAR_LATCH);
+	r_specularExponent  = ri.Cvar_Get("r_specularExponent", "1024.0", CVAR_ARCHIVE | CVAR_LATCH); // cheat?
 	r_specularExponent2 = ri.Cvar_Get("r_specularExponent2", "3", CVAR_CHEAT | CVAR_LATCH);
 	//this one sets the power of specular, the higher the brighter
 	r_specularScale      = ri.Cvar_Get("r_specularScale", "0.2", CVAR_CHEAT | CVAR_LATCH);
@@ -1357,7 +1358,7 @@ void R_Register(void)
 	r_parallaxDepthScale = ri.Cvar_Get("r_parallaxDepthScale", "0.03", CVAR_CHEAT);
 	// toon lightning
 	r_wrapAroundLighting  = ri.Cvar_Get("r_wrapAroundLighting", "0", CVAR_CHEAT | CVAR_LATCH);
-	r_halfLambertLighting = ri.Cvar_Get("r_halfLambertLighting", "1", CVAR_CHEAT | CVAR_LATCH);
+	r_diffuseLighting = ri.Cvar_Get("r_diffuseLighting", "0.0625", CVAR_ARCHIVE | CVAR_LATCH); // cheat?
 	//rim light gives your shading a nice volumentric effect which can greatly enhance the contrast with the background
 	r_rimLighting = ri.Cvar_Get("r_rimLighting", "0", CVAR_CHEAT | CVAR_LATCH); // was CVAR_ARCHIVE | CVAR_LATCH
 	                                                                            // FIXME: make rim lighting work with diffuse maps/textures

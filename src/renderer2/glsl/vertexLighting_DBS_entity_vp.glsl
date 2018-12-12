@@ -23,31 +23,43 @@ uniform mat4 u_ModelMatrix;
 uniform mat4 u_ModelViewProjectionMatrix;
 uniform mat4 u_DiffuseTextureMatrix;
 uniform vec3  u_LightColor;
-#if defined(USE_DEFORM_VERTEXES)
-uniform float u_Time;
-#endif // USE_DEFORM_VERTEXES
-#if defined(USE_VERTEX_ANIMATION)
-uniform float u_VertexInterpolation;
-#endif // USE_VERTEX_ANIMATION
+uniform vec3  u_LightDir;
+uniform vec3  u_ViewOrigin;
+uniform float u_DepthScale;
 #if defined(USE_NORMAL_MAPPING)
 uniform mat4 u_NormalTextureMatrix;
 #if defined(USE_REFLECTIONS) || defined(USE_SPECULAR)
 uniform mat4 u_SpecularTextureMatrix;
 #endif // USE_REFLECTIONS || USE_SPECULAR
 #endif // USE_NORMAL_MAPPING
+#if defined(USE_PORTAL_CLIPPING)
+uniform vec4  u_PortalPlane;
+#endif // USE_PORTAL_CLIPPING
+#if defined(USE_DEFORM_VERTEXES)
+uniform float u_Time;
+#endif // USE_DEFORM_VERTEXES
+#if defined(USE_VERTEX_ANIMATION)
+uniform float u_VertexInterpolation;
+#endif // USE_VERTEX_ANIMATION
 
 varying vec3 var_Position;
 varying vec2 var_TexDiffuse;
-varying vec4 var_LightColor;
 varying vec3 var_Normal;
 #if defined(USE_NORMAL_MAPPING)
-varying vec3 var_Tangent;
-varying vec3 var_Binormal;
+varying mat3 var_tangentMatrix;
 varying vec2 var_TexNormal;
 #if defined(USE_REFLECTIONS) || defined(USE_SPECULAR)
 varying vec2 var_TexSpecular;
 #endif // USE_REFLECTIONS || USE_SPECULAR
+varying vec3 var_LightDirection;
+varying vec3 var_ViewOrigin; // position - vieworigin
+#if defined(USE_PARALLAX_MAPPING)
+varying vec2 var_S; // size and start position of search in texture space
+#endif // USE_PARALLAX_MAPPING
 #endif // USE_NORMAL_MAPPING
+#if defined(USE_PORTAL_CLIPPING)
+varying float var_BackSide; // in front, or behind, the portalplane
+#endif // USE_PORTAL_CLIPPING
 
 
 void main()
@@ -87,13 +99,12 @@ void main()
 #endif // USE_NORMAL_MAPPING
 
 #else // USE_VERTEX_ANIMATION
-	position = attr_Position;
 
+	position = attr_Position;
 #if defined(USE_NORMAL_MAPPING)
 	tangent  = attr_Tangent;
 	binormal = attr_Binormal;
 #endif // USE_NORMAL_MAPPING
-
 	normal = attr_Normal;
 #endif // USE_VERTEX_ANIMATION, USE_VERTEX_SKINNING
 
@@ -116,8 +127,11 @@ void main()
 	// transform tangentspace axis
 	var_Normal.xyz = (u_ModelMatrix * vec4(normal, 0.0)).xyz;
 #if defined(USE_NORMAL_MAPPING)
-	var_Tangent.xyz  = (u_ModelMatrix * vec4(tangent, 0.0)).xyz;
-	var_Binormal.xyz = (u_ModelMatrix * vec4(binormal, 0.0)).xyz;
+	tangent  = (u_ModelMatrix * vec4(tangent, 0.0)).xyz;
+	binormal = (u_ModelMatrix * vec4(binormal, 0.0)).xyz;
+
+	// in a vertex-shader there exists no gl_FrontFacing
+	var_tangentMatrix = mat3(-tangent, -binormal, -var_Normal.xyz);
 
 	// transform normalmap texcoords
 	var_TexNormal = (u_NormalTextureMatrix * attr_TexCoord0).st;
@@ -126,8 +140,20 @@ void main()
 	// transform specularmap texture coords
 	var_TexSpecular = (u_SpecularTextureMatrix * attr_TexCoord0).st;
 #endif // USE_REFLECTIONS || USE_SPECULAR
+
+	var_LightDirection = -normalize(u_LightDir);
+
+	var_ViewOrigin = normalize(var_Position - u_ViewOrigin);
+
+#if defined(USE_PARALLAX_MAPPING)
+	// transform the vieworigin from tangentspace to worldspace
+	vec3 viewOrigin2 = normalize(var_tangentMatrix * var_ViewOrigin);
+	var_S = viewOrigin2.xy * -u_DepthScale / viewOrigin2.z;
+#endif // USE_PARALLAX_MAPPING
 #endif // USE_NORMAL_MAPPING
 
-	// assign color
-	var_LightColor = vec4(u_LightColor, 1.0);
+#if defined(USE_PORTAL_CLIPPING)
+	// in front, or behind, the portalplane
+	var_BackSide = dot(var_Position.xyz, u_PortalPlane.xyz) - u_PortalPlane.w;
+#endif // USE_PORTAL_CLIPPING
 }
