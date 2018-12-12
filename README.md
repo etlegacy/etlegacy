@@ -246,7 +246,7 @@ Install:
 Then brew the following packages in the terminal app:
 
     $ brew cask install xquartz
-    $ brew install --universal gnu-sed cmake glew sdl2 minizip jpeg-turbo curl lua libogg libvorbis libtheora freetype sqlite openal-soft
+    $ brew install --universal gnu-sed cmake glew sdl2 minizip jpeg-turbo curl lua libogg libvorbis theora freetype sqlite openal-soft
 
 The --universal flag ensures both 32bit and 64bit libraries are installed. Although your system curl library supports both architectures, you also need to install its headers.
 
