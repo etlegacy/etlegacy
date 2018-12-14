@@ -22,6 +22,7 @@ weaponDef
 		//spinupSound		""									// sound started when fire button goes down, and stepped on when the first fire event happens
 		//spindownSound		""									// sound called if the above is running but player doesn't follow through and fire
 		switchSound			"sound/weapons/misc/silence_on.wav"	// allow overriding of weaponswitch sound
+		noAmmoSound         "sound/weapons/misc/fire_dry.wav"
 		
 		weaponIcon			"icons/iconw_silencedcolt"
 		weaponIconScale		2

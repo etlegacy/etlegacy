@@ -2089,9 +2089,9 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 		break;
 	case EV_NOAMMO:
 	case EV_WEAPONSWITCHED:
-		if (GetWeaponTableData(es->weapon)->noAmmoSound)
+		if (cg_weapons[es->weapon].noAmmoSound)
 		{
-			trap_S_StartSound(NULL, es->number, CHAN_AUTO, cgs.media.noAmmoSound);     // FIXME: CHAN_LOCAL_SOUND ?
+			trap_S_StartSound(NULL, es->number, CHAN_AUTO, cg_weapons[es->weapon].noAmmoSound);     // FIXME: CHAN_LOCAL_SOUND ?
 		}
 
 		if (es->number == cg.snap->ps.clientNum)

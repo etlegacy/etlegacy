@@ -71,7 +71,7 @@
 
 #define STAT_MINUS          10      ///< num frame for '-' stats digit
 
-#define	NOTIFY_WIDTH        80
+#define NOTIFY_WIDTH        80
 #define NOTIFY_HEIGHT       5
 
 #define TEAMCHAT_WIDTH      70
@@ -768,6 +768,7 @@ typedef struct weaponInfo_s
 	sfxHandle_t spindownSound;      ///< sound called if the above is running but player doesn't follow through and fire
 
 	sfxHandle_t switchSound;
+	sfxHandle_t noAmmoSound;
 } weaponInfo_t;
 
 #define MAX_VIEWDAMAGE  8
@@ -1548,7 +1549,6 @@ typedef struct
 
 	sfxHandle_t sfx_knifehit[5];
 	sfxHandle_t gibSound;
-	sfxHandle_t noAmmoSound;
 	sfxHandle_t landSound[FOOTSTEP_TOTAL];
 
 	sfxHandle_t fiveMinuteSound_g, fiveMinuteSound_a;
@@ -2115,7 +2115,7 @@ typedef struct cgs_s
 	int teamLastChatPos;
 
 	// New notify mechanism for obits
-	char notifyMsgs[NOTIFY_HEIGHT][NOTIFY_WIDTH*3+1];
+	char notifyMsgs[NOTIFY_HEIGHT][NOTIFY_WIDTH * 3 + 1];
 	//int notifyMsgTimes[NOTIFY_HEIGHT];
 	int notifyPos;
 	int notifyLastPos;

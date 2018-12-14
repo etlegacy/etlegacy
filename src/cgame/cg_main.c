@@ -1313,7 +1313,6 @@ static void CG_RegisterSounds(void)
 		speaker->noise = trap_S_RegisterSound(speaker->filename, qfalse);
 	}
 
-	cgs.media.noAmmoSound      = trap_S_RegisterSound("sound/weapons/misc/fire_dry.wav", qfalse);
 	cgs.media.noFireUnderwater = trap_S_RegisterSound("sound/weapons/misc/fire_water.wav", qfalse);
 	cgs.media.selectSound      = trap_S_RegisterSound("sound/weapons/misc/change.wav", qfalse);
 	cgs.media.landHurt         = trap_S_RegisterSound("sound/player/land_hurt.wav", qfalse);
