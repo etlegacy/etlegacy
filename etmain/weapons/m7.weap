@@ -36,6 +36,7 @@ weaponDef
 		//missileDlightColor	0 0 0							// do we still use this?
 		
 		//ejectBrassFunc	""				// supports "MachineGunEjectBrass" and "PanzerFaustEjectBrass"
+		//ejectBrassOffset    16 -4 24
 		
 		modModel 0			"models/multiplayer/m1_garand/v_m1_garand_scope.md3"
 		modModel 1			"models/multiplayer/m1_garand/m1_garand_att.md3"

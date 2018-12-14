@@ -1199,7 +1199,6 @@ typedef struct weapontable_s
 	int altSwitchTimeFinish;        ///< bg -
 
 	float knockback;                ///< bg -
-	int ejectBrassOffset[3];        ///< cg - forward, left, up
 	int muzzlePointOffset[3];       ///< g - forward, left, up
 
 	float adjustLean;               ///< cg -

@@ -190,7 +190,7 @@ void CG_MachineGunEjectBrass(centity_t *cent)
 		}
 		else
 		{
-			VectorCopy(GetWeaponTableData(cent->currentState.weapon)->ejectBrassOffset, offset);
+			VectorCopy(cg_weapons[cent->currentState.weapon].ejectBrassOffset, offset);
 			le->angles.trBase[0] = (rand() & 15) + 82;   // bullets should come out horizontal not vertical JPW NERVE
 		}
 	}
@@ -266,7 +266,7 @@ static void CG_PanzerFaustEjectBrass(centity_t *cent)
 	float         waterScale = 1.0f;
 	vec3_t        v[3];
 
-	VectorCopy(GetWeaponTableData(cent->currentState.weapon)->ejectBrassOffset, offset);
+	VectorCopy(cg_weapons[cent->currentState.weapon].ejectBrassOffset, offset);
 
 	le->leType    = LE_FRAGMENT;
 	le->startTime = cg.time;
@@ -1534,6 +1534,13 @@ static qboolean CG_RW_ParseClient(int handle, weaponInfo_t *weaponInfo)
 			else if (!Q_stricmp(filename, "PanzerFaustEjectBrass"))
 			{
 				weaponInfo->ejectBrassFunc = CG_PanzerFaustEjectBrass;
+			}
+		}
+		else if (!Q_stricmp(token.string, "ejectBrassOffset"))
+		{
+			if (!PC_Vec_Parse(handle, &weaponInfo->ejectBrassOffset))
+			{
+				return CG_RW_ParseError(handle, "expected ejectBrassOffset as foward left up");
 			}
 		}
 		else if (!Q_stricmp(token.string, "modModel"))

@@ -35,6 +35,7 @@ weaponDef
 		//missileDlightColor	0 0 0							// do we still use this?
 		
 		//ejectBrassFunc	""									// supports "MachineGunEjectBrass" and "PanzerFaustEjectBrass"
+		//ejectBrassOffset
 		
 		modModel 0		"models/multiplayer/syringe/100percent"
 

@@ -36,6 +36,7 @@ weaponDef
 		//missileDlightColor	0 0 0							// do we still use this?
 		
 		//ejectBrassFunc	""									// supports "MachineGunEjectBrass" and "PanzerFaustEjectBrass"
+		//ejectBrassOffset
 		
 		modModel 0			"models/multiplayer/kar98/v_kar98_scope.md3"
 		modModel 1			"models/multiplayer/kar98/kar98_att.md3"
