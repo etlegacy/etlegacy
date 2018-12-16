@@ -655,6 +655,9 @@ qboolean CL_CloseAVI(void)
 	SafeFS_Write(buffer, bufIndex, afd.idxF);
 	FS_FCloseFile(afd.idxF);
 
+	Z_Free(afd.cBuffer);
+	Z_Free(afd.eBuffer);
+
 	// Write index
 
 	// Open the temp index file
@@ -694,8 +697,6 @@ qboolean CL_CloseAVI(void)
 
 	SafeFS_Write(buffer, bufIndex, afd.f);
 
-	Z_Free(afd.cBuffer);
-	Z_Free(afd.eBuffer);
 	FS_FCloseFile(afd.f);
 
 	Com_Printf("Wrote %d:%d frames to %s\n", afd.numVideoFrames, afd.numAudioFrames, afd.fileName);

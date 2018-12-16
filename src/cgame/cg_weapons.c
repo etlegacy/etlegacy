@@ -2896,7 +2896,7 @@ void CG_AddViewWeapon(playerState_t *ps)
 	}
 
 	// allow the gun to be completely removed
-	if ((!cg_drawGun.integer))
+	if (!cg_drawGun.integer)
 	{
 		if ((cg.predictedPlayerState.eFlags & EF_FIRING) && !BG_PlayerMounted(cg.predictedPlayerState.eFlags))
 		{

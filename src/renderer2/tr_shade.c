@@ -531,6 +531,26 @@ static rgbaGen_t getRgbaGenForColorModulation(shaderStage_t *pStage, int lightma
 }
 
 /**
+ * @brief Sets light related uniforms (currently sun related only)
+ * @param[in]
+ *
+ * @fixme this should set current light direction (and color) on not always the sun
+ * @fixme deal with tess.svars.color?
+ */
+void SetLightUniforms(qboolean setLightColor)
+{
+	// note: there is always a default sunDirection set in RE_LoadWorldMap
+	//       but sunLight is depending on real sun shader
+	{
+		SetUniformVec3(UNIFORM_LIGHTDIR, tr.sunDirection); // i need to provide _some_ direction.. not all world is lit by the sun..
+		if (setLightColor)
+		{
+			SetUniformVec3(UNIFORM_LIGHTCOLOR, tr.sunLight); // the sun again..
+		}
+	}
+}
+
+/**
  * @brief Render_generic
  * @param[in] stage
  */
@@ -716,26 +736,6 @@ static void Render_vertexLighting_DBS_entity(int stage)
 	Tess_DrawElements();
 
 	GL_CheckErrors();
-}
-
-/**
- * @brief Sets light related uniforms (currently sun related only)
- * @param[in]
- *
- * @fixme this should set current light direction (and color) on not always the sun
- * @fixme deal with tess.svars.color?
- */
-void SetLightUniforms(qboolean setLightColor)
-{
-	// note: there is always a default sunDirection set in RE_LoadWorldMap
-	//       but sunLight is depending on real sun shader
-	{
-		SetUniformVec3(UNIFORM_LIGHTDIR, tr.sunDirection); // i need to provide _some_ direction.. not all world is lit by the sun..
-		if (setLightColor)
-		{
-			SetUniformVec3(UNIFORM_LIGHTCOLOR, tr.sunLight); // the sun again..
-		}
-	}
 }
 
 /**

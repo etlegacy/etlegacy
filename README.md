@@ -293,6 +293,9 @@ Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
 OpenWolf GPL Source Code
 Copyright (C) 2011 Dusan Jocic
 
+XreaL GPL Source Code (renderer2)
+Copyright (C) 2010-2011 Robert Beckebans
+
 ET: Legacy
 Copyright (C) 2012-2018 ET:Legacy Team <mail@etlegacy.com>
 

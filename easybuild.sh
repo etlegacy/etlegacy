@@ -475,9 +475,10 @@ generate_configuration() {
 		PREFIX=${HOME}/etlegacy
 		_CFGSTRING="${_CFGSTRING}
 		-DCMAKE_INSTALL_PREFIX=${PREFIX}
-		-DINSTALL_DEFAULT_MODDIR=.
-		-DINSTALL_DEFAULT_BINDIR=.
-		-DINSTALL_DEFAULT_BASEDIR=.
+
+		-DINSTALL_DEFAULT_MODDIR=/home/olaf/tuttle
+		-DINSTALL_DEFAULT_BINDIR=/home/olaf/tuttle
+		-DINSTALL_DEFAULT_BASEDIR=/home/olaf/tuttle
 		"
 	fi
 	fi
@@ -501,6 +502,7 @@ run_clean() {
 	fi
 	CLEANLIBS=1
 	if [[ -e "${_SRC}/libs/CMakeLists.txt" && ${CLEANLIBS} ]]; then
+		# this doesn't work?
 		if [ "${BUNDLED_SDL}" == 1 ]; then
 			einfo "Cleaning SDL..."
 			cd ${_SRC}/libs/sdl2;  make clean
@@ -533,6 +535,11 @@ run_clean() {
 			# einfo "Cleaning libtheora..."
 			# cd ${_SRC}/libs/theora; make clean
 		fi
+		if [ "${BUNDLED_OPENAL}" == 1 ]; then
+			einfo "Cleaning openAL..."
+			cd ${_SRC}/libs/openal; make clean
+		fi
+
 		cd ${_SRC}/libs
 		git clean -d -f
 	fi

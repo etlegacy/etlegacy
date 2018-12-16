@@ -2808,7 +2808,7 @@ int PC_Directive_evalfloat(source_t *source)
 	return qtrue;
 }
 
-directive_t directives[20] =
+directive_t directives[15] =
 {
 	{ "if",        PC_Directive_if        },
 	{ "ifdef",     PC_Directive_ifdef     },
@@ -3364,6 +3364,7 @@ source_t *LoadSourceFile(const char *filename)
 	script = LoadScriptFile(filename);
 	if (!script)
 	{
+		//botimport.Print(PRT_WARNING, "LoadSourceFile: File %s not found!\n", filename);
 		return NULL;
 	}
 

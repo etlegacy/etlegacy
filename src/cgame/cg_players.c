@@ -2819,8 +2819,8 @@ void CG_Player(centity_t *cent)
 
 			VectorAdd(bmins, cent->lerpOrigin, bmins);
 			VectorAdd(bmaxs, cent->lerpOrigin, bmaxs);
-
-			CG_RailTrail(tv(0.25f, 0.5f, 1.f), bmins, bmaxs, 1, cent->currentState.number | HITBOXBIT_CLIENT);
+			// white
+			CG_RailTrail(tv(1.0f, 1.0f, 1.0f), bmins, bmaxs, 1, cent->currentState.number | HITBOXBIT_CLIENT);
 		}
 
 		// head axis
@@ -2846,7 +2846,8 @@ void CG_Player(centity_t *cent)
 			for (idx = 0; idx < 3; idx++)
 			{
 				VectorMA(start, 32.0f, axis[idx], ends[idx]);
-				CG_RailTrail2(tv(0.25f, 0.5f, 1.f), start, ends[idx], -1, -1);
+				// green
+				CG_RailTrail2(tv(0.0f, 1.0f, 0.0f), start, ends[idx], -1, -1);
 			}
 		}
 
@@ -2869,7 +2870,8 @@ void CG_Player(centity_t *cent)
 
 			VectorAdd(cent->lerpOrigin, mins, mins);
 			VectorAdd(cent->lerpOrigin, maxs, maxs);
-			CG_RailTrail(tv(0.25f, 0.5f, 1.f), mins, maxs, 1, cent->currentState.number | HITBOXBIT_CLIENT);
+			// blue
+			CG_RailTrail(tv(0.0f, 0.0f, 1.f), mins, maxs, 1, cent->currentState.number | HITBOXBIT_CLIENT);
 
 			if (cg.predictedPlayerState.eFlags & EF_PRONE)
 			{
@@ -2889,7 +2891,8 @@ void CG_Player(centity_t *cent)
 
 				VectorAdd(org, mins, mins);
 				VectorAdd(org, maxs, maxs);
-				CG_RailTrail(tv(0.25f, 0.5f, 1.f), mins, maxs, 1, cent->currentState.number | HITBOXBIT_CLIENT | HITBOXBIT_LEGS);
+				// red
+				CG_RailTrail(tv(1.0f, 0.0f, 0.0f), mins, maxs, 1, cent->currentState.number | HITBOXBIT_CLIENT | HITBOXBIT_LEGS);
 
 				// And the head
 				VectorSet(mins, -6, -6, -22);
@@ -2901,7 +2904,8 @@ void CG_Player(centity_t *cent)
 
 				VectorAdd(org, mins, mins);
 				VectorAdd(org, maxs, maxs);
-				CG_RailTrail(tv(0.25f, 0.5f, 1.f), mins, maxs, 1, cent->currentState.number | HITBOXBIT_CLIENT | HITBOXBIT_HEAD);
+				// orange
+				CG_RailTrail(tv(1.0f, 0.5f, 1.f), mins, maxs, 1, cent->currentState.number | HITBOXBIT_CLIENT | HITBOXBIT_HEAD);
 			}
 		}
 	} // END DEBUG

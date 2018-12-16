@@ -87,6 +87,8 @@ cmake_dependent_option(INSTALL_WOLFADMIN	"Install WolfAdmin enhancement suite"		
 
 option(ARM						"Build ARM version"										OFF)
 
+#option(INSTALL_JAYMOD		"Install and compile Jaymod from github"	ON)
+
 set(ET_FS_BASEPATH "" CACHE STRING "Copy required genuine ET files from ET_FS_BASEPATH")
 cmake_dependent_option(ET_KEY	"Copy existing etkey file from ET_FS_BASEPATH)"			ON "ET_FS_BASEPATH" OFF)
 
@@ -168,6 +170,10 @@ if(BUILD_MOD AND INSTALL_EXTRA)
 		include(cmake/ETLInstallWolfAdmin.cmake)
 	endif(INSTALL_WOLFADMIN)
 endif(BUILD_MOD AND INSTALL_EXTRA)
+
+if(INSTALL_JAYMOD)
+		include(cmake/ETLInstallJaymod.cmake)
+endif(INSTALL_JAYMOD)
 
 # Generate install and uninstall packs
 include(cmake/ETLInstall.cmake)

@@ -517,7 +517,7 @@ CENTER PRINTING
  * @param[in,out] s The message to format
  * @return The number of line needed to display the messages
  */
-int CG_FormatCenterPrint(char *s)
+static int CG_FormatCenterPrint(char *s)
 {
 	char     *lastSpace = NULL;
 	int      i, len, lastLR = 0;
@@ -3199,7 +3199,7 @@ static void CG_DrawObjectiveInfo(void)
 /**
  * @brief CG_DrawTimedMenus
  */
-void CG_DrawTimedMenus(void)
+static void CG_DrawTimedMenus(void)
 {
 	if (cg.voiceTime)
 	{

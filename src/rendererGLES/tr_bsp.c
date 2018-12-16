@@ -2282,7 +2282,7 @@ static void R_LoadFogs(lump_t *l, lump_t *brushesLump, lump_t *sidesLump)
 	int          sideNum;
 	int          planeNum;
 	shader_t     *shader;
-	int          firstSide = 0;
+	int          firstSide;
 
 	fogs = ( void * )(fileBase + l->fileofs);
 	if (l->filelen % sizeof(*fogs))
@@ -2327,6 +2327,7 @@ static void R_LoadFogs(lump_t *l, lump_t *brushesLump, lump_t *sidesLump)
 		{
 			VectorSet(out->bounds[0], MIN_WORLD_COORD, MIN_WORLD_COORD, MIN_WORLD_COORD);
 			VectorSet(out->bounds[1], MAX_WORLD_COORD, MAX_WORLD_COORD, MAX_WORLD_COORD);
+			firstSide = 0;
 		}
 		else
 		{

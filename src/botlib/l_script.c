@@ -1511,6 +1511,7 @@ script_t *LoadScriptFile(const char *filename)
 	length = botimport.FS_FOpenFile(pathname, &fp, FS_READ);
 	if (!fp)
 	{
+		//botimport.Print(PRT_WARNING, "LoadScriptFile: File %s not found!\n", pathname);
 		return NULL;
 	}
 

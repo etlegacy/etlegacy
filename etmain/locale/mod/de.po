@@ -13,7 +13,7 @@ msgstr ""
 "Project-Id-Version: ET:Legacy\n"
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
-"PO-Revision-Date: 2018-09-11 08:58+0000\n"
+"PO-Revision-Date: 2018-09-24 12:01+0000\n"
 "Last-Translator: IR4T4 <gutzu@gmx.ch>\n"
 "Language-Team: German (http://www.transifex.com/etlegacy/etlegacy/language/de/)\n"
 "MIME-Version: 1.0\n"
@@ -254,7 +254,7 @@ msgstr "^1MITWIRKENDE"
 
 #: etmain/ui/credits_etlegacy.menu:171
 msgid "See HALL OF FAME below"
-msgstr "Siehe unten: HALL OF FAME "
+msgstr "Siehe unten: RUHMESHALLE"
 
 #: etmain/ui/credits_etlegacy.menu:178 etmain/ui/credits_quit.menu:245
 #: etmain/ui/profile_create_initial.menu:127
@@ -262,8 +262,8 @@ msgid "^1WEBSITE"
 msgstr "^1WEBSITE"
 
 #: etmain/ui/credits_etlegacy.menu:193 etmain/ui/credits_quit.menu:260
-msgid "© 2012-2015 ET Legacy Team - under the terms of GPL version 3."
-msgstr "© 2012-2015 ET Legacy Team - under the terms of GPL version 3."
+msgid "© 2012-2018 ET:Legacy Team - under the terms of GPL version 3."
+msgstr "© 2012-2018 ET:Legacy Team - unter den Bedingungen der GPL Version 3."
 
 #: etmain/ui/credits_etlegacy.menu:201
 msgid "HALL OF FAME"
@@ -525,7 +525,7 @@ msgstr "Intermission Zeit"
 
 #: etmain/ui/hostgame_advanced.menu:38
 msgid "Intermission Ready %:"
-msgstr "Intermission Bereit %:"
+msgstr "Intermission bereit %:"
 
 #: etmain/ui/hostgame_advanced.menu:38
 msgid "Percentage of 'ready' players to start next map"
@@ -1528,7 +1528,7 @@ msgstr "ÖFFENTLICHE EINSTELLUNGEN"
 #: etmain/ui/options_customise_hud.menu:62
 #: etmain/ui/options_customise_hud.menu:63 etmain/ui/options_graphics.menu:55
 msgid "None"
-msgstr "Niemand"
+msgstr "Nichts"
 
 #: etmain/ui/ingame_vote_misc.menu:61
 #: etmain/ui/ingame_vote_misc_refrcon.menu:60
@@ -2109,7 +2109,7 @@ msgstr "Spieler Alias:"
 
 #: etmain/ui/options_customise_game.menu:34
 msgid "Enter the name that you wish to be known by to others on servers"
-msgstr ""
+msgstr "Gib deinen Namen ein, der dich im Onlinespiel anzeigt"
 
 #: etmain/ui/options_customise_game.menu:36
 #: etmain/ui/profile_create_initial.menu:101 etmain/ui/profile_create.menu:94
@@ -2260,15 +2260,15 @@ msgstr ""
 
 #: etmain/ui/options_customise_game.menu:58
 msgid "Zoom Levels:"
-msgstr ""
+msgstr "Zoom Stufen:"
 
 #: etmain/ui/options_customise_game.menu:58
 msgid "4 Levels of Zoom"
-msgstr ""
+msgstr "4 Stufen Zoom"
 
 #: etmain/ui/options_customise_game.menu:58
 msgid "8 Levels of Zoom"
-msgstr ""
+msgstr "8 Stufen Zoom"
 
 #: etmain/ui/options_customise_game.menu:58
 msgid "Specifies the increments you zoom by"
@@ -2327,7 +2327,7 @@ msgstr "Nur Team Chat:"
 
 #: etmain/ui/options_customise_game.menu:65
 msgid "Play only team chat in-game"
-msgstr ""
+msgstr "Nur Team-Chats im Spiel"
 
 #: etmain/ui/options_customise_game.menu:66
 msgid "No voice text:"
@@ -2355,7 +2355,7 @@ msgstr "Kein Sprach Chat:"
 
 #: etmain/ui/options_customise_game.menu:72
 msgid "Don't play voice chat in-game"
-msgstr ""
+msgstr "Keine Sprach-Chats im Spiel"
 
 #: etmain/ui/options_customise_game.menu:73
 msgid "Hitsounds:"
@@ -2367,15 +2367,15 @@ msgstr "Kein Team Treffer Klang"
 
 #: etmain/ui/options_customise_game.menu:73
 msgid "No Head Hit Sound"
-msgstr ""
+msgstr "Kein Kopfschuss Treffer Signal"
 
 #: etmain/ui/options_customise_game.menu:73
 msgid "No Body Hit Sound"
-msgstr ""
+msgstr "Kein Körper Treffer Signal"
 
 #: etmain/ui/options_customise_game.menu:73
 msgid "Set hit sounds"
-msgstr ""
+msgstr "Setze Treffer Signal"
 
 #: etmain/ui/options_customise_game.menu:78
 msgid "Complaint PopUp:"
@@ -2399,11 +2399,11 @@ msgstr "Auto-Aktion:"
 
 #: etmain/ui/options_customise_game.menu:80
 msgid "Demo"
-msgstr "Dmo"
+msgstr "Demo"
 
 #: etmain/ui/options_customise_game.menu:80
 msgid "Screenshot"
-msgstr ""
+msgstr "Bildschirmfoto"
 
 #: etmain/ui/options_customise_game.menu:80
 msgid "Stats Dump"
@@ -2411,19 +2411,19 @@ msgstr ""
 
 #: etmain/ui/options_customise_game.menu:80
 msgid "Demo + SS"
-msgstr ""
+msgstr "Demo + Foto"
 
 #: etmain/ui/options_customise_game.menu:80
 msgid "Demo + Stats"
-msgstr ""
+msgstr "Demo + Stats"
 
 #: etmain/ui/options_customise_game.menu:80
 msgid "SS + Stats"
-msgstr ""
+msgstr "Foto + Stats"
 
 #: etmain/ui/options_customise_game.menu:80
 msgid "Demo + SS + Stats"
-msgstr ""
+msgstr "Demo + Foto + Stats"
 
 #: etmain/ui/options_customise_game.menu:80
 msgid "Automatically performs actions at the start or end of a round"
@@ -2431,7 +2431,7 @@ msgstr ""
 
 #: etmain/ui/options_customise_game.menu:81
 msgid "AutoScreenshots format:"
-msgstr ""
+msgstr "Auto-Bildschirmfoto Format:"
 
 #: etmain/ui/options_customise_game.menu:81
 msgid ""
@@ -2474,7 +2474,7 @@ msgstr ""
 
 #: etmain/ui/options_customise_hud.menu:36
 msgid "Auto Map Zoom:"
-msgstr ""
+msgstr "Karten Auto-Zoom."
 
 #: etmain/ui/options_customise_hud.menu:36
 msgid "Sets Zoom Level Automatically When Map Loads"
@@ -2526,23 +2526,23 @@ msgstr "Zeige Orte:"
 
 #: etmain/ui/options_customise_hud.menu:40
 msgid "Cordinates Only"
-msgstr ""
+msgstr "Nur Koordinaten"
 
 #: etmain/ui/options_customise_hud.menu:40
 msgid "Names Fireteam Only"
-msgstr ""
+msgstr "Nur Name im Feuerteam"
 
 #: etmain/ui/options_customise_hud.menu:40
 msgid "Names Team Chat Only"
-msgstr ""
+msgstr "Nur Name im Team Chat"
 
 #: etmain/ui/options_customise_hud.menu:40
 msgid "Team & Fireteam Chat"
-msgstr ""
+msgstr "Team & Feuerteam Chat"
 
 #: etmain/ui/options_customise_hud.menu:40
 msgid "Displays locations in fireteam"
-msgstr ""
+msgstr "Zeige Orte im Feuerteam"
 
 #: etmain/ui/options_customise_hud.menu:41
 msgid "Enable Flags:"
@@ -2554,11 +2554,11 @@ msgstr ""
 
 #: etmain/ui/options_customise_hud.menu:42
 msgid "Fireteam Latched Class:"
-msgstr ""
+msgstr "Nächste Feuerteam Klasse:"
 
 #: etmain/ui/options_customise_hud.menu:42
 msgid "Displays Fireteam latched class"
-msgstr ""
+msgstr "Zeigt Feuerteam nächste Klasse"
 
 #: etmain/ui/options_customise_hud.menu:43
 msgid "Obituaries Icons:"
@@ -2725,7 +2725,7 @@ msgstr "Corona Entfernung:"
 
 #: etmain/ui/options_customise_hud.menu:59
 msgid "Extreme"
-msgstr ""
+msgstr "Extrem"
 
 #: etmain/ui/options_customise_hud.menu:59
 msgid "Sets the maximum distance light corona is displayed"
@@ -2939,7 +2939,7 @@ msgstr "Orange"
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Light Blue"
-msgstr ""
+msgstr "Hellblau"
 
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
@@ -2959,7 +2959,7 @@ msgstr ""
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Light Green"
-msgstr ""
+msgstr "Hellgrün"
 
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
@@ -3144,7 +3144,7 @@ msgstr ""
 #: etmain/ui/options_graphics_gamma.menu:36
 #: etmain/ui/options_system_gamma.menu:39
 msgid "2. Click the BACK button."
-msgstr ""
+msgstr "2. Klicke den ZURÜCK Button."
 
 #: etmain/ui/options_graphics_gamma.menu:50
 #: etmain/ui/options_system_gamma.menu:53
@@ -3166,7 +3166,7 @@ msgstr ""
 #: etmain/ui/options_graphics_gamma.menu:53
 #: etmain/ui/options_system_gamma.menu:56
 msgid "3. Click the BACK button."
-msgstr ""
+msgstr "3. Klicke den ZURÜCK Button."
 
 #: etmain/ui/options_graphics_gamma.menu:67 etmain/ui/options_graphics.menu:45
 #: etmain/ui/options_system_gamma.menu:70
@@ -3194,7 +3194,7 @@ msgstr "Gesamtqualität:"
 
 #: etmain/ui/options_graphics.menu:39
 msgid "fastest"
-msgstr ""
+msgstr "am schnellsten"
 
 #: etmain/ui/options_graphics.menu:39
 msgid "fast"
@@ -3210,7 +3210,7 @@ msgstr "hoch"
 
 #: etmain/ui/options_graphics.menu:39
 msgid "Set overall video quality"
-msgstr ""
+msgstr "Setze gesamt Video Qualität"
 
 #: etmain/ui/options_graphics.menu:40
 #: etmain/ui/profile_create_initial.menu:104 etmain/ui/profile_create.menu:98
@@ -3219,7 +3219,7 @@ msgstr "Auflösung:"
 
 #: etmain/ui/options_graphics.menu:40
 msgid "Set video resolution of the game"
-msgstr ""
+msgstr "Setze Video Auflösung des Spiels"
 
 #: etmain/ui/options_graphics.menu:42
 #: etmain/ui/profile_create_initial.menu:105 etmain/ui/profile_create.menu:99
@@ -3237,7 +3237,7 @@ msgstr "Intensität:"
 
 #: etmain/ui/options_graphics.menu:46
 msgid "The Intensity Of Textures (requires vid_restart)"
-msgstr ""
+msgstr "Die Intensität der Texturen (erfordert vid_restart)"
 
 #: etmain/ui/options_graphics.menu:47
 msgid "Map overbright bits:"
@@ -3249,7 +3249,7 @@ msgstr ""
 
 #: etmain/ui/options_graphics.menu:48
 msgid "Overbright Bits:"
-msgstr ""
+msgstr "Overbright Bits:"
 
 #: etmain/ui/options_graphics.menu:48
 msgid "Map shines brighter (requires vid_restart)"
@@ -3286,7 +3286,7 @@ msgstr "Niedrig"
 
 #: etmain/ui/options_graphics.menu:56
 msgid "Set texture details"
-msgstr ""
+msgstr "Setze Texturen Details"
 
 #: etmain/ui/options_graphics.menu:58
 msgid "Dynamic Lights:"
@@ -3424,7 +3424,7 @@ msgstr ""
 
 #: etmain/ui/options_graphics.menu:73
 msgid "SET RECOMMENDED"
-msgstr ""
+msgstr "SETZE EMPFOHLEN"
 
 #: etmain/ui/options_graphics.menu:78 etmain/ui/options_system.menu:66
 msgid "APPLY"
@@ -3436,7 +3436,7 @@ msgstr "SYSTEM"
 
 #: etmain/ui/options_system.menu:39
 msgid "AUDIO"
-msgstr ""
+msgstr "AUDIO"
 
 #: etmain/ui/options_system.menu:41
 msgid "Effects Volume:"
@@ -3964,7 +3964,7 @@ msgstr ""
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:89 etmain/ui/wm_quickmessageAlt.menu:89
 msgid "7. Objectives"
-msgstr ""
+msgstr "7. Ziele"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:95 etmain/ui/wm_quickmessageAlt.menu:95
 msgid "1. Path Cleared."
@@ -4029,7 +4029,7 @@ msgstr "3. Brauche Verstärkung!"
 #: etmain/ui/wm_ftquickmessageAlt.menu:113
 #: etmain/ui/wm_quickmessageAlt.menu:113
 msgid "4. Need Engineer!"
-msgstr "4. Brauche Ingenieur!"
+msgstr "4. Brauche Pioniere!"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:114
 #: etmain/ui/wm_quickmessageAlt.menu:114
@@ -4074,7 +4074,7 @@ msgstr "4. Macht den weg frei!"
 #: etmain/ui/wm_ftquickmessageAlt.menu:127
 #: etmain/ui/wm_quickmessageAlt.menu:127
 msgid "5. Defend Objective!"
-msgstr ""
+msgstr "5. Verteidige Ziel!"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:128
 #: etmain/ui/wm_quickmessageAlt.menu:128
@@ -4258,7 +4258,7 @@ msgstr ""
 
 #: etmain/ui/wm_ftquickmessage.menu:89 etmain/ui/wm_quickmessage.menu:90
 msgid "O. Objectives"
-msgstr ""
+msgstr "O. Ziele"
 
 #: etmain/ui/wm_ftquickmessage.menu:95 etmain/ui/wm_quickmessage.menu:96
 msgid "P. Path Cleared."
@@ -4302,7 +4302,7 @@ msgstr ""
 
 #: etmain/ui/wm_ftquickmessage.menu:110 etmain/ui/wm_quickmessage.menu:110
 msgid "M. Need Medic!"
-msgstr ""
+msgstr "M. Brauche Sanitäter!"
 
 #: etmain/ui/wm_ftquickmessage.menu:111 etmain/ui/wm_quickmessage.menu:111
 msgid "A. Need Ammo!"
@@ -4314,7 +4314,7 @@ msgstr ""
 
 #: etmain/ui/wm_ftquickmessage.menu:113 etmain/ui/wm_quickmessage.menu:113
 msgid "E. Need Engineer!"
-msgstr ""
+msgstr "E. Brauche Pioniere!"
 
 #: etmain/ui/wm_ftquickmessage.menu:114 etmain/ui/wm_quickmessage.menu:114
 msgid "C. Cover Me!"
@@ -4413,7 +4413,7 @@ msgstr "B. Tschüss"
 
 #: etmain/ui/wm_ftquickmessage.menu:153 etmain/ui/wm_quickmessage.menu:153
 msgid "S. Great Shot"
-msgstr ""
+msgstr "S. Guter Schuss"
 
 #: etmain/ui/wm_ftquickmessage.menu:154 etmain/ui/wm_quickmessage.menu:154
 msgid "C. Cheer"
@@ -4441,11 +4441,11 @@ msgstr "C. Befehl ausgeführt"
 
 #: etmain/ui/wm_ftquickmessage.menu:175 etmain/ui/wm_quickmessage.menu:175
 msgid "P. Destroy Primary Objective"
-msgstr ""
+msgstr "P. Zerstöre primäres Ziel"
 
 #: etmain/ui/wm_ftquickmessage.menu:176 etmain/ui/wm_quickmessage.menu:176
 msgid "S. Destroy Secondary Objective"
-msgstr ""
+msgstr "S. Zerstöre sekundäres Ziel"
 
 #: etmain/ui/wm_ftquickmessage.menu:177 etmain/ui/wm_quickmessage.menu:177
 msgid "X. Destroy Construction"
@@ -4551,7 +4551,7 @@ msgstr ""
 
 #: src/cgame/cg_debriefing.c:2813
 msgid "^3TO FIRETEAM"
-msgstr ""
+msgstr "^3ZUM FEUERTEAM"
 
 #: src/cgame/cg_debriefing.c:2816
 msgid "^2TO GLOBAL"
@@ -4596,7 +4596,7 @@ msgstr "SEK ZUR NÄCHSTEN KARTE"
 
 #: src/cgame/cg_debriefing.c:2905
 msgid "SEC TO NEXT MAP"
-msgstr ""
+msgstr "SEK ZUR NÄCHSTEN KARTE"
 
 #: src/cgame/cg_debriefing.c:3371
 #, c-format
@@ -4699,7 +4699,7 @@ msgstr "Beschwerde abgewiesen"
 
 #: src/cgame/cg_draw.c:1940
 msgid "Server Host cannot be complained against"
-msgstr ""
+msgstr "Du kannst dich gegen den Server nicht beschweren"
 
 #: src/cgame/cg_draw.c:1946
 msgid "You were team-killed by the Server Host"
@@ -5363,7 +5363,7 @@ msgstr "^3Überprüfe die Filter - keine Server gefunden! Gefiltert/Gesamt: %04i
 msgid ""
 "^1No Connection or master down - no servers found!    Filtered/Total: "
 "0000/0000"
-msgstr ""
+msgstr "^1Keine Verbindung oder Master down - Keine Server gefunden!  Filt./Ges: 0000/0000"
 
 #: src/ui/ui_main.c:7752
 #, c-format
@@ -5454,7 +5454,7 @@ msgid "dynamited himself to pieces"
 msgstr "hat sich selbst in Stücke gesprengt"
 
 msgid "dove on his own grenade"
-msgstr ""
+msgstr "turtelte in seine eigene Granate"
 
 msgid "vaporized himself"
 msgstr "hat sich selbst verdampft"
@@ -5481,7 +5481,7 @@ msgid "embraced his own satchel explosion"
 msgstr ""
 
 msgid "engineered himself into oblivion"
-msgstr ""
+msgstr "hat sich selbst zu Tode getüfftelt"
 
 msgid "buried himself alive"
 msgstr ""
@@ -5505,13 +5505,13 @@ msgid "Improved Dexterity"
 msgstr ""
 
 msgid "Binoculars for any Class"
-msgstr ""
+msgstr "Ferngläser für jede Klasse"
 
 msgid "Medic Ammo"
 msgstr ""
 
 msgid "Improved First Aid Resources"
-msgstr ""
+msgstr "Verbesserte Erste Hilfe Ressourcen"
 
 msgid "Improved use of Light Weapon Ammunition"
 msgstr ""
@@ -5547,10 +5547,10 @@ msgid "Improved Construction and Destruction"
 msgstr ""
 
 msgid "Full Revive"
-msgstr ""
+msgstr "Vollständiges Wiederbeleben"
 
 msgid "Improved Air and Ground Support"
-msgstr ""
+msgstr "Verbesserte Luft- und Boden Unterstützung"
 
 msgid "Improved Light Weapon Handling"
 msgstr ""
@@ -5562,7 +5562,7 @@ msgid "Trap Awareness"
 msgstr ""
 
 msgid "a Flak Jacket"
-msgstr ""
+msgstr "eine Flakweste"
 
 msgid "Adrenalin Self"
 msgstr ""
@@ -5615,10 +5615,10 @@ msgid "^1** Referee Server Setting Change **\n"
 msgstr ""
 
 msgid "Your fireteam is now public"
-msgstr ""
+msgstr "Dein Feuerteam ist jetzt öffentlich"
 
 msgid "Your fireteam is now private"
-msgstr ""
+msgstr "Dein Feuerteam ist jetzt privat"
 
 msgid "The Allies have too many players.\n"
 msgstr ""
@@ -5668,7 +5668,7 @@ msgid "Enemy in disguise."
 msgstr ""
 
 msgid "Need a Medic!"
-msgstr ""
+msgstr "Brauche einen Sanitäter!"
 
 msgid "I need ammo!"
 msgstr ""
@@ -5677,7 +5677,7 @@ msgid "I need backup!"
 msgstr ""
 
 msgid "We need an engineer!"
-msgstr ""
+msgstr "Wir brauchen einen Pionier!"
 
 msgid "Cover me!"
 msgstr ""
@@ -5758,13 +5758,13 @@ msgid "Negative!"
 msgstr ""
 
 msgid "Hi!"
-msgstr ""
+msgstr "Hi!"
 
 msgid "Hello!"
 msgstr ""
 
 msgid "Hallo!"
-msgstr ""
+msgstr "Hallo!"
 
 msgid "Good bye."
 msgstr ""
@@ -5782,7 +5782,7 @@ msgid "You got it, man!"
 msgstr ""
 
 msgid "Yeah!"
-msgstr ""
+msgstr "Yeah!"
 
 msgid "Yoohoo!"
 msgstr ""
@@ -5794,16 +5794,16 @@ msgid "Alright!"
 msgstr ""
 
 msgid "Woo!"
-msgstr ""
+msgstr "Woo!"
 
 msgid "Yeehaa!"
-msgstr ""
+msgstr "Yeehaa!"
 
 msgid "'Atta way, baby!"
 msgstr ""
 
 msgid "Jahaa!"
-msgstr ""
+msgstr "Jahaa!"
 
 msgid "Wunderbar!"
 msgstr ""
@@ -5842,10 +5842,10 @@ msgid "Command completed!"
 msgstr ""
 
 msgid "Destroy primary objective!"
-msgstr ""
+msgstr "Zerstöre das primäres Ziel!"
 
 msgid "Destroy secondary objective!"
-msgstr ""
+msgstr "Zerstöre das sekundäre Ziel!"
 
 msgid "Destroy construction!"
 msgstr ""
@@ -5866,13 +5866,13 @@ msgid "Covering fire!"
 msgstr ""
 
 msgid "I'm a soldier."
-msgstr ""
+msgstr "Ich bin ein Soldat."
 
 msgid "I'm an engineer."
-msgstr ""
+msgstr "Ich bin ein Pionier."
 
 msgid "I'm a medic."
-msgstr ""
+msgstr "Ich bin Sanitäter."
 
 msgid "I'm a field ops."
 msgstr ""
@@ -5881,7 +5881,7 @@ msgid "I'm a covert ops."
 msgstr ""
 
 msgid "unknown cmd"
-msgstr ""
+msgstr "unbekannter Befehl"
 
 msgid "Server:"
 msgstr "Server:"
@@ -5896,13 +5896,13 @@ msgid "Landmine armed"
 msgstr ""
 
 msgid "Dynamite is set, but NOT armed!"
-msgstr ""
+msgstr "Dynamit ist gelegt, aber NICHT scharf!"
 
 msgid "Arming dynamite..."
 msgstr ""
 
 msgid "Dynamite is now armed with a 30 second timer!"
-msgstr ""
+msgstr "Dynamit ist jetzt scharf und zündet in 30 Sekunden!"
 
 msgid "Defusing landmine..."
 msgstr ""
@@ -5917,7 +5917,7 @@ msgid "Affirmative!!"
 msgstr ""
 
 msgid "^1Spam Protection^7: VoiceChat ignored"
-msgstr ""
+msgstr "^1Spam Schutz^7: Sprach-Chat ignoriert"
 
 msgid "Mines have been reported in this area."
 msgstr ""
@@ -5983,7 +5983,7 @@ msgid "Need paks: %s\n"
 msgstr ""
 
 msgid "Not enough players to start match!\n"
-msgstr ""
+msgstr "Nicht genug Spieler um das Spiel zu starten!\n"
 
 msgid "'s flamethrower"
 msgstr ""
@@ -5992,7 +5992,7 @@ msgid "'s Satchel Charge"
 msgstr ""
 
 msgid "You cannot arm dynamite near a friendly objective!"
-msgstr ""
+msgstr "Du kannst kein Dynamit neben einem eigenem Ziel setzen! "
 
 msgid "'s tank-mounted MG42"
 msgstr ""
@@ -6019,7 +6019,7 @@ msgid "Public Settings Loaded!\n"
 msgstr "Öffentliche Einstellungen geladen\n"
 
 msgid "Landmine cannot be armed here"
-msgstr ""
+msgstr "Die Landmiene kann hier nicht gezündet werden."
 
 msgid "Your team has too many landmines placed..."
 msgstr "Dein Team hat zu viele Landminen gelegt..."
@@ -6031,7 +6031,7 @@ msgid "Countdown started.... ^3notready^7 ignored!\n"
 msgstr ""
 
 msgid "No complaint filed against you.\n"
-msgstr ""
+msgstr "Keine Beschwerde gegen dich eingereicht.\n"
 
 msgid "You are not the leader of a fireteam\n"
 msgstr "Du hast nicht das Kommando über das Feuerteam\n"
@@ -6049,7 +6049,7 @@ msgid "The fireteam you are on has been disbanded"
 msgstr ""
 
 msgid "You have been given fireteam admin rights"
-msgstr ""
+msgstr "Dir wurden Feuerteam Admin Rechte gegeben"
 
 msgid "Too many players already on this Fireteam"
 msgstr "Es sind schon zu viele Spieler im Feuerteam"
@@ -6061,10 +6061,10 @@ msgid "The other player is already on a fireteam"
 msgstr "Der andere Spieler ist schon in einem Feuerteam"
 
 msgid "You are not on the same team as the other player"
-msgstr ""
+msgstr "Du bist im selben Team wie der andere Spieler"
 
 msgid "You are not on the same Fireteam as the other player"
-msgstr ""
+msgstr "Du bist im selben Feuerteam wie der andere Spieler"
 
 msgid "Invalid client selected"
 msgstr "Ungültiger Client gewählt"
@@ -6073,19 +6073,19 @@ msgid "usage: fireteam admin <clientname|clientnumber>"
 msgstr "Anwendung: fireteam admin <Clientname|Clientnummer>"
 
 msgid "usage: fireteam propose <clientname|clientnumber>"
-msgstr ""
+msgstr "Anwendung: fireteam propose <clientname|clientnumber>"
 
 msgid "usage: fireteam kick <clientname|clientnumber>"
-msgstr ""
+msgstr "Anwendung: fireteam kick <clientname|clientnumber>"
 
 msgid "usage: fireteam warn <clientname|clientnumber>"
-msgstr ""
+msgstr "Anwendung: fireteam warn <clientname|clientnumber>"
 
 msgid "usage: fireteam invite <clientname|clientnumber>"
-msgstr ""
+msgstr "Anwendung: fireteam invite <clientname|clientnumber>"
 
 msgid "usage: fireteam apply <fireteamname|fireteamnumber>"
-msgstr ""
+msgstr "Anwendung: fireteam apply <fireteamname|fireteamnumber>"
 
 msgid "usage: fireteam <create|leave|apply|invite>"
 msgstr "Anwendung: fireteam <create|leave|apply|invite>"
@@ -6115,7 +6115,7 @@ msgstr ""
 msgid ""
 "Usage: ^3\\ref <cmd> [params]\n"
 "\n"
-msgstr ""
+msgstr "Anwendung: ^3\\ref <cmd> [params]\n\n"
 
 msgid "^5pause speclock warmup ^7[value]\n"
 msgstr ""
@@ -6187,7 +6187,7 @@ msgid "Referee has ^3SPECTATOR UNLOCKED^7 teams\n"
 msgstr ""
 
 msgid "usage: ref warn <clientname> [reason].\n"
-msgstr ""
+msgstr "Anwendung: ref warn <clientname> [Grund].\n"
 
 msgid "Client not on server.\n"
 msgstr "Client ist nicht auf dem Server.\n"
@@ -6222,7 +6222,7 @@ msgstr ""
 
 msgid ""
 "^7-------------------------------------------------------------------------------\n"
-msgstr ""
+msgstr "^7-------------------------------------------------------------------------------\n"
 
 msgid ""
 "^5\n"
@@ -6277,7 +6277,7 @@ msgid ""
 "\n"
 "Usage: ^3\\callvote <command> <params>\n"
 "^7For current settings/help, use: ^3\\callvote <command> ?\n"
-msgstr ""
+msgstr "\nAnwendung:: ^3\\callvote <command> <params>\n^7Für die aktuelle Einstellung/Hilfe benutze: ^3\\callvote <command> ?\n"
 
 msgid "Type ^3\\stats <player_id>^7 to see stats on an active player.\n"
 msgstr ""
@@ -6325,7 +6325,7 @@ msgid "Vote cast.\n"
 msgstr ""
 
 msgid "'s KA-BAR"
-msgstr ""
+msgstr "'s KA-BAR"
 
 msgid "'s knife arts"
 msgstr ""
@@ -6334,34 +6334,34 @@ msgid "'s .45ACP 1911"
 msgstr ""
 
 msgid "'s Thompson"
-msgstr ""
+msgstr "'s Thompson"
 
 msgid "'s MP 40"
-msgstr ""
+msgstr "'s MP 40"
 
 msgid "'s knife"
-msgstr ""
+msgstr "'s Messer"
 
 msgid "'s Luger 9mm"
-msgstr ""
+msgstr "'s Luger 9mm"
 
 msgid "'s Panzerfaust"
-msgstr ""
+msgstr "'s Panzerfaust"
 
 msgid "'s Garand"
-msgstr ""
+msgstr "'s Garand"
 
 msgid "'s Sten"
-msgstr ""
+msgstr "'s Sten"
 
 msgid "'s FG 42"
-msgstr ""
+msgstr "'s FG 42"
 
 msgid "'s K43"
-msgstr ""
+msgstr "'s K43"
 
 msgid "'s Bazooka"
-msgstr ""
+msgstr "'s Bazooka"
 
 msgid "'s Akimbo .45ACP 1911s"
 msgstr ""
@@ -6376,22 +6376,22 @@ msgid "Server disconnected for unknown reason"
 msgstr ""
 
 msgid "'s Akimbo Luger 9mms"
-msgstr ""
+msgstr "'s Akimbo Luger 9mms"
 
 msgid "Cheats are not enabled on this server.\n"
 msgstr ""
 
 msgid "team: class is not available\n"
-msgstr ""
+msgstr "team: Klasse nicht verfügbar\n"
 
 msgid "^1Soldier^7 is not available! Choose another class!\n"
-msgstr ""
+msgstr "^1Soldat^7 ist nicht verfügbar! Wähle eine andere Klasse!\n"
 
 msgid "^1Medic^7 is not available! Choose another class!\n"
-msgstr ""
+msgstr "^Sanitäter^7 ist nicht verfügbar! Wähle eine andere Klasse!\n"
 
 msgid "^1Engineer^7 is not available! Choose another class!\n"
-msgstr ""
+msgstr "^Pionier^7 ist nicht verfügbar! Wähle eine andere Klasse!\n"
 
 msgid "^1Field Ops^7 is not available! Choose another class!\n"
 msgstr ""
@@ -6451,7 +6451,7 @@ msgid "^1Teams have been shuffled!\n"
 msgstr ""
 
 msgid "^3*** Loading nextmap! ***\n"
-msgstr ""
+msgstr "^3*** Lade die nächste Karte! ***\n"
 
 msgid "^1*** Level Restarted! ***\n"
 msgstr ""
@@ -6472,13 +6472,13 @@ msgid "Try to beat the clock!"
 msgstr "Versuche die Uhr zu schlagen!"
 
 msgid "You have been been stripped of fireteam admin rights"
-msgstr ""
+msgstr "Deine Admin Feuerteam Rechte wurden entfernt"
 
 msgid "%s ^7has left the fireteam\n"
 msgstr "%s ^7hat das Feuerteam verlassen\n"
 
 msgid "You have been warned by your fireteam leader\n"
-msgstr ""
+msgstr "Du wurdest vom Feuerteam Leiter verwarnt\n"
 
 msgid "^3moved to spectator for inactivity!\n"
 msgstr ""
@@ -6568,10 +6568,10 @@ msgid "- Luger"
 msgstr "- Luger"
 
 msgid "- Akimbo Luger"
-msgstr ""
+msgstr "- Doppel Luger"
 
 msgid "- Silenced Akimbo Luger"
-msgstr ""
+msgstr "- Leise Doppel Luger"
 
 msgid "- Thompson"
 msgstr "- Thompson"
@@ -6580,13 +6580,13 @@ msgid "- Sten gun"
 msgstr ""
 
 msgid "- Colt"
-msgstr ""
+msgstr "- Colt"
 
 msgid "- Akimbo Colt"
-msgstr ""
+msgstr "- Doppel Colt"
 
 msgid "- Silenced Akimbo Colt"
-msgstr ""
+msgstr "- Leiser Doppel Colt"
 
 msgid "- MP 40"
 msgstr "- MP 40"
@@ -6613,10 +6613,10 @@ msgid "- Adrenaline Syringe"
 msgstr "- Adrenalinspritze"
 
 msgid "- Ammo Pack"
-msgstr "- Muntion"
+msgstr "- Munition Paket"
 
 msgid "- Mega Ammo Pack"
-msgstr ""
+msgstr "- Großes Munition Paket"
 
 msgid "- Binoculars"
 msgstr "- Fernglas"
@@ -6745,7 +6745,7 @@ msgid "Battle Sense"
 msgstr ""
 
 msgid "Engineering"
-msgstr ""
+msgstr "Konstruktion"
 
 msgid "First Aid"
 msgstr "Erste Hilfe"
@@ -6772,7 +6772,7 @@ msgid "Fire Mission: ^3Aborting, can't see target."
 msgstr ""
 
 msgid "I need a Medic!"
-msgstr ""
+msgstr "ich brauche einen Sanitäter!"
 
 msgid "New version available. Do you want to update now?"
 msgstr ""
@@ -6818,7 +6818,7 @@ msgid "Change privacy"
 msgstr ""
 
 msgid "Kick"
-msgstr ""
+msgstr "Kick"
 
 msgid "Warn"
 msgstr "Warne"
@@ -6842,7 +6842,7 @@ msgid "Highest Battle Sense"
 msgstr ""
 
 msgid "Best Engineer"
-msgstr "Bester Ingenieur"
+msgstr "Bester Pionier"
 
 msgid "Best Medic"
 msgstr "Bester Sanitäter"
@@ -6889,7 +6889,7 @@ msgid ""
 msgstr ""
 
 msgid "Gib command not allowed during intermission.\n"
-msgstr ""
+msgstr "Gib Kommando während der Intermission Zeit nicht erlaubt.\n"
 
 msgid "^3%d^7 players gibbed."
 msgstr ""
@@ -6934,7 +6934,7 @@ msgid "No players in team or they are already frozen.\n"
 msgstr ""
 
 msgid "Error - can't freeze - %s.\n"
-msgstr ""
+msgstr "Fehler - kann %s nicht einfrieren.\n"
 
 msgid "Player must be on a team to be frozen.\n"
 msgstr ""
@@ -6994,7 +6994,7 @@ msgid "^7%s^7 is pipped."
 msgstr ""
 
 msgid "%s command not allowed during intermission.\n"
-msgstr ""
+msgstr "%s Kommando während der Intermission Zeit nicht erlaubt.\n"
 
 msgid "^3%d^7 players %s."
 msgstr ""
@@ -7025,7 +7025,7 @@ msgid "Set the system sound control"
 msgstr ""
 
 msgid "No can do!"
-msgstr ""
+msgstr "Das geht nicht!"
 
 msgid "Right away!"
 msgstr ""
@@ -7039,7 +7039,7 @@ msgid "MATCH BEGINS NOW!"
 msgstr "DAS SPIEL STARTET JETZT!"
 
 msgid "Mute Players:"
-msgstr ""
+msgstr "Spieler stumm:"
 
 msgid "Allow players to vote for muting players"
 msgstr ""
@@ -7057,7 +7057,7 @@ msgid "Allow players to vote for teams to be shuffled without a restart"
 msgstr ""
 
 msgid "Restart Campaign:"
-msgstr ""
+msgstr "Kampagnen Neustart:"
 
 msgid "Allow players to vote for restarting campaign"
 msgstr ""
@@ -7069,10 +7069,10 @@ msgid "Allow players to vote for next campaign"
 msgstr ""
 
 msgid "CHANGE SYSTEM SETTINGS"
-msgstr ""
+msgstr "ÄNDERE SYSTEM EINSTELLUNGEN"
 
 msgid "RESTART CAMPAIGN"
-msgstr ""
+msgstr "NEUSTART KAMPAGNE"
 
 msgid "SURRENDER"
 msgstr "AUFGEBEN"
@@ -7151,7 +7151,7 @@ msgid "Enable Joysticks:"
 msgstr "Joysticks einschalten:"
 
 msgid "General joystick initialization. Requires vid_restart."
-msgstr ""
+msgstr "Allgemeine Joystick Initialisierung. Erfordert vid_restart."
 
 msgid "Use Joystick#:"
 msgstr "Benutze Joystick#:"
@@ -7200,10 +7200,10 @@ msgid "Show voice text in-game"
 msgstr ""
 
 msgid "Voice chat:"
-msgstr ""
+msgstr "Sprach Chat:"
 
 msgid "Play voice chat in-game"
-msgstr ""
+msgstr "Sprach-Chat Klänge im Spiel"
 
 #: cgame/cg_limbopanel:1907
 msgid "1of%i"
@@ -7263,13 +7263,13 @@ msgid "JOIN A TEAM"
 msgstr ""
 
 msgid "SOLDIER"
-msgstr ""
+msgstr "SOLDAT"
 
 msgid "MEDIC"
-msgstr ""
+msgstr "SANITÄTER"
 
 msgid "ENGINEER"
-msgstr ""
+msgstr "PIONIER"
 
 msgid "FIELD OPS"
 msgstr ""
@@ -7284,11 +7284,8 @@ msgstr ""
 msgid "Specify receiver of quick radio messages"
 msgstr ""
 
-msgid "Renderer:"
-msgstr "Renderer:"
-
 msgid "High Quality Video:"
-msgstr ""
+msgstr "Hohe Videoqualität:"
 
 msgid "Sets high quality video."
 msgstr ""
@@ -7305,16 +7302,16 @@ msgid ""
 msgstr ""
 
 msgid "CHOOSE CLASS/WEAPON"
-msgstr ""
+msgstr "WÄHLE KLASSE/WAFFE"
 
 msgid "S. Soldier"
-msgstr ""
+msgstr "S. Soldat"
 
 msgid "M. Medic"
-msgstr ""
+msgstr "M. Sanitäter"
 
 msgid "E. Engineer"
-msgstr ""
+msgstr "E. Pionier"
 
 msgid "F. Field Ops"
 msgstr ""
@@ -7329,13 +7326,13 @@ msgid "G. Machinegun"
 msgstr ""
 
 msgid "F. Flamethrower"
-msgstr ""
+msgstr "F. Flammenwerfer"
 
 msgid "R. Rocket Launcher"
 msgstr ""
 
 msgid "M. Mortar"
-msgstr ""
+msgstr "M. Mörser"
 
 msgid "S. SMG"
 msgstr ""
@@ -7347,13 +7344,13 @@ msgid "P. Sniper Rifle"
 msgstr ""
 
 msgid "1. Soldier"
-msgstr ""
+msgstr "1. Soldat"
 
 msgid "2. Medic"
-msgstr ""
+msgstr "2. Sanitäter"
 
 msgid "3. Engineer"
-msgstr ""
+msgstr "3. Pionier"
 
 msgid "4. Field Ops"
 msgstr ""
@@ -7368,7 +7365,7 @@ msgid "2. Machinegun"
 msgstr ""
 
 msgid "3. Flamethrower"
-msgstr ""
+msgstr "3. Flammenwerfer"
 
 msgid "4. Rocket Launcher"
 msgstr ""
@@ -7386,4 +7383,112 @@ msgid "2. Automatic Rifle"
 msgstr ""
 
 msgid "3. Sniper Rifle"
+msgstr ""
+
+msgid "English (default)  "
+msgstr "Englisch (standard)  "
+
+msgid "Czech"
+msgstr "Tschechisch"
+
+msgid "Dutch"
+msgstr "Niederländisch"
+
+msgid "Finnish"
+msgstr "Finnisch"
+
+msgid "French"
+msgstr "Französisch"
+
+msgid "German"
+msgstr "Deutsch"
+
+msgid "Greek"
+msgstr "Griechisch"
+
+msgid "Hungarian"
+msgstr "Ungarisch"
+
+msgid "Italian"
+msgstr "Italienisch"
+
+msgid "Norwegian"
+msgstr "Norwegisch"
+
+msgid "Polish"
+msgstr "Polnisch"
+
+msgid "Portuguese"
+msgstr "Portugiesisch"
+
+msgid "Russian"
+msgstr "Russisch"
+
+msgid "Spanish"
+msgstr "Spanisch"
+
+msgid "Turkish"
+msgstr "Türkisch"
+
+msgid "desktop resolution"
+msgstr ""
+
+msgid "custom resolution"
+msgstr ""
+
+msgid "856*480 Wide Screen"
+msgstr ""
+
+msgid "Windowed"
+msgstr "Im Fenster"
+
+msgid "Fullscreen"
+msgstr "Vollbild"
+
+msgid "Windowed Fullscreen"
+msgstr "Vollbild im Fenster"
+
+msgid "Original"
+msgstr "Original"
+
+msgid "Other"
+msgstr "Andere"
+
+msgid "Show Speed:"
+msgstr "Zeige Geschwindigkeit:"
+
+msgid "UPS + highest speed"
+msgstr ""
+
+msgid "KPH + highest speed"
+msgstr ""
+
+msgid "MPH + highest speed"
+msgstr ""
+
+msgid "Displays speed of player"
+msgstr "Zeigt die Geschwindigkeit des Spielers"
+
+msgid "Vanilla (default)  "
+msgstr "Vanilla (default)  "
+
+msgid "Direct connect"
+msgstr "Direktes Verbinden"
+
+msgid "Override nickname"
+msgstr "Überschreibe Spitzname"
+
+msgid "Mute channel"
+msgstr "Kanal stumm"
+
+msgid "Direct + Override"
+msgstr ""
+
+msgid "Direct + Mute"
+msgstr ""
+
+msgid "Override + Mute"
+msgstr ""
+
+msgid "Direct + Over. + Mute"
 msgstr ""

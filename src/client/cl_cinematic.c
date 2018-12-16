@@ -57,6 +57,7 @@ typedef enum
 #ifdef FEATURE_THEORA
 	VIDEO_OGV,
 #endif
+	//VIDEO_H264,
 
 	VIDEO_NUM_CODECS
 } cinType_t;
@@ -64,10 +65,11 @@ typedef enum
 static videoDecode_t videoDecoders[] =
 {
 	{ "\0",  "\0",  NULL,     NULL, NULL,          NULL,                NULL,      NULL          },
-	{ "roq", "\0",  ROQ_Init, NULL, ROQ_StartRead, ROQ_UpdateCinematic, ROQ_Reset, ROQ_StopVideo },
+	{ "roq", "\0",  ROQ_Init, NULL, ROQ_StartRead,  ROQ_UpdateCinematic,  ROQ_Reset, ROQ_StopVideo },
 #ifdef FEATURE_THEORA
-	{ "ogv", "ogm", NULL,     NULL, OGV_StartRead, OGV_UpdateCinematic, NULL,      OGV_StopVideo },
+	{ "ogv", "ogm", NULL,     NULL, OGV_StartRead,  OGV_UpdateCinematic,  NULL,      OGV_StopVideo },
 #endif
+	//{ "h264", "\0", NULL,     NULL, H264_StartRead, H264_UpdateCinematic, NULL,      H264_StopVideo },
 };
 
 // ============================================================================

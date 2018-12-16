@@ -434,7 +434,9 @@ static void cachetag_resize(int oldcount)
 	int i;
 
 	for (i = 0; i < mdm_model_count; i++)
+	{
 		mdm_cachetag_resize(&mdm_models[i], oldcount);
+	}
 }
 #endif // BONE_HITTESTS
 
@@ -642,7 +644,21 @@ static void mdm_load(mdm_t *mdmModel, char *mem)
 	mdmModel->tag_count = tags;
 	mdmModel->tags      = Com_Allocate(mdmModel->tag_count * sizeof(struct tag));
 
-	mdmModel->tag_head = mdmModel->tag_footleft = mdmModel->tag_footright = -1;
+	mdmModel->tag_head       = -1;
+
+/*
+	mdmModel->tag_armleft    = -1;  // elbow-left
+	mdmModel->tag_armright   = -1;  // elbow-right
+	mdmModel->tag_weapon2    = -1;  // hand-left
+	mdmModel->tag_weapon     = -1;  // hand-right
+	mdmModel->tag_back       = -1;  // upper-backside
+	mdmModel->tag_chest      = -1;  // upper-frontside
+	mdmModel->tag_torso      = -1;  // pelvis
+	mdmModel->tag_legleft    = -1;  // knee-left
+	mdmModel->tag_legright   = -1;  // knee-right
+*/
+	mdmModel->tag_footleft   = -1;  // ankle-left
+	mdmModel->tag_footright  = -1;  // ankle-right
 
 #ifdef BONE_HITTESTS
 	mdmModel->cachetags = NULL;
@@ -659,6 +675,26 @@ static void mdm_load(mdm_t *mdmModel, char *mem)
 		{
 			mdmModel->tag_head = i;
 		}
+/*
+		else if (!Q_stricmp(tag->name, "tag_armleft"))
+			mdmModel->tag_armleft = i;
+		else if (!Q_stricmp(tag->name, "tag_armright"))
+			mdmModel->tag_armright = i;
+		else if (!Q_stricmp(tag->name, "tag_weapon2"))
+			mdmModel->tag_weapon2 = i;
+		else if (!Q_stricmp(tag->name, "tag_weapon"))
+			mdmModel->tag_weapon = i;
+		else if (!Q_stricmp(tag->name, "tag_back"))
+			mdmModel->tag_back = i;
+		else if (!Q_stricmp(tag->name, "tag_chest"))
+			mdmModel->tag_chest = i;
+		else if (!Q_stricmp(tag->name, "tag_torso"))
+			mdmModel->tag_torso = i;
+		else if (!Q_stricmp(tag->name, "tag_legleft"))
+			mdmModel->tag_legleft = i;
+		else if (!Q_stricmp(tag->name, "tag_legright"))
+			mdmModel->tag_legright = i;
+*/
 		else if (!Q_stricmp(tag->name, "tag_footleft"))
 		{
 			mdmModel->tag_footleft = i;
@@ -2976,4 +3012,45 @@ void mdx_legs_position(/*const*/ gentity_t *ent, /*const*/ grefEntity_t *refent,
 	VectorAdd(org1, org2, org);
 	VectorScale(org, 0.5f, org);
 }
+
+/*
+
+static void mdx_taginfo( grefEntity_t& re, int tag, vec3_t& origin, orientation_t& orient)
+{
+    trap_R_LerpTagNumber(&orient, &re, tag);
+
+    // Apply tag offset from model.
+    VectorCopy(re.origin, origin );
+    VectorMA(origin, orient.origin[0], re.axis[0], origin);
+    VectorMA(origin, orient.origin[1], re.axis[1], origin);
+    VectorMA(origin, orient.origin[2], re.axis[2], origin);
+}
+
+void mdx_advanced_positions(gentity_t &ent, grefEntity_t &re, vec3_t* origins, orientation_t* orients)
+{
+    mdm_t& model = mdm_models[QHANDLETOINDEX(re.hModel)];
+
+    mdx_taginfo(re, model.tag_head,      origins[ MRP_NECK        ], orients[ MRP_NECK        ]);
+    mdx_taginfo(re, model.tag_armleft,   origins[ MRP_ELBOW_LEFT  ], orients[ MRP_ELBOW_LEFT  ]);
+    mdx_taginfo(re, model.tag_armright,  origins[ MRP_ELBOW_RIGHT ], orients[ MRP_ELBOW_RIGHT ]);
+    mdx_taginfo(re, model.tag_weapon2,   origins[ MRP_HAND_LEFT   ], orients[ MRP_HAND_LEFT   ]);
+    mdx_taginfo(re, model.tag_weapon,    origins[ MRP_HAND_RIGHT  ], orients[ MRP_HAND_RIGHT  ]);
+    mdx_taginfo(re, model.tag_back,      origins[ MRP_BACK        ], orients[ MRP_BACK        ]);
+    mdx_taginfo(re, model.tag_chest,     origins[ MRP_CHEST       ], orients[ MRP_CHEST       ]);
+    mdx_taginfo(re, model.tag_torso,     origins[ MRP_PELVIS      ], orients[ MRP_PELVIS      ]);
+    mdx_taginfo(re, model.tag_legleft,   origins[ MRP_KNEE_LEFT   ], orients[ MRP_KNEE_LEFT   ]);
+    mdx_taginfo(re, model.tag_legright,  origins[ MRP_KNEE_RIGHT  ], orients[ MRP_KNEE_RIGHT  ]);
+    mdx_taginfo(re, model.tag_footleft,  origins[ MRP_ANKLE_LEFT  ], orients[ MRP_ANKLE_LEFT  ]);
+    mdx_taginfo(re, model.tag_footright, origins[ MRP_ANKLE_RIGHT ], orients[ MRP_ANKLE_RIGHT ]);
+}
+
+void mdx_weapon_positions(gentity_t &ent, grefEntity_t &re, vec3_t* origins, orientation_t* orients)
+{
+    mdm_t& model = mdm_models[QHANDLETOINDEX(re.hModel)];
+
+    mdx_taginfo(re, model.tag_weapon,  origins[0], orients[0]);
+    mdx_taginfo(re, model.tag_weapon2, origins[1], orients[1]);
+}
+*/
+
 #endif

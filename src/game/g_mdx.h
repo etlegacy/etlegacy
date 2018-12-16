@@ -339,6 +339,26 @@ extern void mdx_gentity_to_grefEntity(gentity_t *ent, grefEntity_t *refent, int 
 
 void mdx_LoadHitsFile(char *animationGroup, animModelInfo_t *animModelInfo);
 
+typedef enum
+{
+    MRP_NECK,
+    MRP_ELBOW_LEFT,
+    MRP_ELBOW_RIGHT,
+    MRP_HAND_LEFT,
+    MRP_HAND_RIGHT,
+    MRP_BACK,
+    MRP_CHEST,
+    MRP_PELVIS,
+    MRP_KNEE_LEFT,
+    MRP_KNEE_RIGHT,
+    MRP_ANKLE_LEFT,
+    MRP_ANKLE_RIGHT,
+    MRP_MAX,
+} mdx_advanced_position_t;
+
+//extern void mdx_advanced_positions(gentity_t &ent, grefEntity_t &re, vec3_t*, orientation_t*);
+//extern void mdx_weapon_positions(gentity_t &ent, grefEntity_t &re, vec3_t*, orientation_t*);
+
 #ifdef BONE_HITTESTS
 enum
 {
