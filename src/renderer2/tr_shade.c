@@ -1086,58 +1086,57 @@ static void Render_depthFill(int stage)
  */
 static void Render_shadowFill(int stage)
 {
-	shaderStage_t *pStage   = tess.surfaceStages[stage];
-	uint32_t      stateBits = pStage->stateBits;
+	shaderStage_t *pStage              = tess.surfaceStages[stage];
+	uint32_t      stateBits            = pStage->stateBits;
+	qboolean      use_alphaTesting     = (pStage->stateBits & GLS_ATEST_BITS) != 0;
+	qboolean      use_vertexSkinning   = glConfig2.vboVertexSkinningAvailable && tess.vboVertexSkinning;
+	qboolean      use_vertexAnimation  = glState.vertexAttribsInterpolation > 0;
+	qboolean      use_lightDirectional = backEnd.currentLight->l.rlType == RL_DIRECTIONAL;
 
 	Ren_LogComment("--- Render_shadowFill ---\n");
 
 	// remove blend modes
 	stateBits &= ~(GLS_SRCBLEND_BITS | GLS_DSTBLEND_BITS);
-
 	GL_State(stateBits);
 
 	SetMacrosAndSelectProgram(trProg.gl_shadowFillShader,
-	                          USE_ALPHA_TESTING, (pStage->stateBits & GLS_ATEST_BITS) != 0,
-	                          USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal,
-	                          USE_VERTEX_SKINNING, glConfig2.vboVertexSkinningAvailable && tess.vboVertexSkinning,
-	                          USE_VERTEX_ANIMATION, glState.vertexAttribsInterpolation > 0,
-	                          USE_DEFORM_VERTEXES, tess.surfaceShader->numDeforms,
-	                          LIGHT_DIRECTIONAL, backEnd.currentLight->l.rlType == RL_DIRECTIONAL);
+									USE_ALPHA_TESTING, use_alphaTesting,
+									USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal,
+									USE_VERTEX_SKINNING, use_vertexSkinning,
+									USE_VERTEX_ANIMATION, use_vertexAnimation,
+									USE_DEFORM_VERTEXES, tess.surfaceShader->numDeforms,
+									LIGHT_DIRECTIONAL, use_lightDirectional);
 
 	GLSL_SetRequiredVertexPointers(trProg.gl_shadowFillShader);
 
-	if (r_debugShadowMaps->integer)
-	{
-		vec4_t shadowMapColor;
+	SetUniformMatrix16(UNIFORM_MODELMATRIX, backEnd.orientation.transformMatrix);
+	SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
 
-		Vector4Copy(g_color_table[backEnd.pc.c_batches % 8], shadowMapColor);
-		SetUniformVec4(UNIFORM_COLOR, shadowMapColor);
-	}
-
-	GLSL_SetUniform_AlphaTest(pStage->stateBits);
-
-	if (backEnd.currentLight->l.rlType != RL_DIRECTIONAL)
+	if (!use_lightDirectional)
 	{
 		SetUniformVec3(UNIFORM_LIGHTORIGIN, backEnd.currentLight->origin);
 		SetUniformFloat(UNIFORM_LIGHTRADIUS, backEnd.currentLight->sphereRadius);
 	}
 
-	SetUniformMatrix16(UNIFORM_MODELMATRIX, backEnd.orientation.transformMatrix);
-	SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
+	if (use_alphaTesting)
+	{
+		GLSL_SetUniform_AlphaTest(pStage->stateBits);
+		// bind u_ColorMap
+		SelectTexture(TEX_COLOR);
+		BindTexture(pStage->bundle[TB_COLORMAP].image[0], tr.whiteImage);
+		SetUniformMatrix16(UNIFORM_COLORTEXTUREMATRIX, tess.svars.texMatrices[TB_COLORMAP]);
+	}
 
-	// u_BoneMatrix
-	if (glConfig2.vboVertexSkinningAvailable && tess.vboVertexSkinning)
+	if (use_vertexSkinning)
 	{
 		SetUniformMatrix16ARR(UNIFORM_BONEMATRIX, tess.boneMatrices, MAX_BONES);
 	}
 
-	// u_VertexInterpolation
-	if (glState.vertexAttribsInterpolation > 0)
+	if (use_vertexAnimation)
 	{
 		SetUniformFloat(UNIFORM_VERTEXINTERPOLATION, glState.vertexAttribsInterpolation);
 	}
 
-	// u_DeformGen
 	if (tess.surfaceShader->numDeforms)
 	{
 		GLSL_SetUniform_DeformParms(tess.surfaceShader->deforms, tess.surfaceShader->numDeforms);
@@ -1149,39 +1148,18 @@ static void Render_shadowFill(int stage)
 		clipPortalPlane();
 	}
 
-	// bind u_ColorMap
-	SelectTexture(TEX_COLOR);
-
-	if ((pStage->stateBits & GLS_ATEST_BITS) != 0)
+/*
+	if (r_debugShadowMaps->integer)
 	{
-		image_t* image = pStage->bundle[TB_COLORMAP].image[0];
-
-		if (image)
-		{
-			SetUniformMatrix16(UNIFORM_COLORTEXTUREMATRIX, tess.svars.texMatrices[TB_COLORMAP]);
-		}
-		else
-		{
-			image = pStage->bundle[TB_DIFFUSEMAP].image[0];
-			
-			if (image)
-			{
-				SetUniformMatrix16(UNIFORM_COLORTEXTUREMATRIX, tess.svars.texMatrices[TB_DIFFUSEMAP]);
-			}
-			else
-			{
-				image = tr.whiteImage;
-				SetUniformMatrix16(UNIFORM_COLORTEXTUREMATRIX, matrixIdentity);
-			}
-		}
-		GL_Bind(image);
+		vec4_t shadowMapColor;
+		Vector4Copy(g_color_table[backEnd.pc.c_batches % 8], shadowMapColor);
+		SetUniformVec4(UNIFORM_COLOR, shadowMapColor);
 	}
 	else
 	{
-		GL_Bind(tr.whiteImage);
-		SetUniformMatrix16(UNIFORM_COLORTEXTUREMATRIX, matrixIdentity);
+		SetUniformVec4(UNIFORM_COLOR, colorWhite);
 	}
-
+*/
 	Tess_DrawElements();
 
 	GL_CheckErrors();
@@ -1464,7 +1442,6 @@ static void Render_forwardLighting_DBS_proj(shaderStage_t *diffuseStage,
 	// bind u_DiffuseMap
 	SelectTexture(TEX_DIFFUSE);
 	GL_Bind(diffuseStage->bundle[TB_DIFFUSEMAP].image[0]);
-
 	SetUniformMatrix16(UNIFORM_DIFFUSETEXTUREMATRIX, tess.svars.texMatrices[TB_DIFFUSEMAP]);
 
 	if (r_normalMapping->integer)
@@ -2204,7 +2181,6 @@ static void Render_liquid(int stage)
 	SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
 	SetUniformVec3(UNIFORM_VIEWORIGIN, backEnd.viewParms.orientation.origin); // in world space
 
-//	SetUniformFloat(UNIFORM_FOGDENSITY, RB_EvalExpression(&pStage->fogDensityExp, 0.0005f));
 	SetUniformFloat(UNIFORM_FOGDENSITY, fogDensity);
 	if (fogDensity > 0.0)
 	{
