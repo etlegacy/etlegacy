@@ -476,9 +476,9 @@ generate_configuration() {
 		_CFGSTRING="${_CFGSTRING}
 		-DCMAKE_INSTALL_PREFIX=${PREFIX}
 
-		-DINSTALL_DEFAULT_MODDIR=/home/olaf/tuttle
-		-DINSTALL_DEFAULT_BINDIR=/home/olaf/tuttle
-		-DINSTALL_DEFAULT_BASEDIR=/home/olaf/tuttle
+		-DINSTALL_DEFAULT_MODDIR=.
+		-DINSTALL_DEFAULT_BINDIR=.
+		-DINSTALL_DEFAULT_BASEDIR=.
 		"
 	fi
 	fi

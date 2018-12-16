@@ -331,10 +331,6 @@ void QDECL Com_Error(int code, const char *fmt, ...)
 		code = ERR_FATAL;
 	}
 
-	//if fs_game == etpro && msg = "incorrect ET.exe version"
-
-	Com_Printf("*********************  %s \n", com_errorMessage);
-
 	// make sure we can get at our local stuff
 	FS_PureServerSetLoadedPaks("", "");
 

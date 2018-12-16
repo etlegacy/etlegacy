@@ -507,12 +507,12 @@ void R_AddBSPModelSurfaces(trRefEntity_t *ent)
 		for (i = 0; i < bspModel->numSurfaces; i++)
 		{
 			bspSurface_t *surf = bspModel->firstSurface + i;
-/*
+
 			if (!ShaderRequiresCPUDeforms(surf->shader))
 			{
 				continue;
 			}
-			*/
+
 			if (ent->e.customShader)
 			{
 				R_AddBrushModelSurface(surf, R_GetShaderByHandle(ent->e.customShader), fogNum);

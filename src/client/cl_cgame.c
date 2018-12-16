@@ -443,12 +443,6 @@ rescan:
 
 	// we may want to put a "connect to other server" command here
 
-	// don't pass this to cgame
-    if (!strcmp(cmd, "csum"))
-    {
-            return qfalse;
-    }
-
 	// cgame can now act on the command
 	return qtrue;
 }
@@ -617,18 +611,6 @@ static int FloatAsInt(float f)
  */
 intptr_t CL_CgameSystemCalls(intptr_t *args)
 {
-
-
-/*
-
-	if (args[0] == CG_CVAR_SET || args[0] == CG_CVAR_VARIABLESTRINGBUFFER)
-	{
-		Com_Printf(" [%s] [%s]", VMA(1), VMA(2));
-	}
-
-*/
-
-
 	switch (args[0])
 	{
 	case CG_PRINT:
