@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: ET:Legacy\n"
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
-"PO-Revision-Date: 2018-02-24 15:08+0000\n"
+"PO-Revision-Date: 2018-11-30 14:41+0000\n"
 "Last-Translator: Artem Vorotnikov <artem@vorotnikov.me>\n"
 "Language-Team: French (http://www.transifex.com/etlegacy/etlegacy/language/fr/)\n"
 "MIME-Version: 1.0\n"
@@ -260,8 +260,8 @@ msgid "^1WEBSITE"
 msgstr "^1SITE WEB"
 
 #: etmain/ui/credits_etlegacy.menu:193 etmain/ui/credits_quit.menu:260
-msgid "© 2012-2015 ET Legacy Team - under the terms of GPL version 3."
-msgstr "© 2012-2015 ET Legacy Team - sous les termes de la GPL version 3."
+msgid "© 2012-2018 ET:Legacy Team - under the terms of GPL version 3."
+msgstr ""
 
 #: etmain/ui/credits_etlegacy.menu:201
 msgid "HALL OF FAME"
@@ -7282,9 +7282,6 @@ msgstr ""
 msgid "Specify receiver of quick radio messages"
 msgstr ""
 
-msgid "Renderer:"
-msgstr ""
-
 msgid "High Quality Video:"
 msgstr ""
 
@@ -7384,4 +7381,124 @@ msgid "2. Automatic Rifle"
 msgstr ""
 
 msgid "3. Sniper Rifle"
+msgstr ""
+
+msgid "English (default)  "
+msgstr ""
+
+msgid "Czech"
+msgstr ""
+
+msgid "Dutch"
+msgstr ""
+
+msgid "Finnish"
+msgstr ""
+
+msgid "French"
+msgstr ""
+
+msgid "German"
+msgstr ""
+
+msgid "Greek"
+msgstr ""
+
+msgid "Hungarian"
+msgstr ""
+
+msgid "Italian"
+msgstr ""
+
+msgid "Norwegian"
+msgstr ""
+
+msgid "Polish"
+msgstr ""
+
+msgid "Portuguese"
+msgstr ""
+
+msgid "Russian"
+msgstr ""
+
+msgid "Spanish"
+msgstr ""
+
+msgid "Turkish"
+msgstr ""
+
+msgid "Bulgarian"
+msgstr ""
+
+msgid "Serbian"
+msgstr ""
+
+msgid "Swedish"
+msgstr ""
+
+msgid "desktop resolution"
+msgstr ""
+
+msgid "custom resolution"
+msgstr ""
+
+msgid "856*480 Wide Screen"
+msgstr ""
+
+msgid "Windowed"
+msgstr ""
+
+msgid "Fullscreen"
+msgstr ""
+
+msgid "Windowed Fullscreen"
+msgstr ""
+
+msgid "Original"
+msgstr ""
+
+msgid "Other"
+msgstr ""
+
+msgid "Show Speed:"
+msgstr ""
+
+msgid "UPS + highest speed"
+msgstr ""
+
+msgid "KPH + highest speed"
+msgstr ""
+
+msgid "MPH + highest speed"
+msgstr ""
+
+msgid "Displays speed of player"
+msgstr ""
+
+msgid "Vanilla (default)  "
+msgstr ""
+
+msgid "Direct connect"
+msgstr ""
+
+msgid "Override nickname"
+msgstr ""
+
+msgid "Mute channel"
+msgstr ""
+
+msgid "Direct + Override"
+msgstr ""
+
+msgid "Direct + Mute"
+msgstr ""
+
+msgid "Override + Mute"
+msgstr ""
+
+msgid "Direct + Over. + Mute"
+msgstr ""
+
+msgid "Custom"
 msgstr ""

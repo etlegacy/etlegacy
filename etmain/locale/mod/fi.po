@@ -3,16 +3,18 @@
 # This file is distributed under the same license as the ET:Legacy package.
 # Translators:
 # Christian Sarre <kallekala20@gmail.com>, 2018
+# IR4T4 <gutzu@gmx.ch>, 2018
 # Henrik Heino <henrik.heino@gmail.com>, 2016
 # Jacker <shogaiam@gmail.com>, 2015
+# Ray Wolf <ray.wolf@email.com>, 2018
 # Sauli Vepsä <zAulivee@outlook.com>, 2015
 msgid ""
 msgstr ""
 "Project-Id-Version: ET:Legacy\n"
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
-"PO-Revision-Date: 2018-06-15 09:59+0000\n"
-"Last-Translator: rafal1137 <rafal1137@yahoo.pl>\n"
+"PO-Revision-Date: 2018-11-30 14:41+0000\n"
+"Last-Translator: Artem Vorotnikov <artem@vorotnikov.me>\n"
 "Language-Team: Finnish (http://www.transifex.com/etlegacy/etlegacy/language/fi/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -260,8 +262,8 @@ msgid "^1WEBSITE"
 msgstr "^1VERKKOSIVUSTO"
 
 #: etmain/ui/credits_etlegacy.menu:193 etmain/ui/credits_quit.menu:260
-msgid "© 2012-2015 ET Legacy Team - under the terms of GPL version 3."
-msgstr "© 2012-2015 ET Legacy Team - GPL 3 Lisenssillä"
+msgid "© 2012-2018 ET:Legacy Team - under the terms of GPL version 3."
+msgstr "© 2012-2018 ET Legacy Team - GPL 3 Lisenssillä"
 
 #: etmain/ui/credits_etlegacy.menu:201
 msgid "HALL OF FAME"
@@ -3536,11 +3538,11 @@ msgstr "Tarkista päivitykset automaattisesti?"
 
 #: etmain/ui/options_system.menu:99
 msgid "Get Missing Files:"
-msgstr ""
+msgstr "Hae puuttuvia tiedostoja:"
 
 #: etmain/ui/options_system.menu:99
 msgid "Download missing files when available"
-msgstr ""
+msgstr "Lataa puuttuvat tiedostot, kun saatavilla"
 
 #: etmain/ui/options_system.menu:62
 msgid "Use HTTP/FTP Downloads:"
@@ -3552,7 +3554,7 @@ msgstr "PÄIVITYKSET"
 
 #: etmain/ui/options_system.menu:107
 msgid "Start-Up Updates Check:"
-msgstr ""
+msgstr "Käynnistyspäivitykset Tarkista:"
 
 #: etmain/ui/options_system.menu:107
 msgid "Automatically check for updates"
@@ -5221,17 +5223,17 @@ msgstr "Autovalinta"
 #: src/cgame/cg_servercmds.c:1875
 #, c-format
 msgid "Damage Given: %6d      Team Damage Given: %6d"
-msgstr ""
+msgstr "Vahinkoa annettu: %6d Joukkuevahinkoa annettu: %6d"
 
 #: src/cgame/cg_servercmds.c:1876
 #, c-format
 msgid "Damage Recvd: %6d      Team Damage Recvd: %6d"
-msgstr ""
+msgstr "Vahinkoa otettu: %6d Joukkuevahinkoa otettu: %6d"
 
 #: src/cgame/cg_servercmds.c:1878
 #, c-format
 msgid "Kills:  %3d    Team Kills: %3d    Accuracy:  %5.1f%%"
-msgstr ""
+msgstr "Tapot:%3d Tiimitapot: %3d Tarkkuus: %5.1f%% "
 
 #: src/cgame/cg_servercmds.c:1941
 #, c-format
@@ -5241,7 +5243,7 @@ msgstr ""
 #: src/cgame/cg_servercmds.c:1879
 #, c-format
 msgid "Deaths: %3d    Self Kills: %3d    Headshots: %5.1f%%"
-msgstr ""
+msgstr "Kuolemia: %3dItse Tapettuja: %3d Pääosumia %5.1f%%"
 
 #: src/cgame/cg_servercmds.c:2035
 msgid "^7Weapon     Acrcy Hits/Atts Kills Deaths Headshots\n"
@@ -5410,377 +5412,377 @@ msgid "You are near"
 msgstr "Olet lähellä"
 
 msgid "joined the Axis team\n"
-msgstr ""
+msgstr "liittyi Axis joukkueeseen\n"
 
 msgid "joined the Allies team\n"
-msgstr ""
+msgstr "liittyi liittoutuneiden joukkueeseen\n\n"
 
 msgid "entered the game\n"
-msgstr ""
+msgstr "liittyi peliin\n"
 
 msgid "rediscovered gravity"
-msgstr ""
+msgstr "löysi painovoiman"
 
 msgid "was crushed"
-msgstr ""
+msgstr "joutui murskatuksi"
 
 msgid "drowned"
-msgstr ""
+msgstr "hukkui"
 
 msgid "slagged"
-msgstr ""
+msgstr "kohdeltiin huonosti"
 
 msgid "was killed"
-msgstr ""
+msgstr "tapettiin"
 
 msgid "got buried under a pile of rubble"
-msgstr ""
+msgstr "joutui haudatuksi kivenmusrkan alle"
 
 msgid "was incinerated"
-msgstr ""
+msgstr "tuli poltetuksi"
 
 msgid "had an appointment with the map mortar"
-msgstr ""
+msgstr "oli tapaaminen kranaattiheittimen kanssa"
 
 msgid "took a map mortar shell shower"
-msgstr ""
+msgstr "otti suihkun kranaattien kanssa"
 
 msgid "was pulverized by an explosion"
-msgstr ""
+msgstr "räjähdys pisti jauhoksi"
 
 msgid "dynamited himself to pieces"
-msgstr ""
+msgstr "räjäytti itsensä palasiksi"
 
 msgid "dove on his own grenade"
-msgstr ""
+msgstr "syöksyi oman kranaatin päälle"
 
 msgid "vaporized himself"
-msgstr ""
+msgstr "höyrystyi itsensä"
 
 msgid "played with fire"
-msgstr ""
+msgstr "leikki tulen kanssa"
 
 msgid "obliterated himself"
-msgstr ""
+msgstr "tuhosi itsensä"
 
 msgid "fired-for-effect on himself"
-msgstr ""
+msgstr "komensi tykistö tulta - itseensä"
 
 msgid "died in his own explosion"
-msgstr ""
+msgstr "kuoli omaan räjähdykseen"
 
 msgid "ate his own rifle grenade"
-msgstr ""
+msgstr "söi oman kiväärikranaatin"
 
 msgid "failed to spot his own landmine"
-msgstr ""
+msgstr "ei havannut omaa maa-miinansa"
 
 msgid "embraced his own satchel explosion"
-msgstr ""
+msgstr "syleili oman salkkunsa räjähdyksen"
 
 msgid "engineered himself into oblivion"
-msgstr ""
+msgstr "insinööri itsensä unohduksiin "
 
 msgid "buried himself alive"
-msgstr ""
+msgstr "hautasi itsensä elävänä"
 
 msgid "never saw his own mortar round coming"
-msgstr ""
+msgstr "ei koskaan nähnyt oman kranaatin tulevan"
 
 msgid "danced on his airstrike marker"
-msgstr ""
+msgstr "tanssi ilmaiskun merkin päälle"
 
 msgid "committed suicide"
-msgstr ""
+msgstr "teki itsemurhaa"
 
 msgid "killed himself"
-msgstr ""
+msgstr "tappoi itsensä"
 
 msgid "Improved use of Explosive Ammunition"
-msgstr ""
+msgstr "Parantunut räjähdysammusten käyttö"
 
 msgid "Improved Dexterity"
-msgstr ""
+msgstr "Parantunut käteväisyys"
 
 msgid "Binoculars for any Class"
-msgstr ""
+msgstr "Kiikarit mihin tahansa Luokkaan"
 
 msgid "Medic Ammo"
-msgstr ""
+msgstr "Lääkintämiehen Ammukset"
 
 msgid "Improved First Aid Resources"
-msgstr ""
+msgstr "Parannettu Ensi Apu resursseja"
 
 msgid "Improved use of Light Weapon Ammunition"
-msgstr ""
+msgstr "Kevyiden Aseiden ammusten Käytön Parantaminen"
 
 msgid "Improved Projectile Resources"
-msgstr ""
+msgstr "Parannettuja Resursseja Projektiileille"
 
 msgid "Improved use of Scoped Weapon Ammunition"
 msgstr ""
 
 msgid "Improved Physical Fitness"
-msgstr ""
+msgstr "Parempi Fyysinen Kunto"
 
 msgid "Improved Ammo Resources"
-msgstr ""
+msgstr "Parannettuja Resursseja Ammuksille"
 
 msgid "Improved Signals"
-msgstr ""
+msgstr "Parannetut signaalit"
 
 msgid "Faster Reload"
-msgstr ""
+msgstr "Nopeampi Lataus"
 
 msgid "Heavy Weapon Proficiency"
-msgstr ""
+msgstr "Raskaan Aseen Taito"
 
 msgid "Improved use of Sabotage and Misdirection"
-msgstr ""
+msgstr "Sabotaasin ja Harhaanjohtamisen parantaminen"
 
 msgid "Improved Health"
-msgstr ""
+msgstr "Parannettu Terveys"
 
 msgid "Improved Construction and Destruction"
-msgstr ""
+msgstr "Parannettu Rakentaminen ja Tuhoaminen"
 
 msgid "Full Revive"
-msgstr ""
+msgstr "Täysi Elvytys"
 
 msgid "Improved Air and Ground Support"
-msgstr ""
+msgstr "Parannettu Ilma ja Maa tuki"
 
 msgid "Improved Light Weapon Handling"
-msgstr ""
+msgstr "Parannettu Kevyeiden Aseiden Käyttö"
 
 msgid "Breath Control"
-msgstr ""
+msgstr "Hengityksen Hallinta"
 
 msgid "Trap Awareness"
-msgstr ""
+msgstr "Ansan Tietoisuus"
 
 msgid "a Flak Jacket"
-msgstr ""
+msgstr "Ilmatorjunta Takki"
 
 msgid "Adrenalin Self"
-msgstr ""
+msgstr "Adrenaliini Itse"
 
 msgid "Enemy Recognition"
-msgstr ""
+msgstr "Vihollisen Tunnustaminen"
 
 msgid "Dual-Wield Pistols"
-msgstr ""
+msgstr "Dual-Wield Pistoolit"
 
 msgid "Improved Weapon Handling"
-msgstr ""
+msgstr "Parannettu Aseiden Käyttö"
 
 msgid "Assassin"
-msgstr ""
+msgstr "salamurhaaja"
 
 #: src/cgame/cg_consolecmds:1233
 msgid "You will spawn as an %s %s with a %s and %s."
-msgstr ""
+msgstr "Spawnaat%s %s aseella %s sekä %s"
 
 #: etmain/ui/credits_etlegacy.menu:85
 msgid "^1THE TEAM"
-msgstr ""
+msgstr "^1Joukkue"
 
 msgid "Axis team"
-msgstr ""
+msgstr "Akselivaltojen Joukkue"
 
 msgid "Allied team"
-msgstr ""
+msgstr "Liittoutuneiden Joukkue"
 
 msgid "Spectators"
-msgstr ""
+msgstr "Katsojat"
 
 msgid "You must be a player or following a player to use +stats\n"
-msgstr ""
+msgstr "Sinun on oltava pelaaja tai seuraa pelaajaa, jotta voit käyttää + statsia\n"
 
 msgid "You must be alive to use ^3/kill^7."
-msgstr ""
+msgstr "Sinun on oltava elossa jotta voit käyttää ^3/kill^7."
 
 msgid "No vote in progress.\n"
-msgstr ""
+msgstr "Äänestys ei kehitettävissä.\n\n"
 
 msgid "No or bad challenge for address.\n"
-msgstr ""
+msgstr "Ei tai huono haaste osoitteelle.\n"
 
 msgid "Match is already in progress!\n"
-msgstr ""
+msgstr "Ottelu on jo käynnissä!\n"
 
 msgid "^1** Referee Server Setting Change **\n"
-msgstr ""
+msgstr "^1** Erotuomari Palvelimen Asetuksen Muuttaminen **\n"
 
 msgid "Your fireteam is now public"
-msgstr ""
+msgstr "Sinun Fireteam on nyt julkinen"
 
 msgid "Your fireteam is now private"
-msgstr ""
+msgstr "Sinun Fireteam on nyt yksityinen"
 
 msgid "The Allies have too many players.\n"
-msgstr ""
+msgstr "Liittoutuneilla on liian monta pelaajaa.\n"
 
 msgid "The Axis has too many players.\n"
-msgstr ""
+msgstr "Akselivaltioilla on liian monta pelaajaa.\n"
 
 msgid "Attack!"
-msgstr ""
+msgstr "Hyökkää!"
 
 msgid "Fall back!"
-msgstr ""
+msgstr "Peräänny!"
 
 msgid ""
 "^3All players ready!^7\n"
 "Match starting..."
-msgstr ""
+msgstr "^3Kaikki pelaajat valmiina!^7\nOttelu alkamassa..."
 
 msgid "Path cleared."
-msgstr ""
+msgstr "Reitti selvitetty."
 
 msgid "The enemy is weakened."
-msgstr ""
+msgstr "Vihollinen heikennetty."
 
 msgid "All clear."
-msgstr ""
+msgstr "Vaara ohi."
 
 msgid "Incoming!"
-msgstr ""
+msgstr "Lähestyvä!"
 
 msgid "Fire in the hole!"
-msgstr ""
+msgstr "Tulta reikään!"
 
 msgid "I'm on defense."
-msgstr ""
+msgstr "Olen puolustautumassa."
 
 msgid "I'm on offense."
-msgstr ""
+msgstr "Olen hyökkäämässä."
 
 msgid "Taking fire!"
-msgstr ""
+msgstr "Ottamassa tultaa!"
 
 msgid "Mines cleared."
-msgstr ""
+msgstr "Miinat raivattu."
 
 msgid "Enemy in disguise."
-msgstr ""
+msgstr "Vihollinen valepuvussa."
 
 msgid "Need a Medic!"
-msgstr ""
+msgstr "Tarvitsen lääkintämiehen!"
 
 msgid "I need ammo!"
-msgstr ""
+msgstr "Tarvitsen ammuksia!"
 
 msgid "I need backup!"
-msgstr ""
+msgstr "Tarvitsen tukea!"
 
 msgid "We need an engineer!"
-msgstr ""
+msgstr "Tarvitsemme insinöörin!"
 
 msgid "Cover me!"
-msgstr ""
+msgstr "Suojaa minua!"
 
 msgid "Hold your fire!"
-msgstr ""
+msgstr "Pidä tultasi!"
 
 msgid "Where to?"
-msgstr ""
+msgstr "Minnepäin?"
 
 msgid "We need Covert Ops!"
-msgstr ""
+msgstr "Tarvitsemme salaista operaattoria!"
 
 msgid "Follow me!"
-msgstr ""
+msgstr "Seuratkaa minua!"
 
 msgid "Let's go!"
-msgstr ""
+msgstr "Mennään!"
 
 msgid "Move!"
-msgstr ""
+msgstr "Liikkukaa!"
 
 msgid "Clear the path!"
-msgstr ""
+msgstr "Selvittäkää reitti!"
 
 msgid "Defend our objective!"
-msgstr ""
+msgstr "Puolustakaa päämäärää!"
 
 msgid "Disarm the dynamite!"
-msgstr ""
+msgstr " Purkakaa dynamiitti!"
 
 msgid "Clear the mines!"
-msgstr ""
+msgstr "Poistakaa miinat!"
 
 msgid "Reinforce the offense!"
-msgstr ""
+msgstr "Vahvistakaa hyökkäystä!"
 
 msgid "Reinforce the defense!"
-msgstr ""
+msgstr "Vahvistakaa puolustusta"
 
 msgid "Affirmative!"
-msgstr ""
+msgstr "Kyllä!"
 
 msgid "No!"
-msgstr ""
+msgstr "Ei!"
 
 msgid "Thank you!"
-msgstr ""
+msgstr "Kiitos!"
 
 msgid "You're welcome."
-msgstr ""
+msgstr "Ole Hyvä!"
 
 msgid "Bitte sehr."
-msgstr ""
+msgstr "Kiitos Paljon."
 
 msgid "Ja!"
-msgstr ""
+msgstr "Kyllä!"
 
 msgid "Nein!"
-msgstr ""
+msgstr "Ei!"
 
 msgid "Kein problem."
-msgstr ""
+msgstr "Ei mitään ongelmaa!"
 
 msgid "Sorry!"
-msgstr ""
+msgstr "Anteeksi!"
 
 msgid "Oops!"
-msgstr ""
+msgstr "Oho!"
 
 msgid "Yes!"
-msgstr ""
+msgstr "Kyllä!"
 
 msgid "Jawohl!"
-msgstr ""
+msgstr "Kyllä!"
 
 msgid "Negative!"
-msgstr ""
+msgstr "Ei!"
 
 msgid "Hi!"
-msgstr ""
+msgstr "Moi!"
 
 msgid "Hello!"
-msgstr ""
+msgstr "Hei!"
 
 msgid "Hallo!"
-msgstr ""
+msgstr "Hei!"
 
 msgid "Good bye."
-msgstr ""
+msgstr "Hyvästi."
 
 msgid "Auf wiedersehen."
-msgstr ""
+msgstr "Näkemiin."
 
 msgid "Bye."
-msgstr ""
+msgstr "Näkemiin."
 
 msgid "Great shot!"
-msgstr ""
+msgstr "Hyvä laukaus!"
 
 msgid "You got it, man!"
-msgstr ""
+msgstr "Ymmärsit!"
 
 msgid "Yeah!"
-msgstr ""
+msgstr "Joo!"
 
 msgid "Yoohoo!"
 msgstr ""
@@ -6890,7 +6892,7 @@ msgid "Gib command not allowed during intermission.\n"
 msgstr ""
 
 msgid "^3%d^7 players gibbed."
-msgstr ""
+msgstr "^3%d^7 pelaajat tapettu."
 
 msgid "There is no player to gib."
 msgstr ""
@@ -7282,9 +7284,6 @@ msgstr ""
 msgid "Specify receiver of quick radio messages"
 msgstr ""
 
-msgid "Renderer:"
-msgstr ""
-
 msgid "High Quality Video:"
 msgstr ""
 
@@ -7384,4 +7383,124 @@ msgid "2. Automatic Rifle"
 msgstr ""
 
 msgid "3. Sniper Rifle"
+msgstr ""
+
+msgid "English (default)  "
+msgstr ""
+
+msgid "Czech"
+msgstr ""
+
+msgid "Dutch"
+msgstr ""
+
+msgid "Finnish"
+msgstr ""
+
+msgid "French"
+msgstr ""
+
+msgid "German"
+msgstr ""
+
+msgid "Greek"
+msgstr ""
+
+msgid "Hungarian"
+msgstr ""
+
+msgid "Italian"
+msgstr ""
+
+msgid "Norwegian"
+msgstr ""
+
+msgid "Polish"
+msgstr ""
+
+msgid "Portuguese"
+msgstr ""
+
+msgid "Russian"
+msgstr ""
+
+msgid "Spanish"
+msgstr ""
+
+msgid "Turkish"
+msgstr ""
+
+msgid "Bulgarian"
+msgstr ""
+
+msgid "Serbian"
+msgstr ""
+
+msgid "Swedish"
+msgstr ""
+
+msgid "desktop resolution"
+msgstr ""
+
+msgid "custom resolution"
+msgstr ""
+
+msgid "856*480 Wide Screen"
+msgstr ""
+
+msgid "Windowed"
+msgstr ""
+
+msgid "Fullscreen"
+msgstr ""
+
+msgid "Windowed Fullscreen"
+msgstr ""
+
+msgid "Original"
+msgstr ""
+
+msgid "Other"
+msgstr ""
+
+msgid "Show Speed:"
+msgstr ""
+
+msgid "UPS + highest speed"
+msgstr ""
+
+msgid "KPH + highest speed"
+msgstr ""
+
+msgid "MPH + highest speed"
+msgstr ""
+
+msgid "Displays speed of player"
+msgstr ""
+
+msgid "Vanilla (default)  "
+msgstr ""
+
+msgid "Direct connect"
+msgstr ""
+
+msgid "Override nickname"
+msgstr ""
+
+msgid "Mute channel"
+msgstr ""
+
+msgid "Direct + Override"
+msgstr ""
+
+msgid "Direct + Mute"
+msgstr ""
+
+msgid "Override + Mute"
+msgstr ""
+
+msgid "Direct + Over. + Mute"
+msgstr ""
+
+msgid "Custom"
 msgstr ""
