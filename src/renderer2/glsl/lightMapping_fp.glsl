@@ -91,7 +91,6 @@ void main()
 	float depth = RayIntersectDisplaceMap(texNormal, var_S, u_NormalMap);
 	// compute texcoords offset
 	vec2 texOffset = var_S * depth;
-
 	texDiffuse  += texOffset;
 	texNormal   += texOffset;
 #if defined(USE_REFLECTIONS) || defined(USE_SPECULAR)
@@ -139,26 +138,19 @@ void main()
 
 	// compute the specular term (and reflections)
 	//! https://en.wikipedia.org/wiki/Specular_highlight
-	//! "The number n is called the Phong exponent, and is a user-chosen value that controls the apparent smoothness of the surface"
 #if defined(USE_SPECULAR) && !defined(USE_REFLECTIONS)
 	vec4 map = texture2D(u_SpecularMap, texSpecular);
-	vec3 shininess = map.rgb;
-	// alpha values in range 0 to 1.0. exponent range is 0 to 256 (or whatever maximum value you want.  ..perhaps r_SpecularExponent?).
-	float exponent = map.a * r_SpecularExponent;
-	vec3 specular = computeSpecular2(dotNL, V, N, L, u_LightColor, exponent)
-					* shininess;
+	vec3 specular = computeSpecular2(dotNL, V, N, L, u_LightColor, r_SpecularExponent)
+					* map.rgb;
 #elif defined(USE_SPECULAR) && defined(USE_REFLECTIONS)
 	vec4 map = texture2D(u_SpecularMap, texSpecular);
-	vec3 shininess = map.rgb;
-	float exponent = map.a * r_SpecularExponent;
 	vec3 specular = (computeReflections(V, N, u_EnvironmentMap0, u_EnvironmentMap1, u_EnvironmentInterpolation)
-					+ computeSpecular2(dotNL, V, N, L, u_LightColor, exponent))
-					* shininess;
+					+ computeSpecular2(dotNL, V, N, L, u_LightColor, r_SpecularExponent))
+					* map.rgb;
 #elif !defined(USE_SPECULAR) && defined(USE_REFLECTIONS)
 	vec4 map = texture2D(u_SpecularMap, texSpecular);
-	vec3 shininess = map.rgb;
 	vec3 specular = computeReflections(V, N, u_EnvironmentMap0, u_EnvironmentMap1, u_EnvironmentInterpolation)
-					* shininess;
+					* map.rgb;
 #endif
 
 
@@ -172,7 +164,10 @@ void main()
 	vec4 color = diffuse;
 #if defined(USE_NORMAL_MAPPING)
 #if defined(USE_REFLECTIONS) || defined(USE_SPECULAR)
-	color.rgb += specular;
+	//color.rgb += specular;
+	color.r = min(1.0, color.r + specular.r);
+	color.g = min(1.0, color.g + specular.g);
+	color.b = min(1.0, color.b + specular.b);
 	//color.rgb += (vec4(specular,1.0) * lightmapColor).rgb;
 #endif // USE_REFLECTIONS || USE_SPECULAR
 #endif // USE_NORMAL_MAPPING

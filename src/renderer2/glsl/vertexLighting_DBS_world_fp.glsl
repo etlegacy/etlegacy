@@ -126,26 +126,19 @@ void main()
 
 	// compute the specular term (and reflections)
 	//! https://en.wikipedia.org/wiki/Specular_highlight
-	//! "The number n is called the Phong exponent, and is a user-chosen value that controls the apparent smoothness of the surface"
 #if defined(USE_SPECULAR) && !defined(USE_REFLECTIONS)
 	vec4 map = texture2D(u_SpecularMap, texSpecular);
-	vec3 shininess = map.rgb;
-	// alpha values in range 0 to 1.0. exponent range is 0 to 256 (or whatever maximum value you want.  ..perhaps r_SpecularExponent?).
-	float exponent = map.a * r_SpecularExponent;
-	vec3 specular = computeSpecular2(dotNL, V, N, L, u_LightColor, exponent)
-					* shininess;
+	vec3 specular = computeSpecular2(dotNL, V, N, L, u_LightColor, r_SpecularExponent)
+					* map.rgb;
 #elif defined(USE_SPECULAR) && defined(USE_REFLECTIONS)
 	vec4 map = texture2D(u_SpecularMap, texSpecular);
-	vec3 shininess = map.rgb;
-	float exponent = map.a * r_SpecularExponent;
 	vec3 specular = (computeReflections(V, N, u_EnvironmentMap0, u_EnvironmentMap1, u_EnvironmentInterpolation)
-					+ computeSpecular2(dotNL, V, N, L, u_LightColor, exponent))
-					* shininess;
+					+ computeSpecular2(dotNL, V, N, L, u_LightColor, r_SpecularExponent))
+					* map.rgb;
 #elif !defined(USE_SPECULAR) && defined(USE_REFLECTIONS)
 	vec4 map = texture2D(u_SpecularMap, texSpecular);
-	vec3 shininess = map.rgb;
 	vec3 specular = computeReflections(V, N, u_EnvironmentMap0, u_EnvironmentMap1, u_EnvironmentInterpolation)
-					* shininess;
+					* map.rgb;
 #endif
 
 

@@ -10,10 +10,14 @@
 	{
 		#if defined(TWOSIDED)
 			if (!gl_FrontFacing)
+			{
 				return mat3(-tangent.xyz, -binormal.xyz, -normal.xyz);
+			}
 			else
 		#endif // TWOSIDED
+			{
 				return mat3(tangent.xyz, binormal.xyz, normal.xyz);
+			}
 	}
 
 
@@ -36,7 +40,7 @@
 		return N;
 	}
 
-#if defined(USE_REFLECTIONS)
+//#if defined(USE_REFLECTIONS)
 	// Compute reflections
 	// This function returns the color that's reflected.
 	// Note that the cubeProbe's textures of the cubemap are drawn on the inside of a cubeProbe.
@@ -51,14 +55,14 @@
 		vec4 envColor1 = textureCube(envmap1, R).rgba;
 		return mix(envColor0, envColor1, interpolate).rgb;
 	}
-#endif // end USE_REFLECTIONS
+//#endif // end USE_REFLECTIONS
 
-#if defined(USE_SPECULAR)
+//#if defined(USE_SPECULAR)
 	// Compute the specular lighting
 	// Specular highlights are only visible if you look into the light.
 	vec3 computeSpecular2(float dotNL, vec3 viewDir, vec3 normal, vec3 lightDir, vec3 lightColor, float exponent)
 	{
-		if (dotNL <= 0.0) return vec3(0.0);
+		if (dotNL < 0.0) return vec3(0.0);
 		vec3 H = normalize(lightDir + viewDir); // the half-vector
 		float dotNH = max(0.0, dot(normal, H));
 		float intensity = pow(dotNH, exponent);
@@ -69,7 +73,7 @@
 		float dotNL = dot(normal, lightDir);
 		return computeSpecular2(dotNL, viewDir, normal, lightDir, lightColor, exponent);
 	}
-#endif // USE_SPECULAR
+//#endif // USE_SPECULAR
 
 #if defined(r_diffuseLighting)
 	// compute the diffuse light term

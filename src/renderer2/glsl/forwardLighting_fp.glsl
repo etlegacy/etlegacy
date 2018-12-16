@@ -1,10 +1,11 @@
 /* forwardLighting_fp.glsl */
-//#if defined(USE_NORMAL_MAPPING)
+
+#if defined(USE_NORMAL_MAPPING)
 #include "lib/normalMapping"
-//#if defined(USE_PARALLAX_MAPPING)
+#if defined(USE_PARALLAX_MAPPING)
 #include "lib/reliefMapping"
-//#endif // USE_PARALLAX_MAPPING
-//#endif // USE_NORMAL_MAPPING
+#endif // USE_PARALLAX_MAPPING
+#endif // USE_NORMAL_MAPPING
 
 uniform sampler2D u_DiffuseMap;
 uniform int       u_AlphaTest;
@@ -946,7 +947,6 @@ void    main()
 	vec2 texDiffuse = var_TexDiffuse.st;
 
 	float dotNL;
-	vec3 specular;
 
 #if defined(USE_NORMAL_MAPPING)
 
@@ -961,7 +961,6 @@ void    main()
 	float depth = RayIntersectDisplaceMap(texNormal, var_S, u_NormalMap);
 	// compute texcoords offset
 	vec2 texOffset = var_S * depth;
-
 	texDiffuse  += texOffset;
 	texNormal   += texOffset;
 	texSpecular += texOffset;
@@ -975,20 +974,10 @@ void    main()
 	// the cosine of the angle between N & L    (if N & L are vectors of unit length (normalized))
 	dotNL = dot(N, L);
 
-	// compute the specular term
-	if (dotNL > 0.0)
-	{
-		vec3 H          = normalize(L + V); // the half-vector
-		float dotNH     = max(0.0, dot(N, H));
-		vec4 map        = texture2D(u_SpecularMap, texSpecular);
-		float exponent  = map.a * r_SpecularExponent;
-		float intensity = pow(dotNH, exponent);
-		specular        = map.rgb * u_LightColor * intensity; // * r_SpecularScale;
-	} 
-	else
-	{
-		specular = vec3(0.0);
-	}
+	// specular highlights
+	vec4 map = texture2D(u_SpecularMap, texSpecular);
+	vec3 specular = computeSpecular2(dotNL, V, N, L, vec3(1.0), r_SpecularExponent)
+					* map.rgb * u_LightColor; // * r_SpecularScale;
 
 #else // else USE_NORMAL_MAPPING 
 
