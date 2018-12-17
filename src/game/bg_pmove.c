@@ -2656,7 +2656,7 @@ void PM_CheckForReload(weapon_t weapon)
 				}
 			}
 		}
-		else if (pm->pmext->bAutoReload || !(CHECKBITWISE(GetWeaponTableData(weapon)->firingMode, WEAPON_FIRING_MODE_AUTOMATIC | WEAPON_FIRING_MODE_SEMI_AUTOMATIC)))   // auto reload
+		else if (pm->pmext->bAutoReload || !(GetWeaponTableData(weapon)->firingMode & (WEAPON_FIRING_MODE_AUTOMATIC | WEAPON_FIRING_MODE_SEMI_AUTOMATIC)))   // auto reload
 		{
 			if (!pm->ps->ammoclip[GetWeaponTableData(weapon)->clipIndex] && pm->ps->ammo[GetWeaponTableData(weapon)->ammoIndex])
 			{
