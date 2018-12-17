@@ -746,6 +746,11 @@ typedef struct weaponInfo_s
 
 	qhandle_t weaponIcon[2];            ///< [0] is weap icon, [1] is highlight icon
 	int weaponIconScale;
+    
+    qhandle_t weaponCardIcon;
+    vec2_t weaponCardScale;
+    vec2_t weaponCardPointS;
+    vec2_t weaponCardPointT;
 
 	qhandle_t missileModel;
 	qhandle_t missileAlliedSkin;
@@ -1692,9 +1697,6 @@ typedef struct
 	qhandle_t limboSkillsBS;
 
 	qhandle_t limboCounterBorder;
-	qhandle_t limboWeaponCard1;
-	qhandle_t limboWeaponCard2;
-	qhandle_t limboWeaponCard3;
 	qhandle_t limboWeaponCardArrow;
 	qhandle_t limboObjectiveBack[3];
 	qhandle_t limboClassBar;
@@ -3428,7 +3430,6 @@ void CG_LimboPanel_NameEditFinish(panel_button_t *button);
 void CG_LimboPanel_Setup(void);
 void CG_LimboPanel_Init(void);
 
-void CG_LimboPanel_GetWeaponCardIconData(weapon_t weap, qhandle_t *shader, float *w, float *h, float *s0, float *t0, float *s1, float *t1);
 void CG_LimboPanel_RequestObjective(void);
 void CG_LimboPanel_RequestWeaponStats(void);
 qboolean CG_LimboPanel_Draw(void);

@@ -29,6 +29,11 @@ weaponDef
 		weaponIconScale		2
 		weaponSelectedIcon	"icons/iconw_kar98_gren_1_select"
 		
+		//weaponCardIcon    ""
+		//weaponCardScale   0 0
+		//weaponCardPointS  0 0
+		//weaponCardPointT  0 0
+		
 		missileModel		"models/multiplayer/kar98/v_kar98_scope.md3"
 		missileSound		"sound/weapons/k43/k43_grenade_fly.wav"
 		missileTrailFunc	"GrenadeTrail"						// supports "GrenadeTrail", "RocketTrail", "PyroSmokeTrail" and "DynamiteTrail" (we REALLY want a particle system for this)
@@ -36,7 +41,7 @@ weaponDef
 		//missileDlightColor	0 0 0							// do we still use this?
 		
 		//ejectBrassFunc	""									// supports "MachineGunEjectBrass" and "PanzerFaustEjectBrass"
-		//ejectBrassOffset
+		//ejectBrassOffset  0 0 0
 		
 		modModel 0			"models/multiplayer/kar98/v_kar98_scope.md3"
 		modModel 1			"models/multiplayer/kar98/kar98_att.md3"

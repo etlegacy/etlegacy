@@ -29,6 +29,11 @@ weaponDef
 		weaponIconScale		2
 		weaponSelectedIcon	"icons/iconw_m1_garand_gren_1_select"
 		
+		//weaponCardIcon    ""
+		//weaponCardScale   0 0
+		//weaponCardPointS  0 0
+		//weaponCardPointT  0 0
+		
 		missileModel		"models/multiplayer/m1_garand/m1_garand_prj.md3"
 		missileSound		"sound/weapons/garand/m1_grenade_fly.wav"
 		missileTrailFunc	"GrenadeTrail"						// supports "GrenadeTrail", "RocketTrail", "PyroSmokeTrail" and "DynamiteTrail" (we REALLY want a particle system for this)
@@ -36,7 +41,7 @@ weaponDef
 		//missileDlightColor	0 0 0							// do we still use this?
 		
 		//ejectBrassFunc	""				// supports "MachineGunEjectBrass" and "PanzerFaustEjectBrass"
-		//ejectBrassOffset    16 -4 24
+		//ejectBrassOffset  0 0 0
 		
 		modModel 0			"models/multiplayer/m1_garand/v_m1_garand_scope.md3"
 		modModel 1			"models/multiplayer/m1_garand/m1_garand_att.md3"

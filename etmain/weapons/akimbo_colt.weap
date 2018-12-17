@@ -28,6 +28,13 @@ weaponDef
 		weaponIconScale		2
 		weaponSelectedIcon	"icons/iconw_akimbocolts_1_select"
 		
+		weaponCardIcon      "gfx/limbo/weaponcard02"
+		weaponCardScale     1 1
+		weaponCardPointS    0 1
+		weaponCardPointT    0.375 0.5
+		
+		weaponCardIcon
+		
 		//missileModel		""
 		//missileSound		""
 		//missileTrailFunc	""									// supports "GrenadeTrail", "RocketTrail", "PyroSmokeTrail" and "DynamiteTrail" (we REALLY want a particle system for this)

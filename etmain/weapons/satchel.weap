@@ -27,6 +27,11 @@ weaponDef
 		weaponIconScale		1
 		weaponSelectedIcon	"icons/iconw_satchel_1_select"
 		
+		//weaponCardIcon    ""
+		//weaponCardScale   0 0
+		//weaponCardPointS  0 0
+		//weaponCardPointT  0 0
+		
 		missileModel		"models/multiplayer/satchel/satchel_world.md3"
 		missileaxisskin		"models/multiplayer/satchel/satchel_axis.skin"
 		missilealliedskin	"models/multiplayer/satchel/satchel_allied.skin"
@@ -36,7 +41,7 @@ weaponDef
 		//missileDlightColor	0 0 0							// do we still use this?
 		
 		//ejectBrassFunc	""									// supports "MachineGunEjectBrass" and "PanzerFaustEjectBrass"
-		//ejectBrassOffset
+		//ejectBrassOffset  0 0 0
 		
 		//modModel 1		""
 		

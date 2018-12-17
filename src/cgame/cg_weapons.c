@@ -1446,6 +1446,36 @@ static qboolean CG_RW_ParseClient(int handle, weaponInfo_t *weaponInfo)
 
 			weaponInfo->weaponIcon[1] = trap_R_RegisterShader(filename);
 		}
+		else if (!Q_stricmp(token.string, "weaponCardIcon"))
+		{
+			if (!PC_String_ParseNoAlloc(handle, filename, sizeof(filename)))
+			{
+				return CG_RW_ParseError(handle, "expected weaponCardIcon filename");
+			}
+
+			weaponInfo->weaponCardIcon = trap_R_RegisterShaderNoMip(filename);
+		}
+		else if (!Q_stricmp(token.string, "weaponCardScale"))
+		{
+			if (!PC_Point_Parse(handle, &weaponInfo->weaponCardScale))
+			{
+				return CG_RW_ParseError(handle, "expected weaponCardScale as width height");
+			}
+		}
+		else if (!Q_stricmp(token.string, "weaponCardPointS"))
+		{
+			if (!PC_Point_Parse(handle, &weaponInfo->weaponCardPointS))
+			{
+				return CG_RW_ParseError(handle, "expected weaponCardScale as S0 S1");
+			}
+		}
+		else if (!Q_stricmp(token.string, "weaponCardPointT"))
+		{
+			if (!PC_Point_Parse(handle, &weaponInfo->weaponCardPointT))
+			{
+				return CG_RW_ParseError(handle, "expected weaponCardScale as T0 T1");
+			}
+		}
 		else if (!Q_stricmp(token.string, "missileModel"))
 		{
 			if (!PC_String_ParseNoAlloc(handle, filename, sizeof(filename)))

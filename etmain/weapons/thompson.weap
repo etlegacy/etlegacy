@@ -28,6 +28,11 @@ weaponDef
 		weaponIconScale		2
 		weaponSelectedIcon	"icons/iconw_thompson_1_select"
 		
+		weaponCardIcon      "gfx/limbo/weaponcard01"
+		weaponCardScale     1 1
+		weaponCardPointS    0 1
+		weaponCardPointT    0.875 1
+		
 		//missileModel		""
 		//missileSound		""
 		//missileTrailFunc	""									// supports "GrenadeTrail", "RocketTrail", "PyroSmokeTrail" and "DynamiteTrail" (we REALLY want a particle system for this)

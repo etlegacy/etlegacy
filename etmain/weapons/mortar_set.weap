@@ -35,7 +35,7 @@ weaponDef
 		missileDlightColor	1 0.7 0.5
 		
 		//ejectBrassFunc	""									// supports "MachineGunEjectBrass" and "PanzerFaustEjectBrass"
-		//ejectBrassOffset
+		//ejectBrassOffset  0 0 0
 		
 		//modModel 1		""
 		

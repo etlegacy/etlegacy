@@ -1103,35 +1103,6 @@ typedef struct
 } playerStats_t;
 
 /**
- * @enum weaponCardIconId_t
- * @brief
- */
-typedef enum
-{
-	WEAPON_CARD_NONE,
-	WEAPON_CARD_1,
-	WEAPON_CARD_2,
-	WEAPON_CARD_3,
-
-} weaponCardIconId_t;
-
-/**
- * @enum weaponCardIconCoord_t
- * @brief
- */
-typedef enum
-{
-	WEAPON_CARD_COORD_W,
-	WEAPON_CARD_COORD_H,
-	WEAPON_CARD_COORD_S0,
-	WEAPON_CARD_COORD_S1,
-	WEAPON_CARD_COORD_T0,
-	WEAPON_CARD_COORD_T1,
-	WEAPON_CARD_CORRD_NUM
-
-} weaponCardIconCoord_t;
-
-/**
  * @struct weaponTable_s
  * @typedef weaponTable_t
  * @brief
@@ -1212,9 +1183,6 @@ typedef struct weapontable_s
 
 	const char *className;          ///< g -
 	const char *weapFile;           ///< cg -
-
-	weaponCardIconId_t weaponCardIcon;            ///< cg -
-	float weaponCardCoord[WEAPON_CARD_CORRD_NUM]; ///< cg -
 
 	int idleAnim;                   ///< bg -
 	int attackAnim;                 ///< bg -
@@ -2703,6 +2671,7 @@ qboolean PC_Int_Parse(int handle, int *i);
 qboolean PC_Color_Parse(int handle, vec4_t *c);
 qboolean PC_Vec_Parse(int handle, vec3_t *c);
 qboolean PC_Float_Parse(int handle, float *f);
+qboolean PC_Point_Parse(int handle, vec2_t *c);
 
 /**
  * @enum uiMenuCommand_t

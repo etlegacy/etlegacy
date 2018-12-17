@@ -28,6 +28,11 @@ weaponDef
 		weaponIconScale		1
 		weaponSelectedIcon	"icons/iconw_radio_1_select"
 		
+		//weaponCardIcon    ""
+		//weaponCardScale   0 0
+		//weaponCardPointS  0 0
+		//weaponCardPointT  0 0
+		
 		//missileModel		""
 		//missileSound		""
 		//missileTrailFunc	""									// supports "GrenadeTrail", "RocketTrail", "PyroSmokeTrail" and "DynamiteTrail" (we REALLY want a particle system for this)
@@ -35,7 +40,7 @@ weaponDef
 		//missileDlightColor	0 0 0							// do we still use this?
 		
 		//ejectBrassFunc	""									// supports "MachineGunEjectBrass" and "PanzerFaustEjectBrass"
-		//ejectBrassOffset
+		//ejectBrassOffset  0 0 0
 		
 		modModel 0			"models/multiplayer/satchel/light.md3"
 		modModel 1			"models/multiplayer/satchel/needle.md3"

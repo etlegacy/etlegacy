@@ -2118,9 +2118,6 @@ static void CG_RegisterGraphics(void)
 	cgs.media.hudSprintIcon = trap_R_RegisterShaderNoMip("gfx/hud/ic_stamina");
 	cgs.media.hudHealthIcon = trap_R_RegisterShaderNoMip("gfx/hud/ic_health");
 
-	cgs.media.limboWeaponCard1     = trap_R_RegisterShaderNoMip("gfx/limbo/weaponcard01");
-	cgs.media.limboWeaponCard2     = trap_R_RegisterShaderNoMip("gfx/limbo/weaponcard02");
-	cgs.media.limboWeaponCard3     = trap_R_RegisterShaderNoMip("gfx/limbo/weaponcard03");
 	cgs.media.limboWeaponCardArrow = trap_R_RegisterShaderNoMip("gfx/limbo/weap_dnarrow.tga");
 
 	cgs.media.limboObjectiveBack[0] = trap_R_RegisterShaderNoMip("gfx/limbo/objective_back_axis");
