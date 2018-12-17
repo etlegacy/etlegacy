@@ -44,10 +44,6 @@ glstate_t glState;
 
 static void GfxInfo_f(void);
 
-cvar_t *r_glMajorVersion;
-cvar_t *r_glMinorVersion;
-cvar_t *r_glDebugProfile;
-
 cvar_t *r_flares;
 cvar_t *r_flareSize;
 cvar_t *r_flareFade;
@@ -1149,11 +1145,6 @@ void R_BuildCubeMaps_f(void)
  */
 void R_Register(void)
 {
-	// OpenGL context selection
-	r_glMajorVersion = ri.Cvar_Get("r_glMajorVersion", "", CVAR_LATCH);
-	r_glMinorVersion = ri.Cvar_Get("r_glMinorVersion", "", CVAR_LATCH);
-	r_glDebugProfile = ri.Cvar_Get("r_glDebugProfile", "", CVAR_LATCH);
-
 	// latched and archived variables
 	r_extCompressedTextures       = ri.Cvar_Get("r_ext_compressed_textures", "1", CVAR_ARCHIVE | CVAR_LATCH);
 	r_extOcclusionQuery           = ri.Cvar_Get("r_ext_occlusion_query", "1", CVAR_CHEAT | CVAR_LATCH);
