@@ -255,7 +255,7 @@ void CG_EDV_WeaponCam(centity_t *cent, refEntity_t *ent)
 		return;
 	}
 
-	if ((demo_weaponcam.integer & DWC_PANZER) && GetWeaponTableData(cent->currentState.weapon)->type & WEAPON_TYPE_PANZER)
+	if ((demo_weaponcam.integer & DWC_PANZER) && (GetWeaponTableData(cent->currentState.weapon)->type & WEAPON_TYPE_PANZER))
 	{
 		vec3_t delta;
 

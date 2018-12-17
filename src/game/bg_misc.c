@@ -4116,7 +4116,7 @@ int BG_MaxAmmoForWeapon(weapon_t weaponNum, const int *skill, int cls)
 	}
 	else if (GetWeaponTableData(weaponNum)->type & WEAPON_TYPE_RIFLE)  // also received ammo when weapon is scoped
 	{
-		if (skill[SK_LIGHT_WEAPONS] >= 1 || (skill[SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS] >= 1 && GetWeaponTableData(weaponNum)->type & (WEAPON_TYPE_SCOPED | WEAPON_TYPE_SCOPABLE)))
+		if (skill[SK_LIGHT_WEAPONS] >= 1 || (skill[SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS] >= 1 && (GetWeaponTableData(weaponNum)->type & (WEAPON_TYPE_SCOPED | WEAPON_TYPE_SCOPABLE))))
 		{
 			maxAmmo += GetWeaponTableData(weaponNum)->maxClip;
 		}

@@ -651,7 +651,7 @@ void G_RunMissile(gentity_t *ent)
 
 		//      G_SetOrigin( ent, tr.endpos );
 
-		if (GetWeaponTableData(ent->s.weapon)->type & WEAPON_TYPE_PANZER
+		if ((GetWeaponTableData(ent->s.weapon)->type & WEAPON_TYPE_PANZER)
 		    || CHECKBITWISE(GetWeaponTableData(ent->s.weapon)->type, WEAPON_TYPE_MORTAR | WEAPON_TYPE_SET))
 		{
 			impactDamage = 999; // goes through pretty much any func_explosives

@@ -2621,7 +2621,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 	// add the scope model to the rifle if you've got it
 	if (isFirstPerson)  // for now just do it on the first person weapons
 	{
-		if (GetWeaponTableData(weaponNum)->type & (WEAPON_TYPE_RIFLE | WEAPON_TYPE_RIFLENADE) && !(GetWeaponTableData(weaponNum)->type & (WEAPON_TYPE_SCOPABLE)))
+		if ((GetWeaponTableData(weaponNum)->type & (WEAPON_TYPE_RIFLE | WEAPON_TYPE_RIFLENADE)) && !(GetWeaponTableData(weaponNum)->type & (WEAPON_TYPE_SCOPABLE)))
 		{
 			if ((cg.snap->ps.ammo[GetWeaponTableData(WP_GPG40)->ammoIndex] || cg.snap->ps.ammo[GetWeaponTableData(WP_M7)->ammoIndex] || cg.snap->ps.ammoclip[GetWeaponTableData(WP_GPG40)->ammoIndex] || cg.snap->ps.ammoclip[GetWeaponTableData(WP_M7)->ammoIndex]))
 			{
@@ -4402,7 +4402,7 @@ void CG_OutOfAmmoChange(qboolean allowForceSwitch)
 			return;
 		}
 
-		if (GetWeaponTableData(cg.weaponSelect)->type & WEAPON_TYPE_PANZER || cg.weaponSelect == WP_SMOKE_BOMB || cg.weaponSelect == WP_MEDIC_ADRENALINE)
+		if ((GetWeaponTableData(cg.weaponSelect)->type & WEAPON_TYPE_PANZER) || cg.weaponSelect == WP_SMOKE_BOMB || cg.weaponSelect == WP_MEDIC_ADRENALINE)
 		{
 			for (i = 0; i < MAX_WEAP_BANK_SWITCH_ORDER; i++)
 			{
@@ -4411,7 +4411,7 @@ void CG_OutOfAmmoChange(qboolean allowForceSwitch)
 					if (CG_WeaponSelectable(weapBanksMultiPlayer[weapBankSwitchOrder[i]][j]))
 					{
 						// make sure we don't reselect the panzer or bazooka
-						if (GetWeaponTableData(cg.weaponSelect)->type & WEAPON_TYPE_PANZER && GetWeaponTableData(weapBanksMultiPlayer[weapBankSwitchOrder[i]][j])->type & WEAPON_TYPE_PANZER)
+						if ((GetWeaponTableData(cg.weaponSelect)->type & WEAPON_TYPE_PANZER) && (GetWeaponTableData(weapBanksMultiPlayer[weapBankSwitchOrder[i]][j])->type & WEAPON_TYPE_PANZER))
 						{
 							continue;
 						}
@@ -4702,7 +4702,7 @@ void CG_FireWeapon(centity_t *cent)
 		return;
 	}
 
-	if (GetWeaponTableData(ent->weapon)->type & WEAPON_TYPE_RIFLENADE && ent->clientNum == cg.snap->ps.clientNum)
+	if ((GetWeaponTableData(ent->weapon)->type & WEAPON_TYPE_RIFLENADE) && ent->clientNum == cg.snap->ps.clientNum)
 	{
 		cg.weaponSelect = GetWeaponTableData(ent->weapon)->weapAlts;
 	}

@@ -133,7 +133,7 @@ int Add_Ammo(gentity_t *ent, weapon_t weapon, int count, qboolean fillClip)
 	int      maxammo       = BG_MaxAmmoForWeapon(ammoweap, ent->client->sess.skill, ent->client->ps.stats[STAT_PLAYER_CLASS]);
 	int      originalCount = ent->client->ps.ammo[ammoweap];
 
-	if (GetWeaponTableData(ammoweap)->type & WEAPON_TYPE_GRENADE || ammoweap == WP_DYNAMITE || ammoweap == WP_SATCHEL_DET) // make sure if he picks it up that he get's the "launcher" too
+	if ((GetWeaponTableData(ammoweap)->type & WEAPON_TYPE_GRENADE) || ammoweap == WP_DYNAMITE || ammoweap == WP_SATCHEL_DET) // make sure if he picks it up that he get's the "launcher" too
 	{
 		COM_BitSet(ent->client->ps.weapons, ammoweap);
 		fillClip = qtrue;   // always filter into the "clip"

@@ -3664,7 +3664,7 @@ void Static_Pain(gentity_t *ent, gentity_t *attacker, int damage, vec3_t point)
 
 		// TBD only venom mg42 rocket and grenade can inflict damage
 		if (attacker && attacker->client
-		    && (GetWeaponTableData(attacker->s.weapon)->type & (WEAPON_TYPE_GRENADE | WEAPON_TYPE_PANZER)
+		    && ((GetWeaponTableData(attacker->s.weapon)->type & (WEAPON_TYPE_GRENADE | WEAPON_TYPE_PANZER))
 		        || attacker->client->ps.persistant[PERS_HWEAPON_USE]))
 		{
 

@@ -1707,7 +1707,7 @@ qboolean G_IsWeaponDisabled(gentity_t *ent, weapon_t weapon)
 		return qtrue;
 	}
 
-	if (!(GetWeaponTableData(weapon)->skillBased == SK_HEAVY_WEAPONS || GetWeaponTableData(weapon)->type & WEAPON_TYPE_RIFLE))
+	if (!(GetWeaponTableData(weapon)->skillBased == SK_HEAVY_WEAPONS ||  (GetWeaponTableData(weapon)->type & WEAPON_TYPE_RIFLE)))
 	{
 		return qfalse;
 	}
