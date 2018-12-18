@@ -59,8 +59,11 @@ matrix:
         apt:
           packages:
           - nasm
+
           - libwayland-dev
           - wayland-protocols
+          - libgl1-mesa-dev
+
           - libasound2-dev
           - pulseaudio
           - libpulse-dev
@@ -74,8 +77,11 @@ matrix:
         apt:
           packages:
           - nasm
+
           - libwayland-dev
           - wayland-protocols
+          - libgl1-mesa-dev
+
           - libasound2-dev
           - pulseaudio
           - libpulse-dev
@@ -89,8 +95,11 @@ matrix:
         apt:
           packages:
           - nasm
+
           - libwayland-dev
           - wayland-protocols
+          - libgl1-mesa-dev
+
           - libasound2-dev
           - pulseaudio
           - libpulse-dev
@@ -104,8 +113,11 @@ matrix:
         apt:
           packages:
           - nasm
+
           - libwayland-dev
           - wayland-protocols
+          - libgl1-mesa-dev
+
           - libasound2-dev
           - pulseaudio
           - libpulse-dev
