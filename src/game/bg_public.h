@@ -1130,7 +1130,6 @@ typedef struct weapontable_s
 	int firingMode;                 ///< bg -
 	int attributs;                  ///< bg -
 
-	qboolean noAmmoAutoSwitch;      ///< cg -
 	qboolean noMuzzleFlash;         ///< cg -
 
 	int zoomOut;                    ///< cg -
