@@ -4396,7 +4396,7 @@ void CG_OutOfAmmoChange(qboolean allowForceSwitch)
 			return;
 		}
 
-		if (GetWeaponTableData(cg.weaponSelect)->type & WEAPON_TYPE_SET)
+		if (GetWeaponTableData(cg.weaponSelect)->type & (WEAPON_TYPE_SET | WEAPON_TYPE_RIFLENADE))
 		{
 			cg.weaponSelect = GetWeaponTableData(cg.weaponSelect)->weapAlts;
 			return;
@@ -4421,18 +4421,6 @@ void CG_OutOfAmmoChange(qboolean allowForceSwitch)
 						return;
 					}
 				}
-			}
-		}
-		else if (GetWeaponTableData(cg.weaponSelect)->type & WEAPON_TYPE_RIFLENADE)
-		{
-			// if you're using an alt mode weapon, try switching back to the parent
-			// otherwise, switch to the equivalent if you've got it
-			cg.weaponSelect = GetWeaponTableData(cg.weaponSelect)->weapAlts;      // base any further changes on the parent
-
-			if (CG_WeaponSelectable(cg.weaponSelect))          // the parent was selectable, drop back to that
-			{
-				CG_FinishWeaponChange(cg.predictedPlayerState.weapon, cg.weaponSelect);
-				return;
 			}
 		}
 
@@ -4700,11 +4688,6 @@ void CG_FireWeapon(centity_t *cent)
 	if ((GetWeaponTableData(ent->weapon)->type & WEAPON_TYPE_GRENADE) && ent->apos.trBase[0] > 0)
 	{
 		return;
-	}
-
-	if ((GetWeaponTableData(ent->weapon)->type & WEAPON_TYPE_RIFLENADE) && ent->clientNum == cg.snap->ps.clientNum)
-	{
-		cg.weaponSelect = GetWeaponTableData(ent->weapon)->weapAlts;
 	}
 
 	if ((cent->currentState.event & ~EV_EVENT_BITS) == EV_FIRE_WEAPON_LASTSHOT)

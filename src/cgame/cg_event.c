@@ -2096,9 +2096,11 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 
 		if (es->number == cg.snap->ps.clientNum)
 		{
-			if ((cg_noAmmoAutoSwitch.integer > 0 && !CG_WeaponSelectable(cg.weaponSelect)) || GetWeaponTableData(es->weapon)->noAmmoAutoSwitch)
+			if ((cg_noAmmoAutoSwitch.integer > 0 && !CG_WeaponSelectable(cg.weaponSelect))
+			    || (GetWeaponTableData(es->weapon)->firingMode & (WEAPON_FIRING_MODE_ONE_SHOT | WEAPON_FIRING_MODE_THROWABLE))
+			    || (GetWeaponTableData(es->weapon)->type & WEAPON_TYPE_SET))
 			{
-				CG_OutOfAmmoChange(event == EV_WEAPONSWITCHED ? qfalse : qtrue);
+				CG_OutOfAmmoChange(event == EV_NOAMMO);
 			}
 		}
 		break;
