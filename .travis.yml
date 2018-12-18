@@ -2,7 +2,8 @@
 # https://github.com/travis-ci/apt-source-whitelist
 
 language: cpp
-dist: trusty
+#dist: trusty
+dist: xenial
 sudo: false
 
 env:
