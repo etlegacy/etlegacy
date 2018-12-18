@@ -145,7 +145,7 @@ static void BindLightMap()
 
 /**
  * @brief BindDeluxeMap
- */
+ * unused
 static void BindDeluxeMap(shaderStage_t *pStage)
 {
 	image_t *deluxemap;
@@ -175,6 +175,7 @@ static void BindDeluxeMap(shaderStage_t *pStage)
 
 	GL_Bind(deluxemap);
 }
+*/
 
 /**
 * @brief BindCubeMaps
@@ -1279,10 +1280,13 @@ static void Render_forwardLighting_DBS_omni(shaderStage_t *diffuseStage,
 	// bind u_DiffuseMap
 	SelectTexture(TEX_DIFFUSE);
 	GL_Bind(diffuseStage->bundle[TB_DIFFUSEMAP].image[0]);
-
 	SetUniformMatrix16(UNIFORM_DIFFUSETEXTUREMATRIX, tess.svars.texMatrices[TB_DIFFUSEMAP]);
 
-	if (r_normalMapping->integer)
+	//r_shadows->integer == SHADOWING_EVSM32 || r_shadows->integer == SHADOWING_ESM16 || r_shadows->integer == SHADOWING_ESM32
+
+//	r_DebugShadowMaps && (EVSM || ESM)
+
+	if (r_normalMapping->integer && r_debugShadowMaps->integer == 0)
 	{
 		// bind u_NormalMap
 		SelectTexture(TEX_NORMAL);

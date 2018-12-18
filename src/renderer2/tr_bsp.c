@@ -8123,7 +8123,7 @@ void R_BuildCubeMaps(void)
 
 					rf.viewaxis[2][0] = 0;
 					rf.viewaxis[2][1] = 0;
-					rf.viewaxis[2][2] =- 1;
+					rf.viewaxis[2][2] = -1;
 					break;
 				}
 				case 4:
