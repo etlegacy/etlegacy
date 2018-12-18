@@ -226,7 +226,7 @@ bspGridPoint_t *LightgridColor(const vec3_t position)
 {
 	vec3_t         lightOrigin;
 	int            pos[3];
-	float          frac[3];
+	//float          frac[3];
 	int            gridStep[3];
 	bspGridPoint_t *gridPoint;
 	int            i;
@@ -242,7 +242,7 @@ bspGridPoint_t *LightgridColor(const vec3_t position)
 	{
 		v = lightOrigin[i] * tr.world->lightGridInverseSize[i];
 		pos[i] = floor(v);
-		frac[i] = v - pos[i];
+		//frac[i] = v - pos[i];
 		if (pos[i] < 0)
 		{
 			pos[i] = 0;
@@ -986,7 +986,7 @@ static void Render_lightMapping(int stage, qboolean asColorMap, qboolean normalM
  * @brief Render_depthFill
  * @param[in] stage
  *
- */
+ *unused
 static void Render_depthFill(int stage)
 {
 	shaderStage_t *pStage = tess.surfaceStages[stage];
@@ -1080,6 +1080,7 @@ static void Render_depthFill(int stage)
 
 	GL_CheckErrors();
 }
+*/
 
 /**
  * @brief Render_shadowFill
@@ -1282,11 +1283,11 @@ static void Render_forwardLighting_DBS_omni(shaderStage_t *diffuseStage,
 	GL_Bind(diffuseStage->bundle[TB_DIFFUSEMAP].image[0]);
 	SetUniformMatrix16(UNIFORM_DIFFUSETEXTUREMATRIX, tess.svars.texMatrices[TB_DIFFUSEMAP]);
 
+	// FIXME: don't bind testures for r_DebugShadowMaps
 	//r_shadows->integer == SHADOWING_EVSM32 || r_shadows->integer == SHADOWING_ESM16 || r_shadows->integer == SHADOWING_ESM32
+	//case r_DebugShadowMaps && (EVSM || ESM)
 
-//	r_DebugShadowMaps && (EVSM || ESM)
-
-	if (r_normalMapping->integer && r_debugShadowMaps->integer == 0)
+	if (r_normalMapping->integer)
 	{
 		// bind u_NormalMap
 		SelectTexture(TEX_NORMAL);
