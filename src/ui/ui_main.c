@@ -4921,7 +4921,7 @@ void UI_RunMenuScript(char **args)
 			}
 			else
 			{
-				Com_Printf(trap_TranslateString("Can't add localhost to favorites\n"));
+				Com_Printf("%s", trap_TranslateString("Can't add localhost to favorites\n"));
 			}
 		}
 		else if (Q_stricmp(name, "orders") == 0)
