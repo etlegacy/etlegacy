@@ -63,6 +63,7 @@ matrix:
           - libwayland-dev
           - wayland-protocols
           - libgl1-mesa-dev
+          - libglu1-mesa-dev  
 
           - libasound2-dev
           - pulseaudio
@@ -81,6 +82,7 @@ matrix:
           - libwayland-dev
           - wayland-protocols
           - libgl1-mesa-dev
+          - libglu1-mesa-dev 
 
           - libasound2-dev
           - pulseaudio
@@ -99,6 +101,7 @@ matrix:
           - libwayland-dev
           - wayland-protocols
           - libgl1-mesa-dev
+          - libglu1-mesa-dev 
 
           - libasound2-dev
           - pulseaudio
@@ -117,6 +120,7 @@ matrix:
           - libwayland-dev
           - wayland-protocols
           - libgl1-mesa-dev
+          - libglu1-mesa-dev 
 
           - libasound2-dev
           - pulseaudio
