@@ -330,7 +330,7 @@ void Con_Init(void)
 		historyEditLines[i].widthInChars = g_console_field_width;
 	}
 
-	Cmd_AddCommand("toggleconsole", Con_ToggleConsole_f, "Toogles the console.");
+	Cmd_AddCommand("toggleconsole", Con_ToggleConsole_f, "Toggles the console.");
 	Cmd_AddCommand("clear", Con_Clear_f, "Clears console content.");
 	Cmd_AddCommand("condump", Con_Dump_f, "Dumps console content to disk.", Cmd_CompleteTxtName);
 }

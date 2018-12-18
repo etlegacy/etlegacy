@@ -530,7 +530,7 @@ static keyNum_t IN_TranslateSDLToQ3Key(SDL_Keysym *keysym, qboolean down)
 				break;
 			case SDL_SCANCODE_APOSTROPHE: key = K_APOSTROPHE;
 				break;
-			case SDL_SCANCODE_GRAVE: key = K_GRAVE;              // NOTE: this is console toogle key!
+			case SDL_SCANCODE_GRAVE: key = K_GRAVE;              // NOTE: this is console toggle key!
 				break;
 			case SDL_SCANCODE_COMMA: key = K_COMMA;
 				break;

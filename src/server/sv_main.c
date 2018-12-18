@@ -767,7 +767,7 @@ qboolean SVC_RateLimitAddress(netadr_t from, int burst, int period)
  * Useful for tracking global player stats.
  *
  * @param[in] from
- * @param[in] force toogles rate limit checks
+ * @param[in] force toggle rate limit checks
  */
 static void SVC_Status(netadr_t from, qboolean force)
 {
