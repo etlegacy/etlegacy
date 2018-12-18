@@ -58,6 +58,7 @@ matrix:
         apt:
           packages:
           - nasm
+          - libwayland-dev
           - libasound2-dev
           - pulseaudio
           - libpulse-dev
@@ -71,6 +72,7 @@ matrix:
         apt:
           packages:
           - nasm
+          - libwayland-dev
           - libasound2-dev
           - pulseaudio
           - libpulse-dev
@@ -84,6 +86,7 @@ matrix:
         apt:
           packages:
           - nasm
+          - libwayland-dev
           - libasound2-dev
           - pulseaudio
           - libpulse-dev
@@ -97,6 +100,7 @@ matrix:
         apt:
           packages:
           - nasm
+          - libwayland-dev
           - libasound2-dev
           - pulseaudio
           - libpulse-dev
