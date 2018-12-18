@@ -59,6 +59,7 @@ matrix:
           packages:
           - nasm
           - libwayland-dev
+          - wayland-protocols
           - libasound2-dev
           - pulseaudio
           - libpulse-dev
@@ -73,6 +74,7 @@ matrix:
           packages:
           - nasm
           - libwayland-dev
+          - wayland-protocols
           - libasound2-dev
           - pulseaudio
           - libpulse-dev
@@ -87,6 +89,7 @@ matrix:
           packages:
           - nasm
           - libwayland-dev
+          - wayland-protocols
           - libasound2-dev
           - pulseaudio
           - libpulse-dev
@@ -101,6 +104,7 @@ matrix:
           packages:
           - nasm
           - libwayland-dev
+          - wayland-protocols
           - libasound2-dev
           - pulseaudio
           - libpulse-dev
