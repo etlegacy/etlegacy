@@ -43,16 +43,16 @@ vec3_t ejectBrassCasingOrigin;
  */
 weapon_t weapBanksMultiPlayer[MAX_WEAP_BANKS_MP][MAX_WEAPS_IN_BANK_MP] =
 {
-	{ 0,                   0,                    0,               0,               0,              0,                0,                      0,                       0,       0,      0,              0,                  0,         0,          0,          0,        0,     0}, // empty bank '0'
-	{ WP_KNIFE,            WP_KNIFE_KABAR,       0,               0,               0,              0,                0,                      0,                       0,       0,      0,              0,                  0,         0,          0,          0,        0,     0},
-	{ WP_LUGER,            WP_COLT,              WP_AKIMBO_COLT,  WP_AKIMBO_LUGER, WP_SILENCER,    WP_SILENCED_COLT, WP_AKIMBO_SILENCEDCOLT, WP_AKIMBO_SILENCEDLUGER, 0,       0,      0,              0,                  0,         0,          0,          0,        0,     0},
+	{ 0,                   0,                    0,               0,               0,              0,                0,                      0,                       0,       0,      0,              0,                  0,         0,          0,          0,        0,     0       }, // empty bank '0'
+	{ WP_KNIFE,            WP_KNIFE_KABAR,       0,               0,               0,              0,                0,                      0,                       0,       0,      0,              0,                  0,         0,          0,          0,        0,     0       },
+	{ WP_LUGER,            WP_COLT,              WP_AKIMBO_COLT,  WP_AKIMBO_LUGER, WP_SILENCER,    WP_SILENCED_COLT, WP_AKIMBO_SILENCEDCOLT, WP_AKIMBO_SILENCEDLUGER, 0,       0,      0,              0,                  0,         0,          0,          0,        0,     0       },
 	{ WP_MP40,             WP_THOMPSON,          WP_STEN,         WP_GARAND,       WP_PANZERFAUST, WP_FLAMETHROWER,  WP_KAR98,               WP_CARBINE,              WP_FG42, WP_K43, WP_MOBILE_MG42, WP_MOBILE_BROWNING, WP_MORTAR, WP_MORTAR2, WP_BAZOOKA, WP_GPG40, WP_M7, WP_MP34 },
-	{ WP_GRENADE_LAUNCHER, WP_GRENADE_PINEAPPLE, 0,               0,               0,              0,                0,                      0,                       0,       0,      0,              0,                  0,         0,          0,          0,        0,     0},
-	{ WP_MEDIC_SYRINGE,    WP_PLIERS,            WP_SMOKE_MARKER, WP_SMOKE_BOMB,   0,              0,                0,                      0,                       0,       0,      0,              0,                  0,         0,          0,          0,        0,     0},
-	{ WP_DYNAMITE,         WP_MEDKIT,            WP_AMMO,         WP_SATCHEL,      WP_SATCHEL_DET, 0,                0,                      0,                       0,       0,      0,              0,                  0,         0,          0,          0,        0,     0},
-	{ WP_LANDMINE,         WP_MEDIC_ADRENALINE,  0,               0,               0,              0,                0,                      0,                       0,       0,      0,              0,                  0,         0,          0,          0,        0,     0},
-	{ WP_BINOCULARS,       0,                    0,               0,               0,              0,                0,                      0,                       0,       0,      0,              0,                  0,         0,          0,          0,        0,     0},
-	{ 0,                   0,                    0,               0,               0,              0,                0,                      0,                       0,       0,      0,              0,                  0,         0,          0,          0,        0,     0},
+	{ WP_GRENADE_LAUNCHER, WP_GRENADE_PINEAPPLE, 0,               0,               0,              0,                0,                      0,                       0,       0,      0,              0,                  0,         0,          0,          0,        0,     0       },
+	{ WP_MEDIC_SYRINGE,    WP_PLIERS,            WP_SMOKE_MARKER, WP_SMOKE_BOMB,   0,              0,                0,                      0,                       0,       0,      0,              0,                  0,         0,          0,          0,        0,     0       },
+	{ WP_DYNAMITE,         WP_MEDKIT,            WP_AMMO,         WP_SATCHEL,      WP_SATCHEL_DET, 0,                0,                      0,                       0,       0,      0,              0,                  0,         0,          0,          0,        0,     0       },
+	{ WP_LANDMINE,         WP_MEDIC_ADRENALINE,  0,               0,               0,              0,                0,                      0,                       0,       0,      0,              0,                  0,         0,          0,          0,        0,     0       },
+	{ WP_BINOCULARS,       0,                    0,               0,               0,              0,                0,                      0,                       0,       0,      0,              0,                  0,         0,          0,          0,        0,     0       },
+	{ 0,                   0,                    0,               0,               0,              0,                0,                      0,                       0,       0,      0,              0,                  0,         0,          0,          0,        0,     0       },
 };
 
 /**
@@ -170,8 +170,7 @@ void CG_MachineGunEjectBrass(centity_t *cent)
 	}
 	else
 	{
-		if (GetWeaponTableData(cent->currentState.weapon)->isMG || GetWeaponTableData(cent->currentState.weapon)->isMGSet
-		    || GetWeaponTableData(cent->currentState.weapon)->isRifle || GetWeaponTableData(cent->currentState.weapon)->isRifleWithScope)
+		if (GetWeaponTableData(cent->currentState.weapon)->type & (WEAPON_TYPE_MG | WEAPON_TYPE_RIFLE))
 		{
 			re->hModel = cgs.media.machinegunBrassModel;
 		}
@@ -191,7 +190,7 @@ void CG_MachineGunEjectBrass(centity_t *cent)
 		}
 		else
 		{
-			VectorCopy(GetWeaponTableData(cent->currentState.weapon)->ejectBrassOffset, offset);
+			VectorCopy(cg_weapons[cent->currentState.weapon].ejectBrassOffset, offset);
 			le->angles.trBase[0] = (rand() & 15) + 82;   // bullets should come out horizontal not vertical JPW NERVE
 		}
 	}
@@ -267,7 +266,7 @@ static void CG_PanzerFaustEjectBrass(centity_t *cent)
 	float         waterScale = 1.0f;
 	vec3_t        v[3];
 
-	VectorCopy(GetWeaponTableData(cent->currentState.weapon)->ejectBrassOffset, offset);
+	VectorCopy(cg_weapons[cent->currentState.weapon].ejectBrassOffset, offset);
 
 	le->leType    = LE_FRAGMENT;
 	le->startTime = cg.time;
@@ -349,45 +348,28 @@ void CG_PyroSmokeTrail(centity_t *ent, const weaponInfo_t *wi)
 	entityState_t *es;
 	int           t;
 	float         rnd;
-	team_t        team;
 
 	if (ent->currentState.weapon == WP_LANDMINE)
 	{
-		if (ent->currentState.teamNum < 8)
+		if (ent->currentState.effect1Time != 2)
 		{
 			ent->miscTime = 0;
 			return;
 		}
 
-		if (ent->currentState.teamNum < 12)
+		if (!ent->miscTime)
 		{
-			if (!ent->miscTime)
-			{
-				ent->trailTime = cg.time;
-				ent->miscTime  = cg.time;
+			ent->trailTime = cg.time;
+			ent->miscTime  = cg.time;
 
-				// play the armed sound - weird place to do it but saves us sending an event
-				trap_S_StartSound(NULL, ent->currentState.number, CHAN_WEAPON, cgs.media.minePrimedSound);
-			}
+			// play the armed sound - weird place to do it but saves us sending an event
+			trap_S_StartSound(NULL, ent->currentState.number, CHAN_WEAPON, cgs.media.minePrimedSound);
 		}
 
 		if (cg.time - ent->miscTime > 1000)
 		{
 			return;
 		}
-
-		if (ent->currentState.otherEntityNum2)
-		{
-			team = TEAM_AXIS;
-		}
-		else
-		{
-			team = TEAM_ALLIES;
-		}
-	}
-	else
-	{
-		team = (team_t)ent->currentState.teamNum;
 	}
 
 	step      = 50;
@@ -441,7 +423,7 @@ void CG_PyroSmokeTrail(centity_t *ent, const weaponInfo_t *wi)
 
 		rnd = random();
 
-		if (team == TEAM_ALLIES)     // allied team, generate blue smoke
+		if (ent->currentState.teamNum == TEAM_ALLIES)     // allied team, generate blue smoke
 		{
 			CG_SmokePuff(origin, dir,
 			             25 + rnd * 110,       // width
@@ -478,7 +460,7 @@ void CG_RocketTrail(centity_t *ent, const weaponInfo_t *wi)
 	int           contents;
 	int           lastContents, startTime = ent->trailTime;
 	entityState_t *es = &ent->currentState;
-	int           t = step * ((startTime + step) / step);
+	int           t   = step * ((startTime + step) / step);
 
 	BG_EvaluateTrajectory(&es->pos, cg.time, origin, qfalse, es->effect2Time);
 	contents = CG_PointContents(origin, -1);
@@ -550,7 +532,7 @@ static void CG_DynamiteTrail(centity_t *ent, const weaponInfo_t *wi)
 
 	BG_EvaluateTrajectory(&ent->currentState.pos, cg.time, origin, qfalse, ent->currentState.effect2Time);
 
-	if (ent->currentState.teamNum < 4)
+	if (ent->currentState.effect1Time)
 	{
 		mult = 0.004f * (cg.time - ent->currentState.effect1Time) / 30000.0f;
 		trap_R_AddLightToScene(origin, 320, (float)fabs(sin((cg.time - ent->currentState.effect1Time) * mult)), 1.0f, 0, 0, 0, REF_FORCE_DLIGHT);
@@ -1430,6 +1412,15 @@ static qboolean CG_RW_ParseClient(int handle, weaponInfo_t *weaponInfo)
 
 			weaponInfo->switchSound = trap_S_RegisterSound(filename, qfalse);
 		}
+		else if (!Q_stricmp(token.string, "noAmmoSound"))
+		{
+			if (!PC_String_ParseNoAlloc(handle, filename, sizeof(filename)))
+			{
+				return CG_RW_ParseError(handle, "expected noAmmoSound filename");
+			}
+
+			weaponInfo->noAmmoSound = trap_S_RegisterSound(filename, qfalse);
+		}
 		else if (!Q_stricmp(token.string, "weaponIcon"))
 		{
 			if (!PC_String_ParseNoAlloc(handle, filename, sizeof(filename)))
@@ -1454,6 +1445,36 @@ static qboolean CG_RW_ParseClient(int handle, weaponInfo_t *weaponInfo)
 			}
 
 			weaponInfo->weaponIcon[1] = trap_R_RegisterShader(filename);
+		}
+		else if (!Q_stricmp(token.string, "weaponCardIcon"))
+		{
+			if (!PC_String_ParseNoAlloc(handle, filename, sizeof(filename)))
+			{
+				return CG_RW_ParseError(handle, "expected weaponCardIcon filename");
+			}
+
+			weaponInfo->weaponCardIcon = trap_R_RegisterShaderNoMip(filename);
+		}
+		else if (!Q_stricmp(token.string, "weaponCardScale"))
+		{
+			if (!PC_Point_Parse(handle, &weaponInfo->weaponCardScale))
+			{
+				return CG_RW_ParseError(handle, "expected weaponCardScale as width height");
+			}
+		}
+		else if (!Q_stricmp(token.string, "weaponCardPointS"))
+		{
+			if (!PC_Point_Parse(handle, &weaponInfo->weaponCardPointS))
+			{
+				return CG_RW_ParseError(handle, "expected weaponCardScale as S0 S1");
+			}
+		}
+		else if (!Q_stricmp(token.string, "weaponCardPointT"))
+		{
+			if (!PC_Point_Parse(handle, &weaponInfo->weaponCardPointT))
+			{
+				return CG_RW_ParseError(handle, "expected weaponCardScale as T0 T1");
+			}
 		}
 		else if (!Q_stricmp(token.string, "missileModel"))
 		{
@@ -1543,6 +1564,13 @@ static qboolean CG_RW_ParseClient(int handle, weaponInfo_t *weaponInfo)
 			else if (!Q_stricmp(filename, "PanzerFaustEjectBrass"))
 			{
 				weaponInfo->ejectBrassFunc = CG_PanzerFaustEjectBrass;
+			}
+		}
+		else if (!Q_stricmp(token.string, "ejectBrassOffset"))
+		{
+			if (!PC_Vec_Parse(handle, &weaponInfo->ejectBrassOffset))
+			{
+				return CG_RW_ParseError(handle, "expected ejectBrassOffset as foward left up");
 			}
 		}
 		else if (!Q_stricmp(token.string, "modModel"))
@@ -2013,7 +2041,7 @@ static void CG_CalculateWeaponPosition(vec3_t origin, vec3_t angles)
 		angles[PITCH] = cg.refdefViewAngles[PITCH] / 1.2f;
 	}
 
-	if (!cg.renderingThirdPerson && GetWeaponTableData(cg.predictedPlayerState.weapon)->isSetWeapon &&
+	if (!cg.renderingThirdPerson && (GetWeaponTableData(cg.predictedPlayerState.weapon)->type & WEAPON_TYPE_SET) &&
 	    cg.predictedPlayerState.weaponstate != WEAPON_RAISING)
 	{
 		angles[PITCH] = cg.pmext.mountedWeaponAngles[PITCH];
@@ -2092,7 +2120,7 @@ static void CG_CalculateWeaponPosition(vec3_t origin, vec3_t angles)
 	}
 
 	// idle drift
-	if ((!(cg.predictedPlayerState.eFlags & EF_MOUNTEDTANK) && !GetWeaponTableData(cg.predictedPlayerState.weapon)->isSetWeapon))
+	if ((!(cg.predictedPlayerState.eFlags & EF_MOUNTEDTANK) && !(GetWeaponTableData(cg.predictedPlayerState.weapon)->type & WEAPON_TYPE_SET)))
 	{
 		float fracsin = (float)sin(cg.time * 0.001);
 
@@ -2179,14 +2207,14 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 	}
 
 	// don't draw weapon stuff when looking through a scope
-	if (GetWeaponTableData(weaponNum)->isScoped)
+	if (GetWeaponTableData(weaponNum)->type & WEAPON_TYPE_SCOPED)
 	{
 		if (isFirstPerson)
 		{
 			return;
 		}
 	}
-	else if (GetWeaponTableData(weaponNum)->isGrenade)
+	else if (GetWeaponTableData(weaponNum)->type & WEAPON_TYPE_GRENADE)
 	{
 		if (ps && !ps->ammoclip[weaponNum])
 		{
@@ -2236,7 +2264,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 
 	weapon = &cg_weapons[weaponNum];
 
-	if (GetWeaponTableData(weaponNum)->isAkimbo)
+	if (GetWeaponTableData(weaponNum)->attributs & WEAPON_ATTRIBUT_AKIMBO)
 	{
 		if (isPlayer)
 		{
@@ -2310,7 +2338,8 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 		}
 	}
 
-	if (ps && !cg.renderingThirdPerson && GetWeaponTableData(cg.predictedPlayerState.weapon)->isMortarSet && cg.predictedPlayerState.weaponstate != WEAPON_RAISING)
+	if (ps && !cg.renderingThirdPerson && CHECKBITWISE(GetWeaponTableData(cg.predictedPlayerState.weapon)->type, WEAPON_TYPE_MORTAR | WEAPON_TYPE_SET)
+	    && cg.predictedPlayerState.weaponstate != WEAPON_RAISING)
 	{
 		vec3_t angles;
 
@@ -2321,7 +2350,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 
 		CG_PositionRotatedEntityOnTag(&gun, parent, "tag_weapon");
 	}
-	else if ((!ps || cg.renderingThirdPerson) && (GetWeaponTableData(weaponNum)->isMortar || GetWeaponTableData(weaponNum)->isMortarSet))
+	else if ((!ps || cg.renderingThirdPerson) && (GetWeaponTableData(weaponNum)->type & WEAPON_TYPE_MORTAR))
 	{
 		CG_PositionEntityOnTag(&gun, parent, "tag_weapon2", 0, NULL);
 	}
@@ -2371,7 +2400,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 		CG_AddWeaponWithPowerups(&gun, cent->currentState.powerups, ps, cent);
 	}
 
-	if ((!ps || cg.renderingThirdPerson) && GetWeaponTableData(weaponNum)->isAkimbo)
+	if ((!ps || cg.renderingThirdPerson) && GetWeaponTableData(weaponNum)->attributs & WEAPON_ATTRIBUT_AKIMBO)
 	{
 		// add to other hand as well
 		CG_PositionEntityOnTag(&gun, parent, "tag_weapon2", 0, NULL);
@@ -2388,7 +2417,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 
 		Com_Memset(&brass, 0, sizeof(brass));
 
-		if (GetWeaponTableData(weaponNum)->isAkimbo && akimboFire)
+		if ((GetWeaponTableData(weaponNum)->attributs & WEAPON_ATTRIBUT_AKIMBO) && akimboFire)
 		{
 			CG_PositionRotatedEntityOnTag(&brass, parent, "tag_brass2");
 		}
@@ -2417,7 +2446,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 
 		for (i = W_PART_1; i < W_MAX_PARTS; i++)
 		{
-			if (GetWeaponTableData(weaponNum)->isMortarSet && (i == W_PART_4 || i == W_PART_5))
+			if (CHECKBITWISE(GetWeaponTableData(weaponNum)->type, WEAPON_TYPE_MORTAR | WEAPON_TYPE_SET) && (i == W_PART_4 || i == W_PART_5))
 			{
 				if (ps && !cg.renderingThirdPerson && cg.predictedPlayerState.weaponstate != WEAPON_RAISING)
 				{
@@ -2428,7 +2457,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 			spunpart      = qfalse;
 			barrel.hModel = weapon->partModels[modelViewType][i].model;
 
-			if (GetWeaponTableData(weaponNum)->isMortarSet)
+			if (CHECKBITWISE(GetWeaponTableData(weaponNum)->type, WEAPON_TYPE_MORTAR | WEAPON_TYPE_SET))
 			{
 				if (i == W_PART_3)
 				{
@@ -2471,7 +2500,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 
 				drawpart = CG_GetPartFramesFromWeap(cent, &barrel, parent, i, weapon);
 
-				if (GetWeaponTableData(weaponNum)->isMortarSet && (i == W_PART_1 || i == W_PART_2))
+				if (CHECKBITWISE(GetWeaponTableData(weaponNum)->type, WEAPON_TYPE_MORTAR | WEAPON_TYPE_SET) && (i == W_PART_1 || i == W_PART_2))
 				{
 					if (ps && !cg.renderingThirdPerson && cg.predictedPlayerState.weaponstate != WEAPON_RAISING)
 					{
@@ -2564,7 +2593,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 						satchelDetPart.customShader = weapon->modModels[2];
 						CG_AddWeaponWithPowerups(&satchelDetPart, cent->currentState.powerups, ps, cent);
 					}
-					else if (GetWeaponTableData(weaponNum)->isMortarSet && i == W_PART_3)
+					else if (CHECKBITWISE(GetWeaponTableData(weaponNum)->type, WEAPON_TYPE_MORTAR | WEAPON_TYPE_SET) && i == W_PART_3)
 					{
 						if (ps && !cg.renderingThirdPerson && cg.predictedPlayerState.weaponstate != WEAPON_RAISING)
 						{
@@ -2592,7 +2621,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 	// add the scope model to the rifle if you've got it
 	if (isFirstPerson)  // for now just do it on the first person weapons
 	{
-		if (GetWeaponTableData(weaponNum)->isRifle || GetWeaponTableData(weaponNum)->isRiflenade)
+		if ((GetWeaponTableData(weaponNum)->type & (WEAPON_TYPE_RIFLE | WEAPON_TYPE_RIFLENADE)) && !(GetWeaponTableData(weaponNum)->type & (WEAPON_TYPE_SCOPABLE)))
 		{
 			if ((cg.snap->ps.ammo[GetWeaponTableData(WP_GPG40)->ammoIndex] || cg.snap->ps.ammo[GetWeaponTableData(WP_M7)->ammoIndex] || cg.snap->ps.ammoclip[GetWeaponTableData(WP_GPG40)->ammoIndex] || cg.snap->ps.ammoclip[GetWeaponTableData(WP_M7)->ammoIndex]))
 			{
@@ -2614,7 +2643,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 				}
 			}
 		}
-		else if (GetWeaponTableData(weaponNum)->isRifleWithScope)
+		else if (CHECKBITWISE(GetWeaponTableData(weaponNum)->type, (WEAPON_TYPE_RIFLE | WEAPON_TYPE_SCOPABLE)))
 		{
 			barrel.hModel = weapon->modModels[0];
 
@@ -2634,7 +2663,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 	// 3rd person attachements
 	else
 	{
-		if (GetWeaponTableData(weaponNum)->isRiflenade)
+		if (GetWeaponTableData(weaponNum)->type & WEAPON_TYPE_RIFLENADE)
 		{
 			// the holder
 			barrel.hModel = weapon->modModels[1];
@@ -2650,20 +2679,17 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 				CG_AddWeaponWithPowerups(&barrel, cent->currentState.powerups, ps, cent);
 			}
 		}
-		else if (GetWeaponTableData(weaponNum)->isScoped || GetWeaponTableData(weaponNum)->isRifleWithScope)
+		else if ((GetWeaponTableData(weaponNum)->type & WEAPON_TYPE_RIFLE) && (GetWeaponTableData(weaponNum)->type & (WEAPON_TYPE_SCOPABLE | WEAPON_TYPE_SCOPED)))
 		{
-			if (weaponNum != WP_FG42SCOPE)
-			{
-				// the holder
-				barrel.hModel = weapon->modModels[2];
-				CG_PositionEntityOnTag(&barrel, &gun, "tag_scope", 0, NULL);
-				CG_AddWeaponWithPowerups(&barrel, cent->currentState.powerups, ps, cent);
-			}
+			// the holder
+			barrel.hModel = weapon->modModels[2];
+			CG_PositionEntityOnTag(&barrel, &gun, "tag_scope", 0, NULL);
+			CG_AddWeaponWithPowerups(&barrel, cent->currentState.powerups, ps, cent);
 		}
-		else if (GetWeaponTableData(weaponNum)->isMG || GetWeaponTableData(weaponNum)->isMGSet)
+		else if (GetWeaponTableData(weaponNum)->type & WEAPON_TYPE_MG)
 		{
 			barrel.hModel = weapon->modModels[0];
-			barrel.frame  = GetWeaponTableData(weaponNum)->isMG ? 1 : 0;
+			barrel.frame  = GetWeaponTableData(weaponNum)->type & WEAPON_TYPE_SETTABLE;
 			CG_PositionEntityOnTag(&barrel, &gun, "tag_bipod", 0, NULL);
 			CG_AddWeaponWithPowerups(&barrel, cent->currentState.powerups, ps, cent);
 		}
@@ -2693,7 +2719,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 	angles[ROLL]  = crandom() * 10;
 	AnglesToAxis(angles, flash.axis);
 
-	if (/*isPlayer &&*/ GetWeaponTableData(weaponNum)->isAkimbo)
+	if (/*isPlayer &&*/ GetWeaponTableData(weaponNum)->attributs & WEAPON_ATTRIBUT_AKIMBO)
 	{
 		if (!ps || cg.renderingThirdPerson)
 		{
@@ -2738,7 +2764,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 		// continuous smoke after firing
 		if (ps || !isFirstPerson)
 		{
-			if (GetWeaponTableData(weaponNum)->canHeat)
+			if (GetWeaponTableData(weaponNum)->maxHeat)
 			{
 				// hot smoking gun
 				if ((cg.time - cent->overheatTime < 3000) && !(cent->currentState.powerups & (1 << PW_INVULNERABLE)))
@@ -2752,7 +2778,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 					}
 				}
 			}
-			else if (GetWeaponTableData(weaponNum)->isPanzer)
+			else if (GetWeaponTableData(weaponNum)->type & WEAPON_TYPE_PANZER)
 			{
 				if (cg.time - cent->muzzleFlashTime < BARREL_SMOKE_TIME)
 				{
@@ -2767,7 +2793,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 			}
 		}
 
-		if (GetWeaponTableData(weaponNum)->isMortarSet)
+		if (CHECKBITWISE(GetWeaponTableData(weaponNum)->type, WEAPON_TYPE_MORTAR | WEAPON_TYPE_SET))
 		{
 			if (ps && !cg.renderingThirdPerson && cg.time - cent->muzzleFlashTime < 800)
 			{
@@ -2795,7 +2821,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 	// weaps with barrel smoke
 	if (ps || !isFirstPerson)
 	{
-		if (weaponNum == WP_STEN ||weaponNum == WP_MP34)
+		if (weaponNum == WP_STEN || weaponNum == WP_MP34)
 		{
 			if (cg.time - cent->muzzleFlashTime < 100)
 			{
@@ -2848,7 +2874,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 
 				if (ps)
 				{
-					if (ps->ammoclip[GetWeaponTableData(WP_FLAMETHROWER)->ammoIndex])
+					if (ps->ammoclip[GetWeaponTableData(weaponNum)->ammoIndex])
 					{
 						CG_FireFlameChunks(cent, flash.origin, angles, 1.0, qfalse);
 					}
@@ -3131,7 +3157,7 @@ WEAPON SELECTION
 static qboolean CG_WeaponHasAmmo(weapon_t weapon)
 {
 	// certain weapons don't have ammo
-	if (/*!GetWeaponTableData(weapon)->useAmmo*/ GetWeaponTableData(weapon)->isMeleeWeapon || weapon == WP_PLIERS)
+	if (/*!GetWeaponTableData(weapon)->useAmmo*/ (GetWeaponTableData(weapon)->type & WEAPON_TYPE_MELEE) || weapon == WP_PLIERS)
 	{
 		return qtrue;
 	}
@@ -3398,13 +3424,13 @@ void CG_PlaySwitchSound(int lastweap, int newweap)
 	}
 
 	// no special switching sound when scope/unscope weapon
-	if (GetWeaponTableData(lastweap)->isScoped || GetWeaponTableData(newweap)->isScoped)
+	if ((GetWeaponTableData(lastweap)->type & WEAPON_TYPE_SCOPED) || (GetWeaponTableData(newweap)->type & WEAPON_TYPE_SCOPED))
 	{
 		return;
 	}
 
 	// don't play special switching sound after firing with riflenade
-	if (GetWeaponTableData(newweap)->isRifle && !cg.predictedPlayerState.ammoclip[lastweap])
+	if ((GetWeaponTableData(newweap)->type & WEAPON_TYPE_RIFLE) && !cg.predictedPlayerState.ammoclip[lastweap])
 	{
 		return;
 	}
@@ -3430,10 +3456,10 @@ void CG_FinishWeaponChange(int lastWeapon, int newWeapon)
 
 	if (lastWeapon != GetWeaponTableData(newWeapon)->weapAlts)
 	{
-		if ((GetWeaponTableData(newWeapon)->isPistol            && (cg.pmext.silencedSideArm & 1))
-		    || (GetWeaponTableData(newWeapon)->isSilencedPistol && !(cg.pmext.silencedSideArm & 1))
-		    || (GetWeaponTableData(newWeapon)->isRifle          && (cg.pmext.silencedSideArm & 2))
-		    || (GetWeaponTableData(newWeapon)->isRiflenade      && !(cg.pmext.silencedSideArm & 2)))
+		if (((GetWeaponTableData(newWeapon)->type & WEAPON_TYPE_PISTOL) && !(GetWeaponTableData(newWeapon)->attributs & WEAPON_ATTRIBUT_SILENCED) && (cg.pmext.silencedSideArm & 1))
+		    || ((GetWeaponTableData(newWeapon)->type & WEAPON_TYPE_PISTOL) && (GetWeaponTableData(newWeapon)->attributs & WEAPON_ATTRIBUT_SILENCED) && !(cg.pmext.silencedSideArm & 1))
+		    || ((GetWeaponTableData(newWeapon)->type & WEAPON_TYPE_RIFLE) && (cg.pmext.silencedSideArm & 2))
+		    || ((GetWeaponTableData(newWeapon)->type & WEAPON_TYPE_RIFLENADE) && !(cg.pmext.silencedSideArm & 2)))
 		{
 			newWeapon       = GetWeaponTableData(newWeapon)->weapAlts;
 			cg.weaponSelect = newWeapon;
@@ -3470,7 +3496,7 @@ void CG_FinishWeaponChange(int lastWeapon, int newWeapon)
 	if (lastWeapon == cg.lastFiredWeapon)
 	{
 		// don't set switchback for some weaps...
-		if (!GetWeaponTableData(lastWeapon)->isScoped)
+		if (!(GetWeaponTableData(lastWeapon)->type & WEAPON_TYPE_SCOPED))
 		{
 			cg.switchbackWeapon = lastWeapon;
 		}
@@ -3486,7 +3512,7 @@ void CG_FinishWeaponChange(int lastWeapon, int newWeapon)
 		// selected weapon will become the switchback
 		if (cg.switchbackWeapon == newWeapon)
 		{
-			if (!GetWeaponTableData(lastWeapon)->isScoped)
+			if (!(GetWeaponTableData(lastWeapon)->type & WEAPON_TYPE_SCOPED))
 			{
 				cg.switchbackWeapon = lastWeapon;
 			}
@@ -3498,7 +3524,7 @@ void CG_FinishWeaponChange(int lastWeapon, int newWeapon)
 		// this fixes cg.switchbackWeapon=0 after very first spawn and switching weapon for the first time
 		else if (cg.switchbackWeapon == WP_NONE && CG_WeaponSelectable(lastWeapon)) // ensure last weapon is available
 		{
-			if (!GetWeaponTableData(lastWeapon)->isScoped)
+			if (!(GetWeaponTableData(lastWeapon)->type & WEAPON_TYPE_SCOPED))
 			{
 				cg.switchbackWeapon = lastWeapon;
 			}
@@ -3678,56 +3704,59 @@ void CG_AltWeapon_f(void)
 	}
 
 	// need ground for this
-	if (GetWeaponTableData(cg.weaponSelect)->isMortar)
+	if (GetWeaponTableData(cg.weaponSelect)->type & WEAPON_TYPE_SETTABLE)
 	{
-		int    contents;
-		vec3_t point;
-
-		if (cg.predictedPlayerState.groundEntityNum == ENTITYNUM_NONE)
+		if (GetWeaponTableData(cg.weaponSelect)->type & WEAPON_TYPE_MG)
 		{
-			return;
+			if (!(cg.predictedPlayerState.eFlags & EF_PRONE))
+			{
+				return;
+			}
 		}
-
-		if (!cg.predictedPlayerState.ammoclip[cg.weaponSelect])
+		else // mortar
 		{
-			return;
-		}
+			int    contents;
+			vec3_t point;
 
-		if (cg.predictedPlayerState.eFlags & EF_PRONE)
-		{
-			return;
-		}
+			if (cg.predictedPlayerState.groundEntityNum == ENTITYNUM_NONE)
+			{
+				return;
+			}
 
-		if (cg_pmove.waterlevel == 3)
-		{
-			return;
-		}
+			if (!cg.predictedPlayerState.ammoclip[cg.weaponSelect])
+			{
+				return;
+			}
 
-		// don't allow set if moving
-		if (VectorLengthSquared(cg.snap->ps.velocity) != 0.f)
-		{
-			return;
-		}
+			if (cg.predictedPlayerState.eFlags & EF_PRONE)
+			{
+				return;
+			}
 
-		// eurgh, need it here too else we play sounds :/
-		point[0] = cg.snap->ps.origin[0];
-		point[1] = cg.snap->ps.origin[1];
-		point[2] = cg.snap->ps.origin[2] + cg.snap->ps.crouchViewHeight;
-		contents = CG_PointContents(point, cg.snap->ps.clientNum);
+			if (cg_pmove.waterlevel == 3)
+			{
+				return;
+			}
 
-		if (contents & MASK_WATER)
-		{
-			return;
+			// don't allow set if moving
+			if (VectorLengthSquared(cg.snap->ps.velocity) != 0.f)
+			{
+				return;
+			}
+
+			// eurgh, need it here too else we play sounds :/
+			point[0] = cg.snap->ps.origin[0];
+			point[1] = cg.snap->ps.origin[1];
+			point[2] = cg.snap->ps.origin[2] + cg.snap->ps.crouchViewHeight;
+			contents = CG_PointContents(point, cg.snap->ps.clientNum);
+
+			if (contents & MASK_WATER)
+			{
+				return;
+			}
 		}
 	}
-	else if (GetWeaponTableData(cg.weaponSelect)->isMG)
-	{
-		if (!(cg.predictedPlayerState.eFlags & EF_PRONE))
-		{
-			return;
-		}
-	}
-	else if (GetWeaponTableData(GetWeaponTableData(cg.weaponSelect)->weapAlts)->isScoped)
+	else if (GetWeaponTableData(cg.weaponSelect)->type & WEAPON_TYPE_SCOPABLE)
 	{
 		// don't allow players switching to scoped weapon when prone moving
 		if (cg.predictedPlayerState.eFlags & EF_PRONE_MOVING)
@@ -3754,7 +3783,7 @@ void CG_NextWeap(qboolean switchBanks)
 	qboolean nextbank = qfalse;     // need to switch to the next bank of weapons?
 	int      i;
 
-	if (GetWeaponTableData(curweap)->isPistol || GetWeaponTableData(curweap)->isRifle)
+	if (GetWeaponTableData(curweap)->type & (WEAPON_TYPE_PISTOL | WEAPON_TYPE_RIFLE))
 	{
 		num = GetWeaponTableData(curweap)->weapAlts;
 	}
@@ -3790,7 +3819,7 @@ void CG_NextWeap(qboolean switchBanks)
 				break;
 			}
 
-			if (GetWeaponTableData(num)->isRifle)
+			if (GetWeaponTableData(num)->type & WEAPON_TYPE_RIFLE)
 			{
 				if (CG_WeaponSelectable(GetWeaponTableData(num)->weapAlts))
 				{
@@ -3841,7 +3870,7 @@ void CG_NextWeap(qboolean switchBanks)
 				break;
 			}
 
-			if (GetWeaponTableData(num)->isRifle)
+			if (GetWeaponTableData(num)->type & WEAPON_TYPE_RIFLE)
 			{
 				if (CG_WeaponSelectable(GetWeaponTableData(num)->weapAlts))
 				{
@@ -3865,7 +3894,7 @@ void CG_NextWeap(qboolean switchBanks)
 					break;
 				}
 
-				if (GetWeaponTableData(num)->isRifle)
+				if (GetWeaponTableData(num)->type & WEAPON_TYPE_RIFLE)
 				{
 					if (CG_WeaponSelectable(GetWeaponTableData(num)->weapAlts))
 					{
@@ -3901,7 +3930,8 @@ void CG_PrevWeap(qboolean switchBanks)
 	qboolean prevbank = qfalse;     // need to switch to the next bank of weapons?
 	int      i;
 
-	if (GetWeaponTableData(curweap)->isSilencedPistol || GetWeaponTableData(curweap)->isRiflenade)
+	if (((GetWeaponTableData(curweap)->type & WEAPON_TYPE_PISTOL) && (GetWeaponTableData(curweap)->attributs & WEAPON_ATTRIBUT_SILENCED))
+	    || GetWeaponTableData(curweap)->type & WEAPON_TYPE_RIFLENADE)
 	{
 		num = GetWeaponTableData(curweap)->weapAlts;
 	}
@@ -3942,7 +3972,7 @@ void CG_PrevWeap(qboolean switchBanks)
 				break;
 			}
 
-			if (GetWeaponTableData(num)->isRifle)
+			if (GetWeaponTableData(num)->type & WEAPON_TYPE_RIFLE)
 			{
 				if (CG_WeaponSelectable(GetWeaponTableData(num)->weapAlts))
 				{
@@ -3987,7 +4017,7 @@ void CG_PrevWeap(qboolean switchBanks)
 				break;
 			}
 
-			if (GetWeaponTableData(num)->isRifle)
+			if (GetWeaponTableData(num)->type & WEAPON_TYPE_RIFLE)
 			{
 				if (CG_WeaponSelectable(GetWeaponTableData(num)->weapAlts))
 				{
@@ -4007,7 +4037,7 @@ void CG_PrevWeap(qboolean switchBanks)
 					break;
 				}
 
-				if (GetWeaponTableData(num)->isRifle)
+				if (GetWeaponTableData(num)->type & WEAPON_TYPE_RIFLE)
 				{
 					if (CG_WeaponSelectable(GetWeaponTableData(num)->weapAlts))
 					{
@@ -4079,7 +4109,7 @@ qboolean CG_CheckCanSwitch(void)
 		return qfalse;
 	}
 
-	if (GetWeaponTableData(cg.weaponSelect)->isSetWeapon)
+	if (GetWeaponTableData(cg.weaponSelect)->type & WEAPON_TYPE_SET)
 	{
 		return qfalse;
 	}
@@ -4092,6 +4122,15 @@ qboolean CG_CheckCanSwitch(void)
 	//              the reload time twice.  (the first pause for the current weapon reload,
 	//              and the pause when you have to reload again 'cause you canceled this one)
 	if (cg.snap->ps.weaponstate == WEAPON_RELOADING)
+	{
+		return qfalse;
+	}
+
+	// there is an exploit permitting to fast change weapon right after firing the last bullet/missile.
+	// i.e: in case of MG set, it skip unset animation / in case of riflenade, the nade is fired and still loaded
+	// More precisly, it appear when the event "EV_NOAMMO" is reached. In this case, player can "overwrite"
+	// the value forced by autoswitch. To prevent it, we are waiting the game to return the current weapon "selected"
+	if (cg.weaponSelect != cg.snap->ps.weapon)
 	{
 		return qfalse;
 	}
@@ -4300,7 +4339,7 @@ void CG_WeaponBank_f(void)
 			break;
 		}
 
-		if (GetWeaponTableData(newWeapon)->isRifle)
+		if (GetWeaponTableData(newWeapon)->type & WEAPON_TYPE_RIFLE)
 		{
 			if (CG_WeaponSelectable(GetWeaponTableData(newWeapon)->weapAlts))
 			{
@@ -4355,24 +4394,23 @@ void CG_OutOfAmmoChange(qboolean allowForceSwitch)
 	{
 		if ((cg.weaponSelect == WP_LANDMINE || cg.weaponSelect == WP_DYNAMITE) && CG_WeaponSelectable(WP_PLIERS))
 		{
-			cg.weaponSelect = WP_PLIERS;
 			CG_FinishWeaponChange(cg.predictedPlayerState.weapon, WP_PLIERS);
 			return;
 		}
 
 		if (cg.weaponSelect == WP_SATCHEL && CG_WeaponSelectable(WP_SATCHEL_DET))
 		{
-			cg.weaponSelect = WP_SATCHEL_DET;
+			CG_FinishWeaponChange(cg.predictedPlayerState.weapon, WP_SATCHEL_DET);
 			return;
 		}
 
-		if (GetWeaponTableData(cg.weaponSelect)->isSetWeapon)
+		if (GetWeaponTableData(cg.weaponSelect)->type & (WEAPON_TYPE_SET | WEAPON_TYPE_RIFLENADE))
 		{
-			cg.weaponSelect = GetWeaponTableData(cg.weaponSelect)->weapAlts;
+			CG_FinishWeaponChange(cg.predictedPlayerState.weapon, GetWeaponTableData(cg.weaponSelect)->weapAlts);
 			return;
 		}
 
-		if (GetWeaponTableData(cg.weaponSelect)->isPanzer || cg.weaponSelect == WP_SMOKE_BOMB || cg.weaponSelect == WP_MEDIC_ADRENALINE)
+		if ((GetWeaponTableData(cg.weaponSelect)->type & WEAPON_TYPE_PANZER) || cg.weaponSelect == WP_SMOKE_BOMB || cg.weaponSelect == WP_MEDIC_ADRENALINE)
 		{
 			for (i = 0; i < MAX_WEAP_BANK_SWITCH_ORDER; i++)
 			{
@@ -4381,36 +4419,22 @@ void CG_OutOfAmmoChange(qboolean allowForceSwitch)
 					if (CG_WeaponSelectable(weapBanksMultiPlayer[weapBankSwitchOrder[i]][j]))
 					{
 						// make sure we don't reselect the panzer or bazooka
-						if (GetWeaponTableData(cg.weaponSelect)->isPanzer && GetWeaponTableData(weapBanksMultiPlayer[weapBankSwitchOrder[i]][j])->isPanzer)
+						if ((GetWeaponTableData(cg.weaponSelect)->type & WEAPON_TYPE_PANZER) && (GetWeaponTableData(weapBanksMultiPlayer[weapBankSwitchOrder[i]][j])->type & WEAPON_TYPE_PANZER))
 						{
 							continue;
 						}
 
-						cg.weaponSelect = weapBanksMultiPlayer[weapBankSwitchOrder[i]][j];
-						CG_FinishWeaponChange(cg.predictedPlayerState.weapon, cg.weaponSelect);
+						CG_FinishWeaponChange(cg.predictedPlayerState.weapon, weapBanksMultiPlayer[weapBankSwitchOrder[i]][j]);
 						return;
 					}
 				}
-			}
-		}
-		else if (GetWeaponTableData(cg.weaponSelect)->isRiflenade)
-		{
-			// if you're using an alt mode weapon, try switching back to the parent
-			// otherwise, switch to the equivalent if you've got it
-			cg.weaponSelect = GetWeaponTableData(cg.weaponSelect)->weapAlts;      // base any further changes on the parent
-
-			if (CG_WeaponSelectable(cg.weaponSelect))          // the parent was selectable, drop back to that
-			{
-				CG_FinishWeaponChange(cg.predictedPlayerState.weapon, cg.weaponSelect);
-				return;
 			}
 		}
 
 		// now try the opposite team's equivalent weap
 		if (CG_WeaponSelectable(GetWeaponTableData(cg.weaponSelect)->weapEquiv))
 		{
-			cg.weaponSelect = GetWeaponTableData(cg.weaponSelect)->weapEquiv;
-			CG_FinishWeaponChange(cg.predictedPlayerState.weapon, cg.weaponSelect);
+			CG_FinishWeaponChange(cg.predictedPlayerState.weapon, GetWeaponTableData(cg.weaponSelect)->weapEquiv);
 			return;
 		}
 	}
@@ -4422,8 +4446,7 @@ void CG_OutOfAmmoChange(qboolean allowForceSwitch)
 		{
 			if (CG_WeaponSelectable(weapBanksMultiPlayer[weapBankSwitchOrder[i]][j]))
 			{
-				cg.weaponSelect = weapBanksMultiPlayer[weapBankSwitchOrder[i]][j];
-				CG_FinishWeaponChange(cg.predictedPlayerState.weapon, cg.weaponSelect);
+				CG_FinishWeaponChange(cg.predictedPlayerState.weapon, weapBanksMultiPlayer[weapBankSwitchOrder[i]][j]);
 				return;
 			}
 		}
@@ -4547,7 +4570,7 @@ void CG_WeaponFireRecoil(int weapon)
 	//      pitchAdd = 2 + rand() % 3;
 	// }
 
-	if (GetWeaponTableData(weapon)->firingAuto)
+	if (GetWeaponTableData(weapon)->firingMode & WEAPON_FIRING_MODE_AUTOMATIC)
 	{
 		pitchAdd *= (1 + rand() % 3);
 	}
@@ -4650,7 +4673,7 @@ void CG_FireWeapon(centity_t *cent)
 		CG_WeaponFireRecoil(ent->weapon);
 	}
 
-	if (GetWeaponTableData(ent->weapon)->isMortarSet)
+	if (CHECKBITWISE(GetWeaponTableData(ent->weapon)->type, WEAPON_TYPE_MORTAR | WEAPON_TYPE_SET))
 	{
 		if (ent->clientNum == cg.snap->ps.clientNum)
 		{
@@ -4666,14 +4689,10 @@ void CG_FireWeapon(centity_t *cent)
 		return;
 	}
 
-	if (GetWeaponTableData(ent->weapon)->isThrowable && GetWeaponTableData(ent->weapon)->isExplosive && ent->apos.trBase[0] > 0)
+	// "throwing effort" when grenade is launched far enough
+	if ((GetWeaponTableData(ent->weapon)->type & WEAPON_TYPE_GRENADE) && ent->apos.trBase[0] > 0)
 	{
 		return;
-	}
-
-	if (GetWeaponTableData(ent->weapon)->isRiflenade && ent->clientNum == cg.snap->ps.clientNum)
-	{
-		cg.weaponSelect = GetWeaponTableData(ent->weapon)->weapAlts;
 	}
 
 	if ((cent->currentState.event & ~EV_EVENT_BITS) == EV_FIRE_WEAPON_LASTSHOT)
@@ -5119,7 +5138,7 @@ void CG_MissileHitWall(int weapon, int missileEffect, vec3_t origin, vec3_t dir,
 		return;
 	}
 
-	if (GetWeaponTableData(weapon)->isMeleeWeapon)
+	if (GetWeaponTableData(weapon)->type & WEAPON_TYPE_MELEE)
 	{
 		i = rand() % 4;
 
@@ -5187,7 +5206,7 @@ void CG_MissileHitWall(int weapon, int missileEffect, vec3_t origin, vec3_t dir,
 			// enough to see it, this way we can leave other marks around a lot
 			// longer, since most of the time we can't actually see the bullet holes
 			// - small modification.  only do this for non-rifles (so you can see your shots hitting when you're zooming with a rifle scope)
-			if (GetWeaponTableData(weapon)->isScoped || (Distance(cg.refdef_current->vieworg, origin) < 384))
+			if ((GetWeaponTableData(weapon)->type & WEAPON_TYPE_SCOPED) || (Distance(cg.refdef_current->vieworg, origin) < 384))
 			{
 				// mark and sound can potentially use the surface for override values
 				//mark   = cgs.media.bulletMarkShader;    // default
@@ -5358,7 +5377,7 @@ void CG_MissileHitWall(int weapon, int missileEffect, vec3_t origin, vec3_t dir,
 			CG_AddDebris(origin, dir, (int)(400 + random() * 200), rand() % 2000 + 1400, 12 + rand() % 12, &trace);
 		}
 	}
-	else if (GetWeaponTableData(weapon)->isRiflenade || GetWeaponTableData(weapon)->isMortarSet || GetWeaponTableData(weapon)->isGrenade || weapon == WP_SATCHEL || weapon == WP_LANDMINE)
+	else if ((GetWeaponTableData(weapon)->type & (WEAPON_TYPE_RIFLENADE | WEAPON_TYPE_MORTAR | WEAPON_TYPE_GRENADE)) || weapon == WP_SATCHEL || weapon == WP_LANDMINE)
 	{
 		if (weapon == WP_SATCHEL)
 		{
@@ -5370,7 +5389,7 @@ void CG_MissileHitWall(int weapon, int missileEffect, vec3_t origin, vec3_t dir,
 			sfx  = cgs.media.sfx_landmineexp;
 			sfx2 = cgs.media.sfx_landmineexpDist;
 		}
-		else if (GetWeaponTableData(weapon)->isMortarSet)
+		else if (GetWeaponTableData(weapon)->type & WEAPON_TYPE_MORTAR)
 		{
 			sfx = sfx2 = 0;
 		}
@@ -5425,7 +5444,7 @@ void CG_MissileHitWall(int weapon, int missileEffect, vec3_t origin, vec3_t dir,
 			CG_AddDebris(origin, dir, 280, 1400, 7 + rand() % 2, &trace);
 		}
 	}
-	else if (GetWeaponTableData(weapon)->isPanzer || weapon == VERYBIGEXPLOSION || weapon == WP_ARTY || weapon == WP_SMOKE_MARKER)
+	else if ((GetWeaponTableData(weapon)->type & WEAPON_TYPE_PANZER) || weapon == VERYBIGEXPLOSION || weapon == WP_ARTY || weapon == WP_SMOKE_MARKER)
 	{
 		sfx  = cgs.media.sfx_rockexp;
 		sfx2 = cgs.media.sfx_rockexpDist;
@@ -5609,11 +5628,11 @@ void CG_MissileHitPlayer(centity_t *cent, int weapon, vec3_t origin, vec3_t dir,
 	// some weapons will make an explosion with the blood, while
 	// others will just make the blood
 
-	if (GetWeaponTableData(weapon)->isGrenade || GetWeaponTableData(weapon)->isPanzer)
+	if (GetWeaponTableData(weapon)->type & (WEAPON_TYPE_GRENADE | WEAPON_TYPE_PANZER))
 	{
 		CG_MissileHitWall(weapon, PS_FX_NONE, origin, dir, 0);   // like the old one
 	}
-	else if (GetWeaponTableData(weapon)->isMeleeWeapon)
+	else if (GetWeaponTableData(weapon)->type & WEAPON_TYPE_MELEE)
 	{
 		CG_MissileHitWall(weapon, PS_FX_NONE, origin, dir, 1);    // this one makes the hitting fleshy sound. whee
 	}
@@ -5848,7 +5867,7 @@ qboolean CG_CalcMuzzlePoint(int entityNum, vec3_t muzzle)
 			muzzle[2] += cg.snap->ps.viewheight;
 			AngleVectors(cg.snap->ps.viewangles, forward, NULL, NULL);
 
-			if (GetWeaponTableData(cg.snap->ps.weapon)->isMGSet)
+			if (CHECKBITWISE(GetWeaponTableData(cg.snap->ps.weapon)->type, WEAPON_TYPE_MG | WEAPON_TYPE_SET))
 			{
 				VectorMA(muzzle, 36, forward, muzzle);
 			}
@@ -5913,7 +5932,7 @@ qboolean CG_CalcMuzzlePoint(int entityNum, vec3_t muzzle)
 		{
 			muzzle[2] += PRONE_VIEWHEIGHT;
 
-			if (GetWeaponTableData(cent->currentState.weapon)->isMGSet)
+			if (CHECKBITWISE(GetWeaponTableData(cent->currentState.weapon)->type, WEAPON_TYPE_MG | WEAPON_TYPE_SET))
 			{
 				VectorMA(muzzle, 36, forward, muzzle);
 			}

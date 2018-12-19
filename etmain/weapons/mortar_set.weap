@@ -22,6 +22,7 @@ weaponDef
 		spinupSound			"sound/weapons/mortar/mortar_fire.wav"		// sound started when fire button goes down, and stepped on when the first fire event happens
 		//spindownSound		""									// sound called if the above is running but player doesn't follow through and fire
 		switchSound			"sound/weapons/mortar/mortar_on.wav"		// allow overriding of weaponswitch sound
+		noAmmoSound         "sound/weapons/misc/fire_dry.wav"
 		
 		weaponIcon			"icons/iconw_mortar"
 		weaponIconScale		2
@@ -34,6 +35,7 @@ weaponDef
 		missileDlightColor	1 0.7 0.5
 		
 		//ejectBrassFunc	""									// supports "MachineGunEjectBrass" and "PanzerFaustEjectBrass"
+		//ejectBrassOffset  0 0 0
 		
 		//modModel 1		""
 		

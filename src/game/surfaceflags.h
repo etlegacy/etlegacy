@@ -42,6 +42,7 @@
  *
  * these definitions also need to be in q_shared.h!
  */
+#define CONTENTS_NONE               0x00000000
 #define CONTENTS_SOLID              0x00000001
 #define CONTENTS_LIGHTGRID          0x00000004
 #define CONTENTS_LAVA               0x00000008

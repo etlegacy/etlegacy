@@ -127,7 +127,7 @@ void PM_AddEventExt(int newEvent, int eventParm)
  */
 int PM_ReloadAnimForWeapon(int weapon)
 {
-	if (pm->skill[SK_LIGHT_WEAPONS] >= 2 && GetWeaponTableData(weapon)->isLightWeaponSupportingFastReload)
+	if (pm->skill[SK_LIGHT_WEAPONS] >= 2 && GetWeaponTableData(weapon)->attributs & WEAPON_ATTRIBUT_FAST_RELOAD)
 	{
 		return WEAP_RELOAD2;        // faster reload
 	}
@@ -238,7 +238,7 @@ void PM_ClipVelocity(vec3_t in, vec3_t normal, vec3_t out, float overbounce)
  * @param[in] ignoreent
  * @param[in] tracemask
  */
-void PM_TraceLegs(trace_t *trace, float *legsOffset, vec3_t start, vec3_t end, trace_t *bodytrace, vec3_t viewangles, void(tracefunc) (trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask), int ignoreent, int tracemask)
+void PM_TraceLegs(trace_t *trace, float *legsOffset, vec3_t start, vec3_t end, trace_t *bodytrace, vec3_t viewangles, void (tracefunc) (trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask), int ignoreent, int tracemask)
 {
 	vec3_t ofs, org, point;
 	vec3_t flatforward;
@@ -319,13 +319,13 @@ void PM_TraceLegs(trace_t *trace, float *legsOffset, vec3_t start, vec3_t end, t
  * @param[in] tracemask
  */
 void PM_TraceHead(trace_t *trace, vec3_t start, vec3_t end, trace_t *bodytrace, vec3_t viewangles,
-                  void(tracefunc) (trace_t *results,
-                                   const vec3_t start,
-                                   const vec3_t mins,
-                                   const vec3_t maxs,
-                                   const vec3_t end,
-                                   int passEntityNum,
-                                   int contentMask),
+                  void (tracefunc) (trace_t *results,
+                                    const vec3_t start,
+                                    const vec3_t mins,
+                                    const vec3_t maxs,
+                                    const vec3_t end,
+                                    int passEntityNum,
+                                    int contentMask),
                   int ignoreent,
                   int tracemask)
 {
@@ -604,7 +604,7 @@ static float PM_CmdScale(usercmd_t *cmd)
 	// full speed.  not completely realistic (well, sure, you can run faster with the weapon strapped to your
 	// back than in carry position) but more fun to play.  If it doesn't play well this way we'll bog down the
 	// player if the own the weapon at all.
-	if (GetWeaponTableData(pm->ps->weapon)->isHeavyWeapon && !GetWeaponTableData(pm->ps->weapon)->isMortarSet)
+	if (GetWeaponTableData(pm->ps->weapon)->skillBased == SK_HEAVY_WEAPONS && !CHECKBITWISE(GetWeaponTableData(pm->ps->weapon)->type, WEAPON_TYPE_MORTAR | WEAPON_TYPE_SET))
 	{
 		if (pm->ps->weapon == WP_FLAMETHROWER) // trying some different balance for the FT
 		{
@@ -824,12 +824,12 @@ static qboolean PM_CheckProne(void)
 			return qfalse;
 		}
 
-		if (pm->ps->weaponDelay && GetWeaponTableData(pm->ps->weapon)->isPanzer)
+		if (pm->ps->weaponDelay && (GetWeaponTableData(pm->ps->weapon)->type & WEAPON_TYPE_PANZER))
 		{
 			return qfalse;
 		}
 
-		if (GetWeaponTableData(pm->ps->weapon)->isMortarSet)
+		if (CHECKBITWISE(GetWeaponTableData(pm->ps->weapon)->type, WEAPON_TYPE_MORTAR | WEAPON_TYPE_SET))
 		{
 			return qfalse;
 		}
@@ -910,7 +910,7 @@ static qboolean PM_CheckProne(void)
 				// don't let them keep scope out when
 				// standing from prone or they will
 				// look right through a wall
-				if (GetWeaponTableData(pm->ps->weapon)->isScoped || GetWeaponTableData(pm->ps->weapon)->isMGSet)
+				if (GetWeaponTableData(pm->ps->weapon)->type & (WEAPON_TYPE_SCOPED | WEAPON_TYPE_SET))
 				{
 					PM_BeginWeaponChange((weapon_t)pm->ps->weapon, GetWeaponTableData(pm->ps->weapon)->weapAlts, qfalse);
 				}
@@ -1856,7 +1856,9 @@ static void PM_CheckDuck(void)
 		return;
 	}
 
-	if ((pm->cmd.upmove < 0 && !(pm->ps->eFlags & EF_MOUNTEDTANK) && !(pm->ps->pm_flags & PMF_LADDER)) || GetWeaponTableData(pm->ps->weapon)->isMortarSet) // duck
+	// duck
+	if ((pm->cmd.upmove < 0 && !(pm->ps->eFlags & EF_MOUNTEDTANK) && !(pm->ps->pm_flags & PMF_LADDER))
+	    || CHECKBITWISE(GetWeaponTableData(pm->ps->weapon)->type, WEAPON_TYPE_MORTAR | WEAPON_TYPE_SET))
 	{
 		pm->ps->pm_flags |= PMF_DUCKED;
 	}
@@ -2255,7 +2257,7 @@ static void PM_BeginWeaponReload(weapon_t weapon)
 	if (pm->ps->ammoclip[GetWeaponTableData(weapon)->clipIndex] >= GetWeaponTableData(weapon)->maxClip)
 	{
 		// akimbo should also check other weapon status
-		if (GetWeaponTableData(weapon)->isAkimbo)
+		if (GetWeaponTableData(weapon)->attributs & WEAPON_ATTRIBUT_AKIMBO)
 		{
 			if (pm->ps->ammoclip[GetWeaponTableData(GetWeaponTableData(weapon)->akimboSideArm)->clipIndex] >= GetWeaponTableData(GetWeaponTableData(GetWeaponTableData(weapon)->akimboSideArm)->clipIndex)->maxClip)
 			{
@@ -2275,7 +2277,7 @@ static void PM_BeginWeaponReload(weapon_t weapon)
 	}
 
 	// easier check now that the animation system handles the specifics
-	if (!GetWeaponTableData(weapon)->isThrowable)
+	if (!(GetWeaponTableData(weapon)->firingMode & WEAPON_FIRING_MODE_THROWABLE))
 	{
 		// override current animation (so reloading after firing will work)
 		if (pm->ps->eFlags & EF_PRONE)
@@ -2288,7 +2290,7 @@ static void PM_BeginWeaponReload(weapon_t weapon)
 		}
 	}
 
-	if (!(GetWeaponTableData(weapon)->isMortar || GetWeaponTableData(weapon)->isMortarSet))
+	if (!(GetWeaponTableData(weapon)->type & WEAPON_TYPE_MORTAR))
 	{
 		PM_ContinueWeaponAnim(PM_ReloadAnimForWeapon(pm->ps->weapon));
 	}
@@ -2296,7 +2298,7 @@ static void PM_BeginWeaponReload(weapon_t weapon)
 	// okay to reload while overheating without tacking the reload time onto the end of the
 	// current weaponTime (the reload time is partially absorbed into the overheat time)
 	reloadTime = GetWeaponTableData(weapon)->reloadTime;
-	if (pm->skill[SK_LIGHT_WEAPONS] >= 2 && GetWeaponTableData(weapon)->isLightWeaponSupportingFastReload)
+	if (pm->skill[SK_LIGHT_WEAPONS] >= 2 && (GetWeaponTableData(weapon)->attributs & WEAPON_ATTRIBUT_FAST_RELOAD))
 	{
 		reloadTime *= .65f;
 	}
@@ -2374,7 +2376,7 @@ static void PM_BeginWeaponChange(weapon_t oldWeapon, weapon_t newWeapon, qboolea
 
 	pm->ps->nextWeapon = newWeapon;
 
-	if (GetWeaponTableData(newWeapon)->isRifle)
+	if (GetWeaponTableData(oldWeapon)->type & WEAPON_TYPE_RIFLENADE)
 	{
 		// don't send change weapon event after firing with riflenade
 		if (GetWeaponTableData(oldWeapon)->weapAlts != newWeapon || pm->ps->ammoclip[GetWeaponTableData(oldWeapon)->ammoIndex])
@@ -2382,7 +2384,7 @@ static void PM_BeginWeaponChange(weapon_t oldWeapon, weapon_t newWeapon, qboolea
 			PM_AddEvent(EV_CHANGE_WEAPON);
 		}
 	}
-	else if (GetWeaponTableData(newWeapon)->isMortarSet)
+	else if (CHECKBITWISE(GetWeaponTableData(newWeapon)->type, WEAPON_TYPE_MORTAR | WEAPON_TYPE_SET))
 	{
 		if (pm->ps->eFlags & EF_PRONE)
 		{
@@ -2406,7 +2408,7 @@ static void PM_BeginWeaponChange(weapon_t oldWeapon, weapon_t newWeapon, qboolea
 	{
 		PM_StartWeaponAnim(GetWeaponTableData(oldWeapon)->altSwitchFrom);
 
-		if (GetWeaponTableData(newWeapon)->isSetWeapon)
+		if (GetWeaponTableData(newWeapon)->type & WEAPON_TYPE_SET)
 		{
 			vec3_t axis[3];
 
@@ -2417,7 +2419,7 @@ static void PM_BeginWeaponChange(weapon_t oldWeapon, weapon_t newWeapon, qboolea
 		}
 
 		// special case for silenced pistol
-		if (GetWeaponTableData(oldWeapon)->isSilencedPistol)
+		if ((GetWeaponTableData(oldWeapon)->type & WEAPON_TYPE_PISTOL) && (GetWeaponTableData(oldWeapon)->attributs & WEAPON_ATTRIBUT_SILENCED))
 		{
 			if (pm->ps->eFlags & EF_PRONE)
 			{
@@ -2493,24 +2495,27 @@ static void PM_FinishWeaponChange(void)
 
 	// don't really care about anim since these weapons don't show in view.
 	// However, need to set the animspreadscale so they are initally at worst accuracy
-	if (GetWeaponTableData(newWeapon)->isScoped)
+	if (GetWeaponTableData(newWeapon)->type & WEAPON_TYPE_SCOPED)
 	{
 		pm->ps->aimSpreadScale      = AIMSPREAD_MAXSPREAD;       // initially at lowest accuracy
 		pm->ps->aimSpreadScaleFloat = AIMSPREAD_MAXSPREAD;       // initially at lowest accuracy
 	}
-	else if (GetWeaponTableData(newWeapon)->isPistol)
+	else if (GetWeaponTableData(newWeapon)->type & WEAPON_TYPE_PISTOL)
 	{
-		pm->pmext->silencedSideArm &= ~1;
+		if (GetWeaponTableData(newWeapon)->attributs & WEAPON_ATTRIBUT_SILENCED)
+		{
+			pm->pmext->silencedSideArm |= 1;
+		}
+		else
+		{
+			pm->pmext->silencedSideArm &= ~1;
+		}
 	}
-	else if (GetWeaponTableData(newWeapon)->isSilencedPistol)
-	{
-		pm->pmext->silencedSideArm |= 1;
-	}
-	else if (GetWeaponTableData(newWeapon)->isRifle)
+	else if (GetWeaponTableData(newWeapon)->type & WEAPON_TYPE_RIFLE)
 	{
 		pm->pmext->silencedSideArm &= ~2;
 	}
-	else if (GetWeaponTableData(newWeapon)->isRiflenade)
+	else if (GetWeaponTableData(newWeapon)->type & WEAPON_TYPE_RIFLENADE)
 	{
 		pm->pmext->silencedSideArm |= 2;
 	}
@@ -2524,7 +2529,7 @@ static void PM_FinishWeaponChange(void)
 	// play an animation
 	if (GetWeaponTableData(oldWeapon)->weapAlts == newWeapon)
 	{
-		if (GetWeaponTableData(newWeapon)->isRifle && !pm->ps->ammoclip[GetWeaponTableData(oldWeapon)->ammoIndex])
+		if ((GetWeaponTableData(newWeapon)->type & WEAPON_TYPE_RIFLE) && !pm->ps->ammoclip[GetWeaponTableData(oldWeapon)->ammoIndex])
 		{
 			return;
 		}
@@ -2584,7 +2589,7 @@ static void PM_ReloadClip(weapon_t weapon)
 	}
 
 	// reload akimbo stuff
-	if (GetWeaponTableData(weapon)->isAkimbo)
+	if (GetWeaponTableData(weapon)->attributs & WEAPON_ATTRIBUT_AKIMBO)
 	{
 		PM_ReloadClip(GetWeaponTableData(weapon)->akimboSideArm);
 	}
@@ -2642,7 +2647,7 @@ void PM_CheckForReload(weapon_t weapon)
 				}
 
 				// akimbo should also check other weapon status
-				if (GetWeaponTableData(weapon)->isAkimbo)
+				if (GetWeaponTableData(weapon)->attributs & WEAPON_ATTRIBUT_AKIMBO)
 				{
 					if (pm->ps->ammoclip[GetWeaponTableData(GetWeaponTableData(weapon)->akimboSideArm)->clipIndex] < GetWeaponTableData(GetWeaponTableData(GetWeaponTableData(weapon)->akimboSideArm)->clipIndex)->maxClip)
 					{
@@ -2651,11 +2656,11 @@ void PM_CheckForReload(weapon_t weapon)
 				}
 			}
 		}
-		else if (pm->pmext->bAutoReload || !GetWeaponTableData(weapon)->isAutoReload)   // auto reload
+		else if (pm->pmext->bAutoReload || !(GetWeaponTableData(weapon)->firingMode & (WEAPON_FIRING_MODE_AUTOMATIC | WEAPON_FIRING_MODE_SEMI_AUTOMATIC)))   // auto reload
 		{
 			if (!pm->ps->ammoclip[GetWeaponTableData(weapon)->clipIndex] && pm->ps->ammo[GetWeaponTableData(weapon)->ammoIndex])
 			{
-				if (GetWeaponTableData(weapon)->isAkimbo)
+				if (GetWeaponTableData(weapon)->attributs & WEAPON_ATTRIBUT_AKIMBO)
 				{
 					if (!pm->ps->ammoclip[GetWeaponTableData(GetWeaponTableData(weapon)->akimboSideArm)->clipIndex])
 					{
@@ -2671,7 +2676,7 @@ void PM_CheckForReload(weapon_t weapon)
 
 		if (doReload)
 		{
-			if (GetWeaponTableData(weapon)->isScoped)
+			if (GetWeaponTableData(weapon)->type & WEAPON_TYPE_SCOPED)
 			{
 				PM_BeginWeaponChange(weapon, GetWeaponTableData(weapon)->weapAlts, qtrue);
 			}
@@ -2687,17 +2692,21 @@ void PM_CheckForReload(weapon_t weapon)
 static void PM_SwitchIfEmpty(void)
 {
 	// weapon here are explosives or syringe/adrenaline, if they are not --> return
-	if (!GetWeaponTableData(pm->ps->weapon)->isExplosive && !GetWeaponTableData(pm->ps->weapon)->isSyringe)  // WP_KNIFE WP_SATCHEL_DET
+	if (!(GetWeaponTableData(pm->ps->weapon)->firingMode & (WEAPON_FIRING_MODE_ONE_SHOT | WEAPON_FIRING_MODE_THROWABLE)))
 	{
 		return;
 	}
 
 	// In multiplayer, pfaust fires once then switches to pistol since it's useless for a while
 	// after throwing landmine, let switch to pliers
-	if (GetWeaponTableData(pm->ps->weapon)->useAmmo
-	    && !GetWeaponTableData(pm->ps->weapon)->isPanzer
-	    && pm->ps->weapon != WP_LANDMINE)
+	if (!(GetWeaponTableData(pm->ps->weapon)->firingMode & WEAPON_FIRING_MODE_ONE_SHOT))
 	{
+		// don't consumme ammo
+		if (!GetWeaponTableData(pm->ps->weapon)->useAmmo)
+		{
+			return;
+		}
+
 		// use clip and still got ammo in clip
 		if (GetWeaponTableData(pm->ps->weapon)->useClip && pm->ps->ammoclip[GetWeaponTableData(pm->ps->weapon)->clipIndex])
 		{
@@ -2713,7 +2722,7 @@ static void PM_SwitchIfEmpty(void)
 
 	// If this was the last one, remove the weapon and switch away before the player tries to fire next
 	// NOTE: giving grenade ammo to a player will re-give him the weapon (if you do it through add_ammo())
-	if (GetWeaponTableData(pm->ps->weapon)->isGrenade)
+	if (GetWeaponTableData(pm->ps->weapon)->type & WEAPON_TYPE_GRENADE)
 	{
 		COM_BitClear(pm->ps->weapons, pm->ps->weapon);
 	}
@@ -2744,7 +2753,7 @@ void PM_WeaponUseAmmo(weapon_t wp, int amount)
 	{
 		int takeweapon = GetWeaponTableData(wp)->clipIndex;
 
-		if (GetWeaponTableData(wp)->isAkimbo)
+		if (GetWeaponTableData(wp)->attributs & WEAPON_ATTRIBUT_AKIMBO)
 		{
 			if (!BG_AkimboFireSequence(wp, pm->ps->ammoclip[GetWeaponTableData(wp)->clipIndex], pm->ps->ammoclip[GetWeaponTableData(GetWeaponTableData(wp)->akimboSideArm)->clipIndex]))
 			{
@@ -2768,7 +2777,7 @@ int PM_WeaponAmmoAvailable(weapon_t wp)
 		return pm->ps->ammo[GetWeaponTableData(wp)->ammoIndex];
 	}
 
-	if (GetWeaponTableData(wp)->isAkimbo)
+	if (GetWeaponTableData(wp)->attributs & WEAPON_ATTRIBUT_AKIMBO)
 	{
 		if (!BG_AkimboFireSequence(wp, pm->ps->ammoclip[GetWeaponTableData(wp)->clipIndex], pm->ps->ammoclip[GetWeaponTableData(GetWeaponTableData(wp)->akimboSideArm)->clipIndex]))
 		{
@@ -2805,7 +2814,7 @@ void PM_CoolWeapons(void)
 	{
 		// if the weapon can heat and you have the weapon
 		// dummy MG42 can't be equipped but still have a cool down
-		if (GetWeaponTableData(wp)->canHeat && (COM_BitCheck(pm->ps->weapons, wp) || wp == WP_DUMMY_MG42))
+		if (GetWeaponTableData(wp)->maxHeat && (COM_BitCheck(pm->ps->weapons, wp) || wp == WP_DUMMY_MG42))
 		{
 			// and it's hot
 			if (pm->ps->weapHeat[wp])
@@ -2832,7 +2841,7 @@ void PM_CoolWeapons(void)
 	{
 		pm->ps->curWeapHeat = (int)(floor((pm->ps->weapHeat[WP_DUMMY_MG42] / (double)GetWeaponTableData(WP_DUMMY_MG42)->maxHeat) * 255));
 	}
-	else if (GetWeaponTableData(pm->ps->weapon)->canHeat)
+	else if (GetWeaponTableData(pm->ps->weapon)->maxHeat)
 	{
 		pm->ps->curWeapHeat = (int)(floor((pm->ps->weapHeat[pm->ps->weapon] / (double)GetWeaponTableData(pm->ps->weapon)->maxHeat) * 255));
 	}
@@ -2882,7 +2891,7 @@ void PM_AdjustAimSpreadScale(void)
 	{
 		float viewchange = 0;
 
-		if (GetWeaponTableData(pm->ps->weapon)->isScoped && pm->skill[SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS] >= 3)
+		if ((GetWeaponTableData(pm->ps->weapon)->type & WEAPON_TYPE_SCOPED) && pm->skill[SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS] >= 3)
 		{
 			wpnScale *= 0.5;
 		}
@@ -2897,7 +2906,7 @@ void PM_AdjustAimSpreadScale(void)
 
 		// take player movement into account (even if only for the scoped weapons)
 		// TODO: also check for jump/crouch and adjust accordingly
-		if (GetWeaponTableData(pm->ps->weapon)->isScoped)
+		if (GetWeaponTableData(pm->ps->weapon)->type & WEAPON_TYPE_SCOPED)
 		{
 			for (i = 0; i < 2; i++)
 			{
@@ -3166,7 +3175,7 @@ static void PM_Weapon(void)
 	// if we have issues with water we know why ....
 	//pm->watertype = 0;
 
-	if (GetWeaponTableData(pm->ps->weapon)->isAkimbo)
+	if (GetWeaponTableData(pm->ps->weapon)->attributs & WEAPON_ATTRIBUT_AKIMBO)
 	{
 		akimboFire = BG_AkimboFireSequence(pm->ps->weapon, pm->ps->ammoclip[GetWeaponTableData(pm->ps->weapon)->clipIndex], pm->ps->ammoclip[GetWeaponTableData(GetWeaponTableData(pm->ps->weapon)->akimboSideArm)->clipIndex]);
 	}
@@ -3257,7 +3266,7 @@ static void PM_Weapon(void)
 
 		// aha, THIS is the kewl quick fire mode :)
 		// added back for multiplayer pistol balancing
-		if (GetWeaponTableData(pm->ps->weapon)->quickFireMode)
+		if (GetWeaponTableData(pm->ps->weapon)->firingMode & WEAPON_FIRING_MODE_SEMI_AUTOMATIC)
 		{
 			// moved releasedFire into pmext instead of ps
 			if (pm->pmext->releasedFire)
@@ -3266,7 +3275,7 @@ static void PM_Weapon(void)
 				{
 					// akimbo weapons only have a 200ms delay, so
 					// use a shorter time for quickfire (#255)
-					if (GetWeaponTableData(pm->ps->weapon)->isAkimbo)
+					if (GetWeaponTableData(pm->ps->weapon)->attributs & WEAPON_ATTRIBUT_AKIMBO)
 					{
 						if (pm->ps->weaponTime <= 50)
 						{
@@ -3350,7 +3359,7 @@ static void PM_Weapon(void)
 		return;
 	}
 
-	if (GetWeaponTableData(pm->ps->weapon)->isPanzer)
+	if (GetWeaponTableData(pm->ps->weapon)->type & WEAPON_TYPE_PANZER)
 	{
 		if (pm->ps->eFlags & EF_PRONE)
 		{
@@ -3359,7 +3368,7 @@ static void PM_Weapon(void)
 	}
 
 	// a not mounted mortar can't fire
-	if (GetWeaponTableData(pm->ps->weapon)->isMortar)
+	if (CHECKBITWISE(GetWeaponTableData(pm->ps->weapon)->type, (WEAPON_TYPE_MORTAR | WEAPON_TYPE_SETTABLE)))
 	{
 		return;
 	}
@@ -3383,7 +3392,7 @@ static void PM_Weapon(void)
 	}
 
 	// don't allow some weapons to fire if charge bar isn't full
-	if (GetWeaponTableData(pm->ps->weapon)->useChargeTime)
+	if (GetWeaponTableData(pm->ps->weapon)->attributs & WEAPON_ATTRIBUT_CHARGE_TIME)
 	{
 		skillType_t skill = GetWeaponTableData(pm->ps->weapon)->skillBased;
 		float       coeff = GetWeaponTableData(pm->ps->weapon)->chargeTimeCoeff[pm->skill[skill]];
@@ -3450,7 +3459,7 @@ static void PM_Weapon(void)
 	}
 
 	// player is underwater and weapon can't fire under water
-	if (pm->waterlevel == 3 && GetWeaponTableData(pm->ps->weapon)->isUnderWaterFire == qfalse)
+	if (pm->waterlevel == 3 && !(GetWeaponTableData(pm->ps->weapon)->attributs & WEAPON_ATTRIBUT_FIRE_UNDERWATER))
 	{
 		PM_AddEvent(EV_NOFIRE_UNDERWATER);      // event for underwater 'click' for nofire
 		PM_ContinueWeaponAnim(GetWeaponTableData(pm->ps->weapon)->idleAnim);
@@ -3460,7 +3469,7 @@ static void PM_Weapon(void)
 	}
 
 	// start the animation even if out of ammo
-	if (GetWeaponTableData(pm->ps->weapon)->isMeleeWeapon)
+	if (GetWeaponTableData(pm->ps->weapon)->type & WEAPON_TYPE_MELEE)
 	{
 		if (!delayedFire)
 		{
@@ -3474,7 +3483,7 @@ static void PM_Weapon(void)
 			}
 		}
 	}
-	else if (GetWeaponTableData(pm->ps->weapon)->isThrowable && GetWeaponTableData(pm->ps->weapon)->isExplosive)
+	else if (GetWeaponTableData(pm->ps->weapon)->firingMode & WEAPON_FIRING_MODE_THROWABLE)
 	{
 		if (!delayedFire)
 		{
@@ -3505,11 +3514,11 @@ static void PM_Weapon(void)
 		if (!weaponstateFiring)
 		{
 			// pfaust has spinup time in MP
-			if (GetWeaponTableData(pm->ps->weapon)->isPanzer)
+			if (GetWeaponTableData(pm->ps->weapon)->type & WEAPON_TYPE_PANZER)
 			{
 				PM_AddEvent(EV_SPINUP);
 			}
-			else if (GetWeaponTableData(pm->ps->weapon)->isMortarSet)
+			else if (CHECKBITWISE(GetWeaponTableData(pm->ps->weapon)->type, WEAPON_TYPE_MORTAR | WEAPON_TYPE_SET))
 			{
 				PM_AddEvent(EV_SPINUP);
 				PM_StartWeaponAnim(GetWeaponTableData(pm->ps->weapon)->attackAnim);     // FIXME: returns WEAP_ATTACK1 anyway
@@ -3525,12 +3534,12 @@ static void PM_Weapon(void)
 		else if (pm->ps->eFlags & EF_PRONE)
 		{
 			BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, akimboFire ? ANIM_ET_FIREWEAPON2PRONE : ANIM_ET_FIREWEAPONPRONE,
-			                   GetWeaponTableData(pm->ps->weapon)->firingAuto, qtrue);
+			                   GetWeaponTableData(pm->ps->weapon)->firingMode & WEAPON_FIRING_MODE_AUTOMATIC, qtrue);
 		}
 		else
 		{
 			BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, akimboFire ? ANIM_ET_FIREWEAPON2 : ANIM_ET_FIREWEAPON,
-			                   GetWeaponTableData(pm->ps->weapon)->firingAuto, qtrue);
+			                   GetWeaponTableData(pm->ps->weapon)->firingMode & WEAPON_FIRING_MODE_AUTOMATIC, qtrue);
 		}
 	}
 
@@ -3588,7 +3597,7 @@ static void PM_Weapon(void)
 
 	// if this was the last round in the clip, play the 'lastshot' animation
 	// this animation has the weapon in a "ready to reload" state
-	if (GetWeaponTableData(pm->ps->weapon)->isAkimbo)
+	if (GetWeaponTableData(pm->ps->weapon)->attributs & WEAPON_ATTRIBUT_AKIMBO)
 	{
 		if (akimboFire)
 		{
@@ -3613,16 +3622,16 @@ static void PM_Weapon(void)
 
 	// weapon firing animation
 	// FG42 is exclude because the continue animation don't look great with it (no recoil, look stuck)
-	if (GetWeaponTableData(pm->ps->weapon)->firingAuto && pm->ps->weapon != WP_FG42 && pm->ps->weapon != WP_FG42SCOPE)
+	if ((GetWeaponTableData(pm->ps->weapon)->firingMode & WEAPON_FIRING_MODE_AUTOMATIC) && pm->ps->weapon != WP_FG42 && pm->ps->weapon != WP_FG42SCOPE)
 	{
 		PM_ContinueWeaponAnim(weapattackanim);
 	}
-	else if (!GetWeaponTableData(pm->ps->weapon)->isMortarSet)  // no animation for mortar set
+	else if (!CHECKBITWISE(GetWeaponTableData(pm->ps->weapon)->type, WEAPON_TYPE_MORTAR | WEAPON_TYPE_SET))  // no animation for mortar set
 	{
 		PM_StartWeaponAnim(weapattackanim);
 	}
 
-	if (GetWeaponTableData(pm->ps->weapon)->isAkimbo)
+	if (GetWeaponTableData(pm->ps->weapon)->attributs & WEAPON_ATTRIBUT_AKIMBO)
 	{
 		if (akimboFire)
 		{
@@ -3657,7 +3666,7 @@ static void PM_Weapon(void)
 	pm->pmext->weapRecoilPitch     = GetWeaponTableData(pm->ps->weapon)->weapRecoilPitch[0] * random() * GetWeaponTableData(pm->ps->weapon)->weapRecoilPitch[1];
 
 	// handle case depending of player skill and position for weapon recoil
-	if (GetWeaponTableData(pm->ps->weapon)->isScoped)
+	if (GetWeaponTableData(pm->ps->weapon)->type & WEAPON_TYPE_SCOPED)
 	{
 		if (pm->ps->weapon == WP_FG42SCOPE)
 		{
@@ -3678,7 +3687,7 @@ static void PM_Weapon(void)
 			}
 		}
 	}
-	else if (GetWeaponTableData(pm->ps->weapon)->isMG)
+	else if (CHECKBITWISE(GetWeaponTableData(pm->ps->weapon)->type, WEAPON_TYPE_MG | WEAPON_TYPE_SETTABLE))
 	{
 		if ((pm->ps->pm_flags & PMF_DUCKED) || (pm->ps->eFlags & EF_PRONE))
 		{
@@ -3686,7 +3695,7 @@ static void PM_Weapon(void)
 			pm->pmext->weapRecoilPitch = .45f * random() * .15f;
 		}
 	}
-	else if (GetWeaponTableData(pm->ps->weapon)->isPistol || GetWeaponTableData(pm->ps->weapon)->isSilencedPistol || GetWeaponTableData(pm->ps->weapon)->isAkimbo)
+	else if (GetWeaponTableData(pm->ps->weapon)->type & WEAPON_TYPE_PISTOL)
 	{
 		if (pm->skill[SK_LIGHT_WEAPONS] >= 3)
 		{
@@ -3697,7 +3706,7 @@ static void PM_Weapon(void)
 
 	// Aim Spread Scale handle
 	// add randomness
-	if (GetWeaponTableData(pm->ps->weapon)->isSMG || pm->ps->weapon == WP_STEN || pm->ps->weapon == WP_MP34)
+	if (GetWeaponTableData(pm->ps->weapon)->type & WEAPON_TYPE_SMG)
 	{
 		aimSpreadScaleAdd += rand() % 10;
 	}
@@ -3717,14 +3726,14 @@ static void PM_Weapon(void)
 
 	pm->ps->aimSpreadScale = (int)(pm->ps->aimSpreadScaleFloat);
 
-	if ((GetWeaponTableData(pm->ps->weapon)->isMG || GetWeaponTableData(pm->ps->weapon)->isMGSet))
+	if (GetWeaponTableData(pm->ps->weapon)->type & WEAPON_TYPE_MG)
 	{
 		if (weapattackanim == WEAP_ATTACK_LASTSHOT)
 		{
 			addTime = 0;
 		}
 	}
-	else if (GetWeaponTableData(pm->ps->weapon)->isAkimbo)
+	else if (GetWeaponTableData(pm->ps->weapon)->attributs & WEAPON_ATTRIBUT_AKIMBO)
 	{
 		// if you're firing an akimbo weapon, and your other gun is dry,
 		// nextshot needs to take 2x time
@@ -3839,7 +3848,7 @@ void PM_UpdateLean(playerState_t *ps, usercmd_t *cmd, pmove_t *tpm)
 		     !(ps->eFlags & EF_DEAD) &&                         // not allow to lean while dead
 		     !(ps->eFlags & EF_PRONE) &&                        // not allow to lean while prone
 		     !(ps->weaponstate == WEAPON_FIRING && ps->weapon == WP_DYNAMITE) && // don't allow to lean while tossing dynamite. NOTE: ATVI Wolfenstein Misc #479 - initial fix to #270 would crash in g_synchronousClients 1 situation
-		     !GetWeaponTableData(ps->weapon)->isMortarSet))     // not allow to lean while mortar set
+		     !CHECKBITWISE(GetWeaponTableData(ps->weapon)->type, WEAPON_TYPE_MORTAR | WEAPON_TYPE_SET)))     // not allow to lean while mortar set
 		{
 			// if both are pressed, result is no lean
 			if (cmd->wbuttons & WBUTTON_LEANLEFT)
@@ -3952,7 +3961,7 @@ void PM_UpdateLean(playerState_t *ps, usercmd_t *cmd, pmove_t *tpm)
  *
  * @note Tnused trace parameter
  */
-void PM_UpdateViewAngles(playerState_t *ps, pmoveExt_t *pmext, usercmd_t *cmd, void(trace) (trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask), int tracemask)               //   modified
+void PM_UpdateViewAngles(playerState_t *ps, pmoveExt_t *pmext, usercmd_t *cmd, void (trace) (trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask), int tracemask)               //   modified
 {
 	short  temp;
 	int    i;
@@ -4104,7 +4113,7 @@ void PM_UpdateViewAngles(playerState_t *ps, pmoveExt_t *pmext, usercmd_t *cmd, v
 			}
 		}
 	}
-	else if (GetWeaponTableData(ps->weapon)->isMortarSet)
+	else if (CHECKBITWISE(GetWeaponTableData(ps->weapon)->type, WEAPON_TYPE_MORTAR | WEAPON_TYPE_SET))
 	{
 		float degsSec = 60.f;
 		float pitch, oldPitch;
@@ -4266,7 +4275,7 @@ void PM_UpdateViewAngles(playerState_t *ps, pmoveExt_t *pmext, usercmd_t *cmd, v
 		}*/
 
 		// Check if we are allowed to rotate to there
-		if (GetWeaponTableData(ps->weapon)->isMGSet)
+		if (CHECKBITWISE(GetWeaponTableData(ps->weapon)->type, WEAPON_TYPE_MG | WEAPON_TYPE_SET))
 		{
 			float yawDiff;
 
@@ -4715,9 +4724,8 @@ void PmoveSingle(pmove_t *pmove)
 		if (pm->ps->stats[STAT_KEYS] & (1 << INV_BINOCS))               // binoculars are an inventory item (inventory==keys)
 		{
 			// don't allow binocs:
-			if (!GetWeaponTableData(pm->ps->weapon)->isScoped &&        // if using the sniper scope
+			if (!(GetWeaponTableData(pm->ps->weapon)->type & (WEAPON_TYPE_SCOPED | WEAPON_TYPE_SET)) &&  // if using the sniper scope or set weapon
 			    !BG_PlayerMounted(pm->ps->eFlags) &&                    // or if mounted on a weapon
-			    !GetWeaponTableData(pm->ps->weapon)->isSetWeapon &&     // w/ mounted mob. MG42 or mortar either.
 			    !(pm->ps->eFlags & EF_PRONE_MOVING) &&                  // when prone moving
 			    !pm->ps->grenadeTimeLeft)                               // if in the middle of throwing grenade
 			{
@@ -4869,7 +4877,7 @@ void PmoveSingle(pmove_t *pmove)
 	case PM_INTERMISSION: // no movement at all
 		return;
 	case PM_NORMAL:
-		if (GetWeaponTableData(pm->ps->weapon)->isMortarSet)
+		if (CHECKBITWISE(GetWeaponTableData(pm->ps->weapon)->type, WEAPON_TYPE_MORTAR | WEAPON_TYPE_SET))
 		{
 			pm->cmd.forwardmove = 0;
 			pm->cmd.rightmove   = 0;
@@ -4897,14 +4905,14 @@ void PmoveSingle(pmove_t *pmove)
 	{
 		PM_DeadMove();
 
-		if (GetWeaponTableData(pm->ps->weapon)->isMortarSet)
+		if (CHECKBITWISE(GetWeaponTableData(pm->ps->weapon)->type, WEAPON_TYPE_MORTAR | WEAPON_TYPE_SET))
 		{
 			pm->ps->weapon = GetWeaponTableData(pm->ps->weapon)->weapAlts;
 		}
 	}
 	else
 	{
-		if (GetWeaponTableData(pm->ps->weapon)->isMGSet)
+		if (CHECKBITWISE(GetWeaponTableData(pm->ps->weapon)->type, WEAPON_TYPE_MG | WEAPON_TYPE_SET))
 		{
 			if (!(pm->ps->eFlags & EF_PRONE))
 			{

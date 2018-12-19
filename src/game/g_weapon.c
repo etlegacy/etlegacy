@@ -44,7 +44,7 @@ static vec3_t muzzleEffect;
 vec3_t        muzzleTrace;  // used in G_Damage from g_combat.c
 
 // forward dec
-void Bullet_Fire(gentity_t *ent, gentity_t **firedShot);
+gentity_t *Bullet_Fire(gentity_t *ent);
 qboolean Bullet_Fire_Extended(gentity_t *source, gentity_t *attacker, vec3_t start, vec3_t end, int damage, qboolean distance_falloff);
 
 /**
@@ -56,9 +56,8 @@ KNIFE
 /**
  * @brief Weapon_Knife
  * @param[in] ent
- * @param[out] firedShot - unused
  */
-void Weapon_Knife(gentity_t *ent, gentity_t **firedShot)
+gentity_t *Weapon_Knife(gentity_t *ent)
 {
 	trace_t        tr;
 	gentity_t      *traceEnt, *tent;
@@ -74,7 +73,7 @@ void Weapon_Knife(gentity_t *ent, gentity_t **firedShot)
 	// ignore hits on NOIMPACT surfaces or no contact
 	if ((tr.surfaceFlags & SURF_NOIMPACT) || tr.fraction == 1.0f)
 	{
-		return;
+		return NULL;
 	}
 
 	if (tr.entityNum >= MAX_CLIENTS)       // world brush or non-player entity (no blood)
@@ -93,14 +92,14 @@ void Weapon_Knife(gentity_t *ent, gentity_t **firedShot)
 
 	if (tr.entityNum == ENTITYNUM_WORLD)     // don't worry about doing any damage
 	{
-		return;
+		return NULL;
 	}
 
 	traceEnt = &g_entities[tr.entityNum];
 
 	if (!(traceEnt->takedamage))
 	{
-		return;
+		return NULL;
 	}
 
 	damage = GetWeaponTableData(ent->s.weapon)->damage;   // default knife damage for frontal attacks (10)
@@ -108,7 +107,7 @@ void Weapon_Knife(gentity_t *ent, gentity_t **firedShot)
 	// no damage
 	if (!damage)
 	{
-		return;
+		return NULL;
 	}
 
 	// Covert ops deal double damage with a knife
@@ -138,6 +137,8 @@ void Weapon_Knife(gentity_t *ent, gentity_t **firedShot)
 	}
 
 	G_Damage(traceEnt, ent, ent, vec3_origin, tr.endpos, (damage + rand() % 5), 0, mod);
+
+	return NULL;
 }
 
 /**
@@ -161,9 +162,8 @@ void MagicSink(gentity_t *self)
 /**
  * @brief Class-specific in multiplayer
  * @param[in] ent
- * @param[out] firedShot - unused
  */
-void Weapon_Medic(gentity_t *ent, gentity_t **firedShot)
+gentity_t *Weapon_Medic(gentity_t *ent)
 {
 	vec3_t velocity, angles, tosspos, viewpos;
 
@@ -188,6 +188,8 @@ void Weapon_Medic(gentity_t *ent, gentity_t **firedShot)
 	VectorCopy(ent->client->ps.origin, viewpos);
 
 	Weapon_Medic_Ext(ent, viewpos, tosspos, velocity);
+
+	return NULL;
 }
 
 /**
@@ -238,9 +240,8 @@ void Weapon_Medic_Ext(gentity_t *ent, vec3_t viewpos, vec3_t tosspos, vec3_t vel
 /**
  * @brief Weapon_MagicAmmo
  * @param[in] ent
- * @param[out] firedShot - unused
  */
-void Weapon_MagicAmmo(gentity_t *ent, gentity_t **firedShot)
+gentity_t *Weapon_MagicAmmo(gentity_t *ent)
 {
 	vec3_t velocity, tosspos, viewpos, angles;
 
@@ -265,6 +266,8 @@ void Weapon_MagicAmmo(gentity_t *ent, gentity_t **firedShot)
 	VectorCopy(ent->client->ps.origin, viewpos);
 
 	Weapon_MagicAmmo_Ext(ent, viewpos, tosspos, velocity);
+
+	return NULL;
 }
 
 /**
@@ -438,7 +441,7 @@ qboolean ReviveEntity(gentity_t *ent, gentity_t *traceEnt)
 *
 * @note Currently medic player can get out of syringe ammo when G_MISC_MEDIC_SYRINGE_HEAL is set
 */
-void Weapon_Syringe(gentity_t *ent, gentity_t **firedShot)
+gentity_t *Weapon_Syringe(gentity_t *ent)
 {
 	vec3_t    end;
 	trace_t   tr;
@@ -460,7 +463,7 @@ void Weapon_Syringe(gentity_t *ent, gentity_t **firedShot)
 	{
 		// give back ammo
 		ent->client->ps.ammoclip[GetWeaponTableData(WP_MEDIC_SYRINGE)->clipIndex] += 1;
-		return;
+		return NULL;
 	}
 
 	traceEnt = &g_entities[tr.entityNum];
@@ -469,7 +472,7 @@ void Weapon_Syringe(gentity_t *ent, gentity_t **firedShot)
 	{
 		// give back ammo
 		ent->client->ps.ammoclip[GetWeaponTableData(WP_MEDIC_SYRINGE)->clipIndex] += 1;
-		return;
+		return NULL;
 	}
 
 	if (traceEnt->client->ps.pm_type == PM_DEAD)
@@ -478,7 +481,7 @@ void Weapon_Syringe(gentity_t *ent, gentity_t **firedShot)
 
 		if (traceEnt->client->sess.sessionTeam != ent->client->sess.sessionTeam)
 		{
-			return;
+			return NULL;
 		}
 
 		// moved all the revive stuff into its own function
@@ -517,13 +520,13 @@ void Weapon_Syringe(gentity_t *ent, gentity_t **firedShot)
 		if (traceEnt->client->sess.sessionTeam != ent->client->sess.sessionTeam)
 		{
 			// this doesn't heal enemy but ammo is gone :D FIXME?
-			return;
+			return NULL;
 		}
 
 		if (traceEnt->health > (traceEnt->client->ps.stats[STAT_MAX_HEALTH] * 0.25f))
 		{
 			// this doesn't heal enemy but ammo is gone :D FIXME?
-			return;
+			return NULL;
 		}
 
 		{
@@ -554,16 +557,19 @@ void Weapon_Syringe(gentity_t *ent, gentity_t **firedShot)
 			G_DebugAddSkillPoints(ent, SK_FIRST_AID, 2.f, "syringe heal a player");
 		}
 	}
+
+	return NULL;
 }
 
 /**
  * @brief Hmmmm. Needles. With stuff in it. Woooo.
  * @param[in,out] ent
- * @param[out] firedShot - unused
  */
-void Weapon_AdrenalineSyringe(gentity_t *ent, gentity_t **firedShot)
+gentity_t *Weapon_AdrenalineSyringe(gentity_t *ent)
 {
 	ent->client->ps.powerups[PW_ADRENALINE] = level.time + 10000;
+
+	return NULL;
 }
 
 /**
@@ -1525,7 +1531,7 @@ void AutoBuildConstruction(gentity_t *constructible)
  */
 qboolean G_LandmineTriggered(gentity_t *ent)
 {
-	return (ent->s.teamNum == (TEAM_AXIS + 8) || ent->s.teamNum == (TEAM_ALLIES + 8));
+	return ent->s.effect1Time == 2;
 }
 
 /**
@@ -1535,7 +1541,7 @@ qboolean G_LandmineTriggered(gentity_t *ent)
  */
 qboolean G_LandmineArmed(gentity_t *ent)
 {
-	return (ent->s.teamNum == TEAM_AXIS || ent->s.teamNum == TEAM_ALLIES);
+	return ent->s.effect1Time == 1;
 }
 
 /**
@@ -1545,17 +1551,7 @@ qboolean G_LandmineArmed(gentity_t *ent)
  */
 qboolean G_LandmineUnarmed(gentity_t *ent)
 {
-	return (!G_LandmineArmed(ent) && !G_LandmineTriggered(ent));
-}
-
-/**
- * @brief G_LandmineTeam
- * @param[in] ent
- * @return
- */
-team_t G_LandmineTeam(gentity_t *ent)
-{
-	return (ent->s.teamNum % 4);
+	return ent->s.effect1Time == 0;
 }
 
 /**
@@ -1588,9 +1584,8 @@ void trap_EngineerTrace(trace_t *results, const vec3_t start, const vec3_t mins,
 /**
  * @brief Weapon_Engineer
  * @param[in,out] ent
- * @param[out] firedShot - unused
  */
-void Weapon_Engineer(gentity_t *ent, gentity_t **firedShot)
+gentity_t *Weapon_Engineer(gentity_t *ent)
 {
 	trace_t   tr;
 	gentity_t *traceEnt;
@@ -1600,7 +1595,7 @@ void Weapon_Engineer(gentity_t *ent, gentity_t **firedShot)
 	// Can't heal an MG42 if you're using one!
 	if (ent->client->ps.persistant[PERS_HWEAPON_USE])
 	{
-		return;
+		return NULL;
 	}
 
 	AngleVectors(ent->client->ps.viewangles, forward, right, up);
@@ -1621,10 +1616,10 @@ void Weapon_Engineer(gentity_t *ent, gentity_t **firedShot)
 		{
 			if (TryConstructing(ent))
 			{
-				return;
+				return NULL;
 			}
 		}
-		return;
+		return NULL;
 	}
 
 weapengineergoto1:
@@ -1651,7 +1646,7 @@ weapengineergoto1:
 		if (ent->client->ps.classWeaponTime > level.time)
 		{
 			ent->client->ps.classWeaponTime = level.time;
-			return;     // Out of "ammo"
+			return NULL;     // Out of "ammo"
 		}
 
 		if (traceEnt->health >= 255)
@@ -1713,10 +1708,10 @@ weapengineergoto1:
 			{
 				if (TryConstructing(ent))
 				{
-					return;
+					return NULL;
 				}
 			}
-			return;
+			return NULL;
 		}
 
 weapengineergoto2:
@@ -1751,12 +1746,13 @@ weapengineergoto2:
 					ent->client->ps.classWeaponTime -= .5f * level.engineerChargeTime[ent->client->sess.sessionTeam - 1];
 				}
 				ent->client->sess.aWeaponStats[WS_LANDMINE].atts--;
-				return;
+				return NULL;
 
 				// check landmine team so that enemy mines can be disarmed
 				// even if you're using all of yours :x
 			}
-			else if (G_CountTeamLandmines(ent->client->sess.sessionTeam) >= team_maxLandmines.integer && G_LandmineTeam(traceEnt) == ent->client->sess.sessionTeam)
+
+			if (G_CountTeamLandmines(ent->client->sess.sessionTeam) >= team_maxLandmines.integer && traceEnt->s.teamNum == ent->client->sess.sessionTeam)
 			{
 				if (G_LandmineUnarmed(traceEnt))
 				{
@@ -1780,21 +1776,19 @@ weapengineergoto2:
 					}
 
 					ent->client->sess.aWeaponStats[WS_LANDMINE].atts--;
-					return;
+					return NULL;
 				}
-				else
-				{
-					goto weapengineergoto3;
-				}
+
+				goto weapengineergoto3;
 			}
 			else
 			{
 				if (G_LandmineUnarmed(traceEnt))
 				{
 					// opposing team cannot accidentally arm it
-					if (G_LandmineTeam(traceEnt) != ent->client->sess.sessionTeam)
+					if (traceEnt->s.teamNum != ent->client->sess.sessionTeam)
 					{
-						return;
+						return NULL;
 					}
 
 					G_PrintClientSpammyCenterPrint(ent - g_entities, "Arming landmine...");
@@ -1816,7 +1810,7 @@ weapengineergoto2:
 					}
 					else
 					{
-						return;
+						return NULL;
 					}
 
 					// crosshair mine owner id
@@ -1829,14 +1823,15 @@ weapengineergoto2:
 						traceEnt->s.otherEntityNum = MAX_CLIENTS + 1;
 					}
 
-					traceEnt->r.contents = 0;   // (player can walk through)
+					traceEnt->r.snapshotCallback = qtrue;
+					traceEnt->r.contents         = 0; // (player can walk through)
 					trap_LinkEntity(traceEnt);
 
 					// don't allow disarming for sec (so guy that WAS arming doesn't start disarming it!
 					traceEnt->timestamp = level.time + 1000;
 					traceEnt->health    = 0;
 
-					traceEnt->s.teamNum     = ent->client->sess.sessionTeam;
+					traceEnt->s.effect1Time = 1; // armed
 					traceEnt->s.modelindex2 = 0;
 
 					traceEnt->nextthink = level.time + 2000;
@@ -1847,11 +1842,11 @@ weapengineergoto2:
 weapengineergoto3:
 					if (traceEnt->timestamp > level.time)
 					{
-						return;
+						return NULL;
 					}
 					if (traceEnt->health >= 250)     // have to do this so we don't score multiple times
 					{
-						return;
+						return NULL;
 					}
 
 					if (ent->client->sess.skill[SK_EXPLOSIVES_AND_CONSTRUCTION] >= 2)
@@ -1877,7 +1872,7 @@ weapengineergoto3:
 
 						Add_Ammo(ent, WP_LANDMINE, 1, qfalse);
 
-						if (G_LandmineTeam(traceEnt) != ent->client->sess.sessionTeam)
+						if (traceEnt->s.teamNum != ent->client->sess.sessionTeam)
 						{
 							G_AddSkillPoints(ent, SK_EXPLOSIVES_AND_CONSTRUCTION, 4.f);
 							G_DebugAddSkillPoints(ent, SK_EXPLOSIVES_AND_CONSTRUCTION, 4.f, "defusing an enemy landmine");
@@ -1898,7 +1893,7 @@ weapengineergoto3:
 					}
 					else
 					{
-						return;
+						return NULL;
 					}
 				}
 			}
@@ -1907,7 +1902,7 @@ weapengineergoto3:
 		{
 			if (traceEnt->health >= 250)     // have to do this so we don't score multiple times
 			{
-				return;
+				return NULL;
 			}
 
 			// give health until it is full, don't continue
@@ -1929,7 +1924,7 @@ weapengineergoto3:
 			}
 			else
 			{
-				return;
+				return NULL;
 			}
 		}
 		else if (traceEnt->methodOfDeath == MOD_DYNAMITE)
@@ -1939,15 +1934,15 @@ weapengineergoto3:
 			int       i, num;
 
 			// not armed
-			if (traceEnt->s.teamNum >= 4)
+			if (!traceEnt->s.effect1Time)
 			{
 				qboolean friendlyObj = qfalse;
 				qboolean enemyObj    = qfalse;
 
 				// Opposing team cannot accidentally arm it
-				if ((traceEnt->s.teamNum - 4) != ent->client->sess.sessionTeam)
+				if (traceEnt->s.teamNum != ent->client->sess.sessionTeam)
 				{
-					return;
+					return NULL;
 				}
 
 				G_PrintClientSpammyCenterPrint(ent - g_entities, "Arming dynamite...");
@@ -1996,7 +1991,7 @@ weapengineergoto3:
 						}
 
 						// is it a friendly constructible
-						if (hit->s.teamNum == traceEnt->s.teamNum - 4)
+						if (hit->s.teamNum == traceEnt->s.teamNum)
 						{
 							// G_FreeEntity( traceEnt );
 							// trap_SendServerCommand( ent-g_entities, "cp \"You cannot arm dynamite near a friendly construction!\" 1");
@@ -2057,7 +2052,7 @@ weapengineergoto3:
 				{
 					G_FreeEntity(traceEnt);
 					trap_SendServerCommand(ent - g_entities, "cp \"You cannot arm dynamite near a friendly objective!\" 1");
-					return;
+					return NULL;
 				}
 
 				if (traceEnt->health >= 250)
@@ -2066,15 +2061,13 @@ weapengineergoto3:
 				}
 				else
 				{
-					return;
+					return NULL;
 				}
 
 				// don't allow disarming for sec (so guy that WAS arming doesn't start disarming it!
 				traceEnt->timestamp = level.time + 1000;
 				traceEnt->health    = 5;
 
-				// set teamnum so we can check it for drop/defuse exploit
-				traceEnt->s.teamNum = ent->client->sess.sessionTeam;
 				// for dynamic light pulsing
 				traceEnt->s.effect1Time = level.time;
 
@@ -2174,7 +2167,7 @@ weapengineergoto3:
 							traceEnt->etpro_misc_2  = hit->s.number;
 						}
 						// i = num;
-						return;     // bail out here because primary obj's take precendence over constructibles
+						return NULL;     // bail out here because primary obj's take precendence over constructibles
 					}
 				}
 
@@ -2261,7 +2254,7 @@ weapengineergoto3:
 							}
 							traceEnt->etpro_misc_1 |= 1;
 						}
-						return;
+						return NULL;
 					}
 				}
 			}
@@ -2271,11 +2264,11 @@ weapengineergoto3:
 
 				if (traceEnt->timestamp > level.time)
 				{
-					return;
+					return NULL;
 				}
 				if (traceEnt->health >= 248)         // have to do this so we don't score multiple times
 				{
-					return;
+					return NULL;
 				}
 
 				dynamiteDropTeam = traceEnt->s.teamNum;     // set this here since we wack traceent later but want teamnum for scoring
@@ -2317,7 +2310,7 @@ weapengineergoto3:
 					// eh, why was this commented out? it makes sense, and prevents a sploit.
 					if (dynamiteDropTeam == ent->client->sess.sessionTeam)
 					{
-						return;
+						return NULL;
 					}
 
 					for (i = 0 ; i < num ; i++)
@@ -2374,7 +2367,7 @@ weapengineergoto3:
 					// prevent multiple messages here
 					if (defusedObj)
 					{
-						return;
+						return NULL;
 					}
 
 					// reordered this check so its AFTER the primary obj check
@@ -2435,7 +2428,7 @@ weapengineergoto3:
 							pm->s.effect3Time = hit->parent->s.teamNum;
 							pm->s.teamNum     = ent->client->sess.sessionTeam;
 
-							return;
+							return NULL;
 						}
 					}
 				}
@@ -2445,10 +2438,12 @@ weapengineergoto3:
 		{
 			if (TryConstructing(ent))
 			{
-				return;
+				return NULL;
 			}
 		}
 	}
+
+	return NULL;
 }
 
 /**
@@ -2559,10 +2554,10 @@ void G_AddArtilleryToCounters(gentity_t *ent)
 #define BOMBSPREAD 150
 
 /**
- * @brief weapon_checkAirStrikeThink1
+ * @brief weapon_checkAirStrikeThink
  * @param[in,out] ent
  */
-void weapon_checkAirStrikeThink1(gentity_t *ent)
+void weapon_checkAirStrikeThink(gentity_t *ent)
 {
 	if (!weapon_checkAirStrike(ent))
 	{
@@ -2571,25 +2566,15 @@ void weapon_checkAirStrikeThink1(gentity_t *ent)
 		return;
 	}
 
-	ent->think     = weapon_callAirStrike;
+	if (ent->parent->client && ent->parent->client->sess.skill[SK_SIGNALS] >= 3)
+	{
+		ent->think = weapon_callSecondPlane;
+	}
+	else
+	{
+		ent->think = weapon_callAirStrike;
+	}
 	ent->nextthink = level.time + 1500;
-}
-
-/**
- * @brief weapon_checkAirStrikeThink2
- * @param[in,out] ent
- */
-void weapon_checkAirStrikeThink2(gentity_t *ent)
-{
-	if (!weapon_checkAirStrike(ent))
-	{
-		ent->think     = G_ExplodeMissile;
-		ent->nextthink = level.time + 1000;
-		return;
-	}
-
-	ent->think     = weapon_callSecondPlane;
-	ent->nextthink = level.time + 500;
 }
 
 /**
@@ -2742,6 +2727,15 @@ void weapon_callAirStrike(gentity_t *ent)
 	dir[2] = crandom(); // generate either up or down vector
 	VectorNormalize(dir);   // which adds randomness to pass direction below
 
+	if (ent->parent->client && ent->parent->client->sess.skill[SK_SIGNALS] >= 3)
+	{
+		ent->count = 2;
+	}
+	else
+	{
+		ent->count = 1;
+	}
+
 	for (j = 0; j < ent->count; j++)
 	{
 		RotatePointAroundVector(bombaxis, dir, lookaxis, 90 + crandom() * 30);   // munge the axis line a bit so it's not totally perpendicular
@@ -2755,13 +2749,13 @@ void weapon_callAirStrike(gentity_t *ent)
 		for (i = 0; i < NUMBOMBS; i++)
 		{
 			bomb = G_Spawn();
-			G_PreFilledMissileEntity(bomb, WP_ARTY, WP_SMOKE_MARKER, ent->s.number, ent->s.teamNum, -1, ent->parent);     // might wanna change this
+			G_PreFilledMissileEntity(bomb, WP_ARTY, ent->s.weapon,
+			                         ent->s.number, ent->s.teamNum, -1,
+			                         ent->parent, tv(0.f, 0.f, 0.f), tv(0.f, 0.f, 0.f));     // might wanna change this
 
 			bomb->nextthink           = (int)(level.time + i * 100 + crandom() * 50 + 1000 + (j * 2000)); // overwrite, 1000 for aircraft flyby, other term for tumble stagger
 			bomb->think               = G_AirStrikeExplode;
 			bomb->s.pos.trTime        = 0; // overwrite due to previous impl : //bomb->s.pos.trTime = level.time;      // move a bit on the very first frame
-			bomb->methodOfDeath       = GetWeaponTableData(WP_SMOKE_MARKER)->mod;        // overwrite
-			bomb->splashMethodOfDeath = GetWeaponTableData(WP_SMOKE_MARKER)->splashMod;  // overwrite
 
 			bomboffset[0] = crandom() * .5f * BOMBSPREAD;
 			bomboffset[1] = crandom() * .5f * BOMBSPREAD;
@@ -2868,24 +2862,23 @@ void artillerySpotterThink(gentity_t *ent)
 
 	for (i = 0; i < 7; i++)
 	{
-		// TODO: trType was TR_GRAVITY,  might wanna go back to this and drop from height
-		bomb = G_Spawn();
-		G_PreFilledMissileEntity(bomb, WP_SMOKETRAIL, WP_SMOKETRAIL, ent->s.number, ent->s.teamNum, -1, ent);
-		bomb->nextthink        += random() * 300;
-		bomb->think             = artilleryGoAway;
-		bomb->s.otherEntityNum2 = ent->s.otherEntityNum2;
-
-		VectorCopy(ent->s.pos.trBase, bomb->s.pos.trBase);
 		tmpdir[0] = crandom();
 		tmpdir[1] = crandom();
 		tmpdir[2] = 1;
 		VectorNormalize(tmpdir);
 		tmpdir[2] = 1;           // extra up
 		VectorScale(tmpdir, 500 + random() * 500, tmpdir);
-		VectorCopy(tmpdir, bomb->s.pos.trDelta);
-		SnapVector(bomb->s.pos.trDelta);            // save net bandwidth
-		VectorCopy(ent->s.pos.trBase, bomb->s.pos.trBase);
-		VectorCopy(ent->s.pos.trBase, bomb->r.currentOrigin);
+
+		// TODO: trType was TR_GRAVITY,  might wanna go back to this and drop from height
+		bomb = G_Spawn();
+		G_PreFilledMissileEntity(bomb, WP_SMOKETRAIL, WP_SMOKETRAIL,
+		                         ent->s.number, ent->s.teamNum, -1,
+		                         ent,
+		                         ent->s.pos.trBase, tmpdir);
+
+		bomb->nextthink        += random() * 300;
+		bomb->think             = artilleryGoAway;
+		bomb->s.otherEntityNum2 = ent->s.otherEntityNum2;
 	}
 }
 
@@ -3000,7 +2993,11 @@ void Weapon_Artillery(gentity_t *ent)
 	for (i = 0; i < count; i++)
 	{
 		bomb = G_Spawn();
-		G_PreFilledMissileEntity(bomb, WP_ARTY, WP_ARTY, ent->s.number, ent->client->sess.sessionTeam, ent->client->sess.sessionTeam, ent);
+		G_PreFilledMissileEntity(bomb, WP_ARTY, WP_ARTY,
+		                         ent->s.number, ent->client->sess.sessionTeam, ent->client->sess.sessionTeam,
+		                         ent,
+		                         tv(0.f, 0.f, 0.f),
+		                         tv(0.f, 0.f, 0.f));    // might need to change this
 
 		if (i == 0)
 		{
@@ -3045,17 +3042,13 @@ void Weapon_Artillery(gentity_t *ent)
 			VectorCopy(trace.endpos, bomb->s.pos.trBase);
 		}
 
-		bomb->s.pos.trDelta[0] = 0; // might need to change this
-		bomb->s.pos.trDelta[1] = 0;
-		bomb->s.pos.trDelta[2] = 0;
-		SnapVector(bomb->s.pos.trDelta);            // save net bandwidth
 		VectorCopy(bomb->s.pos.trBase, bomb->r.currentOrigin);
 
 		// build arty falling sound effect in front of bomb drop
 		bomb2               = G_Spawn();
 		bomb2->think        = artilleryThink;
 		bomb2->s.eType      = ET_MISSILE;
-		bomb2->s.weapon		= WP_NONE;
+		bomb2->s.weapon     = WP_NONE;
 		bomb2->r.svFlags    = SVF_NOCLIENT;
 		bomb2->r.ownerNum   = ent->s.number;
 		bomb2->parent       = ent;
@@ -3099,6 +3092,8 @@ void Weapon_Artillery(gentity_t *ent)
 #define SMOKEBOMB_GROWTIME 1000
 #define SMOKEBOMB_SMOKETIME 15000
 #define SMOKEBOMB_POSTSMOKETIME 2000
+#define SMOKEBOMB_STARTRADIUS 16
+#define SMOKEBOMB_FINALRADIUS 640
 
 /**
  * @brief Increases postsmoke time from 2000->32000, this way, the entity
@@ -3117,6 +3112,7 @@ void weapon_smokeBombExplode(gentity_t *ent)
 	if (!ent->grenadeExplodeTime)
 	{
 		ent->grenadeExplodeTime = level.time;
+		ent->s.effect1Time      = SMOKEBOMB_STARTRADIUS;
 	}
 
 	lived          = level.time - ent->grenadeExplodeTime;
@@ -3125,12 +3121,12 @@ void weapon_smokeBombExplode(gentity_t *ent)
 	if (lived < SMOKEBOMB_GROWTIME)
 	{
 		// Just been thrown, increase radius
-		ent->s.effect1Time = (int)(16 + lived * ((640 - 16) / (float)SMOKEBOMB_GROWTIME));
+		ent->s.effect1Time = (int)(SMOKEBOMB_STARTRADIUS + lived * ((SMOKEBOMB_FINALRADIUS - SMOKEBOMB_STARTRADIUS) / (float)SMOKEBOMB_GROWTIME));
 	}
 	else if (lived < SMOKEBOMB_SMOKETIME + SMOKEBOMB_GROWTIME)
 	{
 		// Smoking
-		ent->s.effect1Time = 640;
+		ent->s.effect1Time = SMOKEBOMB_FINALRADIUS;
 	}
 	else if (lived < SMOKEBOMB_SMOKETIME + SMOKEBOMB_GROWTIME + SMOKEBOMB_POSTSMOKETIME)
 	{
@@ -3218,7 +3214,7 @@ void EmitterCheck(gentity_t *ent, gentity_t *attacker, trace_t *tr)
  */
 void Bullet_Endpos(gentity_t *ent, float spread, vec3_t *end)
 {
-	if (GetWeaponTableData(ent->s.weapon)->isScoped)
+	if (GetWeaponTableData(ent->s.weapon)->type & WEAPON_TYPE_SCOPED)
 	{
 		// aim dir already accounted for sway of scoped weapons in CalcMuzzlePoints()
 		VectorMA(muzzleTrace, 2 * MAX_TRACE, forward, *end);
@@ -3238,7 +3234,7 @@ void Bullet_Endpos(gentity_t *ent, float spread, vec3_t *end)
  * @param[in] ent
  * @param[in] firedShot - unused
  */
-void Bullet_Fire(gentity_t *ent, gentity_t **firedShot)
+gentity_t *Bullet_Fire(gentity_t *ent)
 {
 	vec3_t end;
 	float  spread = GetWeaponTableData(ent->s.weapon)->spread;
@@ -3264,14 +3260,14 @@ void Bullet_Fire(gentity_t *ent, gentity_t **firedShot)
 		aimSpreadScale = 2.f;
 	}
 
-	if (GetWeaponTableData(ent->s.weapon)->isRifle || GetWeaponTableData(ent->s.weapon)->isRifleWithScope)
+	if (GetWeaponTableData(ent->s.weapon)->type & WEAPON_TYPE_RIFLE)
 	{
 		aimSpreadScale = 1.f;
 	}
 
 	spread *= aimSpreadScale;
 
-	if (GetWeaponTableData(ent->s.weapon)->isLightWeapon)
+	if (GetWeaponTableData(ent->s.weapon)->skillBased == SK_LIGHT_WEAPONS)
 	{
 		// increase in accuracy (spread reduction) at level 3
 		if (ent->client->sess.skill[SK_LIGHT_WEAPONS] >= 3)
@@ -3279,22 +3275,27 @@ void Bullet_Fire(gentity_t *ent, gentity_t **firedShot)
 			spread *= .65f;
 		}
 	}
-	else if (GetWeaponTableData(ent->s.weapon)->isMGSet)
+	else if (GetWeaponTableData(ent->s.weapon)->type & WEAPON_TYPE_MG)
 	{
-		spread *= .05f;
-	}
-	else if (GetWeaponTableData(ent->s.weapon)->isMG && ((ent->client->ps.pm_flags & PMF_DUCKED) || (ent->client->ps.eFlags & EF_PRONE)))
-	{
-		spread *= .6f;
+        if ((GetWeaponTableData(ent->s.weapon)->type & WEAPON_TYPE_SETTABLE) && ((ent->client->ps.pm_flags & PMF_DUCKED) || (ent->client->ps.eFlags & EF_PRONE)))
+        {
+            spread *= .6f;
+        }
+        else
+        {
+            spread *= .05f;   
+        }
 	}
 
 	Bullet_Endpos(ent, spread, &end);
 
 	G_HistoricalTraceBegin(ent);
 
-	Bullet_Fire_Extended(ent, ent, muzzleTrace, end, GetWeaponTableData(ent->s.weapon)->damage, GetWeaponTableData(ent->s.weapon)->fallOff);
+	Bullet_Fire_Extended(ent, ent, muzzleTrace, end, GetWeaponTableData(ent->s.weapon)->damage, GetWeaponTableData(ent->s.weapon)->attributs & WEAPON_ATTRIBUT_FALL_OFF);
 
 	G_HistoricalTraceEnd(ent);
+
+	return NULL;
 }
 
 /**
@@ -3327,7 +3328,7 @@ qboolean Bullet_Fire_Extended(gentity_t *source, gentity_t *attacker, vec3_t sta
 		waslinked                               = qtrue;
 	}
 
-	G_Trace(source, &tr, start, NULL, NULL, end, source->s.number, MASK_SHOT, !GetWeaponTableData(attacker->s.weapon)->canGib);
+	G_Trace(source, &tr, start, NULL, NULL, end, source->s.number, MASK_SHOT, !GetWeaponTableData(attacker->s.weapon)->splashDamage);
 
 	// prevent shooting ourselves in the head when prone, firing through a breakable
 	if (waslinked == qtrue)
@@ -3435,7 +3436,7 @@ qboolean Bullet_Fire_Extended(gentity_t *source, gentity_t *attacker, vec3_t sta
 
 		tent = G_TempEntity(tr.endpos, EV_BULLET_HIT_WALL);
 
-		G_Trace(source, &tr2, start, NULL, NULL, end, source->s.number, MASK_WATER | MASK_SHOT, !GetWeaponTableData(attacker->s.weapon)->canGib);
+		G_Trace(source, &tr2, start, NULL, NULL, end, source->s.number, MASK_WATER | MASK_SHOT, !GetWeaponTableData(attacker->s.weapon)->splashDamage);
 
 		if ((tr.entityNum != tr2.entityNum && tr2.fraction != 1.f))
 		{
@@ -3490,7 +3491,7 @@ GRENADE LAUNCHER
  * @param[out] firedShot
  * @return
  */
-void weapon_gpg40_fire(gentity_t *ent, gentity_t **firedShot)
+gentity_t *weapon_gpg40_fire(gentity_t *ent)
 {
 	trace_t tr;
 	vec3_t  viewpos;
@@ -3508,7 +3509,7 @@ void weapon_gpg40_fire(gentity_t *ent, gentity_t **firedShot)
 	VectorMA(viewpos, 32, forward, viewpos);
 
 	// to prevent nade-through-teamdoor sploit
-	trap_Trace(&tr, orig_viewpos, tv(-4.f, -4.f, 0.f), tv(4.f, 4.f, 6.f), viewpos, ent->s.number, MASK_MISSILESHOT);
+	trap_Trace(&tr, orig_viewpos, GetWeaponFireTableData(ent->s.weapon)->boudingBox[0], GetWeaponFireTableData(ent->s.weapon)->boudingBox[1], viewpos, ent->s.number, MASK_MISSILESHOT);
 	if (tr.fraction < 1)     // oops, bad launch spot
 	{
 		VectorCopy(tr.endpos, tosspos);
@@ -3516,7 +3517,7 @@ void weapon_gpg40_fire(gentity_t *ent, gentity_t **firedShot)
 	}
 	else
 	{
-		trap_Trace(&tr, viewpos, tv(-4.f, -4.f, 0.f), tv(4.f, 4.f, 6.f), tosspos, ent->s.number, MASK_MISSILESHOT);
+		trap_Trace(&tr, viewpos, GetWeaponFireTableData(ent->s.weapon)->boudingBox[0], GetWeaponFireTableData(ent->s.weapon)->boudingBox[1], tosspos, ent->s.number, MASK_MISSILESHOT);
 		if (tr.fraction < 1)     // oops, bad launch spot
 		{
 			VectorCopy(tr.endpos, tosspos);
@@ -3527,7 +3528,7 @@ void weapon_gpg40_fire(gentity_t *ent, gentity_t **firedShot)
 	VectorScale(forward, 2000, forward);
 
 	// return the grenade so we can do some prediction before deciding if we really want to throw it or not
-	*firedShot = fire_grenade(ent, tosspos, forward, ent->s.weapon);
+	return fire_missile(ent, tosspos, forward, ent->s.weapon);
 }
 
 /**
@@ -3536,7 +3537,7 @@ void weapon_gpg40_fire(gentity_t *ent, gentity_t **firedShot)
  * @param[in] firedShot
  * @return
  */
-void weapon_mortar_fire(gentity_t *ent, gentity_t **firedShot)
+gentity_t *weapon_mortar_fire(gentity_t *ent)
 {
 	trace_t tr;
 	vec3_t  launchPos, testPos;
@@ -3557,7 +3558,7 @@ void weapon_mortar_fire(gentity_t *ent, gentity_t **firedShot)
 	forward[1] *= 3000 * 1.1f;
 	forward[2] *= 1500 * 1.1f;
 
-	trap_Trace(&tr, testPos, tv(-4.f, -4.f, 0.f), tv(4.f, 4.f, 6.f), launchPos, ent->s.number, MASK_MISSILESHOT);
+	trap_Trace(&tr, testPos, GetWeaponFireTableData(ent->s.weapon)->boudingBox[0], GetWeaponFireTableData(ent->s.weapon)->boudingBox[1], launchPos, ent->s.number, MASK_MISSILESHOT);
 
 	if (tr.fraction < 1)     // oops, bad launch spot
 	{
@@ -3565,7 +3566,7 @@ void weapon_mortar_fire(gentity_t *ent, gentity_t **firedShot)
 		SnapVectorTowards(launchPos, testPos);
 	}
 
-	*firedShot = fire_grenade(ent, launchPos, forward, ent->s.weapon);
+	return fire_missile(ent, launchPos, forward, ent->s.weapon);
 }
 
 /**
@@ -3574,14 +3575,13 @@ void weapon_mortar_fire(gentity_t *ent, gentity_t **firedShot)
  * @param[out] firedShot
  * @return
  */
-void weapon_grenadelauncher_fire(gentity_t *ent, gentity_t **firedShot)
+gentity_t *weapon_grenadelauncher_fire(gentity_t *ent)
 {
 	trace_t  tr;
 	vec3_t   viewpos;
 	float    upangle = 0, pitch = ent->s.apos.trBase[0];   // start with level throwing and adjust based on angle
 	vec3_t   tosspos;
 	qboolean underhand = qtrue;
-	weapon_t grenType  = (weapon_t)ent->s.weapon;
 
 	// smoke grenades always overhand
 	if (pitch >= 0)
@@ -3616,7 +3616,7 @@ void weapon_grenadelauncher_fire(gentity_t *ent, gentity_t **firedShot)
 		upangle = .1f;
 	}
 
-	if (GetWeaponTableData(grenType)->isGrenade || grenType == WP_SMOKE_MARKER || grenType == WP_SMOKE_BOMB)
+	if ((GetWeaponTableData(ent->s.weapon)->type & WEAPON_TYPE_GRENADE) || ent->s.weapon == WP_SMOKE_MARKER || ent->s.weapon == WP_SMOKE_BOMB)
 	{
 		upangle *= 900;
 	}
@@ -3642,18 +3642,7 @@ void weapon_grenadelauncher_fire(gentity_t *ent, gentity_t **firedShot)
 	VectorCopy(ent->s.pos.trBase, viewpos);
 	viewpos[2] += ent->client->ps.viewheight;
 
-	if (grenType == WP_DYNAMITE || grenType == WP_SATCHEL)
-	{
-		trap_Trace(&tr, viewpos, tv(-12.f, -12.f, 0.f), tv(12.f, 12.f, 20.f), tosspos, ent->s.number, MASK_MISSILESHOT);
-	}
-	else if (grenType == WP_LANDMINE)
-	{
-		trap_Trace(&tr, viewpos, tv(-16.f, -16.f, 0.f), tv(16.f, 16.f, 16.f), tosspos, ent->s.number, MASK_MISSILESHOT);
-	}
-	else
-	{
-		trap_Trace(&tr, viewpos, tv(-4.f, -4.f, 0.f), tv(4.f, 4.f, 6.f), tosspos, ent->s.number, MASK_MISSILESHOT);
-	}
+	trap_Trace(&tr, viewpos, GetWeaponFireTableData(ent->s.weapon)->boudingBox[0], GetWeaponFireTableData(ent->s.weapon)->boudingBox[1], tosspos, ent->s.number, MASK_MISSILESHOT);
 
 	if (tr.startsolid)
 	{
@@ -3662,18 +3651,7 @@ void weapon_grenadelauncher_fire(gentity_t *ent, gentity_t **firedShot)
 		VectorNormalizeFast(viewpos);
 		VectorMA(ent->r.currentOrigin, -24.f, viewpos, viewpos);
 
-		if (grenType == WP_DYNAMITE || grenType == WP_SATCHEL)
-		{
-			trap_Trace(&tr, viewpos, tv(-12.f, -12.f, 0.f), tv(12.f, 12.f, 20.f), tosspos, ent->s.number, MASK_MISSILESHOT);
-		}
-		else if (grenType == WP_LANDMINE)
-		{
-			trap_Trace(&tr, viewpos, tv(-16.f, -16.f, 0.f), tv(16.f, 16.f, 16.f), tosspos, ent->s.number, MASK_MISSILESHOT);
-		}
-		else
-		{
-			trap_Trace(&tr, viewpos, tv(-4.f, -4.f, 0.f), tv(4.f, 4.f, 6.f), tosspos, ent->s.number, MASK_MISSILESHOT);
-		}
+		trap_Trace(&tr, viewpos, GetWeaponFireTableData(ent->s.weapon)->boudingBox[0], GetWeaponFireTableData(ent->s.weapon)->boudingBox[1], tosspos, ent->s.number, MASK_MISSILESHOT);
 
 		VectorCopy(tr.endpos, tosspos);
 	}
@@ -3684,16 +3662,15 @@ void weapon_grenadelauncher_fire(gentity_t *ent, gentity_t **firedShot)
 	}
 
 	// return the grenade so we can do some prediction before deciding if we really want to throw it or not
-	*firedShot = fire_grenade(ent, tosspos, forward, grenType);
+	return fire_missile(ent, tosspos, forward, ent->s.weapon);
 }
 
 /**
  * @brief weapon_satcheldet_fire
  * @param[in] ent
- * @param[out] firedShot - unused
  * @return
  */
-void weapon_satcheldet_fire(gentity_t *ent, gentity_t **firedShot)
+gentity_t *weapon_satcheldet_fire(gentity_t *ent)
 {
 	if (G_ExplodeSatchels(ent))
 	{
@@ -3706,6 +3683,8 @@ void weapon_satcheldet_fire(gentity_t *ent, gentity_t **firedShot)
 			G_AddEvent(ent, EV_NOAMMO, 0);
 		}
 	}
+
+	return NULL;
 }
 
 /**
@@ -3719,10 +3698,17 @@ ANTI TANK ROCKETS
  * @param[in,out] ent
  * @param[out] firedShot
  */
-void weapon_antitank_fire(gentity_t *ent, gentity_t **firedShot)
+gentity_t *weapon_antitank_fire(gentity_t *ent)
 {
+	gentity_t *rocket;
+	vec3_t    dir;
+
 	//VectorAdd( m->s.pos.trDelta, ent->client->ps.velocity, m->s.pos.trDelta );  // "real" physics
-	*firedShot = fire_rocket(ent, muzzleEffect, forward, ent->s.weapon);
+	VectorCopy(forward, dir);
+	VectorNormalize(dir);
+	VectorScale(dir, 2500, dir);
+    
+	rocket = fire_missile(ent, muzzleEffect, dir, ent->s.weapon);
 
 	if (ent->client)
 	{
@@ -3731,6 +3717,8 @@ void weapon_antitank_fire(gentity_t *ent, gentity_t **firedShot)
 		AngleVectors(ent->client->ps.viewangles, forward, NULL, NULL);
 		VectorMA(ent->client->ps.velocity, -64, forward, ent->client->ps.velocity);
 	}
+
+	return rocket;
 }
 
 /**
@@ -3788,19 +3776,15 @@ void G_BurnMeGood(gentity_t *self, gentity_t *body, gentity_t *chunk)
 	}
 }
 
-// for traces calls
-static vec3_t flameChunkMins = { -4, -4, -4 };
-static vec3_t flameChunkMaxs = { 4, 4, 4 };
-
 /**
  * @brief Weapon_FlamethrowerFire
  * @param[in,out] ent
  * @param[out] firedShot
  * @return
  */
-void Weapon_FlamethrowerFire(gentity_t *ent, gentity_t **firedShot)
+gentity_t *Weapon_FlamethrowerFire(gentity_t *ent)
 {
-	vec3_t  start;
+	vec3_t  start, dir;
 	vec3_t  trace_start;
 	vec3_t  trace_end;
 	trace_t trace;
@@ -3816,7 +3800,7 @@ void Weapon_FlamethrowerFire(gentity_t *ent, gentity_t **firedShot)
 	// prevent flame thrower cheat, run & fire while aiming at the ground, don't get hurt
 	// 72 total box height, 18 xy -> 77 trace radius (from view point towards the ground) is enough to cover the area around the feet
 	VectorMA(trace_start, 77.0f, forward, trace_end);
-	trap_Trace(&trace, trace_start, flameChunkMins, flameChunkMaxs, trace_end, ent->s.number, MASK_SHOT | MASK_WATER);
+	trap_Trace(&trace, trace_start, GetWeaponFireTableData(ent->s.weapon)->boudingBox[0], GetWeaponFireTableData(ent->s.weapon)->boudingBox[1], trace_end, ent->s.number, MASK_SHOT | MASK_WATER);
 	if (trace.fraction != 1.0f)
 	{
 		// additional checks to filter out false positives
@@ -3833,11 +3817,13 @@ void Weapon_FlamethrowerFire(gentity_t *ent, gentity_t **firedShot)
 		}
 	}
 
-	*firedShot = fire_flamechunk(ent, start, forward);
-
 	// flamethrower exploit fix
-	ent->r.svFlags        |= SVF_BROADCAST;
 	ent->client->flametime = level.time + 2500;
+
+	VectorNormalize(dir);
+	VectorScale(forward, FLAME_START_SPEED, dir);
+
+	return fire_flamechunk(ent, start, dir);
 }
 
 //======================================================================
@@ -3920,29 +3906,14 @@ void CalcMuzzlePoint(gentity_t *ent, int weapon, vec3_t forward, vec3_t right, v
 {
 	VectorCopy(ent->r.currentOrigin, muzzlePoint);
 	muzzlePoint[2] += ent->client->ps.viewheight;
+
 	// this puts the start point outside the bounding box, isn't necessary
-	//VectorMA( muzzlePoint, 14, forward, muzzlePoint );
+	//VectorMA(muzzlePoint, GetWeaponTableData(weapon)->muzzlePointOffset[0], forward, muzzlePoint);
 
 	// offset for more realistic firing from actual gun position
 	// changed this so I can predict weapons
-	if (GetWeaponTableData(weapon)->isPanzer)
-	{
-		VectorMA(muzzlePoint, 10, right, muzzlePoint);
-	}
-	else if (GetWeaponTableData(weapon)->isAkimbo)
-	{
-		VectorMA(muzzlePoint, -6, right, muzzlePoint);
-		VectorMA(muzzlePoint, -4, up, muzzlePoint);
-	}
-	else if (GetWeaponTableData(weapon)->isGrenade || weapon == WP_DYNAMITE || weapon == WP_SATCHEL || weapon == WP_SMOKE_BOMB)
-	{
-		VectorMA(muzzlePoint, 20, right, muzzlePoint);
-	}
-	else
-	{
-		VectorMA(muzzlePoint, 6, right, muzzlePoint);
-		VectorMA(muzzlePoint, -4, up, muzzlePoint);
-	}
+	VectorMA(muzzlePoint, GetWeaponTableData(weapon)->muzzlePointOffset[1], right, muzzlePoint);
+	VectorMA(muzzlePoint, GetWeaponTableData(weapon)->muzzlePointOffset[2], up, muzzlePoint);
 
 	// actually, this is sort of moot right now since
 	// you're not allowed to fire when leaning.  Leave in
@@ -3986,7 +3957,7 @@ void CalcMuzzlePoints(gentity_t *ent, int weapon)
 
 	// non ai's take into account scoped weapon 'sway' (just another way aimspread is visualized/utilized)
 
-	if (GetWeaponTableData(weapon)->isScoped)
+	if (GetWeaponTableData(weapon)->type & WEAPON_TYPE_SCOPED)
 	{
 		float pitchMinAmp, yawMinAmp, phase;
 
@@ -4071,69 +4042,70 @@ qboolean G_PlayerCanBeSeenByOthers(gentity_t *ent)
 	return qfalse;
 }
 
-weapFireFunction_t weapFireTable[] =
+weapFireTable_t weapFireTable[] =
 {
-	{ WP_NONE,                 NULL,                        },
-	{ WP_KNIFE,                Weapon_Knife,                },
-	{ WP_LUGER,                Bullet_Fire,                 },
-	{ WP_MP40,                 Bullet_Fire,                 },
-	{ WP_GRENADE_LAUNCHER,     weapon_grenadelauncher_fire, },
-	{ WP_PANZERFAUST,          weapon_antitank_fire,        },
-	{ WP_FLAMETHROWER,         Weapon_FlamethrowerFire,     },  // this is done client-side only now // - um, no it isnt? FIXME
-	{ WP_COLT,                 Bullet_Fire,                 },
-	{ WP_THOMPSON,             Bullet_Fire,                 },
-	{ WP_GRENADE_PINEAPPLE,    weapon_grenadelauncher_fire, },
-
-	{ WP_STEN,                 Bullet_Fire,                 },
-	{ WP_MEDIC_SYRINGE,        Weapon_Syringe,              },
-	{ WP_AMMO,                 Weapon_MagicAmmo,            },
-	{ WP_ARTY,                 NULL,                        },
-	{ WP_SILENCER,             Bullet_Fire,                 },
-	{ WP_DYNAMITE,             weapon_grenadelauncher_fire, },
-	{ WP_SMOKETRAIL,           Bullet_Fire,                 },
-	{ WP_MAPMORTAR,            NULL,                        },
-	{ VERYBIGEXPLOSION,        NULL,                        },
-	{ WP_MEDKIT,               Weapon_Medic,                },
-
-	{ WP_BINOCULARS,           NULL,                        },
-	{ WP_PLIERS,               Weapon_Engineer,             },
-	{ WP_SMOKE_MARKER,         weapon_grenadelauncher_fire, },
-	{ WP_KAR98,                Bullet_Fire,                 },
-	{ WP_CARBINE,              Bullet_Fire,                 },
-	{ WP_GARAND,               Bullet_Fire,                 },
-	{ WP_LANDMINE,             weapon_grenadelauncher_fire, },
-	{ WP_SATCHEL,              weapon_grenadelauncher_fire, },
-	{ WP_SATCHEL_DET,          weapon_satcheldet_fire,      },
-	{ WP_SMOKE_BOMB,           weapon_grenadelauncher_fire, },
-
-	{ WP_MOBILE_MG42,          Bullet_Fire,                 },
-	{ WP_K43,                  Bullet_Fire,                 },
-	{ WP_FG42,                 Bullet_Fire,                 },
-	{ WP_DUMMY_MG42,           NULL,                        },
-	{ WP_MORTAR,               NULL,                        },
-	{ WP_AKIMBO_COLT,          Bullet_Fire,                 },
-	{ WP_AKIMBO_LUGER,         Bullet_Fire,                 },
-
-	{ WP_GPG40,                weapon_gpg40_fire,           },
-	{ WP_M7,                   weapon_gpg40_fire,           },
-	{ WP_SILENCED_COLT,        Bullet_Fire,                 },
-
-	{ WP_GARAND_SCOPE,         Bullet_Fire,                 },
-	{ WP_K43_SCOPE,            Bullet_Fire,                 },
-	{ WP_FG42SCOPE,            Bullet_Fire,                 },
-	{ WP_MORTAR_SET,           weapon_mortar_fire,          },
-	{ WP_MEDIC_ADRENALINE,     Weapon_AdrenalineSyringe,    },
-	{ WP_AKIMBO_SILENCEDCOLT,  Bullet_Fire,                 },
-	{ WP_AKIMBO_SILENCEDLUGER, Bullet_Fire,                 },
-	{ WP_MOBILE_MG42_SET,      Bullet_Fire,                 },
-	// legacy weapons
-	{ WP_KNIFE_KABAR,          Weapon_Knife,                },
-	{ WP_MOBILE_BROWNING,      Bullet_Fire,                 },
-	{ WP_MOBILE_BROWNING_SET,  Bullet_Fire,                 },
-	{ WP_MORTAR2,              NULL,                        },
-	{ WP_MORTAR2_SET,          weapon_mortar_fire,          },
-	{ WP_BAZOOKA,              weapon_antitank_fire,        },
-	{ WP_MP34,                 Bullet_Fire,                 },
+    // weapon                  fire                         think                       free           eType                  eFlags                      svFlags                       content          trType          trTime boundingsBox                                     clipMask          nextThink accuracy health timeStamp                                                                                 
+	{ WP_NONE,                 NULL,                        NULL,                       NULL,          ET_GENERAL,            EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_STATIONARY,  0,     { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_ALL,         0,        0,       0,     0,        },
+	{ WP_KNIFE,                Weapon_Knife,                NULL,                       NULL,          ET_GENERAL,            EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_LINEAR,      0,     { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_SHOT,        0,        0,       0,     0,        },
+	{ WP_LUGER,                Bullet_Fire,                 NULL,                       NULL,          ET_GENERAL,            EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_LINEAR,      0,     { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_SHOT,        0,        0,       0,     0,        },      
+	{ WP_MP40,                 Bullet_Fire,                 NULL,                       NULL,          ET_GENERAL,            EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_LINEAR,      0,     { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_SHOT,        0,        0,       0,     0,        },      
+	{ WP_GRENADE_LAUNCHER,     weapon_grenadelauncher_fire, G_ExplodeMissile,           NULL,          ET_MISSILE,            EF_BOUNCE_HALF | EF_BOUNCE, SVF_BROADCAST,                CONTENTS_NONE,   TR_GRAVITY,     -50,   { { -4.f, -4.f, 0.f }, { 4.f, 4.f, 6.f } },      MASK_MISSILESHOT, 2500,     0,       0,     0,        }, 
+	{ WP_PANZERFAUST,          weapon_antitank_fire,        G_ExplodeMissile,           NULL,          ET_MISSILE,            EF_NONE,                    SVF_BROADCAST,                CONTENTS_NONE,   TR_LINEAR,      -50,   { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_MISSILESHOT, 20000,    4,       0,     0,        },  
+	{ WP_FLAMETHROWER,         Weapon_FlamethrowerFire,     NULL,                       NULL,          ET_FLAMETHROWER_CHUNK, EF_NONE,                    SVF_NOCLIENT | SVF_BROADCAST, CONTENTS_CORPSE, TR_DECCELERATE, -50,   { { -4, -4, -4 }, { 4, 4, 4 } },                 MASK_MISSILESHOT, 0,        0,       0,     1,        },  // this is done client-side only now // - um, no it isnt? FIXME
+	{ WP_COLT,                 Bullet_Fire,                 NULL,                       NULL,          ET_GENERAL,            EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_LINEAR,      0,     { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_SHOT,        0,        0,       0,     0,        },      
+	{ WP_THOMPSON,             Bullet_Fire,                 NULL,                       NULL,          ET_GENERAL,            EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_LINEAR,      0,     { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_SHOT,        0,        0,       0,     0,        },      
+	{ WP_GRENADE_PINEAPPLE,    weapon_grenadelauncher_fire, G_ExplodeMissile,           NULL,          ET_MISSILE,            EF_BOUNCE_HALF | EF_BOUNCE, SVF_BROADCAST,                CONTENTS_NONE,   TR_GRAVITY,     -50,   { { -4.f, -4.f, 0.f }, { 4.f, 4.f, 6.f } },      MASK_MISSILESHOT, 2500,     0,       0,     0,        }, 
+    //                                                                                                 
+	{ WP_STEN,                 Bullet_Fire,                 NULL,                       NULL,          ET_GENERAL,            EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_LINEAR,      0,     { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_SHOT,        0,        0,       0,     0,        },      
+	{ WP_MEDIC_SYRINGE,        Weapon_Syringe,              NULL,                       NULL,          ET_GENERAL,            EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_LINEAR,      0,     { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_SHOT,        0,        0,       0,     0,        },     
+	{ WP_AMMO,                 Weapon_MagicAmmo,            MagicSink,                  NULL,          ET_ITEM,               EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_GRAVITY,     0,     { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_SHOT,        30000,    0,       0,     0,        },
+	{ WP_ARTY,                 NULL,                        G_AirStrikeExplode,         NULL,          ET_MISSILE,            EF_SMOKINGBLACK,            SVF_NOCLIENT,                 CONTENTS_NONE,   TR_STATIONARY,  1,     { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_MISSILESHOT, 8950,     2,       0,     0,        },     
+	{ WP_SILENCER,             Bullet_Fire,                 NULL,                       NULL,          ET_GENERAL,            EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_LINEAR,      0,     { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_SHOT,        0,        0,       0,     0,        },      
+	{ WP_DYNAMITE,             weapon_grenadelauncher_fire, DynaSink,                   DynaFree,      ET_MISSILE,            EF_BOUNCE_HALF | EF_BOUNCE, SVF_BROADCAST,                CONTENTS_CORPSE, TR_GRAVITY,     -50,   { { -12.f, -12.f, 0.f }, { 12.f, 12.f, 20.f } }, MASK_MISSILESHOT, 15000,    0,       5,     16500,    },
+	{ WP_SMOKETRAIL,           NULL,                        artilleryGoAway,            NULL,          ET_MISSILE,            EF_BOUNCE,                  SVF_NONE,                     CONTENTS_NONE,   TR_GRAVITY,     1,     { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_MISSILESHOT, 1000,     0,       0,     0,        },     
+	{ WP_MAPMORTAR,            NULL,                        G_ExplodeMissile,           NULL,          ET_MISSILE,            EF_NONE,                    SVF_BROADCAST,                CONTENTS_NONE,   TR_GRAVITY,     -50,   { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_MISSILESHOT, 20000,    4,       0,     0,        },     
+	{ VERYBIGEXPLOSION,        NULL,                        NULL,                       NULL,          ET_GENERAL,            EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_STATIONARY,  0,     { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_ALL,         0,        0,       0,     0,        },
+	{ WP_MEDKIT,               Weapon_Medic,                MagicSink,                  NULL,          ET_ITEM,               EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_GRAVITY,     0,     { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_SHOT,        30000,    0,       0,     0,        },
+    //                                                                                                 
+	{ WP_BINOCULARS,           NULL,                        NULL,                       NULL,          ET_GENERAL,            EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_STATIONARY,  0,     { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_ALL,         0,        0,       0,     0,        },
+	{ WP_PLIERS,               Weapon_Engineer,             NULL,                       NULL,          ET_GENERAL,            EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_STATIONARY,  0,     { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_ALL,         0,        0,       0,     0,        },
+	{ WP_SMOKE_MARKER,         weapon_grenadelauncher_fire, weapon_checkAirStrikeThink, NULL,          ET_MISSILE,            EF_BOUNCE_HALF | EF_BOUNCE, SVF_BROADCAST,                CONTENTS_NONE,   TR_GRAVITY,     -50,   { { -4.f, -4.f, 0.f }, { 4.f, 4.f, 6.f } },      MASK_MISSILESHOT, 2500,     0,       0,     0,        },  
+	{ WP_KAR98,                Bullet_Fire,                 NULL,                       NULL,          ET_GENERAL,            EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_LINEAR,      0,     { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_SHOT,        0,        0,       0,     0,        },      
+	{ WP_CARBINE,              Bullet_Fire,                 NULL,                       NULL,          ET_GENERAL,            EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_LINEAR,      0,     { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_SHOT,        0,        0,       0,     0,        },      
+	{ WP_GARAND,               Bullet_Fire,                 NULL,                       NULL,          ET_GENERAL,            EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_LINEAR,      0,     { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_SHOT,        0,        0,       0,     0,        },      
+	{ WP_LANDMINE,             weapon_grenadelauncher_fire, DynaSink,                   NULL,          ET_MISSILE,            EF_BOUNCE_HALF | EF_BOUNCE, SVF_BROADCAST,                CONTENTS_CORPSE, TR_GRAVITY,     -50,   { { -16.f, -16.f, 0.f }, { 16.f, 16.f, 16.f } }, MASK_MISSILESHOT, 15000,    0,       5,     16500,    },
+	{ WP_SATCHEL,              weapon_grenadelauncher_fire, NULL,                       G_FreeSatchel, ET_MISSILE,            EF_BOUNCE_HALF | EF_BOUNCE, SVF_BROADCAST,                CONTENTS_CORPSE, TR_GRAVITY,     -50,   { { -12.f, -12.f, 0.f }, { 12.f, 12.f, 20.f } }, MASK_MISSILESHOT, 0,        0,       5,     0,        },
+	{ WP_SATCHEL_DET,          weapon_satcheldet_fire,      NULL,                       NULL,          ET_GENERAL,            EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_STATIONARY,  0,     { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_ALL,         0,        0,       0,     0,        },
+	{ WP_SMOKE_BOMB,           weapon_grenadelauncher_fire, weapon_smokeBombExplode,    NULL,          ET_MISSILE,            EF_BOUNCE_HALF | EF_BOUNCE, SVF_BROADCAST,                CONTENTS_NONE,   TR_GRAVITY,     -50,   { { -4.f, -4.f, 0.f }, { 4.f, 4.f, 6.f } },      MASK_MISSILESHOT, 2500,     0,       0,     0,        },
+    //                                                                                                 
+	{ WP_MOBILE_MG42,          Bullet_Fire,                 NULL,                       NULL,          ET_GENERAL,            EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_LINEAR,      0,     { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_SHOT,        0,        0,       0,     0,        },      
+	{ WP_K43,                  Bullet_Fire,                 NULL,                       NULL,          ET_GENERAL,            EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_LINEAR,      0,     { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_SHOT,        0,        0,       0,     0,        },      
+	{ WP_FG42,                 Bullet_Fire,                 NULL,                       NULL,          ET_GENERAL,            EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_LINEAR,      0,     { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_SHOT,        0,        0,       0,     0,        },      
+	{ WP_DUMMY_MG42,           NULL,                        NULL,                       NULL,          ET_GENERAL,            EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_STATIONARY,  0,     { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_ALL,         0,        0,       0,     0,        },
+	{ WP_MORTAR,               NULL,                        NULL,                       NULL,          ET_GENERAL,            EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_STATIONARY,  0,     { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_ALL,         0,        0,       0,     0,        },
+	{ WP_AKIMBO_COLT,          Bullet_Fire,                 NULL,                       NULL,          ET_GENERAL,            EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_LINEAR,      0,     { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_SHOT,        0,        0,       0,     0,        },      
+	{ WP_AKIMBO_LUGER,         Bullet_Fire,                 NULL,                       NULL,          ET_GENERAL,            EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_LINEAR,      0,     { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_SHOT,        0,        0,       0,     0,        },      
+    //                                                                                                 
+	{ WP_GPG40,                weapon_gpg40_fire,           G_ExplodeMissile,           NULL,          ET_MISSILE,            EF_BOUNCE_HALF | EF_BOUNCE, SVF_BROADCAST,                CONTENTS_NONE,   TR_GRAVITY,     -50,   { { -4.f, -4.f, 0.f }, { 4.f, 4.f, 6.f } },      MASK_MISSILESHOT, 4000,     0,       0,     0,        },
+	{ WP_M7,                   weapon_gpg40_fire,           G_ExplodeMissile,           NULL,          ET_MISSILE,            EF_BOUNCE_HALF | EF_BOUNCE, SVF_BROADCAST,                CONTENTS_NONE,   TR_GRAVITY,     -50,   { { -4.f, -4.f, 0.f }, { 4.f, 4.f, 6.f } },      MASK_MISSILESHOT, 4000,     0,       0,     0,        },
+	{ WP_SILENCED_COLT,        Bullet_Fire,                 NULL,                       NULL,          ET_GENERAL,            EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_LINEAR,      0,     { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_SHOT,        0,        0,       0,     0,        },      
+    //                                                                                                 
+	{ WP_GARAND_SCOPE,         Bullet_Fire,                 NULL,                       NULL,          ET_GENERAL,            EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_LINEAR,      0,     { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_SHOT,        0,        0,       0,     0,        },      
+	{ WP_K43_SCOPE,            Bullet_Fire,                 NULL,                       NULL,          ET_GENERAL,            EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_LINEAR,      0,     { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_SHOT,        0,        0,       0,     0,        },      
+	{ WP_FG42SCOPE,            Bullet_Fire,                 NULL,                       NULL,          ET_GENERAL,            EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_LINEAR,      0,     { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_SHOT,        0,        0,       0,     0,        },      
+	{ WP_MORTAR_SET,           weapon_mortar_fire,          NULL,                       NULL,          ET_MISSILE,            EF_NONE,                    SVF_BROADCAST,                CONTENTS_NONE,   TR_GRAVITY,     -50,   { { -4.f, -4.f, 0.f }, { 4.f, 4.f, 6.f } },      MASK_MISSILESHOT, 0,        0,       0,     0,        },   
+	{ WP_MEDIC_ADRENALINE,     Weapon_AdrenalineSyringe,    NULL,                       NULL,          ET_GENERAL,            EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_LINEAR,      0,     { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_SHOT,        0,        0,       0,     0,        },     
+	{ WP_AKIMBO_SILENCEDCOLT,  Bullet_Fire,                 NULL,                       NULL,          ET_GENERAL,            EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_LINEAR,      0,     { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_SHOT,        0,        0,       0,     0,        },      
+	{ WP_AKIMBO_SILENCEDLUGER, Bullet_Fire,                 NULL,                       NULL,          ET_GENERAL,            EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_LINEAR,      0,     { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_SHOT,        0,        0,       0,     0,        },      
+	{ WP_MOBILE_MG42_SET,      Bullet_Fire,                 NULL,                       NULL,          ET_GENERAL,            EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_LINEAR,      0,     { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_SHOT,        0,        0,       0,     0,        },      
+	// legacy weapons                                                                                  
+	{ WP_KNIFE_KABAR,          Weapon_Knife,                NULL,                       NULL,          ET_GENERAL,            EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_LINEAR,      0,     { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_SHOT,        0,        0,       0,     0,        },
+	{ WP_MOBILE_BROWNING,      Bullet_Fire,                 NULL,                       NULL,          ET_GENERAL,            EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_LINEAR,      0,     { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_SHOT,        0,        0,       0,     0,        },      
+	{ WP_MOBILE_BROWNING_SET,  Bullet_Fire,                 NULL,                       NULL,          ET_GENERAL,            EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_LINEAR,      0,     { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_SHOT,        0,        0,       0,     0,        },      
+	{ WP_MORTAR2,              NULL,                        NULL,                       NULL,          ET_GENERAL,            EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_STATIONARY,  0,     { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_ALL,         0,        0,       0,     0,        },
+	{ WP_MORTAR2_SET,          weapon_mortar_fire,          NULL,                       NULL,          ET_MISSILE,            EF_NONE,                    SVF_BROADCAST,                CONTENTS_NONE,   TR_GRAVITY,     -50,   { { -4.f, -4.f, 0.f }, { 4.f, 4.f, 6.f } },      MASK_MISSILESHOT, 0,        0,       0,     0,        },   
+	{ WP_BAZOOKA,              weapon_antitank_fire,        G_ExplodeMissile,           NULL,          ET_MISSILE,            EF_NONE,                    SVF_BROADCAST,                CONTENTS_NONE,   TR_LINEAR,      -50,   { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_MISSILESHOT, 20000,    4,       0,     0,        },  
+	{ WP_MP34,                 Bullet_Fire,                 NULL,                       NULL,          ET_GENERAL,            EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_LINEAR,      0,     { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_SHOT,        0,        0,       0,     0,        },      
 };
 
 /**
@@ -4175,9 +4147,9 @@ void FireWeapon(gentity_t *ent)
 	// covert ops disguise handling
 	if (ent->client->ps.powerups[PW_OPS_DISGUISED])
 	{
-		if (!GetWeaponTableData(ent->s.weapon)->neverLoseDisguise)
+		if (!(GetWeaponTableData(ent->s.weapon)->attributs & WEAPON_ATTRIBUT_NEVER_LOST_DESGUISE))
 		{
-			if (!GetWeaponTableData(ent->s.weapon)->keepDisguise || G_PlayerCanBeSeenByOthers(ent))
+			if (!(GetWeaponTableData(ent->s.weapon)->attributs & WEAPON_ATTRIBUT_KEEP_DESGUISE) || G_PlayerCanBeSeenByOthers(ent))
 			{
 				ent->client->ps.powerups[PW_OPS_DISGUISED] = 0;
 				ent->client->disguiseClientNum             = -1;
@@ -4188,7 +4160,7 @@ void FireWeapon(gentity_t *ent)
 	// fire the specific weapon
 	if (weapFireTable[ent->s.weapon].fire)
 	{
-		weapFireTable[ent->s.weapon].fire(ent, &pFiredShot);
+		pFiredShot = weapFireTable[ent->s.weapon].fire(ent);
 	}
 
 #ifdef FEATURE_OMNIBOT

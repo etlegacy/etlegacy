@@ -1770,9 +1770,9 @@ int CG_DrawSpawnPointInfo(float px, float py, float pw, float ph, qboolean draw,
  */
 void CG_DrawMortarMarker(float px, float py, float pw, float ph, qboolean draw, mapScissor_t *scissor, int expand)
 {
-	if (GetWeaponTableData(cg.lastFiredWeapon)->isMortarSet && cg.mortarImpactTime >= 0)
+	if (CHECKBITWISE(GetWeaponTableData(cg.lastFiredWeapon)->type, WEAPON_TYPE_MORTAR | WEAPON_TYPE_SET) && cg.mortarImpactTime >= 0)
 	{
-		if (!GetWeaponTableData(cg.snap->ps.weapon)->isMortarSet)
+		if (!(CHECKBITWISE(GetWeaponTableData(cg.snap->ps.weapon)->type, WEAPON_TYPE_MORTAR | WEAPON_TYPE_SET)))
 		{
 			cg.mortarImpactTime = 0;
 		}

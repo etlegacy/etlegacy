@@ -211,7 +211,7 @@ void CG_Respawn(qboolean revived)
 	// ensure scoped weapons are reset after revive
 	if (revived)
 	{
-		if (GetWeaponTableData(cg.snap->ps.weapon)->isScoped)
+		if (GetWeaponTableData(cg.snap->ps.weapon)->type & WEAPON_TYPE_SCOPED)
 		{
 			CG_FinishWeaponChange(cg.snap->ps.weapon, GetWeaponTableData(cg.snap->ps.weapon)->weapAlts);
 		}
@@ -239,7 +239,7 @@ void CG_Respawn(qboolean revived)
 	{
 		cg.pmext.silencedSideArm = 1;
 	}
-	else if (GetWeaponTableData(cg.predictedPlayerState.weapon)->isRiflenade)
+	else if (GetWeaponTableData(cg.predictedPlayerState.weapon)->type & WEAPON_TYPE_RIFLENADE)
 	{
 		cg.pmext.silencedSideArm = 2;
 	}
@@ -576,7 +576,7 @@ void CG_TransitionPlayerState(playerState_t *ps, playerState_t *ops)
 				trap_SendConsoleCommand("-zoom\n");
 			}
 		}
-		else if (GetWeaponTableData(ps->weapon)->isScoped)
+		else if (GetWeaponTableData(ps->weapon)->type & WEAPON_TYPE_SCOPED)
 		{
 			CG_FinishWeaponChange(ps->weapon, GetWeaponTableData(ps->weapon)->weapAlts);
 		}
@@ -596,14 +596,14 @@ void CG_TransitionPlayerState(playerState_t *ps, playerState_t *ops)
 
 	if (!(ps->eFlags & EF_PRONE) && (ops->eFlags & EF_PRONE))
 	{
-		if (GetWeaponTableData(cg.weaponSelect)->isMGSet)
+		if (CHECKBITWISE(GetWeaponTableData(cg.weaponSelect)->type, WEAPON_TYPE_MG | WEAPON_TYPE_SET))
 		{
 			CG_FinishWeaponChange(cg.weaponSelect, ps->nextWeapon);
 		}
 	}
 
 	// don't let players run with rifles -- speed 80 == crouch, 128 == walk, 256 == run until player start to don't run
-	if (GetWeaponTableData(ps->weapon)->isScoped && VectorLength(ps->velocity) > 127)
+	if ((GetWeaponTableData(ps->weapon)->type & WEAPON_TYPE_SCOPED) && VectorLength(ps->velocity) > 127)
 	{
 		CG_FinishWeaponChange(ps->weapon, GetWeaponTableData(ps->weapon)->weapAlts);
 	}

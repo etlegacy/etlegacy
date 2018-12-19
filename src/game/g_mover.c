@@ -585,7 +585,7 @@ qboolean G_MoverPush(gentity_t *pusher, vec3_t move, vec3_t amove, gentity_t **o
 		{
 			if (check->methodOfDeath == MOD_LANDMINE)
 			{
-				if (check->s.teamNum >= 0 && check->s.teamNum < 4)
+				if (check->s.effect1Time == 1)
 				{
 					LandMineTrigger(check);
 				}
@@ -3664,8 +3664,7 @@ void Static_Pain(gentity_t *ent, gentity_t *attacker, int damage, vec3_t point)
 
 		// TBD only venom mg42 rocket and grenade can inflict damage
 		if (attacker && attacker->client
-		    && (GetWeaponTableData(attacker->s.weapon)->isGrenade
-		        || GetWeaponTableData(attacker->s.weapon)->isPanzer
+		    && ((GetWeaponTableData(attacker->s.weapon)->type & (WEAPON_TYPE_GRENADE | WEAPON_TYPE_PANZER))
 		        || attacker->client->ps.persistant[PERS_HWEAPON_USE]))
 		{
 

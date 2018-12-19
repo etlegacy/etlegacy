@@ -1387,7 +1387,7 @@ void CG_LimboPanel_SendSetupMsg(qboolean forceteam)
 	}
 	else
 	{
-		if (GetWeaponTableData(weap2)->isAkimbo)
+		if (GetWeaponTableData(weap2)->attributs & WEAPON_ATTRIBUT_AKIMBO)
 		{
 			CG_PriorityCenterPrint(va(CG_TranslateString("You will spawn as an %s %s with a %s and %s."), str, BG_ClassnameForNumber(CG_LimboPanel_GetClass()), GetWeaponTableData(weap1)->desc, GetWeaponTableData(weap2)->desc), 400, cg_fontScaleCP.value, -1);
 		}
@@ -2397,20 +2397,23 @@ static vec4_t clrDrawWeapon = { 1.f, 1.f, 1.f, 0.6f };
  */
 void CG_LimboPanel_WeaponPanel_DrawWeapon(rectDef_t *rect, weapon_t weap, qboolean highlight, const char *ofTxt, qboolean disabled)
 {
-	qhandle_t shader = cgs.media.limboWeaponCard;
-	int       width;
-	float     x;
-	vec4_t    clr;
+	int    width;
+	float  x;
+	float  x2;
+	float  y2;
+	float  w;
+	float  h;
+	vec4_t clr;
 
 	width = CG_Text_Width_Ext(ofTxt, 0.2f, 0, &cgs.media.limboFont2);
 	x     = rect->x + rect->w - width - 4;
 
-	CG_DrawPic(rect->x, rect->y, rect->w, rect->h, shader);
+	CG_DrawPic(rect->x, rect->y, rect->w, rect->h, cgs.media.limboWeaponCard);
 
 	if (highlight && BG_CursorInRect(rect))
 	{
 		Vector4Copy(weaponPanelNameFont.colour, clr);
-		clr[3] *= 1.5;
+		clr[3] *= 1.5f;
 		CG_Text_Paint_Ext(rect->x + 4, rect->y + 12, weaponPanelNameFont.scalex, weaponPanelNameFont.scaley, clr, GetWeaponTableData(weap)->desc, 0, 0, weaponPanelNameFont.style, weaponPanelNameFont.font);
 	}
 	else
@@ -2418,28 +2421,25 @@ void CG_LimboPanel_WeaponPanel_DrawWeapon(rectDef_t *rect, weapon_t weap, qboole
 		CG_Text_Paint_Ext(rect->x + 4, rect->y + 12, weaponPanelNameFont.scalex, weaponPanelNameFont.scaley, weaponPanelNameFont.colour, GetWeaponTableData(weap)->desc, 0, 0, weaponPanelNameFont.style, weaponPanelNameFont.font);
 	}
 
+	x2 = rect->x;
+	y2 = rect->y + (rect->h * 0.25f);
+	w  = cg_weapons[weap].weaponCardScale[0] * rect->w;
+	h  = cg_weapons[weap].weaponCardScale[1] * rect->h * 0.75f;
+
+	trap_R_SetColor(NULL);
+
+	CG_DrawPicST(x2, y2, w, h,
+	             cg_weapons[weap].weaponCardPointS[0], cg_weapons[weap].weaponCardPointT[0],
+	             cg_weapons[weap].weaponCardPointS[1], cg_weapons[weap].weaponCardPointT[1],
+	             cg_weapons[weap].weaponCardIcon);
+
+	if (disabled)
 	{
-		float x2, y2, w, h, s0, s1, t0, t1;
-
+		trap_R_SetColor(clrDrawWeapon);
+		CG_DrawPic(x2, y2 + 4 + (h - 16) * 0.5f, w, 16, cgs.media.limboWeaponCardOOS);
 		trap_R_SetColor(NULL);
-
-		x2 = rect->x;
-		y2 = rect->y + (rect->h * 0.25f);
-
-		CG_LimboPanel_GetWeaponCardIconData(weap, &shader, &w, &h, &s0, &t0, &s1, &t1);
-
-		w *= rect->w;
-		h *= rect->h * 0.75f;
-
-		CG_DrawPicST(x2, y2, w, h, s0, t0, s1, t1, shader);
-
-		if (disabled)
-		{
-			trap_R_SetColor(clrDrawWeapon);
-			CG_DrawPic(x2, y2 + 4 + (h - 16) * 0.5f, w, 16, cgs.media.limboWeaponCardOOS);
-			trap_R_SetColor(NULL);
-		}
 	}
+
 	CG_Text_Paint_Ext(x, rect->y + rect->h - 2, 0.2f, 0.2f, colorBlack, ofTxt, 0, 0, 0, &cgs.media.limboFont2);
 }
 
@@ -3329,38 +3329,6 @@ void CG_LimboPanel_KeyHandling(int key, qboolean down)
 	}
 }
 
-/**
- * @brief CG_LimboPanel_GetWeaponCardIconData
- * @param[in] weap
- * @param[out] shader
- * @param[out] w
- * @param[out] h
- * @param[out] s0
- * @param[out] t0
- * @param[out] s1
- * @param[out] t1
- */
-void CG_LimboPanel_GetWeaponCardIconData(weapon_t weap, qhandle_t *shader, float *w, float *h, float *s0, float *t0, float *s1, float *t1)
-{
-	// setup the shader
-	// FIXME: weapon card MORTAR 2
-	switch (GetWeaponTableData(weap)->weaponCardIcon)
-	{
-	case WEAPON_CARD_1: *shader = cgs.media.limboWeaponCard1; break;
-	case WEAPON_CARD_2: *shader = cgs.media.limboWeaponCard2; break;
-	case WEAPON_CARD_3: *shader = cgs.media.limboWeaponCard3; break;
-	case WEAPON_CARD_NONE:
-	default: *shader = 0; break; // shouldn't happen
-	}
-
-	*w  = GetWeaponTableData(weap)->weaponCardCoord[WEAPON_CARD_COORD_W];
-	*h  = GetWeaponTableData(weap)->weaponCardCoord[WEAPON_CARD_COORD_H];
-	*s0 = GetWeaponTableData(weap)->weaponCardCoord[WEAPON_CARD_COORD_S0];
-	*s1 = GetWeaponTableData(weap)->weaponCardCoord[WEAPON_CARD_COORD_S1];
-	*t0 = GetWeaponTableData(weap)->weaponCardCoord[WEAPON_CARD_COORD_T0];  // FIXME WP_MORTAR2
-	*t1 = GetWeaponTableData(weap)->weaponCardCoord[WEAPON_CARD_COORD_T1];  // FIXME WP_MORTAR2
-}
-
 // Utility funcs
 
 /**
@@ -3811,7 +3779,7 @@ qboolean CG_LimboPanel_RealWeaponIsDisabled(weapon_t weapon)
 	}
 
 	// never restrict normal weapons
-	if (!(GetWeaponTableData(weapon)->isHeavyWeapon || GetWeaponTableData(weapon)->isRifle))
+	if (!(GetWeaponTableData(weapon)->skillBased == SK_HEAVY_WEAPONS || (GetWeaponTableData(weapon)->type & WEAPON_TYPE_RIFLENADE)))
 	{
 		return qfalse;
 	}
@@ -3820,7 +3788,7 @@ qboolean CG_LimboPanel_RealWeaponIsDisabled(weapon_t weapon)
 	wcount = CG_LimboPanel_TeamCount(weapon);
 
 	// heavy weapon restriction
-	if (GetWeaponTableData(weapon)->isHeavyWeapon)
+	if (GetWeaponTableData(weapon)->skillBased == SK_HEAVY_WEAPONS)
 	{
 		if (wcount >= ceil(count * cgs.weaponRestrictions))
 		{
@@ -3828,19 +3796,19 @@ qboolean CG_LimboPanel_RealWeaponIsDisabled(weapon_t weapon)
 		}
 	}
 
-	if (GetWeaponTableData(weapon)->isPanzer)
+	if (GetWeaponTableData(weapon)->type & WEAPON_TYPE_PANZER)
 	{
 		maxCount = cg.maxPanzers;
 	}
-	else if (GetWeaponTableData(weapon)->isMortar || GetWeaponTableData(weapon)->isMortarSet)
+	else if (GetWeaponTableData(weapon)->type & WEAPON_TYPE_MORTAR)
 	{
 		maxCount = cg.maxMortars;
 	}
-	else if (GetWeaponTableData(weapon)->isMG || GetWeaponTableData(weapon)->isMGSet)
+	else if (GetWeaponTableData(weapon)->type & WEAPON_TYPE_MG)
 	{
 		maxCount = cg.maxMg42s;
 	}
-	else if (GetWeaponTableData(weapon)->isRifle || GetWeaponTableData(weapon)->isRiflenade)
+	else if (GetWeaponTableData(weapon)->type & (WEAPON_TYPE_RIFLE | WEAPON_TYPE_RIFLENADE))
 	{
 		maxCount = cg.maxRiflegrenades;
 	}

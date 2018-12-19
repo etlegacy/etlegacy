@@ -22,10 +22,16 @@ weaponDef
 		spinupSound			"sound/weapons/rocket/rocket_charge.wav"		// sound started when fire button goes down, and stepped on when the first fire event happens
 		//spindownSound		""									// sound called if the above is running but player doesn't follow through and fire
 		//switchSound		""									// allow overriding of weaponswitch sound
+		noAmmoSound         "sound/weapons/misc/fire_dry.wav"
 		
 		weaponIcon			"icons/iconw_bazooka"
 		weaponIconScale		2
 		weaponSelectedIcon	"icons/iconw_bazooka_1_select"
+		
+		weaponCardIcon      "gfx/limbo/weaponcard03"
+		weaponCardScale     1 1
+		weaponCardPointS    0 1
+		weaponCardPointT    0.125 0.25
 		
 		missileModel		"models/weapons2/bazooka/bazooka_rocket.md3"
 		missileSound		"sound/weapons/rocket/rocket_fly.wav"
@@ -34,6 +40,7 @@ weaponDef
 		missileDlightColor	0.75 0.3 0.0
 		
 		//ejectBrassFunc		"PanzerFaustEjectBrass"				// supports "MachineGunEjectBrass" and "PanzerFaustEjectBrass"
+		ejectBrassOffset    -24 -4 24
 		
 		//modModel 1		""
 		

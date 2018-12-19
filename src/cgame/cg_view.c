@@ -590,7 +590,7 @@ static void CG_OffsetFirstPersonView(void)
 	origin = cg.refdef_current->vieworg;
 	angles = cg.refdefViewAngles;
 
-	if (GetWeaponTableData(cg.snap->ps.weapon)->isMGSet)
+	if (CHECKBITWISE(GetWeaponTableData(cg.snap->ps.weapon)->type, WEAPON_TYPE_MG | WEAPON_TYPE_SET))
 	{
 		vec3_t forward, point;
 		float  oldZ = origin[2];
@@ -603,7 +603,7 @@ static void CG_OffsetFirstPersonView(void)
 
 		origin[2] = oldZ;
 	}
-	else if (GetWeaponTableData(cg.snap->ps.weapon)->isMortarSet)
+	else if (CHECKBITWISE(GetWeaponTableData(cg.snap->ps.weapon)->type, WEAPON_TYPE_MORTAR | WEAPON_TYPE_SET))
 	{
 		vec3_t forward, point;
 		float  oldZ = origin[2];
@@ -844,7 +844,7 @@ void CG_ZoomIn_f(void)
 	// fixed being able to "latch" your zoom by weaponcheck + quick zoomin
 	// - change for zoom view in demos
 	// zoom if weapon is scoped or if binoc is scoped
-	if (GetWeaponTableData(cg_entities[cg.snap->ps.clientNum].currentState.weapon)->isScoped)
+	if (GetWeaponTableData(cg_entities[cg.snap->ps.clientNum].currentState.weapon)->type & WEAPON_TYPE_SCOPED)
 	{
 		CG_AdjustZoomVal(-(cg_zoomStepSniper.value)
 		                 , GetWeaponTableData(cg_entities[cg.snap->ps.clientNum].currentState.weapon)->zoomOut
@@ -864,7 +864,7 @@ void CG_ZoomIn_f(void)
 void CG_ZoomOut_f(void)
 {
 	// zoom if weapon is scoped or if binoc is scoped
-	if (GetWeaponTableData(cg_entities[cg.snap->ps.clientNum].currentState.weapon)->isScoped)
+	if (GetWeaponTableData(cg_entities[cg.snap->ps.clientNum].currentState.weapon)->type & WEAPON_TYPE_SCOPED)
 	{
 		CG_AdjustZoomVal(cg_zoomStepSniper.value
 		                 , GetWeaponTableData(cg_entities[cg.snap->ps.clientNum].currentState.weapon)->zoomOut
@@ -919,7 +919,7 @@ void CG_Zoom(void)
 		cg.zoomTime    = cg.time;
 		cg.zoomval     = cg_zoomDefaultSniper.value; // was DefaultBinoc, changed per atvi req
 	}
-	else if (GetWeaponTableData(weapon)->isScoped) // check for scope weapon in use, and change to if necessary
+	else if (GetWeaponTableData(weapon)->type & WEAPON_TYPE_SCOPED) // check for scope weapon in use, and change to if necessary
 	{
 		if (cg.zoomed)
 		{
@@ -1055,7 +1055,7 @@ static int CG_CalcFov(void)
 	{
 		fov_x = 55;
 	}
-	else if (GetWeaponTableData(cg.snap->ps.weapon)->isMGSet)
+	else if (CHECKBITWISE(GetWeaponTableData(cg.snap->ps.weapon)->type, WEAPON_TYPE_MG | WEAPON_TYPE_SET))
 	{
 		fov_x = 55;
 	}
@@ -1656,7 +1656,7 @@ void CG_DrawSkyBoxPortal(qboolean fLocalView)
 
 		rd.rdflags &= ~RDF_SNOOPERVIEW;
 
-		if (BG_PlayerMounted(cg.snap->ps.eFlags) || GetWeaponTableData(cg.predictedPlayerState.weapon)->isMGSet)
+		if (BG_PlayerMounted(cg.snap->ps.eFlags) || (CHECKBITWISE(GetWeaponTableData(cg.predictedPlayerState.weapon)->type, WEAPON_TYPE_MG | WEAPON_TYPE_SET)))
 		{
 			fov_x = 55;
 		}

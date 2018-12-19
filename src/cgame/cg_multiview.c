@@ -473,10 +473,10 @@ void CG_mvUpdateClientInfo(int pID)
 		if (ci->weaponState != ci->weaponState_last)
 		{
 			ci->weaponState_last = ci->weaponState;
-			ci->grenadeTimeStart = (ci->weaponState == WSTATE_FIRE && GetWeaponTableData(weap)->isGrenade) ? 4000 + cg.time : 0;
+			ci->grenadeTimeStart = (ci->weaponState == WSTATE_FIRE && GetWeaponTableData(weap)->grenadeTime) ? GetWeaponTableData(weap)->grenadeTime + cg.time : 0;
 		}
 
-		if (ci->weaponState == WSTATE_FIRE && GetWeaponTableData(weap)->isGrenade)
+		if (ci->weaponState == WSTATE_FIRE && GetWeaponTableData(weap)->grenadeTime)
 		{
 			ci->grenadeTimeLeft = ci->grenadeTimeStart - cg.time;
 			if (ci->grenadeTimeLeft < 0)

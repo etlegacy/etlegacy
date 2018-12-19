@@ -862,7 +862,7 @@ int CG_PredictionOk(playerState_t *ps1, playerState_t *ps2)
 	{
 		if (ps2->ammo[i] != ps1->ammo[i] || ps2->ammoclip[i] != ps1->ammoclip[i])
 		{
-			if (!GetWeaponTableData(i)->isMeleeWeapon) // FIXME: predict knife?
+			if (!(GetWeaponTableData(i)->type & WEAPON_TYPE_MELEE)) // FIXME: predict knife?
 			{
 				return 22;
 			}
@@ -1294,7 +1294,7 @@ void CG_PredictPlayerState(void)
 				CG_AdjustPositionForMover(cg.predictedPlayerState.origin, cg.predictedPlayerState.groundEntityNum, cg.physicsTime, cg.oldTime, adjusted, deltaAngles);
 				// add the deltaAngles (fixes jittery view while riding trains)
 				// only do this if player is prone or using set mortar
-				if ((cg.predictedPlayerState.eFlags & EF_PRONE) || GetWeaponTableData(cg.weaponSelect)->isMortarSet)
+				if ((cg.predictedPlayerState.eFlags & EF_PRONE) || CHECKBITWISE(GetWeaponTableData(cg.weaponSelect)->type, WEAPON_TYPE_MORTAR | WEAPON_TYPE_SET))
 				{
 					cg.predictedPlayerState.delta_angles[YAW] += ANGLE2SHORT(deltaAngles[YAW]);
 				}

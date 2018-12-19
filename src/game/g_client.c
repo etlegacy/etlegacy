@@ -1003,21 +1003,17 @@ static void AddExtraSpawnAmmo(gclient_t *client, weapon_t weaponNum)
 		return;
 	}
 
-	if (GetWeaponTableData(weaponNum)->isPistol || GetWeaponTableData(weaponNum)->isSilencedPistol || GetWeaponTableData(weaponNum)->isRifle || weaponNum == WP_STEN || weaponNum == WP_MP34)
+	if (GetWeaponTableData(weaponNum)->type & WEAPON_TYPE_PISTOL)
 	{
-		if (client->sess.playerType == PC_COVERTOPS && (weaponNum == WP_STEN || weaponNum == WP_MP34))
-		{
-			client->ps.ammo[GetWeaponTableData(weaponNum)->ammoIndex] *= 2;
-		}
-
 		if (client->sess.skill[SK_LIGHT_WEAPONS] >= 1)
 		{
 			client->ps.ammo[GetWeaponTableData(weaponNum)->ammoIndex] += GetWeaponTableData(weaponNum)->maxClip;
 		}
 	}
-	else if (GetWeaponTableData(weaponNum)->isSMG)
+	else if (GetWeaponTableData(weaponNum)->type & WEAPON_TYPE_SMG)
 	{
-		if (client->sess.playerType == PC_SOLDIER)
+		// soldier start with x2 ammo for mp40/thompson and cover-ops with x2 for sten/mp34
+		if (client->sess.playerType == PC_SOLDIER || client->sess.playerType == PC_COVERTOPS)
 		{
 			client->ps.ammo[GetWeaponTableData(weaponNum)->ammoIndex] *= 2;
 		}
@@ -1032,14 +1028,14 @@ static void AddExtraSpawnAmmo(gclient_t *client, weapon_t weaponNum)
 			client->ps.ammo[GetWeaponTableData(weaponNum)->ammoIndex] -= GetWeaponTableData(weaponNum)->maxClip;
 		}
 	}
-	else if (GetWeaponTableData(weaponNum)->isRiflenade)
+	else if (GetWeaponTableData(weaponNum)->type & WEAPON_TYPE_RIFLENADE)
 	{
 		if (client->sess.skill[SK_EXPLOSIVES_AND_CONSTRUCTION] >= 1)
 		{
 			client->ps.ammo[GetWeaponTableData(weaponNum)->ammoIndex] += 4;
 		}
 	}
-	else if (GetWeaponTableData(weaponNum)->isGrenade)
+	else if (GetWeaponTableData(weaponNum)->type & WEAPON_TYPE_GRENADE)
 	{
 		if (client->sess.playerType == PC_ENGINEER)
 		{
@@ -1056,23 +1052,16 @@ static void AddExtraSpawnAmmo(gclient_t *client, weapon_t weaponNum)
 			}
 		}
 	}
-	else if (GetWeaponTableData(weaponNum)->isSyringe)
+	else if (GetWeaponTableData(weaponNum)->type & WEAPON_TYPE_SYRINGUE)
 	{
 		if (client->sess.skill[SK_FIRST_AID] >= 2)
 		{
 			client->ps.ammo[GetWeaponTableData(weaponNum)->ammoIndex] += 2;
 		}
 	}
-	else if (GetWeaponTableData(GetWeaponTableData(weaponNum)->weapAlts)->isScoped)
+	else if (GetWeaponTableData(weaponNum)->type & WEAPON_TYPE_RIFLE)
 	{
-		if (client->sess.skill[SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS] >= 1 || client->sess.skill[SK_LIGHT_WEAPONS] >= 1)
-		{
-			client->ps.ammo[GetWeaponTableData(weaponNum)->ammoIndex] += GetWeaponTableData(weaponNum)->maxClip;
-		}
-	}
-	else if (GetWeaponTableData(weaponNum)->isScoped)
-	{
-		if (client->sess.skill[SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS] >= 1)
+		if (client->sess.skill[SK_LIGHT_WEAPONS] >= 1 || (client->sess.playerType == PC_COVERTOPS && client->sess.skill[SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS] >= 1))
 		{
 			client->ps.ammo[GetWeaponTableData(weaponNum)->ammoIndex] += GetWeaponTableData(weaponNum)->maxClip;
 		}
@@ -1093,7 +1082,7 @@ void AddWeaponToPlayer(gclient_t *client, weapon_t weapon, int ammo, int ammocli
 	client->ps.ammoclip[GetWeaponTableData(weapon)->clipIndex] = ammoclip;
 	client->ps.ammo[GetWeaponTableData(weapon)->ammoIndex]     = ammo;
 
-	if (GetWeaponTableData(weapon)->isAkimbo)
+	if (GetWeaponTableData(weapon)->attributs & WEAPON_ATTRIBUT_AKIMBO)
 	{
 		client->ps.ammoclip[GetWeaponTableData(GetWeaponTableData(weapon)->akimboSideArm)->clipIndex] = GetWeaponTableData(weapon)->defaultStartingClip;
 	}

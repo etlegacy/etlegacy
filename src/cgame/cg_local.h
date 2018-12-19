@@ -71,7 +71,7 @@
 
 #define STAT_MINUS          10      ///< num frame for '-' stats digit
 
-#define	NOTIFY_WIDTH        80
+#define NOTIFY_WIDTH        80
 #define NOTIFY_HEIGHT       5
 
 #define TEAMCHAT_WIDTH      70
@@ -746,6 +746,11 @@ typedef struct weaponInfo_s
 
 	qhandle_t weaponIcon[2];            ///< [0] is weap icon, [1] is highlight icon
 	int weaponIconScale;
+    
+    qhandle_t weaponCardIcon;
+    vec2_t weaponCardScale;
+    vec2_t weaponCardPointS;
+    vec2_t weaponCardPointT;
 
 	qhandle_t missileModel;
 	qhandle_t missileAlliedSkin;
@@ -757,6 +762,7 @@ typedef struct weaponInfo_s
 	int missileRenderfx;
 
 	void (*ejectBrassFunc)(centity_t *);
+	vec3_t ejectBrassOffset;
 
 	sfxHandle_t readySound;             ///< an amibient sound the weapon makes when it's /not/ firing
 	sfxHandle_t firingSound;
@@ -768,6 +774,7 @@ typedef struct weaponInfo_s
 	sfxHandle_t spindownSound;      ///< sound called if the above is running but player doesn't follow through and fire
 
 	sfxHandle_t switchSound;
+	sfxHandle_t noAmmoSound;
 } weaponInfo_t;
 
 #define MAX_VIEWDAMAGE  8
@@ -1548,7 +1555,6 @@ typedef struct
 
 	sfxHandle_t sfx_knifehit[5];
 	sfxHandle_t gibSound;
-	sfxHandle_t noAmmoSound;
 	sfxHandle_t landSound[FOOTSTEP_TOTAL];
 
 	sfxHandle_t fiveMinuteSound_g, fiveMinuteSound_a;
@@ -1691,9 +1697,6 @@ typedef struct
 	qhandle_t limboSkillsBS;
 
 	qhandle_t limboCounterBorder;
-	qhandle_t limboWeaponCard1;
-	qhandle_t limboWeaponCard2;
-	qhandle_t limboWeaponCard3;
 	qhandle_t limboWeaponCardArrow;
 	qhandle_t limboObjectiveBack[3];
 	qhandle_t limboClassBar;
@@ -2115,7 +2118,7 @@ typedef struct cgs_s
 	int teamLastChatPos;
 
 	// New notify mechanism for obits
-	char notifyMsgs[NOTIFY_HEIGHT][NOTIFY_WIDTH*3+1];
+	char notifyMsgs[NOTIFY_HEIGHT][NOTIFY_WIDTH * 3 + 1];
 	//int notifyMsgTimes[NOTIFY_HEIGHT];
 	int notifyPos;
 	int notifyLastPos;
@@ -3427,7 +3430,6 @@ void CG_LimboPanel_NameEditFinish(panel_button_t *button);
 void CG_LimboPanel_Setup(void);
 void CG_LimboPanel_Init(void);
 
-void CG_LimboPanel_GetWeaponCardIconData(weapon_t weap, qhandle_t *shader, float *w, float *h, float *s0, float *t0, float *s1, float *t1);
 void CG_LimboPanel_RequestObjective(void);
 void CG_LimboPanel_RequestWeaponStats(void);
 qboolean CG_LimboPanel_Draw(void);

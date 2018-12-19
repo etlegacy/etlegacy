@@ -23,10 +23,16 @@ weaponDef
 		//spinupSound		""									// sound started when fire button goes down, and stepped on when the first fire event happens
 		//spindownSound		""									// sound called if the above is running but player doesn't follow through and fire
 		switchSound			"sound/weapons/mortar/mortar_off.wav"		// allow overriding of weaponswitch sound
+		noAmmoSound         "sound/weapons/misc/fire_dry.wav"
 		
 		weaponIcon			"icons/iconw_mortar"
 		weaponIconScale		2
 		weaponSelectedIcon	"icons/iconw_mortar_1_select"
+		
+		weaponCardIcon      "gfx/limbo/weaponcard01"
+		weaponCardScale     1 1
+		weaponCardPointS    0 1
+		weaponCardPointT    0 0.125
 		
 		//missileModel		""
 		//missileSound		""
@@ -35,6 +41,7 @@ weaponDef
 		//missileDlightColor	0 0 0							// do we still use this?
 		
 		//ejectBrassFunc	""									// supports "MachineGunEjectBrass" and "PanzerFaustEjectBrass"
+		//ejectBrassOffset  0 0 0
 		
 		//modModel 1		""
 		

@@ -21,10 +21,16 @@ weaponDef
 		//spinupSound		""									// sound started when fire button goes down, and stepped on when the first fire event happens
 		//spindownSound		""									// sound called if the above is running but player doesn't follow through and fire
 		//switchSound		""									// allow overriding of weaponswitch sound
+		//noAmmoSound       ""
 		
 		weaponIcon			"icons/iconw_satchel"
 		weaponIconScale		1
 		weaponSelectedIcon	"icons/iconw_satchel_1_select"
+		
+		//weaponCardIcon    ""
+		//weaponCardScale   0 0
+		//weaponCardPointS  0 0
+		//weaponCardPointT  0 0
 		
 		missileModel		"models/multiplayer/satchel/satchel_world.md3"
 		missileaxisskin		"models/multiplayer/satchel/satchel_axis.skin"
@@ -35,6 +41,7 @@ weaponDef
 		//missileDlightColor	0 0 0							// do we still use this?
 		
 		//ejectBrassFunc	""									// supports "MachineGunEjectBrass" and "PanzerFaustEjectBrass"
+		//ejectBrassOffset  0 0 0
 		
 		//modModel 1		""
 		

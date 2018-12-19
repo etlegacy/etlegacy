@@ -812,7 +812,7 @@ void G_InitGentity(gentity_t *e)
  */
 gentity_t *G_Spawn(void)
 {
-	int       i  = 0, force;
+	int       i = 0, force;
 	gentity_t *e = NULL;
 
 	for (force = 0 ; force < 2 ; force++)
@@ -1869,11 +1869,10 @@ team_t G_GetTeamFromEntity(gentity_t *ent)
 		case MOD_MORTAR2:
 		case MOD_SMOKEBOMB:
 		case MOD_SMOKEGRENADE:
-			return ent->s.teamNum;
 		case MOD_SATCHEL:
 		case MOD_DYNAMITE:
 		case MOD_LANDMINE:
-			return ent->s.teamNum % 4;
+			return ent->s.teamNum;
 		default:
 			break;
 		}

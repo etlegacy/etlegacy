@@ -557,23 +557,32 @@ void Use_Shooter(gentity_t *ent, gentity_t *other, gentity_t *activator)
 
 	VectorNormalize(dir);
 
-	if (GetWeaponTableData(ent->s.weapon)->isGrenade)
+	if (GetWeaponTableData(ent->s.weapon)->type & WEAPON_TYPE_GRENADE)
 	{
 		VectorScale(dir, 700, dir);                   // had to add this as fire_grenade now expects a non-normalized direction vector
 		                                              // FIXME: why we do normalize the vector before this switch? See comment of fire_grenade
-		fire_grenade(ent, ent->s.origin, dir, ent->s.weapon);
+		fire_missile(ent, ent->s.origin, dir, ent->s.weapon);
 	}
-	else if (GetWeaponTableData(ent->s.weapon)->isPanzer)
+	else if (GetWeaponTableData(ent->s.weapon)->type & WEAPON_TYPE_PANZER)
 	{
-		fire_rocket(ent, ent->s.origin, dir, ent->s.weapon);
-		VectorScale(ent->s.pos.trDelta, 2, ent->s.pos.trDelta);
-		SnapVector(ent->s.pos.trDelta);             // save net bandwidth
+		VectorNormalize(dir);
+		VectorScale(dir, 5000, dir);
+		fire_missile(ent, ent->s.origin, dir, ent->s.weapon);
 	}
 	else if (ent->s.weapon == WP_MAPMORTAR)
 	{
-		AimAtTarget(ent);     // store in ent->s.origin2 the direction/force needed to pass through the target
 		VectorScale(dir, VectorLength(ent->s.origin2), dir);
-		fire_mortar(ent, ent->s.origin, dir);
+		fire_missile(ent, ent->s.origin, dir, ent->s.weapon);
+
+		if (ent->spawnflags)
+		{
+			gentity_t *tent;
+
+			tent            = G_TempEntity(ent->s.pos.trBase, EV_MORTAREFX);
+			tent->s.density = ent->spawnflags; // send smoke and muzzle flash flags
+			VectorCopy(ent->s.pos.trBase, tent->s.origin);
+			VectorCopy(ent->s.apos.trBase, tent->s.angles);
+		}
 	}
 
 	G_AddEvent(ent, EV_FIRE_WEAPON, 0);
@@ -2362,15 +2371,15 @@ void landmine_setup(gentity_t *ent)
 	trace_t tr;
 	vec3_t  end;
 
-	VectorSet(ent->r.mins, -16, -16, 0);
+	VectorCopy(GetWeaponFireTableData(WP_LANDMINE)->boudingBox[0], ent->r.mins);
 	VectorCopy(ent->r.mins, ent->r.absmin);
-	VectorSet(ent->r.maxs, 16, 16, 16);
+	VectorCopy(GetWeaponFireTableData(WP_LANDMINE)->boudingBox[1], ent->r.maxs);
 	VectorCopy(ent->r.maxs, ent->r.absmax);
 
 	// drop to floor
 	VectorCopy(ent->s.origin, end);
 	end[2] -= 64;
-	trap_Trace(&tr, ent->s.origin, NULL, NULL, end, ent->s.number, GetWeaponTableData(WP_LANDMINE)->clipMask);
+	trap_Trace(&tr, ent->s.origin, NULL, NULL, end, ent->s.number, GetWeaponFireTableData(WP_LANDMINE)->clipMask);
 
 	if (tr.startsolid || tr.fraction == 1.f || !(tr.surfaceFlags & (SURF_GRASS | SURF_SNOW | SURF_GRAVEL | SURF_LANDMINE)) ||
 	    (tr.entityNum != ENTITYNUM_WORLD && (!g_entities[tr.entityNum].inuse || g_entities[tr.entityNum].s.eType != ET_CONSTRUCTIBLE)))
@@ -2380,25 +2389,20 @@ void landmine_setup(gentity_t *ent)
 		return;
 	}
 
+	G_PreFilledMissileEntity(ent, WP_LANDMINE, WP_LANDMINE, ENTITYNUM_WORLD, ent->s.teamNum, ent->s.clientNum, ent->parent, tr.endpos, tr.endpos);
+
 	G_SetOrigin(ent, tr.endpos);
 	ent->s.pos.trDelta[2] = 1.f;
 	ent->s.time           = ent->s.angles[1] + 90;
 
-	G_PreFilledMissileEntity(ent, WP_LANDMINE, WP_LANDMINE, ENTITYNUM_WORLD, ent->s.teamNum, ent->s.clientNum, ent->parent);
-
 	// all fine
-	ent->takedamage    = qtrue;
-	ent->r.contents    = CONTENTS_CORPSE;       // (player can walk through)
-	ent->health        = 0;
+	ent->health        = 0;                      // overwrite
 	ent->s.modelindex2 = 0;
 	ent->nextthink     = level.time + FRAMETIME; // overwrite nextthink
 	ent->think         = G_LandmineThink;
 
 	// map mines crosshair id
 	ent->s.otherEntityNum = MAX_CLIENTS + 1;
-
-	// store team so we can generate red or blue smoke
-	ent->s.otherEntityNum2 = (ent->s.teamNum == TEAM_AXIS);
 
 	trap_LinkEntity(ent);
 }
@@ -2787,25 +2791,70 @@ qboolean G_FlingClient(gentity_t *vic, int flingType)
  * @param[in] clientNum
  * @param[in] parent
  */
-void G_PreFilledMissileEntity(gentity_t *ent, int weaponNum, int realWeapon, int ownerNum, int teamNum, int clientNum, gentity_t *parent)
+void G_PreFilledMissileEntity(gentity_t *ent, int weaponNum, int realWeapon, int ownerNum, team_t teamNum, int clientNum, gentity_t *parent, const vec3_t start, const vec3_t dir)
 {
-	ent->s.weapon            = realWeapon;
-	ent->r.ownerNum          = ownerNum;
+	//
+	// weapon depend
+	//
+
+	// generic
 	ent->parent              = parent;
-	ent->s.teamNum           = teamNum;
-	ent->s.clientNum         = clientNum;
-	ent->classname           = GetWeaponTableData(weaponNum)->className;
-	ent->s.eType             = GetWeaponTableData(weaponNum)->eType;
-	ent->r.svFlags           = GetWeaponTableData(weaponNum)->svFlags;
-	ent->nextthink           = GetWeaponTableData(weaponNum)->nextThink ? level.time + GetWeaponTableData(weaponNum)->nextThink : 0;
-	ent->s.eFlags            = GetWeaponTableData(weaponNum)->eFlags;
-	ent->classname           = GetWeaponTableData(weaponNum)->className;
-	ent->damage              = GetWeaponTableData(weaponNum)->damage;
-	ent->splashDamage        = GetWeaponTableData(weaponNum)->splashDamage;
-	ent->methodOfDeath       = GetWeaponTableData(weaponNum)->mod;
-	ent->splashMethodOfDeath = GetWeaponTableData(weaponNum)->splashMod;
-	ent->splashRadius        = GetWeaponTableData(weaponNum)->splashRadius;  // blast radius proportional to damage for ALL weapons
-	ent->clipmask            = GetWeaponTableData(weaponNum)->clipMask;
-	ent->s.pos.trType        = GetWeaponTableData(weaponNum)->trType;
-	ent->s.pos.trTime        = GetWeaponTableData(weaponNum)->trTime ? level.time + GetWeaponTableData(weaponNum)->trTime : 0;   // move a bit on the very first frame
+	ent->classname           = GetWeaponTableData(realWeapon)->className;
+	ent->damage              = GetWeaponTableData(realWeapon)->damage;
+	ent->splashDamage        = GetWeaponTableData(realWeapon)->splashDamage;
+	ent->methodOfDeath       = GetWeaponTableData(realWeapon)->mod;
+	ent->splashMethodOfDeath = GetWeaponTableData(realWeapon)->splashMod;
+	ent->splashRadius        = GetWeaponTableData(realWeapon)->splashRadius;  // blast radius proportional to damage for ALL weapons
+
+	// state
+	ent->s.weapon    = realWeapon;
+	ent->s.teamNum   = teamNum;
+	ent->s.clientNum = clientNum;
+
+	// shared
+	ent->r.ownerNum = ownerNum;
+
+	//
+	// ammun depend
+	//
+
+	// generic
+	ent->nextthink = GetWeaponFireTableData(weaponNum)->nextThink ? level.time + GetWeaponFireTableData(weaponNum)->nextThink : 0;
+	ent->clipmask  = GetWeaponFireTableData(weaponNum)->clipMask;
+	ent->accuracy  = GetWeaponFireTableData(weaponNum)->accuracy;
+	ent->health    = GetWeaponFireTableData(weaponNum)->health;
+	ent->timestamp = GetWeaponFireTableData(weaponNum)->timeStamp ? level.time + GetWeaponFireTableData(weaponNum)->timeStamp : 0;
+
+	// state
+	ent->s.eFlags     = GetWeaponFireTableData(weaponNum)->eFlags;
+	ent->s.pos.trType = GetWeaponFireTableData(weaponNum)->trType;
+	ent->s.pos.trTime = GetWeaponFireTableData(weaponNum)->trTime ? level.time + GetWeaponFireTableData(weaponNum)->trTime : 0;           // move a bit on the very first frame
+	ent->s.eType      = GetWeaponFireTableData(weaponNum)->eType;
+
+	// shared
+	ent->r.svFlags  = GetWeaponFireTableData(weaponNum)->svFlags;
+	ent->r.contents = GetWeaponFireTableData(weaponNum)->contents;
+
+	if (ent->r.contents == CONTENTS_CORPSE)
+	{
+		VectorCopy(GetWeaponFireTableData(weaponNum)->boudingBox[0], ent->r.mins);
+		VectorCopy(GetWeaponFireTableData(weaponNum)->boudingBox[0], ent->r.absmin);
+		VectorCopy(GetWeaponFireTableData(weaponNum)->boudingBox[1], ent->r.maxs);
+		VectorCopy(GetWeaponFireTableData(weaponNum)->boudingBox[1], ent->r.absmax);
+	}
+
+	VectorCopy(start, ent->r.currentOrigin);
+	VectorCopy(start, ent->s.pos.trBase);
+	VectorCopy(dir, ent->s.pos.trDelta);
+
+	// add velocity of player (:sigh: guess people don't like it)
+	//VectorAdd( bolt->s.pos.trDelta, self->s.pos.trDelta, bolt->s.pos.trDelta );
+
+	// add velocity of ground entity
+	if (ent->s.pos.trType == TR_GRAVITY && ent->s.groundEntityNum != ENTITYNUM_NONE && ent->s.groundEntityNum != ENTITYNUM_WORLD)
+	{
+		VectorAdd(ent->s.pos.trDelta, g_entities[ent->s.groundEntityNum].instantVelocity, ent->s.pos.trDelta);
+	}
+
+	SnapVector(ent->s.pos.trDelta);            // save net bandwidth
 }

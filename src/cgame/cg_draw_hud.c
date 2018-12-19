@@ -801,7 +801,7 @@ static void CG_PlayerAmmoValue(int *ammo, int *clips, int *akimboammo)
 	}
 
 	// akimbo ammo clip
-	if (GetWeaponTableData(weap)->isAkimbo)
+	if (GetWeaponTableData(weap)->attributs & WEAPON_ATTRIBUT_AKIMBO)
 	{
 		*akimboammo = ps->ammoclip[GetWeaponTableData(GetWeaponTableData(weap)->akimboSideArm)->clipIndex];
 	}
@@ -944,7 +944,7 @@ static void CG_DrawWeapRecharge(rectDef_t *rect)
 	}
 
 	// display colored charbar if charge bar isn't full enough
-	if (GetWeaponTableData(cg.predictedPlayerState.weapon)->useChargeTime)
+	if (GetWeaponTableData(cg.predictedPlayerState.weapon)->attributs & WEAPON_ATTRIBUT_CHARGE_TIME)
 	{
 		skillType_t skill = GetWeaponTableData(cg.predictedPlayerState.weapon)->skillBased;
 		float       coeff = GetWeaponTableData(cg.predictedPlayerState.weapon)->chargeTimeCoeff[cgs.clientinfo[cg.clientNum].skill[skill]];
@@ -1137,7 +1137,7 @@ skillType_t CG_ClassSkillForPosition(clientInfo_t *ci, int pos)
 		return SK_BATTLE_SENSE;
 	case 2:
 		// draw soldier level if using a heavy weapon instead of light weapons icon
-		if ((BG_PlayerMounted(cg.snap->ps.eFlags) || GetWeaponTableData(cg.snap->ps.weapon)->isHeavyWeapon) && ci->cls != PC_SOLDIER)
+		if ((BG_PlayerMounted(cg.snap->ps.eFlags) || GetWeaponTableData(cg.snap->ps.weapon)->skillBased == SK_HEAVY_WEAPONS) && ci->cls != PC_SOLDIER)
 		{
 			return SK_HEAVY_WEAPONS;
 		}

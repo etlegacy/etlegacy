@@ -53,7 +53,7 @@ void G_BounceMissile(gentity_t *ent, trace_t *trace)
 	gentity_t *ground;
 
 	// boom after 750 msecs
-	if (GetWeaponTableData(ent->s.weapon)->isRiflenade)
+	if (GetWeaponTableData(ent->s.weapon)->type & WEAPON_TYPE_RIFLENADE)
 	{
 		ent->s.effect1Time = qtrue; // has bounced
 
@@ -134,7 +134,7 @@ void G_BounceMissile(gentity_t *ent, trace_t *trace)
 
 			G_SetOrigin(ent, trace->endpos);
 			ent->s.time = level.time; // final rotation value
-			if (GetWeaponTableData(ent->s.weapon)->isRiflenade)
+			if (GetWeaponTableData(ent->s.weapon)->type & WEAPON_TYPE_RIFLENADE)
 			{
 				// explode one 750msecs after launchtime
 				ent->nextthink = level.time + (750 - (level.time + 4000 - ent->nextthink));
@@ -253,7 +253,7 @@ void G_MissileImpact(gentity_t *ent, trace_t *trace, int impactDamage)
 	temp->s.weapon    = ent->s.weapon;
 	temp->s.clientNum = ent->r.ownerNum;
 
-	if (GetWeaponTableData(ent->s.weapon)->isMortarSet)
+	if (CHECKBITWISE(GetWeaponTableData(ent->s.weapon)->type, WEAPON_TYPE_MORTAR | WEAPON_TYPE_SET))
 	{
 		temp->s.legsAnim = ent->s.legsAnim; // need this one as well
 		temp->r.svFlags |= SVF_BROADCAST;
@@ -424,7 +424,7 @@ void G_ExplodeMissile(gentity_t *ent)
 		}
 
 		// give big weapons the shakey shakey
-		if (GetWeaponTableData(ent->s.weapon)->shakeEffect)
+		if (GetWeaponTableData(ent->s.weapon)->attributs & WEAPON_ATTRIBUT_SHAKE)
 		{
 			gentity_t *tent;
 
@@ -490,7 +490,7 @@ void G_RunMissile(gentity_t *ent)
 	BG_EvaluateTrajectory(&ent->s.pos, level.time, origin, qfalse, ent->s.effect2Time);
 
 	// ignore body
-	if ((ent->clipmask & CONTENTS_BODY) && (GetWeaponTableData(ent->s.weapon)->isThrowable || ent->s.weapon == WP_ARTY))
+	if ((ent->clipmask & CONTENTS_BODY) && ((GetWeaponTableData(ent->s.weapon)->firingMode & WEAPON_FIRING_MODE_THROWABLE) || ent->s.weapon == WP_ARTY))
 	{
 		if (ent->s.pos.trDelta[0] == 0.f && ent->s.pos.trDelta[1] == 0.f && ent->s.pos.trDelta[2] == 0.f)
 		{
@@ -499,9 +499,8 @@ void G_RunMissile(gentity_t *ent)
 	}
 
 	if (level.tracemapLoaded &&
-	    (GetWeaponTableData(ent->s.weapon)->isMortarSet
-	     || GetWeaponTableData(ent->s.weapon)->isRiflenade
-	     || GetWeaponTableData(ent->s.weapon)->isGrenade))
+	    (CHECKBITWISE(GetWeaponTableData(ent->s.weapon)->type, WEAPON_TYPE_MORTAR | WEAPON_TYPE_SET)
+	     || (GetWeaponTableData(ent->s.weapon)->type & (WEAPON_TYPE_GRENADE | WEAPON_TYPE_RIFLENADE))))
 	{
 		if (ent->count)
 		{
@@ -579,7 +578,7 @@ void G_RunMissile(gentity_t *ent)
 	// ignoring interactions with the missile owner
 	trap_Trace(&tr, ent->r.currentOrigin, ent->r.mins, ent->r.maxs, origin, ent->r.ownerNum, ent->clipmask);
 
-	if (GetWeaponTableData(ent->s.weapon)->isMortarSet && ent->count2 == 1)
+	if (CHECKBITWISE(GetWeaponTableData(ent->s.weapon)->type, WEAPON_TYPE_MORTAR | WEAPON_TYPE_SET) && ent->count2 == 1)
 	{
 		if (ent->r.currentOrigin[2] > origin[2] && origin[2] - BG_GetGroundHeightAtPoint(origin) < 512)
 		{
@@ -633,9 +632,8 @@ void G_RunMissile(gentity_t *ent)
 		int impactDamage;
 
 		if (level.tracemapLoaded &&
-		    (GetWeaponTableData(ent->s.weapon)->isMortarSet
-		     || GetWeaponTableData(ent->s.weapon)->isRiflenade
-		     || GetWeaponTableData(ent->s.weapon)->isGrenade)
+		    (CHECKBITWISE(GetWeaponTableData(ent->s.weapon)->type, WEAPON_TYPE_MORTAR | WEAPON_TYPE_SET)
+		     || (GetWeaponTableData(ent->s.weapon)->type & (WEAPON_TYPE_GRENADE | WEAPON_TYPE_RIFLENADE)))
 		    && (tr.surfaceFlags & SURF_SKY))
 		{
 			// goes through sky
@@ -644,7 +642,8 @@ void G_RunMissile(gentity_t *ent)
 			G_RunThink(ent);
 			return; // keep flying
 		}
-		else if (tr.surfaceFlags & SURF_NOIMPACT) // never explode or bounce on sky
+
+		if (tr.surfaceFlags & SURF_NOIMPACT) // never explode or bounce on sky
 		{
 			G_FreeEntity(ent);
 			return;
@@ -652,7 +651,8 @@ void G_RunMissile(gentity_t *ent)
 
 		//      G_SetOrigin( ent, tr.endpos );
 
-		if (GetWeaponTableData(ent->s.weapon)->isPanzer || GetWeaponTableData(ent->s.weapon)->isMortarSet)
+		if ((GetWeaponTableData(ent->s.weapon)->type & WEAPON_TYPE_PANZER)
+		    || CHECKBITWISE(GetWeaponTableData(ent->s.weapon)->type, WEAPON_TYPE_MORTAR | WEAPON_TYPE_SET))
 		{
 			impactDamage = 999; // goes through pretty much any func_explosives
 		}
@@ -1121,25 +1121,15 @@ gentity_t *fire_flamechunk(gentity_t *self, vec3_t start, vec3_t dir)
 	}
 
 	self->count2 = 1;
-	VectorNormalize(dir);
 
 	bolt = G_Spawn();
-	G_PreFilledMissileEntity(bolt, WP_FLAMETHROWER, self->s.weapon, self->s.number, TEAM_FREE, -1, self);
+	G_PreFilledMissileEntity(bolt, WP_FLAMETHROWER, self->s.weapon, self->s.number, TEAM_FREE, -1, self, start, dir);
 
-	bolt->timestamp        = level.time;
 	bolt->flameQuotaTime   = level.time + 50;
 	bolt->count2           = 0; // how often it bounced off of something
 	bolt->count            = 1; // this chunk can add hit
 	bolt->s.pos.trDuration = 800;
 	bolt->speed            = FLAME_START_SIZE; // 'speed' will be the current size radius of the chunk
-
-	VectorSet(bolt->r.mins, -4, -4, -4);
-	VectorSet(bolt->r.maxs, 4, 4, 4);
-	VectorCopy(start, bolt->s.pos.trBase);
-	VectorScale(dir, FLAME_START_SPEED, bolt->s.pos.trDelta);
-
-	SnapVector(bolt->s.pos.trDelta);            // save net bandwidth
-	VectorCopy(start, bolt->r.currentOrigin);
 
 	return bolt;
 }
@@ -1286,7 +1276,7 @@ int G_CountTeamLandmines(team_t team)
 			continue;
 		}
 
-		if (e->s.teamNum % 4 == team && e->s.teamNum < 4)
+		if (e->s.teamNum == team && e->s.effect1Time == 1)
 		{
 			cnt++;
 		}
@@ -1327,7 +1317,7 @@ qboolean G_SweepForLandmines(vec3_t origin, float radius, int team)
 			continue;
 		}
 
-		if (e->s.teamNum % 4 != team && e->s.teamNum < 4)
+		if (e->s.teamNum != team && e->s.effect1Time == 1)
 		{
 			VectorSubtract(origin, e->r.currentOrigin, dist);
 			if (VectorLengthSquared(dist) > radius)
@@ -1485,11 +1475,12 @@ void LandminePostThink(gentity_t *self);
  */
 void LandMineTrigger(gentity_t *self)
 {
-	self->r.contents = CONTENTS_CORPSE;
+	self->r.snapshotCallback = qfalse;
+	self->r.contents         = CONTENTS_CORPSE;
 	trap_LinkEntity(self);
-	self->nextthink  = level.time + FRAMETIME;
-	self->think      = LandminePostThink;
-	self->s.teamNum += 8;
+	self->nextthink     = level.time + FRAMETIME;
+	self->think         = LandminePostThink;
+	self->s.effect1Time = 2;    // triggered
 	// communicate trigger time to client
 	self->s.time = level.time;
 }
@@ -1574,7 +1565,7 @@ void G_LandmineThink(gentity_t *self)
 #ifdef FEATURE_OMNIBOT
 		if (!(g_OmniBotFlags.integer & OBF_TRIGGER_MINES) && ent->r.svFlags & SVF_BOT)
 		{
-			if (G_LandmineTeam(self) == ent->client->sess.sessionTeam)
+			if (self->s.teamNum == ent->client->sess.sessionTeam)
 			{
 				continue;
 			}
@@ -1668,25 +1659,13 @@ qboolean G_LandmineSnapshotCallback(int entityNum, int clientNum)
 {
 	gentity_t *ent   = &g_entities[entityNum];
 	gentity_t *clEnt = &g_entities[clientNum];
-	team_t    team;
 
 	if (clEnt->client->sess.skill[SK_BATTLE_SENSE] >= 4)
 	{
 		return qtrue;
 	}
 
-	if (!G_LandmineArmed(ent))
-	{
-		return qtrue;
-	}
-
-	if (G_LandmineSpotted(ent))
-	{
-		return qtrue;
-	}
-
-	team = G_LandmineTeam(ent);
-	if (team == clEnt->client->sess.sessionTeam)
+	if (ent->s.teamNum == clEnt->client->sess.sessionTeam)
 	{
 		return qtrue;
 	}
@@ -1708,22 +1687,25 @@ qboolean G_LandmineSnapshotCallback(int entityNum, int clientNum)
 }
 
 /**
- * @brief fire_grenade
+ * @brief fire_missile
  * @param[in] self
  * @param[in] start
  * @param[in] dir
- * @param[in] grenadeWPID
+ * @param[in] weapon
  * @return
  *
  * @note IMPORTANT!!! : This accepts a /non-normalized/ direction vector to allow specification
  * of how hard it's thrown.  Please scale the vector before calling.
  */
-gentity_t *fire_grenade(gentity_t *self, vec3_t start, vec3_t dir, int grenadeWPID)
+gentity_t *fire_missile(gentity_t *self, vec3_t start, vec3_t dir, int weapon)
 {
 	gentity_t *bolt;
 
 	bolt = G_Spawn();
-	G_PreFilledMissileEntity(bolt, grenadeWPID, grenadeWPID, self->s.number, self->client ? self->client->sess.sessionTeam : TEAM_FREE, -1, self);  // store team so we can generate red or blue smoke
+	G_PreFilledMissileEntity(bolt, weapon, weapon,
+	                         self->s.number, self->client ? self->client->sess.sessionTeam : TEAM_FREE, // store team so we can generate red or blue smoke
+	                         self->client ? self->client->ps.clientNum : -1,
+	                         self, start, dir);
 
 	// no self->client for shooter_grenade's
 	// if grenade time left, add it to next think and reset it, else add default value
@@ -1733,145 +1715,21 @@ gentity_t *fire_grenade(gentity_t *self, vec3_t start, vec3_t dir, int grenadeWP
 		self->client->ps.grenadeTimeLeft = 0;   // reset grenade timer
 	}
 
-	if (!GetWeaponTableData(grenadeWPID)->isExplosive)
+	bolt->think = GetWeaponFireTableData(weapon)->think;
+	bolt->free  = GetWeaponFireTableData(weapon)->free;
+
+	if (weapon == WP_DYNAMITE)
 	{
-		G_Printf("WARNING: fire_grenade called for undefined weapon\n");
+		trap_SendServerCommand(self - g_entities, "cp \"Dynamite is set, but NOT armed!\"");
+		// nope - this causes the dynamite to impact on the players bb when he throws it.
+		// will try setting it when it settles
+		//bolt->r.ownerNum            = ENTITYNUM_WORLD;  // make the world the owner of the dynamite, so the player can shoot it without modifying the bullet code to ignore players id for hits
 	}
-	else if (GetWeaponTableData(grenadeWPID)->isRiflenade || GetWeaponTableData(grenadeWPID)->isGrenade)
-	{
-		bolt->think = G_ExplodeMissile;
-	}
-	else if (grenadeWPID == WP_SMOKE_BOMB)
-	{
-		bolt->s.effect1Time = 16;
-		bolt->think         = weapon_smokeBombExplode; // overwrite G_ExplodeMissile
-	}
-	else if (grenadeWPID == WP_SMOKE_MARKER)
-	{
-		if (self->client && self->client->sess.skill[SK_SIGNALS] >= 3)
-		{
-			bolt->count      = 2;
-			bolt->nextthink += 1000;
-			bolt->think      = weapon_checkAirStrikeThink2; // overwrite G_ExplodeMissile
-		}
-		else
-		{
-			bolt->count = 1;
-			bolt->think = weapon_checkAirStrikeThink1;     // overwrite G_ExplodeMissile
-		}
-	}
-	else if (grenadeWPID == WP_LANDMINE)
-	{
-		bolt->think     = DynaSink;
-		bolt->timestamp = level.time + 16500;
-
-		bolt->health     = 5;
-		bolt->takedamage = qtrue;
-		bolt->r.contents = CONTENTS_CORPSE;                 // (player can walk through)
-
-		bolt->r.snapshotCallback = qtrue;
-
-		if (self->client)
-		{
-			bolt->s.teamNum += 4;   // overwrite
-
-			// store team so we can generate red or blue smoke
-			bolt->s.otherEntityNum2 = (self->client->sess.sessionTeam == TEAM_AXIS);
-		}
-		else
-		{
-			bolt->s.otherEntityNum2 = 0;
-		}
-
-		VectorSet(bolt->r.mins, -16, -16, 0);
-		VectorCopy(bolt->r.mins, bolt->r.absmin);
-		VectorSet(bolt->r.maxs, 16, 16, 16);
-		VectorCopy(bolt->r.maxs, bolt->r.absmax);
-	}
-	else if (grenadeWPID == WP_SATCHEL || grenadeWPID == WP_DYNAMITE)
-	{
-		bolt->health     = 5;
-		bolt->takedamage = qfalse;
-		bolt->r.contents = CONTENTS_CORPSE;                 // (player can walk through)
-
-		if (grenadeWPID == WP_DYNAMITE)
-		{
-			bolt->think     = DynaSink;
-			bolt->timestamp = level.time + 16500;
-			bolt->free      = DynaFree;
-
-			trap_SendServerCommand(self - g_entities, "cp \"Dynamite is set, but NOT armed!\"");
-			// differentiate non-armed dynamite with non-pulsing dlight
-			if (self->client)
-			{
-				bolt->s.teamNum += 4;   // overwrite
-			}
-
-			// nope - this causes the dynamite to impact on the players bb when he throws it.
-			// will try setting it when it settles
-			//bolt->r.ownerNum            = ENTITYNUM_WORLD;  // make the world the owner of the dynamite, so the player can shoot it without modifying the bullet code to ignore players id for hits
-		}
-		else
-		{
-			bolt->s.clientNum = self->s.clientNum;
-			bolt->free        = G_FreeSatchel;
-			// is there think set for satchel?
-		}
-
-		// small target cube
-		VectorSet(bolt->r.mins, -12, -12, 0);
-		VectorCopy(bolt->r.mins, bolt->r.absmin);
-		VectorSet(bolt->r.maxs, 12, 12, 20);
-		VectorCopy(bolt->r.maxs, bolt->r.absmax);
-	}
-
-	VectorCopy(start, bolt->s.pos.trBase);
-	VectorCopy(dir, bolt->s.pos.trDelta);
-
-	// add velocity of player (:sigh: guess people don't like it)
-	//VectorAdd( bolt->s.pos.trDelta, self->s.pos.trDelta, bolt->s.pos.trDelta );
-
-	// add velocity of ground entity
-	if (self->s.groundEntityNum != ENTITYNUM_NONE && self->s.groundEntityNum != ENTITYNUM_WORLD)
-	{
-		VectorAdd(bolt->s.pos.trDelta, g_entities[self->s.groundEntityNum].instantVelocity, bolt->s.pos.trDelta);
-	}
-
-	SnapVector(bolt->s.pos.trDelta);            // save net bandwidth
-
-	VectorCopy(start, bolt->r.currentOrigin);
 
 	return bolt;
 }
 
 //=============================================================================
-
-/**
- * @brief fire_rocket
- * @param[in] self
- * @param[in] start
- * @param[in] dir
- * @param[in] rocketType weapon id
- * @return
- */
-gentity_t *fire_rocket(gentity_t *self, vec3_t start, vec3_t dir, int rocketType)
-{
-	gentity_t *bolt;
-
-	bolt = G_Spawn();
-	G_PreFilledMissileEntity(bolt, rocketType, self->s.weapon, self->s.number, self->client ? self->client->sess.sessionTeam : TEAM_FREE, -1, self);
-
-	bolt->think = G_ExplodeMissile;
-
-	VectorNormalize(dir);
-
-	VectorCopy(start, bolt->s.pos.trBase);
-	VectorScale(dir, 2500, bolt->s.pos.trDelta);
-	SnapVector(bolt->s.pos.trDelta);            // save net bandwidth
-	VectorCopy(start, bolt->r.currentOrigin);
-
-	return bolt;
-}
 
 /**
  * @brief fire_flamebarrel
@@ -1913,43 +1771,6 @@ gentity_t *fire_flamebarrel(gentity_t *self, vec3_t start, vec3_t dir)
 	bolt->s.pos.trTime = level.time - MISSILE_PRESTEP_TIME;     // move a bit on the very first frame
 	VectorCopy(start, bolt->s.pos.trBase);
 	VectorScale(dir, 900 + (crandom() * 100), bolt->s.pos.trDelta);
-	SnapVector(bolt->s.pos.trDelta);            // save net bandwidth
-	VectorCopy(start, bolt->r.currentOrigin);
-
-	return bolt;
-}
-
-/**
- * @brief fire_mortar
- * @param[in] self
- * @param[in] start
- * @param[in] dir is a non-normalized direction/power vector
- * @return
- */
-gentity_t *fire_mortar(gentity_t *self, vec3_t start, vec3_t dir)
-{
-	gentity_t *bolt;
-
-	bolt = G_Spawn();
-	G_PreFilledMissileEntity(bolt, WP_MAPMORTAR, WP_MAPMORTAR, self->s.number, TEAM_FREE, self->client ? self->client->ps.clientNum : -1, self);
-
-	bolt->think = G_ExplodeMissile;
-
-	//  VectorNormalize (dir);
-
-	if (self->spawnflags)
-	{
-		gentity_t *tent;
-
-		tent            = G_TempEntity(self->s.pos.trBase, EV_MORTAREFX);
-		tent->s.density = self->spawnflags; // send smoke and muzzle flash flags
-		VectorCopy(self->s.pos.trBase, tent->s.origin);
-		VectorCopy(self->s.apos.trBase, tent->s.angles);
-	}
-
-	VectorCopy(start, bolt->s.pos.trBase);
-
-	VectorCopy(dir, bolt->s.pos.trDelta);
 	SnapVector(bolt->s.pos.trDelta);            // save net bandwidth
 	VectorCopy(start, bolt->r.currentOrigin);
 

@@ -868,7 +868,7 @@ static int _et_RemoveWeaponFromPlayer(lua_State *L)
 	{
 		weapon_t weapAlts = GetWeaponTableData(weapon)->weapAlts;
 
-		if (GetWeaponTableData(weapAlts)->isRiflenade || GetWeaponTableData(weapAlts)->isScoped || GetWeaponTableData(weapAlts)->isSetWeapon)
+		if (GetWeaponTableData(weapAlts)->type & (WEAPON_TYPE_RIFLENADE | WEAPON_TYPE_SCOPED | WEAPON_TYPE_SET))
 		{
 			COM_BitClear(client->ps.weapons, weapAlts);
 		}

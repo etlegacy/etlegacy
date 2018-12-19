@@ -713,7 +713,7 @@ static void CG_DrawScopedReticle(void)
 		weapon = cg.weaponSelect;
 	}
 
-	if (!GetWeaponTableData(weapon)->isScoped)
+	if (!(GetWeaponTableData(weapon)->type & WEAPON_TYPE_SCOPED))
 	{
 		return;
 	}
@@ -851,7 +851,7 @@ static void CG_DrawMortarReticle(void)
 
 	// last fire pos
 	fadeTime = 0;
-	if (GetWeaponTableData(cg.lastFiredWeapon)->isMortarSet && cg.mortarImpactTime >= -1)
+	if (CHECKBITWISE(GetWeaponTableData(cg.lastFiredWeapon)->type, WEAPON_TYPE_MORTAR | WEAPON_TYPE_SET) && cg.mortarImpactTime >= -1)
 	{
 		fadeTime = cg.time - (cg.predictedPlayerEntity.muzzleFlashTime + 5000);
 
@@ -1032,7 +1032,7 @@ static void CG_DrawMortarReticle(void)
 	}
 
 	// last fire pos
-	if (GetWeaponTableData(cg.lastFiredWeapon)->isMortarSet && cg.mortarImpactTime >= -1)
+	if (CHECKBITWISE(GetWeaponTableData(cg.lastFiredWeapon)->type, WEAPON_TYPE_MORTAR | WEAPON_TYPE_SET) && cg.mortarImpactTime >= -1)
 	{
 		if (fadeTime < 3000)
 		{
@@ -1159,7 +1159,7 @@ static void CG_DrawCrosshair(void)
 	}
 
 	// FIXME: spectators/chasing?
-	if (GetWeaponTableData(cg.predictedPlayerState.weapon)->isMortarSet && cg.predictedPlayerState.weaponstate != WEAPON_RAISING)
+	if (CHECKBITWISE(GetWeaponTableData(cg.predictedPlayerState.weapon)->type, WEAPON_TYPE_MORTAR | WEAPON_TYPE_SET) && cg.predictedPlayerState.weaponstate != WEAPON_RAISING)
 	{
 		CG_DrawMortarReticle();
 		return;
@@ -1228,7 +1228,7 @@ static void CG_DrawNoShootIcon(void)
 {
 	float x, y, w, h;
 
-	if ((cg.predictedPlayerState.eFlags & EF_PRONE) && GetWeaponTableData(cg.snap->ps.weapon)->isPanzer)
+	if ((cg.predictedPlayerState.eFlags & EF_PRONE) && (GetWeaponTableData(cg.snap->ps.weapon)->type & WEAPON_TYPE_PANZER))
 	{
 		trap_R_SetColor(colorRed);
 	}
@@ -1481,7 +1481,7 @@ void CG_CheckForCursorHints(void)
 	}
 	else if (trace.entityNum < MAX_CLIENTS)       // people
 	{   // knife
-		if (GetWeaponTableData(cg.snap->ps.weapon)->isMeleeWeapon)
+		if (GetWeaponTableData(cg.snap->ps.weapon)->type & WEAPON_TYPE_MELEE)
 		{
 			if (dist <= CH_KNIFE_DIST)
 			{

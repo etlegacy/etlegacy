@@ -850,17 +850,17 @@ void G_UpdateTeamMapData_LandMine(gentity_t *ent)
 	int                  num = ent - g_entities;
 	mapEntityData_Team_t *teamList;
 	mapEntityData_t      *mEnt;
-	int                  team = ent->s.teamNum & 3;    //ent->s.teamNum % 4
 
-	if (!(ent->s.teamNum < 4 || ent->s.teamNum >= 8))
+	// must be armed..
+	if (!ent->s.effect1Time)
 	{
-		return;                                                 // must be armed..
-
+		return;
 	}
+
 	// inversed teamlists, we want to see the enemy mines
 	if (ent->s.modelindex2)     // must be spotted..
 	{
-		teamList = &mapEntityData[(team == TEAM_AXIS) ? 1 : 0];
+		teamList = &mapEntityData[(ent->s.teamNum == TEAM_AXIS) ? 1 : 0];
 		mEnt     = G_FindMapEntityData(teamList, num);
 		if (!mEnt)
 		{
@@ -868,13 +868,13 @@ void G_UpdateTeamMapData_LandMine(gentity_t *ent)
 			mEnt->entNum = num;
 		}
 		VectorCopy(ent->r.currentOrigin, mEnt->org);
-		mEnt->data      = team;
+		mEnt->data      = ent->s.teamNum;
 		mEnt->startTime = level.time;
 		mEnt->type      = ME_LANDMINE;
 	}
 
 	// team mines..
-	teamList = &mapEntityData[(team == TEAM_AXIS) ? 0 : 1];
+	teamList = &mapEntityData[(ent->s.teamNum == TEAM_AXIS) ? 0 : 1];
 	mEnt     = G_FindMapEntityData(teamList, num);
 	if (!mEnt)
 	{
@@ -882,7 +882,7 @@ void G_UpdateTeamMapData_LandMine(gentity_t *ent)
 		mEnt->entNum = num;
 	}
 	VectorCopy(ent->r.currentOrigin, mEnt->org);
-	mEnt->data      = team;
+	mEnt->data      = ent->s.teamNum;
 	mEnt->startTime = level.time;
 	mEnt->type      = ME_LANDMINE;
 }
@@ -1193,14 +1193,14 @@ void G_CheckSpottedLandMines(void)
 
 				if (ent2->methodOfDeath == MOD_LANDMINE)
 				{
-					if ((ent2->s.teamNum < 4 || ent2->s.teamNum >= 8) && (ent2->s.teamNum % 4 != ent->client->sess.sessionTeam))
+					if (ent2->s.effect1Time == 1 && (ent2->s.teamNum != ent->client->sess.sessionTeam))
 					{
 						// as before, we can only detect a mine if we can see it from our binoculars
 						if (G_VisibleFromBinoculars(ent, ent2, ent2->r.currentOrigin))
 						{
 							G_UpdateTeamMapData_LandMine(ent2);
 
-							switch (ent2->s.teamNum % 4)
+							switch (ent2->s.teamNum)
 							{
 							case TEAM_AXIS:
 							case TEAM_ALLIES:
@@ -1217,6 +1217,10 @@ void G_CheckSpottedLandMines(void)
 										ent->client->landmineSpotted->count2 = 250;
 
 										ent->client->landmineSpotted->s.modelindex2 = 1;
+
+										ent->client->landmineSpotted->takedamage = qtrue;
+
+										ent->client->landmineSpotted->r.snapshotCallback = qfalse;
 
 										// for marker
 										// Landmine flags shouldn't block our view

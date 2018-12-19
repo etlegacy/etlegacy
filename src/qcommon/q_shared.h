@@ -399,6 +399,11 @@ typedef int clipHandle_t;
 #define TOGGLEBIT(x, y) x ^= BIT(y)
 #define CHECKBIT(x, y) (x & BIT(y))
 
+/**
+ * @def Check whether input value is present or not in given bitwise.
+ */ 
+#define CHECKBITWISE(x, y) (((x) & (y)) == (y)) 
+
 //#define   SND_NORMAL          0x000   ///< (default) Allow sound to be cut off only by the same sound on this channel
 #define     SND_OKTOCUT         0x001   ///< Allow sound to be cut off by any following sounds on this channel
 #define     SND_REQUESTCUT      0x002   ///< Allow sound to be cut off by following sounds on this channel only for sounds who request cutoff

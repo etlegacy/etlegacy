@@ -57,7 +57,7 @@
 /**
  * @def BODY_TIME
  * @brief How long do bodies last? (in ms)
- * 
+ *
  * @todo cvar it ?
  */
 #define BODY_TIME 10000
@@ -326,11 +326,11 @@ struct gentity_s
 	qboolean unlinkAfterEvent;
 
 	qboolean physicsObject;         ///< if true, it can be pushed by movers and fall off edges
-	                                ///< all game items are physicsObjects,
+	///< all game items are physicsObjects,
 	float physicsBounce;            ///< 1.0 = continuous bounce, 0.0 = no bounce
 	int clipmask;                   ///< brushes with this content value will be collided against
-	                                ///< when moving.  items and corpses do not collide against
-	                                ///< players, for instance
+	///< when moving.  items and corpses do not collide against
+	///< players, for instance
 
 	int realClipmask;               ///< use these to backup the contents value when we go to state under construction
 	int realContents;
@@ -1059,7 +1059,7 @@ typedef struct voteInfo_s
 	int voteNo;
 	int numVotingClients;               ///< set by CalculateRanks
 	int numVotingTeamClients[2];
-	int (*vote_fn)(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd);
+	int (*vote_fn)(gentity_t * ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd);
 	char vote_value[VOTE_MAXSTRING];    ///< Desired vote item setting.
 	int voteCaller;                     ///< id of the vote caller
 	int voteTeam;                       ///< id of the vote caller's team
@@ -1162,8 +1162,8 @@ typedef struct level_locals_s
 
 	/// intermission state
 	int intermissionQueued;                     ///< intermission was qualified, but wait INTERMISSION_DELAY_TIME before
-	                                            ///< actually going there so the last frag can be watched. Disable future
-	                                            ///< kills during this delay
+	///< actually going there so the last frag can be watched. Disable future
+	///< kills during this delay
 	int intermissiontime;                       ///< time the intermission was started
 	int exitTime;
 	vec3_t intermission_origin;                 ///< also used for spectator spawns
@@ -1508,12 +1508,10 @@ int G_PredictMissile(gentity_t *ent, int duration, vec3_t endPos, qboolean allow
 void G_RunFlamechunk(gentity_t *ent);
 
 gentity_t *fire_flamechunk(gentity_t *self, vec3_t start, vec3_t dir);
-gentity_t *fire_grenade(gentity_t *self, vec3_t start, vec3_t dir, int grenadeWPID);
-gentity_t *fire_rocket(gentity_t *self, vec3_t start, vec3_t dir, int rocketType);
+gentity_t *fire_missile(gentity_t *self, vec3_t start, vec3_t dir, int weapon);
 
 void Fire_Lead_Ext(gentity_t *ent, gentity_t *activator, float spread, int damage, vec3_t muzzle, vec3_t forward, vec3_t right, vec3_t up, meansOfDeath_t mod);
 
-gentity_t *fire_mortar(gentity_t *self, vec3_t start, vec3_t dir);
 gentity_t *fire_flamebarrel(gentity_t *self, vec3_t start, vec3_t dir);
 
 // g_mover.c
@@ -1544,7 +1542,7 @@ void aagun_stopusing(gentity_t *self);
 float AngleDifference(float ang1, float ang2);
 qboolean G_FlingClient(gentity_t *vic, int flingType);
 
-void G_PreFilledMissileEntity(gentity_t *ent, int weaponNum, int realWeapon, int ownerNum, int teamNum, int clientNum, gentity_t *parent);
+void G_PreFilledMissileEntity(gentity_t *ent, int weaponNum, int realWeapon, int ownerNum, team_t teamNum, int clientNum, gentity_t *parent, const vec3_t start, const vec3_t dir);
 
 // g_weapon.c
 qboolean AccuracyHit(gentity_t *target, gentity_t *attacker);
@@ -2535,11 +2533,13 @@ fireteamData_t *G_FindFreePublicFireteam(team_t team);
 void G_RegisterFireteam(int entityNum);
 
 void weapon_callAirStrike(gentity_t *ent);
-void weapon_checkAirStrikeThink2(gentity_t *ent);
-void weapon_checkAirStrikeThink1(gentity_t *ent);
+void weapon_checkAirStrikeThink(gentity_t *ent);
 void weapon_callSecondPlane(gentity_t *ent);
 qboolean weapon_checkAirStrike(gentity_t *ent);
 void weapon_smokeBombExplode(gentity_t *ent);
+
+void DynaSink(gentity_t *self);
+void DynaFree(gentity_t *self);
 
 void G_MakeReady(gentity_t *ent);
 void G_MakeUnready(gentity_t *ent);
@@ -2707,18 +2707,34 @@ void G_RailTrail(vec_t *start, vec_t *end, vec_t *color);
 void G_RailBox(vec_t *origin, vec_t *mins, vec_t *maxs, vec_t *color, int index);
 
 /**
- * @struct weapFireFunction_s
+ * @struct weapFireTable_s
  * @typedef weapFireFunction_t
  * @brief
  */
-typedef struct weapFireFunction_s
+typedef struct weapFireTable_t
 {
 	weapon_t weapon;
-	void (*fire)(gentity_t *ent, gentity_t **firedShot);
+	gentity_t * (*fire)(gentity_t * ent); ///< -
+	void (*think)(gentity_t *ent);      ///< -
+	void (*free)(gentity_t *ent);       ///< -
+	int eType;                          ///< -
+	int eFlags;                         ///< -
+	int svFlags;                        ///< -
+	int contents;                       ///< -
+	int trType;                         ///< -
+	int trTime;                         ///< -
+	float boudingBox[2][3];             ///< - mins / maxs bounding box vectors (for missile ent)
+	int clipMask;                       ///< -
+	int nextThink;                      ///< -
+	int accuracy;                       ///< -
+	int health;                         ///< -
+	int timeStamp;                      ///< -
 
-} weapFireFunction_t;
+} weapFireTable_t;
 
-extern weapFireFunction_t weapFireTable[WP_NUM_WEAPONS];
+// Lookup table to find weapon fire properties
+extern weapFireTable_t weapFireTable[WP_NUM_WEAPONS];
+#define GetWeaponFireTableData(weapIndex) ((weapFireTable_t *)(&weapFireTable[weapIndex]))
 
 
 static const char *gameNames[] =

@@ -471,7 +471,7 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 		launchspot[2] += 40;
 
 		// fixes premature grenade explosion, ta bani ;)
-		fire_grenade(self, launchspot, launchvel, self->s.weapon);
+		fire_missile(self, launchspot, launchvel, self->s.weapon);
 	}
 
 	if (attackerClient)
@@ -1322,7 +1322,7 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 	}
 
 	// set weapons means less knockback
-	if (targ->client && GetWeaponTableData(targ->client->ps.weapon)->isSetWeapon)
+	if (targ->client && (GetWeaponTableData(targ->client->ps.weapon)->type & WEAPON_TYPE_SET))
 	{
 		knockback *= 0.5;
 	}
