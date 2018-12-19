@@ -1068,7 +1068,9 @@ typedef enum weaponAttribut_s
 	WEAPON_ATTRIBUT_NEVER_LOST_DESGUISE = BIT(4),
 	WEAPON_ATTRIBUT_KEEP_DESGUISE       = BIT(5),
 	WEAPON_ATTRIBUT_SHAKE               = BIT(6),
-	WEAPON_ATTRIBUT_CHARGE_TIME         = BIT(7)
+	WEAPON_ATTRIBUT_CHARGE_TIME         = BIT(7),
+	WEAPON_ATTRIBUT_FALL_OFF            = BIT(8)
+
 
 } weaponAttribut_t;
 
@@ -1141,8 +1143,6 @@ typedef struct weapontable_s
 	const char *desc;               ///< bg - description for spawn weapons
 
 	unsigned int indexWeaponStat;   ///< bg - index for weapon stat info
-
-	qboolean fallOff;               ///< g -
 
 	qboolean useAmmo;               ///< bg -
 	qboolean useClip;               ///< bg -

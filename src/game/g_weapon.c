@@ -3291,7 +3291,7 @@ gentity_t *Bullet_Fire(gentity_t *ent)
 
 	G_HistoricalTraceBegin(ent);
 
-	Bullet_Fire_Extended(ent, ent, muzzleTrace, end, GetWeaponTableData(ent->s.weapon)->damage, GetWeaponTableData(ent->s.weapon)->fallOff);
+	Bullet_Fire_Extended(ent, ent, muzzleTrace, end, GetWeaponTableData(ent->s.weapon)->damage, GetWeaponTableData(ent->s.weapon)->attributs & WEAPON_ATTRIBUT_FALL_OFF);
 
 	G_HistoricalTraceEnd(ent);
 
