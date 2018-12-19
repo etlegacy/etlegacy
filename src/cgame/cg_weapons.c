@@ -4126,6 +4126,15 @@ qboolean CG_CheckCanSwitch(void)
 		return qfalse;
 	}
 
+	// there is an exploit permitting to fast change weapon right after firing the last bullet/missile.
+	// i.e: in case of MG set, it skip unset animation / in case of riflenade, the nade is fired and still loaded
+	// More precisly, it appear when the event "EV_NOAMMO" is reached. In this case, player can "overwrite"
+	// the value forced by autoswitch. To prevent it, we are waiting the game to return the current weapon "selected"
+	if (cg.weaponSelect != cg.snap->ps.weapon)
+	{
+		return qfalse;
+	}
+
 	return qtrue;
 }
 
@@ -4385,20 +4394,19 @@ void CG_OutOfAmmoChange(qboolean allowForceSwitch)
 	{
 		if ((cg.weaponSelect == WP_LANDMINE || cg.weaponSelect == WP_DYNAMITE) && CG_WeaponSelectable(WP_PLIERS))
 		{
-			cg.weaponSelect = WP_PLIERS;
 			CG_FinishWeaponChange(cg.predictedPlayerState.weapon, WP_PLIERS);
 			return;
 		}
 
 		if (cg.weaponSelect == WP_SATCHEL && CG_WeaponSelectable(WP_SATCHEL_DET))
 		{
-			cg.weaponSelect = WP_SATCHEL_DET;
+			CG_FinishWeaponChange(cg.predictedPlayerState.weapon, WP_SATCHEL_DET);
 			return;
 		}
 
 		if (GetWeaponTableData(cg.weaponSelect)->type & (WEAPON_TYPE_SET | WEAPON_TYPE_RIFLENADE))
 		{
-			cg.weaponSelect = GetWeaponTableData(cg.weaponSelect)->weapAlts;
+			CG_FinishWeaponChange(cg.predictedPlayerState.weapon, GetWeaponTableData(cg.weaponSelect)->weapAlts);
 			return;
 		}
 
@@ -4416,8 +4424,7 @@ void CG_OutOfAmmoChange(qboolean allowForceSwitch)
 							continue;
 						}
 
-						cg.weaponSelect = weapBanksMultiPlayer[weapBankSwitchOrder[i]][j];
-						CG_FinishWeaponChange(cg.predictedPlayerState.weapon, cg.weaponSelect);
+						CG_FinishWeaponChange(cg.predictedPlayerState.weapon, weapBanksMultiPlayer[weapBankSwitchOrder[i]][j]);
 						return;
 					}
 				}
@@ -4427,8 +4434,7 @@ void CG_OutOfAmmoChange(qboolean allowForceSwitch)
 		// now try the opposite team's equivalent weap
 		if (CG_WeaponSelectable(GetWeaponTableData(cg.weaponSelect)->weapEquiv))
 		{
-			cg.weaponSelect = GetWeaponTableData(cg.weaponSelect)->weapEquiv;
-			CG_FinishWeaponChange(cg.predictedPlayerState.weapon, cg.weaponSelect);
+			CG_FinishWeaponChange(cg.predictedPlayerState.weapon, GetWeaponTableData(cg.weaponSelect)->weapEquiv);
 			return;
 		}
 	}
@@ -4440,8 +4446,7 @@ void CG_OutOfAmmoChange(qboolean allowForceSwitch)
 		{
 			if (CG_WeaponSelectable(weapBanksMultiPlayer[weapBankSwitchOrder[i]][j]))
 			{
-				cg.weaponSelect = weapBanksMultiPlayer[weapBankSwitchOrder[i]][j];
-				CG_FinishWeaponChange(cg.predictedPlayerState.weapon, cg.weaponSelect);
+				CG_FinishWeaponChange(cg.predictedPlayerState.weapon, weapBanksMultiPlayer[weapBankSwitchOrder[i]][j]);
 				return;
 			}
 		}
