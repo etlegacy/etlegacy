@@ -33,8 +33,6 @@ weaponDef
 		weaponCardPointS    0 1
 		weaponCardPointT    0.375 0.5
 		
-		weaponCardIcon
-		
 		//missileModel		""
 		//missileSound		""
 		//missileTrailFunc	""									// supports "GrenadeTrail", "RocketTrail", "PyroSmokeTrail" and "DynamiteTrail" (we REALLY want a particle system for this)

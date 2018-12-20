@@ -31,7 +31,7 @@ weaponDef
 		weaponCardIcon      "gfx/limbo/weaponcard02"
 		weaponCardScale     0.5 1
 		weaponCardPointS    0 0.5
-		weaponCardPointT    0.125 0.375
+		weaponCardPointT    0.125 0.25
 		
 		//missileModel		""
 		//missileSound		""
