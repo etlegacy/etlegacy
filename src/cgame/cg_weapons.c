@@ -2812,12 +2812,6 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 		}
 	}
 
-	// weapons that don't need to go any further as they have no flash or light
-	if (GetWeaponTableData(weaponNum)->noMuzzleFlash)
-	{
-		return;
-	}
-
 	// weaps with barrel smoke
 	if (ps || !isFirstPerson)
 	{
@@ -2830,15 +2824,19 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 		}
 	}
 
-	if (flash.hModel)
+	if (weaponNum != WP_FLAMETHROWER)     // hide the flash also for now
 	{
-		if (weaponNum != WP_FLAMETHROWER)     // hide the flash also for now
-		{   // changed this so the muzzle flash stays onscreen for long enough to be seen
-			if (cg.time - cent->muzzleFlashTime < MUZZLE_FLASH_TIME)
-			{
-				//if (firing) { // Ridah
-				trap_R_AddRefEntityToScene(&flash);
-			}
+		// weapons that don't need to go any further as they have no flash or light
+		if (!flash.hModel)
+		{
+			return;
+		}
+
+		// changed this so the muzzle flash stays onscreen for long enough to be seen
+		if (cg.time - cent->muzzleFlashTime < MUZZLE_FLASH_TIME)
+		{
+			//if (firing) { // Ridah
+			trap_R_AddRefEntityToScene(&flash);
 		}
 	}
 

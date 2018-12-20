@@ -50,7 +50,7 @@ weaponDef
 			model			"models/multiplayer/kar98/v_kar98.md3"
 					axisskin	"models/multiplayer/kar98/kar98_axis.skin"
 					alliedskin	"models/multiplayer/kar98/kar98_allied.skin"
-			flashModel		"models/multiplayer/kar98/v_kar98_flash.mdc"
+			//flashModel		"models/multiplayer/kar98/v_kar98_flash.mdc"
 
 			// weapon building
 			// the parts are numbered because there are some hardcoded references for some weapons to certain parts
@@ -93,7 +93,7 @@ weaponDef
 		
 		thirdPerson {
 			model			"models/multiplayer/kar98/kar98_3rd.md3"
-			flashmodel		"models/multiplayer/kar98/kar98_3rd_flash.mdc"
+			//flashmodel		"models/multiplayer/kar98/kar98_3rd_flash.mdc"
 		}
 	}
 }

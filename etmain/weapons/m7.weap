@@ -48,7 +48,7 @@ weaponDef
 		
 		firstPerson {
 			model			"models/multiplayer/m1_garand/v_m1_garand.md3"
-			flashModel		"models/multiplayer/m1_garand/v_m1_garand_flash.mdc"
+			//flashModel		"models/multiplayer/m1_garand/v_m1_garand_flash.mdc"
 
 			// weapon building
 			// the parts are numbered because there are some hardcoded references for some weapons to certain parts
@@ -89,7 +89,7 @@ weaponDef
 		
 		thirdPerson {
 			model			"models/multiplayer/m1_garand/m1_garand_3rd.md3"
-			flashmodel		"models/multiplayer/m1_garand/m1_garand_3rd_flash.mdc"
+			//flashmodel		"models/multiplayer/m1_garand/m1_garand_3rd_flash.mdc"
 		}
 	}
 }
