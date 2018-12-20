@@ -2264,7 +2264,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 
 	weapon = &cg_weapons[weaponNum];
 
-	if (GetWeaponTableData(weaponNum)->attributs & WEAPON_ATTRIBUT_AKIMBO)
+	if (GetWeaponTableData(weaponNum)->attributes & WEAPON_ATTRIBUT_AKIMBO)
 	{
 		if (isPlayer)
 		{
@@ -2400,7 +2400,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 		CG_AddWeaponWithPowerups(&gun, cent->currentState.powerups, ps, cent);
 	}
 
-	if ((!ps || cg.renderingThirdPerson) && GetWeaponTableData(weaponNum)->attributs & WEAPON_ATTRIBUT_AKIMBO)
+	if ((!ps || cg.renderingThirdPerson) && GetWeaponTableData(weaponNum)->attributes & WEAPON_ATTRIBUT_AKIMBO)
 	{
 		// add to other hand as well
 		CG_PositionEntityOnTag(&gun, parent, "tag_weapon2", 0, NULL);
@@ -2417,7 +2417,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 
 		Com_Memset(&brass, 0, sizeof(brass));
 
-		if ((GetWeaponTableData(weaponNum)->attributs & WEAPON_ATTRIBUT_AKIMBO) && akimboFire)
+		if ((GetWeaponTableData(weaponNum)->attributes & WEAPON_ATTRIBUT_AKIMBO) && akimboFire)
 		{
 			CG_PositionRotatedEntityOnTag(&brass, parent, "tag_brass2");
 		}
@@ -2719,7 +2719,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 	angles[ROLL]  = crandom() * 10;
 	AnglesToAxis(angles, flash.axis);
 
-	if (/*isPlayer &&*/ GetWeaponTableData(weaponNum)->attributs & WEAPON_ATTRIBUT_AKIMBO)
+	if (/*isPlayer &&*/ GetWeaponTableData(weaponNum)->attributes & WEAPON_ATTRIBUT_AKIMBO)
 	{
 		if (!ps || cg.renderingThirdPerson)
 		{
@@ -3456,8 +3456,8 @@ void CG_FinishWeaponChange(int lastWeapon, int newWeapon)
 
 	if (lastWeapon != GetWeaponTableData(newWeapon)->weapAlts)
 	{
-		if (((GetWeaponTableData(newWeapon)->type & WEAPON_TYPE_PISTOL) && !(GetWeaponTableData(newWeapon)->attributs & WEAPON_ATTRIBUT_SILENCED) && (cg.pmext.silencedSideArm & 1))
-		    || ((GetWeaponTableData(newWeapon)->type & WEAPON_TYPE_PISTOL) && (GetWeaponTableData(newWeapon)->attributs & WEAPON_ATTRIBUT_SILENCED) && !(cg.pmext.silencedSideArm & 1))
+		if (((GetWeaponTableData(newWeapon)->type & WEAPON_TYPE_PISTOL) && !(GetWeaponTableData(newWeapon)->attributes & WEAPON_ATTRIBUT_SILENCED) && (cg.pmext.silencedSideArm & 1))
+		    || ((GetWeaponTableData(newWeapon)->type & WEAPON_TYPE_PISTOL) && (GetWeaponTableData(newWeapon)->attributes & WEAPON_ATTRIBUT_SILENCED) && !(cg.pmext.silencedSideArm & 1))
 		    || ((GetWeaponTableData(newWeapon)->type & WEAPON_TYPE_RIFLE) && (cg.pmext.silencedSideArm & 2))
 		    || ((GetWeaponTableData(newWeapon)->type & WEAPON_TYPE_RIFLENADE) && !(cg.pmext.silencedSideArm & 2)))
 		{
@@ -3930,7 +3930,7 @@ void CG_PrevWeap(qboolean switchBanks)
 	qboolean prevbank = qfalse;     // need to switch to the next bank of weapons?
 	int      i;
 
-	if (((GetWeaponTableData(curweap)->type & WEAPON_TYPE_PISTOL) && (GetWeaponTableData(curweap)->attributs & WEAPON_ATTRIBUT_SILENCED))
+	if (((GetWeaponTableData(curweap)->type & WEAPON_TYPE_PISTOL) && (GetWeaponTableData(curweap)->attributes & WEAPON_ATTRIBUT_SILENCED))
 	    || GetWeaponTableData(curweap)->type & WEAPON_TYPE_RIFLENADE)
 	{
 		num = GetWeaponTableData(curweap)->weapAlts;

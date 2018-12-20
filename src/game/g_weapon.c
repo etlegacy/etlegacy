@@ -3291,7 +3291,7 @@ gentity_t *Bullet_Fire(gentity_t *ent)
 
 	G_HistoricalTraceBegin(ent);
 
-	Bullet_Fire_Extended(ent, ent, muzzleTrace, end, GetWeaponTableData(ent->s.weapon)->damage, GetWeaponTableData(ent->s.weapon)->attributs & WEAPON_ATTRIBUT_FALL_OFF);
+	Bullet_Fire_Extended(ent, ent, muzzleTrace, end, GetWeaponTableData(ent->s.weapon)->damage, GetWeaponTableData(ent->s.weapon)->attributes & WEAPON_ATTRIBUT_FALL_OFF);
 
 	G_HistoricalTraceEnd(ent);
 
@@ -4147,9 +4147,9 @@ void FireWeapon(gentity_t *ent)
 	// covert ops disguise handling
 	if (ent->client->ps.powerups[PW_OPS_DISGUISED])
 	{
-		if (!(GetWeaponTableData(ent->s.weapon)->attributs & WEAPON_ATTRIBUT_NEVER_LOST_DESGUISE))
+		if (!(GetWeaponTableData(ent->s.weapon)->attributes & WEAPON_ATTRIBUT_NEVER_LOST_DESGUISE))
 		{
-			if (!(GetWeaponTableData(ent->s.weapon)->attributs & WEAPON_ATTRIBUT_KEEP_DESGUISE) || G_PlayerCanBeSeenByOthers(ent))
+			if (!(GetWeaponTableData(ent->s.weapon)->attributes & WEAPON_ATTRIBUT_KEEP_DESGUISE) || G_PlayerCanBeSeenByOthers(ent))
 			{
 				ent->client->ps.powerups[PW_OPS_DISGUISED] = 0;
 				ent->client->disguiseClientNum             = -1;

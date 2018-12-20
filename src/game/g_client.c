@@ -1071,7 +1071,7 @@ void AddWeaponToPlayer(gclient_t *client, weapon_t weapon, int ammo, int ammocli
 	client->ps.ammoclip[GetWeaponTableData(weapon)->clipIndex] = ammoclip;
 	client->ps.ammo[GetWeaponTableData(weapon)->ammoIndex]     = ammo;
 
-	if (GetWeaponTableData(weapon)->attributs & WEAPON_ATTRIBUT_AKIMBO)
+	if (GetWeaponTableData(weapon)->attributes & WEAPON_ATTRIBUT_AKIMBO)
 	{
 		client->ps.ammoclip[GetWeaponTableData(GetWeaponTableData(weapon)->akimboSideArm)->clipIndex] = ammoclip;
 	}
@@ -1093,7 +1093,7 @@ void AddWeaponToPlayer(gclient_t *client, weapon_t weapon, int ammo, int ammocli
 	if (GetWeaponTableData(weapon)->weapAlts)
 	{
 		// Covertops got silenced secondary weapon
-		if ((GetWeaponTableData(weapon)->type & WEAPON_TYPE_PISTOL) && !(GetWeaponTableData(weapon)->attributs & WEAPON_ATTRIBUT_AKIMBO))
+		if ((GetWeaponTableData(weapon)->type & WEAPON_TYPE_PISTOL) && !(GetWeaponTableData(weapon)->attributes & WEAPON_ATTRIBUT_AKIMBO))
 		{
 			if (client->sess.playerType != PC_COVERTOPS)
 			{

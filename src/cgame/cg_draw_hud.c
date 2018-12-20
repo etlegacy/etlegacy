@@ -801,7 +801,7 @@ static void CG_PlayerAmmoValue(int *ammo, int *clips, int *akimboammo)
 	}
 
 	// akimbo ammo clip
-	if (GetWeaponTableData(weap)->attributs & WEAPON_ATTRIBUT_AKIMBO)
+	if (GetWeaponTableData(weap)->attributes & WEAPON_ATTRIBUT_AKIMBO)
 	{
 		*akimboammo = ps->ammoclip[GetWeaponTableData(GetWeaponTableData(weap)->akimboSideArm)->clipIndex];
 	}
@@ -944,7 +944,7 @@ static void CG_DrawWeapRecharge(rectDef_t *rect)
 	}
 
 	// display colored charbar if charge bar isn't full enough
-	if (GetWeaponTableData(cg.predictedPlayerState.weapon)->attributs & WEAPON_ATTRIBUT_CHARGE_TIME)
+	if (GetWeaponTableData(cg.predictedPlayerState.weapon)->attributes & WEAPON_ATTRIBUT_CHARGE_TIME)
 	{
 		skillType_t skill = GetWeaponTableData(cg.predictedPlayerState.weapon)->skillBased;
 		float       coeff = GetWeaponTableData(cg.predictedPlayerState.weapon)->chargeTimeCoeff[cgs.clientinfo[cg.clientNum].skill[skill]];
