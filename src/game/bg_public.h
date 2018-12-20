@@ -1136,7 +1136,6 @@ typedef struct weapontable_s
 
 	int zoomOut;                    ///< cg -
 	int zoomIn;                     ///< cg -
-	int zoomedScope;                ///< cg - NOTE: unused ???
 
 	// client
 	// icons
