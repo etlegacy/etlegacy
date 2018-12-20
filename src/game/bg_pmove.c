@@ -127,7 +127,7 @@ void PM_AddEventExt(int newEvent, int eventParm)
  */
 int PM_ReloadAnimForWeapon(int weapon)
 {
-	if (pm->skill[SK_LIGHT_WEAPONS] >= 2 && GetWeaponTableData(weapon)->attributs & WEAPON_ATTRIBUT_FAST_RELOAD)
+	if (pm->skill[SK_LIGHT_WEAPONS] >= 2 && GetWeaponTableData(weapon)->attributes & WEAPON_ATTRIBUT_FAST_RELOAD)
 	{
 		return WEAP_RELOAD2;        // faster reload
 	}
@@ -2257,7 +2257,7 @@ static void PM_BeginWeaponReload(weapon_t weapon)
 	if (pm->ps->ammoclip[GetWeaponTableData(weapon)->clipIndex] >= GetWeaponTableData(weapon)->maxClip)
 	{
 		// akimbo should also check other weapon status
-		if (GetWeaponTableData(weapon)->attributs & WEAPON_ATTRIBUT_AKIMBO)
+		if (GetWeaponTableData(weapon)->attributes & WEAPON_ATTRIBUT_AKIMBO)
 		{
 			if (pm->ps->ammoclip[GetWeaponTableData(GetWeaponTableData(weapon)->akimboSideArm)->clipIndex] >= GetWeaponTableData(GetWeaponTableData(GetWeaponTableData(weapon)->akimboSideArm)->clipIndex)->maxClip)
 			{
@@ -2298,7 +2298,7 @@ static void PM_BeginWeaponReload(weapon_t weapon)
 	// okay to reload while overheating without tacking the reload time onto the end of the
 	// current weaponTime (the reload time is partially absorbed into the overheat time)
 	reloadTime = GetWeaponTableData(weapon)->reloadTime;
-	if (pm->skill[SK_LIGHT_WEAPONS] >= 2 && (GetWeaponTableData(weapon)->attributs & WEAPON_ATTRIBUT_FAST_RELOAD))
+	if (pm->skill[SK_LIGHT_WEAPONS] >= 2 && (GetWeaponTableData(weapon)->attributes & WEAPON_ATTRIBUT_FAST_RELOAD))
 	{
 		reloadTime *= .65f;
 	}
@@ -2419,7 +2419,7 @@ static void PM_BeginWeaponChange(weapon_t oldWeapon, weapon_t newWeapon, qboolea
 		}
 
 		// special case for silenced pistol
-		if ((GetWeaponTableData(oldWeapon)->type & WEAPON_TYPE_PISTOL) && (GetWeaponTableData(oldWeapon)->attributs & WEAPON_ATTRIBUT_SILENCED))
+		if ((GetWeaponTableData(oldWeapon)->type & WEAPON_TYPE_PISTOL) && (GetWeaponTableData(oldWeapon)->attributes & WEAPON_ATTRIBUT_SILENCED))
 		{
 			if (pm->ps->eFlags & EF_PRONE)
 			{
@@ -2502,7 +2502,7 @@ static void PM_FinishWeaponChange(void)
 	}
 	else if (GetWeaponTableData(newWeapon)->type & WEAPON_TYPE_PISTOL)
 	{
-		if (GetWeaponTableData(newWeapon)->attributs & WEAPON_ATTRIBUT_SILENCED)
+		if (GetWeaponTableData(newWeapon)->attributes & WEAPON_ATTRIBUT_SILENCED)
 		{
 			pm->pmext->silencedSideArm |= 1;
 		}
@@ -2589,7 +2589,7 @@ static void PM_ReloadClip(weapon_t weapon)
 	}
 
 	// reload akimbo stuff
-	if (GetWeaponTableData(weapon)->attributs & WEAPON_ATTRIBUT_AKIMBO)
+	if (GetWeaponTableData(weapon)->attributes & WEAPON_ATTRIBUT_AKIMBO)
 	{
 		PM_ReloadClip(GetWeaponTableData(weapon)->akimboSideArm);
 	}
@@ -2647,7 +2647,7 @@ void PM_CheckForReload(weapon_t weapon)
 				}
 
 				// akimbo should also check other weapon status
-				if (GetWeaponTableData(weapon)->attributs & WEAPON_ATTRIBUT_AKIMBO)
+				if (GetWeaponTableData(weapon)->attributes & WEAPON_ATTRIBUT_AKIMBO)
 				{
 					if (pm->ps->ammoclip[GetWeaponTableData(GetWeaponTableData(weapon)->akimboSideArm)->clipIndex] < GetWeaponTableData(GetWeaponTableData(GetWeaponTableData(weapon)->akimboSideArm)->clipIndex)->maxClip)
 					{
@@ -2660,7 +2660,7 @@ void PM_CheckForReload(weapon_t weapon)
 		{
 			if (!pm->ps->ammoclip[GetWeaponTableData(weapon)->clipIndex] && pm->ps->ammo[GetWeaponTableData(weapon)->ammoIndex])
 			{
-				if (GetWeaponTableData(weapon)->attributs & WEAPON_ATTRIBUT_AKIMBO)
+				if (GetWeaponTableData(weapon)->attributes & WEAPON_ATTRIBUT_AKIMBO)
 				{
 					if (!pm->ps->ammoclip[GetWeaponTableData(GetWeaponTableData(weapon)->akimboSideArm)->clipIndex])
 					{
@@ -2753,7 +2753,7 @@ void PM_WeaponUseAmmo(weapon_t wp, int amount)
 	{
 		int takeweapon = GetWeaponTableData(wp)->clipIndex;
 
-		if (GetWeaponTableData(wp)->attributs & WEAPON_ATTRIBUT_AKIMBO)
+		if (GetWeaponTableData(wp)->attributes & WEAPON_ATTRIBUT_AKIMBO)
 		{
 			if (!BG_AkimboFireSequence(wp, pm->ps->ammoclip[GetWeaponTableData(wp)->clipIndex], pm->ps->ammoclip[GetWeaponTableData(GetWeaponTableData(wp)->akimboSideArm)->clipIndex]))
 			{
@@ -2777,7 +2777,7 @@ int PM_WeaponAmmoAvailable(weapon_t wp)
 		return pm->ps->ammo[GetWeaponTableData(wp)->ammoIndex];
 	}
 
-	if (GetWeaponTableData(wp)->attributs & WEAPON_ATTRIBUT_AKIMBO)
+	if (GetWeaponTableData(wp)->attributes & WEAPON_ATTRIBUT_AKIMBO)
 	{
 		if (!BG_AkimboFireSequence(wp, pm->ps->ammoclip[GetWeaponTableData(wp)->clipIndex], pm->ps->ammoclip[GetWeaponTableData(GetWeaponTableData(wp)->akimboSideArm)->clipIndex]))
 		{
@@ -3175,7 +3175,7 @@ static void PM_Weapon(void)
 	// if we have issues with water we know why ....
 	//pm->watertype = 0;
 
-	if (GetWeaponTableData(pm->ps->weapon)->attributs & WEAPON_ATTRIBUT_AKIMBO)
+	if (GetWeaponTableData(pm->ps->weapon)->attributes & WEAPON_ATTRIBUT_AKIMBO)
 	{
 		akimboFire = BG_AkimboFireSequence(pm->ps->weapon, pm->ps->ammoclip[GetWeaponTableData(pm->ps->weapon)->clipIndex], pm->ps->ammoclip[GetWeaponTableData(GetWeaponTableData(pm->ps->weapon)->akimboSideArm)->clipIndex]);
 	}
@@ -3275,7 +3275,7 @@ static void PM_Weapon(void)
 				{
 					// akimbo weapons only have a 200ms delay, so
 					// use a shorter time for quickfire (#255)
-					if (GetWeaponTableData(pm->ps->weapon)->attributs & WEAPON_ATTRIBUT_AKIMBO)
+					if (GetWeaponTableData(pm->ps->weapon)->attributes & WEAPON_ATTRIBUT_AKIMBO)
 					{
 						if (pm->ps->weaponTime <= 50)
 						{
@@ -3392,7 +3392,7 @@ static void PM_Weapon(void)
 	}
 
 	// don't allow some weapons to fire if charge bar isn't full
-	if (GetWeaponTableData(pm->ps->weapon)->attributs & WEAPON_ATTRIBUT_CHARGE_TIME)
+	if (GetWeaponTableData(pm->ps->weapon)->attributes & WEAPON_ATTRIBUT_CHARGE_TIME)
 	{
 		skillType_t skill = GetWeaponTableData(pm->ps->weapon)->skillBased;
 		float       coeff = GetWeaponTableData(pm->ps->weapon)->chargeTimeCoeff[pm->skill[skill]];
@@ -3459,7 +3459,7 @@ static void PM_Weapon(void)
 	}
 
 	// player is underwater and weapon can't fire under water
-	if (pm->waterlevel == 3 && !(GetWeaponTableData(pm->ps->weapon)->attributs & WEAPON_ATTRIBUT_FIRE_UNDERWATER))
+	if (pm->waterlevel == 3 && !(GetWeaponTableData(pm->ps->weapon)->attributes & WEAPON_ATTRIBUT_FIRE_UNDERWATER))
 	{
 		PM_AddEvent(EV_NOFIRE_UNDERWATER);      // event for underwater 'click' for nofire
 		PM_ContinueWeaponAnim(GetWeaponTableData(pm->ps->weapon)->idleAnim);
@@ -3597,7 +3597,7 @@ static void PM_Weapon(void)
 
 	// if this was the last round in the clip, play the 'lastshot' animation
 	// this animation has the weapon in a "ready to reload" state
-	if (GetWeaponTableData(pm->ps->weapon)->attributs & WEAPON_ATTRIBUT_AKIMBO)
+	if (GetWeaponTableData(pm->ps->weapon)->attributes & WEAPON_ATTRIBUT_AKIMBO)
 	{
 		if (akimboFire)
 		{
@@ -3631,7 +3631,7 @@ static void PM_Weapon(void)
 		PM_StartWeaponAnim(weapattackanim);
 	}
 
-	if (GetWeaponTableData(pm->ps->weapon)->attributs & WEAPON_ATTRIBUT_AKIMBO)
+	if (GetWeaponTableData(pm->ps->weapon)->attributes & WEAPON_ATTRIBUT_AKIMBO)
 	{
 		if (akimboFire)
 		{
@@ -3733,7 +3733,7 @@ static void PM_Weapon(void)
 			addTime = 0;
 		}
 	}
-	else if (GetWeaponTableData(pm->ps->weapon)->attributs & WEAPON_ATTRIBUT_AKIMBO)
+	else if (GetWeaponTableData(pm->ps->weapon)->attributes & WEAPON_ATTRIBUT_AKIMBO)
 	{
 		// if you're firing an akimbo weapon, and your other gun is dry,
 		// nextshot needs to take 2x time

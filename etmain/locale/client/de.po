@@ -1,5 +1,5 @@
 # Translation pot file for the ET: Legacyclient
-# Copyright (C) 2012-2015 ET: Legacy Team
+# Copyright (C) 2012-2018 ET: Legacy Team
 # This file is distributed under the same license as the ET:Legacy package.
 # Translators:
 # Artem Vorotnikov <artem@vorotnikov.me>, 2015

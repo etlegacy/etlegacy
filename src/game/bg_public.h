@@ -1130,13 +1130,12 @@ typedef struct weapontable_s
 
 	int type;                       ///< bg -
 	int firingMode;                 ///< bg -
-	int attributs;                  ///< bg -
+	int attributes;                 ///< bg -
 
 	qboolean noMuzzleFlash;         ///< cg -
 
 	int zoomOut;                    ///< cg -
 	int zoomIn;                     ///< cg -
-	int zoomedScope;                ///< cg - NOTE: unused ???
 
 	// client
 	// icons

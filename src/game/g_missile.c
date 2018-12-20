@@ -424,7 +424,7 @@ void G_ExplodeMissile(gentity_t *ent)
 		}
 
 		// give big weapons the shakey shakey
-		if (GetWeaponTableData(ent->s.weapon)->attributs & WEAPON_ATTRIBUT_SHAKE)
+		if (GetWeaponTableData(ent->s.weapon)->attributes & WEAPON_ATTRIBUT_SHAKE)
 		{
 			gentity_t *tent;
 

@@ -1387,7 +1387,7 @@ void CG_LimboPanel_SendSetupMsg(qboolean forceteam)
 	}
 	else
 	{
-		if (GetWeaponTableData(weap2)->attributs & WEAPON_ATTRIBUT_AKIMBO)
+		if (GetWeaponTableData(weap2)->attributes & WEAPON_ATTRIBUT_AKIMBO)
 		{
 			CG_PriorityCenterPrint(va(CG_TranslateString("You will spawn as an %s %s with a %s and %s."), str, BG_ClassnameForNumber(CG_LimboPanel_GetClass()), GetWeaponTableData(weap1)->desc, GetWeaponTableData(weap2)->desc), 400, cg_fontScaleCP.value, -1);
 		}
