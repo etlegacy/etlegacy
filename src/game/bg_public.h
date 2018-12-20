@@ -608,7 +608,7 @@ typedef struct
 
 	// callbacks to test the world
 	// these will be different functions during game and cgame
-	void (*trace)(trace_t * results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask);
+	void (*trace)(trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask);
 	int (*pointcontents)(const vec3_t point, int passEntityNum);
 
 	/// used to determine if the player move is for prediction if it is, the movement should trigger no events
@@ -617,7 +617,7 @@ typedef struct
 } pmove_t;
 
 // if a full pmove isn't done on the client, you can just update the angles
-void PM_UpdateViewAngles(playerState_t *ps, pmoveExt_t *pmext, usercmd_t *cmd, void (trace) (trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask), int tracemask);
+void PM_UpdateViewAngles(playerState_t *ps, pmoveExt_t *pmext, usercmd_t *cmd, void(trace) (trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask), int tracemask);
 int Pmove(pmove_t *pmove);
 void PmovePredict(pmove_t *pmove, float frametime);
 
@@ -1151,8 +1151,6 @@ typedef struct weapontable_s
 	int maxAmmo;                    ///< bg - max player ammo carrying capacity.
 	int uses;                       ///< bg - how many 'rounds' it takes/costs to fire one cycle.
 	int maxClip;                    ///< bg - max 'rounds' in a clip.
-	int defaultStartingAmmo;        ///< g - player ammo when spawning.
-	int defaultStartingClip;        ///< g - player clips when spawning.
 	int reloadTime;                 ///< bg - time from start of reload until ready to fire.
 	int fireDelayTime;              ///< bg - time from pressing 'fire' until first shot is fired. (used for delaying fire while weapon is 'readied' in animation)
 	int nextShotTime;               ///< bg - when firing continuously, this is the time between shots
@@ -2422,6 +2420,8 @@ typedef struct
 	weapon_t weapon;    ///< weapon
 	skillType_t skill;  ///< skill related
 	int minSkillLevel;  ///< minimum skill level needed to handle it
+	int startingAmmo;   ///< default starting ammo (reserve)
+	int startingClip;   ///< default starting in clip
 
 } bg_weaponclass_t;
 
@@ -2436,11 +2436,10 @@ typedef struct
 	const char *iconName;
 	const char *iconArrow;
 
-	weapon_t classKnifeWeapon;
+	bg_weaponclass_t classKnifeWeapon;
 	bg_weaponclass_t classPrimaryWeapons[MAX_WEAPS_PER_CLASS];
 	bg_weaponclass_t classSecondaryWeapons[MAX_WEAPS_PER_CLASS];
-	weapon_t classGrenadeWeapon;
-	int defaultGrenadeCount;
+	bg_weaponclass_t classGrenadeWeapon;
 	bg_weaponclass_t classMiscWeapons[MAX_WEAPS_PER_CLASS];
 
 	qhandle_t icon;
@@ -2899,8 +2898,8 @@ typedef enum popupMessageBigType_e
 #define HITBOXBIT_LEGS   2048
 #define HITBOXBIT_CLIENT 4096
 
-void PM_TraceLegs(trace_t *trace, float *legsOffset, vec3_t start, vec3_t end, trace_t *bodytrace, vec3_t viewangles, void (tracefunc)(trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask), int ignoreent, int tracemask);
-void PM_TraceHead(trace_t *trace, vec3_t start, vec3_t end, trace_t *bodytrace, vec3_t viewangles, void (tracefunc)(trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask), int ignoreent, int tracemask);
+void PM_TraceLegs(trace_t *trace, float *legsOffset, vec3_t start, vec3_t end, trace_t *bodytrace, vec3_t viewangles, void(tracefunc)(trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask), int ignoreent, int tracemask);
+void PM_TraceHead(trace_t *trace, vec3_t start, vec3_t end, trace_t *bodytrace, vec3_t viewangles, void(tracefunc)(trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask), int ignoreent, int tracemask);
 void PM_TraceAllParts(trace_t *trace, float *legsOffset, vec3_t start, vec3_t end);
 void PM_TraceAll(trace_t *trace, vec3_t start, vec3_t end);
 

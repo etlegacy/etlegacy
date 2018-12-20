@@ -1084,7 +1084,7 @@ void AddWeaponToPlayer(gclient_t *client, weapon_t weapon, int ammo, int ammocli
 
 	if (GetWeaponTableData(weapon)->attributs & WEAPON_ATTRIBUT_AKIMBO)
 	{
-		client->ps.ammoclip[GetWeaponTableData(GetWeaponTableData(weapon)->akimboSideArm)->clipIndex] = GetWeaponTableData(weapon)->defaultStartingClip;
+		client->ps.ammoclip[GetWeaponTableData(GetWeaponTableData(weapon)->akimboSideArm)->clipIndex] = ammoclip;
 	}
 
 	if (weapon == WP_BINOCULARS)
@@ -1100,6 +1100,27 @@ void AddWeaponToPlayer(gclient_t *client, weapon_t weapon, int ammo, int ammocli
 	// skill handling
 	AddExtraSpawnAmmo(client, weapon);
 
+	// add alternative weapon if exist for primary weapon
+	if (GetWeaponTableData(weapon)->weapAlts)
+	{
+		// Covertops got silenced secondary weapon
+		if ((GetWeaponTableData(weapon)->type & WEAPON_TYPE_PISTOL) && !(GetWeaponTableData(weapon)->attributs & WEAPON_ATTRIBUT_AKIMBO))
+		{
+			if (client->sess.playerType != PC_COVERTOPS)
+			{
+				return;
+			}
+
+			client->pmext.silencedSideArm = 1;
+		}
+
+		COM_BitSet(client->ps.weapons, GetWeaponTableData(weapon)->weapAlts);
+
+#ifdef FEATURE_OMNIBOT
+		Bot_Event_AddWeapon(client->ps.clientNum, Bot_WeaponGameToBot(GetWeaponTableData(weapon)->weapAlts));
+#endif
+	}
+
 #ifdef FEATURE_OMNIBOT
 	Bot_Event_AddWeapon(client->ps.clientNum, Bot_WeaponGameToBot(weapon));
 #endif
@@ -1114,7 +1135,7 @@ void SetWolfSpawnWeapons(gclient_t *client)
 	int              pc   = client->sess.playerType;
 	int              team = client->sess.sessionTeam;
 	int              i;
-	weapon_t         weapon;
+	bg_weaponclass_t *weaponClassInfo;
 	bg_playerclass_t *classInfo;
 
 	if (client->sess.sessionTeam == TEAM_SPECTATOR)
@@ -1149,32 +1170,19 @@ void SetWolfSpawnWeapons(gclient_t *client)
 	//
 	// knife
 	//
-	weapon = classInfo->classKnifeWeapon;
-	AddWeaponToPlayer(client, weapon, GetWeaponTableData(weapon)->defaultStartingAmmo, GetWeaponTableData(weapon)->defaultStartingClip, qtrue);
-
-	//
-	// special weapons and items
-	//
-	for (i = 0; i < MAX_WEAPS_PER_CLASS && classInfo->classMiscWeapons[i].weapon; i++)
-	{
-		weapon = classInfo->classMiscWeapons[i].weapon;
-
-		if (client->sess.skill[classInfo->classMiscWeapons[i].skill] >= classInfo->classMiscWeapons[i].minSkillLevel)
-		{
-			// add each
-			AddWeaponToPlayer(client, weapon, GetWeaponTableData(weapon)->defaultStartingAmmo, GetWeaponTableData(weapon)->defaultStartingClip, qfalse);
-		}
-	}
+	weaponClassInfo = &classInfo->classKnifeWeapon;
+	AddWeaponToPlayer(client, weaponClassInfo->weapon, weaponClassInfo->startingAmmo, weaponClassInfo->startingClip, qtrue);
 
 	//
 	// grenade
 	//
-	AddWeaponToPlayer(client, classInfo->classGrenadeWeapon, classInfo->defaultGrenadeCount, 0, qfalse);
+	weaponClassInfo = &classInfo->classGrenadeWeapon;
+	AddWeaponToPlayer(client, weaponClassInfo->weapon, weaponClassInfo->startingAmmo, weaponClassInfo->startingClip, qfalse);
 
 	//
 	// primary weapon
 	//
-	weapon = classInfo->classPrimaryWeapons[0].weapon; // default primary weapon
+	weaponClassInfo = &classInfo->classPrimaryWeapons[0]; // default primary weapon
 
 	// parse available primary weapons and check is valid for current class
 	for (i = 0; i < MAX_WEAPS_PER_CLASS && classInfo->classPrimaryWeapons[i].weapon; i++)
@@ -1183,34 +1191,19 @@ void SetWolfSpawnWeapons(gclient_t *client)
 		{
 			if (classInfo->classPrimaryWeapons[i].weapon == client->sess.playerWeapon)
 			{
-				weapon = client->sess.playerWeapon;
-				break;
-			}
-
-			// check for an equivalent if the team are not correct following the weapon
-			if (classInfo->classPrimaryWeapons[i].weapon == GetWeaponTableData(client->sess.playerWeapon)->weapEquiv)
-			{
-				weapon = GetWeaponTableData(client->sess.playerWeapon)->weapEquiv;
+				weaponClassInfo = &classInfo->classPrimaryWeapons[i];
 				break;
 			}
 		}
 	}
 
 	// add primary weapon (set to current weapon)
-	AddWeaponToPlayer(client, weapon, GetWeaponTableData(weapon)->defaultStartingAmmo, GetWeaponTableData(weapon)->defaultStartingClip, qtrue);
-
-	// add alternative weapon if exist for primary weapon
-	if (GetWeaponTableData(client->sess.playerWeapon)->weapAlts)
-	{
-		AddWeaponToPlayer(client, GetWeaponTableData(weapon)->weapAlts,
-		                  GetWeaponTableData(GetWeaponTableData(weapon)->weapAlts)->defaultStartingAmmo,
-		                  GetWeaponTableData(GetWeaponTableData(weapon)->weapAlts)->defaultStartingClip, qfalse);
-	}
+	AddWeaponToPlayer(client, weaponClassInfo->weapon, weaponClassInfo->startingAmmo, weaponClassInfo->startingClip, qtrue);
 
 	//
 	// secondary weapon
 	//
-	weapon = classInfo->classSecondaryWeapons[0].weapon;   // default secondary weapon
+	weaponClassInfo = &classInfo->classSecondaryWeapons[0];   // default secondary weapon
 
 	// parse available secondary weapons and check is valid for current class
 	for (i = 0; i < MAX_WEAPS_PER_CLASS && classInfo->classSecondaryWeapons[i].weapon; i++)
@@ -1219,33 +1212,35 @@ void SetWolfSpawnWeapons(gclient_t *client)
 		{
 			if (classInfo->classSecondaryWeapons[i].weapon == client->sess.playerWeapon2)
 			{
-				weapon = client->sess.playerWeapon2;
-				break;
-			}
-
-			// check for an equivalent if the team are not correct following the weapon
-			if (classInfo->classSecondaryWeapons[i].weapon == GetWeaponTableData(client->sess.playerWeapon2)->weapEquiv)
-			{
-				weapon = GetWeaponTableData(client->sess.playerWeapon2)->weapEquiv;
+				weaponClassInfo = &classInfo->classSecondaryWeapons[i];
 				break;
 			}
 		}
 	}
 
 	// add secondary weapon
-	AddWeaponToPlayer(client, weapon, GetWeaponTableData(weapon)->defaultStartingAmmo, GetWeaponTableData(weapon)->defaultStartingClip, qfalse);
+	AddWeaponToPlayer(client, weaponClassInfo->weapon, weaponClassInfo->startingAmmo, weaponClassInfo->startingClip, qfalse);
 
-	// Covertops got silenced secondary weapon
-	if (pc == PC_COVERTOPS)
+	//
+	// special weapons and items
+	//
+	for (i = 0; i < MAX_WEAPS_PER_CLASS && classInfo->classMiscWeapons[i].weapon; i++)
 	{
-		client->pmext.silencedSideArm = 1;
+		weaponClassInfo = &classInfo->classMiscWeapons[i];
 
-		// get pistol without silencer
-		if (GetWeaponTableData(client->sess.playerWeapon2)->weapAlts)
+		if (client->sess.skill[classInfo->classMiscWeapons[i].skill] >= classInfo->classMiscWeapons[i].minSkillLevel)
 		{
-			AddWeaponToPlayer(client, GetWeaponTableData(weapon)->weapAlts,
-			                  GetWeaponTableData(GetWeaponTableData(weapon)->weapAlts)->defaultStartingAmmo,
-			                  GetWeaponTableData(GetWeaponTableData(weapon)->weapAlts)->defaultStartingClip, qfalse);
+			// special check for riflenade, we need the launcher to use it
+			if (GetWeaponTableData(weaponClassInfo->weapon)->type & WEAPON_TYPE_RIFLENADE)
+			{
+				if (!COM_BitCheck(client->ps.weapons, GetWeaponTableData(weaponClassInfo->weapon)->weapAlts))
+				{
+					continue;
+				}
+			}
+
+			// add each
+			AddWeaponToPlayer(client, weaponClassInfo->weapon, weaponClassInfo->startingAmmo, weaponClassInfo->startingClip, qfalse);
 		}
 	}
 }
