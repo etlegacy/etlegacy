@@ -1012,20 +1012,9 @@ static void AddExtraSpawnAmmo(gclient_t *client, weapon_t weaponNum)
 	}
 	else if (GetWeaponTableData(weaponNum)->type & WEAPON_TYPE_SMG)
 	{
-		// soldier start with x2 ammo for mp40/thompson and cover-ops with x2 for sten/mp34
-		if (client->sess.playerType == PC_SOLDIER || client->sess.playerType == PC_COVERTOPS)
-		{
-			client->ps.ammo[GetWeaponTableData(weaponNum)->ammoIndex] *= 2;
-		}
-
 		if (client->sess.skill[SK_LIGHT_WEAPONS] >= 1)
 		{
 			client->ps.ammo[GetWeaponTableData(weaponNum)->ammoIndex] += GetWeaponTableData(weaponNum)->maxClip;
-		}
-
-		if (client->sess.playerType == PC_MEDIC && client->sess.skill[SK_FIRST_AID] < 1)   // NOTE: medic start with 1 clip less until skill is not reach
-		{
-			client->ps.ammo[GetWeaponTableData(weaponNum)->ammoIndex] -= GetWeaponTableData(weaponNum)->maxClip;
 		}
 	}
 	else if (GetWeaponTableData(weaponNum)->type & WEAPON_TYPE_RIFLENADE)

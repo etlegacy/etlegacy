@@ -46,7 +46,7 @@ bg_playerclass_t bg_playerClasses[2][NUM_PLAYER_CLASSES] =
 			"ui/assets/mp_arrow_red.tga",
 			{ WP_KNIFE,                SK_LIGHT_WEAPONS,                            0, 1,   0   },
 			{
-				{ WP_MP40,                 SK_LIGHT_WEAPONS,                            0, 30,  30  },
+				{ WP_MP40,                 SK_LIGHT_WEAPONS,                            0, 60,  30  }, // soldier start with x2 ammo
 				{ WP_MOBILE_MG42,          SK_HEAVY_WEAPONS,                            0, 0,   150 },
 				{ WP_FLAMETHROWER,         SK_HEAVY_WEAPONS,                            0, 200, 1   },
 				{ WP_PANZERFAUST,          SK_HEAVY_WEAPONS,                            0, 4,   0   },
@@ -55,7 +55,7 @@ bg_playerclass_t bg_playerClasses[2][NUM_PLAYER_CLASSES] =
 			{
 				{ WP_LUGER,                SK_LIGHT_WEAPONS,                            0, 24,  8   },
 				{ WP_AKIMBO_LUGER,         SK_LIGHT_WEAPONS,                            4, 48,  8   },
-				{ WP_MP40,                 SK_HEAVY_WEAPONS,                            4, 30,  30  },
+				{ WP_MP40,                 SK_HEAVY_WEAPONS,                            4, 60,  30  }, // soldier start with x2 ammo
 			},
 			{ WP_GRENADE_LAUNCHER,     SK_LIGHT_WEAPONS,                            0, 4,   0   },
 			{
@@ -72,7 +72,7 @@ bg_playerclass_t bg_playerClasses[2][NUM_PLAYER_CLASSES] =
 			"ui/assets/mp_arrow_red.tga",
 			{ WP_KNIFE,                SK_LIGHT_WEAPONS,                            0, 1,   0   },
 			{
-				{ WP_MP40,                 SK_LIGHT_WEAPONS,                            0, 30,  30  },
+				{ WP_MP40,                 SK_LIGHT_WEAPONS,                            0, 0,   30  }, // medic start with 1 clip less
 			},
 			{
 				{ WP_LUGER,                SK_LIGHT_WEAPONS,                            0, 24,  8   },
@@ -105,7 +105,7 @@ bg_playerclass_t bg_playerClasses[2][NUM_PLAYER_CLASSES] =
 			},
 			{ WP_GRENADE_LAUNCHER,     SK_LIGHT_WEAPONS,                            0, 4,   0   },
 			{
-				{ WP_GPG40,                SK_EXPLOSIVES_AND_CONSTRUCTION,              0, 4,   0   },
+				{ WP_GPG40,                SK_EXPLOSIVES_AND_CONSTRUCTION,              0, 4,   0   }, // riflenade as special weapon
 				{ WP_DYNAMITE,             SK_EXPLOSIVES_AND_CONSTRUCTION,              0, 0,   1   },
 				{ WP_PLIERS,               SK_EXPLOSIVES_AND_CONSTRUCTION,              0, 0,   1   },
 				{ WP_LANDMINE,             SK_EXPLOSIVES_AND_CONSTRUCTION,              0, 0,   1   },
@@ -145,7 +145,7 @@ bg_playerclass_t bg_playerClasses[2][NUM_PLAYER_CLASSES] =
 			"ui/assets/mp_arrow_red.tga",
 			{ WP_KNIFE,                SK_LIGHT_WEAPONS,                            0, 1,   0   },
 			{
-				{ WP_MP34,                 SK_LIGHT_WEAPONS,                            0, 32,  32  },
+				{ WP_MP34,                 SK_LIGHT_WEAPONS,                            0, 64,  32  }, // covert-ops start with x2 ammo
 				{ WP_FG42,                 SK_LIGHT_WEAPONS,                            0, 40,  20  },
 				{ WP_K43,                  SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS, 0, 20,  10  },
 			},
@@ -174,7 +174,7 @@ bg_playerclass_t bg_playerClasses[2][NUM_PLAYER_CLASSES] =
 			"ui/assets/mp_arrow_blue.tga",
 			{ WP_KNIFE_KABAR,          SK_LIGHT_WEAPONS,                            0, 1,   0   },
 			{
-				{ WP_THOMPSON,             SK_LIGHT_WEAPONS,                            0, 30,  30  },
+				{ WP_THOMPSON,             SK_LIGHT_WEAPONS,                            0, 60,  30  }, // soldier start with x2 ammo
 				{ WP_MOBILE_BROWNING,      SK_HEAVY_WEAPONS,                            0, 0,   150 },
 				{ WP_FLAMETHROWER,         SK_HEAVY_WEAPONS,                            0, 200, 0   },
 				{ WP_BAZOOKA,              SK_HEAVY_WEAPONS,                            0, 4,   0   },
@@ -183,7 +183,7 @@ bg_playerclass_t bg_playerClasses[2][NUM_PLAYER_CLASSES] =
 			{
 				{ WP_COLT,                 SK_LIGHT_WEAPONS,                            0, 24,  8   },
 				{ WP_AKIMBO_COLT,          SK_LIGHT_WEAPONS,                            4, 48,  8   },
-				{ WP_THOMPSON,             SK_HEAVY_WEAPONS,                            4, 30,  30  },
+				{ WP_THOMPSON,             SK_HEAVY_WEAPONS,                            4, 60,  30  }, // soldier start with x2 ammo
 			},
 			{ WP_GRENADE_PINEAPPLE,    SK_LIGHT_WEAPONS,                            0, 4,   0   },
 			{
@@ -200,7 +200,7 @@ bg_playerclass_t bg_playerClasses[2][NUM_PLAYER_CLASSES] =
 			"ui/assets/mp_arrow_blue.tga",
 			{ WP_KNIFE_KABAR,          SK_LIGHT_WEAPONS,                            0, 1,   0   },
 			{
-				{ WP_THOMPSON,             SK_LIGHT_WEAPONS,                            0, 30,  30  },
+				{ WP_THOMPSON,             SK_LIGHT_WEAPONS,                            0, 0,   30  }, // medic start with 1 clip less
 			},
 			{
 				{ WP_COLT,                 SK_LIGHT_WEAPONS,                            0, 24,  8   },
@@ -233,7 +233,7 @@ bg_playerclass_t bg_playerClasses[2][NUM_PLAYER_CLASSES] =
 			},
 			{ WP_GRENADE_PINEAPPLE,    SK_LIGHT_WEAPONS,                            0, 4,   0   },
 			{
-				{ WP_M7,                   SK_EXPLOSIVES_AND_CONSTRUCTION,              0, 4,   0   },
+				{ WP_M7,                   SK_EXPLOSIVES_AND_CONSTRUCTION,              0, 4,   0   }, // riflenade as special weapon
 				{ WP_DYNAMITE,             SK_EXPLOSIVES_AND_CONSTRUCTION,              0, 0,   1   },
 				{ WP_PLIERS,               SK_EXPLOSIVES_AND_CONSTRUCTION,              0, 0,   1   },
 				{ WP_LANDMINE,             SK_EXPLOSIVES_AND_CONSTRUCTION,              0, 0,   1   },
@@ -273,7 +273,7 @@ bg_playerclass_t bg_playerClasses[2][NUM_PLAYER_CLASSES] =
 			"ui/assets/mp_arrow_blue.tga",
 			{ WP_KNIFE_KABAR,          SK_LIGHT_WEAPONS,                            0, 1,   0   },
 			{
-				{ WP_STEN,                 SK_LIGHT_WEAPONS,                            0, 32,  32  },
+				{ WP_STEN,                 SK_LIGHT_WEAPONS,                            0, 64,  32  }, // covert-ops start with x2 ammo
 				{ WP_FG42,                 SK_LIGHT_WEAPONS,                            0, 40,  20  },
 				{ WP_GARAND,               SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS, 0, 20,  10  },
 			},
