@@ -155,7 +155,7 @@ bg_playerclass_t bg_playerClasses[2][NUM_PLAYER_CLASSES] =
 			},
 			{ WP_GRENADE_LAUNCHER,     SK_LIGHT_WEAPONS,                            0, 2,   0   },
 			{
-				{ WP_SMOKE_BOMB,           SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS, 0, 0,   0   },
+				{ WP_SMOKE_BOMB,           SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS, 0, 0,   1   },
 				{ WP_SATCHEL,              SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS, 0, 0,   1   },
 				{ WP_SATCHEL_DET,          SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS, 0, 0,   1   },
 				{ WP_BINOCULARS,           SK_BATTLE_SENSE,                             0, 0,   1   },
@@ -259,7 +259,7 @@ bg_playerclass_t bg_playerClasses[2][NUM_PLAYER_CLASSES] =
 			{ WP_GRENADE_PINEAPPLE,    SK_LIGHT_WEAPONS,                            0, 1,   0   },
 			{
 				{ WP_AMMO,                 SK_SIGNALS,                                  0, 0,   1   },
-				{ WP_SMOKE_MARKER,         SK_SIGNALS,                                  0, 0,   0   },
+				{ WP_SMOKE_MARKER,         SK_SIGNALS,                                  0, 0,   1   },
 				{ WP_BINOCULARS,           SK_BATTLE_SENSE,                             0, 0,   1   },
 			},
 			0,
