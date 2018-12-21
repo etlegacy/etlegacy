@@ -1854,10 +1854,10 @@ vec4_t       tclr = { 0.625f, 0.625f, 0.6f, 1.0f };
  */
 static float CG_DrawSpeed(float y)
 {
-	char *s;
-	int  w, w2;
+	char *s, *s2 = NULL;
+	int  w, w2, w3, w4;
 	int  thistime;
-	int  x;
+	int  x, h;
 
 	if (resetmaxspeed)
 	{
@@ -1895,28 +1895,42 @@ static float CG_DrawSpeed(float y)
 		break;
 	case 4:
 		// Units per second + highestSpeed
-		s = va("%.1f UPS (%.1f MAX)", speed, highestSpeed);
+		s  = va("%.1f UPS", speed);
+		s2 = va("%.1f MAX", highestSpeed);
 		break;
 	case 5:
 		// Kilometers per hour  + highestSpeed
-		s = va("%.1f KPH (%.1f MAX)", (speed / SPEED_US_TO_KPH), (highestSpeed / SPEED_US_TO_KPH));
+		s  = va("%.1f KPH", (speed / SPEED_US_TO_KPH));
+		s2 = va("%.1f MAX", (highestSpeed / SPEED_US_TO_KPH));
 		break;
 	case 6:
 		// Miles per hour  + highestSpeed
-		s = va("%.1f MPH (%.1f MAX)", (speed / SPEED_US_TO_MPH), (highestSpeed / SPEED_US_TO_MPH));
+		s  = va("%.1f MPH", (speed / SPEED_US_TO_MPH));
+		s2 = va("%.1f MAX", (highestSpeed / SPEED_US_TO_MPH));
 		break;
 	default:
-		s = "";
+		s  = "";
+		s2 = "";
 		break;
 	}
+
+	h = (cg_drawspeed.integer > 3) ? 24 : 12;
 
 	w  = CG_Text_Width_Ext(s, 0.19f, 0, &cgs.media.limboFont1);
 	w2 = (UPPERRIGHT_W > w) ? UPPERRIGHT_W : w;
 
 	x = Ccg_WideX(UPPERRIGHT_X) - w2 - 2;
-	CG_FillRect(x, y, w2 + 5, 12 + 2, HUD_Background);
-	CG_DrawRect_FixedBorder(x, y, w2 + 5, 12 + 2, 1, HUD_Border);
+	CG_FillRect(x, y, w2 + 5, h + 2, HUD_Background);
+	CG_DrawRect_FixedBorder(x, y, w2 + 5, h + 2, 1, HUD_Border);
 	CG_Text_Paint_Ext(x + ((w2 - w) / 2) + 2, y + 11, 0.19f, 0.19f, tclr, s, 0, 0, 0, &cgs.media.limboFont1);
+
+	// draw max speed on second line
+	if (cg_drawspeed.integer > 3) {
+		y = y + 12;
+		w3  = CG_Text_Width_Ext(s2, 0.19f, 0, &cgs.media.limboFont1);
+		w4 = (UPPERRIGHT_W > w3) ? UPPERRIGHT_W : w3;
+		CG_Text_Paint_Ext(x + ((w4 - w3) / 2) + 2, y + 11, 0.19f, 0.19f, tclr, s2, 0, 0, 0, &cgs.media.limboFont1);
+	}
 
 	return y + 12 + 4;
 }
