@@ -2444,10 +2444,10 @@ static float CG_DrawLagometer(float y)
 	CG_FillRect(x, y, w2 + 5, w2 + 5, HUD_Background);
 	CG_DrawRect_FixedBorder(x, y, w2 + 5, w2 + 5, 1, HUD_Border);
 
-	ax = x + 1;
-	ay = y + 1;
-	aw = w2 + 3;
-	ah = w2 + 3;
+	ax = x;
+	ay = y;
+	aw = w2 + 4;
+	ah = w2 + 4;
 	CG_AdjustFrom640(&ax, &ay, &aw, &ah);
 
 	color = -1;
