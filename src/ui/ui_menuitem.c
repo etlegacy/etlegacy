@@ -2872,7 +2872,6 @@ void Item_Combo_Paint(itemDef_t *item)
 
 	Com_Memcpy(&backColor, &item->window.backColor, sizeof(vec4_t));
 	Com_Memcpy(&itemColor, &item->window.foreColor, sizeof(vec4_t));
-	backColor[3] *= 0.8f;
 
 	if (item->text)
 	{
