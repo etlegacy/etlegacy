@@ -2071,15 +2071,6 @@ void Cmd_Team_f(gentity_t *ent, unsigned int dwCommand, qboolean fValue)
 	}
 
 	ent->client->sess.latchPlayerType = playerType;
-	if (ent->client->sess.latchPlayerType < PC_SOLDIER || ent->client->sess.latchPlayerType > PC_COVERTOPS)
-	{
-		ent->client->sess.latchPlayerType = PC_SOLDIER;
-	}
-
-	if (ent->client->sess.latchPlayerType < PC_SOLDIER || ent->client->sess.latchPlayerType > PC_COVERTOPS)
-	{
-		ent->client->sess.latchPlayerType = PC_SOLDIER;
-	}
 
 	if (!SetTeam(ent, s, qfalse, w, w2, qtrue))
 	{
