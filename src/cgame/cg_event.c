@@ -40,7 +40,7 @@ extern void CG_Tracer(vec3_t source, vec3_t dest, int sparks);
 //==========================================================================
 
 static vec3_t OB_YELLOW = { 1.f, 1.f, 0.f };
-static vec3_t OB_RED    = { 1.f, 0.f, 0.f };
+static vec3_t OB_RED = { 1.f, 0.f, 0.f };
 
 /**
  * @brief CG_GetObituaryIcon
@@ -367,6 +367,9 @@ static void CG_ItemPickup(int itemNum)
 	// see if it should be the grabbed weapon
 	if (item->giType == IT_WEAPON)
 	{
+		// select the weapon the server says we are using
+		cg.weaponSelect = cg.snap->ps.weapon;
+
 		if (cg_autoswitch.integer && cg.predictedPlayerState.weaponstate != WEAPON_RELOADING)
 		{
 			//  0 - "Off"

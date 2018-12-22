@@ -846,7 +846,7 @@ int CG_PredictionOk(playerState_t *ps1, playerState_t *ps2)
 		}
 	}
 
-	for (i = 1; i < MAX_POWERUPS; i++)  // start at PW_NONE + 1 (unused)
+	for (i = 0; i < MAX_POWERUPS; i++)
 	{
 		if (ps2->powerups[i] != ps1->powerups[i])
 		{
@@ -858,7 +858,7 @@ int CG_PredictionOk(playerState_t *ps1, playerState_t *ps2)
 		}
 	}
 
-	for (i = 1; i < MAX_WEAPONS; i++)   // start at WP_NONE + 1 (unused)
+	for (i = 0; i < MAX_WEAPONS; i++)
 	{
 		if (ps2->ammo[i] != ps1->ammo[i] || ps2->ammoclip[i] != ps1->ammoclip[i])
 		{
