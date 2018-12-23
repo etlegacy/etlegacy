@@ -42,7 +42,7 @@ menuDef {
 	YESNO( 8, HUD_Y+100, (SUBWINDOW_WIDTH_L)-4, 10, _("Enable Flags:"), .2, 8, "cg_countryflags", _("Displays players country flags in score board") )
 	YESNO( 8, HUD_Y+112, (SUBWINDOW_WIDTH_L)-4, 10, _("Fireteam Latched Class:"), .2, 8, "cg_fireteamLatchedClass", _("Displays Fireteam latched class") )
 	MULTI( 8, HUD_Y+124, (SUBWINDOW_WIDTH_L)-4, 10, _("Obituaries Icons:"), .2, 8, "cg_graphicObituaries", cvarFloatList { "Off" 0 "Victim Weapon Killer" 1 "Killer Weapon Victim" 2 }, _("Displays graphical obituaries") )
-	YESNO( 8, HUD_Y+136, (SUBWINDOW_WIDTH_L)-4, 10, _("Show Descriptive Text:"), .2, 8, "cg_descriptiveText", _("Displays limbo help text") )
+	YESNO( 8, HUD_Y+136, (SUBWINDOW_WIDTH_L)-4, 10, _("Show Descriptive Text:"), .2, 8, "cg_descriptiveText", _("Displays help text") )
 	MULTI( 8, HUD_Y+148, (SUBWINDOW_WIDTH_L)-4, 10, _("Show Clock:"), .2, 8, "cg_drawTime", cvarFloatList { "Off" 0 "24 hours" 1 "24 hours + seconds" 3 "12 hours" 5 "12 hours + seconds" 7 }, _("Displays local time") )
 	YESNO( 8, HUD_Y+160, (SUBWINDOW_WIDTH_L)-4, 10, _("Show FPS:"), .2, 8, "cg_drawFPS", _("Displays Frames Per Second") )
 	YESNO( 8, HUD_Y+172, (SUBWINDOW_WIDTH_L)-4, 10, _("Show Ping:"), .2, 8, "cg_drawPing", _("Displays ping") )	

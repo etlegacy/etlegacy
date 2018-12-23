@@ -35,6 +35,8 @@
 
 #include "cg_local.h"
 
+char *Binding_FromName(const char *cvar);
+
 // colors and fonts for overlays
 vec4_t SB_bg = { 0.16f, 0.2f, 0.17f, 0.8f };
 vec4_t SB_bg2 = { 0.0f, 0.0f, 0.0f, 0.6f };
@@ -1174,9 +1176,11 @@ static int WM_TeamScoreboard(int x, int y, team_t team, float fade, int maxrows,
  */
 qboolean CG_DrawScoreboard(void)
 {
-	int   x = 20, y = 6, x_right = SCREEN_WIDTH - x - (INFO_TOTAL_WIDTH - 5);
+	int   x = 20, y = 6, x_right = SCREEN_WIDTH - x - (INFO_TOTAL_WIDTH - 5), w;
 	float fade;
-	int   width = SCREEN_WIDTH - 2 * x + 5;
+	int width = SCREEN_WIDTH - 2 * x + 5;
+	const char *s, *s2;
+	float fontScale = cg_fontScaleSP.value;
 
 	x       += cgs.wideXoffset;
 	x_right += cgs.wideXoffset;
@@ -1233,6 +1237,21 @@ qboolean CG_DrawScoreboard(void)
 			x = x_right;
 			WM_TeamScoreboard(x, y, TEAM_ALLIES, fade, 24, 32);
 		}
+	}
+
+	if (cg_descriptiveText.integer)
+	{
+		s2 = Binding_FromName("+scores");
+		if (!Q_stricmp(s2, "(+scores)"))
+		{
+			s2 = "TAB";
+		}
+
+		s = va(CG_TranslateString("Press %s twice quickly to switch scoreboard"), s2);
+
+		w = CG_Text_Width_Ext(s, fontScale, 0, &cgs.media.limboFont2);
+		x = Ccg_WideX(SCREEN_WIDTH / 2) - w / 2;
+		CG_Text_Paint_Ext(x, 472, fontScale, fontScale, colorWhite, s, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 	}
 
 	return qtrue;
