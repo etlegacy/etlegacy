@@ -20,7 +20,6 @@ varying float var_DistanceSquared;
 #endif // LIGHT_DIRECTIONAL
 #endif // VSM, EVSM, ESM
 
-//varying vec4 var_Color;
 varying vec3 var_Position;
 #if defined(USE_ALPHA_TESTING)
 varying vec2 var_Tex;

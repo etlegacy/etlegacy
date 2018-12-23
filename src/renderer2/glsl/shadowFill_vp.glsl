@@ -10,7 +10,6 @@
 #include "lib/deformVertexes"
 #endif // USE_DEFORM_VERTEXES
 
-//attribute vec4 attr_Color;
 attribute vec4 attr_TexCoord0;
 attribute vec4 attr_Position;
 attribute vec3 attr_Normal;
@@ -19,7 +18,6 @@ attribute vec4 attr_Position2;
 attribute vec3 attr_Normal2;
 #endif // USE_VERTEX_ANIMATION
 
-//uniform vec4  u_Color;
 #if defined(USE_ALPHA_TESTING)
 uniform mat4  u_ColorTextureMatrix;
 #endif // USE_ALPHA_TESTING
@@ -48,7 +46,6 @@ varying vec3 var_Position;
 #if defined(USE_ALPHA_TESTING)
 varying vec2 var_Tex;
 #endif // USE_ALPHA_TESTING
-//varying vec4 var_Color;
 #if defined(USE_PORTAL_CLIPPING)
 varying float var_BackSide; // in front, or behind, the portalplane
 #endif // USE_PORTAL_CLIPPING
@@ -135,9 +132,6 @@ void main()
 	// transform texcoords
 	var_Tex = (u_ColorTextureMatrix * attr_TexCoord0).st;
 #endif // USE_ALPHA_TESTING
-
-//	// assign color
-//	var_Color = u_Color;
 
 #if defined(USE_PORTAL_CLIPPING)
 	// in front, or behind, the portalplane
