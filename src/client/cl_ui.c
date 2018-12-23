@@ -560,11 +560,11 @@ static int LAN_CompareServers(int source, int sortKey, int sortDir, int s1, int 
 		{
 			res = 1;
 		}
-		else if (server1->clients < server2->clients)
+		else if (server1->clients > server2->clients)
 		{
 			res = -1;
 		}
-		else if (server1->clients > server2->clients)
+		else if (server1->clients < server2->clients)
 		{
 			res = 1;
 		}
