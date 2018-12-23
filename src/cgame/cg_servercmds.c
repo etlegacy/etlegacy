@@ -1381,6 +1381,14 @@ static void CG_MapRestart(void)
 	CG_ParseTagConnects();
 
 	trap_Cvar_Set("cg_thirdPerson", "0");
+
+#ifdef FEATURE_RATING
+	// default scoreboard
+	if (cgs.skillRating > 1)
+	{
+		trap_Cvar_Set("cg_scoreboard", "1");
+	}
+#endif
 }
 
 #define MAX_VOICEFILES      8
