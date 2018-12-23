@@ -552,7 +552,15 @@ static int LAN_CompareServers(int source, int sortKey, int sortDir, int s1, int 
 		res = Q_stricmp(server1->mapName, server2->mapName);
 		break;
 	case SORT_CLIENTS:
-		if (server1->clients < server2->clients)
+		if (server1->humans > server2->humans)
+		{
+			res = -1;
+		}
+		else if (server1->humans < server2->humans)
+		{
+			res = 1;
+		}
+		else if (server1->clients < server2->clients)
 		{
 			res = -1;
 		}
