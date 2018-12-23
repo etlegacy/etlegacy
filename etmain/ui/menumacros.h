@@ -1205,16 +1205,17 @@
 		cvar COMBO_CVAR                                \
 		COMBO_CVARLIST                                            \
 		visible         1                                               \
-		backcolor   0 0 0 .8                             \
 		bordercolor .5 .5 .5 .5                             \
 		tooltip COMBO_TOOLTIP                             \
                                                                         \
 		mouseEnter {                                                    \
-			setitemcolor "combo" ## COMBO_TEXT forecolor .9 .9 .9 1 ;     \
+			setitemcolor "combo" ## COMBO_TEXT forecolor .9 .9 .9 1   \
+			setitemcolor "combo" ## COMBO_TEXT backcolor 0 0 0 .8   \
 		}                                                               \
                                                                         \
 		mouseExit {                                                     \
 			setitemcolor "combo" ## COMBO_TEXT forecolor .6 .6 .6 1 ;     \
+			setitemcolor "combo" ## COMBO_TEXT backcolor 0 0 0 0   \
 		}                                                               \
                                                                         \
 		accept {                                                        \
@@ -1243,16 +1244,17 @@
 		cvar COMBOLEFT_CVAR                                \
 		COMBOLEFT_CVARLIST                                            \
 		visible         1                                               \
-		backcolor   0 0 0 .8                             \
 		bordercolor .5 .5 .5 .5                             \
 		tooltip COMBOLEFT_TOOLTIP                             \
                                                                         \
 		mouseEnter {                                                    \
-			setitemcolor "combo" ## COMBOLEFT_TEXT forecolor .9 .9 .9 1 ;     \
+			setitemcolor "combo" ## COMBOLEFT_TEXT forecolor .9 .9 .9 1 \
+			setitemcolor "combo" ## COMBOLEFT_TEXT backcolor 0 0 0 0.8     \
 		}                                                               \
                                                                         \
 		mouseExit {                                                     \
 			setitemcolor "combo" ## COMBOLEFT_TEXT forecolor .6 .6 .6 1 ;     \
+			setitemcolor "combo" ## COMBOLEFT_TEXT backcolor 0 0 0 0   \
 		}                                                               \
                                                                         \
 		accept {                                                        \
