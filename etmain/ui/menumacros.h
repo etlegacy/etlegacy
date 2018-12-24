@@ -1209,13 +1209,13 @@
 		tooltip COMBO_TOOLTIP                             \
                                                                         \
 		mouseEnter {                                                    \
-			setitemcolor "combo" ## COMBO_TEXT forecolor .9 .9 .9 1   \
-			setitemcolor "combo" ## COMBO_TEXT backcolor 0 0 0 .8   \
+			setitemcolor "combo" ## COMBO_TEXT forecolor .9 .9 .9 1 ;     \
+			setitemcolor "combo" ## COMBO_TEXT backcolor 0 0 0 .8 ;   \
 		}                                                               \
                                                                         \
 		mouseExit {                                                     \
 			setitemcolor "combo" ## COMBO_TEXT forecolor .6 .6 .6 1 ;     \
-			setitemcolor "combo" ## COMBO_TEXT backcolor 0 0 0 0   \
+			setitemcolor "combo" ## COMBO_TEXT backcolor 0 0 0 0 ;   \
 		}                                                               \
                                                                         \
 		accept {                                                        \
@@ -1248,13 +1248,13 @@
 		tooltip COMBOLEFT_TOOLTIP                             \
                                                                         \
 		mouseEnter {                                                    \
-			setitemcolor "combo" ## COMBOLEFT_TEXT forecolor .9 .9 .9 1 \
-			setitemcolor "combo" ## COMBOLEFT_TEXT backcolor 0 0 0 0.8     \
+			setitemcolor "combo" ## COMBOLEFT_TEXT forecolor .9 .9 .9 1 ;     \
+			setitemcolor "combo" ## COMBOLEFT_TEXT backcolor 0 0 0 0.8 ;  \
 		}                                                               \
                                                                         \
 		mouseExit {                                                     \
 			setitemcolor "combo" ## COMBOLEFT_TEXT forecolor .6 .6 .6 1 ;     \
-			setitemcolor "combo" ## COMBOLEFT_TEXT backcolor 0 0 0 0   \
+			setitemcolor "combo" ## COMBOLEFT_TEXT backcolor 0 0 0 0 ;  \
 		}                                                               \
                                                                         \
 		accept {                                                        \
