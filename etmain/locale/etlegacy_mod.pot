@@ -7349,60 +7349,6 @@ msgstr ""
 msgid "3. Sniper Rifle"
 msgstr ""
 
-msgid "English (default)  "
-msgstr ""
-
-msgid "Czech"
-msgstr ""
-
-msgid "Dutch"
-msgstr ""
-
-msgid "Finnish"
-msgstr ""
-
-msgid "French"
-msgstr ""
-
-msgid "German"
-msgstr ""
-
-msgid "Greek"
-msgstr ""
-
-msgid "Hungarian"
-msgstr ""
-
-msgid "Italian"
-msgstr ""
-
-msgid "Norwegian"
-msgstr ""
-
-msgid "Polish"
-msgstr ""
-
-msgid "Portuguese"
-msgstr ""
-
-msgid "Russian"
-msgstr ""
-
-msgid "Spanish"
-msgstr ""
-
-msgid "Turkish"
-msgstr ""
-
-msgid "Bulgarian"
-msgstr ""
-
-msgid "Serbian"
-msgstr ""
-
-msgid "Swedish"
-msgstr ""
-
 msgid "desktop resolution"
 msgstr ""
 
