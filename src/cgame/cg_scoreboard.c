@@ -941,7 +941,7 @@ static int WM_TeamScoreboard(int x, int y, team_t team, float fade, int maxrows,
 	else
 	{
 #ifdef FEATURE_RATING
-		char *s;
+		char *s, *s2;
 #endif
 
 		if (team == TEAM_AXIS)
@@ -949,13 +949,24 @@ static int WM_TeamScoreboard(int x, int y, team_t team, float fade, int maxrows,
 #ifdef FEATURE_RATING
 			if (cgs.skillRating && cg_scoreboard.integer == SCOREBOARD_SR)
 			{
+				s = va("%s [%.1f%%] (%d %s)", CG_TranslateString("AXIS"), (double)cg.axisProb, cg.teamPlayers[team], cg.teamPlayers[team] < 2 ? CG_TranslateString("PLAYER") : CG_TranslateString("PLAYERS"));
+
 				if (cgs.mapProb != 0.f)
 				{
-					s = va("%s [%.1f%%] [%.1f%%] (%d %s)", CG_TranslateString("AXIS"), (double)cg.axisProb, (double)(100.f * cgs.mapProb), cg.teamPlayers[team], cg.teamPlayers[team] < 2 ? CG_TranslateString("PLAYER") : CG_TranslateString("PLAYERS"));
-				}
-				else
-				{
-					s = va("%s [%.1f%%] (%d %s)", CG_TranslateString("AXIS"), (double)cg.axisProb, cg.teamPlayers[team], cg.teamPlayers[team] < 2 ? CG_TranslateString("PLAYER") : CG_TranslateString("PLAYERS"));
+					float mapBias = 100.f * (cgs.mapProb - 0.5f);
+					if (mapBias > 0.f)
+					{
+						s2 = va("%s: ^2+%.1f%%^9", CG_TranslateString("MAP BIAS"), (double)mapBias);
+					}
+					else if (mapBias < 0.f)
+					{
+						s2 = va("%s: ^1%.1f%%^9", CG_TranslateString("MAP BIAS"), (double)mapBias);
+					}
+					else
+					{
+						s2 = va("%s: ^3%.1f%%^9", CG_TranslateString("MAP BIAS"), (double)mapBias);
+					}
+					CG_Text_Paint_Ext(x + width - 5 - CG_Text_Width_Ext(s2, 0.19f, 0, FONT_HEADER), y + 13, 0.19f, 0.19f, SB_text, s2, 0, 0, 0, FONT_HEADER);
 				}
 			}
 			else
@@ -973,13 +984,24 @@ static int WM_TeamScoreboard(int x, int y, team_t team, float fade, int maxrows,
 #ifdef FEATURE_RATING
 			if (cgs.skillRating && cg_scoreboard.integer == SCOREBOARD_SR)
 			{
+				s = va("%s [%.1f%%] (%d %s)", CG_TranslateString("ALLIES"), (double)cg.alliesProb, cg.teamPlayers[team], cg.teamPlayers[team] < 2 ? CG_TranslateString("PLAYER") : CG_TranslateString("PLAYERS"));
+
 				if (cgs.mapProb != 0.f)
 				{
-					s = va("%s [%.1f%%] [%.1f%%] (%d %s)", CG_TranslateString("ALLIES"), (double)cg.alliesProb, (double)(100.f * (1.0f - cgs.mapProb)), cg.teamPlayers[team], cg.teamPlayers[team] < 2 ? CG_TranslateString("PLAYER") : CG_TranslateString("PLAYERS"));
-				}
-				else
-				{
-					s = va("%s [%.1f%%] (%d %s)", CG_TranslateString("ALLIES"), (double)cg.alliesProb, cg.teamPlayers[team], cg.teamPlayers[team] < 2 ? CG_TranslateString("PLAYER") : CG_TranslateString("PLAYERS"));
+					float mapBias = 100.f * (0.5f - cgs.mapProb);
+					if (mapBias > 0.f)
+					{
+						s2 = va("%s: ^2+%.1f%%^9", CG_TranslateString("MAP BIAS"), (double)mapBias);
+					}
+					else if (mapBias < 0.f)
+					{
+						s2 = va("%s: ^1%.1f%%^9", CG_TranslateString("MAP BIAS"), (double)mapBias);
+					}
+					else
+					{
+						s2 = va("%s: ^3%.1f%%^9", CG_TranslateString("MAP BIAS"), (double)mapBias);
+					}
+					CG_Text_Paint_Ext(x + width - 5 - CG_Text_Width_Ext(s2, 0.19f, 0, FONT_HEADER), y + 13, 0.19f, 0.19f, SB_text, s2, 0, 0, 0, FONT_HEADER);
 				}
 			}
 			else
