@@ -615,7 +615,7 @@ cvarTable_t gameCvarTable[] =
 	{ &g_debugHitboxes,                     "g_debugHitboxes",                     "0",                          CVAR_CHEAT,                                      0, qfalse, qfalse },
 	{ &g_debugPlayerHitboxes,               "g_debugPlayerHitboxes",               "0",                          0,                                               0, qfalse, qfalse }, // no need to make this CVAR_CHEAT
 
-	{ &g_corpses,                           "g_dynBQ",                             "0",                          CVAR_LATCH | CVAR_ARCHIVE,                       0, qfalse, qfalse },
+	{ &g_corpses,                           "g_corpses",                           "0",                          CVAR_LATCH | CVAR_ARCHIVE,                       0, qfalse, qfalse },
 	{ &g_realHead,                          "g_realHead",                          "1",                          0,                                               0, qfalse, qfalse },
 	{ &sv_fps,                              "sv_fps",                              "20",                         CVAR_SYSTEMINFO,                                 0, qfalse, qfalse },
 	{ &g_skipCorrection,                    "g_skipCorrection",                    "1",                          0,                                               0, qfalse, qfalse },

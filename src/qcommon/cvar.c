@@ -1738,7 +1738,7 @@ void Cvar_Register(vmCvar_t *vmCvar, const char *varName, const char *defaultVal
 	//WARNING: VM tried to register engine latch cvar to latched value: cvar 'g_maxlives' with value '0'
 	//WARNING: VM tried to register engine latch cvar to latched value: cvar 'g_maxlivesRespawnPenalty' with value '0'
 	//WARNING: VM tried to register engine latch cvar to latched value: cvar 'g_countryflags' with value '0'
-	//WARNING: VM tried to register engine latch cvar to latched value: cvar 'g_dynBQ' with value '0'
+	//WARNING: VM tried to register engine latch cvar to latched value: cvar 'g_corpses' with value '0'
 	//WARNING: VM tried to register engine latch cvar to latched value: cvar 'g_skillRating' with value '2'
 	//WARNING: VM tried to register engine latch cvar to latched value: cvar 'g_multiview' with value '0'
 /*
