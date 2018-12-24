@@ -63,16 +63,19 @@ textures/fueldump/terrain1_0
 		stage diffusemap
 		map textures/stone/mxsnow2.tga
 		rgbGen identity
+		alphaGen vertex
 	}
 	{
 		stage bumpmap
 		map textures/stone/mxsnow2_n.tga
 		rgbGen identity
+		alphaGen vertex
 	}
     {
 		stage specularmap
 		map textures/stone/mxsnow2_r.tga
 		rgbGen identity
+		alphaGen vertex
 	}
 	
 	{
@@ -111,16 +114,19 @@ textures/fueldump/terrain1_1
 		stage diffusemap 
 		map textures/snow_sd/mxrock4b_snow.tga
 		rgbGen identity
+		alphaGen vertex
 	}
 	{
 		stage bumpmap
 		map textures/snow_sd/mxrock4b_snow_n.tga
 		rgbGen identity
+		alphaGen vertex
 	}
 	{
 		stage specularmap
 		map textures/snow_sd/mxrock4b_snow_r.tga
 		rgbGen identity
+		alphaGen vertex
 	}
 	{
 		stage diffusemap
@@ -128,7 +134,6 @@ textures/fueldump/terrain1_1
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
 		rgbgen identity
 		alphaGen vertex
-		
 	}
 	{
 	    stage bumpmap
@@ -159,16 +164,19 @@ textures/fueldump/terrain1_2
 	   stage diffusemap
 	   map textures/stone/mxsnow3.tga
 	   rgbGen identity
+	   alphaGen vertex
     }
 	{
 		stage bumpmap
 		map textures/stone/mxsnow3_n.tga
 		rgbGen identity
+		alphaGen vertex
 	}
 	{
 		stage specularmap
 		map textures/stone/mxsnow3_r.tga
 		rgbGen identity
+		alphaGen vertex
 	}
 	
 	{
@@ -208,16 +216,19 @@ textures/fueldump/terrain1_3
 		stage diffusemap
 		map textures/stone/mxrock3h_snow.tga
 		rgbGen identity
+		alphaGen vertex
 	}
 	{
 		stage bumpmap
 		map textures/stone/mxrock3h_snow_n.tga
 		rgbGen identity
+		alphaGen vertex
 	}
 	{
 		stage specularmap
 		map textures/stone/mxrock3h_snow_r.tga
 		rgbgen identity
+		alphaGen vertex
 	}
 	
 	{
@@ -256,16 +267,19 @@ textures/fueldump/terrain1_0to1
 	    stage diffusemap
 		map textures/stone/mxsnow2.tga
 		rgbgen identity
+		alphaGen vertex
 	}
 	{
 	   stage bumpmap
 	   map textures/stone/mxsnow2_n.tga
 	   rgbgen identity
+	   alphaGen vertex
 	}
 	{
 	    stage specularmap
 		map textures/stone/mxsnow2.tga
 		rgbgen identity
+		alphaGen vertex
 	}
 	{
 		stage diffusemap
@@ -303,16 +317,19 @@ textures/fueldump/terrain1_0to2
 	    stage diffusemap
 		map textures/stone/mxsnow2.tga
 		rgbgen identity
+		alphaGen vertex
 	}
 	{
 	    stage bumpmap
 		map textures/stone/mxsnow2_n.tga
 		rgbgen identity
+		alphaGen vertex
 	}
 	{
 	    stage specularmap
 		map textures/stone/mxsnow2_r.tga
 		rgbgen identity
+		alphaGen vertex
 	}
 	{
 		stage diffusemap
@@ -350,16 +367,19 @@ textures/fueldump/terrain1_0to3
 	    stage diffusemap
 		map textures/stone/mxsnow2.tga
 		rgbgen identity
+		alphaGen vertex
 	}
 	{
 	    stage bumpmap
 		map textures/stone/mxsnow2_n.tga
 		rgbgen identity
+		alphaGen vertex
 	}
 	{
 	    stage specularmap
 		map textures/stone/mxsnow2_r.tga
 		rgbgen identity
+		alphaGen vertex
 	}
 	{
 	    stage diffusemap
@@ -397,16 +417,19 @@ textures/fueldump/terrain1_1to2
 	    stage diffusemap
 		map textures/snow_sd/mxrock4b_snow.tga
 		rgbgen identity
+		alphaGen vertex
 	}
 	{
 	    stage bumpmap
 		map textures/snow_sd/mxrock4b_snow_n.tga
 		rgbgen identity
+		alphaGen vertex
     }
 	{
 	   stage specularmap
 	   map textures/snow_sd/mxrock4b_snow_r.tga
 	   rgbgen identity
+	   alphaGen vertex
 	}
 	{
 	    stage diffusemap
@@ -444,16 +467,19 @@ textures/fueldump/terrain1_1to3
 	    stage diffusemap
 		map textures/snow_sd/mxrock4b_snow.tga
 		rgbgen identity
+		alphaGen vertex
 	}
 	{
 	    stage bumpmap
 		map textures/snow_sd/mxrock4b_snow_n.tga
 		rgbgen identity
+		alphaGen vertex
 	}
 	{
 	    stage specularmap
 		map textures/snow_sd/mxrock4b_snow_r.tga
 		rgbgen identity
+		alphaGen vertex
 	}
 	{
 	    stage diffusemap
@@ -491,17 +517,19 @@ textures/fueldump/terrain1_2to3
 	    stage diffusemap
 		map textures/stone/mxsnow3.tga
 		rgbgen identity
-		
+		alphaGen vertex
 	}
 	{
 	    stage bumpmap
 		map textures/stone/mxsnow3_n.tga
 		rgbgen identity
+		alphaGen vertex
 	}
 	{
 	    stage specularmap
 		map textures/stone/mxsnow3_r.tga
 		rgbgen identity
+		alphaGen vertex
 	}
 	{
 	    stage diffusemap
@@ -787,7 +815,6 @@ textures/fueldump/cave_floorblend
 	}
 }
 
-
 textures/fueldump/alphatree
 {
 	qer_editorimage textures/snow/s_dirt_m03i_alphatree.tga
@@ -804,7 +831,6 @@ textures/fueldump/alphatree
 		rgbGen vertex
 	}
 }
-
 
 //==========================================================================
 // Various metal surfaceparm textures

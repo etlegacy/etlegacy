@@ -17,16 +17,19 @@ textures/goldrush/lmterrain_0
 	    stage diffuseMap
 		map textures/temperate_sd/sand_bubbles_bright.tga
 		rgbgen identity
+		alphaGen vertex
 	}
 	{
 	    stage bumpMap
 		map textures/temperate_sd/sand_bubbles_bright_n.tga
 		rgbgen identity
+		alphaGen vertex
 	}
 	{
 	    stage specularMap
 		map textures/temperate_sd/sand_bubbles_bright_r.tga
 		rgbgen identity
+		alphaGen vertex
 	}
 	{
 	    stage diffuseMap
@@ -63,16 +66,19 @@ textures/goldrush/lmterrain_0to1
 	    stage diffuseMap
 		map textures/temperate_sd/sand_bubbles_bright.tga
 		tcMod scale 1.75 1.75
+		alphaGen vertex
 	}
 	{
 	    stage bumpMap 
 		map textures/temperate_sd/sand_bubbles_bright_n.tga
 		tcMod scale 1.75 1.75
+		alphaGen vertex
 	}
 	{
 	    stage specularMap
 		map textures/temperate_sd/sand_bubbles_bright_r.tga
 		tcMod scale 1.75 1.75
+		alphaGen vertex
 	}
 	{
 	    stage diffuseMap
@@ -110,16 +116,19 @@ textures/goldrush/lmterrain_0to2
 	    stage diffuseMap
 		map textures/temperate_sd/sand_bubbles_bright.tga
 		tcMod scale 1.75 1.75
+		alphaGen vertex
 	}
 	{
 	    stage bumpMap
 		map textures/temperate_sd/sand_bubbles_bright_n.tga
 		tcMod scale 1.75 1.75
+		alphaGen vertex
 	}
 	{
 	    stage specularMap
 		map textures/temperate_sd/sand_bubbles_bright_r.tga
 	    tcMod scale 1.75 1.75
+	    alphaGen vertex
 	}
 	{
 	    stage diffuseMap
@@ -158,16 +167,19 @@ textures/goldrush/lmterrain_0to3
 	    stage diffuseMap
 		map textures/temperate_sd/sand_bubbles_bright.tga
         tcMod scale 1.75 1.75
+        alphaGen vertex
 	}
 	{
 	    stage bumpMap
 		map textures/temperate_sd/sand_bubbles_bright_n.tga
 		tcMod scale 1.75 1.75
+		alphaGen vertex
 	}
 	{
 	    stage specularMap
 		map textures/temperate_sd/sand_bubbles_bright_r.tga
 		tcMod scale 1.75 1.75
+		alphaGen vertex
 	}
 	{
 	    stage diffuseMap
@@ -205,18 +217,21 @@ textures/goldrush/lmterrain_1
 		map textures/desert_sd/pavement_quad_sandy.tga
 		rgbgen identity
 		tcmod scale 1.75 1.75
+		alphaGen vertex
 	}
 	{
 	    stage bumpMap
 		map textures/desert_sd/pavement_quad_sandy_n.tga
 		rgbgen identity
 		tcmod scale 1.75 1.75
+		alphaGen vertex
 	}
 	{
 	    stage specularMap
 		map textures/desert_sd/pavement_quad_sandy_r.tga
 		rgbgen identity
 		tcmod scale 1.75 1.75
+		alphaGen vertex
 	}
 
 	{
@@ -254,16 +269,19 @@ textures/goldrush/lmterrain_1to2
 	    stage diffuseMap
 		map textures/desert_sd/pavement_quad_sandy.tga
 		tcMod scale 1.75 1.75
+		alphaGen vertex
 	}
 	{
 	    stage bumpMap
 		map textures/desert_sd/pavement_quad_sandy_n.tga
 		tcMod scale 1.75 1.75
+		alphaGen vertex
 	}
 	{
 	    stage specularMap
 		map textures/desert_sd/pavement_quad_sandy_r.tga
 		tcMod scale 1.75 1.75
+		alphaGen vertex
 	}
 	{
 	    stage diffuseMap
@@ -300,16 +318,19 @@ textures/goldrush/lmterrain_1to3
 	    stage diffuseMap
 		map textures/desert_sd/pavement_quad_sandy.tga
 		tcmod scale 1.75 1.75
+		alphaGen vertex
 	}
 	{
 	    stage bumpMap
 		map textures/desert_sd/pavement_quad_sandy_n.tga
 		tcmod scale 1.75 1.75
+		alphaGen vertex
 	}
 	{
 	    stage specularMap
 		map textures/desert_sd/pavement_quad_sandy_r.tga
 		tcmod scale 1.75 1.75
+		alphaGen vertex
 	}
 	{
 	    stage diffuseMap
@@ -347,18 +368,21 @@ textures/goldrush/lmterrain_2
 		map textures/desert_sd/pavement_tris_sandy.tga
 		rgbgen identity
 		tcmod scale 1.75 1.75
+		alphaGen vertex
 	}
 	{
 	    stage bumpMap
 		map textures/desert_sd/pavement_tris_sandy_n.tga
 		rgbgen identity
 		tcmod scale 1.75 1.75
+		alphaGen vertex
 	}
 	{
 	    stage specularMap
 		map textures/desert_sd/pavement_tris_sandy_r.tga
 		rgbgen identity
 		tcmod scale 1.75 1.75
+		alphaGen vertex
 	}
 	{
 	    stage diffuseMap
@@ -395,16 +419,19 @@ textures/goldrush/lmterrain_2to3
 	    stage diffuseMap
 		map textures/desert_sd/pavement_tris_sandy.tga
 		tcmod scale 1.75 1.75
+		alphaGen vertex
 	}
 	{
 	    stage bumpMap
 		map textures/desert_sd/pavement_tris_sandy_n.tga
 		tcmod scale 1.75 1.75
+		alphaGen vertex
 	}
 	{
 	    stage specularMap 
 		map textures/desert_sd/pavement_tris_sandy_r.tga
 		tcmod scale 1.75 1.75
+		alphaGen vertex
 	}
 	{
 	    stage diffuseMap
@@ -445,18 +472,21 @@ textures/goldrush/lmterrain_3
 		map textures/desert_sd/road_dirty_gravel.tga
 		rgbgen identity
 		tcmod scale 1.75 1.75
+		alphaGen vertex
 	}
 	{
 	    stage bumpMap
 		map textures/desert_sd/road_dirty_gravel_n.tga
 		rgbgen identity
 		tcmod scale 1.75 1.75
+		alphaGen vertex
 	}
 	{
 	    stage specularMap
 		map textures/desert_sd/road_dirty_gravel_r.tga
 		rgbgen identity
 		tcmod scale 1.75 1.75
+		alphaGen vertex
 	}
 	{
 	    stage diffuseMap
@@ -494,16 +524,19 @@ textures/goldrush/pavement_quad
 	    stage diffuseMap
 		map textures/desert_sd/pavement_quad_sandy.tga
 		tcmod scale 1.75 1.75
+		alphaGen vertex
 	}
 	{
 	    stage bumpMap
 		map textures/desert_sd/pavement_quad_sandy_n.tga
 		tcmod scale 1.75 1.75
+		alphaGen vertex
 	}
 	{
 	    stage specularMap
 		map textures/desert_sd/pavement_quad_sandy_r.tga
 		tcmod scale 1.75 1.75
+		alphaGen vertex
 	}
 	{
 	    stage diffuseMap
@@ -587,18 +620,21 @@ textures/desert_sd/road_dirty_gravel
 		map textures/desert_sd/road_dirty_gravel.tga
 		rgbGen identity
 		tcmod scale 1.2 1.2
+		alphaGen vertex
 	}
 	{
 	    stage bumpMap
 		map textures/desert_sd/road_dirty_gravel_n.tga
 		rgbGen identity
 		tcmod scale 1.2 1.2
+		alphaGen vertex
 	}
 	{
 	    stage specularMap
 		map textures/desert_sd/road_dirty_gravel_r.tga
 		rgbGen identity
 		tcmod scale 1.2 1.2
+		alphaGen vertex
 	}
 	{
 	    stage diffuseMap
@@ -606,6 +642,7 @@ textures/desert_sd/road_dirty_gravel
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
 		alphaGen vertex
 		tcMod scale 1.2 1.2
+		alphaGen vertex
 	}
 	{
 	    stage bumpMap

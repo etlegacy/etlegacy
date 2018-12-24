@@ -51,16 +51,19 @@ textures/mp_railgun/lmterrain_0
 		stage diffusemap
 		map textures/snow_sd/s_dirt_m03i_2_big.tga
 		rgbgen identity
+		alphaGen vertex
 	}
 	{
 		stage bumpmap
 		map textures/snow_sd/s_dirt_m03i_2_big_n.tga
 		rgbgen identity
+		alphaGen vertex
 	}
 	{
 		stage specularmap
 		map textures/snow_sd/s_dirt_m03i_2_big_r.tga
 		rgbgen identity
+		alphaGen vertex
 	}
 	{
 		stage diffusemap
@@ -97,16 +100,19 @@ textures/mp_railgun/lmterrain_0to1
 		stage diffusemap
 		map textures/snow_sd/s_dirt_m03i_2_big.tga
 		rgbgen identity
+		alphaGen vertex
 	}
 	{
 		stage bumpmap
 		map textures/snow_sd/s_dirt_m03i_2_big_n.tga
 		rgbgen identity
+		alphaGen vertex
 	}
 	{
 		stage specularmap
 		map textures/snow_sd/s_dirt_m03i_2_big_r.tga
 		rgbgen identity
+		alphaGen vertex
 	}
 	{
 		stage diffusemap
@@ -143,16 +149,19 @@ textures/mp_railgun/lmterrain_0to2
 		stage diffusemap
 		map textures/snow_sd/s_dirt_m03i_2_big.tga
 		rgbgen identity
+		alphaGen vertex
 	}
 	{
 		stage bumpmap
 		map textures/snow_sd/s_dirt_m03i_2_big_n.tga
 		rgbgen identity
+		alphaGen vertex
 	}
 	{
 		stage specularmap
 		map textures/snow_sd/s_dirt_m03i_2_big_r.tga
 		rgbgen identity
+		alphaGen vertex
 	}
 	{
 		stage diffusemap
@@ -189,16 +198,19 @@ textures/mp_railgun/lmterrain_0to3
 		stage diffusemap
 		map textures/snow_sd/s_dirt_m03i_2_big.tga
 		rgbgen identity
+		alphaGen vertex
 	}
 	{
 		stage bumpmap
 		map textures/snow_sd/s_dirt_m03i_2_big_n.tga
 		rgbgen identity
+		alphaGen vertex
 	}
 	{
 		stage specularmap
 		map textures/snow_sd/s_dirt_m03i_2_big_r.tga
 		rgbgen identity
+		alphaGen vertex
 	}
 	{
 		stage diffusemap
@@ -235,16 +247,19 @@ textures/mp_railgun/lmterrain_0to4
 		stage diffusemap
 		map textures/snow_sd/s_dirt_m03i_2_big.tga
 		rgbgen identity
+		alphaGen vertex
 	}
 	{
 		stage bumpmap
 		map textures/snow_sd/s_dirt_m03i_2_big_n.tga
 		rgbgen identity
+		alphaGen vertex
 	}
 	{
 		stage specularmap
 		map textures/snow_sd/s_dirt_m03i_2_big_r.tga
 		rgbgen identity
+		alphaGen vertex
 	}
 	{
 		stage diffusemap
@@ -281,16 +296,19 @@ textures/mp_railgun/lmterrain_0to5
 		stage diffusemap
 		map textures/snow_sd/s_dirt_m03i_2_big.tga
 		rgbgen identity
+		alphaGen vertex
 	}
 	{
 		stage bumpmap
 		map textures/snow_sd/s_dirt_m03i_2_big_n.tga
 		rgbgen identity
+		alphaGen vertex
 	}
 	{
 		stage specularmap
 		map textures/snow_sd/s_dirt_m03i_2_big_r.tga
 		rgbgen identity
+		alphaGen vertex
 	}
 	{
 		stage diffusemap
@@ -327,16 +345,19 @@ textures/mp_railgun/lmterrain_0to6
 		stage diffusemap
 		map textures/snow_sd/s_dirt_m03i_2_big.tga
 		rgbgen identity
+		alphaGen vertex
 	}
 	{
 		stage bumpmap
 		map textures/snow_sd/s_dirt_m03i_2_big_n.tga
 		rgbgen identity
+		alphaGen vertex
 	}
 	{
 		stage specularmap
 		map textures/snow_sd/s_dirt_m03i_2_big_r.tga
 		rgbgen identity
+		alphaGen vertex
 	}
 	{
 		stage diffusemap
@@ -373,16 +394,19 @@ textures/mp_railgun/lmterrain_1
 		stage diffusemap
 		map textures/snow_sd/bigrock_rounded_faint.tga
 		rgbgen identity
+		alphaGen vertex
 	}
 	{
 		stage bumpmap
 		map textures/snow_sd/bigrock_rounded_faint_n.tga
 		rgbgen identity
+		alphaGen vertex
 	}
 	{
 		stage specularmap
 		map textures/snow_sd/bigrock_rounded_faint_r.tga
 		rgbgen identity
+		alphaGen vertex
 	}
 	{
 		stage diffusemap
@@ -419,16 +443,19 @@ textures/mp_railgun/lmterrain_1to2
 		stage diffusemap
 		map textures/snow_sd/bigrock_rounded_faint.tga
 		rgbgen identity
+		alphaGen vertex
 	}
 	{
 		stage bumpmap
 		map textures/snow_sd/bigrock_rounded_faint_n.tga
 		rgbgen identity
+		alphaGen vertex
 	}
 	{
 		stage specularmap
 		map textures/snow_sd/bigrock_rounded_faint_r.tga
 		rgbgen identity
+		alphaGen vertex
 	}
 	{
 		stage diffusemap
@@ -465,16 +492,19 @@ textures/mp_railgun/lmterrain_1to3
 		stage diffusemap
 		map textures/snow_sd/bigrock_rounded_faint.tga
 		rgbgen identity
+		alphaGen vertex
 	}
 	{
 		stage bumpmap
 		map textures/snow_sd/bigrock_rounded_faint_n.tga
 		rgbgen identity
+		alphaGen vertex
 	}
 	{
 		stage specularmap
 		map textures/snow_sd/bigrock_rounded_faint_r.tga
 		rgbgen identity
+		alphaGen vertex
 	}
 	{
 		stage diffusemap
@@ -511,16 +541,19 @@ textures/mp_railgun/lmterrain_1to4
 		stage diffusemap
 		map textures/snow_sd/bigrock_rounded_faint.tga
 		rgbgen identity
+		alphaGen vertex
 	}
 	{
 		stage bumpmap
 		map textures/snow_sd/bigrock_rounded_faint_n.tga
 		rgbgen identity
+		alphaGen vertex
 	}
 	{
 		stage specularmap
 		map textures/snow_sd/bigrock_rounded_faint_r.tga
 		rgbgen identity
+		alphaGen vertex
 	}
 	{
 		stage diffusemap
@@ -557,16 +590,19 @@ textures/mp_railgun/lmterrain_1to5
 		stage diffusemap
 		map textures/snow_sd/bigrock_rounded_faint.tga
 		rgbgen identity
+		alphaGen vertex
 	}
 	{
 		stage bumpmap
 		map textures/snow_sd/bigrock_rounded_faint_n.tga
 		rgbgen identity
+		alphaGen vertex
 	}
 	{
 		stage specularmap
 		map textures/snow_sd/bigrock_rounded_faint_r.tga
 		rgbgen identity
+		alphaGen vertex
 	}
 	{
 		stage diffusemap
@@ -603,16 +639,19 @@ textures/mp_railgun/lmterrain_1to6
 		stage diffusemap
 		map textures/snow_sd/bigrock_rounded_faint.tga
 		rgbgen identity
+		alphaGen vertex
 	}
 	{
 		stage bumpmap
 		map textures/snow_sd/bigrock_rounded_faint_n.tga
 		rgbgen identity
+		alphaGen vertex
 	}
 	{
 		stage specularmap
 		map textures/snow_sd/bigrock_rounded_faint_r.tga
 		rgbgen identity
+		alphaGen vertex
 	}
 	{
 		stage diffusemap
@@ -649,16 +688,19 @@ textures/mp_railgun/lmterrain_2
 		stage diffusemap
 		map textures/snow_sd/snow_var01_big.tga
 		rgbgen identity
+		alphaGen vertex
 	}
 	{
 		stage bumpmap
 		map textures/snow_sd/snow_var01_big_n.tga
 		rgbgen identity
+		alphaGen vertex
 	}
 	{
 		stage specularmap
 		map textures/snow_sd/snow_var01_big_r.tga
 		rgbgen identity
+		alphaGen vertex
 	}
 	
 	{
@@ -696,16 +738,19 @@ textures/mp_railgun/lmterrain_2to3
 		stage diffusemap
 		map textures/snow_sd/snow_var01_big.tga
 		rgbgen identity
+		alphaGen vertex
 	}
 	{
 		stage bumpmap
 		map textures/snow_sd/snow_var01_big_n.tga
 		rgbgen identity
+		alphaGen vertex
 	}
 	{
 		stage specularmap
 		map textures/snow_sd/snow_var01_big_r.tga
 		rgbgen identity
+		alphaGen vertex
 	}
 	{
 		stage diffusemap
@@ -742,16 +787,19 @@ textures/mp_railgun/lmterrain_2to4
 		stage diffusemap
 		map textures/snow_sd/snow_var01_big.tga
 		rgbgen identity
+		alphaGen vertex
 	}
 	{
 		stage bumpmap
 		map textures/snow_sd/snow_var01_big_n.tga
 		rgbgen identity
+		alphaGen vertex
 	}
 	{
 		stage specularmap
 		map textures/snow_sd/snow_var01_big_r.tga
 		rgbgen identity
+		alphaGen vertex
 	}
 	{
 		stage diffusemap
@@ -788,16 +836,19 @@ textures/mp_railgun/lmterrain_2to5
 		stage diffusemap
 		map textures/snow_sd/snow_var01_big.tga
 		rgbgen identity
+		alphaGen vertex
 	}
 	{
 		stage bumpmap
 		map textures/snow_sd/snow_var01_big_n.tga
 		rgbgen identity
+		alphaGen vertex
 	}
 	{
 		stage specularmap
 		map textures/snow_sd/snow_var01_big_r.tga
 		rgbgen identity
+		alphaGen vertex
 	}
 	{
 		stage diffusemap
@@ -834,16 +885,19 @@ textures/mp_railgun/lmterrain_2to6
 		stage diffusemap
 		map textures/snow_sd/snow_var01_big.tga
 		rgbgen identity
+		alphaGen vertex
 	}
 	{
 		stage bumpmap
 		map textures/snow_sd/snow_var01_big_n.tga
 		rgbgen identity
+		alphaGen vertex
 	}
 	{
 		stage specularmap
 		map textures/snow_sd/snow_var01_big_r.tga
 		rgbgen identity
+		alphaGen vertex
 	}
 	{
 		stage diffusemap
@@ -880,16 +934,19 @@ textures/mp_railgun/lmterrain_3
 		stage diffusemap
 		map textures/snow_sd/snow_muddy.tga
 		rgbgen identity
+		alphaGen vertex
 	}
 	{
 		stage bumpmap
 		map textures/snow_sd/snow_muddy_n.tga
 		rgbgen identity
+		alphaGen vertex
 	}
 	{
 		stage specularmap
 		map textures/snow_sd/snow_muddy_r.tga
 		rgbgen identity
+		alphaGen vertex
 	}
 	{
 		stage diffusemap
@@ -926,16 +983,19 @@ textures/mp_railgun/lmterrain_3to4
 		stage diffusemap
 		map textures/snow_sd/snow_muddy.tga
 		rgbgen identity
+		alphaGen vertex
 	}
 	{
 		stage bumpmap
 		map textures/snow_sd/snow_muddy_n.tga
 		rgbgen identity
+		alphaGen vertex
 	}
 	{
 		stage specularmap
 		map textures/snow_sd/snow_muddy_r.tga
 		rgbgen identity
+		alphaGen vertex
 	}
 	{
 		stage diffusemap
@@ -972,16 +1032,19 @@ textures/mp_railgun/lmterrain_3to5
 		stage diffusemap
 		map textures/snow_sd/snow_muddy.tga
 		rgbgen identity
+		alphaGen vertex
 	}
 	{
 		stage bumpmap
 		map textures/snow_sd/snow_muddy_n.tga
 		rgbgen identity
+		alphaGen vertex
 	}
 	{
 		stage specularmap
 		map textures/snow_sd/snow_muddy_r.tga
 		rgbgen identity
+		alphaGen vertex
 	}
 	{
 		stage diffusemap
@@ -1018,16 +1081,19 @@ textures/mp_railgun/lmterrain_3to6
 		stage diffusemap
 		map textures/snow_sd/snow_muddy.tga
 		rgbgen identity
+		alphaGen vertex
 	}
 	{
 		stage bumpmap
 		map textures/snow_sd/snow_muddy_n.tga
 		rgbgen identity
+		alphaGen vertex
 	}
 	{
 		stage specularmap
 		map textures/snow_sd/snow_muddy_r.tga
 		rgbgen identity
+		alphaGen vertex
 	}
 	{
 		stage diffusemap
@@ -1064,16 +1130,19 @@ textures/mp_railgun/lmterrain_4
 		stage diffusemap
 		map textures/snow_sd/mxrock4b_snow.tga
 		rgbgen identity
+		alphaGen vertex
 	}
 	{
 		stage bumpmap
 		map textures/snow_sd/mxrock4b_snow_n.tga
 		rgbgen identity
+		alphaGen vertex
 	}
 	{
 		stage specularmap
 		map textures/snow_sd/mxrock4b_snow_r.tga
 		rgbgen identity
+		alphaGen vertex
 	}
 	{
 		stage diffusemap
@@ -1110,16 +1179,19 @@ textures/mp_railgun/lmterrain_4to5
 		stage diffusemap
 		map textures/snow_sd/mxrock4b_snow.tga
 		rgbgen identity
+		alphaGen vertex
 	}
 	{
 		stage bumpmap
 		map textures/snow_sd/mxrock4b_snow_n.tga
 		rgbgen identity
+		alphaGen vertex
 	}
 	{
 		stage specularmap
 		map textures/snow_sd/mxrock4b_snow_r.tga
 		rgbgen identity
+		alphaGen vertex
 	}
 	{
 		stage diffusemap
@@ -1156,16 +1228,19 @@ textures/mp_railgun/lmterrain_4to6
 		stage diffusemap
 		map textures/snow_sd/mxrock4b_snow.tga
 		rgbgen identity
+		alphaGen vertex
 	}
 	{
 		stage bumpmap
 		map textures/snow_sd/mxrock4b_snow_n.tga
 		rgbgen identity
+		alphaGen vertex
 	}
 	{
 		stage specularmap
 		map textures/snow_sd/mxrock4b_snow_r.tga
 		rgbgen identity
+		alphaGen vertex
 	}
 	{
 		stage diffusemap
@@ -1202,16 +1277,19 @@ textures/mp_railgun/lmterrain_5
 		stage diffusemap
 		map textures/snow_sd/snow_noisy.tga
 		rgbgen identity
+		alphaGen vertex
 	}
 	{
 		stage bumpmap
 		map textures/snow_sd/snow_noisy_n.tga
 		rgbgen identity
+		alphaGen vertex
 	}
 	{
 		stage specularmap
 		map textures/snow_sd/snow_noisy_r.tga
 		rgbgen identity
+		alphaGen vertex
 	}
 	{
 		stage diffusemap
@@ -1248,16 +1326,19 @@ textures/mp_railgun/lmterrain_5to6
 		stage diffusemap
 		map textures/snow_sd/snow_noisy.tga
 		rgbgen identity
+		alphaGen vertex
 	}
 	{
 		stage bumpmap
 		map textures/snow_sd/snow_noisy_n.tga
 		rgbgen identity
+		alphaGen vertex
 	}
 	{
 		stage specularmap
 		map textures/snow_sd/snow_noisy_r.tga
 		rgbgen identity
+		alphaGen vertex
 	}
 	{
 		stage diffusemap
@@ -1294,16 +1375,19 @@ textures/mp_railgun/lmterrain_6
 		stage diffusemap
 		map textures/snow_sd/s_grass_ml03b_big.tga
 		rgbgen identity
+		alphaGen vertex
 	}
 	{
 		stage bumpmap
 		map textures/snow_sd/s_grass_ml03b_big_n.tga
 		rgbgen identity
+		alphaGen vertex
 	}
 	{
 		stage specularmap
 		map textures/snow_sd/s_grass_ml03b_big_r.tga
 		rgbgen identity
+		alphaGen vertex
 	}
 	{
 		stage diffusemap
