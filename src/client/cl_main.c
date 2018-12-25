@@ -2181,7 +2181,7 @@ void CL_Frame(int msec)
 	// if we haven't gotten a packet in a long time,
 	// drop the connection
 	CL_CheckTimeout();
-//Com_Printf("[%i:dl%i:dc%i]", cls.state, cls.download.bWWWDl,cls.download.bWWWDlDisconnected);
+	//Com_Printf("[%i:dl%i:dc%i]", cls.state, cls.download.bWWWDl,cls.download.bWWWDlDisconnected);
 	// wwwdl download may survive a server disconnect
 	if ((cls.state == CA_CONNECTED && cls.download.bWWWDl) || cls.download.bWWWDlDisconnected)
 	{
@@ -2815,7 +2815,7 @@ void CL_Init(void)
 
 	// userinfo
 	Cvar_Get("name", "ETLegacyPlayer", CVAR_USERINFO | CVAR_ARCHIVE);
-	Cvar_Get("rate", "25000 ", CVAR_USERINFO | CVAR_ARCHIVE);       // changed from 3000
+	Cvar_Get("rate", "25000", CVAR_USERINFO | CVAR_ARCHIVE);
 	Cvar_Get("snaps", "20", CVAR_USERINFO | CVAR_ARCHIVE);
 
 	Cvar_Get("password", "", CVAR_USERINFO);
