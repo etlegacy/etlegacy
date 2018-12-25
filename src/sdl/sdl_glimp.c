@@ -216,8 +216,8 @@ static void GLimp_InitCvars(void)
 	r_fullscreen     = Cvar_Get("r_fullscreen", "1", CVAR_ARCHIVE | CVAR_LATCH);
 	r_noBorder       = Cvar_Get("r_noborder", "0", CVAR_ARCHIVE | CVAR_LATCH);
 	r_centerWindow   = Cvar_Get("r_centerWindow", "0", CVAR_ARCHIVE | CVAR_LATCH);
-	r_customwidth    = Cvar_Get("r_customwidth", "1600", CVAR_ARCHIVE | CVAR_LATCH);
-	r_customheight   = Cvar_Get("r_customheight", "1024", CVAR_ARCHIVE | CVAR_LATCH);
+	r_customwidth    = Cvar_Get("r_customwidth", "1280", CVAR_ARCHIVE | CVAR_LATCH);
+	r_customheight   = Cvar_Get("r_customheight", "720", CVAR_ARCHIVE | CVAR_LATCH);
 	r_swapInterval   = Cvar_Get("r_swapInterval", "0", CVAR_ARCHIVE);
 	r_mode           = Cvar_Get("r_mode", "-2", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE);
 	r_customaspect   = Cvar_Get("r_customaspect", "1", CVAR_ARCHIVE | CVAR_LATCH);
