@@ -1261,9 +1261,9 @@ qboolean CG_DrawScoreboard(void)
 		}
 		else
 		{
-			WM_TeamScoreboard(x, y, TEAM_AXIS, fade, 24, 32);
+			WM_TeamScoreboard(x, y, TEAM_AXIS, fade, 22, 30);
 			x = x_right;
-			WM_TeamScoreboard(x, y, TEAM_ALLIES, fade, 24, 32);
+			WM_TeamScoreboard(x, y, TEAM_ALLIES, fade, 22, 30);
 		}
 	}
 
@@ -1287,7 +1287,7 @@ qboolean CG_DrawScoreboard(void)
 
 		w = CG_Text_Width_Ext(s3, fontScale, 0, &cgs.media.limboFont2);
 		x = Ccg_WideX(SCREEN_WIDTH / 2) - w / 2;
-		CG_Text_Paint_Ext(x, 472, fontScale, fontScale, colorWhite, s3, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+		CG_Text_Paint_Ext(x, 448, fontScale, fontScale, colorWhite, s3, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 	}
 #endif
 
