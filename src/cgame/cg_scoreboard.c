@@ -63,6 +63,9 @@ WM_DrawObjectives
 #define INFO_LINE_HEIGHT        30
 #define INFO_TOTAL_WIDTH        (INFO_PLAYER_WIDTH + INFO_CLASS_WIDTH + INFO_SCORE_WIDTH + INFO_LATENCY_WIDTH)
 
+#define INFOTEXT_STARTX         8
+#define INFOTEXT_STARTY         146
+
 /**
  * @brief Draw a client country flag
  *
@@ -1201,7 +1204,10 @@ qboolean CG_DrawScoreboard(void)
 	int   x = 20, y = 6, x_right = SCREEN_WIDTH - x - (INFO_TOTAL_WIDTH - 5), w;
 	float fade;
 	int width = SCREEN_WIDTH - 2 * x + 5;
-	const char *s, *s2;
+#ifdef FEATURE_RATING
+	const char *s, *s1, *s2, *s3;
+	int        charHeight;
+#endif
 	float fontScale = cg_fontScaleSP.value;
 
 	x       += cgs.wideXoffset;
@@ -1261,6 +1267,14 @@ qboolean CG_DrawScoreboard(void)
 		}
 	}
 
+#ifdef FEATURE_RATING
+	charHeight = CG_Text_Height_Ext("A", fontScale, 0, &cgs.media.limboFont2);
+
+	s = (cgs.skillRating && cg_scoreboard.integer == SCOREBOARD_SR) ? CG_TranslateString("Skill Rating") : CG_TranslateString("Experience");
+	s1 = CG_TranslateString("Scoreboard");
+	CG_Text_Paint_Ext(INFOTEXT_STARTX, INFOTEXT_STARTY, fontScale, fontScale, colorWhite, s, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+	CG_Text_Paint_Ext(INFOTEXT_STARTX, INFOTEXT_STARTY + charHeight * 2.0f, fontScale, fontScale, colorWhite, s1, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+
 	if (cg_descriptiveText.integer)
 	{
 		s2 = Binding_FromName("+scores");
@@ -1269,12 +1283,13 @@ qboolean CG_DrawScoreboard(void)
 			s2 = "TAB";
 		}
 
-		s = va(CG_TranslateString("Press %s twice quickly to switch scoreboard"), s2);
+		s3 = va(CG_TranslateString("Press %s twice quickly to switch scoreboard"), s2);
 
-		w = CG_Text_Width_Ext(s, fontScale, 0, &cgs.media.limboFont2);
+		w = CG_Text_Width_Ext(s3, fontScale, 0, &cgs.media.limboFont2);
 		x = Ccg_WideX(SCREEN_WIDTH / 2) - w / 2;
-		CG_Text_Paint_Ext(x, 472, fontScale, fontScale, colorWhite, s, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+		CG_Text_Paint_Ext(x, 472, fontScale, fontScale, colorWhite, s3, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 	}
+#endif
 
 	return qtrue;
 }
