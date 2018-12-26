@@ -606,6 +606,7 @@ void Script_ConditionalScript(itemDef_t *item, qboolean *bAbort, char **args)
 			}
 			else if (!Q_stricmp(cvar, "vidrestartIsRequired"))
 			{
+				char ui_cl_lang[MAX_CVAR_VALUE_STRING];
 				int  ui_r_mode                           = (int)(DC->getCVarValue("ui_r_mode"));
 				int  ui_r_colorbits                      = (int)(DC->getCVarValue("ui_r_colorbits"));
 				int  ui_r_fullscreen                     = (int)(DC->getCVarValue("ui_r_fullscreen"));
@@ -626,6 +627,7 @@ void Script_ConditionalScript(itemDef_t *item, qboolean *bAbort, char **args)
 				int  ui_s_khz                            = (int)(DC->getCVarValue("ui_s_khz"));
 				char ui_r_texturemode[MAX_CVAR_VALUE_STRING];
 
+				char cl_lang[MAX_CVAR_VALUE_STRING];
 				int  r_mode                           = (int)(DC->getCVarValue("r_mode"));
 				int  r_colorbits                      = (int)(DC->getCVarValue("r_colorbits"));
 				int  r_fullscreen                     = (int)(DC->getCVarValue("r_fullscreen"));
@@ -646,10 +648,12 @@ void Script_ConditionalScript(itemDef_t *item, qboolean *bAbort, char **args)
 				int  s_khz                            = (int)(DC->getCVarValue("s_khz"));
 				char r_texturemode[MAX_CVAR_VALUE_STRING];
 
+				trap_Cvar_VariableStringBuffer("ui_cl_lang", ui_cl_lang, sizeof(ui_cl_lang));
+				trap_Cvar_VariableStringBuffer("cl_lang", cl_lang, sizeof(cl_lang));
 				trap_Cvar_VariableStringBuffer("ui_r_texturemode", ui_r_texturemode, sizeof(ui_r_texturemode));
 				trap_Cvar_VariableStringBuffer("r_texturemode", r_texturemode, sizeof(r_texturemode));
 
-				if (ui_r_subdivisions != r_subdivisions ||
+				if (Q_stricmp(cl_lang, ui_cl_lang) ||
 				    ui_r_mode != r_mode ||
 				    ui_r_colorbits != r_colorbits ||
 				    ui_r_fullscreen != r_fullscreen ||
@@ -662,6 +666,7 @@ void Script_ConditionalScript(itemDef_t *item, qboolean *bAbort, char **args)
 				    ui_r_ext_compressed_textures != r_ext_compressed_textures ||
 				    ui_r_allowextensions != r_allowextensions ||
 				    ui_r_detailtextures != r_detailtextures ||
+				    ui_r_subdivisions != r_subdivisions ||
 				    ui_r_ext_texture_filter_anisotropic != r_ext_texture_filter_anisotropic ||
 					ui_r_ext_multisample != r_ext_multisample ||
 				    ui_cg_shadows != cg_shadows ||

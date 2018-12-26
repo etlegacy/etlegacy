@@ -30,20 +30,17 @@ menuDef {
 
 // Player //
 #define PLAYER_Y 32
-	SUBWINDOW( 6, PLAYER_Y, (SUBWINDOW_WIDTH_L), 40, _("PLAYER") )
+	SUBWINDOW( 6, PLAYER_Y, (SUBWINDOW_WIDTH_L), 28, _("PLAYER") )
 	EDITFIELD( 8, PLAYER_Y+16, (SUBWINDOW_WIDTH_L)-4, 10, _("Player Alias:"), .2, 8, "name", 36, 18, _("Enter the name that you wish to be known by to others on servers") )
-	// TODO: use FEEDER_LANGUAGES to automatically show available localizations
-	//MULTI( 8, PLAYER_Y+28, (SUBWINDOW_WIDTH_L)-4, 10, _("Language:"), .2, 8, "cl_lang", LEGACY_LANGUAGES, _("Set your desired language") )
-	COMBO( 8, PLAYER_Y+28, (SUBWINDOW_WIDTH_L)-4, 10, _("Language:"), .2, 8, "cl_lang", LEGACY_LANGUAGES, none, _("Set your desired language") )
 
 // Physics //
-#define PHYSICS_Y 78
+#define PHYSICS_Y 66
 	SUBWINDOW( 6, PHYSICS_Y, (SUBWINDOW_WIDTH_L), 40, _("PHYSICS") )
 	YESNO( 8, PHYSICS_Y+16, (SUBWINDOW_WIDTH_L)-4, 10, _("Always Run:"), .2, 8, "cl_run", _("Toogle walk/run") )
 	MULTI( 8, PHYSICS_Y+28, (SUBWINDOW_WIDTH_L)-4, 10, _("Double-Tap Prone:"), .2, 8, "cl_doubletapdelay", cvarFloatList { "Yes" 350 "No" 0 }, _("Set the delay time between keypresses required to be a double-tap") )
 
 // Weapons //
-#define WEAPONS_Y 124
+#define WEAPONS_Y 112
 	SUBWINDOW( 6, WEAPONS_Y, (SUBWINDOW_WIDTH_L), 78, _("WEAPONS") )
 	YESNO( 8, WEAPONS_Y+16, (SUBWINDOW_WIDTH_L)-4, 10, _("Automatic Reload:"), .2, 8, "cg_autoReload", _("Automatically reload when ammunition clip runs out") )
 	YESNO( 8, WEAPONS_Y+28, (SUBWINDOW_WIDTH_L)-4, 10, _("Autoswitch:"), .2, 8, "cg_noAmmoAutoSwitch", _("Automatically switch to a new weapon when out of ammunition") )
@@ -52,7 +49,7 @@ menuDef {
 	MULTI( 8, WEAPONS_Y+64, (SUBWINDOW_WIDTH_L)-4, 10, _("Bullet Tracers:"), .2, 8, "cg_tracers", cvarFloatList { "Off" 0 "On" 1 "Only own tracers" 2 "Only others tracers" 3 }, _("Enable/Disable bullet tracers") )
 
 // Scope //
-#define SCOPE_Y 208
+#define SCOPE_Y 196
 	SUBWINDOW( 6, SCOPE_Y, (SUBWINDOW_WIDTH_L), 52,_( "SCOPE") )
 	MULTI( 8, SCOPE_Y+16, (SUBWINDOW_WIDTH_L)-4, 10, _("Weapon Cycle for Zoom:"), .2, 8, "cg_useWeapsForZoom", cvarFloatList { "Off" 0 "On (normal)" 1 "On (reverse)" 2 }, _("Weapon switch will zoom in and out while scoped, rather than switch weapons") )
 	MULTI( 8, SCOPE_Y+28, (SUBWINDOW_WIDTH_L)-4, 10, _("Default Zoom Level:"), .2, 8, "cg_zoomdefaultsniper", cvarFloatList { "All the way Out" 20 "Near" 16 "Far" 8 "All the Way In" 4 }, _("Set the default zoom level for scopes") )

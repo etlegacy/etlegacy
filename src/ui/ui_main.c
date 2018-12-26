@@ -5460,6 +5460,11 @@ void UI_RunMenuScript(char **args)
 				Menu_SetFeederSelection(NULL, FEEDER_ALLMAPS, 0, NULL);
 			}
 		}
+		else if (Q_stricmp(name, "langSave") == 0)
+		{
+			char cl_lang[MAX_CVAR_VALUE_STRING];
+			trap_Cvar_VariableStringBuffer("cl_lang", cl_lang, sizeof(cl_lang));
+		}
 		else if (Q_stricmp(name, "vidSave") == 0)
 		{
 			int r_mode       = (int)(trap_Cvar_VariableValue("r_mode"));
@@ -5487,6 +5492,7 @@ void UI_RunMenuScript(char **args)
 		}
 		else if (Q_stricmp(name, "systemCvarsGet") == 0)
 		{
+			char  ui_cl_lang[MAX_CVAR_VALUE_STRING];
 			int   ui_r_mode                           = (int)(trap_Cvar_VariableValue("r_mode"));
 			int   ui_rate                             = (int)(trap_Cvar_VariableValue("rate"));
 			int   ui_cl_maxpackets                    = (int)(trap_Cvar_VariableValue("cl_maxpackets"));
@@ -5516,8 +5522,10 @@ void UI_RunMenuScript(char **args)
 			int   ui_cg_shadows                       = (char)(trap_Cvar_VariableValue("cg_shadows"));
 			char  ui_r_texturemode[MAX_CVAR_VALUE_STRING];
 
+			trap_Cvar_VariableStringBuffer("cl_lang", ui_cl_lang, sizeof(ui_cl_lang));
 			trap_Cvar_VariableStringBuffer("r_texturemode", ui_r_texturemode, sizeof(ui_r_texturemode));
 
+			trap_Cvar_Set("ui_cl_lang", ui_cl_lang);
 			trap_Cvar_Set("ui_r_mode", va("%i", ui_r_mode));
 			trap_Cvar_Set("ui_r_intensity", va("%f", (double)ui_r_intensity));
 			trap_Cvar_Set("ui_rate", va("%i", ui_rate));
@@ -5559,6 +5567,7 @@ void UI_RunMenuScript(char **args)
 		}
 		else if (Q_stricmp(name, "systemCvarsReset") == 0)
 		{
+			trap_Cvar_Set("ui_cl_lang", "");
 			trap_Cvar_Set("ui_r_mode", "");
 			trap_Cvar_Set("ui_r_intensity", "");
 			trap_Cvar_Set("ui_r_mapoverbrightbits", "");
@@ -5589,6 +5598,7 @@ void UI_RunMenuScript(char **args)
 		}
 		else if (Q_stricmp(name, "systemCvarsApply") == 0)
 		{
+			char  ui_cl_lang[MAX_CVAR_VALUE_STRING];
 			int   ui_r_windowmode                     = (int)(trap_Cvar_VariableValue("ui_r_windowmode"));
 			int   ui_r_mode                           = (int)(trap_Cvar_VariableValue("ui_r_mode"));
 			int   ui_rate                             = (int)(trap_Cvar_VariableValue("ui_rate"));
@@ -5619,6 +5629,7 @@ void UI_RunMenuScript(char **args)
 			int   ui_cg_shadows                       = (int)(trap_Cvar_VariableValue("ui_cg_shadows"));
 			char  ui_r_texturemode[MAX_CVAR_VALUE_STRING];
 
+			trap_Cvar_VariableStringBuffer("ui_cl_lang", ui_cl_lang, sizeof(ui_cl_lang));
 			trap_Cvar_VariableStringBuffer("ui_r_texturemode", ui_r_texturemode, sizeof(ui_r_texturemode));
 
 			// failsafe
@@ -5629,6 +5640,7 @@ void UI_RunMenuScript(char **args)
 				ui_cl_packetdup  = 1;
 			}
 
+			trap_Cvar_Set("cl_lang", ui_cl_lang);
 			trap_Cvar_Set("r_mode", va("%i", ui_r_mode));
 			trap_Cvar_Set("rate", va("%i", ui_rate));
 			trap_Cvar_Set("cl_maxpackets", va("%i", ui_cl_maxpackets));
@@ -5667,6 +5679,7 @@ void UI_RunMenuScript(char **args)
 			trap_Cvar_Set("cg_shadows", va("%i", ui_cg_shadows));
 			trap_Cvar_Set("r_texturemode", ui_r_texturemode);
 
+			trap_Cvar_Set("ui_cl_lang", "");
 			trap_Cvar_Set("ui_r_mode", "");
 			trap_Cvar_Set("ui_rate", "");
 			trap_Cvar_Set("ui_cl_maxpackets", "");
@@ -8611,6 +8624,7 @@ cvarTable_t cvarTable[] =
 	{ NULL,                             "vote_allow_nextcampaign",             "1",                          CVAR_ARCHIVE,                   0 },
 	{ NULL,                             "vote_allow_poll",                     "1",                          CVAR_ARCHIVE,                   0 },
 
+	{ NULL,                             "ui_cl_lang",                          "",                           CVAR_ARCHIVE,                   0 },
 	{ NULL,                             "ui_r_mode",                           "",                           CVAR_ARCHIVE,                   0 },
 	{ NULL,                             "ui_r_ext_texture_filter_anisotropic", "",                           CVAR_ARCHIVE,                   0 },
 	{ NULL,                             "ui_r_ext_multisample",                "",                           CVAR_ARCHIVE,                   0 },
