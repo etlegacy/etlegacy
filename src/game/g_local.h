@@ -2723,7 +2723,7 @@ typedef struct weapFireTable_t
 	int contents;                       ///< -
 	int trType;                         ///< -
 	int trTime;                         ///< -
-	float boudingBox[2][3];             ///< - mins / maxs bounding box vectors (for missile ent)
+	float boundingBox[2][3];            ///< - mins / maxs bounding box vectors (for missile ent)
 	int clipMask;                       ///< -
 	int nextThink;                      ///< -
 	int accuracy;                       ///< -

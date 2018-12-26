@@ -3509,7 +3509,7 @@ gentity_t *weapon_gpg40_fire(gentity_t *ent)
 	VectorMA(viewpos, 32, forward, viewpos);
 
 	// to prevent nade-through-teamdoor sploit
-	trap_Trace(&tr, orig_viewpos, GetWeaponFireTableData(ent->s.weapon)->boudingBox[0], GetWeaponFireTableData(ent->s.weapon)->boudingBox[1], viewpos, ent->s.number, MASK_MISSILESHOT);
+	trap_Trace(&tr, orig_viewpos, GetWeaponFireTableData(ent->s.weapon)->boundingBox[0], GetWeaponFireTableData(ent->s.weapon)->boundingBox[1], viewpos, ent->s.number, MASK_MISSILESHOT);
 	if (tr.fraction < 1)     // oops, bad launch spot
 	{
 		VectorCopy(tr.endpos, tosspos);
@@ -3517,7 +3517,7 @@ gentity_t *weapon_gpg40_fire(gentity_t *ent)
 	}
 	else
 	{
-		trap_Trace(&tr, viewpos, GetWeaponFireTableData(ent->s.weapon)->boudingBox[0], GetWeaponFireTableData(ent->s.weapon)->boudingBox[1], tosspos, ent->s.number, MASK_MISSILESHOT);
+		trap_Trace(&tr, viewpos, GetWeaponFireTableData(ent->s.weapon)->boundingBox[0], GetWeaponFireTableData(ent->s.weapon)->boundingBox[1], tosspos, ent->s.number, MASK_MISSILESHOT);
 		if (tr.fraction < 1)     // oops, bad launch spot
 		{
 			VectorCopy(tr.endpos, tosspos);
@@ -3558,7 +3558,7 @@ gentity_t *weapon_mortar_fire(gentity_t *ent)
 	forward[1] *= 3000 * 1.1f;
 	forward[2] *= 1500 * 1.1f;
 
-	trap_Trace(&tr, testPos, GetWeaponFireTableData(ent->s.weapon)->boudingBox[0], GetWeaponFireTableData(ent->s.weapon)->boudingBox[1], launchPos, ent->s.number, MASK_MISSILESHOT);
+	trap_Trace(&tr, testPos, GetWeaponFireTableData(ent->s.weapon)->boundingBox[0], GetWeaponFireTableData(ent->s.weapon)->boundingBox[1], launchPos, ent->s.number, MASK_MISSILESHOT);
 
 	if (tr.fraction < 1)     // oops, bad launch spot
 	{
@@ -3642,7 +3642,7 @@ gentity_t *weapon_grenadelauncher_fire(gentity_t *ent)
 	VectorCopy(ent->s.pos.trBase, viewpos);
 	viewpos[2] += ent->client->ps.viewheight;
 
-	trap_Trace(&tr, viewpos, GetWeaponFireTableData(ent->s.weapon)->boudingBox[0], GetWeaponFireTableData(ent->s.weapon)->boudingBox[1], tosspos, ent->s.number, MASK_MISSILESHOT);
+	trap_Trace(&tr, viewpos, GetWeaponFireTableData(ent->s.weapon)->boundingBox[0], GetWeaponFireTableData(ent->s.weapon)->boundingBox[1], tosspos, ent->s.number, MASK_MISSILESHOT);
 
 	if (tr.startsolid)
 	{
@@ -3651,7 +3651,7 @@ gentity_t *weapon_grenadelauncher_fire(gentity_t *ent)
 		VectorNormalizeFast(viewpos);
 		VectorMA(ent->r.currentOrigin, -24.f, viewpos, viewpos);
 
-		trap_Trace(&tr, viewpos, GetWeaponFireTableData(ent->s.weapon)->boudingBox[0], GetWeaponFireTableData(ent->s.weapon)->boudingBox[1], tosspos, ent->s.number, MASK_MISSILESHOT);
+		trap_Trace(&tr, viewpos, GetWeaponFireTableData(ent->s.weapon)->boundingBox[0], GetWeaponFireTableData(ent->s.weapon)->boundingBox[1], tosspos, ent->s.number, MASK_MISSILESHOT);
 
 		VectorCopy(tr.endpos, tosspos);
 	}
@@ -3800,7 +3800,7 @@ gentity_t *Weapon_FlamethrowerFire(gentity_t *ent)
 	// prevent flame thrower cheat, run & fire while aiming at the ground, don't get hurt
 	// 72 total box height, 18 xy -> 77 trace radius (from view point towards the ground) is enough to cover the area around the feet
 	VectorMA(trace_start, 77.0f, forward, trace_end);
-	trap_Trace(&trace, trace_start, GetWeaponFireTableData(ent->s.weapon)->boudingBox[0], GetWeaponFireTableData(ent->s.weapon)->boudingBox[1], trace_end, ent->s.number, MASK_SHOT | MASK_WATER);
+	trap_Trace(&trace, trace_start, GetWeaponFireTableData(ent->s.weapon)->boundingBox[0], GetWeaponFireTableData(ent->s.weapon)->boundingBox[1], trace_end, ent->s.number, MASK_SHOT | MASK_WATER);
 	if (trace.fraction != 1.0f)
 	{
 		// additional checks to filter out false positives
@@ -4044,7 +4044,7 @@ qboolean G_PlayerCanBeSeenByOthers(gentity_t *ent)
 
 weapFireTable_t weapFireTable[] =
 {
-    // weapon                  fire                         think                       free           eType                  eFlags                      svFlags                       content          trType          trTime boundingsBox                                     clipMask          nextThink accuracy health timeStamp                                                                                 
+    // weapon                  fire                         think                       free           eType                  eFlags                      svFlags                       content          trType          trTime boundingBox                                      clipMask          nextThink accuracy health timeStamp
 	{ WP_NONE,                 NULL,                        NULL,                       NULL,          ET_GENERAL,            EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_STATIONARY,  0,     { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_ALL,         0,        0,       0,     0,        },
 	{ WP_KNIFE,                Weapon_Knife,                NULL,                       NULL,          ET_GENERAL,            EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_LINEAR,      0,     { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_SHOT,        0,        0,       0,     0,        },
 	{ WP_LUGER,                Bullet_Fire,                 NULL,                       NULL,          ET_GENERAL,            EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_LINEAR,      0,     { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_SHOT,        0,        0,       0,     0,        },      

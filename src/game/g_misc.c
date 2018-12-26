@@ -2371,9 +2371,9 @@ void landmine_setup(gentity_t *ent)
 	trace_t tr;
 	vec3_t  end;
 
-	VectorCopy(GetWeaponFireTableData(WP_LANDMINE)->boudingBox[0], ent->r.mins);
+	VectorCopy(GetWeaponFireTableData(WP_LANDMINE)->boundingBox[0], ent->r.mins);
 	VectorCopy(ent->r.mins, ent->r.absmin);
-	VectorCopy(GetWeaponFireTableData(WP_LANDMINE)->boudingBox[1], ent->r.maxs);
+	VectorCopy(GetWeaponFireTableData(WP_LANDMINE)->boundingBox[1], ent->r.maxs);
 	VectorCopy(ent->r.maxs, ent->r.absmax);
 
 	// drop to floor
@@ -2837,10 +2837,10 @@ void G_PreFilledMissileEntity(gentity_t *ent, int weaponNum, int realWeapon, int
 
 	if (ent->r.contents == CONTENTS_CORPSE)
 	{
-		VectorCopy(GetWeaponFireTableData(weaponNum)->boudingBox[0], ent->r.mins);
-		VectorCopy(GetWeaponFireTableData(weaponNum)->boudingBox[0], ent->r.absmin);
-		VectorCopy(GetWeaponFireTableData(weaponNum)->boudingBox[1], ent->r.maxs);
-		VectorCopy(GetWeaponFireTableData(weaponNum)->boudingBox[1], ent->r.absmax);
+		VectorCopy(GetWeaponFireTableData(weaponNum)->boundingBox[0], ent->r.mins);
+		VectorCopy(GetWeaponFireTableData(weaponNum)->boundingBox[0], ent->r.absmin);
+		VectorCopy(GetWeaponFireTableData(weaponNum)->boundingBox[1], ent->r.maxs);
+		VectorCopy(GetWeaponFireTableData(weaponNum)->boundingBox[1], ent->r.absmax);
 	}
 
 	VectorCopy(start, ent->r.currentOrigin);
