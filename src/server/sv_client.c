@@ -874,12 +874,15 @@ static void SV_StopDownload_f(client_t *cl)
  */
 static void SV_DoneDownload_f(client_t *cl)
 {
-	if (cl->state == CS_ACTIVE)
-	{
-		return;
-	}
 
-	Com_DPrintf("clientDownload: %s Done\n", rc(cl->name));
+	// removed - this is causing trouble when clients are downloading from http but are still connected
+	// CS_ACTIVE might be set in SV_ClientEnterWorld and SV_SpawnServer for any client (f.e. on level/map change)
+	// so let's send the gamestate in any case when SV_DoneDownload_f is called
+	//if (cl->state == CS_ACTIVE)
+	//{
+	//	Com_Printf("^3Warning: SV_DoneDownload_f called for '%s' and client state is already active\n", rc(cl->name));
+	//	return;
+	//}
 
 	// don't timeout after download for valid clients
 	// so SV_CheckTimeouts doesn't drop when we switch related timeout cvar
@@ -1174,6 +1177,10 @@ static qboolean SV_SetupDownloadFile(client_t *cl, msg_t *msg)
 				}
 
 				MSG_WriteLong(msg, download_flag);   // flags
+
+				// set the download ack time for http downloads
+				cl->downloadAckTime = svs.time;
+
 				return qtrue;
 			}
 			else
