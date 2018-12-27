@@ -5505,6 +5505,9 @@ void UI_RunMenuScript(char **args)
 			int   ui_r_colorbits                      = (int)(trap_Cvar_VariableValue("r_colorbits"));
 			int   ui_r_fullscreen                     = (int)(trap_Cvar_VariableValue("r_fullscreen"));
 			int   ui_r_noborder                       = (int)(trap_Cvar_VariableValue("r_noborder"));
+			float ui_r_intensity                      = trap_Cvar_VariableValue("r_intensity");
+			int   ui_r_mapoverbrightbits              = (int)(trap_Cvar_VariableValue("r_mapoverbrightbits"));
+			int   ui_r_overBrightBits                 = (int)(trap_Cvar_VariableValue("r_overBrightBits"));
 			int   ui_r_lodbias                        = (int)(trap_Cvar_VariableValue("r_lodbias"));
 			int   ui_r_subdivisions                   = (int)(trap_Cvar_VariableValue("r_subdivisions"));
 			int   ui_r_picmip                         = (int)(trap_Cvar_VariableValue("r_picmip"));
@@ -5519,6 +5522,7 @@ void UI_RunMenuScript(char **args)
 			int   ui_s_khz                            = (int)(trap_Cvar_VariableValue("s_khz"));
 			int   ui_r_detailtextures                 = (int)(trap_Cvar_VariableValue("r_detailtextures"));
 			int   ui_r_ext_texture_filter_anisotropic = (int)(trap_Cvar_VariableValue("r_ext_texture_filter_anisotropic"));
+			int   ui_r_ext_multisample                = (int)(trap_Cvar_VariableValue("r_ext_multisample"));
 			int   ui_cg_shadows                       = (char)(trap_Cvar_VariableValue("cg_shadows"));
 			char  ui_r_texturemode[MAX_CVAR_VALUE_STRING];
 
@@ -5526,6 +5530,7 @@ void UI_RunMenuScript(char **args)
 
 			trap_Cvar_Set("ui_r_mode", va("%i", ui_r_mode));
 			trap_Cvar_Set("ui_r_gamma", va("%f", (double)ui_r_gamma));
+			trap_Cvar_Set("ui_r_intensity", va("%f", (double)ui_r_intensity));
 			trap_Cvar_Set("ui_rate", va("%i", ui_rate));
 			trap_Cvar_Set("ui_cl_maxpackets", va("%i", ui_cl_maxpackets));
 			trap_Cvar_Set("ui_cl_packetdup", va("%i", ui_cl_packetdup));
@@ -5543,6 +5548,8 @@ void UI_RunMenuScript(char **args)
 
 			trap_Cvar_Set("ui_r_fullscreen", va("%i", ui_r_fullscreen));
 			trap_Cvar_Set("ui_r_noborder", va("%i", ui_r_noborder));
+			trap_Cvar_Set("ui_r_mapoverbrightbits", va("%i", ui_r_mapoverbrightbits));
+			trap_Cvar_Set("ui_r_overBrightBits", va("%i", ui_r_overBrightBits));
 			trap_Cvar_Set("ui_r_lodbias", va("%i", ui_r_lodbias));
 			trap_Cvar_Set("ui_r_subdivisions", va("%i", ui_r_subdivisions));
 			trap_Cvar_Set("ui_r_picmip", va("%i", ui_r_picmip));
@@ -5557,6 +5564,7 @@ void UI_RunMenuScript(char **args)
 			trap_Cvar_Set("ui_s_khz", va("%i", ui_s_khz));
 			trap_Cvar_Set("ui_r_detailtextures", va("%i", ui_r_detailtextures));
 			trap_Cvar_Set("ui_r_ext_texture_filter_anisotropic", va("%i", ui_r_ext_texture_filter_anisotropic));
+			trap_Cvar_Set("ui_r_ext_multisample", va("%i", ui_r_ext_multisample));
 			trap_Cvar_Set("ui_cg_shadows", va("%i", ui_cg_shadows));
 			trap_Cvar_Set("ui_r_texturemode", ui_r_texturemode);
 		}
@@ -5564,6 +5572,9 @@ void UI_RunMenuScript(char **args)
 		{
 			trap_Cvar_Set("ui_r_mode", "");
 			trap_Cvar_Set("ui_r_gamma", "");
+			trap_Cvar_Set("ui_r_intensity", "");
+			trap_Cvar_Set("ui_r_mapoverbrightbits", "");
+			trap_Cvar_Set("ui_r_overBrightBits", "");
 			trap_Cvar_Set("ui_rate", "");
 			trap_Cvar_Set("ui_cl_maxpackets", "");
 			trap_Cvar_Set("ui_cl_packetdup", "");
@@ -5584,6 +5595,7 @@ void UI_RunMenuScript(char **args)
 			trap_Cvar_Set("ui_s_khz", "");
 			trap_Cvar_Set("ui_r_detailtextures", "");
 			trap_Cvar_Set("ui_r_ext_texture_filter_anisotropic", "");
+			trap_Cvar_Set("ui_r_ext_multisample", "");
 			trap_Cvar_Set("ui_cg_shadows", "");
 			trap_Cvar_Set("ui_r_texturemode", "");
 		}
@@ -5598,6 +5610,9 @@ void UI_RunMenuScript(char **args)
 			int   ui_r_colorbits                      = (int)(trap_Cvar_VariableValue("ui_r_colorbits"));
 			int   ui_r_fullscreen                     = (int)(trap_Cvar_VariableValue("ui_r_fullscreen"));
 			int   ui_r_noborder                       = (int)(trap_Cvar_VariableValue("ui_r_noborder"));
+			float ui_r_intensity                      = trap_Cvar_VariableValue("ui_r_intensity");
+			int   ui_r_mapoverbrightbits              = (int)(trap_Cvar_VariableValue("ui_r_mapoverbrightbits"));
+			int   ui_r_overBrightBits                 = (int)(trap_Cvar_VariableValue("ui_r_overBrightBits"));
 			int   ui_r_lodbias                        = (int)(trap_Cvar_VariableValue("ui_r_lodbias"));
 			int   ui_r_subdivisions                   = (int)(trap_Cvar_VariableValue("ui_r_subdivisions"));
 			int   ui_r_picmip                         = (int)(trap_Cvar_VariableValue("ui_r_picmip"));
@@ -5612,6 +5627,7 @@ void UI_RunMenuScript(char **args)
 			int   ui_s_khz                            = (int)(trap_Cvar_VariableValue("ui_s_khz"));
 			int   ui_r_detailtextures                 = (int)(trap_Cvar_VariableValue("ui_r_detailtextures"));
 			int   ui_r_ext_texture_filter_anisotropic = (int)(trap_Cvar_VariableValue("ui_r_ext_texture_filter_anisotropic"));
+			int   ui_r_ext_multisample                = (int)(trap_Cvar_VariableValue("ui_r_ext_multisample"));
 			int   ui_cg_shadows                       = (int)(trap_Cvar_VariableValue("ui_cg_shadows"));
 			char  ui_r_texturemode[MAX_CVAR_VALUE_STRING];
 
@@ -5642,6 +5658,9 @@ void UI_RunMenuScript(char **args)
 			}
 
 			trap_Cvar_Set("r_noborder", va("%i", ui_r_noborder));
+			trap_Cvar_Set("r_intensity", va("%f", ui_r_intensity));
+			trap_Cvar_Set("r_mapoverbrightbits", va("%i", ui_r_mapoverbrightbits));
+			trap_Cvar_Set("r_overBrightBits", va("%i", ui_r_overBrightBits));
 			trap_Cvar_Set("r_lodbias", va("%i", ui_r_lodbias));
 			trap_Cvar_Set("r_subdivisions", va("%i", ui_r_subdivisions));
 			trap_Cvar_Set("r_picmip", va("%i", ui_r_picmip));
@@ -5656,6 +5675,7 @@ void UI_RunMenuScript(char **args)
 			trap_Cvar_Set("s_khz", va("%i", ui_s_khz));
 			trap_Cvar_Set("r_detailtextures", va("%i", ui_r_detailtextures));
 			trap_Cvar_Set("r_ext_texture_filter_anisotropic", va("%i", ui_r_ext_texture_filter_anisotropic));
+			trap_Cvar_Set("r_ext_multisample", va("%i", ui_r_ext_multisample));
 			trap_Cvar_Set("cg_shadows", va("%i", ui_cg_shadows));
 			trap_Cvar_Set("r_texturemode", ui_r_texturemode);
 
@@ -5668,6 +5688,9 @@ void UI_RunMenuScript(char **args)
 			trap_Cvar_Set("ui_r_colorbits", "");
 			trap_Cvar_Set("ui_r_fullscreen", "");
 			trap_Cvar_Set("ui_r_noborder", "");
+			trap_Cvar_Set("ui_r_intensity", "");
+			trap_Cvar_Set("ui_r_mapoverbrightbits", "");
+			trap_Cvar_Set("ui_r_overBrightBits", "");
 			trap_Cvar_Set("ui_r_lodbias", "");
 			trap_Cvar_Set("ui_r_subdivisions", "");
 			trap_Cvar_Set("ui_r_picmip", "");
@@ -5682,6 +5705,7 @@ void UI_RunMenuScript(char **args)
 			trap_Cvar_Set("ui_s_khz", "");
 			trap_Cvar_Set("ui_r_detailtextures", "");
 			trap_Cvar_Set("ui_r_ext_texture_filter_anisotropic", "");
+			trap_Cvar_Set("ui_r_ext_multisample", "");
 			trap_Cvar_Set("ui_cg_shadows", "");
 			trap_Cvar_Set("ui_r_texturemode", "");
 		}
@@ -8603,6 +8627,7 @@ cvarTable_t cvarTable[] =
 	{ NULL,                             "ui_r_mode",                           "",                           CVAR_ARCHIVE,                   0 },
 	{ NULL,                             "ui_r_gamma",                          "",                           CVAR_ARCHIVE,                   0 },
 	{ NULL,                             "ui_r_ext_texture_filter_anisotropic", "",                           CVAR_ARCHIVE,                   0 },
+	{ NULL,                             "ui_r_ext_multisample",                "",                           CVAR_ARCHIVE,                   0 },
 	{ NULL,                             "ui_cg_shadows",                       "",                           CVAR_ARCHIVE,                   0 },
 	{ NULL,                             "ui_rate",                             "",                           CVAR_ARCHIVE,                   0 },
 	{ NULL,                             "ui_handedness",                       "",                           CVAR_ARCHIVE,                   0 },

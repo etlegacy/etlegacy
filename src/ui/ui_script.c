@@ -610,6 +610,9 @@ void Script_ConditionalScript(itemDef_t *item, qboolean *bAbort, char **args)
 				int  ui_r_colorbits                      = (int)(DC->getCVarValue("ui_r_colorbits"));
 				int  ui_r_fullscreen                     = (int)(DC->getCVarValue("ui_r_fullscreen"));
 				int  ui_r_noborder                       = (int)(DC->getCVarValue("ui_r_noborder"));
+				int  ui_r_intensity                      = (int)(DC->getCVarValue("ui_r_intensity"));
+				int  ui_r_mapoverbrightbits              = (int)(DC->getCVarValue("ui_r_mapoverbrightbits"));
+				int  ui_r_overBrightBits                 = (int)(DC->getCVarValue("ui_r_overBrightBits"));
 				int  ui_r_texturebits                    = (int)(DC->getCVarValue("ui_r_texturebits"));
 				int  ui_r_depthbits                      = (int)(DC->getCVarValue("ui_r_depthbits"));
 				int  ui_r_ext_compressed_textures        = (int)(DC->getCVarValue("ui_r_ext_compressed_textures"));
@@ -617,6 +620,7 @@ void Script_ConditionalScript(itemDef_t *item, qboolean *bAbort, char **args)
 				int  ui_r_detailtextures                 = (int)(DC->getCVarValue("ui_r_detailtextures"));
 				int  ui_r_subdivisions                   = (int)(DC->getCVarValue("ui_r_subdivisions"));
 				int  ui_r_ext_texture_filter_anisotropic = (int)(DC->getCVarValue("ui_r_ext_texture_filter_anisotropic"));
+				int  ui_r_ext_multisample                = (int)(DC->getCVarValue("ui_r_ext_multisample"));
 				int  ui_cg_shadows                       = (int)(DC->getCVarValue("ui_cg_shadows"));
 				int  ui_s_initsound                      = (int)(DC->getCVarValue("ui_s_initsound"));
 				int  ui_s_khz                            = (int)(DC->getCVarValue("ui_s_khz"));
@@ -626,6 +630,9 @@ void Script_ConditionalScript(itemDef_t *item, qboolean *bAbort, char **args)
 				int  r_colorbits                      = (int)(DC->getCVarValue("r_colorbits"));
 				int  r_fullscreen                     = (int)(DC->getCVarValue("r_fullscreen"));
 				int  r_noborder                       = (int)(DC->getCVarValue("r_noborder"));
+				int  r_intensity                      = (int)(DC->getCVarValue("r_intensity"));
+				int  r_mapoverbrightbits              = (int)(DC->getCVarValue("r_mapoverbrightbits"));
+				int  r_overBrightBits                 = (int)(DC->getCVarValue("r_overBrightBits"));
 				int  r_texturebits                    = (int)(DC->getCVarValue("r_texturebits"));
 				int  r_depthbits                      = (int)(DC->getCVarValue("r_depthbits"));
 				int  r_ext_compressed_textures        = (int)(DC->getCVarValue("r_ext_compressed_textures"));
@@ -633,6 +640,7 @@ void Script_ConditionalScript(itemDef_t *item, qboolean *bAbort, char **args)
 				int  r_detailtextures                 = (int)(DC->getCVarValue("r_detailtextures"));
 				int  r_subdivisions                   = (int)(DC->getCVarValue("r_subdivisions"));
 				int  r_ext_texture_filter_anisotropic = (int)(DC->getCVarValue("r_ext_texture_filter_anisotropic"));
+				int  r_ext_multisample                = (int)(DC->getCVarValue("r_ext_multisample"));
 				int  cg_shadows                       = (int)(DC->getCVarValue("cg_shadows"));
 				int  s_initsound                      = (int)(DC->getCVarValue("s_initsound"));
 				int  s_khz                            = (int)(DC->getCVarValue("s_khz"));
@@ -646,12 +654,16 @@ void Script_ConditionalScript(itemDef_t *item, qboolean *bAbort, char **args)
 				    ui_r_colorbits != r_colorbits ||
 				    ui_r_fullscreen != r_fullscreen ||
 				    ui_r_noborder != r_noborder ||
+				    ui_r_intensity != r_intensity ||
+				    ui_r_mapoverbrightbits != r_mapoverbrightbits ||
+				   	ui_r_overBrightBits != r_overBrightBits ||
 				    ui_r_texturebits != r_texturebits ||
 				    ui_r_depthbits != r_depthbits ||
 				    ui_r_ext_compressed_textures != r_ext_compressed_textures ||
 				    ui_r_allowextensions != r_allowextensions ||
 				    ui_r_detailtextures != r_detailtextures ||
 				    ui_r_ext_texture_filter_anisotropic != r_ext_texture_filter_anisotropic ||
+					ui_r_ext_multisample != r_ext_multisample ||
 				    ui_cg_shadows != cg_shadows ||
 				    ui_s_khz != s_khz ||
 				    ui_s_initsound != s_initsound ||
