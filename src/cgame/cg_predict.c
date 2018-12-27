@@ -237,8 +237,10 @@ static void CG_ClipMoveToEntities(const vec3_t start, const vec3_t mins, const v
 		}
 		else if (trace.startsolid)
 		{
-			tr->entityNum  = ent->number;
 			tr->startsolid = qtrue;
+
+			// FIXME: entity damage, see SV_ClipMoveToEntities
+			//tr->entityNum  = ent->number;
 		}
 		if (tr->allsolid)
 		{
