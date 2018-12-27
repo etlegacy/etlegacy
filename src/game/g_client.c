@@ -810,6 +810,26 @@ void limbo(gentity_t *ent, qboolean makeCorpse)
 			ent->client->saved_persistant[i] = ent->client->ps.persistant[i];
 		}
 
+		if (g_stickyCharge.integer > 0 && ent->client->ps.classWeaponTime >= 0) {
+			switch (ent->client->sess.playerType) {
+			case PC_MEDIC:
+				ent->client->pers.savedClassWeaponTimeMed = level.time - ent->client->ps.classWeaponTime;
+				break;
+			case PC_ENGINEER:
+				ent->client->pers.savedClassWeaponTimeEng = level.time - ent->client->ps.classWeaponTime;
+				break;
+			case PC_FIELDOPS:
+				ent->client->pers.savedClassWeaponTimeFop = level.time - ent->client->ps.classWeaponTime;
+				break;
+			case PC_COVERTOPS:
+				ent->client->pers.savedClassWeaponTimeCvop = level.time - ent->client->ps.classWeaponTime;
+				break;
+			default:
+				ent->client->pers.savedClassWeaponTime = level.time - ent->client->ps.classWeaponTime;
+			}
+		}
+
+
 		ent->client->ps.pm_flags |= PMF_LIMBO;
 		ent->client->ps.pm_flags |= PMF_FOLLOW;
 
@@ -1138,9 +1158,6 @@ void SetWolfSpawnWeapons(gclient_t *client)
 #endif
 
 	classInfo = BG_GetPlayerClassInfo(team, pc);
-
-	// Reset special weapon time
-	client->ps.classWeaponTime = -999999;
 
 	// Communicate it to cgame
 	client->ps.stats[STAT_PLAYER_CLASS] = pc;
@@ -2389,6 +2406,12 @@ void ClientBegin(int clientNum)
 	client->pers.lastteambleed_client = -1;
 	client->pers.lastteambleed_dmg    = -1;
 
+	client->pers.savedClassWeaponTime = -999999;
+	client->pers.savedClassWeaponTimeCvop = -999999;
+	client->pers.savedClassWeaponTimeEng = -999999;
+	client->pers.savedClassWeaponTimeFop = -999999;
+	client->pers.savedClassWeaponTimeMed = -999999;
+
 #ifdef FEATURE_OMNIBOT
 	// Omni-bot
 	client->sess.botSuicide = qfalse; // make sure this is not set
@@ -2652,6 +2675,7 @@ void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean
 	int                flags;
 	int                savedPing;
 	int                savedTeam;
+	int                savedDeathTime;
 	qboolean           inIntermission = (g_gamestate.integer == GS_INTERMISSION && client->ps.pm_type == PM_INTERMISSION) ? qtrue : qfalse;
 
 	G_UpdateSpawnCounts();
@@ -2717,6 +2741,7 @@ void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean
 	savedSess = client->sess;
 	savedPing = client->ps.ping;
 	savedTeam = client->ps.teamNum;
+	savedDeathTime = client->deathTime;
 
 	for (i = 0 ; i < MAX_PERSISTANT ; i++)
 	{
@@ -2764,6 +2789,46 @@ void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean
 	// clear entity values
 	client->ps.stats[STAT_MAX_HEALTH] = client->pers.maxHealth;
 	client->ps.eFlags                 = flags;
+	client->deathTime = savedDeathTime;
+
+	// Reset/restore special weapon time
+	if (
+		((g_stickyCharge.integer & STICKYCHARGE_SLASHKILL) && client->pers.slashKill) ||
+		(g_stickyCharge.integer & STICKYCHARGE_ANYDEATH)
+	) {
+		switch (client->sess.latchPlayerType) {
+		case PC_MEDIC:
+			client->ps.classWeaponTime = client->pers.savedClassWeaponTimeMed;
+			break;
+		case PC_ENGINEER:
+			client->ps.classWeaponTime = client->pers.savedClassWeaponTimeEng;
+			break;
+		case PC_FIELDOPS:
+			client->ps.classWeaponTime = client->pers.savedClassWeaponTimeFop;
+			break;
+		case PC_COVERTOPS:
+			client->ps.classWeaponTime = client->pers.savedClassWeaponTimeCvop;
+			break;
+		default:
+			client->ps.classWeaponTime = client->pers.savedClassWeaponTime;
+		}
+
+		if (client->ps.classWeaponTime >= 0) {
+			// class change
+			if (client->sess.playerType != client->sess.latchPlayerType) {
+				// restore the weapon time as it was on the moment of death
+				client->ps.classWeaponTime = level.time - client->ps.classWeaponTime;
+			}
+			else
+			{
+				// compenstate limbo time
+				client->ps.classWeaponTime = savedDeathTime - client->ps.classWeaponTime;
+			}
+		}
+	}
+	else {
+		client->ps.classWeaponTime = -999999;
+	}
 
 	ent->s.groundEntityNum = ENTITYNUM_NONE;
 	ent->client            = &level.clients[index];
@@ -2995,6 +3060,8 @@ void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean
 	{
 		G_ResetTeamMapData();
 	}
+
+	client->pers.slashKill = qfalse;
 }
 
 /**

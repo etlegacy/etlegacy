@@ -345,6 +345,8 @@ vmCvar_t g_skillRating;
 vmCvar_t g_multiview; // 0 - off, other - enabled
 #endif
 
+vmCvar_t g_stickyCharge; 
+
 cvarTable_t gameCvarTable[] =
 {
 	// don't override the cheat state set by the system
@@ -626,6 +628,7 @@ cvarTable_t gameCvarTable[] =
 #ifdef FEATURE_MULTIVIEW
 	{ &g_multiview,                         "g_multiview",                         "0",                          CVAR_LATCH | CVAR_ARCHIVE,                       0, qfalse, qfalse },
 #endif
+	{ &g_stickyCharge,                      "g_stickyCharge",                      "0",                          CVAR_ARCHIVE,                                    0, qfalse, qfalse },
 };
 
 /**
