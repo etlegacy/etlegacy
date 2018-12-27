@@ -2225,6 +2225,27 @@ static void registerConfigstringConstants(lua_vm_t *vm)
 	lua_regconstinteger(vm->L, CS_MAX);
 }
 
+static void registerPowerupConstants(lua_vm_t *vm)
+{
+	lua_regconstinteger(vm->L, PW_NONE);
+	lua_regconstinteger(vm->L, PW_INVULNERABLE);
+	lua_regconstinteger(vm->L, PW_NOFATIGUE);
+	lua_regconstinteger(vm->L, PW_REDFLAG);
+	lua_regconstinteger(vm->L, PW_BLUEFLAG);
+	lua_regconstinteger(vm->L, PW_OPS_DISGUISED);
+	lua_regconstinteger(vm->L, PW_OPS_CLASS_1);
+	lua_regconstinteger(vm->L, PW_OPS_CLASS_2);
+	lua_regconstinteger(vm->L, PW_OPS_CLASS_3);
+	lua_regconstinteger(vm->L, PW_ADRENALINE);
+	lua_regconstinteger(vm->L, PW_BLACKOUT);
+
+#ifdef FEATURE_MULTIVIEW
+	lua_regconstinteger(vm->L, PW_MVCLIENTLIST);
+#endif
+
+	lua_regconstinteger(vm->L, PW_NUM_POWERUPS);
+}
+
 static void registerWeaponConstants(lua_vm_t *vm)
 {
 	lua_regconstinteger(vm->L, WP_NONE);                 // 0
@@ -2428,6 +2449,7 @@ static void registerConstants(lua_vm_t *vm)
 
 	// cs, weapon and MOD constants
 	registerConfigstringConstants(vm);
+	registerPowerupConstants(vm);
 	registerWeaponConstants(vm);
 	registerModConstants(vm);
 }
