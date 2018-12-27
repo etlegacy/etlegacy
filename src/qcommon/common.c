@@ -143,8 +143,10 @@ void(QDECL * Q_SnapVector)(vec3_t vec);
 
 cvar_t *com_recommendedSet;
 
+#ifdef DEDICATED
 cvar_t *com_watchdog;
 cvar_t *com_watchdog_cmd;
+#endif
 
 cvar_t *com_hunkused;
 
@@ -2928,8 +2930,10 @@ void Com_Init(char *commandLine)
 	com_speeds    = Cvar_Get("com_speeds", "0", 0);
 	com_timedemo  = Cvar_Get("timedemo", "0", CVAR_CHEAT);
 
+#ifdef DEDICATED
 	com_watchdog     = Cvar_Get("com_watchdog", "60", CVAR_ARCHIVE);
 	com_watchdog_cmd = Cvar_Get("com_watchdog_cmd", "", CVAR_ARCHIVE);
+#endif
 
 	cl_paused       = Cvar_Get("cl_paused", "0", CVAR_ROM);
 	sv_paused       = Cvar_Get("sv_paused", "0", CVAR_ROM);
@@ -3192,6 +3196,7 @@ int Com_ModifyMsec(int msec)
 	return msec;
 }
 
+#ifdef DEDICATED
 /**
  * @brief Com_WatchDog
  */
@@ -3230,6 +3235,7 @@ static void Com_WatchDog(void)
 		}
 	}
 }
+#endif
 
 /**
  * @brief Com_TimeVal
@@ -3452,8 +3458,10 @@ void Com_Frame(void)
 		timeBeforeClient = timeAfter;
 	}
 
+#ifdef DEDICATED
 	// watchdog
 	Com_WatchDog();
+#endif
 
 	// report timing information
 	if (com_speeds->integer)
