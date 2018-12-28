@@ -3,7 +3,3 @@
 	url = git://github.com/etlegacy/etlegacy-libs.git
 	branch = master
 	ignore = dirty
-[submodule "scripts"]
-	path = scripts
-	url = git://github.com/etlegacy/etlegacy-lua_scripts.git
-	branch = master
