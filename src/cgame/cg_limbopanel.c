@@ -1751,7 +1751,9 @@ void CG_LimboPanel_RenderClassButton(panel_button_t *button)
 		{
 			trap_R_SetColor(clrRenderClassButton4);
 			CG_DrawPic(button->rect.x, button->rect.y, button->rect.w, button->rect.h, cgs.media.limboClassButtons2[button->data[1]]);
-		} else {
+		}
+		else
+		{
 			trap_R_SetColor(clrRenderClassButton2);
 			CG_DrawPic(button->rect.x, button->rect.y, button->rect.w, button->rect.h, cgs.media.limboClassButtons2[button->data[1]]);
 		}
