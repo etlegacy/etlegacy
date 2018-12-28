@@ -369,7 +369,7 @@ static void SV_MapRestart_f(void)
 		}
 
 		// Player won't enter the world until the download is done
-		if (client->download == 0)
+		if (client->download == 0 && client->bWWWing == qfalse)
 		{
 			if (client->state == CS_ACTIVE)
 			{
