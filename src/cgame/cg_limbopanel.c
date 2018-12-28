@@ -1750,10 +1750,11 @@ void CG_LimboPanel_RenderClassButton(panel_button_t *button)
 		if (CG_LimboPanel_GetTeam() != TEAM_SPECTATOR && CG_LimboPanel_ClassIsDisabled(CG_LimboPanel_GetTeam(), button->data[1]))
 		{
 			trap_R_SetColor(clrRenderClassButton4);
-			CG_DrawPic(button->rect.x, button->rect.y, button->rect.w, button->rect.h, cgs.media.limboClassButton2Back_on);
+			CG_DrawPic(button->rect.x, button->rect.y, button->rect.w, button->rect.h, cgs.media.limboClassButtons2[button->data[1]]);
+		} else {
+			trap_R_SetColor(clrRenderClassButton2);
+			CG_DrawPic(button->rect.x, button->rect.y, button->rect.w, button->rect.h, cgs.media.limboClassButtons2[button->data[1]]);
 		}
-		trap_R_SetColor(clrRenderClassButton2);
-		CG_DrawPic(button->rect.x, button->rect.y, button->rect.w, button->rect.h, cgs.media.limboClassButtons2[button->data[1]]);
 		trap_R_SetColor(NULL);
 	}
 }
