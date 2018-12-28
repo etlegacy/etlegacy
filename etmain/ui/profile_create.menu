@@ -71,7 +71,7 @@ menuDef {
 
 // Subwindows //
 #define SUBWINDOW_WIDTH		354
-#define SUBWINDOW_HEIGHT	308
+#define SUBWINDOW_HEIGHT	294
 #define SUBWINDOW_X			.5*(WINDOW_WIDTH-SUBWINDOW_WIDTH)
 #define SUBWINDOW_Y			.5*(WINDOW_HEIGHT-SUBWINDOW_HEIGHT)
 
@@ -93,22 +93,20 @@ menuDef {
 	// TODO: use FEEDER_LANGUAGES to automatically show available localizations
 	//MULTI( SUBWINDOW_X+4, SUBWINDOW_Y+112, (SUBWINDOW_WIDTH)-8, 10, _("Language:"), .2, 8, "cl_lang", LEGACY_LANGUAGES, _("Set your desired language") )
 	COMBO( SUBWINDOW_X+4, SUBWINDOW_Y+112, (SUBWINDOW_WIDTH)-8, 10, _("Language:"), .2, 8, "cl_lang", LEGACY_LANGUAGES, none, _("Set your desired language") )
+	MULTIACTION( SUBWINDOW_X+4, SUBWINDOW_Y+136, (SUBWINDOW_WIDTH)-8, 10, _("Video Quality:"), .2, 8, "ui_glCustom", cvarFloatList { "Fastest" 3 "Fast" 2 "Normal" 1 "High" 0 }, uiScript update "ui_glCustom", _("Select your initial video settings, these can be changed later via the options menu") )
 
 #ifdef LEGACY
-	MULTIACTION( SUBWINDOW_X+4, SUBWINDOW_Y+136, (SUBWINDOW_WIDTH)-8, 10, _("Video Quality:"), .2, 8, "ui_glCustom", cvarFloatList { "Fastest" 3 "Fast" 2 "Normal" 1 "High" 0 }, uiScript update "ui_glCustom", _("Select your initial video settings, these can be changed later via the options menu") )
 	COMBO( SUBWINDOW_X+4, SUBWINDOW_Y+150, (SUBWINDOW_WIDTH)-8, 10, _("Resolution:"), .2, 8, "ui_r_mode", LEGACY_RESOLUTIONS, uiScript glCustom, _("Choose your preferred video resolution, if unsure leave it as the default") )
 	COMBO( SUBWINDOW_X+4, SUBWINDOW_Y+164, (SUBWINDOW_WIDTH)-8, 10, _("Window mode:"), .2, 8, "ui_r_windowmode", LEGACY_WINDOWMODES, uiScript glCustom, _("Toggle fullscreen") )
 #endif
-	CVARFLOATLABEL( SUBWINDOW_X+4, SUBWINDOW_Y+178, (SUBWINDOW_WIDTH)-8, 10, "ui_r_gamma", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH)-8), 8 )
-	SLIDER( SUBWINDOW_X+4, SUBWINDOW_Y+178, (SUBWINDOW_WIDTH)-8, 10, _("Brightness:"), .2, 8, "ui_r_gamma" 1 0.5 2, _("Set the brightness of the game") )
 
-	CVARFLOATLABEL( SUBWINDOW_X+4, SUBWINDOW_Y+202, (SUBWINDOW_WIDTH)-8, 10, "ui_sensitivity", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH)-8), 8 )
-	SLIDER( SUBWINDOW_X+4, SUBWINDOW_Y+202, (SUBWINDOW_WIDTH)-8, 10, _("Mouse Sensitivity:"), .2, 8, "ui_sensitivity" 5 1 30, _("Use this slider to set your mouse sensitivity") )
-	YESNO( SUBWINDOW_X+4, SUBWINDOW_Y+214, (SUBWINDOW_WIDTH)-8, 10, _("Invert Mouse:"), .2, 8, "ui_profile_mousePitch", _("Choose invert mouse if you prefer flight-simulator mouse pitch") )
+	CVARFLOATLABEL( SUBWINDOW_X+4, SUBWINDOW_Y+188, (SUBWINDOW_WIDTH)-8, 10, "ui_sensitivity", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH)-8), 8 )
+	SLIDER( SUBWINDOW_X+4, SUBWINDOW_Y+188, (SUBWINDOW_WIDTH)-8, 10, _("Mouse Sensitivity:"), .2, 8, "ui_sensitivity" 5 1 30, _("Use this slider to set your mouse sensitivity") )
+	YESNO( SUBWINDOW_X+4, SUBWINDOW_Y+200, (SUBWINDOW_WIDTH)-8, 10, _("Invert Mouse:"), .2, 8, "ui_profile_mousePitch", _("Choose invert mouse if you prefer flight-simulator mouse pitch") )
 
-	MULTI( SUBWINDOW_X+4, SUBWINDOW_Y+238, (SUBWINDOW_WIDTH)-8, 10, _("Handedness:"), .2, 8, "ui_handedness", cvarFloatList { "Right" 0 "Left" 1 }, _("Left or Right Handed? This sets your default controls\nwhich you can modify later via the options menu") )
+	MULTI( SUBWINDOW_X+4, SUBWINDOW_Y+224, (SUBWINDOW_WIDTH)-8, 10, _("Handedness:"), .2, 8, "ui_handedness", cvarFloatList { "Right" 0 "Left" 1 }, _("Left or Right Handed? This sets your default controls\nwhich you can modify later via the options menu") )
 
-	BUTTON( (SUBWINDOW_X+4)+.5*((SUBWINDOW_WIDTH)-164), SUBWINDOW_Y+252, 164, 14, _("DEFAULT SETTINGS"), .24, 11, DEFAULT_SETTINGS ;
+	BUTTON( (SUBWINDOW_X+4)+.5*((SUBWINDOW_WIDTH)-164), SUBWINDOW_Y+238, 164, 14, _("DEFAULT SETTINGS"), .24, 11, DEFAULT_SETTINGS ;
 			conditionalscript com_recommendedSet 0
 			( "clearfocus" )
 			( "abort" )
