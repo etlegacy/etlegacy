@@ -1263,6 +1263,68 @@ static int CG_GetSecondaryWeapon(int weapon, team_t team, int playerclass)
 }
 
 /**
+* @brief CG_IsClassFull
+* @param[in] ent
+* @param[in] classIndex
+* @param[in] selectedTeam
+* @return
+*/
+qboolean CG_IsClassFull(int playerType, team_t team)
+{
+	int classCount, playerCount;
+
+	if (playerType < PC_SOLDIER || playerType > PC_COVERTOPS || team == TEAM_SPECTATOR)
+	{
+		return qfalse;
+	}
+
+	classCount  = CG_LimboPanel_ClassCount(team, playerType);
+	playerCount = CG_LimboPanel_TeamCount(-1);
+
+	switch (playerType)
+	{
+		case PC_SOLDIER:
+			if (classCount >= CG_LimboPanel_MaxCount(playerCount, cg.maxSoldiers))
+			{
+				CG_PriorityCenterPrint(CG_TranslateString("^1Soldier^7 is not available! Choose another class!"), 400, cg_fontScaleCP.value, -1);
+				return qtrue;
+			}
+			break;
+		case PC_MEDIC:
+			if (classCount >= CG_LimboPanel_MaxCount(playerCount, cg.maxMedics))
+			{
+				CG_PriorityCenterPrint(CG_TranslateString("^1Medic^7 is not available! Choose another class!"), 400, cg_fontScaleCP.value, -1);
+				return qtrue;
+			}
+			break;
+		case PC_ENGINEER:
+			if (classCount >= CG_LimboPanel_MaxCount(playerCount, cg.maxEngineers))
+			{
+				CG_PriorityCenterPrint(CG_TranslateString("^1Engineer^7 is not available! Choose another class!"), 400, cg_fontScaleCP.value, -1);
+				return qtrue;
+			}
+			break;
+		case PC_FIELDOPS:
+			if (classCount >= CG_LimboPanel_MaxCount(playerCount, cg.maxFieldops))
+			{
+				CG_PriorityCenterPrint(CG_TranslateString("^1Field Ops^7 is not available! Choose another class!"), 400, cg_fontScaleCP.value, -1);
+				return qtrue;
+			}
+			break;
+		case PC_COVERTOPS:
+			if (classCount >= CG_LimboPanel_MaxCount(playerCount, cg.maxCovertops))
+			{
+				CG_PriorityCenterPrint(CG_TranslateString("^1Covert Ops^7 is not available! Choose another class!"), 400, cg_fontScaleCP.value, -1);
+				return qtrue;
+			}
+			break;
+		default:
+			break;
+	}
+	return qfalse;
+}
+
+/**
  * @brief class change menu
  */
 static void CG_ClassMenu_f(void)
@@ -1300,18 +1362,13 @@ static void CG_Class_f(void)
 		return;
 	}
 
-	team = cgs.clientinfo[cg.clientNum].team;
-
-	if (team == TEAM_SPECTATOR)
-	{
-		return;
-	}
-
 	if (trap_Argc() < 2)
 	{
 		CG_Printf("Invalid command format.\n");
 		return;
 	}
+
+	team = cgs.clientinfo[cg.clientNum].team;
 
 	// TODO: handle missing case ?
 	switch (team)
@@ -1325,7 +1382,7 @@ static void CG_Class_f(void)
 		teamstring = CG_TranslateString("Allies");
 		break;
 	default:
-		CG_Printf("Invalid team.\n");
+		CG_Printf("class: Invalid team.\n");
 		return;
 	}
 
@@ -1354,6 +1411,12 @@ static void CG_Class_f(void)
 	else
 	{
 		CG_Printf("Invalid class format.\n");
+		return;
+	}
+
+	if (CG_IsClassFull(playerclass, team))
+	{
+		CG_Printf("class: class is not available.\n");
 		return;
 	}
 
