@@ -75,6 +75,15 @@ vec4 DeformPosition(const int deformGen,
 			deformed.xyz += offset;
 			break;
 		}
+		case DGEN_WAVE_NOISE:
+		{
+			float off = (pos.x + pos.y + pos.z) * spread;
+			float scale = wave.x  + noise1(off + wave.z + (time * wave.w)) * wave.y;
+			vec3 offset = normal * scale;
+
+			deformed.xyz += offset;
+			break;
+		}
 		case DGEN_BULGE:
 		{
 			float bulgeWidth = bulge.x;

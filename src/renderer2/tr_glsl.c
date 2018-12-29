@@ -896,6 +896,7 @@ static void GLSL_BuildShaderExtraDef()
 	        "#define DGEN_WAVE_TRIANGLE %i\n"
 	        "#define DGEN_WAVE_SAWTOOTH %i\n"
 	        "#define DGEN_WAVE_INVERSE_SAWTOOTH %i\n"
+			"#define DGEN_WAVE_NOISE %i\n"
 	        "#define DGEN_BULGE %i\n"
 	        "#define DGEN_MOVE %i\n"
 	        "#endif\n",
@@ -904,6 +905,7 @@ static void GLSL_BuildShaderExtraDef()
 	        DGEN_WAVE_TRIANGLE,
 	        DGEN_WAVE_SAWTOOTH,
 	        DGEN_WAVE_INVERSE_SAWTOOTH,
+			DGEN_WAVE_NOISE,
 	        DGEN_BULGE,
 	        DGEN_MOVE);
 
