@@ -110,7 +110,7 @@ float WaveValue(float func, float base, float amplitude, float phase, float freq
 		case GF_INVERSE_SAWTOOTH:
 			return base + (1.0 - sawtooth(phase + (time * freq))) * amplitude;
 		case GF_NOISE:
-			//TODO: implement
+			 return base + noise1((time + phase) * freq) * amplitude;
 		case GF_NONE:
 			break;
 	}
