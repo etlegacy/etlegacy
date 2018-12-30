@@ -1267,7 +1267,7 @@ qboolean CG_DrawScoreboard(void)
 	}
 
 #ifdef FEATURE_RATING
-	if (cg_descriptiveText.integer)
+	if (cg_descriptiveText.integer && cgs.gamestate != GS_INTERMISSION)
 	{
 		s2 = Binding_FromName("+scores");
 		if (!Q_stricmp(s2, "(+scores)"))
