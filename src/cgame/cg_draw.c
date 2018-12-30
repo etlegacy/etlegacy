@@ -378,9 +378,7 @@ void CG_DrawTeamBackground(int x, int y, int w, int h, float alpha, int team)
 ===========================================================================================
 */
 
-#define CHATLOC_X 160
 #define CHATLOC_Y 478
-#define CHATLOC_TEXT_X (CHATLOC_X + SMALLCHAR_WIDTH / 4)
 
 /**
  * @brief CG_DrawTeamInfo
@@ -405,13 +403,12 @@ static void CG_DrawTeamInfo(void)
 		vec4_t hcolor;
 		int    i;
 		float  lineHeight = 9.f;
-		int    x_offset   = 0;
 		float  alphapercent;
 		float  scale       = 0.2f;
 		float  icon_width  = 12.f;
 		float  icon_height = 10.f;
-		int    chatWidth   = SCREEN_WIDTH - CHATLOC_X - 80 /*(cg_drawHUDHead.integer ? 80 : 0)*/;
-		int    chatPosX    = (cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR) ? 20 : CHATLOC_TEXT_X - x_offset;
+		int    chatWidth   = 320;
+		int    chatPosX    = ((int)Ccg_WideX(SCREEN_WIDTH) - chatWidth) / 2;
 
 		if (cg.time - cgs.teamChatMsgTimes[cgs.teamLastChatPos % chatHeight] > cg_teamChatTime.integer)
 		{
