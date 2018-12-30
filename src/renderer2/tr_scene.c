@@ -483,6 +483,8 @@ static void R_AddWorldLightsToScene()
  * @param[in] b
  * @param hShader - unused
  * @param flags   - unused
+ *
+ * @note vanilla mods deliver 0 hShader only
  */
 void RE_AddDynamicLightToScene(const vec3_t org, float radius, float intensity, float r, float g, float b, qhandle_t hShader, int flags)
 {
@@ -513,14 +515,8 @@ void RE_AddDynamicLightToScene(const vec3_t org, float radius, float intensity, 
 	QuatClear(light->l.rotation);
 	VectorClear(light->l.center);
 
-	// HACK: this will tell the renderer backend to use tr.defaultLightShader
-#if 0
-	dl->shader = R_GetShaderByHandle(hShader);
-	if (dl->shader == tr.defaultShader)
-	{
-		dl->shader = NULL;
-	}
-#endif
+	light->shader = R_GetShaderByHandle(hShader);
+
 	light->l.attenuationShader = 0;
 
 	light->l.radius[0] = radius;

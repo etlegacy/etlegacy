@@ -1033,7 +1033,7 @@ typedef enum weaponType_s
 	WEAPON_TYPE_SCOPABLE  = BIT(10),
 	WEAPON_TYPE_SCOPED    = BIT(11),
 	WEAPON_TYPE_SETTABLE  = BIT(12),
-	WEAPON_TYPE_SET       = BIT(13),
+	WEAPON_TYPE_SET       = BIT(13)
 
 } weaponType_t;
 
@@ -1143,7 +1143,6 @@ typedef struct weapontable_s
 
 	qboolean useAmmo;               ///< bg -
 	qboolean useClip;               ///< bg -
-	qboolean useBullet;             ///< cg -
 
 	int maxAmmo;                    ///< bg - max player ammo carrying capacity.
 	int uses;                       ///< bg - how many 'rounds' it takes/costs to fire one cycle.
