@@ -1397,7 +1397,7 @@ typedef enum
 	ET_CAMERA = 30,             ///< 30
 	//ET_MOVERSCALED,           // unused
 
-	ET_CONSTRUCTIBLE_INDICATOR,
+	ET_CONSTRUCTIBLE_INDICATOR = 32,
 	ET_CONSTRUCTIBLE,
 	ET_CONSTRUCTIBLE_MARKER,
 	//ET_BOMB,                  ///< obsolete/unused (tripmines)
