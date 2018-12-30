@@ -5157,7 +5157,7 @@ void CG_MissileHitWall(int weapon, int missileEffect, vec3_t origin, vec3_t dir,
 		// set mark duration
 		markDuration = cg_markTime.integer;
 	}
-	else if (GetWeaponTableData(weapon)->useBullet)
+	else if (GetWeaponTableData(weapon)->type & (WEAPON_TYPE_SMG | WEAPON_TYPE_RIFLE | WEAPON_TYPE_PISTOL | WEAPON_TYPE_MG))
 	{
 		volume = 64;
 
