@@ -728,11 +728,11 @@ void CG_DrawPMItemsBig(void)
 	}
 
 	trap_R_SetColor(colourText);
-	CG_DrawPic(Ccg_WideX(SCREEN_WIDTH) - 56, y, 48, 48, cg_pmWaitingListBig->shader);
+	CG_DrawPic(Ccg_WideX(SCREEN_WIDTH) - 116, y, 48, 48, cg_pmWaitingListBig->shader);
 	trap_R_SetColor(NULL);
 
 	w = CG_Text_Width_Ext(cg_pmWaitingListBig->message, fontScale, 0, &cgs.media.limboFont2);
-	CG_Text_Paint_Ext(Ccg_WideX(SCREEN_WIDTH) - 4 - w, y + 56, fontScale, fontScale, colourText, cg_pmWaitingListBig->message, 0, 0, 0, &cgs.media.limboFont2);
+	CG_Text_Paint_Ext(Ccg_WideX(SCREEN_WIDTH) - 64 - w, y + 56, fontScale, fontScale, colourText, cg_pmWaitingListBig->message, 0, 0, 0, &cgs.media.limboFont2);
 }
 
 /**
