@@ -575,7 +575,7 @@ cvarTable_t gameCvarTable[] =
 
 	{ &g_campaignFile,                      "g_campaignFile",                      "",                           0,                                               0, qfalse, qfalse },
 
-	{ &g_countryflags,                      "g_countryflags",                      "0",                          CVAR_LATCH | CVAR_ARCHIVE,                       0, qfalse, qfalse },
+	{ &g_countryflags,                      "g_countryflags",                      "1",                          CVAR_LATCH | CVAR_ARCHIVE,                       0, qfalse, qfalse },
 
 	{ &team_airstrikeTime,                  "team_airstrikeTime",                  "20",                         0,                                               0, qfalse, qfalse },
 	{ &team_artyTime,                       "team_artyTime",                       "20",                         0,                                               0, qfalse, qfalse },
