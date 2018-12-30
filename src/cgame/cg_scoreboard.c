@@ -1205,7 +1205,7 @@ qboolean CG_DrawScoreboard(void)
 	float fade;
 	int width = SCREEN_WIDTH - 2 * x + 5;
 #ifdef FEATURE_RATING
-	const char *s, *s2;
+	const char *s, *s2, *s3;
 #endif
 	float fontScale = cg_fontScaleSP.value;
 
@@ -1275,7 +1275,11 @@ qboolean CG_DrawScoreboard(void)
 			s2 = "TAB";
 		}
 
-		s = va(CG_TranslateString("Press double-%s quickly to switch scoreboard"), s2);
+		//Skill Rating
+		// XP view
+
+		s3 = (cgs.skillRating && cg_scoreboard.integer == SCOREBOARD_SR) ? CG_TranslateString("Skill Rating view") : CG_TranslateString("XP view");
+		s = va(CG_TranslateString("%s - Press double-%s quickly to switch scoreboard"), s3, s2);
 
 		w = CG_Text_Width_Ext(s, fontScale, 0, &cgs.media.limboFont2);
 		x = Ccg_WideX(SCREEN_WIDTH / 2) - w / 2;
