@@ -1406,7 +1406,7 @@ typedef enum
 	ET_TANK_INDICATOR,
 	ET_TANK_INDICATOR_DEAD,
 	//ET_BOTGOAL_INDICATOR,     ///< obsolete/unused - An indicator object created by the bot code to show where the bots are moving to
-	ET_CORPSE = 40,             ///< 40 - dead player
+	ET_CORPSE = 41,             ///< 40 - dead player
 	ET_SMOKER,                  ///< target_smoke entity
 
 	ET_TEMPHEAD,                ///< temporary head for clients for bullet traces
@@ -1416,8 +1416,8 @@ typedef enum
 	ET_TRIGGER_FLAGONLY,
 	ET_TRIGGER_FLAGONLY_MULTIPLE,
 	ET_GAMEMANAGER,
-	ET_AAGUN,
-	ET_CABINET_H,               ///< 50
+	ET_AAGUN,                   ///< 50
+	ET_CABINET_H,
 	ET_CABINET_A,
 	ET_HEALER,
 	ET_SUPPLIER,
@@ -1427,7 +1427,7 @@ typedef enum
 	//ET_SNIPER_HINT,           ///< obsolete/unused (sniper hint for botsetgoalstate filter)
 	//ET_LANDMINESPOT_HINT,     ///< obsolete/unused (landminespot hint for botsetgoalstate filter)
 
-	ET_COMMANDMAP_MARKER = 58,
+	ET_COMMANDMAP_MARKER = 59,
 
 	ET_WOLF_OBJECTIVE,
 
