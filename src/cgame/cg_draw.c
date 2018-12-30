@@ -406,7 +406,7 @@ static void CG_DrawTeamInfo(void)
 		float  alphapercent;
 		float  scale       = 0.2f;
 		float  icon_width  = 12.f;
-		float  icon_height = 10.f;
+		float  icon_height = 8.f;
 		int    chatWidth   = 320;
 		int    chatPosX    = ((int)Ccg_WideX(SCREEN_WIDTH) - chatWidth) / 2;
 
@@ -447,7 +447,7 @@ static void CG_DrawTeamInfo(void)
 				hcolor[2] = 0;
 			}
 
-			hcolor[3] = 0.33f * alphapercent;
+			hcolor[3] = 0.66f * alphapercent;
 
 			trap_R_SetColor(hcolor);
 			CG_DrawPic(chatPosX, CHATLOC_Y - (cgs.teamChatPos - i) * lineHeight, chatWidth, lineHeight, cgs.media.teamStatusBar);
