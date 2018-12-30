@@ -1984,7 +1984,7 @@ msgid "Use (Activate):"
 msgstr ""
 
 #: etmain/ui/options_controls.menu:87
-msgid "SELECT WEAPONS"
+msgid "SELECT CLASS AND WEAPONS"
 msgstr ""
 
 #: etmain/ui/options_controls.menu:88
@@ -7109,7 +7109,7 @@ msgstr ""
 msgid "Max. Frames Per Second:"
 msgstr ""
 
-msgid "Sets the limit of frames per second - keep the values between 20 and 333"
+msgid "Sets the limit of frames per second"
 msgstr ""
 
 msgid "JOYSTICK"
@@ -7413,4 +7413,55 @@ msgid "Direct + Over. + Mute"
 msgstr ""
 
 msgid "Custom"
+msgstr ""
+
+msgid "Displays help text"
+msgstr ""
+
+msgid "Low (43 FPS)"
+msgstr ""
+
+msgid "Medium (76 FPS)"
+msgstr ""
+
+msgid "Default (85 FPS)"
+msgstr ""
+
+msgid "High (125 FPS)"
+msgstr ""
+
+msgid "ADD FAVORITE"
+msgstr ""
+
+msgid "Add this server to your favorites? IP:"
+msgstr ""
+
+msgid "Select your team, class, weapon and spawnpoint"
+msgstr ""
+
+msgid "Print all server info"
+msgstr ""
+
+msgid "Set available game options"
+msgstr ""
+
+msgid "Add this server to your favorites"
+msgstr ""
+
+msgid "Look at the legacy hall of fame"
+msgstr ""
+
+msgid "Disconnect your connection from current server"
+msgstr ""
+
+msgid "Don't press this. Be warned!"
+msgstr ""
+
+msgid "Skill Rating view"
+msgstr ""
+
+msgid "%s - Press double-%s quickly to switch scoreboard"
+msgstr ""
+
+msgid "XP view"
 msgstr ""
