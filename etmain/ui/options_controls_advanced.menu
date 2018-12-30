@@ -8,6 +8,9 @@
 #define WINDOW_HEIGHT	448
 #define GROUP_NAME		"grpOptionsControls"
 
+// Subwindows //
+#define SUBWINDOW_WIDTH		.5*(WINDOW_WIDTH-18)
+
 // Controls Menu //
 menuDef {
 	name		"options_controls_advanced"
@@ -24,9 +27,6 @@ menuDef {
 // Window //
 	WINDOW( _("CONTROLS: ADVANCED"), 90 )
 
-// Subwindows //
-#define SUBWINDOW_WIDTH		.5*(WINDOW_WIDTH-18)
-
 // Fire-Teams //
 #define FIRETEAM_Y 32
 	SUBWINDOW( 6, FIRETEAM_Y, (SUBWINDOW_WIDTH), 148, _("FIRE-TEAMS" ))
@@ -41,7 +41,6 @@ menuDef {
 	BIND( 8, FIRETEAM_Y+112, (SUBWINDOW_WIDTH)-4, 10, _("Select Member #6:"), .2, 8, "selectbuddy 5", "" )
 	BIND( 8, FIRETEAM_Y+124, (SUBWINDOW_WIDTH)-4, 10, _("Select Member #7:"), .2, 8, "selectbuddy 6", "" )
 	BIND( 8, FIRETEAM_Y+136, (SUBWINDOW_WIDTH)-4, 10, _("Select Member #8:"), .2, 8, "selectbuddy 7", "" )
-
 
 // Joystick //
 #define JOYSTICK_Y 186

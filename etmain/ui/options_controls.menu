@@ -67,7 +67,7 @@ menuDef {
 
 // Select Weapons //
 #define SELECTWEAPONS_Y 32
-	SUBWINDOW( 6+(SUBWINDOW_WIDTH)+6, SELECTWEAPONS_Y, (SUBWINDOW_WIDTH), 136, _("SELECT WEAPONS") )
+	SUBWINDOW( 6+(SUBWINDOW_WIDTH)+6, SELECTWEAPONS_Y, (SUBWINDOW_WIDTH), 148, _("SELECT CLASS AND WEAPONS") )
 	BIND( 6+(SUBWINDOW_WIDTH)+6+2, SELECTWEAPONS_Y+16, (SUBWINDOW_WIDTH)-4, 10, _("Next Weapon:"), .2, 8, "weapnext", "" )
 	BIND( 6+(SUBWINDOW_WIDTH)+6+2, SELECTWEAPONS_Y+28, (SUBWINDOW_WIDTH)-4, 10, _("Previous Weapon:"), .2, 8, "weapprev", "" )
 	BIND( 6+(SUBWINDOW_WIDTH)+6+2, SELECTWEAPONS_Y+40, (SUBWINDOW_WIDTH)-4, 10, _("Slot 1 - Melee:"), .2, 8, "weaponbank 1", "" )
@@ -78,9 +78,10 @@ menuDef {
 	BIND( 6+(SUBWINDOW_WIDTH)+6+2, SELECTWEAPONS_Y+100, (SUBWINDOW_WIDTH)-4, 10, _("Slot 6 - Special 2:"), .2, 8, "weaponbank 6", "" )
 	BIND( 6+(SUBWINDOW_WIDTH)+6+2, SELECTWEAPONS_Y+112, (SUBWINDOW_WIDTH)-4, 10, _("Slot 7 - Special 3:"), .2, 8, "weaponbank 7", "" )
 	BIND( 6+(SUBWINDOW_WIDTH)+6+2, SELECTWEAPONS_Y+124, (SUBWINDOW_WIDTH)-4, 10, _("Slot 8 - Binoculars:"), .2, 8, "weaponbank 8", "" )
+	BIND( 6+(SUBWINDOW_WIDTH)+6+2, SELECTWEAPONS_Y+136, (SUBWINDOW_WIDTH)-4, 10, _("Class selection:"), .2, 8, "classmenu", "" )
 
 // Chat //
-#define CHAT_Y 174
+#define CHAT_Y 186
 	SUBWINDOW( 6+(SUBWINDOW_WIDTH)+6, CHAT_Y, (SUBWINDOW_WIDTH), 76, _("CHAT") )
 	BIND( 6+(SUBWINDOW_WIDTH)+6+2, CHAT_Y+16, (SUBWINDOW_WIDTH)-4, 10, _("Chat:"), .2, 8, "messagemode", "" )
 	BIND( 6+(SUBWINDOW_WIDTH)+6+2, CHAT_Y+28, (SUBWINDOW_WIDTH)-4, 10, _("Team Chat:"), .2, 8, "messagemode2", "" )
@@ -89,7 +90,7 @@ menuDef {
 	BIND( 6+(SUBWINDOW_WIDTH)+6+2, CHAT_Y+64, (SUBWINDOW_WIDTH)-4, 10, _("Fireteam Quick Chat:"), .2, 8, "mp_fireteammsg", "" )
 
 // Input //
-#define INPUT_Y 256
+#define INPUT_Y 268
 	SUBWINDOW( 6+(SUBWINDOW_WIDTH)+6, INPUT_Y, (SUBWINDOW_WIDTH), 52, _("INPUT") )
 	CHECKBOXALIGNXACTION(  6+(SUBWINDOW_WIDTH)+6+2, INPUT_Y+16, .5*((SUBWINDOW_WIDTH)-6), 10,_("Invert Mouse:"), .2, 24, 8, "ui_mousePitch", uiScript update ui_mousePitch, _("Inverts mouse pitch") )
 	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2+(.5*((SUBWINDOW_WIDTH)-6))+2, INPUT_Y+16, .5*((SUBWINDOW_WIDTH)-6), 10, _("Smooth Mouse:"), .2, 24, 8, "m_filter", _("Smooths out the mouse using interpolation") )
@@ -98,7 +99,7 @@ menuDef {
 	MULTI( 6+(SUBWINDOW_WIDTH)+6+2, INPUT_Y+40, (SUBWINDOW_WIDTH)-4, 10, _("Mouse Pitch:"), .2, 8, "m_pitch", cvarFloatList { "0.015 (lowest allowed)" 0.0151 "0.016" 0.016 "0.017" 0.017 "0.018" 0.018 "0.019" 0.019 "0.020" 0.020 "0.021" 0.021 "0.022 (default)" 0.022 }, _("Up-Down Motion Of The Crosshair While Moving.") )
 
 // Miscellaneous //
-#define MISC_Y 314
+#define MISC_Y 326
 	SUBWINDOW( 6+(SUBWINDOW_WIDTH)+6, MISC_Y, (SUBWINDOW_WIDTH), 88, _("MISCELLANEOUS") )
 	BIND( 6+(SUBWINDOW_WIDTH)+6+2, MISC_Y+16, (SUBWINDOW_WIDTH)-4, 10, _("Vote Yes:"), .2, 8, "vote yes", "" )
 	BIND( 6+(SUBWINDOW_WIDTH)+6+2, MISC_Y+28, (SUBWINDOW_WIDTH)-4, 10, _("Vote No:"), .2, 8, "vote no", "" )
