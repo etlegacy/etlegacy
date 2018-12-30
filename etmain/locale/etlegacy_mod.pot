@@ -5227,7 +5227,7 @@ msgstr ""
 
 #: src/cgame/cg_servercmds.c:1941
 #, c-format
-msgid "Gibs:   %3d    Team Gibs:  %3d"
+msgid "Gibs:   %3d    Team Gibs:  %3d    Playtime:  %5.1f%%"
 msgstr ""
 
 #: src/cgame/cg_servercmds.c:1879
@@ -6856,6 +6856,9 @@ msgid "Most Selfkills"
 msgstr ""
 
 msgid "Most Deaths"
+msgstr ""
+
+msgid "Highest Skill Rating"
 msgstr ""
 
 msgid "\nET: Legacy with OpenGL 3.x renderer can not run on this machine since it is missing one or more required OpenGL extensions. Please update your video card drivers and try again.\n"
