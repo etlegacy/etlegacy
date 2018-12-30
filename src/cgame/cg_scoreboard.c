@@ -1205,8 +1205,7 @@ qboolean CG_DrawScoreboard(void)
 	float fade;
 	int width = SCREEN_WIDTH - 2 * x + 5;
 #ifdef FEATURE_RATING
-	const char *s, *s1, *s2, *s3;
-	int        charHeight;
+	const char *s, *s2;
 #endif
 	float fontScale = cg_fontScaleSP.value;
 
@@ -1268,13 +1267,6 @@ qboolean CG_DrawScoreboard(void)
 	}
 
 #ifdef FEATURE_RATING
-	charHeight = CG_Text_Height_Ext("A", fontScale, 0, &cgs.media.limboFont2);
-
-	s = (cgs.skillRating && cg_scoreboard.integer == SCOREBOARD_SR) ? CG_TranslateString("Skill Rating") : CG_TranslateString("Experience");
-	s1 = CG_TranslateString("Scoreboard");
-	CG_Text_Paint_Ext(INFOTEXT_STARTX, INFOTEXT_STARTY, fontScale, fontScale, colorWhite, s, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
-	CG_Text_Paint_Ext(INFOTEXT_STARTX, INFOTEXT_STARTY + charHeight * 2.0f, fontScale, fontScale, colorWhite, s1, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
-
 	if (cg_descriptiveText.integer)
 	{
 		s2 = Binding_FromName("+scores");
@@ -1283,11 +1275,12 @@ qboolean CG_DrawScoreboard(void)
 			s2 = "TAB";
 		}
 
-		s3 = va(CG_TranslateString("Press %s twice quickly to switch scoreboard"), s2);
+		s = va(CG_TranslateString("Press double-%s quickly to switch scoreboard"), s2);
 
-		w = CG_Text_Width_Ext(s3, fontScale, 0, &cgs.media.limboFont2);
+		w = CG_Text_Width_Ext(s, fontScale, 0, &cgs.media.limboFont2);
 		x = Ccg_WideX(SCREEN_WIDTH / 2) - w / 2;
-		CG_Text_Paint_Ext(x, 448, fontScale, fontScale, colorWhite, s3, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+		y = (CG_ConfigString(CS_CONFIGNAME)[0] ? 456 : 438); // for config display
+		CG_Text_Paint_Ext(x, y, fontScale, fontScale, colorWhite, s, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 	}
 #endif
 
