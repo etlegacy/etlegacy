@@ -1325,6 +1325,80 @@ qboolean CG_IsClassFull(int playerType, team_t team)
 }
 
 /**
+ * @brief Checks for heavy and rifle weapons
+ * @param[in] weapon
+ * @return
+ * @note FIXME: this function is based on G_IsWeaponDisabled which needs some rework.
+ */
+qboolean CG_IsWeaponDisabled(weapon_t weapon)
+{
+	int        count, wcount;
+	const char *maxCount;
+
+	if (cgs.clientinfo[cg.clientNum].team == TEAM_SPECTATOR)
+	{
+		return qtrue;
+	}
+
+	// never restrict normal weapons
+	if (!(GetWeaponTableData(weapon)->skillBased == SK_HEAVY_WEAPONS || (GetWeaponTableData(weapon)->type & WEAPON_TYPE_RIFLENADE)))
+	{
+		return qfalse;
+	}
+
+	count  = CG_LimboPanel_TeamCount(-1);
+	wcount = CG_LimboPanel_TeamCount(weapon);
+
+	// heavy weapon restriction
+	if (GetWeaponTableData(weapon)->skillBased == SK_HEAVY_WEAPONS)
+	{
+		if (wcount >= ceil(count * cgs.weaponRestrictions))
+		{
+			return qtrue;
+		}
+	}
+
+	if (GetWeaponTableData(weapon)->type & WEAPON_TYPE_PANZER)
+	{
+		maxCount = cg.maxPanzers;
+	}
+	else if (GetWeaponTableData(weapon)->type & WEAPON_TYPE_MORTAR)
+	{
+		maxCount = cg.maxMortars;
+	}
+	else if (GetWeaponTableData(weapon)->type & WEAPON_TYPE_MG)
+	{
+		maxCount = cg.maxMg42s;
+	}
+	else if (GetWeaponTableData(weapon)->type & (WEAPON_TYPE_RIFLE | WEAPON_TYPE_RIFLENADE))
+	{
+		maxCount = cg.maxRiflegrenades;
+	}
+	else if (weapon == WP_FLAMETHROWER)
+	{
+		maxCount = cg.maxFlamers;
+	}
+	else
+	{
+		return qfalse;
+	}
+
+	if (GetWeaponTableData(weapon)->weapAlts)
+	{
+		// add alt weapons
+		wcount += CG_LimboPanel_TeamCount(GetWeaponTableData(weapon)->weapAlts);
+	}
+
+	if (wcount >= CG_LimboPanel_MaxCount(count, maxCount))
+	{
+		CG_PriorityCenterPrint(va(CG_TranslateString("^1%s^7 is not available! Choose another weapon!"), GetWeaponTableData(weapon)->desc), 400, cg_fontScaleCP.value, -1);
+		return qtrue;
+	}
+
+	return qfalse;
+}
+
+/**
  * @brief class change menu
  */
 static void CG_ClassMenu_f(void)
@@ -1443,6 +1517,12 @@ static void CG_Class_f(void)
 	else
 	{
 		weapon1 = classinfo->classPrimaryWeapons[0].weapon;
+	}
+
+	if (CG_IsWeaponDisabled(weapon1))
+	{
+		CG_Printf("class: weapon is not available.\n");
+		return;
 	}
 
 	if (trap_Argc() > 3)
