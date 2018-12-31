@@ -44,10 +44,6 @@ menuDef {
 		conditionalscript ROldModeCheck 2
 			( "clearFocus ; open vid_confirm" )
 			( "clearFocus" )
-
-		conditionalscript cl_autoupdate 1
-			( "checkautoupdate" )
-			( "clearFocus" )
 	}
 
 	onEsc {

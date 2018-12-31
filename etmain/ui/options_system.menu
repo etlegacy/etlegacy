@@ -104,15 +104,8 @@ menuDef {
 	YESNO( 6+(SUBWINDOW_WIDTH_L)+6+2, DOWNLOADS_Y+16, (SUBWINDOW_WIDTH_L)-4, 10, _("Get Missing Files:"), .2, 8, "cl_allowDownload", _("Download missing files when available") )
 	YESNO( 6+(SUBWINDOW_WIDTH_L)+6+2, DOWNLOADS_Y+28, (SUBWINDOW_WIDTH_L)-4, 10, _("Use HTTP/FTP Downloads:"), .2, 8, "cl_wwwDownload", _("Enables or disables http/ftp downloads") )
 
-// Updates //
-#ifdef LEGACY
-#define UPDATES_Y 238
-	SUBWINDOW( 6+(SUBWINDOW_WIDTH_L)+6, UPDATES_Y, (SUBWINDOW_WIDTH_R), 28, _("UPDATES") )
-	YESNO( 6+(SUBWINDOW_WIDTH_L)+6+2, UPDATES_Y+16, (SUBWINDOW_WIDTH_L)-4, 10, _("Start-Up Updates Check:"), .2, 8, "cl_autoupdate", _("Automatically check for updates") )
-#endif
-
 // IRC //
-#define IRC_Y 274
+#define IRC_Y 238
 	SUBWINDOW( 6+(SUBWINDOW_WIDTH_L)+6, IRC_Y, (SUBWINDOW_WIDTH_R), 102, _("IRC CLIENT") )
 	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, IRC_Y+16, (SUBWINDOW_WIDTH_R)-4, 10, _("Mode:"), .2, 8, "irc_mode", cvarFloatList { "Disabled" 0 "Direct connect" 1 "Override nickname" 2 "Mute channel" 4 "Direct + Override" 3 "Direct + Mute" 5 "Override + Mute" 6 "Direct + Over. + Mute" 7 }, _("Specifies IRC client behavior") )
 	EDITFIELD( 6+(SUBWINDOW_WIDTH_L)+6+2, IRC_Y+28, (SUBWINDOW_WIDTH_L)-4, 10, _("Server:"), .2, 8, "irc_server", 25, 18, _("Name of IRC server") )
