@@ -1451,7 +1451,7 @@ void CG_ObjectivesDraw()
 			CG_DrawPic(x + 4, y + 2, 18, 12, cgs.media.alliedFlag);
 			CG_FitTextToWidth_Ext(temp, tScale, OBJ_W - 26, sizeof(temp), FONT_TEXT);
 			y += tSpacing;
-			CG_Text_Paint_Ext(x + 26, y, tScale, tScale, tColor, "^4Allies", 0.0f, 0, tStyle, tFont);
+			CG_Text_Paint_Ext(x + 26, y, tScale, tScale, tColor, "^$Allies", 0.0f, 0, tStyle, tFont);
 			s = p = temp;
 			while (*p)
 			{

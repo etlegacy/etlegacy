@@ -1481,7 +1481,7 @@ int Team_ClassForString(const char *string)
 }
 */
 
-const char *aTeams[TEAM_NUM_TEAMS] = { "FFA", "^1Axis^7", "^4Allies^7", "^2Spectators^7" };
+const char *aTeams[TEAM_NUM_TEAMS] = { "FFA", "^1Axis^7", "^$Allies^7", "^2Spectators^7" };
 team_info  teamInfo[TEAM_NUM_TEAMS];
 
 /**
