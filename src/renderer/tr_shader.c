@@ -3633,7 +3633,7 @@ qhandle_t RE_RegisterShaderNoMip(const char *name)
 	// the same name, we don't try looking for it again
 	if (sh->defaultShader)
 	{
-		Ren_Warning("RE_RegisterShaderNoMip WARNING: shader '%s' not found - using default shader\n", name);
+		Ren_Developer("RE_RegisterShaderNoMip WARNING: shader '%s' not found - using default shader\n", name);
 		return 0;
 	}
 
