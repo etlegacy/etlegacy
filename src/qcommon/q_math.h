@@ -146,7 +146,7 @@ extern vec4_t clrBrownLineFull;
 #define S_COLOR_RED         "^1"
 #define S_COLOR_GREEN       "^2"
 #define S_COLOR_YELLOW      "^3"
-#define S_COLOR_BLUE        "^4"
+#define S_COLOR_BLUE        "^$" // 4 is unreadable on dark background
 #define S_COLOR_CYAN        "^5"
 #define S_COLOR_MAGENTA     "^6"
 #define S_COLOR_WHITE       "^7"
