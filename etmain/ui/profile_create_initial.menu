@@ -12,7 +12,6 @@
 #define INITIAL_PROFILEDEFAULT_SETTINGS		uiScript systemCvarsGet ;				\
 											uiScript profileCvarsGet ;				\
 											setcvar ui_glCustom 1 ;					\
-											setcvar ui_r_gamma 1.3 ;				\
 											setcvar ui_sensitivity 5 ;				\
 											setcvar ui_profile_mousePitch 0 ;		\
 											setcvar ui_handedness 0 ;				\

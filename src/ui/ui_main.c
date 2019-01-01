@@ -5473,21 +5473,12 @@ void UI_RunMenuScript(char **args)
 		{
 			int   r_oldMode       = (int)(trap_Cvar_VariableValue("r_oldMode"));
 			int   r_oldFullscreen = (int)(trap_Cvar_VariableValue("r_oldFullscreen"));
-			float ui_r_gamma      = trap_Cvar_VariableValue("ui_r_gamma");
-			float r_gamma         = trap_Cvar_VariableValue("r_gamma");
 
 			// reset mode to old settings
 			trap_Cvar_SetValue("r_mode", r_oldMode);
 			trap_Cvar_SetValue("r_fullscreen", r_oldFullscreen);
 			trap_Cvar_Set("r_oldMode", "");
 			trap_Cvar_Set("r_oldFullscreen", "");
-
-			// if gamma has been changed in UI, but not saved
-			// reset it back to the last value
-			if ((ui_r_gamma != r_gamma) && (ui_r_gamma != 0.f))
-			{
-				trap_Cvar_Set("r_gamma", va("%f", (double)ui_r_gamma));
-			}
 		}
 		else if (Q_stricmp(name, "vidConfirm") == 0)
 		{
@@ -5497,7 +5488,6 @@ void UI_RunMenuScript(char **args)
 		else if (Q_stricmp(name, "systemCvarsGet") == 0)
 		{
 			int   ui_r_mode                           = (int)(trap_Cvar_VariableValue("r_mode"));
-			float ui_r_gamma                          = trap_Cvar_VariableValue("r_gamma");
 			int   ui_rate                             = (int)(trap_Cvar_VariableValue("rate"));
 			int   ui_cl_maxpackets                    = (int)(trap_Cvar_VariableValue("cl_maxpackets"));
 			int   ui_cl_packetdup                     = (int)(trap_Cvar_VariableValue("cl_packetdup"));
@@ -5529,7 +5519,6 @@ void UI_RunMenuScript(char **args)
 			trap_Cvar_VariableStringBuffer("r_texturemode", ui_r_texturemode, sizeof(ui_r_texturemode));
 
 			trap_Cvar_Set("ui_r_mode", va("%i", ui_r_mode));
-			trap_Cvar_Set("ui_r_gamma", va("%f", (double)ui_r_gamma));
 			trap_Cvar_Set("ui_r_intensity", va("%f", (double)ui_r_intensity));
 			trap_Cvar_Set("ui_rate", va("%i", ui_rate));
 			trap_Cvar_Set("ui_cl_maxpackets", va("%i", ui_cl_maxpackets));
@@ -5571,7 +5560,6 @@ void UI_RunMenuScript(char **args)
 		else if (Q_stricmp(name, "systemCvarsReset") == 0)
 		{
 			trap_Cvar_Set("ui_r_mode", "");
-			trap_Cvar_Set("ui_r_gamma", "");
 			trap_Cvar_Set("ui_r_intensity", "");
 			trap_Cvar_Set("ui_r_mapoverbrightbits", "");
 			trap_Cvar_Set("ui_r_overBrightBits", "");
@@ -5680,7 +5668,6 @@ void UI_RunMenuScript(char **args)
 			trap_Cvar_Set("r_texturemode", ui_r_texturemode);
 
 			trap_Cvar_Set("ui_r_mode", "");
-			trap_Cvar_Set("ui_r_gamma", "");
 			trap_Cvar_Set("ui_rate", "");
 			trap_Cvar_Set("ui_cl_maxpackets", "");
 			trap_Cvar_Set("ui_cl_packetdup", "");
@@ -8625,7 +8612,6 @@ cvarTable_t cvarTable[] =
 	{ NULL,                             "vote_allow_poll",                     "1",                          CVAR_ARCHIVE,                   0 },
 
 	{ NULL,                             "ui_r_mode",                           "",                           CVAR_ARCHIVE,                   0 },
-	{ NULL,                             "ui_r_gamma",                          "",                           CVAR_ARCHIVE,                   0 },
 	{ NULL,                             "ui_r_ext_texture_filter_anisotropic", "",                           CVAR_ARCHIVE,                   0 },
 	{ NULL,                             "ui_r_ext_multisample",                "",                           CVAR_ARCHIVE,                   0 },
 	{ NULL,                             "ui_cg_shadows",                       "",                           CVAR_ARCHIVE,                   0 },

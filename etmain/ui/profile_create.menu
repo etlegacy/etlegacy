@@ -10,7 +10,6 @@
 
 // Create Profile Menu //
 #define DEFAULT_SETTINGS	setcvar ui_glCustom 1 ;					\
-							setcvar ui_r_gamma 1.3 ;				\
 							setcvar ui_rate 25000 ;					\
 							setcvar ui_sensitivity 5 ;				\
 							setcvar ui_profile_mousePitch 0 ;		\
