@@ -95,7 +95,7 @@ menuDef {
 // Networking //
 #define NETWORK_Y 140
 	SUBWINDOW( 6+(SUBWINDOW_WIDTH_L)+6, NETWORK_Y, (SUBWINDOW_WIDTH_R), 42, _("NETWORK") )
-	MULTIACTION( 6+(SUBWINDOW_WIDTH_L)+6+2, NETWORK_Y+16, (SUBWINDOW_WIDTH_L)-4, 10, _("Max Packets:"), .2, 8, "ui_cl_maxpackets", cvarFloatList { "Very Low" 15 "Low" 30 "Medium" 60 "High" 100 "Very High" 125 }, uiScript update "ui_cl_maxpackets", _("Cap for upstream data packet transmissions") )
+	MULTIACTION( 6+(SUBWINDOW_WIDTH_L)+6+2, NETWORK_Y+16, (SUBWINDOW_WIDTH_L)-4, 10, _("Max Packets:"), .2, 8, "ui_cl_maxpackets", cvarFloatList { "Very Low (15)" 15 "Low (30)" 30 "Medium (60)" 60 "High (100)" 100 "Very High (125)" 125 }, uiScript update "ui_cl_maxpackets", _("Cap for upstream data packet transmissions") )
 	MULTIACTION( 6+(SUBWINDOW_WIDTH_L)+6+2, NETWORK_Y+28, (SUBWINDOW_WIDTH_L)-4, 10, _("Packet Duplication:"), .2, 8, "ui_cl_packetdup", cvarFloatList { "No" 0 "x1" 1 "x2" 2 }, uiScript update "ui_cl_packetdup", _("Number of duplicates for every data packet sent upstream, minimized packetloss") )
 
 // Downloads //
