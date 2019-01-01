@@ -205,7 +205,7 @@ void CG_LoadLocations(void)
 
 		if (fLen <= 0)
 		{
-			CG_Printf("^dLoadLocations: ^3Warning: ^9No location data found for map ^2%s^9.\n", cgs.rawmapname);
+			CG_Printf(S_COLOR_BLUE "LoadLocations: ^3Warning: ^9No location data found for map ^2%s^9.\n", cgs.rawmapname);
 			return;
 		}
 	}
@@ -220,7 +220,7 @@ void CG_LoadLocations(void)
 	fBuffer[fLen] = '\0';                               // make sure it's null-terminated
 	trap_FS_FCloseFile(f);                              // close the file, we're done with it
 
-	CG_Printf("^dLoadLocations: ^9location data for map ^2%s ^9loaded\n", cgs.rawmapname);
+	CG_Printf(S_COLOR_BLUE "LoadLocations: ^9location data for map ^2%s ^9loaded\n", cgs.rawmapname);
 
 	// start parsing!
 	while (p < fLen)
