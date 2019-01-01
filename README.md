@@ -296,7 +296,7 @@ XreaL GPL Source Code (renderer2)
 Copyright (C) 2010-2011 Robert Beckebans
 
 ET: Legacy
-Copyright (C) 2012-2018 ET:Legacy Team <mail@etlegacy.com>
+Copyright (C) 2012-2019 ET:Legacy Team <mail@etlegacy.com>
 
   ET: Legacy is free software: you can redistribute it and/or modify it under
   the terms of the GNU General Public License as published by the Free Software

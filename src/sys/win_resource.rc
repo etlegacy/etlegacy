@@ -112,7 +112,7 @@ BEGIN
 			VALUE "FileDescription", "etl"
 			VALUE "FileVersion", PRODUCT_VERSIONSTR
 			VALUE "InternalName", "Enemy Territory Legacy"
-			VALUE "LegalCopyright", "2012-2018 ET:Legacy Team"
+			VALUE "LegalCopyright", "2012-2019 ET:Legacy Team"
 			VALUE "OriginalFilename", "etl.exe"
 			VALUE "ProductName", "Enemy Territory Legacy"
 			VALUE "ProductVersion", PRODUCT_VERSIONSTR
