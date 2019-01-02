@@ -683,7 +683,7 @@ void Cmd_Give_f(gentity_t *ent)
 	if (Q_stricmpn(name, "skill", 5) == 0)
 	{
 		skillType_t skill;
-        float points;
+		float       points;
 
 		if ((ent->client->sess.sessionTeam != TEAM_ALLIES && ent->client->sess.sessionTeam != TEAM_AXIS) || g_gamestate.integer != GS_PLAYING)
 		{
@@ -709,7 +709,7 @@ void Cmd_Give_f(gentity_t *ent)
 
 				// ceil the given points to keep consistency with the displayed XP value in HUD
 				trap_SendServerCommand(ent - g_entities, va("print \"give skill: Skill %i '%s' increased (+%.0fXP).\n\"", skill, GetSkillTableData(skill)->skillNames, ceil(points)));
-                
+
 			}
 			else
 			{
@@ -1707,7 +1707,8 @@ qboolean G_IsWeaponDisabled(gentity_t *ent, weapon_t weapon)
 		return qtrue;
 	}
 
-	if (!(GetWeaponTableData(weapon)->skillBased == SK_HEAVY_WEAPONS ||  (GetWeaponTableData(weapon)->type & WEAPON_TYPE_RIFLE)))
+	if (!(GetWeaponTableData(weapon)->skillBased == SK_HEAVY_WEAPONS || (GetWeaponTableData(weapon)->type & WEAPON_TYPE_RIFLENADE)
+	      || (GetWeaponTableData(GetWeaponTableData(weapon)->weapAlts)->type & WEAPON_TYPE_RIFLENADE)))
 	{
 		return qfalse;
 	}
@@ -1737,7 +1738,8 @@ qboolean G_IsWeaponDisabled(gentity_t *ent, weapon_t weapon)
 		maxCount     = team_maxMortars.integer;
 		weaponString = team_maxMortars.string;
 	}
-	else if (GetWeaponTableData(weapon)->type & (WEAPON_TYPE_RIFLE | WEAPON_TYPE_RIFLENADE))
+	else if ((GetWeaponTableData(weapon)->type & WEAPON_TYPE_RIFLENADE)
+	         || (GetWeaponTableData(GetWeaponTableData(weapon)->weapAlts)->type & WEAPON_TYPE_RIFLENADE))
 	{
 		maxCount     = team_maxRiflegrenades.integer;
 		weaponString = team_maxRiflegrenades.string;
@@ -2765,7 +2767,7 @@ void G_Voice(gentity_t *ent, gentity_t *target, int mode, const char *id, const 
 		//if (g_customChat.integer && strlen(customChat) > 1 )
 		if (strlen(customChat) > 1) // custom chat cvar control?
 		{
-			G_Say( ent, target, mode, customChat);
+			G_Say(ent, target, mode, customChat);
 			G_VoiceTo(ent, target, mode, id, qtrue, randomNum);
 		}
 		else
@@ -2857,7 +2859,7 @@ void G_Voice(gentity_t *ent, gentity_t *target, int mode, const char *id, const 
 		//if (g_customChat.integer && strlen(customChat) > 1)
 		if (strlen(customChat) > 1) // custom chat cvar control?
 		{
-			G_Say( ent, NULL, mode, customChat );
+			G_Say(ent, NULL, mode, customChat);
 			voiceonly = qtrue;
 		}
 
@@ -2865,7 +2867,7 @@ void G_Voice(gentity_t *ent, gentity_t *target, int mode, const char *id, const 
 		for (j = 0; j < level.numConnectedClients; j++)
 		{
 			victim = &g_entities[level.sortedClients[j]];
-			if(COM_BitCheck(victim->client->sess.ignoreClients, (ent - g_entities)))
+			if (COM_BitCheck(victim->client->sess.ignoreClients, (ent - g_entities)))
 			{
 				continue;
 			}
@@ -2892,9 +2894,9 @@ static void Cmd_Voice_f(gentity_t *ent, int mode, qboolean arg0, qboolean voiceo
 			return;
 		}
 
-		trap_Argv( (arg0) ? 0 : 1, bufferIndexCustom, sizeof(bufferIndexCustom));
+		trap_Argv((arg0) ? 0 : 1, bufferIndexCustom, sizeof(bufferIndexCustom));
 
-		G_Voice(ent, NULL, mode, bufferIndexCustom , ConcatArgs(((arg0) ? 1 : 2)), voiceonly);
+		G_Voice(ent, NULL, mode, bufferIndexCustom, ConcatArgs(((arg0) ? 1 : 2)), voiceonly);
 	}
 	else
 	{

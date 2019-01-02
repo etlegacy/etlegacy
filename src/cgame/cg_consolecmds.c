@@ -1341,7 +1341,7 @@ qboolean CG_IsWeaponDisabled(weapon_t weapon)
 	}
 
 	// never restrict normal weapons
-	if (!(GetWeaponTableData(weapon)->skillBased == SK_HEAVY_WEAPONS || (GetWeaponTableData(weapon)->type & WEAPON_TYPE_RIFLENADE)))
+	if (!(GetWeaponTableData(weapon)->skillBased == SK_HEAVY_WEAPONS || (GetWeaponTableData(GetWeaponTableData(weapon)->weapAlts)->type & WEAPON_TYPE_RIFLENADE)))
 	{
 		return qfalse;
 	}
@@ -1370,7 +1370,7 @@ qboolean CG_IsWeaponDisabled(weapon_t weapon)
 	{
 		maxCount = cg.maxMg42s;
 	}
-	else if (GetWeaponTableData(weapon)->type & (WEAPON_TYPE_RIFLE | WEAPON_TYPE_RIFLENADE))
+	else if (GetWeaponTableData(GetWeaponTableData(weapon)->weapAlts)->type & WEAPON_TYPE_RIFLENADE)
 	{
 		maxCount = cg.maxRiflegrenades;
 	}
