@@ -718,7 +718,7 @@ qboolean ClientInactivityTimer(gclient_t *client)
 #endif
 
 	// no countdown in warmup and intermission
-	if (!g_gamestate.integer == GS_PLAYING)
+	if (g_gamestate.integer != GS_PLAYING)
 	{
 		return qtrue;
 	}
