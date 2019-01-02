@@ -2109,14 +2109,15 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 		break;
 	case EV_CHANGE_WEAPON:
 		trap_S_StartSound(NULL, es->number, CHAN_AUTO, cgs.media.selectSound);
-
-		if (es->number == cg.snap->ps.clientNum)
-		{
-			CG_PlaySwitchSound(es->weapon, cg.weaponSelect);    // grabbed from SP
-		}
 		break;
 	case EV_CHANGE_WEAPON_2:
 		trap_S_StartSound(NULL, es->number, CHAN_AUTO, cgs.media.selectSound);
+
+		// special switching sound for alt weapon
+		if (cg_weapons[GetWeaponTableData(es->weapon)->weapAlts].switchSound)
+		{
+			trap_S_StartSound(NULL, es->number, CHAN_WEAPON, cg_weapons[GetWeaponTableData(es->weapon)->weapAlts].switchSound);
+		}
 
 		if (es->number == cg.snap->ps.clientNum)
 		{

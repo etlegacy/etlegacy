@@ -3410,34 +3410,6 @@ static int getPrevBankWeap(int bank, int cycle, qboolean sameBankPosition)
 }
 
 /**
- * @brief Get special switching sounds if they're there
- * @param[in] lastweap
- * @param[in] newweap
- */
-void CG_PlaySwitchSound(int lastweap, int newweap)
-{
-	// no special switching sound for non alt weapon
-	if (GetWeaponTableData(lastweap)->weapAlts != newweap)
-	{
-		return;
-	}
-
-	// no special switching sound when scope/unscope weapon
-	if ((GetWeaponTableData(lastweap)->type & WEAPON_TYPE_SCOPED) || (GetWeaponTableData(newweap)->type & WEAPON_TYPE_SCOPED))
-	{
-		return;
-	}
-
-	// don't play special switching sound after firing with riflenade
-	if ((GetWeaponTableData(newweap)->type & WEAPON_TYPE_RIFLE) && !cg.predictedPlayerState.ammoclip[lastweap])
-	{
-		return;
-	}
-
-	trap_S_StartSound(NULL, cg.snap->ps.clientNum, CHAN_WEAPON, cg_weapons[newweap].switchSound);
-}
-
-/**
  * @brief CG_FinishWeaponChange
  * @param[in] lastweap
  * @param[in] newweap
