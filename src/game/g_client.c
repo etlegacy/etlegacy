@@ -2652,6 +2652,14 @@ static char *G_CheckVersion(gentity_t *ent)
 }
 #endif
 
+static qboolean isMortalSelfDamage(gentity_t *ent) {
+	return (
+		(ent->enemy && ent->enemy->s.number >= MAX_CLIENTS) // worldkill
+		|| (ent->enemy == ent) // selfkill
+		|| OnSameTeam(ent->enemy, ent) // teamkill
+	);
+}
+
 /**
  * @brief Called every time a client is placed fresh in the world:
  * after the first ClientBegin, and after each respawn
@@ -2793,8 +2801,8 @@ void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean
 
 	// Reset/restore special weapon time
 	if (
-		((g_stickyCharge.integer & STICKYCHARGE_SLASHKILL) && client->pers.slashKill) ||
-		(g_stickyCharge.integer & STICKYCHARGE_ANYDEATH)
+		((g_stickyCharge.integer & STICKYCHARGE_SELFKILL) && isMortalSelfDamage(ent))
+		|| (g_stickyCharge.integer & STICKYCHARGE_ANYDEATH)
 	) {
 		switch (client->sess.latchPlayerType) {
 		case PC_MEDIC:
@@ -3060,8 +3068,6 @@ void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean
 	{
 		G_ResetTeamMapData();
 	}
-
-	client->pers.slashKill = qfalse;
 }
 
 /**

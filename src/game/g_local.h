@@ -819,7 +819,6 @@ typedef struct
 	int lastteambleed_client;
 	int lastteambleed_dmg;
 
-	qboolean slashKill;
 	int savedClassWeaponTimeMed;
 	int savedClassWeaponTimeEng;
 	int savedClassWeaponTimeFop;
@@ -2067,7 +2066,7 @@ extern vmCvar_t g_multiview;
 #endif
 
 #define STICKYCHARGE_NONE 0 // default, reset charge on any death
-#define STICKYCHARGE_SLASHKILL 1 // keep charge after /kill
+#define STICKYCHARGE_SELFKILL 1 // keep charge after selfkill, mortal self damage, teamkill, mortal world damage
 #define STICKYCHARGE_ANYDEATH 2 // keep charge after any death (for eg. death by enemy)
 extern vmCvar_t g_stickyCharge;
 

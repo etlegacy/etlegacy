@@ -1113,7 +1113,6 @@ void Cmd_Kill_f(gentity_t *ent)
 	ent->flags                                  &= ~FL_GODMODE;
 	ent->client->ps.stats[STAT_HEALTH]           = ent->health = 0;
 	ent->client->ps.persistant[PERS_HWEAPON_USE] = 0; // if using /kill while at MG42
-	ent->client->pers.slashKill = qtrue;
 
 	player_die(ent, ent, ent, (g_gamestate.integer == GS_PLAYING) ? 100000 : 135, MOD_SUICIDE);
 }
