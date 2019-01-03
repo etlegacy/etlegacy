@@ -223,7 +223,7 @@ static void GLimp_InitCvars(void)
 	r_mode           = Cvar_Get("r_mode", "-2", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE);
 	r_customaspect   = Cvar_Get("r_customaspect", "1", CVAR_ARCHIVE | CVAR_LATCH);
 	r_displayRefresh = Cvar_Get("r_displayRefresh", "0", CVAR_LATCH);
-	Cvar_CheckRange(r_displayRefresh, 0, 240, qtrue);
+	Cvar_CheckRange(r_displayRefresh, 0, 200, qtrue);
 
 	// Window render surface cvars
 	r_stencilbits     = Cvar_Get("r_stencilbits", "0", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE);
@@ -661,7 +661,6 @@ static int GLimp_SetMode(glconfig_t *glConfig, int mode, qboolean fullscreen, qb
 
 		// SDL2 uses opengl by default, if we want opengl es we need to set this attribute
 #ifdef FEATURE_RENDERER_GLES
-		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 1);
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_EGL, 1);
 #endif
 
