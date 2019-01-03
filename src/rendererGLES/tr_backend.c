@@ -338,11 +338,12 @@ void GL_State(unsigned long stateBits)
 		}
 	}
 
+	// NOT SUPPORTED IN ANDROID OPENGL ES 1.0
 	// fill/line mode
-	if (diff & GLS_POLYMODE_LINE)
-	{
-			qglPolygonMode(GL_FRONT_AND_BACK, GL_LINES);
-	}
+	// if (diff & GLS_POLYMODE_LINE)
+	// {
+	// 		qglPolygonMode(GL_FRONT_AND_BACK, GL_LINES);
+	// }
 
 	// depthtest
 	if (diff & GLS_DEPTHTEST_DISABLE)
@@ -1309,7 +1310,7 @@ const void *RB_DrawBuffer(const void *data)
 {
 	const drawBufferCommand_t *cmd = ( const drawBufferCommand_t * ) data;
 
-	qglDrawBuffer(cmd->buffer);
+	//qglDrawBuffer(cmd->buffer);
 
 	// clear screen for debugging
 	if (r_clear->integer)
