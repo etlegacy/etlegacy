@@ -873,7 +873,8 @@ void GL_SetDefaultState(void)
 	// make sure our GL state vector is set correctly
 	glState.glStateBits = GLS_DEPTHTEST_DISABLE | GLS_DEPTHMASK_TRUE;
 
-	qglPolygonMode(GL_FRONT_AND_BACK, GL_LINES);
+	// NOT SUPPORTED IN ANDROID OPENGL ES 1.0
+	//qglPolygonMode(GL_FRONT_AND_BACK, GL_LINES);
 	qglDepthMask(GL_TRUE);
 	qglDisable(GL_DEPTH_TEST);
 	qglEnable(GL_SCISSOR_TEST);
@@ -938,7 +939,7 @@ void GfxInfo_f(void)
 		primitives = r_primitives->integer;
 		if (primitives == 0)
 		{
-			if (qglLockArraysEXT)
+			if (&qglLockArraysEXT)
 			{
 				primitives = 2;
 			}
@@ -969,7 +970,7 @@ void GfxInfo_f(void)
 	Ren_Print("picmip: %d\n", r_picMip->integer);
 	Ren_Print("texture bits: %d\n", r_textureBits->integer);
 	Ren_Print("multitexture: %s\n", enablestrings[qglActiveTextureARB != 0]);
-	Ren_Print("compiled vertex arrays: %s\n", enablestrings[qglLockArraysEXT != 0]);
+	Ren_Print("compiled vertex arrays: %s\n", enablestrings[&qglLockArraysEXT != 0]);
 	Ren_Print("texenv add: %s\n", enablestrings[glConfig.textureEnvAddAvailable != 0]);
 	Ren_Print("compressed textures: %s\n", enablestrings[glConfig.textureCompression != TC_NONE]);
 
