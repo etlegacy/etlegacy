@@ -35,7 +35,11 @@ public:
 	}
 
 	virtual std::vector<std::string>      open_directory(const std::string& pathname) = 0;
+#if __cplusplus >= 201103L // C++11
 	virtual std::unique_ptr<std::istream> open_file(const std::string& filename)      = 0;
+#else
+	virtual std::auto_ptr<std::istream> open_file(const std::string& filename)        = 0;
+#endif
 };
 
 } // namespace tinygettext
