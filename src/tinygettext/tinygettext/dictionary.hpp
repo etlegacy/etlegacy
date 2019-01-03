@@ -21,7 +21,11 @@
 #define HEADER_TINYGETTEXT_DICTIONARY_HPP
 
 #include <string>
+#if __cplusplus >= 201103L // C++11
 #include <unordered_map>
+#else
+#include <map>
+#endif
 #include <vector>
 
 #include "plural_forms.hpp"
@@ -34,10 +38,18 @@ namespace tinygettext {
 class Dictionary
 {
 private:
+#if __cplusplus >= 201103L // C++11
 	typedef std::unordered_map<std::string, std::vector<std::string> > Entries;
+#else
+	typedef std::map<std::string, std::vector<std::string> > Entries;
+#endif
 	Entries entries;
 
+#if __cplusplus >= 201103L // C++11
 	typedef std::unordered_map<std::string, Entries> CtxtEntries;
+#else
+	typedef std::map<std::string, Entries> CtxtEntries;
+#endif
 	CtxtEntries ctxt_entries;
 
 	std::string charset;

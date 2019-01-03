@@ -55,11 +55,19 @@ UnixFileSystem::open_directory(const std::string& pathname)
 	}
 }
 
-std::unique_ptr<std::istream>
-UnixFileSystem::open_file(const std::string& filename)
-{
-	return std::unique_ptr<std::istream>(new std::ifstream(filename.c_str()));
-}
+#if __cplusplus >= 201103L // C++11
+	std::unique_ptr<std::istream>
+	UnixFileSystem::open_file(const std::string& filename)
+	{
+		return std::unique_ptr<std::istream>(new std::ifstream(filename.c_str()));
+	}
+#else
+	std::auto_ptr<std::istream>
+	UnixFileSystem::open_file(const std::string& filename)
+	{
+		return std::auto_ptr<std::istream>(new std::ifstream(filename.c_str()));
+	}
+#endif
 
 } // namespace tinygettext
 

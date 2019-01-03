@@ -24,7 +24,11 @@
 #include <string>
 #include <istream>
 #include <string.h>
+#if __cplusplus >= 201103L // C++11
 #include <unordered_map>
+#else
+#include <map>
+#endif
 #include <stdlib.h>
 
 #include "tinygettext/language.hpp"

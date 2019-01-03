@@ -21,7 +21,11 @@
 #define HEADER_TINYGETTEXT_LANGUAGE_HPP
 
 #include <string>
+#if __cplusplus >= 201103L // C++11
 #include <unordered_map>
+#else
+#include <map>
+#endif
 
 namespace tinygettext {
 
@@ -92,6 +96,7 @@ inline bool operator<(const Language& lhs, const Language& rhs)
 	return lhs.language_spec < rhs.language_spec;
 }
 
+#if __cplusplus >= 201103L // C++11
 struct Language_hash
 {
 	size_t operator()(const Language& v) const
@@ -99,6 +104,7 @@ struct Language_hash
 		return reinterpret_cast<size_t>(v.language_spec);
 	}
 };
+#endif
 
 } // namespace tinygettext
 
