@@ -37,7 +37,8 @@
 #define INCLUDE_QGL_H
 
 #ifdef FEATURE_RENDERER_GLES
-#   include <GLES/gl.h>
+#   include <SDL2/SDL_opengles.h>
+#   include <SDL2/SDL_egl.h>
 #else
 #   ifdef BUNDLED_GLEW
 #       include "GL/glew.h"
