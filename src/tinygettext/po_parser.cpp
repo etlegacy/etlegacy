@@ -24,11 +24,7 @@
 #include <string>
 #include <istream>
 #include <string.h>
-#if __cplusplus >= 201103L // C++11
-	#include <unordered_map>
-#else
-	#include <map>
-#endif
+#include <unordered_map>
 #include <stdlib.h>
 
 #include "tinygettext/language.hpp"
@@ -167,13 +163,11 @@ POParser::get_string_line(std::ostringstream& out, size_t skip)
 
 	// process trailing garbage in line and warn if there is any
 	for (i = i + 1; i < current_line.size(); ++i)
-	{
 		if (!isspace(current_line[i]))
 		{
 			warning("unexpected garbage after string ignoren");
 			break;
 		}
-	}
 }
 
 std::string
@@ -197,7 +191,7 @@ POParser::get_string(unsigned int skip)
 			warning("keyword and string must be seperated by a single space");
 		}
 
-		for (;; )
+		for (;;)
 		{
 			if (skip >= static_cast<unsigned int>(current_line.size()))
 			{
@@ -492,7 +486,7 @@ next:
 							}
 						}
 
-						if (0)
+						if ((false))
 						{
 							std::cout << (fuzzy ? "fuzzy" : "not-fuzzy") << std::endl;
 							std::cout << "msgid \"" << msgid << "\"" << std::endl;
@@ -525,7 +519,7 @@ next:
 							}
 						}
 
-						if (0)
+						if ((false))
 						{
 							std::cout << (fuzzy ? "fuzzy" : "not-fuzzy") << std::endl;
 							std::cout << "msgid \"" << msgid << "\"" << std::endl;

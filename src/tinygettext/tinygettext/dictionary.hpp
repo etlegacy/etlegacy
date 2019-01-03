@@ -21,11 +21,7 @@
 #define HEADER_TINYGETTEXT_DICTIONARY_HPP
 
 #include <string>
-#if __cplusplus >= 201103L // C++11
-	#include <unordered_map>
-#else
-	#include <map>
-#endif
+#include <unordered_map>
 #include <vector>
 
 #include "plural_forms.hpp"
@@ -38,27 +34,19 @@ namespace tinygettext {
 class Dictionary
 {
 private:
-
-#if __cplusplus >= 201103L // C++11
 	typedef std::unordered_map<std::string, std::vector<std::string> > Entries;
 	Entries entries;
 
 	typedef std::unordered_map<std::string, Entries> CtxtEntries;
 	CtxtEntries ctxt_entries;
-#else
-	typedef std::map<std::string, std::vector<std::string> > Entries;
-	Entries entries;
 
-	typedef std::map<std::string, Entries> CtxtEntries;
-	CtxtEntries ctxt_entries;
-#endif
 	std::string charset;
 	PluralForms plural_forms;
 
 	std::string translate(const Entries& dict, const std::string& msgid) const;
 	std::string translate_plural(const Entries& dict, const std::string& msgid, const std::string& msgidplural, int num) const;
 
-	bool       m_has_fallback;
+	bool m_has_fallback;
 	Dictionary *m_fallback;
 
 public:
@@ -139,11 +127,9 @@ public:
 		return func;
 	}
 
-#if __cplusplus >= 201103L // C++11
 private:
-	Dictionary(const Dictionary&) = delete;
+	Dictionary(const Dictionary&)            = delete;
 	Dictionary& operator=(const Dictionary&) = delete;
-#endif
 };
 
 } // namespace tinygettext

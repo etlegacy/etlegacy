@@ -41,7 +41,7 @@ public:
 	static void set_log_error_callback(log_callback_t callback);
 
 private:
-	log_callback_t     callback;
+	log_callback_t callback;
 	std::ostringstream out;
 
 public:

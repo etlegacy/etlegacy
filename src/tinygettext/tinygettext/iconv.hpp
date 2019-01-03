@@ -23,7 +23,7 @@
 #include <string>
 
 #ifdef HAVE_SDL
-#  include "SDL2/SDL.h"
+#  include "SDL.h"
 
 #  define tinygettext_ICONV_CONST const
 #  define tinygettext_iconv_t     SDL_iconv_t
@@ -50,8 +50,8 @@ namespace tinygettext {
 class IConv
 {
 private:
-	std::string         to_charset;
-	std::string         from_charset;
+	std::string to_charset;
+	std::string from_charset;
 	tinygettext_iconv_t cd;
 
 public:

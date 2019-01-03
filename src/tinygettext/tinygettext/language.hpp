@@ -21,11 +21,8 @@
 #define HEADER_TINYGETTEXT_LANGUAGE_HPP
 
 #include <string>
-#if __cplusplus >= 201103L // C++11
-	#include <unordered_map>
-#else
-	#include <map>
-#endif
+#include <unordered_map>
+
 namespace tinygettext {
 
 struct LanguageSpec;
@@ -42,7 +39,7 @@ public:
 	/** Create a language from language and country code:
 	    Example: Languge("de", "DE"); */
 	static Language from_spec(const std::string& language,
-	                          const std::string& country = std::string(),
+	                          const std::string& country  = std::string(),
 	                          const std::string& modifier = std::string());
 
 	/** Create a language from language and country code:
@@ -50,7 +47,7 @@ public:
 	    Example: Languge("de_DE"); */
 	static Language from_name(const std::string& str);
 
-	/** Create a language from an environment variable style string (e.g de_DE.UTF-8\@modifier) */
+	/** Create a language from an environment variable style string (e.g de_DE.UTF-8@modifier) */
 	static Language from_env(const std::string& env);
 
 	/** Compares two Languages, returns 0 on missmatch and a score
@@ -60,11 +57,8 @@ public:
 
 	/** Create an undefined Language object */
 	Language();
-#if __cplusplus >= 201103L // C++11
+
 	explicit operator bool() const
-#else
-	operator bool() const
-#endif
 	{
 		return language_spec != NULL;
 	}
@@ -90,9 +84,7 @@ public:
 	bool operator!=(const Language& rhs) const;
 
 	friend bool operator<(const Language& lhs, const Language& rhs);
-#if __cplusplus >= 201103L // C++11
 	friend struct Language_hash;
-#endif
 };
 
 inline bool operator<(const Language& lhs, const Language& rhs)
@@ -100,7 +92,6 @@ inline bool operator<(const Language& lhs, const Language& rhs)
 	return lhs.language_spec < rhs.language_spec;
 }
 
-#if __cplusplus >= 201103L // C++11
 struct Language_hash
 {
 	size_t operator()(const Language& v) const
@@ -108,7 +99,6 @@ struct Language_hash
 		return reinterpret_cast<size_t>(v.language_spec);
 	}
 };
-#endif
 
 } // namespace tinygettext
 

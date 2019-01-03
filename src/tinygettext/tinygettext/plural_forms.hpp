@@ -30,7 +30,7 @@ class PluralForms
 {
 private:
 	unsigned int nplural;
-	PluralFunc   plural;
+	PluralFunc plural;
 
 public:
 	static PluralForms from_string(const std::string& str);

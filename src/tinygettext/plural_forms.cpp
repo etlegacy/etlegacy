@@ -19,13 +19,11 @@
 
 #include "tinygettext/plural_forms.hpp"
 
-#if __cplusplus >= 201103L // C++11
-	#include <unordered_map>
-#else
-	#include <map>
-#endif
+#include <unordered_map>
 
 namespace tinygettext {
+
+namespace {
 
 /**
  *  Plural functions are used to select a string that matches a given
@@ -89,15 +87,12 @@ unsigned int plural6_ar(int n)
 	return static_cast<unsigned int>(n == 0 ? 0 : n == 1 ? 1 : n == 2 ? 2 : n % 100 >= 3 && n % 100 <= 10 ? 3 : n % 100 >= 11 ? 4 : 5);
 }
 
+} // namespace
 
 PluralForms
 PluralForms::from_string(const std::string& str)
 {
-#if __cplusplus >= 201103L // C++11
 	typedef std::unordered_map<std::string, PluralForms> PluralFormsMap;
-#else
-	typedef std::map<std::string, PluralForms> PluralFormsMap;
-#endif
 	static PluralFormsMap plural_forms;
 
 	if (plural_forms.empty())
@@ -123,12 +118,10 @@ PluralForms::from_string(const std::string& str)
 	// Remove spaces from string before lookup
 	std::string space_less_str;
 	for (std::string::size_type i = 0; i < str.size(); ++i)
-	{
 		if (!isspace(str[i]))
 		{
 			space_less_str += str[i];
 		}
-	}
 
 	PluralFormsMap::const_iterator it = plural_forms.find(space_less_str);
 	if (it != plural_forms.end())

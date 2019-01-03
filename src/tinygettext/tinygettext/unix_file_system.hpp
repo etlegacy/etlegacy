@@ -29,13 +29,8 @@ class UnixFileSystem : public FileSystem
 public:
 	UnixFileSystem();
 
-	std::vector<std::string> open_directory(const std::string& pathname);
-	
-#if __cplusplus >= 201103L // C++11
+	std::vector<std::string>    open_directory(const std::string& pathname);
 	std::unique_ptr<std::istream> open_file(const std::string& filename);
-#else
-	std::auto_ptr<std::istream> open_file(const std::string& filename);
-#endif
 };
 
 } // namespace tinygettext

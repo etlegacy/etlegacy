@@ -28,11 +28,7 @@
 
 #include "tinygettext/log_stream.hpp"
 #include "tinygettext/po_parser.hpp"
-#ifdef _MSC_VER
-#include "tinygettext/windows_file_system.hpp"
-#else
 #include "tinygettext/unix_file_system.hpp"
-#endif
 
 namespace tinygettext {
 
@@ -56,11 +52,7 @@ DictionaryManager::DictionaryManager(const std::string& charset_) :
 	current_language(),
 	current_dict(0),
 	empty_dict(),
-#ifdef _MSC_VER
-	filesystem(new WindowsFileSystem)
-#else
 	filesystem(new UnixFileSystem)
-#endif
 {
 }
 
@@ -161,11 +153,7 @@ DictionaryManager::get_dictionary(const Language& language)
 				std::string pofile = *p + "/" + best_filename;
 				try
 				{
-#if __cplusplus >= 201103L // C++11
-          			std::unique_ptr<std::istream> in = filesystem->open_file(pofile);
-#else
-					std::auto_ptr<std::istream> in = filesystem->open_file(pofile);
-#endif
+					std::unique_ptr<std::istream> in = filesystem->open_file(pofile);
 					if (!in.get())
 					{
 						log_error << "error: failure opening: " << pofile << std::endl;
@@ -274,17 +262,10 @@ DictionaryManager::remove_directory(const std::string& pathname)
 }
 
 void
-#if __cplusplus >= 201103L // C++11
 DictionaryManager::set_filesystem(std::unique_ptr<FileSystem> filesystem_)
 {
 	filesystem = std::move(filesystem_);
 }
-#else
-DictionaryManager::set_filesystem(std::auto_ptr<FileSystem> filesystem_)
-{
-	filesystem = filesystem_;
-}
-#endif
 // ----------------------------------------------------------------------------
 /** This function converts a .po filename (e.g. zh_TW.po) into a language
  *  specification (zh_TW). On case insensitive file systems (think windows)
