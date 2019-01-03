@@ -168,10 +168,14 @@ if(BUILD_MOD AND INSTALL_EXTRA)
 	endif(INSTALL_WOLFADMIN)
 endif(BUILD_MOD AND INSTALL_EXTRA)
 
-# Generate install and uninstall packs
-include(cmake/ETLInstall.cmake)
+if(NOT ANDROID)
+	# Generate install and uninstall packs
+	include(cmake/ETLInstall.cmake)
+endif(NOT ANDROID)
 
 # Packaging support
 include(cmake/ETLCPack.cmake)
 
-set_target_properties(uninstall PROPERTIES FOLDER ${CMAKE_TARGETS_FOLDER})
+if(NOT ANDROID)
+	set_target_properties(uninstall PROPERTIES FOLDER ${CMAKE_TARGETS_FOLDER})
+endif(NOT ANDROID)
