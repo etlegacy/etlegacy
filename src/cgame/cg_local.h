@@ -746,11 +746,11 @@ typedef struct weaponInfo_s
 
 	qhandle_t weaponIcon[2];            ///< [0] is weap icon, [1] is highlight icon
 	int weaponIconScale;
-    
-    qhandle_t weaponCardIcon;
-    vec2_t weaponCardScale;
-    vec2_t weaponCardPointS;
-    vec2_t weaponCardPointT;
+
+	qhandle_t weaponCardIcon;
+	vec2_t weaponCardScale;
+	vec2_t weaponCardPointS;
+	vec2_t weaponCardPointT;
 
 	qhandle_t missileModel;
 	qhandle_t missileAlliedSkin;
@@ -1296,6 +1296,8 @@ typedef struct
 
 	specName_t specOnScreenNames[MAX_CLIENTS];
 
+	vec3_t airstrikePlaneScale[2];
+
 #ifdef FEATURE_RATING
 	// skill rating
 	float rating[MAX_CLIENTS];
@@ -1484,6 +1486,8 @@ typedef struct
 
 	qhandle_t flamebarrel;
 	qhandle_t mg42muzzleflash;
+
+	qhandle_t airstrikePlane[2];
 
 	qhandle_t waterSplashModel;
 	qhandle_t waterSplashShader;

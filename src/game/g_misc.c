@@ -2807,7 +2807,7 @@ void G_PreFilledMissileEntity(gentity_t *ent, int weaponNum, int realWeapon, int
 	ent->splashRadius        = GetWeaponTableData(realWeapon)->splashRadius;  // blast radius proportional to damage for ALL weapons
 
 	// state
-	ent->s.weapon    = realWeapon;
+	ent->s.weapon    = weaponNum;
 	ent->s.teamNum   = teamNum;
 	ent->s.clientNum = clientNum;
 
@@ -2819,6 +2819,8 @@ void G_PreFilledMissileEntity(gentity_t *ent, int weaponNum, int realWeapon, int
 	//
 
 	// generic
+	ent->think     = GetWeaponFireTableData(weaponNum)->think;
+	ent->free      = GetWeaponFireTableData(weaponNum)->free;
 	ent->nextthink = GetWeaponFireTableData(weaponNum)->nextThink ? level.time + GetWeaponFireTableData(weaponNum)->nextThink : 0;
 	ent->clipmask  = GetWeaponFireTableData(weaponNum)->clipMask;
 	ent->accuracy  = GetWeaponFireTableData(weaponNum)->accuracy;

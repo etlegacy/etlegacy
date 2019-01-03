@@ -1,0 +1,20 @@
+weaponDef
+{
+	// This basically fills out weaponInfo_t
+	client {
+
+		weaponIconScale		1
+
+		missileSound		"sound/weapons/mortar/mortar_fly.wav"
+		missileModel		"models/mapobjects/etl_plane/bomb.md3"
+		//missileTrailFunc	""						// supports "GrenadeTrail", "RocketTrail", "PyroSmokeTrail" and "DynamiteTrail" (we REALLY want a particle system for this)
+		//missileDlight		0
+		//missileDlightColor	0 0 0
+
+		firstPerson {		
+		}
+		
+		thirdPerson {
+		}
+	}
+}

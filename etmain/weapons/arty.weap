@@ -5,8 +5,9 @@ weaponDef
 
 		weaponIconScale		1
 
-		//missileSound		"sound/weapons/rocket/rocket_fly.wav"
-		//missileTrailFunc	"PyroSmokeTrail"						// supports "GrenadeTrail", "RocketTrail", "PyroSmokeTrail" and "DynamiteTrail" (we REALLY want a particle system for this)
+		missileSound		"sound/weapons/mortar/mortar_fly.wav"
+		missileModel		"models/multiplayer/mortar/mortar_shell.md3"
+		missileTrailFunc	"PyroSmokeTrail"						// supports "GrenadeTrail", "RocketTrail", "PyroSmokeTrail" and "DynamiteTrail" (we REALLY want a particle system for this)
 		//missileDlight		200
 		//missileDlightColor	0.75 0.3 0.0
 
