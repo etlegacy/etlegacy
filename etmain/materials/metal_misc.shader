@@ -91,14 +91,17 @@ textures/metal_misc/ametal_m03dm
 	surfaceparm metalsteps
 	implicitMap -
 }
-
+//this texture doesnt seem to be present in ET but is in RTCW, also seems to be used in maps
 textures/metal_misc/ametal_m03ns
 {
 	qer_editorimage textures/metal_misc/ametal_m03.tga
-	diffusemap textures/metal_misc/ametal_m03a.tga
-	bumpmap textures/metal_misc/ametal_m03a_n.tga
-	specularmap textures/metal_misc/ametal_m03a_r.tga
-
+	//diffusemap textures/metal_misc/ametal_m03a.tga
+	//bumpmap textures/metal_misc/ametal_m03a_n.tga
+	//specularmap textures/metal_misc/ametal_m03a_r.tga
+    //using a texture wich seems to be the same for now
+	diffusemap textures/metal_misc/ametal_m04a.tga
+	bumpmap textures/metal_misc/ametal_m04a_n.tga
+	specularmap textures/metal_misc/ametal_m04a_r.tga
 	surfaceparm nonsolid
 	surfaceparm trans
 	implicitMap textures/metal_misc/ametal_m03.tga
