@@ -4779,8 +4779,35 @@ void R_LoadLightGrid(lump_t *l)
 }
 
 /**
- * @brief R_LoadLights
+ * @brief This is extracting classname light and lightJunior entities from bsp into s_worldData.lights 
+ *
  * @param[in] lightDefs
+ *
+ * FIXME: check parser for missing keys
+ * FIXME: Inspect lightJunior (parse it?, is there a need to assign these to models?)
+ * 
+ * fade
+ * - Falloff/radius adjustment value. Multiply the run of the slope by "fade" (1.0f default only valid for "Linear" lights wolf)
+ * light
+ * - Overrides the default 300 intensity.
+ * radius
+ * - Overrides the default 64 unit radius of a spotlight at the target point.
+ * target
+ * - Lights pointed at a target will be spotlights.
+ * targetname
+ * - (If you see doubled targetname keys, this was done for future coding reasons)
+ * _anglescale
+ * - For scaling angle attenuation. Use a small value (< 1.0) to lessen the angle attenuation, and a high value (> 1.0) for sharper, more faceted lighting.
+ * _color
+ * - Weighted RGB value of light color ('k' key)(default white - 1.0 1.0 1.0).
+ * _deviance
+ * - Radius within which additional samples will be placed.
+ * _filter;_filterradius
+ * - "_filterradius" "32" -- will filter lightmaps created by this light by 32 world units
+ * _samples
+ * - Makes Q3map2 replace the light with several smaller lights for smoother illumination. Values of 4 or so will be adequate.(where "#" is distance in world units for point/spot lights and degrees for suns)
+ * _sun
+ * - Set this key to 1 on a spotlight to make an infinite sun light.
  */
 void R_LoadLights(char *lightDefs)
 {
@@ -4849,7 +4876,7 @@ void R_LoadLights(char *lightDefs)
 			Q_strncpyz(value, token, sizeof(value));
 
 			// check if this entity is a light
-			if (!Q_stricmp(keyname, "classname") && !Q_stricmp(value, "light"))
+			if (!Q_stricmp(keyname, "classname") && (!Q_stricmp(value, "light") || !Q_stricmp(value, "lightJunior")))
 			{
 				isLight = qtrue;
 			}
@@ -4870,7 +4897,7 @@ void R_LoadLights(char *lightDefs)
 	}
 
 	Ren_Developer("%i total entities counted\n", numEntities);
-	Ren_Developer("%i total lights counted\n", numLights);
+	Ren_Print("%i total lights counted\n", numLights);
 
 	s_worldData.numLights = numLights;
 
@@ -4970,7 +4997,7 @@ void R_LoadLights(char *lightDefs)
 			Q_strncpyz(value, token, sizeof(value));
 
 			// check if this entity is a light
-			if (!Q_stricmp(keyname, "classname") && !Q_stricmp(value, "light"))
+			if (!Q_stricmp(keyname, "classname") && (!Q_stricmp(value, "light") || !Q_stricmp(value, "lightJunior")))
 			{
 				isLight = qtrue;
 			}
@@ -5140,7 +5167,7 @@ void R_LoadLights(char *lightDefs)
 	}
 
 	Ren_Developer("%i total entities parsed\n", numEntities);
-	Ren_Developer("%i total lights parsed\n", numOmniLights + numProjLights);
+	Ren_Print("%i total lights parsed\n", numOmniLights + numProjLights + numParallelLights);
 	Ren_Developer("%i omni-directional lights parsed\n", numOmniLights);
 	Ren_Developer("%i projective lights parsed\n", numProjLights);
 	Ren_Developer("%i directional lights parsed\n", numParallelLights);
@@ -7223,7 +7250,7 @@ void R_PrecacheInteractions()
 		surface->lightCount = -1;
 	}
 
-	Com_InitGrowList(&s_interactions, 100);
+	Com_InitGrowList(&s_interactions, 10000);
 
 	c_vboWorldSurfaces  = 0;
 	c_vboLightSurfaces  = 0;
