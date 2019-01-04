@@ -32,7 +32,7 @@ foreach(ETLEGACY_WOLFADMIN_CONFIG ${ETLEGACY_WOLFADMIN_CONFIG})
 endforeach()
 
 message(STATUS "Adding WolfAdmin to installer scripts")
-install(DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/legacy/luamods"
+install(DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/legacy/luascripts"
 	DESTINATION "${INSTALL_DEFAULT_MODDIR}/legacy"
 )
 install(DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/legacy/lualibs"
