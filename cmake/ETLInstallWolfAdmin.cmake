@@ -16,7 +16,7 @@ LEG_DOWNLOAD(
 	"${CMAKE_CURRENT_BINARY_DIR}/legacy/wolfadmin"
 )
 
-file(COPY "${CMAKE_CURRENT_BINARY_DIR}/legacy/wolfadmin/luamods"
+file(COPY "${CMAKE_CURRENT_BINARY_DIR}/legacy/wolfadmin/luascripts"
 	DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/legacy"
 )
 file(COPY "${CMAKE_CURRENT_BINARY_DIR}/legacy/wolfadmin/lualibs"
