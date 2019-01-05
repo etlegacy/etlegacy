@@ -1272,7 +1272,7 @@ static void RB_RenderInteractionsShadowMapped()
 //						qboolean flipX, flipY;
 						//float          *proj;
 						vec3_t angles;
-						mat4_t rotationMatrix, transformMatrix, viewMatrix;
+						mat4_t /*rotationMatrix, transformMatrix,*/ viewMatrix;
 
 						Ren_LogComment("----- Rendering shadowCube side: %i -----\n", cubeSide);
 
@@ -1295,7 +1295,7 @@ static void RB_RenderInteractionsShadowMapped()
 						case 0:
 						{
 							// view parameters
-							VectorSet(angles, 0.f, 0.f, 90.f);
+///							VectorSet(angles, 0.f, 0.f, 90.f);
 							// projection parameters
 							/*flipX = qfalse;
 							flipY = qfalse;*/
@@ -1307,7 +1307,7 @@ fovY = 90.f;
 						}
 						case 1:
 						{
-							VectorSet(angles, 0.f, 180.f, 90.f);
+///							VectorSet(angles, 0.f, 180.f, 90.f);
 rotMatrix = &be_rotMatrix_0_180_90;
 rotMatrix_r = &be_rotMatrix_0_180_90_r;
 							/*flipX = qtrue;
@@ -1318,7 +1318,7 @@ fovY = -90.f;
 						}
 						case 2:
 						{
-							VectorSet(angles, 0.f, 90.f, 0.f);
+///							VectorSet(angles, 0.f, 90.f, 0.f);
 rotMatrix = &be_rotMatrix_0_90_0;
 rotMatrix_r = &be_rotMatrix_0_90_0_r;
 							/*flipX = qfalse;
@@ -1329,7 +1329,7 @@ fovY = 90.f;
 						}
 						case 3:
 						{
-							VectorSet(angles, 0.f, -90.f, 0.f);
+///							VectorSet(angles, 0.f, -90.f, 0.f);
 rotMatrix = &be_rotMatrix_0_m90_0;
 rotMatrix_r = &be_rotMatrix_0_m90_0_r;
 							/*flipX = qtrue;
@@ -1340,7 +1340,7 @@ fovY = -90.f;
 						}
 						case 4:
 						{
-							VectorSet(angles, -90.f, 90.f, 0.f);
+///							VectorSet(angles, -90.f, 90.f, 0.f);
 rotMatrix = &be_rotMatrix_m90_90_0;
 rotMatrix_r = &be_rotMatrix_m90_90_0_r;
 							/*flipX = qfalse;
@@ -1351,7 +1351,7 @@ fovY = 90.f;
 						}
 						case 5:
 						{
-							VectorSet(angles, 90.f, 90.f, 0.f);
+///							VectorSet(angles, 90.f, 90.f, 0.f);
 rotMatrix = &be_rotMatrix_90_90_0;
 rotMatrix_r = &be_rotMatrix_90_90_0_r;
 							/*flipX = qtrue;
@@ -1373,7 +1373,7 @@ fovY = 90.f;
 							break;
 						}*/
 						}
-#if 1 //ndef ETL_SSE
+#ifndef ETL_SSE
 						// Quake -> OpenGL view matrix from light perspective
 ///						mat4_from_angles(rotationMatrix, angles[PITCH], angles[YAW], angles[ROLL]);
 //Matrix4Copy((*rotMatrix), rotationMatrix); // temp!!!DEBUG!!!
@@ -1390,7 +1390,7 @@ MatrixSetupTransformFromRotation(transformMatrix, (*rotMatrix), light->origin);
 						__m128 xmm0, xmm1, xmm2, xmm3, xmm4, xmm5, xmm6, xmm7, zeroes;
 						zeroes = _mm_setzero_ps();
 						xmm0 = _mm_loadh_pi(_mm_load_ss((const float *)&light->origin[0]), (const __m64 *)(&light->origin[1]));	// xmm0 = z y 0 x
-						xmm2 = _mm_loadh_pi(_mm_load_ss((const float *)&rotMatrix[0]), (const __m64 *)&rotMatrix[1]);		// xmm2 = z y 0 x
+						xmm2 = _mm_loadh_pi(_mm_load_ss((const float *)&(*rotMatrix)[0]), (const __m64 *)&(*rotMatrix)[1]);		// xmm2 = z y 0 x
 						xmm1 = _mm_mul_ps(xmm0, xmm2);
 						xmm7 = _mm_movehdup_ps(xmm1);		// faster way to do: 2 * hadd
 						xmm6 = _mm_add_ps(xmm1, xmm7);		//
@@ -1399,7 +1399,7 @@ MatrixSetupTransformFromRotation(transformMatrix, (*rotMatrix), light->origin);
 						xmm1 = _mm_sub_ps(zeroes, xmm1);
 						_mm_store_ss(&viewMatrix[12], xmm1);
 
-						xmm2 = _mm_loadh_pi(_mm_load_ss((const float *)&rotMatrix[4]), (const __m64 *)&rotMatrix[5]);		// xmm2 = z y 0 x
+						xmm2 = _mm_loadh_pi(_mm_load_ss((const float *)&(*rotMatrix)[4]), (const __m64 *)&(*rotMatrix)[5]);		// xmm2 = z y 0 x
 						xmm4 = _mm_mul_ps(xmm0, xmm2);
 						xmm7 = _mm_movehdup_ps(xmm4);		// faster way to do: 2 * hadd
 						xmm6 = _mm_add_ps(xmm4, xmm7);		//
@@ -1408,7 +1408,7 @@ MatrixSetupTransformFromRotation(transformMatrix, (*rotMatrix), light->origin);
 						xmm4 = _mm_sub_ps(zeroes, xmm4);
 						_mm_store_ss(&viewMatrix[13], xmm4);
 
-						xmm2 = _mm_loadh_pi(_mm_load_ss((const float *)&rotMatrix[8]), (const __m64 *)&rotMatrix[9]);		// xmm2 = z y 0 x
+						xmm2 = _mm_loadh_pi(_mm_load_ss((const float *)&(*rotMatrix)[8]), (const __m64 *)&(*rotMatrix)[9]);		// xmm2 = z y 0 x
 						xmm5 = _mm_mul_ps(xmm0, xmm2);
 						xmm7 = _mm_movehdup_ps(xmm5);		// faster way to do: 2 * hadd
 						xmm6 = _mm_add_ps(xmm5, xmm7);		//
@@ -1418,9 +1418,9 @@ MatrixSetupTransformFromRotation(transformMatrix, (*rotMatrix), light->origin);
 						_mm_store_ss(&viewMatrix[14], xmm5);
 
 						_mm_store_ss(&viewMatrix[15], _mm_set_ss(1.f));
-						_mm_storeu_ps(&viewMatrix[0], _mm_loadu_ps((const float *)&rotMatrix_r[0]));
-						_mm_storeu_ps(&viewMatrix[4], _mm_loadu_ps((const float *)&rotMatrix_r[4]));
-						_mm_storeu_ps(&viewMatrix[8], _mm_loadu_ps((const float *)&rotMatrix_r[8]));
+						_mm_storeu_ps(&viewMatrix[0], _mm_loadu_ps((const float *)&(*rotMatrix_r)[0]));
+						_mm_storeu_ps(&viewMatrix[4], _mm_loadu_ps((const float *)&(*rotMatrix_r)[4]));
+						_mm_storeu_ps(&viewMatrix[8], _mm_loadu_ps((const float *)&(*rotMatrix_r)[8]));
 #endif
 
 
@@ -1429,11 +1429,11 @@ MatrixSetupTransformFromRotation(transformMatrix, (*rotMatrix), light->origin);
 
 						// convert from our coordinate system (looking down X)
 						// to OpenGL's coordinate system (looking down -Z)
-						Matrix4Multiply(quakeToOpenGLMatrix, viewMatrix, light->viewMatrix);
-/*Vector4Set(&viewMatrix[0], -viewMatrix[1], viewMatrix[2], -viewMatrix[0], viewMatrix[3]);
-Vector4Set(&viewMatrix[4], -viewMatrix[5], viewMatrix[6], -viewMatrix[4], viewMatrix[7]);
-Vector4Set(&viewMatrix[8], -viewMatrix[9], viewMatrix[10], -viewMatrix[8], viewMatrix[11]);
-Vector4Set(&viewMatrix[12], -viewMatrix[13], viewMatrix[14], -viewMatrix[12], viewMatrix[15]);*/
+///						Matrix4Multiply(quakeToOpenGLMatrix, viewMatrix, light->viewMatrix);
+Vector4Set(&light->viewMatrix[0], -viewMatrix[1], viewMatrix[2], -viewMatrix[0], viewMatrix[3]);
+Vector4Set(&light->viewMatrix[4], -viewMatrix[5], viewMatrix[6], -viewMatrix[4], viewMatrix[7]);
+Vector4Set(&light->viewMatrix[8], -viewMatrix[9], viewMatrix[10], -viewMatrix[8], viewMatrix[11]);
+Vector4Set(&light->viewMatrix[12], -viewMatrix[13], viewMatrix[14], -viewMatrix[12], viewMatrix[15]);
 
 
 
@@ -1457,26 +1457,6 @@ Vector4Set(&viewMatrix[12], -viewMatrix[13], viewMatrix[14], -viewMatrix[12], vi
 						}*/
 
 						MatrixPerspectiveProjectionFovXYRH(light->projectionMatrix, fovX, fovY, zNear, zFar);
-
-						GL_LoadProjectionMatrix(light->projectionMatrix);
-						break;
-					}
-					case RL_PROJ:
-					{
-						Ren_LogComment("--- Rendering projective shadowMap ---\n");
-
-						R_BindFBO(tr.shadowMapFBO[light->shadowLOD]);
-						R_AttachFBOTexture2D(GL_TEXTURE_2D, tr.shadowMapFBOImage[light->shadowLOD]->texnum, 0);
-						if (!r_ignoreGLErrors->integer)
-						{
-							R_CheckFBO(tr.shadowMapFBO[light->shadowLOD]);
-						}
-
-						// set the window clipping
-						GL_Viewport(0, 0, shadowMapResolutions[light->shadowLOD], shadowMapResolutions[light->shadowLOD]);
-						GL_Scissor(0, 0, shadowMapResolutions[light->shadowLOD], shadowMapResolutions[light->shadowLOD]);
-
-						GL_Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 						GL_LoadProjectionMatrix(light->projectionMatrix);
 						break;
@@ -1807,7 +1787,26 @@ Vector4Set(&viewMatrix[12], -viewMatrix[13], viewMatrix[14], -viewMatrix[12], vi
 						}
 						break;
 					}
+					case RL_PROJ:
+					{
+						Ren_LogComment("--- Rendering projective shadowMap ---\n");
 
+						R_BindFBO(tr.shadowMapFBO[light->shadowLOD]);
+						R_AttachFBOTexture2D(GL_TEXTURE_2D, tr.shadowMapFBOImage[light->shadowLOD]->texnum, 0);
+						if (!r_ignoreGLErrors->integer)
+						{
+							R_CheckFBO(tr.shadowMapFBO[light->shadowLOD]);
+						}
+
+						// set the window clipping
+						GL_Viewport(0, 0, shadowMapResolutions[light->shadowLOD], shadowMapResolutions[light->shadowLOD]);
+						GL_Scissor(0, 0, shadowMapResolutions[light->shadowLOD], shadowMapResolutions[light->shadowLOD]);
+
+						GL_Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+						GL_LoadProjectionMatrix(light->projectionMatrix);
+						break;
+					}
 					default:
 						break;
 					}
@@ -1874,16 +1873,16 @@ Vector4Set(&viewMatrix[12], -viewMatrix[13], viewMatrix[14], -viewMatrix[12], vi
 							SelectTexture(TEX_CURRENT);
 							GL_Bind(tr.sunShadowMapFBOImage[frustumIndex]);
 
-							w = 200;
-							h = 200;
+							w = 200.f;
+							h = 200.f;
 
-							x = 205 * frustumIndex;
-							y = 70;
+							x = 205.f * (float)frustumIndex;
+							y = 70.f;
 
-							Vector4Set(quadVerts[0], x, y, 0, 1);
-							Vector4Set(quadVerts[1], x + w, y, 0, 1);
-							Vector4Set(quadVerts[2], x + w, y + h, 0, 1);
-							Vector4Set(quadVerts[3], x, y + h, 0, 1);
+							Vector4Set(quadVerts[0], x, y, 0.f, 1.f);
+							Vector4Set(quadVerts[1], x + w, y, 0.f, 1.f);
+							Vector4Set(quadVerts[2], x + w, y + h, 0.f, 1.f);
+							Vector4Set(quadVerts[3], x, y + h, 0.f, 1.f);
 
 							Tess_InstantQuad(quadVerts);
 
@@ -2144,9 +2143,9 @@ Vector4Set(&viewMatrix[12], -viewMatrix[13], viewMatrix[14], -viewMatrix[12], vi
 				if (drawShadows)
 				{
 					Com_Memset(&backEnd.orientation, 0, sizeof(backEnd.orientation));
-					backEnd.orientation.axis[0][0] = 1.0f;
-					backEnd.orientation.axis[1][1] = 1.0f;
-					backEnd.orientation.axis[2][2] = 1.0f;
+					backEnd.orientation.axis[0][0] = 1.0f;	// axis = identity matrix
+					backEnd.orientation.axis[1][1] = 1.0f;	//
+					backEnd.orientation.axis[2][2] = 1.0f;	//
 					VectorCopy(light->l.origin, backEnd.orientation.viewOrigin);
 
 					/*Matrix4Identity(backEnd.orientation.transformMatrix);

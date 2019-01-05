@@ -418,15 +418,15 @@ void MatrixCrop(mat4_t m, const vec3_t mins, const vec3_t maxs)
 	//scale[0] = 2.0f / scale[0];
 	//scale[1] = 2.0f / scale[1];
 	//scale[2] = 1.0f / scale[2];
-	scale[0] = 2.0f * rcp(scale[0]);
-	scale[1] = 2.0f * rcp(scale[1]);
+	scale[0] = rcp(scale[0]) * 2.0f;
+	scale[1] = rcp(scale[1]) * 2.0f;
 	scale[2] = rcp(scale[2]);
 
 	/*offsetX = -0.5f * (maxs[0] + mins[0]) * scaleX;
 	offsetY = -0.5f * (maxs[1] + mins[1]) * scaleY;
 	offsetZ = -mins[2] * scaleZ;*/
-	offset[0] = -0.5f * (maxs[0] + mins[0]);
-	offset[1] = -0.5f * (maxs[1] + mins[1]);
+	offset[0] = -(maxs[0] + mins[0]) * 0.5f;
+	offset[1] = -(maxs[1] + mins[1]) * 0.5f;
 	offset[2] = -mins[2];
 	VectorMultiply(offset, scale, offset);
 

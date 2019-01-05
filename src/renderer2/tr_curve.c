@@ -54,6 +54,7 @@
  * @param[in] b
  * @param[out] out
  */
+#pragma warning(disable:4700)
 static void LerpSurfaceVert(srfVert_t *a, srfVert_t *b, srfVert_t *out)
 {
 #if 0
@@ -103,6 +104,7 @@ static void LerpSurfaceVert(srfVert_t *a, srfVert_t *b, srfVert_t *out)
 	Vector4AM(a->lightColor, b->lightColor, 0.5f, out->lightColor);
 	VectorAM(a->lightDirection, b->lightDirection, 0.5f, out->lightDirection);
 #endif
+#pragma warning(default:4700)
 }
 
 /**
