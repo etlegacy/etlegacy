@@ -1189,108 +1189,47 @@ textures/radar/road
 
 textures/radar/road_puddle1
 {
-	q3map_foliage models/foliage/raincircle0.md3 1 64 0.1 2
-	q3map_foliage models/foliage/raincircle1.md3 0.8 64 0.1 2
-	q3map_foliage models/foliage/raincircle2.md3 0.6 64 0.1 2
-	q3map_foliage models/foliage/raincircle3.md3 0.9 64 0.1 2
-	q3map_foliage models/foliage/raincircle4.md3 0.7 64 0.1 2
-	q3map_foliage models/foliage/raincircle5.md3 0.5 64 0.1 2
-	qer_editorimage textures/temperate_sd/road_puddle1.tga
-	surfaceparm trans
-	surfaceparm splash
-		
-	{
-		map textures/effects/envmap_radar.tga
-		rgbGen identity
-		tcGen environment
-	}
-	{
-		map textures/liquids_sd/puddle_specular.tga
-		rgbGen identity
-		blendFunc GL_SRC_ALPHA GL_ONE
-		tcGen environment
-	}
-	{
-	    stage diffuseMap
-		map textures/temperate_sd/road_puddle1.tga
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
-		rgbGen identity
-	}
-	{
-	    stage bumpMap
-		map textures/temperate_sd/road_puddle1_n.tga
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
-		rgbGen identity
-	}
-	{   
-	    stage specularMap
-		map textures/temperate_sd/road_puddle1_r.tga
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
-		rgbGen identity
-	}
-	{
-		lightmap $lightmap
-		blendFunc GL_DST_COLOR GL_ZERO
-		rgbgen identity
-	}
+//    q3map_foliage models/foliage/raincircle0.md3 1 64 0.1 2
+//    q3map_foliage models/foliage/raincircle1.md3 0.8 64 0.1 2
+//    q3map_foliage models/foliage/raincircle2.md3 0.6 64 0.1 2
+//    q3map_foliage models/foliage/raincircle3.md3 0.9 64 0.1 2
+//    q3map_foliage models/foliage/raincircle4.md3 0.7 64 0.1 2
+//    q3map_foliage models/foliage/raincircle5.md3 0.5 64 0.1 2
+    qer_editorimage textures/temperate_sd/road_puddle1.tga
+    surfaceparm trans
+    surfaceparm splash
+//    diffusemap textures/temperate_sd/road_puddle1.tga
+//    bumpmap textures/temperate_sd/road_puddle1_n.tga
+//    specularmap textures/temperate_sd/road_puddle1_r.tga
+    diffusemap textures/temperate_sd/road_bigpuddle.tga
+    bumpmap textures/temperate_sd/road_bigpuddle_n.tga
+    specularmap textures/temperate_sd/road_bigpuddle_r.tga
+    {
+        lightmap $lightmap
+        blendFunc GL_DST_COLOR GL_ZERO
+        rgbgen identity
+    }
 }
 
 textures/radar/road_bigpuddle
 {
-	q3map_foliage models/foliage/raincircle0.md3 1 64 0.1 2
-	q3map_foliage models/foliage/raincircle1.md3 0.8 64 0.1 2
-	q3map_foliage models/foliage/raincircle2.md3 0.6 64 0.1 2
-	q3map_foliage models/foliage/raincircle3.md3 0.9 64 0.1 2
-	q3map_foliage models/foliage/raincircle4.md3 0.7 64 0.1 2
-	q3map_foliage models/foliage/raincircle5.md3 0.5 64 0.1 2
-	qer_editorimage textures/temperate_sd/road_bigpuddle.tga
-	
-	surfaceparm trans
-	surfaceparm splash
-
-/*
-	// this will fix specular but no puddle shown
-	diffusemap textures/temperate_sd/road_bigpuddle.tga
-	bumpmap textures/temperate_sd/road_bigpuddle_n.tga
-	specularmap textures/temperate_sd/road_bigpuddle_r.tga
-*/
-	
-	{
-		map textures/effects/envmap_radar.tga
-		rgbGen identity
-		tcMod scale 0.5 0.5
-		tcGen environment
-	}
-	{
-		map textures/liquids_sd/puddle_specular.tga
-		rgbGen identity
-		tcMod scale 2 2
-	    blendFunc GL_SRC_ALPHA GL_ONE
-		tcGen environment
-	}
-	{
-	    stage diffuseMap
-		map textures/temperate_sd/road_bigpuddle.tga
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
-		rgbGen identity
-	}
-	{
-	    stage bumpMap
-		map textures/temperate_sd/road_bigpuddle_n.tga
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
-		rgbGen identity
-	}
-	{
-	    stage specularMap
-		map textures/temperate_sd/road_bigpuddle_r.tga
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
-		rgbGen identity
-	}
-	{
-		lightmap $lightmap
-		blendFunc GL_DST_COLOR GL_ZERO
-		rgbgen identity
-	}
+//    q3map_foliage models/foliage/raincircle0.md3 1 64 0.1 2
+//    q3map_foliage models/foliage/raincircle1.md3 0.8 64 0.1 2
+//    q3map_foliage models/foliage/raincircle2.md3 0.6 64 0.1 2
+//    q3map_foliage models/foliage/raincircle3.md3 0.9 64 0.1 2
+//    q3map_foliage models/foliage/raincircle4.md3 0.7 64 0.1 2
+//    q3map_foliage models/foliage/raincircle5.md3 0.5 64 0.1 2
+    qer_editorimage textures/temperate_sd/road_bigpuddle.tga
+    surfaceparm trans
+    surfaceparm splash
+    diffusemap textures/temperate_sd/road_bigpuddle.tga
+    bumpmap textures/temperate_sd/road_bigpuddle_n.tga
+    specularmap textures/temperate_sd/road_bigpuddle_r.tga
+    {
+        lightmap $lightmap
+        blendFunc GL_DST_COLOR GL_ZERO
+        rgbgen identity
+    }
 }
 
 
