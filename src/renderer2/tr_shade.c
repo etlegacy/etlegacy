@@ -184,9 +184,9 @@ static void BindCubeMaps()
 {
 	cubemapProbe_t *cubeProbe1; // nearest
 	cubemapProbe_t *cubeProbe2; // 2nd nearest
-	float          distance1, distance2, interpolate = 0.0;
-	image_t        *env0     = tr.whiteCubeImage;
-	image_t        *env1     = tr.whiteCubeImage;
+	float          distance1, distance2, interpolate = 1.0;
+	image_t        *env0     = tr.autoCubeImage;
+	image_t        *env1     = tr.autoCubeImage;
 	qboolean       isEntity  = (backEnd.currentEntity && (backEnd.currentEntity != &tr.worldEntity));
 	vec3_t         *position = (isEntity) ? &backEnd.currentEntity->e.origin : &backEnd.viewParms.orientation.origin;
 
@@ -199,16 +199,16 @@ static void BindCubeMaps()
 		interpolate = distance1 / (distance1 + distance2);
 		//Ren_LogComment("cubeProbeNearestDistance = %f, cubeProbeSecondNearestDistance = %f, interpolation = %f\n", distance1, distance2, interpolate);
 	}
-	else if (cubeProbe1 == NULL)
-	{
-		env0 = cubeProbe2->cubemap;
-		//Ren_LogComment("cubeProbeNearest == NULL\n");
-	}
-	else if (cubeProbe2 == NULL)
+	else if (cubeProbe1 != NULL && cubeProbe2 == NULL)
 	{
 		env0 = cubeProbe1->cubemap;
-		//Ren_LogComment("cubeProbeSecondNearest == NULL\n");
+		env1 = cubeProbe1->cubemap;
 	}
+	else if (cubeProbe1 == NULL && cubeProbe2 != NULL)
+    {
+        env0 = cubeProbe2->cubemap;
+        env1 = cubeProbe2->cubemap;
+    }
 
 	// bind u_EnvironmentMap0
 	SelectTexture(TEX_ENVMAP0);
