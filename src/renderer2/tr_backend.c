@@ -5181,8 +5181,26 @@ static void RB_RenderDebugUtils()
 			cubeProbe = (cubemapProbe_t *) Com_GrowListElement(&tr.cubeProbes, j);
 
 			Tess_Begin(Tess_StageIteratorDebug, NULL, NULL, NULL, qtrue, qtrue, LIGHTMAP_NONE, FOG_NONE);
-			SelectTexture(TEX_COLOR);
-			GL_Bind(cubeProbe->cubemap);
+#if 1
+            // the glsl shader needs 2 cubemaps and an interpolation factor,
+            // but now we just want to render a single cubemap..
+            // so we pass on two of the same textures
+
+            // bind u_EnvironmentMap0
+            SelectTexture(TEX_ENVMAP0);
+            GL_Bind(cubeProbe->cubemap);
+
+            // bind u_EnvironmentMap1
+            SelectTexture(TEX_ENVMAP1);
+            GL_Bind(cubeProbe->cubemap);
+
+            // u_EnvironmentInterpolation
+            SetUniformFloat(UNIFORM_ENVIRONMENTINTERPOLATION, 1.0);
+#else
+            SelectTexture(TEX_COLOR);
+            GL_Bind(cubeProbe->cubemap);
+#endif
+
 			Tess_AddCubeWithNormals(cubeProbe->origin, mins, maxs, colorWhite);
 			Tess_End();
 		}
