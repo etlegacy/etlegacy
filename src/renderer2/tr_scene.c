@@ -509,7 +509,7 @@ void RE_AddDynamicLightToScene(const vec3_t org, float radius, float intensity, 
 	light = &backEndData->lights[r_numLights++];
 
 	light->l.rlType = RL_OMNI;
-	//light->l.lightfx = 0;
+
 	VectorCopy(org, light->l.origin);
 
 	QuatClear(light->l.rotation);

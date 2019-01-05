@@ -283,7 +283,6 @@ typedef enum
 typedef struct
 {
 	refLightType_t rlType;
-	//int             lightfx;
 
 	qhandle_t attenuationShader;
 
