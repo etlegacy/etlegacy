@@ -4876,7 +4876,7 @@ void R_LoadLights(char *lightDefs)
 			Q_strncpyz(value, token, sizeof(value));
 
 			// check if this entity is a light
-			if (!Q_stricmp(keyname, "classname") && (!Q_stricmp(value, "light") || !Q_stricmp(value, "lightJunior")))
+			if (!Q_stricmp(keyname, "classname") && (!Q_stricmp(value, "light") || !Q_stricmp(value, "lightJunior") || !Q_stricmp(value, "dlight")))
 			{
 				isLight = qtrue;
 			}
@@ -4997,7 +4997,7 @@ void R_LoadLights(char *lightDefs)
 			Q_strncpyz(value, token, sizeof(value));
 
 			// check if this entity is a light
-			if (!Q_stricmp(keyname, "classname") && (!Q_stricmp(value, "light") || !Q_stricmp(value, "lightJunior")))
+			if (!Q_stricmp(keyname, "classname") && (!Q_stricmp(value, "light") || !Q_stricmp(value, "lightJunior") || !Q_stricmp(value, "dlight")))
 			{
 				isLight = qtrue;
 			}
@@ -7262,7 +7262,7 @@ void R_PrecacheInteractions()
 	{
 		light = &s_worldData.lights[i];
 
-		if ((r_precomputedLighting->integer || r_vertexLighting->integer) && !light->noRadiosity)
+		if (!r_staticLight->integer || ((r_precomputedLighting->integer || r_vertexLighting->integer) && light->noRadiosity))
 		{
 			continue;
 		}
