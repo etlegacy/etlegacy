@@ -121,17 +121,14 @@ void main()
 	//! https://en.wikipedia.org/wiki/Specular_highlight
 #if defined(USE_SPECULAR) && !defined(USE_REFLECTIONS)
 	vec4 map = texture2D(u_SpecularMap, texSpecular);
-	vec3 specular = computeSpecular2(dotNL, V, N, L, u_LightColor, r_SpecularExponent)
-					* map.rgb;
+	vec3 specular = computeSpecular3(dotNL, V, N, L, u_LightColor, 32.0) * map.rgb;
 #elif defined(USE_SPECULAR) && defined(USE_REFLECTIONS)
 	vec4 map = texture2D(u_SpecularMap, texSpecular);
-	vec3 specular = (computeReflections(V, N, u_EnvironmentMap0, u_EnvironmentMap1, u_EnvironmentInterpolation)
-					+ computeSpecular2(dotNL, V, N, L, u_LightColor, r_SpecularExponent))
-					* map.rgb;
+	vec3 specular = (computeReflections(V, N, u_EnvironmentMap0, u_EnvironmentMap1, u_EnvironmentInterpolation) * 0.07)
+					+ (computeSpecular3(dotNL, V, N, L, u_LightColor, 32.0) * map.rgb * r_SpecularExponent2); // woot
 #elif !defined(USE_SPECULAR) && defined(USE_REFLECTIONS)
 	vec4 map = texture2D(u_SpecularMap, texSpecular);
-	vec3 specular = computeReflections(V, N, u_EnvironmentMap0, u_EnvironmentMap1, u_EnvironmentInterpolation)
-					* map.rgb;
+	vec3 specular = computeReflections(V, N, u_EnvironmentMap0, u_EnvironmentMap1, u_EnvironmentInterpolation) * map.rgb * 0.07);
 #endif
 
 

@@ -16,7 +16,7 @@ void main()
 	vec3 I = normalize(var_Position - u_ViewOrigin);
 
 	// compute normal
-	vec3 N = normalize(var_Normal);
+	vec3 N = normalize(var_Normal.xyz);
 
 	// compute reflection ray
 	vec3 R = reflect(I, N);

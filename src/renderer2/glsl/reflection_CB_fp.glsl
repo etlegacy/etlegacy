@@ -17,8 +17,7 @@ varying vec3 var_Position;
 varying vec3 var_ViewOrigin; // position - vieworigin
 varying vec4 var_Normal;
 #if defined(USE_NORMAL_MAPPING)
-varying vec4 var_Tangent;
-varying vec4 var_Binormal;
+varying mat3 var_tangentMatrix;
 varying vec2 var_TexNormal;
 #endif // USE_NORMAL_MAPPING
 #if defined(USE_PORTAL_CLIPPING)
@@ -42,10 +41,10 @@ void main()
 
 
 #if defined(USE_NORMAL_MAPPING)
-	// Create the matrix that will transform coordinates to worldspace.
-	mat3 tangentSpaceMatrix = tangentToWorldMatrix(var_Tangent.xyz, var_Binormal.xyz, var_Normal.xyz);
-	// compute normal
-	vec3 N = computeNormal(texture2D(u_NormalMap, var_TexNormal.st).xyz, tangentSpaceMatrix);
+	// normal
+	vec3 Ntex = texture2D(u_NormalMap, var_TexNormal.st).xyz * 2.0 - 1.0;
+	// transform normal from tangentspace to worldspace
+	vec3 N = normalize(var_tangentMatrix * Ntex); // we must normalize to get a vector of unit-length..  reflect() needs it
 #else // USE_NORMAL_MAPPING
 	vec3 N = normalize(var_Normal.xyz);
 #endif // USE_NORMAL_MAPPING
@@ -53,7 +52,7 @@ void main()
 
 	// compute reflection ray
 	vec3 R = reflect(V, N);
-	R.x = -R.x;  //todo:check
+	R.x = -R.x;
 	R.y = -R.y;
 	//R.z = -R.z; // flip vertically
 
@@ -61,7 +60,7 @@ void main()
 	// This is the cubeProbes way of rendering reflections.
 	vec4 envColor0 = textureCube(u_EnvironmentMap0, R).rgba;
 	vec4 envColor1 = textureCube(u_EnvironmentMap1, R).rgba;
-	gl_FragColor = mix(envColor0, envColor1, u_EnvironmentInterpolation).rgba;
+	gl_FragColor = vec4(mix(envColor0, envColor1, u_EnvironmentInterpolation).rgb * 0.1, 1.0); //* map.a
 #else // 1
 	gl_FragColor = textureCube(u_ColorMap, R).rgba;
 #endif // 1

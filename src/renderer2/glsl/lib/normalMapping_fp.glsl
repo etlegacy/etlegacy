@@ -48,25 +48,33 @@
 	vec3 computeReflections(vec3 viewDir, vec3 normal, samplerCube envmap0, samplerCube envmap1, float interpolate)
 	{
 		vec3 R = reflect(viewDir, normal); // the reflection vector
-		R.x = -R.x;  //todo:check
+		R.x = -R.x;
 		R.y = -R.y;
 		//R.z = -R.z; // flip vertically
 		vec4 envColor0 = textureCube(envmap0, R).rgba;
 		vec4 envColor1 = textureCube(envmap1, R).rgba;
-		return mix(envColor0, envColor1, interpolate).rgb;
+		return mix(envColor0, envColor1, interpolate).rgb; // * 0.1; // 0.1 is just a constant factor..
 	}
 //#endif // end USE_REFLECTIONS
 
 //#if defined(USE_SPECULAR)
 	// Compute the specular lighting
 	// Specular highlights are only visible if you look into the light.
+	vec3 computeSpecular3(float dotNL, vec3 viewDir, vec3 normal, vec3 lightDir, vec3 lightColor, float exponent)
+	{
+		if (dotNL < 0.0) return vec3(0.0);
+		vec3 H = normalize(lightDir + viewDir); // the half-vector
+		float dotNH = max(0.0, dot(normal, H));
+		float intensity = pow(dotNH, exponent);
+		return (intensity * lightColor); // float * vec3
+	}
 	vec3 computeSpecular2(float dotNL, vec3 viewDir, vec3 normal, vec3 lightDir, vec3 lightColor, float exponent)
 	{
 		if (dotNL < 0.0) return vec3(0.0);
 		vec3 H = normalize(lightDir + viewDir); // the half-vector
 		float dotNH = max(0.0, dot(normal, H));
 		float intensity = pow(dotNH, exponent);
-		return vec3(intensity);
+		return (intensity * r_SpecularScale * lightColor); // float * float * vec3
 	}
 	vec3 computeSpecular(vec3 viewDir, vec3 normal, vec3 lightDir, vec3 lightColor, float exponent)
 	{
@@ -90,7 +98,6 @@
 			// half-Lambert starts at 0.5, and fills the range 0.5 to 1.0    (dotNL*0.5+0.5)
 			// example: We want it a bit brighter, so we start at 0.875 (to 1.0)   //float lambert = dotNL * 0.125 + 0.875;
 			float lambert = (1.0 - r_diffuseLighting) + (dotNL * r_diffuseLighting);
-
 			//return lambert*lambert; // square the result (this also makes the result always >0)
 			return abs(lambert); // don't square, but abs instead. (the most useful values are so low already. squaring them lowers them even more)
 		#elif defined(r_WrapAroundLighting)

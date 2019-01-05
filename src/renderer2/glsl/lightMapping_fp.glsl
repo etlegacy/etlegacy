@@ -45,6 +45,7 @@ varying vec3 var_LightDirection;
 varying vec3 var_ViewOrigin; // position - vieworigin
 #if defined(USE_PARALLAX_MAPPING)
 varying vec2 var_S; // size and start position of search in texture space
+varying vec3 var_ViewOrigin2; // in worldspace
 #endif // USE_PARALLAX_MAPPING
 #endif // USE_NORMAL_MAPPING
 #if defined(USE_PORTAL_CLIPPING)
@@ -87,14 +88,21 @@ void main()
 
 
 #if defined(USE_PARALLAX_MAPPING)
+#if 0
 	// ray intersect in view direction
 	float depth = RayIntersectDisplaceMap(texNormal, var_S, u_NormalMap);
+//float depth = texture2D(u_NormalMap, texNormal).a;
 	// compute texcoords offset
 	vec2 texOffset = var_S * depth;
-	texDiffuse  += texOffset;
-	texNormal   += texOffset;
+#endif
+vec3 parallax = parallaxReliefMappingOffset(var_ViewOrigin, var_S, texNormal, u_NormalMap);
+vec2 texOffset = parallax.st;
+float parallaxHeight = parallax.z;
+
+	texDiffuse  -= texOffset;
+	texNormal   -= texOffset;
 #if defined(USE_REFLECTIONS) || defined(USE_SPECULAR)
-	texSpecular += texOffset;
+	texSpecular -= texOffset;
 #endif // USE_REFLECTIONS || USE_SPECULAR
 #endif // USE_PARALLAX_MAPPING
 
@@ -131,6 +139,7 @@ void main()
 	vec3 Ntex = texture2D(u_NormalMap, texNormal).xyz * 2.0 - 1.0;
 	// transform normal from tangentspace to worldspace
 	vec3 N = normalize(var_tangentMatrix * Ntex); // we must normalize to get a vector of unit-length..  reflect() needs it
+//vec3 N = Ntex;
 
 	// the angle between the normal- & light-directions (needs normalized vectors to return the cosine of the angle)
 	float dotNL = dot(N, L);
@@ -140,35 +149,26 @@ void main()
 	//! https://en.wikipedia.org/wiki/Specular_highlight
 #if defined(USE_SPECULAR) && !defined(USE_REFLECTIONS)
 	vec4 map = texture2D(u_SpecularMap, texSpecular);
-	vec3 specular = computeSpecular2(dotNL, V, N, L, u_LightColor, r_SpecularExponent)
-					* map.rgb;
+	vec3 specular = computeSpecular2(dotNL, V, N, L, u_LightColor, r_SpecularExponent) * map.rgb;
 #elif defined(USE_SPECULAR) && defined(USE_REFLECTIONS)
 	vec4 map = texture2D(u_SpecularMap, texSpecular);
-	vec3 specular = (computeReflections(V, N, u_EnvironmentMap0, u_EnvironmentMap1, u_EnvironmentInterpolation)
-					+ computeSpecular2(dotNL, V, N, L, u_LightColor, r_SpecularExponent))
-					* map.rgb;
+	vec3 specular = (computeReflections(V, N, u_EnvironmentMap0, u_EnvironmentMap1, u_EnvironmentInterpolation) * 0.07)
+					+ (computeSpecular2(dotNL, V, N, L, u_LightColor, r_SpecularExponent) * map.rgb);
 #elif !defined(USE_SPECULAR) && defined(USE_REFLECTIONS)
 	vec4 map = texture2D(u_SpecularMap, texSpecular);
-	vec3 specular = computeReflections(V, N, u_EnvironmentMap0, u_EnvironmentMap1, u_EnvironmentInterpolation)
-					* map.rgb;
+	vec3 specular = computeReflections(V, N, u_EnvironmentMap0, u_EnvironmentMap1, u_EnvironmentInterpolation) * map.rgb * 0.07;
 #endif
-
 
 #if defined(r_diffuseLighting)
 	// compute the diffuse light term
 	diffuse.rgb *= computeDiffuseLighting2(dotNL);
 #endif // r_diffuseLighting
 
-
 	// compute final color
 	vec4 color = diffuse;
 #if defined(USE_NORMAL_MAPPING)
 #if defined(USE_REFLECTIONS) || defined(USE_SPECULAR)
-	//color.rgb += specular;
-	color.r = min(1.0, color.r + specular.r);
-	color.g = min(1.0, color.g + specular.g);
-	color.b = min(1.0, color.b + specular.b);
-	//color.rgb += (vec4(specular,1.0) * lightmapColor).rgb;
+	color.rgb += specular;
 #endif // USE_REFLECTIONS || USE_SPECULAR
 #endif // USE_NORMAL_MAPPING
 	color *= lightmapColor; // we must blend using the lightmap.a

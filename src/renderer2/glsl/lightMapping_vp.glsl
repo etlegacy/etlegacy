@@ -48,7 +48,8 @@ varying vec2 var_TexSpecular;
 varying vec3 var_LightDirection;
 varying vec3 var_ViewOrigin; // position - vieworigin
 #if defined(USE_PARALLAX_MAPPING)
-varying vec2 var_S; // size and start position of search in texture space
+varying vec2 var_S;
+varying vec3 var_ViewOrigin2; // in worldspace
 #endif // USE_PARALLAX_MAPPING
 #endif // USE_NORMAL_MAPPING
 #if defined(USE_PORTAL_CLIPPING)
@@ -89,6 +90,7 @@ void main()
 
 	// in a vertex-shader there exists no gl_FrontFacing
 	var_tangentMatrix = mat3(-tangent, -binormal, -var_Normal.xyz);
+//var_tangentMatrix = mat3(tangent, binormal, var_Normal.xyz);
 
 	// transform normalmap texcoords
 	var_TexDiffuseNormal.pq = (u_NormalTextureMatrix * attr_TexCoord0).st;
@@ -99,13 +101,21 @@ void main()
 #endif // USE_REFLECTIONS || USE_SPECULAR
 
 	var_LightDirection = -normalize(u_LightDir);
+//var_LightDirection = normalize(var_tangentMatrix * -u_LightDir);
+//var_LightDirection = -vec3(dot(u_LightDir,tangent), dot(u_LightDir,binormal), dot(u_LightDir,var_Normal.xyz));
 
 	// the vieworigin
 	var_ViewOrigin = normalize(var_Position - u_ViewOrigin);
+//	var_ViewOrigin = normalize(u_ViewOrigin - var_Position);
+//var_ViewOrigin = normalize(var_tangentMatrix * (var_Position - u_ViewOrigin));
+//var_ViewOrigin = vec3(dot((u_ViewOrigin - var_Position),tangent), dot((u_ViewOrigin - var_Position),binormal), dot((u_ViewOrigin - var_Position),var_Normal.xyz));
+
 
 #if defined(USE_PARALLAX_MAPPING)
-	vec3 viewOrigin2 = normalize(var_tangentMatrix * var_ViewOrigin);
-	var_S = viewOrigin2.xy * -u_DepthScale / viewOrigin2.z;
+//	vec3 viewOrigin2 = normalize(var_tangentMatrix * var_ViewOrigin);
+var_ViewOrigin2 = vec3(dot(var_ViewOrigin,tangent), dot(var_ViewOrigin,binormal), dot(var_ViewOrigin,var_Normal.xyz));
+//vec3 viewOrigin2 = var_ViewOrigin;
+	var_S = var_ViewOrigin2.xy / var_ViewOrigin2.z * u_DepthScale;
 #endif // USE_PARALLAX_MAPPING
 #endif // USE_NORMAL_MAPPING
 

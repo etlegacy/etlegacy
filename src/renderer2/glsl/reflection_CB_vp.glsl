@@ -1,7 +1,7 @@
 /* reflection_CB_vp.glsl */
 #if defined(USE_VERTEX_SKINNING)
 #include "lib/vertexSkinning"
-#endif USE_VERTEX_SKINNING
+#endif // USE_VERTEX_SKINNING
 #if defined(USE_VERTEX_ANIMATION)
 #include "lib/vertexAnimation"
 #endif // USE_DEFORM_VERTEXES
@@ -42,8 +42,7 @@ varying vec3 var_Position;
 varying vec3 var_ViewOrigin; // position - vieworigin
 varying vec4 var_Normal;
 #if defined(USE_NORMAL_MAPPING)
-varying vec4 var_Tangent;
-varying vec4 var_Binormal;
+varying mat3 var_tangentMatrix;
 varying vec2 var_TexNormal;
 #endif // USE_NORMAL_MAPPING
 #if defined(USE_PORTAL_CLIPPING)
@@ -114,15 +113,19 @@ void    main()
 	// the vieworigin
 	var_ViewOrigin = normalize(var_Position - u_ViewOrigin);
 
+	var_Normal.xyz = (u_ModelMatrix * vec4(normal, 0.0)).xyz;
+
 #if defined(USE_NORMAL_MAPPING)
 	// transform normalmap texcoords
 	var_TexNormal = (u_NormalTextureMatrix * attr_TexCoord0).st;
 
-	var_Tangent.xyz  = (u_ModelMatrix * vec4(tangent, 0.0)).xyz;
-	var_Binormal.xyz = (u_ModelMatrix * vec4(binormal, 0.0)).xyz;
+	tangent  = (u_ModelMatrix * vec4(tangent, 0.0)).xyz;
+	binormal = (u_ModelMatrix * vec4(binormal, 0.0)).xyz;
+
+	// in a vertex-shader there exists no gl_FrontFacing
+	var_tangentMatrix = mat3(-tangent, -binormal, -var_Normal.xyz);
 #endif // USE_NORMAL_MAPPING
 
-	var_Normal.xyz = (u_ModelMatrix * vec4(normal, 0.0)).xyz;
 
 #if defined(USE_PORTAL_CLIPPING)
 	// in front, or behind, the portalplane
