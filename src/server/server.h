@@ -412,10 +412,6 @@ extern cvar_t *sv_privateClients;
 extern cvar_t *sv_hostname;
 extern cvar_t *sv_master[MAX_MASTER_SERVERS];
 
-#ifdef FEATURE_TRACKER
-extern cvar_t *sv_tracker;
-#endif
-
 extern cvar_t *sv_reconnectlimit;
 extern cvar_t *sv_tempbanmessage;
 
