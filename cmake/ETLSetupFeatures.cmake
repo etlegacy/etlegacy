@@ -338,10 +338,6 @@ else()
 	include_directories(SYSTEM ${MINIZIP_BUNDLED_INCLUDE_DIR})
 endif()
 
-if(FEATURE_TRACKER)
-	add_definitions(-DFEATURE_TRACKER)
-endif(FEATURE_TRACKER)
-
 if(FEATURE_ANTICHEAT)
 	add_definitions(-DFEATURE_ANTICHEAT)
 endif(FEATURE_ANTICHEAT)
