@@ -5137,6 +5137,11 @@ qboolean G_ScriptAction_Create(gentity_t *ent, char *params)
 	}
 	create = G_SpawnGEntityFromSpawnVars();
 
+	if (!create)
+	{
+		return qfalse; // don't link NULL ents
+	}
+
 	trap_LinkEntity(create);
 	return qtrue;
 }

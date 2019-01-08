@@ -1313,7 +1313,7 @@ gentity_t *G_Lua_CreateEntity(char *params)
 		if (level.numSpawnVars == MAX_SPAWN_VARS)
 		{
 			// see above note
-			G_Printf("%s API: can't spawn and entity - MAX_SPAWN_VARS reached.\n", LUA_VERSION);
+			G_Printf("%s API: can't spawn an entity - MAX_SPAWN_VARS reached.\n", LUA_VERSION);
 			return NULL;
 		}
 
@@ -1324,7 +1324,12 @@ gentity_t *G_Lua_CreateEntity(char *params)
 	}
 	create = G_SpawnGEntityFromSpawnVars();
 
-	create->classname = "lua_spawn"; // make additional param?
+	//create->classname = "lua_spawn"; // make additional param?
+
+	if (!create)  // don't link NULL ents
+	{
+		return NULL;
+	}
 
 	trap_LinkEntity(create);
 	return create;

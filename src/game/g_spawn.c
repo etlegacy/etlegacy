@@ -802,6 +802,8 @@ gentity_t *G_SpawnGEntityFromSpawnVars(void)
 	G_SpawnInt("notteam", "0", &i);
 	if (i)
 	{
+		G_Printf("G_SpawnGEntityFromSpawnVars Warning: Can't spawn entity in team games - returning NULL\n");
+
 		G_FreeEntity(ent);
 		return NULL;
 	}

@@ -594,6 +594,8 @@ void G_Script_ScriptParse(gentity_t *ent)
 		{
 			if (wantScript)
 			{
+				// note: There are maps available which don't start anymore
+				//       Fix the mapscripts!
 				G_Error("G_Script_ScriptParse(), Error (line %d): '{' expected, but found '%s'.\n", COM_GetCurrentParseLine(), token);
 			}
 
