@@ -1015,7 +1015,7 @@ void G_CalculateSkillRatings(void)
  */
 float pdf(float x)
 {
-	return exp(-0.5f * pow(x, 2)) / sqrt(2 * M_PI);
+	return exp(-0.5f * pow(x, 2)) / sqrt(M_TAU_F);
 }
 
 /**

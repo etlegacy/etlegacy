@@ -3320,8 +3320,8 @@ void BG_EvaluateTrajectoryDelta(const trajectory_t *tr, int atTime, vec3_t resul
 		break;
 	case TR_SINE:
 		deltaTime = (atTime - tr->trTime) / (float) tr->trDuration;
-		phase     = cos(deltaTime *  M_PI * 2);     // derivative of sin = cos
-		phase    *=  M_PI * 2 * 1000 / (float)tr->trDuration;
+		phase     = cos(deltaTime *  M_TAU_F);     // derivative of sin = cos
+		phase    *= M_TAU_F * 2 * 1000 / (float)tr->trDuration;
 		VectorScale(tr->trDelta, phase, result);
 		break;
 	case TR_LINEAR_STOP:

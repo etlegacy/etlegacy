@@ -99,7 +99,7 @@ void moveit(gentity_t *ent, float yaw, float dist)
 	trace_t tr;
 	vec3_t  mins, maxs;
 
-	yaw = (float)(yaw * M_PI * 2 / 360);
+	yaw = (float)(yaw * M_TAU_F / 360);
 
 	move[0] = (float)cos((double)yaw) * dist;
 	move[1] = (float)sin((double)yaw) * dist;

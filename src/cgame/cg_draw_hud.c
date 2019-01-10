@@ -884,7 +884,7 @@ static void CG_DrawStaminaBar(rectDef_t *rect)
 
 			if (msec >= 0)
 			{
-				Vector4Average(colour, colorMdRed, (float)(.5 + sin(.2 * sqrt((double)msec) * 2 * M_PI) * .5), colour);
+				Vector4Average(colour, colorMdRed, (float)(.5 + sin(.2 * sqrt((double)msec) * M_TAU_F) * .5), colour);
 			}
 		}
 	}
@@ -1400,7 +1400,7 @@ void CG_StatsDebugAddText(const char *text)
  */
 void CG_DrawCompassIcon(float x, float y, float w, float h, vec3_t origin, vec3_t dest, qhandle_t shader)
 {
-	float  angle, pi2 = (float)(M_PI * 2);
+	float  angle;
 	vec3_t v1, angles;
 	float  len;
 
@@ -1417,7 +1417,7 @@ void CG_DrawCompassIcon(float x, float y, float w, float h, vec3_t origin, vec3_
 
 	angles[YAW] = AngleSubtract(cg.predictedPlayerState.viewangles[YAW], angles[YAW]);
 
-	angle = ((angles[YAW] + 180.f) / 360.f - (0.50f / 2.f)) * pi2;
+	angle = ((angles[YAW] + 180.f) / 360.f - (0.50f / 2.f)) * M_TAU_F;
 
 	w /= 2;
 	h /= 2;

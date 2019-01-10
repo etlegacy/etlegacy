@@ -3973,10 +3973,10 @@ void CalcMuzzlePoints(gentity_t *ent, int weapon)
 		}
 
 		// rotate 'forward' vector by the sway
-		phase           = level.time / 1000.0f * ZOOM_PITCH_FREQUENCY * (float)M_PI * 2;
+		phase           = level.time / 1000.0f * ZOOM_PITCH_FREQUENCY * M_TAU_F;
 		viewang[PITCH] += ZOOM_PITCH_AMPLITUDE * (float)sin((double)phase) * (ent->client->currentAimSpreadScale + pitchMinAmp);
 
-		phase         = level.time / 1000.0f * ZOOM_YAW_FREQUENCY * (float)M_PI * 2;
+		phase         = level.time / 1000.0f * ZOOM_YAW_FREQUENCY * M_TAU_F;
 		viewang[YAW] += ZOOM_YAW_AMPLITUDE * (float)sin((double)phase) * (ent->client->currentAimSpreadScale + yawMinAmp);
 	}
 

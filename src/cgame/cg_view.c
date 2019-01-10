@@ -561,10 +561,10 @@ static void CG_ZoomSway(void)
 
 	spreadfrac = cg.snap->ps.aimSpreadScale / 255.0f;
 
-	phase                       = cg.time / 1000.0 * ZOOM_PITCH_FREQUENCY * M_PI * 2;
+	phase                       = cg.time / 1000.0 * ZOOM_PITCH_FREQUENCY * M_TAU_F;
 	cg.refdefViewAngles[PITCH] += ZOOM_PITCH_AMPLITUDE * sin(phase) * (spreadfrac + ZOOM_PITCH_MIN_AMPLITUDE);
 
-	phase                     = cg.time / 1000.0 * ZOOM_YAW_FREQUENCY * M_PI * 2;
+	phase                     = cg.time / 1000.0 * ZOOM_YAW_FREQUENCY * M_TAU_F;
 	cg.refdefViewAngles[YAW] += ZOOM_YAW_AMPLITUDE * sin(phase) * (spreadfrac + ZOOM_YAW_MIN_AMPLITUDE);
 }
 
@@ -1091,7 +1091,7 @@ static int CG_CalcFov(void)
 	contents = CG_PointContents(cg.refdef.vieworg, -1);
 	if (contents & (CONTENTS_WATER | CONTENTS_SLIME | CONTENTS_LAVA))
 	{
-		float phase = cg.time / 1000.0 * WAVE_FREQUENCY * M_PI * 2;
+		float phase = cg.time / 1000.0 * WAVE_FREQUENCY * M_TAU_F;
 		float v     = WAVE_AMPLITUDE * sin(phase);
 
 		fov_x                      += v;
