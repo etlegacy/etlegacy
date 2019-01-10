@@ -819,6 +819,12 @@ void CL_ParseDownload(msg_t *msg)
 		return;
 	}
 
+	// explicitly stop all noise while downloading
+	if (cl_allowDownload->integer == 2)
+	{
+		S_StopAllSounds();
+	}
+
 	// read the data
 	block = MSG_ReadShort(msg);
 
