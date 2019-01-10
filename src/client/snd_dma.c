@@ -51,7 +51,6 @@ streamingSound_t streamingSounds[MAX_STREAMING_SOUNDS];
 
 // only begin attenuating sound volumes when outside the FULLVOLUME range
 #define     SOUND_FULLVOLUME    80
-#define     SOUND_ATTENUATE     0.0008f
 #define     SOUND_RANGE_DEFAULT 1250
 
 channel_t s_channels[MAX_CHANNELS];
