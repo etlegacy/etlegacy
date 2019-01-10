@@ -1240,7 +1240,7 @@ void R_Register(void)
 	r_railSegmentLength = ri.Cvar_Get("r_railSegmentLength", "32", CVAR_ARCHIVE);
 
 	r_ambientScale = ri.Cvar_Get("r_ambientScale", "0.5", CVAR_CHEAT);
-	r_lightScale   = ri.Cvar_Get("r_lightScale", "2", CVAR_CHEAT | CVAR_LATCH);
+	r_lightScale   = ri.Cvar_Get("r_lightScale", "1", CVAR_CHEAT | CVAR_ARCHIVE);
 
 	r_vboFaces            = ri.Cvar_Get("r_vboFaces", "1", CVAR_CHEAT);
 	r_vboCurves           = ri.Cvar_Get("r_vboCurves", "1", CVAR_CHEAT);

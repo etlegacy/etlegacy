@@ -4784,7 +4784,9 @@ void R_LoadLightGrid(lump_t *l)
  * @param[in] lightDefs
  *
  * FIXME: check parser for missing keys
- * FIXME: Inspect lightJunior (parse it?, is there a need to assign these to models?)
+ * FIXME: Inspect lightJunior (is there a need to assign these to models?)
+ * FIXME: spotlights targets
+ * FIXME: sun spotlight
  * 
  * fade
  * - Falloff/radius adjustment value. Multiply the run of the slope by "fade" (1.0f default only valid for "Linear" lights wolf)
@@ -4808,6 +4810,19 @@ void R_LoadLightGrid(lump_t *l)
  * - Makes Q3map2 replace the light with several smaller lights for smoother illumination. Values of 4 or so will be adequate.(where "#" is distance in world units for point/spot lights and degrees for suns)
  * _sun
  * - Set this key to 1 on a spotlight to make an infinite sun light.
+ *
+ *  angle?!
+ *
+ * {
+ * "target" "t514"
+ * "radius" "128"
+ * "angle" "0"
+ * "_color" "1.000000 0.690196 0.384314"
+ * "light" "100"
+ * "origin" "-2340 3234 1426"
+ * "fade" ".9"
+ * "classname" "light"
+ * }
  */
 void R_LoadLights(char *lightDefs)
 {
@@ -4876,7 +4891,11 @@ void R_LoadLights(char *lightDefs)
 			Q_strncpyz(value, token, sizeof(value));
 
 			// check if this entity is a light
-			if (!Q_stricmp(keyname, "classname") && (!Q_stricmp(value, "light") || !Q_stricmp(value, "lightJunior") || !Q_stricmp(value, "dlight")))
+			// light related ents are
+			// light, lightJunior, dlight, corona, info_null (spotlights)
+			// see also misc_light_surface, misc_spotlight
+			//if (!Q_stricmp(keyname, "classname") && (!Q_stricmp(value, "light") || !Q_stricmp(value, "lightJunior") || !Q_stricmp(value, "dlight")))
+			if (!Q_stricmp(keyname, "classname") && (!Q_stricmp(value, "light") || !Q_stricmp(value, "lightJunior")))
 			{
 				isLight = qtrue;
 			}
@@ -4922,9 +4941,9 @@ void R_LoadLights(char *lightDefs)
 
 		light->l.scale = r_lightScale->value;
 
-		light->l.radius[0] = 300;
-		light->l.radius[1] = 300;
-		light->l.radius[2] = 300;
+		light->l.radius[0] = 64; // default radius
+		light->l.radius[1] = 64;
+		light->l.radius[2] = 64;
 
 		VectorClear(light->l.projTarget);
 		VectorClear(light->l.projRight);
@@ -4939,6 +4958,8 @@ void R_LoadLights(char *lightDefs)
 		light->additive    = qtrue;
 
 		light->shadowLOD = 0;
+
+		light->l.rlType  = RL_OMNI;
 	}
 
 	// parse lights
@@ -4997,12 +5018,13 @@ void R_LoadLights(char *lightDefs)
 			Q_strncpyz(value, token, sizeof(value));
 
 			// check if this entity is a light
-			if (!Q_stricmp(keyname, "classname") && (!Q_stricmp(value, "light") || !Q_stricmp(value, "lightJunior") || !Q_stricmp(value, "dlight")))
+			//if (!Q_stricmp(keyname, "classname") && (!Q_stricmp(value, "light") || !Q_stricmp(value, "lightJunior") || !Q_stricmp(value, "dlight")))
+			if (!Q_stricmp(keyname, "classname") && (!Q_stricmp(value, "light") || !Q_stricmp(value, "lightJunior")))
 			{
 				isLight = qtrue;
 			}
 			// check for origin
-			else if (!Q_stricmp(keyname, "origin") || !Q_stricmp(keyname, "light_origin"))
+			else if (!Q_stricmp(keyname, "origin") || !Q_stricmp(keyname, "light_origin")) // ETL (origin)
 			{
 				sscanf(value, "%f %f %f", &light->l.origin[0], &light->l.origin[1], &light->l.origin[2]);
 				//s = &value[0];
@@ -5016,14 +5038,14 @@ void R_LoadLights(char *lightDefs)
 				//Com_Parse1DMatrix(&s, 3, light->l.center, qfalse);
 			}
 			// check for color
-			else if (!Q_stricmp(keyname, "_color"))
+			else if (!Q_stricmp(keyname, "_color")) // ETL
 			{
 				sscanf(value, "%f %f %f", &light->l.color[0], &light->l.color[1], &light->l.color[2]);
 				//s = &value[0];
 				//Com_Parse1DMatrix(&s, 3, light->l.color, qfalse);
 			}
 			// check for radius
-			else if (!Q_stricmp(keyname, "light_radius"))
+			else if (!Q_stricmp(keyname, "light_radius") || !Q_stricmp(keyname, "radius")) // ETL (radius)
 			{
 				sscanf(value, "%f %f %f", &light->l.radius[0], &light->l.radius[1], &light->l.radius[2]);
 				//s = &value[0];
@@ -5036,6 +5058,16 @@ void R_LoadLights(char *lightDefs)
 				//s = &value[0];
 				//Com_Parse1DMatrix(&s, 3, light->l.projTarget, qfalse);
 				light->l.rlType = RL_PROJ;
+			}
+			else if (!Q_stricmp(keyname, "target")) // ETL
+			{
+				// FIXME: set/check target origin/projTarget (see origin of info_null entity)
+				light->l.rlType = RL_OMNI;
+			}
+			else if (!Q_stricmp(keyname, "_sun")) // ETL
+			{
+				// FIXME: inspect (has to be set on spotlight ..., target?!)
+				//light->l.rlType = RL_DIRECTIONAL; ?
 			}
 			// check for light_right
 			else if (!Q_stricmp(keyname, "light_right"))
@@ -5069,15 +5101,24 @@ void R_LoadLights(char *lightDefs)
 				//Com_Parse1DMatrix(&s, 3, light->l.projEnd, qfalse);
 				light->l.rlType = RL_PROJ;
 			}
-			// check for radius
-			else if (!Q_stricmp(keyname, "light") || !Q_stricmp(keyname, "_light"))
+			// fixed: xreal did set radius ...
+			else if (!Q_stricmp(keyname, "light") || !Q_stricmp(keyname, "_light")) // ETL (light)
 			{
-				vec_t value2;
+				// 300 is 100% = default intensity
+				light->l.scale = atof(value) / 300.f * r_lightScale->value;
 
-				value2             = atof(value);
-				light->l.radius[0] = value2;
-				light->l.radius[1] = value2;
-				light->l.radius[2] = value2;
+				if (light->l.scale < 0)
+				{
+					light->l.scale = r_lightScale->value;
+				}
+
+				if (!r_hdrRendering->integer || !glConfig2.textureFloatAvailable || !glConfig2.framebufferObjectAvailable || !glConfig2.framebufferBlitAvailable)
+				{
+					if (light->l.scale > r_lightScale->value)
+					{
+						light->l.scale = r_lightScale->value;
+					}
+				}
 			}
 			// check for scale
 			else if (!Q_stricmp(keyname, "light_scale"))
@@ -5086,7 +5127,7 @@ void R_LoadLights(char *lightDefs)
 
 				if (!r_hdrRendering->integer || !glConfig2.textureFloatAvailable || !glConfig2.framebufferObjectAvailable || !glConfig2.framebufferBlitAvailable)
 				{
-					if (light->l.scale >= r_lightScale->value)
+					if (light->l.scale > r_lightScale->value)
 					{
 						light->l.scale = r_lightScale->value;
 					}
@@ -5167,10 +5208,10 @@ void R_LoadLights(char *lightDefs)
 	}
 
 	Ren_Developer("%i total entities parsed\n", numEntities);
-	Ren_Print("%i total lights parsed\n", numOmniLights + numProjLights + numParallelLights);
-	Ren_Developer("%i omni-directional lights parsed\n", numOmniLights);
-	Ren_Developer("%i projective lights parsed\n", numProjLights);
-	Ren_Developer("%i directional lights parsed\n", numParallelLights);
+	Ren_Developer("%i total lights parsed\n", numOmniLights + numProjLights + numParallelLights);
+	Ren_Print("%i omni-directional lights parsed\n", numOmniLights);
+	Ren_Print("%i projective lights parsed\n", numProjLights);
+	Ren_Print("%i directional lights parsed\n", numParallelLights);
 }
 
 /**

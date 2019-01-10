@@ -402,20 +402,28 @@ void RE_AddRefLightToScene(const refLight_t *light)
 		Ren_Drop("RE_AddRefLightToScene: bad rlType %i", light->rlType);
 	}
 
+	if (r_numLights >= MAX_REF_LIGHTS)
+	{
+		Ren_Developer("WARNING RE_AddRefLightToScene: Dropping light, reached MAX_REF_LIGHTS\n");
+		return;
+	}
+
 	trlight = &backEndData->lights[r_numLights++];
 	Com_Memcpy(&trlight->l, light, sizeof(trlight->l));
 
 	trlight->isStatic = qfalse;
 	trlight->additive = qtrue;
 
-	if (trlight->l.scale <= 0)
+	trlight->l.scale *= r_lightScale->value; // cvar for dynamic scaling only?
+
+	if (trlight->l.scale < 0)
 	{
 		trlight->l.scale = r_lightScale->value;
 	}
 
 	if (!HDR_ENABLED())
 	{
-		if (trlight->l.scale >= r_lightScale->value)
+		if (trlight->l.scale > r_lightScale->value)
 		{
 			trlight->l.scale = r_lightScale->value;
 		}
@@ -452,6 +460,7 @@ static void R_AddWorldLightsToScene()
 
 		if (r_numLights >= MAX_REF_LIGHTS)
 		{
+			Ren_Developer("WARNING R_AddWorldLightsToScene: Dropping light, reached MAX_REF_LIGHTS\n");
 			return;
 		}
 
@@ -481,7 +490,7 @@ static void R_AddWorldLightsToScene()
  * @param[in] r
  * @param[in] g
  * @param[in] b
- * @param hShader - unused
+ * @param hShader
  * @param flags   - unused
  *
  * @note vanilla mods deliver 0 hShader only
@@ -533,13 +542,12 @@ void RE_AddDynamicLightToScene(const vec3_t org, float radius, float intensity, 
 	light->isStatic = qfalse;
 	light->additive = qtrue;
 
-	light->l.scale = intensity;
-#if 0
-	if (light->l.scale <= r_lightScale->value)
+	light->l.scale = intensity * r_lightScale->value; // cvar for dynamic only?
+
+	if (light->l.scale < 0)
 	{
 		light->l.scale = r_lightScale->value;
 	}
-#endif
 }
 
 /**
