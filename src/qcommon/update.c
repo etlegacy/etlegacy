@@ -143,6 +143,7 @@ void Com_GetAutoUpdate(void)
 	// starting to load a map so we get out of full screen ui mode
 	Cvar_Set("r_uiFullScreen", "0");
 
+	// FIXME: this should be saved & restored after update
 	// toggle on all the download related cvars
 	Cvar_Set("cl_allowDownload", "1");  // general flag
 	Cvar_Set("cl_wwwDownload", "1");    // ftp/http support

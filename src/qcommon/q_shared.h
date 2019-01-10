@@ -1316,7 +1316,7 @@ typedef enum
 	TR_INTERPOLATE,             ///< non-parametric, but interpolate between snapshots
 	TR_LINEAR,
 	TR_LINEAR_STOP,
-	TR_LINEAR_STOP_BACK,        ///< so reverse movement can be different than forward
+	TR_LINEAR_STOP_BACK,        ///< unused in ET - so reverse movement can be different than forward
 	TR_SINE,                    ///< value = base + sin( time / duration ) * delta
 	TR_GRAVITY,
 	TR_GRAVITY_LOW,
