@@ -29,7 +29,7 @@ menuDef {
 
 // Extended //
 	SUBWINDOW( 6, 32, (SUBWINDOW_WIDTH), 30, _("MISC") )
-	MULTI( 8, 48, (SUBWINDOW_WIDTH)-4, 10, _("Country Flags:"), .2, 8, "g_countryflags", cvarFloatList { "No" 0 "Yes" 1 }, _("Enable Country Flags on the server") )
+	MULTI( 8, 48, (SUBWINDOW_WIDTH)-4, 10, _("Country Flags:"), .2, 8, "g_countryflags", cvarFloatList { "No" 0 "Yes" 1 }, _("Enable country flags on the server") )
 
 // Download //
 	SUBWINDOW( 6, 68, (SUBWINDOW_WIDTH), 66/*72*/, _("DOWNLOAD") )

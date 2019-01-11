@@ -36,7 +36,7 @@ menuDef {
 // Physics //
 #define PHYSICS_Y 66
 	SUBWINDOW( 6, PHYSICS_Y, (SUBWINDOW_WIDTH_L), 40, _("PHYSICS") )
-	YESNO( 8, PHYSICS_Y+16, (SUBWINDOW_WIDTH_L)-4, 10, _("Always Run:"), .2, 8, "cl_run", _("Toogle walk/run") )
+	YESNO( 8, PHYSICS_Y+16, (SUBWINDOW_WIDTH_L)-4, 10, _("Always Run:"), .2, 8, "cl_run", _("Toggle walk/run") )
 	MULTI( 8, PHYSICS_Y+28, (SUBWINDOW_WIDTH_L)-4, 10, _("Double-Tap Prone:"), .2, 8, "cl_doubletapdelay", cvarFloatList { "Yes" 350 "No" 0 }, _("Set the delay time between keypresses required to be a double-tap") )
 
 // Weapons //
