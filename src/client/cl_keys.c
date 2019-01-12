@@ -1121,14 +1121,35 @@ void Key_WriteBindings(fileHandle_t f)
 void Key_Bindlist_f(void)
 {
 	int i;
+	int freeKeys = 0;
+	
+	Com_Printf("key             bind\n");
+	
+	Com_Printf("-----------------------------------\n");
 
 	for (i = 0 ; i < MAX_KEYS ; i++)
 	{
 		if (keys[i].binding && keys[i].binding[0])
 		{
-			Com_Printf("%s \"%s\"\n", Key_KeynumToString(i), keys[i].binding);
+			if (Cmd_Argc() != 2)
+			{
+				Com_Printf("%-15s \"%s\"\n", Key_KeynumToString(i), keys[i].binding);
+			}
+		}
+		else
+		{
+			++freeKeys;
+
+			if (Cmd_Argc() == 2)
+			{
+				Com_Printf("%-15s *free to bind*\n", Key_KeynumToString(i));
+			}
 		}
 	}
+	
+	Com_Printf("-----------------------------------\n");
+	Com_Printf("%i free keys available.\n", freeKeys);
+	Com_Printf("Enter /bindlist -f to see free keys.\n"); // or any other param ... :)
 }
 
 /**
