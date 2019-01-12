@@ -1068,7 +1068,7 @@ msgid "Yes"
 msgstr "Si"
 
 #: etmain/ui/hostgame_extended.menu:32
-msgid "Enable Country Flags on the server"
+msgid "Enable country Flags on the server"
 msgstr "Activa las Banderas de los Países en el Servidor"
 
 #: etmain/ui/hostgame_extended.menu:36 etmain/ui/hostgame.menu:195
@@ -2125,7 +2125,7 @@ msgid "Always Run:"
 msgstr "Correr Siempre:"
 
 #: etmain/ui/options_customise_game.menu:41
-msgid "Toogle walk/run"
+msgid "Toggle walk/run"
 msgstr "Alternar caminar/correr"
 
 #: etmain/ui/options_customise_game.menu:42
