@@ -108,7 +108,7 @@ menuDef {
 // Downloads //
 #define DOWNLOADS_Y 224
 	SUBWINDOW( 6+(SUBWINDOW_WIDTH_L)+6, DOWNLOADS_Y, (SUBWINDOW_WIDTH_R), 40, _("DOWNLOADS") )
-	YESNO( 6+(SUBWINDOW_WIDTH_L)+6+2, DOWNLOADS_Y+16, (SUBWINDOW_WIDTH_L)-4, 10, _("Get Missing Files:"), .2, 8, "cl_allowDownload", _("Download missing files when available") )
+	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, DOWNLOADS_Y+16, (SUBWINDOW_WIDTH_L)-4, 10, _("Get Missing Files:"), .2, 8, "cl_allowDownload", cvarFloatList { "Disabled" 0 "Enabled" 1 "Enabled & no sound" 2 }, _("Download missing files when available") )	
 	YESNO( 6+(SUBWINDOW_WIDTH_L)+6+2, DOWNLOADS_Y+28, (SUBWINDOW_WIDTH_L)-4, 10, _("Use HTTP/FTP Downloads:"), .2, 8, "cl_wwwDownload", _("Enables or disables http/ftp downloads") )
 
 // IRC //
