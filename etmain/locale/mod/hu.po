@@ -1068,7 +1068,7 @@ msgid "Yes"
 msgstr "Igen"
 
 #: etmain/ui/hostgame_extended.menu:32
-msgid "Enable country Flags on the server"
+msgid "Enable country flags on the server"
 msgstr "Országzászlók engedélyezése a szerveren"
 
 #: etmain/ui/hostgame_extended.menu:36 etmain/ui/hostgame.menu:195
