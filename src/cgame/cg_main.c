@@ -1731,6 +1731,7 @@ static void CG_RegisterGraphics(void)
 
 	cgs.media.hudAlliedHelmet = trap_R_RegisterShader("AlliedHelmet");
 	cgs.media.hudAxisHelmet   = trap_R_RegisterShader("AxisHelmet");
+	cgs.media.hudAdrenaline   = trap_R_RegisterShaderNoMip("gfx/hud/adrenaline");
 
 	CG_LoadingString(" - models -");
 

@@ -1333,6 +1333,7 @@ typedef struct
 	qhandle_t hudSprintBar;
 	qhandle_t hudAxisHelmet;
 	qhandle_t hudAlliedHelmet;
+	qhandle_t hudAdrenaline;
 
 	qhandle_t teamStatusBar;
 

@@ -1244,7 +1244,6 @@ static void CG_DrawPowerUps(rectDef_t rect)
 		CG_DrawPic(rect.x, rect.y, rect.w, rect.h, cgs.media.spawnInvincibleShader);
 	}
 	// adrenaline
-	/*
 	if (COM_BitCheck(cg.snap->ps.weapons, WP_MEDIC_ADRENALINE) || ps->powerups[PW_ADRENALINE])
 	{
 		qboolean colorSet = qfalse;
@@ -1262,14 +1261,13 @@ static void CG_DrawPowerUps(rectDef_t rect)
 			colorSet = qtrue;
 		}
 
-		CG_DrawPic(rect.x, rect.y, rect.w, rect.h, cgs.media.scoreEliminatedShader); // FIXME: shader cgs.media.hudAdrenaline
+		CG_DrawPic(rect.x, rect.y, rect.w, rect.h, cgs.media.hudAdrenaline);
 
 		if (colorSet)
 		{
 			trap_R_SetColor(NULL);
 		}
 	}
-	*/
 }
 
 /**
