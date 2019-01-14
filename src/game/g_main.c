@@ -3966,7 +3966,7 @@ void CheckIntermissionExit(void)
 	}
 
 #ifdef FEATURE_RATING
-	if (g_skillRating.integer)
+	if (g_skillRating.integer && level.database.initialized)
 	{
 		// deinitialize db at the last moment to ensure bots/players
 		// connecting in intermission still have db access
