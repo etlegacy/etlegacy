@@ -1244,29 +1244,13 @@ static void CG_DrawPowerUps(rectDef_t rect)
 		CG_DrawPic(rect.x, rect.y, rect.w, rect.h, cgs.media.spawnInvincibleShader);
 	}
 	// adrenaline
-	if (COM_BitCheck(cg.snap->ps.weapons, WP_MEDIC_ADRENALINE) || ps->powerups[PW_ADRENALINE])
+	else if (ps->powerups[PW_ADRENALINE] > 0)
 	{
-		qboolean colorSet = qfalse;
-
-		if (ps->powerups[PW_ADRENALINE])
-		{
-			if (ps->powerups[PW_ADRENALINE] > 0)
-			{
-				trap_R_SetColor(colorMdRed);
-			}
-			else
-			{
-				trap_R_SetColor(colorDkGrey);
-			}
-			colorSet = qtrue;
-		}
-
+		vec4_t color = { 1.0, 0.0, 0.0, 1.0 };
+		color[3] *= 0.5 + 0.5 * sin(cg.time / 150.0);
+		trap_R_SetColor(color);
 		CG_DrawPic(rect.x, rect.y, rect.w, rect.h, cgs.media.hudAdrenaline);
-
-		if (colorSet)
-		{
-			trap_R_SetColor(NULL);
-		}
+		trap_R_SetColor(NULL);
 	}
 }
 
