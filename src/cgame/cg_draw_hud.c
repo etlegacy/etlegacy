@@ -1239,6 +1239,37 @@ static void CG_DrawPowerUps(rectDef_t rect)
 		// show the class to the client
 		CG_DrawPic(rect.x + 9, rect.y + 9, 18, 18, cgs.media.skillPics[BG_ClassSkillForClass((cg_entities[ps->clientNum].currentState.powerups >> PW_OPS_CLASS_1) & 7)]);
 	}
+	else if (ps->powerups[PW_INVULNERABLE])       // spawn shield
+	{
+		CG_DrawPic(rect.x, rect.y, rect.w, rect.h, cgs.media.spawnInvincibleShader);
+	}
+	// adrenaline
+	/*
+	if (COM_BitCheck(cg.snap->ps.weapons, WP_MEDIC_ADRENALINE) || ps->powerups[PW_ADRENALINE])
+	{
+		qboolean colorSet = qfalse;
+
+		if (ps->powerups[PW_ADRENALINE])
+		{
+			if (ps->powerups[PW_ADRENALINE] > 0)
+			{
+				trap_R_SetColor(colorMdRed);
+			}
+			else
+			{
+				trap_R_SetColor(colorDkGrey);
+			}
+			colorSet = qtrue;
+		}
+
+		CG_DrawPic(rect.x, rect.y, rect.w, rect.h, cgs.media.scoreEliminatedShader); // FIXME: shader cgs.media.hudAdrenaline
+
+		if (colorSet)
+		{
+			trap_R_SetColor(NULL);
+		}
+	}
+	*/
 }
 
 /**
