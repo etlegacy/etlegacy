@@ -4009,6 +4009,13 @@ void CheckExitRules(void)
 	// signal ready, then go to next level
 	if (g_gamestate.integer == GS_INTERMISSION)
 	{
+		// if ExitLevel has run, but still no new map was loaded, try restarting the map
+		if (level.intermissiontime == 0) {
+			G_Printf("^3%s\n", "WARNING: failed to load the next map or campaign!");
+			G_Printf("^3%s\n", "Restarting level...");
+			trap_SendConsoleCommand(EXEC_APPEND, "map_restart 0\n");
+			return;
+		}
 		CheckIntermissionExit();
 		return;
 	}
