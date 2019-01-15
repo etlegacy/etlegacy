@@ -150,6 +150,8 @@ cvar_t *com_watchdog_cmd;
 
 cvar_t *com_hunkused;
 
+cvar_t *dl_wgetURL;
+
 // com_speeds times
 int time_game;
 int time_frontend;          // renderer frontend time
@@ -2981,6 +2983,8 @@ void Com_Init(char *commandLine)
 	Cmd_AddCommand("changeVectors", MSG_ReportChangeVectors_f, "Prints out a table from the current statistics for copying to code.");
 	Cmd_AddCommand("writeconfig", Com_WriteConfig_f, "Write the config file to a specific name.");
 	Cmd_AddCommand("update", Com_Update_f, "Updates the game to latest version.");
+
+	dl_wgetURL = Cvar_Get("dl_wgetURL", "http://mirror.etlegacy.com/etmain", CVAR_INIT);
 	Cmd_AddCommand("wget", Com_Download_f, "Downloads a map from etlegacy.com.");
 
 #ifdef FEATURE_DBMS

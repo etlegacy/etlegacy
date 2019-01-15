@@ -438,6 +438,7 @@ void Com_Download_f(void)
 #ifndef DEDICATED
 	if (cls.state >= CA_LOADING)
 	{
+		Com_Printf("Client already downloading or in game!");
 		return;
 	}
 #endif
@@ -446,6 +447,22 @@ void Com_Download_f(void)
 
 	if (Cmd_Argc() > 1)
 	{
-		Com_SetupDownload("http://mirror.etlegacy.com/etmain", Cmd_Argv(1));
+		char *name;
+
+		name = Cmd_Argv(1);
+
+		// Check if the fileName ends with the pk3 extension
+		if (!COM_CompareExtension(name, "pk3"))
+		{
+			Com_Printf("Com_Download_f: wget is for pk3 files only!");
+		}
+		else
+		{
+			Com_SetupDownload(dl_wgetURL->string, name);
+		}
+	}
+	else
+	{
+		Com_Printf("Usage: wget <filname.pk3>");
 	}
 }

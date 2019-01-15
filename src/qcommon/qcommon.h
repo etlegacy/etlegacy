@@ -1079,6 +1079,8 @@ extern int com_hunkusedvalue;
 
 extern qboolean com_errorEntered;
 
+extern cvar_t *dl_wgetURL;
+
 extern fileHandle_t com_journalFile;
 extern fileHandle_t com_journalDataFile;
 
