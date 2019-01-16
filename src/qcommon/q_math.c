@@ -1815,15 +1815,15 @@ void angles_vectors(const vec3_t angles, vec3_t forward, vec3_t right, vec3_t up
 	static float sr, sp, sy, cr, cp, cy;
 	// static to help MS compiler fp bugs
 
-	angle = (float)((double)angles[YAW] * (M_PI * 2 / 360));
+	angle = (float)((double)angles[YAW] * (M_TAU_F / 360));
 	sy    = (float)sin((double)angle);
 	cy    = (float)cos((double)angle);
 
-	angle = (float)((double)angles[PITCH] * (M_PI * 2 / 360));
+	angle = (float)((double)angles[PITCH] * (M_TAU_F / 360));
 	sp    = (float)sin((double)angle);
 	cp    = (float)cos((double)angle);
 
-	angle = (float)((double)angles[ROLL] * (M_PI * 2 / 360));
+	angle = (float)((double)angles[ROLL] * (M_TAU_F / 360));
 	sr    = (float)sin((double)angle);
 	cr    = (float)cos((double)angle);
 
