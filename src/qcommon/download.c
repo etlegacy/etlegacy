@@ -458,7 +458,7 @@ void Com_Download_f(void)
 		}
 		else
 		{
-			Com_SetupDownload(dl_wgetURL->string, name);
+			Com_SetupDownload(dl_curlURL->string, name);
 		}
 	}
 	else

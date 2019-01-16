@@ -1048,7 +1048,9 @@ extern cvar_t *com_journal;
 extern cvar_t *com_ansiColor;
 extern cvar_t *com_unfocused;
 extern cvar_t *com_minimized;
+#if idppc
 extern cvar_t *com_altivec;
+#endif
 
 // updater and motd
 extern cvar_t *com_updateavailable;
@@ -1079,7 +1081,7 @@ extern int com_hunkusedvalue;
 
 extern qboolean com_errorEntered;
 
-extern cvar_t *dl_wgetURL;
+extern cvar_t *dl_curlURL;
 
 extern fileHandle_t com_journalFile;
 extern fileHandle_t com_journalDataFile;

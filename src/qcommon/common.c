@@ -77,9 +77,6 @@ int demo_protocols[] =
 #define DEF_COMHUNKMEGS_S           XSTRING(DEF_COMHUNKMEGS)
 #define DEF_COMZONEMEGS_S           XSTRING(DEF_COMZONEMEGS)
 
-// TODO: Unused
-// int  com_argc;
-// char *com_argv[MAX_NUM_ARGVS + 1];
 
 jmp_buf abortframe;     // an ERR_DROP occured, exit the entire frame
 
@@ -150,7 +147,7 @@ cvar_t *com_watchdog_cmd;
 
 cvar_t *com_hunkused;
 
-cvar_t *dl_wgetURL;
+cvar_t *dl_curlURL;
 
 // com_speeds times
 int time_game;
@@ -1081,9 +1078,6 @@ void Z_Free(void *ptr)
  */
 void Z_FreeTags(int tag)
 {
-#ifdef LEGACY_DEBUG
-	int count = 0;
-#endif
 	memzone_t *zone;
 
 	if (tag == TAG_SMALL)
@@ -1102,9 +1096,6 @@ void Z_FreeTags(int tag)
 	{
 		if (zone->rover->tag == tag)
 		{
-#ifdef LEGACY_DEBUG
-			count++;
-#endif
 			Z_Free(( void * )(zone->rover + 1));
 			continue;
 		}
@@ -1113,7 +1104,7 @@ void Z_FreeTags(int tag)
 	while (zone->rover != &zone->blocklist);
 }
 
-/// RF, jusy so we can track a block to find out when it's getting trashed
+// so we can track a block to find out when it's getting trashed
 memblock_t *debugblock;
 
 #ifdef ZONE_DEBUG
@@ -2984,8 +2975,8 @@ void Com_Init(char *commandLine)
 	Cmd_AddCommand("writeconfig", Com_WriteConfig_f, "Write the config file to a specific name.");
 	Cmd_AddCommand("update", Com_Update_f, "Updates the game to latest version.");
 
-	dl_wgetURL = Cvar_Get("dl_wgetURL", "http://mirror.etlegacy.com/etmain", CVAR_INIT);
-	Cmd_AddCommand("wget", Com_Download_f, "Downloads a map from etlegacy.com.");
+	dl_curlURL = Cvar_Get("dl_curlURL", "http://mirror.etlegacy.com/etmain", CVAR_INIT);
+	Cmd_AddCommand("curl", Com_Download_f, "Downloads a map from the URL set in cvar dl_curlURL.");
 
 #ifdef FEATURE_DBMS
 	Cmd_AddCommand("saveDB", DB_SaveMemDB_f, "Saves the internal memory database to disk.");
