@@ -4791,7 +4791,7 @@ qboolean setProjTargetOrigin(char *lightDefs, char *targetname, trRefLight_t *li
 
 	if (!targetname || !targetname[0])
 	{
-		Ren_Warning("setTarget WARNING: no target set!\n", targetname);
+		Ren_Warning("setProjTargetOrigin WARNING: no target set!\n", targetname);
 		return qfalse;
 	}
 	
@@ -4811,7 +4811,7 @@ qboolean setProjTargetOrigin(char *lightDefs, char *targetname, trRefLight_t *li
 
 		if (*token != '{')
 		{
-			Ren_Warning("WARNING: expected { found '%s'\n", token);
+			Ren_Warning("setProjTargetOrigin WARNING: expected { found '%s'\n", token);
 			break;
 		}
 
@@ -4832,7 +4832,7 @@ qboolean setProjTargetOrigin(char *lightDefs, char *targetname, trRefLight_t *li
 
 			if (!*token)
 			{
-				Ren_Warning("WARNING: EOF without closing bracket\n");
+				Ren_Warning("setProjTargetOrigin WARNING: EOF without closing bracket\n");
 				break;
 			}
 
@@ -4843,7 +4843,7 @@ qboolean setProjTargetOrigin(char *lightDefs, char *targetname, trRefLight_t *li
 
 			if (!*token)
 			{
-				Ren_Warning("WARNING: missing value for key '%s'\n", keyname);
+				Ren_Warning("setProjTargetOrigin WARNING: missing value for key '%s'\n", keyname);
 				continue;
 			}
 
@@ -4874,7 +4874,7 @@ qboolean setProjTargetOrigin(char *lightDefs, char *targetname, trRefLight_t *li
 
 		if (*token != '}')
 		{
-			Ren_Warning("WARNING: expected } found '%s'\n", token);
+			Ren_Warning("setProjTargetOrigin WARNING: expected } found '%s'\n", token);
 			
 			if (origin)
 			{
@@ -4893,7 +4893,7 @@ qboolean setProjTargetOrigin(char *lightDefs, char *targetname, trRefLight_t *li
 			}
 			else
 			{
-				Ren_Warning("WARNING: requested target has no origin '%s'\n");
+				Ren_Warning("setProjTargetOrigin WARNING: requested target has no origin '%s'\n");
 			}
 			
 			return qtrue; // we are done
@@ -5025,7 +5025,7 @@ void R_LoadLights(char *lightDefs)
 
 		if (*token != '{')
 		{
-			Ren_Warning("WARNING: expected { found '%s'\n", token);
+			Ren_Warning("R_LoadLights WARNING: expected { found '%s'\n", token);
 			break;
 		}
 
@@ -5046,7 +5046,7 @@ void R_LoadLights(char *lightDefs)
 
 			if (!*token)
 			{
-				Ren_Warning("WARNING: EOF without closing bracket\n");
+				Ren_Warning("R_LoadLights WARNING: EOF without closing bracket\n");
 				break;
 			}
 
@@ -5057,7 +5057,7 @@ void R_LoadLights(char *lightDefs)
 
 			if (!*token)
 			{
-				Ren_Warning("WARNING: missing value for key '%s'\n", keyname);
+				Ren_Warning("R_LoadLights WARNING: missing value for key '%s'\n", keyname);
 				continue;
 			}
 
@@ -5082,7 +5082,7 @@ void R_LoadLights(char *lightDefs)
 
 		if (*token != '}')
 		{
-			Ren_Warning("WARNING: expected } found '%s'\n", token);
+			Ren_Warning("R_LoadLights WARNING: expected } found '%s'\n", token);
 			break;
 		}
 
@@ -5137,7 +5137,7 @@ void R_LoadLights(char *lightDefs)
 
 		if (*token != '{')
 		{
-			Ren_Warning("WARNING: expected { found '%s'\n", token);
+			Ren_Warning("R_LoadLights WARNING: expected { found '%s'\n", token);
 			break;
 		}
 
@@ -5158,7 +5158,7 @@ void R_LoadLights(char *lightDefs)
 
 			if (!*token)
 			{
-				Ren_Warning("WARNING: EOF without closing bracket\n");
+				Ren_Warning("R_LoadLights WARNING: EOF without closing bracket\n");
 				break;
 			}
 
@@ -5169,7 +5169,7 @@ void R_LoadLights(char *lightDefs)
 
 			if (!*token)
 			{
-				Ren_Warning("WARNING: missing value for key '%s'\n", keyname);
+				Ren_Warning("R_LoadLights WARNING: missing value for key '%s'\n", keyname);
 				continue;
 			}
 
@@ -5351,7 +5351,7 @@ void R_LoadLights(char *lightDefs)
 
 		if (*token != '}')
 		{
-			Ren_Warning("WARNING: expected } found '%s'\n", token);
+			Ren_Warning("R_LoadLights WARNING: expected } found '%s'\n", token);
 
 			if (target)
 			{
@@ -5378,7 +5378,7 @@ void R_LoadLights(char *lightDefs)
 					if (!setProjTargetOrigin(lightDefs, target, light))
 					{
 						// goldrush throws this because of missing info_null 't713'
-						Ren_Warning("R_LoadLights warning: no projection target found for %s\n", target);
+						Ren_Warning("R_LoadLights WARNING: no projection target found for %s\n", target);
 					}
 					numProjLights++;
 					break;
