@@ -4779,6 +4779,171 @@ void R_LoadLightGrid(lump_t *l)
 }
 
 /**
+ * @brief Parses all ents again and sets origin from given targetname null_info ent
+ */
+qboolean setProjTargetOrigin(char *lightDefs, char *targetname, trRefLight_t *light)
+{
+	char     *p = lightDefs, *token;
+	char     keyname[MAX_TOKEN_CHARS];
+	char     value[MAX_TOKEN_CHARS];
+	qboolean isInfoNull, isRequestedTarget;
+	char     *origin;
+
+	if (!targetname || !targetname[0])
+	{
+		Ren_Warning("setTarget WARNING: no target set!\n", targetname);
+		return qfalse;
+	}
+	
+	//Ren_Print("searching for targetname %s\n", targetname);
+	
+	// count lights
+	while (1)
+	{
+		// parse {
+		token = COM_ParseExt2(&p, qtrue);
+
+		if (!*token)
+		{
+			// end of entities string
+			break;
+		}
+
+		if (*token != '{')
+		{
+			Ren_Warning("WARNING: expected { found '%s'\n", token);
+			break;
+		}
+
+		isInfoNull        = qfalse;
+		isRequestedTarget = qfalse;
+		origin            = NULL;
+		
+		// parse epairs
+		while (1)
+		{
+			// parse key
+			token = COM_ParseExt2(&p, qtrue);
+
+			if (*token == '}')
+			{
+				break;
+			}
+
+			if (!*token)
+			{
+				Ren_Warning("WARNING: EOF without closing bracket\n");
+				break;
+			}
+
+			Q_strncpyz(keyname, token, sizeof(keyname));
+
+			// parse value
+			token = COM_ParseExt2(&p, qfalse);
+
+			if (!*token)
+			{
+				Ren_Warning("WARNING: missing value for key '%s'\n", keyname);
+				continue;
+			}
+
+			Q_strncpyz(value, token, sizeof(value));
+
+			// check if this entity is a light
+			// light related ents are
+			// light, lightJunior, dlight, corona, info_null (spotlights)
+			// see also misc_light_surface, misc_spotlight
+			//if (!Q_stricmp(keyname, "classname") && (!Q_stricmp(value, "light") || !Q_stricmp(value, "lightJunior") || !Q_stricmp(value, "dlight")))
+			if (!Q_stricmp(keyname, "classname") && (!Q_stricmp(value, "info_null")))
+			{
+				isInfoNull = qtrue;
+			}
+
+			// note: per definition lightJunior never has a target
+			if (!Q_stricmp(keyname, "targetname") && !Q_stricmp(value, targetname))
+			{
+				isRequestedTarget = qtrue;
+			}
+
+			if (!Q_stricmp(keyname, "origin"))
+			{		
+				origin =  ri.Z_Malloc(strlen(value) + 1);
+				strcpy(origin, value);
+			}
+		}
+
+		if (*token != '}')
+		{
+			Ren_Warning("WARNING: expected } found '%s'\n", token);
+			
+			if (origin)
+			{
+				ri.Free(origin);
+			}
+
+			break;
+		}
+
+		if (isInfoNull && isRequestedTarget)
+		{
+			if (origin)
+			{
+				sscanf(value, "%f %f %f", &light->l.projTarget[0], &light->l.projTarget[1], &light->l.projTarget[2]);
+				ri.Free(origin);
+			}
+			else
+			{
+				Ren_Warning("WARNING: requested target has no origin '%s'\n");
+			}
+			
+			return qtrue; // we are done
+		}
+		
+		if (origin)
+		{
+			ri.Free(origin);
+		}
+	}
+
+	return qfalse;
+}
+
+// this is done for a better effect FIXME: delete? cvar? ditch?
+#define RADIUS_MULTIPLICATOR 3
+
+void resetRefLight(trRefLight_t *light)
+{
+	QuatClear(light->l.rotation); // reset rotation because it may be set to the rotation of other entities
+	VectorClear(light->l.center);
+
+	light->l.color[0] = 1;
+	light->l.color[1] = 1;
+	light->l.color[2] = 1;
+
+	light->l.scale = r_lightScale->value;
+
+	light->l.radius[0] = 64 * RADIUS_MULTIPLICATOR; // default radius 64
+	light->l.radius[1] = 64 * RADIUS_MULTIPLICATOR;
+	light->l.radius[2] = 64 * RADIUS_MULTIPLICATOR;
+
+	VectorClear(light->l.projTarget);
+	VectorClear(light->l.projRight);
+	VectorClear(light->l.projUp);
+	VectorClear(light->l.projStart);
+	VectorClear(light->l.projEnd);
+
+	light->l.inverseShadows = qfalse;
+
+	light->isStatic    = qtrue;
+	light->noRadiosity = qfalse;
+	light->additive    = qtrue;
+
+	light->shadowLOD = 0;
+
+	light->l.rlType  = RL_OMNI;
+}
+
+/**
  * @brief This is extracting classname light and lightJunior entities from bsp into s_worldData.lights 
  *
  * @param[in] lightDefs
@@ -4788,20 +4953,19 @@ void R_LoadLightGrid(lump_t *l)
  * FIXME: spotlights targets
  * FIXME: sun spotlight
  * 
+ * FIXME: this might be optimized by more preparsing (f.e. store info_null ents for spotlights at the first time
+ *        of parsing (we do a full parse of ent def string twice in R_LoadLights and for each target in setProjTarget ...)
+ *
+ * classname light:
+ *
  * fade
- * - Falloff/radius adjustment value. Multiply the run of the slope by "fade" (1.0f default only valid for "Linear" lights wolf)
  * light
- * - Overrides the default 300 intensity.
  * radius
- * - Overrides the default 64 unit radius of a spotlight at the target point.
  * target
- * - Lights pointed at a target will be spotlights.
  * targetname
- * - (If you see doubled targetname keys, this was done for future coding reasons)
  * _anglescale
  * - For scaling angle attenuation. Use a small value (< 1.0) to lessen the angle attenuation, and a high value (> 1.0) for sharper, more faceted lighting.
  * _color
- * - Weighted RGB value of light color ('k' key)(default white - 1.0 1.0 1.0).
  * _deviance
  * - Radius within which additional samples will be placed.
  * _filter;_filterradius
@@ -4809,9 +4973,7 @@ void R_LoadLightGrid(lump_t *l)
  * _samples
  * - Makes Q3map2 replace the light with several smaller lights for smoother illumination. Values of 4 or so will be adequate.(where "#" is distance in world units for point/spot lights and degrees for suns)
  * _sun
- * - Set this key to 1 on a spotlight to make an infinite sun light.
- *
- *  angle?!
+ * angle?!
  *
  * {
  * "target" "t514"
@@ -4823,6 +4985,14 @@ void R_LoadLightGrid(lump_t *l)
  * "fade" ".9"
  * "classname" "light"
  * }
+ *
+ *
+ * classname lightJunior:
+ *
+ * fade
+ * light
+ * radius
+ *
  */
 void R_LoadLights(char *lightDefs)
 {
@@ -4830,14 +5000,16 @@ void R_LoadLights(char *lightDefs)
 	char         *p = lightDefs, *token;
 	char         keyname[MAX_TOKEN_CHARS];
 	char         value[MAX_TOKEN_CHARS];
-	qboolean     isLight           = qfalse;
+	qboolean     isLight, hasInfoNull;
 	int          numEntities       = 1; // parsed worldspawn so far
 	int          numLights         = 0;
 	int          numOmniLights     = 0;
 	int          numProjLights     = 0;
 	int          numParallelLights = 0;
 	trRefLight_t *light;
-	int          i = 0;
+	int          i           = 0;
+	int          numInfoNull = 0;
+	char         *target;
 
 	// count lights
 	while (1)
@@ -4858,7 +5030,8 @@ void R_LoadLights(char *lightDefs)
 		}
 
 		// new entity
-		isLight = qfalse;
+		isLight     = qfalse;
+		hasInfoNull = qfalse;
 
 		// parse epairs
 		while (1)
@@ -4899,6 +5072,12 @@ void R_LoadLights(char *lightDefs)
 			{
 				isLight = qtrue;
 			}
+
+			// note: per definition lightJunior never has a target
+			if (!Q_stricmp(keyname, "target")  || !Q_stricmp(keyname, "targetname"))
+			{
+				hasInfoNull = qtrue;
+			}
 		}
 
 		if (*token != '}')
@@ -4912,11 +5091,16 @@ void R_LoadLights(char *lightDefs)
 			numLights++;
 		}
 
+		if (isLight && hasInfoNull)
+		{
+			numInfoNull++;
+		}
+
 		numEntities++;
 	}
 
 	Ren_Developer("%i total entities counted\n", numEntities);
-	Ren_Print("%i total lights counted\n", numLights);
+	Ren_Print("%i total lights and %i spotlight targets counted\n", numLights, numInfoNull);
 
 	s_worldData.numLights = numLights;
 
@@ -4932,39 +5116,12 @@ void R_LoadLights(char *lightDefs)
 	// basic light setup
 	for (i = 0, light = s_worldData.lights; i < s_worldData.numLights; i++, light++)
 	{
-		QuatClear(light->l.rotation);
-		VectorClear(light->l.center);
-
-		light->l.color[0] = 1;
-		light->l.color[1] = 1;
-		light->l.color[2] = 1;
-
-		light->l.scale = r_lightScale->value;
-
-		light->l.radius[0] = 64; // default radius
-		light->l.radius[1] = 64;
-		light->l.radius[2] = 64;
-
-		VectorClear(light->l.projTarget);
-		VectorClear(light->l.projRight);
-		VectorClear(light->l.projUp);
-		VectorClear(light->l.projStart);
-		VectorClear(light->l.projEnd);
-
-		light->l.inverseShadows = qfalse;
-
-		light->isStatic    = qtrue;
-		light->noRadiosity = qfalse;
-		light->additive    = qtrue;
-
-		light->shadowLOD = 0;
-
-		light->l.rlType  = RL_OMNI;
+		resetRefLight(light);
 	}
 
 	// parse lights
 	p           = lightDefs;
-	numEntities = 1;
+	numEntities = 1; // why 1? - worldspawn?
 	light       = &s_worldData.lights[0];
 
 	while (1)
@@ -4986,6 +5143,7 @@ void R_LoadLights(char *lightDefs)
 
 		// new entity
 		isLight = qfalse;
+		target  = NULL;
 
 		// parse epairs
 		while (1)
@@ -5019,7 +5177,14 @@ void R_LoadLights(char *lightDefs)
 
 			// check if this entity is a light
 			//if (!Q_stricmp(keyname, "classname") && (!Q_stricmp(value, "light") || !Q_stricmp(value, "lightJunior") || !Q_stricmp(value, "dlight")))
-			if (!Q_stricmp(keyname, "classname") && (!Q_stricmp(value, "light") || !Q_stricmp(value, "lightJunior")))
+			// Lights pointed at a target will be spotlights.(Some options will create a Q3map2 light shader for your map"
+			if (!Q_stricmp(keyname, "classname") && !Q_stricmp(value, "light"))
+			{
+				isLight = qtrue;
+			}
+			// Light that only affects dynamic game models, but does not contribute to lightmaps.
+			// Lights pointed at a target will be spotlights. (Some options will create a Q3map2 light shader for your map.)
+			if (!Q_stricmp(keyname, "classname") && !Q_stricmp(value, "lightJunior"))
 			{
 				isLight = qtrue;
 			}
@@ -5027,43 +5192,65 @@ void R_LoadLights(char *lightDefs)
 			else if (!Q_stricmp(keyname, "origin") || !Q_stricmp(keyname, "light_origin")) // ETL (origin)
 			{
 				sscanf(value, "%f %f %f", &light->l.origin[0], &light->l.origin[1], &light->l.origin[2]);
-				//s = &value[0];
-				//COM_Parse1DMatrix(&s, 3, light->l.origin, qfalse);
+			}
+			// check for origin
+			else if (!Q_stricmp(keyname, "spawnflags")) // ETL (spawnflags)
+			{
+				// FIXME: light: ANGLE, NONLINEAR, Q3MAP_NON-DYNAMIC
+				// FIXME: lightJunior: ANGLE, NEGATIVE_POINT, NEGATIVE_SPOT, NONLINEAR
+				int spawnflags = atoi(value);
+			}
+			else if (!Q_stricmp(keyname, "angle")) // ETL (angle)
+			{
+				 // FIXME
+				int angle = atoi(value);
+			}
+			// Falloff/radius adjustment value. Multiply the run of the slope by "fade" (1.0f default only valid for "Linear" lights wolf)
+			else if (!Q_stricmp(keyname, "fade")) // ETL (fade)
+			{
+				 // FIXME
+				float fade = atoi(value);
 			}
 			// check for center
 			else if (!Q_stricmp(keyname, "light_center"))
 			{
 				sscanf(value, "%f %f %f", &light->l.center[0], &light->l.center[1], &light->l.center[2]);
-				//s = &value[0];
-				//Com_Parse1DMatrix(&s, 3, light->l.center, qfalse);
 			}
-			// check for color
+			// check for color - weighted RGB value of light color ('k' key)(default white - 1.0 1.0 1.0)
 			else if (!Q_stricmp(keyname, "_color")) // ETL
 			{
 				sscanf(value, "%f %f %f", &light->l.color[0], &light->l.color[1], &light->l.color[2]);
-				//s = &value[0];
-				//Com_Parse1DMatrix(&s, 3, light->l.color, qfalse);
 			}
-			// check for radius
+			// check for radius - overrides the default 64 unit radius of a spotlight at the target point
 			else if (!Q_stricmp(keyname, "light_radius") || !Q_stricmp(keyname, "radius")) // ETL (radius)
 			{
 				sscanf(value, "%f %f %f", &light->l.radius[0], &light->l.radius[1], &light->l.radius[2]);
-				//s = &value[0];
-				//Com_Parse1DMatrix(&s, 3, light->l.radius, qfalse);
+
+				//VectorScale();
+				light->l.radius[0] *= RADIUS_MULTIPLICATOR;
+				light->l.radius[1] *= RADIUS_MULTIPLICATOR;
+				light->l.radius[2] *= RADIUS_MULTIPLICATOR;
 			}
 			// check for light_target
 			else if (!Q_stricmp(keyname, "light_target"))
 			{
 				sscanf(value, "%f %f %f", &light->l.projTarget[0], &light->l.projTarget[1], &light->l.projTarget[2]);
-				//s = &value[0];
-				//Com_Parse1DMatrix(&s, 3, light->l.projTarget, qfalse);
+
 				light->l.rlType = RL_PROJ;
 			}
+			// lights pointed at a target will be spotlights
 			else if (!Q_stricmp(keyname, "target")) // ETL
 			{
-				// FIXME: set/check target origin/projTarget (see origin of info_null entity)
-				light->l.rlType = RL_OMNI;
+				target = ri.Z_Malloc(strlen(value) + 1);
+				strcpy(target, value);
+
+				light->l.rlType = RL_PROJ;
 			}
+			else if (!Q_stricmp(keyname, "targetname")) // ETL
+			{
+				// see target, this is just duplicate in bsp
+			}
+			// set this key to 1 on a spotlight to make an infinite sun light
 			else if (!Q_stricmp(keyname, "_sun")) // ETL
 			{
 				// FIXME: inspect (has to be set on spotlight ..., target?!)
@@ -5073,34 +5260,31 @@ void R_LoadLights(char *lightDefs)
 			else if (!Q_stricmp(keyname, "light_right"))
 			{
 				sscanf(value, "%f %f %f", &light->l.projRight[0], &light->l.projRight[1], &light->l.projRight[2]);
-				//s = &value[0];
-				//Com_Parse1DMatrix(&s, 3, light->l.projRight, qfalse);
+
 				light->l.rlType = RL_PROJ;
 			}
 			// check for light_up
 			else if (!Q_stricmp(keyname, "light_up"))
 			{
 				sscanf(value, "%f %f %f", &light->l.projUp[0], &light->l.projUp[1], &light->l.projUp[2]);
-				//s = &value[0];
-				//Com_Parse1DMatrix(&s, 3, light->l.projUp, qfalse);
+
 				light->l.rlType = RL_PROJ;
 			}
 			// check for light_start
 			else if (!Q_stricmp(keyname, "light_start"))
 			{
 				sscanf(value, "%f %f %f", &light->l.projStart[0], &light->l.projStart[1], &light->l.projStart[2]);
-				//s = &value[0];
-				//Com_Parse1DMatrix(&s, 3, light->l.projStart, qfalse);
+
 				light->l.rlType = RL_PROJ;
 			}
 			// check for light_end
 			else if (!Q_stricmp(keyname, "light_end"))
 			{
 				sscanf(value, "%f %f %f", &light->l.projEnd[0], &light->l.projEnd[1], &light->l.projEnd[2]);
-				//s = &value[0];
-				//Com_Parse1DMatrix(&s, 3, light->l.projEnd, qfalse);
+
 				light->l.rlType = RL_PROJ;
 			}
+			// Overrides the default 300 intensity
 			// fixed: xreal did set radius ...
 			else if (!Q_stricmp(keyname, "light") || !Q_stricmp(keyname, "_light")) // ETL (light)
 			{
@@ -5168,13 +5352,18 @@ void R_LoadLights(char *lightDefs)
 		if (*token != '}')
 		{
 			Ren_Warning("WARNING: expected } found '%s'\n", token);
+
+			if (target)
+			{
+				ri.Free(target);
+			}
+
 			break;
 		}
 
 		if (!isLight)
 		{
-			// reset rotation because it may be set to the rotation of other entities
-			QuatClear(light->l.rotation);
+			resetRefLight(light);
 		}
 		else
 		{
@@ -5186,6 +5375,11 @@ void R_LoadLights(char *lightDefs)
 					numOmniLights++;
 					break;
 				case RL_PROJ:
+					if (!setProjTargetOrigin(lightDefs, target, light))
+					{
+						// goldrush throws this because of missing info_null 't713'
+						Ren_Warning("R_LoadLights warning: no projection target found for %s\n", target);
+					}
 					numProjLights++;
 					break;
 				case RL_DIRECTIONAL:
@@ -5199,6 +5393,11 @@ void R_LoadLights(char *lightDefs)
 			}
 		}
 
+		if (target)
+		{
+			ri.Free(target);
+		}
+		
 		numEntities++;
 	}
 
