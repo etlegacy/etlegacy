@@ -6061,7 +6061,7 @@ static void UI_BuildServerDisplayList(int force)
 			uiInfo.serverStatus.numPlayersOnServers += clients;
 
 			// drop obvious phony servers
-			if (maxClients >= MAX_CLIENTS && !(ui_serverBrowserSettings.integer & UI_BROWSER_ALLOW_MAX_CLIENTS))
+			if (maxClients > MAX_CLIENTS && !(ui_serverBrowserSettings.integer & UI_BROWSER_ALLOW_MAX_CLIENTS))
 			{
 				trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
 				continue;
