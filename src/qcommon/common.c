@@ -2976,7 +2976,7 @@ void Com_Init(char *commandLine)
 	Cmd_AddCommand("update", Com_Update_f, "Updates the game to latest version.");
 
 	dl_curlURL = Cvar_Get("dl_curlURL", "http://mirror.etlegacy.com/etmain", CVAR_INIT);
-	Cmd_AddCommand("curl", Com_Download_f, "Downloads a map from the URL set in cvar dl_curlURL.");
+	Cmd_AddCommand("download", Com_Download_f, "Downloads a pk3 from the URL set in cvar dl_curlURL.");
 
 #ifdef FEATURE_DBMS
 	Cmd_AddCommand("saveDB", DB_SaveMemDB_f, "Saves the internal memory database to disk.");
