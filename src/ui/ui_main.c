@@ -6057,13 +6057,19 @@ static void UI_BuildServerDisplayList(int force)
 			trap_LAN_GetServerInfo(ui_netSource.integer, i, info, MAX_STRING_CHARS);
 
 			clients                                  = atoi(Info_ValueForKey(info, "clients"));
+			maxClients                               = atoi(Info_ValueForKey(info, "sv_maxclients"));
 			uiInfo.serverStatus.numPlayersOnServers += clients;
+
+			// drop obvious phony servers
+			if (maxClients >= MAX_CLIENTS && !(ui_serverBrowserSettings.integer & UI_BROWSER_ALLOW_MAX_CLIENTS))
+			{
+				trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
+				continue;
+			}
 
 			trap_Cvar_Update(&ui_browserShowEmptyOrFull);
 			if (ui_browserShowEmptyOrFull.integer)
 			{
-				maxClients = atoi(Info_ValueForKey(info, "sv_maxclients"));
-
 				if (clients < maxClients && (
 						(!clients && ui_browserShowEmptyOrFull.integer == 2) ||
 						(clients && ui_browserShowEmptyOrFull.integer == 1)))
@@ -8155,7 +8161,7 @@ void UI_SetActiveMenu(uiMenuCommand_t menu)
 				}
 				else if (strlen(buf) > 5 && !Q_stricmpn(buf, "ET://", 5) && strlen(buf) < 200)
 				{
-					if (ui_serverBrowserSettings.integer)
+					if (ui_serverBrowserSettings.integer & UI_BROWSER_ALLOW_REDIRECT)
 					{
 						Q_strncpyz(buf, buf + 5, sizeof(buf));
 						Com_Printf(trap_TranslateString("Server is full, redirect to: %s\n"), buf);

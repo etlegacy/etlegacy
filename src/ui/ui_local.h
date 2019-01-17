@@ -105,6 +105,10 @@ extern vmCvar_t cl_bypassMouseInput;
 
 extern vmCvar_t ui_serverBrowserSettings;
 
+// ui_serverBrowserSettings flags
+#define UI_BROWSER_ALLOW_REDIRECT    BIT(0)
+#define UI_BROWSER_ALLOW_MAX_CLIENTS BIT(1)
+
 // ui_qmenu.c
 #define RCOLUMN_OFFSET          (BIGCHAR_WIDTH)
 #define LCOLUMN_OFFSET          (-BIGCHAR_WIDTH)
