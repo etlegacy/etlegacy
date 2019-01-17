@@ -1081,7 +1081,7 @@ extern int com_hunkusedvalue;
 
 extern qboolean com_errorEntered;
 
-extern cvar_t *dl_curlURL;
+extern cvar_t *com_downloadURL;
 
 extern fileHandle_t com_journalFile;
 extern fileHandle_t com_journalDataFile;

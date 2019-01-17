@@ -438,7 +438,7 @@ void Com_Download_f(void)
 #ifndef DEDICATED
 	if (cls.state >= CA_LOADING)
 	{
-		Com_Printf("Client already downloading or in game!");
+		Com_Printf("download: client already downloading or in game!");
 		return;
 	}
 #endif
@@ -454,15 +454,15 @@ void Com_Download_f(void)
 		// Check if the fileName ends with the pk3 extension
 		if (!COM_CompareExtension(name, "pk3"))
 		{
-			Com_Printf("Com_Download_f: wget is for pk3 files only!");
+			Com_Printf("download: command is for pk3 files only!");
 		}
 		else
 		{
-			Com_SetupDownload(dl_curlURL->string, name);
+			Com_SetupDownload(com_downloadURL->string, name);
 		}
 	}
 	else
 	{
-		Com_Printf("Usage: wget <filname.pk3>");
+		Com_Printf("Usage: download <filename1.pk3> <filename2.pk3> <filename3.pk3> ...");
 	}
 }

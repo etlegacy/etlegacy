@@ -147,7 +147,7 @@ cvar_t *com_watchdog_cmd;
 
 cvar_t *com_hunkused;
 
-cvar_t *dl_curlURL;
+cvar_t *com_downloadURL;
 
 // com_speeds times
 int time_game;
@@ -2975,8 +2975,8 @@ void Com_Init(char *commandLine)
 	Cmd_AddCommand("writeconfig", Com_WriteConfig_f, "Write the config file to a specific name.");
 	Cmd_AddCommand("update", Com_Update_f, "Updates the game to latest version.");
 
-	dl_curlURL = Cvar_Get("dl_curlURL", "http://mirror.etlegacy.com/etmain", CVAR_INIT);
-	Cmd_AddCommand("download", Com_Download_f, "Downloads a pk3 from the URL set in cvar dl_curlURL.");
+	com_downloadURL = Cvar_Get("com_downloadURL", "http://mirror.etlegacy.com/etmain", CVAR_INIT);
+	Cmd_AddCommand("download", Com_Download_f, "Downloads a pk3 from the URL set in cvar com_downloadURL.");
 
 #ifdef FEATURE_DBMS
 	Cmd_AddCommand("saveDB", DB_SaveMemDB_f, "Saves the internal memory database to disk.");
