@@ -8155,7 +8155,7 @@ void UI_SetActiveMenu(uiMenuCommand_t menu)
 				}
 				else if (strlen(buf) > 5 && !Q_stricmpn(buf, "ET://", 5) && strlen(buf) < 200)
 				{
-					if (ui_serverRedirect.integer)
+					if (ui_serverBrowserSettings.integer)
 					{
 						Q_strncpyz(buf, buf + 5, sizeof(buf));
 						Com_Printf(trap_TranslateString("Server is full, redirect to: %s\n"), buf);
@@ -8468,7 +8468,7 @@ vmCvar_t cg_crosshairSize;
 
 vmCvar_t cl_bypassMouseInput;
 
-vmCvar_t ui_serverRedirect;
+vmCvar_t ui_serverBrowserSettings;
 
 cvarTable_t cvarTable[] =
 {
@@ -8643,7 +8643,7 @@ cvarTable_t cvarTable[] =
 
 	{ NULL,                             "cg_locations",                        "3",                          CVAR_ARCHIVE,                   0 },
 
-	{ &ui_serverRedirect,               "ui_serverRedirect",                   "0",                          CVAR_INIT,                      0 },
+	{ &ui_serverBrowserSettings,        "ui_serverBrowserSettings",            "0",                          CVAR_INIT,                      0 },
 };
 
 const unsigned int cvarTableSize = sizeof(cvarTable) / sizeof(cvarTable[0]);
