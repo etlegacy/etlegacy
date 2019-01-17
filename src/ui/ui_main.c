@@ -6174,9 +6174,14 @@ static void UI_BuildServerDisplayList(int force)
 			trap_Cvar_Update(&ui_browserShowHumans);
 			if (ui_browserShowHumans.integer)
 			{
-				// ETL servers only
+				// Legacy mod or ETL servers only
 				// FIXME: check for ping and compute humans/bots number for vanilla server?
 				if (strstr(Info_ValueForKey(info, "version"), PRODUCT_LABEL) == NULL)
+				{
+					continue;
+				}
+				else if (!(ui_serverBrowserSettings.integer & UI_BROWSER_ALLOW_HUMANS_COUNT) &&
+				    Q_stristr(Info_ValueForKey(info, "game"), "legacy") == 0)
 				{
 					continue;
 				}
@@ -6987,13 +6992,17 @@ const char *UI_FeederItemText(int feederID, int index, int column, qhandle_t *ha
 			case SORT_CLIENTS:
 				clients    = atoi(Info_ValueForKey(info, "clients"));
 				maxclients = atoi(Info_ValueForKey(info, "sv_maxclients"));
+				int humans = atoi(Info_ValueForKey(info, "humans"));
 
-				if (strstr(Info_ValueForKey(info, "version"), PRODUCT_LABEL) != NULL)
+				if ((ui_serverBrowserSettings.integer & UI_BROWSER_ALLOW_HUMANS_COUNT) &&
+				    strstr(Info_ValueForKey(info, "version"), PRODUCT_LABEL) != NULL)
 				{
-					int humans = atoi(Info_ValueForKey(info, "humans"));
-
-					Com_sprintf(clientBuff, sizeof(clientBuff), "^W%i^9(+%i)/%i",
-					            humans, clients - humans, maxclients);
+					Com_sprintf(clientBuff, sizeof(clientBuff), "^W%i^9(+%i)/%i", humans, clients - humans, maxclients);
+				}
+				else if (Q_stristr(Info_ValueForKey(info, "game"), "legacy") != 0 &&
+				    strstr(Info_ValueForKey(info, "version"), PRODUCT_LABEL) != NULL)
+				{
+					Com_sprintf(clientBuff, sizeof(clientBuff), "^W%i^9(+%i)/%i", humans, clients - humans, maxclients);
 				}
 				else
 				{
