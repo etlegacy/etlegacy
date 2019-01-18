@@ -26,6 +26,8 @@
         android:name="android.hardware.type.pc"
         android:required="false" />
 
+    <!-- Allow access to internet -->
+    <uses-permission android:name="android.permission.INTERNET" />
     <!-- Allow writing to external storage -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <!-- Allow access to the vibrator -->
