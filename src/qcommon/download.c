@@ -452,7 +452,7 @@ void Com_Download_f(void)
 		name = Cmd_Argv(1);
 
 		// Check if the fileName ends with the pk3 extension
-		if (!COM_CompareExtension(name, "pk3"))
+		if (!COM_CompareExtension(name, ".pk3"))
 		{
 			Com_Printf("download: command is for pk3 files only!");
 		}
