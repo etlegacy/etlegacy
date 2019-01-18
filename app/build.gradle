@@ -7,6 +7,19 @@ else {
     apply plugin: 'com.android.library'
 }
 
+task pk3(type: Zip) {
+    archiveName = "pak3_v2.76_dirty.pk3"
+    destinationDir = file("$projectDir/src/main/assets/")
+
+    from "$projectDir/../../etlegacy/etmain/"
+}
+
+tasks.whenTaskAdded { task ->
+    if (task.name == 'assembleRelease') {
+        task.dependsOn pk3
+    }
+}
+
 android {
     compileSdkVersion 26
     defaultConfig {
@@ -19,7 +32,7 @@ android {
         versionName "1.0"
         externalNativeBuild {
             cmake {
-                arguments "-DCROSS_COMPILE32=OFF", "-DFEATURE_RENDERER2=OFF", "-DFEATURE_RENDERER_GLES=ON", "-DBUILD_SERVER=OFF", "-DINSTALL_EXTRA=OFF", "-DCMAKE_BUILD_TYPE=Release", "-DBUNDLED_LIBS=ON", "-DBUNDLED_SDL=OFF", "-DFEATURE_LUA=OFF", "-DRENDERER_DYNAMIC=OFF", "-DCMAKE_C_FLAGS= -std=gnu99"
+                arguments "-DCROSS_COMPILE32=OFF", "-DFEATURE_RENDERER2=OFF", "-DFEATURE_RENDERER_GLES=ON", "-DBUILD_SERVER=OFF", "-DINSTALL_EXTRA=OFF", "-DCMAKE_BUILD_TYPE=Release", "-DBUNDLED_LIBS=OFF", "-DBUNDLED_SDL=OFF", "-DBUNDLED_LUA=OFF", "-DFEATURE_LUA=OFF", "-DBUNDLED_OPENAL=OFF", "-DFEATURE_OPENAL=OFF", "-DBUNDLED_FREETYPE=OFF", "-DFEATURE_FREETYPE=OFF", "-DBUNDLED_GLEW=OFF", "-DRENDERER_DYNAMIC=OFF", "-DBUNDLED_JANSSON=OFF", "-DBUNDLED_THEORA=OFF", "-DFEATURE_THEORA=OFF"
                 //"-DANDROID_ARM_NEON=OFF"
             }
         }
@@ -29,8 +42,19 @@ android {
             abiFilters 'armeabi-v7a', 'arm64-v8a'
         }
     }
+
+    signingConfigs {
+        release {
+            storeFile file("")
+            storePassword ""
+            keyAlias ""
+            keyPassword ""
+        }
+    }
+
     buildTypes {
         release {
+            signingConfig signingConfigs.release
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
