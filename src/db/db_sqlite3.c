@@ -60,12 +60,16 @@ char *sql_Version1 =
 //   profile - profilepath
 //   source - favorite source
 //   address - IP + port
-//   name -
-//   mod
+//   name    - FIXME
+//   mod     - FIXME
+//   updated (last visit)
+//   created
+//
 //
 char *sql_Version2 =
 		"CREATE TABLE IF NOT EXISTS client_servers (profile TEXT NOT NULL, source INT NOT NULL, address TEXT NOT NULL, name TEXT NOT NULL, mod TEXT NOT NULL, updated DATETIME, created DATETIME DEFAULT CURRENT_TIMESTAMP);"
-		"CREATE INDEX client_servers_profile_idx ON client_servers(profile);"; // client table
+		"CREATE INDEX client_servers_profile_idx ON client_servers(profile);"
+		"CREATE INDEX client_servers_address_idx ON client_servers(address);"; // client table
 
 // version 3
 /*
@@ -103,7 +107,7 @@ int DB_Init()
 	isDBActive = qfalse;
 
 	db_mode = Cvar_Get("db_mode", "2", CVAR_ARCHIVE | CVAR_LATCH);
-	db_uri  = Cvar_Get("db_uri", "etl.db", CVAR_ARCHIVE | CVAR_LATCH); // filename in path (not real DB URL for now)
+	db_uri  = Cvar_Get("db_uri", "etl.db", CVAR_ARCHIVE | CVAR_LATCH); // .db extension is must have!
 
 	if (db_mode->integer < 1 || db_mode->integer > 2)
 	{
@@ -111,13 +115,20 @@ int DB_Init()
 		return 0; // return 0! - see isDBActive
 	}
 
-	Com_Printf("SQLite3 libversion %s - database URL '%s' - %s\n", sqlite3_libversion(), db_uri->string, db_mode->integer == 1 ? "in-memory" : "in file");
+	Com_Printf("SQLite3 libversion %s - database URI '%s' - %s\n", sqlite3_libversion(), db_uri->string, db_mode->integer == 1 ? "in-memory" : "in file");
 
 	if (!db_uri->string[0]) // FIXME: check extension db
 	{
-		Com_Printf("... can't init database - empty URL\n");
+		Com_Printf("... can't init database - empty URI\n");
 		return 1;
 	}
+
+	// FIXME:
+	//if (!COM_CompareExtension(db_uri->string), ".db")
+	//{
+	//	Com_Printf("... can't init database - invalid filename extension\n");
+	//	return 1;
+	//}
 
 	to_ospath                        = FS_BuildOSPath(Cvar_VariableString("fs_homepath"), db_uri->string, "");
 	to_ospath[strlen(to_ospath) - 1] = '\0';
@@ -211,7 +222,6 @@ int DB_Init()
 
 	Com_Printf("SQLite3 ET: L [%i] database '%s' init in [%i] ms - autocommit %i\n", SQL_DBMS_SCHEMA_VERSION, to_ospath, (Sys_Milliseconds() - msec), sqlite3_get_autocommit(db));
 
-
 	if (DB_UpdateSchema())
 	{
 		Com_Printf("SQLite3 update failed.\n");
@@ -291,6 +301,9 @@ int DB_UpdateSchema()
 
 	int version = -1;
 
+	// FIXME
+	return 0;
+
 	// read version from version table
 
 	if (version == SQL_DBMS_SCHEMA_VERSION) // we are done
@@ -316,7 +329,7 @@ int DB_UpdateSchema()
 /**
  * @brief DB_Create
  *
- * @return
+ * @return result code
  */
 int DB_Create()
 {
@@ -387,7 +400,7 @@ int DB_Create()
 /**
  * @brief saves memory db to disk
  *
- * @return
+ * @return result code
  */
 int DB_SaveMemDB()
 {
@@ -483,7 +496,7 @@ int DB_Close()
  * @param[in] zFilename
  * @param xProgress Progress function to invoke
  *
- * @return
+ * @return sqlite result code
  *
  */
 int DB_BackupDB(const char *zFilename, void (*xProgress)(int, int))
@@ -550,7 +563,7 @@ int DB_BackupDB(const char *zFilename, void (*xProgress)(int, int))
  * @param[in] zFilename
  * @param[in] isSave
  *
- * @return
+ * @return result code
  */
 int DB_LoadOrSaveDb(sqlite3 *pInMemory, const char *zFilename, int isSave)
 {
@@ -608,7 +621,7 @@ int DB_LoadOrSaveDb(sqlite3 *pInMemory, const char *zFilename, int isSave)
  * @param[in] argv
  * @param azColName
  *
- * @return
+ * @return 0
  */
 int DB_Callback(void *NotUsed, int argc, char **argv, char **azColName)
 {
@@ -621,10 +634,10 @@ int DB_Callback(void *NotUsed, int argc, char **argv, char **azColName)
 	//}
 	//Com_Printf("\n");
 
-	Com_Printf("|");
+	Com_Printf("^2|");
 	for (i = 0; i < argc; i++)
 	{
-		Com_Printf("%s|", argv[i] && argv[i][0] ? argv[i] : "NULL");
+		Com_Printf("^7%s^2|^7", argv[i] && argv[i][0] ? argv[i] : "NULL");
 	}
 	Com_Printf("\n");
 
