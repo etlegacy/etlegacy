@@ -32,10 +32,7 @@
  * @file db_sqlite3.c
  * @brief ET: Legacy SQL interface
  *
- * TODO:  - extend our db scheme
- *        - implement version system & auto updates
- *
- *        Tutorial: http://zetcode.com/db/sqlitec/
+ * Tutorial: http://zetcode.com/db/sqlitec/
  */
 
 #include "db_sql.h"
@@ -45,6 +42,51 @@ cvar_t *db_uri;
 
 sqlite3  *db;
 qboolean isDBActive;
+
+
+// Important Note
+// Always create optional feature tables see f.e. rating tables otherwise we can't ensure db integrity for updates
+
+// version 1
+char *sql_Version1 =
+		"CREATE TABLE IF NOT EXISTS etl_version (Id INT PRIMARY KEY NOT NULL, name TEXT, sql TEXT, created TEXT);" // both
+		"CREATE TABLE IF NOT EXISTS rating_users (guid TEXT PRIMARY KEY NOT NULL, mu REAL, sigma REAL, created TEXT, updated TEXT, UNIQUE (guid));"     // server table
+		"CREATE TABLE IF NOT EXISTS rating_match (guid TEXT PRIMARY KEY NOT NULL, mu REAL, sigma REAL, time_axis INT, time_allies INT, UNIQUE (guid));" // server table
+		"CREATE TABLE IF NOT EXISTS rating_maps (mapname TEXT PRIMARY KEY NOT NULL, win_axis INT, win_allies INT, UNIQUE (mapname));";                  // server table
+
+// version 2
+//
+// table client_servers
+//   profile - profilepath
+//   source - favorite source
+//   address - IP + port
+//   name -
+//   mod
+//
+char *sql_Version2 =
+		"CREATE TABLE IF NOT EXISTS client_servers (profile TEXT NOT NULL, source INT NOT NULL, address TEXT NOT NULL, name TEXT NOT NULL, mod TEXT NOT NULL, updated DATETIME, created DATETIME DEFAULT CURRENT_TIMESTAMP);"
+		"CREATE INDEX client_servers_profile_idx ON client_servers(profile);"; // client table
+
+// version 3
+/*
+		// ban/mute table (ensure we can also do IP range ban entries)
+		// type = mute/ban
+		// af = AddressFamily
+		sql = "DROP TABLE IF EXISTS ban;"
+		      "CREATE TABLE ban (Id INT PRIMARY KEY NOT NULL, address TEXT, guid TEXT, type INT NOT NULL, reason TEXT, af INT, length TEXT, expires TEXT, created TEXT, updated TEXT);"
+		      "CREATE INDEX ban_address_idx ON ban(address);"
+		      "CREATE INDEX ban_guid_idx ON ban(guid);";
+		// expires?
+
+		result = sqlite3_exec(db, sql, 0, 0, &err_msg);
+
+		if (result != SQLITE_OK)
+		{
+			Com_Printf("SQLite3 failed to create table ban: %s\n", err_msg);
+			sqlite3_free(err_msg);
+			return 1;
+		}
+*/
 
 /**
  * @brief DB_Init
@@ -165,9 +207,16 @@ int DB_Init()
 		}
 	}
 
+	isDBActive = qtrue;
+
 	Com_Printf("SQLite3 ET: L [%i] database '%s' init in [%i] ms - autocommit %i\n", SQL_DBMS_SCHEMA_VERSION, to_ospath, (Sys_Milliseconds() - msec), sqlite3_get_autocommit(db));
 
-	isDBActive = qtrue;
+
+	if (DB_UpdateSchema())
+	{
+		Com_Printf("SQLite3 update failed.\n");
+	}
+
 	return 0;
 }
 
@@ -175,136 +224,93 @@ int DB_Init()
  * @brief creates tables and populates our scheme.
  *
  * @return
+ *
+ * @note We are using the same db for client and server so listen servers are happy
  */
 static int DB_CreateSchema()
 {
 	int  result;
 	char *err_msg = 0;
+	char *sql;
 
-	// FIXME:
-	// - split this into client and server DB?!
+	// version 1
 
-	// version table - client and server
-	char *sql = "DROP TABLE IF EXISTS etl_version; CREATE TABLE etl_version (Id INT PRIMARY KEY NOT NULL, name TEXT, sql TEXT, created TEXT);";
+	result = sqlite3_exec(db, sql_Version1, 0, 0, &err_msg);
+
+	if (result != SQLITE_OK)
+	{
+		Com_Printf("SQLite3 failed to create schema version 1: %s\n", err_msg);
+		sqlite3_free(err_msg);
+		return 1;
+	}
+
+	sql = va("INSERT INTO etl_version VALUES (1, 'ET: L DBMS schema V1', '%s', CURRENT_TIMESTAMP);", sql_Version1);
 
 	result = sqlite3_exec(db, sql, 0, 0, &err_msg);
 
 	if (result != SQLITE_OK)
 	{
-		Com_Printf("SQLite3 failed to create table version: %s\n", err_msg);
+		Com_Printf("SQLite3 failed to write ETL version 1: %s\n", err_msg);
 		sqlite3_free(err_msg);
 		return 1;
 	}
 
-	// version data
-	sql = va("INSERT INTO etl_version VALUES (%i, 'ET: L DBMS schema V%i for %s', '', CURRENT_TIMESTAMP);", SQL_DBMS_SCHEMA_VERSION, SQL_DBMS_SCHEMA_VERSION, ET_VERSION);
+	// version 2
+
+	// client_servers table - since version 2
+	result = sqlite3_exec(db, sql_Version2, 0, 0, &err_msg);
+
+	if (result != SQLITE_OK)
+	{
+		Com_Printf("... failed to create schema version 2: %s\n", err_msg);
+		sqlite3_free(err_msg);
+		return 1;
+	}
+
+	sql = va("INSERT INTO etl_version VALUES (%i, 'ET: L DBMS schema V%i for %s', '%s', CURRENT_TIMESTAMP);", SQL_DBMS_SCHEMA_VERSION, SQL_DBMS_SCHEMA_VERSION, ET_VERSION, sql_Version2);
 
 	result = sqlite3_exec(db, sql, 0, 0, &err_msg);
 
 	if (result != SQLITE_OK)
 	{
-		Com_Printf("SQLite3 failed to write ETL version: %s\n", err_msg);
+		Com_Printf("SQLite3 failed to write ETL version 2: %s\n", err_msg);
 		sqlite3_free(err_msg);
 		return 1;
 	}
-/* FIXME: addressed in 2.77
-  	// server tables
-
-	// ban/mute table (ensure we can also do IP range ban entries)
-	// type = mute/ban
-	// af = AddressFamily
-	sql = "DROP TABLE IF EXISTS ban;"
-	      "CREATE TABLE ban (Id INT PRIMARY KEY NOT NULL, address TEXT, guid TEXT, type INT NOT NULL, reason TEXT, af INT, length TEXT, expires TEXT, created TEXT, updated TEXT);"
-	      "CREATE INDEX ban_address_idx ON ban(address);"
-	      "CREATE INDEX ban_guid_idx ON ban(guid);";
-	// expires?
-
-	result = sqlite3_exec(db, sql, 0, 0, &err_msg);
-
-	if (result != SQLITE_OK)
-	{
-		Com_Printf("SQLite3 failed to create table ban: %s\n", err_msg);
-		sqlite3_free(err_msg);
-		return 1;
-	}
-
-
-	// client tables
-
-	// player table - if we want to store sessions & favourites and such for clients we need a reference to the used profile
-	sql = "DROP TABLE IF EXISTS player;"
-	      "CREATE TABLE player (Id INT PRIMARY KEY NOT NULL, profile TEXT, username TEXT, created TEXT, updated TEXT);"
-	      "CREATE INDEX player_name_idx ON player(profile);"
-	      "CREATE INDEX player_guid_idx ON player(guid);";
-
-	result = sqlite3_exec(db, sql, 0, 0, &err_msg);
-
-	if (result != SQLITE_OK)
-	{
-		Com_Printf("... failed to create table player: %s\n", err_msg);
-		sqlite3_free(err_msg);
-		return 1;
-	}
-
-	// session table - tracking of games
-	// note: created = start, updated = end of session
-	sql = "DROP TABLE IF EXISTS session;"
-	      "CREATE TABLE session (Id INT PRIMARY KEY NOT NULL, pId INT , server TEXT, port INT, gametype INT,  map TEXT,created TEXT, updated TEXT, FOREIGN KEY(pId) REFERENCES player(Id));";
-
-	result = sqlite3_exec(db, sql, 0, 0, &err_msg);
-
-	if (result != SQLITE_OK)
-	{
-		Com_Printf("... failed to create table session: %s\n", err_msg);
-		sqlite3_free(err_msg);
-		return 1;
-	}
-
-	// FIXME:
-	// add server table - store available maps, uptime & such
-	// add favourite table ?! (client)
-
-*/
-
-#ifdef FEATURE_RATING
-	// rating users table
-	sql = "CREATE TABLE IF NOT EXISTS rating_users (guid TEXT PRIMARY KEY NOT NULL, mu REAL, sigma REAL, created TEXT, updated TEXT, UNIQUE (guid));";
-
-	result = sqlite3_exec(db, sql, 0, 0, &err_msg);
-
-	if (result != SQLITE_OK)
-	{
-		Com_Printf("... failed to create table rating_users: %s\n", err_msg);
-		sqlite3_free(err_msg);
-		return 1;
-	}
-
-	// rating match table
-	sql = "CREATE TABLE IF NOT EXISTS rating_match (guid TEXT PRIMARY KEY NOT NULL, mu REAL, sigma REAL, time_axis INT, time_allies INT, UNIQUE (guid));";
-
-	result = sqlite3_exec(db, sql, 0, 0, &err_msg);
-
-	if (result != SQLITE_OK)
-	{
-		Com_Printf("... failed to create table rating_match: %s\n", err_msg);
-		sqlite3_free(err_msg);
-		return 1;
-	}
-
-	// rating maps table
-	sql = "CREATE TABLE IF NOT EXISTS rating_maps (mapname TEXT PRIMARY KEY NOT NULL, win_axis INT, win_allies INT, UNIQUE (mapname));";
-
-	result = sqlite3_exec(db, sql, 0, 0, &err_msg);
-
-	if (result != SQLITE_OK)
-	{
-		Com_Printf("... failed to create table rating_maps: %s\n", err_msg);
-		sqlite3_free(err_msg);
-		return 1;
-	}
-#endif
 
 	return 0;
+}
+
+/**
+ * @brief DB_UpdateSchema
+ *
+ * @return
+ */
+int DB_UpdateSchema()
+{
+
+	int version = -1;
+
+	// read version from version table
+
+	if (version == SQL_DBMS_SCHEMA_VERSION) // we are done
+	{
+		//Com_Printf("SQLite3 db version is up to date\n");
+		return 0;
+	}
+	else if (version < SQL_DBMS_SCHEMA_VERSION)
+	{
+		Com_Printf("Old database schema #%i detected - performing update ...\n", version);
+
+	}
+
+	// downgrade case ... we can't ensure a working system
+	Com_Printf("Warning: DB update has detected an unknown database schema #%i! Game and database are not in sync!\n", version);
+
+	//DB_Close();
+	//error drop
+
+	return 1;
 }
 
 /**
