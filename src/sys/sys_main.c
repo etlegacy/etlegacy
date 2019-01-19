@@ -441,10 +441,6 @@ void Sys_Error(const char *error, ...)
 	Q_vsnprintf(string, sizeof(string), error, argptr);
 	va_end(argptr);
 
-#ifdef _WIN32
-	Sys_Splash(qfalse);
-#endif
-
 #ifdef USE_WINDOWS_CONSOLE
 	Conbuf_AppendText(string);
 	Conbuf_AppendText("\n");
@@ -1079,8 +1075,6 @@ int main(int argc, char **argv)
 		Sys_ShowConsoleWindow(1, qfalse);
 	}
 #endif
-
-	Sys_Splash(qfalse);
 
 	{
 		char cwd[MAX_OSPATH];

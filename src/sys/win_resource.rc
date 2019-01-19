@@ -136,27 +136,6 @@ IDI_ICON1               ICON    DISCARDABLE     "../../misc/etl.ico"
 
 /////////////////////////////////////////////////////////////////////////////
 //
-// Bitmap
-//
-
-IDB_SPLASH              BITMAP                  "../../misc/splash.bmp"
-
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// Dialog
-//
-
-IDD_SPLASH DIALOGEX 0, 0, 333, 103
-STYLE DS_SETFONT | DS_SETFOREGROUND | DS_FIXEDSYS | DS_CENTER | WS_POPUP | WS_VISIBLE
-EXSTYLE WS_EX_NOACTIVATE
-FONT 8, "MS Shell Dlg", 400, 0, 0x1
-BEGIN
-	CONTROL         132,IDC_STATIC,"Static",SS_BITMAP | SS_REALSIZEIMAGE,0,0,333,103
-END
-
-/////////////////////////////////////////////////////////////////////////////
-//
 // String Table
 //
 

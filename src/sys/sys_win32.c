@@ -826,36 +826,6 @@ void Sys_StartProcess(char *cmdline, qboolean doexit)
 }
 
 /**
- * @brief Sys_Splash
- * @param[in] show
- */
-void Sys_Splash(qboolean show)
-{
-#ifndef DEDICATED
-	if (show)
-	{
-		if (g_wv.hWndSplash)
-		{
-			return;
-		}
-
-		g_wv.hWndSplash = CreateDialog(g_wv.hInstance, MAKEINTRESOURCE(IDD_SPLASH), NULL, NULL);
-	}
-	else
-	{
-		if (!g_wv.hWndSplash)
-		{
-			return;
-		}
-
-		ShowWindow(g_wv.hWndSplash, SW_HIDE);
-		DestroyWindow(g_wv.hWndSplash);
-		g_wv.hWndSplash = NULL;
-	}
-#endif
-}
-
-/**
  * @brief Sys_OpenURL
  * @param[in] url
  * @param[in] doexit
@@ -1033,9 +1003,6 @@ void Sys_PlatformInit(void)
 
 #ifndef DEDICATED
 	Sys_SetProcessProperties();
-
-	//show the splash screen
-	Sys_Splash(qtrue);
 #endif
 
 #ifdef USE_WINDOWS_CONSOLE

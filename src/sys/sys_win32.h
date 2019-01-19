@@ -38,7 +38,6 @@
 #define INCLUDE_SYS_WIN_H
 
 void Sys_CreateConsoleWindow(void);
-void Sys_Splash(qboolean show);
 
 #if defined (_MSC_VER) && (_MSC_VER >= 1200)
 #pragma warning(disable : 4201)
@@ -54,7 +53,6 @@ typedef struct
 	HINSTANCE reflib_library;           // Handle to refresh DLL
 	qboolean reflib_active;
 	HWND hWnd;
-	HWND hWndSplash;
 	HINSTANCE hInstance;
 	qboolean activeApp;
 	OSVERSIONINFO osversion;

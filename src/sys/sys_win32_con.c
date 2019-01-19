@@ -873,11 +873,6 @@ void Sys_ShowConsole(int visLevel, qboolean quitOnClose)
 	ShowWindow(s_wcd.hWnd, SW_SHOWNORMAL);
 	SendMessage(s_wcd.hwndBuffer, EM_LINESCROLL, 0, 0xffff);
 
-	if (visLevel > 0)
-	{
-		Sys_Splash(qfalse);
-	}
-
 	switch (visLevel)
 	{
 	case 0:

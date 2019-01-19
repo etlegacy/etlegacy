@@ -45,8 +45,6 @@
 #define IDC_CURSOR1                     129
 #define IDC_CURSOR2                     130
 #define IDC_CURSOR3                     131
-#define IDB_SPLASH                      132
-#define IDD_SPLASH                      133
 
 // Next default values for new objects
 //
