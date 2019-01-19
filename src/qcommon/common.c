@@ -2883,6 +2883,13 @@ void Com_Init(char *commandLine)
 		}
 	}
 
+#ifdef FEATURE_DBMS
+	if (DB_Init() != 0)
+	{
+		Com_Printf("WARNING: ETL DBMS not init as intended!\n");
+	}
+#endif
+
 	Cbuf_AddText("exec autoexec.cfg\n");
 
 	// reset crashed state
@@ -3044,13 +3051,6 @@ void Com_Init(char *commandLine)
 			Cvar_Set("com_introPlayed", "1");
 		}
 	}
-
-#ifdef FEATURE_DBMS
-	if (DB_Init() != 0)
-	{
-		Com_Printf("WARNING: ETL DBMS not init as intended!\n");
-	}
-#endif
 
 	com_fullyInitialized = qtrue;
 	Com_Printf("--- Common Initialization Complete ---\n");
