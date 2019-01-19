@@ -721,10 +721,6 @@ void SV_AddOperatorCommands(void)
 		Cmd_AddCommand("say", SV_ConSay_f, "Prints console messages on dedicated servers.");
 	}
 
-#ifdef FEATURE_DBMS
-	Cmd_AddCommand("sql", DB_ExecSQLCommand_f, "Executes an sql command.");
-#endif
-
 	Cmd_AddCommand("uptime", SV_Uptime_f, "Prints uptime info.");
 
 #if defined(FEATURE_IRC_SERVER) && defined(DEDICATED)

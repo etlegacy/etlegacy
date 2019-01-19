@@ -2987,6 +2987,10 @@ void Com_Init(char *commandLine)
 
 #ifdef FEATURE_DBMS
 	Cmd_AddCommand("saveDB", DB_SaveMemDB_f, "Saves the internal memory database to disk.");
+	if (com_developer->integer)
+	{
+		Cmd_AddCommand("sql", DB_ExecSQLCommand_f, "Executes an sql command.");
+	}
 #endif
 
 	com_version = Cvar_Get("version", FAKE_VERSION, CVAR_ROM | CVAR_SERVERINFO);

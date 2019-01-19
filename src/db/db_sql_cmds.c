@@ -41,33 +41,36 @@
 void DB_ExecSQLCommand_f(void)
 {
 	int  result;
-	char *cmd;
+	//char *cmd;
 	char *sql;
 	char *err_msg = 0;
 
-	cmd = Cmd_Argv(0);
+	//cmd = Cmd_Argv(0);
 	sql = Cmd_Args();
 
-	if (!db || db_mode->integer == 0)
+	if (db_mode->integer == 0)
 	{
-		Com_Printf("SQL db not available or disabled!\n");
+		Com_Printf("SQL db disabled!\n");
 		return;
 	}
 
 	if (!sql || !sql[0])
 	{
-		Com_Printf("Usage: %s sql <sql_statement>\n", cmd);
+		Com_Printf("Usage: sql \"<sql_statement>\"\n");
 		return;
 	}
 
-	// debug
-	//Com_Printf("sql: '%s'\n", sql);
+	if (!db || !isDBActive)
+	{
+		Com_Printf("SQL db not available!\n");
+		return;
+	}
 
 	result = sqlite3_exec(db, sql, DB_Callback, 0, &err_msg);
 
 	if (result != SQLITE_OK)
 	{
-		Com_Printf("SQL command '%s' failed: %s\n", sql, err_msg);
+		Com_Printf("SQL query '%s' failed: \n%s\n", sql, err_msg);
 		sqlite3_free(err_msg);
 		return;
 	}
