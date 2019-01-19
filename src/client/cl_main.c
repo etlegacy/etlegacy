@@ -1147,6 +1147,10 @@ void CL_Vid_Restart_f(void)
 	// initialize the renderer interface
 	CL_InitRef();
 
+#ifdef FEATURE_GETTEXT
+	I18N_Init();
+#endif
+
 	// startup all the client stuff
 	CL_StartHunkUsers();
 

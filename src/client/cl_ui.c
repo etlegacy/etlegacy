@@ -34,6 +34,10 @@
 
 #include "client.h"
 
+#ifdef FEATURE_DBMS
+#include "../db/db_sql.h"
+#endif
+
 #include "../botlib/botlib.h"
 
 extern botlib_export_t *botlib_export;
@@ -70,6 +74,14 @@ void LAN_LoadCachedServers(void)
 	if (cl_profile->string[0])
 	{
 		Com_sprintf(filename, sizeof(filename), "profiles/%s/favcache.dat", cl_profile->string);
+
+#ifdef FEATURE_DBMS
+
+	// FIXME
+	//loadFavoritesDB(cl_profile->string);
+
+#endif
+
 	}
 	else
 	{
@@ -164,6 +176,109 @@ static void LAN_ResetPings(int source)
 	}
 }
 
+#ifdef FEATURE_DBMS
+
+/**
+ * @brief Inserts given server into client_servers table if not already exists
+ * @param[in] source
+ * @param[in] name
+ * @param[in] address
+ * @param[in] mod
+ */
+void insertFavoriteDB(int source, const char *name, const char *address, const char *mod)
+{
+	char         *sql;
+	int          result;
+	char         *err_msg = 0;
+	sqlite3_stmt *res;
+
+	//
+	// FIXME: name (colors/inject.)
+	//
+
+	sql    = va("SELECT * from client_servers WHERE profile='%s' AND address='%s';", cl_profile->string, address);
+	result = sqlite3_prepare_v2(db, sql, -1, &res, 0);
+
+	if (result != SQLITE_OK)
+	{
+		Com_Printf("Can't save favorite - db error %s\n"); // FIXME: sqlite3_errmsg(db) this is leaking?
+		//sqlite3_free(err_msg);
+	}
+	else
+	{
+		result = sqlite3_step(res);
+
+		if (result == SQLITE_ROW)
+		{
+			Com_Printf("Favorite already stored\n");
+		}
+		else if(result == SQLITE_ERROR)
+		{
+			Com_Printf("SQL an error occured\n");
+		}
+		else
+		{
+			sql = va("INSERT INTO client_servers values('%s', %i, '%s', '%s', '%s', NULL, CURRENT_TIMESTAMP)", cl_profile->string, source, address, name, mod);
+			result = sqlite3_exec(db, sql, 0, 0, &err_msg);
+
+			if (result != SQLITE_OK)
+			{
+				Com_Printf("SQL command '%s' failed: %s\n", sql, err_msg);
+				sqlite3_free(err_msg);
+			}
+
+			Com_Printf("^4Favorite '%s' for profile '%s' created\n", address, cl_profile->string);
+		}
+	}
+}
+
+/**
+ * @brief
+ * @param[in] address
+ *
+ */
+void deleteFavoriteDB(const char *address)
+{
+	char         *sql;
+	int          result;
+	char         *err_msg = 0;
+	sqlite3_stmt *res;
+
+	if (address[0] == '*')
+	{
+		sql = va("DELETE FROM client_servers WHERE profile='%s';", cl_profile->string);
+	}
+	else
+	{
+		sql = va("DELETE FROM client_servers WHERE profile='%s' AND address='%s';", cl_profile->string, address);
+	}
+
+	result = sqlite3_exec(db, sql, 0, 0, &err_msg);
+
+	if (result != SQLITE_OK)
+	{
+		Com_Printf("SQL command '%s' failed: %s\n", sql, err_msg);
+		sqlite3_free(err_msg);
+	}
+
+	if (address[0] == '*')
+	{
+		Com_Printf("All favorites for profile '%s' have been deleted.\n", cl_profile->string);
+	}
+	else
+	{
+		Com_Printf("Favorite '%s' for profile '%s' has been deleted.\n", address, cl_profile->string);
+	}
+}
+
+
+void loadFavoritesDB(const char *profile)
+{
+
+}
+
+#endif
+
 /**
  * @brief LAN_AddServer
  * @param[in] source
@@ -176,6 +291,13 @@ static int LAN_AddServer(int source, const char *name, const char *address)
 	int          max = MAX_OTHER_SERVERS, *count = 0;
 	netadr_t     adr;
 	serverInfo_t *servers = NULL;
+
+#ifdef FEATURE_DBMS
+	if (source == AS_FAVORITES)
+	{
+		insertFavoriteDB(source, name, address, "");
+	}
+#endif
 
 	switch (source)
 	{
@@ -215,7 +337,7 @@ static int LAN_AddServer(int source, const char *name, const char *address)
 
 			if (source == AS_FAVORITES)
 			{
-				LAN_SaveServersToFile();
+				LAN_SaveServersToFile(); // FIXME: don't do with DB mode
 			}
 
 			return 1;
@@ -282,7 +404,12 @@ static void LAN_RemoveServer(int source, const char *addr)
 
 			if (source == AS_FAVORITES)
 			{
-				LAN_SaveServersToFile();
+				LAN_SaveServersToFile(); // FIXME: don't do with DB mode
+
+#ifdef FEATURE_DBMS
+				deleteFavoriteDB(addr);
+#endif
+
 			}
 		}
 		else // remove all
@@ -303,7 +430,10 @@ static void LAN_RemoveServer(int source, const char *addr)
 				Com_Printf("Removing %i favourite servers\n", cls.numfavoriteservers);
 				cls.numfavoriteservers = 0;
 				Com_Memset(&cls.favoriteServers, 0, sizeof(cls.favoriteServers));
-				LAN_SaveServersToFile();
+				LAN_SaveServersToFile(); // FIXME: don't do with DB mode
+#ifdef FEATURE_DBMS
+				deleteFavoriteDB("*");
+#endif
 				break;
 			default:
 				Com_Printf("LAN_RemoveServer: Invalid source\n");
@@ -333,6 +463,7 @@ static int LAN_GetServerCount(int source)
 	case AS_FAVORITES:
 		return cls.numfavoriteservers;
 	default:
+		Com_Printf("LAN_GetServerCount Warning: Invalid source\n");
 		break;
 	}
 	return 0;
@@ -369,6 +500,9 @@ static void LAN_GetServerAddressString(int source, int n, char *buf, size_t bufl
 			Q_strncpyz(buf, NET_AdrToString(cls.favoriteServers[n].adr), buflen);
 			return;
 		}
+		break;
+	default:
+		Com_Printf("LAN_GetServerAddressString Warning: Invalid source\n");
 		break;
 	}
 	buf[0] = '\0';
@@ -407,6 +541,9 @@ static void LAN_GetServerInfo(int source, int n, char *buf, size_t buflen)
 			server = &cls.favoriteServers[n];
 		}
 		break;
+	default:
+		Com_Printf("LAN_GetServerInfo Warning: Invalid source\n");
+		return;
 	}
 	if (server && buf)
 	{
@@ -474,6 +611,9 @@ static int LAN_GetServerPing(int source, int n)
 			server = &cls.favoriteServers[n];
 		}
 		break;
+	default:
+		Com_Printf("LAN_GetServerPing Warning: Invalid source\n");
+		break;
 	}
 	if (server)
 	{
@@ -509,6 +649,9 @@ static serverInfo_t *LAN_GetServerPtr(int source, int n)
 		{
 			return &cls.favoriteServers[n];
 		}
+		break;
+	default:
+		Com_Printf("LAN_GetServerPtr Warning: Invalid source\n");
 		break;
 	}
 	return NULL;

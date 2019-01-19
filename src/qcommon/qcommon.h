@@ -1090,7 +1090,7 @@ extern int com_hunkusedvalue;
 
 extern qboolean com_errorEntered;
 
-extern cvar_t *dl_curlURL;
+extern cvar_t *com_downloadURL;
 
 #if defined(FEATURE_PAKISOLATION) && !defined(DEDICATED)
 extern cvar_t *dl_whitelistModPaks;

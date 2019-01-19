@@ -431,8 +431,6 @@ typedef int clipHandle_t;
 #define YAW                 1       ///< left / right
 #define ROLL                2       ///< fall over
 
-#define MAX_IP4_LENGTH      16
-
 // the game guarantees that no string from the network will ever
 // exceed MAX_STRING_CHARS
 #define MAX_STRING_CHARS    1024    ///< max length of a string passed to Cmd_TokenizeString

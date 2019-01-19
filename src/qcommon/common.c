@@ -147,7 +147,7 @@ cvar_t *com_watchdog_cmd;
 
 cvar_t *com_hunkused;
 
-cvar_t *dl_curlURL;
+cvar_t *com_downloadURL;
 #if defined(FEATURE_PAKISOLATION) && !defined(DEDICATED)
 cvar_t *dl_whitelistModPaks;
 cvar_t *dl_whitelistMapPaks;
@@ -2887,6 +2887,13 @@ void Com_Init(char *commandLine)
 		}
 	}
 
+#ifdef FEATURE_DBMS
+	if (DB_Init() != 0)
+	{
+		Com_Printf("WARNING: ETL DBMS not init as intended!\n");
+	}
+#endif
+
 	Cbuf_AddText("exec autoexec.cfg\n");
 
 	// reset crashed state
@@ -2979,8 +2986,8 @@ void Com_Init(char *commandLine)
 	Cmd_AddCommand("writeconfig", Com_WriteConfig_f, "Write the config file to a specific name.");
 	Cmd_AddCommand("update", Com_Update_f, "Updates the game to latest version.");
 
-	dl_curlURL = Cvar_Get("dl_curlURL", "http://mirror.etlegacy.com/etmain", CVAR_INIT);
-	Cmd_AddCommand("curl", Com_Download_f, "Downloads a map from the URL set in cvar dl_curlURL.");
+	com_downloadURL = Cvar_Get("com_downloadURL", "http://mirror.etlegacy.com/etmain", CVAR_INIT);
+	Cmd_AddCommand("download", Com_Download_f, "Downloads a pk3 from the URL set in cvar com_downloadURL.");
 
 #if defined(FEATURE_PAKISOLATION) && !defined(DEDICATED)
 	dl_whitelistModPaks = Cvar_Get("dl_whitelistModPaks", "0", CVAR_ARCHIVE);
@@ -3053,13 +3060,6 @@ void Com_Init(char *commandLine)
 			Cvar_Set("com_introPlayed", "1");
 		}
 	}
-
-#ifdef FEATURE_DBMS
-	if (DB_Init() != 0)
-	{
-		Com_Printf("WARNING: ETL DBMS not init as intended!\n");
-	}
-#endif
 
 	com_fullyInitialized = qtrue;
 	Com_Printf("--- Common Initialization Complete ---\n");

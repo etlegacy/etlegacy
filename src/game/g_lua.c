@@ -2433,6 +2433,32 @@ static void registerConstants(lua_vm_t *vm)
 	lua_regconstinteger(vm->L, MAX_FIRETEAMS);
 	lua_regconstinteger(vm->L, MAX_MOTDLINES);
 
+	// GS constants
+	lua_regconstinteger(vm->L, GS_INITIALIZE);
+	lua_regconstinteger(vm->L, GS_PLAYING);
+	lua_regconstinteger(vm->L, GS_WARMUP_COUNTDOWN);
+	lua_regconstinteger(vm->L, GS_WARMUP);
+	lua_regconstinteger(vm->L, GS_INTERMISSION);
+	lua_regconstinteger(vm->L, GS_WAITING_FOR_PLAYERS);
+	lua_regconstinteger(vm->L, GS_RESET);
+
+	// TEAM constants
+	lua_regconstinteger(vm->L, TEAM_FREE);
+	lua_regconstinteger(vm->L, TEAM_AXIS);
+	lua_regconstinteger(vm->L, TEAM_ALLIES);
+	lua_regconstinteger(vm->L, TEAM_SPECTATOR);
+	lua_regconstinteger(vm->L, TEAM_NUM_TEAMS);
+
+	// SK constants
+	lua_regconstinteger(vm->L, SK_BATTLE_SENSE);
+	lua_regconstinteger(vm->L, SK_EXPLOSIVES_AND_CONSTRUCTION);
+	lua_regconstinteger(vm->L, SK_FIRST_AID);
+	lua_regconstinteger(vm->L, SK_SIGNALS);
+	lua_regconstinteger(vm->L, SK_LIGHT_WEAPONS);
+	lua_regconstinteger(vm->L, SK_HEAVY_WEAPONS);
+	lua_regconstinteger(vm->L, SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS);
+	lua_regconstinteger(vm->L, SK_NUM_SKILLS);
+
 	// EXEC constants
 	lua_regconstinteger(vm->L, EXEC_NOW);
 	lua_regconstinteger(vm->L, EXEC_INSERT);

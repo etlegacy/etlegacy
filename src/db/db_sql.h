@@ -42,7 +42,7 @@
 
 // when updating our DB schema in DB_CreateSchema increase this
 // for existing databases on servers we do the upgrade with Lua scripts or SQL commands stored in version table ...
-#define SQL_DBMS_SCHEMA_VERSION 1
+#define SQL_DBMS_SCHEMA_VERSION 2
 
 extern cvar_t *db_mode;     // 0 - disabled, 1 - sqlite3 memory db, 2 - sqlite3 file db
 extern cvar_t *db_uri;
@@ -53,6 +53,7 @@ extern qboolean isDBActive; // general flag for active dbms (db_mode is latched)
 int DB_Init(void);
 int DB_Create(void);
 int DB_Close(void);
+int DB_UpdateSchema(void);
 int DB_LoadOrSaveDb(sqlite3 *, const char *, int);
 // int DB_BackupDB(const char *, void *));
 int DB_SaveMemDB(void); // use in code

@@ -6057,13 +6057,19 @@ static void UI_BuildServerDisplayList(int force)
 			trap_LAN_GetServerInfo(ui_netSource.integer, i, info, MAX_STRING_CHARS);
 
 			clients                                  = atoi(Info_ValueForKey(info, "clients"));
+			maxClients                               = atoi(Info_ValueForKey(info, "sv_maxclients"));
 			uiInfo.serverStatus.numPlayersOnServers += clients;
+
+			// drop obvious phony servers
+			if (maxClients > MAX_CLIENTS && !(ui_serverBrowserSettings.integer & UI_BROWSER_ALLOW_MAX_CLIENTS))
+			{
+				trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
+				continue;
+			}
 
 			trap_Cvar_Update(&ui_browserShowEmptyOrFull);
 			if (ui_browserShowEmptyOrFull.integer)
 			{
-				maxClients = atoi(Info_ValueForKey(info, "sv_maxclients"));
-
 				if (clients < maxClients && (
 						(!clients && ui_browserShowEmptyOrFull.integer == 2) ||
 						(clients && ui_browserShowEmptyOrFull.integer == 1)))
@@ -6168,9 +6174,14 @@ static void UI_BuildServerDisplayList(int force)
 			trap_Cvar_Update(&ui_browserShowHumans);
 			if (ui_browserShowHumans.integer)
 			{
-				// ETL servers only
+				// Legacy mod or ETL servers only
 				// FIXME: check for ping and compute humans/bots number for vanilla server?
 				if (strstr(Info_ValueForKey(info, "version"), PRODUCT_LABEL) == NULL)
+				{
+					continue;
+				}
+				else if (!(ui_serverBrowserSettings.integer & UI_BROWSER_ALLOW_HUMANS_COUNT) &&
+				    Q_stristr(Info_ValueForKey(info, "game"), "legacy") == 0)
 				{
 					continue;
 				}
@@ -6981,13 +6992,17 @@ const char *UI_FeederItemText(int feederID, int index, int column, qhandle_t *ha
 			case SORT_CLIENTS:
 				clients    = atoi(Info_ValueForKey(info, "clients"));
 				maxclients = atoi(Info_ValueForKey(info, "sv_maxclients"));
+				int humans = atoi(Info_ValueForKey(info, "humans"));
 
-				if (strstr(Info_ValueForKey(info, "version"), PRODUCT_LABEL) != NULL)
+				if ((ui_serverBrowserSettings.integer & UI_BROWSER_ALLOW_HUMANS_COUNT) &&
+				    strstr(Info_ValueForKey(info, "version"), PRODUCT_LABEL) != NULL)
 				{
-					int humans = atoi(Info_ValueForKey(info, "humans"));
-
-					Com_sprintf(clientBuff, sizeof(clientBuff), "^W%i^9(+%i)/%i",
-					            humans, clients - humans, maxclients);
+					Com_sprintf(clientBuff, sizeof(clientBuff), "^W%i^9(+%i)/%i", humans, clients - humans, maxclients);
+				}
+				else if (Q_stristr(Info_ValueForKey(info, "game"), "legacy") != 0 &&
+				    strstr(Info_ValueForKey(info, "version"), PRODUCT_LABEL) != NULL)
+				{
+					Com_sprintf(clientBuff, sizeof(clientBuff), "^W%i^9(+%i)/%i", humans, clients - humans, maxclients);
 				}
 				else
 				{
@@ -8155,7 +8170,7 @@ void UI_SetActiveMenu(uiMenuCommand_t menu)
 				}
 				else if (strlen(buf) > 5 && !Q_stricmpn(buf, "ET://", 5) && strlen(buf) < 200)
 				{
-					if (ui_serverRedirect.integer)
+					if (ui_serverBrowserSettings.integer & UI_BROWSER_ALLOW_REDIRECT)
 					{
 						Q_strncpyz(buf, buf + 5, sizeof(buf));
 						Com_Printf(trap_TranslateString("Server is full, redirect to: %s\n"), buf);
@@ -8468,7 +8483,7 @@ vmCvar_t cg_crosshairSize;
 
 vmCvar_t cl_bypassMouseInput;
 
-vmCvar_t ui_serverRedirect;
+vmCvar_t ui_serverBrowserSettings;
 
 cvarTable_t cvarTable[] =
 {
@@ -8643,7 +8658,7 @@ cvarTable_t cvarTable[] =
 
 	{ NULL,                             "cg_locations",                        "3",                          CVAR_ARCHIVE,                   0 },
 
-	{ &ui_serverRedirect,               "ui_serverRedirect",                   "0",                          CVAR_INIT,                      0 },
+	{ &ui_serverBrowserSettings,        "ui_serverBrowserSettings",            "0",                          CVAR_INIT,                      0 },
 };
 
 const unsigned int cvarTableSize = sizeof(cvarTable) / sizeof(cvarTable[0]);

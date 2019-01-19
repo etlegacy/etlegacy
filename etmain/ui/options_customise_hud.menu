@@ -56,7 +56,7 @@ menuDef {
 	SUBWINDOW( 6, DISPLAY_Y, (SUBWINDOW_WIDTH_L), 125, _("IN-GAME DISPLAY") )
 	MULTI( 8, DISPLAY_Y+16, (SUBWINDOW_WIDTH_L)-4, 10, _("Ejecting Brass:"), .2, 8, "cg_brassTime", cvarFloatList { "High" 15000 "Med" 2500 "Off" 0 }, _("Sets the duration ejected bullet shells etc. last for") )
 	CVARFLOATLABEL( 8, DISPLAY_Y+28, (SUBWINDOW_WIDTH_L)-6, 10, "cg_fov", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-6), 8 )
-	SLIDER( 8, DISPLAY_Y+28, (SUBWINDOW_WIDTH_L)-4, 10, _("Field Of View:"), .2, 8, "cg_fov" 90 90 120, _("Sets field of view") )
+	SLIDER( 8, DISPLAY_Y+28, (SUBWINDOW_WIDTH_L)-4, 10, _("Field Of View:"), .2, 8, "cg_fov" 90 90 105, _("Sets field of view") )
 	MULTI( 8, DISPLAY_Y+40, (SUBWINDOW_WIDTH_L)-4, 10, _("Corona Distance:"), .2, 8, "cg_coronafardist", cvarFloatList { "Off" 0 "Near" 800 "Normal" 1536 "Far" 4096 "Extreme" 16000 }, _("Sets the maximum distance light corona is displayed") )
 	YESNO( 8, DISPLAY_Y+52, (SUBWINDOW_WIDTH_L)-4, 10, _("Particles:"), .2, 8, "cg_wolfparticles", _("Toggles display of particle effects - e.g. explosions, some smoke effects") )
 	MULTI( 8, DISPLAY_Y+64, (SUBWINDOW_WIDTH_L)-4, 10, _("Wall Mark Lifetime:"), .2, 8, "cg_markTime", cvarFloatList { "Off" 0 "Short" 10000 "Normal" 20000 "Long" 30000 }, _("Duration of bullet marks on walls etc") )
