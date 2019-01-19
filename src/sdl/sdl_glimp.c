@@ -42,6 +42,7 @@
 #include "../sys/sys_local.h"
 #include "../client/client.h"
 #include "sdl_icon.h"
+#include "sdl_splash.h"
 
 //static qboolean SDL_VIDEODRIVER_externallySet = qfalse;
 
@@ -826,6 +827,42 @@ static qboolean GLimp_StartDriverAndSetMode(glconfig_t *glConfig, int mode, qboo
 #define R_MODE_FALLBACK 3 // 640 * 480
 
 /**
+ * @brief GLimp_Splash
+ * @param[in] glConfig
+ * @return
+ */
+void GLimp_Splash(glconfig_t *glConfig)
+{
+	SDL_Surface *splashImage = NULL;
+
+	// get splash image
+	splashImage = SDL_CreateRGBSurfaceFrom(
+	    (void *)CLIENT_WINDOW_SPLASH.pixel_data,
+	    CLIENT_WINDOW_SPLASH.width,
+	    CLIENT_WINDOW_SPLASH.height,
+	    CLIENT_WINDOW_SPLASH.bytes_per_pixel * 8,
+	    CLIENT_WINDOW_SPLASH.bytes_per_pixel * CLIENT_WINDOW_SPLASH.width,
+#ifdef Q3_LITTLE_ENDIAN
+	    0x000000FF, 0x0000FF00, 0x00FF0000, 0xFF000000
+#else
+	    0xFF000000, 0x00FF0000, 0x0000FF00, 0x000000FF
+#endif
+	    );
+
+	SDL_Rect dstRect;
+	dstRect.x = glConfig->vidWidth / 2 - splashImage->w / 2;
+	dstRect.y = glConfig->vidHeight / 2 - splashImage->h / 2;
+	dstRect.w = splashImage->w;
+	dstRect.h = splashImage->h;
+
+	// apply image on surface
+	SDL_BlitSurface(splashImage, NULL, SDL_GetWindowSurface(main_window), &dstRect);
+	SDL_UpdateWindowSurface(main_window);
+
+	SDL_FreeSurface(splashImage);
+}
+
+/**
  * @brief This routine is responsible for initializing the OS specific portions of OpenGL
  * @param[in,out] glConfig
  * @param[in] context
@@ -886,6 +923,9 @@ success:
 	re.InitOpenGL();
 
 	Cvar_Get("r_availableModes", "", CVAR_ROM);
+
+	// Display splash screen
+	GLimp_Splash(glConfig);
 
 	// This depends on SDL_INIT_VIDEO, hence having it here
 	IN_Init();
