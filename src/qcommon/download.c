@@ -278,12 +278,54 @@ void Com_InitDownloads(void)
 	Com_DownloadsComplete();
 }
 
+#if defined(FEATURE_PAKISOLATION) && !defined(DEDICATED)
+static const char* GetDownloadDestPath(const char *temp, const char *dest)
+{
+	const char *destBasename = FS_Basename(dest);
+	const char *destDirpath = FS_Dirpath(dest);
+	const char *homePath = Cvar_VariableString("fs_homepath");
+	char hash[41] = { 0 };
+
+	FS_CalculateFileSHA1(temp, hash);
+	qboolean isWhitelisted = FS_IsWhitelisted(destBasename, hash);
+
+	if (!isWhitelisted) {
+		// disabled whitelisting for maps means all maps are whitelisted by default
+		if (!dl_whitelistMapPaks->integer)
+		{
+			if (FS_MatchFileInPak(temp, "maps/*.bsp"))
+			{
+				isWhitelisted = qtrue;
+			}
+		}
+		if (!isWhitelisted)
+		{
+			// disabled whitelisting for mods means all mods are whitelisted by default
+			if (!dl_whitelistModPaks->integer)
+			{
+				if (FS_MatchFileInPak(temp, "*.dll"))
+				{
+					isWhitelisted = qtrue;
+				}
+			}
+		}
+	}
+
+	if (!isWhitelisted) {
+		const char *containerName = Cvar_VariableString("fs_containerName");
+		return FS_BuildOSPath(homePath, destDirpath, va("%s%c%s", containerName, PATH_SEP, destBasename));
+	}
+
+	return FS_BuildOSPath(homePath, dest, NULL);
+}
+#endif
+
 /**
  * @brief Com_WWWDownload
  */
 void Com_WWWDownload(void)
 {
-	char            *to_ospath;
+	const char *to_ospath;
 	dlStatus_t      ret;
 	static qboolean bAbort = qfalse;
 
@@ -312,9 +354,13 @@ void Com_WWWDownload(void)
 	{
 		// taken from CL_ParseDownload
 		// we work with OS paths
-		dld.download                     = 0;
-		to_ospath                        = FS_BuildOSPath(Cvar_VariableString("fs_homepath"), dld.originalDownloadName, "");
-		to_ospath[strlen(to_ospath) - 1] = '\0';
+
+		dld.download = 0;
+#if defined(FEATURE_PAKISOLATION) && !defined(DEDICATED)
+		to_ospath = GetDownloadDestPath(dld.downloadTempName, dld.originalDownloadName);
+#else
+		to_ospath = FS_BuildOSPath(Cvar_VariableString("fs_homepath"), dld.originalDownloadName, NULL);
+#endif
 		if (rename(dld.downloadTempName, to_ospath))
 		{
 			FS_CopyFile(dld.downloadTempName, to_ospath);

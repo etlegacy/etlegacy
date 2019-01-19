@@ -701,6 +701,22 @@ void CL_SystemInfoChanged(void)
 	}
 }
 
+#if defined(FEATURE_PAKISOLATION) && !defined(DEDICATED)
+static const char *CreateContainerName()
+{
+	static char containerName[64];
+	FS_CreateContainerName(va(
+		"%i%i%i%i%i",
+		clc.serverAddress.ip[0],
+		clc.serverAddress.ip[1],
+		clc.serverAddress.ip[2],
+		clc.serverAddress.ip[3],
+		((clc.serverAddress.port & 0xff) << 8) | (clc.serverAddress.port >> 8)
+	), containerName);
+	return containerName;
+}
+#endif
+
 /**
  * @brief CL_ParseGamestate
  * @param[in] msg
@@ -787,6 +803,11 @@ void CL_ParseGamestate(msg_t *msg)
 	{
 		Com_Error(ERR_DROP, "Couldn't load an official pak file; verify your installation and make sure it has been updated to the latest version.");
 	}
+
+#if defined(FEATURE_PAKISOLATION) && !defined(DEDICATED)
+	// set contaner name based of server address
+	Cvar_Set("fs_containerName", CreateContainerName());
+#endif
 
 	// reinitialize the filesystem if the game directory has changed
 	FS_ConditionalRestart(clc.checksumFeed);

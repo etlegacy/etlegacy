@@ -39,6 +39,10 @@
 #include "q_shared.h"
 #include "qcommon.h"
 
+#if defined(FEATURE_PAKISOLATION) && !defined(DEDICATED)
+#include "./crypto/sha-1/sha1.h"
+#endif
+
 #ifdef BUNDLED_MINIZIP
 #    include "unzip.h"
 #else
@@ -252,7 +256,7 @@ typedef struct searchpath_s
 
 /**
  * @var fs_gamedir
- * @brief This will be a single file name with no separators
+ * @brief This will be a single directory name with no separators
  */
 char                fs_gamedir[MAX_OSPATH];
 static cvar_t       *fs_debug;
@@ -261,6 +265,14 @@ static cvar_t       *fs_basepath;
 static cvar_t       *fs_basegame;
 static cvar_t       *fs_gamedirvar;
 static searchpath_t *fs_searchpaths;
+#if defined(FEATURE_PAKISOLATION) && !defined(DEDICATED)
+/**
+* @var fs_containerName
+* @brief This is a directory name where non secure downloadable content is stored,
+*        set on each server connect once the gamestate is received
+*/
+static cvar_t *fs_containerName;
+#endif
 
 /**
  * @var fs_readCount
@@ -4102,17 +4114,28 @@ static void FS_AddBothGameDirectories(const char *subpath)
 {
 	if (fs_basepath->string[0])
 	{
-		// fs_homepath is somewhat particular to *nix systems, only add if relevant
-		// - update: now fs_homepath is used for all system
+		// fs_homepath is used for all systems
 		// NOTE: same filtering below for mods and basegame
 		FS_AddGameDirectory(fs_basepath->string, subpath);
 
 		if (fs_homepath->string[0] && Q_stricmp(fs_homepath->string, fs_basepath->string))
 		{
 			FS_AddGameDirectory(fs_homepath->string, subpath);
+#if defined(FEATURE_PAKISOLATION) && !defined(DEDICATED)
+			if (fs_containerName->string[0]) {
+				char contPath[MAX_OSPATH];
+				Com_sprintf(contPath, sizeof(contPath), "%s%c%s", subpath, PATH_SEP, fs_containerName->string);
+				FS_AddGameDirectory(fs_homepath->string, contPath);
+				Q_strncpyz(fs_gamedir, subpath, sizeof(fs_gamedir));
+			}
+#endif
 		}
 	}
 }
+
+#if defined(FEATURE_PAKISOLATION) && !defined(DEDICATED)
+static qboolean FS_InvalidContainerName(const char *dirname);
+#endif
 
 /**
  * @brief FS_Startup
@@ -4144,6 +4167,9 @@ static void FS_Startup(const char *gameName)
 	fs_homepath = Cvar_Get("fs_homepath", homePath, CVAR_INIT);
 
 	fs_gamedirvar = Cvar_Get("fs_game", "", CVAR_INIT | CVAR_SYSTEMINFO);
+#if defined(FEATURE_PAKISOLATION) && !defined(DEDICATED)
+	fs_containerName = Cvar_Get("fs_containerName", "", CVAR_INIT);
+#endif
 
 
 	if (FS_InvalidGameDir(gameName))
@@ -4158,6 +4184,12 @@ static void FS_Startup(const char *gameName)
 	{
 		Com_Error( ERR_DROP, "Invalid fs_game '%s'", fs_gamedirvar->string );
 	}
+#if defined(FEATURE_PAKISOLATION) && !defined(DEDICATED)
+	if (FS_InvalidContainerName(fs_containerName->string))
+	{
+		Com_Error(ERR_DROP, "Invalid fs_containerName '%s'", fs_containerName->string);
+	}
+#endif
 
 	// add search path elements in reverse priority order
 	FS_AddBothGameDirectories(gameName);
@@ -4542,6 +4574,10 @@ void FS_PureServerSetLoadedPaks(const char *pakSums, const char *pakNames)
 	}
 	else
 	{
+#if defined(FEATURE_PAKISOLATION) && !defined(DEDICATED)
+		// reset the value on each disconnect, before fs restarts
+		Cvar_Set("fs_containerName", "");
+#endif
 		if (fs_reordered)
 		{
 			// force a restart to make sure the search order will be correct
@@ -4643,7 +4679,9 @@ void FS_Fileinfo_f(void)
 	Com_Printf("fs_basepath %s\n", fs_basepath->string);
 	Com_Printf("fs_basegame %s\n", fs_basegame->string);
 	Com_Printf("fs_gamedirvar %s\n", fs_gamedirvar->string);
-
+#if defined(FEATURE_PAKISOLATION) && !defined(DEDICATED)
+	Com_Printf("fs_containerName %s\n", fs_containerName->string);
+#endif
 	// static searchpath_t *fs_searchpaths;
 
 	Com_Printf("Total megs read %i\n", fs_readCount / (1024 * 1024)); // total at runtime, isn't reset
@@ -4696,6 +4734,9 @@ static void FS_CheckRequiredFiles(int checksumFeed)
 	}
 }
 
+#if defined(FEATURE_PAKISOLATION) && !defined(DEDICATED)
+void FS_InitWhitelist();
+#endif
 /**
  * @brief Called only at initial startup, not when the filesystem
  * is resetting due to a game change
@@ -4711,7 +4752,9 @@ void FS_InitFilesystem(void)
 	Com_StartupVariable("fs_basepath");
 	Com_StartupVariable("fs_homepath");
 	Com_StartupVariable("fs_game");
-
+#if defined(FEATURE_PAKISOLATION) && !defined(DEDICATED)
+	// Com_StartupVariable("fs_containerName"); // enable me if you want to specify startup container name
+#endif
 	// ET: Legacy start
 	// if fs_game is not specified, set 'legacy' mod as default fs_game
 	// this 'optimization' grants us 2.60b compatibilty w/o deeper changes and users
@@ -4740,6 +4783,9 @@ void FS_InitFilesystem(void)
 	{
 		Cmd_AddCommand("fileinfo", FS_Fileinfo_f, "Prints file system info.");
 	}
+#if defined(FEATURE_PAKISOLATION) && !defined(DEDICATED)
+	FS_InitWhitelist();
+#endif
 }
 
 /**
@@ -5201,3 +5247,288 @@ qboolean FS_Unzip(const char *fileName, qboolean quiet)
 	Com_sprintf(newFilePath, sizeof(newFilePath), "%s%c%s", fs_homepath->string, PATH_SEP, fs_gamedir);
 	return FS_UnzipTo(fileName, newFilePath, quiet);
 }
+
+#if defined(FEATURE_PAKISOLATION) && !defined(DEDICATED)
+
+// File containerization facilities
+
+#define IsPathSep(X) ((X) == '\\' || (X) == '/' || (X) == PATH_SEP)
+#define CONTAINER_DIRNAME ".server_"
+/**
+* @brief FS_InvalidContainerName
+* @param[in] dirname
+* @return qtrue if name is invalid
+*/
+static qboolean FS_InvalidContainerName(const char *dirname)
+{
+	if (*dirname && (strncmp(dirname, CONTAINER_DIRNAME, 8) || strchr(dirname, '/') || strchr(dirname, '\\')))
+	{
+		return qtrue;
+	}
+
+	return qfalse;
+}
+
+void FS_CreateContainerName(const char *id, char *output)
+{
+	Com_sprintf(output, 64, CONTAINER_DIRNAME "%s", id);
+}
+
+/**
+* @brief FS_Basename
+* @param[in] path
+* @return basename
+*/
+const char *FS_Basename(const char *path)
+{
+	static char base[MAX_OSPATH] = { 0 };
+	int length = (int)strlen(path) - 1;
+
+	// Skip trailing slashes
+	while (length > 0 && (IsPathSep(path[length])))
+		length--;
+
+	while (length > 0 && !(IsPathSep(path[length - 1])))
+		length--;
+
+	Q_strncpyz(base, &path[length], sizeof(base));
+
+	length = strlen(base) - 1;
+
+	// Strip trailing slashes
+	while (length > 0 && base[length] == '\\')
+		base[length--] = '\0';
+
+	return base;
+}
+
+/**
+* @brief FS_Basename
+* @param[in] path
+* @return directory path
+*/
+const char *FS_Dirpath(const char *path)
+{
+	static char dirpath[MAX_OSPATH] = { 0 };
+	int index = 0;
+	int lastSepPos = 0;
+
+	while (path[index] && index < MAX_OSPATH) {
+		if (IsPathSep(path[index])) {
+			lastSepPos = index + 1;
+		}
+		index++;
+	}
+
+	Q_strncpyz(dirpath, path, lastSepPos);
+
+	return dirpath;
+}
+
+/**
+* @brief FS_MatchFileInPak
+* @param[in] filepath to the pak file
+* @param[in] match string
+* @return qtrue if matched path is found
+*/
+qboolean FS_MatchFileInPak(const char *filepath, const char *match)
+{
+	int i;
+	pack_t *pak;
+	fileInPack_t *buildBuffer;
+	qboolean found = qfalse;
+
+	pak = FS_LoadZipFile(filepath, "");
+
+	if (!pak) {
+		return qfalse;
+	}
+
+	buildBuffer = pak->buildBuffer;
+
+	for (i = 0; i < pak->numfiles; i++)
+	{
+		if (Com_FilterPath(match, buildBuffer[i].name, qfalse))
+		{
+			found = qtrue;
+			break;
+		}
+	}
+
+	FS_FreePak(pak);
+
+	return found;
+}
+
+/**
+* @brief FS_CalculateFileSHA1
+* @param[in] path to the file
+* @param[out] hash sha1
+* @return status
+*/
+int FS_CalculateFileSHA1(const char *path, char *hash)
+{
+	SHA1Context sha;
+	FILE *f;
+	int  len;
+	byte *buf;
+	const int MAX_BUFFER_SIZE = 64 * 1024;
+
+	Com_Memset(hash, 0, 40);
+	SHA1Reset(&sha);
+	
+	f = Sys_FOpen(path, "rb");
+	if (!f) return 1;
+
+	fseek(f, 0, SEEK_END);
+	len = ftell(f);
+	if (len == -1) return 1;
+	fseek(f, 0, SEEK_SET);
+
+	buf = Com_Allocate(MAX_BUFFER_SIZE);
+	if (!buf) return 1;
+
+	while (1)
+	{
+		len = fread(buf, 1, MAX_BUFFER_SIZE, f);
+		SHA1Input(&sha, buf, len);
+		if (len != MAX_BUFFER_SIZE)
+		{
+			break;
+		}
+	}
+
+	if (!SHA1Result(&sha))
+	{
+		return 1;
+	}
+
+	Com_Memcpy(hash, va(
+		"%08x%08x%08x%08x%08x",
+		sha.Message_Digest[0],
+		sha.Message_Digest[1],
+		sha.Message_Digest[2],
+		sha.Message_Digest[3],
+		sha.Message_Digest[4]
+	), 40);
+	
+	fclose(f);
+
+	return 0;
+}
+
+typedef struct {
+	char name[MAX_OSPATH];
+	char hash[41];
+} pakMetaEntry_t;
+
+#define MAX_META_ENTRIES 128
+#define META_FILE_NAME "etl_pakmeta.txt"
+pakMetaEntry_t pakMetaEntries[MAX_META_ENTRIES];
+pakMetaEntry_t *pakMetaEntryMap[MAX_META_ENTRIES];
+
+/**
+* @brief FS_InitWhitelist loads the file containing whitelisted entries
+*/
+void FS_InitWhitelist() {
+	int i = 0, pakNameHash, len;
+	pakMetaEntry_t *pakEntry;
+	FILE *file;
+	char *fileMetaPath, *buf, *token;
+
+	Com_Memset(pakMetaEntries, 0, MAX_META_ENTRIES);
+	Com_Memset(pakMetaEntryMap, 0, MAX_META_ENTRIES);
+
+	fileMetaPath = va("%s%c%s", fs_homepath->string, PATH_SEP, META_FILE_NAME);
+	file = Sys_FOpen(fileMetaPath, "rb");
+	if (!file) {
+		Com_Printf("^3Warning: " META_FILE_NAME " was not found.\n");
+		return;
+	}
+
+	fseek(file, 0, SEEK_END);
+	len = ftell(file);
+	if (len == -1)
+	{
+		Com_Printf("^3Warning: unable to get current position in stream of file " META_FILE_NAME ".\n");
+		return;
+	}
+	fseek(file, 0, SEEK_SET);
+
+	buf = Com_Allocate(len + 1);
+	if (!buf)
+	{
+		Com_Printf("^3Warning: unable to allocate buffer for " META_FILE_NAME " contents.\n");
+		return;
+	}
+	if (fread(buf, 1, len, file) != len)
+	{
+		Com_Printf("3Warning: FS_InitWhitelist: short read.");
+		Com_Dealloc(buf);
+		return;
+	}
+	buf[len] = 0;
+	fclose(file);
+
+	while (1)
+	{
+		pakEntry = &pakMetaEntries[i++];
+		token = COM_ParseExt(&buf, qfalse);
+		if (!token[0]) break;
+		Q_strncpyz(pakEntry->name, token, MAX_OSPATH);
+		pakNameHash = FS_HashFileName(token, MAX_META_ENTRIES);
+		pakMetaEntryMap[pakNameHash] = pakEntry;
+
+		token = COM_ParseExt(&buf, qfalse);
+		if (!token[0]) break;
+		Q_strncpyz(pakEntry->hash, token, 41);
+
+		COM_ParseExt(&buf, qfalse); // eat line
+	}
+	Com_Dealloc(buf);
+}
+
+/**
+* @brief FS_IsWhitelisted checks whether pak is contained in the list
+* @param[in] pakName the basename of the pak
+* @param[out] hash the sha1 hash of the pak
+* @return qtrue if predicate holds
+*/
+qboolean FS_IsWhitelisted(const char *pakName, const char *hash)
+{
+	int i = 0;
+	int pakNameHash = FS_HashFileName(pakName, MAX_META_ENTRIES);
+	pakMetaEntry_t *pakEntry = pakMetaEntryMap[pakNameHash];
+	if (!pakEntry)
+	{
+		// try manual search on hash miss 
+		for (i = 0; i < MAX_META_ENTRIES; i++)
+		{
+			pakEntry = &pakMetaEntries[i];
+			// list end, bail out
+			if (!pakEntry->name[0] || !pakEntry->hash[0])
+			{
+				return qfalse;
+			}
+			// found it?
+			if (!strcmp(pakEntry->name, pakName))
+			{
+				break;
+			}
+		}
+		if (!pakEntry)
+		{
+			return qfalse;
+		}
+	}
+	// got match?
+	if (!strcmp(pakEntry->hash, hash))
+	{
+		return qtrue;
+	}
+	return qfalse;
+}
+
+#undef MAX_META_ENTRIES
+#undef META_FILE_NAME
+#endif
