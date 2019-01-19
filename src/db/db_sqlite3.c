@@ -58,10 +58,10 @@ char *sql_Version1 =
 //
 // table client_servers
 //   profile - profilepath
-//   source - favorite source
+//   source  - favorite source
 //   address - IP + port
-//   name    - FIXME
-//   mod     - FIXME
+//   name    - server name
+//   mod     - server mod
 //   updated (last visit)
 //   created
 //
@@ -117,18 +117,17 @@ int DB_Init()
 
 	Com_Printf("SQLite3 libversion %s - database URI '%s' - %s\n", sqlite3_libversion(), db_uri->string, db_mode->integer == 1 ? "in-memory" : "in file");
 
-	if (!db_uri->string[0]) // FIXME: check extension db
+	if (!db_uri->string[0])
 	{
 		Com_Printf("... can't init database - empty URI\n");
 		return 1;
 	}
 
-	// FIXME:
-	//if (!COM_CompareExtension(db_uri->string), ".db")
-	//{
-	//	Com_Printf("... can't init database - invalid filename extension\n");
-	//	return 1;
-	//}
+	if (!COM_CompareExtension(db_uri->string, ".db"))
+	{
+		Com_Printf("... can't init database - invalid filename extension\n");
+		return 1;
+	}
 
 	to_ospath                        = FS_BuildOSPath(Cvar_VariableString("fs_homepath"), db_uri->string, "");
 	to_ospath[strlen(to_ospath) - 1] = '\0';
@@ -298,7 +297,6 @@ static int DB_CreateSchema()
  */
 int DB_UpdateSchema()
 {
-
 	int version = -1;
 
 	// FIXME
@@ -366,7 +364,19 @@ int DB_Create()
 	{
 		char *to_ospath;
 
-		to_ospath                        = FS_BuildOSPath(Cvar_VariableString("fs_homepath"), db_uri->string, ""); // FIXME: check for empty db_uri
+		if (!db_uri->string[0])
+		{
+			Com_Printf("... can't create database - empty URI\n");
+			return 1;
+		}
+
+		if (!COM_CompareExtension(db_uri->string, ".db"))
+		{
+			Com_Printf("... can't create database - invalid filename extension\n");
+			return 1;
+		}
+
+		to_ospath                        = FS_BuildOSPath(Cvar_VariableString("fs_homepath"), db_uri->string, "");
 		to_ospath[strlen(to_ospath) - 1] = '\0';
 
 		result = sqlite3_open_v2(to_ospath, &db, (SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE), NULL);
@@ -409,7 +419,17 @@ int DB_SaveMemDB()
 		int  result, msec;
 		char *to_ospath;
 
-		// FIXME: check for empty db_uri
+		if (!db_uri->string[0])
+		{
+			Com_Printf("... can't save database - empty URI\n");
+			return 1;
+		}
+
+		if (!COM_CompareExtension(db_uri->string, ".db"))
+		{
+			Com_Printf("... can't save database - invalid filename extension\n");
+			return 1;
+		}
 
 		to_ospath                        = FS_BuildOSPath(Cvar_VariableString("fs_homepath"), db_uri->string, "");
 		to_ospath[strlen(to_ospath) - 1] = '\0';
