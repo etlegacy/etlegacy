@@ -35,7 +35,7 @@
 #include "client.h"
 
 #ifdef FEATURE_DBMS
-#include "../db/db_sql.h"
+#include "../db/db_sql.h" // FIXME; only for db_init (this is a com cvar ...)
 #endif
 
 #include "../botlib/botlib.h"
@@ -73,15 +73,15 @@ void LAN_LoadCachedServers(void)
 
 	if (cl_profile->string[0])
 	{
-		Com_sprintf(filename, sizeof(filename), "profiles/%s/favcache.dat", cl_profile->string);
-
 #ifdef FEATURE_DBMS
+		if (db_mode->integer > 0)
+		{
+			DB_loadFavorites(cl_profile->string);
 
-	// FIXME
-	//loadFavoritesDB(cl_profile->string);
-
+			return; // don't load favcache.dat
+		}
 #endif
-
+		Com_sprintf(filename, sizeof(filename), "profiles/%s/favcache.dat", cl_profile->string);
 	}
 	else
 	{
@@ -103,11 +103,11 @@ void LAN_LoadCachedServers(void)
 		}
 		FS_FCloseFile(fileIn);
 
-		Com_Printf("Total favourite servers restored: %i\n", cls.numfavoriteservers);
+		Com_Printf("Total favorite servers restored: %i\n", cls.numfavoriteservers);
 	}
 	else
 	{
-		Com_Printf("Warning: can't read '%s' - no favourite servers restored.\n", filename);
+		Com_Printf("Warning: can't read '%s' - no favorite servers restored.\n", filename);
 	}
 }
 
@@ -139,7 +139,7 @@ void LAN_SaveServersToFile(void)
 	(void) FS_Write(&cls.favoriteServers, sizeof(cls.favoriteServers), fileOut);
 	FS_FCloseFile(fileOut);
 
-	Com_Printf("Total favourite servers saved: %i\n", cls.numfavoriteservers);
+	Com_Printf("Total favorite servers saved: %i\n", cls.numfavoriteservers);
 }
 
 /**
@@ -163,7 +163,7 @@ static void LAN_ResetPings(int source)
 		break;
 	case AS_FAVORITES:
 		servers = &cls.favoriteServers[0];
-		count   = MAX_OTHER_SERVERS;
+		count   = MAX_FAVOURITE_SERVERS;
 		break;
 	}
 
@@ -176,109 +176,6 @@ static void LAN_ResetPings(int source)
 	}
 }
 
-#ifdef FEATURE_DBMS
-
-/**
- * @brief Inserts given server into client_servers table if not already exists
- * @param[in] source
- * @param[in] name
- * @param[in] address
- * @param[in] mod
- */
-void insertFavoriteDB(int source, const char *name, const char *address, const char *mod)
-{
-	char         *sql;
-	int          result;
-	char         *err_msg = 0;
-	sqlite3_stmt *res;
-
-	//
-	// FIXME: name (colors/inject.)
-	//
-
-	sql    = va("SELECT * from client_servers WHERE profile='%s' AND address='%s';", cl_profile->string, address);
-	result = sqlite3_prepare_v2(db, sql, -1, &res, 0);
-
-	if (result != SQLITE_OK)
-	{
-		Com_Printf("Can't save favorite - db error %s\n"); // FIXME: sqlite3_errmsg(db) this is leaking?
-		//sqlite3_free(err_msg);
-	}
-	else
-	{
-		result = sqlite3_step(res);
-
-		if (result == SQLITE_ROW)
-		{
-			Com_Printf("Favorite already stored\n");
-		}
-		else if(result == SQLITE_ERROR)
-		{
-			Com_Printf("SQL an error occured\n");
-		}
-		else
-		{
-			sql = va("INSERT INTO client_servers values('%s', %i, '%s', '%s', '%s', NULL, CURRENT_TIMESTAMP)", cl_profile->string, source, address, name, mod);
-			result = sqlite3_exec(db, sql, 0, 0, &err_msg);
-
-			if (result != SQLITE_OK)
-			{
-				Com_Printf("SQL command '%s' failed: %s\n", sql, err_msg);
-				sqlite3_free(err_msg);
-			}
-
-			Com_Printf("^4Favorite '%s' for profile '%s' created\n", address, cl_profile->string);
-		}
-	}
-}
-
-/**
- * @brief
- * @param[in] address
- *
- */
-void deleteFavoriteDB(const char *address)
-{
-	char         *sql;
-	int          result;
-	char         *err_msg = 0;
-	sqlite3_stmt *res;
-
-	if (address[0] == '*')
-	{
-		sql = va("DELETE FROM client_servers WHERE profile='%s';", cl_profile->string);
-	}
-	else
-	{
-		sql = va("DELETE FROM client_servers WHERE profile='%s' AND address='%s';", cl_profile->string, address);
-	}
-
-	result = sqlite3_exec(db, sql, 0, 0, &err_msg);
-
-	if (result != SQLITE_OK)
-	{
-		Com_Printf("SQL command '%s' failed: %s\n", sql, err_msg);
-		sqlite3_free(err_msg);
-	}
-
-	if (address[0] == '*')
-	{
-		Com_Printf("All favorites for profile '%s' have been deleted.\n", cl_profile->string);
-	}
-	else
-	{
-		Com_Printf("Favorite '%s' for profile '%s' has been deleted.\n", address, cl_profile->string);
-	}
-}
-
-
-void loadFavoritesDB(const char *profile)
-{
-
-}
-
-#endif
-
 /**
  * @brief LAN_AddServer
  * @param[in] source
@@ -288,20 +185,14 @@ void loadFavoritesDB(const char *profile)
  */
 static int LAN_AddServer(int source, const char *name, const char *address)
 {
-	int          max = MAX_OTHER_SERVERS, *count = 0;
+	int          max, *count = 0;
 	netadr_t     adr;
 	serverInfo_t *servers = NULL;
-
-#ifdef FEATURE_DBMS
-	if (source == AS_FAVORITES)
-	{
-		insertFavoriteDB(source, name, address, "");
-	}
-#endif
 
 	switch (source)
 	{
 	case AS_LOCAL:
+		max     = MAX_OTHER_SERVERS;
 		count   = &cls.numlocalservers;
 		servers = &cls.localServers[0];
 		break;
@@ -311,9 +202,19 @@ static int LAN_AddServer(int source, const char *name, const char *address)
 		servers = &cls.globalServers[0];
 		break;
 	case AS_FAVORITES:
+		max     = MAX_FAVOURITE_SERVERS;
 		count   = &cls.numfavoriteservers;
 		servers = &cls.favoriteServers[0];
+#ifdef FEATURE_DBMS
+		if (db_mode->integer > 0)
+		{
+			DB_insertFavorite(cl_profile->string, source, name, address, "");
+		}
+#endif
 		break;
+	default:
+		Com_Printf("LAN_AddServer Warning: Invalid source\n");
+		return -1;
 	}
 
 	if (servers && *count < max)
@@ -335,9 +236,13 @@ static int LAN_AddServer(int source, const char *name, const char *address)
 			servers[*count].visible = qtrue;
 			(*count)++;
 
+#ifdef FEATURE_DBMS
+			if (source == AS_FAVORITES && db_mode->integer == 0)			
+#else
 			if (source == AS_FAVORITES)
+#endif
 			{
-				LAN_SaveServersToFile(); // FIXME: don't do with DB mode
+				LAN_SaveServersToFile();
 			}
 
 			return 1;
@@ -404,11 +309,16 @@ static void LAN_RemoveServer(int source, const char *addr)
 
 			if (source == AS_FAVORITES)
 			{
-				LAN_SaveServersToFile(); // FIXME: don't do with DB mode
-
 #ifdef FEATURE_DBMS
-				deleteFavoriteDB(addr);
+				if (db_mode->integer > 0)
+				{
+					DB_deleteFavorite(cl_profile->string, addr);
+				}
+				else
 #endif
+				{
+					LAN_SaveServersToFile();
+				}
 
 			}
 		}
@@ -430,10 +340,18 @@ static void LAN_RemoveServer(int source, const char *addr)
 				Com_Printf("Removing %i favourite servers\n", cls.numfavoriteservers);
 				cls.numfavoriteservers = 0;
 				Com_Memset(&cls.favoriteServers, 0, sizeof(cls.favoriteServers));
-				LAN_SaveServersToFile(); // FIXME: don't do with DB mode
+
 #ifdef FEATURE_DBMS
-				deleteFavoriteDB("*");
+				if (db_mode->integer > 0)
+				{
+					DB_deleteFavorite(cl_profile->string, "*");
+				}
+				else
 #endif
+				{
+					LAN_SaveServersToFile();
+				}
+
 				break;
 			default:
 				Com_Printf("LAN_RemoveServer: Invalid source\n");
@@ -495,7 +413,7 @@ static void LAN_GetServerAddressString(int source, int n, char *buf, size_t bufl
 		}
 		break;
 	case AS_FAVORITES:
-		if (n >= 0 && n < MAX_OTHER_SERVERS)
+		if (n >= 0 && n < MAX_FAVOURITE_SERVERS)
 		{
 			Q_strncpyz(buf, NET_AdrToString(cls.favoriteServers[n].adr), buflen);
 			return;
@@ -536,7 +454,7 @@ static void LAN_GetServerInfo(int source, int n, char *buf, size_t buflen)
 		}
 		break;
 	case AS_FAVORITES:
-		if (n >= 0 && n < MAX_OTHER_SERVERS)
+		if (n >= 0 && n < MAX_FAVOURITE_SERVERS)
 		{
 			server = &cls.favoriteServers[n];
 		}
@@ -606,7 +524,7 @@ static int LAN_GetServerPing(int source, int n)
 		}
 		break;
 	case AS_FAVORITES:
-		if (n >= 0 && n < MAX_OTHER_SERVERS)
+		if (n >= 0 && n < MAX_FAVOURITE_SERVERS)
 		{
 			server = &cls.favoriteServers[n];
 		}
@@ -645,7 +563,7 @@ static serverInfo_t *LAN_GetServerPtr(int source, int n)
 		}
 		break;
 	case AS_FAVORITES:
-		if (n >= 0 && n < MAX_OTHER_SERVERS)
+		if (n >= 0 && n < MAX_FAVOURITE_SERVERS)
 		{
 			return &cls.favoriteServers[n];
 		}
@@ -812,21 +730,25 @@ static void LAN_MarkServerVisible(int source, int n, qboolean visible)
 {
 	if (n == -1)
 	{
-		int          count   = MAX_OTHER_SERVERS;
+		int          count;
 		serverInfo_t *server = NULL;
 
 		switch (source)
 		{
 		case AS_LOCAL:
+			count   = MAX_OTHER_SERVERS;
 			server = &cls.localServers[0];
 			break;
 		case AS_GLOBAL:
-			server = &cls.globalServers[0];
 			count  = MAX_GLOBAL_SERVERS;
+			server = &cls.globalServers[0];
 			break;
 		case AS_FAVORITES:
+			count   = MAX_FAVOURITE_SERVERS;
 			server = &cls.favoriteServers[0];
 			break;
+		default:
+			return;
 		}
 		if (server)
 		{
@@ -853,7 +775,7 @@ static void LAN_MarkServerVisible(int source, int n, qboolean visible)
 			}
 			break;
 		case AS_FAVORITES:
-			if (n >= 0 && n < MAX_OTHER_SERVERS)
+			if (n >= 0 && n < MAX_FAVOURITE_SERVERS)
 			{
 				cls.favoriteServers[n].visible = visible;
 			}
@@ -885,7 +807,7 @@ static int LAN_ServerIsVisible(int source, int n)
 		}
 		break;
 	case AS_FAVORITES:
-		if (n >= 0 && n < MAX_OTHER_SERVERS)
+		if (n >= 0 && n < MAX_FAVOURITE_SERVERS)
 		{
 			return cls.favoriteServers[n].visible;
 		}
@@ -942,7 +864,7 @@ qboolean LAN_ServerIsInFavoriteList(int source, int n)
 		}
 		break;
 	case AS_FAVORITES:
-		if (n >= 0 && n < MAX_OTHER_SERVERS)
+		if (n >= 0 && n < MAX_FAVOURITE_SERVERS)
 		{
 			return qtrue;
 		}

@@ -3075,7 +3075,7 @@ static void CL_SetServerInfoByAddress(netadr_t from, const char *info, int ping)
 		}
 	}
 
-	for (i = 0; i < MAX_OTHER_SERVERS; i++)
+	for (i = 0; i < MAX_FAVOURITE_SERVERS; i++)
 	{
 		if (NET_CompareAdr(from, cls.favoriteServers[i].adr))
 		{
