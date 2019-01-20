@@ -581,7 +581,7 @@ cvarTable_t cvarTable[] =
 	{ &cg_optimizePrediction,     "cg_optimizePrediction",     "1",           CVAR_ARCHIVE,                 0 }, // unlagged optimized prediction
 
 #ifdef FEATURE_RATING
-	{ &cg_scoreboard,             "cg_scoreboard",             "0",           CVAR_ARCHIVE,                 0 },
+	{ &cg_scoreboard,             "cg_scoreboard",             "1",           CVAR_ARCHIVE,                 0 },
 #endif
 
 	{ &cg_quickchat,              "cg_quickchat",              "0",           CVAR_ARCHIVE,                 0 },

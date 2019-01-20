@@ -211,7 +211,7 @@ void CG_objectivesUp_f(void)
 void CG_ScoresDown_f(void)
 {
 #ifdef FEATURE_RATING
-	if (cgs.skillRating)
+	if (cgs.skillRating && cgs.gametype != GT_WOLF_STOPWATCH && cgs.gametype != GT_WOLF_LMS)
 	{
 		if (!cg.showScores && cg.scoresDownTime + 250 > cg.time && cg.scoreToggleTime < (cg.time - 500))
 		{
@@ -229,7 +229,11 @@ void CG_ScoresDown_f(void)
 		}
 		cg.scoresDownTime = cg.time;
 	}
+	else
 #endif
+	{
+		trap_Cvar_Set("cg_scoreboard", "0"); // SCOREBOARD_XP
+	}
 
 	if (cg.scoresRequestTime + 2000 < cg.time)
 	{

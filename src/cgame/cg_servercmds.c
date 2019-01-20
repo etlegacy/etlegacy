@@ -1384,11 +1384,15 @@ static void CG_MapRestart(void)
 
 #ifdef FEATURE_RATING
 	// default scoreboard
-	if (cgs.skillRating > 0)
+	if (cgs.skillRating > 0 && cgs.gametype != GT_WOLF_STOPWATCH && cgs.gametype != GT_WOLF_LMS)
 	{
-		trap_Cvar_Set("cg_scoreboard", "1");
+		trap_Cvar_Set("cg_scoreboard", "1"); // SCOREBOARD_SR
 	}
+	else
 #endif
+	{
+		trap_Cvar_Set("cg_scoreboard", "0"); // SCOREBOARD_XP
+	}
 }
 
 #define MAX_VOICEFILES      8
