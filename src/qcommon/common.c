@@ -148,6 +148,10 @@ cvar_t *com_watchdog_cmd;
 cvar_t *com_hunkused;
 
 cvar_t *com_downloadURL;
+#if defined(FEATURE_PAKISOLATION) && !defined(DEDICATED)
+cvar_t *dl_whitelistModPaks;
+cvar_t *dl_whitelistMapPaks;
+#endif
 
 // com_speeds times
 int time_game;
@@ -2984,6 +2988,11 @@ void Com_Init(char *commandLine)
 
 	com_downloadURL = Cvar_Get("com_downloadURL", "http://mirror.etlegacy.com/etmain", CVAR_INIT);
 	Cmd_AddCommand("download", Com_Download_f, "Downloads a pk3 from the URL set in cvar com_downloadURL.");
+
+#if defined(FEATURE_PAKISOLATION) && !defined(DEDICATED)
+	dl_whitelistModPaks = Cvar_Get("dl_whitelistModPaks", "0", CVAR_ARCHIVE);
+	dl_whitelistMapPaks = Cvar_Get("dl_whitelistMapPaks", "1", CVAR_ARCHIVE);
+#endif
 
 #ifdef FEATURE_DBMS
 	Cmd_AddCommand("saveDB", DB_SaveMemDB_f, "Saves the internal memory database to disk.");

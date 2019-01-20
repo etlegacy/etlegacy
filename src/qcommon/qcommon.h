@@ -845,8 +845,8 @@ but that's a C++ construct ..
 #define FS_EXCLUDE_PK3 0x2
 long FS_FOpenFileRead_Filtered(const char *qpath, fileHandle_t *file, qboolean uniqueFILE, int filter_flag);
 
-int FS_FileIsInPAK(const char *fileName, int *pChecksum);
 // returns 1 if a file is in the PAK file, otherwise -1
+int FS_FileIsInPAK(const char *fileName, int *pChecksum);
 
 int FS_Delete(const char *fileName);
 
@@ -944,6 +944,15 @@ qboolean FS_Unzip(const char *fileName, qboolean quiet);
 
 void FS_HomeRemove(const char *homePath);
 qboolean FS_FileInPathExists(const char *testpath);
+
+#if defined(FEATURE_PAKISOLATION) && !defined(DEDICATED)
+const char *FS_Basename(const char *path);
+const char *FS_Dirpath(const char *path);
+void FS_CreateContainerName(const char *id, char *output);
+qboolean FS_MatchFileInPak(const char *filepath, const char *match);
+int FS_CalculateFileSHA1(const char *path, char *hash);
+qboolean FS_IsWhitelisted(const char *pakName, const char *hash);
+#endif
 
 /*
 ==============================================================
@@ -1082,6 +1091,11 @@ extern int com_hunkusedvalue;
 extern qboolean com_errorEntered;
 
 extern cvar_t *com_downloadURL;
+
+#if defined(FEATURE_PAKISOLATION) && !defined(DEDICATED)
+extern cvar_t *dl_whitelistModPaks;
+extern cvar_t *dl_whitelistMapPaks;
+#endif
 
 extern fileHandle_t com_journalFile;
 extern fileHandle_t com_journalDataFile;
