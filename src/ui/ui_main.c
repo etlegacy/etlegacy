@@ -8667,6 +8667,7 @@ cvarTable_t cvarTable[] =
 	{ NULL,                             "cg_locations",                        "3",                          CVAR_ARCHIVE,                   0 },
 
 	{ &ui_serverBrowserSettings,        "ui_serverBrowserSettings",            "0",                          CVAR_INIT,                      0 },
+	{ NULL,                             "cg_allowGeoIP",                       "1",                          CVAR_ARCHIVE | CVAR_USERINFO,   0 },
 };
 
 const unsigned int cvarTableSize = sizeof(cvarTable) / sizeof(cvarTable[0]);
