@@ -42,7 +42,9 @@
 #include "../sys/sys_local.h"
 #include "../client/client.h"
 #include "sdl_icon.h"
+#ifndef _MSC_VER
 #include "sdl_splash.h"
+#endif
 
 //static qboolean SDL_VIDEODRIVER_externallySet = qfalse;
 
@@ -833,6 +835,7 @@ static qboolean GLimp_StartDriverAndSetMode(glconfig_t *glConfig, int mode, qboo
  */
 void GLimp_Splash(glconfig_t *glConfig)
 {
+#ifndef _MSC_VER // FIXME: error C1091
 	SDL_Surface *splashImage = NULL;
 
 	// get splash image
@@ -860,6 +863,7 @@ void GLimp_Splash(glconfig_t *glConfig)
 	SDL_UpdateWindowSurface(main_window);
 
 	SDL_FreeSurface(splashImage);
+#endif
 }
 
 /**
