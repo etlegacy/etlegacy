@@ -1963,6 +1963,7 @@ char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 #ifdef FEATURE_LUA
 	char reason[MAX_STRING_CHARS] = "";
 #endif
+	qboolean allowGeoIP = qfalse;
 	trap_GetUserinfo(clientNum, userinfo, sizeof(userinfo));
 
 	// grab the values we need in just one pass
@@ -1979,6 +1980,12 @@ char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 		{
 			break;
 		}
+		if (!Q_stricmp(cs_key, "cg_allowGeoIP") && cs_value[0])
+		{
+			allowGeoIP = cs_value[0] >= '1' ? qtrue : qfalse;
+			continue;
+		}
+
 		token = G_GetTokenForString(cs_key);
 		switch (token)
 		{
@@ -2160,7 +2167,7 @@ char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 			{
 				client->sess.uci = 0;
 			}
-			else
+			else if (allowGeoIP)
 			{
 				unsigned int ret = GeoIP_seek_record(gidb, ip);
 
@@ -2173,6 +2180,10 @@ char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 					client->sess.uci = 246;
 					G_LogPrintf("GeoIP: This IP:%s cannot be located\n", cs_ip);
 				}
+			}
+			else
+			{
+				client->sess.uci = 246;
 			}
 		}
 	}
@@ -2245,7 +2256,7 @@ char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 	// disabled for bots - see join message ... make cvar ?
 	if (firstTime && !(ent->r.svFlags & SVF_BOT))
 	{
-		if ((g_countryflags.integer & CF_CONNECT) && client->sess.uci > 0 && client->sess.uci < MAX_COUNTRY_NUM)
+		if ((g_countryflags.integer & CF_CONNECT) && client->sess.uci > 0 && client->sess.uci < MAX_COUNTRY_NUM && allowGeoIP)
 		{
 			trap_SendServerCommand(-1, va("cpm \"" S_COLOR_WHITE "%s" S_COLOR_WHITE " connected from %s\n\"", client->pers.netname, country_name[client->sess.uci]));
 		}
