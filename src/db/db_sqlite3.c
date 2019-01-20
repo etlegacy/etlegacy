@@ -65,9 +65,8 @@ char *sql_Version1 =
 //   updated (last visit)
 //   created
 //
-//
 char *sql_Version2 =
-		"CREATE TABLE IF NOT EXISTS client_servers (profile TEXT NOT NULL, source INT NOT NULL, address TEXT NOT NULL, name TEXT NOT NULL, mod TEXT NOT NULL, updated DATETIME, created DATETIME DEFAULT CURRENT_TIMESTAMP);"
+		"CREATE TABLE IF NOT EXISTS client_servers (profile TEXT NOT NULL, source INT NOT NULL, address TEXT NOT NULL, name TEXT NOT NULL, mod TEXT NOT NULL, updated DATETIME, created DATETIME DEFAULT (datetime('now','localtime')));"
 		"CREATE INDEX client_servers_profile_idx ON client_servers(profile);"
 		"CREATE INDEX client_servers_address_idx ON client_servers(address);"; // client table
 

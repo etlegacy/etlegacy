@@ -68,25 +68,25 @@ void DB_insertFavorite(const char *profile, int source, const char *name, const 
 		return;
 	}
 
-	//
-	// FIXME: name (colors/inject.)
-	//
-
 	sql    = va("SELECT * from client_servers WHERE profile='%s' AND address='%s';", profile, address);
 	result = sqlite3_prepare_v2(db, sql, -1, &res, 0);
 
-	if (result != SQLITE_OK)
+	if (result == SQLITE_OK)
 	{
-		Com_Printf("Can't save favorite - db error\n"); // FIXME: sqlite3_errmsg(db) this is leaking?
-		//sqlite3_free(err_msg);
-	}
-	else
-	{
+		// FIXME: name - use prepared statement
+		//sqlite3_bind_int(res, 1, 3);
+	    //...
+
+		// FIXME: check if client is connected and don't use name?! (not really required)
+		// ingame adding of favorites won't pass correct hostname (address instead)
+		// this is a bug in ET ui code
+
 		result = sqlite3_step(res);
 
 		if (result == SQLITE_ROW)
 		{
-			Com_Printf("Favorite already stored\n");
+			//Com_Printf("Favorite already stored\n");
+			return;
 		}
 		else if(result == SQLITE_ERROR)
 		{
@@ -94,7 +94,7 @@ void DB_insertFavorite(const char *profile, int source, const char *name, const 
 		}
 		else
 		{
-			sql = va("INSERT INTO client_servers values('%s', %i, '%s', '%s', '%s', NULL, CURRENT_TIMESTAMP)", profile, source, address, name, mod);
+			sql = va("INSERT INTO client_servers values('%s', %i, '%s', '%s', '%s', NULL, (datetime('now','localtime')))", profile, source, address, name, mod);
 			result = sqlite3_exec(db, sql, 0, 0, &err_msg);
 
 			if (result != SQLITE_OK)
@@ -102,10 +102,15 @@ void DB_insertFavorite(const char *profile, int source, const char *name, const 
 				Com_Printf("SQL command '%s' failed: %s\n", sql, err_msg);
 				sqlite3_free(err_msg);
 			}
-
-			Com_Printf("^4Favorite '%s' for profile '%s' created\n", address, profile);
+			else
+			{
+				Com_Printf("Favorite '%s' for profile '%s' created\n", address, profile);
+				return;
+			}
 		}
 	}
+
+	Com_Printf("Can't save favorite - db error\n");
 }
 
 /**
@@ -170,7 +175,7 @@ int DB_callbackFavorites(void *NotUsed, int argc, char **argv, char **azColName)
     // avoid array overflows
 	if (rowCounter >= MAX_FAVOURITE_SERVERS - 1)
 	{
-		Com_Printf("Can't load all Favorites. MAX_FAVOURITE_SERVERS reached.\n");
+		Com_Printf("Can't load all favorites. MAX_FAVOURITE_SERVERS reached.\n");
 		return 0;
 	}
 
@@ -194,6 +199,7 @@ int DB_callbackFavorites(void *NotUsed, int argc, char **argv, char **azColName)
 
 /**
  * @brief Loads favorites from db into favoriteServers list
+ * @param[in]
  */
 void DB_loadFavorites(const char *profile)
 {
@@ -208,7 +214,7 @@ void DB_loadFavorites(const char *profile)
 	}
 
 	sql = va("SELECT * FROM client_servers WHERE profile='%s';", profile);
-    Com_Printf(va("%s",sql));
+
 	rowCounter = 0;
 
 	result = sqlite3_exec(db, sql, DB_callbackFavorites, 0, &err_msg);
