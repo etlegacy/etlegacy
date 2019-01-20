@@ -5253,7 +5253,7 @@ qboolean FS_Unzip(const char *fileName, qboolean quiet)
 // File containerization facilities
 
 #define IsPathSep(X) ((X) == '\\' || (X) == '/' || (X) == PATH_SEP)
-#define CONTAINER_DIRNAME ".server_"
+#define CONTAINER_DIRNAME "server_"
 /**
 * @brief FS_InvalidContainerName
 * @param[in] dirname
