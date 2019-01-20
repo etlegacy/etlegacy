@@ -349,6 +349,9 @@ typedef struct itemDef_s
 
 	/// ETL: checkbox for bitflags in an integer cvar. The value it has is the bitvalue (1,2,4,8 etc)
 	int bitflag;
+
+	vec4_t scrollColor;
+	vec4_t sliderColor;
 } itemDef_t;
 
 /**

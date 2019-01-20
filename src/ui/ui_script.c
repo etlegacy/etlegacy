@@ -183,6 +183,14 @@ void Script_SetItemColor(itemDef_t *item, qboolean *bAbort, char **args)
 				{
 					out = &item2->window.borderColor;
 				}
+				else if (Q_stricmp(name, "scrollcolor") == 0)
+				{
+					out = &item2->scrollColor;
+				}
+				else if (Q_stricmp(name, "slidercolor") == 0)
+				{
+					out = &item2->sliderColor;
+				}
 
 				if (out)
 				{
@@ -1351,6 +1359,42 @@ void Script_ToggleCvarBit(itemDef_t *item, qboolean *bAbort, char **args)
 }
 
 /**
+* @brief Script_SetTextStyle
+* @param[in] item
+* @param bAbort - unused
+* @param[in] args
+*/
+void Script_SetTextStyle(itemDef_t *item, qboolean *bAbort, char **args)
+{
+	const char *itemname = NULL;
+
+	// expecting type of color to set and 4 args for the color
+	if (String_Parse(args, &itemname))
+	{
+		itemDef_t *item2;
+		vec4_t    color;
+		vec4_t    *out;
+		int       j, i, style;
+		int       count = Menu_ItemsMatchingGroup(item->parent, itemname);
+
+		if (!Int_Parse(args, &style))
+		{
+			return;
+		}
+
+		for (j = 0; j < count; j++)
+		{
+			item2 = Menu_GetMatchingItemByNumber(item->parent, j, itemname);
+
+			if (item2 != NULL)
+			{
+				item2->textStyle = style;
+			}
+		}
+	}
+}
+
+/**
  * @brief Script_Skip
  * @param item - unused
  * @param bAbort - unused
@@ -1406,6 +1450,7 @@ commandDef_t commandList[] =
 	{ "abort",              &Script_Abort              },
 	{ "getclipboard",       &Script_GetClipboard       },
 	{ "togglecvarbit",      &Script_ToggleCvarBit      },
+	{ "settextstyle",       &Script_SetTextStyle       },
 	{ "none",               &Script_Skip               }, // skip execution (used as a placeholder)
 };
 

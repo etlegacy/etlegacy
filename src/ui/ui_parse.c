@@ -2132,6 +2132,54 @@ qboolean ItemParse_voteFlag(itemDef_t *item, int handle)
 	return(PC_Int_Parse(handle, &item->voteFlag));
 }
 
+/**
+* @brief ItemParse_scrollColor
+* @param[in,out] item
+* @param[in] handle
+* @return
+*/
+qboolean ItemParse_scrollColor(itemDef_t *item, int handle)
+{
+	int   i;
+	float f = 0.0f;
+
+	for (i = 0; i < 4; i++)
+	{
+		if (!PC_Float_Parse(handle, &f))
+		{
+			return qfalse;
+		}
+
+		item->scrollColor[i] = f;
+	}
+
+	return qtrue;
+}
+
+/**
+* @brief ItemParse_sliderColor
+* @param[in,out] item
+* @param[in] handle
+* @return
+*/
+qboolean ItemParse_sliderColor(itemDef_t *item, int handle)
+{
+	int   i;
+	float f = 0.0f;
+
+	for (i = 0; i < 4; i++)
+	{
+		if (!PC_Float_Parse(handle, &f))
+		{
+			return qfalse;
+		}
+
+		item->sliderColor[i] = f;
+	}
+
+	return qtrue;
+}
+
 keywordHash_t itemParseKeywords[] =
 {
 	{ "accept",            ItemParse_accept,            NULL },
@@ -2219,6 +2267,8 @@ keywordHash_t itemParseKeywords[] =
 	{ "voteFlag",          ItemParse_voteFlag,          NULL }, // vote check
 	{ "wrapped",           ItemParse_wrapped,           NULL },
 	{ "bitflag",           ItemParse_bitflag,           NULL },
+	{ "scrollcolor",       ItemParse_scrollColor,       NULL },
+	{ "slidercolor",       ItemParse_sliderColor,       NULL },
 	{ NULL,                NULL,                        NULL }
 };
 

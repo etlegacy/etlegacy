@@ -1284,6 +1284,9 @@ void UI_LoadMenus(const char *menuFile, qboolean reset)
 		trap_PC_AddGlobalDefine("LEGACY");
 	}
 
+	trap_PC_AddGlobalDefine(va("__WINDOW_WIDTH %f", (uiInfo.uiDC.glconfig.windowAspect / RATIO43) * 640 ));
+	trap_PC_AddGlobalDefine("__WINDOW_HEIGHT 480");
+
 	handle = trap_PC_LoadSource(menuFile);
 	if (!handle)
 	{
@@ -7890,6 +7893,11 @@ void UI_Init(int legacyClient, int clientVersion)
 	}
 
 	MOD_CHECK_LEGACY(legacyClient, clientVersion, uiInfo.legacyClient);
+
+	if (uiInfo.legacyClient <= 0)
+	{
+		uiInfo.uiDC.glconfig.windowAspect = (float)uiInfo.uiDC.glconfig.vidWidth / (float)uiInfo.uiDC.glconfig.vidHeight;
+	}
 
 	//UI_Load();
 	uiInfo.uiDC.registerShaderNoMip  = &trap_R_RegisterShaderNoMip;
