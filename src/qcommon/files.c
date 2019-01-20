@@ -5261,7 +5261,7 @@ qboolean FS_Unzip(const char *fileName, qboolean quiet)
 */
 static qboolean FS_InvalidContainerName(const char *dirname)
 {
-	if (*dirname && (strncmp(dirname, CONTAINER_DIRNAME, 8) || strchr(dirname, '/') || strchr(dirname, '\\')))
+	if (*dirname && (strncmp(dirname, CONTAINER_DIRNAME, strlen(CONTAINER_DIRNAME)) || strchr(dirname, '/') || strchr(dirname, '\\')))
 	{
 		return qtrue;
 	}
