@@ -2986,23 +2986,19 @@ void Item_Combo_Paint(itemDef_t *item)
  */
 void Item_Slider_Paint(itemDef_t *item)
 {
-	vec4_t    newColor;
+	vec4_t    sliderColor;
 	float     x, y;
 	menuDef_t *parent = (menuDef_t *)item->parent;
 
 	if ((item->window.flags & WINDOW_HASFOCUS) && (item->window.flags & WINDOW_FOCUSPULSE))
 	{
-		vec4_t lowLight;
-
-		lowLight[0] = 0.8f * parent->focusColor[0];
-		lowLight[1] = 0.8f * parent->focusColor[1];
-		lowLight[2] = 0.8f * parent->focusColor[2];
-		lowLight[3] = 0.8f * parent->focusColor[3];
-		LerpColor(parent->focusColor, lowLight, newColor, 0.5f + 0.5f * (float)(sin(DC->realTime / PULSE_DIVISOR)));
+		vec4_t dimmedColor;
+		VectorScale(item->sliderColor, 0.8, dimmedColor);
+		LerpColor(item->sliderColor, dimmedColor, sliderColor, 0.5f + 0.5f * (float)(sin(DC->realTime / PULSE_DIVISOR)));
 	}
 	else
 	{
-		Com_Memcpy(&newColor, &item->window.foreColor, sizeof(vec4_t));
+		Vector4Copy(item->sliderColor, sliderColor);
 	}
 
 	y = item->window.rect.y;
@@ -3016,11 +3012,12 @@ void Item_Slider_Paint(itemDef_t *item)
 		x = item->window.rect.x;
 	}
 
-	DC->setColor(newColor);
+	DC->setColor(sliderColor);
 	DC->drawHandlePic(x, y + 1, SLIDER_WIDTH, SLIDER_HEIGHT, DC->Assets.sliderBar);
 
 	x = Item_Slider_ThumbPosition(item);
 	DC->drawHandlePic(x - (SLIDER_THUMB_WIDTH / 2), y, SLIDER_THUMB_WIDTH, SLIDER_THUMB_HEIGHT, DC->Assets.sliderThumb);
+	DC->setColor(NULL);
 }
 
 /**
@@ -3375,6 +3372,7 @@ void Item_ListBox_Paint(itemDef_t *item)
 		// bar
 		x = fillRect.x + 1;
 		y = fillRect.y + fillRect.h - SCROLLBAR_SIZE - 1;
+		DC->setColor(item->scrollColor);
 		DC->drawHandlePic(x, y, SCROLLBAR_SIZE, SCROLLBAR_SIZE, DC->Assets.scrollBarArrowLeft);
 		x   += SCROLLBAR_SIZE - 1;
 		size = fillRect.w - (SCROLLBAR_SIZE * 2);
@@ -3389,6 +3387,7 @@ void Item_ListBox_Paint(itemDef_t *item)
 		}
 
 		DC->drawHandlePic(thumb, y, SCROLLBAR_SIZE, SCROLLBAR_SIZE, DC->Assets.scrollBarThumb);
+		DC->setColor(NULL);
 
 		listPtr->endPos = listPtr->startPos;
 		size            = fillRect.w - 2;
@@ -3431,6 +3430,7 @@ void Item_ListBox_Paint(itemDef_t *item)
 		// draw scrollbar to right side of the window
 		x = fillRect.x + fillRect.w - SCROLLBAR_SIZE - 1;
 		y = fillRect.y + 1;
+		DC->setColor(item->scrollColor);
 		DC->drawHandlePic(x, y, SCROLLBAR_SIZE, SCROLLBAR_SIZE, DC->Assets.scrollBarArrowUp);
 		y += SCROLLBAR_SIZE - 1;
 
@@ -3447,6 +3447,7 @@ void Item_ListBox_Paint(itemDef_t *item)
 		}
 
 		DC->drawHandlePic(x, thumb, SCROLLBAR_SIZE, SCROLLBAR_SIZE, DC->Assets.scrollBarThumb);
+		DC->setColor(NULL);
 
 		// adjust size for item painting
 		size = fillRect.h /* - 2*/;
@@ -3993,6 +3994,9 @@ void Item_Init(itemDef_t *item)
 
 	// default hotkey to -1
 	item->hotkey = -1;
+
+	Vector4Set(item->scrollColor, 1, 1, 1, 1);
+	Vector4Set(item->sliderColor, 1, 1, 1, 1);
 
 	Window_Init(&item->window);
 }

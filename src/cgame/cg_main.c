@@ -2674,6 +2674,12 @@ void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qbo
 	cgs.screenXScale = cgs.glconfig.vidWidth / 640.0f;
 	cgs.screenYScale = cgs.glconfig.vidHeight / 480.0f;
 
+
+	if (cg.legacyClient <= 0)
+	{
+		cgs.glconfig.windowAspect = (float)cgs.glconfig.vidWidth / (float)cgs.glconfig.vidHeight;
+	}
+
 	// screen support ...
 	cgs.adr43       = cgs.glconfig.windowAspect * RPRATIO43;       // aspectratio / (4/3)
 	cgs.r43da       = RATIO43 * 1.0f / cgs.glconfig.windowAspect;  // (4/3) / aspectratio
