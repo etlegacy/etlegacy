@@ -1300,6 +1300,14 @@ void CL_WavStopRecord_f(void)
 	clc.waverecording = qfalse;
 }
 
+/**
+ * @brief CL_SaveFavServersToFile_f
+ */
+void CL_SaveFavServersToFile_f(void)
+{
+	LAN_SaveServersToFile();
+}
+
 //====================================================================
 
 /**
@@ -2884,6 +2892,8 @@ void CL_Init(void)
 	Cmd_AddCommand("video", CL_Video_f, "Starts AVI recording during demo view.");
 	Cmd_AddCommand("stopvideo", CL_StopVideo_f, "Stops AVI recording.");
 
+	Cmd_AddCommand("save_favs", CL_SaveFavServersToFile_f, "Saves the favcache.dat file into mod/profile path of fs_homepath.");
+
 	CIN_Init();
 
 	CL_DemoInit();
@@ -2968,6 +2978,8 @@ void CL_Shutdown(void)
 	Cmd_RemoveCommand("model");
 	Cmd_RemoveCommand("video");
 	Cmd_RemoveCommand("stopvideo");
+
+	Cmd_RemoveCommand("save_favs");
 
 	Cmd_RemoveCommand("pausedemo");
 

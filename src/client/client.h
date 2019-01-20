@@ -777,6 +777,7 @@ void CL_ShutdownUI(void);
 int Key_GetCatcher(void);
 void Key_SetCatcher(int catcher);
 void LAN_LoadCachedServers(void);
+void LAN_SaveServersToFile(void);
 
 // cl_net_chan.c
 

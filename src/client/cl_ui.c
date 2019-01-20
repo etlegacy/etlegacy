@@ -112,7 +112,7 @@ void LAN_LoadCachedServers(void)
 }
 
 /**
- * @brief LAN_SaveServersToFile
+ * @brief Saves favorite servers into .dat file format
  */
 void LAN_SaveServersToFile(void)
 {
@@ -120,6 +120,7 @@ void LAN_SaveServersToFile(void)
 	fileHandle_t fileOut;
 	char         filename[MAX_QPATH];
 
+	// moved to mod/profiles dir
 	if (cl_profile->string[0])
 	{
 		Com_sprintf(filename, sizeof(filename), "profiles/%s/favcache.dat", cl_profile->string);
@@ -129,8 +130,12 @@ void LAN_SaveServersToFile(void)
 		Q_strncpyz(filename, "favcache.dat", sizeof(filename));
 	}
 
-	// moved to mod/profiles dir
-	fileOut = FS_FOpenFileWrite(filename);
+	if ((fileOut = FS_FOpenFileWrite(filename)) <= 0)
+	{
+		Com_Printf("Saving favorites failed: Can't open file to write\n");
+		return;
+	}
+
 	(void) FS_Write(&cls.numfavoriteservers, sizeof(int32_t), fileOut);
 
 	size = sizeof(cls.favoriteServers);
