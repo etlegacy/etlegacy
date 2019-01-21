@@ -1384,7 +1384,7 @@ static void CG_MapRestart(void)
 
 #ifdef FEATURE_RATING
 	// default scoreboard
-	if (cgs.skillRating > 1)
+	if (cgs.skillRating > 0)
 	{
 		trap_Cvar_Set("cg_scoreboard", "1");
 	}
