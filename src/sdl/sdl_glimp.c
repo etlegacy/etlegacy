@@ -42,9 +42,7 @@
 #include "../sys/sys_local.h"
 #include "../client/client.h"
 #include "sdl_icon.h"
-#ifndef _MSC_VER
 #include "sdl_splash.h"
-#endif
 
 //static qboolean SDL_VIDEODRIVER_externallySet = qfalse;
 
@@ -835,12 +833,18 @@ static qboolean GLimp_StartDriverAndSetMode(glconfig_t *glConfig, int mode, qboo
  */
 void GLimp_Splash(glconfig_t *glConfig)
 {
-#ifndef _MSC_VER // FIXME: error C1091
+	unsigned char splashData[144000]; // width * height * bytes_per_pixel
 	SDL_Surface *splashImage = NULL;
+
+	// decode splash image
+	SPLASH_IMAGE_RUN_LENGTH_DECODE(splashData,
+	    CLIENT_WINDOW_SPLASH.rle_pixel_data,
+	    CLIENT_WINDOW_SPLASH.width * CLIENT_WINDOW_SPLASH.height,
+	    CLIENT_WINDOW_SPLASH.bytes_per_pixel);
 
 	// get splash image
 	splashImage = SDL_CreateRGBSurfaceFrom(
-	    (void *)CLIENT_WINDOW_SPLASH.pixel_data,
+	    (void *)splashData,
 	    CLIENT_WINDOW_SPLASH.width,
 	    CLIENT_WINDOW_SPLASH.height,
 	    CLIENT_WINDOW_SPLASH.bytes_per_pixel * 8,
@@ -863,7 +867,6 @@ void GLimp_Splash(glconfig_t *glConfig)
 	SDL_UpdateWindowSurface(main_window);
 
 	SDL_FreeSurface(splashImage);
-#endif
 }
 
 /**
