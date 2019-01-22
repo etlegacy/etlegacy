@@ -191,8 +191,10 @@ menuDef {
 	TRICHECKBOXACTIONMULTI( 8+.66*((FILTERS_WIDTH)-6)+2+2+12, 116, .33*((FILTERS_WIDTH)-6)-14, 10, .2, 8, "ui_browserShowHumans", cvarFloatList { "Filter Disabled" 0 "Only show..." 1 "Don't show..." 2 }, uiScript RefreshFilter ; setcvar ui_filterdescription "Filter affecting ET:Legacy Servers with Humans players", "Includes or excludes ET:Legacy servers with humans from the server list" )
 
 	// Buttons
-	BUTTONEXT( 10+2, 140, .5*((FILTERS_WIDTH)-6)-6, 14, _("REFRESH LIST"), .24, 11, uiScript RefreshServers, tooltip _("Refresh servers list"))
-	BUTTONEXT( 10+.5*((FILTERS_WIDTH)-6)+2, 140, .5*((FILTERS_WIDTH)-6)-6, 14, _("RESET FILTERS"), .24, 11, uiScript ResetFilters; uiScript RefreshFilter, tooltip _("Reset all filters to their defaults"))
+	// FIXME: make it look better (full adjust)
+	BUTTONEXT( 10+2, 140, .3*(FILTERS_WIDTH-6), 14, _("REFRESH LIST"), .24, 11, uiScript RefreshServers, tooltip _("Refresh servers list"))
+	BUTTONEXT( 20+2+ .3*(FILTERS_WIDTH-6), 140, .3*((FILTERS_WIDTH)-6), 14, _("RESET FILTERS"), .24, 11, uiScript ResetFilters; uiScript RefreshFilter, tooltip _("Reset all filters to their defaults"))
+	BUTTONEXT( 30+2+ 2*.3*(FILTERS_WIDTH-6), 140, .3*((FILTERS_WIDTH)-6), 14, _("FAVORITES"), .24, 11, uiScript ResetFavorites; uiScript RefreshFilter, tooltip _("Shows all favorite servers"))
 
 	/*
 	itemDef {
