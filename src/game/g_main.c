@@ -606,7 +606,7 @@ cvarTable_t gameCvarTable[] =
 	{ &g_misc,                              "g_misc",                              "0",                          0,                                               0, qfalse, qfalse },
 	{ &g_intermissionTime,                  "g_intermissionTime",                  "60",                         0,                                               0, qfalse, qfalse },
 	{ &g_intermissionReadyPercent,          "g_intermissionReadyPercent",          "100",                        0,                                               0, qfalse, qfalse },
-	{ &g_mapScriptDirectory,                "g_mapScriptDirectory",                "",                           0,                                               0, qfalse, qfalse },
+	{ &g_mapScriptDirectory,                "g_mapScriptDirectory",                "mapscripts",                 0,                                               0, qfalse, qfalse },
 	{ &g_mapConfigs,                        "g_mapConfigs",                        "",                           0,                                               0, qfalse, qfalse },
 	{ &g_customConfig,                      "g_customConfig",                      "defaultpublic",              CVAR_ARCHIVE,                                    0, qfalse, qfalse },
 	{ &g_moverScale,                        "g_moverScale",                        "1.0",                        0,                                               0, qfalse, qfalse },
