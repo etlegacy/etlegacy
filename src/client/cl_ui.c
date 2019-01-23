@@ -211,7 +211,7 @@ static int LAN_AddServer(int source, const char *name, const char *address)
 		count   = &cls.numfavoriteservers;
 		servers = &cls.favoriteServers[0];
 #ifdef FEATURE_DBMS
-		if (db_mode->integer > 0)
+		if (db_mode->integer > 0 && cl_profile->string[0])
 		{
 			DB_insertFavorite(cl_profile->string, source, name, address, "");
 		}
@@ -315,7 +315,7 @@ static void LAN_RemoveServer(int source, const char *addr)
 			if (source == AS_FAVORITES)
 			{
 #ifdef FEATURE_DBMS
-				if (db_mode->integer > 0)
+				if (db_mode->integer > 0 && cl_profile->string[0])
 				{
 					DB_deleteFavorite(cl_profile->string, addr);
 				}
