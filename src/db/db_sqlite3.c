@@ -48,11 +48,10 @@ qboolean isDBActive;
 // Always create optional feature tables see f.e. rating tables otherwise we can't ensure db integrity for updates
 
 // version 1
-char *sql_Version1 =
-		"CREATE TABLE IF NOT EXISTS etl_version (Id INT PRIMARY KEY NOT NULL, name TEXT, sql TEXT, created TEXT);" // both
-		"CREATE TABLE IF NOT EXISTS rating_users (guid TEXT PRIMARY KEY NOT NULL, mu REAL, sigma REAL, created TEXT, updated TEXT, UNIQUE (guid));"     // server table
-		"CREATE TABLE IF NOT EXISTS rating_match (guid TEXT PRIMARY KEY NOT NULL, mu REAL, sigma REAL, time_axis INT, time_allies INT, UNIQUE (guid));" // server table
-		"CREATE TABLE IF NOT EXISTS rating_maps (mapname TEXT PRIMARY KEY NOT NULL, win_axis INT, win_allies INT, UNIQUE (mapname));";                  // server table
+//
+// ....
+//
+//
 
 // version 2
 //
@@ -65,13 +64,34 @@ char *sql_Version1 =
 //   updated (last visit)
 //   created
 //
-char *sql_Version2 =
-		"CREATE TABLE IF NOT EXISTS client_servers (profile TEXT NOT NULL, source INT NOT NULL, address TEXT NOT NULL, name TEXT NOT NULL, mod TEXT NOT NULL, updated DATETIME, created DATETIME DEFAULT (datetime('now','localtime')));"
-		"CREATE INDEX client_servers_profile_idx ON client_servers(profile);"
-		"CREATE INDEX client_servers_address_idx ON client_servers(address);"; // client table
+// table etl_whitelist
+//   key
+//   filename
+//   type (map or mod)
+//   created
+//
 
-// version 3
+const char *sql_Version_Statements[SQL_DBMS_SCHEMA_VERSION] =
+{
+		//version 1
+		"CREATE TABLE IF NOT EXISTS etl_version (Id INT PRIMARY KEY NOT NULL, name TEXT, sql TEXT, created TEXT);"  // both
+		"CREATE TABLE IF NOT EXISTS rating_users (guid TEXT PRIMARY KEY NOT NULL, mu REAL, sigma REAL, created TEXT, updated TEXT, UNIQUE (guid));"     // server table
+		"CREATE TABLE IF NOT EXISTS rating_match (guid TEXT PRIMARY KEY NOT NULL, mu REAL, sigma REAL, time_axis INT, time_allies INT, UNIQUE (guid));" // server table
+		"CREATE TABLE IF NOT EXISTS rating_maps (mapname TEXT PRIMARY KEY NOT NULL, win_axis INT, win_allies INT, UNIQUE (mapname));",                  // server table
+		// version 2
+		"CREATE TABLE IF NOT EXISTS client_servers (profile TEXT NOT NULL, source INT NOT NULL, address TEXT NOT NULL, name TEXT NOT NULL, mod TEXT NOT NULL, updated DATETIME, created DATETIME);"
+		"CREATE INDEX client_servers_profile_idx ON client_servers(profile);"
+		"CREATE INDEX client_servers_address_idx ON client_servers(address);" // client table
+
+		//"CREATE TABLE IF NOT EXISTS etl_whitelist (key TEXT NOT NULL, filename TEXT NOT NULL, type INT, updated DATETIME , created DATETIME NOT NULL);"
+		//"CREATE INDEX etl_whitelist ON etl_whitelist(key);"
+		//"CREATE INDEX etl_whitelist ON etl_whitelist(filename);" // client table (no use for server atm)
+};
+
+
+
 /*
+  	  	// version 3?!
 		// ban/mute table (ensure we can also do IP range ban entries)
 		// type = mute/ban
 		// af = AddressFamily
@@ -79,16 +99,6 @@ char *sql_Version2 =
 		      "CREATE TABLE ban (Id INT PRIMARY KEY NOT NULL, address TEXT, guid TEXT, type INT NOT NULL, reason TEXT, af INT, length TEXT, expires TEXT, created TEXT, updated TEXT);"
 		      "CREATE INDEX ban_address_idx ON ban(address);"
 		      "CREATE INDEX ban_guid_idx ON ban(guid);";
-		// expires?
-
-		result = sqlite3_exec(db, sql, 0, 0, &err_msg);
-
-		if (result != SQLITE_OK)
-		{
-			Com_Printf("SQLite3 failed to create table ban: %s\n", err_msg);
-			sqlite3_free(err_msg);
-			return 1;
-		}
 */
 
 /**
@@ -199,20 +209,9 @@ int DB_Init()
 
 		if (result != 0)
 		{
+			(void) sqlite3_close(db);
 			Com_Printf("... WARNING can't create database [%i]\n", result);
 			return 1;
-		}
-
-		// save memory db to disk
-		if (db_mode->integer == 1)
-		{
-			result = DB_SaveMemDB();
-
-			if (result != SQLITE_OK)
-			{
-				Com_Printf("... WARNING can't save memory database file [%i]\n", result);
-				return 1;
-			}
 		}
 	}
 
@@ -220,9 +219,26 @@ int DB_Init()
 
 	Com_Printf("SQLite3 ET: L [%i] database '%s' init in [%i] ms - autocommit %i\n", SQL_DBMS_SCHEMA_VERSION, to_ospath, (Sys_Milliseconds() - msec), sqlite3_get_autocommit(db));
 
-	if (DB_UpdateSchema())
+	if (!DB_CheckUpdates())
 	{
 		Com_Printf("SQLite3 update failed.\n");
+		//DB_Close(); ?
+		//error drop ?
+		// db is still active
+	}
+
+	// save memory db to disk
+	if (db_mode->integer == 1)
+	{
+		int result;
+
+		result = DB_SaveMemDB();
+
+		if (result != SQLITE_OK)
+		{
+			Com_Printf("... WARNING can't save memory database file [%i]\n", result);
+			return 1;
+		}
 	}
 
 	return 0;
@@ -230,95 +246,127 @@ int DB_Init()
 
 /**
  * @brief creates tables and populates our scheme.
+ * @param[in]
  *
  * @return
  *
  * @note We are using the same db for client and server so listen servers are happy
  */
-static int DB_CreateSchema()
+static int DB_CreateOrUpdateSchema(int startSchemaVersion)
 {
-	int  result;
+	int  result, i;
 	char *err_msg = 0;
 	char *sql;
 
-	// version 1
-
-	result = sqlite3_exec(db, sql_Version1, 0, 0, &err_msg);
-
-	if (result != SQLITE_OK)
+	for (i = startSchemaVersion; i < SQL_DBMS_SCHEMA_VERSION; i++)
 	{
-		Com_Printf("SQLite3 failed to create schema version 1: %s\n", err_msg);
-		sqlite3_free(err_msg);
-		return 1;
-	}
+		result = sqlite3_exec(db, sql_Version_Statements[i], 0, 0, &err_msg);
 
-	sql = va("INSERT INTO etl_version VALUES (1, 'ET: L DBMS schema V1', '%s', CURRENT_TIMESTAMP);", sql_Version1);
+		if (result != SQLITE_OK)
+		{
+			Com_Printf("SQLite3 failed to create schema version i%: %s\n", i + 1, err_msg);
+			sqlite3_free(err_msg);
+			return 1;
+		}
 
-	result = sqlite3_exec(db, sql, 0, 0, &err_msg);
+		if (i + 1 == SQL_DBMS_SCHEMA_VERSION)
+		{
+			sql = va("INSERT INTO etl_version VALUES (%i, 'ET: L DBMS schema V%i for %s', '%s', CURRENT_TIMESTAMP);", i + 1, i + 1, ET_VERSION, sql_Version_Statements[i]);
+		}
+		else
+		{
+			sql = va("INSERT INTO etl_version VALUES (%i, 'ET: L DBMS schema V%i', '%s', CURRENT_TIMESTAMP);", i + 1 , i + 1, sql_Version_Statements[i]);
+		}
 
-	if (result != SQLITE_OK)
-	{
-		Com_Printf("SQLite3 failed to write ETL version 1: %s\n", err_msg);
-		sqlite3_free(err_msg);
-		return 1;
-	}
+		result = sqlite3_exec(db, sql, 0, 0, &err_msg);
 
-	// version 2
+		if (result != SQLITE_OK)
+		{
+			Com_Printf("SQLite3 failed to write ETL version %i: %s\n", i + 1, err_msg);
+			sqlite3_free(err_msg);
+			return 1;
+		}
 
-	// client_servers table - since version 2
-	result = sqlite3_exec(db, sql_Version2, 0, 0, &err_msg);
-
-	if (result != SQLITE_OK)
-	{
-		Com_Printf("... failed to create schema version 2: %s\n", err_msg);
-		sqlite3_free(err_msg);
-		return 1;
-	}
-
-	sql = va("INSERT INTO etl_version VALUES (%i, 'ET: L DBMS schema V%i for %s', '%s', CURRENT_TIMESTAMP);", SQL_DBMS_SCHEMA_VERSION, SQL_DBMS_SCHEMA_VERSION, ET_VERSION, sql_Version2);
-
-	result = sqlite3_exec(db, sql, 0, 0, &err_msg);
-
-	if (result != SQLITE_OK)
-	{
-		Com_Printf("SQLite3 failed to write ETL version 2: %s\n", err_msg);
-		sqlite3_free(err_msg);
-		return 1;
+		Com_Printf("... DB schema version: %i created\n", i + 1);
 	}
 
 	return 0;
 }
 
 /**
- * @brief DB_UpdateSchema
+ * @brief DB_CallbackVersion
+ */
+int DB_CallbackVersion(void *NotUsed, int argc, char **argv,
+                    char **azColName)
+{
+    NotUsed = 0;
+
+    for (int i = 0; i < argc; i++)
+    {
+
+        Com_Printf("%s = %s\n", azColName[i], argv[i] ? argv[i] : "NULL");
+    }
+
+    return 0;
+}
+
+/**
+ * @brief DB_CheckUpdates
  *
  * @return
  */
-int DB_UpdateSchema()
+int DB_CheckUpdates()
 {
-	int version = -1;
-
-	// FIXME
-	return 0;
+	int version = 0;
+	char         *sql;
+	int          result;
+	char         *err_msg = 0;
+	sqlite3_stmt *res;
 
 	// read version from version table
+	sql    = va("SELECT id from etl_version ORDER BY Id DESC LIMIT 1;");
+	result = sqlite3_prepare_v2(db, sql, -1, &res, 0);
+
+	if (result == SQLITE_OK)
+	{
+		result = sqlite3_step(res);
+
+		if (result == SQLITE_ROW)
+		{
+			version = sqlite3_column_int(res, 0);
+		}
+	}
 
 	if (version == SQL_DBMS_SCHEMA_VERSION) // we are done
 	{
-		//Com_Printf("SQLite3 db version is up to date\n");
+		Com_Printf("SQLite3 db version is up to date\n");
+		sqlite3_finalize(res);
 		return 0;
 	}
 	else if (version < SQL_DBMS_SCHEMA_VERSION)
 	{
 		Com_Printf("Old database schema #%i detected - performing update ...\n", version);
 
+		if (!DB_CreateOrUpdateSchema(version))
+		{
+			return 1;
+		}
+		
+		Com_Printf("Old database schema has been updated to version #%i...\n", SQL_DBMS_SCHEMA_VERSION);
+		
+		return 0;
 	}
 
-	// downgrade case ... we can't ensure a working system
-	Com_Printf("Warning: DB update has detected an unknown database schema #%i! Game and database are not in sync!\n", version);
+	if (version == 0)
+	{
+		Com_Printf("Warning: DB update can't find a valid database schema! Game and database are not in sync!\n");
+	}
+	else 	// downgrade case ... we can't ensure a working system
+	{
+		Com_Printf("Warning: DB update has detected an unknown database schema #%i! Game and database are not in sync!\n", version);
+	}
 
-	//DB_Close();
-	//error drop
+	sqlite3_finalize(res);
 
 	return 1;
 }
@@ -342,7 +390,6 @@ int DB_Create()
 		if (result != SQLITE_OK)
 		{
 			Com_Printf("... failed to create memory database - error: %s\n", sqlite3_errstr(result));
-			(void) sqlite3_close(db);
 			return 1;
 		}
 
@@ -351,7 +398,6 @@ int DB_Create()
 		if (result != SQLITE_OK)
 		{
 			Com_Printf("... failed to share memory database - error: %s\n", sqlite3_errstr(result));
-			(void) sqlite3_close(db);
 			return 1;
 		}
 		else
@@ -383,7 +429,6 @@ int DB_Create()
 		if (result != SQLITE_OK)
 		{
 			Com_Printf("... failed to create file database - error: %s\n", sqlite3_errstr(result));
-			(void) sqlite3_close(db);
 			return 1;
 		}
 	}
@@ -393,12 +438,11 @@ int DB_Create()
 		return 1;
 	}
 
-	result = DB_CreateSchema();
+	result = DB_CreateOrUpdateSchema(0);
 
 	if (result != 0)
 	{
-		Com_Printf("... failed to create database schema\n");
-		(void) sqlite3_close(db);
+		Com_Printf("... failed to create database schema.\n");
 		return 1;
 	}
 
@@ -446,13 +490,13 @@ int DB_SaveMemDB()
 	}
 	else
 	{
-		Com_Printf("saveMemDB called for unknown database mode\n");
+		Com_Printf("DB_SaveMemDB called for unknown database mode\n");
 	}
 	return 0;
 }
 
 /**
- * @brief DB_Close
+ * @brief Closes the database properly.
  *
  * @return
  */
