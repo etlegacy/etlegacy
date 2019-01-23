@@ -39,8 +39,6 @@
 
 #include "../db/db_sql.h"
 
-int rowCounter = 0;
-
 /**
  * @brief Inserts given server into client_servers table if not already exists
  * @param[in] profile
@@ -56,15 +54,27 @@ void DB_insertFavorite(const char *profile, int source, const char *name, const 
 	char         *err_msg = 0;
 	sqlite3_stmt *res;
 
+	if (!profile[0]) // no profile given
+	{
+		Com_Printf("DB_insertFavorite warning: Invalid profile.\n");
+		return;
+	}
+
+	if (!address[0]) // no profile given
+	{
+		Com_Printf("DB_insertFavorite warning: Invalid address.\n");
+		return;
+	}
+
 	if (!isDBActive)
 	{
-		Com_Printf("insertFavoriteDB warning: DB not active error\n");
+		Com_Printf("DB_insertFavorite warning: DB not active error\n");
 		return;
 	}
 
 	if (cls.numfavoriteservers >= MAX_FAVOURITE_SERVERS - 1)
 	{
-		Com_Printf("insertFavoriteDB warning: Can't insert. MAX_FAVOURITE_SERVERS reached\n");
+		Com_Printf("DB_insertFavorite warning: Can't insert. MAX_FAVOURITE_SERVERS reached.\n");
 		return;
 	}
 
@@ -86,6 +96,7 @@ void DB_insertFavorite(const char *profile, int source, const char *name, const 
 		if (result == SQLITE_ROW)
 		{
 			//Com_Printf("Favorite already stored\n");
+			sqlite3_finalize(res);
 			return;
 		}
 		else if(result == SQLITE_ERROR)
@@ -104,12 +115,14 @@ void DB_insertFavorite(const char *profile, int source, const char *name, const 
 			}
 			else
 			{
-				Com_Printf("Favorite '%s' for profile '%s' created\n", address, profile);
+				Com_Printf("Favorite '%s' for profile '%s' created.\n", address, profile);
+				sqlite3_finalize(res);
 				return;
 			}
 		}
 	}
 
+	sqlite3_finalize(res);
 	Com_Printf("Can't save favorite - db error\n");
 }
 
@@ -128,6 +141,12 @@ void DB_deleteFavorite(const char *profile, const char *address)
 	if (!isDBActive)
 	{
 		Com_Printf("DB_deleteFavorite warning: DB not active error\n");
+		return;
+	}
+
+	if (!profile[0]) // no profile given
+	{
+		Com_Printf("DB_deleteFavorite warning: Invalid profile.\n");
 		return;
 	}
 
@@ -156,6 +175,8 @@ void DB_deleteFavorite(const char *profile, const char *address)
 	{
 		Com_Printf("Favorite '%s' for profile '%s' has been deleted.\n", address, profile);
 	}
+
+	sqlite3_finalize(res);
 }
 
 /**
@@ -173,7 +194,7 @@ int DB_callbackFavorites(void *NotUsed, int argc, char **argv, char **azColName)
     NotUsed = 0;
 
     // avoid array overflows
-	if (rowCounter >= MAX_FAVOURITE_SERVERS - 1)
+	if (cls.numfavoriteservers >= MAX_FAVOURITE_SERVERS - 1)
 	{
 		Com_Printf("Can't load all favorites. MAX_FAVOURITE_SERVERS reached.\n");
 		return 0;
@@ -187,12 +208,12 @@ int DB_callbackFavorites(void *NotUsed, int argc, char **argv, char **azColName)
     }
 */
 	NET_StringToAdr(argv[2], &addr, NA_UNSPEC);
-	CL_InitServerInfo(&cls.favoriteServers[rowCounter], &addr);
-    Q_strncpyz(cls.favoriteServers[rowCounter].hostName, argv[3], MAX_SERVER_NAME_LENGTH);
+	CL_InitServerInfo(&cls.favoriteServers[cls.numfavoriteservers], &addr);
+    Q_strncpyz(cls.favoriteServers[cls.numfavoriteservers].hostName, argv[3], MAX_SERVER_NAME_LENGTH);
 
-    cls.favoriteServers[rowCounter].visible = qtrue;
+    cls.favoriteServers[cls.numfavoriteservers].visible = qtrue;
 
-    rowCounter++;
+    cls.numfavoriteservers++;
 
     return 0;
 }
@@ -206,16 +227,22 @@ void DB_loadFavorites(const char *profile)
 	int          result;
 	char         *sql;
 	char         *err_msg = 0;
-	sqlite3_stmt *res;
+
+	cls.numfavoriteservers = 0;
 
 	if (!isDBActive)
 	{
 		Com_Printf("DB_loadFavorites warning: DB not active error\n");
+		return;
+	}
+
+	if (!profile[0]) // no profile given
+	{
+		Com_Printf("DB_loadFavorites warning: Invalid profile.\n");
+		return;
 	}
 
 	sql = va("SELECT * FROM client_servers WHERE profile='%s';", profile);
-
-	rowCounter = 0;
 
 	result = sqlite3_exec(db, sql, DB_callbackFavorites, 0, &err_msg);
 
@@ -224,8 +251,6 @@ void DB_loadFavorites(const char *profile)
 		Com_Printf("Can't load favorites - db error %s\n", err_msg);
 		sqlite3_free(err_msg);
 	}
-
-	cls.numfavoriteservers = rowCounter;
 
 	Com_Printf("Total favorite servers restored: %i\n", cls.numfavoriteservers);
 }
