@@ -421,6 +421,13 @@ int DB_Create()
 		}
 
 		to_ospath                        = FS_BuildOSPath(Cvar_VariableString("fs_homepath"), db_uri->string, "");
+
+		// Make sure that we actually have the homepath available so we dont try to create a database file into a nonexisting path
+		if (FS_CreatePath(to_ospath))
+		{
+			return 0;
+		}
+
 		to_ospath[strlen(to_ospath) - 1] = '\0';
 
 		result = sqlite3_open_v2(to_ospath, &db, (SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE), NULL);
