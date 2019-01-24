@@ -83,9 +83,8 @@ const char *sql_Version_Statements[SQL_DBMS_SCHEMA_VERSION] =
 		"CREATE INDEX client_servers_profile_idx ON client_servers(profile);"
 		"CREATE INDEX client_servers_address_idx ON client_servers(address);" // client table
 
-		//"CREATE TABLE IF NOT EXISTS etl_whitelist (key TEXT NOT NULL, filename TEXT NOT NULL, type INT, updated DATETIME , created DATETIME NOT NULL);"
-		//"CREATE INDEX etl_whitelist ON etl_whitelist(key);"
-		//"CREATE INDEX etl_whitelist ON etl_whitelist(filename);" // client table (no use for server atm)
+		"CREATE TABLE IF NOT EXISTS etl_whitelist (key TEXT PRIMARY KEY NOT NULL, filename TEXT NOT NULL, updated DATETIME , created DATETIME NOT NULL);"
+		"CREATE INDEX etl_whitelist_idx ON etl_whitelist(filename);" // client table (no use for server atm)
 };
 
 
@@ -217,7 +216,7 @@ int DB_Init()
 
 	isDBActive = qtrue;
 
-	Com_Printf("SQLite3 ET: L [%i] database '%s' init in [%i] ms - autocommit %i\n", SQL_DBMS_SCHEMA_VERSION, to_ospath, (Sys_Milliseconds() - msec), sqlite3_get_autocommit(db));
+	Com_Printf("SQLite3 ETL: DB init #%i%s in [%i] ms - autocommit %i\n", SQL_DBMS_SCHEMA_VERSION, to_ospath, (Sys_Milliseconds() - msec), sqlite3_get_autocommit(db));
 
 	if (!DB_CheckUpdates())
 	{
@@ -338,31 +337,33 @@ int DB_CheckUpdates()
 
 	if (version == SQL_DBMS_SCHEMA_VERSION) // we are done
 	{
-		Com_Printf("SQLite3 db version is up to date\n");
+		Com_Printf("SQLite3 ETL: DB schema version #%i is up to date!\n", version);
 		sqlite3_finalize(res);
-		return 0;
+		return 1;
 	}
 	else if (version < SQL_DBMS_SCHEMA_VERSION)
 	{
-		Com_Printf("Old database schema #%i detected - performing update ...\n", version);
+		Com_Printf("SQLite3 ETL: Old DB schema #%i detected - performing update ...\n", version);
+
+		// FIXME: do a copy before ...
 
 		if (!DB_CreateOrUpdateSchema(version))
 		{
-			return 1;
+			return 0;
 		}
 		
-		Com_Printf("Old database schema has been updated to version #%i...\n", SQL_DBMS_SCHEMA_VERSION);
+		Com_Printf("SQLite3 ETL: Old DB schema has been updated to version #%i...\n", SQL_DBMS_SCHEMA_VERSION);
 		
-		return 0;
+		return 1;
 	}
 
 	if (version == 0)
 	{
-		Com_Printf("Warning: DB update can't find a valid database schema! Game and database are not in sync!\n");
+		Com_Printf("Warning: DB update can't find a valid schema! Game and database are not in sync!\n");
 	}
 	else 	// downgrade case ... we can't ensure a working system
 	{
-		Com_Printf("Warning: DB update has detected an unknown database schema #%i! Game and database are not in sync!\n", version);
+		Com_Printf("Warning: DB update has detected an unknown schema #%i! Game and database are not in sync!\n", version);
 	}
 
 	sqlite3_finalize(res);
@@ -416,17 +417,19 @@ int DB_Create()
 
 		if (!COM_CompareExtension(db_uri->string, ".db"))
 		{
-			Com_Printf("... can't create database - invalid filename extension\n");
+			Com_Printf("... DB_Create failed - invalid filename extension\n");
 			return 1;
 		}
 
-		to_ospath                        = FS_BuildOSPath(Cvar_VariableString("fs_homepath"), db_uri->string, "");
-
 		// Make sure that we actually have the homepath available so we dont try to create a database file into a nonexisting path
+		to_ospath = FS_BuildOSPath(Cvar_VariableString("fs_homepath"), "", "");
 		if (FS_CreatePath(to_ospath))
 		{
-			return 0;
+			Com_Printf("... DB_Create failed - can't create path\n");
+			return 1;
 		}
+		
+		to_ospath = FS_BuildOSPath(Cvar_VariableString("fs_homepath"), db_uri->string, "");
 
 		to_ospath[strlen(to_ospath) - 1] = '\0';
 
@@ -434,7 +437,7 @@ int DB_Create()
 
 		if (result != SQLITE_OK)
 		{
-			Com_Printf("... failed to create file database - error: %s\n", sqlite3_errstr(result));
+			Com_Printf("... DB_Create failed - error %s\n", sqlite3_errstr(result));
 			return 1;
 		}
 	}
@@ -448,11 +451,11 @@ int DB_Create()
 
 	if (result != 0)
 	{
-		Com_Printf("... failed to create database schema.\n");
+		Com_Printf("... DB_Create failed - can't create database schema\n");
 		return 1;
 	}
 
-	Com_Printf("... database %s created in [%i] ms\n", db_uri->string, (Sys_Milliseconds() - msec));
+	Com_Printf("... database '%s' created in [%i] ms\n", db_uri->string, (Sys_Milliseconds() - msec));
 	return 0;
 }
 
@@ -683,7 +686,7 @@ int DB_LoadOrSaveDb(sqlite3 *pInMemory, const char *zFilename, int isSave)
 }
 
 /**
- * @brief DB_Callback
+ * @brief Simple callback function which can be used to show results printed on console
  *
  * @param NotUsed
  * @param[in] argc
