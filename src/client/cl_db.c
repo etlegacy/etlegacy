@@ -80,13 +80,10 @@ void DB_insertFavorite(const char *profile, int source, const char *name, const 
 
 	sql    = va("SELECT * from client_servers WHERE profile='%s' AND address='%s';", profile, address);
 	result = sqlite3_prepare_v2(db, sql, -1, &res, 0);
+	// FIXME: name - use prepared statement
 
 	if (result == SQLITE_OK)
 	{
-		// FIXME: name - use prepared statement
-		//sqlite3_bind_int(res, 1, 3);
-	    //...
-
 		// FIXME: check if client is connected and don't use name?! (not really required)
 		// ingame adding of favorites won't pass correct hostname (address instead)
 		// this is a bug in ET ui code
@@ -105,12 +102,14 @@ void DB_insertFavorite(const char *profile, int source, const char *name, const 
 		}
 		else
 		{
+			// FIXME: name - use prepared statement
+			//sqlite3_bind_int(res, 1, 3);
 			sql = va("INSERT INTO client_servers values('%s', %i, '%s', '%s', '%s', NULL, (datetime('now','localtime')))", profile, source, address, name, mod);
 			result = sqlite3_exec(db, sql, 0, 0, &err_msg);
 
 			if (result != SQLITE_OK)
 			{
-				Com_Printf("SQL command '%s' failed: %s\n", sql, err_msg);
+				Com_Printf("SQL command '%s' failed: %i\n", sql, err_msg);
 				sqlite3_free(err_msg);
 			}
 			else
@@ -228,7 +227,7 @@ void DB_loadFavorites(const char *profile)
 	char         *sql;
 	char         *err_msg = 0;
 
-	cls.numfavoriteservers = 0;
+	// cls.numfavoriteservers = 0; already done before
 
 	if (!isDBActive)
 	{
@@ -255,4 +254,73 @@ void DB_loadFavorites(const char *profile)
 	Com_Printf("Total favorite servers restored: %i\n", cls.numfavoriteservers);
 }
 
+/**
+ * @brief
+ * @param(in]
+ * @param(in]
+ */
+void DB_updateFavorite(const char *profile, const char *address)
+{
+	int          result;
+	char         *sql;
+	char         *err_msg = 0;
+	sqlite3_stmt *res;
+
+	if (!profile[0] || !address[0]) // nothing to do
+	{
+		return;
+	}
+
+	if (!isDBActive)
+	{
+		Com_Printf("DB_updateFavorite warning: DB not active error\n");
+		return;
+	}
+
+	// get favorite
+	sql    = va("SELECT * from client_servers WHERE profile='%s' AND address='%s';", profile, address);
+	result = sqlite3_prepare_v2(db, sql, -1, &res, 0);
+	// FIXME: name - use prepared statement
+
+	if (result == SQLITE_OK) // we've found an entry
+	{
+		result = sqlite3_step(res);
+
+		if (result == SQLITE_ROW)
+		{
+			Com_Printf("Favorite found.\n");
+
+			// FIXME: prepared statement
+			//sqlite3_bind_int(res, 1, 3);
+			// FIXME: update name and mod if not set
+			sql = va("UPDATE client_servers SET updated=(datetime('now','localtime')) WHERE profile='%s' AND address='%s';", profile, address);
+			result = sqlite3_exec(db, sql, 0, 0, &err_msg);
+
+			if (result != SQLITE_OK)
+			{
+				Com_Printf("Can't update favorite '%s' failed: %i\n", address, err_msg);
+			}
+			else
+			{
+				Com_Printf("Favorite '%s' for profile '%s' updated.\n", address, profile);
+				sqlite3_free(err_msg);
+				return;
+			}
+		}
+		else if(result == SQLITE_ERROR)
+		{
+			Com_Printf("SQL an error occured\n");
+		}
+		//else
+		//{
+		//	Com_Printf("No Favorite found\n");
+		//}
+	}
+	else
+	{
+		Com_Printf("Can't update favorite '%s'\n", address);
+	}
+
+	sqlite3_finalize(res);
+}
 #endif

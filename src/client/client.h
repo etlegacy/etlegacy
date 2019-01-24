@@ -789,7 +789,9 @@ qboolean CL_Netchan_Process(netchan_t *chan, msg_t *msg);
 #ifdef FEATURE_DBMS
 void DB_insertFavorite(const char *profile, int source, const char *name, const char *address, const char *mod);
 void DB_deleteFavorite(const char *profile, const char *address);
+void DB_updateFavorite(const char *profile, const char *address);
 void DB_loadFavorites(const char *profile);
+
 
 void CL_InitServerInfo(serverInfo_t *server, netadr_t *address);
 #endif

@@ -1341,6 +1341,13 @@ void CL_FirstSnapshot(void)
 		Cbuf_AddText("\n");
 		Cvar_Set("activeAction", "");
 	}
+
+#ifdef FEATURE_DBMS
+	if (!clc.demoplaying)
+	{
+		DB_updateFavorite(cl_profile->string, cls.servername);
+	}
+#endif
 }
 
 /**
