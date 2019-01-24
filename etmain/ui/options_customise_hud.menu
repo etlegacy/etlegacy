@@ -5,7 +5,7 @@
 #define WINDOW_X		16
 #define WINDOW_Y		16
 #define WINDOW_WIDTH	608
-#define WINDOW_HEIGHT	448
+#define WINDOW_HEIGHT	456
 #define GROUP_NAME		"grpOptionsCustomiseHud"
 
 // Subwindows //
@@ -30,7 +30,7 @@ menuDef {
 
 // Hud Display //
 #define HUD_Y 32
-	SUBWINDOW( 6, HUD_Y, (SUBWINDOW_WIDTH_L), 232, _("HUD DISPLAY") )
+	SUBWINDOW( 6, HUD_Y, (SUBWINDOW_WIDTH_L), 220, _("HUD DISPLAY") )
 	YESNO( 8, HUD_Y+16, (SUBWINDOW_WIDTH_L)-4, 10, _("Draw Gun:"), .2, 8, "cg_drawGun", _("Shows gun model on-screen") )
 	YESNO( 8, HUD_Y+28, (SUBWINDOW_WIDTH_L)-4, 10, _("Show Compass:"), .2, 8, "cg_drawCompass", _("Displays compass (with icons when near select events)") )
 	CVARFLOATLABEL( 8, HUD_Y+40, (SUBWINDOW_WIDTH_L)-4, 10, "cg_automapZoom", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-6), 8 )
@@ -39,20 +39,19 @@ menuDef {
 	MULTI( 8, HUD_Y+64, (SUBWINDOW_WIDTH_L)-4, 10, _("Reinforcement Timer:"), .2, 8, "cg_drawReinforcementTime", cvarFloatList { "Off" 0 "On" 1 }, _("Displays your team's \"reinforcement\" time") )
 	MULTI( 8, HUD_Y+76, (SUBWINDOW_WIDTH_L)-4, 10, _("Cursor Hints:"), .2, 8, "cg_cursorHints", cvarFloatList { "Off" 0 "Size Pulse" 1 "Strobe Pulse" 2 "Alpha Pulse" 3 "Solid" 4 }, _("Icon display format when near an action item") )
 	MULTI( 8, HUD_Y+88, (SUBWINDOW_WIDTH_L)-4, 10, _("Show Locations:"), .2, 8, "cg_locations", cvarFloatList { "Cordinates Only" 0 "Names Fireteam Only" 1 "Names Team Chat Only" 2 "Team & Fireteam Chat" 3 }, _("Displays locations in fireteam") )
-	YESNO( 8, HUD_Y+100, (SUBWINDOW_WIDTH_L)-4, 10, _("Enable Flags:"), .2, 8, "cg_countryflags", _("Displays players country flags in score board") )
-	YESNO( 8, HUD_Y+112, (SUBWINDOW_WIDTH_L)-4, 10, _("Fireteam Latched Class:"), .2, 8, "cg_fireteamLatchedClass", _("Displays Fireteam latched class") )
-	MULTI( 8, HUD_Y+124, (SUBWINDOW_WIDTH_L)-4, 10, _("Obituaries Icons:"), .2, 8, "cg_graphicObituaries", cvarFloatList { "Off" 0 "Victim Weapon Killer" 1 "Killer Weapon Victim" 2 }, _("Displays graphical obituaries") )
-	YESNO( 8, HUD_Y+136, (SUBWINDOW_WIDTH_L)-4, 10, _("Show Descriptive Text:"), .2, 8, "cg_descriptiveText", _("Displays help text") )
-	MULTI( 8, HUD_Y+148, (SUBWINDOW_WIDTH_L)-4, 10, _("Show Clock:"), .2, 8, "cg_drawTime", cvarFloatList { "Off" 0 "24 hours" 1 "24 hours + seconds" 3 "12 hours" 5 "12 hours + seconds" 7 }, _("Displays local time") )
-	YESNO( 8, HUD_Y+160, (SUBWINDOW_WIDTH_L)-4, 10, _("Show FPS:"), .2, 8, "cg_drawFPS", _("Displays Frames Per Second") )
-	YESNO( 8, HUD_Y+172, (SUBWINDOW_WIDTH_L)-4, 10, _("Show Ping:"), .2, 8, "cg_drawPing", _("Displays ping") )	
-	MULTI( 8, HUD_Y+184, (SUBWINDOW_WIDTH_L)-4, 10, _("Show Speed:"), .2, 8, "cg_drawspeed", cvarFloatList { "Off" 0 "UPS" 1 "KPH" 2 "MPH" 3 "UPS + highest speed" 4 "KPH + highest speed" 5 "MPH + highest speed" 6}, _("Displays speed of player") )
-	YESNO( 8, HUD_Y+196, (SUBWINDOW_WIDTH_L)-4, 10, _("Show Lagometer:"), .2, 8, "cg_lagometer", _("Displays lagometer") )
-	MULTI( 8, HUD_Y+208, (SUBWINDOW_WIDTH_L)-4, 10, _("Switch HUD:"), .2, 8, "cg_altHud", cvarFloatList { "Standard Hud" 0 "Alternate Hud 1" 1 "Alternate Hud 2" 2 }, _("Switches between different HUD") )
-	MULTI( 8, HUD_Y+220, (SUBWINDOW_WIDTH_L)-4, 10, _("Modify Selected HUD:"), .2, 8, "cg_altHudFlags", cvarFloatList { "Normal" 0 "Move Round Timer" 1 "Remove Ranks" 2 "Move Popups" 4 "Ranks + Timer" 3 "Timer + Popups" 5 "Ranks + Popups" 6 "Timer + Ranks + Popups" 7 }, _("Customises Selected HUD") )
+	YESNO( 8, HUD_Y+100, (SUBWINDOW_WIDTH_L)-4, 10, _("Fireteam Latched Class:"), .2, 8, "cg_fireteamLatchedClass", _("Displays Fireteam latched class") )
+	MULTI( 8, HUD_Y+112, (SUBWINDOW_WIDTH_L)-4, 10, _("Obituaries Icons:"), .2, 8, "cg_graphicObituaries", cvarFloatList { "Off" 0 "Victim Weapon Killer" 1 "Killer Weapon Victim" 2 }, _("Displays graphical obituaries") )
+	YESNO( 8, HUD_Y+124, (SUBWINDOW_WIDTH_L)-4, 10, _("Show Descriptive Text:"), .2, 8, "cg_descriptiveText", _("Displays help text") )
+	MULTI( 8, HUD_Y+136, (SUBWINDOW_WIDTH_L)-4, 10, _("Show Clock:"), .2, 8, "cg_drawTime", cvarFloatList { "Off" 0 "24 hours" 1 "24 hours + seconds" 3 "12 hours" 5 "12 hours + seconds" 7 }, _("Displays local time") )
+	YESNO( 8, HUD_Y+148, (SUBWINDOW_WIDTH_L)-4, 10, _("Show FPS:"), .2, 8, "cg_drawFPS", _("Displays Frames Per Second") )
+	YESNO( 8, HUD_Y+160, (SUBWINDOW_WIDTH_L)-4, 10, _("Show Ping:"), .2, 8, "cg_drawPing", _("Displays ping") )
+	MULTI( 8, HUD_Y+172, (SUBWINDOW_WIDTH_L)-4, 10, _("Show Speed:"), .2, 8, "cg_drawspeed", cvarFloatList { "Off" 0 "UPS" 1 "KPH" 2 "MPH" 3 "UPS + highest speed" 4 "KPH + highest speed" 5 "MPH + highest speed" 6}, _("Displays speed of player") )
+	YESNO( 8, HUD_Y+184, (SUBWINDOW_WIDTH_L)-4, 10, _("Show Lagometer:"), .2, 8, "cg_lagometer", _("Displays lagometer") )
+	MULTI( 8, HUD_Y+196, (SUBWINDOW_WIDTH_L)-4, 10, _("Switch HUD:"), .2, 8, "cg_altHud", cvarFloatList { "Standard Hud" 0 "Alternate Hud 1" 1 "Alternate Hud 2" 2 }, _("Switches between different HUD") )
+	MULTI( 8, HUD_Y+208, (SUBWINDOW_WIDTH_L)-4, 10, _("Modify Selected HUD:"), .2, 8, "cg_altHudFlags", cvarFloatList { "Normal" 0 "Move Round Timer" 1 "Remove Ranks" 2 "Move Popups" 4 "Ranks + Timer" 3 "Timer + Popups" 5 "Ranks + Popups" 6 "Timer + Ranks + Popups" 7 }, _("Customises Selected HUD") )
 
 // In-Game Display //
-#define DISPLAY_Y 270
+#define DISPLAY_Y 256
 	SUBWINDOW( 6, DISPLAY_Y, (SUBWINDOW_WIDTH_L), 125, _("IN-GAME DISPLAY") )
 	MULTI( 8, DISPLAY_Y+16, (SUBWINDOW_WIDTH_L)-4, 10, _("Ejecting Brass:"), .2, 8, "cg_brassTime", cvarFloatList { "High" 15000 "Med" 2500 "Off" 0 }, _("Sets the duration ejected bullet shells etc. last for") )
 	CVARFLOATLABEL( 8, DISPLAY_Y+28, (SUBWINDOW_WIDTH_L)-6, 10, "cg_fov", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-6), 8 )
@@ -64,6 +63,12 @@ menuDef {
 	MULTI( 8, DISPLAY_Y+88, (SUBWINDOW_WIDTH_L)-4, 10, _("Blood Splatter:"), .2, 8, "cg_bloodDamageBlend", cvarFloatList { "None" 0.0 "Light" 0.25 "Medium" 0.5 "Heavy" 0.75 "Full" 1.0 }, _("Blood \"splatter\" transparency when taking damage from other players") )
 	YESNO( 8, DISPLAY_Y+100, (SUBWINDOW_WIDTH_L)-4, 10, _("Show Blood:"), .2, 8, "cg_showblood", _("Toggles showing blood spurt effect when player's are shot") )
 	YESNO( 8, DISPLAY_Y+112, (SUBWINDOW_WIDTH_L)-4, 10, _("Atmospheric Effects:"), .2, 8, "cg_atmosphericEffects", _("Draws atmospheric effects (snow/rain) on-screen") )
+
+// Geolocation Display //
+#define GEOLOCATION_Y 386
+	SUBWINDOW( 6, GEOLOCATION_Y, (SUBWINDOW_WIDTH_L), 40, _("GEOLOCATION") )
+	YESNO( 8, GEOLOCATION_Y+16, (SUBWINDOW_WIDTH_L)-4, 10, _("Enable Flags:"), .2, 8, "cg_countryflags", _("Displays players country flags in score board") )
+	YESNO( 8, GEOLOCATION_Y+28, (SUBWINDOW_WIDTH_L)-4, 10, _("Share Location:"), .2, 8, "cg_allowGeoIP", _("Displays your own location in score board") )
 
 // Crosshair //
 #define CROSSHAIR_Y 32
@@ -104,13 +109,13 @@ menuDef {
 
 // Movement //
   #define MOVEMENT_Y 200
-	SUBWINDOW( 6+(SUBWINDOW_WIDTH_L)+6, MOVEMENT_Y, (SUBWINDOW_WIDTH_R), 64, _("MOVEMENT") )
+	SUBWINDOW( 6+(SUBWINDOW_WIDTH_L)+6, MOVEMENT_Y, (SUBWINDOW_WIDTH_R), 52, _("MOVEMENT") )
 	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, MOVEMENT_Y+16, (SUBWINDOW_WIDTH_R)-4, 10, _("Bob up:"), .2, 8, "cg_bobup", cvarFloatList { "Off" 0.00 "On" 0.005 }, _("Enable/Disable the vertical bob effect when moving") )
 	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, MOVEMENT_Y+28, (SUBWINDOW_WIDTH_R)-4, 10, _("Bob pitch:"), .2, 8, "cg_bobpitch", cvarFloatList { "Off" 0.00 "On" 0.002 }, _("Enable/Disable the bob pitch (forwards/backwards) effect when moving") )
 	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, MOVEMENT_Y+40, (SUBWINDOW_WIDTH_R)-4, 10, _("Bob roll:"), .2, 8, "cg_bobroll", cvarFloatList { "Off" 0.000 "On" 0.002 }, _("Enable/Disable the bob roll (left/right) effect when moving") )
 
 // Fonts //
-  #define FONTS_Y 270
+  #define FONTS_Y 256
 	SUBWINDOW( 6+(SUBWINDOW_WIDTH_L)+6, FONTS_Y, (SUBWINDOW_WIDTH_R), 78, _("FONTS") )
 	MULTIACTION( 6+(SUBWINDOW_WIDTH_L)+6+2, FONTS_Y+16, (SUBWINDOW_WIDTH_R)-4, 10, _("Fonts Size:"), .2, 8, "cg_fontScale", cvarFloatList { "Tiny" 2 "Small" 1 "Normal" 0 }, uiScript SetFontScale, _("Sets the size of the in-game fonts") )
 	CVARFLOATLABEL( 6+(SUBWINDOW_WIDTH_L)+6+2, FONTS_Y+28, (SUBWINDOW_WIDTH_L)-6, 10, "cg_fontScaleTP", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-4), 8 )
@@ -123,7 +128,7 @@ menuDef {
 	SLIDER( 6+(SUBWINDOW_WIDTH_L)+6+2, FONTS_Y+64, (SUBWINDOW_WIDTH_L)-4, 10, _("Crosshair Name:"), .2, 8, "cg_fontScaleCN" 0.15 0 0.5, _("Set font size for Crosshair Name label") )
 
 // Misc //
-  #define MISC_Y 352
+  #define MISC_Y 338
 	SUBWINDOW( 6+(SUBWINDOW_WIDTH_L)+6, MISC_Y, (SUBWINDOW_WIDTH_R), 42, _("MISC") )
 	CVARFLOATLABEL( 6+(SUBWINDOW_WIDTH_L)+6+2, MISC_Y+16, (SUBWINDOW_WIDTH_L)-6, 10, "cg_popupStayTime", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-4), 8 )
 	SLIDER( 6+(SUBWINDOW_WIDTH_L)+6+2, MISC_Y+16, (SUBWINDOW_WIDTH_L)-4, 10, _("PopUpTimeStay:"), .2, 8, "cg_popupStayTime" 2500 0 6000, _("Set the time a pop-up stays visible") )
