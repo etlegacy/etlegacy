@@ -188,7 +188,7 @@ void DB_deleteFavorite(const char *profile, const char *address)
 int DB_callbackFavorites(void *NotUsed, int argc, char **argv, char **azColName)
 {
 	netadr_t addr;
-	int      i, j;
+	int      i;
 
     NotUsed = 0;
 
@@ -199,13 +199,12 @@ int DB_callbackFavorites(void *NotUsed, int argc, char **argv, char **azColName)
 		return 0;
 	}
 
-/*
-    for (int i = 0; i < argc; i++)
-    {
 
-    	Com_Printf("%s = %s\n", azColName[i], argv[i] ? argv[i] : "*NULL*");
-    }
-*/
+	//for (int i = 0; i < argc; i++)
+    //{
+    //	Com_Printf("%s = %s\n", azColName[i], argv[i] ? argv[i] : "*NULL*");
+    //}
+
 	NET_StringToAdr(argv[2], &addr, NA_UNSPEC);
 	CL_InitServerInfo(&cls.favoriteServers[cls.numfavoriteservers], &addr);
     Q_strncpyz(cls.favoriteServers[cls.numfavoriteservers].hostName, argv[3], MAX_SERVER_NAME_LENGTH);
