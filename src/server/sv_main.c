@@ -405,7 +405,7 @@ void SV_MasterHeartbeat(const char *msg)
 #ifdef FEATURE_IPV6
 		if (netenabled & NET_ENABLEV6 && adr[i][1].type != NA_BAD)
 		{
-			NET_OutOfBandPrint(NS_SERVER, adr[i][1], "heartbeat %s\n", message);
+			NET_OutOfBandPrint(NS_SERVER, adr[i][1], "heartbeat %s\n", msg);
 		}
 #endif
 	}
