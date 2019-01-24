@@ -706,7 +706,7 @@ static const char *CreateContainerName()
 {
 	static char containerName[64];
 	FS_CreateContainerName(va(
-		"%i%i%i%i%i",
+		"%i_%i_%i_%i_%i",
 		clc.serverAddress.ip[0],
 		clc.serverAddress.ip[1],
 		clc.serverAddress.ip[2],
