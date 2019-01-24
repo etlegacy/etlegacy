@@ -1372,9 +1372,7 @@ void Script_SetTextStyle(itemDef_t *item, qboolean *bAbort, char **args)
 	if (String_Parse(args, &itemname))
 	{
 		itemDef_t *item2;
-		vec4_t    color;
-		vec4_t    *out;
-		int       j, i, style;
+		int       j, style;
 		int       count = Menu_ItemsMatchingGroup(item->parent, itemname);
 
 		if (!Int_Parse(args, &style))

@@ -2988,11 +2988,12 @@ void Item_Slider_Paint(itemDef_t *item)
 {
 	vec4_t    sliderColor;
 	float     x, y;
-	menuDef_t *parent = (menuDef_t *)item->parent;
+	///menuDef_t *parent = (menuDef_t *)item->parent;
 
 	if ((item->window.flags & WINDOW_HASFOCUS) && (item->window.flags & WINDOW_FOCUSPULSE))
 	{
 		vec4_t dimmedColor;
+
 		VectorScale(item->sliderColor, 0.8, dimmedColor);
 		LerpColor(item->sliderColor, dimmedColor, sliderColor, 0.5f + 0.5f * (float)(sin(DC->realTime / PULSE_DIVISOR)));
 	}
