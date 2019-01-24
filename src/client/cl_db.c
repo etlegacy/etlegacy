@@ -109,7 +109,7 @@ void DB_insertFavorite(const char *profile, int source, const char *name, const 
 
 			if (result != SQLITE_OK)
 			{
-				Com_Printf("SQL command '%s' failed: %i\n", sql, err_msg);
+				Com_Printf("SQL command '%s' failed: %s\n", sql, err_msg);
 				sqlite3_free(err_msg);
 			}
 			else
@@ -135,7 +135,7 @@ void DB_deleteFavorite(const char *profile, const char *address)
 	char         *sql;
 	int          result;
 	char         *err_msg = 0;
-	sqlite3_stmt *res;
+	//sqlite3_stmt *res;
 
 	if (!isDBActive)
 	{
@@ -175,7 +175,7 @@ void DB_deleteFavorite(const char *profile, const char *address)
 		Com_Printf("Favorite '%s' for profile '%s' has been deleted.\n", address, profile);
 	}
 
-	sqlite3_finalize(res);
+	//sqlite3_finalize(res);
 }
 
 /**
@@ -298,7 +298,7 @@ void DB_updateFavorite(const char *profile, const char *address)
 
 			if (result != SQLITE_OK)
 			{
-				Com_Printf("Can't update favorite '%s' failed: %i\n", address, err_msg);
+				Com_Printf("Can't update favorite '%s' failed: %s\n", address, err_msg);
 			}
 			else
 			{

@@ -264,7 +264,7 @@ static int DB_CreateOrUpdateSchema(int startSchemaVersion)
 
 		if (result != SQLITE_OK)
 		{
-			Com_Printf("SQLite3 failed to create schema version i%: %s\n", i + 1, err_msg);
+			Com_Printf("SQLite3 failed to create schema version %i: %s\n", i + 1, err_msg);
 			sqlite3_free(err_msg);
 			return 1;
 		}
@@ -320,7 +320,6 @@ int DB_CheckUpdates()
 	int version = 0;
 	char         *sql;
 	int          result;
-	char         *err_msg = 0;
 	sqlite3_stmt *res;
 
 	// read version from version table
