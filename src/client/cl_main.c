@@ -1592,6 +1592,7 @@ void CL_ServersResponsePacket(const netadr_t *from, msg_t *msg, qboolean extende
 		// state to detect lack of servers or lack of response
 		cls.numglobalservers         = 0;
 		cls.numGlobalServerAddresses = 0;
+		// don't memset above related arrays!
 	}
 
 	// advance to initial token

@@ -71,6 +71,10 @@ void LAN_LoadCachedServers(void)
 	cls.numfavoriteservers       = 0;
 	cls.numGlobalServerAddresses = 0;
 
+	Com_Memset(&cls.globalServers, 0, sizeof(cls.globalServers));
+	Com_Memset(&cls.favoriteServers, 0, sizeof(cls.favoriteServers));
+	Com_Memset(&cls.numGlobalServerAddresses, 0, sizeof(cls.numGlobalServerAddresses));
+
 	if (cl_profile->string[0])
 	{
 #ifdef FEATURE_DBMS
