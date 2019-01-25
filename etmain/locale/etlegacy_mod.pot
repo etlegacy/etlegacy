@@ -256,7 +256,7 @@ msgid "^1WEBSITE"
 msgstr ""
 
 #: etmain/ui/credits_etlegacy.menu:193 etmain/ui/credits_quit.menu:260
-msgid "© 2012-2018 ET:Legacy Team - under the terms of GPL version 3."
+msgid "© 2012-2019 ET:Legacy Team - under the terms of GPL version 3."
 msgstr ""
 
 #: etmain/ui/credits_etlegacy.menu:201
@@ -7256,7 +7256,7 @@ msgstr ""
 msgid "High Quality Video:"
 msgstr ""
 
-msgid "Sets high quality video."
+msgid "Sets high quality video"
 msgstr ""
 
 msgid "Port:"
@@ -7467,4 +7467,64 @@ msgid "%s - Press double-%s quickly to switch scoreboard"
 msgstr ""
 
 msgid "XP view"
+msgstr ""
+
+msgid "CHOOSE YOUR INITIAL SETTINGS"
+msgstr ""
+
+msgid "FAVORITES"
+msgstr ""
+
+msgid "Shows all favorite servers"
+msgstr ""
+
+msgid "GEOLOCATION"
+msgstr ""
+
+msgid "Share Location:"
+msgstr ""
+
+msgid "Displays your own location in score board"
+msgstr ""
+
+msgid "Class selection:"
+msgstr ""
+
+msgid "Specifies custom resolution width (requires custom resolution set - *Use at your own risk*)"
+msgstr ""
+
+msgid "Specifies custom resolution height (requires custom resolution set - *Use at your own risk*)"
+msgstr ""
+
+msgid "The intensity of textures (requires vid_restart)"
+msgstr ""
+
+msgid "The world gets brighter, but paler (requires vid_restart)"
+msgstr ""
+
+msgid "Sets the frames per second limit for a stable render rate"
+msgstr ""
+
+msgid "LANGUAGE"
+msgstr ""
+
+msgid "Very Low (15)"
+msgstr ""
+
+msgid "Low (30)"
+msgstr ""
+
+msgid "Medium (60)"
+msgstr ""
+
+msgid "High (100)"
+msgstr ""
+
+msgid "Very High (125)"
+msgstr ""
+
+msgid "Enabled & no sound"
+msgstr ""
+
+msgid "RANDOM"
 msgstr ""
