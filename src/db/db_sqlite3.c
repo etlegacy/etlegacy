@@ -214,18 +214,17 @@ qboolean DB_Init()
 	}
 	else // create new
 	{
-		int result;
-
 		Com_Printf("... no database file '%s' found ... creating now\n", to_ospath);
 
 		if (!DB_Create())
 		{
 			(void) sqlite3_close(db);
-			Com_Printf("... WARNING can't create database [%i]\n", result);
+			Com_Printf("... WARNING can't create database\n");
 			return qfalse;
 		}
 	}
 
+	// this has to be enabled here to perform DB_CheckUpdates
 	isDBActive = qtrue;
 
 	Com_Printf("SQLite3 ETL: DB init #%i%s in [%i] ms - autocommit %i\n", SQL_DBMS_SCHEMA_VERSION, to_ospath, (Sys_Milliseconds() - msec), sqlite3_get_autocommit(db));
@@ -233,9 +232,9 @@ qboolean DB_Init()
 	if (!DB_CheckUpdates())
 	{
 		Com_Printf("SQLite3 ETL: Update failed.\n");
-		//DB_Close(); ?
-		//error drop ?
-		// db is still active
+		(void) sqlite3_close(db);
+		isDBActive = qfalse;
+		return qfalse;
 	}
 
 	// save memory db to disk
@@ -244,8 +243,8 @@ qboolean DB_Init()
 		if (!DB_SaveMemDB())
 		{
 			Com_Printf("... WARNING can't save memory database file\n");
-
-			// FIXME: DB close?
+			(void) sqlite3_close(db);
+			isDBActive = qfalse;
 			return qfalse;
 		}
 	}
@@ -366,7 +365,7 @@ qboolean DB_CheckUpdates()
 			return qfalse;
 		}
 
-		to_ospath = FS_BuildOSPath(Cvar_VariableString("fs_homepath"), va("%s%i.old", version,db_uri->string), "");
+		to_ospath = FS_BuildOSPath(Cvar_VariableString("fs_homepath"), va("%s%i.old", db_uri->string, version), "");
 		to_ospath[strlen(to_ospath) - 1] = '\0';
 
 		result = DB_LoadOrSaveDb(db, to_ospath, 1);
