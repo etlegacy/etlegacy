@@ -3229,7 +3229,7 @@ msgid "Intensity:"
 msgstr ""
 
 #: etmain/ui/options_graphics.menu:46
-msgid "The Intensity Of Textures (requires vid_restart)"
+msgid "The intensity of textures (requires vid_restart)"
 msgstr ""
 
 #: etmain/ui/options_graphics.menu:47
@@ -3237,7 +3237,7 @@ msgid "Map overbright bits:"
 msgstr ""
 
 #: etmain/ui/options_graphics.menu:47
-msgid "The World Gets Brighter, But Paler (requires vid_restart)"
+msgid "The world gets brighter, but paler (requires vid_restart)"
 msgstr ""
 
 #: etmain/ui/options_graphics.menu:48
@@ -7100,13 +7100,13 @@ msgstr ""
 msgid "Custom Width:"
 msgstr ""
 
-msgid "Specifies custom resolution width - requires custom resolution set. *Use on your own risk!"
+msgid "Specifies custom resolution width (requires custom resolution set - *Use at your own risk*)"
 msgstr ""
 
 msgid "Custom Height:"
 msgstr ""
 
-msgid "Specifies custom resolution height - requires custom resolution set .*Use on your own risk!"
+msgid "Specifies custom resolution height (requires custom resolution set - *Use at your own risk*)"
 msgstr ""
 
 msgid "Max. Frames Per Second:"
@@ -7488,18 +7488,6 @@ msgid "Displays your own location in score board"
 msgstr ""
 
 msgid "Class selection:"
-msgstr ""
-
-msgid "Specifies custom resolution width (requires custom resolution set - *Use at your own risk*)"
-msgstr ""
-
-msgid "Specifies custom resolution height (requires custom resolution set - *Use at your own risk*)"
-msgstr ""
-
-msgid "The intensity of textures (requires vid_restart)"
-msgstr ""
-
-msgid "The world gets brighter, but paler (requires vid_restart)"
 msgstr ""
 
 msgid "Sets the frames per second limit for a stable render rate"
