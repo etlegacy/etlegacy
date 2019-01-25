@@ -7469,7 +7469,7 @@ msgstr ""
 msgid "XP view"
 msgstr ""
 
-msgid "CHOOSE YOUR INITIAL SETTINGS"
+msgid "^1CHOOSE YOUR INITIAL SETTINGS"
 msgstr ""
 
 msgid "FAVORITES"
