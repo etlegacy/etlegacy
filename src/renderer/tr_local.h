@@ -1879,7 +1879,7 @@ RENDERER BACK END COMMAND QUEUE
 =============================================================
 */
 
-#define MAX_RENDER_COMMANDS 0x40000
+#define MAX_RENDER_COMMANDS (0x40000 * 2)
 
 /**
  * @struct renderCommandList_t
