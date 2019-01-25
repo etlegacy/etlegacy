@@ -83,16 +83,19 @@ void DB_ExecSQLCommand_f(void)
  */
 void DB_SaveMemDB_f(void)
 {
-	int result;
-
 	if (!db || db_mode->integer == 0)
 	{
 		Com_Printf("saveDB: db not available or disabled!\n");
 		return;
 	}
 
-	result = DB_SaveMemDB();
-	if (result != SQLITE_OK)
+	if (db_mode->integer != 1)
+	{
+		Com_Printf("saveDB: command only available for memory DBMS\n");
+		return;
+	}
+
+	if (!DB_SaveMemDB())
 	{
 		Com_Printf("saveDB: can't save database.\n");
 	}

@@ -2888,9 +2888,9 @@ void Com_Init(char *commandLine)
 	}
 
 #ifdef FEATURE_DBMS
-	if (DB_Init() != 0)
+	if (!DB_Init())
 	{
-		Com_Printf("WARNING: ETL DBMS not init as intended!\n");
+		Com_Printf("SQLite3 ETL WARNING: DBMS not init as intended!\n");
 	}
 #endif
 
@@ -3538,7 +3538,7 @@ void Com_Shutdown(qboolean badProfile)
 	}
 
 #ifdef FEATURE_DBMS
-	DB_Close();
+	(void) DB_Close();
 #endif
 
 	if (logfile)

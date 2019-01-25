@@ -303,7 +303,7 @@ static const char* GetDownloadDestPath(const char *temp, const char *dest)
 			// disabled whitelisting for mods means all mods are whitelisted by default
 			if (!dl_whitelistModPaks->integer)
 			{
-				if (FS_MatchFileInPak(temp, "*.dll"))
+				if (FS_MatchFileInPak(temp, "*.dll")) // FIXME: make this more precise and check for all dlls (ui, cg &game)
 				{
 					isWhitelisted = qtrue;
 				}

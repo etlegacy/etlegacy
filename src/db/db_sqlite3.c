@@ -37,6 +37,8 @@
 
 #include "db_sql.h"
 
+// FIXME: - move cvars to qcommon?
+
 cvar_t *db_mode;
 cvar_t *db_uri;
 
@@ -49,9 +51,13 @@ qboolean isDBActive;
 
 // version 1
 //
-// ....
+// table etl_version
 //
+// table rating_users
 //
+// table rating_match
+//
+// table rating_maps
 
 // version 2
 //
@@ -80,14 +86,15 @@ const char *sql_Version_Statements[SQL_DBMS_SCHEMA_VERSION] =
 		"CREATE TABLE IF NOT EXISTS rating_maps (mapname TEXT PRIMARY KEY NOT NULL, win_axis INT, win_allies INT, UNIQUE (mapname));",                  // server table
 		// version 2
 		"CREATE TABLE IF NOT EXISTS client_servers (profile TEXT NOT NULL, source INT NOT NULL, address TEXT NOT NULL, name TEXT NOT NULL, mod TEXT NOT NULL, updated DATETIME, created DATETIME);"
-		"CREATE INDEX client_servers_profile_idx ON client_servers(profile);"
-		"CREATE INDEX client_servers_address_idx ON client_servers(address);" // client table
+		"CREATE INDEX IF NOT EXISTS client_servers_profile_idx ON client_servers(profile);"
+		"CREATE INDEX IF NOT EXISTS client_servers_address_idx ON client_servers(address);" // client table
 
 		"CREATE TABLE IF NOT EXISTS etl_whitelist (key TEXT PRIMARY KEY NOT NULL, filename TEXT NOT NULL, updated DATETIME , created DATETIME NOT NULL);"
-		"CREATE INDEX etl_whitelist_idx ON etl_whitelist(filename);" // client table (no use for server atm)
+		"CREATE INDEX IF NOT EXISTS etl_whitelist_idx ON etl_whitelist(filename);" // client table (no use for server atm)
+
+		// Version 3
+		// ...
 };
-
-
 
 /*
   	  	// version 3?!
@@ -103,9 +110,9 @@ const char *sql_Version_Statements[SQL_DBMS_SCHEMA_VERSION] =
 /**
  * @brief DB_Init
  *
- * @return
+ * @return qtrue on success
  */
-int DB_Init()
+qboolean DB_Init()
 {
 	char *to_ospath;
 	int  msec;
@@ -117,10 +124,16 @@ int DB_Init()
 	db_mode = Cvar_Get("db_mode", "2", CVAR_ARCHIVE | CVAR_LATCH);
 	db_uri  = Cvar_Get("db_uri", "etl.db", CVAR_ARCHIVE | CVAR_LATCH); // .db extension is must have!
 
+	if (db_mode->integer == 0)
+	{
+		Com_Printf("SQLite3 ETL: DBMS is disabled\n");
+		return qtrue;
+	}
+
 	if (db_mode->integer < 1 || db_mode->integer > 2)
 	{
-		Com_Printf("... DBMS is disabled\n");
-		return 0; // return 0! - see isDBActive
+		Com_Printf("... DBMS mode is invalid\n");
+		return qfalse; // return qfalse! - see isDBActive
 	}
 
 	Com_Printf("SQLite3 libversion %s - database URI '%s' - %s\n", sqlite3_libversion(), db_uri->string, db_mode->integer == 1 ? "in-memory" : "in file");
@@ -128,13 +141,13 @@ int DB_Init()
 	if (!db_uri->string[0])
 	{
 		Com_Printf("... can't init database - empty URI\n");
-		return 1;
+		return qfalse;
 	}
 
 	if (!COM_CompareExtension(db_uri->string, ".db"))
 	{
 		Com_Printf("... can't init database - invalid filename extension\n");
-		return 1;
+		return qfalse;
 	}
 
 	to_ospath                        = FS_BuildOSPath(Cvar_VariableString("fs_homepath"), db_uri->string, "");
@@ -155,7 +168,7 @@ int DB_Init()
 			{
 				Com_Printf("... failed to open memory database - error: %s\n", sqlite3_errstr(result));
 				(void) sqlite3_close(db);
-				return 1;
+				return qfalse;
 			}
 
 			result = sqlite3_enable_shared_cache(1);
@@ -164,7 +177,7 @@ int DB_Init()
 			{
 				Com_Printf("... failed to share memory database - error: %s\n", sqlite3_errstr(result));
 				(void) sqlite3_close(db);
-				return 1;
+				return qfalse;
 			}
 			else
 			{
@@ -176,8 +189,8 @@ int DB_Init()
 
 			if (result != SQLITE_OK)
 			{
-				Com_Printf("... WARNING can't load database file %s\n", db_uri->string);
-				return 1;
+				Com_Printf("... can't load database file %s\n", db_uri->string);
+				return qfalse;
 			}
 		}
 		else if (db_mode->integer == 2)
@@ -188,13 +201,13 @@ int DB_Init()
 			{
 				Com_Printf("... failed to open file database - error: %s\n", sqlite3_errstr(result));
 				(void) sqlite3_close(db);
-				return 1;
+				return qfalse;
 			}
 		}
 		else
 		{
 			Com_Printf("... failed to open database - unknown mode\n");
-			return 1;
+			return qfalse;
 		}
 
 		Com_Printf("... database file '%s' loaded\n", to_ospath);
@@ -204,13 +217,12 @@ int DB_Init()
 		int result;
 
 		Com_Printf("... no database file '%s' found ... creating now\n", to_ospath);
-		result = DB_Create();
 
-		if (result != 0)
+		if (!DB_Create())
 		{
 			(void) sqlite3_close(db);
 			Com_Printf("... WARNING can't create database [%i]\n", result);
-			return 1;
+			return qfalse;
 		}
 	}
 
@@ -220,7 +232,7 @@ int DB_Init()
 
 	if (!DB_CheckUpdates())
 	{
-		Com_Printf("SQLite3 update failed.\n");
+		Com_Printf("SQLite3 ETL: Update failed.\n");
 		//DB_Close(); ?
 		//error drop ?
 		// db is still active
@@ -229,29 +241,27 @@ int DB_Init()
 	// save memory db to disk
 	if (db_mode->integer == 1)
 	{
-		int result;
-
-		result = DB_SaveMemDB();
-
-		if (result != SQLITE_OK)
+		if (!DB_SaveMemDB())
 		{
-			Com_Printf("... WARNING can't save memory database file [%i]\n", result);
-			return 1;
+			Com_Printf("... WARNING can't save memory database file\n");
+
+			// FIXME: DB close?
+			return qfalse;
 		}
 	}
 
-	return 0;
+	return qtrue;
 }
 
 /**
  * @brief creates tables and populates our scheme.
  * @param[in]
  *
- * @return
+ * @return qtrue on success
  *
  * @note We are using the same db for client and server so listen servers are happy
  */
-static int DB_CreateOrUpdateSchema(int startSchemaVersion)
+static qboolean DB_CreateOrUpdateSchema(int startSchemaVersion)
 {
 	int  result, i;
 	char *err_msg = 0;
@@ -265,7 +275,7 @@ static int DB_CreateOrUpdateSchema(int startSchemaVersion)
 		{
 			Com_Printf("SQLite3 failed to create schema version %i: %s\n", i + 1, err_msg);
 			sqlite3_free(err_msg);
-			return 1;
+			return qfalse;
 		}
 
 		if (i + 1 == SQL_DBMS_SCHEMA_VERSION)
@@ -283,13 +293,13 @@ static int DB_CreateOrUpdateSchema(int startSchemaVersion)
 		{
 			Com_Printf("SQLite3 failed to write ETL version %i: %s\n", i + 1, err_msg);
 			sqlite3_free(err_msg);
-			return 1;
+			return qfalse;
 		}
 
 		Com_Printf("... DB schema version: %i created\n", i + 1);
 	}
 
-	return 0;
+	return qtrue;
 }
 
 /**
@@ -312,9 +322,9 @@ int DB_CallbackVersion(void *NotUsed, int argc, char **argv,
 /**
  * @brief DB_CheckUpdates
  *
- * @return
+ * @return qtrue on success
  */
-int DB_CheckUpdates()
+qboolean DB_CheckUpdates()
 {
 	int version = 0;
 	char         *sql;
@@ -339,22 +349,44 @@ int DB_CheckUpdates()
 	{
 		Com_Printf("SQLite3 ETL: DB schema version #%i is up to date!\n", version);
 		sqlite3_finalize(res);
-		return 1;
+		return qtrue;
 	}
 	else if (version < SQL_DBMS_SCHEMA_VERSION)
 	{
-		Com_Printf("SQLite3 ETL: Old DB schema #%i detected - performing update ...\n", version);
+		char *to_ospath;
 
-		// FIXME: do a copy before ...
+		Com_Printf("SQLite3 ETL: Old DB schema #%i detected - performing backup & update ...\n", version);
+
+		// backup old database file etl.dbX.old
+		// Make sure that we actually have the homepath available so we dont try to create a database file into a nonexisting path
+		to_ospath = FS_BuildOSPath(Cvar_VariableString("fs_homepath"), "", "");
+		if (FS_CreatePath(to_ospath))
+		{
+			Com_Printf("... DB_CheckUpdates failed - can't create path for backup file\n");
+			return qfalse;
+		}
+
+		to_ospath = FS_BuildOSPath(Cvar_VariableString("fs_homepath"), va("%s%i.old", version,db_uri->string), "");
+		to_ospath[strlen(to_ospath) - 1] = '\0';
+
+		result = DB_LoadOrSaveDb(db, to_ospath, 1);
+
+		if (result != SQLITE_OK)
+		{
+			Com_Printf("... WARNING can't save database backup file [%i]\n", result);
+			return qfalse;
+		}
+
+		Com_Printf("SQLite3 ETL: backup '%s' created  ...\n", to_ospath);
 
 		if (!DB_CreateOrUpdateSchema(version))
 		{
-			return 0;
+			return qfalse;
 		}
 		
 		Com_Printf("SQLite3 ETL: Old DB schema has been updated to version #%i...\n", SQL_DBMS_SCHEMA_VERSION);
 		
-		return 1;
+		return qtrue;
 	}
 
 	if (version == 0)
@@ -368,15 +400,15 @@ int DB_CheckUpdates()
 
 	sqlite3_finalize(res);
 
-	return 1;
+	return qtrue;
 }
 
 /**
  * @brief DB_Create
  *
- * @return result code
+ * @return qtrue on sucess
  */
-int DB_Create()
+qboolean DB_Create()
 {
 	int result;
 	int msec;
@@ -390,7 +422,7 @@ int DB_Create()
 		if (result != SQLITE_OK)
 		{
 			Com_Printf("... failed to create memory database - error: %s\n", sqlite3_errstr(result));
-			return 1;
+			return qfalse;
 		}
 
 		result = sqlite3_enable_shared_cache(1);
@@ -398,7 +430,7 @@ int DB_Create()
 		if (result != SQLITE_OK)
 		{
 			Com_Printf("... failed to share memory database - error: %s\n", sqlite3_errstr(result));
-			return 1;
+			return qfalse;
 		}
 		else
 		{
@@ -412,13 +444,13 @@ int DB_Create()
 		if (!db_uri->string[0])
 		{
 			Com_Printf("... can't create database - empty URI\n");
-			return 1;
+			return qfalse;
 		}
 
 		if (!COM_CompareExtension(db_uri->string, ".db"))
 		{
 			Com_Printf("... DB_Create failed - invalid filename extension\n");
-			return 1;
+			return qfalse;
 		}
 
 		// Make sure that we actually have the homepath available so we dont try to create a database file into a nonexisting path
@@ -426,11 +458,10 @@ int DB_Create()
 		if (FS_CreatePath(to_ospath))
 		{
 			Com_Printf("... DB_Create failed - can't create path\n");
-			return 1;
+			return qfalse;
 		}
 		
 		to_ospath = FS_BuildOSPath(Cvar_VariableString("fs_homepath"), db_uri->string, "");
-
 		to_ospath[strlen(to_ospath) - 1] = '\0';
 
 		result = sqlite3_open_v2(to_ospath, &db, (SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE), NULL);
@@ -438,33 +469,31 @@ int DB_Create()
 		if (result != SQLITE_OK)
 		{
 			Com_Printf("... DB_Create failed - error %s\n", sqlite3_errstr(result));
-			return 1;
+			return qfalse;
 		}
 	}
 	else
 	{
 		Com_Printf("... DB_Create failed - unknown mode\n");
-		return 1;
+		return qfalse;
 	}
 
-	result = DB_CreateOrUpdateSchema(0);
-
-	if (result != 0)
+	if (!DB_CreateOrUpdateSchema(0))
 	{
 		Com_Printf("... DB_Create failed - can't create database schema\n");
-		return 1;
+		return qfalse;
 	}
 
 	Com_Printf("... database '%s' created in [%i] ms\n", db_uri->string, (Sys_Milliseconds() - msec));
-	return 0;
+	return qtrue;
 }
 
 /**
  * @brief saves memory db to disk
  *
- * @return result code
+ * @return qtrue on success
  */
-int DB_SaveMemDB()
+qboolean DB_SaveMemDB()
 {
 	if (db_mode->integer == 1)
 	{
@@ -474,16 +503,24 @@ int DB_SaveMemDB()
 		if (!db_uri->string[0])
 		{
 			Com_Printf("... can't save database - empty URI\n");
-			return 1;
+			return qfalse;
 		}
 
 		if (!COM_CompareExtension(db_uri->string, ".db"))
 		{
 			Com_Printf("... can't save database - invalid filename extension\n");
-			return 1;
+			return qfalse;
 		}
 
-		to_ospath                        = FS_BuildOSPath(Cvar_VariableString("fs_homepath"), db_uri->string, "");
+		// Make sure that we actually have the homepath available so we dont try to create a database file into a nonexisting path
+		to_ospath = FS_BuildOSPath(Cvar_VariableString("fs_homepath"), "", "");
+		if (FS_CreatePath(to_ospath))
+		{
+			Com_Printf("... DB_SaveMemDB failed - can't create path\n");
+			return qfalse;
+		}
+
+		to_ospath = FS_BuildOSPath(Cvar_VariableString("fs_homepath"), db_uri->string, "");
 		to_ospath[strlen(to_ospath) - 1] = '\0';
 
 		msec = Sys_Milliseconds();
@@ -493,7 +530,7 @@ int DB_SaveMemDB()
 		if (result != SQLITE_OK)
 		{
 			Com_Printf("... WARNING can't save memory database file [%i]\n", result);
-			return 1;
+			return qfalse;
 		}
 		Com_Printf("SQLite3 in-memory tables saved to disk @[%s] in [%i] ms\n", to_ospath, (Sys_Milliseconds() - msec));
 	}
@@ -501,30 +538,28 @@ int DB_SaveMemDB()
 	{
 		Com_Printf("DB_SaveMemDB called for unknown database mode\n");
 	}
-	return 0;
+	return qtrue;
 }
 
 /**
  * @brief Closes the database properly.
  *
- * @return
+ * @return qtrue on success
  */
-int DB_Close()
+qboolean DB_Close()
 {
 	int result;
 
 	if (!isDBActive)
 	{
 		Com_Printf("SQLite3 can't close database - not active.\n");
-		return 1;
+		return qfalse;
 	}
 
 	// save memory db to disk
 	if (db_mode->integer == 1)
 	{
-		result = DB_SaveMemDB();
-
-		if (result != SQLITE_OK)
+		if (!DB_SaveMemDB())
 		{
 			Com_Printf("... WARNING can't save memory database file [%i]\n", result);
 			// let's close the db ...
@@ -537,11 +572,11 @@ int DB_Close()
 	if (result != SQLITE_OK)
 	{
 		Com_Printf("SQLite3 failed to close database.\n");
-		return 1;
+		return qfalse;
 	}
 
 	Com_Printf("SQLite3 database closed.\n");
-	return 0;
+	return qtrue;
 }
 
 /**
