@@ -3,17 +3,17 @@
 # This file is distributed under the same license as the ET:Legacy package.
 # Translators:
 # Jakub Strelcow <jakubstrelcow@gmail.com>, 2015
-# Jakub Strelcow <jakubstrelcow@gmail.com>, 2018
+# Jakub Strelcow <jakubstrelcow@gmail.com>, 2018-2019
 # Mateusz Olejnik <matti@gamesboard.pl>, 2018
-# rafal1137 <rafal1137@yahoo.pl>, 2016,2018
+# rafal1137 <rafal1137@yahoo.pl>, 2016,2018-2019
 # rafal1137 <rafal1137@yahoo.pl>, 2015-2016
 msgid ""
 msgstr ""
 "Project-Id-Version: ET:Legacy\n"
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
-"PO-Revision-Date: 2018-11-30 14:41+0000\n"
-"Last-Translator: Artem Vorotnikov <artem@vorotnikov.me>\n"
+"PO-Revision-Date: 2019-01-25 16:42+0000\n"
+"Last-Translator: rafal1137 <rafal1137@yahoo.pl>\n"
 "Language-Team: Polish (http://www.transifex.com/etlegacy/etlegacy/language/pl/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -222,11 +222,11 @@ msgstr "Głowny koder windowsa & silnik graficzny"
 
 #: etmain/ui/credits_etlegacy.menu:104
 msgid "Website, coding & scripts"
-msgstr "Strona, koder & skrypty"
+msgstr "Strona WWW, koder & skrypty"
 
 #: etmain/ui/credits_etlegacy.menu:106
 msgid "Coding, mod development"
-msgstr "Koder, wydawca moda"
+msgstr "Koder, rozwój moda"
 
 #: etmain/ui/credits_etlegacy.menu:113
 msgid "^1PORTS"
@@ -261,8 +261,8 @@ msgid "^1WEBSITE"
 msgstr "^1STRONA"
 
 #: etmain/ui/credits_etlegacy.menu:193 etmain/ui/credits_quit.menu:260
-msgid "© 2012-2018 ET:Legacy Team - under the terms of GPL version 3."
-msgstr "© 2012-2018 ET:Legacy Team - na warunkach licencji GPL w wersji 3."
+msgid "© 2012-2019 ET:Legacy Team - under the terms of GPL version 3."
+msgstr "© 2012-2019 ET:Legacy Team - na warunkach licencji GPL w wersji 3."
 
 #: etmain/ui/credits_etlegacy.menu:201
 msgid "HALL OF FAME"
@@ -318,7 +318,7 @@ msgstr "Dodatkowe Programowanie"
 msgid ""
 "Wolfenstein: Enemy Territory is powered by id Software's Quake III Arena "
 "(TM) technology."
-msgstr "Wolfenstein: Enemy Territory jest oparty na technologi Quake III Arena (TM) od id Software"
+msgstr "Wolfenstein: Enemy Territory jest oparty na technologi Quake III Arena (TM) stworzonej przez id Software"
 
 #: etmain/ui/credits_idsoftware.menu:88
 msgid ""
@@ -425,7 +425,7 @@ msgstr "Strona internetowa ET: Legacy"
 msgid ""
 "Do you want to open\n"
 " www.etlegacy.com ?"
-msgstr "Czy chcesz otworzyć\n www.etlegacy.com ?"
+msgstr "Czy chcesz otworzyć\n www.etlegacy.com?"
 
 #: etmain/ui/etlegacywebsite.menu:51
 #: etmain/ui/hostgame_advanced_default.menu:126
@@ -475,7 +475,7 @@ msgstr "Minimalny Ping:"
 
 #: etmain/ui/hostgame_advanced.menu:32
 msgid "Setting the minimum ping can be used to exclude LPBs (0 = No Minimum)"
-msgstr "Ustawia minimalny ping który może być użyty do wykluczenia (0 = Brak Minimum)"
+msgstr "Ustawia minimalny ping, który może być użyty do wykluczenia (0 = Brak Minimum)"
 
 #: etmain/ui/hostgame_advanced.menu:33
 msgid "Maximum Ping:"
@@ -483,7 +483,7 @@ msgstr "Maksymalny Ping:"
 
 #: etmain/ui/hostgame_advanced.menu:33
 msgid "Setting the maximum ping can be used to exclude HPBs (0 = No Maximum)"
-msgstr "Ustawia maksymalny ping który może być użyty do wykluczenia (0 = Brak Maximum)"
+msgstr "Ustawia maksymalny ping, który może być użyty do wykluczenia (0 = Brak Maximum)"
 
 #: etmain/ui/hostgame_advanced.menu:34
 msgid "Maximum Game Rate:"
@@ -492,7 +492,7 @@ msgstr "Maksymalny Rate Gry:"
 #: etmain/ui/hostgame_advanced.menu:34
 msgid ""
 "Maximum rate to send game data to clients (0 = match client rate settings)"
-msgstr "Maksmalna ilość danych gry wysłanych do klientów (0 = ustawienia jak u klienta )"
+msgstr "Maksymalna ilość danych gry wysłanych do klientów (0 = ustawienia jak u klienta)"
 
 #: etmain/ui/hostgame_advanced.menu:35
 msgid "Player Inactivity:"
@@ -1820,7 +1820,7 @@ msgstr "Do przodu:"
 
 #: etmain/ui/options_controls.menu:34
 msgid "Back:"
-msgstr "Tył:"
+msgstr "Do tyłu:"
 
 #: etmain/ui/options_controls.menu:35
 msgid "Move Left:"
@@ -1989,8 +1989,8 @@ msgid "Use (Activate):"
 msgstr "Użyj (Aktywuj):"
 
 #: etmain/ui/options_controls.menu:87
-msgid "SELECT WEAPONS"
-msgstr "ZMIANA BRONI"
+msgid "SELECT CLASS AND WEAPONS"
+msgstr "WYBIERZ KLASĘ I BROŃ"
 
 #: etmain/ui/options_controls.menu:88
 msgid "Next Weapon:"
@@ -2130,7 +2130,7 @@ msgstr "Zawsze Biegnij:"
 
 #: etmain/ui/options_customise_game.menu:41
 msgid "Toggle walk/run"
-msgstr "Ustawia chodznie/bieg"
+msgstr "Przełącza między chodem/biegiem"
 
 #: etmain/ui/options_customise_game.menu:42
 msgid "Double-Tap Prone:"
@@ -2220,11 +2220,11 @@ msgstr "Przybliż kółkiem myszy:"
 
 #: etmain/ui/options_customise_game.menu:56
 msgid "On (normal)"
-msgstr "Włączone (normalnie)"
+msgstr "Wł. (normalnie)"
 
 #: etmain/ui/options_customise_game.menu:56
 msgid "On (reverse)"
-msgstr "Włączone (odwrócone)"
+msgstr "Wł. (odwrócone)"
 
 #: etmain/ui/options_customise_game.menu:56
 msgid ""
@@ -2541,7 +2541,7 @@ msgstr "Czat Zespołu & Oddziału"
 
 #: etmain/ui/options_customise_hud.menu:40
 msgid "Displays locations in fireteam"
-msgstr "Wyświetl lokalizacje w oddziale"
+msgstr "Wyświetla lokalizacje w oddziale"
 
 #: etmain/ui/options_customise_hud.menu:41
 msgid "Enable Flags:"
@@ -2557,7 +2557,7 @@ msgstr "Klasa w Oddziale:"
 
 #: etmain/ui/options_customise_hud.menu:42
 msgid "Displays Fireteam latched class"
-msgstr "Wyświetl zmianę klasy w Oddziale"
+msgstr "Wyświetla zmianę klasy w Oddziale"
 
 #: etmain/ui/options_customise_hud.menu:43
 msgid "Obituaries Icons:"
@@ -2838,7 +2838,7 @@ msgstr "Pulsowanie Celownika:"
 
 #: etmain/ui/options_customise_hud.menu:71
 msgid "Toggles crosshair spread sizing while moving/firing"
-msgstr "Włącza rozszerzania celownika podczas poruszania/strzelania"
+msgstr "Włącza poszerzanie się celownika podczas poruszania/strzelania"
 
 #: etmain/ui/options_customise_hud.menu:72
 msgid "Crosshair Health Info:"
@@ -3235,15 +3235,15 @@ msgid "Intensity:"
 msgstr "Intensywność:"
 
 #: etmain/ui/options_graphics.menu:46
-msgid "The Intensity Of Textures (requires vid_restart)"
-msgstr "Intensywność Tekstur (potrzeba vid_restart)"
+msgid "The intensity of textures (requires vid_restart)"
+msgstr "Intensywność tekstur (wymaga restartu obrazy)"
 
 #: etmain/ui/options_graphics.menu:47
 msgid "Map overbright bits:"
 msgstr "Nadjasność bitowa Mapy:"
 
 #: etmain/ui/options_graphics.menu:47
-msgid "The World Gets Brighter, But Paler (requires vid_restart)"
+msgid "The world gets brighter, but paler (requires vid_restart)"
 msgstr "Świat staje się jaśniejszy, ale bledszy (wymaga restartu obrazy)"
 
 #: etmain/ui/options_graphics.menu:48
@@ -3455,7 +3455,7 @@ msgstr "Ustaw głośność muzyki"
 
 #: etmain/ui/options_system.menu:44
 msgid "Sound Quality:"
-msgstr "Jakość Dżwięku:"
+msgstr "Jakość Dźwięku:"
 
 #: etmain/ui/options_system.menu:44
 msgid "11 khz (low)"
@@ -3573,7 +3573,7 @@ msgstr "USUŃ ULUBIONE SERWERY"
 
 #: etmain/ui/playonline_deletefavs.menu:51
 msgid "Do you really want to"
-msgstr "Czy na pewno chcesz aby"
+msgstr "Czy na pewno chcesz, aby"
 
 #: etmain/ui/playonline_deletefavs.menu:52
 msgid "delete YOUR favourites?"
@@ -3646,7 +3646,7 @@ msgstr "Filtr Wyłączony"
 #: etmain/ui/playonline.menu:158 etmain/ui/playonline.menu:169
 #: etmain/ui/playonline.menu:180 etmain/ui/playonline.menu:191
 msgid "Only show..."
-msgstr "Tylko pokazuj..."
+msgstr "Pokazuj tylko..."
 
 #: etmain/ui/playonline.menu:114 etmain/ui/playonline.menu:125
 #: etmain/ui/playonline.menu:136 etmain/ui/playonline.menu:147
@@ -3765,7 +3765,7 @@ msgid ""
 "and access more advanced options by visiting the Options Menu. Should more "
 "than one person wish to play Enemy Territory: Legacy, you can create "
 "additional profiles by visiting the Profiles Menu."
-msgstr "Wybierz swoje początkowe ustawienia. Pamiętaj, że możesz je w dowolnym momencie zmienić w menu Opcje (znajdziesz tam również więcej zaawansowanych opcji). Jeżeli więcej niż jedna osoba będzie grała na tym komputerze w ET: Legacy, to możesz utworzyć więcej profili w menu Profile."
+msgstr "Wybierz swoje ustawienia początkowe. Pamiętaj, że możesz je w dowolnym momencie zmienić w menu Opcje (znajdziesz tam również więcej zaawansowanych opcji). Jeżeli więcej niż jedna osoba będzie grała na tym komputerze w ET: Legacy, to możesz utworzyć więcej profili w menu Profile."
 
 #: etmain/ui/profile_create_initial.menu:98 etmain/ui/profile_create.menu:91
 msgid ""
@@ -3803,7 +3803,7 @@ msgstr "Użyj paska, aby ustawić czułość myszy"
 msgid ""
 "Choose invert mouse if you prefer flight-simulator style mouse pitch "
 "controls"
-msgstr "Wybierz odwróconą mysz jeśli preferujesz kontrole stylu symulatora  latania"
+msgstr "Wybierz odwróconą oś myszy jeśli preferujesz kontrole w stylu symulatora latania"
 
 #: etmain/ui/profile_create_initial.menu:116 etmain/ui/profile_create.menu:110
 msgid "DEFAULT SETTINGS"
@@ -3815,7 +3815,7 @@ msgstr "^1UTRZYMAJMY ET PRZY ŻYCIU!"
 
 #: etmain/ui/profile_create_initial.menu:126
 msgid "Thank you for installing ET: Legacy"
-msgstr "Dzięki za zainstalowanie ET: Legacy"
+msgstr "Dziękujemy za zainstalowanie ET: Legacy"
 
 #: etmain/ui/profile_create_initial.menu:130
 msgid "QUIT"
@@ -3856,7 +3856,7 @@ msgstr "USUŃ"
 
 #: etmain/ui/profile.menu:66 etmain/ui/profile_rename.menu:69
 msgid "RENAME"
-msgstr "ZMIEŃ NAZWE"
+msgstr "ZMIEŃ NAZWĘ"
 
 #: etmain/ui/profile.menu:67
 msgid "SET AS DEFAULT"
@@ -3868,7 +3868,7 @@ msgstr "WYBIERZ PROFIL"
 
 #: etmain/ui/profile_rename.menu:55
 msgid "RENAME PROFILE"
-msgstr "ZMIEŃ NAZWE PROFILU"
+msgstr "ZMIEŃ NAZWĘ PROFILU"
 
 #: etmain/ui/profile_rename.menu:65
 msgid "New Profile Name:"
@@ -3971,7 +3971,7 @@ msgstr "1. Droga Wolna."
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:96 etmain/ui/wm_quickmessageAlt.menu:96
 msgid "2. Enemy Weak!"
-msgstr "2. Słabi Przeciwnicy!"
+msgstr "2. Wróg Osłabiony!"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:97 etmain/ui/wm_quickmessageAlt.menu:97
 msgid "3. All Clear"
@@ -4129,7 +4129,7 @@ msgstr "6. Oops"
 #: etmain/ui/wm_ftquickmessageAlt.menu:150
 #: etmain/ui/wm_quickmessageAlt.menu:150
 msgid "3. Enemy Weak"
-msgstr "3. Słabi Przeciwnicy"
+msgstr "3. Wróg Osłabiony"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:151
 #: etmain/ui/wm_quickmessageAlt.menu:151
@@ -4265,7 +4265,7 @@ msgstr "P. Droga Wolna."
 
 #: etmain/ui/wm_ftquickmessage.menu:96 etmain/ui/wm_quickmessage.menu:97
 msgid "W. Enemy Weak!"
-msgstr "W. Słabi Przeciwnicy!"
+msgstr "W. Wróg Osłabiony"
 
 #: etmain/ui/wm_ftquickmessage.menu:97 etmain/ui/wm_quickmessage.menu:98
 msgid "C. All Clear"
@@ -4400,7 +4400,7 @@ msgstr "O. Oops"
 
 #: etmain/ui/wm_ftquickmessage.menu:150 etmain/ui/wm_quickmessage.menu:150
 msgid "W. Enemy Weak"
-msgstr "W. Słabi Przeciwnicy"
+msgstr "W. Wróg Osłabiony"
 
 #: etmain/ui/wm_ftquickmessage.menu:151 etmain/ui/wm_quickmessage.menu:151
 msgid "H. Hi"
@@ -4570,19 +4570,19 @@ msgstr "REMIS!"
 
 #: src/cgame/cg_debriefing.c:3211
 msgid "ALLIES SUCCESSFULLY BEAT THE CLOCK!"
-msgstr "ALLIANCI POMYŚLNIE POKONALI CZAS!"
+msgstr "ALIANCI WYGRALI Z CZASEM!"
 
 #: src/cgame/cg_debriefing.c:3215
 msgid "ALLIES COULDN'T BEAT THE CLOCK!"
-msgstr "ALLIANCI NIE MOGLI POKONAĆ CZASU!"
+msgstr "ALIANCI PRZEGRALI Z CZASEM!"
 
 #: src/cgame/cg_debriefing.c:3222
 msgid "AXIS SUCCESSFULLY BEAT THE CLOCK!"
-msgstr "OŚ POMYŚLNIE POKONAŁA CZAS!"
+msgstr "OŚ WYGRAŁA Z CZASEM!"
 
 #: src/cgame/cg_debriefing.c:3226
 msgid "AXIS COULDN'T BEAT THE CLOCK!"
-msgstr "OŚ NIE MOGŁA POKONAĆ CZASU!"
+msgstr "OŚ PRZEGRAŁA Z CZASEM!"
 
 #: src/cgame/cg_debriefing.c:3236
 #, c-format
@@ -5236,8 +5236,8 @@ msgstr "Zabójstw: %3d Zabójstw Zespołu: %3d Celność: %5.1f%%"
 
 #: src/cgame/cg_servercmds.c:1941
 #, c-format
-msgid "Gibs:   %3d    Team Gibs:  %3d"
-msgstr "Gibnięć: %3d Gibnięć Zespołu: %3d"
+msgid "Gibs:   %3d    Team Gibs:  %3d    Playtime:  %5.1f%%"
+msgstr "Gibnięć: %3d  Gibnięć Zespołu: %3d Czas rozgrywki: %5.1f%%"
 
 #: src/cgame/cg_servercmds.c:1879
 #, c-format
@@ -5301,7 +5301,7 @@ msgstr "Oczekiwanie na połączenie...%i"
 #: src/ui/ui_loadpanel.c:341
 #, c-format
 msgid "Awaiting challenge...%i"
-msgstr "Oczekiwanie na wyzwanie...%i"
+msgstr "Oczekiwanie na odpowiedź...%i"
 
 #: src/ui/ui_loadpanel.c:351
 msgid "Awaiting gamestate..."
@@ -5309,7 +5309,7 @@ msgstr "Oczekiwanie na grę..."
 
 #: src/ui/ui_main.c:2401 src/ui/ui_main.c:2642
 msgid "Waiting for new key... Press ESCAPE to cancel"
-msgstr "Oczekiwanie na nowy klawisz.. Naciśnij ESCAPE, aby anulować"
+msgstr "Oczekiwanie na nowy klawisz... Naciśnij ESCAPE, aby anulować"
 
 #: src/ui/ui_main.c:2405 src/ui/ui_main.c:2646
 msgid "Press ENTER or CLICK to change, Press BACKSPACE to clear"
@@ -5640,7 +5640,7 @@ msgid "Path cleared."
 msgstr "Droga wolna."
 
 msgid "The enemy is weakened."
-msgstr "Nasi przeciwnicy to cieniasy."
+msgstr "Wróg jest osłabiony."
 
 msgid "All clear."
 msgstr "Czysto."
@@ -5781,10 +5781,10 @@ msgid "You got it, man!"
 msgstr "Świetnie stary!"
 
 msgid "Yeah!"
-msgstr "Nareszcie!"
+msgstr "Jea!"
 
 msgid "Yoohoo!"
-msgstr "Tak Jest!"
+msgstr "Juhuuu!"
 
 msgid "Hahaa!"
 msgstr "Hahaha!"
@@ -5793,16 +5793,16 @@ msgid "Alright!"
 msgstr "Nieźle!"
 
 msgid "Woo!"
-msgstr "Wooo!"
+msgstr "Łuuu!"
 
 msgid "Yeehaa!"
-msgstr "Wspaniale!"
+msgstr "Yeehaa!"
 
 msgid "'Atta way, baby!"
 msgstr "Tak trzymać, maleńka!"
 
 msgid "Jahaa!"
-msgstr "Nareszcie!"
+msgstr "Jahaa!"
 
 msgid "Wunderbar!"
 msgstr "Wspaniale!"
@@ -5874,7 +5874,7 @@ msgid "I'm a medic."
 msgstr "Jestem Medykiem."
 
 msgid "I'm a field ops."
-msgstr "Jestem Wsparciem."
+msgstr "Jestem Radiooperatorem"
 
 msgid "I'm a covert ops."
 msgstr "Jestem Szpiegiem"
@@ -6192,7 +6192,7 @@ msgid "Client not on server.\n"
 msgstr "Nie ma Klienta na serwerze.\n"
 
 msgid "%s^7 was issued a ^1Warning^7 (No Reason Supplied)\n"
-msgstr "%s^7 otrzymał ^1Ostrzeżenie^7 (Brak Dostatecznego Powodu)\n"
+msgstr "%s^7 otrzymał ^1Ostrzeżenie^7 (Nie podano przyczyny)\n"
 
 msgid "Cannot mute a referee.\n"
 msgstr "Nie można uciszyć sędziego.\n"
@@ -6204,7 +6204,7 @@ msgid "Can't chat - you are muted\n"
 msgstr "Nie możesz pisać - jesteś uciszony\n"
 
 msgid "^5You've been unmuted\n"
-msgstr "^5Dostałeś możliwość pisania\n"
+msgstr "^5Odzyskałeś możliwość pisania\n"
 
 msgid ""
 "^7 ID : Player                    Nudge  Rate  MaxPkts  Snaps  Specials\n"
@@ -6345,7 +6345,7 @@ msgid "'s Luger 9mm"
 msgstr " Lugerem 9mm"
 
 msgid "'s Panzerfaust"
-msgstr " Pociskiem Przeciwczołgowym"
+msgstr " Pociskiem z Panzerfausta"
 
 msgid "'s Garand"
 msgstr " Garantem"
@@ -6360,7 +6360,7 @@ msgid "'s K43"
 msgstr " K43"
 
 msgid "'s Bazooka"
-msgstr " Pociskiem Przeciwczołgowym"
+msgstr " Pociskiem z Bazooki"
 
 msgid "'s Akimbo .45ACP 1911s"
 msgstr " Podwójnym .45ACP 1911s"
@@ -6393,13 +6393,13 @@ msgid "^1Engineer^7 is not available! Choose another class!\n"
 msgstr "^1Inżynier^7 nie jest dostępny! Wybierz inną klasę!\n"
 
 msgid "^1Field Ops^7 is not available! Choose another class!\n"
-msgstr "^1Wsparcie^7 nie jest dostępny! Wybierz inną klasę!\n"
+msgstr "^1Radiooperator^7 nie jest dostępny! Wybierz inną klasę!\n"
 
 msgid "^1Covert Ops^7 is not available! Choose another class!\n"
 msgstr "^1Szpieg^7 nie jest dostępny! Wybierz inną klasę!\n"
 
 msgid "You must be alive to use this command.\n"
-msgstr "Musisz być żywym aby użyć tę komendę.\n"
+msgstr "Musisz być żywy, aby użyć tę komendę.\n"
 
 msgid "The ^1Axis^7 team is empty!  Follow command ignored.\n"
 msgstr "Zespół ^1Osi^7 jest pusty!  Komenda Follow zignorowana.\n"
@@ -6408,10 +6408,10 @@ msgid "The ^4Allies^7 team is empty!  Follow command ignored.\n"
 msgstr "Zespół ^4Aliantow^7 jest pusty!  Komenda Follow zignorowana.\n"
 
 msgid "Can't follow a player on an enemy team!\n"
-msgstr "Nie możesz podążać za graczem z przeciwnego zespołu!\n"
+msgstr "Nie możesz obserwować gracza z przeciwnego zespołu!\n"
 
 msgid "Can't follow while not in limbo if on a team!\n"
-msgstr "Nie możesz podążać podczas kiedy jesteś w limbo!\n"
+msgstr "Nie możesz obserwować podczas kiedy jesteś w menu gracza!\n"
 
 msgid "Partial Name Matches more than 1 Player.\n"
 msgstr "Częściowe Imię Pasuje dla więcej niż 1 Gracza.\n"
@@ -6438,10 +6438,10 @@ msgid "Server quit\n"
 msgstr "Serwer wyłączony\n"
 
 msgid "You cannot switch during a match, please wait until the round ends."
-msgstr "Nie możesz zmienić drużyny podczas meczu, proszę poczekaj aż runda dobiegnie końca."
+msgstr "Nie możesz zmienić drużyny podczas meczu, proszę poczekać aż runda dobiegnie końca."
 
 msgid "Use the ^3players^7 command to find a valid player ID.\n"
-msgstr "Użyj komendę ^3players^7 aby znaleźć poprawne ID gracza.\n"
+msgstr "Użyj komendy ^3players^7, aby znaleźć poprawne ID gracza.\n"
 
 msgid "^3Match is already in progress!\n"
 msgstr "^3Mecz już trwa!\n"
@@ -6459,16 +6459,16 @@ msgid "You have been switched to the Axis team"
 msgstr "Zostałeś przeniesiony do zespołu Osi"
 
 msgid "Keep the Allies from beating the clock!"
-msgstr "Powstrzymaj Aliantów od pobicia czasu!"
+msgstr "Powstrzymaj Aliantów od wygrania z czasem!"
 
 msgid "Keep the Axis from beating the clock!"
-msgstr "Powstrzymaj Oś od pobicia czasu!"
+msgstr "Powstrzymaj Oś od wygrania z czasem!"
 
 msgid "You have been switched to the Allied team"
 msgstr "Zostałeś przeniesiony do zespołu Aliantów"
 
 msgid "Try to beat the clock!"
-msgstr "Spróbuj pokonać czas!"
+msgstr "Spróbuj wygrać z czasem!"
 
 msgid "You have been been stripped of fireteam admin rights"
 msgstr "Zostałeś pozbawiony praw lidera oddziału"
@@ -6504,7 +6504,7 @@ msgid "never saw"
 msgstr "nie widział"
 
 msgid "'s mortar round coming"
-msgstr " pocisku mortara"
+msgstr " pocisku moździerza"
 
 msgid "was perforated by"
 msgstr "został podziurawiony przez"
@@ -6522,7 +6522,7 @@ msgid "^2swapped places with^7"
 msgstr "^2zamienileś miejscami z^7"
 
 msgid "failed to spot"
-msgstr "niezauwazył"
+msgstr "nie zauważył"
 
 msgid "was mown down by"
 msgstr "został podziurawiony przez"
@@ -6679,12 +6679,12 @@ msgstr "Zawiera lub wyklucza serwery gdzie jest włączony Przyjacielski Ogień 
 msgid ""
 "Includes or excludes servers that limit the number of player lives per match"
 " from the server list"
-msgstr "Zawiera lub wyklucza serwery które ograniczają liczbę żyć na mecz z listy serwerów"
+msgstr "Zawiera lub wyklucza serwery, które ograniczają liczbę żyć na mecz z listy serwerów"
 
 msgid ""
 "Includes or excludes servers that limit the number of\n"
 " available heavy weapons from the server list"
-msgstr "Zawiera lub wyklucza serwery które ograniczają liczbę\n dostępnej broni ciężkiej z liczby serwerów"
+msgstr "Zawiera lub wyklucza serwery, które ograniczają liczbę\n dostępnej broni ciężkiej z liczby serwerów"
 
 msgid ""
 "Includes or excludes servers with support for modem players from the server "
@@ -6741,7 +6741,7 @@ msgid ""
 msgstr "Nie można było wczytać oficjalnego pliku; sprawdź swoją instalację i upewnij się, że została ona zaktualizowana do najnowszej wersji."
 
 msgid "Battle Sense"
-msgstr "Wyczucia Wojennego"
+msgstr "Zmysłu Bitewnego"
 
 msgid "Engineering"
 msgstr "Inżyniera"
@@ -6832,13 +6832,13 @@ msgid "Highest Experience Points"
 msgstr "Najwięcej Punktów Doświadczenia"
 
 msgid "Highest Ranking Officer"
-msgstr "Najwyższy Rangą Officer"
+msgstr "Najwyższy Rangą Oficer"
 
 msgid "Most Highly Decorated"
 msgstr "Najbardziej Udekorowany"
 
 msgid "Highest Battle Sense"
-msgstr "Najwyższe Wyczucie Bojowe"
+msgstr "Najwyższy Zmysł Bitewny"
 
 msgid "Best Engineer"
 msgstr "Najlepszy Inżynier"
@@ -6847,7 +6847,7 @@ msgid "Best Medic"
 msgstr "Najlepszy Medyk"
 
 msgid "Best Field Ops"
-msgstr "Najlepsze Wsparcie"
+msgstr "Najlepszy Radiooperator"
 
 msgid "Highest Light Weapons"
 msgstr "Najlepsza Lekka Broń"
@@ -6862,7 +6862,7 @@ msgid "Highest Accuracy"
 msgstr "Najlepsza Celność"
 
 msgid "I Ain't Got No Friends Award"
-msgstr "Nagroda za brak przyjaciół"
+msgstr "Nagroda \"Nie mam przyjaciół\""
 
 msgid "Welcome Newbie! Award"
 msgstr "Nagroda Witamy Początkującego!"
@@ -6881,6 +6881,9 @@ msgstr "Najwięcej Samobójstw"
 
 msgid "Most Deaths"
 msgstr "Najwięcej Śmierci"
+
+msgid "Highest Skill Rating"
+msgstr "Najwyższy Skill Rating"
 
 msgid ""
 "\n"
@@ -6906,7 +6909,7 @@ msgid "^7%s^7 was gibbed."
 msgstr "^7%s^7 został zgibowany."
 
 msgid "Die command not allowed during intermission.\n"
-msgstr "Komenda Die nie dostępna podczas przerw.\n"
+msgstr "Komenda Die nie jest dostępna podczas przerw.\n"
 
 msgid "^3%d^7 players died."
 msgstr "^3%d^7 graczy umarło."
@@ -6924,7 +6927,7 @@ msgid "^7%s^7 died."
 msgstr "^7%s^7 umarło."
 
 msgid "Freeze command not allowed during intermission.\n"
-msgstr "Komenda Freeze nie dostępna podczas przerw.\n"
+msgstr "Komenda Freeze nie jest dostępna podczas przerw.\n"
 
 msgid "^3%d^7 players are frozen."
 msgstr "^3%d^7 graczy jest zamrożonych."
@@ -7124,24 +7127,23 @@ msgid "Custom Width:"
 msgstr "Niestandardowa Szerokość:"
 
 msgid ""
-"Specifies custom resolution width - requires custom resolution set. *Use on "
-"your own risk!"
-msgstr "Określa niestandardową szerokość rozdzielczości - wymaga niestandardowego ustawienia rozdzielczości .*Używaj na własną odpowiedzialność!"
+"Specifies custom resolution width (requires custom resolution set - *Use at "
+"your own risk*)"
+msgstr "Określa niestandardową szerokość rozdzielczości (wymaga niestandardowego ustawienia rozdzielczości .*Używaj na własną odpowiedzialność*)"
 
 msgid "Custom Height:"
 msgstr "Niestandardowa Wysokość:"
 
 msgid ""
-"Specifies custom resolution height - requires custom resolution set .*Use on"
-" your own risk!"
-msgstr "Określa niestandardową wysokość rozdzielczości - wymaga niestandardowego ustawienia rozdzielczości .*Używaj na własną odpowiedzialność!"
+"Specifies custom resolution height (requires custom resolution set - *Use at"
+" your own risk*)"
+msgstr "Określa niestandardową wysokość rozdzielczości (wymaga niestandardowego ustawienia rozdzielczości .*Używaj na własną odpowiedzialność*)"
 
 msgid "Max. Frames Per Second:"
-msgstr "Maks. Ilość Klatek na Sekundę"
+msgstr "Maks. Ilość FPS"
 
-msgid ""
-"Sets the limit of frames per second - keep the values between 20 and 333"
-msgstr "Ustawia limit klatek na sekundę - ustaw wartości pomiędzy 20 a 333"
+msgid "Sets the limit of frames per second"
+msgstr "Ustawia limit klatek na sekundę"
 
 msgid "JOYSTICK"
 msgstr "JOYSTICK"
@@ -7241,7 +7243,7 @@ msgid "IRC nickame in channel"
 msgstr "Ksywka w kanale IRC"
 
 msgid "Kick rejoin time ms:"
-msgstr "Ponownie połączenie po wywaleniu w ms:"
+msgstr "Ponowne połącz. po wywaleniu w ms:"
 
 msgid "Auto rejoin time after kick"
 msgstr "Automatyczne ponowne połączenie po wywaleniu"
@@ -7271,14 +7273,14 @@ msgid "ENGINEER"
 msgstr "INŻYNIER"
 
 msgid "FIELD OPS"
-msgstr "WSPARCIE"
+msgstr "RADIOOPERATOR"
 
 msgid "COVERT OPS"
 msgstr "SZPIEG"
 
 msgid ""
 "Includes or excludes ET:Legacy servers with humans from the server list"
-msgstr "Zawiera lub wyklucza serwery ET:Legacy z ludzmi z listy serwerów "
+msgstr "Zawiera lub wyklucza serwery ET:Legacy z ludźmi z listy serwerów "
 
 msgid "Specify receiver of quick radio messages"
 msgstr "Określa dokąd mają być przesyłane szybkie wiadomości"
@@ -7286,8 +7288,8 @@ msgstr "Określa dokąd mają być przesyłane szybkie wiadomości"
 msgid "High Quality Video:"
 msgstr "Wideo Wysokiej Jakości:"
 
-msgid "Sets high quality video."
-msgstr "Ustawia wysoką jakość wideo."
+msgid "Sets high quality video"
+msgstr "Ustawia wysoką jakość wideo"
 
 msgid "Port:"
 msgstr "Port:"
@@ -7313,7 +7315,7 @@ msgid "E. Engineer"
 msgstr "E. Inżynier"
 
 msgid "F. Field Ops"
-msgstr "F. Wsparcie"
+msgstr "F. Radiooperator"
 
 msgid "C. Covert Ops"
 msgstr "C. Szpieg"
@@ -7352,7 +7354,7 @@ msgid "3. Engineer"
 msgstr "3. Inżynier"
 
 msgid "4. Field Ops"
-msgstr "4. Wsparcie"
+msgstr "4. Radiooperator"
 
 msgid "5. Covert Ops"
 msgstr "5. Szpieg"
@@ -7383,60 +7385,6 @@ msgstr "2. Karabin Maszynowy"
 
 msgid "3. Sniper Rifle"
 msgstr "3. Karabin Snajperski"
-
-msgid "English (default)  "
-msgstr "Angielski (domyślnie) "
-
-msgid "Czech"
-msgstr "Czeski"
-
-msgid "Dutch"
-msgstr "Niderlandzki "
-
-msgid "Finnish"
-msgstr "Fiński"
-
-msgid "French"
-msgstr "Francuski"
-
-msgid "German"
-msgstr "Niemiecki"
-
-msgid "Greek"
-msgstr "Grecki"
-
-msgid "Hungarian"
-msgstr "Węgierski"
-
-msgid "Italian"
-msgstr "Włoski"
-
-msgid "Norwegian"
-msgstr "Norweski"
-
-msgid "Polish"
-msgstr "Polski"
-
-msgid "Portuguese"
-msgstr "Portugalski"
-
-msgid "Russian"
-msgstr "Rosyjski"
-
-msgid "Spanish"
-msgstr "Hiszpański"
-
-msgid "Turkish"
-msgstr "Turecki"
-
-msgid "Bulgarian"
-msgstr "Bułgarski"
-
-msgid "Serbian"
-msgstr "Serbski"
-
-msgid "Swedish"
-msgstr ""
 
 msgid "desktop resolution"
 msgstr "rozdzielczość ekranu"
@@ -7503,3 +7451,102 @@ msgstr "Przek. + Nadp + Wyc."
 
 msgid "Custom"
 msgstr "Niestandardowy"
+
+msgid "Displays help text"
+msgstr "Wyświetla tekst pomocy"
+
+msgid "Low (43 FPS)"
+msgstr "Niskie (43 FPS)"
+
+msgid "Medium (76 FPS)"
+msgstr "Średnie (76 FPS)"
+
+msgid "Default (85 FPS)"
+msgstr "Domyślnie (85 FPS)"
+
+msgid "High (125 FPS)"
+msgstr "Wysokie (125 FPS)"
+
+msgid "ADD FAVORITE"
+msgstr "DODAJ DO ULUBIONYCH"
+
+msgid "Add this server to your favorites? IP:"
+msgstr "Dodać ten serwer do ulubionych? IP:"
+
+msgid "Select your team, class, weapon and spawnpoint"
+msgstr "Wybierz swoją drużynę, klasę, broń i miejsce odrodzenia "
+
+msgid "Print all server info"
+msgstr "Wyświetl wszystkie informacje o serwerze"
+
+msgid "Set available game options"
+msgstr "Ustaw dostępne opcje gry"
+
+msgid "Add this server to your favorites"
+msgstr "Dodaj ten serwer do ulubionych "
+
+msgid "Look at the legacy hall of fame"
+msgstr "Spójrz na galerię sław projektu legacy"
+
+msgid "Disconnect your connection from current server"
+msgstr "Rozłącz z aktualnym serwerem"
+
+msgid "Don't press this. Be warned!"
+msgstr "Nie wciskaj tego. Bądź ostrożny!"
+
+msgid "Skill Rating view"
+msgstr "Widok Skill Rating"
+
+msgid "%s - Press double-%s quickly to switch scoreboard"
+msgstr "%s - Szybko i podwójnie wciśnij - %s, aby przełączyć widok tablicy wyników"
+
+msgid "XP view"
+msgstr "Widok XP"
+
+msgid "^1CHOOSE YOUR INITIAL SETTINGS"
+msgstr "^1WYBIERZ SWOJE USTAWIENIA WSTĘPNE"
+
+msgid "FAVORITES"
+msgstr "ULUBIONE"
+
+msgid "Shows all favorite servers"
+msgstr "Pokazuje wszystkie ulubione serwery"
+
+msgid "GEOLOCATION"
+msgstr "GEOLOKACJA"
+
+msgid "Share Location:"
+msgstr "Dzielenie Lokalizacji:"
+
+msgid "Displays your own location in score board"
+msgstr "Wyświetla swoją lokalizację w tablicy wyników"
+
+msgid "Class selection:"
+msgstr "Wybór Klasy:"
+
+msgid "Sets the frames per second limit for a stable render rate"
+msgstr "Ustawia limit klatek na sekundę dla stabilnej płynności grania"
+
+msgid "LANGUAGE"
+msgstr "JĘZYK"
+
+msgid "Very Low (15)"
+msgstr "Bardzo Niskie (15)"
+
+msgid "Low (30)"
+msgstr "Niskie (30)"
+
+msgid "Medium (60)"
+msgstr "Średnie (60)"
+
+msgid "High (100)"
+msgstr "Wysokie (100)"
+
+msgid "Very High (125)"
+msgstr "Bardzo Wysokie (125)"
+
+msgid "Enabled & no sound"
+msgstr "Włączone & brak dźwięku"
+
+msgid "RANDOM"
+msgstr "LOSOWO"
