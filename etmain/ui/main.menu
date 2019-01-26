@@ -4,8 +4,10 @@
 // Defines //
 #define WINDOW_X		16
 #define WINDOW_Y		16
-#define WINDOW_WIDTH	128
-#define WINDOW_HEIGHT	248
+#define WINDOW_WIDTH	__WINDOW_WIDTH-32
+#define WINDOW_HEIGHT	448
+#define MENU_WIDTH		128
+#define MENU_HEIGHT		248
 #define GROUP_NAME		"grpMain"
 
 // Opener //
@@ -13,7 +15,7 @@ menuDef {
 	name		"main_opener"
 	visible		0
 	fullscreen	0
-	rect		WINDOW_X WINDOW_Y WINDOW_WIDTH WINDOW_HEIGHT
+	rect		WINDOW_X WINDOW_Y MENU_WIDTH MENU_HEIGHT
 
 	onOpen {
 		open fadebox_black ;
@@ -31,7 +33,7 @@ menuDef {
 	name		"main"
 	visible		0
 	fullscreen	0
-	rect		WINDOW_X WINDOW_Y 624 464
+	rect		WINDOW_X WINDOW_Y $evalint(WINDOW_WIDTH) $evalint(WINDOW_HEIGHT)
 	style		WINDOW_STYLE_FILLED
 
 	onOpen {
@@ -54,7 +56,7 @@ menuDef {
 // Background Logo //
 	itemDef {
 		name		"etl_logo"
-		rect		204 124 200 200		// 16, 16 offset!!
+		rect		$evalint(__WINDOW_WIDTH/2-100-16) 124 200 200		// 16, 16 offset!!
 		style		WINDOW_STYLE_SHADER
 		background	"ui/assets/etl_logo_huge"
 		visible		1
@@ -74,7 +76,7 @@ menuDef {
 
 	itemDef {
 		name		"atvi_logo"
-		rect		$evalfloat(640-(2*WINDOW_X)-48-4-108) 421 108 27		// 16, 16 offset!! (note offset to left a little as well)
+		rect		$evalint(__WINDOW_WIDTH-(2*WINDOW_X)-48-4-108) 421 108 27		// 16, 16 offset!! (note offset to left a little as well)
 		style		WINDOW_STYLE_SHADER
 		background	"ui/assets/logo_atvi_dark"
 		forecolor	1 1 1 1
@@ -84,7 +86,7 @@ menuDef {
 
 	itemDef {
 		name		"id_logo"
-		rect		$evalfloat(640-(2*WINDOW_X)-48) 400 48 48		// 16, 16 offset!!
+		rect		$evalint(__WINDOW_WIDTH-(2*WINDOW_X)-48) 400 48 48		// 16, 16 offset!!
 		style		WINDOW_STYLE_SHADER
 		background	"ui/assets/logo_id_dark"
 		forecolor	1 1 1 1
@@ -94,40 +96,41 @@ menuDef {
 
 
 // Window //
-	WINDOW( _("MENU"), 50 )
+	//WINDOW( _("MENU"), 50 ) // FIXME: script error with WINDOW_HEIGHT
+	SUBWINDOW( 0, 0, MENU_WIDTH, MENU_HEIGHT, _("MENU") )
 	execKey "c" { close main ; open main_quickconnect }
 
 // Buttons //
-	BUTTON( 6, 32, WINDOW_WIDTH-12, 18, _("PLAY ONLINE"), .3, 14, close main ; /*close backgroundmusic ; open backgroundmusic_server ;*/ uiScript UpdateFilter ; uiScript ServerSort 2 ; open playonline )
-	BUTTON( 6, 56, WINDOW_WIDTH-12, 18, _("HOST GAME"), .3, 14, close main ; /*close backgroundmusic ; open backgroundmusic_server ;*/ uiScript loadArenas ; uiScript initHostGameFeatures ; open hostgame )
-	BUTTON( 6, 80, WINDOW_WIDTH-12, 18, _("REPLAYS"), .3, 14, close main ; open viewreplay )
-	BUTTON( 6, 104, WINDOW_WIDTH-12, 18, _("OPTIONS"), .3, 14, close main ; open options )
-	BUTTON( 6, 128, WINDOW_WIDTH-12, 18, _("PROFILE"), .3, 14, close main ; open profile )
-	BUTTON( 6, 152, WINDOW_WIDTH-12, 18, _("MODS"), .3, 14, close main ; open mods )
-	BUTTON( 6, 176, WINDOW_WIDTH-12, 18, _("CREDITS"), .3, 14, close main ; open credits_etlegacy )
-	BUTTON( 6, 200, WINDOW_WIDTH-12, 18, _("ETLEGACY.COM"), .3, 14, clearFocus ; open etlegacywebsite )
-	BUTTON( 6, 224, WINDOW_WIDTH-12, 18, _("EXIT GAME"), .3, 14, clearFocus ; open quit )
+	BUTTON( 6, 32, MENU_WIDTH-12, 18, _("PLAY ONLINE"), .3, 14, close main ; /*close backgroundmusic ; open backgroundmusic_server ;*/ uiScript UpdateFilter ; uiScript ServerSort 2 ; open playonline )
+	BUTTON( 6, 56, MENU_WIDTH-12, 18, _("HOST GAME"), .3, 14, close main ; /*close backgroundmusic ; open backgroundmusic_server ;*/ uiScript loadArenas ; uiScript initHostGameFeatures ; open hostgame )
+	BUTTON( 6, 80, MENU_WIDTH-12, 18, _("REPLAYS"), .3, 14, close main ; open viewreplay )
+	BUTTON( 6, 104, MENU_WIDTH-12, 18, _("OPTIONS"), .3, 14, close main ; open options )
+	BUTTON( 6, 128, MENU_WIDTH-12, 18, _("PROFILE"), .3, 14, close main ; open profile )
+	BUTTON( 6, 152, MENU_WIDTH-12, 18, _("MODS"), .3, 14, close main ; open mods )
+	BUTTON( 6, 176, MENU_WIDTH-12, 18, _("CREDITS"), .3, 14, close main ; open credits_etlegacy )
+	BUTTON( 6, 200, MENU_WIDTH-12, 18, _("ETLEGACY.COM"), .3, 14, clearFocus ; open etlegacywebsite )
+	BUTTON( 6, 224, MENU_WIDTH-12, 18, _("EXIT GAME"), .3, 14, clearFocus ; open quit )
 
 // Vanilla client warning //
 #ifndef LEGACY
 #define SECURITY_WIDTH	200
-	LABEL( 80, 368, SECURITY_WIDTH, 18, _("^1SECURITY INFORMATION"), .3, ITEM_ALIGN_CENTER, .5*SECURITY_WIDTH, 8 )
-	LABELWHITE( 80, 384, SECURITY_WIDTH, 9, _("You are running old software"), .2, ITEM_ALIGN_CENTER, .5*SECURITY_WIDTH, 8 )
-	LABEL( 80, 398, SECURITY_WIDTH, 9, _("We do recommend to\nupgrade your ET client"), .2, ITEM_ALIGN_CENTER, .5*SECURITY_WIDTH, 8 )
-	BUTTON( 80+6, 428, SECURITY_WIDTH-12, 18, _("UPGRADE NOW"), .3, 14, clearFocus ; uiScript validate_openURL )
-	//LABEL( 80, 440, SECURITY_WIDTH, 18, _("Join ET Legacy and keep the game alive"), .2, ITEM_ALIGN_CENTER, .5*SECURITY_WIDTH, 8 )
+	LABEL( __WINDOW_WIDTH/2-100-16, 368, SECURITY_WIDTH, 18, _("^1SECURITY INFORMATION"), .3, ITEM_ALIGN_CENTER, .5*SECURITY_WIDTH, 8 )
+	LABELWHITE( __WINDOW_WIDTH/2-100-16, 384, SECURITY_WIDTH, 9, _("You are running old software"), .2, ITEM_ALIGN_CENTER, .5*SECURITY_WIDTH, 8 )
+	LABEL( __WINDOW_WIDTH/2-100-16, 398, SECURITY_WIDTH, 9, _("We do recommend to\nupgrade your ET client"), .2, ITEM_ALIGN_CENTER, .5*SECURITY_WIDTH, 8 )
+	BUTTON( __WINDOW_WIDTH/2-100-16+6, 428, SECURITY_WIDTH-12, 18, _("UPGRADE NOW"), .3, 14, clearFocus ; uiScript validate_openURL )
+	//LABEL( __WINDOW_WIDTH/2-100-16, 440, SECURITY_WIDTH, 18, _("Join ET Legacy and keep the game alive"), .2, ITEM_ALIGN_CENTER, .5*SECURITY_WIDTH, 8 )
 #endif
 
 // Version //
-LABEL( 6, 450, WINDOW_WIDTH, 18, "^1"ETLEGACY_VERSION, .2, ITEM_ALIGN_LEFT, 0, 8 )
+LABEL( 6, 450, MENU_WIDTH, 18, "^1"ETLEGACY_VERSION, .2, ITEM_ALIGN_LEFT, 0, 8 )
 
 // profile info //
-SUBWINDOW( 0, 260, WINDOW_WIDTH, 40, _("CURRENT PROFILE") )
-CVARLABEL( 6, 276, WINDOW_WIDTH, WINDOW_WIDTH, "cl_profile", .2, ITEM_ALIGN_LEFT, 0, 8 )
-CVARLABEL( 6, 288, WINDOW_WIDTH, WINDOW_WIDTH, "name", .2, ITEM_ALIGN_LEFT, 0, 8 )
+SUBWINDOW( 0, 260, MENU_WIDTH, 40, _("CURRENT PROFILE") )
+CVARLABEL( 6, 276, MENU_WIDTH, MENU_WIDTH, "cl_profile", .2, ITEM_ALIGN_LEFT, 0, 8 )
+CVARLABEL( 6, 288, MENU_WIDTH, MENU_WIDTH, "name", .2, ITEM_ALIGN_LEFT, 0, 8 )
 
 // message of the day?
-//	SUBWINDOW( WINDOW_WIDTH+6, 0, 640-WINDOW_WIDTH -6, 28, _("MESSAGE OF THE DAY") )
+//	SUBWINDOW( MENU_WIDTH+6, 0, __WINDOW_WIDTH-MENU_WIDTH-6-32, 28, _("MESSAGE OF THE DAY") )
 //	itemDef {
 //		name			"messageOfTheDay"
 //		group			GROUP_NAME
