@@ -108,7 +108,7 @@ menuDef {
 	BUTTON( 6, 128, MENU_WIDTH-12, 18, _("PROFILE"), .3, 14, close main ; open profile )
 	BUTTON( 6, 152, MENU_WIDTH-12, 18, _("MODS"), .3, 14, close main ; open mods )
 	BUTTON( 6, 176, MENU_WIDTH-12, 18, _("CREDITS"), .3, 14, close main ; open credits_etlegacy )
-	BUTTON( 6, 200, MENU_WIDTH-12, 18, _("ETLEGACY.COM"), .3, 14, clearFocus ; open etlegacywebsite )
+	BUTTON( 6, 200, MENU_WIDTH-12, 18, _("WEBSITE"), .3, 14, clearFocus ; open website_etlegacy )
 	BUTTON( 6, 224, MENU_WIDTH-12, 18, _("EXIT GAME"), .3, 14, clearFocus ; open quit )
 
 // Vanilla client warning //

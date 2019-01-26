@@ -38,7 +38,7 @@
 	loadMenu { "ui/credits_activision.menu" }
 	loadMenu { "ui/credits_additional.menu" }
 	loadMenu { "ui/credits_et260.menu" }
-	loadMenu { "ui/etlegacywebsite.menu" }
+	loadMenu { "ui/website_etlegacy.menu" }
 	loadMenu { "ui/credits_quit.menu" }
 	loadMenu { "ui/quit.menu" }
 

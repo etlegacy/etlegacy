@@ -3,7 +3,7 @@
 // Defines //
 #define WINDOW_X		0
 #define WINDOW_Y		0
-#define WINDOW_WIDTH	640
+#define WINDOW_WIDTH	__WINDOW_WIDTH
 #define WINDOW_HEIGHT	480
 #define GROUP_NAME "grpWWWConfirm"
 
@@ -13,15 +13,15 @@
 // WWW Confirmation Menu //
 menuDef
 {
-	name "etlegacywebsite"
-	visible 0
-	fullscreen 0
-	rect WINDOW_X WINDOW_Y WINDOW_WIDTH WINDOW_HEIGHT
-	style WINDOW_STYLE_FILLED
+	name "website_etlegacy"
+	visible		0
+	fullscreen	0
+	rect		WINDOW_X WINDOW_Y WINDOW_WIDTH WINDOW_HEIGHT
+	style		WINDOW_STYLE_FILLED
 	popup
 
-	fadeClamp 0.5
-	fadeAmount  0.075
+	fadeClamp	0.5
+	fadeAmount	0.075
 
 	onOpen
 	{
@@ -32,12 +32,23 @@ menuDef
 
 	onESC
 	{
-		close etlegacywebsite ;
+		close website_etlegacy ;
 #ifdef FUI
 		open main
 #else
 		open ingame_main
 #endif
+	}
+
+// Background //
+	itemDef {
+		name		"background"
+		rect		0 0 __WINDOW_WIDTH 480
+		style		WINDOW_STYLE_FILLED
+		background	"ui/assets/fadebox.tga"
+		backcolor	0 0 0 0
+		visible		1
+		decoration
 	}
 
 // Subwindows //
@@ -48,10 +59,10 @@ menuDef
 
 	SUBWINDOWBLACK( SUBWINDOW_X, SUBWINDOW_Y, SUBWINDOW_WIDTH, SUBWINDOW_HEIGHT, _("ET Legacy Website") )
 	LABEL( SUBWINDOW_X+2, SUBWINDOW_Y+16, (SUBWINDOW_WIDTH)-8, 10, _("Do you want to open\n www.etlegacy.com ?"), .2, ITEM_ALIGN_CENTER, .5*((SUBWINDOW_WIDTH)-4), 8 )
-	BUTTON( SUBWINDOW_X+6, SUBWINDOW_Y+SUBWINDOW_HEIGHT-24, .5*(SUBWINDOW_WIDTH-18), 18, _("YES"), .3, 14, close etlegacywebsite ; uiScript validate_openURL )
+	BUTTON( SUBWINDOW_X+6, SUBWINDOW_Y+SUBWINDOW_HEIGHT-24, .5*(SUBWINDOW_WIDTH-18), 18, _("YES"), .3, 14, close website_etlegacy ; uiScript validate_openURL )
 #ifdef FUI
-	BUTTON( SUBWINDOW_X+6+.5*(SUBWINDOW_WIDTH-18)+6, SUBWINDOW_Y+SUBWINDOW_HEIGHT-24, .5*(SUBWINDOW_WIDTH-18), 18, _("NO"), .3, 14, close etlegacywebsite ; open main )
+	BUTTON( SUBWINDOW_X+6+.5*(SUBWINDOW_WIDTH-18)+6, SUBWINDOW_Y+SUBWINDOW_HEIGHT-24, .5*(SUBWINDOW_WIDTH-18), 18, _("NO"), .3, 14, close website_etlegacy ; open main )
 #else
-	BUTTON( SUBWINDOW_X+6+.5*(SUBWINDOW_WIDTH-18)+6, SUBWINDOW_Y+SUBWINDOW_HEIGHT-24, .5*(SUBWINDOW_WIDTH-18), 18, _("NO"), .3, 14, close etlegacywebsite ; open ingame_main )
+	BUTTON( SUBWINDOW_X+6+.5*(SUBWINDOW_WIDTH-18)+6, SUBWINDOW_Y+SUBWINDOW_HEIGHT-24, .5*(SUBWINDOW_WIDTH-18), 18, _("NO"), .3, 14, close website_etlegacy ; open ingame_main )
 #endif // FUI
 }
