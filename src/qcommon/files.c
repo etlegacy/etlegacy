@@ -4734,9 +4734,6 @@ static void FS_CheckRequiredFiles(int checksumFeed)
 	}
 }
 
-#if defined(FEATURE_PAKISOLATION) && !defined(DEDICATED)
-void FS_InitWhitelist();
-#endif
 /**
  * @brief Called only at initial startup, not when the filesystem
  * is resetting due to a game change
@@ -4783,9 +4780,6 @@ void FS_InitFilesystem(void)
 	{
 		Cmd_AddCommand("fileinfo", FS_Fileinfo_f, "Prints file system info.");
 	}
-#if defined(FEATURE_PAKISOLATION) && !defined(DEDICATED)
-	FS_InitWhitelist();
-#endif
 }
 
 /**
@@ -5282,7 +5276,7 @@ void FS_CreateContainerName(const char *id, char *output)
 const char *FS_Basename(const char *path)
 {
 	static char base[MAX_OSPATH] = { 0 };
-	int length = (int)strlen(path) - 1;
+	int         length           = (int)strlen(path) - 1;
 
 	// Skip trailing slashes
 	while (length > 0 && (IsPathSep(path[length])))
@@ -5310,11 +5304,13 @@ const char *FS_Basename(const char *path)
 const char *FS_Dirpath(const char *path)
 {
 	static char dirpath[MAX_OSPATH] = { 0 };
-	int index = 0;
-	int lastSepPos = 0;
+	int         index               = 0;
+	int         lastSepPos          = 0;
 
-	while (path[index] && index < MAX_OSPATH) {
-		if (IsPathSep(path[index])) {
+	while (path[index] && index < MAX_OSPATH)
+	{
+		if (IsPathSep(path[index]))
+		{
 			lastSepPos = index + 1;
 		}
 		index++;
@@ -5333,14 +5329,15 @@ const char *FS_Dirpath(const char *path)
 */
 qboolean FS_MatchFileInPak(const char *filepath, const char *match)
 {
-	int i;
-	pack_t *pak;
+	int          i;
+	pack_t       *pak;
 	fileInPack_t *buildBuffer;
-	qboolean found = qfalse;
+	qboolean     found = qfalse;
 
 	pak = FS_LoadZipFile(filepath, "");
 
-	if (!pak) {
+	if (!pak)
+	{
 		return qfalse;
 	}
 
@@ -5369,16 +5366,19 @@ qboolean FS_MatchFileInPak(const char *filepath, const char *match)
 int FS_CalculateFileSHA1(const char *path, char *hash)
 {
 	SHA1Context sha;
-	FILE *f;
-	int  len;
-	byte *buf;
-	const int MAX_BUFFER_SIZE = 64 * 1024;
+	FILE        *f;
+	int         len;
+	byte        *buf;
+	const int   MAX_BUFFER_SIZE = 64 * 1024;
 
 	Com_Memset(hash, 0, 40);
 	SHA1Reset(&sha);
 	
 	f = Sys_FOpen(path, "rb");
-	if (!f) return 1;
+	if (!f)
+	{
+		return 1;
+	}
 
 	fseek(f, 0, SEEK_END);
 	len = ftell(f);
@@ -5386,7 +5386,10 @@ int FS_CalculateFileSHA1(const char *path, char *hash)
 	fseek(f, 0, SEEK_SET);
 
 	buf = Com_Allocate(MAX_BUFFER_SIZE);
-	if (!buf) return 1;
+	if (!buf)
+	{
+		return 1;
+	}
 
 	while (1)
 	{
@@ -5417,31 +5420,41 @@ int FS_CalculateFileSHA1(const char *path, char *hash)
 	return 0;
 }
 
-typedef struct {
+typedef struct
+{
 	char name[MAX_OSPATH];
 	char hash[41];
 } pakMetaEntry_t;
 
-#define MAX_META_ENTRIES 128
+#define MAX_META_ENTRIES 4096 // see db_mode 1
 #define META_FILE_NAME "etl_pakmeta.txt"
 pakMetaEntry_t pakMetaEntries[MAX_META_ENTRIES];
 pakMetaEntry_t *pakMetaEntryMap[MAX_META_ENTRIES];
 
+#ifdef FEATURE_DBMS
+// FIXME: sort header entries
+extern void DB_insertWhitelist(const char *key, const char *name);
+#endif
+
 /**
 * @brief FS_InitWhitelist loads the file containing whitelisted entries
 */
-void FS_InitWhitelist() {
-	int i = 0, pakNameHash, len;
+void FS_InitWhitelist()
+{
+	int            i = 0, msec, pakNameHash, len;
 	pakMetaEntry_t *pakEntry;
-	FILE *file;
-	char *fileMetaPath, *buf, *token;
+	FILE           *file;
+	char           *fileMetaPath, *buf, *token;
+
+	msec = Sys_Milliseconds();
 
 	Com_Memset(pakMetaEntries, 0, MAX_META_ENTRIES);
 	Com_Memset(pakMetaEntryMap, 0, MAX_META_ENTRIES);
 
 	fileMetaPath = va("%s%c%s", fs_homepath->string, PATH_SEP, META_FILE_NAME);
 	file = Sys_FOpen(fileMetaPath, "rb");
-	if (!file) {
+	if (!file)
+	{
 		Com_Printf("^3Warning: " META_FILE_NAME " was not found.\n");
 		return;
 	}
@@ -5467,25 +5480,40 @@ void FS_InitWhitelist() {
 		Com_Dealloc(buf);
 		return;
 	}
+
 	buf[len] = 0;
 	fclose(file);
 
 	while (1)
 	{
 		pakEntry = &pakMetaEntries[i++];
-		token = COM_ParseExt(&buf, qfalse);
-		if (!token[0]) break;
-		Q_strncpyz(pakEntry->name, token, MAX_OSPATH);
-		pakNameHash = FS_HashFileName(token, MAX_META_ENTRIES);
-		pakMetaEntryMap[pakNameHash] = pakEntry;
+		token    = COM_ParseExt(&buf, qfalse);
 
-		token = COM_ParseExt(&buf, qfalse);
-		if (!token[0]) break;
+		if (!token[0])
+		{
+			break;
+		}
+
+		Q_strncpyz(pakEntry->name, token, MAX_OSPATH);
+		pakNameHash                  = FS_HashFileName(token, MAX_META_ENTRIES);
+		pakMetaEntryMap[pakNameHash] = pakEntry;
+		token                        = COM_ParseExt(&buf, qfalse);
+
+		if (!token[0])
+		{
+			break;
+		}
+
 		Q_strncpyz(pakEntry->hash, token, 41);
 
+#ifdef FEATURE_DBMS
+		//DB_insertWhitelist(pakEntry->hash, pakEntry->name);
+#endif
 		COM_ParseExt(&buf, qfalse); // eat line
 	}
 	Com_Dealloc(buf);
+
+	Com_Printf("%i Entries imported from whitelist in %i ms\n", i, (Sys_Milliseconds() - msec));
 }
 
 /**
@@ -5496,9 +5524,13 @@ void FS_InitWhitelist() {
 */
 qboolean FS_IsWhitelisted(const char *pakName, const char *hash)
 {
-	int i = 0;
-	int pakNameHash = FS_HashFileName(pakName, MAX_META_ENTRIES);
-	pakMetaEntry_t *pakEntry = pakMetaEntryMap[pakNameHash];
+	int            i = 0;
+	int            pakNameHash;
+	pakMetaEntry_t *pakEntry;
+
+	pakNameHash = FS_HashFileName(pakName, MAX_META_ENTRIES);
+	pakEntry    = pakMetaEntryMap[pakNameHash];
+
 	if (!pakEntry)
 	{
 		// try manual search on hash miss 

@@ -946,6 +946,7 @@ void FS_HomeRemove(const char *homePath);
 qboolean FS_FileInPathExists(const char *testpath);
 
 #if defined(FEATURE_PAKISOLATION) && !defined(DEDICATED)
+void FS_InitWhitelist(void);
 const char *FS_Basename(const char *path);
 const char *FS_Dirpath(const char *path);
 void FS_CreateContainerName(const char *id, char *output);

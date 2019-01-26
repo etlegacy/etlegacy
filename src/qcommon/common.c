@@ -2894,6 +2894,10 @@ void Com_Init(char *commandLine)
 	}
 #endif
 
+#if defined(FEATURE_PAKISOLATION) && !defined(DEDICATED)
+	FS_InitWhitelist();
+#endif
+
 	Cbuf_AddText("exec autoexec.cfg\n");
 
 	// reset crashed state
