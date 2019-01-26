@@ -98,7 +98,7 @@ typedef struct vidmode_s
 	float pixelAspect;              // pixel width / height
 } vidmode_t;
 
-vidmode_t glimp_vidModes[] =
+vidmode_t glimp_vidModes[] =        // keep in sync with LEGACY_RESOLUTIONS
 {
 	{ "Mode  0: 320x240",           320,  240,  1 },
 	{ "Mode  1: 400x300",           400,  300,  1 },
@@ -111,7 +111,7 @@ vidmode_t glimp_vidModes[] =
 	{ "Mode  8: 1280x1024",         1280, 1024, 1 },
 	{ "Mode  9: 1600x1200",         1600, 1200, 1 },
 	{ "Mode 10: 2048x1536",         2048, 1536, 1 },
-	{ "Mode 11: 856x480 (wide)",    856,  480,  1 },
+	{ "Mode 11: 856x480 (16:9)",    856,  480,  1 },
 	{ "Mode 12: 1366x768 (16:9)",   1366, 768,  1 },
 	{ "Mode 13: 1440x900 (16:10)",  1440, 900,  1 },
 	{ "Mode 14: 1680x1050 (16:10)", 1680, 1050, 1 },
