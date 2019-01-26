@@ -5441,10 +5441,10 @@ extern void DB_insertWhitelist(const char *key, const char *name);
 */
 void FS_InitWhitelist()
 {
-	int            i = 0, msec, pakNameHash, len;
+    int            i = 0, p = 0, lc = 0, div, len, msec, pakNameHash, fileLen;
 	pakMetaEntry_t *pakEntry;
 	FILE           *file;
-	char           *fileMetaPath, *buf, *token;
+    char           *fileMetaPath, *buf, *line;
 
 	msec = Sys_Milliseconds();
 
@@ -5460,60 +5460,81 @@ void FS_InitWhitelist()
 	}
 
 	fseek(file, 0, SEEK_END);
-	len = ftell(file);
-	if (len == -1)
+    fileLen = ftell(file);
+    if (fileLen == -1)
 	{
 		Com_Printf("^3Warning: unable to get current position in stream of file " META_FILE_NAME ".\n");
 		return;
 	}
 	fseek(file, 0, SEEK_SET);
 
-	buf = Com_Allocate(len + 1);
+    buf = Com_Allocate(fileLen + 1);
 	if (!buf)
 	{
 		Com_Printf("^3Warning: unable to allocate buffer for " META_FILE_NAME " contents.\n");
 		return;
 	}
-	if (fread(buf, 1, len, file) != len)
+    if (fread(buf, 1, fileLen, file) != fileLen)
 	{
 		Com_Printf("3Warning: FS_InitWhitelist: short read.");
 		Com_Dealloc(buf);
 		return;
 	}
 
-	buf[len] = 0;
-	fclose(file);
+    fclose(file);
 
-	while (1)
+    buf[fileLen] = 0;
+    line = buf;
+
+    while (i < MAX_META_ENTRIES)
 	{
-		pakEntry = &pakMetaEntries[i++];
-		token    = COM_ParseExt(&buf, qfalse);
-
-		if (!token[0])
-		{
-			break;
-		}
-
-		Q_strncpyz(pakEntry->name, token, MAX_OSPATH);
-		pakNameHash                  = FS_HashFileName(token, MAX_META_ENTRIES);
-		pakMetaEntryMap[pakNameHash] = pakEntry;
-		token                        = COM_ParseExt(&buf, qfalse);
-
-		if (!token[0])
-		{
-			break;
-		}
-
-		Q_strncpyz(pakEntry->hash, token, 41);
-
+        if (p >= fileLen)
+        {
+            break;
+        }
+        if (buf[p] == '\n' || !buf[p + 1])
+        {
+            lc++;
+            len = &buf[p] - line;
+            if (len == 0)
+            {
+                line = &buf[++p];
+                continue;
+            }
+            for (div = len; div > 0; div--)
+            {
+                if (*(line + div) == ' ')
+                {
+                    break;
+                }
+            }
+            if (div == 0 || div == len || (len - div != 41))
+            {
+                Com_Printf("^1FS_InitWhitelist: Erroneous line %i found, ignoring the rest of file\n", lc);
+                break;
+            }
+            pakEntry = &pakMetaEntries[i++];
+            Com_Memcpy(pakEntry->name, line, (size_t)div);
+            Com_Memcpy(pakEntry->hash, line + div + 1, 40);
+            pakNameHash = FS_HashFileName(pakEntry->name, MAX_META_ENTRIES);
+            pakMetaEntryMap[pakNameHash] = pakEntry;
 #ifdef FEATURE_DBMS
-		//DB_insertWhitelist(pakEntry->hash, pakEntry->name);
+            //DB_insertWhitelist(pakEntry->hash, pakEntry->name);
 #endif
-		COM_ParseExt(&buf, qfalse); // eat line
+            line = &buf[p + 1];
+        }
+        else if (buf[p] == '/' && buf[p + 1] == '/')
+        {
+            while (++p < fileLen && (buf[p] && buf[p] != '\n')) /* skip line */;
+            line = &buf[p + 1];
+            lc++;
+        }
+        p++;
 	}
+
 	Com_Dealloc(buf);
 
-	Com_Printf("%i Entries imported from whitelist in %i ms\n", i, (Sys_Milliseconds() - msec));
+    Com_Printf("%i entries imported from whitelist in %i ms\n", i, (Sys_Milliseconds() - msec));
 }
 
 /**
