@@ -5434,6 +5434,8 @@ pakMetaEntry_t *pakMetaEntryMap[MAX_META_ENTRIES];
 #ifdef FEATURE_DBMS
 // FIXME: sort header entries
 extern void DB_insertWhitelist(const char *key, const char *name);
+extern void DB_beginTransaction(void);
+extern void DB_endTransaction(void);
 #endif
 
 /**
@@ -5486,6 +5488,10 @@ void FS_InitWhitelist()
     buf[fileLen] = 0;
     line = buf;
 
+#ifdef FEATURE_DBMS
+    DB_beginTransaction();
+#endif
+
     while (i < MAX_META_ENTRIES)
 	{
         if (p >= fileLen)
@@ -5519,7 +5525,7 @@ void FS_InitWhitelist()
             pakNameHash = FS_HashFileName(pakEntry->name, MAX_META_ENTRIES);
             pakMetaEntryMap[pakNameHash] = pakEntry;
 #ifdef FEATURE_DBMS
-            //DB_insertWhitelist(pakEntry->hash, pakEntry->name);
+            DB_insertWhitelist(pakEntry->hash, pakEntry->name);
 #endif
             line = &buf[p + 1];
         }
@@ -5531,6 +5537,10 @@ void FS_InitWhitelist()
         }
         p++;
 	}
+
+#ifdef FEATURE_DBMS
+    DB_endTransaction();
+#endif
 
 	Com_Dealloc(buf);
 

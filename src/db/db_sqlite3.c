@@ -112,7 +112,7 @@ const char *sql_Version_Statements[SQL_DBMS_SCHEMA_VERSION] =
  *
  * @return qtrue on success
  */
-qboolean DB_Init()
+qboolean DB_Init(void)
 {
 	char *to_ospath;
 	int  msec;
@@ -323,7 +323,7 @@ int DB_CallbackVersion(void *NotUsed, int argc, char **argv,
  *
  * @return qtrue on success
  */
-qboolean DB_CheckUpdates()
+qboolean DB_CheckUpdates(void)
 {
 	int version = 0;
 	char         *sql;
@@ -407,7 +407,7 @@ qboolean DB_CheckUpdates()
  *
  * @return qtrue on sucess
  */
-qboolean DB_Create()
+qboolean DB_Create(void)
 {
 	int result;
 	int msec;
@@ -492,7 +492,7 @@ qboolean DB_Create()
  *
  * @return qtrue on success
  */
-qboolean DB_SaveMemDB()
+qboolean DB_SaveMemDB(void)
 {
 	if (db_mode->integer == 1)
 	{
@@ -545,7 +545,7 @@ qboolean DB_SaveMemDB()
  *
  * @return qtrue on success
  */
-qboolean DB_Close()
+qboolean DB_Close(void)
 {
 	int result;
 
@@ -750,20 +750,59 @@ int DB_Callback(void *NotUsed, int argc, char **argv, char **azColName)
 	return 0;
 }
 
-
 /**
- * @brief Get the last inserted ROWID
- *
- * @see "SELECT last_insert_rowid()"
- *
- * @return If database is available, last insert row id. Otherwise -1
+ * @brief Disables autocommit
  */
-int DB_LastInsertRowId()
+qboolean DB_beginTransaction(void)
 {
-	if (db)
+	char *err_msg = 0;
+
+	if (!isDBActive)
 	{
-		return sqlite3_last_insert_rowid(db);
+		Com_Printf("DB_beginTransaction warning: DB not active error\n");
+		return qfalse;
 	}
 
-	return -1;
+	if (sqlite3_exec(db, "BEGIN TRANSACTION", 0, 0, &err_msg) != SQLITE_OK)
+	{
+		Com_Printf("SQL BEGIN TRANSACTION failed: %s\n", err_msg);
+		sqlite3_free(err_msg);
+		return qfalse;
+	}
+	else
+	{
+		Com_DPrintf("SQL ET: autocommit disabled\n");
+	}
+
+	sqlite3_free(err_msg);
+
+	return qtrue;
+}
+
+/**
+ * @brief Enables autocommit
+ *
+ */
+qboolean DB_endTransaction(void)
+{
+	char *err_msg = 0;
+
+	if (!isDBActive)
+	{
+		Com_Printf("DB_endTransaction warning: DB not active error\n");
+		return qfalse;
+	}
+
+	if (sqlite3_exec(db, "END TRANSACTION", 0, 0, &err_msg) != SQLITE_OK)
+	{
+		Com_Printf("SQL END TRANSACTION failed: %s\n", err_msg);
+		sqlite3_free(err_msg);
+		return qfalse;
+	}
+	else
+	{
+		Com_DPrintf("SQL ET: autocommit enabled\n");
+	}
+
+	sqlite3_free(err_msg);
 }

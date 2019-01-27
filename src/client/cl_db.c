@@ -51,7 +51,6 @@ void DB_insertFavorite(const char *profile, int source, const char *name, const 
 {
 	char         *sql;
 	int          result;
-	char         *err_msg = 0;
 	sqlite3_stmt *res;
 
 	if (!profile[0]) // no profile given
@@ -102,6 +101,8 @@ void DB_insertFavorite(const char *profile, int source, const char *name, const 
 		}
 		else
 		{
+			char *err_msg = 0;
+
 			// FIXME: name - use prepared statement
 			//sqlite3_bind_int(res, 1, 3);
 			sql = va("INSERT INTO client_servers values('%s', %i, '%s', '%s', '%s', NULL, (datetime('now','localtime')))", profile, source, address, name, mod);
@@ -115,6 +116,7 @@ void DB_insertFavorite(const char *profile, int source, const char *name, const 
 			else
 			{
 				Com_Printf("Favorite '%s' for profile '%s' created.\n", address, profile);
+				sqlite3_free(err_msg);
 				sqlite3_finalize(res);
 				return;
 			}
@@ -163,8 +165,9 @@ void DB_deleteFavorite(const char *profile, const char *address)
 	if (result != SQLITE_OK)
 	{
 		Com_Printf("SQL command '%s' failed: %s\n", sql, err_msg);
-		sqlite3_free(err_msg);
 	}
+
+	sqlite3_free(err_msg);
 
 	if (address[0] == '*')
 	{
@@ -198,7 +201,6 @@ int DB_callbackFavorites(void *NotUsed, int argc, char **argv, char **azColName)
 		Com_Printf("Can't load all favorites. MAX_FAVOURITE_SERVERS reached.\n");
 		return 0;
 	}
-
 
 	//for (int i = 0; i < argc; i++)
     //{
@@ -247,8 +249,8 @@ void DB_loadFavorites(const char *profile)
 	if (result != SQLITE_OK)
 	{
 		Com_Printf("Can't load favorites - db error %s\n", err_msg);
-		sqlite3_free(err_msg);
 	}
+	sqlite3_free(err_msg);
 
 	Com_Printf("Total favorite servers restored: %i\n", cls.numfavoriteservers);
 }
@@ -302,6 +304,7 @@ void DB_updateFavorite(const char *profile, const char *address)
 			else
 			{
 				Com_Printf("Favorite '%s' for profile '%s' updated.\n", address, profile);
+				sqlite3_finalize(res);
 				sqlite3_free(err_msg);
 				return;
 			}
@@ -322,4 +325,50 @@ void DB_updateFavorite(const char *profile, const char *address)
 
 	sqlite3_finalize(res);
 }
+
+/**
+ * @brief
+ * @param[in]
+ * @param[in]
+ */
+void DB_insertWhitelist(const char *key, const char *name)
+{
+	char         *sql;
+	int          result;
+	char         *err_msg = 0;
+	sqlite3_stmt *res;
+
+	if (!isDBActive)
+	{
+		Com_Printf("DB_insertWhitelist warning: DB not active error\n");
+		return;
+	}
+
+	// FIXME: name - use prepared statement
+	//sqlite3_bind_int(res, 1, 3);
+	sql = va("INSERT INTO etl_whitelist values('%s', '%s', NULL, (datetime('now','localtime')));", key, name);
+	result = sqlite3_exec(db, sql, 0, 0, &err_msg);
+
+	if (result != SQLITE_OK)
+	{
+		Com_Printf("SQL command '%s' failed: %s\n", sql, err_msg);
+	}
+	else
+	{
+		Com_DPrintf("Whitelist entry created.\n");
+	}
+
+	sqlite3_free(err_msg);
+	sqlite3_finalize(res);
+}
+
+/**
+ * @brief
+ * @param[in]
+ */
+void DB_selectWhitelist(const char *key)
+{
+	// ... FIXME
+}
+
 #endif
