@@ -17,9 +17,6 @@ menuDef {
 	style		WINDOW_STYLE_FILLED
 
 	onOpen {
-		// reset filters
-		uiScript ResetFilters ;
-		uiScript RefreshServers ;
 
 		// sort by servername ?
 		conditionalScript serversort_0 2
