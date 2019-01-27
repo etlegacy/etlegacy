@@ -256,6 +256,12 @@ static qboolean SV_isValidClient(netadr_t from, const char *userinfo)
 		return qfalse;
 	}
 
+	// server bots are always valid (with valid userinfo)
+	if (from.type == NA_BOT)
+	{
+		return qtrue;
+	}
+
 	if (SV_TempBanIsBanned(from))
 	{
 		NET_OutOfBandPrint(NS_SERVER, from, "print\n%s\n", sv_tempbanmessage->string);
