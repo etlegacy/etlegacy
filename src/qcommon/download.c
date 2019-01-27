@@ -282,14 +282,17 @@ void Com_InitDownloads(void)
 static const char* GetDownloadDestPath(const char *temp, const char *dest)
 {
 	const char *destBasename = FS_Basename(dest);
-	const char *destDirpath = FS_Dirpath(dest);
-	const char *homePath = Cvar_VariableString("fs_homepath");
-	char hash[41] = { 0 };
+	const char *destDirpath  = FS_Dirpath(dest);
+	const char *homePath     = Cvar_VariableString("fs_homepath");
+	char       hash[41]      = { 0 };
+	qboolean   isWhitelisted;
 
 	FS_CalculateFileSHA1(temp, hash);
-	qboolean isWhitelisted = FS_IsWhitelisted(destBasename, hash);
 
-	if (!isWhitelisted) {
+	isWhitelisted = FS_IsWhitelisted(destBasename, hash);
+
+	if (!isWhitelisted)
+	{
 		// disabled whitelisting for maps means all maps are whitelisted by default
 		if (!dl_whitelistMapPaks->integer)
 		{
@@ -311,9 +314,9 @@ static const char* GetDownloadDestPath(const char *temp, const char *dest)
 		}
 	}
 
-	if (!isWhitelisted) {
-		const char *containerName = Cvar_VariableString("fs_containerName");
-		return FS_BuildOSPath(homePath, destDirpath, va("%s%c%s", containerName, PATH_SEP, destBasename));
+	if (!isWhitelisted)
+	{
+		return FS_BuildOSPath(homePath, destDirpath, va("%s%c%s", Cvar_VariableString("fs_containerName"), PATH_SEP, destBasename));
 	}
 
 	return FS_BuildOSPath(homePath, dest, NULL);

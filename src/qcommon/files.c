@@ -5436,6 +5436,7 @@ pakMetaEntry_t *pakMetaEntryMap[MAX_META_ENTRIES];
 extern void DB_insertWhitelist(const char *key, const char *name);
 extern void DB_beginTransaction(void);
 extern void DB_endTransaction(void);
+extern qboolean DB_IsWhitelisted(const char *pakName, const char *hash);
 #endif
 
 /**
@@ -5558,6 +5559,13 @@ qboolean FS_IsWhitelisted(const char *pakName, const char *hash)
 	int            i = 0;
 	int            pakNameHash;
 	pakMetaEntry_t *pakEntry;
+
+#ifdef FEATURE_DBMS
+    if (DB_IsWhitelisted(pakName, hash))
+    {
+    	return qtrue;
+    }
+#endif
 
 	pakNameHash = FS_HashFileName(pakName, MAX_META_ENTRIES);
 	pakEntry    = pakMetaEntryMap[pakNameHash];
