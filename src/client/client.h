@@ -793,7 +793,7 @@ void DB_updateFavorite(const char *profile, const char *address);
 void DB_loadFavorites(const char *profile);
 
 void DB_insertWhitelist(const char *key, const char *name);
-void DB_selectWhitelist(const char *key);
+qboolean DB_IsWhitelisted(const char *pakName, const char *hash);
 
 void CL_InitServerInfo(serverInfo_t *server, netadr_t *address);
 #endif

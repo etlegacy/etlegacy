@@ -366,9 +366,46 @@ void DB_insertWhitelist(const char *key, const char *name)
  * @brief
  * @param[in]
  */
-void DB_selectWhitelist(const char *key)
+qboolean DB_IsWhitelisted(const char *pakName, const char *hash)
 {
-	// ... FIXME
+	int          result;
+	char         *sql;
+	sqlite3_stmt *res;
+
+	if (!isDBActive)
+	{
+		Com_Printf("DB_IsWhitelisted warning: DB not active error\n");
+		return qfalse;
+	}
+
+	if (db_mode->integer == 0)
+	{
+		// Com_Printf("DB_IsWhitelisted: DBMS disabled\n");
+		return qfalse;
+	}
+
+	// FIXME: prepare
+	sql = va("SELECT key FROM etl_whitelist WHERE key='%s';", hash);
+
+	result = sqlite3_prepare_v2(db, sql, -1, &res, 0);
+
+	if (result != SQLITE_OK)
+	{
+		Com_Printf("Can't load whitelist - db error\n");
+		return qfalse;
+	}
+
+	result = sqlite3_step(res);
+
+	if (result == SQLITE_ROW)
+	{
+		Com_Printf("Client has found %s - this is a well-known pk3!\n", pakName);
+		sqlite3_finalize(res);
+		return qtrue;
+	}
+
+	sqlite3_finalize(res);
+	return qfalse;
 }
 
 #endif
