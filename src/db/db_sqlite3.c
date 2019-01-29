@@ -356,6 +356,8 @@ qboolean DB_CheckUpdates(void)
 
 		Com_Printf("SQLite3 ETL: Old DB schema #%i detected - performing backup & update ...\n", version);
 
+		sqlite3_finalize(res);
+		
 		// backup old database file etl.dbX.old
 		// Make sure that we actually have the homepath available so we dont try to create a database file into a nonexisting path
 		to_ospath = FS_BuildOSPath(Cvar_VariableString("fs_homepath"), "", "");
@@ -399,7 +401,7 @@ qboolean DB_CheckUpdates(void)
 
 	sqlite3_finalize(res);
 
-	return qtrue;
+	return qfalse;
 }
 
 /**
@@ -753,13 +755,13 @@ int DB_Callback(void *NotUsed, int argc, char **argv, char **azColName)
 /**
  * @brief Disables autocommit
  */
-qboolean DB_beginTransaction(void)
+qboolean DB_BeginTransaction(void)
 {
 	char *err_msg = 0;
 
 	if (!isDBActive)
 	{
-		Com_Printf("DB_beginTransaction warning: DB not active error\n");
+		Com_DPrintf("DB_BeginTransaction warning: DB not active error\n");
 		return qfalse;
 	}
 
@@ -775,7 +777,6 @@ qboolean DB_beginTransaction(void)
 	}
 
 	sqlite3_free(err_msg);
-
 	return qtrue;
 }
 
@@ -783,13 +784,13 @@ qboolean DB_beginTransaction(void)
  * @brief Enables autocommit
  *
  */
-qboolean DB_endTransaction(void)
+qboolean DB_EndTransaction(void)
 {
 	char *err_msg = 0;
 
 	if (!isDBActive)
 	{
-		Com_Printf("DB_endTransaction warning: DB not active error\n");
+		Com_DPrintf("DB_EndTransaction warning: DB not active error\n");
 		return qfalse;
 	}
 
@@ -805,4 +806,5 @@ qboolean DB_endTransaction(void)
 	}
 
 	sqlite3_free(err_msg);
+	return qtrue;
 }

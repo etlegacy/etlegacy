@@ -80,7 +80,7 @@ void LAN_LoadCachedServers(void)
 #ifdef FEATURE_DBMS
 		if (db_mode->integer > 0)
 		{
-			DB_loadFavorites(cl_profile->string);
+			DB_LoadFavorites(cl_profile->string);
 
 			return; // don't load favcache.dat
 		}
@@ -217,7 +217,7 @@ static int LAN_AddServer(int source, const char *name, const char *address)
 #ifdef FEATURE_DBMS
 		if (db_mode->integer > 0 && cl_profile->string[0])
 		{
-			DB_insertFavorite(cl_profile->string, source, name, address, "");
+			DB_InsertFavorite(cl_profile->string, source, name, address, "");
 		}
 #endif
 		break;
@@ -321,7 +321,7 @@ static void LAN_RemoveServer(int source, const char *addr)
 #ifdef FEATURE_DBMS
 				if (db_mode->integer > 0 && cl_profile->string[0])
 				{
-					DB_deleteFavorite(cl_profile->string, addr);
+					DB_DeleteFavorite(cl_profile->string, addr);
 				}
 				else
 #endif
@@ -353,7 +353,7 @@ static void LAN_RemoveServer(int source, const char *addr)
 #ifdef FEATURE_DBMS
 				if (db_mode->integer > 0)
 				{
-					DB_deleteFavorite(cl_profile->string, "*");
+					DB_DeleteFavorite(cl_profile->string, "*");
 				}
 				else
 #endif

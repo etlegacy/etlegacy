@@ -787,12 +787,12 @@ qboolean CL_Netchan_Process(netchan_t *chan, msg_t *msg);
 
 // cl_db.c
 #ifdef FEATURE_DBMS
-void DB_insertFavorite(const char *profile, int source, const char *name, const char *address, const char *mod);
-void DB_deleteFavorite(const char *profile, const char *address);
-void DB_updateFavorite(const char *profile, const char *address);
-void DB_loadFavorites(const char *profile);
+void DB_InsertFavorite(const char *profile, int source, const char *name, const char *address, const char *mod);
+void DB_DeleteFavorite(const char *profile, const char *address);
+void DB_UpdateFavorite(const char *profile, const char *address);
+void DB_LoadFavorites(const char *profile);
 
-void DB_insertWhitelist(const char *key, const char *name);
+void DB_InsertWhitelist(const char *key, const char *name);
 qboolean DB_IsWhitelisted(const char *pakName, const char *hash);
 
 void CL_InitServerInfo(serverInfo_t *server, netadr_t *address);

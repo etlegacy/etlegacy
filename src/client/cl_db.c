@@ -47,7 +47,7 @@
  * @param[in] address
  * @param[in] mod
  */
-void DB_insertFavorite(const char *profile, int source, const char *name, const char *address, const char *mod)
+void DB_InsertFavorite(const char *profile, int source, const char *name, const char *address, const char *mod)
 {
 	char         *sql;
 	int          result;
@@ -55,25 +55,25 @@ void DB_insertFavorite(const char *profile, int source, const char *name, const 
 
 	if (!profile[0]) // no profile given
 	{
-		Com_Printf("DB_insertFavorite warning: Invalid profile.\n");
+		Com_Printf("DB_InsertFavorite warning: Invalid profile.\n");
 		return;
 	}
 
 	if (!address[0]) // no profile given
 	{
-		Com_Printf("DB_insertFavorite warning: Invalid address.\n");
+		Com_Printf("DB_InsertFavorite warning: Invalid address.\n");
 		return;
 	}
 
 	if (!isDBActive)
 	{
-		Com_Printf("DB_insertFavorite warning: DB not active error\n");
+		Com_Printf("DB_InsertFavorite warning: DB not active error\n");
 		return;
 	}
 
 	if (cls.numfavoriteservers >= MAX_FAVOURITE_SERVERS - 1)
 	{
-		Com_Printf("DB_insertFavorite warning: Can't insert. MAX_FAVOURITE_SERVERS reached.\n");
+		Com_Printf("DB_InsertFavorite warning: Can't insert. MAX_FAVOURITE_SERVERS reached.\n");
 		return;
 	}
 
@@ -132,7 +132,7 @@ void DB_insertFavorite(const char *profile, int source, const char *name, const 
  * @param[in] profile
  * @param[in] address
  */
-void DB_deleteFavorite(const char *profile, const char *address)
+void DB_DeleteFavorite(const char *profile, const char *address)
 {
 	char         *sql;
 	int          result;
@@ -141,13 +141,13 @@ void DB_deleteFavorite(const char *profile, const char *address)
 
 	if (!isDBActive)
 	{
-		Com_Printf("DB_deleteFavorite warning: DB not active error\n");
+		Com_Printf("DB_DeleteFavorite warning: DB not active error\n");
 		return;
 	}
 
 	if (!profile[0]) // no profile given
 	{
-		Com_Printf("DB_deleteFavorite warning: Invalid profile.\n");
+		Com_Printf("DB_DeleteFavorite warning: Invalid profile.\n");
 		return;
 	}
 
@@ -182,13 +182,13 @@ void DB_deleteFavorite(const char *profile, const char *address)
 }
 
 /**
- * @brief Callback function for DB_loadFavorites
+ * @brief Callback function for DB_LoadFavorites
  * @param[out]
  * @param[out]
  * @param[out]
  * @param[out]
  */
-int DB_callbackFavorites(void *NotUsed, int argc, char **argv, char **azColName)
+static int DB_callbackFavorites(void *NotUsed, int argc, char **argv, char **azColName)
 {
 	netadr_t addr;
 	int      i;
@@ -222,7 +222,7 @@ int DB_callbackFavorites(void *NotUsed, int argc, char **argv, char **azColName)
  * @brief Loads favorites from db into favoriteServers list
  * @param[in]
  */
-void DB_loadFavorites(const char *profile)
+void DB_LoadFavorites(const char *profile)
 {
 	int          result;
 	char         *sql;
@@ -232,13 +232,13 @@ void DB_loadFavorites(const char *profile)
 
 	if (!isDBActive)
 	{
-		Com_Printf("DB_loadFavorites warning: DB not active error\n");
+		Com_Printf("DB_LoadFavorites warning: DB not active error\n");
 		return;
 	}
 
 	if (!profile[0]) // no profile given
 	{
-		Com_Printf("DB_loadFavorites warning: Invalid profile.\n");
+		Com_Printf("DB_LoadFavorites warning: Invalid profile.\n");
 		return;
 	}
 
@@ -260,7 +260,7 @@ void DB_loadFavorites(const char *profile)
  * @param(in]
  * @param(in]
  */
-void DB_updateFavorite(const char *profile, const char *address)
+void DB_UpdateFavorite(const char *profile, const char *address)
 {
 	int          result;
 	char         *sql;
@@ -274,7 +274,7 @@ void DB_updateFavorite(const char *profile, const char *address)
 
 	if (!isDBActive)
 	{
-		Com_Printf("DB_updateFavorite warning: DB not active error\n");
+		Com_Printf("DB_UpdateFavorite warning: DB not active error\n");
 		return;
 	}
 
@@ -331,16 +331,22 @@ void DB_updateFavorite(const char *profile, const char *address)
  * @param[in]
  * @param[in]
  */
-void DB_insertWhitelist(const char *key, const char *name)
+void DB_InsertWhitelist(const char *key, const char *name)
 {
 	char         *sql;
 	int          result;
 	char         *err_msg = 0;
-	sqlite3_stmt *res;
+	//sqlite3_stmt *res;
+
+	if (db_mode->integer == 0)
+	{
+		// Com_Printf("DB_IsWhitelisted: DBMS disabled\n");
+		return;
+	}
 
 	if (!isDBActive)
 	{
-		Com_Printf("DB_insertWhitelist warning: DB not active error\n");
+		Com_DPrintf("DB_InsertWhitelist warning: DB not active error\n");
 		return;
 	}
 
@@ -359,7 +365,7 @@ void DB_insertWhitelist(const char *key, const char *name)
 	}
 
 	sqlite3_free(err_msg);
-	sqlite3_finalize(res);
+	//sqlite3_finalize(res);
 }
 
 /**
@@ -372,21 +378,21 @@ qboolean DB_IsWhitelisted(const char *pakName, const char *hash)
 	char         *sql;
 	sqlite3_stmt *res;
 
-	if (!isDBActive)
-	{
-		Com_Printf("DB_IsWhitelisted warning: DB not active error\n");
-		return qfalse;
-	}
-
 	if (db_mode->integer == 0)
 	{
 		// Com_Printf("DB_IsWhitelisted: DBMS disabled\n");
 		return qfalse;
 	}
 
-	// FIXME: prepare
-	sql = va("SELECT key FROM etl_whitelist WHERE key='%s';", hash);
+	if (!isDBActive)
+	{
+		Com_Printf("DB_IsWhitelisted warning: DB not active error\n");
+		return qfalse;
+	}
 
+	// FIXME: prepare
+	//sql    = va("SELECT key FROM etl_whitelist WHERE key = ?", hash);
+	sql    = va("SELECT key FROM etl_whitelist WHERE key='%s';", hash);
 	result = sqlite3_prepare_v2(db, sql, -1, &res, 0);
 
 	if (result != SQLITE_OK)
@@ -394,6 +400,8 @@ qboolean DB_IsWhitelisted(const char *pakName, const char *hash)
 		Com_Printf("Can't load whitelist - db error\n");
 		return qfalse;
 	}
+
+	//sqlite3_bind_text(res, 1, hash, 41, SQLITE_STATIC);
 
 	result = sqlite3_step(res);
 

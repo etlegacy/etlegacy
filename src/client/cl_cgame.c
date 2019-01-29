@@ -1345,7 +1345,7 @@ void CL_FirstSnapshot(void)
 #ifdef FEATURE_DBMS
 	if (!clc.demoplaying)
 	{
-		DB_updateFavorite(cl_profile->string, cls.servername);
+		DB_UpdateFavorite(cl_profile->string, cls.servername);
 	}
 #endif
 }
