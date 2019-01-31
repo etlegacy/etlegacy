@@ -1,0 +1,1491 @@
+//
+//Ron-007 Scripting
+//Map: Secret Bay for ET
+//Last edited by: [EGN]Ron-007
+//
+
+
+game_manager
+{
+	spawn
+	{
+	
+
+	// Game rules
+		wm_axis_respawntime	30
+		wm_allied_respawntime	25
+		wm_number_of_objectives 8
+		wm_set_round_timelimit  25
+
+
+		// Objectives
+		// 1: Steal the Gold Bars
+	        	// 2: East Ramp
+            	// 3: West Ramp
+            	// 4: Main Entrance
+            	// 5: Side Entrance
+            	// 6: The Flag Forward Bunker
+            	// 7: Allied / Axis Command post
+                  // 8: The Water Pump
+		
+		wm_set_main_objective		1	0
+		wm_set_main_objective		1	1
+
+		wm_objective_status 1 1 0
+		wm_objective_status 1 0 0
+		wm_objective_status 2 1 0
+		wm_objective_status 2 0 0
+		wm_objective_status 3 1 0
+		wm_objective_status 3 0 0
+		wm_objective_status 4 1 0
+		wm_objective_status 4 0 0
+            	wm_objective_status 5 1 0
+		wm_objective_status 5 0 0
+            	wm_objective_status 6 1 0
+		wm_objective_status 6 0 0
+		wm_objective_status 7 1 0
+		wm_objective_status 7 0 0
+            	wm_objective_status 8 1 0
+		wm_objective_status 8 0 0
+            
+
+
+		// Stopwatch mode defending team (0=Axis, 1=Allies)
+		wm_set_defending_team	0
+
+		// Winner on expiration of round timer (0=Axis, 1=Allies)
+		wm_setwinner	0
+
+		accum 1 set 0		// Set counter for radar equipment
+
+		wait 500
+		
+		setautospawn	"Forward Bunker"	1
+		setautospawn	"Forward Bunker"	0
+
+		
+
+// start triggered loops on/off as required (eg: command post radio sounds)
+		disablespeaker allies_compost_sound
+		disablespeaker axis_compost_sound
+		disablespeaker allies_compost_sound_lms
+		disablespeaker axis_compost_sound_lms
+
+		wait 2000
+		
+		
+            wm_addteamvoiceannounce 0 "sbay_axis_entrances_defend"
+            wm_addteamvoiceannounce 1 "sbay_allies_entrances_destroy"
+
+            wm_addteamvoiceannounce 0 "sbay_axis_pumps_stop"
+            wm_addteamvoiceannounce 1 "sbay_allies_pumps_repair"
+            
+            wm_teamvoiceannounce 0 "sbay_axis_entrances_defend"
+            wm_teamvoiceannounce 1 "sbay_allies_entrances_destroy"
+
+            wm_teamvoiceannounce 1 "sbay_allies_ramp_construct"
+            wm_addteamvoiceannounce 0 "axis_hq_compost_construct"
+
+		wm_addteamvoiceannounce 1 "allies_hq_compost_construct"
+            wm_teamvoiceannounce 0 "sbay_axis_ramp_stop"
+
+		wm_teamvoiceannounce 0 "axis_hq_compost_construct"
+            wm_addteamvoiceannounce 1 "sbay_allies_ramp_construct"
+
+            wm_addteamvoiceannounce 0 "sbay_axis_ramp_stop"
+		wm_teamvoiceannounce 1 "allies_hq_compost_construct"
+
+            wm_addteamvoiceannounce 0 "sbay_axis_bunker_stop"
+            wm_addteamvoiceannounce 1 "sbay_allies_bunker_capture"
+
+            wm_teamvoiceannounce 0 "sbay_axis_bunker_stop"
+            wm_teamvoiceannounce 1 "sbay_allies_bunker_capture"
+
+            wm_teamvoiceannounce 0 "sbay_dont_let_them_construct_a_bridge"
+            wm_teamvoiceannounce 1 "sbay_construct_a_bridge"
+
+
+            wm_addteamvoiceannounce 0 "sbay_dont_let_them_construct_a_bridge"
+		wm_addteamvoiceannounce 1 "sbay_construct_a_bridge"
+
+            wm_addteamvoiceannounce 0 "sbay_axis_pumps_stop"
+            wm_addteamvoiceannounce 1 "sbay_allies_pumps_repair"
+            wm_teamvoiceannounce 0 "sbay_axis_pumps_stop"
+            wm_teamvoiceannounce 1 "sbay_allies_pumps_repair"
+
+	}
+
+
+
+	trigger stolen_circuit
+	{
+		accum 1 inc 1				// One circuit board home
+		trigger game_manager checkgame		// Check for end of game
+	}
+
+	
+
+	
+	trigger checkgame
+	{
+		accum 1 abort_if_not_equal 2
+		wm_setwinner 1
+		wait 1500
+		wm_endround
+	}
+
+trigger depot_flagblue
+	{
+		// Some kind of UI pop-up to alert players
+		wm_announce	"Allies capture the Forward Bunker!"
+
+		wm_objective_status	6 1 1
+		wm_objective_status	6 0 2
+	}
+
+	trigger depot_flagred
+	{
+		// Some kind of UI pop-up to alert players
+		wm_announce	"Axis reclaim the Forward Bunker!"
+
+		wm_objective_status	6 1 2
+		wm_objective_status	6 0 1
+	}
+
+trigger water_pumps_counter
+	{
+		accum 6 inc 1				// Increase game counter
+		accum 6 abort_if_not_equal 2		// Pumps completed?
+		accum 7 set 1
+		wm_announce	"Allies have repaired both Water Pumps!"
+	}
+
+	trigger water_pumps_destroyed
+	{
+		accum 6 abort_if_equal 0		// Can't damage pumps before they're repaired
+		accum 6 inc -1				// Decrease game counter
+
+		accum 6 abort_if_not_equal 0
+		accum 7 abort_if_not_equal 1
+		accum 7 set 0
+		wm_announce	"Axis have damaged both Water Pumps!"
+
+}
+}
+
+
+
+truckbox1
+{
+	spawn
+	{
+		wait 50
+		setstate truckbox1 invisible
+		accum 1 set 0
+	}
+
+	trigger visible
+	{
+		setstate truckbox1 default
+		accum 1 abort_if_not_equal 0
+		wm_announce "Allied team has secured the second Gold Crate!"
+		wm_teamvoiceannounce 0 "sbay_axis_gold2_secured"
+
+		wm_teamvoiceannounce 1 "sbay_allies_gold2_secured"
+
+
+		accum 1 set 1
+	}
+
+	trigger invisible
+	{
+		setstate truckbox1 invisible
+	}
+}
+
+truckbox2
+{
+	spawn
+	{
+		wait 50
+		setstate truckbox2 invisible
+		accum 1 set 0
+	}
+
+	trigger visible
+	{
+		setstate truckbox2 default
+		accum 1 abort_if_not_equal 0
+		wm_announce "Allied team has secured the first Gold Crate!"
+
+		wm_teamvoiceannounce 0 "sbay_axis_gold1_secured"
+            wm_teamvoiceannounce 1 "sbay_allies_gold1_secured"
+		
+
+		accum 1 set 1
+	}
+
+	trigger invisible
+	{
+		setstate truckbox2 invisible
+	}
+}
+
+truckboxtrans1
+{
+	trigger visible
+	{
+		setstate truckboxtrans1 default
+	}
+
+	trigger invisible
+	{
+		setstate truckboxtrans1 invisible
+	}
+}
+
+truckboxtrans2
+{
+	trigger visible
+	{
+		setstate truckboxtrans2 default
+	}
+
+	trigger invisible
+	{
+		setstate truckboxtrans2 invisible
+	}
+}
+
+
+truck_exitpoint // Exit point of map
+{
+	death
+	{
+		trigger game_manager stolen_circuit
+	}
+}
+
+radarbox1
+{
+	spawn
+	{
+	}
+
+	trigger stolen
+	{
+		
+
+		wait 1000
+
+		wm_teamvoiceannounce 0 "sbay_axis_gold2_taken"  
+            wm_teamvoiceannounce 1 "sbay_allies_gold2_taken"
+
+	}
+
+	trigger returned
+	{
+            wm_teamvoiceannounce 0 "sbay_axis_gold2_lost"
+		wm_teamvoiceannounce 0 "sbay_axis_gold2_returned"            
+            wm_teamvoiceannounce 1 "sbay_allies_gold2_lost"
+            wm_teamvoiceannounce 1 "sbay_allies_gold2_returned"
+
+		
+	}
+
+	trigger captured
+	{
+		trigger truckbox1 visible
+		trigger truckboxtrans1 invisible
+	}
+}
+
+
+radarbox2
+{
+	spawn
+	{
+	}
+
+	trigger stolen
+	{
+		
+		wait 1000
+
+		wm_teamvoiceannounce 0 "sbay_axis_gold1_taken"
+
+		wm_teamvoiceannounce 1 "sbay_allies_gold1_taken"
+
+	}
+
+	trigger returned
+	{
+		wm_teamvoiceannounce 0 "sbay_axis_gold1_lost"
+            wm_teamvoiceannounce 0 "sbay_axis_gold1_returned"
+            wm_teamvoiceannounce 1 "sbay_allies_gold1_lost"
+            wm_teamvoiceannounce 1 "sbay_allies_gold1_returned"
+		
+	}
+
+	trigger captured
+	{
+		trigger truckbox2 visible
+		trigger truckboxtrans2 invisible
+	}
+}
+
+// Desert (pump 1)
+water_pump_1
+{
+	spawn
+	{
+		wait 200
+
+		constructible_class 3
+
+		trigger water_pump_1 setup
+	}
+
+	trigger setup
+	{
+		setstate pump_materials_1 default
+		setstate pump_materials_clip_1 default
+		setstate pump_flag_1 default
+		setstate pump1_p1 default
+		setstate pump1_p2 invisible
+		setstate water_pump_1_oldclip default
+	}
+
+	buildstart final
+	{
+		setstate pump_materials_1 default
+		setstate pump_materials_clip_1 default
+		setstate pump_flag_1 default
+		setstate pump1_p2 underconstruction
+
+	}
+
+	built final
+	{
+		setstate pump_materials_1 invisible
+		setstate pump_materials_clip_1 invisible
+		setstate pump_flag_1 invisible
+		setstate water_pump_1_oldclip invisible
+		setstate pump1_p2 default
+
+		enablespeaker wp1_sound
+		enablespeaker hose1_sound1
+
+		trigger water_tunnel down
+
+		wm_announce	"Allies have built the Water Pump!"
+
+		wm_objective_status 		8 0 2
+		wm_objective_status 		8 1 1
+
+		// Update game manager counter for objectives
+		trigger game_manager water_pumps_counter
+		
+		wm_teamvoiceannounce 0 "sbay_axis_pump_disable"
+		wm_teamvoiceannounce 0 "sbay_axis_caves_drain"
+
+		wm_teamvoiceannounce 1 "sbay_allies_pump_repaired"
+		wm_teamvoiceannounce 1 "sbay_allies_caves_drain"
+
+		wm_removeteamvoiceannounce 0 "sbay_axis_pump_stop"
+		wm_removeteamvoiceannounce 0 "sbay_axis_pumps_stop"
+
+		wm_removeteamvoiceannounce 1 "sbay_allies_pumps_repair"
+		wm_removeteamvoiceannounce 1 "sbay_allies_pump_repair"
+		
+	}
+
+	death
+	{
+		setstate pump_materials_1 default
+		setstate pump_materials_clip_1 default
+		setstate pump_flag_1 default
+		setstate pump1_p2 invisible
+		setstate pump_sound invisible
+		setstate water_pump_1_oldclip default
+
+		disablespeaker wp1_sound
+		enablespeaker hose1_sound2
+
+		trigger water_tunnel up
+
+		wm_announce	"Axis have damaged the Water Pump!"
+		wm_addteamvoiceannounce 0 "sbay_axis_pump_stop"
+		wm_addteamvoiceannounce 1 "sbay_allies_pump_repair"
+
+		wm_teamvoiceannounce 0 "sbay_axis_pump_disabled"
+		wm_teamvoiceannounce 0 "sbay_axis_caves_flood"
+
+		wm_teamvoiceannounce 1 "sbay_allies_pump_disabled"
+		wm_teamvoiceannounce 1 "sbay_allies_caves_flood"
+		
+		wm_objective_status 		8 0 1
+		wm_objective_status 		8 1 2
+
+		// Update game manager counter for objectives
+		trigger game_manager water_pumps_destroyed
+	}
+
+	decayed final
+	{
+		setstate pump_materials_1 default
+		setstate pump_materials_clip_1 default
+		setstate pump_flag_1 default
+		setstate pump1_p1 default
+		setstate pump1_p2 invisible
+		setstate water_pump_1_oldclip default
+	}
+}
+
+pump1_p2
+{
+	spawn
+	{
+		startanimation 0 40 20 nolerp
+	}
+}
+
+
+water_pump_1_lms_clip
+{
+	spawn
+	{
+		wait 200
+		remove
+	}
+}
+
+
+water_tunnel
+{
+	trigger up
+	{
+		gotomarker path_water_tunnel_top 4 wait
+		disablespeaker hose1_sound2
+	}
+
+	trigger down
+	{
+		gotomarker path_water_tunnel_lower 4 wait
+		disablespeaker hose1_sound1
+		gotomarker path_water_discharge_bottom 4 wait
+	}
+}
+
+
+bridge1
+{
+	spawn
+	{
+		wait 200
+		trigger self setup
+
+		constructible_class 2
+	}
+
+	trigger setup
+	{
+		setstate bridge1 invisible
+
+		setstate bridge1_materials default
+	}
+
+	buildstart final
+	{
+		setstate bridge1 underconstruction
+
+		setstate bridge1_materials default
+	}
+
+	built final
+	{
+
+		setstate bridge1 default
+
+		setstate bridge1_materials invisible
+
+		wm_announce "The Bridge has been constructed."
+		
+            wm_removeteamvoiceannounce 0 "sbay_dont_let_them_construct_a_bridge"
+		wm_removeteamvoiceannounce 1 "sbay_construct_a_bridge"
+            wm_teamvoiceannounce 0 "sbay_bridge_constructed_destroy_it"
+		wm_teamvoiceannounce 1 "sbay_bridge_constructed"
+		
+
+		
+	}
+
+	decayed final
+	{
+		setstate bridge1 invisible
+
+		setstate bridge1_materials default
+	}
+	
+	death
+	{
+		setstate bridge1 invisible
+
+		setstate bridge1_materials default
+
+		wm_announce "Axis have destroyed the Bridge."
+
+	wm_teamvoiceannounce 0 "sbay_axis_bridge_destroyed"
+	wm_teamvoiceannounce 1 "sbay_allies_bridge_destroyed"
+
+	wm_teamvoiceannounce 0 "sbay_dont_let_them_construct_a_bridge"
+	wm_teamvoiceannounce 1 "sbay_construct_a_bridge"
+
+	wm_addteamvoiceannounce 0 "sbay_dont_let_them_construct_a_bridge"
+	wm_addteamvoiceannounce 1 "sbay_construct_a_bridge"
+
+
+	}
+}
+
+allied_obj6
+{
+	spawn
+	{
+		wait 200
+		constructible_class 3
+	}
+
+	death
+	{
+		wm_announce "The Side Entrance has been breached!"
+		//wm_objective_status 5 0 1
+		//wm_objective_status 5 1 2
+	
+
+		wm_teamvoiceannounce 0 "sbay_axis_entrance2_destroyed"
+            wm_teamvoiceannounce 1 "sbay_allies_entrance2_destroyed"
+
+		wm_removeteamvoiceannounce 0 "sbay_axis_entrances_defend"
+		wm_removeteamvoiceannounce 0 "sbay_axis_entrance2_defend"
+
+		wm_removeteamvoiceannounce 1 "sbay_allies_entrances_destroy"
+		wm_removeteamvoiceannounce 1 "sbay_allies_entrance2_destroy"
+
+            wm_removeteamvoiceannounce 1 "sbay_allies_depot_capture"
+
+
+}
+}
+
+allied_obj5
+{
+	spawn
+	{
+		wait 200
+		constructible_class 3
+	}
+
+	death
+	{
+		wm_announce "The Main Entrance has been breached!"
+		//wm_objective_status 4 0 1
+		//wm_objective_status 4 1 2
+
+
+            wm_teamvoiceannounce 0 "sbay_axis_entrance1_destroyed"
+		wm_teamvoiceannounce 1 "sbay_allies_entrance1_destroyed"
+		
+		wm_removeteamvoiceannounce 0 "sbay_axis_entrances_defend"
+		wm_removeteamvoiceannounce 0 "sbay_axis_entrance1_defend"
+		
+		wm_removeteamvoiceannounce 1 "sbay_allies_entrances_destroy"
+		wm_removeteamvoiceannounce 1 "sbay_allies_entrance1_destroy"
+		
+     }
+}
+
+allied_obj4
+{
+	spawn
+	{
+		wait 200
+		constructible_class 3
+	}
+
+	death
+	{
+		wm_announce "The Bank Door has been breached!"
+		
+            wm_addteamvoiceannounce 0 "sbay_axis_gold_defend"
+            wm_addteamvoiceannounce 1 "sbay_allies_gold_get"
+
+            wm_teamvoiceannounce 0 "sbay_axis_bank_broken"
+            wm_teamvoiceannounce 0 "sbay_axis_gold_defend"
+
+            wm_teamvoiceannounce 1 "sbay_allies_bank_courtyard"
+		wm_teamvoiceannounce 1 "sbay_allies_gold_get"
+
+				
+     }
+}
+
+eastramp
+{
+	spawn
+	{
+		wait 200
+		trigger self setup
+
+		constructible_class 2
+	}
+
+	trigger setup
+	{    
+
+            setstate eastramp invisible
+
+		setstate eastramp_materials_clip default
+		setstate eastramp_materials default
+		setstate eastramp_flag default
+	}
+
+	buildstart final
+	{
+		setstate eastramp underconstruction
+
+		setstate eastramp_materials_clip default
+		setstate eastramp_materials default
+		setstate eastramp_flag default
+	}
+
+	built final
+	{
+		setstate eastramp default
+
+		setstate eastramp_materials_clip invisible
+		setstate eastramp_materials invisible
+		setstate eastramp_flag invisible
+
+            
+		
+		wm_teamvoiceannounce 0 "sbay_axis_ramp_constructed"
+		wm_teamvoiceannounce 1 "sbay_allies_ramp_constructed"
+		
+		wm_removeteamvoiceannounce 0 "sbay_axis_ramp_stop"
+		wm_removeteamvoiceannounce 1 "sbay_allies_ramp_construct"
+
+		
+		wm_announce "Allies have the East Ramp constructed."
+
+		//wm_objective_status 2 0 2
+		//wm_objective_status 2 1 1
+	}
+
+	decayed final
+	{
+		setstate eastramp invisible
+
+		setstate eastramp_materials_clip default
+		setstate eastramp_materials default
+		setstate eastramp_flag default
+	}
+
+	death
+	{
+		setstate eastramp invisible
+
+		setstate eastramp_materials_clip default
+		setstate eastramp_materials default
+		setstate eastramp_flag default
+
+            wm_addteamvoiceannounce 0 "sbay_axis_ramp_stop"
+
+		wm_addteamvoiceannounce 1 "sbay_allies_ramp_construct"
+
+		wm_teamvoiceannounce 0 "sbay_axis_ramp_destroyed"
+
+		wm_teamvoiceannounce 1 "sbay_allies_ramp_destroyed"
+
+		
+		wm_announce "Axis have destroyed the East Ramp."
+
+		//wm_objective_status 2 0 1
+		//wm_objective_status 2 1 2
+	}
+}
+
+
+mg42_clip_1
+{
+	spawn
+	{
+		wait 200
+		trigger mg42_clip_1 setup
+
+		constructible_class 2
+	}
+
+	trigger setup
+	{
+		setstate mg42_1 invisible
+
+		setstate mg42_materials_1 default
+		setstate mg42_materials_clip_1 default
+		setstate mg42_flag_1 default
+	}
+
+	buildstart final
+	{
+		setstate mg42_1 underconstruction
+
+		setstate mg42_materials_1 default
+		setstate mg42_materials_clip_1 default
+		setstate mg42_flag_1 default
+	}
+
+	built final
+	{
+		setstate mg42_1 default
+
+		setstate mg42_materials_1 invisible
+		setstate mg42_materials_clip_1 invisible
+		setstate mg42_flag_1 invisible
+
+		wm_teamvoiceannounce 0 "sbay_hq_const_completed"
+		wm_teamvoiceannounce 1 "sbay_hq_const_completed"
+		
+		
+		wm_announce "The Axis Main Bunker MG Nest1 constructed."
+
+	}
+
+	decayed final
+	{
+		setstate mg42_1 invisible
+
+		setstate mg42_materials_1 default
+		setstate mg42_materials_clip_1 default
+		setstate mg42_flag_1 default
+	}
+
+	death
+	{
+		setstate mg42_1 invisible
+		repairmg42 mg42_1
+		setstate mg42_materials_1 default
+		setstate mg42_materials_clip_1 default
+		setstate mg42_flag_1 default
+
+		wm_teamvoiceannounce 0 "sbay_hq_const_destroyed"
+            wm_teamvoiceannounce 1 "sbay_hq_const_destroyed"
+
+
+		wm_announce "The Axis Main Bunker MG Nest1 destroyed."
+
+	}
+}
+
+
+mg42_clip_2
+{
+	spawn
+	{
+		wait 200
+		trigger mg42_clip_2 setup
+
+		constructible_class 2
+	}
+
+	trigger setup
+	{
+		setstate mg42_2 invisible
+
+		setstate mg42_materials_2 default
+		setstate mg42_materials_clip_2 default
+		setstate mg42_flag_2 default
+	}
+
+	buildstart final
+	{
+		setstate mg42_2 underconstruction
+
+		setstate mg42_materials_2 default
+		setstate mg42_materials_clip_2 default
+		setstate mg42_flag_2 default
+	}
+
+	built final
+	{
+		setstate mg42_2 default
+
+		setstate mg42_materials_2 invisible
+		setstate mg42_materials_clip_2 invisible
+		setstate mg42_flag_2 invisible
+
+		wm_teamvoiceannounce 0 "sbay_hq_const_completed"
+		wm_teamvoiceannounce 1 "sbay_hq_const_completed"
+		
+		
+		wm_announce "The Axis Main Bunker MG Nest2 constructed."
+
+	}
+
+	decayed final
+	{
+		setstate mg42_2 invisible
+
+		setstate mg42_materials_2 default
+		setstate mg42_materials_clip_2 default
+		setstate mg42_flag_2 default
+	}
+
+	death
+	{
+		setstate mg42_2 invisible
+		repairmg42 mg42_2
+		setstate mg42_materials_2 default
+		setstate mg42_materials_clip_2 default
+		setstate mg42_flag_2 default
+
+		wm_teamvoiceannounce 0 "sbay_hq_const_destroyed"
+            wm_teamvoiceannounce 1 "sbay_hq_const_destroyed"
+
+
+		wm_announce "The Axis Main Bunker MG Nest2 destroyed."
+
+	}
+}
+
+mg42_clip_3
+{
+	spawn
+	{
+		wait 200
+		trigger mg42_clip_3 setup
+
+		constructible_class 2
+	}
+
+	trigger setup
+	{
+		setstate mg42_3 invisible
+
+		setstate mg42_materials_3 default
+		setstate mg42_materials_clip_3 default
+		setstate mg42_flag_3 default
+	}
+
+	buildstart final
+	{
+		setstate mg42_3 underconstruction
+
+		setstate mg42_materials_3 default
+		setstate mg42_materials_clip_3 default
+		setstate mg42_flag_3 default
+	}
+
+	built final
+	{
+		setstate mg42_3 default
+
+		setstate mg42_materials_3 invisible
+		setstate mg42_materials_clip_3 invisible
+		setstate mg42_flag_3 invisible
+
+		wm_teamvoiceannounce 0 "sbay_hq_const_completed"
+		wm_teamvoiceannounce 1 "sbay_hq_const_completed"
+		
+		
+		wm_announce "The Axis Command Bunker MG Nest constructed."
+
+	}
+
+	decayed final
+	{
+		setstate mg42_3 invisible
+
+		setstate mg42_materials_3 default
+		setstate mg42_materials_clip_3 default
+		setstate mg42_flag_3 default
+	}
+
+	death
+	{
+		setstate mg42_3 invisible
+		repairmg42 mg42_3
+		setstate mg42_materials_3 default
+		setstate mg42_materials_clip_3 default
+		setstate mg42_flag_3 default
+
+		wm_teamvoiceannounce 0 "sbay_hq_const_destroyed"
+            wm_teamvoiceannounce 1 "sbay_hq_const_destroyed"
+
+
+		wm_announce "The Axis Command Bunker MG Nest destroyed."
+
+	}
+}
+
+westramp
+{
+	spawn
+	{
+		wait 200
+		trigger self setup
+
+		constructible_class 2
+	}
+
+	trigger setup
+	{
+		setstate westramp invisible
+
+		setstate westramp_materials_clip default
+		setstate westramp_materials default
+		setstate westramp_flag default
+	}
+
+	buildstart final
+	{
+		setstate westramp underconstruction
+
+		setstate westramp_materials_clip default
+		setstate westramp_materials default
+		setstate westramp_flag default
+	}
+
+	built final
+	{
+		setstate westramp default
+
+		setstate westramp_materials_clip invisible
+		setstate westramp_materials invisible
+		setstate westramp_flag invisible
+
+            wm_teamvoiceannounce 0 "sbay_axis_ramp_constructed"
+		wm_teamvoiceannounce 1 "sbay_allies_ramp_constructed"
+		
+		wm_removeteamvoiceannounce 0 "sbay_axis_ramp_stop"
+		wm_removeteamvoiceannounce 1 "sbay_allies_ramp_construct"
+
+            wm_announce "Allies have the West Ramp constructed."
+
+		//wm_objective_status 3 1 2
+		//wm_objective_status 3 0 1
+	}
+
+	decayed final
+	{
+		setstate westramp invisible
+
+		setstate westramp_materials_clip default
+		setstate westramp_materials default
+		setstate westramp_flag default
+	}
+
+	death
+	{
+		setstate westramp invisible
+
+		setstate westramp_materials_clip default
+		setstate westramp_materials default
+		setstate westramp_flag default
+
+            wm_addteamvoiceannounce 0 "sbay_axis_ramp_stop"
+            wm_addteamvoiceannounce 1 "sbay_allies_ramp_construct"
+		wm_teamvoiceannounce 0 "sbay_axis_ramp_destroyed"
+		wm_teamvoiceannounce 1 "sbay_allies_ramp_destroyed"
+            wm_announce "Axis have destroyed the West Ramp."
+
+		//wm_objective_status 3 0 2
+		//wm_objective_status 3 1 1
+	}
+}
+
+
+// description			: team_wolf_objectives	: spawns
+// Allied East Beach 	: eastbeach_wobj		: eastbeach_spawns
+// Allied West Beach 	: westbeach_wobj		: westbeach_spawns
+// Axis Depot		: mainbunker_wobj		: mainbunker_spawns
+// East Bunker			: eastbunker_wobj		: eastbunker_spawns
+// West Bunker			: depot_wobj		: depot_spawns
+
+allied_lms_spawns
+{
+	spawn
+	{
+		remove
+	}
+}
+
+allied_lms_wobj
+{
+	spawn
+	{
+		remove
+	}
+}
+
+axis_lms_spawns
+{
+	spawn
+	{
+		remove
+	}
+}
+
+axis_lms_wobj
+{
+	spawn
+	{
+		remove
+	}
+}
+
+depot_spawns
+{
+	spawn
+	{
+//		setstate depot_spawns invisible
+	}
+}
+
+depot_wobj
+{
+	spawn
+	{
+//		wait 100
+
+//		setstate depot_wobj invisible
+	}
+}
+
+depot_flag
+{
+	spawn
+	{
+		accum 0 set 0	// Who has the flag: 0-Axis, 1-Allied
+	}
+
+	trigger allied_capture
+	{
+		accum 0 abort_if_equal 1 // do Allies own flag?
+
+		trigger game_manager depot_flagblue
+
+		setstate depot_spawns default
+		setstate depot_wobj default
+
+		trigger depot_flag setallies
+		
+            wm_teamvoiceannounce 0 "sbay_axis_bunker_captured"
+		wm_teamvoiceannounce 1 "sbay_allies_bunker_captured"
+		wm_removeteamvoiceannounce 0 "sbay_axis_bunker_stop"
+		wm_removeteamvoiceannounce 1 "sbay_allies_bunker_capture"
+
+
+		
+	}
+
+	trigger setallies
+	{
+		accum 0 abort_if_equal 1
+		accum 0 set 1
+
+		alertentity depot_wobj
+		alertentity depot_spawns
+
+		setautospawn "Axis Depot" 0
+	}
+
+	trigger axis_capture
+	{
+		accum 0 abort_if_equal 0 // do Axis own flag?
+
+		trigger game_manager depot_flagred
+
+		setstate depot_spawns default
+		setstate depot_wobj default
+
+		trigger depot_flag setaxis
+
+		
+            wm_addteamvoiceannounce 0 "sbay_axis_bunker_stop"
+		wm_addteamvoiceannounce 1 "sbay_allies_bunker_capture"
+		wm_teamvoiceannounce 0 "sbay_axis_bunker_reclaimed"
+		wm_teamvoiceannounce 1 "sbay_allies_bunker_reclaimed"
+
+
+	}
+
+	trigger setaxis
+	{
+		accum 0 abort_if_equal 0
+		accum 0 set 0
+
+		alertentity depot_wobj
+		alertentity depot_spawns
+	}
+}
+
+
+
+lift
+{
+	trigger start
+	{
+		trigger aufzug move
+	}
+}
+
+aufzug     
+{   
+	trigger move   
+	{
+ 		accum 1 abort_if_not_equal 0  
+     		accum 1 set 1
+
+		gotomarker unten 38   
+		wait 1000
+		playsound sound/ron/door.wav
+	
+		gotomarker oben 38
+		faceangles 0 0 0 gototime  
+		wait 1000  
+		wait 1000
+		playsound sound/ron/door.wav
+
+  
+		gotomarker unten 38
+		faceangles 0 0 0 gototime
+		wait 1000
+  
+		accum 1 set 0      
+	}  
+}
+
+
+lift1
+{
+	trigger start1
+	{
+		trigger aufzug1 move1
+	}
+}
+
+aufzug1     
+{   
+	trigger move1   
+	{
+ 		accum 1 abort_if_not_equal 0  
+     		accum 1 set 1
+
+		gotomarker unten1 38   
+		wait 1000
+		playsound sound/ron/door.wav
+	
+		gotomarker oben1 38
+		faceangles 0 0 0 gototime  
+		wait 1000  
+		wait 1000
+		playsound sound/ron/door.wav
+
+  
+		gotomarker unten1 38
+		faceangles 0 0 0 gototime
+		wait 1000
+  
+		accum 1 set 0      
+	}  
+}
+
+allied_compost_built
+{
+	spawn
+	{
+		wait 400
+		trigger allied_compost_built setup
+
+		constructible_class 2
+	}
+
+	trigger setup
+	{
+		setchargetimefactor 1 soldier 1
+		setchargetimefactor 1 lieutenant 1
+		setchargetimefactor 1 medic 1
+		setchargetimefactor 1 engineer 1
+		setchargetimefactor 1 covertops 1
+		sethqstatus 1 0
+	}
+
+	buildstart final
+	{
+		setstate allied_compost_built_model underconstruction
+		setstate neutral_compost_closed_clip invisible
+		setstate neutral_compost_closed_model invisible
+	}
+
+	built final
+	{
+		setstate allied_compost_built_model default
+		setstate neutral_compost_closed_clip invisible
+		setstate neutral_compost_closed_model invisible
+
+		trigger allied_compost_built_model enable_allied_features
+
+		enablespeaker allies_compost_sound
+	}
+
+	decayed final
+	{
+		setstate allied_compost_built_model invisible
+		setstate neutral_compost_closed_clip default
+		setstate neutral_compost_closed_model default
+	}
+
+	death
+	{
+		setstate allied_compost_built_model invisible
+		setstate neutral_compost_closed_clip default
+		setstate neutral_compost_closed_model default
+
+		trigger allied_compost_built_model disable_allied_features
+
+		disablespeaker allies_compost_sound
+	}
+}
+
+allied_compost_built_model
+{
+	spawn
+	{
+		wait 400
+		setstate allied_compost_built_model invisible
+	}
+
+	trigger enable_allied_features
+	{
+		setchargetimefactor 1 soldier 0.75
+		setchargetimefactor 1 lieutenant 0.75
+		setchargetimefactor 1 medic 0.75
+		setchargetimefactor 1 engineer 0.75
+		setchargetimefactor 1 covertops 0.75
+		sethqstatus 1 1
+
+		wm_announce	"Allied Command Post constructed. Charge speed increased!"
+
+		wm_teamvoiceannounce 0 "axis_hq_compost_constructed_allies"
+
+		wm_teamvoiceannounce 1 "allies_hq_compost_constructed"
+
+		wm_removeteamvoiceannounce 1 "allies_hq_compost_construct"
+		
+
+		wm_objective_status 7 0 2
+		wm_objective_status 7 1 1
+	}
+
+	trigger disable_allied_features
+	{
+		setchargetimefactor 1 soldier 1
+		setchargetimefactor 1 lieutenant 1
+		setchargetimefactor 1 medic 1
+		setchargetimefactor 1 engineer 1
+		setchargetimefactor 1 covertops 1
+		sethqstatus 1 0
+
+		wm_announce	"Axis team has destroyed the Allied Command Post!"
+
+       	wm_addteamvoiceannounce 0 "axis_hq_compost_construct"
+		wm_addteamvoiceannounce 1 "allies_hq_compost_construct"
+		wm_teamvoiceannounce 0 "axis_hq_compost_construct"
+		wm_teamvoiceannounce 1 "allies_hq_compost_damaged"
+		
+		//wm_objective_status 7 0 0
+		//wm_objective_status 7 1 0
+	}
+}
+
+axis_compost_built
+{
+	spawn
+	{
+		wait 400
+		trigger axis_compost_built setup
+
+		constructible_class 2
+	}
+
+	trigger setup
+	{
+		setchargetimefactor 0 soldier 1
+		setchargetimefactor 0 lieutenant 1
+		setchargetimefactor 0 medic 1
+		setchargetimefactor 0 engineer 1
+		setchargetimefactor 0 covertops 1
+		sethqstatus 0 0
+	}
+
+	buildstart final
+	{
+		setstate axis_compost_built_model underconstruction
+		setstate neutral_compost_closed_clip invisible
+		setstate neutral_compost_closed_model invisible
+	}
+
+	built final
+	{
+		setstate axis_compost_built_model default
+		setstate neutral_compost_closed_clip invisible
+		setstate neutral_compost_closed_model invisible
+
+		trigger axis_compost_built_model enable_axis_features
+
+		enablespeaker axis_compost_sound
+	}
+
+	decayed final
+	{
+		setstate axis_compost_built_model invisible
+		setstate neutral_compost_closed_clip default
+		setstate neutral_compost_closed_model default
+	}
+
+	death
+	{
+		setstate axis_compost_built_model invisible
+		setstate neutral_compost_closed_clip default
+		setstate neutral_compost_closed_model default
+
+		trigger axis_compost_built_model disable_axis_features
+
+		disablespeaker axis_compost_sound
+	}
+}
+
+axis_compost_built_model
+{
+	spawn
+	{
+		wait 400
+		setstate axis_compost_built_model invisible
+	}
+
+	trigger enable_axis_features
+	{
+		setchargetimefactor 0 soldier 0.75
+		setchargetimefactor 0 lieutenant 0.75
+		setchargetimefactor 0 medic 0.75
+		setchargetimefactor 0 engineer 0.75
+		setchargetimefactor 0 covertops 0.75
+		sethqstatus 0 1
+
+		wm_announce	"Axis Command Post constructed. Charge speed increased!"
+
+		
+		wm_teamvoiceannounce 0 "axis_hq_compost_constructed"
+		wm_teamvoiceannounce 1 "allies_hq_compost_constructed_axis"
+
+		//wm_objective_status 7 0 1
+		//wm_objective_status 7 1 2
+	}
+
+	trigger disable_axis_features
+	{
+		setchargetimefactor 0 soldier 1
+		setchargetimefactor 0 lieutenant 1
+		setchargetimefactor 0 medic 1
+		setchargetimefactor 0 engineer 1
+		setchargetimefactor 0 covertops 1
+		sethqstatus 0 0
+
+		wm_announce	"Allied team has destroyed the Axis Command Post!"
+		wm_addteamvoiceannounce 0 "axis_hq_compost_construct"
+		wm_addteamvoiceannounce 1 "allies_hq_compost_construct"
+		wm_teamvoiceannounce 0 "axis_hq_compost_damaged"
+		wm_teamvoiceannounce 1 "allies_hq_compost_construct"
+		
+		//wm_objective_status 7 0 0
+		//wm_objective_status 7 1 0
+	}
+}
+
+
+// LMS Command Post
+neutral_compost_toi_lms
+{
+	spawn
+	{
+		wait 50
+		setstate neutral_compost_toi_lms invisible
+	}
+}
+
+neutral_compost_clip_lms
+{
+	spawn
+	{
+		wait 400
+		remove
+	}
+}
+
+neutral_compost_closed_clip_lms
+{
+	spawn
+	{
+		wait 400
+		remove
+	}
+}
+
+neutral_compost_closed_model_lms
+{
+	spawn
+	{
+		wait 400
+		remove
+	}
+}
+
+allied_compost_built_lms
+{
+	spawn
+	{
+		wait 400
+		remove
+	}
+}
+
+allied_compost_built_model_lms
+{
+	spawn
+	{
+		wait 400
+		remove
+	}
+}
+
+axis_compost_built_lms
+{
+	spawn
+	{
+		wait 400
+		remove
+	}
+}
+
+axis_compost_built_model_lms
+{
+	spawn
+	{
+		wait 400
+		remove
+	}
+}
+
+
+
+
