@@ -2252,6 +2252,7 @@ typedef struct cgs_s
 	int dbPlayerListOffset;
 	int dbWeaponListOffset;
 	cg_weaponstats_t dbWeaponStats[WS_MAX];
+	int	dbHitRegions[HR_NUM_HITREGIONS];
 	int dbChatMode;
 
 	int tdbAxisMapsXP[SK_NUM_SKILLS][MAX_MAPS_PER_CAMPAIGN];
@@ -3530,6 +3531,7 @@ void CG_Debriefing_PlayerSR_Draw(panel_button_t *button);
 void CG_Debriefing_PlayerACC_Draw(panel_button_t *button);
 void CG_Debriefing_PlayerHS_Draw(panel_button_t *button);
 void CG_Debriefing_PlayerSkills_Draw(panel_button_t *button);
+void CG_Debriefing_PlayerHitRegions_Draw(panel_button_t* button);
 
 void CG_DebriefingPlayerWeaponStats_Draw(panel_button_t *button);
 

@@ -4271,6 +4271,14 @@ void Cmd_IntermissionWeaponStats_f(gentity_t *ent)
 	}
 
 	Q_strncpyz(buffer, "imws ", sizeof(buffer));
+
+	// hit regions
+	Q_strcat(buffer, sizeof(buffer), va("%i %i %i %i ",
+		level.clients[clientNum].pers.playerStats.hitRegions[HR_HEAD],
+		level.clients[clientNum].pers.playerStats.hitRegions[HR_ARMS],
+		level.clients[clientNum].pers.playerStats.hitRegions[HR_BODY],
+		level.clients[clientNum].pers.playerStats.hitRegions[HR_LEGS]));
+
 	for (i = 0; i < WS_MAX; i++)
 	{
 		Q_strcat(buffer, sizeof(buffer), va("%i %i %i ", level.clients[clientNum].sess.aWeaponStats[i].atts, level.clients[clientNum].sess.aWeaponStats[i].hits, level.clients[clientNum].sess.aWeaponStats[i].kills));
