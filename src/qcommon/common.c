@@ -3329,7 +3329,7 @@ void Com_Frame(void)
 				minMsec = 100; // = 1000/10;
 			}
 			else if (com_unfocused->integer && com_maxfps->integer > 1 && !Cvar_VariableString("cl_downloadName")[0]  // don't set different minMsec while downloading
-				&& Cvar_VariableIntegerValue(cl_demorecording) == 0) // don't set different minMsec while recording
+				&& Cvar_VariableIntegerValue("cl_demorecording") == 0) // don't set different minMsec while recording
 			{
 				minMsec = 1000 / (com_maxfps->integer / 2);
 			}
