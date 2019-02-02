@@ -389,8 +389,8 @@ void RE_AddRefEntityToScene(const refEntity_t *ent)
 	// NOTE: fixed was ENTITYNUM_WORLD
 	if (r_numentities >= MAX_REFENTITIES)
 	{
-		// we may change this to developer print
-		Ren_Print("WARNING RE_AddRefEntityToScene: Dropping refEntity, reached MAX_REFENTITIES\n");
+		// some servers/mods might throw this - let's see what we are missing in the scene
+		Ren_Developer("WARNING RE_AddRefEntityToScene: Dropping refEntity [%i] model '%s', reached MAX_REFENTITIES\n", ent->entityNum, R_GetModelByHandle(ent->hModel)->name);
 		return;
 	}
 
