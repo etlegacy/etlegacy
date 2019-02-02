@@ -719,6 +719,17 @@ qboolean NET_IsLocalAddress(netadr_t adr)
 	return adr.type == NA_LOOPBACK;
 }
 
+/**
+ * @brief NET_IsLocalAddressString
+ * @param[in] address
+ * @return
+ */
+qboolean NET_IsLocalAddressString(const char *address)
+{
+	// see NET_AdrToString & make fail safe (see UI)
+	return !Q_stricmp(address, "loopback") || !Q_stricmp(address, "localhost");
+}
+
 //=============================================================================
 
 /**

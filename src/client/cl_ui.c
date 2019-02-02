@@ -186,17 +186,25 @@ static void LAN_ResetPings(int source)
 }
 
 /**
- * @brief LAN_AddServer
+ * @brief Adds servers to the internal data structure
+ * @note  Never ever add a localhost!
+ *
  * @param[in] source
  * @param[in] name
  * @param[in] address
- * @return
+ * @return 1 on success
  */
-static int LAN_AddServer(int source, const char *name, const char *address)
+int LAN_AddServer(int source, const char *name, const char *address)
 {
 	int          max, *count = 0;
 	netadr_t     adr;
 	serverInfo_t *servers = NULL;
+
+	if (NET_IsLocalAddressString(address))
+	{
+		Com_Printf("LAN_AddServer Warning: Can't add localhost\n");
+		return -1;
+	}
 
 	switch (source)
 	{

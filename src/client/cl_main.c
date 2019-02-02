@@ -1308,6 +1308,26 @@ void CL_SaveFavServersToFile_f(void)
 	LAN_SaveServersToFile();
 }
 
+/**
+ * @brief CL_AddFavServer_f
+ * DO NOT ACTIVATE UNTIL WE HAVE CLARIFIED SECURITY! (command execution vie ascripts)
+void CL_AddFavServer_f(void)
+{
+	if (cls.state != CA_ACTIVE)
+	{
+		Com_Printf("Not connected to a server.\n");
+		return;
+	}
+
+	if (clc.demoplaying)
+	{
+		return;
+	}
+
+	(void) LAN_AddServer(AS_FAVORITES, "", NET_AdrToString(clc.netchan.remoteAddress));
+}
+*/
+
 //====================================================================
 
 /**
@@ -2894,6 +2914,7 @@ void CL_Init(void)
 	Cmd_AddCommand("stopvideo", CL_StopVideo_f, "Stops AVI recording.");
 
 	Cmd_AddCommand("save_favs", CL_SaveFavServersToFile_f, "Saves the favcache.dat file into mod/profile path of fs_homepath.");
+	//Cmd_AddCommand("add_fav", CL_AddFavServer_f, "Adds the current connected server to favorites.");
 
 	CIN_Init();
 
@@ -2981,6 +3002,7 @@ void CL_Shutdown(void)
 	Cmd_RemoveCommand("stopvideo");
 
 	Cmd_RemoveCommand("save_favs");
+	//Cmd_RemoveCommand("add_fav");
 
 	Cmd_RemoveCommand("pausedemo");
 
