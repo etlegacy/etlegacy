@@ -1077,8 +1077,6 @@ void Z_Free(void *ptr)
 /**
  * @brief Z_FreeTags
  * @param[in] tag
- *
- * @todo FIXME: remove debug count ?
  */
 void Z_FreeTags(int tag)
 {
@@ -1239,7 +1237,7 @@ void *Z_Malloc(int size)
 #endif
 	void *buf;
 
-	//Z_CheckHeap ();	// DEBUG
+	//Z_CheckHeap();	// DEBUG
 
 #ifdef ZONE_DEBUG
 	buf = Z_TagMallocDebug(size, TAG_GENERAL, label, file, line);
@@ -3324,7 +3322,7 @@ void Com_Frame(void)
 		else
 		{
 			if (com_minimized->integer && !Cvar_VariableString("cl_downloadName")[0] // don't set different minMsec while downloading
-				&& Cvar_VariableIntegerValue(cl_demorecording) == 0) // don't set different minMsec while recording
+				&& Cvar_VariableIntegerValue("cl_demorecording") == 0) // don't set different minMsec while recording
 			{
 				minMsec = 100; // = 1000/10;
 			}
