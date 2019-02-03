@@ -1550,6 +1550,8 @@ qboolean G_FlingClient(gentity_t *vic, int flingType);
 
 void G_PreFilledMissileEntity(gentity_t *ent, int weaponNum, int realWeapon, int ownerNum, team_t teamNum, int clientNum, gentity_t *parent, const vec3_t start, const vec3_t dir);
 
+int G_GetEnemyPosition(gentity_t *ent, gentity_t *targ);
+
 // g_weapon.c
 qboolean AccuracyHit(gentity_t *target, gentity_t *attacker);
 void CalcMuzzlePoint(gentity_t *ent, int weapon, vec3_t forward, vec3_t right, vec3_t up, vec3_t muzzlePoint);
@@ -2621,8 +2623,6 @@ qboolean G_LandmineSnapshotCallback(int entityNum, int clientNum);
 #define DOOR_CRUSHER                    4
 #define DOOR_TOUCH                      8
 
-// Spawnflags end
-
 // teamplay specific stuff
 #define AXIS_OBJECTIVE                   1
 #define ALLIED_OBJECTIVE                 2
@@ -2649,6 +2649,9 @@ qboolean G_LandmineSnapshotCallback(int entityNum, int clientNum);
 #define MAPVOTE_MULTI_VOTE       4
 #define MAPVOTE_NO_RANDOMIZE     8 ///< unused
 #define MAPVOTE_NEXTMAP_VOTEMAP  16
+
+
+// Spawnflags end
 
 /**
  * @enum fieldtype_t

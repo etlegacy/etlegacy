@@ -116,26 +116,31 @@ gentity_t *Weapon_Knife(gentity_t *ent)
 		damage <<= 1; // damage *= 2;    // Watch it - you could hurt someone with that thing!
 
 	}
-	// Only do backstabs if the body is standing up (i.e. alive)
-	if (traceEnt->client && traceEnt->health > 0)
+	// removed not allowing insta-gib backstabs on wounded players (CHRUKER: b002 "fix")
+	if (traceEnt->client) // && traceEnt->health > 0)
 	{
-		vec3_t eforward;
-
-		AngleVectors(ent->client->ps.viewangles, pforward, NULL, NULL);
-		AngleVectors(traceEnt->client->ps.viewangles, eforward, NULL, NULL);
-
-		if (DotProduct(eforward, pforward) > 0.6f)           // from behind(-ish)
+		if (G_GetEnemyPosition(ent, traceEnt) == POSITION_BEHIND)           // from behind(-ish)
 		{
-			damage = 100;   // enough to drop a 'normal' (100 health) human with one jab
+			// enough to drop a 'normal' (100 health) human with one jab
+			// (not for real if there is a medic in the team because of medic MP bonus)
+			damage = 100;
 			mod    = MOD_BACKSTAB;
 
 			if (ent->client->sess.skill[SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS] >= 4)
 			{
-				damage = traceEnt->health;
+				if (traceEnt->health > 0)
+				{
+					damage = traceEnt->health;
+				}
+				else if (traceEnt->health <= 0) // allow 'instagib' on wounded players
+				{
+					damage = traceEnt->health - GIB_HEALTH;
+				}
 			}
 		}
 	}
 
+	// FIXME: should we keep this random add ?!
 	G_Damage(traceEnt, ent, ent, vec3_origin, tr.endpos, (damage + rand() % 5), 0, mod);
 
 	return NULL;

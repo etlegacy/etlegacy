@@ -2858,3 +2858,25 @@ void G_PreFilledMissileEntity(gentity_t *ent, int weaponNum, int realWeapon, int
 
 	SnapVector(ent->s.pos.trDelta);            // save net bandwidth
 }
+
+int G_GetEnemyPosition(gentity_t *ent, gentity_t *targ)
+{
+	float	angle = 0;
+	vec3_t	pforward, eforward;
+
+	AngleVectors (ent->client->ps.viewangles,	pforward, NULL, NULL);
+	AngleVectors (targ->client->ps.viewangles,	eforward, NULL, NULL);
+
+	angle = DotProduct(eforward, pforward);
+
+	if (angle > 0.6f)
+	{
+		return POSITION_BEHIND;
+	}
+	if (angle <-0.6f)
+	{
+		return POSITION_INFRONT;
+	}
+
+	return POSITION_UNUSED;
+}
