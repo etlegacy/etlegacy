@@ -44,7 +44,9 @@ glstate_t glState;
 static void GfxInfo_f(void);
 
 #ifdef USE_RENDERER_DLOPEN
+#if idppc
 cvar_t *com_altivec;
+#endif
 #endif
 
 cvar_t *r_flareSize;
@@ -1055,7 +1057,9 @@ void GfxInfo_f(void)
 void R_Register(void)
 {
 #ifdef USE_RENDERER_DLOPEN
+#if idppc
 	com_altivec = ri.Cvar_Get("com_altivec", "1", CVAR_ARCHIVE);
+#endif
 #endif
 
 	// latched and archived variables
