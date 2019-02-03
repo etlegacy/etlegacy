@@ -4791,7 +4791,7 @@ qboolean setProjTargetOrigin(char *lightDefs, char *targetname, trRefLight_t *li
 
 	if (!targetname || !targetname[0])
 	{
-		Ren_Warning("setProjTargetOrigin WARNING: no target set!\n", targetname);
+		Ren_Warning("setProjTargetOrigin WARNING: no target set!\n");
 		return qfalse;
 	}
 	
@@ -4893,7 +4893,7 @@ qboolean setProjTargetOrigin(char *lightDefs, char *targetname, trRefLight_t *li
 			}
 			else
 			{
-				Ren_Warning("setProjTargetOrigin WARNING: requested target has no origin '%s'\n");
+				Ren_Warning("setProjTargetOrigin WARNING: requested target '%s' has no origin\n", targetname);
 			}
 			
 			return qtrue; // we are done
@@ -4908,9 +4908,14 @@ qboolean setProjTargetOrigin(char *lightDefs, char *targetname, trRefLight_t *li
 	return qfalse;
 }
 
-// this is done for a better effect FIXME: delete? cvar? ditch?
-#define RADIUS_MULTIPLICATOR 3
+// debug
+#define RADIUS_MULTIPLICATOR 1
 
+
+/**
+ * @brief Resets a static light to default values
+ * @param[in]
+ */
 void resetRefLight(trRefLight_t *light)
 {
 	QuatClear(light->l.rotation); // reset rotation because it may be set to the rotation of other entities
@@ -5100,7 +5105,7 @@ void R_LoadLights(char *lightDefs)
 	}
 
 	Ren_Developer("%i total entities counted\n", numEntities);
-	Ren_Print("%i total lights and %i spotlight targets counted\n", numLights, numInfoNull);
+	Ren_Print("%i total lights and %i light targets counted\n", numLights, numInfoNull);
 
 	s_worldData.numLights = numLights;
 
@@ -5244,7 +5249,7 @@ void R_LoadLights(char *lightDefs)
 				target = ri.Z_Malloc(strlen(value) + 1);
 				strcpy(target, value);
 
-				light->l.rlType = RL_PROJ;
+				//light->l.rlType = RL_PROJ;
 			}
 			else if (!Q_stricmp(keyname, "targetname")) // ETL
 			{
@@ -5254,7 +5259,8 @@ void R_LoadLights(char *lightDefs)
 			else if (!Q_stricmp(keyname, "_sun")) // ETL
 			{
 				// FIXME: inspect (has to be set on spotlight ..., target?!)
-				//light->l.rlType = RL_DIRECTIONAL; ?
+				// is this info exported? no sun/moon on radar/goldrush ...
+				//light->l.rlType = RL_DIRECTIONAL;
 			}
 			// check for light_right
 			else if (!Q_stricmp(keyname, "light_right"))
@@ -5372,9 +5378,21 @@ void R_LoadLights(char *lightDefs)
 				switch (light->l.rlType)
 				{
 				case RL_OMNI:
+					if (target) // might have a target
+					{
+						if (!setProjTargetOrigin(lightDefs, target, light))
+						{
+							// goldrush throws this because of missing info_null 't713'
+							Ren_Warning("R_LoadLights WARNING: no projection target found for %s\n", target);
+						}
+						else
+						{
+							Ren_Developer("R_LoadLights target for %s\n", target);
+						}
+					}
 					numOmniLights++;
 					break;
-				case RL_PROJ:
+				case RL_PROJ: // must have a target
 					if (!setProjTargetOrigin(lightDefs, target, light))
 					{
 						// goldrush throws this because of missing info_null 't713'
@@ -8739,6 +8757,40 @@ void RE_LoadWorldMap(const char *name)
 	R_CreateWorldVBO();
 	R_CreateClusters();
 	R_CreateSubModelVBOs();
+/*
+	{
+		// sun light is already init see resetRefLight() in R_LoadLights
+		trRefLight_t *light = &s_worldData.lights[0];
+
+		light->shader   = tr.sunShader;
+		light->l.rlType = RL_DIRECTIONAL;
+
+		light->l.origin[0] = 1;
+		light->l.origin[1] = 1;
+		light->l.origin[2] = 2000;
+
+		light->l.projTarget[0] = 1;
+		light->l.projTarget[1] = 1;
+		light->l.projTarget[2] = 1;
+
+		light->l.color[0] = tr.sunLight[0];
+		light->l.color[1] = tr.sunLight[1];
+		light->l.color[2] = tr.sunLight[2];
+
+		light->l.scale = r_lightScale->value * 0.2;
+
+		light->direction[0] = tr.sunDirection[0];
+		light->direction[1] = tr.sunDirection[1];
+		light->direction[2] = tr.sunDirection[2];
+
+		light->l.radius[0] = 8182;
+		light->l.radius[1] = 8182;
+		light->l.radius[2] = 8182;
+
+		light->l.inverseShadows = qfalse; // must be false
+		light->isStatic         = qfalse; // must be false to render alpha-masked surfaces
+	}
+*/
 
 	// we precache interactions between lights and surfaces
 	// to reduce the polygon count
