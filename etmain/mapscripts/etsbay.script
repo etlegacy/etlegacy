@@ -473,7 +473,6 @@ water_tunnel
 	{
 		gotomarker path_water_tunnel_lower 4 wait
 		disablespeaker hose1_sound1
-		gotomarker path_water_discharge_bottom 4 wait
 	}
 }
 
