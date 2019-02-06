@@ -3398,6 +3398,7 @@ const char *awardNames[NUM_ENDGAME_AWARDS] =
 	"Highest Accuracy",
 	"Highest Headshots Percentage",
 	"Best Survivor",
+	"Most Damage Given",
 	"Most Gibs",
 	"Most Selfkills",
 	"Most Deaths",
@@ -3442,7 +3443,7 @@ void CG_Debriefing_Awards_Draw(panel_button_t *button)
 		case TEAM_SPECTATOR: // fall through
 		default:
 			CG_DrawPic(button->rect.x + 6, y + 2, 18, 12, cgs.media.limboTeamButtonBack_on);
-			CG_DrawPic(button->rect.x + 6, y + 2, 18, 12, cgs.media.limboTeamButtonSpec); // TEAM_FREE shouldn't occure
+			CG_DrawPic(button->rect.x + 6, y + 2, 18, 12, cgs.media.limboTeamButtonSpec); // TEAM_FREE shouldn't occur
 			break;
 		}
 

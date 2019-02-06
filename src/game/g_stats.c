@@ -1055,6 +1055,45 @@ void G_BuildEndgameStats(void)
 
 	best = NULL;
 
+	// most damage given - check damage given, then damage received
+	for (i = 0; i < level.numConnectedClients; i++)
+	{
+		gclient_t *cl = &level.clients[level.sortedClients[i]];
+
+		if (cl->sess.sessionTeam == TEAM_FREE)
+		{
+			continue;
+		}
+
+		if (cl->sess.damage_given <= 0)
+		{
+			continue;
+		}
+
+		if (!best || cl->sess.damage_given > best->sess.damage_given)
+		{
+			best          = cl;
+			bestClientNum = level.sortedClients[i];
+		}
+		else if (cl->sess.damage_given == best->sess.damage_given && cl->sess.damage_received > best->sess.damage_received)
+		{
+			best          = cl;
+			bestClientNum = level.sortedClients[i];
+		}
+	}
+
+	if (best)
+	{
+		best->hasaward = qtrue;
+		Q_strcat(buffer, 1024, va("%i %i %i ", bestClientNum, best->sess.damage_given, best->sess.sessionTeam));
+	}
+	else
+	{
+		Q_strcat(buffer, 1024, "-1 0 0 ");
+	}
+
+	best = NULL;
+
 	// most gibs - check gibs, then damage given
 	for (i = 0; i < level.numConnectedClients; i++)
 	{
@@ -1202,7 +1241,7 @@ void G_BuildEndgameStats(void)
 
 	best = NULL;
 
-	// welcome newbie! award - dont get this if any other award given or > 100 xp (this map)
+	// welcome newbie! award - don't get this if any other award given or > 100 xp (this map)
 	for (i = 0; i < level.numConnectedClients; i++)
 	{
 		gclient_t *cl = &level.clients[level.sortedClients[i]];
