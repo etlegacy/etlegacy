@@ -27,7 +27,7 @@ option(BUILD_MOD		"Build the mod libraries"										ON)
 option(BUILD_MOD_PK3	"Pack the mod libraries into etl_bin.pk3"						ON)
 option(BUILD_PAK3_PK3	"Pack updated game scripts into pak3.pk3"						ON)
 
-option(BUNDLED_LIBS		"Use all available bundled libraries instead of system libs."	ON)
+option(BUNDLED_LIBS		"Use all available bundled libraries instead of system libs"	ON)
 
 LEG_BUNDLE(SDL SDL)
 LEG_BUNDLE(ZLIB Zlib)
@@ -72,8 +72,8 @@ option(FEATURE_GETTEXT			"Enable localization using tinygettext"					ON)
 option(FEATURE_JANSSON			"Enable JSON support (client)"							OFF)
 option(FEATURE_SERVERMDX		"Enable MDX support on server side (mod)"				ON)
 option(FEATURE_DBMS				"Enable dbms support (sqlite3)"							ON)
+option(FEATURE_PAKISOLATION		"Enable custom pak isolation"							ON)
 option(FORCE_DEBUG				"Force enable legacy debug macros"						OFF)
-option(FEATURE_PAKISOLATION		"Enables custom pak isolation"							ON)
 
 cmake_dependent_option(FEATURE_LUASQL	"Enable LuaSQL sqlite3 backend (mod)"			ON "FEATURE_LUA" OFF)
 cmake_dependent_option(FEATURE_RATING	"Enable skill rating support (mod)"				ON "FEATURE_DBMS" OFF)
