@@ -810,8 +810,10 @@ void limbo(gentity_t *ent, qboolean makeCorpse)
 			ent->client->saved_persistant[i] = ent->client->ps.persistant[i];
 		}
 
-		if (g_stickyCharge.integer > 0 && ent->client->ps.classWeaponTime >= 0) {
-			switch (ent->client->sess.playerType) {
+		if (g_stickyCharge.integer > 0 && ent->client->ps.classWeaponTime >= 0)
+		{
+			switch (ent->client->sess.playerType)
+			{
 			case PC_MEDIC:
 				ent->client->pers.savedClassWeaponTimeMed = level.time - ent->client->ps.classWeaponTime;
 				break;
@@ -1089,7 +1091,7 @@ void AddWeaponToPlayer(gclient_t *client, weapon_t weapon, int ammo, int ammocli
 {
 	COM_BitSet(client->ps.weapons, weapon);
 	client->ps.ammoclip[GetWeaponTableData(weapon)->clipIndex] = ammoclip;
-	client->ps.ammo[GetWeaponTableData(weapon)->ammoIndex]     = ammo;
+	client->ps.ammo[GetWeaponTableData(weapon)->ammoIndex]    += ammo;
 
 	if (GetWeaponTableData(weapon)->attributes & WEAPON_ATTRIBUT_AKIMBO)
 	{
@@ -1166,6 +1168,7 @@ void SetWolfSpawnWeapons(gclient_t *client)
 
 	// zero out all ammo counts
 	Com_Memset(client->ps.ammo, 0, MAX_WEAPONS * sizeof(int));
+	Com_Memset(client->ps.ammoclip, 0, MAX_WEAPONS * sizeof(int));
 
 	// All players start with a knife (not OR-ing so that it clears previous weapons)
 	client->ps.weapons[0] = 0;
@@ -2390,11 +2393,11 @@ void ClientBegin(int clientNum)
 	client->pers.lastteambleed_client = -1;
 	client->pers.lastteambleed_dmg    = -1;
 
-	client->pers.savedClassWeaponTime = -999999;
+	client->pers.savedClassWeaponTime     = -999999;
 	client->pers.savedClassWeaponTimeCvop = -999999;
-	client->pers.savedClassWeaponTimeEng = -999999;
-	client->pers.savedClassWeaponTimeFop = -999999;
-	client->pers.savedClassWeaponTimeMed = -999999;
+	client->pers.savedClassWeaponTimeEng  = -999999;
+	client->pers.savedClassWeaponTimeFop  = -999999;
+	client->pers.savedClassWeaponTimeMed  = -999999;
 
 #ifdef FEATURE_OMNIBOT
 	// Omni-bot
@@ -2636,12 +2639,13 @@ static char *G_CheckVersion(gentity_t *ent)
 }
 #endif
 
-static qboolean isMortalSelfDamage(gentity_t *ent) {
+static qboolean isMortalSelfDamage(gentity_t *ent)
+{
 	return (
 		(ent->enemy && ent->enemy->s.number >= MAX_CLIENTS) // worldkill
 		|| (ent->enemy == ent) // selfkill
 		|| OnSameTeam(ent->enemy, ent) // teamkill
-	);
+		);
 }
 
 /**
@@ -2729,10 +2733,10 @@ void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean
 
 	ent->s.eFlags &= ~EF_MOUNTEDTANK;
 
-	savedPers = client->pers;
-	savedSess = client->sess;
-	savedPing = client->ps.ping;
-	savedTeam = client->ps.teamNum;
+	savedPers      = client->pers;
+	savedSess      = client->sess;
+	savedPing      = client->ps.ping;
+	savedTeam      = client->ps.teamNum;
 	savedDeathTime = client->deathTime;
 
 	for (i = 0 ; i < MAX_PERSISTANT ; i++)
@@ -2781,14 +2785,16 @@ void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean
 	// clear entity values
 	client->ps.stats[STAT_MAX_HEALTH] = client->pers.maxHealth;
 	client->ps.eFlags                 = flags;
-	client->deathTime = savedDeathTime;
+	client->deathTime                 = savedDeathTime;
 
 	// Reset/restore special weapon time
 	if (
 		((g_stickyCharge.integer & STICKYCHARGE_SELFKILL) && isMortalSelfDamage(ent))
 		|| (g_stickyCharge.integer & STICKYCHARGE_ANYDEATH)
-	) {
-		switch (client->sess.latchPlayerType) {
+		)
+	{
+		switch (client->sess.latchPlayerType)
+		{
 		case PC_MEDIC:
 			client->ps.classWeaponTime = client->pers.savedClassWeaponTimeMed;
 			break;
@@ -2805,9 +2811,11 @@ void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean
 			client->ps.classWeaponTime = client->pers.savedClassWeaponTime;
 		}
 
-		if (client->ps.classWeaponTime >= 0) {
+		if (client->ps.classWeaponTime >= 0)
+		{
 			// class change
-			if (client->sess.playerType != client->sess.latchPlayerType) {
+			if (client->sess.playerType != client->sess.latchPlayerType)
+			{
 				// restore the weapon time as it was on the moment of death
 				client->ps.classWeaponTime = level.time - client->ps.classWeaponTime;
 			}
@@ -2818,7 +2826,8 @@ void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean
 			}
 		}
 	}
-	else {
+	else
+	{
 		client->ps.classWeaponTime = -999999;
 	}
 

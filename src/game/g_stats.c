@@ -191,7 +191,8 @@ extern void AddWeaponToPlayer(gclient_t *client, weapon_t weapon, int ammo, int 
  */
 void G_UpgradeSkill(gentity_t *ent, skillType_t skill)
 {
-	int i;
+	int              i;
+	bg_playerclass_t *classInfo;
 
 #ifdef FEATURE_LUA
 	// *LUA* API callbacks
@@ -261,14 +262,17 @@ void G_UpgradeSkill(gentity_t *ent, skillType_t skill)
 
 	ClientUserinfoChanged(ent - g_entities);
 
+	classInfo = BG_GetPlayerClassInfo(ent->client->sess.sessionTeam, ent->client->sess.playerType);
+
 	// Give em rightaway
-	if (skill == SK_BATTLE_SENSE && ent->client->sess.skill[skill] == 1)
+	for (i = 0; i < MAX_WEAPS_PER_CLASS && classInfo->classMiscWeapons[i].weapon; i++)
 	{
-		AddWeaponToPlayer(ent->client, WP_BINOCULARS, 1, 0, qfalse);
-	}
-	else if (skill == SK_FIRST_AID && ent->client->sess.playerType == PC_MEDIC && ent->client->sess.skill[skill] == 4)
-	{
-		AddWeaponToPlayer(ent->client, WP_MEDIC_ADRENALINE, ent->client->ps.ammo[GetWeaponTableData(WP_MEDIC_ADRENALINE)->ammoIndex], ent->client->ps.ammoclip[GetWeaponTableData(WP_MEDIC_ADRENALINE)->clipIndex], qfalse);
+		bg_weaponclass_t *weaponClassInfo = &classInfo->classMiscWeapons[i];
+
+		if (skill == classInfo->classMiscWeapons[i].skill && ent->client->sess.skill[skill] == classInfo->classMiscWeapons[i].minSkillLevel)
+		{
+			AddWeaponToPlayer(ent->client, weaponClassInfo->weapon, classInfo->classMiscWeapons[i].startingAmmo, classInfo->classMiscWeapons[i].startingClip, qfalse);
+		}
 	}
 }
 
