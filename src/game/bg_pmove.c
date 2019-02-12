@@ -3358,7 +3358,7 @@ static void PM_Weapon(void)
 	// if not on fire button and there's not a delayed shot this frame...
 	// consider also leaning, with delayed attack reset
 	if ((!(pm->cmd.buttons & BUTTON_ATTACK) && !(pm->cmd.wbuttons & WBUTTON_ATTACK2) && !delayedFire) ||
-	    (pm->ps->leanf != 0.f && !pm->ps->grenadeTimeLeft))
+	    (pm->ps->leanf != 0.f && !GetWeaponTableData(pm->ps->weapon)->grenadeTime))
 	{
 		pm->ps->weaponTime  = 0;
 		pm->ps->weaponDelay = 0;
