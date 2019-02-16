@@ -3589,74 +3589,84 @@ void CG_AltWeapon_f(void)
 		return;
 	}
 
-	// some alt vsays, don't check for weapon with alternative weapon
-	// 0 - disabled
-	// 1 - team
-	// 2 - fireteam
-	if (cg_quickchat.integer && !GetWeaponTableData(cg.weaponSelect)->weapAlts)
+	// don't check for weapon with alternative weapon, instead check special action
+	if (!GetWeaponTableData(cg.weaponSelect)->weapAlts)
 	{
-		char *cmd;
-
-		if (cg_quickchat.integer == 2)
+		if (cg_weapaltReloads.integer && GetWeaponTableData(cg.weaponSelect)->useClip)
 		{
-			cmd = va("vsay_buddy -1 %s", CG_BuildSelectedFirteamString());
+			//TODO: This is a horrible way of doing it but theres not other way atm.
+			trap_SendConsoleCommand("+reload\n");
+			trap_SendConsoleCommand("-reload\n");
 		}
-		else
+		// some alt vsays,
+		// 0 - disabled
+		// 1 - team
+		// 2 - fireteam
+		else if (cg_quickchat.integer)
 		{
-			cmd = "vsay_team";
-		}
+			char *cmd;
 
-		switch (cg.weaponSelect)
-		{
-		case WP_DYNAMITE:
-			trap_SendConsoleCommand(va("cmd %s %s\n", cmd, "FTExploreArea"));
-			break;     //return;
-		case WP_SMOKE_BOMB:
-			switch ((rand() % 2))
+			if (cg_quickchat.integer == 2)
 			{
-			case 0:
-				trap_SendConsoleCommand(va("cmd %s %s\n", cmd, "FTGoUndercover"));
-				break;
-			case 1:
-				trap_SendConsoleCommand(va("cmd %s %s\n", cmd, "FTInfiltrate"));
+				cmd = va("vsay_buddy -1 %s", CG_BuildSelectedFirteamString());
+			}
+			else
+			{
+				cmd = "vsay_team";
+			}
+
+			switch (cg.weaponSelect)
+			{
+			case WP_DYNAMITE:
+				trap_SendConsoleCommand(va("cmd %s %s\n", cmd, "FTExploreArea"));
+				break;     //return;
+			case WP_SMOKE_BOMB:
+				switch ((rand() % 2))
+				{
+				case 0:
+					trap_SendConsoleCommand(va("cmd %s %s\n", cmd, "FTGoUndercover"));
+					break;
+				case 1:
+					trap_SendConsoleCommand(va("cmd %s %s\n", cmd, "FTInfiltrate"));
+					break;
+				}
+				break;     //return;
+			case WP_SMOKE_MARKER:
+			case WP_GRENADE_LAUNCHER:
+			case WP_GRENADE_PINEAPPLE:
+				trap_SendConsoleCommand(va("cmd %s %s\n", cmd, "FireInTheHole"));
+				break;     //return;
+			case WP_PLIERS:
+				switch ((rand() % 3))
+				{
+				case 0:
+					trap_SendConsoleCommand(va("cmd %s %s\n", cmd, "CoverMe"));
+					break;
+				case 1:
+					trap_SendConsoleCommand(va("cmd %s %s\n", cmd, "NeedBackup"));
+					break;
+				case 2:
+					trap_SendConsoleCommand(va("cmd %s %s\n", cmd, "ClearPath"));
+					break;
+				}
+				break;     //return;
+			case WP_SATCHEL:
+				trap_SendConsoleCommand(va("cmd %s %s\n", cmd, "LetsGo"));
+				break;     //return;
+			case WP_MEDKIT:
+			case WP_MEDIC_SYRINGE:
+				trap_SendConsoleCommand(va("cmd %s %s\n", cmd, "IamMedic"));
+				break;     //return;
+			case WP_AMMO:
+				trap_SendConsoleCommand(va("cmd %s %s\n", cmd, "IamFieldOps"));
+				break;     // return;
+			// add others ...
+			//case WP_POISON_SYRINGE:
+			//trap_SendConsoleCommand(va("cmd %s %s\n", cmd, "EnemyWeak"));
+			//return;
+			default:
 				break;
 			}
-			break;     //return;
-		case WP_SMOKE_MARKER:
-		case WP_GRENADE_LAUNCHER:
-		case WP_GRENADE_PINEAPPLE:
-			trap_SendConsoleCommand(va("cmd %s %s\n", cmd, "FireInTheHole"));
-			break;     //return;
-		case WP_PLIERS:
-			switch ((rand() % 3))
-			{
-			case 0:
-				trap_SendConsoleCommand(va("cmd %s %s\n", cmd, "CoverMe"));
-				break;
-			case 1:
-				trap_SendConsoleCommand(va("cmd %s %s\n", cmd, "NeedBackup"));
-				break;
-			case 2:
-				trap_SendConsoleCommand(va("cmd %s %s\n", cmd, "ClearPath"));
-				break;
-			}
-			break;     //return;
-		case WP_SATCHEL:
-			trap_SendConsoleCommand(va("cmd %s %s\n", cmd, "LetsGo"));
-			break;     //return;
-		case WP_MEDKIT:
-		case WP_MEDIC_SYRINGE:
-			trap_SendConsoleCommand(va("cmd %s %s\n", cmd, "IamMedic"));
-			break;     //return;
-		case WP_AMMO:
-			trap_SendConsoleCommand(va("cmd %s %s\n", cmd, "IamFieldOps"));
-			break;     // return;
-		// add others ...
-		//case WP_POISON_SYRINGE:
-		//trap_SendConsoleCommand(va("cmd %s %s\n", cmd, "EnemyWeak"));
-		//return;
-		default:
-			break;
 		}
 
 		return;
@@ -3739,6 +3749,12 @@ void CG_AltWeapon_f(void)
 	if (CG_WeaponSelectable(GetWeaponTableData(cg.weaponSelect)->weapAlts))        // new weapon is valid
 	{
 		CG_FinishWeaponChange(cg.weaponSelect, GetWeaponTableData(cg.weaponSelect)->weapAlts);
+	}
+	else if (cg_weapaltReloads.integer)
+	{
+		//TODO: This is a horrible way of doing it but theres not other way atm.
+		trap_SendConsoleCommand("+reload\n");
+		trap_SendConsoleCommand("-reload\n");
 	}
 }
 
