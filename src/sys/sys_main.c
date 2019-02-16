@@ -1035,6 +1035,17 @@ int main(int argc, char **argv)
 	{
 		char     parentdir[1024];
 		CFURLRef url = CFBundleCopyBundleURL(CFBundleGetMainBundle());
+		int quarantine_status = 0;
+
+		quarantine_status = needsOSXQuarantineFix();
+		if(quarantine_status == 1) {
+			//app restarts itself under the right path
+			Sys_Exit(EXIT_SUCCESS);
+		} else if (quarantine_status >=2) {
+			Sys_Dialog(DT_ERROR, "An error occured while removing the app quarantine flag automatically. Please read the installation instructions on removing the app quarantine on the ET Legacy wiki:\r\n\r\nhttps://dev.etlegacy.com/projects/etlegacy/wiki/Mac_OS_X", "Can't remove app quarantine");
+			Sys_Exit(EXIT_FAILURE);
+		}
+
 		if (!url)
 		{
 			Sys_Dialog(DT_ERROR, "A CFURL for the app bundle could not be found.", "Can't set Sys_SetBinaryPath");

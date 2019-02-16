@@ -43,6 +43,7 @@
 #include "../qcommon/qcommon.h"
 #include "sys_local.h"
 
+#include <dlfcn.h> // dlopen, dlclose
 #import <Carbon/Carbon.h>
 #import <Cocoa/Cocoa.h>
 
@@ -113,4 +114,83 @@ const char *OSX_ApplicationSupportPath()
 	const char  *tempPath  = [[NSSearchPathForDirectoriesInDomains(NSApplicationSupportDirectory, NSUserDomainMask, YES) lastObject] UTF8String];
 	Q_strncpyz(path, tempPath, sizeof(path));
 	return (const char *)path;
+}
+
+/**
+ * @brief Checks for OSX' App Translocation
+ */
+bool IsTranslocatedURL(CFURLRef currentURL, CFURLRef *originalURL)
+{
+	if (currentURL == NULL) {
+		return false;
+	}
+
+	if (floor(NSAppKitVersionNumber) <= 1404) {
+		return false;
+	}
+
+	void *handle = dlopen("/System/Library/Frameworks/Security.framework/Security", RTLD_LAZY);
+	if (handle == NULL) {
+		return false;
+	}
+
+	bool isTranslocated = false;
+
+	Boolean (*mySecTranslocateIsTranslocatedURL)(CFURLRef path, bool *isTranslocated, CFErrorRef * __nullable error);
+	mySecTranslocateIsTranslocatedURL = dlsym(handle, "SecTranslocateIsTranslocatedURL");
+	if (mySecTranslocateIsTranslocatedURL != NULL) {
+		if (mySecTranslocateIsTranslocatedURL(currentURL, &isTranslocated, NULL)) {
+			if (isTranslocated) {
+				if (originalURL != NULL) {
+					CFURLRef __nullable (*mySecTranslocateCreateOriginalPathForURL)(CFURLRef translocatedPath, CFErrorRef * __nullable error);
+					mySecTranslocateCreateOriginalPathForURL = dlsym(handle, "SecTranslocateCreateOriginalPathForURL");
+					if (mySecTranslocateCreateOriginalPathForURL != NULL) {
+						*originalURL = mySecTranslocateCreateOriginalPathForURL((CFURLRef)currentURL, NULL);
+					} else {
+						*originalURL = NULL;
+					}
+				}
+			}
+		}
+	}
+
+	dlclose(handle);
+
+	return isTranslocated;
+}
+
+/**
+ * @brief Check for OSX Quarantine, remove the attributes und restart the app
+ * @return int: 0 = no action required, 1 = relaunch after dequarantine, >=2 = error, show modal
+ */
+int needsOSXQuarantineFix() {
+    bool isQuarantined;
+    int taskRetVal;
+    NSURL *appPath = [NSURL fileURLWithPath:[[NSBundle mainBundle] bundlePath]];
+    NSURL *newPath = nil;
+
+    //does the app run in a translocated path?
+    isQuarantined = IsTranslocatedURL((CFURLRef) appPath, &newPath);
+
+    if(isQuarantined) {
+        //remove quarantine flag
+        @try {
+            NSTask *xattrTask = [NSTask launchedTaskWithLaunchPath:@"/usr/bin/xattr" arguments:@[@"-cr", (NSURL*)newPath.path]];
+            [xattrTask waitUntilExit];
+            taskRetVal = xattrTask.terminationStatus;
+        } @catch (NSException *exception) {
+            return 2;
+        }
+
+        //relaunch, using 'open'
+        @try {
+            [NSTask launchedTaskWithLaunchPath:@"/usr/bin/open" arguments:@[@"-n", @"-a", newPath.path]];
+        } @catch (NSException *exception) {
+            return 3;
+        }
+        //shutdown this instance
+        return 1;
+    } else {
+        return 0;
+    }
 }
