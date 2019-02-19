@@ -510,14 +510,6 @@ panel_button_text_t debriefPlayerInfoFont =
 	&cgs.media.limboFont2,
 };
 
-panel_button_text_t debriefPlayerInfoHitRegionsFont =
-{
-	0.15f,                 0.15f,
-	{ 0.6f,                0.6f, 0.6f,    1.f },
-	0,                     0,
-	&cgs.media.limboFont2,
-};
-
 panel_button_t debriefPlayerInfoWindow =
 {
 	NULL,
@@ -650,11 +642,11 @@ panel_button_t debriefPlayerInfoHitRegions =
 {
 	NULL,
 	NULL,
-	{ 154,                      54, 0, 0 },
+	{ 146,                      156, 0, 0 },
 	{ 0,                        0,  0, 0, 0, 0, 0, 0 },
-	&debriefPlayerInfoHitRegionsFont, // font
-	NULL,						      // keyDown
-	NULL,						      // keyUp
+	&debriefPlayerInfoFont,     // font
+	NULL,                       // keyDown
+	NULL,                       // keyUp
 	CG_Debriefing_PlayerHitRegions_Draw,
 	NULL,
 };
@@ -663,11 +655,11 @@ panel_button_t debriefPlayerInfoHitRegions =
 	panel_button_t debriefPlayerInfoSkills ## number = {      \
 		NULL,                                       \
 		NULL,                                       \
-		{ 18 + (94 * (number % 2)),      140 + (number / 2 * 24),                       12, 12 }, \
-		{ number,                        0,                                             0,  0, 0, 0, 0, 0},            \
+		{ 24,                            136 + (number * 14),  12, 12 }, \
+		{ number,                        0,                     0,  0, 0, 0, 0, 0},  \
 		&debriefPlayerInfoFont,          /* font     */  \
-		NULL,                            /* keyDown    */                  \
-		NULL,                            /* keyUp  */                      \
+		NULL,                            /* keyDown  */  \
+		NULL,                            /* keyUp    */  \
 		CG_Debriefing_PlayerSkills_Draw,            \
 		NULL,                                       \
 		0,                                       \
@@ -687,7 +679,7 @@ panel_button_t *debriefPanelButtons[] =
 	&debriefPlayerListWindow,       &debriefPlayerList,                   &debriefPlayerListScroll,
 	&debriefHeadingRank,            &debriefHeadingName,
 	&debriefHeadingTime,            &debriefHeadingXP,                    &debriefHeadingKills,                &debriefHeadingDeaths,                &debriefHeadingGibs,                  &debriefHeadingSelfKills, &debriefHeadingTeamKills, &debriefHeadingTeamGibs,
-	&debriefPlayerInfoWindow,       &debriefPlayerInfoName,               &debriefPlayerInfoRank,              &debriefPlayerInfoHitRegions,         &debriefPlayerInfoMedals,             &debriefPlayerInfoTime,               &debriefPlayerInfoXP,
+	&debriefPlayerInfoWindow,       &debriefPlayerInfoName,               &debriefPlayerInfoRank,              &debriefPlayerInfoMedals,             &debriefPlayerInfoTime,               &debriefPlayerInfoXP,
 #ifdef FEATURE_RATING
 	&debriefPlayerInfoSR,
 #endif
@@ -699,6 +691,7 @@ panel_button_t *debriefPanelButtons[] =
 	&debriefPlayerInfoSkills4,
 	&debriefPlayerInfoSkills5,
 	&debriefPlayerInfoSkills6,
+	&debriefPlayerInfoHitRegions,
 	&debriefPlayerWeaponStatsHeader,&debriefPlayerWeaponStatsNameHeader,  &debriefPlayerWeaponStatsShotsHeader,&debriefPlayerWeaponStatsHitsHeader,  &debriefPlayerWeaponStatsKillsHeader,
 	&debriefPlayerWeaponStatsList,  &debriefPlayerWeaponStatsListScroll,
 
@@ -2554,12 +2547,10 @@ void CG_Debriefing_PlayerSkills_Draw(panel_button_t *button)
 
 	ci = CG_Debriefing_GetSelectedClientInfo();
 
-	CG_Text_Paint_Ext(button->rect.x, button->rect.y - 2, button->font->scalex, button->font->scaley, button->font->colour, GetSkillTableData(button->data[0])->skillNames, 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
-
 	x = button->rect.x;
 	CG_DrawPic(x, button->rect.y, button->rect.w, button->rect.h, cgs.media.skillPics[button->data[0]]);
 
-	x += button->rect.w + 2;
+	x += button->rect.w + 8;
 	for (i = ci->skill[button->data[0]]; i > 0; i--)
 	{
 
@@ -2625,31 +2616,31 @@ void CG_Debriefing_PlayerHitRegions_Draw(panel_button_t* button)
 		imgL = trap_R_RegisterShaderNoMip("gfx/misc/hitregion_legs.tga");
 	}
 
-	CG_Text_Paint_Ext(button->rect.x - w, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, "Regionhits", 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
+	CG_Text_Paint_Ext(button->rect.x - w, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, "Region Hits:", 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
 
-	CG_Text_Paint_Ext(button->rect.x - w, button->rect.y + 8, button->font->scalex, button->font->scaley, button->font->colour, "Head:", 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
-	CG_Text_Paint_Ext(button->rect.x, button->rect.y + 8, button->font->scalex, button->font->scaley, button->font->colour, va( "%i", cgs.dbHitRegions[HR_HEAD]), 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
+	CG_Text_Paint_Ext(button->rect.x - w, button->rect.y + 2 * 12, button->font->scalex, button->font->scaley, button->font->colour, "Head:", 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
+	CG_Text_Paint_Ext(button->rect.x, button->rect.y + 2 * 12, button->font->scalex, button->font->scaley, button->font->colour, va( "%i", cgs.dbHitRegions[HR_HEAD]), 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
 
 	w = CG_Text_Width_Ext("Arms: ", button->font->scalex, 0, button->font->font);
-	CG_Text_Paint_Ext(button->rect.x - w, button->rect.y + 2 * 8, button->font->scalex, button->font->scaley, button->font->colour, "Arms:", 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
-	CG_Text_Paint_Ext(button->rect.x, button->rect.y + 2 * 8, button->font->scalex, button->font->scaley, button->font->colour, va("%i", cgs.dbHitRegions[HR_ARMS]), 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
+	CG_Text_Paint_Ext(button->rect.x - w, button->rect.y + 3 * 12, button->font->scalex, button->font->scaley, button->font->colour, "Arms:", 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
+	CG_Text_Paint_Ext(button->rect.x, button->rect.y + 3 * 12, button->font->scalex, button->font->scaley, button->font->colour, va("%i", cgs.dbHitRegions[HR_ARMS]), 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
 
 	w = CG_Text_Width_Ext("Body: ", button->font->scalex, 0, button->font->font);
-	CG_Text_Paint_Ext(button->rect.x - w, button->rect.y + 3 * 8, button->font->scalex, button->font->scaley, button->font->colour, "Body:", 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
-	CG_Text_Paint_Ext(button->rect.x, button->rect.y + 3 * 8, button->font->scalex, button->font->scaley, button->font->colour, va("%i", cgs.dbHitRegions[HR_BODY]), 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
+	CG_Text_Paint_Ext(button->rect.x - w, button->rect.y + 4 * 12, button->font->scalex, button->font->scaley, button->font->colour, "Body:", 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
+	CG_Text_Paint_Ext(button->rect.x, button->rect.y + 4 * 12, button->font->scalex, button->font->scaley, button->font->colour, va("%i", cgs.dbHitRegions[HR_BODY]), 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
 
 	w = CG_Text_Width_Ext("Legs: ", button->font->scalex, 0, button->font->font);
-	CG_Text_Paint_Ext(button->rect.x - w, button->rect.y + 4 * 8, button->font->scalex, button->font->scaley, button->font->colour, "Legs:", 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
-	CG_Text_Paint_Ext(button->rect.x, button->rect.y + 4 * 8, button->font->scalex, button->font->scaley, button->font->colour, va("%i", cgs.dbHitRegions[HR_LEGS]), 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
+	CG_Text_Paint_Ext(button->rect.x - w, button->rect.y + 5 * 12, button->font->scalex, button->font->scaley, button->font->colour, "Legs:", 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
+	CG_Text_Paint_Ext(button->rect.x, button->rect.y + 5 * 12, button->font->scalex, button->font->scaley, button->font->colour, va("%i", cgs.dbHitRegions[HR_LEGS]), 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
 
 	// draw the image of a puppet, indicating red++ colors for higher hit-ratios per region
-	CG_DrawPic(button->rect.x, button->rect.y - 12, 54, 54, img);
+	CG_DrawPic(button->rect.x + 4, button->rect.y + 12, 54, 54, img);
 
 	if (alphaH)
 	{
 		Vector4Set(colorH, 1.0f, 0.f, 0.f, alphaH);
 		trap_R_SetColor(colorH);
-		CG_DrawPic(button->rect.x, button->rect.y - 12, 54, 54, imgH);
+		CG_DrawPic(button->rect.x + 4, button->rect.y + 12, 54, 54, imgH);
 		trap_R_SetColor(NULL);
 	}
 
@@ -2657,7 +2648,7 @@ void CG_Debriefing_PlayerHitRegions_Draw(panel_button_t* button)
 	{
 		Vector4Set(colorA, 1.0f, 0.f, 0.f, alphaA );
 		trap_R_SetColor(colorA);
-		CG_DrawPic(button->rect.x, button->rect.y - 12, 54, 54, imgA);
+		CG_DrawPic(button->rect.x + 4, button->rect.y + 12, 54, 54, imgA);
 		trap_R_SetColor(NULL);
 	}
 
@@ -2665,7 +2656,7 @@ void CG_Debriefing_PlayerHitRegions_Draw(panel_button_t* button)
 	{
 		Vector4Set(colorB, 1.0f, 0.f, 0.f, alphaB);
 		trap_R_SetColor(colorB);
-		CG_DrawPic(button->rect.x, button->rect.y - 12, 54, 54, imgB);
+		CG_DrawPic(button->rect.x + 4, button->rect.y + 12, 54, 54, imgB);
 		trap_R_SetColor(NULL);
 	}
 
@@ -2673,7 +2664,7 @@ void CG_Debriefing_PlayerHitRegions_Draw(panel_button_t* button)
 	{
 		Vector4Set(colorL, 1.0f, 0.f, 0.f, alphaL);
 		trap_R_SetColor(colorL);
-		CG_DrawPic(button->rect.x, button->rect.y - 12, 54, 54, imgL);
+		CG_DrawPic(button->rect.x + 4, button->rect.y + 12, 54, 54, imgL);
 		trap_R_SetColor(NULL);
 	}
 }
