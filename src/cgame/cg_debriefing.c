@@ -2585,10 +2585,14 @@ qhandle_t imgL;
 void CG_Debriefing_PlayerHitRegions_Draw(panel_button_t* button)
 {
 	int    totalHits = cgs.dbHitRegions[HR_HEAD] + cgs.dbHitRegions[HR_ARMS] + cgs.dbHitRegions[HR_BODY] + cgs.dbHitRegions[HR_LEGS];
-	float  alphaH    = (totalHits && cgs.dbHitRegions[HR_HEAD])? (cgs.dbHitRegions[HR_HEAD]/(float)totalHits * 0.8f) + 0.2f : 0.0f;
-	float  alphaA    = (totalHits && cgs.dbHitRegions[HR_ARMS])? (cgs.dbHitRegions[HR_ARMS]/(float)totalHits * 0.8f) + 0.2f : 0.0f;
-	float  alphaB    = (totalHits && cgs.dbHitRegions[HR_BODY])? (cgs.dbHitRegions[HR_BODY]/(float)totalHits * 0.8f) + 0.2f : 0.0f;
-	float  alphaL    = (totalHits && cgs.dbHitRegions[HR_LEGS])? (cgs.dbHitRegions[HR_LEGS]/(float)totalHits * 0.8f) + 0.2f : 0.0f;
+	float  hitsHead  = (totalHits && cgs.dbHitRegions[HR_HEAD]) ? (cgs.dbHitRegions[HR_HEAD]/(float)totalHits) : 0.0f;
+	float  hitsArms  = (totalHits && cgs.dbHitRegions[HR_ARMS]) ? (cgs.dbHitRegions[HR_ARMS]/(float)totalHits) : 0.0f;
+	float  hitsBody  = (totalHits && cgs.dbHitRegions[HR_BODY]) ? (cgs.dbHitRegions[HR_BODY]/(float)totalHits) : 0.0f;
+	float  hitsLegs  = (totalHits && cgs.dbHitRegions[HR_LEGS]) ? (cgs.dbHitRegions[HR_LEGS]/(float)totalHits) : 0.0f;
+	float  alphaH    = hitsHead > 0.f ? (hitsHead * 0.8f) + 0.2f : 0.0f;
+	float  alphaA    = hitsArms > 0.f ? (hitsArms * 0.8f) + 0.2f : 0.0f;
+	float  alphaB    = hitsBody > 0.f ? (hitsBody * 0.8f) + 0.2f : 0.0f;
+	float  alphaL    = hitsLegs > 0.f ? (hitsLegs * 0.8f) + 0.2f : 0.0f;
 	float  w;
 	vec4_t colorH, colorA, colorB, colorL;
 
@@ -2619,19 +2623,19 @@ void CG_Debriefing_PlayerHitRegions_Draw(panel_button_t* button)
 	CG_Text_Paint_Ext(button->rect.x - w, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, "Region Hits:", 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
 
 	CG_Text_Paint_Ext(button->rect.x - w, button->rect.y + 2 * 12, button->font->scalex, button->font->scaley, button->font->colour, "Head:", 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
-	CG_Text_Paint_Ext(button->rect.x, button->rect.y + 2 * 12, button->font->scalex, button->font->scaley, button->font->colour, va( "%i", cgs.dbHitRegions[HR_HEAD]), 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
+	CG_Text_Paint_Ext(button->rect.x, button->rect.y + 2 * 12, button->font->scalex, button->font->scaley, button->font->colour, va("%2.0f%%", hitsHead * 100), 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
 
 	w = CG_Text_Width_Ext("Arms: ", button->font->scalex, 0, button->font->font);
 	CG_Text_Paint_Ext(button->rect.x - w, button->rect.y + 3 * 12, button->font->scalex, button->font->scaley, button->font->colour, "Arms:", 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
-	CG_Text_Paint_Ext(button->rect.x, button->rect.y + 3 * 12, button->font->scalex, button->font->scaley, button->font->colour, va("%i", cgs.dbHitRegions[HR_ARMS]), 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
+	CG_Text_Paint_Ext(button->rect.x, button->rect.y + 3 * 12, button->font->scalex, button->font->scaley, button->font->colour, va("%2.0f%%", hitsArms * 100), 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
 
 	w = CG_Text_Width_Ext("Body: ", button->font->scalex, 0, button->font->font);
 	CG_Text_Paint_Ext(button->rect.x - w, button->rect.y + 4 * 12, button->font->scalex, button->font->scaley, button->font->colour, "Body:", 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
-	CG_Text_Paint_Ext(button->rect.x, button->rect.y + 4 * 12, button->font->scalex, button->font->scaley, button->font->colour, va("%i", cgs.dbHitRegions[HR_BODY]), 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
+	CG_Text_Paint_Ext(button->rect.x, button->rect.y + 4 * 12, button->font->scalex, button->font->scaley, button->font->colour, va("%2.0f%%", hitsBody * 100), 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
 
 	w = CG_Text_Width_Ext("Legs: ", button->font->scalex, 0, button->font->font);
 	CG_Text_Paint_Ext(button->rect.x - w, button->rect.y + 5 * 12, button->font->scalex, button->font->scaley, button->font->colour, "Legs:", 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
-	CG_Text_Paint_Ext(button->rect.x, button->rect.y + 5 * 12, button->font->scalex, button->font->scaley, button->font->colour, va("%i", cgs.dbHitRegions[HR_LEGS]), 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
+	CG_Text_Paint_Ext(button->rect.x, button->rect.y + 5 * 12, button->font->scalex, button->font->scaley, button->font->colour, va("%2.0f%%", hitsLegs * 100), 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
 
 	// draw the image of a puppet, indicating red++ colors for higher hit-ratios per region
 	CG_DrawPic(button->rect.x + 4, button->rect.y + 12, 54, 54, img);
