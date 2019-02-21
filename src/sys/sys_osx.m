@@ -121,32 +121,42 @@ const char *OSX_ApplicationSupportPath()
  */
 bool IsTranslocatedURL(CFURLRef currentURL, CFURLRef *originalURL)
 {
-	if (currentURL == NULL) {
+	if (currentURL == NULL)
+	{
 		return false;
 	}
 
-	if (floor(NSAppKitVersionNumber) <= 1404) {
+	if (floor(NSAppKitVersionNumber) <= 1404)
+	{
 		return false;
 	}
 
 	void *handle = dlopen("/System/Library/Frameworks/Security.framework/Security", RTLD_LAZY);
-	if (handle == NULL) {
+	if (handle == NULL)
+	{
 		return false;
 	}
 
 	bool isTranslocated = false;
 
-	Boolean (*mySecTranslocateIsTranslocatedURL)(CFURLRef path, bool *isTranslocated, CFErrorRef * __nullable error);
+	Boolean (*mySecTranslocateIsTranslocatedURL)(CFURLRef path, bool *isTranslocated, CFErrorRef *__nullable error);
 	mySecTranslocateIsTranslocatedURL = dlsym(handle, "SecTranslocateIsTranslocatedURL");
-	if (mySecTranslocateIsTranslocatedURL != NULL) {
-		if (mySecTranslocateIsTranslocatedURL(currentURL, &isTranslocated, NULL)) {
-			if (isTranslocated) {
-				if (originalURL != NULL) {
-					CFURLRef __nullable (*mySecTranslocateCreateOriginalPathForURL)(CFURLRef translocatedPath, CFErrorRef * __nullable error);
+	if (mySecTranslocateIsTranslocatedURL != NULL)
+	{
+		if (mySecTranslocateIsTranslocatedURL(currentURL, &isTranslocated, NULL))
+		{
+			if (isTranslocated)
+			{
+				if (originalURL != NULL)
+				{
+					CFURLRef __nullable (*mySecTranslocateCreateOriginalPathForURL)(CFURLRef translocatedPath, CFErrorRef *__nullable error);
 					mySecTranslocateCreateOriginalPathForURL = dlsym(handle, "SecTranslocateCreateOriginalPathForURL");
-					if (mySecTranslocateCreateOriginalPathForURL != NULL) {
+					if (mySecTranslocateCreateOriginalPathForURL != NULL)
+					{
 						*originalURL = mySecTranslocateCreateOriginalPathForURL((CFURLRef)currentURL, NULL);
-					} else {
+					}
+					else
+					{
 						*originalURL = NULL;
 					}
 				}
@@ -163,34 +173,61 @@ bool IsTranslocatedURL(CFURLRef currentURL, CFURLRef *originalURL)
  * @brief Check for OSX Quarantine, remove the attributes und restart the app
  * @return int: 0 = no action required, 1 = relaunch after dequarantine, >=2 = error, show modal
  */
-int needsOSXQuarantineFix() {
-    bool isQuarantined;
-    int taskRetVal;
-    NSURL *appPath = [NSURL fileURLWithPath:[[NSBundle mainBundle] bundlePath]];
-    NSURL *newPath = nil;
+int needsOSXQuarantineFix()
+{
+	bool  isQuarantined;
+	bool  dialogReturn;
+	int   taskRetVal;
+	NSURL *appPath = [NSURL fileURLWithPath:[[NSBundle mainBundle] bundlePath]];
+	NSURL *newPath = nil;
 
-    //does the app run in a translocated path?
-    isQuarantined = IsTranslocatedURL((CFURLRef) appPath, &newPath);
+	//does the app run in a translocated path?
+	isQuarantined = IsTranslocatedURL((CFURLRef) appPath, &newPath);
 
-    if(isQuarantined) {
-        //remove quarantine flag
-        @try {
-            NSTask *xattrTask = [NSTask launchedTaskWithLaunchPath:@"/usr/bin/xattr" arguments:@[@"-cr", (NSURL*)newPath.path]];
-            [xattrTask waitUntilExit];
-            taskRetVal = xattrTask.terminationStatus;
-        } @catch (NSException *exception) {
-            return 2;
-        }
+	if (isQuarantined)
+	{
+		//ask user if we should fix it programmatically
+		dialogReturn = Sys_Dialog(DT_YES_NO, "The game runs in a hidden folder, to prevent possible dangerous apps. As this prevents loading the game files, a command needs to be executed to run the game from it's original path.\r\n\r\nShould the following command be executed now?\r\n\r\n/usr/bin/xattr -cr etl.app", "App Translocation detected");
+		if (dialogReturn == DR_YES)
+		{
+			//remove quarantine flag
+			@try
+			{
+				NSTask *xattrTask = [NSTask launchedTaskWithLaunchPath:@"/usr/bin/xattr" arguments:@[@"-cr", (NSURL *)newPath.path]];
+				[xattrTask waitUntilExit];
+				taskRetVal = xattrTask.terminationStatus;
+				if (taskRetVal != 0)
+				{
+					char retstr[410];
+					snprintf(retstr, 400, "xattr error return value: %d", taskRetVal);
+					Sys_Dialog(DT_ERROR, retstr, "Can't remove app quarantine");
+					return 5;
+				}
+			}
+			@catch (NSException *exception)
+			{
+				Sys_Dialog(DT_ERROR, [exception.reason UTF8String], "Can't remove app quarantine");
+				return 2;
+			}
 
-        //relaunch, using 'open'
-        @try {
-            [NSTask launchedTaskWithLaunchPath:@"/usr/bin/open" arguments:@[@"-n", @"-a", newPath.path]];
-        } @catch (NSException *exception) {
-            return 3;
-        }
-        //shutdown this instance
-        return 1;
-    } else {
-        return 0;
-    }
+			//relaunch, using 'open'
+			@try
+			{
+				[NSTask launchedTaskWithLaunchPath:@"/usr/bin/open" arguments:@[@"-n", @"-a", newPath.path]];
+			}
+			@catch (NSException *exception)
+			{
+				return 3;
+			}
+
+			//shutdown this instance
+			return 1;
+		}
+
+		return 4;
+	}
+	else
+	{
+		return 0;
+	}
 }

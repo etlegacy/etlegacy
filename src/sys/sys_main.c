@@ -58,7 +58,7 @@
 #include <CoreFoundation/CoreFoundation.h>
 #endif
 
-static char binaryPath[MAX_OSPATH] = { 0 };
+static char binaryPath[MAX_OSPATH]  = { 0 };
 static char installPath[MAX_OSPATH] = { 0 };
 
 #ifdef FEATURE_CURSES
@@ -514,7 +514,7 @@ void *Sys_LoadDll(const char *name, qboolean useSystemLib)
 	void *dllhandle;
 
 	// Don't load any DLLs that end with the pk3 extension or try to traverse directories
-	if(!Sys_DllExtension(name))
+	if (!Sys_DllExtension(name))
 	{
 		Com_Printf("Refusing to attempt to load library \"%s\": Extension not allowed.\n", name);
 		return NULL;
@@ -543,7 +543,7 @@ void *Sys_LoadDll(const char *name, qboolean useSystemLib)
 		if (!(dllhandle = Sys_LoadLibrary(libPath)))
 		{
 			const char *basePath;
-			
+
 			basePath = Cvar_VariableString("fs_basepath");
 
 			if (!basePath || !*basePath)
@@ -783,7 +783,7 @@ void *Sys_LoadGameDll(const char *name, qboolean extract,
 		}
 
 		// use legacy ui for download process (mod binary pk3 isn't extracted)
-		if (!strcmp(name,  "ui") && !libHandle && strcmp(gamedir, DEFAULT_MODGAME))
+		if (!strcmp(name, "ui") && !libHandle && strcmp(gamedir, DEFAULT_MODGAME))
 		{
 			Com_Printf("Sys_LoadDll: mod initialisation - ui fallback\n");
 
@@ -1034,14 +1034,23 @@ int main(int argc, char **argv)
 	// So that way the base folder is right next to the .app allowing
 	{
 		char     parentdir[1024];
-		CFURLRef url = CFBundleCopyBundleURL(CFBundleGetMainBundle());
-		int quarantine_status = 0;
+		CFURLRef url               = CFBundleCopyBundleURL(CFBundleGetMainBundle());
+		int      quarantine_status = 0;
 
 		quarantine_status = needsOSXQuarantineFix();
-		if(quarantine_status == 1) {
+		if (quarantine_status == 1)
+		{
 			//app restarts itself under the right path
 			Sys_Exit(EXIT_SUCCESS);
-		} else if (quarantine_status >=2) {
+		}
+		else if (quarantine_status == 4)
+		{
+			//user canceled the dialog box
+			Sys_Dialog(DT_ERROR, "Running ET Legacy with enabled App Translocation isn't possible. Please remove the quarantine flag by using the following command in the terminal and restart the game:\r\n\r\nxattr -cr /Applications/ET\\ Legacy/", "App Translocation detected");
+			Sys_Exit(EXIT_FAILURE);
+		}
+		else if (quarantine_status >= 2)
+		{
 			Sys_Dialog(DT_ERROR, "An error occured while removing the app quarantine flag automatically. Please read the installation instructions on removing the app quarantine on the ET Legacy wiki:\r\n\r\nhttps://dev.etlegacy.com/projects/etlegacy/wiki/Mac_OS_X", "Can't remove app quarantine");
 			Sys_Exit(EXIT_FAILURE);
 		}
