@@ -36,7 +36,7 @@
 #ifndef INCLUDE_MENUMACROS_H
 #define INCLUDE_MENUMACROS_H
 
-#define LEGACY_RESOLUTIONS cvarFloatList { "desktop resolution" - 2 "custom resolution" - 1 "640*480" 3 "800*600" 4 "960*720" 5 "1024*768" 6 "1152*864" 7 "1280*1024" 8 "1600*1200" 9 "2048*1536" 10 "856*480 (16:9)" 11 "1366x768 (16:9)" 12 "1440x900 (16:10)" 13 "1680x1050 (16:10)" 14 "1600x1200" 15 "1920x1080 (16:9)" 16 "1920x1200 (16:10)" 17 "2560x1440 (16:9)" 18 "2560x1600 (16:10)" 19 "3840x2160 (16:9)" 20 } // see glimp_vidModes in sdl_glimp.c
+#define LEGACY_RESOLUTIONS cvarFloatList { "desktop resolution" - 2 "custom resolution" - 1 "640*480" 3 "800*600" 4 "960*720" 5 "1024*768" 6 "1152*864" 7 "1280*1024" 8 "1600*1200" 9 "2048*1536" 10 "856*480 (16:9)" 11 "1366*768 (16:9)" 12 "1440*900 (16:10)" 13 "1680*1050 (16:10)" 14 "1600*1200" 15 "1920*1080 (16:9)" 16 "1920*1200 (16:10)" 17 "2560*1440 (16:9)" 18 "2560*1600 (16:10)" 19 "3840*2160 (16:9)" 20 } // see glimp_vidModes in sdl_glimp.c
 #define LEGACY_WINDOWMODES cvarFloatList { "Windowed" 0 "Fullscreen" 1 "Windowed Fullscreen" 2 }
 #define LEGACY_LANGUAGES   cvarStrList { "English (default)  "; "en"; "Български"; "bg"; "Čeština"; "cs"; "Deutsch"; "de"; "Español"; "es"; "Suomi"; "fi"; "Français"; "fr"; "Magyar"; "hu"; "Italiano"; "it"; "Nederlands"; "nl"; "Norsk"; "no"; "Polski"; "pl"; "Português"; "pt"; "Русский"; "ru"; "Српски"; "sr"; "Svenska"; "sv"; "Türkçe"; "tr"; }
 #define LEGACY_RENDERERS   cvarStrList { "Vanilla (default)  "; "opengl1"; /*"ET: Legacy"; "opengl2"*/ }
