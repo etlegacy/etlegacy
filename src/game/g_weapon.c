@@ -3564,11 +3564,10 @@ gentity_t *weapon_mortar_fire(gentity_t *ent)
  */
 gentity_t *weapon_grenadelauncher_fire(gentity_t *ent)
 {
-	trace_t  tr;
-	vec3_t   viewpos;
-	float    upangle = 0, pitch = ent->s.apos.trBase[0];   // start with level throwing and adjust based on angle
-	vec3_t   tosspos;
-	qboolean underhand = qtrue;
+	trace_t tr;
+	vec3_t  viewpos;
+	float   upangle = 0, pitch = ent->s.apos.trBase[0];    // start with level throwing and adjust based on angle
+	vec3_t  tosspos;
 
 	// smoke grenades always overhand
 	if (pitch >= 0)
@@ -3614,14 +3613,11 @@ gentity_t *weapon_grenadelauncher_fire(gentity_t *ent)
 
 	VectorCopy(muzzleEffect, tosspos);
 
-	if (underhand)
-	{
-		// move a little bit more away from the player (so underhand tosses don't get caught on nearby lips)
-		VectorMA(muzzleEffect, 8, forward, tosspos);
-		tosspos[2] -= 8;    // lower origin for the underhand throw
-		upangle    *= pitch;
-		SnapVector(tosspos);
-	}
+	// move a little bit more away from the player (so underhand tosses don't get caught on nearby lips)
+	VectorMA(muzzleEffect, 8, forward, tosspos);
+	tosspos[2] -= 8;    // lower origin for the underhand throw
+	upangle    *= pitch;
+	SnapVector(tosspos);
 
 	VectorScale(forward, upangle, forward);
 
