@@ -4372,7 +4372,7 @@ void CG_OutOfAmmoChange(qboolean allowForceSwitch)
 	// int bank = 0, cycle = 0;
 
 	// trivial switching
-	if (cg.weaponSelect == WP_PLIERS || (cg.weaponSelect == WP_SATCHEL_DET && cg.predictedPlayerState.ammo[WP_SATCHEL_DET]))
+	if (cg.weaponSelect == WP_PLIERS || (cg.weaponSelect == WP_SATCHEL_DET && cg.predictedPlayerState.ammoclip[WP_SATCHEL_DET]))
 	{
 		return;
 	}

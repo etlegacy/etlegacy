@@ -3659,9 +3659,7 @@ gentity_t *weapon_satcheldet_fire(gentity_t *ent)
 	{
 		if (ent->client)
 		{
-			ent->client->ps.ammo[WP_SATCHEL_DET]     = 0;
 			ent->client->ps.ammoclip[WP_SATCHEL_DET] = 0;
-			ent->client->ps.ammoclip[WP_SATCHEL]     = 1;
 			ent->client->ps.ammoclip[WP_SATCHEL]     = 1;
 			G_AddEvent(ent, EV_NOAMMO, 0);
 		}

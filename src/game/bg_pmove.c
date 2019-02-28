@@ -2710,8 +2710,6 @@ static void PM_SwitchIfEmpty(void)
 	else if (pm->ps->weapon == WP_SATCHEL)
 	{
 		pm->ps->ammoclip[WP_SATCHEL_DET] = 1;
-		pm->ps->ammo[WP_SATCHEL_DET]     = 1;
-		pm->ps->ammo[WP_SATCHEL]         = 0;
 		pm->ps->ammoclip[WP_SATCHEL]     = 0;
 		PM_BeginWeaponChange(WP_SATCHEL, WP_SATCHEL_DET, qfalse);
 	}
