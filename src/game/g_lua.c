@@ -568,7 +568,7 @@ static int _et_trap_FS_Rename(lua_State *L)
 extern char bigTextBuffer[100000];
 static int _et_trap_FS_GetFileList(lua_State *L)
 {
-	const char *dirname            = luaL_checkstring(L, 1);
+	const char *dirname = luaL_checkstring(L, 1);
 	const char *filename_extension = luaL_checkstring(L, 2);
 	int        newTable, index = 1, i, filelen, numfiles;
 	char       filename[MAX_QPATH];
@@ -1309,7 +1309,7 @@ gentity_t *G_Lua_CreateEntity(char *params)
 
 		if (g_scriptDebug.integer)
 		{
-			G_Printf("%s API %d: set [%s] [%s] [%s]\n", LUA_VERSION , level.time, GAMEVERSION, key, value);
+			G_Printf("%s API %d: set [%s] [%s] [%s]\n", LUA_VERSION, level.time, GAMEVERSION, key, value);
 		}
 
 		if (level.numSpawnVars == MAX_SPAWN_VARS)
@@ -1353,7 +1353,7 @@ static int _et_G_Lua_CreateEntity(lua_State *L)
 		//luaL_error(L, "can't create entity");
 		return 0;
 	}
-	
+
 	lua_pushinteger(L, entnum - g_entities);
 
 	return 1;
@@ -2317,6 +2317,7 @@ static void registerWeaponConstants(lua_vm_t *vm)
 	lua_regconstinteger(vm->L, WP_MORTAR2_SET);          // 52
 	lua_regconstinteger(vm->L, WP_BAZOOKA);              // 53
 	lua_regconstinteger(vm->L, WP_MP34);                 // 54
+	lua_regconstinteger(vm->L, WP_SHELL);                // 55
 	lua_regconstinteger(vm->L, WP_NUM_WEAPONS);
 }
 
@@ -2574,7 +2575,7 @@ qboolean G_LuaStartVM(lua_vm_t *vm)
 	case LUA_OK:
 		break;
 	case LUA_ERRSYNTAX:
-		G_Printf("%s API: %ssyntax error during pre-compilation: %s\n", LUA_VERSION, S_COLOR_BLUE,lua_tostring(vm->L, -1));
+		G_Printf("%s API: %ssyntax error during pre-compilation: %s\n", LUA_VERSION, S_COLOR_BLUE, lua_tostring(vm->L, -1));
 		lua_pop(vm->L, 1);
 		vm->err++;
 		return qfalse;

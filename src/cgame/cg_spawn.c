@@ -503,8 +503,9 @@ qboolean CG_ParseSpawnVars(void)
  */
 void SP_worldspawn(void)
 {
-	char *s;
-	int  i;
+	char   *s;
+	int    i;
+	vec3_t vec;
 
 	CG_SpawnString("classname", "", &s);
 	if (Q_stricmp(s, "worldspawn"))
@@ -553,11 +554,11 @@ void SP_worldspawn(void)
 	CG_EffectParse(s);
 
 	cg.fiveMinuteSound_g[0]                       = \
-	    cg.fiveMinuteSound_a[0]                   = \
-	        cg.twoMinuteSound_g[0]                = \
-	            cg.twoMinuteSound_a[0]            = \
-	                cg.thirtySecondSound_g[0]     = \
-	                    cg.thirtySecondSound_a[0] = '\0';
+		cg.fiveMinuteSound_a[0]                   = \
+			cg.twoMinuteSound_g[0]                = \
+				cg.twoMinuteSound_a[0]            = \
+					cg.thirtySecondSound_g[0]     = \
+						cg.thirtySecondSound_a[0] = '\0';
 
 	CG_SpawnString("fiveMinuteSound_axis", "axis_hq_5minutes", &s);
 	Q_strncpyz(cg.fiveMinuteSound_g, s, sizeof(cg.fiveMinuteSound_g));
@@ -657,6 +658,36 @@ void SP_worldspawn(void)
 	{
 		cgs.media.thirtySecondSound_a = -1;
 	}
+
+	// axis airstrike plane
+	CG_SpawnString("airstrikePlane_axis", "models/mapobjects/etl_plane/junker88.md3", &s);
+
+	if (!*s)
+	{
+		cgs.media.airstrikePlane[0] = trap_R_RegisterModel("models/mapobjects/etl_plane/junker88.md3");
+	}
+	else
+	{
+		cgs.media.airstrikePlane[0] = trap_R_RegisterModel(s); // axis
+	}
+
+	CG_SpawnVector("airstrikePlaneScale_axis", "0 0 0", vec);
+	VectorCopy(vec, cg.airstrikePlaneScale[0]);
+
+	// allies airstrike plane
+	CG_SpawnString("airstrikePlane_allies", "models/mapobjects/etl_plane/b-25.md3", &s);
+
+	if (!*s)
+	{
+		cgs.media.airstrikePlane[1] = trap_R_RegisterModel("models/mapobjects/etl_plane/b-25.md3");
+	}
+	else
+	{
+		cgs.media.airstrikePlane[1] = trap_R_RegisterModel(s);
+	}
+
+	CG_SpawnVector("airstrikePlaneScale_allies", "0 0 0", vec);
+	VectorCopy(vec, cg.airstrikePlaneScale[1]);
 }
 
 /**

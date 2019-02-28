@@ -2381,7 +2381,7 @@ static void PM_BeginWeaponChange(weapon_t oldWeapon, weapon_t newWeapon, qboolea
 	{
 		// don't send change weapon event after firing with riflenade
 		if (!(GetWeaponTableData(oldWeapon)->type & WEAPON_TYPE_RIFLENADE) || pm->ps->ammoclip[GetWeaponTableData(oldWeapon)->ammoIndex])
-		{
+	{
 			PM_AddEvent(EV_CHANGE_WEAPON_2);
 		}
 

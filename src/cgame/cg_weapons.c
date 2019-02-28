@@ -5431,12 +5431,12 @@ void CG_MissileHitWall(int weapon, int missileEffect, vec3_t origin, vec3_t dir,
 			CG_AddDebris(origin, dir, 280, 1400, 7 + rand() % 2, &trace);
 		}
 	}
-	else if ((GetWeaponTableData(weapon)->type & WEAPON_TYPE_PANZER) || weapon == VERYBIGEXPLOSION || weapon == WP_ARTY || weapon == WP_SMOKE_MARKER)
+	else if ((GetWeaponTableData(weapon)->type & WEAPON_TYPE_PANZER) || weapon == VERYBIGEXPLOSION || weapon == WP_ARTY || weapon == WP_SHELL || weapon == WP_SMOKE_MARKER)
 	{
 		sfx  = cgs.media.sfx_rockexp;
 		sfx2 = cgs.media.sfx_rockexpDist;
 
-		if (weapon == VERYBIGEXPLOSION || weapon == WP_ARTY)
+		if (weapon == VERYBIGEXPLOSION || weapon == WP_ARTY || weapon == WP_SHELL)
 		{
 			sfx  = cgs.media.sfx_artilleryExp[rand() % 3];
 			sfx2 = cgs.media.sfx_artilleryDist;

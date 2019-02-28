@@ -994,9 +994,6 @@ static void CG_Missile(centity_t *cent)
 	}
 	weapon = &cg_weapons[s1->weapon];
 
-	// calculate the axis
-	VectorCopy(s1->angles, cent->lerpAngles);
-
 	if (s1->weapon == WP_SMOKE_BOMB)
 	{
 		// the smoke effect
@@ -1082,6 +1079,7 @@ static void CG_Missile(centity_t *cent)
 	Com_Memset(&ent, 0, sizeof(ent));
 	VectorCopy(cent->lerpOrigin, ent.origin);
 	VectorCopy(cent->lerpOrigin, ent.oldorigin);
+	AnglesToAxis(cent->lerpAngles, ent.axis);
 
 	// flicker between two skins
 	ent.skinNum = cg.clientFrame & 1;
@@ -1217,7 +1215,7 @@ static void CG_Missile(centity_t *cent)
 			ent.axis[0][2] = 1;
 		}
 	}
-	else
+	else if (cent->lerpAngles[0] == 0.f && cent->lerpAngles[1] == 0.f && cent->lerpAngles[2] == 0.f)
 	{
 		// FIXME: anything to do/save for edv?
 		if (VectorNormalize2(s1->pos.trDelta, ent.axis[0]) == 0.f)
@@ -1225,8 +1223,6 @@ static void CG_Missile(centity_t *cent)
 			ent.axis[0][2] = 1;
 		}
 	}
-
-	AxisToAngles(ent.axis, cent->lerpAngles);
 
 	// spin as it moves
 	if (s1->pos.trType != TR_STATIONARY)
@@ -1509,6 +1505,7 @@ static void CG_Mover(centity_t *cent)
 	ent.skinNum  = 0;
 
 	// get the model, either as a bmodel or a modelindex
+
 	if (s1->solid == SOLID_BMODEL)
 	{
 		ent.hModel = cgs.inlineDrawModel[s1->modelindex];
@@ -1617,6 +1614,103 @@ static void CG_Mover(centity_t *cent)
 		trap_R_AddRefEntityToScene(&ent);
 	}
 }
+
+#define NUM_FRAME_PROPELLER 10
+#define TIME_FRAME_PROPELLER (1000 / NUM_FRAME_PROPELLER)
+
+/**
+ * @brief CG_MovePlane
+ * @param[in] cent
+ */
+void CG_MovePlane(centity_t *cent)
+{
+	refEntity_t ent;
+
+	Com_Memset(&ent, 0, sizeof(ent));
+	VectorCopy(cent->lerpOrigin, ent.origin);
+	VectorCopy(cent->lastLerpOrigin, ent.oldorigin);
+	AnglesToAxis(cent->lerpAngles, ent.axis);
+
+	// set frame
+	if (cg.time >= cent->lerpFrame.frameTime)
+	{
+		cent->lerpFrame.oldFrameTime = cent->lerpFrame.frameTime;
+		cent->lerpFrame.oldFrame     = cent->lerpFrame.frame;
+
+		while (cg.time >= cent->lerpFrame.frameTime)
+		{
+			cent->lerpFrame.frameTime += TIME_FRAME_PROPELLER;
+			cent->lerpFrame.frame++;
+
+			if (cent->lerpFrame.frame >= NUM_FRAME_PROPELLER)
+			{
+				cent->lerpFrame.frame = 0;
+			}
+		}
+	}
+
+	if (cent->lerpFrame.frameTime == cent->lerpFrame.oldFrameTime)
+	{
+		cent->lerpFrame.backlerp = 0;
+	}
+	else
+	{
+		cent->lerpFrame.backlerp = 1.0f - (float)(cg.time - cent->lerpFrame.oldFrameTime) / (cent->lerpFrame.frameTime - cent->lerpFrame.oldFrameTime);
+	}
+
+	ent.frame = cent->lerpFrame.frame + cent->currentState.frame; // offset
+	if (ent.frame >= NUM_FRAME_PROPELLER)
+	{
+		ent.frame -= NUM_FRAME_PROPELLER;
+	}
+
+	ent.oldframe = cent->lerpFrame.oldFrame + cent->currentState.frame;   // offset
+	if (ent.oldframe >= NUM_FRAME_PROPELLER)
+	{
+		ent.oldframe -= NUM_FRAME_PROPELLER;
+	}
+
+	ent.backlerp = cent->lerpFrame.backlerp;
+
+	// fade effect
+	if (cent->currentState.time)
+	{
+		ent.shaderRGBA[3] = (byte)(255.f * (float)(cent->currentState.time2 - cg.time) / (float)(cent->currentState.time2 - cent->currentState.time));
+	}
+	else
+	{
+		ent.shaderRGBA[3] = 255;
+	}
+
+	if (cent->currentState.teamNum == TEAM_AXIS)
+	{
+		ent.hModel = cgs.media.airstrikePlane[0];
+
+		if (cg.airstrikePlaneScale[0][0] != 0.f || cg.airstrikePlaneScale[0][1] != 0.f || cg.airstrikePlaneScale[0][2] != 0.f)
+		{
+			VectorScale(ent.axis[0], cg.airstrikePlaneScale[0][0], ent.axis[0]);
+			VectorScale(ent.axis[1], cg.airstrikePlaneScale[0][1], ent.axis[1]);
+			VectorScale(ent.axis[2], cg.airstrikePlaneScale[0][2], ent.axis[2]);
+			ent.nonNormalizedAxes = qtrue;
+		}
+	}
+	else
+	{
+		ent.hModel = cgs.media.airstrikePlane[1];
+
+		if (cg.airstrikePlaneScale[1][0] != 0.f || cg.airstrikePlaneScale[1][1] != 0.f || cg.airstrikePlaneScale[1][2] != 0.f)
+		{
+			VectorScale(ent.axis[0], cg.airstrikePlaneScale[1][0], ent.axis[0]);
+			VectorScale(ent.axis[1], cg.airstrikePlaneScale[1][1], ent.axis[1]);
+			VectorScale(ent.axis[2], cg.airstrikePlaneScale[1][2], ent.axis[2]);
+			ent.nonNormalizedAxes = qtrue;
+		}
+	}
+
+	// add to refresh list
+	trap_R_AddRefEntityToScene(&ent);
+}
+
 
 /**
  * @brief CG_Mover_PostProcess
@@ -2315,6 +2409,9 @@ static void CG_ProcessEntity(centity_t *cent)
 		break;
 	case ET_SMOKER:
 		CG_Smoker(cent);
+		break;
+	case ET_AIRSTRIKE_PLANE:
+		CG_MovePlane(cent);
 		break;
 	}
 }

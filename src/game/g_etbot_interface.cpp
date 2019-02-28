@@ -1819,6 +1819,9 @@ static int _GetEntityClass(gentity_t *_ent)
 			return ET_CLASSEX_ROCKET;
 #endif
 		case WP_ARTY:
+#if defined(LEGACY)
+		case WP_SHELL:
+#endif
 			return ET_CLASSEX_ARTY;
 		case WP_DYNAMITE:
 			return ET_CLASSEX_DYNAMITE;
@@ -3385,6 +3388,9 @@ public:
 			case WP_GRENADE_PINEAPPLE:
 			case WP_PANZERFAUST:
 			case WP_ARTY:
+#if defined(LEGACY)
+			case WP_SHELL:
+#endif
 			case WP_DYNAMITE:
 			case WP_SMOKE_MARKER:
 			case WP_SATCHEL:
@@ -3799,6 +3805,9 @@ public:
 				case WP_GRENADE_LAUNCHER:
 				case WP_PANZERFAUST:
 				case WP_ARTY:
+#if defined(LEGACY)
+				case WP_SHELL:
+#endif
 				case WP_DYNAMITE:
 				case WP_SMOKE_MARKER:
 				case WP_LANDMINE:
@@ -3811,7 +3820,7 @@ public:
 				case WP_BAZOOKA:
 #endif
 				case WP_SMOKE_BOMB:
-
+				// FIXME: fallthrough ??
 				default:
 					_flags.SetFlag(ENT_FLAG_VISTEST);
 				}

@@ -53,6 +53,7 @@ typedef struct tracemap_s
 	float ground[TRACEMAP_SIZE][TRACEMAP_SIZE];
 	vec2_t world_mins, world_maxs;
 	int groundfloor, groundceil;
+	int skygroundfloor, skygroundceil;
 } tracemap_t;
 
 static tracemap_t tracemap;
@@ -584,17 +585,17 @@ qboolean BG_LoadTraceMap(char *rawmapname, vec2_t world_mins, vec2_t world_maxs)
 {
 	fileHandle_t f;
 	byte         data, datablock[TRACEMAP_SIZE][4];
-	int          ground_min = MIN_WORLD_HEIGHT;
-	int          ground_max = MIN_WORLD_HEIGHT;
+	int          ground_min    = MIN_WORLD_HEIGHT;
+	int          ground_max    = MIN_WORLD_HEIGHT;
+	int          skyground_min = MAX_WORLD_HEIGHT;
+	int          skyground_max = MAX_WORLD_HEIGHT;
 	//int startTime = trap_Milliseconds();
 
 	if (trap_FS_FOpenFile(va("maps/%s_tracemap.tga", Q_strlwr(rawmapname)), &f, FS_READ) >= 0)
 	{
 		float scalefactor;
-		int   sky_min       = MAX_WORLD_HEIGHT;
-		int   sky_max       = MAX_WORLD_HEIGHT;
-		int   skyground_min = MAX_WORLD_HEIGHT;
-		int   skyground_max = MAX_WORLD_HEIGHT;
+		int   sky_min = MAX_WORLD_HEIGHT;
+		int   sky_max = MAX_WORLD_HEIGHT;
 		int   i, j;
 
 		// skip over header
@@ -796,6 +797,9 @@ qboolean BG_LoadTraceMap(char *rawmapname, vec2_t world_mins, vec2_t world_maxs)
 	tracemap.groundfloor = ground_min;
 	tracemap.groundceil  = ground_max;
 
+	tracemap.skygroundfloor = skyground_min;
+	tracemap.skygroundceil  = skyground_max;
+
 	//Com_Printf( "^8Loaded tracemap in %i msec\n", trap_Milliseconds() - startTime );
 
 	return(tracemap.loaded = qtrue);
@@ -950,6 +954,32 @@ int BG_GetTracemapGroundCeil(void)
 		return MAX_WORLD_HEIGHT;
 	}
 	return tracemap.groundceil;
+}
+
+/**
+ * @brief BG_GetTracemapSkyGroundFloor
+ * @return
+ */
+int BG_GetTracemapSkyGroundFloor(void)
+{
+	if (!tracemap.loaded)
+	{
+		return MIN_WORLD_HEIGHT;
+	}
+	return tracemap.skygroundfloor;
+}
+
+/**
+ * @brief BG_GetTracemapSkyGroundCeil
+ * @return
+ */
+int BG_GetTracemapSkyGroundCeil(void)
+{
+	if (!tracemap.loaded)
+	{
+		return MAX_WORLD_HEIGHT;
+	}
+	return tracemap.skygroundceil;
 }
 
 /**

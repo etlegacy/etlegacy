@@ -468,7 +468,7 @@ void Landmine_Check_Ground(gentity_t *self)
  */
 void G_RunMissile(gentity_t *ent)
 {
-	vec3_t  origin;
+	vec3_t  origin, angle;
 	trace_t tr;
 
 	// shootable ent (i.e landmine, dynamite, satchel)
@@ -488,9 +488,10 @@ void G_RunMissile(gentity_t *ent)
 
 	// get current position
 	BG_EvaluateTrajectory(&ent->s.pos, level.time, origin, qfalse, ent->s.effect2Time);
+	BG_EvaluateTrajectory(&ent->s.apos, level.time, angle, qtrue, ent->s.effect2Time);
 
 	// ignore body
-	if ((ent->clipmask & CONTENTS_BODY) && ((GetWeaponTableData(ent->s.weapon)->firingMode & WEAPON_FIRING_MODE_THROWABLE) || ent->s.weapon == WP_ARTY))
+	if ((ent->clipmask & CONTENTS_BODY) && ((GetWeaponTableData(ent->s.weapon)->firingMode & WEAPON_FIRING_MODE_THROWABLE) || ent->s.weapon == WP_ARTY || ent->s.weapon == WP_SHELL))
 	{
 		if (ent->s.pos.trDelta[0] == 0.f && ent->s.pos.trDelta[1] == 0.f && ent->s.pos.trDelta[2] == 0.f)
 		{
@@ -500,7 +501,8 @@ void G_RunMissile(gentity_t *ent)
 
 	if (level.tracemapLoaded &&
 	    (CHECKBITWISE(GetWeaponTableData(ent->s.weapon)->type, WEAPON_TYPE_MORTAR | WEAPON_TYPE_SET)
-	     || (GetWeaponTableData(ent->s.weapon)->type & (WEAPON_TYPE_GRENADE | WEAPON_TYPE_RIFLENADE))))
+	     || (GetWeaponTableData(ent->s.weapon)->type & (WEAPON_TYPE_GRENADE | WEAPON_TYPE_RIFLENADE))
+	     || ent->s.weapon == WP_SHELL || ent->s.weapon == WP_ARTY))
 	{
 		if (ent->count)
 		{
@@ -545,6 +547,7 @@ void G_RunMissile(gentity_t *ent)
 				{
 					G_RunThink(ent);
 					VectorCopy(origin, ent->r.currentOrigin);   // keep the previous origin to don't go too far
+					VectorCopy(angle, ent->r.currentAngles);
 
 					return;     // keep flying
 				}
@@ -558,6 +561,7 @@ void G_RunMissile(gentity_t *ent)
 
 				// back in the world, keep going like normal
 				VectorCopy(origin, ent->r.currentOrigin);
+				VectorCopy(angle, ent->r.currentAngles);
 				ent->count  = 0;
 				ent->count2 = 1;
 			}
@@ -619,6 +623,7 @@ void G_RunMissile(gentity_t *ent)
 	}
 
 	VectorCopy(tr.endpos, ent->r.currentOrigin);
+	VectorCopy(angle, ent->r.currentAngles);
 
 	if (tr.startsolid)
 	{
@@ -633,7 +638,8 @@ void G_RunMissile(gentity_t *ent)
 
 		if (level.tracemapLoaded &&
 		    (CHECKBITWISE(GetWeaponTableData(ent->s.weapon)->type, WEAPON_TYPE_MORTAR | WEAPON_TYPE_SET)
-		     || (GetWeaponTableData(ent->s.weapon)->type & (WEAPON_TYPE_GRENADE | WEAPON_TYPE_RIFLENADE)))
+		     || (GetWeaponTableData(ent->s.weapon)->type & (WEAPON_TYPE_GRENADE | WEAPON_TYPE_RIFLENADE))
+		     || ent->s.weapon == WP_SHELL || ent->s.weapon == WP_ARTY)
 		    && (tr.surfaceFlags & SURF_SKY))
 		{
 			// goes through sky
@@ -1714,9 +1720,6 @@ gentity_t *fire_missile(gentity_t *self, vec3_t start, vec3_t dir, int weapon)
 		bolt->nextthink                  = level.time + self->client->ps.grenadeTimeLeft;
 		self->client->ps.grenadeTimeLeft = 0;   // reset grenade timer
 	}
-
-	bolt->think = GetWeaponFireTableData(weapon)->think;
-	bolt->free  = GetWeaponFireTableData(weapon)->free;
 
 	if (weapon == WP_DYNAMITE)
 	{

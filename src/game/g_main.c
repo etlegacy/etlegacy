@@ -345,7 +345,7 @@ vmCvar_t g_skillRating;
 vmCvar_t g_multiview; // 0 - off, other - enabled
 #endif
 
-vmCvar_t g_stickyCharge; 
+vmCvar_t g_stickyCharge;
 
 cvarTable_t gameCvarTable[] =
 {
@@ -499,7 +499,7 @@ cvarTable_t gameCvarTable[] =
 	{ &vote_allow_restartcampaign,          "vote_allow_restartcampaign",          "1",                          0,                                               0, qfalse, qfalse },
 	{ &vote_allow_nextcampaign,             "vote_allow_nextcampaign",             "1",                          0,                                               0, qfalse, qfalse },
 	{ &vote_allow_poll,                     "vote_allow_poll",                     "1",                          0,                                               0, qfalse, qfalse },
-	{ &vote_allow_maprestart,				"vote_allow_maprestart",               "1",                          0,                                               0, qfalse, qfalse },
+	{ &vote_allow_maprestart,               "vote_allow_maprestart",               "1",                          0,                                               0, qfalse, qfalse },
 
 	{ &g_voting,                            "g_voting",                            "0",                          0,                                               0, qfalse, qfalse },
 
@@ -1752,9 +1752,9 @@ void G_RegisterCvars(void)
 		trap_Cvar_Set("g_gametype", va("%i", GT_WOLF));
 		trap_Cvar_Update(&g_gametype);
 		// FIXME: auto restart?
-		// g_gametype is latched and won't use the above value for current game. but running legacy with invalid gametype is resulting in bad behaviour 
+		// g_gametype is latched and won't use the above value for current game. but running legacy with invalid gametype is resulting in bad behaviour
 		// let's drop the game... (unfortunately we can't immediately restart the server here (exec map_restart isn't working)
-		G_Error("Invalid game type %i detected - defaulting to %s (%i). Start your server again with no gametype set!\n", g_gametype.integer, gameNames[GT_WOLF] , GT_WOLF);
+		G_Error("Invalid game type %i detected - defaulting to %s (%i). Start your server again with no gametype set!\n", g_gametype.integer, gameNames[GT_WOLF], GT_WOLF);
 	}
 
 	trap_SetConfigstring(CS_SERVERTOGGLES, va("%d", level.server_settings));
@@ -4792,6 +4792,14 @@ void G_DrawEntBBox(gentity_t *ent)
 		VectorCopy(ent->r.maxs, maxs);
 		VectorCopy(ent->r.mins, mins);
 		break;
+	case ET_AIRSTRIKE_PLANE:
+		if (g_debugHitboxes.integer != 15)
+		{
+			return;
+		}
+		VectorCopy(ent->r.maxs, maxs);
+		VectorCopy(ent->r.mins, mins);
+		break;
 	default:
 		return;
 	}
@@ -4939,6 +4947,12 @@ void G_RunEntity(gentity_t *ent, int msec)
 		// hack for instantaneous velocity
 		VectorSubtract(ent->r.currentOrigin, ent->oldOrigin, ent->instantVelocity);
 		VectorScale(ent->instantVelocity, 1000.0f / msec, ent->instantVelocity);
+		return;
+	case ET_AIRSTRIKE_PLANE:
+		// get current position
+		BG_EvaluateTrajectory(&ent->s.pos, level.time, ent->r.currentOrigin, qfalse, ent->s.effect2Time);
+		trap_LinkEntity(ent);
+		G_RunThink(ent);
 		return;
 	default:
 		break;
