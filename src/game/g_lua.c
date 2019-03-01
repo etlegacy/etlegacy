@@ -2409,6 +2409,7 @@ static void registerModConstants(lua_vm_t *vm)
 	lua_regconstinteger(vm->L, MOD_BAZOOKA);
 	lua_regconstinteger(vm->L, MOD_BACKSTAB);
 	lua_regconstinteger(vm->L, MOD_MP34);
+	lua_regconstinteger(vm->L, MOD_SHELL);
 
 	lua_regconstinteger(vm->L, MOD_NUM_MODS);
 }

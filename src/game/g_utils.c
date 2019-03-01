@@ -1872,6 +1872,7 @@ team_t G_GetTeamFromEntity(gentity_t *ent)
 		case MOD_SATCHEL:
 		case MOD_DYNAMITE:
 		case MOD_LANDMINE:
+		case MOD_SHELL:
 			return ent->s.teamNum;
 		default:
 			break;
