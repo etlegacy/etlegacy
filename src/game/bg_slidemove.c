@@ -245,8 +245,8 @@ qboolean PM_SlideMove(qboolean gravity)
 				d = DotProduct(dir, pm->ps->velocity);
 				VectorScale(dir, d, clipVelocity);
 
-				CrossProduct(planes[i], planes[j], dir);
-				VectorNormalize(dir);
+				//CrossProduct(planes[i], planes[j], dir); // this has just been done
+				//VectorNormalize(dir);                    // and this too..  no need to do it again
 				d = DotProduct(dir, endVelocity);
 				VectorScale(dir, d, endClipVelocity);
 
