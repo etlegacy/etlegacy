@@ -15,11 +15,11 @@
 DEFINES
 
 // weapons
-set weapons knives               = knife AND Ka-Bar
+set weapons knives               = Knife AND Ka-Bar
 set weapons Bipods               = Mobile MG 42 Bipod AND Mobile Browning Bipod
 set weapons pistols              = Luger AND Colt AND Silenced Luger AND Silenced Colt
 set weapons akimbo_pistols       = Akimbo Luger AND Silenced Akimbo Luger AND Akimbo Colt AND Silenced Akimbo Colt
-set weapons machineguns          = MP 40 AND Thompson AND Sten gun AND Flamethrower AND panzerfaust AND bazooka AND Mobile MG 42 AND Mobile Browning
+set weapons machineguns          = MP 40 AND Thompson AND Sten gun AND Flamethrower AND panzerfaust AND bazooka AND Mobile MG 42 AND Mobile Browning AND MP34
 set weapons rifles               = K43 Rifle AND gpg40 AND M7 AND m1 garand AND FG 42 Paratroop Rifle AND Scoped K43 Rifle AND K43 Rifle Scope AND M1 Garand Scope AND FG 42 Paratroop Rifle Scope
 
 // broke off dynamite, since we never want to throw it overhand
@@ -27,11 +27,11 @@ set weapons throwables           = pineapple AND grenade AND Smoke Bomb
 set weapons throwables_underhand = dynamite weapon
 
 set weapons one_handed_weapons   = Luger AND Colt AND Silenced Luger AND Silenced Colt
-set weapons two_handed_weapons   = MP 40 AND Thompson AND Sten gun AND flamethrower AND panzerfaust AND bazooka AND K43 Rifle AND gpg40 AND M7 AND m1 garand AND FG 42 Paratroop Rifle AND Scoped M1 Garand AND Mobile MG 42 AND Scoped K43 Rifle AND K43 Rifle Scope AND M1 Garand Scope AND FG 42 Paratroop Rifle Scope AND Mobile Browning
+set weapons two_handed_weapons   = MP 40 AND Thompson AND Sten gun AND flamethrower AND panzerfaust AND bazooka AND K43 Rifle AND gpg40 AND M7 AND m1 garand AND FG 42 Paratroop Rifle AND Scoped M1 Garand AND Mobile MG 42 AND Scoped K43 Rifle AND K43 Rifle Scope AND M1 Garand Scope AND FG 42 Paratroop Rifle Scope AND Mobile Browning AND MP34
 
-set weapons all = Luger AND Colt AND Silenced Luger AND Silenced Colt AND Binoculars AND special AND Ammo Pack AND knives AND dynamite weapon AND pineapple AND grenade AND smokeGrenade AND Smoke Bomb AND Landmine AND Satchel Charge AND MP 40 AND Thompson AND Sten gun AND flamethrower AND panzerfaust AND bazooka AND Ammo Pack AND Medicheal AND gpg40 AND M7 AND m1 garand AND FG 42 Paratroop Rifle AND Scoped M1 Garand AND Satchel Charge AND Landmine AND Mobile MG 42 AND Scoped K43 Rifle AND K43 Rifle Scope AND M1 Garand Scope AND FG 42 Paratroop Rifle Scope AND Mortar AND Mounted Mortar AND Satchel Charge AND Satchel Charge Detonator AND Mobile Browning AND Granatwerfer AND Mounted Granatwerfer
+set weapons all                    = Luger AND Colt AND Silenced Luger AND Silenced Colt AND Binoculars AND special AND Ammo Pack AND knives AND dynamite weapon AND pineapple AND grenade AND smokeGrenade AND Smoke Bomb AND Landmine AND Satchel Charge AND MP 40 AND Thompson AND Sten gun AND flamethrower AND panzerfaust AND bazooka AND Ammo Pack AND Medicheal AND gpg40 AND M7 AND m1 garand AND FG 42 Paratroop Rifle AND Scoped M1 Garand AND Satchel Charge AND Landmine AND Mobile MG 42 AND Scoped K43 Rifle AND K43 Rifle Scope AND M1 Garand Scope AND FG 42 Paratroop Rifle Scope AND Mortar AND Mounted Mortar AND Satchel Charge AND Satchel Charge Detonator AND Mobile Browning AND Granatwerfer AND Mounted Granatwerfer AND MP34
 set weapons all_one_handed_weapons = Luger AND Colt AND Silenced Luger AND Silenced Colt AND Binoculars AND special AND Ammo Pack AND knives AND dynamite weapon AND pineapple AND grenade AND smokeGrenade AND Smoke Bomb AND Landmine AND Satchel Charge
-set weapons all_two_handed_weapons = MP 40 AND Thompson AND Sten gun AND flamethrower AND panzerfaust AND bazooka AND Ammo Pack AND Medicheal AND gpg40 AND M7 AND m1 garand AND FG 42 Paratroop Rifle AND Scoped M1 Garand AND Satchel Charge AND Landmine AND Mobile MG 42 AND Scoped K43 Rifle AND K43 Rifle Scope AND M1 Garand Scope AND FG 42 Paratroop Rifle Scope AND Mortar AND Mounted Mortar AND Satchel Charge AND Satchel Charge Detonator AND Mobile Browning AND Granatwerfer AND Mounted Granatwerfer
+set weapons all_two_handed_weapons = MP 40 AND Thompson AND Sten gun AND flamethrower AND panzerfaust AND bazooka AND Ammo Pack AND Medicheal AND gpg40 AND M7 AND m1 garand AND FG 42 Paratroop Rifle AND Scoped M1 Garand AND Satchel Charge AND Landmine AND Mobile MG 42 AND Scoped K43 Rifle AND K43 Rifle Scope AND M1 Garand Scope AND FG 42 Paratroop Rifle Scope AND Mortar AND Mounted Mortar AND Satchel Charge AND Satchel Charge Detonator AND Mobile Browning AND Granatwerfer AND Mounted Granatwerfer AND MP34
 
 // movetypes
 set movetype moving = walk AND walkcr AND walkcrbk AND walkbk AND run AND runbk AND straferight AND strafeleft
@@ -142,7 +142,7 @@ STATE COMBAT
 		{
 			both stand_grenade
 		}
-		weapons syringe AND Adrenaline Syringe
+		weapons Syringe AND Adrenaline Syringe
 		{
 			both stand_knife
 		}
@@ -287,7 +287,7 @@ STATE COMBAT
 		{
 			legs alert_crchidle_1h torso stand_grenade
 		}
-		weapons syringe AND Adrenaline Syringe
+		weapons Syringe AND Adrenaline Syringe
 		{
 			legs alert_crchidle_1h torso stand_knife
 		}
@@ -414,7 +414,7 @@ STATE COMBAT
 		{
 			both relaxed_walk_1h_1
 		}
-		weapons syringe AND Adrenaline Syringe
+		weapons Syringe AND Adrenaline Syringe
 		{
 			both relaxed_walk_1h_1
 		}
@@ -541,7 +541,7 @@ STATE COMBAT
 		{
 			both alert_bk_1h
 		}
-		weapons syringe AND Adrenaline Syringe
+		weapons Syringe AND Adrenaline Syringe
 		{
 			both alert_bk_1h
 		}
@@ -664,7 +664,7 @@ STATE COMBAT
 		{
 			both alert_crch_1h
 		}
-		weapons syringe AND Adrenaline Syringe
+		weapons Syringe AND Adrenaline Syringe
 		{
 			both alert_crch_1h
 		}
@@ -788,7 +788,7 @@ STATE COMBAT
 		{
 			both alert_crbk_1h
 		}
-		weapons syringe AND Adrenaline Syringe
+		weapons Syringe AND Adrenaline Syringe
 		{
 			both alert_crbk_1h
 		}
@@ -907,7 +907,7 @@ STATE COMBAT
 		{
 			both alert_run_no
 		}
-		weapons syringe AND Adrenaline Syringe
+		weapons Syringe AND Adrenaline Syringe
 		{
 			both alert_run_1h
 		}
@@ -1034,7 +1034,7 @@ STATE COMBAT
 		{
 			both alert_bk_1h
 		}
-		weapons syringe AND Adrenaline Syringe
+		weapons Syringe AND Adrenaline Syringe
 		{
 			legs alert_bk_1h
 		}
@@ -1161,7 +1161,7 @@ STATE COMBAT
 		{
 			both alert_run_no
 		}
-		weapons syringe AND Adrenaline Syringe
+		weapons Syringe AND Adrenaline Syringe
 		{
 			both alert_run_1h
 		}
@@ -1284,7 +1284,7 @@ STATE COMBAT
 		{
 			torso stand_binoculars legs alert_run_1h
 		}
-		weapons syringe AND Adrenaline Syringe
+		weapons Syringe AND Adrenaline Syringe
 		{
 			both alert_run_1h
 		}
@@ -1495,7 +1495,7 @@ STATE COMBAT
 		{
 			legs prone_legs torso prone_poke_idle
 		}
-		weapons syringe AND Adrenaline Syringe
+		weapons Syringe AND Adrenaline Syringe
 		{
 			legs prone_legs torso prone_poke_idle
 		}
@@ -1730,23 +1730,23 @@ fireweapon
 		torso firing_pliers
 	}
 // SYRINGE
-	weapons syringe, movetype walk AND turnleft AND turnright AND idlecr AND idle
+	weapons Syringe, movetype walk AND turnleft AND turnright AND idlecr AND idle
 	{
 		torso firing_syringe
 	}
-	weapons syringe, movetype crouching
+	weapons Syringe, movetype crouching
 	{
 		torso firing_syringe
 	}
-	weapons syringe, movetype run AND swim
+	weapons Syringe, movetype run AND swim
 	{
 		torso firing_syringe
 	}
-	weapons syringe, movetype backstep AND swimbk
+	weapons Syringe, movetype backstep AND swimbk
 	{
 		torso firing_syringe
 	}
-	weapons syringe
+	weapons Syringe
 	{
 		torso firing_syringe
 	}
@@ -2221,7 +2221,7 @@ fireweaponprone
 	{
 		torso prone_poke_fire
 	}
-	weapons syringe AND Adrenaline Syringe
+	weapons Syringe AND Adrenaline Syringe
 	{
 		torso prone_poke_fire
 	}
@@ -2353,7 +2353,7 @@ raiseweaponprone
 	{
 		torso prone_poke_switch
 	}
-	weapons syringe AND Adrenaline Syringe
+	weapons Syringe AND Adrenaline Syringe
 	{
 		torso prone_poke_switch
 	}
@@ -2457,7 +2457,7 @@ reloadprone
 	{
 		torso prone_poke_switch
 	}
-	weapons syringe AND Adrenaline Syringe
+	weapons Syringe AND Adrenaline Syringe
 	{
 		torso prone_poke_switch
 	}
@@ -2545,7 +2545,7 @@ raiseweapon
 	{
 		torso raise_grenade
 	}
-	weapons syringe AND Adrenaline Syringe
+	weapons Syringe AND Adrenaline Syringe
 	{
 		torso raise_knife
 	}
@@ -2657,7 +2657,7 @@ reload
 	{
 		torso raise_grenade
 	}
-	weapons syringe AND Adrenaline Syringe
+	weapons Syringe AND Adrenaline Syringe
 	{
 		torso raise_knife
 	}
