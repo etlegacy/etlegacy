@@ -840,12 +840,26 @@ panel_button_t chatPanelNextButton =
 	0
 };
 
+panel_button_t chatPanelVoteButton =
+{
+	NULL,
+	"VOTE NOW",
+	{ SCREEN_WIDTH - 10 - 60 - 4 - 60 - 4, SCREEN_HEIGHT - 30,               60, 16 },
+	{ 0,                          0,                                         0,  0, 0, 0, 0, 0},
+	NULL,                         // font
+	CG_Debriefing_VoteButton_KeyDown,// keyDown
+	NULL,                         // keyUp
+	CG_Debriefing_VoteButton_Draw,
+	NULL,
+	0
+};
+
 panel_button_t chatPanelQCButton =
 {
 	NULL,
 	"QUICK CHAT",
-	{ SCREEN_WIDTH - 10 - 60 - 4 - 60 - 4 - 80 - 4,SCREEN_HEIGHT - 30,                                    80, 16 },
-	{ 0,                         0,                                                     0,  0, 0, 0, 0, 0},
+	{ SCREEN_WIDTH - 10 - 60 - 4 - 60 - 4 - 80 - 4, SCREEN_HEIGHT - 30,      80, 16 },
+	{ 0,                         0,                                          0,  0, 0, 0, 0, 0},
 	NULL,                        // font
 	CG_Debriefing_QCButton_KeyDown,// keyDown
 	NULL,                        // keyUp
@@ -858,8 +872,8 @@ panel_button_t chatPanelReadyButton =
 {
 	NULL,
 	"READY",
-	{ SCREEN_WIDTH - 10 - 60 - 4 - 60 - 4 - 80 - 4 - 60 - 4,SCREEN_HEIGHT - 30,                                                  60, 16 },
-	{ 0,                           0,                                                                   0,  0, 0, 0, 0, 0},
+	{ SCREEN_WIDTH - 10 - 60 - 4 - 60 - 4 - 80 - 4 - 60 - 4, SCREEN_HEIGHT - 30, 60, 16 },
+	{ 0,                           0,                                            0,  0, 0, 0, 0, 0},
 	NULL,                          // font
 	CG_Debriefing_ReadyButton_KeyDown,// keyDown
 	NULL,                          // keyUp
@@ -1478,12 +1492,11 @@ void CG_Debriefing_ChatBox_Draw(panel_button_t *button)
 panel_button_t *chatPanelButtons[] =
 {
 	&chatPanelWindow,       &chatPanelText,
-	&chatPanelNextButton,   &chatPanelQCButton,&chatTypeButton,  &chatPanelReadyButton,
+	&chatPanelNextButton,   &chatPanelVoteButton, &chatPanelQCButton, &chatTypeButton, &chatPanelReadyButton,
 	&charPanelEditSurround, &charPanelEdit,
 	NULL
 };
 
-// MAPVOTE
 panel_button_t *mapVoteButtons[] =
 {
 	&debriefTitleWindow,     &mapVoteWindow,    &mapVoteHeadingName, &mapVoteHeadingVotes,
@@ -1542,6 +1555,9 @@ void CG_Debriefing_Startup(void)
 
 	cgs.dbAwardsParsed = qfalse;
 
+	// display results first
+	cgs.dbMode = 0;
+
 	s   = CG_ConfigString(CS_MULTI_MAPWINNER);
 	buf = Info_ValueForKey(s, "w");
 
@@ -1558,9 +1574,6 @@ void CG_Debriefing_Startup(void)
 	{
 		trap_S_StartLocalSound(trap_S_RegisterSound("sound/music/axis_win.wav", qfalse), CHAN_LOCAL_SOUND);
 	}
-
-	// display results first
-	cgs.dbMode = 0;
 }
 
 /**
@@ -3032,6 +3045,30 @@ qboolean CG_Debriefing_QCButton_KeyDown(panel_button_t *button, int key)
 }
 
 /**
+ * @brief CG_Debriefing_VoteButton_KeyDown
+ * @param button - unused
+ * @param[in] key
+ * @return
+ */
+qboolean CG_Debriefing_VoteButton_KeyDown(panel_button_t *button, int key)
+{
+	if (key == K_MOUSE1)
+	{
+		cgs.dbMode = 3;
+
+		// failsafe
+		if (cgs.gametype != GT_WOLF_MAPVOTE && cgs.dbMode == 3)
+		{
+			cgs.dbMode = 0;
+		}
+
+		return qtrue;
+	}
+
+	return qfalse;
+}
+
+/**
  * @brief CG_Debriefing_NextButton_KeyDown
  * @param button - unused
  * @param[in] key
@@ -3052,6 +3089,20 @@ qboolean CG_Debriefing_NextButton_KeyDown(panel_button_t *button, int key)
 	}
 
 	return qfalse;
+}
+
+/**
+ * @brief CG_Debriefing_VoteButton_Draw
+ * @param[in] button
+ */
+void CG_Debriefing_VoteButton_Draw(panel_button_t *button)
+{
+	if (cgs.gametype != GT_WOLF_MAPVOTE || cgs.dbMode == 3)
+	{
+		return;
+	}
+
+	CG_PanelButtonsRender_Button(button);
 }
 
 /**
