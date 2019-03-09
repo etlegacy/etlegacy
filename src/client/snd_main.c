@@ -809,7 +809,7 @@ void S_StopMusic_f(void)
  */
 void S_Init(void)
 {
-	cvar_t *cv = Cvar_Get("s_initsound", "1", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE);  // 0 = disabled, 1 = SDL2, 2 = OpenAL
+	cvar_t *cv = Cvar_Get("s_initsound", "2", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE);  // 0 = disabled, 1 = SDL2, 2 = OpenAL
 
 	Com_Printf("------ Initializing Sound (%i)------\n", cv->integer);
 
