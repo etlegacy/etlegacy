@@ -45,7 +45,7 @@ menuDef {
 	MULTI( 8, HUD_Y+136, (SUBWINDOW_WIDTH_L)-4, 10, _("Show Clock:"), .2, 8, "cg_drawTime", cvarFloatList { "Off" 0 "24 hours" 1 "24 hours + seconds" 3 "12 hours" 5 "12 hours + seconds" 7 }, _("Displays local time") )
 	YESNO( 8, HUD_Y+148, (SUBWINDOW_WIDTH_L)-4, 10, _("Show FPS:"), .2, 8, "cg_drawFPS", _("Displays Frames Per Second") )
 	YESNO( 8, HUD_Y+160, (SUBWINDOW_WIDTH_L)-4, 10, _("Show Ping:"), .2, 8, "cg_drawPing", _("Displays ping") )
-	MULTI( 8, HUD_Y+172, (SUBWINDOW_WIDTH_L)-4, 10, _("Show Speed:"), .2, 8, "cg_drawspeed", cvarFloatList { "Off" 0 "UPS" 1 "KPH" 2 "MPH" 3 "UPS + highest speed" 4 "KPH + highest speed" 5 "MPH + highest speed" 6}, _("Displays speed of player") )
+	MULTI( 8, HUD_Y+172, (SUBWINDOW_WIDTH_L)-4, 10, _("Show Speed:"), .2, 8, "cg_drawspeed", cvarFloatList { "Off" 0 "UPS" 1 "KPH" 2 "MPH" 3 "UPS + MAX speed" 4 "KPH + MAX speed" 5 "MPH + MAX speed" 6}, _("Displays speed of player") )
 	YESNO( 8, HUD_Y+184, (SUBWINDOW_WIDTH_L)-4, 10, _("Show Lagometer:"), .2, 8, "cg_lagometer", _("Displays lagometer") )
 	MULTI( 8, HUD_Y+196, (SUBWINDOW_WIDTH_L)-4, 10, _("Switch HUD:"), .2, 8, "cg_altHud", cvarFloatList { "Standard Hud" 0 "Alternate Hud 1" 1 "Alternate Hud 2" 2 }, _("Switches between different HUD") )
 	MULTI( 8, HUD_Y+208, (SUBWINDOW_WIDTH_L)-4, 10, _("Modify Selected HUD:"), .2, 8, "cg_altHudFlags", cvarFloatList { "Normal" 0 "Move Round Timer" 1 "Remove Ranks" 2 "Move Popups" 4 "Ranks + Timer" 3 "Timer + Popups" 5 "Ranks + Popups" 6 "Timer + Ranks + Popups" 7 }, _("Customises Selected HUD") )
@@ -57,18 +57,12 @@ menuDef {
 	CVARFLOATLABEL( 8, DISPLAY_Y+28, (SUBWINDOW_WIDTH_L)-6, 10, "cg_fov", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-6), 8 )
 	SLIDER( 8, DISPLAY_Y+28, (SUBWINDOW_WIDTH_L)-4, 10, _("Field Of View:"), .2, 8, "cg_fov" 90 90 105, _("Sets field of view") )
 	MULTI( 8, DISPLAY_Y+40, (SUBWINDOW_WIDTH_L)-4, 10, _("Corona Distance:"), .2, 8, "cg_coronafardist", cvarFloatList { "Off" 0 "Near" 800 "Normal" 1536 "Far" 4096 "Extreme" 16000 }, _("Sets the maximum distance light corona is displayed") )
-	YESNO( 8, DISPLAY_Y+52, (SUBWINDOW_WIDTH_L)-4, 10, _("Particles:"), .2, 8, "cg_wolfparticles", _("Toggles display of particle effects - e.g. explosions, some smoke effects") )
-	MULTI( 8, DISPLAY_Y+64, (SUBWINDOW_WIDTH_L)-4, 10, _("Wall Mark Lifetime:"), .2, 8, "cg_markTime", cvarFloatList { "Off" 0 "Short" 10000 "Normal" 20000 "Long" 30000 }, _("Duration of bullet marks on walls etc") )
-	MULTI( 8, DISPLAY_Y+76, (SUBWINDOW_WIDTH_L)-4, 10, _("Blood Flash:"), .2, 8, "cg_bloodFlash", cvarFloatList { "None" 0.0 "Light" 0.25 "Medium" 0.5 "Heavy" 0.75 "Full" 1.0 }, _("Red blood \"flash\" scale when receiving damage") )
-	MULTI( 8, DISPLAY_Y+88, (SUBWINDOW_WIDTH_L)-4, 10, _("Blood Splatter:"), .2, 8, "cg_bloodDamageBlend", cvarFloatList { "None" 0.0 "Light" 0.25 "Medium" 0.5 "Heavy" 0.75 "Full" 1.0 }, _("Blood \"splatter\" transparency when taking damage from other players") )
-	YESNO( 8, DISPLAY_Y+100, (SUBWINDOW_WIDTH_L)-4, 10, _("Show Blood:"), .2, 8, "cg_showblood", _("Toggles showing blood spurt effect when player's are shot") )
+	MULTI( 8, DISPLAY_Y+52, (SUBWINDOW_WIDTH_L)-4, 10, _("Wall Mark Lifetime:"), .2, 8, "cg_markTime", cvarFloatList { "Off" 0 "Short" 10000 "Normal" 20000 "Long" 30000 }, _("Duration of bullet marks on walls etc") )
+	MULTI( 8, DISPLAY_Y+64, (SUBWINDOW_WIDTH_L)-4, 10, _("Blood Flash:"), .2, 8, "cg_bloodFlash", cvarFloatList { "None" 0.0 "Light" 0.25 "Medium" 0.5 "Heavy" 0.75 "Full" 1.0 }, _("Red blood \"flash\" scale when receiving damage") )
+	MULTI( 8, DISPLAY_Y+76, (SUBWINDOW_WIDTH_L)-4, 10, _("Blood Splatter:"), .2, 8, "cg_bloodDamageBlend", cvarFloatList { "None" 0.0 "Light" 0.25 "Medium" 0.5 "Heavy" 0.75 "Full" 1.0 }, _("Blood \"splatter\" transparency when taking damage from other players") )
+	YESNO( 8, DISPLAY_Y+88, (SUBWINDOW_WIDTH_L)-4, 10, _("Show Blood:"), .2, 8, "cg_showblood", _("Toggles showing blood spurt effect when player's are shot") )
+	YESNO( 8, DISPLAY_Y+100, (SUBWINDOW_WIDTH_L)-4, 10, _("Particles Effects:"), .2, 8, "cg_wolfparticles", _("Toggles display of particle effects - e.g. explosions, some smoke effects") )
 	YESNO( 8, DISPLAY_Y+112, (SUBWINDOW_WIDTH_L)-4, 10, _("Atmospheric Effects:"), .2, 8, "cg_atmosphericEffects", _("Draws atmospheric effects (snow/rain) on-screen") )
-
-// Geolocation Display //
-#define GEOLOCATION_Y 386
-	SUBWINDOW( 6, GEOLOCATION_Y, (SUBWINDOW_WIDTH_L), 40, _("GEOLOCATION") )
-	YESNO( 8, GEOLOCATION_Y+16, (SUBWINDOW_WIDTH_L)-4, 10, _("Enable Flags:"), .2, 8, "cg_countryflags", _("Displays players country flags in score board") )
-	YESNO( 8, GEOLOCATION_Y+28, (SUBWINDOW_WIDTH_L)-4, 10, _("Share Location:"), .2, 8, "cg_allowGeoIP", _("Displays your own location in score board") )
 
 // Crosshair //
 #define CROSSHAIR_Y 32
@@ -108,14 +102,20 @@ menuDef {
 	SLIDER( 6+(SUBWINDOW_WIDTH_L)+6+2, CROSSHAIR_Y+152, (SUBWINDOW_WIDTH_R)-4, 10, _("Secondary Alpha:"), .2, 8, "cg_crosshairAlphaAlt" 1 0 1, _("Set the transparency level for the secondary crosshair") )
 
 // Movement //
-  #define MOVEMENT_Y 200
+#define MOVEMENT_Y 200
 	SUBWINDOW( 6+(SUBWINDOW_WIDTH_L)+6, MOVEMENT_Y, (SUBWINDOW_WIDTH_R), 52, _("MOVEMENT") )
 	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, MOVEMENT_Y+16, (SUBWINDOW_WIDTH_R)-4, 10, _("Bob up:"), .2, 8, "cg_bobup", cvarFloatList { "Off" 0.00 "On" 0.005 }, _("Enable/Disable the vertical bob effect when moving") )
 	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, MOVEMENT_Y+28, (SUBWINDOW_WIDTH_R)-4, 10, _("Bob pitch:"), .2, 8, "cg_bobpitch", cvarFloatList { "Off" 0.00 "On" 0.002 }, _("Enable/Disable the bob pitch (forwards/backwards) effect when moving") )
 	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, MOVEMENT_Y+40, (SUBWINDOW_WIDTH_R)-4, 10, _("Bob roll:"), .2, 8, "cg_bobroll", cvarFloatList { "Off" 0.000 "On" 0.002 }, _("Enable/Disable the bob roll (left/right) effect when moving") )
 
+// Geolocation Display //
+#define GEOLOCATION_Y 256
+	SUBWINDOW( 6+(SUBWINDOW_WIDTH_L)+6, GEOLOCATION_Y, (SUBWINDOW_WIDTH_R), 40, _("GEOLOCATION") )
+	YESNO( 6+(SUBWINDOW_WIDTH_L)+6+2, GEOLOCATION_Y+16, (SUBWINDOW_WIDTH_R)-4, 10, _("Enable Flags:"), .2, 8, "cg_countryflags", _("Displays players country flags in score board") )
+	YESNO( 6+(SUBWINDOW_WIDTH_L)+6+2, GEOLOCATION_Y+28, (SUBWINDOW_WIDTH_R)-4, 10, _("Share Location:"), .2, 8, "cg_allowGeoIP", _("Displays your own location in score board") )
+
 // Fonts //
-  #define FONTS_Y 256
+#define FONTS_Y 300
 	SUBWINDOW( 6+(SUBWINDOW_WIDTH_L)+6, FONTS_Y, (SUBWINDOW_WIDTH_R), 78, _("FONTS") )
 	MULTIACTION( 6+(SUBWINDOW_WIDTH_L)+6+2, FONTS_Y+16, (SUBWINDOW_WIDTH_R)-4, 10, _("Fonts Size:"), .2, 8, "cg_fontScale", cvarFloatList { "Tiny" 2 "Small" 1 "Normal" 0 }, uiScript SetFontScale, _("Sets the size of the in-game fonts") )
 	CVARFLOATLABEL( 6+(SUBWINDOW_WIDTH_L)+6+2, FONTS_Y+28, (SUBWINDOW_WIDTH_L)-6, 10, "cg_fontScaleTP", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-4), 8 )
@@ -128,7 +128,7 @@ menuDef {
 	SLIDER( 6+(SUBWINDOW_WIDTH_L)+6+2, FONTS_Y+64, (SUBWINDOW_WIDTH_L)-4, 10, _("Crosshair Name:"), .2, 8, "cg_fontScaleCN" 0.15 0 0.5, _("Set font size for Crosshair Name label") )
 
 // Misc //
-  #define MISC_Y 338
+#define MISC_Y 382
 	SUBWINDOW( 6+(SUBWINDOW_WIDTH_L)+6, MISC_Y, (SUBWINDOW_WIDTH_R), 42, _("MISC") )
 	CVARFLOATLABEL( 6+(SUBWINDOW_WIDTH_L)+6+2, MISC_Y+16, (SUBWINDOW_WIDTH_L)-6, 10, "cg_popupStayTime", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-4), 8 )
 	SLIDER( 6+(SUBWINDOW_WIDTH_L)+6+2, MISC_Y+16, (SUBWINDOW_WIDTH_L)-4, 10, _("PopUpTimeStay:"), .2, 8, "cg_popupStayTime" 2500 0 6000, _("Set the time a pop-up stays visible") )
