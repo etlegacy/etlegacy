@@ -1559,8 +1559,8 @@ void CG_Debriefing_Startup(void)
 		trap_S_StartLocalSound(trap_S_RegisterSound("sound/music/axis_win.wav", qfalse), CHAN_LOCAL_SOUND);
 	}
 
-	// 3 : display first
-	cgs.dbMode = cgs.gametype == GT_WOLF_MAPVOTE ? 3 : 0;
+	// display results first
+	cgs.dbMode = 0;
 }
 
 /**
