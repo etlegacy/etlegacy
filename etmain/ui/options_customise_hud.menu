@@ -30,7 +30,7 @@ menuDef {
 
 // Hud Display //
 #define HUD_Y 32
-	SUBWINDOW( 6, HUD_Y, (SUBWINDOW_WIDTH_L), 220, _("HUD DISPLAY") )
+	SUBWINDOW( 6, HUD_Y, (SUBWINDOW_WIDTH_L), 232, _("HUD DISPLAY") )
 	YESNO( 8, HUD_Y+16, (SUBWINDOW_WIDTH_L)-4, 10, _("Draw Gun:"), .2, 8, "cg_drawGun", _("Shows gun model on-screen") )
 	YESNO( 8, HUD_Y+28, (SUBWINDOW_WIDTH_L)-4, 10, _("Show Compass:"), .2, 8, "cg_drawCompass", _("Displays compass (with icons when near select events)") )
 	CVARFLOATLABEL( 8, HUD_Y+40, (SUBWINDOW_WIDTH_L)-4, 10, "cg_automapZoom", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-6), 8 )
@@ -40,29 +40,32 @@ menuDef {
 	MULTI( 8, HUD_Y+76, (SUBWINDOW_WIDTH_L)-4, 10, _("Cursor Hints:"), .2, 8, "cg_cursorHints", cvarFloatList { "Off" 0 "Size Pulse" 1 "Strobe Pulse" 2 "Alpha Pulse" 3 "Solid" 4 }, _("Icon display format when near an action item") )
 	MULTI( 8, HUD_Y+88, (SUBWINDOW_WIDTH_L)-4, 10, _("Show Locations:"), .2, 8, "cg_locations", cvarFloatList { "Cordinates Only" 0 "Names Fireteam Only" 1 "Names Team Chat Only" 2 "Team & Fireteam Chat" 3 }, _("Displays locations in fireteam") )
 	YESNO( 8, HUD_Y+100, (SUBWINDOW_WIDTH_L)-4, 10, _("Fireteam Latched Class:"), .2, 8, "cg_fireteamLatchedClass", _("Displays Fireteam latched class") )
-	MULTI( 8, HUD_Y+112, (SUBWINDOW_WIDTH_L)-4, 10, _("Obituaries Icons:"), .2, 8, "cg_graphicObituaries", cvarFloatList { "Off" 0 "Victim Weapon Killer" 1 "Killer Weapon Victim" 2 }, _("Displays graphical obituaries") )
-	YESNO( 8, HUD_Y+124, (SUBWINDOW_WIDTH_L)-4, 10, _("Show Descriptive Text:"), .2, 8, "cg_descriptiveText", _("Displays help text") )
-	MULTI( 8, HUD_Y+136, (SUBWINDOW_WIDTH_L)-4, 10, _("Show Clock:"), .2, 8, "cg_drawTime", cvarFloatList { "Off" 0 "24 hours" 1 "24 hours + seconds" 3 "12 hours" 5 "12 hours + seconds" 7 }, _("Displays local time") )
-	YESNO( 8, HUD_Y+148, (SUBWINDOW_WIDTH_L)-4, 10, _("Show FPS:"), .2, 8, "cg_drawFPS", _("Displays Frames Per Second") )
-	YESNO( 8, HUD_Y+160, (SUBWINDOW_WIDTH_L)-4, 10, _("Show Ping:"), .2, 8, "cg_drawPing", _("Displays ping") )
-	MULTI( 8, HUD_Y+172, (SUBWINDOW_WIDTH_L)-4, 10, _("Show Speed:"), .2, 8, "cg_drawspeed", cvarFloatList { "Off" 0 "UPS" 1 "KPH" 2 "MPH" 3 "UPS + MAX speed" 4 "KPH + MAX speed" 5 "MPH + MAX speed" 6}, _("Displays speed of player") )
-	YESNO( 8, HUD_Y+184, (SUBWINDOW_WIDTH_L)-4, 10, _("Show Lagometer:"), .2, 8, "cg_lagometer", _("Displays lagometer") )
-	MULTI( 8, HUD_Y+196, (SUBWINDOW_WIDTH_L)-4, 10, _("Switch HUD:"), .2, 8, "cg_altHud", cvarFloatList { "Standard Hud" 0 "Alternate Hud 1" 1 "Alternate Hud 2" 2 }, _("Switches between different HUD") )
-	MULTI( 8, HUD_Y+208, (SUBWINDOW_WIDTH_L)-4, 10, _("Modify Selected HUD:"), .2, 8, "cg_altHudFlags", cvarFloatList { "Normal" 0 "Move Round Timer" 1 "Remove Ranks" 2 "Move Popups" 4 "Ranks + Timer" 3 "Timer + Popups" 5 "Ranks + Popups" 6 "Timer + Ranks + Popups" 7 }, _("Customises Selected HUD") )
+	MULTI( 8, HUD_Y+112, (SUBWINDOW_WIDTH_L)-4, 10, _("Weapon Icon Flash:"), .2, 8, "cg_drawWeaponIconFlash", cvarFloatList { "Off" 0 "On" 1 }, _("Flash weapon icon when firing, reloading, or switching") )
+	MULTI( 8, HUD_Y+124, (SUBWINDOW_WIDTH_L)-4, 10, _("Obituaries Icons:"), .2, 8, "cg_graphicObituaries", cvarFloatList { "Off" 0 "Victim Weapon Killer" 1 "Killer Weapon Victim" 2 }, _("Displays graphical obituaries") )
+	YESNO( 8, HUD_Y+136, (SUBWINDOW_WIDTH_L)-4, 10, _("Show Descriptive Text:"), .2, 8, "cg_descriptiveText", _("Displays help text") )
+	MULTI( 8, HUD_Y+148, (SUBWINDOW_WIDTH_L)-4, 10, _("Show Clock:"), .2, 8, "cg_drawTime", cvarFloatList { "Off" 0 "24 hours" 1 "24 hours + seconds" 3 "12 hours" 5 "12 hours + seconds" 7 }, _("Displays local time") )
+	YESNO( 8, HUD_Y+160, (SUBWINDOW_WIDTH_L)-4, 10, _("Show FPS:"), .2, 8, "cg_drawFPS", _("Displays Frames Per Second") )
+	YESNO( 8, HUD_Y+172, (SUBWINDOW_WIDTH_L)-4, 10, _("Show Ping:"), .2, 8, "cg_drawPing", _("Displays ping") )
+	MULTI( 8, HUD_Y+184, (SUBWINDOW_WIDTH_L)-4, 10, _("Show Speed:"), .2, 8, "cg_drawspeed", cvarFloatList { "Off" 0 "UPS" 1 "KPH" 2 "MPH" 3 "UPS + MAX speed" 4 "KPH + MAX speed" 5 "MPH + MAX speed" 6}, _("Displays speed of player") )
+	YESNO( 8, HUD_Y+196, (SUBWINDOW_WIDTH_L)-4, 10, _("Show Lagometer:"), .2, 8, "cg_lagometer", _("Displays lagometer") )
+	MULTI( 8, HUD_Y+208, (SUBWINDOW_WIDTH_L)-4, 10, _("Switch HUD:"), .2, 8, "cg_altHud", cvarFloatList { "Standard Hud" 0 "Alternate Hud 1" 1 "Alternate Hud 2" 2 }, _("Switches between different HUD") )
+	MULTI( 8, HUD_Y+220, (SUBWINDOW_WIDTH_L)-4, 10, _("Modify Selected HUD:"), .2, 8, "cg_altHudFlags", cvarFloatList { "Normal" 0 "Move Round Timer" 1 "Remove Ranks" 2 "Move Popups" 4 "Ranks + Timer" 3 "Timer + Popups" 5 "Ranks + Popups" 6 "Timer + Ranks + Popups" 7 }, _("Customises Selected HUD") )
 
 // In-Game Display //
-#define DISPLAY_Y 256
-	SUBWINDOW( 6, DISPLAY_Y, (SUBWINDOW_WIDTH_L), 125, _("IN-GAME DISPLAY") )
-	MULTI( 8, DISPLAY_Y+16, (SUBWINDOW_WIDTH_L)-4, 10, _("Ejecting Brass:"), .2, 8, "cg_brassTime", cvarFloatList { "High" 15000 "Med" 2500 "Off" 0 }, _("Sets the duration ejected bullet shells etc. last for") )
-	CVARFLOATLABEL( 8, DISPLAY_Y+28, (SUBWINDOW_WIDTH_L)-6, 10, "cg_fov", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-6), 8 )
-	SLIDER( 8, DISPLAY_Y+28, (SUBWINDOW_WIDTH_L)-4, 10, _("Field Of View:"), .2, 8, "cg_fov" 90 90 105, _("Sets field of view") )
-	MULTI( 8, DISPLAY_Y+40, (SUBWINDOW_WIDTH_L)-4, 10, _("Corona Distance:"), .2, 8, "cg_coronafardist", cvarFloatList { "Off" 0 "Near" 800 "Normal" 1536 "Far" 4096 "Extreme" 16000 }, _("Sets the maximum distance light corona is displayed") )
-	MULTI( 8, DISPLAY_Y+52, (SUBWINDOW_WIDTH_L)-4, 10, _("Wall Mark Lifetime:"), .2, 8, "cg_markTime", cvarFloatList { "Off" 0 "Short" 10000 "Normal" 20000 "Long" 30000 }, _("Duration of bullet marks on walls etc") )
-	MULTI( 8, DISPLAY_Y+64, (SUBWINDOW_WIDTH_L)-4, 10, _("Blood Flash:"), .2, 8, "cg_bloodFlash", cvarFloatList { "None" 0.0 "Light" 0.25 "Medium" 0.5 "Heavy" 0.75 "Full" 1.0 }, _("Red blood \"flash\" scale when receiving damage") )
-	MULTI( 8, DISPLAY_Y+76, (SUBWINDOW_WIDTH_L)-4, 10, _("Blood Splatter:"), .2, 8, "cg_bloodDamageBlend", cvarFloatList { "None" 0.0 "Light" 0.25 "Medium" 0.5 "Heavy" 0.75 "Full" 1.0 }, _("Blood \"splatter\" transparency when taking damage from other players") )
-	YESNO( 8, DISPLAY_Y+88, (SUBWINDOW_WIDTH_L)-4, 10, _("Show Blood:"), .2, 8, "cg_showblood", _("Toggles showing blood spurt effect when player's are shot") )
-	YESNO( 8, DISPLAY_Y+100, (SUBWINDOW_WIDTH_L)-4, 10, _("Particles Effects:"), .2, 8, "cg_wolfparticles", _("Toggles display of particle effects - e.g. explosions, some smoke effects") )
-	YESNO( 8, DISPLAY_Y+112, (SUBWINDOW_WIDTH_L)-4, 10, _("Atmospheric Effects:"), .2, 8, "cg_atmosphericEffects", _("Draws atmospheric effects (snow/rain) on-screen") )
+#define DISPLAY_Y 268
+	SUBWINDOW( 6, DISPLAY_Y, (SUBWINDOW_WIDTH_L), 148, _("IN-GAME DISPLAY") )
+	YESNO( 8, DISPLAY_Y+16, (SUBWINDOW_WIDTH_L)-4, 10, _("Muzzle Flash:"), .2, 8, "cg_muzzleflash", _("Enables or disables weapon fire (muzzle flash)") )
+	MULTI( 8, DISPLAY_Y+28, (SUBWINDOW_WIDTH_L)-4, 10, _("Ejecting Brass:"), .2, 8, "cg_brassTime", cvarFloatList { "High" 15000 "Med" 2500 "Off" 0 }, _("Sets the duration ejected bullet shells etc. last for") )
+	MULTI( 8, DISPLAY_Y+40, (SUBWINDOW_WIDTH_L)-4, 10, _("Bullet Tracers:"), .2, 8, "cg_tracers", cvarFloatList { "Off" 0 "On" 1 "Only own tracers" 2 "Only others tracers" 3 }, _("Enable/Disable bullet tracers") )
+	CVARFLOATLABEL( 8, DISPLAY_Y+52, (SUBWINDOW_WIDTH_L)-6, 10, "cg_fov", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-6), 8 )
+	SLIDER( 8, DISPLAY_Y+52, (SUBWINDOW_WIDTH_L)-4, 10, _("Field Of View:"), .2, 8, "cg_fov" 90 90 105, _("Sets field of view") )
+	MULTI( 8, DISPLAY_Y+64, (SUBWINDOW_WIDTH_L)-4, 10, _("Corona Distance:"), .2, 8, "cg_coronafardist", cvarFloatList { "Off" 0 "Near" 800 "Normal" 1536 "Far" 4096 "Extreme" 16000 }, _("Sets the maximum distance light corona is displayed") )
+	MULTI( 8, DISPLAY_Y+76, (SUBWINDOW_WIDTH_L)-4, 10, _("Wall Mark Lifetime:"), .2, 8, "cg_markTime", cvarFloatList { "Off" 0 "Short" 10000 "Normal" 20000 "Long" 30000 }, _("Duration of bullet marks on walls etc") )
+	MULTI( 8, DISPLAY_Y+88, (SUBWINDOW_WIDTH_L)-4, 10, _("Blood Flash:"), .2, 8, "cg_bloodFlash", cvarFloatList { "None" 0.0 "Light" 0.25 "Medium" 0.5 "Heavy" 0.75 "Full" 1.0 }, _("Red blood \"flash\" scale when receiving damage") )
+	MULTI( 8, DISPLAY_Y+100, (SUBWINDOW_WIDTH_L)-4, 10, _("Blood Splatter:"), .2, 8, "cg_bloodDamageBlend", cvarFloatList { "None" 0.0 "Light" 0.25 "Medium" 0.5 "Heavy" 0.75 "Full" 1.0 }, _("Blood \"splatter\" transparency when taking damage from other players") )
+	YESNO( 8, DISPLAY_Y+112, (SUBWINDOW_WIDTH_L)-4, 10, _("Show Blood:"), .2, 8, "cg_showblood", _("Toggles showing blood spurt effect when player's are shot") )
+	YESNO( 8, DISPLAY_Y+124, (SUBWINDOW_WIDTH_L)-4, 10, _("Particles Effects:"), .2, 8, "cg_wolfparticles", _("Toggles display of particle effects - e.g. explosions, some smoke effects") )
+	YESNO( 8, DISPLAY_Y+136, (SUBWINDOW_WIDTH_L)-4, 10, _("Atmospheric Effects:"), .2, 8, "cg_atmosphericEffects", _("Draws atmospheric effects (snow/rain) on-screen") )
 
 // Crosshair //
 #define CROSSHAIR_Y 32
