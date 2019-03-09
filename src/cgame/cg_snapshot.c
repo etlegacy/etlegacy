@@ -56,6 +56,7 @@ static void CG_ResetEntity(centity_t *cent)
 
 	VectorCopy(cent->currentState.origin, cent->lerpOrigin);
 	VectorCopy(cent->currentState.angles, cent->lerpAngles);
+
 	if (cent->currentState.eType == ET_PLAYER)
 	{
 		CG_ResetPlayerEntity(cent);
@@ -109,6 +110,17 @@ static void CG_TransitionEntity(centity_t *cent)
 		{
 			VectorCopy(newDir, cent->fireRiseDir);
 		}
+	}
+
+	// if each frame since last CheckEvents olds entity number n
+	// then cent will never be reset in CG_TransitionSnapshot and
+	// so previousEvent will never return to 0 (condition cg_entities[id].currentValid == qfalse).
+	// this ensures cent->previousEvent is 0 when a new event occurs
+	if (cent->nextState.eType < ET_EVENTS ||
+		cent->currentState.otherEntityNum != cent->nextState.otherEntityNum ||
+		cent->currentState.otherEntityNum2 != cent->nextState.otherEntityNum2)
+	{
+		cent->previousEvent = 0;
 	}
 
 	cent->currentState = cent->nextState;
@@ -250,7 +262,7 @@ static void CG_TransitionSnapshot(void)
 	// execute any server string commands before transitioning entities
 	CG_ExecuteNewServerCommands(cg.nextSnap->serverCommandSequence);
 
-	// if we had a map_restart, set everthing with initial
+	// if we had a map_restart, set everything with initial
 	//if (cg.mapRestart)
 	//{
 	//}
@@ -295,14 +307,6 @@ static void CG_TransitionSnapshot(void)
 		id = cg.snap->entities[i].number;
 		CG_TransitionEntity(&cg_entities[id]);
 
-		// ent doesn't exist in this frame, reset it.
-		// this is to fix the silent landmines bug, which is caused
-		// by a stale miscTime in the cent
-		if (cg_entities[id].currentValid == qfalse && oldValid[id] == qtrue)
-		{
-			CG_ResetEntity(&cg_entities[id]);
-		}
-
 #ifdef FEATURE_MULTIVIEW
 		if (cg.mvTotalClients > 0 && CG_mvMergedClientLocate(id))
 		{
@@ -320,9 +324,20 @@ static void CG_TransitionSnapshot(void)
 
 	cg.nextSnap = NULL;
 
-	// check for playerstate transition events
+	// check for playerstate transition events and entities that need reset from oldFrame
 	if (oldFrame)
 	{
+		// reset entity not valid in this frame but valid last frame.
+		for (i = 0; i < oldFrame->numEntities; i++)
+		{
+			id = oldFrame->entities[i].number;
+
+			if (cg_entities[id].currentValid == qfalse && oldValid[id] == qtrue)
+			{
+				CG_ResetEntity(&cg_entities[id]);
+			}
+		}
+
 		playerState_t *ops = &oldFrame->ps;
 		playerState_t *ps  = &cg.snap->ps;
 
