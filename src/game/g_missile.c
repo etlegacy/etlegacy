@@ -1707,8 +1707,8 @@ gentity_t *fire_missile(gentity_t *self, vec3_t start, vec3_t dir, int weapon)
 
 	bolt = G_Spawn();
 	G_PreFilledMissileEntity(bolt, weapon, weapon,
-	                         self->s.number, self->client ? self->client->sess.sessionTeam : TEAM_FREE, // store team so we can generate red or blue smoke
-	                         self->client ? self->client->ps.clientNum : -1,
+	                         self->s.number, self->client ? self->client->sess.sessionTeam : self->s.teamNum, // store team so we can generate red or blue smoke
+	                         self->client ? self->client->ps.clientNum : self->s.clientNum,
 	                         self, start, dir);
 
 	// no self->client for shooter_grenade's

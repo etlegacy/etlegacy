@@ -2634,7 +2634,7 @@ void G_AirStrikeThink(gentity_t *ent)
 		while (angle[0] < -180)
 			angle[0] += 360;
 
-		bomb = fire_missile(ent, bomboffset, tv(0, 0, -750), ent->s.weapon);
+		bomb = fire_missile((ent->parent && ent->parent->client) ? ent->parent : ent, bomboffset, tv(0, 0, -750), ent->s.weapon);
 
 		bomb->s.pos.trTime = (int)(level.time + crandom() * 50);
 
@@ -2773,7 +2773,7 @@ void weapon_callAirStrike(gentity_t *ent)
 
 		// spotter
 		plane               = G_Spawn();
-		plane->parent       = ent;
+		plane->parent       = ent->parent;
 		plane->think        = weapon_callPlane;
 		plane->active       = ent->active;
 		plane->s.weapon     = WP_SHELL;
@@ -2896,7 +2896,7 @@ void artillerySpotterThink(gentity_t *ent)
 		VectorAdd(bomboffset, ent->s.pos.trBase, bomboffset);
 		bomboffset[2] = BG_GetSkyHeightAtPoint(bomboffset);
 
-		bomb = fire_missile(ent->parent ? ent->parent : ent, bomboffset, tv(0.f, 0.f, -1650.f), ent->s.weapon);
+		bomb = fire_missile((ent->parent && ent->parent->client) ? ent->parent : ent, bomboffset, tv(0.f, 0.f, -1650.f), ent->s.weapon);
 
 		bomb->nextthink    += 1950; // overwrite, add delay between 1st bomb and 2nd one
 		bomb->splashDamage  = 90;   // overwrite
@@ -2914,7 +2914,7 @@ void artillerySpotterThink(gentity_t *ent)
 		VectorAdd(bomboffset, ent->s.pos.trBase, bomboffset);
 		bomboffset[2] = BG_GetSkyHeightAtPoint(bomboffset);
 
-		bomb = fire_missile(ent->parent ? ent->parent : ent, bomboffset, tv(0.f, 0.f, -1650.f), ent->s.weapon);
+		bomb = fire_missile((ent->parent && ent->parent->client) ? ent->parent : ent, bomboffset, tv(0.f, 0.f, -1650.f), ent->s.weapon);
 	}
 
 	// next bomb drop, add randomness
@@ -3029,9 +3029,9 @@ void Weapon_Artillery(gentity_t *ent)
 	spotter->parent       = ent;
 	spotter->think        = artillerySpotterThink;
 	spotter->s.weapon     = WP_ARTY;
-	spotter->s.teamNum    = ent->client ? ent->client->sess.sessionTeam : TEAM_FREE;
-	spotter->s.clientNum  = ent->client->sess.sessionTeam;
-	spotter->r.ownerNum   = ent->client ? ent->client->ps.clientNum : -1;
+	spotter->s.teamNum    = ent->client->sess.sessionTeam;
+	spotter->s.clientNum  = ent->client->ps.clientNum;
+	spotter->r.ownerNum   = ent->s.number;
 	spotter->nextthink    = level.time + 5000;
 	spotter->r.svFlags    = SVF_BROADCAST;
 	spotter->count2       = 1;                      // first bomb
