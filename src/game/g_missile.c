@@ -491,7 +491,7 @@ void G_RunMissile(gentity_t *ent)
 	BG_EvaluateTrajectory(&ent->s.apos, level.time, angle, qtrue, ent->s.effect2Time);
 
 	// ignore body
-	if ((ent->clipmask & CONTENTS_BODY) && ((GetWeaponTableData(ent->s.weapon)->firingMode & WEAPON_FIRING_MODE_THROWABLE) || ent->s.weapon == WP_ARTY || ent->s.weapon == WP_SHELL))
+	if ((ent->clipmask & CONTENTS_BODY) && ((GetWeaponTableData(ent->s.weapon)->firingMode & WEAPON_FIRING_MODE_THROWABLE) || ent->s.weapon == WP_ARTY || ent->s.weapon == WP_AIRSTRIKE))
 	{
 		if (ent->s.pos.trDelta[0] == 0.f && ent->s.pos.trDelta[1] == 0.f && ent->s.pos.trDelta[2] == 0.f)
 		{
@@ -502,7 +502,7 @@ void G_RunMissile(gentity_t *ent)
 	if (level.tracemapLoaded &&
 	    (CHECKBITWISE(GetWeaponTableData(ent->s.weapon)->type, WEAPON_TYPE_MORTAR | WEAPON_TYPE_SET)
 	     || (GetWeaponTableData(ent->s.weapon)->type & (WEAPON_TYPE_GRENADE | WEAPON_TYPE_RIFLENADE))
-	     || ent->s.weapon == WP_SHELL || ent->s.weapon == WP_ARTY))
+	     || ent->s.weapon == WP_AIRSTRIKE || ent->s.weapon == WP_ARTY))
 	{
 		if (ent->count)
 		{
@@ -639,7 +639,7 @@ void G_RunMissile(gentity_t *ent)
 		if (level.tracemapLoaded &&
 		    (CHECKBITWISE(GetWeaponTableData(ent->s.weapon)->type, WEAPON_TYPE_MORTAR | WEAPON_TYPE_SET)
 		     || (GetWeaponTableData(ent->s.weapon)->type & (WEAPON_TYPE_GRENADE | WEAPON_TYPE_RIFLENADE))
-		     || ent->s.weapon == WP_SHELL || ent->s.weapon == WP_ARTY)
+		     || ent->s.weapon == WP_AIRSTRIKE || ent->s.weapon == WP_ARTY)
 		    && (tr.surfaceFlags & SURF_SKY))
 		{
 			// goes through sky

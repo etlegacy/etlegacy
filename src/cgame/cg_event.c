@@ -2281,7 +2281,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 		vec3_t dir;
 
 		ByteToDir(es->eventParm, dir);
-		if (es->weapon == WP_ARTY || es->weapon == WP_SHELL || es->weapon == WP_SMOKE_MARKER)
+		if (es->weapon == WP_ARTY || es->weapon == WP_AIRSTRIKE || es->weapon == WP_SMOKE_MARKER)
 		{
 			CG_MissileHitWall(es->weapon, PS_FX_NONE, position, dir, 0);           // modified to send missilehitwall surface parameters
 		}

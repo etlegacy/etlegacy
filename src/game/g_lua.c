@@ -2317,7 +2317,7 @@ static void registerWeaponConstants(lua_vm_t *vm)
 	lua_regconstinteger(vm->L, WP_MORTAR2_SET);          // 52
 	lua_regconstinteger(vm->L, WP_BAZOOKA);              // 53
 	lua_regconstinteger(vm->L, WP_MP34);                 // 54
-	lua_regconstinteger(vm->L, WP_SHELL);                // 55
+	lua_regconstinteger(vm->L, WP_AIRSTRIKE);            // 55
 	lua_regconstinteger(vm->L, WP_NUM_WEAPONS);
 }
 

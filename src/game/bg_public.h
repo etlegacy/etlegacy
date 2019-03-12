@@ -868,7 +868,7 @@ typedef enum
 	WP_MORTAR2_SET,            ///< 52
 	WP_BAZOOKA,                ///< 53
 	WP_MP34,                   ///< 54
-	WP_SHELL,                  ///< 55
+	WP_AIRSTRIKE,              ///< 55
 
 	WP_NUM_WEAPONS             ///< 56
 	///< NOTE: this cannot be larger than 64 for AI/player weapons!
@@ -1830,7 +1830,7 @@ typedef enum item_s
 	ITEM_WEAPON_MAPMORTAR,
 	ITEM_WEAPON_PLIERS,
 	ITEM_WEAPON_ARTY,
-	ITEM_WEAPON_SHELL,
+	ITEM_WEAPON_AIRSTRIKE,
 	ITEM_WEAPON_MEDIC_SYRINGE,
 	ITEM_WEAPON_MEDIC_ADRENALINE,
 	ITEM_WEAPON_MAGICAMMO,

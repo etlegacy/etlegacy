@@ -1820,7 +1820,7 @@ static int _GetEntityClass(gentity_t *_ent)
 #endif
 		case WP_ARTY:
 #if defined(LEGACY)
-		case WP_SHELL:
+		case WP_AIRSTRIKE:
 #endif
 			return ET_CLASSEX_ARTY;
 		case WP_DYNAMITE:
@@ -3389,7 +3389,7 @@ public:
 			case WP_PANZERFAUST:
 			case WP_ARTY:
 #if defined(LEGACY)
-			case WP_SHELL:
+			case WP_AIRSTRIKE:
 #endif
 			case WP_DYNAMITE:
 			case WP_SMOKE_MARKER:
@@ -3806,7 +3806,7 @@ public:
 				case WP_PANZERFAUST:
 				case WP_ARTY:
 #if defined(LEGACY)
-				case WP_SHELL:
+				case WP_AIRSTRIKE:
 #endif
 				case WP_DYNAMITE:
 				case WP_SMOKE_MARKER:

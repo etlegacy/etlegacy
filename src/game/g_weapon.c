@@ -2776,7 +2776,7 @@ void weapon_callAirStrike(gentity_t *ent)
 		plane->parent       = ent->parent;
 		plane->think        = weapon_callPlane;
 		plane->active       = ent->active;
-		plane->s.weapon     = WP_SHELL;
+		plane->s.weapon     = WP_AIRSTRIKE;
 		plane->s.teamNum    = ent->s.teamNum;
 		plane->s.clientNum  = ent->s.clientNum;
 		plane->r.ownerNum   = ent->r.ownerNum;
@@ -4088,7 +4088,7 @@ weapFireTable_t weapFireTable[] =
 	{ WP_MORTAR2_SET,          weapon_mortar_fire,          NULL,                       NULL,               ET_MISSILE,            EF_NONE,                    SVF_BROADCAST,                CONTENTS_NONE,   TR_GRAVITY,     -50,   { { -4.f, -4.f, 0.f }, { 4.f, 4.f, 6.f } },      MASK_MISSILESHOT, 0,         0,       0,     0,        },
 	{ WP_BAZOOKA,              weapon_antitank_fire,        G_ExplodeMissile,           NULL,               ET_MISSILE,            EF_NONE,                    SVF_BROADCAST,                CONTENTS_NONE,   TR_LINEAR,      -50,   { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_MISSILESHOT, 20000,     4,       0,     0,        },
 	{ WP_MP34,                 Bullet_Fire,                 NULL,                       NULL,               ET_GENERAL,            EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_LINEAR,      0,     { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_SHOT,        0,         0,       0,     0,        },
-        { WP_SHELL,                NULL,                        artilleryThink,             NULL,               ET_MISSILE,            EF_NONE,                    SVF_BROADCAST,                CONTENTS_NONE,   TR_GRAVITY,     1,     { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_MISSILESHOT, FRAMETIME, 2,       0,     0,        },
+        { WP_AIRSTRIKE,            NULL,                        artilleryThink,             NULL,               ET_MISSILE,            EF_NONE,                    SVF_BROADCAST,                CONTENTS_NONE,   TR_GRAVITY,     1,     { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_MISSILESHOT, FRAMETIME, 2,       0,     0,        },
 };
 // *INDENT-ON*
 
