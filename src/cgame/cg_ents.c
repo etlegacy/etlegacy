@@ -1626,6 +1626,12 @@ void CG_MovePlane(centity_t *cent)
 {
 	refEntity_t ent;
 
+	// allow the airstrike plane to be completely removed
+	if (!cg_drawAirstrikePlane.integer)
+	{
+		return;
+	}
+
 	Com_Memset(&ent, 0, sizeof(ent));
 	VectorCopy(cent->lerpOrigin, ent.origin);
 	VectorCopy(cent->lastLerpOrigin, ent.oldorigin);

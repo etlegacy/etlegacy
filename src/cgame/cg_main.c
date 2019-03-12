@@ -346,6 +346,8 @@ vmCvar_t cg_quickchat;
 
 vmCvar_t cg_drawspeed;
 
+vmCvar_t cg_drawAirstrikePlane;
+
 typedef struct
 {
 	vmCvar_t *vmCvar;
@@ -586,7 +588,9 @@ cvarTable_t cvarTable[] =
 
 	{ &cg_quickchat,              "cg_quickchat",              "0",           CVAR_ARCHIVE,                 0 },
 
-	{ &cg_drawspeed,              "cg_drawspeed",              "0",           CVAR_ARCHIVE,                 0 }
+	{ &cg_drawspeed,              "cg_drawspeed",              "0",           CVAR_ARCHIVE,                 0 },
+
+	{ &cg_drawAirstrikePlane,     "cg_drawAirstrikePlane",     "1",           CVAR_ARCHIVE,                 0 }  // Draw Airstrike Plane
 };
 
 const unsigned int cvarTableSize = sizeof(cvarTable) / sizeof(cvarTable[0]);
