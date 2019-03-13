@@ -116,7 +116,7 @@ void CG_MachineGunEjectBrass(centity_t *cent)
 	localEntity_t *le;
 	refEntity_t   *re;
 	vec3_t        velocity, xvelocity;
-	vec3_t        offset, xoffset;
+	vec3_t        offset = { 0, 0, 0 };
 	float         waterScale = 1.0f;
 	vec3_t        v[3], end;
 	qboolean      isFirstPerson = ((cent->currentState.clientNum == cg.snap->ps.clientNum) && !cg.renderingThirdPerson);
@@ -197,6 +197,8 @@ void CG_MachineGunEjectBrass(centity_t *cent)
 
 	if ((cent->currentState.eFlags & EF_MG42_ACTIVE) || (cent->currentState.eFlags & EF_AAGUN_ACTIVE) || !isFirstPerson)
 	{
+		vec3_t xoffset;
+
 		xoffset[0] = offset[0] * v[0][0] + offset[1] * v[1][0] + offset[2] * v[2][0];
 		xoffset[1] = offset[0] * v[0][1] + offset[1] * v[1][1] + offset[2] * v[2][1];
 		xoffset[2] = offset[0] * v[0][2] + offset[1] * v[1][2] + offset[2] * v[2][2];
