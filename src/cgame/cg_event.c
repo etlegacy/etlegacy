@@ -1822,7 +1822,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 	{
 		CG_Printf("time:%i ent:%3i  event:%3i ", cg.time, es->number, event);
 
-		if (event < EV_NONE || event > EV_MAX_EVENTS)
+		if (event < EV_NONE || event >= EV_MAX_EVENTS)
 		{
 			CG_Printf("UNKNOWN\n");
 		}
