@@ -72,7 +72,7 @@ public:
 		return !(*this == other);
 	}
 
-	explicit operator bool() const
+	operator bool() const
 	{
 		return plural != NULL;
 	}

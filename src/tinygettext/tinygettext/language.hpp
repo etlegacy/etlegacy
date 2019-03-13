@@ -62,7 +62,7 @@ public:
 	/** Create an undefined Language object */
 	Language();
 
-	explicit operator bool() const
+	operator bool() const
 	{
 		return language_spec != NULL;
 	}
