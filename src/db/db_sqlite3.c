@@ -304,18 +304,17 @@ static qboolean DB_CreateOrUpdateSchema(int startSchemaVersion)
 /**
  * @brief DB_CallbackVersion
  */
-int DB_CallbackVersion(void *NotUsed, int argc, char **argv,
-                    char **azColName)
+int DB_CallbackVersion(void *NotUsed, int argc, char **argv, char **azColName)
 {
-    NotUsed = 0;
+	NotUsed = 0;
+	int       i;
 
-    for (int i = 0; i < argc; i++)
-    {
+	for (i = 0; i < argc; i++)
+	{
+		Com_Printf("%s = %s\n", azColName[i], argv[i] ? argv[i] : "NULL");
+	}
 
-        Com_Printf("%s = %s\n", azColName[i], argv[i] ? argv[i] : "NULL");
-    }
-
-    return 0;
+	return 0;
 }
 
 /**
