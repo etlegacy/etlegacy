@@ -555,6 +555,8 @@ const char *enttypenames[] =
 
 	"ET_WOLF_OBJECTIVE",
 
+	"ET_AIRSTRIKE_PLANE",
+
 	"ET_EVENTS"
 };
 
