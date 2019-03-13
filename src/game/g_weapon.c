@@ -3801,8 +3801,9 @@ gentity_t *Weapon_FlamethrowerFire(gentity_t *ent)
 	// flamethrower exploit fix
 	ent->client->flametime = level.time + 2500;
 
+	VectorCopy(forward, dir);
 	VectorNormalize(dir);
-	VectorScale(forward, FLAME_START_SPEED, dir);
+	VectorScale(dir, FLAME_START_SPEED, dir);
 
 	return fire_flamechunk(ent, start, dir);
 }
