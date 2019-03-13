@@ -860,11 +860,12 @@ int CG_PredictionOk(playerState_t *ps1, playerState_t *ps2)
 		}
 	}
 
+	// TODO: use WP_NUM_WEAPONS instead ? we don't need to reach the max weapons, no ?
 	for (i = 0; i < MAX_WEAPONS; i++)
 	{
 		if (ps2->ammo[i] != ps1->ammo[i] || ps2->ammoclip[i] != ps1->ammoclip[i])
 		{
-			if (!(GetWeaponTableData(i)->type & WEAPON_TYPE_MELEE)) // FIXME: predict knife?
+			if (i < WP_NUM_WEAPONS && !(GetWeaponTableData(i)->type & WEAPON_TYPE_MELEE)) // FIXME: predict knife?
 			{
 				return 22;
 			}
