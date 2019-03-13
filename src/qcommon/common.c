@@ -2971,7 +2971,7 @@ void Com_Init(char *commandLine)
 		}
 	}
 
-	if (com_developer && com_developer->integer)
+	if (com_developer->integer)
 	{
 		Cmd_AddCommand("error", Com_Error_f, "Just throw a fatal error to test error shutdown procedures.");
 		Cmd_AddCommand("crash", Com_Crash_f, "A way to force a bus error for development reasons.");
