@@ -2321,7 +2321,7 @@ void CG_AddLagometerSnapshotInfo(snapshot_t *snap)
 	// compute server framerate
 	index = cgs.sampledStat.count;
 
-	if (cgs.sampledStat.count <= LAG_SAMPLES)
+	if (cgs.sampledStat.count < LAG_SAMPLES)
 	{
 		cgs.sampledStat.count++;
 	}
