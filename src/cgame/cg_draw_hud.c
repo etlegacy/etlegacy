@@ -943,7 +943,7 @@ static void CG_DrawWeapRecharge(rectDef_t *rect)
 	default:           chargeTime = cg.soldierChargeTime[cg.snap->ps.persistant[PERS_TEAM] - 1];   break;
 	}
 
-	// display colored charbar if charge bar isn't full enough
+	// display colored charge bar if charge bar isn't full enough
 	if (GetWeaponTableData(cg.predictedPlayerState.weapon)->attributes & WEAPON_ATTRIBUT_CHARGE_TIME)
 	{
 		skillType_t skill = GetWeaponTableData(cg.predictedPlayerState.weapon)->skillBased;
@@ -954,7 +954,8 @@ static void CG_DrawWeapRecharge(rectDef_t *rect)
 			charge = qfalse;
 		}
 	}
-	else if (cg.predictedPlayerState.weapon == WP_BINOCULARS && cgs.clientinfo[cg.snap->ps.clientNum].cls == PC_FIELDOPS)
+	else if ((cg.predictedPlayerState.eFlags & EF_ZOOMING || cg.predictedPlayerState.weapon == WP_BINOCULARS)
+		&& cgs.clientinfo[cg.snap->ps.clientNum].cls == PC_FIELDOPS)
 	{
 		skillType_t skill = GetWeaponTableData(WP_ARTY)->skillBased;
 		float       coeff = GetWeaponTableData(WP_ARTY)->chargeTimeCoeff[cgs.clientinfo[cg.clientNum].skill[skill]];
