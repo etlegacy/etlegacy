@@ -2554,7 +2554,7 @@ extern vmCvar_t cg_quickchat;
 
 extern vmCvar_t cg_drawspeed;
 
-extern vmCvar_t cg_drawAirstrikePlane;  ///< turn invisible (0) / visible (1) airstrike plane
+extern vmCvar_t cg_visualEffects;  ///< turn invisible (0) / visible (1) visual effect (i.e airstrike plane, debris ...)
 
 // local clock flags
 #define LOCALTIME_ON                0x01

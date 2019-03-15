@@ -1627,7 +1627,7 @@ void CG_MovePlane(centity_t *cent)
 	refEntity_t ent;
 
 	// allow the airstrike plane to be completely removed
-	if (!cg_drawAirstrikePlane.integer)
+	if (!cg_visualEffects.integer)
 	{
 		return;
 	}

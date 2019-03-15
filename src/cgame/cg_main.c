@@ -346,7 +346,7 @@ vmCvar_t cg_quickchat;
 
 vmCvar_t cg_drawspeed;
 
-vmCvar_t cg_drawAirstrikePlane;
+vmCvar_t cg_visualEffects;
 
 typedef struct
 {
@@ -590,7 +590,7 @@ cvarTable_t cvarTable[] =
 
 	{ &cg_drawspeed,              "cg_drawspeed",              "0",           CVAR_ARCHIVE,                 0 },
 
-	{ &cg_drawAirstrikePlane,     "cg_drawAirstrikePlane",     "1",           CVAR_ARCHIVE,                 0 }  // Draw Airstrike Plane
+	{ &cg_visualEffects,          "cg_visualEffects",          "1",           CVAR_ARCHIVE,                 0 }  // Draw visual effects (i.e : airstrike plane, debris ...)
 };
 
 const unsigned int cvarTableSize = sizeof(cvarTable) / sizeof(cvarTable[0]);
