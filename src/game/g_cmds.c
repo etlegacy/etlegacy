@@ -1793,6 +1793,16 @@ void G_SetClientWeapons(gentity_t *ent, weapon_t w1, weapon_t w2, qboolean updat
 {
 	qboolean changed = qfalse;
 
+	if (!IS_VALID_WEAPON(w1))
+	{
+		return;
+	}
+
+	if (!IS_VALID_WEAPON(w2))
+	{
+		return;
+	}
+
 	if (ent->client->sess.latchPlayerWeapon2 != w2)
 	{
 		ent->client->sess.latchPlayerWeapon2 = w2;
@@ -2055,16 +2065,6 @@ void Cmd_Team_f(gentity_t *ent, unsigned int dwCommand, qboolean fValue)
 	if (playerType < PC_SOLDIER || playerType > PC_COVERTOPS)
 	{
 		playerType = PC_SOLDIER;
-	}
-
-	if (!IS_VALID_WEAPON(w))
-	{
-		return;
-	}
-
-	if (!IS_VALID_WEAPON(w2))
-	{
-		return;
 	}
 
 	if (G_IsClassFull(ent, playerType, team))
