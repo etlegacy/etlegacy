@@ -53,7 +53,7 @@ menuDef {
 
 // In-Game Display //
 #define DISPLAY_Y 268
-	SUBWINDOW( 6, DISPLAY_Y, (SUBWINDOW_WIDTH_L), 148, _("IN-GAME DISPLAY") )
+	SUBWINDOW( 6, DISPLAY_Y, (SUBWINDOW_WIDTH_L), 160, _("IN-GAME DISPLAY") )
 	YESNO( 8, DISPLAY_Y+16, (SUBWINDOW_WIDTH_L)-4, 10, _("Muzzle Flash:"), .2, 8, "cg_muzzleflash", _("Enables or disables weapon fire (muzzle flash)") )
 	MULTI( 8, DISPLAY_Y+28, (SUBWINDOW_WIDTH_L)-4, 10, _("Ejecting Brass:"), .2, 8, "cg_brassTime", cvarFloatList { "High" 15000 "Med" 2500 "Off" 0 }, _("Sets the duration ejected bullet shells etc. last for") )
 	MULTI( 8, DISPLAY_Y+40, (SUBWINDOW_WIDTH_L)-4, 10, _("Bullet Tracers:"), .2, 8, "cg_tracers", cvarFloatList { "Off" 0 "On" 1 "Only own tracers" 2 "Only others tracers" 3 }, _("Enable/Disable bullet tracers") )
@@ -66,6 +66,7 @@ menuDef {
 	YESNO( 8, DISPLAY_Y+112, (SUBWINDOW_WIDTH_L)-4, 10, _("Show Blood:"), .2, 8, "cg_showblood", _("Toggles showing blood spurt effect when player's are shot") )
 	YESNO( 8, DISPLAY_Y+124, (SUBWINDOW_WIDTH_L)-4, 10, _("Particles Effects:"), .2, 8, "cg_wolfparticles", _("Toggles display of particle effects - e.g. explosions, some smoke effects") )
 	YESNO( 8, DISPLAY_Y+136, (SUBWINDOW_WIDTH_L)-4, 10, _("Atmospheric Effects:"), .2, 8, "cg_atmosphericEffects", _("Draws atmospheric effects (snow/rain) on-screen") )
+	YESNO( 8, DISPLAY_Y+148, (SUBWINDOW_WIDTH_L)-4, 10, _("Visual Effects:"), .2, 8, "cg_visualEffects", _("Draws additional visual effects (airstrike planes, debris, ...)") )
 
 // Crosshair //
 #define CROSSHAIR_Y 32
