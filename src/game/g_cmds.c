@@ -2057,6 +2057,16 @@ void Cmd_Team_f(gentity_t *ent, unsigned int dwCommand, qboolean fValue)
 		playerType = PC_SOLDIER;
 	}
 
+	if (!IS_VALID_WEAPON(w))
+	{
+		return;
+	}
+
+	if (!IS_VALID_WEAPON(w2))
+	{
+		return;
+	}
+
 	if (G_IsClassFull(ent, playerType, team))
 	{
 		CP("print \"team: class is not available\n\"");
