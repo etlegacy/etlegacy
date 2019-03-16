@@ -1193,6 +1193,12 @@ void SetWolfSpawnWeapons(gclient_t *client)
 	//
 	weaponClassInfo = &classInfo->classPrimaryWeapons[0]; // default primary weapon
 
+	// ensure weapon is valid
+	if (!IS_VALID_WEAPON(client->sess.playerWeapon))
+	{
+		client->sess.playerWeapon = weaponClassInfo->weapon;
+	}
+
 	// parse available primary weapons and check is valid for current class
 	for (i = 0; i < MAX_WEAPS_PER_CLASS && classInfo->classPrimaryWeapons[i].weapon; i++)
 	{
@@ -1213,6 +1219,12 @@ void SetWolfSpawnWeapons(gclient_t *client)
 	// secondary weapon
 	//
 	weaponClassInfo = &classInfo->classSecondaryWeapons[0];   // default secondary weapon
+
+	// ensure weapon is valid
+	if (!IS_VALID_WEAPON(client->sess.playerWeapon2))
+	{
+		client->sess.playerWeapon2 = weaponClassInfo->weapon;
+	}
 
 	// parse available secondary weapons and check is valid for current class
 	for (i = 0; i < MAX_WEAPS_PER_CLASS && classInfo->classSecondaryWeapons[i].weapon; i++)

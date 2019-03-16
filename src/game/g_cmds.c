@@ -1793,16 +1793,6 @@ void G_SetClientWeapons(gentity_t *ent, weapon_t w1, weapon_t w2, qboolean updat
 {
 	qboolean changed = qfalse;
 
-	if (!IS_VALID_WEAPON(w1))
-	{
-		return;
-	}
-
-	if (!IS_VALID_WEAPON(w2))
-	{
-		return;
-	}
-
 	if (ent->client->sess.latchPlayerWeapon2 != w2)
 	{
 		ent->client->sess.latchPlayerWeapon2 = w2;
