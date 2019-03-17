@@ -101,7 +101,9 @@ void main()
 	var_S = viewOrigin2.xy * -u_DepthScale / viewOrigin2.z;
 #endif // USE_PARALLAX_MAPPING
 #endif // USE_NORMAL_MAPPING
-
+//need todo this for r_normalmapping 0 so color wont be 0 and we render black
+// assign color
+	var_LightColor = attr_Color * u_ColorModulate + u_Color;
 #if defined(USE_PORTAL_CLIPPING)
 	// in front, or behind, the portalplane
 	var_BackSide = dot(var_Position.xyz, u_PortalPlane.xyz) - u_PortalPlane.w;
