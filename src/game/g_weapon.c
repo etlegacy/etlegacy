@@ -63,7 +63,7 @@ gentity_t *Weapon_Knife(gentity_t *ent)
 	gentity_t      *traceEnt, *tent;
 	int            damage;
 	meansOfDeath_t mod = GetWeaponTableData(ent->s.weapon)->mod;
-	vec3_t         pforward, end;
+	vec3_t         end;
 
 	AngleVectors(ent->client->ps.viewangles, forward, right, up);
 	CalcMuzzlePoint(ent, ent->s.weapon, forward, right, up, muzzleTrace);
