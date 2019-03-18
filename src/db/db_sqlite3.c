@@ -548,7 +548,7 @@ qboolean DB_SaveMemDB(void)
  */
 qboolean DB_Close(void)
 {
-	int result;
+	int result = 0;
 
 	if (!isDBActive)
 	{

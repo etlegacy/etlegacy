@@ -191,7 +191,6 @@ void DB_DeleteFavorite(const char *profile, const char *address)
 static int DB_callbackFavorites(void *NotUsed, int argc, char **argv, char **azColName)
 {
 	netadr_t addr;
-	int      i;
 
     NotUsed = 0;
 
@@ -201,11 +200,6 @@ static int DB_callbackFavorites(void *NotUsed, int argc, char **argv, char **azC
 		Com_Printf("Can't load all favorites. MAX_FAVOURITE_SERVERS reached.\n");
 		return 0;
 	}
-
-	//for (int i = 0; i < argc; i++)
-    //{
-    //	Com_Printf("%s = %s\n", azColName[i], argv[i] ? argv[i] : "*NULL*");
-    //}
 
 	NET_StringToAdr(argv[2], &addr, NA_UNSPEC);
 	CL_InitServerInfo(&cls.favoriteServers[cls.numfavoriteservers], &addr);
