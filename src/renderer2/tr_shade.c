@@ -3228,8 +3228,16 @@ void Tess_StageIteratorGeneric()
 						if (!tess.surfaceShader->has_lightmapStage &&
 							tess.lightmapNum >= 0 && tr.lightmaps.currentElements && tess.lightmapNum < tr.lightmaps.currentElements)
 						{
-							Render_lightMapping(stage, qtrue, qtrue); // normalmapped
+							if (r_normalMapping->integer)
+							{
+								Render_lightMapping(stage, qtrue, qtrue); // normalmapped
+							}
+							else
+							{
+								Render_lightMapping(stage, qtrue, qfalse); //not normalmapped
+							}
 						}
+
 						else
 						{
 							Render_vertexLighting_DBS_world(stage); // LIGHTMAP_BY_VERTEX
@@ -3243,7 +3251,15 @@ void Tess_StageIteratorGeneric()
 			}
 			else
 			{
-				Render_generic(stage); // doesn't do normalmapped stuff
+				//this should be more propper for the renderer
+				if (r_normalMapping->integer)
+				{
+					Render_vertexLighting_DBS_world(stage);
+				}
+				else
+				{
+					Render_generic(stage); // doesn't do normalmapped stuff
+				}
 			}
 			break;
 		}
