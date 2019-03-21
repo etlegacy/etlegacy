@@ -450,7 +450,7 @@ static void WM_DrawClientScore(int x, int y, score_t *score, float *color, float
 			tempx    += 12;
 			maxchars -= 2;
 		}
-		else if (ci->powerups & (1 << PW_INVULNERABLE))
+		else if (cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR && ci->team == cgs.clientinfo[cg.clientNum].team && (ci->powerups & (1 << PW_INVULNERABLE)))
 		{
 			CG_DrawPic(tempx - 1, y - 9, 10, 10, cgs.media.spawnInvincibleShader);
 			offset   += 12;
