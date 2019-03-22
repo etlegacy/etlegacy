@@ -228,6 +228,7 @@ vmCvar_t g_lms_currentMatch;
 vmCvar_t g_lms_lockTeams;
 vmCvar_t g_lms_followTeamOnly;
 
+vmCvar_t mod_version;
 vmCvar_t mod_url;
 vmCvar_t url;
 
@@ -540,6 +541,7 @@ cvarTable_t gameCvarTable[] =
 	{ &g_currentCampaign,                   "g_currentCampaign",                   "",                           CVAR_WOLFINFO | CVAR_ROM,                        0, qfalse, qfalse },
 	{ &g_currentCampaignMap,                "g_currentCampaignMap",                "0",                          CVAR_WOLFINFO | CVAR_ROM,                        0, qfalse, qfalse },
 
+	{ &mod_version,                         "mod_version",                         ETLEGACY_VERSION,             CVAR_SERVERINFO | CVAR_ROM,                      0, qfalse, qfalse },
 	// points to the URL for mod information, should not be modified by server admin
 	{ &mod_url,                             "mod_url",                             "www.etlegacy.com",           CVAR_SERVERINFO | CVAR_ROM,                      0, qfalse, qfalse },
 	// configured by the server admin, points to the web pages for the server
