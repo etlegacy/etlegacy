@@ -681,6 +681,21 @@ static void WM_DrawClientScore_Small(int x, int y, score_t *score, float *color,
 			tempx    += 14;
 			maxchars -= 2;
 		}
+		else if (cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR && ci->team == cgs.clientinfo[cg.clientNum].team && (ci->powerups & (1 << PW_OPS_DISGUISED)))
+		{
+			CG_DrawPic(tempx + 1, y - 9, 10, 10, ci->team == TEAM_AXIS ? cgs.media.alliedUniformShader : cgs.media.axisUniformShader);
+			offset   += 14;
+			tempx    += 14;
+			maxchars -= 2;
+		}
+		else if (cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR && ci->team == cgs.clientinfo[cg.clientNum].team
+				 && cgs.clientinfo[score->client].health > 0 && (ci->powerups & (1 << PW_INVULNERABLE)))
+		{
+			CG_DrawPic(tempx + 1, y - 9, 10, 10, cgs.media.spawnInvincibleShader);
+			offset   += 14;
+			tempx    += 14;
+			maxchars -= 2;
+		}
 
 		// draw the skull icon if out of lives
 		if (score->respawnsLeft == -2 || (cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR && ci->team == cgs.clientinfo[cg.clientNum].team && cgs.clientinfo[score->client].health == -1))
