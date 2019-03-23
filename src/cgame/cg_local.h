@@ -1298,6 +1298,11 @@ typedef struct
 
 	vec3_t airstrikePlaneScale[2];
 
+	// objective indicator
+	int flagIndicator;
+	int redFlagCounter;
+	int blueFlagCounter;
+
 #ifdef FEATURE_RATING
 	// skill rating
 	float rating[MAX_CLIENTS];
@@ -1367,6 +1372,12 @@ typedef struct
 	qhandle_t voiceChatShader;
 	qhandle_t balloonShader;
 	qhandle_t objectiveShader;
+	qhandle_t objectiveTeamShader;
+	qhandle_t objectiveDroppedShader;
+	qhandle_t objectiveEnemyShader;
+	qhandle_t objectiveBothTEShader;
+	qhandle_t objectiveBothTDShader;
+	qhandle_t objectiveBothDEShader;
 	qhandle_t readyShader;
 
 	qhandle_t destroyShader;

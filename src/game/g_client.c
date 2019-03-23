@@ -2417,6 +2417,12 @@ void ClientBegin(int clientNum)
 	client->sess.botPush    = (ent->r.svFlags & SVF_BOT) ? qtrue : qfalse;
 #endif
 
+	// init objective indicator if already set
+	if (level.flagIndicator > 0)
+	{
+		G_clientFlagIndicator(ent);
+	}
+
 	ClientSpawn(ent, qfalse, qtrue, qtrue);
 
 	if (client->sess.sessionTeam == TEAM_AXIS || client->sess.sessionTeam == TEAM_ALLIES)

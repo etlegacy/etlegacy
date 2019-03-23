@@ -1292,6 +1292,11 @@ typedef struct level_locals_s
 
 	config_t config;            ///< etpro style config
 
+	// objective indicator
+	int flagIndicator;
+	int redFlagCounter;
+	int blueFlagCounter;
+
 #ifdef FEATURE_RATING
 	// skill rating
 	float alliesProb;
@@ -2469,6 +2474,8 @@ gentity_t *SelectCTFSpawnPoint(team_t team, int teamstate, vec3_t origin, vec3_t
 void TeamplayInfoMessage(team_t team);
 void CheckTeamStatus(void);
 int Pickup_Team(gentity_t *ent, gentity_t *other);
+void G_globalFlagIndicator(void);
+void G_clientFlagIndicator(gentity_t *ent);
 
 // g_vote.c
 int G_voteCmdCheck(gentity_t *ent, char *arg, char *arg2, qboolean fRefereeCmd);

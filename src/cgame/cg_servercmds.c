@@ -1290,6 +1290,11 @@ static void CG_MapRestart(void)
 	cg.crosshairMine = -1;
 	cg.crosshairDyna = -1;
 
+	// init objective indicator
+	cg.flagIndicator   = 0;
+	cg.redFlagCounter  = 0;
+	cg.blueFlagCounter = 0;
+
 	CG_LimboPanel_RequestObjective();
 
 	// clear zoom (so no warpies)

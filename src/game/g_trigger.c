@@ -1223,6 +1223,9 @@ void Touch_flagonly(gentity_t *ent, gentity_t *other, trace_t *trace)
 		{
 			other->client->ps.powerups[PW_REDFLAG] = 0;
 			other->client->speedScale              = 0;
+
+			// update objective indicator
+			level.redFlagCounter -= 1;
 		}
 
 		tmp         = ent->parent;
@@ -1235,6 +1238,12 @@ void Touch_flagonly(gentity_t *ent, gentity_t *other, trace_t *trace)
 #ifdef FEATURE_OMNIBOT
 		Bot_Util_SendTrigger(ent, NULL, va("Allies captured %s", ent->scriptName), "");
 #endif
+		// unset objective indicator
+		if (!level.redFlagCounter)
+		{
+			level.flagIndicator &= ~(1 << PW_REDFLAG);
+		}
+		G_globalFlagIndicator();
 
 		ent->parent = tmp;
 
@@ -1249,6 +1258,9 @@ void Touch_flagonly(gentity_t *ent, gentity_t *other, trace_t *trace)
 		{
 			other->client->ps.powerups[PW_BLUEFLAG] = 0;
 			other->client->speedScale               = 0;
+
+			// update objective indicator
+			level.blueFlagCounter -= 1;
 		}
 
 		tmp         = ent->parent;
@@ -1261,6 +1273,12 @@ void Touch_flagonly(gentity_t *ent, gentity_t *other, trace_t *trace)
 #ifdef FEATURE_OMNIBOT
 		Bot_Util_SendTrigger(ent, NULL, va("Axis captured %s", ent->scriptName), "");
 #endif
+		// unset objective indicator
+		if (!level.blueFlagCounter)
+		{
+			level.flagIndicator &= ~(1 << PW_BLUEFLAG);
+		}
+		G_globalFlagIndicator();
 
 		ent->parent = tmp;
 
@@ -1291,6 +1309,9 @@ void Touch_flagonly_multiple(gentity_t *ent, gentity_t *other, trace_t *trace)
 		other->client->ps.powerups[PW_REDFLAG] = 0;
 		other->client->speedScale              = 0;
 
+		// update objective indicator
+		level.redFlagCounter -= 1;
+
 		tmp         = ent->parent;
 		ent->parent = other;
 
@@ -1301,6 +1322,12 @@ void Touch_flagonly_multiple(gentity_t *ent, gentity_t *other, trace_t *trace)
 #ifdef FEATURE_OMNIBOT
 		Bot_Util_SendTrigger(ent, NULL, va("Allies captured %s", ent->scriptName), "");
 #endif
+		// unset objective indicator
+		if (!level.redFlagCounter)
+		{
+			level.flagIndicator &= ~(1 << PW_REDFLAG);
+		}
+		G_globalFlagIndicator();
 
 		ent->parent = tmp;
 	}
@@ -1308,6 +1335,9 @@ void Touch_flagonly_multiple(gentity_t *ent, gentity_t *other, trace_t *trace)
 	{
 		other->client->ps.powerups[PW_BLUEFLAG] = 0;
 		other->client->speedScale               = 0;
+
+		// update objective indicator
+		level.blueFlagCounter -= 1;
 
 		tmp         = ent->parent;
 		ent->parent = other;
@@ -1319,6 +1349,12 @@ void Touch_flagonly_multiple(gentity_t *ent, gentity_t *other, trace_t *trace)
 #ifdef FEATURE_OMNIBOT
 		Bot_Util_SendTrigger(ent, NULL, va("Axis captured %s", ent->scriptName), "");
 #endif
+		// unset objective indicator
+		if (!level.blueFlagCounter)
+		{
+			level.flagIndicator &= ~(1 << PW_BLUEFLAG);
+		}
+		G_globalFlagIndicator();
 
 		ent->parent = tmp;
 	}
