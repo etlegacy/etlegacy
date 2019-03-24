@@ -240,7 +240,7 @@ void G_PlaySound_Cmd(void)
  */
 static void G_SendSkillRating(gentity_t *ent)
 {
-	char      buffer[1024];
+	char      buffer[2048];
 	int       i, clientNum;
 	gclient_t *cl;
 
