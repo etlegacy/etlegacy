@@ -1588,11 +1588,15 @@ qboolean LoadMap(shaderStage_t *stage, char *buffer)
 
 	// try to load the image
 	stage->bundle[0].image[0] = R_FindImageFile(buffer, imageBits, filterType, wrapType, shader.name);
-
+	
 	if (!stage->bundle[0].image[0])
 	{
 		Ren_Warning("WARNING: LoadMap could not find image '%s' in shader '%s'\n", buffer, shader.name);
-		return qfalse;
+		//FIXME:returning qfalse here if you dont have the new textures and r_materialscan is set to 3,
+		//makes terrain black and orange,also on some
+		//maps loads model textures it didnt before.
+		//better just to print a warning for now
+		//return qfalse;
 	}
 
 /*
