@@ -2546,6 +2546,11 @@ void G_InitGame(int levelTime, int randomSeed, int restart, int legacyServer, in
 	// MAPVOTE
 	level.mapsSinceLastXPReset = 0;
 
+	// init objective indicator
+	level.flagIndicator   = 0;
+	level.redFlagCounter  = 0;
+	level.blueFlagCounter = 0;
+
 #ifdef FEATURE_RATING
 	// check and initialize db
 	if (g_skillRating.integer && G_SkillRatingDB_Init() != 0)

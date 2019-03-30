@@ -1207,11 +1207,19 @@ void G_DropItems(gentity_t *self)
 	{
 		item                                  = BG_GetItem(ITEM_RED_FLAG);
 		self->client->ps.powerups[PW_REDFLAG] = 0;
+
+		// update objective indicator
+		level.redFlagCounter -= 1;
+		G_globalFlagIndicator();
 	}
 	if (self->client->ps.powerups[PW_BLUEFLAG])
 	{
 		item                                   = BG_GetItem(ITEM_BLUE_FLAG);
 		self->client->ps.powerups[PW_BLUEFLAG] = 0;
+
+		// update objective indicator
+		level.blueFlagCounter -= 1;
+		G_globalFlagIndicator();
 	}
 
 	if (item)

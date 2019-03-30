@@ -2881,7 +2881,11 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 		default:     // shouldn't happen
 			break;
 		}
-
+	break;
+	case EV_FLAG_INDICATOR:
+		cg.flagIndicator   = es->eventParm;
+		cg.redFlagCounter  = es->otherEntityNum;
+		cg.blueFlagCounter = es->otherEntityNum2;
 		break;
 
 	default:

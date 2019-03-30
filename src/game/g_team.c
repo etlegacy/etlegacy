@@ -192,8 +192,28 @@ void Team_ResetFlag(gentity_t *ent)
 		if (ent->s.density == 1)
 		{
 			RespawnItem(ent);
-#ifdef FEATURE_OMNIBOT
 
+			// unset objective indicator
+			switch (ent->item->giPowerUp == PW_REDFLAG ? TEAM_AXIS : TEAM_ALLIES)
+			{
+				case TEAM_AXIS:
+					if (!level.redFlagCounter)
+					{
+						level.flagIndicator &= ~(1 << PW_REDFLAG);
+					}
+					break;
+				case TEAM_ALLIES:
+					if (!level.blueFlagCounter)
+					{
+						level.flagIndicator &= ~(1 << PW_BLUEFLAG);
+					}
+					break;
+				default:
+					break;
+			}
+			G_globalFlagIndicator();
+
+#ifdef FEATURE_OMNIBOT
 			Bot_Util_SendTrigger(ent, NULL, va("Flag returned %s!", _GetEntityName(ent)), "returned");
 #endif
 		}
@@ -298,6 +318,12 @@ int Team_TouchOurFlag(gentity_t *ent, gentity_t *other, int team)
 				Bot_Util_SendTrigger(ent, NULL, va("Axis have returned %s!", pName ? pName : ""), "returned");
 			}
 #endif
+			// unset objective indicator
+			if (!level.redFlagCounter)
+			{
+				level.flagIndicator &= ~(1 << PW_REDFLAG);
+			}
+			G_globalFlagIndicator();
 		}
 		else
 		{
@@ -312,6 +338,12 @@ int Team_TouchOurFlag(gentity_t *ent, gentity_t *other, int team)
 				Bot_Util_SendTrigger(ent, NULL, va("Allies have returned %s!", pName ? pName : ""), "returned");
 			}
 #endif
+			// unset objective indicator
+			if (!level.blueFlagCounter)
+			{
+				level.flagIndicator &= ~(1 << PW_BLUEFLAG);
+			}
+			G_globalFlagIndicator();
 		}
 
 		//ResetFlag will remove this entity!  We must return zero
@@ -386,11 +418,20 @@ int Team_TouchEnemyFlag(gentity_t *ent, gentity_t *other, int team)
 	if (team == TEAM_AXIS)
 	{
 		cl->ps.powerups[PW_REDFLAG] = INT_MAX;
+		// update objective indicator
+		level.flagIndicator  |= (1 << PW_REDFLAG);
+		level.redFlagCounter += 1;
 	}
 	else
 	{
 		cl->ps.powerups[PW_BLUEFLAG] = INT_MAX;
+		// update objective indicator
+		level.flagIndicator   |= (1 << PW_BLUEFLAG);
+		level.blueFlagCounter += 1;
 	} // flags never expire
+
+	// set objective indicator
+	G_globalFlagIndicator();
 
 	// store the entitynum of our original flag spawner
 	if (ent->flags & FL_DROPPED_ITEM)
@@ -447,6 +488,39 @@ int Pickup_Team(gentity_t *ent, gentity_t *other)
 	return ((team == cl->sess.sessionTeam) ?
 	        Team_TouchOurFlag : Team_TouchEnemyFlag)
 	           (ent, other, team);
+}
+
+/**
+ * @brief G_globalFlagIndicator
+ * @param[in] flagIndicator
+ */
+void G_globalFlagIndicator()
+{
+	gentity_t *te;
+
+	te = G_TempEntityNotLinked(EV_FLAG_INDICATOR);
+
+	te->s.eventParm       = level.flagIndicator;
+	te->s.otherEntityNum  = level.redFlagCounter;
+	te->s.otherEntityNum2 = level.blueFlagCounter;
+	te->r.svFlags         |= SVF_BROADCAST;
+}
+
+/**
+ * @brief G_clientFlagIndicator
+ * @param[in] flagIndicator
+ */
+void G_clientFlagIndicator(gentity_t *ent)
+{
+	gentity_t *te;
+
+	te = G_TempEntityNotLinked(EV_FLAG_INDICATOR);
+
+	te->s.eventParm       = level.flagIndicator;
+	te->s.otherEntityNum  = level.redFlagCounter;
+	te->s.otherEntityNum2 = level.blueFlagCounter;
+	te->r.singleClient    = ent->s.number;
+	te->r.svFlags         |= SVF_SINGLECLIENT;
 }
 
 /*---------------------------------------------------------------------------*/
