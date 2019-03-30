@@ -641,6 +641,9 @@ void R_DoGLimpShutdown(void)
 {
 	ri.GLimp_Shutdown();
 	Com_Memset(&glConfig, 0, sizeof(glConfig));
+#ifdef FEATURE_RENDERER2
+	Com_Memset(&glConfig2, 0, sizeof(glConfig2));
+#endif
 	Com_Memset(&glState, 0, sizeof(glState));
 }
 
