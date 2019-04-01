@@ -2638,7 +2638,10 @@ void G_AirStrikeThink(gentity_t *ent)
 
 		bomb->s.pos.trTime = (int)(level.time + crandom() * 50);
 
-		bomb->count = 1;    // start through the sky
+		if (bomboffset[2] >= BG_GetSkyHeightAtPoint(bomboffset))
+		{
+			bomb->count = 1;         // may start through the sky
+		}
 
 		bomb->s.apos.trType = TR_LINEAR;
 		bomb->s.apos.trTime = level.time;
@@ -2684,9 +2687,10 @@ void weapon_callPlane(gentity_t *ent)
 void weapon_callAirStrike(gentity_t *ent)
 {
 	int       i;
-	vec3_t    bombaxis, lookaxis, pos, bomboffset, dir, angle, end;
+	vec3_t    bombaxis, lookaxis, pos, dir, angle, end;
 	trace_t   tr;
 	gentity_t *plane;
+	float     skyHeight;
 
 	// FIXME: HARD-CODED!
 	static vec3_t planeBBoxMin = { -330, -504, -35 }, planeBBoxMax = { 330, 504, 128 };
@@ -2704,10 +2708,10 @@ void weapon_callAirStrike(gentity_t *ent)
 	ent->think     = G_ExplodeMissile;
 	ent->nextthink = (int)(level.time + 950 + ((ent->count - 1) * 2000) + NUMBOMBS * 100 + crandom() * 50);     // 950 offset is for aircraft flyby + plane count
 
-	VectorCopy(ent->s.pos.trBase, bomboffset);
-	bomboffset[2] += BG_GetSkyHeightAtPoint(ent->s.pos.trBase);
+	VectorCopy(ent->s.pos.trBase, end);
+	end[2] += BG_GetSkyHeightAtPoint(ent->s.pos.trBase);
 
-	trap_Trace(&tr, ent->s.pos.trBase, NULL, NULL, bomboffset, ent->s.number, MASK_SHOT);
+	trap_Trace(&tr, ent->s.pos.trBase, NULL, NULL, end, ent->s.number, MASK_SHOT);
 	if ((tr.fraction < 1.0f) && (!(tr.surfaceFlags & SURF_NOIMPACT)))           //SURF_SKY)) ) { // changed for trenchtoast foggie prollem
 	{
 		G_HQSay(ent->parent, COLOR_YELLOW, "Pilot: ", "Aborting, can't see target.");
@@ -2732,6 +2736,9 @@ void weapon_callAirStrike(gentity_t *ent)
 		ent->active = qtrue;
 	}
 
+	// keep sky height
+	skyHeight = tr.endpos[2];
+
 	VectorSubtract(ent->s.pos.trBase, ent->parent->client->ps.origin, lookaxis);
 	lookaxis[2] = 0;
 	VectorNormalize(lookaxis);
@@ -2749,11 +2756,11 @@ void weapon_callAirStrike(gentity_t *ent)
 		VectorScale(bombaxis, (-.5f * BOMBSPREAD * NUMBOMBS), pos);
 		VectorAdd(ent->s.pos.trBase, pos, pos);   // first bomb position
 		VectorScale(bombaxis, BOMBSPREAD * NUMBOMBS, bombaxis);   // bomb drop direction offset
-		pos[2] = bomboffset[2];
+		pos[2] = skyHeight;
 
 		// destination point of aircraft
 		VectorMA(pos, 4, bombaxis, end);
-		end[2] = bomboffset[2];
+		end[2] = skyHeight;
 
 		trap_TraceCapsule(&tr, pos, planeBBoxMin, planeBBoxMax, end, ent->s.number, MASK_SOLID);
 		while (tr.fraction < 1.0f && (tr.surfaceFlags & SURF_NOIMPACT) && !VectorCompare(tr.endpos, end)) //SURF_SKY)) ) { // changed for trenchtoast foggie prollem
@@ -2766,7 +2773,17 @@ void weapon_callAirStrike(gentity_t *ent)
 
 		if (tr.fraction < 1.0f && !(tr.surfaceFlags & SURF_NOIMPACT)) //SURF_SKY)) ) { // changed for trenchtoast foggie prollem
 		{
-			pos[2] = BG_GetTracemapSkyGroundCeil();
+			int skyFloor, skyCeil;
+			skyFloor = BG_GetTracemapSkyGroundFloor();
+			skyCeil  = BG_GetTracemapSkyGroundCeil();
+
+			// some maps block missile throws sky by defining a thin sky surface and adding
+			// a surface as SURF_NODRAW and SURF_NOMARK, this to ensure no map exploit.
+			// in case we encounter this kind of sky, simply check if the sky have an height
+			if (skyFloor != skyCeil)
+			{
+				pos[2] = BG_GetTracemapSkyGroundCeil();
+			}
 		}
 
 		vectoangles(bombaxis, angle);
@@ -2894,7 +2911,6 @@ void artillerySpotterThink(gentity_t *ent)
 		bomboffset[1] = crandom() * 50;     // was 0;
 		bomboffset[2] = 0;
 		VectorAdd(bomboffset, ent->s.pos.trBase, bomboffset);
-		bomboffset[2] = BG_GetSkyHeightAtPoint(bomboffset);
 
 		bomb = fire_missile((ent->parent && ent->parent->client) ? ent->parent : ent, bomboffset, tv(0.f, 0.f, -1650.f), ent->s.weapon);
 
@@ -2912,7 +2928,6 @@ void artillerySpotterThink(gentity_t *ent)
 		bomboffset[1] = crandom() * 250;
 		bomboffset[2] = 0;
 		VectorAdd(bomboffset, ent->s.pos.trBase, bomboffset);
-		bomboffset[2] = BG_GetSkyHeightAtPoint(bomboffset);
 
 		bomb = fire_missile((ent->parent && ent->parent->client) ? ent->parent : ent, bomboffset, tv(0.f, 0.f, -1650.f), ent->s.weapon);
 	}
@@ -2922,7 +2937,11 @@ void artillerySpotterThink(gentity_t *ent)
 
 	// overwrite, spotter is thinking for next bomb so let think for shelling sound
 	bomb->nextthink = level.time + FRAMETIME;
-	bomb->count     = 1; // may start through the sky
+
+	if (bomboffset[2] >= BG_GetSkyHeightAtPoint(bomboffset))
+	{
+		bomb->count = 1;     // may start through the sky
+	}
 
 	// no more bomb to drop
 	if (ent->count <= 0)
@@ -3016,6 +3035,9 @@ void Weapon_Artillery(gentity_t *ent)
 
 		return;
 	}
+
+	// final result
+	VectorCopy(tr.endpos, pos);
 
 	// arty/airstrike rate limiting.
 	G_AddArtilleryToCounters(ent);
