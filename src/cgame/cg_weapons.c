@@ -1853,7 +1853,7 @@ static void CG_SetWeapLerpFrameAnimation(weaponInfo_t *wi, lerpFrame_t *lf, int 
 	lf->animation     = anim;
 	lf->animationTime = lf->frameTime + anim->initialLerp;
 
-	if (cg_debugAnim.integer & 2)
+	if (cg_debugAnim.integer == 2)
 	{
 		CG_Printf("Weap Anim: %d\n", newAnimation);
 	}
