@@ -63,7 +63,7 @@ menuDef {
 	MULTI( 8, DISPLAY_Y+76, (SUBWINDOW_WIDTH_L)-4, 10, _("Wall Mark Lifetime:"), .2, 8, "cg_markTime", cvarFloatList { "Off" 0 "Short" 10000 "Normal" 20000 "Long" 30000 }, _("Duration of bullet marks on walls") )
 	MULTI( 8, DISPLAY_Y+88, (SUBWINDOW_WIDTH_L)-4, 10, _("Blood Flash:"), .2, 8, "cg_bloodFlash", cvarFloatList { "None" 0.0 "Light" 0.25 "Medium" 0.5 "Heavy" 0.75 "Full" 1.0 }, _("Red blood \"flash\" scale when receiving damage") )
 	MULTI( 8, DISPLAY_Y+100, (SUBWINDOW_WIDTH_L)-4, 10, _("Blood Splatter:"), .2, 8, "cg_bloodDamageBlend", cvarFloatList { "None" 0.0 "Light" 0.25 "Medium" 0.5 "Heavy" 0.75 "Full" 1.0 }, _("Blood \"splatter\" transparency when taking damage from other players") )
-	YESNO( 8, DISPLAY_Y+112, (SUBWINDOW_WIDTH_L)-4, 10, _("Show Blood:"), .2, 8, "cg_showblood", _("Toggles showing blood spurt effect when player's are shot") )
+	YESNO( 8, DISPLAY_Y+112, (SUBWINDOW_WIDTH_L)-4, 10, _("Show Blood:"), .2, 8, "cg_showblood", _("Toggles showing blood spurt effect when players are shot") )
 	YESNO( 8, DISPLAY_Y+124, (SUBWINDOW_WIDTH_L)-4, 10, _("Particles Effects:"), .2, 8, "cg_wolfparticles", _("Toggles display of particle effects (explosions, some smoke effects)") )
 	YESNO( 8, DISPLAY_Y+136, (SUBWINDOW_WIDTH_L)-4, 10, _("Atmospheric Effects:"), .2, 8, "cg_atmosphericEffects", _("Draws atmospheric effects (snow/rain) on-screen") )
 	YESNO( 8, DISPLAY_Y+148, (SUBWINDOW_WIDTH_L)-4, 10, _("Visual Effects:"), .2, 8, "cg_visualEffects", _("Draws additional visual effects (airstrike planes, debris)") )
