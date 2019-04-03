@@ -448,7 +448,7 @@ cvarTable_t cvarTable[] =
 	// the following variables are created in other parts of the system,
 	// but we also reference them here
 
-	{ &cg_buildScript,            "com_buildScript",           "0",           0,                            0 }, // force loading of all possible data amd error on failures
+	{ &cg_buildScript,            "com_buildScript",           "0",           0,                            0 }, // force loading of all possible data and error on failures
 	{ &cg_paused,                 "cl_paused",                 "0",           CVAR_ROM,                     0 },
 
 	{ &cg_blood,                  "cg_showblood",              "1",           CVAR_ARCHIVE,                 0 },
