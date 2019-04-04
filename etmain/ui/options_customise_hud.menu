@@ -38,7 +38,7 @@ menuDef {
 	MULTI( 8, HUD_Y+52, (SUBWINDOW_WIDTH_L)-4, 10, _("Mission Timer:"), .2, 8, "cg_drawRoundTimer", cvarFloatList { "Off" 0 "On" 1 }, _("Displays remaining mission time") )
 	MULTI( 8, HUD_Y+64, (SUBWINDOW_WIDTH_L)-4, 10, _("Reinforcement Timer:"), .2, 8, "cg_drawReinforcementTime", cvarFloatList { "Off" 0 "On" 1 }, _("Displays your team's \"reinforcement\" time") )
 	MULTI( 8, HUD_Y+76, (SUBWINDOW_WIDTH_L)-4, 10, _("Cursor Hints:"), .2, 8, "cg_cursorHints", cvarFloatList { "Off" 0 "Size Pulse" 1 "Strobe Pulse" 2 "Alpha Pulse" 3 "Solid" 4 }, _("Icon display format when near an action item") )
-	MULTI( 8, HUD_Y+88, (SUBWINDOW_WIDTH_L)-4, 10, _("Show Locations:"), .2, 8, "cg_locations", cvarFloatList { "Cordinates Only" 0 "Names Fireteam Only" 1 "Names Team Chat Only" 2 "Team & Fireteam Chat" 3 }, _("Displays locations in fireteam") )
+	MULTI( 8, HUD_Y+88, (SUBWINDOW_WIDTH_L)-4, 10, _("Show Locations:"), .2, 8, "cg_locations", cvarFloatList { "Coordinates Only" 0 "Fireteam Overlay" 1 "Team and Fireteam Chat" 2 "Chat + FT Overlay" 3 }, _("Displays locations in fireteam") )
 	YESNO( 8, HUD_Y+100, (SUBWINDOW_WIDTH_L)-4, 10, _("Fireteam Latched Class:"), .2, 8, "cg_fireteamLatchedClass", _("Displays Fireteam latched class") )
 	MULTI( 8, HUD_Y+112, (SUBWINDOW_WIDTH_L)-4, 10, _("Weapon Icon Flash:"), .2, 8, "cg_drawWeaponIconFlash", cvarFloatList { "Off" 0 "On" 1 }, _("Flash weapon icon when firing, reloading, or switching") )
 	MULTI( 8, HUD_Y+124, (SUBWINDOW_WIDTH_L)-4, 10, _("Obituaries Icons:"), .2, 8, "cg_graphicObituaries", cvarFloatList { "Off" 0 "Victim Weapon Killer" 1 "Killer Weapon Victim" 2 }, _("Displays graphical obituaries") )
