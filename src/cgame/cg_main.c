@@ -553,7 +553,7 @@ cvarTable_t cvarTable[] =
 	{ &cg_recording_statusline,   "cg_recording_statusline",   "9",           CVAR_ARCHIVE,                 0 },
 
 	{ &cg_hitSounds,              "cg_hitSounds",              "1",           CVAR_ARCHIVE,                 0 },
-	{ &cg_locations,              "cg_locations",              "7",           CVAR_ARCHIVE,                 0 },
+	{ &cg_locations,              "cg_locations",              "3",           CVAR_ARCHIVE,                 0 },
 
 	{ &cg_spawnTimer_set,         "cg_spawnTimer_set",         "-1",          CVAR_TEMP,                    0 },
 
