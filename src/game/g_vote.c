@@ -1827,7 +1827,7 @@ int G_Surrender_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg
 		             "Axis" : "Allies"));
 		AP(va("chat \"%s have surrendered!\"",
 		      (level.voteInfo.voteTeam == TEAM_AXIS) ?
-		      "^1AXIS^7" : "^4ALLIES^7"));
+		      "^1AXIS^7" : "^$ALLIES^7"));
 	}
 	return G_OK;
 }

@@ -488,7 +488,7 @@ void G_players_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fDump)
 			}
 			else if (cl->sess.sessionTeam == TEAM_ALLIES)
 			{
-				tc = (ent) ? "^4L^7" : "L";
+				tc = (ent) ? "^$L^7" : "L";
 			}
 			else if (cl->sess.sessionTeam == TEAM_SPECTATOR)
 			{
