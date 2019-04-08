@@ -34,7 +34,7 @@
 #    include <lualib.h>
 #endif
 
-#define LUA_NUM_VM 16
+#define LUA_NUM_VM 18
 #define LUA_MAX_FSIZE 1024 * 1024 ///< 1MB
 
 #define FIELD_INT           0
@@ -136,6 +136,7 @@ qboolean G_LuaInit(void);
 qboolean G_LuaCall(lua_vm_t *vm, const char *func, int nargs, int nresults);
 qboolean G_LuaGetNamedFunction(lua_vm_t *vm, const char *name);
 qboolean G_LuaStartVM(lua_vm_t *vm);
+qboolean G_LuaRunIsolated(const char *modName);
 void G_LuaStopVM(lua_vm_t *vm);
 void G_LuaShutdown(void);
 void G_LuaStatus(gentity_t *ent);
@@ -160,6 +161,7 @@ qboolean G_LuaHook_Obituary(int victim, int killer, int meansOfDeath);
 qboolean G_LuaHook_Damage(int target, int attacker, int damage, int dflags, meansOfDeath_t mod);
 void G_LuaHook_SpawnEntitiesFromString();
 qboolean G_ScriptAction_Delete(gentity_t *ent, char *params);
+qboolean G_LuaHook_WeaponFire(int clientNum, weapon_t weapon, gentity_t **pFiredShot);
 
 #endif // #ifndef INCLUDE_G_LUA_H
 

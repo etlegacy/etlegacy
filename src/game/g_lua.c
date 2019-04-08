@@ -889,6 +889,36 @@ static int _et_RemoveWeaponFromPlayer(lua_State *L)
 	return 1;
 }
 
+// et.GetCurrentWeapon( clientNum ) -> weapon, ammo, ammoclip
+static int _et_GetCurrentWeapon(lua_State *L)
+{
+	gentity_t *ent;
+	gclient_t *client;
+	int       clientNum, ammo, ammoclip;
+
+	clientNum = luaL_checkinteger(L, 1);
+	if (clientNum < 0 || clientNum >= MAX_CLIENTS)
+	{
+		luaL_error(L, "\"clientNum\" is out of bounds: %d", clientNum);
+	}
+
+	ent = g_entities + clientNum;
+	if (!ent->client)
+	{
+		luaL_error(L, "\"clientNum\" \"%d\" is not a client entity", clientNum);
+	}
+
+	client   = ent->client;
+	ammo     = client->ps.ammo[GetWeaponTableData(client->ps.weapon)->ammoIndex];
+	ammoclip = client->ps.ammoclip[GetWeaponTableData(client->ps.weapon)->clipIndex];
+
+	lua_pushinteger(L, client->ps.weapon);
+	lua_pushinteger(L, ammo);
+	lua_pushinteger(L, ammoclip);
+
+	return 3;
+}
+
 // Entities
 // client entity fields
 static const gentity_field_t gclient_fields[] =
@@ -946,7 +976,7 @@ static const gentity_field_t gclient_fields[] =
 	_et_gclient_addfield(pers.lastrevive_client,            FIELD_INT,                 FIELD_FLAG_READONLY),
 	_et_gclient_addfield(pers.lastkiller_client,            FIELD_INT,                 FIELD_FLAG_READONLY),
 	_et_gclient_addfield(pers.lastammo_client,              FIELD_INT,                 FIELD_FLAG_READONLY),
-	_et_gclient_addfield(pers.lasthealth_client,            FIELD_INT,                 FIELD_FLAG_READONLY),
+	_et_gclient_addfield(pers.lasthealth_client,            FIELD_INT,                 0),
 	_et_gclient_addfield(pers.lastteambleed_client,         FIELD_INT,                 FIELD_FLAG_READONLY),
 	_et_gclient_addfield(pers.lastteambleed_dmg,            FIELD_INT,                 FIELD_FLAG_READONLY),
 	_et_gclient_addfield(pers.playerStats.hitRegions,       FIELD_INT_ARRAY,           FIELD_FLAG_READONLY),
@@ -957,6 +987,7 @@ static const gentity_field_t gclient_fields[] =
 
 	_et_gclient_addfield(ps.pm_flags,                       FIELD_INT,                 FIELD_FLAG_READONLY),
 	_et_gclient_addfield(ps.pm_time,                        FIELD_INT,                 FIELD_FLAG_READONLY),
+	_et_gclient_addfield(ps.pm_type,                        FIELD_INT,                 FIELD_FLAG_READONLY),
 	_et_gclient_addfield(ps.eFlags,                         FIELD_INT,                 FIELD_FLAG_READONLY),
 	_et_gclient_addfield(ps.weapon,                         FIELD_INT,                 FIELD_FLAG_READONLY),
 	_et_gclient_addfield(ps.weaponstate,                    FIELD_INT,                 FIELD_FLAG_READONLY),
@@ -970,6 +1001,9 @@ static const gentity_field_t gclient_fields[] =
 	_et_gclient_addfield(ps.ammo,                           FIELD_INT_ARRAY,           0),
 	_et_gclient_addfield(ps.ammoclip,                       FIELD_INT_ARRAY,           0),
 	_et_gclient_addfield(ps.classWeaponTime,                FIELD_INT,                 0),
+	_et_gclient_addfield(ps.viewheight,                     FIELD_INT,                 FIELD_FLAG_READONLY),
+	_et_gclient_addfield(ps.leanf,                          FIELD_FLOAT,               FIELD_FLAG_READONLY),
+
 
 	// same order as in g_local.h
 	_et_gclient_addfield(sess.sessionTeam,                  FIELD_INT,                 0),
@@ -1823,6 +1857,151 @@ static int _et_G_SetGlobalFog(lua_State *L)
 	return 1;
 }
 
+static void _et_getclipplane(lua_State *L, cplane_t *plane)
+{
+	lua_newtable(L);
+	_et_gentity_getvec3(L, plane->normal);
+	lua_setfield(L, -2, "normal");
+	lua_pushnumber(L, plane->dist);
+	lua_setfield(L, -2, "dist");
+	lua_pushinteger(L, plane->type);
+	lua_setfield(L, -2, "type");
+	lua_pushinteger(L, plane->signbits);
+	lua_setfield(L, -2, "signbits");
+	lua_newtable(L);
+	lua_pushinteger(L, plane->pad[0]);
+	lua_rawseti(L, -2, 1);
+	lua_pushinteger(L, plane->pad[1]);
+	lua_rawseti(L, -2, 2);
+	lua_setfield(L, -2, "pad");
+}
+
+static void _et_gettrace(lua_State *L, trace_t *tr)
+{
+	lua_newtable(L);
+	lua_pushboolean(L, tr->allsolid);
+	lua_setfield(L, -2, "allsolid");
+	lua_pushboolean(L, tr->startsolid);
+	lua_setfield(L, -2, "startsolid");
+	lua_pushnumber(L, tr->fraction);
+	lua_setfield(L, -2, "fraction");
+	_et_gentity_getvec3(L, tr->endpos);
+	lua_setfield(L, -2, "endpos");
+	_et_getclipplane(L, &tr->plane);
+	lua_setfield(L, -2, "plane");
+	lua_pushinteger(L, tr->surfaceFlags);
+	lua_setfield(L, -2, "surfaceFlags");
+	lua_pushinteger(L, tr->contents);
+	lua_setfield(L, -2, "contents");
+	lua_pushinteger(L, tr->entityNum);
+	lua_setfield(L, -2, "entityNum");
+}
+
+static vec3_t *_etH_toVec3(lua_State *L, int inx)
+{
+	static vec3_t vec;
+
+	lua_pushvalue(L, inx);
+	_et_gentity_setvec3(L, &vec);
+	lua_pop(L, 1);
+
+	return &vec;
+}
+
+// et.trap_Trace( start, mins, maxs, end, entNum, mask )
+static int _et_trap_Trace(lua_State *L)
+{
+	trace_t tr;
+	vec3_t  start, end, mins, maxs;
+	vec3_t  *minsPtr = NULL, *maxsPtr = NULL;
+	int     entNum, mask;
+
+	if (!lua_istable(L, 1))
+	{
+		luaL_error(L, "trap_Trace: \"start\" argument should be an instance of table");
+	}
+	VectorCopy(*_etH_toVec3(L, 1), start);
+
+	if (lua_istable(L, 2))
+	{
+		VectorCopy(*_etH_toVec3(L, 2), mins);
+		minsPtr = &mins;
+	}
+
+	if (lua_istable(L, 3))
+	{
+		VectorCopy(*_etH_toVec3(L, 3), maxs);
+		maxsPtr = &maxs;
+	}
+
+	if (!lua_istable(L, 4))
+	{
+		luaL_error(L, "trap_Trace: \"end\" should be an instance of table");
+	}
+	VectorCopy(*_etH_toVec3(L, 4), end);
+
+	entNum = luaL_checkinteger(L, 5);
+	mask   = luaL_checkinteger(L, 6);
+
+	trap_Trace(&tr, start, *minsPtr, *maxsPtr, end, entNum, mask);
+	_et_gettrace(L, &tr);
+
+	return 1;
+}
+
+// et.G_HistoricalTrace( ent, start, mins, maxs, end, entNum, mask )
+static int _et_G_HistoricalTrace(lua_State *L)
+{
+	gentity_t *gent;
+	trace_t   tr;
+	vec3_t    start, mins, maxs, end;
+	vec3_t    *minsPtr = NULL, *maxsPtr = NULL;
+	int       entNum, mask, ent;
+
+	ent = luaL_checkinteger(L, 1);
+
+	if (ent < 0 || ent >= MAX_GENTITIES)
+	{
+		luaL_error(L, "G_HistoricalTrace: \"ent\" is out of bounds");
+	}
+
+	gent = g_entities + ent;
+
+	if (!lua_istable(L, 2))
+	{
+		luaL_error(L, "G_HistoricalTrace: \"start\" argument should be an instance of table");
+	}
+
+	VectorCopy(*_etH_toVec3(L, 2), start);
+
+	if (lua_istable(L, 3))
+	{
+		VectorCopy(*_etH_toVec3(L, 3), mins);
+		minsPtr = &mins;
+	}
+
+	if (lua_istable(L, 4))
+	{
+		VectorCopy(*_etH_toVec3(L, 4), maxs);
+		maxsPtr = &maxs;
+	}
+
+	if (!lua_istable(L, 5))
+	{
+		luaL_error(L, "G_HistoricalTrace: \"end\" should be an instance of table");
+	}
+
+	VectorCopy(*_etH_toVec3(L, 5), end);
+
+	entNum = luaL_checkinteger(L, 6);
+	mask   = luaL_checkinteger(L, 7);
+
+	G_HistoricalTrace(gent, &tr, start, *minsPtr, *maxsPtr, end, entNum, mask);
+	_et_gettrace(L, &tr);
+
+	return 1;
+}
+
 /** @}*/ // doxygen addtogroup lua_etfncs
 
 // et library initialisation array
@@ -1890,6 +2069,7 @@ static const luaL_Reg etlib[] =
 	{ "G_ResetXP",               _et_G_ResetXP               },
 	{ "AddWeaponToPlayer",       _et_AddWeaponToPlayer       },
 	{ "RemoveWeaponFromPlayer",  _et_RemoveWeaponFromPlayer  },
+	{ "GetCurrentWeapon",        _et_GetCurrentWeapon        },
 	// Entities
 	{ "G_CreateEntity",          _et_G_Lua_CreateEntity      },
 	{ "G_DeleteEntity",          _et_G_Lua_DeleteEntity      },
@@ -1909,6 +2089,8 @@ static const luaL_Reg etlib[] =
 	{ "G_ResetRemappedShaders",  _et_G_ResetRemappedShaders  },
 	{ "G_ShaderRemapFlush",      _et_G_ShaderRemapFlush      },
 	{ "G_SetGlobalFog",          _et_G_SetGlobalFog          },
+	{ "trap_Trace",              _et_trap_Trace              },
+	{ "G_HistoricalTrace",       _et_G_HistoricalTrace       },
 	{ NULL },
 };
 
@@ -1917,122 +2099,156 @@ static const luaL_Reg etlib[] =
 /*************/
 
 /*
+ * G_LuaRunIsolated(modName)
+ * Creates and runs specified module in isolated state
+ */
+qboolean G_LuaRunIsolated(const char *modName)
+{
+	int          freeVM, flen = 0;
+	static char  allowedModules[MAX_CVAR_VALUE_STRING];
+	static char  buff[MAX_CVAR_VALUE_STRING];
+	char         *code, *signature;
+	fileHandle_t f;
+	lua_vm_t     *vm;
+
+	for (freeVM = 0; freeVM < LUA_NUM_VM; freeVM++)
+	{
+		if (lVM[freeVM] == NULL)
+		{
+			break;
+		}
+	}
+
+	if (freeVM == LUA_NUM_VM)
+	{
+		G_Printf("%s API: %sno free VMs left to load module: \"%s\" \n", LUA_VERSION, S_COLOR_BLUE, modName);
+		return qfalse;
+	}
+
+	Q_strncpyz(allowedModules, Q_strupr(lua_allowedModules.string), sizeof(allowedModules));
+
+	// try to open lua file
+	flen = trap_FS_FOpenFile(modName, &f, FS_READ);
+	if (flen < 0)
+	{
+		G_Printf("%s API: %scan not open file '%s'\n", LUA_VERSION, S_COLOR_BLUE, modName);
+	}
+	else if (flen > LUA_MAX_FSIZE)
+	{
+		// Let's not load arbitrarily big files to memory.
+		// If your lua file exceeds the limit, let me know.
+		G_Printf("%s API: %signoring file '%s' (too big)\n", LUA_VERSION, S_COLOR_BLUE, modName);
+		trap_FS_FCloseFile(f);
+	}
+	else
+	{
+		code = Com_Allocate(flen + 1);
+
+		if (code == NULL)
+		{
+			G_Error("%s API: %smemory allocation error for '%s' data\n", LUA_VERSION, S_COLOR_BLUE, modName);
+		}
+
+		trap_FS_Read(code, flen, f);
+		*(code + flen) = '\0';
+		trap_FS_FCloseFile(f);
+		signature = G_SHA1(code);
+
+		if (Q_stricmp(lua_allowedModules.string, "") && !strstr(allowedModules, signature))
+		{
+			// don't load disallowed lua modules into vm
+			Com_Dealloc(code); // fixed memory leaking in Lua API - thx ETPub/goesa
+			G_Printf("%s API: %sLua module [%s] [%s] disallowed by ACL\n", LUA_VERSION, S_COLOR_BLUE, modName, signature);
+		}
+		else
+		{
+			// Init lua_vm_t struct
+			vm = (lua_vm_t *)Com_Allocate(sizeof(lua_vm_t));
+
+			if (vm == NULL)
+			{
+				G_Error("%s API: %svm memory allocation error for %s data\n", LUA_VERSION, S_COLOR_BLUE, modName);
+			}
+
+			vm->id = -1;
+			Q_strncpyz(vm->file_name, modName, sizeof(vm->file_name));
+			Q_strncpyz(vm->mod_name, "", sizeof(vm->mod_name));
+			Q_strncpyz(vm->mod_signature, signature, sizeof(vm->mod_signature));
+			vm->code      = code;
+			vm->code_size = flen;
+			vm->err       = 0;
+
+			// Start lua virtual machine
+			if (G_LuaStartVM(vm))
+			{
+				vm->id      = freeVM;
+				lVM[freeVM] = vm;
+				return qtrue;
+			}
+			else
+			{
+				G_LuaStopVM(vm);
+			}
+		}
+	}
+	return qfalse;
+}
+
+
+/*
  * G_LuaInit()
  * Initialises the Lua API interface
  */
 qboolean G_LuaInit(void)
 {
-	char         allowedModules[MAX_CVAR_VALUE_STRING];
-	int          i, num_vm = 0, len, flen = 0;
-	char         buff[MAX_CVAR_VALUE_STRING], *crt, *code, *signature;
-	fileHandle_t f;
-	lua_vm_t     *vm;
-
-	if (!lua_modules.string[0])
-	{
-		G_Printf("%s API: %sno Lua files set\n", LUA_VERSION, S_COLOR_BLUE);
-		return qtrue;
-	}
-
-	Q_strncpyz(allowedModules, Q_strupr(lua_allowedModules.string), sizeof(allowedModules));
-
-	Q_strncpyz(buff, lua_modules.string, sizeof(buff));
-	len = strlen(buff);
-	crt = buff;
+	int  i, num_vm = 0, len;
+	char buff[MAX_CVAR_VALUE_STRING], *crt;
 
 	for (i = 0; i < LUA_NUM_VM; i++)
 	{
 		lVM[i] = NULL;
 	}
 
-	for (i = 0; i <= len; i++)
+	if (lua_modules.string[0])
 	{
-		if (buff[i] == ' ' || buff[i] == '\0' || buff[i] == ',' || buff[i] == ';')
+		Q_strncpyz(buff, lua_modules.string, sizeof(buff));
+		len = strlen(buff);
+		crt = buff;
+		for (i = 0; i <= len; i++)
 		{
-			buff[i] = '\0';
+			if (buff[i] == ' ' || buff[i] == '\0' || buff[i] == ',' || buff[i] == ';')
+			{
+				buff[i] = '\0';
 
-			// try to open lua file
-			flen = trap_FS_FOpenFile(crt, &f, FS_READ);
-			if (flen < 0)
-			{
-				G_Printf("%s API: %scan not open file '%s'\n", LUA_VERSION, S_COLOR_BLUE, crt);
-			}
-			else if (flen > LUA_MAX_FSIZE)
-			{
-				// Let's not load arbitrarily big files to memory.
-				// If your lua file exceeds the limit, let me know.
-				G_Printf("%s API: %signoring file '%s' (too big)\n", LUA_VERSION, S_COLOR_BLUE, crt);
-				trap_FS_FCloseFile(f);
-			}
-			else
-			{
-				code = Com_Allocate(flen + 1);
-
-				if (code == NULL)
+				if (!G_LuaRunIsolated(crt))
 				{
-					G_Error("%s API: %smemory allocation error for '%s' data\n", LUA_VERSION, S_COLOR_BLUE, crt);
+					continue;
 				}
 
-				trap_FS_Read(code, flen, f);
-				*(code + flen) = '\0';
-				trap_FS_FCloseFile(f);
-				signature = G_SHA1(code);
+				num_vm++;
 
-				if (Q_stricmp(lua_allowedModules.string, "") && !strstr(allowedModules, signature))
+				// prepare for next iteration
+				if (i + 1 < len)
 				{
-					// don't load disallowed lua modules into vm
-					Com_Dealloc(code); // fixed memory leaking in Lua API - thx ETPub/goesa
-					G_Printf("%s API: %sLua module [%s] [%s] disallowed by ACL\n", LUA_VERSION, S_COLOR_BLUE, crt, signature);
+					crt = buff + i + 1;
 				}
 				else
 				{
-					// Init lua_vm_t struct
-					vm = (lua_vm_t *) Com_Allocate(sizeof(lua_vm_t));
-
-					if (vm == NULL)
-					{
-						G_Error("%s API: %svm memory allocation error for %s data\n", LUA_VERSION, S_COLOR_BLUE, crt);
-					}
-
-					vm->id = -1;
-					Q_strncpyz(vm->file_name, crt, sizeof(vm->file_name));
-					Q_strncpyz(vm->mod_name, "", sizeof(vm->mod_name));
-					Q_strncpyz(vm->mod_signature, signature, sizeof(vm->mod_signature));
-					vm->code      = code;
-					vm->code_size = flen;
-					vm->err       = 0;
-
-					// Start lua virtual machine
-					if (G_LuaStartVM(vm) == qfalse)
-					{
-						G_LuaStopVM(vm);
-						vm = NULL;
-					}
-					else
-					{
-						vm->id      = num_vm;
-						lVM[num_vm] = vm;
-						num_vm++;
-					}
+					crt = NULL;
 				}
-			}
-
-			// prepare for next iteration
-			if (i + 1 < len)
-			{
-				crt = buff + i + 1;
-			}
-			else
-			{
-				crt = NULL;
-			}
-			if (num_vm >= LUA_NUM_VM)
-			{
-				G_Printf("%s API: %stoo many lua files specified, only the first %d have been loaded\n", LUA_VERSION, S_COLOR_BLUE, LUA_NUM_VM);
-				break;
+				if (num_vm >= LUA_NUM_VM)
+				{
+					G_Printf("%s API: %stoo many lua files specified, only the first %d have been loaded\n", LUA_VERSION, S_COLOR_BLUE, LUA_NUM_VM);
+					break;
+				}
 			}
 		}
 	}
+	else
+	{
+		G_Printf("%s API: %sno Lua files set\n", LUA_VERSION, S_COLOR_BLUE);
+	}
+
 	return qtrue;
 }
 
@@ -2413,6 +2629,78 @@ static void registerModConstants(lua_vm_t *vm)
 	lua_regconstinteger(vm->L, MOD_NUM_MODS);
 }
 
+static void registerSurfaceConstants(lua_vm_t *vm)
+{
+	lua_regconstinteger(vm->L, CONTENTS_NONE);
+	lua_regconstinteger(vm->L, CONTENTS_SOLID);
+	lua_regconstinteger(vm->L, CONTENTS_LIGHTGRID);
+	lua_regconstinteger(vm->L, CONTENTS_LAVA);
+	lua_regconstinteger(vm->L, CONTENTS_SLIME);
+	lua_regconstinteger(vm->L, CONTENTS_WATER);
+	lua_regconstinteger(vm->L, CONTENTS_FOG);
+	lua_regconstinteger(vm->L, CONTENTS_MISSILECLIP);
+	lua_regconstinteger(vm->L, CONTENTS_ITEM);
+	lua_regconstinteger(vm->L, CONTENTS_MOVER);
+	lua_regconstinteger(vm->L, CONTENTS_AREAPORTAL);
+	lua_regconstinteger(vm->L, CONTENTS_PLAYERCLIP);
+	lua_regconstinteger(vm->L, CONTENTS_MONSTERCLIP);
+	lua_regconstinteger(vm->L, CONTENTS_TELEPORTER);
+	lua_regconstinteger(vm->L, CONTENTS_JUMPPAD);
+	lua_regconstinteger(vm->L, CONTENTS_CLUSTERPORTAL);
+	lua_regconstinteger(vm->L, CONTENTS_DONOTENTER);
+	lua_regconstinteger(vm->L, CONTENTS_DONOTENTER_LARGE);
+	lua_regconstinteger(vm->L, CONTENTS_ORIGIN);
+	lua_regconstinteger(vm->L, CONTENTS_BODY);
+	lua_regconstinteger(vm->L, CONTENTS_CORPSE);
+	lua_regconstinteger(vm->L, CONTENTS_DETAIL);
+	lua_regconstinteger(vm->L, CONTENTS_STRUCTURAL);
+	lua_regconstinteger(vm->L, CONTENTS_TRANSLUCENT);
+	lua_regconstinteger(vm->L, CONTENTS_TRIGGER);
+	lua_regconstinteger(vm->L, CONTENTS_NODROP);
+
+	lua_regconstinteger(vm->L, SURF_NODAMAGE);
+	lua_regconstinteger(vm->L, SURF_SLICK);
+	lua_regconstinteger(vm->L, SURF_SKY);
+	lua_regconstinteger(vm->L, SURF_LADDER);
+	lua_regconstinteger(vm->L, SURF_NOIMPACT);
+	lua_regconstinteger(vm->L, SURF_NOMARKS);
+	lua_regconstinteger(vm->L, SURF_SPLASH);
+	lua_regconstinteger(vm->L, SURF_NODRAW);
+	lua_regconstinteger(vm->L, SURF_HINT);
+	lua_regconstinteger(vm->L, SURF_SKIP);
+	lua_regconstinteger(vm->L, SURF_NOLIGHTMAP);
+	lua_regconstinteger(vm->L, SURF_POINTLIGHT);
+	lua_regconstinteger(vm->L, SURF_METAL);
+	lua_regconstinteger(vm->L, SURF_NOSTEPS);
+	lua_regconstinteger(vm->L, SURF_NONSOLID);
+	lua_regconstinteger(vm->L, SURF_LIGHTFILTER);
+	lua_regconstinteger(vm->L, SURF_ALPHASHADOW);
+	lua_regconstinteger(vm->L, SURF_NODLIGHT);
+	lua_regconstinteger(vm->L, SURF_WOOD);
+	lua_regconstinteger(vm->L, SURF_GRASS);
+	lua_regconstinteger(vm->L, SURF_CERAMIC);
+	lua_regconstinteger(vm->L, SURF_GRAVEL);
+	lua_regconstinteger(vm->L, SURF_GLASS);
+	lua_regconstinteger(vm->L, SURF_SNOW);
+	lua_regconstinteger(vm->L, SURF_ROOF);
+	lua_regconstinteger(vm->L, SURF_RUBBLE);
+	lua_regconstinteger(vm->L, SURF_CARPET);
+	lua_regconstinteger(vm->L, SURF_MONSTERSLICK);
+	lua_regconstinteger(vm->L, SURF_MONSLICK_W);
+	lua_regconstinteger(vm->L, SURF_MONSLICK_N);
+	lua_regconstinteger(vm->L, SURF_MONSLICK_E);
+	lua_regconstinteger(vm->L, SURF_MONSLICK_S);
+	lua_regconstinteger(vm->L, SURF_LANDMINE);
+
+	lua_regconstinteger(vm->L, MASK_ALL);
+	lua_regconstinteger(vm->L, MASK_SOLID);
+	lua_regconstinteger(vm->L, MASK_PLAYERSOLID);
+	lua_regconstinteger(vm->L, MASK_WATER);
+	lua_regconstinteger(vm->L, MASK_OPAQUE);
+	lua_regconstinteger(vm->L, MASK_SHOT);
+	lua_regconstinteger(vm->L, MASK_MISSILESHOT);
+}
+
 static void registerConstants(lua_vm_t *vm)
 {
 	// max constants
@@ -2481,11 +2769,31 @@ static void registerConstants(lua_vm_t *vm)
 
 	lua_regconststring(vm->L, HOSTARCH);
 
+	// pmtype_t
+	lua_regconstinteger(vm->L, PM_NORMAL);
+	lua_regconstinteger(vm->L, PM_NOCLIP);
+	lua_regconstinteger(vm->L, PM_SPECTATOR);
+	lua_regconstinteger(vm->L, PM_FREEZE);
+	lua_regconstinteger(vm->L, PM_INTERMISSION);
+
+	// statIndex_t
+	lua_regconstinteger(vm->L, STAT_HEALTH);
+	lua_regconstinteger(vm->L, STAT_KEYS);
+	lua_regconstinteger(vm->L, STAT_DEAD_YAW);
+	lua_regconstinteger(vm->L, STAT_MAX_HEALTH);
+	lua_regconstinteger(vm->L, STAT_PLAYER_CLASS);
+	lua_regconstinteger(vm->L, STAT_XP);
+	lua_regconstinteger(vm->L, STAT_PS_FLAGS);
+	lua_regconstinteger(vm->L, STAT_AIRLEFT);
+	lua_regconstinteger(vm->L, STAT_SPRINTTIME);
+	lua_regconstinteger(vm->L, STAT_ANTIWARP_DELAY);
+
 	// cs, weapon and MOD constants
 	registerConfigstringConstants(vm);
 	registerPowerupConstants(vm);
 	registerWeaponConstants(vm);
 	registerModConstants(vm);
+	registerSurfaceConstants(vm);
 }
 
 /*
@@ -2761,7 +3069,6 @@ void G_LuaHook_InitGame(int levelTime, int randomSeed, int restart)
 				//G_LuaStopVM(vm);
 				continue;
 			}
-			// Return values
 		}
 	}
 }
@@ -2796,7 +3103,6 @@ void G_LuaHook_ShutdownGame(int restart)
 				//G_LuaStopVM(vm);
 				continue;
 			}
-			// Return values
 		}
 	}
 }
@@ -2831,7 +3137,6 @@ void G_LuaHook_RunFrame(int levelTime)
 				//G_LuaStopVM(vm);
 				continue;
 			}
-			// Return values
 		}
 	}
 }
@@ -2872,8 +3177,10 @@ qboolean G_LuaHook_ClientConnect(int clientNum, qboolean firstTime, qboolean isB
 			if (lua_isstring(vm->L, -1))
 			{
 				Q_strncpyz(reason, lua_tostring(vm->L, -1), MAX_STRING_CHARS);
+				lua_pop(vm->L, 1);
 				return qtrue;
 			}
+			lua_pop(vm->L, 1);
 		}
 	}
 	return qfalse;
@@ -2909,7 +3216,6 @@ void G_LuaHook_ClientDisconnect(int clientNum)
 				//G_LuaStopVM(vm);
 				continue;
 			}
-			// Return values
 		}
 	}
 }
@@ -2944,7 +3250,6 @@ void G_LuaHook_ClientBegin(int clientNum)
 				//G_LuaStopVM(vm);
 				continue;
 			}
-			// Return values
 		}
 	}
 }
@@ -2979,7 +3284,6 @@ void G_LuaHook_ClientUserinfoChanged(int clientNum)
 				//G_LuaStopVM(vm);
 				continue;
 			}
-			// Return values
 		}
 	}
 }
@@ -3017,7 +3321,6 @@ void G_LuaHook_ClientSpawn(int clientNum, qboolean revived, qboolean teamChange,
 				//G_LuaStopVM(vm);
 				continue;
 			}
-			// Return values
 		}
 	}
 }
@@ -3058,9 +3361,11 @@ qboolean G_LuaHook_ClientCommand(int clientNum, char *command)
 			{
 				if (lua_tointeger(vm->L, -1) == 1)
 				{
+					lua_pop(vm->L, 1);
 					return qtrue;
 				}
 			}
+			lua_pop(vm->L, 1);
 		}
 	}
 	return qfalse;
@@ -3101,9 +3406,11 @@ qboolean G_LuaHook_ConsoleCommand(char *command)
 			{
 				if (lua_tointeger(vm->L, -1) == 1)
 				{
+					lua_pop(vm->L, 1);
 					return qtrue;
 				}
 			}
+			lua_pop(vm->L, 1);
 		}
 	}
 	return qfalse;
@@ -3145,9 +3452,11 @@ qboolean G_LuaHook_UpgradeSkill(int cno, skillType_t skill)
 			{
 				if (lua_tointeger(vm->L, -1) == -1)
 				{
+					lua_pop(vm->L, 1);
 					return qtrue;
 				}
 			}
+			lua_pop(vm->L, 1);
 		}
 	}
 	return qfalse;
@@ -3189,9 +3498,11 @@ qboolean G_LuaHook_SetPlayerSkill(int cno, skillType_t skill)
 			{
 				if (lua_tointeger(vm->L, -1) == -1)
 				{
+					lua_pop(vm->L, 1);
 					return qtrue;
 				}
 			}
+			lua_pop(vm->L, 1);
 		}
 	}
 	return qfalse;
@@ -3279,8 +3590,10 @@ qboolean G_LuaHook_Obituary(int victim, int killer, int meansOfDeath)
 			// Return values
 			if (lua_isstring(vm->L, -1))
 			{
+				lua_pop(vm->L, 1);
 				return qtrue;
 			}
+			lua_pop(vm->L, 1);
 		}
 	}
 	return qfalse;
@@ -3321,8 +3634,58 @@ qboolean G_LuaHook_Damage(int target, int attacker, int damage, int dflags, mean
 			// Return values
 			if (lua_tointeger(vm->L, -1) == 1)
 			{
+				lua_pop(vm->L, 1);
 				return qtrue;
 			}
+			lua_pop(vm->L, 1);
+		}
+	}
+	return qfalse;
+}
+
+// G_LuaHook_WeaponFire
+// et_WeaponFire( clientNum, weapon )
+qboolean G_LuaHook_WeaponFire(int clientNum, weapon_t weapon, gentity_t **pFiredShot)
+{
+	int      i;
+	lua_vm_t *vm;
+
+	for (i = 0; i < LUA_NUM_VM; i++)
+	{
+		vm = lVM[i];
+		if (vm)
+		{
+			if (vm->id < 0 /*|| vm->err*/)
+			{
+				continue;
+			}
+			if (!G_LuaGetNamedFunction(vm, "et_WeaponFire"))
+			{
+				continue;
+			}
+			// Arguments
+			lua_pushinteger(vm->L, clientNum);
+			lua_pushinteger(vm->L, weapon);
+			// Call
+			if (!G_LuaCall(vm, "et_WeaponFire", 2, 2))
+			{
+				continue;
+			}
+			// Return values
+			if (lua_tointeger(vm->L, -2) == 1)
+			{
+				if (lua_isinteger(vm->L, -1))
+				{
+					int entNum = lua_tointeger(vm->L, -1);
+					if (entNum >= 0 && entNum < MAX_GENTITIES)
+					{
+						*pFiredShot = g_entities + entNum;
+					}
+				}
+				lua_pop(vm->L, 2);
+				return qtrue;
+			}
+			lua_pop(vm->L, 2);
 		}
 	}
 	return qfalse;

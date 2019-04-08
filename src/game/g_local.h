@@ -2705,7 +2705,7 @@ void G_MapVoteInfoRead(void);
 
 // g_misc flags
 #define G_MISC_SHOVE_NOZ               BIT(0)
-#define G_MISC_MEDIC_SYRINGE_HEAL      BIT(1)
+// BIT(1) unused
 #define G_MISC_ARTY_STRIKE_COMBINE     BIT(2)
 #define G_MISC_CROSSHAIR_DYNAMITE      BIT(3)
 #define G_MISC_CROSSHAIR_LANDMINE      BIT(4)
