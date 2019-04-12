@@ -2236,6 +2236,7 @@ void G_InitGame(int levelTime, int randomSeed, int restart, int legacyServer, in
 	int    i;
 	char   cs[MAX_INFO_STRING];
 	time_t aclock;
+	char   timeFt[32];
 	char   *logDate;
 
 	G_Printf("------- Game Initialization -------\ngamename: %s\ngamedate: %s\n", GAMEVERSION, __DATE__);
@@ -2386,7 +2387,8 @@ void G_InitGame(int levelTime, int randomSeed, int restart, int legacyServer, in
 
 	// time
 	time(&aclock);
-	G_Printf("gametime: %s\n", asctime(localtime(&aclock)));
+	strftime(timeFt, sizeof(timeFt), "%a %b %d %X %Y", localtime(&aclock));
+	G_Printf("gametime: %s\n", timeFt);
 
 	G_ParseCampaigns();
 	if (g_gametype.integer == GT_WOLF_CAMPAIGN)
@@ -2424,7 +2426,7 @@ void G_InitGame(int levelTime, int randomSeed, int restart, int legacyServer, in
 		{
 			if (trap_FS_FOpenFile(g_log.string, &level.logFile, FS_WRITE) >= 0)
 			{
-				logDate = va("logfile opened on %s\n", asctime(localtime(&aclock)));
+				logDate = va("logfile opened on %s\n", timeFt);
 
 				trap_FS_Write(logDate, strlen(logDate), level.logFile);
 				trap_FS_FCloseFile(level.logFile);
@@ -2657,6 +2659,7 @@ void G_InitGame(int levelTime, int randomSeed, int restart, int legacyServer, in
 void G_ShutdownGame(int restart)
 {
 	time_t aclock;
+	char   timeFt[32];
 
 #ifdef FEATURE_LUA
 	G_LuaHook_ShutdownGame(restart);
@@ -2683,7 +2686,8 @@ void G_ShutdownGame(int restart)
 
 	// time
 	time(&aclock);
-	G_Printf("gametime: %s\n", asctime(localtime(&aclock)));
+	strftime(timeFt, sizeof(timeFt), "%a %b %d %X %Y", localtime(&aclock));
+	G_Printf("gametime: %s\n", timeFt);
 
 #ifdef FEATURE_OMNIBOT
 	if (!Bot_Interface_Shutdown())

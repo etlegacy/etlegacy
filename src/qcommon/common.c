@@ -257,21 +257,19 @@ void QDECL Com_Printf(const char *fmt, ...)
 		// also, avoid recursing in the qconsole.log opening (i.e. if fs_debug is on)
 		if (!logfile && FS_Initialized() && !opening_qconsole)
 		{
-			struct tm *newtime;
-			time_t    aclock;
+			time_t aclock;
+			char   timeFt[32];
 
 			opening_qconsole = qtrue;
-
-			time(&aclock);
-			newtime = localtime(&aclock);
 
 			logfile = FS_FOpenFileWrite("etconsole.log");
 
 			if (logfile)
 			{
-				// FIXME: Obsolete function 'asctime' called. It is recommended to use 'strftime' instead.
-				// Does we really need to change it ?
-				Com_Printf("logfile opened on %s\n", asctime(newtime));
+				time(&aclock);
+				strftime(timeFt, sizeof(timeFt), "%a %b %d %X %Y",  localtime(&aclock));
+				Com_Printf("logfile opened on %s\n", timeFt);
+
 				if (com_logfile->integer > 1)
 				{
 					// force it to not buffer so we get valid
