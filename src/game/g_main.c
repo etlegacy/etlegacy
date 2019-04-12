@@ -2412,6 +2412,23 @@ void G_InitGame(int levelTime, int randomSeed, int restart, int legacyServer, in
 
 	if (g_log.string[0])
 	{
+		// ensure log file is always created if it does not exist
+		// as 'append' fails to do so on some unix platforms
+		if (trap_FS_FOpenFile(g_log.string, &level.logFile, FS_READ) <= 0)
+		{
+			if (trap_FS_FOpenFile(g_log.string, &level.logFile, FS_WRITE) >= 0)
+			{
+				time_t aclock;
+				char   *logDate;
+
+				time(&aclock);
+				logDate = va("logfile opened on %s\n", asctime(localtime(&aclock)));
+
+				trap_FS_Write(logDate, strlen(logDate), level.logFile);
+				trap_FS_FCloseFile(level.logFile);
+			}
+		}
+
 		if (g_logSync.integer)
 		{
 			trap_FS_FOpenFile(g_log.string, &level.logFile, FS_APPEND_SYNC);
@@ -2420,6 +2437,7 @@ void G_InitGame(int levelTime, int randomSeed, int restart, int legacyServer, in
 		{
 			trap_FS_FOpenFile(g_log.string, &level.logFile, FS_APPEND);
 		}
+
 		if (!level.logFile)
 		{
 			G_Printf("WARNING: Couldn't open logfile: %s\n", g_log.string);
