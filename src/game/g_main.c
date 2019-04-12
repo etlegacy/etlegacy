@@ -2233,8 +2233,10 @@ void G_GetMapXP(void)
  */
 void G_InitGame(int levelTime, int randomSeed, int restart, int legacyServer, int serverVersion)
 {
-	int  i;
-	char cs[MAX_INFO_STRING];
+	int    i;
+	char   cs[MAX_INFO_STRING];
+	time_t aclock;
+	char   *logDate;
 
 	G_Printf("------- Game Initialization -------\ngamename: %s\ngamedate: %s\n", GAMEVERSION, __DATE__);
 
@@ -2382,6 +2384,10 @@ void G_InitGame(int levelTime, int randomSeed, int restart, int legacyServer, in
 	// array acces check is done in G_RegisterCvars - we won't execute this with invalid gametype
 	G_Printf("gametype: %s\n", gameNames[g_gametype.integer]);
 
+	// time
+	time(&aclock);
+	G_Printf("gametime: %s\n", asctime(localtime(&aclock)));
+
 	G_ParseCampaigns();
 	if (g_gametype.integer == GT_WOLF_CAMPAIGN)
 	{
@@ -2418,10 +2424,6 @@ void G_InitGame(int levelTime, int randomSeed, int restart, int legacyServer, in
 		{
 			if (trap_FS_FOpenFile(g_log.string, &level.logFile, FS_WRITE) >= 0)
 			{
-				time_t aclock;
-				char   *logDate;
-
-				time(&aclock);
 				logDate = va("logfile opened on %s\n", asctime(localtime(&aclock)));
 
 				trap_FS_Write(logDate, strlen(logDate), level.logFile);
@@ -2654,6 +2656,8 @@ void G_InitGame(int levelTime, int randomSeed, int restart, int legacyServer, in
  */
 void G_ShutdownGame(int restart)
 {
+	time_t aclock;
+
 #ifdef FEATURE_LUA
 	G_LuaHook_ShutdownGame(restart);
 	G_LuaShutdown();
@@ -2676,6 +2680,10 @@ void G_ShutdownGame(int restart)
 	}
 
 	G_Printf("==== ShutdownGame (%i - %s) ====\n", restart, level.rawmapname);
+
+	// time
+	time(&aclock);
+	G_Printf("gametime: %s\n", asctime(localtime(&aclock)));
 
 #ifdef FEATURE_OMNIBOT
 	if (!Bot_Interface_Shutdown())
