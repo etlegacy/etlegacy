@@ -1,16 +1,31 @@
 INTRODUCTION
 ============
 
-ET: Legacy is based on the on the GPL'd source code of Wolfenstein: Enemy Territory.
+ET: Legacy is an open source project based on the code of Wolfenstein: Enemy Territory, which was released in 2010 under
+the terms of General Public License v3.
 
-The main goals of the project are fixing bugs, cleaning up the codebase and adding useful features
-while remaining compatible with the ET 2.60b version.
+Set during World War II and heavily focused on team work, the game was initially released in 2003 by Splash Damage and
+id Software. More than a decade after its release, after spending countless hours of escorting tanks and trucks,
+stealing gold and radar parts and transmitting confidential documents, it was time to dust off the game which
+consistently refused to go down.
 
-The Legacy mod is the default mod shipped with ET: Legacy. It aims to add many useful features and
-improvements, while staying close to the original gameplay, as well as being lightweight and fully
-extensible through Lua scripts.
+Ambition
+----------------------------------------------------------------------------
+There are two aspects to this project: an updated game version "Enemy Territory: Legacy" and a new mod "legacy".
 
-ET: Legacy development is a collaborative effort done in an open, transparent and friendly manner.
+* The main goal of ET: Legacy is to fix bugs and security exploits, remove old dependencies, add useful features and
+  modernize its graphics while still remaining compatible with ET 2.60b and as many of its mods as possible.
+* The main goal of legacy is to stay close to the original gameplay experience and provide a viable alternative to ETPro
+  for competitive play while staying lightweight but extensible through additional Lua scripts.
+
+Community
+----------------------------------------------------------------------------
+Under the wing of ET: Legacy, players from all corners of the Wolfenstein: Enemy Territory community came together to
+continuously update a game that is well over a decade old, which despite its considerable age is still home to hundreds
+of concurrent players a day. ET: Legacy development is a collaborative effort done in an open, transparent and friendly
+manner. We do appreciate any contribution to the project may it be in the form of patches, suggestions, reports or
+comments.
+
 Anyone is welcome to join our efforts!
 
 
@@ -56,9 +71,17 @@ are available in 32 bit only version.
 INSTALLATION
 ============
 
-Installation Guides are provided at http://dev.etlegacy.com/projects/etlegacy/wiki/Installation_Guides
+Installation Guides are provided at http://dev.etlegacy.com/projects/etlegacy/wiki/Installation
 
-To run a server, please refer to http://dev.etlegacy.com/projects/etlegacy/wiki/Set_up_Features
+To run a server, please refer to http://dev.etlegacy.com/projects/etlegacy/wiki/Features
+
+
+LUA SCRIPTS
+===========
+
+A collection of Lua scripts to extend the Legacy mod can be found at https://github.com/etlegacy/etlegacy-lua_scripts
+
+The Lua API documentation can be found at https://legacy-lua-api.readthedocs.io
 
 
 FREQUENTLY ASKED QUESTIONS
