@@ -2150,7 +2150,8 @@ static void CG_DrawTimersAlt(rectDef_t *respawn, rectDef_t *spawntimer, rectDef_
 		{
 			int reinfTime = CG_CalculateReinfTime(qfalse);
 
-			rt = va("%s%d%s", (reinfTime <= 2 && cgs.clientinfo[cg.clientNum].health == 0) ? "^3" : "^F", reinfTime, ((cgs.timelimit <= 0.0f) ? "" : " "));
+			rt = va("%s%d%s", (reinfTime <= 2 && cgs.clientinfo[cg.clientNum].health == 0 &&
+				!(cg.snap->ps.pm_flags & PMF_FOLLOW)) ? "^3" : "^F", reinfTime, ((cgs.timelimit <= 0.0f) ? "" : " "));
 		}
 		else
 		{
@@ -2255,7 +2256,8 @@ static float CG_DrawTimerNormal(float y)
 		{
 			int reinfTime = CG_CalculateReinfTime(qfalse);
 
-			rt = va("%s%d%s", (reinfTime <= 2 && cgs.clientinfo[cg.clientNum].health == 0) ? "^3" : "^F", reinfTime, ((cgs.timelimit <= 0.0f) ? "" : " "));
+			rt = va("%s%d%s", (reinfTime <= 2 && cgs.clientinfo[cg.clientNum].health == 0 &&
+				!(cg.snap->ps.pm_flags & PMF_FOLLOW)) ? "^3" : "^F", reinfTime, ((cgs.timelimit <= 0.0f) ? "" : " "));
 		}
 		else
 		{
