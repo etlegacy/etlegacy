@@ -79,6 +79,20 @@ char *Sys_DefaultHomePath(void)
 #ifdef __APPLE__
 			Q_strncpyz(homePath, OSX_ApplicationSupportPath(), sizeof(homePath));
 			Q_strcat(homePath, sizeof(homePath), "/etlegacy");
+#elseif __ANDROID__
+
+			if(SDL_AndroidGetExternalStorageState() == 1)
+			{
+				Q_strncpyz(homePath, SDL_AndroidGetExternalStoragePath(), sizeof(homePath));
+				Q_strcat(homePath, sizeof(homePath), "/");
+			}
+			else
+			{
+				//use SDL_GetBasePath, SDL_PrefBasePath, or  Sys_DefaultBasePath instead ?
+				// for now print log via __android_log_print()
+				__android_log_print(ANDROID_LOG_ERROR, "ETL-ERROR", "No SDCard deteced! Please insert one")
+			}
+
 #else
 			Q_strcat(homePath, sizeof(homePath), "/.etlegacy");
 #endif
