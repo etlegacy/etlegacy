@@ -50,8 +50,7 @@ static void CG_ParseSkillRating(void)
 	s = CG_Argv(i);
 	while (*s)
 	{
-		cg.rating[i]      = (float)atof(CG_Argv(2 + i * 2 + 1));
-		cg.deltaRating[i] = (float)atof(CG_Argv(2 + i * 2 + 2));
+		cg.rating[i] = (float)atof(CG_Argv(i + 3));
 		i++;
 		s = CG_Argv(i);
 	}
