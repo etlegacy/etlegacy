@@ -362,11 +362,7 @@
     #endif
   #endif
 #elif defined __aarch64__
-  #if defined __ARM_ARCH_ISA_A64
-    #ifndef ARCH_STRING
       #define ARCH_STRING "arm64-v8a"
-    #endif
-  #endif
 #endif
 
 #if __FLOAT_WORD_ORDER == __BIG_ENDIAN
