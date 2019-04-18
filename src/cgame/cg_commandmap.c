@@ -1249,30 +1249,25 @@ void CG_DrawMap(float x, float y, float w, float h, int mEntFilter, mapScissor_t
 			{
 				continue;
 			}
+
 			CG_DrawMapEntity(mEnt, x, y, w, h, mEntFilter, scissor, interactive, snap, icon_size);
 			continue;
 		}
 
 		if (mEnt->type == ME_PLAYER ||
-		    mEnt->type == ME_PLAYER_DISGUISED ||
-		    mEnt->type == ME_PLAYER_OBJECTIVE ||
-		    mEnt->type == ME_PLAYER_REVIVE)
+			mEnt->type == ME_PLAYER_DISGUISED ||
+			mEnt->type == ME_PLAYER_OBJECTIVE ||
+			mEnt->type == ME_PLAYER_REVIVE)
 		{
 			if (mEnt->team != RealTeam && !CG_DisguiseMapCheck(mEnt))
 			{
 				continue;
 			}
 
-			if (mEnt->type != ME_PLAYER &&
-				mEnt->type != ME_PLAYER_DISGUISED &&
-				mEnt->type != ME_PLAYER_OBJECTIVE &&
-				mEnt->type != ME_PLAYER_REVIVE)
-			{
-				continue;
-			}
 			CG_DrawMapEntity(mEnt, x, y, w, h, mEntFilter, scissor, interactive, snap, icon_size);
 			continue;
 		}
+
 		CG_DrawMapEntity(mEnt, x, y, w, h, mEntFilter, scissor, interactive, snap, icon_size);
 	}
 
