@@ -1237,7 +1237,20 @@ void CG_DrawMap(float x, float y, float w, float h, int mEntFilter, mapScissor_t
 		if ((interactive && mEnt->team != RealTeam) ||
 		    (mEnt->team != snap->ps.persistant[PERS_TEAM] && snap->ps.persistant[PERS_TEAM] != TEAM_SPECTATOR))
 		{
-			goto CG_DrawMap_check;
+			if (mEnt->team != RealTeam && !CG_DisguiseMapCheck(mEnt))
+			{
+				continue;
+			}
+
+			if (mEnt->type != ME_PLAYER &&
+				mEnt->type != ME_PLAYER_DISGUISED &&
+				mEnt->type != ME_PLAYER_OBJECTIVE &&
+				mEnt->type != ME_PLAYER_REVIVE)
+			{
+				continue;
+			}
+			CG_DrawMapEntity(mEnt, x, y, w, h, mEntFilter, scissor, interactive, snap, icon_size);
+			continue;
 		}
 
 		if (mEnt->type == ME_PLAYER ||
@@ -1245,25 +1258,21 @@ void CG_DrawMap(float x, float y, float w, float h, int mEntFilter, mapScissor_t
 		    mEnt->type == ME_PLAYER_OBJECTIVE ||
 		    mEnt->type == ME_PLAYER_REVIVE)
 		{
-			goto CG_DrawMap_check;
-		}
-		goto CG_DrawMap_draw;
+			if (mEnt->team != RealTeam && !CG_DisguiseMapCheck(mEnt))
+			{
+				continue;
+			}
 
-CG_DrawMap_check:
-		if (mEnt->team != RealTeam && !CG_DisguiseMapCheck(mEnt))
-		{
+			if (mEnt->type != ME_PLAYER &&
+				mEnt->type != ME_PLAYER_DISGUISED &&
+				mEnt->type != ME_PLAYER_OBJECTIVE &&
+				mEnt->type != ME_PLAYER_REVIVE)
+			{
+				continue;
+			}
+			CG_DrawMapEntity(mEnt, x, y, w, h, mEntFilter, scissor, interactive, snap, icon_size);
 			continue;
 		}
-
-		if (mEnt->type != ME_PLAYER &&
-		    mEnt->type != ME_PLAYER_DISGUISED &&
-		    mEnt->type != ME_PLAYER_OBJECTIVE &&
-		    mEnt->type != ME_PLAYER_REVIVE)
-		{
-			continue;
-		}
-
-CG_DrawMap_draw:
 		CG_DrawMapEntity(mEnt, x, y, w, h, mEntFilter, scissor, interactive, snap, icon_size);
 	}
 
