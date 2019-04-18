@@ -459,7 +459,7 @@ typedef int clipHandle_t;
 #define MAX_NAME_LENGTH            36   ///< max length of a client name
 #define MAX_SERVER_NAME_LENGTH     72   ///< max length of a server name
 
-#define MAX_SAY_TEXT        150
+#define MAX_SAY_TEXT        150     ///< max length of a chat message
 
 #define MAX_BINARY_MESSAGE  32768   ///< max length of binary message
 

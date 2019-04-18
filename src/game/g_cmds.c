@@ -2457,8 +2457,6 @@ void G_HQSay(gentity_t *other, int color, const char *name, const char *message)
 	trap_SendServerCommand(other - g_entities, va("gamechat \"%s%c%c%s\" 1", name, Q_COLOR_ESCAPE, color, message));
 }
 
-#define MAX_SAY_TEXT    150
-
 /**
  * @brief G_SayTo
  * @param[in] ent

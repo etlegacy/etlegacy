@@ -597,13 +597,13 @@ static void CG_MessageMode_f(void)
  */
 static void CG_MessageSend_f(void)
 {
-	char messageText[256];
+	char messageText[MAX_SAY_TEXT];
 	int  messageType;
 
 	// get values
-	trap_Cvar_VariableStringBuffer("cg_messageType", messageText, 256);
+	trap_Cvar_VariableStringBuffer("cg_messageType", messageText, MAX_SAY_TEXT);
 	messageType = atoi(messageText);
-	trap_Cvar_VariableStringBuffer("cg_messageText", messageText, 256);
+	trap_Cvar_VariableStringBuffer("cg_messageText", messageText, MAX_SAY_TEXT);
 
 	// reset values
 	trap_Cvar_Set("cg_messageText", "");
