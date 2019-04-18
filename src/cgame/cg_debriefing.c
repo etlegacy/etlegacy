@@ -843,7 +843,7 @@ panel_button_t chatPanelNextButton =
 panel_button_t chatPanelVoteButton =
 {
 	NULL,
-	"VOTE NOW",
+	"MAP VOTE",
 	{ SCREEN_WIDTH - 10 - 60 - 4 - 60 - 4, SCREEN_HEIGHT - 30,               60, 16 },
 	{ 0,                          0,                                         0,  0, 0, 0, 0, 0},
 	NULL,                         // font
@@ -3097,7 +3097,7 @@ qboolean CG_Debriefing_NextButton_KeyDown(panel_button_t *button, int key)
  */
 void CG_Debriefing_VoteButton_Draw(panel_button_t *button)
 {
-	if (cgs.gametype != GT_WOLF_MAPVOTE || cgs.dbMode == 3)
+	if (cgs.gametype != GT_WOLF_MAPVOTE)
 	{
 		return;
 	}
@@ -3400,6 +3400,21 @@ void CG_Debriefing_MissionTitle_Draw(panel_button_t *button)
 		CG_PanelButtonsRender_Window_Ext(&button->rect, CG_Debriefing_WinStringForTeam(CG_Debriefing_FindWinningTeamForMap()), 0, 18, 0.25f, 16);
 
 		s = va(CG_TranslateString("CAMPAIGN STATUS: %s"), CG_Debriefing_WinStringForTeam(CG_Debriefing_FindOveralWinningTeam()));
+		w = CG_Text_Width_Ext(s, 0.25f, 0, &cgs.media.limboFont1);
+		CG_Text_Paint_Ext(button->rect.x + (button->rect.w - w) * 0.5f, button->rect.y + 16, 0.25f, 0.25f, clrTxtBck, s, 0, 0, 0, &cgs.media.limboFont1);
+	}
+	else if (cg_gameType.integer == GT_WOLF_MAPVOTE)
+	{
+		CG_PanelButtonsRender_Window_Ext(&button->rect, CG_Debriefing_WinStringForTeam(CG_Debriefing_FindWinningTeamForMap()), 0, 18, 0.25f, 16);
+
+		if (cgs.dbMapVotedFor[0] != -1 || cgs.dbMapVotedFor[1] != -1  || cgs.dbMapVotedFor[2] != -1)
+		{
+			s = va("^2%s", CG_TranslateString("VOTED"));
+		}
+		else
+		{
+			s = va("^3%s", CG_TranslateString("VOTE NOW"));
+		}
 		w = CG_Text_Width_Ext(s, 0.25f, 0, &cgs.media.limboFont1);
 		CG_Text_Paint_Ext(button->rect.x + (button->rect.w - w) * 0.5f, button->rect.y + 16, 0.25f, 0.25f, clrTxtBck, s, 0, 0, 0, &cgs.media.limboFont1);
 	}
