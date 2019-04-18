@@ -1777,12 +1777,12 @@ static void CG_RegisterGraphics(void)
 	cgs.media.balloonShader   = trap_R_RegisterShader("sprites/balloon3");
 
 	cgs.media.objectiveShader        = trap_R_RegisterShader("sprites/objective");
-	cgs.media.objectiveTeamShader    = trap_R_RegisterShader("sprites/objective_team");
-	cgs.media.objectiveDroppedShader = trap_R_RegisterShader("sprites/objective_dropped");
-	cgs.media.objectiveEnemyShader   = trap_R_RegisterShader("sprites/objective_enemy");
-	cgs.media.objectiveBothTEShader  = trap_R_RegisterShader("sprites/objective_both_te");
-	cgs.media.objectiveBothTDShader  = trap_R_RegisterShader("sprites/objective_both_td");
-	cgs.media.objectiveBothDEShader  = trap_R_RegisterShader("sprites/objective_both_de");
+	cgs.media.objectiveTeamShader    = trap_R_RegisterShaderNoMip("sprites/objective_team");
+	cgs.media.objectiveDroppedShader = trap_R_RegisterShaderNoMip("sprites/objective_dropped");
+	cgs.media.objectiveEnemyShader   = trap_R_RegisterShaderNoMip("sprites/objective_enemy");
+	cgs.media.objectiveBothTEShader  = trap_R_RegisterShaderNoMip("sprites/objective_both_te");
+	cgs.media.objectiveBothTDShader  = trap_R_RegisterShaderNoMip("sprites/objective_both_td");
+	cgs.media.objectiveBothDEShader  = trap_R_RegisterShaderNoMip("sprites/objective_both_de");
 	cgs.media.readyShader            = trap_R_RegisterShader("sprites/ready");
 
 	//cgs.media.bloodExplosionShader = trap_R_RegisterShader("bloodExplosion"); // unused FIXME: remove from shader def
