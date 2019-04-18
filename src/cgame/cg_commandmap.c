@@ -536,6 +536,7 @@ void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, float h,
 	vec2_t           icon_extends, icon_pos, string_pos = { 0 };
 	int              customimage = 0;
 	oidInfo_t        *oidInfo    = NULL;
+	int              entNum;
 
 	switch (mEnt->type)
 	{
@@ -835,17 +836,18 @@ void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, float h,
 
 		if (oidInfo)
 		{
-			int entNum;
-
 			customimage = mEnt->team == TEAM_AXIS ? oidInfo->customimageaxis : oidInfo->customimageallies;
 
 			// we have an oidInfo - check for main objective and do special color in case of
 			// note: to make this work map scripts have to be adjusted
-			entNum = atoi(CG_ConfigString(mEnt->team == TEAM_AXIS ? CS_MAIN_AXIS_OBJECTIVE : CS_MAIN_ALLIES_OBJECTIVE));
-
-			if (entNum == oidInfo->entityNum)
+			if (snap->ps.persistant[PERS_TEAM] != TEAM_SPECTATOR)
 			{
-				trap_R_SetColor(colorYellow);
+				entNum = atoi(CG_ConfigString(mEnt->team == TEAM_AXIS ? CS_MAIN_AXIS_OBJECTIVE : CS_MAIN_ALLIES_OBJECTIVE));
+
+				if (entNum == oidInfo->entityNum)
+				{
+					trap_R_SetColor(colorYellow);
+				}
 			}
 		}
 
