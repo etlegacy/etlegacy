@@ -58,7 +58,7 @@
 #define SPRINTTIME 20000.0f
 
 #define DEFAULT_GRAVITY     800
-#define FORCE_LIMBO_HEALTH  -75
+#define FORCE_LIMBO_HEALTH  -113
 #define GIB_ENT             99999
 #define GIB_HEALTH          -175
 #define GIB_DAMAGE(health) health - GIB_HEALTH + 1
