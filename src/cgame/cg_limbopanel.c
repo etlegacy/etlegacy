@@ -1651,7 +1651,7 @@ void CG_LimboPanel_ClassBar_Draw(panel_button_t *button)
 	CG_Text_Paint_Ext(button->rect.x + (button->rect.w - w) * 0.5f, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, CG_TranslateString(buffer), 0, 0, button->font->style, button->font->font);
 }
 
-static vec4_t clrRenderClassButton  = { 1.f, 1.f, 1.f, 0.4f };
+static vec4_t clrRenderClassButton = { 1.f, 1.f, 1.f, 0.4f };
 static vec4_t clrRenderClassButton2 = { 1.f, 1.f, 1.f, 0.75f };
 static vec4_t clrRenderClassButton3 = { 1.f, 1.f, 1.f, 0.6f };
 static vec4_t clrRenderClassButton4 = { 1.f, 0.f, 0.f, 0.5f };
@@ -2446,7 +2446,7 @@ void CG_LimboPanel_WeaponPanel_DrawWeapon(rectDef_t *rect, weapon_t weap, qboole
 	CG_Text_Paint_Ext(x, rect->y + rect->h - 2, 0.2f, 0.2f, colorBlack, ofTxt, 0, 0, 0, &cgs.media.limboFont2);
 }
 
-static vec4_t clrBackBorder  = { 0.1f, 0.1f, 0.1f, 1.f };
+static vec4_t clrBackBorder = { 0.1f, 0.1f, 0.1f, 1.f };
 static vec4_t clrBackBorder2 = { 0.2f, 0.2f, 0.2f, 1.f };
 
 #define BRDRSIZE 4
@@ -2510,7 +2510,7 @@ void CG_LimboPanel_Border_Draw(panel_button_t *button)
 	CG_DrawBorder(button->rect.x, button->rect.y, button->rect.w, button->rect.h, qtrue, qtrue);
 }
 
-static vec4_t clrWeaponPanel  = { 0.f, 0.f, 0.f, 0.4f };
+static vec4_t clrWeaponPanel = { 0.f, 0.f, 0.f, 0.4f };
 static vec4_t clrWeaponPanel2 = { 1.f, 1.f, 1.f, 0.4f };
 
 /**
@@ -3893,6 +3893,11 @@ qboolean CG_LimboPanel_ClassIsDisabled(team_t selectedTeam, int classIndex)
 		return qtrue;
 	}
 
+	if (classIndex < PC_SOLDIER || classIndex > PC_COVERTOPS)
+	{
+		return qfalse;
+	}
+
 	playerTeam = CG_LimboPanel_GetRealTeam();
 	classinfo  = CG_LimboPanel_GetPlayerClass();
 
@@ -3904,40 +3909,9 @@ qboolean CG_LimboPanel_ClassIsDisabled(team_t selectedTeam, int classIndex)
 	classCount  = CG_LimboPanel_ClassCount(selectedTeam, classIndex);
 	playerCount = CG_LimboPanel_TeamCount(-1);
 
-	switch (classIndex)
+	if (classCount >= CG_LimboPanel_MaxCount(playerCount, cg.maxPlayerClasses[classIndex]))
 	{
-	case PC_SOLDIER:
-		if (classCount >= CG_LimboPanel_MaxCount(playerCount, cg.maxSoldiers))
-		{
-			return qtrue;
-		}
-		break;
-	case PC_MEDIC:
-		if (classCount >= CG_LimboPanel_MaxCount(playerCount, cg.maxMedics))
-		{
-			return qtrue;
-		}
-		break;
-	case PC_ENGINEER:
-		if (classCount >= CG_LimboPanel_MaxCount(playerCount, cg.maxEngineers))
-		{
-			return qtrue;
-		}
-		break;
-	case PC_FIELDOPS:
-		if (classCount >= CG_LimboPanel_MaxCount(playerCount, cg.maxFieldops))
-		{
-			return qtrue;
-		}
-		break;
-	case PC_COVERTOPS:
-		if (classCount >= CG_LimboPanel_MaxCount(playerCount, cg.maxCovertops))
-		{
-			return qtrue;
-		}
-		break;
-	default:
-		break;
+		return qtrue;
 	}
 
 	return qfalse;

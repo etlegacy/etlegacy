@@ -1285,46 +1285,12 @@ qboolean CG_IsClassFull(int playerType, team_t team)
 	classCount  = CG_LimboPanel_ClassCount(team, playerType);
 	playerCount = CG_LimboPanel_TeamCount(-1);
 
-	switch (playerType)
+	if (classCount >= CG_LimboPanel_MaxCount(playerCount, cg.maxPlayerClasses[playerType]))
 	{
-		case PC_SOLDIER:
-			if (classCount >= CG_LimboPanel_MaxCount(playerCount, cg.maxSoldiers))
-			{
-				CG_PriorityCenterPrint(CG_TranslateString("^1Soldier^7 is not available! Choose another class!"), 400, cg_fontScaleCP.value, -1);
-				return qtrue;
-			}
-			break;
-		case PC_MEDIC:
-			if (classCount >= CG_LimboPanel_MaxCount(playerCount, cg.maxMedics))
-			{
-				CG_PriorityCenterPrint(CG_TranslateString("^1Medic^7 is not available! Choose another class!"), 400, cg_fontScaleCP.value, -1);
-				return qtrue;
-			}
-			break;
-		case PC_ENGINEER:
-			if (classCount >= CG_LimboPanel_MaxCount(playerCount, cg.maxEngineers))
-			{
-				CG_PriorityCenterPrint(CG_TranslateString("^1Engineer^7 is not available! Choose another class!"), 400, cg_fontScaleCP.value, -1);
-				return qtrue;
-			}
-			break;
-		case PC_FIELDOPS:
-			if (classCount >= CG_LimboPanel_MaxCount(playerCount, cg.maxFieldops))
-			{
-				CG_PriorityCenterPrint(CG_TranslateString("^1Field Ops^7 is not available! Choose another class!"), 400, cg_fontScaleCP.value, -1);
-				return qtrue;
-			}
-			break;
-		case PC_COVERTOPS:
-			if (classCount >= CG_LimboPanel_MaxCount(playerCount, cg.maxCovertops))
-			{
-				CG_PriorityCenterPrint(CG_TranslateString("^1Covert Ops^7 is not available! Choose another class!"), 400, cg_fontScaleCP.value, -1);
-				return qtrue;
-			}
-			break;
-		default:
-			break;
+		CG_PriorityCenterPrint(CG_TranslateString(va("^1%s^7 is not available! Choose another class!", BG_ClassnameForNumber(playerType))), 400, cg_fontScaleCP.value, -1);
+		return qtrue;
 	}
+
 	return qfalse;
 }
 

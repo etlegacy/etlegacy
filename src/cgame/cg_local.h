@@ -1222,11 +1222,8 @@ typedef struct
 	int medicChargeTime[2];
 	int covertopsChargeTime[2];
 
-	char maxSoldiers[MAX_QPATH];
-	char maxMedics[MAX_QPATH];
-	char maxEngineers[MAX_QPATH];
-	char maxFieldops[MAX_QPATH];
-	char maxCovertops[MAX_QPATH];
+	char maxPlayerClasses[NUM_PLAYER_CLASSES][MAX_QPATH];
+
 	char maxMortars[MAX_QPATH];
 	char maxFlamers[MAX_QPATH];
 	char maxMg42s[MAX_QPATH];
@@ -2266,7 +2263,7 @@ typedef struct cgs_s
 	int dbPlayerListOffset;
 	int dbWeaponListOffset;
 	cg_weaponstats_t dbWeaponStats[WS_MAX];
-	int	dbHitRegions[HR_NUM_HITREGIONS];
+	int dbHitRegions[HR_NUM_HITREGIONS];
 	int dbChatMode;
 
 	int tdbAxisMapsXP[SK_NUM_SKILLS][MAX_MAPS_PER_CAMPAIGN];
@@ -2997,7 +2994,7 @@ void CG_AddToNotify(const char *str);
 const char *CG_LocalizeServerCommand(const char *buf);
 void CG_wstatsParse_cmd(void);
 
-void CG_parseWeaponStats_cmd(void (txt_dump) (const char *));
+void CG_parseWeaponStats_cmd(void(txt_dump) (const char *));
 //void CG_parseBestShotsStats_cmd(qboolean doTop, void(txt_dump) (const char *));
 //void CG_parseTopShotsStats_cmd(qboolean doTop, void(txt_dump) (const char *));
 //void CG_scores_cmd(void);
@@ -3548,7 +3545,7 @@ void CG_Debriefing_PlayerSR_Draw(panel_button_t *button);
 void CG_Debriefing_PlayerACC_Draw(panel_button_t *button);
 void CG_Debriefing_PlayerHS_Draw(panel_button_t *button);
 void CG_Debriefing_PlayerSkills_Draw(panel_button_t *button);
-void CG_Debriefing_PlayerHitRegions_Draw(panel_button_t* button);
+void CG_Debriefing_PlayerHitRegions_Draw(panel_button_t *button);
 
 void CG_DebriefingPlayerWeaponStats_Draw(panel_button_t *button);
 

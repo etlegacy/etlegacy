@@ -833,14 +833,15 @@ void CG_ChargeTimesChanged(void)
 void CG_TeamRestrictionsChanged(void)
 {
 	const char *info;
+	int        i;
 
 	info = CG_ConfigString(CS_TEAMRESTRICTIONS);
 
-	Q_strncpyz(cg.maxSoldiers, Info_ValueForKey(info, "c0"), sizeof(cg.maxSoldiers));
-	Q_strncpyz(cg.maxMedics, Info_ValueForKey(info, "c1"), sizeof(cg.maxMedics));
-	Q_strncpyz(cg.maxEngineers, Info_ValueForKey(info, "c2"), sizeof(cg.maxEngineers));
-	Q_strncpyz(cg.maxFieldops, Info_ValueForKey(info, "c3"), sizeof(cg.maxFieldops));
-	Q_strncpyz(cg.maxCovertops, Info_ValueForKey(info, "c4"), sizeof(cg.maxCovertops));
+	for (i = 0; i < NUM_PLAYER_CLASSES; i++)
+	{
+		Q_strncpyz(cg.maxPlayerClasses[i], Info_ValueForKey(info, va("c%i", i)), sizeof(cg.maxPlayerClasses[i]));
+	}
+
 	Q_strncpyz(cg.maxMortars, Info_ValueForKey(info, "w0"), sizeof(cg.maxMortars));
 	Q_strncpyz(cg.maxFlamers, Info_ValueForKey(info, "w1"), sizeof(cg.maxFlamers));
 	Q_strncpyz(cg.maxMg42s, Info_ValueForKey(info, "w2"), sizeof(cg.maxMg42s));
@@ -2215,7 +2216,7 @@ void CG_parseWeaponStatsGS_cmd(void)
 /**
  * @brief Client-side stat presentation
  */
-void CG_parseWeaponStats_cmd(void (txt_dump) (const char *))
+void CG_parseWeaponStats_cmd(void(txt_dump) (const char *))
 {
 	clientInfo_t *ci;
 	qboolean     fFull;
@@ -2459,7 +2460,7 @@ void CG_parseWeaponStats_cmd(void (txt_dump) (const char *))
  * @brief CG_parseBestShotsStats_cmd
  * @param[in] doTop
  */
-static void CG_parseBestShotsStats_cmd(qboolean doTop, void (txt_dump) (const char *))
+static void CG_parseBestShotsStats_cmd(qboolean doTop, void(txt_dump) (const char *))
 {
 	int      iArg = 1;
 	qboolean fFull;
@@ -2532,7 +2533,7 @@ static void CG_parseBestShotsStats_cmd(qboolean doTop, void (txt_dump) (const ch
  * @brief CG_parseTopShotsStats_cmd
  * @param[in] doTop
  */
-static void CG_parseTopShotsStats_cmd(qboolean doTop, void (txt_dump) (const char *))
+static void CG_parseTopShotsStats_cmd(qboolean doTop, void(txt_dump) (const char *))
 {
 	int i, iArg = 1;
 	int cClients;
