@@ -668,7 +668,7 @@ static void WM_DrawClientScore_Small(int x, int y, score_t *score, float *color,
 	if (ci->team != TEAM_SPECTATOR)
 	{
 		// draw ready icon if client is ready..
-		if ((score->scoreflags & 1) && (cgs.gamestate == GS_WARMUP || cgs.gamestate == GS_INTERMISSION))
+		if ((score->scoreflags & 1) && cgs.gamestate != GS_PLAYING)
 		{
 			CG_DrawPic(tempx + 1, y - 9, 10, 10, cgs.media.readyShader);
 			offset   += 14;
