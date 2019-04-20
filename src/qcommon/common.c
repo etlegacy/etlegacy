@@ -3643,7 +3643,7 @@ static void PrintMatches(const char *s)
 {
 	if (!Q_stricmpn(s, shortestMatch, strlen(shortestMatch)))
 	{
-		Com_Printf("    %s\n", s);
+		Com_Printf("    ^5%s\n", s);
 	}
 }
 
@@ -3658,7 +3658,7 @@ static void PrintCvarMatches(const char *s)
 	if (!Q_stricmpn(s, shortestMatch, strlen(shortestMatch)))
 	{
 		Com_TruncateLongString(value, Cvar_VariableString(s));
-		Com_Printf("    %s = \"%s^7\"\n", s, value);
+		Com_Printf("    ^9%s = \"^5%s^9\"\n", s, value);
 	}
 }
 
