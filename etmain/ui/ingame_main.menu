@@ -47,28 +47,14 @@ menuDef {
 	BUTTONEXT( 6, 200, WINDOW_WIDTH-12, 18, _("EXIT GAME"), .3, 14, clearFocus ; open quit, tooltip _("Don't press this. Be warned!") )
 
 	itemDef {
-      name        "legacy_logo"
-      rect        15 220 128 64
-      style       WINDOW_STYLE_SHADER
-      background  "ui/assets/etl_logo"
-      forecolor   1 1 1 1
-      visible     1
-      decoration
-   }
+		name        "legacy_logo"
+		rect        15 220 128 64
+		style       WINDOW_STYLE_SHADER
+		background  "ui/assets/etl_logo"
+		forecolor   1 1 1 1
+		visible     1
+		decoration
+	}
 
-   itemDef {
-      name       "modversion"
-      group       GROUP_NAME
-      rect        -45 260 128 64
-      text        "^1"ETLEGACY_VERSION
-      textfont    UI_FONT_COURBD_21
-      textstyle   ITEM_TEXTSTYLE_SHADOWED
-      textscale   .2
-      textalign   ITEM_ALIGN_LEFT
-      textalignx  $evalfloat(.7*(WINDOW_WIDTH-8))
-      textaligny  10
-      forecolor   1 1 1 1
-      visible     1
-      decoration
-   }
+	LABEL( 60, 262, 114, 10, "^1"ETLEGACY_VERSION, .2, ITEM_ALIGN_LEFT, 0, 8 )
 }

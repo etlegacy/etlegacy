@@ -580,9 +580,9 @@ menuDef {
 	}
 
 	itemDef {
-		name       "serverFilterLaber"
+		name       "serverFilterLabel"
 		group      GROUP_NAME
-		rect       $evalfloat(12+SERVERNAME_WIDTH+MAPNAME_WIDTH+PLAYERS_WIDTH+GAMETYPE_WIDTH+PING_WIDTH+110) 165 500 16
+		rect       $evalfloat(12+SERVERNAME_WIDTH+MAPNAME_WIDTH+PLAYERS_WIDTH+GAMETYPE_WIDTH+PING_WIDTH+110) 165 584 12
 		type       ITEM_TYPE_TEXT
 		textfont   UI_FONT_ARIBLK_27
 		// textstyle  ITEM_TEXTSTYLE_SHADOWED

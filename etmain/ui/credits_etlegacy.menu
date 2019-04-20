@@ -136,7 +136,7 @@ menuDef {
 		decoration
 	}
 
-	LABELWHITE( 6, CREDITS_Y+186, .7*(WINDOW_WIDTH-12), 10, _("See HALL OF FAME below"), .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-12), 8 )
+	LABELWHITE( 6, CREDITS_Y+186, WINDOW_WIDTH-12, 10, _("See HALL OF FAME below"), .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-12), 8 )
 
 // Greetings //
 	itemDef {
@@ -155,9 +155,9 @@ menuDef {
 		decoration
 	}
 
-	LABELWHITE( 6, CREDITS_Y+224, (WINDOW_WIDTH-12), 10, "ETPro Team - ETPub Team - Jaymod Team - Lazlo Menczel\nStephen 'lrq3000' Larroque - Neil 'haste' Toronto - NoQuarter Team - Omni-Bot Team\nQ3MME Team - QtZ Team - RTCW COOP Team - Ryan C. Gordon - Splash Damage ET community\nTimothee 'TTimo' Besset - Unvanquished Team - Xreal Team - Zynx", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-12), 8 )
+	LABELWHITE( 6, CREDITS_Y+224, WINDOW_WIDTH-12, 10, "ETPro Team - ETPub Team - Jaymod Team - Lazlo Menczel\nStephen 'lrq3000' Larroque - Neil 'haste' Toronto - NoQuarter Team - Omni-Bot Team\nQ3MME Team - QtZ Team - RTCW COOP Team - Ryan C. Gordon - Splash Damage ET community\nTimothee 'TTimo' Besset - Unvanquished Team - Xreal Team - Zynx", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-12), 8 )
 
-	LABELWHITE( 6, CREDITS_Y+282, (WINDOW_WIDTH-12), 10, _("Many thanks to Splash Damage for their release of the source code, ioWolfET & raedwulf-et (especially Ralph Eastwood) for our code base and ioQuake3 for their inspirations."), .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-12), 8 )
+	LABELWHITE( 6, CREDITS_Y+282, WINDOW_WIDTH-12, 10, _("Many thanks to Splash Damage for their release of the source code, ioWolfET & raedwulf-et (especially Ralph Eastwood) for our code base and ioQuake3 for their inspirations."), .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-12), 8 )
 
 // Buttons //
 #ifdef FUI

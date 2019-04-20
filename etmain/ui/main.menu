@@ -66,7 +66,7 @@ menuDef {
 // Company Logos //
 	itemDef {
 		name		"sd_logo"
-		rect		4 394 54 54		// 16, 16 offset!!
+		rect		0 394 54 54		// 16, 16 offset!!
 		style		WINDOW_STYLE_SHADER
 		background	"ui/assets/logo_sd_dark"
 		forecolor	1 1 1 1
@@ -122,12 +122,12 @@ menuDef {
 #endif
 
 // Version //
-LABEL( 6, 450, MENU_WIDTH, 18, "^1"ETLEGACY_VERSION, .2, ITEM_ALIGN_LEFT, 0, 8 )
+LABEL( 2, 450, 114, 10, "^1"ETLEGACY_VERSION, .2, ITEM_ALIGN_LEFT, 0, 8 )
 
 // profile info //
 SUBWINDOW( 0, 260, MENU_WIDTH, 40, _("CURRENT PROFILE") )
-CVARLABEL( 6, 276, MENU_WIDTH, MENU_WIDTH, "cl_profile", .2, ITEM_ALIGN_LEFT, 0, 8 )
-CVARLABEL( 6, 288, MENU_WIDTH, MENU_WIDTH, "name", .2, ITEM_ALIGN_LEFT, 0, 8 )
+CVARLABEL( 6, 276, MENU_WIDTH-12, 10, "cl_profile", .2, ITEM_ALIGN_LEFT, 0, 8 )
+CVARLABEL( 6, 288, MENU_WIDTH-12, 10, "name", .2, ITEM_ALIGN_LEFT, 0, 8 )
 
 // message of the day?
 //	SUBWINDOW( MENU_WIDTH+6, 0, __WINDOW_WIDTH-MENU_WIDTH-6-32, 28, _("MESSAGE OF THE DAY") )
