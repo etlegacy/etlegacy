@@ -343,7 +343,11 @@ void Menu_UpdatePosition(menuDef_t *menu)
 	centered       = (r->x == 16.f && r->w == 608.f);
 	menuName       = menu->window.name;
 
-	Cui_WideRect(&menu->window.rect);
+	// add offset to windows
+	if (centered)
+	{
+		menu->window.rect.x = menu->window.rect.x + xoffset;
+	}
 
 	for (i = 0; i < menu->itemCount; ++i)
 	{
