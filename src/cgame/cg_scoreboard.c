@@ -437,14 +437,15 @@ static void WM_DrawClientScore(int x, int y, score_t *score, float *color, float
 			maxchars -= 2;
 		}
 
-		if (ci->powerups & ((1 << PW_REDFLAG) | (1 << PW_BLUEFLAG)))
+		if (ci->powerups & ((1 << PW_REDFLAG) | (1 << PW_BLUEFLAG)) && cgs.gamestate != GS_INTERMISSION)
 		{
 			CG_DrawPic(tempx - 1, y - 9, 10, 10, cgs.media.objectiveShader);
 			offset   += 12;
 			tempx    += 12;
 			maxchars -= 2;
 		}
-		else if (cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR && ci->team == cgs.clientinfo[cg.clientNum].team && (ci->powerups & (1 << PW_OPS_DISGUISED)))
+		else if (cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR && ci->team == cgs.clientinfo[cg.clientNum].team
+			&& (ci->powerups & (1 << PW_OPS_DISGUISED)) && cgs.gamestate != GS_INTERMISSION)
 		{
 			CG_DrawPic(tempx - 1, y - 9, 10, 10, ci->team == TEAM_AXIS ? cgs.media.alliedUniformShader : cgs.media.axisUniformShader);
 			offset   += 12;
@@ -452,7 +453,7 @@ static void WM_DrawClientScore(int x, int y, score_t *score, float *color, float
 			maxchars -= 2;
 		}
 		else if (cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR && ci->team == cgs.clientinfo[cg.clientNum].team
-			&& cgs.clientinfo[score->client].health > 0 && (ci->powerups & (1 << PW_INVULNERABLE)))
+			&& cgs.clientinfo[score->client].health > 0 && (ci->powerups & (1 << PW_INVULNERABLE)) && cgs.gamestate != GS_INTERMISSION)
 		{
 			CG_DrawPic(tempx - 1, y - 9, 10, 10, cgs.media.spawnInvincibleShader);
 			offset   += 12;
@@ -675,14 +676,15 @@ static void WM_DrawClientScore_Small(int x, int y, score_t *score, float *color,
 			maxchars -= 2;
 		}
 
-		if (ci->powerups & ((1 << PW_REDFLAG) | (1 << PW_BLUEFLAG)))
+		if (ci->powerups & ((1 << PW_REDFLAG) | (1 << PW_BLUEFLAG)) && cgs.gamestate != GS_INTERMISSION)
 		{
 			CG_DrawPic(tempx + 1, y - 9, 10, 10, cgs.media.objectiveShader);
 			offset   += 14;
 			tempx    += 14;
 			maxchars -= 2;
 		}
-		else if (cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR && ci->team == cgs.clientinfo[cg.clientNum].team && (ci->powerups & (1 << PW_OPS_DISGUISED)))
+		else if (cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR && ci->team == cgs.clientinfo[cg.clientNum].team
+			&& (ci->powerups & (1 << PW_OPS_DISGUISED)) && cgs.gamestate != GS_INTERMISSION)
 		{
 			CG_DrawPic(tempx + 1, y - 9, 10, 10, ci->team == TEAM_AXIS ? cgs.media.alliedUniformShader : cgs.media.axisUniformShader);
 			offset   += 14;
@@ -690,7 +692,7 @@ static void WM_DrawClientScore_Small(int x, int y, score_t *score, float *color,
 			maxchars -= 2;
 		}
 		else if (cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR && ci->team == cgs.clientinfo[cg.clientNum].team
-				 && cgs.clientinfo[score->client].health > 0 && (ci->powerups & (1 << PW_INVULNERABLE)))
+			&& cgs.clientinfo[score->client].health > 0 && (ci->powerups & (1 << PW_INVULNERABLE)) && cgs.gamestate != GS_INTERMISSION)
 		{
 			CG_DrawPic(tempx + 1, y - 9, 10, 10, cgs.media.spawnInvincibleShader);
 			offset   += 14;
