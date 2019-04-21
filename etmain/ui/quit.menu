@@ -13,7 +13,7 @@ menuDef {
 	name		"quit"
 	visible		0
 	fullscreen	0
-	rect		WINDOW_X WINDOW_Y __WINDOW_WIDTH WINDOW_HEIGHT
+	rect		WINDOW_X WINDOW_Y WINDOW_WIDTH WINDOW_HEIGHT
 	style		WINDOW_STYLE_FILLED
 	popup
 
@@ -37,7 +37,7 @@ menuDef {
 // Background //
 	itemDef {
 		name		"background"
-		rect		0 0 __WINDOW_WIDTH 480
+		rect		0 0 WINDOW_WIDTH 480
 		style		WINDOW_STYLE_FILLED
 		background	"ui/assets/fadebox.tga"
 		backcolor	0 0 0 0

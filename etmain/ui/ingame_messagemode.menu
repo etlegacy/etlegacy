@@ -13,7 +13,7 @@ menuDef {
 	name		"ingame_messagemode"
 	visible		0
 	fullscreen	0
-	rect		WINDOW_X WINDOW_Y __WINDOW_WIDTH WINDOW_HEIGHT
+	rect		WINDOW_X WINDOW_Y WINDOW_WIDTH WINDOW_HEIGHT
 	style		WINDOW_STYLE_FILLED
 
 	onOpen

@@ -36,7 +36,7 @@ menuDef
 // Background //
 	itemDef {
 		name		"background"
-		rect		0 0 __WINDOW_WIDTH 480
+		rect		0 0 WINDOW_WIDTH 480
 		style		WINDOW_STYLE_FILLED
 		background	"ui/assets/fadebox.tga"
 		backcolor	0 0 0 0

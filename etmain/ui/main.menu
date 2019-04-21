@@ -33,7 +33,7 @@ menuDef {
 	name		"main"
 	visible		0
 	fullscreen	0
-	rect		WINDOW_X WINDOW_Y $evalint(WINDOW_WIDTH) $evalint(WINDOW_HEIGHT)
+	rect		WINDOW_X WINDOW_Y $evalint(WINDOW_WIDTH) WINDOW_HEIGHT
 	style		WINDOW_STYLE_FILLED
 
 	onOpen {
@@ -118,7 +118,6 @@ menuDef {
 	LABELWHITE( __WINDOW_WIDTH/2-100-16, 384, SECURITY_WIDTH, 9, _("You are running old software"), .2, ITEM_ALIGN_CENTER, .5*SECURITY_WIDTH, 8 )
 	LABEL( __WINDOW_WIDTH/2-100-16, 398, SECURITY_WIDTH, 9, _("We do recommend to\nupgrade your ET client"), .2, ITEM_ALIGN_CENTER, .5*SECURITY_WIDTH, 8 )
 	BUTTON( __WINDOW_WIDTH/2-100-16+6, 428, SECURITY_WIDTH-12, 18, _("UPGRADE NOW"), .3, 14, clearFocus ; uiScript validate_openURL )
-	//LABEL( __WINDOW_WIDTH/2-100-16, 440, SECURITY_WIDTH, 18, _("Join ET Legacy and keep the game alive"), .2, ITEM_ALIGN_CENTER, .5*SECURITY_WIDTH, 8 )
 #endif
 
 // Version //
