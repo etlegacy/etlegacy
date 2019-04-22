@@ -1756,7 +1756,7 @@ void CG_VoiceChatLocal(int mode, qboolean voiceOnly, int clientNum, int color, c
 
 	if (CG_GetVoiceChat(voiceChatList, cmd, &snd, &sprite, &chat))
 	{
-		if (mode == SAY_TEAM || !cg_teamChatsOnly.integer)
+		if (mode == SAY_TEAM || mode == SAY_BUDDY || !cg_teamChatsOnly.integer)
 		{
 			bufferedVoiceChat_t vchat;
 			const char          *loc = " ";
