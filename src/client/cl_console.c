@@ -833,23 +833,25 @@ extern cvar_t *con_drawnotify;
  */
 void Con_DrawConsole(void)
 {
-	// render console only if opened but also if disconnected
-	if (con.displayFrac == 0.f && !(cls.state == CA_DISCONNECTED &&
-	                                !(cls.keyCatchers & (KEYCATCH_UI | KEYCATCH_CGAME))))
+	if (!con.displayFrac)
 	{
-		return;
+		// draw notify lines
+		if (cls.state == CA_ACTIVE && con_drawnotify->integer)
+		{
+			Con_DrawNotify();
+		}
+
+		// render console only if opened but also if disconnected
+		if (!(cls.state == CA_DISCONNECTED && !(cls.keyCatchers & (KEYCATCH_UI | KEYCATCH_CGAME))))
+		{
+			return;
+		}
 	}
 
 	// check for console width changes from a vid mode change
 	Con_CheckResize();
 
 	Con_DrawSolidConsole(con.displayFrac);
-
-	// draw notify lines
-	if (cls.state == CA_ACTIVE && con_drawnotify->integer)
-	{
-		Con_DrawNotify();
-	}
 }
 
 /**
