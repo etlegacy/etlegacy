@@ -2347,6 +2347,7 @@ qboolean G_configSet(const char *configname);
 void G_ConfigCheckLocked(void);
 void G_PrintConfigs(gentity_t *ent);
 qboolean G_isValidConfig(gentity_t *ent, const char *configname);
+void G_ReloadConfig(void);
 
 // g_match.c
 void G_addStats(gentity_t *targ, gentity_t *attacker, int damage, meansOfDeath_t mod);
@@ -2757,17 +2758,28 @@ typedef struct weapFireTable_t
 extern weapFireTable_t weapFireTable[WP_NUM_WEAPONS];
 #define GetWeaponFireTableData(weapIndex) ((weapFireTable_t *)(&weapFireTable[weapIndex]))
 
+/**
+ * @struct consoleCommmandTable_s
+ * @typedef consoleCommandTable_t
+ * @brief
+ */
+typedef struct consoleCommandTable_s
+{
+	char *name;           ///< -
+	void (*cmd)(void);    ///< -
+
+} consoleCommandTable_t;
 
 static const char *gameNames[] =
 {
-		"Single Player",    // Obsolete
-		"Cooperative",      // Obsolete
-		"Objective",
-		"Stopwatch",
-		"Campaign",
-		"Last Man Standing",
-		"Map Voting"        // GT_WOLF_MAPVOTE
-		// GT_MAX_GAME_TYPE
+	"Single Player",        // Obsolete
+	"Cooperative",          // Obsolete
+	"Objective",
+	"Stopwatch",
+	"Campaign",
+	"Last Man Standing",
+	"Map Voting"            // GT_WOLF_MAPVOTE
+	// GT_MAX_GAME_TYPE
 };
 
 #endif // #ifndef INCLUDE_G_LOCAL_H

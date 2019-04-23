@@ -139,6 +139,7 @@ qboolean G_LuaStartVM(lua_vm_t *vm);
 qboolean G_LuaRunIsolated(const char *modName);
 void G_LuaStopVM(lua_vm_t *vm);
 void G_LuaShutdown(void);
+void G_LuaRestart(void);
 void G_LuaStatus(gentity_t *ent);
 void G_LuaStackDump();
 lua_vm_t *G_LuaGetVM(lua_State *L);

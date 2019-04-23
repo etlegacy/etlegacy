@@ -457,6 +457,14 @@ void Svcmd_RemoveIP_f(void)
 }
 
 /**
+ * @brief Svcmd_ListIp_f
+ */
+void Svcmd_ListIp_f(void)
+{
+	trap_SendConsoleCommand(EXEC_INSERT, "g_banIPs\n");
+}
+
+/**
  * @brief Clears out the entire list maxlives enforcement banlist
  */
 void ClearMaxLivesBans()
@@ -850,6 +858,14 @@ void Svcmd_ResetMatch_f(qboolean fDoReset, qboolean fDoRestart)
 }
 
 /**
+ * @brief Svcmd_ResetMatch
+ */
+void Svcmd_ResetMatch()
+{
+	Svcmd_ResetMatch_f(qtrue, qtrue);
+}
+
+/**
  * @brief swaps all clients to opposite team
  */
 void Svcmd_SwapTeams_f(void)
@@ -896,6 +912,22 @@ void Svcmd_ShuffleTeamsXP_f(qboolean restart)
 	}
 }
 
+/**
+ * @brief Svcmd_ShuffleTeamsXP
+ */
+void Svcmd_ShuffleTeamsXP()
+{
+	Svcmd_ShuffleTeamsXP_f(qtrue);
+}
+
+/**
+ * @brief Svcmd_ShuffleTeamsXPNoRestart
+ */
+void Svcmd_ShuffleTeamsXPNoRestart()
+{
+	Svcmd_ShuffleTeamsXP_f(qfalse);
+}
+
 #ifdef FEATURE_RATING
 /**
  * @brief randomly places players on teams
@@ -921,6 +953,22 @@ void Svcmd_ShuffleTeamsSR_f(qboolean restart)
 		G_resetModeState();
 		Svcmd_ResetMatch_f(qfalse, qtrue);
 	}
+}
+
+/**
+ * @brief Svcmd_ShuffleTeamsSR
+ */
+void Svcmd_ShuffleTeamsSR()
+{
+	Svcmd_ShuffleTeamsSR_f(qtrue);
+}
+
+/**
+ * @brief Svcmd_ShuffleTeamsSRPNoRestart
+ */
+void Svcmd_ShuffleTeamsSRNoRestart()
+{
+	Svcmd_ShuffleTeamsSR_f(qfalse);
 }
 #endif
 
@@ -1005,10 +1053,19 @@ extern int FindClientByName(const char *name);
  * @brief Svcmd_RevivePlayer
  * @param[in] name
  */
-void Svcmd_RevivePlayer(const char *name)
+void Svcmd_RevivePlayer()
 {
 	int       clientNum;
 	gentity_t *player;
+	char      name[MAX_NAME_LENGTH];
+
+	trap_Argv(1, name, sizeof(name));
+
+	if (!*name)
+	{
+		G_Printf("usage: revive <clientname>.\n");
+		return;
+	}
 
 	if (!g_cheats.integer)
 	{
@@ -1019,6 +1076,7 @@ void Svcmd_RevivePlayer(const char *name)
 	clientNum = FindClientByName(name);
 	if (clientNum < 0)
 	{
+		G_Printf("Invalid client name.\n");
 		return;
 	}
 	player = &g_entities[clientNum];
@@ -1606,33 +1664,15 @@ static void Svcmd_Pip(void)
 
 /**
  * @brief Svcmd_Fling
- * @param[in] flingType
  */
-static void Svcmd_Fling(int flingType) // 0 = fling, 1 = throw, 2 = launch
+static void Svcmd_Fling(void) // 0 = fling, 1 = throw, 2 = launch
 {
 	int       pids[MAX_CLIENTS];
 	char      name[MAX_NAME_LENGTH], err[MAX_STRING_CHARS];
 	char      fling[9], pastTense[9];
 	gentity_t *vic;
-	qboolean  doAll = qfalse;
-
-	switch (flingType)
-	{
-	case 0:
-		Q_strncpyz(fling, "fling", sizeof(fling));
-		Q_strncpyz(pastTense, "flung", sizeof(pastTense));
-		break;
-	case 1:
-		Q_strncpyz(fling, "throw", sizeof(fling));
-		Q_strncpyz(pastTense, "thrown", sizeof(pastTense));
-		break;
-	case 2:
-		Q_strncpyz(fling, "launch", sizeof(fling));
-		Q_strncpyz(pastTense, "launched", sizeof(pastTense));
-		break;
-	default:
-		return;
-	}
+	qboolean  doAll     = qfalse;
+	int       flingType = 1;
 
 	// ignore in intermission
 	if (level.intermissiontime)
@@ -1641,10 +1681,46 @@ static void Svcmd_Fling(int flingType) // 0 = fling, 1 = throw, 2 = launch
 		return;
 	}
 
+	if (trap_Argc() > 3)
+	{
+		G_Printf("usage: <clientname> 0 = fling | 1 = throw | 2 = launch.");
+		return;
+	}
+
 	if (trap_Argc() < 2)
 	{
 		doAll = qtrue;
+		Q_strncpyz(fling, "throw", sizeof(fling));
+		Q_strncpyz(pastTense, "thrown", sizeof(pastTense));
 	}
+	else
+	{
+		trap_Argv(2, name, sizeof(name));
+
+		if (*name)
+		{
+			flingType = atoi(name);
+		}
+
+		switch (flingType)
+		{
+		case 0:
+			Q_strncpyz(fling, "fling", sizeof(fling));
+			Q_strncpyz(pastTense, "flung", sizeof(pastTense));
+			break;
+		case 1:
+			Q_strncpyz(fling, "throw", sizeof(fling));
+			Q_strncpyz(pastTense, "thrown", sizeof(pastTense));
+			break;
+		case 2:
+			Q_strncpyz(fling, "launch", sizeof(fling));
+			Q_strncpyz(pastTense, "launched", sizeof(pastTense));
+			break;
+		default:
+			return;
+		}
+	}
+
 
 	trap_Argv(1, name, sizeof(name));
 
@@ -1910,6 +1986,14 @@ static void Svcmd_KickNum_f(void)
 }
 
 /**
+ * @brief Svcmd_CP_f
+ */
+void Svcmd_CP_f(void)
+{
+	trap_SendServerCommand(-1, va("cp \"%s\"", Q_AddCR(ConcatArgs(1))));
+}
+
+/**
  * @brief G_UpdateSvCvars
  */
 void G_UpdateSvCvars(void)
@@ -1937,6 +2021,16 @@ void G_UpdateSvCvars(void)
 
 	// FIXME: print a warning when this configstring has nearly reached MAX_INFO_STRING size and don't set it if greater
 	trap_SetConfigstring(CS_SVCVAR, cs);
+}
+
+/**
+ * @brief CC_cvarempty
+ */
+void CC_cvarempty()
+{
+	Com_Memset(level.svCvars, 0, sizeof(level.svCvars));
+	level.svCvarsCount = 0;
+	G_UpdateSvCvars();
 }
 
 /**
@@ -2368,12 +2462,118 @@ void Svcmd_CSInfo_f(void)
 }
 
 /**
+ * @brief Svcmd_Ref_f
+ */
+void Svcmd_Ref_f()
+{
+	char cmd[MAX_TOKEN_CHARS];
+
+	if (!level.fLocalHost)
+	{
+		return;
+	}
+
+	//G_refCommandCheck expects the next argument (warn, pause, lock,..)
+	trap_Argv(1, cmd, sizeof(cmd));
+	if (!G_refCommandCheck(NULL, cmd))
+	{
+		G_refHelp_cmd(NULL);
+	}
+}
+
+/**
+ * @brief Svcmd_Say_f
+ *
+ * @todo FIXME this 'say' condition is never reached?!
+ */
+void Svcmd_Say_f()
+{
+	if (g_dedicated.integer)
+	{
+		trap_SendServerCommand(-1, va("cpm \"server: %s\n\"", Q_AddCR(ConcatArgs(1))));
+	}
+}
+
+/**
+ * @brief Svcmd_Chat_f
+ */
+void Svcmd_Chat_f()
+{
+	if (g_dedicated.integer)
+	{
+		// added for rcon/Lua chat
+		trap_SendServerCommand(-1, va("chat \"console: %s\"", Q_AddCR(ConcatArgs(1))));
+	}
+}
+/**
+ * @var consoleCommandTable
+ * @brief Store common console command
+ */
+static consoleCommandTable_t consoleCommandTable[] =
+{
+	{ "entitylist",                 Svcmd_EntityList_f            },
+	{ "csinfo",                     Svcmd_CSInfo_f                },
+	{ "forceteam",                  Svcmd_ForceTeam_f             },
+	{ "game_memory",                Svcmd_GameMem_f               },
+	{ "addip",                      Svcmd_AddIP_f                 },
+	{ "removeip",                   Svcmd_RemoveIP_f              },
+	{ "listip",                     Svcmd_ListIp_f                },
+	{ "listmaxlivesip",             PrintMaxLivesGUID             },
+	{ "start_match",                Svcmd_StartMatch_f            },
+	{ "reset_match",                Svcmd_ResetMatch              },
+	{ "swap_teams",                 Svcmd_SwapTeams_f             },
+	{ "shuffle_teams",              Svcmd_ShuffleTeamsXP          },
+	{ "shuffle_teams_norestart",    Svcmd_ShuffleTeamsXPNoRestart },
+#ifdef FEATURE_RATING
+	{ "shuffle_teams_sr",           Svcmd_ShuffleTeamsSR          },
+	{ "shuffle_teams_sr_norestart", Svcmd_ShuffleTeamsSRNoRestart },
+#endif
+	{ "makeReferee",                G_MakeReferee                 },
+	{ "removeReferee",              G_RemoveReferee               },
+	{ "mute",                       G_MuteClient                  },
+	{ "unmute",                     G_UnMuteClient                },
+	{ "ban",                        G_PlayerBan                   },
+	{ "campaign",                   Svcmd_Campaign_f              },
+	{ "listcampaigns",              Svcmd_ListCampaigns_f         },
+	{ "revive",                     Svcmd_RevivePlayer            },
+	{ "kick",                       Svcmd_Kick_f                  },    // moved from engine
+	{ "clientkick",                 Svcmd_KickNum_f               },
+#ifdef FEATURE_OMNIBOT
+	{ "bot",                        Bot_Interface_ConsoleCommand  },
+#endif
+	{ "cp",                         Svcmd_CP_f                    },
+	{ "reloadConfig",               G_ReloadConfig                },
+	{ "loadConfig",                 CC_loadconfig                 },
+	{ "sv_cvarempty",               CC_cvarempty                  },
+	{ "sv_cvar",                    CC_svcvar                     },
+	{ "sv_cvarempty",               CC_cvarempty                  },
+	{ "playsound",                  G_PlaySound_Cmd               },
+	{ "playsound_env",              G_PlaySound_Cmd               },
+	{ "gib",                        Svcmd_Gib                     },
+	{ "die",                        Svcmd_Die                     },
+	{ "freeze",                     Svcmd_Freeze                  },
+	{ "unfreeze",                   Svcmd_Unfreeze                },
+	{ "burn",                       Svcmd_Burn                    },
+	{ "pip",                        Svcmd_Pip                     },
+	{ "throw",                      Svcmd_Fling                   },
+	{ "unfreeze",                   Svcmd_Unfreeze                },
+	{ "throw",                      Svcmd_Fling                   },
+#ifdef LEGACY_DEBUG
+	{ "ae",                         Svcmd_PlayerAnimEvent         },    //ae <playername> <animEvent>
+#endif
+	{ "ref",                        Svcmd_Ref_f                   },    // console also gets ref commands
+	{ "say",                        Svcmd_Say_f                   },
+	{ "chat",                       Svcmd_Chat_f                  },
+};
+
+/**
  * @brief ConsoleCommand
  * @return
  */
 qboolean ConsoleCommand(void)
 {
-	char cmd[MAX_TOKEN_CHARS];
+	char         cmd[MAX_TOKEN_CHARS];
+	unsigned int i;
 
 	trap_Argv(0, cmd, sizeof(cmd));
 
@@ -2385,8 +2585,7 @@ qboolean ConsoleCommand(void)
 	}
 	else if (!Q_stricmp(cmd, "lua_restart"))
 	{
-		G_LuaShutdown();
-		G_LuaInit();
+		G_LuaRestart();
 		return qtrue;
 	}
 	else if (Q_stricmp(cmd, "lua_api") == 0)
@@ -2399,259 +2598,15 @@ qboolean ConsoleCommand(void)
 	{
 		return qtrue;
 	}
-	else
 #endif
-	if (Q_stricmp(cmd, "entitylist") == 0)
-	{
-		Svcmd_EntityList_f();
-		return qtrue;
-	}
-	else if (Q_stricmp(cmd, "csinfo") == 0)
-	{
-		Svcmd_CSInfo_f();
-		return qtrue;
-	}
-	else if (Q_stricmp(cmd, "forceteam") == 0)
-	{
-		Svcmd_ForceTeam_f();
-		return qtrue;
-	}
-	else if (Q_stricmp(cmd, "game_memory") == 0)
-	{
-		Svcmd_GameMem_f();
-		return qtrue;
-	}
-	else if (Q_stricmp(cmd, "addip") == 0)
-	{
-		Svcmd_AddIP_f();
-		return qtrue;
-	}
-	else if (Q_stricmp(cmd, "removeip") == 0)
-	{
-		Svcmd_RemoveIP_f();
-		return qtrue;
-	}
-	else if (Q_stricmp(cmd, "listip") == 0)
-	{
-		trap_SendConsoleCommand(EXEC_INSERT, "g_banIPs\n");
-		return qtrue;
-	}
-	else if (Q_stricmp(cmd, "listmaxlivesip") == 0)
-	{
-		PrintMaxLivesGUID();
-		return qtrue;
-	}
-	else if (Q_stricmp(cmd, "start_match") == 0)
-	{
-		Svcmd_StartMatch_f();
-		return qtrue;
-	}
-	else if (Q_stricmp(cmd, "reset_match") == 0)
-	{
-		Svcmd_ResetMatch_f(qtrue, qtrue);
-		return qtrue;
-	}
-	else if (Q_stricmp(cmd, "swap_teams") == 0)
-	{
-		Svcmd_SwapTeams_f();
-		return qtrue;
-	}
-	else if (Q_stricmp(cmd, "shuffle_teams") == 0)
-	{
-		Svcmd_ShuffleTeamsXP_f(qtrue);
-		return qtrue;
-	}
-	else if (Q_stricmp(cmd, "shuffle_teams_norestart") == 0)
-	{
-		Svcmd_ShuffleTeamsXP_f(qfalse);
-		return qtrue;
-	}
-#ifdef FEATURE_RATING
-	else if (Q_stricmp(cmd, "shuffle_teams_sr") == 0)
-	{
-		Svcmd_ShuffleTeamsSR_f(qtrue);
-		return qtrue;
-	}
-	else if (Q_stricmp(cmd, "shuffle_teams_sr_norestart") == 0)
-	{
-		Svcmd_ShuffleTeamsSR_f(qfalse);
-		return qtrue;
-	}
-#endif
-	else if (Q_stricmp(cmd, "makeReferee") == 0)
-	{
-		G_MakeReferee();
-		return qtrue;
-	}
-	else if (Q_stricmp(cmd, "removeReferee") == 0)
-	{
-		G_RemoveReferee();
-		return qtrue;
-	}
-	else if (Q_stricmp(cmd, "mute") == 0)
-	{
-		G_MuteClient();
-		return qtrue;
-	}
-	else if (Q_stricmp(cmd, "unmute") == 0)
-	{
-		G_UnMuteClient();
-		return qtrue;
-	}
-	else if (Q_stricmp(cmd, "ban") == 0)
-	{
-		G_PlayerBan();
-		return qtrue;
-	}
-	else if (Q_stricmp(cmd, "campaign") == 0)
-	{
-		Svcmd_Campaign_f();
-		return qtrue;
-	}
-	else if (Q_stricmp(cmd, "listcampaigns") == 0)
-	{
-		Svcmd_ListCampaigns_f();
-		return qtrue;
-	}
-	else if (Q_stricmp(cmd, "revive") == 0)
-	{
-		trap_Argv(1, cmd, sizeof(cmd));
-		Svcmd_RevivePlayer(cmd);
-		return qtrue;
-	}
-	// moved from engine
-	else if (!Q_stricmp(cmd, "kick"))
-	{
-		Svcmd_Kick_f();
-		return qtrue;
-	}
-	else if (!Q_stricmp(cmd, "clientkick"))
-	{
-		Svcmd_KickNum_f();
-		return qtrue;
-	}
-#ifdef FEATURE_OMNIBOT
-	else if (!Q_stricmp(cmd, "bot"))
-	{
-		Bot_Interface_ConsoleCommand();
-		return qtrue;
-	}
-#endif
-	else if (!Q_stricmp(cmd, "cp"))
-	{
-		trap_SendServerCommand(-1, va("cp \"%s\"", Q_AddCR(ConcatArgs(1))));
-		return qtrue;
-	}
-	else if (!Q_stricmp(cmd, "reloadConfig"))
-	{
-		trap_SetConfigstring(CS_CONFIGNAME, "");
-		Com_Memset(&level.config, 0, sizeof(config_t));
-		G_configSet(g_customConfig.string);
 
-		return qtrue;
-	}
-	else if (!Q_stricmp(cmd, "loadConfig"))
+	for (i = 0; i < sizeof(consoleCommandTable) / sizeof(consoleCommandTable_t); i++)
 	{
-		CC_loadconfig();
-		return qtrue;
-	}
-	else if (!Q_stricmp(cmd, "sv_cvarempty"))
-	{
-		Com_Memset(level.svCvars, 0, sizeof(level.svCvars));
-		level.svCvarsCount = 0;
-		G_UpdateSvCvars();
-		return qtrue;
-	}
-	else if (!Q_stricmp(cmd, "sv_cvar"))
-	{
-		CC_svcvar();
-		return qtrue;
-	}
-	else if (!Q_stricmp(cmd, "playsound") || !Q_stricmp(cmd, "playsound_env"))
-	{
-		G_PlaySound_Cmd();
-		return qtrue;
-	}
-	else if (!Q_stricmp(cmd, "gib"))
-	{
-		Svcmd_Gib();
-		return qtrue;
-	}
-	else if (!Q_stricmp(cmd, "die"))
-	{
-		Svcmd_Die();
-		return qtrue;
-	}
-	else if (!Q_stricmp(cmd, "freeze"))
-	{
-		Svcmd_Freeze();
-		return qtrue;
-	}
-	else if (!Q_stricmp(cmd, "unfreeze"))
-	{
-		Svcmd_Unfreeze();
-		return qtrue;
-	}
-	else if (!Q_stricmp(cmd, "burn"))
-	{
-		Svcmd_Burn();
-		return qtrue;
-	}
-	else if (!Q_stricmp(cmd, "pip"))
-	{
-		Svcmd_Pip();
-		return qtrue;
-	}
-	else if (!Q_stricmp(cmd, "throw"))
-	{
-		Svcmd_Fling(1);
-		return qtrue;
-	}
-#ifdef LEGACY_DEBUG
-	else if (!Q_stricmp(cmd, "ae"))
-	{
-		//ae <playername> <animEvent>
-		Svcmd_PlayerAnimEvent();
-		return qtrue;
-	}
-#endif
-	else if (!Q_stricmp(cmd, "ref")) // console also gets ref commands
-	{
-		if (!level.fLocalHost)
+		if (!Q_stricmp(cmd, consoleCommandTable[i].name))
 		{
-			return qfalse;
-		}
-
-		//G_refCommandCheck expects the next argument (warn, pause, lock,..)
-		trap_Argv(1, cmd, sizeof(cmd));
-		if (!G_refCommandCheck(NULL, cmd))
-		{
-			G_refHelp_cmd(NULL);
-		}
-		return qtrue;
-	}
-
-	if (g_dedicated.integer)
-	{
-		// FIXME
-		// this 'say' condition is never reached?!
-		if (!Q_stricmp(cmd, "say"))
-		{
-			trap_SendServerCommand(-1, va("cpm \"server: %s\n\"", Q_AddCR(ConcatArgs(1))));
+			consoleCommandTable[i].cmd();
 			return qtrue;
 		}
-		// added for rcon/Lua chat
-		if (!Q_stricmp(cmd, "chat"))
-		{
-			trap_SendServerCommand(-1, va("chat \"console: %s\"", Q_AddCR(ConcatArgs(1))));
-			return qtrue;
-		}
-
-		// everything else will also be printed as a say command
-		//trap_SendServerCommand( -1, va("cpm \"server: %s\n\"", ConcatArgs(0) ) );
-
-		// prints to the console instead now
-		return qfalse;
 	}
 
 	return qfalse;

@@ -545,3 +545,13 @@ void G_ConfigCheckLocked(void)
 		}
 	}
 }
+
+/**
+ * @brief G_ReloadConfig
+ */
+void G_ReloadConfig(void)
+{
+	trap_SetConfigstring(CS_CONFIGNAME, "");
+	Com_Memset(&level.config, 0, sizeof(config_t));
+	G_configSet(g_customConfig.string);
+}

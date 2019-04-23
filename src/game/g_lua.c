@@ -2972,6 +2972,16 @@ void G_LuaShutdown(void)
 }
 
 /*
+ * G_LuaRestart()
+ * Restart Lua API
+ */
+void G_LuaRestart(void)
+{
+	G_LuaShutdown();
+	G_LuaInit();
+}
+
+/*
  * G_LuaStatus( ent )
  * Prints information on the Lua virtual machines.
  */
