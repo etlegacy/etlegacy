@@ -2546,7 +2546,6 @@ static consoleCommandTable_t consoleCommandTable[] =
 	{ "loadConfig",                 CC_loadconfig                 },
 	{ "sv_cvarempty",               CC_cvarempty                  },
 	{ "sv_cvar",                    CC_svcvar                     },
-	{ "sv_cvarempty",               CC_cvarempty                  },
 	{ "playsound",                  G_PlaySound_Cmd               },
 	{ "playsound_env",              G_PlaySound_Cmd               },
 	{ "gib",                        Svcmd_Gib                     },
@@ -2555,8 +2554,6 @@ static consoleCommandTable_t consoleCommandTable[] =
 	{ "unfreeze",                   Svcmd_Unfreeze                },
 	{ "burn",                       Svcmd_Burn                    },
 	{ "pip",                        Svcmd_Pip                     },
-	{ "throw",                      Svcmd_Fling                   },
-	{ "unfreeze",                   Svcmd_Unfreeze                },
 	{ "throw",                      Svcmd_Fling                   },
 #ifdef LEGACY_DEBUG
 	{ "ae",                         Svcmd_PlayerAnimEvent         },    //ae <playername> <animEvent>
