@@ -9,7 +9,7 @@ menuDef {																										\
 	name		WINDOWNAME																						\
 	visible		0																								\
 	fullscreen	0																								\
-	rect		0 100 640 380																					\
+	rect		0 100 __WINDOW_WIDTH 380																		\
 	onOpen		{ setCvar cl_bypassMouseInput "1" }																\
 	onClose		{ setCvar cl_bypassMouseInput "0" }																\
 	onEsc		{ closeAll }																					\
