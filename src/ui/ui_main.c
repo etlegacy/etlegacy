@@ -8337,6 +8337,22 @@ void UI_SetActiveMenu(uiMenuCommand_t menu)
 			Menus_OpenByName("wm_classAlt");
 			return;
 
+		case UIMENU_WM_TEAM:
+			uiInfo.uiDC.cursorx = 639;
+			uiInfo.uiDC.cursory = 479;
+			trap_Key_SetCatcher(KEYCATCH_UI);
+			Menus_CloseAll();
+			Menus_OpenByName("wm_team");
+			return;
+
+		case UIMENU_WM_TEAMALT:
+			uiInfo.uiDC.cursorx = 639;
+			uiInfo.uiDC.cursory = 479;
+			trap_Key_SetCatcher(KEYCATCH_UI);
+			Menus_CloseAll();
+			Menus_OpenByName("wm_teamAlt");
+			return;
+
 		// say, team say, etc
 		case UIMENU_INGAME_MESSAGEMODE:
 			trap_Key_SetCatcher(KEYCATCH_UI);

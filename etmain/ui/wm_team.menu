@@ -1,0 +1,85 @@
+#include "ui/menudef.h"
+
+#define DEFAULT_TEXT_SCALE	0.25
+#define ORIGIN_QUICKMESSAGE	10 10
+#define QM_MENU_GRADIENT_START_OFFSET
+#define QM_MENU_START(WINDOWNAME)																				\
+																												\
+menuDef {																										\
+	name		WINDOWNAME																						\
+	visible		0																								\
+	fullscreen	0																								\
+	rect		0 100 __WINDOW_WIDTH 380																		\
+	onOpen		{ setCvar cl_bypassMouseInput "1" }																\
+	onClose		{ setCvar cl_bypassMouseInput "0" }																\
+	onEsc		{ closeAll }																					\
+																												\
+	itemDef {																									\
+		name		"window"																					\
+		rect		0 19 204 136																				\
+		origin		ORIGIN_QUICKMESSAGE																			\
+		style		WINDOW_STYLE_FILLED																			\
+		backcolor	0 0 0 .75																					\
+		border		WINDOW_BORDER_FULL																			\
+		bordercolor	.5 .5 .5 .5																					\
+		visible		1																							\
+		decoration																								\
+	}																											\
+																												\
+	itemDef {																									\
+		name		"windowtitle"																				\
+		rect		$evalfloat((0)+2) $evalfloat((19)+2) $evalfloat((204)-4) 12									\
+		origin		ORIGIN_QUICKMESSAGE																			\
+		text		"CHOOSE TEAM"																				\
+		textfont	UI_FONT_ARIBLK_16																			\
+		textscale	.19																							\
+		textalignx	3																							\
+		textaligny	10																							\
+		style		WINDOW_STYLE_FILLED																			\
+		backcolor	.16 .2 .17 .8																				\
+		forecolor	.6 .6 .6 1																					\
+		visible		1																							\
+		decoration																								\
+	}
+
+	#define QM_MENU_END }
+
+	#define QM_MENU_ITEM( WINDOWTEXT, ACTION, KEY, POS )				\
+    itemDef {															\
+		name			"menuitem"##WINDOWTEXT							\
+		rect			6 $evalfloat( 35 + ( 12 * POS )) 128 10			\
+		origin			ORIGIN_QUICKMESSAGE								\
+		type			ITEM_TYPE_TEXT									\
+		text			WINDOWTEXT										\
+		textfont		UI_FONT_COURBD_21								\
+		textstyle		ITEM_TEXTSTYLE_SHADOWED							\
+		textscale		.2												\
+		textaligny		8												\
+		forecolor		.6 .6 .6 1										\
+		visible			1												\
+		decoration														\
+	}																	\
+	execKey KEY { ACTION }
+
+	#define QM_MENU_ITEM_TEAM( WINDOWTEXT, ACTION, KEY, POS )			\
+    itemDef {															\
+		name			"menuitem"##WINDOWTEXT							\
+		rect			6 $evalfloat( 35 + ( 12 * POS )) 128 10			\
+		origin			ORIGIN_QUICKMESSAGE								\
+		type			ITEM_TYPE_TEXT									\
+		text			WINDOWTEXT										\
+		textfont		UI_FONT_COURBD_21								\
+		textstyle		ITEM_TEXTSTYLE_SHADOWED							\
+		textscale		.2												\
+		textaligny		8												\
+		forecolor		.6 .6 .6 1										\
+		visible			1												\
+		decoration														\
+	}																	\
+	execKey KEY { ACTION }
+
+QM_MENU_START( "wm_team" )
+	QM_MENU_ITEM_TEAM(	"R. Axis",			exec "team r";	close wm_team,		"r", 0 )
+	QM_MENU_ITEM_TEAM(	"B. Allies",		exec "team b";	close wm_team,		"b", 1 )
+	QM_MENU_ITEM_TEAM(	"S. Spectators",	exec "team s";	close wm_team,		"s", 2 )
+QM_MENU_END

@@ -2699,6 +2699,9 @@ typedef enum
 	UIMENU_WM_CLASS,
 	UIMENU_WM_CLASSALT,
 
+	UIMENU_WM_TEAM,
+	UIMENU_WM_TEAMALT,
+
 	// say, team say, etc
 	UIMENU_INGAME_MESSAGEMODE,
 } uiMenuCommand_t;

@@ -1531,6 +1531,23 @@ static void CG_Class_f(void)
 }
 
 /**
+ * @brief team change menu
+ */
+static void CG_TeamMenu_f(void)
+{
+	CG_EventHandling(CGAME_EVENT_NONE, qfalse);
+
+	if (cg_quickMessageAlt.integer)
+	{
+		trap_UI_Popup(UIMENU_WM_TEAMALT);
+	}
+	else
+	{
+		trap_UI_Popup(UIMENU_WM_TEAM);
+	}
+}
+
+/**
  * @brief CG_ReadHuds_f
  */
 static void CG_ReadHuds_f(void)
@@ -1915,6 +1932,7 @@ static consoleCommand_t commands[] =
 	{ "resetTimer",          CG_TimerReset_f           }, // keep ETPro compatibility
 	{ "class",               CG_Class_f                },
 	{ "classmenu",           CG_ClassMenu_f            },
+	{ "teammenu",            CG_TeamMenu_f             },
 	{ "readhuds",            CG_ReadHuds_f             },
 #ifdef FEATURE_EDV
 	{ "+freecam_turnleft",   CG_FreecamTurnLeftDown_f  },
