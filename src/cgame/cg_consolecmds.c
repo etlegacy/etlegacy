@@ -1499,7 +1499,14 @@ static void CG_Class_f(void)
 	{
 		trap_Argv(3, cls, 64);
 		weapon2 = atoi(cls);
-		weapon2 = CG_GetSecondaryWeapon(weapon2, team, playerclass);
+		if (weapon2 <= 0 || weapon2 > MAX_WEAPS_PER_CLASS)
+		{
+			weapon2 = classinfo->classSecondaryWeapons[0].weapon;
+		}
+		else
+		{
+			weapon2 = CG_GetSecondaryWeapon(weapon2 - 1, team, playerclass);
+		}
 	}
 	else
 	{
