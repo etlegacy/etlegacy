@@ -675,7 +675,7 @@ typedef struct
 
 	weapon_stat_t aWeaponStats[WS_MAX + 1];             ////< Weapon stats.  +1 to avoid invalid weapon check
 
-	qboolean versionOK;
+	qboolean versionOK;                                 ////< mod version mismatch check
 
 	unsigned int uci;                                   ////< GeoIP
 

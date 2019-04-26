@@ -2632,30 +2632,26 @@ gentity_t *SelectSpawnPointFromList(char *list, vec3_t spawn_origin, vec3_t spaw
 
 	return spawnPoint;
 }
+#endif
 
 /**
- * @brief G_CheckVersion
+ * @brief Prevent nasty version mismatches
  * @param ent
  * @return
- *
- * @note Unused
  */
 static char *G_CheckVersion(gentity_t *ent)
 {
-	// Prevent nasty version mismatches (or people sticking in Q3Aimbot cgames)
-
 	char userinfo[MAX_INFO_STRING];
 	char *s;
 
 	trap_GetUserinfo(ent->s.number, userinfo, sizeof(userinfo));
-	s = Info_ValueForKey(userinfo, "cg_etVersion");
-	if (!s || strcmp(s, GAME_VERSION_DATED))
+	s = Info_ValueForKey(userinfo, "cg_modVersion");
+	if (!s || strcmp(s, ETLEGACY_VERSION))
 	{
 		return(s);
 	}
 	return NULL;
 }
-#endif
 
 static qboolean isMortalSelfDamage(gentity_t *ent)
 {
@@ -2698,19 +2694,20 @@ void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean
 	client->pers.lastBattleSenseBonusTime = level.timeCurrent;
 	client->pers.lastHQMineReportTime     = level.timeCurrent;
 
-/*
-#ifndef LEGACY_DEBUG
-    if( !client->sess.versionOK ) {
-        char *clientMismatchedVersion = G_CheckVersion( ent );	// returns NULL if version is identical
+	// check version mismatch
+	if (!client->sess.versionOK)
+	{
+		char *clientMismatchedVersion = G_CheckVersion(ent);  // returns NULL if version is identical
 
-        if( clientMismatchedVersion ) {
-            trap_DropClient( ent - g_entities, va( "Client/Server game mismatch: '%s/%s'", clientMismatchedVersion, GAME_VERSION_DATED ) );
-        } else {
-            client->sess.versionOK = qtrue;
-        }
-    }
-#endif
-*/
+		if (clientMismatchedVersion)
+		{
+			trap_DropClient(ent - g_entities, va("Legacy cgame/qgame mismatch: %s/%s", clientMismatchedVersion, ETLEGACY_VERSION), 0);
+		}
+		else
+		{
+			client->sess.versionOK = qtrue;
+		}
+	}
 
 	// find a spawn point
 	// do it before setting health back up, so farthest
