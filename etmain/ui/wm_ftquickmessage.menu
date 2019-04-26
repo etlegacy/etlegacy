@@ -1,7 +1,7 @@
 #include "ui/menudef.h"
 #include "ui/menumacros.h"
-#define DEFAULT_TEXT_SCALE 0.25
-#define ORIGIN_QUICKMESSAGE		10 10
+#define DEFAULT_TEXT_SCALE	0.25
+#define ORIGIN_QUICKMESSAGE	10 10
 #define QM_MENU_GRADIENT_START_OFFSET
 #define QM_MENU_START( WINDOWNAME )																				\
 																												\
@@ -173,7 +173,7 @@ QM_MENU_START( "wm_ftquickobjectives" )
 	QM_MENU_ITEM_TEAM( _("D. Command Declined"),			exec "VoiceFireteamChat CommandDeclined";			close wm_ftquickobjectives,	"d", 1 )
 	QM_MENU_ITEM_TEAM( _("C. Command Completed"),			exec "VoiceFireteamChat CommandCompleted";			close wm_ftquickobjectives,	"c", 2 )
 	QM_MENU_ITEM_TEAM( _("P. Destroy Primary Objective"),	exec "VoiceFireteamChat DestroyPrimary"; 			close wm_ftquickobjectives,	"p", 3 )
-	QM_MENU_ITEM_TEAM( _("S. Destroy Secondary Objective"),	exec "VoiceFireteamChat DestroySecondary";		close wm_ftquickobjectives,	"s", 4 )
+	QM_MENU_ITEM_TEAM( _("S. Destroy Secondary Objective"),	exec "VoiceFireteamChat DestroySecondary";			close wm_ftquickobjectives,	"s", 4 )
 	QM_MENU_ITEM_TEAM( _("X. Destroy Construction"),		exec "VoiceFireteamChat DestroyConstruction";		close wm_ftquickobjectives,	"x", 5 )
 	QM_MENU_ITEM_TEAM( _("M. Commencing Construction"),		exec "VoiceFireteamChat ConstructionCommencing";	close wm_ftquickobjectives, "m", 6 )
 	QM_MENU_ITEM_TEAM( _("R. Repair Vehicle"),				exec "VoiceFireteamChat RepairVehicle";				close wm_ftquickobjectives,	"r", 7 )

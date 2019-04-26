@@ -1,7 +1,7 @@
 #include "ui/menudef.h"
 #include "ui/menumacros.h"
-#define DEFAULT_TEXT_SCALE 0.25
-#define ORIGIN_QUICKMESSAGE		10 10
+#define DEFAULT_TEXT_SCALE	0.25
+#define ORIGIN_QUICKMESSAGE	10 10
 #define QM_MENU_GRADIENT_START_OFFSET
 #define QM_MENU_START( WINDOWNAME )																				\
 																												\
@@ -30,7 +30,7 @@ menuDef {																										\
 		name		"windowtitle"																				\
 		rect		$evalfloat((0)+2) $evalfloat((19)+2) $evalfloat((204)-4) 12									\
 		origin		ORIGIN_QUICKMESSAGE																			\
-		text		_("MESSAGE")																					\
+		text		_("MESSAGE")																				\
 		textfont	UI_FONT_ARIBLK_16																			\
 		textscale	.19																							\
 		textalignx	3																							\
