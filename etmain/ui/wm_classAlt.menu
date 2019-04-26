@@ -80,7 +80,7 @@ menuDef {																										\
 
 QM_MENU_START( "wm_classalt" )
 	QM_MENU_ITEM_TEAM(	"1. Soldier",			close wm_classalt;	open wm_class_soldieralt,		"1", 0 )
-	QM_MENU_ITEM_TEAM(	"2. Medic",				exec "class m";		close wm_classalt,				"2", 1 )
+	QM_MENU_ITEM_TEAM(	"2. Medic",				close wm_classalt;	open wm_class_medicalt,			"2", 1 )
 	QM_MENU_ITEM_TEAM(	"3. Engineer",			close wm_classalt;	open wm_class_engineeralt,		"3", 2 )
 	QM_MENU_ITEM_TEAM(	"4. Field Ops",			close wm_classalt;	open wm_class_fieldopsalt,		"4", 3 )
 	QM_MENU_ITEM_TEAM(	"5. Covert Ops",		close wm_classalt;	open wm_class_covertopsalt,		"5", 4 )
@@ -92,6 +92,10 @@ QM_MENU_START( "wm_class_soldieralt" )
 	QM_MENU_ITEM_TEAM(	"3. Flamethrower",		exec "class s 3";	close wm_class_soldieralt,		"3", 2 )
 	QM_MENU_ITEM_TEAM(	"4. Rocket Launcher",	exec "class s 4";	close wm_class_soldieralt,		"4", 3 )
 	QM_MENU_ITEM_TEAM(	"5. Mortar",			exec "class s 5";	close wm_class_soldieralt,		"5", 4 )
+QM_MENU_END
+
+QM_MENU_START( "wm_class_medicalt" )
+	QM_MENU_ITEM_TEAM(	"1. SMG",				exec "class m 1";	close wm_class_medicalt,		"1", 0 )
 QM_MENU_END
 
 QM_MENU_START( "wm_class_engineeralt" )
