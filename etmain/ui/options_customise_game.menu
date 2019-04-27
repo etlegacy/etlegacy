@@ -63,12 +63,13 @@ menuDef {
 
 // Sounds //
 #define SOUND_Y 114
-	SUBWINDOW( 6+(SUBWINDOW_WIDTH_L)+6, SOUND_Y, (SUBWINDOW_WIDTH_R), 40, _("SOUND") )
-	YESNO( 6+(SUBWINDOW_WIDTH_L)+6+2, SOUND_Y+16, (SUBWINDOW_WIDTH_R)-4, 10, _("Voice chat:"), .2, 8, "cg_voiceChats", _("Play voice chat in-game") )
-	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, SOUND_Y+28, (SUBWINDOW_WIDTH_R)-4, 10, _("Hitsounds:"), .2, 8, "cg_hitsounds", cvarFloatList { "None" 0 "All" 1 "No Body Hit Sound" 2 "No Head Hit Sound" 4 "No Team Hit Sound" 8 }, _("Set hit sounds") )
+	SUBWINDOW( 6+(SUBWINDOW_WIDTH_L)+6, SOUND_Y, (SUBWINDOW_WIDTH_R), 52, _("SOUND") )
+	YESNO( 6+(SUBWINDOW_WIDTH_L)+6+2, SOUND_Y+16, (SUBWINDOW_WIDTH_R)-4, 10, _("Announcer:"), .2, 8, "cg_announcer", _("Play startup announcer voice") )
+	YESNO( 6+(SUBWINDOW_WIDTH_L)+6+2, SOUND_Y+28, (SUBWINDOW_WIDTH_R)-4, 10, _("Voice chat:"), .2, 8, "cg_voiceChats", _("Play voice chat in-game") )
+	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, SOUND_Y+40, (SUBWINDOW_WIDTH_R)-4, 10, _("Hitsounds:"), .2, 8, "cg_hitsounds", cvarFloatList { "None" 0 "All" 1 "No Body Hit Sound" 2 "No Head Hit Sound" 4 "No Team Hit Sound" 8 }, _("Set hit sounds") )
 
 // Miscellaneous //
-#define MISC_Y 160
+#define MISC_Y 172
 	SUBWINDOW( 6+(SUBWINDOW_WIDTH_L)+6, MISC_Y, (SUBWINDOW_WIDTH_R), 90, _("MISCELLANEOUS") )
 	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, MISC_Y+16, (SUBWINDOW_WIDTH_R)-4, 10, _("Complaint PopUp:"), .2, 8, "cg_complaintPopUp", cvarFloatList { "Off" 0 "On" 1 }, _("Display the option to file complaints about teammates who kill you") )
 	YESNO( 6+(SUBWINDOW_WIDTH_L)+6+2, MISC_Y+28, (SUBWINDOW_WIDTH_R)-4, 10, _("Log Important Messages:"), .2, 8, "cg_printObjectiveInfo",_("Prints important game messages to the console") )
