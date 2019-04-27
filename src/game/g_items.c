@@ -878,7 +878,7 @@ gentity_t *LaunchItem(gitem_t *item, vec3_t origin, vec3_t velocity, int ownerNu
 		int i;
 
 		VectorSubtract(g_entities[ownerNum].s.origin, origin, temp);
-		VectorNormalize(temp);
+		VectorNormalizeOnly(temp);
 
 		for (i = 16; i <= 48; i += 16)
 		{
@@ -1143,7 +1143,8 @@ void G_BounceItem(gentity_t *ent, trace_t *trace)
 	// reflect the velocity on the trace plane
 
 	BG_EvaluateTrajectoryDelta(&ent->s.pos, hitTime, velocity, qfalse, ent->s.effect2Time);
-	dot = DotProduct(velocity, trace->plane.normal);
+	//dot = DotProduct(velocity, trace->plane.normal);
+	Dot(velocity, trace->plane.normal, dot);
 	VectorMA(velocity, -2 * dot, trace->plane.normal, ent->s.pos.trDelta);
 
 	// cut the velocity to keep from bouncing forever

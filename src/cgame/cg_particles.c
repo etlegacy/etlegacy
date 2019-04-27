@@ -652,7 +652,7 @@ void CG_AddParticleToScene(cparticle_t *p, vec3_t org, float alpha)
 	{
 		vec3_t color;
 		float  width, height;
-		float  sinR, cosR;
+		float  sinR, cosR, S, C, angle;
 		float  time  = cg.time - p->time;
 		float  time2 = p->endtime - p->time;
 		float  ratio = time / time2;
@@ -679,8 +679,12 @@ void CG_AddParticleToScene(cparticle_t *p, vec3_t org, float alpha)
 			height = p->endheight;
 		}
 
-		sinR = height * (float)(sin(DEG2RAD(p->roll)) * M_SQRT2);
-		cosR = width * (float)(cos(DEG2RAD(p->roll)) * M_SQRT2);
+		//sinR = height * (float)(sin(DEG2RAD(p->roll)) * M_SQRT2);
+		//cosR = width * (float)(cos(DEG2RAD(p->roll)) * M_SQRT2);
+		angle = DEG2RAD(p->roll);
+		SinCos(angle, S, C);
+		sinR = height * (float)(S * M_SQRT2);
+		cosR = width * (float)(C * M_SQRT2);
 
 		VectorCopy(org, verts[0].xyz);
 		verts[0].xyz[0]     -= sinR;

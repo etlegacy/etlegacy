@@ -1402,7 +1402,7 @@ static void mdx_calculate_bone(
 
 	// frame bone rotation
 	AnglesToAxisBroken(frameBone->offset_angles, axis);
-	vec3_rotate(tmp, axis, dest);
+	VectorRotate(tmp, axis, dest);
 }
 
 /**
@@ -1621,7 +1621,7 @@ static void mdx_bone_orientation(/*const*/ grefEntity_t *refent, int idx, vec3_t
 
 		// Rotate around torso_parent
 		VectorSubtract(origin, mdx_bones[boneFrameModel->torso_parent], tmp);
-		vec3_rotate(tmp, refent->torsoAxis, torso_origin);
+		VectorRotate(tmp, refent->torsoAxis, torso_origin);
 		VectorAdd(torso_origin, mdx_bones[boneFrameModel->torso_parent], torso_origin);
 
 		// Lerp torso-rotated point with non-rotated
@@ -1654,7 +1654,11 @@ static void mdx_bone_orientation(/*const*/ grefEntity_t *refent, int idx, vec3_t
 
 
 	// FIXME: Why is this transpose needed?
-	TransposeMatrix(tmpaxis, axis1);
+	// Info: If the matrix is a rotation-matrix, then the transpose of that matrix is equal to the inverse of that matrix.
+	// In other words: You get the reverse of a transform, simply by taking the transposed matrix (must be a rotation-matrix).
+	// Maybe that's the reason? to "turn back" the calculation.. into the opposite direction.
+	// You calculated the change, you know where you are now, so you "inverse" to where you came from.  (does this make it more clear?)
+	MatrixTranspose(tmpaxis, axis1);
 
 	// torso angles
 	// FIXME: This probably isn't how the engine decides.
@@ -1712,7 +1716,7 @@ static void mdx_tag_orientation(/*const*/ grefEntity_t *refent, int idx, vec3_t 
 	}
 
 	// Tag offset
-	vec3_rotate(tag->offset, tmpaxis, offset);
+	VectorRotate(tag->offset, tmpaxis, offset);
 	VectorAdd(origin, offset, origin);
 
 	// Tag axis
@@ -1781,7 +1785,7 @@ int trap_R_LerpTagNumber(orientation_t *tag, /*const*/ grefEntity_t *refent, int
 	mdx_calculate_bones_single(refent, bone);
 	mdx_bone_orientation(refent, bone, tag->origin, axis);
 
-	vec3_rotate(model->tags[tagNum].offset, axis, offset);
+	VectorRotate(model->tags[tagNum].offset, axis, offset);
 	VectorAdd(tag->origin, offset, tag->origin);
 
 	MatrixMultiply(model->tags[tagNum].axis, axis, tag->axis);
@@ -2122,19 +2126,24 @@ void mdx_PlayerAngles(gentity_t *ent, vec3_t legsAngles, vec3_t torsoAngles, vec
 
 	// lean towards the direction of travel
 	VectorCopy(client->ps.velocity, velocity);
-	speed = VectorNormalize(velocity);
+	//speed = VectorNormalize(velocity);
+	VectorNorm(velocity, &speed);
 	if (speed != 0.f)
 	{
 		vec3_t axis[3];
-		float  side;
+		float  side, dot;
 
 		speed *= 0.05f;
 
 		AnglesToAxis(legsAngles, axis);
-		side              = speed * DotProduct(velocity, axis[1]);
+		//side              = speed * DotProduct(velocity, axis[1]);
+		Dot(velocity, axis[1], dot);
+		side = speed * dot;
 		legsAngles[ROLL] -= side;
 
-		side               = speed * DotProduct(velocity, axis[0]);
+		//side               = speed * DotProduct(velocity, axis[0]);
+		Dot(velocity, axis[0], dot);
+		side = speed * dot;
 		legsAngles[PITCH] += side;
 	}
 
@@ -2417,7 +2426,8 @@ static void mdx_RunLerpFrame(gentity_t *ent, glerpFrame_t *lf, int newAnimation,
 		}
 		else
 		{
-			lf->frameTime = lf->oldFrameTime + (int)(anim->frameLerp * (1.0f / lf->animSpeedScale));
+			//lf->frameTime = lf->oldFrameTime + (int)(anim->frameLerp * (1.0f / lf->animSpeedScale));
+			lf->frameTime = lf->oldFrameTime + (int)(anim->frameLerp * rcp(lf->animSpeedScale));
 			if (anim->flags & ANIMFL_REVERSED)
 			{
 				f = (anim->numFrames - 1) - ((lf->frame - anim->firstFrame) - 1);
@@ -2535,18 +2545,19 @@ static qboolean mdx_hit_warp(
 	vec3_t unaxis[3];
 	vec3_t unstart, unend, undir;
 	vec3_t tmp;
+	float dotsd, dotdd;
 
 	// Un-translate
 	VectorSubtract(start, origin, unstart);
 	VectorSubtract(end, origin, unend);
 
 	// Un-rotate
-	TransposeMatrix(axis, unaxis);
+	MatrixTranspose(axis, unaxis);
 
-	vec3_rotate(unstart, unaxis, tmp);
+	VectorRotate(unstart, unaxis, tmp);
 	VectorCopy(tmp, unstart);
 
-	vec3_rotate(unend, unaxis, tmp);
+	VectorRotate(unend, unaxis, tmp);
 	VectorCopy(tmp, unend);
 
 	// Un-scale
@@ -2562,7 +2573,10 @@ static qboolean mdx_hit_warp(
 
 	// Find closest point
 	VectorNegate(unstart, unstart);
-	*fraction = DotProduct(unstart, undir) / DotProduct(undir, undir);
+	//*fraction = DotProduct(unstart, undir) / DotProduct(undir, undir);
+	Dot(unstart, undir, dotsd);
+	Dot(undir, undir, dotdd);
+	*fraction = dotsd / dotdd;
 	VectorNegate(unstart, unstart);
 
 	if (*fraction < 0.0f)
@@ -2789,10 +2803,10 @@ qboolean mdx_hit_test(const vec3_t start, const vec3_t end, /*const*/ gentity_t 
 
 			// Calculate axis
 			VectorSubtract(o2, o1, a1[2]);
-			VectorNormalize(a1[2]);
+			VectorNormalizeOnly(a1[2]);
 
 			CrossProduct(a1[2], a1[0], a1[1]);
-			VectorNormalize(a1[1]);
+			VectorNormalizeOnly(a1[1]);
 
 			CrossProduct(a1[2], a1[1], a1[0]);
 

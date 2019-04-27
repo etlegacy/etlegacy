@@ -7,7 +7,6 @@ textures/egypt_floor_sd/carpet_c02
 	bumpmap textures/egypt_floor_sd/carpet_c02_n.tga
 	specularmap textures/egypt_floor_sd/carpet_c02_r.tga
 	surfaceparm carpetsteps
-	implicitMap -
 }
 
 textures/egypt_floor_sd/desertsand_light
@@ -20,7 +19,6 @@ textures/egypt_floor_sd/desertsand_light
 	q3map_shadeangle 100
 	surfaceparm landmine
 	surfaceparm gravelsteps
-	implicitMap -
 }
 
 textures/egypt_floor_sd/floor_c06
@@ -30,7 +28,6 @@ textures/egypt_floor_sd/floor_c06
 	bumpmap textures/egypt_floor_sd/floor_c06_n.tga
 	specularmap textures/egypt_floor_sd/floor_c06_r.tga
 	surfaceparm woodsteps
-	implicitMap -
 }
 
 textures/egypt_floor_sd/mudroad01
@@ -41,7 +38,6 @@ textures/egypt_floor_sd/mudroad01
 	specularmap textures/egypt_floor_sd/mudroad01_r.tga
 	surfaceparm landmine
 	surfaceparm gravelsteps
-	implicitMap -
 }
 
 textures/egypt_floor_sd/mudroad01_trim
@@ -52,7 +48,6 @@ textures/egypt_floor_sd/mudroad01_trim
 	specularmap textures/egypt_floor_sd/mudroad01_trim_r.tga
 	surfaceparm landmine	
 	surfaceparm gravelsteps
-	implicitMap -
 }
 
 textures/egypt_floor_sd/sandy_dirt_01
@@ -65,7 +60,6 @@ textures/egypt_floor_sd/sandy_dirt_01
 	q3map_shadeangle 100
 	surfaceparm landmine
 	surfaceparm gravelsteps
-	implicitMap -
 }
 
 textures/egypt_floor_sd/sandy_dirt_02
@@ -77,7 +71,6 @@ textures/egypt_floor_sd/sandy_dirt_02
 	q3map_nonplanar.tga
 	q3map_shadeangle 100
 	surfaceparm gravelsteps
-	implicitMap textures/egypt_floor_sd/sandy_dirt_01.tga
 }
 
 textures/egypt_floor_sd/siwa_sandygrass
@@ -90,7 +83,6 @@ textures/egypt_floor_sd/siwa_sandygrass
 	q3map_shadeangle 100
 	surfaceparm landmine
 	surfaceparm gravelsteps
-	implicitMap -
 }
 
 textures/egypt_floor_sd/siwa_sandy1
@@ -103,7 +95,6 @@ textures/egypt_floor_sd/siwa_sandy1
 	q3map_shadeangle 100
 	surfaceparm landmine
 	surfaceparm gravelsteps
-	implicitMap textures/egypt_floor_sd/desertsand_generic_a.tga
 }
 
 textures/egypt_floor_sd/wood_c13
@@ -113,7 +104,6 @@ textures/egypt_floor_sd/wood_c13
 	bumpmap textures/egypt_floor_sd/wood_c13_n.tga
 	specularmap textures/egypt_floor_sd/wood_c13_r.tga
 	surfaceparm woodsteps
-	implicitMap -
 }
 
 //NEW ONES
@@ -123,7 +113,6 @@ textures/egypt_floor_sd/afloor_m02
 	diffusemap textures/egypt_floor_sd/afloor_m02.tga
 	bumpmap textures/egypt_floor_sd/afloor_m02_n.tga
 	specularmap textures/egypt_floor_sd/afloor_m02_r.tga
-	implicitMap -
 }
 
 textures/egypt_floor_sd/block-16sq
@@ -132,7 +121,6 @@ textures/egypt_floor_sd/block-16sq
 	diffusemap textures/egypt_floor_sd/block-16sq.tga
 	bumpmap textures/egypt_floor_sd/block-16sq_n.tga
 	specularmap textures/egypt_floor_sd/block-16sq_r.tga
-	implicitMap -
 }
 
 textures/egypt_floor_sd/dirt_cracked_01
@@ -153,7 +141,6 @@ textures/egypt_floor_sd/marblefloor_c04
 	diffusemap textures/egypt_floor_sd/marblefloor_c04.tga
 	bumpmap textures/egypt_floor_sd/marblefloor_c04_n.tga
 	specularmap textures/egypt_floor_sd/marblefloor_c04_r.tga
-	implicitMap -
 }
 
 textures/egypt_floor_sd/sandygrass_b
@@ -166,7 +153,6 @@ textures/egypt_floor_sd/sandygrass_b
 	q3map_shadeangle 100
 	surfaceparm landmine
 	surfaceparm gravelsteps
-	implicitMap -
 }
 
 textures/egypt_floor_sd/siwa_rubble_1
@@ -175,5 +161,4 @@ textures/egypt_floor_sd/siwa_rubble_1
 	diffusemap textures/egypt_floor_sd/siwa_rubble_1.tga
 	bumpmap textures/egypt_floor_sd/siwa_rubble_1_n.tga
 	specularmap textures/egypt_floor_sd/siwa_rubble_1_r.tga
-	implicitMap -
 }

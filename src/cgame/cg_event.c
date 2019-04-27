@@ -898,7 +898,8 @@ void CG_RubbleFx(vec3_t origin, vec3_t dir, int mass, int type, sfxHandle_t soun
 				}
 			}
 
-			le->lifeRate   = 1.0f / (le->endTime - le->startTime);
+			//le->lifeRate   = 1.0f / (le->endTime - le->startTime);
+			le->lifeRate = rcp((float)(le->endTime - le->startTime));
 			le->leFlags    = LEF_TUMBLE;
 			le->leMarkType = LEMT_NONE;
 
@@ -948,7 +949,7 @@ void CG_RubbleFx(vec3_t origin, vec3_t dir, int mass, int type, sfxHandle_t soun
 			le->angles.trDelta[2] = ((100 + (rand() & 500)) - 300) * materialmul;
 
 			VectorCopy(origin, le->pos.trBase);
-			VectorNormalize(dir);
+			VectorNormalizeOnly(dir);
 			le->pos.trTime = cg.time;
 
 			// hoping that was just intended to represent randomness
@@ -1274,7 +1275,8 @@ void CG_Explodef(vec3_t origin, vec3_t dir, int mass, int type, qhandle_t sound,
 				}
 			}
 
-			le->lifeRate   = 1.0f / (le->endTime - le->startTime);
+			//le->lifeRate   = 1.0f / (le->endTime - le->startTime);
+			le->lifeRate = rcp((float)(le->endTime - le->startTime));
 			le->leFlags    = LEF_TUMBLE;
 			le->leMarkType = LEMT_NONE;
 
@@ -1325,7 +1327,7 @@ void CG_Explodef(vec3_t origin, vec3_t dir, int mass, int type, qhandle_t sound,
 
 
 			VectorCopy(origin, le->pos.trBase);
-			VectorNormalize(dir);
+			VectorNormalizeOnly(dir);
 			le->pos.trTime = cg.time;
 
 			// hoping that was just intended to represent randomness
@@ -1468,7 +1470,7 @@ void CG_Effect(centity_t *cent, vec3_t origin, vec3_t dir)
 		VectorCopy(origin, le->pos.trBase);
 
 		//VectorCopy( velocity, le->pos.trDelta );
-		VectorNormalize(dir);
+		VectorNormalizeOnly(dir);
 		VectorMA(dir, 200, dir, le->pos.trDelta);
 
 		le->pos.trTime = cg.time;
@@ -1531,7 +1533,8 @@ void CG_Shard(centity_t *cent, vec3_t origin, vec3_t dir)
 			isflyingdebris = qtrue;
 		}
 
-		le->lifeRate     = 1.0f / (le->endTime - le->startTime);
+		//le->lifeRate     = 1.0f / (le->endTime - le->startTime);
+		le->lifeRate = rcp((float)(le->endTime - le->startTime));
 		le->leFlags      = LEF_TUMBLE;
 		le->bounceFactor = 0.4f;
 		// le->leBounceSoundType    = LEBS_WOOD;
@@ -1621,7 +1624,7 @@ void CG_Shard(centity_t *cent, vec3_t origin, vec3_t dir)
 		}
 
 		VectorCopy(origin, le->pos.trBase);
-		VectorNormalize(dir);
+		VectorNormalizeOnly(dir);
 		VectorScale(dir, 10 * howmany, le->pos.trDelta);
 		le->pos.trTime      = cg.time;
 		le->pos.trDelta[0] += ((random() * 100) - 50);
@@ -1664,7 +1667,8 @@ void CG_ShardJunk(vec3_t origin, vec3_t dir)
 	re->fadeStartTime = le->endTime - 1000;
 	re->fadeEndTime   = le->endTime;
 
-	le->lifeRate     = 1.0f / (le->endTime - le->startTime);
+	//le->lifeRate     = 1.0f / (le->endTime - le->startTime);
+	le->lifeRate = rcp((float)(le->endTime - le->startTime));
 	le->leFlags      = LEF_TUMBLE;
 	le->bounceFactor = 0.4f;
 	le->leMarkType   = LEMT_NONE;
@@ -1677,7 +1681,7 @@ void CG_ShardJunk(vec3_t origin, vec3_t dir)
 	le->pos.trType = TR_GRAVITY;
 
 	VectorCopy(origin, le->pos.trBase);
-	VectorNormalize(dir);
+	VectorNormalizeOnly(dir);
 	VectorScale(dir, 10 * 8, le->pos.trDelta);
 	le->pos.trTime      = cg.time;
 	le->pos.trDelta[0] += ((random() * 100) - 50);
@@ -1715,7 +1719,8 @@ void CG_Debris(centity_t *cent, vec3_t origin, vec3_t dir)
 	re->fadeStartTime = le->endTime - 1000;
 	re->fadeEndTime   = le->endTime;
 
-	le->lifeRate     = 1.0f / (le->endTime - le->startTime);
+	//le->lifeRate     = 1.0f / (le->endTime - le->startTime);
+	le->lifeRate = rcp((float)(le->endTime - le->startTime));
 	le->leFlags      = LEF_TUMBLE | LEF_TUMBLE_SLOW;
 	le->bounceFactor = 0.4f;
 	le->leMarkType   = LEMT_NONE;
@@ -1763,7 +1768,8 @@ void CG_MortarImpact(centity_t *cent, vec3_t origin, int sfx, qboolean dist)
 		float  gdist;
 
 		VectorSubtract(origin, cg.refdef_current->vieworg, norm);
-		gdist = VectorNormalize(norm);
+		//gdist = VectorNormalize(norm);
+		VectorNorm(norm, &gdist);
 		if (gdist > 1200 && gdist < 8000)      // 1200 is max cam shakey dist (2*600) use gorg as the new sound origin
 		{
 			VectorMA(cg.refdef_current->vieworg, 800, norm, gorg);     // non-distance falloff makes more sense; sfx2range was gdist*0.2
@@ -2138,7 +2144,8 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 		VectorCopy(cent->currentState.pos.trBase, gorg);
 		VectorCopy(cg.refdef_current->vieworg, porg);
 		VectorSubtract(gorg, porg, norm);
-		gdist = VectorNormalize(norm);
+		//gdist = VectorNormalize(norm);
+		VectorNorm(norm, &gdist);
 		if (gdist > 512 && gdist < 4096)
 		{
 			VectorMA(cg.refdef_current->vieworg, 64, norm, gorg);

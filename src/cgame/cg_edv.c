@@ -263,7 +263,7 @@ void CG_EDV_WeaponCam(centity_t *cent, refEntity_t *ent)
 
 		// point camera in direction of travel
 		VectorCopy(cent->currentState.pos.trDelta, delta);
-		VectorNormalize(delta);
+		VectorNormalizeOnly(delta);
 		vectoangles(delta, cgs.demoCamera.camAngle);
 
 		if (demo_autotimescaleweapons.integer & ATSW_PANZER)
@@ -493,7 +493,7 @@ void CG_EDV_RunInput(void)
 	edv_ps.sprintSpeedScale = 1.1f;
 	edv_ps.crouchSpeedScale = 0.25;
 
-	VectorSet(edv_ps.delta_angles, 0, 0, 0);
+	vec3_set(edv_ps.delta_angles, 0, 0, 0);
 	VectorCopy(cg.refdefViewAngles, edv_ps.viewangles);
 	VectorCopy(cgs.demoCamera.camOrigin, edv_ps.origin);
 	VectorCopy(cgs.demoCamera.velocity, edv_ps.velocity);

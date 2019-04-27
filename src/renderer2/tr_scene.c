@@ -629,6 +629,25 @@ void RE_RenderScene(const refdef_t *fd)
 	VectorCopy(fd->viewaxis[2], tr.refdef.viewaxis[2]);
 
 	tr.refdef.time    = fd->time;
+
+// check if we transit into, or out of, the water
+if (!(tr.refdef.rdflags & RDF_UNDERWATER) && (fd->rdflags & RDF_UNDERWATER))
+{
+	RE_SetFog(FOG_CMD_SWITCHFOG, FOG_WATER, 1000, 0, 0, 0, 0); // entering the water
+	//tess.fogNum = FOG_WATER;
+
+	// this will crash with an exception
+	//RE_SetGlobalFog(qfalse, 50, tr.glfogsettings[FOG_WATER].color[0], tr.glfogsettings[FOG_WATER].color[1], tr.glfogsettings[FOG_WATER].color[2], tr.glfogsettings[FOG_WATER].density);
+}
+else if ((tr.refdef.rdflags & RDF_UNDERWATER) && !(fd->rdflags & RDF_UNDERWATER))
+{
+	RE_SetFog(FOG_CMD_SWITCHFOG, FOG_MAP, 1000, 0, 0, 0, 0); // exiting the water
+	//tess.fogNum = FOG_MAP;
+
+	// this will crash with an exception
+	//RE_SetGlobalFog(qfalse, 50, tr.glfogsettings[FOG_MAP].color[0], tr.glfogsettings[FOG_MAP].color[1], tr.glfogsettings[FOG_MAP].color[2], tr.glfogsettings[FOG_WATER].density);
+}
+
 	tr.refdef.rdflags = fd->rdflags;
 
 	if(fd->rdflags & RDF_SKYBOXPORTAL)
@@ -714,6 +733,7 @@ void RE_RenderScene(const refdef_t *fd)
 	Com_Memset(&parms, 0, sizeof(parms));
 
 #if 1
+	// During the building of the cubeprobes (for the reflections), pixelTarget is != null.
 	if (tr.refdef.pixelTarget == NULL)
 	{
 		parms.viewportX = tr.refdef.x;
@@ -735,10 +755,10 @@ void RE_RenderScene(const refdef_t *fd)
 	parms.viewportWidth  = tr.refdef.width;
 	parms.viewportHeight = tr.refdef.height;
 
-	Vector4Set(parms.viewportVerts[0], parms.viewportX, parms.viewportY, 0, 1);
-	Vector4Set(parms.viewportVerts[1], parms.viewportX + parms.viewportWidth, parms.viewportY, 0, 1);
-	Vector4Set(parms.viewportVerts[2], parms.viewportX + parms.viewportWidth, parms.viewportY + parms.viewportHeight, 0, 1);
-	Vector4Set(parms.viewportVerts[3], parms.viewportX, parms.viewportY + parms.viewportHeight, 0, 1);
+	Vector4Set(parms.viewportVerts[0], parms.viewportX, parms.viewportY, 0.f, 1.f);
+	Vector4Set(parms.viewportVerts[1], parms.viewportX + parms.viewportWidth, parms.viewportY, 0.f, 1.f);
+	Vector4Set(parms.viewportVerts[2], parms.viewportX + parms.viewportWidth, parms.viewportY + parms.viewportHeight, 0.f, 1.f);
+	Vector4Set(parms.viewportVerts[3], parms.viewportX, parms.viewportY + parms.viewportHeight, 0.f, 1.f);
 
 	parms.isPortal = qfalse;
 

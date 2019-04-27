@@ -864,7 +864,8 @@ static void CG_RenderScriptSpeakers(void)
 		if (!editSpeakerActive)
 		{
 			VectorSubtract(speaker->origin, cg.refdef_current->vieworg, vec);
-			dist = DotProduct(vec, cg.refdef_current->viewaxis[0]);
+			//dist = DotProduct(vec, cg.refdef_current->viewaxis[0]);
+			Dot(vec, cg.refdef_current->viewaxis[0], dist);
 			VectorMA(cg.refdef_current->vieworg, dist, cg.refdef_current->viewaxis[0], vec);
 			VectorSubtract(speaker->origin, vec, vec);
 			dist = VectorLengthSquared(vec);
@@ -2289,7 +2290,8 @@ void CG_SpeakerEditor_KeyHandling(int key, qboolean down)
 
 					// see which one is closest to our cursor
 					VectorSubtract(axisOrg, cg.refdef_current->vieworg, vec);
-					dist = DotProduct(vec, dir);
+					//dist = DotProduct(vec, dir);
+					Dot(vec, dir, dist);
 					VectorMA(cg.refdef_current->vieworg, dist, dir, vec);
 					dist = DistanceSquared(axisOrg, vec);
 					if (dist <= minDist)

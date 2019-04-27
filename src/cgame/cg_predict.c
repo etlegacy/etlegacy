@@ -717,6 +717,7 @@ int CG_PredictionOk(playerState_t *ps1, playerState_t *ps2)
 {
 	vec3_t vec;
 	int    i;
+	float  dot;
 
 	if (ps2->pm_type != ps1->pm_type || ps2->pm_flags != ps1->pm_flags || ps2->pm_time != ps1->pm_time)
 	{
@@ -724,13 +725,17 @@ int CG_PredictionOk(playerState_t *ps1, playerState_t *ps2)
 	}
 
 	VectorSubtract(ps2->origin, ps1->origin, vec);
-	if (DotProduct(vec, vec) > MAX_PREDICT_ORIGIN_DELTA_2)
+	//if (DotProduct(vec, vec) > MAX_PREDICT_ORIGIN_DELTA_2)
+	Dot(vec, vec, dot);
+	if (dot > MAX_PREDICT_ORIGIN_DELTA_2)
 	{
 		return 2;
 	}
 
 	VectorSubtract(ps2->velocity, ps1->velocity, vec);
-	if (DotProduct(vec, vec) > MAX_PREDICT_VELOCITY_DELTA_2)
+	//if (DotProduct(vec, vec) > MAX_PREDICT_VELOCITY_DELTA_2)
+	Dot(vec, vec, dot);
+	if (dot > MAX_PREDICT_VELOCITY_DELTA_2)
 	{
 		return 3;
 	}
@@ -1479,12 +1484,12 @@ void CG_PredictPlayerState(void)
 
 		// move
 		cg.predictedPlayerState.origin[2] +=
-			sin(M_PI * 8 * 13.0 + cg.cameraShakePhase) * x * 6.0f * cg.cameraShakeScale;
+			sin(M_PI * 8.0f * 13.0f + cg.cameraShakePhase) * x * 6.0f * cg.cameraShakeScale;
 
 		cg.predictedPlayerState.origin[1] +=
-			sin(M_PI * 17 * x + cg.cameraShakePhase) * x * 6.0f * cg.cameraShakeScale;
+			sin(M_PI * 17.0f * x + cg.cameraShakePhase) * x * 6.0f * cg.cameraShakeScale;
 
 		cg.predictedPlayerState.origin[0] +=
-			cos(M_PI * 7 * x + cg.cameraShakePhase) * x * 6.0f * cg.cameraShakeScale;
+			cos(M_PI * 7.0f * x + cg.cameraShakePhase) * x * 6.0f * cg.cameraShakeScale;
 	}
 }

@@ -655,7 +655,8 @@ void CG_ReflectVelocity(localEntity_t *le, trace_t *trace)
 	// reflect the velocity on the trace plane
 
 	BG_EvaluateTrajectoryDelta(&le->pos, hitTime, velocity, qfalse, -1);
-	dot = DotProduct(velocity, trace->plane.normal);
+	//dot = DotProduct(velocity, trace->plane.normal);
+	Dot(velocity, trace->plane.normal, dot);
 	VectorMA(velocity, -2 * dot, trace->plane.normal, le->pos.trDelta);
 
 	VectorScale(le->pos.trDelta, le->bounceFactor, le->pos.trDelta);
@@ -846,7 +847,7 @@ void CG_AddFragment(localEntity_t *le)
 		}
 		else
 		{
-			VectorNormalize(flameDir);
+			VectorNormalizeOnly(flameDir);
 			// play a flame blow sound when moving
 			trap_S_AddLoopingSound(newOrigin, vec3_origin, cgs.media.flameBlowSound, (int)(0.3f * 255.0f * flameAlpha), 0);
 		}
@@ -950,7 +951,7 @@ void CG_AddFragment(localEntity_t *le)
 			}
 
 			// move us a bit
-			VectorNormalize2(le->pos.trDelta, dir);
+			VectorNormalize2Only(le->pos.trDelta, dir);
 			VectorMA(trace.endpos, 4.0f * sizeScale, dir, org);
 
 			// randomize vel a bit
@@ -1000,7 +1001,7 @@ void CG_AddFragment(localEntity_t *le)
 					nle->leBounceSoundType = 0;
 				}
 				// move us a bit
-				VectorNormalize2(nle->pos.trDelta, dir);
+				VectorNormalize2Only(nle->pos.trDelta, dir);
 				VectorMA(trace.endpos, 4.0f * le->sizeScale * i, dir, nle->pos.trBase);
 				// randomize vel a bit
 				VectorMA(nle->pos.trDelta, VectorLength(nle->pos.trDelta) * 0.3f, bytedirs[rand() % NUMVERTEXNORMALS], nle->pos.trDelta);
@@ -1575,11 +1576,11 @@ static void CG_AddExplosion(localEntity_t *ex)
 		}
 		else
 		{
-			light = 1.0f - (light - 0.5f) * 2;
+			light = 1.0f - (light - 0.5f) * 2.f;
 		}
 		light = ex->light * light;
 
-		trap_R_AddLightToScene(ent->origin, 512, light, ex->lightColor[0], ex->lightColor[1], ex->lightColor[2], 0, 0);
+		trap_R_AddLightToScene(ent->origin, 512.f, light, ex->lightColor[0], ex->lightColor[1], ex->lightColor[2], 0, 0);
 	}
 }
 
@@ -1626,9 +1627,9 @@ static void CG_AddSpriteExplosion(localEntity_t *le)
 		}
 		else
 		{
-			light = 1.0f - (light - 0.5f) * 2;
+			light = 1.0f - (light - 0.5f) * 2.f;
 		}
-		trap_R_AddLightToScene(re.origin, 320, light, le->lightColor[0], le->lightColor[1], le->lightColor[2], 0, 0);
+		trap_R_AddLightToScene(re.origin, 320.f, light, le->lightColor[0], le->lightColor[1], le->lightColor[2], 0, 0);
 	}
 }
 

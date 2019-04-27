@@ -91,7 +91,8 @@ static void predict_clip_velocity(vec3_t in, vec3_t normal, vec3_t out)
 	float backoff;
 
 	// find the magnitude of the vector "in" along "normal"
-	backoff = DotProduct(in, normal);
+	//backoff = DotProduct(in, normal);
+	Dot(in, normal, backoff);
 
 	// tilt the plane a bit to avoid floating-point error issues
 	if (backoff < 0)
@@ -125,7 +126,7 @@ static void predict_clip_velocity(vec3_t in, vec3_t normal, vec3_t out)
 static int predict_slide_move(sharedEntity_t *ent, float frametime, trajectory_t *tr, vec3_t result)
 {
 	int    count, numplanes = 0, i, j, k;
-	float  d, time_left = frametime, into;
+	float  d, time_left = frametime, into, dot;
 	vec3_t planes[MAX_CLIP_PLANES],
 	       velocity, origin, clipVelocity, endVelocity, endClipVelocity, dir, end;
 	trace_t trace;
@@ -176,7 +177,9 @@ static int predict_slide_move(sharedEntity_t *ent, float frametime, trajectory_t
 		// non-axial planes
 		for (i = 0; i < numplanes; i++)
 		{
-			if (DotProduct(trace.plane.normal, planes[i]) > 0.99f)
+			//if (DotProduct(trace.plane.normal, planes[i]) > 0.99f)
+			Dot(trace.plane.normal, planes[i], dot);
+			if (dot > 0.99f)
 			{
 				VectorAdd(trace.plane.normal, velocity, velocity);
 				break;
@@ -195,7 +198,8 @@ static int predict_slide_move(sharedEntity_t *ent, float frametime, trajectory_t
 		// find a plane that it enters
 		for (i = 0; i < numplanes; i++)
 		{
-			into = DotProduct(velocity, planes[i]);
+			//into = DotProduct(velocity, planes[i]);
+			Dot(velocity, planes[i], into);
 			if (into >= 0.1f) // move doesn't interact with the plane
 			{
 				continue;
@@ -215,7 +219,9 @@ static int predict_slide_move(sharedEntity_t *ent, float frametime, trajectory_t
 					continue;
 				}
 
-				if (DotProduct(clipVelocity, planes[j]) >= 0.1f) // move doesn't interact with the plane
+				//if (DotProduct(clipVelocity, planes[j]) >= 0.1f) // move doesn't interact with the plane
+				Dot(clipVelocity, planes[j], dot);
+				if (dot >= 0.1f) // move doesn't interact with the plane
 				{
 					continue;
 				}
@@ -225,20 +231,24 @@ static int predict_slide_move(sharedEntity_t *ent, float frametime, trajectory_t
 				predict_clip_velocity(endClipVelocity, planes[j], endClipVelocity);
 
 				// see if it goes back into the first clip plane
-				if (DotProduct(clipVelocity, planes[i]) >= 0)
+				//if (DotProduct(clipVelocity, planes[i]) >= 0)
+				Dot(clipVelocity, planes[i], dot);
+				if (dot >= 0)
 				{
 					continue;
 				}
 
 				// slide the original velocity along the crease
-				vec3_cross(planes[i], planes[j], dir);
-				VectorNormalize(dir);
-				d = DotProduct(dir, velocity);
+				CrossProduct(planes[i], planes[j], dir);
+				VectorNormalizeOnly(dir);
+				//d = DotProduct(dir, velocity);
+				Dot(dir, velocity, d);
 				VectorScale(dir, d, clipVelocity);
 
-				vec3_cross(planes[i], planes[j], dir);
-				VectorNormalize(dir);
-				d = DotProduct(dir, endVelocity);
+				CrossProduct(planes[i], planes[j], dir);
+				VectorNormalizeOnly(dir);
+				//d = DotProduct(dir, endVelocity);
+				Dot(dir, endVelocity, d);
 				VectorScale(dir, d, endClipVelocity);
 
 				// see if there is a third plane the new move enters
@@ -249,7 +259,9 @@ static int predict_slide_move(sharedEntity_t *ent, float frametime, trajectory_t
 						continue;
 					}
 
-					if (DotProduct(clipVelocity, planes[k]) >= 0.1f) // move doesn't interact with the plane
+					//if (DotProduct(clipVelocity, planes[k]) >= 0.1f) // move doesn't interact with the plane
+					Dot(clipVelocity, planes[k], dot);
+					if (dot >= 0.1f) // move doesn't interact with the plane
 					{
 						continue;
 					}
@@ -387,7 +399,7 @@ static void calc_viewpoint(playerState_t *ps, vec3_t org, vec3_t vp)
  */
 static int player_in_fov(vec3_t viewangle, vec3_t ppos, vec3_t opos)
 {
-	float  yaw, pitch, cos_angle;
+	float  yaw, pitch, cos_angle, Spp, Cp, Sy, Cy;
 	vec3_t dir, los;
 
 	VectorSubtract(opos, ppos, los);
@@ -396,23 +408,29 @@ static int player_in_fov(vec3_t viewangle, vec3_t ppos, vec3_t opos)
 	// and skip the test if not. We only want to eliminate info that
 	// would reveal the position of opponents behind the player on
 	// the same X/Y plane (e.g. on the same floor in a room).
-	if (vec3_length(los) < (5.f * Q_fabs((opos[2] - ppos[2]))))
+	if (VectorLength(los) < (5.f * Q_fabs((opos[2] - ppos[2]))))
 	{
 		return 1;
 	}
 
 	// calculate unit vector of the direction the player looks at
-	yaw    = viewangle[YAW] * (M_PI * 2 / 360);
-	pitch  = viewangle[PITCH] * (M_PI * 2 / 360);
-	dir[0] = cos(yaw) * cos(pitch);
+	yaw    = DEG2RAD(viewangle[YAW]);
+	pitch  = DEG2RAD(viewangle[PITCH]);
+	/*dir[0] = cos(yaw) * cos(pitch);
 	dir[1] = sin(yaw);
-	dir[2] = cos(yaw) * sin(pitch);
+	dir[2] = cos(yaw) * sin(pitch);*/
+	SinCos(yaw, Sy, Cy);
+	SinCos(pitch, Spp, Cp);
+	dir[0] = Cy * Cp;
+	dir[1] = Sy;
+	dir[2] = Cy * Spp;
 
 	// calculate unit vector corresponding to line of sight to opponent
-	VectorNormalize(los);
+	VectorNormalizeOnly(los);
 
 	// calculate and test the angle between the two vectors
-	cos_angle = DotProduct(dir, los);
+	//cos_angle = DotProduct(dir, los);
+	Dot(dir, los, cos_angle);
 	if (cos_angle > 0)      // +/- 90 degrees (fov = 180)
 	{
 		return 1;
@@ -642,7 +660,7 @@ void SV_RandomizePos(int player, int other)
 
 	// get distance (we need it for correct sound scaling)
 	VectorSubtract(oent->s.pos.trBase, pent->s.pos.trBase, los);
-	dist = vec3_length(los);
+	dist = VectorLength(los);
 
 	// set the opponent's position directly below the player
 	VectorCopy(pent->s.pos.trBase, oent->s.pos.trBase);

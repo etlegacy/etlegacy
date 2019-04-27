@@ -147,7 +147,7 @@ void RB_SetViewMVPM(void)
 	MatrixOrthogonalProjection(ortho,
 	                           backEnd.viewParms.viewportX, backEnd.viewParms.viewportX + backEnd.viewParms.viewportWidth,
 	                           backEnd.viewParms.viewportY, backEnd.viewParms.viewportY + backEnd.viewParms.viewportHeight,
-	                           -99999, 99999);
+	                           -99999.f, 99999.f);
 	GL_LoadProjectionMatrix(ortho);
 	GL_LoadModelViewMatrix(matrixIdentity);
 }
@@ -498,25 +498,27 @@ static void Render_lightVolume(interaction_t *ia)
 	{
 	case RL_PROJ:
 	{
-		mat4_reset_translate(light->attenuationMatrix, 0.5, 0.5, 0.0);        // bias
-		MatrixMultiplyScale(light->attenuationMatrix, 0.5, 0.5, 1.0f / Q_min(light->falloffLength, 1.0f));        // scale
+		Matrix4IdentTranslate(light->attenuationMatrix, 0.5f, 0.5f, 0.0f);        // bias
+		//MatrixMultiplyScale(light->attenuationMatrix, 0.5f, 0.5f, 1.0f / Q_min(light->falloffLength, 1.0f));        // scale
+		MatrixMultiplyScale(light->attenuationMatrix, 0.5f, 0.5f, rcp(Q_min(light->falloffLength, 1.0f)));        // scale
 		break;
 	}
 	case RL_OMNI:
 	default:
 	{
-		mat4_reset_translate(light->attenuationMatrix, 0.5, 0.5, 0.5);    // bias
-		MatrixMultiplyScale(light->attenuationMatrix, 0.5, 0.5, 0.5);       // scale
+		Matrix4IdentTranslate(light->attenuationMatrix, 0.5f, 0.5f, 0.5f);    // bias
+		MatrixMultiplyScale(light->attenuationMatrix, 0.5f, 0.5f, 0.5f);       // scale
 		break;
 	}
 	}
-	mat4_mult_self(light->attenuationMatrix, light->projectionMatrix); // light projection (frustum)
-	mat4_mult_self(light->attenuationMatrix, light->viewMatrix);
+	Matrix4MultiplyWith(light->attenuationMatrix, light->projectionMatrix); // light projection (frustum)
+	Matrix4MultiplyWith(light->attenuationMatrix, light->viewMatrix);
 
 	lightShader       = light->shader;
 	attenuationZStage = lightShader->stages[0];
 
-	for (j = 1; j < MAX_SHADER_STAGES; j++)
+	// !! We know exactly howmany stages there are.. so don't loop through max_stages
+	for (j = 1; j < lightShader->numStages; j++)
 	{
 		attenuationXYStage = lightShader->stages[j];
 
@@ -530,7 +532,7 @@ static void Render_lightVolume(interaction_t *ia)
 			continue;
 		}
 
-		if (!RB_EvalExpression(&attenuationXYStage->ifExp, 1.0f))
+		if (RB_EvalExpression(&attenuationXYStage->ifExp, 1.0f) == 0.f)
 		{
 			continue;
 		}
@@ -591,11 +593,10 @@ static void Render_lightVolume(interaction_t *ia)
 			}
 
 			// draw light scissor rectangle
-			Vector4Set(quadVerts[0], ia->scissorX, ia->scissorY, 0, 1);
-			Vector4Set(quadVerts[1], ia->scissorX + ia->scissorWidth - 1, ia->scissorY, 0, 1);
-			Vector4Set(quadVerts[2], ia->scissorX + ia->scissorWidth - 1, ia->scissorY + ia->scissorHeight - 1, 0,
-			           1);
-			Vector4Set(quadVerts[3], ia->scissorX, ia->scissorY + ia->scissorHeight - 1, 0, 1);
+			Vector4Set(quadVerts[0], ia->scissorX, ia->scissorY, 0.f, 1.f);
+			Vector4Set(quadVerts[1], ia->scissorX + ia->scissorWidth - 1, ia->scissorY, 0.f, 1.f);
+			Vector4Set(quadVerts[2], ia->scissorX + ia->scissorWidth - 1, ia->scissorY + ia->scissorHeight - 1, 0.f, 1.f);
+			Vector4Set(quadVerts[3], ia->scissorX, ia->scissorY + ia->scissorHeight - 1, 0.f, 1.f);
 			Tess_InstantQuad(quadVerts);
 
 			GL_CheckErrors();
@@ -683,7 +684,6 @@ static int MergeInteractionBounds(const mat4_t lightViewProjectionMatrix, intera
 		for (i = 0; i < 6; i++)
 		{
 			clipPlane = &frustum[i];
-
 			r = BoxOnPlaneSide(worldBounds[0], worldBounds[1], clipPlane);
 			if (r == 2)
 			{
@@ -698,17 +698,20 @@ static int MergeInteractionBounds(const mat4_t lightViewProjectionMatrix, intera
 		}
 
 #if 1
+		point[3] = 1.0f;
 		for (j = 0; j < 8; j++)
 		{
 			point[0] = worldBounds[j & 1][0];
 			point[1] = worldBounds[(j >> 1) & 1][1];
 			point[2] = worldBounds[(j >> 2) & 1][2];
-			point[3] = 1;
+			//point[3] = 1.0f;
 
-			mat4_transform_vec4(lightViewProjectionMatrix, point, transf);
-			transf[0] /= transf[3];
+			Vector4TransformM4(lightViewProjectionMatrix, point, transf);
+			/*transf[0] /= transf[3];
 			transf[1] /= transf[3];
-			transf[2] /= transf[3];
+			transf[2] /= transf[3];*/
+			//VectorScale(transf, 1.0f / transf[3], transf);
+			VectorScale(transf, rcp(transf[3]), transf);
 
 			AddPointToBounds(transf, bounds[0], bounds[1]);
 		}
@@ -721,7 +724,7 @@ static int MergeInteractionBounds(const mat4_t lightViewProjectionMatrix, intera
 			point[2] = worldBounds[(j >> 2) & 1][2];
 			point[3] = 1;
 
-			mat4_transform_vec4(lightViewProjectionMatrix, point, transf);
+			Vector4TransformM4(lightViewProjectionMatrix, point, transf);
 			transf[0] /= transf[3];
 			transf[1] /= transf[3];
 			transf[2] /= transf[3];
@@ -757,7 +760,7 @@ static int MergeInteractionBounds(const mat4_t lightViewProjectionMatrix, intera
 			point[2] = worldBounds[(j >> 2) & 1][2];
 			point[3] = 1;
 
-			mat4_transform_vec4(lightViewProjectionMatrix, point, transf);
+			Vector4TransformM4(lightViewProjectionMatrix, point, transf);
 			//transf[0] /= transf[3];
 			//transf[1] /= transf[3];
 			//transf[2] /= transf[3];
@@ -884,7 +887,7 @@ static void RB_RenderInteractions()
 		Tess_End();
 
 		// begin a new batch
-		Tess_Begin(Tess_StageIteratorLighting, NULL, shader, light->shader, qfalse, qfalse, -1, 0);
+		Tess_Begin(Tess_StageIteratorLighting, NULL, shader, light->shader, qfalse, qfalse, LIGHTMAP_NONE, FOG_NONE);
 
 		// change the modelview matrix if needed
 		if (entity != oldEntity)
@@ -931,9 +934,12 @@ static void RB_RenderInteractions()
 			if (entity != &tr.worldEntity)
 			{
 				VectorSubtract(light->origin, backEnd.orientation.origin, tmp);
-				light->transformed[0] = DotProduct(tmp, backEnd.orientation.axis[0]);
+				/*light->transformed[0] = DotProduct(tmp, backEnd.orientation.axis[0]);
 				light->transformed[1] = DotProduct(tmp, backEnd.orientation.axis[1]);
-				light->transformed[2] = DotProduct(tmp, backEnd.orientation.axis[2]);
+				light->transformed[2] = DotProduct(tmp, backEnd.orientation.axis[2]);*/
+				Dot(tmp, backEnd.orientation.axis[0], light->transformed[0]);
+				Dot(tmp, backEnd.orientation.axis[1], light->transformed[1]);
+				Dot(tmp, backEnd.orientation.axis[2], light->transformed[2]);
 			}
 			else
 			{
@@ -941,26 +947,27 @@ static void RB_RenderInteractions()
 			}
 
 			// build the attenuation matrix using the entity transform
-			mat4_mult(light->viewMatrix, backEnd.orientation.transformMatrix, modelToLight);
+			Matrix4Multiply(light->viewMatrix, backEnd.orientation.transformMatrix, modelToLight);
 
 			switch (light->l.rlType)
 			{
 			case RL_PROJ:
 			{
-				mat4_reset_translate(light->attenuationMatrix, 0.5, 0.5, 0.0);            // bias
-				MatrixMultiplyScale(light->attenuationMatrix, 0.5, 0.5, 1.0f / Q_min(light->falloffLength, 1.0f));            // scale
+				Matrix4IdentTranslate(light->attenuationMatrix, 0.5f, 0.5f, 0.0f);            // bias
+				//MatrixMultiplyScale(light->attenuationMatrix, 0.5f, 0.5f, 1.0f / Q_min(light->falloffLength, 1.0f));            // scale
+				MatrixMultiplyScale(light->attenuationMatrix, 0.5f, 0.5f, rcp(Q_min(light->falloffLength, 1.0f)));            // scale
 				break;
 			}
 			case RL_OMNI:
 			default:
 			{
-				mat4_reset_translate(light->attenuationMatrix, 0.5, 0.5, 0.5);        // bias
-				MatrixMultiplyScale(light->attenuationMatrix, 0.5, 0.5, 0.5);           // scale
+				Matrix4IdentTranslate(light->attenuationMatrix, 0.5f, 0.5f, 0.5f);        // bias
+				MatrixMultiplyScale(light->attenuationMatrix, 0.5f, 0.5f, 0.5f);           // scale
 				break;
 			}
 			}
-			mat4_mult_self(light->attenuationMatrix, light->projectionMatrix); // light projection (frustum)
-			mat4_mult_self(light->attenuationMatrix, modelToLight);
+			Matrix4MultiplyWith(light->attenuationMatrix, light->projectionMatrix); // light projection (frustum)
+			Matrix4MultiplyWith(light->attenuationMatrix, modelToLight);
 		}
 
 		// add the triangles for this surface
@@ -1029,6 +1036,132 @@ skipInteraction:
 	}
 }
 
+
+
+
+
+
+// TODO: check these matrix values.. something is wrong, somewhere..
+
+/// sincos 0 0 90		sin: 0 0 1,		cos = 1 1 0
+//  srcy=1*1=1
+//	srsy=1*0=0
+//	crcy=0*1=0
+//	crsy=0*0=0
+/// sincos 0 180 90:	sin = 0 0 1,	cos = 1 -1 0
+//  srcy=1*-1=-1
+//	srsy=1*0=0
+//	crcy=0*-1=0
+//	crsy=0*0=0
+/// sincos 0 90 0;		sin = 0 1 0,	cos = 1 0 1
+//  srcy=0*0=0
+//	srsy=0*1=0
+//	crcy=1*0=0
+//	crsy=1*1=1
+/// sincos 0 -90 0:		sin = 0 -1 0,	cos = 1 0 1
+//  srcy=0*0=0
+//	srsy=0*-1=0
+//	crcy=1*0=0
+//	crsy=1*-1=-1
+/// sincos -90 90 0:	sin = -1 1 0,	cos = 0 0 1
+//  srcy=0*0=0
+//	srsy=0*1=0
+//	crcy=1*0=0
+//	crsy=1*1=1
+/// sincos 90 90 0:		sin = 1 1 0,	cos = 0 0 1
+//  srcy=0*0=0
+//	srsy=0*1=0
+//	crcy=1*0=0
+//	crsy=1*1=1
+
+
+
+
+
+// sincos 0 0 90		sin: 0 0 1,		cos = 1 1 0
+/// m[0] = 1.f;		m[4] = 0.f		m[8] = 0.f;		m[12] = 0.f;
+/// m[1] = 0.f;		m[5] = 0.f;		m[9] = -1.f		m[13] = 0.f;
+/// m[2] = 0.f;		m[6] = 1.f;		m[10] = 0.f;	m[14] = 0.f;
+/// m[3] = 0.f;		m[7] = 0.f;		m[11] = 0.f		m[15] = 1.f;
+mat4_t be_rotMatrix_0_0_90 = { 1.0f, 0.0f, 0.0f, 0.0f,
+								0.0f, 0.0f, 1.0f, 0.0f,
+								0.0f, -1.0f, 0.0f, 0.0f,
+								0.0f, 0.0f, 0.0f, 1.0f };
+mat4_t be_rotMatrix_0_0_90_r = { 1.0f, 0.0f, 0.0f, 0.0f,
+								0.0f, 0.0f, -1.0f, 0.0f,
+								0.0f, 1.0f, 0.0f, 0.0f,
+								0.0f, 0.0f, 0.0f, 1.0f };
+// sincos 0 180 90:		sin = 0 0 1,	cos = 1 -1 0
+/// m[0] = -1.f;	m[4] = 0.f		m[8] = 0.f;		m[12] = 0.f;
+/// m[1] = 0.f;		m[5] = 0.f;		m[9] = 1.f		m[13] = 0.f;
+/// m[2] = 0.f;		m[6] = 1.f;		m[10] = 0.f;	m[14] = 0.f;
+/// m[3] = 0.f;		m[7] = 0.f;		m[11] = 0.f		m[15] = 1.f;
+mat4_t be_rotMatrix_0_180_90 = { -1.0f, 0.0f, 0.0f, 0.0f,
+								0.0f, 0.0f, 1.0f, 0.0f,
+								0.0f, 1.0f, 0.0f, 0.0f,
+								0.0f, 0.0f, 0.0f, 1.0f };
+mat4_t be_rotMatrix_0_180_90_r = { -1.0f, 0.0f, 0.0f, 0.0f,
+									0.0f, 0.0f, 1.0f, 0.0f,
+									0.0f, 1.0f, 0.0f, 0.0f,
+									0.0f, 0.0f, 0.0f, 1.0f };
+// sincos 0 90 0;		sin = 0 1 0,	cos = 1 0 1
+/// m[0] = 0.f;		m[4] = -1.f		m[8] = 0.f;		m[12] = 0.f;
+/// m[1] = 1.f;		m[5] = 0.f;		m[9] = 0.f		m[13] = 0.f;
+/// m[2] = 0.f;		m[6] = 0.f;		m[10] = 1.f;	m[14] = 0.f;
+/// m[3] = 0.f;		m[7] = 0.f;		m[11] = 0.f		m[15] = 1.f;
+mat4_t be_rotMatrix_0_90_0 = { 0.0f, 1.0f, 0.0f, 0.0f,
+								-1.0f, 0.0f, 0.0f, 0.0f,
+								0.0f, 0.0f, 1.0f, 0.0f,
+								0.0f, 0.0f, 0.0f, 1.0f };
+mat4_t be_rotMatrix_0_90_0_r = { 0.0f, -1.0f, 0.0f, 0.0f,
+								1.0f, 0.0f, 0.0f, 0.0f,
+								0.0f, 0.0f, 1.0f, 0.0f,
+								0.0f, 0.0f, 0.0f, 1.0f };
+// sincos 0 -90 0:		sin = 0 -1 0,	cos = 1 0 1
+/// m[0] = 0.f;		m[4] = 1.f		m[8] = 0.f;		m[12] = 0.f;
+/// m[1] = -1.f;	m[5] = 0.f;		m[9] = 0.f		m[13] = 0.f;
+/// m[2] = 0.f;		m[6] = 0.f;		m[10] = 1.f;	m[14] = 0.f;
+/// m[3] = 0.f;		m[7] = 0.f;		m[11] = 0.f		m[15] = 1.f;
+mat4_t be_rotMatrix_0_m90_0 = { 0.0f, -1.0f, 0.0f, 0.0f,
+								1.0f, 0.0f, 0.0f, 0.0f,
+								0.0f, 0.0f, 1.0f, 0.0f,
+								0.0f, 0.0f, 0.0f, 1.0f };
+mat4_t be_rotMatrix_0_m90_0_r = { 0.0f, 1.0f, 0.0f, 0.0f,
+								-1.0f, 0.0f, 0.0f, 0.0f,
+								0.0f, 0.0f, 1.0f, 0.0f,
+								0.0f, 0.0f, 0.0f, 1.0f };
+// sincos -90 90 0:		sin = -1 1 0,	cos = 0 0 1
+/// m[0] = 0.f;		m[4] = -1.f		m[8] = 0.f;		m[12] = 0.f;
+/// m[1] = 0.f;		m[5] = 0.f;		m[9] = -1.f		m[13] = 0.f;
+/// m[2] = 1.f;		m[6] = 0.f;		m[10] = 0.f;	m[14] = 0.f;
+/// m[3] = 0.f;		m[7] = 0.f;		m[11] = 0.f		m[15] = 1.f;
+mat4_t be_rotMatrix_m90_90_0 = { 0.0f, 0.0f, 1.0f, 0.0f,
+								-1.0f, 0.0f, 0.0f, 0.0f,
+								0.0f, -1.0f, 0.0f, 0.0f,
+								0.0f, 0.0f, 0.0f, 1.0f };
+mat4_t be_rotMatrix_m90_90_0_r = { 0.0f, -1.0f, 0.0f, 0.0f,
+								0.0f, 0.0f, -1.0f, 0.0f,
+								1.0f, 0.0f, 0.0f, 0.0f,
+								0.0f, 0.0f, 0.0f, 1.0f };
+// sincos 90 90 0:		sin = 1 1 0,	cos = 0 0 1
+/// m[0] = 0.f;		m[4] = -1.f		m[8] = 0.f;		m[12] = 0.f;
+/// m[1] = 0.f;		m[5] = 0.f;		m[9] = 1.f		m[13] = 0.f;
+/// m[2] = -1.f;	m[6] = 0.f;		m[10] = 0.f;	m[14] = 0.f;
+/// m[3] = 0.f;		m[7] = 0.f;		m[11] = 0.f		m[15] = 1.f;
+mat4_t be_rotMatrix_90_90_0 = { 0.0f, 0.0f, -1.0f, 0.0f,
+								-1.0f, 0.0f, 0.0f, 0.0f,
+								0.0f, 1.0f, 0.0f, 0.0f,
+								0.0f, 0.0f, 0.0f, 1.0f };
+mat4_t be_rotMatrix_90_90_0_r = { 0.0f, -1.0f, 0.0f, 0.0f,
+								0.0f, 0.0f, 1.0f, 0.0f,
+								-1.0f, 0.0f, 0.0f, 0.0f,
+								0.0f, 0.0f, 0.0f, 1.0f };
+
+
+
+
+
+
 /**
  * @brief RB_RenderInteractionsShadowMapped
  */
@@ -1050,10 +1183,11 @@ static void RB_RenderInteractionsShadowMapped()
 	int           cubeSide;
 	int           splitFrustumIndex;
 	int           startTime = 0;
-	const mat4_t  bias      = { 0.5, 0.0, 0.0, 0.0,
-		                        0.0,       0.5, 0.0, 0.0,
-		                        0.0,       0.0, 0.5, 0.0,
-		                        0.5,       0.5, 0.5, 1.0 };
+	const mat4_t  bias      = { 0.5f, 0.0f, 0.0f, 0.0f,
+		                        0.0f, 0.5f, 0.0f, 0.0f,
+		                        0.0f, 0.0f, 0.5f, 0.0f,
+		                        0.5f, 0.5f, 0.5f, 1.0f };
+	mat4_t        *rotMatrix, *rotMatrix_r;
 
 	if (!glConfig2.framebufferObjectAvailable || !glConfig2.textureFloatAvailable)
 	{
@@ -1135,7 +1269,7 @@ static void RB_RenderInteractionsShadowMapped()
 						//float           width, height, depth;
 						float    zNear, zFar;
 						float    fovX, fovY;
-						qboolean flipX, flipY;
+//						qboolean flipX, flipY;
 						//float          *proj;
 						vec3_t angles;
 						mat4_t rotationMatrix, transformMatrix, viewMatrix;
@@ -1161,75 +1295,158 @@ static void RB_RenderInteractionsShadowMapped()
 						case 0:
 						{
 							// view parameters
-							VectorSet(angles, 0, 0, 90);
-
+							VectorSet(angles, 0.f, 0.f, 90.f);
 							// projection parameters
-							flipX = qfalse;
-							flipY = qfalse;
+							/*flipX = qfalse;
+							flipY = qfalse;*/
+rotMatrix = &be_rotMatrix_0_0_90;
+rotMatrix_r = &be_rotMatrix_0_0_90_r;
+fovX = 90.f;
+fovY = 90.f;
 							break;
 						}
 						case 1:
 						{
-							VectorSet(angles, 0, 180, 90);
-							flipX = qtrue;
-							flipY = qtrue;
+							VectorSet(angles, 0.f, 180.f, 90.f);
+rotMatrix = &be_rotMatrix_0_180_90;
+rotMatrix_r = &be_rotMatrix_0_180_90_r;
+							/*flipX = qtrue;
+							flipY = qtrue;*/
+fovX = -90.f;
+fovY = -90.f;
 							break;
 						}
 						case 2:
 						{
-							VectorSet(angles, 0, 90, 0);
-							flipX = qfalse;
-							flipY = qfalse;
+							VectorSet(angles, 0.f, 90.f, 0.f);
+rotMatrix = &be_rotMatrix_0_90_0;
+rotMatrix_r = &be_rotMatrix_0_90_0_r;
+							/*flipX = qfalse;
+							flipY = qfalse;*/
+fovX = 90.f;
+fovY = 90.f;
 							break;
 						}
 						case 3:
 						{
-							VectorSet(angles, 0, -90, 0);
-							flipX = qtrue;
-							flipY = qtrue;
+							VectorSet(angles, 0.f, -90.f, 0.f);
+rotMatrix = &be_rotMatrix_0_m90_0;
+rotMatrix_r = &be_rotMatrix_0_m90_0_r;
+							/*flipX = qtrue;
+							flipY = qtrue;*/
+fovX = -90.f;
+fovY = -90.f;
 							break;
 						}
 						case 4:
 						{
-							VectorSet(angles, -90, 90, 0);
-							flipX = qfalse;
-							flipY = qfalse;
+							VectorSet(angles, -90.f, 90.f, 0.f);
+rotMatrix = &be_rotMatrix_m90_90_0;
+rotMatrix_r = &be_rotMatrix_m90_90_0_r;
+							/*flipX = qfalse;
+							flipY = qfalse;*/
+fovX = 90.f;
+fovY = 90.f;
 							break;
 						}
 						case 5:
 						{
-							VectorSet(angles, 90, 90, 0);
-							flipX = qtrue;
-							flipY = qtrue;
+							VectorSet(angles, 90.f, 90.f, 0.f);
+rotMatrix = &be_rotMatrix_90_90_0;
+rotMatrix_r = &be_rotMatrix_90_90_0_r;
+							/*flipX = qtrue;
+							flipY = qtrue;*/
+fovX = -90.f;
+fovY = -90.f;
 							break;
 						}
-						default:
+/*						default:
+// this should not be possible to ever happen...  case default
 						{
 							// shut up compiler
-							VectorSet(angles, 0, 0, 0);
-							flipX = qfalse;
-							flipY = qfalse;
-							break;
-						}
-						}
+							VectorSet(angles, 0.f, 0.f, 0.f);
 
+							//flipX = qfalse;
+							//flipY = qfalse;
+fovX = 90.f;
+fovY = 90.f;
+							break;
+						}*/
+						}
+#if 1 //ndef ETL_SSE
 						// Quake -> OpenGL view matrix from light perspective
-						mat4_from_angles(rotationMatrix, angles[PITCH], angles[YAW], angles[ROLL]);
-						MatrixSetupTransformFromRotation(transformMatrix, rotationMatrix, light->origin);
+///						mat4_from_angles(rotationMatrix, angles[PITCH], angles[YAW], angles[ROLL]);
+//Matrix4Copy((*rotMatrix), rotationMatrix); // temp!!!DEBUG!!!
+
+///						MatrixSetupTransformFromRotation(transformMatrix, rotationMatrix, light->origin);
+MatrixSetupTransformFromRotation(transformMatrix, (*rotMatrix), light->origin);
+
 						MatrixAffineInverse(transformMatrix, viewMatrix);
+
+#else
+						// this is setting viewMatrix.
+						//	MatrixSetupTransformFromRotation(transformMatrix, rotMatrix_x_y_z, light->origin)
+						//	MatrixAffineInverse(transformMatrix, viewMatrix);
+						__m128 xmm0, xmm1, xmm2, xmm3, xmm4, xmm5, xmm6, xmm7, zeroes;
+						zeroes = _mm_setzero_ps();
+						xmm0 = _mm_loadh_pi(_mm_load_ss((const float *)&light->origin[0]), (const __m64 *)(&light->origin[1]));	// xmm0 = z y 0 x
+						xmm2 = _mm_loadh_pi(_mm_load_ss((const float *)&rotMatrix[0]), (const __m64 *)&rotMatrix[1]);		// xmm2 = z y 0 x
+						xmm1 = _mm_mul_ps(xmm0, xmm2);
+						xmm7 = _mm_movehdup_ps(xmm1);		// faster way to do: 2 * hadd
+						xmm6 = _mm_add_ps(xmm1, xmm7);		//
+						xmm7 = _mm_movehl_ps(xmm7, xmm6);	//
+						xmm1 = _mm_add_ss(xmm6, xmm7);		// xmm1 = dot(in0, in12)
+						xmm1 = _mm_sub_ps(zeroes, xmm1);
+						_mm_store_ss(&viewMatrix[12], xmm1);
+
+						xmm2 = _mm_loadh_pi(_mm_load_ss((const float *)&rotMatrix[4]), (const __m64 *)&rotMatrix[5]);		// xmm2 = z y 0 x
+						xmm4 = _mm_mul_ps(xmm0, xmm2);
+						xmm7 = _mm_movehdup_ps(xmm4);		// faster way to do: 2 * hadd
+						xmm6 = _mm_add_ps(xmm4, xmm7);		//
+						xmm7 = _mm_movehl_ps(xmm7, xmm6);	//
+						xmm4 = _mm_add_ss(xmm6, xmm7);		// xmm4 = dot(in4, in12)
+						xmm4 = _mm_sub_ps(zeroes, xmm4);
+						_mm_store_ss(&viewMatrix[13], xmm4);
+
+						xmm2 = _mm_loadh_pi(_mm_load_ss((const float *)&rotMatrix[8]), (const __m64 *)&rotMatrix[9]);		// xmm2 = z y 0 x
+						xmm5 = _mm_mul_ps(xmm0, xmm2);
+						xmm7 = _mm_movehdup_ps(xmm5);		// faster way to do: 2 * hadd
+						xmm6 = _mm_add_ps(xmm5, xmm7);		//
+						xmm7 = _mm_movehl_ps(xmm7, xmm6);	//
+						xmm5 = _mm_add_ss(xmm6, xmm7);		// xmm5 = dot(in8, in12)
+						xmm5 = _mm_sub_ps(zeroes, xmm5);
+						_mm_store_ss(&viewMatrix[14], xmm5);
+
+						_mm_store_ss(&viewMatrix[15], _mm_set_ss(1.f));
+						_mm_storeu_ps(&viewMatrix[0], _mm_loadu_ps((const float *)&rotMatrix_r[0]));
+						_mm_storeu_ps(&viewMatrix[4], _mm_loadu_ps((const float *)&rotMatrix_r[4]));
+						_mm_storeu_ps(&viewMatrix[8], _mm_loadu_ps((const float *)&rotMatrix_r[8]));
+#endif
+
+
+// TODO: check R_CalcLightCubeSideBits() on how to optimize that^^ code above..  OK busy doing that..
+
 
 						// convert from our coordinate system (looking down X)
 						// to OpenGL's coordinate system (looking down -Z)
-						mat4_mult(quakeToOpenGLMatrix, viewMatrix, light->viewMatrix);
+						Matrix4Multiply(quakeToOpenGLMatrix, viewMatrix, light->viewMatrix);
+/*Vector4Set(&viewMatrix[0], -viewMatrix[1], viewMatrix[2], -viewMatrix[0], viewMatrix[3]);
+Vector4Set(&viewMatrix[4], -viewMatrix[5], viewMatrix[6], -viewMatrix[4], viewMatrix[7]);
+Vector4Set(&viewMatrix[8], -viewMatrix[9], viewMatrix[10], -viewMatrix[8], viewMatrix[11]);
+Vector4Set(&viewMatrix[12], -viewMatrix[13], viewMatrix[14], -viewMatrix[12], viewMatrix[15]);*/
 
-						// OpenGL projection matrix
-						fovX = 90;
-						fovY = 90;
 
-						zNear = 1.0;
+
+
+
+// OpenGL projection matrix
+						/*fovX = 90.f;
+						fovY = 90.f;*/
+
+						zNear = 1.0f; // const
 						zFar  = light->sphereRadius;
 
-						if (flipX)
+/*						if (flipX)
 						{
 							fovX = -fovX;
 						}
@@ -1237,7 +1454,7 @@ static void RB_RenderInteractionsShadowMapped()
 						if (flipY)
 						{
 							fovY = -fovY;
-						}
+						}*/
 
 						MatrixPerspectiveProjectionFovXYRH(light->projectionMatrix, fovX, fovY, zNear, zFar);
 
@@ -1307,11 +1524,11 @@ static void RB_RenderInteractionsShadowMapped()
 
 						GL_Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-							#if 1
+#if 1
 						VectorCopy(tr.sunDirection, lightDirection);
-							#else
+#else
 						VectorCopy(light->direction, lightDirection);
-							#endif
+#endif
 
 						if (r_parallelShadowSplits->integer)
 						{
@@ -1319,19 +1536,19 @@ static void RB_RenderInteractionsShadowMapped()
 
 							// original light direction is from surface to light
 							VectorInverse(lightDirection);
-							VectorNormalize(lightDirection);
+							VectorNormalizeOnly(lightDirection);
 
 							VectorCopy(backEnd.viewParms.orientation.origin, viewOrigin);
 							VectorCopy(backEnd.viewParms.orientation.axis[0], viewDirection);
-							VectorNormalize(viewDirection);
+							VectorNormalizeOnly(viewDirection);
 
 #if 1
 							// calculate new up dir
 							CrossProduct(lightDirection, viewDirection, side);
-							VectorNormalize(side);
+							VectorNormalizeOnly(side);
 
 							CrossProduct(side, lightDirection, up);
-							VectorNormalize(up);
+							VectorNormalizeOnly(up);
 
 							VectorToAngles(lightDirection, angles);
 							mat4_from_angles(rotationMatrix, angles[PITCH], angles[YAW], angles[ROLL]);
@@ -1425,7 +1642,7 @@ static void RB_RenderInteractionsShadowMapped()
 							                             -splitFrustumViewBounds[1][2],
 							                             -splitFrustumViewBounds[0][2]);
 								#endif
-							mat4_mult(projectionMatrix, light->viewMatrix, viewProjectionMatrix);
+							Matrix4Multiply(projectionMatrix, light->viewMatrix, viewProjectionMatrix);
 
 							// find the bounding box of the current split in the light's clip space
 							ClearBounds(splitFrustumClipBounds[0], splitFrustumClipBounds[1]);
@@ -1434,7 +1651,7 @@ static void RB_RenderInteractionsShadowMapped()
 								VectorCopy(splitFrustumCorners[j], point);
 								point[3] = 1;
 
-								mat4_transform_vec4(viewProjectionMatrix, point, transf);
+								Vector4TransformM4(viewProjectionMatrix, point, transf);
 								transf[0] /= transf[3];
 								transf[1] /= transf[3];
 								transf[2] /= transf[3];
@@ -1463,22 +1680,25 @@ static void RB_RenderInteractionsShadowMapped()
 							for (j = 0; j < 8; j++)
 							{
 								VectorCopy(splitFrustumCorners[j], point);
-								point[3] = 1;
+								point[3] = 1.0f;
 #if 1
-								mat4_transform_vec4(light->viewMatrix, point, transf);
-								transf[0] /= transf[3];
+								Vector4TransformM4(light->viewMatrix, point, transf);
+								/*transf[0] /= transf[3];
 								transf[1] /= transf[3];
-								transf[2] /= transf[3];
+								transf[2] /= transf[3];*/
+								//VectorScale(transf, 1.0f / transf[3], transf);
+								VectorScale(transf, rcp(transf[3]), transf);
 #else
-								mat4_transform_vec3(light->viewMatrix, point, transf);
+								VectorTransformM4(light->viewMatrix, point, transf);
 #endif
 
 								AddPointToBounds(transf, cropBounds[0], cropBounds[1]);
 							}
 
-							MatrixOrthogonalProjectionRH(projectionMatrix, cropBounds[0][0], cropBounds[1][0], cropBounds[0][1], cropBounds[1][1], -cropBounds[1][2], -cropBounds[0][2]);
+							// MatrixOrthogonalProjectionRH(projectionMatrix, cropBounds[0][0], cropBounds[1][0], cropBounds[0][1], cropBounds[1][1], -cropBounds[1][2], -cropBounds[0][2]);
+							MatrixOrthogonalProjectionRH(projectionMatrix, cropBounds);
 
-							mat4_mult(projectionMatrix, light->viewMatrix, viewProjectionMatrix);
+							Matrix4Multiply(projectionMatrix, light->viewMatrix, viewProjectionMatrix);
 
 							numCasters = MergeInteractionBounds(viewProjectionMatrix, ia, iaCount, casterBounds, qtrue);
 							MergeInteractionBounds(viewProjectionMatrix, ia, iaCount, receiverBounds, qfalse);
@@ -1488,12 +1708,14 @@ static void RB_RenderInteractionsShadowMapped()
 							for (j = 0; j < 8; j++)
 							{
 								VectorCopy(splitFrustumCorners[j], point);
-								point[3] = 1;
+								point[3] = 1.0f;
 
-								mat4_transform_vec4(viewProjectionMatrix, point, transf);
-								transf[0] /= transf[3];
+								Vector4TransformM4(viewProjectionMatrix, point, transf);
+								/*transf[0] /= transf[3];
 								transf[1] /= transf[3];
-								transf[2] /= transf[3];
+								transf[2] /= transf[3];*/
+								//VectorScale(transf, 1.0f / transf[3], transf);
+								VectorScale(transf, rcp(transf[3]), transf);
 
 								AddPointToBounds(transf, splitFrustumClipBounds[0], splitFrustumClipBounds[1]);
 							}
@@ -1531,7 +1753,7 @@ static void RB_RenderInteractionsShadowMapped()
 							MatrixCrop(cropMatrix, cropBounds[0], cropBounds[1]);
 #endif
 
-							mat4_mult(cropMatrix, projectionMatrix, light->projectionMatrix);
+							Matrix4Multiply(cropMatrix, projectionMatrix, light->projectionMatrix);
 
 							GL_LoadProjectionMatrix(light->projectionMatrix);
 						}
@@ -1546,7 +1768,7 @@ static void RB_RenderInteractionsShadowMapped()
 							mat4_from_angles(rotationMatrix, angles[PITCH], angles[YAW], angles[ROLL]);
 							MatrixSetupTransformFromRotation(transformMatrix, rotationMatrix, backEnd.viewParms.orientation.origin);
 							MatrixAffineInverse(transformMatrix, viewMatrix);
-							mat4_mult(quakeToOpenGLMatrix, viewMatrix, light->viewMatrix);
+							Matrix4Multiply(quakeToOpenGLMatrix, viewMatrix, light->viewMatrix);
 #else
 							MatrixLookAtRH(light->viewMatrix, backEnd.viewParms.orientation.origin, lightDirection, backEnd.viewParms.orientation.axis[0]);
 #endif
@@ -1563,10 +1785,12 @@ static void RB_RenderInteractionsShadowMapped()
 								point[2] = splitFrustumBounds[(j >> 2) & 1][2];
 								point[3] = 1;
 
-								mat4_transform_vec4(light->viewMatrix, point, transf);
-								transf[0] /= transf[3];
+								Vector4TransformM4(light->viewMatrix, point, transf);
+								/*transf[0] /= transf[3];
 								transf[1] /= transf[3];
-								transf[2] /= transf[3];
+								transf[2] /= transf[3];*/
+								//VectorScale(transf, 1.0f / transf[3], transf);
+								VectorScale(transf, rcp(transf[3]), transf);
 
 								AddPointToBounds(transf, cropBounds[0], cropBounds[1]);
 							}
@@ -1576,7 +1800,8 @@ static void RB_RenderInteractionsShadowMapped()
 							MatrixScaleTranslateToUnitCube(projectionMatrix, cropBounds[0], cropBounds[1]);
 							MatrixMultiplyMOD(flipZMatrix, projectionMatrix, light->projectionMatrix);
 #else
-							MatrixOrthogonalProjectionRH(light->projectionMatrix, cropBounds[0][0], cropBounds[1][0], cropBounds[0][1], cropBounds[1][1], -cropBounds[1][2], -cropBounds[0][2]);
+							//MatrixOrthogonalProjectionRH(light->projectionMatrix, cropBounds[0][0], cropBounds[1][0], cropBounds[0][1], cropBounds[1][1], -cropBounds[1][2], -cropBounds[0][2]);
+							MatrixOrthogonalProjectionRH(light->projectionMatrix, cropBounds);
 #endif
 							GL_LoadProjectionMatrix(light->projectionMatrix);
 						}
@@ -1621,8 +1846,8 @@ static void RB_RenderInteractionsShadowMapped()
 				case RL_OMNI:
 				{
 					MatrixAffineInverse(light->transformMatrix, light->viewMatrix);
-					mat4_reset_scale(light->projectionMatrix, 1.0f / light->l.radius[0], 1.0f / light->l.radius[1],
-					                 1.0f / light->l.radius[2]);
+					//Matrix4IdentScale(light->projectionMatrix, 1.0f / light->l.radius[0], 1.0f / light->l.radius[1], 1.0f / light->l.radius[2]);
+					Matrix4IdentScale(light->projectionMatrix, rcp(light->l.radius[0]), rcp(light->l.radius[1]), rcp(light->l.radius[2]));
 					break;
 				}
 				case RL_DIRECTIONAL:
@@ -1842,7 +2067,7 @@ static void RB_RenderInteractionsShadowMapped()
 					Ren_LogComment("----- Beginning Shadow Interaction: %i -----\n", iaCount);
 
 					// we don't need tangent space calculations here
-					Tess_Begin(Tess_StageIteratorShadowFill, NULL, shader, light->shader, qtrue, qfalse, -1, 0);
+					Tess_Begin(Tess_StageIteratorShadowFill, NULL, shader, light->shader, qtrue, qfalse, LIGHTMAP_NONE, FOG_NONE);
 				}
 				break;
 			}
@@ -1886,7 +2111,7 @@ static void RB_RenderInteractionsShadowMapped()
 				Ren_LogComment("----- Beginning Light Interaction: %i -----\n", iaCount);
 
 				// begin a new batch
-				Tess_Begin(Tess_StageIteratorLighting, NULL, shader, light->shader, light->l.inverseShadows, qfalse, -1, 0);
+				Tess_Begin(Tess_StageIteratorLighting, NULL, shader, light->shader, light->l.inverseShadows, qfalse, LIGHTMAP_NONE, FOG_NONE);
 			}
 		}
 
@@ -1919,16 +2144,18 @@ static void RB_RenderInteractionsShadowMapped()
 				if (drawShadows)
 				{
 					Com_Memset(&backEnd.orientation, 0, sizeof(backEnd.orientation));
-
-					backEnd.orientation.axis[0][0] = 1;
-					backEnd.orientation.axis[1][1] = 1;
-					backEnd.orientation.axis[2][2] = 1;
+					backEnd.orientation.axis[0][0] = 1.0f;
+					backEnd.orientation.axis[1][1] = 1.0f;
+					backEnd.orientation.axis[2][2] = 1.0f;
 					VectorCopy(light->l.origin, backEnd.orientation.viewOrigin);
 
-					mat4_ident(backEnd.orientation.transformMatrix);
+					/*Matrix4Identity(backEnd.orientation.transformMatrix);
 					//MatrixAffineInverse(backEnd.orientation.transformMatrix, backEnd.orientation.viewMatrix);
-					mat4_mult(light->viewMatrix, backEnd.orientation.transformMatrix, backEnd.orientation.viewMatrix);
-					mat4_copy(backEnd.orientation.viewMatrix, backEnd.orientation.modelViewMatrix);
+					Matrix4Multiply(light->viewMatrix, backEnd.orientation.transformMatrix, backEnd.orientation.viewMatrix);
+					Matrix4Copy(backEnd.orientation.viewMatrix, backEnd.orientation.modelViewMatrix);*/
+					Matrix4Identity(backEnd.orientation.transformMatrix);
+					Matrix4Copy(light->viewMatrix, backEnd.orientation.viewMatrix);
+					Matrix4Copy(backEnd.orientation.viewMatrix, backEnd.orientation.modelViewMatrix);
 				}
 				else
 				{
@@ -1961,46 +2188,48 @@ static void RB_RenderInteractionsShadowMapped()
 			if (entity != &tr.worldEntity)
 			{
 				VectorSubtract(light->origin, backEnd.orientation.origin, tmp);
-				light->transformed[0] = DotProduct(tmp, backEnd.orientation.axis[0]);
+				/*light->transformed[0] = DotProduct(tmp, backEnd.orientation.axis[0]);
 				light->transformed[1] = DotProduct(tmp, backEnd.orientation.axis[1]);
-				light->transformed[2] = DotProduct(tmp, backEnd.orientation.axis[2]);
+				light->transformed[2] = DotProduct(tmp, backEnd.orientation.axis[2]);*/
+				Dot(tmp, backEnd.orientation.axis[0], light->transformed[0]);
+				Dot(tmp, backEnd.orientation.axis[1], light->transformed[1]);
+				Dot(tmp, backEnd.orientation.axis[2], light->transformed[2]);
 			}
 			else
 			{
 				VectorCopy(light->origin, light->transformed);
 			}
 
-			mat4_mult(light->viewMatrix, backEnd.orientation.transformMatrix, modelToLight);
+			Matrix4Multiply(light->viewMatrix, backEnd.orientation.transformMatrix, modelToLight);
 
 			// build the attenuation matrix using the entity transform
 			switch (light->l.rlType)
 			{
 			case RL_OMNI:
 			{
-				mat4_reset_translate(light->attenuationMatrix, 0.5, 0.5, 0.5);    // bias
-				MatrixMultiplyScale(light->attenuationMatrix, 0.5, 0.5, 0.5);       // scale
-				mat4_mult_self(light->attenuationMatrix, light->projectionMatrix);
-				mat4_mult_self(light->attenuationMatrix, modelToLight);
-
-				mat4_copy(light->attenuationMatrix, light->shadowMatrices[0]);
+				Matrix4IdentTranslate(light->attenuationMatrix, 0.5f, 0.5f, 0.5f);    // bias
+				MatrixMultiplyScale(light->attenuationMatrix, 0.5f, 0.5f, 0.5f);       // scale
+				Matrix4MultiplyWith(light->attenuationMatrix, light->projectionMatrix);
+				Matrix4MultiplyWith(light->attenuationMatrix, modelToLight);
+				Matrix4Copy(light->attenuationMatrix, light->shadowMatrices[0]);
 				break;
 			}
 			case RL_PROJ:
 			{
-				mat4_reset_translate(light->attenuationMatrix, 0.5, 0.5, 0.0);        // bias
-				MatrixMultiplyScale(light->attenuationMatrix, 0.5, 0.5, 1.0 / Q_min(light->falloffLength, 1.0));        // scale
-				mat4_mult_self(light->attenuationMatrix, light->projectionMatrix);
-				mat4_mult_self(light->attenuationMatrix, modelToLight);
-
-				mat4_copy(light->attenuationMatrix, light->shadowMatrices[0]);
+				Matrix4IdentTranslate(light->attenuationMatrix, 0.5f, 0.5f, 0.0f);        // bias
+				//MatrixMultiplyScale(light->attenuationMatrix, 0.5f, 0.5f, 1.0f / Q_min(light->falloffLength, 1.0f));        // scale
+				MatrixMultiplyScale(light->attenuationMatrix, 0.5f, 0.5f, rcp(Q_min(light->falloffLength, 1.0f)));        // scale
+				Matrix4MultiplyWith(light->attenuationMatrix, light->projectionMatrix);
+				Matrix4MultiplyWith(light->attenuationMatrix, modelToLight);
+				Matrix4Copy(light->attenuationMatrix, light->shadowMatrices[0]);
 				break;
 			}
 			case RL_DIRECTIONAL:
 			{
-				mat4_reset_translate(light->attenuationMatrix, 0.5, 0.5, 0.5);    // bias
-				MatrixMultiplyScale(light->attenuationMatrix, 0.5, 0.5, 0.5);       // scale
-				mat4_mult_self(light->attenuationMatrix, light->projectionMatrix);
-				mat4_mult_self(light->attenuationMatrix, modelToLight);
+				Matrix4IdentTranslate(light->attenuationMatrix, 0.5f, 0.5f, 0.5f);    // bias
+				MatrixMultiplyScale(light->attenuationMatrix, 0.5f, 0.5f, 0.5f);       // scale
+				Matrix4MultiplyWith(light->attenuationMatrix, light->projectionMatrix);
+				Matrix4MultiplyWith(light->attenuationMatrix, modelToLight);
 				break;
 			}
 			default:
@@ -2082,11 +2311,11 @@ skipInteraction:
 				case RL_DIRECTIONAL:
 				{
 					// set shadow matrix including scale + offset
-					mat4_copy(bias, light->shadowMatricesBiased[splitFrustumIndex]);
-					mat4_mult_self(light->shadowMatricesBiased[splitFrustumIndex], light->projectionMatrix);
-					mat4_mult_self(light->shadowMatricesBiased[splitFrustumIndex], light->viewMatrix);
+					Matrix4Copy(bias, light->shadowMatricesBiased[splitFrustumIndex]);
+					Matrix4MultiplyWith(light->shadowMatricesBiased[splitFrustumIndex], light->projectionMatrix);
+					Matrix4MultiplyWith(light->shadowMatricesBiased[splitFrustumIndex], light->viewMatrix);
 
-					mat4_mult(light->projectionMatrix, light->viewMatrix, light->shadowMatrices[splitFrustumIndex]);
+					Matrix4Multiply(light->projectionMatrix, light->viewMatrix, light->shadowMatrices[splitFrustumIndex]);
 
 					if (r_parallelShadowSplits->integer)
 					{
@@ -2209,16 +2438,13 @@ void RB_RenderScreenSpaceAmbientOcclusion()
 	ImageCopyBackBuffer(tr.depthRenderImage);
 
 	// set 2D virtual screen size
-	GL_PushMatrix();
+	GL_PushMatrix(); //<--- push
 	RB_SetViewMVPM();
-
 	SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
-
 	// draw viewport
 	DRAWVIEWQUAD();
-
 	// go back to 3D
-	GL_PopMatrix();
+	GL_PopMatrix(); //<--- pop
 
 	GL_CheckErrors();
 }
@@ -2288,6 +2514,9 @@ void RB_RenderDepthOfField()
 
 /**
  * @brief RB_RenderGlobalFog
+ *
+ * This is the fogGlobal glsl shader
+ *
  */
 void RB_RenderGlobalFog()
 {
@@ -2296,6 +2525,7 @@ void RB_RenderGlobalFog()
 
 	Ren_LogComment("--- RB_RenderGlobalFog ---\n");
 
+	// this fogGlobal is disabled?
 	if (r_noFog->integer)
 	{
 		return;
@@ -2337,20 +2567,21 @@ void RB_RenderGlobalFog()
 		fogDistanceVector[0] = -backEnd.orientation.modelViewMatrix[2];
 		fogDistanceVector[1] = -backEnd.orientation.modelViewMatrix[6];
 		fogDistanceVector[2] = -backEnd.orientation.modelViewMatrix[10];
-		fogDistanceVector[3] = DotProduct(local, backEnd.viewParms.orientation.axis[0]);
+		//fogDistanceVector[3] = DotProduct(local, backEnd.viewParms.orientation.axis[0]);
+		Dot(local, backEnd.viewParms.orientation.axis[0], fogDistanceVector[3]);
 
 		// scale the fog vectors based on the fog's thickness
-		fogDistanceVector[0] *= fog->tcScale;
+		/*fogDistanceVector[0] *= fog->tcScale;
 		fogDistanceVector[1] *= fog->tcScale;
 		fogDistanceVector[2] *= fog->tcScale;
-		fogDistanceVector[3] *= fog->tcScale;
+		fogDistanceVector[3] *= fog->tcScale;*/
+		Vector4Scale(fogDistanceVector, fog->tcScale, fogDistanceVector);
 
 		SetUniformVec4(UNIFORM_FOGDISTANCEVECTOR, fogDistanceVector);
 		SetUniformVec4(UNIFORM_COLOR, fog->color);
-		SetUniformFloat(UNIFORM_FOGDENSITY, 0.6f); // FIXME: fog->fogParms.density?!
+		SetUniformFloat(UNIFORM_FOGDENSITY, 1.0f); // this must be 1
 	}
 
-	SetUniformMatrix16(UNIFORM_VIEWMATRIX, backEnd.viewParms.world.viewMatrix);
 	SetUniformMatrix16(UNIFORM_UNPROJECTMATRIX, backEnd.viewParms.unprojectionMatrix);
 
 	// bind u_ColorMap
@@ -2370,16 +2601,13 @@ void RB_RenderGlobalFog()
 	}
 
 	// set 2D virtual screen size
-	GL_PushMatrix();
+	GL_PushMatrix(); //--- push
 	RB_SetViewMVPM();
-
 	SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
-
 	// draw viewport
 	DRAWVIEWQUAD();
-
 	// go back to 3D
-	GL_PopMatrix();
+	GL_PopMatrix();  //--- pop
 
 	GL_CheckErrors();
 }
@@ -2426,7 +2654,6 @@ void RB_RenderBloom()
 		if (HDR_ENABLED())
 		{
 			SetMacrosAndSelectProgram(trProg.gl_toneMappingShader, BRIGHTPASS_FILTER, qtrue);
-
 			SetUniformFloat(UNIFORM_HDRKEY, backEnd.hdrKey);
 			SetUniformFloat(UNIFORM_HDRAVERAGELUMINANCE, backEnd.hdrAverageLuminance);
 			SetUniformFloat(UNIFORM_HDRMAXLUMINANCE, backEnd.hdrMaxLuminance);
@@ -2617,14 +2844,14 @@ void RB_CameraPostFX(void)
 	SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
 	//glUniform1f(tr.cameraEffectsShader.u_BlurMagnitude, r_bloomBlur->value);
 
-	mat4_ident(grain);
+	Matrix4Identity(grain);
 
-	MatrixMultiplyScale(grain, r_cameraFilmGrainScale->value, r_cameraFilmGrainScale->value, 0);
-	MatrixMultiplyTranslation(grain, tess.shaderTime * 10, backEnd.refdef.floatTime * 10, 0);
+	MatrixMultiplyScale(grain, r_cameraFilmGrainScale->value, r_cameraFilmGrainScale->value, 0.f);
+	MatrixMultiplyTranslation(grain, tess.shaderTime * 10.0f, backEnd.refdef.floatTime * 10.f, 0.f);
 
-	MatrixMultiplyTranslation(grain, 0.5, 0.5, 0.0);
+	MatrixMultiplyTranslation(grain, 0.5f, 0.5f, 0.0f);
 	MatrixMultiplyZRotation(grain, tess.shaderTime * (random() * 7));
-	MatrixMultiplyTranslation(grain, -0.5, -0.5, 0.0);
+	MatrixMultiplyTranslation(grain, -0.5f, -0.5f, 0.0f);
 
 	SetUniformMatrix16(UNIFORM_COLORTEXTUREMATRIX, grain);
 
@@ -2677,9 +2904,9 @@ static void RB_CalculateAdaptation()
 	float        maxLuminance     = 0.0f;
 	double       sum              = 0.0;
 	const vec3_t LUMINANCE_VECTOR = { 0.2125f, 0.7154f, 0.0721f };
-	vec4_t       color;
 	float        newAdaptation;
-	float        newMaximum;
+	float        newMaximum, dot;
+	//vec4_t       color;
 
 	// calculate the average scene luminance
 	R_BindFBO(tr.downScaleFBO_64x64);
@@ -2690,12 +2917,14 @@ static void RB_CalculateAdaptation()
 
 	for (i = 0; i < (64 * 64 * 4); i += 4)
 	{
-		color[0] = image[i + 0];
+		/*color[0] = image[i + 0];
 		color[1] = image[i + 1];
 		color[2] = image[i + 2];
 		color[3] = image[i + 3];
-
-		luminance = DotProduct(color, LUMINANCE_VECTOR) + 0.0001f;
+		//luminance = DotProduct(color, LUMINANCE_VECTOR) + 0.0001f;
+		Dot(color, LUMINANCE_VECTOR, dot);*/
+		Dot((image+i), LUMINANCE_VECTOR, dot);	// don't copy to 'color'. Just point to the vector in the image..
+		luminance = dot + 0.0001f;
 		if (luminance > maxLuminance)
 		{
 			maxLuminance = luminance;
@@ -3228,7 +3457,7 @@ void RB_RenderLightOcclusionQueries()
 		tr.numUsedOcclusionQueryObjects = 0;
 		QueueInit(&occlusionQueryQueue);
 		QueueInit(&invisibleQueue);
-		Com_InitGrowList(&invisibleList, 1000);
+		Com_InitGrowList(&invisibleList, 100); //Com_InitGrowList(&invisibleList, 1000);
 
 		// loop trough all light interactions and render the light OBB for each last interaction
 		for (iaCount = 0, ia = &backEnd.viewParms.interactions[0]; iaCount < backEnd.viewParms.numInteractions; )
@@ -3502,7 +3731,7 @@ static void RenderEntityOcclusionVolume(trRefEntity_t *entity)
 	MatrixSetupTransformFromVectorsFLU(backEnd.orientation.transformMatrix, axis[0], axis[1], axis[2], boundsCenter);
 
 	MatrixAffineInverse(backEnd.orientation.transformMatrix, backEnd.orientation.viewMatrix);
-	mat4_mult(backEnd.viewParms.world.viewMatrix, backEnd.orientation.transformMatrix, backEnd.orientation.modelViewMatrix);
+	Matrix4Multiply(backEnd.viewParms.world.viewMatrix, backEnd.orientation.transformMatrix, backEnd.orientation.modelViewMatrix);
 
 	GL_LoadModelViewMatrix(backEnd.orientation.modelViewMatrix);
 
@@ -3735,7 +3964,10 @@ static int EntityOcclusionResultAvailable(trRefEntity_t *entity)
 		//if(glIsQuery(light->occlusionQueryObjects[backEnd.viewParms.viewCount]))
 		{
 			glGetQueryObjectiv(entity->occlusionQueryObject, GL_QUERY_RESULT_AVAILABLE, &available);
-			GL_CheckErrors();
+			if (available)
+			{
+				GL_CheckErrors();
+			}
 		}
 
 		return available;
@@ -3876,7 +4108,7 @@ void RB_RenderEntityOcclusionQueries()
 		tr.numUsedOcclusionQueryObjects = 0;
 		QueueInit(&occlusionQueryQueue);
 		QueueInit(&invisibleQueue);
-		Com_InitGrowList(&invisibleList, 1000);
+		Com_InitGrowList(&invisibleList, 100); //Com_InitGrowList(&invisibleList, 1000);
 
 		// loop trough all entities and render the entity OBB
 		for (i = 0, entity = backEnd.refdef.entities; i < backEnd.refdef.numEntities; i++, entity++)
@@ -4313,9 +4545,12 @@ static void RB_RenderDebugUtils()
 				glVertexAttrib4fv(ATTR_INDEX_COLOR, colorYellow);
 				glVertex3fv(vec3_origin);
 				VectorSubtract(light->origin, backEnd.orientation.origin, tmp);
-				light->transformed[0] = DotProduct(tmp, backEnd.orientation.axis[0]);
-				light->transformed[1] = DotProduct(tmp, backEnd.orientation.axis[1]);
-				light->transformed[2] = DotProduct(tmp, backEnd.orientation.axis[2]);
+				//light->transformed[0] = DotProduct(tmp, backEnd.orientation.axis[0]);
+				//light->transformed[1] = DotProduct(tmp, backEnd.orientation.axis[1]);
+				//light->transformed[2] = DotProduct(tmp, backEnd.orientation.axis[2]);
+				Dot(tmp, backEnd.orientation.axis[0], light->transformed[0]);
+				Dot(tmp, backEnd.orientation.axis[1], light->transformed[1]);
+				Dot(tmp, backEnd.orientation.axis[2], light->transformed[2]);
 				glVertex3fv(light->transformed);
 
 				glEnd();
@@ -4376,8 +4611,8 @@ static void RB_RenderDebugUtils()
 #else
 						mat4_t transform, scale, rot;
 
-						mat4_reset_scale(scale, light->l.radius[0], light->l.radius[1], light->l.radius[2]);
-						mat4_mult(light->transformMatrix, scale, transform);
+						Matrix4IdentScale(scale, light->l.radius[0], light->l.radius[1], light->l.radius[2]);
+						Matrix4Multiply(light->transformMatrix, scale, transform);
 
 						GL_LoadModelViewMatrix(transform);
 						//GL_LoadProjectionMatrix(backEnd.viewParms.projectionMatrix);
@@ -4581,8 +4816,8 @@ static void RB_RenderDebugUtils()
 		trRefEntity_t *entity;
 		surfaceType_t *surface;
 		vec4_t        lightColor;
-		vec3_t        mins = { -1, -1, -1 };
-		vec3_t        maxs = { 1, 1, 1 };
+		vec3_t        mins = { -1.f, -1.f, -1.f };
+		vec3_t        maxs = { 1.f, 1.f, 1.f };
 
 		SetMacrosAndSelectProgram(trProg.gl_genericShader);
 
@@ -4702,7 +4937,7 @@ static void RB_RenderDebugUtils()
 				}
 				else
 				{
-					Vector4Copy(colorMdGrey, lightColor);
+					Vector4Copy(colorDkGrey, lightColor);
 				}
 
 				Tess_AddCube(vec3_origin, gen->bounds[0], gen->bounds[1], lightColor);
@@ -4946,7 +5181,9 @@ static void RB_RenderDebugUtils()
 					quat_to_vec3_FRU(skel->bones[j].rotation, forward, right, up);
 
 					VectorSubtract(offset, origin, diff);
-					if ((length = VectorNormalize(diff)))
+					//if ((length = VectorNormalize(diff)))
+					VectorNorm(diff, &length);
+					if (length != 0.0f)
 					{
 						PerpendicularVector(tmp, diff);
 						//VectorCopy(up, tmp);
@@ -4971,7 +5208,7 @@ static void RB_RenderDebugUtils()
 						Tess_AddTetrahedron(tetraVerts, g_color_table[ColorIndex(j)]);
 					}
 
-					mat4_transform_vec3(backEnd.orientation.transformMatrix, skel->bones[j].origin, worldOrigins[j]);
+					VectorTransformM4(backEnd.orientation.transformMatrix, skel->bones[j].origin, worldOrigins[j]);
 				}
 
 				Tess_UpdateVBOs(ATTR_POSITION | ATTR_TEXCOORD | ATTR_COLOR);
@@ -5242,7 +5479,7 @@ static void RB_RenderDebugUtils()
 
 			R_FindTwoNearestCubeMaps(backEnd.viewParms.orientation.origin, &cubeProbe1, &cubeProbe2, &distance1, &distance2);
 
-			Tess_Begin(Tess_StageIteratorDebug, NULL, NULL, NULL, qtrue, qfalse, -1, 0);
+			Tess_Begin(Tess_StageIteratorDebug, NULL, NULL, NULL, qtrue, qfalse, LIGHTMAP_NONE, FOG_NONE);
 
 			if (cubeProbe1 == NULL && cubeProbe2 == NULL)
 			{
@@ -5313,7 +5550,7 @@ static void RB_RenderDebugUtils()
 
 		GL_CheckErrors();
 
-		Tess_Begin(Tess_StageIteratorDebug, NULL, NULL, NULL, qtrue, qfalse, -1, 0);
+		Tess_Begin(Tess_StageIteratorDebug, NULL, NULL, NULL, qtrue, qfalse, LIGHTMAP_NONE, FOG_NONE);
 
 		for (j = 0; j < tr.world->numLightGridPoints; j++)
 		{
@@ -5453,16 +5690,19 @@ static void RB_RenderDebugUtils()
 							point[2] = tr.world->models[0].bounds[(j >> 2) & 1][2];
 							point[3] = 1;
 
-							mat4_transform_vec4(viewMatrix, point, transf);
-							transf[0] /= transf[3];
+							Vector4TransformM4(viewMatrix, point, transf);
+							/*transf[0] /= transf[3];
 							transf[1] /= transf[3];
-							transf[2] /= transf[3];
+							transf[2] /= transf[3];*/
+							//VectorScale(transf, 1.0f / transf[3], transf);
+							VectorScale(transf, rcp(transf[3]), transf);
 
 							AddPointToBounds(transf, cropBounds[0], cropBounds[1]);
 						}
 
 
-						MatrixOrthogonalProjectionRH(projectionMatrix, cropBounds[0][0], cropBounds[1][0], cropBounds[0][1], cropBounds[1][1], -cropBounds[1][2], -cropBounds[0][2]);
+						//MatrixOrthogonalProjectionRH(projectionMatrix, cropBounds[0][0], cropBounds[1][0], cropBounds[0][1], cropBounds[1][1], -cropBounds[1][2], -cropBounds[0][2]);
+						MatrixOrthogonalProjectionRH(projectionMatrix, cropBounds);
 
 						GL_LoadModelViewMatrix(viewMatrix);
 						GL_LoadProjectionMatrix(projectionMatrix);
@@ -5735,7 +5975,7 @@ static void RB_RenderDebugUtils()
 
 		GL_CheckErrors();
 
-		Tess_Begin(Tess_StageIteratorDebug, NULL, NULL, NULL, qtrue, qfalse, -1, 0);
+		Tess_Begin(Tess_StageIteratorDebug, NULL, NULL, NULL, qtrue, qfalse, LIGHTMAP_NONE, FOG_NONE);
 
 		for (i = 0, dp = backEnd.refdef.decalProjectors; i < backEnd.refdef.numDecalProjectors; i++, dp++)
 		{
@@ -5828,8 +6068,8 @@ static void RB_RenderViewFront(void)
 			clearBits |= GL_COLOR_BUFFER_BIT;
 
 			GL_ClearColor(tr.world->fogs[tr.world->globalFog].color[0],
-			              tr.world->fogs[tr.world->globalFog].color[1],
-			              tr.world->fogs[tr.world->globalFog].color[2], 1.0);
+							tr.world->fogs[tr.world->globalFog].color[1],
+							tr.world->fogs[tr.world->globalFog].color[2], 1.0);
 		}
 	}
 	else if (tr.world && tr.world->hasSkyboxPortal)
@@ -5918,7 +6158,7 @@ static void RB_RenderViewFront(void)
 		{
 			clearBits &= ~GL_COLOR_BUFFER_BIT;
 		}
-		else if (r_fastSky->integer || (backEnd.refdef.rdflags & RDF_NOWORLDMODEL))
+		else if (r_fastSky->integer /*|| (backEnd.refdef.rdflags & RDF_NOWORLDMODEL)*/)
 		{
 			clearBits |= GL_COLOR_BUFFER_BIT;
 
@@ -5959,7 +6199,7 @@ static void RB_RenderViewFront(void)
 	}
 
 	GL_Clear(clearBits);
-
+		
 	if ((backEnd.refdef.rdflags & RDF_HYPERSPACE))
 	{
 		RB_Hyperspace();
@@ -6037,7 +6277,9 @@ static void RB_RenderViewFront(void)
 		R_BindFBO(tr.deferredRenderFBO);
 	}
 
-	// render global fog post process effect
+	// render global fog effect
+	// This is the fog that fills the world.
+	// It is not the fog that is rendered on brushes.
 	RB_RenderGlobalFog();
 
 	// draw everything that is translucent
@@ -6046,21 +6288,21 @@ static void RB_RenderViewFront(void)
 	// scale down rendered HDR scene to 1 / 4th
 	if (HDR_ENABLED())
 	{
-		if (glConfig2.framebufferBlitAvailable)
-		{
+		//if (glConfig2.framebufferBlitAvailable)
+		//{
 			R_CopyToFBO(tr.deferredRenderFBO, tr.downScaleFBO_quarter, GL_COLOR_BUFFER_BIT, GL_LINEAR);
 			R_CopyToFBO(tr.deferredRenderFBO, tr.downScaleFBO_64x64, GL_COLOR_BUFFER_BIT, GL_LINEAR);
-		}
-		else
-		{
-			// FIXME add non EXT_framebuffer_blit code
-		}
+		//}
+		//else
+		//{
+		//	// FIXME add non EXT_framebuffer_blit code
+		//}
 
 		RB_CalculateAdaptation();
 	}
+		/*
 	else
 	{
-		/*
 		FIXME this causes: caught OpenGL error:
 		GL_INVALID_OPERATION in file code/renderer/tr_backend.c line 6479
 
@@ -6073,8 +6315,8 @@ static void RB_RenderViewFront(void)
 		{
 		    // FIXME add non EXT_framebuffer_blit code
 		}
-		*/
 	}
+		*/
 
 	GL_CheckErrors();
 
@@ -6094,7 +6336,7 @@ static void RB_RenderViewFront(void)
 	RB_DrawSun();
 
 	// add light flares on lights that aren't obscured
-	RB_RenderFlares();
+	RB_RenderFlares(); // this initiates calls to the very slow glReadPixels()..
 
 	// wait until all bsp node occlusion queries are back
 	RB_CollectBspOcclusionQueries();
@@ -6111,15 +6353,16 @@ static void RB_RenderViewFront(void)
 			R_CopyToFBO(tr.deferredRenderFBO, tr.portalRenderFBO, GL_COLOR_BUFFER_BIT, GL_NEAREST);
 		}
 #endif
-#if 0
+#if 1
 		// FIXME: this trashes the OpenGL context for an unknown reason
+		// update: for me it seems to work just fine..
 		if (glConfig2.framebufferObjectAvailable && glConfig2.framebufferBlitAvailable)
 		{
 			// copy main context to portalRenderFBO
 			R_CopyToFBO(NULL, tr.portalRenderFBO, GL_COLOR_BUFFER_BIT, GL_NEAREST);
 		}
-#endif
 		//else
+#endif
 		{
 			// capture current color buffer
 			GL_SelectTexture(0);
@@ -6153,27 +6396,20 @@ static void RB_RenderView(void)
 	RB_RenderViewFront();
 
 	// render chromatric aberration
-	RB_CameraPostFX();
-
-	// copy to given byte buffer that is NOT a FBO
-	if (tr.refdef.pixelTarget != NULL)
+	if (tr.refdef.pixelTarget == NULL) // see comment on next code block.. we don't want postFX on cubemaps
 	{
-		int i;
-
-		// need to convert Y axis
-#if 0
-		glReadPixels(0, 0, tr.refdef.pixelTargetWidth, tr.refdef.pixelTargetHeight, GL_RGBA, GL_UNSIGNED_BYTE, tr.refdef.pixelTarget);
-#else
+		RB_CameraPostFX();
+	}
+	// copy to given byte buffer that is NOT a FBO.
+	// This will copy the current screen content to a texture.
+	// The given texture, pixelTarget, is (a pointer to) a cubeProbe's cubemap.
+	// R_BuildCubeMaps() is the function that triggers this mechanism.
+	else //if (tr.refdef.pixelTarget != NULL)
+	{
 		// Bugfix: drivers absolutely hate running in high res and using glReadPixels near the top or bottom edge.
 		// Soo.. lets do it in the middle.
-		glReadPixels(glConfig.vidWidth / 2, glConfig.vidHeight / 2, tr.refdef.pixelTargetWidth, tr.refdef.pixelTargetHeight, GL_RGBA,
-		             GL_UNSIGNED_BYTE, tr.refdef.pixelTarget);
-#endif
-
-		for (i = 0; i < tr.refdef.pixelTargetWidth * tr.refdef.pixelTargetHeight; i++)
-		{
-			tr.refdef.pixelTarget[(i * 4) + 3] = 255;   //set the alpha pure white
-		}
+		// Note: i don't know how old that^^ comment above is. The issue could long be history.. todo: check it
+		glReadPixels(glConfig.vidWidth / 2, glConfig.vidHeight / 2, REF_CUBEMAP_SIZE, REF_CUBEMAP_SIZE, GL_RGBA, GL_UNSIGNED_BYTE, tr.refdef.pixelTarget);
 	}
 
 	GL_CheckErrors();
@@ -6420,7 +6656,7 @@ const void *RB_StretchPic(const void *data)
 			Tess_End();
 		}
 		backEnd.currentEntity = &backEnd.entity2D;
-		Tess_Begin(Tess_StageIteratorGeneric, NULL, shader, NULL, qfalse, qfalse, -1, 0);
+		Tess_Begin(Tess_StageIteratorGeneric, NULL, shader, NULL, qfalse, qfalse, LIGHTMAP_NONE, FOG_NONE);
 	}
 
 	Tess_CheckOverflow(4, 6);
@@ -6514,7 +6750,7 @@ const void *RB_Draw2dPolys(const void *data)
 			Tess_End();
 		}
 		backEnd.currentEntity = &backEnd.entity2D;
-		Tess_Begin(Tess_StageIteratorGeneric, NULL, shader, NULL, qfalse, qfalse, -1, 0);
+		Tess_Begin(Tess_StageIteratorGeneric, NULL, shader, NULL, qfalse, qfalse, LIGHTMAP_NONE, FOG_NONE);
 	}
 
 	Tess_CheckOverflow(cmd->numverts, (cmd->numverts - 2) * 3);
@@ -6537,10 +6773,10 @@ const void *RB_Draw2dPolys(const void *data)
 		tess.texCoords[tess.numVertexes][0] = cmd->verts[i].st[0];
 		tess.texCoords[tess.numVertexes][1] = cmd->verts[i].st[1];
 
-		tess.colors[tess.numVertexes][0] = cmd->verts[i].modulate[0] * (1.0f / 255.0f);
-		tess.colors[tess.numVertexes][1] = cmd->verts[i].modulate[1] * (1.0f / 255.0f);
-		tess.colors[tess.numVertexes][2] = cmd->verts[i].modulate[2] * (1.0f / 255.0f);
-		tess.colors[tess.numVertexes][3] = cmd->verts[i].modulate[3] * (1.0f / 255.0f);
+		tess.colors[tess.numVertexes][0] = cmd->verts[i].modulate[0] * _1div255;
+		tess.colors[tess.numVertexes][1] = cmd->verts[i].modulate[1] * _1div255;
+		tess.colors[tess.numVertexes][2] = cmd->verts[i].modulate[2] * _1div255;
+		tess.colors[tess.numVertexes][3] = cmd->verts[i].modulate[3] * _1div255;
 		tess.numVertexes++;
 	}
 
@@ -6574,7 +6810,7 @@ const void *RB_RotatedPic(const void *data)
 			Tess_End();
 		}
 		backEnd.currentEntity = &backEnd.entity2D;
-		Tess_Begin(Tess_StageIteratorGeneric, NULL, shader, NULL, qfalse, qfalse, -1, 0);
+		Tess_Begin(Tess_StageIteratorGeneric, NULL, shader, NULL, qfalse, qfalse, LIGHTMAP_NONE, FOG_NONE);
 	}
 
 	Tess_CheckOverflow(4, 6);
@@ -6671,7 +6907,7 @@ const void *RB_StretchPicGradient(const void *data)
 			Tess_End();
 		}
 		backEnd.currentEntity = &backEnd.entity2D;
-		Tess_Begin(Tess_StageIteratorGeneric, NULL, shader, NULL, qfalse, qfalse, -1, 0);
+		Tess_Begin(Tess_StageIteratorGeneric, NULL, shader, NULL, qfalse, qfalse, LIGHTMAP_NONE, FOG_NONE);
 	}
 
 	Tess_CheckOverflow(4, 6);
@@ -6696,8 +6932,8 @@ const void *RB_StretchPicGradient(const void *data)
 
 	for (i = 0; i < 4; i++)
 	{
-		tess.colors[numVerts + 2][i] = cmd->gradientColor[i] * (1.0f / 255.0f);
-		tess.colors[numVerts + 3][i] = cmd->gradientColor[i] * (1.0f / 255.0f);
+		tess.colors[numVerts + 2][i] = cmd->gradientColor[i] * _1div255;
+		tess.colors[numVerts + 3][i] = cmd->gradientColor[i] * _1div255;
 	}
 
 	tess.xyz[numVerts][0] = cmd->x;

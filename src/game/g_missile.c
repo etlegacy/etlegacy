@@ -67,7 +67,8 @@ void G_BounceMissile(gentity_t *ent, trace_t *trace)
 	// reflect the velocity on the trace plane
 	hitTime = (int)(level.previousTime + (level.time - level.previousTime) * trace->fraction);
 	BG_EvaluateTrajectoryDelta(&ent->s.pos, hitTime, velocity, qfalse, ent->s.effect2Time);
-	dot = DotProduct(velocity, trace->plane.normal);
+	//dot = DotProduct(velocity, trace->plane.normal);
+	Dot(velocity, trace->plane.normal, dot);
 	VectorMA(velocity, -2 * dot, trace->plane.normal, ent->s.pos.trDelta);
 
 	// record this for mover pushing
@@ -711,7 +712,8 @@ void G_PredictBounceMissile(gentity_t *ent, trajectory_t *pos, trace_t *trace, i
 	// reflect the velocity on the trace plane
 	hitTime = time;
 	BG_EvaluateTrajectoryDelta(pos, hitTime, velocity, qfalse, ent->s.effect2Time);
-	dot = DotProduct(velocity, trace->plane.normal);
+	//dot = DotProduct(velocity, trace->plane.normal);
+	Dot(velocity, trace->plane.normal, dot);
 	VectorMA(velocity, -2 * dot, trace->plane.normal, pos->trDelta);
 
 	if (ent->s.eFlags & EF_BOUNCE_HALF)
@@ -1000,7 +1002,8 @@ void G_RunFlamechunk(gentity_t *ent)
 	// vel was only being set if (level.time - ent->timestamp > 50
 	// However, below, it was being used when we hit something and it was uninitialized
 	VectorCopy(ent->s.pos.trDelta, vel);
-	speed = VectorNormalize(vel);
+	//speed = VectorNormalize(vel);
+	VectorNorm(vel, &speed);
 
 	// Adust the current speed of the chunk
 	if (level.time - ent->timestamp > 50)
@@ -1036,9 +1039,10 @@ void G_RunFlamechunk(gentity_t *ent)
 
 		VectorCopy(tr.endpos, ent->r.currentOrigin);
 
-		dot = DotProduct(vel, tr.plane.normal);
+		//dot = DotProduct(vel, tr.plane.normal);
+		Dot(vel, tr.plane.normal, dot);
 		VectorMA(vel, -2.f * dot, tr.plane.normal, vel);
-		VectorNormalize(vel);
+		VectorNormalizeOnly(vel);
 		speed *= 0.5f * (0.25f + 0.75f * ((dot + 1.0f) * 0.5f));
 		VectorScale(vel, speed, ent->s.pos.trDelta);
 
@@ -1744,7 +1748,7 @@ gentity_t *fire_flamebarrel(gentity_t *self, vec3_t start, vec3_t dir)
 
 	bolt = G_Spawn();
 
-	VectorNormalize(dir);
+	VectorNormalizeOnly(dir);
 
 	// for explosion type
 	bolt->accuracy = 3;

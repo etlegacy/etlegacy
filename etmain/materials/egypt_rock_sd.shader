@@ -8,7 +8,6 @@ textures/egypt_rock_sd/layered_rock_01
 	specularmap textures/egypt_rock_sd/layered_rock_01_r.tga
 	q3map_nonplanar
 	q3map_shadeangle 90
-	implicitMap -
 }
 
 textures/egypt_rock_sd/layered_rock_01_btrim_01
@@ -19,7 +18,6 @@ textures/egypt_rock_sd/layered_rock_01_btrim_01
 	specularmap textures/egypt_rock_sd/layered_rock_01_btrim_01_r.tga
 	q3map_nonplanar
 	q3map_shadeangle 90
-	implicitMap -
 }
 
 textures/egypt_rock_sd/layered_rock_01_btrim_01_nero
@@ -46,7 +44,6 @@ textures/egypt_rock_sd/layered_rock_01_ttrim_01
 	specularmap textures/egypt_rock_sd/layered_rock_01_ttrim_01_r.tga
 	q3map_nonplanar
 	q3map_shadeangle 90
-	implicitMap -
 }
 
 textures/egypt_rock_sd/layered_rock_01_ttrim_01_nero
@@ -57,7 +54,6 @@ textures/egypt_rock_sd/layered_rock_01_ttrim_01_nero
 	specularmap textures/egypt_rock_sd/layered_rock_01_ttrim_01_r.tga
 	q3map_nonplanar
 	q3map_shadeangle 90
-	implicitMap textures/egypt_rock_sd/layered_rock_01_ttrim_01.tga
 }
 
 textures/egypt_rock_sd/sandstone_01
@@ -68,5 +64,4 @@ textures/egypt_rock_sd/sandstone_01
 	specularmap textures/egypt_rock_sd/sandstone_01_r.tga
 	q3map_nonplanar
 	q3map_shadeangle 90
-	implicitMap -
 }

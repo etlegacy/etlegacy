@@ -65,7 +65,7 @@
 #define CONFIG_NAME             "etconfig.cfg"
 // widescreen monitor support
 #define RATIO43     (4.0f / 3.0f)   ///< 4:3 aspectratio is the default for this game engine ...
-#define RPRATIO43   (1 / RATIO43)   ///<
+#define RPRATIO43   (1.0f / RATIO43)   ///<
 #endif
 
 #define CONFIG_NAME_DEFAULT      "default.cfg"         ///< if you change this adjust files.c - name ist still hard coded in pk3 checks
@@ -902,8 +902,8 @@ PlaneTypeForNormal
  */
 typedef struct cplane_s
 {
-	vec3_t normal;
-	float dist;
+	vec3_t normal;			/// It would be possible to access 'normal' & 'dist' in one go, as a vec4_t
+	float dist;				/// So, never change the order of those 2 members: normal & dist !!!!!!!!!!
 	byte type;              ///< for fast side tests: 0,1,2 = axial, 3 = nonaxial
 	byte signbits;          ///< signx + (signy<<1) + (signz<<2), used as lookup during collision
 	byte pad[2];
@@ -984,8 +984,14 @@ typedef enum
 */
 #define ANIM_BITS       10
 
-#define ANGLE2SHORT(x)  ((int)((x) * 65536 / 360) & 65535)
-#define SHORT2ANGLE(x)  ((x) * (360.0f / 65536))
+// 65536 / 360
+#define _65536_DIV_360 182.04444444444444444444444444444f
+// 360.0f / 65536
+#define _360_DIV_65536 0.0054931640625f
+#define ANGLE2SHORT(x)  ((int)((x) * _65536_DIV_360) & 65535)
+#define SHORT2ANGLE(x)  ((x) * _360_DIV_65536)
+//#define ANGLE2SHORT(x)  ((int)((x) * 65536 / 360) & 65535)
+//#define SHORT2ANGLE(x)  ((x) * (360.0f / 65536))
 
 #define SNAPFLAG_RATE_DELAYED   1
 #define SNAPFLAG_NOT_ACTIVE     2   ///< snapshot used during connection and for zombies
@@ -998,7 +1004,7 @@ typedef enum
 #define MAX_GENTITIES       (1 << GENTITYNUM_BITS)
 
 // entitynums are communicated with GENTITY_BITS, so any reserved
-// values thatare going to be communcated over the net need to
+// values that are going to be communicated over the net need to
 // also be in this range
 #define ENTITYNUM_NONE      (MAX_GENTITIES - 1)
 #define ENTITYNUM_WORLD     (MAX_GENTITIES - 2)

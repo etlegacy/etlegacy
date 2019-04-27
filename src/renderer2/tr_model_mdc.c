@@ -161,9 +161,9 @@ static void R_MDC_CreateVBO_Surfaces(mdvModel_t *mdvModel)
 
 			for (j = 0, vert = vertexes; j < (surf->numVerts * mdvModel->numFrames); j++, vert++)
 			{
-				VectorNormalize(vert->tangent);
-				VectorNormalize(vert->binormal);
-				VectorNormalize(vert->normal);
+				VectorNormalizeOnly(vert->tangent);
+				VectorNormalizeOnly(vert->binormal);
+				VectorNormalizeOnly(vert->normal);
 			}
 
 			if (r_smoothNormals->integer & FLAGS_SMOOTH_MDC) // do another extra smoothing for normals to avoid flat shading
@@ -184,7 +184,7 @@ static void R_MDC_CreateVBO_Surfaces(mdvModel_t *mdvModel)
 						}
 					}
 
-					VectorNormalize(vertexes[j].normal);
+					VectorNormalizeOnly(vertexes[j].normal);
 				}
 			}
 		}

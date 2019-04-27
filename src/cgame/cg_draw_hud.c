@@ -884,7 +884,8 @@ static void CG_DrawStaminaBar(rectDef_t *rect)
 
 			if (msec >= 0)
 			{
-				Vector4Average(colour, colorMdRed, (float)(.5 + sin(.2 * sqrt((double)msec) * 2 * M_PI) * .5), colour);
+				//Vector4Average(colour, colorMdRed, (float)(.5 + sin(.2 * sqrt((double)msec) * 2 * M_PI) * .5), colour);
+				Vector4Average(colour, colorMdRed, (float)(.5f + sin(.2f * sqrt((double)msec) * M_2PI) * .5f), colour);
 			}
 		}
 	}
@@ -1400,14 +1401,14 @@ void CG_StatsDebugAddText(const char *text)
  */
 void CG_DrawCompassIcon(float x, float y, float w, float h, vec3_t origin, vec3_t dest, qhandle_t shader)
 {
-	float  angle, pi2 = (float)(M_PI * 2);
+	float  angle, S, C, pi2 = (float)(M_PI * 2);
 	vec3_t v1, angles;
 	float  len;
 
 	VectorCopy(dest, v1);
 	VectorSubtract(origin, v1, v1);
 	len = VectorLength(v1);
-	VectorNormalize(v1);
+	VectorNormalizeOnly(v1);
 	vectoangles(v1, angles);
 
 	if (v1[0] == 0.f && v1[1] == 0.f && v1[2] == 0.f)
@@ -1429,8 +1430,11 @@ void CG_DrawCompassIcon(float x, float y, float w, float h, vec3_t origin, vec3_
 		w = (float)sqrt((w * w) + (h * h)) / 3.f * 2.f * 0.9f;
 	}
 
-	x = x + ((float)cos(angle) * w);
-	y = y + ((float)sin(angle) * w);
+	//x = x + ((float)cos(angle) * w);
+	//y = y + ((float)sin(angle) * w);
+	SinCos(angle, S, C);
+	x = x + (C * w);
+	y = y + (S * w);
 
 	len = 1 - MIN(1.f, len / 2000.f);
 

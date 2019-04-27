@@ -670,7 +670,8 @@ void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, float h,
 				msec = 0;
 			}
 
-			reviveClr[3] = .5f + .5f * (float)((sin(sqrt((double)msec) * 25 * 2 * M_PI) + 1) * 0.5);
+			//reviveClr[3] = .5f + .5f * (float)((sin(sqrt((double)msec) * 25 * 2 * M_PI) + 1) * 0.5);
+			reviveClr[3] = .5f + .5f * (float)((sin(sqrt((double)msec) * 25.0f * M_2PI) + 1.0f) * 0.5f);
 
 			trap_R_SetColor(reviveClr);
 			CG_DrawPic(icon_pos[0] + 3, icon_pos[1] + 3, icon_extends[0] - 3, icon_extends[1] - 3, cgs.media.medicIcon);

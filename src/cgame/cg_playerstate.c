@@ -116,9 +116,12 @@ void CG_DamageFeedback(int yawByte, int pitchByte, int damage)
 		AngleVectors(angles, dir, NULL, NULL);
 		VectorSubtract(vec3_origin, dir, dir);
 
-		front = DotProduct(dir, cg.refdef.viewaxis[0]);
-		left  = DotProduct(dir, cg.refdef.viewaxis[1]);
-		up    = DotProduct(dir, cg.refdef.viewaxis[2]);
+		//front = DotProduct(dir, cg.refdef.viewaxis[0]);
+		//left = DotProduct(dir, cg.refdef.viewaxis[1]);
+		//up = DotProduct(dir, cg.refdef.viewaxis[2]);
+		Dot(dir, cg.refdef.viewaxis[0], front);
+		Dot(dir, cg.refdef.viewaxis[1], left);
+		Dot(dir, cg.refdef.viewaxis[2], up);
 
 		dir[0] = front;
 		dir[1] = left;

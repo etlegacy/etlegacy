@@ -2814,6 +2814,7 @@ public:
 		{
 			float fMaxSpeed = 127.f;
 			vec3_t angles, bodyangles, forward, right;
+			float dot;
 
 			// Convert the bots vector to angles and set the view angle to the orientation
 			vectoangles(_input.m_Facing, angles);
@@ -2832,8 +2833,12 @@ public:
 			bodyangles[PITCH] = 0;
 
 			AngleVectors(bodyangles, forward, right, NULL);
-			const float fwd = DotProduct(forward, _input.m_MoveDir);
-			const float rght = DotProduct(right, _input.m_MoveDir);
+			/*const float fwd = DotProduct(forward, _input.m_MoveDir);
+			const float rght = DotProduct(right, _input.m_MoveDir);*/
+			Dot(forward, _input.m_MoveDir, dot);
+			const float fwd = dot;
+			Dot(right, _input.m_MoveDir, dot);
+			const float rght = dot;
 
 			cmd.forwardmove = (char)(fwd * fMaxSpeed);
 			cmd.rightmove = (char)(rght * fMaxSpeed);

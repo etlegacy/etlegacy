@@ -1,11 +1,14 @@
 /* reliefMapping_vp.glsl - Relief mapping helper functions */
 // The heights are encoded in the alpha channel of an image.
 
+#if 0
 // input:          V = the view direction to the camera in tangentspace
 //           Vscaled = parallaxScale * V.xy / V.z
 //                 T = current texture coordinates
 //         normalMap = the .rgb is the normal, the .a is the height
 // returns a vec3, where .xy is the st offset,  and .z is the parralaxHeight
+
+//test.. remove this function..or make it work (again)
 vec3 parallaxReliefMappingOffset(vec3 V, vec2 Vscaled, vec2 T, sampler2D normalMap)
 {
 	const float minLayers = 8.0;
@@ -40,16 +43,21 @@ vec3 parallaxReliefMappingOffset(vec3 V, vec2 Vscaled, vec2 T, sampler2D normalM
 	}
 	return vec3(deltaTexCoords, curLayerHeight); //curTexCoords;
 }
+#endif
 
-float RayIntersectDisplaceMap(vec2 dp, vec2 ds, sampler2D normalMap)
-{
+
+// the next two functions were taken from the iortcw project.  (thanks)
+// There have been some minor adjustments though..
+
+float SampleDepth(sampler2D normalMap, vec2 t) {
+//	return 1.0 - texture2D(normalMap, t).a; //!!!DEBUG!!! our alpha data has some issue, using the displaceMap() function..
+	return texture2D(normalMap, t).r; // i would not have tried using .r ..
+}
+
+vec2 RayIntersectDisplaceMap(vec2 t, vec2 ds, sampler2D normalMap) {
 	const int linearSearchSteps = 16;
 	const int binarySearchSteps = 6;
-
-	float depthStep = 1.0 / float(linearSearchSteps);
-
-	// current size of search window
-	float size = depthStep;
+	const float stepSize = 1.0 / float(linearSearchSteps); 
 
 	// current depth position
 	float depth = 0.0;
@@ -58,41 +66,30 @@ float RayIntersectDisplaceMap(vec2 dp, vec2 ds, sampler2D normalMap)
 	float bestDepth = 1.0;
 
 	// search front to back for first point inside object
-	for (int i = 0; i < linearSearchSteps - 1; ++i)
-	{
-		depth += size;
-
-		vec4 t = texture2D(normalMap, dp + ds * depth);
-
-		if (bestDepth > 0.996)       // if no depth found yet
-		{
-			if (depth >= t.w)
-			{
-				bestDepth = depth;  // store best depth
-			}
+	for (int i = 0; i < linearSearchSteps - 1; ++i) {
+		depth += stepSize;
+		float d = SampleDepth(normalMap, ds * depth + t);
+		if (depth >= d) {
+			bestDepth = depth; // store best depth
+			break;
 		}
 	}
 
-	depth = bestDepth;
+	// current size of search window
+	float size = stepSize * 0.5;
+	depth = bestDepth - size;
 
 	// recurse around first point (depth) for closest match
-	for (int i = 0; i < binarySearchSteps; ++i)
-	{
+	for (int i = 0; i < binarySearchSteps; ++i) {
+		float d = SampleDepth(normalMap, ds * depth + t);
 		size *= 0.5;
-
-		vec4 t = texture2D(normalMap, dp + ds * depth);
-
-		if (depth >= t.w)
-		#ifdef RM_DOUBLEDEPTH
-			if (depth <= t.z)
-		#endif
-		{
+		if (depth >= d) {
 			bestDepth = depth;
-			depth    -= 2.0 * size;
+			depth -= size;
+		} else {
+			depth += size;
 		}
-
-		depth += size;
 	}
 
-	return bestDepth;
+	return ds * bestDepth;
 }

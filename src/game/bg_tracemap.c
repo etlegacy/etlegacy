@@ -790,8 +790,10 @@ qboolean BG_LoadTraceMap(char *rawmapname, vec2_t world_mins, vec2_t world_maxs)
 	tracemap.world_maxs[0] = world_maxs[0];
 	tracemap.world_maxs[1] = world_maxs[1];
 
-	one_over_mapgrid_factor[0] = 1.f / ((tracemap.world_maxs[0] - tracemap.world_mins[0]) / (float)TRACEMAP_SIZE);
-	one_over_mapgrid_factor[1] = 1.f / ((tracemap.world_maxs[1] - tracemap.world_mins[1]) / (float)TRACEMAP_SIZE);
+	//one_over_mapgrid_factor[0] = 1.0f / ((tracemap.world_maxs[0] - tracemap.world_mins[0]) / (float)TRACEMAP_SIZE);
+	//one_over_mapgrid_factor[1] = 1.0f / ((tracemap.world_maxs[1] - tracemap.world_mins[1]) / (float)TRACEMAP_SIZE);
+	one_over_mapgrid_factor[0] = rcp((tracemap.world_maxs[0] - tracemap.world_mins[0]) / (float)TRACEMAP_SIZE);
+	one_over_mapgrid_factor[1] = rcp((tracemap.world_maxs[1] - tracemap.world_mins[1]) / (float)TRACEMAP_SIZE);
 
 	tracemap.groundfloor = ground_min;
 	tracemap.groundceil  = ground_max;

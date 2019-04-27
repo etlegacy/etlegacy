@@ -307,8 +307,8 @@ static void AddSurfaceToVBOSurfacesListMDM(growList_t *vboSurfaces, growList_t *
 				*pCollapse = collapse[collapseValue];
 			}
 
+			// find out howmany indexes there are
 			indexesNum = 0;
-
 			for (j = 0; j < vboTriangles->currentElements; j++)
 			{
 				tri = Com_GrowListElement(vboTriangles, j);
@@ -329,6 +329,7 @@ static void AddSurfaceToVBOSurfacesListMDM(growList_t *vboSurfaces, growList_t *
 				indexesNum += 3;
 			}
 
+			// allocate memory for the indexes
 			indexesSize = indexesNum * sizeof(int);
 			indexes     = ri.Hunk_AllocateTempMemory(indexesSize);
 			indexesOfs  = 0;
@@ -353,7 +354,6 @@ static void AddSurfaceToVBOSurfacesListMDM(growList_t *vboSurfaces, growList_t *
 				for (k = 0; k < 3; k++)
 				{
 					index = ci[k];
-
 					Com_Memcpy(indexes + indexesOfs, &index, sizeof(int));
 					indexesOfs += sizeof(int);
 				}
@@ -753,16 +753,16 @@ qboolean R_LoadMDM(model_t *mod, void *buffer, const char *name)
 
 			for (j = 0, v = surf->verts; j < surf->numVerts; j++, v++)
 			{
-				VectorNormalize(v->tangent);
-				VectorNormalize(v->binormal);
-				VectorNormalize(v->normal);
+				VectorNormalizeOnly(v->tangent);
+				VectorNormalizeOnly(v->binormal);
+				VectorNormalizeOnly(v->normal);
 			}
 		}
 #else
 		{
-			int         k;
-			float       bb, s, t;
-			vec3_t      bary;
+			//int         k;
+			//float       bb, s, t;
+			//vec3_t      bary;
 			vec3_t      faceNormal;
 			md5Vertex_t *dv[3];
 
@@ -774,9 +774,13 @@ qboolean R_LoadMDM(model_t *mod, void *buffer, const char *name)
 
 				R_CalcNormalForTriangle(faceNormal, dv[0]->position, dv[1]->position, dv[2]->position);
 
+CalcTangentBinormal(dv[0]->position, dv[1]->position, dv[2]->position,
+					dv[0]->texCoords, dv[1]->texCoords, dv[2]->texCoords,
+					dv[0]->tangent, dv[0]->binormal, dv[1]->tangent, dv[1]->binormal, dv[2]->tangent, dv[2]->binormal);
+/*
 				// calculate barycentric basis for the triangle
-				bb = (dv[1]->texCoords[0] - dv[0]->texCoords[0]) * (dv[2]->texCoords[1] - dv[0]->texCoords[1]) - (dv[2]->texCoords[0] - dv[0]->texCoords[0]) * (dv[1]->texCoords[1] -
-				                                                                                                                                                dv[0]->texCoords[1]);
+				bb = (dv[1]->texCoords[0] - dv[0]->texCoords[0]) * (dv[2]->texCoords[1] - dv[0]->texCoords[1]) -
+					(dv[2]->texCoords[0] - dv[0]->texCoords[0]) * (dv[1]->texCoords[1] - dv[0]->texCoords[1]);
 
 				if (Q_fabs(bb) < 0.00000001f)
 				{
@@ -798,7 +802,7 @@ qboolean R_LoadMDM(model_t *mod, void *buffer, const char *name)
 					dv[k]->tangent[2] = bary[0] * dv[0]->position[2] + bary[1] * dv[1]->position[2] + bary[2] * dv[2]->position[2];
 
 					VectorSubtract(dv[k]->tangent, dv[k]->position, dv[k]->tangent);
-					VectorNormalize(dv[k]->tangent);
+					VectorNormalizeOnly(dv[k]->tangent);
 
 					// calculate t tangent vector (binormal)
 					s       = dv[k]->texCoords[0];
@@ -812,12 +816,12 @@ qboolean R_LoadMDM(model_t *mod, void *buffer, const char *name)
 					dv[k]->binormal[2] = bary[0] * dv[0]->position[2] + bary[1] * dv[1]->position[2] + bary[2] * dv[2]->position[2];
 
 					VectorSubtract(dv[k]->binormal, dv[k]->position, dv[k]->binormal);
-					VectorNormalize(dv[k]->binormal);
+					VectorNormalizeOnly(dv[k]->binormal);
 
 					// calculate the normal as cross product N=TxB
 #if 0
 					CrossProduct(dv[k]->tangent, dv[k]->binormal, dv[k]->normal);
-					VectorNormalize(dv[k]->normal);
+					VectorNormalizeOnly(dv[k]->normal);
 
 					// Gram-Schmidt orthogonalization process for B
 					// compute the cross product B=NxT to obtain
@@ -835,14 +839,15 @@ qboolean R_LoadMDM(model_t *mod, void *buffer, const char *name)
 					//VectorAdd(dv[k]->normal, faceNormal, dv[k]->normal);
 #endif
 				}
+*/
 			}
 
 #if 0
 			for (j = 0, v = surf->verts; j < surf->numVerts; j++, v++)
 			{
-				//VectorNormalize(v->tangent);
-				//VectorNormalize(v->binormal);
-				//VectorNormalize(v->normal);
+				//VectorNormalizeOnly(v->tangent);
+				//VectorNormalizeOnly(v->binormal);
+				//VectorNormalizeOnly(v->normal);
 			}
 #endif
 		}
@@ -865,7 +870,7 @@ qboolean R_LoadMDM(model_t *mod, void *buffer, const char *name)
 					}
 				}
 
-				VectorNormalize(surf->verts[j].normal);
+				VectorNormalizeOnly(surf->verts[j].normal);
 			}
 		}
 	}
@@ -885,7 +890,7 @@ qboolean R_LoadMDM(model_t *mod, void *buffer, const char *name)
 		for (i = 0, surf = mdmModel->surfaces; i < mdmModel->numSurfaces; i++, surf++)
 		{
 			// sort triangles
-			Com_InitGrowList(&sortedTriangles, 1000);
+			Com_InitGrowList(&sortedTriangles, 100); //Com_InitGrowList(&sortedTriangles, 1000);
 
 			for (j = 0, tri = surf->triangles; j < surf->numTriangles; j++, tri++)
 			{
@@ -933,7 +938,7 @@ qboolean R_LoadMDM(model_t *mod, void *buffer, const char *name)
 				numBoneReferences = 0;
 				Com_Memset(boneReferences, 0, sizeof(boneReferences));
 
-				Com_InitGrowList(&vboTriangles, 1000);
+				Com_InitGrowList(&vboTriangles, 100); //Com_InitGrowList(&vboTriangles, 1000);
 
 				for (j = 0; j < sortedTriangles.currentElements; j++)
 				{

@@ -179,14 +179,14 @@ static void R_SetupEntityLightingGrid(trRefEntity_t *ent, vec3_t forcedOrigin)
 {
 	vec3_t         lightOrigin;
 	int            pos[3];
-	int            i, j;
+	int            i; // , j;
 	bspGridPoint_t *gridPoint;
 	bspGridPoint_t *gridPoint2;
 	float          frac[3];
 	int            gridStep[3];
-	vec3_t         direction;
+	vec3_t         direction, vec;
 	float          totalFactor;
-	float          v;
+	//float          v;
 
 	if (forcedOrigin)
 	{
@@ -208,11 +208,12 @@ static void R_SetupEntityLightingGrid(trRefEntity_t *ent, vec3_t forcedOrigin)
 	}
 
 	VectorSubtract(lightOrigin, tr.world->lightGridOrigin, lightOrigin);
+	VectorMultiply(lightOrigin, tr.world->lightGridInverseSize, vec);
 	for (i = 0; i < 3; i++)
 	{
-		v       = lightOrigin[i] * tr.world->lightGridInverseSize[i];
-		pos[i]  = floor(v);
-		frac[i] = v - pos[i];
+		//v       = lightOrigin[i] * tr.world->lightGridInverseSize[i];
+		pos[i]  = floor(vec[i]);
+		frac[i] = vec[i] - (float)pos[i];
 		if (pos[i] < 0)
 		{
 			pos[i] = 0;
@@ -238,10 +239,10 @@ static void R_SetupEntityLightingGrid(trRefEntity_t *ent, vec3_t forcedOrigin)
 	totalFactor = 0;
 	for (i = 0; i < 8; i++)
 	{
-		float factor = 1.0;
+		float factor = 1.0f;
 
 		gridPoint2 = gridPoint;
-		for (j = 0; j < 3; j++)
+		/*for (j = 0; j < 3; j++)
 		{
 			if (i & (1 << j))
 			{
@@ -252,34 +253,97 @@ static void R_SetupEntityLightingGrid(trRefEntity_t *ent, vec3_t forcedOrigin)
 			{
 				factor *= (1.0f - frac[j]);
 			}
+		}*/
+		// loop j unrolled..
+		switch (i)
+		{
+		case 0:
+			factor *= (1.0f - frac[0]);
+			factor *= (1.0f - frac[1]);
+			factor *= (1.0f - frac[2]);
+			break;
+		case 1:
+			factor *= frac[0];
+			gridPoint2 += gridStep[0];
+			factor *= (1.0f - frac[1]);
+			factor *= (1.0f - frac[2]);
+			break;
+		case 2:
+			factor *= (1.0f - frac[0]);
+			factor *= frac[1];
+			gridPoint2 += gridStep[1];
+			factor *= (1.0f - frac[2]);
+			break;
+		case 3:
+			factor *= frac[0];
+			gridPoint2 += gridStep[0];
+			factor *= frac[1];
+			gridPoint2 += gridStep[1];
+			factor *= (1.0f - frac[2]);
+			break;
+		case 4:
+			factor *= (1.0f - frac[0]);
+			factor *= (1.0f - frac[1]);
+			factor *= frac[2];
+			gridPoint2 += gridStep[2];
+			break;
+		case 5:
+			factor *= frac[0];
+			gridPoint2 += gridStep[0];
+			factor *= (1.0f - frac[1]);
+			factor *= frac[2];
+			gridPoint2 += gridStep[2];
+			break;
+		case 6:
+			factor *= (1.0f - frac[0]);
+			factor *= frac[1];
+			gridPoint2 += gridStep[1];
+			factor *= frac[2];
+			gridPoint2 += gridStep[2];
+			break;
+		case 7:
+			factor *= frac[0];
+			gridPoint2 += gridStep[0];
+			factor *= frac[1];
+			gridPoint2 += gridStep[1];
+			factor *= frac[2];
+			gridPoint2 += gridStep[2];
+			break;
 		}
 
-		if (!(gridPoint2->ambientColor[0] + gridPoint2->ambientColor[1] + gridPoint2->ambientColor[2]))
+
+		if (gridPoint2->ambientColor[0] + gridPoint2->ambientColor[1] + gridPoint2->ambientColor[2] == 0.f)
 		{
 			continue;           // ignore samples in walls
 		}
 
 		totalFactor += factor;
 
-		ent->ambientLight[0] += factor * gridPoint2->ambientColor[0];
+		/*ent->ambientLight[0] += factor * gridPoint2->ambientColor[0];
 		ent->ambientLight[1] += factor * gridPoint2->ambientColor[1];
-		ent->ambientLight[2] += factor * gridPoint2->ambientColor[2];
+		ent->ambientLight[2] += factor * gridPoint2->ambientColor[2];*/
+		VectorScale(gridPoint2->ambientColor, factor, vec);
+		VectorAdd(ent->ambientLight, vec, ent->ambientLight);
 
-		ent->directedLight[0] += factor * gridPoint2->directedColor[0];
+		/*ent->directedLight[0] += factor * gridPoint2->directedColor[0];
 		ent->directedLight[1] += factor * gridPoint2->directedColor[1];
-		ent->directedLight[2] += factor * gridPoint2->directedColor[2];
+		ent->directedLight[2] += factor * gridPoint2->directedColor[2];*/
+		VectorScale(gridPoint2->directedColor, factor, vec);
+		VectorAdd(ent->directedLight, vec, ent->directedLight);
 
 		VectorMA(direction, factor, gridPoint2->direction, direction);
 	}
 
-	if (totalFactor > 0 && totalFactor < 0.99f)
+	//if (totalFactor > 0 && totalFactor < 0.99f) // < 0.99 ?  why not test < 1 ?   now, when == 1 vectors are scaled by 1 :S
+	if (totalFactor > 0 && totalFactor < 1.f)
 	{
-		totalFactor = 1.0f / totalFactor;
+		//totalFactor = 1.0f / totalFactor;
+		RECIPROCAL(totalFactor);
 		VectorScale(ent->ambientLight, totalFactor, ent->ambientLight);
 		VectorScale(ent->directedLight, totalFactor, ent->directedLight);
 	}
 
-	VectorNormalize2(direction, ent->lightDir);
+	VectorNormalize2Only(direction, ent->lightDir);
 
 	// cheats?  check for single player?
 	if (tr.lightGridMulDirected != 0.f)
@@ -302,6 +366,8 @@ static void R_SetupEntityLightingGrid(trRefEntity_t *ent, vec3_t forcedOrigin)
  */
 void R_SetupEntityLighting(const trRefdef_t *refdef, trRefEntity_t *ent, vec3_t forcedOrigin)
 {
+	float f;
+
 	// lighting calculations
 	if (ent->lightingCalculated)
 	{
@@ -325,24 +391,28 @@ void R_SetupEntityLighting(const trRefdef_t *refdef, trRefEntity_t *ent, vec3_t 
 		ent->directedLight[2] = tr.identityLight * (224.0f / 255.0f);
 
 		//VectorCopy(tr.sunDirection, ent->lightDir);
-		VectorSet(ent->lightDir, -1, 1, 1.25);
-		VectorNormalize(ent->lightDir);
+		VectorSet(ent->lightDir, -1.0f, 1.0f, 1.25f);
+		VectorNormalizeOnly(ent->lightDir);
 	}
 
 	// ambient light adds
 	if (ent->e.hilightIntensity != 0.f)
 	{
 		// level of intensity was set because the item was looked at
-		ent->ambientLight[0] += tr.identityLight * 128.0f / 255.0f * ent->e.hilightIntensity;
-		ent->ambientLight[1] += tr.identityLight * 128.0f / 255.0f * ent->e.hilightIntensity;
-		ent->ambientLight[2] += tr.identityLight * 128.0f / 255.0f * ent->e.hilightIntensity;
+		f = tr.identityLight * (128.0f / 255.0f) * ent->e.hilightIntensity;
+		/*ent->ambientLight[0] += f;
+		ent->ambientLight[1] += f;
+		ent->ambientLight[2] += f;*/
+		VectorAddConst(ent->ambientLight, f, ent->ambientLight);
 	}
 	else if (ent->e.renderfx & RF_MINLIGHT)  // && VectorLength(ent->ambientLight) <= 0)
 	{
 		// give everything a minimum light add
-		ent->ambientLight[0] += tr.identityLight * 32 / 255.0f;
-		ent->ambientLight[1] += tr.identityLight * 32 / 255.0f;
-		ent->ambientLight[2] += tr.identityLight * 32 / 255.0f;
+		f = tr.identityLight * (32.f / 255.0f);
+		/*ent->ambientLight[0] += f;
+		ent->ambientLight[1] += f;
+		ent->ambientLight[2] += f;*/
+		VectorAddConst(ent->ambientLight, f, ent->ambientLight);
 	}
 
 #if 0
@@ -361,33 +431,38 @@ void R_SetupEntityLighting(const trRefdef_t *refdef, trRefEntity_t *ent, vec3_t 
 	// transform the direction to local space
 	//d = VectorLength(ent->directedLight);
 	//VectorScale(ent->lightDir, d, lightDir);
-	//VectorNormalize(lightDir);
+	//VectorNormalizeOnly(lightDir);
 
-	//ent->lightDir[0] = DotProduct(lightDir, ent->e.axis[0]);
-	//ent->lightDir[1] = DotProduct(lightDir, ent->e.axis[1]);
-	//ent->lightDir[2] = DotProduct(lightDir, ent->e.axis[2]);
+	////ent->lightDir[0] = DotProduct(lightDir, ent->e.axis[0]);
+	////ent->lightDir[1] = DotProduct(lightDir, ent->e.axis[1]);
+	////ent->lightDir[2] = DotProduct(lightDir, ent->e.axis[2]);
+	//Dot(lightDir, ent->e.axis[0], ent->lightDir[0]);
+	//Dot(lightDir, ent->e.axis[1], ent->lightDir[1]);
+	//Dot(lightDir, ent->e.axis[2], ent->lightDir[2]);
 
 
 	// force an ambient light value or scale by given r_ambientscale
 	// note: this will also affect ambient light for hilightIntensity and RF_MINLIGHT ...
-	if (VectorLength(ent->ambientLight) < r_forceAmbient->value)
+	// ..try to avoid calculating a vectorlength.
+	if (r_forceAmbient->value && VectorLength(ent->ambientLight) < r_forceAmbient->value)
 	{
-		ent->ambientLight[0] = r_forceAmbient->value;
+		/*ent->ambientLight[0] = r_forceAmbient->value;
 		ent->ambientLight[1] = r_forceAmbient->value;
-		ent->ambientLight[2] = r_forceAmbient->value;
+		ent->ambientLight[2] = r_forceAmbient->value;*/
+		VectorSet(ent->ambientLight, r_forceAmbient->value, r_forceAmbient->value, r_forceAmbient->value);
 	}
 	else
 	{
-		if (refdef->rdflags & RDF_NOWORLDMODEL) // no scaling for no world models set world ambient light instead
-		{
-			VectorCopy(tr.worldEntity.ambientLight, ent->ambientLight);
-		}
 		if (refdef->rdflags & RDF_SNOOPERVIEW) // nightscope
 		{
 			VectorSet(ent->ambientLight, 0.96f, 0.96f, 0.96f);  // allow a little room for flicker from directed light
 		}
 		else
 		{
+			if (refdef->rdflags & RDF_NOWORLDMODEL) // no scaling for no world models set world ambient light instead
+			{
+				VectorCopy(tr.worldEntity.ambientLight, ent->ambientLight);
+			}
 			VectorScale(ent->ambientLight, r_ambientScale->value, ent->ambientLight);
 		}
 	}
@@ -412,32 +487,26 @@ void R_SetupLightOrigin(trRefLight_t *light)
 
 	if (light->l.rlType == RL_DIRECTIONAL)
 	{
-#if 1
 		if (!VectorCompare(light->l.center, vec3_origin))
 		{
-			mat4_transform_vec3(light->transformMatrix, light->l.center, transformed);
+			VectorTransformM4(light->transformMatrix, light->l.center, transformed);
 			VectorSubtract(transformed, light->l.origin, light->direction);
-			VectorNormalize(light->direction);
-
-			VectorMA(light->l.origin, 10000, light->direction, light->origin);
+			VectorNormalizeOnly(light->direction);
+			VectorMA(light->l.origin, 100000.0f, light->direction, light->origin);
 		}
 		else
-#endif
 		{
-			vec3_t down = { 0, 0, 1 };
-
-			mat4_transform_vec3(light->transformMatrix, down, transformed);
+			const vec3_t down = { 0.0f, 0.0f, 1.0f };
+			VectorTransformM4(light->transformMatrix, down, transformed);
 			VectorSubtract(transformed, light->l.origin, light->direction);
-			VectorNormalize(light->direction);
-
-			VectorMA(light->l.origin, 10000, light->direction, light->origin);
-
+			VectorNormalizeOnly(light->direction);
+			VectorMA(light->l.origin, 100000.0f, light->direction, light->origin);
 			VectorCopy(light->l.origin, light->origin);
 		}
 	}
 	else
 	{
-		mat4_transform_vec3(light->transformMatrix, light->l.center, light->origin);
+		VectorTransformM4(light->transformMatrix, light->l.center, light->origin);
 	}
 }
 
@@ -452,12 +521,15 @@ void R_SetupLightLocalBounds(trRefLight_t *light)
 	case RL_OMNI:
 	case RL_DIRECTIONAL:
 	{
-		light->localBounds[0][0] = -light->l.radius[0];
+		/*light->localBounds[0][0] = -light->l.radius[0];
 		light->localBounds[0][1] = -light->l.radius[1];
-		light->localBounds[0][2] = -light->l.radius[2];
-		light->localBounds[1][0] = light->l.radius[0];
+		light->localBounds[0][2] = -light->l.radius[2];*/
+		VectorCopy(light->l.radius, light->localBounds[0]);
+		VectorInverse(light->localBounds[0]);
+		/*light->localBounds[1][0] = light->l.radius[0];
 		light->localBounds[1][1] = light->l.radius[1];
-		light->localBounds[1][2] = light->l.radius[2];
+		light->localBounds[1][2] = light->l.radius[2];*/
+		VectorCopy(light->l.radius, light->localBounds[1]);
 		break;
 	}
 	case RL_PROJ:
@@ -547,7 +619,7 @@ void R_SetupLightView(trRefLight_t *light)
 	case RL_DIRECTIONAL:
 	{
 		MatrixAffineInverse(light->transformMatrix, light->viewMatrix);
-		break;
+		return; // break;
 	}
 	/*
 	case RL_PROJ:
@@ -558,11 +630,11 @@ void R_SetupLightView(trRefLight_t *light)
 
 	    // convert from our coordinate system (looking down X)
 	    // to OpenGL's coordinate system (looking down -Z)
-	    mat4_mult(quakeToOpenGLMatrix, viewMatrix, light->viewMatrix);
+	    Matrix4Multiply(quakeToOpenGLMatrix, viewMatrix, light->viewMatrix);
 	    break;
 	}
 	*/
-	default:
+	default: // would this ever happen?.. a light of an unknown type
 		Ren_Drop("R_SetupLightView: Bad rlType");
 		//break;
 	}
@@ -580,9 +652,9 @@ void R_SetupLightFrustum(trRefLight_t *light)
 	case RL_DIRECTIONAL:
 	{
 		int    i;
+		axis_t axis;
 		vec3_t planeNormal;
 		vec3_t planeOrigin;
-		axis_t axis;
 
 		quat_to_axis(light->l.rotation, axis);
 
@@ -590,39 +662,51 @@ void R_SetupLightFrustum(trRefLight_t *light)
 		{
 			VectorMA(light->l.origin, light->l.radius[i], axis[i], planeOrigin);
 			VectorNegate(axis[i], planeNormal);
-			VectorNormalize(planeNormal);
-
+			VectorNormalizeOnly(planeNormal);
 			VectorCopy(planeNormal, light->frustum[i].normal);
-			light->frustum[i].dist = DotProduct(planeOrigin, planeNormal);
-		}
-
-		for (i = 0; i < 3; i++)
-		{
+			//light->frustum[i].dist = DotProduct(planeOrigin, planeNormal);
+			Dot(planeOrigin, planeNormal, light->frustum[i].dist);
+		//}
+		//for (i = 0; i < 3; i++)
+		//{
 			VectorMA(light->l.origin, -light->l.radius[i], axis[i], planeOrigin);
 			VectorCopy(axis[i], planeNormal);
-			VectorNormalize(planeNormal);
-
+			VectorNormalizeOnly(planeNormal);
 			VectorCopy(planeNormal, light->frustum[i + 3].normal);
-			light->frustum[i + 3].dist = DotProduct(planeOrigin, planeNormal);
+			//light->frustum[i + 3].dist = DotProduct(planeOrigin, planeNormal);
+			Dot(planeOrigin, planeNormal, light->frustum[i + 3].dist);
 		}
 
 		for (i = 0; i < 6; i++)
 		{
-			vec_t length, ilength;
+			//vec_t length; // , ilength;
 
 			light->frustum[i].type = PLANE_NON_AXIAL;
 
 			// normalize
-			length = VectorLength(light->frustum[i].normal);
+			/*length = VectorLength(light->frustum[i].normal);
 			if (length != 0.f)
 			{
 				ilength                      = 1.0f / length;
-				light->frustum[i].normal[0] *= ilength;
-				light->frustum[i].normal[1] *= ilength;
-				light->frustum[i].normal[2] *= ilength;
+				//light->frustum[i].normal[0] *= ilength;
+				//light->frustum[i].normal[1] *= ilength;
+				//light->frustum[i].normal[2] *= ilength;
+				VectorScale(light->frustum[i].normal, ilength, light->frustum[i].normal);
 				light->frustum[i].dist      *= ilength;
+			}*/
+#if 0
+			VectorNorm(light->frustum[i].normal, &length);
+			if (length != 0.f)
+			{
+				//light->frustum[i].dist /= length;
+				light->frustum[i].dist *= rcp(length);
 			}
-
+#else
+			// ^^that^^ is really a Vector4Norm
+			// NOTE: vec4 scales the frustum.dist as well
+			//       Beware of this! because it is not obvious at first glance..
+			Vector4NormalizeOnly(light->frustum[i].normal);
+#endif
 			SetPlaneSignbits(&light->frustum[i]);
 		}
 		break;
@@ -643,8 +727,9 @@ void R_SetupLightFrustum(trRefLight_t *light)
 		{
 			PlaneNormalize(worldFrustum[i]);
 
-			VectorCopy(worldFrustum[i], light->frustum[i].normal);
-			light->frustum[i].dist = worldFrustum[i][3];
+			/*VectorCopy(worldFrustum[i], light->frustum[i].normal);
+			light->frustum[i].dist = worldFrustum[i][3];*/
+			Vector4Copy(worldFrustum[i], light->frustum[i].normal); // normal & dist are stored  in this packed memory order..
 
 			light->frustum[i].type = PLANE_NON_AXIAL;
 
@@ -658,7 +743,7 @@ void R_SetupLightFrustum(trRefLight_t *light)
 
 	if (light->isStatic)
 	{
-		int           i, j;
+		int           i, j, i3;
 		vec4_t        quadVerts[4];
 		srfVert_t     *verts;
 		srfTriangle_t *triangles;
@@ -674,8 +759,44 @@ void R_SetupLightFrustum(trRefLight_t *light)
 		{
 			vec3_t worldBounds[2];
 
-			mat4_transform_vec3(light->transformMatrix, light->localBounds[0], worldBounds[0]);
-			mat4_transform_vec3(light->transformMatrix, light->localBounds[1], worldBounds[1]);
+#ifndef ETL_SSE
+			VectorTransformM4(light->transformMatrix, light->localBounds[0], worldBounds[0]);
+			VectorTransformM4(light->transformMatrix, light->localBounds[1], worldBounds[1]);
+#else
+			__m128 xmm0, xmm1, xmm2, xmm3, xmm4, xmm5, xmm6;
+			xmm3 = _mm_loadu_ps((const float *)&light->transformMatrix[0]);
+			xmm4 = _mm_loadu_ps((const float *)&light->transformMatrix[4]);
+			xmm5 = _mm_loadu_ps((const float *)&light->transformMatrix[8]);
+			xmm6 = _mm_loadu_ps((const float *)&light->transformMatrix[12]);
+
+			xmm1 = _mm_loadh_pi(_mm_load_ss((const float *)&light->localBounds[0][0]), (const __m64 *)&light->localBounds[0][1]);
+			xmm2 = _mm_shuffle_ps(xmm1, xmm1, 0b11111111);
+			xmm1 = _mm_shuffle_ps(xmm1, xmm1, 0b10101010);
+			xmm0 = _mm_shuffle_ps(xmm1, xmm1, 0b00000000);
+			xmm0 = _mm_mul_ps(xmm0, xmm3);
+			xmm1 = _mm_mul_ps(xmm1, xmm4);
+			xmm2 = _mm_mul_ps(xmm2, xmm5);
+			xmm0 = _mm_add_ps(xmm0, xmm1);
+			xmm0 = _mm_add_ps(xmm0, xmm2);
+			xmm0 = _mm_add_ps(xmm0, xmm6);
+			xmm0 = _mm_shuffle_ps(xmm0, xmm0, 0b10010100);
+			_mm_store_ss((float *)&worldBounds[0][0], xmm0);
+			_mm_storeh_pi((__m64 *)&worldBounds[0][1], xmm0);
+
+			xmm1 = _mm_loadh_pi(_mm_load_ss((const float *)&light->localBounds[1][0]), (const __m64 *)&light->localBounds[1][1]);
+			xmm2 = _mm_shuffle_ps(xmm1, xmm1, 0b11111111);
+			xmm1 = _mm_shuffle_ps(xmm1, xmm1, 0b10101010);
+			xmm0 = _mm_shuffle_ps(xmm1, xmm1, 0b00000000);
+			xmm0 = _mm_mul_ps(xmm0, xmm3);
+			xmm1 = _mm_mul_ps(xmm1, xmm4);
+			xmm2 = _mm_mul_ps(xmm2, xmm5);
+			xmm0 = _mm_add_ps(xmm0, xmm1);
+			xmm0 = _mm_add_ps(xmm0, xmm2);
+			xmm0 = _mm_add_ps(xmm0, xmm6);
+			xmm0 = _mm_shuffle_ps(xmm0, xmm0, 0b10010100);
+			_mm_store_ss((float *)&worldBounds[1][0], xmm0);
+			_mm_storeh_pi((__m64 *)&worldBounds[1][1], xmm0);
+#endif
 
 			Tess_AddCube(vec3_origin, worldBounds[0], worldBounds[1], colorWhite);
 
@@ -684,14 +805,20 @@ void R_SetupLightFrustum(trRefLight_t *light)
 
 			for (i = 0; i < tess.numVertexes; i++)
 			{
-				VectorCopy(tess.xyz[i], verts[i].xyz);
+				VectorCopy(tess.xyz[i], verts[i].xyz);	// vec4 to vec3 :S
 			}
 
-			for (i = 0; i < (tess.numIndexes / 3); i++)
+			/*for (i = 0; i < (tess.numIndexes / 3); i++)
 			{
 				triangles[i].indexes[0] = tess.indexes[i * 3 + 0];
 				triangles[i].indexes[1] = tess.indexes[i * 3 + 1];
 				triangles[i].indexes[2] = tess.indexes[i * 3 + 2];
+			}*/
+			for (i = 0, i3 = 0; i3 < tess.numIndexes; i++, i3 += 3)
+			{
+				triangles[i].indexes[0] = tess.indexes[i3 + 0];
+				triangles[i].indexes[1] = tess.indexes[i3 + 1];
+				triangles[i].indexes[2] = tess.indexes[i3 + 2];
 			}
 
 			light->frustumVBO = R_CreateVBO2("staticLightFrustum_VBO", tess.numVertexes, verts, ATTR_POSITION, VBO_USAGE_STATIC);
@@ -780,10 +907,10 @@ void R_SetupLightFrustum(trRefLight_t *light)
 					tess.numVertexes++;
 				}
 
-				Vector4Set(quadVerts[0], farCorners[0][0], farCorners[0][1], farCorners[0][2], 1);
-				Vector4Set(quadVerts[1], farCorners[1][0], farCorners[1][1], farCorners[1][2], 1);
-				Vector4Set(quadVerts[2], farCorners[2][0], farCorners[2][1], farCorners[2][2], 1);
-				Vector4Set(quadVerts[3], farCorners[3][0], farCorners[3][1], farCorners[3][2], 1);
+				Vector4Set(quadVerts[0], farCorners[0][0], farCorners[0][1], farCorners[0][2], 1.0f);
+				Vector4Set(quadVerts[1], farCorners[1][0], farCorners[1][1], farCorners[1][2], 1.0f);
+				Vector4Set(quadVerts[2], farCorners[2][0], farCorners[2][1], farCorners[2][2], 1.0f);
+				Vector4Set(quadVerts[3], farCorners[3][0], farCorners[3][1], farCorners[3][2], 1.0f);
 				Tess_AddQuadStamp2(quadVerts, colorRed);
 			}
 
@@ -795,11 +922,17 @@ void R_SetupLightFrustum(trRefLight_t *light)
 				VectorCopy(tess.xyz[i], verts[i].xyz);
 			}
 
-			for (i = 0; i < (tess.numIndexes / 3); i++)
+			/*for (i = 0; i < (tess.numIndexes / 3); i++)
 			{
 				triangles[i].indexes[0] = tess.indexes[i * 3 + 0];
 				triangles[i].indexes[1] = tess.indexes[i * 3 + 1];
 				triangles[i].indexes[2] = tess.indexes[i * 3 + 2];
+			}*/
+			for (i = 0, i3 = 0; i3 < tess.numIndexes; i++, i3 += 3)
+			{
+				triangles[i].indexes[0] = tess.indexes[i3 + 0];
+				triangles[i].indexes[1] = tess.indexes[i3 + 1];
+				triangles[i].indexes[2] = tess.indexes[i3 + 2];
 			}
 
 			light->frustumVBO = R_CreateVBO2("staticLightFrustum_VBO", tess.numVertexes, verts, ATTR_POSITION, VBO_USAGE_STATIC);
@@ -834,12 +967,13 @@ void R_SetupLightProjection(trRefLight_t *light)
 	case RL_OMNI:
 	case RL_DIRECTIONAL:
 	{
-		mat4_reset_scale(light->projectionMatrix, 1.0f / light->l.radius[0], 1.0f / light->l.radius[1], 1.0f / light->l.radius[2]);
+		//Matrix4IdentTranslate(light->projectionMatrix, 1.0f / light->l.radius[0], 1.0f / light->l.radius[1], 1.0f / light->l.radius[2]);
+		Matrix4IdentTranslate(light->projectionMatrix, rcp(light->l.radius[0]), rcp(light->l.radius[1]), rcp(light->l.radius[2]));
 		break;
 	}
 	case RL_PROJ:
 	{
-		int    i;
+		//int    i;
 		float  *proj    = light->projectionMatrix;
 		vec4_t *frustum = light->localFrustum;
 		vec4_t lightProject[4];
@@ -849,7 +983,7 @@ void R_SetupLightProjection(trRefLight_t *light)
 		float  falloffLen;
 		float  rLen;
 		float  uLen;
-		float  a, b, ofs, dist;
+		float  a, b, ofs, dist, dot;
 		vec4_t targetGlobal;
 
 		// This transformation remaps the X,Y coordinates from [-1..1] to [0..1],
@@ -862,10 +996,11 @@ void R_SetupLightProjection(trRefLight_t *light)
 		uLen = VectorNormalize2(light->l.projUp, up);
 
 		CrossProduct(up, right, normal);
-		VectorNormalize(normal);
+		VectorNormalizeOnly(normal);
 
-		dist = DotProduct(light->l.projTarget, normal);
-		if (dist < 0)
+		//dist = DotProduct(light->l.projTarget, normal);
+		Dot(light->l.projTarget, normal, dist);
+		if (dist < 0.f)
 		{
 			dist = -dist;
 			VectorInverse(normal);
@@ -874,13 +1009,13 @@ void R_SetupLightProjection(trRefLight_t *light)
 		VectorScale(right, (0.5f * dist) / rLen, right);
 		VectorScale(up, -(0.5f * dist) / uLen, up);
 
-		Vector4Set(lightProject[0], right[0], right[1], right[2], 0);
-		Vector4Set(lightProject[1], up[0], up[1], up[2], 0);
-		Vector4Set(lightProject[2], normal[0], normal[1], normal[2], 0);
+		Vector4Set(lightProject[0], right[0], right[1], right[2], 0.0f);
+		Vector4Set(lightProject[1], up[0], up[1], up[2], 0.0f);
+		Vector4Set(lightProject[2], normal[0], normal[1], normal[2], 0.0f);
 
 		// now offset to center
 		VectorCopy(light->l.projTarget, targetGlobal);
-		targetGlobal[3] = 1;
+		targetGlobal[3] = 1.0f;
 		{
 			a   = DotProduct4(targetGlobal, lightProject[0]);
 			b   = DotProduct4(targetGlobal, lightProject[2]);
@@ -916,17 +1051,22 @@ void R_SetupLightProjection(trRefLight_t *light)
 
 		// Calculate the falloff vector
 		VectorSubtract(stop, start, falloff);
-		light->falloffLength = falloffLen = VectorNormalize(falloff);
-		if (falloffLen <= 0)
+		//light->falloffLength = falloffLen = VectorNormalize(falloff);
+		VectorNorm(falloff, &falloffLen);
+		light->falloffLength = falloffLen;
+		if (falloffLen <= 0.0f)
 		{
-			falloffLen = 1;
+			falloffLen = 1.0f;
 		}
 		//FIXME ?
-		VectorScale(falloff, 1.0f / falloffLen, falloff);
+		//VectorScale(falloff, 1.0f / falloffLen, falloff);
+		VectorScale(falloff, rcp(falloffLen), falloff);
 
-		//light->falloffLength = 1;
+		//light->falloffLength = 1.0f;
 
-		Vector4Set(lightProject[3], falloff[0], falloff[1], falloff[2], -DotProduct(start, falloff));
+		//Vector4Set(lightProject[3], falloff[0], falloff[1], falloff[2], -DotProduct(start, falloff));
+		Dot(start, falloff, dot);
+		Vector4Set(lightProject[3], falloff[0], falloff[1], falloff[2], -dot);
 
 		// we want the planes of s=0, s=q, t=0, and t=q
 		Vector4Copy(lightProject[0], frustum[FRUSTUM_LEFT]);
@@ -969,10 +1109,12 @@ void R_SetupLightProjection(trRefLight_t *light)
 		//proj[10] *= 0.5f;
 
 		// normalise all frustum planes
-		for (i = 0; i < 6; i++)
-		{
-			PlaneNormalize(frustum[i]);
-		}
+		PlaneNormalize(frustum[FRUSTUM_LEFT]);
+		PlaneNormalize(frustum[FRUSTUM_RIGHT]);
+		PlaneNormalize(frustum[FRUSTUM_BOTTOM]);
+		PlaneNormalize(frustum[FRUSTUM_TOP]);
+		PlaneNormalize(frustum[FRUSTUM_NEAR]);
+		PlaneNormalize(frustum[FRUSTUM_FAR]);
 
 #if 0
 		Ren_Print("normalized frustum:\n");
@@ -1012,9 +1154,19 @@ qboolean R_AddLightInteraction(trRefLight_t *light, surfaceType_t *surface, shad
 			return qfalse;
 		}
 	}
-
+/*
+	// test: don't interact on the same >1..
+	// update: If you enable this code, playermodel-shadows are not all/fully drawn.
+	for (int i = 0; i < tr.refdef.numInteractions; i++)
+	{
+		ia = &tr.refdef.interactions[i];
+		if (ia->surface == surface && ia->surfaceShader == surfaceShader && ia->light == light) {
+			return qfalse;
+		}
+	}
+*/
 	// instead of checking for overflow, we just mask the index
-	// so it wraps around
+	 // so it wraps around
 	iaIndex = tr.refdef.numInteractions & INTERACTION_MASK;
 	ia      = &tr.refdef.interactions[iaIndex];
 	tr.refdef.numInteractions++;
@@ -1186,15 +1338,37 @@ void R_SortInteractions(trRefLight_t *light)
  * @param[in] plane
  * @param[out] res
  */
-static void R_IntersectRayPlane(const vec3_t v1, const vec3_t v2, cplane_t *plane, vec3_t res)
+ID_INLINE void R_IntersectRayPlane(const vec3_t v1, const vec3_t v2, cplane_t *plane, vec3_t res)
 {
 	vec3_t v;
-	float  sect;
-
+	float  sect, dotnv1, dotnv;
 	VectorSubtract(v1, v2, v);
-	sect = -(DotProduct(plane->normal, v1) - plane->dist) / DotProduct(plane->normal, v);
+	//sect = -(DotProduct(plane->normal, v1) - plane->dist) / DotProduct(plane->normal, v);
+	Dot(plane->normal, v1, dotnv1);
+	Dot(plane->normal, v, dotnv);
+	sect = -(dotnv1 - plane->dist) / dotnv;
 	VectorScale(v, sect, v);
 	VectorAdd(v1, v, res);
+}
+
+/**
+ * @brief R_TransformWorldToClip
+ * @param[in] src
+ * @param[in] cameraViewMatrix
+ * @param[in] projectionMatrix
+ * @param[in] eye
+ * @param[out] dst
+ * unused
+ */
+void R_TransformWorldToClip(const vec3_t src, const float *cameraViewMatrix, const float *projectionMatrix, vec4_t eye,	vec4_t dst)
+{
+	vec4_t src2;
+
+	VectorCopy(src, src2);
+	src2[3] = 1.0f;
+
+	Vector4TransformM4(cameraViewMatrix, src2, eye);
+	Vector4TransformM4(projectionMatrix, eye, dst);
 }
 
 /**
@@ -1202,32 +1376,49 @@ static void R_IntersectRayPlane(const vec3_t v1, const vec3_t v2, cplane_t *plan
  * @param[in,out] light
  * @param[in] world
  */
-static void R_AddPointToLightScissor(trRefLight_t *light, const vec3_t world)
+#pragma warning(disable:4700)
+ID_INLINE void R_AddPointToLightScissor(trRefLight_t *light, const vec3_t world)
 {
-	vec4_t eye, clip, normalized, window;
+	vec4_t eye, clip, normalized, window, src2;
+	int windowInt[2];
 
-	R_TransformWorldToClip(world, tr.viewParms.world.viewMatrix, tr.viewParms.projectionMatrix, eye, clip);
-	R_TransformClipToWindow(clip, &tr.viewParms, normalized, window);
+	///R_TransformWorldToClip(world, tr.viewParms.world.viewMatrix, tr.viewParms.projectionMatrix, eye, clip);
+	Vector4Set(src2, world[0], world[1], world[2], 1.f);
+	Vector4TransformM4(tr.viewParms.world.viewMatrix, src2, eye);
+	Vector4TransformM4(tr.viewParms.projectionMatrix, eye, clip);
 
-	if (window[0] > light->scissor.coords[2])
+	///R_TransformClipToWindow(clip, &tr.viewParms, normalized, window);
+	Vector2Scale(&clip[0], 1.f / clip[3], &normalized[0]);
+	//window[0] = ((1.0f + normalized[0]) * 0.5f * (float)tr.viewParms.viewportWidth) + (float)tr.viewParms.viewportX;
+	//window[1] = ((1.0f + normalized[1]) * 0.5f * (float)tr.viewParms.viewportHeight) + (float)tr.viewParms.viewportY;
+	Vector2AddConst(normalized, 1.f, window);
+	Vector2Scale(window, 0.5f, window);
+	window[0] = window[0] * (float)tr.viewParms.viewportWidth + (float)tr.viewParms.viewportX;
+	window[1] = window[1] * (float)tr.viewParms.viewportHeight + (float)tr.viewParms.viewportY;
+
+	//window[0] = (int)(window[0] + 0.5f);
+	//window[1] = (int)(window[1] + 0.5f);
+	Vector2AddConst(window, 0.5f, window);
+	windowInt[0] = (int)window[0]; // eeer..
+	windowInt[1] = (int)window[1];
+
+	if (windowInt[0] > light->scissor.coords[2])
 	{
-		light->scissor.coords[2] = (int)window[0];
+		light->scissor.coords[2] = windowInt[0];
 	}
-
-	if (window[0] < light->scissor.coords[0])
+	if (windowInt[0] < light->scissor.coords[0])
 	{
-		light->scissor.coords[0] = (int)window[0];
+		light->scissor.coords[0] = windowInt[0];
 	}
-
-	if (window[1] > light->scissor.coords[3])
+	if (windowInt[1] > light->scissor.coords[3])
 	{
-		light->scissor.coords[3] = (int)window[1];
+		light->scissor.coords[3] = windowInt[1];
 	}
-
-	if (window[1] < light->scissor.coords[1])
+	if (windowInt[1] < light->scissor.coords[1])
 	{
-		light->scissor.coords[1] = (int)window[1];
+		light->scissor.coords[1] = windowInt[1];
 	}
+#pragma warning(default:4700)
 }
 
 /**
@@ -1236,26 +1427,38 @@ static void R_AddPointToLightScissor(trRefLight_t *light, const vec3_t world)
  * @param[in] local1
  * @param[in] local2
  */
-static void R_AddEdgeToLightScissor(trRefLight_t *light, vec3_t local1, vec3_t local2)
+ID_INLINE void R_AddEdgeToLightScissor(trRefLight_t *light, vec3_t local1, vec3_t local2)
 {
 	int      i;
-	vec3_t   intersect = { 0 };
-	vec3_t   world1, world2;
+	vec3_t   world1, world2, intersect; // = { 0 };
 	qboolean side1, side2;
 	cplane_t *frust;
+	float    dot;
+
+	//R_LocalPointToWorld(local1, world1);
+	VectorTransformM4(tr.orientation.transformMatrix, local1, world1);
+	//R_LocalPointToWorld(local2, world2);
+	VectorTransformM4(tr.orientation.transformMatrix, local2, world2);
 
 	for (i = 0; i < FRUSTUM_PLANES; i++)
 	{
-		R_LocalPointToWorld(local1, world1);
-		R_LocalPointToWorld(local2, world2);
+/*		//R_LocalPointToWorld(local1, world1);
+		VectorTransformM4(tr.orientation.transformMatrix, local1, world1);
+
+		//R_LocalPointToWorld(local2, world2);
+		VectorTransformM4(tr.orientation.transformMatrix, local2, world2);*/
 
 		frust = &tr.viewParms.frustums[0][i];
 
 		// check edge to frustrum plane
-		side1 = ((DotProduct(frust->normal, world1) - frust->dist) >= 0.0f);
-		side2 = ((DotProduct(frust->normal, world2) - frust->dist) >= 0.0f);
+		/*side1 = ((DotProduct(frust->normal, world1) - frust->dist) >= 0.0f);
+		side2 = ((DotProduct(frust->normal, world2) - frust->dist) >= 0.0f);*/
+		Dot(frust->normal, world1, dot);
+		side1 = (dot - frust->dist >= 0.0f);
+		Dot(frust->normal, world2, dot);
+		side2 = (dot - frust->dist >= 0.0f);
 
-		if (glConfig2.occlusionQueryAvailable && i == FRUSTUM_NEAR)
+		/*if (glConfig2.occlusionQueryAvailable && i == FRUSTUM_NEAR)
 		{
 			if (!side1 || !side2)
 			{
@@ -1266,7 +1469,6 @@ static void R_AddEdgeToLightScissor(trRefLight_t *light, vec3_t local1, vec3_t l
 		if (!side1 && !side2)
 		{
 			continue;           // edge behind plane
-
 		}
 		if (!side1 || !side2)
 		{
@@ -1280,10 +1482,33 @@ static void R_AddEdgeToLightScissor(trRefLight_t *light, vec3_t local1, vec3_t l
 		else if (!side2)
 		{
 			VectorCopy(intersect, world2);
+		}*/
+		if (!side1 || !side2)
+		{
+			if (glConfig2.occlusionQueryAvailable && i == FRUSTUM_NEAR)	// is this a hack? or what?..
+			{
+				light->noOcclusionQueries = qtrue;
+			}
+			if (!side1 && !side2)
+			{
+				continue; // edge behind plane
+			}
+			R_IntersectRayPlane(world1, world2, frust, intersect);
+			if (!side1)
+			{
+				//VectorCopy(intersect, world1);
+				R_AddPointToLightScissor(light, intersect);
+				R_AddPointToLightScissor(light, world2);
+			}
+			else // if (!side2)
+			{
+				//VectorCopy(intersect, world2);
+				R_AddPointToLightScissor(light, world1);
+				R_AddPointToLightScissor(light, intersect);
+			}
 		}
-
-		R_AddPointToLightScissor(light, world1);
-		R_AddPointToLightScissor(light, world2);
+		//R_AddPointToLightScissor(light, world1);
+		//R_AddPointToLightScissor(light, world2);
 	}
 }
 
@@ -1295,7 +1520,7 @@ static void R_AddEdgeToLightScissor(trRefLight_t *light, vec3_t local1, vec3_t l
  */
 void R_SetupLightScissor(trRefLight_t *light)
 {
-	vec3_t v1, v2;
+	vec3_t v1, v3, v4, v5, v6, v7, v8, v9;
 
 	light->scissor.coords[0] = tr.viewParms.viewportX;
 	light->scissor.coords[1] = tr.viewParms.viewportY;
@@ -1337,56 +1562,67 @@ void R_SetupLightScissor(trRefLight_t *light)
 	{
 	case RL_OMNI:
 	{
+// TODO: There's really a lot of copying data in this function.. and also lots of function calls. => inline
+// also a lot of double stuff :S  same verts copied
 		// top plane
-		VectorSet(v1, light->localBounds[1][0], light->localBounds[1][1], light->localBounds[1][2]);
-		VectorSet(v2, light->localBounds[0][0], light->localBounds[1][1], light->localBounds[1][2]);
-		R_AddEdgeToLightScissor(light, v1, v2);
+		//VectorSet(v1, light->localBounds[1][0], light->localBounds[1][1], light->localBounds[1][2]);
+		VectorCopy(light->localBounds[1], v1);
+		VectorSet(v3, light->localBounds[0][0], light->localBounds[1][1], light->localBounds[1][2]);
+		R_AddEdgeToLightScissor(light, v1, v3);
 
-		VectorSet(v1, light->localBounds[1][0], light->localBounds[1][1], light->localBounds[1][2]);
-		VectorSet(v2, light->localBounds[1][0], light->localBounds[0][1], light->localBounds[1][2]);
-		R_AddEdgeToLightScissor(light, v1, v2);
+		//VectorSet(v1, light->localBounds[1][0], light->localBounds[1][1], light->localBounds[1][2]);
+		VectorSet(v4, light->localBounds[1][0], light->localBounds[0][1], light->localBounds[1][2]);
+		R_AddEdgeToLightScissor(light, v1, v4);
 
-		VectorSet(v1, light->localBounds[0][0], light->localBounds[0][1], light->localBounds[1][2]);
-		VectorSet(v2, light->localBounds[0][0], light->localBounds[1][1], light->localBounds[1][2]);
-		R_AddEdgeToLightScissor(light, v1, v2);
+		VectorSet(v5, light->localBounds[0][0], light->localBounds[0][1], light->localBounds[1][2]);
+//		VectorSet(v2, light->localBounds[0][0], light->localBounds[1][1], light->localBounds[1][2]);
+//		R_AddEdgeToLightScissor(light, v1, v2);
+		R_AddEdgeToLightScissor(light, v5, v3);
 
-		VectorSet(v1, light->localBounds[0][0], light->localBounds[0][1], light->localBounds[1][2]);
-		VectorSet(v2, light->localBounds[1][0], light->localBounds[0][1], light->localBounds[1][2]);
-		R_AddEdgeToLightScissor(light, v1, v2);
+//		VectorSet(v1, light->localBounds[0][0], light->localBounds[0][1], light->localBounds[1][2]);
+//		VectorSet(v2, light->localBounds[1][0], light->localBounds[0][1], light->localBounds[1][2]);
+//		R_AddEdgeToLightScissor(light, v1, v2);
+		R_AddEdgeToLightScissor(light, v5, v4);
 
 		// bottom plane
-		VectorSet(v1, light->localBounds[1][0], light->localBounds[1][1], light->localBounds[0][2]);
-		VectorSet(v2, light->localBounds[0][0], light->localBounds[1][1], light->localBounds[0][2]);
-		R_AddEdgeToLightScissor(light, v1, v2);
+		VectorSet(v7, light->localBounds[1][0], light->localBounds[1][1], light->localBounds[0][2]);
+		VectorSet(v8, light->localBounds[0][0], light->localBounds[1][1], light->localBounds[0][2]);
+		R_AddEdgeToLightScissor(light, v7, v8);
 
-		VectorSet(v1, light->localBounds[1][0], light->localBounds[1][1], light->localBounds[0][2]);
-		VectorSet(v2, light->localBounds[1][0], light->localBounds[0][1], light->localBounds[0][2]);
-		R_AddEdgeToLightScissor(light, v1, v2);
+//		VectorSet(v1, light->localBounds[1][0], light->localBounds[1][1], light->localBounds[0][2]);
+		VectorSet(v9, light->localBounds[1][0], light->localBounds[0][1], light->localBounds[0][2]);
+		R_AddEdgeToLightScissor(light, v7, v9);
 
-		VectorSet(v1, light->localBounds[0][0], light->localBounds[0][1], light->localBounds[0][2]);
-		VectorSet(v2, light->localBounds[0][0], light->localBounds[1][1], light->localBounds[0][2]);
-		R_AddEdgeToLightScissor(light, v1, v2);
+		//VectorSet(v1, light->localBounds[0][0], light->localBounds[0][1], light->localBounds[0][2]);
+		VectorCopy(light->localBounds[0], v6);
+//		VectorSet(v2, light->localBounds[0][0], light->localBounds[1][1], light->localBounds[0][2]);
+		R_AddEdgeToLightScissor(light, v6, v8);
 
-		VectorSet(v1, light->localBounds[0][0], light->localBounds[0][1], light->localBounds[0][2]);
-		VectorSet(v2, light->localBounds[1][0], light->localBounds[0][1], light->localBounds[0][2]);
-		R_AddEdgeToLightScissor(light, v1, v2);
+		//VectorSet(v1, light->localBounds[0][0], light->localBounds[0][1], light->localBounds[0][2]);
+//		VectorSet(v2, light->localBounds[1][0], light->localBounds[0][1], light->localBounds[0][2]);
+		R_AddEdgeToLightScissor(light, v1, v9);
 
 		// sides
-		VectorSet(v1, light->localBounds[0][0], light->localBounds[1][1], light->localBounds[0][2]);
-		VectorSet(v2, light->localBounds[0][0], light->localBounds[1][1], light->localBounds[1][2]);
-		R_AddEdgeToLightScissor(light, v1, v2);
+//		VectorSet(v1, light->localBounds[0][0], light->localBounds[1][1], light->localBounds[0][2]);
+//		VectorSet(v2, light->localBounds[0][0], light->localBounds[1][1], light->localBounds[1][2]);
+//		R_AddEdgeToLightScissor(light, v1, v2);
+		R_AddEdgeToLightScissor(light, v8, v3);
 
-		VectorSet(v1, light->localBounds[1][0], light->localBounds[1][1], light->localBounds[0][2]);
-		VectorSet(v2, light->localBounds[1][0], light->localBounds[1][1], light->localBounds[1][2]);
-		R_AddEdgeToLightScissor(light, v1, v2);
+//		VectorSet(v1, light->localBounds[1][0], light->localBounds[1][1], light->localBounds[0][2]);
+		//VectorSet(v2, light->localBounds[1][0], light->localBounds[1][1], light->localBounds[1][2]);
+//		VectorCopy(light->localBounds[1], v2);
+		R_AddEdgeToLightScissor(light, v7, v1);
 
-		VectorSet(v1, light->localBounds[0][0], light->localBounds[0][1], light->localBounds[0][2]);
-		VectorSet(v2, light->localBounds[0][0], light->localBounds[0][1], light->localBounds[1][2]);
-		R_AddEdgeToLightScissor(light, v1, v2);
+		//VectorSet(v1, light->localBounds[0][0], light->localBounds[0][1], light->localBounds[0][2]);
+//		VectorCopy(light->localBounds[0], v1);
+//		VectorSet(v2, light->localBounds[0][0], light->localBounds[0][1], light->localBounds[1][2]);
+//		R_AddEdgeToLightScissor(light, v1, v2);
+		R_AddEdgeToLightScissor(light, v6, v5);
 
-		VectorSet(v1, light->localBounds[1][0], light->localBounds[0][1], light->localBounds[0][2]);
-		VectorSet(v2, light->localBounds[1][0], light->localBounds[0][1], light->localBounds[1][2]);
-		R_AddEdgeToLightScissor(light, v1, v2);
+//		VectorSet(v1, light->localBounds[1][0], light->localBounds[0][1], light->localBounds[0][2]);
+//		VectorSet(v2, light->localBounds[1][0], light->localBounds[0][1], light->localBounds[1][2]);
+//		R_AddEdgeToLightScissor(light, v1, v2);
+		R_AddEdgeToLightScissor(light, v9, v4);
 		break;
 	}
 	case RL_PROJ:
@@ -1525,6 +1761,64 @@ void R_SetupLightDepthBounds(trRefLight_t *light)
 }
 */
 
+
+// Some matrices that are used by R_CalcLightCubeSideBits()
+// There are two versions of a matrix (_r = "3x3 transposed" version)
+mat4_t rotMatrix_0_0_0 = { 1.0f, 0.0f, 0.0f, 0.0f,
+						0.0f, 1.0f, 0.0f, 0.0f,
+						0.0f, 0.0f, 1.0f, 0.0f,
+						0.0f, 0.0f, 0.0f, 1.0f };
+mat4_t rotMatrix_0_0_0_r = { 1.0f, 0.0f, 0.0f, 0.0f,
+							0.0f, 1.0f, 0.0f, 0.0f,
+							0.0f, 0.0f, 1.0f, 0.0f,
+							0.0f, 0.0f, 0.0f, 1.0f };
+
+mat4_t rotMatrix_0_180_0 = { -1.f, 0.f, 0.f, 0.f,
+							0.f, -1.f, 0.f, 0.f,
+							0.f, 0.f, 1.f, 0.f,
+							0.0f, 0.0f, 0.0f, 1.0f };
+mat4_t rotMatrix_0_180_0_r = { -1.f, 0.f, 0.f, 0.f,
+								0.f, -1.f, 0.f, 0.f,
+								0.f, 0.f, 1.f, 0.f,
+								0.0f, 0.0f, 0.0f, 1.0f };
+
+mat4_t rotMatrix_0_90_0 = { 0.f, 1.f, 0.f, 0.f,
+							-1.f, 0.f, 0.f, 0.f,
+							0.f, 0.f, 1.f, 0.f,
+							0.0f, 0.0f, 0.0f, 1.0f };
+mat4_t rotMatrix_0_90_0_r = { 0.f, -1.f, 0.f, 0.f,
+							1.f, 0.f, 0.f, 0.f,
+							0.f, 0.f, 1.f, 0.f,
+							0.0f, 0.0f, 0.0f, 1.0f };
+
+mat4_t rotMatrix_0_270_0 = { 0.f, -1.f, 0.f, 0.f,
+							1.f, 0.f, 0.f, 0.f,
+							0.f, 0.f, 1.f, 0.f,
+							0.0f, 0.0f, 0.0f, 1.0f };
+mat4_t rotMatrix_0_270_0_r = { 0.f, 1.f, 0.f, 0.f,
+								-1.f, 0.f, 0.f, 0.f,
+								0.f, 0.f, 1.f, 0.f,
+								0.0f, 0.0f, 0.0f, 1.0f };
+
+mat4_t rotMatrix_m90_0_0 = { 0.f, 0.f, 1.f, 0.f,
+							0.f, 1.f, 0.f, 0.f,
+							-1.f, 0.f, 0.f, 0.f,
+							0.0f, 0.0f, 0.0f, 1.0f };
+mat4_t rotMatrix_m90_0_0_r = { 0.f, 0.f, -1.f, 0.f,
+								0.f, 1.f, 0.f, 0.f,
+								1.f, 0.f, 0.f, 0.f,
+								0.0f, 0.0f, 0.0f, 1.0f };
+
+mat4_t rotMatrix_90_0_0 = { 0.f, 0.f, -1.f, 0.f,
+							0.f, 1.f, 0.f, 0.f,
+							1.f, 0.f, 0.f, 0.f,
+							0.0f, 0.0f, 0.0f, 1.0f };
+mat4_t rotMatrix_90_0_0_r = { 0.f, 0.f, 1.f, 0.f,
+							0.f, 1.f, 0.f, 0.f,
+							-1.f, 0.f, 0.f, 0.f,
+							0.0f, 0.0f, 0.0f, 1.0f };
+
+
 // *INDENT-OFF*
 /**
  * @brief R_CalcLightCubeSideBits
@@ -1537,13 +1831,14 @@ byte R_CalcLightCubeSideBits(trRefLight_t *light, vec3_t worldBounds[2])
 	int       i;
 	int       cubeSide;
 	byte      cubeSideBits;
-	float     xMin, xMax, yMin, yMax;
-	float     width, height, depth;
-	float     zNear, zFar;
-	float     fovX, fovY;
-	float     *proj;
-	vec3_t    angles;
-	mat4_t    tmpMatrix, rotationMatrix, transformMatrix, viewMatrix, projectionMatrix, viewProjectionMatrix;
+	//float     xMin, xMax, yMin, yMax;
+	float     /*width, height,*/ depth;
+	float     /*zNear,*/ zFar;
+	//float     fovX, fovY;
+	//float     *proj;
+	//vec3_t    angles;
+	mat4_t    tmpMatrix, /*rotationMatrix, transformMatrix, viewMatrix, projectionMatrix,*/ viewProjectionMatrix;
+	mat4_t    *rotMatrix, *rotMatrix_r;
 	frustum_t frustum;
 	cplane_t  *clipPlane;
 	int       r;
@@ -1568,6 +1863,7 @@ byte R_CalcLightCubeSideBits(trRefLight_t *light, vec3_t worldBounds[2])
 		return CUBESIDE_CLIPALL;
 	}
 
+#if 0
 	cubeSideBits = 0;
 	for (cubeSide = 0; cubeSide < 6; cubeSide++)
 	{
@@ -1576,62 +1872,243 @@ byte R_CalcLightCubeSideBits(trRefLight_t *light, vec3_t worldBounds[2])
 		case 0:
 		{
 			// view parameters
-			VectorSet(angles, 0, 0, 0);
+			VectorSet(angles, 0.0f, 0.0f, 0.0f);
 			break;
 		}
 		case 1:
 		{
-			VectorSet(angles, 0, 180, 0);
+			VectorSet(angles, 0.0f, 180.0f, 0.0f);
 			break;
 		}
 		case 2:
 		{
-			VectorSet(angles, 0, 90, 0);
+			VectorSet(angles, 0.0f, 90.0f, 0.0f);
 			break;
 		}
 		case 3:
 		{
-			VectorSet(angles, 0, 270, 0);
+			VectorSet(angles, 0.0f, 270.0f, 0.0f);
 			break;
 		}
 		case 4:
 		{
-			VectorSet(angles, -90, 0, 0);
+			VectorSet(angles, -90.0f, 0.0f, 0.0f);
 			break;
 		}
 		case 5:
 		{
-			VectorSet(angles, 90, 0, 0);
-			break;
-		}
-		default:
-		{
-			// shut up compiler
-			VectorSet(angles, 0, 0, 0);
+			VectorSet(angles, 90.0f, 0.0f, 0.0f);
 			break;
 		}
 		}
 
 		// Quake -> OpenGL view matrix from light perspective
 		mat4_from_angles(rotationMatrix, angles[PITCH], angles[YAW], angles[ROLL]);
+// ^^that is calculating a constant value, from some vectorSet(constant)
 		MatrixSetupTransformFromRotation(transformMatrix, rotationMatrix, light->origin);
-		MatrixAffineInverse(transformMatrix, tmpMatrix);
+#else
+	cubeSideBits = 0;
+	for (cubeSide = 0; cubeSide < 6; cubeSide++)
+	{
+		switch (cubeSide)
+		{
+		case 0:
+		{
+//!!			MatrixSetupTransformFromRotation(transformMatrix, rotMatrix_0_0_0, light->origin);
+			rotMatrix = &rotMatrix_0_0_0;
+			rotMatrix_r = &rotMatrix_0_0_0_r;
+			break;
+		}
+		case 1:
+		{
+//!!			MatrixSetupTransformFromRotation(transformMatrix, rotMatrix_0_180_0, light->origin);
+			rotMatrix = &rotMatrix_0_180_0;
+			rotMatrix_r = &rotMatrix_0_180_0_r;
+			break;
+		}
+		case 2:
+		{
+//!!			MatrixSetupTransformFromRotation(transformMatrix, rotMatrix_0_90_0, light->origin);
+			rotMatrix = &rotMatrix_0_90_0;
+			rotMatrix_r = &rotMatrix_0_90_0_r;
+			break;
+		}
+		case 3:
+		{
+//!!			MatrixSetupTransformFromRotation(transformMatrix, rotMatrix_0_270_0, light->origin);
+			rotMatrix = &rotMatrix_0_270_0;
+			rotMatrix_r = &rotMatrix_0_270_0_r;
+			break;
+		}
+		case 4:
+		{
+//!!			MatrixSetupTransformFromRotation(transformMatrix, rotMatrix_m90_0_0, light->origin);
+			rotMatrix = &rotMatrix_m90_0_0;
+			rotMatrix_r = &rotMatrix_m90_0_0_r;
+			break;
+		}
+		case 5:
+		{
+//!!			MatrixSetupTransformFromRotation(transformMatrix, rotMatrix_90_0_0, light->origin);
+			rotMatrix = &rotMatrix_90_0_0;
+			rotMatrix_r = &rotMatrix_90_0_0_r;
+			break;
+		}
+		}
+#endif
 
-		// convert from our coordinate system (looking down X)
-		// to OpenGL's coordinate system (looking down -Z)
-		mat4_mult(quakeToOpenGLMatrix, tmpMatrix, viewMatrix);
+//!!		MatrixAffineInverse(transformMatrix, tmpMatrix);
+
+/*	out[0] = in[0];       out[4] = in[1];       out[8] = in[2];          out[12] = -(in[12] * out[0] + in[13] * out[4] + in[14] * out[8]);
+	out[1] = in[4];       out[5] = in[5];       out[9] = in[6];          out[13] = -(in[12] * out[1] + in[13] * out[5] + in[14] * out[9]);
+	out[2] = in[8];       out[6] = in[9];       out[10] = in[10];        out[14] = -(in[12] * out[2] + in[13] * out[6] + in[14] * out[10]);
+	out[3] = 0.0f;        out[7] = 0.0f;        out[11] = 0.0f;          out[15] = 1.0f;
+
+	out[0] = in[0];       out[4] = in[1];       out[8] = in[2];          out[12] = -(in[12] * in[0] + in[13] * in[1] + in[14] * in[2]);
+	out[1] = in[4];       out[5] = in[5];       out[9] = in[6];          out[13] = -(in[12] * in[4] + in[13] * in[5] + in[14] * in[6]);
+	out[2] = in[8];       out[6] = in[9];       out[10] = in[10];        out[14] = -(in[12] * in[8] + in[13] * in[9] + in[14] * in[10]);
+	out[3] = 0.0f;        out[7] = 0.0f;        out[11] = 0.0f;          out[15] = 1.0f;
+
+	out[0] = in[0];       out[4] = in[1];       out[8] = in[2];          out[12] = -dot(vec3 in[0], vec3 in[12]);  // -dot(in0, light->origin)
+	out[1] = in[4];       out[5] = in[5];       out[9] = in[6];          out[13] = -dot(vec3 in[4], vec3 in[12]);  // -dot(in4, light->origin)
+	out[2] = in[8];       out[6] = in[9];       out[10] = in[10];        out[14] = -dot(vec3 in[8], vec3 in[12]);  // -dot(in8, light->origin)
+	out[3] = 0.0f;        out[7] = 0.0f;        out[11] = 0.0f;          out[15] = 1.0f;
+
+	// a version that uses both rotMatrix and the transposed rotMatrix_r
+	out[0] = in_r[0];      out[4] = in_r[4];       out[8] = in_r[8];          out[12] = -dot(vec3 in[0], vec3 in[12]);  // -dot(in0, light->origin)
+	out[1] = in_r[1];      out[5] = in_r[5];       out[9] = in_r[9];          out[13] = -dot(vec3 in[4], vec3 in[12]);  // -dot(in4, light->origin)
+	out[2] = in_r[2];      out[6] = in_r[6];       out[10] = in_r[10];        out[14] = -dot(vec3 in[8], vec3 in[12]);  // -dot(in8, light->origin)
+	out[3] = in_r[3];      out[7] = in_r[7];       out[11] = in_r[11];        out[15] = 1.0f;
+
+	^^ that last version is doing the same as the following SSE3 version:
+*/
+#ifndef ETL_SSE
+	/*out[0] = rotMatrix_r[0];      out[4] = rotMatrix_r[4];       out[8] = rotMatrix_r[8];          out[12] = -dot(vec3 in[0], light->origin);
+	out[1] = rotMatrix_r[1];      out[5] = rotMatrix_r[5];       out[9] = rotMatrix_r[9];          out[13] = -dot(vec3 in[4], light->origin);
+	out[2] = rotMatrix_r[2];      out[6] = rotMatrix_r[6];       out[10] = rotMatrix_r[10];        out[14] = -dot(vec3 in[8], light->origin);
+	out[3] = rotMatrix_r[3];      out[7] = rotMatrix_r[7];       out[11] = rotMatrix_r[11];        out[15] = 1.0f;*/
+	Vector4Copy(rotMatrix_r + 0, &tmpMatrix[0]);
+	Vector4Copy(rotMatrix_r + 4, &tmpMatrix[4]);
+	Vector4Copy(rotMatrix_r + 8, &tmpMatrix[8]);
+	Dot(rotMatrix + 0, light->origin, &tmpMatrix[12]);
+	Dot(rotMatrix + 4, light->origin, &tmpMatrix[13]);
+	Dot(rotMatrix + 8, light->origin, &tmpMatrix[14]);
+	out[15] = 1.0f;
+	Matrix4Multiply(quakeToOpenGLMatrix, tmpMatrix, viewMatrix);	//@
+#else
+	// this is setting tmpMatrix.
+	//	MatrixSetupTransformFromRotation(transformMatrix, rotMatrix_x_y_z, light->origin)
+	//	MatrixAffineInverse(transformMatrix, tmpMatrix);
+	__m128 xmm0, xmm1, xmm2, xmm3, xmm4, xmm5, xmm6, xmm7, zeroes;
+	zeroes = _mm_setzero_ps();
+	xmm0 = _mm_loadh_pi(_mm_load_ss(&light->origin[0]), (const __m64 *)(&light->origin[1]));	// xmm0 = z y 0 x
+
+	xmm2 = _mm_loadh_pi(_mm_load_ss(rotMatrix[0]), (const __m64 *)(rotMatrix[1]));		// xmm2 = z y 0 x
+	xmm1 = _mm_mul_ps(xmm0, xmm2);
+	xmm7 = _mm_movehdup_ps(xmm1);		// faster way to do: 2 * hadd
+	xmm6 = _mm_add_ps(xmm1, xmm7);		//
+	xmm7 = _mm_movehl_ps(xmm7, xmm6);	//
+	xmm1 = _mm_add_ss(xmm6, xmm7);		// xmm1 = dot(in0, in12)
+	xmm1 = _mm_sub_ps(zeroes, xmm1);
+	_mm_store_ss(&tmpMatrix[12], xmm1);
+
+	xmm2 = _mm_loadh_pi(_mm_load_ss(rotMatrix[4]), (const __m64 *)(rotMatrix[5]));		// xmm2 = z y 0 x
+	xmm4 = _mm_mul_ps(xmm0, xmm2);
+	xmm7 = _mm_movehdup_ps(xmm4);		// faster way to do: 2 * hadd
+	xmm6 = _mm_add_ps(xmm4, xmm7);		//
+	xmm7 = _mm_movehl_ps(xmm7, xmm6);	//
+	xmm4 = _mm_add_ss(xmm6, xmm7);		// xmm4 = dot(in4, in12)
+	xmm4 = _mm_sub_ps(zeroes, xmm4);
+	_mm_store_ss(&tmpMatrix[13], xmm4);
+
+	xmm2 = _mm_loadh_pi(_mm_load_ss(rotMatrix[8]), (const __m64 *)(rotMatrix[9]));		// xmm2 = z y 0 x
+	xmm5 = _mm_mul_ps(xmm0, xmm2);
+	xmm7 = _mm_movehdup_ps(xmm5);		// faster way to do: 2 * hadd
+	xmm6 = _mm_add_ps(xmm5, xmm7);		//
+	xmm7 = _mm_movehl_ps(xmm7, xmm6);	//
+	xmm5 = _mm_add_ss(xmm6, xmm7);		// xmm5 = dot(in8, in12)
+	xmm5 = _mm_sub_ps(zeroes, xmm5);
+	_mm_store_ss(&tmpMatrix[14], xmm5);
+
+	_mm_store_ss(&tmpMatrix[15], _mm_set_ss(1.f));
+	_mm_storeu_ps(&tmpMatrix[0], _mm_loadu_ps(rotMatrix_r[0]));
+	_mm_storeu_ps(&tmpMatrix[4], _mm_loadu_ps(rotMatrix_r[4]));
+	_mm_storeu_ps(&tmpMatrix[8], _mm_loadu_ps(rotMatrix_r[8]));
+
+// --TODO: do that quakeToOpenGLMatrix matmult also.. still to implement
+// update: it's implemented now, but i leave in all comments.
+// That'll make it easier to trace back some steps, and understand what's going on.
+// If you see the final 4 vector4set statements that handle the trandformation (quakeToOpenGLMatrix * tmpMatrix) only,
+// it would be confusing, and not easy to read code.
+/*
+					0.0f, 0.0f, -1.0f, 0.0f,
+	viewMatrix =	-1.0f, 0.0f, 0.0f, 0.0f,   *  tmpMatrix
+					0.0f, 1.0f, 0.0f, 0.0f,
+					0.0f, 0.0f, 0.0f, 1.0f
+
+
+	viewMatrix[0] = b[0] * 0 + b[1] * -1 + b[2] * 0 + b[3] * 0;
+	viewMatrix[1] = b[0] * 0 + b[1] * 0 + b[2] * 1 + b[3] * 0;
+	viewMatrix[2] = b[0] * -1 + b[1] * 0 + b[2] * 0 + b[3] * 0;
+	viewMatrix[3] = b[0] * 0 + b[1] * 0 + b[2] * 0 + b[3] * 1;
+
+
+	viewMatrix[0] = -b[1];
+	viewMatrix[1] = b[2];
+	viewMatrix[2] = -b[0];
+	viewMatrix[3] = b[3];
+
+	viewMatrix[4] = -b[5];
+	viewMatrix[5] = b[6];
+	viewMatrix[6] = -b[4];
+	viewMatrix[7] = b[7];
+
+	viewMatrix[8] = -b[9];
+	viewMatrix[9] = b[10];
+	viewMatrix[10] = -b[8];
+	viewMatrix[11] = b[11];
+
+	viewMatrix[12] = -b[13];
+	viewMatrix[13] = b[14];
+	viewMatrix[14] = -b[12];
+	viewMatrix[15] = b[15];
+
+*/
+/*$$	//@	new code that does this: Matrix4Multiply(quakeToOpenGLMatrix, tmpMatrix, viewMatrix);
+	// but atm it is commented out, because we do all viewMatrix-handling via registers (no need to store in seperate matrx var).
+	Vector4Set(&viewMatrix[0], -tmpMatrix[1], tmpMatrix[2], -tmpMatrix[0], tmpMatrix[3]);
+	Vector4Set(&viewMatrix[4], -tmpMatrix[5], tmpMatrix[6], -tmpMatrix[4], tmpMatrix[7]);
+	Vector4Set(&viewMatrix[8], -tmpMatrix[9], tmpMatrix[10], -tmpMatrix[8], tmpMatrix[11]);
+	Vector4Set(&viewMatrix[12], -tmpMatrix[13], tmpMatrix[14], -tmpMatrix[12], tmpMatrix[15]);*/
+#endif
+
+	// convert from our coordinate system (looking down X)
+	// to OpenGL's coordinate system (looking down -Z)
+//@	Matrix4Multiply(quakeToOpenGLMatrix, tmpMatrix, viewMatrix);
+
+// NOTE: You can combine the 3 calculations: MatrixSetupTransformFromRotation, MatrixAffineInverse & Matrix4Multiply
+// It's all "just" to calculate the viewMatrix. The light.origin is the only changing value,
+// all other matrices are constants.
+// TODO: combine into a simpler block, providing the final viewMatrix asap.
+// update: done.
+
+
+
 
 		// OpenGL projection matrix
-		fovX = 90;
-		fovY = 90; //R_CalcFov(fovX, shadowMapResolutions[light->shadowLOD], shadowMapResolutions[light->shadowLOD]);
+/*
+// tan(90 degrees) is always the same constant, zNear is always 1  =>  keep it simple..(for the computer)
 
-		zNear = 1.0;
+		fovX = 90.0f;
+		fovY = 90.0f; //R_CalcFov(fovX, shadowMapResolutions[light->shadowLOD], shadowMapResolutions[light->shadowLOD]);
+
+		zNear = 1.0f;
 		zFar  = light->sphereRadius;
 
-		xMax = zNear * tan(fovX * M_PI / 360.0);
+		xMax = zNear * tan(DEG2RAD(fovX));
 		xMin = -xMax;
 
-		yMax = zNear * tan(fovY * M_PI / 360.0);
+		yMax = zNear * tan(DEG2RAD(fovY));
 		yMin = -yMax;
 
 		width  = xMax - xMin;
@@ -1639,13 +2116,97 @@ byte R_CalcLightCubeSideBits(trRefLight_t *light, vec3_t worldBounds[2])
 		depth  = zFar - zNear;
 
 		proj    = projectionMatrix;
-		proj[0] = (2 * zNear) / width;  proj[4] = 0;                    proj[8] = (xMax + xMin) / width;    proj[12] = 0;
-		proj[1] = 0;                    proj[5] = (2 * zNear) / height; proj[9] = (yMax + yMin) / height;   proj[13] = 0;
-		proj[2] = 0;                    proj[6] = 0;                    proj[10] = -(zFar + zNear) / depth; proj[14] = -(2 * zFar * zNear) / depth;
-		proj[3] = 0;                    proj[7] = 0;                    proj[11] = -1;                      proj[15] = 0;
+//		proj[0] = (2 * zNear) / width;  proj[4] = 0;                    proj[8] = (xMax + xMin) / width;    proj[12] = 0;
+//		proj[1] = 0;                    proj[5] = (2 * zNear) / height; proj[9] = (yMax + yMin) / height;   proj[13] = 0;
+//		proj[2] = 0;                    proj[6] = 0;                    proj[10] = -(zFar + zNear) / depth; proj[14] = -(2 * zFar * zNear) / depth;
+//		proj[3] = 0;                    proj[7] = 0;                    proj[11] = -1;                      proj[15] = 0;
+float rW = 1.0f / width, rH = 1.0f / height, rD = 1.0f / depth, zN2 = 2.0f * zNear;
+proj[0] = zN2 * rW;   proj[4] = 0.0f;       proj[8] = (xMax + xMin) * rW;      proj[12] = 0.0f;
+proj[1] = 0.0f;       proj[5] = zN2 * rH;   proj[9] = (yMax + yMin) * rH;      proj[13] = 0.0f;
+proj[2] = 0.0f;       proj[6] = 0.0f;       proj[10] = -(zFar + zNear) * rD;   proj[14] = -(zFar * zN2) * rD;
+proj[3] = 0.0f;       proj[7] = 0.0f;       proj[11] = -1.0f;                  proj[15] = 0.0f;
+*/
+		// ..after optimizing, not much of the old code exists.
+		zFar = light->sphereRadius;
+		depth = zFar - 1.0f;
+		float rWH = 36.466487130706173033023747483407f, rD = rcp(depth);
+#ifndef ETL_SSE
+		Vector4Set(&projectionMatrix[0], rWH, 0.f, 0.f, 0.f);
+		Vector4Set(&projectionMatrix[4], 0.f, rWH, 0.f, 0.f);
+		Vector4Set(&projectionMatrix[8], 0.f, 0.f, -(zFar + 1.0f) * rD, -1.f);
+		Vector4Set(&projectionMatrix[12], 0.f, 0.f, -(2.0f * zFar) * rD, 0.f);
 
 		// calculate frustum planes using the modelview projection matrix
-		mat4_mult(projectionMatrix, viewMatrix, viewProjectionMatrix);
+		Matrix4Multiply(projectionMatrix, viewMatrix, viewProjectionMatrix);
+#else
+		//$$ load the projectionMatrix
+		xmm4 = _mm_set_ps(0.f, 0.f, 0.f, rWH);
+		xmm5 = _mm_set_ps(0.f, 0.f, rWH, 0.f);
+		xmm6 = _mm_set_ps(-1.f, -(zFar + 1.0f) * rD, 0.f, 0.f);
+		xmm7 = _mm_set_ps(0.f, -(2.0f * zFar) * rD, 0.f, 0.f);
+
+		// Matrix4Multiply(projectionMatrix, viewMatrix, viewProjectionMatrix)
+		//$$	xmm0 = _mm_loadu_ps(&viewMatrix[0]);			// xmm0 = b0 b1 b2 b3
+		xmm0 = _mm_set_ps(tmpMatrix[3], -tmpMatrix[0], tmpMatrix[2], -tmpMatrix[1]);
+		xmm3 = _mm_shuffle_ps(xmm0, xmm0, 0b11111111);	// xmm0 = b0 b0 b0 b0
+		xmm2 = _mm_shuffle_ps(xmm0, xmm0, 0b10101010);	// xmm1 = b1 b1 b1 b1
+		xmm1 = _mm_shuffle_ps(xmm0, xmm0, 0b01010101);	// xmm2 = b2 b2 b2 b2
+		xmm0 = _mm_shuffle_ps(xmm0, xmm0, 0b00000000);	// xmm3 = b3 b3 b3 b3
+		xmm3 = _mm_mul_ps(xmm3, xmm7);					// xmm3 = b3*a12 b3*a13 b3*a14 b3*a15
+		xmm2 = _mm_mul_ps(xmm2, xmm6);					// xmm2 =  b2*a8  b2*a9 b2*a10 b2*a11
+		xmm1 = _mm_mul_ps(xmm1, xmm5);					// xmm1 =  b1*a4  b1*a5  b1*a6  b1*a7
+		xmm0 = _mm_mul_ps(xmm0, xmm4);					// xmm0 =  b0*a0  b0*a1  b0*a2  b0*a3
+		xmm3 = _mm_add_ps(xmm3, xmm2);
+		xmm0 = _mm_add_ps(xmm0, xmm1);
+		xmm0 = _mm_add_ps(xmm0, xmm3);
+		_mm_storeu_ps(&viewProjectionMatrix[0], xmm0);
+
+		//$$	xmm0 = _mm_loadu_ps(&viewMatrix[4]);			// xmm0 = b4 b5 b6 b7
+		xmm0 = _mm_set_ps(tmpMatrix[7], -tmpMatrix[4], tmpMatrix[6], -tmpMatrix[5]);
+		xmm3 = _mm_shuffle_ps(xmm0, xmm0, 0b11111111);	// xmm0 = b4 b4 b4 b4
+		xmm2 = _mm_shuffle_ps(xmm0, xmm0, 0b10101010);	// xmm1 = b5 b5 b5 b5
+		xmm1 = _mm_shuffle_ps(xmm0, xmm0, 0b01010101);	// xmm2 = b6 b6 b6 b6
+		xmm0 = _mm_shuffle_ps(xmm0, xmm0, 0b00000000);	// xmm3 = b7 b7 b7 b7
+		xmm3 = _mm_mul_ps(xmm3, xmm7);					// xmm3 = b7*a12 b7*a13 b7*a14 b7*a15
+		xmm2 = _mm_mul_ps(xmm2, xmm6);					// xmm2 =  b6*a8  b6*a9 b6*a10 b6*a11
+		xmm1 = _mm_mul_ps(xmm1, xmm5);					// xmm1 =  b5*a4  b5*a5  b5*a6  b5*a7
+		xmm0 = _mm_mul_ps(xmm0, xmm4);					// xmm0 =  b4*a0  b4*a1  b4*a2  b4*a3
+		xmm3 = _mm_add_ps(xmm3, xmm2);
+		xmm0 = _mm_add_ps(xmm0, xmm1);
+		xmm0 = _mm_add_ps(xmm0, xmm3);
+		_mm_storeu_ps(&viewProjectionMatrix[4], xmm0);
+
+		//$$	xmm0 = _mm_loadu_ps(&viewMatrix[8]);			// xmm0 = b8 b9 b10 b11
+		xmm0 = _mm_set_ps(tmpMatrix[11], -tmpMatrix[8], tmpMatrix[10], -tmpMatrix[9]);
+		xmm3 = _mm_shuffle_ps(xmm0, xmm0, 0b11111111);	// xmm0 = b8 b8 b8 b8
+		xmm2 = _mm_shuffle_ps(xmm0, xmm0, 0b10101010);	// xmm1 = b9 b9 b9 b9
+		xmm1 = _mm_shuffle_ps(xmm0, xmm0, 0b01010101);	// xmm2 = b10 b10 b10 b10
+		xmm0 = _mm_shuffle_ps(xmm0, xmm0, 0b00000000);	// xmm3 = b11 b11 b11 b11
+		xmm3 = _mm_mul_ps(xmm3, xmm7);					// xmm3 = b11*a12 b11*a13 b11*a14 b11*a15
+		xmm2 = _mm_mul_ps(xmm2, xmm6);					// xmm2 =  b10*a8  b10*a9 b10*a10 b10*a11
+		xmm1 = _mm_mul_ps(xmm1, xmm5);					// xmm1 =   b9*a4   b9*a5   b9*a6   b9*a7
+		xmm0 = _mm_mul_ps(xmm0, xmm4);					// xmm0 =   b8*a0   b8*a1   b8*a2   b8*a3
+		xmm3 = _mm_add_ps(xmm3, xmm2);
+		xmm0 = _mm_add_ps(xmm0, xmm1);
+		xmm0 = _mm_add_ps(xmm0, xmm3);
+		_mm_storeu_ps(&viewProjectionMatrix[8], xmm0);
+
+		//xmm0 = _mm_loadu_ps(&viewMatrix[12]);			// xmm0 = b12 b13 b14 b15
+		xmm0 = _mm_set_ps(tmpMatrix[15], -tmpMatrix[12], tmpMatrix[14], -tmpMatrix[13]);
+		xmm3 = _mm_shuffle_ps(xmm0, xmm0, 0b11111111);	// xmm0 = b12 b12 b12 b12
+		xmm2 = _mm_shuffle_ps(xmm0, xmm0, 0b10101010);	// xmm1 = b13 b13 b13 b13
+		xmm1 = _mm_shuffle_ps(xmm0, xmm0, 0b01010101);	// xmm2 = b14 b14 b14 b14
+		xmm0 = _mm_shuffle_ps(xmm0, xmm0, 0b00000000);	// xmm3 = b15 b15 b15 b15
+		xmm3 = _mm_mul_ps(xmm3, xmm7);					// xmm3 = b15*a12 b15*a13 b15*a14 b15*a15
+		xmm2 = _mm_mul_ps(xmm2, xmm6);					// xmm2 =  b14*a8  b14*a9 b14*a10 b14*a11
+		xmm1 = _mm_mul_ps(xmm1, xmm5);					// xmm1 =  b13*a4  b13*a5  b13*a6  b13*a7
+		xmm0 = _mm_mul_ps(xmm0, xmm4);					// xmm0 =  b12*a0  b12*a1  b12*a2  b12*a3
+		xmm3 = _mm_add_ps(xmm3, xmm2);
+		xmm0 = _mm_add_ps(xmm0, xmm1);
+		xmm0 = _mm_add_ps(xmm0, xmm3);
+		_mm_storeu_ps(&viewProjectionMatrix[12], xmm0);
+#endif
+
 		R_SetupFrustum2(frustum, viewProjectionMatrix);
 
 		// use the frustum planes to cut off shadowmaps beyond the light volume
@@ -1723,9 +2284,9 @@ void R_SetupLightLOD(trRefLight_t *light)
 	{
 		lodscale = r_shadowLodScale->value;
 
-		if (lodscale > 20)
+		if (lodscale > 20.f)
 		{
-			lodscale = 20;
+			lodscale = 20.f;
 		}
 
 		flod = 1.0f - projectedRadius * lodscale;
@@ -1733,7 +2294,7 @@ void R_SetupLightLOD(trRefLight_t *light)
 	else
 	{
 		// object intersects near view plane, e.g. view weapon
-		flod = 0;
+		flod = 0.f;
 	}
 
 	flod *= numLods;
@@ -1826,7 +2387,7 @@ void R_ComputeFinalAttenuation(shaderStage_t *pStage, trRefLight_t *light)
 
 	RB_CalcTexMatrix(&pStage->bundle[TB_COLORMAP], matrix);
 
-	mat4_mult(matrix, light->attenuationMatrix, light->attenuationMatrix2);
+	Matrix4Multiply(matrix, light->attenuationMatrix, light->attenuationMatrix2);
 }
 
 /**
@@ -1847,9 +2408,10 @@ int R_CullLightPoint(trRefLight_t *light, const vec3_t p)
 	for (i = 0; i < 6; i++)
 	{
 		frust = &light->frustum[i];
-
-		dist = DotProduct(p, frust->normal) - frust->dist;
-		if (dist < 0)
+		//dist = DotProduct(p, frust->normal) - frust->dist;
+		Dot(p, frust->normal, dist);
+		dist -= frust->dist;
+		if (dist < 0.0f)
 		{
 			// completely outside frustum
 			return CULL_OUT;
@@ -1868,7 +2430,7 @@ int R_CullLightPoint(trRefLight_t *light, const vec3_t p)
  */
 int R_CullLightTriangle(trRefLight_t *light, vec3_t verts[3])
 {
-	int    i;
+	//int    i;
 	vec3_t worldBounds[2];
 
 	if (r_noCull->integer)
@@ -1878,10 +2440,13 @@ int R_CullLightTriangle(trRefLight_t *light, vec3_t verts[3])
 
 	// calc AABB of the triangle
 	ClearBounds(worldBounds[0], worldBounds[1]);
-	for (i = 0; i < 3; i++)
+	/*for (i = 0; i < 3; i++)
 	{
 		AddPointToBounds(verts[i], worldBounds[0], worldBounds[1]);
-	}
+	}*/
+	AddPointToBounds(verts[0], worldBounds[0], worldBounds[1]);
+	AddPointToBounds(verts[1], worldBounds[0], worldBounds[1]);
+	AddPointToBounds(verts[2], worldBounds[0], worldBounds[1]);
 
 	return R_CullLightWorldBounds(light, worldBounds);
 }

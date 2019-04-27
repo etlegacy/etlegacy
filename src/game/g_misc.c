@@ -447,7 +447,7 @@ void locateCamera(gentity_t *ent)
 	if (target)
 	{
 		VectorSubtract(target->s.origin, owner->s.origin, dir);
-		VectorNormalize(dir);
+		VectorNormalizeOnly(dir);
 	}
 	else
 	{
@@ -532,7 +532,7 @@ void Use_Shooter(gentity_t *ent, gentity_t *other, gentity_t *activator)
 	if (ent->enemy)
 	{
 		VectorSubtract(ent->enemy->r.currentOrigin, ent->s.origin, dir);
-		VectorNormalize(dir);
+		VectorNormalizeOnly(dir);
 	}
 	else
 	{
@@ -555,7 +555,7 @@ void Use_Shooter(gentity_t *ent, gentity_t *other, gentity_t *activator)
 	deg = crandom() * ent->random;
 	VectorMA(dir, deg, right, dir);
 
-	VectorNormalize(dir);
+	VectorNormalizeOnly(dir);
 
 	if (GetWeaponTableData(ent->s.weapon)->type & WEAPON_TYPE_GRENADE)
 	{
@@ -565,7 +565,7 @@ void Use_Shooter(gentity_t *ent, gentity_t *other, gentity_t *activator)
 	}
 	else if (GetWeaponTableData(ent->s.weapon)->type & WEAPON_TYPE_PANZER)
 	{
-		VectorNormalize(dir);
+		VectorNormalizeOnly(dir);
 		VectorScale(dir, 5000, dir);
 		fire_missile(ent, ent->s.origin, dir, ent->s.weapon);
 	}
@@ -1040,9 +1040,10 @@ void Fire_Lead_Ext(gentity_t *ent, gentity_t *activator, float spread, int damag
 
 		tent = G_TempEntity(tr.endpos, EV_MG42BULLET_HIT_WALL);
 
-		dot = DotProduct(forward, tr.plane.normal);
+		//dot = DotProduct(forward, tr.plane.normal);
+		Dot(forward, tr.plane.normal, dot);
 		VectorMA(forward, -2 * dot, tr.plane.normal, reflect);
-		VectorNormalize(reflect);
+		VectorNormalizeOnly(reflect);
 
 		tent->s.eventParm       = DirToByte(reflect);
 		tent->s.otherEntityNum  = ent->s.number;
@@ -2773,7 +2774,7 @@ qboolean G_FlingClient(gentity_t *vic, int flingType)
 		VectorSet(dir, 0, 0, 10);
 	}
 
-	VectorNormalize(dir);
+	VectorNormalizeOnly(dir);
 	VectorScale(dir, 1500, flingvec);
 	VectorAdd(vic->s.pos.trDelta, flingvec, vic->s.pos.trDelta);
 	VectorAdd(vic->client->ps.velocity, flingvec, vic->client->ps.velocity);

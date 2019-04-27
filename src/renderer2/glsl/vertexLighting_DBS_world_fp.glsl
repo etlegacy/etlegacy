@@ -6,35 +6,42 @@
 #endif // USE_PARALLAX_MAPPING
 #endif // USE_NORMAL_MAPPING
 
+uniform float     u_DiffuseLighting;
 uniform sampler2D u_DiffuseMap;
-uniform int       u_AlphaTest;
 uniform float     u_LightWrapAround;
-uniform vec3      u_LightColor;
 #if defined(USE_NORMAL_MAPPING)
+uniform vec3      u_LightColor;
 uniform sampler2D u_NormalMap;
-#if defined(USE_REFLECTIONS) || defined(USE_SPECULAR)
+#if defined(USE_SPECULAR)
 uniform sampler2D u_SpecularMap;
+uniform float     u_SpecularScale;
+uniform float     u_SpecularExponent;
+#endif // USE_SPECULAR
 #if defined(USE_REFLECTIONS)
 uniform samplerCube u_EnvironmentMap0;
 uniform samplerCube u_EnvironmentMap1;
 uniform float       u_EnvironmentInterpolation;
+uniform float       u_ReflectionScale;
+#if defined(USE_REFLECTIONMAP)
+uniform sampler2D u_ReflectionMap;
+#endif // USE_REFLECTIONMAP
 #endif // USE_REFLECTIONS
-#endif // USE_REFLECTIONS || USE_SPECULAR
 #endif // USE_NORMAL_MAPPING
+#if defined(USE_ALPHA_TESTING)
+uniform int u_AlphaTest;
+#endif // USE_ALPHA_TESTING
 
 varying vec3 var_Position;
-varying vec4 var_TexDiffuseNormal;
+varying vec4 var_Color;
 varying vec4 var_LightColor;
+varying vec2 var_TexDiffuse;
 varying vec3 var_Normal;
 #if defined(USE_NORMAL_MAPPING)
 varying mat3 var_tangentMatrix;
-#if defined(USE_REFLECTIONS) || defined(USE_SPECULAR)
-varying vec2 var_TexSpecular;
-#endif // USE_REFLECTIONS || USE_SPECULAR
 varying vec3 var_LightDirection;
-varying vec3 var_ViewOrigin; // position - vieworigin
+varying vec3 var_ViewOrigin;
 #if defined(USE_PARALLAX_MAPPING)
-varying vec2 var_S; // size and start position of search in texture space
+varying vec2 var_S;
 #endif // USE_PARALLAX_MAPPING
 #endif // USE_NORMAL_MAPPING
 #if defined(USE_PORTAL_CLIPPING)
@@ -56,33 +63,9 @@ void main()
 #if defined(USE_NORMAL_MAPPING)
 
 	// texture coordinates
-	vec2 texDiffuse  = var_TexDiffuseNormal.st;
-	vec2 texNormal   = var_TexDiffuseNormal.pq;
-#if defined(USE_REFLECTIONS) || defined(USE_SPECULAR)
-	vec2 texSpecular = var_TexSpecular.st;
-#endif // USE_REFLECTIONS || USE_SPECULAR
-
-
+	vec2 texDiffuse = var_TexDiffuse;
 #if defined(USE_PARALLAX_MAPPING)
-	// ray intersect in view direction
-#if 1
-	float depth = RayIntersectDisplaceMap(texNormal, var_S, u_NormalMap);
-	// compute texcoords offset
-	vec2 texOffset = var_S * depth;
-#else // 1
-	vec2 texOffset = vec2(0.0);
-	for (int i = 0; i < 4; i++)
-	{
-		vec4  Normal = texture2D(u_NormalMap, texNormal + texOffset);
-		float height = Normal.a * 0.2 - 0.0125;
-		texOffset += height * Normal.z * var_S;
-	}
-#endif // 1
-	texDiffuse  += texOffset;
-	texNormal   += texOffset;
-#if defined(USE_REFLECTIONS) || defined(USE_SPECULAR)
-	texSpecular += texOffset;
-#endif // USE_REFLECTIONS || USE_SPECULAR
+	texDiffuse += RayIntersectDisplaceMap(texDiffuse, var_S, u_NormalMap);
 #endif // USE_PARALLAX_MAPPING
 
 
@@ -116,7 +99,7 @@ void main()
 	vec3 L = var_LightDirection;
 
 	// normal
-	vec3 Ntex = texture2D(u_NormalMap, texNormal).xyz * 2.0 - 1.0;
+	vec3 Ntex = texture2D(u_NormalMap, texDiffuse).xyz * 2.0 - 1.0;
 	// transform normal from tangentspace to worldspace
 	vec3 N = normalize(var_tangentMatrix * Ntex); // we must normalize to get a vector of unit-length..  reflect() needs it
 
@@ -126,32 +109,31 @@ void main()
 
 	// compute the specular term (and reflections)
 	//! https://en.wikipedia.org/wiki/Specular_highlight
-#if defined(USE_SPECULAR) && !defined(USE_REFLECTIONS)
-	vec4 map = texture2D(u_SpecularMap, texSpecular);
-	vec3 specular = computeSpecular2(dotNL, V, N, L, u_LightColor, r_SpecularExponent) * map.rgb;
-#elif defined(USE_SPECULAR) && defined(USE_REFLECTIONS)
-	vec4 map = texture2D(u_SpecularMap, texSpecular);
-	vec3 specular = (computeReflections(V, N, u_EnvironmentMap0, u_EnvironmentMap1, u_EnvironmentInterpolation) * 0.07)
-					+ (computeSpecular2(dotNL, V, N, L, u_LightColor, r_SpecularExponent) * map.rgb);
-#elif !defined(USE_SPECULAR) && defined(USE_REFLECTIONS)
-	vec4 map = texture2D(u_SpecularMap, texSpecular);
-	vec3 specular = computeReflections(V, N, u_EnvironmentMap0, u_EnvironmentMap1, u_EnvironmentInterpolation) * map.rgb * 0.07;
-#endif
+#if defined(USE_SPECULAR)
+	vec3 specular = computeSpecular2(dotNL, V, N, L, u_LightColor, u_SpecularExponent, u_SpecularScale);
+	specular *= texture2D(u_SpecularMap, texDiffuse).rgb;
+#endif // USE_SPECULAR
+#if defined(USE_REFLECTIONS)
+	vec3 reflections = computeReflections(V, N, u_EnvironmentMap0, u_EnvironmentMap1, u_EnvironmentInterpolation, u_ReflectionScale);
+#if defined(USE_REFLECTIONMAP)
+	reflections *= texture2D(u_ReflectionMap, texDiffuse).rgb;
+#endif // USE_REFLECTIONMAP
+#endif // USE_REFLECTIONS
 
 
-#if defined(r_diffuseLighting)
 	// compute the diffuse light term
-	diffuse.rgb *= computeDiffuseLighting2(dotNL);
-#endif // r_diffuseLighting
+	diffuse.rgb *= computeDiffuseLighting(dotNL, u_DiffuseLighting);
 
 
 
 	// compute final color
-	vec4 color = diffuse;
-#if defined(USE_REFLECTIONS) || defined(USE_SPECULAR)
+	vec4 color = diffuse * var_LightColor;
+#if defined(USE_SPECULAR)
 	color.rgb += specular;
-#endif // USE_REFLECTIONS || USE_SPECULAR
-	color *= var_LightColor;
+#endif // USE_SPECULAR
+#if defined(USE_REFLECTIONS)
+	color.rgb += reflections;
+#endif // USE_REFLECTIONS
 	gl_FragColor = color;
 
 
@@ -160,7 +142,7 @@ void main()
 
 
 	// compute the diffuse term
-	vec4 diffuse = texture2D(u_DiffuseMap, var_TexDiffuseNormal.st);
+	vec4 diffuse = texture2D(u_DiffuseMap, var_TexDiffuse);
 
 #if defined(USE_ALPHA_TESTING)
 	if (u_AlphaTest == ATEST_GT_0 && diffuse.a <= 0.0)

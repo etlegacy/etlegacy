@@ -156,7 +156,7 @@ cvar_t *r_cacheGathering;
 
 cvar_t *r_bonesDebug;
 
-cvar_t *r_wolfFog;
+//cvar_t *r_wolfFog;
 
 cvar_t *r_screenshotJpegQuality;
 
@@ -1141,7 +1141,7 @@ void R_Register(void)
 	r_cacheGathering = ri.Cvar_Get("cl_cacheGathering", "0", 0);
 	r_bonesDebug     = ri.Cvar_Get("r_bonesDebug", "0", CVAR_CHEAT);
 
-	r_wolfFog = ri.Cvar_Get("r_wolffog", "1", CVAR_ARCHIVE);
+	//r_wolfFog = ri.Cvar_Get("r_wolffog", "1", CVAR_ARCHIVE);
 
 	r_noCurves    = ri.Cvar_Get("r_nocurves", "0", CVAR_CHEAT);
 	r_drawWorld   = ri.Cvar_Get("r_drawworld", "1", CVAR_CHEAT);

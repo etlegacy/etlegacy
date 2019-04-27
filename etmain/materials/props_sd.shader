@@ -7,7 +7,6 @@ textures/props_sd/board_cl01m
 	bumpmap textures/props_sd/board_cl01m_n.tga
 	specularmap textures/props_sd/board_cl01m_r.tga
 	surfaceparm woodsteps
-	implicitMap -
 }
 
 textures/props_sd/board_cl02m
@@ -17,7 +16,6 @@ textures/props_sd/board_cl02m
 	bumpmap textures/props_sd/board_cl02m_n.tga
 	specularmap textures/props_sd/board_cl02m_r.tga
 	surfaceparm woodsteps
-	implicitMap -
 }
 
 textures/props_sd/s_ammo01
@@ -27,7 +25,6 @@ textures/props_sd/s_ammo01
 	bumpmap textures/props_sd/s_ammo01_n.tga
 	specularmap textures/props_sd/s_ammo01_r.tga
 	surfaceparm metalsteps
-	implicitMap -
 }
 
 textures/props_sd/s_casemate01
@@ -37,7 +34,6 @@ textures/props_sd/s_casemate01
 	bumpmap textures/props_sd/s_casemate01_n.tga
 	specularmap textures/props_sd/s_casemate01_r.tga
 	surfaceparm metalsteps
-	implicitMap -
 }
 
 textures/props_sd/s_casemate02
@@ -47,7 +43,6 @@ textures/props_sd/s_casemate02
 	bumpmap textures/props_sd/s_casemate02_n.tga
 	specularmap textures/props_sd/s_casemate02_r.tga
 	surfaceparm metalsteps
-	implicitMap -
 }
 
 textures/props_sd/s_generator01
@@ -57,7 +52,6 @@ textures/props_sd/s_generator01
 	bumpmap textures/props_sd/s_generator01_n.tga
 	specularmap textures/props_sd/s_generator01_r.tga
 	surfaceparm metalsteps
-	implicitMap -
 }
 
 textures/props_sd/s_gun01
@@ -67,7 +61,6 @@ textures/props_sd/s_gun01
 	bumpmap textures/props_sd/s_gun01_n.tga
 	specularmap textures/props_sd/s_gun01_r.tga
 	surfaceparm metalsteps
-	implicitMap -
 }
 
 textures/props_sd/barrel_m01_rednwhite
@@ -77,7 +70,6 @@ textures/props_sd/barrel_m01_rednwhite
 	bumpmap textures/props_sd/barrel_m01_rednwhite_n.tga
 	specularmap textures/props_sd/barrel_m01_rednwhite_r.tga
 	surfaceparm metalsteps
-	implicitMap -
 }
 
 // norm and spec doesnt seem to work here
@@ -98,7 +90,7 @@ textures/props_sd/wires
 	{
 		map textures/props_sd/wires.tga
 		alphaFunc GE128
-		depthWrite
+//		depthWrite
 		rgbGen vertex
 	}
 }
@@ -120,7 +112,7 @@ textures/props_sd/wires01
 	{
 		map textures/props_sd/wires01.tga
 		alphaFunc GE128
-		depthWrite
+//		depthWrite
 		rgbGen vertex
 	}
 }
@@ -133,7 +125,6 @@ textures/props_sd/sign_radar
 	bumpmap textures/props_sd/sign_radar_n.tga
 	specularmap textures/props_sd/sign_radar.tga
 	surfaceparm metalsteps
-	implicitMap -
 }
 
 textures/props_sd/trim_c01w
@@ -142,7 +133,6 @@ textures/props_sd/trim_c01w
 	diffusemap textures/props_sd/trim_c01w.tga
 	bumpmap textures/props_sd/trim_c01w_n.tga
 	specularmap textures/props_sd/trim_c01w_r.tga
-    implicitMap -
 }
 	
 textures/props_sd/trim_c03w
@@ -151,7 +141,6 @@ textures/props_sd/trim_c03w
 	diffusemap textures/props_sd/trim_c03w.tga
 	bumpmap textures/props_sd/trim_c03w_n.tga
 	specularmap textures/props_sd/trim_c03w_r.tga
-    implicitMap -
 }
 
 textures/props_sd/trim_c10w
@@ -160,7 +149,6 @@ textures/props_sd/trim_c10w
 	diffusemap textures/props_sd/trim_c10w.tga
 	bumpmap textures/props_sd/trim_c10w_n.tga
 	specularmap textures/props_sd/trim_c10w_r.tga
-    implicitMap -
 }
 
 textures/props_sd/basketsand
@@ -170,5 +158,4 @@ textures/props_sd/basketsand
 	bumpmap textures/props_sd/basketsand_n.tga
 	specularmap textures/props_sd/basketsand_r.tga
 	surfaceparm gravelsteps
-    implicitMap -
 }

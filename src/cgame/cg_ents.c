@@ -597,7 +597,8 @@ qboolean CG_PlayerSeesItem(playerState_t *ps, entityState_t *item, int atTime, i
 
 	VectorSubtract(vorigin, eorigin, dir);
 
-	dist = VectorNormalize(dir);            // dir is now the direction from the item to the player
+	//dist = VectorNormalize(dir);            // dir is now the direction from the item to the player
+	VectorNorm(dir, &dist);
 
 	if (dist > 255)
 	{
@@ -611,7 +612,8 @@ qboolean CG_PlayerSeesItem(playerState_t *ps, entityState_t *item, int atTime, i
 	//      for the current frame please let me know so I don't
 	//      have to do redundant calcs)
 	AngleVectors(ps->viewangles, viewa, 0, 0);
-	dot = DotProduct(viewa, dir);
+	//dot = DotProduct(viewa, dir);
+	Dot(viewa, dir, dot);
 
 	// give more range based on distance (the hit area is wider when closer)
 
@@ -1199,7 +1201,7 @@ static void CG_Missile(centity_t *cent)
 			vec3_t temp;
 
 			VectorCopy(delta, d2);
-			VectorNormalize(d2);
+			VectorNormalizeOnly(d2);
 			vectoangles(d2, temp);
 			if (demo_nopitch.integer)
 			{
@@ -1371,7 +1373,8 @@ static void CG_Corona(centity_t *cent)
 		toofar = qtrue;
 	}
 
-	dot = DotProduct(dir, cg.refdef_current->viewaxis[0]);
+	//dot = DotProduct(dir, cg.refdef_current->viewaxis[0]);
+	Dot(dir, cg.refdef_current->viewaxis[0], dot);
 	if (dot >= -0.6f)         // assumes ~90 deg fov - changed value to 0.6 (screen corner at 90 fov)
 	{
 		behind = qtrue;     // use the dot to at least do trivial removal of those behind you.
@@ -1730,7 +1733,11 @@ void CG_Beam_2(centity_t *cent)
 	ent.radius       = 8;
 	ent.frame        = 2;
 
-	VectorScale(cent->currentState.angles2, 255, ent.shaderRGBA);
+	//VectorScale(cent->currentState.angles2, 255, ent.shaderRGBA);
+	// The SSE version of VectorScale() takes only float* as arguments, not bytes.
+	ent.shaderRGBA[0] = (byte)(cent->currentState.angles2[0] * 255.0);
+	ent.shaderRGBA[1] = (byte)(cent->currentState.angles2[1] * 255.0);
+	ent.shaderRGBA[2] = (byte)(cent->currentState.angles2[2] * 255.0);
 	ent.shaderRGBA[3] = 255;
 
 	// add to refresh list
@@ -2128,12 +2135,12 @@ void CG_AdjustPositionForMover(const vec3_t in, int moverNum, int fromTime, int 
 	}
 
 	CreateRotationMatrix(deltaAngles, transpose);
-	TransposeMatrix(transpose, matrix);
+	MatrixTranspose(transpose, matrix);
 
 	VectorSubtract(cg.snap->ps.origin, cent->lerpOrigin, org);
 
 	VectorCopy(org, org2);
-	RotatePoint(org2, matrix);
+	VectorRotate(org2, matrix, org2); //RotatePoint(org2, matrix);
 	VectorSubtract(org2, org, move);
 	VectorAdd(deltaOrigin, move, deltaOrigin);
 

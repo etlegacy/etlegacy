@@ -160,6 +160,10 @@ int GLSL_GetMacroByName(const char *name)
  * @return
  *
  * @todo FIXME: return -1 but type is unsigned !
+ * A value -1 returned as an unsigned int, will promote the signed value to an unsigned value.
+ * What happens, is that the value becomes:  value + (UINT_MAX + 1).   so,  -1 + (UINT_MAX + 1) = UINT_MAX
+ * The maximum value for an unsigned int is: 0xFFFFFFFF  (in binary all 32 bits are set to 1).
+ * "return -1;" would do the exact same as: "return UINT_MAX;"
  */
 unsigned int GLSL_GetAttribByName(const char *name)
 {
@@ -758,6 +762,7 @@ static qboolean GLSL_MissesRequiredMacros(int compilemacro, int usedmacros)
 	case USE_DELUXE_MAPPING:
 	case USE_REFLECTIONS:
 	case USE_SPECULAR:
+	case USE_WATER:
 		if (!(usedmacros & BIT(USE_NORMAL_MAPPING)))
 		{
 			return qtrue;
@@ -804,6 +809,9 @@ static unsigned int GLSL_GetRequiredVertexAttributes(int compilemacro)
 		attr = ATTR_NORMAL;
 		break;
 	case USE_NORMAL_MAPPING:
+	case USE_SPECULAR:
+	case USE_REFLECTIONS:
+	case USE_WATER:
 		attr = ATTR_NORMAL | ATTR_TANGENT | ATTR_BINORMAL;
 		break;
 	case USE_TCGEN_ENVIRONMENT:
@@ -852,10 +860,10 @@ static void GLSL_BuildShaderExtraDef()
 
 
 	// HACK: add some macros to avoid extra uniforms and save speed and code maintenance
-	BUFFEXT("#ifndef r_SpecularExponent\n#define r_SpecularExponent %f\n#endif\n", r_specularExponent->value);
-	BUFFEXT("#ifndef r_SpecularExponent2\n#define r_SpecularExponent2 %f\n#endif\n", r_specularExponent2->value);
-	BUFFEXT("#ifndef r_SpecularScale\n#define r_SpecularScale %f\n#endif\n", r_specularScale->value);
-	BUFFEXT("#ifndef r_NormalScale\n#define r_NormalScale %f\n#endif\n", r_normalScale->value);
+//	BUFFEXT("#ifndef r_SpecularExponent\n#define r_SpecularExponent %f\n#endif\n", r_specularExponent->value);
+//	BUFFEXT("#ifndef r_SpecularExponent2\n#define r_SpecularExponent2 %f\n#endif\n", r_specularExponent2->value);
+//	BUFFEXT("#ifndef r_SpecularScale\n#define r_SpecularScale %f\n#endif\n", r_specularScale->value);
+//	BUFFEXT("#ifndef r_NormalScale\n#define r_NormalScale %f\n#endif\n", r_normalScale->value);
 
 	BUFFEXT("#ifndef M_PI\n#define M_PI 3.14159265358979323846f\n#endif\n");
 	BUFFEXT("#ifndef M_TAU\n#define M_TAU 6.28318530717958647693f\n#endif\n");
@@ -945,8 +953,8 @@ static void GLSL_BuildShaderExtraDef()
 
 	if (glConfig2.textureNPOTAvailable)
 	{
-		npotWidthScale  = 1;
-		npotHeightScale = 1;
+		npotWidthScale  = 1.f;
+		npotHeightScale = 1.f;
 	}
 	else
 	{
@@ -955,6 +963,9 @@ static void GLSL_BuildShaderExtraDef()
 	}
 
 	BUFFEXT("#ifndef r_NPOTScale\n#define r_NPOTScale vec2(%f, %f)\n#endif\n", npotWidthScale, npotHeightScale);
+
+	// It's always: r_FBufScale * r_NPOTScale.. so we the multiplication once (not for every pixel/fragment)
+	BUFFEXT("#ifndef r_FBufNPOTScale\n#define r_FBufNPOTScale vec2(%f, %f)\n#endif\n", fbufWidthScale * npotWidthScale, fbufHeightScale * npotHeightScale);
 
 	if (r_shadows->integer >= SHADOWING_ESM16 && glConfig2.textureFloatAvailable && glConfig2.framebufferObjectAvailable)
 	{
@@ -1004,10 +1015,10 @@ static void GLSL_BuildShaderExtraDef()
 		//	BUFFEXT("#ifndef r_OverDarkeningFactor\n#define r_OverDarkeningFactor %f\n#endif\n", r_overDarkeningFactor->value);
 		//}
 
-		if (r_shadowMapDepthScale->value)
-		{
-			BUFFEXT("#ifndef r_ShadowMapDepthScale\n#define r_ShadowMapDepthScale %f\n#endif\n", r_shadowMapDepthScale->value);
-		}
+		//if (r_shadowMapDepthScale->value)
+		//{
+		//	BUFFEXT("#ifndef r_ShadowMapDepthScale\n#define r_ShadowMapDepthScale %f\n#endif\n", r_shadowMapDepthScale->value);
+		//}
 
 		if (r_debugShadowMaps->integer)
 		{
@@ -1018,7 +1029,7 @@ static void GLSL_BuildShaderExtraDef()
 		{
 			BUFFEXT("#ifndef PCSS\n#define PCSS 1\n#endif\n");
 		}
-		else if (r_softShadows->integer)
+		else if (r_softShadows->value)
 		{
 			BUFFEXT("#ifndef r_PCFSamples\n#define r_PCFSamples %1.1f\n#endif\n", r_softShadows->value + 1.0f);
 		}
@@ -1077,12 +1088,12 @@ static void GLSL_BuildShaderExtraDef()
 	{
 		BUFFEXT("#ifndef r_WrapAroundLighting\n#define r_WrapAroundLighting %i\n#endif\n", r_wrapAroundLighting->integer);
 	}
-
+/*
 	if (r_diffuseLighting->value >= 0.0) // && r_diffuseLighting->value <= 1.0
 	{
 		BUFFEXT("#ifndef r_diffuseLighting\n#define r_diffuseLighting %f\n#endif\n", r_diffuseLighting->value);
 	}
-
+*/
 	if (r_rimLighting->integer)
 	{
 		BUFFEXT("#ifndef r_rimLighting\n#define r_rimLighting 1\n#endif\n");
@@ -1908,7 +1919,7 @@ void GLSL_SetUniformMatrix16(shaderProgram_t *program, int uniformNum, const mat
 		return;
 	}
 
-	mat4_copy(matrix, compare);
+	Matrix4Copy(matrix, compare);
 
 	glUniformMatrix4fv(uniforms[uniformNum], 1, GL_FALSE, matrix);
 }
@@ -3263,6 +3274,7 @@ void GLSL_VertexAttribPointers(uint32_t attribBits)
 	{
 		// FIXME: this occures on maps for unknown reasons (uje_marketgarden + r_wolffog and
 		// and on radar when R_BuildCubemaps is called at start)
+		// Update: check if ^^that^^ is still the case
 		Ren_Warning("GLSL_VertexAttribPointers: no current VBO bound (attribBits %u)\n", attribBits);
 		return;
 		//Ren_Fatal("GLSL_VertexAttribPointers: no current VBO bound\n");

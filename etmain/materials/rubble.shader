@@ -8,7 +8,6 @@ textures/rubble/burn_flr_m01
 	bumpmap textures/rubble/burn_flr_m01_n.tga
 	specularmap textures/rubble/burn_flr_m01_r.tga
 	surfaceparm woodsteps
-	implicitMap -
 }
 
 textures/rubble/burn_flr_m01a

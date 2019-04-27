@@ -7,7 +7,6 @@ textures/chat/bedlinen_c02
 	bumpmap textures/chat/bedlinen_c04_n.tga
 	specularmap textures/chat/bedlinen_c04_r.tga
     surfaceparm carpetsteps
-	implicitMap -
 }
 
 textures/chat/bedlinen_c04
@@ -17,7 +16,6 @@ textures/chat/bedlinen_c04
 	bumpmap textures/chat/bedlinen_c04_n.tga
 	specularmap textures/chat/bedlinen_c04_r.tga
 	surfaceparm carpetsteps
-	implicitMap -
 }
 
 textures/chat/bedlinenpillow_c02
@@ -27,7 +25,6 @@ textures/chat/bedlinenpillow_c02
 	bumpmap textures/chat/bedlinenpillow_c02_n.tga
 	specularmap textures/chat/bedlinenpillow_c02_r.tga
 	surfaceparm carpetsteps
-	implicitMap -
 }
 
 textures/chat/book_c02
@@ -37,7 +34,6 @@ textures/chat/book_c02
 	bumpmap textures/chat/book_c02_n.tga
 	specularmap textures/chat/book_c02_r.tga
 	surfaceparm woodsteps
-	implicitMap -
 }
 
 textures/chat/book_c03
@@ -47,7 +43,6 @@ textures/chat/book_c03
 	bumpmap textures/chat/book_c03_n.tga
 	specularmap textures/chat/book_c03_r.tga
    	surfaceparm woodsteps
-	implicitMap -
 }
 
 textures/chat/book_c05
@@ -57,7 +52,6 @@ textures/chat/book_c05
 	bumpmap textures/chat/book_c05_n.tga
 	specularmap textures/chat/book_c05_r.tga
 	surfaceparm woodsteps
-	implicitMap -
 }
 
 textures/chat/carpet_c02
@@ -67,7 +61,6 @@ textures/chat/carpet_c02
 	bumpmap textures/chat/carpet_c02_n.tga
 	specularmap textures/chat/carpet_c02_r.tga
 	surfaceparm carpetsteps
-	implicitMap -
 }
 
 textures/chat/carpet_c03
@@ -77,7 +70,6 @@ textures/chat/carpet_c03
 	bumpmap textures/chat/carpet_c03_n.tga
 	specularmap textures/chat/carpet_c03_r.tga
 	surfaceparm carpetsteps
-	implicitMap -
 }
 
 textures/chat/carpet_c08
@@ -87,7 +79,6 @@ textures/chat/carpet_c08
 	bumpmap textures/chat/carpet_c08_n.tga
 	specularmap textures/chat/carpet_c08_r.tga
 	surfaceparm carpetsteps
-	implicitMap -
 }
 
 textures/chat/carpet_c10
@@ -97,7 +88,6 @@ textures/chat/carpet_c10
 	bumpmap textures/chat/carpet_c10_n.tga
 	specularmap textures/chat/carpet_c10_r.tga
 	surfaceparm carpetsteps
-	implicitMap -
 }
 
 textures/chat/carpet_c10trim
@@ -107,7 +97,6 @@ textures/chat/carpet_c10trim
 	bumpmap textures/chat/carpet_c10trim_n.tga
 	specularmap textures/chat/carpet_c10trim_r.tga
 	surfaceparm carpetsteps
-	implicitMap -
 }
 
 textures/chat/carpet_c11
@@ -117,7 +106,6 @@ textures/chat/carpet_c11
 	bumpmap textures/chat/carpet_c11_n.tga
 	specularmap textures/chat/carpet_c11_r.tga
 	surfaceparm carpetsteps.tga
-	implicitMap -
 }
 
 textures/chat/carpet_c14trim
@@ -127,7 +115,6 @@ textures/chat/carpet_c14trim
 	bumpmap textures/chat/carpet_c14trim_n.tga
 	specularmap textures/chat/carpet_c14trim_r.tga
 	surfaceparm carpetsteps
-	implicitMap -
 }
 
 textures/chat/office_c03
@@ -137,7 +124,6 @@ textures/chat/office_c03
 	bumpmap textures/chat/office_c03_n.tga
 	specularmap textures/chat/office_c03_r.tga
 	surfaceparm woodsteps
-	implicitMap -
 }
 
 textures/chat/picture_05
@@ -147,7 +133,6 @@ textures/chat/picture_05
 	bumpmap textures/chat/picture_05_n.tga
 	specularmap textures/chat/picture_05_r.tga
 	surfaceparm woodsteps
-	implicitMap -
 }
 
 textures/chat/wd_sr_va7
@@ -157,5 +142,4 @@ textures/chat/wd_sr_va7
 	bumpmap textures/chat/wd_sr_va7_n.tga
 	specularmap textures/chat/wd_sr_va7_r.tga
 	surfaceparm woodsteps
-	implicitMap -
 }

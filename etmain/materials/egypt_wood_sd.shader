@@ -7,7 +7,6 @@ textures/egypt_wood_sd/wood1a
 	bumpmap textures/egypt_wood_sd/wood1a_n.tga
 	specularmap textures/egypt_wood_sd/wood1a_r.tga
 	surfaceparm woodsteps
-	implicitMap -
 }
 
 textures/egypt_wood_sd/wood1b
@@ -17,5 +16,4 @@ textures/egypt_wood_sd/wood1b
 	bumpmap textures/egypt_wood_sd/wood1b_n.tga
 	specularmap textures/egypt_wood_sd/wood1b_r.tga
 	surfaceparm woodsteps
-	implicitMap -
 }

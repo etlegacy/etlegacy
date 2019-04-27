@@ -52,17 +52,13 @@ qboolean R_LoadPSK(model_t *mod, byte *buffer, int bufferSize, const char *name)
  */
 model_t *R_GetModelByHandle(qhandle_t hModel)
 {
-	model_t *mod;
-
 	// out of range gets the default model
 	if (hModel < 1 || hModel >= tr.numModels)
 	{
 		return tr.models[0];
 	}
 
-	mod = tr.models[hModel];
-
-	return mod;
+	return tr.models[hModel];
 }
 
 //===============================================================================
@@ -717,9 +713,9 @@ int RE_LerpTagQ3A(orientation_t *tag, qhandle_t handle, int startFrame, int endF
 		tag->axis[1][i] = start->axis[1][i] * backLerp + end->axis[1][i] * frontLerp;
 		tag->axis[2][i] = start->axis[2][i] * backLerp + end->axis[2][i] * frontLerp;
 	}
-	VectorNormalize(tag->axis[0]);
-	VectorNormalize(tag->axis[1]);
-	VectorNormalize(tag->axis[2]);
+	VectorNormalizeOnly(tag->axis[0]);
+	VectorNormalizeOnly(tag->axis[1]);
+	VectorNormalizeOnly(tag->axis[2]);
 	return retval;
 }
 
@@ -879,9 +875,9 @@ int RE_LerpTagET(orientation_t *tag, const refEntity_t *refent, const char *tagN
 		tag->axis[2][i] = start->axis[2][i] * backLerp + end->axis[2][i] * frontLerp;
 	}
 
-	VectorNormalize(tag->axis[0]);
-	VectorNormalize(tag->axis[1]);
-	VectorNormalize(tag->axis[2]);
+	VectorNormalizeOnly(tag->axis[0]);
+	VectorNormalizeOnly(tag->axis[1]);
+	VectorNormalizeOnly(tag->axis[2]);
 
 	return retval;
 }

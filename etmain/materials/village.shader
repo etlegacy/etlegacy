@@ -88,20 +88,20 @@ textures/village/villwin_c18
 
 textures/village/vill2_win_m2
 {
-        qer_editorimage textures/village/vill2_win_m2.tga
-		diffusemap textures/village/vill2_win_m2.tga
-		specularmap textures/village/vill2_win_m2_r.tga
-		bumpmap textures/village/vill2_win_m2_n.tga
-		surfaceparm glass
-	    surfaceparm pointlight
+	qer_editorimage textures/village/vill2_win_m2.tga
+	diffusemap textures/village/vill2_win_m2.tga
+	specularmap textures/village/vill2_win_m2_r.tga
+	bumpmap textures/village/vill2_win_m2_n.tga
+	surfaceparm glass
+	surfaceparm pointlight
 }
 
 textures/village/villwin_c08dm
 {
-        qer_editorimage textures/village/villwin_c08dm.tga
-		diffusemap textures/village/villwin_c08dm.tga
-		specularmap textures/village/villwin_c08dm_r.tga
-		bumpmap textures/village/villwin_c08dm_n.tga
-		surfaceparm glass
-	    surfaceparm pointlight
+	qer_editorimage textures/village/villwin_c08dm.tga
+	diffusemap textures/village/villwin_c08dm.tga
+	specularmap textures/village/villwin_c08dm_r.tga
+	bumpmap textures/village/villwin_c08dm_n.tga
+	surfaceparm glass
+	surfaceparm pointlight
 }

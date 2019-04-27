@@ -68,6 +68,10 @@ typedef unsigned short glIndex_t;
 
 #define MAX_SHADOWMAPS          5
 
+
+// 1.0f / 255.0f
+#define _1div255 0.0039215686274509803921568627451f
+
 //#define VOLUMETRIC_LIGHTING 1
 
 #define CALC_REDUNDANT_SHADOWVERTS 0
@@ -86,7 +90,10 @@ typedef enum
 
 #define HDR_ENABLED() ((r_hdrRendering->integer && glConfig2.textureFloatAvailable && glConfig2.framebufferObjectAvailable && glConfig2.framebufferBlitAvailable))
 
+// The cubeProbes used for reflections:
+// The width/height (in pixels) of a cubemap texture
 #define REF_CUBEMAP_SIZE        32
+// The width/height (in pixels) of a 'cm' image (1 cm image contains multiple cubemaps)
 #define REF_CUBEMAP_STORE_SIZE  1024
 #define REF_CUBEMAP_STORE_SIDE  (REF_CUBEMAP_STORE_SIZE / REF_CUBEMAP_SIZE)
 #define REF_CUBEMAPS_PER_FILE   (REF_CUBEMAP_STORE_SIDE * REF_CUBEMAP_STORE_SIDE)
@@ -621,14 +628,14 @@ typedef struct BufferImage_s
 /**
  * @enum BuffetType_t
  * @brief
- */
+ * /
 typedef enum
 {
 	DEFAULT = 0,
 	DIFFUSE,
 	NORMAL,
 	SPECULAR
-} BuffetType_t;
+} BuffetType_t;*/
 
 /**
  * @struct FBO_s
@@ -1128,7 +1135,10 @@ enum
 	TB_DIFFUSEMAP = 0,
 	TB_NORMALMAP,
 	TB_SPECULARMAP,
-	MAX_TEXTURE_BUNDLES = 3
+	TB_REFLECTIONMAP,
+	MAX_TEXTURE_BUNDLES // = 4    If you don't explicitely assign a value here,
+						//        the enum will get the correct value automatically.
+						//        And if you add a new TB_ type, you wouldn't forget to change this value manually.
 };
 
 /**
@@ -1137,11 +1147,11 @@ enum
  */
 typedef struct
 {
-	uint8_t numImages;
+	uint8_t numImages; // the number of animation images
 	double imageAnimationSpeed;
 	image_t *image[MAX_IMAGE_ANIMATIONS];
 
-	qboolean isTcGen;
+	qboolean isTcGenVector;
 	vec3_t tcGenVectors[2];
 
 	uint8_t numTexMods;
@@ -1159,23 +1169,34 @@ typedef enum
 {
 	// material shader stage types
 	ST_COLORMAP = 0,            ///< vanilla Q3A style shader treatening
-	ST_DIFFUSEMAP,
-	ST_NORMALMAP,
-	ST_SPECULARMAP,
-	ST_REFLECTIONMAP,           ///< cubeMap based reflection
+	ST_DIFFUSEMAP,              ///< diffuse
+	ST_NORMALMAP,               ///< bump
+	ST_SPECULARMAP,             ///< specular
+
+	ST_REFLECTIONMAP,           ///< cubeMap based reflection + reflectionmap texture.  RGB is filled with shades of gray to set the amount of reflection
+	ST_CUBEREFLECTIONS,         ///< tcGen reflect     cubeMap based reflection
+	ST_TCGENENVMAP,			    ///< tcGen environment reflection
+
+	ST_LIQUIDMAP,               ///< liquid/water
+
 	ST_REFRACTIONMAP,
 	ST_DISPERSIONMAP,
 	ST_SKYBOXMAP,
 	ST_SCREENMAP,               ///< 2d offscreen or portal rendering
 	ST_PORTALMAP,
 	ST_HEATHAZEMAP,             ///< heatHaze post process effect
-	ST_LIQUIDMAP,
-
 	ST_LIGHTMAP,
 
-	ST_COLLAPSE_lighting_DB,    ///< diffusemap + bumpmap
-	ST_COLLAPSE_lighting_DBS,   ///< diffusemap + bumpmap + specularmap
-	ST_COLLAPSE_reflection_CB,  ///< color cubemap + bumpmap
+//	ST_BUNDLE_LD,               ///< lightmap + diffuse
+//	ST_BUNDLE_LDB,              ///< lightmap + diffuse + bump
+//	ST_BUNDLE_LDBS,             ///< lightmap + diffuse + bump + specular
+	ST_BUNDLE_DB,               ///< diffuse + bump
+	ST_BUNDLE_DBS,              ///< diffuse + bump + specular
+	ST_BUNDLE_DBSR,             ///< diffuse + bump + specular + reflectionmap
+	ST_BUNDLE_CB,               ///< color cubemap + bump              (reflections)
+	ST_BUNDLE_WDB,              ///< liquid/water + diffuse + bump
+	ST_BUNDLE_WB,               ///< liquid/water + bump
+	ST_BUNDLE_WD,               ///< liquid/water + diffuse
 
 	// light shader stage types
 	ST_ATTENUATIONMAP_XY,
@@ -1190,10 +1211,13 @@ typedef enum
 {
 	COLLAPSE_none = 0,
 	COLLAPSE_genericMulti,
-	COLLAPSE_lighting_DB,
-	COLLAPSE_lighting_DBS,
-	COLLAPSE_reflection_CB,
-	COLLAPSE_color_lightmap
+	COLLAPSE_DB,
+	COLLAPSE_DBS,
+	COLLAPSE_DBSR,
+	COLLAPSE_WDB,
+	COLLAPSE_WB,
+	COLLAPSE_WD,
+	COLLAPSE_CB
 } collapseType_t;
 
 /**
@@ -1291,8 +1315,10 @@ typedef struct
 	stencil_t frontStencil, backStencil;
 
 	qboolean overrideNoPicMip;              ///< for images that must always be full resolution
+
 	qboolean overrideFilterType;            ///< for console fonts, 2D elements, etc.
 	filterType_t filterType;
+
 	qboolean overrideWrapType;
 	wrapType_t wrapType;
 
@@ -1474,6 +1500,7 @@ typedef struct shader_s
 	int timeOffset;                                     ///< current time offset for this shader
 
 	qboolean has_lightmapStage;
+	qboolean has_liquidStage;
 
 	struct shader_s *remappedShader;    ///< current shader this one is remapped too
 
@@ -1890,8 +1917,6 @@ typedef struct
 	struct interaction_s *interactions;
 
 	byte *pixelTarget;                  ///< set this to Non Null to copy to a buffer after scene rendering
-	int pixelTargetWidth;
-	int pixelTargetHeight;
 
 	glfog_t glFog;                      ///< added (needed to pass fog infos into the portal sky scene)
 } trRefdef_t;
@@ -3319,9 +3344,20 @@ typedef struct
 
 #define DEFAULT_FOG_EXP_DENSITY         0.5
 
+// size = 4096, that is 2^12.   4096 values fit in table[0 to 4095].  Each value fits in 2^12 bits.
+// If you take any power-of-two value, and you subtract 1 of that value, you have the mask-value.
+// 2^12 - 1 = 4096 - 1 = 4095 = 0b111111111111 = 0x1000 - 1 = 0xFFF
+// Note that the way FUNCTABLE_MASK is defined below, FUNCTABLE_SIZE needs to be a power-of-two.
+// If you do the "-1" on some non-power-of-two value, you get some funny mask value. Example: 11-1 = 10 = 0b1010
+// If you need to know your mask-value for any FUNCTABLE_SIZE, you can use the log-function to find it out.
+// Log2(4096) = 12    on a calculator you typ in:   4096 'log' / 2 'log' =
+// Log2(4096) = 12, because 2^12 = 4096.
+// The example again: Log2(11) = 3.459   Round up, and you need 4 bits for storing 11 unique values.
 #define FUNCTABLE_SIZE      4096    ///< % 1024
-#define FUNCTABLE_SIZE2     12      ///< % 10
-#define FUNCTABLE_MASK      (FUNCTABLE_SIZE - 1)
+#define FUNCTABLE_BITS      12      ///< % 10
+#define FUNCTABLE_DIV_4     1024    ///< (FUNCTABLE_SIZE / 4)
+//#define FUNCTABLE_MASK      (FUNCTABLE_SIZE - 1)
+#define FUNCTABLE_MASK      0xFFF
 
 #define MAX_GLSTACK         5
 
@@ -3734,7 +3770,6 @@ extern cvar_t *r_railCoreWidth;
 
 extern cvar_t *r_lodTest;
 
-extern cvar_t *r_wolfFog;
 extern cvar_t *r_noFog;
 
 extern cvar_t *r_forceAmbient;
@@ -3747,8 +3782,9 @@ extern cvar_t *r_dynamicLightShadows;
 extern cvar_t *r_precomputedLighting;
 extern cvar_t *r_vertexLighting;
 extern cvar_t *r_compressDiffuseMaps;
-extern cvar_t *r_compressSpecularMaps;
 extern cvar_t *r_compressNormalMaps;
+extern cvar_t *r_compressSpecularMaps;
+extern cvar_t *r_compressReflectionMaps;
 extern cvar_t *r_heatHazeFix;
 extern cvar_t *r_noMarksOnTrisurfs;
 
@@ -3772,25 +3808,30 @@ extern cvar_t *r_extPackedDepthStencil;
 extern cvar_t *r_extFramebufferBlit;
 extern cvar_t *r_extGenerateMipmap;
 
-extern cvar_t *r_collapseStages;
-
-extern cvar_t *r_forceSpecular;
-extern cvar_t *r_specularExponent;
-extern cvar_t *r_specularExponent2;
-extern cvar_t *r_specularScale;
-extern cvar_t *r_normalScale;
+extern cvar_t *r_specularExponent;  // for the world
+extern cvar_t *r_specularExponent2; // for entities only
+extern cvar_t *r_specularExponent3; // for players only
+extern cvar_t *r_specularScale;  // for the world
+extern cvar_t *r_specularScale2; // for entities only
+extern cvar_t *r_specularScale3; // for players only
+//extern cvar_t *r_normalScale;
 extern cvar_t *r_normalMapping;
 extern cvar_t *r_wrapAroundLighting;
 extern cvar_t *r_diffuseLighting;
 extern cvar_t *r_rimLighting;
 extern cvar_t *r_rimExponent;
 
+extern cvar_t *r_reflectionMapping; // on/off
+extern cvar_t *r_reflectionScale; // value 0.0 to 1.0     (0.07 = 7%)
+
+extern cvar_t *r_parallaxMapping;
+extern cvar_t *r_parallaxDepthScale;
+
 // 3 = stencil shadow volumes
 // 4 = shadow mapping
 extern cvar_t *r_softShadows;
 extern cvar_t *r_shadowBlur;
 
-extern cvar_t *r_shadowMapQuality;
 extern cvar_t *r_shadowMapSizeUltra;
 extern cvar_t *r_shadowMapSizeVeryHigh;
 extern cvar_t *r_shadowMapSizeHigh;
@@ -3803,8 +3844,6 @@ extern cvar_t *r_shadowMapSizeSunHigh;
 extern cvar_t *r_shadowMapSizeSunMedium;
 extern cvar_t *r_shadowMapSizeSunLow;
 
-extern cvar_t *r_shadowOffsetFactor;
-extern cvar_t *r_shadowOffsetUnits;
 extern cvar_t *r_shadowLodBias;
 extern cvar_t *r_shadowLodScale;
 extern cvar_t *r_noShadowPyramids;
@@ -3814,7 +3853,6 @@ extern cvar_t *r_cullShadowPyramidTriangles;
 extern cvar_t *r_debugShadowMaps;
 extern cvar_t *r_noShadowFrustums;
 extern cvar_t *r_noLightFrustums;
-extern cvar_t *r_shadowMapLuminanceAlpha;
 extern cvar_t *r_shadowMapLinearFilter;
 //extern cvar_t *r_lightBleedReduction;
 //extern cvar_t *r_overDarkeningFactor; // exponential shadow mapping
@@ -3852,18 +3890,13 @@ extern cvar_t *r_vboShadows;
 extern cvar_t *r_vboLighting;
 extern cvar_t *r_vboModels;
 extern cvar_t *r_vboVertexSkinning;
-extern cvar_t *r_vboSmoothNormals;
 extern cvar_t *r_vboFoliage;
-extern cvar_t *r_worldInlineModels;
 #if defined(USE_BSP_CLUSTERSURFACE_MERGING)
 extern cvar_t *r_mergeClusterSurfaces;
 extern cvar_t *r_mergeClusterFaces;
 extern cvar_t *r_mergeClusterCurves;
 extern cvar_t *r_mergeClusterTriangles;
 #endif
-
-extern cvar_t *r_parallaxMapping;
-extern cvar_t *r_parallaxDepthScale;
 
 extern cvar_t *r_dynamicBspOcclusionCulling;
 extern cvar_t *r_dynamicEntityOcclusionCulling;
@@ -3890,7 +3923,6 @@ extern cvar_t *r_hdrDebug;
 extern cvar_t *r_screenSpaceAmbientOcclusion;
 extern cvar_t *r_depthOfField;
 
-extern cvar_t *r_reflectionMapping;
 extern cvar_t *r_highQualityNormalMapping;
 
 extern cvar_t *r_bloom;
@@ -3942,7 +3974,15 @@ int R_FogLocalPointAndRadius(const vec3_t pt, float radius);
 int R_FogPointAndRadius(const vec3_t pt, float radius);
 int R_FogWorldBox(vec3_t bounds[2]);
 
+#ifndef ETL_SSE
 void R_SetupEntityWorldBounds(trRefEntity_t *ent);
+#else
+///void R_SetupEntityWorldBounds(trRefEntity_t *ent);
+#define R_SetupEntityWorldBounds(ent) \
+{ \
+	MatrixTransformBounds(tr.orientation.transformMatrix, ent->localBounds[0], ent->localBounds[1], ent->worldBounds[0], ent->worldBounds[1]); \
+}
+#endif
 
 void R_RotateEntityForViewParms(const trRefEntity_t *ent, const viewParms_t *viewParms, orientationr_t *orientation);
 void R_RotateEntityForLight(const trRefEntity_t *ent, const trRefLight_t *light, orientationr_t *orientation);
@@ -3975,7 +4015,7 @@ void R_CalcTBN(vec3_t tangent, vec3_t bitangent, vec3_t normal,
 
 qboolean R_CalcTangentVectors(srfVert_t * dv[3]);
 
-void R_CalcSurfaceTrianglePlanes(int numTriangles, srfTriangle_t *triangles, srfVert_t *verts);
+//void R_CalcSurfaceTrianglePlanes(int numTriangles, srfTriangle_t *triangles, srfVert_t *verts); //unused
 
 float R_CalcFov(float fovX, float width, float height);
 
@@ -4162,8 +4202,8 @@ typedef byte color4ub_t[4];
 typedef struct stageVars
 {
 	vec4_t color;
-	qboolean texMatricesChanged[MAX_TEXTURE_BUNDLES];
-	mat4_t texMatrices[MAX_TEXTURE_BUNDLES];
+	//qboolean texMatricesChanged[MAX_TEXTURE_BUNDLES];  //was unused?
+	mat4_t texMatrix; // mat4_t texMatrices[MAX_TEXTURE_BUNDLES];
 } stageVars_t;
 
 #define MAX_MULTIDRAW_PRIMITIVES    1000
@@ -4255,7 +4295,7 @@ void Tess_StageIteratorSky();
 
 void Tess_AddQuadStamp(vec3_t origin, vec3_t left, vec3_t up, const vec4_t color);
 void Tess_AddQuadStampExt(vec3_t origin, vec3_t left, vec3_t up, const vec4_t color, float s1, float t1, float s2, float t2);
-void Tess_AddQuadStampExt2(vec4_t quadVerts[4], const vec4_t color, float s1, float t1, float s2, float t2, qboolean calcNormals);
+//void Tess_AddQuadStampExt2(vec4_t quadVerts[4], const vec4_t color, float s1, float t1, float s2, float t2, qboolean calcNormals); // this func is local to tr_surface
 void Tess_AddQuadStamp2(vec4_t quadVerts[4], const vec4_t color);
 void Tess_AddQuadStamp2WithNormals(vec4_t quadVerts[4], const vec4_t color);
 
@@ -4342,12 +4382,13 @@ FOG, tr_fog.c
 ============================================================
 */
 
-void R_SetFrameFog();
-void RB_Fog(glfog_t *curfog);
-void RB_FogOff();
-void RB_FogOn();
+// the old wolfFog functions are commented out
+//void RB_Fog(glfog_t *curfog);
+//void RB_FogOff();
+//void RB_FogOn();
 void RE_SetFog(int fogvar, int var1, int var2, float r, float g, float b, float density);
 void RE_SetGlobalFog(qboolean restore, int duration, float r, float g, float b, float depthForOpaque);
+void R_SetFrameFog();
 
 /*
 ============================================================
@@ -4544,8 +4585,8 @@ void Tess_SurfaceVBOMDMMesh(srfVBOMDMMesh_t *surface);
 =============================================================
 */
 
-void R_TransformWorldToClip(const vec3_t src, const float *cameraViewMatrix,
-                            const float *projectionMatrix, vec4_t eye, vec4_t dst);
+/*void R_TransformWorldToClip(const vec3_t src, const float *cameraViewMatrix,
+                            const float *projectionMatrix, vec4_t eye, vec4_t dst);*/
 void R_TransformModelToClip(const vec3_t src, const float *modelMatrix,
                             const float *projectionMatrix, vec4_t eye, vec4_t dst);
 void R_TransformClipToWindow(const vec4_t clip, const viewParms_t *view, vec4_t normalized, vec4_t window);
@@ -4848,6 +4889,7 @@ void RE_TakeVideoFrame(int width, int height, byte *captureBuffer, byte *encodeB
 // cubemap reflections stuff
 void R_BuildCubeMaps(void);
 void R_FindTwoNearestCubeMaps(const vec3_t position, cubemapProbe_t **cubeProbe1, cubemapProbe_t **cubeProbe2, float *distance1, float *distance2);
+void R_FindCubeMaps(const vec3_t position, cubemapProbe_t **cubeProbe1, cubemapProbe_t **cubeProbe2, cubemapProbe_t **cubeProbe3, float *distance1, float *distance2, float *distance3, float *interpolation1, float *interpolation2, float *interpolation3);
 
 void FreeVertexHashTable(vertexHash_t **hashTable);
 

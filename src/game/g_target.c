@@ -552,7 +552,7 @@ void target_laser_think(gentity_t *self)
 		VectorMA(self->enemy->s.origin, 0.5f, self->enemy->r.mins, point);
 		VectorMA(point, 0.5f, self->enemy->r.maxs, point);
 		VectorSubtract(point, self->s.origin, self->movedir);
-		VectorNormalize(self->movedir);
+		VectorNormalizeOnly(self->movedir);
 	}
 
 	// fire forward and see what we hit

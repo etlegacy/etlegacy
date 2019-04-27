@@ -215,7 +215,7 @@ qboolean ParseShaderR1(char *_text)
 			}
 			tr.sunLight[2] = atof(token);
 
-			VectorNormalize(tr.sunLight);
+			VectorNormalizeOnly(tr.sunLight);
 
 			token = COM_ParseExt2(text, qfalse);
 			if (!token[0])
@@ -672,7 +672,8 @@ qboolean ParseShaderR1(char *_text)
 			if (shader.distanceCull[1] - shader.distanceCull[0] > 0)
 			{
 				// distanceCull[ 3 ] is an optimization
-				shader.distanceCull[3] = 1.0f / (shader.distanceCull[1] - shader.distanceCull[0]);
+				//shader.distanceCull[3] = 1.0f / (shader.distanceCull[1] - shader.distanceCull[0]);
+				shader.distanceCull[3] = rcp(shader.distanceCull[1] - shader.distanceCull[0]);
 			}
 			else
 			{

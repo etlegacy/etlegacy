@@ -7,5 +7,4 @@ textures/town_window/shudder_c04
 	specularmap textures/town_window/shudder_c04_r.tga
 	bumpmap textures/town_window/shudder_c04_n.tga
 	surfaceparm woodsteps
-	implicitMap -
 }

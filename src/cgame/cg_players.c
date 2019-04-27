@@ -899,7 +899,8 @@ void CG_RunLerpFrameRate(clientInfo_t *ci, lerpFrame_t *lf, int newAnimation, ce
 		}
 		else
 		{
-			lf->frameTime = lf->oldFrameTime + (int)((float)anim->frameLerp * (1.0f / lf->animSpeedScale));
+			//lf->frameTime = lf->oldFrameTime + (int)((float)anim->frameLerp * (1.0f / lf->animSpeedScale));
+			lf->frameTime = lf->oldFrameTime + (int)((float)anim->frameLerp * rcp(lf->animSpeedScale));
 			if (lf->frameTime < cg.time)
 			{
 				lf->frameTime = cg.time;
@@ -1734,19 +1735,24 @@ static void CG_PlayerAngles(centity_t *cent, vec3_t legs[3], vec3_t torso[3], ve
 
 	// lean towards the direction of travel
 	VectorCopy(cent->currentState.pos.trDelta, velocity);
-	speed = VectorNormalize(velocity);
+	//speed = VectorNormalize(velocity);
+	VectorNorm(velocity, &speed);
 	if (speed != 0.f)
 	{
 		vec3_t axis[3];
-		float side;
+		float side, dot;
 
 		speed *= 0.05;
 
 		AnglesToAxis(legsAngles, axis);
-		side              = speed * DotProduct(velocity, axis[1]);
+		//side              = speed * DotProduct(velocity, axis[1]);
+		Dot(velocity, axis[1], dot);
+		side = speed * dot;
 		legsAngles[ROLL] -= side;
 
-		side               = speed * DotProduct(velocity, axis[0]);
+		//side               = speed * DotProduct(velocity, axis[0]);
+		Dot(velocity, axis[0], dot);
+		side = speed * dot;
 		legsAngles[PITCH] += side;
 	}
 
@@ -1908,9 +1914,7 @@ static void CG_PlayerFloatSprite(centity_t *cent, qhandle_t shader, int height, 
 qboolean CG_WorldCoordToScreenCoordFloat(vec3_t point, float *x, float *y)
 {
 	vec3_t trans;
-	float xc, yc;
-	float px, py;
-	float z;
+	float xc, yc, px, py, z, dot1, dot2;
 
 	px = (float)tan(DEG2RAD((double)cg.refdef.fov_x) / 2);
 	py = (float)tan(DEG2RAD((double)cg.refdef.fov_y) / 2);
@@ -1920,7 +1924,8 @@ qboolean CG_WorldCoordToScreenCoordFloat(vec3_t point, float *x, float *y)
 	xc = 640.0f / 2.0f;
 	yc = 480.0f / 2.0f;
 
-	z = DotProduct(trans, cg.refdef.viewaxis[0]);
+	//z = DotProduct(trans, cg.refdef.viewaxis[0]);
+	Dot(trans, cg.refdef.viewaxis[0], z);
 	if (z < 0.1f)
 	{
 		return qfalse;
@@ -1932,8 +1937,12 @@ qboolean CG_WorldCoordToScreenCoordFloat(vec3_t point, float *x, float *y)
 		return qfalse;
 	}
 
-	*x = xc - (DotProduct(trans, cg.refdef.viewaxis[1]) * xc) / px;
-	*y = yc - (DotProduct(trans, cg.refdef.viewaxis[2]) * yc) / py;
+	//*x = xc - (DotProduct(trans, cg.refdef.viewaxis[1]) * xc) / px;
+	//*y = yc - (DotProduct(trans, cg.refdef.viewaxis[2]) * yc) / py;
+	Dot(trans, cg.refdef.viewaxis[1], dot1);
+	Dot(trans, cg.refdef.viewaxis[2], dot2);
+	*x = xc - (dot1 * xc) / px;
+	*y = yc - (dot2 * yc) / py;
 	*x = Ccg_WideX(*x);
 
 	return qtrue;

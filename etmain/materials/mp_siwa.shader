@@ -11,7 +11,6 @@ textures/mp_siwa/sky
 	surfaceparm noimpact
 	surfaceparm nolightmap
 	surfaceparm sky
-
 	{
 		map textures/skies_sd/siwa_clouds.tga
 		tcMod scale 3 3
@@ -35,49 +34,30 @@ textures/mp_siwa/lmterrain_0
 	qer_editorimage textures/desert_sd/sand_wave_desert.tga
 	surfaceparm landmine
 	surfaceparm gravelsteps
-
+	diffusemap textures/desert_sd/sand_wave_desert.tga
+	bumpmap textures/desert_sd/sand_wave_desert_n.tga
+	specularmap textures/desert_sd/sand_wave_desert_r.tga
 	{
-	    stage diffuseMap
+		stage diffuseMap
 		map textures/desert_sd/sand_wave_desert.tga
 		rgbGen identity
 		alphaGen vertex
 	}
 	{
-	    stage bumpMap
+		stage bumpMap
 		map textures/desert_sd/sand_wave_desert_n.tga
 		rgbGen identity
 		alphaGen vertex
 	}
 	{
-	    stage specularMap
+		stage specularMap
 		map textures/desert_sd/sand_wave_desert_r.tga
 		rgbGen identity
 		alphaGen vertex
-	}
-	{
-	    stage diffuseMap
-		map textures/desert_sd/sand_wave_desert.tga
-		rgbGen identity
-		alphaGen vertex
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
-	}
-	{
-	    stage bumpMap
-		map textures/desert_sd/sand_wave_desert_n.tga
-		rgbGen identity
-		alphaGen vertex
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
-	}
-	{
-	    stage specularMap
-		map textures/desert_sd/sand_wave_desert_r.tga
-		rgbGen identity
-		alphaGen vertex
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
 	}
 	{
 		map $lightmap
-		blendFunc GL_DST_COLOR GL_ZERO
+		blendFunc filter
 		rgbGen identity
 	}
 }
@@ -88,49 +68,33 @@ textures/mp_siwa/lmterrain_1
 	qer_editorimage textures/desert_sd/grass_sand_flat.tga
 	surfaceparm landmine
 	surfaceparm gravelsteps
-
+	diffusemap textures/desert_sd/grass_sand_flat.tga
+	bumpmap textures/desert_sd/grass_sand_flat_n.tga
+	specularmap textures/desert_sd/grass_sand_flat_r.tga
 	{
 	    stage diffuseMap
 		map textures/desert_sd/grass_sand_flat.tga
 		rgbGen identity
 		alphaGen vertex
+		blendFunc blend
 	}
 	{
 	    stage bumpMap
 		map textures/desert_sd/grass_sand_flat_n.tga
 		rgbGen identity
 		alphaGen vertex
+		blendFunc blend
 	}
 	{
 	    stage specularMap
 		map textures/desert_sd/grass_sand_flat_r.tga
 		rgbGen identity
 		alphaGen vertex
-	}
-	{
-	    stage diffuseMap
-		map textures/desert_sd/grass_sand_flat.tga
-		rgbGen identity
-		alphaGen vertex
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
-	}
-	{
-	    stage bumpMap
-		map textures/desert_sd/grass_sand_flat_n.tga
-		rgbGen identity
-		alphaGen vertex
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
-	}
-	{
-	    stage specularMap
-		map textures/desert_sd/grass_sand_flat_r.tga
-		rgbGen identity
-		alphaGen vertex
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		blendFunc blend
 	}
 	{
 		map $lightmap
-		blendFunc GL_DST_COLOR GL_ZERO
+		blendFunc filter
 		rgbGen identity
 	}
 }
@@ -141,50 +105,33 @@ textures/mp_siwa/lmterrain_2
 	qer_editorimage textures/desert_sd/sand_patchy.tga
 	surfaceparm landmine
 	surfaceparm gravelsteps
-
+	diffusemap textures/desert_sd/sand_patchy.tga
+	bumpmap textures/desert_sd/sand_patchy_n.tga
+	specularmap textures/desert_sd/sand_patchy_r.tga
 	{
 	    stage diffuseMap
 		map textures/desert_sd/sand_patchy.tga
 		rgbGen identity
 		alphaGen vertex
+		blendFunc blend
 	}
 	{
 	    stage bumpMap
 		map textures/desert_sd/sand_patchy_n.tga
 		rgbGen identity
 		alphaGen vertex
+		blendFunc blend
 	}
 	{
 	    stage specularMap
 		map textures/desert_sd/sand_patchy_r.tga
 		rgbGen identity
 		alphaGen vertex
-	}
-	
-	{
-	    stage diffuseMap
-		map textures/desert_sd/sand_patchy.tga
-		rgbGen identity
-		alphaGen vertex
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
-	}
-	{
-	    stage bumpMap
-		map textures/desert_sd/sand_patchy_n.tga
-		rgbGen identity
-		alphaGen vertex
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
-	}
-	{
-	    stage specularMap
-		map textures/desert_sd/sand_patchy_r.tga
-		rgbGen identity
-		alphaGen vertex
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		blendFunc blend
 	}
 	{
 		map $lightmap
-		blendFunc GL_DST_COLOR GL_ZERO
+		blendFunc filter
 		rgbGen identity
 	}
 }
@@ -195,49 +142,33 @@ textures/mp_siwa/lmterrain_3
 	qer_editorimage textures/desert_sd/sand_disturb_desert.tga
 	surfaceparm landmine
 	surfaceparm gravelsteps
-
+	diffusemap textures/desert_sd/sand_disturb_desert.tga
+	bumpmap textures/desert_sd/sand_disturb_desert_n.tga
+	specularmap textures/desert_sd/sand_disturb_desert_r.tga
 	{
 	    stage diffuseMap
 		map textures/desert_sd/sand_disturb_desert.tga
 		rgbGen identity
 		alphaGen vertex
+		blendFunc blend
 	}
 	{
 	    stage bumpMap
 		map textures/desert_sd/sand_disturb_desert_n.tga
 		rgbGen identity
 		alphaGen vertex
+		blendFunc blend
 	}
 	{
 	    stage specularMap
 		map textures/desert_sd/sand_disturb_desert_r.tga
 		rgbGen identity
 		alphaGen vertex
+		blendFunc blend
 	}
-	{
-	    stage diffuseMap
-		map textures/desert_sd/sand_disturb_desert.tga
-		rgbGen identity
-		alphaGen vertex
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
-	}
-	{
-	    stage bumpMap
-		map textures/desert_sd/sand_disturb_desert_n.tga
-		rgbGen identity
-		alphaGen vertex
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
-	}
-	{
-	    stage specularMap
-		map textures/desert_sd/sand_disturb_desert_r.tga
-		rgbGen identity
-		alphaGen vertex
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
-	}	
 	{
 		map $lightmap
-		blendFunc GL_DST_COLOR GL_ZERO
+		blendFunc filter
 		rgbGen identity
 	}
 }
@@ -248,49 +179,33 @@ textures/mp_siwa/lmterrain_4
 	qer_editorimage textures/desert_sd/grass_desert_flat.tga
 	surfaceparm landmine
 	surfaceparm gravelsteps
-
+	diffusemap textures/desert_sd/grass_desert_flat.tga
+	bumpmap textures/desert_sd/grass_desert_flat_n.tga
+	specularmap textures/desert_sd/grass_desert_flat_r.tga
 	{
 	    stage diffuseMap
 		map textures/desert_sd/grass_desert_flat.tga
 		rgbGen identity
 		alphaGen vertex
+		blendFunc blend
 	}
 	{
 	    stage bumpMap
 		map textures/desert_sd/grass_desert_flat_n.tga
 		rgbGen identity
 		alphaGen vertex
+		blendFunc blend
 	}
 	{
 	    stage specularMap
 		map textures/desert_sd/grass_desert_flat_r.tga
 		rgbGen identity
 		alphaGen vertex
+		blendFunc blend
 	}
-	{
-	    stage diffuseMap
-		map textures/desert_sd/grass_desert_flat.tga
-		rgbGen identity
-		alphaGen vertex
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
-	}
-	{
-	    stage bumpMap
-		map textures/desert_sd/grass_desert_flat_n.tga
-		rgbGen identity
-		alphaGen vertex
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
-	}
-	{
-	    stage specularMap
-		map textures/desert_sd/grass_desert_flat_r.tga
-		rgbGen identity
-		alphaGen vertex
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
-	}	
 	{
 		map $lightmap
-		blendFunc GL_DST_COLOR GL_ZERO
+		blendFunc filter
 		rgbGen identity
 	}
 }
@@ -299,48 +214,33 @@ textures/mp_siwa/lmterrain_5
 {
 	q3map_baseshader textures/mp_siwa/lmterrain_base
 	qer_editorimage textures/desert_sd/rock_edged_smooth.tga
+	diffusemap textures/desert_sd/rock_edged_smooth.tga
+	bumpmap textures/desert_sd/rock_edged_smooth_n.tga
+	specularmap textures/desert_sd/rock_edged_smooth_r.tga
 	{
 	    stage diffuseMap
 		map textures/desert_sd/rock_edged_smooth.tga
 		rgbGen identity
 		alphaGen vertex
+		blendFunc blend
 	}
 	{
 	    stage bumpMap
 		map textures/desert_sd/rock_edged_smooth_n.tga
 		rgbGen identity
 		alphaGen vertex
+		blendFunc blend
 	}
 	{
 	    stage specularMap
 		map textures/desert_sd/rock_edged_smooth_r.tga
 		rgbGen identity
 		alphaGen vertex
-	}
-	{
-	    stage diffuseMap
-		map textures/desert_sd/rock_edged_smooth.tga
-		rgbGen identity
-		alphaGen vertex
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
-	}
-	{
-	    stage bumpMap
-		map textures/desert_sd/rock_edged_smooth_n.tga
-		rgbGen identity
-		alphaGen vertex
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
-	}
-	{
-	    stage specularMap
-		map textures/desert_sd/rock_edged_smooth_r.tga
-		rgbGen identity
-		alphaGen vertex
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		blendFunc blend
 	}
 	{
 		map $lightmap
-		blendFunc GL_DST_COLOR GL_ZERO
+		blendFunc filter
 		rgbGen identity
 	}
 }
@@ -351,49 +251,54 @@ textures/mp_siwa/lmterrain_6
 	qer_editorimage textures/desert_sd/sand_gravels_bright.tga
 	surfaceparm landmine
 	surfaceparm gravelsteps
-
+	
+	// shader stage 1
+	diffusemap textures/desert_sd/sand_gravels_bright.tga
+	specularmap textures/desert_sd/sand_gravels_bright_r.tga
+	bumpmap textures/desert_sd/sand_gravels_bright_n.tga
+/*	
+	// enable parallax relief mapping for this material.
+	parallax
+	// For parallax relief mapping to work, you need to provide a special kind of normalmap texture.
+	// That parallax-normalmap contains in the alpha-channel the heightmap values. Shades of gray.
+	// The 'displaceMap' function can make such a normal+height map, but it is not the best way for all textures.
+	// But it is done on-the-fly, and is very easy to use and adjust.
+	// Here's how it works:
+	//     displaceMap(<map>, <map>)
+	//     Sets the alpha channel to an average of the second image's RGB channels.
+	// To create a displaceMap, the 2 provided images must be of the same resolution.
+	//
+	bumpmap displaceMap(textures/desert_sd/sand_gravels_bright_n.tga, textures/desert_sd/sand_gravels_bright_p.tga)
+	//
+	// You can also prepare an image with an appropriate alpha channel, a displacemap. In that case you just have to assign that map.
+	//bumpmap textures/desert_sd/sand_gravels_bright_n.tga
+	//
+*/
+	// shader stage 2
 	{
 	    stage diffuseMap
 		map textures/desert_sd/sand_gravels_bright.tga
 		rgbGen identity
 		alphaGen vertex
+		blendFunc blend
 	}
 	{
 	    stage bumpMap
 		map textures/desert_sd/sand_gravels_bright_n.tga
 		rgbGen identity
 		alphaGen vertex
+		blendFunc blend
 	}
 	{
 	    stage specularMap
 		map textures/desert_sd/sand_gravels_bright_r.tga
 		rgbGen identity
 		alphaGen vertex
-	}
-	{
-	    stage diffuseMap
-		map textures/desert_sd/sand_gravels_bright.tga
-		rgbGen identity
-		alphaGen vertex
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
-	}
-	{
-	    stage bumpMap
-		map textures/desert_sd/sand_gravels_bright_n.tga
-		rgbGen identity
-		alphaGen vertex
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
-	}
-	{
-	    stage specularMap
-		map textures/desert_sd/sand_gravels_bright_r.tga
-		rgbGen identity
-		alphaGen vertex
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		blendFunc blend
 	}
 	{
 		map $lightmap
-		blendFunc GL_DST_COLOR GL_ZERO
+		blendFunc filter
 		rgbGen identity
 	}
 }
@@ -404,50 +309,33 @@ textures/mp_siwa/lmterrain_7
 	qer_editorimage textures/desert_sd/sand_dirt_medium.tga
 	surfaceparm landmine
 	surfaceparm gravelsteps
-
+	diffusemap textures/desert_sd/sand_dirt_medium.tga
+	bumpmap textures/desert_sd/sand_dirt_medium_n.tga
+	specularmap textures/desert_sd/sand_dirt_medium_r.tga
 	{
 	    stage diffuseMap
 		map textures/desert_sd/sand_dirt_medium.tga
 		rgbGen identity
 		alphaGen vertex
+		blendFunc blend
 	}
 	{
 	    stage bumpMap
 		map textures/desert_sd/sand_dirt_medium_n.tga
 		rgbGen identity
 		alphaGen vertex
+		blendFunc blend
 	}
 	{
 	    stage specularMap
 		map textures/desert_sd/sand_dirt_medium_r.tga
 		rgbGen identity
 		alphaGen vertex
-	}
-	
-	{
-	    stage diffuseMap
-		map textures/desert_sd/sand_dirt_medium.tga
-		rgbGen identity
-		alphaGen vertex
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
-	}
-	{
-	    stage bumpMap
-		map textures/desert_sd/sand_dirt_medium_n.tga
-		rgbGen identity
-		alphaGen vertex
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
-	}
-	{
-	    stage specularMap
-		map textures/desert_sd/sand_dirt_medium_r.tga
-		rgbGen identity
-		alphaGen vertex
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		blendFunc blend
 	}
 	{
 		map $lightmap
-		blendFunc GL_DST_COLOR GL_ZERO
+		blendFunc filter
 		rgbGen identity
 	}
 }
@@ -457,49 +345,33 @@ textures/mp_siwa/lmterrain_0to1
 	q3map_baseshader textures/mp_siwa/lmterrain_base
 	surfaceparm landmine
 	surfaceparm gravelsteps
-
-    {
-	    stage diffuseMap
-		map textures/desert_sd/sand_wave_desert.tga
-		rgbGen identity
-		alphaGen vertex
-	}
-	{
-	    stage bumpMap
-		map textures/desert_sd/sand_wave_desert_n.tga
-		rgbGen identity
-		alphaGen vertex
-	}
-	{
-	    stage specularMap
-		map textures/desert_sd/sand_wave_desert_r.tga
-		rgbGen identity
-		alphaGen vertex
-	}
+	diffusemap textures/desert_sd/sand_wave_desert.tga
+ 	bumpmap textures/desert_sd/sand_wave_desert_n.tga
+ 	specularmap textures/desert_sd/sand_wave_desert_r.tga
 	{
 	    stage diffuseMap
 		map textures/desert_sd/grass_sand_flat.tga
 		rgbGen identity
 		alphaGen vertex
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		blendFunc blend
 	}
 	{
 	    stage bumpMap
 		map textures/desert_sd/grass_sand_flat_n.tga
 		rgbGen identity
 		alphaGen vertex
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		blendFunc blend
 	}
 	{
 	    stage specularMap
 		map textures/desert_sd/grass_sand_flat_r.tga
 		rgbGen identity
 		alphaGen vertex
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		blendFunc blend
 	}
 	{
 		map $lightmap
-		blendFunc GL_DST_COLOR GL_ZERO
+		blendFunc filter
 		rgbGen identity
 	}
 }
@@ -509,45 +381,29 @@ textures/mp_siwa/lmterrain_0to2
 	q3map_baseshader textures/mp_siwa/lmterrain_base
 	surfaceparm landmine
 	surfaceparm gravelsteps
-
-	{
-	    stage diffuseMap
-		map textures/desert_sd/sand_wave_desert.tga
-		rgbGen identity
-		alphaGen vertex
-	}
-	{
-	    stage bumpMap
-		map textures/desert_sd/sand_wave_desert_n.tga
-		rgbGen identity
-		alphaGen vertex
-	}
-	{
-	    stage specularMap
-		map textures/desert_sd/sand_wave_desert_r.tga
-		rgbGen identity
-		alphaGen vertex
-	}
+	diffusemap textures/desert_sd/sand_wave_desert.tga
+	bumpmap textures/desert_sd/sand_wave_desert_n.tga
+	specularmap textures/desert_sd/sand_wave_desert_r.tga
 	{
 	    stage diffuseMap
 		map textures/desert_sd/sand_patchy.tga
 		rgbGen identity
 		alphaGen vertex
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		blendFunc blend
 	}
 	{
 	    stage bumpMap
 		map textures/desert_sd/sand_patchy_n.tga
 		rgbGen identity
 		alphaGen vertex
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		blendFunc blend
 	}
 	{
 	    stage specularMap
 		map textures/desert_sd/sand_patchy_r.tga
 		rgbGen identity
 		alphaGen vertex
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		blendFunc blend
 	}
 	{
 		map $lightmap
@@ -561,49 +417,33 @@ textures/mp_siwa/lmterrain_0to3
 	q3map_baseshader textures/mp_siwa/lmterrain_base
 	surfaceparm landmine
 	surfaceparm gravelsteps
-
-	{
-	    stage diffuseMap
-		map textures/desert_sd/sand_wave_desert.tga
-		rgbGen identity
-		alphaGen vertex
-	}
-	{
-	    stage bumpMap
-		map textures/desert_sd/sand_wave_desert_n.tga
-		rgbGen identity
-		alphaGen vertex
-	}
-	{
-	    stage specularMap
-		map textures/desert_sd/sand_wave_desert_r.tga
-		rgbGen identity
-		alphaGen vertex
-	}
+	diffusemap textures/desert_sd/sand_wave_desert.tga
+	bumpmap textures/desert_sd/sand_wave_desert_n.tga
+	specularmap textures/desert_sd/sand_wave_desert_r.tga
 	{
 	    stage diffuseMap
 		map textures/desert_sd/sand_disturb_desert.tga
 		rgbGen identity
 		alphaGen vertex
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		blendFunc blend
 	}
 	{
 	    stage bumpMap
 		map textures/desert_sd/sand_disturb_desert_n.tga
 		rgbGen identity
 		alphaGen vertex
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		blendFunc blend
 	}
 	{
 	    stage specularMap
 		map textures/desert_sd/sand_disturb_desert_r.tga
 		rgbGen identity
 		alphaGen vertex
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		blendFunc blend
 	}
 	{
 		map $lightmap
-		blendFunc GL_DST_COLOR GL_ZERO
+		blendFunc filter
 		rgbGen identity
 	}
 }
@@ -613,49 +453,33 @@ textures/mp_siwa/lmterrain_0to4
 	q3map_baseshader textures/mp_siwa/lmterrain_base
 	surfaceparm landmine
 	surfaceparm gravelsteps
-
-	{
-	    stage diffuseMap
-		map textures/desert_sd/sand_wave_desert.tga
-		rgbGen identity
-		alphaGen vertex
-	}
-	{
-	    stage bumpMap
-		map textures/desert_sd/sand_wave_desert_n.tga
-		rgbGen identity
-		alphaGen vertex
-	}
-	{
-	    stage specularMap
-		map textures/desert_sd/sand_wave_desert_r.tga
-		rgbGen identity
-		alphaGen vertex
-	}
+	diffusemap textures/desert_sd/sand_wave_desert.tga
+	bumpmap textures/desert_sd/sand_wave_desert_n.tga
+	specularmap textures/desert_sd/sand_wave_desert_r.tga
 	{
 	    stage diffuseMap
 		map textures/desert_sd/grass_desert_flat.tga
 		rgbGen identity
 		alphaGen vertex
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		blendFunc blend
 	}
 	{
 	    stage bumpMap
 		map textures/desert_sd/grass_desert_flat_n.tga
 		rgbGen identity
 		alphaGen vertex
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		blendFunc blend
 	}
 	{
 	    stage specularMap
 		map textures/desert_sd/grass_desert_flat_r.tga
 		rgbGen identity
 		alphaGen vertex
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		blendFunc blend
 	}
 	{
 		map $lightmap
-		blendFunc GL_DST_COLOR GL_ZERO
+		blendFunc filter
 		rgbGen identity
 	}
 }
@@ -665,49 +489,33 @@ textures/mp_siwa/lmterrain_0to5
 	q3map_baseshader textures/mp_siwa/lmterrain_base
 	surfaceparm landmine
 	surfaceparm gravelsteps
-
-	{
-	    stage diffuseMap
-		map textures/desert_sd/sand_wave_desert.tga
-		rgbGen identity
-		alphaGen vertex
-	}
-	{
-	    stage bumpMap
-		map textures/desert_sd/sand_wave_desert_n.tga
-		rgbGen identity
-		alphaGen vertex
-	}
-	{
-	    stage specularMap
-		map textures/desert_sd/sand_wave_desert_r.tga
-		rgbGen identity
-		alphaGen vertex
-	}
+	diffusemap textures/desert_sd/sand_wave_desert.tga
+	bumpmap textures/desert_sd/sand_wave_desert_n.tga
+	specularmap textures/desert_sd/sand_wave_desert_r.tga
 	{
 	    stage diffuseMap
 		map textures/desert_sd/rock_edged_smooth.tga
 		rgbGen identity
 		alphaGen vertex
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		blendFunc blend
 	}
 	{
 	    stage bumpMap
 		map textures/desert_sd/rock_edged_smooth_n.tga
 		rgbGen identity
 		alphaGen vertex
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		blendFunc blend
 	}
 	{
 	    stage specularMap
 		map textures/desert_sd/rock_edged_smooth_r.tga
 		rgbGen identity
 		alphaGen vertex
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		blendFunc blend
 	}
 	{
 		map $lightmap
-		blendFunc GL_DST_COLOR GL_ZERO
+		blendFunc filter
 		rgbGen identity
 	}
 }
@@ -717,50 +525,33 @@ textures/mp_siwa/lmterrain_0to6
 	q3map_baseshader textures/mp_siwa/lmterrain_base
 	surfaceparm landmine
 	surfaceparm gravelsteps
-
-	{
-	    stage diffuseMap
-		map textures/desert_sd/sand_wave_desert.tga
-		rgbGen identity
-		alphaGen vertex
-	}
-	{
-	    stage bumpMap
-		map textures/desert_sd/sand_wave_desert_n.tga
-		rgbGen identity
-		alphaGen vertex
-	}
-	{
-	    stage specularMap
-		map textures/desert_sd/sand_wave_desert_r.tga
-		rgbGen identity
-		alphaGen vertex
-	}
-	
+	diffusemap textures/desert_sd/sand_wave_desert.tga
+	bumpmap textures/desert_sd/sand_wave_desert_n.tga
+	specularmap textures/desert_sd/sand_wave_desert_r.tga
 	{
 	    stage diffuseMap
 		map textures/desert_sd/sand_gravels_bright.tga
 		rgbGen identity
 		alphaGen vertex
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		blendFunc blend
 	}
 	{
 	    stage bumpMap
 		map textures/desert_sd/sand_gravels_bright_n.tga
 		rgbGen identity
 		alphaGen vertex
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		blendFunc blend
 	}
 	{
 	    stage specularMap
 		map textures/desert_sd/sand_gravels_bright_r.tga
 		rgbGen identity
 		alphaGen vertex
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		blendFunc blend
 	}
 	{
 		map $lightmap
-		blendFunc GL_DST_COLOR GL_ZERO
+		blendFunc filter
 		rgbGen identity
 	}
 }
@@ -770,49 +561,33 @@ textures/mp_siwa/lmterrain_0to7
 	q3map_baseshader textures/mp_siwa/lmterrain_base
 	surfaceparm landmine
 	surfaceparm gravelsteps
-
-	{
-	    stage diffuseMap
-		map textures/desert_sd/sand_wave_desert.tga
-		rgbGen identity
-		alphaGen vertex
-	}
-	{
-	    stage bumpMap
-		map textures/desert_sd/sand_wave_desert_n.tga
-		rgbGen identity
-		alphaGen vertex
-	}
-	{
-	    stage specularMap
-		map textures/desert_sd/sand_wave_desert_r.tga
-		rgbGen identity
-		alphaGen vertex
-	}
+	diffusemap textures/desert_sd/sand_wave_desert.tga
+	bumpmap textures/desert_sd/sand_wave_desert_n.tga
+	specularmap textures/desert_sd/sand_wave_desert_r.tga
 	{
 	    stage diffuseMap
 		map textures/desert_sd/sand_dirt_medium.tga
 		rgbGen identity
 		alphaGen vertex
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		blendFunc blend
 	}
 	{
 	    stage bumpMap
 		map textures/desert_sd/sand_dirt_medium_n.tga
 		rgbGen identity
 		alphaGen vertex
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		blendFunc blend
 	}
 	{
 	    stage specularMap
 		map textures/desert_sd/sand_dirt_medium_r.tga
 		rgbGen identity
 		alphaGen vertex
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		blendFunc blend
 	}
 	{
 		map $lightmap
-		blendFunc GL_DST_COLOR GL_ZERO
+		blendFunc filter
 		rgbGen identity
 	}
 }
@@ -822,49 +597,33 @@ textures/mp_siwa/lmterrain_1to2
 	q3map_baseshader textures/mp_siwa/lmterrain_base
 	surfaceparm landmine
 	surfaceparm gravelsteps
-
-	{
-	    stage diffuseMap
-		map textures/desert_sd/grass_sand_flat.tga
-		rgbGen identity
-		alphaGen vertex
-	}
-	{
-	    stage bumpMap
-		map textures/desert_sd/grass_sand_flat_n.tga
-		rgbGen identity
-		alphaGen vertex
-	}
-	{
-	    stage specularMap
-		map textures/desert_sd/grass_sand_flat_r.tga
-		rgbGen identity
-		alphaGen vertex
-	}
+	diffusemap textures/desert_sd/grass_sand_flat.tga
+	bumpmap textures/desert_sd/grass_sand_flat_n.tga
+	specularmap textures/desert_sd/grass_sand_flat_r.tga
 	{
 	    stage diffuseMap
 		map textures/desert_sd/sand_patchy.tga
 		rgbGen identity
 		alphaGen vertex
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		blendFunc blend
 	}
 	{
 	    stage bumpMap
 		map textures/desert_sd/sand_patchy_n.tga
 		rgbGen identity
 		alphaGen vertex
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		blendFunc blend
 	}
 	{
 	    stage specularMap
 		map textures/desert_sd/sand_patchy_r.tga
 		rgbGen identity
 		alphaGen vertex
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		blendFunc blend
 	}
 	{
 		map $lightmap
-		blendFunc GL_DST_COLOR GL_ZERO
+		blendFunc filter
 		rgbGen identity
 	}
 }
@@ -874,49 +633,33 @@ textures/mp_siwa/lmterrain_1to3
 	q3map_baseshader textures/mp_siwa/lmterrain_base
 	surfaceparm landmine
 	surfaceparm gravelsteps
-
-	{
-	    stage diffuseMap
-		map textures/desert_sd/grass_sand_flat.tga
-		rgbGen identity
-		alphaGen vertex
-	}
-	{
-	    stage bumpMap
-		map textures/desert_sd/grass_sand_flat_n.tga
-		rgbGen identity
-		alphaGen vertex
-	}
-	{
-	    stage specularMap
-		map textures/desert_sd/grass_sand_flat_r.tga
-		rgbGen identity
-		alphaGen vertex
-	}
+	diffusemap textures/desert_sd/grass_sand_flat.tga
+	bumpmap textures/desert_sd/grass_sand_flat_n.tga
+	specularmap textures/desert_sd/grass_sand_flat_r.tga
 	{
 	    stage diffuseMap
 		map textures/desert_sd/sand_disturb_desert.tga
 		rgbGen identity
 		alphaGen vertex
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		blendFunc blend
 	}
 	{
 	    stage bumpMap
 		map textures/desert_sd/sand_disturb_desert_n.tga
 		rgbGen identity
 		alphaGen vertex
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		blendFunc blend
 	}
 	{
 	    stage specularMap
 		map textures/desert_sd/sand_disturb_desert_r.tga
 		rgbGen identity
 		alphaGen vertex
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		blendFunc blend
 	}
 	{
 		map $lightmap
-		blendFunc GL_DST_COLOR GL_ZERO
+		blendFunc filter
 		rgbGen identity
 	}
 }
@@ -926,48 +669,33 @@ textures/mp_siwa/lmterrain_1to4
 	q3map_baseshader textures/mp_siwa/lmterrain_base
 	surfaceparm landmine
 	surfaceparm gravelsteps
-	{
-	    stage diffuseMap
-		map textures/desert_sd/grass_sand_flat.tga
-		rgbGen identity
-		alphaGen vertex
-	}
-	{
-	    stage bumpMap
-		map textures/desert_sd/grass_sand_flat_n.tga
-		rgbGen identity
-		alphaGen vertex
-	}
-	{
-	    stage specularMap
-		map textures/desert_sd/grass_sand_flat_r.tga
-		rgbGen identity
-		alphaGen vertex
-	}
+	diffusemap textures/desert_sd/grass_sand_flat.tga
+	bumpmap textures/desert_sd/grass_sand_flat_n.tga
+	specularmap textures/desert_sd/grass_sand_flat_r.tga
 	{
 	    stage diffuseMap
 		map textures/desert_sd/grass_desert_flat.tga
 		rgbGen identity
 		alphaGen vertex
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		blendFunc blend
 	}
 	{
 	    stage bumpMap
 		map textures/desert_sd/grass_desert_flat_n.tga
 		rgbGen identity
 		alphaGen vertex
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		blendFunc blend
 	}
 	{
 	    stage specularMap
 		map textures/desert_sd/grass_desert_flat_r.tga
 		rgbGen identity
 		alphaGen vertex
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		blendFunc blend
 	}
 	{
 		map $lightmap
-		blendFunc GL_DST_COLOR GL_ZERO
+		blendFunc filter
 		rgbGen identity
 	}
 }
@@ -977,49 +705,33 @@ textures/mp_siwa/lmterrain_1to5
 	q3map_baseshader textures/mp_siwa/lmterrain_base
 	surfaceparm landmine
 	surfaceparm gravelsteps
-
-	{
-	    stage diffuseMap
-		map textures/desert_sd/grass_sand_flat.tga
-		rgbGen identity
-		alphaGen vertex
-	}
-	{
-	    stage bumpMap
-		map textures/desert_sd/grass_sand_flat_n.tga
-		rgbGen identity
-		alphaGen vertex
-	}
-	{
-	    stage specularMap
-		map textures/desert_sd/grass_sand_flat_r.tga
-		rgbGen identity
-		alphaGen vertex
-	}
+	diffusemap textures/desert_sd/grass_sand_flat.tga
+	bumpmap textures/desert_sd/grass_sand_flat_n.tga
+	specularmap textures/desert_sd/grass_sand_flat_r.tga
 	{
 	    stage diffuseMap
 		map textures/desert_sd/rock_edged_smooth.tga
 		rgbGen identity
 		alphaGen vertex
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		blendFunc blend
 	}
 	{
 	    stage bumpMap
 		map textures/desert_sd/rock_edged_smooth_n.tga
 		rgbGen identity
 		alphaGen vertex
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		blendFunc blend
 	}
 	{
 	    stage specularMap
 		map textures/desert_sd/rock_edged_smooth_r.tga
 		rgbGen identity
 		alphaGen vertex
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		blendFunc blend
 	}
 	{
 		map $lightmap
-		blendFunc GL_DST_COLOR GL_ZERO
+		blendFunc filter
 		rgbGen identity
 	}
 }
@@ -1029,49 +741,33 @@ textures/mp_siwa/lmterrain_1to6
 	q3map_baseshader textures/mp_siwa/lmterrain_base
 	surfaceparm landmine
 	surfaceparm gravelsteps
-
-	{
-	    stage diffuseMap
-		map textures/desert_sd/grass_sand_flat.tga
-		rgbGen identity
-		alphaGen vertex
-	}
-	{
-	    stage bumpMap
-		map textures/desert_sd/grass_sand_flat_n.tga
-		rgbGen identity
-		alphaGen vertex
-	}
-	{
-	    stage specularMap
-		map textures/desert_sd/grass_sand_flat_r.tga
-		rgbGen identity
-		alphaGen vertex
-	}
+	diffusemap textures/desert_sd/grass_sand_flat.tga
+	bumpmap textures/desert_sd/grass_sand_flat_n.tga
+	specularmap textures/desert_sd/grass_sand_flat_r.tga
 	{
 	    stage diffuseMap
 		map textures/desert_sd/sand_gravels_bright.tga
 		rgbGen identity
 		alphaGen vertex
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		blendFunc blend
 	}
 	{
 	    stage bumpMap
 		map textures/desert_sd/sand_gravels_bright_n.tga
 		rgbGen identity
 		alphaGen vertex
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		blendFunc blend
 	}
 	{
 	    stage specularMap
 		map textures/desert_sd/sand_gravels_bright_r.tga
 		rgbGen identity
 		alphaGen vertex
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		blendFunc blend
 	}
 	{
 		map $lightmap
-		blendFunc GL_DST_COLOR GL_ZERO
+		blendFunc filter
 		rgbGen identity
 	}
 }
@@ -1081,49 +777,33 @@ textures/mp_siwa/lmterrain_1to7
 	q3map_baseshader textures/mp_siwa/lmterrain_base
 	surfaceparm landmine
 	surfaceparm gravelsteps
-
-    {
-	    stage diffuseMap
-		map textures/desert_sd/grass_sand_flat_r.tga
-		rgbGen identity
-		alphaGen vertex
-	}
-	{
-	    stage bumpMap
-		map textures/desert_sd/grass_sand_flat_n.tga
-		rgbGen identity
-		alphaGen vertex
-	}
-	{
-	    stage specularMap
-		map textures/desert_sd/grass_sand_flat_r.tga
-		rgbGen identity
-		alphaGen vertex
-	}
+	diffusemap textures/desert_sd/grass_sand_flat.tga
+	bumpmap textures/desert_sd/grass_sand_flat_n.tga
+	specularmap textures/desert_sd/grass_sand_flat_r.tga
 	{
 	    stage diffuseMap
 		map textures/desert_sd/sand_dirt_medium.tga
 		rgbGen identity
 		alphaGen vertex
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		blendFunc blend
 	}
 	{
 	    stage bumpMap
 		map textures/desert_sd/sand_dirt_medium_n.tga
 		rgbGen identity
 		alphaGen vertex
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		blendFunc blend
 	}
 	{
 	    stage specularMap
 		map textures/desert_sd/sand_dirt_medium_r.tga
 		rgbGen identity
 		alphaGen vertex
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		blendFunc blend
 	}
 	{
 		map $lightmap
-		blendFunc GL_DST_COLOR GL_ZERO
+		blendFunc filter
 		rgbGen identity
 	}
 }
@@ -1133,49 +813,33 @@ textures/mp_siwa/lmterrain_2to3
 	q3map_baseshader textures/mp_siwa/lmterrain_base
 	surfaceparm landmine
 	surfaceparm gravelsteps
-
-	{
-	    stage diffuseMap
-		map textures/desert_sd/sand_patchy.tga
-		rgbGen identity
-		alphaGen vertex
-	}
-	{
-	    stage bumpMap
-		map textures/desert_sd/sand_patchy_n.tga
-		rgbGen identity
-		alphaGen vertex
-	}
-	{
-	    stage specularMap
-		map textures/desert_sd/sand_patchy_r.tga
-		rgbGen identity
-		alphaGen vertex
-	}
+	diffusemap textures/desert_sd/sand_patchy.tga
+	bumpmap textures/desert_sd/sand_patchy_n.tga
+	specularmap textures/desert_sd/sand_patchy_r.tga
 	{
 	    stage diffuseMap
 		map textures/desert_sd/sand_disturb_desert.tga
 		rgbGen identity
 		alphaGen vertex
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		blendFunc blend
 	}
 	{
 	    stage bumpMap
 		map textures/desert_sd/sand_disturb_desert_n.tga
 		rgbGen identity
 		alphaGen vertex
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		blendFunc blend
 	}
 	{
 	    stage specularMap
 		map textures/desert_sd/sand_disturb_desert_r.tga
 		rgbGen identity
 		alphaGen vertex
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		blendFunc blend
 	}
 	{
 		map $lightmap
-		blendFunc GL_DST_COLOR GL_ZERO
+		blendFunc filter
 		rgbGen identity
 	}
 }
@@ -1184,49 +848,33 @@ textures/mp_siwa/lmterrain_2to4
 	q3map_baseshader textures/mp_siwa/lmterrain_base
 	surfaceparm landmine
 	surfaceparm gravelsteps
-
-    {
-	    stage diffuseMap
-		map textures/desert_sd/sand_patchy.tga
-		rgbGen identity
-		alphaGen vertex
-	}
-	{
-	    stage bumpMap
-		map textures/desert_sd/sand_patchy_n.tga
-		rgbGen identity
-		alphaGen vertex
-	}
-	{
-	    stage specularMap
-		map textures/desert_sd/sand_patchy_r.tga
-		rgbGen identity
-		alphaGen vertex
-	}
+	diffusemap textures/desert_sd/sand_patchy.tga
+	bumpmap textures/desert_sd/sand_patchy_n.tga
+	specularmap textures/desert_sd/sand_patchy_r.tga
 	{
 	    stage diffuseMap
 		map textures/desert_sd/grass_desert_flat.tga
 		rgbGen identity
 		alphaGen vertex
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		blendFunc blend
 	}
 	{   
 	    stage bumpMap
 		map textures/desert_sd/grass_desert_flat_n.tga
 		rgbGen identity
 		alphaGen vertex
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		blendFunc blend
 	}
 	{
 	    stage specularMap
 		map textures/desert_sd/grass_desert_flat_r.tga
 		rgbGen identity
 		alphaGen vertex
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		blendFunc blend
 	}
 	{
 		map $lightmap
-		blendFunc GL_DST_COLOR GL_ZERO
+		blendFunc filter
 		rgbGen identity
 	}
 }
@@ -1236,49 +884,33 @@ textures/mp_siwa/lmterrain_2to5
 	q3map_baseshader textures/mp_siwa/lmterrain_base
 	surfaceparm landmine
 	surfaceparm gravelsteps
-
-	{
-	    stage diffuseMap
-		map textures/desert_sd/sand_patchy.tga
-		rgbGen identity
-		alphaGen vertex
-	}
-	{
-	    stage bumpMap
-		map textures/desert_sd/sand_patchy_n.tga
-		rgbGen identity
-		alphaGen vertex
-	}
-	{
-	    stage specularMap
-		map textures/desert_sd/sand_patchy_r.tga
-		rgbGen identity
-		alphaGen vertex
-	}
+	diffusemap textures/desert_sd/sand_patchy.tga
+	bumpmap textures/desert_sd/sand_patchy_n.tga
+	specularmap textures/desert_sd/sand_patchy_r.tga
 	{
 	    stage diffuseMap
 		map textures/desert_sd/rock_edged_smooth.tga
 		rgbGen identity
 		alphaGen vertex
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		blendFunc blend
 	}
 	{
 	    stage bumpMap
     	map textures/desert_sd/rock_edged_smooth_n.tga
 		rgbGen identity
 		alphaGen vertex
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		blendFunc blend
 	}
 	{
 	    stage specularMap
 		map textures/desert_sd/rock_edged_smooth_r.tga
 		rgbGen identity
 		alphaGen vertex
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		blendFunc blend
     }
 	{
 		map $lightmap
-		blendFunc GL_DST_COLOR GL_ZERO
+		blendFunc filter
 		rgbGen identity
 	}
 }
@@ -1288,49 +920,33 @@ textures/mp_siwa/lmterrain_2to6
 	q3map_baseshader textures/mp_siwa/lmterrain_base
 	surfaceparm landmine
 	surfaceparm gravelsteps
-
-	{
-	    stage diffuseMap
-		map textures/desert_sd/sand_patchy.tga
-		rgbGen identity
-		alphaGen vertex
-	}
-	{
-	    stage bumpMap
-		map textures/desert_sd/sand_patchy_n.tga
-		rgbGen identity
-		alphaGen vertex
-	}
-	{
-	    stage specularMap
-		map textures/desert_sd/sand_patchy_r.tga
-		rgbGen identity
-		alphaGen vertex
-	}
+	diffusemap textures/desert_sd/sand_patchy.tga
+	bumpmap textures/desert_sd/sand_patchy_n.tga
+	specularmap textures/desert_sd/sand_patchy_r.tga
 	{
 	    stage diffuseMap
 		map textures/desert_sd/sand_gravels_bright.tga
 		rgbGen identity
 		alphaGen vertex
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		blendFunc blend
 	}
 	{
 	    stage bumpMap
 		map textures/desert_sd/sand_gravels_bright_n.tga
 		rgbGen identity
 		alphaGen vertex
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		blendFunc blend
 	}
 	{
 	    stage specularMap
 		map textures/desert_sd/sand_gravels_bright_r.tga
 		rgbGen identity
 		alphaGen vertex
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		blendFunc blend
 	}
 	{
 		map $lightmap
-		blendFunc GL_DST_COLOR GL_ZERO
+		blendFunc filter
 		rgbGen identity
 	}
 }
@@ -1340,49 +956,33 @@ textures/mp_siwa/lmterrain_2to7
 	q3map_baseshader textures/mp_siwa/lmterrain_base
 	surfaceparm landmine
 	surfaceparm gravelsteps
-
-	{
-	    stage diffuseMap
-		map textures/desert_sd/sand_patchy.tga
-		rgbGen identity
-		alphaGen vertex
-	}
-	{
-	    stage bumpMap
-		map textures/desert_sd/sand_patchy_n.tga
-		rgbGen identity
-		alphaGen vertex
-	}
-	{
-	    stage specularMap
-		map textures/desert_sd/sand_patchy_r.tga
-		rgbGen identity
-		alphaGen vertex
-	}
+	diffusemap textures/desert_sd/sand_patchy.tga
+	bumpmap textures/desert_sd/sand_patchy_n.tga
+	specularmap textures/desert_sd/sand_patchy_r.tga
 	{
 	    stage diffuseMap
 		map textures/desert_sd/sand_dirt_medium.tga
 		rgbGen identity
 		alphaGen vertex
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		blendFunc blend
 	}
 	{
 	    stage bumpMap
 		map textures/desert_sd/sand_dirt_medium_n.tga
 		rgbGen identity
 		alphaGen vertex
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		blendFunc blend
 	}
 	{
 	    stage specularMap
 		map textures/desert_sd/sand_dirt_medium_r.tga
 		rgbGen identity
 		alphaGen vertex
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		blendFunc blend
 	}
 	{
 		map $lightmap
-		blendFunc GL_DST_COLOR GL_ZERO
+		blendFunc filter
 		rgbGen identity
 	}
 }
@@ -1392,49 +992,33 @@ textures/mp_siwa/lmterrain_3to4
 	q3map_baseshader textures/mp_siwa/lmterrain_base
 	surfaceparm landmine
 	surfaceparm gravelsteps
-
-	{
-	    stage diffuseMap
-		map textures/desert_sd/sand_disturb_desert.tga
-		rgbGen identity
-		alphaGen vertex
-	}
-	{
-	    stage bumpMap
-		map textures/desert_sd/sand_disturb_desert_n.tga
-		rgbGen identity
-		alphaGen vertex
-	}
-	{
-	    stage specularMap
-		map textures/desert_sd/sand_disturb_desert_r.tga
-		rgbGen identity
-		alphaGen vertex
-	}
+	diffusemap textures/desert_sd/sand_disturb_desert.tga
+	bumpmap textures/desert_sd/sand_disturb_desert_n.tga
+	specularmap textures/desert_sd/sand_disturb_desert_r.tga
 	{
 	    stage diffuseMap
 		map textures/desert_sd/grass_desert_flat.tga
 		rgbGen identity
 		alphaGen vertex
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		blendFunc blend
 	}
 	{
 	    stage bumpMap
 		map textures/desert_sd/grass_desert_flat_n.tga
 		rgbGen identity
 		alphaGen vertex
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		blendFunc blend
 	}
 	{
 	    stage specularMap
 		map textures/desert_sd/grass_desert_flat_r.tga
 		rgbGen identity
 		alphaGen vertex
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		blendFunc blend
 	}
 	{
 		map $lightmap
-		blendFunc GL_DST_COLOR GL_ZERO
+		blendFunc filter
 		rgbGen identity
 	}
 }
@@ -1444,49 +1028,33 @@ textures/mp_siwa/lmterrain_3to5
 	q3map_baseshader textures/mp_siwa/lmterrain_base
 	surfaceparm landmine
 	surfaceparm gravelsteps
-
-	{
-	    stage diffuseMap
-		map textures/desert_sd/sand_disturb_desert.tga
-		rgbGen identity
-		alphaGen vertex
-	}
-	{
-	    stage bumpMap
-		map textures/desert_sd/sand_disturb_desert_n.tga
-		rgbGen identity
-		alphaGen vertex
-	}
-	{
-	    stage specularMap
-		map textures/desert_sd/sand_disturb_desert_r.tga
-		rgbGen identity
-		alphaGen vertex
-	}
+	diffusemap textures/desert_sd/sand_disturb_desert.tga
+	bumpmap textures/desert_sd/sand_disturb_desert_n.tga
+	specularmap textures/desert_sd/sand_disturb_desert_r.tga
 	{
 	    stage diffuseMap
 		map textures/desert_sd/rock_edged_smooth.tga
 		rgbGen identity
 		alphaGen vertex
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		blendFunc blend
 	}
 	{
 	    stage bumpMap
 		map textures/desert_sd/rock_edged_smooth_n.tga
 		rgbGen identity
 		alphaGen vertex
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		blendFunc blend
 	}
 	{
 	    stage specularMap
 		map textures/desert_sd/rock_edged_smooth_r.tga
 		rgbGen identity
 		alphaGen vertex
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		blendFunc blend
 	}
 	{
 		map $lightmap
-		blendFunc GL_DST_COLOR GL_ZERO
+		blendFunc filter
 		rgbGen identity
 	}
 }
@@ -1496,49 +1064,33 @@ textures/mp_siwa/lmterrain_3to6
 	q3map_baseshader textures/mp_siwa/lmterrain_base
 	surfaceparm landmine
 	surfaceparm gravelsteps
-
-	{
-	    stage diffuseMap
-		map textures/desert_sd/sand_disturb_desert.tga
-	    rgbGen identity
-	    alphaGen vertex
-	}
-	{
-	    stage specularMap
-		map textures/desert_sd/sand_disturb_desert_r.tga
-	    rgbGen identity
-	    alphaGen vertex
-	}
-	{
-	    stage bumpMap
-		map textures/desert_sd/sand_disturb_desert_n.tga
-	    rgbGen identity
-	    alphaGen vertex
-	}
+	diffusemap textures/desert_sd/sand_disturb_desert.tga
+	bumpmap textures/desert_sd/sand_disturb_desert_n.tga
+	specularmap textures/desert_sd/sand_disturb_desert_r.tga
 	{
 	    stage diffuseMap
 		map textures/desert_sd/sand_gravels_bright.tga
 	    rgbGen identity
 		alphaGen vertex
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		blendFunc blend
 	}
 	{
 	    stage specularMap
 		map textures/desert_sd/sand_gravels_bright_r.tga
 	    rgbGen identity
 		alphaGen vertex
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		blendFunc blend
 	}
 	{
 	    stage bumpMap
 		map textures/desert_sd/sand_gravels_bright_n.tga
 	    rgbGen identity
 		alphaGen vertex
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		blendFunc blend
 	}
 	{
 		map $lightmap
-		blendFunc GL_DST_COLOR GL_ZERO
+		blendFunc filter
 		rgbGen identity
 	}
 }
@@ -1548,49 +1100,33 @@ textures/mp_siwa/lmterrain_3to7
 	q3map_baseshader textures/mp_siwa/lmterrain_base
 	surfaceparm landmine
 	surfaceparm gravelsteps
-
-	{
-	    stage diffuseMap
-		map textures/desert_sd/sand_disturb_desert.tga
-	    rgbGen identity
-	    alphaGen vertex
-	}
-	{
-	    stage bumpMap
-		map textures/desert_sd/sand_disturb_desert_n.tga
-	    rgbGen identity
-	    alphaGen vertex
-	}
-	{
-	    stage specularMap
-		map textures/desert_sd/sand_disturb_desert_r.tga
-	    rgbGen identity
-	    alphaGen vertex
-	}
+	diffusemap textures/desert_sd/sand_disturb_desert.tga
+	bumpmap textures/desert_sd/sand_disturb_desert_n.tga
+	specularmap textures/desert_sd/sand_disturb_desert_r.tga
 	{
 	    stage diffuseMap
 		map textures/desert_sd/sand_dirt_medium.tga
 	    rgbGen identity
 		alphaGen vertex
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		blendFunc blend
 	}
 	{
 	    stage bumpMap
 		map textures/desert_sd/sand_dirt_medium_n.tga
 	    rgbGen identity
 		alphaGen vertex
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		blendFunc blend
 	}
 	{
 	    stage specularMap
 		map textures/desert_sd/sand_dirt_medium_r.tga
 	    rgbGen identity
 		alphaGen vertex
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		blendFunc blend
 	}
 	{
 		map $lightmap
-		blendFunc GL_DST_COLOR GL_ZERO
+		blendFunc filter
 		rgbGen identity
 	}	
 }
@@ -1600,48 +1136,33 @@ textures/mp_siwa/lmterrain_4to5
 	q3map_baseshader textures/mp_siwa/lmterrain_base
 	surfaceparm landmine
 	surfaceparm gravelsteps
-   {
-	    stage diffuseMap
-		map textures/desert_sd/grass_desert_flat.tga
-        rgbGen identity
-        alphaGen vertex
-	}
-	{
-	    stage specularMap
-		map textures/desert_sd/grass_desert_flat_r.tga
-        rgbGen identity
-        alphaGen vertex
-	}
-	{
-	    stage bumpMap
-		map textures/desert_sd/grass_desert_flat_n.tga
-        rgbGen identity
-        alphaGen vertex
-	}
+	diffusemap textures/desert_sd/grass_desert_flat.tga
+	bumpmap textures/desert_sd/grass_desert_flat_n.tga
+	specularmap textures/desert_sd/grass_desert_flat_r.tga
 	{
 	    stage diffuseMap
 		map textures/desert_sd/rock_edged_smooth.tga
 	    rgbGen identity
 		alphaGen vertex
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
-	}
-	{
-	    stage specularMap
-		map textures/desert_sd/rock_edged_smooth_r.tga
-	    rgbGen identity
-		alphaGen vertex
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		blendFunc blend
 	}
 	{
 	    stage bumpMap
 		map textures/desert_sd/rock_edged_smooth_n.tga
 	    rgbGen identity
 		alphaGen vertex
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		blendFunc blend
+	}
+	{
+	    stage specularMap
+		map textures/desert_sd/rock_edged_smooth_r.tga
+	    rgbGen identity
+		alphaGen vertex
+		blendFunc blend
 	}
 	{
 		map $lightmap
-		blendFunc GL_DST_COLOR GL_ZERO
+		blendFunc filter
 		rgbGen identity
 	}
 }
@@ -1651,49 +1172,33 @@ textures/mp_siwa/lmterrain_4to6
 	q3map_baseshader textures/mp_siwa/lmterrain_base
 	surfaceparm landmine
 	surfaceparm gravelsteps
-
-	{
-	    stage diffuseMap
-		map textures/desert_sd/grass_desert_flat.tga
-        rgbGen identity
-        alphaGen vertex
-    }
-	{
-	    stage specularMap
-		map textures/desert_sd/grass_desert_flat_r.tga
-        rgbGen identity
-        alphaGen vertex
-	}
-	{
-	    stage bumpMap
-		map textures/desert_sd/grass_desert_flat_n.tga
-        rgbGen identity
-        alphaGen vertex
-	}
+	diffusemap textures/desert_sd/grass_desert_flat.tga
+	bumpmap textures/desert_sd/grass_desert_flat_n.tga
+	specularmap textures/desert_sd/grass_desert_flat_r.tga
 	{
 	    stage diffuseMap
 		map textures/desert_sd/sand_gravels_bright.tga
 	    rgbGen identity
 		alphaGen vertex
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
-	}
-	{
-	    stage specularMap
-		map textures/desert_sd/sand_gravels_bright_r.tga
-	    rgbGen identity
-		alphaGen vertex
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		blendFunc blend
 	}
 	{
 	    stage bumpMap
 		map textures/desert_sd/sand_gravels_bright_n.tga
 	    rgbGen identity
 		alphaGen vertex
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		blendFunc blend
+	}
+	{
+	    stage specularMap
+		map textures/desert_sd/sand_gravels_bright_r.tga
+	    rgbGen identity
+		alphaGen vertex
+		blendFunc blend
 	}
 	{
 		map $lightmap
-		blendFunc GL_DST_COLOR GL_ZERO
+		blendFunc filter
 		rgbGen identity
 	}
 }
@@ -1703,49 +1208,33 @@ textures/mp_siwa/lmterrain_4to7
 	q3map_baseshader textures/mp_siwa/lmterrain_base
 	surfaceparm landmine
 	surfaceparm gravelsteps
-
-	{
-	    stage diffuseMap
-		map textures/desert_sd/grass_desert_flat.tga
-        rgbGen identity
-        alphaGen vertex
-	}
-	{
-	    stage specularMap
-		map textures/desert_sd/grass_desert_flat_r.tga
-        rgbGen identity
-        alphaGen vertex
-	}
-	{
-	    stage bumpMap
-		map textures/desert_sd/grass_desert_flat_n.tga
-        rgbGen identity
-        alphaGen vertex
-	}
+	diffusemap textures/desert_sd/grass_desert_flat.tga
+	bumpmap textures/desert_sd/grass_desert_flat_n.tga
+	specularmap textures/desert_sd/grass_desert_flat_r.tga
 	{
 	    stage diffuseMap
 		map textures/desert_sd/sand_dirt_medium.tga
 	    rgbGen identity
 		alphaGen vertex
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
-	}
-	{
-	    stage specularMap
-		map textures/desert_sd/sand_dirt_medium_r.tga
-	    rgbGen identity
-		alphaGen vertex
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		blendFunc blend
 	}
 	{
 	    stage bumpMap
 		map textures/desert_sd/sand_dirt_medium_n.tga
 	    rgbGen identity
 		alphaGen vertex
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		blendFunc blend
+	}
+	{
+	    stage specularMap
+		map textures/desert_sd/sand_dirt_medium_r.tga
+	    rgbGen identity
+		alphaGen vertex
+		blendFunc blend
 	}
 	{
 		map $lightmap
-		blendFunc GL_DST_COLOR GL_ZERO
+		blendFunc filter
 		rgbGen identity
 	}
 }
@@ -1755,49 +1244,33 @@ textures/mp_siwa/lmterrain_5to6
 	q3map_baseshader textures/mp_siwa/lmterrain_base
 	surfaceparm landmine
 	surfaceparm gravelsteps
-
-	{
-	    stage diffuseMap
-		map textures/desert_sd/rock_edged_smooth.tga
-	    rgbGen identity
-	    alphaGen vertex
-	}
-	{
-	    stage specularMap
-		map textures/desert_sd/rock_edged_smooth_r.tga
-	    rgbGen identity
-	    alphaGen vertex
-	}
-	{
-	    stage bumpMap
-		map textures/desert_sd/rock_edged_smooth_n.tga
-	    rgbGen identity
-	    alphaGen vertex
-	}
+	diffusemap textures/desert_sd/rock_edged_smooth.tga
+	bumpmap textures/desert_sd/rock_edged_smooth_n.tga
+	specularmap textures/desert_sd/rock_edged_smooth_r.tga
 	{
 	    stage diffuseMap
 		map textures/desert_sd/sand_gravels_bright.tga
 	    rgbGen identity
 		alphaGen vertex
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
-	}
-	{
-	    stage specularMap
-		map textures/desert_sd/sand_gravels_bright_r.tga
-	    rgbGen identity
-		alphaGen vertex
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		blendFunc blend
 	}
 	{
 	    stage bumpMap
 		map textures/desert_sd/sand_gravels_bright_n.tga
 	    rgbGen identity
 		alphaGen vertex
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		blendFunc blend
+	}
+	{
+	    stage specularMap
+		map textures/desert_sd/sand_gravels_bright_r.tga
+	    rgbGen identity
+		alphaGen vertex
+		blendFunc blend
 	}
 	{
 		map $lightmap
-		blendFunc GL_DST_COLOR GL_ZERO
+		blendFunc filter
 		rgbGen identity
 	}
 }
@@ -1807,49 +1280,33 @@ textures/mp_siwa/lmterrain_5to7
 	q3map_baseshader textures/mp_siwa/lmterrain_base
 	surfaceparm landmine
 	surfaceparm gravelsteps
-
-	{
-	    stage diffuseMap
-		map textures/desert_sd/rock_edged_smooth.tga
-	    rgbGen identity
-	    alphaGen vertex
-	}
-	{
-	    stage specularMap
-		map textures/desert_sd/rock_edged_smooth_r.tga
-	    rgbGen identity
-	    alphaGen vertex
-	}
+	diffusemap textures/desert_sd/rock_edged_smooth.tga
+	bumpmap textures/desert_sd/rock_edged_smooth_n.tga
+	specularmap textures/desert_sd/rock_edged_smooth_r.tga
 	{
 	    stage bumpMap
-		map textures/desert_sd/rock_edged_smooth_n.tga
+		map textures/desert_sd/sand_dirt_medium_n.tga
 	    rgbGen identity
-	    alphaGen vertex
+		alphaGen vertex
+		blendFunc blend
 	}
 	{
 	    stage diffuseMap
 		map textures/desert_sd/sand_dirt_medium.tga
 	    rgbGen identity
 		alphaGen vertex
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		blendFunc blend
 	}
 	{
 	    stage specularMap
 		map textures/desert_sd/sand_dirt_medium_r.tga
 	    rgbGen identity
 		alphaGen vertex
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
-	}
-	{
-	    stage bumpMap
-		map textures/desert_sd/sand_dirt_medium_n.tga
-	    rgbGen identity
-		alphaGen vertex
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		blendFunc blend
 	}
 	{
 		map $lightmap
-		blendFunc GL_DST_COLOR GL_ZERO
+		blendFunc filter
 		rgbGen identity
 	}
 }
@@ -1859,49 +1316,33 @@ textures/mp_siwa/lmterrain_6to7
 	q3map_baseshader textures/mp_siwa/lmterrain_base
 	surfaceparm landmine
 	surfaceparm gravelsteps
-
-	{
-	    stage diffuseMap
-		map textures/desert_sd/sand_gravels_bright.tga
-	    rgbGen identity
-	    alphaGen vertex
-	}
-	{
-	    stage specularMap
-		map textures/desert_sd/sand_gravels_bright_r.tga
-	    rgbGen identity
-	    alphaGen vertex
-	}
-	{
-	    stage bumpMap
-		map textures/desert_sd/sand_gravels_bright_n.tga
-	    rgbGen identity
-	    alphaGen vertex
-	}
+	diffusemap textures/desert_sd/sand_gravels_bright.tga
+	bumpmap textures/desert_sd/sand_gravels_bright_n.tga
+	specularmap textures/desert_sd/sand_gravels_bright_r.tga
 	{
 	    stage diffuseMap
 		map textures/desert_sd/sand_dirt_medium.tga
 	    rgbGen identity
 		alphaGen vertex
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
-	}
-	{
-	    stage specularMap
-		map textures/desert_sd/sand_dirt_medium_r.tga
-	    rgbGen identity
-		alphaGen vertex
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		blendFunc blend
 	}
 	{
 	    stage bumpMap
 		map textures/desert_sd/sand_dirt_medium_n.tga
 	    rgbGen identity
 		alphaGen vertex
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		blendFunc blend
+	}
+	{
+	    stage specularMap
+		map textures/desert_sd/sand_dirt_medium_r.tga
+	    rgbGen identity
+		alphaGen vertex
+		blendFunc blend
 	}
 	{
 		map $lightmap
-		blendFunc GL_DST_COLOR GL_ZERO
+		blendFunc filter
 		rgbGen identity
 	}
 }
@@ -1913,48 +1354,34 @@ textures/mp_siwa/sand_dirt
 	qer_editorimage textures/desert_sd/sand_dirt_medium.tga
 	surfaceparm landmine
 	surfaceparm gravelsteps
-
-	{   stage diffuseMap
-		map textures/desert_sd/sand_dirt_medium.tga
-		rgbGen identity
-		alphaGen vertex
-	}
-	{   stage bumpMap
-		map textures/desert_sd/sand_dirt_medium_n.tga
-		rgbGen identity
-		alphaGen vertex
-	}
-	{
-	    stage specularMap
-		map textures/desert_sd/sand_dirt_medium_r.tga
-		rgbGen identity
-		alphaGen vertex
-	}
+	diffusemap textures/desert_sd/sand_dirt_medium.tga
+	bumpmap textures/desert_sd/sand_dirt_medium_n.tga
+	specularmap textures/desert_sd/sand_dirt_medium_r.tga
 	{
 	    stage diffuseMap
 		map textures/desert_sd/sand_dirt_medium.tga
 	    rgbGen identity
 		alphaGen vertex
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
-	}
-	{
-	    stage specularMap
-		map textures/desert_sd/sand_dirt_medium_r.tga
-	    rgbGen identity
-		alphaGen vertex
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		blendFunc blend
 	}
 	{
 	    stage bumpMap
 		map textures/desert_sd/sand_dirt_medium_n.tga
 	    rgbGen identity
 		alphaGen vertex
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		blendFunc blend
+	}
+	{
+	    stage specularMap
+		map textures/desert_sd/sand_dirt_medium_r.tga
+	    rgbGen identity
+		alphaGen vertex
+		blendFunc blend
 	}
 	{
 		map $lightmap
 		rgbGen identity
-		blendFunc GL_DST_COLOR GL_ZERO
+		blendFunc filter
 	}
 }
 
@@ -1965,49 +1392,33 @@ textures/mp_siwa/rock_edged
 	qer_editorimage textures/desert_sd/rock_edged_smooth.tga
 	surfaceparm landmine
 	surfaceparm gravelsteps
-
-	{
-		stage diffuseMap
-		map $whiteimage
-		rgbGen identity
-		alphaGen vertex
-    }
-    {
-    	stage bumpMap
-    	map textures/desert_sd/rock_edged_smooth_n.tga
-    	rgbGen identity
-    	alphaGen vertex
-	}
-	{
-		stage specularMap
-		map textures/desert_sd/rock_edged_smooth_r.tga
-		rgbGen identity
-		alphaGen vertex
-	}
+    diffusemap textures/desert_sd/rock_edged_smooth.tga
+    bumpmap textures/desert_sd/rock_edged_smooth_n.tga
+	specularmap textures/desert_sd/rock_edged_smooth_r.tga
 	{
 	    stage diffuseMap
 		map textures/desert_sd/rock_edged_smooth.tga
 	    rgbGen identity
 		alphaGen vertex
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
-	}
-	{
-	    stage specularMap
-		map textures/desert_sd/rock_edged_smooth_r.tga
-	    rgbGen identity
-		alphaGen vertex
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		blendFunc blend
 	}
 	{
 	    stage bumpMap
 		map textures/desert_sd/rock_edged_smooth_n.tga
 	    rgbGen identity
 		alphaGen vertex
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		blendFunc blend
+	}
+	{
+	    stage specularMap
+		map textures/desert_sd/rock_edged_smooth_r.tga
+	    rgbGen identity
+		alphaGen vertex
+		blendFunc blend
 	}
 	{
 		map $lightmap
-		blendFunc GL_DST_COLOR GL_ZERO
+		blendFunc filter
 		rgbGen identity
 	}
 }

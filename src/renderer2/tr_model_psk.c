@@ -692,7 +692,7 @@ qboolean R_LoadPSK(model_t *mod, void *buffer, int bufferSize, const char *modNa
 #endif
 	}
 
-	Com_InitGrowList(&vboVertexes, 10000);
+	Com_InitGrowList(&vboVertexes, 100); //Com_InitGrowList(&vboVertexes, 10000);
 
 	for (i = 0, vertex = vertexes; i < numVertexes; i++, vertex++)
 	{
@@ -767,7 +767,7 @@ qboolean R_LoadPSK(model_t *mod, void *buffer, int bufferSize, const char *modNa
 	// sort triangles
 	qsort(triangles, numTriangles, sizeof(axTriangle_t), CompareTrianglesByMaterialIndex);
 
-	Com_InitGrowList(&sortedTriangles, 1000);
+	Com_InitGrowList(&sortedTriangles, 100); //Com_InitGrowList(&sortedTriangles, 1000);
 
 	for (i = 0, triangle = triangles; i < numTriangles; i++, triangle++)
 	{
@@ -847,9 +847,9 @@ qboolean R_LoadPSK(model_t *mod, void *buffer, int bufferSize, const char *modNa
 		{
 			v0 = Com_GrowListElement(&vboVertexes, j);
 
-			VectorNormalize(v0->tangent);
-			VectorNormalize(v0->binormal);
-			VectorNormalize(v0->normal);
+			VectorNormalizeOnly(v0->tangent);
+			VectorNormalizeOnly(v0->binormal);
+			VectorNormalizeOnly(v0->normal);
 		}
 	}
 #else
@@ -893,7 +893,7 @@ qboolean R_LoadPSK(model_t *mod, void *buffer, int bufferSize, const char *modNa
 				dv[k]->tangent[2] = bary[0] * dv[0]->position[2] + bary[1] * dv[1]->position[2] + bary[2] * dv[2]->position[2];
 
 				VectorSubtract(dv[k]->tangent, dv[k]->position, dv[k]->tangent);
-				VectorNormalize(dv[k]->tangent);
+				VectorNormalizeOnly(dv[k]->tangent);
 
 				// calculate t tangent vector (binormal)
 				s       = dv[k]->texCoords[0];
@@ -907,12 +907,12 @@ qboolean R_LoadPSK(model_t *mod, void *buffer, int bufferSize, const char *modNa
 				dv[k]->binormal[2] = bary[0] * dv[0]->position[2] + bary[1] * dv[1]->position[2] + bary[2] * dv[2]->position[2];
 
 				VectorSubtract(dv[k]->binormal, dv[k]->position, dv[k]->binormal);
-				VectorNormalize(dv[k]->binormal);
+				VectorNormalizeOnly(dv[k]->binormal);
 
 				// calculate the normal as cross product N=TxB
 #if 0
 				CrossProduct(dv[k]->tangent, dv[k]->binormal, dv[k]->normal);
-				VectorNormalize(dv[k]->normal);
+				VectorNormalizeOnly(dv[k]->normal);
 
 				// Gram-Schmidt orthogonalization process for B
 				// compute the cross product B=NxT to obtain
@@ -937,9 +937,9 @@ qboolean R_LoadPSK(model_t *mod, void *buffer, int bufferSize, const char *modNa
 		for (j = 0; j < vboVertexes.currentElements; j++)
 		{
 			dv[0] = Com_GrowListElement(&vboVertexes, j);
-			//VectorNormalize(dv[0]->tangent);
-			//VectorNormalize(dv[0]->binormal);
-			VectorNormalize(dv[0]->normal);
+			//VectorNormalizeOnly(dv[0]->tangent);
+			//VectorNormalizeOnly(dv[0]->binormal);
+			VectorNormalizeOnly(dv[0]->normal);
 		}
 
 #endif
@@ -969,7 +969,7 @@ qboolean R_LoadPSK(model_t *mod, void *buffer, int bufferSize, const char *modNa
 				}
 			}
 
-			VectorNormalize(v0->normal);
+			VectorNormalizeOnly(v0->normal);
 		}
 	}
 
@@ -994,7 +994,7 @@ qboolean R_LoadPSK(model_t *mod, void *buffer, int bufferSize, const char *modNa
 				numBoneReferences = 0;
 				Com_Memset(boneReferences, 0, sizeof(boneReferences));
 
-				Com_InitGrowList(&vboTriangles, 1000);
+				Com_InitGrowList(&vboTriangles, 100); //Com_InitGrowList(&vboTriangles, 1000);
 
 				for (j = i; j < sortedTriangles.currentElements; j++)
 				{

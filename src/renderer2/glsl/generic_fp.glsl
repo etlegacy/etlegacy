@@ -1,23 +1,25 @@
 /* generic_fp.glsl */
 
 uniform sampler2D u_ColorMap;
+#if defined(USE_ALPHA_TESTING)
 uniform int       u_AlphaTest;
-uniform vec4      u_PortalPlane;
+#endif // USE_ALPHA_TESTING
 
-varying vec3 var_Position;
 varying vec2 var_Tex;
 varying vec4 var_Color;
+#if defined(USE_PORTAL_CLIPPING)
+varying float var_BackSide; // in front, or behind, the portalplane
+#endif // USE_PORTAL_CLIPPING
 
 void main()
 {
 #if defined(USE_PORTAL_CLIPPING)
-	float dist = dot(var_Position.xyz, u_PortalPlane.xyz) - u_PortalPlane.w;
-	if (dist < 0.0)
+	if (var_BackSide < 0.0)
 	{
 		discard;
 		return;
 	}
-#endif
+#endif // USE_PORTAL_CLIPPING
 
 	vec4 color = texture2D(u_ColorMap, var_Tex);
 

@@ -466,18 +466,19 @@ void BotImport_DebugLineShow(int line, vec3_t start, vec3_t end, int color)
 	VectorCopy(end, points[3]);
 
 	VectorSubtract(end, start, dir);
-	VectorNormalize(dir);
-	dot = DotProduct(dir, up);
+	VectorNormalizeOnly(dir);
+	//dot = DotProduct(dir, up);
+	Dot(dir, up, dot);
 	if (dot > 0.99f || dot < -0.99f)
 	{
 		VectorSet(cross, 1, 0, 0);
 	}
 	else
 	{
-		vec3_cross(dir, up, cross);
+		CrossProduct(dir, up, cross);
 	}
 
-	VectorNormalize(cross);
+	VectorNormalizeOnly(cross);
 
 	VectorMA(points[0], 2, cross, points[0]);
 	VectorMA(points[1], -2, cross, points[1]);

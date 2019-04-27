@@ -1,5 +1,7 @@
 /* vertexLighting_DBS_world_vp.glsl */
+#if defined(USE_DEFORM_VERTEXES)
 #include "lib/deformVertexes"
+#endif // USE_DEFORM_VERTEXES
 
 attribute vec4 attr_Position;
 attribute vec4 attr_Color;
@@ -13,43 +15,32 @@ attribute vec3 attr_Binormal;
 uniform mat4 u_DiffuseTextureMatrix;
 uniform mat4 u_ModelViewProjectionMatrix;
 uniform mat4 u_ModelMatrix;
-uniform float u_Time;
 uniform vec4 u_ColorModulate;
 uniform vec4 u_Color;
-uniform vec3 u_LightColor;
 #if defined(USE_NORMAL_MAPPING)
-uniform mat4 u_NormalTextureMatrix;
-#if defined(USE_REFLECTIONS) || defined(USE_SPECULAR)
-uniform mat4 u_SpecularTextureMatrix;
-#if defined(USE_REFLECTIONS)
-uniform samplerCube u_EnvironmentMap0;
-uniform samplerCube u_EnvironmentMap1;
-uniform float       u_EnvironmentInterpolation;
-#endif // USE_REFLECTIONS
-#endif // USE_REFLECTIONS || USE_SPECULAR
-uniform vec3  u_LightDir;
+uniform vec3 u_LightDir;
 uniform vec3 u_ViewOrigin;
 #if defined(USE_PARALLAX_MAPPING)
 uniform float u_DepthScale;
 #endif // USE_PARALLAX_MAPPING
 #endif // USE_NORMAL_MAPPING
 #if defined(USE_PORTAL_CLIPPING)
-uniform vec4  u_PortalPlane;
+uniform vec4 u_PortalPlane;
 #endif // USE_PORTAL_CLIPPING
+#if defined(USE_DEFORM_VERTEXES)
+uniform float u_Time;
+#endif // USE_DEFORM_VERTEXES
 
 varying vec3 var_Position;
 varying vec4 var_LightColor;
-varying vec4 var_TexDiffuseNormal;
+varying vec2 var_TexDiffuse;
 varying vec3 var_Normal;
 #if defined(USE_NORMAL_MAPPING)
 varying mat3 var_tangentMatrix;
-#if defined(USE_REFLECTIONS) || defined(USE_SPECULAR)
-varying vec2 var_TexSpecular;
-#endif // USE_REFLECTIONS || USE_SPECULAR
 varying vec3 var_LightDirection;
-varying vec3 var_ViewOrigin; // position - vieworigin
+varying vec3 var_ViewOrigin;
 #if defined(USE_PARALLAX_MAPPING)
-varying vec2 var_S; // size and start position of search in texture space
+varying vec2 var_S;
 #endif // USE_PARALLAX_MAPPING
 #endif // USE_NORMAL_MAPPING
 #if defined(USE_PORTAL_CLIPPING)
@@ -67,10 +58,13 @@ void main()
 	gl_Position = u_ModelViewProjectionMatrix * position;
 
 	// transform diffusemap texcoords
-	var_TexDiffuseNormal.st = (u_DiffuseTextureMatrix * attr_TexCoord0).st;
+	var_TexDiffuse = (u_DiffuseTextureMatrix * attr_TexCoord0).st;
 
 	// transform position into world space
 	var_Position = (u_ModelMatrix * position).xyz;
+
+	// assign color
+	var_LightColor = attr_Color * u_ColorModulate + u_Color;
 
 	// transform tangentspace axis
 	var_Normal.xyz = (u_ModelMatrix * vec4(attr_Normal, 0.0)).xyz;
@@ -81,16 +75,6 @@ void main()
 	// in a vertex-shader there exists no gl_FrontFacing
 	var_tangentMatrix = mat3(-tangent, -binormal, -var_Normal.xyz);
 
-	// transform normalmap texcoords
-	var_TexDiffuseNormal.pq = (u_NormalTextureMatrix * attr_TexCoord0).st;
-
-#if defined(USE_REFLECTIONS) || defined(USE_SPECULAR)
-	// transform specularmap texture coords
-	var_TexSpecular = (u_SpecularTextureMatrix * attr_TexCoord0).st;
-#endif // USE_REFLECTIONS || USE_SPECULAR
-
-	// assign color
-	var_LightColor = attr_Color * u_ColorModulate + u_Color;
 	var_LightDirection = -normalize(u_LightDir);
 
 	var_ViewOrigin = normalize(var_Position - u_ViewOrigin);

@@ -111,6 +111,7 @@ void RemoveColinearPoints(winding_t *w)
 	vec3_t v1, v2;
 	int    nump = 0;
 	vec3_t p[MAX_POINTS_ON_WINDING];
+	float  dot;
 
 	for (i = 0 ; i < w->numpoints ; i++)
 	{
@@ -118,9 +119,11 @@ void RemoveColinearPoints(winding_t *w)
 		k = (i + w->numpoints - 1) % w->numpoints;
 		VectorSubtract(w->p[j], w->p[i], v1);
 		VectorSubtract(w->p[i], w->p[k], v2);
-		vec3_norm2(v1, v1);
-		vec3_norm2(v2, v2);
-		if (DotProduct(v1, v2) < 0.999f)
+		VectorNormalize2Only(v1, v1);
+		VectorNormalize2Only(v2, v2);
+		//if (DotProduct(v1, v2) < 0.999f)
+		Dot(v1, v2, dot);
+		if (dot < 0.999f)
 		{
 			VectorCopy(w->p[i], p[nump]);
 			nump++;
@@ -146,12 +149,13 @@ void RemoveColinearPoints(winding_t *w)
 void WindingPlane(winding_t *w, vec3_t normal, vec_t *dist)
 {
 	vec3_t v1, v2;
-
+	float dot;
 	VectorSubtract(w->p[1], w->p[0], v1);
 	VectorSubtract(w->p[2], w->p[0], v2);
-	vec3_cross(v2, v1, normal);
-	vec3_norm2(normal, normal);
-	*dist = DotProduct(w->p[0], normal);
+	CrossProduct(v2, v1, normal);
+	VectorNormalize2Only(normal, normal);
+	Dot(w->p[0], normal, dot);
+	*dist = dot;
 }
 
 /**
@@ -169,8 +173,8 @@ vec_t WindingArea(winding_t *w)
 	{
 		VectorSubtract(w->p[i - 1], w->p[0], d1);
 		VectorSubtract(w->p[i], w->p[0], d2);
-		vec3_cross(d1, d2, cross);
-		total += 0.5f * vec3_length(cross);
+		CrossProduct(d1, d2, cross);
+		total += 0.5f * VectorLength(cross);
 	}
 
 	return total;
@@ -225,7 +229,8 @@ void WindingCenter(winding_t *w, vec3_t center)
 		VectorAdd(w->p[i], center, center);
 	}
 
-	scale = 1.0f / w->numpoints;
+	//scale = 1.0f / w->numpoints;
+	scale = rcp((float)w->numpoints);
 	VectorScale(center, scale, center);
 }
 
@@ -270,13 +275,14 @@ winding_t *BaseWindingForPlane(vec3_t normal, vec_t dist)
 		break;
 	}
 
-	v = DotProduct(vup, normal);
+	//v = DotProduct(vup, normal);
+	Dot(vup, normal, v);
 	VectorMA(vup, -v, normal, vup);
-	vec3_norm2(vup, vup);
+	VectorNormalize2Only(vup, vup);
 
 	VectorScale(normal, dist, org);
 
-	vec3_cross(vup, normal, vright);
+	CrossProduct(vup, normal, vright);
 
 	VectorScale(vup, MAX_MAP_BOUNDS, vup);
 	VectorScale(vright, MAX_MAP_BOUNDS, vright);
@@ -366,7 +372,8 @@ void ClipWindingEpsilon(winding_t *in, vec3_t normal, vec_t dist,
 	// determine sides for each point
 	for (i = 0 ; i < in->numpoints ; i++)
 	{
-		dot      = DotProduct(in->p[i], normal);
+		//dot      = DotProduct(in->p[i], normal);
+		Dot(in->p[i], normal, dot);
 		dot     -= dist;
 		dists[i] = dot;
 		if (dot > epsilon)
@@ -497,7 +504,8 @@ void ChopWindingInPlace(winding_t **w, vec3_t normal, vec_t dist, vec_t epsilon)
 	// determine sides for each point
 	for (i = 0 ; i < in->numpoints ; i++)
 	{
-		dot      = DotProduct(in->p[i], normal);
+		//dot      = DotProduct(in->p[i], normal);
+		Dot(in->p[i], normal, dot);
 		dot     -= dist;
 		dists[i] = dot;
 		if (dot > epsilon)
@@ -658,7 +666,9 @@ void CheckWinding(winding_t *w)
 		j = i + 1 == w->numpoints ? 0 : i + 1;
 
 		// check the point is on the face plane
-		d = DotProduct(p1, facenormal) - facedist;
+		//d = DotProduct(p1, facenormal) - facedist;
+		Dot(p1, facenormal, d);
+		d -= facedist;
 		if (d < -ON_EPSILON || d > ON_EPSILON)
 		{
 			Com_Error(ERR_DROP, "CheckWinding: point off plane");
@@ -668,14 +678,15 @@ void CheckWinding(winding_t *w)
 		p2 = w->p[j];
 		VectorSubtract(p2, p1, dir);
 
-		if (vec3_length(dir) < ON_EPSILON)
+		if (VectorLength(dir) < ON_EPSILON)
 		{
 			Com_Error(ERR_DROP, "CheckWinding: degenerate edge");
 		}
 
-		vec3_cross(facenormal, dir, edgenormal);
-		vec3_norm2(edgenormal, edgenormal);
-		edgedist  = DotProduct(p1, edgenormal);
+		CrossProduct(facenormal, dir, edgenormal);
+		VectorNormalize2Only(edgenormal, edgenormal);
+		//edgedist  = DotProduct(p1, edgenormal);
+		Dot(p1, edgenormal, edgedist);
 		edgedist += ON_EPSILON;
 
 		// all other points must be on front side
@@ -685,7 +696,8 @@ void CheckWinding(winding_t *w)
 			{
 				continue;
 			}
-			d = DotProduct(w->p[j], edgenormal);
+			//d = DotProduct(w->p[j], edgenormal);
+			Dot(w->p[j], edgenormal, d);
 			if (d > edgedist)
 			{
 				Com_Error(ERR_DROP, "CheckWinding: non-convex");
@@ -711,7 +723,9 @@ int WindingOnPlaneSide(winding_t *w, vec3_t normal, vec_t dist)
 
 	for (i = 0 ; i < w->numpoints ; i++)
 	{
-		d = DotProduct(w->p[i], normal) - dist;
+		//d = DotProduct(w->p[i], normal) - dist;
+		Dot(w->p[i], normal, d);
+		d -= dist;
 		if (d < -ON_EPSILON)
 		{
 			if (front)
@@ -788,15 +802,16 @@ void AddWindingToConvexHull(winding_t *w, winding_t **hull, vec3_t normal)
 			k = (j + 1) % numHullPoints;
 
 			VectorSubtract(hullPoints[k], hullPoints[j], dir);
-			vec3_norm2(dir, dir);
-			vec3_cross(normal, dir, hullDirs[j]);
+			VectorNormalize2Only(dir, dir);
+			CrossProduct(normal, dir, hullDirs[j]);
 		}
 
 		outside = qfalse;
 		for (j = 0 ; j < numHullPoints ; j++)
 		{
 			VectorSubtract(p, hullPoints[j], dir);
-			d = DotProduct(dir, hullDirs[j]);
+			//d = DotProduct(dir, hullDirs[j]);
+			Dot(dir, hullDirs[j], d);
 			if (d >= ON_EPSILON)
 			{
 				outside = qtrue;

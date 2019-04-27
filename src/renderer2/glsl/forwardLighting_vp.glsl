@@ -33,8 +33,6 @@ uniform mat4 u_ModelViewProjectionMatrix;
 uniform vec4 u_ColorModulate;
 uniform vec4 u_Color;
 #if defined(USE_NORMAL_MAPPING)
-uniform mat4 u_NormalTextureMatrix;
-uniform mat4 u_SpecularTextureMatrix;
 uniform vec3 u_ViewOrigin;
 #endif // USE_NORMAL_MAPPING
 #if defined(USE_DEFORM_VERTEXES)
@@ -57,11 +55,10 @@ varying vec4 var_TexAttenuation;
 varying vec4 var_Normal;
 #if defined(USE_NORMAL_MAPPING)
 varying mat3 var_tangentMatrix;
-varying vec2 var_TexSpecular;
 varying vec3 var_ViewOrigin; // vieworigin - position    !
-varying vec3 var_ViewOrigin2; // vieworigin in worldspace
+varying vec3 var_ViewOrigin2;
 #if defined(USE_PARALLAX_MAPPING)
-varying vec2 var_S; // size and start position of search in texture space
+varying vec2 var_S;
 #endif // USE_PARALLAX_MAPPING
 #endif // USE_NORMAL_MAPPING
 #if defined(USE_PORTAL_CLIPPING)
@@ -80,25 +77,25 @@ void main()
 
 #if defined(USE_VERTEX_SKINNING)
 	#if defined(USE_NORMAL_MAPPING)
-	VertexSkinning_P_TBN(attr_Position, attr_Tangent, attr_Binormal, attr_Normal,
-	                     position, tangent, binormal, normal);
+	VertexSkinning_PTBN(attr_Position, attr_Tangent, attr_Binormal, attr_Normal,
+	                    position,      tangent,      binormal,      normal);
 	#else
-	VertexSkinning_P_N(attr_Position, attr_Normal,
-	                   position, normal);
+	VertexSkinning_PN(attr_Position, attr_Normal,
+	                  position,      normal);
 	#endif
 #elif defined(USE_VERTEX_ANIMATION)
 	#if defined(USE_NORMAL_MAPPING)
-	VertexAnimation_P_TBN(attr_Position, attr_Position2,
-	                      attr_Tangent, attr_Tangent2,
-	                      attr_Binormal, attr_Binormal2,
-	                      attr_Normal, attr_Normal2,
-	                      u_VertexInterpolation,
-	                      position, tangent, binormal, normal);
+	VertexAnimation_PTBN(attr_Position, attr_Position2,
+	                     attr_Tangent,  attr_Tangent2,
+	                     attr_Binormal, attr_Binormal2,
+	                     attr_Normal,   attr_Normal2,
+	                     u_VertexInterpolation,
+	                     position, tangent, binormal, normal);
 	#else
-	VertexAnimation_P_N(attr_Position, attr_Position2,
-	                    attr_Normal, attr_Normal2,
-	                    u_VertexInterpolation,
-	                    position, normal);
+	VertexAnimation_PN(attr_Position, attr_Position2,
+	                   attr_Normal,   attr_Normal2,
+	                   u_VertexInterpolation,
+	                   position,      normal);
 	#endif
 #else
 	position = attr_Position;
@@ -110,10 +107,7 @@ void main()
 #endif
 
 #if defined(USE_DEFORM_VERTEXES)
-	position = DeformPosition2(position,
-	                           normal,
-	                           attr_TexCoord0.st,
-	                           u_Time);
+	position = DeformPosition2(position, normal, attr_TexCoord0.st, u_Time);
 #endif
 
 	// transform vertex position into homogenous clip-space
@@ -128,6 +122,11 @@ void main()
 	// transform diffusemap texcoords
 	var_TexDiffuse.xy = (u_DiffuseTextureMatrix * attr_TexCoord0).st;
 
+	// assign color
+	vec4 color = attr_Color * u_ColorModulate + u_Color;
+	var_TexDiffuse.p = color.r;
+	var_TexNormal.pq = color.gb;
+
 	var_Normal.xyz = mat3(u_ModelMatrix) * normal;
 
 #if defined(USE_NORMAL_MAPPING)
@@ -136,28 +135,17 @@ void main()
 
 	// in a vertex-shader there exists no gl_FrontFacing
 	var_tangentMatrix = mat3(tangent, binormal, var_Normal.xyz);
-	// transpose(inverse()) ? on a rotationmatrix?       for a rotationmatrix, the transpose is equal to the inverse.
-	//var_tangentMatrix = transpose(inverse(mat3(tangent, binormal, var_Normal.xyz)));
-
-	// transform normalmap texcoords
-	var_TexNormal.xy = (u_NormalTextureMatrix * attr_TexCoord0).st;
-
-	// transform specularmap texture coords
-	var_TexSpecular = (u_SpecularTextureMatrix * attr_TexCoord0).st;
+//!!! this shader is different from the others, concerning directions/normals/vectors..  todo:check !!!
+//var_tangentMatrix = mat3(-tangent, -binormal, -var_Normal.xyz);
 
 	var_ViewOrigin = normalize(u_ViewOrigin - var_Position.xyz);
+//var_ViewOrigin = normalize(var_Position - u_ViewOrigin);
 	var_ViewOrigin2 = normalize(var_tangentMatrix * var_ViewOrigin);
 
 #if defined(USE_PARALLAX_MAPPING)
 	var_S = var_ViewOrigin2.xy * -u_DepthScale / var_ViewOrigin2.z;
 #endif // USE_PARALLAX_MAPPING
 #endif // USE_NORMAL_MAPPING
-
-	// assign color
-	vec4 color = attr_Color * u_ColorModulate + u_Color;
-
-	var_TexDiffuse.p = color.r;
-	var_TexNormal.pq = color.gb;
 
 #if defined(USE_PORTAL_CLIPPING)
 	// in front, or behind, the portalplane

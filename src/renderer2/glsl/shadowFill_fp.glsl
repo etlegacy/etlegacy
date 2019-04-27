@@ -5,7 +5,7 @@ uniform int       u_AlphaTest;
 uniform sampler2D u_ColorMap;
 #endif // USE_ALPHA_TESTING
 #if defined(USE_PORTAL_CLIPPING)
-uniform vec4      u_PortalPlane;
+uniform vec4 u_PortalPlane;
 #endif // USE_PORTAL_CLIPPING
 
 #if defined(VSM) || defined(EVSM) || defined(ESM)
@@ -31,7 +31,6 @@ varying vec4 var_FragColorEVSM;
 #endif // r_EVSMPostProcess
 #endif // EVSM
 #endif // LIGHT_DIRECTIONAL
-
 #if defined(USE_PORTAL_CLIPPING)
 varying float var_BackSide; // in front, or behind, the portalplane
 #endif // USE_PORTAL_CLIPPING

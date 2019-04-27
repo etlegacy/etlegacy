@@ -96,7 +96,7 @@ typedef struct
  * @def MD3_XYZ_SCALE
  * @brief Vertex scales
  */
-#define MD3_XYZ_SCALE       (1.0 / 64)
+#define MD3_XYZ_SCALE       (1.0f / 64.f)
 
 /**
  * @struct md3Frame_s
@@ -385,7 +385,7 @@ MDS file format (Wolfenstein Skeletal Format)
 #define MDS_MAX_SURFACES    32
 #define MDS_MAX_TAGS        128
 
-#define MDS_TRANSLATION_SCALE   (1.0 / 64)
+#define MDS_TRANSLATION_SCALE   (1.0f / 64.f)
 
 /**
  * @struct mdsWeight_t
@@ -576,7 +576,7 @@ version history:
 #define MDM_MAX_SURFACES    32
 #define MDM_MAX_TAGS        128
 
-#define MDM_TRANSLATION_SCALE   (1.0 / 64)
+#define MDM_TRANSLATION_SCALE   (1.0f / 64.f)
 
 /**
  * @struct mdmWeight_t
@@ -779,7 +779,6 @@ typedef struct
  * @brief
  *
  * @note This only used at run-time
- * @todo FIXME: do we really need this?
  */
 typedef struct
 {

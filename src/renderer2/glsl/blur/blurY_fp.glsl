@@ -6,6 +6,7 @@ void main()
 {
 	vec2 st = gl_FragCoord.st;
 
+#if 0
 	// calculate the screen texcoord in the 0.0 to 1.0 range
 	st *= r_FBufScale;
 
@@ -14,6 +15,10 @@ void main()
 
 	// scale by the screen non-power-of-two-adjust
 	st *= r_NPOTScale;
+#else
+	st *= r_FBufNPOTScale;
+	st *= vec2(4.0, 4.0);
+#endif
 
 #if 1
 	// set so a magnitude of 1 is approximately 1 pixel with 640x480

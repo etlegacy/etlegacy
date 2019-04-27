@@ -14,7 +14,6 @@ textures/egypt_props_sd/siwa_canvas1
 	surfaceparm nomarks
 	surfaceparm trans
 	tessSize 64
-	implicitMap -
 }
 
 textures/egypt_props_sd/siwa_canvas2
@@ -31,7 +30,6 @@ textures/egypt_props_sd/siwa_canvas2
 	surfaceparm nomarks
 	surfaceparm trans
 	tessSize 64
-	implicitMap textures/egypt_props_sd/siwa_canvas1.tga
 }
 
 textures/egypt_props_sd/siwa_carpet1

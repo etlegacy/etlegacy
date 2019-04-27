@@ -558,7 +558,8 @@ void S_SpatializeOrigin(vec3_t origin, int master_vol, int *left_vol, int *right
 		// calculate stereo seperation and distance attenuation
 		VectorSubtract(origin, listener_origin, source_vec);
 
-		dist  = vec3_norm(source_vec);
+		//dist = VectorNormalize(source_vec);
+		VectorNorm(source_vec, &dist);
 		dist -= dist_fullvol;
 		if (dist < 0.0f || no_attenuation)
 		{
@@ -569,7 +570,7 @@ void S_SpatializeOrigin(vec3_t origin, int master_vol, int *left_vol, int *right
 			dist /= range;
 		}
 
-		vec3_rotate(source_vec, listener_axis, vec);
+		VectorRotate(source_vec, listener_axis, vec);
 
 		rscale = (float)(sqrt((double)(1.0f - vec[1])));
 		lscale = (float)(sqrt((double)(1.0f + vec[1])));
@@ -969,7 +970,7 @@ void S_Base_AddLoopingSound(const vec3_t origin, const vec3_t velocity, int rang
 	}
 	loopSounds[numLoopSounds].volume = (int)((float)volume * s_volCurrent);
 
-	if (s_doppler->integer && vec3_length_squared(velocity) > 0)
+	if (s_doppler->integer && VectorLengthSquared(velocity) > 0)
 	{
 		vec3_t out;
 		float  lena, lenb;
@@ -1406,7 +1407,7 @@ void S_Base_Respatialize(int entnum, const vec3_t head, vec3_t axis[3], int inwa
 	VectorCopy(axis[0], listener_axis[0]);
 	VectorCopy(axis[1], listener_axis[1]);
 	VectorCopy(axis[2], listener_axis[2]);
-	mat3_transpose(listener_axis, listener_axis);
+	MatrixTranspose(listener_axis, listener_axis);
 
 	// update spatialization for dynamic sounds
 	ch = s_channels;

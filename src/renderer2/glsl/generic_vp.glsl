@@ -1,33 +1,51 @@
 /* generic_vp.glsl */
+#if defined(USE_VERTEX_SKINNING)
 #include "lib/vertexSkinning"
+#endif // USE_VERTEX_SKINNING
+#if defined(USE_VERTEX_ANIMATION)
 #include "lib/vertexAnimation"
+#endif // USE_VERTEX_ANIMATION
+#if defined(USE_DEFORM_VERTEXES)
 #include "lib/deformVertexes"
+#endif // USE_DEFORM_VERTEXES
 
 attribute vec4 attr_Position;
-attribute vec4 attr_TexCoord0;
-attribute vec4 attr_TexCoord1;
 attribute vec3 attr_Normal;
+attribute vec4 attr_TexCoord0;
 attribute vec4 attr_Color;
-
+#if defined(USE_VERTEX_ANIMATION)
 attribute vec4 attr_Position2;
 attribute vec3 attr_Normal2;
+#endif // USE_VERTEX_ANIMATION
+#if defined(USE_TCGEN_LIGHTMAP)
+attribute vec4 attr_TexCoord1;
+#endif // USE_TCGEN_LIGHTMAP
 
-uniform float u_VertexInterpolation;
-
-uniform mat4 u_ColorTextureMatrix;
-uniform vec3 u_ViewOrigin;
-//uniform int  u_TCGen_Environment;
-
-uniform float u_Time;
-
-uniform vec4 u_ColorModulate;
-uniform vec4 u_Color;
 uniform mat4 u_ModelMatrix;
 uniform mat4 u_ModelViewProjectionMatrix;
+uniform vec4 u_Color;
+uniform vec4 u_ColorModulate;
+uniform mat4 u_ColorTextureMatrix;
+#if defined(USE_VERTEX_ANIMATION)
+uniform float u_VertexInterpolation;
+#endif // USE_VERTEX_ANIMATION
+#if defined(USE_DEFORM_VERTEXES)
+uniform float u_Time;
+#endif // USE_DEFORM_VERTEXES
+#if defined(USE_TCGEN_ENVIRONMENT)
+uniform vec3 u_ViewOrigin;
+#endif // USE_TCGEN_ENVIRONMENT
+#if defined(USE_PORTAL_CLIPPING)
+uniform vec4 u_PortalPlane;
+#endif// USE_PORTAL_CLIPPING
 
-varying vec3 var_Position;
-varying vec2 var_Tex;
+
 varying vec4 var_Color;
+varying vec2 var_Tex;
+#if defined(USE_PORTAL_CLIPPING)
+varying float var_BackSide; // in front, or behind, the portalplane
+#endif // USE_PORTAL_CLIPPING
+
 
 void main()
 {
@@ -35,9 +53,13 @@ void main()
 	vec3 normal;
 
 #if defined(USE_VERTEX_SKINNING)
-	VertexSkinning_P_N(attr_Position, attr_Normal, position, normal);
+	VertexSkinning_PN(attr_Position, attr_Normal,
+	                  position,      normal);
 #elif defined(USE_VERTEX_ANIMATION)
-	VertexAnimation_P_N(attr_Position, attr_Position2, attr_Normal, attr_Normal2, u_VertexInterpolation, position, normal);
+	VertexAnimation_PN(attr_Position, attr_Position2,
+	                   attr_Normal,   attr_Normal2,
+                       u_VertexInterpolation,
+                       position,      normal);
 #else
 	position = attr_Position;
 	normal   = attr_Normal;
@@ -50,8 +72,7 @@ void main()
 	// transform vertex position into homogenous clip-space
 	gl_Position = u_ModelViewProjectionMatrix * position;
 
-	// transform position into world space
-	var_Position = mat3(u_ModelMatrix) * position.xyz;
+	var_Color = attr_Color * u_ColorModulate + u_Color;
 
 	// transform texcoords
 	vec4 texCoord;
@@ -72,9 +93,14 @@ void main()
 	texCoord = attr_TexCoord1;
 #else
 	texCoord = attr_TexCoord0;
-#endif
+#endif // USE_TCGEN_ENVIRONMENT,USE_TCGEN_LIGHTMAP
 
 	var_Tex = (u_ColorTextureMatrix * texCoord).st;
 
-	var_Color = attr_Color * u_ColorModulate + u_Color;
+#if defined(USE_PORTAL_CLIPPING)
+	// transform position into world space
+	vec3 varPosition = mat3(u_ModelMatrix) * position.xyz;
+	// in front, or behind, the portalplane
+	var_BackSide = dot(varPosition.xyz, u_PortalPlane.xyz) - u_PortalPlane.w;
+#endif // USE_PORTAL_CLIPPING
 }

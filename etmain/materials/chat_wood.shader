@@ -7,7 +7,6 @@ textures/chat_wood/chwood_c02
 	bumpmap textures/chat_wood/chwood_c02_n.tga
 	specularmap textures/chat_wood/chwood_c02_r.tga
 	surfaceparm woodsteps
-	implicitMap -
 }
 
 textures/chat_wood/chwood_c04
@@ -16,5 +15,4 @@ textures/chat_wood/chwood_c04
 	diffusemap textures/chat_wood/chwood_c04_n.tga
 	specularmap textures/chat_wood/chwood_c04_r.tga
 	surfaceparm woodsteps
-	implicitMap -
 }

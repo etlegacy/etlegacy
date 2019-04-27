@@ -1,19 +1,25 @@
 /* liquid_vp.glsl */
+#if defined(USE_DEFORM_VERTEXES)
+#include "lib/deformVertexes"
+#endif // USE_DEFORM_VERTEXES
 
 attribute vec4 attr_Position;
 attribute vec4 attr_Color;
+attribute vec4 attr_TexCoord0;
 attribute vec3 attr_Normal;
 #if defined(USE_NORMAL_MAPPING)
 attribute vec3 attr_Tangent;
 attribute vec3 attr_Binormal;
-attribute vec4 attr_TexCoord0;
 #endif // USE_NORMAL_MAPPING
 
 uniform mat4 u_ModelMatrix;
 uniform mat4 u_ModelViewProjectionMatrix;
-uniform mat4 u_NormalTextureMatrix;
-uniform vec3 u_ViewOrigin;
+uniform vec4 u_ColorModulate;
+#if defined(USE_DIFFUSE)
+uniform mat4 u_DiffuseTextureMatrix;
+#endif // USE_DIFFUSE
 #if defined(USE_NORMAL_MAPPING)
+uniform vec3 u_ViewOrigin;
 uniform vec3 u_LightDir;
 #if defined(USE_PARALLAX_MAPPING)
 uniform float u_DepthScale;
@@ -22,21 +28,24 @@ uniform float u_DepthScale;
 #if defined(USE_PORTAL_CLIPPING)
 uniform vec4  u_PortalPlane;
 #endif // USE_PORTAL_CLIPPING
+#if defined(USE_DEFORM_VERTEXES)
+uniform float u_Time;
+#endif // USE_DEFORM_VERTEXES
 
 varying vec4 var_LightColor;
+varying float var_alphaGen;
 varying vec3 var_Position;
-varying vec3 var_ViewOrigin; // position - vieworigin
 varying vec3 var_Normal;
+#if defined(USE_DIFFUSE)
+varying vec2 var_TexDiffuse; // possibly moving coords
+#endif // USE_DIFFUSE
 #if defined(USE_NORMAL_MAPPING)
+varying vec3 var_ViewOrigin;
 varying mat3 var_tangentMatrix;
 varying vec2 var_TexNormal; // these coords are never moving
-#if defined(USE_WATER)
-varying vec2 var_TexNormal2; // these coords might be moving (tcMod)
-#endif // USE_WATER
 varying vec3 var_LightDirection;
-varying vec3 var_ViewOrigin2; // vieworigin in worldspace
 #if defined(USE_PARALLAX_MAPPING)
-varying vec2 var_S; // size and start position of search in texture space
+varying vec2 var_S;
 #endif // USE_PARALLAX_MAPPING
 #endif // USE_NORMAL_MAPPING
 #if defined(USE_PORTAL_CLIPPING)
@@ -46,14 +55,26 @@ varying float var_BackSide; // in front, or behind, the portalplane
 
 void main()
 {
+	vec4 position = attr_Position;
+
+#if defined(USE_DEFORM_VERTEXES)
+	position = DeformPosition2(position, attr_Normal, attr_TexCoord0.st, u_Time);
+#endif // USE_DEFORM_VERTEXES
+
 	// transform vertex position into homogenous clip-space
-	gl_Position = u_ModelViewProjectionMatrix * attr_Position;
+	gl_Position = u_ModelViewProjectionMatrix * position;
 
 	// transform position into world space
-	var_Position = (u_ModelMatrix * attr_Position).xyz;
+	var_Position = (u_ModelMatrix * position).xyz;
 
-	// the vieworigin
-	var_ViewOrigin = normalize(var_Position - u_ViewOrigin);
+	var_LightColor = attr_Color;
+
+#if defined(USE_DIFFUSE)
+	var_TexDiffuse = (u_DiffuseTextureMatrix * attr_TexCoord0).st;
+
+	// the alpha value is the one set by alphaGen const <value>
+	var_alphaGen = u_ColorModulate.a * 0.5 + 0.5;
+#endif // USE_DIFFUSE
 
 	// transform normal into world space
 	var_Normal = (u_ModelMatrix * vec4(attr_Normal, 0.0)).xyz;
@@ -65,18 +86,16 @@ void main()
 	// in a vertex-shader there exists no gl_FrontFacing
 	var_tangentMatrix = mat3(-tangent, -binormal, -var_Normal.xyz);
 
-	// transform normalmap texcoords
-	var_TexNormal.xy = attr_TexCoord0.st;
-#if defined(USE_WATER)
-	var_TexNormal2.xy = (u_NormalTextureMatrix * attr_TexCoord0).st;
-#endif // USE_WATER
+	// normalmap texcoords are not transformed
+	var_TexNormal = attr_TexCoord0.st;
 
-	var_LightColor = attr_Color;
 	var_LightDirection = -normalize(u_LightDir);
-	// the view origin in worldspace
-	var_ViewOrigin2 = normalize(var_tangentMatrix * var_ViewOrigin);
+
+	var_ViewOrigin = normalize(var_Position - u_ViewOrigin);
+
 #if defined(USE_PARALLAX_MAPPING)
-	var_S = var_ViewOrigin2.xy * -u_DepthScale / var_ViewOrigin2.z;
+	vec3 viewOrigin2 = normalize(var_tangentMatrix * var_ViewOrigin);
+	var_S = viewOrigin2.xy * -u_DepthScale / viewOrigin2.z;
 #endif // USE_PARALLAX_MAPPING
 #endif // USE_NORMAL_MAPPING
 

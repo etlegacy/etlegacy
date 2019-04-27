@@ -1,5 +1,4 @@
 /* shadowFill_vp.glsl */
-
 #if defined(USE_VERTEX_SKINNING)
 #include "lib/vertexSkinning"
 #endif // USE_VERTEX_SKINNING
@@ -18,11 +17,11 @@ attribute vec4 attr_Position2;
 attribute vec3 attr_Normal2;
 #endif // USE_VERTEX_ANIMATION
 
+uniform mat4  u_ModelMatrix;
+uniform mat4  u_ModelViewProjectionMatrix;
 #if defined(USE_ALPHA_TESTING)
 uniform mat4  u_ColorTextureMatrix;
 #endif // USE_ALPHA_TESTING
-uniform mat4  u_ModelMatrix;
-uniform mat4  u_ModelViewProjectionMatrix;
 #if defined(USE_VERTEX_ANIMATION)
 uniform float u_VertexInterpolation;
 #endif // USE_VERTEX_ANIMATION
@@ -84,12 +83,14 @@ void main()
 
 
 #if defined(USE_VERTEX_SKINNING)
-	VertexSkinning_P_N(attr_Position, attr_Normal,
-	                   position, normal);
+	VertexSkinning_PN(attr_Position, attr_Normal,
+	                  position,      normal);
 
 #elif defined(USE_VERTEX_ANIMATION)
-	VertexAnimation_P_N(attr_Position, attr_Position2, attr_Normal, attr_Normal2, u_VertexInterpolation,
-	                    position, normal);
+	VertexAnimation_PN(attr_Position, attr_Position2,
+	                   attr_Normal,   attr_Normal2,
+                       u_VertexInterpolation,
+                       position,      normal);
 #else
 	position = attr_Position;
 	normal   = attr_Normal;

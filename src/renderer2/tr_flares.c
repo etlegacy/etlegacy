@@ -211,7 +211,8 @@ void RB_AddFlare(void *surface, int fogNum, vec3_t point, vec3_t color, vec3_t n
 			d2 = (distBias * 2.0f);
 		}
 		d2 -= distBias;
-		d2  = 1.0f - (d2 * (1.0f / distBias));
+		//d2  = 1.0f - (d2 * (1.0f / distBias));
+		d2 = 1.0f - (d2 * rcp(distBias));
 		d2 *= distLerp;
 	}
 	else
@@ -224,8 +225,9 @@ void RB_AddFlare(void *surface, int fogNum, vec3_t point, vec3_t color, vec3_t n
 	if (normal)
 	{
 		VectorSubtract(backEnd.viewParms.orientation.origin, point, local);
-		VectorNormalize(local);
-		d1  = DotProduct(local, normal);
+		VectorNormalizeOnly(local);
+		//d1  = DotProduct(local, normal);
+		Dot(local, normal, d1);
 		d1 *= (1.0f - distLerp);
 		d1 += d2;
 	}
@@ -364,11 +366,11 @@ void RB_TestFlare(flare_t *f)
 
 	// read back the z buffer contents
 	glReadPixels(f->windowX, f->windowY, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
-
+	
 	screenZ = backEnd.viewParms.projectionMatrix[14] /
-	          ((2 * depth - 1) * backEnd.viewParms.projectionMatrix[11] - backEnd.viewParms.projectionMatrix[10]);
+	          ((2.f * depth - 1.f) * backEnd.viewParms.projectionMatrix[11] - backEnd.viewParms.projectionMatrix[10]);
 
-	visible = (-f->eyeZ - -screenZ) < 24;
+	visible = (-f->eyeZ - -screenZ) < 24.f;
 
 	if (visible)
 	{
@@ -416,11 +418,11 @@ void RB_RenderFlare(flare_t *f)
 	if (f->isCorona) // corona case
 	{
 		VectorScale(colorWhite, f->drawIntensity, color);
-		iColor[0] = color[0];
-		iColor[1] = color[1];
-		iColor[2] = color[2];
+		iColor[0] = (int)color[0];
+		iColor[1] = (int)color[1];
+		iColor[2] = (int)color[2];
 
-		size = backEnd.viewParms.viewportWidth * (r_flareSize->value / 640.0f + 8 / -f->eyeZ);
+		size = (float)backEnd.viewParms.viewportWidth * ((r_flareSize->value / 640.0f) + (8.f / -f->eyeZ));
 	}
 	else
 	{
@@ -448,7 +450,7 @@ void RB_RenderFlare(flare_t *f)
 		}
 
 		// calculate the flare size
-		size = backEnd.viewParms.viewportWidth * (r_flareSize->value / 640.0f + 8 / distance);
+		size = (float)backEnd.viewParms.viewportWidth * ((r_flareSize->value / 640.0f) + (8.f / distance));
 
 		factor    = distance + size * sqrt(flareCoeff);
 		intensity = flareCoeff * size * size / (factor * factor);
@@ -458,63 +460,75 @@ void RB_RenderFlare(flare_t *f)
 		iColor[1] = color[1] * 255;
 		iColor[2] = color[2] * 255;
 	}
-	Tess_Begin(Tess_StageIteratorGeneric, NULL, tr.flareShader, NULL, qfalse, qfalse, -1, f->fogNum);
+	Tess_Begin(Tess_StageIteratorGeneric, NULL, tr.flareShader, NULL, qfalse, qfalse, LIGHTMAP_NONE, f->fogNum);
 
 	// FIXME: use quadstamp?
-	tess.xyz[tess.numVertexes][0]       = f->windowX - size;
+	/*tess.xyz[tess.numVertexes][0]       = f->windowX - size;
 	tess.xyz[tess.numVertexes][1]       = f->windowY - size;
 	tess.xyz[tess.numVertexes][2]       = 0;
-	tess.xyz[tess.numVertexes][3]       = 1;
-	tess.texCoords[tess.numVertexes][0] = 0;
+	tess.xyz[tess.numVertexes][3]       = 1;*/
+	Vector4Set(tess.xyz[tess.numVertexes], f->windowX - size, f->windowY - size, 0.f, 1.f);
+	/*tess.texCoords[tess.numVertexes][0] = 0;
 	tess.texCoords[tess.numVertexes][1] = 0;
 	tess.texCoords[tess.numVertexes][2] = 0;
-	tess.texCoords[tess.numVertexes][3] = 1;
-	tess.colors[tess.numVertexes][0]    = iColor[0];
+	tess.texCoords[tess.numVertexes][3] = 1;*/
+	Vector4Set(tess.texCoords[tess.numVertexes], 0.f, 0.f, 0.f, 1.f);
+	/*tess.colors[tess.numVertexes][0]    = iColor[0];
 	tess.colors[tess.numVertexes][1]    = iColor[1];
 	tess.colors[tess.numVertexes][2]    = iColor[2];
-	tess.colors[tess.numVertexes][3]    = 1;
+	tess.colors[tess.numVertexes][3]    = 1;*/
+	Vector4Set(tess.colors[tess.numVertexes], (float)iColor[0], (float)iColor[1], (float)iColor[2], 1.f);
 	tess.numVertexes++;
 
-	tess.xyz[tess.numVertexes][0]       = f->windowX - size;
+	/*tess.xyz[tess.numVertexes][0]       = f->windowX - size;
 	tess.xyz[tess.numVertexes][1]       = f->windowY + size;
 	tess.xyz[tess.numVertexes][2]       = 0;
-	tess.xyz[tess.numVertexes][3]       = 1;
-	tess.texCoords[tess.numVertexes][0] = 0;
+	tess.xyz[tess.numVertexes][3]       = 1;*/
+	Vector4Set(tess.xyz[tess.numVertexes], f->windowX - size, f->windowY + size, 0.f, 1.f);
+	/*tess.texCoords[tess.numVertexes][0] = 0;
 	tess.texCoords[tess.numVertexes][1] = 1;
 	tess.texCoords[tess.numVertexes][2] = 0;
-	tess.texCoords[tess.numVertexes][3] = 1;
-	tess.colors[tess.numVertexes][0]    = iColor[0];
+	tess.texCoords[tess.numVertexes][3] = 1;*/
+	Vector4Set(tess.texCoords[tess.numVertexes], 0.f, 1.f, 0.f, 1.f);
+	/*tess.colors[tess.numVertexes][0]    = iColor[0];
 	tess.colors[tess.numVertexes][1]    = iColor[1];
 	tess.colors[tess.numVertexes][2]    = iColor[2];
-	tess.colors[tess.numVertexes][3]    = 1;
+	tess.colors[tess.numVertexes][3]    = 1;*/
+	Vector4Set(tess.colors[tess.numVertexes], (float)iColor[0], (float)iColor[1], (float)iColor[2], 1.f);
 	tess.numVertexes++;
 
-	tess.xyz[tess.numVertexes][0]       = f->windowX + size;
+	/*tess.xyz[tess.numVertexes][0]       = f->windowX + size;
 	tess.xyz[tess.numVertexes][1]       = f->windowY + size;
 	tess.xyz[tess.numVertexes][2]       = 0;
-	tess.xyz[tess.numVertexes][3]       = 1;
-	tess.texCoords[tess.numVertexes][0] = 1;
+	tess.xyz[tess.numVertexes][3]       = 1;*/
+	Vector4Set(tess.xyz[tess.numVertexes], (float)f->windowX + size, (float)f->windowY + size, 0.f, 1.f);
+	/*tess.texCoords[tess.numVertexes][0] = 1;
 	tess.texCoords[tess.numVertexes][1] = 1;
 	tess.texCoords[tess.numVertexes][2] = 0;
-	tess.texCoords[tess.numVertexes][3] = 1;
-	tess.colors[tess.numVertexes][0]    = iColor[0];
+	tess.texCoords[tess.numVertexes][3] = 1;*/
+	Vector4Set(tess.texCoords[tess.numVertexes], 1.f, 1.f, 0.f, 1.f);
+	/*tess.colors[tess.numVertexes][0]    = iColor[0];
 	tess.colors[tess.numVertexes][1]    = iColor[1];
 	tess.colors[tess.numVertexes][2]    = iColor[2];
-	tess.colors[tess.numVertexes][3]    = 1;
+	tess.colors[tess.numVertexes][3]    = 1;*/
+	Vector4Set(tess.colors[tess.numVertexes], (float)iColor[0], (float)iColor[1], (float)iColor[2], 1.f);
 	tess.numVertexes++;
 
-	tess.xyz[tess.numVertexes][0]       = f->windowX + size;
+	/*tess.xyz[tess.numVertexes][0]       = f->windowX + size;
 	tess.xyz[tess.numVertexes][1]       = f->windowY - size;
 	tess.xyz[tess.numVertexes][2]       = 0;
-	tess.xyz[tess.numVertexes][3]       = 1;
-	tess.texCoords[tess.numVertexes][0] = 1;
+	tess.xyz[tess.numVertexes][3]       = 1;*/
+	Vector4Set(tess.xyz[tess.numVertexes], (float)f->windowX + size, (float)f->windowY -+ size, 0.f, 1.f);
+	/*tess.texCoords[tess.numVertexes][0] = 1;
 	tess.texCoords[tess.numVertexes][1] = 0;
 	tess.texCoords[tess.numVertexes][2] = 0;
-	tess.texCoords[tess.numVertexes][3] = 1;
-	tess.colors[tess.numVertexes][0]    = iColor[0];
+	tess.texCoords[tess.numVertexes][3] = 1;*/
+	Vector4Set(tess.texCoords[tess.numVertexes], 1.f, 0.f, 0.f, 1.f);
+	/*tess.colors[tess.numVertexes][0]    = iColor[0];
 	tess.colors[tess.numVertexes][1]    = iColor[1];
 	tess.colors[tess.numVertexes][2]    = iColor[2];
-	tess.colors[tess.numVertexes][3]    = 1;
+	tess.colors[tess.numVertexes][3]    = 1;*/
+	Vector4Set(tess.colors[tess.numVertexes], (float)iColor[0], (float)iColor[1], (float)iColor[2], 1.f);
 	tess.numVertexes++;
 
 	tess.indexes[tess.numIndexes++] = 0;

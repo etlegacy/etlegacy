@@ -1,9 +1,12 @@
 /* lightMapping_vp.glsl */
+#if defined(USE_DEFORM_VERTEXES)
 #include "lib/deformVertexes"
+#endif // USE_DEFORM_VERTEXES
 
+// vertex attributes
 attribute vec4 attr_Position;
-attribute vec4 attr_TexCoord0;
-attribute vec4 attr_TexCoord1;
+attribute vec4 attr_TexCoord0; // the diffuse/colormap texture coordinates
+attribute vec4 attr_TexCoord1; // the lightmap texture coordinates
 attribute vec4 attr_Color;
 attribute vec3 attr_Normal;
 #if defined(USE_NORMAL_MAPPING)
@@ -11,47 +14,47 @@ attribute vec3 attr_Tangent;
 attribute vec3 attr_Binormal;
 #endif // USE_NORMAL_MAPPING
 
-uniform mat4 u_DiffuseTextureMatrix;
+// uniform variables
 uniform mat4 u_ModelMatrix;
 uniform mat4 u_ModelViewProjectionMatrix;
 uniform vec4 u_ColorModulate;
 uniform vec4 u_Color;
-uniform vec3 u_LightDir;
-uniform vec3  u_LightColor;
-uniform float u_Time;
+#if defined(USE_DIFFUSE)
+uniform mat4 u_DiffuseTextureMatrix;
+#if defined(USE_NORMAL_MAPPING)
 uniform vec3 u_ViewOrigin;
-#if defined(USE_NORMAL_MAPPING)
-uniform mat4 u_NormalTextureMatrix;
-#if defined(USE_REFLECTIONS) || defined(USE_SPECULAR)
-uniform mat4 u_SpecularTextureMatrix;
-#if defined(USE_REFLECTIONS)
-uniform samplerCube u_EnvironmentMap0;
-uniform samplerCube u_EnvironmentMap1;
-uniform float       u_EnvironmentInterpolation;
-#endif // USE_REFLECTIONS
-#endif // USE_REFLECTIONS || USE_SPECULAR
-#endif // USE_NORMAL_MAPPING
-#if defined(USE_PORTAL_CLIPPING)
-uniform vec4  u_PortalPlane;
-#endif // USE_PORTAL_CLIPPING
-
-varying vec3 var_Position;
-varying vec4 var_TexDiffuseNormal;
-varying vec2 var_TexLight;
-varying vec4 var_Color;
-varying vec3 var_Normal;
-#if defined(USE_NORMAL_MAPPING)
-varying mat3 var_tangentMatrix;
-#if defined(USE_REFLECTIONS) || defined(USE_SPECULAR)
-varying vec2 var_TexSpecular;
-#endif // USE_REFLECTIONS || USE_SPECULAR
-varying vec3 var_LightDirection;
-varying vec3 var_ViewOrigin; // position - vieworigin
+uniform vec3 u_LightDir;
 #if defined(USE_PARALLAX_MAPPING)
-varying vec2 var_S;
-varying vec3 var_ViewOrigin2; // in worldspace
+uniform float u_DepthScale;
 #endif // USE_PARALLAX_MAPPING
 #endif // USE_NORMAL_MAPPING
+#endif // USE_DIFFUSE
+#if defined(USE_PORTAL_CLIPPING)
+uniform vec4 u_PortalPlane;
+#endif // USE_PORTAL_CLIPPING
+#if defined(USE_DEFORM_VERTEXES)
+uniform float u_Time;
+#endif // USE_DEFORM_VERTEXES
+
+// varying variables
+varying vec3 var_Position;
+varying vec4 var_Color;
+varying vec2 var_TexLight;
+varying vec3 var_Normal;
+#if defined(USE_DIFFUSE)
+varying vec2 var_TexDiffuse;
+#if defined(USE_NORMAL_MAPPING)
+varying vec3 var_Tangent;
+varying vec3 var_biNormal;
+varying mat3 var_tangentMatrix;
+varying vec3 var_LightDirection;
+varying vec3 var_ViewOrigin;
+#if defined(USE_PARALLAX_MAPPING)
+varying vec2 var_S;
+varying vec3 var_ViewOrigin2;
+#endif // USE_PARALLAX_MAPPING
+#endif // USE_NORMAL_MAPPING
+#endif // USE_DIFFUSE
 #if defined(USE_PORTAL_CLIPPING)
 varying float var_BackSide; // in front, or behind, the portalplane
 #endif // USE_PORTAL_CLIPPING
@@ -77,45 +80,39 @@ void main()
 	// transform position into world space
 	var_Position = (u_ModelMatrix * position).xyz;
 
-	// transform diffusemap texcoords
-	var_TexDiffuseNormal.st = (u_DiffuseTextureMatrix * attr_TexCoord0).st;
+	// assign color
+//	var_Color = attr_Color * u_ColorModulate + u_Color;
+	var_Color = vec4(vec3(attr_Color.rgb), u_ColorModulate.a * 0.5 + 0.5); // the alphaGen value goes in the alpha=channel
+
 	// get lightmap texture coordinates
 	var_TexLight = attr_TexCoord1.st;
 
-	// transform tangentspace axis
 	var_Normal.xyz = (u_ModelMatrix * vec4(attr_Normal, 0.0)).xyz;
+
+#if defined(USE_DIFFUSE)
+	// transform diffusemap texcoords
+	var_TexDiffuse = (u_DiffuseTextureMatrix * attr_TexCoord0).st;
+#endif // USE_DIFFUSE
+
 #if defined(USE_NORMAL_MAPPING)
+	// transform tangentspace axis
 	vec3 tangent  = (u_ModelMatrix * vec4(attr_Tangent, 0.0)).xyz;
 	vec3 binormal = (u_ModelMatrix * vec4(attr_Binormal, 0.0)).xyz;
+	var_Tangent = tangent;
+	var_biNormal = binormal;
 
 	// in a vertex-shader there exists no gl_FrontFacing
 	var_tangentMatrix = mat3(-tangent, -binormal, -var_Normal.xyz);
-//var_tangentMatrix = mat3(tangent, binormal, var_Normal.xyz);
-
-	// transform normalmap texcoords
-	var_TexDiffuseNormal.pq = (u_NormalTextureMatrix * attr_TexCoord0).st;
-
-#if defined(USE_REFLECTIONS) || defined(USE_SPECULAR)
-	// transform specularmap texcoords
-	var_TexSpecular = (u_SpecularTextureMatrix * attr_TexCoord0).st;
-#endif // USE_REFLECTIONS || USE_SPECULAR
 
 	var_LightDirection = -normalize(u_LightDir);
-//var_LightDirection = normalize(var_tangentMatrix * -u_LightDir);
-//var_LightDirection = -vec3(dot(u_LightDir,tangent), dot(u_LightDir,binormal), dot(u_LightDir,var_Normal.xyz));
 
 	// the vieworigin
 	var_ViewOrigin = normalize(var_Position - u_ViewOrigin);
-//	var_ViewOrigin = normalize(u_ViewOrigin - var_Position);
-//var_ViewOrigin = normalize(var_tangentMatrix * (var_Position - u_ViewOrigin));
-//var_ViewOrigin = vec3(dot((u_ViewOrigin - var_Position),tangent), dot((u_ViewOrigin - var_Position),binormal), dot((u_ViewOrigin - var_Position),var_Normal.xyz));
-
 
 #if defined(USE_PARALLAX_MAPPING)
-//	vec3 viewOrigin2 = normalize(var_tangentMatrix * var_ViewOrigin);
-var_ViewOrigin2 = vec3(dot(var_ViewOrigin,tangent), dot(var_ViewOrigin,binormal), dot(var_ViewOrigin,var_Normal.xyz));
-//vec3 viewOrigin2 = var_ViewOrigin;
-	var_S = var_ViewOrigin2.xy / var_ViewOrigin2.z * u_DepthScale;
+	vec3 viewOrigin2 = normalize(var_tangentMatrix * var_ViewOrigin);
+//	vec3 viewOrigin2 = normalize(vec3(dot(var_ViewOrigin,-tangent), dot(var_ViewOrigin,-binormal), dot(var_ViewOrigin,-var_Normal.xyz)));
+	var_S = viewOrigin2.xy * (-u_DepthScale / viewOrigin2.z);
 #endif // USE_PARALLAX_MAPPING
 #endif // USE_NORMAL_MAPPING
 
@@ -123,7 +120,4 @@ var_ViewOrigin2 = vec3(dot(var_ViewOrigin,tangent), dot(var_ViewOrigin,binormal)
 	// in front, or behind, the portalplane
 	var_BackSide = dot(var_Position.xyz, u_PortalPlane.xyz) - u_PortalPlane.w;
 #endif // USE_PORTAL_CLIPPING
-
-	// assign color
-	var_Color = attr_Color * u_ColorModulate + u_Color;
 }

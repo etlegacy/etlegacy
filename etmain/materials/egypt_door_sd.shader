@@ -7,7 +7,6 @@ textures/egypt_door_sd/door_c05
 	bumpmap textures/egypt_door_sd/door_c05_n.tga
 	specularmap textures/egypt_door_sd/door_c05_r.tga
 	surfaceparm woodsteps
-	implicitMap -
 }
 
 textures/egypt_door_sd/heavy_door_01
@@ -17,7 +16,6 @@ textures/egypt_door_sd/heavy_door_01
 	bumpmap textures/egypt_door_sd/heavy_door_01_n.tga
 	specularmap textures/egypt_door_sd/heavy_door_01_r.tga
 	surfaceparm metalsteps
-	implicitMap -
 }
 
 textures/egypt_door_sd/siwa_door2
@@ -27,7 +25,6 @@ textures/egypt_door_sd/siwa_door2
 	bumpmap textures/egypt_door_sd/siwa_door2_n.tga
 	specularmap textures/egypt_door_sd/siwa_door2_r.tga
 	surfaceparm woodsteps
-	implicitMap -
 }
 
 textures/egypt_door_sd/siwa_door3
@@ -37,7 +34,6 @@ textures/egypt_door_sd/siwa_door3
 	bumpmap textures/egypt_door_sd/siwa_door3_n.tga
 	specularmap textures/egypt_door_sd/siwa_door3_r.tga
 	surfaceparm woodsteps
-	implicitMap -
 }
 
 textures/egypt_door_sd/siwa_door_neutral
@@ -47,7 +43,6 @@ textures/egypt_door_sd/siwa_door_neutral
 	bumpmap textures/egypt_door_sd/siwa_door_neutral_n.tga
 	specularmap textures/egypt_door_sd/siwa_door_neutral_r.tga
 	surfaceparm woodsteps
-	implicitMap -
 }
 
 
@@ -58,5 +53,4 @@ textures/egypt_door_sd/siwa_door_axis
 	bumpmap textures/egypt_door_sd/siwa_door_axis_n.tga
 	specularmap textures/egypt_door_sd/siwa_door_axis_r.tga
 	surfaceparm woodsteps
-	implicitMap -
 }

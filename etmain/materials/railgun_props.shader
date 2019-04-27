@@ -7,5 +7,4 @@ textures/railgun_props/tug_side
 	bumpmap textures/railgun_props/tug_side_n.tga
 	specularmap textures/railgun_props/tug_side_r.tga
 	surfaceparm metalsteps
-	implicitMap -
 }

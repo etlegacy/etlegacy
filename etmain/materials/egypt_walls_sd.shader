@@ -8,7 +8,6 @@ textures/egypt_walls_sd/stucco01_decor01_phong
 	specularmap textures/egypt_walls_sd/stucco01_decor01_r.tga
 	q3map_nonplanar
 	q3map_shadeangle 90
-	implicitMap textures/egypt_walls_sd/stucco01_decor01.tga
 }
 
 textures/egypt_walls_sd/stucco01_phong
@@ -19,7 +18,6 @@ textures/egypt_walls_sd/stucco01_phong
 	specularmap textures/egypt_walls_sd/stucco01_r.tga
 	q3map_nonplanar
 	q3map_shadeangle 90
-	implicitMap textures/egypt_walls_sd/stucco01.tga
 }
 
 textures/egypt_walls_sd/stucco02
@@ -48,7 +46,6 @@ textures/egypt_walls_sd/stucco02_04blend
 	specularmap textures/egypt_walls_sd/stucco02_04blend_r.tga
 	q3map_nonplanar
 	q3map_shadeangle 30
-	implicitMap -
 }
 
 textures/egypt_walls_sd/stucco03
@@ -59,7 +56,6 @@ textures/egypt_walls_sd/stucco03
 	specularmap textures/egypt_walls_sd/stucco03_r.tga
 	q3map_nonplanar
 	q3map_shadeangle 60
-	implicitMap -
 }
 
 textures/egypt_walls_sd/stucco03b
@@ -70,7 +66,6 @@ textures/egypt_walls_sd/stucco03b
 	specularmap textures/egypt_walls_sd/stucco03b_r.tga
 	q3map_nonplanar
 	q3map_shadeangle 60
-	implicitMap -
 }
 
 textures/egypt_walls_sd/stucco04
@@ -81,7 +76,6 @@ textures/egypt_walls_sd/stucco04
 	specularmap textures/egypt_walls_sd/stucco04_r.tga
 	q3map_nonplanar
 	q3map_shadeangle 60
-	implicitMap -
 }
 
 textures/egypt_walls_sd/stucco07a
@@ -92,7 +86,6 @@ textures/egypt_walls_sd/stucco07a
 	specularmap textures/egypt_walls_sd/stucco07a_r.tga
 	q3map_nonplanar
 	q3map_shadeangle 90
-	implicitMap -
 }
 
 textures/egypt_walls_sd/stucco07a_nonsolid
@@ -104,7 +97,6 @@ textures/egypt_walls_sd/stucco07a_nonsolid
 	surfaceparm nonsolid
 	q3map_nonplanar
 	q3map_shadeangle 90
-	implicitMap textures/egypt_walls_sd/stucco07a.tga
 }
 
 textures/egypt_walls_sd/stucco07b
@@ -115,7 +107,6 @@ textures/egypt_walls_sd/stucco07b
 	specularmap textures/egypt_walls_sd/stucco07b_r.tga
 	q3map_nonplanar
 	q3map_shadeangle 90
-	implicitMap -
 }
 
 textures/egypt_walls_sd/stucco07c
@@ -126,7 +117,6 @@ textures/egypt_walls_sd/stucco07c
 	specularmap textures/egypt_walls_sd/stucco07c_r.tga
 	q3map_nonplanar
 	q3map_shadeangle 90
-	implicitMap -
 }
 
 textures/egypt_walls_sd/stucco07d
@@ -137,7 +127,6 @@ textures/egypt_walls_sd/stucco07d
 	specularmap textures/egypt_walls_sd/stucco07d_r.tga
 	q3map_nonplanar
 	q3map_shadeangle 90
-	implicitMap -
 }
 
 textures/egypt_walls_sd/stucco07f
@@ -148,7 +137,6 @@ textures/egypt_walls_sd/stucco07f
 	specularmap textures/egypt_walls_sd/stucco07f_r.tga
 	q3map_nonplanar
 	q3map_shadeangle 90
-	implicitMap -
 }
 
 textures/egypt_walls_sd/stucco08a
@@ -159,7 +147,6 @@ textures/egypt_walls_sd/stucco08a
 	specularmap textures/egypt_walls_sd/stucco08a_r.tga
 	q3map_nonplanar
 	q3map_shadeangle 90
-	implicitMap -
 }
 
 textures/egypt_walls_sd/stucco08b
@@ -170,7 +157,6 @@ textures/egypt_walls_sd/stucco08b
 	specularmap textures/egypt_walls_sd/stucco08b_r.tga
 	q3map_nonplanar
 	q3map_shadeangle 90
-	implicitMap -
 }
 
 textures/egypt_walls_sd/stucco08c
@@ -181,7 +167,6 @@ textures/egypt_walls_sd/stucco08c
 	specularmap textures/egypt_walls_sd/stucco08c_r.tga
 	q3map_nonplanar
 	q3map_shadeangle 90
-	implicitMap -
 }
 
 textures/egypt_walls_sd/stucco08d
@@ -192,7 +177,6 @@ textures/egypt_walls_sd/stucco08d
 	specularmap textures/egypt_walls_sd/stucco08d_r.tga
 	q3map_nonplanar
 	q3map_shadeangle 90
-	implicitMap -
 }
 
 textures/egypt_walls_sd/stucco08e
@@ -203,7 +187,6 @@ textures/egypt_walls_sd/stucco08e
 	specularmap textures/egypt_walls_sd/stucco08e_r.tga
 	q3map_nonplanar
 	q3map_shadeangle 90
-	implicitMap -
 }
 
 textures/egypt_walls_sd/stucco09_bigexp
@@ -214,7 +197,6 @@ textures/egypt_walls_sd/stucco09_bigexp
 	specularmap textures/egypt_walls_sd/stucco09_bigexp_r.tga
 	q3map_nonplanar
 	q3map_shadeangle 90
-	implicitMap -
 }
 
 textures/egypt_walls_sd/stucco09a
@@ -225,7 +207,6 @@ textures/egypt_walls_sd/stucco09a
 	specularmap textures/egypt_walls_sd/stucco09a_r.tga
 	q3map_nonplanar
 	q3map_shadeangle 90
-	implicitMap -
 }
 
 textures/egypt_walls_sd/stucco09b
@@ -236,7 +217,6 @@ textures/egypt_walls_sd/stucco09b
 	specularmap textures/egypt_walls_sd/stucco09b_r.tga
 	q3map_nonplanar
 	q3map_shadeangle 90
-	implicitMap -
 }
 
 textures/egypt_walls_sd/stucco09c
@@ -247,7 +227,6 @@ textures/egypt_walls_sd/stucco09c
 	specularmap textures/egypt_walls_sd/stucco09c_r.tga
 	q3map_nonplanar
 	q3map_shadeangle 90
-	implicitMap -
 }
 
 textures/egypt_walls_sd/stucco09d
@@ -258,7 +237,6 @@ textures/egypt_walls_sd/stucco09d
 	specularmap textures/egypt_walls_sd/stucco09d_r.tga
 	q3map_nonplanar
 	q3map_shadeangle 90
-	implicitMap -
 }
 
 textures/egypt_walls_sd/stucco09e
@@ -269,7 +247,6 @@ textures/egypt_walls_sd/stucco09e
 	specularmap textures/egypt_walls_sd/stucco09e_r.tga
 	q3map_nonplanar
 	q3map_shadeangle 90
-	implicitMap -
 }
 
 textures/egypt_walls_sd/stucco09f
@@ -280,7 +257,6 @@ textures/egypt_walls_sd/stucco09f
 	specularmap textures/egypt_walls_sd/stucco09f_r.tga
 	q3map_nonplanar
 	q3map_shadeangle 90
-	implicitMap -
 }
 
 textures/egypt_walls_sd/stucco09g
@@ -291,7 +267,6 @@ textures/egypt_walls_sd/stucco09g
 	specularmap textures/egypt_walls_sd/stucco09g_r.tga
 	q3map_nonplanar
 	q3map_shadeangle 90
-	implicitMap -
 }
 
 textures/egypt_walls_sd/stucco09h
@@ -302,7 +277,6 @@ textures/egypt_walls_sd/stucco09h
 	specularmap textures/egypt_walls_sd/stucco09h_r.tga
 	q3map_nonplanar
 	q3map_shadeangle 90
-	implicitMap -
 }
 
 textures/egypt_walls_sd/white01
@@ -313,7 +287,6 @@ textures/egypt_walls_sd/white01
 	specularmap textures/egypt_walls_sd/white01_r.tga
 	q3map_nonplanar
 	q3map_shadeangle 90
-	implicitMap -
 }
 
 textures/egypt_walls_sd/wood_c05
@@ -323,7 +296,6 @@ textures/egypt_walls_sd/wood_c05
 	specularmap textures/egypt_walls_sd/wood_c05_r.tga
 	bumpmap textures/egypt_walls_sd/wood_c05_n.tga
 	surfaceparm woodsteps
-	implicitMap -
 }
 
 textures/egypt_walls_sd/wood_c06
@@ -333,7 +305,6 @@ textures/egypt_walls_sd/wood_c06
 	bumpmap textures/egypt_walls_sd/wood_c06_n.tga
 	specularmap textures/egypt_walls_sd/wood_c06_r.tga
 	surfaceparm woodsteps
-	implicitMap -
 }
 
 textures/egypt_walls_sd/wood_test
@@ -343,5 +314,4 @@ textures/egypt_walls_sd/wood_test
 	bumpmap textures/egypt_walls_sd/wood_test_n.tga
 	specularmap textures/egypt_walls_sd/wood_test_r.tga
 	surfaceparm woodsteps
-	implicitMap -
 }

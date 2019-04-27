@@ -1050,7 +1050,7 @@ static void RB_FogPass(void)
 	int   i;
 
 	// no fog pass in snooper
-	if ((tr.refdef.rdflags & RDF_SNOOPERVIEW) || tess.shader->noFog || !r_wolfFog->integer)
+	if ((tr.refdef.rdflags & RDF_SNOOPERVIEW) || tess.shader->noFog /*|| !r_wolfFog->integer*/)
 	{
 		return;
 	}

@@ -66,14 +66,17 @@ void RB_ProjectionShadowDeform(void)
 	groundDist = backEnd.orientation.origin[2] - backEnd.currentEntity->e.shadowPlane;
 
 	VectorCopy(backEnd.currentEntity->lightDir, lightDir);
-	d = DotProduct(lightDir, ground);
+	//d = DotProduct(lightDir, ground);
+	Dot(lightDir, ground, d);
 	// don't let the shadows get too long or go negative
 	if (d < 0.5f)
 	{
 		VectorMA(lightDir, (0.5f - d), ground, lightDir);
-		d = DotProduct(lightDir, ground);
+		//d = DotProduct(lightDir, ground);
+		Dot(lightDir, ground, d);
 	}
-	d = 1.0f / d;
+	//d = 1.0f / d;
+	RECIPROCAL(d);
 
 	light[0] = lightDir[0] * d;
 	light[1] = lightDir[1] * d;
@@ -81,7 +84,9 @@ void RB_ProjectionShadowDeform(void)
 
 	for (i = 0; i < tess.numVertexes; i++, xyz += 4)
 	{
-		h = DotProduct(xyz, ground) + groundDist;
+		//h = DotProduct(xyz, ground) + groundDist;
+		Dot(xyz, ground, h);
+		h += groundDist;
 
 		xyz[0] -= light[0] * h;
 		xyz[1] -= light[1] * h;

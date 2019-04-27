@@ -418,6 +418,7 @@ static void G_StepSlideCorpse(gentity_t *ent, vec3_t newOrigin)
 {
 	vec3_t  start, down, up;
 	trace_t trace;
+	float dot;
 
 	VectorCopy(ent->s.pos.trBase, start);
 
@@ -450,7 +451,9 @@ static void G_StepSlideCorpse(gentity_t *ent, vec3_t newOrigin)
 
 	VectorSet(up, 0, 0, 1);
 	// never step up when you still have up velocity
-	if (ent->s.pos.trDelta[2] > 0 && (trace.fraction == 1.0f || DotProduct(trace.plane.normal, up) < 0.7f))
+	//if (ent->s.pos.trDelta[2] > 0 && (trace.fraction == 1.0f || DotProduct(trace.plane.normal, up) < 0.7f))
+	Dot(trace.plane.normal, up, dot);
+	if (ent->s.pos.trDelta[2] > 0 && (trace.fraction == 1.0f || dot < 0.7f))
 	{
 		return;
 	}

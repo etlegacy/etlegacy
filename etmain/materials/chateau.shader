@@ -7,7 +7,6 @@ textures/chateau/desk_c03
 	bumpmap textures/chateau/desk_c03_n.tga
 	specularmap textures/chateau/desk_c03_r.tga
 	surfaceparm woodsteps
-	implicitMap -
 }
 
 textures/chateau/desk_c04
@@ -17,7 +16,6 @@ textures/chateau/desk_c04
 	bumpmap textures/chateau/desk_c04_n.tga
 	specularmap textures/chateau/desk_c04_r.tga
 	surfaceparm woodsteps
-	implicitMap -
 }
 
 textures/chateau/door_c01
@@ -27,7 +25,6 @@ textures/chateau/door_c01
 	bumpmap textures/chateau/door_c01_n.tga
 	specularmap textures/chateau/door_c01_r.tga
 	surfaceparm woodsteps
-	implicitMap -
 }
 
 textures/chateau/fireplace_01
@@ -37,7 +34,6 @@ textures/chateau/fireplace_01
 	bumpmap textures/chateau/fireplace_01_n.tga
 	specularmap textures/chateau/fireplace_01_r.tga
 	surfaceparm woodsteps
-	implicitMap -
 }
 
 textures/chateau/floor_c04
@@ -47,7 +43,6 @@ textures/chateau/floor_c04
 	bumpmap textures/chateau/floor_c04_n.tga
 	specularmap textures/chateau/floor_c04_r.tga
 	surfaceparm woodsteps
-	implicitMap -
 }
 
 textures/chateau/floor_c05
@@ -57,7 +52,6 @@ textures/chateau/floor_c05
 	bumpmap textures/chateau/floor_c05_n.tga
 	specularmap textures/chateau/floor_c05_r.tga
 	surfaceparm woodsteps
-	implicitMap -
 }
 
 textures/chateau/floor_c06
@@ -67,7 +61,6 @@ textures/chateau/floor_c06
 	bumpmap textures/chateau/floor_c06_n.tga
 	specularmap textures/chateau/floor_c06_r.tga
 	surfaceparm woodsteps
-	implicitMap -
 }
 
 textures/chateau/floor_c10
@@ -77,7 +70,6 @@ textures/chateau/floor_c10
 	bumpmap textures/chateau/floor_c10_n.tga
 	specularmap textures/chateau/floor_c10_r.tga
 	surfaceparm carpetsteps
-	implicitMap -
 }
 
 textures/chateau/floor_c10a
@@ -87,7 +79,6 @@ textures/chateau/floor_c10a
 	bumpmap textures/chateau/floor_c10a_n.tga
 	specularmap textures/chateau/floor_c10a_r.tga
 	surfaceparm carpetsteps
-	implicitMap -
 }
 
 textures/chateau/pillar_temp_rf
@@ -97,7 +88,6 @@ textures/chateau/pillar_temp_rf
 	bumpmap textures/chateau/pillar_temp_rf_n.tga
 	specularmap textures/chateau/pillar_temp_rf_r.tga
 	surfaceparm woodsteps
-	implicitMap -
 }
 
 textures/chateau/stair_c01
@@ -107,7 +97,6 @@ textures/chateau/stair_c01
 	bumpmap textures/chateau/stair_c01_n.tga
 	specularmap textures/chateau/stair_c01_r.tga
 	surfaceparm woodsteps
-	implicitMap -
 }
 
 textures/chateau/stair_c03
@@ -117,7 +106,6 @@ textures/chateau/stair_c03
 	bumpmap textures/chateau/stair_c03_n.tga
 	specularmap textures/chateau/stair_c03_r.tga
 	surfaceparm carpetsteps
-	implicitMap -
 }
 
 textures/chateau/trim_c01
@@ -127,7 +115,6 @@ textures/chateau/trim_c01
 	bumpmap textures/chateau/trim_c01_n.tga
 	specularmap textures/chateau/trim_c01_r.tga
 	surfaceparm woodsteps
-	implicitMap -
 }
 
 textures/chateau/trim_c03
@@ -137,7 +124,6 @@ textures/chateau/trim_c03
 	bumpmap textures/chateau/trim_c03_n.tga
 	specularmap textures/chateau/trim_c03_r.tga
 	surfaceparm woodsteps
-	implicitMap -
 }
 
 textures/chateau/trim_c08
@@ -147,7 +133,6 @@ textures/chateau/trim_c08
 	bumpmap textures/chateau/trim_c08_n.tga
 	specularmap textures/chateau/trim_c08_r.tga
 	surfaceparm woodsteps
-	implicitMap -
 }
 
 textures/chateau/trim_c09
@@ -157,7 +142,6 @@ textures/chateau/trim_c09
 	bumpmap textures/chateau/trim_c09_n.tga
 	specularmap textures/chateau/trim_c09_r.tga
 	surfaceparm woodsteps
-	implicitMap -
 }
 
 textures/chateau/trim_c10
@@ -167,7 +151,6 @@ textures/chateau/trim_c10
 	bumpmap textures/chateau/trim_c10_n.tga
 	specularmap textures/chateau/trim_c10_r.tga
 	surfaceparm woodsteps
-	implicitMap -
 }
 
 textures/chateau/trim_c14
@@ -177,7 +160,6 @@ textures/chateau/trim_c14
 	bumpmap textures/chateau/trim_c14_n.tga
 	specularmap textures/chateau/trim_c14_r.tga
 	surfaceparm woodsteps
-	implicitMap -
 }
 
 textures/chateau/walltest_c07a_vertex
@@ -356,7 +338,6 @@ textures/chateau/wood_c05
 	bumpmap textures/chateau/wood_c05_n.tga
 	specularmap textures/chateau/wood_c05_r.tga
 	surfaceparm woodsteps
-	implicitMap -
 }
 
 textures/chateau/wood_c06
@@ -366,7 +347,6 @@ textures/chateau/wood_c06
 	bumpmap textures/chateau/wood_c06_n.tga
 	specularmap textures/chateau/wood_c06_r.tga
 	surfaceparm woodsteps
-	implicitMap -
 }
 
 textures/chateau/wood_c07
@@ -376,7 +356,6 @@ textures/chateau/wood_c07
 	bumpmap textures/chateau/wood_c07_n.tga
 	specularmap textures/chateau/wood_c07_r.tga
 	surfaceparm woodsteps
-	implicitMap -
 }
 
 textures/chateau/wood_c09
@@ -386,7 +365,6 @@ textures/chateau/wood_c09
 	bumpmap textures/chateau/wood_c09_n.tga
 	specularmap textures/chateau/wood_c09_r.tga
 	surfaceparm woodsteps
-	implicitMap -
 }
 
 textures/chateau/wood_c20
@@ -396,7 +374,6 @@ textures/chateau/wood_c20
 	bumpmap textures/chateau/wood_c20_n.tga
 	specularmap textures/chateau/wood_c20_r.tga
 	surfaceparm woodsteps
-	implicitMap -
 }
 
 textures/chateau/wood_test
@@ -406,5 +383,4 @@ textures/chateau/wood_test
 	bumpmap textures/chateau/wood_test_n.tga
 	specularmap textures/chateau/wood_test_r.tga
 	surfaceparm woodsteps
-	implicitMap -
 }

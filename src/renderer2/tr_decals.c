@@ -64,11 +64,17 @@ static qboolean MakeTextureMatrix(vec4_t texMat[2], vec4_t projection, decalVert
 	vec3_t vecs[3], axis[3], lengths;
 
 	// project triangle onto plane of projection
-	d = DotProduct(a->xyz, projection) - projection[3];
+	//d = DotProduct(a->xyz, projection) - projection[3];
+	Dot(a->xyz, projection, d);
+	d -= projection[3];
 	VectorMA(a->xyz, -d, projection, pa);
-	d = DotProduct(b->xyz, projection) - projection[3];
+	//d = DotProduct(b->xyz, projection) - projection[3];
+	Dot(b->xyz, projection, d);
+	d -= projection[3];
 	VectorMA(b->xyz, -d, projection, pb);
-	d = DotProduct(c->xyz, projection) - projection[3];
+	//d = DotProduct(c->xyz, projection) - projection[3];
+	Dot(c->xyz, projection, d);
+	d -= projection[3];
 	VectorMA(c->xyz, -d, projection, pc);
 
 	// calculate barycentric basis for the triangle
@@ -125,8 +131,12 @@ static qboolean MakeTextureMatrix(vec4_t texMat[2], vec4_t projection, decalVert
 	for (i = 0; i < 2; i++)
 		for (j = 0; j < 3; j++)
 			texMat[i][j] = lengths[i] > 0.0f ? (axis[i][j] / lengths[i]) : 0.0f;
-	texMat[0][3] = a->st[0] - DotProduct(pa, texMat[0]);
-	texMat[1][3] = a->st[1] - DotProduct(pa, texMat[1]);
+	/*texMat[0][3] = a->st[0] - DotProduct(pa, texMat[0]);
+	texMat[1][3] = a->st[1] - DotProduct(pa, texMat[1]);*/
+	Dot(pa, texMat[0], d);
+	texMat[0][3] = a->st[0] - d;
+	Dot(pa, texMat[1], d);
+	texMat[1][3] = a->st[1] - d;
 
 	// disco
 	return qtrue;
@@ -215,7 +225,7 @@ void RE_ProjectDecal(qhandle_t hShader, int numPoints, vec3_t *points, vec4_t pr
 	if (numPoints == 1)
 	{
 		float radius;
-		float iDist;
+		float iDist, dot;
 
 		// set up omnidirectional
 		numPoints            = 4;
@@ -224,28 +234,41 @@ void RE_ProjectDecal(qhandle_t hShader, int numPoints, vec3_t *points, vec4_t pr
 		radius               = projection[3];
 
 		Vector4Set(projection, 0.0f, 0.0f, -1.0f, radius * 2.0f);
-		iDist = 1.0f / (radius * 2.0f);
+		//iDist = 1.0f / (radius * 2.0f);
+		iDist = rcp(radius * 2.0f);
 
 		// set corner
 		VectorSet(xyz, points[0][0] - radius, points[0][1] - radius, points[0][2] + radius);
 
 		// make x axis texture matrix (yz)
 		VectorSet(temp.texMat[0][0], 0.0f, iDist, 0.0f);
-		temp.texMat[0][0][3] = -DotProduct(temp.texMat[0][0], xyz);
+		//temp.texMat[0][0][3] = -DotProduct(temp.texMat[0][0], xyz);
+		Dot(temp.texMat[0][0], xyz, dot);
+		temp.texMat[0][0][3] = -dot;
 		VectorSet(temp.texMat[0][1], 0.0f, 0.0f, iDist);
-		temp.texMat[0][1][3] = -DotProduct(temp.texMat[0][1], xyz);
+		//temp.texMat[0][1][3] = -DotProduct(temp.texMat[0][1], xyz);
+		Dot(temp.texMat[0][1], xyz, dot);
+		temp.texMat[0][1][3] = -dot;
 
 		// make y axis texture matrix (xz)
 		VectorSet(temp.texMat[1][0], iDist, 0.0f, 0.0f);
-		temp.texMat[1][0][3] = -DotProduct(temp.texMat[1][0], xyz);
+		//temp.texMat[1][0][3] = -DotProduct(temp.texMat[1][0], xyz);
+		Dot(temp.texMat[1][0], xyz, dot);
+		temp.texMat[1][0][3] = -dot;
 		VectorSet(temp.texMat[1][1], 0.0f, 0.0f, iDist);
-		temp.texMat[1][1][3] = -DotProduct(temp.texMat[1][1], xyz);
+		//temp.texMat[1][1][3] = -DotProduct(temp.texMat[1][1], xyz);
+		Dot(temp.texMat[1][1], xyz, dot);
+		temp.texMat[1][1][3] = -dot;
 
 		// make z axis texture matrix (xy)
 		VectorSet(temp.texMat[2][0], iDist, 0.0f, 0.0f);
-		temp.texMat[2][0][3] = -DotProduct(temp.texMat[2][0], xyz);
+		//temp.texMat[2][0][3] = -DotProduct(temp.texMat[2][0], xyz);
+		Dot(temp.texMat[2][0], xyz, dot);
+		temp.texMat[2][0][3] = -dot;
 		VectorSet(temp.texMat[2][1], 0.0f, iDist, 0.0f);
-		temp.texMat[2][1][3] = -DotProduct(temp.texMat[2][1], xyz);
+		//temp.texMat[2][1][3] = -DotProduct(temp.texMat[2][1], xyz);
+		Dot(temp.texMat[2][1], xyz, dot);
+		temp.texMat[2][1][3] = -dot;
 
 		// setup decal points
 		VectorSet(dv[0].xyz, points[0][0] - radius, points[0][1] - radius, points[0][2] + radius);
@@ -298,7 +321,8 @@ void RE_ProjectDecal(qhandle_t hShader, int numPoints, vec3_t *points, vec4_t pr
 	// make the back plane
 	VectorSubtract(vec3_origin, temp.planes[0], temp.planes[1]);
 	VectorMA(dv[0].xyz, projection[3], projection, xyz);
-	temp.planes[1][3] = DotProduct(xyz, temp.planes[1]);
+	//temp.planes[1][3] = DotProduct(xyz, temp.planes[1]);
+	Dot(xyz, temp.planes[1], temp.planes[1][3]);
 
 	// make the side planes
 	for (i = 0; i < numPoints; i++)
@@ -363,6 +387,7 @@ void R_TransformDecalProjector(decalProjector_t *in, vec3_t axis[3], vec3_t orig
 {
 	int    i, m;
 	vec3_t center;
+	float dot;
 
 	// copy misc stuff
 	out->shader          = in->shader;
@@ -377,9 +402,12 @@ void R_TransformDecalProjector(decalProjector_t *in, vec3_t axis[3], vec3_t orig
 	VectorSubtract(in->mins, origin, out->mins);
 	VectorSubtract(in->maxs, origin, out->maxs);
 	VectorSubtract(in->center, origin, center);
-	out->center[0] = DotProduct(center, axis[0]);
+	/*out->center[0] = DotProduct(center, axis[0]);
 	out->center[1] = DotProduct(center, axis[1]);
-	out->center[2] = DotProduct(center, axis[2]);
+	out->center[2] = DotProduct(center, axis[2]);*/
+	Dot(center, axis[0], out->center[0]);
+	Dot(center, axis[1], out->center[1]);
+	Dot(center, axis[2], out->center[2]);
 	out->radius    = in->radius;
 	out->radius2   = in->radius2;
 
@@ -387,10 +415,15 @@ void R_TransformDecalProjector(decalProjector_t *in, vec3_t axis[3], vec3_t orig
 	for (i = 0; i < in->numPlanes; i++)
 	{
 		// transform by transposed inner 3x3 matrix
-		out->planes[i][0] = DotProduct(in->planes[i], axis[0]);
+		/*out->planes[i][0] = DotProduct(in->planes[i], axis[0]);
 		out->planes[i][1] = DotProduct(in->planes[i], axis[1]);
-		out->planes[i][2] = DotProduct(in->planes[i], axis[2]);
-		out->planes[i][3] = in->planes[i][3] - DotProduct(in->planes[i], origin);
+		out->planes[i][2] = DotProduct(in->planes[i], axis[2]);*/
+		Dot(in->planes[i], axis[0], out->planes[i][0]);
+		Dot(in->planes[i], axis[1], out->planes[i][1]);
+		Dot(in->planes[i], axis[2], out->planes[i][2]);
+		//out->planes[i][3] = in->planes[i][3] - DotProduct(in->planes[i], origin);
+		Dot(in->planes[i], origin, dot);
+		out->planes[i][3] = in->planes[i][3] - dot;
 	}
 
 	//ri.Printf( PRINT_ALL, "plane 0: %f %f %f in dist: %f out dist: %f z: %f\n",
@@ -402,10 +435,15 @@ void R_TransformDecalProjector(decalProjector_t *in, vec3_t axis[3], vec3_t orig
 	{
 		for (i = 0; i < 2; i++)
 		{
-			out->texMat[m][i][0] = DotProduct(in->texMat[m][i], axis[0]);
+			/*out->texMat[m][i][0] = DotProduct(in->texMat[m][i], axis[0]);
 			out->texMat[m][i][1] = DotProduct(in->texMat[m][i], axis[1]);
-			out->texMat[m][i][2] = DotProduct(in->texMat[m][i], axis[2]);
-			out->texMat[m][i][3] = in->texMat[m][i][3] + DotProduct(in->texMat[m][i], origin);
+			out->texMat[m][i][2] = DotProduct(in->texMat[m][i], axis[2]);*/
+			Dot(in->texMat[m][i], axis[0], out->texMat[m][i][0]);
+			Dot(in->texMat[m][i], axis[1], out->texMat[m][i][1]);
+			Dot(in->texMat[m][i], axis[2], out->texMat[m][i][2]);
+			//out->texMat[m][i][3] = in->texMat[m][i][3] + DotProduct(in->texMat[m][i], origin);
+			Dot(in->texMat[m][i], origin, dot);
+			out->texMat[m][i][3] = in->texMat[m][i][3] + dot;
 		}
 	}
 }
@@ -419,6 +457,7 @@ void R_TransformDecalProjector(decalProjector_t *in, vec3_t axis[3], vec3_t orig
  */
 qboolean R_TestDecalBoundingBox(decalProjector_t *dp, vec3_t mins, vec3_t maxs)
 {
+#ifndef ETL_SSE
 	if (mins[0] >= (dp->center[0] + dp->radius) || maxs[0] <= (dp->center[0] - dp->radius) ||
 	    mins[1] >= (dp->center[1] + dp->radius) || maxs[1] <= (dp->center[1] - dp->radius) ||
 	    mins[2] >= (dp->center[2] + dp->radius) || maxs[2] <= (dp->center[2] - dp->radius))
@@ -426,6 +465,25 @@ qboolean R_TestDecalBoundingBox(decalProjector_t *dp, vec3_t mins, vec3_t maxs)
 		return qfalse;
 	}
 	return qtrue;
+#else
+	__m128 xmm0, xmm1, xmm2, xmm3, xmm4, xmm5;
+	xmm0 = _mm_loadh_pi(_mm_load_ss((const float *)dp->center), (const __m64 *)(dp->center + 1));
+	xmm1 = _mm_add_ps(xmm0, _mm_set_ps1(dp->radius));			// + radius
+	xmm2 = _mm_add_ps(xmm0, _mm_sub_ps(_mm_setzero_ps(),xmm1));	// + -radius
+	// mins >= center+radius?
+	xmm4 = _mm_loadh_pi(_mm_load_ss((const float *)mins), (const __m64 *)(mins + 1));
+	xmm3 = _mm_cmplt_ps(xmm4, xmm1); // mins < (dp.center - dp.radius)
+	// _mm_movemask_ps returns relevant bits 2,1,0
+	// bits 2,1,0 now indicate which mins[bit] < (center-radius).
+	// Any bit that is unset, indicates that mins[bit] >= (center-radius), in which case we function-return false
+	// So, if not all 3 bits are set, we return false.
+	if (_mm_movemask_ps(xmm3) != 7) return qfalse;
+	// maxs <= center-radius?
+	xmm5 = _mm_loadh_pi(_mm_load_ss((const float *)maxs), (const __m64 *)(maxs + 1));
+	xmm3 = _mm_cmpgt_ps(xmm5, xmm2);
+	if (_mm_movemask_ps(xmm3) != 7) return qfalse;
+	return qtrue;
+#endif
 }
 
 /**
@@ -441,7 +499,8 @@ qboolean R_TestDecalBoundingSphere(decalProjector_t *dp, vec3_t center, float ra
 	float  distance2;
 
 	VectorSubtract(center, dp->center, delta);
-	distance2 = DotProduct(delta, delta);
+	//distance2 = DotProduct(delta, delta);
+	Dot(delta, delta, distance2);
 	if (distance2 >= (radius2 + dp->radius2))
 	{
 		return qfalse;
@@ -488,7 +547,9 @@ static void ChopWindingBehindPlane(int numInPoints, vec3_t inPoints[MAX_DECAL_VE
 	counts[SIDE_ON]    = 0;
 	for (i = 0; i < numInPoints; i++)
 	{
-		dists[i] = DotProduct(inPoints[i], plane) - plane[3];
+		//dists[i] = DotProduct(inPoints[i], plane) - plane[3];
+		Dot(inPoints[i], plane, dists[i]);
+		dists[i] -= plane[3];
 		if (dists[i] > epsilon)
 		{
 			sides[i] = SIDE_FRONT;
@@ -503,7 +564,7 @@ static void ChopWindingBehindPlane(int numInPoints, vec3_t inPoints[MAX_DECAL_VE
 		}
 		counts[sides[i]]++;
 	}
-	sides[i] = sides[0];
+	sides[i] = sides[0];	// i == numInPoints
 	dists[i] = dists[0];
 
 	// all points on front
@@ -543,7 +604,7 @@ static void ChopWindingBehindPlane(int numInPoints, vec3_t inPoints[MAX_DECAL_VE
 		d = dists[i] - dists[i + 1];
 		if (d == 0.f)
 		{
-			dot = 0;
+			dot = 0.f;
 		}
 		else
 		{
@@ -551,6 +612,7 @@ static void ChopWindingBehindPlane(int numInPoints, vec3_t inPoints[MAX_DECAL_VE
 		}
 
 		// clip xyz
+		// vec3 outPoints[*numOutPoints] = (p2-p1) * dot + p1
 		clip = outPoints[*numOutPoints];
 		for (j = 0; j < 3; j++)
 		{
@@ -592,7 +654,9 @@ static void ProjectDecalOntoWinding(decalProjector_t *dp, int numPoints, vec3_t 
 		pd = 1.0f;
 
 		// fade by distance from plane
-		d     = DotProduct(dp->center, plane) - plane[3];
+		//d     = DotProduct(dp->center, plane) - plane[3];
+		Dot(dp->center, plane, d);
+		d -= plane[3];
 		alpha = 1.0f - (Q_fabs(d) / dp->radius);
 		if (alpha < 0.0f)
 		{
@@ -604,9 +668,11 @@ static void ProjectDecalOntoWinding(decalProjector_t *dp, int numPoints, vec3_t 
 		}
 
 		// set projection axis
-		absNormal[0] = Q_fabs(plane[0]);
+		/*absNormal[0] = Q_fabs(plane[0]);
 		absNormal[1] = Q_fabs(plane[1]);
-		absNormal[2] = Q_fabs(plane[2]);
+		absNormal[2] = Q_fabs(plane[2]);*/
+		VectorAbs(plane, absNormal);
+
 		if (absNormal[2] >= absNormal[0] && absNormal[2] >= absNormal[1])
 		{
 			axis = 2;
@@ -623,7 +689,8 @@ static void ProjectDecalOntoWinding(decalProjector_t *dp, int numPoints, vec3_t 
 	else
 	{
 		// backface check
-		pd = DotProduct(dp->planes[0], plane);
+		//pd = DotProduct(dp->planes[0], plane);
+		Dot(dp->planes[0], plane, pd);
 		if (pd < -0.0001f)
 		{
 			return;
@@ -695,15 +762,23 @@ static void ProjectDecalOntoWinding(decalProjector_t *dp, int numPoints, vec3_t 
 		VectorCopy(points[pingPong][i], vert->xyz);
 
 		// set st
-		vert->st[0] = DotProduct(vert->xyz, dp->texMat[axis][0]) + dp->texMat[axis][0][3];
-		vert->st[1] = DotProduct(vert->xyz, dp->texMat[axis][1]) + dp->texMat[axis][1][3];
+		/*vert->st[0] = DotProduct(vert->xyz, dp->texMat[axis][0]) + dp->texMat[axis][0][3];
+		vert->st[1] = DotProduct(vert->xyz, dp->texMat[axis][1]) + dp->texMat[axis][1][3];*/
+		Dot(vert->xyz, dp->texMat[axis][0], d);
+		vert->st[0] = d + dp->texMat[axis][0][3];
+		Dot(vert->xyz, dp->texMat[axis][1], d);
+		vert->st[1] = d + dp->texMat[axis][1][3];
 
 		// unidirectional decals fade by half distance from front->back planes
 		if (!dp->omnidirectional)
 		{
 			// set alpha
-			d     = DotProduct(vert->xyz, dp->planes[0]) - dp->planes[0][3];
-			d2    = DotProduct(vert->xyz, dp->planes[1]) - dp->planes[1][3];
+			/*d     = DotProduct(vert->xyz, dp->planes[0]) - dp->planes[0][3];
+			d2    = DotProduct(vert->xyz, dp->planes[1]) - dp->planes[1][3];*/
+			Dot(vert->xyz, dp->planes[0], d);
+			d -= dp->planes[0][3];
+			Dot(vert->xyz, dp->planes[1], d2);
+			d2 -= dp->planes[1][3];
 			alpha = 2.0f * d2 / (d + d2);
 			if (alpha > 1.0f)
 			{
@@ -847,20 +922,23 @@ void R_ProjectDecalOntoSurface(decalProjector_t *dp, bspSurface_t *surf, bspMode
 		return;
 	}
 
-	// planar surface
+	// non-planar surface
 	if (gen->plane.normal[0] != 0.f || gen->plane.normal[1] != 0.f || gen->plane.normal[2] != 0.f)
 	{
 		float d;
 
 		// backface check
-		d = DotProduct(dp->planes[0], gen->plane.normal);
+		//d = DotProduct(dp->planes[0], gen->plane.normal);
+		Dot(dp->planes[0], gen->plane.normal, d);
 		if (d < -0.0001f)
 		{
 			return;
 		}
 
 		// plane-sphere check
-		d = DotProduct(dp->center, gen->plane.normal) - gen->plane.dist;
+		//d = DotProduct(dp->center, gen->plane.normal) - gen->plane.dist;
+		Dot(dp->center, gen->plane.normal, d);
+		d -= gen->plane.dist;
 		if (Q_fabs(d) >= dp->radius)
 		{
 			return;

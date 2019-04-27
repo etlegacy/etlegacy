@@ -7,7 +7,6 @@ textures/town_wood/trenchwood
 	specularmap textures/town_wood/trenchwood_r.tga
 	bumpmap textures/town_wood/trenchwood_n.tga
 	surfaceparm woodsteps
-	implicitMap -
 }
 
 textures/town_wood/wood_c01
@@ -17,7 +16,6 @@ textures/town_wood/wood_c01
 	specularmap textures/town_wood/wood_c01_r.tga
 	bumpmap textures/town_wood/wood_c01_n.tga
 	surfaceparm woodsteps
-	implicitMap -
 }
 
 textures/town_wood/wood_c02
@@ -27,7 +25,6 @@ textures/town_wood/wood_c02
 	specularmap textures/town_wood/wood_c02_r.tga
 	bumpmap textures/town_wood/wood_c02_n.tga
 	surfaceparm woodsteps
-	implicitMap -
 }
 
 textures/town_wood/wood_c08
@@ -37,7 +34,6 @@ textures/town_wood/wood_c08
 	specularmap textures/town_wood/wood_c08_r.tga
 	bumpmap textures/town_wood/wood_c08_n.tga
 	surfaceparm woodsteps
-	implicitMap -
 }
 
 textures/town_wood/wood_c11
@@ -47,5 +43,4 @@ textures/town_wood/wood_c11
 	specularmap textures/town_wood/wood_c11_r.tga
 	bumpmap textures/town_wood/wood_c11_n.tga
 	surfaceparm woodsteps
-	implicitMap -
 }

@@ -1,10 +1,16 @@
 /* vertexLighting_DBS_entity_vp.glsl */
+#if defined(USE_VERTEX_SKINNING)
 #include "lib/vertexSkinning"
+#endif // USE_VERTEX_SKINNING
+#if defined(USE_VERTEX_ANIMATION)
 #include "lib/vertexAnimation"
+#endif // USE_VERTEX_ANIMATION
+#if defined(USE_DEFORM_VERTEXES)
 #include "lib/deformVertexes"
+#endif // USE_DEFORM_VERTEXES
 
-attribute vec4 attr_Position;
 attribute vec4 attr_TexCoord0;
+attribute vec4 attr_Position;
 attribute vec3 attr_Normal;
 #if defined(USE_VERTEX_ANIMATION)
 attribute vec4 attr_Position2;
@@ -19,18 +25,15 @@ attribute vec3 attr_Binormal2;
 #endif // USE_VERTEX_ANIMATION
 #endif // USE_NORMAL_MAPPING
 
-uniform mat4 u_ModelMatrix;
-uniform mat4 u_ModelViewProjectionMatrix;
-uniform mat4 u_DiffuseTextureMatrix;
-uniform vec3  u_LightColor;
-uniform vec3  u_LightDir;
-uniform vec3  u_ViewOrigin;
-uniform float u_DepthScale;
+uniform mat4  u_ModelMatrix;
+uniform mat4  u_ModelViewProjectionMatrix;
+uniform mat4  u_DiffuseTextureMatrix;
 #if defined(USE_NORMAL_MAPPING)
-uniform mat4 u_NormalTextureMatrix;
-#if defined(USE_REFLECTIONS) || defined(USE_SPECULAR)
-uniform mat4 u_SpecularTextureMatrix;
-#endif // USE_REFLECTIONS || USE_SPECULAR
+uniform vec3  u_ViewOrigin;
+uniform vec3  u_LightDir;
+#if defined(USE_PARALLAX_MAPPING)
+uniform float u_DepthScale;
+#endif // USE_PARALLAX_MAPPING
 #endif // USE_NORMAL_MAPPING
 #if defined(USE_PORTAL_CLIPPING)
 uniform vec4  u_PortalPlane;
@@ -42,19 +45,15 @@ uniform float u_Time;
 uniform float u_VertexInterpolation;
 #endif // USE_VERTEX_ANIMATION
 
-varying vec3 var_Position;
 varying vec2 var_TexDiffuse;
+varying vec3 var_Position;
 varying vec3 var_Normal;
 #if defined(USE_NORMAL_MAPPING)
 varying mat3 var_tangentMatrix;
-varying vec2 var_TexNormal;
-#if defined(USE_REFLECTIONS) || defined(USE_SPECULAR)
-varying vec2 var_TexSpecular;
-#endif // USE_REFLECTIONS || USE_SPECULAR
 varying vec3 var_LightDirection;
-varying vec3 var_ViewOrigin; // position - vieworigin
+varying vec3 var_ViewOrigin;
 #if defined(USE_PARALLAX_MAPPING)
-varying vec2 var_S; // size and start position of search in texture space
+varying vec2 var_S;
 #endif // USE_PARALLAX_MAPPING
 #endif // USE_NORMAL_MAPPING
 #if defined(USE_PORTAL_CLIPPING)
@@ -75,44 +74,41 @@ void main()
 #if defined(USE_VERTEX_SKINNING)
 
 #if defined(USE_NORMAL_MAPPING)
-	VertexSkinning_P_TBN(attr_Position, attr_Tangent, attr_Binormal, attr_Normal,
-	                     position, tangent, binormal, normal);
+	VertexSkinning_PTBN(attr_Position, attr_Tangent, attr_Binormal, attr_Normal,
+	                    position,      tangent,      binormal,      normal);
 #else
-	VertexSkinning_P_N(attr_Position, attr_Normal,
-	                   position, normal);
+	VertexSkinning_PN(attr_Position, attr_Normal,
+	                  position,      normal);
 #endif // USE_NORMAL_MAPPING
 
 #elif defined(USE_VERTEX_ANIMATION)
 
 #if defined(USE_NORMAL_MAPPING)
-	VertexAnimation_P_TBN(attr_Position, attr_Position2,
-	                      attr_Tangent, attr_Tangent2,
-	                      attr_Binormal, attr_Binormal2,
-	                      attr_Normal, attr_Normal2,
-	                      u_VertexInterpolation,
-	                      position, tangent, binormal, normal);
+	VertexAnimation_PTBN(attr_Position, attr_Position2,
+	                     attr_Tangent,  attr_Tangent2,
+	                     attr_Binormal, attr_Binormal2,
+	                     attr_Normal,   attr_Normal2,
+	                     u_VertexInterpolation,
+	                     position, tangent, binormal, normal);
 #else // USE_NORMAL_MAPPING
-	VertexAnimation_P_N(attr_Position, attr_Position2,
-	                    attr_Normal, attr_Normal2,
-	                    u_VertexInterpolation,
-	                    position, normal);
+	VertexAnimation_PN(attr_Position, attr_Position2,
+	                   attr_Normal,   attr_Normal2,
+	                   u_VertexInterpolation,
+	                   position,      normal);
 #endif // USE_NORMAL_MAPPING
 
 #else // USE_VERTEX_ANIMATION
 
 	position = attr_Position;
+	normal   = attr_Normal;
 #if defined(USE_NORMAL_MAPPING)
 	tangent  = attr_Tangent;
 	binormal = attr_Binormal;
 #endif // USE_NORMAL_MAPPING
-	normal = attr_Normal;
 #endif // USE_VERTEX_ANIMATION, USE_VERTEX_SKINNING
 
 #if defined(USE_DEFORM_VERTEXES)
-	position = DeformPosition2(position,
-	                           normal,
-	                           attr_TexCoord0.st,
-	                           u_Time);
+	position = DeformPosition2(position, normal, attr_TexCoord0.st, u_Time);
 #endif // USE_DEFORM_VERTEXES
 
 	// transform vertex position into homogenous clip-space
@@ -132,14 +128,6 @@ void main()
 
 	// in a vertex-shader there exists no gl_FrontFacing
 	var_tangentMatrix = mat3(-tangent, -binormal, -var_Normal.xyz);
-
-	// transform normalmap texcoords
-	var_TexNormal = (u_NormalTextureMatrix * attr_TexCoord0).st;
-
-#if defined(USE_REFLECTIONS) || defined(USE_SPECULAR)
-	// transform specularmap texture coords
-	var_TexSpecular = (u_SpecularTextureMatrix * attr_TexCoord0).st;
-#endif // USE_REFLECTIONS || USE_SPECULAR
 
 	var_LightDirection = -normalize(u_LightDir);
 

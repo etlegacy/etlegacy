@@ -113,7 +113,7 @@ void BindAnimatedImage(textureBundle_t *bundle)
 	//index   = Q_ftol(backEnd.refdef.floatTime * bundle->imageAnimationSpeed * FUNCTABLE_SIZE);
 	//index = (int64_t)(backEnd.refdef.floatTime * bundle->imageAnimationSpeed * FUNCTABLE_SIZE);
 	index = (int64_t)(tess.shaderTime * bundle->imageAnimationSpeed * FUNCTABLE_SIZE);
-	//index >>= FUNCTABLE_SIZE2; // ??! what is this?
+	//index >>= FUNCTABLE_BITS; // ??! what is this?
 	index %= FUNCTABLE_SIZE;
 
 	if (index < 0)
@@ -367,8 +367,8 @@ void GL_LoadModelViewMatrix(const mat4_t m)
 		return;
 	}
 
-	mat4_copy(m, GLSTACK_MVM);
-	mat4_mult(GLSTACK_PM, GLSTACK_MVM, GLSTACK_MVPM);
+	Matrix4Copy(m, GLSTACK_MVM);
+	Matrix4Multiply(GLSTACK_PM, GLSTACK_MVM, GLSTACK_MVPM);
 }
 
 /**
@@ -382,8 +382,8 @@ void GL_LoadProjectionMatrix(const mat4_t m)
 		return;
 	}
 
-	mat4_copy(m, GLSTACK_PM);
-	mat4_mult(GLSTACK_PM, GLSTACK_MVM, GLSTACK_MVPM);
+	Matrix4Copy(m, GLSTACK_PM);
+	Matrix4Multiply(GLSTACK_PM, GLSTACK_MVM, GLSTACK_MVPM);
 }
 
 /**

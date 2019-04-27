@@ -554,8 +554,8 @@ void R_InitVBOs(void)
 
 	Ren_Print("------- R_InitVBOs -------\n");
 
-	Com_InitGrowList(&tr.vbos, 16384);
-	Com_InitGrowList(&tr.ibos, 2048);
+	Com_InitGrowList(&tr.vbos, 100); //Com_InitGrowList(&tr.vbos, 16384);
+	Com_InitGrowList(&tr.ibos, 100); //Com_InitGrowList(&tr.ibos, 2048);
 
 	dataSize = sizeof(vec4_t) * SHADER_MAX_VERTEXES * 11;
 	data     = (byte *)Com_Allocate(dataSize);

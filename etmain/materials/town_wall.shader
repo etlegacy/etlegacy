@@ -7,7 +7,6 @@ textures/town_wall/store_c01
 	specularmap textures/town_wall/store_c01_r.tga
 	bumpmap textures/town_wall/store_c01_n.tga
 	surfaceparm woodsteps
-	implicitMap -
 }
 
 textures/town_wall/store_c02
@@ -17,7 +16,6 @@ textures/town_wall/store_c02
 	specularmap textures/town_wall/store_c02_r.tga
 	bumpmap textures/town_wall/store_c02_n.tga
 	surfaceparm woodsteps
-	implicitMap -
 }
 
 textures/town_wall/store_c03_a
@@ -27,5 +25,4 @@ textures/town_wall/store_c03_a
 	specularmap textures/town_wall/store_c03_a_r.tga
 	bumpmap textures/town_wall/store_c03_a_n.tga
 	surfaceparm woodsteps
-	implicitMap -
 }

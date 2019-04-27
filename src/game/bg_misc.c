@@ -2802,12 +2802,16 @@ qboolean BG_TraverseSpline(float *deltaTime, splinePath_t **pSpline)
 qboolean BG_RaySphereIntersection(float radius, vec3_t origin, splineSegment_t *path, float *t0, float *t1)
 {
 	vec3_t v;
-	float  b, c, d;
+	float  b, c, d, dotvn, dotvv;
 
 	VectorSubtract(path->start, origin, v);
 
-	b = 2 * DotProduct(v, path->v_norm);
-	c = DotProduct(v, v) - (radius * radius);
+	/*b = 2 * DotProduct(v, path->v_norm);
+	c = DotProduct(v, v) - (radius * radius);*/
+	Dot(v, path->v_norm, dotvn);
+	Dot(v, v, dotvv);
+	b = 2 * dotvn;
+	c = dotvv - (radius * radius);
 
 	d = (b * b) - (4 * c);
 	if (d < 0)
@@ -2990,7 +2994,7 @@ void BG_ComputeSegments(splinePath_t *pSpline)
 
 		VectorSubtract(vec[0], pSpline->segments[i].start, pSpline->segments[i].v_norm);
 		pSpline->segments[i].length = VectorLength(pSpline->segments[i].v_norm);
-		VectorNormalize(pSpline->segments[i].v_norm);
+		VectorNormalizeOnly(pSpline->segments[i].v_norm);
 	}
 }
 
@@ -3025,7 +3029,7 @@ void BG_EvaluateTrajectory(const trajectory_t *tr, int atTime, vec3_t result, qb
 		break;
 	case TR_SINE:
 		deltaTime = (atTime - tr->trTime) / (float) tr->trDuration;
-		phase     = sin(deltaTime * M_PI * 2);
+		phase     = sin(deltaTime * M_2PI); // * M_PI * 2
 		VectorMA(tr->trBase, phase, tr->trDelta, result);
 		break;
 	case TR_LINEAR_STOP:
@@ -3034,9 +3038,9 @@ void BG_EvaluateTrajectory(const trajectory_t *tr, int atTime, vec3_t result, qb
 			atTime = tr->trTime + tr->trDuration;
 		}
 		deltaTime = (atTime - tr->trTime) * 0.001f;      // milliseconds to seconds
-		if (deltaTime < 0)
+		if (deltaTime < 0.0f)
 		{
-			deltaTime = 0;
+			deltaTime = 0.0f;
 		}
 		VectorMA(tr->trBase, deltaTime, tr->trDelta, result);
 		break;
@@ -3065,7 +3069,7 @@ void BG_EvaluateTrajectory(const trajectory_t *tr, int atTime, vec3_t result, qb
 		// phase is the acceleration constant
 		phase = VectorLength(tr->trDelta) / (tr->trDuration * 0.001f);
 		// trDelta at least gives us the acceleration direction
-		VectorNormalize2(tr->trDelta, result);
+		VectorNormalize2Only(tr->trDelta, result);
 		// get distance travelled at current time
 		VectorMA(tr->trBase, phase * 0.5f * deltaTime * deltaTime, result, result);
 		break;
@@ -3078,7 +3082,7 @@ void BG_EvaluateTrajectory(const trajectory_t *tr, int atTime, vec3_t result, qb
 		// phase is the breaking constant
 		phase = VectorLength(tr->trDelta) / (tr->trDuration * 0.001f);
 		// trDelta at least gives us the acceleration direction
-		VectorNormalize2(tr->trDelta, result);
+		VectorNormalize2Only(tr->trDelta, result);
 		// get distance travelled at current time (without breaking)
 		VectorMA(tr->trBase, deltaTime, tr->trDelta, v);
 		// subtract breaking force
@@ -3090,7 +3094,7 @@ void BG_EvaluateTrajectory(const trajectory_t *tr, int atTime, vec3_t result, qb
 			return;
 		}
 
-		deltaTime = tr->trDuration ? (atTime - tr->trTime) / ((float)tr->trDuration) : 0;
+		deltaTime = tr->trDuration ? (atTime - tr->trTime) / ((float)tr->trDuration) : 0.0f;
 
 		if (deltaTime < 0.f)
 		{
@@ -3103,7 +3107,7 @@ void BG_EvaluateTrajectory(const trajectory_t *tr, int atTime, vec3_t result, qb
 
 		if (backwards)
 		{
-			deltaTime = 1 - deltaTime;
+			deltaTime = 1.0f - deltaTime;
 		}
 
 		/*      if(pSpline->isStart) {
@@ -3161,43 +3165,46 @@ void BG_EvaluateTrajectory(const trajectory_t *tr, int atTime, vec3_t result, qb
 			vectoangles(result, result);
 
 			base1 = tr->trBase[1];
-			if (base1 >= 10000 || base1 < -10000)
+			if (base1 >= 10000.0f || base1 < -10000.0f)
 			{
 				dampin = qtrue;
 				if (base1 < 0)
 				{
-					base1 += 10000;
+					base1 += 10000.0f;
 				}
 				else
 				{
-					base1 -= 10000;
+					base1 -= 10000.0f;
 				}
 			}
 
-			if (base1 >= 1000 || base1 < -1000)
+			if (base1 >= 1000.0f || base1 < -1000.0f)
 			{
 				dampout = qtrue;
-				if (base1 < 0)
+				if (base1 < 0.0f)
 				{
-					base1 += 1000;
+					base1 += 1000.0f;
 				}
 				else
 				{
-					base1 -= 1000;
+					base1 -= 1000.0f;
 				}
 			}
 
 			if (dampin && dampout)
 			{
-				result[ROLL] = base1 + ((sin(((deltaTime * 2) - 1) * M_PI * 0.5f) + 1) * 0.5 * tr->trBase[2]);
+				//result[ROLL] = base1 + ((sin(((deltaTime * 2) - 1) * M_PI * 0.5f) + 1) * 0.5 * tr->trBase[2]);
+				result[ROLL] = base1 + ((sin(((deltaTime * 2.0f) - 1.0f) * M_halfPI) + 1.0f) * 0.5f * tr->trBase[2]);
 			}
 			else if (dampin)
 			{
-				result[ROLL] = base1 + (sin(deltaTime * M_PI * 0.5) * tr->trBase[2]);
+				//result[ROLL] = base1 + (sin(deltaTime * M_PI * 0.5) * tr->trBase[2]);
+				result[ROLL] = base1 + (sin(deltaTime * M_halfPI) * tr->trBase[2]);
 			}
 			else if (dampout)
 			{
-				result[ROLL] = base1 + ((1 - sin((1 - deltaTime) * M_PI * 0.5)) * tr->trBase[2]);
+				//result[ROLL] = base1 + ((1 - sin((1 - deltaTime) * M_PI * 0.5)) * tr->trBase[2]);
+				result[ROLL] = base1 + ((1.0f - sin((1.0f - deltaTime) * M_halfPI)) * tr->trBase[2]);
 			}
 			else
 			{
@@ -3389,7 +3396,7 @@ void BG_EvaluateTrajectoryDelta(const trajectory_t *tr, int atTime, vec3_t resul
 void BG_GetMarkDir(const vec3_t dir, const vec3_t normal, vec3_t out)
 {
 	vec3_t ndir, lnormal;
-	float  minDot = 0.3f;
+	float  dot, minDot = 0.3f;
 	int    x      = 0;
 
 	if (dir[0] < 0.001f && dir[1] < 0.001f)
@@ -3406,22 +3413,24 @@ void BG_GetMarkDir(const vec3_t dir, const vec3_t normal, vec3_t out)
 	{
 		//VectorCopy( normal, lnormal );
 		//VectorNormalizeFast( lnormal );
-		VectorNormalize2(normal, lnormal);
+		VectorNormalize2Only(normal, lnormal);
 	}
 
 	VectorNegate(dir, ndir);
-	VectorNormalize(ndir);
+	VectorNormalizeOnly(ndir);
 	if (normal[2] > .8f)
 	{
 		minDot = .7f;
 	}
 
-	// make sure it makrs the impact surface
-	while (DotProduct(ndir, lnormal) < minDot && x < 10)
+	// make sure it marks the impact surface
+	//while (DotProduct(ndir, lnormal) < minDot && x < 10)
+	Dot(ndir, lnormal, dot);
+	while (dot < minDot && x < 10)
 	{
 		VectorMA(ndir, .5f, lnormal, ndir);
-		VectorNormalize(ndir);
-
+		VectorNormalizeOnly(ndir);
+		Dot(ndir, lnormal, dot);
 		x++;
 	}
 

@@ -241,12 +241,16 @@ static qboolean CG_SetParticleActive(cg_atmosphericParticle_t *particle, active_
  */
 static qboolean CG_ParticleGenerate(cg_atmosphericParticle_t *particle, vec3_t currvec, float currweight, atmFXType_t atmFX)
 {
-	float angle = random() * 2 * M_PI;
+	float angle = random() * M_2PI; // * 2 * M_PI;
 	float distance = 20 + MAX_ATMOSPHERIC_DISTANCE * random();
 	float groundHeight, skyHeight;
 
-	particle->pos[0] = cg.refdef_current->vieworg[0] + sin(angle) * distance;
-	particle->pos[1] = cg.refdef_current->vieworg[1] + cos(angle) * distance;
+	//particle->pos[0] = cg.refdef_current->vieworg[0] + sin(angle) * distance;
+	//particle->pos[1] = cg.refdef_current->vieworg[1] + cos(angle) * distance;
+	float S, C;
+	SinCos(angle, S, C);
+	particle->pos[0] = cg.refdef_current->vieworg[0] + S * distance;
+	particle->pos[1] = cg.refdef_current->vieworg[1] + C * distance;
 
 	// choose a spawn point randomly between sky and ground
 	skyHeight = BG_GetSkyHeightAtPoint(particle->pos);
@@ -395,8 +399,8 @@ static void CG_ParticleRender(cg_atmosphericParticle_t *particle)
 	{
 		sinTumbling = sin(particle->pos[2] * 0.03125f * (0.5f * particle->weight));
 		cosTumbling = cos((particle->pos[2] + particle->pos[1]) * 0.03125f * (0.5f * particle->weight));
-		start[0]   += 24 * (1 - particle->deltaNormalized[2]) * sinTumbling;
-		start[1]   += 24 * (1 - particle->deltaNormalized[2]) * cosTumbling;
+		start[0]   += 24.0f * (1.0f - particle->deltaNormalized[2]) * sinTumbling;
+		start[1]   += 24.0f * (1.0f - particle->deltaNormalized[2]) * cosTumbling;
 	}
 	else // ATM_RAIN
 	{
@@ -466,36 +470,38 @@ static void CG_ParticleRender(cg_atmosphericParticle_t *particle)
 	VectorCopy(particle->deltaNormalized, forward);
 	VectorMA(start, -len, forward, finish);
 
-	line[0] = DotProduct(forward, cg.refdef_current->viewaxis[1]);
-	line[1] = DotProduct(forward, cg.refdef_current->viewaxis[2]);
+	//line[0] = DotProduct(forward, cg.refdef_current->viewaxis[1]);
+	//line[1] = DotProduct(forward, cg.refdef_current->viewaxis[2]);
+	Dot(forward, cg.refdef_current->viewaxis[1], line[0]);
+	Dot(forward, cg.refdef_current->viewaxis[2], line[1]);
 
 	VectorScale(cg.refdef_current->viewaxis[1], line[1], right);
 	VectorMA(right, -line[0], cg.refdef_current->viewaxis[2], right);
-	VectorNormalize(right);
+	VectorNormalizeOnly(right);
 
 	if (particle->partFX == ATM_SNOW)
 	{
 		particleWidth = dist * (particle->weight);
 
 		VectorMA(finish, -particleWidth, right, verts[0].xyz);
-		verts[0].st[0]       = 0;
-		verts[0].st[1]       = 0;
+		verts[0].st[0]       = 0.0f;
+		verts[0].st[1]       = 0.0f;
 		verts[0].modulate[0] = particle->colour[0];
 		verts[0].modulate[1] = particle->colour[1];
 		verts[0].modulate[2] = particle->colour[2];
 		verts[0].modulate[3] = 255;
 
 		VectorMA(start, -particleWidth, right, verts[1].xyz);
-		verts[1].st[0]       = 0;
-		verts[1].st[1]       = 1;
+		verts[1].st[0]       = 0.0f;
+		verts[1].st[1]       = 1.0f;
 		verts[1].modulate[0] = particle->colour[0];
 		verts[1].modulate[1] = particle->colour[1];
 		verts[1].modulate[2] = particle->colour[2];
 		verts[1].modulate[3] = 255;
 
 		VectorMA(start, particleWidth, right, verts[2].xyz);
-		verts[2].st[0]       = 1;
-		verts[2].st[1]       = 1;
+		verts[2].st[0]       = 1.0f;
+		verts[2].st[1]       = 1.0f;
 		verts[2].modulate[0] = particle->colour[0];
 		verts[2].modulate[1] = particle->colour[1];
 		verts[2].modulate[2] = particle->colour[2];
@@ -505,23 +511,23 @@ static void CG_ParticleRender(cg_atmosphericParticle_t *particle)
 	{
 		VectorCopy(finish, verts[0].xyz);
 		verts[0].st[0]       = 0.5f;
-		verts[0].st[1]       = 0;
+		verts[0].st[1]       = 0.0f;
 		verts[0].modulate[0] = particle->colour[0];
 		verts[0].modulate[1] = particle->colour[1];
 		verts[0].modulate[2] = particle->colour[2];
 		verts[0].modulate[3] = 100 * dist;
 
 		VectorMA(start, -particle->weight, right, verts[1].xyz);
-		verts[1].st[0]       = 0;
-		verts[1].st[1]       = 1;
+		verts[1].st[0]       = 0.0f;
+		verts[1].st[1]       = 1.0f;
 		verts[1].modulate[0] = particle->colour[0];
 		verts[1].modulate[1] = particle->colour[1];
 		verts[1].modulate[2] = particle->colour[2];
 		verts[1].modulate[3] = 200 * dist;
 
 		VectorMA(start, particle->weight, right, verts[2].xyz);
-		verts[2].st[0]       = 1;
-		verts[2].st[1]       = 1;
+		verts[2].st[0]       = 1.0f;
+		verts[2].st[1]       = 1.0f;
 		verts[2].modulate[0] = particle->colour[0];
 		verts[2].modulate[1] = particle->colour[1];
 		verts[2].modulate[2] = particle->colour[2];

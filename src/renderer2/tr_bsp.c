@@ -109,8 +109,8 @@ static void HSVtoRGB(float h, float s, float v, float rgb[3])
 
 /**
  * @brief R_ColorShiftLightingBytes
- * @param[in] in
- * @param[out] out
+ * @param[in] in[4]
+ * @param[out] out[4]
  */
 static void R_ColorShiftLightingBytes(byte in[4], byte out[4])
 {
@@ -125,7 +125,6 @@ static void R_ColorShiftLightingBytes(byte in[4], byte out[4])
 	if ((r | g | b) > 255)
 	{
 		int max = r > g ? r : g;
-
 		max = max > b ? max : b;
 		r   = r * 255 / max;
 		g   = g * 255 / max;
@@ -136,6 +135,43 @@ static void R_ColorShiftLightingBytes(byte in[4], byte out[4])
 	out[1] = (byte)g;
 	out[2] = (byte)b;
 	out[3] = in[3];
+}
+
+/**
+ * @brief R_ColorShiftLightingBytes3
+ * @param[in] in[4]
+ * @param[out] out[4]
+ */
+static void R_ColorShiftLightingBytes3(byte in[3], byte out[3])
+{
+	// shift the color data based on overbright range
+	int shift = r_mapOverBrightBits->integer - tr.overbrightBits;
+	if (shift == 0)
+	{
+		out[0] = in[0];
+		out[1] = in[1];
+		out[2] = in[2];
+		return;
+	}
+
+	// shift the data based on overbright range
+	unsigned int r = in[0] << shift;
+	unsigned int g = in[1] << shift;
+	unsigned int b = in[2] << shift;
+
+	// normalize by color instead of saturating to white
+	if ((r | g | b) > 255) // if any of the rgb bits now overflow the byte..
+	{
+		unsigned int max = r > g ? r : g;
+		max = max > b ? max : b;
+		r = r * 255 / max; // r = ((r << 8) - r) / max;
+		g = g * 255 / max; // g = ((g << 8) - g) / max;
+		b = b * 255 / max; // b = ((b << 8) - b) / max;
+	}
+
+	out[0] = (byte)r;
+	out[1] = (byte)g;
+	out[2] = (byte)b;
 }
 
 /**
@@ -167,9 +203,9 @@ static void R_ColorShiftLightingFloats(const vec4_t in, vec4_t out)
 		b   = b * 255 / max;
 	}
 
-	out[0] = r * (1.0f / 255.0f);
-	out[1] = g * (1.0f / 255.0f);
-	out[2] = b * (1.0f / 255.0f);
+	out[0] = r * _1div255;
+	out[1] = g * _1div255;
+	out[2] = b * _1div255;
 	out[3] = in[3];
 }
 
@@ -186,6 +222,8 @@ float R_ProcessLightmap(byte *pic, int in_padding, int width, int height, byte *
 {
 	int   j;
 	float maxIntensity = 0;
+	int   wh = width * height;
+	int   j4, jpad;
 
 	if (r_showLightMaps->integer > 1)     // color code by intensity as development tool (FIXME: check range)
 	{
@@ -193,7 +231,7 @@ float R_ProcessLightmap(byte *pic, int in_padding, int width, int height, byte *
 		float r, g, b, intensity;
 		float out[3] = { 0, 0, 0 };
 
-		for (j = 0; j < width * height; j++)
+		for (j = 0; j < wh; j++)
 		{
 			r = pic[j * in_padding + 0];
 			g = pic[j * in_padding + 1];
@@ -237,10 +275,10 @@ float R_ProcessLightmap(byte *pic, int in_padding, int width, int height, byte *
 	}
 	else
 	{
-		for (j = 0; j < width * height; j++)
+		for (j = 0, j4 = 0, jpad = 0; j < wh; j++, j4 += 4, jpad += in_padding)
 		{
-			R_ColorShiftLightingBytes(&pic[j * in_padding], &pic_out[j * 4]);
-			pic_out[j * 4 + 3] = 255;
+			R_ColorShiftLightingBytes3(&pic[jpad], &pic_out[j4]);
+			pic_out[j4 + 3] = 255;
 		}
 	}
 
@@ -354,7 +392,7 @@ void LoadRGBEToFloats(const char *name, float **pic, int *width, int *height, qb
 	byte     *buffer;
 	float    *floatbuf;
 	char     *token;
-	int      w, h, c;
+	int      w, h, c, wh;
 	qboolean formatFound;
 	//unsigned char   rgbe[4];
 	//float           red;
@@ -372,6 +410,7 @@ void LoadRGBEToFloats(const char *name, float **pic, int *width, int *height, qb
 	float        finalLuminance;
 	double       sum;
 	float        gamma;
+	float        rCompensate, dot;
 
 	union
 	{
@@ -506,9 +545,11 @@ void LoadRGBEToFloats(const char *name, float **pic, int *width, int *height, qb
 		Ren_Drop("LoadRGBE: %s has an invalid image size\n", name);
 	}
 
-	*pic     = (float *)ri.Hunk_AllocateTempMemory(w * h * 3 * sizeof(float));
+	wh = w * h;
+
+	*pic     = (float *)ri.Hunk_AllocateTempMemory(wh * 3 * sizeof(float));
 	floatbuf = *pic;
-	for (i = 0; i < (w * h); i++)
+	for (i = 0; i < wh; i++)
 	{
 #if 0
 		rgbe[0] = *buf_p++;
@@ -529,7 +570,7 @@ void LoadRGBEToFloats(const char *name, float **pic, int *width, int *height, qb
 			sample.b[2] = *buf_p++;
 			sample.b[3] = *buf_p++;
 
-			*floatbuf++ = sample.f / 255.0f;    // FIXME XMap2's output is 255 times too high
+			*floatbuf++ = sample.f * _1div255; // / 255.0f;    // FIXME XMap2's output is 255 times too high
 		}
 #endif
 	}
@@ -538,8 +579,9 @@ void LoadRGBEToFloats(const char *name, float **pic, int *width, int *height, qb
 	if (doGamma)
 	{
 		floatbuf = *pic;
-		gamma    = 1.0f / r_hdrLightmapGamma->value;
-		for (i = 0; i < (w * h); i++)
+		//gamma    = 1.0f / r_hdrLightmapGamma->value;
+		gamma = rcp(r_hdrLightmapGamma->value);
+		for (i = 0; i < wh; i++)
 		{
 			for (j = 0; j < 3; j++)
 			{
@@ -556,14 +598,16 @@ void LoadRGBEToFloats(const char *name, float **pic, int *width, int *height, qb
 		sum          = 0.0;
 		maxLuminance = 0.0f;
 		floatbuf     = *pic;
-		for (i = 0; i < (w * h); i++)
+		for (i = 0; i < wh; i++)
 		{
 			for (j = 0; j < 3; j++)
 			{
 				sampleVector[j] = *floatbuf++;
 			}
 
-			luminance = DotProduct(sampleVector, LUMINANCE_VECTOR) + 0.0001f;
+			//luminance = DotProduct(sampleVector, LUMINANCE_VECTOR) + 0.0001f;
+			Dot(sampleVector, LUMINANCE_VECTOR, dot);
+			luminance = dot + 0.0001f;
 			if (luminance > maxLuminance)
 			{
 				maxLuminance = luminance;
@@ -571,12 +615,12 @@ void LoadRGBEToFloats(const char *name, float **pic, int *width, int *height, qb
 
 			sum += log(luminance);
 		}
-		sum         /= (w * h);
+		sum /= wh;
 		avgLuminance = exp(sum);
 
 		// post process buffer with tone mapping
 		floatbuf = *pic;
-		for (i = 0; i < (w * h); i++)
+		for (i = 0; i < wh; i++)
 		{
 			for (j = 0; j < 3; j++)
 			{
@@ -592,7 +636,9 @@ void LoadRGBEToFloats(const char *name, float **pic, int *width, int *height, qb
 				exposure = r_hdrLightmapExposure->value;
 			}
 
-			scaledLuminance = exposure * DotProduct(sampleVector, LUMINANCE_VECTOR);
+			//scaledLuminance = exposure * DotProduct(sampleVector, LUMINANCE_VECTOR);
+			Dot(sampleVector, LUMINANCE_VECTOR, dot);
+			scaledLuminance = exposure * dot;
 #if 0
 			finalLuminance = scaledLuminance / (scaledLuminance + 1.0);
 #elif 0
@@ -620,12 +666,14 @@ void LoadRGBEToFloats(const char *name, float **pic, int *width, int *height, qb
 
 	if (compensate)
 	{
+		//rCompensate = 1.0f / r_hdrLightmapCompensate->value;
+		rCompensate = rcp(r_hdrLightmapCompensate->value);
 		floatbuf = *pic;
-		for (i = 0; i < (w * h); i++)
+		for (i = 0; i < wh; i++)
 		{
 			for (j = 0; j < 3; j++)
 			{
-				*floatbuf = *floatbuf / r_hdrLightmapCompensate->value;
+				*floatbuf = *floatbuf * rCompensate;
 				floatbuf++;
 			}
 		}
@@ -657,7 +705,7 @@ void LoadRGBEToHalfs(const char *name, unsigned short **halfImage, int *width, i
 static void LoadRGBEToBytes(const char *name, byte **ldrImage, int *width, int *height)
 {
 	int    i, j;
-	int    w, h;
+	int    w, h, wh;
 	float  *hdrImage;
 	float  *floatbuf;
 	byte   *pixbuf;
@@ -695,28 +743,22 @@ static void LoadRGBEToBytes(const char *name, byte **ldrImage, int *width, int *
 
 	*width  = w;
 	*height = h;
+	wh = w * h;
 
-	*ldrImage = (byte *)ri.Z_Malloc(w * h * 4);
+	*ldrImage = (byte *)ri.Z_Malloc(wh * 4);
 	pixbuf    = *ldrImage;
 
 	floatbuf = hdrImage;
-	for (i = 0; i < (w * h); i++)
+	for (i = 0; i < wh; i++)
 	{
 		for (j = 0; j < 3; j++)
 		{
-			sample[j] = *floatbuf++ *255.0f;
+			sample[j] = *floatbuf++ * 255.0f;
 		}
 
 		// clamp with color normalization
-		max = sample[0];
-		if (sample[1] > max)
-		{
-			max = sample[1];
-		}
-		if (sample[2] > max)
-		{
-			max = sample[2];
-		}
+		max = sample[0] > sample[1] ? sample[0] : sample[1];
+		max = sample[2] > max ? sample[2] : max;
 		if (max > 255.0f)
 		{
 			VectorScale(sample, (255.0f / max), sample);
@@ -742,8 +784,10 @@ static void R_LoadLightmapsInternal(lump_t *l, const char *bspName)
 {
 	unsigned int len = l->filelen;
 	image_t      *image;
-	int          i, j;
+	int          i, j, j3, j4;
 	static byte  data[LIGHTMAP_SIZE * LIGHTMAP_SIZE * 4], *buf, *buf_p;
+	const        lightmapSquared = LIGHTMAP_SIZE * LIGHTMAP_SIZE;
+	const        lightmapSquared3 = lightmapSquared * 3;
 
 	buf = fileBase + l->fileofs;
 
@@ -751,35 +795,35 @@ static void R_LoadLightmapsInternal(lump_t *l, const char *bspName)
 	R_IssuePendingRenderCommands();
 
 	// create all the lightmaps
-	tr.numLightmaps = len / (LIGHTMAP_SIZE * LIGHTMAP_SIZE * 3);
+	tr.numLightmaps = len / lightmapSquared3;
 
 	Ren_Developer("...loading %i lightmaps\n", tr.numLightmaps);
 
 	for (i = 0; i < tr.numLightmaps; i++)
 	{
 		// expand the 24 bit on-disk to 32 bit
-		buf_p = buf + i * LIGHTMAP_SIZE * LIGHTMAP_SIZE * 3;
+		buf_p = buf + i * lightmapSquared3;
 
 		if (tr.worldDeluxeMapping)
 		{
 			if (i % 2 == 0)
 			{
-				for (j = 0; j < LIGHTMAP_SIZE * LIGHTMAP_SIZE; j++)
+				for (j = 0, j3 = 0, j4 = 0; j < lightmapSquared; j++, j3 += 3, j4 += 4)
 				{
-					R_ColorShiftLightingBytes(&buf_p[j * 3], &data[j * 4]);
-					data[j * 4 + 3] = 255;
+					R_ColorShiftLightingBytes3(&buf_p[j3], &data[j4]);
+					data[j4 + 3] = 255;
 				}
 				image = R_CreateImage(va("_lightmap%d", i), data, LIGHTMAP_SIZE, LIGHTMAP_SIZE, IF_LIGHTMAP | IF_NOCOMPRESSION, FT_DEFAULT, WT_EDGE_CLAMP);
 				Com_AddToGrowList(&tr.lightmaps, image);
 			}
 			else
 			{
-				for (j = 0; j < LIGHTMAP_SIZE * LIGHTMAP_SIZE; j++)
+				for (j = 0, j3 = 0, j4 = 0; j < lightmapSquared; j++, j3 += 3, j4 += 4)
 				{
-					data[j * 4 + 0] = buf_p[j * 3 + 0];
-					data[j * 4 + 1] = buf_p[j * 3 + 1];
-					data[j * 4 + 2] = buf_p[j * 3 + 2];
-					data[j * 4 + 3] = 255;
+					data[j4 + 0] = buf_p[j3 + 0];
+					data[j4 + 1] = buf_p[j3 + 1];
+					data[j4 + 2] = buf_p[j3 + 2];
+					data[j4 + 3] = 255;
 				}
 				image = R_CreateImage(va("_lightmap%d", i), data, LIGHTMAP_SIZE, LIGHTMAP_SIZE, IF_NORMALMAP, FT_DEFAULT, WT_EDGE_CLAMP);
 				Com_AddToGrowList(&tr.deluxemaps, image);
@@ -787,10 +831,10 @@ static void R_LoadLightmapsInternal(lump_t *l, const char *bspName)
 		}
 		else
 		{
-			for (j = 0; j < LIGHTMAP_SIZE * LIGHTMAP_SIZE; j++)
+			for (j = 0, j3 = 0, j4 = 0; j < lightmapSquared; j++, j3 += 3, j4 += 4)
 			{
-				R_ColorShiftLightingBytes(&buf_p[j * 3], &data[j * 4]);
-				data[j * 4 + 3] = 255;
+				R_ColorShiftLightingBytes3(&buf_p[j3], &data[j4]);
+				data[j4 + 3] = 255;
 			}
 			image = R_CreateImage(va("_lightmap%d", i), data, LIGHTMAP_SIZE, LIGHTMAP_SIZE, IF_LIGHTMAP | IF_NOCOMPRESSION, FT_DEFAULT, WT_EDGE_CLAMP);
 			Com_AddToGrowList(&tr.lightmaps, image);
@@ -1133,7 +1177,8 @@ static void FinishGenericSurface(dsurface_t *ds, srfGeneric_t *gen, vec3_t pt)
 	gen->plane.normal[0] = LittleFloat(ds->lightmapVecs[2][0]);
 	gen->plane.normal[1] = LittleFloat(ds->lightmapVecs[2][1]);
 	gen->plane.normal[2] = LittleFloat(ds->lightmapVecs[2][2]);
-	gen->plane.dist      = DotProduct(pt, gen->plane.normal);
+	//gen->plane.dist      = DotProduct(pt, gen->plane.normal);
+	Dot(pt, gen->plane.normal, gen->plane.dist);
 	SetPlaneSignbits(&gen->plane);
 	gen->plane.type = PlaneTypeForNormal(gen->plane.normal);
 }
@@ -1225,7 +1270,7 @@ static void ParseFace(dsurface_t *ds, drawVert_t *verts, bspSurface_t *surf, int
 
 		for (j = 0; j < 4; j++)
 		{
-			cv->verts[i].lightColor[j] = verts[i].color[j] * (1.0f / 255.0f);
+			cv->verts[i].lightColor[j] = verts[i].color[j] * _1div255;
 		}
 		R_ColorShiftLightingFloats(cv->verts[i].lightColor, cv->verts[i].lightColor);
 	}
@@ -1291,9 +1336,9 @@ static void ParseFace(dsurface_t *ds, drawVert_t *verts, bspSurface_t *surf, int
 
 		for (i = 0; i < numVerts; i++)
 		{
-			VectorNormalize(cv->verts[i].tangent);
-			VectorNormalize(cv->verts[i].binormal);
-			VectorNormalize(cv->verts[i].normal);
+			VectorNormalizeOnly(cv->verts[i].tangent);
+			VectorNormalizeOnly(cv->verts[i].binormal);
+			VectorNormalizeOnly(cv->verts[i].normal);
 		}
 	}
 #else
@@ -1390,7 +1435,7 @@ static void ParseMesh(dsurface_t *ds, drawVert_t *verts, bspSurface_t *surf)
 
 		for (j = 0; j < 4; j++)
 		{
-			points[i].lightColor[j] = verts[i].color[j] * (1.0f / 255.0f);
+			points[i].lightColor[j] = verts[i].color[j] * _1div255;
 		}
 		R_ColorShiftLightingFloats(points[i].lightColor, points[i].lightColor);
 	}
@@ -1496,7 +1541,7 @@ static void ParseTriSurf(dsurface_t *ds, drawVert_t *verts, bspSurface_t *surf, 
 
 		for (j = 0; j < 4; j++)
 		{
-			cv->verts[i].lightColor[j] = verts[i].color[j] * (1.0f / 255.0f);
+			cv->verts[i].lightColor[j] = verts[i].color[j] * _1div255;
 		}
 		R_ColorShiftLightingFloats(cv->verts[i].lightColor, cv->verts[i].lightColor);
 	}
@@ -1577,18 +1622,20 @@ static void ParseTriSurf(dsurface_t *ds, drawVert_t *verts, bspSurface_t *surf, 
 		{
 			float dot;
 
-			//VectorNormalize(cv->verts[i].tangent);
-			VectorNormalize(cv->verts[i].binormal);
-			VectorNormalize(cv->verts[i].normal);
+			//VectorNormalizeOnly(cv->verts[i].tangent);
+			VectorNormalizeOnly(cv->verts[i].binormal);
+			VectorNormalizeOnly(cv->verts[i].normal);
 
 			// Gram-Schmidt orthogonalize
-			dot = DotProduct(cv->verts[i].normal, cv->verts[i].tangent);
-			VectorMA(cv->verts[i].tangent, -dot, cv->verts[i].normal, cv->verts[i].tangent);
-			VectorNormalize(cv->verts[i].tangent);
-
 			//dot = DotProduct(cv->verts[i].normal, cv->verts[i].tangent);
+			Dot(cv->verts[i].normal, cv->verts[i].tangent, dot);
+			VectorMA(cv->verts[i].tangent, -dot, cv->verts[i].normal, cv->verts[i].tangent);
+			VectorNormalizeOnly(cv->verts[i].tangent);
+
+			////dot = DotProduct(cv->verts[i].normal, cv->verts[i].tangent);
+			//Dot(cv->verts[i].normal, cv->verts[i].tangent, dot);
 			//VectorMA(cv->verts[i].tangent, -dot, cv->verts[i].normal, cv->verts[i].tangent);
-			//VectorNormalize(cv->verts[i].tangent);
+			//VectorNormalizeOnly(cv->verts[i].tangent);
 		}
 	}
 #else
@@ -1624,7 +1671,7 @@ static void ParseTriSurf(dsurface_t *ds, drawVert_t *verts, bspSurface_t *surf, 
 				}
 			}
 
-			VectorNormalize(cv->verts[i].normal);
+			VectorNormalizeOnly(cv->verts[i].normal);
 		}
 	}
 
@@ -3040,7 +3087,7 @@ static void R_CreateClusters()
 
 
 			// add cluster surfaces
-			Com_InitGrowList(&clusterSurfaces, 10000);
+			Com_InitGrowList(&clusterSurfaces, 100); //Com_InitGrowList(&clusterSurfaces, 10000);
 
 			ClearBounds(mins, maxs);
 			for (j = 0, node = s_worldData.nodes; j < s_worldData.numnodes; j++, node++)
@@ -3106,7 +3153,7 @@ static void R_CreateClusters()
 	}
 
 	// create a super cluster that will be always used when no view cluster can be found
-	Com_InitGrowList(&clusterSurfaces, 10000);
+	Com_InitGrowList(&clusterSurfaces, 100); //Com_InitGrowList(&clusterSurfaces, 10000);
 
 	for (i = 0, surface = s_worldData.surfaces; i < s_worldData.numWorldSurfaces; i++, surface++)
 	{
@@ -3540,6 +3587,7 @@ static void R_CreateWorldVBO()
 		Ren_Print("...calculating redundant world vertices ( %i verts )\n", numVerts);
 
 		s_worldData.redundantLightVerts = ri.Hunk_Alloc(numVerts * sizeof(int), h_low);
+		// hmm.. BuildRedundantIndices() is not found in the code
 		BuildRedundantIndices(numVerts, verts, s_worldData.redundantLightVerts, CompareLightVert);
 
 		s_worldData.redundantShadowVerts = ri.Hunk_Alloc(numVerts * sizeof(int), h_low);
@@ -4602,8 +4650,9 @@ static void R_LoadFogs(lump_t *l, lump_t *brushesLump, lump_t *sidesLump)
 		out->color[2] = shader->fogParms.color[2] * tr.identityLight;
 		out->color[3] = 1;
 
-		d            = shader->fogParms.depthForOpaque < 1 ? 1 : shader->fogParms.depthForOpaque;
-		out->tcScale = 1.0f / (d * 8);
+		d = shader->fogParms.depthForOpaque < 1 ? 1 : shader->fogParms.depthForOpaque;
+		//out->tcScale = 1.0f / (d * 8);
+		out->tcScale = rcp(d * 8.f);
 
 		// global fog sets clearcolor/zfar
 		if (out->originalBrushNumber == -1)
@@ -4652,12 +4701,17 @@ void R_LoadLightGrid(lump_t *l)
 	int            pos[3];
 	float          posFloat[3];
 	byte           tmpAmbient[4], tmpDirected[4];
+	const float    latLng2RAD = (360.0 / 256.0) * _PI_DIV_180;
+	float          sinLng, cosLng, sinLat, cosLat;
 
 	Ren_Print("...loading light grid\n");
 
-	w->lightGridInverseSize[0] = 1.0f / w->lightGridSize[0];
+	/*w->lightGridInverseSize[0] = 1.0f / w->lightGridSize[0];
 	w->lightGridInverseSize[1] = 1.0f / w->lightGridSize[1];
-	w->lightGridInverseSize[2] = 1.0f / w->lightGridSize[2];
+	w->lightGridInverseSize[2] = 1.0f / w->lightGridSize[2];*/
+	w->lightGridInverseSize[0] = rcp(w->lightGridSize[0]);
+	w->lightGridInverseSize[1] = rcp(w->lightGridSize[1]);
+	w->lightGridInverseSize[2] = rcp(w->lightGridSize[2]);
 
 	wMins = w->models[0].bounds[0];
 	wMaxs = w->models[0].bounds[1];
@@ -4734,12 +4788,21 @@ void R_LoadLightGrid(lump_t *l)
 		}
 		else
 		{
-			lat = DEG2RAD(in->latLong[1] * (360.0 / 256.0)); // calculate with 256 instead of 255 to hit exact PI
-			lng = DEG2RAD(in->latLong[0] * (360.0 / 256.0));
+			
+			//lat = DEG2RAD(in->latLong[1] * (360.0 / 256.0)); // calculate with 256 instead of 255 to hit exact PI
+			//lng = DEG2RAD(in->latLong[0] * (360.0 / 256.0));
+			lat = in->latLong[1] * latLng2RAD; // calculate with 256 instead of 255 to hit exact PI
+			lng = in->latLong[0] * latLng2RAD;
 
-			gridPoint->direction[0] = cos(lat) * sin(lng);
-			gridPoint->direction[1] = sin(lat) * sin(lng);
-			gridPoint->direction[2] = cos(lng);
+			/*sinLng = sin(lng);
+			gridPoint->direction[0] = cos(lat) * sinLng;
+			gridPoint->direction[1] = sin(lat) * sinLng;
+			gridPoint->direction[2] = cos(lng);*/
+			SinCos(lat, sinLat, cosLat);
+			SinCos(lng, sinLng, cosLng);
+			gridPoint->direction[0] = cosLat * sinLng;
+			gridPoint->direction[1] = sinLat * sinLng;
+			gridPoint->direction[2] = cosLng;
 		}
 
 		//Ren_Print(" %i %i %f %f\n" , in->latLong[1], in->latLong[0], lat , lng);
@@ -4754,25 +4817,28 @@ void R_LoadLightGrid(lump_t *l)
 	gridStep[1] = w->lightGridBounds[0];
 	gridStep[2] = w->lightGridBounds[0] * w->lightGridBounds[1];
 
-	for (i = 0; i < w->lightGridBounds[0]; i += 1)
+	pos[0] = 0;
+	posFloat[0] = 0.0f;
+	for (i = 0; i < w->lightGridBounds[0]; i++)
 	{
-		for (j = 0; j < w->lightGridBounds[1]; j += 1)
+		pos[1] = 0;
+		posFloat[1] = 0.0f;
+		for (j = 0; j < w->lightGridBounds[1]; j++)
 		{
-			for (k = 0; k < w->lightGridBounds[2]; k += 1)
+			pos[2] = 0;
+			posFloat[2] = 0.0f;
+			for (k = 0; k < w->lightGridBounds[2]; k++)
 			{
-				pos[0] = i;
-				pos[1] = j;
-				pos[2] = k;
-
-				posFloat[0] = i * w->lightGridSize[0];
-				posFloat[1] = j * w->lightGridSize[1];
-				posFloat[2] = k * w->lightGridSize[2];
-
-				gridPoint = w->lightGridData + pos[0] * gridStep[0] + pos[1] * gridStep[1] + pos[2] * gridStep[2];
-
+				gridPoint = w->lightGridData + pos[0] + pos[1] + pos[2];
 				VectorAdd(posFloat, w->lightGridOrigin, gridPoint->origin);
+				pos[2] += gridStep[2];
+				posFloat[2] += w->lightGridSize[2];
 			}
+			pos[1] += gridStep[1];
+			posFloat[1] += w->lightGridSize[1];
 		}
+		pos[0] += gridStep[0];
+		posFloat[0] += w->lightGridSize[0];
 	}
 
 	Ren_Developer("%i light grid points created\n", w->numLightGridPoints);
@@ -4785,6 +4851,8 @@ void R_LoadLightGrid(lump_t *l)
  *
  * FIXME: check parser for missing keys
  * FIXME: Inspect lightJunior (parse it?, is there a need to assign these to models?)
+ * FIXME: spotlights targets
+ * FIXME: sun spotlight
  * 
  * fade
  * - Falloff/radius adjustment value. Multiply the run of the slope by "fade" (1.0f default only valid for "Linear" lights wolf)
@@ -4808,6 +4876,19 @@ void R_LoadLightGrid(lump_t *l)
  * - Makes Q3map2 replace the light with several smaller lights for smoother illumination. Values of 4 or so will be adequate.(where "#" is distance in world units for point/spot lights and degrees for suns)
  * _sun
  * - Set this key to 1 on a spotlight to make an infinite sun light.
+ *
+ *  angle?!
+ *
+ * {
+ * "target" "t514"
+ * "radius" "128"
+ * "angle" "0"
+ * "_color" "1.000000 0.690196 0.384314"
+ * "light" "100"
+ * "origin" "-2340 3234 1426"
+ * "fade" ".9"
+ * "classname" "light"
+ * }
  */
 void R_LoadLights(char *lightDefs)
 {
@@ -4876,7 +4957,8 @@ void R_LoadLights(char *lightDefs)
 			Q_strncpyz(value, token, sizeof(value));
 
 			// check if this entity is a light
-			if (!Q_stricmp(keyname, "classname") && (!Q_stricmp(value, "light") || !Q_stricmp(value, "lightJunior")))
+			if (!Q_stricmp(keyname, "classname") && (!Q_stricmp(value, "light") || !Q_stricmp(value, "lightJunior") || !Q_stricmp(value, "dlight")))
+			//if (!Q_stricmp(keyname, "classname") && (!Q_stricmp(value, "light") || !Q_stricmp(value, "lightJunior")))
 			{
 				isLight = qtrue;
 			}
@@ -4922,9 +5004,9 @@ void R_LoadLights(char *lightDefs)
 
 		light->l.scale = r_lightScale->value;
 
-		light->l.radius[0] = 300;
-		light->l.radius[1] = 300;
-		light->l.radius[2] = 300;
+		light->l.radius[0] = 64;
+		light->l.radius[1] = 64;
+		light->l.radius[2] = 64;
 
 		VectorClear(light->l.projTarget);
 		VectorClear(light->l.projRight);
@@ -4939,6 +5021,7 @@ void R_LoadLights(char *lightDefs)
 		light->additive    = qtrue;
 
 		light->shadowLOD = 0;
+		light->l.rlType  = RL_OMNI;
 	}
 
 	// parse lights
@@ -4997,12 +5080,13 @@ void R_LoadLights(char *lightDefs)
 			Q_strncpyz(value, token, sizeof(value));
 
 			// check if this entity is a light
-			if (!Q_stricmp(keyname, "classname") && (!Q_stricmp(value, "light") || !Q_stricmp(value, "lightJunior")))
+			//if (!Q_stricmp(keyname, "classname") && (!Q_stricmp(value, "light") || !Q_stricmp(value, "lightJunior") || !Q_stricmp(value, "dlight")))
+			if (!Q_stricmp(keyname, "classname") && (!Q_stricmp(value, "light") || !Q_stricmp(value, "lightJunior") || !Q_stricmp(value, "dlight")))
 			{
 				isLight = qtrue;
 			}
 			// check for origin
-			else if (!Q_stricmp(keyname, "origin") || !Q_stricmp(keyname, "light_origin"))
+			else if (!Q_stricmp(keyname, "origin") || !Q_stricmp(keyname, "light_origin")) // ETL (origin)
 			{
 				sscanf(value, "%f %f %f", &light->l.origin[0], &light->l.origin[1], &light->l.origin[2]);
 				//s = &value[0];
@@ -5016,14 +5100,14 @@ void R_LoadLights(char *lightDefs)
 				//Com_Parse1DMatrix(&s, 3, light->l.center, qfalse);
 			}
 			// check for color
-			else if (!Q_stricmp(keyname, "_color"))
+			else if (!Q_stricmp(keyname, "_color")) // ETL
 			{
 				sscanf(value, "%f %f %f", &light->l.color[0], &light->l.color[1], &light->l.color[2]);
 				//s = &value[0];
 				//Com_Parse1DMatrix(&s, 3, light->l.color, qfalse);
 			}
 			// check for radius
-			else if (!Q_stricmp(keyname, "light_radius"))
+			else if (!Q_stricmp(keyname, "light_radius") || !Q_stricmp(keyname, "radius")) // ETL (radius)
 			{
 				sscanf(value, "%f %f %f", &light->l.radius[0], &light->l.radius[1], &light->l.radius[2]);
 				//s = &value[0];
@@ -5036,6 +5120,16 @@ void R_LoadLights(char *lightDefs)
 				//s = &value[0];
 				//Com_Parse1DMatrix(&s, 3, light->l.projTarget, qfalse);
 				light->l.rlType = RL_PROJ;
+			}
+			else if (!Q_stricmp(keyname, "target")) // ETL
+			{
+				// FIXME: set/check target origin/projTarget (see origin of info_null entity)
+				//light->l.rlType = RL_PROJ;
+			}
+			else if (!Q_stricmp(keyname, "_sun")) // ETL
+			{
+				// FIXME: inspect (has to be set on spotlight ..., target?!)
+				light->l.rlType = RL_DIRECTIONAL;
 			}
 			// check for light_right
 			else if (!Q_stricmp(keyname, "light_right"))
@@ -5070,14 +5164,13 @@ void R_LoadLights(char *lightDefs)
 				light->l.rlType = RL_PROJ;
 			}
 			// check for radius
-			else if (!Q_stricmp(keyname, "light") || !Q_stricmp(keyname, "_light"))
+			// FIXME: test this "light " -> Overrides the default 300 intensity.
+			// this is radius ??!
+			else if (!Q_stricmp(keyname, "light") || !Q_stricmp(keyname, "_light")) // ETL (light)
 			{
-				vec_t value2;
-
-				value2             = atof(value);
-				light->l.radius[0] = value2;
-				light->l.radius[1] = value2;
-				light->l.radius[2] = value2;
+				int intensity = atof(value);
+				// FIXME: Overrides the default 300 intensity.
+				//light->l.scale = intensity / 300.0;
 			}
 			// check for scale
 			else if (!Q_stricmp(keyname, "light_scale"))
@@ -5086,7 +5179,7 @@ void R_LoadLights(char *lightDefs)
 
 				if (!r_hdrRendering->integer || !glConfig2.textureFloatAvailable || !glConfig2.framebufferObjectAvailable || !glConfig2.framebufferBlitAvailable)
 				{
-					if (light->l.scale >= r_lightScale->value)
+					if (light->l.scale > r_lightScale->value)
 					{
 						light->l.scale = r_lightScale->value;
 					}
@@ -5544,7 +5637,7 @@ static int R_BuildShadowPlanes(int numTriangles, const srfTriangle_t * triangles
             // extrude the infinite one
             //VectorSubtract(verts[tri->indexes[0]].xyz, light->origin, lightDir);
             //VectorAdd(verts[tri->indexes[0]].xyz, lightDir, pos[2]);
-            //VectorNormalize(lightDir);
+            //VectorNormalizeOnly(lightDir);
             //VectorMA(verts[tri->indexes[0]].xyz, 9999, lightDir, pos[2]);
 
             if(PlaneFromPoints(plane, pos[0], pos[1], pos[2]))
@@ -5574,7 +5667,7 @@ static int R_BuildShadowPlanes(int numTriangles, const srfTriangle_t * triangles
 
             // extrude the infinite one
             //VectorSubtract(verts[tri->indexes[1]].xyz, light->origin, lightDir);
-            //VectorNormalize(lightDir);
+            //VectorNormalizeOnly(lightDir);
             //VectorMA(verts[tri->indexes[1]].xyz, 9999, lightDir, pos[2]);
 
             if(PlaneFromPoints(plane, pos[0], pos[1], pos[2]))
@@ -5604,7 +5697,7 @@ static int R_BuildShadowPlanes(int numTriangles, const srfTriangle_t * triangles
 
             // extrude the infinite one
             //VectorSubtract(verts[tri->indexes[2]].xyz, light->origin, lightDir);
-            //VectorNormalize(lightDir);
+            //VectorNormalizeOnly(lightDir);
             //VectorMA(verts[tri->indexes[2]].xyz, 9999, lightDir, pos[2]);
 
             if(PlaneFromPoints(plane, pos[0], pos[1], pos[2]))
@@ -5746,7 +5839,7 @@ static void R_RecursivePrecacheInteractionNode(bspNode_t *node, trRefLight_t *li
 
 		node->lightCount = s_lightCount;
 
-		if (node->contents != -1)
+		if (node->contents != CONTENTS_NODE)
 		{
 			break;
 		}
@@ -5813,7 +5906,7 @@ static void R_RecursiveAddInteractionNode(bspNode_t *node, trRefLight_t *light)
 
 		node->lightCount = s_lightCount;
 
-		if (node->contents != -1)
+		if (node->contents != CONTENTS_NODE)
 		{
 			break;
 		}
@@ -6016,7 +6109,8 @@ static int UpdateLightTriangles(const srfVert_t *verts, int numTriangles, srfTri
 				VectorCopy(light->direction, lightDirection); // use global light
 #endif
 
-				d = DotProduct(triPlane, lightDirection);
+				//d = DotProduct(triPlane, lightDirection);
+				Dot(triPlane, lightDirection, d);
 
 				if (surfaceShader->cullType == CT_TWO_SIDED || (d > 0 && surfaceShader->cullType != CT_BACK_SIDED))
 				{
@@ -6030,7 +6124,9 @@ static int UpdateLightTriangles(const srfVert_t *verts, int numTriangles, srfTri
 			else
 			{
 				// check if light origin is behind triangle
-				d = DotProduct(triPlane, light->origin) - triPlane[3];
+				//d = DotProduct(triPlane, light->origin) - triPlane[3];
+				Dot(triPlane, light->origin, d);
+				d -= triPlane[3];
 
 				if (surfaceShader->cullType == CT_TWO_SIDED || (d > 0 && surfaceShader->cullType != CT_BACK_SIDED))
 				{
@@ -6408,11 +6504,10 @@ static void R_CreateVBOShadowMeshes(trRefLight_t *light)
 
 	switch (light->l.rlType)
 	{
-	case RL_OMNI:
-		return;
 	case RL_DIRECTIONAL:
 	case RL_PROJ:
 		break;
+	case RL_OMNI:
 	default:
 		return;
 	}
@@ -6521,9 +6616,7 @@ static void R_CreateVBOShadowMeshes(trRefLight_t *light)
 		iaCache->mergedIntoVBO = qtrue;
 
 		shader    = iaCache->surface->shader;
-		alphaTest = shader->alphaTest;
-
-		iaCache->mergedIntoVBO = qtrue;
+		alphaTest = !shader->alphaTest;
 
 		if (alphaTest ? shader != oldShader : alphaTest != oldAlphaTest)
 		{
@@ -6903,7 +6996,7 @@ static void R_CreateVBOShadowCubeMeshes(trRefLight_t *light)
 		{
 			iaCache   = iaCachesSorted[k];
 			shader    = iaCache->surface->shader;
-			alphaTest = shader->alphaTest;
+			alphaTest = !shader->alphaTest;
 
 			iaCache->mergedIntoVBO = qtrue;
 
@@ -6912,6 +7005,7 @@ static void R_CreateVBOShadowCubeMeshes(trRefLight_t *light)
 
 			//if(shader != oldShader)
 			if (alphaTest ? shader != oldShader : alphaTest != oldAlphaTest)
+//if (shader != oldShader || alphaTest != oldAlphaTest)
 			{
 				oldShader    = shader;
 				oldAlphaTest = alphaTest;
@@ -6932,6 +7026,7 @@ static void R_CreateVBOShadowCubeMeshes(trRefLight_t *light)
 						break;
 					}
 #else
+//if (shader != oldShader || alphaTest != oldAlphaTest)
 					if (alphaTest)
 					{
 						if (surface->shader != shader)
@@ -7034,20 +7129,21 @@ static void R_CreateVBOShadowCubeMeshes(trRefLight_t *light)
 						break;
 					}
 #else
-					if (alphaTest)
+if (shader != oldShader || alphaTest != oldAlphaTest)
+//					if (alphaTest)
 					{
-						if (surface->shader != shader)
-						{
+//						if (surface->shader != shader)
+//						{
 							break;
-						}
+//						}
 					}
-					else
-					{
-						if (surface->shader->alphaTest != alphaTest)
-						{
-							break;
-						}
-					}
+//					else
+//					{
+//						if (surface->shader->alphaTest != alphaTest)
+//						{
+//							break;
+//						}
+//					}
 #endif
 
 					if (!(iaCache2->cubeSideBits & (1 << cubeSide)))
@@ -7250,7 +7346,7 @@ void R_PrecacheInteractions()
 		surface->lightCount = -1;
 	}
 
-	Com_InitGrowList(&s_interactions, 10000);
+	Com_InitGrowList(&s_interactions, 100); //Com_InitGrowList(&s_interactions, 10000);
 
 	c_vboWorldSurfaces  = 0;
 	c_vboLightSurfaces  = 0;
@@ -7262,7 +7358,7 @@ void R_PrecacheInteractions()
 	{
 		light = &s_worldData.lights[i];
 
-		if ((r_precomputedLighting->integer || r_vertexLighting->integer) && !light->noRadiosity)
+		if (!r_staticLight->integer || ((r_precomputedLighting->integer || r_vertexLighting->integer) && light->noRadiosity))
 		{
 			continue;
 		}
@@ -7282,7 +7378,7 @@ void R_PrecacheInteractions()
 		R_SetupLightOrigin(light);
 
 		// set up model to light view matrix
-		R_SetupLightView(light);
+		MatrixAffineInverse(light->transformMatrix, light->viewMatrix); // R_SetupLightView(light);
 
 		// set up projection
 		R_SetupLightProjection(light);
@@ -7291,7 +7387,7 @@ void R_PrecacheInteractions()
 		R_SetupLightLocalBounds(light);
 
 		// setup world bounds for intersection tests
-		R_SetupLightWorldBounds(light);
+		MatrixTransformBounds(light->transformMatrix, light->localBounds[0], light->localBounds[1], light->worldBounds[0], light->worldBounds[1]); // R_SetupLightWorldBounds(light);
 
 		// setup frustum planes for intersection tests
 		R_SetupLightFrustum(light);
@@ -7355,12 +7451,13 @@ void R_PrecacheInteractions()
 #endif
 }
 
-#define HASHTABLE_SIZE 7919 // 32749 // 2039    /* prime, use % */
+//#define HASHTABLE_SIZE 7919 // 32749 // 2039    /* prime, use % */
+#define HASHTABLE_SIZE 7919
 #define HASH_USE_EPSILON
 
 #ifdef HASH_USE_EPSILON
 #define HASH_XYZ_EPSILON                    0.01f
-#define HASH_XYZ_EPSILONSPACE_MULTIPLIER    1.f / HASH_XYZ_EPSILON
+#define HASH_XYZ_EPSILONSPACE_MULTIPLIER    (1.0f / HASH_XYZ_EPSILON)
 #endif
 
 /**
@@ -7585,6 +7682,8 @@ void GL_BindNearestCubeMap(const vec3_t xyz)
  * @param[in] position
  * @param[out] cubeProbe1 // nearest
  * @param[out] cubeProbe2 // 2nd nearest
+ * @param[out] distance1 // distance to nearest
+ * @param[out] distance2 // distance to 2nd nearest
  */
 void R_FindTwoNearestCubeMaps(const vec3_t position, cubemapProbe_t **cubeProbe1, cubemapProbe_t **cubeProbe2, float *distance1, float *distance2)
 {
@@ -7637,6 +7736,149 @@ void R_FindTwoNearestCubeMaps(const vec3_t position, cubemapProbe_t **cubeProbe1
 			*distance2 = distance;
 		}
 	}
+
+	//Ren_Print("iterated through %i cubeprobes\n", j);
+}
+
+/**
+ * @brief R_FindCubeMaps
+ * @param[in] position
+ * @param[out] cubeProbe1 // nearest
+ * @param[out] cubeProbe2 // 2nd nearest
+ * @param[out] cubeProbe3 // 3rd nearest
+ * @param[out] distance1 // distance to nearest
+ * @param[out] distance2 // distance to 2nd nearest
+ * @param[out] distance3 // distance to 3rd nearest
+ * @param[out] interpolation1 // ratio to nearest
+ * @param[out] interpolation2 // ratio to 2nd nearest
+ * @param[out] interpolation3 // ratio to 3rd nearest
+*/
+void R_FindCubeMaps(const vec3_t position,
+					cubemapProbe_t **cubeProbe1, cubemapProbe_t **cubeProbe2, cubemapProbe_t **cubeProbe3,
+					float *distance1, float *distance2, float *distance3,
+					float *interpolation1, float *interpolation2, float *interpolation3)
+{
+	int				j;
+	float			distance, distance4, d1, d2, d3;
+	cubemapProbe_t	*cubeProbe, *cubeProbe4;
+	vec3_t			v1, v2, v3;
+#if 0
+	unsigned int   hash;
+	vertexHash_t   *vertexHash;
+#endif
+	Ren_LogComment("--- R_FindTwoNearestCubeMaps ---\n");
+
+	*cubeProbe1 = NULL;
+	*cubeProbe2 = NULL;
+	*cubeProbe3 = NULL;
+	cubeProbe4 = NULL; // we need to know where the closest triangle of probes is
+#if 0 // cubeProbe hash values
+	if (tr.cubeHashTable == NULL || position == NULL)
+#else
+	if (tr.cubeProbes.currentElements == 0 || position == NULL)
+#endif
+	{
+		return;
+	}
+#if 0
+	hash = VertexCoordGenerateHash(position);
+#endif
+	*distance1 = *distance2 = *distance3 = distance4 = 9999999.0f;
+
+#if 1
+	for (j = 0; j < tr.cubeProbes.currentElements; j++)
+	{
+		cubeProbe = Com_GrowListElement(&tr.cubeProbes, j);
+#else // cubeProbe hash values
+	for (j = 0, vertexHash = tr.cubeHashTable[hash]; vertexHash; vertexHash = vertexHash->next, j++)
+	{
+		cubeProbe = (cubemapProbe_t *)vertexHash->data;
+#endif
+
+		distance = Distance(cubeProbe->origin, position);
+		if (distance < *distance1)
+		{
+			cubeProbe4 = *cubeProbe3;
+			distance4 = *distance3;
+
+			*cubeProbe3 = *cubeProbe2;
+			*distance3 = *distance2;
+
+			*cubeProbe2 = *cubeProbe1;
+			*distance2 = *distance1;
+
+			*cubeProbe1 = cubeProbe;
+			*distance1 = distance;
+		}
+		else if (distance < *distance2)
+		{
+			cubeProbe4 = *cubeProbe3;
+			distance4 = *distance3;
+
+			*cubeProbe3 = *cubeProbe2;
+			*distance3 = *distance2;
+
+			*cubeProbe2 = cubeProbe;
+			*distance2 = distance;
+		}
+		else if (distance < *distance3)
+		{
+			cubeProbe4 = *cubeProbe3;
+			distance4 = *distance3;
+
+			*cubeProbe3 = cubeProbe;
+			*distance3 = distance;
+		}
+		else if (distance < distance4)
+		{
+			cubeProbe4 = cubeProbe;
+			distance4 = distance;
+		}
+	}
+
+	// now check how we should interpolate between the found cubemaps..
+	// The three returned values are ratios (in range 0.0 to 1.0), and together add up to a value of 1.0
+	// get the direction and distance: from cp1 to cp4
+	VectorSubtract(cubeProbe4->origin, (*cubeProbe1)->origin, v1);
+	// halfway this distance, cp1 should have faded out to 0
+	VectorScale(v1, 0.5, v2);
+	// find the ratio we are now on that path, vector v2, halfway from cp1 to cp4..
+	// So if we are at cp1, we are at 0% of our path.
+	// And if we reached v2, that means we traveled 100% of our path.
+	// For that we project our current position onto the path.
+	VectorNormalizeOnly(v2);
+	VectorSubtract(position, (*cubeProbe1)->origin, v3);
+	//d1 = DotProduct(v3, position);
+	Dot(v3, position, d1);
+	d1 = (d1 < 0.0) ? 0.0 : ((d1 > 1.0)? 1.0 : d1); // clamp to a range 0.0 to 1.0
+	d1 = 1.0 - d1; // invert ratio
+
+	// now do this for the 2nd closest cubeprobe
+	VectorSubtract(cubeProbe4->origin, (*cubeProbe2)->origin, v1);
+	VectorScale(v1, 0.5, v2);
+	VectorNormalizeOnly(v2);
+	VectorSubtract(position, (*cubeProbe2)->origin, v3);
+	//d2 = DotProduct(v3, position);
+	Dot(v3, position, d2);
+	d2 = (d2 < 0.0) ? 0.0 : ((d2 > 1.0) ? 1.0 : d2);
+	d2 = 1.0 - d2;
+
+	// now do this for the 3rd closest cubeprobe
+	VectorSubtract(cubeProbe4->origin, (*cubeProbe3)->origin, v1);
+	VectorScale(v1, 0.5, v2);
+	VectorNormalizeOnly(v2);
+	VectorSubtract(position, (*cubeProbe3)->origin, v3);
+	//d3 = DotProduct(v3, position);
+	Dot(v3, position, d3);
+	d3 = (d3 < 0.0) ? 0.0 : ((d3 > 1.0) ? 1.0 : d3);
+	d3 = 1.0 - d3;
+
+	// now we have 3 values. we put them in a vector, and normalize the vector
+	VectorSet(v1, d1, d2, d3);
+	VectorNormalizeOnly(v1);
+	*interpolation1 = v1[0];
+	*interpolation2 = v1[1];
+	*interpolation3 = v1[2];
 
 	//Ren_Print("iterated through %i cubeprobes\n", j);
 }
@@ -7779,6 +8021,66 @@ qboolean R_LoadCubeProbe(int cubeProbeNum, int totalCubeProbes, byte *cubeTemp[6
 	return qtrue; // result is true if all the sides of the cube could be loaded,
 }
 
+
+
+/**
+ * @brief Compare function for qsort()
+ * @param[in] a
+ * @param[in] b
+ * @return
+ */
+int vertexposCompare(const void *a, const void *b)
+{
+	cubemapProbe_t *aa = *(cubemapProbe_t **)a;
+	cubemapProbe_t *bb = *(cubemapProbe_t **)b;
+
+	if (!aa && bb)
+	{
+		return -1;
+	}
+	else if (aa && !bb)
+	{
+		return 1;
+	}
+	else if (!aa && !bb)
+	{
+		return 0;
+	}
+
+	// x first
+	if (aa->origin[0] < bb->origin[0])
+	{
+		return -1;
+	}
+	else if (aa->origin[0] > bb->origin[0])
+	{
+		return 1;
+	}
+
+	// y
+	if (aa->origin[1] < bb->origin[1])
+	{
+		return -1;
+	}
+	else if (aa->origin[1] > bb->origin[1])
+	{
+		return 1;
+	}
+
+	// z
+	if (aa->origin[2] < bb->origin[2])
+	{
+		return -1;
+	}
+	else if (aa->origin[2] > bb->origin[2])
+	{
+		return 1;
+	}
+
+	return 0;
+}
+
+
 #define CUBES_MINIMUM_DISTANCE 200.0f
 
 /**
@@ -7843,7 +8145,7 @@ void R_BuildCubeMaps(void)
 	//}
 
 	// the cubeProbes list
-	Com_InitGrowList(&tr.cubeProbes, 5000);
+	Com_InitGrowList(&tr.cubeProbes, 100);//Com_InitGrowList(&tr.cubeProbes, 5000);
 #if 0 // cubeProbe hash values
 	tr.cubeHashTable = NewVertexHashTable();
 #endif
@@ -7891,8 +8193,6 @@ void R_BuildCubeMaps(void)
 
 		Ren_Print("...trying to allocate %d cubemaps from world nodes\n", tr.world->numnodes);
 
-		// FIXME: this doesn't create cubes on important locations
-		//        f.e. oasis (about 2600 cubes in total) water pump near allies spawn
 		for (i = 0; i < tr.world->numnodes; i++)
 		{
 			node = &tr.world->nodes[i];
@@ -7910,10 +8210,10 @@ void R_BuildCubeMaps(void)
 			}
 
 			// We don't want the cubeProbes to be too close to eachother
-	#if 0 // cubeProbe hash values
+#if 0 // cubeProbe hash values
 			if (FindVertexInHashTable(tr.cubeHashTable, node->origin, CUBES_MINIMUM_DISTANCE) == NULL)
 			{
-	#else
+#else
 				isCubeOK = qtrue;
 
 			for (p = 0; p < tr.cubeProbes.currentElements; p++)
@@ -7931,14 +8231,14 @@ void R_BuildCubeMaps(void)
 
 			if (isCubeOK)
 			{
-	#endif
+#endif
 				// create a new cubeProbe
 				cubeProbe = (cubemapProbe_t *)ri.Hunk_Alloc(sizeof(*cubeProbe), h_high);
 				Com_AddToGrowList(&tr.cubeProbes, cubeProbe);
 				VectorCopy(node->origin, cubeProbe->origin);
-	#if 0 // cubeProbe hash values
+#if 0 // cubeProbe hash values
 				AddVertexToHashTable(tr.cubeHashTable, cubeProbe->origin, cubeProbe);
-	#endif
+#endif
 			}
 		}
 	}
@@ -8011,6 +8311,9 @@ void R_BuildCubeMaps(void)
 		VectorClear(cubeProbe->origin);
 #endif
 	}
+
+// quicksort all elements on position
+//	qsort(&tr.cubeProbes, tr.cubeProbes.currentElements, sizeof(void *), vertexposCompare); crash
 
 #if 1
 	ticsPerProbe = 50 / tr.cubeProbes.currentElements; // currentElements is != 0 for sure
@@ -8189,8 +8492,6 @@ void R_BuildCubeMaps(void)
 				}
 		
 				tr.refdef.pixelTarget = tr.cubeTemp[i];
-				tr.refdef.pixelTargetWidth  = REF_CUBEMAP_SIZE;
-				tr.refdef.pixelTargetHeight = REF_CUBEMAP_SIZE;
 				Com_Memset(tr.cubeTemp[i], 255, REF_CUBEMAP_SIZE * REF_CUBEMAP_SIZE * 4);
 		
 				RE_BeginFrame();
@@ -8393,13 +8694,9 @@ void RE_LoadWorldMap(const char *name)
 	tr.sunDirection[1] = 0.3f;
 	tr.sunDirection[2] = 0.9f;
 
-	VectorNormalize(tr.sunDirection);
+	VectorNormalizeOnly(tr.sunDirection);
 
 	// invalidate fogs (likely to be re-initialized to new values by the current map)
-	// TODO: this is sort of silly.  I'm going to do a general cleanup on fog stuff
-	//          now that I can see how it's been used.  (functionality can narrow since
-	//          it's not used as much as it's designed for.)
-
 	RE_SetFog(FOG_SKY, 0, 0, 0, 0, 0, 0);
 	RE_SetFog(FOG_PORTALVIEW, 0, 0, 0, 0, 0, 0);
 	RE_SetFog(FOG_HUD, 0, 0, 0, 0, 0, 0);
@@ -8409,7 +8706,7 @@ void RE_LoadWorldMap(const char *name)
 	RE_SetFog(FOG_WATER, 0, 0, 0, 0, 0, 0);
 	RE_SetFog(FOG_SERVER, 0, 0, 0, 0, 0, 0);
 
-	tr.glfogNum = (glfogType_t)0;
+	tr.glfogNum = FOG_NONE;
 
 	VectorCopy(colorMdGrey, tr.fogColor);
 	tr.fogDensity = 0;
@@ -8495,6 +8792,65 @@ void RE_LoadWorldMap(const char *name)
 	Ren_UpdateScreen();
 	R_LoadLightGrid(&header->lumps[LUMP_LIGHTGRID]);
 
+
+
+//!!!DEBUG!!!
+// set the sun shader if there is one
+if (tr.sunShaderName)
+{
+	tr.sunShader = R_FindShader(tr.sunShaderName, SHADER_3D_STATIC, qfalse);
+}
+else
+{
+	tr.sunShader = 0;   // clear sunshader so it's not there if the level doesn't specify it
+}
+
+
+//!!!DEBUG!!! add a directional sun light
+{
+	if (!s_worldData.numLights) { //!!!DEBUG!!! very woot..
+		s_worldData.lights = (trRefLight_t *)ri.Hunk_Alloc(sizeof(trRefLight_t), h_low);  //!!!DEBUG!!!  just test  beware! of what it does..
+	}
+	trRefLight_t *light = &s_worldData.lights[s_worldData.numLights];
+	s_worldData.numLights++;
+
+	light->l.color[0] = tr.sunLight[0];
+	light->l.color[1] = tr.sunLight[1];
+	light->l.color[2] = tr.sunLight[2];
+
+	light->direction[0] = tr.sunDirection[0];
+	light->direction[1] = tr.sunDirection[1];
+	light->direction[2] = tr.sunDirection[2];
+
+	light->l.scale = r_lightScale->value; //!
+
+	light->l.radius[0] = 9999999000.0;
+	light->l.radius[1] = 9999999000.0;
+	light->l.radius[2] = 9999999000.0;
+
+	QuatClear(light->l.rotation);
+	VectorClear(light->l.center);
+
+	VectorClear(light->l.projTarget);
+	VectorClear(light->l.projRight);
+	VectorClear(light->l.projUp);
+	VectorClear(light->l.projStart);
+	VectorClear(light->l.projEnd);
+
+	light->l.inverseShadows = qfalse; // must be false
+	light->isStatic = qtrue; // must be false to render alpha-masked surfaces.  if true render much faster!
+	light->noRadiosity = qfalse;
+	light->additive = qtrue;
+
+	light->shadowLOD = 0;
+	light->l.rlType = RL_DIRECTIONAL;
+}
+
+
+
+
+
+
 	// create static VBOS from the world
 	R_CreateWorldVBO();
 	R_CreateClusters();
@@ -8521,19 +8877,10 @@ void RE_LoadWorldMap(const char *name)
 	R_BindNullVBO();
 	R_BindNullIBO();
 
-	// set the sun shader if there is one
-	if (tr.sunShaderName)
-	{
-		tr.sunShader = R_FindShader(tr.sunShaderName, SHADER_3D_STATIC, qfalse);
-	}
-	else
-	{
-		tr.sunShader = 0;   // clear sunshader so it's not there if the level doesn't specify it
-	}
-
 	// build cubemaps after the necessary vbo stuff is done
-	// FIXME: causes missing vbo error on radar (maps with portal sky or foliage )
-	// devmap oasis; set developer 1; set r_showcubeprobs 1
+///	// FIXME: causes missing vbo error on radar (maps with portal sky or foliage )
+///	// devmap oasis; set developer 1; set r_showcubeprobes 1
+/// ^^that is an old comment.. i think.
 	//
 	R_BuildCubeMaps();
 

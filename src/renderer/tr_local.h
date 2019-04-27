@@ -1311,6 +1311,7 @@ typedef struct
 	int c_decalProjectors, c_decalTestSurfaces, c_decalClipSurfaces, c_decalSurfaces, c_decalSurfacesCreated;
 } frontEndCounters_t;
 
+// Defining a mask like this, only works if the size is a power of two
 #define FUNCTABLE_SIZE      4096    ///< % 1024
 #define FUNCTABLE_SIZE2     12      ///< % 10
 #define FUNCTABLE_MASK      (FUNCTABLE_SIZE - 1)

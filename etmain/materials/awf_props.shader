@@ -7,7 +7,6 @@ textures/awf_props/tool_m01
 	bumpMap textures/awf_props/tool_m01_n.tga
 	specularMap textures/awf_props/tool_m01_r.tga
 	surfaceparm metalsteps
-	implicitMap -
 }
 
 textures/awf_props/tool_m06
@@ -17,7 +16,6 @@ textures/awf_props/tool_m06
 	bumpMap textures/awf_props/tool_m06_n.tga
 	specularMap textures/awf_props/tool_m06_r.tga
 	surfaceparm metalsteps
-	implicitMap -
 }
 
 textures/awf_props/tool_m07

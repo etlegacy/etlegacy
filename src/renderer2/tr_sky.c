@@ -221,7 +221,8 @@ static void ClipSkyPolygon(int nump, vec3_t vecs, int stage)
 	norm  = sky_clip[stage];
 	for (i = 0, v = vecs; i < nump; i++, v += 3)
 	{
-		d = DotProduct(v, norm);
+		//d = DotProduct(v, norm);
+		Dot(v, norm, d);
 		if (d > ON_EPSILON)
 		{
 			front    = qtrue;
@@ -834,8 +835,8 @@ static void BuildCloudData()
 	etl_assert(shader->isSky);
 #endif
 
-	sky_min = 1.0 / 256.0;     // FIXME: not correct?
-	sky_max = 255.0 / 256.0;
+	sky_min = (1.0f / 256.0f);     // FIXME: not correct?
+	sky_max = (255.0f / 256.0f);
 
 	// set up for drawing
 	tess.multiDrawPrimitives = 0;
@@ -875,7 +876,7 @@ void R_InitSkyTexCoords(float heightCloud)
 {
 	int    i, s, t;
 	float  radiusWorld = 4096;
-	float  p;
+	float  p, dot;
 	float  sRad, tRad;
 	vec4_t skyVec;
 	vec3_t v;
@@ -898,14 +899,15 @@ void R_InitSkyTexCoords(float heightCloud)
 				           skyVec);
 
 				// compute parametric value 'p' that intersects with cloud layer
-				p = (1.0f / (2 * DotProduct(skyVec, skyVec))) *
-				    (-2 * skyVec[2] * radiusWorld +
-				     2 * sqrt(Square(skyVec[2]) * Square(radiusWorld) +
-				              2 * Square(skyVec[0]) * radiusWorld * heightCloud +
+				Dot(skyVec, skyVec, dot);
+				p = (1.0f / (2.0f * dot)) *
+				    (-2.0f * skyVec[2] * radiusWorld +
+				     2.0f * sqrt(Square(skyVec[2]) * Square(radiusWorld) +
+				              2.0f * Square(skyVec[0]) * radiusWorld * heightCloud +
 				              Square(skyVec[0]) * Square(heightCloud) +
-				              2 * Square(skyVec[1]) * radiusWorld * heightCloud +
+				              2.0f * Square(skyVec[1]) * radiusWorld * heightCloud +
 				              Square(skyVec[1]) * Square(heightCloud) +
-				              2 * Square(skyVec[2]) * radiusWorld * heightCloud +
+				              2.0f * Square(skyVec[2]) * radiusWorld * heightCloud +
 				              Square(skyVec[2]) * Square(heightCloud)));
 
 				s_cloudTexP[i][t][s] = p;
@@ -915,7 +917,7 @@ void R_InitSkyTexCoords(float heightCloud)
 				v[2] += radiusWorld;
 
 				// compute vector from world origin to intersection point 'v'
-				VectorNormalize(v);
+				VectorNormalizeOnly(v);
 
 				sRad = Q_acos(v[0]);
 				tRad = Q_acos(v[1]);
@@ -956,8 +958,8 @@ void RB_DrawSun(void)
 
 	GL_PushMatrix();
 
-	mat4_reset_translate_vec3(transformMatrix, backEnd.viewParms.orientation.origin);
-	mat4_mult(backEnd.viewParms.world.viewMatrix, transformMatrix, modelViewMatrix);
+	Matrix4IdentTranslateV3(transformMatrix, backEnd.viewParms.orientation.origin);
+	Matrix4Multiply(backEnd.viewParms.world.viewMatrix, transformMatrix, modelViewMatrix);
 
 	GL_LoadProjectionMatrix(backEnd.viewParms.projectionMatrix);
 	GL_LoadModelViewMatrix(modelViewMatrix);
@@ -975,7 +977,7 @@ void RB_DrawSun(void)
 
 	// farthest depth range
 	glDepthRange(1.0, 1.0);
-	Tess_Begin(Tess_StageIteratorGeneric, NULL, tr.sunShader, NULL, tess.skipTangentSpaces, qfalse, -1, tess.fogNum);
+	Tess_Begin(Tess_StageIteratorGeneric, NULL, tr.sunShader, NULL, tess.skipTangentSpaces, qfalse, LIGHTMAP_NONE, tess.fogNum);
 	Tess_AddQuadStamp(origin, vec1, vec2, colorWhite);
 	Tess_End();
 

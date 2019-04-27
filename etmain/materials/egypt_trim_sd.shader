@@ -7,7 +7,6 @@ textures/egypt_trim_sd/ctrim_c01
 	bumpmap textures/egypt_trim_sd/ctrim_c01_n.tga
 	specularmap textures/egypt_trim_sd/ctrim_c01_r.tga
 	surfaceparm woodsteps
-	implicitMap -
 }
 
 textures/egypt_trim_sd/ctrim_c03
@@ -17,7 +16,6 @@ textures/egypt_trim_sd/ctrim_c03
 	bumpmap textures/egypt_trim_sd/ctrim_c03_n.tga
 	specularmap textures/egypt_trim_sd/ctrim_c03_r.tga
 	surfaceparm woodsteps
-	implicitMap -
 }
 
 textures/egypt_trim_sd/trim_c14
@@ -27,5 +25,4 @@ textures/egypt_trim_sd/trim_c14
 	bumpmap textures/egypt_trim_sd/trim_c14_n.tga
 	specularmap textures/egypt_trim_sd/trim_c14_r.tga
 	surfaceparm woodsteps
-	implicitMap -
 }

@@ -35,6 +35,10 @@
 
 #include "tr_local.h"
 
+ //!!!DEBUG!!!
+ // sse3 (Pentium 4 Prescott, Athlon 64 San Diego, and up. old stuff.)
+#include "pmmintrin.h"
+
 static byte          s_intensitytable[256];
 static unsigned char s_gammatable[256];
 
@@ -353,8 +357,13 @@ static void R_ResampleTexture(unsigned *in, int inwidth, int inheight, unsigned 
 	unsigned fracstep, frac;
 	unsigned p1[2048], p2[2048];
 	byte     *pix1, *pix2, *pix3, *pix4;
-	float    inv127 = 1.0f / 127.0f;
 	vec3_t   n, n2, n3, n4;
+	//const vec3_t v1 = {1.0f, 1.0f, 1.0f};
+	//const vec3_t v128 = { 128.0f, 128.0f, 128.0f };
+	//const float _127 = 127.0f;
+	const float inv127 = (1.0f / 127.0f);
+	const float inH_DIV_outH = (float)inheight / (float)outheight;
+	float l;
 
 	// NOTE: limitation not needed anymore
 	//if(outwidth > 2048)
@@ -365,18 +374,23 @@ static void R_ResampleTexture(unsigned *in, int inwidth, int inheight, unsigned 
 		outwidth = 1;
 	}
 
-	fracstep = inwidth * 0x10000 / outwidth;
+	//fracstep = inwidth * 0x10000 / outwidth;
+	fracstep = (inwidth << 16) / outwidth;
 	frac     = fracstep >> 2;
 
 	for (x = 0; x < outwidth; x++)
 	{
-		p1[x] = 4 * (frac >> 16);
+		///p1[x] = 4 * (frac >> 16);
+		//p1[x] = (frac >> 16) << 2;
+		p1[x] = (frac >> 14) & ~3; // shift 14b and clear the 2 lowest bits..
 		frac += fracstep;
 	}
 	frac = 3 * (fracstep >> 2);
 	for (x = 0; x < outwidth; x++)
 	{
-		p2[x] = 4 * (frac >> 16);
+		///p2[x] = 4 * (frac >> 16);
+		//p2[x] = (frac >> 16) << 2;
+		p2[x] = (frac >> 14) & ~3;
 		frac += fracstep;
 	}
 
@@ -384,8 +398,8 @@ static void R_ResampleTexture(unsigned *in, int inwidth, int inheight, unsigned 
 	{
 		for (y = 0; y < outheight; y++, out += outwidth)
 		{
-			inrow  = in + inwidth * (int)((y + 0.25) * inheight / outheight);
-			inrow2 = in + inwidth * (int)((y + 0.75) * inheight / outheight);
+			inrow = in + inwidth * (int)((y + 0.25) * inH_DIV_outH); // * inheight / outheight);
+			inrow2 = in + inwidth * (int)((y + 0.75) * inH_DIV_outH); // * inheight / outheight);
 
 			//frac = fracstep >> 1;
 
@@ -395,7 +409,7 @@ static void R_ResampleTexture(unsigned *in, int inwidth, int inheight, unsigned 
 				pix2 = (byte *) inrow + p2[x];
 				pix3 = (byte *) inrow2 + p1[x];
 				pix4 = (byte *) inrow2 + p2[x];
-
+/*
 				n[0] = (pix1[0] * inv127 - 1.0f);
 				n[1] = (pix1[1] * inv127 - 1.0f);
 				n[2] = (pix1[2] * inv127 - 1.0f);
@@ -411,20 +425,59 @@ static void R_ResampleTexture(unsigned *in, int inwidth, int inheight, unsigned 
 				n4[0] = (pix4[0] * inv127 - 1.0f);
 				n4[1] = (pix4[1] * inv127 - 1.0f);
 				n4[2] = (pix4[2] * inv127 - 1.0f);
+*/
+				n[0] = (float)(pix1[0]);
+				n[1] = (float)(pix1[1]);
+				n[2] = (float)(pix1[2]);
+
+				n2[0] = (float)(pix2[0]);
+				n2[1] = (float)(pix2[1]);
+				n2[2] = (float)(pix2[2]);
+
+				n3[0] = (float)(pix3[0]);
+				n3[1] = (float)(pix3[1]);
+				n3[2] = (float)(pix3[2]);
+
+				n4[0] = (float)(pix4[0]);
+				n4[1] = (float)(pix4[1]);
+				n4[2] = (float)(pix4[2]);
+
+				VectorScale(n, inv127, n);
+				VectorScale(n2, inv127, n2);
+				VectorScale(n3, inv127, n3);
+				VectorScale(n4, inv127, n4);
+
+				/*VectorSubtract(n, v1, n);
+				VectorSubtract(n2, v1, n2);
+				VectorSubtract(n3, v1, n3);
+				VectorSubtract(n4, v1, n4);*/
+				VectorAddConst(n, -1.0f, n);
+				VectorAddConst(n2, -1.0f, n2);
+				VectorAddConst(n3, -1.0f, n3);
+				VectorAddConst(n4, -1.0f, n4);
 
 				VectorAdd(n, n2, n);
 				VectorAdd(n, n3, n);
 				VectorAdd(n, n4, n);
 
-				if (VectorNormalize(n) == 0.f)
+				//if (VectorNormalize(n) == 0.f)
+				VectorNorm(n, &l);
+				if (l == 0.f)
 				{
-					VectorSet(n, 0, 0, 1);
+					VectorSet(n, 0.f, 0.f, 1.f);
 				}
-
-				((byte *) (out + x))[0] = (byte) (128 + 127 * n[0]);
-				((byte *) (out + x))[1] = (byte) (128 + 127 * n[1]);
-				((byte *) (out + x))[2] = (byte) (128 + 127 * n[2]);
-				((byte *) (out + x))[3] = (byte) (128 + 127 * 1.0);
+/*
+				((byte *)(out + x))[0] = (byte) (n[0] * 127 + 128);
+				((byte *)(out + x))[1] = (byte) (n[1] * 127 + 128);
+				((byte *)(out + x))[2] = (byte) (n[2] * 127 + 128);
+				((byte *)(out + x))[3] = 255; // (127 * 1.0 + 128);
+*/
+				VectorScale(n, 127.0f, n);
+				VectorAddConst(n, 128.0f, n);
+				((byte *)(out + x))[0] = (byte)(n[0]);
+				((byte *)(out + x))[1] = (byte)(n[1]);
+				((byte *)(out + x))[2] = (byte)(n[2]);
+				((byte *)(out + x))[3] = 255;
 			}
 		}
 	}
@@ -432,8 +485,8 @@ static void R_ResampleTexture(unsigned *in, int inwidth, int inheight, unsigned 
 	{
 		for (y = 0; y < outheight; y++, out += outwidth)
 		{
-			inrow  = in + inwidth * (int)((y + 0.25) * inheight / outheight);
-			inrow2 = in + inwidth * (int)((y + 0.75) * inheight / outheight);
+			inrow = in + inwidth * (int)((y + 0.25) * inH_DIV_outH); // * inheight / outheight);
+			inrow2 = in + inwidth * (int)((y + 0.75) * inH_DIV_outH); // * inheight / outheight);
 
 			//frac = fracstep >> 1;
 
@@ -515,51 +568,91 @@ void R_LightScaleTexture(unsigned *in, int inwidth, int inheight, qboolean onlyG
  * @param[in] inWidth
  * @param[in] inHeight
  */
-static void R_MipMap2(unsigned *in, int inWidth, int inHeight)
+static void R_MipMap2(byte *in, int inWidth, int inHeight)
 {
 	int      i, j, k;
 	byte     *outpix;
 	int      inWidthMask, inHeightMask;
-	int      total;
-	int      outWidth  = inWidth >> 1;
+	unsigned int total;
+	int      outWidth  = inWidth >> 1; // /2
 	int      outHeight = inHeight >> 1;
 	unsigned *temp;
+	int      wh4 = outWidth * outHeight * 4;
+	int      i2, i2_1, i2_, i21, i22, j2, j2_1, j2_, j21, j22,
+	         i2_1_j2_1, i2_1_j2_, i2_1_j21, i2_1_j22, i2__j2_1, i2__j2_, i2__j21, i2__j22,
+	         i21_j2_1, i21_j2_, i21_j21, i21_j22, i22_j2_1, i22_j2_, i22_j21, i22_j22;
 
-	temp = (unsigned int *)ri.Hunk_AllocateTempMemory(outWidth * outHeight * 4);
+	temp = (unsigned int *)ri.Hunk_AllocateTempMemory(wh4);
 
+	// NOTE: doing a bit-mask only works if inWidth (and inHeight) are powers-of-2
 	inWidthMask  = inWidth - 1;
 	inHeightMask = inHeight - 1;
 
+	outpix = (byte *)(temp);
 	for (i = 0; i < outHeight; i++)
 	{
+		/*i2 = i + i; // *2;
+		i2_1 = ((i2 - 1) & inHeightMask) * inWidth;
+		i2_ = (i2 & inHeightMask) * inWidth;
+		i21 = ((i2 + 1) & inHeightMask) * inWidth;
+		i22 = ((i2 + 2) & inHeightMask) * inWidth;*/
+		i2 = (i + i) * inWidth; // *2;  * inWidth
+		i2_1 = ((i2 - 1) & inHeightMask);
+		i2_ = (i2 & inHeightMask);
+		i21 = ((i2 + 1) & inHeightMask);
+		i22 = ((i2 + 2) & inHeightMask);
+
 		for (j = 0; j < outWidth; j++)
 		{
-			outpix = (byte *) (temp + i * outWidth + j);
+			j2 = j + j; // *2;
+			j2_1 = ((j2 - 1) & inWidthMask);
+			j2_ = j2 & inWidthMask;
+			j21 = ((j2 + 1) & inWidthMask);
+			j22 = ((j2 + 2) & inWidthMask);
+
+			i2_1_j2_1 = i2_1 + j2_1;
+			i2_1_j2_ = i2_1 + j2_;
+			i2_1_j21 = i2_1 + j21;
+			i2_1_j22 = i2_1 + j22;
+			i2__j2_1 = i2_ + j2_1;
+			i2__j2_ = i2_ + j2_;
+			i2__j21 = i2_ + j21;
+			i2__j22 = i2_ + j22;
+			i21_j2_1 = i21 + j2_1;
+			i21_j2_ = i21 + j2_;
+			i21_j21 = i21 + j21;
+			i21_j22 = i21 + j22;
+			i22_j2_1 = i22 + j2_1;
+			i22_j2_ = i22 + j2_;
+			i22_j21 = i22 + j21;
+			i22_j22 = i22 + j22;
+
 			for (k = 0; k < 4; k++)
 			{
-				total =
-				    1 * ((byte *) &in[((i * 2 - 1) & inHeightMask) * inWidth + ((j * 2 - 1) & inWidthMask)])[k] +
-				    2 * ((byte *) &in[((i * 2 - 1) & inHeightMask) * inWidth + ((j * 2) & inWidthMask)])[k] +
-				    2 * ((byte *) &in[((i * 2 - 1) & inHeightMask) * inWidth + ((j * 2 + 1) & inWidthMask)])[k] +
-				    1 * ((byte *) &in[((i * 2 - 1) & inHeightMask) * inWidth + ((j * 2 + 2) & inWidthMask)])[k] +
-				    2 * ((byte *) &in[((i * 2) & inHeightMask) * inWidth + ((j * 2 - 1) & inWidthMask)])[k] +
-				    4 * ((byte *) &in[((i * 2) & inHeightMask) * inWidth + ((j * 2) & inWidthMask)])[k] +
-				    4 * ((byte *) &in[((i * 2) & inHeightMask) * inWidth + ((j * 2 + 1) & inWidthMask)])[k] +
-				    2 * ((byte *) &in[((i * 2) & inHeightMask) * inWidth + ((j * 2 + 2) & inWidthMask)])[k] +
-				    2 * ((byte *) &in[((i * 2 + 1) & inHeightMask) * inWidth + ((j * 2 - 1) & inWidthMask)])[k] +
-				    4 * ((byte *) &in[((i * 2 + 1) & inHeightMask) * inWidth + ((j * 2) & inWidthMask)])[k] +
-				    4 * ((byte *) &in[((i * 2 + 1) & inHeightMask) * inWidth + ((j * 2 + 1) & inWidthMask)])[k] +
-				    2 * ((byte *) &in[((i * 2 + 1) & inHeightMask) * inWidth + ((j * 2 + 2) & inWidthMask)])[k] +
-				    1 * ((byte *) &in[((i * 2 + 2) & inHeightMask) * inWidth + ((j * 2 - 1) & inWidthMask)])[k] +
-				    2 * ((byte *) &in[((i * 2 + 2) & inHeightMask) * inWidth + ((j * 2) & inWidthMask)])[k] +
-				    2 * ((byte *) &in[((i * 2 + 2) & inHeightMask) * inWidth + ((j * 2 + 1) & inWidthMask)])[k] +
-				    1 * ((byte *) &in[((i * 2 + 2) & inHeightMask) * inWidth + ((j * 2 + 2) & inWidthMask)])[k];
+				total = in[i2_1_j2_1++] +
+						(in[i2_1_j2_++] << 1) +
+						(in[i2_1_j21++] << 1) +
+						in[i2_1_j22++] +
+						(in[i2__j2_1++] << 1) +
+						(in[i2__j2_++] << 2) +
+						(in[i2__j21++] << 2) +
+						(in[i2__j22++] << 1) +
+						(in[i21_j2_1++] << 1) +
+						(in[i21_j2_++] << 2) +
+						(in[i21_j21++] << 2) +
+						(in[i21_j22++] << 1) +
+						in[i22_j2_1++] +
+						(in[i22_j2_++] << 1) +
+						(in[i22_j21++] << 1) +
+						in[i22_j22++];
 				outpix[k] = total / 36;
 			}
+
+			outpix += 4; // next pixel
 		}
 	}
 
-	Com_Memcpy(in, temp, outWidth * outHeight * 4);
+	Com_Memcpy(in, temp, wh4);
 	ri.Hunk_FreeTempMemory(temp);
 }
 
@@ -577,7 +670,7 @@ static void R_MipMap(byte *in, int width, int height)
 
 	if (!r_simpleMipMaps->integer)
 	{
-		R_MipMap2((unsigned *)in, width, height);
+		R_MipMap2(in, width, height);
 		return;
 	}
 
@@ -616,6 +709,11 @@ static void R_MipMap(byte *in, int width, int height)
 	}
 }
 
+// 1.0 / 255.0
+#define _1_DIV_255 0.0039215686274509803921568627451f
+// 255.0f / 4.0f
+#define _255_DIV_4 63.75f
+
 // *INDENT-OFF*
 /**
  * @brief Operates in place, quartering the size of the texture
@@ -628,8 +726,8 @@ static void R_MipNormalMap(byte *in, int width, int height)
 	int    i, j;
 	byte   *out;
 	vec4_t n;
-	vec_t  length;
-	float  inv255 = 1.0f / 255.0f;
+	//vec_t  length;
+	float l;
 
 	if (width == 1 && height == 1)
 	{
@@ -637,54 +735,129 @@ static void R_MipNormalMap(byte *in, int width, int height)
 	}
 
 	out = in;
-	//width >>= 1;
-	width  <<= 2;
+	width >>= 1;
+	//width  <<= 2; // why is this *4 ??  mipmaps that get wider and wider?
 	height >>= 1;
-
+#ifndef ETL_SSE
 	for (i = 0; i < height; i++, in += width)
 	{
 		for (j = 0; j < width; j += 8, out += 4, in += 8)
 		{
-			n[0] = (in[0] * inv255 - 0.5f) * 2.0f +
-			       (in[4] * inv255 - 0.5f) * 2.0f +
-			       (in[width + 0] * inv255 - 0.5f) * 2.0f +
-			       (in[width + 4] * inv255 - 0.5f) * 2.0f;
+			n[0] = (in[0] * _1_DIV_255 - 0.5f) * 2.0f +
+			       (in[4] * _1_DIV_255 - 0.5f) * 2.0f +
+			       (in[width + 0] * _1_DIV_255 - 0.5f) * 2.0f +
+			       (in[width + 4] * _1_DIV_255 - 0.5f) * 2.0f;
 
-			n[1] = (in[1] * inv255 - 0.5f) * 2.0f +
-			       (in[5] * inv255 - 0.5f) * 2.0f +
-			       (in[width + 1] * inv255 - 0.5f) * 2.0f +
-			       (in[width + 5] * inv255 - 0.5f) * 2.0f;
+			n[1] = (in[1] * _1_DIV_255 - 0.5f) * 2.0f +
+			       (in[5] * _1_DIV_255 - 0.5f) * 2.0f +
+			       (in[width + 1] * _1_DIV_255 - 0.5f) * 2.0f +
+			       (in[width + 5] * _1_DIV_255 - 0.5f) * 2.0f;
 
-			n[2] = (in[2] * inv255 - 0.5f) * 2.0f +
-			       (in[6] * inv255 - 0.5f) * 2.0f +
-			       (in[width + 2] * inv255 - 0.5f) * 2.0f +
-			       (in[width + 6] * inv255 - 0.5f) * 2.0f;
+			n[2] = (in[2] * _1_DIV_255 - 0.5f) * 2.0f +
+			       (in[6] * _1_DIV_255 - 0.5f) * 2.0f +
+			       (in[width + 2] * _1_DIV_255 - 0.5f) * 2.0f +
+			       (in[width + 6] * _1_DIV_255 - 0.5f) * 2.0f;
 
-			n[3] = (inv255 * in[3]) +
-			       (inv255 * in[7]) +
-			       (inv255 * in[width + 3]) +
-			       (inv255 * in[width + 7]);
+			n[3] = (_1_DIV_255 * in[3]) +
+			       (_1_DIV_255 * in[7]) +
+			       (_1_DIV_255 * in[width + 3]) +
+			       (_1_DIV_255 * in[width + 7]);
 
 			length = VectorLength(n);
 
 			if (length != 0.f)
 			{
-				n[0] /= length;
-				n[1] /= length;
-				n[2] /= length;
+				float length1 = 1.0 / length;
+				n[0] *= length1;
+				n[1] *= length1;
+				n[2] *= length1;
 			}
 			else
 			{
 				VectorSet(n, 0.0, 0.0, 1.0);
 			}
 
-			out[0] = (byte) (128 + 127 * n[0]);
-			out[1] = (byte) (128 + 127 * n[1]);
-			out[2] = (byte) (128 + 127 * n[2]);
-			out[3] = (byte) (n[3] * 255.0f / 4.0f);
+			out[0] = (byte) (127 * n[0] + 128);
+			out[1] = (byte) (127 * n[1] + 128);
+			out[2] = (byte) (127 * n[2] + 128);
+			out[3] = (byte) (n[3] * _255_DIV_4);
 			//out[3] = (in[3] + in[7] + in[width + 3] + in[width + 7]) >> 2;
 		}
 	}
+#else
+	__m128 xmm0, xmm1, xmm2, xmm3, xmm4, xmm5, xmm6, xmm7;
+	for (i = 0; i < height; i++, in += width)
+	{
+		for (j = 0; j < width; j += 8, out += 4, in += 8)
+		{
+			// load n
+			xmm0 = _mm_set_ps(in[0], in[4], in[width + 0], in[width + 4]);
+			xmm1 = _mm_set_ps(in[1], in[5], in[width + 1], in[width + 5]);
+			xmm2 = _mm_set_ps(in[2], in[6], in[width + 2], in[width + 6]);
+			xmm3 = _mm_set_ps(in[3], in[7], in[width + 3], in[width + 7]);
+			// load inv255
+			///xmm4 = _mm_load_ss(&inv255);
+			///xmm4 = _mm_shuffle_ps(xmm4, xmm4, 0);
+			//xmm4 = _mm_load_ps1(&inv255);
+			xmm4 = _mm_set_ps1(_1_DIV_255);
+			// n *= inv255
+			xmm0 = _mm_mul_ps(xmm0, xmm4);
+			xmm1 = _mm_mul_ps(xmm1, xmm4);
+			xmm2 = _mm_mul_ps(xmm2, xmm4);
+			xmm3 = _mm_mul_ps(xmm3, xmm4);
+			// load 0.5
+			xmm5 = _mm_set_ps1(0.5f);
+			// n -= 0.5
+			xmm0 = _mm_sub_ps(xmm0, xmm5);
+			xmm1 = _mm_sub_ps(xmm1, xmm5);
+			xmm2 = _mm_sub_ps(xmm2, xmm5);
+			// n *= 2.0
+			xmm0 = _mm_add_ps(xmm0, xmm0);
+			xmm1 = _mm_add_ps(xmm1, xmm1);
+			xmm2 = _mm_add_ps(xmm2, xmm2);
+			// add each component of n[] horizontally
+			/*xmm0 = _mm_hadd_ps(xmm0, xmm0);
+			xmm0 = _mm_hadd_ps(xmm0, xmm0);
+			xmm1 = _mm_hadd_ps(xmm1, xmm1);
+			xmm1 = _mm_hadd_ps(xmm1, xmm1);
+			xmm2 = _mm_hadd_ps(xmm2, xmm2);
+			xmm2 = _mm_hadd_ps(xmm2, xmm2);*/
+			xmm6 = _mm_movehdup_ps(xmm0);		// faster way to do: 2 * hadd
+			xmm7 = _mm_add_ps(xmm0, xmm6);		//
+			xmm6 = _mm_movehl_ps(xmm6, xmm7);	//
+			xmm0 = _mm_add_ss(xmm7, xmm6);		//
+			xmm6 = _mm_movehdup_ps(xmm1);		// faster way to do: 2 * hadd
+			xmm7 = _mm_add_ps(xmm1, xmm6);		//
+			xmm6 = _mm_movehl_ps(xmm6, xmm7);	//
+			xmm1 = _mm_add_ss(xmm7, xmm6);		//
+			xmm6 = _mm_movehdup_ps(xmm2);		// faster way to do: 2 * hadd
+			xmm7 = _mm_add_ps(xmm2, xmm6);		//
+			xmm6 = _mm_movehl_ps(xmm6, xmm7);	//
+			xmm2 = _mm_add_ss(xmm7, xmm6);		//
+			// shuffle all components into 1 register
+			xmm0 = _mm_shuffle_ps(xmm0, xmm1, 0b00000000);	// xmm0 = n[1] n[1] n[0] n[0]
+			xmm3 = _mm_shuffle_ps(xmm3, xmm2, 0b11110000);	// xmm3 = n[2] n[2] n[3] n[3]
+			xmm0 = _mm_shuffle_ps(xmm0, xmm3, 0b00101000);	// xmm0 = n[3] n[2] n[1] n[0]
+			// and store into n
+			_mm_storeu_ps(n, xmm0);
+
+			//if (VectorNormalize(n) == 0.0)
+			VectorNorm(n, &l);
+			if (l == 0.0f)
+			{
+				VectorSet(n, 0.0f, 0.0f, 1.0f);
+			}
+
+			VectorScale(n, 127.0f, n);
+			VectorAddConst(n, 128.0f, n);
+
+			out[0] = (byte)(n[0]);
+			out[1] = (byte)(n[1]);
+			out[2] = (byte)(n[2]);
+			out[3] = (byte)(n[3] * _255_DIV_4);
+		}
+	}
+#endif
 }
 // *INDENT-ON*
 
@@ -698,10 +871,10 @@ static void R_MipNormalMap(byte *in, int width, int height)
 static void R_HeightMapToNormalMap(byte *in, int width, int height, float scale)
 {
 	int    x, y;
-	float  r, g, b;
+	float  r, g, b, l;
 	float  c, cx, cy;
 	float  dcx, dcy;
-	float  inv255 = 1.0f / 255.0f;
+	float  inv255 = (1.0f / 255.0f);
 	vec3_t n;
 	byte   *out = in;
 
@@ -710,26 +883,29 @@ static void R_HeightMapToNormalMap(byte *in, int width, int height, float scale)
 		for (x = 0; x < width; x++)
 		{
 			// convert the pixel at x, y in the bump map to a normal (float)
+			int yw = y * width;
+			int ywx4 = 4 * (yw + x);
+			r = in[ywx4];// +0];
+			g = in[ywx4 + 1];
+			b = in[ywx4 + 2];
 
 			// expand [0,255] texel values to the [0,1] range
-			r = in[4 * (y * width + x) + 0];
-			g = in[4 * (y * width + x) + 1];
-			b = in[4 * (y * width + x) + 2];
-
 			c = (r + g + b) * inv255;
 
 			// expand the texel to its right
 			if (x == width - 1)
 			{
-				r = in[4 * (y * width + x) + 0];
-				g = in[4 * (y * width + x) + 1];
-				b = in[4 * (y * width + x) + 2];
+				r = in[ywx4];// +0];
+				g = in[ywx4 + 1];
+				b = in[ywx4 + 2];
 			}
 			else
 			{
-				r = in[4 * (y * width + ((x + 1) % width)) + 0];
-				g = in[4 * (y * width + ((x + 1) % width)) + 1];
-				b = in[4 * (y * width + ((x + 1) % width)) + 2];
+				int x1 = x + 1;
+				int ywx1w4 = ((x1 % width) + yw) * 4;
+				r = in[ywx1w4];// +0];
+				g = in[ywx1w4 + 1];
+				b = in[ywx1w4 + 2];
 			}
 
 			cx = (r + g + b) * inv255;
@@ -737,15 +913,17 @@ static void R_HeightMapToNormalMap(byte *in, int width, int height, float scale)
 			// expand the texel one up
 			if (y == height - 1)
 			{
-				r = in[4 * (y * width + x) + 0];
-				g = in[4 * (y * width + x) + 1];
-				b = in[4 * (y * width + x) + 2];
+				int ywx4 = (yw + x) * 4;
+				r = in[ywx4];// +0];
+				g = in[ywx4 + 1];
+				b = in[ywx4 + 2];
 			}
 			else
 			{
-				r = in[4 * (((y + 1) % height) * width + x) + 0];
-				g = in[4 * (((y + 1) % height) * width + x) + 1];
-				b = in[4 * (((y + 1) % height) * width + x) + 2];
+				int y1hwx4 = (((y + 1) % height) * width + x) * 4;
+				r = in[y1hwx4];// +0];
+				g = in[y1hwx4 + 1];
+				b = in[y1hwx4 + 2];
 			}
 
 			cy = (r + g + b) * inv255;
@@ -754,17 +932,19 @@ static void R_HeightMapToNormalMap(byte *in, int width, int height, float scale)
 			dcy = scale * (c - cy);
 
 			// normalize the vector
-			VectorSet(n, dcx, dcy, 1.0);    //scale);
-			if (VectorNormalize(n) == 0.f)
+			VectorSet(n, dcx, dcy, 1.f);    //scale);
+			//if (VectorNormalize(n) == 0.f)
+			VectorNorm(n, &l);
+			if (l == 0.f)
 			{
-				VectorSet(n, 0, 0, 1);
+				VectorSet(n, 0.f, 0.f, 1.f);
 			}
 
 			// repack the normalized vector into an RGB unsigned byte
 			// vector in the normal map image
-			*out++ = (byte) (128 + 127 * n[0]);
-			*out++ = (byte) (128 + 127 * n[1]);
-			*out++ = (byte) (128 + 127 * n[2]);
+			*out++ = (byte)(128.f + 127.f * n[0]);
+			*out++ = (byte)(128.f + 127.f * n[1]);
+			*out++ = (byte)(128.f + 127.f * n[2]);
 
 			// put in no height as displacement map by default
 			*out++ = (byte) 0;  //(Q_bound(0, c * 255.0 / 3.0, 255));
@@ -781,30 +961,40 @@ static void R_HeightMapToNormalMap(byte *in, int width, int height, float scale)
  */
 static void R_DisplaceMap(byte *in, byte *in2, int width, int height)
 {
-	int    x, y;
-	vec3_t n;
-	int    avg;
-	float  inv255 = 1.0f / 255.0f;
-	byte   *out   = in;
+	int x, y, idx = 0;
+	float avg;
+	byte *out = in;
+//	float  inv255 = 1.0f / 255.0f;
+//	vec3_t n;
 
 	for (y = 0; y < height; y++)
 	{
 		for (x = 0; x < width; x++)
 		{
-			n[0] = (in[4 * (y * width + x) + 0] * inv255 - 0.5f) * 2.0f;
-			n[1] = (in[4 * (y * width + x) + 1] * inv255 - 0.5f) * 2.0f;
-			n[2] = (in[4 * (y * width + x) + 2] * inv255 - 0.5f) * 2.0f;
+			//idx = (y * width + x) * 4; // ..if we make idx=0 at start, we can simply add+4
 
-			avg  = 0;
-			avg += in2[4 * (y * width + x) + 0];
-			avg += in2[4 * (y * width + x) + 1];
-			avg += in2[4 * (y * width + x) + 2];
-			avg /= 3;
+	//		n[0] = (in[idx + 0] * inv255 - 0.5f) * 2.0f;
+	//		n[1] = (in[idx + 1] * inv255 - 0.5f) * 2.0f;
+	//		n[2] = (in[idx + 2] * inv255 - 0.5f) * 2.0f;
 
-			*out++ = (byte) (128 + 127 * n[0]);
-			*out++ = (byte) (128 + 127 * n[1]);
-			*out++ = (byte) (128 + 127 * n[2]);
-			*out++ = (byte) (avg);
+//			*out = (byte)(128 + 127 * n[0]);
+//			out++;
+//			*out = (byte)(128 + 127 * n[1]);
+//			out++;
+//			*out = (byte)(128 + 127 * n[2]);
+//			out++;
+
+	//		avg = (n[0] + n[1] + n[2]) / 3.0f;
+	//		avg = avg * 255.0f;
+avg = (in[idx] + in[idx + 1] + in[idx + 2]) / 3.0;
+out[idx + 3] = (byte)avg;
+//			out++;
+
+			//out[idx] = in[idx];
+			//out[idx+1] = in[idx+1];
+			//out[idx+2] = in[idx+2];
+//			out[idx+3] = (byte)((unsigned int)((unsigned int)in[idx] + (unsigned int)in[idx] + (unsigned int)in[idx]) / 3);
+			idx += 4;
 		}
 	}
 }
@@ -823,28 +1013,31 @@ static void R_AddNormals(byte *in, byte *in2, int width, int height)
 	byte   a;
 	vec3_t n2;
 	byte   a2;
-	float  inv255 = 1.0f / 255.0f;
+	float  l, inv255 = (1.0f / 255.0f);
 	byte   *out   = in;
 
 	for (y = 0; y < height; y++)
 	{
 		for (x = 0; x < width; x++)
 		{
-			n[0] = (in[4 * (y * width + x) + 0] * inv255 - 0.5f) * 2.0f;
-			n[1] = (in[4 * (y * width + x) + 1] * inv255 - 0.5f) * 2.0f;
-			n[2] = (in[4 * (y * width + x) + 2] * inv255 - 0.5f) * 2.0f;
-			a    = in[4 * (y * width + x) + 3];
+			int ywx4 = 4 * (y * width + x);
+			n[0] = (in[ywx4 + 0] * inv255 - 0.5f) * 2.0f;
+			n[1] = (in[ywx4 + 1] * inv255 - 0.5f) * 2.0f;
+			n[2] = (in[ywx4 + 2] * inv255 - 0.5f) * 2.0f;
+			a = in[ywx4 + 3];
 
-			n2[0] = (in2[4 * (y * width + x) + 0] * inv255 - 0.5f) * 2.0f;
-			n2[1] = (in2[4 * (y * width + x) + 1] * inv255 - 0.5f) * 2.0f;
-			n2[2] = (in2[4 * (y * width + x) + 2] * inv255 - 0.5f) * 2.0f;
-			a2    = in2[4 * (y * width + x) + 3];
+			n2[0] = (in2[ywx4 + 0] * inv255 - 0.5f) * 2.0f;
+			n2[1] = (in2[ywx4 + 1] * inv255 - 0.5f) * 2.0f;
+			n2[2] = (in2[ywx4 + 2] * inv255 - 0.5f) * 2.0f;
+			a2 = in2[ywx4 + 3];
 
 			VectorAdd(n, n2, n);
 
-			if (VectorNormalize(n) == 0.f)
+			//if (VectorNormalize(n) == 0.f)
+			VectorNorm(n, &l);
+			if (l == 0.f)
 			{
-				VectorSet(n, 0, 0, 1);
+				VectorSet(n, 0.f, 0.f, 1.f);
 			}
 
 			*out++ = (byte) (128 + 127 * n[0]);
@@ -870,7 +1063,8 @@ static void R_InvertAlpha(byte *in, int width, int height)
 	{
 		for (x = 0; x < width; x++)
 		{
-			out[4 * (y * width + x) + 3] = 255 - in[4 * (y * width + x) + 3];
+			int ywx43 = 4 * (y * width + x) + 3;
+			out[ywx43] = 255 - in[ywx43];
 		}
 	}
 }
@@ -890,9 +1084,10 @@ static void R_InvertColor(byte *in, int width, int height)
 	{
 		for (x = 0; x < width; x++)
 		{
-			out[4 * (y * width + x) + 0] = 255 - in[4 * (y * width + x) + 0];
-			out[4 * (y * width + x) + 1] = 255 - in[4 * (y * width + x) + 1];
-			out[4 * (y * width + x) + 2] = 255 - in[4 * (y * width + x) + 2];
+			int ywx4 = 4 * (y * width + x);
+			out[ywx4 + 0] = 255 - in[ywx4 + 0];
+			out[ywx4 + 1] = 255 - in[ywx4 + 1];
+			out[ywx4 + 2] = 255 - in[ywx4 + 2];
 		}
 	}
 }
@@ -913,11 +1108,11 @@ static void R_MakeIntensity(byte *in, int width, int height)
 	{
 		for (x = 0; x < width; x++)
 		{
-			red = out[4 * (y * width + x) + 0];
-
-			out[4 * (y * width + x) + 1] = red;
-			out[4 * (y * width + x) + 2] = red;
-			out[4 * (y * width + x) + 3] = red;
+			int ywx4 = 4 * (y * width + x);
+			red = out[ywx4];// +0];
+			out[ywx4 + 1] = red;
+			out[ywx4 + 2] = red;
+			out[ywx4 + 3] = red;
 		}
 	}
 }
@@ -938,16 +1133,17 @@ static void R_MakeAlpha(byte *in, int width, int height)
 	{
 		for (x = 0; x < width; x++)
 		{
+			int ywx4 = 4 * (y * width + x);
 			avg  = 0;
-			avg += out[4 * (y * width + x) + 0];
-			avg += out[4 * (y * width + x) + 1];
-			avg += out[4 * (y * width + x) + 2];
+			avg += out[ywx4 + 0];
+			avg += out[ywx4 + 1];
+			avg += out[ywx4 + 2];
 			avg /= 3;
 
-			out[4 * (y * width + x) + 0] = 255;
-			out[4 * (y * width + x) + 1] = 255;
-			out[4 * (y * width + x) + 2] = 255;
-			out[4 * (y * width + x) + 3] = (byte) avg;
+			out[ywx4 + 0] = 255;
+			out[ywx4 + 1] = 255;
+			out[ywx4 + 2] = 255;
+			out[ywx4 + 3] = (byte)avg;
 		}
 	}
 }
@@ -1023,7 +1219,7 @@ void R_UploadImage(const byte **dataArray, int numData, image_t *image)
 	const byte *data         = dataArray[0];
 	byte       *scaledBuffer = NULL;
 	int        scaledWidth, scaledHeight;
-	int        i, c;
+	int        i, i4, c;
 	const byte *scan;
 	GLenum     target;
 	GLenum     format               = GL_RGBA;
@@ -1046,13 +1242,16 @@ void R_UploadImage(const byte **dataArray, int numData, image_t *image)
 			;
 	}
 
-	if (r_roundImagesDown->integer && scaledWidth > image->width)
+	if (r_roundImagesDown->integer)
 	{
-		scaledWidth >>= 1;
-	}
-	if (r_roundImagesDown->integer && scaledHeight > image->height)
-	{
-		scaledHeight >>= 1;
+		if (scaledWidth > image->width)
+		{
+			scaledWidth >>= 1;
+		}
+		if (scaledHeight > image->height)
+		{
+			scaledHeight >>= 1;
+		}
 	}
 
 	// perform optional picmip operation
@@ -1178,7 +1377,7 @@ void R_UploadImage(const byte **dataArray, int numData, image_t *image)
 		{
 			if (image->bits & (IF_DISPLACEMAP | IF_ALPHATEST))
 			{
-				samples = 4;
+				samples = 4;  // a breakpoint here is never hit  TODO: check..
 			}
 			else
 			{
@@ -1191,21 +1390,21 @@ void R_UploadImage(const byte **dataArray, int numData, image_t *image)
 		}
 		else
 		{
-			for (i = 0; i < c; i++)
+			for (i = 0, i4 = 0; i < c; i++, i4 += 4)
 			{
-				if (scan[i * 4 + 0] > rMax)
+				if (scan[i4 + 0] > rMax)
 				{
-					rMax = scan[i * 4 + 0];
+					rMax = scan[i4 + 0];
 				}
-				if (scan[i * 4 + 1] > gMax)
+				if (scan[i4 + 1] > gMax)
 				{
-					gMax = scan[i * 4 + 1];
+					gMax = scan[i4 + 1];
 				}
-				if (scan[i * 4 + 2] > bMax)
+				if (scan[i4 + 2] > bMax)
 				{
-					bMax = scan[i * 4 + 2];
+					bMax = scan[i4 + 2];
 				}
-				if (scan[i * 4 + 3] != 255)
+				if (scan[i4 + 3] != 255)
 				{
 					samples = 4;
 					break;
@@ -1504,13 +1703,15 @@ image_t *R_CreateImage(const char *name,
 	}
 
 	image->type = GL_TEXTURE_2D;
-
-	image->width  = width;
+	image->width = width;
 	image->height = height;
-
-	image->bits       = bits;
+	image->bits = bits;
 	image->filterType = filterType;
-	image->wrapType   = wrapType;
+	image->wrapType = wrapType;
+/*	if (bits & (IF_NORMALMAP | IF_DISPLACEMAP))
+	{
+		image->internalFormat = GL_RGBA;
+	}*/
 
 	GL_Bind(image);
 
@@ -1582,7 +1783,7 @@ static qboolean ParseHeightMap(char **text, byte **pic, int *width, int *height,
 	float scale;
 
 	token = COM_ParseExt2(text, qfalse);
-	if (token[0] != '(')
+	if (Q_stricmp(token, "("))
 	{
 		Ren_Warning("WARNING: expecting '(', found '%s' for heightMap\n", token);
 		return qfalse;
@@ -1596,7 +1797,7 @@ static qboolean ParseHeightMap(char **text, byte **pic, int *width, int *height,
 	}
 
 	token = COM_ParseExt2(text, qfalse);
-	if (token[0] != ',')
+	if (Q_stricmp(token, ","))
 	{
 		Ren_Warning("WARNING: no matching ',' found for heightMap\n");
 		return qfalse;
@@ -1606,7 +1807,7 @@ static qboolean ParseHeightMap(char **text, byte **pic, int *width, int *height,
 	scale = atof(token);
 
 	token = COM_ParseExt2(text, qfalse);
-	if (token[0] != ')')
+	if (Q_stricmp(token, ")"))
 	{
 		Ren_Warning("WARNING: expecting ')', found '%s' for heightMap\n", token);
 		return qfalse;
@@ -1637,7 +1838,7 @@ static qboolean ParseDisplaceMap(char **text, byte **pic, int *width, int *heigh
 	int  width2, height2;
 
 	token = COM_ParseExt2(text, qfalse);
-	if (token[0] != '(')
+	if (Q_stricmp(token, "("))
 	{
 		Ren_Warning("WARNING: expecting '(', found '%s' for displaceMap\n", token);
 		return qfalse;
@@ -1651,7 +1852,7 @@ static qboolean ParseDisplaceMap(char **text, byte **pic, int *width, int *heigh
 	}
 
 	token = COM_ParseExt2(text, qfalse);
-	if (token[0] != ',')
+	if (Q_stricmp(token, ","))
 	{
 		Ren_Warning("WARNING: no matching ',' found for displaceMap\n");
 		return qfalse;
@@ -1665,7 +1866,7 @@ static qboolean ParseDisplaceMap(char **text, byte **pic, int *width, int *heigh
 	}
 
 	token = COM_ParseExt2(text, qfalse);
-	if (token[0] != ')')
+	if (Q_stricmp(token, ")"))
 	{
 		Ren_Warning("WARNING: expecting ')', found '%s' for displaceMap\n", token);
 	}
@@ -1706,7 +1907,7 @@ static qboolean ParseAddNormals(char **text, byte **pic, int *width, int *height
 	int  width2, height2;
 
 	token = COM_ParseExt2(text, qfalse);
-	if (token[0] != '(')
+	if (Q_stricmp(token, "("))
 	{
 		Ren_Warning("WARNING: expecting '(', found '%s' for addNormals\n", token);
 		return qfalse;
@@ -1720,7 +1921,7 @@ static qboolean ParseAddNormals(char **text, byte **pic, int *width, int *height
 	}
 
 	token = COM_ParseExt2(text, qfalse);
-	if (token[0] != ',')
+	if (Q_stricmp(token, ","))
 	{
 		Ren_Warning("WARNING: no matching ',' found for addNormals\n");
 		return qfalse;
@@ -1734,7 +1935,7 @@ static qboolean ParseAddNormals(char **text, byte **pic, int *width, int *height
 	}
 
 	token = COM_ParseExt2(text, qfalse);
-	if (token[0] != ')')
+	if (Q_stricmp(token, ")"))
 	{
 		Ren_Warning("WARNING: expecting ')', found '%s' for addNormals\n", token);
 	}
@@ -1773,7 +1974,7 @@ static qboolean ParseInvertAlpha(char **text, byte **pic, int *width, int *heigh
 	char *token;
 
 	token = COM_ParseExt2(text, qfalse);
-	if (token[0] != '(')
+	if (Q_stricmp(token, "("))
 	{
 		Ren_Warning("WARNING: expecting '(', found '%s' for invertAlpha\n", token);
 		return qfalse;
@@ -1787,7 +1988,7 @@ static qboolean ParseInvertAlpha(char **text, byte **pic, int *width, int *heigh
 	}
 
 	token = COM_ParseExt2(text, qfalse);
-	if (token[0] != ')')
+	if (Q_stricmp(token, ")"))
 	{
 		Ren_Warning("WARNING: expecting ')', found '%s' for invertAlpha\n", token);
 		return qfalse;
@@ -1813,7 +2014,7 @@ static qboolean ParseInvertColor(char **text, byte **pic, int *width, int *heigh
 	char *token;
 
 	token = COM_ParseExt2(text, qfalse);
-	if (token[0] != '(')
+	if (Q_stricmp(token, "("))
 	{
 		Ren_Warning("WARNING: expecting '(', found '%s' for invertColor\n", token);
 		return qfalse;
@@ -1827,7 +2028,7 @@ static qboolean ParseInvertColor(char **text, byte **pic, int *width, int *heigh
 	}
 
 	token = COM_ParseExt2(text, qfalse);
-	if (token[0] != ')')
+	if (Q_stricmp(token, ")"))
 	{
 		Ren_Warning("WARNING: expecting ')', found '%s' for invertColor\n", token);
 		return qfalse;
@@ -1853,7 +2054,7 @@ static qboolean ParseMakeIntensity(char **text, byte **pic, int *width, int *hei
 	char *token;
 
 	token = COM_ParseExt2(text, qfalse);
-	if (token[0] != '(')
+	if (Q_stricmp(token, "("))
 	{
 		Ren_Warning("WARNING: expecting '(', found '%s' for makeIntensity\n", token);
 		return qfalse;
@@ -1867,7 +2068,7 @@ static qboolean ParseMakeIntensity(char **text, byte **pic, int *width, int *hei
 	}
 
 	token = COM_ParseExt2(text, qfalse);
-	if (token[0] != ')')
+	if (Q_stricmp(token, ")"))
 	{
 		Ren_Warning("WARNING: expecting ')', found '%s' for makeIntensity\n", token);
 		return qfalse;
@@ -1896,7 +2097,7 @@ static qboolean ParseMakeAlpha(char **text, byte **pic, int *width, int *height,
 	char *token;
 
 	token = COM_ParseExt2(text, qfalse);
-	if (token[0] != '(')
+	if (Q_stricmp(token, "("))
 	{
 		Ren_Warning("WARNING: expecting '(', found '%s' for makeAlpha\n", token);
 		return qfalse;
@@ -1910,7 +2111,7 @@ static qboolean ParseMakeAlpha(char **text, byte **pic, int *width, int *height,
 	}
 
 	token = COM_ParseExt2(text, qfalse);
-	if (token[0] != ')')
+	if (Q_stricmp(token, ")"))
 	{
 		Ren_Warning("WARNING: expecting ')', found '%s' for makeAlpha\n", token);
 		return qfalse;
@@ -2244,12 +2445,12 @@ void R_ImageCopyBack(image_t *image, int x, int y, int width, int height)
 image_t *R_FindImageFile(const char *imageName, int bits, filterType_t filterType, wrapType_t wrapType, const char *materialName)
 {
 	image_t *image = NULL;
-	int     width  = 0, height = 0;
-	byte    *pic   = NULL;
-	long    hash;
-	char    buffer[1024];
-	//char          ddsName[1024];
-	char          *buffer_p;
+	int width = 0, height = 0;
+	byte *pic = NULL;
+	long hash;
+	char buffer[1024];
+	//char ddsName[1024];
+	char *buffer_p;
 	unsigned long diff;
 
 	if (!imageName)
@@ -2330,20 +2531,27 @@ image_t *R_FindImageFile(const char *imageName, int bits, filterType_t filterTyp
 
 	// load the pic from disk
 	buffer_p = &buffer[0];
-	R_LoadImage(&buffer_p, &pic, &width, &height, &bits, materialName);
+//	R_LoadImage(&buffer_p, &pic, &width, &height, &bits, materialName);
+	{
+		int imagebits = bits; //we want the bits value back from the function.. (would argument 'int bits' work?)
+		R_LoadImage(&buffer_p, &pic, &width, &height, &imagebits, materialName);
+		bits = imagebits;
+	}
 	if (pic == NULL)
 	{
 		// FIXME !!!
 		// this will occure in mods for default light shaders until we add our material pk3 to the common search path
 		// or modders add the light shaders (and related images) to their mod.
-		// update: set to dev print - FIXME: there are more cases for some models on vanilla maps! 
-		Ren_Developer("WARNING R_FindImageFile: can't load material '%s'\n", materialName);
+		// update: set to dev print - FIXME: there are more cases for some models on vanilla maps!
+		// Update: There are many cases: checking if a file exists (_n _r _x), and it doesn't exist..
+//		Ren_Developer("WARNING R_FindImageFile: can't load material '%s'\n", materialName);
 		return NULL;
 	}
 
 	if (((width - 1) & width) || ((height - 1) & height))
 	{
 		Ren_Warning("WARNING: Image not power of 2 scaled: %s   %i:%i\n", materialName, width, height);
+		Com_Dealloc(pic);
 		return NULL;
 	}
 
@@ -2362,7 +2570,7 @@ image_t *R_FindImageFile(const char *imageName, int bits, filterType_t filterTyp
 	}
 #endif
 
-	image = R_CreateImage((char *)buffer, pic, width, height, bits, filterType, wrapType);
+	image = R_CreateImage((char *)buffer, pic, width, height, bits, filterType, wrapType); // the bits will be written into image->bits
 	Com_Dealloc(pic);
 	return image;
 }
@@ -2382,25 +2590,27 @@ static ID_INLINE void R_SwapPixel(byte *inout, int x, int y, int x2, int y2, int
 	byte color[4];
 	byte color2[4];
 
-	color[0] = inout[4 * (y * width + x) + 0];
-	color[1] = inout[4 * (y * width + x) + 1];
-	color[2] = inout[4 * (y * width + x) + 2];
-	color[3] = inout[4 * (y * width + x) + 3];
+	int ywx4 = (y * width + x) * 4;
+	int y2wx24 = (y2 * width + x2) * 4;
+	color[0] = inout[ywx4 + 0];
+	color[1] = inout[ywx4 + 1];
+	color[2] = inout[ywx4 + 2];
+	color[3] = inout[ywx4 + 3];
 
-	color2[0] = inout[4 * (y2 * width + x2) + 0];
-	color2[1] = inout[4 * (y2 * width + x2) + 1];
-	color2[2] = inout[4 * (y2 * width + x2) + 2];
-	color2[3] = inout[4 * (y2 * width + x2) + 3];
+	color2[0] = inout[y2wx24 + 0];
+	color2[1] = inout[y2wx24 + 1];
+	color2[2] = inout[y2wx24 + 2];
+	color2[3] = inout[y2wx24 + 3];
 
-	inout[4 * (y * width + x) + 0] = color2[0];
-	inout[4 * (y * width + x) + 1] = color2[1];
-	inout[4 * (y * width + x) + 2] = color2[2];
-	inout[4 * (y * width + x) + 3] = color2[3];
+	inout[ywx4 + 0] = color2[0];
+	inout[ywx4 + 1] = color2[1];
+	inout[ywx4 + 2] = color2[2];
+	inout[ywx4 + 3] = color2[3];
 
-	inout[4 * (y2 * width + x2) + 0] = color[0];
-	inout[4 * (y2 * width + x2) + 1] = color[1];
-	inout[4 * (y2 * width + x2) + 2] = color[2];
-	inout[4 * (y2 * width + x2) + 3] = color[3];
+	inout[y2wx24 + 0] = color[0];
+	inout[y2wx24 + 1] = color[1];
+	inout[y2wx24 + 2] = color[2];
+	inout[y2wx24 + 3] = color[3];
 }
 
 /**
@@ -2450,68 +2660,37 @@ static void R_Flop(byte *in, int width, int height)
  */
 static void R_Rotate(byte *in, int width, int height, int degrees)
 {
-	byte color[4];
-	int  x, y, x2, y2;
-	byte *out, *tmp;
+	int  x, y, ywidth, ywx4, y2w, y2wx24, hw4, _w2, h_1, w_1, h_1w;
+	byte *tmp;
 
-	tmp = (byte *)Com_Allocate(width * height * 4);
-	Com_Memset(tmp, 0, width * height * 4);
+	// we only need to rotate when degrees equals 90 (or -90)
+	if (degrees != 90 && degrees != -90)
+	{
+		return;
+	}
+
+	hw4 = height * width * 4;
+	_w2 = width << 2; // * 4
+	h_1 = height - 1;
+	w_1 = width - 1;
+	h_1w = h_1 * width;
+
+	tmp = (byte *)Com_Allocate(hw4);
 
 	// rotate into tmp buffer
-	for (y = 0; y < height; y++)
+	for (y = 0, ywidth = 0; y < height; y++, ywidth += _w2)
 	{
-		for (x = 0; x < width; x++)
+		y2w = (degrees == 90) ? h_1w + y : w_1;
+		for (x = 0, ywx4 = ywidth; x < width; x++, ywx4 += 4)
 		{
-			color[0] = in[4 * (y * width + x) + 0];
-			color[1] = in[4 * (y * width + x) + 1];
-			color[2] = in[4 * (y * width + x) + 2];
-			color[3] = in[4 * (y * width + x) + 3];
-
-			if (degrees == 90)
-			{
-				x2 = y;
-				y2 = (height - (1 + x));
-
-				tmp[4 * (y2 * width + x2) + 0] = color[0];
-				tmp[4 * (y2 * width + x2) + 1] = color[1];
-				tmp[4 * (y2 * width + x2) + 2] = color[2];
-				tmp[4 * (y2 * width + x2) + 3] = color[3];
-			}
-			else if (degrees == -90)
-			{
-				x2 = (width - (1 + y));
-				y2 = x;
-
-				tmp[4 * (y2 * width + x2) + 0] = color[0];
-				tmp[4 * (y2 * width + x2) + 1] = color[1];
-				tmp[4 * (y2 * width + x2) + 2] = color[2];
-				tmp[4 * (y2 * width + x2) + 3] = color[3];
-			}
-			else
-			{
-				tmp[4 * (y * width + x) + 0] = color[0];
-				tmp[4 * (y * width + x) + 1] = color[1];
-				tmp[4 * (y * width + x) + 2] = color[2];
-				tmp[4 * (y * width + x) + 3] = color[3];
-			}
-
+			y2wx24 = (y2w << 2); // *4;
+			*(unsigned int *)(&tmp[y2wx24]) = *(unsigned int *)(&in[ywx4]); // copy all rgba bytes as one 32b uint
+			y2w += (degrees == 90) ? -width : width;
 		}
 	}
 
-	// copy back to input
-	out = in;
-	for (y = 0; y < height; y++)
-	{
-		for (x = 0; x < width; x++)
-		{
-			out[4 * (y * width + x) + 0] = tmp[4 * (y * width + x) + 0];
-			out[4 * (y * width + x) + 1] = tmp[4 * (y * width + x) + 1];
-			out[4 * (y * width + x) + 2] = tmp[4 * (y * width + x) + 2];
-			out[4 * (y * width + x) + 3] = tmp[4 * (y * width + x) + 3];
-		}
-	}
-
-	Com_Dealloc(tmp);
+	Com_Memcpy(in, tmp, hw4); // copy back to input
+	Com_Dealloc(tmp); // free tmp
 }
 
 /**
@@ -2798,12 +2977,21 @@ skipCubeImage:
 void R_InitFogTable(void)
 {
 	int i;
-
+	const double rFOG_TABLE_SIZE = 1.0f / (FOG_TABLE_SIZE - 1);
 	for (i = 0; i < FOG_TABLE_SIZE; i++)
 	{
-		tr.fogTable[i] = pow((double)i / (FOG_TABLE_SIZE - 1), DEFAULT_FOG_EXP_DENSITY);
+		tr.fogTable[i] = pow((double)i * rFOG_TABLE_SIZE, DEFAULT_FOG_EXP_DENSITY);
 	}
 }
+
+// 1.0 / 512.0
+#define _1_DIV_512 0.001953125f
+// 1.0 / 32.0
+#define _1_DIV_32 0.03125f
+// 31.0 / 32.0
+#define _31_DIV_32 0.96875f
+// 30.0 / 32.0
+#define _30_DIV_32 0.9375f
 
 /**
  * @brief This is called for each texel of the fog texture on startup
@@ -2814,33 +3002,29 @@ void R_InitFogTable(void)
  */
 float R_FogFactor(float s, float t)
 {
-	float d;
-
-	s -= 1.0f / 512;
+	s -= _1_DIV_512; // 1.0f / 512;
 	if (s < 0)
 	{
 		return 0;
 	}
-	if (t < 1.0f / 32)
+	if (t < _1_DIV_32) // 1.0f / 32)
 	{
 		return 0;
 	}
-	if (t < 31.0f / 32)
+	if (t < _31_DIV_32) // 31.0f / 32)
 	{
-		s *= (t - 1.0f / 32.0f) / (30.0f / 32.0f);
+		//s *= (t - 1.0f / 32.0f) / (30.0f / 32.0f);
+		s *= (t - _1_DIV_32) / _30_DIV_32;
 	}
 
 	// we need to leave a lot of clamp range
-	s *= 8;
-
+	s *= 8.f;
 	if (s > 1.0f)
 	{
 		s = 1.0f;
 	}
 
-	d = tr.fogTable[(int)(s * (FOG_TABLE_SIZE - 1))];
-
-	return d;
+	return tr.fogTable[(int)(s * (FOG_TABLE_SIZE - 1))];
 }
 
 #define FOG_S   256
@@ -2851,21 +3035,26 @@ float R_FogFactor(float s, float t)
  */
 static void R_CreateFogImage(void)
 {
-	int   x, y;
+	int   x, y, yfx4, yfogs;
 	byte  *data;
-	float d;
+	float d, s, t,
+		rFOG_S = 1.0f / FOG_S,
+		rFOG_T = 1.0f / FOG_T;
 
 	data = (byte *)ri.Hunk_AllocateTempMemory(FOG_S * FOG_T * 4);
 
 	// S is distance, T is depth
 	for (x = 0; x < FOG_S; x++)
 	{
-		for (y = 0; y < FOG_T; y++)
+		s = ((float)(x) + 0.5f) * rFOG_S;
+		yfogs = x;
+		for (y = 0, t = 0.5; y < FOG_T; y++, t += 1.0)
 		{
-			d = R_FogFactor((x + 0.5f) / FOG_S, (y + 0.5f) / FOG_T);
-
-			data[(y * FOG_S + x) * 4 + 0] = data[(y * FOG_S + x) * 4 + 1] = data[(y * FOG_S + x) * 4 + 2] = 255;
-			data[(y * FOG_S + x) * 4 + 3] = 255 * d;
+			d = R_FogFactor(s, t * rFOG_T);
+			yfx4 = yfogs << 2; // *4;
+			data[yfx4 + 0] = data[yfx4 + 1] = data[yfx4 + 2] = 255;
+			data[yfx4 + 3] = (byte)(255 * d);
+			yfogs += FOG_S;
 		}
 	}
 	// standard openGL clamping doesn't really do what we want -- it includes
@@ -2876,6 +3065,7 @@ static void R_CreateFogImage(void)
 	ri.Hunk_FreeTempMemory(data);
 }
 
+// the default dimensions of the default images. Keep this value a power of 2
 #define DEFAULT_SIZE    128
 
 /**
@@ -2892,6 +3082,8 @@ static void R_CreateDefaultImage(void)
 	{
 		for (y = 0; y < 2; y++)
 		{
+			int d_1_y = DEFAULT_SIZE - 1 - y;
+
 			data[y][x][0] = 255;
 			data[y][x][1] = 128;
 			data[y][x][2] = 0;
@@ -2902,15 +3094,15 @@ static void R_CreateDefaultImage(void)
 			data[x][y][2] = 0;
 			data[x][y][3] = 255;
 
-			data[DEFAULT_SIZE - 1 - y][x][0] = 255;
-			data[DEFAULT_SIZE - 1 - y][x][1] = 128;
-			data[DEFAULT_SIZE - 1 - y][x][2] = 0;
-			data[DEFAULT_SIZE - 1 - y][x][3] = 255;
+			data[d_1_y][x][0] = 255;
+			data[d_1_y][x][1] = 128;
+			data[d_1_y][x][2] = 0;
+			data[d_1_y][x][3] = 255;
 
-			data[x][DEFAULT_SIZE - 1 - y][0] = 255;
-			data[x][DEFAULT_SIZE - 1 - y][1] = 128;
-			data[x][DEFAULT_SIZE - 1 - y][2] = 0;
-			data[x][DEFAULT_SIZE - 1 - y][3] = 255;
+			data[x][d_1_y][0] = 255;
+			data[x][d_1_y][1] = 128;
+			data[x][d_1_y][2] = 0;
+			data[x][d_1_y][3] = 255;
 		}
 	}
 
@@ -2938,7 +3130,7 @@ static void R_CreateRandomNormalsImage(void)
 			angle = M_TAU_F * r; // / 360.0;
 
 			VectorSet(n, cos(angle), sin(angle), r);
-			VectorNormalize(n);
+			VectorNormalizeOnly(n);
 
 			//VectorSet(n, crandom(), crandom(), crandom());
 
@@ -2981,8 +3173,10 @@ static void R_CreateAttenuationXYImage(void)
 	{
 		for (y = 0; y < ATTENUATION_XY_SIZE; y++)
 		{
-			d = (ATTENUATION_XY_SIZE / 2 - 0.5f - x) * (ATTENUATION_XY_SIZE / 2 - 0.5f - x) +
-			    (ATTENUATION_XY_SIZE / 2 - 0.5f - y) * (ATTENUATION_XY_SIZE / 2 - 0.5f - y);
+			float a2_5 = (ATTENUATION_XY_SIZE / 2) - 0.5f;
+			float a2_5x = a2_5 - x;
+			float a2_5y = a2_5 - y;
+			d = a2_5x * a2_5x + a2_5y * a2_5y; // dot
 			b = 4000 / d;
 			if (b > 255)
 			{
@@ -3200,18 +3394,11 @@ static void R_CreateDownScaleFBOImages(void)
 	if (r_hdrRendering->integer && glConfig2.textureFloatAvailable)
 	{
 		tr.downScaleFBOImage_quarter = R_CreateRenderImage("_downScaleFBOImage_quarter", qtrue, IF_RGBA16F, FT_NEAREST, WT_EDGE_CLAMP);
-	}
-	else
-	{
-		tr.downScaleFBOImage_quarter = R_CreateRenderImage("_downScaleFBOImage_quarter", qtrue, IF_NOCOMPRESSION, FT_NEAREST, WT_EDGE_CLAMP);
-	}
-
-	if (r_hdrRendering->integer && glConfig2.textureFloatAvailable)
-	{
 		tr.downScaleFBOImage_64x64 = R_CreateRenderImageSize("_downScaleFBOImage_64x64", 64, 64, IF_RGBA16F, FT_NEAREST, WT_EDGE_CLAMP);
 	}
 	else
 	{
+		tr.downScaleFBOImage_quarter = R_CreateRenderImage("_downScaleFBOImage_quarter", qtrue, IF_NOCOMPRESSION, FT_NEAREST, WT_EDGE_CLAMP);
 		tr.downScaleFBOImage_64x64 = R_CreateRenderImageSize("_downScaleFBOImage_64x64", 64, 64, IF_NOCOMPRESSION, FT_NEAREST, WT_EDGE_CLAMP);
 	}
 
@@ -3255,18 +3442,11 @@ static void R_CreateDeferredRenderFBOImages(void)
 	if (HDR_ENABLED())
 	{
 		tr.lightRenderFBOImage = R_CreateRenderImage("_lightRenderFBO", qfalse, IF_RGBA16F, FT_NEAREST, WT_EDGE_CLAMP);
-	}
-	else
-	{
-		tr.lightRenderFBOImage = R_CreateRenderImage("_lightRenderFBO", qfalse, IF_NOCOMPRESSION, FT_NEAREST, WT_EDGE_CLAMP);
-	}
-
-	if (HDR_ENABLED())
-	{
 		tr.deferredRenderFBOImage = R_CreateRenderImage("_deferredRenderFBO", qfalse, IF_RGBA16F, FT_NEAREST, WT_EDGE_CLAMP);
 	}
 	else
 	{
+		tr.lightRenderFBOImage = R_CreateRenderImage("_lightRenderFBO", qfalse, IF_NOCOMPRESSION, FT_NEAREST, WT_EDGE_CLAMP);
 		tr.deferredRenderFBOImage = R_CreateRenderImage("_deferredRenderFBO", qfalse, IF_NOCOMPRESSION, FT_NEAREST, WT_EDGE_CLAMP);
 	}
 }
@@ -3425,6 +3605,8 @@ void R_CreateBuiltinImages(void)
 	byte  *out;
 	float s, value;
 	byte  intensity;
+	const rDEFAULT_SIZE = 1.0f / DEFAULT_SIZE;
+	const rDEFAULT_SIZE2 = 2.0f / DEFAULT_SIZE;
 
 	R_CreateDefaultImage();
 
@@ -3499,9 +3681,10 @@ void R_CreateBuiltinImages(void)
 	{
 		for (x = 0; x < DEFAULT_SIZE; x++, out += 4)
 		{
-			s = (((float)x + 0.5f) * (2.0f / DEFAULT_SIZE) - 1.0f);
+			//s = (((float)x + 0.5f) * (2.0f / DEFAULT_SIZE) - 1.0f);
+			s = ((float)x + 0.5f) * rDEFAULT_SIZE2 - 1.0f;
 
-			s = Q_fabs(s) - (1.0f / DEFAULT_SIZE);
+			s = Q_fabs(s) - rDEFAULT_SIZE; // (1.0f / DEFAULT_SIZE);
 
 			value = 1.0f - (s * 2.0f) + (s * s);
 
@@ -3657,9 +3840,9 @@ void R_InitImages(void)
 	Ren_Developer("------- R_InitImages -------\n");
 
 	Com_Memset(r_imageHashTable, 0, sizeof(r_imageHashTable));
-	Com_InitGrowList(&tr.images, 4096);
-	Com_InitGrowList(&tr.lightmaps, 128);
-	Com_InitGrowList(&tr.deluxemaps, 128);
+	Com_InitGrowList(&tr.images, 100); //Com_InitGrowList(&tr.images, 4096);
+	Com_InitGrowList(&tr.lightmaps, 20);
+	Com_InitGrowList(&tr.deluxemaps, 0); //Com_InitGrowList(&tr.deluxemaps, 128);
 
 	// build brightness translation tables
 	R_SetColorMappings();

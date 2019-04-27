@@ -12,7 +12,6 @@ textures/goldrush/lmterrain_0
 	q3map_baseshader textures/goldrush/lmterrain_base
 	surfaceparm landmine
 	surfaceparm gravelsteps
-
 	{
 	    stage diffuseMap
 		map textures/temperate_sd/sand_bubbles_bright.tga
@@ -111,7 +110,6 @@ textures/goldrush/lmterrain_0to1
 textures/goldrush/lmterrain_0to2
 {
 	q3map_baseshader textures/goldrush/lmterrain_base
-	
 	{
 	    stage diffuseMap
 		map textures/temperate_sd/sand_bubbles_bright.tga
@@ -233,7 +231,6 @@ textures/goldrush/lmterrain_1
 		tcmod scale 1.75 1.75
 		alphaGen vertex
 	}
-
 	{
 	    stage diffuseMap
 		map textures/desert_sd/pavement_quad_sandy.tga
@@ -466,7 +463,6 @@ textures/goldrush/lmterrain_3
 	q3map_baseshader textures/goldrush/lmterrain_base
 	surfaceparm gravelsteps
 	surfaceparm landmine
-	
 	{
 	    stage diffuseMap
 		map textures/desert_sd/road_dirty_gravel.tga
@@ -519,7 +515,6 @@ textures/goldrush/lmterrain_3
 textures/goldrush/pavement_quad
 {
 	qer_editorimage textures/desert_sd/pavement_quad_sandy
-	
 	{
 	    stage diffuseMap
 		map textures/desert_sd/pavement_quad_sandy.tga
@@ -571,11 +566,9 @@ textures/goldrush/sandygrass_b_phong
 	qer_editorimage textures/egypt_floor_sd/sandygrass_b.tga
 	q3map_nonplanar
 	q3map_shadeangle 135
-	
 	diffuseMap textures/egypt_floor_sd/sandygrass_b.tga
     bumpMap textures/egypt_floor_sd/sandygrass_b_n.tga
 	specularMap textures/egypt_floor_sd/sandygrass_b_r.tga
-	
 	surfaceparm landmine
 	surfaceparm grasssteps
 	{
@@ -589,24 +582,20 @@ textures/goldrush/camp_map
 {
 	qer_editorimage gfx/loading/camp_map.tga
 	surfaceparm woodsteps
-	
 	implicitMap gfx/loading/camp_map.tga
 }
 
 textures/goldrush/canvas_nondeform
 {
 	qer_editorimage textures/egypt_props_sd/siwa_canvas1.tga
-	
 	diffuseMap textures/egypt_props_sd/siwa_canvas1.tga
 	bumpMap textures/egypt_props_sd/siwa_canvas1_n.tga
 	specularMap textures/egypt_props_sd/siwa_canvas1_r.tga
-	
 	cull disable
 	nofog
 	surfaceparm alphashadow
 	surfaceparm nomarks
 	surfaceparm trans
-	implicitMap textures/egypt_props_sd/siwa_canvas1.tga
 }
 
 //Needs to be there for bridge...
@@ -614,7 +603,6 @@ textures/goldrush/canvas_nondeform
 textures/desert_sd/road_dirty_gravel
 {
     qer_editorimage  textures/desert_sd/road_dirty_gravel.tga
-    
     {
 	    stage diffuseMap
 		map textures/desert_sd/road_dirty_gravel.tga
@@ -658,7 +646,6 @@ textures/desert_sd/road_dirty_gravel
 		alphaGen vertex
 		tcMod scale 1.2 1.2
 	}
-	
 	{
 		map $lightmap
 		blendFunc GL_DST_COLOR GL_ZERO

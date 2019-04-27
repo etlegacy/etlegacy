@@ -7,7 +7,6 @@ textures/castle_wood/cwood_c10
 	bumpmap textures/castle_wood/cwood_c10_n.tga
 	specularmap textures/castle_wood/cwood_c10_r.tga
 	surfaceparm woodsteps
-	implicitMap -
 }
 
 textures/castle_wood/cwood_c18
@@ -17,7 +16,6 @@ textures/castle_wood/cwood_c18
 	bumpmap textures/castle_wood/cwood_c18_n.tga
 	specularmap textures/castle_wood/cwood_c18_r.tga
 	surfaceparm woodsteps
-	implicitMap -
 }
 
 textures/castle_wood/cwood_mo2s1
@@ -27,7 +25,6 @@ textures/castle_wood/cwood_mo2s1
 	bumpmap textures/castle_wood/cwood_mo2s1_n.tga
 	specularmap textures/castle_wood/cwood_mo2s1_r.tga
 	surfaceparm woodsteps
-	implicitMap -
 }
 
 textures/castle_wood/cwood_mo5c
@@ -37,7 +34,6 @@ textures/castle_wood/cwood_mo5c
 	bumpmap textures/castle_wood/cwood_mo5c_n.tga
 	specularmap textures/castle_wood/cwood_mo5c_r.tga
 	surfaceparm woodsteps
-	implicitMap -
 }
 
 textures/castle_wood/cwood_mo5cb
@@ -47,7 +43,6 @@ textures/castle_wood/cwood_mo5cb
 	bumpmap textures/castle_wood/cwood_mo5cb_n.tga
 	specularmap textures/castle_wood/cwood_mo5cb_r.tga
 	surfaceparm woodsteps
-	implicitMap -
 }
 
 textures/castle_wood/cwood_mo6
@@ -57,5 +52,4 @@ textures/castle_wood/cwood_mo6
 	bumpmap textures/castle_wood/cwood_mo6_n.tga
 	specularmap textures/castle_wood/cwood_mo6_r.tga
 	surfaceparm woodsteps
-	implicitMap -
 }

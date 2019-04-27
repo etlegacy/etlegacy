@@ -2636,8 +2636,8 @@ void CG_LimboPanel_WeaponPanel(panel_button_t *button)
  */
 void CG_LimboPanel_RenderCounterNumber(float x, float y, float w, float h, float number, qhandle_t shaderBack, qhandle_t shaderRoll, int numbuttons)
 {
-	float numberS = (((numbuttons - 1) - number) + 0) * (1.f / numbuttons);
-	float numberE = (((numbuttons - 1) - number) + 1) * (1.f / numbuttons);
+	float numberS = (((numbuttons - 1) - number) + 0) * (1.0f / numbuttons);
+	float numberE = (((numbuttons - 1) - number) + 1) * (1.0f / numbuttons);
 
 	CG_AdjustFrom640(&x, &y, &w, &h);
 	trap_R_DrawStretchPic(x, y, w, h, 0, 0, 1, 1, shaderBack);

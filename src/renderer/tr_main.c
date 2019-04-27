@@ -67,11 +67,11 @@ qboolean    fogIsOn  = qfalse;
  */
 void R_Fog(glfog_t *curfog)
 {
-	if (!r_wolfFog->integer)
+	/*if (!r_wolfFog->integer)
 	{
 		R_FogOff();
 		return;
-	}
+	}*/
 
 	if (!curfog->registered)
 	{
@@ -140,10 +140,10 @@ void R_FogOn(void)
 		return;
 	}
 
-	if (!r_wolfFog->integer)
+	/*if (!r_wolfFog->integer)
 	{
 		return;
-	}
+	}*/
 
 	if (backEnd.refdef.rdflags & RDF_SKYBOXPORTAL)     // don't force world fog on portal sky
 	{

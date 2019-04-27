@@ -54,7 +54,8 @@ void CG_BubbleTrail(vec3_t start, vec3_t end, float size, float spacing)
 
 	VectorCopy(start, move);
 	VectorSubtract(end, start, vec);
-	len = VectorNormalize(vec);
+	//len = VectorNormalize(vec);
+	VectorNorm(vec, &len);
 
 	// advance a random amount first
 	VectorMA(move, i, vec, move);
@@ -68,7 +69,8 @@ void CG_BubbleTrail(vec3_t start, vec3_t end, float size, float spacing)
 		le->leType    = LE_MOVE_SCALE_FADE;
 		le->startTime = cg.time;
 		le->endTime   = cg.time + 1000 + random() * 250;
-		le->lifeRate  = 1.0f / (le->endTime - le->startTime);
+		//le->lifeRate  = 1.0f / (le->endTime - le->startTime);
+		le->lifeRate = rcp((float)(le->endTime - le->startTime));
 
 		re             = &le->refEntity;
 		re->shaderTime = cg.time / 1000.0f;
@@ -143,11 +145,13 @@ localEntity_t *CG_SmokePuff(const vec3_t p, const vec3_t vel,
 	le->fadeInTime = fadeInTime;
 	if (fadeInTime > startTime)
 	{
-		le->lifeRate = 1.0f / (le->endTime - le->fadeInTime);
+		//le->lifeRate = 1.0f / (le->endTime - le->fadeInTime);
+		le->lifeRate = rcp((float)(le->endTime - le->fadeInTime));
 	}
 	else
 	{
-		le->lifeRate = 1.0f / (le->endTime - le->startTime);
+		//le->lifeRate = 1.0f / (le->endTime - le->startTime);
+		le->lifeRate = rcp((float)(le->endTime - le->startTime));
 	}
 
 	le->color[0] = r;
@@ -313,6 +317,7 @@ void CG_Bleed(vec3_t origin, int entityNum)
 	{
 		vec3_t vhead, vbody, bOrigin, dir, vec, pvec, ndir;
 		int    i, j;
+		float  dot;
 
 		CG_GetBleedOrigin(vhead, vbody, entityNum);
 
@@ -322,14 +327,18 @@ void CG_Bleed(vec3_t origin, int entityNum)
 		// if it's below the waste, or above the head, clamp
 		VectorSubtract(vhead, vbody, vec);
 		VectorSubtract(bOrigin, vbody, pvec);
-		if (DotProduct(pvec, vec) < 0)
+		//if (DotProduct(pvec, vec) < 0)
+		Dot(pvec, vec, dot);
+		if (dot < 0)
 		{
 			VectorCopy(vbody, bOrigin);
 		}
 		else
 		{
 			VectorSubtract(bOrigin, vhead, pvec);
-			if (DotProduct(pvec, vec) > 0)
+			//if (DotProduct(pvec, vec) > 0)
+			Dot(pvec, vec, dot);
+			if (dot > 0)
 			{
 				VectorCopy(vhead, bOrigin);
 			}
@@ -337,7 +346,7 @@ void CG_Bleed(vec3_t origin, int entityNum)
 
 		// spawn some blood trails, heading out towards the impact point
 		VectorSubtract(origin, bOrigin, dir);
-		VectorNormalize(dir);
+		VectorNormalizeOnly(dir);
 
 		{
 			float  len;
@@ -359,7 +368,7 @@ void CG_Bleed(vec3_t origin, int entityNum)
 			{
 				ndir[j] += crandom() * 0.3f;
 			}
-			VectorNormalize(ndir);
+			VectorNormalizeOnly(ndir);
 			CG_AddBloodTrails(bOrigin, ndir,
 			                  100,  // speed
 			                  450 + (int)(crandom() * 50),       // duration
@@ -679,7 +688,7 @@ void CG_GibPlayer(centity_t *cent, vec3_t playerOrigin, vec3_t gdir)
 				foundtag = qtrue;
 
 				VectorSubtract(origin, re->origin, dir);
-				VectorNormalize(dir);
+				VectorNormalizeOnly(dir);
 
 				// spawn a gib
 				velocity[0] = dir[0] * (0.5f + random()) * GIB_VELOCITY * 0.3f;
@@ -806,7 +815,7 @@ void CG_SparklerSparks(vec3_t origin, int count)
 		le->pos.trType = TR_GRAVITY;
 		VectorCopy(origin, le->pos.trBase);
 		VectorSet(le->pos.trDelta, crandom(), crandom(), crandom());
-		VectorNormalize(le->pos.trDelta);
+		VectorNormalizeOnly(le->pos.trDelta);
 		VectorScale(le->pos.trDelta, FUSE_SPARK_SPEED, le->pos.trDelta);
 		le->pos.trTime = cg.time;
 	}
@@ -1037,7 +1046,7 @@ static qboolean CG_SmokeSpritePhysics(smokesprite_t *smokesprite, const float di
 		VectorCopy(tr.endpos, smokesprite->pos);
 
 		// bounce off
-		//dot = DotProduct( smokesprite->dir, tr.plane.normal );
+		//Dot(smokesprite->dir, tr.plane.normal, dot);
 		//VectorMA( smokesprite->dir, -2*dot, tr.plane.normal, smokesprite->dir );
 		//VectorScale( smokesprite->dir, .25f, smokesprite->dir );
 	} // else {
@@ -1094,7 +1103,8 @@ qboolean CG_SpawnSmokeSprite(centity_t *cent, float dist)
 void CG_RenderSmokeGrenadeSmoke(centity_t *cent, const weaponInfo_t *weapon)
 {
 	//int numSpritesForRadius, numNewSpritesNeeded = 0;
-	float spawnrate = (1.f / SMOKEBOMB_SPAWNRATE) * 1000.f;
+	//float spawnrate = (1.0f / SMOKEBOMB_SPAWNRATE) * 1000.f;
+	float spawnrate = rcp((float)SMOKEBOMB_SPAWNRATE) * 1000.f;
 
 	if (!cent->currentState.effect1Time)
 	{
@@ -1281,7 +1291,7 @@ void CG_AddSmokeSprites(void)
 		halfSmokeSpriteHeight = 0.5f * smokesprite->size;
 
 		VectorCopy(cg.refdef_current->viewaxis[1], tmp);
-		RotatePointAroundVector(right, cg.refdef_current->viewaxis[0], tmp, 0);
+		RotatePointAroundVector(right, cg.refdef_current->viewaxis[0], tmp, 0); // ?! rotate 0 degrees? (just to get 'right')
 		CrossProduct(cg.refdef_current->viewaxis[0], right, up);
 
 		VectorMA(smokesprite->pos, halfSmokeSpriteHeight, up, top);

@@ -9,10 +9,14 @@ varying vec4 var_Color;
 void main()
 {
 	// calculate the screen texcoord in the 0.0 to 1.0 range
+#if 0
 	vec2 st = gl_FragCoord.st * r_FBufScale;
 
 	// scale by the screen non-power-of-two-adjust
 	st *= r_NPOTScale;
+#else
+	vec2 st = gl_FragCoord.st * r_FBufNPOTScale;
+#endif
 
 	vec4 color = texture2D(u_CurrentMap, st);
 	color *= var_Color;

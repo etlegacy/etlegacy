@@ -63,7 +63,7 @@ qboolean PM_SlideMove(qboolean gravity)
 	trace_t trace;
 	vec3_t  end;
 	float   time_left;
-	float   into;
+	float   into, dot;
 	vec3_t  endVelocity;
 	vec3_t  endClipVelocity;
 
@@ -101,7 +101,7 @@ qboolean PM_SlideMove(qboolean gravity)
 	}
 
 	// never turn against original velocity
-	VectorNormalize2(pm->ps->velocity, planes[numplanes]);
+	VectorNormalize2Only(pm->ps->velocity, planes[numplanes]);
 	numplanes++;
 
 	for (bumpcount = 0 ; bumpcount < numbumps ; bumpcount++)
@@ -157,7 +157,9 @@ qboolean PM_SlideMove(qboolean gravity)
 
 		for (i = 0 ; i < numplanes ; i++)
 		{
-			if (DotProduct(trace.plane.normal, planes[i]) > 0.99f)
+			//if (DotProduct(trace.plane.normal, planes[i]) > 0.99f)
+			Dot(trace.plane.normal, planes[i], dot);
+			if (dot > 0.99f)
 			{
 				if (extrabumps <= 0)
 				{
@@ -199,7 +201,8 @@ qboolean PM_SlideMove(qboolean gravity)
 		// find a plane that it enters
 		for (i = 0 ; i < numplanes ; i++)
 		{
-			into = DotProduct(pm->ps->velocity, planes[i]);
+			//into = DotProduct(pm->ps->velocity, planes[i]);
+			Dot(pm->ps->velocity, planes[i], into);
 			if (into >= 0.1f)
 			{
 				continue;       // move doesn't interact with the plane
@@ -224,7 +227,9 @@ qboolean PM_SlideMove(qboolean gravity)
 				{
 					continue;
 				}
-				if (DotProduct(clipVelocity, planes[j]) >= 0.1f)
+				//if (DotProduct(clipVelocity, planes[j]) >= 0.1f)
+				Dot(clipVelocity, planes[j], dot);
+				if (dot >= 0.1f)
 				{
 					continue;       // move doesn't interact with the plane
 				}
@@ -234,20 +239,24 @@ qboolean PM_SlideMove(qboolean gravity)
 				PM_ClipVelocity(endClipVelocity, planes[j], endClipVelocity, OVERCLIP);
 
 				// see if it goes back into the first clip plane
-				if (DotProduct(clipVelocity, planes[i]) >= 0)
+				//if (DotProduct(clipVelocity, planes[i]) >= 0)
+				Dot(clipVelocity, planes[i], dot);
+				if (dot >= 0)
 				{
 					continue;
 				}
 
 				// slide the original velocity along the crease
 				CrossProduct(planes[i], planes[j], dir);
-				VectorNormalize(dir);
-				d = DotProduct(dir, pm->ps->velocity);
+				VectorNormalizeOnly(dir);
+				//d = DotProduct(dir, pm->ps->velocity);
+				Dot(dir, pm->ps->velocity, d);
 				VectorScale(dir, d, clipVelocity);
 
-				CrossProduct(planes[i], planes[j], dir);
-				VectorNormalize(dir);
-				d = DotProduct(dir, endVelocity);
+				//CrossProduct(planes[i], planes[j], dir);
+				//VectorNormalizeOnly(dir);
+				//d = DotProduct(dir, endVelocity);
+				Dot(dir, endVelocity, d);
 				VectorScale(dir, d, endClipVelocity);
 
 				// see if there is a third plane the the new move enters
@@ -257,7 +266,9 @@ qboolean PM_SlideMove(qboolean gravity)
 					{
 						continue;
 					}
-					if (DotProduct(clipVelocity, planes[k]) >= 0.1f)
+					//if (DotProduct(clipVelocity, planes[k]) >= 0.1f)
+					Dot(clipVelocity, planes[k], dot);
+					if (dot >= 0.1f)
 					{
 						continue;       // move doesn't interact with the plane
 					}
@@ -299,6 +310,7 @@ void PM_StepSlideMove(qboolean gravity)
 	vec3_t  down_o, down_v;
 	trace_t trace;
 	vec3_t  up, down;
+	float dot;
 
 	VectorCopy(pm->ps->origin, start_o);
 	VectorCopy(pm->ps->velocity, start_v);
@@ -349,7 +361,9 @@ void PM_StepSlideMove(qboolean gravity)
 	PM_TraceAll(&trace, start_o, down);
 	VectorSet(up, 0, 0, 1);
 	// never step up when you still have up velocity
-	if (pm->ps->velocity[2] > 0 && (trace.fraction == 1.0f || DotProduct(trace.plane.normal, up) < 0.7f))
+	//if (pm->ps->velocity[2] > 0 && (trace.fraction == 1.0f || DotProduct(trace.plane.normal, up) < 0.7f))
+	Dot(trace.plane.normal, up, dot);
+	if (pm->ps->velocity[2] > 0 && (trace.fraction == 1.0f || dot < 0.7f))
 	{
 		return;
 	}

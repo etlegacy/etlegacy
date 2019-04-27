@@ -214,11 +214,11 @@ void GibEntity(gentity_t *self, int killer)
 		if (other->client)
 		{
 			VectorSubtract(self->r.currentOrigin, other->r.currentOrigin, dir);
-			VectorNormalize(dir);
+			VectorNormalizeOnly(dir);
 		}
 		else if (!VectorCompare(other->s.pos.trDelta, vec3_origin))
 		{
-			VectorNormalize2(other->s.pos.trDelta, dir);
+			VectorNormalize2Only(other->s.pos.trDelta, dir);
 		}
 	}
 
@@ -1074,9 +1074,10 @@ qboolean IsArmShot(gentity_t *targ, gentity_t *ent, vec3_t point, meansOfDeath_t
 	AngleVectors(targ->client->ps.viewangles, view, NULL, NULL);
 	view[2] = 0;
 
-	VectorNormalize(path);
+	VectorNormalizeOnly(path);
 
-	dot = DotProduct(path, view);
+	//dot = DotProduct(path, view);
+	Dot(path, view, dot);
 
 	if (dot > 0.4f || dot < -0.75f)
 	{
@@ -1300,7 +1301,7 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 	}
 	else
 	{
-		VectorNormalize(dir);
+		VectorNormalizeOnly(dir);
 	}
 
 	knockback = damage;

@@ -331,7 +331,7 @@ void CG_GetWindVector(vec3_t dir)
 	dir[0] = random() * 0.25f;
 	dir[1] = (float)sin(0.00001 * cg.time); // simulate a little wind so it looks natural
 	dir[2] = random(); // one direction (so smoke goes side-like)
-	VectorNormalize(dir);
+	VectorNormalizeOnly(dir);
 }
 
 /**
@@ -631,7 +631,8 @@ void CG_RailTrail2(vec3_t color, vec3_t start, vec3_t end, int index, int sideNu
 	le->leType    = LE_CONST_RGB;
 	le->startTime = cg.time;
 	le->endTime   = cg.time + 50; // FIXME: make it sv_fps dependent?
-	le->lifeRate  = 1.0f / (le->endTime - le->startTime);
+	//le->lifeRate  = 1.0f / (le->endTime - le->startTime);
+	le->lifeRate = rcp((float)(le->endTime - le->startTime));
 
 	re->shaderTime   = cg.time / 1000.0f;
 	re->reType       = RT_RAIL_CORE;
@@ -2053,7 +2054,8 @@ static void CG_CalculateWeaponPosition(vec3_t origin, vec3_t angles)
 
 		if (pronemovingtime > 0)     // div by 0
 		{
-			float factor = pronemovingtime > 200 ? 1.f : 1.f / (200.f / (float)pronemovingtime);
+			//float factor = pronemovingtime > 200 ? 1.0f : 1.0f / (200.f / (float)pronemovingtime);
+			float factor = pronemovingtime > 200 ? 1.0f : rcp(200.f / (float)pronemovingtime);
 
 			VectorMA(origin, factor * -20, cg.refdef_current->viewaxis[0], origin);
 			VectorMA(origin, factor * 3, cg.refdef_current->viewaxis[1], origin);
@@ -2065,7 +2067,8 @@ static void CG_CalculateWeaponPosition(vec3_t origin, vec3_t angles)
 
 		if (pronenomovingtime < 200)
 		{
-			float factor = pronenomovingtime == 0 ? 1.f : 1.f - (1.f / (200.f / (float)pronenomovingtime));
+			//float factor = pronenomovingtime == 0 ? 1.0f : 1.0f - (1.0f / (200.f / (float)pronenomovingtime));
+			float factor = pronenomovingtime == 0 ? 1.0f : 1.0f - rcp(200.f / (float)pronenomovingtime);
 
 			VectorMA(origin, factor * -20, cg.refdef_current->viewaxis[0], origin);
 			VectorMA(origin, factor * 3, cg.refdef_current->viewaxis[1], origin);
@@ -4722,11 +4725,11 @@ void CG_FireWeapon(centity_t *cent)
 					VectorCopy(cent->currentState.pos.trBase, gorg);
 					VectorCopy(cg.refdef_current->vieworg, porg);
 					VectorSubtract(gorg, porg, norm);
-					gdist = VectorNormalize(norm);
-
-					if (gdist > 512 && gdist < 4096)       // temp dist.  TODO: use numbers that are weapon specific
+					//gdist = VectorNormalize(norm);
+					VectorNorm(norm, &gdist);
+					if (gdist > 512.f && gdist < 4096.f)       // temp dist.  TODO: use numbers that are weapon specific
 					{   // use gorg as the new sound origin
-						VectorMA(cg.refdef_current->vieworg, 64, norm, gorg);     // sound-on-a-stick
+						VectorMA(cg.refdef_current->vieworg, 64.f, norm, gorg);     // sound-on-a-stick
 						trap_S_StartSoundEx(gorg, ent->number, CHAN_WEAPON, fireEchosound[c], SND_NOCUT);
 					}
 				}
@@ -5070,7 +5073,8 @@ void CG_WaterRipple(qhandle_t shader, vec3_t loc, vec3_t dir, int size, int life
 
 	le->startTime = cg.time;
 	le->endTime   = cg.time + lifetime;
-	le->lifeRate  = 1.0f / (le->endTime - le->startTime);
+	//le->lifeRate  = 1.0f / (le->endTime - le->startTime);
+	le->lifeRate = rcp((float)(le->endTime - le->startTime));
 
 	re = &le->refEntity;
 	VectorCopy(loc, re->origin);
@@ -5507,9 +5511,9 @@ void CG_MissileHitWall(int weapon, int missileEffect, vec3_t origin, vec3_t dir,
 		VectorCopy(origin, gorg);
 		VectorCopy(cg.refdef_current->vieworg, porg);
 		VectorSubtract(gorg, porg, norm);
-		gdist = VectorNormalize(norm);
-
-		if (gdist > 1200 && gdist < 8000)      // 1200 is max cam shakey dist (2*600) use gorg as the new sound origin
+		//gdist = VectorNormalize(norm);
+		VectorNorm(norm, &gdist);
+		if (gdist > 1200.f && gdist < 8000.f)      // 1200 is max cam shakey dist (2*600) use gorg as the new sound origin
 		{
 			VectorMA(cg.refdef_current->vieworg, sfx2range, norm, gorg);   // non-distance falloff makes more sense; sfx2range was gdist*0.2
 			// sfx2range is variable to give us minimum volume control different explosion sizes (see mortar, panzerfaust, and grenade)
@@ -5638,7 +5642,8 @@ void CG_SpawnTracer(int sourceEnt, vec3_t pstart, vec3_t pend)
 	}
 
 	VectorSubtract(end, start, dir);
-	dist = VectorNormalize(dir);
+	//dist = VectorNormalize(dir);
+	VectorNorm(dir, &dist);
 
 	if (dist < 2.0f * cg_tracerLength.value)
 	{
@@ -5695,12 +5700,14 @@ void CG_DrawTracer(const vec3_t start, const vec3_t finish)
 
 	VectorSubtract(finish, start, forward);
 
-	line[0] = DotProduct(forward, cg.refdef_current->viewaxis[1]);
-	line[1] = DotProduct(forward, cg.refdef_current->viewaxis[2]);
+	/*line[0] = DotProduct(forward, cg.refdef_current->viewaxis[1]);
+	line[1] = DotProduct(forward, cg.refdef_current->viewaxis[2]);*/
+	Dot(forward, cg.refdef_current->viewaxis[1], line[0]);
+	Dot(forward, cg.refdef_current->viewaxis[2], line[1]);
 
 	VectorScale(cg.refdef_current->viewaxis[1], line[1], right);
 	VectorMA(right, -line[0], cg.refdef_current->viewaxis[2], right);
-	VectorNormalize(right);
+	VectorNormalizeOnly(right);
 
 	VectorMA(finish, cg_tracerWidth.value, right, verts[0].xyz);
 	verts[0].st[0]       = 1;
@@ -5751,15 +5758,16 @@ void CG_Tracer(const vec3_t source, const vec3_t dest, int sparks)
 
 	// tracer
 	VectorSubtract(dest, source, forward);
-	len = VectorNormalize(forward);
+	//len = VectorNormalize(forward);
+	VectorNorm(forward, &len);
 
 	// start at least a little ways from the muzzle
-	if (len < 100 && !sparks)
+	if (len < 100.f && !sparks)
 	{
 		return;
 	}
 
-	begin = 50 + random() * (len - 60);
+	begin = 50.f + random() * (len - 60.f);
 	end   = begin + cg_tracerLength.value;
 
 	if (end > len)
@@ -6104,7 +6112,7 @@ void CG_Bullet(vec3_t end, int sourceEntityNum, qboolean flesh, int fleshEntityN
 
 		// smoke puffs (sometimes with some blood)
 		VectorSubtract(end, start, smokedir); // get a nice "through the body" vector
-		VectorNormalize(smokedir);
+		VectorNormalizeOnly(smokedir);
 		// all this to come up with a decent center-body displacement of bullet impact point
 		VectorSubtract(cent->currentState.pos.trBase, end, tmpv);
 		tmpv[2] = 0;
@@ -6171,7 +6179,7 @@ void CG_Bullet(vec3_t end, int sourceEntityNum, qboolean flesh, int fleshEntityN
 				vec4_t projection;
 
 				VectorSubtract(end, start, dir);
-				VectorNormalize(dir);
+				VectorNormalizeOnly(dir);
 				VectorMA(end, 128, dir, trend);
 				trap_CM_BoxTrace(&trace, end, trend, NULL, NULL, 0, MASK_SHOT & ~CONTENTS_BODY);
 

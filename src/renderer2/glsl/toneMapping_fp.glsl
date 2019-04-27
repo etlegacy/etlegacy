@@ -10,6 +10,7 @@ const vec3 BLUE_SHIFT_VECTOR = vec3(1.05, 0.97, 1.27);
 
 void main()
 {
+#if 0
 	// calculate the screen texcoord in the 0.0 to 1.0 range
 	vec2 st = gl_FragCoord.st * r_FBufScale;
 
@@ -20,7 +21,12 @@ void main()
 
 	// scale by the screen non-power-of-two-adjust
 	st *= r_NPOTScale;
-
+#else
+	vec2 st = gl_FragCoord.st * r_FBufNPOTScale;
+#if defined(BRIGHTPASS_FILTER)
+	st *= vec2(4.0, 4.0);
+#endif
+#endif
 	vec4 color = texture2D(u_CurrentMap, st);
 
 	// see http://www.gamedev.net/reference/articles/article2208.asp
@@ -37,8 +43,11 @@ void main()
 	}
 #endif
 
+	float KaL = u_HDRKey / u_HDRAverageLuminance;
+
 	// calculate the relative luminance
-	float Yr = u_HDRKey * Y / u_HDRAverageLuminance;
+	//float Yr = u_HDRKey * Y / u_HDRAverageLuminance;
+	float Yr = Y * KaL;
 
 	float Ymax = u_HDRMaxLuminance;
 
@@ -55,14 +64,19 @@ void main()
 	// Y = Y luminance
 	Yxy.r = XYZ.g;
 
+	float rXYZrgb = 1.0 / (XYZ.r + XYZ.g + XYZ.b);
+
 	// x = X / (X + Y + Z)
-	Yxy.g = XYZ.r / (XYZ.r + XYZ.g + XYZ.b);
+	//Yxy.g = XYZ.r / (XYZ.r + XYZ.g + XYZ.b);
+	Yxy.g = XYZ.r * rXYZrgb;
 
 	// y = Y / (X + Y + Z)
-	Yxy.b = XYZ.g / (XYZ.r + XYZ.g + XYZ.b);
+	//Yxy.b = XYZ.g / (XYZ.r + XYZ.g + XYZ.b);
+	Yxy.b = XYZ.g * rXYZrgb;
 
 	// (Lp) map average luminance to the middlegrey zone by scaling pixel luminance
-	float Lp = Yxy.r * u_HDRKey / u_HDRAverageLuminance;
+	//float Lp = Yxy.r * u_HDRKey / u_HDRAverageLuminance;
+	float Lp = Yxy.r * KaL;
 
 	// (Ld) scale all luminance within a displayable range of 0 to 1
 

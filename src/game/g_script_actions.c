@@ -1580,7 +1580,8 @@ qboolean G_ScriptAction_GotoMarker(gentity_t *ent, char *params)
 			ent->s.pos.trType = TR_LINEAR_STOP;
 			ent->s.pos.trTime = level.time;
 			VectorCopy(ent->r.currentOrigin, ent->s.pos.trBase);
-			dist = VectorNormalize(vec);
+			//dist = VectorNormalize(vec);
+			VectorNorm(vec, &dist);
 			VectorScale(vec, speed, ent->s.pos.trDelta);
 			ent->s.pos.trDuration = (int)(1000 * (dist / speed));
 
@@ -1622,7 +1623,8 @@ qboolean G_ScriptAction_GotoMarker(gentity_t *ent, char *params)
 
 				if (frac < 1)
 				{
-					VectorScale(ent->s.pos.trDelta, 1.0f / (1.0f + frac), ent->s.pos.trDelta);
+					//VectorScale(ent->s.pos.trDelta, 1.0f / (1.0f + frac), ent->s.pos.trDelta);
+					VectorScale(ent->s.pos.trDelta, rcp(1.0f + frac), ent->s.pos.trDelta);
 					ent->s.pos.trDuration = (ent->s.pos.trDuration / 50) * 50 + 50;
 				}
 			}

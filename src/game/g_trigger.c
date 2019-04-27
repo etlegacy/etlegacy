@@ -361,7 +361,8 @@ void AimAtTarget(gentity_t *self)
 	// set s.origin2 to the push velocity
 	VectorSubtract(ent->s.origin, origin, self->s.origin2);
 	self->s.origin2[2] = 0;
-	dist               = VectorNormalize(self->s.origin2);
+	//dist = VectorNormalize(self->s.origin2);
+	VectorNorm(self->s.origin2, &dist);
 
 	forward = dist / time;
 	VectorScale(self->s.origin2, forward, self->s.origin2);

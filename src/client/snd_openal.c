@@ -254,6 +254,7 @@ static sfxHandle_t S_AL_BufferFindFree(void)
 
 	// Shit...
 	Com_Error(ERR_FATAL, "S_AL_BufferFindFree: No free sound handles");
+	return -1; // supress compiler warning
 }
 
 /**

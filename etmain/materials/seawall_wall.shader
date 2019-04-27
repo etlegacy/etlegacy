@@ -11,7 +11,6 @@ textures/seawall_wall/metal_trim1
 	bumpmap textures/seawall_wall/metal_trim1_n.tga
 	specularmap textures/seawall_wall/metal_trim1_r.tga
 	surfaceparm metalsteps
-	implicitMap -
 }
 
 textures/seawall_wall/wall02_mid
@@ -20,7 +19,6 @@ textures/seawall_wall/wall02_mid
 	diffusemap textures/seawall_wall/wall02_mid.tga
 	bumpmap textures/seawall_wall/wall02_mid_n.tga
 	specularmap textures/seawall_wall/wall02_mid_r.tga
-	implicitMap -
 }
 
 textures/seawall_wall/wall03_mid
@@ -29,7 +27,6 @@ textures/seawall_wall/wall03_mid
 	diffusemap textures/seawall_wall/wall03_mid.tga
 	bumpmap textures/seawall_wall/wall03_mid_n.tga
 	specularmap textures/seawall_wall/wall03_mid_r.tga
-	implicitMap -
 }
 
 textures/seawall_wall/wall03_top
@@ -38,5 +35,4 @@ textures/seawall_wall/wall03_top
 	diffusemap textures/seawall_wall/wall03_top.tga
 	bumpmap textures/seawall_wall/wall03_top_n.tga
 	specularmap textures/seawall_wall/wall03_top_r.tga
-	implicitMap -
 }

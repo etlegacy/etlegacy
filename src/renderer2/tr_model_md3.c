@@ -157,9 +157,9 @@ static void R_MD3_CreateVBO_Surfaces(mdvModel_t *mdvModel)
 
 			for (j = 0, vert = vertexes; j < (surf->numVerts * mdvModel->numFrames); j++, vert++)
 			{
-				VectorNormalize(vert->tangent);
-				VectorNormalize(vert->binormal);
-				VectorNormalize(vert->normal);
+				VectorNormalizeOnly(vert->tangent);
+				VectorNormalizeOnly(vert->binormal);
+				VectorNormalizeOnly(vert->normal);
 			}
 /* FIXME: Hunk_FreeTempMemory: not the final block
  	 	 	// Note: This does basically work - vanilla truck is fine with smoothed normals
@@ -232,7 +232,7 @@ static void R_MD3_CreateVBO_Surfaces(mdvModel_t *mdvModel)
 
 						// average the vector
 						VectorScale(avgVector, 1.0 / (float)numSame, avgVector);
-						//VectorNormalize(avgVector); //?!
+						//VectorNormalizeOnly(avgVector); //?!
 
 						// now write back the newly calculated average normal for all the same vertices
 						for (k = 0; k < numSame; k++)

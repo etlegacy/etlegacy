@@ -207,7 +207,7 @@ qboolean R_LoadMD5(model_t *mod, void *buffer, int bufferSize, const char *modNa
 		}
 
 		QuatCalcW(boneQuat);
-		mat4_from_quat(boneMat, boneQuat);
+		Matrix4FromQuaternion(boneMat, boneQuat);
 
 		VectorCopy(boneOrigin, bone->origin);
 		quat_copy(boneQuat, bone->rotation);
@@ -568,9 +568,9 @@ qboolean R_LoadMD5(model_t *mod, void *buffer, int bufferSize, const char *modNa
 
 			for (j = 0, v = surf->verts; j < surf->numVerts; j++, v++)
 			{
-				VectorNormalize(v->tangent);
-				VectorNormalize(v->binormal);
-				VectorNormalize(v->normal);
+				VectorNormalizeOnly(v->tangent);
+				VectorNormalizeOnly(v->binormal);
+				VectorNormalizeOnly(v->normal);
 			}
 		}
 #else
@@ -613,7 +613,7 @@ qboolean R_LoadMD5(model_t *mod, void *buffer, int bufferSize, const char *modNa
 					dv[k]->tangent[2] = bary[0] * dv[0]->position[2] + bary[1] * dv[1]->position[2] + bary[2] * dv[2]->position[2];
 
 					VectorSubtract(dv[k]->tangent, dv[k]->position, dv[k]->tangent);
-					VectorNormalize(dv[k]->tangent);
+					VectorNormalizeOnly(dv[k]->tangent);
 
 					// calculate t tangent vector (binormal)
 					s       = dv[k]->texCoords[0];
@@ -627,12 +627,12 @@ qboolean R_LoadMD5(model_t *mod, void *buffer, int bufferSize, const char *modNa
 					dv[k]->binormal[2] = bary[0] * dv[0]->position[2] + bary[1] * dv[1]->position[2] + bary[2] * dv[2]->position[2];
 
 					VectorSubtract(dv[k]->binormal, dv[k]->position, dv[k]->binormal);
-					VectorNormalize(dv[k]->binormal);
+					VectorNormalizeOnly(dv[k]->binormal);
 
 					// calculate the normal as cross product N=TxB
 #if 0
 					CrossProduct(dv[k]->tangent, dv[k]->binormal, dv[k]->normal);
-					VectorNormalize(dv[k]->normal);
+					VectorNormalizeOnly(dv[k]->normal);
 
 					// Gram-Schmidt orthogonalization process for B
 					// compute the cross product B=NxT to obtain
@@ -655,9 +655,9 @@ qboolean R_LoadMD5(model_t *mod, void *buffer, int bufferSize, const char *modNa
 #if 1
 			for (j = 0, v = surf->verts; j < surf->numVerts; j++, v++)
 			{
-				//VectorNormalize(v->tangent);
-				//VectorNormalize(v->binormal);
-				VectorNormalize(v->normal);
+				//VectorNormalizeOnly(v->tangent);
+				//VectorNormalizeOnly(v->binormal);
+				VectorNormalizeOnly(v->normal);
 			}
 #endif
 		}
@@ -681,7 +681,7 @@ qboolean R_LoadMD5(model_t *mod, void *buffer, int bufferSize, const char *modNa
 					}
 				}
 
-				VectorNormalize(surf->verts[j].normal);
+				VectorNormalizeOnly(surf->verts[j].normal);
 			}
 		}
 	}
@@ -692,7 +692,7 @@ qboolean R_LoadMD5(model_t *mod, void *buffer, int bufferSize, const char *modNa
 	for (i = 0, surf = md5->surfaces; i < md5->numSurfaces; i++, surf++)
 	{
 		// sort triangles
-		Com_InitGrowList(&sortedTriangles, 1000);
+		Com_InitGrowList(&sortedTriangles, 100); //Com_InitGrowList(&sortedTriangles, 1000);
 
 		for (j = 0, tri = surf->triangles; j < surf->numTriangles; j++, tri++)
 		{
@@ -740,7 +740,7 @@ qboolean R_LoadMD5(model_t *mod, void *buffer, int bufferSize, const char *modNa
 			numBoneReferences = 0;
 			Com_Memset(boneReferences, 0, sizeof(boneReferences));
 
-			Com_InitGrowList(&vboTriangles, 1000);
+			Com_InitGrowList(&vboTriangles, 100); //Com_InitGrowList(&vboTriangles, 1000);
 
 			for (j = 0; j < sortedTriangles.currentElements; j++)
 			{

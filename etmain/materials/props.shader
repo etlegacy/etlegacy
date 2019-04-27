@@ -7,7 +7,6 @@ textures/props/barrel_m01
 	bumpmap textures/props/barrel_m01_n.tga
 	specularmap textures/props/barrel_m01_r.tga
 	surfaceparm metalsteps
-	implicitMap -
 }
 
 textures/props/barrel_m02
@@ -17,7 +16,6 @@ textures/props/barrel_m02
 	bumpmap textures/props/barrel_m02_n.tga
 	specularmap textures/props/barrel_m02_r.tga
 	surfaceparm metalsteps
-	implicitMap -
 }
 
 textures/props/barrel_m02d
@@ -27,7 +25,6 @@ textures/props/barrel_m02d
 	bumpmap textures/props/barrel_m02d_n.tga
 	specularmap textures/props/barrel_m02d_r.tga
 	surfaceparm metalsteps
-	implicitMap -
 }
 
 textures/props/base_lamp_1
@@ -39,8 +36,6 @@ textures/props/base_lamp_1
     surfaceparm nomarks
     surfaceparm pointlight
  	surfaceparm nolightmap
-
-	implicitMap textures/props/base_lamp.tga
 }
 
 textures/props/base_lamp_1_oasis
@@ -53,7 +48,6 @@ textures/props/base_lamp_1_oasis
     surfaceparm pointlight
  	surfaceparm nolightmap
 	surfaceparm trans
-
 	{
 		map textures/props/base_lamp.tga
 		rgbGen identity
@@ -67,7 +61,6 @@ textures/props/board_cl01
 	bumpmap textures/props/board_cl01_n.tga
 	specularmap textures/props/board_cl01_r.tga
 	surfaceparm woodsteps
-	implicitMap -
 }
 
 textures/props/board_cl01m
@@ -77,7 +70,6 @@ textures/props/board_cl01m
 	bumpmap textures/props/board_cl01m_n.tga
 	specularmap textures/props/board_cl01m_r.tga
 	surfaceparm woodsteps
-	implicitMap -
 }
 
 textures/props/board_c01
@@ -87,7 +79,6 @@ textures/props/board_c01
 	bumpmap textures/props/board_c01_n.tga
 	specularmap textures/props/board_c01_r.tga
 	surfaceparm woodsteps
-	implicitMap -
 }
 
 textures/props/board_c03
@@ -97,7 +88,6 @@ textures/props/board_c03
 	bumpmap textures/props/board_c03_n.tga
 	specularmap textures/props/board_c03_r.tga
 	surfaceparm woodsteps
-	implicitMap -
 }
 
 textures/props/board_m01
@@ -107,7 +97,6 @@ textures/props/board_m01
 	bumpmap textures/props/board_m01_n.tga
 	specularmap textures/props/board_m01_r.tga
 	surfaceparm woodsteps
-	implicitMap -
 }
 
 //extra shader
@@ -118,7 +107,6 @@ textures/props/board_cl02m
 	bumpmap textures/props/board_cl02m_n.tga
 	specularmap textures/props/board_cl02m_r.tga
 	surfaceparm woodsteps
-	implicitMap -
 }
 
 textures/props/box_c01
@@ -128,7 +116,6 @@ textures/props/box_c01
 	bumpmap textures/props/box_c01_n.tga
 	specularmap textures/props/box_c01_r.tga
 	surfaceparm woodsteps
-	implicitMap -
 }
 
 textures/props/box_c02
@@ -138,7 +125,6 @@ textures/props/box_c02
 	bumpmap textures/props/box_c02_n.tga
 	specularmap textures/props/box_c02_r.tga
 	surfaceparm woodsteps
-	implicitMap -
 }
 
 textures/props/box_c03
@@ -148,7 +134,6 @@ textures/props/box_c03
 	bumpmap textures/props/box_c03_n.tga
 	specularmap textures/props/box_c03_r.tga
 	surfaceparm woodsteps
-	implicitMap -
 }
 
 textures/props/box_m01
@@ -158,7 +143,6 @@ textures/props/box_m01
 	bumpmap textures/props/box_m01_n.tga
 	specularmap textures/props/box_m01_r.tga
 	surfaceparm woodsteps
-	implicitMap -
 }
 
 textures/props/box_m02
@@ -168,7 +152,6 @@ textures/props/box_m02
 	bumpmap textures/props/box_m02_n.tga
 	specularmap textures/props/box_m02_r.tga
 	surfaceparm woodsteps
-	implicitMap -
 }
 
 textures/props/box_m03
@@ -178,7 +161,6 @@ textures/props/box_m03
 	bumpmap textures/props/box_m03_n.tga
 	specularmap textures/props/box_m03_r.tga
 	surfaceparm woodsteps
-	implicitMap -
 }
 
 textures/props/box_m04
@@ -188,7 +170,6 @@ textures/props/box_m04
     bumpmap textures/props/box_m04_n.tga
     specularmap textures/props/box_m04_r.tga
 	surfaceparm woodsteps
-	implicitMap -
 }
 
 textures/props/box_m04a
@@ -198,7 +179,6 @@ textures/props/box_m04a
 	bumpmap textures/props/box_m04a_n.tga
 	specularmap textures/props/box_m04a_r.tga
 	surfaceparm woodsteps
-	implicitMap -
 }
 
 textures/props/box_m04a_sd
@@ -208,7 +188,6 @@ textures/props/box_m04a_sd
 	bumpmap textures/props/box_m04a_sd_n.tga
 	specularmap textures/props/box_m04a_sd_r.tga
 	surfaceparm woodsteps
-	implicitMap -
 }
 
 textures/props/box_m05
@@ -218,7 +197,6 @@ textures/props/box_m05
 	bumpmap textures/props/box_m05_n.tga
 	specularmap textures/props/box_m05_r.tga
 	surfaceparm woodsteps
-	implicitMap -
 }
 
 textures/props/box_m05a
@@ -228,7 +206,6 @@ textures/props/box_m05a
 	bumpmap textures/props/box_m05a_n.tga
 	specularmap textures/props/box_m05a_r.tga
 	surfaceparm woodsteps
-	implicitMap -
 }
 
 textures/props/box_t_m01
@@ -238,7 +215,6 @@ textures/props/box_t_m01
 	bumpmap textures/props/box_t_m01_n.tga
 	specularmap textures/props/box_t_m01_r.tga
 	surfaceparm woodsteps
-	implicitMap -
 }
 
 textures/props/box_t_m01a
@@ -248,7 +224,6 @@ textures/props/box_t_m01a
 	bumpmap textures/props/box_t_m01a_n.tga
 	specularmap textures/props/box_t_m01a_r.tga
 	surfaceparm woodsteps
-	implicitMap -
 }
 
 textures/props/box_t_m02
@@ -258,7 +233,6 @@ textures/props/box_t_m02
 	bumpmap textures/props/box_t_m02_n.tga
 	specularmap textures/props/box_t_m02_r.tga
 	surfaceparm woodsteps
-	implicitMap -
 }
 
 textures/props/box_t_m04
@@ -268,7 +242,6 @@ textures/props/box_t_m04
 	bumpmap textures/props/box_t_m04_n.tga
 	specularmap textures/props/box_t_m04_r.tga
 	surfaceparm woodsteps
-	implicitMap -
 }
 
 textures/props/box_t_m04a
@@ -278,7 +251,6 @@ textures/props/box_t_m04a
 	bumpmap textures/props/box_t_m04a_n.tga
 	specularmap textures/props/box_t_m04a_r.tga
 	surfaceparm woodsteps
-	implicitMap -
 }
 
 textures/props/box_t_m04b
@@ -288,7 +260,6 @@ textures/props/box_t_m04b
 	bumpmap textures/props/box_t_m04b_n.tga
 	specularmap textures/props/box_t_m04b_r.tga
 	surfaceparm woodsteps
-	implicitMap -
 }
 
 textures/props/cable_m01
@@ -298,7 +269,6 @@ textures/props/cable_m01
 	bumpmap textures/props/cable_m01_n.tga
 	specularmap textures/props/cable_m01_r.tga
 	surfaceparm metalsteps
-	implicitMap -
 }
 
 textures/props/flag_l_m01
@@ -433,7 +403,6 @@ textures/props/hay
 	bumpmap textures/props/hay_n.tga
 	specularmap textures/props/hay_r.tga
 	surfaceparm grasssteps
-	implicitMap -
 }
 
 textures/props/hayd
@@ -443,7 +412,6 @@ textures/props/hayd
 	bumpmap textures/props/hayd_n.tga
 	specularmap textures/props/hayd_r.tga
 	surfaceparm grasssteps
-	implicitMap -
 }
 
 textures/props/lockers_c01
@@ -453,7 +421,6 @@ textures/props/lockers_c01
 	bumpmap textures/props/lockers_c01_n.tga
 	specularmap textures/props/lockers_c01_r.tga
 	surfaceparm metalsteps
-	implicitMap -
 }
 
 textures/props/lockers_c02
@@ -463,7 +430,6 @@ textures/props/lockers_c02
 	bumpmap textures/props/lockers_c02_n.tga
 	specularmap textures/props/lockers_c02_r.tga
 	surfaceparm metalsteps
-	implicitMap -
 }
 
 textures/props/panel_d03
@@ -473,7 +439,6 @@ textures/props/panel_d03
 	bumpmap textures/props/panel_d03_n.tga
 	specularmap textures/props/panel_d03_r.tga
 	surfaceparm metalsteps
-	implicitMap -
 }
 
 textures/props/panel_d04
@@ -483,7 +448,6 @@ textures/props/panel_d04
 	bumpmap textures/props/panel_d04_n.tga
 	specularmap textures/props/panel_d04_r.tga
 	surfaceparm metalsteps
-	implicitMap -
 }
 
 textures/props/panel_tram2
@@ -493,7 +457,6 @@ textures/props/panel_tram2
 	bumpmap textures/props/panel_tram2_n.tga
 	specularmap textures/props/panel_tram2_r.tga
 	surfaceparm metalsteps
-	implicitMap -
 }
 
 textures/props/panel_tram3
@@ -503,7 +466,6 @@ textures/props/panel_tram3
 	bumpmap textures/props/panel_tram3_n.tga
 	specularmap textures/props/panel_tram3_r.tga
 	surfaceparm metalsteps
-	implicitMap -
 }
 
 textures/props/panelside_d01
@@ -513,7 +475,6 @@ textures/props/panelside_d01
 	bumpmap textures/props/panelside_d01_n.tga
 	specularmap textures/props/panelside_d01_r.tga
 	surfaceparm metalsteps
-	implicitMap -
 }
 
 textures/props/rail_side_wils
@@ -523,7 +484,6 @@ textures/props/rail_side_wils
 	bumpmap textures/props/rail_side_wils_n.tga
 	specularmap textures/props/rail_side_wils_r.tga
 	surfaceparm metalsteps
-	implicitMap -
 }
 
 textures/props/rail_top_wils
@@ -533,7 +493,6 @@ textures/props/rail_top_wils
 	bumpmap textures/props/rail_top_wils_n.tga
 	specularmap textures/props/rail_top_wils_r.tga
 	surfaceparm metalsteps
-	implicitMap -
 }
 
 textures/props/refer_light
@@ -566,7 +525,6 @@ textures/props/rope_m01
 	bumpmap textures/props/rope_m01_n.tga
 	specularmap textures/props/rope_m01_r.tga
 	surfaceparm woodsteps
-	implicitMap -
 }
 
 textures/props/sawblade
@@ -576,7 +534,6 @@ textures/props/sawblade
 	bumpmap textures/props/sawblade_n.tga
 	specularmap textures/props/sawblade_r.tga
 	surfaceparm metalsteps
-	implicitMap -
 }
 // end new ones
 
@@ -587,7 +544,6 @@ textures/props/sho_box_c01
 	bumpmap textures/props/sho_box_c01_n.tga
 	specularmap textures/props/sho_box_c01_r.tga
 	surfaceparm metalsteps
-	implicitMap -
 }
 
 textures/props/sho_box_c02
@@ -597,7 +553,6 @@ textures/props/sho_box_c02
 	bumpmap textures/props/sho_box_c02_n.tga
 	specularmap textures/props/sho_box_c02_r.tga
 	surfaceparm metalsteps
-	implicitMap -
 }
 
 textures/props/sho_box_c03
@@ -607,7 +562,6 @@ textures/props/sho_box_c03
 	bumpmap textures/props/sho_box_c03_n.tga
 	specularmap textures/props/sho_box_c03_r.tga
 	surfaceparm metalsteps
-	implicitMap -
 }
 
 textures/props/sign_c01
@@ -617,7 +571,6 @@ textures/props/sign_c01
 	bumpmap textures/props/sign_c01_n.tga
 	specularmap textures/props/sign_c01_r.tga
 	surfaceparm woodsteps
-	implicitMap -
 }
 
 textures/props/sign_c05
@@ -627,7 +580,6 @@ textures/props/sign_c05
 	bumpmap textures/props/sign_c05_n.tga
 	specularmap textures/props/sign_c05_r.tga
 	surfaceparm woodsteps
-	implicitMap -
 }
 
 textures/props/sign_c06
@@ -637,7 +589,6 @@ textures/props/sign_c06
 	bumpmap textures/props/sign_c06_n.tga
 	specularmap textures/props/sign_c06_r.tga
 	surfaceparm woodsteps
-	implicitMap -
 }
 
 textures/props/sign_c26
@@ -647,7 +598,6 @@ textures/props/sign_c26
 	bumpmap textures/props/sign_c26_n.tga
 	specularmap textures/props/sign_c26_r.tga
 	surfaceparm woodsteps
-	implicitMap -
 }
 
 textures/props/sign_c27
@@ -657,7 +607,6 @@ textures/props/sign_c27
 	bumpmap textures/props/sign_c27_n.tga
 	specularmap textures/props/sign_c27_r.tga
 	surfaceparm woodsteps
-	implicitMap -
 }
 
 textures/props/sub1
@@ -667,7 +616,6 @@ textures/props/sub1
 	bumpmap textures/props/sub1_n.tga
 	specularmap textures/props/sub1_r.tga
 	surfaceparm metalsteps
-	implicitMap -
 }
 
 textures/props/table
@@ -715,7 +663,6 @@ textures/props/train_m01
 	bumpmap textures/props/train_m01_n.tga
 	specularmap textures/props/train_m01_r.tga
 	surfaceparm metalsteps
-	implicitMap -
 }
 
 textures/props/train_m02
@@ -725,7 +672,6 @@ textures/props/train_m02
 	bumpmap textures/props/train_m02_n.tga
 	specularmap textures/props/train_m02_r.tga
 	surfaceparm metalsteps
-	implicitMap -
 }
 
 textures/props/train_m03
@@ -735,7 +681,6 @@ textures/props/train_m03
 	bumpmap textures/props/train_m03_n.tga
 	specularmap textures/props/train_m03_r.tga
 	surfaceparm metalsteps
-	implicitMap -
 }
 
 textures/props/train_m04
@@ -745,7 +690,6 @@ textures/props/train_m04
 	bumpmap textures/props/train_m04_n.tga
 	specularmap textures/props/train_m04_r.tga
 	surfaceparm metalsteps
-	implicitMap -
 }
 
 textures/props/train_m05
@@ -755,7 +699,6 @@ textures/props/train_m05
 	bumpmap textures/props/train_m05_n.tga
 	specularmap textures/props/train_m05_r.tga
 	surfaceparm metalsteps
-	implicitMap -
 }
 
 textures/props/train_m06
@@ -765,7 +708,6 @@ textures/props/train_m06
 	bumpmap textures/props/train_m06_n.tga
 	specularmap textures/props/train_m06_r.tga
 	surfaceparm metalsteps
-	implicitMap -
 }
 
 textures/props/wine_c01
@@ -775,7 +717,6 @@ textures/props/wine_c01
 	bumpmap textures/props/wine_c01_n.tga
 	specularmap textures/props/wine_c01_r.tga
 	surfaceparm woodsteps
-	implicitMap -
 }
 
 textures/props/wine_c02
@@ -785,7 +726,6 @@ textures/props/wine_c02
 	bumpmap textures/props/wine_c02_n.tga
 	specularmap textures/props/wine_c02_r.tga
     surfaceparm woodsteps
-	implicitMap -
 }
 
 textures/props/file_cab_m01
@@ -795,5 +735,4 @@ textures/props/file_cab_m01
 	bumpmap textures/props/file_cab_m01_n.tga
 	specularmap textures/props/file_cab_m01_r.tga
 	surfaceparm metalsteps
-	implicitMap -
 }

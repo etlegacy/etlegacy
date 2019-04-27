@@ -341,7 +341,7 @@ qboolean G_TryPushingEntity(gentity_t *check, gentity_t *pusher, vec3_t move, ve
 
 	// figure movement due to the pusher's amove
 	CreateRotationMatrix(amove, transpose);
-	TransposeMatrix(transpose, matrix);
+	MatrixTranspose(transpose, matrix);
 	if (check->client)
 	{
 		VectorSubtract(check->client->ps.origin, pusher->r.currentOrigin, org);
@@ -351,7 +351,7 @@ qboolean G_TryPushingEntity(gentity_t *check, gentity_t *pusher, vec3_t move, ve
 		VectorSubtract(check->s.pos.trBase, pusher->r.currentOrigin, org);
 	}
 	VectorCopy(org, org2);
-	RotatePoint(org2, matrix);
+	VectorRotate(org2, matrix, org2); //RotatePoint(org2, matrix);
 	VectorSubtract(org2, org, move2);
 	VectorAdd(check->s.pos.trBase, move2, check->s.pos.trBase);
 	if (check->client)
@@ -1358,8 +1358,9 @@ qboolean IsBinaryMoverBlocked(gentity_t *ent, gentity_t *other, gentity_t *activ
 			VectorSubtract(activator->r.currentOrigin, pos, vec);
 		}
 
-		VectorNormalize(vec);
-		dot = DotProduct(vec, forward);
+		VectorNormalizeOnly(vec);
+		//dot = DotProduct(vec, forward);
+		Dot(vec, forward, dot);
 
 		if (dot >= 0)
 		{
@@ -2506,7 +2507,9 @@ void SP_func_door(gentity_t *ent)
 	abs_movedir[1] = Q_fabs(ent->movedir[1]);
 	abs_movedir[2] = Q_fabs(ent->movedir[2]);
 	VectorSubtract(ent->r.maxs, ent->r.mins, size);
-	distance = DotProduct(abs_movedir, size) - lip;
+	//distance = DotProduct(abs_movedir, size) - lip;
+	Dot(abs_movedir, size, distance);
+	distance -= lip;
 	VectorMA(ent->pos1, distance, ent->movedir, ent->pos2);
 
 	if (ent->spawnflags & DOOR_START_OPEN)        // START_OPEN - reverse position 1 and 2
@@ -2652,7 +2655,9 @@ void SP_func_secret(gentity_t *ent)
 	abs_movedir[1] = Q_fabs(ent->movedir[1]);
 	abs_movedir[2] = Q_fabs(ent->movedir[2]);
 	VectorSubtract(ent->r.maxs, ent->r.mins, size);
-	distance = DotProduct(abs_movedir, size) - lip;
+	//distance = DotProduct(abs_movedir, size) - lip;
+	Dot(abs_movedir, size, distance);
+	distance -= lip;
 	VectorMA(ent->pos1, distance, ent->movedir, ent->pos2);
 
 	// calculate third position
@@ -2661,7 +2666,9 @@ void SP_func_secret(gentity_t *ent)
 	abs_movedir[1] = Q_fabs(ent->movedir[1]);
 	abs_movedir[2] = Q_fabs(ent->movedir[2]);
 	VectorSubtract(ent->r.maxs, ent->r.mins, size);
-	distance = DotProduct(abs_movedir, size) - lip;
+	//distance = DotProduct(abs_movedir, size) - lip;
+	Dot(abs_movedir, size, distance);
+	distance -= lip;
 	VectorMA(ent->pos2, distance, ent->movedir, ent->pos3);
 
 	// if "start_open", reverse position 1 and 3
@@ -3258,7 +3265,7 @@ void info_limbo_camera_setup(gentity_t *self)
 	if (!caminfo->hasEnt)
 	{
 		VectorSubtract(target->s.origin, caminfo->origin, vec);
-		VectorNormalize(vec);
+		VectorNormalizeOnly(vec);
 		vectoangles(vec, caminfo->angles);
 	}
 
@@ -4377,7 +4384,7 @@ void func_explosive_explode(gentity_t *self, gentity_t *inflictor, gentity_t *at
 		if (tent)
 		{
 			VectorSubtract(tent->s.pos.trBase, self->s.pos.trBase, dir);
-			VectorNormalize(dir);
+			VectorNormalizeOnly(dir);
 		}
 	}
 
@@ -5855,7 +5862,7 @@ void G_LinkDebris(void)
 		speed = debris->velocity[0];
 
 		VectorSubtract(target->s.origin, debris->origin, debris->velocity);
-		VectorNormalize(debris->velocity);
+		VectorNormalizeOnly(debris->velocity);
 		VectorScale(debris->velocity, speed, debris->velocity);
 		trap_SnapVector(debris->velocity);
 	}

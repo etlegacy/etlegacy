@@ -208,7 +208,9 @@ void PM_ContinueWeaponAnim(int anim)
  */
 void PM_ClipVelocity(vec3_t in, vec3_t normal, vec3_t out, float overbounce)
 {
-	float backoff = DotProduct(in, normal);
+	//float backoff = DotProduct(in, normal);
+	float backoff;
+	Dot(in, normal, backoff);
 
 	if (backoff < 0)
 	{
@@ -253,17 +255,22 @@ void PM_TraceLegs(trace_t *trace, float *legsOffset, vec3_t start, vec3_t end, t
 	}
 
 	angle          = DEG2RAD(viewangles[YAW]);
-	flatforward[0] = cos(angle);
-	flatforward[1] = sin(angle);
+	///flatforward[0] = cos(angle);
+	///flatforward[1] = sin(angle);
+#ifndef ETL_SSE
+	SinCos(angle, flatforward[1], flatforward[0]);
+#else
+	SinCos(angle, flatforward+1, flatforward+0); // this is the asm way of specifying an address..
+#endif
 	flatforward[2] = 0;
 
 	if (pm->ps->eFlags & EF_PRONE)
 	{
-		VectorScale(flatforward, -32, ofs);
+		VectorScale(flatforward, -32.0f, ofs);
 	}
 	else
 	{
-		VectorScale(flatforward, 32, ofs);
+		VectorScale(flatforward, 32.0f, ofs);
 	}
 
 	VectorAdd(start, ofs, org);
@@ -348,11 +355,11 @@ void PM_TraceHead(trace_t *trace, vec3_t start, vec3_t end, trace_t *bodytrace, 
 
 	if (pm->ps->eFlags & EF_PRONE)
 	{
-		VectorScale(flatforward, 36, ofs);
+		VectorScale(flatforward, 36.0f, ofs);
 	}
 	else
 	{
-		VectorScale(flatforward, -36, ofs);
+		VectorScale(flatforward, -36.0f, ofs);
 	}
 
 	VectorAdd(end, ofs, point);
@@ -527,7 +534,8 @@ static void PM_Accelerate(vec3_t wishdir, float wishspeed, float accel)
 	int   i;
 	float addspeed, accelspeed, currentspeed;
 
-	currentspeed = DotProduct(pm->ps->velocity, wishdir);
+	//currentspeed = DotProduct(pm->ps->velocity, wishdir);
+	Dot(pm->ps->velocity, wishdir, currentspeed);
 	addspeed     = wishspeed - currentspeed;
 	if (addspeed <= 0)
 	{
@@ -542,7 +550,8 @@ static void PM_Accelerate(vec3_t wishdir, float wishspeed, float accel)
 	// variable friction for AI's
 	if (pm->ps->groundEntityNum != ENTITYNUM_NONE)
 	{
-		accelspeed *= (1.0f / pm->ps->friction);
+		//accelspeed *= (1.0f / pm->ps->friction);
+		accelspeed *= rcp(pm->ps->friction);
 	}
 	if (accelspeed > addspeed)
 	{
@@ -649,7 +658,7 @@ static void PM_SetMovementDir(void)
 		vec3_t dir;
 		int    moveyaw;
 
-		VectorNormalize2(moved, dir);
+		VectorNormalize2Only(moved, dir);
 		vectoangles(dir, dir);
 
 		moveyaw = (int)(AngleDelta(dir[YAW], pm->ps->viewangles[YAW]));
@@ -769,7 +778,7 @@ static qboolean PM_CheckWaterJump(void)
 	flatforward[0] = pml.forward[0];
 	flatforward[1] = pml.forward[1];
 	flatforward[2] = 0;
-	VectorNormalize(flatforward);
+	VectorNormalizeOnly(flatforward);
 
 	VectorMA(pm->ps->origin, 30, flatforward, spot);
 	spot[2] += 4;
@@ -985,7 +994,7 @@ static void PM_WaterMove(void)
 	vec3_t wishvel;
 	float  wishspeed;
 	vec3_t wishdir;
-	float  scale;
+	float  scale, dot;
 
 	if (PM_CheckWaterJump())
 	{
@@ -1017,7 +1026,8 @@ static void PM_WaterMove(void)
 	}
 
 	VectorCopy(wishvel, wishdir);
-	wishspeed = VectorNormalize(wishdir);
+	//wishspeed = VectorNormalize(wishdir);
+	VectorNorm(wishdir, &wishspeed);
 
 	if (pm->watertype & CONTENTS_SLIME)        // slag
 	{
@@ -1039,7 +1049,9 @@ static void PM_WaterMove(void)
 	}
 
 	// make sure we can go up slopes easily under water
-	if (pml.groundPlane && DotProduct(pm->ps->velocity, pml.groundTrace.plane.normal) < 0)
+	//if (pml.groundPlane && DotProduct(pm->ps->velocity, pml.groundTrace.plane.normal) < 0)
+	Dot(pm->ps->velocity, pml.groundTrace.plane.normal, dot);
+	if (pml.groundPlane && dot < 0)
 	{
 		float vel = VectorLength(pm->ps->velocity);
 
@@ -1047,7 +1059,7 @@ static void PM_WaterMove(void)
 		PM_ClipVelocity(pm->ps->velocity, pml.groundTrace.plane.normal,
 		                pm->ps->velocity, OVERCLIP);
 
-		VectorNormalize(pm->ps->velocity);
+		VectorNormalizeOnly(pm->ps->velocity);
 		VectorScale(pm->ps->velocity, vel, pm->ps->velocity);
 	}
 
@@ -1095,7 +1107,8 @@ static void PM_FlyMove(void)
 	}
 
 	VectorCopy(wishvel, wishdir);
-	wishspeed = VectorNormalize(wishdir);
+	//wishspeed = VectorNormalize(wishdir);
+	VectorNorm(wishdir, &wishspeed);
 
 	PM_Accelerate(wishdir, wishspeed, pm_flyaccelerate);
 
@@ -1125,8 +1138,8 @@ static void PM_AirMove(void)
 	pml.forward[2] = 0;
 	pml.right[2]   = 0;
 
-	VectorNormalize(pml.forward);
-	VectorNormalize(pml.right);
+	VectorNormalizeOnly(pml.forward);
+	VectorNormalizeOnly(pml.right);
 
 	wishvel[0] = pml.forward[0] * fmove + pml.right[0] * smove;
 	wishvel[1] = pml.forward[1] * fmove + pml.right[1] * smove;
@@ -1134,7 +1147,8 @@ static void PM_AirMove(void)
 	wishvel[2] = 0;
 
 	VectorCopy(wishvel, wishdir);
-	wishspeed  = VectorNormalize(wishdir);
+	//wishspeed  = VectorNormalize(wishdir);
+	VectorNorm(wishdir, &wishspeed);
 	wishspeed *= scale;
 
 	// not on ground, so little effect on velocity
@@ -1168,9 +1182,11 @@ static void PM_WalkMove(void)
 	float     scale;
 	usercmd_t cmd;
 	float     accelerate;
-	float     vel;
+	float     vel, dot;
 
-	if (pm->waterlevel > 2 && DotProduct(pml.forward, pml.groundTrace.plane.normal) > 0)
+	//if (pm->waterlevel > 2 && DotProduct(pml.forward, pml.groundTrace.plane.normal) > 0)
+	Dot(pml.forward, pml.groundTrace.plane.normal, dot);
+	if (pm->waterlevel > 2 && dot > 0)
 	{
 		// begin swimming
 		PM_WaterMove();
@@ -1221,8 +1237,8 @@ static void PM_WalkMove(void)
 	PM_ClipVelocity(pml.forward, pml.groundTrace.plane.normal, pml.forward, OVERCLIP);
 	PM_ClipVelocity(pml.right, pml.groundTrace.plane.normal, pml.right, OVERCLIP);
 	//
-	VectorNormalize(pml.forward);
-	VectorNormalize(pml.right);
+	VectorNormalizeOnly(pml.forward);
+	VectorNormalizeOnly(pml.right);
 
 	for (i = 0 ; i < 3 ; i++)
 	{
@@ -1232,7 +1248,8 @@ static void PM_WalkMove(void)
 	//wishvel[2] = 0;
 
 	VectorCopy(wishvel, wishdir);
-	wishspeed  = VectorNormalize(wishdir);
+	//wishspeed  = VectorNormalize(wishdir);
+	VectorNorm(wishdir, &wishspeed);
 	wishspeed *= scale;
 
 	// clamp the speed lower if prone
@@ -1325,7 +1342,7 @@ static void PM_WalkMove(void)
 	}
 
 	// don't decrease velocity when going up or down a slope
-	VectorNormalize(pm->ps->velocity);
+	VectorNormalizeOnly(pm->ps->velocity);
 	VectorScale(pm->ps->velocity, vel, pm->ps->velocity);
 
 	PM_StepSlideMove(qfalse);
@@ -1356,7 +1373,7 @@ static void PM_DeadMove(void)
 	}
 	else
 	{
-		VectorNormalize(pm->ps->velocity);
+		VectorNormalizeOnly(pm->ps->velocity);
 		VectorScale(pm->ps->velocity, forward, pm->ps->velocity);
 	}
 }
@@ -1415,7 +1432,8 @@ static void PM_NoclipMove(void)
 	wishvel[2] += pm->cmd.upmove;
 
 	VectorCopy(wishvel, wishdir);
-	wishspeed  = VectorNormalize(wishdir);
+	//wishspeed  = VectorNormalize(wishdir);
+	VectorNorm(wishdir, &wishspeed);
 	wishspeed *= scale;
 
 	PM_Accelerate(wishdir, wishspeed, pm_accelerate);
@@ -1678,6 +1696,7 @@ static void PM_GroundTrace(void)
 {
 	vec3_t  point;
 	trace_t trace;
+	float dot;
 
 	point[0] = pm->ps->origin[0];
 	point[1] = pm->ps->origin[1];
@@ -1713,7 +1732,9 @@ static void PM_GroundTrace(void)
 	}
 
 	// check if getting thrown off the ground
-	if (pm->ps->velocity[2] > 0 && DotProduct(pm->ps->velocity, trace.plane.normal) > 10 && !(pm->ps->eFlags & EF_PRONE))
+	//if (pm->ps->velocity[2] > 0 && DotProduct(pm->ps->velocity, trace.plane.normal) > 10 && !(pm->ps->eFlags & EF_PRONE))
+	Dot(pm->ps->velocity, trace.plane.normal, dot);
+	if (pm->ps->velocity[2] > 0 && dot > 10 && !(pm->ps->eFlags & EF_PRONE))
 	{
 		if (pm->debugLevel)
 		{
@@ -4395,7 +4416,7 @@ void PM_CheckLadderMove(void)
 	flatforward[0] = pml.forward[0];
 	flatforward[1] = pml.forward[1];
 	flatforward[2] = 0;
-	VectorNormalize(flatforward);
+	VectorNormalizeOnly(flatforward);
 
 	VectorMA(pm->ps->origin, tracedist, flatforward, spot);
 	pm->trace(&trace, pm->ps->origin, pm->mins, pm->maxs, spot, pm->ps->clientNum, pm->tracemask);
@@ -4464,7 +4485,7 @@ void PM_CheckLadderMove(void)
  */
 void PM_LadderMove(void)
 {
-	float  wishspeed, scale;
+	float  wishspeed, scale, dot;
 	vec3_t wishdir, wishvel;
 	float  upscale;
 
@@ -4489,8 +4510,8 @@ void PM_LadderMove(void)
 	// forward/right should be horizontal only
 	pml.forward[2] = 0;
 	pml.right[2]   = 0;
-	VectorNormalize(pml.forward);
-	VectorNormalize(pml.right);
+	VectorNormalizeOnly(pml.forward);
+	VectorNormalizeOnly(pml.right);
 
 	// move depending on the view, if view is straight forward, then go up
 	// if view is down more then X degrees, start going down
@@ -4512,7 +4533,9 @@ void PM_LadderMove(void)
 		AngleVectors(ang, NULL, ladder_right, NULL);
 
 		// if we are looking away from the ladder, reverse the right vector
-		if (DotProduct(laddervec, pml.forward) < 0)
+		//if (DotProduct(laddervec, pml.forward) < 0)
+		Dot(laddervec, pml.forward, dot);
+		if (dot < 0)
 		{
 			VectorInverse(ladder_right);
 		}
@@ -5020,7 +5043,7 @@ void PmoveSingle(pmove_t *pmove)
 			VectorScale(pm->ps->velocity, 64.0f, pm->ps->velocity);
 			// snap some parts of playerstate to save network bandwidth
 			trap_SnapVector(pm->ps->velocity);
-			VectorScale(pm->ps->velocity, 1.0f / 64.0f, pm->ps->velocity);
+			VectorScale(pm->ps->velocity, (1.0f / 64.0f), pm->ps->velocity);
 		}
 	}
 	else
