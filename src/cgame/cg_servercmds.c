@@ -479,7 +479,10 @@ void CG_ParseWolfinfo(void)
 	// Announce game in progress if we are really playing
 	if (old_gs != GS_PLAYING && cgs.gamestate == GS_PLAYING)
 	{
-		trap_S_StartLocalSound(cgs.media.countFight, CHAN_ANNOUNCER);
+		if (cg_announcer.integer)
+		{
+			trap_S_StartLocalSound(cgs.media.countFight, CHAN_ANNOUNCER);
+		}
 
 		Pri("^1FIGHT!\n");
 		CPri(CG_TranslateString("^1FIGHT!\n"));

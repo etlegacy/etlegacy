@@ -2670,7 +2670,10 @@ static void CG_DrawWarmup(void)
 	// pre start actions
 	if (sec == 3 && !announced)
 	{
-		trap_S_StartLocalSound(cgs.media.countPrepare, CHAN_ANNOUNCER);
+		if (cg_announcer.integer)
+		{
+			trap_S_StartLocalSound(cgs.media.countPrepare, CHAN_ANNOUNCER);
+		}
 
 		CPri(CG_TranslateString("^3PREPARE TO FIGHT!\n"));
 
