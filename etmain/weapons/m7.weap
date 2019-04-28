@@ -35,7 +35,7 @@ weaponDef
 		//weaponCardPointT  0 0
 		
 		missileModel		"models/multiplayer/m1_garand/m1_garand_prj.md3"
-		missileSound		"sound/weapons/garand/m1_grenade_fly.wav"
+		//missileSound		"sound/weapons/garand/m1_grenade_fly.wav"
 		missileTrailFunc	"GrenadeTrail"						// supports "GrenadeTrail", "RocketTrail", "PyroSmokeTrail" and "DynamiteTrail" (we REALLY want a particle system for this)
 		//missileDlight		0
 		//missileDlightColor	0 0 0							// do we still use this?

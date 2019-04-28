@@ -35,7 +35,7 @@ weaponDef
 		//weaponCardPointT  0 0
 		
 		missileModel		"models/multiplayer/kar98/v_kar98_scope.md3"
-		missileSound		"sound/weapons/k43/k43_grenade_fly.wav"
+		//missileSound		"sound/weapons/k43/k43_grenade_fly.wav"
 		missileTrailFunc	"GrenadeTrail"						// supports "GrenadeTrail", "RocketTrail", "PyroSmokeTrail" and "DynamiteTrail" (we REALLY want a particle system for this)
 		//missileDlight		0
 		//missileDlightColor	0 0 0							// do we still use this?
