@@ -44,9 +44,11 @@
 // At the moment, there will most likely be a lot of penalties for uOps (micro-ops).
 // The provided code is a first attempt to convert some old code into a bit faster code.
 // By commenting out the ETL_SSE define below, you have the old code back..
-// Note: I still need to fix usage of ETL_SSE so it compiles on all systems (atm. Windows comoile only).
+// update: I still need to test usage of ETL_SSE so it compiles on all systems (atm. Windows compile only).
 //
+#if defined(_WIN32) && !defined(_WIN64) && defined(_MSC_VER) && (_MSC_VER >= 1800) && !defined(_WIN32_WCE) && !defined(_M_ARM)
 #define ETL_SSE
+#endif
 //#ifdef ETL_SSE
 #include "pmmintrin.h"
 //#endif

@@ -1434,7 +1434,7 @@ Vector4Set(&light->viewMatrix[0], -viewMatrix[1], viewMatrix[2], -viewMatrix[0],
 Vector4Set(&light->viewMatrix[4], -viewMatrix[5], viewMatrix[6], -viewMatrix[4], viewMatrix[7]);
 Vector4Set(&light->viewMatrix[8], -viewMatrix[9], viewMatrix[10], -viewMatrix[8], viewMatrix[11]);
 Vector4Set(&light->viewMatrix[12], -viewMatrix[13], viewMatrix[14], -viewMatrix[12], viewMatrix[15]);
-
+// TODO: ^^that can be done quicker.   /optimize
 
 
 
