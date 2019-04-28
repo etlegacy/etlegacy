@@ -2702,6 +2702,7 @@ void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean
 		if (clientMismatchedVersion)
 		{
 			trap_DropClient(ent - g_entities, va("Legacy cgame/qgame mismatch: %s/%s", clientMismatchedVersion, ETLEGACY_VERSION), 0);
+			return;
 		}
 		else
 		{
