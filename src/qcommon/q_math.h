@@ -45,13 +45,16 @@
 // The provided code is a first attempt to convert some old code into a bit faster code.
 // By commenting out the ETL_SSE define below, you have the old code back..
 // update: I still need to test usage of ETL_SSE so it compiles on all systems (atm. Windows compile only).
+// note: If ETL_SSE is disabled, compiling this branch has no meaning. This version is all about the inlined macro stuff..
 //
 #if defined(_WIN32) && !defined(_WIN64) && defined(_MSC_VER) && (_MSC_VER >= 1800) && !defined(_WIN32_WCE) && !defined(_M_ARM)
+// this is the compiler directive that will use the SSE2/SSE3 code
+#ifndef ETL_SSE
 #define ETL_SSE
-#endif
-//#ifdef ETL_SSE
+// include the SSE intrinsics once
 #include "pmmintrin.h"
-//#endif
+#endif
+#endif
 
 
 // i don't know how to make pragma 4700 warning suppression work for inlined macros.
@@ -563,7 +566,7 @@ void _Vector4Set4(const float value, vec4_t out); // set x,y,z & w components to
 	(s) = sin((rad)); \
 	(c) = cos((rad));
 
-#define VectorBound(v, mins, maxs, out) (v[0]=Q_bound(mins[0], v[0], maxs[0]); v[1]=Q_bound(mins[1], v[1], maxs[1]); v[2]=Q_bound(mins[2], v[2], maxs[2]))
+#define VectorBound(v, mins, maxs, out) {v[0]=Q_bound(mins[0], v[0], maxs[0]); v[1]=Q_bound(mins[1], v[1], maxs[1]); v[2]=Q_bound(mins[2], v[2], maxs[2]);}
 
 void SetPlaneSignbits(struct cplane_s *out);
 void vec3_norm_inlined(vec3_t v, float *l);
@@ -574,7 +577,7 @@ void BoundsAdd(vec3_t mins, vec3_t maxs, const vec3_t mins2, const vec3_t maxs2)
 
 void PlaneFromPoints_void(vec4_t plane, const vec3_t a, const vec3_t b, const vec3_t c);
 
-void MatrixSetupTransformFromVectorsFLU(mat4_t m, const vec3_t forward, const vec3_t left, const vec3_t up, const vec3_t origin)
+void MatrixSetupTransformFromVectorsFLU(mat4_t m, const vec3_t forward, const vec3_t left, const vec3_t up, const vec3_t origin);
 void MatrixFromVectorsFLU(mat4_t m, const vec3_t forward, const vec3_t left, const vec3_t up);
 void MatrixToVectorsFLU(const mat4_t m, vec3_t forward, vec3_t left, vec3_t up);
 void MatrixToVectorsFRU(const mat4_t m, vec3_t forward, vec3_t right, vec3_t up);

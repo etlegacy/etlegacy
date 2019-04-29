@@ -35,10 +35,6 @@
 
 #include "tr_local.h"
 
-#ifdef ETL_SSE
- // sse3 (Pentium 4 Prescott, Athlon 64 San Diego, and up. old stuff.)
-#include "pmmintrin.h"
-#endif
 
 mat4_t matrixIdentity = { 1.0f, 0.0f, 0.0f, 0.0f,
 	                      0.0f, 1.0f, 0.0f, 0.0f,
@@ -924,14 +920,17 @@ void MatrixPerspectiveProjectionFovXYInfiniteRH(mat4_t m, vec_t fovX, vec_t fovY
 {
 	vec_t width = tanf(DEG2RAD(fovX * 0.5f)),
 		height = tanf(DEG2RAD(fovY * 0.5f));
-	/*m[0] = 1.0f / width;   m[4] = 0.0f;           m[8] = 0.0f;      m[12] = 0.0f;
+#ifndef ETL_SSE
+	m[0] = 1.0f / width;   m[4] = 0.0f;           m[8] = 0.0f;      m[12] = 0.0f;
 	m[1] = 0.0f;           m[5] = 1.0f / height;  m[9] = 0.0f;      m[13] = 0.0f;
 	m[2] = 0.0f;           m[6] = 0.0f;           m[10] = -1.0f;    m[14] = -2.0f * nearvec;
-	m[3] = 0.0f;           m[7] = 0.0f;           m[11] = -1.0f;    m[15] = 0.0f;*/
+	m[3] = 0.0f;           m[7] = 0.0f;           m[11] = -1.0f;    m[15] = 0.0f;
+#else
 	_mm_storeu_ps(&m[0], _mm_set_ps(0.0f,  0.0f,            0.0f,          1.0f / width));
 	_mm_storeu_ps(&m[4], _mm_set_ps(0.0f,  0.0f,            1.0f / height, 0.0f));
 	_mm_storeu_ps(&m[8], _mm_set_ps(-1.0f, -1.0f,           0.0f,          0.0f));
 	_mm_storeu_ps(&m[12], _mm_set_ps(0.0f, -2.0f * nearvec, 0.0f,          0.0f));
+#endif
 }
 #endif
 

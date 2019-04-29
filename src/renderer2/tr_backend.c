@@ -1271,9 +1271,12 @@ static void RB_RenderInteractionsShadowMapped()
 						float    fovX, fovY;
 //						qboolean flipX, flipY;
 						//float          *proj;
-						vec3_t angles;
-						mat4_t /*rotationMatrix, transformMatrix,*/ viewMatrix;
-
+						//vec3_t angles;
+#ifndef ETL_SSE
+						mat4_t /*rotationMatrix,*/ transformMatrix, viewMatrix;
+#else
+						mat4_t viewMatrix;
+#endif
 						Ren_LogComment("----- Rendering shadowCube side: %i -----\n", cubeSide);
 
 						R_BindFBO(tr.shadowMapFBO[light->shadowLOD]);

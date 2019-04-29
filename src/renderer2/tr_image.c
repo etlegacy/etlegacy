@@ -726,9 +726,11 @@ static void R_MipNormalMap(byte *in, int width, int height)
 	int    i, j;
 	byte   *out;
 	vec4_t n;
-	//vec_t  length;
+#ifndef ETL_SSE
+	vec_t  length;
+#else
 	float l;
-
+#endif
 	if (width == 1 && height == 1)
 	{
 		return;

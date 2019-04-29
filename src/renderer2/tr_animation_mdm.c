@@ -805,7 +805,7 @@ void R_AddMDMInteractions(trRefEntity_t *ent, trRefLight_t *light)
  */
 static ID_INLINE void LocalMatrixTransformVector(vec3_t in, vec3_t mat[3], vec3_t out)
 {
-#if 0
+#ifndef ETL_SSE
 	out[0] = in[0] * mat[0][0] + in[1] * mat[0][1] + in[2] * mat[0][2];
 	out[1] = in[0] * mat[1][0] + in[1] * mat[1][1] + in[2] * mat[1][2];
 	out[2] = in[0] * mat[2][0] + in[1] * mat[2][1] + in[2] * mat[2][2];
@@ -1278,7 +1278,7 @@ static ID_INLINE void Matrix4Multiply(const vec4_t a[4], const vec4_t b[4], vec4
  */
 static ID_INLINE void Matrix4MultiplyInto3x3AndTranslation(/*const*/ vec4_t a[4], /*const*/ vec4_t b[4], vec3_t dst[3], vec3_t t)
 {
-#if 0
+#ifndef ETL_SSE
 	dst[0][0] = a[0][0] * b[0][0] + a[0][1] * b[1][0] + a[0][2] * b[2][0] + a[0][3] * b[3][0];
 	dst[0][1] = a[0][0] * b[0][1] + a[0][1] * b[1][1] + a[0][2] * b[2][1] + a[0][3] * b[3][1];
 	dst[0][2] = a[0][0] * b[0][2] + a[0][1] * b[1][2] + a[0][2] * b[2][2] + a[0][3] * b[3][2];
@@ -1463,7 +1463,7 @@ static ID_INLINE void Matrix4FromTranslation(const vec3_t t, vec4_t dst[4])
  */
 static ID_INLINE void Matrix4FromAxisPlusTranslation(/*const*/ vec3_t axis[3], const vec3_t t, vec4_t dst[4])
 {
-#if 0
+#ifndef ETL_SSE
 	// row 0
 	VectorCopy(axis[0], (vec_t *)&dst[0]);
 	dst[0][3] = t[0];
@@ -1627,7 +1627,7 @@ static ID_INLINE void Matrix4TransformVector(const vec4_t m[4], const vec3_t src
  */
 static ID_INLINE void Matrix3Transpose(const vec3_t matrix[3], vec3_t transpose[3])
 {
-#if 0
+#ifndef ETL_SSE
 /*
 	int i, j;
 	for (i = 0; i < 3; i++)
