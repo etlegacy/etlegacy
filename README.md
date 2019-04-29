@@ -41,12 +41,12 @@ You must change those settings for:
 
 ### Compiler
 ![Compiler Code Generation](https://github.com/etlegacy/etlegacy/tree/corec/compile_code_generation.jpg)
+
 ![Compiler Code Optimilization](https://github.com/etlegacy/etlegacy/tree/corec/compile_code_optimization.jpg)
 
 ### Linker
-General
-Optimization
 ![Linker General](https://github.com/etlegacy/etlegacy/tree/corec/link_general.jpg)
+
 ![Linker Optimilization](https://github.com/etlegacy/etlegacy/tree/corec/link_optimization.jpgg)
 
 
