@@ -3,17 +3,6 @@ Enemy Territory: Legacy
 
 *This version aims for performance. It must run fast and smooth, or else nobody wants to play with it. Excel or die..*
 
-* Website: [https://www.etlegacy.com](https://www.etlegacy.com)
-* Downloads: [https://www.etlegacy.com/download](https://www.etlegacy.com/download)
-* Wiki/FAQ: [https://dev.etlegacy.com/projects/etlegacy/wiki](https://dev.etlegacy.com/projects/etlegacy/wiki)
-* Forums: [https://dev.etlegacy.com/projects/etlegacy/boards](https://dev.etlegacy.com/projects/etlegacy/boards)
-* Development (bug reports and feature requests): [https://dev.etlegacy.com](https://dev.etlegacy.com)
-* Repository: [https://github.com/etlegacy/etlegacy](https://github.com/etlegacy/etlegacy)
-* Assets Repository: [https://drive.google.com](https://drive.google.com/drive/folders/0Bw7Yu-pqzcSaLXEtVEVjZF82UEU)
-* Legacy Lua API: [http://legacy-lua-api.readthedocs.io](http://legacy-lua-api.readthedocs.io)
-* Translation: [https://www.transifex.com/projects/p/etlegacy/](https://www.transifex.com/projects/p/etlegacy/)
-* Contact: [\#etlegacy](http://webchat.freenode.net/?channels=#etlegacy) on irc.freenode.net and [etlegacy/#development](https://discordapp.com/channels/260750790203932672/346956915814957067) on Discord.
-
 INTRODUCTION
 ============
 
