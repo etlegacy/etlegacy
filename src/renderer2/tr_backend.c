@@ -1041,48 +1041,10 @@ skipInteraction:
 
 
 
-// TODO: check these matrix values.. something is wrong, somewhere..
-
+/*
+Some helper matrices for RB_RenderInteractionsShadowMapped()
+*/
 /// sincos 0 0 90		sin: 0 0 1,		cos = 1 1 0
-//  srcy=1*1=1
-//	srsy=1*0=0
-//	crcy=0*1=0
-//	crsy=0*0=0
-/// sincos 0 180 90:	sin = 0 0 1,	cos = 1 -1 0
-//  srcy=1*-1=-1
-//	srsy=1*0=0
-//	crcy=0*-1=0
-//	crsy=0*0=0
-/// sincos 0 90 0;		sin = 0 1 0,	cos = 1 0 1
-//  srcy=0*0=0
-//	srsy=0*1=0
-//	crcy=1*0=0
-//	crsy=1*1=1
-/// sincos 0 -90 0:		sin = 0 -1 0,	cos = 1 0 1
-//  srcy=0*0=0
-//	srsy=0*-1=0
-//	crcy=1*0=0
-//	crsy=1*-1=-1
-/// sincos -90 90 0:	sin = -1 1 0,	cos = 0 0 1
-//  srcy=0*0=0
-//	srsy=0*1=0
-//	crcy=1*0=0
-//	crsy=1*1=1
-/// sincos 90 90 0:		sin = 1 1 0,	cos = 0 0 1
-//  srcy=0*0=0
-//	srsy=0*1=0
-//	crcy=1*0=0
-//	crsy=1*1=1
-
-
-
-
-
-// sincos 0 0 90		sin: 0 0 1,		cos = 1 1 0
-/// m[0] = 1.f;		m[4] = 0.f		m[8] = 0.f;		m[12] = 0.f;
-/// m[1] = 0.f;		m[5] = 0.f;		m[9] = -1.f		m[13] = 0.f;
-/// m[2] = 0.f;		m[6] = 1.f;		m[10] = 0.f;	m[14] = 0.f;
-/// m[3] = 0.f;		m[7] = 0.f;		m[11] = 0.f		m[15] = 1.f;
 mat4_t be_rotMatrix_0_0_90 = { 1.0f, 0.0f, 0.0f, 0.0f,
 								0.0f, 0.0f, 1.0f, 0.0f,
 								0.0f, -1.0f, 0.0f, 0.0f,
@@ -1091,11 +1053,7 @@ mat4_t be_rotMatrix_0_0_90_r = { 1.0f, 0.0f, 0.0f, 0.0f,
 								0.0f, 0.0f, -1.0f, 0.0f,
 								0.0f, 1.0f, 0.0f, 0.0f,
 								0.0f, 0.0f, 0.0f, 1.0f };
-// sincos 0 180 90:		sin = 0 0 1,	cos = 1 -1 0
-/// m[0] = -1.f;	m[4] = 0.f		m[8] = 0.f;		m[12] = 0.f;
-/// m[1] = 0.f;		m[5] = 0.f;		m[9] = 1.f		m[13] = 0.f;
-/// m[2] = 0.f;		m[6] = 1.f;		m[10] = 0.f;	m[14] = 0.f;
-/// m[3] = 0.f;		m[7] = 0.f;		m[11] = 0.f		m[15] = 1.f;
+/// sincos 0 180 90:		sin = 0 0 1,	cos = 1 -1 0
 mat4_t be_rotMatrix_0_180_90 = { -1.0f, 0.0f, 0.0f, 0.0f,
 								0.0f, 0.0f, 1.0f, 0.0f,
 								0.0f, 1.0f, 0.0f, 0.0f,
@@ -1104,11 +1062,7 @@ mat4_t be_rotMatrix_0_180_90_r = { -1.0f, 0.0f, 0.0f, 0.0f,
 									0.0f, 0.0f, 1.0f, 0.0f,
 									0.0f, 1.0f, 0.0f, 0.0f,
 									0.0f, 0.0f, 0.0f, 1.0f };
-// sincos 0 90 0;		sin = 0 1 0,	cos = 1 0 1
-/// m[0] = 0.f;		m[4] = -1.f		m[8] = 0.f;		m[12] = 0.f;
-/// m[1] = 1.f;		m[5] = 0.f;		m[9] = 0.f		m[13] = 0.f;
-/// m[2] = 0.f;		m[6] = 0.f;		m[10] = 1.f;	m[14] = 0.f;
-/// m[3] = 0.f;		m[7] = 0.f;		m[11] = 0.f		m[15] = 1.f;
+/// sincos 0 90 0;		sin = 0 1 0,	cos = 1 0 1
 mat4_t be_rotMatrix_0_90_0 = { 0.0f, 1.0f, 0.0f, 0.0f,
 								-1.0f, 0.0f, 0.0f, 0.0f,
 								0.0f, 0.0f, 1.0f, 0.0f,
@@ -1117,11 +1071,7 @@ mat4_t be_rotMatrix_0_90_0_r = { 0.0f, -1.0f, 0.0f, 0.0f,
 								1.0f, 0.0f, 0.0f, 0.0f,
 								0.0f, 0.0f, 1.0f, 0.0f,
 								0.0f, 0.0f, 0.0f, 1.0f };
-// sincos 0 -90 0:		sin = 0 -1 0,	cos = 1 0 1
-/// m[0] = 0.f;		m[4] = 1.f		m[8] = 0.f;		m[12] = 0.f;
-/// m[1] = -1.f;	m[5] = 0.f;		m[9] = 0.f		m[13] = 0.f;
-/// m[2] = 0.f;		m[6] = 0.f;		m[10] = 1.f;	m[14] = 0.f;
-/// m[3] = 0.f;		m[7] = 0.f;		m[11] = 0.f		m[15] = 1.f;
+/// sincos 0 -90 0:		sin = 0 -1 0,	cos = 1 0 1
 mat4_t be_rotMatrix_0_m90_0 = { 0.0f, -1.0f, 0.0f, 0.0f,
 								1.0f, 0.0f, 0.0f, 0.0f,
 								0.0f, 0.0f, 1.0f, 0.0f,
@@ -1130,11 +1080,7 @@ mat4_t be_rotMatrix_0_m90_0_r = { 0.0f, 1.0f, 0.0f, 0.0f,
 								-1.0f, 0.0f, 0.0f, 0.0f,
 								0.0f, 0.0f, 1.0f, 0.0f,
 								0.0f, 0.0f, 0.0f, 1.0f };
-// sincos -90 90 0:		sin = -1 1 0,	cos = 0 0 1
-/// m[0] = 0.f;		m[4] = -1.f		m[8] = 0.f;		m[12] = 0.f;
-/// m[1] = 0.f;		m[5] = 0.f;		m[9] = -1.f		m[13] = 0.f;
-/// m[2] = 1.f;		m[6] = 0.f;		m[10] = 0.f;	m[14] = 0.f;
-/// m[3] = 0.f;		m[7] = 0.f;		m[11] = 0.f		m[15] = 1.f;
+/// sincos -90 90 0:		sin = -1 1 0,	cos = 0 0 1
 mat4_t be_rotMatrix_m90_90_0 = { 0.0f, 0.0f, 1.0f, 0.0f,
 								-1.0f, 0.0f, 0.0f, 0.0f,
 								0.0f, -1.0f, 0.0f, 0.0f,
@@ -1143,11 +1089,7 @@ mat4_t be_rotMatrix_m90_90_0_r = { 0.0f, -1.0f, 0.0f, 0.0f,
 								0.0f, 0.0f, -1.0f, 0.0f,
 								1.0f, 0.0f, 0.0f, 0.0f,
 								0.0f, 0.0f, 0.0f, 1.0f };
-// sincos 90 90 0:		sin = 1 1 0,	cos = 0 0 1
-/// m[0] = 0.f;		m[4] = -1.f		m[8] = 0.f;		m[12] = 0.f;
-/// m[1] = 0.f;		m[5] = 0.f;		m[9] = 1.f		m[13] = 0.f;
-/// m[2] = -1.f;	m[6] = 0.f;		m[10] = 0.f;	m[14] = 0.f;
-/// m[3] = 0.f;		m[7] = 0.f;		m[11] = 0.f		m[15] = 1.f;
+/// sincos 90 90 0:		sin = 1 1 0,	cos = 0 0 1
 mat4_t be_rotMatrix_90_90_0 = { 0.0f, 0.0f, -1.0f, 0.0f,
 								-1.0f, 0.0f, 0.0f, 0.0f,
 								0.0f, 1.0f, 0.0f, 0.0f,
@@ -1156,11 +1098,6 @@ mat4_t be_rotMatrix_90_90_0_r = { 0.0f, -1.0f, 0.0f, 0.0f,
 								0.0f, 0.0f, 1.0f, 0.0f,
 								-1.0f, 0.0f, 0.0f, 0.0f,
 								0.0f, 0.0f, 0.0f, 1.0f };
-
-
-
-
-
 
 /**
  * @brief RB_RenderInteractionsShadowMapped
@@ -1225,7 +1162,7 @@ static void RB_RenderInteractionsShadowMapped()
 		shader                = ia->surfaceShader;
 		alphaTest             = shader->alphaTest;
 
-		if (shader->numDeforms)
+		if (shader->numDeforms != 0)
 		{
 			deformType = ShaderRequiresCPUDeforms(shader) ? DEFORM_TYPE_CPU : DEFORM_TYPE_GPU;
 		}
@@ -1534,7 +1471,7 @@ Vector4Set(&light->viewMatrix[12], -viewMatrix[13], viewMatrix[14], -viewMatrix[
 							VectorNormalizeOnly(up);
 
 							VectorToAngles(lightDirection, angles);
-							mat4_from_angles(rotationMatrix, angles[PITCH], angles[YAW], angles[ROLL]);
+							//mat4_from_angles(rotationMatrix, angles[PITCH], angles[YAW], angles[ROLL]); // rotationMatrix is never used.. or?
 							AngleVectors(angles, forward, side, up);
 
 							MatrixLookAtRH(light->viewMatrix, viewOrigin, lightDirection, up);

@@ -184,6 +184,7 @@ void MatrixAffineInverse(const mat4_t in, mat4_t out)
 	out[2] = in[8];       out[6] = in[9];       out[10] = in[10];        out[14] = -(in[12] * out[2] + in[13] * out[6] + in[14] * out[10]);
 	out[3] = 0.0f;        out[7] = 0.0f;        out[11] = 0.0f;          out[15] = 1.0f;
 #else
+	// TODO: There's a lot of shuffling going on in this function.  that can be done better..
 	__m128 xmm0, xmm1, xmm2, xmm3, xmm4, xmm5, xmm6, xmm7;
 	xmm6 = _mm_set_ps(0.0f, 1.0f, 0.0f, 1.0f);						// constants
 	xmm3 = _mm_loadu_ps(&in[0]);
