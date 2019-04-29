@@ -1,7 +1,7 @@
-Enemy Territory: Legacy [![Travis Status](https://travis-ci.org/etlegacy/etlegacy.svg?branch=master)](https://travis-ci.org/etlegacy/etlegacy) [![AppVeyor status](https://ci.appveyor.com/api/projects/status/468s0285u3w4vfom/branch/master?svg=true)](https://ci.appveyor.com/project/rmarquis/etlegacy/branch/master) [![Analysis Status](https://scan.coverity.com/projects/1160/badge.svg)](https://scan.coverity.com/projects/1160) [![chat](https://img.shields.io/discord/260750790203932672.svg?logo=discord)](https://discord.gg/UBAZFys)
+Enemy Territory: Legacy
 ==========
 
-*A second breath of life for Wolfenstein: Enemy Territory*
+*This version aims for performance. It must run fast and smooth, or else nobody wants to play with it. Excel or die..*
 
 * Website: [https://www.etlegacy.com](https://www.etlegacy.com)
 * Downloads: [https://www.etlegacy.com/download](https://www.etlegacy.com/download)
@@ -17,268 +17,48 @@ Enemy Territory: Legacy [![Travis Status](https://travis-ci.org/etlegacy/etlegac
 INTRODUCTION
 ============
 
-Enemy Territory: Legacy is based on the [raedwulf-et](https://bitbucket.org/tcmreastwood/raedwulf-et/)
-project which in turn is based on the [GPL'd source code](https://github.com/id-Software/Enemy-Territory) of Wolfenstein: Enemy Territory.
+The goal of this branch is to make it work, and to make it run smoother while doing that..
+Many calculational functions have been inlined, and rewritten in (at this moment, still unoptimized) SSE2/SSE3 intrinsics code.
 
-The main goals of the project are fixing bugs, cleaning up the codebase and adding useful features
-while remaining compatible with the ET 2.60b version.
+The purpose of inlining functions, is to have less function-calls.
+There are many calculational functions that are being called continuously. I prefer to have a bit larger code, for a game!, that runs faster. The penalty for inlining all those functions is minimal, in my opinion.
 
-The Legacy mod is the default mod shipped with ET: Legacy. It aims to add many useful features and
-improvements, while staying close to the original gameplay, as well as being lightweight and extensible
-through Lua scripts.
+SSE2/SSE3 code is used for code that would benefit from doing 'the same thing' on each of their vector-components. SSE3 is able to do that same 'thing' on 4 values at the same time. ET uses a lot of vec3_t data types.. some were changed into vec4_t, so SSE can access that memory easier/faster,.. and/or to make better use of inlining.
 
-For more information consult our [changelog](https://dev.etlegacy.com/projects/etlegacy/wiki/Changelog).
-
-ET: Legacy development is a collaborative effort done in an open, transparent and friendly manner.
-Anyone is welcome to join our efforts!
+There are some pieces of code that have their logical flow changed. While crawling the code, in search of optimizations, i encountered lots of locations where the best optimization was to change some fundamental logic.
+A good example is that old 'personalModel' logic.. brrr
 
 
-### Donations
-
-By request, we have finally managed to create a PayPal account for donations. So if you like the
-ET: Legacy project or our game server, don't hesitate to send us some cash at **Paypal: etlegacy@liebt-dich.info**
-
-Your contribution will be used to pay for our server and domain. To clarify, the project is not dependant
-on donations. But we don't reject them if you want to honor our work. Thank you!
+Anyway.. At current time, this branch only works on a Windows system.
+The compiler settings should only make it compile with the new ETL_SSE stuff, if you compile on Windows using MSVS.
 
 
 GENERAL NOTES
 =============
 
-### Game data
-
-Wolfenstein: Enemy Territory is a free release, and can be downloaded from [Splash Damage](http://www.splashdamage.com/content/download-wolfenstein-enemy-territory).
-
-This source release contains only the engine and mod code but not any game data,
-which is still covered by the original EULA and must be obeyed as usual.
-
-In order to run ET: Legacy you will need to copy the original assets files
-(*pak0.pk3*, *pak1.pk3* and *pak2.pk3*) to the etmain folder.
-
-
-### Compatibility with Enemy Territory 2.60b
-
-ET: Legacy remains compatible with the ET 2.60b version as much as possible.
-
-Please note that ET: Legacy is *not* compatible with PunkBuster enabled servers.
-ET: Legacy clients also cannot connect to servers running the ETPro mod.
-
-
-### Linux 64 bit
-
-Please remember that 64 bit ET: Legacy clients can only connect to servers running
-mods providing a 64 bit version. You will be able to play 32 bit-only mods only if
-you compile ET: Legacy on a 32 bit system or crosscompile it for 32 bit architecture
-on a 64 bit system.
-
-At the moment, only the Legacy mod is available in 64 bit version, while all other
-existing mods are available in 32 bit only version.
-
-In case you are a running a 64 bit system, you probably might want to use the
-**bundled libraries** which are located in a separate *etlegacy-libs* repository and
-can be automatically downloaded using the `git submodule` command. See the next
-section for more details.
-
-
-DEPENDENCIES
-============
-
-* **CMake** (compile-time only)
-* **OpenGL**
-* **GLEW**
-* **SDL**
-* **ZLib**
-* **MiniZip**
-* **libjpeg-turbo** or **libjpeg**
-* **libcurl** (optional, enabled by default)
-* **Lua** (optional, enabled by default)
-* **Ogg Vorbis** (optional, enabled by default)
-* **Theora** (optional, enabled by default)
-* **Freetype** (optional, enabled by default)
-* **SQLite** (optional, enabled by default)
-* **OpenAL** (optional, enabled by default)
-* **Jansson** (optional)
-
-
-Grab info about current lib versions from our wiki page [ET: Legacy Libs_Changelog](https://dev.etlegacy.com/projects/etlegacy/wiki/Libs_Changelog)
-
-To get the latest source code install [git](http://git-scm.com/) and
-clone our repository hosted at [Github.com](https://github.com/etlegacy/etlegacy):
-
-    $ git clone git://github.com/etlegacy/etlegacy.git
-
-If the required dependencies are not installed on your system run:
-
-    $ git submodule init
-    $ git submodule update
-
-This downloads the essential dependencies into the `libs/`directory. You can choose
-whether to use bundled libraries instead of the system ones by changing the
-`BUNDLED_LIBS` variable in the CMakeList.txt configuration file. You can then select
-which bundled libraries to use by toggling the respective `BUNDLED_XXX` variable.
-
-
-COMPILE AND INSTALL
-===================
-
-To install the binaries system-wide, you need to compile ET: Legacy with hardcoded
-fs_basepath.
-
-The following variables can be adjusted in CMake:
-
-  * **INSTALL_DEFAULT_BASEDIR**: sets default *fs_basepath*, i.e. where etl and etlded
-    executables look for data files. In most cases it is CMAKE_INSTALL_PREFIX+INSTALL_DEFAULT_MODDIR.
-    Defaults to empty value, because we want *fs_basepath* to be the current working directory
-    when not installing the game system-wide.
-
-  * (optional) **INSTALL_DEFAULT_BINDIR**: Location for executables. Appended to CMAKE_INSTALL_PREFIX.
-    Defaults to "bin".
-
-  * (optional) **INSTALL_DEFAULT_MODDIR**: Location for libraries and paks. Appended to
-    CMAKE_INSTALL_PREFIX. Defaults to "share/etlegacy" and then "legacy" is appended to it.
-
-
-### Linux
-
-Install required dependencies.
-
-* option A: **easybuild**
-
-In terminal, run:
-
-    $ ./easybuild.sh
-
-ET: Legacy will be installed in `~/etlegacy`.
-
-* option B: **command line**
-
-In terminal, run:
-
-    $ mkdir build && cd build && cmake ..
-
-To compile, run:
-
-    $ make
-
-If you wish to install ET: Legacy system-wide, run:
-
-    # make install
-
-Be sure to set the CMake variables (see above) beforehand.
-
-
-**NOTES:**
-
-  * Even if you have a 64 bit linux distribution which provides 32 bit versions of all
-  the required libraries, you might also need the development libraries (-devel packages)
-  installed on your system.
-
-  * In order to compile the jpeg-turbo library properly you will need the **nasm** assembler.
-
-
-### Crosscompiling on Linux with MinGW-w64
-
-In terminal, run:
-
-    $ mkdir build && cd build
-    $ cmake -DCMAKE_TOOLCHAIN_FILE=../cmake/Toolchain-cross-mingw-linux.cmake ..
-    $ make
-
-By default, MinGW name is set to *i686-w64-mingw32*. You may have to change it in
-`cmake/Toolchain-cross-mingw-linux.cmake` depending on how it is called on your system.
-
-
-### Windows
-
-Install:
-
-  1. [Visual Studio Community](http://www.visualstudio.com/)
-  2. [CMake](http://www.cmake.org/) and make sure it is added to your system PATH
-
-* option A: **easybuild**
-
-    1. run easybuild.bat
-
-ET: Legacy will be installed in `My Documents\ETLegacy-Build`.
-
-* option B: **Visual Studio**
-
-    1. create a `build` directory inside the directory which contains ET: Legacy sources
-    2. open *Visual Studio Command Prompt* in the Start menu
-    3. change directory with `cd` to the newly created build directory
-
-In the command prompt, run:
-
-    cmake -G "NMake Makefiles" -DBUNDLED_LIBS=YES .. && nmake
-
-or
-
-    cmake -G "Visual Studio 10" -DBUNDLED_LIBS=YES ..
-
-and open the resulting project in Visual Studio.
-
-
-**NOTES:**
-
-  * If compilation of bundled libraries is aborted for any reason, you will probably need to clean the
-  libs directory and start over. This can be done by executing `git clean -df && git reset --hard HEAD`
-  inside `libs/` directory.
-
-  * If the build fails during libcurl compilation because of missing *sed* utility, download it from
-  [GnuWin](http://gnuwin32.sourceforge.net/packages/sed.htm) and place it into your system path or
-  copy it into `MSVC/VC/bin`. It also comes with Git and can be placed into your system path
-  automatically if you select that option during Git installation.
-
-  * In order to compile the jpeg library properly there is a need for a file named 'win32.mak'.
-  Unfortunately this file isn't shipped with Windows 8.0 and 8.1 SDK versions.
-  Solution: Get the Windows SDK 7 and copy 'win32.mak' to `libs/jpeturbo/`.
-
-
-### Mac OS X
-
-Install:
-
-    1. [Xcode](https://developer.apple.com/xcode/downloads/)
-    2. [Homebrew](http://brew.sh/)
-    3. [Homebrew Cask](http://caskroom.io/)
-
-Then brew the following packages in the terminal app:
-
-    $ brew cask install xquartz
-    $ brew install --universal gnu-sed cmake glew sdl2 minizip jpeg-turbo curl lua libogg libvorbis theora freetype sqlite openal-soft
-
-The --universal flag ensures both 32bit and 64bit libraries are installed. Although your system curl library supports both architectures, you also need to install its headers.
-
-* option A: **easybuild**
-
-In Terminal, run:
-
-    $ ./easybuild.sh
-
-This will put an 'etlegacy' folder into your user folder.
-
-* option B: **command line**
-
-In terminal, run:
-
-    $ mkdir build && cd build && cmake ..
-
-To compile, run:
-
-    $ make
-
-If you wish to install ET: Legacy system-wide, run:
-
-    # make install
-
-Be sure to set the CMake variables (see above) beforehand.
-
-
-**NOTES**:
-
-  * In the legacy mod folder, the cgame_mac and ui_mac files are redundant since they are in the 
-  etl_bin.pk3 and will be extracted at runtime, so you can delete those. The client is named etl.app
-  (and can safely be renamed), while the dedicated server is just a command-line binary named "etlded".
+### Solution Compiler Settings
+
+All the seperate projects in the solution should have their compiler- & linker properties changed.
+You need to tell MSVS to handle the SSE code.
+
+Here are some screenshots of how to set the properties for each project.
+You must change those settings for:
+* cgame_mp_x86
+* etl
+* etlded
+* qagame_mp_x86
+* renderer_opengl2_x86
+* ui_mp_x86
+
+# Compiler
+![Compiler Code Generation](https://github.com/etlegacy/etlegacy/tree/corec/compile_code_generation.jpg)
+![Compiler Code Optimilization](https://github.com/etlegacy/etlegacy/tree/corec/compile_code_optimization.jpg)
+
+# Linker
+General
+Optimization
+![Linker General](https://github.com/etlegacy/etlegacy/tree/corec/link_general.jpg)
+![Linker Optimilization](https://github.com/etlegacy/etlegacy/tree/corec/link_optimization.jpgg)
 
 
 LICENSE

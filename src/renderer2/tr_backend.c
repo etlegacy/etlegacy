@@ -1390,7 +1390,7 @@ MatrixSetupTransformFromRotation(transformMatrix, (*rotMatrix), light->origin);
 						// this is setting viewMatrix.
 						//	MatrixSetupTransformFromRotation(transformMatrix, rotMatrix_x_y_z, light->origin)
 						//	MatrixAffineInverse(transformMatrix, viewMatrix);
-						__m128 xmm0, xmm1, xmm2, xmm3, xmm4, xmm5, xmm6, xmm7, zeroes;
+						__m128 xmm0, xmm1, xmm2, xmm4, xmm5, xmm6, xmm7, zeroes;
 						zeroes = _mm_setzero_ps();
 						xmm0 = _mm_loadh_pi(_mm_load_ss((const float *)&light->origin[0]), (const __m64 *)(&light->origin[1]));	// xmm0 = z y 0 x
 						xmm2 = _mm_loadh_pi(_mm_load_ss((const float *)&(*rotMatrix)[0]), (const __m64 *)&(*rotMatrix)[1]);		// xmm2 = z y 0 x

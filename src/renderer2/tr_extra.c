@@ -303,7 +303,7 @@ void PlaneIntersectRay(const vec3_t rayPos, const vec3_t rayDir, const vec4_t pl
 	VectorNormalize2Only(rayDir, dir);
 	Dot(plane, rayPos, dotprp);
 	Dot(plane, rayDir, dotprd);
-	sect = -(dotprp - plane[3]) / dotprd;
+	sect = -(dotprp - plane[3]) * rcp(dotprd);
 	VectorScale(dir, sect, dir);
 	VectorAdd(rayPos, dir, res);
 }

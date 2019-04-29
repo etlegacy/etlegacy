@@ -44,6 +44,14 @@
 
 #pragma warning(disable:4700)
 
+/*
+	An effort was done to get rid of many function-calls.
+	Most calculational functions have been inlined already (in q_math, tr_extra ...)
+	Because playermodel rendering appeared to be a demanding task for ET, this file got some special attention.
+	There were some functions that peaked in cpu-usage, such as GetMDMSurfaceShader() and R_CalcBones(),
+	and for that code also some logic flow changes were done too. (see references to 'personalModel'.. pfff).
+*/
+
 
 // undef to use floating-point lerping with explicit trig funcs
 #define YD_INGLES
@@ -98,7 +106,7 @@ static float RB_ProjectRadius(float r, vec3_t location)
 	float  pr;
 	float  dist;
 	float  c;
-	vec4_t p; // vec3_t p;
+	vec4_t p; // vec3_t p; // we use vec4, because SSE can handle that better than vec3 (vec4 is exactly 128b, and fits an SSE-register perfectly).
 	float  projected[4];
 
 	/*c    = DotProduct(backEnd.viewParms.orientation.axis[0], backEnd.viewParms.orientation.origin);

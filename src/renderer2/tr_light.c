@@ -1825,6 +1825,9 @@ mat4_t rotMatrix_90_0_0_r = { 0.f, 0.f, 1.f, 0.f,
  * @param[in] light
  * @param[in] worldBounds
  * @return
+ *
+ * INFO: This function could use a cleanup. But then all the old code and comments get lost.
+ *       Because the old code makes it easier to understand what is going on, i leave in all that for "understandability"..
  */
 byte R_CalcLightCubeSideBits(trRefLight_t *light, vec3_t worldBounds[2])
 {
