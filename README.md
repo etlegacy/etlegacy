@@ -39,11 +39,11 @@ You must change those settings for:
 * renderer_opengl2_x86
 * ui_mp_x86
 
-# Compiler
+### Compiler
 ![Compiler Code Generation](https://github.com/etlegacy/etlegacy/tree/corec/compile_code_generation.jpg)
 ![Compiler Code Optimilization](https://github.com/etlegacy/etlegacy/tree/corec/compile_code_optimization.jpg)
 
-# Linker
+### Linker
 General
 Optimization
 ![Linker General](https://github.com/etlegacy/etlegacy/tree/corec/link_general.jpg)
