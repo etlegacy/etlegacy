@@ -47,7 +47,8 @@
 // update: I still need to test usage of ETL_SSE so it compiles on all systems (atm. Windows compile only).
 // note: If ETL_SSE is disabled, compiling this branch has no meaning. This version is all about the inlined macro stuff..
 //
-#if defined(_WIN32) && !defined(_WIN64) && defined(_MSC_VER) && (_MSC_VER >= 1800) && !defined(_WIN32_WCE) && !defined(_M_ARM)
+// The intrinsics header files are available since Visual Studio 2008 (9.0)   That's _MSC_VER 1500
+#if defined(_WIN32) && !defined(_WIN64) && defined(_MSC_VER) && (_MSC_VER >= 1500) && !defined(_WIN32_WCE) && !defined(_M_ARM)
 // this is the compiler directive that will use the SSE2/SSE3 code
 #ifndef ETL_SSE
 #define ETL_SSE
