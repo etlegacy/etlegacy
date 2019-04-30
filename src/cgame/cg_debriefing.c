@@ -802,7 +802,7 @@ panel_button_t chatPanelWindow =
 {
 	NULL,
 	"CHAT",
-	{ 10,                        SCREEN_HEIGHT - 120,620, 110 },
+	{ 10,                        SCREEN_HEIGHT - 122,620, 112 },
 	{ 0,                         0,                  0,   0, 0, 0, 0, 0},
 	NULL,                        // font
 	NULL,                        // keyDown
@@ -816,7 +816,7 @@ panel_button_t chatPanelText =
 {
 	NULL,
 	NULL,
-	{ 18,                      SCREEN_HEIGHT - 34,  SCREEN_WIDTH - 36, TEAMCHAT_HEIGHT },
+	{ 14,                      SCREEN_HEIGHT - 33,  SCREEN_WIDTH - 28, TEAMCHAT_HEIGHT },
 	{ 0,                       0,                   0,                 0, 0, 0, 0, 0   },
 	NULL,                      // font
 	NULL,                      // keyDown
