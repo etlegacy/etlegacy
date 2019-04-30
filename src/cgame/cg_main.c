@@ -537,9 +537,9 @@ cvarTable_t cvarTable[] =
 
 	{ &cg_instanttapout,          "cg_instanttapout",          "0",           CVAR_ARCHIVE,                 0 },
 	{ &cg_debugSkills,            "cg_debugSkills",            "0",           0,                            0 },
-
-	{ NULL,                       "cg_modVersion",          ETLEGACY_VERSION, CVAR_USERINFO | CVAR_ROM,     0 },
-
+#if 0 // not used
+	{ NULL,                       "cg_etVersion",              "",            CVAR_USERINFO | CVAR_ROM,     0 },
+#endif
 	{ &cg_drawFireteamOverlay,    "cg_drawFireteamOverlay",    "1",           CVAR_ARCHIVE,                 0 },
 	{ &cg_drawSmallPopupIcons,    "cg_drawSmallPopupIcons",    "1",           CVAR_ARCHIVE,                 0 },
 
@@ -2774,16 +2774,13 @@ void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qbo
 
 	// check version
 	s = CG_ConfigString(CS_GAME_VERSION);
-	if (strcmp(s, ETLEGACY_VERSION))
+	if (strcmp(s, GAME_VERSION))
 	{
-		CG_Error("Legacy cgame/qgame mismatch: %s/%s\n", ETLEGACY_VERSION, s);
+		CG_Error("Client/Server game mismatch: '%s/%s'\n", GAME_VERSION, s);
 	}
-	else
-	{
-		CG_Printf(S_COLOR_MDGREY "Matching Legacy game " S_COLOR_GREEN "%s\n", s);
-	}
-
-	trap_Cvar_Set("cg_modVersion", ETLEGACY_VERSION);   // so server can check
+#if 0 // not used
+	trap_Cvar_Set("cg_etVersion", GAME_VERSION_DATED);   // So server can check
+#endif
 
 	s                  = CG_ConfigString(CS_LEVEL_START_TIME);
 	cgs.levelStartTime = atoi(s);
