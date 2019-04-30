@@ -34,24 +34,24 @@
 
 #ifdef __ANDROID__
 
+#include "jni.h"
 /*******************************************************************************
                  Functions called by JNI
 *******************************************************************************/
 
 /* Start up the ET Legacy app */
-void Java_org_etlegacy_app_SDLActivity_nativeInit()
+JNIEXPORT void JNICALL Java_org_etlegacy_app_SDLActivity_nativeSetupJNI()
 {
     Android_JNI_SetupThread();
 
     SDL_SetMainReady();
 
     /* Run the application code! */
-    int status;
     char *argv[2];
     argv[0] = SDL_strdup("ET Legacy");
     // send r_fullscreen 0 with argv[1] because on fullscreen can cause some issues see: https://github.com/rafal1137/android-project/commit/d960cc244b17d8cc0d084f9c8dad9c1af4b2ba72#diff-b9bd293cfb066fe80c10d3fcdd0fd6cbL439
     argv[1] = 0;
-    status = SDL_main(1, argv);
+    SDL_main(1, argv);
 
 }
 
