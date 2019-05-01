@@ -1049,58 +1049,91 @@ mat4_t be_rotMatrix_0_0_90 = { 1.0f, 0.0f, 0.0f, 0.0f,
 								0.0f, 0.0f, 1.0f, 0.0f,
 								0.0f, -1.0f, 0.0f, 0.0f,
 								0.0f, 0.0f, 0.0f, 1.0f };
-mat4_t be_rotMatrix_0_0_90_r = { 1.0f, 0.0f, 0.0f, 0.0f,
+/*@ mat4_t be_rotMatrix_0_0_90_r = { 1.0f, 0.0f, 0.0f, 0.0f,
 								0.0f, 0.0f, -1.0f, 0.0f,
 								0.0f, 1.0f, 0.0f, 0.0f,
+								0.0f, 0.0f, 0.0f, 1.0f };*/ // no longer needed.. obsolete
+mat4_t be_rotMatrix_0_0_90_q = { 0.0f, 0.0f, -1.0f, 0.0f,
+								0.0f, -1.0f, 0.0f, 0.0f,
+								-1.0f, 0.0f, 0.0f, 0.0f,
 								0.0f, 0.0f, 0.0f, 1.0f };
 /// sincos 0 180 90:		sin = 0 0 1,	cos = 1 -1 0
 mat4_t be_rotMatrix_0_180_90 = { -1.0f, 0.0f, 0.0f, 0.0f,
 								0.0f, 0.0f, 1.0f, 0.0f,
 								0.0f, 1.0f, 0.0f, 0.0f,
 								0.0f, 0.0f, 0.0f, 1.0f };
-mat4_t be_rotMatrix_0_180_90_r = { -1.0f, 0.0f, 0.0f, 0.0f,
+/*@ mat4_t be_rotMatrix_0_180_90_r = { -1.0f, 0.0f, 0.0f, 0.0f,
 									0.0f, 0.0f, 1.0f, 0.0f,
 									0.0f, 1.0f, 0.0f, 0.0f,
+									0.0f, 0.0f, 0.0f, 1.0f };*/
+mat4_t be_rotMatrix_0_180_90_q = { 0.0f, 0.0f, 1.0f, 0.0f,
+									0.0f, 1.0f, 0.0f, 0.0f,
+									-1.0f, 0.0f, 0.0f, 0.0f,
 									0.0f, 0.0f, 0.0f, 1.0f };
 /// sincos 0 90 0;		sin = 0 1 0,	cos = 1 0 1
 mat4_t be_rotMatrix_0_90_0 = { 0.0f, 1.0f, 0.0f, 0.0f,
 								-1.0f, 0.0f, 0.0f, 0.0f,
 								0.0f, 0.0f, 1.0f, 0.0f,
 								0.0f, 0.0f, 0.0f, 1.0f };
-mat4_t be_rotMatrix_0_90_0_r = { 0.0f, -1.0f, 0.0f, 0.0f,
+/*@ mat4_t be_rotMatrix_0_90_0_r = { 0.0f, -1.0f, 0.0f, 0.0f,
 								1.0f, 0.0f, 0.0f, 0.0f,
 								0.0f, 0.0f, 1.0f, 0.0f,
+								0.0f, 0.0f, 0.0f, 1.0f };*/
+mat4_t be_rotMatrix_0_90_0_q = { 1.0f, 0.0f, 0.0f, 0.0f,
+								0.0f, 0.0f, -1.0f, 0.0f,
+								0.0f, 1.0f, 0.0f, 0.0f,
 								0.0f, 0.0f, 0.0f, 1.0f };
 /// sincos 0 -90 0:		sin = 0 -1 0,	cos = 1 0 1
 mat4_t be_rotMatrix_0_m90_0 = { 0.0f, -1.0f, 0.0f, 0.0f,
 								1.0f, 0.0f, 0.0f, 0.0f,
 								0.0f, 0.0f, 1.0f, 0.0f,
 								0.0f, 0.0f, 0.0f, 1.0f };
-mat4_t be_rotMatrix_0_m90_0_r = { 0.0f, 1.0f, 0.0f, 0.0f,
+/*@ mat4_t be_rotMatrix_0_m90_0_r = { 0.0f, 1.0f, 0.0f, 0.0f,
 								-1.0f, 0.0f, 0.0f, 0.0f,
 								0.0f, 0.0f, 1.0f, 0.0f,
+								0.0f, 0.0f, 0.0f, 1.0f };*/
+mat4_t be_rotMatrix_0_m90_0_q = { -1.0f, 0.0f, 0.0f, 0.0f,
+								0.0f, 0.0f, 1.0f, 0.0f,
+								0.0f, 1.0f, 0.0f, 0.0f,
 								0.0f, 0.0f, 0.0f, 1.0f };
 /// sincos -90 90 0:		sin = -1 1 0,	cos = 0 0 1
 mat4_t be_rotMatrix_m90_90_0 = { 0.0f, 0.0f, 1.0f, 0.0f,
 								-1.0f, 0.0f, 0.0f, 0.0f,
 								0.0f, -1.0f, 0.0f, 0.0f,
 								0.0f, 0.0f, 0.0f, 1.0f };
-mat4_t be_rotMatrix_m90_90_0_r = { 0.0f, -1.0f, 0.0f, 0.0f,
+/*@ mat4_t be_rotMatrix_m90_90_0_r = { 0.0f, -1.0f, 0.0f, 0.0f,
 								0.0f, 0.0f, -1.0f, 0.0f,
 								1.0f, 0.0f, 0.0f, 0.0f,
+								0.0f, 0.0f, 0.0f, 1.0f };*/
+mat4_t be_rotMatrix_m90_90_0_q = { 1.0f, 0.0f, 0.0f, 0.0f,
+								0.0f, -1.0f, 0.0f, 0.0f,
+								0.0f, 0.0f, -1.0f, 0.0f,
 								0.0f, 0.0f, 0.0f, 1.0f };
 /// sincos 90 90 0:		sin = 1 1 0,	cos = 0 0 1
 mat4_t be_rotMatrix_90_90_0 = { 0.0f, 0.0f, -1.0f, 0.0f,
 								-1.0f, 0.0f, 0.0f, 0.0f,
 								0.0f, 1.0f, 0.0f, 0.0f,
 								0.0f, 0.0f, 0.0f, 1.0f };
-mat4_t be_rotMatrix_90_90_0_r = { 0.0f, -1.0f, 0.0f, 0.0f,
+/*@ mat4_t be_rotMatrix_90_90_0_r = { 0.0f, -1.0f, 0.0f, 0.0f,
 								0.0f, 0.0f, 1.0f, 0.0f,
 								-1.0f, 0.0f, 0.0f, 0.0f,
+								0.0f, 0.0f, 0.0f, 1.0f };*/
+mat4_t be_rotMatrix_90_90_0_q = { 1.0f, 0.0f, 0.0f, 0.0f,
+								0.0f, 1.0f, 0.0f, 0.0f,
+								0.0f, 0.0f, 1.0f, 0.0f,
 								0.0f, 0.0f, 0.0f, 1.0f };
 
 /**
  * @brief RB_RenderInteractionsShadowMapped
+ *
+ * After some initial optimizing, some parts of the code are hardly recognizable.
+ * The remaining old commented out code, and commented out intermediate optimization steps ..
+ * .. help in understanding how especially the RL_OMNI code has shrunken so much,
+ * into just a few basic instructions.
+ * If this function would be cleaned up, and removed from all commented out lines,
+ * not even i can read easily what is really going on. So for developer's sake, i leave in all comments.
+ * If you look at this code in a code editor, you will most likely "skip" all the green lines already..
+ * ..and see them when you need them.
  */
 static void RB_RenderInteractionsShadowMapped()
 {
@@ -1124,7 +1157,7 @@ static void RB_RenderInteractionsShadowMapped()
 		                        0.0f, 0.5f, 0.0f, 0.0f,
 		                        0.0f, 0.0f, 0.5f, 0.0f,
 		                        0.5f, 0.5f, 0.5f, 1.0f };
-	mat4_t        *rotMatrix, *rotMatrix_r;
+	mat4_t        *rotMatrix, *rotMatrix_r, *rotMatrix_q;
 
 	if (!glConfig2.framebufferObjectAvailable || !glConfig2.textureFloatAvailable)
 	{
@@ -1204,8 +1237,8 @@ static void RB_RenderInteractionsShadowMapped()
 					{
 						//float           xMin, xMax, yMin, yMax;
 						//float           width, height, depth;
-						float    zNear, zFar;
-						float    fovX, fovY;
+//@						float    zNear, zFar;
+						float    fovXY;
 //						qboolean flipX, flipY;
 						//float          *proj;
 						//vec3_t angles;
@@ -1214,7 +1247,7 @@ static void RB_RenderInteractionsShadowMapped()
 #else
 						mat4_t viewMatrix;
 #endif
-						Ren_LogComment("----- Rendering shadowCube side: %i -----\n", cubeSide);
+//						Ren_LogComment("----- Rendering shadowCube side: %i -----\n", cubeSide); // insert back if you need it.. i want this function to execute faster..
 
 						R_BindFBO(tr.shadowMapFBO[light->shadowLOD]);
 						R_AttachFBOTexture2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + cubeSide,
@@ -1235,69 +1268,69 @@ static void RB_RenderInteractionsShadowMapped()
 						case 0:
 						{
 							// view parameters
-///							VectorSet(angles, 0.f, 0.f, 90.f);
+///							VectorSet(angles, 0.f, 0.f, 90.f);	// the oldest way. vectorset(amgles...); mat4_from_angles(rotationMatrix...)
 							// projection parameters
-							/*flipX = qfalse;
+							/*flipX = qfalse;					// flipX & flipY were used to choose between 90 or -90
 							flipY = qfalse;*/
 rotMatrix = &be_rotMatrix_0_0_90;
-rotMatrix_r = &be_rotMatrix_0_0_90_r;
-fovX = 90.f;
-fovY = 90.f;
+//$	rotMatrix_r = &be_rotMatrix_0_0_90_r;							// this is the viewmatrix: the transposed rotationmatrix
+rotMatrix_q = &be_rotMatrix_0_0_90_q;							// this is the quakeToOpenGLMatrix * viewmatrix
+fovXY = 90.f;
 							break;
 						}
 						case 1:
 						{
 ///							VectorSet(angles, 0.f, 180.f, 90.f);
 rotMatrix = &be_rotMatrix_0_180_90;
-rotMatrix_r = &be_rotMatrix_0_180_90_r;
+//$	rotMatrix_r = &be_rotMatrix_0_180_90_r;
+rotMatrix_q = &be_rotMatrix_0_180_90_q;
+fovXY = -90.f;
 							/*flipX = qtrue;
 							flipY = qtrue;*/
-fovX = -90.f;
-fovY = -90.f;
 							break;
 						}
 						case 2:
 						{
 ///							VectorSet(angles, 0.f, 90.f, 0.f);
 rotMatrix = &be_rotMatrix_0_90_0;
-rotMatrix_r = &be_rotMatrix_0_90_0_r;
+//$	rotMatrix_r = &be_rotMatrix_0_90_0_r;
+rotMatrix_q = &be_rotMatrix_0_90_0_q;
+fovXY = 90.f;
 							/*flipX = qfalse;
 							flipY = qfalse;*/
-fovX = 90.f;
-fovY = 90.f;
 							break;
 						}
 						case 3:
 						{
 ///							VectorSet(angles, 0.f, -90.f, 0.f);
 rotMatrix = &be_rotMatrix_0_m90_0;
-rotMatrix_r = &be_rotMatrix_0_m90_0_r;
+//$	rotMatrix_r = &be_rotMatrix_0_m90_0_r;
+rotMatrix_q = &be_rotMatrix_0_m90_0_q;
+fovXY = -90.f;
 							/*flipX = qtrue;
 							flipY = qtrue;*/
-fovX = -90.f;
-fovY = -90.f;
 							break;
 						}
 						case 4:
 						{
 ///							VectorSet(angles, -90.f, 90.f, 0.f);
 rotMatrix = &be_rotMatrix_m90_90_0;
-rotMatrix_r = &be_rotMatrix_m90_90_0_r;
+//$	rotMatrix_r = &be_rotMatrix_m90_90_0_r;
+rotMatrix_q = &be_rotMatrix_m90_90_0_q;
+fovXY = 90.f;
 							/*flipX = qfalse;
 							flipY = qfalse;*/
-fovX = 90.f;
-fovY = 90.f;
 							break;
 						}
 						case 5:
 						{
 ///							VectorSet(angles, 90.f, 90.f, 0.f);
 rotMatrix = &be_rotMatrix_90_90_0;
-rotMatrix_r = &be_rotMatrix_90_90_0_r;
+//$	rotMatrix_r = &be_rotMatrix_90_90_0_r;
+rotMatrix_q = &be_rotMatrix_90_90_0_q;
+fovXY = -90.f;
 							/*flipX = qtrue;
 							flipY = qtrue;*/
-fovX = -90.f;
-fovY = -90.f;
 							break;
 						}
 /*						default:
@@ -1325,8 +1358,9 @@ MatrixSetupTransformFromRotation(transformMatrix, (*rotMatrix), light->origin);
 
 #else
 						// this is setting viewMatrix.
-						//	MatrixSetupTransformFromRotation(transformMatrix, rotMatrix_x_y_z, light->origin)
-						//	MatrixAffineInverse(transformMatrix, viewMatrix);
+						//	  MatrixSetupTransformFromRotation(transformMatrix, rotMatrix_x_y_z, light->origin)
+						//	  MatrixAffineInverse(transformMatrix, viewMatrix);
+						// UPDATE: in the end, all that's done, is calculating the bottom row of the viewMatrix..
 						__m128 xmm0, xmm1, xmm2, xmm4, xmm5, xmm6, xmm7, zeroes;
 						zeroes = _mm_setzero_ps();
 						xmm0 = _mm_loadh_pi(_mm_load_ss((const float *)&light->origin[0]), (const __m64 *)(&light->origin[1]));	// xmm0 = z y 0 x
@@ -1358,24 +1392,38 @@ MatrixSetupTransformFromRotation(transformMatrix, (*rotMatrix), light->origin);
 						_mm_store_ss(&viewMatrix[14], xmm5);
 
 						_mm_store_ss(&viewMatrix[15], _mm_set_ss(1.f));
+/*$
 						_mm_storeu_ps(&viewMatrix[0], _mm_loadu_ps((const float *)&(*rotMatrix_r)[0]));
 						_mm_storeu_ps(&viewMatrix[4], _mm_loadu_ps((const float *)&(*rotMatrix_r)[4]));
-						_mm_storeu_ps(&viewMatrix[8], _mm_loadu_ps((const float *)&(*rotMatrix_r)[8]));
+						_mm_storeu_ps(&viewMatrix[8], _mm_loadu_ps((const float *)&(*rotMatrix_r)[8]));*/
+						// improvement on ^^the previous^^ code above, ..
+						// .. for the 3x3 part of the matrix that is concerned, we load directly from
+						// the '* quakeToOpenGLMatrix' transformed matrix: rotMatrix_q
+						// We do not use rotMatrix_r values, and later mangle values to create light->viewMatrix ..
+						// .. but we use the "quakeToOpenGLMatrix"-values from rotMatrix_q  (those values are already pre-mangled;)
+						_mm_storeu_ps(&light->viewMatrix[0], _mm_loadu_ps((const float *)&(*rotMatrix_q)[0]));
+						_mm_storeu_ps(&light->viewMatrix[4], _mm_loadu_ps((const float *)&(*rotMatrix_q)[4]));
+						_mm_storeu_ps(&light->viewMatrix[8], _mm_loadu_ps((const float *)&(*rotMatrix_q)[8]));
 #endif
 
 
-// TODO: check R_CalcLightCubeSideBits() on how to optimize that^^ code above..  OK busy doing that..
 
 
 						// convert from our coordinate system (looking down X)
 						// to OpenGL's coordinate system (looking down -Z)
 ///						Matrix4Multiply(quakeToOpenGLMatrix, viewMatrix, light->viewMatrix);
-Vector4Set(&light->viewMatrix[0], -viewMatrix[1], viewMatrix[2], -viewMatrix[0], viewMatrix[3]);
-Vector4Set(&light->viewMatrix[4], -viewMatrix[5], viewMatrix[6], -viewMatrix[4], viewMatrix[7]);
-Vector4Set(&light->viewMatrix[8], -viewMatrix[9], viewMatrix[10], -viewMatrix[8], viewMatrix[11]);
-Vector4Set(&light->viewMatrix[12], -viewMatrix[13], viewMatrix[14], -viewMatrix[12], viewMatrix[15]);
-// TODO: ^^that can be done quicker.   /optimize
 
+/*$	Vector4Set(&light->viewMatrix[0], -viewMatrix[1], viewMatrix[2], -viewMatrix[0], viewMatrix[3]);
+Vector4Set(&light->viewMatrix[4], -viewMatrix[5], viewMatrix[6], -viewMatrix[4], viewMatrix[7]);
+Vector4Set(&light->viewMatrix[8], -viewMatrix[9], viewMatrix[10], -viewMatrix[8], viewMatrix[11]);*/
+Vector4Set(&light->viewMatrix[12], -viewMatrix[13], viewMatrix[14], -viewMatrix[12], viewMatrix[15]); // only the bottom row of the matrix is left to be mangled..
+// TODO: ^^that can be done quicker.   /optimize
+// This case is a bit different from the code in tr_light R_CalcLightCubeSideBits().
+// Here the light->viewMatrix & light->projectionMatrix are NOT multiplied..
+// UPDATE: rotMatrix_q is the viewmatrix * quakeToOpenGLMatrix, and simply copied to 3 rows of light->viewMatrix..
+//         The last row (light->viewMatrix[12]) is set with the previously calculated data (from viewMatrix).
+// And now that that step in optimization has been done,
+// it's clear that it would suffice to use a vec4_t (instead of a mat4_t) for the variable 'viewMatrix'.. but yeah.. readability--
 
 
 
@@ -1383,10 +1431,10 @@ Vector4Set(&light->viewMatrix[12], -viewMatrix[13], viewMatrix[14], -viewMatrix[
 						/*fovX = 90.f;
 						fovY = 90.f;*/
 
-						zNear = 1.0f; // const
-						zFar  = light->sphereRadius;
+//@						zNear = 1.0f; // const
+//@						zFar  = light->sphereRadius;
 
-/*						if (flipX)
+						/*if (flipX)
 						{
 							fovX = -fovX;
 						}
@@ -1396,7 +1444,26 @@ Vector4Set(&light->viewMatrix[12], -viewMatrix[13], viewMatrix[14], -viewMatrix[
 							fovY = -fovY;
 						}*/
 
-						MatrixPerspectiveProjectionFovXYRH(light->projectionMatrix, fovX, fovY, zNear, zFar);
+//@						MatrixPerspectiveProjectionFovXYRH(light->projectionMatrix, fovX, fovY, zNear, zFar);
+
+						// fovX & fovY are always both the same, 90 or -90, and zNear is always 1.
+						// we can save the two tanf() calls, and some more calculations..
+						vec_t width_r = rcp(tanf(DEG2RAD(fovXY * 0.5f))), // why don't i succeed making this use constants? :S :)
+							FarrNearFar = light->sphereRadius / (1.f - light->sphereRadius);
+						xmm0 = _mm_set_ps(0.0f, 0.0f, 0.0f, width_r);
+						_mm_storeu_ps(&light->projectionMatrix[0], xmm0);
+						xmm0 = _mm_shuffle_ps(xmm0, xmm0, 0b11100001);		// xmm0 = 0.0f, 0.0f, width_r, 0.0f
+						_mm_storeu_ps(&light->projectionMatrix[4], xmm0); // _mm_set_ps(0.0f, 0.0f, width_r, 0.0f));
+						xmm1 = _mm_set_ps(-1.0f, FarrNearFar, 0.0f, 0.0f);
+						_mm_storeu_ps(&light->projectionMatrix[8], xmm1);
+						xmm1 = _mm_shuffle_ps(xmm1, xmm1, 0b00100000);		// xmm1 = 0.0f, FarrNearFar, 0.0f, 0.0f
+						_mm_storeu_ps(&light->projectionMatrix[12], xmm1); // _mm_set_ps(0.0f, FarrNearFar, 0.0f, 0.0f));
+
+
+// ..There is almost nothing left of the original code for this OMNI light shadowing.. very woot
+// and still the very same is done as before.. only now more efficiently.
+// Because this function is one of the most heavy ones being called, (if you have the fancy shadows enabled in-game),
+// overall performance could possibly best be improved upon in one of those more cpu-time-consuming functions.
 
 						GL_LoadProjectionMatrix(light->projectionMatrix);
 						break;
@@ -1639,7 +1706,7 @@ Vector4Set(&light->viewMatrix[12], -viewMatrix[13], viewMatrix[14], -viewMatrix[
 
 								AddPointToBounds(transf, splitFrustumClipBounds[0], splitFrustumClipBounds[1]);
 							}
-
+/*
 							Ren_LogComment("shadow casters = %i\n", numCasters);
 							Ren_LogComment("split frustum light space clip bounds (%5.3f, %5.3f, %5.3f) (%5.3f, %5.3f, %5.3f)\n",
 							               splitFrustumClipBounds[0][0], splitFrustumClipBounds[0][1], splitFrustumClipBounds[0][2],
@@ -1650,7 +1717,7 @@ Vector4Set(&light->viewMatrix[12], -viewMatrix[13], viewMatrix[14], -viewMatrix[
 							Ren_LogComment("light receiver light space clip bounds (%5.3f, %5.3f, %5.3f) (%5.3f, %5.3f, %5.3f)\n",
 							               receiverBounds[0][0], receiverBounds[0][1], receiverBounds[0][2],
 							               receiverBounds[1][0], receiverBounds[1][1], receiverBounds[1][2]);
-
+*/
 							// scene-dependent bounding volume
 							cropBounds[0][0] = Q_max(Q_max(casterBounds[0][0], receiverBounds[0][0]), splitFrustumClipBounds[0][0]);
 							cropBounds[0][1] = Q_max(Q_max(casterBounds[0][1], receiverBounds[0][1]), splitFrustumClipBounds[0][1]);
@@ -1659,10 +1726,7 @@ Vector4Set(&light->viewMatrix[12], -viewMatrix[13], viewMatrix[14], -viewMatrix[
 							cropBounds[1][1] = Q_min(Q_min(casterBounds[1][1], receiverBounds[1][1]), splitFrustumClipBounds[1][1]);
 
 							cropBounds[0][2] = Q_min(casterBounds[0][2], splitFrustumClipBounds[0][2]);
-							//cropBounds[0][2] = casterBounds[0][2];
-							//cropBounds[0][2] = splitFrustumClipBounds[0][2];
 							cropBounds[1][2] = Q_min(receiverBounds[1][2], splitFrustumClipBounds[1][2]);
-							//cropBounds[1][2] = splitFrustumClipBounds[1][2];
 
 							if (numCasters == 0)
 							{
