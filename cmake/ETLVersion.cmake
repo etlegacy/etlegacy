@@ -50,7 +50,7 @@ macro(GENERATENUMBER VAR VAL)
 	ENDIF()
 endmacro(GENERATENUMBER)
 
-git_describe(GIT_DESCRIBE)
+git_describe(GIT_DESCRIBE "--abbrev=7")
 git_describe(GIT_DESCRIBE_TAG "--abbrev=0")
 if(GIT_DESCRIBE)
 	set(ETL_CMAKE_VERSION ${GIT_DESCRIBE})
