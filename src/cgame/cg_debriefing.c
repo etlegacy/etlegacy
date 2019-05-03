@@ -1546,12 +1546,13 @@ void CG_Debriefing_Startup(void)
 	cgs.dbLastRequestTime = 0;
 	cgs.dbSelectedClient  = cg.clientNum;
 
-	// MAPVOTE
-	cgs.dbSelectedMap     = -1;
-	cgs.dbMapListReceived = qfalse;
-	cgs.dbMapVotedFor[0]  = -1;
-	cgs.dbMapVotedFor[1]  = -1;
-	cgs.dbMapVotedFor[2]  = -1;
+	// mapvote
+	cgs.dbSelectedMap       = -1;
+	cgs.dbMapListReceived   = qfalse;
+	cgs.dbVoteTallyReceived = qfalse;
+	cgs.dbMapVotedFor[0]    = -1;
+	cgs.dbMapVotedFor[1]    = -1;
+	cgs.dbMapVotedFor[2]    = -1;
 
 	cgs.dbAwardsParsed = qfalse;
 
@@ -1597,10 +1598,15 @@ void CG_Debriefing_InfoRequests(void)
 	}
 	cgs.dbLastRequestTime = cg.time;
 
-	// MAPVOTE
 	if (!cgs.dbMapListReceived && cgs.gametype == GT_WOLF_MAPVOTE)
 	{
 		trap_SendClientCommand("immaplist");
+		return;
+	}
+
+	if (!cgs.dbVoteTallyReceived && cgs.gametype == GT_WOLF_MAPVOTE)
+	{
+		trap_SendClientCommand("imvotetally");
 		return;
 	}
 
@@ -4103,5 +4109,8 @@ void CG_parseMapVoteTally()
 	{
 		cgs.dbMapVotes[i] = atoi(CG_Argv(i + 1));
 	}
+
+	cgs.dbVoteTallyReceived = qtrue;
+
 	return;
 }

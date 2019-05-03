@@ -2304,6 +2304,7 @@ typedef struct cgs_s
 	int dbSelectedMap;
 	int dbSelectedMapTime;
 	qboolean dbMapListReceived;
+	qboolean dbVoteTallyReceived;
 	qboolean dbMapMultiVote;
 	int dbMapVotedFor[3];
 	int mapVoteMapX;

@@ -3122,10 +3122,13 @@ void MoveClientToIntermission(gentity_t *ent)
 		G_LeaveTank(ent, qfalse);
 	}
 
-	// MAPVOTING initialize the vars
-	ent->client->sess.mapVotedFor[0] = -1;
-	ent->client->sess.mapVotedFor[1] = -1;
-	ent->client->sess.mapVotedFor[2] = -1;
+	// initialize vars
+	if (g_gametype.integer == GT_WOLF_MAPVOTE)
+	{
+		ent->client->sess.mapVotedFor[0] = -1;
+		ent->client->sess.mapVotedFor[1] = -1;
+		ent->client->sess.mapVotedFor[2] = -1;
+	}
 
 	ent->client->ps.eFlags = 0;
 	ent->s.eFlags          = 0;
