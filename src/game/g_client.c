@@ -3218,6 +3218,30 @@ void ClientDisconnect(int clientNum)
 		G_LogPrintf("WeaponStats: %s\n", G_createStats(ent));
 	}
 
+	// remove mapvote
+	if (g_gametype.integer == GT_WOLF_MAPVOTE && g_gamestate.integer == GS_INTERMISSION)
+	{
+		if (g_mapVoteFlags.integer & MAPVOTE_MULTI_VOTE && ent->client->ps.eFlags & EF_VOTED)
+		{
+			for (i = 0; i < 3; i++)
+			{
+				if (ent->client->sess.mapVotedFor[i] != -1)
+				{
+					level.mapvoteinfo[ent->client->sess.mapVotedFor[i]].numVotes   -= (i + 1);
+					level.mapvoteinfo[ent->client->sess.mapVotedFor[i]].totalVotes -= (i + 1);
+				}
+			}
+		}
+		else if (ent->client->ps.eFlags & EF_VOTED)
+		{
+			level.mapvoteinfo[ent->client->sess.mapVotedFor[0]].numVotes--;
+			level.mapvoteinfo[ent->client->sess.mapVotedFor[0]].totalVotes--;
+		}
+
+		// send updated vote tally to all
+		G_IntermissionVoteTally(NULL);
+	}
+
 	G_LogPrintf("ClientDisconnect: %i\n", clientNum);
 
 	trap_UnlinkEntity(ent);
