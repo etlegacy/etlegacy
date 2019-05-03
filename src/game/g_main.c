@@ -568,7 +568,7 @@ cvarTable_t gameCvarTable[] =
 	{ &g_protect,                           "g_protect",                           "0",                          CVAR_ARCHIVE,                                    0, qfalse, qfalse },
 	{ &g_dropHealth,                        "g_dropHealth",                        "0",                          0,                                               0, qfalse, qfalse },
 	{ &g_dropAmmo,                          "g_dropAmmo",                          "0",                          0,                                               0, qfalse, qfalse },
-	{ &g_shove,                             "g_shove",                             "80",                         0,                                               0, qfalse, qfalse },
+	{ &g_shove,                             "g_shove",                             "60",                         0,                                               0, qfalse, qfalse },
 
 	// MAPVOTE
 	{ &g_mapVoteFlags,                      "g_mapVoteFlags",                      "0",                          0,                                               0, qfalse, qfalse },
@@ -612,7 +612,7 @@ cvarTable_t gameCvarTable[] =
 	{ &g_mapConfigs,                        "g_mapConfigs",                        "",                           0,                                               0, qfalse, qfalse },
 	{ &g_customConfig,                      "g_customConfig",                      "defaultpublic",              CVAR_ARCHIVE,                                    0, qfalse, qfalse },
 	{ &g_moverScale,                        "g_moverScale",                        "1.0",                        0,                                               0, qfalse, qfalse },
-	{ &g_fixedphysics,                      "g_fixedphysics",                      "0",                          CVAR_ARCHIVE | CVAR_SERVERINFO,                  0, qfalse, qfalse },
+	{ &g_fixedphysics,                      "g_fixedphysics",                      "1",                          CVAR_ARCHIVE | CVAR_SERVERINFO,                  0, qfalse, qfalse },
 	{ &g_fixedphysicsfps,                   "g_fixedphysicsfps",                   "125",                        CVAR_ARCHIVE | CVAR_SERVERINFO,                  0, qfalse, qfalse },
 	{ &g_pronedelay,                        "g_pronedelay",                        "0",                          CVAR_ARCHIVE | CVAR_SERVERINFO,                  0, qfalse, qfalse },
 	// Debug
