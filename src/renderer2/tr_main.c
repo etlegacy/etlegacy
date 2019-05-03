@@ -685,7 +685,7 @@ void R_CalcSurfaceTrianglePlanes(int numTriangles, srfTriangle_t *triangles, srf
  */
 cullResult_t R_CullBox(vec3_t worldBounds[2])
 {
-	qboolean anyClip;
+	qboolean anyClip = qfalse;
 	cplane_t *frust;
 	int      i, r;
 
@@ -695,7 +695,6 @@ cullResult_t R_CullBox(vec3_t worldBounds[2])
 	}
 
 	// check against frustum planes
-	anyClip = qfalse;
 	for (i = 0; i < FRUSTUM_PLANES; i++)
 	{
 		frust = &tr.viewParms.frustums[0][i];
@@ -711,13 +710,8 @@ cullResult_t R_CullBox(vec3_t worldBounds[2])
 		}
 	}
 
-	if (anyClip)
-	{
-		// partially clipped
-		return CULL_CLIP;
-	}
-	// completely inside frustum
-	return CULL_IN;
+	// partially clipped  or  completely inside frustum
+	return (anyClip) ? CULL_CLIP : CULL_IN;
 }
 
 /*
@@ -1856,6 +1850,7 @@ void R_SetupFrustum2(frustum_t frustum, const mat4_t mvp)
 		}
 #else
 		// ^^that^^ is really a Vector4Norm
+		// !! beware that in the struct .normal & .dist must be stored sequentially..
 		Vector4NormalizeOnly(frustum[i].normal);
 #endif
 
@@ -3057,11 +3052,6 @@ void R_AddLightInteractions()
 			// look if we have to draw the light including its interactions
 			switch (R_CullLocalBox(light->localBounds))
 			{
-			case CULL_IN:
-			default:
-				tr.pc.c_box_cull_light_in++;
-				light->cull = CULL_IN;
-				break;
 			case CULL_CLIP:
 				tr.pc.c_box_cull_light_clip++;
 				light->cull = CULL_CLIP;
@@ -3071,6 +3061,11 @@ void R_AddLightInteractions()
 				tr.pc.c_box_cull_light_out++;
 				light->cull = CULL_OUT;
 				continue;
+			case CULL_IN:
+			default:
+				tr.pc.c_box_cull_light_in++;
+				light->cull = CULL_IN;
+				break;
 			}
 
 			// setup world bounds for intersection tests

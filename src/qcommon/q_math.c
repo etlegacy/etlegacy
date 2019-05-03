@@ -376,7 +376,7 @@ void ByteToDir(int b, vec3_t dir)
 	int x = (b >> 20) & 0b1111111111;
 	int y = (b >> 10) & 0b1111111111;
 	int z = b & 0b1111111111;
-	const float r2048 = (1.0f / 2048.0f);
+	const float r2048 = rcp(2048.f); // (1.0f / 2048.0f);
 	dir[0] = (float)(x) * r2048 - 1.0f; // / 4096 * 2.0 - 1.0
 	dir[1] = (float)(y) * r2048 - 1.0f;
 	dir[2] = (float)(z) * r2048 - 1.0f;

@@ -410,6 +410,8 @@ void R_AddMDVInteractions(trRefEntity_t *ent, trRefLight_t *light)
 
 	// don't add third_person objects if not in a portal
 	personalModel = (ent->e.renderfx & RF_THIRD_PERSON) && !tr.viewParms.isPortal;
+// TODO: if personalMode is true, nothing but counting (culling) is done..
+if (personalModel) return; // now only the cull counting is off.. beware. todo
 
 	// compute LOD
 	lod = R_ComputeLOD(ent);

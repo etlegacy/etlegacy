@@ -1040,7 +1040,6 @@ skipInteraction:
 
 
 
-
 /*
 Some helper matrices for RB_RenderInteractionsShadowMapped()
 */
@@ -1157,7 +1156,7 @@ static void RB_RenderInteractionsShadowMapped()
 		                        0.0f, 0.5f, 0.0f, 0.0f,
 		                        0.0f, 0.0f, 0.5f, 0.0f,
 		                        0.5f, 0.5f, 0.5f, 1.0f };
-	mat4_t        *rotMatrix, *rotMatrix_r, *rotMatrix_q;
+	mat4_t        *rotMatrix, /* *rotMatrix_r,*/ *rotMatrix_q;
 
 	if (!glConfig2.framebufferObjectAvailable || !glConfig2.textureFloatAvailable)
 	{
@@ -1237,15 +1236,16 @@ static void RB_RenderInteractionsShadowMapped()
 					{
 						//float           xMin, xMax, yMin, yMax;
 						//float           width, height, depth;
-//@						float    zNear, zFar;
 						float    fovXY;
 //						qboolean flipX, flipY;
 						//float          *proj;
 						//vec3_t angles;
 #ifndef ETL_SSE
+						float    zNear, zFar;
 						mat4_t /*rotationMatrix,*/ transformMatrix, viewMatrix;
 #else
 						mat4_t viewMatrix;
+						__m128 xmm0, xmm1, xmm2, xmm4, xmm5, xmm6, xmm7, zeroes;
 #endif
 //						Ren_LogComment("----- Rendering shadowCube side: %i -----\n", cubeSide); // insert back if you need it.. i want this function to execute faster..
 
@@ -1361,7 +1361,6 @@ MatrixSetupTransformFromRotation(transformMatrix, (*rotMatrix), light->origin);
 						//	  MatrixSetupTransformFromRotation(transformMatrix, rotMatrix_x_y_z, light->origin)
 						//	  MatrixAffineInverse(transformMatrix, viewMatrix);
 						// UPDATE: in the end, all that's done, is calculating the bottom row of the viewMatrix..
-						__m128 xmm0, xmm1, xmm2, xmm4, xmm5, xmm6, xmm7, zeroes;
 						zeroes = _mm_setzero_ps();
 						xmm0 = _mm_loadh_pi(_mm_load_ss((const float *)&light->origin[0]), (const __m64 *)(&light->origin[1]));	// xmm0 = z y 0 x
 						xmm2 = _mm_loadh_pi(_mm_load_ss((const float *)&(*rotMatrix)[0]), (const __m64 *)&(*rotMatrix)[1]);		// xmm2 = z y 0 x
@@ -1428,11 +1427,12 @@ Vector4Set(&light->viewMatrix[12], -viewMatrix[13], viewMatrix[14], -viewMatrix[
 
 
 // OpenGL projection matrix
+#ifndef ETL_SSE
 						/*fovX = 90.f;
 						fovY = 90.f;*/
 
-//@						zNear = 1.0f; // const
-//@						zFar  = light->sphereRadius;
+						zNear = 1.0f; // const
+						zFar  = light->sphereRadius;
 
 						/*if (flipX)
 						{
@@ -1444,8 +1444,8 @@ Vector4Set(&light->viewMatrix[12], -viewMatrix[13], viewMatrix[14], -viewMatrix[
 							fovY = -fovY;
 						}*/
 
-//@						MatrixPerspectiveProjectionFovXYRH(light->projectionMatrix, fovX, fovY, zNear, zFar);
-
+						MatrixPerspectiveProjectionFovXYRH(light->projectionMatrix, fovXY, fovXY, zNear, zFar); // was fovX,fovY
+#else
 						// fovX & fovY are always both the same, 90 or -90, and zNear is always 1.
 						// we can save the two tanf() calls, and some more calculations..
 						vec_t width_r = rcp(tanf(DEG2RAD(fovXY * 0.5f))), // why don't i succeed making this use constants? :S :)
@@ -1458,7 +1458,7 @@ Vector4Set(&light->viewMatrix[12], -viewMatrix[13], viewMatrix[14], -viewMatrix[
 						_mm_storeu_ps(&light->projectionMatrix[8], xmm1);
 						xmm1 = _mm_shuffle_ps(xmm1, xmm1, 0b00100000);		// xmm1 = 0.0f, FarrNearFar, 0.0f, 0.0f
 						_mm_storeu_ps(&light->projectionMatrix[12], xmm1); // _mm_set_ps(0.0f, FarrNearFar, 0.0f, 0.0f));
-
+#endif
 
 // ..There is almost nothing left of the original code for this OMNI light shadowing.. very woot
 // and still the very same is done as before.. only now more efficiently.
@@ -1486,7 +1486,7 @@ Vector4Set(&light->viewMatrix[12], -viewMatrix[13], viewMatrix[14], -viewMatrix[
 						vec3_t casterBounds[2];
 						vec3_t receiverBounds[2];
 						vec3_t cropBounds[2];
-						vec4_t point;
+						vec4_t point = {0.f, 0.f, 0.f, 1.f};
 						vec4_t transf;
 
 						Ren_LogComment("--- Rendering directional shadowMap ---\n");
@@ -1667,7 +1667,7 @@ Vector4Set(&light->viewMatrix[12], -viewMatrix[13], viewMatrix[14], -viewMatrix[
 							for (j = 0; j < 8; j++)
 							{
 								VectorCopy(splitFrustumCorners[j], point);
-								point[3] = 1.0f;
+								//point[3] = 1.0f; // initialized once, ..no need to keep setting it.
 #if 1
 								Vector4TransformM4(light->viewMatrix, point, transf);
 								/*transf[0] /= transf[3];
@@ -4945,7 +4945,7 @@ static void RB_RenderDebugUtils()
 
 				Tess_AddCube(vec3_origin, gen->bounds[0], gen->bounds[1], lightColor);
 
-				Tess_AddCube(gen->origin, mins, maxs, colorWhite);
+				Tess_AddCube(gen->origin, mins, maxs, colorWhite); // eer..
 			}
 			else if (*surface == SF_VBO_MESH)
 			{
@@ -6021,13 +6021,13 @@ static void RB_RenderViewFront(void)
 	int startTime = 0;
 
 	// sync with gl if needed
-	if (r_finish->integer == 1 && !glState.finishCalled)
-	{
-		GL_JOIN();
-		glState.finishCalled = qtrue;
-	}
 	if (r_finish->integer == 0)
 	{
+		glState.finishCalled = qtrue;
+	}
+	else if (r_finish->integer == 1 && !glState.finishCalled)
+	{
+		GL_JOIN();
 		glState.finishCalled = qtrue;
 	}
 

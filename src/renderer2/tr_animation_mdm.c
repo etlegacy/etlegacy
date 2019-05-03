@@ -821,8 +821,7 @@ static ID_INLINE void LocalMatrixTransformVector(vec3_t in, vec3_t mat[3], vec3_
 	/*Dot(in, mat[0], out[0]);
 	Dot(in, mat[1], out[1]);
 	Dot(in, mat[2], out[2]);*/
-	// TODO: this can be better, with less memory-access.. (but also with not many shuffles)
-	// ..and a 'horizontal add' is not so fast either
+	// TODO: this can be better, .. a 'horizontal add' is not so fast
 	__m128 xmm0, xmm1, xmm2, xmm3, xmm5, xmm6;
 	xmm3 = _mm_loadh_pi(_mm_load_ss(&in[0]), (const __m64 *)(&in[1]));
 	xmm0 = _mm_loadh_pi(_mm_load_ss(&mat[0][0]), (const __m64 *)(&mat[0][1]));
@@ -1539,27 +1538,6 @@ static ID_INLINE void Matrix4FromScaledAxisPlusTranslation(/*const*/ vec3_t axis
 		dst[i][3] = t[i];
 	}
 	dst[3][3] = 1.f;*/
-/* TODO : #else
-	float scale1 = 1.0f - scale;
-	__m128 xmm0, xmm1, xmm2, xmm7;
-	xmm0 = _mm_loadu_ps(&axis[0][0]);
-	xmm1 = _mm_loadu_ps(&axis[1][1]);
-	xmm2 = _mm_load_ss(&axis[2][2]);
-	xmm7 = _mm_load_ps1(scale);
-	xmm0 = _mm_mul_ps(xmm0, xmm7);
-	xmm1 = _mm_mul_ps(xmm1, xmm7);
-	xmm2 = _mm_mul_ps(xmm2, xmm7);
-
-
-	_mm_storeu_ps(&dst[0][0], xmm0);
-	_mm_storeu_ps(&dst[1][0], _mm_set_ps(1.0f, 0.0f, 0.0f, 0.0f));
-	_mm_storeu_ps(&dst[2][0], _mm_set_ps(1.0f, 0.0f, 0.0f, 0.0f));
-	_mm_storeu_ps(&dst[3][0], _mm_set_ps(1.0f, 0.0f, 0.0f, 0.0f));
-	dst[0][0] += scale1;
-	dst[1][1] += scale1;
-	dst[2][2] += scale1;
-#endif*/
-
 
 	float scale1 = 1.0f - scale;
 	VectorScale(axis[0], scale, &dst[0][0]);

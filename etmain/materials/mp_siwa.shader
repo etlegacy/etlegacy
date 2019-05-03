@@ -386,7 +386,7 @@ textures/mp_siwa/lmterrain_6
 	diffuseMap textures/desert_sd/sand_gravels_bright.tga
 	bumpMap textures/desert_sd/sand_gravels_bright_n.tga
 	specularMap textures/desert_sd/sand_gravels_bright_r.tga
-	parallax
+//	parallax
 /*
 	{
 	    stage diffuseMap

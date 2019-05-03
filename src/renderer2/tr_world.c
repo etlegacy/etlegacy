@@ -720,7 +720,7 @@ static void R_RecursiveInteractionNode(bspNode_t *node, trRefLight_t *light, int
 		// even surfaces that belong to nodes that are outside of the view frustum
 		// can cast shadows into the view frustum
 //		if (!r_noCull->integer && r_shadows->integer <= SHADOWING_BLOB)
-if (!r_noCull->integer && r_shadows->integer >= SHADOWING_BLOB)
+if (!r_noCull->integer && r_shadows->integer > SHADOWING_BLOB)
 			{
 			for (i = 0; i < FRUSTUM_PLANES; i++)
 			{

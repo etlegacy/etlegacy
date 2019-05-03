@@ -334,7 +334,7 @@ static void R_SetupEntityLightingGrid(trRefEntity_t *ent, vec3_t forcedOrigin)
 		VectorMA(direction, factor, gridPoint2->direction, direction);
 	}
 
-	//if (totalFactor > 0 && totalFactor < 0.99f) // < 0.99 ?  why not test < 1 ?   now, when == 1 vectors are scaled by 1 :S
+	//if (totalFactor > 0 && totalFactor < 0.99f) // < 0.99 ?  why not test < 1 ?   when testing < 0.99, when == 1 vectors are scaled by 1 :S
 	if (totalFactor > 0 && totalFactor < 1.f)
 	{
 		//totalFactor = 1.0f / totalFactor;
@@ -2148,7 +2148,7 @@ proj[3] = 0.0f;       proj[7] = 0.0f;       proj[11] = -1.0f;                  p
 
 		// Matrix4Multiply(projectionMatrix, viewMatrix, viewProjectionMatrix)
 		//$$	xmm0 = _mm_loadu_ps(&viewMatrix[0]);			// xmm0 = b0 b1 b2 b3
-		xmm0 = _mm_set_ps(tmpMatrix[3], -tmpMatrix[0], tmpMatrix[2], -tmpMatrix[1]);
+		xmm0 = _mm_set_ps(tmpMatrix[3], -tmpMatrix[0], tmpMatrix[2], -tmpMatrix[1]); // this handles the quakeToOpenGLMatrix tranform
 		xmm3 = _mm_shuffle_ps(xmm0, xmm0, 0b11111111);	// xmm0 = b0 b0 b0 b0
 		xmm2 = _mm_shuffle_ps(xmm0, xmm0, 0b10101010);	// xmm1 = b1 b1 b1 b1
 		xmm1 = _mm_shuffle_ps(xmm0, xmm0, 0b01010101);	// xmm2 = b2 b2 b2 b2

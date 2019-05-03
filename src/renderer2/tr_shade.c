@@ -3582,16 +3582,16 @@ void Tess_StageIteratorLighting()
 				{
 					renderStage = qtrue;
 				}
-				else if (light->l.rlType == RL_PROJ)
+				else if (light->l.rlType == RL_DIRECTIONAL)
 				{
-					if (!light->l.inverseShadows)
+					//if(!light->l.inverseShadows)
 					{
 						renderStage = qtrue;
 					}
 				}
-				else if (light->l.rlType == RL_DIRECTIONAL)
+				else if (light->l.rlType == RL_PROJ)
 				{
-					//if(!light->l.inverseShadows)
+					if (!light->l.inverseShadows)
 					{
 						renderStage = qtrue;
 					}

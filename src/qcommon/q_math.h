@@ -44,15 +44,23 @@
 // At the moment, there will most likely be a lot of penalties for uOps (micro-ops).
 // The provided code is a first attempt to convert some old code into a bit faster code.
 // By commenting out the ETL_SSE define below, you have the old code back..
-// update: I still need to test usage of ETL_SSE so it compiles on all systems (atm. Windows compile only).
-// note: If ETL_SSE is disabled, compiling this branch has no meaning. This version is all about the inlined macro stuff..
+// UPDATE: I still need to test usage of ETL_SSE so it compiles on all systems (atm. Windows MSVS compile only).
+// NOTE: If ETL_SSE is disabled, compiling this branch has not much meaning. This version is all about the inlined macro stuff..
+// For this branch, many functions that do not return a function-result, are converted into inlined macros.
+// The names of those macros are kept the same as the original function names, so nothing in the rest code needs to be changed.
+// However, there are a few exceptions made (so far): like the old function DotProduct() and the newer Dot() macro.
+//
+// Also note that atm. there are lots of compiler warnings 4700 generated. It's safe to ignore those warnings.
+// The vec2 SSE code generates those warnings. (some xmm register is partially loaded and used, but compiler complains about the uninitialized, discarded part that we don't use at all).
+//
+// BTW: I think it would be benefitial for ETLegacy, to change compiler settings (for x86), to always generate SSE2 code.
 //
 // The intrinsics header files are available since Visual Studio 2008 (9.0)   That's _MSC_VER 1500
 #if defined(_WIN32) && !defined(_WIN64) && defined(_MSC_VER) && (_MSC_VER >= 1500) && !defined(_WIN32_WCE) && !defined(_M_ARM)
-// this is the compiler directive that will use the SSE2/SSE3 code
+// this is the compiler directive that will use the SSE2/SSE3 code..
 #ifndef ETL_SSE
 #define ETL_SSE
-// include the SSE intrinsics once
+// ..and include the SSE intrinsics once
 #include "pmmintrin.h"
 #endif
 #endif
