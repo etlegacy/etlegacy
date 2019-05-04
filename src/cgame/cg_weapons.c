@@ -5987,19 +5987,9 @@ void CG_DrawBulletTracer(vec3_t pstart, vec3_t pend, int sourceEntityNum, int ot
 		return; // Only others tracers
 	}
 
-	if (otherEntityNum >= 0 && otherEntityNum != ENTITYNUM_NONE)
+	if (sourceEntityNum >= 0 && sourceEntityNum != ENTITYNUM_NONE && cg_tracers.integer <= 3)
 	{
-		if (cg_tracers.integer == 1 || cg_tracers.integer == 3)
-		{
-			CG_SpawnTracer(otherEntityNum, pstart, pend);
-		}
-	}
-	else
-	{
-		if (cg_tracers.integer <= 2)
-		{
-			CG_SpawnTracer(sourceEntityNum, pstart, pend);
-		}
+		CG_SpawnTracer(sourceEntityNum, pstart, pend);
 	}
 }
 
