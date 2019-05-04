@@ -2853,7 +2853,14 @@ static void CG_ServerCommand(void)
 			iconnumber = PM_MESSAGE;
 		}
 
-		CG_AddPMItem(PM_MESSAGE, CG_LocalizeServerCommand(CG_Argv(1)), " ", cgs.media.pmImages[iconnumber], 0, 0, NULL);
+		if ((cg_popupFilter.integer & POPUP_FILTER_CONNECT) && (strstr(CG_Argv(1), " connected") || strstr(CG_Argv(1), " disconnected")))
+		{
+			trap_Print(va("connect_filter: %s", CG_Argv(1))); // log to console if filtered
+		}
+		else
+		{
+			CG_AddPMItem(PM_MESSAGE, CG_LocalizeServerCommand(CG_Argv(1)), " ", cgs.media.pmImages[iconnumber], 0, 0, NULL);
+		}
 		return;
 	}
 	case CP_HASH:                         // "cp"

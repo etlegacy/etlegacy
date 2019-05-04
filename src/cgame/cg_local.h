@@ -1882,6 +1882,16 @@ typedef struct oidInfo_s
 	vec3_t origin;
 } oidInfo_t;
 
+// Popup filters
+enum
+{
+	POPUP_FILTER_CONNECT  = BIT(0),
+	POPUP_FILTER_TEAMJOIN = BIT(1),
+	POPUP_FILTER_MISSION  = BIT(2),
+	POPUP_FILTER_PICKUP   = BIT(3),
+	POPUP_FILTER_DEATH    = BIT(4),
+};
+
 /// Locations
 #define MAX_C_LOCATIONS 1024
 
@@ -2539,6 +2549,7 @@ extern vmCvar_t cg_drawTime;
 
 extern vmCvar_t cg_popupFadeTime;
 extern vmCvar_t cg_popupStayTime;
+extern vmCvar_t cg_popupFilter;
 extern vmCvar_t cg_graphicObituaries;
 
 extern vmCvar_t cg_fontScaleTP;
