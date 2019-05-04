@@ -1259,14 +1259,12 @@ typedef struct level_locals_s
 	qboolean disableTankExit;
 	qboolean disableTankEnter;
 
-	int axisBombCounter, alliedBombCounter;
-	int axisArtyCounter, alliedArtyCounter;     ///< arty/airstrike rate limiting
+	int axisAirstrikeCounter, alliedAirstrikeCounter; ///< airstrike rate limiting
+	int axisArtilleryCounter, alliedArtilleryCounter; ///< artillery rate limiting
 	int axisAutoSpawn, alliesAutoSpawn;
 
 	limbo_cam_t limboCams[MAX_LIMBO_CAMS];
 	int numLimboCams;
-
-	int numActiveAirstrikes[2];
 
 	float teamXP[SK_NUM_SKILLS][2];
 
@@ -2011,8 +2009,8 @@ extern vmCvar_t g_campaignFile;
 extern vmCvar_t g_countryflags;
 
 // arty/airstrike rate limiting
-extern vmCvar_t team_airstrikeTime;
-extern vmCvar_t team_artyTime;
+extern vmCvar_t team_maxAirstrikes;
+extern vmCvar_t team_maxArtillery;
 
 // team class/weapon limiting
 // classes
@@ -2524,16 +2522,19 @@ qboolean G_LandmineArmed(gentity_t *ent);
 qboolean G_LandmineUnarmed(gentity_t *ent);
 team_t G_LandmineTeam(gentity_t *ent);
 qboolean G_LandmineSpotted(gentity_t *ent);
-qboolean G_AvailableAirstrikes(gentity_t *ent);
+qboolean G_AvailableAirstrike(gentity_t *ent);
 qboolean G_AvailableArtillery(gentity_t *ent);
 void G_AddAirstrikeToCounters(gentity_t *ent);
 void G_AddArtilleryToCounters(gentity_t *ent);
+int G_MaxAvailableAirstrikes(gentity_t *ent);
+int G_MaxAvailableArtillery(gentity_t *ent);
 
 void G_SetTargetName(gentity_t *ent, char *targetname);
 void G_KillEnts(const char *target, gentity_t *ignore, gentity_t *killer, meansOfDeath_t mod);
 void trap_EngineerTrace(trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentmask);
 
 int G_CountTeamMedics(team_t team, qboolean alivecheck);
+int G_CountTeamFieldops(team_t team);
 qboolean G_TankIsOccupied(gentity_t *ent);
 qboolean G_TankIsMountable(gentity_t *ent, gentity_t *other);
 
@@ -2707,7 +2708,7 @@ void G_MapVoteInfoRead(void);
 // g_misc flags
 #define G_MISC_SHOVE_NOZ               BIT(0)
 // BIT(1) unused
-#define G_MISC_ARTY_STRIKE_COMBINE     BIT(2)
+// BIT(2) unused
 #define G_MISC_CROSSHAIR_DYNAMITE      BIT(3)
 #define G_MISC_CROSSHAIR_LANDMINE      BIT(4)
 #define G_MISC_LOOSE_SPAWN_PROTECTION  BIT(5)

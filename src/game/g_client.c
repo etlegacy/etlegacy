@@ -1333,6 +1333,37 @@ void AddMedicTeamBonus(gclient_t *client)
 }
 
 /**
+ * @brief G_CountTeamFieldops
+ * @param[in] team
+ * @param[in] alivecheck
+ * @return
+ */
+int G_CountTeamFieldops(team_t team)
+{
+	int numFieldops = 0;
+	int i, j;
+
+	for (i = 0; i < level.numConnectedClients; i++)
+	{
+		j = level.sortedClients[i];
+
+		if (level.clients[j].sess.sessionTeam != team)
+		{
+			continue;
+		}
+
+		if (level.clients[j].sess.playerType != PC_FIELDOPS)
+		{
+			continue;
+		}
+
+		numFieldops++;
+	}
+
+	return numFieldops;
+}
+
+/**
  * @brief ClientCleanName
  * @param[in] in
  * @param[out] out

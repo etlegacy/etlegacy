@@ -1184,7 +1184,7 @@ void ClientThink_real(gentity_t *ent, qboolean skipServerTime)
 	}
 
 	client->ps.ammo[WP_ARTY] = 0;
-	if (!G_AvailableAirstrikes(ent))
+	if (!G_AvailableAirstrike(ent))
 	{
 		client->ps.ammo[WP_ARTY] |= NO_AIRSTRIKE;
 	}

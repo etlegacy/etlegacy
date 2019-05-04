@@ -271,8 +271,8 @@ vmCvar_t g_campaignFile;
 vmCvar_t g_countryflags; // GeoIP
 
 // arty/airstrike rate limiting
-vmCvar_t team_airstrikeTime;
-vmCvar_t team_artyTime;
+vmCvar_t team_maxAirstrikes;
+vmCvar_t team_maxArtillery;
 
 // team class/weapon limiting
 // classes
@@ -581,8 +581,8 @@ cvarTable_t gameCvarTable[] =
 
 	{ &g_countryflags,                      "g_countryflags",                      "1",                          CVAR_LATCH | CVAR_ARCHIVE,                       0, qfalse, qfalse },
 
-	{ &team_airstrikeTime,                  "team_airstrikeTime",                  "20",                         0,                                               0, qfalse, qfalse },
-	{ &team_artyTime,                       "team_artyTime",                       "20",                         0,                                               0, qfalse, qfalse },
+	{ &team_maxAirstrikes,                  "team_maxAirstrikes",                  "0",                          0,                                               0, qfalse, qfalse },
+	{ &team_maxArtillery,                   "team_maxArtillery",                   "0",                          0,                                               0, qfalse, qfalse },
 	// team class/weapon limiting
 	//classes
 	{ &team_maxSoldiers,                    "team_maxSoldiers",                    "-1",                         0,                                               0, qfalse, qfalse },
@@ -5098,27 +5098,27 @@ void G_RunFrame(int levelTime)
 
 	msec = level.time - level.previousTime;
 
-	level.axisBombCounter   -= msec;
-	level.alliedBombCounter -= msec;
-	level.axisArtyCounter   -= msec;
-	level.alliedArtyCounter -= msec;
+	level.axisAirstrikeCounter   -= msec;
+	level.alliedAirstrikeCounter -= msec;
+	level.axisArtilleryCounter   -= msec;
+	level.alliedArtilleryCounter -= msec;
 
-	if (level.axisBombCounter < 0)
+	if (level.axisAirstrikeCounter < 0)
 	{
-		level.axisBombCounter = 0;
+		level.axisAirstrikeCounter = 0;
 	}
-	if (level.alliedBombCounter < 0)
+	if (level.alliedAirstrikeCounter < 0)
 	{
-		level.alliedBombCounter = 0;
+		level.alliedAirstrikeCounter = 0;
 	}
 
-	if (level.axisArtyCounter < 0)
+	if (level.axisArtilleryCounter < 0)
 	{
-		level.axisArtyCounter = 0;
+		level.axisArtilleryCounter = 0;
 	}
-	if (level.alliedArtyCounter < 0)
+	if (level.alliedArtilleryCounter < 0)
 	{
-		level.alliedArtyCounter = 0;
+		level.alliedArtilleryCounter = 0;
 	}
 
 	// get any cvar changes

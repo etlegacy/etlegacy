@@ -280,11 +280,6 @@ void G_ExplodeMissile(gentity_t *ent)
 	vec3_t origin;
 	int    etype;
 
-	if (ent->s.weapon == WP_SMOKE_MARKER && ent->active)
-	{
-		level.numActiveAirstrikes[ent->s.teamNum - 1]--;
-	}
-
 	etype        = ent->s.eType;
 	ent->s.eType = ET_GENERAL;
 

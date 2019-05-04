@@ -2405,32 +2405,78 @@ weapengineergoto3:
 }
 
 /**
+ * @brief G_MaxAvailableAirstrikes
+ * @param[in] ent
+ * @return
+ */
+int G_MaxAvailableAirstrikes(gentity_t *ent)
+{
+	int playerCount;
+	int fieldopsCount;
+
+	playerCount   = G_TeamCount(ent, -1);
+	fieldopsCount = G_CountTeamFieldops(ent->client->sess.sessionTeam);
+
+	if (fieldopsCount > 6)
+	{
+		fieldopsCount = 6;
+	}
+	else if (fieldopsCount < 2)
+	{
+		fieldopsCount = 2;
+	}
+
+	// max number of airstrikes per team per minute
+	return ceil(fieldopsCount * playerCount * g_heavyWeaponRestriction.integer * 0.01);
+}
+
+/**
+ * @brief G_MaxAvailableArtillery
+ * @param[in] ent
+ * @return
+ */
+int G_MaxAvailableArtillery(gentity_t *ent)
+{
+	int playerCount;
+	int fieldopsCount;
+
+	playerCount   = G_TeamCount(ent, -1);
+	fieldopsCount = G_CountTeamFieldops(ent->client->sess.sessionTeam);
+
+	if (fieldopsCount > 6)
+	{
+		fieldopsCount = 6;
+	}
+	else if (fieldopsCount < 2)
+	{
+		fieldopsCount = 2;
+	}
+
+	// max number of artillery per team per minute
+	return ceil(fieldopsCount * playerCount * g_heavyWeaponRestriction.integer * 0.01);
+}
+
+/**
  * @brief G_AvailableAirstrikes
  * @param[in] ent
  * @return
  */
-qboolean G_AvailableAirstrikes(gentity_t *ent)
+qboolean G_AvailableAirstrike(gentity_t *ent)
 {
-	if ((g_misc.integer & G_MISC_ARTY_STRIKE_COMBINE) && !G_AvailableArtillery(ent))
-	{
-		return qfalse;
-	}
-
 	if (ent->client->sess.sessionTeam == TEAM_AXIS)
 	{
-		if (level.axisBombCounter > 0)
+		if (level.axisAirstrikeCounter > 60000)
 		{
 			return qfalse;
 		}
 	}
 	else
 	{
-		if (level.alliedBombCounter > 0)
+		if (level.alliedAirstrikeCounter > 60000)
 		{
 			return qfalse;
 		}
 	}
-
 	return qtrue;
 }
 
@@ -2443,14 +2489,14 @@ qboolean G_AvailableArtillery(gentity_t *ent)
 {
 	if (ent->client->sess.sessionTeam == TEAM_AXIS)
 	{
-		if (level.axisArtyCounter > 0)
+		if (level.axisArtilleryCounter > 60000)
 		{
 			return qfalse;
 		}
 	}
 	else
 	{
-		if (level.alliedArtyCounter > 0)
+		if (level.alliedArtilleryCounter > 60000)
 		{
 			return qfalse;
 		}
@@ -2464,34 +2510,56 @@ qboolean G_AvailableArtillery(gentity_t *ent)
  */
 void G_AddAirstrikeToCounters(gentity_t *ent)
 {
-	if (g_misc.integer & G_MISC_ARTY_STRIKE_COMBINE)
-	{
-		G_AddArtilleryToCounters(ent);
-	}
-
 	if (ent->client->sess.sessionTeam == TEAM_AXIS)
 	{
-		level.axisBombCounter += team_airstrikeTime.integer * 1000;
+		if (team_maxAirstrikes.integer)
+		{
+			level.axisAirstrikeCounter += 60000 / team_maxAirstrikes.integer;
+		}
+		else
+		{
+			level.axisAirstrikeCounter += 60000 / G_MaxAvailableAirstrikes(ent);
+		}
 	}
 	else
 	{
-		level.alliedBombCounter += team_airstrikeTime.integer * 1000;
+		if (team_maxAirstrikes.integer)
+		{
+			level.alliedAirstrikeCounter += 60000 / team_maxAirstrikes.integer;
+		}
+		else
+		{
+			level.alliedAirstrikeCounter += 60000 / G_MaxAvailableAirstrikes(ent);
+		}
 	}
 }
 
 /**
- * @brief arty/airstrike rate limiting
+ * @brief G_AddArtilleryToCounters
  * @param[in] ent
  */
 void G_AddArtilleryToCounters(gentity_t *ent)
 {
 	if (ent->client->sess.sessionTeam == TEAM_AXIS)
 	{
-		level.axisArtyCounter += team_artyTime.integer * 1000;
+		if (team_maxArtillery.integer)
+		{
+			level.axisArtilleryCounter += 60000 / team_maxArtillery.integer;
+		}
+		else
+		{
+			level.axisArtilleryCounter += 60000 / G_MaxAvailableArtillery(ent);
+		}
 	}
 	else
 	{
-		level.alliedArtyCounter += team_artyTime.integer * 1000;
+		if (team_maxArtillery.integer)
+		{
+			level.alliedArtilleryCounter += 60000 / team_maxArtillery.integer;
+		} else
+		{
+			level.alliedArtilleryCounter += 60000 / G_MaxAvailableArtillery(ent);
+		}
 	}
 }
 
@@ -2543,20 +2611,15 @@ qboolean weapon_checkAirStrike(gentity_t *ent)
 		return qfalse; // do nothing, don't hurt anyone
 	}
 
-	if (ent->s.teamNum == TEAM_AXIS || ent->s.teamNum == TEAM_ALLIES)
+	if (!G_AvailableAirstrike(ent->parent))
 	{
-		if (level.numActiveAirstrikes[ent->s.teamNum - 1] > 6 || !G_AvailableAirstrikes(ent->parent))
-		{
-			G_HQSay(ent->parent, COLOR_YELLOW, "HQ: ", "All available planes are already en-route.");
+		G_HQSay(ent->parent, COLOR_YELLOW, "HQ: ", "All available planes are already en-route.");
 
-			G_GlobalClientEvent(EV_AIRSTRIKEMESSAGE, 0, ent->parent - g_entities);
+		G_GlobalClientEvent(EV_AIRSTRIKEMESSAGE, 0, ent->parent - g_entities);
 
-			ent->active = qfalse;
+		ent->active = qfalse;
 
-			return qfalse;
-		}
-
-		level.numActiveAirstrikes[ent->s.teamNum - 1]++;
+		return qfalse;
 	}
 
 	return qtrue;
@@ -2671,15 +2734,11 @@ void weapon_callAirStrike(gentity_t *ent)
 
 		G_GlobalClientEvent(EV_AIRSTRIKEMESSAGE, 1, ent->parent - g_entities);
 
-		if (ent->s.teamNum == TEAM_AXIS || ent->s.teamNum == TEAM_ALLIES)
-		{
-			level.numActiveAirstrikes[ent->s.teamNum - 1]--;
-		}
-
 		ent->active = qfalse;   // plane arrive and shell is abort
 	}
 	else
 	{
+		// arty/airstrike rate limiting
 		G_AddAirstrikeToCounters(ent->parent);
 
 		G_HQSay(ent->parent, COLOR_YELLOW, "Pilot: ", "Affirmative, on my way!");
@@ -2992,7 +3051,7 @@ void Weapon_Artillery(gentity_t *ent)
 	// final result
 	VectorCopy(tr.endpos, pos);
 
-	// arty/airstrike rate limiting.
+	// arty/airstrike rate limiting
 	G_AddArtilleryToCounters(ent);
 
 	G_HQSay(ent, COLOR_YELLOW, "Fire Mission: ", "Firing for effect!");
