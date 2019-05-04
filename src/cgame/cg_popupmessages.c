@@ -102,6 +102,8 @@ void CG_InitPMGraphics(void)
 	cgs.media.pmImages[PM_TEAM]         = trap_R_RegisterShaderNoMip("sprites/voiceChat");
 	cgs.media.pmImages[PM_AMMOPICKUP]   = trap_R_RegisterShaderNoMip("gfx/limbo/filter_healthammo");
 	cgs.media.pmImages[PM_HEALTHPICKUP] = trap_R_RegisterShaderNoMip("gfx/limbo/filter_healthammo");
+	cgs.media.pmImages[PM_WEAPONPICKUP] = trap_R_RegisterShaderNoMip("sprites/voiceChat");
+	cgs.media.pmImages[PM_CONNECT]      = trap_R_RegisterShaderNoMip("sprites/voiceChat");
 
 	cgs.media.pmImageAlliesConstruct = trap_R_RegisterShaderNoMip("gfx/hud/pm_constallied");
 	cgs.media.pmImageAxisConstruct   = trap_R_RegisterShaderNoMip("gfx/hud/pm_constaxis");
@@ -341,6 +343,11 @@ pmListItem_t *CG_FindFreePMItem(void)
 static qboolean CG_CheckPMItemFilter(popupMessageType_t type)
 {
 	switch (type) {
+		case PM_CONNECT:
+			if (cg_popupFilter.integer & POPUP_FILTER_CONNECT)
+			{
+				return qtrue;
+			}
 		case PM_TEAM:
 			if (cg_popupFilter.integer & POPUP_FILTER_TEAMJOIN)
 			{
@@ -360,6 +367,7 @@ static qboolean CG_CheckPMItemFilter(popupMessageType_t type)
 			break;
 		case PM_AMMOPICKUP:
 		case PM_HEALTHPICKUP:
+		case PM_WEAPONPICKUP:
 			if (cg_popupFilter.integer & POPUP_FILTER_PICKUP)
 			{
 				return qtrue;

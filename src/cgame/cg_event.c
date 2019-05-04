@@ -340,7 +340,7 @@ static void CG_ItemPickup(int itemNum)
 		}
 		else
 		{
-			giType = PM_MESSAGE;
+			giType = PM_WEAPONPICKUP;
 		}
 		break;
 	case IT_HEALTH:
