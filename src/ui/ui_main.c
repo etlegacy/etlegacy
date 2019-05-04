@@ -8649,7 +8649,6 @@ cvarTable_t cvarTable[] =
 	{ NULL,                             "server_motd3",                        "",                           CVAR_ARCHIVE,                   0 },
 	{ NULL,                             "server_motd4",                        "",                           CVAR_ARCHIVE,                   0 },
 	{ NULL,                             "server_motd5",                        "",                           CVAR_ARCHIVE,                   0 },
-	{ NULL,                             "team_maxPanzers",                     "-1",                         CVAR_ARCHIVE,                   0 },
 	{ NULL,                             "team_maxplayers",                     "0",                          CVAR_ARCHIVE,                   0 },
 	{ NULL,                             "team_nocontrols",                     "0",                          CVAR_ARCHIVE,                   0 },
 	{ NULL,                             "vote_allow_gametype",                 "1",                          CVAR_ARCHIVE,                   0 },

@@ -284,8 +284,8 @@ vmCvar_t team_maxCovertops;
 // weapons
 vmCvar_t team_maxMortars;
 vmCvar_t team_maxFlamers;
-vmCvar_t team_maxMg42s;
-vmCvar_t team_maxPanzers;
+vmCvar_t team_maxMachineguns;
+vmCvar_t team_maxRockets;
 vmCvar_t team_maxRiflegrenades;
 vmCvar_t team_maxLandmines;
 // skills
@@ -593,8 +593,10 @@ cvarTable_t gameCvarTable[] =
 	//weapons
 	{ &team_maxMortars,                     "team_maxMortars",                     "-1",                         0,                                               0, qfalse, qfalse },
 	{ &team_maxFlamers,                     "team_maxFlamers",                     "-1",                         0,                                               0, qfalse, qfalse },
-	{ &team_maxMg42s,                       "team_maxMg42s",                       "-1",                         0,                                               0, qfalse, qfalse },
-	{ &team_maxPanzers,                     "team_maxPanzers",                     "-1",                         0,                                               0, qfalse, qfalse },
+	{ &team_maxMachineguns,                 "team_maxMachineguns",                 "-1",                         0,                                               0, qfalse, qfalse },
+	{ &team_maxRockets,                     "team_maxRockets",                     "-1",                         0,                                               0, qfalse, qfalse },
+	{ &team_maxMachineguns,                 "team_maxMg42s",                       "-1",                         0,                                               0, qfalse, qfalse }, // keep ETPro compatibility
+	{ &team_maxRockets,                     "team_maxPanzers",                     "-1",                         0,                                               0, qfalse, qfalse }, // keep ETPro compatibility
 	{ &team_maxRiflegrenades,               "team_maxRiflegrenades",               "-1",                         0,                                               0, qfalse, qfalse },
 	{ &team_maxLandmines,                   "team_maxLandmines",                   "10",                         0,                                               0, qfalse, qfalse },
 	//Skills
@@ -1925,7 +1927,7 @@ void G_UpdateCvars(void)
 						trap_Cvar_Set(cv->cvarName, "33");
 					}
 				}
-				else if (cv->vmCvar == &team_maxSoldiers || cv->vmCvar == &team_maxMedics || cv->vmCvar == &team_maxEngineers || cv->vmCvar == &team_maxFieldops || cv->vmCvar == &team_maxCovertops || cv->vmCvar == &team_maxMortars || cv->vmCvar == &team_maxFlamers || cv->vmCvar == &team_maxMg42s || cv->vmCvar == &team_maxPanzers || cv->vmCvar == &team_maxRiflegrenades || cv->vmCvar == &team_maxplayers)
+				else if (cv->vmCvar == &team_maxSoldiers || cv->vmCvar == &team_maxMedics || cv->vmCvar == &team_maxEngineers || cv->vmCvar == &team_maxFieldops || cv->vmCvar == &team_maxCovertops || cv->vmCvar == &team_maxMortars || cv->vmCvar == &team_maxFlamers || cv->vmCvar == &team_maxMachineguns || cv->vmCvar == &team_maxRockets || cv->vmCvar == &team_maxRiflegrenades || cv->vmCvar == &team_maxplayers)
 				{
 					clsweaprestriction = qtrue;
 				}
@@ -2039,8 +2041,8 @@ void G_UpdateCvars(void)
 		Info_SetValueForKey(cs, "c4", team_maxCovertops.string);
 		Info_SetValueForKey(cs, "w0", team_maxMortars.string);
 		Info_SetValueForKey(cs, "w1", team_maxFlamers.string);
-		Info_SetValueForKey(cs, "w2", team_maxMg42s.string);
-		Info_SetValueForKey(cs, "w3", team_maxPanzers.string);
+		Info_SetValueForKey(cs, "w2", team_maxMachineguns.string);
+		Info_SetValueForKey(cs, "w3", team_maxRockets.string);
 		Info_SetValueForKey(cs, "w4", team_maxRiflegrenades.string);
 		Info_SetValueForKey(cs, "m", team_maxplayers.string);
 		trap_SetConfigstring(CS_TEAMRESTRICTIONS, cs);
@@ -2343,8 +2345,8 @@ void G_InitGame(int levelTime, int randomSeed, int restart, int legacyServer, in
 	Info_SetValueForKey(cs, "c4", team_maxCovertops.string);
 	Info_SetValueForKey(cs, "w0", team_maxMortars.string);
 	Info_SetValueForKey(cs, "w1", team_maxFlamers.string);
-	Info_SetValueForKey(cs, "w2", team_maxMg42s.string);
-	Info_SetValueForKey(cs, "w3", team_maxPanzers.string);
+	Info_SetValueForKey(cs, "w2", team_maxMachineguns.string);
+	Info_SetValueForKey(cs, "w3", team_maxRockets.string);
 	Info_SetValueForKey(cs, "w4", team_maxRiflegrenades.string);
 	Info_SetValueForKey(cs, "m", team_maxplayers.string);
 	trap_SetConfigstring(CS_TEAMRESTRICTIONS, cs);

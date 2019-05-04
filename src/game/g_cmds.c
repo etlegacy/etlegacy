@@ -1731,13 +1731,13 @@ qboolean G_IsWeaponDisabled(gentity_t *ent, weapon_t weapon)
 	// single weapon restrictions
 	if (GetWeaponTableData(weapon)->type & WEAPON_TYPE_PANZER)
 	{
-		maxCount     = team_maxPanzers.integer;
-		weaponString = team_maxPanzers.string;
+		maxCount     = team_maxRockets.integer;
+		weaponString = team_maxRockets.string;
 	}
 	else if (GetWeaponTableData(weapon)->type & WEAPON_TYPE_MG)
 	{
-		maxCount     = team_maxMg42s.integer;
-		weaponString = team_maxMg42s.string;
+		maxCount     = team_maxMachineguns.integer;
+		weaponString = team_maxMachineguns.string;
 	}
 	else if (GetWeaponTableData(weapon)->type & WEAPON_TYPE_MORTAR)
 	{

@@ -2022,8 +2022,8 @@ extern vmCvar_t team_maxCovertops;
 // weapons
 extern vmCvar_t team_maxMortars;
 extern vmCvar_t team_maxFlamers;
-extern vmCvar_t team_maxMg42s;
-extern vmCvar_t team_maxPanzers;
+extern vmCvar_t team_maxMachineguns;
+extern vmCvar_t team_maxRockets;
 extern vmCvar_t team_maxRiflegrenades;
 extern vmCvar_t team_maxLandmines;
 // skills
