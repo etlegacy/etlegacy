@@ -48,9 +48,9 @@ JNIEXPORT void JNICALL Java_org_etlegacy_app_SDLActivity_nativeSetupJNI()
 
     /* Run the application code! */
     char *argv[2];
-    argv[0] = SDL_strdup("ET Legacy");
+    argv[0] = SDL_GetBasePath();
     // send r_fullscreen 0 with argv[1] because on fullscreen can cause some issues see: https://github.com/rafal1137/android-project/commit/d960cc244b17d8cc0d084f9c8dad9c1af4b2ba72#diff-b9bd293cfb066fe80c10d3fcdd0fd6cbL439
-    argv[1] = 0;
+    argv[1] = NULL;
     SDL_main(1, argv);
 
 }
