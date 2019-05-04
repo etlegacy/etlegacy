@@ -3110,7 +3110,7 @@ void Tess_SurfaceVBOMDMMesh(srfVBOMDMMesh_t *surface)
 		float *row2  = bones[surface->boneRemapInverse[i]].matrix[2];
 		float *trans = bones[surface->boneRemapInverse[i]].translation;
 
-		float *m = tess.boneMatrices[i];
+		float *m = tess.boneMatrices[i];   
 
 		/*m[0] = row0[0];        m[4] = row0[1];        m[8] = row0[2];     m[12] = trans[0];
 		m[1] = row1[0];        m[5] = row1[1];        m[9] = row1[2];     m[13] = trans[1];
@@ -3171,7 +3171,7 @@ int R_MDM_GetBoneTag(orientation_t *outTag, mdmModel_t *mdm, int startTagIndex, 
 	// find the correct tag
 	pTag = (mdmTagIntern_t *) &mdm->tags[startTagIndex];
 
-#if 1 //#ifndef ETL_SSE
+#if 1 //ndef ETL_SSE
 	for (i = startTagIndex; i < mdm->numTags; i++, pTag++)
 	{
 		if (!strcmp(pTag->name, tagName))
@@ -3180,24 +3180,27 @@ int R_MDM_GetBoneTag(orientation_t *outTag, mdmModel_t *mdm, int startTagIndex, 
 		}
 	}
 #else
-	// TODO: finish this..  ? what is wrong? :) can't c it..  
+	// TODO: make it work..
 	// We presume that tagnames are conform the Q3 rules (char[64])
+	// but it appears the given 'tagName' is not pointing to a char[64] for real.
+	// Probably, if trap_R_LerpTag() is passed a tagName which is stored in a char[64], it works.
+	// UPDATE: tested that^^ trap_R_LerpTag(), passing a char[64], and it is indeed working (very well).
 	__m128i xmm0, xmm1, xmm2, xmm3, xmm4, xmm7, zeroes;
 	int mask0, mask16, mask32;
 	zeroes = _mm_setzero_si128();
-	xmm0 = _mm_loadu_si128((const __m128i *)&tagName[0]);
+	xmm0 = _mm_loadu_si128((const __m128i *)tagName[0]);
 	mask0 = _mm_movemask_epi8(_mm_cmpeq_epi8(xmm0, zeroes));
 	if (mask0 == 0)
 	{
-		xmm1 = _mm_loadu_si128((const __m128i *)&tagName[16]);
+		xmm1 = _mm_loadu_si128((const __m128i *)tagName[16]);
 		mask16 = _mm_movemask_epi8(_mm_cmpeq_epi8(xmm1, zeroes));
 		if (mask16 == 0)
 		{
-			xmm2 = _mm_loadu_si128((const __m128i *)&tagName[32]);
+			xmm2 = _mm_loadu_si128((const __m128i *)tagName[32]);
 			mask32 = _mm_movemask_epi8(_mm_cmpeq_epi8(xmm2, zeroes));
 			if (mask32 == 0)
 			{
-				xmm3 = _mm_loadu_si128((const __m128i *)&tagName[48]);
+				xmm3 = _mm_loadu_si128((const __m128i *)tagName[48]);
 			}
 		}
 	}
