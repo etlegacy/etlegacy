@@ -105,21 +105,17 @@ menuDef {
 	CVARFLOATLABEL( 6+(SUBWINDOW_WIDTH_L)+6+2, CROSSHAIR_Y+152, (SUBWINDOW_WIDTH_L)-6, 10, "cg_crosshairAlphaAlt", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-4), 8 )
 	SLIDER( 6+(SUBWINDOW_WIDTH_L)+6+2, CROSSHAIR_Y+152, (SUBWINDOW_WIDTH_R)-4, 10, _("Secondary Alpha:"), .2, 8, "cg_crosshairAlphaAlt" 1 0 1, _("Set the transparency level for the secondary crosshair") )
 
-// Movement //
-#define MOVEMENT_Y 200
-	SUBWINDOW( 6+(SUBWINDOW_WIDTH_L)+6, MOVEMENT_Y, (SUBWINDOW_WIDTH_R), 52, _("MOVEMENT") )
-	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, MOVEMENT_Y+16, (SUBWINDOW_WIDTH_R)-4, 10, _("Bob up:"), .2, 8, "cg_bobup", cvarFloatList { "Off" 0.00 "On" 0.005 }, _("Toggles the vertical bob effect when moving") )
-	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, MOVEMENT_Y+28, (SUBWINDOW_WIDTH_R)-4, 10, _("Bob pitch:"), .2, 8, "cg_bobpitch", cvarFloatList { "Off" 0.00 "On" 0.002 }, _("Toggles the bob pitch (forwards/backwards) effect when moving") )
-	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, MOVEMENT_Y+40, (SUBWINDOW_WIDTH_R)-4, 10, _("Bob roll:"), .2, 8, "cg_bobroll", cvarFloatList { "Off" 0.000 "On" 0.002 }, _("Toggles the bob roll (left/right) effect when moving") )
-
-// Geolocation Display //
-#define GEOLOCATION_Y 256
-	SUBWINDOW( 6+(SUBWINDOW_WIDTH_L)+6, GEOLOCATION_Y, (SUBWINDOW_WIDTH_R), 40, _("GEOLOCATION") )
-	YESNO( 6+(SUBWINDOW_WIDTH_L)+6+2, GEOLOCATION_Y+16, (SUBWINDOW_WIDTH_R)-4, 10, _("Country Flags:"), .2, 8, "cg_countryflags", _("Displays players country flags in score board") )
-	YESNO( 6+(SUBWINDOW_WIDTH_L)+6+2, GEOLOCATION_Y+28, (SUBWINDOW_WIDTH_R)-4, 10, _("Share Location:"), .2, 8, "cg_allowGeoIP", _("Displays your own location in score board") )
+// Popup //
+#define POPUP_Y 200
+	SUBWINDOW( 6+(SUBWINDOW_WIDTH_L)+6, POPUP_Y, (SUBWINDOW_WIDTH_R), 54, _("POPUPS") )
+	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, POPUP_Y+16, (SUBWINDOW_WIDTH_R)-4, 10, _("Filter messages:"), .2, 8, "cg_popupFilter", cvarFloatList { "None" 0 "Connection" 1 "Pickup" 8 "Death" 16 "Connection, Pickup" 9 "Connection, Death" 17 "Connect, Pickup, Death" 25}, _("Set filter on popup messages") )
+	CVARFLOATLABEL( 6+(SUBWINDOW_WIDTH_L)+6+2, POPUP_Y+28, (SUBWINDOW_WIDTH_L)-6, 10, "cg_popupStayTime", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-4), 8 )
+	SLIDER( 6+(SUBWINDOW_WIDTH_L)+6+2, POPUP_Y+28, (SUBWINDOW_WIDTH_L)-4, 10, _("Stay Time:"), .2, 8, "cg_popupStayTime" 2500 0 6000, _("Set the time a pop-up stays visible") )
+	CVARFLOATLABEL( 6+(SUBWINDOW_WIDTH_L)+6+2, POPUP_Y+40, (SUBWINDOW_WIDTH_L)-6, 10, "cg_popupFadeTime", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-4), 8 )
+	SLIDER( 6+(SUBWINDOW_WIDTH_L)+6+2, POPUP_Y+40, (SUBWINDOW_WIDTH_L)-4, 10, _("Fade Time:"), .2, 8, "cg_popupFadeTime" 2500 0 6000, _("Set the time a pop-up fades away") )
 
 // Fonts //
-#define FONTS_Y 300
+#define FONTS_Y 258
 	SUBWINDOW( 6+(SUBWINDOW_WIDTH_L)+6, FONTS_Y, (SUBWINDOW_WIDTH_R), 78, _("FONTS") )
 	MULTIACTION( 6+(SUBWINDOW_WIDTH_L)+6+2, FONTS_Y+16, (SUBWINDOW_WIDTH_R)-4, 10, _("Fonts Size:"), .2, 8, "cg_fontScale", cvarFloatList { "Tiny" 2 "Small" 1 "Normal" 0 }, uiScript SetFontScale, _("Sets the size of the in-game fonts") )
 	CVARFLOATLABEL( 6+(SUBWINDOW_WIDTH_L)+6+2, FONTS_Y+28, (SUBWINDOW_WIDTH_L)-6, 10, "cg_fontScaleTP", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-4), 8 )
@@ -131,13 +127,11 @@ menuDef {
 	CVARFLOATLABEL( 6+(SUBWINDOW_WIDTH_L)+6+2, FONTS_Y+64, (SUBWINDOW_WIDTH_L)-6, 10, "cg_fontScaleCN", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-4), 8 )
 	SLIDER( 6+(SUBWINDOW_WIDTH_L)+6+2, FONTS_Y+64, (SUBWINDOW_WIDTH_L)-4, 10, _("Crosshair Name:"), .2, 8, "cg_fontScaleCN" 0.15 0 0.5, _("Set font size for Crosshair Name label") )
 
-// Misc //
-#define MISC_Y 382
-	SUBWINDOW( 6+(SUBWINDOW_WIDTH_L)+6, MISC_Y, (SUBWINDOW_WIDTH_R), 42, _("MISC") )
-	CVARFLOATLABEL( 6+(SUBWINDOW_WIDTH_L)+6+2, MISC_Y+16, (SUBWINDOW_WIDTH_L)-6, 10, "cg_popupStayTime", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-4), 8 )
-	SLIDER( 6+(SUBWINDOW_WIDTH_L)+6+2, MISC_Y+16, (SUBWINDOW_WIDTH_L)-4, 10, _("PopUpTimeStay:"), .2, 8, "cg_popupStayTime" 2500 0 6000, _("Set the time a pop-up stays visible") )
-	CVARFLOATLABEL( 6+(SUBWINDOW_WIDTH_L)+6+2, MISC_Y+28, (SUBWINDOW_WIDTH_L)-6, 10, "cg_popupFadeTime", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-4), 8 )
-	SLIDER( 6+(SUBWINDOW_WIDTH_L)+6+2, MISC_Y+28, (SUBWINDOW_WIDTH_L)-4, 10, _("PopUpTimeFade:"), .2, 8, "cg_popupFadeTime" 2500 0 6000, _("Set the time a pop-up fades away") )
+// Geolocation //
+#define GEOLOCATION_Y 340
+	SUBWINDOW( 6+(SUBWINDOW_WIDTH_L)+6, GEOLOCATION_Y, (SUBWINDOW_WIDTH_R), 40, _("GEOLOCATION") )
+	YESNO( 6+(SUBWINDOW_WIDTH_L)+6+2, GEOLOCATION_Y+16, (SUBWINDOW_WIDTH_R)-4, 10, _("Country Flags:"), .2, 8, "cg_countryflags", _("Displays players country flags in score board") )
+	YESNO( 6+(SUBWINDOW_WIDTH_L)+6+2, GEOLOCATION_Y+28, (SUBWINDOW_WIDTH_R)-4, 10, _("Share Location:"), .2, 8, "cg_allowGeoIP", _("Displays your own location in score board") )
 
 // Buttons //
 	BUTTON( 6, WINDOW_HEIGHT-24, WINDOW_WIDTH-12, 18, _("BACK"), .3, 14, close options_customise_hud ; open options )
