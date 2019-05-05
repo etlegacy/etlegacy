@@ -1136,21 +1136,19 @@ void R_RotateEntityForViewParms(const trRefEntity_t *ent, const viewParms_t *vie
 			//axisLength = 1.0f / axisLength;
 			RECIPROCAL(axisLength);
 		}
+		Dot(delta, orientation->axis[0], orientation->viewOrigin[0]);
+		Dot(delta, orientation->axis[1], orientation->viewOrigin[1]);
+		Dot(delta, orientation->axis[2], orientation->viewOrigin[2]);
+		if (axisLength != 1.f)
+		{
+			VectorScale(orientation->viewOrigin, axisLength, orientation->viewOrigin);
+		}
 	}
 	else
 	{
-		axisLength = 1.0f;
-	}
-
-	/*orientation->viewOrigin[0] = DotProduct(delta, orientation->axis[0]) * axisLength;
-	orientation->viewOrigin[1] = DotProduct(delta, orientation->axis[1]) * axisLength;
-	orientation->viewOrigin[2] = DotProduct(delta, orientation->axis[2]) * axisLength;*/
-	Dot(delta, orientation->axis[0], orientation->viewOrigin[0]);
-	Dot(delta, orientation->axis[1], orientation->viewOrigin[1]);
-	Dot(delta, orientation->axis[2], orientation->viewOrigin[2]);
-	if (axisLength != 1.f)
-	{
-		VectorScale(orientation->viewOrigin, axisLength, orientation->viewOrigin);
+		Dot(delta, orientation->axis[0], orientation->viewOrigin[0]);
+		Dot(delta, orientation->axis[1], orientation->viewOrigin[1]);
+		Dot(delta, orientation->axis[2], orientation->viewOrigin[2]);
 	}
 }
 
@@ -1213,25 +1211,20 @@ void R_RotateEntityForLight(const trRefEntity_t *ent, const trRefLight_t *light,
 			//axisLength = 1.0f / axisLength;
 			RECIPROCAL(axisLength);
 		}
+		Dot(delta, orientation->axis[0], orientation->viewOrigin[0]);
+		Dot(delta, orientation->axis[1], orientation->viewOrigin[1]);
+		Dot(delta, orientation->axis[2], orientation->viewOrigin[2]);
+		if (axisLength != 1.f)
+		{
+			VectorScale(orientation->viewOrigin, axisLength, orientation->viewOrigin);
+		}
 	}
 	else
 	{
-		axisLength = 1.0f;
+		Dot(delta, orientation->axis[0], orientation->viewOrigin[0]);
+		Dot(delta, orientation->axis[1], orientation->viewOrigin[1]);
+		Dot(delta, orientation->axis[2], orientation->viewOrigin[2]);
 	}
-
-	/*orientation->viewOrigin[0] = DotProduct(delta, orientation->axis[0]) * axisLength;
-	orientation->viewOrigin[1] = DotProduct(delta, orientation->axis[1]) * axisLength;
-	orientation->viewOrigin[2] = DotProduct(delta, orientation->axis[2]) * axisLength;*/
-	Dot(delta, orientation->axis[0], orientation->viewOrigin[0]);
-	Dot(delta, orientation->axis[1], orientation->viewOrigin[1]);
-	Dot(delta, orientation->axis[2], orientation->viewOrigin[2]);
-	if (axisLength != 1.f)
-	{
-		VectorScale(orientation->viewOrigin, axisLength, orientation->viewOrigin);
-	}
-
-	/*VectorRotate(delta, orientation->axis, orientation->viewOrigin);
-	VectorScale(orientation->viewOrigin, axisLength, orientation->viewOrigin);*/
 }
 
 /**
@@ -1290,8 +1283,7 @@ void R_RotateForViewer(void)
 #endif
 
 	// transform by the camera placement
-	MatrixSetupTransformFromVectorsFLU(transformMatrix,
-	                                   tr.viewParms.orientation.axis[0], tr.viewParms.orientation.axis[1], tr.viewParms.orientation.axis[2], tr.viewParms.orientation.origin);
+	MatrixSetupTransformFromVectorsFLU(transformMatrix, tr.viewParms.orientation.axis[0], tr.viewParms.orientation.axis[1], tr.viewParms.orientation.axis[2], tr.viewParms.orientation.origin);
 
 	MatrixAffineInverse(transformMatrix, tr.orientation.viewMatrix2);
 	//MatrixAffineInverse(transformMatrix, tr.orientation.viewMatrix);
@@ -2016,7 +2008,7 @@ void R_PlaneForSurface(surfaceType_t *surfType, cplane_t *plane)
 		PlaneFromPoints_void(plane4, v1->xyz, v2->xyz, v3->xyz);
 		/*VectorCopy(plane4, plane->normal);
 		plane->dist = plane4[3];*/
-		Vector4Copy(plane4, plane->normal); // !! this will write plane.dist too
+		Vector4Copy(plane4, plane->normal); // !! this will write plane.dist too (write normal+dist as a vec4)
 		return;
 	case SF_POLY:
 		poly = (srfPoly_t *) surfType;
@@ -2024,7 +2016,7 @@ void R_PlaneForSurface(surfaceType_t *surfType, cplane_t *plane)
 		PlaneFromPoints_void(plane4, poly->verts[0].xyz, poly->verts[1].xyz, poly->verts[2].xyz);
 		/*VectorCopy(plane4, plane->normal);
 		plane->dist = plane4[3];*/
-		Vector4Copy(plane4, plane->normal); // !! this will write plane.dist too
+		Vector4Copy(plane4, plane->normal); // !! this will write plane.dist too (write normal+dist as a vec4)
 		return;
 	default:
 		Com_Memset(plane, 0, sizeof(*plane));

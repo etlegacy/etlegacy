@@ -1880,7 +1880,8 @@ static ID_INLINE int VectorCompareEpsilon(const vec3_t v1, const vec3_t v2, floa
 
 //#define MatrixTranspose mat3_transpose
 #define AngleVectors angles_vectors
-#define PerpendicularVector(out, src) vec3_per(src, out) // rotated the params to match the way other functions are written
+// rotated the params to match the way other functions are written
+#define PerpendicularVector(out, src) vec3_per(src, out)
 
 #pragma warning(default:4700)
 #pragma warning(default:4010)

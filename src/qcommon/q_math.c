@@ -1024,16 +1024,15 @@ float Q_fabs(float f)
  */
 float angle_lerp(float from, float to, float frac)
 {
-	float to_from = to - from;
-	if (to_from > 180.f)
+	if (to - from > 180.f)
 	{
 		to -= 360.f;
 	}
-	if (to_from < -180.f)
+	if (to - from < -180.f)
 	{
 		to += 360.f;
 	}
-	return(from + frac * to_from);
+	return(from + frac * (to - from));
 }
 
 /**
