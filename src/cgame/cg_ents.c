@@ -2598,7 +2598,13 @@ qboolean CG_AddEntityToTag(centity_t *cent)
 	cent->processedFrame = cg.clientFrame;
 
 	// start with default axis
-	AnglesToAxis(vec3_origin, ent.axis);
+	// HINT: if you calculate some constant values, better fill in those final values (and not calculate at all)..
+	//       This will result in the values: axis[0]={1,0,0}, axis[1]={0,1,0}, axis[2]={0,0,1}   (that is the 3x3 identity matrix)
+	///AnglesToAxis(vec3_origin, ent.axis);
+	VectorSet(ent.axis[0], 1.f, 0.f, 0.f);
+	VectorSet(ent.axis[1], 0.f, 1.f, 0.f);
+	VectorSet(ent.axis[2], 0.f, 0.f, 1.f);
+
 
 	// get the tag position from parent
 	CG_PositionEntityOnTag(&ent, &centParent->refEnt, cent->tagName, 0, NULL);

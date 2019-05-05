@@ -634,7 +634,7 @@ void RotatePointAroundVector(vec3_t dst, const vec3_t dir, const vec3_t point, f
 		VectorTransformM4(M, point, dst);
 #else
 // ^^those 4 vector4set (to store a matrix), followed by the read of the same matrix (in VectorTransformM4),
-// is object for optimalization..
+// is subject for optimalization..
 		__m128 xmm0, xmm1, xmm2, xmm3, xmm4, xmm5, xmm6;
 		xmm3 = _mm_set_ps(0.f, C1axa[1] - as[1], C1axa[0] + as[2], C1aa[0]);
 		xmm4 = _mm_set_ps(0.f, C1axa[2] + as[0], C1aa[1], C1axa[0] - as[2]);
@@ -741,7 +741,6 @@ void CreateRotationMatrix(const vec3_t angles, vec3_t matrix[3])
  */
 void vec3_to_angles(const vec3_t value1, vec3_t angles)
 {
-#if 1
 	float yaw, pitch;
 
 	if (value1[1] == 0.f && value1[0] == 0.f)
@@ -790,29 +789,6 @@ void vec3_to_angles(const vec3_t value1, vec3_t angles)
 	angles[PITCH] = -pitch;
 	angles[YAW]   = yaw;
 	angles[ROLL]  = 0;
-#else
-	// TODO: work in progress.. just test code here..
-	//vec3_t xAxis = { 1.0, 0.0, 0.0 }; // axisDefault[0]
-	//vec3_t yAxis = { 0.0, 1.0, 0.0 }; // axisDefault[1]
-	//vec3_t zAxis = { 0.0, 0.0, 1.0 }; // axisDefault[2]
-	// i'm unsure (and did not check) if value1 is always normalized.
-	// It probably isn't, because atan2 doesn't need normalized values,
-	// and to calculate the pitch, they first get the length of the 'forward' vector.
-	// Now we just normalize value1 first, and use the dotproduct to get the angles.
-	// The dotproduct of 2 vectors of length 1 (unit vectors), is the cosine value of the angle between those 2 vectors.
-	vec3_t V;
-	VectorCopy(value1, V);
-	vec3_norm_fast(V); //(void)vec3_norm(V);
-
-/*	angles[PITCH] = RAD2DEG(acos(DotProduct(V, axisDefault[0]))); // acos returns the angle
-	angles[YAW] = RAD2DEG(acos(DotProduct(V, axisDefault[1])));
-//	angles[PITCH] = RAD2DEG(acos(V[2])) - 90.0; // acos returns the angle
-//	angles[YAW] = RAD2DEG(acos(V[0]));
-	angles[ROLL] = RAD2DEG(acos(DotProduct(V, axisDefault[1])));*/
-	angles[PITCH] = RAD2DEG(acos(V[0])); // acos returns the angle
-	angles[YAW] = 0.0f;// RAD2DEG(acos(V[0]) - 90.0f);
-	angles[ROLL] = 0.0f;
-#endif
 }
 
 /**
@@ -3087,20 +3063,45 @@ void angles_vectors(const vec3_t angles, vec3_t forward, vec3_t right, vec3_t up
 {
 	float angle, sr, spp, sy, cr, cp, cy;
 
-	angle = DEG2RAD(angles[YAW]);
-	//sy    = sin(angle);
-	//cy    = cos(angle);
-	SinCos(angle, sy, cy);
-
 	angle = DEG2RAD(angles[PITCH]);
 	//sp    = sin(angle);
 	//cp    = cos(angle);
 	SinCos(angle, spp, cp);
 
-	angle = DEG2RAD(angles[ROLL]);
-	//sr    = sin(angle);
-	//cr    = cos(angle);
-	SinCos(angle, sr, cr);
+	// try not to sin/cos for the same angles
+	if (angles[YAW] == angles[PITCH])
+	{
+		sy = spp;
+		cy = cp;
+	}
+	else
+	{
+		angle = DEG2RAD(angles[YAW]);
+		//sy    = sin(angle);
+		//cy    = cos(angle);
+		SinCos(angle, sy, cy);
+	}
+
+	if (angles[ROLL] == angles[PITCH])
+	{
+		sr = spp;
+		cr = cp;
+	}
+	else
+	{
+		if (angles[ROLL] == angles[YAW])
+		{
+			sr = sy;
+			cr = cy;
+		}
+		else
+		{
+			angle = DEG2RAD(angles[ROLL]);
+			//sr    = sin(angle);
+			//cr    = cos(angle);
+			SinCos(angle, sr, cr);
+		}
+	}
 
 	if (forward)
 	{
@@ -3344,6 +3345,8 @@ float vec3_to_yawn(const vec3_t vec)
  *
  * @details This doesn't have to be fast, since it's only used for conversion in utils, try to avoid
  * using this during gameplay
+ * UPDATE: This function (/the new SSE macro for this function) is used in some key parts of the game.
+ *         ..and it always has to be fast. :P
  *
  * @param[in] axis
  * @param[out] angles
@@ -5230,6 +5233,7 @@ void mat4_from_angles(mat4_t m, vec_t pitch, vec_t yaw, vec_t roll)
 
 // calculate the tangent-vectors and the binormal-vectors
 // given 3 points of a triangle (the positions and the texture-coordinates of those points).
+#pragma warning(disable:4700)
 qboolean CalcTangentBinormal(const vec3_t pos0, const vec3_t pos1, const vec3_t pos2,
 						const vec2_t texCoords0, const vec2_t texCoords1, const vec2_t texCoords2,
 						vec3_t tangent0, vec3_t binormal0, vec3_t tangent1, vec3_t binormal1, vec3_t tangent2, vec3_t binormal2)
@@ -5348,6 +5352,7 @@ qboolean CalcTangentBinormal(const vec3_t pos0, const vec3_t pos1, const vec3_t 
 	VectorNormalizeOnly(binormal2);
 
 	return qtrue;
+#pragma warning(default:4700)
 }
 
 #pragma warning(default:4700)

@@ -627,6 +627,11 @@ void R_Modellist_f(void)
  * @param[in] startTagIndex
  * @param[out] outTag
  * @return
+ *
+ * NOTE: R_GetTag() is a local function, and we know for sure that argument _tagName is pointing to a char[64]
+ *       because, at this moment, the caller function copies the tagname to a char[64] first.
+ *       Pff   lots of copying of data, and string searching for tagnames.. continuously
+ *       Better 1 time look up the tag (by name), find the index, and from then on, get the tag by that index, immediately..
  */
 static int R_GetTag(mdvModel_t *model, int frame, const char *_tagName, int startTagIndex, mdvTag_t **outTag)
 {
@@ -643,9 +648,8 @@ static int R_GetTag(mdvModel_t *model, int frame, const char *_tagName, int star
 		return -1;
 	}
 
-#if 1
 	tag     = model->tags + frame * model->numTags;
-	tagName = model->tagNames;
+/*	tagName = model->tagNames;
 	for (i = 0; i < model->numTags; i++, tag++, tagName++)
 	{
 		if ((i >= startTagIndex) && !strcmp(tagName->name, _tagName))
@@ -653,11 +657,65 @@ static int R_GetTag(mdvModel_t *model, int frame, const char *_tagName, int star
 			*outTag = tag;
 			return i;
 		}
+	}*/
+/*	// the oldest code ^^above, loops through elements[0 to startTagIndex] without any need for doing that..
+	tagName = &model->tagNames[startTagIndex];
+	for (i = startTagIndex; i < model->numTags; i++, tag++, tagName++)
+	{
+		if (!strcmp(tagName->name, _tagName))
+		{
+			*outTag = tag;
+			return i;
+		}
+	}*/
+	// ..and here's the SSE search string version
+	__m128i xmm0, xmm1, xmm2, xmm3, xmm4, xmm7, zeroes;
+	int mask0, mask16, mask32;
+	zeroes = _mm_setzero_si128();
+	xmm0 = _mm_loadu_si128((const __m128i *)&_tagName[0]);
+	mask0 = _mm_movemask_epi8(_mm_cmpeq_epi8(xmm0, zeroes));
+	if (mask0 == 0)
+	{
+		xmm1 = _mm_loadu_si128((const __m128i *)&_tagName[16]);
+		mask16 = _mm_movemask_epi8(_mm_cmpeq_epi8(xmm1, zeroes));
+		if (mask16 == 0)
+		{
+			xmm2 = _mm_loadu_si128((const __m128i *)&_tagName[32]);
+			mask32 = _mm_movemask_epi8(_mm_cmpeq_epi8(xmm2, zeroes));
+			if (mask32 == 0)
+			{
+				xmm3 = _mm_loadu_si128((const __m128i *)&_tagName[48]);
+			}
+		}
 	}
-#endif
+	tagName = &model->tagNames[startTagIndex];
+	for (i = startTagIndex; i < model->numTags; i++, tag++, tagName++)
+	{
+		xmm4 = _mm_loadu_si128((const __m128i *)&tagName->name[0]);
+		xmm7 = _mm_cmpeq_epi8(xmm4, xmm0);
+		if (_mm_movemask_epi8(xmm7) != 0xFFFF) continue;
+		if (mask0 != 0) goto tagName_found;
 
+		xmm4 = _mm_loadu_si128((const __m128i *)&tagName->name[16]);
+		xmm7 = _mm_cmpeq_epi8(xmm4, xmm1);
+		if (_mm_movemask_epi8(xmm7) != 0xFFFF) continue;
+		if (mask16 != 0) goto tagName_found;
+
+		xmm4 = _mm_loadu_si128((const __m128i *)&tagName->name[32]);
+		xmm7 = _mm_cmpeq_epi8(xmm4, xmm2);
+		if (_mm_movemask_epi8(xmm7) != 0xFFFF) continue;
+		if (mask32 != 0) goto tagName_found;
+
+		xmm4 = _mm_loadu_si128((const __m128i *)&tagName->name[48]);
+		xmm7 = _mm_cmpeq_epi8(xmm4, xmm3);
+		if (_mm_movemask_epi8(xmm7) == 0xFFFF) goto tagName_found;
+	}
+//tagName_not_found:
 	*outTag = NULL;
 	return -1;
+tagName_found:
+	*outTag = tag;
+	return i;
 }
 
 /**
@@ -729,8 +787,10 @@ int RE_LerpTagQ3A(orientation_t *tag, qhandle_t handle, int startFrame, int endF
  */
 int RE_LerpTagET(orientation_t *tag, const refEntity_t *refent, const char *tagNameIn, int startIndex)
 {
-	mdvTag_t  *start, *end;
+#ifndef ETL_SSE
 	int       i;
+#endif
+	mdvTag_t  *start = NULL, *end = NULL;
 	float     frontLerp, backLerp;
 	model_t   *model;
 	char      tagName[MAX_QPATH];       //, *ch;
@@ -745,6 +805,9 @@ int RE_LerpTagET(orientation_t *tag, const refEntity_t *refent, const char *tagN
 	frac       = 1.0f - refent->backlerp;
 
 	Q_strncpyz(tagName, tagNameIn, MAX_QPATH);
+	// TODO: check if we really need a copy of tagNameIn..
+	//       You could however safely use SSE string searching when it's a char[64] (instead of a char* of unknown length)
+	//       It's silly though, to copy every tagname that needs to be found..
 /*
     // if the tagName has a space in it, then it is passing through the starting tag number
     if (ch = strrchr(tagName, ' ')) {
@@ -763,55 +826,77 @@ int RE_LerpTagET(orientation_t *tag, const refEntity_t *refent, const char *tagN
 	}
 	*/
 
-	frontLerp = frac;
-	backLerp  = 1.0f - frac;
-
-	start = end = NULL;
-
-	if (model->type == MOD_MESH)
+	switch (model->type)
 	{
-		// old MD3 style
-		// FIXME: retval is reassigned before used, does it was intended ?
-		retval = R_GetTag(model->mdv[0], startFrame, tagName, startIndex, &start);
-		retval = R_GetTag(model->mdv[0], endFrame, tagName, startIndex, &end);
-
-	}
-/*
-    else if(model->type == MOD_MDS)
-    {
-        // use bone lerping
-        retval = R_GetBoneTag(tag, model->model.mds, startIndex, refent, tagNameIn);
-
-        if(retval >= 0)
-        {
-            return retval;
-        }
-
-        // failed
-        return -1;
-
-    }
-    */
-	else if (model->type == MOD_MDM)
-	{
+	case MOD_MDM:
 		// use bone lerping
-		retval = R_MDM_GetBoneTag(tag, model->mdm, startIndex, refent, tagNameIn);
+		retval = R_MDM_GetBoneTag(tag, model->mdm, startIndex, refent, tagName); // tagNameIn
+		return (retval >= 0) ? retval : -1;
+		break; // this line is not needed after a return (a line before)..
 
-		if (retval >= 0)
+	case MOD_MESH:
+		// old MD3 style
+		(void)R_GetTag(model->mdv[0], startFrame, tagName, startIndex, &start);
+		retval = R_GetTag(model->mdv[0], endFrame, tagName, startIndex, &end);
+		if (!start || !end)
 		{
-			return retval;
+			AxisClear(tag->axis);
+			VectorClear(tag->origin);
+			return -1;
 		}
+		frontLerp = frac;
+		backLerp = 1.0f - frac;
+#ifndef ETL_SSE
+		for (i = 0; i < 3; i++)
+		{
+			tag->origin[i] = start->origin[i] * backLerp + end->origin[i] * frontLerp;
+			tag->axis[0][i] = start->axis[0][i] * backLerp + end->axis[0][i] * frontLerp;
+			tag->axis[1][i] = start->axis[1][i] * backLerp + end->axis[1][i] * frontLerp;
+			tag->axis[2][i] = start->axis[2][i] * backLerp + end->axis[2][i] * frontLerp;
+		}
+#else
+		__m128 xmm0, xmm1, xmm6, xmm7;
+		xmm6 = _mm_set_ps1(backLerp);
+		xmm7 = _mm_set_ps1(frontLerp);
+		xmm0 = _mm_loadh_pi(_mm_load_ss((const float *)&start->origin[0]), (const __m64 *)&start->origin[1]);
+		xmm1 = _mm_loadh_pi(_mm_load_ss((const float *)&end->origin[0]), (const __m64 *)&end->origin[1]);
+		xmm0 = _mm_mul_ps(xmm0, xmm6);
+		xmm1 = _mm_mul_ps(xmm1, xmm7);
+		xmm0 = _mm_add_ps(xmm0, xmm1);
+		_mm_store_ss(&tag->origin[0], xmm0);
+		_mm_storeh_pi((__m64 *)(&tag->origin[1]), xmm0);
+		xmm0 = _mm_loadh_pi(_mm_load_ss((const float *)&start->axis[0][0]), (const __m64 *)&start->axis[0][1]);
+		xmm1 = _mm_loadh_pi(_mm_load_ss((const float *)&end->axis[0][0]), (const __m64 *)&end->axis[0][1]);
+		xmm0 = _mm_mul_ps(xmm0, xmm6);
+		xmm1 = _mm_mul_ps(xmm1, xmm7);
+		xmm0 = _mm_add_ps(xmm0, xmm1);
+		_mm_store_ss(&tag->axis[0][0], xmm0);
+		_mm_storeh_pi((__m64 *)(&tag->axis[0][1]), xmm0);
+		xmm0 = _mm_loadh_pi(_mm_load_ss((const float *)&start->axis[1][0]), (const __m64 *)&start->axis[1][1]);
+		xmm1 = _mm_loadh_pi(_mm_load_ss((const float *)&end->axis[1][0]), (const __m64 *)&end->axis[1][1]);
+		xmm0 = _mm_mul_ps(xmm0, xmm6);
+		xmm1 = _mm_mul_ps(xmm1, xmm7);
+		xmm0 = _mm_add_ps(xmm0, xmm1);
+		_mm_store_ss(&tag->axis[1][0], xmm0);
+		_mm_storeh_pi((__m64 *)(&tag->axis[1][1]), xmm0);
+		xmm0 = _mm_loadh_pi(_mm_load_ss((const float *)&start->axis[2][0]), (const __m64 *)&start->axis[2][1]);
+		xmm1 = _mm_loadh_pi(_mm_load_ss((const float *)&end->axis[2][0]), (const __m64 *)&end->axis[2][1]);
+		xmm0 = _mm_mul_ps(xmm0, xmm6);
+		xmm1 = _mm_mul_ps(xmm1, xmm7);
+		xmm0 = _mm_add_ps(xmm0, xmm1);
+		_mm_store_ss(&tag->axis[2][0], xmm0);
+		_mm_storeh_pi((__m64 *)(&tag->axis[2][1]), xmm0);
+#endif
+		VectorNormalizeOnly(tag->axis[0]);
+		VectorNormalizeOnly(tag->axis[1]);
+		VectorNormalizeOnly(tag->axis[2]);
+		return retval;
+		break; //..
 
-		// failed
-		return -1;
-
-	}
 #if defined(USE_REFENTITY_ANIMATIONSYSTEM)
-	else if (model->type == MOD_MD5)
-	{
+	case MOD_MD5:
 		// Dushan: VS need this first
 		vec3_t tmp;
-
 		retval = RE_BoneIndex(handle, tagName);
 		if (retval <= 0)
 		{
@@ -824,62 +909,57 @@ int RE_LerpTagET(orientation_t *tag, const refEntity_t *refent, const char *tagN
 		VectorCopy(tag->axis[0], tag->axis[1]);
 		VectorCopy(tmp, tag->axis[0]);
 		return retval;
-	}
+		break; //..
 #endif
-	/*
-	else
-	{
-	    // psuedo-compressed MDC tags
-	    mdcTag_t       *cstart, *cend;
 
-	    retval = R_GetMDCTag((byte *) model->model.mdc[0], startFrame, tagName, startIndex, &cstart);
-	    retval = R_GetMDCTag((byte *) model->model.mdc[0], endFrame, tagName, startIndex, &cend);
-
-	    // uncompress the MDC tags into MD3 style tags
-	    if(cstart && cend)
-	    {
-	        for(i = 0; i < 3; i++)
-	        {
-	            ustart.origin[i] = (float)cstart->xyz[i] * MD3_XYZ_SCALE;
-	            uend.origin[i] = (float)cend->xyz[i] * MD3_XYZ_SCALE;
-	            sangles[i] = (float)cstart->angles[i] * MDC_TAG_ANGLE_SCALE;
-	            eangles[i] = (float)cend->angles[i] * MDC_TAG_ANGLE_SCALE;
-	        }
-
-	        AnglesToAxis(sangles, ustart.axis);
-	        AnglesToAxis(eangles, uend.axis);
-
-	        start = &ustart;
-	        end = &uend;
-	    }
-	    else
-	    {
-	        start = NULL;
-	        end = NULL;
-	    }
-	}
-	*/
-
-	if (!start || !end)
-	{
+	default:
 		AxisClear(tag->axis);
 		VectorClear(tag->origin);
 		return -1;
+
+
+/*	case MOD_MDS:
+		// use bone lerping
+		retval = R_GetBoneTag(tag, model->model.mds, startIndex, refent, tagNameIn);
+		if (retval >= 0)
+		{
+			return retval;
+		}
+		// failed
+		return -1;
+		break;*/
+
+/*	case MOD_MDC:
+		// psuedo-compressed MDC tags
+		mdcTag_t       *cstart, *cend;
+
+		retval = R_GetMDCTag((byte *) model->model.mdc[0], startFrame, tagName, startIndex, &cstart);
+		retval = R_GetMDCTag((byte *) model->model.mdc[0], endFrame, tagName, startIndex, &cend);
+
+		// uncompress the MDC tags into MD3 style tags
+		if(cstart && cend)
+		{
+			for(i = 0; i < 3; i++)
+			{
+				ustart.origin[i] = (float)cstart->xyz[i] * MD3_XYZ_SCALE;
+				uend.origin[i] = (float)cend->xyz[i] * MD3_XYZ_SCALE;
+				sangles[i] = (float)cstart->angles[i] * MDC_TAG_ANGLE_SCALE;
+				eangles[i] = (float)cend->angles[i] * MDC_TAG_ANGLE_SCALE;
+			}
+
+			AnglesToAxis(sangles, ustart.axis);
+			AnglesToAxis(eangles, uend.axis);
+
+			start = &ustart;
+			end = &uend;
+		}
+		else
+		{
+			start = NULL;
+			end = NULL;
+		}*/
+
 	}
-
-	for (i = 0; i < 3; i++)
-	{
-		tag->origin[i]  = start->origin[i] * backLerp + end->origin[i] * frontLerp;
-		tag->axis[0][i] = start->axis[0][i] * backLerp + end->axis[0][i] * frontLerp;
-		tag->axis[1][i] = start->axis[1][i] * backLerp + end->axis[1][i] * frontLerp;
-		tag->axis[2][i] = start->axis[2][i] * backLerp + end->axis[2][i] * frontLerp;
-	}
-
-	VectorNormalizeOnly(tag->axis[0]);
-	VectorNormalizeOnly(tag->axis[1]);
-	VectorNormalizeOnly(tag->axis[2]);
-
-	return retval;
 }
 
 /**
