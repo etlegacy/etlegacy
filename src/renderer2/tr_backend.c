@@ -2156,6 +2156,7 @@ Vector4Set(&light->viewMatrix[12], -viewMatrix[13], viewMatrix[14], -viewMatrix[
 					//MatrixAffineInverse(backEnd.orientation.transformMatrix, backEnd.orientation.viewMatrix);
 					Matrix4Multiply(light->viewMatrix, backEnd.orientation.transformMatrix, backEnd.orientation.viewMatrix);
 					Matrix4Copy(backEnd.orientation.viewMatrix, backEnd.orientation.modelViewMatrix);*/
+					// multiplying with the identity-matrix, does nothing..
 					Matrix4Identity(backEnd.orientation.transformMatrix);
 					Matrix4Copy(light->viewMatrix, backEnd.orientation.viewMatrix);
 					Matrix4Copy(backEnd.orientation.viewMatrix, backEnd.orientation.modelViewMatrix);

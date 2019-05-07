@@ -217,9 +217,8 @@ void MatrixAffineInverse(const mat4_t in, mat4_t out)
 	xmm3 = _mm_add_ps(xmm3, xmm4);									// xmm3 = _ z y x
 	xmm7 = _mm_shuffle_ps(xmm6, xmm6, 0b01010101);					// xmm7 = 0 0 0 0
 	xmm3 = _mm_sub_ps(xmm7, xmm3);									// xmm3 = -xmm3
-	xmm6 = _mm_shuffle_ps(xmm6, xmm6, 0b00000000);					// xmm6 = 1 1 1 1
-	xmm6 = _mm_shuffle_ps(xmm6, xmm3, 0b10100000);					// xmm3 = z z 1 1
-	xmm3 = _mm_shuffle_ps(xmm3, xmm6, 0b00110100);					// xmm0 = 1 z y x
+	xmm6 = _mm_shuffle_ps(xmm6, xmm3, 0b10100000);					// xmm6 = z z 1 1
+	xmm3 = _mm_shuffle_ps(xmm3, xmm6, 0b00110100);					// xmm3 = 1 z y x
 	_mm_storeu_ps(&out[12], xmm3);
 #endif
 #endif
@@ -749,8 +748,8 @@ void MatrixTransformNormal(const mat4_t m, const vec3_t in, vec3_t out)
 	__m128 xmm0, xmm1, xmm2, xmm3, xmm4, xmm5;
 	xmm1 = _mm_loadh_pi(_mm_load_ss(&in[0]), (const __m64 *)(&in[1]));	// xmm1 = z y _ x
 	xmm2 = _mm_shuffle_ps(xmm1, xmm1, 0b11111111);		// xmm2 = z z z z
-	xmm1 = _mm_shuffle_ps(xmm1, xmm1, 0b10101010);		// xmm1 = y y y y
 	xmm0 = _mm_shuffle_ps(xmm1, xmm1, 0b00000000);		// xmm0 = x x x x
+	xmm1 = _mm_shuffle_ps(xmm1, xmm1, 0b10101010);		// xmm1 = y y y y
 	xmm3 = _mm_loadu_ps(&m[0]);							// xmm3 =  m3  m2  m1  m0
 	xmm4 = _mm_loadu_ps(&m[4]);							// xmm4 =  m7  m6  m5  m4
 	xmm5 = _mm_loadu_ps(&m[8]);							// xmm5 = m11 m10  m9  m8
@@ -784,8 +783,8 @@ void MatrixTransformNormal2(const mat4_t m, vec3_t inout)
 	__m128 xmm0, xmm1, xmm2, xmm3, xmm4, xmm5;
 	xmm1 = _mm_loadh_pi(_mm_load_ss(&inout[0]), (const __m64 *)(&inout[1]));	// xmm1 = z y _ x
 	xmm2 = _mm_shuffle_ps(xmm1, xmm1, 0b11111111);			// xmm2 = z z z z
-	xmm1 = _mm_shuffle_ps(xmm1, xmm1, 0b10101010);			// xmm1 = y y y y
 	xmm0 = _mm_shuffle_ps(xmm1, xmm1, 0b00000000);			// xmm0 = x x x x
+	xmm1 = _mm_shuffle_ps(xmm1, xmm1, 0b10101010);			// xmm1 = y y y y
 	xmm3 = _mm_loadu_ps(&m[0]);								// xmm3 =  m3  m2  m1  m0
 	xmm4 = _mm_loadu_ps(&m[4]);								// xmm4 =  m7  m6  m5  m4
 	xmm5 = _mm_loadu_ps(&m[8]);								// xmm5 = m11 m10  m9  m8

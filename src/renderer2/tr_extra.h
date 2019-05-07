@@ -311,25 +311,14 @@ void MatrixMultiplyZRotation(mat4_t m, vec_t degrees);
 	_mm_storeu_ps(&m[12], xmm0); \
 }
 
-///void MatrixTransformPlane(const mat4_t m, const vec4_t in, vec4_t out);
-#define MatrixTransformPlane(m, in, out) \
-{ \
-	vec3_t translation, planePos; \
-	MatrixTransformNormal(m, in, out); \
-	VectorSet(translation, m[12], m[13], m[14]); \
-	VectorMA(translation, in[3], out, planePos); \
-	Dot(out, planePos, out[3]); \
-}
-
 ///void MatrixTransformNormal(const mat4_t m, const vec3_t in, vec3_t out);
 #define MatrixTransformNormal(m, in, out) \
 { \
 	__m128 xmm0, xmm1, xmm2, xmm3, xmm4, xmm5; \
-	xmm0 = _mm_load_ss(&in[0]); \
-	xmm1 = _mm_loadh_pi(xmm0, (const __m64 *)(&in[1])); \
+	xmm1 = _mm_loadh_pi(_mm_load_ss(&in[0]), (const __m64 *)(&in[1])); \
 	xmm2 = _mm_shuffle_ps(xmm1, xmm1, 0b11111111); \
+	xmm0 = _mm_shuffle_ps(xmm1, xmm1, 0b00000000); \
 	xmm1 = _mm_shuffle_ps(xmm1, xmm1, 0b10101010); \
-	xmm0 = _mm_shuffle_ps(xmm0, xmm0, 0b00000000); \
 	xmm3 = _mm_loadu_ps(&m[0]); \
 	xmm4 = _mm_loadu_ps(&m[4]); \
 	xmm5 = _mm_loadu_ps(&m[8]); \
@@ -341,6 +330,16 @@ void MatrixMultiplyZRotation(mat4_t m, vec_t degrees);
 	xmm0 = _mm_shuffle_ps(xmm0, xmm0, 0b10010100); \
 	_mm_store_ss(&out[0], xmm0); \
 	_mm_storeh_pi((__m64 *)(&out[1]), xmm0); \
+}
+
+///void MatrixTransformPlane(const mat4_t m, const vec4_t in, vec4_t out);
+#define MatrixTransformPlane(m, in, out) \
+{ \
+	vec3_t translation, planePos; \
+	MatrixTransformNormal(m, in, out); \
+	VectorSet(translation, m[12], m[13], m[14]); \
+	VectorMA(translation, in[3], out, planePos); \
+	Dot(out, planePos, out[3]); \
 }
 
 ///void MatrixAffineInverse(const mat4_t in, mat4_t out);
@@ -374,7 +373,6 @@ void MatrixMultiplyZRotation(mat4_t m, vec_t degrees);
 	xmm3 = _mm_add_ps(xmm3, xmm4); \
 	xmm7 = _mm_shuffle_ps(xmm6, xmm6, 0b01010101); \
 	xmm3 = _mm_sub_ps(xmm7, xmm3); \
-	xmm6 = _mm_shuffle_ps(xmm6, xmm6, 0b00000000); \
 	xmm6 = _mm_shuffle_ps(xmm6, xmm3, 0b10100000); \
 	xmm3 = _mm_shuffle_ps(xmm3, xmm6, 0b00110100); \
 	_mm_storeu_ps(&out[12], xmm3); \

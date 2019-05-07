@@ -988,11 +988,9 @@ void R_TransformWorldToClip(const vec3_t src, const float *cameraViewMatrix, con
  */
 void R_TransformModelToClip(const vec3_t src, const float *modelMatrix, const float *projectionMatrix, vec4_t eye, vec4_t dst)
 {
-	vec4_t src2;
-
+	vec4_t src2 = {0.f, 0.f, 0.f, 1.f};
 	VectorCopy(src, src2);
-	src2[3] = 1.0f;
-
+	//src2[3] = 1.0f;
 	Vector4TransformM4(modelMatrix, src2, eye);
 	Vector4TransformM4(projectionMatrix, eye, dst);
 }
@@ -1044,10 +1042,11 @@ float R_ProjectRadius(float r, vec3_t location)
 		return 0;
 	}
 
-	p[0] = 0.0f;
+	/*p[0] = 0.0f;
 	p[1] = Q_fabs(r);
 	p[2] = -dist;
-	p[3] = 1.0f; // vec4
+	p[3] = 1.0f; // vec4*/
+	Vector4Set(p, 0.f, Q_fabs(r), -dist, 1.f);
 /*
 	projected[0] = p[0] * tr.viewParms.projectionMatrix[0] +
 	               p[1] * tr.viewParms.projectionMatrix[4] +
@@ -1071,7 +1070,8 @@ float R_ProjectRadius(float r, vec3_t location)
 */
 	Vector4TransformM4(tr.viewParms.projectionMatrix, p, projected);
 
-	pr = projected[1] / projected[3];
+	//pr = projected[1] / projected[3];
+	pr = projected[1] * rcp(projected[3]);
 
 	if (pr > 1.0f)
 	{
@@ -1130,15 +1130,15 @@ void R_RotateEntityForViewParms(const trRefEntity_t *ent, const viewParms_t *vie
 	// compensate for scale in the axes if necessary
 	if (ent->e.nonNormalizedAxes)
 	{
+		Dot(delta, orientation->axis[0], orientation->viewOrigin[0]);
+		Dot(delta, orientation->axis[1], orientation->viewOrigin[1]);
+		Dot(delta, orientation->axis[2], orientation->viewOrigin[2]);
 		axisLength = VectorLength(ent->e.axis[0]);
-		if (axisLength != 0.f)
+		if (axisLength != 0.f && axisLength != 1.f)
 		{
 			//axisLength = 1.0f / axisLength;
 			RECIPROCAL(axisLength);
 		}
-		Dot(delta, orientation->axis[0], orientation->viewOrigin[0]);
-		Dot(delta, orientation->axis[1], orientation->viewOrigin[1]);
-		Dot(delta, orientation->axis[2], orientation->viewOrigin[2]);
 		if (axisLength != 1.f)
 		{
 			VectorScale(orientation->viewOrigin, axisLength, orientation->viewOrigin);
@@ -1205,15 +1205,15 @@ void R_RotateEntityForLight(const trRefEntity_t *ent, const trRefLight_t *light,
 	// compensate for scale in the axes if necessary
 	if (ent->e.nonNormalizedAxes)
 	{
+		Dot(delta, orientation->axis[0], orientation->viewOrigin[0]);
+		Dot(delta, orientation->axis[1], orientation->viewOrigin[1]);
+		Dot(delta, orientation->axis[2], orientation->viewOrigin[2]);
 		axisLength = VectorLength(ent->e.axis[0]);
-		if (axisLength != 0.f)
+		if (axisLength != 0.f && axisLength != 1.f)
 		{
 			//axisLength = 1.0f / axisLength;
 			RECIPROCAL(axisLength);
 		}
-		Dot(delta, orientation->axis[0], orientation->viewOrigin[0]);
-		Dot(delta, orientation->axis[1], orientation->viewOrigin[1]);
-		Dot(delta, orientation->axis[2], orientation->viewOrigin[2]);
 		if (axisLength != 1.f)
 		{
 			VectorScale(orientation->viewOrigin, axisLength, orientation->viewOrigin);

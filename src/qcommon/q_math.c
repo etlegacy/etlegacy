@@ -642,8 +642,8 @@ void RotatePointAroundVector(vec3_t dst, const vec3_t dir, const vec3_t point, f
 		xmm6 = _mm_set_ps(1.f, 0.f, 0.f, 0.f);
 		xmm1 = _mm_loadh_pi(_mm_load_ss((const float *)point), (const __m64 *)(point + 1));
 		xmm2 = _mm_shuffle_ps(xmm1, xmm1, 0b11111111);
-		xmm1 = _mm_shuffle_ps(xmm1, xmm1, 0b10101010);
 		xmm0 = _mm_shuffle_ps(xmm1, xmm1, 0b00000000);
+		xmm1 = _mm_shuffle_ps(xmm1, xmm1, 0b10101010);
 		xmm0 = _mm_mul_ps(xmm0, xmm3);
 		xmm1 = _mm_mul_ps(xmm1, xmm4);
 		xmm2 = _mm_mul_ps(xmm2, xmm5);
@@ -2444,8 +2444,8 @@ void _Vector2AM(const vec2_t veca, const vec2_t vecb, const float scale, vec2_t 
 	xmm2 = _mm_shuffle_ps(xmm2, xmm2, 0);
 	xmm0 = _mm_mul_ps(xmm0, xmm2);
 	_mm_storel_pi((__m64 *)out, xmm0);
-	#pragma warning(default:4700)
 #endif
+#pragma warning(default:4700)
 }
 
 // Vector4Set
@@ -2575,8 +2575,8 @@ void _Vector2Subtract(const vec2_t veca, const vec2_t vecb, vec2_t out)
 	xmm1 = _mm_loadl_pi(xmm1, (const __m64 *)vecb); // we only use the lower bits
 	xmm0 = _mm_sub_ps(xmm0, xmm1);
 	_mm_storel_pi((__m64 *)out, xmm0);
-#pragma warning(default:4700)
 #endif
+#pragma warning(default:4700)
 }
 
 /**
@@ -2619,8 +2619,6 @@ void _VectorAddConst(const vec3_t v, const float value, vec3_t out)
 	__m128 xmm1, xmm2;
 	xmm1 = _mm_load_ss(&v[0]);
 	xmm1 = _mm_loadh_pi(xmm1, (const __m64 *)(&v[1]));
-	//xmm2 = _mm_load_ss(&value);
-	//xmm2 = _mm_shuffle_ps(xmm2, xmm2, 0);
 	xmm2 = _mm_load_ps1(&value);
 	xmm1 = _mm_add_ps(xmm1, xmm2);
 	_mm_store_ss(&out[0], xmm1);
@@ -2856,8 +2854,7 @@ void vec3_inv(vec3_t v)
 	v[2] = -v[2];
 #else
 	__m128 xmm0, xmm1;
-	xmm1 = _mm_load_ss(&v[0]);
-	xmm1 = _mm_loadh_pi(xmm1, (const __m64 *)(&v[1]));
+	xmm1 = _mm_loadh_pi(_mm_load_ss(&v[0]), (const __m64 *)(&v[1]));
 	xmm0 = _mm_sub_ps(_mm_setzero_ps(), xmm1);
 	_mm_store_ss(&v[0], xmm0);
 	_mm_storeh_pi((__m64 *)(&v[1]), xmm0);
@@ -3061,7 +3058,7 @@ void mat3_transpose(vec3_t matrix[3], vec3_t transpose[3])
  */
 void angles_vectors(const vec3_t angles, vec3_t forward, vec3_t right, vec3_t up)
 {
-	float angle, sr, spp, sy, cr, cp, cy;
+	float angle, sr, spp, sy, cr, cp, cy; // 'sp' is the name of a cpu register: we use 'spp' otherwise we get an error..
 
 	angle = DEG2RAD(angles[PITCH]);
 	//sp    = sin(angle);
@@ -3132,22 +3129,14 @@ void angles_vectors(const vec3_t angles, vec3_t forward, vec3_t right, vec3_t up
  */
 void vec3_per(const vec3_t src, vec3_t dst)
 {
-	int    pos;
-	int    i;
+	int    i, pos = 0;
 	float  minelem = 1.0F;
 	vec3_t tempvec;
-	//float  abs_srci;
 
 	// find the smallest magnitude axially aligned vector
 	VectorAbs(src, tempvec);
-	for (pos = 0, i = 0; i < 3; i++)
+	for (i = 0; i < 3; i++)
 	{
-		/*abs_srci = Q_fabs(src[i]);
-		if (abs_srci < minelem)
-		{
-			pos     = i;
-			minelem = abs_srci;
-		}*/
 		if (tempvec[i] < minelem)
 		{
 			pos = i;
@@ -3327,13 +3316,9 @@ float vec3_to_yawn(const vec3_t vec)
 				yaw += 360.f;
 			}
 		}
-		else if (vec[YAW] > 0.f)
-		{
-			yaw = 90.f;
-		}
 		else
 		{
-			yaw = 270.f;
+			yaw = (vec[YAW] > 0.f) ? 90.f : 270.f;
 		}
 	}
 
@@ -3775,10 +3760,10 @@ vec_t quat_norm(quat_t q)
 	xmm0 = _mm_mul_ps(xmm0, xmm0);
 	//xmm0 = _mm_hadd_ps(xmm0, xmm0);
 	//xmm0 = _mm_hadd_ps(xmm0, xmm0); // xmm0 = length
-	xmm7 = _mm_movehdup_ps(xmm1);		// faster way to do: 2 * hadd
-	xmm6 = _mm_add_ps(xmm1, xmm7);		//
+	xmm7 = _mm_movehdup_ps(xmm0);		// faster way to do: 2 * hadd
+	xmm6 = _mm_add_ps(xmm0, xmm7);		//
 	xmm7 = _mm_movehl_ps(xmm7, xmm6);	//
-	xmm1 = _mm_add_ss(xmm6, xmm7);		//
+	xmm0 = _mm_add_ss(xmm6, xmm7);		//
 	xmm0 = _mm_sqrt_ss(xmm0);
 	_mm_store_ss(&s, xmm0); // function result
 	if (s != 0.0) {

@@ -52,6 +52,7 @@
 //
 // Also note that atm. there are lots of compiler warnings 4700 generated. It's safe to ignore those warnings.
 // The vec2 SSE code generates those warnings. (some xmm register is partially loaded and used, but compiler complains about the uninitialized, discarded part that we don't use at all).
+// UPDATE: By now all those warnings are supressed.
 //
 // BTW: I think it would be benefitial for ETLegacy, to change compiler settings (for x86), to always generate SSE2 code.
 //
@@ -759,21 +760,6 @@ static inline void VectorMax(const vec3_t a, const vec3_t b, vec3_t out)
 	_mm_storeh_pi((__m64 *)(&maxs[1]), xmm3); \
 }
 
-///void PlaneFromPoints_void(vec4_t plane, const vec3_t a, const vec3_t b, const vec3_t c);
-#define PlaneFromPoints_void(plane, a, b, c) \
-{ \
-	vec3_t d1, d2; \
-	float n; \
-	VectorSubtract(b, a, d1); \
-	VectorSubtract(c, a, d2); \
-	CrossProduct(d2, d1, plane); \
-	VectorNorm(plane, &n); \
-	if (n != 0.f) \
-	{ \
-		Dot(a, plane, plane[3]); \
-	} \
-}
-
 // These are the SSE3 functions and (inlined) macro's
 // DEPRICATED: USE Dot() INSTEAD..
 #define DotProduct(x, y) _DotProduct(x, y)
@@ -1479,15 +1465,14 @@ static inline void VectorMax(const vec3_t a, const vec3_t b, vec3_t out)
 	_mm_storeu_ps(out, xmm3); \
 }
 
-// TODO: handle instruction pairing to minimize uOps..
 ///#define VectorTransformM4(m, in, out) mat4_transform_vec3(m, in, out)
 #define VectorTransformM4(m, in, out) \
 { \
 	__m128 xmm0, xmm1, xmm2, xmm3, xmm4, xmm5, xmm6; \
 	xmm1 = _mm_loadh_pi( _mm_load_ss((const float *)in), (const __m64 *)(in+1)); \
 	xmm2 = _mm_shuffle_ps(xmm1, xmm1, 0b11111111); \
-	xmm1 = _mm_shuffle_ps(xmm1, xmm1, 0b10101010); \
 	xmm0 = _mm_shuffle_ps(xmm1, xmm1, 0b00000000); \
+	xmm1 = _mm_shuffle_ps(xmm1, xmm1, 0b10101010); \
 	xmm3 = _mm_loadu_ps((const float *)m); \
 	xmm4 = _mm_loadu_ps((const float *)(m+4)); \
 	xmm5 = _mm_loadu_ps((const float *)(m+8)); \
@@ -1671,6 +1656,7 @@ static inline void VectorMax(const vec3_t a, const vec3_t b, vec3_t out)
 	axis[2][2] =  -xx2 - qy2[1] + 1.0f; \
 }
 
+
 /*
 // Because we're unsure of the input data-types being floats or doubles,
 // we cast them to doubles first, so we can use the good old FPU.
@@ -1702,43 +1688,20 @@ static inline void VectorMax(const vec3_t a, const vec3_t b, vec3_t out)
 	} \
 }
 
-
-// This one is taken from:
-// https://dtosoftware.wordpress.com/2013/01/07/fast-sin-and-cos-functions/
-// until i created our own version..
-// .. this current version is buggy.  precision issue?
-/*#define SinCos(rad, S, C) \
+///void PlaneFromPoints_void(vec4_t plane, const vec3_t a, const vec3_t b, const vec3_t c);
+#define PlaneFromPoints_void(plane, a, b, c) \
 { \
-	const float B = 4.f / M_PI; \
-	const float CC = -4.f / (M_PI * M_PI); \
-	const float P = 0.225f; \
-	__m128 m_abs, m_y, m_sincos, m_cos; \
-	__m128 m_x = _mm_set_ps(0.f, 0.f, rad + M_halfPI, rad); \
-	__m128 m_pi = _mm_set1_ps(M_PI); \
-	__m128 m_mpi = _mm_set1_ps(-M_PI); \
-	__m128 m_2pi = _mm_set1_ps(M_PI * 2.0f); \
-	__m128 m_B = _mm_set1_ps(B); \
-	__m128 m_C = _mm_set1_ps(CC); \
-	__m128 m_P = _mm_set1_ps(P); \
-	__m128 m1 = _mm_cmpnlt_ps(m_x, m_pi); \
-	m1 = _mm_and_ps(m1, m_2pi); \
-	m_x = _mm_sub_ps(m_x, m1); \
-	m1 = _mm_cmpngt_ps(m_x, m_mpi); \
-	m1 = _mm_and_ps(m1, m_2pi); \
-	m_x = _mm_add_ps(m_x, m1); \
-	m_abs = _mm_andnot_ps(_mm_castsi128_ps(_mm_set1_epi32(0x80000000)), m_x); \
-	m1 = _mm_mul_ps(m_abs, m_C); \
-	m1 = _mm_add_ps(m1, m_B); \
-	m_y = _mm_mul_ps(m1, m_x); \
-	m_abs = _mm_andnot_ps(_mm_castsi128_ps(_mm_set1_epi32(0x80000000)), m_y); \
-	m1 = _mm_mul_ps(m_abs, m_y); \
-	m1 = _mm_sub_ps(m1, m_y); \
-	m1 = _mm_mul_ps(m1, m_P); \
-	m_sincos = _mm_add_ps(m1, m_y); \
-	m_cos = _mm_shuffle_ps(m_sincos, m_sincos, _MM_SHUFFLE(0, 0, 0, 1)); \
-	_mm_store_ss(&S, m_sincos); \
-	_mm_store_ss(&C, m_cos); \
-}*/
+	vec3_t d1, d2; \
+	float n; \
+	VectorSubtract(b, a, d1); \
+	VectorSubtract(c, a, d2); \
+	CrossProduct(d2, d1, plane); \
+	VectorNorm(plane, &n); \
+	if (n != 0.f) \
+	{ \
+		Dot(a, plane, plane[3]); \
+	} \
+}
 
 ///void ProjectPointOntoVector(vec3_t point, vec3_t vStart, vec3_t vEnd, vec3_t vProj);
 #define ProjectPointOntoVector(point, vStart, vEnd, vProj) \
