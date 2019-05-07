@@ -59,7 +59,7 @@ menuDef {
 	#define SUBWINDOW_WIDTH		WINDOW_WIDTH-12
 
 // Filters //
-	#define FILTERS_WIDTH		.75*(WINDOW_WIDTH-18)
+	#define FILTERS_WIDTH		.75*WINDOW_WIDTH
 
 	SUBWINDOW( 6, 32, (FILTERS_WIDTH), 28, _("MESSAGE OF THE DAY") )
 	itemDef {
@@ -79,122 +79,116 @@ menuDef {
 
 	SUBWINDOW( 6, 64, (FILTERS_WIDTH), 94, _("FILTERS") )
 
-	MULTIACTIONLEFT( 12, 80, .33*((FILTERS_WIDTH)-6), 10, _("Source:"), .2, 8, "ui_netSource", cvarFloatList { "Local" 0 "Internet" 1 "Favorites" 2 }, uiScript UpdateFilter, _("Choose the type of game servers to display from Internet, local and the favorites list") )
-	MULTIACTIONLEFT( 12, 92, .33*((FILTERS_WIDTH)-6), 10, _("Game Type:"), .2, 8, "ui_joinGameType", cvarFloatList { "All" -1 "Objective" 2 "Stopwatch" 3 "Campaign" 4 "LMS" 5 "Map Voting" 6 }, uiScript RefreshFilter, _("Displays only game servers offering this Game Type") )
-	MULTIACTIONLEFT( 12, 104, .33*((FILTERS_WIDTH)-6), 10, _("Mod:"), .2, 8, "ui_browserModFilter", cvarFloatList { "All" 0 "Legacy" 1 "ETPub" 2 "Jaymod" 3 "NoQuarter" 4 "N!tmod" 5 "silEnT" 6 "True Combat" 7 "ETNam" 8 "ETrun" 9 "ETJump" 10 "TJMod" 11 "Original" 12 "Other" -1 }, uiScript UpdateFilter, _("Displays only game servers offering this Mod") )
-	EDITFIELDSIMPLE( 12+24, 116, .33*((FILTERS_WIDTH)-6)-28, 10, "", .2, 8, "ui_browserMapFilter", 25, 25, uiScript RefreshFilter, _("Includes or excludes servers with desired map name from the server list") )
+	BUTTONEXT( FILTERS_WIDTH-.16*FILTERS_WIDTH, 66, .16*(FILTERS_WIDTH-6), 12, _("RESET"), .20, 9, uiScript ResetFilters; uiScript RefreshFilter, tooltip _("Reset all filters to their defaults"))
+
+// Buttons
+	BUTTONEXT( 12, 84, .33*(FILTERS_WIDTH-24), 14, _("INTERNET"), .24, 11, uiScript ResetInternet; uiScript RefreshServers, tooltip _("Shows all Internet servers"))
+	BUTTONEXT( 8+(.34*(FILTERS_WIDTH-24))+6, 84, .34*(FILTERS_WIDTH-24), 14, _("FAVORITES"), .24, 11, uiScript ResetFavorites; uiScript RefreshFilter, tooltip _("Shows all favorite servers"))
+	BUTTONEXT( 18+(.67*(FILTERS_WIDTH-24))+6, 84, .33*(FILTERS_WIDTH-24), 14, _("LOCAL"), .24, 11, uiScript ResetLocal; uiScript RefreshFilter, tooltip _("Shows all local servers"))
+
+	MULTIACTIONLEFT( 12, 102, .33*(FILTERS_WIDTH-24), 10, _("Source:"), .2, 8, "ui_netSource", cvarFloatList { "^5Local" 0 "^2Internet" 1 "^1Favorites" 2 }, uiScript UpdateFilter, _("Choose the type of game servers to display from Internet, local and the favorites list"))
+	MULTIACTIONLEFT( 12, 114, .33*(FILTERS_WIDTH-24), 10, _("Game Type:"), .2, 8, "ui_joinGameType", cvarFloatList { "All" -1 "Objective" 2 "Stopwatch" 3 "Campaign" 4 "LMS" 5 "Map Voting" 6 }, uiScript RefreshFilter, _("Displays only game servers offering this Game Type") )
+	MULTIACTIONLEFT( 12, 126, .33*(FILTERS_WIDTH-24), 10, _("Mod:"), .2, 8, "ui_browserModFilter", cvarFloatList { "All" 0 "Legacy" 1 "ETPub" 2 "Jaymod" 3 "NoQuarter" 4 "N!tmod" 5 "silEnT" 6 "True Combat" 7 "ETNam" 8 "ETrun" 9 "ETJump" 10 "TJMod" 11 "Original" 12 "Other" -1 }, uiScript UpdateFilter, _("Displays only game servers offering this Mod") )
 
 	itemDef {
 		name		"filtericonMapName"
-		rect		12 116 10 10
+		rect		12 138 10 10
 		style		WINDOW_STYLE_SHADER
 		background	"ui/assets/filter_map"
 		forecolor	1 1 1 1
 		visible		1
 		decoration
 	}
-
-	TRICHECKBOXACTIONMULTI( 12+12, 116, 10, 10, .2, 8, "ui_browserMapFilterCheckBox",  cvarFloatList { "" 0 "" 1 "" 2 }, uiScript RefreshFilter ; setcvar ui_filterdescription _("Filter affecting servers with map name"), _("Includes or excludes servers with desired map name from the server list") )
-
-	// FIXME: selected bitflag checkbox enable all checkboxes
-	//CHECKBOXACTIONBITFLAG( CHECKBOXACTION_X, CHECKBOXACTION_Y, CHECKBOXACTION_W, CHECKBOXACTION_H, CHECKBOXACTION_TEXT, CHECKBOXACTION_TEXT_SCALE, CHECKBOXACTION_TEXT_ALIGN_X, CHECKBOXACTION_TEXT_ALIGN_Y, CHECKBOXACTION_CVAR, BITFLAG, CHECKBOXACTION_ACTION, CHECKBOXACTION_TOOLTIP )
-	//CHECKBOXACTIONBITFLAG( 32, 128, 32, 10, "^8All", .2, 0, 8, "ui_browserOssFilter", 0, togglecvarbit ui_browserOssFilter 0 ; uiScript RefreshFilter, "Show all servers" )
-	//CHECKBOXACTIONBITFLAG( 104, 128, 66, 10, "^8Linux 64", .2, 20, 8, "ui_browserOssFilter", 4, togglecvarbit ui_browserOssFilter 4 ; uiScript RefreshFilter, "Show only Linux 64 bit compatible servers" )
-	//MULTIACTIONLEFT( 12, 128, .33*((FILTERS_WIDTH)-6), 10, "Supported systems:", .2, 8, "ui_browserOssFilter", cvarFloatList { "^8All" 0 "^8Linux 64 bits only" 4 }, uiScript UpdateFilter, "Choose the servers supported operating systems to display" )
+	TRICHECKBOXACTIONMULTI( 12+12, 138, 10, 10, .2, 8, "ui_browserMapFilterCheckBox",  cvarFloatList { "" 0 "" 1 "" 2 }, uiScript RefreshFilter ; setcvar ui_filterdescription _("Filter affecting servers with map name"), _("Includes or excludes servers with desired map name from the server list") )
+	EDITFIELDSIMPLE( 12+24, 138, .33*(FILTERS_WIDTH-12)-28, 10, "", .2, 8, "ui_browserMapFilter", 25, 25, uiScript RefreshFilter, _("Includes or excludes servers with desired map name from the server list") )
 
 	itemDef {
 		name		"filtericonEmptyFull"
-		rect		$evalfloat(8+.33*((FILTERS_WIDTH)-6)+2+2) 80 10 10
+		rect		$evalfloat(8+.33*(FILTERS_WIDTH-6)+2+2) 102 10 10
 		style		WINDOW_STYLE_SHADER
 		background	"ui/assets/filter_emptyfull"
 		forecolor	1 1 1 1
 		visible		1
 		decoration
 	}
-	TRICHECKBOXACTIONMULTI( 8+.33*((FILTERS_WIDTH)-6)+2+2+12, 80, .33*((FILTERS_WIDTH)-6)-14, 10, .2, 8, "ui_browserShowEmptyOrFull", cvarFloatList { "Filter Disabled" 0 "Only show..." 1 "Don't show..." 2 }, uiScript RefreshFilter ; setcvar ui_filterdescription "Filter affecting Empty and Full Servers", "Includes or excludes empty and full servers from the server list"  )
+	TRICHECKBOXACTIONMULTI( 8+.33*(FILTERS_WIDTH-6)+2+2+12, 102, .34*(FILTERS_WIDTH-6)-18, 10, .2, 8, "ui_browserShowEmptyOrFull", cvarFloatList { "Filter Disabled" 0 "Only show..." 1 "Don't show..." 2 }, uiScript RefreshFilter ; setcvar ui_filterdescription "Filter affecting Empty and Full Servers", "Includes or excludes empty and full servers from the server list"  )
 
 	itemDef {
 		name		"filtericonPassword"
-		rect		$evalfloat(8+.33*((FILTERS_WIDTH)-6)+2+2) 92 10 10
+		rect		$evalfloat(8+.33*(FILTERS_WIDTH-6)+2+2) 114 10 10
 		style		WINDOW_STYLE_SHADER
 		background	"ui/assets/filter_pass"
 		forecolor	1 1 1 1
 		visible		1
 		decoration
 	}
-	TRICHECKBOXACTIONMULTI( 8+.33*((FILTERS_WIDTH)-6)+2+2+12, 92, .33*((FILTERS_WIDTH)-6)-14, 10, .2, 8, "ui_browserShowPasswordProtected", cvarFloatList { "Filter Disabled" 0 "Only show..." 1 "Don't show..." 2 }, uiScript RefreshFilter ; setcvar ui_filterdescription "Filter affecting Password Protected Servers", "Includes or excludes password protected servers from the server list" )
+	TRICHECKBOXACTIONMULTI( 8+.33*(FILTERS_WIDTH-6)+2+2+12, 114, .34*(FILTERS_WIDTH-6)-18, 10, .2, 8, "ui_browserShowPasswordProtected", cvarFloatList { "Filter Disabled" 0 "Only show..." 1 "Don't show..." 2 }, uiScript RefreshFilter ; setcvar ui_filterdescription "Filter affecting Password Protected Servers", "Includes or excludes password protected servers from the server list" )
 
 	itemDef {
 		name		"filtericonFriendlyFire"
-		rect		$evalfloat(8+.33*((FILTERS_WIDTH)-6)+2+2) 104 10 10
+		rect		$evalfloat(8+.33*((FILTERS_WIDTH)-6)+2+2) 126 10 10
 		style		WINDOW_STYLE_SHADER
 		background	"ui/assets/filter_ff"
 		forecolor	1 1 1 1
 		visible		1
 		decoration
 	}
-	TRICHECKBOXACTIONMULTI( 8+.33*((FILTERS_WIDTH)-6)+2+2+12, 104, .33*((FILTERS_WIDTH)-6)-14, 10, .2, 8, "ui_browserShowFriendlyFire", cvarFloatList { "Filter Disabled" 0 "Only show..." 1 "Don't show..." 2 }, uiScript RefreshFilter ; setcvar ui_filterdescription "Filter affecting Servers with Friendly Fire", "Includes or excludes servers where team mates can damage each other from the server list"  )
+	TRICHECKBOXACTIONMULTI( 8+.33*(FILTERS_WIDTH-6)+2+2+12, 126, .34*(FILTERS_WIDTH-6)-18, 10, .2, 8, "ui_browserShowFriendlyFire", cvarFloatList { "Filter Disabled" 0 "Only show..." 1 "Don't show..." 2 }, uiScript RefreshFilter ; setcvar ui_filterdescription "Filter affecting Servers with Friendly Fire", "Includes or excludes servers where team mates can damage each other from the server list"  )
 
 	itemDef {
 		name		"filtericonMaxLives"
-		rect		$evalfloat(8+.33*((FILTERS_WIDTH)-6)+2+2) 116 10 10
+		rect		$evalfloat(8+.33*(FILTERS_WIDTH-6)+2+2) 138 10 10
 		style		WINDOW_STYLE_SHADER
 		background	"ui/assets/filter_lives"
 		forecolor	1 1 1 1
 		visible		1
 		decoration
 	}
-	TRICHECKBOXACTIONMULTI( 8+.33*((FILTERS_WIDTH)-6)+2+2+12, 116, .33*((FILTERS_WIDTH)-6)-14, 10, .2, 8, "ui_browserShowMaxlives", cvarFloatList { "Filter Disabled" 0 "Only show..." 1 "Don't show..." 2 }, uiScript RefreshFilter ; setcvar ui_filterdescription "Filter affecting Servers with Max Lives", "Includes or excludes servers that limit the number of player lives per match from the server list" )
+	TRICHECKBOXACTIONMULTI( 8+.33*(FILTERS_WIDTH-6)+2+2+12, 138, .34*(FILTERS_WIDTH-6)-18, 10, .2, 8, "ui_browserShowMaxlives", cvarFloatList { "Filter Disabled" 0 "Only show..." 1 "Don't show..." 2 }, uiScript RefreshFilter ; setcvar ui_filterdescription "Filter affecting Servers with Max Lives", "Includes or excludes servers that limit the number of player lives per match from the server list" )
 
 	itemDef {
 		name		"filtericonWeapRestrict"
-		rect		$evalfloat(8+.66*((FILTERS_WIDTH)-6)+2+2) 80 10 10
+		rect		$evalfloat(8+.67*(FILTERS_WIDTH-6)+2+2) 102 10 10
 		style		WINDOW_STYLE_SHADER
 		background	"ui/assets/filter_weap"
 		forecolor	1 1 1 1
 		visible		1
 		decoration
 	}
-	TRICHECKBOXACTIONMULTI( 8+.66*((FILTERS_WIDTH)-6)+2+2+12, 80, .33*((FILTERS_WIDTH)-6)-14, 10, .2, 8, "ui_browserShowWeaponsRestricted", cvarFloatList { "Filter Disabled" 0 "Only show..." 1 "Don't show..." 2 }, uiScript RefreshFilter ; setcvar ui_filterdescription "Filter affecting Servers with Weapon Restrictions", "Includes or excludes servers that limit the number of\n available heavy weapons from the server list" )
+	TRICHECKBOXACTIONMULTI( 8+.67*(FILTERS_WIDTH-6)+2+2+12, 102, .33*(FILTERS_WIDTH-6)-18, 10, .2, 8, "ui_browserShowWeaponsRestricted", cvarFloatList { "Filter Disabled" 0 "Only show..." 1 "Don't show..." 2 }, uiScript RefreshFilter ; setcvar ui_filterdescription "Filter affecting Servers with Weapon Restrictions", "Includes or excludes servers that limit the number of\n available heavy weapons from the server list" )
 
 	itemDef {
 		name		"filtericonAntilag"
-		rect		$evalfloat(8+.66*((FILTERS_WIDTH)-6)+2+2) 92 10 10
+		rect		$evalfloat(8+.67*(FILTERS_WIDTH-6)+2+2) 114 10 10
 		style		WINDOW_STYLE_SHADER
 		background	"ui/assets/filter_antilag"
 		forecolor	1 1 1 1
 		visible		1
 		decoration
 	}
-	TRICHECKBOXACTIONMULTI( 8+.66*((FILTERS_WIDTH)-6)+2+2+12, 92, .33*((FILTERS_WIDTH)-6)-14, 10, .2, 8, "ui_browserShowAntilag", cvarFloatList { "Filter Disabled" 0 "Only show..." 1 "Don't show..." 2 }, uiScript RefreshFilter ; setcvar ui_filterdescription "Filter affecting Anti-Lag Servers", "Includes or excludes servers with anti-lag support from the server list" )
+	TRICHECKBOXACTIONMULTI( 8+.67*(FILTERS_WIDTH-6)+2+2+12, 114, .33*(FILTERS_WIDTH-6)-18, 10, .2, 8, "ui_browserShowAntilag", cvarFloatList { "Filter Disabled" 0 "Only show..." 1 "Don't show..." 2 }, uiScript RefreshFilter ; setcvar ui_filterdescription "Filter affecting Anti-Lag Servers", "Includes or excludes servers with anti-lag support from the server list" )
 
 	itemDef {
 		name		"filtericonTeamBalance"
-		rect		$evalfloat(8+.66*((FILTERS_WIDTH)-6)+2+2) 104 10 10
+		rect		$evalfloat(8+.67*((FILTERS_WIDTH)-6)+2+2) 126 10 10
 		style		WINDOW_STYLE_SHADER
 		background	"ui/assets/filter_balance"
 		forecolor	1 1 1 1
 		visible		1
 		decoration
 	}
-	TRICHECKBOXACTIONMULTI( 8+.66*((FILTERS_WIDTH)-6)+2+2+12, 104, .33*((FILTERS_WIDTH)-6)-14, 10, .2, 8, "ui_browserShowTeamBalanced", cvarFloatList { "Filter Disabled" 0 "Only show..." 1 "Don't show..." 2 }, uiScript RefreshFilter ; setcvar ui_filterdescription "Filter affecting Servers with Force Team Balance", "Includes or excludes servers that enforce balanced teams from the server list" )
+	TRICHECKBOXACTIONMULTI( 8+.67*(FILTERS_WIDTH-6)+2+2+12, 126, .33*(FILTERS_WIDTH-6)-18, 10, .2, 8, "ui_browserShowTeamBalanced", cvarFloatList { "Filter Disabled" 0 "Only show..." 1 "Don't show..." 2 }, uiScript RefreshFilter ; setcvar ui_filterdescription "Filter affecting Servers with Force Team Balance", "Includes or excludes servers that enforce balanced teams from the server list" )
 
 	itemDef {
 		name		"filtericonBots"
-		rect		$evalfloat(8+.66*((FILTERS_WIDTH)-6)+2+2) 116 10 10
+		rect		$evalfloat(8+.67*((FILTERS_WIDTH)-6)+2+2) 138 10 10
 		style		WINDOW_STYLE_SHADER
 		background	"ui/assets/filter_bots"
 		forecolor	1 1 1 1
 		visible		1
 		decoration
 	}
-	TRICHECKBOXACTIONMULTI( 8+.66*((FILTERS_WIDTH)-6)+2+2+12, 116, .33*((FILTERS_WIDTH)-6)-14, 10, .2, 8, "ui_browserShowHumans", cvarFloatList { "Filter Disabled" 0 "Only show..." 1 "Don't show..." 2 }, uiScript RefreshFilter ; setcvar ui_filterdescription "Filter affecting ET:Legacy Servers with Humans players", "Includes or excludes ET:Legacy servers with humans from the server list" )
-
-	// Buttons
-	// FIXME: make it look better (full adjust)
-	BUTTONEXT( 10+2, 140, .3*(FILTERS_WIDTH-6), 14, _("REFRESH LIST"), .24, 11, uiScript RefreshServers, tooltip _("Refresh servers list"))
-	BUTTONEXT( 20+2+ .3*(FILTERS_WIDTH-6), 140, .3*((FILTERS_WIDTH)-6), 14, _("RESET FILTERS"), .24, 11, uiScript ResetFilters; uiScript RefreshFilter, tooltip _("Reset all filters to their defaults"))
-	BUTTONEXT( 30+2+ 2*.3*(FILTERS_WIDTH-6), 140, .3*((FILTERS_WIDTH)-6), 14, _("FAVORITES"), .24, 11, uiScript ResetFavorites; uiScript RefreshFilter, tooltip _("Shows all favorite servers"))
+	TRICHECKBOXACTIONMULTI( 8+.67*(FILTERS_WIDTH-6)+2+2+12, 138, .33*(FILTERS_WIDTH-6)-18, 10, .2, 8, "ui_browserShowHumans", cvarFloatList { "Filter Disabled" 0 "Only show..." 1 "Don't show..." 2 }, uiScript RefreshFilter ; setcvar ui_filterdescription "Filter affecting ET:Legacy Servers with Humans players", "Includes or excludes ET:Legacy servers with humans from the server list" )
 
 	/*
 	itemDef {
@@ -218,11 +212,11 @@ menuDef {
 	}
 	*/
 
-	SUBWINDOW( 6+(FILTERS_WIDTH)+4, 32, ((SUBWINDOW_WIDTH)-(FILTERS_WIDTH)-4), 126, _("PREVIEW") )
+	SUBWINDOW( 6+FILTERS_WIDTH+4, 32, (SUBWINDOW_WIDTH-FILTERS_WIDTH-4), 126, _("PREVIEW") )
 	itemDef {
 		name		"mapPreview"
 		group		GROUP_NAME
-		rect		$evalfloat(6+(FILTERS_WIDTH)+4+2) $evalfloat(32+16) $evalfloat((SUBWINDOW_WIDTH)-(FILTERS_WIDTH)-4-4) $evalfloat(.75*((SUBWINDOW_WIDTH)-(FILTERS_WIDTH)-4-4))
+		rect		$evalfloat(6+FILTERS_WIDTH+4+2) $evalfloat(32+16) $evalfloat(SUBWINDOW_WIDTH-FILTERS_WIDTH-4-4) $evalfloat(.75*(SUBWINDOW_WIDTH-FILTERS_WIDTH-4-4))
 		style		WINDOW_STYLE_FILLED
 		ownerdraw	UI_NETMAPPREVIEW
 		backcolor	0 0 0 .5
@@ -235,7 +229,27 @@ menuDef {
 // Server Browser //
 	SUBWINDOW( 6, 162, (SUBWINDOW_WIDTH), 256, _("SERVER BROWSER") )
 
-	// Rows
+	BUTTONEXT( SUBWINDOW_WIDTH-.16*FILTERS_WIDTH, 164, .16*(FILTERS_WIDTH-6), 12, _("REFRESH"), .20, 9, uiScript RefreshFilter, tooltip _("Refresh servers list"))
+
+	itemDef {
+		name       "serverFilterLabel"
+		group      GROUP_NAME
+		rect       $evalfloat(SUBWINDOW_WIDTH-.16*FILTERS_WIDTH-6) 165 584 12
+		type       ITEM_TYPE_TEXT
+		textfont   UI_FONT_ARIBLK_27
+		// textstyle  ITEM_TEXTSTYLE_SHADOWED
+		textscale  .19
+		textalign  ITEM_ALIGN_RIGHT
+		textalignx 0
+		textaligny 8
+		forecolor  .6 .6 .6 1
+		cvar       "ui_tmp_ServersFiltered"
+		visible    1
+		decoration
+		autowrapped
+	}
+
+// Rows
 
 	itemDef {
 		name		"row1"
@@ -317,7 +331,7 @@ menuDef {
 		decoration
 	}
 
-	// Columns and sort tabs
+// Columns and sort tabs
 
 #define COLUMN_HEIGHT		194
 #define SERVERNAME_WIDTH	220
@@ -580,24 +594,6 @@ menuDef {
 	}
 
 	itemDef {
-		name       "serverFilterLabel"
-		group      GROUP_NAME
-		rect       $evalfloat(12+SERVERNAME_WIDTH+MAPNAME_WIDTH+PLAYERS_WIDTH+GAMETYPE_WIDTH+PING_WIDTH+110) 165 584 12
-		type       ITEM_TYPE_TEXT
-		textfont   UI_FONT_ARIBLK_27
-		// textstyle  ITEM_TEXTSTYLE_SHADOWED
-		textscale  .19
-		textalign  ITEM_ALIGN_RIGHT
-		textalignx 0
-		textaligny 8
-		forecolor  .6 .6 .6 1
-		cvar       "ui_tmp_ServersFiltered"
-		visible    1
-		decoration
-		autowrapped
-	}
-
-	itemDef {
 		name		"favouritesColumn"
 		group		GROUP_NAME
 		rect		$evalfloat(12+SERVERNAME_WIDTH+MAPNAME_WIDTH+PLAYERS_WIDTH+GAMETYPE_WIDTH+PING_WIDTH+84) 195 12 COLUMN_HEIGHT
@@ -645,8 +641,7 @@ menuDef {
 
 	// Status bar
 
-
-	// Misc Buttons
+// Misc Buttons
 	BUTTON( 12, 102+316-20, .25*((SUBWINDOW_WIDTH)-30), 14, _("REFRESH LIST"), .24, 11, uiScript RefreshServers )
 	BUTTON( 6+6+(.25*((SUBWINDOW_WIDTH)-30))+6, 102+316-20, .25*((SUBWINDOW_WIDTH)-30), 14, _("CONNECT TO IP"), .24, 11, clearFocus ; open playonline_connecttoip )
 	BUTTON( 6+6+(.25*((SUBWINDOW_WIDTH)-30))+6+(.25*((SUBWINDOW_WIDTH)-30))+6, 102+316-20, .25*((SUBWINDOW_WIDTH)-30), 14, _("SERVER INFO"), .24, 11, clearFocus ; open playonline_serverinfo )

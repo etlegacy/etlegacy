@@ -5788,10 +5788,42 @@ void UI_RunMenuScript(char **args)
 			trap_Cvar_Set("ui_browserModFilter", "0");
 			trap_Cvar_Set("ui_browserOssFilter", "0");
 		}
+		else if (Q_stricmp(name, "ResetInternet") == 0)
+		{
+			trap_Cvar_Set("ui_joinGameType", "-1");
+			trap_Cvar_Set("ui_netSource", "1");
+			trap_Cvar_Set("ui_browserShowEmptyOrFull", "0");
+			trap_Cvar_Set("ui_browserShowPasswordProtected", "0");
+			trap_Cvar_Set("ui_browserShowFriendlyFire", "0");
+			trap_Cvar_Set("ui_browserShowMaxlives", "0");
+			trap_Cvar_Set("ui_browserShowWeaponsRestricted", "0");
+			trap_Cvar_Set("ui_browserShowAntilag", "0");
+			trap_Cvar_Set("ui_browserShowTeamBalanced", "0");
+			trap_Cvar_Set("ui_browserShowHumans", "0");
+			trap_Cvar_Set("ui_browserMapFilterCheckBox", "0");
+			trap_Cvar_Set("ui_browserModFilter", "0");
+			trap_Cvar_Set("ui_browserOssFilter", "0");
+		}
 		else if (Q_stricmp(name, "ResetFavorites") == 0)
 		{
 			trap_Cvar_Set("ui_joinGameType", "-1");
 			trap_Cvar_Set("ui_netSource", "2");
+			trap_Cvar_Set("ui_browserShowEmptyOrFull", "0");
+			trap_Cvar_Set("ui_browserShowPasswordProtected", "0");
+			trap_Cvar_Set("ui_browserShowFriendlyFire", "0");
+			trap_Cvar_Set("ui_browserShowMaxlives", "0");
+			trap_Cvar_Set("ui_browserShowWeaponsRestricted", "0");
+			trap_Cvar_Set("ui_browserShowAntilag", "0");
+			trap_Cvar_Set("ui_browserShowTeamBalanced", "0");
+			trap_Cvar_Set("ui_browserShowHumans", "0");
+			trap_Cvar_Set("ui_browserMapFilterCheckBox", "0");
+			trap_Cvar_Set("ui_browserModFilter", "0");
+			trap_Cvar_Set("ui_browserOssFilter", "0");
+		}
+		else if (Q_stricmp(name, "ResetLocal") == 0)
+		{
+			trap_Cvar_Set("ui_joinGameType", "-1");
+			trap_Cvar_Set("ui_netSource", "0");
 			trap_Cvar_Set("ui_browserShowEmptyOrFull", "0");
 			trap_Cvar_Set("ui_browserShowPasswordProtected", "0");
 			trap_Cvar_Set("ui_browserShowFriendlyFire", "0");
@@ -6418,16 +6450,16 @@ static void UI_BuildServerDisplayList(int force)
 	{
 		if (numinvisible > 0)
 		{
-			DC->setCVar("ui_tmp_ServersFiltered", va(trap_TranslateString("^3Filtered/Total: %04i/%04i"), numinvisible, count));
+			DC->setCVar("ui_tmp_ServersFiltered", va(trap_TranslateString("Filtered/Total: %04i/%04i"), numinvisible, count));
 		}
 		else
 		{
-			DC->setCVar("ui_tmp_ServersFiltered", va(trap_TranslateString("^3Check your filters - no servers found!              Filtered/Total: %04i/%04i"), numinvisible, count));
+			DC->setCVar("ui_tmp_ServersFiltered", va(trap_TranslateString("^3Check your filters - no servers found!              ^9Filtered/Total: ^3%04i^9/%04i"), numinvisible, count));
 		}
 	}
 	else
 	{
-		DC->setCVar("ui_tmp_ServersFiltered", trap_TranslateString("^1No Connection or master down - no servers found!    Filtered/Total: 0000/0000"));
+		DC->setCVar("ui_tmp_ServersFiltered", trap_TranslateString("^1No Connection or master down - no servers found!    ^9Filtered/Total: ^10000^9/0000"));
 	}
 }
 
