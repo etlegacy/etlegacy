@@ -993,13 +993,17 @@ static void CG_DrawWeapRecharge(rectDef_t *rect)
 
 	if (cg.snap->ps.stats[STAT_PLAYER_CLASS] == PC_FIELDOPS)
 	{
-		if ((cg.predictedPlayerState.weapon == WP_SMOKE_MARKER && (cg.snap->ps.ammo[WP_ARTY] & NO_AIRSTRIKE)))
+		if (cg.snap->ps.ammo[WP_ARTY] & NO_AIRSTRIKE && cg.snap->ps.ammo[WP_ARTY] & NO_ARTILLERY)
 		{
 			trap_R_SetColor(colorRed);
 		}
-		else if ((cg.predictedPlayerState.weapon != WP_SMOKE_MARKER && (cg.snap->ps.ammo[WP_ARTY] & NO_ARTILLERY)))
+		else if (cg.snap->ps.ammo[WP_ARTY] & NO_AIRSTRIKE)
 		{
-			trap_R_SetColor(colorRed);
+			trap_R_SetColor(colorOrange);
+		}
+		else if (cg.snap->ps.ammo[WP_ARTY] & NO_ARTILLERY)
+		{
+			trap_R_SetColor(colorYellow);
 		}
 		CG_DrawPic(rect->x + (rect->w * 0.25f) - 1, rect->y + rect->h + 4, (rect->w * 0.5f) + 2, rect->w + 2, cgs.media.hudPowerIcon);
 		trap_R_SetColor(NULL);
