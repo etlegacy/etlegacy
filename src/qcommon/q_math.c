@@ -5167,40 +5167,34 @@ void mat4_from_angles(mat4_t m, vec_t pitch, vec_t yaw, vec_t roll)
 	float radp, rady, radr, srcy, srsy, crcy, crsy, sr, spp, sy, cr, cp, cy;
 
 	radp = DEG2RAD(pitch);
-	rady = DEG2RAD(yaw);
-	radr = DEG2RAD(roll);
-
-	///spp = sin(radp);
-	///cp = cos(radp);
 	SinCos(radp, spp, cp); // 'sp' is also the name of a CPU-register. We use 'spp' for asm not to get confused..
 
-	if (rady == radp)
+	// try not to calculate the same sine/cosine
+	if (yaw == pitch)
 	{
 		sy = spp;
 		cy = cp;
 	}
 	else
 	{
-		///sy = sin(rady);
-		///cy = cos(rady);
+		rady = DEG2RAD(yaw);
 		SinCos(rady, sy, cy);
 	}
 
-	if (radr == radp)
+	if (roll == pitch)
 	{
 		sr = spp;
 		cr = cp;
 	}
 	else
 	{
-		if (radr == rady)
+		if (roll == yaw)
 		{
 			sr = sy;
 			cr = cy;
 		}
 		else {
-			///sr = sin(radr);
-			///cr = cos(radr);
+			radr = DEG2RAD(roll);
 			SinCos(radr, sr, cr);
 		}
 	}
@@ -5210,10 +5204,10 @@ void mat4_from_angles(mat4_t m, vec_t pitch, vec_t yaw, vec_t roll)
 	crcy = cr * cy;
 	crsy = cr * sy;
 
-	m[0] = cp * cy;   m[4] = (srcy * spp - crsy);    m[8] = (crcy * spp + srsy);    m[12] = 0.0f;
-	m[1] = cp * sy;   m[5] = (srsy * spp + crcy);    m[9] = (crsy * spp - srcy);    m[13] = 0.0f;
-	m[2] = -spp;      m[6] = sr * cp;                m[10] = cr * cp;               m[14] = 0.0f;
-	m[3] = 0.0f;      m[7] = 0.0f;                   m[11] = 0.0f;                  m[15] = 1.0f;
+	m[0] = cp * cy;   m[4] = srcy * spp - crsy;    m[8] = crcy * spp + srsy;    m[12] = 0.0f;
+	m[1] = cp * sy;   m[5] = srsy * spp + crcy;    m[9] = crsy * spp - srcy;    m[13] = 0.0f;
+	m[2] = -spp;      m[6] = sr * cp;              m[10] = cr * cp;             m[14] = 0.0f;
+	m[3] = 0.0f;      m[7] = 0.0f;                 m[11] = 0.0f;                m[15] = 1.0f;
 }
 
 // calculate the tangent-vectors and the binormal-vectors

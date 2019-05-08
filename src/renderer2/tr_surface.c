@@ -795,10 +795,15 @@ static void Tess_SurfaceSplash(void)
 		VectorSubtract(vec3_origin, left, left);
 	}
 
-	color[0] = backEnd.currentEntity->e.shaderRGBA[0] * _1div255;
+	/*color[0] = backEnd.currentEntity->e.shaderRGBA[0] * _1div255;
 	color[1] = backEnd.currentEntity->e.shaderRGBA[1] * _1div255;
 	color[2] = backEnd.currentEntity->e.shaderRGBA[2] * _1div255;
-	color[3] = backEnd.currentEntity->e.shaderRGBA[3] * _1div255;
+	color[3] = backEnd.currentEntity->e.shaderRGBA[3] * _1div255;*/
+	color[0] = (float)backEnd.currentEntity->e.shaderRGBA[0];
+	color[1] = (float)backEnd.currentEntity->e.shaderRGBA[1];
+	color[2] = (float)backEnd.currentEntity->e.shaderRGBA[2];
+	color[3] = (float)backEnd.currentEntity->e.shaderRGBA[3];
+	Vector4Scale(color, _1div255, color);
 
 	Tess_AddQuadStamp(backEnd.currentEntity->e.origin, left, up, color);
 }
@@ -840,10 +845,15 @@ static void Tess_SurfaceSprite(void)
 		VectorSubtract(vec3_origin, left, left);
 	}
 
-	color[0] = backEnd.currentEntity->e.shaderRGBA[0] * _1div255;
+	/*color[0] = backEnd.currentEntity->e.shaderRGBA[0] * _1div255;
 	color[1] = backEnd.currentEntity->e.shaderRGBA[1] * _1div255;
 	color[2] = backEnd.currentEntity->e.shaderRGBA[2] * _1div255;
-	color[3] = backEnd.currentEntity->e.shaderRGBA[3] * _1div255;
+	color[3] = backEnd.currentEntity->e.shaderRGBA[3] * _1div255;*/
+	color[0] = (float)backEnd.currentEntity->e.shaderRGBA[0];
+	color[1] = (float)backEnd.currentEntity->e.shaderRGBA[1];
+	color[2] = (float)backEnd.currentEntity->e.shaderRGBA[2];
+	color[3] = (float)backEnd.currentEntity->e.shaderRGBA[3];
+	Vector4Scale(color, _1div255, color);
 
 	Tess_AddQuadStamp(backEnd.currentEntity->e.origin, left, up, color);
 }
@@ -904,7 +914,6 @@ static void VectorArrayNormalize(vec4_t *normals, unsigned int count)
 		normals++;
 	}
 #endif
-
 }
 
 /**
@@ -929,15 +938,21 @@ static void Tess_SurfacePolychain(srfPoly_t *p)
 			VectorCopy(p->verts[i].xyz, tess.xyz[nvi]);
 			tess.xyz[nvi][3] = 1;
 
-			tess.texCoords[nvi][0] = p->verts[i].st[0];
+			/*tess.texCoords[nvi][0] = p->verts[i].st[0];
 			tess.texCoords[nvi][1] = p->verts[i].st[1];
 			tess.texCoords[nvi][2] = 0.f;
-			tess.texCoords[nvi][3] = 1.f;
+			tess.texCoords[nvi][3] = 1.f;*/
+			Vector4Set(tess.texCoords[nvi], p->verts[i].st[0], p->verts[i].st[1], 0.f, 1.f);
 
-			tess.colors[nvi][0] = p->verts[i].modulate[0] * _1div255;
+			/*tess.colors[nvi][0] = p->verts[i].modulate[0] * _1div255;
 			tess.colors[nvi][1] = p->verts[i].modulate[1] * _1div255;
 			tess.colors[nvi][2] = p->verts[i].modulate[2] * _1div255;
-			tess.colors[nvi][3] = p->verts[i].modulate[3] * _1div255;
+			tess.colors[nvi][3] = p->verts[i].modulate[3] * _1div255;*/
+			tess.colors[nvi][0] = (float)p->verts[i].modulate[0];
+			tess.colors[nvi][1] = (float)p->verts[i].modulate[1];
+			tess.colors[nvi][2] = (float)p->verts[i].modulate[2];
+			tess.colors[nvi][3] = (float)p->verts[i].modulate[3];
+			Vector4Scale(tess.colors[nvi], _1div255, tess.colors[nvi]);
 		}
 
 		// generate fan indexes into the tess array
@@ -956,7 +971,7 @@ static void Tess_SurfacePolychain(srfPoly_t *p)
 		float       *v;
 		const float *v0, *v1, *v2;
 		const float *t0, *t1, *t2;
-		vec3_t      tangent = { 0, 0, 0 };
+		vec3_t      tangent = { 0.f, 0.f, 0.f };
 		vec3_t      binormal;
 		vec3_t      normal;
 		glIndex_t   *indices;
@@ -1037,15 +1052,21 @@ void Tess_SurfacePolybuffer(srfPolyBuffer_t *surf)
 		VectorCopy(xyzw, tess.xyz[nvi]);
 		tess.xyz[nvi][3] = 1.f;
 
-		tess.texCoords[nvi][0] = st[0];
+		/*tess.texCoords[nvi][0] = st[0];
 		tess.texCoords[nvi][1] = st[1];
 		tess.texCoords[nvi][2] = 0.f;
-		tess.texCoords[nvi][3] = 1.f;
+		tess.texCoords[nvi][3] = 1.f;*/
+		Vector4Set(tess.texCoords[nvi], st[0], st[1], 0.f, 1.f);
 
-		tess.colors[nvi][0] = color[0] * _1div255;
+		/*tess.colors[nvi][0] = color[0] * _1div255;
 		tess.colors[nvi][1] = color[1] * _1div255;
 		tess.colors[nvi][2] = color[2] * _1div255;
-		tess.colors[nvi][3] = color[3] * _1div255;
+		tess.colors[nvi][3] = color[3] * _1div255;*/
+		tess.colors[nvi][0] = (float)color[0];
+		tess.colors[nvi][1] = (float)color[1];
+		tess.colors[nvi][2] = (float)color[2];
+		tess.colors[nvi][3] = (float)color[3];
+		Vector4Scale(tess.colors[nvi], _1div255, tess.colors[nvi]);
 	}
 
 	tess.attribsSet |= ATTR_POSITION | ATTR_COLOR | ATTR_TEXCOORD;
@@ -1071,15 +1092,21 @@ void Tess_SurfaceDecal(srfDecal_t *srf)
 		VectorCopy(srf->verts[i].xyz, tess.xyz[nvi]);
 		tess.xyz[nvi][3] = 1;
 
-		tess.texCoords[nvi][0] = srf->verts[i].st[0];
+		/*tess.texCoords[nvi][0] = srf->verts[i].st[0];
 		tess.texCoords[nvi][1] = srf->verts[i].st[1];
 		tess.texCoords[nvi][2] = 0.f;
-		tess.texCoords[nvi][3] = 1.f;
+		tess.texCoords[nvi][3] = 1.f;*/
+		Vector4Set(tess.texCoords[nvi], srf->verts[i].st[0], srf->verts[i].st[1], 0.f, 1.f);
 
-		tess.colors[nvi][0] = srf->verts[i].modulate[0] * _1div255;
+		/*tess.colors[nvi][0] = srf->verts[i].modulate[0] * _1div255;
 		tess.colors[nvi][1] = srf->verts[i].modulate[1] * _1div255;
 		tess.colors[nvi][2] = srf->verts[i].modulate[2] * _1div255;
-		tess.colors[nvi][3] = srf->verts[i].modulate[3] * _1div255;
+		tess.colors[nvi][3] = srf->verts[i].modulate[3] * _1div255;*/
+		tess.colors[nvi][0] = (float)srf->verts[i].modulate[0];
+		tess.colors[nvi][1] = (float)srf->verts[i].modulate[1];
+		tess.colors[nvi][2] = (float)srf->verts[i].modulate[2];
+		tess.colors[nvi][3] = (float)srf->verts[i].modulate[3];
+		Vector4Scale(tess.colors[nvi], _1div255, tess.colors[nvi]);
 	}
 
 	// generate fan indexes into the tess array

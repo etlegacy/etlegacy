@@ -1390,7 +1390,7 @@ MatrixSetupTransformFromRotation(transformMatrix, (*rotMatrix), light->origin);
 						xmm5 = _mm_sub_ps(zeroes, xmm5);
 						_mm_store_ss(&viewMatrix[14], xmm5);
 
-						_mm_store_ss(&viewMatrix[15], _mm_set_ss(1.f));
+//#						_mm_store_ss(&viewMatrix[15], _mm_set_ss(1.f)); // we just supply a constant 1.f later..
 /*$
 						_mm_storeu_ps(&viewMatrix[0], _mm_loadu_ps((const float *)&(*rotMatrix_r)[0]));
 						_mm_storeu_ps(&viewMatrix[4], _mm_loadu_ps((const float *)&(*rotMatrix_r)[4]));
@@ -1415,7 +1415,8 @@ MatrixSetupTransformFromRotation(transformMatrix, (*rotMatrix), light->origin);
 /*$	Vector4Set(&light->viewMatrix[0], -viewMatrix[1], viewMatrix[2], -viewMatrix[0], viewMatrix[3]);
 Vector4Set(&light->viewMatrix[4], -viewMatrix[5], viewMatrix[6], -viewMatrix[4], viewMatrix[7]);
 Vector4Set(&light->viewMatrix[8], -viewMatrix[9], viewMatrix[10], -viewMatrix[8], viewMatrix[11]);*/
-Vector4Set(&light->viewMatrix[12], -viewMatrix[13], viewMatrix[14], -viewMatrix[12], viewMatrix[15]); // only the bottom row of the matrix is left to be mangled..
+//# Vector4Set(&light->viewMatrix[12], -viewMatrix[13], viewMatrix[14], -viewMatrix[12], viewMatrix[15]); // only the bottom row of the matrix is left to be mangled..
+Vector4Set(&light->viewMatrix[12], -viewMatrix[13], viewMatrix[14], -viewMatrix[12], 1.f); // only the bottom row of the matrix is left to be mangled..
 // TODO: ^^that can be done quicker.   /optimize
 // This case is a bit different from the code in tr_light R_CalcLightCubeSideBits().
 // Here the light->viewMatrix & light->projectionMatrix are NOT multiplied..
@@ -1449,7 +1450,7 @@ Vector4Set(&light->viewMatrix[12], -viewMatrix[13], viewMatrix[14], -viewMatrix[
 						// fovX & fovY are always both the same, 90 or -90, and zNear is always 1.
 						// we can save the two tanf() calls, and some more calculations..
 						vec_t width_r = rcp(tanf(DEG2RAD(fovXY * 0.5f))), // why don't i succeed making this use constants? :S :)
-							FarrNearFar = light->sphereRadius / (1.f - light->sphereRadius);
+							FarrNearFar = light->sphereRadius * rcp(1.f - light->sphereRadius);
 						xmm0 = _mm_set_ps(0.0f, 0.0f, 0.0f, width_r);
 						_mm_storeu_ps(&light->projectionMatrix[0], xmm0);
 						xmm0 = _mm_shuffle_ps(xmm0, xmm0, 0b11100001);		// xmm0 = 0.0f, 0.0f, width_r, 0.0f
@@ -1689,7 +1690,7 @@ Vector4Set(&light->viewMatrix[12], -viewMatrix[13], viewMatrix[14], -viewMatrix[
 
 							numCasters = MergeInteractionBounds(viewProjectionMatrix, ia, iaCount, casterBounds, qtrue);
 							MergeInteractionBounds(viewProjectionMatrix, ia, iaCount, receiverBounds, qfalse);
-
+							
 							// find the bounding box of the current split in the light's clip space
 							ClearBounds(splitFrustumClipBounds[0], splitFrustumClipBounds[1]);
 							for (j = 0; j < 8; j++)
