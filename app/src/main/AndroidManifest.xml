@@ -31,6 +31,8 @@
     <!-- Allow writing to external storage and reading from it -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <!-- Allow access to bluetooth -->
+    <uses-permission android:name="android.permission.BLUETOOTH" />
     <!-- Allow access to the vibrator -->
     <uses-permission android:name="android.permission.VIBRATE" />
 
