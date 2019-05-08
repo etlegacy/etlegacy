@@ -47,6 +47,7 @@ menuDef {
 	}
 
 	onESC {
+		uiScript ServerSort 2 ;
 		uiScript closeJoin ;
 		close playonline ;
 		open main
@@ -648,6 +649,6 @@ menuDef {
 	BUTTON( 6+6+(.25*((SUBWINDOW_WIDTH)-30))+6+(.25*((SUBWINDOW_WIDTH)-30))+6+(.25*((SUBWINDOW_WIDTH)-30))+6, 102+316-20, .25*((SUBWINDOW_WIDTH)-30), 14, _("DELETE FAVS"), .24, 11, clearFocus ; open playonline_deletefavs )
 
 // Buttons //
-	BUTTON( 6, WINDOW_HEIGHT-24, .5*(WINDOW_WIDTH-18), 18, _("BACK"), .3, 14, close playonline ; open main )
+	BUTTON( 6, WINDOW_HEIGHT-24, .5*(WINDOW_WIDTH-18), 18, _("BACK"), .3, 14, uiScript ServerSort 2 ; close playonline ; open main )
 	BUTTON( 6+.5*(WINDOW_WIDTH-18)+6, WINDOW_HEIGHT-24, .5*(WINDOW_WIDTH-18), 18, _("JOIN SERVER"), .3, 14, uiScript JoinServer )
 }
