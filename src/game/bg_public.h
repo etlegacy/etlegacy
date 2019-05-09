@@ -77,8 +77,13 @@
 #define DEFAULT_VIEWHEIGHT  40
 #define CROUCH_VIEWHEIGHT   16
 #define DEAD_VIEWHEIGHT     -16
-
 #define PRONE_VIEWHEIGHT    -8
+
+#define DEFAULT_BODYHEIGHT_DELTA        -4  ///< default body height 36
+#define CROUCH_BODYHEIGHT_DELTA          8  ///< crouch  body height 24
+#define CROUCH_IDLE_BODYHEIGHT_DELTA     2  ///< crouch  idle body height 18
+#define DEAD_BODYHEIGHT_DELTA            20 ///< dead    body height 4
+#define PRONE_BODYHEIGHT_DELTA           0  ///< prone   body height -8
 
 extern vec3_t playerlegsProneMins;
 extern vec3_t playerlegsProneMaxs;

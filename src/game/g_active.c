@@ -1611,11 +1611,23 @@ void ClientThink_real(gentity_t *ent, qboolean skipServerTime)
 
 		VectorCopy(ent->r.maxs, maxs);
 		maxs[2] = ClientHitboxMaxZ(ent);
+		// green
 		G_RailBox(ent->r.currentOrigin, ent->r.mins, maxs, tv(0.f, 0.f, 1.f), ent->s.number);
 
 		head = G_BuildHead(ent, &refent, qtrue);
+		// green
 		G_RailBox(head->r.currentOrigin, head->r.mins, head->r.maxs, tv(0.f, 0.f, 1.f), head->s.number | HITBOXBIT_HEAD);
 		G_FreeEntity(head);
+
+		if (client->ps.eFlags & EF_PRONE)
+		{
+			gentity_t *legs;
+
+			legs = G_BuildLeg(ent, &refent, qtrue);
+			// green
+			G_RailBox(legs->r.currentOrigin, legs->r.mins, legs->r.maxs, tv(0.f, 0.f, 1.f), legs->s.number | HITBOXBIT_LEGS);
+			G_FreeEntity(legs);
+		}
 	}
 
 	// perform once-a-second actions
@@ -2307,11 +2319,23 @@ void ClientEndFrame(gentity_t *ent)
 
 		VectorCopy(ent->r.maxs, maxs);
 		maxs[2] = ClientHitboxMaxZ(ent);
+		// blue
 		G_RailBox(ent->r.currentOrigin, ent->r.mins, maxs, tv(0.f, 1.f, 0.f), ent->s.number);
 
 		head = G_BuildHead(ent, &refent, qtrue);
+		// blue
 		G_RailBox(head->r.currentOrigin, head->r.mins, head->r.maxs, tv(0.f, 1.f, 0.f), ent->s.number | HITBOXBIT_HEAD);
 		G_FreeEntity(head);
+
+		if (ent->client->ps.eFlags & EF_PRONE)
+		{
+			gentity_t *legs;
+
+			legs = G_BuildLeg(ent, &refent, qtrue);
+			// blue
+			G_RailBox(legs->r.currentOrigin, legs->r.mins, legs->r.maxs, tv(0.f, 1.f, 0.f), legs->s.number | HITBOXBIT_LEGS);
+			G_FreeEntity(legs);
+		}
 	}
 
 	// store the client's current position for antilag traces

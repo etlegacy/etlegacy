@@ -2802,7 +2802,7 @@ void CG_Player(centity_t *cent)
 	// DEBUG
 	if (cg_debugPlayerHitboxes.integer)
 	{
-		// position marker?
+		// position marker
 		if (cg_debugPlayerHitboxes.integer & 4)
 		{
 			int x, zd, zu;
@@ -2846,38 +2846,66 @@ void CG_Player(centity_t *cent)
 			for (idx = 0; idx < 3; idx++)
 			{
 				VectorMA(start, 32.0f, axis[idx], ends[idx]);
-				// green
-				CG_RailTrail2(tv(0.0f, 1.0f, 0.0f), start, ends[idx], -1, -1);
+				// red
+				CG_RailTrail2(tv(1.0f, 0.0f, 0.0f), start, ends[idx], -1, -1);
 			}
 		}
 
 		// hitbox
 		if (cg_debugPlayerHitboxes.integer & 1)
 		{
-			vec3_t mins, maxs;
+			vec3_t mins, maxs, org, forward;
 
 			VectorCopy(cg.predictedPlayerState.mins, mins);
 			VectorCopy(cg.predictedPlayerState.maxs, maxs);
 
 			if (cg.predictedPlayerState.eFlags & EF_PRONE)
 			{
-				maxs[2] = maxs[2] - (cg.predictedPlayerState.standViewHeight - PRONE_VIEWHEIGHT + 8);
+				maxs[2] = maxs[2] - (cg.predictedPlayerState.standViewHeight - (PRONE_VIEWHEIGHT + PRONE_BODYHEIGHT_DELTA) + 8);
+			}
+			else if (cg.predictedPlayerState.pm_flags & PMF_DUCKED
+				&& cg.predictedPlayerState.velocity[0] == 0.f && cg.predictedPlayerState.velocity[1] == 0.f)
+			{
+				maxs[2] = cg.predictedPlayerState.crouchMaxZ + DEFAULT_BODYHEIGHT_DELTA - CROUCH_IDLE_BODYHEIGHT_DELTA;
 			}
 			else if (cg.predictedPlayerState.pm_flags & PMF_DUCKED)
 			{
 				maxs[2] = cg.predictedPlayerState.crouchMaxZ;
 			}
+			else if (cg.predictedPlayerState.eFlags & EF_DEAD)
+			{
+				maxs[2] = cg.predictedPlayerState.deadViewHeight + DEAD_BODYHEIGHT_DELTA;
+			}
+			else
+			{
+				maxs[2] = cg.predictedPlayerState.standViewHeight + DEFAULT_BODYHEIGHT_DELTA;
+			}
 
 			VectorAdd(cent->lerpOrigin, mins, mins);
 			VectorAdd(cent->lerpOrigin, maxs, maxs);
-			// blue
-			CG_RailTrail(tv(0.0f, 0.0f, 1.f), mins, maxs, 1, cent->currentState.number | HITBOXBIT_CLIENT);
+			// red
+			CG_RailTrail(tv(1.0f, 0.0f, 0.0f), mins, maxs, 1, cent->currentState.number | HITBOXBIT_CLIENT);
 
-			if (cg.predictedPlayerState.eFlags & EF_PRONE)
+			// head and legs
+			if (!(cg.predictedPlayerState.eFlags & EF_PRONE))
 			{
-				vec3_t org, forward;
+				org[0] = cent->lerpOrigin[0];
+				org[1] = cent->lerpOrigin[1] + 4;
+				org[2] = maxs[2] + 6;
 
-				// The legs
+				// head
+				VectorSet(mins, -6, -6, -6);
+				VectorSet(maxs, 6, 6, 6);
+
+				VectorAdd(org, mins, mins);
+				VectorAdd(org, maxs, maxs);
+
+				// red
+				CG_RailTrail(tv(1.0f, 0.0f, 0.0f), mins, maxs, 1, cent->currentState.number | HITBOXBIT_CLIENT | HITBOXBIT_HEAD);
+			}
+			else
+			{
+				// legs
 				VectorCopy(playerlegsProneMins, mins);
 				VectorCopy(playerlegsProneMaxs, maxs);
 
@@ -2886,7 +2914,7 @@ void CG_Player(centity_t *cent)
 				VectorNormalizeFast(forward);
 
 				org[0] = cent->lerpOrigin[0] + forward[0] * -32;
-				org[1] = cent->lerpOrigin[1] + forward[1] * -32;
+				org[1] = cent->lerpOrigin[1] + forward[1] * -24;
 				org[2] = cent->lerpOrigin[2] + cg.pmext.proneLegsOffset;
 
 				VectorAdd(org, mins, mins);
@@ -2894,7 +2922,7 @@ void CG_Player(centity_t *cent)
 				// red
 				CG_RailTrail(tv(1.0f, 0.0f, 0.0f), mins, maxs, 1, cent->currentState.number | HITBOXBIT_CLIENT | HITBOXBIT_LEGS);
 
-				// And the head
+				// head
 				VectorSet(mins, -6, -6, -22);
 				VectorSet(maxs, 6, 6, -10);
 
@@ -2904,8 +2932,8 @@ void CG_Player(centity_t *cent)
 
 				VectorAdd(org, mins, mins);
 				VectorAdd(org, maxs, maxs);
-				// orange
-				CG_RailTrail(tv(1.0f, 0.5f, 1.f), mins, maxs, 1, cent->currentState.number | HITBOXBIT_CLIENT | HITBOXBIT_HEAD);
+				// red
+				CG_RailTrail(tv(1.0f, 0.0f, 0.0f), mins, maxs, 1, cent->currentState.number | HITBOXBIT_CLIENT | HITBOXBIT_HEAD);
 			}
 		}
 	} // END DEBUG
