@@ -297,17 +297,6 @@ void CG_DrawPlayerWeaponIcon(rectDef_t *rect, qboolean drawHighlighted, int alig
 
 		cg.grenLastTime = cg.predictedPlayerState.grenadeTimeLeft;
 	}
-	else if (realweap == WP_DYNAMITE && cg.predictedPlayerState.weaponDelay > 0)    // keep the dynamite tick sound ... in memory of good old time
-	{
-		if (cg.grenLastTime < cg.time)
-		{
-			trap_S_StartLocalSound(cgs.media.grenadePulseSound[3], CHAN_LOCAL_SOUND);
-			cg.grenLastTime = cg.time + 1000;
-		}
-
-		scale     = (float)((cg.grenLastTime - cg.time) % 1000) / 100.0f;
-		halfScale = scale * 0.5f;
-	}
 	else
 	{
 		scale = halfScale = 0;
