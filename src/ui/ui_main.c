@@ -7276,7 +7276,7 @@ const char *UI_FeederItemText(int feederID, int index, int column, qhandle_t *ha
 			case SORT_FAVOURITES:
 				*numhandles = 1;
 
-				if (trap_LAN_ServerIsInFavoriteList(AS_FAVORITES, uiInfo.serverStatus.displayServers[index]))
+				if (trap_LAN_ServerIsInFavoriteList(ui_netSource.integer, uiInfo.serverStatus.displayServers[index]))
 				{
 					handles[0] = uiInfo.uiDC.Assets.checkboxCheck;
 				}
