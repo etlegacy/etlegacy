@@ -75,5 +75,8 @@ menuDef {
 
 	BUTTON( (SUBWINDOW_X)+6, (SUBWINDOW_Y)+(SUBWINDOW_HEIGHT)-24, .25*((SUBWINDOW_WIDTH)-24), 18, _("BACK"), .3, 14, close ingame_serverinfo ; open ingame_main )
 	BUTTON( (SUBWINDOW_X)+6+.25*((SUBWINDOW_WIDTH)-24)+6, (SUBWINDOW_Y)+(SUBWINDOW_HEIGHT)-24, .25*((SUBWINDOW_WIDTH)-24), 18, _("REFRESH"), .3, 14, uiScript ServerStatus )
-	BUTTON( (SUBWINDOW_X)+6+.25*((SUBWINDOW_WIDTH)-24)+6+.25*((SUBWINDOW_WIDTH)-24)+6, (SUBWINDOW_Y)+(SUBWINDOW_HEIGHT)-24, .5*((SUBWINDOW_WIDTH)-24), 18, _("ADD TO FAVORITES"), .3, 14, uiScript createFavoriteIngame )
+	BUTTON( (SUBWINDOW_X)+6+.25*((SUBWINDOW_WIDTH)-24)+6+.25*((SUBWINDOW_WIDTH)-24)+6, (SUBWINDOW_Y)+(SUBWINDOW_HEIGHT)-24, .5*((SUBWINDOW_WIDTH)-24), 18, _("FAVORITE"), .3, 14, clearFocus ; close ingame_serverinfo ; uiScript clientCheckFavorite ;
+		conditionalScript cg_ui_favorite 0
+		( "open popupAddFavorite" )
+		( "open popupRemoveFavorite" ) )
 }

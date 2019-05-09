@@ -4918,6 +4918,7 @@ void UI_RunMenuScript(char **args)
 				}
 				else
 				{
+					trap_Cvar_SetValue("cg_ui_favorite", 1);
 					// successfully added
 					Com_Printf(trap_TranslateString("Added favorite server %s\n"), addr);
 				}
@@ -4925,6 +4926,27 @@ void UI_RunMenuScript(char **args)
 			else
 			{
 				Com_Printf("%s", trap_TranslateString("Can't add localhost to favorites\n"));
+			}
+		}
+		else if (Q_stricmp(name, "removeFavoriteIngame") == 0)
+		{
+			uiClientState_t cstate;
+			char            addr[MAX_NAME_LENGTH];
+
+			trap_GetClientState(&cstate);
+
+			addr[0] = '\0';
+			Q_strncpyz(addr, cstate.servername, MAX_NAME_LENGTH);
+			if (*addr && Q_stricmp(addr, "localhost"))
+			{
+				trap_LAN_RemoveServer(AS_FAVORITES, addr);
+				trap_Cvar_SetValue("cg_ui_favorite", 0);
+				// successfully removed
+				Com_Printf(trap_TranslateString("Removed favorite server %s\n"), addr);
+			}
+			else
+			{
+				Com_Printf("%s", trap_TranslateString("Can't remove localhost from favorites\n"));
 			}
 		}
 		else if (Q_stricmp(name, "orders") == 0)
@@ -5438,6 +5460,17 @@ void UI_RunMenuScript(char **args)
 			else
 			{
 				trap_Cvar_SetValue("cg_ui_novote", 0);
+			}
+		}
+		else if (Q_stricmp(name, "clientCheckFavorite") == 0)
+		{
+			if (trap_LAN_ServerIsInFavoriteList(ui_netSource.integer, uiInfo.serverStatus.displayServers[uiInfo.serverStatus.currentServer]))
+			{
+				trap_Cvar_SetValue("cg_ui_favorite", 0);
+			}
+			else
+			{
+				trap_Cvar_SetValue("cg_ui_favorite", 1);
 			}
 		}
 		else if (Q_stricmp(name, "reconnect") == 0)
@@ -7243,7 +7276,7 @@ const char *UI_FeederItemText(int feederID, int index, int column, qhandle_t *ha
 			case SORT_FAVOURITES:
 				*numhandles = 1;
 
-				if (trap_LAN_ServerIsInFavoriteList(ui_netSource.integer, uiInfo.serverStatus.displayServers[index]))
+				if (trap_LAN_ServerIsInFavoriteList(AS_FAVORITES, uiInfo.serverStatus.displayServers[index]))
 				{
 					handles[0] = uiInfo.uiDC.Assets.checkboxCheck;
 				}
