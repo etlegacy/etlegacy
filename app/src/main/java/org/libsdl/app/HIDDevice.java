@@ -1,4 +1,4 @@
-package org.etlegacy.app;
+package org.libsdl.app;
 
 interface HIDDevice
 {

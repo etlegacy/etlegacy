@@ -1,4 +1,4 @@
-package org.etlegacy.app;
+package org.libsdl.app;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -143,8 +143,11 @@ public class SDLActivity extends Activity implements View.OnSystemUiVisibilityCh
     protected String[] getLibraries() {
         return new String[] {
             "SDL2",
-            "hidapi",
-            "etl"
+            // "SDL2_image",
+            // "SDL2_mixer",
+            // "SDL2_net",
+            // "SDL2_ttf",
+            "main"
         };
     }
 

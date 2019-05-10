@@ -1,4 +1,4 @@
-package org.etlegacy.app;
+package org.libsdl.app;
 
 import java.util.ArrayList;
 import java.util.Collections;
