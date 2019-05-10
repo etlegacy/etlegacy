@@ -6340,7 +6340,7 @@ int Bot_Interface_Shutdown()
 
 //////////////////////////////////////////////////////////////////////////
 
-void Bot_Interface_ConsoleCommand()
+void Bot_Interface_ConsoleCommand(void)
 {
 	enum { BuffSize=32 };
 	char buffer[BuffSize] = {};

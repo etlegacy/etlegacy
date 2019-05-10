@@ -936,11 +936,21 @@ static void CG_DrawWeapRecharge(rectDef_t *rect)
 	// Draw power bar
 	switch (cg.snap->ps.stats[STAT_PLAYER_CLASS])
 	{
-	case PC_ENGINEER:  chargeTime = cg.engineerChargeTime[cg.snap->ps.persistant[PERS_TEAM] - 1];  break;
-	case PC_MEDIC:     chargeTime = cg.medicChargeTime[cg.snap->ps.persistant[PERS_TEAM] - 1];     break;
-	case PC_FIELDOPS:  chargeTime = cg.fieldopsChargeTime[cg.snap->ps.persistant[PERS_TEAM] - 1];  break;
-	case PC_COVERTOPS: chargeTime = cg.covertopsChargeTime[cg.snap->ps.persistant[PERS_TEAM] - 1]; break;
-	default:           chargeTime = cg.soldierChargeTime[cg.snap->ps.persistant[PERS_TEAM] - 1];   break;
+	case PC_ENGINEER:
+		chargeTime = cg.engineerChargeTime[cg.snap->ps.persistant[PERS_TEAM] - 1];
+		break;
+	case PC_MEDIC:
+		chargeTime = cg.medicChargeTime[cg.snap->ps.persistant[PERS_TEAM] - 1];
+		break;
+	case PC_FIELDOPS:
+		chargeTime = cg.fieldopsChargeTime[cg.snap->ps.persistant[PERS_TEAM] - 1];
+		break;
+	case PC_COVERTOPS:
+		chargeTime = cg.covertopsChargeTime[cg.snap->ps.persistant[PERS_TEAM] - 1];
+		break;
+	default:
+		chargeTime = cg.soldierChargeTime[cg.snap->ps.persistant[PERS_TEAM] - 1];
+		break;
 	}
 
 	// display colored charge bar if charge bar isn't full enough

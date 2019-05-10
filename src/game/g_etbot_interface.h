@@ -72,7 +72,7 @@ int Bot_Interface_Shutdown();
 
 void Bot_Interface_Update();
 
-void Bot_Interface_ConsoleCommand();
+void Bot_Interface_ConsoleCommand(void);
 
 qboolean Bot_Util_AllowPush(int weaponId);
 qboolean Bot_Util_CheckForSuicide(gentity_t *ent);

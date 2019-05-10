@@ -85,6 +85,7 @@
 
 #ifdef _MSC_VER
 #pragma warning(disable : 4018) // signed/unsigned mismatch
+#pragma warning(disable : 4068) // unknown pragma warning
 #pragma warning(disable : 4244) // number conversion (possible loss of data)
 #pragma warning(disable : 4305) // truncation from const double to float
 #pragma warning(disable : 4711) // selected for automatic inline expansion

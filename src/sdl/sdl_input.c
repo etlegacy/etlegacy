@@ -735,7 +735,7 @@ struct
 /**
  * @brief Prints joystick info to console
  */
-void IN_PrintJoystickInfo_f()
+void IN_PrintJoystickInfo_f(void)
 {
 	if (!in_joystick->integer)
 	{

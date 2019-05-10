@@ -860,7 +860,7 @@ void Svcmd_ResetMatch_f(qboolean fDoReset, qboolean fDoRestart)
 /**
  * @brief Svcmd_ResetMatch
  */
-void Svcmd_ResetMatch()
+void Svcmd_ResetMatch(void)
 {
 	Svcmd_ResetMatch_f(qtrue, qtrue);
 }
@@ -915,7 +915,7 @@ void Svcmd_ShuffleTeamsXP_f(qboolean restart)
 /**
  * @brief Svcmd_ShuffleTeamsXP
  */
-void Svcmd_ShuffleTeamsXP()
+void Svcmd_ShuffleTeamsXP(void)
 {
 	Svcmd_ShuffleTeamsXP_f(qtrue);
 }
@@ -923,7 +923,7 @@ void Svcmd_ShuffleTeamsXP()
 /**
  * @brief Svcmd_ShuffleTeamsXPNoRestart
  */
-void Svcmd_ShuffleTeamsXPNoRestart()
+void Svcmd_ShuffleTeamsXPNoRestart(void)
 {
 	Svcmd_ShuffleTeamsXP_f(qfalse);
 }
@@ -958,7 +958,7 @@ void Svcmd_ShuffleTeamsSR_f(qboolean restart)
 /**
  * @brief Svcmd_ShuffleTeamsSR
  */
-void Svcmd_ShuffleTeamsSR()
+void Svcmd_ShuffleTeamsSR(void)
 {
 	Svcmd_ShuffleTeamsSR_f(qtrue);
 }
@@ -966,7 +966,7 @@ void Svcmd_ShuffleTeamsSR()
 /**
  * @brief Svcmd_ShuffleTeamsSRPNoRestart
  */
-void Svcmd_ShuffleTeamsSRNoRestart()
+void Svcmd_ShuffleTeamsSRNoRestart(void)
 {
 	Svcmd_ShuffleTeamsSR_f(qfalse);
 }
@@ -1053,7 +1053,7 @@ extern int FindClientByName(const char *name);
  * @brief Svcmd_RevivePlayer
  * @param[in] name
  */
-void Svcmd_RevivePlayer()
+void Svcmd_RevivePlayer(void)
 {
 	int       clientNum;
 	gentity_t *player;
@@ -2026,7 +2026,7 @@ void G_UpdateSvCvars(void)
 /**
  * @brief CC_cvarempty
  */
-void CC_cvarempty()
+void CC_cvarempty(void)
 {
 	Com_Memset(level.svCvars, 0, sizeof(level.svCvars));
 	level.svCvarsCount = 0;
@@ -2464,7 +2464,7 @@ void Svcmd_CSInfo_f(void)
 /**
  * @brief Svcmd_Ref_f
  */
-void Svcmd_Ref_f()
+void Svcmd_Ref_f(void)
 {
 	char cmd[MAX_TOKEN_CHARS];
 
@@ -2486,7 +2486,7 @@ void Svcmd_Ref_f()
  *
  * @todo FIXME this 'say' condition is never reached?!
  */
-void Svcmd_Say_f()
+void Svcmd_Say_f(void)
 {
 	if (g_dedicated.integer)
 	{
@@ -2497,7 +2497,7 @@ void Svcmd_Say_f()
 /**
  * @brief Svcmd_Chat_f
  */
-void Svcmd_Chat_f()
+void Svcmd_Chat_f(void)
 {
 	if (g_dedicated.integer)
 	{
