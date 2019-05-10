@@ -2659,7 +2659,7 @@ void Tess_ComputeColor(shaderStage_t *pStage)
 		tess.svars.color[1] = (float)pStage->constantColor[1];
 		tess.svars.color[2] = (float)pStage->constantColor[2];
 		tess.svars.color[3] = (float)pStage->constantColor[3];
-		VectorScale(tess.svars.color, _1div255, tess.svars.color);
+		Vector4Scale(tess.svars.color, _1div255, tess.svars.color);
 		break;
 	}
 	case CGEN_ENTITY:
@@ -2669,7 +2669,7 @@ void Tess_ComputeColor(shaderStage_t *pStage)
 			/*tess.svars.color[0] = Q_bound(0.0f, backEnd.currentLight->l.color[0], 1.0f);
 			tess.svars.color[1] = Q_bound(0.0f, backEnd.currentLight->l.color[1], 1.0f);
 			tess.svars.color[2] = Q_bound(0.0f, backEnd.currentLight->l.color[2], 1.0f);*/
-			VectorBound(backEnd.currentLight->l.color, vec3_origin, vec3_111, tess.svars.color);
+			VectorBound(backEnd.currentLight->l.color, vec3_origin, vec3_1, tess.svars.color);
 			tess.svars.color[3] = 1.0f;
 		}
 		else if (backEnd.currentEntity)
@@ -2683,7 +2683,7 @@ void Tess_ComputeColor(shaderStage_t *pStage)
 			tess.svars.color[2] = (float)backEnd.currentEntity->e.shaderRGBA[2];
 			tess.svars.color[3] = (float)backEnd.currentEntity->e.shaderRGBA[3];
 			Vector4Scale(tess.svars.color, _1div255, tess.svars.color);
-			VectorBound(tess.svars.color, vec3_origin, vec3_111, tess.svars.color);
+			Vector4Bound(tess.svars.color, vec4_origin, vec4_1, tess.svars.color);
 		}
 		else
 		{
@@ -2702,8 +2702,8 @@ void Tess_ComputeColor(shaderStage_t *pStage)
 			/*tess.svars.color[0] = 1.0f - Q_bound(0.0f, backEnd.currentLight->l.color[0], 1.0f);
 			tess.svars.color[1] = 1.0f - Q_bound(0.0f, backEnd.currentLight->l.color[1], 1.0f);
 			tess.svars.color[2] = 1.0f - Q_bound(0.0f, backEnd.currentLight->l.color[2], 1.0f);*/
-			VectorBound(backEnd.currentLight->l.color, vec3_origin, vec3_111, tess.svars.color);
-			VectorSubtract(vec3_111, tess.svars.color, tess.svars.color);
+			VectorBound(backEnd.currentLight->l.color, vec3_origin, vec3_1, tess.svars.color);
+			VectorSubtract(vec3_1, tess.svars.color, tess.svars.color);
 			tess.svars.color[3] = 0.0f;      // FIXME
 		}
 		else if (backEnd.currentEntity)
@@ -2717,8 +2717,8 @@ void Tess_ComputeColor(shaderStage_t *pStage)
 			tess.svars.color[2] = (float)backEnd.currentEntity->e.shaderRGBA[2];
 			tess.svars.color[3] = (float)backEnd.currentEntity->e.shaderRGBA[3];
 			Vector4Scale(tess.svars.color, _1div255, tess.svars.color);
-			VectorBound(tess.svars.color, vec3_origin, vec3_111, tess.svars.color);
-			VectorSubtract(vec3_111, tess.svars.color, tess.svars.color);
+			Vector4Bound(tess.svars.color, vec3_origin, vec3_1, tess.svars.color);
+			Vector4Subtract(vec4_1, tess.svars.color, tess.svars.color);
 		}
 		else
 		{
@@ -2753,10 +2753,11 @@ void Tess_ComputeColor(shaderStage_t *pStage)
 			glow = 1.f;
 		}
 
-		tess.svars.color[0] = glow;
+		/*tess.svars.color[0] = glow;
 		tess.svars.color[1] = glow;
 		tess.svars.color[2] = glow;
-		tess.svars.color[3] = 1.0f;
+		tess.svars.color[3] = 1.0f;*/
+		Vector4Set(tess.svars.color, glow, glow, glow, 1.f);
 		break;
 	}
 	case CGEN_CUSTOM_RGB:
@@ -2765,9 +2766,10 @@ void Tess_ComputeColor(shaderStage_t *pStage)
 
 		rgb = Q_bound(0.0f, RB_EvalExpression(&pStage->rgbExp, 1.0f), 1.0f);
 
-		tess.svars.color[0] = rgb;
+		/*tess.svars.color[0] = rgb;
 		tess.svars.color[1] = rgb;
-		tess.svars.color[2] = rgb;
+		tess.svars.color[2] = rgb;*/
+		VectorSet(tess.svars.color, rgb, rgb, rgb);
 		break;
 	}
 	case CGEN_CUSTOM_RGBs:

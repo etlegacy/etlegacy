@@ -542,12 +542,12 @@ qboolean BoundsIntersect(const vec3_t mins, const vec3_t maxs, const vec3_t mins
 	return qtrue;
 #else
 	__m128 xmm1, xmm2, xmm3;
-	xmm1 = _mm_loadh_pi(_mm_load_ss((const float *)maxs), (const __m64 *)(maxs+1));
-	xmm2 = _mm_loadh_pi(_mm_load_ss((const float *)mins2), (const __m64 *)(mins2+1));
+	xmm1 = _mm_loadh_pi(_mm_load_ss((const float *)&maxs[0]), (const __m64 *)&maxs[1]);
+	xmm2 = _mm_loadh_pi(_mm_load_ss((const float *)&mins2[0]), (const __m64 *)&mins2[1]);
 	xmm3 = _mm_cmplt_ps(xmm1, xmm2);
 	if (_mm_movemask_ps(xmm3) != 0) return qfalse;
-	xmm1 = _mm_loadh_pi(_mm_load_ss((const float *)mins), (const __m64 *)(mins+1));
-	xmm2 = _mm_loadh_pi(_mm_load_ss((const float *)maxs2), (const __m64 *)(maxs2+1));
+	xmm1 = _mm_loadh_pi(_mm_load_ss((const float *)&mins[0]), (const __m64 *)&mins[1]);
+	xmm2 = _mm_loadh_pi(_mm_load_ss((const float *)&maxs2[0]), (const __m64 *)&maxs2[1]);
 	xmm3 = _mm_cmpgt_ps(xmm1, xmm2);
 	if (_mm_movemask_ps(xmm3) != 0) return qfalse;
 	return qtrue;

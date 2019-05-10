@@ -1988,12 +1988,12 @@ byte R_CalcLightCubeSideBits(trRefLight_t *light, vec3_t worldBounds[2])
 	out[1] = rotMatrix_r[1];      out[5] = rotMatrix_r[5];       out[9] = rotMatrix_r[9];          out[13] = -dot(vec3 in[4], light->origin);
 	out[2] = rotMatrix_r[2];      out[6] = rotMatrix_r[6];       out[10] = rotMatrix_r[10];        out[14] = -dot(vec3 in[8], light->origin);
 	out[3] = rotMatrix_r[3];      out[7] = rotMatrix_r[7];       out[11] = rotMatrix_r[11];        out[15] = 1.0f;*/
-	Vector4Copy((float *)rotMatrix_r + 0, &tmpMatrix[0]);
-	Vector4Copy((float *)rotMatrix_r + 4, &tmpMatrix[4]);
-	Vector4Copy((float *)rotMatrix_r + 8, &tmpMatrix[8]);
-	Dot((float *)rotMatrix + 0, (const float *)&light->origin, tmpMatrix[12]);
-	Dot((float *)rotMatrix + 4, (const float *)&light->origin, tmpMatrix[13]);
-	Dot((float *)rotMatrix + 8, (const float *)&light->origin, tmpMatrix[14]);
+	Vector4Copy((float *)&rotMatrix_r[0], &tmpMatrix[0]);
+	Vector4Copy((float *)&rotMatrix_r[4], &tmpMatrix[4]);
+	Vector4Copy((float *)&rotMatrix_r[8], &tmpMatrix[8]);
+	Dot((float *)&rotMatrix[0], (const float *)&light->origin, tmpMatrix[12]);
+	Dot((float *)&rotMatrix[4], (const float *)&light->origin, tmpMatrix[13]);
+	Dot((float *)&rotMatrix[8], (const float *)&light->origin, tmpMatrix[14]);
 	tmpMatrix[15] = 1.0f;
 	Matrix4Multiply(quakeToOpenGLMatrix, tmpMatrix, viewMatrix);	//@
 #else

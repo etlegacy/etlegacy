@@ -262,15 +262,15 @@ void Tess_AddQuadStampExt2(vec4_t quadVerts[4], const vec4_t color, float s1, fl
 #else
 	{
 		__m128 xmm0;
-		xmm0 = _mm_loadh_pi(_mm_load_ss((const float *)plane), (const __m64 *)(plane + 1));
-		_mm_store_ss((float *)(&tess.normals[ndx] + 0), xmm0);
-		_mm_storeh_pi((__m64 *)(&tess.normals[ndx] + 1), xmm0);
-		_mm_store_ss((float *)(&tess.normals[ndx+1] + 0), xmm0);
-		_mm_storeh_pi((__m64 *)(&tess.normals[ndx+1] + 1), xmm0);
-		_mm_store_ss((float *)(&tess.normals[ndx+2] + 0), xmm0);
-		_mm_storeh_pi((__m64 *)(&tess.normals[ndx+2] + 1), xmm0);
-		_mm_store_ss((float *)(&tess.normals[ndx+3] + 0), xmm0);
-		_mm_storeh_pi((__m64 *)(&tess.normals[ndx+3] + 1), xmm0);
+		xmm0 = _mm_loadh_pi(_mm_load_ss((const float *)&plane[0]), (const __m64 *)&plane[1]);
+		_mm_store_ss((float *)(&tess.normals[ndx][0]), xmm0);
+		_mm_storeh_pi((__m64 *)(&tess.normals[ndx][1]), xmm0);
+		_mm_store_ss((float *)(&tess.normals[ndx+1][0]), xmm0);
+		_mm_storeh_pi((__m64 *)(&tess.normals[ndx+1][1]), xmm0);
+		_mm_store_ss((float *)(&tess.normals[ndx+2][0]), xmm0);
+		_mm_storeh_pi((__m64 *)(&tess.normals[ndx+2][1]), xmm0);
+		_mm_store_ss((float *)(&tess.normals[ndx+3][0]), xmm0);
+		_mm_storeh_pi((__m64 *)(&tess.normals[ndx+3][1]), xmm0);
 	}
 #endif
 
@@ -381,15 +381,15 @@ __inline void Tess_AddQuadStampExt3(vec4_t quadVerts[4], const vec4_t color, qbo
 #else
 	{
 		__m128 xmm0;
-		xmm0 = _mm_loadh_pi(_mm_load_ss((const float *)plane), (const __m64 *)(plane + 1));
-		_mm_store_ss((float *)(&tess.normals[ndx] + 0), xmm0);
-		_mm_storeh_pi((__m64 *)(&tess.normals[ndx] + 1), xmm0);
-		_mm_store_ss((float *)(&tess.normals[ndx + 1] + 0), xmm0);
-		_mm_storeh_pi((__m64 *)(&tess.normals[ndx + 1] + 1), xmm0);
-		_mm_store_ss((float *)(&tess.normals[ndx + 2] + 0), xmm0);
-		_mm_storeh_pi((__m64 *)(&tess.normals[ndx + 2] + 1), xmm0);
-		_mm_store_ss((float *)(&tess.normals[ndx + 3] + 0), xmm0);
-		_mm_storeh_pi((__m64 *)(&tess.normals[ndx + 3] + 1), xmm0);
+		xmm0 = _mm_loadh_pi(_mm_load_ss((const float *)&plane[0]), (const __m64 *)&plane[1]);
+		_mm_store_ss((float *)(&tess.normals[ndx][0]), xmm0);
+		_mm_storeh_pi((__m64 *)(&tess.normals[ndx][1]), xmm0);
+		_mm_store_ss((float *)(&tess.normals[ndx + 1][0]), xmm0);
+		_mm_storeh_pi((__m64 *)(&tess.normals[ndx + 1][1]), xmm0);
+		_mm_store_ss((float *)(&tess.normals[ndx + 2][0]), xmm0);
+		_mm_storeh_pi((__m64 *)(&tess.normals[ndx + 2][1]), xmm0);
+		_mm_store_ss((float *)(&tess.normals[ndx + 3][0]), xmm0);
+		_mm_storeh_pi((__m64 *)(&tess.normals[ndx + 3][1]), xmm0);
 	}
 #endif
 

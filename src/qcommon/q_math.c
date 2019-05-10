@@ -38,7 +38,13 @@
 #pragma warning(disable:4700)
 
 vec3_t vec3_origin = { 0.f, 0.f, 0.f };
-vec3_t vec3_111 = { 1.f, 1.f, 1.f };
+vec3_t vec3_1 = { 1.f, 1.f, 1.f };
+vec3_t vec3_minus1 = { -1.f, -1.f, -1.f };
+vec3_t vec3_half = { 0.5f, 0.5f, 0.5f };
+vec4_t vec4_origin = { 0.f, 0.f, 0.f, 0.f };
+vec4_t vec4_1 = { 1.f, 1.f, 1.f, 1.f };
+vec4_t vec4_minus1 = { -1.f, -1.f, -1.f, -1.f };
+vec4_t vec4_half = { 0.5f, 0.5f, 0.5f, 0.5f };
 vec3_t axisDefault[3] = { { 1.f, 0.f, 0.f }, { 0.f, 1.f, 0.f }, { 0.f, 0.f, 1.f } };
 
 vec4_t colorBlack = { 0, 0, 0, 1 };
@@ -348,9 +354,17 @@ int DirToByte(vec3_t dir)
 #else
 	// We use 30 bits of the eventParm integer to store in a vector.
 	// convert vector values from [-1,1] to [0,1] range, then to a range that fits 10 bits. 2^10 == 4096
-	int x = (int)((dir[0] * 0.5 + 0.5) * 4096.0 - 1.0); // the greatest value that fits is 4096-1
-	int y = (int)((dir[1] * 0.5 + 0.5) * 4096.0 - 1.0);
-	int z = (int)((dir[2] * 0.5 + 0.5) * 4096.0 - 1.0);
+	int x = (int)((dir[0] * 0.5f + 0.5f) * 4096.f - 1.f); // the greatest value that fits is 4096-1
+	int y = (int)((dir[1] * 0.5f + 0.5f) * 4096.f - 1.f);
+	int z = (int)((dir[2] * 0.5f + 0.5f) * 4096.f - 1.f);
+	/*vec3_t v;
+	VectorScale(dir, 0.5f, v);
+	VectorAdd(v, vec3_half, v);
+	VectorScale(v, 4096.f, v);
+	VectorAdd(v, vec3_minus1, v);
+	int x = (int)v[0];
+	int y = (int)v[1];
+	int z = (int)v[2];*/
 	return (x << 20) | (y << 10) | z;
 #endif
 }
@@ -376,10 +390,10 @@ void ByteToDir(int b, vec3_t dir)
 	int x = (b >> 20) & 0b1111111111;
 	int y = (b >> 10) & 0b1111111111;
 	int z = b & 0b1111111111;
-	const float r2048 = rcp(2048.f); // (1.0f / 2048.0f);
-	dir[0] = (float)(x) * r2048 - 1.0f; // / 4096 * 2.0 - 1.0
-	dir[1] = (float)(y) * r2048 - 1.0f;
-	dir[2] = (float)(z) * r2048 - 1.0f;
+	const float r2048 = rcp(2048.f); // rcp(2048) == 1/2048;
+	dir[0] = (float)(x) * r2048 - 1.f; // / 4096 * 2.0 - 1.0
+	dir[1] = (float)(y) * r2048 - 1.f;
+	dir[2] = (float)(z) * r2048 - 1.f;
 #endif
 }
 

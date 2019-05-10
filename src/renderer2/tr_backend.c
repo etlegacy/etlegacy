@@ -1473,7 +1473,7 @@ Vector4Set(&light->viewMatrix[12], -viewMatrix[13], viewMatrix[14], -viewMatrix[
 					{
 						int    j;
 						vec3_t angles;
-						vec4_t forward, side, up;
+						vec4_t /*forward,*/ side, up;
 						vec3_t lightDirection;
 						vec3_t viewOrigin, viewDirection;
 						mat4_t rotationMatrix, transformMatrix, viewMatrix, projectionMatrix, viewProjectionMatrix;
@@ -1540,7 +1540,8 @@ Vector4Set(&light->viewMatrix[12], -viewMatrix[13], viewMatrix[14], -viewMatrix[
 
 							VectorToAngles(lightDirection, angles);
 							//mat4_from_angles(rotationMatrix, angles[PITCH], angles[YAW], angles[ROLL]); // rotationMatrix is never used.. or?
-							AngleVectors(angles, forward, side, up);
+//							AngleVectors(angles, forward, side, up);
+							AngleVectors(angles, NULL, NULL, up);
 
 							MatrixLookAtRH(light->viewMatrix, viewOrigin, lightDirection, up);
 #else

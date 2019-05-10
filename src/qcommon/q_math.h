@@ -238,7 +238,13 @@ extern vec4_t g_color_table[32];
 struct cplane_s;
 
 extern vec3_t vec3_origin;		// 0,0,0
-extern vec3_t vec3_111;			// 1,1,1
+extern vec3_t vec3_1;			// 1,1,1
+extern vec3_t vec3_minus1;		// -1,-1,-1
+extern vec3_t vec3_half;		// 0.5,0.5,0.5
+extern vec4_t vec4_origin;		// 0,0,0,0
+extern vec4_t vec4_1;			// 1,1,1,1
+extern vec4_t vec4_minus1;		// -1,-1,-1,-1
+extern vec4_t vec4_half;		// 0.5,0.5,0.5,0.5
 extern vec3_t axisDefault[3];
 
 // unused
@@ -577,6 +583,7 @@ void _Vector4Set4(const float value, vec4_t out); // set x,y,z & w components to
 	(c) = cos((rad));
 
 #define VectorBound(v, mins, maxs, out) {v[0]=Q_bound(mins[0], v[0], maxs[0]); v[1]=Q_bound(mins[1], v[1], maxs[1]); v[2]=Q_bound(mins[2], v[2], maxs[2]);}
+#define Vector4Bound(v, mins, maxs, out) {v[0]=Q_bound(mins[0], v[0], maxs[0]); v[1]=Q_bound(mins[1], v[1], maxs[1]); v[2]=Q_bound(mins[2], v[2], maxs[2]); v[3]=Q_bound(mins[3], v[3], maxs[3]);}
 
 void SetPlaneSignbits(struct cplane_s *out);
 void vec3_norm_inlined(vec3_t v, float *l);
@@ -704,6 +711,16 @@ static inline void VectorMax(const vec3_t a, const vec3_t b, vec3_t out)
 	xmm0 = _mm_max_ps(xmm0, xmm1); \
 	_mm_store_ss(&out[0], xmm0); \
 	_mm_storeh_pi((__m64 *)(&out[1]), xmm0); \
+}
+
+///#define Vector4Bound(v, min, max, out)
+#define Vector4Bound(v, mins, maxs, out) \
+{ \
+	__m128 xmm0; \
+	xmm0 = _mm_loadu_ps((const float *)&v[0]); \
+	xmm0 = _mm_min_ps(xmm0, _mm_loadu_ps((const float *)&maxs[0])); \
+	xmm0 = _mm_max_ps(xmm0, _mm_loadu_ps((const float *)&mins[0])); \
+	_mm_storeu_ps((float *)&out[0], xmm0); \
 }
 
 ///void SetPlaneSignbits(struct cplane_s *out);
