@@ -2702,7 +2702,7 @@ int CG_LimboPanel_RenderCounter_ValueForButton(panel_button_t *button)
 
 			return 0;
 		}
-		if (CG_LimboPanel_GetTeam() == TEAM_SPECTATOR)
+		if (cgs.clientinfo[cg.clientNum].team == TEAM_SPECTATOR)
 		{
 			return 0;
 		}
