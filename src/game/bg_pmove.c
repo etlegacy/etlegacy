@@ -238,7 +238,7 @@ void PM_ClipVelocity(vec3_t in, vec3_t normal, vec3_t out, float overbounce)
  * @param[in] ignoreent
  * @param[in] tracemask
  */
-void PM_TraceLegs(trace_t *trace, float *legsOffset, vec3_t start, vec3_t end, trace_t *bodytrace, vec3_t viewangles, void(tracefunc) (trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask), int ignoreent, int tracemask)
+void PM_TraceLegs(trace_t *trace, float *legsOffset, vec3_t start, vec3_t end, trace_t *bodytrace, vec3_t viewangles, void (tracefunc) (trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask), int ignoreent, int tracemask)
 {
 	vec3_t ofs, org, point;
 	vec3_t flatforward;
@@ -319,13 +319,13 @@ void PM_TraceLegs(trace_t *trace, float *legsOffset, vec3_t start, vec3_t end, t
  * @param[in] tracemask
  */
 void PM_TraceHead(trace_t *trace, vec3_t start, vec3_t end, trace_t *bodytrace, vec3_t viewangles,
-                  void(tracefunc) (trace_t *results,
-                                   const vec3_t start,
-                                   const vec3_t mins,
-                                   const vec3_t maxs,
-                                   const vec3_t end,
-                                   int passEntityNum,
-                                   int contentMask),
+                  void (tracefunc) (trace_t *results,
+                                    const vec3_t start,
+                                    const vec3_t mins,
+                                    const vec3_t maxs,
+                                    const vec3_t end,
+                                    int passEntityNum,
+                                    int contentMask),
                   int ignoreent,
                   int tracemask)
 {
@@ -2383,9 +2383,8 @@ static void PM_BeginWeaponChange(weapon_t oldWeapon, weapon_t newWeapon, qboolea
 		if (!(GetWeaponTableData(oldWeapon)->type & WEAPON_TYPE_RIFLENADE) || pm->ps->ammoclip[GetWeaponTableData(oldWeapon)->ammoIndex])
 		{
 			PM_AddEvent(EV_CHANGE_WEAPON_2);
+			PM_StartWeaponAnim(GetWeaponTableData(oldWeapon)->altSwitchFrom);
 		}
-
-		PM_StartWeaponAnim(GetWeaponTableData(oldWeapon)->altSwitchFrom);
 
 		if (GetWeaponTableData(newWeapon)->type & WEAPON_TYPE_SET)
 		{
@@ -2711,7 +2710,12 @@ static void PM_SwitchIfEmpty(void)
 	{
 		pm->ps->ammoclip[WP_SATCHEL_DET] = 1;
 		pm->ps->ammoclip[WP_SATCHEL]     = 0;
-		PM_BeginWeaponChange(WP_SATCHEL, WP_SATCHEL_DET, qfalse);
+	}
+
+	// force switching to rifle
+	if (GetWeaponTableData(pm->ps->weapon)->type & WEAPON_TYPE_RIFLENADE)
+	{
+		PM_BeginWeaponChange(pm->ps->weapon, GetWeaponTableData(pm->ps->weapon)->weapAlts, qfalse);
 	}
 
 	PM_AddEvent(EV_NOAMMO);
@@ -3941,7 +3945,7 @@ void PM_UpdateLean(playerState_t *ps, usercmd_t *cmd, pmove_t *tpm)
  *
  * @note Tnused trace parameter
  */
-void PM_UpdateViewAngles(playerState_t *ps, pmoveExt_t *pmext, usercmd_t *cmd, void(trace) (trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask), int tracemask)                 //   modified
+void PM_UpdateViewAngles(playerState_t *ps, pmoveExt_t *pmext, usercmd_t *cmd, void (trace) (trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask), int tracemask)                 //   modified
 {
 	short  temp;
 	int    i;

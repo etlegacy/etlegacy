@@ -3686,6 +3686,15 @@ void CG_AltWeapon_f(void)
 		return;
 	}
 
+	// don't allow another weapon switch when we're still swapping alt weap, to prevent animation breaking
+	// there we check the value of the animation to prevent any switch during raising and dropping alt weapon
+	// until the animation is ended
+	if ((cg.snap->ps.weapAnim & ~ANIM_TOGGLEBIT) == GetWeaponTableData(cg.snap->ps.weapon)->altSwitchFrom ||
+	    (cg.snap->ps.weapAnim & ~ANIM_TOGGLEBIT) == GetWeaponTableData(cg.snap->ps.weapon)->altSwitchTo)
+	{
+		return;
+	}
+
 	// need ground for this
 	if (GetWeaponTableData(cg.weaponSelect)->type & WEAPON_TYPE_SETTABLE)
 	{
@@ -4098,7 +4107,7 @@ qboolean CG_CheckCanSwitch(void)
 		return qfalse;
 	}
 
-	if (GetWeaponTableData(cg.weaponSelect)->type & WEAPON_TYPE_SET)
+	if (GetWeaponTableData(cg.snap->ps.weapon)->type & WEAPON_TYPE_SET)
 	{
 		return qfalse;
 	}
@@ -4111,15 +4120,6 @@ qboolean CG_CheckCanSwitch(void)
 	//              the reload time twice.  (the first pause for the current weapon reload,
 	//              and the pause when you have to reload again 'cause you canceled this one)
 	if (cg.snap->ps.weaponstate == WEAPON_RELOADING)
-	{
-		return qfalse;
-	}
-
-	// there is an exploit permitting to fast change weapon right after firing the last bullet/missile.
-	// i.e: in case of MG set, it skip unset animation / in case of riflenade, the nade is fired and still loaded
-	// More precisly, it appear when the event "EV_NOAMMO" is reached. In this case, player can "overwrite"
-	// the value forced by autoswitch. To prevent it, we are waiting the game to return the current weapon "selected"
-	if (cg.weaponSelect != cg.snap->ps.weapon)
 	{
 		return qfalse;
 	}
