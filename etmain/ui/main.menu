@@ -97,8 +97,11 @@ menuDef {
 
 // Window //
 	//WINDOW( _("MENU"), 50 ) // FIXME: script error with WINDOW_HEIGHT
-	SUBWINDOW( 0, 0, MENU_WIDTH, MENU_HEIGHT, _("MENU") )
+	SUBWINDOW( 0, 0, MENU_WIDTH, MENU_HEIGHT, _("WELCOME") )
 	execKey "c" { close main ; open main_quickconnect }
+
+// Active profile
+	CVARLABEL( 6+((MENU_WIDTH-12)/2), 18, MENU_WIDTH-12, 10, "cl_profile", .2, ITEM_ALIGN_CENTER, 0, 8 )
 
 // Buttons //
 	BUTTON( 6, 32, MENU_WIDTH-12, 18, _("PLAY ONLINE"), .3, 14, close main ; /*close backgroundmusic ; open backgroundmusic_server ;*/ uiScript UpdateFilter ; uiScript ServerSort 2 ; open playonline )
@@ -122,11 +125,6 @@ menuDef {
 
 // Version //
 LABEL( 2, 450, 114, 10, "^1"ETLEGACY_VERSION, .2, ITEM_ALIGN_LEFT, 0, 8 )
-
-// profile info //
-SUBWINDOW( 0, 260, MENU_WIDTH, 40, _("CURRENT PROFILE") )
-CVARLABEL( 6, 276, MENU_WIDTH-12, 10, "cl_profile", .2, ITEM_ALIGN_LEFT, 0, 8 )
-CVARLABEL( 6, 288, MENU_WIDTH-12, 10, "name", .2, ITEM_ALIGN_LEFT, 0, 8 )
 
 // message of the day?
 //	SUBWINDOW( MENU_WIDTH+6, 0, __WINDOW_WIDTH-MENU_WIDTH-6-32, 28, _("MESSAGE OF THE DAY") )
