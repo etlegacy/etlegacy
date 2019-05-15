@@ -260,7 +260,7 @@
 #elif defined __amd64__
 #undef idx64
 #define idx64 1
-#define ARCH_STRING "amd64"
+#define ARCH_STRING "x86_64"
 #elif defined __axp__
 #define ARCH_STRING "alpha"
 #endif
