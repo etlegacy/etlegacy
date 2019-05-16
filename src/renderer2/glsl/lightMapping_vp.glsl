@@ -39,8 +39,8 @@ uniform float u_Time;
 // varying variables
 varying vec3 var_Position;
 varying vec4 var_Color;
-varying vec2 var_TexLight;
 varying vec3 var_Normal;
+varying vec2 var_TexLight;
 #if defined(USE_DIFFUSE)
 varying vec2 var_TexDiffuse;
 #if defined(USE_NORMAL_MAPPING)

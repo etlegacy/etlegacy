@@ -1190,9 +1190,10 @@ typedef enum
 //	ST_BUNDLE_LD,               ///< lightmap + diffuse
 //	ST_BUNDLE_LDB,              ///< lightmap + diffuse + bump
 //	ST_BUNDLE_LDBS,             ///< lightmap + diffuse + bump + specular
-	ST_BUNDLE_DB,               ///< diffuse + bump
-	ST_BUNDLE_DBS,              ///< diffuse + bump + specular
-	ST_BUNDLE_DBSR,             ///< diffuse + bump + specular + reflectionmap
+//	ST_BUNDLE_LDBSR,            ///< lightmap + diffuse + bump + specular + reflectionmap
+	ST_BUNDLE_DB,               ///<            diffuse + bump
+	ST_BUNDLE_DBS,              ///<            diffuse + bump + specular
+	ST_BUNDLE_DBSR,             ///<            diffuse + bump + specular + reflectionmap
 	ST_BUNDLE_CB,               ///< color cubemap + bump              (reflections)
 	ST_BUNDLE_WDB,              ///< liquid/water + diffuse + bump
 	ST_BUNDLE_WB,               ///< liquid/water + bump
@@ -1211,6 +1212,10 @@ typedef enum
 {
 	COLLAPSE_none = 0,
 	COLLAPSE_genericMulti,
+	COLLAPSE_LD,
+	COLLAPSE_LDB,
+	COLLAPSE_LDBS,
+	COLLAPSE_LDBSR,
 	COLLAPSE_DB,
 	COLLAPSE_DBS,
 	COLLAPSE_DBSR,

@@ -4596,6 +4596,26 @@ static void OptimizeStages()
 	shader.has_liquidStage = qfalse;
 	// 'numStages' counts the final number of stages, after collapsing has been done.
 	numStages = 0;
+/*$
+	// first find out if there is a lightmap stage, and if so, make it the first stage.
+	for (j = 0; j < MAX_SHADER_STAGES; j++)
+	{
+		if (!stages[j].active)
+		{
+			continue; // ignore inactive stages
+		}
+
+		// check for a lightmap or liquid stage
+		if (stages[j].type == ST_LIGHTMAP)
+		{
+			// keep the lightmap stage uncollapsed..
+			shader.has_lightmapStage = qtrue;
+			tmpStages[numStages] = stages[j];
+			numStages++;
+			break; // for
+		}
+	}
+*/
 	for (j = 0; j < MAX_SHADER_STAGES; j++)
 	{
 		if (!stages[j].active)
@@ -4608,7 +4628,8 @@ static void OptimizeStages()
 		{
 		case ST_LIGHTMAP:
 			shader.has_lightmapStage = qtrue;
-			break; // switch
+//$			continue; // lightmap is already handled, skip it now
+			break;
 		case ST_LIQUIDMAP:
 			//case ST_BUNDLE_WB:  // there are none yet..
 			//case ST_BUNDLE_WDB: // ..this is the collapse function :)

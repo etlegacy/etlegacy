@@ -1359,17 +1359,17 @@ ID_INLINE void R_IntersectRayPlane(const vec3_t v1, const vec3_t v2, cplane_t *p
  * @param[in] eye
  * @param[out] dst
  * unused
- */
+ * /
 void R_TransformWorldToClip(const vec3_t src, const float *cameraViewMatrix, const float *projectionMatrix, vec4_t eye,	vec4_t dst)
 {
-	/*vec4_t src2;
-	VectorCopy(src, src2);
-	src2[3] = 1.0f;*/
+	//vec4_t src2;
+	//VectorCopy(src, src2);
+	//src2[3] = 1.0f;
 	vec4_t src2 = {0.f, 0.f, 0.f, 1.f};
 	VectorCopy(src, src2);
 	Vector4TransformM4(cameraViewMatrix, src2, eye);
 	Vector4TransformM4(projectionMatrix, eye, dst);
-}
+}*/
 
 /**
  * @brief R_AddPointToLightScissor
@@ -1828,6 +1828,251 @@ byte R_CalcLightCubeSideBits(trRefLight_t *light, vec3_t worldBounds[2])
 	int       i;
 	int       cubeSide;
 	byte      cubeSideBits;
+	float     xMin, xMax, yMin, yMax;
+	float     width, height, depth;
+	float     zNear, zFar;
+	float     fovX, fovY;
+	float     *proj;
+	vec3_t    angles;
+	mat4_t    tmpMatrix, viewMatrix, projectionMatrix, rotationMatrix, transformMatrix, viewProjectionMatrix;
+	mat4_t    *rotMatrix, *rotMatrix_r;
+	frustum_t frustum;
+	cplane_t  *clipPlane;
+	int       r;
+	qboolean  anyClip;
+	qboolean  culled;
+
+#if 0
+	static int count = 0;
+	cubeSideBits = 0;
+	for (cubeSide = 0; cubeSide < 6; cubeSide++)
+	{
+		if (count % 2 == 0)
+		{
+			cubeSideBits |= (1 << cubeSide);
+		}
+	}
+	return cubeSideBits;
+#endif
+
+	if (light->l.rlType != RL_OMNI || r_shadows->integer < SHADOWING_ESM16 || r_noShadowPyramids->integer)
+	{
+		return CUBESIDE_CLIPALL;
+	}
+#if 1
+	cubeSideBits = 0;
+	for (cubeSide = 0; cubeSide < 6; cubeSide++)
+	{
+		switch (cubeSide)
+		{
+		case 0:
+		{
+			// view parameters
+			VectorSet(angles, 0.0f, 0.0f, 0.0f);
+			break;
+		}
+		case 1:
+		{
+			VectorSet(angles, 0.0f, 180.0f, 0.0f);
+			break;
+		}
+		case 2:
+		{
+			VectorSet(angles, 0.0f, 90.0f, 0.0f);
+			break;
+		}
+		case 3:
+		{
+			VectorSet(angles, 0.0f, 270.0f, 0.0f);
+			break;
+		}
+		case 4:
+		{
+			VectorSet(angles, -90.0f, 0.0f, 0.0f);
+			break;
+		}
+		case 5:
+		{
+			VectorSet(angles, 90.0f, 0.0f, 0.0f);
+			break;
+		}
+		}
+
+		// Quake -> OpenGL view matrix from light perspective
+		mat4_from_angles(rotationMatrix, angles[PITCH], angles[YAW], angles[ROLL]);
+		MatrixSetupTransformFromRotation(transformMatrix, rotationMatrix, light->origin);
+
+		MatrixAffineInverse(transformMatrix, tmpMatrix);
+
+
+	/*out[0] = rotMatrix_r[0];      out[4] = rotMatrix_r[4];       out[8] = rotMatrix_r[8];          out[12] = -dot(vec3 in[0], light->origin);
+	out[1] = rotMatrix_r[1];      out[5] = rotMatrix_r[5];       out[9] = rotMatrix_r[9];          out[13] = -dot(vec3 in[4], light->origin);
+	out[2] = rotMatrix_r[2];      out[6] = rotMatrix_r[6];       out[10] = rotMatrix_r[10];        out[14] = -dot(vec3 in[8], light->origin);
+	out[3] = rotMatrix_r[3];      out[7] = rotMatrix_r[7];       out[11] = rotMatrix_r[11];        out[15] = 1.0f;*/
+/*	Vector4Copy((float *)&rotMatrix_r[0], &tmpMatrix[0]);
+	Vector4Copy((float *)&rotMatrix_r[4], &tmpMatrix[4]);
+	Vector4Copy((float *)&rotMatrix_r[8], &tmpMatrix[8]);
+	Dot(rotMatrix[0], light->origin, tmpMatrix[12]);
+	Dot(rotMatrix[4], light->origin, tmpMatrix[13]);
+	Dot(rotMatrix[8], light->origin, tmpMatrix[14]);
+	tmpMatrix[15] = 1.0f;*/
+
+/*$	//@ Matrix4Multiply(quakeToOpenGLMatrix, tmpMatrix, viewMatrix);
+	//@	new code that does this: Matrix4Multiply(quakeToOpenGLMatrix, tmpMatrix, viewMatrix);
+	// but atm it is commented out, because we do all viewMatrix-handling via registers (no need to store in seperate matrx var).
+	Vector4Set(&viewMatrix[0], -tmpMatrix[1], tmpMatrix[2], -tmpMatrix[0], tmpMatrix[3]);
+	Vector4Set(&viewMatrix[4], -tmpMatrix[5], tmpMatrix[6], -tmpMatrix[4], tmpMatrix[7]);
+	Vector4Set(&viewMatrix[8], -tmpMatrix[9], tmpMatrix[10], -tmpMatrix[8], tmpMatrix[11]);
+	Vector4Set(&viewMatrix[12], -tmpMatrix[13], tmpMatrix[14], -tmpMatrix[12], tmpMatrix[15]);*/
+#else
+	cubeSideBits = 0;
+	for (cubeSide = 0; cubeSide < 6; cubeSide++)
+	{
+		switch (cubeSide)
+		{
+		case 0:
+		{
+			//!!			MatrixSetupTransformFromRotation(transformMatrix, rotMatrix_0_0_0, light->origin);
+			rotMatrix = &rotMatrix_0_0_0;
+			rotMatrix_r = &rotMatrix_0_0_0_r;
+			break;
+		}
+		case 1:
+		{
+			//!!			MatrixSetupTransformFromRotation(transformMatrix, rotMatrix_0_180_0, light->origin);
+			rotMatrix = &rotMatrix_0_180_0;
+			rotMatrix_r = &rotMatrix_0_180_0_r;
+			break;
+		}
+		case 2:
+		{
+			//!!			MatrixSetupTransformFromRotation(transformMatrix, rotMatrix_0_90_0, light->origin);
+			rotMatrix = &rotMatrix_0_90_0;
+			rotMatrix_r = &rotMatrix_0_90_0_r;
+			break;
+		}
+		case 3:
+		{
+			//!!			MatrixSetupTransformFromRotation(transformMatrix, rotMatrix_0_270_0, light->origin);
+			rotMatrix = &rotMatrix_0_270_0;
+			rotMatrix_r = &rotMatrix_0_270_0_r;
+			break;
+		}
+		case 4:
+		{
+			//!!			MatrixSetupTransformFromRotation(transformMatrix, rotMatrix_m90_0_0, light->origin);
+			rotMatrix = &rotMatrix_m90_0_0;
+			rotMatrix_r = &rotMatrix_m90_0_0_r;
+			break;
+		}
+		case 5:
+		{
+			//!!			MatrixSetupTransformFromRotation(transformMatrix, rotMatrix_90_0_0, light->origin);
+			rotMatrix = &rotMatrix_90_0_0;
+			rotMatrix_r = &rotMatrix_90_0_0_r;
+			break;
+		}
+		}
+		Vector4Copy((float *)&rotMatrix_r[0], &tmpMatrix[0]);
+		Vector4Copy((float *)&rotMatrix_r[4], &tmpMatrix[4]);
+		Vector4Copy((float *)&rotMatrix_r[8], &tmpMatrix[8]);
+		Dot(rotMatrix[0], light->origin, tmpMatrix[12]);  tmpMatrix[12] = -tmpMatrix[12];
+		Dot(rotMatrix[4], light->origin, tmpMatrix[13]);  tmpMatrix[13] = -tmpMatrix[13];
+		Dot(rotMatrix[8], light->origin, tmpMatrix[14]);  tmpMatrix[14] = -tmpMatrix[14];
+		tmpMatrix[15] = 1.0f;
+#endif
+		// OpenGL projection matrix
+
+// tan(90 degrees) is always the same constant, zNear is always 1  =>  keep it simple..(for the computer)
+
+		fovX = 90.0f;
+		fovY = 90.0f; //R_CalcFov(fovX, shadowMapResolutions[light->shadowLOD], shadowMapResolutions[light->shadowLOD]);
+
+		zNear = 1.0f;
+		zFar  = light->sphereRadius;
+
+		xMax = zNear * tan(DEG2RAD(fovX));
+		xMin = -xMax;
+
+		yMax = zNear * tan(DEG2RAD(fovY));
+		yMin = -yMax;
+
+		width  = xMax - xMin;
+		height = yMax - yMin;
+		depth  = zFar - zNear;
+
+		proj    = projectionMatrix;
+//		proj[0] = (2 * zNear) / width;  proj[4] = 0;                    proj[8] = (xMax + xMin) / width;    proj[12] = 0;
+//		proj[1] = 0;                    proj[5] = (2 * zNear) / height; proj[9] = (yMax + yMin) / height;   proj[13] = 0;
+//		proj[2] = 0;                    proj[6] = 0;                    proj[10] = -(zFar + zNear) / depth; proj[14] = -(2 * zFar * zNear) / depth;
+//		proj[3] = 0;                    proj[7] = 0;                    proj[11] = -1;                      proj[15] = 0;
+float rW = 1.0f / width, rH = 1.0f / height, rD = 1.0f / depth, zN2 = 2.0f * zNear;
+proj[0] = zN2 * rW;   proj[4] = 0.0f;       proj[8] = (xMax + xMin) * rW;      proj[12] = 0.0f;
+proj[1] = 0.0f;       proj[5] = zN2 * rH;   proj[9] = (yMax + yMin) * rH;      proj[13] = 0.0f;
+proj[2] = 0.0f;       proj[6] = 0.0f;       proj[10] = -(zFar + zNear) * rD;   proj[14] = -(zFar * zN2) * rD;
+proj[3] = 0.0f;       proj[7] = 0.0f;       proj[11] = -1.0f;                  proj[15] = 0.0f;
+
+		// calculate frustum planes using the modelview projection matrix
+//		Matrix4Multiply(projectionMatrix, viewMatrix, viewProjectionMatrix);
+Matrix4Multiply(projectionMatrix, tmpMatrix, viewProjectionMatrix);
+
+		R_SetupFrustum2(frustum, viewProjectionMatrix);
+
+		// use the frustum planes to cut off shadowmaps beyond the light volume
+		anyClip = qfalse;
+		culled  = qfalse;
+		for (i = 0; i < 5; i++)
+		{
+			clipPlane = &frustum[i];
+
+			r = BoxOnPlaneSide(worldBounds[0], worldBounds[1], clipPlane);
+			if (r == 2)
+			{
+				culled = qtrue;
+				break;
+			}
+			if (r == 3)
+			{
+				anyClip = qtrue;
+			}
+		}
+
+		if (!culled)
+		{
+			if (!anyClip)
+			{
+				// completely inside frustum
+				tr.pc.c_pyramid_cull_ent_in++;
+			}
+			else
+			{
+				// partially clipped
+				tr.pc.c_pyramid_cull_ent_clip++;
+			}
+
+			cubeSideBits |= (1 << cubeSide);
+		}
+		else
+		{
+			// completely outside frustum
+			tr.pc.c_pyramid_cull_ent_out++;
+		}
+	}
+
+	tr.pc.c_pyramidTests++;
+
+	return cubeSideBits;
+}
+// *INDENT-ON*
+
+
+#if 0
+// sse version
+byte R_CalcLightCubeSideBits(trRefLight_t *light, vec3_t worldBounds[2])
+{
+	int       i;
+	int       cubeSide;
+	byte      cubeSideBits;
 	//float     xMin, xMax, yMin, yMax;
 	float     /*width, height,*/ depth;
 	float     /*zNear,*/ zFar;
@@ -1837,7 +2082,8 @@ byte R_CalcLightCubeSideBits(trRefLight_t *light, vec3_t worldBounds[2])
 #ifndef ETL_SSE
 	mat4_t    tmpMatrix, viewMatrix, projectionMatrix, /*rotationMatrix, transformMatrix,*/ viewProjectionMatrix;
 #else
-	mat4_t    tmpMatrix, viewProjectionMatrix;
+	mat4_t    tmpMatrix, viewMatrix, projectionMatrix, viewProjectionMatrix;
+	__m128 xmm0, xmm1, xmm2, xmm4, xmm5, xmm6, xmm7, zeroes;
 #endif
 	mat4_t    *rotMatrix, *rotMatrix_r;
 	frustum_t frustum;
@@ -1905,7 +2151,7 @@ byte R_CalcLightCubeSideBits(trRefLight_t *light, vec3_t worldBounds[2])
 
 		// Quake -> OpenGL view matrix from light perspective
 		mat4_from_angles(rotationMatrix, angles[PITCH], angles[YAW], angles[ROLL]);
-// ^^that is calculating a constant value, from some vectorSet(constant)
+		// ^^that is calculating a constant value, from some vectorSet(constant)
 		MatrixSetupTransformFromRotation(transformMatrix, rotationMatrix, light->origin);
 #else
 	cubeSideBits = 0;
@@ -1915,42 +2161,42 @@ byte R_CalcLightCubeSideBits(trRefLight_t *light, vec3_t worldBounds[2])
 		{
 		case 0:
 		{
-//!!			MatrixSetupTransformFromRotation(transformMatrix, rotMatrix_0_0_0, light->origin);
+			//!!			MatrixSetupTransformFromRotation(transformMatrix, rotMatrix_0_0_0, light->origin);
 			rotMatrix = &rotMatrix_0_0_0;
 			rotMatrix_r = &rotMatrix_0_0_0_r;
 			break;
 		}
 		case 1:
 		{
-//!!			MatrixSetupTransformFromRotation(transformMatrix, rotMatrix_0_180_0, light->origin);
+			//!!			MatrixSetupTransformFromRotation(transformMatrix, rotMatrix_0_180_0, light->origin);
 			rotMatrix = &rotMatrix_0_180_0;
 			rotMatrix_r = &rotMatrix_0_180_0_r;
 			break;
 		}
 		case 2:
 		{
-//!!			MatrixSetupTransformFromRotation(transformMatrix, rotMatrix_0_90_0, light->origin);
+			//!!			MatrixSetupTransformFromRotation(transformMatrix, rotMatrix_0_90_0, light->origin);
 			rotMatrix = &rotMatrix_0_90_0;
 			rotMatrix_r = &rotMatrix_0_90_0_r;
 			break;
 		}
 		case 3:
 		{
-//!!			MatrixSetupTransformFromRotation(transformMatrix, rotMatrix_0_270_0, light->origin);
+			//!!			MatrixSetupTransformFromRotation(transformMatrix, rotMatrix_0_270_0, light->origin);
 			rotMatrix = &rotMatrix_0_270_0;
 			rotMatrix_r = &rotMatrix_0_270_0_r;
 			break;
 		}
 		case 4:
 		{
-//!!			MatrixSetupTransformFromRotation(transformMatrix, rotMatrix_m90_0_0, light->origin);
+			//!!			MatrixSetupTransformFromRotation(transformMatrix, rotMatrix_m90_0_0, light->origin);
 			rotMatrix = &rotMatrix_m90_0_0;
 			rotMatrix_r = &rotMatrix_m90_0_0_r;
 			break;
 		}
 		case 5:
 		{
-//!!			MatrixSetupTransformFromRotation(transformMatrix, rotMatrix_90_0_0, light->origin);
+			//!!			MatrixSetupTransformFromRotation(transformMatrix, rotMatrix_90_0_0, light->origin);
 			rotMatrix = &rotMatrix_90_0_0;
 			rotMatrix_r = &rotMatrix_90_0_0_r;
 			break;
@@ -1958,188 +2204,188 @@ byte R_CalcLightCubeSideBits(trRefLight_t *light, vec3_t worldBounds[2])
 		}
 #endif
 
-//!!		MatrixAffineInverse(transformMatrix, tmpMatrix);
+		//!!		MatrixAffineInverse(transformMatrix, tmpMatrix);
 
-/*	out[0] = in[0];       out[4] = in[1];       out[8] = in[2];          out[12] = -(in[12] * out[0] + in[13] * out[4] + in[14] * out[8]);
-	out[1] = in[4];       out[5] = in[5];       out[9] = in[6];          out[13] = -(in[12] * out[1] + in[13] * out[5] + in[14] * out[9]);
-	out[2] = in[8];       out[6] = in[9];       out[10] = in[10];        out[14] = -(in[12] * out[2] + in[13] * out[6] + in[14] * out[10]);
-	out[3] = 0.0f;        out[7] = 0.0f;        out[11] = 0.0f;          out[15] = 1.0f;
+		/*	out[0] = in[0];       out[4] = in[1];       out[8] = in[2];          out[12] = -(in[12] * out[0] + in[13] * out[4] + in[14] * out[8]);
+			out[1] = in[4];       out[5] = in[5];       out[9] = in[6];          out[13] = -(in[12] * out[1] + in[13] * out[5] + in[14] * out[9]);
+			out[2] = in[8];       out[6] = in[9];       out[10] = in[10];        out[14] = -(in[12] * out[2] + in[13] * out[6] + in[14] * out[10]);
+			out[3] = 0.0f;        out[7] = 0.0f;        out[11] = 0.0f;          out[15] = 1.0f;
 
-	out[0] = in[0];       out[4] = in[1];       out[8] = in[2];          out[12] = -(in[12] * in[0] + in[13] * in[1] + in[14] * in[2]);
-	out[1] = in[4];       out[5] = in[5];       out[9] = in[6];          out[13] = -(in[12] * in[4] + in[13] * in[5] + in[14] * in[6]);
-	out[2] = in[8];       out[6] = in[9];       out[10] = in[10];        out[14] = -(in[12] * in[8] + in[13] * in[9] + in[14] * in[10]);
-	out[3] = 0.0f;        out[7] = 0.0f;        out[11] = 0.0f;          out[15] = 1.0f;
+			out[0] = in[0];       out[4] = in[1];       out[8] = in[2];          out[12] = -(in[12] * in[0] + in[13] * in[1] + in[14] * in[2]);
+			out[1] = in[4];       out[5] = in[5];       out[9] = in[6];          out[13] = -(in[12] * in[4] + in[13] * in[5] + in[14] * in[6]);
+			out[2] = in[8];       out[6] = in[9];       out[10] = in[10];        out[14] = -(in[12] * in[8] + in[13] * in[9] + in[14] * in[10]);
+			out[3] = 0.0f;        out[7] = 0.0f;        out[11] = 0.0f;          out[15] = 1.0f;
 
-	out[0] = in[0];       out[4] = in[1];       out[8] = in[2];          out[12] = -dot(vec3 in[0], vec3 in[12]);  // -dot(in0, light->origin)
-	out[1] = in[4];       out[5] = in[5];       out[9] = in[6];          out[13] = -dot(vec3 in[4], vec3 in[12]);  // -dot(in4, light->origin)
-	out[2] = in[8];       out[6] = in[9];       out[10] = in[10];        out[14] = -dot(vec3 in[8], vec3 in[12]);  // -dot(in8, light->origin)
-	out[3] = 0.0f;        out[7] = 0.0f;        out[11] = 0.0f;          out[15] = 1.0f;
+			out[0] = in[0];       out[4] = in[1];       out[8] = in[2];          out[12] = -dot(vec3 in[0], vec3 in[12]);  // -dot(in0, light->origin)
+			out[1] = in[4];       out[5] = in[5];       out[9] = in[6];          out[13] = -dot(vec3 in[4], vec3 in[12]);  // -dot(in4, light->origin)
+			out[2] = in[8];       out[6] = in[9];       out[10] = in[10];        out[14] = -dot(vec3 in[8], vec3 in[12]);  // -dot(in8, light->origin)
+			out[3] = 0.0f;        out[7] = 0.0f;        out[11] = 0.0f;          out[15] = 1.0f;
 
-	// a version that uses both rotMatrix and the transposed rotMatrix_r
-	out[0] = in_r[0];      out[4] = in_r[4];       out[8] = in_r[8];          out[12] = -dot(vec3 in[0], vec3 in[12]);  // -dot(in0, light->origin)
-	out[1] = in_r[1];      out[5] = in_r[5];       out[9] = in_r[9];          out[13] = -dot(vec3 in[4], vec3 in[12]);  // -dot(in4, light->origin)
-	out[2] = in_r[2];      out[6] = in_r[6];       out[10] = in_r[10];        out[14] = -dot(vec3 in[8], vec3 in[12]);  // -dot(in8, light->origin)
-	out[3] = in_r[3];      out[7] = in_r[7];       out[11] = in_r[11];        out[15] = 1.0f;
+			// a version that uses both rotMatrix and the transposed rotMatrix_r
+			out[0] = in_r[0];      out[4] = in_r[4];       out[8] = in_r[8];          out[12] = -dot(vec3 in[0], vec3 in[12]);  // -dot(in0, light->origin)
+			out[1] = in_r[1];      out[5] = in_r[5];       out[9] = in_r[9];          out[13] = -dot(vec3 in[4], vec3 in[12]);  // -dot(in4, light->origin)
+			out[2] = in_r[2];      out[6] = in_r[6];       out[10] = in_r[10];        out[14] = -dot(vec3 in[8], vec3 in[12]);  // -dot(in8, light->origin)
+			out[3] = in_r[3];      out[7] = in_r[7];       out[11] = in_r[11];        out[15] = 1.0f;
 
-	^^ that last version is doing the same as the following SSE3 version:
-*/
+			^^ that last version is doing the same as the following SSE3 version:
+		*/
 #ifndef ETL_SSE
-	/*out[0] = rotMatrix_r[0];      out[4] = rotMatrix_r[4];       out[8] = rotMatrix_r[8];          out[12] = -dot(vec3 in[0], light->origin);
-	out[1] = rotMatrix_r[1];      out[5] = rotMatrix_r[5];       out[9] = rotMatrix_r[9];          out[13] = -dot(vec3 in[4], light->origin);
-	out[2] = rotMatrix_r[2];      out[6] = rotMatrix_r[6];       out[10] = rotMatrix_r[10];        out[14] = -dot(vec3 in[8], light->origin);
-	out[3] = rotMatrix_r[3];      out[7] = rotMatrix_r[7];       out[11] = rotMatrix_r[11];        out[15] = 1.0f;*/
-	Vector4Copy((float *)&rotMatrix_r[0], &tmpMatrix[0]);
-	Vector4Copy((float *)&rotMatrix_r[4], &tmpMatrix[4]);
-	Vector4Copy((float *)&rotMatrix_r[8], &tmpMatrix[8]);
-	Dot((float *)&rotMatrix[0], (const float *)&light->origin, tmpMatrix[12]);
-	Dot((float *)&rotMatrix[4], (const float *)&light->origin, tmpMatrix[13]);
-	Dot((float *)&rotMatrix[8], (const float *)&light->origin, tmpMatrix[14]);
-	tmpMatrix[15] = 1.0f;
-	Matrix4Multiply(quakeToOpenGLMatrix, tmpMatrix, viewMatrix);	//@
+		/*out[0] = rotMatrix_r[0];      out[4] = rotMatrix_r[4];       out[8] = rotMatrix_r[8];          out[12] = -dot(vec3 in[0], light->origin);
+		out[1] = rotMatrix_r[1];      out[5] = rotMatrix_r[5];       out[9] = rotMatrix_r[9];          out[13] = -dot(vec3 in[4], light->origin);
+		out[2] = rotMatrix_r[2];      out[6] = rotMatrix_r[6];       out[10] = rotMatrix_r[10];        out[14] = -dot(vec3 in[8], light->origin);
+		out[3] = rotMatrix_r[3];      out[7] = rotMatrix_r[7];       out[11] = rotMatrix_r[11];        out[15] = 1.0f;*/
+		Vector4Copy((float *)&rotMatrix_r[0], &tmpMatrix[0]);
+		Vector4Copy((float *)&rotMatrix_r[4], &tmpMatrix[4]);
+		Vector4Copy((float *)&rotMatrix_r[8], &tmpMatrix[8]);
+		Dot(rotMatrix[0], light->origin, tmpMatrix[12]);
+		Dot(rotMatrix[4], light->origin, tmpMatrix[13]);
+		Dot(rotMatrix[8], light->origin, tmpMatrix[14]);
+		tmpMatrix[15] = 1.0f;
+		Matrix4Multiply(quakeToOpenGLMatrix, tmpMatrix, viewMatrix);	//@
 #else
-	// this is setting tmpMatrix.
-	//	MatrixSetupTransformFromRotation(transformMatrix, rotMatrix_x_y_z, light->origin)
-	//	MatrixAffineInverse(transformMatrix, tmpMatrix);
-	__m128 xmm0, xmm1, xmm2, xmm3, xmm4, xmm5, xmm6, xmm7, zeroes;
-	zeroes = _mm_setzero_ps();
-	xmm0 = _mm_loadh_pi(_mm_load_ss(&light->origin[0]), (const __m64 *)(&light->origin[1]));	// xmm0 = z y 0 x
+		// this is setting tmpMatrix.
+		//	MatrixSetupTransformFromRotation(transformMatrix, rotMatrix_x_y_z, light->origin)
+		//	MatrixAffineInverse(transformMatrix, tmpMatrix);
+		zeroes = _mm_setzero_ps();
+		xmm0 = _mm_loadh_pi(_mm_load_ss(&light->origin[0]), (const __m64 *)(&light->origin[1]));	// xmm0 = z y 0 x
 
-	xmm2 = _mm_loadh_pi(_mm_load_ss(rotMatrix[0]), (const __m64 *)(rotMatrix[1]));		// xmm2 = z y 0 x
-	xmm1 = _mm_mul_ps(xmm0, xmm2);
-	xmm7 = _mm_movehdup_ps(xmm1);		// faster way to do: 2 * hadd
-	xmm6 = _mm_add_ps(xmm1, xmm7);		//
-	xmm7 = _mm_movehl_ps(xmm7, xmm6);	//
-	xmm1 = _mm_add_ss(xmm6, xmm7);		// xmm1 = dot(in0, in12)
-	xmm1 = _mm_sub_ps(zeroes, xmm1);
-	_mm_store_ss(&tmpMatrix[12], xmm1);
+		xmm2 = _mm_loadh_pi(_mm_load_ss((const float *)&rotMatrix[0]), (const __m64 *)(&rotMatrix[1]));		// xmm2 = z y 0 x
+		xmm1 = _mm_mul_ps(xmm0, xmm2);
+		xmm7 = _mm_movehdup_ps(xmm1);		// faster way to do: 2 * hadd
+		xmm6 = _mm_add_ps(xmm1, xmm7);		//
+		xmm7 = _mm_movehl_ps(xmm7, xmm6);	//
+		xmm1 = _mm_add_ss(xmm6, xmm7);		// xmm1 = dot(in0, in12)
+		xmm1 = _mm_sub_ps(zeroes, xmm1);
+		_mm_store_ss(&tmpMatrix[12], xmm1);
 
-	xmm2 = _mm_loadh_pi(_mm_load_ss(rotMatrix[4]), (const __m64 *)(rotMatrix[5]));		// xmm2 = z y 0 x
-	xmm4 = _mm_mul_ps(xmm0, xmm2);
-	xmm7 = _mm_movehdup_ps(xmm4);		// faster way to do: 2 * hadd
-	xmm6 = _mm_add_ps(xmm4, xmm7);		//
-	xmm7 = _mm_movehl_ps(xmm7, xmm6);	//
-	xmm4 = _mm_add_ss(xmm6, xmm7);		// xmm4 = dot(in4, in12)
-	xmm4 = _mm_sub_ps(zeroes, xmm4);
-	_mm_store_ss(&tmpMatrix[13], xmm4);
+		xmm2 = _mm_loadh_pi(_mm_load_ss((const float *)&rotMatrix[4]), (const __m64 *)(&rotMatrix[5]));		// xmm2 = z y 0 x
+		xmm4 = _mm_mul_ps(xmm0, xmm2);
+		xmm7 = _mm_movehdup_ps(xmm4);		// faster way to do: 2 * hadd
+		xmm6 = _mm_add_ps(xmm4, xmm7);		//
+		xmm7 = _mm_movehl_ps(xmm7, xmm6);	//
+		xmm4 = _mm_add_ss(xmm6, xmm7);		// xmm4 = dot(in4, in12)
+		xmm4 = _mm_sub_ps(zeroes, xmm4);
+		_mm_store_ss(&tmpMatrix[13], xmm4);
 
-	xmm2 = _mm_loadh_pi(_mm_load_ss(rotMatrix[8]), (const __m64 *)(rotMatrix[9]));		// xmm2 = z y 0 x
-	xmm5 = _mm_mul_ps(xmm0, xmm2);
-	xmm7 = _mm_movehdup_ps(xmm5);		// faster way to do: 2 * hadd
-	xmm6 = _mm_add_ps(xmm5, xmm7);		//
-	xmm7 = _mm_movehl_ps(xmm7, xmm6);	//
-	xmm5 = _mm_add_ss(xmm6, xmm7);		// xmm5 = dot(in8, in12)
-	xmm5 = _mm_sub_ps(zeroes, xmm5);
-	_mm_store_ss(&tmpMatrix[14], xmm5);
+		xmm2 = _mm_loadh_pi(_mm_load_ss((const float *)&rotMatrix[8]), (const __m64 *)(&rotMatrix[9]));		// xmm2 = z y 0 x
+		xmm5 = _mm_mul_ps(xmm0, xmm2);
+		xmm7 = _mm_movehdup_ps(xmm5);		// faster way to do: 2 * hadd
+		xmm6 = _mm_add_ps(xmm5, xmm7);		//
+		xmm7 = _mm_movehl_ps(xmm7, xmm6);	//
+		xmm5 = _mm_add_ss(xmm6, xmm7);		// xmm5 = dot(in8, in12)
+		xmm5 = _mm_sub_ps(zeroes, xmm5);
+		_mm_store_ss(&tmpMatrix[14], xmm5);
 
-	_mm_store_ss(&tmpMatrix[15], _mm_set_ss(1.f));
-	_mm_storeu_ps(&tmpMatrix[0], _mm_loadu_ps(rotMatrix_r[0]));
-	_mm_storeu_ps(&tmpMatrix[4], _mm_loadu_ps(rotMatrix_r[4]));
-	_mm_storeu_ps(&tmpMatrix[8], _mm_loadu_ps(rotMatrix_r[8]));
+		_mm_store_ss(&tmpMatrix[15], _mm_set_ss(1.f));
+		_mm_storeu_ps(&tmpMatrix[0], _mm_loadu_ps((const float *)&rotMatrix_r[0]));
+		_mm_storeu_ps(&tmpMatrix[4], _mm_loadu_ps((const float *)&rotMatrix_r[4]));
+		_mm_storeu_ps(&tmpMatrix[8], _mm_loadu_ps((const float *)&rotMatrix_r[8]));
 
-// --TODO: do that quakeToOpenGLMatrix matmult also.. still to implement
-// update: it's implemented now, but i leave in all comments.
-// That'll make it easier to trace back some steps, and understand what's going on.
-// If you see the final 4 vector4set statements that handle the trandformation (quakeToOpenGLMatrix * tmpMatrix) only,
-// it would be confusing, and not easy to read code.
-/*
-					0.0f, 0.0f, -1.0f, 0.0f,
-	viewMatrix =	-1.0f, 0.0f, 0.0f, 0.0f,   *  tmpMatrix
-					0.0f, 1.0f, 0.0f, 0.0f,
-					0.0f, 0.0f, 0.0f, 1.0f
-
-
-	viewMatrix[0] = b[0] * 0 + b[1] * -1 + b[2] * 0 + b[3] * 0;
-	viewMatrix[1] = b[0] * 0 + b[1] * 0 + b[2] * 1 + b[3] * 0;
-	viewMatrix[2] = b[0] * -1 + b[1] * 0 + b[2] * 0 + b[3] * 0;
-	viewMatrix[3] = b[0] * 0 + b[1] * 0 + b[2] * 0 + b[3] * 1;
+		// --TODO: do that quakeToOpenGLMatrix matmult also.. still to implement
+		// update: it's implemented now, but i leave in all comments.
+		// That'll make it easier to trace back some steps, and understand what's going on.
+		// If you see the final 4 vector4set statements that handle the trandformation (quakeToOpenGLMatrix * tmpMatrix) only,
+		// it would be confusing, and not easy to read code.
+		/*
+							0.0f, 0.0f, -1.0f, 0.0f,
+			viewMatrix =	-1.0f, 0.0f, 0.0f, 0.0f,   *  tmpMatrix
+							0.0f, 1.0f, 0.0f, 0.0f,
+							0.0f, 0.0f, 0.0f, 1.0f
 
 
-	viewMatrix[0] = -b[1];
-	viewMatrix[1] = b[2];
-	viewMatrix[2] = -b[0];
-	viewMatrix[3] = b[3];
+			viewMatrix[0] = b[0] * 0 + b[1] * -1 + b[2] * 0 + b[3] * 0;
+			viewMatrix[1] = b[0] * 0 + b[1] * 0 + b[2] * 1 + b[3] * 0;
+			viewMatrix[2] = b[0] * -1 + b[1] * 0 + b[2] * 0 + b[3] * 0;
+			viewMatrix[3] = b[0] * 0 + b[1] * 0 + b[2] * 0 + b[3] * 1;
 
-	viewMatrix[4] = -b[5];
-	viewMatrix[5] = b[6];
-	viewMatrix[6] = -b[4];
-	viewMatrix[7] = b[7];
 
-	viewMatrix[8] = -b[9];
-	viewMatrix[9] = b[10];
-	viewMatrix[10] = -b[8];
-	viewMatrix[11] = b[11];
+			viewMatrix[0] = -b[1];
+			viewMatrix[1] = b[2];
+			viewMatrix[2] = -b[0];
+			viewMatrix[3] = b[3];
 
-	viewMatrix[12] = -b[13];
-	viewMatrix[13] = b[14];
-	viewMatrix[14] = -b[12];
-	viewMatrix[15] = b[15];
+			viewMatrix[4] = -b[5];
+			viewMatrix[5] = b[6];
+			viewMatrix[6] = -b[4];
+			viewMatrix[7] = b[7];
 
-*/
-/*$$	//@	new code that does this: Matrix4Multiply(quakeToOpenGLMatrix, tmpMatrix, viewMatrix);
-	// but atm it is commented out, because we do all viewMatrix-handling via registers (no need to store in seperate matrx var).
-	Vector4Set(&viewMatrix[0], -tmpMatrix[1], tmpMatrix[2], -tmpMatrix[0], tmpMatrix[3]);
-	Vector4Set(&viewMatrix[4], -tmpMatrix[5], tmpMatrix[6], -tmpMatrix[4], tmpMatrix[7]);
-	Vector4Set(&viewMatrix[8], -tmpMatrix[9], tmpMatrix[10], -tmpMatrix[8], tmpMatrix[11]);
-	Vector4Set(&viewMatrix[12], -tmpMatrix[13], tmpMatrix[14], -tmpMatrix[12], tmpMatrix[15]);*/
+			viewMatrix[8] = -b[9];
+			viewMatrix[9] = b[10];
+			viewMatrix[10] = -b[8];
+			viewMatrix[11] = b[11];
+
+			viewMatrix[12] = -b[13];
+			viewMatrix[13] = b[14];
+			viewMatrix[14] = -b[12];
+			viewMatrix[15] = b[15];
+
+		*/
+		/*$$	//@	new code that does this: Matrix4Multiply(quakeToOpenGLMatrix, tmpMatrix, viewMatrix);
+			// but atm it is commented out, because we do all viewMatrix-handling via registers (no need to store in seperate matrx var).
+			Vector4Set(&viewMatrix[0], -tmpMatrix[1], tmpMatrix[2], -tmpMatrix[0], tmpMatrix[3]);
+			Vector4Set(&viewMatrix[4], -tmpMatrix[5], tmpMatrix[6], -tmpMatrix[4], tmpMatrix[7]);
+			Vector4Set(&viewMatrix[8], -tmpMatrix[9], tmpMatrix[10], -tmpMatrix[8], tmpMatrix[11]);
+			Vector4Set(&viewMatrix[12], -tmpMatrix[13], tmpMatrix[14], -tmpMatrix[12], tmpMatrix[15]);*/
 #endif
 
-	// convert from our coordinate system (looking down X)
-	// to OpenGL's coordinate system (looking down -Z)
-//@	Matrix4Multiply(quakeToOpenGLMatrix, tmpMatrix, viewMatrix);
+			// convert from our coordinate system (looking down X)
+			// to OpenGL's coordinate system (looking down -Z)
+		//@	Matrix4Multiply(quakeToOpenGLMatrix, tmpMatrix, viewMatrix);
 
-// NOTE: You can combine the 3 calculations: MatrixSetupTransformFromRotation, MatrixAffineInverse & Matrix4Multiply
-// It's all "just" to calculate the viewMatrix. The light.origin is the only changing value,
-// all other matrices are constants.
-// TODO: combine into a simpler block, providing the final viewMatrix asap.
-// update: done.
-
-
+		// NOTE: You can combine the 3 calculations: MatrixSetupTransformFromRotation, MatrixAffineInverse & Matrix4Multiply
+		// It's all "just" to calculate the viewMatrix. The light.origin is the only changing value,
+		// all other matrices are constants.
+		// TODO: combine into a simpler block, providing the final viewMatrix asap.
+		// update: done.
 
 
-		// OpenGL projection matrix
-/*
-// tan(90 degrees) is always the same constant, zNear is always 1  =>  keep it simple..(for the computer)
 
-		fovX = 90.0f;
-		fovY = 90.0f; //R_CalcFov(fovX, shadowMapResolutions[light->shadowLOD], shadowMapResolutions[light->shadowLOD]);
 
-		zNear = 1.0f;
-		zFar  = light->sphereRadius;
+				// OpenGL projection matrix
+		/*
+		// tan(90 degrees) is always the same constant, zNear is always 1  =>  keep it simple..(for the computer)
 
-		xMax = zNear * tan(DEG2RAD(fovX));
-		xMin = -xMax;
+				fovX = 90.0f;
+				fovY = 90.0f; //R_CalcFov(fovX, shadowMapResolutions[light->shadowLOD], shadowMapResolutions[light->shadowLOD]);
 
-		yMax = zNear * tan(DEG2RAD(fovY));
-		yMin = -yMax;
+				zNear = 1.0f;
+				zFar  = light->sphereRadius;
 
-		width  = xMax - xMin;
-		height = yMax - yMin;
-		depth  = zFar - zNear;
+				xMax = zNear * tan(DEG2RAD(fovX));
+				xMin = -xMax;
 
-		proj    = projectionMatrix;
-//		proj[0] = (2 * zNear) / width;  proj[4] = 0;                    proj[8] = (xMax + xMin) / width;    proj[12] = 0;
-//		proj[1] = 0;                    proj[5] = (2 * zNear) / height; proj[9] = (yMax + yMin) / height;   proj[13] = 0;
-//		proj[2] = 0;                    proj[6] = 0;                    proj[10] = -(zFar + zNear) / depth; proj[14] = -(2 * zFar * zNear) / depth;
-//		proj[3] = 0;                    proj[7] = 0;                    proj[11] = -1;                      proj[15] = 0;
-float rW = 1.0f / width, rH = 1.0f / height, rD = 1.0f / depth, zN2 = 2.0f * zNear;
-proj[0] = zN2 * rW;   proj[4] = 0.0f;       proj[8] = (xMax + xMin) * rW;      proj[12] = 0.0f;
-proj[1] = 0.0f;       proj[5] = zN2 * rH;   proj[9] = (yMax + yMin) * rH;      proj[13] = 0.0f;
-proj[2] = 0.0f;       proj[6] = 0.0f;       proj[10] = -(zFar + zNear) * rD;   proj[14] = -(zFar * zN2) * rD;
-proj[3] = 0.0f;       proj[7] = 0.0f;       proj[11] = -1.0f;                  proj[15] = 0.0f;
-*/
+				yMax = zNear * tan(DEG2RAD(fovY));
+				yMin = -yMax;
+
+				width  = xMax - xMin;
+				height = yMax - yMin;
+				depth  = zFar - zNear;
+
+				proj    = projectionMatrix;
+		//		proj[0] = (2 * zNear) / width;  proj[4] = 0;                    proj[8] = (xMax + xMin) / width;    proj[12] = 0;
+		//		proj[1] = 0;                    proj[5] = (2 * zNear) / height; proj[9] = (yMax + yMin) / height;   proj[13] = 0;
+		//		proj[2] = 0;                    proj[6] = 0;                    proj[10] = -(zFar + zNear) / depth; proj[14] = -(2 * zFar * zNear) / depth;
+		//		proj[3] = 0;                    proj[7] = 0;                    proj[11] = -1;                      proj[15] = 0;
+		float rW = 1.0f / width, rH = 1.0f / height, rD = 1.0f / depth, zN2 = 2.0f * zNear;
+		proj[0] = zN2 * rW;   proj[4] = 0.0f;       proj[8] = (xMax + xMin) * rW;      proj[12] = 0.0f;
+		proj[1] = 0.0f;       proj[5] = zN2 * rH;   proj[9] = (yMax + yMin) * rH;      proj[13] = 0.0f;
+		proj[2] = 0.0f;       proj[6] = 0.0f;       proj[10] = -(zFar + zNear) * rD;   proj[14] = -(zFar * zN2) * rD;
+		proj[3] = 0.0f;       proj[7] = 0.0f;       proj[11] = -1.0f;                  proj[15] = 0.0f;
+		*/
 		// ..after optimizing, not much of the old code exists.
 		zFar = light->sphereRadius;
 		depth = zFar - 1.0f;
 		float rWH = 36.466487130706173033023747483407f, rD = rcp(depth);
-#ifndef ETL_SSE
+#if 1 //ndef ETL_SSE
 		Vector4Set(&projectionMatrix[0], rWH, 0.f, 0.f, 0.f);
 		Vector4Set(&projectionMatrix[4], 0.f, rWH, 0.f, 0.f);
 		Vector4Set(&projectionMatrix[8], 0.f, 0.f, -(zFar + 1.0f) * rD, -1.f);
 		Vector4Set(&projectionMatrix[12], 0.f, 0.f, -(2.0f * zFar) * rD, 0.f);
 
 		// calculate frustum planes using the modelview projection matrix
+		Matrix4Copy(tmpMatrix, viewMatrix);
 		Matrix4Multiply(projectionMatrix, viewMatrix, viewProjectionMatrix);
-#else
+#else // todo: check some bug in the next block..
 		//$$ load the projectionMatrix
 		xmm4 = _mm_set_ps(0.f, 0.f, 0.f, rWH);
 		xmm5 = _mm_set_ps(0.f, 0.f, rWH, 0.f);
@@ -2212,7 +2458,7 @@ proj[3] = 0.0f;       proj[7] = 0.0f;       proj[11] = -1.0f;                  p
 
 		// use the frustum planes to cut off shadowmaps beyond the light volume
 		anyClip = qfalse;
-		culled  = qfalse;
+		culled = qfalse;
 		for (i = 0; i < 5; i++)
 		{
 			clipPlane = &frustum[i];
@@ -2254,8 +2500,18 @@ proj[3] = 0.0f;       proj[7] = 0.0f;       proj[11] = -1.0f;                  p
 	tr.pc.c_pyramidTests++;
 
 	return cubeSideBits;
+	}
 }
-// *INDENT-ON*
+#endif
+
+
+
+
+
+
+
+
+
 
 /**
  * @brief R_SetupLightLOD

@@ -561,7 +561,7 @@ static void R_AddLeafSurfaces(bspNode_t *node, int decalBits)
 	tr.pc.c_leafs++;
 
 	// add to z buffer bounds
-	if (node->mins[0] < tr.viewParms.visBounds[0][0])
+	/*if (node->mins[0] < tr.viewParms.visBounds[0][0])
 	{
 		tr.viewParms.visBounds[0][0] = node->mins[0];
 	}
@@ -572,9 +572,10 @@ static void R_AddLeafSurfaces(bspNode_t *node, int decalBits)
 	if (node->mins[2] < tr.viewParms.visBounds[0][2])
 	{
 		tr.viewParms.visBounds[0][2] = node->mins[2];
-	}
+	}*/
+	VectorMin(node->mins, tr.viewParms.visBounds[0], tr.viewParms.visBounds[0]);
 
-	if (node->maxs[0] > tr.viewParms.visBounds[1][0])
+	/*if (node->maxs[0] > tr.viewParms.visBounds[1][0])
 	{
 		tr.viewParms.visBounds[1][0] = node->maxs[0];
 	}
@@ -585,7 +586,8 @@ static void R_AddLeafSurfaces(bspNode_t *node, int decalBits)
 	if (node->maxs[2] > tr.viewParms.visBounds[1][2])
 	{
 		tr.viewParms.visBounds[1][2] = node->maxs[2];
-	}
+	}*/
+	VectorMax(node->maxs, tr.viewParms.visBounds[1], tr.viewParms.visBounds[1]);
 
 	// add the individual surfaces
 	mark = node->markSurfaces;

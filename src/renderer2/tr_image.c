@@ -35,10 +35,6 @@
 
 #include "tr_local.h"
 
- //!!!DEBUG!!!
- // sse3 (Pentium 4 Prescott, Athlon 64 San Diego, and up. old stuff.)
-#include "pmmintrin.h"
-
 static byte          s_intensitytable[256];
 static unsigned char s_gammatable[256];
 

@@ -95,7 +95,11 @@ void main()
 #endif
 #if defined(EVSM)
 	#if !defined(r_EVSMPostProcess)
+#if !defined(LIGHT_DIRECTIONAL)
 		gl_FragColor = var_FragColorEVSM; //ShadowDepthToEVSM(distance_);
+#else
+	gl_FragColor = vec4(0.0, 0.0, 0.0, distance_);
+#endif
 	#else
 		gl_FragColor = vec4(0.0, 0.0, 0.0, distance_);
 	#endif

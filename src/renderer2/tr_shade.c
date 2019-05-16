@@ -955,7 +955,7 @@ static void Render_lightMapping(int stage)
 									pStage->type == ST_BUNDLE_DBSR &&
 									tr.cubeProbes.currentElements > 0 && !tr.refdef.pixelTarget;
 	// !tr.refdef.pixelTarget to prevent using reflections before buildcubemaps() has finished. This is anti eye-cancer..
-	qboolean use_reflectionmap   = use_reflections && pStage->type == ST_BUNDLE_DBSR;
+	qboolean use_reflectionmap   = use_reflections && (pStage->type == ST_BUNDLE_DBSR);
 	// for now we pass USE_REFLECTIONS & USE_REFLECTIONMAP, but the lightmapping shader will only reflect when there's a reflectionmap assigned.
 	Ren_LogComment("--- Render_lightMapping ---\n");
 
@@ -3192,10 +3192,10 @@ void Tess_StageIteratorGeneric()
 
 		switch (pStage->type)
 		{
-		case ST_DIFFUSEMAP:  // diffuse
-		case ST_BUNDLE_DB:   // diffuse + bump
-		case ST_BUNDLE_DBS:  // diffuse + bump + specular
-		case ST_BUNDLE_DBSR: // diffuse + bump + specular + reflectionmap
+		case ST_DIFFUSEMAP:   // diffuse
+		case ST_BUNDLE_DB:    // diffuse + bump
+		case ST_BUNDLE_DBS:   // diffuse + bump + specular
+		case ST_BUNDLE_DBSR:  // diffuse + bump + specular + reflectionmap
 			//if(tess.surfaceShader->sort <= SS_OPAQUE)
 			if (r_vertexLighting->integer || r_precomputedLighting->integer)
 			{

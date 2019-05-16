@@ -9,8 +9,8 @@
 uniform bool SHOW_LIGHTMAP;
 //uniform bool SHOW_DELUXEMAP;
 
-uniform sampler2D u_LightMap;
 uniform float     u_DiffuseLighting;
+uniform sampler2D u_LightMap;
 #if defined(USE_DIFFUSE)
 uniform sampler2D u_DiffuseMap;
 #if defined(USE_ALPHA_TESTING)
@@ -76,7 +76,7 @@ void main()
 
 
 	// get the color from the lightmap
-	vec4 lightmapColor  = texture2D(u_LightMap, var_TexLight);
+	vec4 lightmapColor = texture2D(u_LightMap, var_TexLight);
 
 
 //#if defined(USE_DELUXE_MAPPING)
@@ -177,7 +177,6 @@ void main()
 	color.rgb += reflections;
 #endif // USE_REFLECTIONS
 	color *= lightmapColor; // we must blend using the lightmap.a
-
 
 #else // USE_NORMAL_MAPPING
 

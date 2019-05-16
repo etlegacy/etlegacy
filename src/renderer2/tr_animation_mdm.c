@@ -1660,7 +1660,7 @@ static void R_CalcBone(const int torsoParent, const refEntity_t *refent, int bon
 #endif
 	short *sh;
 	vec3_t vec , v2;
-	qboolean isTorso, fullTorso;
+	qboolean isTorso = qfalse, fullTorso = qfalse;
 	mdxBoneFrameCompressed_t *cBonePtr, *cTBonePtr;
 	mdxBoneFrame_t *bonePtr, *parentBone;
 	vec3_t angles, tangles;
@@ -1837,7 +1837,7 @@ static void R_CalcBoneLerp(const int torsoParent, const refEntity_t *refent, int
 #endif
 	short *sh, *sh2;
 	vec3_t vec, v2, dir;
-	qboolean isTorso, fullTorso;
+	qboolean isTorso = qfalse, fullTorso = qfalse;
 	mdxBoneFrameCompressed_t *cBonePtr, *cTBonePtr, *cOldBonePtr, *cOldTBonePtr;
 	mdxBoneFrame_t *bonePtr, *parentBone;
 	int ingles[3], tingles[3];
