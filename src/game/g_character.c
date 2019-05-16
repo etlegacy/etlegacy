@@ -80,7 +80,6 @@ static void G_CalcMoveSpeeds(bg_character_t *character)
 		// for each frame
 		for (j = 0; j < anim->numFrames; j++)
 		{
-
 			refent.frame           = anim->firstFrame + j;
 			refent.oldframe        = refent.frame;
 			refent.torsoFrameModel = refent.oldTorsoFrameModel = refent.frameModel = refent.oldframeModel = anim->mdxFile;
@@ -128,7 +127,6 @@ static void G_CalcMoveSpeeds(bg_character_t *character)
 				VectorCopy(o[k].origin, oldPos[k]);
 			}
 		}
-
 		// record the speed
 		anim->moveSpeed = round((totalSpeed / numSpeed) * 1000.0 / anim->frameLerp);
 	}
@@ -168,6 +166,7 @@ static qboolean G_ParseAnimationFiles(bg_character_t *character, const char *ani
 	{
 		G_Printf("File %s is too long\n", animationScript);
 		trap_FS_FCloseFile(f);
+
 		return qfalse;
 	}
 	trap_FS_Read(text, len, f);
@@ -202,6 +201,7 @@ static qboolean G_CheckForExistingAnimModelInfo(const char *animationGroup, cons
 			{
 				// found a match, use this animModelInfo
 				*animModelInfo = trav;
+
 				return qtrue;
 			}
 		}
@@ -221,7 +221,6 @@ static qboolean G_CheckForExistingAnimModelInfo(const char *animationGroup, cons
 		// clear the structure out ready for use
 		Com_Memset(*animModelInfo, 0, sizeof(animModelInfo_t));
 	}
-
 	// qfalse signifies that we need to parse the information from the script files
 	return qfalse;
 }
@@ -259,10 +258,10 @@ qboolean G_RegisterCharacter(const char *characterFile, bg_character_t *characte
 			G_Printf(S_COLOR_YELLOW "WARNING: failed to load animation files referenced from '%s'\n", characterFile);
 			return qfalse;
 		}
-
+#ifdef FEATURE_SERVERMDX
 		mdx_LoadHitsFile(characterDef.animationGroup, character->animModelInfo);
+#endif
 	}
-
 	return qtrue;
 }
 
@@ -317,6 +316,7 @@ void G_UpdateCharacter(gclient_t *client)
 		{
 			client->pers.characterIndex = characterIndex;
 			trap_GetConfigstring(CS_CHARACTERS + characterIndex, infostring, MAX_INFO_STRING);
+
 			if (!(client->pers.character = BG_FindCharacter(infostring)))
 			{
 				// not found - create it (this should never happen as we should have everything precached)
@@ -337,14 +337,11 @@ void G_UpdateCharacter(gclient_t *client)
 					goto set_default_character;
 				}
 			}
-
 			// reset anims so client's dont freak out
 
-			// xkan: this can only be done if the model really changed - otherwise, the
-			// animation may get screwed up if we are in the middle of some animation
-			// and we come into this function;
+			// this can only be done if the model really changed - otherwise, the animation may get
+			// screwed up if we are in the middle of some animation and we come into this function;
 			// plus, also reset the timer so we can properly start the next animation
-
 			client->ps.legsAnim   = 0;
 			client->ps.torsoAnim  = 0;
 			client->ps.legsTimer  = 0;
