@@ -2819,8 +2819,8 @@ void CG_Player(centity_t *cent)
 
 			VectorAdd(bmins, cent->lerpOrigin, bmins);
 			VectorAdd(bmaxs, cent->lerpOrigin, bmaxs);
-			// white
-			CG_RailTrail(tv(1.0f, 1.0f, 1.0f), bmins, bmaxs, 1, cent->currentState.number | HITBOXBIT_CLIENT);
+			// red
+			CG_RailTrail(tv(1.0f, 0.0f, 0.0f), bmins, bmaxs, 1, cent->currentState.number | HITBOXBIT_CLIENT);
 		}
 
 		// head axis
@@ -2887,23 +2887,7 @@ void CG_Player(centity_t *cent)
 			CG_RailTrail(tv(1.0f, 0.0f, 0.0f), mins, maxs, 1, cent->currentState.number | HITBOXBIT_CLIENT);
 
 			// head and legs
-			if (!(cg.predictedPlayerState.eFlags & EF_PRONE))
-			{
-				org[0] = cent->lerpOrigin[0];
-				org[1] = cent->lerpOrigin[1] + 4;
-				org[2] = maxs[2] + 6;
-
-				// head
-				VectorSet(mins, -6, -6, -6);
-				VectorSet(maxs, 6, 6, 6);
-
-				VectorAdd(org, mins, mins);
-				VectorAdd(org, maxs, maxs);
-
-				// red
-				CG_RailTrail(tv(1.0f, 0.0f, 0.0f), mins, maxs, 1, cent->currentState.number | HITBOXBIT_CLIENT | HITBOXBIT_HEAD);
-			}
-			else
+			if (cg.predictedPlayerState.eFlags & (EF_PRONE | EF_DEAD))
 			{
 				// legs
 				VectorCopy(playerlegsProneMins, mins);
@@ -2913,9 +2897,18 @@ void CG_Player(centity_t *cent)
 				forward[2] = 0;
 				VectorNormalizeFast(forward);
 
-				org[0] = cent->lerpOrigin[0] + forward[0] * -32;
-				org[1] = cent->lerpOrigin[1] + forward[1] * -24;
-				org[2] = cent->lerpOrigin[2] + cg.pmext.proneLegsOffset;
+				if (cg.predictedPlayerState.eFlags & EF_PRONE)
+				{
+					org[0] = cent->lerpOrigin[0] + forward[0] * -24;
+					org[1] = cent->lerpOrigin[1] + forward[1] * -24;
+					org[2] = cent->lerpOrigin[2] + cg.pmext.proneLegsOffset;
+				}
+				else // EF_DEAD
+				{
+					org[0] = cent->lerpOrigin[0] + forward[0] * 32;
+					org[1] = cent->lerpOrigin[1] + forward[1] * 32;
+					org[2] = cent->lerpOrigin[2] - cg.pmext.proneLegsOffset;
+				}
 
 				VectorAdd(org, mins, mins);
 				VectorAdd(org, maxs, maxs);
@@ -2926,12 +2919,37 @@ void CG_Player(centity_t *cent)
 				VectorSet(mins, -6, -6, -22);
 				VectorSet(maxs, 6, 6, -10);
 
-				org[0] = cent->lerpOrigin[0] + forward[0] * 24;
-				org[1] = cent->lerpOrigin[1] + forward[1] * 24;
-				org[2] = cent->lerpOrigin[2] + 8;
+				if (cg.predictedPlayerState.eFlags & EF_PRONE)
+				{
+					org[0] = cent->lerpOrigin[0] + forward[0] * 24;
+					org[1] = cent->lerpOrigin[1] + forward[1] * 24;
+					org[2] = cent->lerpOrigin[2] + 8;
+				}
+				else // EF_DEAD
+				{
+					org[0] = cent->lerpOrigin[0] + forward[0] * -32;
+					org[1] = cent->lerpOrigin[1] + forward[1] * -32;
+					org[2] = cent->lerpOrigin[2] - 4;
+				}
 
 				VectorAdd(org, mins, mins);
 				VectorAdd(org, maxs, maxs);
+				// red
+				CG_RailTrail(tv(1.0f, 0.0f, 0.0f), mins, maxs, 1, cent->currentState.number | HITBOXBIT_CLIENT | HITBOXBIT_HEAD);
+			}
+			else
+			{
+				org[0] = cent->lerpOrigin[0];
+				org[1] = cent->lerpOrigin[1];
+				org[2] = maxs[2] + 6;
+
+				// head
+				VectorSet(mins, -6, -6, -6);
+				VectorSet(maxs, 6, 6, 6);
+
+				VectorAdd(org, mins, mins);
+				VectorAdd(org, maxs, maxs);
+
 				// red
 				CG_RailTrail(tv(1.0f, 0.0f, 0.0f), mins, maxs, 1, cent->currentState.number | HITBOXBIT_CLIENT | HITBOXBIT_HEAD);
 			}
