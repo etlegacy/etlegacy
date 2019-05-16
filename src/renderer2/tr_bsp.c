@@ -7381,7 +7381,7 @@ void R_PrecacheInteractions()
 		MatrixAffineInverse(light->transformMatrix, light->viewMatrix); // R_SetupLightView(light);
 
 		// set up projection
-//		R_SetupLightProjection(light);
+		R_SetupLightProjection(light);
 
 		// calc local bounds for culling
 		R_SetupLightLocalBounds(light);
