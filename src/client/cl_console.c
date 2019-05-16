@@ -537,7 +537,32 @@ void Con_DrawVersion(void)
 		SCR_DrawSmallChar(cls.glconfig.vidWidth - (i - x + 1) * SMALLCHAR_WIDTH,
 		                  con.scanLines - 1.25f * SMALLCHAR_HEIGHT, version[x]);
 	}
+}
 
+/**
+ * @brief Draw system clock
+ */
+void Con_DrawClock(void)
+{
+	int       x, i;
+	char      clock[6];
+	time_t    longTime;
+	struct tm *localTime;
+
+	// get date from system
+	time(&longTime);
+	localTime = localtime(&longTime);
+
+	Com_sprintf(clock, sizeof(clock), _("%02d:%02d"), localTime->tm_hour, localTime->tm_min);
+
+	i = strlen(clock);
+
+	for (x = 0 ; x < i ; x++)
+	{
+		re.SetColor(g_color_table[ColorIndex(COLOR_MDGREY)]);
+
+		SCR_DrawSmallChar(cls.glconfig.vidWidth - (i - x + 2) * SMALLCHAR_WIDTH, 0.5f * SMALLCHAR_HEIGHT, clock[x]);
+	}
 }
 
 /**
@@ -757,6 +782,8 @@ void Con_DrawSolidConsole(float frac)
 	Con_DrawScrollbar(y - 1.5f * SMALLCHAR_HEIGHT, SCREEN_WIDTH - 5, 3);
 	// draw the version number
 	Con_DrawVersion();
+	// draw system clock
+	Con_DrawClock();
 
 	// draw text
 	con.visibleLines = (con.scanLines - SMALLCHAR_HEIGHT) / SMALLCHAR_HEIGHT - 1;  // rows of text to draw

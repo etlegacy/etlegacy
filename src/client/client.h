@@ -639,6 +639,7 @@ void Con_Shutdown(void);
 void Con_Linefeed(qboolean skipnotify);
 void CL_ConsolePrint(char *txt);
 
+void Con_DrawClock(void);
 void Con_DrawVersion(void);
 void Con_DrawInput(void);
 void Con_DrawScrollbar(int length, float x, float y);
