@@ -2800,7 +2800,8 @@ void CG_Player(centity_t *cent)
 #endif
 
 	// DEBUG
-	if (cg_debugPlayerHitboxes.integer)
+	if (cg_debugPlayerHitboxes.integer && cent->currentState.eType != ET_CORPSE &&
+			cent->currentState.number == cg.snap->ps.clientNum)
 	{
 		// position marker
 		if (cg_debugPlayerHitboxes.integer & 4)
