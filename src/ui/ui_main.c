@@ -6483,16 +6483,16 @@ static void UI_BuildServerDisplayList(int force)
 	{
 		if (numinvisible > 0)
 		{
-			DC->setCVar("ui_tmp_ServersFiltered", va(trap_TranslateString("Filtered/Total: %04i/%04i"), numinvisible, count));
+			DC->setCVar("ui_tmp_ServersFiltered", va(trap_TranslateString("Filtered/Total: %03i/%03i"), numinvisible, count));
 		}
 		else
 		{
-			DC->setCVar("ui_tmp_ServersFiltered", va(trap_TranslateString("^3Check your filters - no servers found!              ^9Filtered/Total: ^3%04i^9/%04i"), numinvisible, count));
+			DC->setCVar("ui_tmp_ServersFiltered", va(trap_TranslateString("^3Check your filters - no servers found!              ^9Filtered/Total: ^3%03i^9/%03i"), numinvisible, count));
 		}
 	}
 	else
 	{
-		DC->setCVar("ui_tmp_ServersFiltered", trap_TranslateString("^1No Connection or master down - no servers found!    ^9Filtered/Total: ^10000^9/0000"));
+		DC->setCVar("ui_tmp_ServersFiltered", trap_TranslateString("^1No Connection or master down - no servers found!    ^9Filtered/Total: ^1000^9/000"));
 	}
 }
 
