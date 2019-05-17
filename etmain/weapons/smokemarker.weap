@@ -43,6 +43,20 @@ weaponDef
 		//ejectBrassOffset  0 0 0
 		
 		//modModel 1		""
+                
+                impactSoundRange 800
+                impactFunction    "BigExplosionImpact"  // supports "MeleeImpact", "BulletImpact", "SmallExplosionImpact", "BigExplosionImpact", "MapMortarImpact" and "DynamiteExplosionImpact"
+                impactSoundVolume 127
+                impactMarkRadius  128
+                impactSound {                           // each surface supports up to 5 hits sounds. available surface : default, far, wood, metal, roof, gravel, glass, snow, water, flesh
+                
+                    default 3 "sound/weapons/airstrike/airstrike_expl_"
+                    far       "sound/weapons/airstrike/airstrike_expl_far.wav"
+                    water     "sound/weapons/grenade/gren_expl_water.wav"
+                }
+                impactMark {                    // each surface supports up to 1 marks shader. available surface : default, far, wood, metal, roof, gravel, glass, snow, water, flesh
+                    default "gfx/damage/burn_med_mrk"
+                }
 		
 		firstPerson {
 			model		"models/multiplayer/smokegrenade/v_smokegrenade.md3"

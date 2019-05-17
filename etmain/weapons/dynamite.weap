@@ -7,7 +7,7 @@ weaponDef
 		//pickupSound		"sound/misc/w_pkup.wav"
 		
 		weaponConfig		"models/weapons2/dynamite/weapon.cfg"
-		handsModel			"models/weapons2/dynamite/v_dynamite_hand.mdc"
+		handsModel              "models/weapons2/dynamite/v_dynamite_hand.mdc"
 		
 		//flashDlightColor	0 0 0
 		//flashSound		""									// supports up to 4 flash sounds
@@ -44,6 +44,19 @@ weaponDef
 		
 		//modModel 1		""
 		
+                impactSoundRange 400
+                impactFunction   "DynamiteExplosionImpact" // supports "MeleeImpact", "BulletImpact", "SmallExplosionImpact", "BigExplosionImpact", "MapMortarImpact" and "DynamiteExplosionImpact"
+                impactSoundVolume 127
+                impactMarkRadius  128
+                impactSound {                       // each surface supports up to 5 hits sounds. available surface : default, far, wood, metal, roof, gravel, glass, snow, water, flesh
+                
+                    default "sound/weapons/dynamite/dynamite_expl.wav"
+                    far     "sound/weapons/dynamite/dynamite_expl_far.wav"
+                }
+                impactMark {                    // each surface supports up to 1 marks shader. available surface : default, far, wood, metal, roof, gravel, glass, snow, water, flesh
+                    default "gfx/damage/burn_med_mrk"
+                }
+
 		firstPerson {
 			model		"models/weapons2/dynamite/v_dynamite.md3"
 			//flashModel	""

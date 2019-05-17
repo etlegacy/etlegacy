@@ -45,6 +45,20 @@ weaponDef
 		
 		modModel 0			"models/multiplayer/kar98/v_kar98_scope.md3"
 		modModel 1			"models/multiplayer/kar98/kar98_att.md3"
+                
+                impactSoundRange  400
+                impactFunction    "SmallExplosionImpact"  // supports "MeleeImpact", "BulletImpact", "SmallExplosionImpact", "BigExplosionImpact", "MapMortarImpact" and "DynamiteExplosionImpact"
+                impactSoundVolume 127
+                impactMarkRadius  64
+                impactSound {                           // each surface supports up to 5 hits sounds. available surface : default, far, wood, metal, roof, gravel, glass, snow, water, flesh
+                
+                    default "sound/weapons/grenade/gren_expl.wav"
+                    far     "sound/weapons/grenade/gren_expl_far.wav"
+                    water   "sound/weapons/grenade/gren_expl_water.wav"
+                }
+                impactMark {                    // each surface supports up to 1 marks shader. available surface : default, far, wood, metal, roof, gravel, glass, snow, water, flesh
+                    default "gfx/damage/burn_med_mrk"
+                }
 		
 		firstPerson {
 			model			"models/multiplayer/kar98/v_kar98.md3"

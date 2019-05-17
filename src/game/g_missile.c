@@ -255,7 +255,6 @@ void G_MissileImpact(gentity_t *ent, trace_t *trace, int impactDamage)
 
 	if (CHECKBITWISE(GetWeaponTableData(ent->s.weapon)->type, WEAPON_TYPE_MORTAR | WEAPON_TYPE_SET))
 	{
-		temp->s.legsAnim = ent->s.legsAnim; // need this one as well
 		temp->r.svFlags |= SVF_BROADCAST;
 	}
 
@@ -577,7 +576,8 @@ void G_RunMissile(gentity_t *ent)
 	// ignoring interactions with the missile owner
 	trap_Trace(&tr, ent->r.currentOrigin, ent->r.mins, ent->r.maxs, origin, ent->r.ownerNum, ent->clipmask);
 
-	if (CHECKBITWISE(GetWeaponTableData(ent->s.weapon)->type, WEAPON_TYPE_MORTAR | WEAPON_TYPE_SET) && ent->count2 == 1)
+	if ((CHECKBITWISE(GetWeaponTableData(ent->s.weapon)->type, WEAPON_TYPE_MORTAR | WEAPON_TYPE_SET) ||
+	     ent->s.weapon == WP_AIRSTRIKE || ent->s.weapon == WP_ARTY) && ent->count2 == 1)
 	{
 		if (ent->r.currentOrigin[2] > origin[2] && origin[2] - BG_GetGroundHeightAtPoint(origin) < 512)
 		{
@@ -591,28 +591,38 @@ void G_RunMissile(gentity_t *ent)
 
 			if (mortar_tr.fraction != 1.f)
 			{
-				gentity_t *tent;
+				int i;
 
-				impactpos[2] = BG_GetGroundHeightAtPoint(impactpos);
+				i = rand() % 3;
 
-				tent              = G_TempEntity(impactpos, EV_MORTAR_IMPACT);
-				tent->s.clientNum = ent->r.ownerNum;
-				tent->r.svFlags  |= SVF_BROADCAST;
+				// Sound effect for spotter round, had to do this as half-second bomb warning
+				G_AddEvent(ent, EV_GENERAL_SOUND_VOLUME, GAMESOUND_WPN_ARTILLERY_FLY_1 + i);
+				ent->s.onFireStart = 255;                   // sound control
 
-				ent->count2     = 2;
-				ent->s.legsAnim = 1;
+				if ((CHECKBITWISE(GetWeaponTableData(ent->s.weapon)->type, WEAPON_TYPE_MORTAR | WEAPON_TYPE_SET)))
+				{
+					gentity_t *tent;
 
-				/*{
-				    gentity_t *tent;
+					impactpos[2] = BG_GetGroundHeightAtPoint(impactpos);
 
-				    tent = G_TempEntity( origin, EV_RAILTRAIL );
-				    VectorCopy( impactpos, tent->s.origin2 );
-				    tent->s.dmgFlags = 0;
+					tent              = G_TempEntity(impactpos, EV_MORTAR_IMPACT);
+					tent->s.clientNum = ent->r.ownerNum;
+					tent->r.svFlags  |= SVF_BROADCAST;
 
-				    tent = G_TempEntity( origin, EV_RAILTRAIL );
-				    VectorCopy( ent->r.currentOrigin, tent->s.origin2 );
-				    tent->s.dmgFlags = 0;
-				}*/
+					ent->count2 = 2;
+
+					/*{
+					    gentity_t *tent;
+
+					    tent = G_TempEntity( origin, EV_RAILTRAIL );
+					    VectorCopy( impactpos, tent->s.origin2 );
+					    tent->s.dmgFlags = 0;
+
+					    tent = G_TempEntity( origin, EV_RAILTRAIL );
+					    VectorCopy( ent->r.currentOrigin, tent->s.origin2 );
+					    tent->s.dmgFlags = 0;
+					}*/
+				}
 			}
 		}
 	}

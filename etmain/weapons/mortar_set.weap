@@ -38,6 +38,19 @@ weaponDef
 		//ejectBrassOffset  0 0 0
 		
 		//modModel 1		""
+                
+                impactSoundRange  400
+                impactFunction    "SmallExplosionImpact"  // supports "MeleeImpact", "BulletImpact", "SmallExplosionImpact", "BigExplosionImpact", "MapMortarImpact" and "DynamiteExplosionImpact"
+                impactSoundVolume 127
+                impactMarkRadius  64
+                impactSound {
+                    default   "sound/weapons/mortar/mortar_expl.wav"
+                    far       "sound/weapons/mortar/mortar_expl_far.wav"
+                    water     "sound/weapons/grenade/gren_expl_water.wav"
+                }
+                impactMark {                    // each surface supports up to 1 marks shader. available surface : default, far, wood, metal, roof, gravel, glass, snow, water, flesh
+                    default "gfx/damage/burn_med_mrk"
+                }
 		
 		firstPerson {
 			model		"models/multiplayer/mortar/v_mortar.md3"

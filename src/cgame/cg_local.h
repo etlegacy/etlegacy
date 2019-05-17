@@ -695,6 +695,41 @@ typedef enum
 } modelViewType_t;
 
 /**
+ * @enum impactSurface_s
+ * @typedef impactSurface_t
+ * @brief index used to identify sound to play surface hit
+ * wood, metal, roof, stone, glass, water, snow, flesh
+ */
+typedef enum impactSurface_s
+{
+	W_IMPACT_DEFAULT = 0,  ///< default sound in case of no sound for hit surface sound
+	W_IMPACT_FAR,          ///< used sound when player is far from the impact origin
+	W_IMPACT_METAL,
+	W_IMPACT_WOOD,
+	W_IMPACT_GRASS,
+	W_IMPACT_GRAVEL,
+	W_IMPACT_GLASS,
+	W_IMPACT_SNOW,
+	W_IMPACT_ROOF,
+	W_IMPACT_WATER,
+	W_IMPACT_FLESH,
+	W_MAX_IMPACTS
+
+} impactSurface_t;
+
+/**
+ * @struct impactTable_s
+ * @typedef impactTable_t
+ * @brief Impact Table
+ */
+typedef struct impactTable_s
+{
+	int surfaceType;
+	const char *surfaceName;
+
+} impactTable_t;
+
+/**
  * @struct partModel_s
  * @typedef partModel_t
  * @brief
@@ -716,6 +751,19 @@ typedef struct weaponModel_s
 	qhandle_t model;
 	qhandle_t skin[3];              ///< 0: neutral, 1: axis, 2: allied
 } weaponModel_t;
+
+#define MAX_WEAPON_SOUNDS   5
+
+/**
+ * @struct weaponSounds_s
+ * @typedef impactSounds_t
+ * @brief
+ */
+typedef struct weaponSounds_s
+{
+	int count;
+	sfxHandle_t sounds[MAX_WEAPON_SOUNDS];
+}weaponSounds_t;
 
 /**
  * @struct weaponInfo_s
@@ -775,6 +823,13 @@ typedef struct weaponInfo_s
 
 	sfxHandle_t switchSound;
 	sfxHandle_t noAmmoSound;
+
+	int impactSoundRange;
+	int impactSoundVolume;
+	float impactMarkRadius;
+	sfxHandle_t impactMark[W_MAX_IMPACTS];
+	weaponSounds_t impactSound[W_MAX_IMPACTS];
+	void (*impactFunc)(int weapon, int missileEffect, vec3_t origin, vec3_t dir, int surfFlags, float *radius, int *markDuration);
 } weaponInfo_t;
 
 #define MAX_VIEWDAMAGE  8
@@ -1314,8 +1369,6 @@ typedef struct
 
 #define MAX_LOCKER_DEBRIS   5
 
-#define MAX_IMPACT_SOUNDS   5
-
 /**
  * @struct cgMedia_t
  * @brief all of the model, shader, and sound references that are
@@ -1486,10 +1539,6 @@ typedef struct
 	qhandle_t wakeMarkShaderAnim;
 	qhandle_t bloodMarkShaders[5];
 	qhandle_t bloodDotShaders[5];
-	qhandle_t bulletMarkShader;
-	qhandle_t bulletMarkShaderMetal;
-	qhandle_t bulletMarkShaderWood;
-	qhandle_t bulletMarkShaderGlass;
 	qhandle_t burnMarkShader;
 
 	qhandle_t flamebarrel;
@@ -1503,7 +1552,7 @@ typedef struct
 	qhandle_t thirdPersonBinocModel;
 
 	// weapon effect shaders
-	qhandle_t rocketExplosionShader;
+	//qhandle_t rocketExplosionShader;
 
 	qhandle_t bloodCloudShader;
 	qhandle_t sparkParticleShader;
@@ -1529,12 +1578,6 @@ typedef struct
 	qhandle_t alliedUniformShader;
 	qhandle_t axisUniformShader;
 
-	sfxHandle_t sfx_artilleryExp[3];
-	sfxHandle_t sfx_artilleryDist;
-
-	sfxHandle_t sfx_airstrikeExp[3];
-	sfxHandle_t sfx_airstrikeDist;
-
 	// sounds
 	sfxHandle_t noFireUnderwater;
 	sfxHandle_t selectSound;
@@ -1542,30 +1585,9 @@ typedef struct
 
 	sfxHandle_t footsteps[FOOTSTEP_TOTAL][4];
 	sfxHandle_t sfx_rockexp;
-	sfxHandle_t sfx_rockexpDist;
-	sfxHandle_t sfx_rockexpWater;
-	sfxHandle_t sfx_satchelexp;
-	sfxHandle_t sfx_satchelexpDist;
-	sfxHandle_t sfx_landmineexp;
-	sfxHandle_t sfx_landmineexpDist;
-	sfxHandle_t sfx_mortarexp[4];
-	sfxHandle_t sfx_mortarexpDist;
-	sfxHandle_t sfx_grenexp;
-	sfxHandle_t sfx_grenexpDist;
 	sfxHandle_t sfx_brassSound[BRASSSOUND_MAX][3][2];
 	sfxHandle_t sfx_rubbleBounce[3];
 
-	//sfxHandle_t sfx_bullet_fleshhit[MAX_IMPACT_SOUNDS];
-	sfxHandle_t sfx_bullet_metalhit[MAX_IMPACT_SOUNDS];
-	sfxHandle_t sfx_bullet_woodhit[MAX_IMPACT_SOUNDS];
-	sfxHandle_t sfx_bullet_glasshit[MAX_IMPACT_SOUNDS];
-	sfxHandle_t sfx_bullet_stonehit[MAX_IMPACT_SOUNDS];
-	sfxHandle_t sfx_bullet_waterhit[MAX_IMPACT_SOUNDS];
-
-	sfxHandle_t sfx_dynamiteexp;
-	sfxHandle_t sfx_dynamiteexpDist;
-
-	sfxHandle_t sfx_knifehit[5];
 	sfxHandle_t gibSound;
 	sfxHandle_t landSound[FOOTSTEP_TOTAL];
 
@@ -1579,8 +1601,6 @@ typedef struct
 	sfxHandle_t watrGaspSound;
 
 	sfxHandle_t underWaterSound;
-	sfxHandle_t fireSound;
-	sfxHandle_t waterSound;
 
 	sfxHandle_t countFight;
 	sfxHandle_t countPrepare;
@@ -2589,6 +2609,7 @@ extern vmCvar_t cg_visualEffects;  ///< turn invisible (0) / visible (1) visual 
 #define PS_FX_NONE   0
 #define PS_FX_COMMON 1
 #define PS_FX_WATER  2
+#define PS_FX_FLESH  3
 
 // cg_atmospheric.c
 void CG_EffectParse(const char *effectstr);
@@ -3007,7 +3028,7 @@ void CG_AddToNotify(const char *str);
 const char *CG_LocalizeServerCommand(const char *buf);
 void CG_wstatsParse_cmd(void);
 
-void CG_parseWeaponStats_cmd(void(txt_dump) (const char *));
+void CG_parseWeaponStats_cmd(void (txt_dump) (const char *));
 //void CG_parseBestShotsStats_cmd(qboolean doTop, void(txt_dump) (const char *));
 //void CG_parseTopShotsStats_cmd(qboolean doTop, void(txt_dump) (const char *));
 //void CG_scores_cmd(void);

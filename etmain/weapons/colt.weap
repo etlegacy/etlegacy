@@ -43,6 +43,27 @@ weaponDef
 		ejectBrassOffset    24 -4 36
 		
 		//modModel 1		""
+                
+                impactFunction    "BulletImpact" // supports "MeleeImpact", "BulletImpact", "SmallExplosionImpact", "BigExplosionImpact", "MapMortarImpact" and "DynamiteExplosionImpact"
+                impactSoundVolume 64
+                impactMarkRadius  32
+                impactSound {                   // each surface supports up to 5 hits sounds. available surface : default, far, wood, metal, roof, gravel, glass, snow, water, flesh
+                
+                    default 5 "sound/weapons/impact/stone"
+                    wood    5 "sound/weapons/impact/wood"
+                    metal   5 "sound/weapons/impact/metal"
+                    roof    5 "sound/weapons/impact/metal"
+                    glass   5 "sound/weapons/impact/glass"
+                    water   5 "sound/weapons/impact/water"
+                    //flesh   5 "sound/weapons/impact/flesh"    // terrible sounds, stonehit is used instead
+                
+                }
+                impactMark {                    // each surface supports up to 1 marks shader. available surface : default, far, wood, metal, roof, gravel, glass, snow, water, flesh
+                    default "gfx/damage/bullet_mrk"
+                    wood    "gfx/damage/wood_mrk"
+                    metal   "gfx/damage/metal_mrk"
+                    glass   "gfx/damage/glass_mrk" 
+                }
 		
 		firstPerson {
 			model			"models/weapons2/colt/v_colt.mdc"
