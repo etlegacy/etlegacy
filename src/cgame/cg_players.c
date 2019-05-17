@@ -2862,7 +2862,7 @@ void CG_Player(centity_t *cent)
 
 			if (cg.predictedPlayerState.eFlags & EF_PRONE)
 			{
-				maxs[2] = maxs[2] - (cg.predictedPlayerState.standViewHeight - (PRONE_VIEWHEIGHT + PRONE_BODYHEIGHT_DELTA) + 8);
+				maxs[2] = maxs[2] - (cg.predictedPlayerState.standViewHeight - PRONE_BODYHEIGHT + 8);
 			}
 			else if (cg.predictedPlayerState.pm_flags & PMF_DUCKED
 				&& cg.predictedPlayerState.velocity[0] == 0.f && cg.predictedPlayerState.velocity[1] == 0.f)

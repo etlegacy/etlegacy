@@ -79,6 +79,12 @@
 #define DEAD_VIEWHEIGHT     -16
 #define PRONE_VIEWHEIGHT    -8
 
+#define DEFAULT_BODYHEIGHT     36  ///< delta height -4
+#define CROUCH_BODYHEIGHT      24  ///< delta height 8
+#define CROUCH_IDLE_BODYHEIGHT 18  ///< delta height 2
+#define DEAD_BODYHEIGHT        4   ///< delta height 20
+#define PRONE_BODYHEIGHT       -8  ///< delta height 0
+
 #define DEFAULT_BODYHEIGHT_DELTA        -4  ///< default body height 36
 #define CROUCH_BODYHEIGHT_DELTA          8  ///< crouch  body height 24
 #define CROUCH_IDLE_BODYHEIGHT_DELTA     2  ///< crouch  idle body height 18
