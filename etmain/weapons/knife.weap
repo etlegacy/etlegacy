@@ -10,9 +10,7 @@ weaponDef
 		handsModel			"models/multiplayer/knife/v_knife_hand.md3"
 		
 		//flashDlightColor	0 0 0
-		flashSound			"sound/weapons/knife/knife_slash1.wav"	// supports up to 4 flash sounds
-		flashSound			"sound/weapons/knife/knife_slash2.wav"	// supports up to 4 flash sounds
-		flashSound			"sound/weapons/knife/knife_slash3.wav"	// supports up to 4 flash sounds
+		flashSound		3	"sound/weapons/knife/knife_slash"	// supports up to 4 flash sounds
 		//flashEchoSound	""										// supports up to 4 flash echo sounds
 		//lastShotSound		""									// supports up to 4 last shot sounds
 		

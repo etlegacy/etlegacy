@@ -1447,65 +1447,23 @@ static qboolean CG_RW_ParseClient(int handle, weaponInfo_t *weaponInfo)
 		}
 		else if (!Q_stricmp(token.string, "flashSound"))
 		{
-			if (!PC_String_ParseNoAlloc(handle, filename, sizeof(filename)))
+			if (!CG_RW_ParseWeaponSound(handle, &weaponInfo->flashSound))
 			{
-				return CG_RW_ParseError(handle, "expected flashSound filename");
-			}
-
-			for (i = 0; i < 4; i++)
-			{
-				if (!weaponInfo->flashSound[i])
-				{
-					weaponInfo->flashSound[i] = trap_S_RegisterSound(filename, qfalse);
-					break;
-				}
-			}
-
-			if (i == 4)
-			{
-				CG_Printf(S_COLOR_YELLOW "WARNING: only up to 4 flashSounds supported per weapon\n");
+				return qfalse;
 			}
 		}
 		else if (!Q_stricmp(token.string, "flashEchoSound"))
 		{
-			if (!PC_String_ParseNoAlloc(handle, filename, sizeof(filename)))
+			if (!CG_RW_ParseWeaponSound(handle, &weaponInfo->flashEchoSound))
 			{
-				return CG_RW_ParseError(handle, "expected flashEchoSound filename");
-			}
-
-			for (i = 0; i < 4; i++)
-			{
-				if (!weaponInfo->flashEchoSound[i])
-				{
-					weaponInfo->flashEchoSound[i] = trap_S_RegisterSound(filename, qfalse);
-					break;
-				}
-			}
-
-			if (i == 4)
-			{
-				CG_Printf(S_COLOR_YELLOW "WARNING: only up to 4 flashEchoSounds supported per weapon\n");
+				return qfalse;
 			}
 		}
 		else if (!Q_stricmp(token.string, "lastShotSound"))
 		{
-			if (!PC_String_ParseNoAlloc(handle, filename, sizeof(filename)))
+			if (!CG_RW_ParseWeaponSound(handle, &weaponInfo->lastShotSound))
 			{
-				return CG_RW_ParseError(handle, "expected lastShotSound filename");
-			}
-
-			for (i = 0; i < 4; i++)
-			{
-				if (!weaponInfo->lastShotSound[i])
-				{
-					weaponInfo->lastShotSound[i] = trap_S_RegisterSound(filename, qfalse);
-					break;
-				}
-			}
-
-			if (i == 4)
-			{
-				CG_Printf(S_COLOR_YELLOW "WARNING: only up to 4 lastShotSound supported per weapon\n");
+				return qfalse;
 			}
 		}
 		else if (!Q_stricmp(token.string, "readySound"))
@@ -4816,10 +4774,7 @@ void CG_WeaponFireRecoil(int weapon)
 void CG_FireWeapon(centity_t *cent)
 {
 	entityState_t *ent = &cent->currentState;
-	int           c;
 	weaponInfo_t  *weap;
-	sfxHandle_t   *firesound;
-	sfxHandle_t   *fireEchosound;
 
 	if (BG_PlayerMounted(cent->currentState.eFlags))
 	{
@@ -4917,69 +4872,54 @@ void CG_FireWeapon(centity_t *cent)
 		return;
 	}
 
-	if ((cent->currentState.event & ~EV_EVENT_BITS) == EV_FIRE_WEAPON_LASTSHOT)
-	{
-		firesound     = &weap->lastShotSound[0];
-		fireEchosound = &weap->flashEchoSound[0];
-
-		// try to use the lastShotSound, but don't assume it's there.
-		// if a weapon without the sound calls it, drop back to regular fire sound
-
-		for (c = 0; c < 4; c++)
-		{
-			if (!firesound[c])
-			{
-				break;
-			}
-		}
-
-		if (!c)
-		{
-			firesound     = &weap->flashSound[0];
-			fireEchosound = &weap->flashEchoSound[0];
-		}
-	}
-	else
-	{
-		firesound     = &weap->flashSound[0];
-		fireEchosound = &weap->flashEchoSound[0];
-	}
-
 	if (!(cent->currentState.eFlags & EF_ZOOMING))       // don't play sounds or eject brass if zoomed in
 	{
-		// play a sound
-		for (c = 0 ; c < 4 ; c++)
-		{
-			if (!firesound[c])
-			{
-				break;
-			}
-		}
+		int         c             = weap->flashSound.count;
+		sfxHandle_t firesound     = 0;
+		sfxHandle_t fireEchosound = 0;
 
-		if (c > 0)
+		if (c)
 		{
 			c = rand() % c;
 
-			if (firesound[c])
+			firesound     = weap->flashSound.sounds[c];
+			fireEchosound = weap->flashEchoSound.sounds[c];
+		}
+
+		// try to use the lastShotSound, but don't assume it's there.
+		// if a weapon without the sound calls it, keep regular fire sound
+		if ((cent->currentState.event & ~EV_EVENT_BITS) == EV_FIRE_WEAPON_LASTSHOT)
+		{
+			c = weap->lastShotSound.count;
+
+			if (c)
 			{
-				trap_S_StartSound(NULL, ent->number, CHAN_WEAPON, firesound[c]);
+				c = rand() % c;
 
-				if (fireEchosound && fireEchosound[c])     // check for echo
-				{
-					centity_t *cent = &cg_entities[ent->number];
-					vec3_t    porg, gorg, norm; // player/gun origin
-					float     gdist;
+				firesound     = weap->lastShotSound.sounds[c];
+				fireEchosound = weap->flashEchoSound.sounds[c];
+			}
+		}
 
-					VectorCopy(cent->currentState.pos.trBase, gorg);
-					VectorCopy(cg.refdef_current->vieworg, porg);
-					VectorSubtract(gorg, porg, norm);
-					gdist = VectorNormalize(norm);
+		if (firesound)
+		{
+			trap_S_StartSound(NULL, ent->number, CHAN_WEAPON, firesound);
 
-					if (gdist > 512 && gdist < 4096)       // temp dist.  TODO: use numbers that are weapon specific
-					{   // use gorg as the new sound origin
-						VectorMA(cg.refdef_current->vieworg, 64, norm, gorg);     // sound-on-a-stick
-						trap_S_StartSoundEx(gorg, ent->number, CHAN_WEAPON, fireEchosound[c], SND_NOCUT);
-					}
+			if (fireEchosound)  // check for echo
+			{
+				centity_t *cent = &cg_entities[ent->number];
+				vec3_t    porg, gorg, norm;                 // player/gun origin
+				float     gdist;
+
+				VectorCopy(cent->currentState.pos.trBase, gorg);
+				VectorCopy(cg.refdef_current->vieworg, porg);
+				VectorSubtract(gorg, porg, norm);
+				gdist = VectorNormalize(norm);
+
+				if (gdist > 512 && gdist < 4096)                       // temp dist.  TODO: use numbers that are weapon specific
+				{                   // use gorg as the new sound origin
+					VectorMA(cg.refdef_current->vieworg, 64, norm, gorg);                         // sound-on-a-stick
+					trap_S_StartSoundEx(gorg, ent->number, CHAN_WEAPON, fireEchosound, SND_NOCUT);
 				}
 			}
 		}

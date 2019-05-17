@@ -788,9 +788,9 @@ typedef struct weaponInfo_s
 	qhandle_t modModels[6];             ///< like the scope for the rifles
 
 	vec3_t flashDlightColor;
-	sfxHandle_t flashSound[4];          ///< fast firing weapons randomly choose
-	sfxHandle_t flashEchoSound[4];      ///< distant gun firing sound
-	sfxHandle_t lastShotSound[4];       ///< sound of the last shot can be different (mauser doesn't have bolt action on last shot for example)
+	weaponSounds_t flashSound;          ///< fast firing weapons randomly choose
+	weaponSounds_t flashEchoSound;      ///< distant gun firing sound
+	weaponSounds_t lastShotSound;       ///< sound of the last shot can be different (mauser doesn't have bolt action on last shot for example)
 
 	qhandle_t weaponIcon[2];            ///< [0] is weap icon, [1] is highlight icon
 	int weaponIconScale;
