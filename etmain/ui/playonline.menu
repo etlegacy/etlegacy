@@ -87,7 +87,7 @@ menuDef {
 	BUTTONEXT( 8+(.34*(FILTERS_WIDTH-24))+6, 84, .34*(FILTERS_WIDTH-24), 14, _("FAVORITES"), .24, 11, uiScript ResetFavorites; uiScript RefreshFilter, tooltip _("Shows all favorite servers"))
 	BUTTONEXT( 18+(.67*(FILTERS_WIDTH-24))+6, 84, .33*(FILTERS_WIDTH-24), 14, _("LOCAL"), .24, 11, uiScript ResetLocal; uiScript RefreshFilter, tooltip _("Shows all local servers"))
 
-	MULTIACTIONLEFT( 12, 102, .33*(FILTERS_WIDTH-24), 10, _("Source:"), .2, 8, "ui_netSource", cvarFloatList { "^5Local" 0 "^2Internet" 1 "^1Favorites" 2 }, uiScript UpdateFilter, _("Choose the type of game servers to display from Internet, local and the favorites list"))
+	MULTIACTIONLEFT( 12, 102, .33*(FILTERS_WIDTH-24), 10, _("Source:"), .2, 8, "ui_netSource", cvarFloatList { "^5Local" 0 "^2Internet" 1 "^3Favorites" 2 }, uiScript UpdateFilter, _("Choose the type of game servers to display from Internet, local and the favorites list"))
 	MULTIACTIONLEFT( 12, 114, .33*(FILTERS_WIDTH-24), 10, _("Game Type:"), .2, 8, "ui_joinGameType", cvarFloatList { "All" -1 "Objective" 2 "Stopwatch" 3 "Campaign" 4 "LMS" 5 "Map Voting" 6 }, uiScript RefreshFilter, _("Displays only game servers offering this Game Type") )
 	MULTIACTIONLEFT( 12, 126, .33*(FILTERS_WIDTH-24), 10, _("Mod:"), .2, 8, "ui_browserModFilter", cvarFloatList { "All" 0 "Legacy" 1 "ETPub" 2 "Jaymod" 3 "NoQuarter" 4 "N!tmod" 5 "silEnT" 6 "True Combat" 7 "ETNam" 8 "ETrun" 9 "ETJump" 10 "TJMod" 11 "Original" 12 "Other" -1 }, uiScript UpdateFilter, _("Displays only game servers offering this Mod") )
 
