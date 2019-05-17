@@ -2327,7 +2327,7 @@ void ClientEndFrame(gentity_t *ent)
 		G_RailBox(head->r.currentOrigin, head->r.mins, head->r.maxs, tv(0.f, 1.f, 0.f), ent->s.number | HITBOXBIT_HEAD);
 		G_FreeEntity(head);
 
-		if (ent->client->ps.eFlags & EF_PRONE)
+		if (ent->client->ps.eFlags & (EF_PRONE|EF_DEAD))
 		{
 			gentity_t *legs;
 
