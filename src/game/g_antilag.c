@@ -729,7 +729,15 @@ void G_HistoricalTrace(gentity_t *ent, trace_t *results, const vec3_t start, con
 		if (&g_entities[clientNum] && g_entities[clientNum].client && g_entities[clientNum].takedamage)
 		{
 			maxsBackup[clientNum]           = g_entities[clientNum].r.maxs[2];
-			g_entities[clientNum].r.maxs[2] = ClientHitboxMaxZ(&g_entities[clientNum]);
+			// use higher hitbox for syringe only
+			if (ent->s.weapon != WP_MEDIC_SYRINGE)
+			{
+				g_entities[clientNum].r.maxs[2] = ClientHitboxMaxZ(&g_entities[clientNum]);
+			}
+			else
+			{
+				g_entities[clientNum].r.maxs[2] = CROUCH_BODYHEIGHT;
+			}
 		}
 	}
 
