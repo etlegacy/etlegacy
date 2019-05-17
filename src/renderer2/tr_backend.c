@@ -529,7 +529,7 @@ static void Render_lightVolume(interaction_t *ia)
 
 		if (attenuationXYStage->type != ST_ATTENUATIONMAP_XY)
 		{
-			continue;
+			continue; // break?
 		}
 
 		if (RB_EvalExpression(&attenuationXYStage->ifExp, 1.0f) == 0.f)

@@ -3570,7 +3570,6 @@ void Tess_StageIteratorLighting()
 				continue;
 			}
 
-
 			renderStage = qfalse;
 			
 			switch (diffuseStage->type)
@@ -3627,10 +3626,12 @@ void Tess_StageIteratorLighting()
 				{
 					Render_forwardLighting_DBS_proj(diffuseStage, attenuationXYStage, attenuationZStage, light);
 				}
+goto done;
 			}
 		}
 	}
 
+done:
 	// reset polygon offset
 	if (tess.surfaceShader->polygonOffset)
 	{
