@@ -122,7 +122,7 @@ extern vec4_t clrBrownLineFull;
 #define COLOR_RED       '1'
 #define COLOR_GREEN     '2'
 #define COLOR_YELLOW    '3'
-#define COLOR_BLUE      '4'
+#define COLOR_BLUE      '$' // 4 is unreadable on dark background
 #define COLOR_CYAN      '5'
 #define COLOR_MAGENTA   '6'
 #define COLOR_WHITE     '7'
