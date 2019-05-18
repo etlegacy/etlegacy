@@ -1912,6 +1912,13 @@ enum
 	POPUP_FILTER_DEATH    = BIT(4),
 };
 
+// Big popup filters
+enum
+{
+	POPUP_BIG_FILTER_SKILL = BIT(0),
+	POPUP_BIG_FILTER_RANK  = BIT(1),
+};
+
 /// Locations
 #define MAX_C_LOCATIONS 1024
 
@@ -2570,6 +2577,7 @@ extern vmCvar_t cg_drawTime;
 extern vmCvar_t cg_popupFadeTime;
 extern vmCvar_t cg_popupStayTime;
 extern vmCvar_t cg_popupFilter;
+extern vmCvar_t cg_popupBigFilter;
 extern vmCvar_t cg_graphicObituaries;
 
 extern vmCvar_t cg_fontScaleTP;

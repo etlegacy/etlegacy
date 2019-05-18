@@ -308,7 +308,10 @@ void CG_NewClientInfo(int clientNum)
 		{
 			CG_SoundPlaySoundScript(GetRankTableData(cgs.clientinfo[cg.clientNum].team, newInfo.rank)->soundNames, NULL, -1, qtrue);
 
-			CG_AddPMItemBig(PM_RANK, va(CG_TranslateString("Promoted to rank %s!"), GetRankTableData(cgs.clientinfo[cg.clientNum].team, newInfo.rank)->names), rankicons[newInfo.rank][cgs.clientinfo[cg.clientNum].team == TEAM_AXIS ? 1 : 0][0].shader);
+			if (cg_popupBigFilter.integer & POPUP_BIG_FILTER_RANK)
+			{
+				CG_AddPMItemBig(PM_RANK, va(CG_TranslateString("Promoted to rank %s!"), GetRankTableData(cgs.clientinfo[cg.clientNum].team, newInfo.rank)->names), rankicons[newInfo.rank][cgs.clientinfo[cg.clientNum].team == TEAM_AXIS ? 1 : 0][0].shader);
+			}
 		}
 
 		// Make sure primary class and primary weapons are correct for
@@ -339,11 +342,14 @@ void CG_NewClientInfo(int clientNum)
 				if (!cgs.demoCamera.renderingFreeCam && !cgs.demoCamera.renderingWeaponCam)
 				{
 #endif
-				CG_AddPMItemBig(PM_SKILL, va(CG_TranslateString("Increased %s skill to level %i!"), CG_TranslateString(GetSkillTableData(i)->skillNames), newInfo.skill[i]), cgs.media.skillPics[i]);
+				if (cg_popupBigFilter.integer & POPUP_BIG_FILTER_SKILL)
+				{
+					CG_AddPMItemBig(PM_SKILL, va(CG_TranslateString("Increased %s skill to level %i!"), CG_TranslateString(GetSkillTableData(i)->skillNames), newInfo.skill[i]), cgs.media.skillPics[i]);
+				}
 
 				CG_PriorityCenterPrint(va(CG_TranslateString("You have been rewarded with %s"), CG_TranslateString(cg_skillRewards[i][newInfo.skill[i] - 1])), 400, cg_fontScaleCP.value, 99999);
 #ifdef FEATURE_EDV
-			}
+				}
 #endif
 			}
 		}
