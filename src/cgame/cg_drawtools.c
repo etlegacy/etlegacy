@@ -657,7 +657,7 @@ void CG_ColorForHealth(vec4_t hcolor)
 	{
 		hcolor[2] = 1.0;
 	}
-	else if (health < 66)
+	else if (health <= 66)
 	{
 		hcolor[2] = 0;
 	}
@@ -666,17 +666,17 @@ void CG_ColorForHealth(vec4_t hcolor)
 		hcolor[2] = (health - 66.f) / 33.0f;
 	}
 
-	if (health > 60)
+	if (health > 66)
 	{
 		hcolor[1] = 1.0;
 	}
-	else if (health < 30)
+	else if (health <= 33)
 	{
 		hcolor[1] = 0;
 	}
 	else
 	{
-		hcolor[1] = (health - 30.f) / 30.0f;
+		hcolor[1] = (health - 33.f) / 33.0f;
 	}
 }
 
