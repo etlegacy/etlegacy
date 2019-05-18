@@ -1387,7 +1387,7 @@ void CG_Effect(centity_t *cent, vec3_t origin, vec3_t dir)
 
 		effect = (CG_PointContents(origin, 0) & CONTENTS_WATER) ? PS_FX_WATER : PS_FX_NONE;
 
-		CG_MissileHitWall(WP_DYNAMITE, effect, origin, dir, 0);
+		CG_MissileHitWall(WP_DYNAMITE, effect, origin, dir, 0, -1);
 		return;
 	}
 
@@ -2239,7 +2239,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 		effect = (CG_PointContents(position, 0) & CONTENTS_WATER) ? PS_FX_WATER : PS_FX_NONE;
 
 		ByteToDir(es->eventParm, dir);
-		CG_MissileHitWall(es->weapon, effect, position, dir, 0);
+		CG_MissileHitWall(es->weapon, effect, position, dir, 0, -1);
 	}
 	break;
 	case EV_MISSILE_MISS_LARGE:
@@ -2252,11 +2252,11 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 		ByteToDir(es->eventParm, dir);
 		if (es->weapon == WP_ARTY || es->weapon == WP_AIRSTRIKE || es->weapon == WP_SMOKE_MARKER)
 		{
-			CG_MissileHitWall(es->weapon, effect, position, dir, 0);
+			CG_MissileHitWall(es->weapon, effect, position, dir, 0, -1);
 		}
 		else
 		{
-			CG_MissileHitWall(VERYBIGEXPLOSION, effect, position, dir, 0);
+			CG_MissileHitWall(VERYBIGEXPLOSION, effect, position, dir, 0, -1);
 		}
 	}
 	break;
@@ -2273,16 +2273,16 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 		//}
 		break;
 	case EV_MG42BULLET_HIT_WALL:
-		CG_Bullet(es->pos.trBase, es->otherEntityNum, qfalse, ENTITYNUM_WORLD, es->otherEntityNum2, es->origin2[0], es->effect1Time);
+		CG_Bullet(es->weapon, es->pos.trBase, es->otherEntityNum, qfalse, ENTITYNUM_WORLD, es->otherEntityNum2, es->origin2[0], es->effect1Time);
 		break;
 	case EV_MG42BULLET_HIT_FLESH:
-		CG_Bullet(es->pos.trBase, es->otherEntityNum, qtrue, es->eventParm, es->otherEntityNum2, 0, es->effect1Time);
+		CG_Bullet(es->weapon, es->pos.trBase, es->otherEntityNum, qtrue, es->eventParm, es->otherEntityNum2, 0, es->effect1Time);
 		break;
 	case EV_BULLET_HIT_WALL:
-		CG_Bullet(es->pos.trBase, es->otherEntityNum, qfalse, ENTITYNUM_WORLD, es->otherEntityNum2, es->origin2[0], 0);
+		CG_Bullet(es->weapon, es->pos.trBase, es->otherEntityNum, qfalse, ENTITYNUM_WORLD, es->otherEntityNum2, es->origin2[0], 0);
 		break;
 	case EV_BULLET_HIT_FLESH:
-		CG_Bullet(es->pos.trBase, es->otherEntityNum, qtrue, es->eventParm, es->otherEntityNum2, 0, 0);
+		CG_Bullet(es->weapon, es->pos.trBase, es->otherEntityNum, qtrue, es->eventParm, es->otherEntityNum2, 0, 0);
 		break;
 	case EV_GENERAL_SOUND:
 	{

@@ -5630,7 +5630,7 @@ void CG_DynamiteExplosionImpact(int weapon, int missileEffect, vec3_t origin, ve
  *
  * @note modified to send missilehitwall surface parameters
  */
-void CG_MissileHitWall(int weapon, int missileEffect, vec3_t origin, vec3_t dir, int surfFlags)
+void CG_MissileHitWall(int weapon, int missileEffect, vec3_t origin, vec3_t dir, int surfFlags, int entityNum)
 {
 	impactSurface_t impactSurfaceIndex = W_IMPACT_DEFAULT;
 	qhandle_t       mark;
@@ -5694,7 +5694,7 @@ void CG_MissileHitWall(int weapon, int missileEffect, vec3_t origin, vec3_t dir,
 
 	if (sfx)
 	{
-		trap_S_StartSoundVControl(origin, -1, CHAN_AUTO, sfx, cg_weapons[weapon].impactSoundVolume);
+		trap_S_StartSoundVControl((entityNum == cg.snap->ps.clientNum) ? NULL : origin, entityNum, PS_FX_FLESH ? CHAN_BODY : CHAN_AUTO, sfx, cg_weapons[weapon].impactSoundVolume);
 	}
 
 	// distant sounds for weapons with a broadcast fire sound (so you /always/ hear dynamite explosions)
@@ -5797,11 +5797,11 @@ void CG_MissileHitPlayer(centity_t *cent, int weapon, vec3_t origin, vec3_t dir,
 
 		effect = (CG_PointContents(origin, 0) & CONTENTS_WATER) ? PS_FX_WATER : PS_FX_NONE;
 
-		CG_MissileHitWall(weapon, effect, origin, dir, 0);       // like the old one
+		CG_MissileHitWall(weapon, effect, origin, dir, 0, entityNum);       // like the old one
 	}
 	else if (GetWeaponTableData(weapon)->type & WEAPON_TYPE_MELEE)
 	{
-		CG_MissileHitWall(weapon, PS_FX_FLESH, origin, dir, 0);        // this one makes the hitting fleshy sound. whee
+		CG_MissileHitWall(weapon, PS_FX_FLESH, origin, dir, 0, entityNum);        // this one makes the hitting fleshy sound. whee
 	}
 }
 
@@ -6176,7 +6176,7 @@ void CG_DrawBulletTracer(vec3_t pstart, vec3_t pend, int sourceEntityNum, int ot
  * @param[in] waterfraction
  * @param[in] seed
  */
-void CG_Bullet(vec3_t end, int sourceEntityNum, qboolean flesh, int fleshEntityNum, int otherEntNum2, float waterfraction, int seed)
+void CG_Bullet(int weapon, vec3_t end, int sourceEntityNum, qboolean flesh, int fleshEntityNum, int otherEntNum2, float waterfraction, int seed)
 {
 	trace_t    trace, trace2;
 	vec3_t     dir;
@@ -6192,6 +6192,30 @@ void CG_Bullet(vec3_t end, int sourceEntityNum, qboolean flesh, int fleshEntityN
 	if (cg_entities[sourceEntityNum].currentState.eFlags & EF_ZOOMING)
 	{
 		return;
+	}
+
+    // hack for fixed/mounted MG
+	if (BG_PlayerMounted(cg_entities[sourceEntityNum].currentState.eFlags))
+	{
+		if (cg_entities[sourceEntityNum].currentState.eFlags & EF_MOUNTEDTANK)
+		{
+			if (IS_MOUNTED_TANK_BROWNING(sourceEntityNum))
+			{
+				weapon = WP_MOBILE_BROWNING;
+			}
+			else
+			{
+				weapon = WP_MOBILE_MG42;
+			}
+		}
+		else if (cg_entities[sourceEntityNum].currentState.eFlags & EF_AAGUN_ACTIVE)
+		{
+			// TODO
+		}
+		else
+		{
+			weapon = WP_MOBILE_MG42;
+		}
 	}
 
 	// snap tracers for MG42 to viewangle of client when antilag is enabled
@@ -6338,17 +6362,20 @@ void CG_Bullet(vec3_t end, int sourceEntityNum, qboolean flesh, int fleshEntityN
 		}
 
 		// play the bullet hit flesh sound
-		if (fleshEntityNum == cg.snap->ps.clientNum)
-		{
-			//trap_S_StartSound(NULL, fleshEntityNum, CHAN_BODY, cgs.media.sfx_bullet_fleshhit[rand() % MAX_WEAPON_SOUNDS]);
-			trap_S_StartSound(NULL, fleshEntityNum, CHAN_BODY,
-			                  cg_weapons[cg.snap->ps.weapon].impactSound[W_IMPACT_DEFAULT].sounds[rand() % cg_weapons[cg.snap->ps.weapon].impactSound[W_IMPACT_DEFAULT].count]);
-		}
-		else
-		{
-			trap_S_StartSound(cg_entities[fleshEntityNum].currentState.origin, ENTITYNUM_WORLD, CHAN_BODY,
-			                  cg_weapons[cg.snap->ps.weapon].impactSound[W_IMPACT_DEFAULT].sounds[rand() % cg_weapons[cg.snap->ps.weapon].impactSound[W_IMPACT_DEFAULT].count]);
-		}
+//		if (fleshEntityNum == cg.snap->ps.clientNum)
+//		{
+//			//trap_S_StartSound(NULL, fleshEntityNum, CHAN_BODY, cgs.media.sfx_bullet_fleshhit[rand() % MAX_WEAPON_SOUNDS]);
+//			trap_S_StartSound(NULL, fleshEntityNum, CHAN_BODY,
+//			                  cg_weapons[weapon].impactSound[W_IMPACT_DEFAULT].sounds[rand() % cg_weapons[weapon].impactSound[W_IMPACT_DEFAULT].count]);
+
+//		}
+//		else
+//		{
+//			trap_S_StartSound(cg_entities[fleshEntityNum].currentState.origin, ENTITYNUM_WORLD, CHAN_BODY,
+//			                  cg_weapons[weapon].impactSound[W_IMPACT_DEFAULT].sounds[rand() % cg_weapons[weapon].impactSound[W_IMPACT_DEFAULT].count]);
+//		}
+
+		CG_MissileHitWall(weapon, PS_FX_FLESH, cg_entities[fleshEntityNum].currentState.origin, smokedir, 0, fleshEntityNum);
 
 		// if we haven't dropped a blood spat in a while, check if this is a good scenario
 		if (cg_blood.integer && cg_bloodTime.integer && (lastBloodSpat > cg.time || lastBloodSpat < cg.time - 500))
@@ -6425,8 +6452,8 @@ void CG_Bullet(vec3_t end, int sourceEntityNum, qboolean flesh, int fleshEntityN
 				VectorSubtract(end, start, dist);
 				VectorMA(start, waterfraction, dist, end2);
 
-				CG_MissileHitWall(cg.snap->ps.weapon, PS_FX_WATER, end2, dir, 0);
-				CG_MissileHitWall(cg.snap->ps.weapon, PS_FX_COMMON, end, trace.plane.normal, 0);
+				CG_MissileHitWall(weapon, PS_FX_WATER, end2, dir, 0, -1);
+				CG_MissileHitWall(weapon, PS_FX_COMMON, end, trace.plane.normal, 0, -1);
 			}
 			else
 			{
@@ -6447,14 +6474,14 @@ void CG_Bullet(vec3_t end, int sourceEntityNum, qboolean flesh, int fleshEntityN
 					CG_Trace(&trace2, start, NULL, NULL, end, -1, MASK_WATER);
 					cg.bulletTrace = qfalse;
 
-					CG_MissileHitWall(cg.snap->ps.weapon, PS_FX_WATER, trace2.endpos, trace2.plane.normal, trace2.surfaceFlags);
+					CG_MissileHitWall(weapon, PS_FX_WATER, trace2.endpos, trace2.plane.normal, trace2.surfaceFlags, -1);
 					return;
 				}
 
 				// better bullet marks
 				VectorSubtract(vec3_origin, dir, dir);
 
-				CG_MissileHitWall(cg.snap->ps.weapon, PS_FX_COMMON, trace.endpos, dir, trace.surfaceFlags);
+				CG_MissileHitWall(weapon, PS_FX_COMMON, trace.endpos, dir, trace.surfaceFlags, -1);
 			}
 		}
 	}

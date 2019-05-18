@@ -482,7 +482,7 @@ gentity_t *Weapon_Syringe(gentity_t *ent)
 	}
 
 	if (traceEnt->client->ps.pm_type == PM_DEAD &&
-		traceEnt->client->sess.sessionTeam == ent->client->sess.sessionTeam)
+	    traceEnt->client->sess.sessionTeam == ent->client->sess.sessionTeam)
 	{
 		// moved all the revive stuff into its own function
 		usedSyringe = ReviveEntity(ent, traceEnt);
@@ -2556,7 +2556,8 @@ void G_AddArtilleryToCounters(gentity_t *ent)
 		if (team_maxArtillery.integer)
 		{
 			level.alliedArtilleryCounter += 60000 / team_maxArtillery.integer;
-		} else
+		}
+		else
 		{
 			level.alliedArtilleryCounter += 60000 / G_MaxAvailableArtillery(ent);
 		}
@@ -3384,6 +3385,7 @@ qboolean Bullet_Fire_Extended(gentity_t *source, gentity_t *attacker, vec3_t sta
 	{
 		tent              = G_TempEntity(tr.endpos, EV_BULLET_HIT_FLESH);
 		tent->s.eventParm = traceEnt->s.number;
+		tent->s.weapon    = source->s.weapon;
 
 		if (AccuracyHit(traceEnt, attacker))
 		{
@@ -3451,6 +3453,7 @@ qboolean Bullet_Fire_Extended(gentity_t *source, gentity_t *attacker, vec3_t sta
 
 		tent->s.eventParm       = DirToByte(reflect);
 		tent->s.otherEntityNum2 = ENTITYNUM_NONE;
+		tent->s.weapon          = source->s.weapon;
 	}
 	tent->s.otherEntityNum = attacker->s.number;
 
