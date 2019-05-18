@@ -1340,7 +1340,9 @@ void aagun_fire(gentity_t *other)
 	// snap to integer coordinates for more efficient network bandwidth usage
 	SnapVector(muzzle);
 
+#ifdef FEATURE_LUA
 	if (!G_LuaHook_AAGunFire(other->s.number))
+#endif
 	{
 		Fire_Lead_Ext(self, other, AAGUN_SPREAD, AAGUN_DAMAGE, muzzle, forward, right, up, MOD_MACHINEGUN);
 	}
@@ -1493,7 +1495,9 @@ void mg42_fire(gentity_t *other)
 	// snap to integer coordinates for more efficient network bandwidth usage
 	SnapVector(muzzle);
 
+#ifdef FEATURE_LUA
 	if (!G_LuaHook_FixedMGFire(other->s.number))
+#endif
 	{
 		Fire_Lead_Ext(self, other, GetWeaponTableData(WP_DUMMY_MG42)->spread, GetWeaponTableData(WP_DUMMY_MG42)->damage, muzzle, forward, right, up, MOD_MACHINEGUN);
 	}

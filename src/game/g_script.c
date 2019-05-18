@@ -904,7 +904,9 @@ void mountedmg42_fire(gentity_t *other)
 	//self->s.eFlags  |= EF_MG42_ACTIVE;
 	other->s.eFlags |= EF_MG42_ACTIVE;
 
+#ifdef FEATURE_LUA
 	if (!G_LuaHook_MountedMGFire(other->s.number))
+#endif
 	{
 		if (self->s.density & 8)
 		{

@@ -4151,7 +4151,9 @@ void FireWeapon(gentity_t *ent)
 	if (weapFireTable[ent->s.weapon].fire)
 	{
 		gentity_t *pFiredShot = NULL;       // Omni-bot To tell bots about projectiles
+#ifdef FEATURE_LUA
 		if (!G_LuaHook_WeaponFire(ent->s.number, ent->s.weapon, &pFiredShot))
+#endif
 		{
 			pFiredShot = weapFireTable[ent->s.weapon].fire(ent);
 		}
