@@ -2711,7 +2711,6 @@ void G_MapVoteInfoRead(void);
 // BIT(2) unused
 #define G_MISC_CROSSHAIR_DYNAMITE      BIT(3)
 #define G_MISC_CROSSHAIR_LANDMINE      BIT(4)
-#define G_MISC_LOOSE_SPAWN_PROTECTION  BIT(5)
 
 // g_voting flags
 #define VOTEF_USE_TOTAL_VOTERS      1   ///< use total voters instead of total players to decide if a vote passes
