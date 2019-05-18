@@ -67,6 +67,7 @@ typedef struct hudStructure_s
 	hudComponent_t weaponchargebar;
 	hudComponent_t healthtext;
 	hudComponent_t xptext;
+	hudComponent_t ranktext;
 	hudComponent_t statsdisplay;
 	hudComponent_t weaponicon;
 	hudComponent_t weaponammo;
@@ -80,7 +81,7 @@ typedef struct hudStructure_s
 	hudComponent_t livesleft;
 
 	hudComponent_t roundtimer;
-	hudComponent_t reinforcment;
+	hudComponent_t reinforcement;
 	hudComponent_t spawntimer;
 	hudComponent_t localtime;
 } hudStucture_t;
@@ -169,11 +170,10 @@ void CG_setDefaultHudValues(hudStucture_t *hud)
 	hud->cursorhint      = CG_getComponent(.5f * SCREEN_WIDTH - .5f * 48, 260, 48, 48, qtrue, STYLE_NORMAL); // FIXME: widescreen ?
 	hud->weaponstability = CG_getComponent(50, 208, 10, 64, qtrue, STYLE_NORMAL);
 	hud->livesleft       = CG_getComponent(0, 0, 0, 0, qtrue, STYLE_NORMAL);
-
-	hud->reinforcment = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 70, SCREEN_HEIGHT - 70, 0, 0, qtrue, STYLE_NORMAL);
-	hud->roundtimer   = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 55, SCREEN_HEIGHT - 70, 0, 0, qtrue, STYLE_NORMAL);
-	hud->spawntimer   = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 70, SCREEN_HEIGHT - 60, 0, 0, qtrue, STYLE_NORMAL);
-	hud->localtime    = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 55, SCREEN_HEIGHT - 60, 0, 0, qtrue, STYLE_NORMAL);
+	hud->reinforcement   = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 70, SCREEN_HEIGHT - 70, 0, 0, qtrue, STYLE_NORMAL);
+	hud->roundtimer      = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 55, SCREEN_HEIGHT - 70, 0, 0, qtrue, STYLE_NORMAL);
+	hud->spawntimer      = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 70, SCREEN_HEIGHT - 60, 0, 0, qtrue, STYLE_NORMAL);
+	hud->localtime       = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 55, SCREEN_HEIGHT - 60, 0, 0, qtrue, STYLE_NORMAL);
 }
 
 /*
@@ -438,6 +438,15 @@ static qboolean CG_ParseHUD(int handle)
 			continue;
 		}
 
+		if (!Q_stricmp(token.string, "ranktext"))
+		{
+			if (!CG_ParseHudComponent(handle, &temphud.ranktext))
+			{
+				return CG_HUD_ParseError(handle, "expected ranktext");
+			}
+			continue;
+		}
+
 		if (!Q_stricmp(token.string, "statsdisplay"))
 		{
 			if (!CG_ParseHudComponent(handle, &temphud.statsdisplay))
@@ -537,11 +546,11 @@ static qboolean CG_ParseHUD(int handle)
 			continue;
 		}
 
-		if (!Q_stricmp(token.string, "reinforcment"))
+		if (!Q_stricmp(token.string, "reinforcement"))
 		{
-			if (!CG_ParseHudComponent(handle, &temphud.reinforcment))
+			if (!CG_ParseHudComponent(handle, &temphud.reinforcement))
 			{
-				return CG_HUD_ParseError(handle, "expected reinforcment");
+				return CG_HUD_ParseError(handle, "expected reinforcement");
 			}
 			continue;
 		}
@@ -1232,6 +1241,22 @@ static void CG_DrawXP(float x, float y)
 	w   = CG_Text_Width_Ext(str, 0.25f, 0, &cgs.media.limboFont1);
 	CG_Text_Paint_Ext(x - w, y, 0.25f, 0.25f, clr, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
 	CG_Text_Paint_Ext(x + 2, y, 0.2f, 0.2f, clr, "XP", 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
+}
+
+/**
+ * @brief CG_DrawRank
+ * @param[in] x
+ * @param[in] y
+ */
+static void CG_DrawRank(float x, float y)
+{
+	const char *str;
+	float      w;
+	playerState_t *ps = &cg.snap->ps;
+
+	str = va("%s", GetRankTableData(cgs.clientinfo[ps->clientNum].team, cgs.clientinfo[ps->clientNum].rank)->miniNames);
+	w   = CG_Text_Width_Ext(str, 0.2f, 0, &cgs.media.limboFont1);
+	CG_Text_Paint_Ext(x - w, y, 0.2f, 0.2f, colorWhite, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
 }
 
 /**
@@ -2821,6 +2846,11 @@ static void CG_DrawPlayerStats(void)
 		CG_DrawXP(activehud->xptext.location.x, activehud->xptext.location.y);
 	}
 
+	if (activehud->ranktext.visible && !(cg_altHudFlags.integer & FLAGS_REMOVE_RANKS))
+	{
+		CG_DrawRank(activehud->ranktext.location.x, activehud->ranktext.location.y);
+	}
+
 	if (activehud->powerups.visible)
 	{
 		CG_DrawPowerUps(activehud->powerups.location);
@@ -2849,6 +2879,7 @@ void CG_Hud_Setup(void)
 	hud1.weaponchargebar = CG_getComponent((Ccg_WideX(SCREEN_WIDTH) - 16), 388, 12, 72, qtrue, STYLE_NORMAL);
 	hud1.healthtext      = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 60, SCREEN_HEIGHT - 65, 0, 0, qtrue, STYLE_NORMAL);
 	hud1.xptext          = CG_getComponent(48, SCREEN_HEIGHT - 4, 0, 0, qtrue, STYLE_NORMAL);
+	hud1.ranktext        = CG_getComponent(62, SCREEN_HEIGHT - 16, 0, 0, qtrue, STYLE_NORMAL);
 	hud1.statsdisplay    = CG_getComponent(24, SCREEN_HEIGHT - 95, 0, 0, qtrue, STYLE_SIMPLE);
 	hud1.weaponicon      = CG_getComponent((Ccg_WideX(SCREEN_WIDTH) - 82 - 20), (SCREEN_HEIGHT - 56), 60, 32, qtrue, STYLE_NORMAL);
 	hud1.weaponammo      = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 22 - 20, SCREEN_HEIGHT - 1 * (16 + 2) + 12 - 4, 0, 0, qtrue, STYLE_NORMAL);
@@ -2859,7 +2890,7 @@ void CG_Hud_Setup(void)
 	hud1.cursorhint      = CG_getComponent(.5f * SCREEN_WIDTH - .5f * 48, 260, 48, 48, qtrue, STYLE_NORMAL);
 	hud1.weaponstability = CG_getComponent(50, 208, 10, 64, qtrue, STYLE_NORMAL);
 	hud1.livesleft       = CG_getComponent(0, 0, 0, 0, qtrue, STYLE_NORMAL);
-	hud1.reinforcment    = CG_getComponent(70, SCREEN_HEIGHT - 12, 0, 0, qtrue, STYLE_NORMAL);
+	hud1.reinforcement   = CG_getComponent(70, SCREEN_HEIGHT - 12, 0, 0, qtrue, STYLE_NORMAL);
 	hud1.roundtimer      = CG_getComponent(85, SCREEN_HEIGHT - 12, 0, 0, qtrue, STYLE_NORMAL);
 	hud1.spawntimer      = CG_getComponent(70, SCREEN_HEIGHT - 2, 0, 0, qtrue, STYLE_NORMAL);
 	hud1.localtime       = CG_getComponent(85, SCREEN_HEIGHT - 2, 0, 0, qtrue, STYLE_NORMAL);
@@ -2874,6 +2905,7 @@ void CG_Hud_Setup(void)
 	hud2.weaponchargebar = CG_getComponent((Ccg_WideX(SCREEN_WIDTH) - 16), 388, 12, 72, qtrue, STYLE_NORMAL);
 	hud2.healthtext      = CG_getComponent(65, SCREEN_HEIGHT - 4, 0, 0, qtrue, STYLE_NORMAL);
 	hud2.xptext          = CG_getComponent(120, SCREEN_HEIGHT - 4, 0, 0, qtrue, STYLE_NORMAL);
+	hud2.ranktext        = CG_getComponent(134, SCREEN_HEIGHT - 16, 0, 0, qtrue, STYLE_NORMAL);
 	hud2.statsdisplay    = CG_getComponent(44, SCREEN_HEIGHT - 95, 0, 0, qtrue, STYLE_SIMPLE);
 	hud2.weaponicon      = CG_getComponent((Ccg_WideX(SCREEN_WIDTH) - 82), (SCREEN_HEIGHT - 56), 60, 32, qtrue, STYLE_NORMAL);
 	hud2.weaponammo      = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 22, SCREEN_HEIGHT - 1 * (16 + 2) + 12 - 4, 0, 0, qtrue, STYLE_NORMAL);
@@ -2884,7 +2916,7 @@ void CG_Hud_Setup(void)
 	hud2.cursorhint      = CG_getComponent(.5f * SCREEN_WIDTH - .5f * 48, 260, 48, 48, qtrue, STYLE_NORMAL);
 	hud2.weaponstability = CG_getComponent(50, 208, 10, 64, qtrue, STYLE_NORMAL);
 	hud2.livesleft       = CG_getComponent(0, 0, 0, 0, qtrue, STYLE_NORMAL);
-	hud2.reinforcment    = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 70, SCREEN_HEIGHT - 70, 0, 0, qtrue, STYLE_NORMAL);
+	hud2.reinforcement   = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 70, SCREEN_HEIGHT - 70, 0, 0, qtrue, STYLE_NORMAL);
 	hud2.roundtimer      = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 55, SCREEN_HEIGHT - 70, 0, 0, qtrue, STYLE_NORMAL);
 	hud2.spawntimer      = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 70, SCREEN_HEIGHT - 60, 0, 0, qtrue, STYLE_NORMAL);
 	hud2.localtime       = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 55, SCREEN_HEIGHT - 60, 0, 0, qtrue, STYLE_NORMAL);
@@ -3007,10 +3039,8 @@ void CG_DrawGlobalHud(void)
 		CG_DrawPMItems(hud0.popupmessages.location, (cg_altHudFlags.integer & FLAGS_POPUPS_SHADOW) ? ITEM_TEXTSTYLE_SHADOWED : 0);
 	}
 
-	if (!(cg_altHudFlags.integer & FLAGS_REMOVE_RANKS))
-	{
-		CG_DrawPMItemsBig();
-	}
+	CG_DrawPMItemsBig();
+
 #ifdef FEATURE_EDV
 	if (cgs.demoCamera.renderingFreeCam || cgs.demoCamera.renderingWeaponCam)
 	{
@@ -3051,7 +3081,7 @@ void CG_DrawUpperRight(void)
 	{
 		if (cg_altHudFlags.integer & FLAGS_MOVE_TIMERS)
 		{
-			CG_DrawTimersAlt(&activehud->reinforcment.location, &activehud->spawntimer.location, &activehud->localtime.location, &activehud->roundtimer.location);
+			CG_DrawTimersAlt(&activehud->reinforcement.location, &activehud->spawntimer.location, &activehud->localtime.location, &activehud->roundtimer.location);
 		}
 		else
 		{
