@@ -36,7 +36,8 @@
  * according to each different scenario.
  */
 
-#include "../game/g_local.h"
+#include "g_local.h"
+#include "g_lua.h"
 #include "../qcommon/q_shared.h"
 
 #ifdef FEATURE_OMNIBOT
@@ -903,13 +904,16 @@ void mountedmg42_fire(gentity_t *other)
 	//self->s.eFlags  |= EF_MG42_ACTIVE;
 	other->s.eFlags |= EF_MG42_ACTIVE;
 
-	if (self->s.density & 8)
+	if (!G_LuaHook_MountedMGFire(other->s.number))
 	{
-		Fire_Lead_Ext(other, other, GetWeaponTableData(WP_DUMMY_MG42)->spread, GetWeaponTableData(WP_DUMMY_MG42)->damage, muzzle, forward, right, up, MOD_BROWNING);
-	}
-	else
-	{
-		Fire_Lead_Ext(other, other, GetWeaponTableData(WP_DUMMY_MG42)->spread, GetWeaponTableData(WP_DUMMY_MG42)->damage, muzzle, forward, right, up, MOD_MG42);
+		if (self->s.density & 8)
+		{
+			Fire_Lead_Ext(other, other, GetWeaponTableData(WP_DUMMY_MG42)->spread, GetWeaponTableData(WP_DUMMY_MG42)->damage, muzzle, forward, right, up, MOD_BROWNING);
+		}
+		else
+		{
+			Fire_Lead_Ext(other, other, GetWeaponTableData(WP_DUMMY_MG42)->spread, GetWeaponTableData(WP_DUMMY_MG42)->damage, muzzle, forward, right, up, MOD_MG42);
+		}
 	}
 }
 

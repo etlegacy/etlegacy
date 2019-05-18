@@ -3701,6 +3701,123 @@ qboolean G_LuaHook_WeaponFire(int clientNum, weapon_t weapon, gentity_t **pFired
 	return qfalse;
 }
 
+// G_LuaHook_FixedMGFire
+// et_FixedMGFire( clientNum )
+qboolean G_LuaHook_FixedMGFire(int clientNum)
+{
+	int      i;
+	lua_vm_t *vm;
+
+	for (i = 0; i < LUA_NUM_VM; i++)
+	{
+		vm = lVM[i];
+		if (vm)
+		{
+			if (vm->id < 0 /*|| vm->err*/)
+			{
+				continue;
+			}
+			if (!G_LuaGetNamedFunction(vm, "et_FixedMGFire"))
+			{
+				continue;
+			}
+			// Arguments
+			lua_pushinteger(vm->L, clientNum);
+			// Call
+			if (!G_LuaCall(vm, "et_FixedMGFire", 1, 1))
+			{
+				continue;
+			}
+			// Return values
+			if (lua_tointeger(vm->L, -1) == 1)
+			{
+				lua_pop(vm->L, 1);
+				return qtrue;
+			}
+			lua_pop(vm->L, 1);
+		}
+	}
+	return qfalse;
+}
+
+// G_LuaHook_MountedMGFire
+// et_MountedMGFire( clientNum )
+qboolean G_LuaHook_MountedMGFire(int clientNum)
+{
+	int      i;
+	lua_vm_t *vm;
+
+	for (i = 0; i < LUA_NUM_VM; i++)
+	{
+		vm = lVM[i];
+		if (vm)
+		{
+			if (vm->id < 0 /*|| vm->err*/)
+			{
+				continue;
+			}
+			if (!G_LuaGetNamedFunction(vm, "et_MountedMGFire"))
+			{
+				continue;
+			}
+			// Arguments
+			lua_pushinteger(vm->L, clientNum);
+			// Call
+			if (!G_LuaCall(vm, "et_MountedMGFire", 1, 1))
+			{
+				continue;
+			}
+			// Return values
+			if (lua_tointeger(vm->L, -1) == 1)
+			{
+				lua_pop(vm->L, 1);
+				return qtrue;
+			}
+			lua_pop(vm->L, 1);
+		}
+	}
+	return qfalse;
+}
+
+// G_LuaHook_AAGunFire
+// et_AAGunFire( clientNum )
+qboolean G_LuaHook_AAGunFire(int clientNum)
+{
+	int      i;
+	lua_vm_t *vm;
+
+	for (i = 0; i < LUA_NUM_VM; i++)
+	{
+		vm = lVM[i];
+		if (vm)
+		{
+			if (vm->id < 0 /*|| vm->err*/)
+			{
+				continue;
+			}
+			if (!G_LuaGetNamedFunction(vm, "et_AAGunFire"))
+			{
+				continue;
+			}
+			// Arguments
+			lua_pushinteger(vm->L, clientNum);
+			// Call
+			if (!G_LuaCall(vm, "et_AAGunFire", 1, 1))
+			{
+				continue;
+			}
+			// Return values
+			if (lua_tointeger(vm->L, -1) == 1)
+			{
+				lua_pop(vm->L, 1);
+				return qtrue;
+			}
+			lua_pop(vm->L, 1);
+		}
+	}
+	return qfalse;
+}
+
 /*
  * G_LuaHook_SpawnEntitiesFromString
  * et_LuaSpawnEntitiesFromString()

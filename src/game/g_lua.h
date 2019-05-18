@@ -163,6 +163,9 @@ qboolean G_LuaHook_Damage(int target, int attacker, int damage, int dflags, mean
 void G_LuaHook_SpawnEntitiesFromString();
 qboolean G_ScriptAction_Delete(gentity_t *ent, char *params);
 qboolean G_LuaHook_WeaponFire(int clientNum, weapon_t weapon, gentity_t **pFiredShot);
+qboolean G_LuaHook_FixedMGFire(int clientNum);
+qboolean G_LuaHook_MountedMGFire(int clientNum);
+qboolean G_LuaHook_AAGunFire(int clientNum);
 
 #endif // #ifndef INCLUDE_G_LUA_H
 
