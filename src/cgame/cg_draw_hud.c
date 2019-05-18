@@ -2872,7 +2872,7 @@ void CG_Hud_Setup(void)
 
 	// Hud1
 	hud1.hudnumber       = 1;
-	hud1.compas          = CG_getComponent(44, SCREEN_HEIGHT - 75, 72, 72, qtrue, STYLE_NORMAL);
+	hud1.compas          = CG_getComponent(44, SCREEN_HEIGHT - 87, 84, 84, qtrue, STYLE_NORMAL);
 	hud1.staminabar      = CG_getComponent(4, 388, 12, 72, qtrue, STYLE_NORMAL);
 	hud1.breathbar       = CG_getComponent(4, 388, 12, 72, qtrue, STYLE_NORMAL);
 	hud1.healthbar       = CG_getComponent((Ccg_WideX(SCREEN_WIDTH) - 36), 388, 12, 72, qtrue, STYLE_NORMAL);
@@ -2898,14 +2898,14 @@ void CG_Hud_Setup(void)
 
 	// Hud2
 	hud2.hudnumber       = 2;
-	hud2.compas          = CG_getComponent(64, SCREEN_HEIGHT - 75, 72, 72, qtrue, STYLE_NORMAL);
+	hud2.compas          = CG_getComponent(64, SCREEN_HEIGHT - 87, 84, 84, qtrue, STYLE_NORMAL);
 	hud2.staminabar      = CG_getComponent(4, 388, 12, 72, qtrue, STYLE_NORMAL);
 	hud2.breathbar       = CG_getComponent(4, 388, 12, 72, qtrue, STYLE_NORMAL);
 	hud2.healthbar       = CG_getComponent(24, 388, 12, 72, qtrue, STYLE_NORMAL);
 	hud2.weaponchargebar = CG_getComponent((Ccg_WideX(SCREEN_WIDTH) - 16), 388, 12, 72, qtrue, STYLE_NORMAL);
 	hud2.healthtext      = CG_getComponent(65, SCREEN_HEIGHT - 4, 0, 0, qtrue, STYLE_NORMAL);
-	hud2.xptext          = CG_getComponent(120, SCREEN_HEIGHT - 4, 0, 0, qtrue, STYLE_NORMAL);
-	hud2.ranktext        = CG_getComponent(134, SCREEN_HEIGHT - 16, 0, 0, qtrue, STYLE_NORMAL);
+	hud2.xptext          = CG_getComponent(132, SCREEN_HEIGHT - 4, 0, 0, qtrue, STYLE_NORMAL);
+	hud2.ranktext        = CG_getComponent(146, SCREEN_HEIGHT - 16, 0, 0, qtrue, STYLE_NORMAL);
 	hud2.statsdisplay    = CG_getComponent(44, SCREEN_HEIGHT - 95, 0, 0, qtrue, STYLE_SIMPLE);
 	hud2.weaponicon      = CG_getComponent((Ccg_WideX(SCREEN_WIDTH) - 82), (SCREEN_HEIGHT - 56), 60, 32, qtrue, STYLE_NORMAL);
 	hud2.weaponammo      = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 22, SCREEN_HEIGHT - 1 * (16 + 2) + 12 - 4, 0, 0, qtrue, STYLE_NORMAL);
