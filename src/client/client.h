@@ -584,7 +584,7 @@ void CL_Ping_f(void);
 qboolean CL_UpdateVisiblePings_f(int source);
 
 /// console
-#define NUM_CON_TIMES   4
+#define NUM_CON_TIMES   10
 
 #define CON_TEXTSIZE    131072
 

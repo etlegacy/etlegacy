@@ -113,6 +113,7 @@ cvar_t *com_showtrace;
 cvar_t *com_version;
 cvar_t *com_buildScript;    // for automated data building scripts
 cvar_t *con_drawnotify;
+cvar_t *con_numNotifies;
 cvar_t *com_introPlayed;
 cvar_t *com_unfocused;
 cvar_t *com_minimized;
@@ -2946,6 +2947,7 @@ void Com_Init(char *commandLine)
 	com_buildScript = Cvar_Get("com_buildScript", "0", 0);
 
 	con_drawnotify = Cvar_Get("con_drawnotify", "0", CVAR_CHEAT);
+    con_numNotifies = Cvar_Get("con_numNotifies", "4", CVAR_CHEAT);
 
 	com_introPlayed = Cvar_Get("com_introplayed", "0", CVAR_ARCHIVE);
 
