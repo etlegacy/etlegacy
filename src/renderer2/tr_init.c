@@ -123,7 +123,7 @@ cvar_t *r_shadows;
 cvar_t *r_softShadows;
 cvar_t *r_shadowBlur;
 
-cvar_t *r_shadowMapQuality;
+//cvar_t *r_shadowMapQuality; // unused
 cvar_t *r_shadowMapSizeUltra;
 cvar_t *r_shadowMapSizeVeryHigh;
 cvar_t *r_shadowMapSizeHigh;
@@ -1347,7 +1347,7 @@ void R_Register(void)
 	r_dynamicLight = ri.Cvar_Get("r_dynamicLight", "1", CVAR_ARCHIVE);
 	r_dynamicLightShadows = ri.Cvar_Get("r_dynamicLightShadows", "1", CVAR_ARCHIVE);
 
-	r_lightScale = ri.Cvar_Get("r_lightScale", "0.25", CVAR_ARCHIVE); // used with shadowing
+	r_lightScale = ri.Cvar_Get("r_lightScale", "0.005", CVAR_ARCHIVE | CVAR_LATCH); // used with shadowing
 
 	// shadowing
 	r_shadows = ri.Cvar_Get("cg_shadows", "1", CVAR_ARCHIVE | CVAR_LATCH);
@@ -1358,8 +1358,8 @@ void R_Register(void)
 
 	r_shadowBlur = ri.Cvar_Get("r_shadowBlur", "2", CVAR_ARCHIVE | CVAR_LATCH);
 
-	r_shadowMapQuality = ri.Cvar_Get("r_shadowMapQuality", "3", CVAR_ARCHIVE | CVAR_LATCH);
-	ri.Cvar_CheckRange(r_shadowMapQuality, 0, 4, qtrue);
+//	r_shadowMapQuality = ri.Cvar_Get("r_shadowMapQuality", "3", CVAR_ARCHIVE | CVAR_LATCH);
+//	ri.Cvar_CheckRange(r_shadowMapQuality, 0, 4, qtrue);
 
 	r_shadowMapSizeUltra = ri.Cvar_Get("r_shadowMapSizeUltra", "1024", CVAR_ARCHIVE | CVAR_LATCH);
 	ri.Cvar_CheckRange(r_shadowMapSizeUltra, 32, 2048, qtrue);
@@ -1422,7 +1422,8 @@ void R_Register(void)
 	r_parallelShadowSplits = ri.Cvar_Get("r_parallelShadowSplits", "2", CVAR_ARCHIVE);
 	ri.Cvar_CheckRange(r_parallelShadowSplits, 0, MAX_SHADOWMAPS - 1, qtrue);
 
-	r_evsmPostProcess = ri.Cvar_Get("r_evsmPostProcess", "0", CVAR_ARCHIVE | CVAR_LATCH);
+	// atm. you need this set to 1, otherwise the EVSM shadows (cgshadows 6) are not shown..  todo
+	r_evsmPostProcess = ri.Cvar_Get("r_evsmPostProcess", "1", CVAR_ARCHIVE | CVAR_LATCH);
 
 
 	// note: MAX_POLYS and MAX_POLYVERTS are heavily increased in ET compared to q3

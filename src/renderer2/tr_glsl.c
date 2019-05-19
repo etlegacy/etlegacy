@@ -3000,15 +3000,15 @@ void GLSL_SetUniform_ColorModulate(programInfo_t *prog, int colorGen, int alphaG
 	{
 	case CGEN_VERTEX:
 		prog->attributes |= ATTR_COLOR;
-		VectorSet(temp, 1, 1, 1);
+		VectorSet(temp, 1.f, 1.f, 1.f);
 		break;
 	case CGEN_ONE_MINUS_VERTEX:
 		prog->attributes |= ATTR_COLOR;
-		VectorSet(temp, -1, -1, -1);
+		VectorSet(temp, -1.f, -1.f, -1.f);
 		break;
 	default:
 		prog->attributes &= ~ATTR_COLOR;
-		VectorSet(temp, 0, 0, 0);
+		VectorSet(temp, 0.f, 0.f, 0.f);
 		break;
 	}
 

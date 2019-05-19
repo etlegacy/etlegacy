@@ -74,6 +74,7 @@ typedef unsigned short glIndex_t;
 
 //#define VOLUMETRIC_LIGHTING 1
 
+// NOTE: function BuildRedundantIndices() does not exist, but it's needed by CALC_REDUNDANT_SHADOWVERTS 1
 #define CALC_REDUNDANT_SHADOWVERTS 0
 
 //#define USE_BSP_CLUSTERSURFACE_MERGING 1

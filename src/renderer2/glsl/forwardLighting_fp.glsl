@@ -926,7 +926,7 @@ void    main()
 		const float SHADOW_BIAS = 0.001;
 
 #if defined(LIGHT_DIRECTIONAL)
-		float vertexDistance = shadowVert.z - 0.0001;
+		float vertexDistance = shadowVert.z - 0.000001;// 0.0001;
 #else
 		float vertexDistance = (length(I) / u_LightRadius) - SHADOW_BIAS; // * r_ShadowMapDepthScale;// - SHADOW_BIAS;
 #endif

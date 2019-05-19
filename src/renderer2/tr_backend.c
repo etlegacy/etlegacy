@@ -483,6 +483,8 @@ static void Render_lightVolume(interaction_t *ia)
 	shaderStage_t *attenuationZStage;
 	vec4_t        quadVerts[4];
 
+	if (light->l.rlType != RL_OMNI) return; // finally only omni lights interactions are rendered..
+
 	// set the window clipping
 	GL_Viewport(backEnd.viewParms.viewportX, backEnd.viewParms.viewportY,
 	            backEnd.viewParms.viewportWidth, backEnd.viewParms.viewportHeight);
@@ -540,7 +542,7 @@ static void Render_lightVolume(interaction_t *ia)
 		Tess_ComputeColor(attenuationXYStage);
 		R_ComputeFinalAttenuation(attenuationXYStage, light);
 
-		if (light->l.rlType == RL_OMNI)
+//		if (light->l.rlType == RL_OMNI)
 		{
 			qboolean shadowCompare;
 
