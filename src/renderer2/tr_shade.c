@@ -3455,7 +3455,7 @@ void Tess_StageIteratorShadowFill()
 				Render_shadowFill(stage);
 			}
 			break;*/
-			if (tess.surfaceShader->sort > SS_OPAQUE) break;
+			if (tess.surfaceShader->sort > SS_OPAQUE) continue;//for      break;//switch
 			// else drop down the next following case statements, and execute that code block..
 			// That's how switch/case/break work.. 
 		}
@@ -3464,6 +3464,10 @@ void Tess_StageIteratorShadowFill()
 		case ST_BUNDLE_DB:
 		case ST_BUNDLE_DBS:
 		case ST_BUNDLE_DBSR:
+		case ST_BUNDLE_CB:
+//		case ST_BUNDLE_WDB:
+//		case ST_BUNDLE_WB:
+//		case ST_BUNDLE_WD:
 		{
 			Tess_ComputeTexMatrices(pStage);
 			Render_shadowFill(stage);
