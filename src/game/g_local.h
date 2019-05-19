@@ -1065,7 +1065,7 @@ typedef struct voteInfo_s
 	int voteNo;
 	int numVotingClients;               ///< set by CalculateRanks
 	int numVotingTeamClients[2];
-	int (*vote_fn)(gentity_t * ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd);
+	int (*vote_fn)(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd);
 	char vote_value[VOTE_MAXSTRING];    ///< Desired vote item setting.
 	int voteCaller;                     ///< id of the vote caller
 	int voteTeam;                       ///< id of the vote caller's team
@@ -1457,6 +1457,9 @@ void G_ParseCampaigns(void);
 qboolean G_MapIsValidCampaignStartMap(void);
 
 team_t G_GetTeamFromEntity(gentity_t *ent);
+
+const char *G_StringContains(const char *str1, const char *str2, int casesensitive);
+qboolean G_MatchString(const char *filter, const char *name, int casesensitive);
 
 /**
  * @struct grefEntity_t
@@ -1872,7 +1875,9 @@ extern vmCvar_t pmove_fixed;
 extern vmCvar_t pmove_msec;
 
 extern vmCvar_t g_scriptName;               ///< name of script file to run (instead of default for that map)
-extern vmCvar_t g_scriptDebug;
+extern vmCvar_t g_scriptDebug;              ///< what level of detail do we want script printing to go to.
+extern vmCvar_t g_scriptDebugLevel;         ///< filter out script debug messages from other entities
+extern vmCvar_t g_scriptDebugTarget;
 
 extern vmCvar_t g_userAim;
 extern vmCvar_t g_developer;
@@ -1888,9 +1893,6 @@ extern vmCvar_t g_covertopsChargeTime;
 
 extern vmCvar_t g_debugConstruct;
 extern vmCvar_t g_landminetimeout;
-
-/// What level of detail do we want script printing to go to.
-extern vmCvar_t g_scriptDebugLevel;
 
 /// How fast do SP player and allied bots move?
 extern vmCvar_t g_movespeed;

@@ -209,7 +209,9 @@ vmCvar_t g_landminetimeout;
 
 // Variable for setting the current level of debug printing/logging
 // enabled in bot scripts and regular scripts.
+vmCvar_t g_scriptDebug;
 vmCvar_t g_scriptDebugLevel;
+vmCvar_t g_scriptDebugTarget;
 vmCvar_t g_movespeed;
 
 vmCvar_t g_axismapxp;
@@ -508,9 +510,9 @@ cvarTable_t gameCvarTable[] =
 	{ &g_debugConstruct,                    "g_debugConstruct",                    "0",                          CVAR_CHEAT,                                      0, qfalse, qfalse },
 
 	{ &g_scriptDebug,                       "g_scriptDebug",                       "0",                          CVAR_CHEAT,                                      0, qfalse, qfalse },
-
 	// What level of detail do we want script printing to go to.
 	{ &g_scriptDebugLevel,                  "g_scriptDebugLevel",                  "0",                          CVAR_CHEAT,                                      0, qfalse, qfalse },
+    { &g_scriptDebugTarget,                 "g_scriptDebugTarget",                 "",                           CVAR_CHEAT,                                      0, qfalse, qfalse },
 
 	// How fast do we want Allied single player movement?
 	{ &g_movespeed,                         "g_movespeed",                         "76",                         CVAR_CHEAT,                                      0, qfalse, qfalse },

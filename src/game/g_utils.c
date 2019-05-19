@@ -1894,3 +1894,180 @@ team_t G_GetTeamFromEntity(gentity_t *ent)
 
 	return TEAM_FREE;
 }
+
+/**
+ * @brief G_StringContains
+ * @param[in] str1
+ * @param[in] str2
+ * @param[in] casesensitive
+ * @return
+ */
+const char *G_StringContains(const char *str1, const char *str2, int casesensitive)
+{
+	int len, i, j;
+
+	len = strlen(str1) - strlen(str2);
+	for (i = 0; i <= len; i++, str1++)
+	{
+		for (j = 0; str2[j]; j++)
+		{
+			if (casesensitive)
+			{
+				if (str1[j] != str2[j])
+				{
+					break;
+				}
+			}
+			else
+			{
+				if (toupper(str1[j]) != toupper(str2[j]))
+				{
+					break;
+				}
+			}
+		}
+		if (!str2[j])
+		{
+			return str1;
+		}
+	}
+	return NULL;
+}
+
+/**
+ * @brief G_MatchString
+ * @param[in] filter
+ * @param[in] name
+ * @param[in] casesensitive
+ * @return
+ */
+qboolean G_MatchString(const char *filter, const char *name, int casesensitive)
+{
+	char       buf[MAX_TOKEN_CHARS];
+	const char *ptr;
+	int        i, found;
+
+	if (!name || !filter)
+	{
+		return qfalse;
+	}
+
+	while (*filter)
+	{
+		if (*filter == '*')
+		{
+			filter++;
+			for (i = 0; *filter; i++)
+			{
+				if (*filter == '*' || *filter == '?')
+				{
+					break;
+				}
+				buf[i] = *filter;
+				filter++;
+			}
+			buf[i] = '\0';
+			if (strlen(buf))
+			{
+				ptr = G_StringContains(name, buf, casesensitive);
+				if (!ptr)
+				{
+					return qfalse;
+				}
+				name = ptr + strlen(buf);
+			}
+		}
+		else if (*filter == '?')
+		{
+			filter++;
+			name++;
+		}
+		else if (*filter == '[' && *(filter + 1) == '[')
+		{
+			filter++;
+		}
+		else if (*filter == '[')
+		{
+			filter++;
+			found = qfalse;
+			while (*filter && !found)
+			{
+				if (*filter == ']' && *(filter + 1) != ']')
+				{
+					break;
+				}
+				if (*(filter + 1) == '-' && *(filter + 2) && (*(filter + 2) != ']' || *(filter + 3) == ']'))
+				{
+					if (casesensitive)
+					{
+						if (*name >= *filter && *name <= *(filter + 2))
+						{
+							found = qtrue;
+						}
+					}
+					else
+					{
+						if (toupper(*name) >= toupper(*filter) &&
+						    toupper(*name) <= toupper(*(filter + 2)))
+						{
+							found = qtrue;
+						}
+					}
+					filter += 3;
+				}
+				else
+				{
+					if (casesensitive)
+					{
+						if (*filter == *name)
+						{
+							found = qtrue;
+						}
+					}
+					else
+					{
+						if (toupper(*filter) == toupper(*name))
+						{
+							found = qtrue;
+						}
+					}
+					filter++;
+				}
+			}
+			if (!found)
+			{
+				return qfalse;
+			}
+			while (*filter)
+			{
+				if (*filter == ']' && *(filter + 1) != ']')
+				{
+					break;
+				}
+				filter++;
+			}
+			filter++;
+			name++;
+		}
+		else
+		{
+			if (casesensitive)
+			{
+				if (*filter != *name)
+				{
+					return qfalse;
+				}
+			}
+			else
+			{
+				if (toupper(*filter) != toupper(*name))
+				{
+					return qfalse;
+				}
+			}
+			filter++;
+			name++;
+		}
+	}
+	return qtrue;
+}
