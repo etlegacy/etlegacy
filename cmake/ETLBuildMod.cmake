@@ -16,8 +16,8 @@ if(NOT ANDROID)
 		OSX_ARCHITECTURES "i386;x86_64"
 	)
 else()
-	add_library(libcgame MODULE ${CGAME_SRC})
-	set_target_properties(libcgame
+	add_library(libcgame${LIB_SUFFIX}${ARCH} MODULE ${CGAME_SRC})
+	set_target_properties(libcgame${LIB_SUFFIX}${ARCH}
 		PROPERTIES COMPILE_DEFINITIONS "CGAMEDLL"
 		PREFIX ""
 		LIBRARY_OUTPUT_DIRECTORY "legacy"
@@ -94,8 +94,8 @@ if(NOT ANDROID)
 		OSX_ARCHITECTURES "i386;x86_64"
 	)
 else()
-	add_library(libui MODULE ${UI_SRC})
-	set_target_properties(libui
+	add_library(libui${LIB_SUFFIX}${ARCH} MODULE ${UI_SRC})
+	set_target_properties(libui${LIB_SUFFIX}${ARCH}
 		PROPERTIES
 		PREFIX ""
 		LIBRARY_OUTPUT_DIRECTORY "legacy"

@@ -78,6 +78,7 @@ if(UNIX)
 	elseif(CMAKE_SYSTEM MATCHES "Android")
 		# Add libs with neon support
 		# set(HAVE_NEON "neon")
+		set(LIB_SUFFIX ".mp.")
 	elseif(APPLE)
 		set(OS_LIBRARIES dl m)
 		set(CMAKE_EXE_LINKER_FLAGS "-lobjc -framework Cocoa -framework IOKit -framework CoreFoundation")
