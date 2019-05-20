@@ -3914,7 +3914,8 @@ static void CreateExternalShaders(void)
 {
 	tr.projectionShadowShader = R_FindShader("projectionShadow", LIGHTMAP_NONE, qtrue);
 	tr.flareShader            = R_FindShader("flareShader", LIGHTMAP_NONE, qtrue);
-	tr.sunflareShader[0]      = R_FindShader("sunflare1", LIGHTMAP_NONE, qtrue);
+	// Its failing here
+	//tr.sunflareShader[0]      = R_FindShader("sunflare1", LIGHTMAP_NONE, qtrue);
 	tr.dlightShader           = R_FindShader("dlightshader", LIGHTMAP_NONE, qtrue);
 }
 
