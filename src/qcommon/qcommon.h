@@ -1359,6 +1359,8 @@ qboolean IN_IsNumLockDown(void);
 #define Sys_GetDLLName(x) x ".mp.nbsd." ARCH_STRING DLL_EXT
 #elif __APPLE__
 #define Sys_GetDLLName(x) x DLL_EXT
+#elif __ANDROID__
+#define Sys_GetDLLName(x) "lib" x ".mp." ARCH_STRING DLL_EXT
 #else
 #define Sys_GetDLLName(x) x ".mp." ARCH_STRING DLL_EXT
 #endif
