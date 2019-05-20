@@ -338,7 +338,7 @@ void VM_LoadSymbols(vm_t *vm)
  */
 intptr_t QDECL VM_DllSyscall(intptr_t arg, ...)
 {
-#if defined(__x86_64__) || defined (__llvm__) || ((defined __linux__) && (defined __powerpc__))
+#if defined(__x86_64__) || defined (__llvm__) || defined(__ANDROID__) || ((defined __linux__) && (defined __powerpc__))
 	// rcg010206 - see commentary above
 	intptr_t args[VM_SYSCALL_ARGS];
 	int      i;
