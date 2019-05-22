@@ -55,9 +55,10 @@
         <!-- Example of setting SDL hints from AndroidManifest.xml:
         <meta-data android:name="SDL_ENV.SDL_ACCELEROMETER_AS_JOYSTICK" android:value="0"/>
          -->
-     
+
         <activity android:name="ETLActivity"
             android:label="@string/app_name"
+            android:screenOrientation="landscape"
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
             >
             <intent-filter>
