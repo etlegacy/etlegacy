@@ -4778,8 +4778,7 @@ void CG_WeaponFireRecoil(int weapon)
  */
 void CG_FireWeapon(centity_t *cent)
 {
-	entityState_t *ent = &cent->currentState;
-	weaponInfo_t  *weap;
+	weaponInfo_t *weap;
 
 	if (BG_PlayerMounted(cent->currentState.eFlags))
 	{
@@ -4821,21 +4820,31 @@ void CG_FireWeapon(centity_t *cent)
 		return;
 	}
 
-	if (ent->weapon == WP_NONE)
+	if (cent->currentState.weapon == WP_NONE)
 	{
 		return;
 	}
 
-	if (ent->weapon >= WP_NUM_WEAPONS)
+	if (cent->currentState.weapon >= WP_NUM_WEAPONS)
 	{
 		CG_Error("CG_FireWeapon: ent->weapon >= WP_NUM_WEAPONS\n");
 	}
 
-	weap = &cg_weapons[ent->weapon];
+	weap = &cg_weapons[cent->currentState.weapon];
 
 	if (cent->currentState.clientNum == cg.snap->ps.clientNum)
 	{
-		cg.lastFiredWeapon = ent->weapon;
+		cg.lastFiredWeapon = cent->currentState.weapon;
+
+		// kick angles
+		CG_WeaponFireRecoil(cent->currentState.weapon);
+
+		if (CHECKBITWISE(GetWeaponTableData(cent->currentState.weapon)->type, WEAPON_TYPE_MORTAR | WEAPON_TYPE_SET))
+		{
+			cg.mortarImpactTime        = -1;
+			cg.mortarFireAngles[PITCH] = cg.predictedPlayerState.viewangles[PITCH];
+			cg.mortarFireAngles[YAW]   = cg.predictedPlayerState.viewangles[YAW];
+		}
 	}
 
 	// mark the entity as muzzle flashing, so when it is added it will
@@ -4849,30 +4858,14 @@ void CG_FireWeapon(centity_t *cent)
 		cent->muzzleFlashTime = 0;
 	}
 
-	// kick angles
-	if (ent->number == cg.snap->ps.clientNum)
-	{
-		CG_WeaponFireRecoil(ent->weapon);
-	}
-
-	if (CHECKBITWISE(GetWeaponTableData(ent->weapon)->type, WEAPON_TYPE_MORTAR | WEAPON_TYPE_SET))
-	{
-		if (ent->clientNum == cg.snap->ps.clientNum)
-		{
-			cg.mortarImpactTime        = -1;
-			cg.mortarFireAngles[PITCH] = cg.predictedPlayerState.viewangles[PITCH];
-			cg.mortarFireAngles[YAW]   = cg.predictedPlayerState.viewangles[YAW];
-		}
-	}
-
 	// lightning gun only does this on initial press
-	if (ent->weapon == WP_FLAMETHROWER && cent->pe.lightningFiring)
+	if (cent->currentState.weapon == WP_FLAMETHROWER && cent->pe.lightningFiring)
 	{
 		return;
 	}
 
 	// "throwing effort" when grenade is launched far enough
-	if ((GetWeaponTableData(ent->weapon)->type & WEAPON_TYPE_GRENADE) && ent->apos.trBase[0] > 0)
+	if ((GetWeaponTableData(cent->currentState.weapon)->type & WEAPON_TYPE_GRENADE) && cent->currentState.apos.trBase[0] > 0)
 	{
 		return;
 	}
@@ -4908,13 +4901,12 @@ void CG_FireWeapon(centity_t *cent)
 
 		if (firesound)
 		{
-			trap_S_StartSound(NULL, ent->number, CHAN_WEAPON, firesound);
+			trap_S_StartSound(NULL, cent->currentState.number, CHAN_WEAPON, firesound);
 
 			if (fireEchosound)  // check for echo
 			{
-				centity_t *cent = &cg_entities[ent->number];
-				vec3_t    porg, gorg, norm;                 // player/gun origin
-				float     gdist;
+				vec3_t porg, gorg, norm;                    // player/gun origin
+				float  gdist;
 
 				VectorCopy(cent->currentState.pos.trBase, gorg);
 				VectorCopy(cg.refdef_current->vieworg, porg);
@@ -4924,7 +4916,7 @@ void CG_FireWeapon(centity_t *cent)
 				if (gdist > 512 && gdist < 4096)                       // temp dist.  TODO: use numbers that are weapon specific
 				{                   // use gorg as the new sound origin
 					VectorMA(cg.refdef_current->vieworg, 64, norm, gorg);                         // sound-on-a-stick
-					trap_S_StartSoundEx(gorg, ent->number, CHAN_WEAPON, fireEchosound, SND_NOCUT);
+					trap_S_StartSoundEx(gorg, cent->currentState.number, CHAN_WEAPON, fireEchosound, SND_NOCUT);
 				}
 			}
 		}
