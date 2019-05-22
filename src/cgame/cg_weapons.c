@@ -1209,6 +1209,12 @@ static const impactTable_t impactSurfaceTable[W_MAX_IMPACTS] =
 	{ 0,           "flesh"   }
 };
 
+/**
+ * @brief CG_RW_ParseWeaponSound
+ * @param[in] handle
+ * @param[in,out] weaponSounds
+ * @return
+ */
 static qboolean CG_RW_ParseWeaponSound(int handle, weaponSounds_t *weaponSounds)
 {
 	pc_token_t token;
@@ -1367,7 +1373,6 @@ static qboolean CG_RW_ParseClient(int handle, weaponInfo_t *weaponInfo)
 {
 	pc_token_t token;
 	char       filename[MAX_QPATH];
-	int        i;
 
 	if (!trap_PC_ReadToken(handle, &token) || Q_stricmp(token.string, "{"))
 	{
@@ -5301,6 +5306,16 @@ static sfxHandle_t CG_GetRandomImpactSound(int weapon, impactSurface_t surf)
 	return 0;
 }
 
+/**
+ * @brief CG_MeleeImpact
+ * @param[in] weapon
+ * @param[in] missileEffect
+ * @param[in] origin
+ * @param[in] dir
+ * @param[in] surfFlags
+ * @param[in,out] radius
+ * @param[in,out] markDuration
+ */
 void CG_MeleeImpact(int weapon, int missileEffect, vec3_t origin, vec3_t dir, int surfFlags, float *radius, int *markDuration)
 {
 	if (missileEffect != PS_FX_FLESH)
@@ -5313,6 +5328,16 @@ void CG_MeleeImpact(int weapon, int missileEffect, vec3_t origin, vec3_t dir, in
 	*markDuration = cg_markTime.integer;
 }
 
+/**
+ * @brief CG_BulletImpact
+ * @param[in] weapon
+ * @param[in] missileEffect
+ * @param[in] origin
+ * @param[in] dir
+ * @param[in] surfFlags
+ * @param[in,out] radius
+ * @param[in,out] markDuration
+ */
 void CG_BulletImpact(int weapon, int missileEffect, vec3_t origin, vec3_t dir, int surfFlags, float *radius, int *markDuration)
 {
 	*markDuration = -1;
@@ -5379,6 +5404,16 @@ void CG_BulletImpact(int weapon, int missileEffect, vec3_t origin, vec3_t dir, i
 	}
 }
 
+/**
+ * @brief CG_SmallExplosionImpact
+ * @param[in] weapon
+ * @param[in] missileEffect
+ * @param[in] origin
+ * @param[in] dir
+ * @param[in] surfFlags
+ * @param[in,out] radius
+ * @param[in,out] markDuration
+ */
 void CG_SmallExplosionImpact(int weapon, int missileEffect, vec3_t origin, vec3_t dir, int surfFlags, float *radius, int *markDuration)
 {
 	trace_t trace;
@@ -5427,6 +5462,16 @@ void CG_SmallExplosionImpact(int weapon, int missileEffect, vec3_t origin, vec3_
 	}
 }
 
+/**
+ * @brief CG_BigExplosionImpact
+ * @param[in] weapon
+ * @param[in] missileEffect
+ * @param[in] origin
+ * @param[in] dir
+ * @param[in] surfFlags
+ * @param[in,out] radius
+ * @param[in,out] markDuration
+ */
 void CG_BigExplosionImpact(int weapon, int missileEffect, vec3_t origin, vec3_t dir, int surfFlags, float *radius, int *markDuration)
 {
 	trace_t trace;
@@ -5491,6 +5536,16 @@ void CG_BigExplosionImpact(int weapon, int missileEffect, vec3_t origin, vec3_t 
 	}
 }
 
+/**
+ * @brief CG_MapMortarImpact
+ * @param[in] weapon
+ * @param[in] missileEffect
+ * @param[in] origin
+ * @param[in] dir
+ * @param[in] surfFlags
+ * @param[in,out] radius
+ * @param[in,out] markDuration
+ */
 void CG_MapMortarImpact(int weapon, int missileEffect, vec3_t origin, vec3_t dir, int surfFlags, float *radius, int *markDuration)
 {
 	trace_t trace;
@@ -5549,6 +5604,16 @@ void CG_MapMortarImpact(int weapon, int missileEffect, vec3_t origin, vec3_t dir
 	}
 }
 
+/**
+ * @brief CG_DynamiteExplosionImpact
+ * @param[in] weapon
+ * @param[in] missileEffect
+ * @param[in] origin
+ * @param[in] dir
+ * @param[in] surfFlags
+ * @param[in,out] radius
+ * @param[in,out] markDuration
+ */
 void CG_DynamiteExplosionImpact(int weapon, int missileEffect, vec3_t origin, vec3_t dir, int surfFlags, float *radius, int *markDuration)
 {
 	trace_t trace;
@@ -6194,7 +6259,7 @@ void CG_Bullet(int weapon, vec3_t end, int sourceEntityNum, qboolean flesh, int 
 		return;
 	}
 
-    // hack for fixed/mounted MG
+	// hack for fixed/mounted MG
 	if (BG_PlayerMounted(cg_entities[sourceEntityNum].currentState.eFlags))
 	{
 		if (cg_entities[sourceEntityNum].currentState.eFlags & EF_MOUNTEDTANK)
@@ -6362,19 +6427,6 @@ void CG_Bullet(int weapon, vec3_t end, int sourceEntityNum, qboolean flesh, int 
 		}
 
 		// play the bullet hit flesh sound
-//		if (fleshEntityNum == cg.snap->ps.clientNum)
-//		{
-//			//trap_S_StartSound(NULL, fleshEntityNum, CHAN_BODY, cgs.media.sfx_bullet_fleshhit[rand() % MAX_WEAPON_SOUNDS]);
-//			trap_S_StartSound(NULL, fleshEntityNum, CHAN_BODY,
-//			                  cg_weapons[weapon].impactSound[W_IMPACT_DEFAULT].sounds[rand() % cg_weapons[weapon].impactSound[W_IMPACT_DEFAULT].count]);
-
-//		}
-//		else
-//		{
-//			trap_S_StartSound(cg_entities[fleshEntityNum].currentState.origin, ENTITYNUM_WORLD, CHAN_BODY,
-//			                  cg_weapons[weapon].impactSound[W_IMPACT_DEFAULT].sounds[rand() % cg_weapons[weapon].impactSound[W_IMPACT_DEFAULT].count]);
-//		}
-
 		CG_MissileHitWall(weapon, PS_FX_FLESH, cg_entities[fleshEntityNum].currentState.origin, smokedir, 0, fleshEntityNum);
 
 		// if we haven't dropped a blood spat in a while, check if this is a good scenario

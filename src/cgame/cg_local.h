@@ -812,7 +812,7 @@ typedef struct weaponInfo_s
 	void (*ejectBrassFunc)(centity_t *);
 	vec3_t ejectBrassOffset;
 
-	sfxHandle_t readySound;             ///< an amibient sound the weapon makes when it's /not/ firing
+	sfxHandle_t readySound;             ///< an ambient sound the weapon makes when it's /not/ firing
 	sfxHandle_t firingSound;
 	sfxHandle_t overheatSound;
 	sfxHandle_t reloadSound;
