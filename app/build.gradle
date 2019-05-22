@@ -30,6 +30,7 @@ android {
         targetSdkVersion 26
         versionCode 1
         versionName "1.0"
+        setProperty("archivesBaseName", "ETLegacy v-$versionName")
         externalNativeBuild {
             cmake {
                 arguments "-DCROSS_COMPILE32=OFF", "-DFEATURE_RENDERER2=OFF", "-DFEATURE_RENDERER_GLES=ON", "-DBUILD_SERVER=OFF", "-DINSTALL_EXTRA=OFF", "-DCMAKE_BUILD_TYPE=Release", "-DBUNDLED_LIBS=OFF", "-DBUNDLED_SDL=OFF", "-DBUNDLED_LUA=OFF", "-DFEATURE_LUA=OFF", "-DBUNDLED_OPENAL=OFF", "-DFEATURE_OPENAL=OFF", "-DBUNDLED_FREETYPE=OFF", "-DFEATURE_FREETYPE=OFF", "-DBUNDLED_GLEW=OFF", "-DRENDERER_DYNAMIC=OFF", "-DBUNDLED_JANSSON=OFF", "-DBUNDLED_THEORA=OFF", "-DFEATURE_THEORA=OFF"
