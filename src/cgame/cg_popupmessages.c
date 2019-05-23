@@ -349,6 +349,7 @@ static qboolean CG_CheckPMItemFilter(popupMessageType_t type)
 		{
 			return qtrue;
 		}
+		break;
 	case PM_TEAM:
 		if (cg_popupFilter.integer & POPUP_FILTER_TEAMJOIN)
 		{
