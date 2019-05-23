@@ -22,8 +22,8 @@ SET use_autoupdate=1
 SET use_extra=1
 SET build_r2=1
 SET generator=
-REM SET generator=Visual Studio 14 2015
-REM SET platform_toolset=-T v141_xp
+REM SET generator=Visual Studio 16 2019
+REM SET platform_toolset=-T v142
 
 :: pickup some parameters before proceeding
 set i=0
@@ -64,11 +64,6 @@ SET tasks=%i%
 
 IF NOT "%generator%"=="" (
 	SET generator=-G "%generator%
-	IF %build_64%==1 (
-		SET generator=!generator! Win64"
-	) ELSE (
-		SET generator=!generator!"
-	)
 )
 
 REM for /L %%i in (1,1,%tasks%) do echo Task number %%i: "!commands[%%i]!"
@@ -202,8 +197,13 @@ GOTO:EOF
 
 	set build_string=
 	CALL:GENERATECMAKE build_string
-	cmake !generator! !platform_toolset! %build_string% "%~2"
-	ECHO cmake !generator! !platform_toolset! %build_string% "%~2"
+	IF %build_64%==1 (
+		cmake !generator! !platform_toolset! -A Win64 %build_string% "%~2"
+		ECHO cmake !generator! !platform_toolset! -A Win64 %build_string% "%~2"
+	) ELSE (
+		cmake !generator! !platform_toolset! -A Win32 %build_string% "%~2"
+		ECHO cmake !generator! !platform_toolset! -A Win32 %build_string% "%~2"
+	)
 GOTO:EOF
 
 :OPENPROJECT
