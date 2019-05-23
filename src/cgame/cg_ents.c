@@ -651,7 +651,8 @@ static void CG_Item(centity_t *cent)
 
 	item = BG_GetItem(es->modelindex);
 
-	if (cg_simpleItems.integer)
+	if (cg_simpleItems.integer == 1 ||
+		(cg_simpleItems.integer > 1 && (item->giType == IT_WEAPON || item->giType == IT_HEALTH || item->giType == IT_AMMO)))
 	{
 		Com_Memset(&ent, 0, sizeof(ent));
 		VectorCopy(cent->lerpOrigin, ent.origin);
