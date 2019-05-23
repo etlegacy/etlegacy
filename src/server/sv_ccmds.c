@@ -469,18 +469,13 @@ static void SV_Status_f(void)
 		return;
 	}
 
-	Com_Printf("cpu server utilization: %i %%\n"
-	           "avg response time     : %i ms\n"
-	           "server time           : %i\n"
-	           "internal time         : %i\n"
-	           "map                   : %s\n\n"
-	           "num score ping name                                lastmsg address               qport rate  lastConnectTime\n"
-	           "--- ----- ---- ----------------------------------- ------- --------------------- ----- ----- ---------------\n",
-	           ( int ) svs.stats.cpu,
-	           ( int ) svs.stats.avg,
-	           svs.time,
-	           Sys_Milliseconds(),
-	           sv_mapname->string);
+	Com_Printf("cpu server utilization: %i %%\n", ( int ) svs.stats.cpu);
+	Com_Printf("avg response time     : %i ms\n", ( int ) svs.stats.avg);
+	Com_Printf("server time           : %i\n", svs.time);
+	Com_Printf("internal time         : %i\n", Sys_Milliseconds());
+	Com_Printf("map                   : %s\n\n", sv_mapname->string);
+	Com_Printf("num score ping name                                lastmsg address               qport rate  lastConnectTime\n");
+	Com_Printf("--- ----- ---- ----------------------------------- ------- --------------------- ----- ----- ---------------\n");
 
 	for (i = 0, cl = svs.clients ; i < sv_maxclients->integer ; i++, cl++)
 	{
