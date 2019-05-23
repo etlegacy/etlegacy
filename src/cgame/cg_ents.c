@@ -651,30 +651,35 @@ static void CG_Item(centity_t *cent)
 
 	item = BG_GetItem(es->modelindex);
 
-	if (cg_simpleItems.integer && (item->giType == IT_WEAPON || item->giType == IT_HEALTH || item->giType == IT_AMMO))
+	if (cg_simpleItems.integer)
 	{
 		Com_Memset(&ent, 0, sizeof(ent));
-		ent.reType = RT_SPRITE;
 		VectorCopy(cent->lerpOrigin, ent.origin);
-		ent.radius = 14;
-		//ent.origin[0] += 7;
-		//ent.origin[1] += 7;
+		ent.reType     = RT_SPRITE;
+		ent.radius     = 14;
 		ent.origin[2] += 7;
 
-		if (item->giType == IT_AMMO)
+		switch (item->giType)
 		{
-			ent.customShader = cg_weapons[WP_AMMO].weaponIcon[1];
-		}
-		else if (item->giType == IT_HEALTH)
-		{
-			ent.customShader = cg_weapons[WP_MEDKIT].weaponIcon[1];
-		}
-		else
-		{
-			ent.customShader = cg_weapons[item->giWeapon].weaponIcon[1];
+			case IT_AMMO:
+				ent.customShader = cg_weapons[WP_AMMO].weaponIcon[1];
+				break;
+			case IT_HEALTH:
+				ent.customShader = cg_weapons[WP_MEDKIT].weaponIcon[1];
+				break;
+			case IT_TEAM:
+				ent.customShader = cgs.media.objectiveShader;
+				ent.origin[2]   += 7;
+				break;
+			case IT_WEAPON:
+				ent.customShader = cg_weapons[item->giWeapon].weaponIcon[1];
+				break;
+			case IT_BAD:
+			default:
+				break;
 		}
 
-		if (item->giType == IT_AMMO || item->giType == IT_HEALTH ||
+		if (item->giType == IT_AMMO || item->giType == IT_HEALTH || item->giType == IT_TEAM ||
 			BG_ClassHasWeapon(GetPlayerClassesData(cgs.clientinfo[cg.snap->ps.clientNum].team,
 			cgs.clientinfo[cg.snap->ps.clientNum].cls), item->giWeapon))
 		{
