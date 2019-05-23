@@ -673,10 +673,24 @@ static void CG_Item(centity_t *cent)
 		{
 			ent.customShader = cg_weapons[item->giWeapon].weaponIcon[1];
 		}
-		ent.shaderRGBA[0] = 255;
-		ent.shaderRGBA[1] = 255;
-		ent.shaderRGBA[2] = 255;
-		ent.shaderRGBA[3] = 255;
+
+		if (item->giType == IT_AMMO || item->giType == IT_HEALTH ||
+			BG_ClassHasWeapon(GetPlayerClassesData(cgs.clientinfo[cg.snap->ps.clientNum].team,
+			cgs.clientinfo[cg.snap->ps.clientNum].cls), item->giWeapon))
+		{
+			ent.shaderRGBA[0] = 255;
+			ent.shaderRGBA[1] = 255;
+			ent.shaderRGBA[2] = 255;
+			ent.shaderRGBA[3] = 255;
+		}
+		else
+		{
+			ent.shaderRGBA[0] = 255;
+			ent.shaderRGBA[1] = 0;
+			ent.shaderRGBA[2] = 0;
+			ent.shaderRGBA[3] = 255;
+		}
+
 		trap_R_AddRefEntityToScene(&ent);
 		return;
 	}
