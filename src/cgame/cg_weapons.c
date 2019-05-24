@@ -185,7 +185,28 @@ void CG_MachineGunEjectBrass(centity_t *cent)
 
 		if (isFirstPerson)
 		{
-			VectorCopy(ejectBrassCasingOrigin, re->origin);
+			refEntity_t brass;
+
+			Com_Memset(&brass, 0, sizeof(brass));
+
+			if ((GetWeaponTableData(cent->currentState.weapon)->attributes & WEAPON_ATTRIBUT_AKIMBO))
+			{
+				if (!cent->akimboFire)
+				{
+					CG_PositionRotatedEntityOnTag(&brass, &cg.predictedPlayerEntity.pe.bodyRefEnt, "tag_brass2");
+				}
+				else
+				{
+					CG_PositionRotatedEntityOnTag(&brass, &cg.predictedPlayerEntity.pe.bodyRefEnt, "tag_brass");
+				}
+			}
+			else
+			{
+				CG_PositionRotatedEntityOnTag(&brass, &cg.predictedPlayerEntity.pe.bodyRefEnt, "tag_brass");
+			}
+
+			VectorCopy(brass.origin, re->origin);
+
 			le->angles.trBase[0] = (rand() & 31) + 60;    // bullets should come out horizontal not vertical JPW NERVE
 		}
 		else
@@ -2605,28 +2626,6 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 		CG_AddWeaponWithPowerups(&gun, cent->currentState.powerups, ps, cent);
 	}
 
-	// test hack
-	//if( weaponNum == WP_KNIFE )
-	//  trap_R_AddLightToScene( gun.origin, 512, 1.5, 1.0, 1.0, 1.0, 0, 0 );
-
-	if (isPlayer)
-	{
-		refEntity_t brass;
-
-		Com_Memset(&brass, 0, sizeof(brass));
-
-		if ((GetWeaponTableData(weaponNum)->attributes & WEAPON_ATTRIBUT_AKIMBO) && akimboFire)
-		{
-			CG_PositionRotatedEntityOnTag(&brass, parent, "tag_brass2");
-		}
-		else
-		{
-			CG_PositionRotatedEntityOnTag(&brass, parent, "tag_brass");
-		}
-
-		VectorCopy(brass.origin, ejectBrassCasingOrigin);
-	}
-
 	Com_Memset(&barrel, 0, sizeof(barrel));
 	VectorCopy(parent->lightingOrigin, barrel.lightingOrigin);
 	barrel.shadowPlane = parent->shadowPlane;
@@ -3337,6 +3336,7 @@ void CG_AddViewWeapon(playerState_t *ps)
 
 		// add everything onto the hand
 		CG_AddPlayerWeapon(&hand, ps, &cg.predictedPlayerEntity);
+		cg.predictedPlayerEntity.pe.bodyRefEnt = hand;
 	}
 }
 

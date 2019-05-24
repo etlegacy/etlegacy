@@ -2149,15 +2149,10 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 		{
 			break;
 		}
+
+		cent->akimboFire = (event == EV_FIRE_WEAPONB);         // akimbo firing
+
 		CG_FireWeapon(cent);
-		if (event == EV_FIRE_WEAPONB)     // akimbo firing
-		{
-			cent->akimboFire = qtrue;
-		}
-		else
-		{
-			cent->akimboFire = qfalse;
-		}
 		break;
 	case EV_FIRE_WEAPON_LASTSHOT:
 		CG_FireWeapon(cent);
