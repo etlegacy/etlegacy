@@ -2708,7 +2708,7 @@ void G_MapVoteInfoWrite(void);
 void G_MapVoteInfoRead(void);
 
 // g_misc flags
-#define G_MISC_SHOVE_NOZ               BIT(0)
+#define G_MISC_SHOVE_Z                 BIT(0)
 // BIT(1) unused
 // BIT(2) unused
 #define G_MISC_CROSSHAIR_DYNAMITE      BIT(3)
