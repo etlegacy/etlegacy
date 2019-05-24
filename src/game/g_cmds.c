@@ -3455,9 +3455,8 @@ void Cmd_Vote_f(gentity_t *ent)
 		level.voteInfo.voteNo++;
 		trap_SetConfigstring(CS_VOTE_NO, va("%i", level.voteInfo.voteNo));
 	}
-
-	// a majority will be determined in G_CheckVote, which will also account
-	// for players entering or leaving
+	// a majority will be determined in G_CheckVote,
+	// which will also account for players entering or leaving
 }
 
 /**
@@ -3508,7 +3507,6 @@ qboolean G_TankIsOccupied(gentity_t *ent)
 	{
 		return qfalse;
 	}
-
 	return qtrue;
 }
 
@@ -3549,7 +3547,6 @@ qboolean G_TankIsMountable(gentity_t *ent, gentity_t *other)
 	{
 		return qfalse;
 	}
-
 	return qtrue;
 }
 
@@ -3605,13 +3602,11 @@ qboolean Do_Activate2_f(gentity_t *ent, gentity_t *traceEnt)
 					{
 						BODY_VALUE(traceEnt) += 5;
 					}
-
 					return qtrue;
 				}
 			}
 		}
 	}
-
 	return qfalse;
 }
 
@@ -3761,7 +3756,6 @@ qboolean Do_Activate_f(gentity_t *ent, gentity_t *traceEnt)
 	{
 		return qfalse;
 	}
-
 	return qtrue;
 }
 
@@ -3969,9 +3963,8 @@ qboolean G_PushPlayer(gentity_t *ent, gentity_t *victim)
 		return qfalse;
 	}
 
-	// Prevent possible cheating, as well as annoying push after CPR revive
-	// check also if player has just been revived, so pushing after a normal spawn works..
-	if (ent->client->ps.powerups[PW_INVULNERABLE] && ent->props_frame_state != -1)
+	// Prevent possible cheating, as well as annoying push after revive and spawning
+	if (ent->client->ps.powerups[PW_INVULNERABLE])
 	{
 		return qfalse;
 	}
@@ -4008,7 +4001,8 @@ qboolean G_PushPlayer(gentity_t *ent, gentity_t *victim)
 		}
 		else
 		{
-			push[2] = dir[2] * g_shove.integer * 4;     // like in etpro, shoving up gives only 350 speed ( jump gives 270 )
+			// like in etpro, shoving up gives only 350 speed (jump gives 270)
+			push[2] = dir[2] * g_shove.integer * 4;
 		}
 	}
 	else
@@ -4044,7 +4038,7 @@ void Cmd_Activate2_f(gentity_t *ent)
 	vec3_t   forward, right, up, offset;
 	qboolean pass2 = qfalse;
 
-	if (ent->health <= 0)  // uch
+	if (ent->health <= 0)
 	{
 		return;
 	}
