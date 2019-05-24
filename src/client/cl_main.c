@@ -2129,7 +2129,7 @@ void CL_CaptureFrameVideo(void)
 	switch (cl_avidemotype->integer)
 	{
 	case 1:
-		Cbuf_ExecuteText(EXEC_NOW, "screenshotJPEG silent\n");
+		Cbuf_ExecuteText(EXEC_NOW, "screenshot silent\n");
 		break;
 	case 2:
 		if (CL_VideoRecording())
