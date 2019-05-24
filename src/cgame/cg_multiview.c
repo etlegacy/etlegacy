@@ -1199,7 +1199,7 @@ void CG_mv_KeyHandling(int key, qboolean down)
 	case K_F11:
 		if (!down)
 		{
-			trap_SendConsoleCommand(va("screenshot%s\n", ((cg_useScreenshotJPEG.integer) ? "JPEG" : "")));
+			trap_SendConsoleCommand("screenshot");
 		}
 		return;
 	case K_F12:

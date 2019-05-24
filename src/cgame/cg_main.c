@@ -245,7 +245,6 @@ vmCvar_t cg_printObjectiveInfo;
 vmCvar_t cg_specHelp;
 #endif
 vmCvar_t cg_uinfo;
-vmCvar_t cg_useScreenshotJPEG;
 
 vmCvar_t demo_avifpsF1;
 vmCvar_t demo_avifpsF2;
@@ -491,7 +490,6 @@ cvarTable_t cvarTable[] =
 	{ &cg_specHelp,               "cg_specHelp",               "1",           CVAR_ARCHIVE,                 0 },
 #endif
 	{ &cg_uinfo,                  "cg_uinfo",                  "0",           CVAR_ROM | CVAR_USERINFO,     0 },
-	{ &cg_useScreenshotJPEG,      "cg_useScreenshotJPEG",      "1",           CVAR_ARCHIVE,                 0 },
 
 	{ &demo_avifpsF1,             "demo_avifpsF1",             "0",           CVAR_ARCHIVE,                 0 },
 	{ &demo_avifpsF2,             "demo_avifpsF2",             "10",          CVAR_ARCHIVE,                 0 },

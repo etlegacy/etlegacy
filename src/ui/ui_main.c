@@ -8652,7 +8652,6 @@ cvarTable_t cvarTable[] =
 	{ NULL,                             "cg_voiceSpriteTime",                  "6000",                       CVAR_ARCHIVE,                   0 },
 	{ NULL,                             "cg_complaintPopUp",                   "1",                          CVAR_ARCHIVE,                   0 },
 	{ NULL,                             "cg_printObjectiveInfo",               "1",                          CVAR_ARCHIVE,                   0 },
-	{ NULL,                             "cg_useScreenshotJPEG",                "1",                          CVAR_ARCHIVE,                   0 },
 	{ NULL,                             "cg_drawGun",                          "1",                          CVAR_ARCHIVE,                   0 },
 	{ NULL,                             "cg_drawCompass",                      "1",                          CVAR_ARCHIVE,                   0 },
 	{ NULL,                             "cg_drawRoundTimer",                   "1",                          CVAR_ARCHIVE,                   0 },

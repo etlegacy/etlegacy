@@ -810,11 +810,11 @@ void CG_autoRecord_f(void)
 }
 
 /**
- * @brief Dynamically names a screenshot[JPEG]
+ * @brief Dynamically names a screenshot
  */
 void CG_autoScreenShot_f(void)
 {
-	trap_SendConsoleCommand(va("screenshot%s %s\n", ((cg_useScreenshotJPEG.integer) ? "JPEG" : ""), CG_generateFilename()));
+	trap_SendConsoleCommand(va("screenshot %s\n", CG_generateFilename()));
 }
 
 /**

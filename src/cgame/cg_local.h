@@ -2499,7 +2499,6 @@ extern vmCvar_t cg_printObjectiveInfo;
 extern vmCvar_t cg_specHelp;
 #endif
 extern vmCvar_t cg_uinfo;
-extern vmCvar_t cg_useScreenshotJPEG;
 
 extern vmCvar_t demo_avifpsF1;
 extern vmCvar_t demo_avifpsF2;
