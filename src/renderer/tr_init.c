@@ -267,10 +267,10 @@ void GL_CheckErrors(void)
  * NOTE: some thoughts about the screenshots system:
  * screenshots get written in fs_homepath + fs_gamedir
  * vanilla W:ET .. etmain/screenshots/<FILE>.tga
- * ET: Legacy   .. legacy/screenshots/<FILE>.tga
+ * ET: Legacy   .. legacy/screenshots/<FILE>.jpg
  *
- * two commands: "screenshot" and "screenshotJPEG"
- * we use statics to store a count and start writing the first screenshot/screenshot????.tga (.jpg) available
+ * one command: "screenshot"
+ * we use statics to store a count and start writing the first screenshot/screenshot????.jpg available
  * (with FS_FileExists / FS_FOpenFileWrite calls)
  * FIXME: the statics don't get a reinit between fs_game changes
  *
@@ -414,14 +414,14 @@ void RB_TakeDepthshot(int x, int y, int width, int height, const char *fileName)
 */
 
 /**
- * @brief RB_TakeScreenshot
+ * @brief RB_TakeScreenshotTGA
  * @param[in] x
  * @param[in] y
  * @param[in] width
  * @param[in] height
  * @param[in] fileName
  */
-void RB_TakeScreenshot(int x, int y, int width, int height, const char *fileName)
+void RB_TakeScreenshotTGA(int x, int y, int width, int height, const char *fileName)
 {
 	byte   *allbuf, *buffer;
 	byte   *srcptr, *destptr;
@@ -514,13 +514,17 @@ const void *RB_TakeScreenshotCmd(const void *data)
 {
 	const screenshotCommand_t *cmd = ( const screenshotCommand_t * ) data;
 
-	if (cmd->jpeg)
+	switch (cmd->format)
 	{
-		RB_TakeScreenshotJPEG(cmd->x, cmd->y, cmd->width, cmd->height, cmd->fileName);
-	}
-	else
-	{
-		RB_TakeScreenshot(cmd->x, cmd->y, cmd->width, cmd->height, cmd->fileName);
+		case SSF_TGA:
+			RB_TakeScreenshotTGA(cmd->x, cmd->y, cmd->width, cmd->height, cmd->fileName);
+			break;
+		case SSF_JPEG:
+			RB_TakeScreenshotJPEG(cmd->x, cmd->y, cmd->width, cmd->height, cmd->fileName);
+			break;
+		case SSF_PNG:
+			Ren_Print("PNG output is not implemented");
+			break;
 	}
 
 	return ( const void * ) (cmd + 1);
@@ -533,9 +537,9 @@ const void *RB_TakeScreenshotCmd(const void *data)
  * @param[in] width
  * @param[in] height
  * @param[in] name
- * @param[in] jpeg
+ * @param[in] format
  */
-void R_TakeScreenshot(int x, int y, int width, int height, const char *name, qboolean jpeg)
+void R_TakeScreenshot(int x, int y, int width, int height, const char *name, ssFormat_t format)
 {
 	static char         fileName[MAX_OSPATH]; // bad things if two screenshots per frame?
 	screenshotCommand_t *cmd;
@@ -553,7 +557,7 @@ void R_TakeScreenshot(int x, int y, int width, int height, const char *name, qbo
 	cmd->height = height;
 	Q_strncpyz(fileName, name, sizeof(fileName));
 	cmd->fileName = fileName;
-	cmd->jpeg     = jpeg;
+	cmd->format   = format;
 }
 
 /**
@@ -561,13 +565,13 @@ void R_TakeScreenshot(int x, int y, int width, int height, const char *name, qbo
  * @param[in] lastNumber
  * @param[out] fileName
  */
-void R_ScreenshotFilename(int lastNumber, char *fileName)
+void R_ScreenshotFilename(int lastNumber, char *fileName, char *ext)
 {
 	int a, b, c, d;
 
 	if (lastNumber < 0 || lastNumber > 9999)
 	{
-		Com_sprintf(fileName, MAX_OSPATH, "screenshots/shot9999.tga");
+		Com_sprintf(fileName, MAX_OSPATH, "screenshots/shot9999.%s", ext);
 		return;
 	}
 
@@ -579,35 +583,8 @@ void R_ScreenshotFilename(int lastNumber, char *fileName)
 	lastNumber -= c * 10;
 	d           = lastNumber;
 
-	Com_sprintf(fileName, MAX_OSPATH, "screenshots/shot%i%i%i%i.tga"
-	            , a, b, c, d);
-}
-
-/**
- * @brief R_ScreenshotFilenameJPEG
- * @param[in] lastNumber
- * @param[out] fileName
- */
-void R_ScreenshotFilenameJPEG(int lastNumber, char *fileName)
-{
-	int a, b, c, d;
-
-	if (lastNumber < 0 || lastNumber > 9999)
-	{
-		Com_sprintf(fileName, MAX_OSPATH, "screenshots/shot9999.jpg");
-		return;
-	}
-
-	a           = lastNumber / 1000;
-	lastNumber -= a * 1000;
-	b           = lastNumber / 100;
-	lastNumber -= b * 100;
-	c           = lastNumber / 10;
-	lastNumber -= c * 10;
-	d           = lastNumber;
-
-	Com_sprintf(fileName, MAX_OSPATH, "screenshots/shot%i%i%i%i.jpg"
-	            , a, b, c, d);
+	Com_sprintf(fileName, MAX_OSPATH, "screenshots/shot%i%i%i%i.%s"
+	            , a, b, c, d, ext);
 }
 
 /**
@@ -779,6 +756,25 @@ void R_ScreenShot_f(void)
 	char       checkname[MAX_OSPATH];
 	static int lastNumber = -1;
 	qboolean   silent;
+	char       *ext = "";
+
+	// FIXME: allow multiple format
+	ssFormat_t format = SSF_JPEG;
+
+	switch (format)
+	{
+		case SSF_TGA:
+			ext = "tga";
+			break;
+		case SSF_JPEG:
+			ext = "jpg";
+			break;
+		case SSF_PNG:
+			ext = "png";
+			break;
+		default:
+			return;
+	}
 
 	if (!strcmp(ri.Cmd_Argv(1), "levelshot"))
 	{
@@ -798,7 +794,7 @@ void R_ScreenShot_f(void)
 	if (ri.Cmd_Argc() == 2 && !silent)
 	{
 		// explicit filename
-		Com_sprintf(checkname, MAX_OSPATH, "screenshots/%s.tga", ri.Cmd_Argv(1));
+		Com_sprintf(checkname, MAX_OSPATH, "screenshots/%s.%s", ri.Cmd_Argv(1), ext);
 	}
 	else
 	{
@@ -814,7 +810,7 @@ void R_ScreenShot_f(void)
 		// scan for a free number
 		for ( ; lastNumber <= 99999 ; lastNumber++)
 		{
-			R_ScreenshotFilename(lastNumber, checkname);
+			R_ScreenshotFilename(lastNumber, checkname, ext);
 
 			if (!ri.FS_FileExists(checkname))
 			{
@@ -831,75 +827,7 @@ void R_ScreenShot_f(void)
 		lastNumber++;
 	}
 
-	R_TakeScreenshot(0, 0, glConfig.vidWidth, glConfig.vidHeight, checkname, qfalse);
-
-	if (!silent)
-	{
-		Ren_Print("Wrote %s\n", checkname);
-	}
-}
-
-/**
- * @brief R_ScreenShotJPEG_f
- */
-void R_ScreenShotJPEG_f(void)
-{
-	char       checkname[MAX_OSPATH];
-	static int lastNumber = -1;
-	qboolean   silent;
-
-	if (!strcmp(ri.Cmd_Argv(1), "levelshot"))
-	{
-		R_LevelShot();
-		return;
-	}
-
-	if (!strcmp(ri.Cmd_Argv(1), "silent"))
-	{
-		silent = qtrue;
-	}
-	else
-	{
-		silent = qfalse;
-	}
-
-	if (ri.Cmd_Argc() == 2 && !silent)
-	{
-		// explicit filename
-		Com_sprintf(checkname, MAX_OSPATH, "screenshots/%s.jpg", ri.Cmd_Argv(1));
-	}
-	else
-	{
-		// scan for a free filename
-
-		// if we have saved a previous screenshot, don't scan
-		// again, because recording demo avis can involve
-		// thousands of shots
-		if (lastNumber == -1)
-		{
-			lastNumber = 0;
-		}
-		// scan for a free number
-		for ( ; lastNumber <= 99999 ; lastNumber++)
-		{
-			R_ScreenshotFilenameJPEG(lastNumber, checkname);
-
-			if (!ri.FS_FileExists(checkname))
-			{
-				break; // file doesn't exist
-			}
-		}
-
-		if (lastNumber == 100000)
-		{
-			Ren_Print("ScreenShot: Couldn't create a file\n");
-			return;
-		}
-
-		lastNumber++;
-	}
-
-	R_TakeScreenshot(0, 0, glConfig.vidWidth, glConfig.vidHeight, checkname, qtrue);
+	R_TakeScreenshot(0, 0, glConfig.vidWidth, glConfig.vidHeight, checkname, format);
 
 	if (!silent)
 	{
@@ -1207,7 +1135,6 @@ void R_Register(void)
 	ri.Cmd_AddSystemCommand("skinlist", R_SkinList_f, "Print out the list of skins", NULL);
 	ri.Cmd_AddSystemCommand("modellist", R_Modellist_f, "Print out the list of loaded models", NULL);
 	ri.Cmd_AddSystemCommand("screenshot", R_ScreenShot_f, "Take a screenshot of current frame", NULL);
-	ri.Cmd_AddSystemCommand("screenshotJPEG", R_ScreenShotJPEG_f, "Take a JPEG screenshot of current frame", NULL);
 	ri.Cmd_AddSystemCommand("gfxinfo", GfxInfo_f, "GFX info of current system", NULL);
 	ri.Cmd_AddSystemCommand("taginfo", R_TagInfo_f, "Print the list of loaded tags", NULL);
 }
@@ -1318,7 +1245,6 @@ void RE_Shutdown(qboolean destroyWindow)
 	ri.Cmd_RemoveSystemCommand("modellist");
 	ri.Cmd_RemoveSystemCommand("modelist");
 	ri.Cmd_RemoveSystemCommand("screenshot");
-	ri.Cmd_RemoveSystemCommand("screenshotJPEG");
 	ri.Cmd_RemoveSystemCommand("gfxinfo");
 	ri.Cmd_RemoveSystemCommand("minimize");
 	ri.Cmd_RemoveSystemCommand("taginfo");

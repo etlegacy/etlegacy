@@ -419,7 +419,7 @@ void GL_CheckErrors_(const char *fileName, int line)
 screenshots get written in fs_homepath + fs_gamedir
 .. base/screenshots\*.*
 
-three commands: "screenshot", "screenshotJPEG" and "screenshotPNG"
+one command: "screenshot"
 
 the format is etxreal-YYYY_MM_DD-HH_MM_SS-MS.tga/jpeg/png
 ==============================================================================
@@ -642,23 +642,9 @@ void R_TakeScreenshot(const char *name, ssFormat_t format)
  */
 static void R_ScreenShot_f(void)
 {
-	R_TakeScreenshot("tga", SSF_TGA);
-}
-
-/**
- * @brief R_ScreenShotJPEG_f
- */
-static void R_ScreenShotJPEG_f(void)
-{
+	//R_TakeScreenshot("tga", SSF_TGA);
 	R_TakeScreenshot("jpg", SSF_JPEG);
-}
-
-/**
- * @brief R_ScreenShotPNG_f
- */
-static void R_ScreenShotPNG_f(void)
-{
-	R_TakeScreenshot("png", SSF_PNG);
+	//R_TakeScreenshot("png", SSF_PNG);
 }
 
 /*
@@ -1480,8 +1466,6 @@ void R_Register(void)
 	ri.Cmd_AddSystemCommand("fbolist", R_FBOList_f, "Prints the lists of frame buffer objects.", NULL);
 	ri.Cmd_AddSystemCommand("vbolist", R_VBOList_f, "Prints the lists of current vertex buffer objects", NULL);
 	ri.Cmd_AddSystemCommand("screenshot", R_ScreenShot_f, "Takes a screenshot of current frame.", NULL);
-	ri.Cmd_AddSystemCommand("screenshotJPEG", R_ScreenShotJPEG_f, "Takes a JPG screenshot of current frame.", NULL);
-	ri.Cmd_AddSystemCommand("screenshotPNG", R_ScreenShotPNG_f, "Takes a PNG screenshot of current frame.", NULL);
 	ri.Cmd_AddSystemCommand("gfxinfo", GfxInfo_f, "Prints GFX info of current system.", NULL);
 	//ri.Cmd_AddSystemCommand("generatemtr", R_GenerateMaterialFile_f, "Generate material file", NULL);
 	ri.Cmd_AddSystemCommand("buildcubemaps", R_BuildCubeMaps_f, "Builds cubemaps for the current loaded map.", NULL);
@@ -1604,8 +1588,6 @@ void RE_Shutdown(qboolean destroyWindow)
 	Ren_Print("RE_Shutdown( destroyWindow = %i )\n", destroyWindow);
 
 	ri.Cmd_RemoveSystemCommand("modellist");
-	ri.Cmd_RemoveSystemCommand("screenshotPNG");
-	ri.Cmd_RemoveSystemCommand("screenshotJPEG");
 	ri.Cmd_RemoveSystemCommand("screenshot");
 	ri.Cmd_RemoveSystemCommand("imagelist");
 	ri.Cmd_RemoveSystemCommand("shaderlist");

@@ -1585,7 +1585,6 @@ void R_SkinList_f(void);
 
 const void *RB_TakeScreenshotCmd(const void *data);
 void R_ScreenShot_f(void);
-void R_ScreenShotJPEG_f(void);
 
 void R_InitImages(void);
 void R_DeleteTextures(void);
@@ -1988,6 +1987,17 @@ typedef struct
 } drawSurfsCommand_t;
 
 /**
+ * @enum ssFormat_t
+ * @brief
+ */
+typedef enum
+{
+	SSF_TGA = 0,
+	SSF_JPEG,
+	SSF_PNG
+} ssFormat_t;
+
+/**
  * @struct screenshotCommand_t
  * @brief
  */
@@ -1999,7 +2009,7 @@ typedef struct
 	int width;
 	int height;
 	char *fileName;
-	qboolean jpeg;
+	ssFormat_t format;
 } screenshotCommand_t;
 
 /**
