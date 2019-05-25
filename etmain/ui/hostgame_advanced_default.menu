@@ -53,6 +53,8 @@
 							setcvar g_password "none" ;				\
 							setcvar refereePassword "none" ;		\
 							clearcvar rconPassword ;				\
+							setcvar shoutcastPassword "none" ;		\
+							clearcvar shoutcastPassword ;			\
 							setcvar vote_limit 5 ;					\
 							setcvar vote_percent 50 ;				\
 							setcvar vote_allow_gametype 1 ;			\

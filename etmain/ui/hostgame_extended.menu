@@ -27,16 +27,18 @@ menuDef {
 // Subwindows //
 #define SUBWINDOW_WIDTH		.5*(WINDOW_WIDTH-18)
 
-// Extended //
-	SUBWINDOW( 6, 32, (SUBWINDOW_WIDTH), 30, _("MISC") )
-	MULTI( 8, 48, (SUBWINDOW_WIDTH)-4, 10, _("Country Flags:"), .2, 8, "g_countryflags", cvarFloatList { "No" 0 "Yes" 1 }, _("Enable country flags on the server") )
+// Misc //
+#define MISC_Y 32
+	SUBWINDOW( 6, MISC_Y, (SUBWINDOW_WIDTH), 30, _("MISC") )
+	MULTI( 8, MISC_Y+16, (SUBWINDOW_WIDTH)-4, 10, _("Country Flags:"), .2, 8, "g_countryflags", cvarFloatList { "No" 0 "Yes" 1 }, _("Enable country flags on the server") )
 
 // Download //
-	SUBWINDOW( 6, 68, (SUBWINDOW_WIDTH), 66/*72*/, _("DOWNLOAD") )
-	YESNO( 8, 84, (SUBWINDOW_WIDTH)-4, 10, _("Client Downloads:"), .2, 8, "sv_allowDownload", _("Allows players to download missing files from the server") )
-	NUMERICFIELD( 8, 96, (SUBWINDOW_WIDTH)-4, 10, _("Maximum Download Rate:"), .2, 8, "sv_dl_maxRate", 6, _("Specifies the maximum download rate from the server for players with missing files") )
-	YESNO( 8, 108, (SUBWINDOW_WIDTH)-4, 10, _("FTP/HTTP Redirects:"), .2, 8, "sv_wwwDownload", _("Redirects players with missing files to another server") )
-	EDITFIELD( 8, 120, (SUBWINDOW_WIDTH)-4, 10, _("Base URL:"), .2, 8, "sv_wwwDaveUrl", 64, 18, _("Used to build the URL given to clients for download") )
+#define DOWNLOAD_Y 68
+	SUBWINDOW( 6, DOWNLOAD_Y, (SUBWINDOW_WIDTH), 66, _("DOWNLOAD") )
+	YESNO( 8, DOWNLOAD_Y+16, (SUBWINDOW_WIDTH)-4, 10, _("Client Downloads:"), .2, 8, "sv_allowDownload", _("Allows players to download missing files from the server") )
+	NUMERICFIELD( 8, DOWNLOAD_Y+28, (SUBWINDOW_WIDTH)-4, 10, _("Maximum Download Rate:"), .2, 8, "sv_dl_maxRate", 6, _("Specifies the maximum download rate from the server for players with missing files") )
+	YESNO( 8, DOWNLOAD_Y+40, (SUBWINDOW_WIDTH)-4, 10, _("FTP/HTTP Redirects:"), .2, 8, "sv_wwwDownload", _("Redirects players with missing files to another server") )
+	EDITFIELD( 8, DOWNLOAD_Y+52, (SUBWINDOW_WIDTH)-4, 10, _("Base URL:"), .2, 8, "sv_wwwDaveUrl", 64, 18, _("Used to build the URL given to clients for download") )
 	
 // Buttons //
 	BUTTON( 6, WINDOW_HEIGHT-24, .33*(WINDOW_WIDTH-24), 18, _("BACK"), .3, 14, close hostgame_extended ; open hostgame )
