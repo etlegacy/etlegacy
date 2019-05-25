@@ -515,12 +515,12 @@ static void WM_DrawClientScore(int x, int y, score_t *score, float *color, float
 		// Show connecting people as CONNECTING
 		if (score->ping == -1)
 		{
-			s = CG_TranslateString("^3CONNECTING");
+			s = CG_TranslateString("CONNECTING");
 			p = "";
 		}
 		else
 		{
-			s = CG_TranslateString("^3SPECTATOR");
+			s = CG_TranslateString(va("%s", ci->shoutcaster ? "SHOUTCASTER" : "SPECTATOR"));
 			p = va("%4i", score->ping);
 		}
 
@@ -753,12 +753,12 @@ static void WM_DrawClientScore_Small(int x, int y, score_t *score, float *color,
 		// Show connecting people as CONNECTING
 		if (score->ping == -1)
 		{
-			s = CG_TranslateString("^3CONNECTING");
+			s = CG_TranslateString("CONNECTING");
 			p = "";
 		}
 		else
 		{
-			s = CG_TranslateString("^3SPECTATOR");
+			s = CG_TranslateString(va("%s", ci->shoutcaster ? "SHOUTCASTER" : "SPECTATOR"));
 			p = va("%4i", score->ping);
 		}
 		w = CG_Text_Width_Ext(s, 0.20f, 0, FONT_TEXT);
