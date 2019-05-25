@@ -2530,6 +2530,8 @@ static consoleCommandTable_t consoleCommandTable[] =
 #endif
 	{ "makeReferee",                G_MakeReferee                 },
 	{ "removeReferee",              G_RemoveReferee               },
+	{ "makeShoutcaster",            G_makesc_cmd                  },
+	{ "removeShoutcaster",          G_removesc_cmd                },
 	{ "mute",                       G_MuteClient                  },
 	{ "unmute",                     G_UnMuteClient                },
 	{ "ban",                        G_PlayerBan                   },

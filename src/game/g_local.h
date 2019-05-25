@@ -646,6 +646,7 @@ typedef struct
 	int medals[SK_NUM_SKILLS];                          ///< medals
 
 	int referee;
+	int shoutcaster;
 	int rounds;
 	int spec_invite;
 	int spec_team;
@@ -1927,6 +1928,7 @@ extern vmCvar_t g_swapteams;
 extern vmCvar_t g_antilag;
 
 extern vmCvar_t refereePassword;
+extern vmCvar_t shoutcastPassword;
 extern vmCvar_t g_spectatorInactivity;
 extern vmCvar_t match_latejoin;
 extern vmCvar_t match_minplayers;
@@ -2332,6 +2334,10 @@ void G_pause_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fPause);
 void G_players_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fDump);
 void G_ready_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fDump);
 void G_say_teamnl_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fValue);
+void G_sclogin_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fValue);
+void G_sclogout_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fValue);
+void G_makesc_cmd(void);
+void G_removesc_cmd(void);
 void G_scores_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fValue);
 void G_specinvite_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fLock);
 void G_speclock_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fLock);
@@ -2439,6 +2445,8 @@ void G_refSpeclockTeams_cmd(gentity_t *ent, qboolean fLock);
 void G_refWarmup_cmd(gentity_t *ent);
 void G_refWarning_cmd(gentity_t *ent);
 void G_refMute_cmd(gentity_t *ent, qboolean mute);
+void G_refMakeShoutcaster_cmd(gentity_t *ent);
+void G_refRemoveShoutcaster_cmd(gentity_t *ent);
 void G_refLogout_cmd(gentity_t *ent);
 int G_refClientnumForName(gentity_t *ent, const char *name);
 void G_refPrintf(gentity_t *ent, const char *fmt, ...) _attribute((format(printf, 2, 3)));
@@ -2447,6 +2455,11 @@ void G_MakeReferee(void);
 void G_RemoveReferee(void);
 void G_MuteClient(void);
 void G_UnMuteClient(void);
+qboolean G_IsShoutcastPasswordSet(void);
+qboolean G_IsShoutcastStatusAvailable(gentity_t *ent);
+void G_MakeShoutcaster(gentity_t *ent);
+void G_RemoveShoutcaster(gentity_t *ent);
+void G_RemoveAllShoutcasters(void);
 
 // g_team.c
 extern const char *aTeams[TEAM_NUM_TEAMS];

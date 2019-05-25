@@ -61,9 +61,9 @@ void G_WriteClientSessionData(gclient_t *client, qboolean restart)
 
 #ifdef FEATURE_MULTIVIEW
 #ifdef FEATURE_RATING
-	s = va("%i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %f %f %f %f %i %i %i %i %i %i %i %i",
+	s = va("%i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %f %f %f %f %i %i %i %i %i %i %i %i %i",
 #else
-	s = va("%i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i",
+	s = va("%i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i",
 #endif
 #else
 #ifdef FEATURE_RATING
@@ -84,6 +84,7 @@ void G_WriteClientSessionData(gclient_t *client, qboolean restart)
 	       client->sess.latchPlayerWeapon2,
 
 	       client->sess.referee,
+		   client->sess.shoutcaster,
 	       client->sess.spec_invite,
 	       client->sess.spec_team,
 	       client->sess.kills,
@@ -292,6 +293,7 @@ void G_ReadSessionData(gclient_t *client)
 		   (int *)&client->sess.latchPlayerWeapon2,
 
 	       &client->sess.referee,
+		   &client->sess.shoutcaster,
 	       &client->sess.spec_invite,
 	       &client->sess.spec_team,
 	       &client->sess.kills,

@@ -204,6 +204,7 @@ vmCvar_t vote_allow_poll;
 vmCvar_t vote_allow_maprestart;
 
 vmCvar_t refereePassword;
+vmCvar_t shoutcastPassword;
 vmCvar_t g_debugConstruct;
 vmCvar_t g_landminetimeout;
 
@@ -459,6 +460,7 @@ cvarTable_t gameCvarTable[] =
 	{ NULL,                                 "P",                                   "",                           CVAR_SERVERINFO_NOUPDATE,                        0, qfalse, qfalse },
 
 	{ &refereePassword,                     "refereePassword",                     "none",                       0,                                               0, qfalse, qfalse },
+	{ &shoutcastPassword,                   "shoutcastPassword",                   "none",                       0,                                               0, qfalse, qfalse },
 	{ &g_spectatorInactivity,               "g_spectatorInactivity",               "0",                          0,                                               0, qfalse, qfalse },
 	{ &match_latejoin,                      "match_latejoin",                      "1",                          0,                                               0, qfalse, qfalse },
 	{ &match_minplayers,                    "match_minplayers",                    MATCH_MINPLAYERS,             0,                                               0, qfalse, qfalse },
@@ -1937,6 +1939,15 @@ void G_UpdateCvars(void)
 				{
 					G_SetSkillLevelsByCvar(cv->vmCvar);
 					skillLevelPoints = qtrue;
+				}
+				else if (cv->vmCvar == &shoutcastPassword)
+				{
+					// logout all currently logged in shoutcasters
+					// when changing shoutcastPassword to '' or 'none'
+					if (!Q_stricmp(shoutcastPassword.string, "none") || !shoutcastPassword.string[0])
+					{
+						G_RemoveAllShoutcasters();
+					}
 				}
 #ifdef FEATURE_LUA
 				else if (cv->vmCvar == &lua_modules || cv->vmCvar == &lua_allowedModules)

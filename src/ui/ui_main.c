@@ -8696,6 +8696,7 @@ cvarTable_t cvarTable[] =
 	{ NULL,                             "g_inactivity",                        "0",                          CVAR_ARCHIVE,                   0 },
 	{ NULL,                             "g_maxLives",                          "0",                          CVAR_ARCHIVE,                   0 },
 	{ NULL,                             "refereePassword",                     "none",                       CVAR_ARCHIVE,                   0 },
+	{ NULL,                             "shoutcastPassword",                   "none",                       CVAR_ARCHIVE,                   0 },
 	{ NULL,                             "g_teamForceBalance",                  "0",                          CVAR_ARCHIVE,                   0 },
 	{ NULL,                             "sv_maxRate",                          "0",                          CVAR_ARCHIVE,                   0 },
 	{ NULL,                             "g_spectatorInactivity",               "0",                          CVAR_ARCHIVE,                   0 },
