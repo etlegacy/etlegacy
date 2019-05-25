@@ -1541,7 +1541,11 @@ int G_Unreferee_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg
 		gclient_t *cl = &level.clients[atoi(level.voteInfo.vote_value)];
 
 		cl->sess.referee     = RL_NONE;
-		cl->sess.spec_invite = 0;
+		// don't remove shoutcaster invitation
+		if (!cl->sess.shoutcaster)
+		{
+			cl->sess.spec_invite = 0;
+		}
 		AP(va("cp \"%s^7\nis no longer a referee\n\"", cl->pers.netname));
 		ClientUserinfoChanged(atoi(level.voteInfo.vote_value));
 	}

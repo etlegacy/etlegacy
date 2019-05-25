@@ -1936,6 +1936,12 @@ qboolean G_teamJoinCheck(team_t nTeam, gentity_t *ent)
 			return qtrue;
 		}
 
+		// shoutcasters aren't allowed to join
+		if (ent->client->sess.shoutcaster)
+		{
+			return qfalse;
+		}
+
 		if (g_gametype.integer != GT_WOLF_LMS)
 		{
 			// Check for full teams
@@ -1986,6 +1992,12 @@ void G_updateSpecLock(int nTeam, qboolean fLock)
 		ent = g_entities + level.sortedClients[i];
 
 		if (ent->client->sess.referee)
+		{
+			continue;
+		}
+
+		// shoutcasters are not affected by speclock
+		if (ent->client->sess.shoutcaster)
 		{
 			continue;
 		}
@@ -2055,7 +2067,7 @@ void G_removeSpecInvite(int team)
 	for (i = 0; i < level.numConnectedClients; i++)
 	{
 		cl = g_entities + level.sortedClients[i];
-		if (!cl->inuse || cl->client->sess.referee)
+		if (!cl->inuse || cl->client->sess.referee || cl->client->sess.shoutcaster)
 		{
 			continue;
 		}

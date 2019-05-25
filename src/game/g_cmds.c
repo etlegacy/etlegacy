@@ -2053,6 +2053,14 @@ void Cmd_Team_f(gentity_t *ent, unsigned int dwCommand, qboolean fValue)
 
 	G_TeamDataForString(s, ent->s.clientNum, &team, &specState, &specClient);
 
+	// don't allow shoutcasters to join teams
+	if (ent->client->sess.shoutcaster && (team == TEAM_ALLIES || team == TEAM_AXIS))
+	{
+		CP("print \"team: shoutcasters may not join a team\n\"");
+		CP("cp \"Shoutcasters may not join a team\n\"");
+		return;
+	}
+
 	playerType = -1;
 	if (*ptype)
 	{
