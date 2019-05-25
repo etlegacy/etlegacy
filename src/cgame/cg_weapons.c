@@ -35,8 +35,6 @@
 
 #include "cg_local.h"
 
-vec3_t ejectBrassCasingOrigin;
-
 /**
  * @var weapBanksMultiPlayer
  * @brief The new loadout for WolfXP
@@ -146,7 +144,13 @@ void CG_MachineGunEjectBrass(centity_t *cent)
 		{
 			if (isFirstPerson)
 			{
-				VectorCopy(ejectBrassCasingOrigin, re->origin);
+				refEntity_t brass;
+
+				Com_Memset(&brass, 0, sizeof(brass));
+
+				CG_PositionRotatedEntityOnTag(&brass, &cg.predictedPlayerEntity.pe.bodyRefEnt, "tag_brass");
+
+				VectorMA(brass.origin, 6, brass.axis[0], re->origin);
 			}
 			else
 			{
@@ -189,16 +193,9 @@ void CG_MachineGunEjectBrass(centity_t *cent)
 
 			Com_Memset(&brass, 0, sizeof(brass));
 
-			if ((GetWeaponTableData(cent->currentState.weapon)->attributes & WEAPON_ATTRIBUT_AKIMBO))
+			if ((GetWeaponTableData(cent->currentState.weapon)->attributes & WEAPON_ATTRIBUT_AKIMBO) && !cent->akimboFire)
 			{
-				if (!cent->akimboFire)
-				{
-					CG_PositionRotatedEntityOnTag(&brass, &cg.predictedPlayerEntity.pe.bodyRefEnt, "tag_brass2");
-				}
-				else
-				{
-					CG_PositionRotatedEntityOnTag(&brass, &cg.predictedPlayerEntity.pe.bodyRefEnt, "tag_brass");
-				}
+				CG_PositionRotatedEntityOnTag(&brass, &cg.predictedPlayerEntity.pe.bodyRefEnt, "tag_brass2");
 			}
 			else
 			{
@@ -3090,7 +3087,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
  */
 void CG_AddViewWeapon(playerState_t *ps)
 {
-	refEntity_t  hand;
+	refEntity_t  *hand = &cg.predictedPlayerEntity.pe.bodyRefEnt;   // use body to store hand
 	float        fovOffset;
 	vec3_t       angles;
 	vec3_t       gunoff;
@@ -3185,18 +3182,18 @@ void CG_AddViewWeapon(playerState_t *ps)
 	// mounted gun drawing
 	if (ps->eFlags & EF_MOUNTEDTANK)
 	{
-		Com_Memset(&hand, 0, sizeof(hand));
-		CG_CalculateWeaponPosition(hand.origin, angles);
-		AnglesToAxis(angles, hand.axis);
-		hand.renderfx = RF_DEPTHHACK | RF_FIRST_PERSON | RF_MINLIGHT;
+		Com_Memset(hand, 0, sizeof(refEntity_t));
+		CG_CalculateWeaponPosition(hand->origin, angles);
+		AnglesToAxis(angles, hand->axis);
+		hand->renderfx = RF_DEPTHHACK | RF_FIRST_PERSON | RF_MINLIGHT;
 
 		if (IS_MOUNTED_TANK_BROWNING(ps->clientNum))
 		{
-			hand.hModel = cgs.media.hMountedFPBrowning;
+			hand->hModel = cgs.media.hMountedFPBrowning;
 		}
 		else
 		{
-			hand.hModel = cgs.media.hMountedFPMG42;
+			hand->hModel = cgs.media.hMountedFPMG42;
 		}
 
 		//gunoff[0] = cg_gun_x.value;
@@ -3210,11 +3207,11 @@ void CG_AddViewWeapon(playerState_t *ps)
 			gunoff[0] += random() * 2.f;
 		}
 
-		VectorMA(hand.origin, gunoff[0], cg.refdef_current->viewaxis[0], hand.origin);
-		VectorMA(hand.origin, -10, cg.refdef_current->viewaxis[1], hand.origin);
-		VectorMA(hand.origin, (-8 + fovOffset), cg.refdef_current->viewaxis[2], hand.origin);
+		VectorMA(hand->origin, gunoff[0], cg.refdef_current->viewaxis[0], hand->origin);
+		VectorMA(hand->origin, -10, cg.refdef_current->viewaxis[1], hand->origin);
+		VectorMA(hand->origin, (-8 + fovOffset), cg.refdef_current->viewaxis[2], hand->origin);
 
-		CG_AddWeaponWithPowerups(&hand, cg.predictedPlayerEntity.currentState.powerups, ps, &cg.predictedPlayerEntity);
+		CG_AddWeaponWithPowerups(hand, cg.predictedPlayerEntity.currentState.powerups, ps, &cg.predictedPlayerEntity);
 
 		if (cg.time - cg.predictedPlayerEntity.overheatTime < 3000)
 		{
@@ -3229,10 +3226,8 @@ void CG_AddViewWeapon(playerState_t *ps)
 
 		// FIXME: HACK dummy model to just draw _something_
 		refEntity_t flash;
-		refEntity_t brass;
 
 		Com_Memset(&flash, 0, sizeof(flash));
-		Com_Memset(&brass, 0, sizeof(brass));
 		flash.renderfx = (RF_LIGHTING_ORIGIN | RF_DEPTHHACK);
 		flash.hModel   = cgs.media.mg42muzzleflash;
 
@@ -3241,14 +3236,11 @@ void CG_AddViewWeapon(playerState_t *ps)
 		angles[ROLL]  = crandom() * 10;
 		AnglesToAxis(angles, flash.axis);
 
-		CG_PositionRotatedEntityOnTag(&flash, &hand, "tag_flash");
-		CG_PositionRotatedEntityOnTag(&brass, &hand, "tag_brass");
+		CG_PositionRotatedEntityOnTag(&flash, hand, "tag_flash");
 
 		VectorMA(flash.origin, 22, flash.axis[0], flash.origin);
-		VectorMA(brass.origin, 6, brass.axis[0], brass.origin);
 
 		VectorCopy(flash.origin, cg.tankflashorg);
-		VectorCopy(brass.origin, ejectBrassCasingOrigin);
 
 		if (cg.time - cg.predictedPlayerEntity.muzzleFlashTime < MUZZLE_FLASH_TIME)
 		{
@@ -3262,25 +3254,25 @@ void CG_AddViewWeapon(playerState_t *ps)
 	{
 		weapon = &cg_weapons[ps->weapon];
 
-		Com_Memset(&hand, 0, sizeof(hand));
+		Com_Memset(hand, 0, sizeof(refEntity_t));
 
 		// set up gun position
-		CG_CalculateWeaponPosition(hand.origin, angles);
+		CG_CalculateWeaponPosition(hand->origin, angles);
 
 		gunoff[0] = cg_gun_x.value;
 		gunoff[1] = cg_gun_y.value;
 		gunoff[2] = cg_gun_z.value;
 
-		VectorMA(hand.origin, gunoff[0], cg.refdef_current->viewaxis[0], hand.origin);
-		VectorMA(hand.origin, gunoff[1], cg.refdef_current->viewaxis[1], hand.origin);
-		VectorMA(hand.origin, (gunoff[2] + fovOffset), cg.refdef_current->viewaxis[2], hand.origin);
+		VectorMA(hand->origin, gunoff[0], cg.refdef_current->viewaxis[0], hand->origin);
+		VectorMA(hand->origin, gunoff[1], cg.refdef_current->viewaxis[1], hand->origin);
+		VectorMA(hand->origin, (gunoff[2] + fovOffset), cg.refdef_current->viewaxis[2], hand->origin);
 
-		AnglesToAxis(angles, hand.axis);
+		AnglesToAxis(angles, hand->axis);
 
 		if (cg_gun_frame.integer)
 		{
-			hand.frame    = hand.oldframe = cg_gun_frame.integer;
-			hand.backlerp = 0;
+			hand->frame    = hand->oldframe = cg_gun_frame.integer;
+			hand->backlerp = 0;
 		}
 		else      // get the animation state
 		{
@@ -3319,24 +3311,23 @@ void CG_AddViewWeapon(playerState_t *ps)
 				}
 			}
 
-			CG_WeaponAnimation(ps, weapon, &hand.oldframe, &hand.frame, &hand.backlerp);
+			CG_WeaponAnimation(ps, weapon, &hand->oldframe, &hand->frame, &hand->backlerp);
 		}
 
-		hand.hModel   = weapon->handsModel;
-		hand.renderfx = RF_DEPTHHACK | RF_FIRST_PERSON | RF_MINLIGHT;
+		hand->hModel   = weapon->handsModel;
+		hand->renderfx = RF_DEPTHHACK | RF_FIRST_PERSON | RF_MINLIGHT;
 
 		// adjust bazooka so it has bigger distance to our crosshair
 		if (ps->weapon == WP_BAZOOKA)
 		{
-			hand.axis[0][0]       *= .8f;
-			hand.axis[0][1]       *= .8f;
-			hand.axis[0][2]       *= .8f;
-			hand.nonNormalizedAxes = qtrue;
+			hand->axis[0][0]       *= .8f;
+			hand->axis[0][1]       *= .8f;
+			hand->axis[0][2]       *= .8f;
+			hand->nonNormalizedAxes = qtrue;
 		}
 
 		// add everything onto the hand
-		CG_AddPlayerWeapon(&hand, ps, &cg.predictedPlayerEntity);
-		cg.predictedPlayerEntity.pe.bodyRefEnt = hand;
+		CG_AddPlayerWeapon(hand, ps, &cg.predictedPlayerEntity);
 	}
 }
 
