@@ -738,7 +738,9 @@ qboolean ClientInactivityTimer(gclient_t *client)
 	    (client->pers.cmd.wbuttons & (WBUTTON_ATTACK2 | WBUTTON_LEANLEFT | WBUTTON_LEANRIGHT))  ||
 	    (client->pers.cmd.buttons & BUTTON_ATTACK) ||
 	    BG_PlayerMounted(client->ps.eFlags) ||
-	    (client->ps.pm_type == PM_DEAD /*&& !(client->ps.eFlags & EF_PLAYDEAD)*/))     // playdead sets PM_DEAD, so check if playing dead ...
+	    (client->ps.pm_flags & PMF_LIMBO) ||
+	    ((client->ps.eFlags & EF_PRONE) && (client->ps.weapon == WP_MOBILE_MG42_SET || client->ps.weapon == WP_MOBILE_BROWNING_SET)) ||
+	    (client->ps.pm_type == PM_DEAD))
 	{
 		client->inactivityWarning = qfalse;
 
