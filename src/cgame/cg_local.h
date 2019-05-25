@@ -1581,6 +1581,7 @@ typedef struct
 	qhandle_t dirtParticle2Shader;
 
 	qhandle_t genericConstructionShader;
+	qhandle_t shoutcastLandmineShader;
 
 	qhandle_t alliedUniformShader;
 	qhandle_t axisUniformShader;

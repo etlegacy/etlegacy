@@ -1637,6 +1637,7 @@ qboolean G_LandmineSnapshotCallback(int entityNum, int clientNum)
 {
 	gentity_t *ent   = &g_entities[entityNum];
 	gentity_t *clEnt = &g_entities[clientNum];
+	int       i;
 
 	// don't send if landmine is not in pvs
 	if (!trap_InPVS(clEnt->client->ps.origin, ent->r.currentOrigin))
@@ -1670,12 +1671,25 @@ qboolean G_LandmineSnapshotCallback(int entityNum, int clientNum)
 		return qtrue;
 	}
 
-	// FIXME: do this for ettv
-	// allow ettv to see landmines
-	//if (clEnt->client->sess.sessionTeam == TEAM_SPECTATOR)
-	//{
-	//  return qtrue;
-	//}
+	// shoutcasters can see landmines
+	if (clEnt->client->sess.sessionTeam == TEAM_SPECTATOR && clEnt->client->sess.shoutcaster)
+	{
+		return qtrue;
+	}
+
+	// check also following shoutcasters
+	for (i = 0; i < level.numConnectedClients; i++)
+	{
+		gclient_t *cl = &level.clients[level.sortedClients[i]];
+
+		if (cl->sess.sessionTeam == TEAM_SPECTATOR &&
+			cl->sess.spectatorState == SPECTATOR_FOLLOW &&
+			cl->sess.spectatorClient == (clEnt - g_entities) &&
+			cl->sess.shoutcaster)
+		{
+			return qtrue;
+		}
+	}
 
 	return qfalse;
 }

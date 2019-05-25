@@ -1753,6 +1753,7 @@ static void CG_RegisterGraphics(void)
 	cgs.media.dirtParticle2Shader = trap_R_RegisterShader("water_splash");
 
 	cgs.media.genericConstructionShader = trap_R_RegisterShader("textures/sfx/construction");
+	cgs.media.shoutcastLandmineShader   = trap_R_RegisterShader("textures/sfx/shoutcast_landmine");
 
 	cgs.media.alliedUniformShader = trap_R_RegisterShader("sprites/uniform_allied");
 	cgs.media.axisUniformShader   = trap_R_RegisterShader("sprites/uniform_axis");

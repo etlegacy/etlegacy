@@ -652,7 +652,7 @@ static void CG_Item(centity_t *cent)
 	item = BG_GetItem(es->modelindex);
 
 	if (cg_simpleItems.integer == 1 ||
-		(cg_simpleItems.integer > 1 && (item->giType == IT_WEAPON || item->giType == IT_HEALTH || item->giType == IT_AMMO)))
+	    (cg_simpleItems.integer > 1 && (item->giType == IT_WEAPON || item->giType == IT_HEALTH || item->giType == IT_AMMO)))
 	{
 		Com_Memset(&ent, 0, sizeof(ent));
 		VectorCopy(cent->lerpOrigin, ent.origin);
@@ -662,27 +662,27 @@ static void CG_Item(centity_t *cent)
 
 		switch (item->giType)
 		{
-			case IT_AMMO:
-				ent.customShader = cg_weapons[WP_AMMO].weaponIcon[1];
-				break;
-			case IT_HEALTH:
-				ent.customShader = cg_weapons[WP_MEDKIT].weaponIcon[1];
-				break;
-			case IT_TEAM:
-				ent.customShader = cgs.media.objectiveShader;
-				ent.origin[2]   += 7;
-				break;
-			case IT_WEAPON:
-				ent.customShader = cg_weapons[item->giWeapon].weaponIcon[1];
-				break;
-			case IT_BAD:
-			default:
-				break;
+		case IT_AMMO:
+			ent.customShader = cg_weapons[WP_AMMO].weaponIcon[1];
+			break;
+		case IT_HEALTH:
+			ent.customShader = cg_weapons[WP_MEDKIT].weaponIcon[1];
+			break;
+		case IT_TEAM:
+			ent.customShader = cgs.media.objectiveShader;
+			ent.origin[2]   += 7;
+			break;
+		case IT_WEAPON:
+			ent.customShader = cg_weapons[item->giWeapon].weaponIcon[1];
+			break;
+		case IT_BAD:
+		default:
+			break;
 		}
 
 		if (item->giType == IT_AMMO || item->giType == IT_HEALTH || item->giType == IT_TEAM ||
-			BG_ClassHasWeapon(GetPlayerClassesData(cgs.clientinfo[cg.snap->ps.clientNum].team,
-			cgs.clientinfo[cg.snap->ps.clientNum].cls), item->giWeapon))
+		    BG_ClassHasWeapon(GetPlayerClassesData(cgs.clientinfo[cg.snap->ps.clientNum].team,
+		                                           cgs.clientinfo[cg.snap->ps.clientNum].cls), item->giWeapon))
 		{
 			ent.shaderRGBA[0] = 255;
 			ent.shaderRGBA[1] = 255;
@@ -937,6 +937,30 @@ static void CG_Smoker(centity_t *cent)
 	cent->lastTrailTime = cg.time;  // time we were last received at the client
 }
 
+static void CG_DrawLandmine(centity_t *cent, refEntity_t *ent)
+{
+	int color = (int)255 - (255 * fabs(sin(cg.time * 0.002)));
+
+	if (cent->currentState.teamNum == TEAM_AXIS)
+	{
+		// red landmines
+		ent->shaderRGBA[0] = 255;
+		ent->shaderRGBA[1] = color;
+		ent->shaderRGBA[2] = color;
+		ent->shaderRGBA[3] = 255;
+	}
+	else
+	{
+		// blue landmines
+		ent->shaderRGBA[0] = color;
+		ent->shaderRGBA[1] = color;
+		ent->shaderRGBA[2] = 255;
+		ent->shaderRGBA[3] = 255;
+	}
+
+	ent->customShader = cgs.media.shoutcastLandmineShader;
+}
+
 /**
  * @brief CG_DrawMineMarkerFlag
  * @param[in] cent
@@ -1128,9 +1152,14 @@ static void CG_Missile(centity_t *cent)
 	}
 	ent.renderfx = weapon->missileRenderfx | RF_NOSHADOW;
 
-
 	if (cent->currentState.weapon == WP_LANDMINE)
 	{
+		// shoutcasters can see armed landmines
+		if (cgs.clientinfo[cg.clientNum].team == TEAM_SPECTATOR && !cgs.clientinfo[cg.clientNum].shoutcaster)
+		{
+			return;
+		}
+
 		VectorCopy(ent.origin, ent.lightingOrigin);
 		ent.renderfx |= RF_LIGHTING_ORIGIN;
 
@@ -1145,10 +1174,14 @@ static void CG_Missile(centity_t *cent)
 				{
 					ent.customShader = cgs.media.genericConstructionShader;
 				}
+				else if (cgs.clientinfo[cg.clientNum].shoutcaster)
+				{
+					CG_DrawLandmine(cent, &ent);
+				}
 				else if (!cent->currentState.modelindex2)
 				{
 					// see if we have the skill to see them and are close enough
-					if (cgs.clientinfo[cg.snap->ps.clientNum].team != TEAM_SPECTATOR && cgs.clientinfo[cg.snap->ps.clientNum].skill[SK_BATTLE_SENSE] >= 4)
+					if (cgs.clientinfo[cg.snap->ps.clientNum].skill[SK_BATTLE_SENSE] >= 4)
 					{
 						vec_t distSquared = DistanceSquared(cent->lerpOrigin, cg.predictedPlayerEntity.lerpOrigin);
 
@@ -1173,9 +1206,16 @@ static void CG_Missile(centity_t *cent)
 			}
 			else
 			{
-				CG_DrawMineMarkerFlag(cent, &ent, weapon);
-
-				CG_ScanForCrosshairMine(cent);
+				if (cgs.clientinfo[cg.clientNum].shoutcaster)
+				{
+					// shoutcasters can see landmines
+					CG_DrawLandmine(cent, &ent);
+				}
+				else
+				{
+					CG_DrawMineMarkerFlag(cent, &ent, weapon);
+					CG_ScanForCrosshairMine(cent);
+				}
 			}
 		}
 
