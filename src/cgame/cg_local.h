@@ -620,6 +620,7 @@ typedef struct clientInfo_s
 	int latchedweapon;
 
 	int refStatus;
+	int shoutcaster;
 
 	bg_character_t *character;
 

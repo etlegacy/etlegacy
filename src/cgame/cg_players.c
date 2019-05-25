@@ -281,6 +281,9 @@ void CG_NewClientInfo(int clientNum)
 	v                 = Info_ValueForKey(configstring, "ref");
 	newInfo.refStatus = atoi(v);
 
+	v                   = Info_ValueForKey(configstring, "sc");
+	newInfo.shoutcaster = atoi(v);
+
 	// Detect rank/skill changes client side.
 	// Make sure we have some valid clientinfo, otherwise people are thrown
 	// into spectator on map starts.

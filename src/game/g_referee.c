@@ -105,11 +105,11 @@ qboolean G_refCommandCheck(gentity_t *ent, const char *cmd)
 	{
 		G_refMute_cmd(ent, qfalse);
 	}
-	else if (!Q_stricmp(cmd, "makeshoutcaster") || !Q_stricmp(cmd, "makesc"))
+	else if (!Q_stricmp(cmd, "makeShoutcaster") || !Q_stricmp(cmd, "makesc"))
 	{
 		G_refMakeShoutcaster_cmd(ent);
 	}
-	else if (!Q_stricmp(cmd, "removeshoutcaster") || !Q_stricmp(cmd, "removesc"))
+	else if (!Q_stricmp(cmd, "removeShoutcaster") || !Q_stricmp(cmd, "removesc"))
 	{
 		G_refRemoveShoutcaster_cmd(ent);
 	}

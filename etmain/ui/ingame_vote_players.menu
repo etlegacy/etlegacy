@@ -5,7 +5,7 @@
 #define WINDOW_X		16
 #define WINDOW_Y		16
 #define WINDOW_WIDTH	348
-#define WINDOW_HEIGHT	180
+#define WINDOW_HEIGHT	198
 #define GROUP_NAME		"grpIngameVotePlayers"
 
 // Players Vote Menu //
@@ -22,7 +22,7 @@ menuDef {
 	}
 
 // Window //
-	WINDOW( _("PLAYERS"), 50)
+	WINDOW( _("PLAYERS"), 68)
 
 // Map Selection //
 	itemDef {
@@ -66,9 +66,13 @@ menuDef {
 	BUTTONEXT( 208, 86, WINDOW_WIDTH-208-6, 14, _("MAKE AXIS"), .24, 11, uiScript refMakeAxis ; uiScript closeingame, cvarTest "authLevel" showCVar { RL_REFEREE RL_RCON } )
 	BUTTONEXT( 208, 104, WINDOW_WIDTH-208-6, 14, _("MAKE ALLIED"), .24, 11, uiScript refMakeAllied ; uiScript closeingame, cvarTest "authLevel" showCVar { RL_REFEREE RL_RCON } )
 	BUTTONEXT( 208, 122, WINDOW_WIDTH-208-6, 14, _("MAKE SPEC"), .24, 11, uiScript refMakeSpec ; uiScript closeingame, cvarTest "authLevel" showCVar { RL_REFEREE RL_RCON } )
+	BUTTONEXT( 208, 140, WINDOW_WIDTH-208-6, 14, _("MAKE SHOUTCASTER"), .24, 11, uiScript refMakeShoutcaster ; uiScript closeingame, ownerdrawFlag UI_SHOW_PLAYERNOSHOUTCASTER cvarTest "authLevel" showCVar { RL_REFEREE } )
+	BUTTONEXT( 208, 140, WINDOW_WIDTH-208-6, 14, _("MAKE SHOUTCASTER"), .24, 11, uiScript rconMakeShoutcaster ; uiScript closeingame, ownerdrawFlag UI_SHOW_PLAYERNOSHOUTCASTER cvarTest "authLevel" showCVar { RL_RCON } )
+	BUTTONEXT( 208, 140, WINDOW_WIDTH-208-6, 14, _("UN-SHOUTCAST"), .24, 11, uiScript refRemoveShoutcaster ; uiScript closeingame, ownerdrawFlag UI_SHOW_PLAYERSHOUTCASTER cvarTest "authLevel" showCVar { RL_REFEREE } )
+	BUTTONEXT( 208, 140, WINDOW_WIDTH-208-6, 14, _("UN-SHOUTCAST"), .24, 11, uiScript rconRemoveShoutcaster ; uiScript closeingame, ownerdrawFlag UI_SHOW_PLAYERSHOUTCASTER cvarTest "authLevel" showCVar { RL_RCON } )
 
-	BUTTONEXT( 208, 140, WINDOW_WIDTH-208-6, 14, _("WARN"), .24, 11, open ingame_vote_players_warn, cvarTest "authLevel" showCVar { RL_REFEREE RL_RCON } )
-	BUTTONEXT( 208, 152, WINDOW_WIDTH-208-6, 14, _("BAN"), .24, 11, uiScript rconBan ; uiScript closeingame, cvarTest "authLevel" showCVar { RL_RCON } )
+	BUTTONEXT( 208, 158, WINDOW_WIDTH-208-6, 14, _("WARN"), .24, 11, open ingame_vote_players_warn, cvarTest "authLevel" showCVar { RL_REFEREE RL_RCON } )
+	BUTTONEXT( 208, 170, WINDOW_WIDTH-208-6, 14, _("BAN"), .24, 11, uiScript rconBan ; uiScript closeingame, cvarTest "authLevel" showCVar { RL_RCON } )
 
 	BUTTON( 6, WINDOW_HEIGHT-24, WINDOW_WIDTH-12, 18, _("BACK"), .3, 14, close ingame_vote_players ; open ingame_vote )
 }

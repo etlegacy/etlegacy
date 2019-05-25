@@ -1284,7 +1284,7 @@ void UI_LoadMenus(const char *menuFile, qboolean reset)
 		trap_PC_AddGlobalDefine("LEGACY");
 	}
 
-	trap_PC_AddGlobalDefine(va("__WINDOW_WIDTH %f", (uiInfo.uiDC.glconfig.windowAspect / RATIO43) * 640 ));
+	trap_PC_AddGlobalDefine(va("__WINDOW_WIDTH %f", (uiInfo.uiDC.glconfig.windowAspect / RATIO43) * 640));
 	trap_PC_AddGlobalDefine("__WINDOW_HEIGHT 480");
 
 	handle = trap_PC_LoadSource(menuFile);
@@ -2902,6 +2902,7 @@ static void UI_BuildPlayerList(void)
 				uiInfo.playerMuted[uiInfo.playerCount] = qfalse;
 			}
 			uiInfo.playerRefereeStatus[uiInfo.playerCount] = atoi(Info_ValueForKey(info, "ref"));
+			uiInfo.playerShoutcasterStatus[uiInfo.playerCount] = atoi(Info_ValueForKey( info, "sc" ));
 			uiInfo.playerCount++;
 			team2 = atoi(Info_ValueForKey(info, "t"));
 			if (team2 == team)
@@ -3492,6 +3493,23 @@ qboolean UI_OwnerDrawVisible(int flags)
 				vis = qfalse;
 			}
 			flags &= ~UI_SHOW_PLAYERREFEREE;
+		}
+
+		if (flags & UI_SHOW_PLAYERNOSHOUTCASTER)
+		{
+			if (uiInfo.playerShoutcasterStatus[uiInfo.playerIndex] != 0)
+			{
+				vis = qfalse;
+			}
+			flags &= ~UI_SHOW_PLAYERNOSHOUTCASTER;
+		}
+		if (flags & UI_SHOW_PLAYERSHOUTCASTER)
+		{
+			if (uiInfo.playerShoutcasterStatus[uiInfo.playerIndex] != 1)
+			{
+				vis = qfalse;
+			}
+			flags &= ~UI_SHOW_PLAYERSHOUTCASTER;
 		}
 		else
 		{
@@ -5153,6 +5171,34 @@ void UI_RunMenuScript(char **args)
 				trap_Cmd_ExecuteText(EXEC_APPEND, va("rcon removeReferee \"%s\"\n", uiInfo.playerNames[uiInfo.playerIndex]));
 			}
 		}
+		else if (Q_stricmp(name, "refMakeShoutcaster") == 0)
+		{
+			if (uiInfo.playerIndex >= 0 && uiInfo.playerIndex < uiInfo.playerCount)
+			{
+				trap_Cmd_ExecuteText(EXEC_APPEND, va("ref makeShoutcaster \"%s\"\n", uiInfo.playerNames[uiInfo.playerIndex]));
+			}
+		}
+		else if (Q_stricmp(name, "refRemoveShoutcaster") == 0)
+		{
+			if (uiInfo.playerIndex >= 0 && uiInfo.playerIndex < uiInfo.playerCount)
+			{
+				trap_Cmd_ExecuteText(EXEC_APPEND, va("ref removeShoutcaster \"%s\"\n", uiInfo.playerNames[uiInfo.playerIndex]));
+			}
+		}
+		else if (Q_stricmp(name, "rconMakeShoutcaster") == 0)
+		{
+			if (uiInfo.playerIndex >= 0 && uiInfo.playerIndex < uiInfo.playerCount)
+			{
+				trap_Cmd_ExecuteText(EXEC_APPEND, va("rcon makeShoutcaster %i\n", uiInfo.playerNumber));
+			}
+		}
+		else if (Q_stricmp(name, "rconRemoveShoutcaster") == 0)
+		{
+			if (uiInfo.playerIndex >= 0 && uiInfo.playerIndex < uiInfo.playerCount)
+			{
+				trap_Cmd_ExecuteText(EXEC_APPEND, va("rcon removeShoutcaster %i\n", uiInfo.playerNumber));
+			}
+		}
 		else if (Q_stricmp(name, "rconMute") == 0)
 		{
 			if (uiInfo.playerIndex >= 0 && uiInfo.playerIndex < uiInfo.playerCount)
@@ -5512,8 +5558,8 @@ void UI_RunMenuScript(char **args)
 		}
 		else if (Q_stricmp(name, "vidReset") == 0)
 		{
-			int   r_oldMode       = (int)(trap_Cvar_VariableValue("r_oldMode"));
-			int   r_oldFullscreen = (int)(trap_Cvar_VariableValue("r_oldFullscreen"));
+			int r_oldMode       = (int)(trap_Cvar_VariableValue("r_oldMode"));
+			int r_oldFullscreen = (int)(trap_Cvar_VariableValue("r_oldFullscreen"));
 
 			// reset mode to old settings
 			trap_Cvar_SetValue("r_mode", r_oldMode);
@@ -6265,7 +6311,7 @@ static void UI_BuildServerDisplayList(int force)
 					continue;
 				}
 				else if (!(ui_serverBrowserSettings.integer & UI_BROWSER_ALLOW_HUMANS_COUNT) &&
-				    Q_stristr(Info_ValueForKey(info, "game"), "legacy") == 0)
+				         Q_stristr(Info_ValueForKey(info, "game"), "legacy") == 0)
 				{
 					continue;
 				}
@@ -7084,7 +7130,7 @@ const char *UI_FeederItemText(int feederID, int index, int column, qhandle_t *ha
 					Com_sprintf(clientBuff, sizeof(clientBuff), "^W%i^9(+%i)/%i", humans, clients - humans, maxclients);
 				}
 				else if (Q_stristr(Info_ValueForKey(info, "game"), "legacy") != 0 &&
-				    strstr(Info_ValueForKey(info, "version"), PRODUCT_LABEL) != NULL)
+				         strstr(Info_ValueForKey(info, "version"), PRODUCT_LABEL) != NULL)
 				{
 					Com_sprintf(clientBuff, sizeof(clientBuff), "^W%i^9(+%i)/%i", humans, clients - humans, maxclients);
 				}

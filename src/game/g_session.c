@@ -84,7 +84,7 @@ void G_WriteClientSessionData(gclient_t *client, qboolean restart)
 	       client->sess.latchPlayerWeapon2,
 
 	       client->sess.referee,
-		   client->sess.shoutcaster,
+	       client->sess.shoutcaster,
 	       client->sess.spec_invite,
 	       client->sess.spec_team,
 	       client->sess.kills,
@@ -286,14 +286,14 @@ void G_ReadSessionData(gclient_t *client)
 	       (int *)&client->sess.spectatorState,
 	       &client->sess.spectatorClient,
 	       &client->sess.playerType,
-		   (int *)&client->sess.playerWeapon,
-		   (int *)&client->sess.playerWeapon2,
+	       (int *)&client->sess.playerWeapon,
+	       (int *)&client->sess.playerWeapon2,
 	       &client->sess.latchPlayerType,
-		   (int *)&client->sess.latchPlayerWeapon,
-		   (int *)&client->sess.latchPlayerWeapon2,
+	       (int *)&client->sess.latchPlayerWeapon,
+	       (int *)&client->sess.latchPlayerWeapon2,
 
 	       &client->sess.referee,
-		   &client->sess.shoutcaster,
+	       &client->sess.shoutcaster,
 	       &client->sess.spec_invite,
 	       &client->sess.spec_team,
 	       &client->sess.kills,
@@ -375,19 +375,19 @@ void G_ReadSessionData(gclient_t *client)
 
 	test = (g_altStopwatchMode.integer != 0 || g_currentRound.integer == 1);
 
-	        if (g_gametype.integer == GT_WOLF_STOPWATCH && g_gamestate.integer != GS_PLAYING && test)
+	if (g_gametype.integer == GT_WOLF_STOPWATCH && g_gamestate.integer != GS_PLAYING && test)
 	{
 		G_ClientSwap(client);
 	}
 
-	        if (g_swapteams.integer)
+	if (g_swapteams.integer)
 	{
 		trap_Cvar_Set("g_swapteams", "0");
 		G_ClientSwap(client);
 	}
 
-	        client->sess.startxptotal = 0;
-	        for (j = 0; j < SK_NUM_SKILLS; j++)
+	client->sess.startxptotal = 0;
+	for (j = 0; j < SK_NUM_SKILLS; j++)
 	{
 		client->sess.startskillpoints[j] = client->sess.skillpoints[j];
 		client->sess.startxptotal += client->sess.skillpoints[j];
