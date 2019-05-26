@@ -481,6 +481,12 @@ int G_Kick_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qb
 			return G_INVALID;
 		}
 
+		if (level.clients[pid].sess.shoutcaster)
+		{
+			G_refPrintf(ent, "Can't vote to kick shoutcasters!");
+			return G_INVALID;
+		}
+
 		if (g_entities[pid].r.svFlags & SVF_BOT)
 		{
 			G_refPrintf(ent, "Can't vote to kick bots!");
