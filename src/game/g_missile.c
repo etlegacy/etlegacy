@@ -591,38 +591,27 @@ void G_RunMissile(gentity_t *ent)
 
 			if (mortar_tr.fraction != 1.f)
 			{
-				int i;
+				gentity_t *tent;
 
-				i = rand() % 3;
+				impactpos[2] = BG_GetGroundHeightAtPoint(impactpos);
 
-				// Sound effect for spotter round, had to do this as half-second bomb warning
-				G_AddEvent(ent, EV_GENERAL_SOUND_VOLUME, GAMESOUND_WPN_ARTILLERY_FLY_1 + i);
-				ent->s.onFireStart = 255;                   // sound control
+				tent              = G_TempEntity(impactpos, EV_MORTAR_IMPACT);
+				tent->s.clientNum = ent->r.ownerNum;
+				tent->r.svFlags  |= SVF_BROADCAST;
 
-				if ((CHECKBITWISE(GetWeaponTableData(ent->s.weapon)->type, WEAPON_TYPE_MORTAR | WEAPON_TYPE_SET)))
-				{
-					gentity_t *tent;
+				ent->count2 = 2;                        // missile is about to impact, no more check in worldspace are required
 
-					impactpos[2] = BG_GetGroundHeightAtPoint(impactpos);
+				/*{
+				    gentity_t *tent;
 
-					tent              = G_TempEntity(impactpos, EV_MORTAR_IMPACT);
-					tent->s.clientNum = ent->r.ownerNum;
-					tent->r.svFlags  |= SVF_BROADCAST;
+				    tent = G_TempEntity( origin, EV_RAILTRAIL );
+				    VectorCopy( impactpos, tent->s.origin2 );
+				    tent->s.dmgFlags = 0;
 
-					ent->count2 = 2;
-
-					/*{
-					    gentity_t *tent;
-
-					    tent = G_TempEntity( origin, EV_RAILTRAIL );
-					    VectorCopy( impactpos, tent->s.origin2 );
-					    tent->s.dmgFlags = 0;
-
-					    tent = G_TempEntity( origin, EV_RAILTRAIL );
-					    VectorCopy( ent->r.currentOrigin, tent->s.origin2 );
-					    tent->s.dmgFlags = 0;
-					}*/
-				}
+				    tent = G_TempEntity( origin, EV_RAILTRAIL );
+				    VectorCopy( ent->r.currentOrigin, tent->s.origin2 );
+				    tent->s.dmgFlags = 0;
+				}*/
 			}
 		}
 	}
