@@ -380,14 +380,14 @@ void G_players_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fDump)
 	gclient_t *cl;
 	gentity_t *cl_ent;
 	char      n2[MAX_NETNAME], ready[16], ref[8], rate[32];
-	char      *s, *tc, *ign, *muted, userinfo[MAX_INFO_STRING];
+	char      *s, *tc, *sc, *ign, *muted, userinfo[MAX_INFO_STRING];
 
 	if (g_gamestate.integer == GS_PLAYING)
 	{
 		if (ent)
 		{
 			CP("print \"^7 ID : Player                    Nudge  Rate  MaxPkts  Snaps  Specials\n\"");
-			CP("print \"^7----------------------------------------------------------------------\n\"");
+			CP("print \"^7---------------------------------------------------------------------\n\"");
 		}
 		else
 		{
@@ -463,6 +463,15 @@ void G_players_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fDump)
 			strcpy(ref, "REF ");
 		}
 
+		if (cl->sess.shoutcaster && !(cl_ent->r.svFlags & SVF_BOT))
+		{
+			sc = "SC ";
+		}
+		else
+		{
+			sc = "";
+		}
+
 		if (ent && COM_BitCheck(ent->client->sess.ignoreClients, idnum))
 		{
 			ign = "IGN ";
@@ -504,11 +513,11 @@ void G_players_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fDump)
 
 		if (ent)
 		{
-			CP(va("print \"%s%s%2d :%s %-26s^7%s  ^3%s%s%s^7\n\"", ready, tc, idnum, ((ref[0]) ? "^3" : "^7"), n2, rate, ref, ign, muted));
+			CP(va("print \"%s%s%2d :%s %-26s^7%s  ^3%s%s%s%s^7\n\"", ready, tc, idnum, ((ref[0]) ? "^3" : "^7"), n2, rate, ref, sc, ign, muted));
 		}
 		else
 		{
-			G_Printf("%s%s%2d : %-26s%s  %s%s\n", ready, tc, idnum, n2, rate, ref, muted);
+			G_Printf("%s%s%2d : %-26s%s  %s%s\n", ready, tc, idnum, n2, rate, ref, sc, muted);
 		}
 
 		cnt++;
