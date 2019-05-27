@@ -804,6 +804,7 @@ typedef struct weaponInfo_s
 	qhandle_t missileAlliedSkin;
 	qhandle_t missileAxisSkin;
 	sfxHandle_t missileSound;
+	weaponSounds_t missileFallSound;
 	void (*missileTrailFunc)(centity_t *, const struct weaponInfo_s *wi);
 	float missileDlight;
 	vec3_t missileDlightColor;

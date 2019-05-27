@@ -30,6 +30,7 @@ weaponDef
 		
 		missileModel		"models/multiplayer/mortar/mortar_shell.md3"
 		missileSound		"sound/weapons/mortar/mortar_fly.wav"
+		missileFallSound        3 "sound/weapons/artillery/artillery_fly_"
 		missileTrailFunc	"GrenadeTrail"						// supports "GrenadeTrail", "RocketTrail", "PyroSmokeTrail" and "DynamiteTrail" (we REALLY want a particle system for this)
 		//missileDlight		0
 		missileDlightColor	1 0.7 0.5

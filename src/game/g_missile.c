@@ -598,6 +598,7 @@ void G_RunMissile(gentity_t *ent)
 				tent              = G_TempEntity(impactpos, EV_MORTAR_IMPACT);
 				tent->s.clientNum = ent->r.ownerNum;
 				tent->r.svFlags  |= SVF_BROADCAST;
+				tent->s.weapon    = ent->s.weapon;
 
 				ent->count2 = 2;                        // missile is about to impact, no more check in worldspace are required
 

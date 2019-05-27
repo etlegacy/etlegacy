@@ -1661,6 +1661,13 @@ static qboolean CG_RW_ParseClient(int handle, weaponInfo_t *weaponInfo)
 
 			weaponInfo->missileSound = trap_S_RegisterSound(filename, qfalse);
 		}
+		else if (!Q_stricmp(token.string, "missileFallSound"))
+		{
+			if (!CG_RW_ParseWeaponSound(handle, &weaponInfo->missileFallSound))
+			{
+				return qfalse;
+			}
+		}
 		else if (!Q_stricmp(token.string, "missileTrailFunc"))
 		{
 			if (!PC_String_ParseNoAlloc(handle, filename, sizeof(filename)))

@@ -2960,9 +2960,9 @@ typedef enum
 	GAMESOUND_PLAYER_GURP2,        ///< "sound/player/gurp2.wav"
 	GAMESOUND_PLAYER_BUBBLE,
 	GAMESOUND_WPN_AIRSTRIKE_PLANE, ///< "sound/weapons/airstrike/airstrike_plane.wav"    Used by Airstrike marker after it triggers
-	GAMESOUND_WPN_ARTILLERY_FLY_1, ///< "sound/weapons/artillery/artillery_fly_1.wav"    Used by Artillery before impact
-	GAMESOUND_WPN_ARTILLERY_FLY_2, ///< "sound/weapons/artillery/artillery_fly_2.wav"
-	GAMESOUND_WPN_ARTILLERY_FLY_3, ///< "sound/weapons/artillery/artillery_fly_3.wav"
+	//GAMESOUND_WPN_ARTILLERY_FLY_1, ///< "sound/weapons/artillery/artillery_fly_1.wav"    Used by Artillery before impact // moved in weap file
+	//GAMESOUND_WPN_ARTILLERY_FLY_2, ///< "sound/weapons/artillery/artillery_fly_2.wav"                                    // moved in weap file
+	//GAMESOUND_WPN_ARTILLERY_FLY_3, ///< "sound/weapons/artillery/artillery_fly_3.wav"                                    // moved in weap file
 
 	GAMESOUND_MISC_REVIVE,         ///< "sound/misc/vo_revive.wav"                       Used by revival Needle
 	GAMESOUND_MISC_REFEREE,        ///< "sound/misc/referee.wav"                         Game Referee performs action

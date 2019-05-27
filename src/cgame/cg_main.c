@@ -1285,9 +1285,9 @@ void CG_RegisterGameSounds()
 	cgs.cachedSounds[GAMESOUND_WORLD_BUILD]          = trap_S_RegisterSound("sound/world/build.wav", qfalse);
 	cgs.cachedSounds[GAMESOUND_WORLD_MG_CONSTRUCTED] = trap_S_RegisterSound("sound/world/mg_constructed.wav", qfalse);
 	cgs.cachedSounds[GAMESOUND_WPN_AIRSTRIKE_PLANE]  = trap_S_RegisterSound("sound/weapons/airstrike/airstrike_plane.wav", qfalse);
-	cgs.cachedSounds[GAMESOUND_WPN_ARTILLERY_FLY_1]  = trap_S_RegisterSound("sound/weapons/artillery/artillery_fly_1.wav", qfalse);
-	cgs.cachedSounds[GAMESOUND_WPN_ARTILLERY_FLY_2]  = trap_S_RegisterSound("sound/weapons/artillery/artillery_fly_2.wav", qfalse);
-	cgs.cachedSounds[GAMESOUND_WPN_ARTILLERY_FLY_3]  = trap_S_RegisterSound("sound/weapons/artillery/artillery_fly_3.wav", qfalse);
+	//cgs.cachedSounds[GAMESOUND_WPN_ARTILLERY_FLY_1]  = trap_S_RegisterSound("sound/weapons/artillery/artillery_fly_1.wav", qfalse);   // moved in weap file
+	//cgs.cachedSounds[GAMESOUND_WPN_ARTILLERY_FLY_2]  = trap_S_RegisterSound("sound/weapons/artillery/artillery_fly_2.wav", qfalse);   // moved in weap file
+	//cgs.cachedSounds[GAMESOUND_WPN_ARTILLERY_FLY_3]  = trap_S_RegisterSound("sound/weapons/artillery/artillery_fly_3.wav", qfalse);   // moved in weap file
 	cgs.cachedSounds[GAMESOUND_MISC_REVIVE]          = trap_S_RegisterSound("sound/misc/vo_revive.wav", qfalse);
 	cgs.cachedSounds[GAMESOUND_MISC_REFEREE]         = trap_S_RegisterSound("sound/misc/referee.wav", qfalse);
 	cgs.cachedSounds[GAMESOUND_MISC_VOTE]            = trap_S_RegisterSound("sound/misc/vote.wav", qfalse);
