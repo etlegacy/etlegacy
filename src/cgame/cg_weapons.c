@@ -1260,7 +1260,7 @@ static qboolean CG_RW_ParseWeaponSound(int handle, weaponSounds_t *weaponSounds)
 
 		for (i = 0; i < token.intvalue && i < MAX_WEAPON_SOUNDS; i++)
 		{
-			weaponSounds->sounds[i] = trap_S_RegisterSound(va("%s%i", filename, i + 1), qfalse);
+            weaponSounds->sounds[i] = trap_S_RegisterSound(va("%s%i.wav", filename, i + 1), qfalse);
 		}
 
 		weaponSounds->count = i;
@@ -1577,7 +1577,7 @@ static qboolean CG_RW_ParseClient(int handle, weaponInfo_t *weaponInfo)
 				return CG_RW_ParseError(handle, "expected weaponIcon filename");
 			}
 
-			weaponInfo->weaponIcon[0] = trap_R_RegisterShader(filename);
+            weaponInfo->weaponIcon[0] = trap_R_RegisterShaderNoMip(filename);
 		}
 		else if (!Q_stricmp(token.string, "weaponIconScale"))
 		{
@@ -1593,7 +1593,7 @@ static qboolean CG_RW_ParseClient(int handle, weaponInfo_t *weaponInfo)
 				return CG_RW_ParseError(handle, "expected weaponSelectedIcon filename");
 			}
 
-			weaponInfo->weaponIcon[1] = trap_R_RegisterShader(filename);
+            weaponInfo->weaponIcon[1] = trap_R_RegisterShaderNoMip(filename);
 		}
 		else if (!Q_stricmp(token.string, "weaponCardIcon"))
 		{
