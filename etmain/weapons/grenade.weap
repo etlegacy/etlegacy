@@ -35,6 +35,16 @@ weaponDef
 		
 		missileModel		"models/ammo/grenade1.md3"
 		//missileSound		""
+                missileBouncingSound { 
+                    default 2 "sound/weapons/grenade/bounce_hard"
+                    wood    2 "sound/weapons/grenade/bounce_wood"
+                    metal   2 "sound/weapons/grenade/bounce_metal"
+                    roof    2 "sound/weapons/grenade/bounce_metal"
+                    gravel  2 "sound/weapons/grenade/bounce_hard"
+                    grass   2 "sound/weapons/grenade/bounce_soft"
+                    snow    2 "sound/weapons/grenade/bounce_soft"
+                    carpet  2 "sound/weapons/grenade/bounce_soft"
+                    }
 		missileTrailFunc	"GrenadeTrail"						// supports "GrenadeTrail", "RocketTrail", "PyroSmokeTrail" and "DynamiteTrail" (we REALLY want a particle system for this)
 		//missileDlight		0
 		//missileDlightColor	0 0 0							// do we still use this?

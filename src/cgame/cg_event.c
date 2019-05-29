@@ -2164,34 +2164,20 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 		}
 		break;
 	case EV_GRENADE_BOUNCE:
-		if (es->weapon == WP_SATCHEL)
+	{
+		sfxHandle_t    sfx;
+		soundSurface_t soundSurfaceIndex;
+
+		soundSurfaceIndex = CG_GetSoundSurfaceIndex(es->eventParm);
+
+                sfx = CG_GetRandomSoundSurface(cg_weapons[es->weapon].missileBouncingSound, soundSurfaceIndex);
+
+		if (sfx)
 		{
-			trap_S_StartSound(NULL, es->number, CHAN_AUTO, cgs.media.satchelbounce1);
+			trap_S_StartSound(NULL, es->number, CHAN_AUTO, sfx);
 		}
-		else if (es->weapon == WP_DYNAMITE)
-		{
-			trap_S_StartSound(NULL, es->number, CHAN_AUTO, cgs.media.dynamitebounce1);
-		}
-		else if (es->weapon == WP_LANDMINE)
-		{
-			trap_S_StartSound(NULL, es->number, CHAN_AUTO, cgs.media.landminebounce1);
-		}
-		else
-		{
-			// GRENADES
-			if (es->eventParm != FOOTSTEP_TOTAL)
-			{
-				if (rand() & 1)
-				{
-					trap_S_StartSound(NULL, es->number, CHAN_AUTO, cgs.media.grenadebounce[es->eventParm][0]);
-				}
-				else
-				{
-					trap_S_StartSound(NULL, es->number, CHAN_AUTO, cgs.media.grenadebounce[es->eventParm][1]);
-				}
-			}
-		}
-		break;
+	}
+	break;
 	case EV_RAILTRAIL:
 	{
 		vec3_t color = { es->angles[0] / 255.f, es->angles[1] / 255.f, es->angles[2] / 255.f };

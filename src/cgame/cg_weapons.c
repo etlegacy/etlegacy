@@ -1210,9 +1210,9 @@ static qboolean CG_RW_ParseModModel(int handle, weaponInfo_t *weaponInfo)
 }
 
 /**
- * @var impactSurfaceTable
+ * @var soundSurfaceTable
  */
-static const impactTable_t impactSurfaceTable[W_MAX_IMPACTS] =
+static const soundSurfaceTable_t soundSurfaceTable[W_MAX_SND_SURF] =
 {
 	{ 0,           "default" },
 	{ 0,           "far",    },
@@ -1223,6 +1223,7 @@ static const impactTable_t impactSurfaceTable[W_MAX_IMPACTS] =
 	{ SURF_GLASS,  "glass",  },
 	{ SURF_SNOW,   "snow",   },
 	{ SURF_ROOF,   "roof",   },
+	{ SURF_CARPET, "carpet"  },
 	{ 0,           "water",  },
 	{ 0,           "flesh"   }
 };
@@ -1255,12 +1256,12 @@ static qboolean CG_RW_ParseWeaponSound(int handle, weaponSounds_t *weaponSounds)
 
 		if (!PC_String_ParseNoAlloc(handle, filename, sizeof(filename)))
 		{
-			return CG_RW_ParseError(handle, "expected impactSound filename");
+			return CG_RW_ParseError(handle, "expected soundSurface filename");
 		}
 
 		for (i = 0; i < token.intvalue && i < MAX_WEAPON_SOUNDS; i++)
 		{
-            weaponSounds->sounds[i] = trap_S_RegisterSound(va("%s%i.wav", filename, i + 1), qfalse);
+			weaponSounds->sounds[i] = trap_S_RegisterSound(va("%s%i.wav", filename, i + 1), qfalse);
 		}
 
 		weaponSounds->count = i;
@@ -1275,15 +1276,15 @@ static qboolean CG_RW_ParseWeaponSound(int handle, weaponSounds_t *weaponSounds)
 }
 
 /**
- * @brief CG_RW_ParseImpactSound
+ * @brief CG_RW_ParseSoundSurface
  * @param[in] handle
  * @param[in,out] weaponInfo
  * @return
  */
-static qboolean CG_RW_ParseImpactSound(int handle, weaponInfo_t *weaponInfo)
+static qboolean CG_RW_ParseSoundSurface(int handle, weaponSounds_t *weaponSound)
 {
-	pc_token_t      token;
-	impactSurface_t impactSurface;
+	pc_token_t     token;
+	soundSurface_t soundSurface;
 
 	if (!trap_PC_ReadToken(handle, &token) || Q_stricmp(token.string, "{"))
 	{
@@ -1302,20 +1303,20 @@ static qboolean CG_RW_ParseImpactSound(int handle, weaponInfo_t *weaponInfo)
 			break;
 		}
 
-		for (impactSurface = 0; impactSurface < W_MAX_IMPACTS; impactSurface++)
+		for (soundSurface = 0; soundSurface < W_MAX_SND_SURF; soundSurface++)
 		{
-			if (!Q_stricmp(token.string, impactSurfaceTable[impactSurface].surfaceName))
+			if (!Q_stricmp(token.string, soundSurfaceTable[soundSurface].surfaceName))
 			{
 				break;
 			}
 		}
 
-		if (impactSurface == W_MAX_IMPACTS)
+		if (soundSurface == W_MAX_SND_SURF)
 		{
 			return CG_RW_ParseError(handle, "unknown token '%s'", token.string);
 		}
 
-		CG_RW_ParseWeaponSound(handle, &weaponInfo->impactSound[impactSurface]);
+		CG_RW_ParseWeaponSound(handle, &weaponSound[soundSurface]);
 	}
 
 	return qtrue;
@@ -1329,9 +1330,9 @@ static qboolean CG_RW_ParseImpactSound(int handle, weaponInfo_t *weaponInfo)
  */
 static qboolean CG_RW_ParseImpactMark(int handle, weaponInfo_t *weaponInfo)
 {
-	pc_token_t      token;
-	char            filename[MAX_QPATH];
-	impactSurface_t impactSurface;
+	pc_token_t     token;
+	char           filename[MAX_QPATH];
+	soundSurface_t impactSurface;
 
 	if (!trap_PC_ReadToken(handle, &token) || Q_stricmp(token.string, "{"))
 	{
@@ -1350,9 +1351,9 @@ static qboolean CG_RW_ParseImpactMark(int handle, weaponInfo_t *weaponInfo)
 			break;
 		}
 
-		for (impactSurface = 0; impactSurface < W_MAX_IMPACTS; impactSurface++)
+		for (impactSurface = 0; impactSurface < W_MAX_SND_SURF; impactSurface++)
 		{
-			if (!Q_stricmp(token.string, impactSurfaceTable[impactSurface].surfaceName))
+			if (!Q_stricmp(token.string, soundSurfaceTable[impactSurface].surfaceName))
 			{
 				if (!PC_String_ParseNoAlloc(handle, filename, sizeof(filename)))
 				{
@@ -1363,7 +1364,7 @@ static qboolean CG_RW_ParseImpactMark(int handle, weaponInfo_t *weaponInfo)
 			}
 		}
 
-		if (impactSurface == W_MAX_IMPACTS)
+		if (impactSurface == W_MAX_SND_SURF)
 		{
 			return CG_RW_ParseError(handle, "unknown token '%s'", token.string);
 		}
@@ -1577,7 +1578,7 @@ static qboolean CG_RW_ParseClient(int handle, weaponInfo_t *weaponInfo)
 				return CG_RW_ParseError(handle, "expected weaponIcon filename");
 			}
 
-            weaponInfo->weaponIcon[0] = trap_R_RegisterShaderNoMip(filename);
+			weaponInfo->weaponIcon[0] = trap_R_RegisterShaderNoMip(filename);
 		}
 		else if (!Q_stricmp(token.string, "weaponIconScale"))
 		{
@@ -1593,7 +1594,7 @@ static qboolean CG_RW_ParseClient(int handle, weaponInfo_t *weaponInfo)
 				return CG_RW_ParseError(handle, "expected weaponSelectedIcon filename");
 			}
 
-            weaponInfo->weaponIcon[1] = trap_R_RegisterShaderNoMip(filename);
+			weaponInfo->weaponIcon[1] = trap_R_RegisterShaderNoMip(filename);
 		}
 		else if (!Q_stricmp(token.string, "weaponCardIcon"))
 		{
@@ -1664,6 +1665,13 @@ static qboolean CG_RW_ParseClient(int handle, weaponInfo_t *weaponInfo)
 		else if (!Q_stricmp(token.string, "missileFallSound"))
 		{
 			if (!CG_RW_ParseWeaponSound(handle, &weaponInfo->missileFallSound))
+			{
+				return qfalse;
+			}
+		}
+		else if (!Q_stricmp(token.string, "missileBouncingSound"))
+		{
+			if (!CG_RW_ParseSoundSurface(handle, weaponInfo->missileBouncingSound))
 			{
 				return qfalse;
 			}
@@ -1784,7 +1792,7 @@ static qboolean CG_RW_ParseClient(int handle, weaponInfo_t *weaponInfo)
 		}
 		else if (!Q_stricmp(token.string, "impactSound"))
 		{
-			if (!CG_RW_ParseImpactSound(handle, weaponInfo))
+			if (!CG_RW_ParseSoundSurface(handle, weaponInfo->impactSound))
 			{
 				return qfalse;
 			}
@@ -5277,20 +5285,41 @@ void CG_WaterRipple(qhandle_t shader, vec3_t loc, vec3_t dir, int size, int life
 }
 
 /**
- * @brief CG_GetRandomImpactSound
+ * @brief CG_GetSoundSurfaceIndex
+ * @param[in] surfFlags
+ * @return
+ */
+soundSurface_t CG_GetSoundSurfaceIndex(int surfFlags)
+{
+	soundSurface_t soundSurfaceIndex;
+
+	for (soundSurfaceIndex = 0; soundSurfaceIndex < W_MAX_SND_SURF; soundSurfaceIndex++)
+	{
+		if (surfFlags & soundSurfaceTable[soundSurfaceIndex].surfaceType)
+		{
+			return soundSurfaceIndex;
+		}
+	}
+
+	return W_SND_SURF_DEFAULT;
+}
+
+/**
+ * @brief CG_GetRandomSoundSurface
  * @param[in] weapon
  * @param[in] surf
  * @return
  */
-static sfxHandle_t CG_GetRandomImpactSound(int weapon, impactSurface_t surf)
+sfxHandle_t CG_GetRandomSoundSurface(weaponSounds_t *weaponSounds, soundSurface_t surf)
 {
-	int c = cg_weapons[weapon].impactSound[surf].count;
+	// if no sound found for given surface, force using default one if exist
+	int c = weaponSounds[surf].count ? weaponSounds[surf].count : weaponSounds[W_SND_SURF_DEFAULT].count;
 
 	if (c)
 	{
 		c = rand() % c;
 
-		return cg_weapons[weapon].impactSound[surf].sounds[c];
+		return weaponSounds[surf].sounds[c];
 	}
 
 	return 0;
@@ -5687,11 +5716,11 @@ void CG_DynamiteExplosionImpact(int weapon, int missileEffect, vec3_t origin, ve
  */
 void CG_MissileHitWall(int weapon, int missileEffect, vec3_t origin, vec3_t dir, int surfFlags, int entityNum)
 {
-	impactSurface_t impactSurfaceIndex = W_IMPACT_DEFAULT;
-	qhandle_t       mark;
-	sfxHandle_t     sfx, sfx2;
-	int             markDuration;
-	float           radius;
+	soundSurface_t soundSurfaceIndex = W_SND_SURF_DEFAULT;
+	qhandle_t      mark;
+	sfxHandle_t    sfx, sfx2;
+	int            markDuration;
+	float          radius;
 
 	// no impact
 	if (!cg_weapons[weapon].impactFunc)
@@ -5706,45 +5735,28 @@ void CG_MissileHitWall(int weapon, int missileEffect, vec3_t origin, vec3_t dir,
 
 	if (missileEffect == PS_FX_COMMON)
 	{
-		for (impactSurfaceIndex = 0; impactSurfaceIndex < W_MAX_IMPACTS; impactSurfaceIndex++)
-		{
-			if (surfFlags & impactSurfaceTable[impactSurfaceIndex].surfaceType)
-			{
-				break;
-			}
-		}
-
-		if (impactSurfaceIndex == W_MAX_IMPACTS)
-		{
-			impactSurfaceIndex = W_IMPACT_DEFAULT;
-		}
+		soundSurfaceIndex = CG_GetSoundSurfaceIndex(surfFlags);
 	}
 	else if (missileEffect == PS_FX_WATER)
 	{
-		impactSurfaceIndex = W_IMPACT_WATER;
+		soundSurfaceIndex = W_SND_SURF_WATER;
 	}
 	else if (missileEffect == PS_FX_FLESH)
 	{
-		impactSurfaceIndex = W_IMPACT_FLESH;
+		soundSurfaceIndex = W_SND_SURF_FLESH;
 	}
 
-	sfx    = CG_GetRandomImpactSound(weapon, impactSurfaceIndex);
-	sfx2   = CG_GetRandomImpactSound(weapon, W_IMPACT_FAR);
-	mark   = cg_weapons[weapon].impactMark[impactSurfaceIndex];
+	sfx    = CG_GetRandomSoundSurface(cg_weapons[weapon].impactSound, soundSurfaceIndex);
+	sfx2   = CG_GetRandomSoundSurface(cg_weapons[weapon].impactSound, W_SND_SURF_FAR);
+	mark   = cg_weapons[weapon].impactMark[soundSurfaceIndex];
 	radius = cg_weapons[weapon].impactMarkRadius;
 
 	cg_weapons[weapon].impactFunc(weapon, missileEffect, origin, dir, surfFlags, &radius, &markDuration);
 
-	// no sound found for given surface, force using default one if exist
-	if (!sfx)
-	{
-		sfx = CG_GetRandomImpactSound(weapon, W_IMPACT_DEFAULT);
-	}
-
 	// no mark found for given surface, force using default one if exist
 	if (!mark)
 	{
-		mark = cg_weapons[weapon].impactMark[W_IMPACT_DEFAULT];
+		mark = cg_weapons[weapon].impactMark[W_SND_SURF_DEFAULT];
 	}
 
 	if (sfx)

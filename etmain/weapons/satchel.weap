@@ -36,6 +36,9 @@ weaponDef
 		missileaxisskin		"models/multiplayer/satchel/satchel_axis.skin"
 		missilealliedskin	"models/multiplayer/satchel/satchel_allied.skin"
 		//missileSound		""
+                missileBouncingSound {
+                    default "sound/weapons/satchel/satchel_bounce.wav"
+                }
 		//missileTrailFunc	""									// supports "GrenadeTrail", "RocketTrail", "PyroSmokeTrail" and "DynamiteTrail" (we REALLY want a particle system for this)
 		//missileDlight		0
 		//missileDlightColor	0 0 0							// do we still use this?

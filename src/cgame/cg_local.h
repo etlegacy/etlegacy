@@ -695,39 +695,40 @@ typedef enum
 } modelViewType_t;
 
 /**
- * @enum impactSurface_s
+ * @enum soundSurface_s
  * @typedef impactSurface_t
  * @brief index used to identify sound to play surface hit
- * wood, metal, roof, stone, glass, water, snow, flesh
+ * wood, metal, roof, stone, glass, water, snow, flesh, carpet
  */
-typedef enum impactSurface_s
+typedef enum soundSurface_s
 {
-	W_IMPACT_DEFAULT = 0,  ///< default sound in case of no sound for hit surface sound
-	W_IMPACT_FAR,          ///< used sound when player is far from the impact origin
-	W_IMPACT_METAL,
-	W_IMPACT_WOOD,
-	W_IMPACT_GRASS,
-	W_IMPACT_GRAVEL,
-	W_IMPACT_GLASS,
-	W_IMPACT_SNOW,
-	W_IMPACT_ROOF,
-	W_IMPACT_WATER,
-	W_IMPACT_FLESH,
-	W_MAX_IMPACTS
+	W_SND_SURF_DEFAULT = 0,  ///< default sound in case of no sound found for given surface
+	W_SND_SURF_FAR,          ///< used sound when player is far from the origin
+	W_SND_SURF_METAL,
+	W_SND_SURF_WOOD,
+	W_SND_SURF_GRASS,
+	W_SND_SURF_GRAVEL,
+	W_SND_SURF_GLASS,
+	W_SND_SURF_SNOW,
+	W_SND_SURF_ROOF,
+	W_SND_SURF_CARPET,
+	W_SND_SURF_WATER,
+	W_SND_SURF_FLESH,
+	W_MAX_SND_SURF
 
-} impactSurface_t;
+} soundSurface_t;
 
 /**
- * @struct impactTable_s
- * @typedef impactTable_t
- * @brief Impact Table
+ * @struct soundSurfaceTable_s
+ * @typedef soundSurfaceTable_t
+ * @brief Sound Surface Table
  */
-typedef struct impactTable_s
+typedef struct soundSurfaceTable_s
 {
 	int surfaceType;
 	const char *surfaceName;
 
-} impactTable_t;
+} soundSurfaceTable_t;
 
 /**
  * @struct partModel_s
@@ -805,6 +806,7 @@ typedef struct weaponInfo_s
 	qhandle_t missileAxisSkin;
 	sfxHandle_t missileSound;
 	weaponSounds_t missileFallSound;
+        weaponSounds_t missileBouncingSound[W_MAX_SND_SURF];
 	void (*missileTrailFunc)(centity_t *, const struct weaponInfo_s *wi);
 	float missileDlight;
 	vec3_t missileDlightColor;
@@ -828,8 +830,8 @@ typedef struct weaponInfo_s
 	int impactSoundRange;
 	int impactSoundVolume;
 	float impactMarkRadius;
-	sfxHandle_t impactMark[W_MAX_IMPACTS];
-	weaponSounds_t impactSound[W_MAX_IMPACTS];
+	sfxHandle_t impactMark[W_MAX_SND_SURF];
+	weaponSounds_t impactSound[W_MAX_SND_SURF];
 	void (*impactFunc)(int weapon, int missileEffect, vec3_t origin, vec3_t dir, int surfFlags, float *radius, int *markDuration);
 } weaponInfo_t;
 
@@ -1620,13 +1622,6 @@ typedef struct
 	sfxHandle_t flameStreamSound;
 
 	sfxHandle_t boneBounceSound;
-
-	sfxHandle_t grenadebounce[FOOTSTEP_TOTAL][2];
-
-	sfxHandle_t dynamitebounce1;
-	sfxHandle_t landminebounce1;
-
-	sfxHandle_t satchelbounce1;
 
 	qhandle_t cursor;
 
@@ -2841,6 +2836,9 @@ void CG_AddViewWeapon(playerState_t *ps);
 void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent);
 
 void CG_OutOfAmmoChange(qboolean allowforceswitch);
+
+soundSurface_t CG_GetSoundSurfaceIndex(int surfFlags);
+sfxHandle_t CG_GetRandomSoundSurface(weaponSounds_t *weaponSounds, soundSurface_t surf);
 
 // added to header to access from outside cg_weapons.c
 void CG_AddDebris(vec3_t origin, vec3_t dir, int speed, int duration, int count, trace_t *trace);

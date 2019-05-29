@@ -1325,31 +1325,12 @@ static void CG_RegisterSounds(void)
 	cgs.media.selectSound      = trap_S_RegisterSound("sound/weapons/misc/change.wav", qfalse);
 	cgs.media.landHurt         = trap_S_RegisterSound("sound/player/land_hurt.wav", qfalse);
 	cgs.media.gibSound         = trap_S_RegisterSound("sound/player/gib.wav", qfalse);
-	cgs.media.dynamitebounce1  = trap_S_RegisterSound("sound/weapons/dynamite/dynamite_bounce.wav", qfalse);
-	cgs.media.satchelbounce1   = trap_S_RegisterSound("sound/weapons/satchel/satchel_bounce.wav", qfalse);
-	cgs.media.landminebounce1  = trap_S_RegisterSound("sound/weapons/landmine/mine_bounce.wav", qfalse);
 
 	cgs.media.watrInSound     = trap_S_RegisterSound("sound/player/water_in.wav", qfalse);
 	cgs.media.watrOutSound    = trap_S_RegisterSound("sound/player/water_out.wav", qfalse);
 	cgs.media.watrUnSound     = trap_S_RegisterSound("sound/player/water_un.wav", qfalse);
 	cgs.media.watrGaspSound   = trap_S_RegisterSound("sound/player/gasp.wav", qfalse);
 	cgs.media.underWaterSound = trap_S_RegisterSound("sound/player/underwater.wav", qfalse);
-
-	for (i = 0; i < 2; i++)
-	{
-		cgs.media.grenadebounce[FOOTSTEP_NORMAL][i]         = \
-			cgs.media.grenadebounce[FOOTSTEP_GRAVEL][i]     = \
-				cgs.media.grenadebounce[FOOTSTEP_SPLASH][i] = trap_S_RegisterSound(va("sound/weapons/grenade/bounce_hard%i.wav", i + 1), qfalse);
-
-		cgs.media.grenadebounce[FOOTSTEP_METAL][i]    = \
-			cgs.media.grenadebounce[FOOTSTEP_ROOF][i] = trap_S_RegisterSound(va("sound/weapons/grenade/bounce_metal%i.wav", i + 1), qfalse);
-
-		cgs.media.grenadebounce[FOOTSTEP_WOOD][i] = trap_S_RegisterSound(va("sound/weapons/grenade/bounce_wood%i.wav", i + 1), qfalse);
-
-		cgs.media.grenadebounce[FOOTSTEP_GRASS][i]          = \
-			cgs.media.grenadebounce[FOOTSTEP_SNOW][i]       = \
-				cgs.media.grenadebounce[FOOTSTEP_CARPET][i] = trap_S_RegisterSound(va("sound/weapons/grenade/bounce_soft%i.wav", i + 1), qfalse);
-	}
 
 	cgs.media.landSound[FOOTSTEP_NORMAL] = trap_S_RegisterSound("sound/player/footsteps/stone_jump.wav", qfalse);
 	cgs.media.landSound[FOOTSTEP_SPLASH] = trap_S_RegisterSound("sound/player/footsteps/water_jump.wav", qfalse);
