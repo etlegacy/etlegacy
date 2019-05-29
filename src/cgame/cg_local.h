@@ -150,11 +150,11 @@
 #define ISVALIDCLIENTNUM(clientNum) ((clientNum) >= 0 && (clientNum) < MAX_CLIENTS)
 
 /**
- * @struct specName_s
- * @typedef specName_t
+ * @struct specLabel_s
+ * @typedef specLabel_t
  * @brief
  */
-typedef struct specName_s
+typedef struct specLabel_s
 {
 	float x;
 	float y;
@@ -165,7 +165,7 @@ typedef struct specName_s
 	int lastInvisibleTime;
 	qboolean visible;
 	float alpha;
-} specName_t;
+} specLabel_t;
 
 /**
  * @struct cg_window_s
@@ -867,6 +867,8 @@ typedef struct
 #define MAX_BUFFERED_SOUNDSCRIPTS 16
 #define MAX_SOUNDSCRIPT_SOUNDS 16
 
+#define MAX_FLOATING_STRINGS 128
+
 /**
  * @struct soundScriptHandle_s
  * @typedef soundScriptHandle_t
@@ -1353,7 +1355,8 @@ typedef struct
 	/// tracing bullet, predict hitboxes used on server
 	qboolean bulletTrace;
 
-	specName_t specOnScreenNames[MAX_CLIENTS];
+	specLabel_t specOnScreenLabels[MAX_FLOATING_STRINGS];
+	int         specStringCount;
 
 	vec3_t airstrikePlaneScale[2];
 
@@ -2706,6 +2709,9 @@ float *CG_TeamColor(int team);
 void CG_TileClear(void);
 void CG_ColorForHealth(vec4_t hcolor);
 void CG_GetColorForHealth(int health, vec4_t hcolor);
+
+qboolean CG_WorldCoordToScreenCoordFloat(vec3_t point, float *x, float *y);
+void CG_AddOnScreenText(const char *text, vec3_t origin);
 
 // new hud stuff
 void CG_DrawRect(float x, float y, float width, float height, float size, const float *color);

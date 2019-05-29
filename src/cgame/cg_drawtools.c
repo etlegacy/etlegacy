@@ -700,3 +700,98 @@ const char *CG_TranslateString(const char *string)
 	return buf;
 }
 
+/**
+ * @brief Float a sprite over the player's head
+ * added height parameter
+ * @param point
+ * @param[out] x
+ * @param[out] y
+ * @return
+ */
+qboolean CG_WorldCoordToScreenCoordFloat(vec3_t point, float *x, float *y)
+{
+	vec3_t trans;
+	float xc, yc;
+	float px, py;
+	float z;
+
+	px = (float)tan(DEG2RAD((double)cg.refdef.fov_x) / 2);
+	py = (float)tan(DEG2RAD((double)cg.refdef.fov_y) / 2);
+
+	VectorSubtract(point, cg.refdef.vieworg, trans);
+
+	xc = 640.0f / 2.0f;
+	yc = 480.0f / 2.0f;
+
+	z = DotProduct(trans, cg.refdef.viewaxis[0]);
+	if (z < 0.1f)
+	{
+		return qfalse;
+	}
+	px *= z;
+	py *= z;
+	if (px == 0.f || py == 0.f)
+	{
+		return qfalse;
+	}
+
+	*x = xc - (DotProduct(trans, cg.refdef.viewaxis[1]) * xc) / px;
+	*y = yc - (DotProduct(trans, cg.refdef.viewaxis[2]) * yc) / py;
+	*x = Ccg_WideX(*x);
+
+	return qtrue;
+}
+
+/**
+ * @brief CG_AddOnScreenText
+ * @param[in] text
+ * @param[in] origin
+ */
+void CG_AddOnScreenText(const char *text, vec3_t origin)
+{
+	float x, y;
+
+	if (cg.specStringCount >= MAX_FLOATING_STRINGS)
+	{
+		return;
+	}
+
+	if (CG_WorldCoordToScreenCoordFloat(origin, &x, &y))
+	{
+		float scale, w, h;
+		float dist  = VectorDistance(origin, cg.refdef_current->vieworg);
+		float dist2 = (dist * dist) / (3600.0f);
+
+		if (dist2 > 2.0f)
+		{
+			dist2 = 2.0f;
+		}
+
+		scale = 2.4f - dist2 - dist / 6000.0f;
+		if (scale < 0.05f)
+		{
+			scale = 0.05f;
+		}
+
+		w = CG_Text_Width_Ext(text, scale, 0, &cgs.media.limboFont1);
+		h = CG_Text_Height_Ext(text, scale, 0, &cgs.media.limboFont1);
+
+		x -= w / 2;
+		y -= h / 2;
+
+		// save it
+		cg.specOnScreenLabels[cg.specStringCount].x     = x;
+		cg.specOnScreenLabels[cg.specStringCount].y     = y;
+		cg.specOnScreenLabels[cg.specStringCount].scale = scale;
+		cg.specOnScreenLabels[cg.specStringCount].text  = text;
+		VectorCopy(origin, cg.specOnScreenLabels[cg.specStringCount].origin);
+		cg.specOnScreenLabels[cg.specStringCount].visible = qtrue;
+
+		// count
+		cg.specStringCount++;
+	}
+	else
+	{
+		Com_Memset(&cg.specOnScreenLabels[cg.specStringCount], 0, sizeof(cg.specOnScreenLabels[cg.specStringCount]));
+	}
+}

@@ -3364,57 +3364,57 @@ void CG_DrawDemoRecording(void)
 }
 
 /**
- * @brief CG_DrawOnScreenNames
+ * @brief CG_DrawOnScreenLabels
  */
-void CG_DrawOnScreenNames(void)
+void CG_DrawOnScreenLabels(void)
 {
 	static vec3_t mins  = { -1, -1, -1 };
 	static vec3_t maxs  = { 1, 1, 1 };
 	vec4_t        white = { 1.0f, 1.0f, 1.0f, 1.0f };
 	int           i;
-	specName_t    *spcNm;
+	specLabel_t   *specLabel;
 	trace_t       tr;
 	int           FadeOut = 0;
 	int           FadeIn  = 0;
 
-	for (i = 0; i < cgs.maxclients; ++i)
+	for (i = 0; i < cg.specStringCount; ++i)
 	{
-		spcNm = &cg.specOnScreenNames[i];
+		specLabel = &cg.specOnScreenLabels[i];
 
 		// Visible checks if information is actually valid
-		if (!spcNm || !spcNm->visible)
+		if (!specLabel || !specLabel->visible)
 		{
 			continue;
 		}
 
-		CG_Trace(&tr, cg.refdef.vieworg, mins, maxs, spcNm->origin, -1, CONTENTS_SOLID);
+		CG_Trace(&tr, cg.refdef.vieworg, mins, maxs, specLabel->origin, -1, CONTENTS_SOLID);
 
 		if (tr.fraction < 1.0f)
 		{
-			spcNm->lastInvisibleTime = cg.time;
+			specLabel->lastInvisibleTime = cg.time;
 		}
 		else
 		{
-			spcNm->lastVisibleTime = cg.time;
+			specLabel->lastVisibleTime = cg.time;
 		}
 
-		FadeOut = cg.time - spcNm->lastVisibleTime;
-		FadeIn  = cg.time - spcNm->lastInvisibleTime;
+		FadeOut = cg.time - specLabel->lastVisibleTime;
+		FadeIn  = cg.time - specLabel->lastInvisibleTime;
 
 		if (FadeIn)
 		{
 			white[3] = (FadeIn > 500) ? 1.0 : FadeIn / 500.0f;
-			if (white[3] < spcNm->alpha)
+			if (white[3] < specLabel->alpha)
 			{
-				white[3] = spcNm->alpha;
+				white[3] = specLabel->alpha;
 			}
 		}
 		if (FadeOut)
 		{
 			white[3] = (FadeOut > 500) ? 0.0 : 1.0f - FadeOut / 500.0f;
-			if (white[3] > spcNm->alpha)
+			if (white[3] > specLabel->alpha)
 			{
-				white[3] = spcNm->alpha;
+				white[3] = specLabel->alpha;
 			}
 		}
 		if (white[3] > 1.0f)
@@ -3422,16 +3422,18 @@ void CG_DrawOnScreenNames(void)
 			white[3] = 1.0f;
 		}
 
-		spcNm->alpha = white[3];
-		if (spcNm->alpha <= 0.0f)
+		specLabel->alpha = white[3];
+		if (specLabel->alpha <= 0.0f)
 		{
 			continue;                           // no alpha = nothing to draw..
-
 		}
-		CG_Text_Paint_Ext(spcNm->x, spcNm->y, spcNm->scale, spcNm->scale, white, spcNm->text, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
+
+		CG_Text_Paint_Ext(specLabel->x, specLabel->y, specLabel->scale, specLabel->scale, white, specLabel->text, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
 		// expect update next frame again
-		spcNm->visible = qfalse;
+		specLabel->visible = qfalse;
 	}
+
+	cg.specStringCount = 0;
 }
 
 /**
@@ -3462,7 +3464,7 @@ static void CG_Draw2D(void)
 
 	if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR)
 	{
-		CG_DrawOnScreenNames();
+		CG_DrawOnScreenLabels();
 	}
 
 	// no longer cheat protected, we draw crosshair/reticle in non demoplayback

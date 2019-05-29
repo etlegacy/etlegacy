@@ -1023,6 +1023,23 @@ extern void CG_ScanForCrosshairMine(centity_t *cent);
 extern void CG_ScanForCrosshairDyna(centity_t *cent);
 
 /**
+ * @brief CG_PlayerFloatText
+ * @param[in] cent
+ * @param[in] text
+ * @param[in] height
+ */
+static void CG_EntityFloatText(centity_t *cent, const char *text, int height)
+{
+	vec3_t origin;
+
+	VectorCopy(cent->lerpOrigin, origin);
+
+	origin[2] += height;
+
+	CG_AddOnScreenText(text, origin);
+}
+
+/**
  * @brief CG_Missile
  * @param[in] cent
  */
@@ -1108,6 +1125,7 @@ static void CG_Missile(centity_t *cent)
 		if (cent->currentState.effect1Time)
 		{
 			vec3_t velocity;
+			char   *timer;
 
 			BG_EvaluateTrajectoryDelta(&cent->currentState.pos, cg.time, velocity, qfalse, -1);
 			trap_S_AddLoopingSound(cent->lerpOrigin, velocity, weapon->spindownSound, 255, 0);
@@ -1115,6 +1133,13 @@ static void CG_Missile(centity_t *cent)
 			if (cgs.clientinfo[cg.snap->ps.clientNum].team == cent->currentState.teamNum)
 			{
 				CG_ScanForCrosshairDyna(cent);
+			}
+
+			// add dynamite counter to floating string list
+			if (cgs.clientinfo[cg.clientNum].team == TEAM_SPECTATOR && cgs.clientinfo[cg.clientNum].shoutcaster)
+			{
+				timer = va("%i", 30 - (cg.time - cent->currentState.effect1Time)/1000);
+				CG_EntityFloatText(cent, timer, 8);
 			}
 		}
 	}

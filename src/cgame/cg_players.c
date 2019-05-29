@@ -1907,100 +1907,6 @@ static void CG_PlayerFloatSprite(centity_t *cent, qhandle_t shader, int height, 
 }
 
 /**
- * @brief Float a sprite over the player's head
- * added height parameter
- * @param point
- * @param[out] x
- * @param[out] y
- * @return
- */
-qboolean CG_WorldCoordToScreenCoordFloat(vec3_t point, float *x, float *y)
-{
-	vec3_t trans;
-	float xc, yc;
-	float px, py;
-	float z;
-
-	px = (float)tan(DEG2RAD((double)cg.refdef.fov_x) / 2);
-	py = (float)tan(DEG2RAD((double)cg.refdef.fov_y) / 2);
-
-	VectorSubtract(point, cg.refdef.vieworg, trans);
-
-	xc = 640.0f / 2.0f;
-	yc = 480.0f / 2.0f;
-
-	z = DotProduct(trans, cg.refdef.viewaxis[0]);
-	if (z < 0.1f)
-	{
-		return qfalse;
-	}
-	px *= z;
-	py *= z;
-	if (px == 0.f || py == 0.f)
-	{
-		return qfalse;
-	}
-
-	*x = xc - (DotProduct(trans, cg.refdef.viewaxis[1]) * xc) / px;
-	*y = yc - (DotProduct(trans, cg.refdef.viewaxis[2]) * yc) / py;
-	*x = Ccg_WideX(*x);
-
-	return qtrue;
-}
-
-/**
- * @brief CG_AddOnScreenText
- * @param[in] text
- * @param[in] origin
- * @param[in] clientNum
- */
-void CG_AddOnScreenText(const char *text, vec3_t origin, int clientNum)
-{
-	float x, y;
-
-	if (!ISVALIDCLIENTNUM(clientNum))
-	{
-		return;
-	}
-
-	if (CG_WorldCoordToScreenCoordFloat(origin, &x, &y))
-	{
-		float scale, w, h;
-		float dist  = VectorDistance(origin, cg.refdef_current->vieworg);
-		float dist2 = (dist * dist) / (3600.0f);
-
-		if (dist2 > 2.0f)
-		{
-			dist2 = 2.0f;
-		}
-
-		scale = 2.4f - dist2 - dist / 6000.0f;
-		if (scale < 0.05f)
-		{
-			scale = 0.05f;
-		}
-
-		w = CG_Text_Width_Ext(text, scale, 0, &cgs.media.limboFont1);
-		h = CG_Text_Height_Ext(text, scale, 0, &cgs.media.limboFont1);
-
-		x -= w / 2;
-		y -= h / 2;
-
-		// save it
-		cg.specOnScreenNames[clientNum].x     = x;
-		cg.specOnScreenNames[clientNum].y     = y;
-		cg.specOnScreenNames[clientNum].scale = scale;
-		cg.specOnScreenNames[clientNum].text  = text;
-		VectorCopy(origin, cg.specOnScreenNames[clientNum].origin);
-		cg.specOnScreenNames[clientNum].visible = qtrue;
-	}
-	else
-	{
-		Com_Memset(&cg.specOnScreenNames[clientNum], 0, sizeof(cg.specOnScreenNames[clientNum]));
-	}
-}
-
-/**
  * @brief CG_PlayerFloatText
  * @param[in] cent
  * @param[in] text
@@ -2021,7 +1927,7 @@ static void CG_PlayerFloatText(centity_t *cent, const char *text, int height)
 		origin[2] -= 18;
 	}
 
-	CG_AddOnScreenText(text, origin, cent->currentState.clientNum);
+	CG_AddOnScreenText(text, origin);
 }
 
 /**
