@@ -2056,7 +2056,7 @@ static void CG_PlayerSprites(centity_t *cent)
 
 	if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR)
 	{
-		if (cg_drawCrosshairNames.integer > 0)
+		if (cg_drawCrosshairNames.integer > 0 || cgs.clientinfo[cg.clientNum].shoutcaster)
 		{
 			CG_PlayerFloatText(cent, ci->name, height + 16);
 		}
