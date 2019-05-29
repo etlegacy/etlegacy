@@ -154,6 +154,13 @@ void R_LoadJPG(const char *filename, unsigned char **pic, int *width, int *heigh
 		// There was an error in jpeg decompression. Abort.
 		return;
 	}
+#else
+	/* deep error handling */
+	if (setjmp(jerr.jmpbuf))
+	{
+		// There was an error in jpeg decompression. Abort.
+		return;
+	}
 
 	/* Now we can initialize the JPEG decompression object. */
 	jpeg_create_decompress(&cinfo);
