@@ -1550,7 +1550,9 @@ static void CG_DrawCrosshairNames(void)
 	dist = CG_ScanForCrosshairEntity(&zChange, &hitClient);
 
 	// don't draw crosshair names in shoutcast mode
-	if (cgs.clientinfo[cg.clientNum].team == TEAM_SPECTATOR && cgs.clientinfo[cg.clientNum].shoutcaster)
+	// shoutcasters can see tank and truck health
+	if (cgs.clientinfo[cg.clientNum].team == TEAM_SPECTATOR && cgs.clientinfo[cg.clientNum].shoutcaster &&
+	    cg_entities[cg.crosshairClientNum].currentState.eType != ET_MOVER)
 	{
 		return;
 	}
@@ -1582,7 +1584,7 @@ static void CG_DrawCrosshairNames(void)
 			return;
 		}
 
-		if (cgs.clientinfo[cg.snap->ps.clientNum].team != TEAM_SPECTATOR)
+		if (cgs.clientinfo[cg.snap->ps.clientNum].team != TEAM_SPECTATOR || cgs.clientinfo[cg.clientNum].shoutcaster)
 		{
 			if (cg_entities[cg.crosshairClientNum].currentState.eType == ET_MOVER && cg_entities[cg.crosshairClientNum].currentState.effect1Time)
 			{
