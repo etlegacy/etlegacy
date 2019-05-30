@@ -148,15 +148,15 @@ void R_LoadJPG(const char *filename, unsigned char **pic, int *width, int *heigh
 	cinfo.err->error_exit     = R_JPGErrorExit;
 	cinfo.err->output_message = R_JPGOutputMessage;
 
-	/* Now we can initialize the JPEG decompression object. */
-	jpeg_create_decompress(&cinfo);
-
 	/* deep error handling */
 	if (setjmp(jerr.jmpbuf))
 	{
 		// There was an error in jpeg decompression. Abort.
 		return;
 	}
+
+	/* Now we can initialize the JPEG decompression object. */
+	jpeg_create_decompress(&cinfo);
 
 	/* Step 2: specify data source (eg, a file) */
 
