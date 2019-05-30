@@ -2011,23 +2011,16 @@ static void CG_PlayerFloatText(centity_t *cent, const char *text, int height)
 	vec3_t origin;
 
 	VectorCopy(cent->lerpOrigin, origin);
+
 	origin[2] += height;
 
-	// Account for ducking
-	if (cent->currentState.clientNum == cg.snap->ps.clientNum)
+	// adjust label height
+	if (cent->currentState.eFlags & EF_CROUCHING ||
+	    cent->currentState.eFlags & EF_PRONE || cent->currentState.eFlags & EF_PRONE_MOVING)
 	{
-		if (cg.snap->ps.pm_flags & PMF_DUCKED)
-		{
-			origin[2] -= 18;
-		}
+		origin[2] -= 18;
 	}
-	else
-	{
-		if ((qboolean)cent->currentState.animMovetype)
-		{
-			origin[2] -= 18;
-		}
-	}
+
 	CG_AddOnScreenText(text, origin, cent->currentState.clientNum);
 }
 
@@ -2039,14 +2032,14 @@ static void CG_PlayerSprites(centity_t *cent)
 {
 	int team;
 	int numIcons       = 0;
-	int height         = 48;
+	int height         = 56;
 	clientInfo_t   *ci = &cgs.clientinfo[cent->currentState.clientNum];
 	fireteamData_t *ft;
 	qboolean       sameTeam;
 
 	if ((cent->currentState.powerups & (1 << PW_REDFLAG)) || (cent->currentState.powerups & (1 << PW_BLUEFLAG)))
 	{
-		CG_PlayerFloatSprite(cent, cgs.media.objectiveShader, 56, numIcons++);
+		CG_PlayerFloatSprite(cent, cgs.media.objectiveShader, height, numIcons++);
 	}
 
 	if (cent->currentState.eFlags & EF_DEAD)
@@ -2058,34 +2051,34 @@ static void CG_PlayerSprites(centity_t *cent)
 	{
 		if (cg_drawCrosshairNames.integer > 0 || cgs.clientinfo[cg.clientNum].shoutcaster)
 		{
-			CG_PlayerFloatText(cent, ci->name, height + 16);
+			CG_PlayerFloatText(cent, ci->name, height + 8);
 		}
 
 		// show some useful icons to spectators
 		if (cent->currentState.eFlags & EF_CONNECTION)
 		{
-			CG_PlayerFloatSprite(cent, cgs.media.disconnectIcon, height + 8, numIcons++);
+			CG_PlayerFloatSprite(cent, cgs.media.disconnectIcon, height, numIcons++);
 			return;
 		}
 		if (cent->currentState.eFlags & EF_DEAD && cgs.clientinfo[cg.clientNum].shoutcaster)
 		{
-			CG_PlayerFloatSprite(cent, cgs.media.medicReviveShader, height + 8, numIcons++);
+			CG_PlayerFloatSprite(cent, cgs.media.medicReviveShader, height, numIcons++);
 			return;
 		}
 		if (cent->currentState.powerups & (1 << PW_INVULNERABLE))
 		{
-			CG_PlayerFloatSprite(cent, cgs.media.spawnInvincibleShader, height + 8, numIcons++);
+			CG_PlayerFloatSprite(cent, cgs.media.spawnInvincibleShader, height, numIcons++);
 		}
 		if (cent->currentState.powerups & (1 << PW_OPS_DISGUISED) && cgs.clientinfo[cg.clientNum].shoutcaster)
 		{
-			CG_PlayerFloatSprite(cent, cgs.media.friendShader, height + 8, numIcons++);
+			CG_PlayerFloatSprite(cent, cgs.media.friendShader, height, numIcons++);
 		}
 		return;
 	}
 
 	if (cent->currentState.powerups & (1 << PW_INVULNERABLE))
 	{
-		CG_PlayerFloatSprite(cent, cgs.media.spawnInvincibleShader, height + 8, numIcons++);
+		CG_PlayerFloatSprite(cent, cgs.media.spawnInvincibleShader, height, numIcons++);
 	}
 
 	team     = ci->team;
@@ -2112,7 +2105,7 @@ static void CG_PlayerSprites(centity_t *cent)
 	{
 		if (sameTeam)
 		{
-			CG_PlayerFloatSprite(cent, cent->voiceChatSprite, height + 8, numIcons++);
+			CG_PlayerFloatSprite(cent, cent->voiceChatSprite, height, numIcons++);
 		}
 	}
 
@@ -2127,7 +2120,7 @@ static void CG_PlayerSprites(centity_t *cent)
 	{
 		if (sameTeam)
 		{
-			CG_PlayerFloatSprite(cent, cgs.media.friendShader, height + 8, numIcons++);
+			CG_PlayerFloatSprite(cent, cgs.media.friendShader, height, numIcons++);
 		}
 		else // !sameTeam
 		{
@@ -2135,7 +2128,7 @@ static void CG_PlayerSprites(centity_t *cent)
 				&& (ft = CG_IsOnFireteam(cgs.clientinfo[cent->currentState.number].disguiseClientNum))
 				&& cgs.clientinfo[cgs.clientinfo[cent->currentState.number].disguiseClientNum].selected)
 			{
-				CG_PlayerFloatSprite(cent, cgs.media.fireteamicons[ft->ident], height + 8, numIcons++);
+				CG_PlayerFloatSprite(cent, cgs.media.fireteamicons[ft->ident], height, numIcons++);
 			}
 		}
 	}
@@ -2144,7 +2137,7 @@ static void CG_PlayerSprites(centity_t *cent)
 	{
 		if ((ft == CG_IsOnFireteam(cg.clientNum)) && cgs.clientinfo[cent->currentState.number].selected)
 		{
-			CG_PlayerFloatSprite(cent, cgs.media.fireteamicons[ft->ident], height + 8, numIcons++);
+			CG_PlayerFloatSprite(cent, cgs.media.fireteamicons[ft->ident], height, numIcons++);
 		}
 	}
 }
