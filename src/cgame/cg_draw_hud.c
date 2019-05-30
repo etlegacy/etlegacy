@@ -1740,7 +1740,7 @@ static void CG_DrawNewCompass(rectDef_t location)
 		}
 	}
 
-	if (snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR || !cg_drawCompass.integer)
+	if ((snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR && !cgs.clientinfo[snap->ps.clientNum].shoutcaster) || !cg_drawCompass.integer)
 	{
 		return;
 	}
