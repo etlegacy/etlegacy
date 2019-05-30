@@ -291,6 +291,8 @@ vmCvar_t team_maxMachineguns;
 vmCvar_t team_maxRockets;
 vmCvar_t team_maxRiflegrenades;
 vmCvar_t team_maxLandmines;
+// misc
+vmCvar_t team_riflegrenades;
 // skills
 vmCvar_t skill_soldier;
 vmCvar_t skill_medic;
@@ -603,7 +605,9 @@ cvarTable_t gameCvarTable[] =
 	{ &team_maxRockets,                     "team_maxPanzers",                     "-1",                         0,                                               0, qfalse, qfalse }, // keep ETPro compatibility
 	{ &team_maxRiflegrenades,               "team_maxRiflegrenades",               "-1",                         0,                                               0, qfalse, qfalse },
 	{ &team_maxLandmines,                   "team_maxLandmines",                   "10",                         0,                                               0, qfalse, qfalse },
-	//Skills
+	//misc
+	{ &team_riflegrenades,                  "team_riflegrenades",                  "1",                          0,                                               0, qfalse, qfalse },
+	//skills
 	{ &skill_soldier,                       "skill_soldier",                       "20 50 90 140",               CVAR_ARCHIVE,                                    0, qfalse, qfalse },
 	{ &skill_medic,                         "skill_medic",                         "20 50 90 140",               CVAR_ARCHIVE,                                    0, qfalse, qfalse },
 	{ &skill_fieldops,                      "skill_fieldops",                      "20 50 90 140",               CVAR_ARCHIVE,                                    0, qfalse, qfalse },

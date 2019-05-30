@@ -39,6 +39,7 @@
 
 #ifdef GAMEDLL
 extern vmCvar_t g_developer;
+extern vmCvar_t team_riflegrenades;
 #endif
 
 // *INDENT-OFF*
@@ -2571,6 +2572,20 @@ qboolean BG_AddMagicAmmo(playerState_t *ps, int *skill, team_t teamNum, int numO
 		{
 			int      maxAmmo;
 			weapon_t clip;
+
+#ifdef GAMEDLL
+			if (team_riflegrenades.integer == 0)
+			{
+				switch (weapon)
+				{
+					case WP_GPG40:
+					case WP_M7:
+						continue;
+					default:
+						break;
+				}
+			}
+#endif
 
 			// special case for grenades, they must be linked to the correct team
 			// and they may don't appear in weapons bit-wise (see PM_SwitchIfEmpty and Add_Ammo)

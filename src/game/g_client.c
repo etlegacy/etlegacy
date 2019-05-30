@@ -1089,6 +1089,18 @@ static void AddExtraSpawnAmmo(gclient_t *client, weapon_t weaponNum)
  */
 void AddWeaponToPlayer(gclient_t *client, weapon_t weapon, int ammo, int ammoclip, qboolean setcurrent)
 {
+	if (team_riflegrenades.integer == 0)
+	{
+		switch (weapon)
+		{
+			case WP_GPG40:
+			case WP_M7:
+				return;
+			default:
+				break;
+		}
+	}
+
 	COM_BitSet(client->ps.weapons, weapon);
 	client->ps.ammoclip[GetWeaponTableData(weapon)->clipIndex] = ammoclip;
 	client->ps.ammo[GetWeaponTableData(weapon)->ammoIndex]    += ammo;

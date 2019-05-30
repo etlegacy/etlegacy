@@ -2030,6 +2030,8 @@ extern vmCvar_t team_maxMachineguns;
 extern vmCvar_t team_maxRockets;
 extern vmCvar_t team_maxRiflegrenades;
 extern vmCvar_t team_maxLandmines;
+// misc
+extern vmCvar_t team_riflegrenades;
 // skills
 extern vmCvar_t skill_soldier;
 extern vmCvar_t skill_medic;
