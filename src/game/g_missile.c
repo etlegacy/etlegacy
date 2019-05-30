@@ -201,7 +201,7 @@ void G_MissileImpact(gentity_t *ent, trace_t *trace, int impactDamage)
 			return;
 		}
 
-		G_AddEvent(ent, EV_GRENADE_BOUNCE, trace->surfaceFlags);
+		G_AddEvent(ent, EV_GRENADE_BOUNCE, BG_FootstepForSurface(trace->surfaceFlags));
 
 		return;
 	}

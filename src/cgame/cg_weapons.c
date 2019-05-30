@@ -5311,9 +5311,15 @@ soundSurface_t CG_GetSoundSurfaceIndex(int surfFlags)
  * @return
  */
 sfxHandle_t CG_GetRandomSoundSurface(weaponSounds_t *weaponSounds, soundSurface_t surf)
-{
-	// if no sound found for given surface, force using default one if exist
-	int c = weaponSounds[surf].count ? weaponSounds[surf].count : weaponSounds[W_SND_SURF_DEFAULT].count;
+{	
+	int c = weaponSounds[surf].count;
+
+    // if no sound found for given surface, force using default one if exist
+	if (!c)
+	{
+		surf = W_SND_SURF_DEFAULT;
+		c    = weaponSounds[surf].count;
+	}
 
 	if (c)
 	{

@@ -40,7 +40,7 @@ extern void CG_Tracer(vec3_t source, vec3_t dest, int sparks);
 //==========================================================================
 
 static vec3_t OB_YELLOW = { 1.f, 1.f, 0.f };
-static vec3_t OB_RED    = { 1.f, 0.f, 0.f };
+static vec3_t OB_RED = { 1.f, 0.f, 0.f };
 
 /**
  * @brief CG_GetObituaryIcon
@@ -2168,9 +2168,9 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 		sfxHandle_t    sfx;
 		soundSurface_t soundSurfaceIndex;
 
-		soundSurfaceIndex = CG_GetSoundSurfaceIndex(es->eventParm);
+		soundSurfaceIndex = CG_GetSoundSurfaceIndex(BG_SurfaceForFootstep(es->eventParm));
 
-                sfx = CG_GetRandomSoundSurface(cg_weapons[es->weapon].missileBouncingSound, soundSurfaceIndex);
+		sfx = CG_GetRandomSoundSurface(cg_weapons[es->weapon].missileBouncingSound, soundSurfaceIndex);
 
 		if (sfx)
 		{

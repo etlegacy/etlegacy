@@ -2723,6 +2723,7 @@ int BG_ClassTextToClass(const char *token);
 skillType_t BG_ClassSkillForClass(int classnum);
 
 int BG_FootstepForSurface(int surfaceFlags);
+int BG_SurfaceForFootstep(int surfaceFlags);
 
 #define MATCH_MINPLAYERS "4"///<"1"	// Minimum # of players needed to start a match
 

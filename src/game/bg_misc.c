@@ -102,62 +102,62 @@ pathCorner_t pathCorners[MAX_PATH_CORNERS];
  * @var weaponTable
  * @brief New weapon table to store common weapon properties:
  * [0]   = weapon               - reference
- * [1]   = item                 - 
- * [2]   = team                 - 
- * [3]   = skillBased           - 
- * [4]   = weapAlts             - 
+ * [1]   = item                 -
+ * [2]   = team                 -
+ * [3]   = skillBased           -
+ * [4]   = weapAlts             -
  * [5]   = weapEquiv            - the id of the opposite team's weapon (but not for WP_GPG40 <-> WP_M7 - see CG_OutOfAmmoChange).
- * [6]   = akimboSideArm        - 
+ * [6]   = akimboSideArm        -
  * [7]   = ammoIndex            - type of weapon ammo this uses
  * [8]   = clipIndex            - which clip this weapon uses. This allows the sniper rifle to use the same clip as the garand, etc.
  * [9]   = damage               - returns 1 for no damage, return 0 for no explode on contact ... FIXME: some weapons are handled differently f.e. VERYBIGEXPLOSION
- * [10]  = spread               - 
- * [11]  = spreadScale          - 
- * [12]  = splashDamage         - 
+ * [10]  = spread               -
+ * [11]  = spreadScale          -
+ * [12]  = splashDamage         -
  * [13]  = splashRadius         -
  * [14]  = type                 -
  * [15]  = fireMode             -
  * [16]  = attributes           -
- * [17]  = zoomOut              - 
- * [18]  = zoomIn               - 
- * [19]  = zoomedScope          - 
- * [20]  = desc                 - 
- * [21]  = indexWeaponStat      - 
- * [22]  = useAmmo              - 
- * [23]  = useClip              - 
+ * [17]  = zoomOut              -
+ * [18]  = zoomIn               -
+ * [19]  = zoomedScope          -
+ * [20]  = desc                 -
+ * [21]  = indexWeaponStat      -
+ * [22]  = useAmmo              -
+ * [23]  = useClip              -
  * [24]  = maxAmmo              - max player ammo carrying capacity.
  * [25]  = uses                 - how many 'rounds' it takes/costs to fire one cycle.
  * [26]  = maxClip              - max 'rounds' in a clip.
  * [27]  = reloadTime           - time from start of reload until ready to fire.
  * [28]  = fireDelayTime        - time from pressing 'fire' until first shot is fired. (used for delaying fire while weapon is 'readied' in animation)
  * [29]  = nextShotTime         - when firing continuously, this is the time between shots
- * [30]  = grenadeTime          - 
- * [31]  = aimSpreadScaleAdd    - 
+ * [30]  = grenadeTime          -
+ * [31]  = aimSpreadScaleAdd    -
  * [32]  = maxHeat              - max active firing time before weapon 'overheats' (at which point the weapon will fail for a moment)
  * [33]  = coolRate             - how fast the weapon cools down.
  * [34]  = heatRecoveryTime     - time from overheats until weapon can fire again
- * [35]  = switchTimeBegin      - 
- * [36]  = switchTimeFinish     - 
- * [37]  = altSwitchTimeBegin   - 
- * [38]  = altSwitchTimeFinish  - 
- * [39]  = knockback            - 
- * [40]  = adjustLean           - 
- * [41]  = fireRecoilPitch      - 
- * [42]  = fireRecoilYaw        - 
- * [43]  = weapRecoilDuration   - 
- * [44]  = weapRecoilPitch      - 
- * [45]  = weapRecoilYaw        - 
- * [46]  = className            - 
- * [47]  = weapFile             - 
- * [48]  = idleAnim             - 
- * [49]  = attackAnim           - 
- * [50]  = lastAttackAnim       - 
- * [51]  = altSwitchFrom        - 
- * [52]  = altSwitchTo          - 
- * [53]  = reloadAnim           - 
- * [54]  = raiseAnim            - 
- * [55]  = dropAnim             - 
- * [56]  = chargeTimeCoeff      - 
+ * [35]  = switchTimeBegin      -
+ * [36]  = switchTimeFinish     -
+ * [37]  = altSwitchTimeBegin   -
+ * [38]  = altSwitchTimeFinish  -
+ * [39]  = knockback            -
+ * [40]  = adjustLean           -
+ * [41]  = fireRecoilPitch      -
+ * [42]  = fireRecoilYaw        -
+ * [43]  = weapRecoilDuration   -
+ * [44]  = weapRecoilPitch      -
+ * [45]  = weapRecoilYaw        -
+ * [46]  = className            -
+ * [47]  = weapFile             -
+ * [48]  = idleAnim             -
+ * [49]  = attackAnim           -
+ * [50]  = lastAttackAnim       -
+ * [51]  = altSwitchFrom        -
+ * [52]  = altSwitchTo          -
+ * [53]  = reloadAnim           -
+ * [54]  = raiseAnim            -
+ * [55]  = dropAnim             -
+ * [56]  = chargeTimeCoeff      -
  * [57]  = mod                  - means of death.
  * [58]  = splashMod            - splash means of death.
  */
@@ -217,7 +217,7 @@ weaponTable_t weaponTable[WP_NUM_WEAPONS] =
 	{ WP_AKIMBO_SILENCEDCOLT,  ITEM_WEAPON_AKIMBO_SILENCED_COLT,  TEAM_ALLIES, SK_LIGHT_WEAPONS,                            WP_NONE,                WP_AKIMBO_SILENCEDLUGER, WP_COLT,  WP_COLT,              WP_AKIMBO_COLT,       18,    600,   0.4f,       0,           0,           WEAPON_TYPE_PISTOL,                        WEAPON_FIRING_MODE_SEMI_AUTOMATIC,                           WEAPON_ATTRIBUT_AKIMBO | WEAPON_ATTRIBUT_SILENCED | WEAPON_ATTRIBUT_KEEP_DESGUISE | WEAPON_ATTRIBUT_FALL_OFF,                                                0,      0,     "SLNCD AKIMBO COLTS",  WS_COLT,            qtrue,  qtrue,  48,     1,   8,      2700,      DELAY_PISTOL,  200,         0,          20,               0,      0,       0,               250,            250,             250,               250,                0,        { 14, -6, -4 },   1.0f,      0,              0,            100,               { .45f, .15f }, { 0, 0 },      "",                "akimbo_silenced_colt",  WEAP_IDLE1, WEAP_ATTACK1, WEAP_ATTACK_LASTSHOT, WEAP_ALTSWITCHFROM, WEAP_ALTSWITCHTO,   WEAP_RELOAD1, WEAP_RAISE,   WEAP_DROP,    {1, 1, 1, 1, 1},                     MOD_AKIMBO_SILENCEDCOLT,  MOD_AKIMBO_SILENCEDCOLT  },  // WP_AKIMBO_SILENCEDCOLT   // 45
 	{ WP_AKIMBO_SILENCEDLUGER, ITEM_WEAPON_AKIMBO_SILENCED_LUGER, TEAM_AXIS,   SK_LIGHT_WEAPONS,                            WP_NONE,                WP_AKIMBO_SILENCEDCOLT,  WP_LUGER, WP_LUGER,             WP_AKIMBO_LUGER,      18,    600,   0.4f,       0,           0,           WEAPON_TYPE_PISTOL,                        WEAPON_FIRING_MODE_SEMI_AUTOMATIC,                           WEAPON_ATTRIBUT_AKIMBO | WEAPON_ATTRIBUT_SILENCED | WEAPON_ATTRIBUT_KEEP_DESGUISE | WEAPON_ATTRIBUT_FALL_OFF,                                                0,      0,     "SLNCD AKIMBO LUGERS", WS_LUGER,           qtrue,  qtrue,  48,     1,   8,      2700,      DELAY_PISTOL,  200,         0,          20,               0,      0,       0,               250,            250,             250,               250,                0,        { 14, -6, -4 },   1.0f,      0,              0,            100,               { .45f, .15f }, { 0, 0 },      "",                "akimbo_silenced_luger", WEAP_IDLE1, WEAP_ATTACK1, WEAP_ATTACK_LASTSHOT, WEAP_ALTSWITCHFROM, WEAP_ALTSWITCHTO,   WEAP_RELOAD1, WEAP_RAISE,   WEAP_DROP,    {1, 1, 1, 1, 1},                     MOD_AKIMBO_SILENCEDLUGER, MOD_AKIMBO_SILENCEDLUGER },  // WP_AKIMBO_SILENCEDLUGER  // 46
 	{ WP_MOBILE_MG42_SET,      ITEM_WEAPON_MOBILE_MG42_SET,       TEAM_AXIS,   SK_HEAVY_WEAPONS,                            WP_MOBILE_MG42,         WP_MOBILE_BROWNING_SET,  WP_NONE,  WP_MOBILE_MG42,       WP_MOBILE_MG42,       18,    2500,  0.9f,       0,           0,           WEAPON_TYPE_MG | WEAPON_TYPE_SET,          WEAPON_FIRING_MODE_AUTOMATIC,                                WEAPON_ATTRIBUT_NONE,                                                                                                                                        55,     55,    "MOBILE MG 42",        WS_MG42,            qtrue,  qtrue,  450,    1,   150,    3000,      DELAY_LOW,     66,          0,          20,               1500,   300,     2000,            250,            250,             0,                 1250,               0,        { 14, 6, -4 },    1.0f,      0.3f,           0.6f,         0,                 { 0, 0 },       { 0, 0 },      "",                "mg42",                  WEAP_IDLE2, WEAP_ATTACK2, WEAP_ATTACK2,         WEAP_ALTSWITCHFROM, WEAP_ALTSWITCHTO,   WEAP_RELOAD3, WEAP_DROP2,   WEAP_DROP,    {1, 1, 1, 1, 1},                     MOD_MOBILE_MG42,          MOD_MOBILE_MG42          },  // WP_MOBILE_MG42_SET       // 47
-	// legacy weapons                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
+	// legacy weapons
 	{ WP_KNIFE_KABAR,          ITEM_WEAPON_KNIFE_KABAR,           TEAM_ALLIES, SK_LIGHT_WEAPONS,                            WP_NONE,                WP_KNIFE,                WP_NONE,  WP_KNIFE_KABAR,       WP_KNIFE_KABAR,       10,    0,     0,          0,           0,           WEAPON_TYPE_MELEE,                         WEAPON_FIRING_MODE_MANUAL,                                   WEAPON_ATTRIBUT_FIRE_UNDERWATER | WEAPON_ATTRIBUT_KEEP_DESGUISE | WEAPON_ATTRIBUT_NEVER_LOST_DESGUISE,                                                       0,      0,     "KABAR",               WS_KNIFE_KBAR,      qfalse, qfalse, 999,    0,   999,    0,         50,            200,         0,          0,                0,      0,       0,               250,            250,             250,               250,                0,        { 14, 6, -4 },    1.0f,      0,              0,            0,                 { 0, 0 },       { 0, 0 },      "",                "knife_kbar",            WEAP_IDLE1, WEAP_ATTACK1, WEAP_ATTACK_LASTSHOT, WEAP_ALTSWITCHFROM, WEAP_ALTSWITCHTO,   WEAP_RELOAD1, WEAP_RAISE,   WEAP_DROP,    {1, 1, 1, 1, 1},                     MOD_KNIFE_KABAR,          MOD_KNIFE_KABAR          },  // WP_KNIFE_KABAR           // 48
 	{ WP_MOBILE_BROWNING,      ITEM_WEAPON_MOBILE_BROWNING,       TEAM_ALLIES, SK_HEAVY_WEAPONS,                            WP_MOBILE_BROWNING_SET, WP_MOBILE_MG42,          WP_NONE,  WP_MOBILE_BROWNING,   WP_MOBILE_BROWNING,   18,    2500,  0.9f,       0,           0,           WEAPON_TYPE_MG | WEAPON_TYPE_SETTABLE,     WEAPON_FIRING_MODE_AUTOMATIC,                                WEAPON_ATTRIBUT_NONE,                                                                                                                                        0,      0,     "MOBILE BROWNING",     WS_BROWNING,        qtrue,  qtrue,  450,    1,   150,    3000,      DELAY_LOW,     66,          0,          20,               1500,   300,     2000,            250,            250,             0,                 1722,               4000.f,   { 14, 6, -4 },    1.0f,      0.3f,           0.6f,         200,               { .75f, .2f },  { 1.f, .25f }, "",                "browning",              WEAP_IDLE1, WEAP_ATTACK1, WEAP_ATTACK_LASTSHOT, WEAP_ALTSWITCHFROM, WEAP_ALTSWITCHFROM, WEAP_RELOAD1, WEAP_RAISE,   WEAP_DROP,    {1, 1, 1, 1, 1},                     MOD_MOBILE_BROWNING,      MOD_MOBILE_BROWNING      },  // WP_MOBILE_BROWNING       // 49
 	{ WP_MOBILE_BROWNING_SET,  ITEM_WEAPON_MOBILE_BROWNING_SET,   TEAM_ALLIES, SK_HEAVY_WEAPONS,                            WP_MOBILE_BROWNING,     WP_MOBILE_MG42_SET,      WP_NONE,  WP_MOBILE_BROWNING,   WP_MOBILE_BROWNING,   18,    2500,  0.9f,       0,           0,           WEAPON_TYPE_MG | WEAPON_TYPE_SET,          WEAPON_FIRING_MODE_AUTOMATIC,                                WEAPON_ATTRIBUT_NONE,                                                                                                                                        55,     55,    "MOBILE BROWNING",     WS_BROWNING,        qtrue,  qtrue,  450,    1,   150,    3000,      DELAY_LOW,     66,          0,          20,               1500,   300,     2000,            250,            250,             0,                 1250,               0,        { 14, 6, -4 },    1.0f,      0.3f,           0.6f,         0,                 { 0, 0 },       { 0, 0 },      "",                "browning",              WEAP_IDLE2, WEAP_ATTACK2, WEAP_ATTACK2,         WEAP_ALTSWITCHFROM, WEAP_ALTSWITCHTO,   WEAP_RELOAD3, WEAP_DROP2,   WEAP_DROP,    {1, 1, 1, 1, 1},                     MOD_MOBILE_BROWNING,      MOD_MOBILE_BROWNING      },  // WP_MOBILE_BROWNING_SET   // 50
@@ -4854,4 +4854,59 @@ int BG_FootstepForSurface(int surfaceFlags)
 	}
 
 	return FOOTSTEP_NORMAL;
+}
+
+/**
+ * @brief BG_SurfaceForFootstep
+ * @param[in] surfaceFlags
+ * @return
+ */
+int BG_SurfaceForFootstep(int surfaceFlags)
+{
+	if (surfaceFlags == FOOTSTEP_TOTAL)
+	{
+		return SURF_NOSTEPS;
+	}
+
+	if (surfaceFlags == FOOTSTEP_METAL)
+	{
+		return SURF_METAL;
+	}
+
+	if (surfaceFlags == FOOTSTEP_WOOD)
+	{
+		return SURF_WOOD;
+	}
+
+	if (surfaceFlags == FOOTSTEP_GRASS)
+	{
+		return SURF_GRASS;
+	}
+
+	if (surfaceFlags == FOOTSTEP_GRAVEL)
+	{
+		return SURF_GRAVEL;
+	}
+
+	if (surfaceFlags == FOOTSTEP_ROOF)
+	{
+		return SURF_ROOF;
+	}
+
+	if (surfaceFlags == FOOTSTEP_SNOW)
+	{
+		return SURF_SNOW;
+	}
+
+	if (surfaceFlags == FOOTSTEP_CARPET)
+	{
+		return SURF_CARPET;
+	}
+
+	if (surfaceFlags == FOOTSTEP_SPLASH)
+	{
+		return SURF_SPLASH;
+	}
+
+	return 0;
 }
