@@ -1715,8 +1715,10 @@ weapengineergoto2:
 				if (G_LandmineUnarmed(traceEnt))
 				{
 					// should be impossible now
-					//if ( G_LandmineTeam( traceEnt ) != ent->client->sess.sessionTeam )
-					//return;
+					//if (traceEnt->s.teamNum != ent->client->sess.sessionTeam)
+					//{
+					//	return NULL;
+					//}
 
 					trap_SendServerCommand(ent - g_entities, "cp \"Your team has too many landmines placed\" 1");
 

@@ -1552,7 +1552,8 @@ void G_LandmineThink(gentity_t *self)
 			continue;
 		}
 
-		//if( !g_friendlyFire.integer && G_LandmineTeam( self ) == ent->client->sess.sessionTeam ) {
+		//if (!g_friendlyFire.integer && self->s.teamNum == ent->client->sess.sessionTeam)
+		//{
 		//   continue;
 		//}
 
@@ -1563,6 +1564,7 @@ void G_LandmineThink(gentity_t *self)
 			{
 				continue;
 			}
+
 			if (G_LandmineSpotted(self))
 			{
 				continue;
@@ -1654,7 +1656,23 @@ qboolean G_LandmineSnapshotCallback(int entityNum, int clientNum)
 	gentity_t *ent   = &g_entities[entityNum];
 	gentity_t *clEnt = &g_entities[clientNum];
 
+	// don't send if landmine is not in pvs
+	if (!trap_InPVS( clEnt->client->ps.origin, ent->r.currentOrigin))
+	{
+		return qfalse;
+	}
+
 	if (clEnt->client->sess.skill[SK_BATTLE_SENSE] >= 4)
+	{
+		return qtrue;
+	}
+
+	if (!G_LandmineArmed(ent))
+	{
+		return qtrue;
+	}
+
+	if (G_LandmineSpotted(ent))
 	{
 		return qtrue;
 	}

@@ -2522,7 +2522,6 @@ int EntsThatRadiusCanDamage(vec3_t origin, float radius, int *damagedList);
 qboolean G_LandmineTriggered(gentity_t *ent);
 qboolean G_LandmineArmed(gentity_t *ent);
 qboolean G_LandmineUnarmed(gentity_t *ent);
-team_t G_LandmineTeam(gentity_t *ent);
 qboolean G_LandmineSpotted(gentity_t *ent);
 qboolean G_AvailableAirstrike(gentity_t *ent);
 qboolean G_AvailableArtillery(gentity_t *ent);
