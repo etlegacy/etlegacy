@@ -195,11 +195,6 @@ void G_MissileImpact(gentity_t *ent, trace_t *trace, int impactDamage)
 	if ((!other->takedamage || !ent->damage) && (ent->s.eFlags & (EF_BOUNCE | EF_BOUNCE_HALF)))
 	{
 		G_BounceMissile(ent, trace);
-		// spotter White Phosphorous rounds shouldn't bounce noise
-		if (!Q_stricmp(ent->classname, "WP"))
-		{
-			return;
-		}
 
 		G_AddEvent(ent, EV_GRENADE_BOUNCE, BG_FootstepForSurface(trace->surfaceFlags));
 
