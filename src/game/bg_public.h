@@ -1179,9 +1179,6 @@ typedef struct weapontable_s
 
 	float adjustLean;               ///< cg -
 
-	float fireRecoilPitch;          ///< cg -
-	float fireRecoilYaw;            ///< cg -
-
 	int weapRecoilDuration;         ///< bg -
 	float weapRecoilPitch[2];       ///< bg -
 	float weapRecoilYaw[2];         ///< bg -

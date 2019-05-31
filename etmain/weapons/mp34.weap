@@ -43,6 +43,8 @@ weaponDef
 		ejectBrassFunc		"MachineGunEjectBrass"				// supports "MachineGunEjectBrass" and "PanzerFaustEjectBrass"
 		ejectBrassOffset    16 -4 24
 		//brassmodel				"models/weapons2/shells/9mmshell.md3"
+                
+                fireRecoil 0.3 0.6 0    // kick angle
 		
 		//modModel 1		""
                 

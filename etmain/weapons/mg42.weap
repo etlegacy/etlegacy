@@ -42,6 +42,8 @@ weaponDef
 		
 		ejectBrassFunc		"MachineGunEjectBrass"				// supports "MachineGunEjectBrass" and "PanzerFaustEjectBrass"
 		ejectBrassOffset    12 -4 24
+                
+                fireRecoil 0.3 0.6 0    // kick angle
 		
 		modModel 0			"models/multiplayer/mg42/mg42_3rd_bipod.md3"
                 

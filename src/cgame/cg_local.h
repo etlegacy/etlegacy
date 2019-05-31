@@ -806,7 +806,7 @@ typedef struct weaponInfo_s
 	qhandle_t missileAxisSkin;
 	sfxHandle_t missileSound;
 	weaponSounds_t missileFallSound;
-        weaponSounds_t missileBouncingSound[W_MAX_SND_SURF];
+	weaponSounds_t missileBouncingSound[W_MAX_SND_SURF];
 	void (*missileTrailFunc)(centity_t *, const struct weaponInfo_s *wi);
 	float missileDlight;
 	vec3_t missileDlightColor;
@@ -814,6 +814,8 @@ typedef struct weaponInfo_s
 
 	void (*ejectBrassFunc)(centity_t *);
 	vec3_t ejectBrassOffset;
+
+	vec3_t fireRecoil;                  ///< kick angle
 
 	sfxHandle_t readySound;             ///< an ambient sound the weapon makes when it's /not/ firing
 	sfxHandle_t firingSound;

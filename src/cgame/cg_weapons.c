@@ -1737,6 +1737,13 @@ static qboolean CG_RW_ParseClient(int handle, weaponInfo_t *weaponInfo)
 				return CG_RW_ParseError(handle, "expected ejectBrassOffset as foward left up");
 			}
 		}
+		else if (!Q_stricmp(token.string, "fireRecoil"))
+		{
+			if (!PC_Vec_Parse(handle, &weaponInfo->fireRecoil))
+			{
+				return CG_RW_ParseError(handle, "expected fireRecoil as pitch yaw roll");
+			}
+		}
 		else if (!Q_stricmp(token.string, "impactSoundRange"))
 		{
 			if (!PC_Int_Parse(handle, &weaponInfo->impactSoundRange))
@@ -4751,8 +4758,8 @@ void CG_MortarEFX(centity_t *cent)
  */
 void CG_WeaponFireRecoil(int weapon)
 {
-	float  pitchAdd  = GetWeaponTableData(weapon)->fireRecoilPitch;
-	float  yawRandom = GetWeaponTableData(weapon)->fireRecoilYaw;
+	float  pitchAdd  = cg_weapons[weapon].fireRecoil[PITCH];
+	float  yawRandom = cg_weapons[weapon].fireRecoil[YAW];
 	vec3_t recoil;
 
 	// FIXME: add recoil for secondary weapons?
@@ -4764,6 +4771,11 @@ void CG_WeaponFireRecoil(int weapon)
 	if (GetWeaponTableData(weapon)->firingMode & WEAPON_FIRING_MODE_AUTOMATIC)
 	{
 		pitchAdd *= (1 + rand() % 3);
+	}
+	else if ((GetWeaponTableData(weapon)->type & WEAPON_TYPE_RIFLE) && (GetWeaponTableData(weapon)->attributes & WEAPON_TYPE_SCOPED))
+	{
+		// scoped weapon avoid yaw recoil (but FG42)
+		yawRandom = 0;
 	}
 
 	// calc the recoil
@@ -5311,10 +5323,10 @@ soundSurface_t CG_GetSoundSurfaceIndex(int surfFlags)
  * @return
  */
 sfxHandle_t CG_GetRandomSoundSurface(weaponSounds_t *weaponSounds, soundSurface_t surf)
-{	
+{
 	int c = weaponSounds[surf].count;
 
-    // if no sound found for given surface, force using default one if exist
+	// if no sound found for given surface, force using default one if exist
 	if (!c)
 	{
 		surf = W_SND_SURF_DEFAULT;

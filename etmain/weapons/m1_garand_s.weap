@@ -42,6 +42,8 @@ weaponDef
 		
 		ejectBrassFunc		"MachineGunEjectBrass"				// supports "MachineGunEjectBrass" and "PanzerFaustEjectBrass"
 		ejectBrassOffset    16 -4 24
+                
+                fireRecoil 2 1 0    // kick angle
 		
 		modModel 0			"models/multiplayer/m1_garand/v_m1_garand_scope2.md3"
 		modModel 1			"models/multiplayer/m1_garand/v_m1_garand_silencer.md3"
