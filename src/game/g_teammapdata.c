@@ -956,14 +956,37 @@ void G_SendSpectatorMapEntityInfo(gentity_t *e)
 
 	for (mEnt = teamList->activeMapEntityData.next; mEnt && mEnt != &teamList->activeMapEntityData; mEnt = mEnt->next)
 	{
-		if (mEnt->type != ME_CONSTRUCT && mEnt->type != ME_DESTRUCT && mEnt->type != ME_DESTRUCT_2 && mEnt->type != ME_TANK && mEnt->type != ME_TANK_DEAD && mEnt->type != ME_COMMANDMAP_MARKER)
+		if (!e->client->sess.shoutcaster)
 		{
-			continue;
-		}
+			if (mEnt->type != ME_CONSTRUCT && mEnt->type != ME_DESTRUCT && mEnt->type != ME_DESTRUCT_2 && mEnt->type != ME_TANK && mEnt->type != ME_TANK_DEAD && mEnt->type != ME_COMMANDMAP_MARKER)
+			{
+				continue;
+			}
 
-		if (mEnt->singleClient >= 0 && e->s.clientNum != mEnt->singleClient)
+			if (mEnt->singleClient >= 0 && e->s.clientNum != mEnt->singleClient)
+			{
+				continue;
+			}
+		}
+		else
 		{
-			continue;
+			if (level.time - mEnt->startTime > 1000)
+			{
+				// we can free this player from the list now
+				if (mEnt->type == ME_PLAYER || mEnt->type == ME_PLAYER_REVIVE || mEnt->type == ME_PLAYER_OBJECTIVE)
+				{
+					mEnt = G_FreeMapEntityData(teamList, mEnt);
+					continue;
+				}
+				else if (mEnt->type == ME_PLAYER_DISGUISED)
+				{
+					if (mEnt->singleClient == e->s.clientNum)
+					{
+						mEnt = G_FreeMapEntityData(teamList, mEnt);
+						continue;
+					}
+				}
+			}
 		}
 
 		ax_cnt++;
@@ -974,14 +997,38 @@ void G_SendSpectatorMapEntityInfo(gentity_t *e)
 
 	for (mEnt = teamList->activeMapEntityData.next; mEnt && mEnt != &teamList->activeMapEntityData; mEnt = mEnt->next)
 	{
-		if (mEnt->type != ME_CONSTRUCT && mEnt->type != ME_DESTRUCT && mEnt->type != ME_DESTRUCT_2 && mEnt->type != ME_TANK && mEnt->type != ME_TANK_DEAD && mEnt->type != ME_COMMANDMAP_MARKER)
+		if (!e->client->sess.shoutcaster)
 		{
-			continue;
-		}
+			if (mEnt->type != ME_CONSTRUCT && mEnt->type != ME_DESTRUCT && mEnt->type != ME_DESTRUCT_2 &&
+				mEnt->type != ME_TANK && mEnt->type != ME_TANK_DEAD && mEnt->type != ME_COMMANDMAP_MARKER)
+			{
+				continue;
+			}
 
-		if (mEnt->singleClient >= 0 && e->s.clientNum != mEnt->singleClient)
+			if (mEnt->singleClient >= 0 && e->s.clientNum != mEnt->singleClient)
+			{
+				continue;
+			}
+		}
+		else
 		{
-			continue;
+			if (level.time - mEnt->startTime > 1000)
+			{
+				// we can free this player from the list now
+				if (mEnt->type == ME_PLAYER || mEnt->type == ME_PLAYER_REVIVE || mEnt->type == ME_PLAYER_OBJECTIVE)
+				{
+					mEnt = G_FreeMapEntityData(teamList, mEnt);
+					continue;
+				}
+				else if (mEnt->type == ME_PLAYER_DISGUISED)
+				{
+					if (mEnt->singleClient == e->s.clientNum)
+					{
+						mEnt = G_FreeMapEntityData(teamList, mEnt);
+						continue;
+					}
+				}
+			}
 		}
 
 		al_cnt++;
@@ -999,7 +1046,9 @@ void G_SendSpectatorMapEntityInfo(gentity_t *e)
 
 	for (mEnt = teamList->activeMapEntityData.next; mEnt && mEnt != &teamList->activeMapEntityData; mEnt = mEnt->next)
 	{
-		if (mEnt->type != ME_CONSTRUCT && mEnt->type != ME_DESTRUCT && mEnt->type != ME_DESTRUCT_2 && mEnt->type != ME_TANK && mEnt->type != ME_TANK_DEAD && mEnt->type != ME_COMMANDMAP_MARKER)
+		if (mEnt->type != ME_CONSTRUCT && mEnt->type != ME_DESTRUCT && mEnt->type != ME_DESTRUCT_2 &&
+		    mEnt->type != ME_TANK && mEnt->type != ME_TANK_DEAD && mEnt->type != ME_COMMANDMAP_MARKER &&
+		    !e->client->sess.shoutcaster)
 		{
 			continue;
 		}
@@ -1017,7 +1066,9 @@ void G_SendSpectatorMapEntityInfo(gentity_t *e)
 
 	for (mEnt = teamList->activeMapEntityData.next; mEnt && mEnt != &teamList->activeMapEntityData; mEnt = mEnt->next)
 	{
-		if (mEnt->type != ME_CONSTRUCT && mEnt->type != ME_DESTRUCT && mEnt->type != ME_DESTRUCT_2 && mEnt->type != ME_TANK && mEnt->type != ME_TANK_DEAD && mEnt->type != ME_COMMANDMAP_MARKER)
+		if (mEnt->type != ME_CONSTRUCT && mEnt->type != ME_DESTRUCT && mEnt->type != ME_DESTRUCT_2 &&
+		    mEnt->type != ME_TANK && mEnt->type != ME_TANK_DEAD && mEnt->type != ME_COMMANDMAP_MARKER &&
+		    !e->client->sess.shoutcaster)
 		{
 			continue;
 		}

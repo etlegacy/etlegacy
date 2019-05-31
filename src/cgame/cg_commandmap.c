@@ -594,7 +594,7 @@ void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, float h,
 
 			mEnt->yaw = (int)cg.predictedPlayerState.viewangles[YAW];
 		}
-		else if (ci->team == snap->ps.persistant[PERS_TEAM] && cent->currentValid)
+		else if ((ci->team == snap->ps.persistant[PERS_TEAM] && cent->currentValid) || cgs.clientinfo[cg.clientNum].shoutcaster)
 		{
 			if (!scissor)
 			{
@@ -658,11 +658,11 @@ void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, float h,
 			float  msec;
 			vec4_t reviveClr = { 1.f, 1.f, 1.f, 1.f };
 
-			if (cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_AXIS)
+			if (cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_AXIS || (cgs.clientinfo[cg.clientNum].shoutcaster && mEnt->team == TEAM_AXIS))
 			{
 				msec = (cg_redlimbotime.integer - (cg.time % cg_redlimbotime.integer)) / (float)cg_redlimbotime.integer;
 			}
-			else if (cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_ALLIES)
+			else if (cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_ALLIES || (cgs.clientinfo[cg.clientNum].shoutcaster && mEnt->team == TEAM_ALLIES))
 			{
 				msec = (cg_bluelimbotime.integer - (cg.time % cg_bluelimbotime.integer)) / (float)cg_bluelimbotime.integer;
 			}
@@ -1259,11 +1259,6 @@ void CG_DrawMap(float x, float y, float w, float h, int mEntFilter, mapScissor_t
 		CG_DrawMapEntity(mEnt, x, y, w, h, mEntFilter, scissor, interactive, snap, icon_size);
 	}
 
-	// entnfo2 data, draw non-players & non-tanks
-	//for(i = 0, mEnt = &mapEntities2[0]; i < mapEntityCount2; ++i, ++mEnt ) {
-	//  CG_DrawMapEntity( mEnt, x, y, w, h, mEntFilter, scissor, interactive, snap, icon_size );
-	//}
-
 	// spawn point info
 	CG_DrawSpawnPointInfo(x, y, w, h, qtrue, scissor, exspawn);
 
@@ -1273,7 +1268,7 @@ void CG_DrawMap(float x, float y, float w, float h, int mEntFilter, mapScissor_t
 	// entnfo players data
 	for (i = 0, mEnt = &mapEntities[0]; i < mapEntityCount; ++i, ++mEnt)
 	{
-		if (mEnt->team != RealTeam && !CG_DisguiseMapCheck(mEnt))
+		if (mEnt->team != RealTeam && !CG_DisguiseMapCheck(mEnt) && !cgs.clientinfo[cg.clientNum].shoutcaster)
 		{
 			continue;
 		}
