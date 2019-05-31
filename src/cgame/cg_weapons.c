@@ -5322,12 +5322,12 @@ soundSurface_t CG_GetSoundSurfaceIndex(int surfFlags)
  * @param[in] surf
  * @return
  */
-sfxHandle_t CG_GetRandomSoundSurface(weaponSounds_t *weaponSounds, soundSurface_t surf)
+sfxHandle_t CG_GetRandomSoundSurface(weaponSounds_t *weaponSounds, soundSurface_t surf, qboolean forceDefault)
 {
 	int c = weaponSounds[surf].count;
 
 	// if no sound found for given surface, force using default one if exist
-	if (!c)
+	if (!c && forceDefault)
 	{
 		surf = W_SND_SURF_DEFAULT;
 		c    = weaponSounds[surf].count;
@@ -5764,8 +5764,8 @@ void CG_MissileHitWall(int weapon, int missileEffect, vec3_t origin, vec3_t dir,
 		soundSurfaceIndex = W_SND_SURF_FLESH;
 	}
 
-	sfx    = CG_GetRandomSoundSurface(cg_weapons[weapon].impactSound, soundSurfaceIndex);
-	sfx2   = CG_GetRandomSoundSurface(cg_weapons[weapon].impactSound, W_SND_SURF_FAR);
+	sfx    = CG_GetRandomSoundSurface(cg_weapons[weapon].impactSound, soundSurfaceIndex, qtrue);
+	sfx2   = CG_GetRandomSoundSurface(cg_weapons[weapon].impactSound, W_SND_SURF_FAR, qfalse);
 	mark   = cg_weapons[weapon].impactMark[soundSurfaceIndex];
 	radius = cg_weapons[weapon].impactMarkRadius;
 

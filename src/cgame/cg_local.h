@@ -2840,7 +2840,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 void CG_OutOfAmmoChange(qboolean allowforceswitch);
 
 soundSurface_t CG_GetSoundSurfaceIndex(int surfFlags);
-sfxHandle_t CG_GetRandomSoundSurface(weaponSounds_t *weaponSounds, soundSurface_t surf);
+sfxHandle_t CG_GetRandomSoundSurface(weaponSounds_t *weaponSounds, soundSurface_t surf, qboolean forceDefault);
 
 // added to header to access from outside cg_weapons.c
 void CG_AddDebris(vec3_t origin, vec3_t dir, int speed, int duration, int count, trace_t *trace);
