@@ -488,10 +488,7 @@ void G_RunMissile(gentity_t *ent)
 		}
 	}
 
-	if (level.tracemapLoaded &&
-	    (CHECKBITWISE(GetWeaponTableData(ent->s.weapon)->type, WEAPON_TYPE_MORTAR | WEAPON_TYPE_SET)
-	     || (GetWeaponTableData(ent->s.weapon)->type & (WEAPON_TYPE_GRENADE | WEAPON_TYPE_RIFLENADE))
-	     || ent->s.weapon == WP_AIRSTRIKE || ent->s.weapon == WP_ARTY))
+	if (level.tracemapLoaded && ent->s.pos.trType == TR_GRAVITY && ent->r.contents != CONTENTS_CORPSE)
 	{
 		if (ent->count)
 		{
@@ -624,13 +621,8 @@ void G_RunMissile(gentity_t *ent)
 
 	if (tr.fraction != 1.f)
 	{
-		int impactDamage;
-
-		if (level.tracemapLoaded &&
-		    (CHECKBITWISE(GetWeaponTableData(ent->s.weapon)->type, WEAPON_TYPE_MORTAR | WEAPON_TYPE_SET)
-		     || (GetWeaponTableData(ent->s.weapon)->type & (WEAPON_TYPE_GRENADE | WEAPON_TYPE_RIFLENADE))
-		     || ent->s.weapon == WP_AIRSTRIKE || ent->s.weapon == WP_ARTY)
-		    && (!tr.surfaceFlags || (tr.surfaceFlags & SURF_SKY)))
+		if (level.tracemapLoaded && ent->s.pos.trType == TR_GRAVITY && ent->r.contents != CONTENTS_CORPSE
+                && ((!tr.surfaceFlags && tr.startsolid)|| (tr.surfaceFlags & SURF_SKY)))
 		{
 			// goes through sky
 			ent->count = 1;
@@ -647,26 +639,16 @@ void G_RunMissile(gentity_t *ent)
 
 		//      G_SetOrigin( ent, tr.endpos );
 
-		if ((GetWeaponTableData(ent->s.weapon)->type & WEAPON_TYPE_PANZER)
-		    || CHECKBITWISE(GetWeaponTableData(ent->s.weapon)->type, WEAPON_TYPE_MORTAR | WEAPON_TYPE_SET))
-		{
-			impactDamage = 999; // goes through pretty much any func_explosives
-		}
-		else
-		{
-			impactDamage = 20;  // "grenade"/"dynamite"     // probably adjust this based on velocity
-		}
-
 		if (ent->r.contents == CONTENTS_CORPSE)
 		{
 			if (ent->s.pos.trType != TR_STATIONARY)
 			{
-				G_MissileImpact(ent, &tr, impactDamage);
+				G_MissileImpact(ent, &tr, GetWeaponFireTableData(ent->s.weapon)->impactDamage);
 			}
 		}
 		else
 		{
-			G_MissileImpact(ent, &tr, impactDamage);
+			G_MissileImpact(ent, &tr, GetWeaponFireTableData(ent->s.weapon)->impactDamage);
 		}
 
 		if (ent->s.eType != ET_MISSILE)

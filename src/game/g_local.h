@@ -1065,7 +1065,7 @@ typedef struct voteInfo_s
 	int voteNo;
 	int numVotingClients;               ///< set by CalculateRanks
 	int numVotingTeamClients[2];
-	int (*vote_fn)(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd);
+	int (*vote_fn)(gentity_t * ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd);
 	char vote_value[VOTE_MAXSTRING];    ///< Desired vote item setting.
 	int voteCaller;                     ///< id of the vote caller
 	int voteTeam;                       ///< id of the vote caller's team
@@ -2738,20 +2738,21 @@ typedef struct weapFireTable_t
 {
 	weapon_t weapon;
 	gentity_t * (*fire)(gentity_t * ent); ///< -
-	void (*think)(gentity_t *ent);      ///< -
-	void (*free)(gentity_t *ent);       ///< -
-	int eType;                          ///< -
-	int eFlags;                         ///< -
-	int svFlags;                        ///< -
-	int contents;                       ///< -
-	int trType;                         ///< -
-	int trTime;                         ///< -
-	float boundingBox[2][3];            ///< - mins / maxs bounding box vectors (for missile ent)
-	int clipMask;                       ///< -
-	int nextThink;                      ///< -
-	int accuracy;                       ///< -
-	int health;                         ///< -
-	int timeStamp;                      ///< -
+	void (*think)(gentity_t *ent);        ///< -
+	void (*free)(gentity_t *ent);         ///< -
+	int eType;                            ///< -
+	int eFlags;                           ///< -
+	int svFlags;                          ///< -
+	int contents;                         ///< -
+	int trType;                           ///< -
+	int trTime;                           ///< -
+	float boundingBox[2][3];              ///< - mins / maxs bounding box vectors (for missile ent)
+	int clipMask;                         ///< -
+	int nextThink;                        ///< -
+	int accuracy;                         ///< -
+	int health;                           ///< -
+	int timeStamp;                        ///< -
+	int impactDamage;                     ///< - func_explosives damage, probably adjust this based on velocity for throwable missile
 
 } weapFireTable_t;
 
