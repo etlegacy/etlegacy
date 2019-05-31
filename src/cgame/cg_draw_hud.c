@@ -1740,7 +1740,7 @@ static void CG_DrawNewCompass(rectDef_t location)
 		}
 	}
 
-	if ((snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR && !cgs.clientinfo[snap->ps.clientNum].shoutcaster) || !cg_drawCompass.integer)
+	if ((snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR && !cgs.clientinfo[cg.clientNum].shoutcaster) || !cg_drawCompass.integer)
 	{
 		return;
 	}
@@ -1768,7 +1768,8 @@ static void CG_DrawNewCompass(rectDef_t location)
 		{
 			cent = &cg_entities[i];
 
-			if (cg.predictedPlayerState.clientNum == i || !cgs.clientinfo[i].infoValid || cg.predictedPlayerState.persistant[PERS_TEAM] != cgs.clientinfo[i].team)
+			if (cg.predictedPlayerState.clientNum == i || !cgs.clientinfo[i].infoValid ||
+			    (cg.predictedPlayerState.persistant[PERS_TEAM] != cgs.clientinfo[i].team && !cgs.clientinfo[cg.clientNum].shoutcaster))
 			{
 				continue;
 			}
@@ -1831,9 +1832,9 @@ static void CG_DrawNewCompass(rectDef_t location)
 
 			if (ent->eFlags & EF_DEAD)
 			{
-				if (cg.predictedPlayerState.stats[STAT_PLAYER_CLASS] == PC_MEDIC && ent->number == ent->clientNum) // && !(cgs.ccFilter & CC_FILTER_REQUESTS)
+				if ((cg.predictedPlayerState.stats[STAT_PLAYER_CLASS] == PC_MEDIC && ent->number == ent->clientNum) || cgs.clientinfo[cg.clientNum].shoutcaster) // && !(cgs.ccFilter & CC_FILTER_REQUESTS)
 				{
-					if (!cgs.clientinfo[ent->clientNum].infoValid || cg.predictedPlayerState.persistant[PERS_TEAM] != cgs.clientinfo[ent->clientNum].team)
+					if (!cgs.clientinfo[ent->clientNum].infoValid || (cg.predictedPlayerState.persistant[PERS_TEAM] != cgs.clientinfo[ent->clientNum].team && !cgs.clientinfo[cg.clientNum].shoutcaster))
 					{
 						continue;
 					}
@@ -1844,12 +1845,12 @@ static void CG_DrawNewCompass(rectDef_t location)
 				continue;
 			}
 
-			if (!cgs.clientinfo[ent->clientNum].infoValid || cg.predictedPlayerState.persistant[PERS_TEAM] != cgs.clientinfo[ent->clientNum].team)
+			if (!cgs.clientinfo[ent->clientNum].infoValid || (cg.predictedPlayerState.persistant[PERS_TEAM] != cgs.clientinfo[ent->clientNum].team && !cgs.clientinfo[cg.clientNum].shoutcaster))
 			{
 				continue;
 			}
 
-			if (!CG_IsOnSameFireteam(cg.clientNum, ent->clientNum))
+			if (!CG_IsOnSameFireteam(cg.clientNum, ent->clientNum) && !cgs.clientinfo[cg.clientNum].shoutcaster)
 			{
 				continue;
 			}
@@ -1859,7 +1860,7 @@ static void CG_DrawNewCompass(rectDef_t location)
 			{
 				CG_DrawCompassIcon(basex, basey, basew, baseh, cg.predictedPlayerState.origin, ent->pos.trBase, cgs.media.objectiveShader);
 			}
-			else
+			else if (!cgs.clientinfo[cg.clientNum].shoutcaster)
 			{
 				// draw overlapping no-shoot icon if disguised
 				if (cgs.clientinfo[ent->clientNum].powerups & (1 << PW_OPS_DISGUISED))
