@@ -17,7 +17,7 @@ weaponDef
                 impactMarkRadius  96
                 impactSound {                       // each surface supports up to 5 hits sounds. available surface : default, far, wood, metal, roof, gravel, glass, snow, water, flesh
                 
-                    default "sound/weapons/mortar/mortar_expl"        
+                    default "sound/weapons/mortar/mortar_expl.wav"        
                     far     "sound/weapons/mortar/mortar_expl_far.wav"
                     water   "sound/weapons/grenade/gren_expl_water.wav"
                 }
