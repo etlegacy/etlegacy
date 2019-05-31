@@ -1267,6 +1267,11 @@ static void CG_DrawPowerUps(rectDef_t rect)
 {
 	playerState_t *ps = &cg.snap->ps;
 
+	if (ps->persistant[PERS_TEAM] == TEAM_SPECTATOR && !cgs.clientinfo[cg.clientNum].shoutcaster)
+	{
+		return;
+	}
+
 	// draw treasure icon if we have the flag
 	if (ps->powerups[PW_REDFLAG] || ps->powerups[PW_BLUEFLAG])
 	{
@@ -1290,6 +1295,85 @@ static void CG_DrawPowerUps(rectDef_t rect)
 		color[3] *= 0.5 + 0.5 * sin(cg.time / 150.0);
 		trap_R_SetColor(color);
 		CG_DrawPic(rect.x, rect.y, rect.w, rect.h, cgs.media.hudAdrenaline);
+		trap_R_SetColor(NULL);
+	}
+	else if (cgs.clientinfo[cg.clientNum].shoutcaster)
+	{
+		// simplified version for shoutcaster
+		vec4_t color = { 1.f, 1.f, 1.f, 1.f };
+		color[3] *= 0.67 + 0.33 * sin(cg.time / 200.0);
+		trap_R_SetColor(color);
+
+		if (cg.flagIndicator & (1 << PW_REDFLAG) && cg.flagIndicator & (1 << PW_BLUEFLAG))
+		{
+			if (cg.redFlagCounter > 0 && cg.blueFlagCounter > 0)
+			{
+				// both team stole an enemy flags
+				CG_DrawPic(rect.x, rect.y, rect.w, rect.h, cgs.media.objectiveTeamShader);
+			}
+			else if ((cg.redFlagCounter > 0 && !cg.blueFlagCounter) || (!cg.redFlagCounter && cg.blueFlagCounter > 0))
+			{
+				// one flag stolen and the other flag dropped
+				CG_DrawPic(rect.x, rect.y, rect.w, rect.h, cgs.media.objectiveTeamShader);
+			}
+			else
+			{
+				// both team dropped flags
+				CG_DrawPic(rect.x, rect.y, rect.w, rect.h, cgs.media.objectiveDroppedShader);
+			}
+			trap_R_SetColor(NULL);
+
+			// display team flag
+			color[3] = 1.f;
+			trap_R_SetColor(color);
+			CG_DrawPic(rect.x + rect.w / 2 - 20, rect.y + 28, 12, 8, cgs.media.axisFlag);
+			CG_DrawPic(rect.x + rect.w / 2 + 8,  rect.y + 28, 12, 8, cgs.media.alliedFlag);
+		}
+		else if (cg.flagIndicator & (1 << PW_REDFLAG))
+		{
+			if (cg.redFlagCounter > 0)
+			{
+				CG_DrawPic(rect.x, rect.y, rect.w, rect.h, cgs.media.objectiveTeamShader);
+			}
+			else
+			{
+				CG_DrawPic(rect.x, rect.y, rect.w, rect.h, cgs.media.objectiveDroppedShader);
+			}
+			trap_R_SetColor(NULL);
+
+			// display team flag
+			color[3] = 1.f;
+			trap_R_SetColor(color);
+			CG_DrawPic(rect.x + rect.w / 2 + 8, rect.y + 28, 12, 8, cgs.media.alliedFlag);
+		}
+		else if (cg.flagIndicator & (1 << PW_BLUEFLAG))
+		{
+			if (cg.blueFlagCounter > 0)
+			{
+				CG_DrawPic(rect.x, rect.y, rect.w, rect.h, cgs.media.objectiveTeamShader);
+			}
+			else
+			{
+				CG_DrawPic(rect.x, rect.y, rect.w, rect.h, cgs.media.objectiveDroppedShader);
+			}
+			trap_R_SetColor(NULL);
+
+			// display team flag
+			color[3] = 1.f;
+			trap_R_SetColor(color);
+			CG_DrawPic(rect.x + rect.w / 2 - 20, rect.y + 28, 12, 8, cgs.media.axisFlag);
+		}
+
+		// display active flag counter
+		if (cg.redFlagCounter > 1)
+		{
+			CG_Text_Paint_Ext(rect.x + rect.w / 2 + 12, rect.y + 38, 0.18, 0.18, colorWhite, va("%i", cg.redFlagCounter), 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
+		}
+		if (cg.blueFlagCounter > 1)
+		{
+			CG_Text_Paint_Ext(rect.x + rect.w / 2 - 16, rect.y + 38, 0.18, 0.18, colorWhite, va("%i", cg.blueFlagCounter), 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
+		}
+
 		trap_R_SetColor(NULL);
 	}
 	else
@@ -2851,11 +2935,6 @@ static void CG_DrawPlayerStats(void)
 	{
 		CG_DrawRank(activehud->ranktext.location.x, activehud->ranktext.location.y);
 	}
-
-	if (activehud->powerups.visible)
-	{
-		CG_DrawPowerUps(activehud->powerups.location);
-	}
 }
 
 /**
@@ -3049,6 +3128,11 @@ void CG_DrawGlobalHud(void)
 	}
 #endif
 	CG_DrawNewCompass(activehud->compas.location);
+
+	if (activehud->powerups.visible)
+	{
+		CG_DrawPowerUps(activehud->powerups.location);
+	}
 }
 
 /**
