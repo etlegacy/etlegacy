@@ -2678,7 +2678,7 @@ void G_AirStrikeThink(gentity_t *ent)
 	if (ent->count <= 0)
 	{
 		ent->think     = G_FreeEntity;
-		ent->nextthink = level.time + 1000;
+		ent->nextthink = level.time + 5000;
 		ent->s.time    = level.time;        // fade effect
 		ent->s.time2   = ent->nextthink;    // fade effect
 	}
@@ -2818,8 +2818,8 @@ void weapon_callAirStrike(gentity_t *ent)
 		plane->s.eType      = ET_AIRSTRIKE_PLANE;
 		plane->s.pos.trType = TR_LINEAR;
 		plane->s.pos.trTime = plane->nextthink;
-		plane->s.time       = plane->nextthink; // fade effect
-		plane->s.time2      = level.time;       // fade effect
+		plane->s.time       = -1; // draw nothing   plane->nextthink; // fade effect
+		plane->s.time2      = -1; // draw nothing   level.time;       // fade effect
 
 		VectorCopy(planeBBoxMin, plane->r.mins);
 		VectorCopy(planeBBoxMax, plane->r.maxs);
