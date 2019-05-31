@@ -630,7 +630,7 @@ void G_RunMissile(gentity_t *ent)
 		    (CHECKBITWISE(GetWeaponTableData(ent->s.weapon)->type, WEAPON_TYPE_MORTAR | WEAPON_TYPE_SET)
 		     || (GetWeaponTableData(ent->s.weapon)->type & (WEAPON_TYPE_GRENADE | WEAPON_TYPE_RIFLENADE))
 		     || ent->s.weapon == WP_AIRSTRIKE || ent->s.weapon == WP_ARTY)
-		    && (tr.surfaceFlags & SURF_SKY))
+		    && (!tr.surfaceFlags || (tr.surfaceFlags & SURF_SKY)))
 		{
 			// goes through sky
 			ent->count = 1;
@@ -1657,7 +1657,7 @@ qboolean G_LandmineSnapshotCallback(int entityNum, int clientNum)
 	gentity_t *clEnt = &g_entities[clientNum];
 
 	// don't send if landmine is not in pvs
-	if (!trap_InPVS( clEnt->client->ps.origin, ent->r.currentOrigin))
+	if (!trap_InPVS(clEnt->client->ps.origin, ent->r.currentOrigin))
 	{
 		return qfalse;
 	}
