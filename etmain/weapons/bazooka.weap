@@ -41,6 +41,8 @@ weaponDef
 		
 		//ejectBrassFunc		"PanzerFaustEjectBrass"				// supports "MachineGunEjectBrass" and "PanzerFaustEjectBrass"
 		ejectBrassOffset    -24 -4 24
+                
+                adjustLean 1 1 1
 		
 		//modModel 1		""
                 

@@ -45,6 +45,7 @@ weaponDef
 		//brassmodel				"models/weapons2/shells/9mmshell.md3"
                 
                 fireRecoil 0.3 0.6 0    // kick angle
+                adjustLean 1 1 1
 		
 		//modModel 1		""
                 

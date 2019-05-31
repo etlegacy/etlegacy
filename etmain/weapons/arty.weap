@@ -12,6 +12,8 @@ weaponDef
 		//missileDlight		200
 		//missileDlightColor	0.75 0.3 0.0
                 
+                adjustLean 1 1 1
+                
                 impactSoundRange 800
                 impactSoundVolume 127
                 impactMarkRadius  128

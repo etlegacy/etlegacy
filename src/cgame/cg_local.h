@@ -816,6 +816,7 @@ typedef struct weaponInfo_s
 	vec3_t ejectBrassOffset;
 
 	vec3_t fireRecoil;                  ///< kick angle
+	vec3_t adjustLean;
 
 	sfxHandle_t readySound;             ///< an ambient sound the weapon makes when it's /not/ firing
 	sfxHandle_t firingSound;

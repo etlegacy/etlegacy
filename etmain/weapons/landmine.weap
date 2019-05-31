@@ -44,6 +44,8 @@ weaponDef
 		
 		//ejectBrassFunc	""									// supports "MachineGunEjectBrass" and "PanzerFaustEjectBrass"
 		//ejectBrassOffset  0 0 0
+                
+                adjustLean 1 1 1
 		
 		modModel 0			"models/multiplayer/mine_marker/allied_marker.md3"
 		modModel 1			"models/multiplayer/mine_marker/axis_marker.md3"

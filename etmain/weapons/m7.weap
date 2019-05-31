@@ -52,6 +52,8 @@ weaponDef
 		
 		//ejectBrassFunc	""				// supports "MachineGunEjectBrass" and "PanzerFaustEjectBrass"
 		//ejectBrassOffset  0 0 0
+                
+                adjustLean 1 1 2
 		
 		modModel 0			"models/multiplayer/m1_garand/v_m1_garand_scope.md3"
 		modModel 1			"models/multiplayer/m1_garand/m1_garand_att.md3"

@@ -1744,6 +1744,13 @@ static qboolean CG_RW_ParseClient(int handle, weaponInfo_t *weaponInfo)
 				return CG_RW_ParseError(handle, "expected fireRecoil as pitch yaw roll");
 			}
 		}
+		else if (!Q_stricmp(token.string, "adjustLean"))
+		{
+			if (!PC_Vec_Parse(handle, &weaponInfo->adjustLean))
+			{
+				return CG_RW_ParseError(handle, "expected adjustLean as pitch yaw roll");
+			}
+		}
 		else if (!Q_stricmp(token.string, "impactSoundRange"))
 		{
 			if (!PC_Int_Parse(handle, &weaponInfo->impactSoundRange))
@@ -2316,12 +2323,12 @@ static void CG_CalculateWeaponPosition(vec3_t origin, vec3_t angles)
 		vec3_t right, up;
 
 		// reverse the roll on the weapon so it stays relatively level
-		angles[ROLL] -= cg.predictedPlayerState.leanf / (GetWeaponTableData(cg.predictedPlayerState.weapon)->adjustLean * 2.0f);
+		angles[ROLL] -= cg.predictedPlayerState.leanf / (cg_weapons[cg.predictedPlayerState.weapon].adjustLean[ROLL] * 2.0f);
 		AngleVectors(angles, NULL, right, up);
 		VectorMA(origin, angles[ROLL], right, origin);
 
 		// pitch the gun down a bit to show that firing is not allowed when leaning
-		angles[PITCH] += (fabsf(cg.predictedPlayerState.leanf) / 2.0f);
+		angles[PITCH] += (fabsf(cg.predictedPlayerState.leanf) / (cg_weapons[cg.predictedPlayerState.weapon].adjustLean[PITCH] * 2.0f));
 
 		// this gives you some impression that the weapon stays in relatively the same
 		// position while you lean, so you appear to 'peek' over the weapon

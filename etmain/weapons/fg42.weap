@@ -44,6 +44,7 @@ weaponDef
 		ejectBrassOffset    16 -4 24
                 
                 fireRecoil 0.3 0.6 0    // kick angle
+                adjustLean 1 1 1
 		
 		//modModel 1		""
                 

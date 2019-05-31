@@ -42,6 +42,8 @@ weaponDef
 		//ejectBrassFunc	""									// supports "MachineGunEjectBrass" and "PanzerFaustEjectBrass"
 		//ejectBrassOffset  0 0 0
                 
+                adjustLean 1 1 1
+                
                 impactFunction    "MeleeImpact" // supports "MeleeImpact", "BulletImpact", "SmallExplosionImpact", "BigExplosionImpact", "MapMortarImpact" and "DynamiteExplosionImpact"
                 impactSoundVolume 127
                 impactMarkRadius  32

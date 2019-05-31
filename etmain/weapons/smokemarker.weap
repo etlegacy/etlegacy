@@ -54,6 +54,8 @@ weaponDef
 		
 		//modModel 1		""
                 
+                adjustLean 1 1 1
+                
                 impactSoundRange 800
                 impactFunction    "BigExplosionImpact"  // supports "MeleeImpact", "BulletImpact", "SmallExplosionImpact", "BigExplosionImpact", "MapMortarImpact" and "DynamiteExplosionImpact"
                 impactSoundVolume 127

@@ -44,6 +44,7 @@ weaponDef
 		ejectBrassOffset    12 -4 24
                 
                 fireRecoil 0.3 0.6 0    // kick angle
+                adjustLean 1 1 1
 		
 		modModel 0			"models/multiplayer/mg42/mg42_3rd_bipod.md3"
                 

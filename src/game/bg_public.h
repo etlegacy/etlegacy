@@ -1177,8 +1177,6 @@ typedef struct weapontable_s
 	float knockback;                ///< bg -
 	int muzzlePointOffset[3];       ///< g - forward, left, up
 
-	float adjustLean;               ///< cg -
-
 	int weapRecoilDuration;         ///< bg -
 	float weapRecoilPitch[2];       ///< bg -
 	float weapRecoilYaw[2];         ///< bg -
