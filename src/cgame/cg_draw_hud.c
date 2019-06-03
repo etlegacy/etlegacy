@@ -2241,6 +2241,7 @@ static float CG_DrawFPS(float y)
 static void CG_DrawTimersAlt(rectDef_t *respawn, rectDef_t *spawntimer, rectDef_t *localtime, rectDef_t *roundtimer)
 {
 	char    *s, *rt;
+	int     w;
 	qtime_t time;
 	vec4_t  color = { 0.625f, 0.625f, 0.6f, 1.0f };
 	int     tens;
@@ -2259,7 +2260,7 @@ static void CG_DrawTimersAlt(rectDef_t *respawn, rectDef_t *spawntimer, rectDef_
 	}
 	else if (msec < 0 && cgs.timelimit > 0.0f)
 	{
-		s        = "^N0:00";
+		s        = "^70:00";
 		color[3] = fabs(sin(cg.time * 0.002));
 	}
 	else
@@ -2272,10 +2273,19 @@ static void CG_DrawTimersAlt(rectDef_t *respawn, rectDef_t *spawntimer, rectDef_
 
 		if (cgs.gametype != GT_WOLF_LMS && (cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR || (cg.snap->ps.pm_flags & PMF_FOLLOW)) && cg_drawReinforcementTime.integer > 0)
 		{
-			int reinfTime = CG_CalculateReinfTime(qfalse);
+			int   reinfTime = CG_CalculateReinfTime(qfalse);
+			char *teamColor = (cgs.clientinfo[cg.clientNum].shoutcaster ? (cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_AXIS ? "^1" : "^$") : "^F");
 
 			rt = va("%s%d%s", (reinfTime <= 2 && cgs.clientinfo[cg.clientNum].health == 0 &&
-				!(cg.snap->ps.pm_flags & PMF_FOLLOW)) ? "^3" : "^F", reinfTime, ((cgs.timelimit <= 0.0f) ? "" : " "));
+				!(cg.snap->ps.pm_flags & PMF_FOLLOW)) ? "^3" : teamColor, reinfTime, ((cgs.timelimit <= 0.0f) ? "" : " "));
+		}
+		else if (cgs.gametype != GT_WOLF_LMS && cgs.clientinfo[cg.clientNum].shoutcaster && cg_drawReinforcementTime.integer > 0)
+		{
+			int reinfTimeAx = CG_CalculateShoutcasterReinfTime(TEAM_AXIS);
+			int reinfTimeAl = CG_CalculateShoutcasterReinfTime(TEAM_ALLIES);
+
+			rt = va("^1%s%d^$%s%d ", (reinfTimeAx < 10 ? "  " : ((cgs.timelimit <= 0.0f) ? "" : " ")), reinfTimeAx,
+					(reinfTimeAl < 10 ? "  " : ((cgs.timelimit <= 0.0f) ? "" : " ")), reinfTimeAl);
 		}
 		else
 		{
@@ -2284,10 +2294,12 @@ static void CG_DrawTimersAlt(rectDef_t *respawn, rectDef_t *spawntimer, rectDef_
 
 		s = va("%s", rt);
 	}
-	CG_Text_Paint_Ext(respawn->x, respawn->y, 0.19f, 0.19f, color, s, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
+
+	w = ((cgs.gamestate != GS_PLAYING || (msec < 0 && cgs.timelimit > 0.0f)) ? 0 : CG_Text_Width_Ext(s, 0.19f, 0, &cgs.media.limboFont1));
+	CG_Text_Paint_Ext(respawn->x - w, respawn->y, 0.19f, 0.19f, color, s, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
 
 	// spawntimer
-	if (cg_spawnTimer_set.integer != -1 && cg_spawnTimer_period.integer > 0 && cgs.gamestate == GS_PLAYING)
+	if (cg_spawnTimer_set.integer != -1 && cg_spawnTimer_period.integer > 0 && cgs.gamestate == GS_PLAYING && !cgs.clientinfo[cg.clientNum].shoutcaster)
 	{
 		if (cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR || (cg.snap->ps.pm_flags & PMF_FOLLOW))
 		{
@@ -2371,17 +2383,26 @@ static float CG_DrawTimerNormal(float y)
 	}
 	else if (msec < 0 && cgs.timelimit > 0.0f)
 	{
-		s        = "^N0:00";
+		s        = "^70:00";
 		color[3] = fabs(sin(cg.time * 0.002));
 	}
 	else
 	{
 		if (cgs.gametype != GT_WOLF_LMS && (cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR || (cg.snap->ps.pm_flags & PMF_FOLLOW)) && cg_drawReinforcementTime.integer > 0)
 		{
-			int reinfTime = CG_CalculateReinfTime(qfalse);
+			int  reinfTime = CG_CalculateReinfTime(qfalse);
+			char *c        = (cgs.clientinfo[cg.clientNum].shoutcaster ? (cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_AXIS ? "^1" : "^$") : "^F");
 
-			rt = va("%s%d%s", (reinfTime <= 2 && cgs.clientinfo[cg.clientNum].health == 0 &&
-				!(cg.snap->ps.pm_flags & PMF_FOLLOW)) ? "^3" : "^F", reinfTime, ((cgs.timelimit <= 0.0f) ? "" : " "));
+			rt = va("%s%s%d", (reinfTime <= 2 && cgs.clientinfo[cg.clientNum].health == 0 &&
+			        !(cg.snap->ps.pm_flags & PMF_FOLLOW)) ? "^3" : c, ((cgs.timelimit <= 0.0f) ? "" : " "), reinfTime);
+		}
+		else if (cgs.gametype != GT_WOLF_LMS && cgs.clientinfo[cg.clientNum].shoutcaster && cg_drawReinforcementTime.integer > 0)
+		{
+			int reinfTimeAx = CG_CalculateShoutcasterReinfTime(TEAM_AXIS);
+			int reinfTimeAl = CG_CalculateShoutcasterReinfTime(TEAM_ALLIES);
+
+			rt = va("^1%s%d^$%s%d", (reinfTimeAx < 10 ? "  " : ((cgs.timelimit <= 0.0f) ? "" : " ")), reinfTimeAx,
+			        (reinfTimeAl < 10 ? "  " : ((cgs.timelimit <= 0.0f) ? "" : " ")), reinfTimeAl);
 		}
 		else
 		{
@@ -2394,14 +2415,14 @@ static float CG_DrawTimerNormal(float y)
 		}
 		else
 		{
-			s = va("%s^7%i:%i%i", rt, mins, tens, seconds);  // ^*
+			s = va("%s ^7%i:%i%i", rt, mins, tens, seconds);  // ^*
 		}
 
 		color[3] = 1.f;
 	}
 
 	// spawntimer
-	if (cg_spawnTimer_set.integer != -1 && cg_spawnTimer_period.integer > 0 && cgs.gamestate == GS_PLAYING)
+	if (cg_spawnTimer_set.integer != -1 && cg_spawnTimer_period.integer > 0 && cgs.gamestate == GS_PLAYING && !cgs.clientinfo[cg.clientNum].shoutcaster)
 	{
 		if (cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR || (cg.snap->ps.pm_flags & PMF_FOLLOW))
 		{
@@ -2970,7 +2991,7 @@ void CG_Hud_Setup(void)
 	hud1.cursorhint      = CG_getComponent(.5f * SCREEN_WIDTH - .5f * 48, 260, 48, 48, qtrue, STYLE_NORMAL);
 	hud1.weaponstability = CG_getComponent(50, 208, 10, 64, qtrue, STYLE_NORMAL);
 	hud1.livesleft       = CG_getComponent(0, 0, 0, 0, qtrue, STYLE_NORMAL);
-	hud1.reinforcement   = CG_getComponent(70, SCREEN_HEIGHT - 12, 0, 0, qtrue, STYLE_NORMAL);
+	hud1.reinforcement   = CG_getComponent(85, SCREEN_HEIGHT - 12, 0, 0, qtrue, STYLE_NORMAL);
 	hud1.roundtimer      = CG_getComponent(85, SCREEN_HEIGHT - 12, 0, 0, qtrue, STYLE_NORMAL);
 	hud1.spawntimer      = CG_getComponent(70, SCREEN_HEIGHT - 2, 0, 0, qtrue, STYLE_NORMAL);
 	hud1.localtime       = CG_getComponent(85, SCREEN_HEIGHT - 2, 0, 0, qtrue, STYLE_NORMAL);
@@ -2996,7 +3017,7 @@ void CG_Hud_Setup(void)
 	hud2.cursorhint      = CG_getComponent(.5f * SCREEN_WIDTH - .5f * 48, 260, 48, 48, qtrue, STYLE_NORMAL);
 	hud2.weaponstability = CG_getComponent(50, 208, 10, 64, qtrue, STYLE_NORMAL);
 	hud2.livesleft       = CG_getComponent(0, 0, 0, 0, qtrue, STYLE_NORMAL);
-	hud2.reinforcement   = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 70, SCREEN_HEIGHT - 70, 0, 0, qtrue, STYLE_NORMAL);
+	hud2.reinforcement   = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 55, SCREEN_HEIGHT - 70, 0, 0, qtrue, STYLE_NORMAL);
 	hud2.roundtimer      = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 55, SCREEN_HEIGHT - 70, 0, 0, qtrue, STYLE_NORMAL);
 	hud2.spawntimer      = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 70, SCREEN_HEIGHT - 60, 0, 0, qtrue, STYLE_NORMAL);
 	hud2.localtime       = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 55, SCREEN_HEIGHT - 60, 0, 0, qtrue, STYLE_NORMAL);

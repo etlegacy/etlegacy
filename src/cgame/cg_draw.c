@@ -2387,6 +2387,19 @@ int CG_CalculateReinfTime(qboolean menu)
 }
 
 /**
+ * @brief CG_CalculateShoutcasterReinfTime
+ * @param[in] team
+ * @return
+ */
+int CG_CalculateShoutcasterReinfTime(team_t team)
+{
+	int dwDeployTime;
+
+	dwDeployTime = (team == TEAM_AXIS) ? cg_redlimbotime.integer : cg_bluelimbotime.integer;
+	return (int)(1 + (dwDeployTime - ((cgs.aReinfOffset[team] + cg.time - cgs.levelStartTime) % dwDeployTime)) * 0.001f);
+}
+
+/**
  * @brief CG_DrawLimboMessage
  */
 static void CG_DrawLimboMessage(void)
