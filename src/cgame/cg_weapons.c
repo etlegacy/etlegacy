@@ -4765,7 +4765,7 @@ void CG_WeaponFireRecoil(int weapon)
 	{
 		pitchAdd *= (1 + rand() % 3);
 	}
-	else if ((GetWeaponTableData(weapon)->type & WEAPON_TYPE_RIFLE) && (GetWeaponTableData(weapon)->attributes & WEAPON_TYPE_SCOPED))
+	else if (CHECKBITWISE(GetWeaponTableData(weapon)->type, (WEAPON_TYPE_RIFLE | WEAPON_TYPE_SCOPED)))
 	{
 		// scoped weapon avoid yaw recoil (but FG42)
 		yawRandom = 0;
