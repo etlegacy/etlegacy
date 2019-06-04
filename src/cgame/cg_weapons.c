@@ -2437,7 +2437,6 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 	weapon_t        weaponNum = (weapon_t)cent->currentState.weapon;
 	weaponInfo_t    *weapon;
 	centity_t       *nonPredictedCent;
-	qboolean        akimboFire = qfalse;
 	qboolean        drawpart;
 	qboolean        isPlayer      = cent->currentState.clientNum == cg.snap->ps.clientNum; // might as well have this check consistant throughout the routine
 	qboolean        isFirstPerson = isPlayer && !cg.renderingThirdPerson;
@@ -2508,19 +2507,6 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 	}
 
 	weapon = &cg_weapons[weaponNum];
-
-	if (GetWeaponTableData(weaponNum)->attributes & WEAPON_ATTRIBUT_AKIMBO)
-	{
-		if (isPlayer)
-		{
-			akimboFire = BG_AkimboFireSequence(weaponNum, cg.predictedPlayerState.ammoclip[GetWeaponTableData(weaponNum)->clipIndex], cg.predictedPlayerState.ammoclip[GetWeaponTableData(GetWeaponTableData(weaponNum)->akimboSideArm)->clipIndex]);
-		}
-		else if (ps)
-		{
-			akimboFire = BG_AkimboFireSequence(weaponNum, ps->ammoclip[GetWeaponTableData(weaponNum)->clipIndex], ps->ammoclip[GetWeaponTableData(GetWeaponTableData(weaponNum)->akimboSideArm)->clipIndex]);
-		}
-		// alternate for other clients, store flip-flop on cent or smuffin
-	}
 
 	// add the weapon
 	Com_Memset(&gun, 0, sizeof(gun));
