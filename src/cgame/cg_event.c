@@ -1787,6 +1787,82 @@ void CG_MortarMiss(centity_t *cent, vec3_t origin)
 	}
 }
 
+/**
+ * @brief CG_PlayGlobalSound
+ * @param[in] cent
+ * @param[in] index
+ */
+void CG_PlayGlobalSound(centity_t *cent, int index)
+{
+	sfxHandle_t sound = CG_GetGameSound(index);
+
+	if (sound)
+	{
+		// no origin!
+#ifdef FEATURE_EDV
+		if (cgs.demoCamera.renderingFreeCam || cgs.demoCamera.renderingWeaponCam)
+		{
+			trap_S_StartLocalSound(sound, CHAN_AUTO);
+		}
+		else
+		{
+			// no origin!
+			trap_S_StartSound(NULL, cg.snap->ps.clientNum, CHAN_AUTO, sound);
+
+		}
+#else
+		// no origin!
+		trap_S_StartSound(NULL, cg.snap->ps.clientNum, CHAN_AUTO, sound);
+#endif
+	}
+	else
+	{
+		if (index >= GAMESOUND_MAX)
+		{
+			const char *s;
+
+			s = CG_ConfigString(CS_SOUNDS + (index - GAMESOUND_MAX));
+
+			if (!strstr(s, ".wav") && !strstr(s, ".ogg"))         // sound script names haven't got file extensions
+			{
+				// origin is NULL!
+				if (CG_SoundPlaySoundScript(s, NULL, -1, qtrue))
+				{
+					return;
+				}
+			}
+
+			sound = CG_CustomSound(cent->currentState.number, s);
+			if (sound)
+			{
+#ifdef FEATURE_EDV
+				if (cgs.demoCamera.renderingFreeCam || cgs.demoCamera.renderingWeaponCam)
+				{
+					trap_S_StartLocalSound(sound, CHAN_AUTO);
+				}
+				else
+				{
+					// origin is NULL!
+					trap_S_StartSound(NULL, cg.snap->ps.clientNum, CHAN_AUTO, sound);
+				}
+#else
+				// origin is NULL!
+				trap_S_StartSound(NULL, cg.snap->ps.clientNum, CHAN_AUTO, sound);
+#endif
+
+			}
+			else
+			{
+				CG_Printf(S_COLOR_YELLOW "WARNING: CG_EntityEvent() cannot play EV_GLOBAL_SOUND sound '%s'\n", s);
+			}
+		}
+		else
+		{
+			CG_Printf(S_COLOR_YELLOW "WARNING: CG_EntityEvent() es->eventParm < GAMESOUND_MAX\n");
+		}
+	}
+}
+
 extern void CG_AddBulletParticles(vec3_t origin, vec3_t dir, int speed, int duration, int count, float randScale);
 
 /**
@@ -2357,125 +2433,20 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 	}
 	break;
 	case EV_GLOBAL_TEAM_SOUND:
-		if (cgs.clientinfo[cg.snap->ps.clientNum].team != es->teamNum)
+		if (cgs.clientinfo[cg.snap->ps.clientNum].team == es->teamNum)
 		{
-			break;
-		} // fall through
+			CG_PlayGlobalSound(cent, es->eventParm);
+		}
+		break;
 	case EV_GLOBAL_SOUND:     // play from the player's head so it never diminishes
-	{
-		sfxHandle_t sound = CG_GetGameSound(es->eventParm);
-
-		if (sound)
-		{
-			// no origin!
-#ifdef FEATURE_EDV
-			if (cgs.demoCamera.renderingFreeCam || cgs.demoCamera.renderingWeaponCam)
-			{
-				trap_S_StartLocalSound(sound, CHAN_AUTO);
-			}
-			else
-			{
-				// no origin!
-				trap_S_StartSound(NULL, cg.snap->ps.clientNum, CHAN_AUTO, sound);
-
-			}
-#else
-			// no origin!
-			trap_S_StartSound(NULL, cg.snap->ps.clientNum, CHAN_AUTO, sound);
-#endif
-		}
-		else
-		{
-			if (es->eventParm >= GAMESOUND_MAX)
-			{
-				const char *s;
-
-				s = CG_ConfigString(CS_SOUNDS + (es->eventParm - GAMESOUND_MAX));
-
-				if (!strstr(s, ".wav") && !strstr(s, ".ogg"))         // sound script names haven't got file extensions
-				{
-					// origin is NULL!
-					if (CG_SoundPlaySoundScript(s, NULL, -1, qtrue))
-					{
-						break;
-					}
-				}
-
-				sound = CG_CustomSound(es->number, s);
-				if (sound)
-				{
-#ifdef FEATURE_EDV
-					if (cgs.demoCamera.renderingFreeCam || cgs.demoCamera.renderingWeaponCam)
-					{
-						trap_S_StartLocalSound(sound, CHAN_AUTO);
-					}
-					else
-					{
-						// origin is NULL!
-						trap_S_StartSound(NULL, cg.snap->ps.clientNum, CHAN_AUTO, sound);
-					}
-#else
-					// origin is NULL!
-					trap_S_StartSound(NULL, cg.snap->ps.clientNum, CHAN_AUTO, sound);
-#endif
-
-				}
-				else
-				{
-					CG_Printf(S_COLOR_YELLOW "WARNING: CG_EntityEvent() cannot play EV_GLOBAL_SOUND sound '%s'\n", s);
-				}
-			}
-			else
-			{
-				CG_Printf(S_COLOR_YELLOW "WARNING: CG_EntityEvent() es->eventParm < GAMESOUND_MAX\n");
-			}
-		}
-	}
-	break;
+		CG_PlayGlobalSound(cent, es->eventParm);
+		break;
 	case EV_GLOBAL_CLIENT_SOUND:
-	{
 		if (cg.snap->ps.clientNum == es->teamNum)
 		{
-			sfxHandle_t sound = CG_GetGameSound(es->eventParm);
-
-			if (sound)
-			{
-				trap_S_StartSound(NULL, cg.snap->ps.clientNum, CHAN_AUTO, sound);
-			}
-			else
-			{
-				if (es->eventParm >= GAMESOUND_MAX)
-				{
-					const char *s;
-
-					s = CG_ConfigString(CS_SOUNDS + (es->eventParm - GAMESOUND_MAX));
-
-					if (!strstr(s, ".wav") && !strstr(s, ".ogg"))         // sound script names haven't got file extensions
-					{
-						if (CG_SoundPlaySoundScript(s, NULL, -1, (es->effect1Time ? qfalse : qtrue)))
-						{
-							break;
-						}
-					}
-
-					sound = CG_CustomSound(es->number, s);
-					if (sound)
-					{
-						trap_S_StartSound(NULL, cg.snap->ps.clientNum, CHAN_AUTO, sound);
-					}
-					else
-					{
-						CG_Printf(S_COLOR_YELLOW "WARNING: CG_EntityEvent() cannot play EV_GLOBAL_CLIENT_SOUND sound '%s'\n", s);
-					}
-				}
-				else
-				{
-					CG_Printf(S_COLOR_YELLOW "WARNING: CG_EntityEvent() es->eventParm < GAMESOUND_MAX\n");
-				}
-			}
+			CG_PlayGlobalSound(cent, es->eventParm);
 		}
-	}
-	break;
+		break;
 	case EV_PAIN:
 		// local player sounds are triggered in CG_CheckLocalSounds,
 		// so ignore events on the player
