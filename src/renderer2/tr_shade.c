@@ -545,8 +545,9 @@ void SetLightUniforms(qboolean setLightColor)
 	{
 		SetUniformVec3(UNIFORM_LIGHTDIR, tr.sunDirection); // i need to provide _some_ direction.. not all world is lit by the sun..
 		if (setLightColor)
-		{
-			SetUniformVec3(UNIFORM_LIGHTCOLOR, tr.sunLight); // the sun again..
+		{    //sun is too bright, we'll use tess.svars.color instead
+			//SetUniformVec3(UNIFORM_LIGHTCOLOR, tr.sunLight); // the sun again..
+			SetUniformVec3(UNIFORM_LIGHTCOLOR, tess.svars.color);
 		}
 	}
 }
@@ -924,7 +925,9 @@ static void Render_lightMapping(int stage, qboolean asColorMap, qboolean normalM
 
 	//SetUniformVec3(UNIFORM_LIGHTDIR, backEnd.currentEntity->lightDir);
 	SetUniformVec3(UNIFORM_LIGHTDIR, tr.sunDirection);
-	SetUniformVec3(UNIFORM_LIGHTCOLOR, tr.sunLight);
+	//SetUniformVec3(UNIFORM_LIGHTCOLOR, tr.sunLight);
+	//sun too bright lets use tess instead
+	SetUniformVec3(UNIFORM_LIGHTCOLOR, tess.svars.color);
 
 	SelectTexture(TEX_DIFFUSE);
 	image_t* image = pStage->bundle[TB_DIFFUSEMAP].image[0];
