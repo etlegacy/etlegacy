@@ -2322,8 +2322,6 @@ static void PM_BeginWeaponReload(weapon_t weapon)
 	}
 }
 
-static void PM_ReloadClip(weapon_t weapon);
-
 /**
  * @brief PM_BeginWeaponChange
  * @param[in] oldweapon
