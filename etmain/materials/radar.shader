@@ -3,9 +3,9 @@
 textures/radar/dirt_m03icmp_brown
 {
 	qer_editorimage textures/temperate_sd/dirt_m03icmp_brown.tga
-	diffuseMap textures/radar/dirt_m03icmp_brown.tga
-	bumpMap textures/radar/dirt_m03icmp_brown_n.tga
-	specularMap textures/radar/dirt_m03icmp_brown_r.tga
+	diffuseMap textures/temperate_sd/dirt_m03icmp_brown.tga
+	bumpMap textures/temperate_sd/dirt_m03icmp_brown_n.tga
+	specularMap textures/temperate_sd/dirt_m03icmp_brown_r.tga
 	cull twosided
 	surfaceparm trans
 	rgbGen identity	
@@ -19,9 +19,9 @@ textures/radar/dirt_m03icmp_brown
 textures/radar/dirt_m04cmp_brown
 {
 	qer_editorimage textures/temperate_sd/dirt_m04cmp_brown.tga
-	diffuseMap textures/radar/dirt_m04cmp_brown.tga
-	bumpMap textures/radar/dirt_m04cmp_brown_n.tga
-	specularMap textures/radar/dirt_m04cmp_brown_r.tga
+	diffuseMap textures/temperate_sd/dirt_m04cmp_brown.tga
+	bumpMap textures/temperate_sd/dirt_m04cmp_brown_n.tga
+	specularMap textures/temperate_sd/dirt_m04cmp_brown_r.tga
 	cull twosided
 	surfaceparm trans
 	rgbGen identity	
