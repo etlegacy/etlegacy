@@ -207,7 +207,7 @@ void G_noTeamControls(gentity_t *ent)
  */
 void G_commands_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fValue)
 {
-	int i, rows, num_cmds = sizeof(aCommandInfo) / sizeof(aCommandInfo[0]) - 1;
+	int i, rows, num_cmds = sizeof(aCommandInfo) / sizeof(aCommandInfo[0]);
 
 	rows = num_cmds / HELP_COLUMNS;
 	if (num_cmds % HELP_COLUMNS)
@@ -517,7 +517,7 @@ void G_players_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fDump)
 		}
 		else
 		{
-			G_Printf("%s%s%2d : %-26s%s  %s%s\n", ready, tc, idnum, n2, rate, ref, sc, muted);
+			G_Printf("%s%s%2d : %-26s%s  %s%s%s\n", ready, tc, idnum, n2, rate, ref, sc, muted);
 		}
 
 		cnt++;
