@@ -1316,7 +1316,10 @@ static qboolean CG_RW_ParseSoundSurface(int handle, weaponSounds_t *weaponSound)
 			return CG_RW_ParseError(handle, "unknown token '%s'", token.string);
 		}
 
-		CG_RW_ParseWeaponSound(handle, &weaponSound[soundSurface]);
+		if (!CG_RW_ParseWeaponSound(handle, &weaponSound[soundSurface]))
+		{
+			return qfalse;
+		}
 	}
 
 	return qtrue;
