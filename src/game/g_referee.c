@@ -878,7 +878,7 @@ qboolean G_IsShoutcastPasswordSet(void)
  */
 qboolean G_IsShoutcastStatusAvailable(gentity_t *ent)
 {
-	if (!(ent->r.svFlags & SVF_BOT))
+	if (ent->r.svFlags & SVF_BOT)
 	{
 		return qfalse;
 	}
