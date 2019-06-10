@@ -1048,6 +1048,8 @@ typedef struct
 	int selectedScore;
 	int teamScores[2];
 	int teamPlayers[TEAM_NUM_TEAMS];         ///< for scoreboard
+	float teamPingMean[2];
+	float teamPingSd[2];
 	score_t scores[MAX_CLIENTS];
 	qboolean showScores;
 	qboolean scoreBoardShowing;
