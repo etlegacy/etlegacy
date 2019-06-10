@@ -1767,7 +1767,9 @@ void NET_OpenIP(void)
 	int port6 = net_port6->integer;
 #endif
 
+#ifndef __ANDROID__
 	NET_GetLocalAddress();
+#endif
 
 	// automatically scan for a valid port, so multiple
 	// dedicated servers can be started without requiring
