@@ -4510,9 +4510,9 @@ const weap_ws_t aWeaponInfo[WS_MAX] =
 	{ qtrue,  "TMPS", "Thompson"   },  // 5  WS_THOMPSON
 	{ qtrue,  "STEN", "Sten"       },  // 6  WS_STEN
 	{ qtrue,  "FG42", "FG 42"      },  // 7  WS_FG42
-	{ qtrue,  "PNZR", "Panzer"     },  // 8  WS_PANZERFAUST
-	{ qtrue,  "BZKA", "Bazooka"    },  // 9  WS_BAZOOKA
-	{ qtrue,  "FLAM", "F.Thrower"  },  // 10 WS_FLAMETHROWER
+	{ qfalse, "PNZR", "Panzer"     },  // 8  WS_PANZERFAUST
+	{ qfalse, "BZKA", "Bazooka"    },  // 9  WS_BAZOOKA
+	{ qfalse, "FLAM", "F.Thrower"  },  // 10 WS_FLAMETHROWER
 	{ qfalse, "GRND", "Grenade"    },  // 11 WS_GRENADE
 	{ qfalse, "MRTR", "Mortar"     },  // 12 WS_MORTAR
 	{ qfalse, "GRWF", "Granatwerf" },  // 13 WS_MORTAR2
@@ -4522,8 +4522,8 @@ const weap_ws_t aWeaponInfo[WS_MAX] =
 	{ qfalse, "STCH", "Satchel"    },  // 17 WS_SATCHEL
 	{ qfalse, "GRLN", "G.Launchr"  },  // 18 WS_GRENADELAUNCHER
 	{ qfalse, "LNMN", "Landmine"   },  // 19 WS_LANDMINE
-	{ qtrue,  "MG42", "MG 42 Gun"  },  // 20 WS_MG42
-	{ qtrue,  "BRNG", "Browning"   },  // 21 WS_BROWNING
+	{ qfalse, "MG42", "MG 42 Gun"  },  // 20 WS_MG42
+	{ qfalse, "BRNG", "Browning"   },  // 21 WS_BROWNING
 	{ qtrue,  "GARN", "Garand"     },  // 22 WS_CARBINE
 	{ qtrue,  "K-43", "K43 Rifle"  },  // 23 WS_KAR98
 	{ qtrue,  "SGRN", "Scp.Garand" },  // 24 WS_GARAND

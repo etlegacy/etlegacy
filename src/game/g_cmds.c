@@ -4449,6 +4449,12 @@ void G_CalcClientAccuracies(void)
 		{
 			for (j = 0; j < WS_MAX; j++)
 			{
+				// don't take into account weapon that can't do headshot
+				if (!aWeaponInfo[j].fHasHeadShots)
+				{
+					continue;
+				}
+
 				shots     += level.clients[i].sess.aWeaponStats[j].atts;
 				hits      += level.clients[i].sess.aWeaponStats[j].hits;
 				headshots += level.clients[i].sess.aWeaponStats[j].headshots;
@@ -4486,7 +4492,7 @@ void Cmd_IntermissionWeaponAccuracies_f(gentity_t *ent)
 	{
 		if (g_entities[i].inuse)
 		{
-			Q_strcat(buffer, sizeof(buffer), va("%.1f %.1f ", level.clients[i].acc > 100.f ? 100 : level.clients[i].acc, level.clients[i].hspct));
+			Q_strcat(buffer, sizeof(buffer), va("%.1f %.1f ", level.clients[i].acc, level.clients[i].hspct));
 		}
 		else
 		{
