@@ -935,7 +935,9 @@ success:
 	Cvar_Get("r_availableModes", "", CVAR_ROM);
 
 	// Display splash screen
+#ifndef __ANDROID__
 	GLimp_Splash(glConfig);
+#endif
 
 	// This depends on SDL_INIT_VIDEO, hence having it here
 	IN_Init();
