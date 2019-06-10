@@ -39,7 +39,7 @@ menuDef {
 #define GRAPHICS_Y 32
 	SUBWINDOW( 6, GRAPHICS_Y, (SUBWINDOW_WIDTH_L), 160, _("GRAPHICS") )
 #ifdef LEGACY
-	COMBO( 8, GRAPHICS_Y+16, (SUBWINDOW_WIDTH_L)-4, 10, _("Renderer:"), 0.2, 8, "cl_renderer", LEGACY_RENDERERS, exec vid_restart, _("Set your desired renderer (does a video restart)") )
+	COMBO( 8, GRAPHICS_Y+16, (SUBWINDOW_WIDTH_L)-4, 10, _("Renderer:"), .2, 8, "cl_renderer", LEGACY_RENDERERS, exec vid_restart, _("Set your desired renderer (does a video restart)") )
 	MULTIACTION( 8, GRAPHICS_Y+28, (SUBWINDOW_WIDTH_L)-4, 10, _("Overall Quality:"), .2, 8, "ui_glCustom", cvarFloatList { "fastest" 3 "fast" 2 "normal" 1 "high" 0 }, uiScript update "ui_glCustom", _("Set overall video quality") )
 	COMBO( 8, GRAPHICS_Y+40, (SUBWINDOW_WIDTH_L)-4, 10, _("Resolution:"), .2, 8, "ui_r_mode", LEGACY_RESOLUTIONS, uiScript glCustom, _("Set video resolution of the game") )
 	NUMERICFIELD( 8, GRAPHICS_Y+52, (SUBWINDOW_WIDTH_L)-4, 10, _("Custom Width:"), .2, 8, "r_customwidth", 5, _("Specifies custom resolution width (requires custom resolution set - *Use at your own risk*)") )
@@ -52,7 +52,7 @@ menuDef {
 	MULTIACTION( 8, GRAPHICS_Y+112, (SUBWINDOW_WIDTH_L)-4, 10, _("Map overbright bits:"), .2, 8, "ui_r_mapoverbrightbits", cvarFloatList { "0" 0 "1" 1 "2" 2 "3" 3 }, uiScript update "ui_glCustom", _("The world gets brighter, but paler (requires vid_restart)") )
 	YESNOACTION( 8, GRAPHICS_Y+124, (SUBWINDOW_WIDTH_L)-4, 10, _("Overbright Bits:"), .2, 8, "ui_r_overBrightBits", uiScript update "ui_glCustom", _("Map shines brighter (requires vid_restart)") )
 	MULTIACTION( 8, GRAPHICS_Y+136, (SUBWINDOW_WIDTH_L)-4, 10, _("Max. Frames Per Second:"), .2, 8, "com_maxfps", cvarFloatList { "Low (43 FPS)" 43 "Medium (76 FPS)" 76 "Default (85 FPS)" 85 "High (125 FPS)" 125 }, uiScript update "ui_glCustom", _("Sets the frames per second limit for a stable render rate") )
-	MULTIACTION( 8, GRAPHICS_Y+148, (SUBWINDOW_WIDTH_L)-4, 10, _("High Quality Video:"), .2, 8, "r_highQualityVideo", cvarFloatList { "0" 0 "1" 1 }, uiScript update "ui_glCustom", _("Sets high quality video") )
+	YESNOACTION( 8, GRAPHICS_Y+148, (SUBWINDOW_WIDTH_L)-4, 10, _("High Quality Video:"), .2, 8, "r_highQualityVideo", uiScript update "ui_glCustom", _("Sets high quality video") )
 
 // Advanced graphics //
 #define GRAPHICSADVANCED_Y 196
@@ -64,7 +64,7 @@ menuDef {
 	// add options 0 - disabled, 1 - single path, 2 - path
 	YESNOACTION( 8, GRAPHICSADVANCED_Y+52, (SUBWINDOW_WIDTH_L)-4, 10, _("Dynamic Lights:"), .2, 8, "ui_r_dynamiclight", uiScript glCustom; uiScript update "r_dynamicLight", _("Toggles use of dynamic lighting effects") )
 	// check this if ET supports same way
-	MULTIACTION( 8, GRAPHICSADVANCED_Y+64, (SUBWINDOW_WIDTH_L)-4, 10, _("Geometric Detail:"), .2, 8, "ui_r_lodbias", cvarFloatList { "Low" 2 "Medium" 1 "High" 0 }, uiScript glCustom ; uiScript update "r_lodbias", _("Set level of details bias") )
+	MULTIACTION( 8, GRAPHICSADVANCED_Y+64, (SUBWINDOW_WIDTH_L)-4, 10, _("Geometric Detail:"), .2, 8, "ui_r_lodbias", cvarFloatList { "Low" 2 "Medium" 1 "High" 0 }, uiScript glCustom; uiScript update "r_lodbias", _("Set level of details bias") )
 	MULTIACTION( 8, GRAPHICSADVANCED_Y+76, (SUBWINDOW_WIDTH_L)-4, 10, _("Texture Quality:"), .2, 8, "ui_r_texturebits", cvarFloatList { "Default" 0 "16-bit" 16 "32-bit" 32 }, uiScript glCustom, _("Set the number of bits for textures") )
 	// "GL_NEAREST" "GL_LINEAR" "GL_NEAREST_MIPMAP_NEAREST" "GL_LINEAR_MIPMAP_NEAREST" "GL_NEAREST_MIPMAP_LINEAR" "GL_LINEAR_MIPMAP_LINEAR"
 	MULTIACTION( 8, GRAPHICSADVANCED_Y+88, (SUBWINDOW_WIDTH_L)-4, 10, _("Texture Filter:"), .2, 8, "ui_r_texturemode", cvarStrList { "Bilinear"; "GL_LINEAR_MIPMAP_NEAREST"; "Trilinear"; "GL_LINEAR_MIPMAP_LINEAR" }, uiScript glCustom, _("Set the GL texture mode") )
@@ -75,7 +75,7 @@ menuDef {
 	MULTIACTION( 8, GRAPHICSADVANCED_Y+148, (SUBWINDOW_WIDTH_L)-4, 10, _("Depth Buffer:"), .2, 8, "ui_r_depthbits", cvarFloatList { "Default" 0 "16-bit" 16 "24-bit" 24 }, uiScript glCustom, _("Set the number of desired depth bits") )
 	YESNOACTION( 8, GRAPHICSADVANCED_Y+160, (SUBWINDOW_WIDTH_L)-4, 10, _("Compress Textures:"), .2, 8, "ui_r_ext_compressed_textures", uiScript glCustom, _("Toggles the compression of textures") )
 	YESNOACTION( 8, GRAPHICSADVANCED_Y+172, (SUBWINDOW_WIDTH_L)-4, 10, _("Sync Every Frame:"), .2, 8, "ui_r_finish", uiScript glCustom, _("Prevent screen tearing") )
-	MULTIACTION( 8, GRAPHICSADVANCED_Y+184, (SUBWINDOW_WIDTH_L)-4, 10, _("GL Extensions:"), .2, 8, "ui_r_allowExtensions", cvarFloatList { "Enabled" 1 "Disabled" 0 }, uiScript glCustom , _("Enables or disables usage of OpenGL extensions"))
+	MULTIACTION( 8, GRAPHICSADVANCED_Y+184, (SUBWINDOW_WIDTH_L)-4, 10, _("GL Extensions:"), .2, 8, "ui_r_allowExtensions", cvarFloatList { "Enabled" 1 "Disabled" 0 }, uiScript glCustom, _("Enables or disables usage of OpenGL extensions"))
 
 	BUTTON( 8+.5*((SUBWINDOW_WIDTH_L)-196), GRAPHICSADVANCED_Y+198, 196, 14, _("SET RECOMMENDED"), .24, 11, uiScript vidReset ; uiScript systemCvarsReset ; open rec_restart )
 
