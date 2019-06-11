@@ -108,8 +108,8 @@ void G_WriteClientSessionData(gclient_t *client, qboolean restart)
 	       ((mvc >> 16) & 0xFFFF),
 #endif
 	       // Damage and rounds played rolled in with weapon stats (below)
-
 	       client->sess.muted,
+
 	       client->sess.ignoreClients[0],
 	       client->sess.ignoreClients[1],
 	       client->pers.enterTime,
@@ -270,15 +270,15 @@ void G_ReadSessionData(gclient_t *client)
 
 #ifdef FEATURE_MULTIVIEW
 #ifdef FEATURE_RATING
-	sscanf(s, "%i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %f %f %f %f %i %i %i %i %i %i %i %i",
+	sscanf(s, "%i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %f %f %f %f %i %i %i %i %i %i %i %i",
 #else
-	sscanf(s, "%i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i",
+	sscanf(s, "%i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i",
 #endif
 #else
 #ifdef FEATURE_RATING
-	sscanf(s, "%i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %f %f %f %f %i %i %i %i %i %i",
+	sscanf(s, "%i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %f %f %f %f %i %i %i %i %i %i",
 #else
-	sscanf(s, "%i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i",
+	sscanf(s, "%i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i",
 #endif
 #endif
 	       (int *)&client->sess.sessionTeam,
@@ -302,6 +302,7 @@ void G_ReadSessionData(gclient_t *client)
 	       &client->sess.self_kills,
 	       &client->sess.team_kills,
 	       &client->sess.team_gibs,
+
 	       &client->sess.time_axis,
 	       &client->sess.time_allies,
 	       &client->sess.time_played,
@@ -317,6 +318,7 @@ void G_ReadSessionData(gclient_t *client)
 #endif
 	       // Damage and round count rolled in with weapon stats (below)
 	       (int *)&client->sess.muted,
+
 	       &client->sess.ignoreClients[0],
 	       &client->sess.ignoreClients[1],
 	       &client->pers.enterTime,
