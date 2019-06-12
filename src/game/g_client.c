@@ -3312,8 +3312,6 @@ void ClientDisconnect(int clientNum)
 
 	trap_SetConfigstring(CS_PLAYERS + clientNum, "");
 
-	G_deleteStats(clientNum); // session related
-
 	CalculateRanks();
 
 	G_verifyMatchState((team_t)i);

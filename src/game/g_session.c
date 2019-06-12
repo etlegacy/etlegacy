@@ -54,10 +54,10 @@ void G_WriteClientSessionData(gclient_t *client, qboolean restart)
 	const char *s;
 
 	// stats reset check
-	//if (level.fResetStats)
-	//{
-	G_deleteStats(client - level.clients);
-	//}
+	if (level.fResetStats)
+	{
+		G_deleteStats(client - level.clients);
+	}
 
 #ifdef FEATURE_MULTIVIEW
 #ifdef FEATURE_RATING
@@ -403,40 +403,40 @@ void G_ReadSessionData(gclient_t *client)
  */
 void G_InitSessionData(gclient_t *client, const char *userinfo)
 {
-    clientSession_t *sess = &client->sess;
+	clientSession_t *sess = &client->sess;
 
-    // initial team determination
-    sess->sessionTeam = TEAM_SPECTATOR;
+	// initial team determination
+	sess->sessionTeam = TEAM_SPECTATOR;
 
-    sess->spectatorState = SPECTATOR_FREE;
-    sess->spectatorTime = level.time;
+	sess->spectatorState = SPECTATOR_FREE;
+	sess->spectatorTime = level.time;
 
-    sess->latchPlayerType = sess->playerType = 0;
-    sess->latchPlayerWeapon = sess->playerWeapon = WP_NONE;
-    sess->latchPlayerWeapon2 = sess->playerWeapon2 = WP_NONE;
+	sess->latchPlayerType = sess->playerType = 0;
+	sess->latchPlayerWeapon = sess->playerWeapon = WP_NONE;
+	sess->latchPlayerWeapon2 = sess->playerWeapon2 = WP_NONE;
 
-    sess->spawnObjectiveIndex = 0;
+	sess->spawnObjectiveIndex = 0;
 
-    Com_Memset(sess->ignoreClients, 0, sizeof(sess->ignoreClients));
+	Com_Memset(sess->ignoreClients, 0, sizeof(sess->ignoreClients));
 
-    sess->muted = qfalse;
-    Com_Memset(sess->skill, 0, sizeof(sess->skill));
-    Com_Memset(sess->skillpoints, 0, sizeof(sess->skillpoints));
-    Com_Memset(sess->startskillpoints, 0, sizeof(sess->startskillpoints));
-    Com_Memset(sess->medals, 0, sizeof(sess->medals));
-    sess->rank = 0;
-    sess->startxptotal = 0;
+	sess->muted = qfalse;
+	Com_Memset(sess->skill, 0, sizeof(sess->skill));
+	Com_Memset(sess->skillpoints, 0, sizeof(sess->skillpoints));
+	Com_Memset(sess->startskillpoints, 0, sizeof(sess->startskillpoints));
+	Com_Memset(sess->medals, 0, sizeof(sess->medals));
+	sess->rank = 0;
+	sess->startxptotal = 0;
 
-    // we set ref in ClientUserinfoChanged
-    sess->referee = RL_NONE; // (client->pers.localClient) ? RL_REFEREE : RL_NONE;
-    sess->spec_invite = 0;
-    sess->spec_team = 0;
-    // G_WriteClientSessionData calls this
-    //G_deleteStats(client - level.clients);
+	// we set ref in ClientUserinfoChanged
+	sess->referee = RL_NONE; // (client->pers.localClient) ? RL_REFEREE : RL_NONE;
+	sess->spec_invite = 0;
+	sess->spec_team = 0;
 
-    sess->uci = 0; // GeoIP
+	sess->uci = 0; // GeoIP
 
-    G_WriteClientSessionData(client, qfalse);
+	G_deleteStats(client - level.clients);
+
+	G_WriteClientSessionData(client, qfalse);
 }
 
 /**
