@@ -670,7 +670,7 @@ static void CG_Item(centity_t *cent)
 			break;
 		case IT_TEAM:
 			ent.customShader = cgs.media.objectiveShader;
-			ent.origin[2]   += 7;
+			ent.origin[2]   += 9 + sin((cg.time + 1000) * 0.005) * 3;
 			break;
 		case IT_WEAPON:
 			ent.customShader = cg_weapons[item->giWeapon].weaponIcon[1];
