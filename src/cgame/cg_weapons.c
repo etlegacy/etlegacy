@@ -5373,7 +5373,7 @@ void CG_MeleeImpact(int weapon, int missileEffect, vec3_t origin, vec3_t dir, in
  */
 void CG_BulletImpact(int weapon, int missileEffect, vec3_t origin, vec3_t dir, int surfFlags, float *radius, int *markDuration)
 {
-	*markDuration = -1;
+	*markDuration = 0;
 
 	if (missileEffect == PS_FX_NONE)
 	{
