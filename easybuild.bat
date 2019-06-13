@@ -137,6 +137,11 @@ GOTO:EOF
 	CALL:CLEANPATH "!game_homepath!\legacy\" "*.pk3 *.dll *.dat"
 	CALL:COPYFROMPATH "%cd%\" "et*.exe renderer_openg*.dll SDL2.dll" "!game_basepath!\"
 	CALL:COPYFROMPATH "%cd%\legacy\" "*.pk3 qagame*.dll *.dat" "!game_basepath!\legacy\"
+	CD !batloc!
+	CALL:COPYFROMPATH "%cd%\misc\etmain\" "*" "!game_basepath!\etmain\"
+	CALL:COPYFROMPATH "%cd%\misc\" "description.txt" "!game_basepath!\legacy\"
+	CALL:COPYFROMPATH "%cd%\docs\" "INSTALL.txt" "!game_basepath!"
+	CALL:COPYFROMPATH "%cd%\" "COPYING.txt" "!game_basepath!"
 GOTO:EOF
 
 :CLEANPATH
