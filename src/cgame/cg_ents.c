@@ -682,7 +682,8 @@ static void CG_Item(centity_t *cent)
 
 		if (item->giType == IT_AMMO || item->giType == IT_HEALTH || item->giType == IT_TEAM ||
 		    BG_ClassHasWeapon(GetPlayerClassesData(cgs.clientinfo[cg.snap->ps.clientNum].team,
-		                                           cgs.clientinfo[cg.snap->ps.clientNum].cls), item->giWeapon))
+		                                           cgs.clientinfo[cg.snap->ps.clientNum].cls), item->giWeapon) ||
+		    cgs.clientinfo[cg.clientNum].team == TEAM_SPECTATOR)
 		{
 			ent.shaderRGBA[0] = 255;
 			ent.shaderRGBA[1] = 255;
