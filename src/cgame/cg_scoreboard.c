@@ -970,8 +970,9 @@ static int WM_TeamScoreboard(int x, int y, team_t team, float fade, int maxrows,
 	else
 	{
 #ifdef FEATURE_RATING
-		char *s, *s2;
+		char *s;
 #endif
+		char *s2;
 
 		if (team == TEAM_AXIS)
 		{
