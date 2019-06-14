@@ -221,7 +221,7 @@ int WM_DrawObjectives(int x, int y, int width, float fade)
 		}
 		else
 		{
-			s = va("%s   ^7%2.0f:%i%i", CG_TranslateString("MISSION TIME:"), (double)mins, tens, seconds);     // double cast to line up with reinforce time
+			s = va("%s   ^7%2.f:%i%i", CG_TranslateString("MISSION TIME:"), (float)mins, tens, seconds);
 		}
 
 		CG_Text_Paint_Ext(x, y, 0.25f, 0.25f, SB_text, s, 0, 0, 0, FONT_HEADER);
