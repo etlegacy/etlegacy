@@ -1717,7 +1717,7 @@ gentity_t *fire_missile(gentity_t *self, vec3_t start, vec3_t dir, int weapon)
 
 	// no self->client for shooter_grenade's
 	// if grenade time left, add it to next think and reset it, else add default value
-	if (self->client && self->client->ps.grenadeTimeLeft)
+	if (GetWeaponTableData(weapon)->grenadeTime && self->client && self->client->ps.grenadeTimeLeft)
 	{
 		bolt->nextthink                  = level.time + self->client->ps.grenadeTimeLeft;
 		self->client->ps.grenadeTimeLeft = 0;   // reset grenade timer
