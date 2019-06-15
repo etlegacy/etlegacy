@@ -5351,14 +5351,14 @@ sfxHandle_t CG_GetRandomSoundSurface(weaponSounds_t *weaponSounds, soundSurface_
  */
 void CG_MeleeImpact(int weapon, int missileEffect, vec3_t origin, vec3_t dir, int surfFlags, float *radius, int *markDuration)
 {
-	if (missileEffect != PS_FX_FLESH)
+	if (missileEffect == PS_FX_COMMON)
 	{
 		*radius = 1 + rand() % 2;
 
 		CG_AddBulletParticles(origin, dir, 20, 800, 3 + rand() % 6, 1.0f);
-	}
 
-	*markDuration = cg_markTime.integer;
+		*markDuration = cg_markTime.integer;
+	}
 }
 
 /**
@@ -5373,8 +5373,6 @@ void CG_MeleeImpact(int weapon, int missileEffect, vec3_t origin, vec3_t dir, in
  */
 void CG_BulletImpact(int weapon, int missileEffect, vec3_t origin, vec3_t dir, int surfFlags, float *radius, int *markDuration)
 {
-	*markDuration = 0;
-
 	if (missileEffect == PS_FX_NONE)
 	{
 		CG_AddSparks(origin, dir, 350, 200, 15 + rand() % 7, 0.2f);
@@ -5733,7 +5731,7 @@ void CG_MissileHitWall(int weapon, int missileEffect, vec3_t origin, vec3_t dir,
 	soundSurface_t soundSurfaceIndex = W_SND_SURF_DEFAULT;
 	qhandle_t      mark;
 	sfxHandle_t    sfx, sfx2;
-	int            markDuration;
+	int            markDuration = 0;
 	float          radius;
 
 	// no impact
