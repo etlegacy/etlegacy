@@ -684,7 +684,7 @@ static void CG_Item(centity_t *cent)
 		    (item->giType == IT_WEAPON && item->giWeapon == WP_AMMO) ||
 		    BG_ClassHasWeapon(GetPlayerClassesData(TEAM_AXIS, cgs.clientinfo[cg.snap->ps.clientNum].cls), item->giWeapon) ||
 		    BG_ClassHasWeapon(GetPlayerClassesData(TEAM_ALLIES, cgs.clientinfo[cg.snap->ps.clientNum].cls), item->giWeapon) ||
-		    cgs.clientinfo[cg.clientNum].team == TEAM_SPECTATOR)
+		    cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_SPECTATOR)
 		{
 			ent.shaderRGBA[0] = 255;
 			ent.shaderRGBA[1] = 255;
