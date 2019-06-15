@@ -3971,6 +3971,11 @@ qboolean CG_LimboPanel_TeamIsDisabled(team_t checkTeam)
 		return qfalse;
 	}
 
+	if (cgs.clientinfo[cg.clientNum].shoutcaster)
+	{
+		return qtrue;
+	}
+
 	if (CG_LimboPanel_TeamIsFull(checkTeam))
 	{
 		return qtrue;

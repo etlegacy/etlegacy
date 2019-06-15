@@ -2026,7 +2026,7 @@ const char *CG_Debriefing_FullRankNameForClientInfo(clientInfo_t *ci)
 {
 	if (ci->team != TEAM_AXIS && ci->team != TEAM_ALLIES)
 	{
-		return "Spectator";
+		return (ci->shoutcaster) ? "Shoutcaster" : "Spectator";
 	}
 
 	return GetRankTableData(ci->team, ci->rank)->names;
@@ -2041,7 +2041,7 @@ const char *CG_Debriefing_RankNameForClientInfo(clientInfo_t *ci)
 {
 	if (ci->team != TEAM_AXIS && ci->team != TEAM_ALLIES)
 	{
-		return "Spc";
+		return (ci->shoutcaster) ? "Shc" : "Spc";
 	}
 
 	return GetRankTableData(ci->team, ci->rank)->miniNames;
