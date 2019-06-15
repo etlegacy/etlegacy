@@ -594,7 +594,7 @@ void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, float h,
 
 			mEnt->yaw = (int)cg.predictedPlayerState.viewangles[YAW];
 		}
-		else if ((ci->team == snap->ps.persistant[PERS_TEAM] && cent->currentValid) || cgs.clientinfo[cg.clientNum].shoutcaster)
+		else if ((ci->team == snap->ps.persistant[PERS_TEAM] || cgs.clientinfo[cg.clientNum].shoutcaster) && cent->currentValid)
 		{
 			if (!scissor)
 			{
