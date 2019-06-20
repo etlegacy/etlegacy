@@ -570,14 +570,22 @@ static void CG_MessageMode_f(void)
 	trap_Argv(0, cmd, 64);
 
 	// team say
-	if (!Q_stricmp(cmd, "messagemode2"))
+	if (!Q_stricmp(cmd, "messagemode2") && cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR)
 	{
 		trap_Cvar_Set("cg_messageType", "2");
 	}
 	// fireteam say
-	else if (!Q_stricmp(cmd, "messagemode3") && CG_IsOnFireteam(cg.clientNum))
+	else if (!Q_stricmp(cmd, "messagemode3") && cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR)
 	{
-		trap_Cvar_Set("cg_messageType", "3");
+		if (CG_IsOnFireteam(cg.clientNum))
+		{
+			trap_Cvar_Set("cg_messageType", "3");
+		}
+		else
+		{
+			// fallback to team say
+			trap_Cvar_Set("cg_messageType", "2");
+		}
 	}
 	// (normal) say
 	else
