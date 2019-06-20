@@ -4778,6 +4778,12 @@ void ClientCommand(int clientNum)
 	}
 	else if (Q_stricmp(cmd, "say_buddy") == 0)
 	{
+		if (ent->client->sess.sessionTeam == TEAM_SPECTATOR || ent->client->sess.sessionTeam == TEAM_FREE)
+		{
+			trap_SendServerCommand(ent - g_entities, "print \"Can't buddy chat as spectator\n\"");
+			return;
+		}
+
 		if (!ent->client->sess.muted)
 		{
 			Cmd_Say_f(ent, SAY_BUDDY, qfalse);
@@ -4790,6 +4796,12 @@ void ClientCommand(int clientNum)
 	}
 	else if (Q_stricmp(cmd, "vsay_buddy") == 0)
 	{
+		if (ent->client->sess.sessionTeam == TEAM_SPECTATOR || ent->client->sess.sessionTeam == TEAM_FREE)
+		{
+			trap_SendServerCommand(ent - g_entities, "print \"Can't buddy chat as spectator\n\"");
+			return;
+		}
+
 		if (!ent->client->sess.muted)
 		{
 			Cmd_Voice_f(ent, SAY_BUDDY, qfalse, qfalse);
