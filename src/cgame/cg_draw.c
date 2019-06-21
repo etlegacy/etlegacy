@@ -2067,7 +2067,7 @@ static void CG_DrawVote(void)
 				CG_Text_Paint_Ext(INFOTEXT_STARTX, y, fontScale, fontScale, colorYellow, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 				y += charHeight * 2;
 
-				str = CG_TranslateString("Can't vote as Spectator");
+				str = CG_TranslateString(va("Can't vote as %s", cgs.clientinfo[cg.clientNum].shoutcaster ? "Shoutcaster" : "Spectator"));
 			}
 			else
 			{
