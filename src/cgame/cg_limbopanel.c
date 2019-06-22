@@ -2181,7 +2181,14 @@ void CG_LimboPanel_RenderHead(panel_button_t *button)
 		//CG_FillRect( button->rect.x, button->rect.y, button->rect.w, button->rect.h, colorBlack );
 		//CG_DrawPlayerHead( &button->rect, BG_GetCharacter( TEAM_ALLIES, PC_SOLDIER ), BG_GetCharacter( TEAM_ALLIES, PC_SOLDIER ), 180, 0, qtrue, HD_IDLE4, 0, 0, qtrue );
 
-		CG_DrawPic(button->rect.x, button->rect.y, button->rect.w, button->rect.h, cgs.media.limboSpectator);
+		if (cgs.clientinfo[cg.clientNum].shoutcaster)
+		{
+			CG_DrawPic(button->rect.x, button->rect.y, button->rect.w, button->rect.h, cgs.media.limboShoutcaster);
+		}
+		else
+		{
+			CG_DrawPic(button->rect.x, button->rect.y, button->rect.w, button->rect.h, cgs.media.limboSpectator);
+		}
 	}
 
 	VectorSet(clrBackRenderHead, .6f, .6f, .6f);
@@ -2532,7 +2539,7 @@ void CG_LimboPanel_WeaponPanel(panel_button_t *button)
 		CG_DrawPic(button->rect.x, button->rect.y, button->rect.w, button->rect.h, cgs.media.limboWeaponBlendThingy);
 		trap_R_SetColor(NULL);
 
-		CG_Text_Paint_Ext(button->rect.x + 4, button->rect.y + 12, weaponPanelNameFont.scalex, weaponPanelNameFont.scaley, weaponPanelNameFont.colour, "SPECTATOR", 0, 0, weaponPanelNameFont.style, weaponPanelNameFont.font);
+		CG_Text_Paint_Ext(button->rect.x + 4, button->rect.y + 12, weaponPanelNameFont.scalex, weaponPanelNameFont.scaley, weaponPanelNameFont.colour, cgs.clientinfo[cg.clientNum].shoutcaster ? "SHOUTCASTER" : "SPECTATOR", 0, 0, weaponPanelNameFont.style, weaponPanelNameFont.font);
 
 		return;
 	}

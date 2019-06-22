@@ -1744,6 +1744,7 @@ typedef struct
 	qhandle_t limboBriefingButtonStopOff;
 
 	qhandle_t limboSpectator;
+	qhandle_t limboShoutcaster;
 	qhandle_t limboRadioBroadcast;
 
 	qhandle_t limboTeamLocked;

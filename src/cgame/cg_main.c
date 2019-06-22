@@ -2081,6 +2081,7 @@ static void CG_RegisterGraphics(void)
 	cgs.media.limboBriefingButtonStopOff = trap_R_RegisterShaderNoMip("gfx/limbo/but_stop_off");
 
 	cgs.media.limboSpectator      = trap_R_RegisterShaderNoMip("gfx/limbo/spectator");
+	cgs.media.limboShoutcaster    = trap_R_RegisterShaderNoMip("gfx/limbo/shoutcaster");
 	cgs.media.limboRadioBroadcast = trap_R_RegisterShaderNoMip("ui/assets/radio_tower");
 
 	cgs.media.limboTeamLocked = trap_R_RegisterShaderNoMip("gfx/limbo/lock");
