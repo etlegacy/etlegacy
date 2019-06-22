@@ -1297,9 +1297,9 @@ static void CG_DrawPowerUps(rectDef_t rect)
 		CG_DrawPic(rect.x, rect.y, rect.w, rect.h, cgs.media.hudAdrenaline);
 		trap_R_SetColor(NULL);
 	}
-	else if (cgs.clientinfo[cg.clientNum].shoutcaster)
+	else if (cgs.clientinfo[cg.clientNum].shoutcaster && !(cg.snap->ps.pm_flags & PMF_FOLLOW))
 	{
-		// simplified version for shoutcaster
+		// simplified version for shoutcaster when not following players
 		vec4_t color = { 1.f, 1.f, 1.f, 1.f };
 		color[3] *= 0.67 + 0.33 * sin(cg.time / 200.0);
 		trap_R_SetColor(color);
