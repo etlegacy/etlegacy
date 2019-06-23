@@ -87,7 +87,7 @@ if(UNIX)
 		set(LIB_SUFFIX "_mac")
 		set(CMAKE_SHARED_MODULE_SUFFIX "")
 	else()
-		set(OS_LIBRARIES dl m rt pthread)
+		set(OS_LIBRARIES ${CMAKE_DL_LIBS} m rt pthread)
 		set(LIB_SUFFIX ".mp.")
 	endif()
 
