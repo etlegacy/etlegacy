@@ -1759,7 +1759,7 @@ void CG_VoiceChatLocal(int mode, qboolean voiceOnly, int clientNum, int color, c
 
 	if (CG_GetVoiceChat(voiceChatList, cmd, &snd, &sprite, &chat))
 	{
-		if (mode == SAY_TEAM || mode == SAY_BUDDY || !cg_teamChatsOnly.integer)
+		if (mode == SAY_TEAM || mode == SAY_BUDDY || !cg_teamChatsOnly.integer || cgs.clientinfo[cg.clientNum].team == TEAM_SPECTATOR)
 		{
 			bufferedVoiceChat_t vchat;
 			const char          *loc = " ";
@@ -2902,7 +2902,7 @@ static void CG_ServerCommand(void)
 		const char *s;
 		int        clientNum = -1;     // console
 
-		if (cg_teamChatsOnly.integer)     // FIXME: skip for console?
+		if (cg_teamChatsOnly.integer && cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR) // FIXME: skip for console?
 		{
 			return;
 		}
