@@ -1799,28 +1799,31 @@ static void CG_DrawNewCompass(rectDef_t location)
 
 	diff = basew * 0.25f;
 
-	if (cgs.autoMapExpanded)
+	if (!cg_altHud.integer)
 	{
-		if (cg.time - cgs.autoMapExpandTime < 100.f)
+		if (cgs.autoMapExpanded)
 		{
-			CG_CompasMoveLocation(&basex, &basey, qtrue);
+			if (cg.time - cgs.autoMapExpandTime < 100.f)
+			{
+				CG_CompasMoveLocation(&basex, &basey, qtrue);
+			}
+			else
+			{
+				CG_DrawExpandedAutoMap();
+				return;
+			}
 		}
 		else
 		{
-			CG_DrawExpandedAutoMap();
-			return;
-		}
-	}
-	else
-	{
-		if (cg.time - cgs.autoMapExpandTime <= 150.f)
-		{
-			CG_DrawExpandedAutoMap();
-			return;
-		}
-		else if ((cg.time - cgs.autoMapExpandTime > 150.f) && (cg.time - cgs.autoMapExpandTime < 250.f))
-		{
-			CG_CompasMoveLocation(&basex, &basey, qfalse);
+			if (cg.time - cgs.autoMapExpandTime <= 150.f)
+			{
+				CG_DrawExpandedAutoMap();
+				return;
+			}
+			else if ((cg.time - cgs.autoMapExpandTime > 150.f) && (cg.time - cgs.autoMapExpandTime < 250.f))
+			{
+				CG_CompasMoveLocation(&basex, &basey, qfalse);
+			}
 		}
 	}
 
@@ -3175,7 +3178,7 @@ void CG_DrawUpperRight(void)
 			}
 		}
 
-		if (!(cg.snap->ps.pm_flags & PMF_LIMBO) && (cgs.autoMapExpanded || (cg.time - cgs.autoMapExpandTime < 250.f)))
+		if (!(cg.snap->ps.pm_flags & PMF_LIMBO) && (cgs.autoMapExpanded || (cg.time - cgs.autoMapExpandTime < 250.f)) && !cg_altHud.integer)
 		{
 			return;
 		}

@@ -1506,27 +1506,31 @@ void CG_DrawAutoMap(float x, float y, float w, float h)
 	{
 		if (cg.time - cgs.autoMapExpandTime < 100.f)
 		{
-			//y -= ((cg.time - cgs.autoMapExpandTime) / 100.f) * 128.f;
 			CG_DrawExpandedAutoMap();
 		}
 		else
 		{
-			//y -= 128.f;
 			CG_DrawExpandedAutoMap();
-			return;
+
+			if (!cg_altHud.integer)
+			{
+				return;
+			}
 		}
 	}
 	else
 	{
 		if (cg.time - cgs.autoMapExpandTime <= 150.f)
 		{
-			//y -= 128.f;
 			CG_DrawExpandedAutoMap();
-			return;
+
+			if (!cg_altHud.integer)
+			{
+				return;
+			}
 		}
 		else if ((cg.time - cgs.autoMapExpandTime > 150.f) && (cg.time - cgs.autoMapExpandTime < 250.f))
 		{
-			//y = (y - 128.f) + ((cg.time - cgs.autoMapExpandTime - 150.f) / 100.f) * 128.f;
 			CG_DrawExpandedAutoMap();
 		}
 	}
