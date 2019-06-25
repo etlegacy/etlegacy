@@ -404,8 +404,8 @@ static void WM_DrawClientScore(int x, int y, score_t *score, float *color, float
 
 	tempx = x;
 
-	// VectorSet(hcolor, 1, 1, 1);
-	// hcolor[3] = fade;
+	//VectorSet(hcolor, 1, 1, 1);
+	//hcolor[3] = fade;
 
 	y += 12;
 
@@ -428,7 +428,7 @@ static void WM_DrawClientScore(int x, int y, score_t *score, float *color, float
 
 	if (ci->team != TEAM_SPECTATOR)
 	{
-		// draw ready icon if client is ready..
+		// draw ready icon if client is ready
 		if ((score->scoreflags & 1) && cgs.gamestate != GS_PLAYING)
 		{
 			CG_DrawPic(tempx - 1, y - 9, 10, 10, cgs.media.readyShader);
@@ -445,7 +445,7 @@ static void WM_DrawClientScore(int x, int y, score_t *score, float *color, float
 			maxchars -= 2;
 		}
 		else if (cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR && ci->team == cgs.clientinfo[cg.clientNum].team
-			&& (ci->powerups & (1 << PW_OPS_DISGUISED)) && cgs.gamestate != GS_INTERMISSION)
+		         && (ci->powerups & (1 << PW_OPS_DISGUISED)) && cgs.gamestate != GS_INTERMISSION)
 		{
 			CG_DrawPic(tempx - 1, y - 9, 10, 10, ci->team == TEAM_AXIS ? cgs.media.alliedUniformShader : cgs.media.axisUniformShader);
 			offset   += 12;
@@ -453,7 +453,7 @@ static void WM_DrawClientScore(int x, int y, score_t *score, float *color, float
 			maxchars -= 2;
 		}
 		else if (cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR && ci->team == cgs.clientinfo[cg.clientNum].team
-			&& cgs.clientinfo[score->client].health > 0 && (ci->powerups & (1 << PW_INVULNERABLE)) && cgs.gamestate != GS_INTERMISSION)
+		         && cgs.clientinfo[score->client].health > 0 && (ci->powerups & (1 << PW_INVULNERABLE)) && cgs.gamestate != GS_INTERMISSION)
 		{
 			CG_DrawPic(tempx - 1, y - 9, 10, 10, cgs.media.spawnInvincibleShader);
 			offset   += 12;
@@ -469,7 +469,8 @@ static void WM_DrawClientScore(int x, int y, score_t *score, float *color, float
 			tempx    += 12;
 			maxchars -= 2;
 		}
-		else if (cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR && ci->team == cgs.clientinfo[cg.clientNum].team && cgs.clientinfo[score->client].health == 0 && cgs.gamestate != GS_INTERMISSION)
+		else if (cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR && ci->team == cgs.clientinfo[cg.clientNum].team
+		         && cgs.clientinfo[score->client].health == 0 && cgs.gamestate != GS_INTERMISSION)
 		{
 			CG_DrawPic(tempx - 1, y - 9, 10, 10, cgs.media.medicIcon);
 			offset   += 12;
@@ -649,8 +650,8 @@ static void WM_DrawClientScore_Small(int x, int y, score_t *score, float *color,
 
 	tempx = x;
 
-	// VectorSet(hcolor, 1, 1, 1);
-	// hcolor[3] = fade;
+	//VectorSet(hcolor, 1, 1, 1);
+	//hcolor[3] = fade;
 
 	y += 10;
 
@@ -684,7 +685,7 @@ static void WM_DrawClientScore_Small(int x, int y, score_t *score, float *color,
 			maxchars -= 2;
 		}
 		else if (cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR && ci->team == cgs.clientinfo[cg.clientNum].team
-			&& (ci->powerups & (1 << PW_OPS_DISGUISED)) && cgs.gamestate != GS_INTERMISSION)
+		         && (ci->powerups & (1 << PW_OPS_DISGUISED)) && cgs.gamestate != GS_INTERMISSION)
 		{
 			CG_DrawPic(tempx + 1, y - 9, 10, 10, ci->team == TEAM_AXIS ? cgs.media.alliedUniformShader : cgs.media.axisUniformShader);
 			offset   += 14;
@@ -692,7 +693,7 @@ static void WM_DrawClientScore_Small(int x, int y, score_t *score, float *color,
 			maxchars -= 2;
 		}
 		else if (cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR && ci->team == cgs.clientinfo[cg.clientNum].team
-			&& cgs.clientinfo[score->client].health > 0 && (ci->powerups & (1 << PW_INVULNERABLE)) && cgs.gamestate != GS_INTERMISSION)
+		         && cgs.clientinfo[score->client].health > 0 && (ci->powerups & (1 << PW_INVULNERABLE)) && cgs.gamestate != GS_INTERMISSION)
 		{
 			CG_DrawPic(tempx + 1, y - 9, 10, 10, cgs.media.spawnInvincibleShader);
 			offset   += 14;
@@ -708,7 +709,8 @@ static void WM_DrawClientScore_Small(int x, int y, score_t *score, float *color,
 			tempx    += 14;
 			maxchars -= 2;
 		}
-		else if (cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR && ci->team == cgs.clientinfo[cg.clientNum].team && cgs.clientinfo[score->client].health == 0 && cgs.gamestate != GS_INTERMISSION)
+		else if (cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR && ci->team == cgs.clientinfo[cg.clientNum].team
+		         && cgs.clientinfo[score->client].health == 0 && cgs.gamestate != GS_INTERMISSION)
 		{
 			CG_DrawPic(tempx + 1, y - 9, 10, 10, cgs.media.medicIcon);
 			offset   += 14;
@@ -1149,7 +1151,6 @@ static int WM_TeamScoreboard(int x, int y, team_t team, float fade, int maxrows,
 	{
 		maxrows        = absmaxrows;
 		use_mini_chars = qtrue;
-
 	}
 	// save off y val
 	tempy = y;
@@ -1174,7 +1175,6 @@ static int WM_TeamScoreboard(int x, int y, team_t team, float fade, int maxrows,
 			CG_DrawBottom_NoScale(x - 5, y, width + 5, 12, 1);
 			trap_R_SetColor(NULL);
 			y += 12;
-
 		}
 		else
 		{
@@ -1261,10 +1261,11 @@ static int WM_TeamScoreboard(int x, int y, team_t team, float fade, int maxrows,
  */
 qboolean CG_DrawScoreboard(void)
 {
-	int   x = 20, y = 6, x_right = SCREEN_WIDTH - x - (INFO_TOTAL_WIDTH - 5), w;
+	int   x = 20, y = 6, x_right = SCREEN_WIDTH - x - (INFO_TOTAL_WIDTH - 5);
 	float fade;
 	int width = SCREEN_WIDTH - 2 * x + 5;
 #ifdef FEATURE_RATING
+	int        w;
 	const char *s, *s2, *s3;
 #endif
 	float fontScale = cg_fontScaleSP.value;
@@ -1337,7 +1338,6 @@ qboolean CG_DrawScoreboard(void)
 
 		//Skill Rating
 		// XP view
-
 		s3 = (cgs.skillRating && cg_scoreboard.integer == SCOREBOARD_SR) ? CG_TranslateString("Skill Rating view") : CG_TranslateString("XP view");
 		s = va(CG_TranslateString("%s - Press double-%s quickly to switch scoreboard"), s3, s2);
 
