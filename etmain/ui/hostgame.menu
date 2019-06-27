@@ -156,12 +156,12 @@ menuDef {
 	}
 
 // Details //
-	SUBWINDOW( 6, 320, WINDOW_WIDTH-12, 96, _("DETAILS") )
+	SUBWINDOW( 6, 320, WINDOW_WIDTH-12, 100, _("DETAILS") )
 
 	itemDef {
 		name			"labelDetailsGametype"
       	group			GROUP_NAME
-		rect			$evalfloat(6+4) $evalfloat(320+16) $evalfloat(WINDOW_WIDTH-12-8-8) $evalfloat(96-16-4)
+		rect			$evalfloat(6+4) $evalfloat(320+16) $evalfloat(WINDOW_WIDTH-12-8-8) $evalfloat(100-16-4)
 		type			ITEM_TYPE_OWNERDRAW
 		ownerdraw		UI_GAMETYPEDESCRIPTION
 		textfont		UI_FONT_COURBD_21
@@ -177,7 +177,7 @@ menuDef {
     itemDef {
 		name			"labelDetailsCampaign"
       	group			GROUP_NAME
-		rect			$evalfloat(6+4) $evalfloat(320+16) $evalfloat(WINDOW_WIDTH-12-8-8) $evalfloat(96-16-4)
+		rect			$evalfloat(6+4) $evalfloat(320+16) $evalfloat(WINDOW_WIDTH-12-8-8) $evalfloat(100-16-4)
 		type			ITEM_TYPE_OWNERDRAW
 		ownerdraw		UI_CAMPAIGNDESCRIPTION
 		textfont		UI_FONT_COURBD_21
