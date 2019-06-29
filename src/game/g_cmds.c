@@ -1229,8 +1229,7 @@ void G_DropItems(gentity_t *self)
 		gentity_t *flag;
 
 		VectorCopy(self->client->ps.origin, origin);
-		// if the player hasn't died, then assume he's
-		//      throwing objective per g_dropObj
+		// if the player hasn't died, then assume he's throwing objective
 		if (self->health > 0)
 		{
 			VectorCopy(self->client->ps.viewangles, angles);
@@ -4101,6 +4100,18 @@ void Cmd_Activate2_f(gentity_t *ent)
 
 		pass2 = qtrue;
 		trap_Trace(&tr, offset, NULL, NULL, end, ent->s.number, (CONTENTS_SOLID | CONTENTS_BODY | CONTENTS_CORPSE | CONTENTS_TRIGGER));
+	}
+
+	if (ent->client->ps.powerups[PW_REDFLAG] || ent->client->ps.powerups[PW_BLUEFLAG])
+	{
+		if (ent->client->ps.weapon != WP_KNIFE && ent->client->ps.weapon != WP_KNIFE_KABAR)
+		{
+			CP("cp \"You must switch to knife to drop objective\"");
+		}
+		else
+		{
+			G_DropItems(ent);
+		}
 	}
 }
 
