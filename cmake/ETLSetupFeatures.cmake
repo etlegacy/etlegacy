@@ -347,15 +347,3 @@ endif(FEATURE_ANTICHEAT)
 if (FEATURE_RENDERER_GLES)
 	add_definitions(-DFEATURE_RENDERER_GLES)
 endif()
-
-if(FEATURE_CURSES)
-	find_package(Curses REQUIRED)
-	set(CURSES_NEED_NCURSES 1) # Tells FindCurses that ncurses is required
-	list(APPEND CLIENT_LIBRARIES ${CURSES_LIBRARIES})
-	list(APPEND SERVER_LIBRARIES ${CURSES_LIBRARIES})
-	include_directories(SYSTEM ${CURSES_INCLUDE_DIR})
-	list(APPEND COMMON_SRC "src/sys/con_curses.c")
-	add_definitions(-DFEATURE_CURSES)
-endif(FEATURE_CURSES)
-
-

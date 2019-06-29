@@ -1455,15 +1455,6 @@ void Hist_Add(field_t *field);
 field_t *Hist_Prev(void);
 field_t *Hist_Next(void);
 
-#ifdef FEATURE_CURSES
-// Functions from the tty console for fallback
-void CON_Shutdown_tty(void);
-void CON_Init_tty(void);
-char *CON_Input_tty(void);
-void CON_Print_tty(const char *message);
-void CON_Clear_tty(void);
-#endif
-
 /*
  * This is based on the Adaptive Huffman algorithm described in Sayood's Data
  * Compression book.  The ranks are not actually stored, but implicitly defined
