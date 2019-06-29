@@ -2206,9 +2206,13 @@ char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 					client->sess.uci = 0;
 				}
 			}
+			else if (isBot)
+			{
+				client->sess.uci = 0; // bots
+			}
 			else
 			{
-				client->sess.uci = 0; // localhost players
+				client->sess.uci = 246; // localhost players
 			}
 		}
 		else
@@ -2216,7 +2220,7 @@ char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 			unsigned long ip = GeoIP_addr_to_num(cs_ip);
 
 			// 10.0.0.0/8			[RFC1918]
-			// 172.16.0.0/12			[RFC1918]
+			// 172.16.0.0/12		[RFC1918]
 			// 192.168.0.0/16		[RFC1918]
 			// 169.254.0.0/16		[RFC3330] we need this ?
 			if (((ip & 0xFF000000) == 0x0A000000) ||
@@ -2224,7 +2228,7 @@ char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 			    ((ip & 0xFFFF0000) == 0xC0A80000) ||
 			    (ip  == 0x7F000001))                    // recognise also 127.0.0.1
 			{
-				client->sess.uci = 0;
+				client->sess.uci = 246;
 			}
 			else if (allowGeoIP)
 			{
