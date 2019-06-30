@@ -6,6 +6,7 @@
 # Flag icon set : https://www.gosquared.com/resources/flag-icons/
 #                 https://github.com/gosquared/flags
 #
+# Put _bots.png in flags-iso/shiny/32 directory.
 # Put the script in flags-iso/shiny/32 and execute.
 # Copy generated world_flags.tga file to /etmain/gfx/flags/.
 
@@ -67,7 +68,7 @@ geoip_country_codes=("00" "AP" "EU" "AD" "AE" "AF"
 	"BL" "MF" "BQ" "SS" "01")
 
 # handle special territories
-cp -fpv _united-nations.png 00.png # was '--'
+cp -fpv _bots.png 00.png # was '--'
 cp -f _unknown.png AP.png
 cp -f NO.png BV.png
 cp -f NL.png SX.png
