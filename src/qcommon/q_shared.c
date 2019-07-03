@@ -278,10 +278,11 @@ void COM_BitClear(int array[], int bitNum)
  */
 short ShortSwap(short l)
 {
-	byte b1 = l & 255;
-	byte b2 = (l >> 8) & 255;
+	unsigned short tmp = l;
+	unsigned short b1  = (tmp & 0x00ff) << 8;
+	unsigned short b2  = (tmp & 0xff00) >> 8;
 
-	return (short)((b1 << 8) + b2);
+	return (b1 | b2);
 }
 
 /**
@@ -303,12 +304,14 @@ short ShortNoSwap(short l)
  */
 int LongSwap(int l)
 {
-	byte b1 = l & 255;
-	byte b2 = (l >> 8) & 255;
-	byte b3 = (l >> 16) & 255;
-	byte b4 = (l >> 24) & 255;
+	/* is compiled to bswap on gcc/clang/msvc */	
+	unsigned int tmp = l;
+	unsigned int b1  = (tmp & 0x000000ff) << 24;
+	unsigned int b2  = (tmp & 0x0000ff00) <<  8;
+	unsigned int b3  = (tmp & 0x00ff0000) >>  8;
+	unsigned int b4  = (tmp & 0xff000000) >> 24;
 
-	return ((int)b1 << 24) + ((int)b2 << 16) + ((int)b3 << 8) + b4;
+	return ( b1 | b2 | b3 | b4);
 }
 
 /**
