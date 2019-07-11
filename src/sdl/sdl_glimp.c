@@ -223,7 +223,7 @@ static void GLimp_InitCvars(void)
 	r_mode           = Cvar_Get("r_mode", "-2", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE);
 	r_customaspect   = Cvar_Get("r_customaspect", "1", CVAR_ARCHIVE | CVAR_LATCH);
 	r_displayRefresh = Cvar_Get("r_displayRefresh", "0", CVAR_LATCH);
-	Cvar_CheckRange(r_displayRefresh, 0, 200, qtrue);
+	Cvar_CheckRange(r_displayRefresh, 0, 240, qtrue);
 
 	// Window render surface cvars
 	r_stencilbits     = Cvar_Get("r_stencilbits", "0", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE);
