@@ -2960,7 +2960,7 @@ typedef enum
 	//GAMESOUND_WPN_ARTILLERY_FLY_2, ///< "sound/weapons/artillery/artillery_fly_2.wav"                                    // moved in weap file
 	//GAMESOUND_WPN_ARTILLERY_FLY_3, ///< "sound/weapons/artillery/artillery_fly_3.wav"                                    // moved in weap file
 
-	GAMESOUND_MISC_REVIVE,         ///< "sound/misc/vo_revive.wav"                       Used by revival Needle
+	GAMESOUND_MISC_REVIVE = 8,     ///< "sound/misc/vo_revive.wav"                       Used by revival Needle
 	GAMESOUND_MISC_REFEREE,        ///< "sound/misc/referee.wav"                         Game Referee performs action
 	GAMESOUND_MISC_VOTE,           ///< "sound/misc/vote.wav"                            Vote is issued
 
