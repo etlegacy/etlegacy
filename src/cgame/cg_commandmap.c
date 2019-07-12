@@ -1731,7 +1731,7 @@ int CG_DrawSpawnPointInfo(float px, float py, float pw, float ph, qboolean draw,
 				{
 					float w;
 
-					Com_sprintf(buffer, sizeof(buffer), "%s (Troops: %i)", cg.spawnPoints[i], cg.spawnPlayerCounts[i]);
+					Com_sprintf(buffer, sizeof(buffer), "%s (%i)", cg.spawnPoints[i], cg.spawnPlayerCounts[i]);
 					w = CG_Text_Width_Ext(buffer, 0.2f, 0, &cgs.media.limboFont2);
 					CG_CommandMap_SetHighlightText(buffer, point[0] - (w * 0.5f), point[1] - 8);
 				}
@@ -1758,7 +1758,7 @@ int CG_DrawSpawnPointInfo(float px, float py, float pw, float ph, qboolean draw,
 
 				if (!scissor)
 				{
-					Com_sprintf(buffer, sizeof(buffer), "(Troops: %i)", cg.spawnPlayerCounts[i]);
+					Com_sprintf(buffer, sizeof(buffer), "(%i)", cg.spawnPlayerCounts[i]);
 					CG_Text_Paint_Ext(point[0] + FLAGSIZE_NORMAL * 0.25f, point[1], 0.2f, 0.2f, colorWhite, buffer, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 				}
 			}
