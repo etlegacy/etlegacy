@@ -764,9 +764,7 @@ qboolean ClientInactivityTimer(gclient_t *client)
 	// start countdown
 	if (!client->inactivityWarning)
 	{
-		if (g_inactivity.integer &&
-		    (level.time > client->inactivityTime - inactivity) &&
-		    inTeam)
+		if (g_inactivity.integer && (level.time > client->inactivityTime - inactivity) && inTeam)
 		{
 			client->inactivityWarning     = qtrue;
 			client->inactivityTime        = level.time + 1000 * inactivity;
@@ -775,8 +773,7 @@ qboolean ClientInactivityTimer(gclient_t *client)
 		// if a player will not be kicked from the server (because there are still free slots),
 		// do not display messages for inactivity-drop/kick.
 		else if (doDrop && g_spectatorInactivity.integer &&
-		         (level.time > client->inactivityTime - inactivityspec) &&
-		         !inTeam)
+		         (level.time > client->inactivityTime - inactivityspec) && !inTeam)
 		{
 			client->inactivityWarning     = qtrue;
 			client->inactivityTime        = level.time + 1000 * inactivityspec;
@@ -816,29 +813,26 @@ qboolean ClientInactivityTimer(gclient_t *client)
 	}
 	else
 	{
-		if (level.time > client->inactivityTime) // failsafe
-		{
-			if (inTeam && g_inactivity.integer)
-			{
-				SetTeam(&g_entities[client - level.clients], "s", qtrue, WP_NONE, WP_NONE, qfalse);
-				client->inactivityWarning     = qfalse;
-				client->inactivityTime        = level.time + 1000 * inactivityspec;
-				client->inactivitySecondsLeft = inactivityspec;
+        if (inTeam && g_inactivity.integer)
+        {
+            SetTeam(&g_entities[client - level.clients], "s", qtrue, WP_NONE, WP_NONE, qfalse);
+            client->inactivityWarning     = qfalse;
+            client->inactivityTime        = level.time + 1000 * inactivityspec;
+            client->inactivitySecondsLeft = inactivityspec;
 
-				G_Printf("Moved to spectator for inactivity: %s\n", client->pers.netname);
-			}
-			else if (doDrop && g_spectatorInactivity.integer && !inTeam)
-			{
-				// slots occupied by bots should be considered "free",
-				// because bots will disconnect if a human player connects..
-				G_Printf("Spectator dropped for inactivity: %s\n", client->pers.netname);
-				trap_DropClient(client - level.clients, "Dropped due to inactivity", 0);
-				return qfalse;
-			}
-		}
+            G_Printf("Moved to spectator for inactivity: %s\n", client->pers.netname);
+        }
+        else if (doDrop && g_spectatorInactivity.integer && !inTeam)
+        {
+            // slots occupied by bots should be considered "free",
+            // because bots will disconnect if a human player connects..
+            G_Printf("Spectator dropped for inactivity: %s\n", client->pers.netname);
+            trap_DropClient(client - level.clients, "Dropped due to inactivity", 0);
+            return qfalse;
+        }
 	}
 
-	// do not kick by default..
+	// do not kick by default
 	return qtrue;
 }
 
