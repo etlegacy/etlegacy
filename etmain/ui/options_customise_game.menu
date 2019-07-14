@@ -62,7 +62,7 @@ menuDef {
 // Chat //
 #define CHAT_Y 32
 	SUBWINDOW( 6+(SUBWINDOW_WIDTH_L)+6, CHAT_Y, (SUBWINDOW_WIDTH_R), 76, _("CHAT") )
-		MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, CHAT_Y+16, (SUBWINDOW_WIDTH_L)-4, 10, _("Quick Chat:"), .2, 8, "cg_quickChat", cvarFloatList { "Disabled" 0 "Team" 1 "Fireteam" 2 }, _("Specify receiver of quick radio messages") )
+	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, CHAT_Y+16, (SUBWINDOW_WIDTH_L)-4, 10, _("Quick Chat:"), .2, 8, "cg_quickChat", cvarFloatList { "Disabled" 0 "Team" 1 "Fireteam" 2 }, _("Specify receiver of quick radio messages") )
 	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, CHAT_Y+28, (SUBWINDOW_WIDTH_L)-4, 10, _("Quick Chat Mode:"), .2, 8, "cg_quickMessageAlt", cvarFloatList { "Alpha" 0 "Numeric" 1 }, _("Use alpha or numeric keys to send radio messages") )
 	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, CHAT_Y+40, (SUBWINDOW_WIDTH_L)-4, 10, _("Chat Icon Time:"), .2, 8, "cg_voiceSpriteTime", cvarFloatList { "Short" 3000 "Normal" 6000 "Long" 12000 "Really Long" 24000 }, _("Specify how long the chat icon appears above other players' heads") )
 	YESNO( 6+(SUBWINDOW_WIDTH_L)+6+2, CHAT_Y+52, (SUBWINDOW_WIDTH_L)-4, 10, _("Team chat only:"), .2, 8, "cg_teamChatsOnly", _("Play only team chat in-game") )
@@ -75,9 +75,14 @@ menuDef {
 	YESNO( 6+(SUBWINDOW_WIDTH_L)+6+2, SOUND_Y+28, (SUBWINDOW_WIDTH_R)-4, 10, _("Voice chat:"), .2, 8, "cg_voiceChats", _("Play voice chat in-game") )
 	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, SOUND_Y+40, (SUBWINDOW_WIDTH_R)-4, 10, _("Hitsounds:"), .2, 8, "cg_hitsounds", cvarFloatList { "None" 0 "All" 1 "No Body Hit Sound" 2 "No Head Hit Sound" 4 "No Team Hit Sound" 8 }, _("Set hit sounds") )
 
+// Items //
+#define ITEMS_Y 172
+	SUBWINDOW( 6+(SUBWINDOW_WIDTH_L)+6, ITEMS_Y, (SUBWINDOW_WIDTH_R), 28, _("ITEMS") )
+	YESNO( 6+(SUBWINDOW_WIDTH_L)+6+2, ITEMS_Y+16, (SUBWINDOW_WIDTH_L)-4, 10, _("Simple Items:"), .2, 8, "cg_simpleItems", _("Draw simple items") )
+
 // Miscellaneous //
-#define MISC_Y 172
-	SUBWINDOW( 6+(SUBWINDOW_WIDTH_L)+6, MISC_Y, (SUBWINDOW_WIDTH_R), 90, _("MISCELLANEOUS") )
+#define MISC_Y 206
+	SUBWINDOW( 6+(SUBWINDOW_WIDTH_L)+6, MISC_Y, (SUBWINDOW_WIDTH_R), 76, _("MISCELLANEOUS") )
 	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, MISC_Y+16, (SUBWINDOW_WIDTH_R)-4, 10, _("Complaint PopUp:"), .2, 8, "cg_complaintPopUp", cvarFloatList { "Off" 0 "On" 1 }, _("Display the option to file complaints about teammates who kill you") )
 	YESNO( 6+(SUBWINDOW_WIDTH_L)+6+2, MISC_Y+28, (SUBWINDOW_WIDTH_R)-4, 10, _("Log Important Messages:"), .2, 8, "cg_printObjectiveInfo",_("Prints important game messages to the console") )
 	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, MISC_Y+40, (SUBWINDOW_WIDTH_R)-4, 10, _("Auto-Action:"), .2, 8, "cg_autoAction", cvarFloatList { "None" 0 "Demo" 1 "Screenshot" 2 "Stats Dump" 4 "Demo + SS" 3 "Demo + Stats" 5 "SS + Stats" 6 "Demo + SS + Stats" 7 }, _("Automatically performs actions at the start or end of a round") )
