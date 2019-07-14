@@ -28,6 +28,7 @@ weaponDef
 		weaponIcon			"icons/iconw_mortar"
 		weaponIconScale		2
 		weaponSelectedIcon	"icons/iconw_mortar_1_select"
+		weaponSimpleIcon	"simpleicons/mortar"
 		
 		weaponCardIcon      "gfx/limbo/weaponcard01"
 		weaponCardScale     1 1

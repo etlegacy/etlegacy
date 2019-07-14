@@ -27,6 +27,7 @@ weaponDef
 		weaponIcon			"icons/iconw_silencedcolt"
 		weaponIconScale		2
 		weaponSelectedIcon	"icons/iconw_silencedcolt_1_select"
+		//weaponSimpleIcon	""
 		
 		weaponCardIcon      "gfx/limbo/weaponcard02"
 		weaponCardScale     0.5 1

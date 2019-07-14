@@ -27,6 +27,7 @@ weaponDef
 		weaponIcon			"icons/iconw_ammopack"
 		weaponIconScale		1
 		weaponSelectedIcon	"icons/iconw_ammopack_1_select"
+		weaponSimpleIcon	"simpleicons/ammopack"
 		
 		//weaponCardIcon    ""
 		//weaponCardScale   0 0

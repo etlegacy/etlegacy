@@ -27,6 +27,7 @@ weaponDef
 		weaponIcon			"icons/iconw_landmine"
 		weaponIconScale		1
 		weaponSelectedIcon	"icons/iconw_landmine_1_select"
+		//weaponSimpleIcon	""
 		
 		//weaponCardIcon    ""
 		//weaponCardScale   0 0

@@ -27,6 +27,7 @@ weaponDef
 		weaponIcon			"icons/iconw_silencedakimbolugers"
 		weaponIconScale		2
 		weaponSelectedIcon	"icons/iconw_silencedakimbolugers_1_select"
+		//weaponSimpleIcon	""
 		
 		weaponCardIcon      "gfx/limbo/weaponcard02"
 		weaponCardScale     1 1

@@ -27,6 +27,7 @@ weaponDef
 		weaponIcon			"icons/iconw_binoculars"
 		weaponIconScale		1
 		weaponSelectedIcon	"icons/iconw_binoculars_1_select.tga"
+		//weaponSimpleIcon	""
 		
 		//weaponCardIcon    ""
 		//weaponCardScale   0 0

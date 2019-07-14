@@ -1599,6 +1599,15 @@ static qboolean CG_RW_ParseClient(int handle, weaponInfo_t *weaponInfo)
 
 			weaponInfo->weaponIcon[1] = trap_R_RegisterShaderNoMip(filename);
 		}
+		else if (!Q_stricmp(token.string, "weaponSimpleIcon"))
+		{
+			if (!PC_String_ParseNoAlloc(handle, filename, sizeof(filename)))
+			{
+				return CG_RW_ParseError(handle, "expected weaponSimpleIcon filename");
+			}
+
+			weaponInfo->weaponSimpleIcon = trap_R_RegisterShaderNoMip(filename);
+		}
 		else if (!Q_stricmp(token.string, "weaponCardIcon"))
 		{
 			if (!PC_String_ParseNoAlloc(handle, filename, sizeof(filename)))

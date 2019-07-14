@@ -796,6 +796,7 @@ typedef struct weaponInfo_s
 
 	qhandle_t weaponIcon[2];            ///< [0] is weap icon, [1] is highlight icon
 	int weaponIconScale;
+    qhandle_t weaponSimpleIcon;
 
 	qhandle_t weaponCardIcon;
 	vec2_t weaponCardScale;
@@ -1439,6 +1440,7 @@ typedef struct
 	qhandle_t objectiveBothTEShader;
 	qhandle_t objectiveBothTDShader;
 	qhandle_t objectiveBothDEShader;
+    qhandle_t objectiveSimpleIcon;
 	qhandle_t readyShader;
 
 	qhandle_t destroyShader;

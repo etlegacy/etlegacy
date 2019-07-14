@@ -27,6 +27,7 @@ weaponDef
 		weaponIcon			"icons/iconw_medheal"
 		weaponIconScale		1
 		weaponSelectedIcon	"icons/iconw_medheal_1_select"
+		weaponSimpleIcon	"simpleicons/medheal"
 		
 		//weaponCardIcon    ""
 		//weaponCardScale   0 0

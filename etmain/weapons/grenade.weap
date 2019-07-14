@@ -27,6 +27,7 @@ weaponDef
 		weaponIcon			"icons/iconw_grenade"
 		weaponIconScale		1
 		weaponSelectedIcon	"icons/iconw_grenade_1_select"
+		//weaponSimpleIcon	""
 		
 		//weaponCardIcon    ""
 		//weaponCardScale   0 0

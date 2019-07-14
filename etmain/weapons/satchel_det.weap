@@ -27,6 +27,7 @@ weaponDef
 		weaponIcon			"icons/iconw_radio"
 		weaponIconScale		1
 		weaponSelectedIcon	"icons/iconw_radio_1_select"
+		//weaponSimpleIcon	""
 		
 		//weaponCardIcon    ""
 		//weaponCardScale   0 0

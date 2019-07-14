@@ -1725,6 +1725,7 @@ static void CG_RegisterGraphics(void)
 	cgs.media.objectiveBothTEShader  = trap_R_RegisterShaderNoMip("sprites/objective_both_te");
 	cgs.media.objectiveBothTDShader  = trap_R_RegisterShaderNoMip("sprites/objective_both_td");
 	cgs.media.objectiveBothDEShader  = trap_R_RegisterShaderNoMip("sprites/objective_both_de");
+    cgs.media.objectiveSimpleIcon    = trap_R_RegisterShader("simpleicons/objective");
 	cgs.media.readyShader            = trap_R_RegisterShader("sprites/ready");
 
 	//cgs.media.bloodExplosionShader = trap_R_RegisterShader("bloodExplosion"); // unused FIXME: remove from shader def

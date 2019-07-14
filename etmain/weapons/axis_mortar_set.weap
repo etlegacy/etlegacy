@@ -27,6 +27,7 @@ weaponDef
 		weaponIcon				"icons/iconw_mortar_ax"
 		weaponIconScale		2
 		weaponSelectedIcon		"icons/iconw_mortar_ax_1_select"
+		//weaponSimpleIcon	""
 		
 		missileModel		"models/multiplayer/mortar/mortar_shell_ax.md3"
 		missileSound		"sound/weapons/mortar/mortar_fly.wav"

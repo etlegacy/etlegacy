@@ -663,17 +663,21 @@ static void CG_Item(centity_t *cent)
 		switch (item->giType)
 		{
 		case IT_AMMO:
-			ent.customShader = cg_weapons[WP_AMMO].weaponIcon[1];
+			ent.customShader = cg_weapons[WP_AMMO].weaponSimpleIcon;
 			break;
 		case IT_HEALTH:
-			ent.customShader = cg_weapons[WP_MEDKIT].weaponIcon[1];
+			ent.customShader = cg_weapons[WP_MEDKIT].weaponSimpleIcon;
 			break;
 		case IT_TEAM:
-			ent.customShader = cgs.media.objectiveShader;
+			ent.customShader = cgs.media.objectiveSimpleIcon;
 			ent.origin[2]   += 9 + sin((cg.time + 1000) * 0.005) * 3;
 			break;
 		case IT_WEAPON:
-			ent.customShader = cg_weapons[item->giWeapon].weaponIcon[1];
+			ent.customShader = cg_weapons[item->giWeapon].weaponSimpleIcon;
+			if (item->giWeapon != WP_AMMO)
+            {
+                ent.origin[2] += 5;
+            }
 			break;
 		case IT_BAD:
 		default:
@@ -682,20 +686,29 @@ static void CG_Item(centity_t *cent)
 
 		if (item->giType == IT_AMMO || item->giType == IT_HEALTH || item->giType == IT_TEAM ||
 		    (item->giType == IT_WEAPON && item->giWeapon == WP_AMMO) ||
-		    BG_ClassHasWeapon(GetPlayerClassesData(TEAM_AXIS, cgs.clientinfo[cg.snap->ps.clientNum].cls), item->giWeapon) ||
-		    BG_ClassHasWeapon(GetPlayerClassesData(TEAM_ALLIES, cgs.clientinfo[cg.snap->ps.clientNum].cls), item->giWeapon) ||
 		    cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_SPECTATOR)
 		{
+		    // default color
 			ent.shaderRGBA[0] = 255;
 			ent.shaderRGBA[1] = 255;
 			ent.shaderRGBA[2] = 255;
 			ent.shaderRGBA[3] = 255;
 		}
+		else if (BG_ClassHasWeapon(GetPlayerClassesData(TEAM_AXIS, cgs.clientinfo[cg.snap->ps.clientNum].cls), item->giWeapon) ||
+                 BG_ClassHasWeapon(GetPlayerClassesData(TEAM_ALLIES, cgs.clientinfo[cg.snap->ps.clientNum].cls), item->giWeapon))
+        {
+		    // blue color
+            ent.shaderRGBA[0] = 1;
+            ent.shaderRGBA[1] = 198;
+            ent.shaderRGBA[2] = 255;
+            ent.shaderRGBA[3] = 255;
+        }
 		else
 		{
-			ent.shaderRGBA[0] = 255;
-			ent.shaderRGBA[1] = 0;
-			ent.shaderRGBA[2] = 0;
+		    // red color
+			ent.shaderRGBA[0] = 250;
+			ent.shaderRGBA[1] = 14;
+			ent.shaderRGBA[2] = 14;
 			ent.shaderRGBA[3] = 255;
 		}
 
@@ -862,7 +875,6 @@ static void CG_Item(centity_t *cent)
 		if (CG_PlayerSeesItem(&cg.predictedPlayerState, es, cg.time, item->giType))
 		{
 			highlight = qtrue;
-
 		}
 
 		// fixed item highlight fading

@@ -28,6 +28,7 @@ weaponDef
 		weaponIcon				"icons/iconw_browning"
 		weaponIconScale		2
 		weaponSelectedIcon		"icons/iconw_browning_1_select"
+		weaponSimpleIcon	"simpleicons/browning"
 		
 		weaponCardIcon      "gfx/limbo/weaponcard03"
 		weaponCardScale     1 1

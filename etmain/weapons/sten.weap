@@ -27,6 +27,7 @@ weaponDef
 		weaponIcon			"icons/iconw_sten"
 		weaponIconScale		2
 		weaponSelectedIcon	"icons/iconw_sten_1_select"
+		weaponSimpleIcon	"simpleicons/sten"
 		
 		weaponCardIcon      "gfx/limbo/weaponcard01"
 		weaponCardScale     1 1

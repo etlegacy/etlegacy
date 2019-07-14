@@ -26,6 +26,7 @@ weaponDef
 		weaponIcon			"icons/iconw_satchel"
 		weaponIconScale		1
 		weaponSelectedIcon	"icons/iconw_satchel_1_select"
+		//weaponSimpleIcon	""
 		
 		//weaponCardIcon    ""
 		//weaponCardScale   0 0

@@ -28,6 +28,7 @@ weaponDef
 		weaponIcon			"icons/iconw_m1_garand_gren"
 		weaponIconScale		2
 		weaponSelectedIcon	"icons/iconw_m1_garand_gren_1_select"
+		weaponSimpleIcon	"simpleicons/carbine"
 		
 		//weaponCardIcon    ""
 		//weaponCardScale   0 0

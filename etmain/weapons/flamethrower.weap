@@ -27,6 +27,7 @@ weaponDef
 		weaponIcon			"icons/iconw_flamethrower"
 		weaponIconScale		2
 		weaponSelectedIcon	"icons/iconw_flamethrower_1_select"
+		weaponSimpleIcon	"simpleicons/flamethrower"
 		
 		weaponCardIcon      "gfx/limbo/weaponcard01"
 		weaponCardScale     1 1

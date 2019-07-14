@@ -27,6 +27,7 @@ weaponDef
 		weaponIcon			"icons/iconw_akimbolugers"
 		weaponIconScale		2
 		weaponSelectedIcon	"icons/iconw_akimbolugers_1_select"
+		//weaponSimpleIcon	""
 		
 		weaponCardIcon      "gfx/limbo/weaponcard02"
 		weaponCardScale     1 1
