@@ -658,7 +658,7 @@ static void CG_Item(centity_t *cent)
 		VectorCopy(cent->lerpOrigin, ent.origin);
 		ent.reType     = RT_SPRITE;
 		ent.radius     = 14;
-		ent.origin[2] += 7;
+		ent.origin[2] += 12;
 
 		switch (item->giType)
 		{
@@ -670,14 +670,10 @@ static void CG_Item(centity_t *cent)
 			break;
 		case IT_TEAM:
 			ent.customShader = cgs.media.objectiveSimpleIcon;
-			ent.origin[2]   += 9 + sin((cg.time + 1000) * 0.005) * 3;
+			ent.origin[2]   += 4 + sin((cg.time + 1000) * 0.005) * 3;
 			break;
 		case IT_WEAPON:
 			ent.customShader = cg_weapons[item->giWeapon].weaponSimpleIcon;
-			if (item->giWeapon != WP_AMMO)
-            {
-                ent.origin[2] += 5;
-            }
 			break;
 		case IT_BAD:
 		default:
@@ -688,24 +684,24 @@ static void CG_Item(centity_t *cent)
 		    (item->giType == IT_WEAPON && item->giWeapon == WP_AMMO) ||
 		    cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_SPECTATOR)
 		{
-		    // default color
+			// default color
 			ent.shaderRGBA[0] = 255;
 			ent.shaderRGBA[1] = 255;
 			ent.shaderRGBA[2] = 255;
 			ent.shaderRGBA[3] = 255;
 		}
 		else if (BG_ClassHasWeapon(GetPlayerClassesData(TEAM_AXIS, cgs.clientinfo[cg.snap->ps.clientNum].cls), item->giWeapon) ||
-                 BG_ClassHasWeapon(GetPlayerClassesData(TEAM_ALLIES, cgs.clientinfo[cg.snap->ps.clientNum].cls), item->giWeapon))
-        {
-		    // blue color
-            ent.shaderRGBA[0] = 1;
-            ent.shaderRGBA[1] = 198;
-            ent.shaderRGBA[2] = 255;
-            ent.shaderRGBA[3] = 255;
-        }
+		         BG_ClassHasWeapon(GetPlayerClassesData(TEAM_ALLIES, cgs.clientinfo[cg.snap->ps.clientNum].cls), item->giWeapon))
+		{
+			// blue color
+			ent.shaderRGBA[0] = 1;
+			ent.shaderRGBA[1] = 198;
+			ent.shaderRGBA[2] = 255;
+			ent.shaderRGBA[3] = 255;
+		}
 		else
 		{
-		    // red color
+			// red color
 			ent.shaderRGBA[0] = 250;
 			ent.shaderRGBA[1] = 14;
 			ent.shaderRGBA[2] = 14;
