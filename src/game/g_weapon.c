@@ -2679,8 +2679,13 @@ void G_AirStrikeThink(gentity_t *ent)
 	{
 		ent->think     = G_FreeEntity;
 		ent->nextthink = level.time + 5000;
-		ent->s.time    = level.time;        // fade effect
-		ent->s.time2   = ent->nextthink;    // fade effect
+
+		// don't fade plane if the skybox is totaly wrong (-2)
+		if (ent->s.time != -2)
+		{
+			ent->s.time  = level.time;                  // fade effect
+			ent->s.time2 = ent->nextthink;              // fade effect
+		}
 	}
 }
 
@@ -2693,9 +2698,14 @@ void weapon_callPlane(gentity_t *ent)
 	G_AddEvent(ent, EV_GLOBAL_SOUND, GAMESOUND_WPN_AIRSTRIKE_PLANE);
 
 	G_AirStrikeThink(ent);
-	ent->think   = G_AirStrikeThink;
-	ent->s.time  = 0;   // stop fade effect
-	ent->s.time2 = 0;   // stop fade effect
+	ent->think = G_AirStrikeThink;
+
+	// don't draw plane if the skybox is totaly wrong (-2)
+	if (ent->s.time != -2)
+	{
+		ent->s.time  = 0;       // stop fade effect
+		ent->s.time2 = 0;       // stop fade effect
+	}
 }
 
 /**
@@ -2786,21 +2796,6 @@ void weapon_callAirStrike(gentity_t *ent)
 			trap_TraceCapsule(&tr, tr.endpos, planeBBoxMin, planeBBoxMax, end, ent->s.number, MASK_SOLID);
 		}
 
-		if (tr.fraction < 1.0f && !(tr.surfaceFlags & SURF_NOIMPACT)) //SURF_SKY)) ) { // changed for trenchtoast foggie prollem
-		{
-			int skyFloor, skyCeil;
-			skyFloor = BG_GetTracemapSkyGroundFloor();
-			skyCeil  = BG_GetTracemapSkyGroundCeil();
-
-			// some maps block missile throws sky by defining a thin sky surface and adding
-			// a surface as SURF_NODRAW and SURF_NOMARK, this to ensure no map exploit.
-			// in case we encounter this kind of sky, simply check if the sky have an height
-			if (skyFloor != skyCeil)
-			{
-				pos[2] = BG_GetTracemapSkyGroundCeil();
-			}
-		}
-
 		vectoangles(bombaxis, angle);
 
 		// spotter
@@ -2818,8 +2813,28 @@ void weapon_callAirStrike(gentity_t *ent)
 		plane->s.eType      = ET_AIRSTRIKE_PLANE;
 		plane->s.pos.trType = TR_LINEAR;
 		plane->s.pos.trTime = plane->nextthink;
-		plane->s.time       = -1; // draw nothing   plane->nextthink; // fade effect
-		plane->s.time2      = -1; // draw nothing   level.time;       // fade effect
+		plane->s.time       = -1;         // draw nothing   plane->nextthink; // fade effect
+		plane->s.time2      = -1;         // draw nothing   level.time;       // fade effect
+
+		if (tr.fraction < 1.0f && !(tr.surfaceFlags & SURF_NOIMPACT))         //SURF_SKY)) ) { // changed for trenchtoast foggie prollem
+		{
+			int skyFloor, skyCeil;
+			skyFloor = BG_GetTracemapSkyGroundFloor();
+			skyCeil  = BG_GetTracemapSkyGroundCeil();
+
+			// some maps block missile throws sky by defining a thin sky surface and adding
+			// a surface as SURF_NODRAW and SURF_NOMARK, this to ensure no map exploit.
+			// in case we encounter this kind of sky, simply check if the sky have an height
+			if (skyFloor != skyCeil)
+			{
+				pos[2] = BG_GetTracemapSkyGroundCeil();
+			}
+			else            // don't draw plane at all, sky box is totaly wrong
+			{
+				plane->s.time  = -2;
+				plane->s.time2 = -2;
+			}
+		}
 
 		VectorCopy(planeBBoxMin, plane->r.mins);
 		VectorCopy(planeBBoxMax, plane->r.maxs);
