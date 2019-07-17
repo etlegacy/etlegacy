@@ -1676,7 +1676,10 @@ void CG_AddLocalEntities(void)
 
 			// reuses debris le for more debris - we don't allocate extra local ents for this
 			// setup is done in CG_AddDebris
-			CG_AddDebrisElementsExtended(le); // TODO merge with CG_AddDebrisElements
+			if (cg_visualEffects.integer)
+			{
+				CG_AddDebrisElementsExtended(le);             // TODO merge with CG_AddDebrisElements
+			}
 		}
 		break;
 		case LE_BLOOD:

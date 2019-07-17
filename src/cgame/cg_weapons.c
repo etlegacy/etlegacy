@@ -5114,16 +5114,6 @@ void CG_AddDebris(vec3_t origin, vec3_t dir, int speed, int duration, int count,
 	float         timeAdd;
 	int           i;
 
-	if (!cg_wolfparticles.integer)
-	{
-		return;
-	}
-
-	if (!cg_visualEffects.integer)
-	{
-		return;
-	}
-
 	for (i = 0; i < count; i++)
 	{
 		le = CG_AllocLocalEntity();
@@ -5162,7 +5152,7 @@ void CG_AddDebris(vec3_t origin, vec3_t dir, int speed, int duration, int count,
 		// TODO: find better models and/or extend ...
 		// TODO: make dependant from surface (snow etc and use related models/sounds) and or weapon
 		// TODO: find a client cvar so purists can disable (see CG_AddLocalEntities)
-		if (trace) // && user enabled
+		if (cg_visualEffects.integer && trace) // && user enabled
 		{
 			// airborn or solid with no surface set - just throw projectile fragments
 			if (trace->fraction == 1.0f || ((trace->contents & CONTENTS_SOLID) && !trace->surfaceFlags))
