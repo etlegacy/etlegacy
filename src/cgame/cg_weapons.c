@@ -3141,8 +3141,9 @@ void CG_AddViewWeapon(playerState_t *ps)
 		return;
 	}
 
-	// allow the gun to be completely removed
-	if (!cg_drawGun.integer)
+	// allow the gun to be completely removed (0)
+	// allow the gun to be completely removed but non-weapons and throwables including grenade (2)
+        if (!cg_drawGun.integer || (cg_drawGun.integer == 2 && GetWeaponTableData(cg.weaponSelect)->type && !(GetWeaponTableData(cg.weaponSelect)->type & WEAPON_TYPE_GRENADE)))
 	{
 		if ((cg.predictedPlayerState.eFlags & EF_FIRING) && !BG_PlayerMounted(cg.predictedPlayerState.eFlags))
 		{
@@ -6092,7 +6093,7 @@ qboolean CG_CalcMuzzlePoint(int entityNum, vec3_t muzzle)
 			else
 			{
 				// fix firstperson tank muzzle origin if drawgun is off
-				if (!cg_drawGun.integer)
+				if (cg_drawGun.integer != 1)
 				{
 					VectorCopy(cg.snap->ps.origin, muzzle);
 					AngleVectors(cg.snap->ps.viewangles, forward, right, up);
