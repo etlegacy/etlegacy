@@ -338,15 +338,14 @@ void Weapon_MagicAmmo_Ext(gentity_t *ent, vec3_t viewpos, vec3_t tosspos, vec3_t
  * @param[in,out] traceEnt
  * @return
  */
-qboolean ReviveEntity(gentity_t *ent, gentity_t *traceEnt)
+void ReviveEntity(gentity_t *ent, gentity_t *traceEnt)
 {
-	vec3_t   org;
-	trace_t  tr;
-	int      healamt, headshot, oldweapon, oldclasstime = 0;
-	qboolean usedSyringe = qfalse;
-	int      ammo[MAX_WEAPONS];         // total amount of ammo
-	int      ammoclip[MAX_WEAPONS];     // ammo in clip
-	int      weapons[MAX_WEAPONS / (sizeof(int) * 8)];  // 64 bits for weapons held
+	vec3_t  org;
+	trace_t tr;
+	int     healamt, headshot, oldweapon, oldclasstime = 0;
+	int     ammo[MAX_WEAPONS];          // total amount of ammo
+	int     ammoclip[MAX_WEAPONS];      // ammo in clip
+	int     weapons[MAX_WEAPONS / (sizeof(int) * 8)];   // 64 bits for weapons held
 
 	// heal the dude
 	// copy some stuff out that we'll wanna restore
@@ -410,9 +409,6 @@ qboolean ReviveEntity(gentity_t *ent, gentity_t *traceEnt)
 
 	traceEnt->props_frame_state = ent->s.number;
 
-	// Mark that the medicine was indeed dispensed
-	usedSyringe = qtrue;
-
 	// sound
 	G_Sound(traceEnt, GAMESOUND_MISC_REVIVE);
 
@@ -430,9 +426,6 @@ qboolean ReviveEntity(gentity_t *ent, gentity_t *traceEnt)
 		traceEnt->client->ps.pm_flags |= PMF_TIME_LOCKPLAYER;
 		traceEnt->client->ps.pm_time   = 2100;
 	}
-
-	// Tell the caller if we actually used a syringe
-	return usedSyringe;
 }
 
 /**
@@ -447,7 +440,6 @@ gentity_t *Weapon_Syringe(gentity_t *ent)
 	vec3_t    end;
 	trace_t   tr;
 	gentity_t *traceEnt;
-	qboolean  usedSyringe = qfalse;
 
 	AngleVectors(ent->client->ps.viewangles, forward, right, up);
 	CalcMuzzlePointForActivate(ent, forward, right, up, muzzleTrace);
@@ -481,7 +473,7 @@ gentity_t *Weapon_Syringe(gentity_t *ent)
 	    traceEnt->client->sess.sessionTeam == ent->client->sess.sessionTeam)
 	{
 		// moved all the revive stuff into its own function
-		usedSyringe = ReviveEntity(ent, traceEnt);
+		ReviveEntity(ent, traceEnt);
 
 		// syringe "hit"
 		// we no longer track the syringe - it's no real weapon and messes up the total weapon stats (see acc)
@@ -505,10 +497,9 @@ gentity_t *Weapon_Syringe(gentity_t *ent)
 			CalculateRanks();
 		}
 	}
-
-	// If the medicine wasn't used, give back the ammo
-	if (!usedSyringe)
+	else
 	{
+		// If the medicine wasn't used, give back the ammo
 		ent->client->ps.ammoclip[GetWeaponTableData(WP_MEDIC_SYRINGE)->clipIndex] += 1;
 	}
 
