@@ -342,7 +342,7 @@ qboolean ReviveEntity(gentity_t *ent, gentity_t *traceEnt)
 {
 	vec3_t   org;
 	trace_t  tr;
-	int      healamt, headshot, oldweapon, oldweaponstate, oldclasstime = 0;
+	int      healamt, headshot, oldweapon, oldclasstime = 0;
 	qboolean usedSyringe = qfalse;
 	int      ammo[MAX_WEAPONS];         // total amount of ammo
 	int      ammoclip[MAX_WEAPONS];     // ammo in clip
@@ -362,8 +362,8 @@ qboolean ReviveEntity(gentity_t *ent, gentity_t *traceEnt)
 	{
 		healamt = (int)(traceEnt->client->ps.stats[STAT_MAX_HEALTH] * 0.5);
 	}
-	oldweapon      = traceEnt->client->ps.weapon;
-	oldweaponstate = traceEnt->client->ps.weaponstate;
+
+	oldweapon = traceEnt->client->ps.weapon;
 
 	// keep class special weapon time to keep them from exploiting revives
 	oldclasstime = traceEnt->client->ps.classWeaponTime;
@@ -387,12 +387,8 @@ qboolean ReviveEntity(gentity_t *ent, gentity_t *traceEnt)
 	{
 		traceEnt->client->ps.eFlags |= EF_HEADSHOT;
 	}
-	traceEnt->client->ps.weapon      = oldweapon;
-	traceEnt->client->ps.weaponstate = oldweaponstate;
 
-	// set idle animation on weapon
-	traceEnt->client->ps.weapAnim = ((traceEnt->client->ps.weapAnim & ANIM_TOGGLEBIT) ^ ANIM_TOGGLEBIT) | GetWeaponTableData(traceEnt->client->ps.weapon)->idleAnim;
-
+	traceEnt->client->ps.weapon          = oldweapon;
 	traceEnt->client->ps.classWeaponTime = oldclasstime;
 
 	traceEnt->health = healamt;
