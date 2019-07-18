@@ -796,7 +796,7 @@ typedef struct weaponInfo_s
 
 	qhandle_t weaponIcon[2];            ///< [0] is weap icon, [1] is highlight icon
 	int weaponIconScale;
-    qhandle_t weaponSimpleIcon;
+	qhandle_t weaponSimpleIcon;
 
 	qhandle_t weaponCardIcon;
 	vec2_t weaponCardScale;
@@ -1359,7 +1359,7 @@ typedef struct
 	qboolean bulletTrace;
 
 	specLabel_t specOnScreenLabels[MAX_FLOATING_STRINGS];
-	int         specStringCount;
+	int specStringCount;
 
 	vec3_t airstrikePlaneScale[2];
 
@@ -1440,7 +1440,7 @@ typedef struct
 	qhandle_t objectiveBothTEShader;
 	qhandle_t objectiveBothTDShader;
 	qhandle_t objectiveBothDEShader;
-    qhandle_t objectiveSimpleIcon;
+	qhandle_t objectiveSimpleIcon;
 	qhandle_t readyShader;
 
 	qhandle_t destroyShader;
@@ -2415,6 +2415,7 @@ extern vmCvar_t cg_debugAnim;
 extern vmCvar_t cg_debugPosition;
 extern vmCvar_t cg_debugEvents;
 extern vmCvar_t cg_drawSpreadScale;
+extern vmCvar_t cg_railTrailTime;
 extern vmCvar_t cg_errorDecay;
 extern vmCvar_t cg_nopredict;
 extern vmCvar_t cg_noPlayerAnims;
@@ -3051,7 +3052,7 @@ void CG_AddToNotify(const char *str);
 const char *CG_LocalizeServerCommand(const char *buf);
 void CG_wstatsParse_cmd(void);
 
-void CG_parseWeaponStats_cmd(void (txt_dump) (const char *));
+void CG_parseWeaponStats_cmd(void(txt_dump) (const char *));
 //void CG_parseBestShotsStats_cmd(qboolean doTop, void(txt_dump) (const char *));
 //void CG_parseTopShotsStats_cmd(qboolean doTop, void(txt_dump) (const char *));
 //void CG_scores_cmd(void);

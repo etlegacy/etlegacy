@@ -150,6 +150,7 @@ vmCvar_t cg_voiceText;
 vmCvar_t cg_drawStatus;
 vmCvar_t cg_animSpeed;
 vmCvar_t cg_drawSpreadScale;
+vmCvar_t cg_railTrailTime;
 vmCvar_t cg_debugAnim;
 vmCvar_t cg_debugPosition;
 vmCvar_t cg_debugEvents;
@@ -376,6 +377,7 @@ cvarTable_t cvarTable[] =
 	//  { &cg_draw2D, "cg_draw2D", "1", CVAR_CHEAT }, // JPW NERVE changed per atvi req to prevent sniper rifle zoom cheats
 	{ &cg_draw2D,                 "cg_draw2D",                 "1",           CVAR_ARCHIVE,                 0 },
 	{ &cg_drawSpreadScale,        "cg_drawSpreadScale",        "1",           CVAR_ARCHIVE,                 0 },
+	{ &cg_railTrailTime,          "cg_railTrailTime",          "50",          CVAR_ARCHIVE,                 0 },
 	{ &cg_drawStatus,             "cg_drawStatus",             "1",           CVAR_ARCHIVE,                 0 },
 	{ &cg_drawFPS,                "cg_drawFPS",                "0",           CVAR_ARCHIVE,                 0 },
 	{ &cg_drawPing,               "cg_drawPing",               "0",           CVAR_ARCHIVE,                 0 },
@@ -1288,9 +1290,9 @@ void CG_RegisterGameSounds()
 	//cgs.cachedSounds[GAMESOUND_WPN_ARTILLERY_FLY_1]  = trap_S_RegisterSound("sound/weapons/artillery/artillery_fly_1.wav", qfalse);   // moved in weap file
 	//cgs.cachedSounds[GAMESOUND_WPN_ARTILLERY_FLY_2]  = trap_S_RegisterSound("sound/weapons/artillery/artillery_fly_2.wav", qfalse);   // moved in weap file
 	//cgs.cachedSounds[GAMESOUND_WPN_ARTILLERY_FLY_3]  = trap_S_RegisterSound("sound/weapons/artillery/artillery_fly_3.wav", qfalse);   // moved in weap file
-	cgs.cachedSounds[GAMESOUND_MISC_REVIVE]          = trap_S_RegisterSound("sound/misc/vo_revive.wav", qfalse);
-	cgs.cachedSounds[GAMESOUND_MISC_REFEREE]         = trap_S_RegisterSound("sound/misc/referee.wav", qfalse);
-	cgs.cachedSounds[GAMESOUND_MISC_VOTE]            = trap_S_RegisterSound("sound/misc/vote.wav", qfalse);
+	cgs.cachedSounds[GAMESOUND_MISC_REVIVE]  = trap_S_RegisterSound("sound/misc/vo_revive.wav", qfalse);
+	cgs.cachedSounds[GAMESOUND_MISC_REFEREE] = trap_S_RegisterSound("sound/misc/referee.wav", qfalse);
+	cgs.cachedSounds[GAMESOUND_MISC_VOTE]    = trap_S_RegisterSound("sound/misc/vote.wav", qfalse);
 	//cgs.cachedSounds[GAMESOUND_MISC_BANNED] = trap_S_RegisterSound("sound/osp/banned.wav", qfalse);
 	//cgs.cachedSounds[GAMESOUND_MISC_KICKED] = trap_S_RegisterSound("sound/osp/kicked.wav", qfalse);
 }
@@ -1725,7 +1727,7 @@ static void CG_RegisterGraphics(void)
 	cgs.media.objectiveBothTEShader  = trap_R_RegisterShaderNoMip("sprites/objective_both_te");
 	cgs.media.objectiveBothTDShader  = trap_R_RegisterShaderNoMip("sprites/objective_both_td");
 	cgs.media.objectiveBothDEShader  = trap_R_RegisterShaderNoMip("sprites/objective_both_de");
-    cgs.media.objectiveSimpleIcon    = trap_R_RegisterShader("simpleicons/objective");
+	cgs.media.objectiveSimpleIcon    = trap_R_RegisterShader("simpleicons/objective");
 	cgs.media.readyShader            = trap_R_RegisterShader("sprites/ready");
 
 	//cgs.media.bloodExplosionShader = trap_R_RegisterShader("bloodExplosion"); // unused FIXME: remove from shader def

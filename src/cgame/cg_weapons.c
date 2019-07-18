@@ -650,7 +650,7 @@ void CG_RailTrail2(vec3_t color, vec3_t start, vec3_t end, int index, int sideNu
 
 	le->leType    = LE_CONST_RGB;
 	le->startTime = cg.time;
-	le->endTime   = cg.time + 50; // FIXME: make it sv_fps dependent?
+	le->endTime   = cg.time + cg_railTrailTime.integer;
 	le->lifeRate  = 1.0f / (le->endTime - le->startTime);
 
 	re->shaderTime   = cg.time / 1000.0f;
@@ -3143,7 +3143,7 @@ void CG_AddViewWeapon(playerState_t *ps)
 
 	// allow the gun to be completely removed (0)
 	// allow the gun to be completely removed but non-weapons and throwables including grenade (2)
-        if (!cg_drawGun.integer || (cg_drawGun.integer == 2 && GetWeaponTableData(cg.weaponSelect)->type && !(GetWeaponTableData(cg.weaponSelect)->type & WEAPON_TYPE_GRENADE)))
+	if (!cg_drawGun.integer || (cg_drawGun.integer == 2 && GetWeaponTableData(cg.weaponSelect)->type && !(GetWeaponTableData(cg.weaponSelect)->type & WEAPON_TYPE_GRENADE)))
 	{
 		if ((cg.predictedPlayerState.eFlags & EF_FIRING) && !BG_PlayerMounted(cg.predictedPlayerState.eFlags))
 		{
