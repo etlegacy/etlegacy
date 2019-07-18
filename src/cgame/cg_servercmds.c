@@ -39,20 +39,21 @@
 #include "cg_local.h"
 
 #ifdef FEATURE_RATING
-static void CG_ParseSkillRating(void)
+static void CG_ParseSkillRating(int version)
 {
-	int        i = 0;
-	const char *s;
-
+	int i, r;
+	int argc = trap_Argc();
 	cg.axisProb   = (float)atof(CG_Argv(1));
 	cg.alliesProb = (float)atof(CG_Argv(2));
 
-	s = CG_Argv(i);
-	while (*s)
+	for (i = 0, r = 3; i < MAX_CLIENTS && r < argc; i++, r++)
 	{
-		cg.rating[i] = (float)atof(CG_Argv(i + 3));
-		i++;
-		s = CG_Argv(i);
+		cg.rating[i] = (float)atof(CG_Argv(r));
+		// sr
+		if (version == 1)
+		{
+			r++; // skip delta ratings
+		}
 	}
 }
 #endif
@@ -2581,8 +2582,8 @@ static void CG_parseTopShotsStats_cmd(qboolean doTop, void(txt_dump) (const char
 
 			CG_cleanName(cgs.clientinfo[cnum].name, name, 30, qfalse);
 			txt_dump(va("%s%s ^5%4d/%-4d ^2%5d ^1%6d ^3%s %s%s\n", color,
-					aWeaponInfo[i].fHasHeadShots ? va("%5.1f", (double)acc) : "     ", hits, atts, kills, deaths,
-					aWeaponInfo[i].fHasHeadShots ? va("^3%9d", headshots) : "", color, name));
+			            aWeaponInfo[i].fHasHeadShots ? va("%5.1f", (double)acc) : "     ", hits, atts, kills, deaths,
+			            aWeaponInfo[i].fHasHeadShots ? va("^3%9d", headshots) : "", color, name));
 		}
 	}
 }
@@ -2739,6 +2740,7 @@ void CG_dumpStats(void)
 #define IMPT_HASH           53279
 #define IMSR_HASH           53398
 #define SR_HASH             27365
+#define SRA_HASH            39102
 #define MU_START_HASH       107698
 #define MU_PLAY_HASH        92607
 #define MU_STOP_HASH        94568
@@ -3218,10 +3220,16 @@ static void CG_ServerCommand(void)
 			CG_Debriefing_ParseSkillRating();
 		}
 		return;
-	case SR_HASH:                                          // "sr"
+	case SR_HASH:                                          // "sr" - backward compatibility with 2.76 demos
 		if (cgs.skillRating)
 		{
-			CG_ParseSkillRating();
+			CG_ParseSkillRating(1);
+		}
+		return;
+	case SRA_HASH:                                         // "sra"
+		if (cgs.skillRating)
+		{
+			CG_ParseSkillRating(2);
 		}
 		return;
 #endif

@@ -360,7 +360,7 @@ typedef struct
 	int modificationCount;
 } cvarTable_t;
 
-cvarTable_t cvarTable[] =
+static cvarTable_t cvarTable[] =
 {
 	{ &cg_autoswitch,             "cg_autoswitch",             "2",           CVAR_ARCHIVE,                 0 },
 	{ &cg_drawGun,                "cg_drawGun",                "1",           CVAR_ARCHIVE,                 0 },
@@ -599,8 +599,8 @@ cvarTable_t cvarTable[] =
 	{ &cg_visualEffects,          "cg_visualEffects",          "1",           CVAR_ARCHIVE,                 0 }  // Draw visual effects (i.e : airstrike plane, debris ...)
 };
 
-const unsigned int cvarTableSize = sizeof(cvarTable) / sizeof(cvarTable[0]);
-qboolean           cvarsLoaded   = qfalse;
+static const unsigned int cvarTableSize = sizeof(cvarTable) / sizeof(cvarTable[0]);
+static qboolean           cvarsLoaded   = qfalse;
 void CG_setClientFlags(void);
 
 /**

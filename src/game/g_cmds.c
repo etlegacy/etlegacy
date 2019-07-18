@@ -257,7 +257,7 @@ static void G_SendSkillRating(gentity_t *ent)
 		return;
 	}
 
-	Q_strncpyz(buffer, "sr ", sizeof(buffer));
+	Q_strncpyz(buffer, "sra ", sizeof(buffer));
 
 	// win probability
 	Q_strcat(buffer, sizeof(buffer), va("%.1f ", level.axisProb * 100.f));
@@ -4291,10 +4291,10 @@ void Cmd_IntermissionWeaponStats_f(gentity_t *ent)
 
 	// hit regions
 	Q_strcat(buffer, sizeof(buffer), va("%i %i %i %i ",
-		level.clients[clientNum].pers.playerStats.hitRegions[HR_HEAD],
-		level.clients[clientNum].pers.playerStats.hitRegions[HR_ARMS],
-		level.clients[clientNum].pers.playerStats.hitRegions[HR_BODY],
-		level.clients[clientNum].pers.playerStats.hitRegions[HR_LEGS]));
+	                                    level.clients[clientNum].pers.playerStats.hitRegions[HR_HEAD],
+	                                    level.clients[clientNum].pers.playerStats.hitRegions[HR_ARMS],
+	                                    level.clients[clientNum].pers.playerStats.hitRegions[HR_BODY],
+	                                    level.clients[clientNum].pers.playerStats.hitRegions[HR_LEGS]));
 
 	for (i = 0; i < WS_MAX; i++)
 	{

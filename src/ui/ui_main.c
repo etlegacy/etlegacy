@@ -2845,7 +2845,7 @@ static void UI_DrawRedBlue(rectDef_t *rect, float scale, vec4_t color, int textS
  */
 static void UI_DrawCrosshair(rectDef_t *rect, float scale, vec4_t color)
 {
-	float size = cg_crosshairSize.integer;
+	float size = ui_cg_crosshairSize.integer;
 
 	if (uiInfo.currentCrosshair < 0 || uiInfo.currentCrosshair >= NUM_CROSSHAIRS)
 	{
@@ -2901,8 +2901,8 @@ static void UI_BuildPlayerList(void)
 			{
 				uiInfo.playerMuted[uiInfo.playerCount] = qfalse;
 			}
-			uiInfo.playerRefereeStatus[uiInfo.playerCount] = atoi(Info_ValueForKey(info, "ref"));
-			uiInfo.playerShoutcasterStatus[uiInfo.playerCount] = atoi(Info_ValueForKey( info, "sc" ));
+			uiInfo.playerRefereeStatus[uiInfo.playerCount]     = atoi(Info_ValueForKey(info, "ref"));
+			uiInfo.playerShoutcasterStatus[uiInfo.playerCount] = atoi(Info_ValueForKey(info, "sc"));
 			uiInfo.playerCount++;
 			team2 = atoi(Info_ValueForKey(info, "t"));
 			if (team2 == team)
@@ -8626,17 +8626,17 @@ vmCvar_t ui_currentCampaignCompleted;
 
 // cgame mappings
 vmCvar_t ui_blackout;       // For speclock
-vmCvar_t cg_crosshairColor;
-vmCvar_t cg_crosshairColorAlt;
-vmCvar_t cg_crosshairAlpha;
-vmCvar_t cg_crosshairAlphaAlt;
-vmCvar_t cg_crosshairSize;
+vmCvar_t ui_cg_crosshairColor;
+vmCvar_t ui_cg_crosshairColorAlt;
+vmCvar_t ui_cg_crosshairAlpha;
+vmCvar_t ui_cg_crosshairAlphaAlt;
+vmCvar_t ui_cg_crosshairSize;
 
 vmCvar_t cl_bypassMouseInput;
 
 vmCvar_t ui_serverBrowserSettings;
 
-cvarTable_t cvarTable[] =
+static cvarTable_t cvarTable[] =
 {
 	{ NULL,                             "ui_textfield_temp",                   "",                           CVAR_TEMP,                      0 },
 	{ &ui_glCustom,                     "ui_glCustom",                         "4",                          CVAR_ARCHIVE,                   0 },
@@ -8728,11 +8728,11 @@ cvarTable_t cvarTable[] =
 
 	// cgame mappings
 	{ &ui_blackout,                     "ui_blackout",                         "0",                          CVAR_ROM,                       0 },
-	{ &cg_crosshairAlpha,               "cg_crosshairAlpha",                   "1.0",                        CVAR_ARCHIVE,                   0 },
-	{ &cg_crosshairAlphaAlt,            "cg_crosshairAlphaAlt",                "1.0",                        CVAR_ARCHIVE,                   0 },
-	{ &cg_crosshairColor,               "cg_crosshairColor",                   "White",                      CVAR_ARCHIVE,                   0 },
-	{ &cg_crosshairColorAlt,            "cg_crosshairColorAlt",                "White",                      CVAR_ARCHIVE,                   0 },
-	{ &cg_crosshairSize,                "cg_crosshairSize",                    "48",                         CVAR_ARCHIVE,                   0 },
+	{ &ui_cg_crosshairAlpha,            "cg_crosshairAlpha",                   "1.0",                        CVAR_ARCHIVE,                   0 },
+	{ &ui_cg_crosshairAlphaAlt,         "cg_crosshairAlphaAlt",                "1.0",                        CVAR_ARCHIVE,                   0 },
+	{ &ui_cg_crosshairColor,            "cg_crosshairColor",                   "White",                      CVAR_ARCHIVE,                   0 },
+	{ &ui_cg_crosshairColorAlt,         "cg_crosshairColorAlt",                "White",                      CVAR_ARCHIVE,                   0 },
+	{ &ui_cg_crosshairSize,             "cg_crosshairSize",                    "48",                         CVAR_ARCHIVE,                   0 },
 
 	// game mappings (for create server option)
 	{ NULL,                             "g_altStopwatchMode",                  "0",                          CVAR_ARCHIVE,                   0 },
@@ -8812,7 +8812,7 @@ cvarTable_t cvarTable[] =
 	{ NULL,                             "cg_allowGeoIP",                       "1",                          CVAR_ARCHIVE | CVAR_USERINFO,   0 },
 };
 
-const unsigned int cvarTableSize = sizeof(cvarTable) / sizeof(cvarTable[0]);
+static const unsigned int cvarTableSize = sizeof(cvarTable) / sizeof(cvarTable[0]);
 
 /**
  * @brief UI_RegisterCvars
@@ -8835,8 +8835,8 @@ void UI_RegisterCvars(void)
 
 	// Always force this to 0 on init
 	trap_Cvar_Set("ui_blackout", "0");
-	BG_setCrosshair(cg_crosshairColor.string, uiInfo.xhairColor, cg_crosshairAlpha.value, "cg_crosshairColor");
-	BG_setCrosshair(cg_crosshairColorAlt.string, uiInfo.xhairColorAlt, cg_crosshairAlphaAlt.value, "cg_crosshairColorAlt");
+	BG_setCrosshair(ui_cg_crosshairColor.string, uiInfo.xhairColor, ui_cg_crosshairAlpha.value, "cg_crosshairColor");
+	BG_setCrosshair(ui_cg_crosshairColorAlt.string, uiInfo.xhairColorAlt, ui_cg_crosshairAlphaAlt.value, "cg_crosshairColorAlt");
 }
 
 /**
@@ -8856,14 +8856,14 @@ void UI_UpdateCvars(void)
 			{
 				cv->modificationCount = cv->vmCvar->modificationCount;
 
-				if (cv->vmCvar == &cg_crosshairColor || cv->vmCvar == &cg_crosshairAlpha)
+				if (cv->vmCvar == &ui_cg_crosshairColor || cv->vmCvar == &ui_cg_crosshairAlpha)
 				{
-					BG_setCrosshair(cg_crosshairColor.string, uiInfo.xhairColor, cg_crosshairAlpha.value, "cg_crosshairColor");
+					BG_setCrosshair(ui_cg_crosshairColor.string, uiInfo.xhairColor, ui_cg_crosshairAlpha.value, "cg_crosshairColor");
 				}
 
-				if (cv->vmCvar == &cg_crosshairColorAlt || cv->vmCvar == &cg_crosshairAlphaAlt)
+				if (cv->vmCvar == &ui_cg_crosshairColorAlt || cv->vmCvar == &ui_cg_crosshairAlphaAlt)
 				{
-					BG_setCrosshair(cg_crosshairColorAlt.string, uiInfo.xhairColorAlt, cg_crosshairAlphaAlt.value, "cg_crosshairColorAlt");
+					BG_setCrosshair(ui_cg_crosshairColorAlt.string, uiInfo.xhairColorAlt, ui_cg_crosshairAlphaAlt.value, "cg_crosshairColorAlt");
 				}
 			}
 		}

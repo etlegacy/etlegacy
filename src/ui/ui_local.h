@@ -95,11 +95,11 @@ extern vmCvar_t ui_currentCampaign;
 extern vmCvar_t ui_campaignIndex;
 extern vmCvar_t ui_currentCampaignCompleted;
 extern vmCvar_t ui_blackout;
-extern vmCvar_t cg_crosshairAlpha;
-extern vmCvar_t cg_crosshairAlphaAlt;
-extern vmCvar_t cg_crosshairColor;
-extern vmCvar_t cg_crosshairColorAlt;
-extern vmCvar_t cg_crosshairSize;
+extern vmCvar_t ui_cg_crosshairAlpha;
+extern vmCvar_t ui_cg_crosshairAlphaAlt;
+extern vmCvar_t ui_cg_crosshairColor;
+extern vmCvar_t ui_cg_crosshairColorAlt;
+extern vmCvar_t ui_cg_crosshairSize;
 
 extern vmCvar_t cl_bypassMouseInput;
 
