@@ -3701,7 +3701,9 @@ static void PM_Weapon(void)
 		pm->ps->aimSpreadScaleFloat = AIMSPREAD_MAXSPREAD;
 	}
 
-	if (pm->skill[SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS] >= 3 && pm->ps->stats[STAT_PLAYER_CLASS] == PC_COVERTOPS)
+	// covert ops received a reduction of 50% reduction in both recoil jump and weapon sway with Scoped Weapons ONLY
+	if ((GetWeaponTableData(pm->ps->weapon)->type & WEAPON_TYPE_SCOPED) && pm->skill[SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS] >= 3
+	    && pm->ps->stats[STAT_PLAYER_CLASS] == PC_COVERTOPS)
 	{
 		pm->ps->aimSpreadScaleFloat *= .5f;
 	}
