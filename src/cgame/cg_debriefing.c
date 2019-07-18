@@ -1097,9 +1097,10 @@ void CG_MapVoteList_Draw(panel_button_t *button)
 		                  button->font->scaley, button->font->colour,
 		                  cgs.dbMapDispName[i + cgs.dbMapVoteListOffset],
 		                  0, 30, 0, button->font->font);
-		CG_Text_Paint_Ext(DB_MAPVOTE_X + 10 + 10 + cgs.wideXoffset, y, button->font->scalex,
+		CG_Text_Paint_Ext(DB_MAPVOTE_X + cgs.wideXoffset, y, button->font->scalex,
 		                  button->font->scaley, button->font->colour,
-		                  va("%d", cgs.dbMapVotes[i + cgs.dbMapVoteListOffset]),
+		                  va("%3d%% (%d)", cgs.dbMapVotesSum > 0 ? 100 * cgs.dbMapVotes[i + cgs.dbMapVoteListOffset] / cgs.dbMapVotesSum : 0,
+		                                  cgs.dbMapVotes[i + cgs.dbMapVoteListOffset]),
 		                  0, 0, 0, button->font->font);
 		y += 12;
 	}
@@ -1234,7 +1235,7 @@ panel_button_t mapVoteHeadingVotes =
 {
 	NULL,
 	"Votes",
-	{ DB_MAPVOTE_X + 10,       DB_MAPVOTE_Y,              0, 0 },
+	{ DB_MAPVOTE_X,            DB_MAPVOTE_Y,              0, 0 },
 	{ 0,                       0,                         0, 0, 0, 0, 0, 0},
 	&mapVoteFont,              // font
 	NULL,                      // keyDown
@@ -4104,10 +4105,13 @@ void CG_parseMapVoteTally()
 {
 	int i, numMaps;
 
+	cgs.dbMapVotesSum = 0;
+
 	numMaps = (trap_Argc() - 1);
 	for (i = 0; i < numMaps; i++)
 	{
-		cgs.dbMapVotes[i] = atoi(CG_Argv(i + 1));
+		cgs.dbMapVotes[i]  = atoi(CG_Argv(i + 1));
+		cgs.dbMapVotesSum += cgs.dbMapVotes[i];
 	}
 
 	cgs.dbVoteTallyReceived = qtrue;

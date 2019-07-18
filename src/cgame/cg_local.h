@@ -2344,6 +2344,7 @@ typedef struct cgs_s
 	char dbMaps[MAX_VOTE_MAPS][MAX_QPATH];
 	char dbMapDispName[MAX_VOTE_MAPS][128];
 	int dbMapVotes[MAX_VOTE_MAPS];
+	int dbMapVotesSum;
 	int dbMapID[MAX_VOTE_MAPS];
 	int dbMapLastPlayed[MAX_VOTE_MAPS];
 	int dbMapTotalVotes[MAX_VOTE_MAPS];
