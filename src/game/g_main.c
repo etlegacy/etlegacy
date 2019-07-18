@@ -66,6 +66,18 @@ g_campaignInfo_t g_campaigns[MAX_CAMPAIGNS];
 
 mapEntityData_Team_t mapEntityData[2];
 
+const char *gameNames[] =
+{
+	"Single Player",        // Obsolete
+	"Cooperative",          // Obsolete
+	"Objective",
+	"Stopwatch",
+	"Campaign",
+	"Last Man Standing",
+	"Map Voting"            // GT_WOLF_MAPVOTE
+	// GT_MAX_GAME_TYPE
+};
+
 #ifdef FEATURE_OMNIBOT
 vmCvar_t g_OmniBotPath;
 vmCvar_t g_OmniBotEnable;
@@ -516,7 +528,7 @@ cvarTable_t gameCvarTable[] =
 	{ &g_scriptDebug,                       "g_scriptDebug",                       "0",                          CVAR_CHEAT,                                      0, qfalse, qfalse },
 	// What level of detail do we want script printing to go to.
 	{ &g_scriptDebugLevel,                  "g_scriptDebugLevel",                  "0",                          CVAR_CHEAT,                                      0, qfalse, qfalse },
-    { &g_scriptDebugTarget,                 "g_scriptDebugTarget",                 "",                           CVAR_CHEAT,                                      0, qfalse, qfalse },
+	{ &g_scriptDebugTarget,                 "g_scriptDebugTarget",                 "",                           CVAR_CHEAT,                                      0, qfalse, qfalse },
 
 	// How fast do we want Allied single player movement?
 	{ &g_movespeed,                         "g_movespeed",                         "76",                         CVAR_CHEAT,                                      0, qfalse, qfalse },
@@ -4069,7 +4081,8 @@ void CheckExitRules(void)
 	if (g_gamestate.integer == GS_INTERMISSION)
 	{
 		// if ExitLevel has run, but still no new map was loaded, try restarting the map
-		if (level.intermissiontime == 0) {
+		if (level.intermissiontime == 0)
+		{
 			G_Printf("^3%s\n", "WARNING: failed to load the next map or campaign!");
 			G_Printf("^3%s\n", "Restarting level...");
 			trap_SendConsoleCommand(EXEC_APPEND, "map_restart 0\n");

@@ -1066,7 +1066,7 @@ typedef struct voteInfo_s
 	int voteNo;
 	int numVotingClients;               ///< set by CalculateRanks
 	int numVotingTeamClients[2];
-	int (*vote_fn)(gentity_t * ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd);
+	int (*vote_fn)(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd);
 	char vote_value[VOTE_MAXSTRING];    ///< Desired vote item setting.
 	int voteCaller;                     ///< id of the vote caller
 	int voteTeam;                       ///< id of the vote caller's team
@@ -2787,16 +2787,6 @@ typedef struct consoleCommandTable_s
 
 } consoleCommandTable_t;
 
-static const char *gameNames[] =
-{
-	"Single Player",        // Obsolete
-	"Cooperative",          // Obsolete
-	"Objective",
-	"Stopwatch",
-	"Campaign",
-	"Last Man Standing",
-	"Map Voting"            // GT_WOLF_MAPVOTE
-	// GT_MAX_GAME_TYPE
-};
+extern const char *gameNames[];
 
 #endif // #ifndef INCLUDE_G_LOCAL_H

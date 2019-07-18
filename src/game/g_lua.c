@@ -2107,7 +2107,6 @@ qboolean G_LuaRunIsolated(const char *modName)
 {
 	int          freeVM, flen = 0;
 	static char  allowedModules[MAX_CVAR_VALUE_STRING];
-	static char  buff[MAX_CVAR_VALUE_STRING];
 	char         *code, *signature;
 	fileHandle_t f;
 	lua_vm_t     *vm;
