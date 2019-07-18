@@ -657,8 +657,8 @@ static void CG_Item(centity_t *cent)
 		Com_Memset(&ent, 0, sizeof(ent));
 		VectorCopy(cent->lerpOrigin, ent.origin);
 		ent.reType     = RT_SPRITE;
-		ent.radius     = 14;
-		ent.origin[2] += 12;
+		ent.radius     = 12;
+		ent.origin[2] += 9;
 
 		switch (item->giType)
 		{
@@ -670,7 +670,7 @@ static void CG_Item(centity_t *cent)
 			break;
 		case IT_TEAM:
 			ent.customShader = cgs.media.objectiveSimpleIcon;
-			ent.origin[2]   += 4 + sin((cg.time + 1000) * 0.005) * 3;
+			ent.origin[2]   += 5 + sin((cg.time + 1000) * 0.005) * 3;
 			break;
 		case IT_WEAPON:
 			ent.customShader = cg_weapons[item->giWeapon].weaponSimpleIcon;
