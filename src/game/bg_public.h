@@ -1045,7 +1045,8 @@ typedef enum weaponType_s
 	WEAPON_TYPE_SCOPABLE  = BIT(10),
 	WEAPON_TYPE_SCOPED    = BIT(11),
 	WEAPON_TYPE_SETTABLE  = BIT(12),
-	WEAPON_TYPE_SET       = BIT(13)
+	WEAPON_TYPE_SET       = BIT(13),
+	WEAPON_TYPE_BEAM      = BIT(14)         ///< flamethrower
 
 } weaponType_t;
 

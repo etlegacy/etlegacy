@@ -3142,8 +3142,12 @@ void CG_AddViewWeapon(playerState_t *ps)
 	}
 
 	// allow the gun to be completely removed (0)
-	// allow the gun to be completely removed but non-weapons and throwables including grenade (2)
-	if (!cg_drawGun.integer || (cg_drawGun.integer == 2 && GetWeaponTableData(cg.weaponSelect)->type && !(GetWeaponTableData(cg.weaponSelect)->type & WEAPON_TYPE_GRENADE)))
+	// allow the gun to be completely removed but non-weapons, melee weapon, syringue and throwables including grenade (2)
+	if (!cg_drawGun.integer || (cg_drawGun.integer == 2
+	                            && GetWeaponTableData(cg.weaponSelect)->type
+	                            && !(GetWeaponTableData(cg.weaponSelect)->type & WEAPON_TYPE_GRENADE)
+	                            && !(GetWeaponTableData(cg.weaponSelect)->type & WEAPON_TYPE_MELEE)
+	                            && !(GetWeaponTableData(cg.weaponSelect)->type & WEAPON_TYPE_SYRINGUE)))
 	{
 		if ((cg.predictedPlayerState.eFlags & EF_FIRING) && !BG_PlayerMounted(cg.predictedPlayerState.eFlags))
 		{
