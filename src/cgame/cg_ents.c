@@ -664,8 +664,7 @@ static void CG_Item(centity_t *cent)
 
 	item = BG_GetItem(es->modelindex);
 
-	if (cg_simpleItems.integer == 1 ||
-	    (cg_simpleItems.integer > 1 && item->giType != IT_TEAM))
+	if (cg_simpleItems.integer == 1 || (cg_simpleItems.integer > 1 && item->giType != IT_TEAM))
 	{
 		polyVert_t    temp[4];
 		polyVert_t    quad[4];
@@ -683,18 +682,18 @@ static void CG_Item(centity_t *cent)
 		{
 		case IT_AMMO:
 			weaponInfo = &cg_weapons[WP_AMMO];
-			// custom colors can be set here
+			Vector4Set(accentColor, 255, 239, 12, 255);
 			break;
 		case IT_HEALTH:
 			weaponInfo = &cg_weapons[WP_MEDKIT];
-			// custom colors can be set here
+			Vector4Set(accentColor, 17, 227, 70, 255);
 			break;
 		case IT_WEAPON:
 			weaponInfo = &cg_weapons[item->giWeapon];
 			// ammo box
 			if (item->giWeapon == WP_AMMO)
 			{
-				// custom colors can be set here
+				Vector4Set(accentColor, 255, 239, 12, 255);
 			}
 			else
 			{
@@ -711,7 +710,7 @@ static void CG_Item(centity_t *cent)
 		case IT_TEAM:
 			simpleItemShader = cgs.media.objectiveSimpleIcon;
 			origin[2]       += 5 + (float)sin((cg.time + 1000) * 0.005) * 3;
-			// custom colors can be set here
+			Vector4Set(accentColor, 226, 29, 255, 255);
 			break;
 		case IT_BAD:
 		default:
@@ -719,7 +718,8 @@ static void CG_Item(centity_t *cent)
 		}
 
 		// reset color
-		if (cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_SPECTATOR)
+		if (cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_SPECTATOR &&
+		    item->giType == IT_WEAPON && item->giWeapon != WP_AMMO)
 		{
 			Vector4Set(accentColor, 255, 255, 255, 255);
 		}
