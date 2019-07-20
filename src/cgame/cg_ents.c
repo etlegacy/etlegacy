@@ -627,7 +627,7 @@ qboolean CG_PlayerSeesItem(playerState_t *ps, entityState_t *item, int atTime, i
 	return qtrue;
 }
 
-#define SIMPLEITEM_ICON_SIZE 24
+#define SIMPLEITEM_ICON_SIZE 24.f
 
 /**
  * @brief CG_PlayerCanPickupWeapon
@@ -677,7 +677,6 @@ static void CG_Item(centity_t *cent)
 		float         simpleItemScaleY = 1.f;
 
 		VectorCopy(cent->lerpOrigin, origin);
-		origin[2] += SIMPLEITEM_ICON_SIZE / 2;
 		Vector4Set(accentColor, 255, 255, 255, 255); // default white color
 
 		switch (item->giType)
@@ -692,13 +691,21 @@ static void CG_Item(centity_t *cent)
 			break;
 		case IT_WEAPON:
 			weaponInfo = &cg_weapons[item->giWeapon];
-			if (CG_PlayerCanPickupWeapon(cg.snap->ps.clientNum, item->giWeapon))
+			// ammo box
+			if (item->giWeapon == WP_AMMO)
 			{
-				Vector4Set(accentColor, 1, 198, 255, 255);
+				// custom colors can be set here
 			}
 			else
 			{
-				Vector4Set(accentColor, 250, 14, 14, 255);
+				if (CG_PlayerCanPickupWeapon(cg.snap->ps.clientNum, item->giWeapon))
+				{
+					Vector4Set(accentColor, 1, 198, 255, 255);
+				}
+				else
+				{
+					Vector4Set(accentColor, 250, 14, 14, 255);
+				}
 			}
 			break;
 		case IT_TEAM:
@@ -728,6 +735,7 @@ static void CG_Item(centity_t *cent)
 
 		if (simpleItemShader)
 		{
+			origin[2] += SIMPLEITEM_ICON_SIZE * simpleItemScaleY / 2.f;
 			// build quad out of verts (inversed)
 			VectorSet(temp[0].xyz, 0, 1 * simpleItemScaleX, 1 * simpleItemScaleY);
 			VectorSet(temp[1].xyz, 0, -1 * simpleItemScaleX, 1 * simpleItemScaleY);
