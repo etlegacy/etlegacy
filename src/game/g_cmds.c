@@ -2086,7 +2086,7 @@ void Cmd_Team_f(gentity_t *ent, unsigned int dwCommand, qboolean fValue)
 	if (ent->client->sess.shoutcaster && (team == TEAM_ALLIES || team == TEAM_AXIS))
 	{
 		CP("print \"team: shoutcasters may not join a team\n\"");
-		CP("cp \"Shoutcasters may not join a team\n\"");
+		CP("cp \"Shoutcasters may not join a team.\n\"");
 		return;
 	}
 
@@ -3471,7 +3471,7 @@ void Cmd_Vote_f(gentity_t *ent)
 	{
 		if (ent->client->sess.sessionTeam != level.voteInfo.voteTeam)
 		{
-			CP("cp \"You cannot vote on the other team's surrender\"");
+			CP("cp \"You cannot vote on the other team's surrender.\"");
 			return;
 		}
 	}

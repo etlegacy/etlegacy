@@ -1817,7 +1817,7 @@ void ClientUserinfoChanged(int clientNum)
 		Q_strncpyz(cs_name, va("Target #%i", clientNum), 15);
 		Info_SetValueForKey(userinfo, "name", cs_name);
 		trap_SetUserinfo(clientNum, userinfo);
-		CP("cp \"You cannot assign an empty playername! (Your name is reset)\"");
+		CP("cp \"You cannot assign an empty playername! Your name has been reset.\"");
 		G_LogPrintf("ClientUserinfoChanged: %i User with empty name. (Changed to: \"Target #%i\")\n", clientNum, clientNum);
 		G_DPrintf("ClientUserinfoChanged: %i User with empty name. (Changed to: \"Target #%i\")\n", clientNum, clientNum);
 	}
