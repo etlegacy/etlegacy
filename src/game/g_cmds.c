@@ -1116,6 +1116,36 @@ void Cmd_Kill_f(gentity_t *ent)
 }
 
 /**
+ * @brief Cmd_DropObjective_f
+ * @param[in,out] ent
+ */
+void Cmd_DropObjective_f(gentity_t *ent)
+{
+	if (!ent || !ent->client)
+	{
+		return;
+	}
+
+	if (ent->health <= 0)
+	{
+		return;
+	}
+
+	if (!ent->client->ps.powerups[PW_REDFLAG] && !ent->client->ps.powerups[PW_BLUEFLAG])
+	{
+		return;
+	}
+
+	if (level.time - ent->client->pickObjectiveTime < 10000)
+	{
+		CP("cp \"You can't drop objective right after picking it up.\"");
+		return;
+	}
+
+	G_DropItems(ent);
+}
+
+/**
  * @brief G_TeamDataForString
  * @param[in] teamstr
  * @param[in] clientNum
@@ -4101,18 +4131,6 @@ void Cmd_Activate2_f(gentity_t *ent)
 		pass2 = qtrue;
 		trap_Trace(&tr, offset, NULL, NULL, end, ent->s.number, (CONTENTS_SOLID | CONTENTS_BODY | CONTENTS_CORPSE | CONTENTS_TRIGGER));
 	}
-
-	if (ent->client->ps.powerups[PW_REDFLAG] || ent->client->ps.powerups[PW_BLUEFLAG])
-	{
-		if (ent->client->ps.weapon != WP_KNIFE && ent->client->ps.weapon != WP_KNIFE_KABAR)
-		{
-			CP("cp \"You must switch to knife to drop objective\"");
-		}
-		else
-		{
-			G_DropItems(ent);
-		}
-	}
 }
 
 /**
@@ -4985,6 +5003,10 @@ void ClientCommand(int clientNum)
 	else if (Q_stricmp(cmd, "kill") == 0)
 	{
 		Cmd_Kill_f(ent);
+	}
+	else if (Q_stricmp(cmd, "dropobj") == 0)
+	{
+		Cmd_DropObjective_f(ent);
 	}
 	else if (Q_stricmp(cmd, "follownext") == 0)
 	{

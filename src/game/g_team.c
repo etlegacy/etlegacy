@@ -481,6 +481,15 @@ int Pickup_Team(gentity_t *ent, gentity_t *other)
 		return 0;
 	}
 
+	// ensure we don't pick a dropped obj up right away
+	if (level.time - cl->dropObjectiveTime < 2000)
+	{
+		return 0;
+	}
+
+	// set timer
+	cl->pickObjectiveTime = level.time;
+
 	// set flag model in carrying entity if multiplayer and flagmodel is set
 	other->message           = ent->message;
 	other->s.otherEntityNum2 = ent->s.modelindex2;

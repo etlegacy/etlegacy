@@ -44,16 +44,17 @@ menuDef {
 
 // Use Weapons //
 #define USEWEAPONS_Y 186
-	SUBWINDOW( 6, USEWEAPONS_Y, (SUBWINDOW_WIDTH), 88, _("USE WEAPONS") )
+	SUBWINDOW( 6, USEWEAPONS_Y, (SUBWINDOW_WIDTH), 100, _("USE WEAPONS") )
 	BIND( 8, USEWEAPONS_Y+16, (SUBWINDOW_WIDTH)-4, 10, _("Attack:"), .2, 8, "+attack", "" )
 	BIND( 8, USEWEAPONS_Y+28, (SUBWINDOW_WIDTH)-4, 10, _("Switch to Alternate:"), .2, 8, "weapalt", "" )
 	BIND( 8, USEWEAPONS_Y+40, (SUBWINDOW_WIDTH)-4, 10, _("Reload Weapon:"), .2, 8, "+reload", "" )
 	BIND( 8, USEWEAPONS_Y+52, (SUBWINDOW_WIDTH)-4, 10, _("Binoculars Zoom:"), .2, 8, "+zoom", "" )
 	BIND( 8, USEWEAPONS_Y+64, (SUBWINDOW_WIDTH)-4, 10, _("Use (Activate):"), .2, 8, "+activate", "" )
-	BIND( 8, USEWEAPONS_Y+76, (SUBWINDOW_WIDTH)-4, 10, _("Selfkill:"), .2, 8, "kill", "" )
+	BIND( 8, USEWEAPONS_Y+76, (SUBWINDOW_WIDTH)-4, 10, _("Drop Objective"), .2, 8, "dropobj", "" )
+	BIND( 8, USEWEAPONS_Y+88, (SUBWINDOW_WIDTH)-4, 10, _("Selfkill:"), .2, 8, "kill", "" )
 
 // Pop-Ups //
-#define POPUPS_Y 280
+#define POPUPS_Y 292
 	SUBWINDOW( 6, POPUPS_Y, (SUBWINDOW_WIDTH), 124, _("POP-UPS") )
 	BIND( 8, POPUPS_Y+16, (SUBWINDOW_WIDTH)-4, 10, _("Show Scores:"), .2, 8, "+scores", "" )
 	BIND( 8, POPUPS_Y+28, (SUBWINDOW_WIDTH)-4, 10, _("Show Limbo Menu:"), .2, 8, "OpenLimboMenu", "" )

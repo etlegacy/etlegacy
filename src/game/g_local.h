@@ -954,6 +954,8 @@ struct gclient_s
 
 	float currentAimSpreadScale;
 
+	int pickObjectiveTime;                  ///< last time an objective was taken
+	int dropObjectiveTime;                  ///< last time an objective was dropped
 	int dropWeaponTime;                     ///< last time a weapon was dropped
 	int limboDropWeapon;                    ///< weapon to drop in limbo
 	int lastBurnTime;                       ///< last time index for flamethrower burn

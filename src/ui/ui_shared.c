@@ -762,6 +762,7 @@ static bind_t g_bindings[] =
 	{ "+activate",        'f',             -1,  K_ENTER,         -1,  -1, -1, -1 },
 	{ "+zoom",            'b',             -1,  'b',             -1,  -1, -1, -1 },
 	{ "+mapexpand",       'g',             -1,  '#',             -1,  -1, -1, -1 },
+	{ "dropobj",          'h',             -1,  'h',             -1,  -1, -1, -1 },
 	{ "+reload",          'r',             -1,  K_END,           -1,  -1, -1, -1 },
 	{ "kill",             'k',             -1,  'k',             -1,  -1, -1, -1 },
 	{ "+scores",          K_TAB,           -1,  K_TAB,           -1,  -1, -1, -1 },
