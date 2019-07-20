@@ -1297,6 +1297,9 @@ void G_DropItems(gentity_t *self)
 				VectorCopy(tr.endpos, origin);
 				SnapVectorTowards(origin, viewpos);
 			}
+
+			// set timer
+			self->client->dropObjectiveTime = level.time;
 		}
 
 		flag = LaunchItem(item, origin, launchvel, self->s.number);
