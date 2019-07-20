@@ -1257,6 +1257,10 @@ void G_DropItems(gentity_t *self)
 		vec3_t    origin;
 		vec3_t    angles;
 		gentity_t *flag;
+		vec3_t    mins;
+		vec3_t    maxs;
+		vec3_t    viewpos;
+		trace_t   tr;
 
 		VectorCopy(self->client->ps.origin, origin);
 		// if the player hasn't died, then assume he's throwing objective
@@ -1271,6 +1275,28 @@ void G_DropItems(gentity_t *self)
 			VectorMA(self->client->ps.velocity, 96, forward, launchvel);
 			VectorMA(origin, 36.0f, forward, origin);
 			origin[2] += self->client->ps.viewheight;
+
+			// prevent stuck item in solid
+			VectorCopy(self->client->ps.origin, viewpos);
+			VectorSet(mins, -(ITEM_RADIUS + 8), -(ITEM_RADIUS + 8), 0);
+			VectorSet(maxs, (ITEM_RADIUS + 8), (ITEM_RADIUS + 8), 2 * (ITEM_RADIUS + 8));
+
+			trap_EngineerTrace(&tr, viewpos, mins, maxs, origin, self->s.number, MASK_MISSILESHOT);
+			if (tr.startsolid)
+			{
+				VectorCopy(forward, viewpos);
+				VectorNormalizeFast(viewpos);
+				VectorMA(self->r.currentOrigin, -24.f, viewpos, viewpos);
+
+				trap_EngineerTrace(&tr, viewpos, mins, maxs, origin, self->s.number, MASK_MISSILESHOT);
+
+				VectorCopy(tr.endpos, origin);
+			}
+			else if (tr.fraction < 1)       // oops, bad launch spot
+			{
+				VectorCopy(tr.endpos, origin);
+				SnapVectorTowards(origin, viewpos);
+			}
 		}
 
 		flag = LaunchItem(item, origin, launchvel, self->s.number);
