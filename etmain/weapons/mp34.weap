@@ -29,6 +29,7 @@ weaponDef
 		weaponIconScale		2
 		weaponSelectedIcon	"icons/iconw_mp34_1_select"
 		weaponSimpleIcon	"simpleicons/mp34"
+		weaponSimpleIconScale 2 1
 		
 		weaponCardIcon      "gfx/limbo/weaponcard03"
 		weaponCardScale     1 1

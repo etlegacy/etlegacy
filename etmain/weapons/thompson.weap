@@ -28,6 +28,7 @@ weaponDef
 		weaponIconScale		2
 		weaponSelectedIcon	"icons/iconw_thompson_1_select"
 		weaponSimpleIcon	"simpleicons/thompson"
+		weaponSimpleIconScale 2 1
 		
 		weaponCardIcon      "gfx/limbo/weaponcard01"
 		weaponCardScale     1 1

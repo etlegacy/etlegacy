@@ -28,6 +28,7 @@ weaponDef
 		weaponIconScale		2
 		weaponSelectedIcon	"icons/iconw_bazooka_1_select"
 		weaponSimpleIcon	"simpleicons/bazooka"
+		weaponSimpleIconScale 2 1
 		
 		weaponCardIcon      "gfx/limbo/weaponcard03"
 		weaponCardScale     1 1

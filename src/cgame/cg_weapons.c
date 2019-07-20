@@ -1603,10 +1603,17 @@ static qboolean CG_RW_ParseClient(int handle, weaponInfo_t *weaponInfo)
 		{
 			if (!PC_String_ParseNoAlloc(handle, filename, sizeof(filename)))
 			{
-				return CG_RW_ParseError(handle, "expected weaponSimpleIcon filename");
+				return CG_RW_ParseError(handle, "expected weaponSimpleIcon shadername");
 			}
 
 			weaponInfo->weaponSimpleIcon = trap_R_RegisterShaderNoMip(filename);
+		}
+		else if (!Q_stricmp(token.string, "weaponSimpleIconScale"))
+		{
+			if (!PC_Point_Parse(handle, &weaponInfo->weaponSimpleIconScale))
+			{
+				return CG_RW_ParseError(handle, "expected weaponSimpleIconScale X Y");
+			}
 		}
 		else if (!Q_stricmp(token.string, "weaponCardIcon"))
 		{

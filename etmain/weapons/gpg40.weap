@@ -29,6 +29,7 @@ weaponDef
 		weaponIconScale		2
 		weaponSelectedIcon	"icons/iconw_kar98_gren_1_select"
 		weaponSimpleIcon	"simpleicons/kar98"
+		weaponSimpleIconScale 2 1
 		
 		//weaponCardIcon    ""
 		//weaponCardScale   0 0

@@ -797,6 +797,7 @@ typedef struct weaponInfo_s
 	qhandle_t weaponIcon[2];            ///< [0] is weap icon, [1] is highlight icon
 	int weaponIconScale;
 	qhandle_t weaponSimpleIcon;
+	vec2_t weaponSimpleIconScale;
 
 	qhandle_t weaponCardIcon;
 	vec2_t weaponCardScale;

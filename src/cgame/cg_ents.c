@@ -627,6 +627,19 @@ qboolean CG_PlayerSeesItem(playerState_t *ps, entityState_t *item, int atTime, i
 	return qtrue;
 }
 
+#define SIMPLEITEM_ICON_SIZE 24
+
+/**
+ * @brief CG_PlayerCanPickupWeapon
+ * @param[in] clientNum
+ * @param[in] weapon
+ */
+static int CG_PlayerCanPickupWeapon(int clientNum, weapon_t weapon)
+{
+	return BG_ClassHasWeapon(GetPlayerClassesData(TEAM_AXIS, cgs.clientinfo[clientNum].cls), weapon) ||
+	       BG_ClassHasWeapon(GetPlayerClassesData(TEAM_ALLIES, cgs.clientinfo[clientNum].cls), weapon);
+}
+
 /**
  * @brief CG_Item
  * @param[in] cent
@@ -652,64 +665,101 @@ static void CG_Item(centity_t *cent)
 	item = BG_GetItem(es->modelindex);
 
 	if (cg_simpleItems.integer == 1 ||
-	    (cg_simpleItems.integer > 1 && (item->giType == IT_WEAPON || item->giType == IT_HEALTH || item->giType == IT_AMMO)))
+	    (cg_simpleItems.integer > 1 && item->giType != IT_TEAM))
 	{
-		Com_Memset(&ent, 0, sizeof(ent));
-		VectorCopy(cent->lerpOrigin, ent.origin);
-		ent.reType     = RT_SPRITE;
-		ent.radius     = 12;
-		ent.origin[2] += 9;
+		polyVert_t    temp[4];
+		polyVert_t    quad[4];
+		qhandle_t     simpleItemShader = 0;
+		weaponInfo_t  *weaponInfo      = NULL;
+		vec3_t        origin;
+		unsigned char accentColor[4];
+		float         simpleItemScaleX = 1.f;
+		float         simpleItemScaleY = 1.f;
+
+		VectorCopy(cent->lerpOrigin, origin);
+		origin[2] += SIMPLEITEM_ICON_SIZE / 2;
+		Vector4Set(accentColor, 255, 255, 255, 255); // default white color
 
 		switch (item->giType)
 		{
 		case IT_AMMO:
-			ent.customShader = cg_weapons[WP_AMMO].weaponSimpleIcon;
+			weaponInfo = &cg_weapons[WP_AMMO];
+			// custom colors can be set here
 			break;
 		case IT_HEALTH:
-			ent.customShader = cg_weapons[WP_MEDKIT].weaponSimpleIcon;
-			break;
-		case IT_TEAM:
-			ent.customShader = cgs.media.objectiveSimpleIcon;
-			ent.origin[2]   += 5 + sin((cg.time + 1000) * 0.005) * 3;
+			weaponInfo = &cg_weapons[WP_MEDKIT];
+			// custom colors can be set here
 			break;
 		case IT_WEAPON:
-			ent.customShader = cg_weapons[item->giWeapon].weaponSimpleIcon;
+			weaponInfo = &cg_weapons[item->giWeapon];
+			if (CG_PlayerCanPickupWeapon(cg.snap->ps.clientNum, item->giWeapon))
+			{
+				Vector4Set(accentColor, 1, 198, 255, 255);
+			}
+			else
+			{
+				Vector4Set(accentColor, 250, 14, 14, 255);
+			}
+			break;
+		case IT_TEAM:
+			simpleItemShader = cgs.media.objectiveSimpleIcon;
+			origin[2]       += 5 + (float)sin((cg.time + 1000) * 0.005) * 3;
+			// custom colors can be set here
 			break;
 		case IT_BAD:
 		default:
-			break;
+			return;
 		}
 
-		if (item->giType == IT_AMMO || item->giType == IT_HEALTH || item->giType == IT_TEAM ||
-		    (item->giType == IT_WEAPON && item->giWeapon == WP_AMMO) ||
-		    cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_SPECTATOR)
+		// reset color
+		if (cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_SPECTATOR)
 		{
-			// default color
-			ent.shaderRGBA[0] = 255;
-			ent.shaderRGBA[1] = 255;
-			ent.shaderRGBA[2] = 255;
-			ent.shaderRGBA[3] = 255;
-		}
-		else if (BG_ClassHasWeapon(GetPlayerClassesData(TEAM_AXIS, cgs.clientinfo[cg.snap->ps.clientNum].cls), item->giWeapon) ||
-		         BG_ClassHasWeapon(GetPlayerClassesData(TEAM_ALLIES, cgs.clientinfo[cg.snap->ps.clientNum].cls), item->giWeapon))
-		{
-			// blue color
-			ent.shaderRGBA[0] = 1;
-			ent.shaderRGBA[1] = 198;
-			ent.shaderRGBA[2] = 255;
-			ent.shaderRGBA[3] = 255;
-		}
-		else
-		{
-			// red color
-			ent.shaderRGBA[0] = 250;
-			ent.shaderRGBA[1] = 14;
-			ent.shaderRGBA[2] = 14;
-			ent.shaderRGBA[3] = 255;
+			Vector4Set(accentColor, 255, 255, 255, 255);
 		}
 
-		trap_R_AddRefEntityToScene(&ent);
-		return;
+		if (weaponInfo)
+		{
+			// fallback to weapon icon
+			simpleItemShader = weaponInfo->weaponSimpleIcon ? weaponInfo->weaponSimpleIcon : weaponInfo->weaponIcon[1];
+			// custom simple item scale
+			simpleItemScaleX = weaponInfo->weaponSimpleIconScale[0] > 0.f ? weaponInfo->weaponSimpleIconScale[0] : 1.f;
+			simpleItemScaleY = weaponInfo->weaponSimpleIconScale[1] > 0.f ? weaponInfo->weaponSimpleIconScale[1] : 1.f;
+		}
+
+		if (simpleItemShader)
+		{
+			// build quad out of verts (inversed)
+			VectorSet(temp[0].xyz, 0, 1 * simpleItemScaleX, 1 * simpleItemScaleY);
+			VectorSet(temp[1].xyz, 0, -1 * simpleItemScaleX, 1 * simpleItemScaleY);
+			VectorSet(temp[2].xyz, 0, -1 * simpleItemScaleX, -1 * simpleItemScaleY);
+			VectorSet(temp[3].xyz, 0, 1 * simpleItemScaleX, -1 * simpleItemScaleY);
+			// face quad towards viewer
+			vec3_rotate(temp[0].xyz, cg.refdef_current->viewaxis, quad[0].xyz);
+			vec3_rotate(temp[1].xyz, cg.refdef_current->viewaxis, quad[1].xyz);
+			vec3_rotate(temp[2].xyz, cg.refdef_current->viewaxis, quad[2].xyz);
+			vec3_rotate(temp[3].xyz, cg.refdef_current->viewaxis, quad[3].xyz);
+			// position quad
+			VectorMA(origin, SIMPLEITEM_ICON_SIZE / 2, quad[0].xyz, quad[0].xyz);
+			VectorMA(origin, SIMPLEITEM_ICON_SIZE / 2, quad[1].xyz, quad[1].xyz);
+			VectorMA(origin, SIMPLEITEM_ICON_SIZE / 2, quad[2].xyz, quad[2].xyz);
+			VectorMA(origin, SIMPLEITEM_ICON_SIZE / 2, quad[3].xyz, quad[3].xyz);
+			// set texture coords
+			Vector2Set(quad[0].st, 0.f, 0.f);
+			Vector2Set(quad[1].st, 1.f, 0.f);
+			Vector2Set(quad[2].st, 1.f, 1.f);
+			Vector2Set(quad[3].st, 0.f, 1.f);
+			// set color modulation
+			Vector4Copy(accentColor, quad[0].modulate);
+			Vector4Copy(accentColor, quad[1].modulate);
+			Vector4Copy(accentColor, quad[2].modulate);
+			Vector4Copy(accentColor, quad[3].modulate);
+
+			// draw quad
+			trap_R_AddPolyToScene(simpleItemShader, 4, quad);
+			return;
+		}
+
+		// fallback to 3d model, in case no simple icon shader was found
 	}
 
 	Com_Memset(&ent, 0, sizeof(ent));
@@ -1265,8 +1315,8 @@ static void CG_Missile(centity_t *cent)
 	// reverted to vanilla behaviour
 	// FIXME: check FEATURE_EDV weapon cam (see else condition below)
 	if (/*GetWeaponTableData(cent->currentState.weapon)->type & (WEAPON_TYPE_RIFLENADE | WEAPON_TYPE_PANZER | WEAPON_TYPE_GRENADE)
-	    &&*/ (CHECKBITWISE(GetWeaponTableData(cent->currentState.weapon)->type, WEAPON_TYPE_MORTAR | WEAPON_TYPE_SET)
-	          || cent->currentState.weapon == WP_MAPMORTAR /*|| cent->currentState.weapon == WP_SMOKE_MARKER
+	    &&*/(CHECKBITWISE(GetWeaponTableData(cent->currentState.weapon)->type, WEAPON_TYPE_MORTAR | WEAPON_TYPE_SET)
+	     || cent->currentState.weapon == WP_MAPMORTAR /*|| cent->currentState.weapon == WP_SMOKE_MARKER
 	        || cent->currentState.weapon == WP_SMOKE_BOMB || cent->currentState.weapon == WP_DYNAMITE*/))
 	{
 		vec3_t delta;

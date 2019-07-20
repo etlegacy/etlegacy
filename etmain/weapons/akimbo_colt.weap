@@ -28,6 +28,7 @@ weaponDef
 		weaponIconScale		2
 		weaponSelectedIcon	"icons/iconw_akimbocolts_1_select"
 		//weaponSimpleIcon	""
+		//weaponSimpleIconScale 1 1
 		
 		weaponCardIcon      "gfx/limbo/weaponcard02"
 		weaponCardScale     1 1

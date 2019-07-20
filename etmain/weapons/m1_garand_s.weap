@@ -29,6 +29,7 @@ weaponDef
 		weaponIconScale		2
 		weaponSelectedIcon	"icons/iconw_mauser_1_select"
 		weaponSimpleIcon	"simpleicons/garand"
+		weaponSimpleIconScale 2 1
 		
 		weaponCardIcon      "gfx/limbo/weaponcard02"
 		weaponCardScale     1 1
