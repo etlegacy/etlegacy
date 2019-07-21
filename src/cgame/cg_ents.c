@@ -682,35 +682,42 @@ static void CG_Item(centity_t *cent)
 		{
 		case IT_AMMO:
 			weaponInfo = &cg_weapons[WP_AMMO];
-			Vector4Set(accentColor, 255, 239, 12, 255);
+			Vector4Set(accentColor, 25, 255, 25, 127);
 			break;
 		case IT_HEALTH:
 			weaponInfo = &cg_weapons[WP_MEDKIT];
-			Vector4Set(accentColor, 17, 227, 70, 255);
+			Vector4Set(accentColor, 255, 25, 25, 127);
 			break;
 		case IT_WEAPON:
 			weaponInfo = &cg_weapons[item->giWeapon];
 			// ammo box
 			if (item->giWeapon == WP_AMMO)
 			{
-				Vector4Set(accentColor, 255, 239, 12, 255);
+				Vector4Set(accentColor, 25, 255, 25, 127);
 			}
 			else
 			{
 				if (CG_PlayerCanPickupWeapon(cg.snap->ps.clientNum, item->giWeapon))
 				{
-					Vector4Set(accentColor, 1, 198, 255, 255);
+					Vector4Set(accentColor, 188, 200, 202, 255);
 				}
 				else
 				{
-					Vector4Set(accentColor, 250, 14, 14, 255);
+					Vector4Set(accentColor, 97, 97, 97, 255);
 				}
 			}
 			break;
 		case IT_TEAM:
 			simpleItemShader = cgs.media.objectiveSimpleIcon;
 			origin[2]       += 5 + (float)sin((cg.time + 1000) * 0.005) * 3;
-			Vector4Set(accentColor, 226, 29, 255, 255);
+			if (item->giPowerUp == PW_BLUEFLAG)
+			{
+				Vector4Set(accentColor, 255, 0, 0, 255);
+			}
+			else if (item->giPowerUp == PW_REDFLAG)
+			{
+				Vector4Set(accentColor, 0, 127, 255, 255);
+			}
 			break;
 		case IT_BAD:
 		default:
@@ -721,7 +728,7 @@ static void CG_Item(centity_t *cent)
 		if (cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_SPECTATOR &&
 		    item->giType == IT_WEAPON && item->giWeapon != WP_AMMO)
 		{
-			Vector4Set(accentColor, 255, 255, 255, 255);
+			Vector4Set(accentColor, 188, 200, 202, 255);
 		}
 
 		if (weaponInfo)
