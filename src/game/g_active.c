@@ -98,6 +98,7 @@ void P_DamageFeedback(gentity_t *player)
 	{
 		player->pain_debounce_time = level.time + 700;
 		G_AddEvent(player, EV_PAIN, player->health);
+		BG_AnimScriptEvent(&client->ps, client->pers.character->animModelInfo, ANIM_ET_PAIN, qfalse, qtrue);
 	}
 
 	client->ps.damageEvent++;   // always increment this since we do multiple view damage anims
@@ -804,7 +805,7 @@ qboolean ClientInactivityTimer(gclient_t *client)
 			{
 				CPx(client - level.clients, "cp \"^3Dropped for inactivity\n\"");
 			}
-				// display a message at 30 seconds, and countdown at last 10 ..
+			// display a message at 30 seconds, and countdown at last 10 ..
 			else if (secondsLeft <= 10 || secondsLeft == 30)
 			{
 				CPx(client - level.clients, va("cp \"^1%i ^3seconds until inactivity drop\n\"", secondsLeft));
@@ -813,23 +814,23 @@ qboolean ClientInactivityTimer(gclient_t *client)
 	}
 	else
 	{
-        if (inTeam && g_inactivity.integer)
-        {
-            SetTeam(&g_entities[client - level.clients], "s", qtrue, WP_NONE, WP_NONE, qfalse);
-            client->inactivityWarning     = qfalse;
-            client->inactivityTime        = level.time + 1000 * inactivityspec;
-            client->inactivitySecondsLeft = inactivityspec;
+		if (inTeam && g_inactivity.integer)
+		{
+			SetTeam(&g_entities[client - level.clients], "s", qtrue, WP_NONE, WP_NONE, qfalse);
+			client->inactivityWarning     = qfalse;
+			client->inactivityTime        = level.time + 1000 * inactivityspec;
+			client->inactivitySecondsLeft = inactivityspec;
 
-            G_Printf("Moved to spectator for inactivity: %s\n", client->pers.netname);
-        }
-        else if (doDrop && g_spectatorInactivity.integer && !inTeam)
-        {
-            // slots occupied by bots should be considered "free",
-            // because bots will disconnect if a human player connects..
-            G_Printf("Spectator dropped for inactivity: %s\n", client->pers.netname);
-            trap_DropClient(client - level.clients, "Dropped due to inactivity", 0);
-            return qfalse;
-        }
+			G_Printf("Moved to spectator for inactivity: %s\n", client->pers.netname);
+		}
+		else if (doDrop && g_spectatorInactivity.integer && !inTeam)
+		{
+			// slots occupied by bots should be considered "free",
+			// because bots will disconnect if a human player connects..
+			G_Printf("Spectator dropped for inactivity: %s\n", client->pers.netname);
+			trap_DropClient(client - level.clients, "Dropped due to inactivity", 0);
+			return qfalse;
+		}
 	}
 
 	// do not kick by default
@@ -1063,8 +1064,8 @@ void WolfFindMedic(gentity_t *self)
 	trace_t   tr;
 	float     bestdist = 1024, dist;
 
-	self->client->ps.viewlocked_entNum    = 0;
-	self->client->ps.viewlocked           = VIEWLOCK_NONE;
+	self->client->ps.viewlocked_entNum = 0;
+	self->client->ps.viewlocked        = VIEWLOCK_NONE;
 
 	VectorCopy(self->s.pos.trBase, start);
 	start[2] += self->client->ps.viewheight;
@@ -2303,7 +2304,7 @@ void ClientEndFrame(gentity_t *ent)
 		G_RailBox(head->r.currentOrigin, head->r.mins, head->r.maxs, tv(0.f, 1.f, 0.f), head->s.number | HITBOXBIT_HEAD);
 		G_FreeEntity(head);
 
-		if (ent->client->ps.eFlags & (EF_PRONE|EF_DEAD))
+		if (ent->client->ps.eFlags & (EF_PRONE | EF_DEAD))
 		{
 			gentity_t *legs;
 
