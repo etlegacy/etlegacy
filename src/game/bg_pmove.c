@@ -1537,7 +1537,13 @@ static void PM_CrashLand(void)
 		}
 		else if (delta > 67)
 		{
-			PM_AddEventExt(EV_FALL_DMG_50, PM_FootstepForSurface());
+			// this is a pain grunt, so don't play it if dead
+			if (pm->ps->stats[STAT_HEALTH] > 0)
+			{
+				PM_AddEventExt(EV_FALL_DMG_50, PM_FootstepForSurface());
+				BG_UpdateConditionValue(pm->ps->clientNum, ANIM_COND_IMPACT_POINT, (rand() + 1) ? IMPACTPOINT_KNEE_RIGHT : IMPACTPOINT_KNEE_LEFT, qtrue);
+				BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_PAIN, qfalse, qtrue);
+			}
 		}
 		else if (delta > 58)
 		{
@@ -1545,6 +1551,8 @@ static void PM_CrashLand(void)
 			if (pm->ps->stats[STAT_HEALTH] > 0)
 			{
 				PM_AddEventExt(EV_FALL_DMG_25, PM_FootstepForSurface());
+				BG_UpdateConditionValue(pm->ps->clientNum, ANIM_COND_IMPACT_POINT, (rand() + 1) ? IMPACTPOINT_KNEE_RIGHT : IMPACTPOINT_KNEE_LEFT, qtrue);
+				BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_PAIN, qfalse, qtrue);
 			}
 		}
 		else if (delta > 48)
@@ -1553,6 +1561,8 @@ static void PM_CrashLand(void)
 			if (pm->ps->stats[STAT_HEALTH] > 0)
 			{
 				PM_AddEventExt(EV_FALL_DMG_15, PM_FootstepForSurface());
+				BG_UpdateConditionValue(pm->ps->clientNum, ANIM_COND_IMPACT_POINT, (rand() + 1) ? IMPACTPOINT_KNEE_RIGHT : IMPACTPOINT_KNEE_LEFT, qtrue);
+				BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_PAIN, qfalse, qtrue);
 			}
 		}
 		else if (delta > 38.75f)
@@ -1561,6 +1571,8 @@ static void PM_CrashLand(void)
 			if (pm->ps->stats[STAT_HEALTH] > 0)
 			{
 				PM_AddEventExt(EV_FALL_DMG_10, PM_FootstepForSurface());
+				BG_UpdateConditionValue(pm->ps->clientNum, ANIM_COND_IMPACT_POINT, (rand() + 1) ? IMPACTPOINT_KNEE_RIGHT : IMPACTPOINT_KNEE_LEFT, qtrue);
+				BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_PAIN, qfalse, qtrue);
 			}
 		}
 		else if (delta > 7)
@@ -2430,7 +2442,7 @@ static void PM_BeginWeaponChange(weapon_t oldWeapon, weapon_t newWeapon, qboolea
 	{
 		PM_AddEvent(EV_CHANGE_WEAPON);
 
-                PM_StartWeaponAnim(WEAP_DROP);
+		PM_StartWeaponAnim(WEAP_DROP);
 
 		// play an animation
 		BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_DROPWEAPON, qfalse, qfalse);

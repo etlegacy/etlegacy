@@ -352,7 +352,7 @@ void CG_NewClientInfo(int clientNum)
 
 				CG_PriorityCenterPrint(va(CG_TranslateString("You have been rewarded with %s"), CG_TranslateString(cg_skillRewards[i][newInfo.skill[i] - 1])), 400, cg_fontScaleCP.value, 99999);
 #ifdef FEATURE_EDV
-				}
+			}
 #endif
 			}
 		}
@@ -1937,11 +1937,11 @@ static void CG_PlayerFloatText(centity_t *cent, const char *text, int height)
 static void CG_PlayerSprites(centity_t *cent)
 {
 	int team;
-	int numIcons       = 0;
-	int height         = 56;
-	clientInfo_t   *ci = &cgs.clientinfo[cent->currentState.clientNum];
+	int numIcons     = 0;
+	int height       = 56;
+	clientInfo_t *ci = &cgs.clientinfo[cent->currentState.clientNum];
 	fireteamData_t *ft;
-	qboolean       sameTeam;
+	qboolean sameTeam;
 
 	if ((cent->currentState.powerups & (1 << PW_REDFLAG)) || (cent->currentState.powerups & (1 << PW_BLUEFLAG)))
 	{
@@ -2031,8 +2031,8 @@ static void CG_PlayerSprites(centity_t *cent)
 		else // !sameTeam
 		{
 			if (cgs.clientinfo[cent->currentState.number].disguiseClientNum > -1
-				&& (ft = CG_IsOnFireteam(cgs.clientinfo[cent->currentState.number].disguiseClientNum))
-				&& cgs.clientinfo[cgs.clientinfo[cent->currentState.number].disguiseClientNum].selected)
+			    && (ft = CG_IsOnFireteam(cgs.clientinfo[cent->currentState.number].disguiseClientNum))
+			    && cgs.clientinfo[cgs.clientinfo[cent->currentState.number].disguiseClientNum].selected)
 			{
 				CG_PlayerFloatSprite(cent, cgs.media.fireteamicons[ft->ident], height, numIcons++);
 			}
@@ -2470,6 +2470,8 @@ void CG_AnimPlayerConditions(bg_character_t *character, centity_t *cent)
 	{
 		BG_UpdateConditionValue(es->clientNum, ANIM_COND_MOVETYPE, character->animModelInfo->animations[legsAnim]->movetype, qfalse);
 	}
+
+	BG_UpdateConditionValue(es->clientNum, ANIM_COND_IMPACT_POINT, IMPACTPOINT_UNUSED, qtrue);
 }
 
 /**
@@ -2702,7 +2704,7 @@ void CG_Player(centity_t *cent)
 
 	// DEBUG
 	if (cg_debugPlayerHitboxes.integer && cent->currentState.eType != ET_CORPSE &&
-			cent->currentState.number == cg.snap->ps.clientNum)
+	    cent->currentState.number == cg.snap->ps.clientNum)
 	{
 		// position marker
 		if (cg_debugPlayerHitboxes.integer & 4)
@@ -2766,7 +2768,7 @@ void CG_Player(centity_t *cent)
 				maxs[2] = maxs[2] - (cg.predictedPlayerState.standViewHeight - PRONE_BODYHEIGHT + 8);
 			}
 			else if (cg.predictedPlayerState.pm_flags & PMF_DUCKED
-				&& cg.predictedPlayerState.velocity[0] == 0.f && cg.predictedPlayerState.velocity[1] == 0.f)
+			         && cg.predictedPlayerState.velocity[0] == 0.f && cg.predictedPlayerState.velocity[1] == 0.f)
 			{
 				maxs[2] = cg.predictedPlayerState.crouchMaxZ + DEFAULT_BODYHEIGHT_DELTA - CROUCH_IDLE_BODYHEIGHT_DELTA;
 			}

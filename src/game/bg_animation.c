@@ -1995,4 +1995,6 @@ void BG_AnimUpdatePlayerStateConditions(pmove_t *pmove)
 			}
 		}
 	}
+
+	BG_UpdateConditionValue(ps->clientNum, ANIM_COND_IMPACT_POINT, IMPACTPOINT_UNUSED, qtrue);
 }
