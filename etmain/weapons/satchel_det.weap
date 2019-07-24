@@ -6,7 +6,7 @@ weaponDef
 		//pickupModel		""
 		//pickupSound		"sound/misc/w_pkup.wav"
 		
-		weaponConfig		"models/multiplayer/satchel/weapon.cfg"
+		weaponConfig		"models/multiplayer/satchel_det/weapon.cfg"
 		handsModel			"models/multiplayer/satchel/v_satchel_hand.md3"
 		
 		//flashDlightColor	0 0 0

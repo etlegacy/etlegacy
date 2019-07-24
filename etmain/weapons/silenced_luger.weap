@@ -6,7 +6,7 @@ weaponDef
 		//pickupModel		""
 		//pickupSound		"sound/misc/w_pkup.wav"
 		
-		weaponConfig		"models/weapons2/silencer/weapon.cfg"
+		weaponConfig		"models/weapons2/luger/weapon.cfg"
 		handsModel			"models/weapons2/silencer/v_silencer_hand.mdc"
 		
 		flashDlightColor	1.0 0.6 0.23

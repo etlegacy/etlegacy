@@ -96,6 +96,8 @@ extern int c_pmove;
 void PM_AddTouchEnt(int entityNum);
 void PM_AddEvent(int newEvent);
 
+int PM_IdleAnimForWeapon(int weapon);
+
 qboolean PM_SlideMove(qboolean gravity);
 void PM_StepSlideMove(qboolean gravity);
 

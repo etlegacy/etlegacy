@@ -1172,8 +1172,8 @@ typedef struct weapontable_s
 
 	int switchTimeBegin;            ///< bg -
 	int switchTimeFinish;           ///< bg -
-	int altSwitchTimeBegin;         ///< bg -
-	int altSwitchTimeFinish;        ///< bg -
+	int altSwitchTimeFrom;          ///< bg -
+	int altSwitchTimeTo;            ///< bg -
 
 	float knockback;                ///< bg -
 	int muzzlePointOffset[3];       ///< g - forward, left, up
@@ -1184,15 +1184,6 @@ typedef struct weapontable_s
 
 	const char *className;          ///< g -
 	const char *weapFile;           ///< cg -
-
-	int idleAnim;                   ///< bg -
-	int attackAnim;                 ///< bg -
-	int lastAttackAnim;             ///< bg -
-	int altSwitchFrom;              ///< bg -
-	int altSwitchTo;                ///< bg -
-	int reloadAnim;                 ///< bg -
-	int raiseAnim;                  ///< bg -
-	int dropAnim;                   ///< bg -
 
 	float chargeTimeCoeff[NUM_SKILL_LEVELS];      ///< bg -
 
@@ -1576,15 +1567,15 @@ typedef enum
 	WEAP_IDLE2,
 	WEAP_ATTACK1,
 	WEAP_ATTACK2,
-	WEAP_ATTACK_LASTSHOT,  ///< used when firing the last round before having an empty clip.
+	WEAP_ATTACK_LASTSHOT,   ///< used when firing the last round before having an empty clip.
 	WEAP_DROP,
 	WEAP_RAISE,
 	WEAP_RELOAD1,
 	WEAP_RELOAD2,
-	WEAP_RELOAD3,
-	WEAP_ALTSWITCHFROM,///< switch from alt fire mode weap (scoped/silencer/etc)
-	WEAP_ALTSWITCHTO,  ///< switch to alt fire mode weap
-	WEAP_DROP2,
+	WEAP_RELOAD3,           ///< unused (was used as RAISE2)
+	WEAP_ALTSWITCHFROM,     ///< switch from alt fire mode weap (scoped/silencer/etc)
+	WEAP_ALTSWITCHTO,       ///< switch to alt fire mode weap
+	WEAP_DROP2,             ///< unused
 	MAX_WP_ANIMATIONS
 } weapAnimNumber_t;
 

@@ -2161,7 +2161,7 @@ static void CG_RunWeapLerpFrame(clientInfo_t *ci, weaponInfo_t *wi, lerpFrame_t 
 	}
 	else if (newAnimation != lf->animationNumber)
 	{
-		if ((newAnimation & ~ANIM_TOGGLEBIT) == GetWeaponTableData(cg.snap->ps.nextWeapon)->raiseAnim)
+		if ((newAnimation & ~ANIM_TOGGLEBIT) == WEAP_RAISE)
 		{
 			CG_ClearWeapLerpFrame(wi, lf, newAnimation);     // clear when switching to raise (since it should be out of view anyway)
 		}
@@ -2855,7 +2855,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 			{
 				int anim = cg.snap->ps.weapAnim & ~ANIM_TOGGLEBIT;
 
-				if (anim == GetWeaponTableData(weaponNum)->altSwitchFrom || anim == GetWeaponTableData(weaponNum)->altSwitchTo || anim == GetWeaponTableData(weaponNum)->idleAnim)
+				if (anim == WEAP_ALTSWITCHFROM || anim == WEAP_ALTSWITCHTO || anim == WEAP_IDLE1 || anim == WEAP_IDLE2)
 				{
 					// prevent the flying nade effect (much visible with M7 when swapping while raising)
 					if (weaponNum == cent->currentState.nextWeapon)
@@ -3915,8 +3915,8 @@ void CG_AltWeapon_f(void)
 	// don't allow another weapon switch when we're still swapping alt weap, to prevent animation breaking
 	// there we check the value of the animation to prevent any switch during raising and dropping alt weapon
 	// until the animation is ended
-	if ((cg.snap->ps.weapAnim & ~ANIM_TOGGLEBIT) == GetWeaponTableData(cg.snap->ps.weapon)->altSwitchFrom ||
-	    (cg.snap->ps.weapAnim & ~ANIM_TOGGLEBIT) == GetWeaponTableData(cg.snap->ps.weapon)->altSwitchTo)
+	if ((cg.snap->ps.weapAnim & ~ANIM_TOGGLEBIT) == WEAP_ALTSWITCHFROM ||
+	    (cg.snap->ps.weapAnim & ~ANIM_TOGGLEBIT) == WEAP_ALTSWITCHTO)
 	{
 		return;
 	}

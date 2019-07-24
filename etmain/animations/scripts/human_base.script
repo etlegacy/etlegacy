@@ -3174,11 +3174,11 @@ do_alt_weapon_mode
 {
 	weapons K43 Rifle
 	{
-		torso detach_grenlauncher
+		torso reload_grenlauncher
 	}
 	weapons m1 garand
 	{
-		torso detach_grenlauncher
+		torso reload_grenlauncher
 	}
 	weapons gpg40
 	{
@@ -3187,6 +3187,14 @@ do_alt_weapon_mode
 	weapons M7
 	{
 		torso reload_grenlauncher
+	}
+	weapons Luger
+	{
+		torso attach_silencer
+	}
+	weapons Colt
+	{
+		torso attach_silencer
 	}
 	weapons Silenced Luger
 	{
@@ -3200,6 +3208,30 @@ do_alt_weapon_mode
 
 undo_alt_weapon_mode
 {
+	weapons K43 Rifle
+	{
+		torso detach_grenlauncher
+	}
+	weapons m1 garand
+	{
+		torso detach_grenlauncher
+	}
+	weapons gpg40
+	{
+		torso detach_grenlauncher
+	}
+	weapons M7
+	{
+		torso detach_grenlauncher
+	}
+	weapons Luger
+	{
+		torso detach_silencer
+	}
+	weapons Colt
+	{
+		torso detach_silencer
+	}
 	weapons Silenced Luger
 	{
 		torso detach_silencer
@@ -3228,6 +3260,14 @@ do_alt_weapon_mode_prone
 	{
 		torso e_prone_rifle_attach
 	}
+	weapons Luger
+	{
+		torso e_prone_pistol_attach
+	}
+	weapons Colt
+	{
+		torso e_prone_pistol_attach
+	}
 	weapons Silenced Luger
 	{
 		torso e_prone_pistol_attach
@@ -3255,6 +3295,14 @@ undo_alt_weapon_mode_prone
 	weapons M7
 	{
 		torso e_prone_rifle_detach
+	}
+	weapons Luger
+	{
+		torso e_prone_pistol_detach
+	}
+	weapons Colt
+	{
+		torso e_prone_pistol_detach
 	}
 	weapons Silenced Luger
 	{

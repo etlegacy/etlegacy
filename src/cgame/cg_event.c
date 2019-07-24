@@ -2114,7 +2114,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 		// start weapon idle animation
 		if (es->number == cg.snap->ps.clientNum)
 		{
-			cg.predictedPlayerState.weapAnim = ((cg.predictedPlayerState.weapAnim & ANIM_TOGGLEBIT) ^ ANIM_TOGGLEBIT) | GetWeaponTableData(cg.snap->ps.weapon)->idleAnim;
+			cg.predictedPlayerState.weapAnim = ((cg.predictedPlayerState.weapAnim & ANIM_TOGGLEBIT) ^ ANIM_TOGGLEBIT) | PM_IdleAnimForWeapon(es->weapon);
 			cent->overheatTime               = cg.time;     // used to make the barrels smoke when overheated
 		}
 

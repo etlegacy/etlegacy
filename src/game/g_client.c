@@ -1093,11 +1093,11 @@ void AddWeaponToPlayer(gclient_t *client, weapon_t weapon, int ammo, int ammocli
 	{
 		switch (weapon)
 		{
-			case WP_GPG40:
-			case WP_M7:
-				return;
-			default:
-				break;
+		case WP_GPG40:
+		case WP_M7:
+			return;
+		default:
+			break;
 		}
 	}
 
@@ -1963,7 +1963,7 @@ void ClientUserinfoChanged(int clientNum)
 	       client->sess.latchPlayerWeapon2,
 	       client->sess.muted ? 1 : 0,
 	       client->sess.referee,
-		   client->sess.shoutcaster,
+	       client->sess.shoutcaster,
 	       client->sess.uci
 	       );
 
@@ -3113,7 +3113,7 @@ void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean
 	ClientEndFrame(ent);
 
 	// set idle animation on weapon
-	ent->client->ps.weapAnim = ((ent->client->ps.weapAnim & ANIM_TOGGLEBIT) ^ ANIM_TOGGLEBIT) | GetWeaponTableData(ent->client->ps.weapon)->idleAnim;
+	ent->client->ps.weapAnim = ((ent->client->ps.weapAnim & ANIM_TOGGLEBIT) ^ ANIM_TOGGLEBIT) | WEAP_IDLE1;
 
 	// clear entity state values
 	BG_PlayerStateToEntityState(&client->ps, &ent->s, level.time, qtrue);
@@ -3371,7 +3371,7 @@ float ClientHitboxMaxZ(gentity_t *hitEnt)
 		return PRONE_BODYHEIGHT;
 	}
 	else if (hitEnt->client->ps.eFlags & EF_CROUCHING &&
-		hitEnt->client->ps.velocity[0] == 0.f && hitEnt->client->ps.velocity[1] == 0.f)
+	         hitEnt->client->ps.velocity[0] == 0.f && hitEnt->client->ps.velocity[1] == 0.f)
 	{
 		// crouched idle animation is lower than the moving one
 		return CROUCH_IDLE_BODYHEIGHT;

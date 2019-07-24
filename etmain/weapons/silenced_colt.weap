@@ -6,7 +6,7 @@ weaponDef
 		//pickupModel		""
 		//pickupSound		"sound/misc/w_pkup.wav"
 		
-		weaponConfig		"models/multiplayer/silencedcolt/weapon.cfg"
+		weaponConfig		"models/weapons2/colt/weapon.cfg"
 		handsModel			"models/multiplayer/silencedcolt/v_silencedcolt_hand.md3"
 		
 		flashDlightColor	1.0 0.6 0.23
