@@ -3044,30 +3044,41 @@ DEATH
 	enemy_weapon knives, enemy_position behind
 	{
 		both death_machinegun_1
+		both death_machinegun_2
+		both death_gut
 	}
 
 	enemy_weapon machineguns
 	{
 		both death_machinegun_1
+		both death_machinegun_2
+		both death_gut
 	}
 
 	enemy_weapon rifles, impact_point head
 	{
 		both death_machinegun_1
+		both death_machinegun_2
+		both death_gut
 	}
 
 	enemy_weapon rifles, impact_point chest
 	{
 		both death_machinegun_1
+		both death_machinegun_2
+		both death_gut
 	}
 	enemy_weapon flamethrower
 	{
 		both death_machinegun_1
+		both death_machinegun_2
+		both death_gut
 	}
 
 	default
 	{
 		both death_machinegun_1
+		both death_machinegun_2
 		both death_gut
 	}
 }
