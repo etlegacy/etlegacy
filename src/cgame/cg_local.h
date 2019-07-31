@@ -3693,4 +3693,44 @@ typedef enum
 
 extern qboolean resetmaxspeed; // CG_DrawSpeed
 
+/* HUD exports */
+
+typedef struct hudComponent_s
+{
+	rectDef_t location;
+	int visible;
+	int style;
+} hudComponent_t;
+
+typedef struct hudStructure_s
+{
+	int hudnumber;
+	hudComponent_t compas;
+	hudComponent_t staminabar;
+	hudComponent_t breathbar;
+	hudComponent_t healthbar;
+	hudComponent_t weaponchargebar;
+	hudComponent_t healthtext;
+	hudComponent_t xptext;
+	hudComponent_t ranktext;
+	hudComponent_t statsdisplay;
+	hudComponent_t weaponicon;
+	hudComponent_t weaponammo;
+	hudComponent_t fireteam;
+	hudComponent_t popupmessages;
+	hudComponent_t powerups;
+	hudComponent_t hudhead;
+
+	hudComponent_t cursorhint;
+	hudComponent_t weaponstability;
+	hudComponent_t livesleft;
+
+	hudComponent_t roundtimer;
+	hudComponent_t reinforcement;
+	hudComponent_t spawntimer;
+	hudComponent_t localtime;
+} hudStucture_t;
+
+hudStucture_t *CG_GetActiveHUD();
+
 #endif // #ifndef INCLUDE_CG_LOCAL_H

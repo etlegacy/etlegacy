@@ -156,14 +156,22 @@ void CG_TransformAutomapEntity(void)
 {
 	mapEntityData_t *mEnt;
 	int             i;
+	float           w = 100.f, h = 100.f;
+	hudStucture_t   *hud = CG_GetActiveHUD();
+	if (hud)
+	{
+		// subtract surrounding decoration of the compass
+		w = hud->compas.location.w - (hud->compas.location.w * 0.25f);
+		h = hud->compas.location.h - (hud->compas.location.h * 0.25f);
+	}
 
 	for (i = 0; i < mapEntityCount; i++)
 	{
 		mEnt = &mapEntities[i];
 
 		// calculate the screen coordinate of this entity for the automap, consider the zoom value
-		mEnt->automapTransformed[0] = (mEnt->x - cg.mapcoordsMins[0]) * cg.mapcoordsScale[0] * 100 * cg_automapZoom.value; // FIXME: check value out of range before?
-		mEnt->automapTransformed[1] = (mEnt->y - cg.mapcoordsMins[1]) * cg.mapcoordsScale[1] * 100 * cg_automapZoom.value;
+		mEnt->automapTransformed[0] = (mEnt->x - cg.mapcoordsMins[0]) * cg.mapcoordsScale[0] * w * cg_automapZoom.value; // FIXME: check value out of range before?
+		mEnt->automapTransformed[1] = (mEnt->y - cg.mapcoordsMins[1]) * cg.mapcoordsScale[1] * h * cg_automapZoom.value;
 	}
 }
 
@@ -1245,9 +1253,9 @@ void CG_DrawMap(float x, float y, float w, float h, int mEntFilter, mapScissor_t
 			}
 
 			if (mEnt->type != ME_PLAYER &&
-				mEnt->type != ME_PLAYER_DISGUISED &&
-				mEnt->type != ME_PLAYER_OBJECTIVE &&
-				mEnt->type != ME_PLAYER_REVIVE)
+			    mEnt->type != ME_PLAYER_DISGUISED &&
+			    mEnt->type != ME_PLAYER_OBJECTIVE &&
+			    mEnt->type != ME_PLAYER_REVIVE)
 			{
 				continue;
 			}
@@ -1274,9 +1282,9 @@ void CG_DrawMap(float x, float y, float w, float h, int mEntFilter, mapScissor_t
 		}
 
 		if (mEnt->type != ME_PLAYER &&
-			mEnt->type != ME_PLAYER_DISGUISED &&
-			mEnt->type != ME_PLAYER_OBJECTIVE &&
-			mEnt->type != ME_PLAYER_REVIVE)
+		    mEnt->type != ME_PLAYER_DISGUISED &&
+		    mEnt->type != ME_PLAYER_OBJECTIVE &&
+		    mEnt->type != ME_PLAYER_REVIVE)
 		{
 			continue;
 		}

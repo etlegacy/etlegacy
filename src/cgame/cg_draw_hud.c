@@ -50,42 +50,6 @@ typedef enum
 	STYLE_SIMPLE
 } componentStyle;
 
-typedef struct hudComponent_s
-{
-	rectDef_t location;
-	int visible;
-	int style;
-} hudComponent_t;
-
-typedef struct hudStructure_s
-{
-	int hudnumber;
-	hudComponent_t compas;
-	hudComponent_t staminabar;
-	hudComponent_t breathbar;
-	hudComponent_t healthbar;
-	hudComponent_t weaponchargebar;
-	hudComponent_t healthtext;
-	hudComponent_t xptext;
-	hudComponent_t ranktext;
-	hudComponent_t statsdisplay;
-	hudComponent_t weaponicon;
-	hudComponent_t weaponammo;
-	hudComponent_t fireteam;
-	hudComponent_t popupmessages;
-	hudComponent_t powerups;
-	hudComponent_t hudhead;
-
-	hudComponent_t cursorhint;
-	hudComponent_t weaponstability;
-	hudComponent_t livesleft;
-
-	hudComponent_t roundtimer;
-	hudComponent_t reinforcement;
-	hudComponent_t spawntimer;
-	hudComponent_t localtime;
-} hudStucture_t;
-
 #define SKILL_ICON_SIZE     14
 
 #define SKILLS_X 112
@@ -127,6 +91,15 @@ rectDef_t CG_getRect(float x, float y, float w, float h)
     return rect;
 }
 */
+
+/**
+ * @brief CG_getActiveHUD Returns reference to an active hud structure.
+ * @return
+ */
+hudStucture_t *CG_GetActiveHUD()
+{
+	return activehud;
+}
 
 /**
  * @brief CG_getComponent
@@ -974,7 +947,7 @@ static void CG_DrawWeapRecharge(rectDef_t *rect)
 		}
 	}
 	else if ((cg.predictedPlayerState.eFlags & EF_ZOOMING || cg.predictedPlayerState.weapon == WP_BINOCULARS)
-		&& cgs.clientinfo[cg.snap->ps.clientNum].cls == PC_FIELDOPS)
+	         && cgs.clientinfo[cg.snap->ps.clientNum].cls == PC_FIELDOPS)
 	{
 		skillType_t skill = GetWeaponTableData(WP_ARTY)->skillBased;
 		float       coeff = GetWeaponTableData(WP_ARTY)->chargeTimeCoeff[cgs.clientinfo[cg.clientNum].skill[skill]];
@@ -1250,8 +1223,8 @@ static void CG_DrawXP(float x, float y)
  */
 static void CG_DrawRank(float x, float y)
 {
-	const char *str;
-	float      w;
+	const char    *str;
+	float         w;
 	playerState_t *ps = &cg.snap->ps;
 
 	str = va("%s", GetRankTableData(cgs.clientinfo[ps->clientNum].team, cgs.clientinfo[ps->clientNum].rank)->miniNames);
@@ -1327,7 +1300,7 @@ static void CG_DrawPowerUps(rectDef_t rect)
 			color[3] = 1.f;
 			trap_R_SetColor(color);
 			CG_DrawPic(rect.x + rect.w / 2 - 20, rect.y + 28, 12, 8, cgs.media.axisFlag);
-			CG_DrawPic(rect.x + rect.w / 2 + 8,  rect.y + 28, 12, 8, cgs.media.alliedFlag);
+			CG_DrawPic(rect.x + rect.w / 2 + 8, rect.y + 28, 12, 8, cgs.media.alliedFlag);
 		}
 		else if (cg.flagIndicator & (1 << PW_REDFLAG))
 		{
@@ -1411,7 +1384,7 @@ static void CG_DrawPowerUps(rectDef_t rect)
 			color[3] = 1.f;
 			trap_R_SetColor(color);
 			CG_DrawPic(rect.x + rect.w / 2 - 20, rect.y + 28, 12, 8, ps->persistant[PERS_TEAM] == TEAM_AXIS ? cgs.media.axisFlag : cgs.media.alliedFlag);
-			CG_DrawPic(rect.x + rect.w / 2 + 8,  rect.y + 28, 12, 8, ps->persistant[PERS_TEAM] == TEAM_AXIS ? cgs.media.alliedFlag : cgs.media.axisFlag);
+			CG_DrawPic(rect.x + rect.w / 2 + 8, rect.y + 28, 12, 8, ps->persistant[PERS_TEAM] == TEAM_AXIS ? cgs.media.alliedFlag : cgs.media.axisFlag);
 		}
 		else if (cg.flagIndicator & (1 << PW_REDFLAG))
 		{
@@ -1428,7 +1401,7 @@ static void CG_DrawPowerUps(rectDef_t rect)
 			// display team flag
 			color[3] = 1.f;
 			trap_R_SetColor(color);
-			CG_DrawPic(rect.x + rect.w / 2 + (ps->persistant[PERS_TEAM] == TEAM_AXIS ? 8 : -20),  rect.y + 28, 12, 8, cgs.media.alliedFlag);
+			CG_DrawPic(rect.x + rect.w / 2 + (ps->persistant[PERS_TEAM] == TEAM_AXIS ? 8 : -20), rect.y + 28, 12, 8, cgs.media.alliedFlag);
 		}
 		else if (cg.flagIndicator & (1 << PW_BLUEFLAG))
 		{
@@ -1445,7 +1418,7 @@ static void CG_DrawPowerUps(rectDef_t rect)
 			// display team flag
 			color[3] = 1.f;
 			trap_R_SetColor(color);
-			CG_DrawPic(rect.x + rect.w / 2 + (ps->persistant[PERS_TEAM] == TEAM_ALLIES ? 8 : -20),  rect.y + 28, 12, 8, cgs.media.axisFlag);
+			CG_DrawPic(rect.x + rect.w / 2 + (ps->persistant[PERS_TEAM] == TEAM_ALLIES ? 8 : -20), rect.y + 28, 12, 8, cgs.media.axisFlag);
 		}
 
 		// display active flag counter
@@ -2150,9 +2123,10 @@ static float CG_DrawSpeed(float y)
 	CG_Text_Paint_Ext(x + ((w2 - w) / 2) + 2, y + 11, 0.19f, 0.19f, tclr, s, 0, 0, 0, &cgs.media.limboFont1);
 
 	// draw max speed on second line
-	if (cg_drawspeed.integer > 3) {
-		y = y + 12;
-		w3  = CG_Text_Width_Ext(s2, 0.19f, 0, &cgs.media.limboFont1);
+	if (cg_drawspeed.integer > 3)
+	{
+		y  = y + 12;
+		w3 = CG_Text_Width_Ext(s2, 0.19f, 0, &cgs.media.limboFont1);
 		w4 = (UPPERRIGHT_W > w3) ? UPPERRIGHT_W : w3;
 		CG_Text_Paint_Ext(x + ((w4 - w3) / 2) + 2, y + 11, 0.19f, 0.19f, tclr, s2, 0, 0, 0, &cgs.media.limboFont1);
 	}
@@ -2276,11 +2250,11 @@ static void CG_DrawTimersAlt(rectDef_t *respawn, rectDef_t *spawntimer, rectDef_
 
 		if (cgs.gametype != GT_WOLF_LMS && (cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR || (cg.snap->ps.pm_flags & PMF_FOLLOW)) && cg_drawReinforcementTime.integer > 0)
 		{
-			int   reinfTime = CG_CalculateReinfTime(qfalse);
+			int  reinfTime  = CG_CalculateReinfTime(qfalse);
 			char *teamColor = (cgs.clientinfo[cg.clientNum].shoutcaster ? (cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_AXIS ? "^1" : "^$") : "^F");
 
 			rt = va("%s%d%s", (reinfTime <= 2 && cgs.clientinfo[cg.clientNum].health == 0 &&
-				!(cg.snap->ps.pm_flags & PMF_FOLLOW)) ? "^3" : teamColor, reinfTime, ((cgs.timelimit <= 0.0f) ? "" : " "));
+			                   !(cg.snap->ps.pm_flags & PMF_FOLLOW)) ? "^3" : teamColor, reinfTime, ((cgs.timelimit <= 0.0f) ? "" : " "));
 		}
 		else if (cgs.gametype != GT_WOLF_LMS && cgs.clientinfo[cg.clientNum].shoutcaster && cg_drawReinforcementTime.integer > 0)
 		{
@@ -2396,7 +2370,7 @@ static float CG_DrawTimerNormal(float y)
 			char *c        = (cgs.clientinfo[cg.clientNum].shoutcaster ? (cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_AXIS ? "^1" : "^$") : "^F");
 
 			rt = va("%s%s%d", (reinfTime <= 2 && cgs.clientinfo[cg.clientNum].health == 0 &&
-			        !(cg.snap->ps.pm_flags & PMF_FOLLOW)) ? "^3" : c, ((cgs.timelimit <= 0.0f) ? "" : " "), reinfTime);
+			                   !(cg.snap->ps.pm_flags & PMF_FOLLOW)) ? "^3" : c, ((cgs.timelimit <= 0.0f) ? "" : " "), reinfTime);
 		}
 		else if (cgs.gametype != GT_WOLF_LMS && cgs.clientinfo[cg.clientNum].shoutcaster && cg_drawReinforcementTime.integer > 0)
 		{
@@ -2593,8 +2567,8 @@ void CG_AddLagometerSnapshotInfo(snapshot_t *snap)
 	}
 
 	cgs.sampledStat.avg = cgs.sampledStat.samplesTotalElpased > 0
-	                  ? (int) (cgs.sampledStat.count / (cgs.sampledStat.samplesTotalElpased / 1000.0f) + 0.5f)
-	                  : 0;
+	                      ? (int) (cgs.sampledStat.count / (cgs.sampledStat.samplesTotalElpased / 1000.0f) + 0.5f)
+	                      : 0;
 }
 
 /**
