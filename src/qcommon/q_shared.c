@@ -44,18 +44,10 @@
  */
 qboolean Com_PowerOf2(int x)
 {
-	int          bitsSet = 0;
-	unsigned int i;
+	int bitsSet;
+	bitsSet = x & (x - 1); /* bitwise trick to check if x is a power of two */
 
-	for (i = 0; i < sizeof(int) * 8; ++i)
-	{
-		if (x & (1 << i))
-		{
-			++bitsSet;
-		}
-	}
-
-	return (qboolean)(bitsSet <= 1);
+	return (qboolean)(bitsSet == 0);
 }
 
 /**
@@ -221,17 +213,13 @@ int Com_HashKey(char *string, int maxlen)
  * @param[in] bitNum
  * @return
  */
-qboolean COM_BitCheck(const int array[], int bitNum)
+qboolean COM_BitCheck(const int array[], unsigned int bitNum)
 {
-	int i = 0;
-
-	while (bitNum > 31)
-	{
-		i++;
-		bitNum -= 32;
-	}
-
-	return ((array[i] & (1 << bitNum)) != 0);
+	unsigned int i = bitNum / 32;
+	unsigned int bitmask;
+	bitNum = bitNum % 32;
+	bitmask= 1u << bitNum;
+	return ((array[i] & bitmask) != 0);
 }
 
 /**
@@ -239,17 +227,14 @@ qboolean COM_BitCheck(const int array[], int bitNum)
  * @param[in] array
  * @param[out] bitNum
  */
-void COM_BitSet(int array[], int bitNum)
+void COM_BitSet(int array[], unsigned int bitNum)
 {
-	int i = 0;
+	unsigned int i = bitNum / 32;
+	unsigned int bitmask;
+	bitNum = bitNum % 32;
+	bitmask= 1u << bitNum;
 
-	while (bitNum > 31)
-	{
-		i++;
-		bitNum -= 32;
-	}
-
-	array[i] |= (1 << bitNum);
+	array[i] |= bitmask;
 }
 
 /**
@@ -257,17 +242,14 @@ void COM_BitSet(int array[], int bitNum)
  * @param[out] array
  * @param[in] bitNum
  */
-void COM_BitClear(int array[], int bitNum)
+void COM_BitClear(int array[], unsigned int bitNum)
 {
-	int i = 0;
+	unsigned int i = bitNum / 32;
+	unsigned int bitmask;
+	bitNum = bitNum % 32;
+	bitmask= ~(1u << bitNum);
 
-	while (bitNum > 31)
-	{
-		i++;
-		bitNum -= 32;
-	}
-
-	array[i] &= ~(1 << bitNum);
+	array[i] &= bitmask;
 }
 //============================================================================
 

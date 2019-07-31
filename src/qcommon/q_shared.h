@@ -630,9 +630,9 @@ int COM_Compress(char *data_p);
 void COM_ParseError(const char *format, ...) __attribute__ ((format(printf, 1, 2)));
 //void COM_ParseWarning(const char *format, ...) __attribute__ ((format(printf, 1, 2))); // Unused
 
-qboolean COM_BitCheck(const int array[], int bitNum);
-void COM_BitSet(int array[], int bitNum);
-void COM_BitClear(int array[], int bitNum);
+qboolean COM_BitCheck(const int array[], unsigned int bitNum);
+void COM_BitSet(int array[], unsigned int bitNum);
+void COM_BitClear(int array[], unsigned int bitNum);
 
 #define MAX_TOKENLENGTH     1024
 
