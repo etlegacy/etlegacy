@@ -78,7 +78,7 @@ menuDef {
 // Items //
 #define ITEMS_Y 172
 	SUBWINDOW( 6+(SUBWINDOW_WIDTH_L)+6, ITEMS_Y, (SUBWINDOW_WIDTH_R), 28, _("ITEMS") )
-	YESNO( 6+(SUBWINDOW_WIDTH_L)+6+2, ITEMS_Y+16, (SUBWINDOW_WIDTH_L)-4, 10, _("Simple Items:"), .2, 8, "cg_simpleItems", _("Draw simple items") )
+	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, ITEMS_Y+16, (SUBWINDOW_WIDTH_R)-4, 10, _("Simple Items:"), .2, 8, "cg_simpleItems", cvarFloatList { "No" 0 "Yes" 1 "Yes except objectives" 2 }, _("Draw simple items") )
 
 // Miscellaneous //
 #define MISC_Y 206
