@@ -682,28 +682,28 @@ static void CG_Item(centity_t *cent)
 		{
 		case IT_AMMO:
 			weaponInfo = &cg_weapons[WP_AMMO];
-			Vector4Set(accentColor, 25, 255, 25, 127);
+			Vector4Set(accentColor, 255, 255, 25, 127);
 			break;
 		case IT_HEALTH:
 			weaponInfo = &cg_weapons[WP_MEDKIT];
-			Vector4Set(accentColor, 255, 25, 25, 127);
+			Vector4Set(accentColor, 25, 255, 25, 127);
 			break;
 		case IT_WEAPON:
 			weaponInfo = &cg_weapons[item->giWeapon];
 			// ammo box
 			if (item->giWeapon == WP_AMMO)
 			{
-				Vector4Set(accentColor, 25, 255, 25, 127);
+				Vector4Set(accentColor, 255, 255, 25, 127);
 			}
 			else
 			{
 				if (CG_PlayerCanPickupWeapon(cg.snap->ps.clientNum, item->giWeapon))
 				{
-					Vector4Set(accentColor, 188, 200, 202, 255);
+					Vector4Set(accentColor, 192, 192, 192, 255);
 				}
 				else
 				{
-					Vector4Set(accentColor, 97, 97, 97, 255);
+					Vector4Set(accentColor, 63, 63, 63, 255);
 				}
 			}
 			break;
