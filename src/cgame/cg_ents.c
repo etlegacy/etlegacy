@@ -3053,6 +3053,12 @@ void CG_AttachBitsToTank(centity_t *tank, refEntity_t *mg42base, refEntity_t *mg
 		mg42gun->hModel = cgs.media.hMountedMG42;
 	}
 
+	// entity was not received yet, ignore
+	if (tank->currentState.number == 0)
+	{
+		return;
+	}
+
 	if (!CG_AddCEntity_Filter(tank))
 	{
 		return;
