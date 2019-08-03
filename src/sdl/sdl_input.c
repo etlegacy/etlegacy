@@ -1314,6 +1314,8 @@ static void IN_ProcessEvents(void)
 			break;
 		case SDL_FINGERUP:
 		{
+			x = e.tfinger.x * cls.glconfig.vidWidth;
+			y = e.tfinger.y * cls.glconfig.vidHeight;
 			if (cls.state == CA_DISCONNECTED)
 			{
 				Com_QueueEvent(lasttime, SE_KEY, K_MOUSE1, qtrue, 0, NULL);
