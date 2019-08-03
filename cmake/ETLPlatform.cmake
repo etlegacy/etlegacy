@@ -113,7 +113,7 @@ elseif(WIN32)
 	endif()
 	if(BUNDLED_SDL)
 		# Libraries for Win32 native and MinGW required by static SDL2 build
-		list(APPEND OS_LIBRARIES user32 gdi32 winmm imm32 ole32 oleaut32 version uuid)
+		list(APPEND OS_LIBRARIES user32 gdi32 winmm imm32 ole32 oleaut32 version uuid hid setupapi)
 	endif()
 	set(LIB_SUFFIX "_mp_")
 	if(MSVC)
