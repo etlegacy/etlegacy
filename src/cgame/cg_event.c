@@ -34,6 +34,7 @@
  */
 
 #include "cg_local.h"
+#include "../game/bg_local.h"
 
 extern void CG_StartShakeCamera(float param);
 extern void CG_Tracer(vec3_t source, vec3_t dest, int sparks);
