@@ -2379,7 +2379,6 @@ void ClientBegin(int clientNum)
 	int       flags;
 	int       spawn_count, lives_left;
 	int       stat_xp, score; // restore xp & score
-	qboolean  inIntermission = (g_gamestate.integer == GS_INTERMISSION && client->ps.pm_type == PM_INTERMISSION) ? qtrue : qfalse;
 
 #ifdef FEATURE_LUA
 	// call LUA clientBegin only once when player connects
@@ -2434,7 +2433,7 @@ void ClientBegin(int clientNum)
 		ent->client->ps.stats[STAT_XP] = stat_xp;
 	}
 
-	if (inIntermission == qtrue)
+	if (g_gamestate.integer == GS_INTERMISSION)
 	{
 		client->ps.pm_type = PM_INTERMISSION;
 	}
@@ -2738,7 +2737,6 @@ void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean
 	int                savedPing;
 	int                savedTeam;
 	int                savedDeathTime;
-	qboolean           inIntermission = (g_gamestate.integer == GS_INTERMISSION && client->ps.pm_type == PM_INTERMISSION) ? qtrue : qfalse;
 
 	G_UpdateSpawnCounts();
 
@@ -2824,7 +2822,7 @@ void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean
 	client->ps.teamNum        = savedTeam;
 	client->disguiseClientNum = -1;
 
-	if (inIntermission)
+	if (g_gamestate.integer == GS_INTERMISSION)
 	{
 		client->ps.pm_type = PM_INTERMISSION;
 	}

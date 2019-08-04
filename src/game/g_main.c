@@ -3125,12 +3125,6 @@ void SendScoreboardMessageToAllClients(void)
  */
 void MoveClientToIntermission(gentity_t *ent)
 {
-	// if we are in intermission ensure we don't move the client twice
-	if (ent->client->ps.pm_type == PM_INTERMISSION)
-	{
-		return;
-	}
-
 	// take out of follow mode if needed
 	if (ent->client->sess.spectatorState == SPECTATOR_FOLLOW)
 	{
