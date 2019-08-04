@@ -76,5 +76,6 @@ android {
 }
 
 dependencies {
+    api 'com.github.erz05:JoyStick:1.1.0'
     implementation fileTree(include: ['*.jar'], dir: 'libs')
 }
