@@ -11,12 +11,15 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 
+import com.erz.joysticklibrary.JoyStick;
+import com.erz.joysticklibrary.JoyStick.JoyStickListener;
+
 import org.libsdl.app.SDLActivity;
 
 import java.io.IOException;
 import java.io.InputStream;
 
-public class ETLActivity extends SDLActivity
+public class ETLActivity extends SDLActivity implements JoyStickListener
 {
     private Bitmap getBitmapFromAsset(String strName)
     {
@@ -66,6 +69,95 @@ public class ETLActivity extends SDLActivity
 
         mLayout.addView(btn2, lp);
 
+        JoyStick joyStick = new JoyStick(getApplicationContext());
+
+        joyStick.setListener(this);
+        joyStick.setPadBackground(getBitmapFromAsset("btn_joystick.png"));
+        joyStick.setButtonColor(Color.RED);
+        joyStick.setButtonRadiusScale(50);
+
+        RelativeLayout.LayoutParams joystick_layout = new RelativeLayout.LayoutParams(
+                400,
+                400);
+
+        joystick_layout.addRule(RelativeLayout.ALIGN_LEFT);
+        joystick_layout.addRule(RelativeLayout.CENTER_VERTICAL);
+        joystick_layout.leftMargin = 90;
+
+        mLayout.addView(joyStick, joystick_layout);
+
+    }
+
+    @Override
+    public void onMove(JoyStick joyStick, double angle, double power, int direction) {
+
+        switch(direction)
+        {
+            case JoyStick.DIRECTION_CENTER:
+                SDLActivity.onNativeKeyUp(51);
+                SDLActivity.onNativeKeyUp(32);
+                SDLActivity.onNativeKeyUp(47);
+                SDLActivity.onNativeKeyUp(29);
+                break;
+            case JoyStick.DIRECTION_UP:
+                SDLActivity.onNativeKeyUp(32);
+                SDLActivity.onNativeKeyUp(47);
+                SDLActivity.onNativeKeyUp(29);
+                SDLActivity.onNativeKeyDown(51);
+                break;
+            case JoyStick.DIRECTION_UP_RIGHT:
+                SDLActivity.onNativeKeyUp(47);
+                SDLActivity.onNativeKeyUp(29);
+                SDLActivity.onNativeKeyDown(51);
+                SDLActivity.onNativeKeyDown(32);
+                break;
+            case JoyStick.DIRECTION_RIGHT:
+                SDLActivity.onNativeKeyUp(51);
+                SDLActivity.onNativeKeyUp(47);
+                SDLActivity.onNativeKeyUp(29);
+                SDLActivity.onNativeKeyDown(32);
+                break;
+            case JoyStick.DIRECTION_RIGHT_DOWN:
+                SDLActivity.onNativeKeyUp(51);
+                SDLActivity.onNativeKeyUp(29);
+                SDLActivity.onNativeKeyDown(32);
+                SDLActivity.onNativeKeyDown(47);
+                break;
+            case JoyStick.DIRECTION_DOWN:
+                SDLActivity.onNativeKeyUp(51);
+                SDLActivity.onNativeKeyUp(32);
+                SDLActivity.onNativeKeyUp(29);
+                SDLActivity.onNativeKeyDown(47);
+                break;
+            case JoyStick.DIRECTION_DOWN_LEFT:
+                SDLActivity.onNativeKeyUp(51);
+                SDLActivity.onNativeKeyUp(32);
+                SDLActivity.onNativeKeyDown(47);
+                SDLActivity.onNativeKeyDown(29);
+                break;
+            case JoyStick.DIRECTION_LEFT:
+                SDLActivity.onNativeKeyUp(51);
+                SDLActivity.onNativeKeyUp(32);
+                SDLActivity.onNativeKeyUp(47);
+                SDLActivity.onNativeKeyDown(29);
+                break;
+            case JoyStick.DIRECTION_LEFT_UP:
+                SDLActivity.onNativeKeyUp(32);
+                SDLActivity.onNativeKeyUp(47);
+                SDLActivity.onNativeKeyDown(29);
+                SDLActivity.onNativeKeyDown(51);
+                break;
+        }
+    }
+
+    @Override
+    public void onTap() {
+
+    }
+
+    @Override
+    public void onDoubleTap() {
+
     }
 
     @Override
@@ -75,4 +167,5 @@ public class ETLActivity extends SDLActivity
                 "etl"
         };
     }
+
 }
