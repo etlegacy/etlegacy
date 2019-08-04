@@ -79,7 +79,9 @@ menuDef {																										\
 	execKey KEY { ACTION }
 
 QM_MENU_START( "wm_classalt" )
-	QM_MENU_ITEM_TEAM(	"1. Soldier",			close wm_classalt;	open wm_class_soldieralt,		"1", 0 )
+	QM_MENU_ITEM_TEAM(	"1. Soldier",			uiScript clientCheckSecondaryWeapon ; conditionalscript cg_ui_secondary_hw 0
+												( "close wm_classalt ; open wm_class_soldieralt_hw" )
+												( "close wm_classalt ; open wm_class_soldieralt" ),	"1", 0 )
 	QM_MENU_ITEM_TEAM(	"2. Medic",				close wm_classalt;	open wm_class_medicalt,			"2", 1 )
 	QM_MENU_ITEM_TEAM(	"3. Engineer",			close wm_classalt;	open wm_class_engineeralt,		"3", 2 )
 	QM_MENU_ITEM_TEAM(	"4. Field Ops",			close wm_classalt;	open wm_class_fieldopsalt,		"4", 3 )
@@ -87,28 +89,222 @@ QM_MENU_START( "wm_classalt" )
 QM_MENU_END
 
 QM_MENU_START( "wm_class_soldieralt" )
-	QM_MENU_ITEM_TEAM(	"1. Automatic Rifle",	exec "class s 1";	close wm_class_soldieralt,		"1", 0 )
-	QM_MENU_ITEM_TEAM(	"2. Machinegun",		exec "class s 2";	close wm_class_soldieralt,		"2", 1 )
-	QM_MENU_ITEM_TEAM(	"3. Flamethrower",		exec "class s 3";	close wm_class_soldieralt,		"3", 2 )
-	QM_MENU_ITEM_TEAM(	"4. Rocket Launcher",	exec "class s 4";	close wm_class_soldieralt,		"4", 3 )
-	QM_MENU_ITEM_TEAM(	"5. Mortar",			exec "class s 5";	close wm_class_soldieralt,		"5", 4 )
+	QM_MENU_ITEM_TEAM(	"1. Automatic Rifle",	uiScript clientCheckSecondaryWeapon ; conditionalscript cg_ui_secondary_lw 0
+												( "close wm_class_soldieralt ; open wm_class_soldieralt_p1_s2" )
+												( "close wm_class_soldieralt ; open wm_class_soldieralt_p1_s1" ),	"1", 0 )
+	QM_MENU_ITEM_TEAM(	"2. Machinegun",		uiScript clientCheckSecondaryWeapon ; conditionalscript cg_ui_secondary_lw 0
+												( "close wm_class_soldieralt ; open wm_class_soldieralt_p2_s2" )
+												( "close wm_class_soldieralt ; open wm_class_soldieralt_p2_s1" ),	"2", 1 )
+	QM_MENU_ITEM_TEAM(	"3. Flamethrower",		uiScript clientCheckSecondaryWeapon ; conditionalscript cg_ui_secondary_lw 0
+												( "close wm_class_soldieralt ; open wm_class_soldieralt_p3_s2" )
+												( "close wm_class_soldieralt ; open wm_class_soldieralt_p3_s1" ),	"3", 2 )
+	QM_MENU_ITEM_TEAM(	"4. Rocket Launcher",	uiScript clientCheckSecondaryWeapon ; conditionalscript cg_ui_secondary_lw 0
+												( "close wm_class_soldieralt ; open wm_class_soldieralt_p4_s2" )
+												( "close wm_class_soldieralt ; open wm_class_soldieralt_p4_s1" ),	"4", 3 )
+	QM_MENU_ITEM_TEAM(	"5. Mortar",			uiScript clientCheckSecondaryWeapon ; conditionalscript cg_ui_secondary_lw 0
+												( "close wm_class_soldieralt ; open wm_class_soldieralt_p5_s2" )
+												( "close wm_class_soldieralt ; open wm_class_soldieralt_p5_s1" ),	"5", 4 )
+QM_MENU_END
+
+QM_MENU_START( "wm_class_soldieralt_p1_s1" )
+	QM_MENU_ITEM_TEAM(	"1. Pistol",			exec "class s 1 1";	close wm_class_soldieralt_p1_s1,		"1", 0 )
+QM_MENU_END
+
+QM_MENU_START( "wm_class_soldieralt_p1_s2" )
+	QM_MENU_ITEM_TEAM(	"1. Pistol",			exec "class s 1 1";	close wm_class_soldieralt_p1_s2,		"1", 0 )
+	QM_MENU_ITEM_TEAM(	"2. Akimbo",			exec "class s 1 2";	close wm_class_soldieralt_p1_s2,		"2", 1 )
+QM_MENU_END
+
+QM_MENU_START( "wm_class_soldieralt_p2_s1" )
+	QM_MENU_ITEM_TEAM(	"1. Pistol",			exec "class s 2 1";	close wm_class_soldieralt_p2_s1,		"1", 0 )
+QM_MENU_END
+
+QM_MENU_START( "wm_class_soldieralt_p2_s2" )
+	QM_MENU_ITEM_TEAM(	"1. Pistol",			exec "class s 2 1";	close wm_class_soldieralt_p2_s2,		"1", 0 )
+	QM_MENU_ITEM_TEAM(	"2. Akimbo",			exec "class s 2 2";	close wm_class_soldieralt_p2_s2,		"2", 1 )
+QM_MENU_END
+
+QM_MENU_START( "wm_class_soldieralt_p3_s1" )
+	QM_MENU_ITEM_TEAM(	"1. Pistol",			exec "class s 3 1";	close wm_class_soldieralt_p3_s1,		"1", 0 )
+QM_MENU_END
+
+QM_MENU_START( "wm_class_soldieralt_p3_s2" )
+	QM_MENU_ITEM_TEAM(	"1. Pistol",			exec "class s 3 1";	close wm_class_soldieralt_p3_s2,		"1", 0 )
+	QM_MENU_ITEM_TEAM(	"2. Akimbo",			exec "class s 3 2";	close wm_class_soldieralt_p3_s2,		"2", 1 )
+QM_MENU_END
+
+QM_MENU_START( "wm_class_soldieralt_p4_s1" )
+	QM_MENU_ITEM_TEAM(	"1. Pistol",			exec "class s 4 1";	close wm_class_soldieralt_p4_s1,		"1", 0 )
+QM_MENU_END
+
+QM_MENU_START( "wm_class_soldieralt_p4_s2" )
+	QM_MENU_ITEM_TEAM(	"1. Pistol",			exec "class s 4 1";	close wm_class_soldieralt_p4_s2,		"1", 0 )
+	QM_MENU_ITEM_TEAM(	"2. Akimbo",			exec "class s 4 2";	close wm_class_soldieralt_p4_s2,		"2", 1 )
+QM_MENU_END
+
+QM_MENU_START( "wm_class_soldieralt_p5_s1" )
+	QM_MENU_ITEM_TEAM(	"1. Pistol",			exec "class s 5 1";	close wm_class_soldieralt_p5_s1,		"1", 0 )
+QM_MENU_END
+
+QM_MENU_START( "wm_class_soldieralt_p5_s2" )
+	QM_MENU_ITEM_TEAM(	"1. Pistol",			exec "class s 5 1";	close wm_class_soldieralt_p5_s2,		"1", 0 )
+	QM_MENU_ITEM_TEAM(	"2. Akimbo",			exec "class s 5 2";	close wm_class_soldieralt_p5_s2,		"2", 1 )
+QM_MENU_END
+
+QM_MENU_START( "wm_class_soldieralt_hw" )
+	QM_MENU_ITEM_TEAM(	"1. Automatic Rifle",	uiScript clientCheckSecondaryWeapon ; conditionalscript cg_ui_secondary_lw 0
+												( "close wm_class_soldieralt_hw ; open wm_class_soldieralt_p1_s2" )
+												( "close wm_class_soldieralt_hw ; open wm_class_soldieralt_p1_s1" ),	"1", 0 )
+	QM_MENU_ITEM_TEAM(	"2. Machinegun",		uiScript clientCheckSecondaryWeapon ; conditionalscript cg_ui_secondary_lw 0
+												( "close wm_class_soldieralt_hw ; open wm_class_soldieralt_p2_s4" )
+												( "close wm_class_soldieralt_hw ; open wm_class_soldieralt_p2_s3" ),	"2", 1 )
+	QM_MENU_ITEM_TEAM(	"3. Flamethrower",		uiScript clientCheckSecondaryWeapon ; conditionalscript cg_ui_secondary_lw 0
+												( "close wm_class_soldieralt_hw ; open wm_class_soldieralt_p3_s4" )
+												( "close wm_class_soldieralt_hw ; open wm_class_soldieralt_p3_s3" ),	"3", 2 )
+	QM_MENU_ITEM_TEAM(	"4. Rocket Launcher",	uiScript clientCheckSecondaryWeapon ; conditionalscript cg_ui_secondary_lw 0
+												( "close wm_class_soldieralt_hw ; open wm_class_soldieralt_p4_s4" )
+												( "close wm_class_soldieralt_hw ; open wm_class_soldieralt_p4_s3" ),	"4", 3 )
+	QM_MENU_ITEM_TEAM(	"5. Mortar",			uiScript clientCheckSecondaryWeapon ; conditionalscript cg_ui_secondary_lw 0
+												( "close wm_class_soldieralt_hw ; open wm_class_soldieralt_p5_s4" )
+												( "close wm_class_soldieralt_hw ; open wm_class_soldieralt_p5_s3" ),	"5", 4 )
+QM_MENU_END
+
+QM_MENU_START( "wm_class_soldieralt_p2_s3" )
+	QM_MENU_ITEM_TEAM(	"1. Pistol",			exec "class s 2 1";	close wm_class_soldieralt_p2_s3,		"1", 0 )
+	QM_MENU_ITEM_TEAM(	"3. SMG",				exec "class s 2 3";	close wm_class_soldieralt_p2_s3,		"3", 2 )
+QM_MENU_END
+
+QM_MENU_START( "wm_class_soldieralt_p2_s4" )
+	QM_MENU_ITEM_TEAM(	"1. Pistol",			exec "class s 2 1";	close wm_class_soldieralt_p2_s4,		"1", 0 )
+	QM_MENU_ITEM_TEAM(	"2. Akimbo",			exec "class s 2 2";	close wm_class_soldieralt_p2_s4,		"2", 1 )
+	QM_MENU_ITEM_TEAM(	"3. SMG",				exec "class s 2 3";	close wm_class_soldieralt_p2_s4,		"3", 2 )
+QM_MENU_END
+
+QM_MENU_START( "wm_class_soldieralt_p3_s3" )
+	QM_MENU_ITEM_TEAM(	"1. Pistol",			exec "class s 3 1";	close wm_class_soldieralt_p3_s3,		"1", 0 )
+	QM_MENU_ITEM_TEAM(	"3. SMG",				exec "class s 3 3";	close wm_class_soldieralt_p3_s3,		"3", 2 )
+QM_MENU_END
+
+QM_MENU_START( "wm_class_soldieralt_p3_s4" )
+	QM_MENU_ITEM_TEAM(	"1. Pistol",			exec "class s 3 1";	close wm_class_soldieralt_p3_s4,		"1", 0 )
+	QM_MENU_ITEM_TEAM(	"2. Akimbo",			exec "class s 3 2";	close wm_class_soldieralt_p3_s4,		"2", 1 )
+	QM_MENU_ITEM_TEAM(	"3. SMG",				exec "class s 3 3";	close wm_class_soldieralt_p3_s4,		"3", 2 )
+QM_MENU_END
+
+QM_MENU_START( "wm_class_soldieralt_p4_s3" )
+	QM_MENU_ITEM_TEAM(	"1. Pistol",			exec "class s 4 1";	close wm_class_soldieralt_p4_s3,		"1", 0 )
+	QM_MENU_ITEM_TEAM(	"3. SMG",				exec "class s 4 3";	close wm_class_soldieralt_p4_s3,		"3", 2 )
+QM_MENU_END
+
+QM_MENU_START( "wm_class_soldieralt_p4_s4" )
+	QM_MENU_ITEM_TEAM(	"1. Pistol",			exec "class s 4 1";	close wm_class_soldieralt_p4_s4,		"1", 0 )
+	QM_MENU_ITEM_TEAM(	"2. Akimbo",			exec "class s 4 2";	close wm_class_soldieralt_p4_s4,		"2", 1 )
+	QM_MENU_ITEM_TEAM(	"3. SMG",				exec "class s 4 3";	close wm_class_soldieralt_p4_s4,		"3", 2 )
+QM_MENU_END
+
+QM_MENU_START( "wm_class_soldieralt_p5_s3" )
+	QM_MENU_ITEM_TEAM(	"1. Pistol",			exec "class s 5 1";	close wm_class_soldieralt_p5_s3,		"1", 0 )
+	QM_MENU_ITEM_TEAM(	"3. SMG",				exec "class s 5 3";	close wm_class_soldieralt_p5_s3,		"3", 2 )
+QM_MENU_END
+
+QM_MENU_START( "wm_class_soldieralt_p5_s4" )
+	QM_MENU_ITEM_TEAM(	"1. Pistol",			exec "class s 5 1";	close wm_class_soldieralt_p5_s4,		"1", 0 )
+	QM_MENU_ITEM_TEAM(	"2. Akimbo",			exec "class s 5 2";	close wm_class_soldieralt_p5_s4,		"2", 1 )
+	QM_MENU_ITEM_TEAM(	"3. SMG",				exec "class s 5 3";	close wm_class_soldieralt_p5_s4,		"3", 2 )
 QM_MENU_END
 
 QM_MENU_START( "wm_class_medicalt" )
-	QM_MENU_ITEM_TEAM(	"1. SMG",				exec "class m 1";	close wm_class_medicalt,		"1", 0 )
+	QM_MENU_ITEM_TEAM(	"1. SMG",				uiScript clientCheckSecondaryWeapon ; conditionalscript cg_ui_secondary_lw 0
+												( "close wm_class_medicalt ; open wm_class_medicalt_p1_s2" )
+												( "close wm_class_medicalt ; open wm_class_medicalt_p1_s1" ),	"1", 0 )
+QM_MENU_END
+
+QM_MENU_START( "wm_class_medicalt_p1_s1" )
+	QM_MENU_ITEM_TEAM(	"1. Pistol",			exec "class m 1 1";	close wm_class_medicalt_p1_s1,		"1", 0 )
+QM_MENU_END
+
+QM_MENU_START( "wm_class_medicalt_p1_s2" )
+	QM_MENU_ITEM_TEAM(	"1. Pistol",			exec "class m 1 1";	close wm_class_medicalt_p1_s2,		"1", 0 )
+	QM_MENU_ITEM_TEAM(	"2. Akimbo",			exec "class m 1 2";	close wm_class_medicalt_p1_s2,		"2", 1 )
 QM_MENU_END
 
 QM_MENU_START( "wm_class_engineeralt" )
-	QM_MENU_ITEM_TEAM(	"1. SMG",				exec "class e 1";	close wm_class_engineeralt,		"1", 0 )
-	QM_MENU_ITEM_TEAM(	"2. Rifle",				exec "class e 2";	close wm_class_engineeralt,		"2", 1 )
+	QM_MENU_ITEM_TEAM(	"1. SMG",				uiScript clientCheckSecondaryWeapon ; conditionalscript cg_ui_secondary_lw 0
+												( "close wm_class_engineeralt ; open wm_class_engineeralt_p1_s2" )
+												( "close wm_class_engineeralt ; open wm_class_engineeralt_p1_s1" ),	"1", 0 )
+	QM_MENU_ITEM_TEAM(	"2. Rifle",				uiScript clientCheckSecondaryWeapon ; conditionalscript cg_ui_secondary_lw 0
+												( "close wm_class_engineeralt ; open wm_class_engineeralt_p2_s2" )
+												( "close wm_class_engineeralt ; open wm_class_engineeralt_p2_s1" ),	"2", 1 )
+QM_MENU_END
+
+QM_MENU_START( "wm_class_engineeralt_p1_s1" )
+	QM_MENU_ITEM_TEAM(	"1. Pistol",			exec "class e 1 1";	close wm_class_engineeralt_p1_s1,		"1", 0 )
+QM_MENU_END
+
+QM_MENU_START( "wm_class_engineeralt_p1_s2" )
+	QM_MENU_ITEM_TEAM(	"1. Pistol",			exec "class e 1 1";	close wm_class_engineeralt_p1_s2,		"1", 0 )
+	QM_MENU_ITEM_TEAM(	"2. Akimbo",			exec "class e 1 2";	close wm_class_engineeralt_p1_s2,		"2", 1 )
+QM_MENU_END
+
+QM_MENU_START( "wm_class_engineeralt_p2_s1" )
+	QM_MENU_ITEM_TEAM(	"1. Pistol",			exec "class e 2 1";	close wm_class_engineeralt_p2_s1,		"1", 0 )
+QM_MENU_END
+
+QM_MENU_START( "wm_class_engineeralt_p2_s2" )
+	QM_MENU_ITEM_TEAM(	"1. Pistol",			exec "class e 2 1";	close wm_class_engineeralt_p2_s2,		"1", 0 )
+	QM_MENU_ITEM_TEAM(	"2. Akimbo",			exec "class e 2 2";	close wm_class_engineeralt_p2_s2,		"2", 1 )
 QM_MENU_END
 
 QM_MENU_START( "wm_class_fieldopsalt" )
-	QM_MENU_ITEM_TEAM(	"1. SMG",				exec "class f 1";	close wm_class_fieldopsalt,		"1", 0 )
+	QM_MENU_ITEM_TEAM(	"1. SMG",				uiScript clientCheckSecondaryWeapon ; conditionalscript cg_ui_secondary_lw 0
+												( "close wm_class_fieldopsalt ; open wm_class_fieldopsalt_p1_s2" )
+												( "close wm_class_fieldopsalt ; open wm_class_fieldopsalt_p1_s1" ),	"1", 0 )
+QM_MENU_END
+
+QM_MENU_START( "wm_class_fieldopsalt_p1_s1" )
+	QM_MENU_ITEM_TEAM(	"1. Pistol",			exec "class f 1 1";	close wm_class_fieldopsalt_p1_s1,		"1", 0 )
+QM_MENU_END
+
+QM_MENU_START( "wm_class_fieldopsalt_p1_s2" )
+	QM_MENU_ITEM_TEAM(	"1. Pistol",			exec "class f 1 1";	close wm_class_fieldopsalt_p1_s2,		"1", 0 )
+	QM_MENU_ITEM_TEAM(	"2. Akimbo",			exec "class f 1 2";	close wm_class_fieldopsalt_p1_s2,		"2", 1 )
 QM_MENU_END
 
 QM_MENU_START( "wm_class_covertopsalt" )
-	QM_MENU_ITEM_TEAM(	"1. SMG",				exec "class c 1";	close wm_class_covertopsalt,	"1", 0 )
-	QM_MENU_ITEM_TEAM(	"2. Automatic Rifle",	exec "class c 2";	close wm_class_covertopsalt,	"2", 1 )
-	QM_MENU_ITEM_TEAM(	"3. Sniper Rifle",		exec "class c 3";	close wm_class_covertopsalt,	"3", 2 )
+	QM_MENU_ITEM_TEAM(	"1. SMG",				uiScript clientCheckSecondaryWeapon ; conditionalscript cg_ui_secondary_lw 0
+												( "close wm_class_covertopsalt ; open wm_class_covertopsalt_p1_s2" )
+												( "close wm_class_covertopsalt ; open wm_class_covertopsalt_p1_s1" ),	"1", 0 )
+	QM_MENU_ITEM_TEAM(	"2. Automatic Rifle",	uiScript clientCheckSecondaryWeapon ; conditionalscript cg_ui_secondary_lw 0
+												( "close wm_class_covertopsalt ; open wm_class_covertopsalt_p2_s2" )
+												( "close wm_class_covertopsalt ; open wm_class_covertopsalt_p2_s1" ),	"2", 1 )
+	QM_MENU_ITEM_TEAM(	"3. Sniper Rifle",		uiScript clientCheckSecondaryWeapon ; conditionalscript cg_ui_secondary_lw 0
+												( "close wm_class_covertopsalt ; open wm_class_covertopsalt_p3_s2" )
+												( "close wm_class_covertopsalt ; open wm_class_covertopsalt_p3_s1" ),	"3", 2 )
+QM_MENU_END
+
+QM_MENU_START( "wm_class_covertopsalt_p1_s1" )
+	QM_MENU_ITEM_TEAM(	"1. Silenced Pistol",	exec "class c 1 1";	close wm_class_covertopsalt_p1_s1,		"1", 0 )
+QM_MENU_END
+
+QM_MENU_START( "wm_class_covertopsalt_p1_s2" )
+	QM_MENU_ITEM_TEAM(	"1. Silenced Pistol",	exec "class c 1 1";	close wm_class_covertopsalt_p1_s2,		"1", 0 )
+	QM_MENU_ITEM_TEAM(	"2. Silenced Akimbo",	exec "class c 1 2";	close wm_class_covertopsalt_p1_s2,		"2", 1 )
+QM_MENU_END
+
+QM_MENU_START( "wm_class_covertopsalt_p2_s1" )
+	QM_MENU_ITEM_TEAM(	"1. Silenced Pistol",	exec "class c 2 1";	close wm_class_covertopsalt_p2_s1,		"1", 0 )
+QM_MENU_END
+
+QM_MENU_START( "wm_class_covertopsalt_p2_s2" )
+	QM_MENU_ITEM_TEAM(	"1. Silenced Pistol",	exec "class c 2 1";	close wm_class_covertopsalt_p2_s2,		"1", 0 )
+	QM_MENU_ITEM_TEAM(	"2. Silenced Akimbo",	exec "class c 2 2";	close wm_class_covertopsalt_p2_s2,		"2", 1 )
+QM_MENU_END
+
+QM_MENU_START( "wm_class_covertopsalt_p3_s1" )
+	QM_MENU_ITEM_TEAM(	"1. Silenced Pistol",	exec "class c 3 1";	close wm_class_covertopsalt_p3_s1,		"1", 0 )
+QM_MENU_END
+
+QM_MENU_START( "wm_class_covertopsalt_p3_s2" )
+	QM_MENU_ITEM_TEAM(	"1. Silenced Pistol",	exec "class c 3 1";	close wm_class_covertopsalt_p3_s2,		"1", 0 )
+	QM_MENU_ITEM_TEAM(	"2. Silenced Akimbo",	exec "class c 3 2";	close wm_class_covertopsalt_p3_s2,		"2", 1 )
 QM_MENU_END

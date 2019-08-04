@@ -5519,6 +5519,40 @@ void UI_RunMenuScript(char **args)
 				trap_Cvar_SetValue("cg_ui_favorite", 1);
 			}
 		}
+		else if (Q_stricmp(name, "clientCheckSecondaryWeapon") == 0)
+		{
+			uiClientState_t cs;
+			char            info[MAX_INFO_STRING];
+			char            *skillStr, skillLW, skillHW;
+
+			trap_GetClientState(&cs);
+			trap_GetConfigString(CS_PLAYERS + cs.clientNum, info, MAX_INFO_STRING);
+
+			if (info[0])
+			{
+				skillStr = Info_ValueForKey(info, "s");
+				skillLW  = skillStr[SK_LIGHT_WEAPONS];
+				skillHW  = skillStr[SK_HEAVY_WEAPONS];
+
+				if (atoi(&skillLW) >= 4)
+				{
+					trap_Cvar_SetValue("cg_ui_secondary_lw", 1);
+				}
+				else
+				{
+					trap_Cvar_SetValue("cg_ui_secondary_lw", 0);
+				}
+
+				if (atoi(&skillHW) >= 4)
+				{
+					trap_Cvar_SetValue("cg_ui_secondary_hw", 1);
+				}
+				else
+				{
+					trap_Cvar_SetValue("cg_ui_secondary_hw", 0);
+				}
+			}
+		}
 		else if (Q_stricmp(name, "reconnect") == 0)
 		{
 			// TODO: if dumped because of cl_allowdownload problem, toggle on first (we don't have appropriate support for this yet)

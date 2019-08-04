@@ -44,7 +44,7 @@
 
 #define MAX_MENUDEFFILE   4096
 #define MAX_MENUFILE     32768
-#define MAX_MENUS          128
+#define MAX_MENUS          256
 #define MAX_MENUDEPTH        8
 #define MAX_MENUITEMS      128       ///< ioquake3 has 96
 #define MAX_COLOR_RANGES    10
