@@ -2906,7 +2906,7 @@ void artillerySpotterThink(gentity_t *ent)
 
 		bomb = fire_missile((ent->parent && ent->parent->client) ? ent->parent : ent, bomboffset, tv(0.f, 0.f, -1650.f), ent->s.weapon);
 
-		bomb->nextthink    += 1950; // overwrite, add delay between 1st bomb and 2nd one
+		bomb->nextthink    += 3950; // overwrite, add delay between 1st bomb and 2nd one
 		bomb->splashDamage  = 90;   // overwrite
 		bomb->splashRadius  = 50;   // overwrite
 		bomb->s.effect1Time = 1;    // first bomb, make smoke appear
