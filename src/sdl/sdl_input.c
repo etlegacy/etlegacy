@@ -58,10 +58,6 @@ static cvar_t       *in_joystickUseAnalog = NULL;
 static int vidRestartTime = 0;
 SDL_Window *mainScreen    = NULL;
 
-#ifdef __ANDROID__
-static float x, y, dx, dy;
-#endif
-
 // Used for giving the engine better (= unlagged) input timestamps
 // We give the engine the time we last polled inputs as the timestamp to the current inputs.
 // As long as the input backend doesn't have reliable timestamps, this is the right thing to do!
@@ -1299,30 +1295,6 @@ static void IN_ProcessEvents(void)
 			break;
 			}
 			break;
-#ifdef __ANDROID__
-		case SDL_FINGERDOWN:
-			x = e.tfinger.x * cls.glconfig.vidWidth;
-			y = e.tfinger.y * cls.glconfig.vidHeight;
-			SDL_WarpMouseInWindow(mainScreen, x, y);
-			break;
-			case SDL_FINGERMOTION:
-			dx = e.tfinger.dx * cls.glconfig.vidWidth;
-			dy = e.tfinger.dy * cls.glconfig.vidHeight;
-			x += dx;
-			y += dy;
-			SDL_WarpMouseInWindow(mainScreen, x, y);
-			break;
-		case SDL_FINGERUP:
-		{
-			x = e.tfinger.x * cls.glconfig.vidWidth;
-			y = e.tfinger.y * cls.glconfig.vidHeight;
-			if (cls.state == CA_DISCONNECTED)
-			{
-				Com_QueueEvent(lasttime, SE_KEY, K_MOUSE1, qtrue, 0, NULL);
-			}
-			break;
-		}
-#endif // __ANDROID__
 		default:
 			break;
 		}
