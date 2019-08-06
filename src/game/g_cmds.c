@@ -1530,8 +1530,6 @@ qboolean SetTeam(gentity_t *ent, const char *s, qboolean force, weapon_t w1, wea
 	//	G_deleteStats(clientNum);
 	//}
 
-	G_UpdateSpawnCounts();
-
 	if (g_gamestate.integer == GS_PLAYING && (client->sess.sessionTeam == TEAM_AXIS || client->sess.sessionTeam == TEAM_ALLIES))
 	{
 		if (g_gametype.integer == GT_WOLF_LMS && level.numTeamClients[0] > 0 && level.numTeamClients[1] > 0)
@@ -4163,69 +4161,6 @@ void Cmd_Activate2_f(gentity_t *ent)
 }
 
 /**
- * @brief G_UpdateSpawnCounts
- */
-void G_UpdateSpawnCounts(void)
-{
-	int  i, j;
-	char cs[MAX_STRING_CHARS];
-	int  current, count, team;
-
-	for (i = 0; i < level.numspawntargets; i++)
-	{
-		trap_GetConfigstring(CS_MULTI_SPAWNTARGETS + i, cs, sizeof(cs));
-
-		current = atoi(Info_ValueForKey(cs, "c"));
-		team    = atoi(Info_ValueForKey(cs, "t")) & ~256;
-
-		count = 0;
-		for (j = 0; j < level.numConnectedClients; j++)
-		{
-			gclient_t *client = &level.clients[level.sortedClients[j]];
-
-			if (client->sess.sessionTeam != TEAM_AXIS && client->sess.sessionTeam != TEAM_ALLIES)
-			{
-				continue;
-			}
-
-			if (client->sess.sessionTeam == team && client->sess.spawnObjectiveIndex == i + 1)
-			{
-				count++;
-				continue;
-			}
-
-			if (client->sess.spawnObjectiveIndex == 0)
-			{
-				if (client->sess.sessionTeam == TEAM_AXIS)
-				{
-					if (level.axisAutoSpawn == i)
-					{
-						count++;
-						continue;
-					}
-				}
-				else
-				{
-					if (level.alliesAutoSpawn == i)
-					{
-						count++;
-						continue;
-					}
-				}
-			}
-		}
-
-		if (count == current)
-		{
-			continue;
-		}
-
-		Info_SetValueForKey(cs, "c", va("%i", count));
-		trap_SetConfigstring(CS_MULTI_SPAWNTARGETS + i, cs);
-	}
-}
-
-/**
  * @brief SetPlayerSpawn
  * @param[in,out] ent
  * @param[in] spawn
@@ -4233,15 +4168,39 @@ void G_UpdateSpawnCounts(void)
  */
 void SetPlayerSpawn(gentity_t *ent, int spawn, qboolean update)
 {
-	ent->client->sess.spawnObjectiveIndex = spawn;
-	if (ent->client->sess.spawnObjectiveIndex >= MAX_MULTI_SPAWNTARGETS || ent->client->sess.spawnObjectiveIndex < 0)
+	int               resolvedSpawnPoint;
+	int               targetSpawnPoint;
+	spawnPointState_t *spawnPointState;
+	spawnPointState_t *targetSpawnPointState;
+	ent->client->sess.userSpawnPointValue = spawn;
+	if (ent->client->sess.sessionTeam != TEAM_ALLIES && ent->client->sess.sessionTeam != TEAM_AXIS)
 	{
-		ent->client->sess.spawnObjectiveIndex = 0;
+		trap_SendServerCommand((int)(ent - g_entities), "print \"^3Warning! To select spawn points you should be in game.\n\"");
+		return;
+	}
+	if (spawn < 0 || spawn > level.numSpawnPoints)
+	{
+		trap_SendServerCommand((int)(ent - g_entities), "print \"^3Warning! Spawn point is out of bounds. Selecting 'Auto Pick'.\n\"");
+		trap_SendServerCommand((int)(ent - g_entities), "print \"         ^3Use '/listspawnpt' command to list available spawn points.\n\"");
+		ent->client->sess.userSpawnPointValue = 0;
 	}
 
 	if (update)
 	{
-		G_UpdateSpawnCounts();
+		G_UpdateSpawnPointStatePlayerCounts();
+	}
+
+	resolvedSpawnPoint = Com_Clamp(0, (level.numSpawnPoints - 1), ent->client->sess.resolvedSpawnPointIndex);
+	targetSpawnPoint   = Com_Clamp(0, (level.numSpawnPoints - 1), (ent->client->sess.userSpawnPointValue - 1));
+	spawnPointState    = &level.spawnPointStates[resolvedSpawnPoint];
+	if (spawn > 0 && targetSpawnPoint != resolvedSpawnPoint)
+	{
+		targetSpawnPointState = &level.spawnPointStates[targetSpawnPoint];
+		trap_SendServerCommand((int)(ent - g_entities), va("print \"^9Spawning at '^2%s^9', near the selected '^2%s^9'.\n\"", spawnPointState->description, targetSpawnPointState->description));
+	}
+	else
+	{
+		trap_SendServerCommand((int)(ent - g_entities), va("print \"^9Spawning at '^2%s^9'.\n\"", spawnPointState->description));
 	}
 }
 
@@ -4251,11 +4210,14 @@ void SetPlayerSpawn(gentity_t *ent, int spawn, qboolean update)
  */
 void Cmd_SetSpawnPoint_f(gentity_t *ent)
 {
-	char arg[MAX_TOKEN_CHARS];
-	int  val, i;
+	char              arg[MAX_TOKEN_CHARS];
+	int               val, i;
+	spawnPointState_t *spawnPointState;
 
 	if (trap_Argc() != 2)
 	{
+		trap_SendServerCommand((int)(ent - g_entities), "print \"^3Warning! Spawn point number expected.\n\"");
+		trap_SendServerCommand((int)(ent - g_entities), "print \"         ^3Use '/listspawnpt' command to list available spawn points.\n\"");
 		return;
 	}
 
@@ -4269,13 +4231,20 @@ void Cmd_SetSpawnPoint_f(gentity_t *ent)
 
 	for (i = 0; i < level.numLimboCams; i++)
 	{
-		int x = (g_entities[level.limboCams[i].targetEnt].count - CS_MULTI_SPAWNTARGETS) + 1;
-
-		if (level.limboCams[i].spawn && x == val)
+		int targetSpawnPoint = g_entities[level.limboCams[i].targetEnt].count - CS_MULTI_SPAWNTARGETS;
+		if (level.limboCams[i].spawn && (targetSpawnPoint + 1) == val)
 		{
+			spawnPointState = &level.spawnPointStates[targetSpawnPoint];
+			// don't allow checking opposite team's spawn camp
+			if (ent->client &&
+			    ent->client->sess.sessionTeam != TEAM_SPECTATOR &&
+			    ent->client->sess.sessionTeam != spawnPointState->team)
+			{
+				break;
+			}
 			VectorCopy(level.limboCams[i].origin, ent->s.origin2);
 			ent->r.svFlags |= SVF_SELF_PORTAL_EXCLUSIVE;
-			trap_SendServerCommand(ent - g_entities, va("portalcampos %i %i %i %i %i %i %i %i", val - 1, (int)level.limboCams[i].origin[0], (int)level.limboCams[i].origin[1], (int)level.limboCams[i].origin[2], (int)level.limboCams[i].angles[0], (int)level.limboCams[i].angles[1], (int)level.limboCams[i].angles[2], level.limboCams[i].hasEnt ? level.limboCams[i].targetEnt : -1));
+			trap_SendServerCommand((int)(ent - g_entities), va("portalcampos %i %i %i %i %i %i %i %i", val - 1, (int)level.limboCams[i].origin[0], (int)level.limboCams[i].origin[1], (int)level.limboCams[i].origin[2], (int)level.limboCams[i].angles[0], (int)level.limboCams[i].angles[1], (int)level.limboCams[i].angles[2], level.limboCams[i].hasEnt ? level.limboCams[i].targetEnt : -1));
 			break;
 		}
 	}

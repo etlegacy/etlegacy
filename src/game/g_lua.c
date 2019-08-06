@@ -1013,7 +1013,7 @@ static const gentity_field_t gclient_fields[] =
 	_et_gclient_addfield(sess.playerType,                   FIELD_INT,                 0),
 	_et_gclient_addfield(sess.playerWeapon,                 FIELD_INT,                 0),
 	_et_gclient_addfield(sess.playerWeapon2,                FIELD_INT,                 0),
-	_et_gclient_addfield(sess.spawnObjectiveIndex,          FIELD_INT,                 0),
+	_et_gclient_addfield(sess.userSpawnPointValue,          FIELD_INT,                 0),
 	_et_gclient_addfield(sess.latchPlayerType,              FIELD_INT,                 0),
 	_et_gclient_addfield(sess.latchPlayerWeapon,            FIELD_INT,                 0),
 	_et_gclient_addfield(sess.latchPlayerWeapon2,           FIELD_INT,                 0),

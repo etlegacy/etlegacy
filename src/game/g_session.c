@@ -113,7 +113,7 @@ void G_WriteClientSessionData(gclient_t *client, qboolean restart)
 	       client->sess.ignoreClients[0],
 	       client->sess.ignoreClients[1],
 	       client->pers.enterTime,
-	       restart ? client->sess.spawnObjectiveIndex : 0,
+	       restart ? client->sess.userSpawnPointValue : 0,
 	       client->sess.uci
 	       );
 
@@ -322,7 +322,7 @@ void G_ReadSessionData(gclient_t *client)
 	       &client->sess.ignoreClients[0],
 	       &client->sess.ignoreClients[1],
 	       &client->pers.enterTime,
-	       &client->sess.spawnObjectiveIndex,
+	       &client->sess.userSpawnPointValue,
 	       &client->sess.uci
 	       );
 
@@ -415,7 +415,7 @@ void G_InitSessionData(gclient_t *client, const char *userinfo)
 	sess->latchPlayerWeapon = sess->playerWeapon = WP_NONE;
 	sess->latchPlayerWeapon2 = sess->playerWeapon2 = WP_NONE;
 
-	sess->spawnObjectiveIndex = 0;
+	sess->userSpawnPointValue = 0;
 
 	Com_Memset(sess->ignoreClients, 0, sizeof(sess->ignoreClients));
 

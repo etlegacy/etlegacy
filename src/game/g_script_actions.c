@@ -212,7 +212,7 @@ qboolean G_ScriptAction_SetAutoSpawn(gentity_t *ent, char *params)
 
 	*pTeamAutoSpawn = tent->count - CS_MULTI_SPAWNTARGETS;
 
-	G_UpdateSpawnCounts();
+	G_UpdateSpawnPointStatePlayerCounts();
 
 	return qtrue;
 }
@@ -252,7 +252,7 @@ qboolean G_ScriptAction_ChangeModel(gentity_t *ent, char *params)
 qboolean G_ScriptAction_ShaderRemap(gentity_t *ent, char *params)
 {
 	char  *pString = params, *token;
-	float f        = level.time * 0.001f;
+	float f = level.time * 0.001f;
 	char  oldShader[MAX_QPATH];
 	char  newShader[MAX_QPATH];
 
@@ -2004,7 +2004,7 @@ qboolean G_ScriptAction_MusicPlay(gentity_t *ent, char *params)
  */
 qboolean G_ScriptAction_MusicStop(gentity_t *ent, char *params)
 {
-	char *pString    = params, *token;
+	char *pString = params, *token;
 	int  fadeoutTime = 0;
 
 	token = COM_ParseExt(&pString, qfalse);
@@ -2049,7 +2049,7 @@ qboolean G_ScriptAction_MusicQueue(gentity_t *ent, char *params)
  */
 qboolean G_ScriptAction_MusicFade(gentity_t *ent, char *params)
 {
-	char  *pString    = params, *token;
+	char  *pString = params, *token;
 	int   fadeoutTime = 0;
 	float targetVol   = 0.0;
 
@@ -2932,7 +2932,7 @@ qboolean G_ScriptAction_Print(gentity_t *ent, char *params)
 	// Default to printing whole string
 	char *printThis = params;
 
-	char *pString   = params, *token;
+	char *pString = params, *token;
 	int  printLevel = 0;
 
 	if (!params || !params[0])

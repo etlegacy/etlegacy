@@ -196,20 +196,20 @@ void Team_ResetFlag(gentity_t *ent)
 			// unset objective indicator
 			switch (ent->item->giPowerUp == PW_REDFLAG ? TEAM_AXIS : TEAM_ALLIES)
 			{
-				case TEAM_AXIS:
-					if (!level.redFlagCounter)
-					{
-						level.flagIndicator &= ~(1 << PW_REDFLAG);
-					}
-					break;
-				case TEAM_ALLIES:
-					if (!level.blueFlagCounter)
-					{
-						level.flagIndicator &= ~(1 << PW_BLUEFLAG);
-					}
-					break;
-				default:
-					break;
+			case TEAM_AXIS:
+				if (!level.redFlagCounter)
+				{
+					level.flagIndicator &= ~(1 << PW_REDFLAG);
+				}
+				break;
+			case TEAM_ALLIES:
+				if (!level.blueFlagCounter)
+				{
+					level.flagIndicator &= ~(1 << PW_BLUEFLAG);
+				}
+				break;
+			default:
+				break;
 			}
 			G_globalFlagIndicator();
 
@@ -512,7 +512,7 @@ void G_globalFlagIndicator()
 	te->s.eventParm       = level.flagIndicator;
 	te->s.otherEntityNum  = level.redFlagCounter;
 	te->s.otherEntityNum2 = level.blueFlagCounter;
-	te->r.svFlags         |= SVF_BROADCAST;
+	te->r.svFlags        |= SVF_BROADCAST;
 }
 
 /**
@@ -529,7 +529,7 @@ void G_clientFlagIndicator(gentity_t *ent)
 	te->s.otherEntityNum  = level.redFlagCounter;
 	te->s.otherEntityNum2 = level.blueFlagCounter;
 	te->r.singleClient    = ent->s.number;
-	te->r.svFlags         |= SVF_SINGLECLIENT;
+	te->r.svFlags        |= SVF_SINGLECLIENT;
 }
 
 /*---------------------------------------------------------------------------*/
@@ -620,7 +620,7 @@ gentity_t *SelectRandomTeamSpawnPoint(int teamstate, team_t team, int spawnObjec
 		return G_Find(NULL, FOFS(classname), classname);
 	}
 
-	if ((!level.numspawntargets))
+	if ((!level.numSpawnPoints))
 	{
 		G_Error("No spawnpoints found\n");
 		return NULL;
@@ -645,7 +645,7 @@ gentity_t *SelectRandomTeamSpawnPoint(int teamstate, team_t team, int spawnObjec
 
 		i = spawnObjective - 1;
 
-		VectorCopy(level.spawntargets[i], farthest);
+		VectorCopy(level.spawnPointStates[i].origin, farthest);
 
 		// now that we've got farthest vector, figure closest spawnpoint to it
 		VectorSubtract(farthest, spots[0]->s.origin, target);
@@ -902,16 +902,6 @@ void SP_team_CTF_bluespawn(gentity_t *ent)
 	ent->think = DropToFloor;
 }
 
-static int numobjectives = 0;
-
-/**
- * @brief reset_numobjectives
- */
-void reset_numobjectives(void)
-{
-	numobjectives = 0;
-}
-
 /**
  * @brief Swaps the team
  *
@@ -935,8 +925,6 @@ void reset_numobjectives(void)
  */
 void team_wolf_objective_use(gentity_t *self, gentity_t *other, gentity_t *activator)
 {
-	char cs[MAX_STRING_CHARS];
-
 	// 256 is a disabled flag
 	if ((self->count2 & ~256) == TEAM_AXIS)
 	{
@@ -947,13 +935,7 @@ void team_wolf_objective_use(gentity_t *self, gentity_t *other, gentity_t *activ
 		self->count2 = (self->count2 & 256) + TEAM_AXIS;
 	}
 
-	// And update configstring
-	trap_GetConfigstring(self->count, cs, sizeof(cs));
-	Info_SetValueForKey(cs, "s", self->message); // spawn_targ
-	Info_SetValueForKey(cs, "x", va("%i", (int)self->s.origin[0]));
-	Info_SetValueForKey(cs, "y", va("%i", (int)self->s.origin[1]));
-	Info_SetValueForKey(cs, "t", va("%i", self->count2));
-	trap_SetConfigstring(self->count, cs);
+	G_UpdateSpawnPointState(self);
 }
 
 /**
@@ -962,38 +944,27 @@ void team_wolf_objective_use(gentity_t *self, gentity_t *other, gentity_t *activ
  */
 void objective_Register(gentity_t *self)
 {
-	char numspawntargets[128];
-	int  cs_obj = CS_MULTI_SPAWNTARGETS;
-	char cs[MAX_STRING_CHARS];
+	static char cs[MAX_STRING_CHARS];
+	char        numspawntargets[128];
+	int         cs_obj = CS_MULTI_SPAWNTARGETS;
 
-	if (numobjectives == MAX_MULTI_SPAWNTARGETS)
+	if (level.numSpawnPoints == MAX_MULTI_SPAWNTARGETS)
 	{
 		G_Error("SP_team_WOLF_objective: exceeded MAX_MULTI_SPAWNTARGETS (%d)\n", MAX_MULTI_SPAWNTARGETS);
 	}
 	else     // Set config strings
 	{
-		cs_obj += numobjectives;
-		trap_GetConfigstring(cs_obj, cs, sizeof(cs));
-		Info_SetValueForKey(cs, "s", self->message); // spawn_targ
-		Info_SetValueForKey(cs, "x", va("%i", (int)self->s.origin[0]));
-		Info_SetValueForKey(cs, "y", va("%i", (int)self->s.origin[1]));
-		if (level.ccLayers)
-		{
-			Info_SetValueForKey(cs, "z", va("%i", (int)self->s.origin[2]));
-		}
-		Info_SetValueForKey(cs, "t", va("%i", self->count2));
+		cs_obj     += level.numSpawnPoints;
 		self->use   = team_wolf_objective_use;
 		self->count = cs_obj;
-		trap_SetConfigstring(cs_obj, cs);
-		VectorCopy(self->s.origin, level.spawntargets[numobjectives]);
+		G_UpdateSpawnPointState(self);
 	}
 
-	numobjectives++;
+	level.numSpawnPoints++;
 
 	// set current # spawntargets
-	level.numspawntargets = numobjectives;
 	trap_GetConfigstring(CS_MULTI_INFO, cs, sizeof(cs));
-	Com_sprintf(numspawntargets, 128, "%d", numobjectives);
+	Com_sprintf(numspawntargets, 128, "%d", level.numSpawnPoints);
 	Info_SetValueForKey(cs, "s", numspawntargets); // numspawntargets
 	trap_SetConfigstring(CS_MULTI_INFO, cs);
 }
@@ -2147,4 +2118,170 @@ qboolean G_desiredFollow(gentity_t *ent, int nTeam)
 	}
 
 	return qfalse;
+}
+
+/**
+ * @brief Finds suitable spawn point index for the given team.
+ *        If player selected spawn point is invalid, tries to resolve it.
+ * @param[in] team
+ * @param[in] targetSpawnPt Player selected spawn point.
+ * @return Spawn point index or -1.
+ */
+static int G_ResolveSpawnPointIndex(team_t team, int targetSpawnPt)
+{
+	int i;
+	if (targetSpawnPt >= 0 && targetSpawnPt < level.numSpawnPoints)
+	{
+		int closestTeamSpawnPt;
+		float closestTeamSpawnPtDist;
+		spawnPointState_t *tagetSpawnPointState = &level.spawnPointStates[targetSpawnPt];
+		// if this spawn point is already owned by the team, no further actions necessary
+		if (tagetSpawnPointState->isActive && tagetSpawnPointState->team == team)
+		{
+			return targetSpawnPt;
+		}
+		// if target spawn point is owned by the opposite team,
+		// find closest team spawn point to the target.
+		// this works similar to an actual algorithm used to pick spawn blob.
+		// however, it might be inaccurate in some cases.
+		closestTeamSpawnPt     = -1;
+		closestTeamSpawnPtDist = -1;
+		for (i = 0; i < level.numSpawnPoints; i++)
+		{
+			vec3_t diffVector;
+			float distance;
+			spawnPointState_t *teamSpawnPointState = &level.spawnPointStates[i];
+			if (!teamSpawnPointState->isActive || teamSpawnPointState->team != team)
+			{
+				continue;
+			}
+			VectorSubtract(tagetSpawnPointState->origin, teamSpawnPointState->origin, diffVector);
+			distance = VectorLength(diffVector);
+			if ((closestTeamSpawnPtDist < 0) || (closestTeamSpawnPtDist > distance))
+			{
+				closestTeamSpawnPt     = i;
+				closestTeamSpawnPtDist = distance;
+			}
+		}
+		return closestTeamSpawnPt;
+	}
+	// fallback: find first team spawn point
+	for (i = 0; i < level.numSpawnPoints; i++)
+	{
+		spawnPointState_t *spawnPointState = level.spawnPointStates + i;
+		if (spawnPointState->team == team)
+		{
+			return i;
+		}
+	}
+	// found nothing
+	return -1;
+}
+
+/**
+ * @brief Converts spawn point value into spawn point index.
+ * @param[in] spawnPointValue
+ * @param[in] defaultSpawnPointIndex
+ * @return
+ */
+static int G_ConvertToSpawnPointIndex(int spawnPointValue, int defaultSpawnPointIndex)
+{
+	if (spawnPointValue > 0 && spawnPointValue <= level.numSpawnPoints)
+	{
+		return (spawnPointValue - 1);
+	}
+	return defaultSpawnPointIndex;
+}
+
+/**
+ * @brief Udates player counts in all spawn point states.
+ * @return
+ */
+void G_UpdateSpawnPointStatePlayerCounts()
+{
+	static char cs[MAX_STRING_CHARS];
+	int playerCounts[MAX_MULTI_SPAWNTARGETS] = { 0 };
+	gclient_t *client;
+	int resolvedAutoSpawnPts[2] =
+	{
+		G_ResolveSpawnPointIndex(TEAM_AXIS,   level.axisAutoSpawn),
+		G_ResolveSpawnPointIndex(TEAM_ALLIES, level.alliesAutoSpawn)
+	};
+	int i, teamAutoSpawnPt, resolvedSpawnPt;
+	// check updates
+	for (i = 0; i < level.numConnectedClients; i++)
+	{
+		client = &level.clients[level.sortedClients[i]];
+		// skip non-playing clients
+		if (client->sess.sessionTeam != TEAM_AXIS && client->sess.sessionTeam != TEAM_ALLIES)
+		{
+			continue;
+		}
+		teamAutoSpawnPt = resolvedAutoSpawnPts[(client->sess.sessionTeam == TEAM_AXIS) ? 0 : 1];
+		// no spawn points are found for the given team
+		if (teamAutoSpawnPt == -1)
+		{
+			continue;
+		}
+		resolvedSpawnPt = G_ConvertToSpawnPointIndex(client->sess.userSpawnPointValue, teamAutoSpawnPt);
+		// selected spawn point is owned by the opposite team, find closest team spawn point
+		if (level.spawnPointStates[resolvedSpawnPt].team != client->sess.sessionTeam ||
+		    level.spawnPointStates[resolvedSpawnPt].isActive != 1)
+		{
+			resolvedSpawnPt = G_ResolveSpawnPointIndex(client->sess.sessionTeam, resolvedSpawnPt);
+			if (resolvedSpawnPt == -1)
+			{
+				continue;
+			}
+		}
+		playerCounts[resolvedSpawnPt]       += 1;
+		client->sess.resolvedSpawnPointIndex = resolvedSpawnPt;
+	}
+	// update configstring, if necessary
+	for (i = 0; i < level.numSpawnPoints; i++)
+	{
+		spawnPointState_t *spawnPointState = &level.spawnPointStates[i];
+		// no updates
+		if (spawnPointState->playerCount == playerCounts[i])
+		{
+			continue;
+		}
+		spawnPointState->playerCount = playerCounts[i];
+		trap_GetConfigstring(CS_MULTI_SPAWNTARGETS + i, cs, sizeof(cs));
+		Info_SetValueForKey(cs, "c", va("%i", playerCounts[i]));
+		trap_SetConfigstring(CS_MULTI_SPAWNTARGETS + i, cs);
+	}
+}
+
+/**
+ * @brief Udates spawn point state.
+ * @param[in] ent wolf_objective entity.
+ * @return
+ */
+void G_UpdateSpawnPointState(gentity_t *ent)
+{
+	static char cs[MAX_STRING_CHARS];
+	if (ent == NULL)
+	{
+		return;
+	}
+	spawnPointState_t *spawnPointState = &level.spawnPointStates[ent->count - CS_MULTI_SPAWNTARGETS];
+	// update state
+	VectorCopy(ent->s.origin, spawnPointState->origin);
+	spawnPointState->team = (team_t)(ent->count2 & 0xF);
+	strncpy(spawnPointState->description, ent->message, 128);
+	spawnPointState->description[127] = 0;
+	spawnPointState->isActive         = (ent->entstate == STATE_DEFAULT) ? 1 : 0;
+	// and update configstring
+	trap_GetConfigstring(ent->count, cs, sizeof(cs));
+	Info_SetValueForKey(cs, "s", ent->message); // spawn_targ
+	Info_SetValueForKey(cs, "x", va("%i", (int)ent->s.origin[0]));
+	Info_SetValueForKey(cs, "y", va("%i", (int)ent->s.origin[1]));
+	if (level.ccLayers)
+	{
+		Info_SetValueForKey(cs, "z", va("%i", (int)ent->s.origin[2]));
+	}
+	Info_SetValueForKey(cs, "t", va("%i", ent->count2));
+	trap_SetConfigstring(ent->count, cs);
+	G_UpdateSpawnPointStatePlayerCounts();
 }

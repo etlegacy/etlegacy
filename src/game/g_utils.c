@@ -1314,12 +1314,8 @@ void G_SetEntState(gentity_t *ent, entState_t state)
 
 		if (ent->s.eType == ET_WOLF_OBJECTIVE)
 		{
-			char cs[MAX_STRING_CHARS];
-
-			trap_GetConfigstring(ent->count, cs, sizeof(cs));
 			ent->count2 &= ~256;
-			Info_SetValueForKey(cs, "t", va("%i", ent->count2));
-			trap_SetConfigstring(ent->count, cs);
+			G_UpdateSpawnPointState(ent);
 		}
 
 		if (ent->s.eType != ET_COMMANDMAP_MARKER)
@@ -1463,12 +1459,8 @@ void G_SetEntState(gentity_t *ent, entState_t state)
 		}
 		else if (ent->s.eType == ET_WOLF_OBJECTIVE)
 		{
-			char cs[MAX_STRING_CHARS];
-
-			trap_GetConfigstring(ent->count, cs, sizeof(cs));
 			ent->count2 |= 256;
-			Info_SetValueForKey(cs, "t", va("%i", ent->count2));
-			trap_SetConfigstring(ent->count, cs);
+			G_UpdateSpawnPointState(ent);
 		}
 
 		if (ent->s.eType == ET_COMMANDMAP_MARKER)

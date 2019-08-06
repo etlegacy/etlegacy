@@ -1847,6 +1847,24 @@ static void CG_PrintObjectiveInfo_f(void)
 	CG_Printf("^2%i from %i objectives defined\n", i, MAX_OID_TRIGGERS);
 }
 
+static void CG_ListSpawnPoints_f()
+{
+	int i;
+	CG_Printf("^2Spawn Points\n");
+	for (i = 0; i < cg.spawnCount; i++)
+	{
+		// inactive
+		if (cg.spawnTeams[i] & 256)
+		{
+			CG_Printf("^9[%2i] %s %-26s\n", i, ((cg.spawnTeams[i] & 0xF) == TEAM_AXIS) ? "X" : "A", cg.spawnPoints[i]);
+		}
+		else
+		{
+			CG_Printf("^7[^2%2i^7] %s ^o%-26s\n", i, (cg.spawnTeams[i] == TEAM_AXIS) ? "^1X" : "^4A", cg.spawnPoints[i]);
+		}
+	}
+}
+
 static consoleCommand_t commands[] =
 {
 	{ "testgun",             CG_TestGun_f              },
@@ -1965,7 +1983,8 @@ static consoleCommand_t commands[] =
 #endif
 	// objective info list for mappers/scripters (and players? - we might extend it)
 	{ "oinfo",               CG_PrintObjectiveInfo_f   },
-	{ "resetmaxspeed",       CG_ResetMaxSpeed_f        }
+	{ "resetmaxspeed",       CG_ResetMaxSpeed_f        },
+	{ "listspawnpt",         CG_ListSpawnPoints_f      }
 };
 
 /**

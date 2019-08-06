@@ -2330,7 +2330,8 @@ void G_InitGame(int levelTime, int randomSeed, int restart, int legacyServer, in
 
 	for (i = 0; i < level.numConnectedClients; i++)
 	{
-		level.clients[level.sortedClients[i]].sess.spawnObjectiveIndex = 0;
+		level.clients[level.sortedClients[i]].sess.userSpawnPointValue     = 0;
+		level.clients[level.sortedClients[i]].sess.resolvedSpawnPointIndex = 0;
 	}
 
 	// init the anim scripting
@@ -2545,7 +2546,6 @@ void G_InitGame(int levelTime, int randomSeed, int restart, int legacyServer, in
 	// Clear out spawn target config strings
 	trap_GetConfigstring(CS_MULTI_INFO, cs, sizeof(cs));
 	Info_SetValueForKey(cs, "s", "0"); // numspawntargets
-	reset_numobjectives();
 	trap_SetConfigstring(CS_MULTI_INFO, cs);
 
 	for (i = CS_MULTI_SPAWNTARGETS; i < CS_MULTI_SPAWNTARGETS + MAX_MULTI_SPAWNTARGETS; i++)

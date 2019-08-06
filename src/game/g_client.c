@@ -642,7 +642,7 @@ void CopyToBodyQue(gentity_t *ent)
 	BODY_TEAM(body)      = ent->client->sess.sessionTeam;
 	BODY_CLASS(body)     = ent->client->sess.playerType;
 	BODY_CHARACTER(body) = ent->client->pers.characterIndex;
-	BODY_VALUE(body)     = 0;
+	BODY_VALUE(body) = 0;
 
 	//if ( ent->client->ps.eFlags & EF_PANTSED ){
 	//	body->s.time2 =	1;
@@ -2738,8 +2738,6 @@ void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean
 	int                savedTeam;
 	int                savedDeathTime;
 
-	G_UpdateSpawnCounts();
-
 	client->pers.lastSpawnTime            = level.time;
 	client->pers.lastBattleSenseBonusTime = level.timeCurrent;
 	client->pers.lastHQMineReportTime     = level.timeCurrent;
@@ -2770,6 +2768,7 @@ void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean
 	}
 	else
 	{
+		G_UpdateSpawnPointStatePlayerCounts();
 		// let's just be sure it does the right thing at all times. (well maybe not the right thing, but at least not the bad thing!)
 		//if( client->sess.sessionTeam == TEAM_SPECTATOR || client->sess.sessionTeam == TEAM_FREE ) {
 		if (client->sess.sessionTeam != TEAM_AXIS && client->sess.sessionTeam != TEAM_ALLIES)
@@ -2778,7 +2777,7 @@ void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean
 		}
 		else
 		{
-			spawnPoint = SelectCTFSpawnPoint(client->sess.sessionTeam, client->pers.teamState.state, spawn_origin, spawn_angles, client->sess.spawnObjectiveIndex);
+			spawnPoint = SelectCTFSpawnPoint(client->sess.sessionTeam, client->pers.teamState.state, spawn_origin, spawn_angles, client->sess.userSpawnPointValue);
 		}
 	}
 

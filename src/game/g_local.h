@@ -632,7 +632,8 @@ typedef struct
 	int playerType;                                     ///< for GT_WOLF
 	weapon_t playerWeapon;                              ///< for GT_WOLF
 	weapon_t playerWeapon2;                             ///< secondary weapon
-	int spawnObjectiveIndex;                            ///< index of objective to spawn nearest to (returned from UI)
+	int userSpawnPointValue;                            ///< index of objective to spawn nearest to (returned from UI)
+	int resolvedSpawnPointIndex;                        ///< most possible objective to spawn nearest to
 	int latchPlayerType;                                ///< for GT_WOLF not archived
 	weapon_t latchPlayerWeapon;                         ///< for GT_WOLF not archived
 	weapon_t latchPlayerWeapon2;                        ///< secondary weapon
@@ -1113,6 +1114,15 @@ typedef struct database_s
 } database_t;
 #endif
 
+typedef struct spawnPointState_s
+{
+	vec3_t origin;
+	team_t team;
+	int playerCount;
+	int isActive;
+	char description[128];
+} spawnPointState_t;
+
 /**
  * @struct level_locals_s
  * @typedef level_locals_t
@@ -1182,8 +1192,8 @@ typedef struct level_locals_s
 	int bodyQueIndex;                           ///< dead bodies
 	gentity_t *bodyQue[BODY_QUEUE_SIZE];
 
-	vec3_t spawntargets[MAX_MULTI_SPAWNTARGETS];    ///< coordinates of spawn targets
-	int numspawntargets;                        ////< # spawntargets in this map
+	int numSpawnPoints;                        ////< number of spawn points in this map
+	spawnPointState_t spawnPointStates[MAX_MULTI_SPAWNTARGETS];
 
 	/// entity scripting
 	char *scriptEntity;
@@ -1681,7 +1691,6 @@ qboolean ReadyToConstruct(gentity_t *ent, gentity_t *constructible, qboolean upd
 // g_team.c
 qboolean OnSameTeam(gentity_t *ent1, gentity_t *ent2);
 //int Team_ClassForString(const char *string); // Unused
-void reset_numobjectives(void);
 
 // g_mem.c
 void *G_Alloc(unsigned int size);
@@ -2585,7 +2594,8 @@ void G_MakeReady(gentity_t *ent);
 void G_MakeUnready(gentity_t *ent);
 
 void SetPlayerSpawn(gentity_t *ent, int spawn, qboolean update);
-void G_UpdateSpawnCounts(void);
+void G_UpdateSpawnPointState(gentity_t *ent);
+void G_UpdateSpawnPointStatePlayerCounts();
 
 void G_SetConfigStringValue(int num, const char *key, const char *value);
 void G_GlobalClientEvent(entity_event_t event, int param, int client);
