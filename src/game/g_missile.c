@@ -487,7 +487,7 @@ void G_RunMissile(gentity_t *ent)
 				tent->r.svFlags  |= SVF_BROADCAST;
 				tent->s.density   = 1;  // angular
 
-				G_FreeEntity(ent);
+				G_RealExplodedMissile(ent, tv(0, 0, 1), qfalse);
 				return;     // delete it and play explode sound
 			}
 			else
@@ -506,7 +506,7 @@ void G_RunMissile(gentity_t *ent)
 					tent->r.svFlags  |= SVF_BROADCAST;
 					tent->s.density   = 0;  // direct
 
-					G_FreeEntity(ent);
+					G_RealExplodedMissile(ent, tv(0, 0, 1), qfalse);
 					return; // delete it and play explode sound
 				}
 
