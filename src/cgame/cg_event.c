@@ -36,6 +36,8 @@
 #include "cg_local.h"
 #include "../game/bg_local.h"
 
+#define POSSIBLE_PIECES 6
+
 extern void CG_StartShakeCamera(float param);
 extern void CG_Tracer(vec3_t source, vec3_t dest, int sparks);
 //==========================================================================
@@ -685,12 +687,12 @@ void CG_RubbleFx(vec3_t origin, vec3_t dir, int mass, int type, sfxHandle_t soun
 		modelshader = shader;
 	}
 
-	for (i = FXTYPE_WOOD; i < FXTYPE_MAX; i++)
+	for (i = 0; i < POSSIBLE_PIECES; i++)
 	{
 		snd    = LEBS_NONE;
 		hmodel = 0;
 
-		for (howmany = 0; howmany < i; howmany++)
+		for (howmany = 0; howmany < pieces[i]; howmany++)
 		{
 			scale   = 1.0f;
 			endtime = 0;     // set endtime offset for faster/slower fadeouts
@@ -987,6 +989,8 @@ pass:
 	}
 }
 
+#define POSSIBLE_PIECES 6
+
 /**
  * @brief Made this more generic for spawning hits and breaks without needing a *cent
  * @param[in] origin
@@ -1061,12 +1065,12 @@ void CG_Explodef(vec3_t origin, vec3_t dir, int mass, int type, qhandle_t sound,
 		modelshader = shader;
 	}
 
-	for (i = FXTYPE_WOOD; i < FXTYPE_MAX; i++)
+	for (i = 0; i < POSSIBLE_PIECES; i++)
 	{
 		snd    = LEBS_NONE;
 		hmodel = 0;
 
-		for (howmany = 0; howmany < i; howmany++)
+		for (howmany = 0; howmany < pieces[i]; howmany++)
 		{
 			scale   = 1.0f;
 			endtime = 0;     // set endtime offset for faster/slower fadeouts
