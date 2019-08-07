@@ -311,7 +311,7 @@ void CG_NewClientInfo(int clientNum)
 		{
 			CG_SoundPlaySoundScript(GetRankTableData(cgs.clientinfo[cg.clientNum].team, newInfo.rank)->soundNames, NULL, -1, qtrue);
 
-			if (cg_popupBigFilter.integer & POPUP_BIG_FILTER_RANK)
+			if (!(cg_popupBigFilter.integer & POPUP_BIG_FILTER_RANK))
 			{
 				CG_AddPMItemBig(PM_RANK, va(CG_TranslateString("Promoted to rank %s!"), GetRankTableData(cgs.clientinfo[cg.clientNum].team, newInfo.rank)->names), rankicons[newInfo.rank][cgs.clientinfo[cg.clientNum].team == TEAM_AXIS ? 1 : 0][0].shader);
 			}
@@ -345,7 +345,7 @@ void CG_NewClientInfo(int clientNum)
 				if (!cgs.demoCamera.renderingFreeCam && !cgs.demoCamera.renderingWeaponCam)
 				{
 #endif
-				if (cg_popupBigFilter.integer & POPUP_BIG_FILTER_SKILL)
+				if (!(cg_popupBigFilter.integer & POPUP_BIG_FILTER_SKILL))
 				{
 					CG_AddPMItemBig(PM_SKILL, va(CG_TranslateString("Increased %s skill to level %i!"), CG_TranslateString(GetSkillTableData(i)->skillNames), newInfo.skill[i]), cgs.media.skillPics[i]);
 				}
