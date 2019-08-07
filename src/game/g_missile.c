@@ -41,6 +41,165 @@
 #define MISSILE_PRESTEP_TIME    50
 
 /**
+ * @brief G_RealExplodedMissile
+ * @param[in,out] ent
+ * @param[in] dir
+ * @param[in] hit
+ */
+void G_RealExplodedMissile(gentity_t *ent, vec3_t dir, qboolean hit)
+{
+	gentity_t      *tent;
+	entity_event_t event;
+
+	// splash damage
+	if (ent->splashDamage)
+	{
+		vec3_t origin;
+
+		VectorCopy(ent->r.currentOrigin, origin);
+
+		if (ent->s.weapon == WP_DYNAMITE)
+		{
+			origin[2] += 4;
+		}
+
+		if ((ent->s.weapon == WP_DYNAMITE && (ent->etpro_misc_1 & 1)) || ent->s.weapon == WP_SATCHEL)
+		{
+			etpro_RadiusDamage(origin, ent, ent->parent, ent->splashDamage, ent->splashRadius, ent, ent->splashMethodOfDeath, qtrue);
+			G_TempTraceIgnorePlayersAndBodies();
+			etpro_RadiusDamage(origin, ent, ent->parent, ent->splashDamage, ent->splashRadius, ent, ent->splashMethodOfDeath, qfalse);
+			G_ResetTempTraceIgnoreEnts();
+		}
+		else
+		{
+			G_RadiusDamage(origin, ent, ent->parent, ent->splashDamage, ent->splashRadius, ent, ent->splashMethodOfDeath);
+		}
+	}
+
+	if (hit)
+	{
+		event = EV_MISSILE_HIT;
+		//G_AddEvent(ent, EV_MISSILE_HIT, DirToByte(dir));
+	}
+	else if (ent->accuracy == 1.f)
+	{
+		event = EV_MISSILE_MISS_SMALL;
+	}
+	else if (ent->accuracy == 2.f)
+	{
+		event = EV_MISSILE_MISS_LARGE;
+	}
+	else if (ent->accuracy == 3.f)
+	{
+		ent->freeAfterEvent = qtrue;
+		trap_LinkEntity(ent);
+		return;
+	}
+	else
+	{
+		event = EV_MISSILE_MISS;
+	}
+
+	// TODO: is it cheaper in bandwidth to just remove this ent and create a new
+	// one, rather than changing the missile into the explosion?
+	// G_AddEvent don't work as expected in this case ...
+	tent                   = G_TempEntity(ent->r.currentOrigin, event);
+	tent->s.otherEntityNum = ent->r.ownerNum;
+	tent->r.svFlags        = ent->r.svFlags;
+	tent->s.eventParm      = DirToByte(dir);
+	tent->s.weapon         = ent->s.weapon;
+	tent->s.clientNum      = ent->r.ownerNum;
+
+	ent->freeAfterEvent = qtrue;
+
+	trap_LinkEntity(ent);
+
+	if (ent->s.weapon == WP_LANDMINE)
+	{
+		mapEntityData_t *mEnt;
+
+		if ((mEnt = G_FindMapEntityData(&mapEntityData[0], ent - g_entities)) != NULL)
+		{
+			G_FreeMapEntityData(&mapEntityData[0], mEnt);
+		}
+
+		if ((mEnt = G_FindMapEntityData(&mapEntityData[1], ent - g_entities)) != NULL)
+		{
+			G_FreeMapEntityData(&mapEntityData[1], mEnt);
+		}
+	}
+	else if (ent->s.weapon == WP_DYNAMITE && (ent->etpro_misc_1 & 1))         // do some scoring
+	{   // check if dynamite is in trigger_objective_info field
+		vec3_t    mins, maxs;
+		int       i, num, touch[MAX_GENTITIES];
+		gentity_t *hit;
+
+		ent->free = NULL; // no defused tidy up if we exploded
+
+		// made this the actual bounding box of dynamite instead of range
+		VectorAdd(ent->r.currentOrigin, ent->r.mins, mins);
+		VectorAdd(ent->r.currentOrigin, ent->r.maxs, maxs);
+		num = trap_EntitiesInBox(mins, maxs, touch, MAX_GENTITIES);
+
+		for (i = 0; i < num; i++)
+		{
+			hit = &g_entities[touch[i]];
+			if (!hit->target)
+			{
+				continue;
+			}
+
+			if ((hit->s.eType != ET_OID_TRIGGER))
+			{
+				continue;
+			}
+
+			if (!(hit->spawnflags & (AXIS_OBJECTIVE | ALLIED_OBJECTIVE)))
+			{
+				continue;
+			}
+
+			if (hit->target_ent)
+			{
+				// only if it targets a func_explosive
+				if (hit->target_ent->s.eType != ET_EXPLOSIVE)
+				{
+					continue;
+				}
+
+				if (hit->target_ent->constructibleStats.weaponclass < 1)
+				{
+					continue;
+				}
+			}
+
+			if (((hit->spawnflags & AXIS_OBJECTIVE) && (ent->s.teamNum == TEAM_ALLIES)) || ((hit->spawnflags & ALLIED_OBJECTIVE) && (ent->s.teamNum == TEAM_AXIS)))
+			{
+				if (ent->parent->client && hit->target_ent && GetMODTableData(MOD_DYNAMITE)->weaponClassForMOD >= hit->target_ent->constructibleStats.weaponclass)
+				{
+					G_AddKillSkillPointsForDestruction(ent->parent, MOD_DYNAMITE, &hit->target_ent->constructibleStats);
+				}
+
+				G_UseTargets(hit, ent);
+				hit->think     = G_FreeEntity;
+				hit->nextthink = level.time + FRAMETIME;
+
+				G_Script_ScriptEvent(hit, "destroyed", "");
+			}
+		}
+	}
+
+	// give big weapons the shakey shakey
+	if (GetWeaponTableData(ent->s.weapon)->attributes & WEAPON_ATTRIBUT_SHAKE)
+	{
+		tent = G_TempEntity(ent->r.currentOrigin, EV_SHAKE);
+
+		tent->s.onFireStart = ent->splashDamage * 4;
+		tent->r.svFlags    |= SVF_BROADCAST;
+	}
+}
+
+/**
  * @brief G_BounceMissile
  * @param[in,out] ent
  * @param[in] trace
@@ -157,14 +316,12 @@ void G_BounceMissile(gentity_t *ent, trace_t *trace)
  * @param[in] ent
  * @param[in] trace
  * @param[in] impactDamage is how much damage the impact will do to func_explosives
+ * @return true if missile exploded otherwise false
  */
-void G_MissileImpact(gentity_t *ent, trace_t *trace, int impactDamage)
+qboolean G_MissileImpact(gentity_t *ent, trace_t *trace, int impactDamage)
 {
-	gentity_t      *other = &g_entities[trace->entityNum];
-	gentity_t      *temp;
-	vec3_t         velocity;
-	entity_event_t event = EV_NONE;
-	int            param = 0, otherentnum = 0;
+	gentity_t *other = &g_entities[trace->entityNum];
+	vec3_t    velocity;
 
 	// handle func_explosives
 	if (other->classname && Q_stricmp(other->classname, "func_explosive") == 0)
@@ -186,7 +343,7 @@ void G_MissileImpact(gentity_t *ent, trace_t *trace, int impactDamage)
 			// should reflect the missile or explode it not vanish into oblivion
 			if (other->health <= 0)
 			{
-				return;
+				return qfalse;
 			}
 		}
 	}
@@ -198,7 +355,7 @@ void G_MissileImpact(gentity_t *ent, trace_t *trace, int impactDamage)
 
 		G_AddEvent(ent, EV_GRENADE_BOUNCE, BG_FootstepForSurface(trace->surfaceFlags));
 
-		return;
+		return qfalse;
 	}
 
 	// impact damage
@@ -216,18 +373,13 @@ void G_MissileImpact(gentity_t *ent, trace_t *trace, int impactDamage)
 		else     // if no damage value, then this is a splash damage grenade only
 		{
 			G_BounceMissile(ent, trace);
-			return;
+			return qfalse;
 		}
 	}
 
-	// is it cheaper in bandwidth to just remove this ent and create a new
-	// one, rather than changing the missile into the explosion?
-
 	if (other->takedamage && other->client)
 	{
-		event       = EV_MISSILE_HIT;
-		param       = DirToByte(trace->plane.normal);
-		otherentnum = other->s.number;
+		G_RealExplodedMissile(ent, trace->plane.normal, qtrue);
 	}
 	else
 	{
@@ -237,31 +389,10 @@ void G_MissileImpact(gentity_t *ent, trace_t *trace, int impactDamage)
 		BG_EvaluateTrajectoryDelta(&ent->s.pos, level.time, dir, qfalse, ent->s.effect2Time);
 		BG_GetMarkDir(dir, trace->plane.normal, dir);
 
-		event = EV_MISSILE_MISS;
-		param = DirToByte(dir);
+		G_RealExplodedMissile(ent, dir, qfalse);
 	}
 
-	temp                   = G_TempEntity(trace->endpos, event);
-	temp->s.otherEntityNum = otherentnum;
-	//temp->r.svFlags |= SVF_BROADCAST;
-	temp->s.eventParm = param;
-	temp->s.weapon    = ent->s.weapon;
-	temp->s.clientNum = ent->r.ownerNum;
-
-	if (CHECKBITWISE(GetWeaponTableData(ent->s.weapon)->type, WEAPON_TYPE_MORTAR | WEAPON_TYPE_SET))
-	{
-		temp->r.svFlags |= SVF_BROADCAST;
-	}
-
-	// splash damage (doesn't apply to person directly hit)
-	if (ent->splashDamage)
-	{
-		G_RadiusDamage(trace->endpos, ent, ent->parent, ent->splashDamage, ent->splashRadius, other, ent->splashMethodOfDeath);
-	}
-
-	//trap_LinkEntity( ent );
-
-	G_FreeEntity(ent);
+	return qtrue;
 }
 
 /**
@@ -270,159 +401,10 @@ void G_MissileImpact(gentity_t *ent, trace_t *trace, int impactDamage)
  */
 void G_ExplodeMissile(gentity_t *ent)
 {
-	vec3_t dir;
-	vec3_t origin;
-	int    etype;
-
-	etype        = ent->s.eType;
-	ent->s.eType = ET_GENERAL;
-
-	// splash damage
-	if (ent->splashDamage)
-	{
-		vec3_t origin;
-
-		VectorCopy(ent->r.currentOrigin, origin);
-
-		if (ent->s.weapon == WP_DYNAMITE)
-		{
-			origin[2] += 4;
-		}
-
-		if ((ent->s.weapon == WP_DYNAMITE && (ent->etpro_misc_1 & 1)) || ent->s.weapon == WP_SATCHEL)
-		{
-			etpro_RadiusDamage(origin, ent, ent->parent, ent->splashDamage, ent->splashRadius, ent, ent->splashMethodOfDeath, qtrue);
-			G_TempTraceIgnorePlayersAndBodies();
-			etpro_RadiusDamage(origin, ent, ent->parent, ent->splashDamage, ent->splashRadius, ent, ent->splashMethodOfDeath, qfalse);
-			G_ResetTempTraceIgnoreEnts();
-		}
-		else
-		{
-			G_RadiusDamage(origin, ent, ent->parent, ent->splashDamage, ent->splashRadius, ent, ent->splashMethodOfDeath);
-		}
-	}
-
-	BG_EvaluateTrajectory(&ent->s.pos, level.time, origin, qfalse, ent->s.effect2Time);
-	SnapVector(origin);
-	G_SetOrigin(ent, origin);
+	vec3_t dir = { 0, 0, 1 };
 
 	// we don't have a valid direction, so just point straight up
-	dir[0] = dir[1] = 0;
-	dir[2] = 1;
-
-	if (ent->accuracy == 1.f)
-	{
-		G_AddEvent(ent, EV_MISSILE_MISS_SMALL, DirToByte(dir));
-	}
-	else if (ent->accuracy == 2.f)
-	{
-		G_AddEvent(ent, EV_MISSILE_MISS_LARGE, DirToByte(dir));
-	}
-	else if (ent->accuracy == 3.f)
-	{
-		ent->freeAfterEvent = qtrue;
-		trap_LinkEntity(ent);
-		return;
-	}
-	else
-	{
-		G_AddEvent(ent, EV_MISSILE_MISS, DirToByte(dir));
-		ent->s.clientNum = ent->r.ownerNum;
-	}
-
-	ent->freeAfterEvent = qtrue;
-
-	trap_LinkEntity(ent);
-
-	if (etype == ET_MISSILE)
-	{
-
-		if (ent->s.weapon == WP_LANDMINE)
-		{
-			mapEntityData_t *mEnt;
-
-			if ((mEnt = G_FindMapEntityData(&mapEntityData[0], ent - g_entities)) != NULL)
-			{
-				G_FreeMapEntityData(&mapEntityData[0], mEnt);
-			}
-
-			if ((mEnt = G_FindMapEntityData(&mapEntityData[1], ent - g_entities)) != NULL)
-			{
-				G_FreeMapEntityData(&mapEntityData[1], mEnt);
-			}
-		}
-		else if (ent->s.weapon == WP_DYNAMITE && (ent->etpro_misc_1 & 1))         // do some scoring
-		{   // check if dynamite is in trigger_objective_info field
-			vec3_t    mins, maxs;
-			int       i, num, touch[MAX_GENTITIES];
-			gentity_t *hit;
-
-			ent->free = NULL; // no defused tidy up if we exploded
-
-			// made this the actual bounding box of dynamite instead of range
-			VectorAdd(ent->r.currentOrigin, ent->r.mins, mins);
-			VectorAdd(ent->r.currentOrigin, ent->r.maxs, maxs);
-			num = trap_EntitiesInBox(mins, maxs, touch, MAX_GENTITIES);
-
-			for (i = 0; i < num; i++)
-			{
-				hit = &g_entities[touch[i]];
-				if (!hit->target)
-				{
-					continue;
-				}
-
-				if ((hit->s.eType != ET_OID_TRIGGER))
-				{
-					continue;
-				}
-
-				if (!(hit->spawnflags & (AXIS_OBJECTIVE | ALLIED_OBJECTIVE)))
-				{
-					continue;
-				}
-
-				if (hit->target_ent)
-				{
-					// only if it targets a func_explosive
-					if (hit->target_ent->s.eType != ET_EXPLOSIVE)
-					{
-						continue;
-					}
-
-					if (hit->target_ent->constructibleStats.weaponclass < 1)
-					{
-						continue;
-					}
-				}
-
-				if (((hit->spawnflags & AXIS_OBJECTIVE) && (ent->s.teamNum == TEAM_ALLIES)) || ((hit->spawnflags & ALLIED_OBJECTIVE) && (ent->s.teamNum == TEAM_AXIS)))
-				{
-					if (ent->parent->client && hit->target_ent && GetMODTableData(MOD_DYNAMITE)->weaponClassForMOD >= hit->target_ent->constructibleStats.weaponclass)
-					{
-						G_AddKillSkillPointsForDestruction(ent->parent, MOD_DYNAMITE, &hit->target_ent->constructibleStats);
-					}
-
-					G_UseTargets(hit, ent);
-					hit->think     = G_FreeEntity;
-					hit->nextthink = level.time + FRAMETIME;
-
-					G_Script_ScriptEvent(hit, "destroyed", "");
-				}
-			}
-		}
-
-		// give big weapons the shakey shakey
-		if (GetWeaponTableData(ent->s.weapon)->attributes & WEAPON_ATTRIBUT_SHAKE)
-		{
-			gentity_t *tent;
-
-			tent = G_TempEntity(ent->r.currentOrigin, EV_SHAKE);
-
-			tent->s.onFireStart = ent->splashDamage * 4;
-			tent->r.svFlags    |= SVF_BROADCAST;
-		}
-	}
+	G_RealExplodedMissile(ent, dir, qfalse);
 }
 
 /**
@@ -621,8 +603,10 @@ void G_RunMissile(gentity_t *ent)
 
 	if (tr.fraction != 1.f)
 	{
+		qboolean exploded = qfalse;
+
 		if (level.tracemapLoaded && ent->s.pos.trType == TR_GRAVITY && ent->r.contents != CONTENTS_CORPSE
-                && ((!tr.surfaceFlags && tr.startsolid)|| (tr.surfaceFlags & SURF_SKY)))
+		    && ((!tr.surfaceFlags && tr.startsolid) || (tr.surfaceFlags & SURF_SKY)))
 		{
 			// goes through sky
 			ent->count = 1;
@@ -637,28 +621,20 @@ void G_RunMissile(gentity_t *ent)
 			return;
 		}
 
-		//      G_SetOrigin( ent, tr.endpos );
-
 		if (ent->r.contents == CONTENTS_CORPSE)
 		{
 			if (ent->s.pos.trType != TR_STATIONARY)
 			{
-				G_MissileImpact(ent, &tr, GetWeaponFireTableData(ent->s.weapon)->impactDamage);
+				exploded = G_MissileImpact(ent, &tr, GetWeaponFireTableData(ent->s.weapon)->impactDamage);
 			}
 		}
 		else
 		{
-			G_MissileImpact(ent, &tr, GetWeaponFireTableData(ent->s.weapon)->impactDamage);
+			exploded = G_MissileImpact(ent, &tr, GetWeaponFireTableData(ent->s.weapon)->impactDamage);
 		}
 
-		if (ent->s.eType != ET_MISSILE)
+		if (exploded)
 		{
-			gentity_t *tent;
-
-			tent = G_TempEntity(ent->r.currentOrigin, EV_SHAKE);
-
-			tent->s.onFireStart = ent->splashDamage * 4;
-			tent->r.svFlags    |= SVF_BROADCAST;
 			return;     // exploded
 		}
 	}
@@ -1683,9 +1659,9 @@ qboolean G_LandmineSnapshotCallback(int entityNum, int clientNum)
 		gclient_t *cl = &level.clients[level.sortedClients[i]];
 
 		if (cl->sess.sessionTeam == TEAM_SPECTATOR &&
-			cl->sess.spectatorState == SPECTATOR_FOLLOW &&
-			cl->sess.spectatorClient == (clEnt - g_entities) &&
-			cl->sess.shoutcaster)
+		    cl->sess.spectatorState == SPECTATOR_FOLLOW &&
+		    cl->sess.spectatorClient == (clEnt - g_entities) &&
+		    cl->sess.shoutcaster)
 		{
 			return qtrue;
 		}
