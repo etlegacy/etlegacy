@@ -1338,7 +1338,7 @@ qboolean CG_IsWeaponDisabled(weapon_t weapon)
 
 	if (GetWeaponTableData(weapon)->type & WEAPON_TYPE_PANZER)
 	{
-		maxCount = cg.maxPanzers;
+		maxCount = cg.maxRockets;
 	}
 	else if (GetWeaponTableData(weapon)->type & WEAPON_TYPE_MORTAR)
 	{
@@ -1346,7 +1346,7 @@ qboolean CG_IsWeaponDisabled(weapon_t weapon)
 	}
 	else if (GetWeaponTableData(weapon)->type & WEAPON_TYPE_MG)
 	{
-		maxCount = cg.maxMg42s;
+		maxCount = cg.maxMachineguns;
 	}
 	else if (GetWeaponTableData(GetWeaponTableData(weapon)->weapAlts)->type & WEAPON_TYPE_RIFLENADE)
 	{

@@ -1294,8 +1294,8 @@ typedef struct
 
 	char maxMortars[MAX_QPATH];
 	char maxFlamers[MAX_QPATH];
-	char maxMg42s[MAX_QPATH];
-	char maxPanzers[MAX_QPATH];
+	char maxMachineguns[MAX_QPATH];
+	char maxRockets[MAX_QPATH];
 	char maxRiflegrenades[MAX_QPATH];
 	int maxPlayers;
 
