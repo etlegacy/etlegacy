@@ -307,7 +307,7 @@ typedef struct
 	int lightningFiring;
 
 	// so we can do fast tag grabbing
-	refEntity_t bodyRefEnt, headRefEnt, gunRefEnt;
+	refEntity_t bodyRefEnt, headRefEnt, gunRefEnt, handRefEnt;
 	int gunRefEntFrame;
 
 	float animSpeed;            ///< for manual adjustment

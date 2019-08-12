@@ -148,7 +148,7 @@ void CG_MachineGunEjectBrass(centity_t *cent)
 
 				Com_Memset(&brass, 0, sizeof(brass));
 
-				CG_PositionRotatedEntityOnTag(&brass, &cg.predictedPlayerEntity.pe.bodyRefEnt, "tag_brass");
+				CG_PositionRotatedEntityOnTag(&brass, &cg.predictedPlayerEntity.pe.handRefEnt, "tag_brass");
 
 				VectorMA(brass.origin, 6, brass.axis[0], re->origin);
 			}
@@ -195,11 +195,11 @@ void CG_MachineGunEjectBrass(centity_t *cent)
 
 			if ((GetWeaponTableData(cent->currentState.weapon)->attributes & WEAPON_ATTRIBUT_AKIMBO) && !cent->akimboFire)
 			{
-				CG_PositionRotatedEntityOnTag(&brass, &cg.predictedPlayerEntity.pe.bodyRefEnt, "tag_brass2");
+				CG_PositionRotatedEntityOnTag(&brass, &cg.predictedPlayerEntity.pe.handRefEnt, "tag_brass2");
 			}
 			else
 			{
-				CG_PositionRotatedEntityOnTag(&brass, &cg.predictedPlayerEntity.pe.bodyRefEnt, "tag_brass");
+				CG_PositionRotatedEntityOnTag(&brass, &cg.predictedPlayerEntity.pe.handRefEnt, "tag_brass");
 			}
 
 			VectorCopy(brass.origin, re->origin);
@@ -3121,7 +3121,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
  */
 void CG_AddViewWeapon(playerState_t *ps)
 {
-	refEntity_t  *hand = &cg.predictedPlayerEntity.pe.bodyRefEnt;   // use body to store hand
+	refEntity_t  *hand = &cg.predictedPlayerEntity.pe.handRefEnt;
 	float        fovOffset;
 	vec3_t       angles;
 	vec3_t       gunoff;
