@@ -625,6 +625,11 @@ void SpectatorThink(gentity_t *ent, usercmd_t *ucmd)
 		ent->client->pmext.sprintTime = SPRINTTIME;
 	}
 
+	if (ent->flags & FL_NOSTAMINA)
+	{
+		ent->client->ps.classWeaponTime = 0;
+	}
+
 	client->oldbuttons = client->buttons;
 	client->buttons    = ucmd->buttons;
 
@@ -1511,6 +1516,11 @@ void ClientThink_real(gentity_t *ent, qboolean skipServerTime)
 	if (ent->flags & FL_NOFATIGUE)
 	{
 		ent->client->pmext.sprintTime = SPRINTTIME;
+	}
+
+	if (ent->flags & FL_NOSTAMINA)
+	{
+		ent->client->ps.classWeaponTime = 0;
 	}
 
 	if (g_entities[ent->client->ps.identifyClient].inuse && g_entities[ent->client->ps.identifyClient].client &&

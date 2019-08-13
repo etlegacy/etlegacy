@@ -70,6 +70,7 @@
 #define FL_DROPPED_ITEM         0x00001000
 #define FL_NO_BOTS              0x00002000  ///< spawn point not for bot use
 #define FL_NO_HUMANS            0x00004000  ///< spawn point just for bots
+#define FL_NOSTAMINA            0x00008000  ///< cheat flag no stamina
 #define FL_NOFATIGUE            0x00010000  ///< cheat flag no fatigue
 
 #define FL_TOGGLE               0x00020000  ///< ent is toggling (doors use this for ex.)

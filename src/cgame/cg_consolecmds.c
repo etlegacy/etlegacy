@@ -2045,6 +2045,7 @@ void CG_InitConsoleCommands(void)
 	trap_AddCommand("vote");
 
 	trap_AddCommand("nofatigue");
+	trap_AddCommand("nostamina");
 
 	trap_AddCommand("follownext");
 	trap_AddCommand("followprev");

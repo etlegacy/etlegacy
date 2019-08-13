@@ -1076,6 +1076,47 @@ void Cmd_Noclip_f(gentity_t *ent)
 }
 
 /**
+ * @brief Sets client to nostamina
+ * @param[in,out] ent
+ *
+ * @note argv(0) nostamina
+ */
+void Cmd_Nostamina_f(gentity_t *ent)
+{
+	char *msg;
+	char *name = ConcatArgs(1);
+
+	if (!CheatsOk(ent))
+	{
+		return;
+	}
+
+	if (!Q_stricmp(name, "on") || atoi(name))
+	{
+		ent->flags |= FL_NOSTAMINA;
+	}
+	else if (!Q_stricmp(name, "off") || !Q_stricmp(name, "0"))
+	{
+		ent->flags &= ~FL_NOSTAMINA;
+	}
+	else
+	{
+		ent->flags ^= FL_NOSTAMINA;
+	}
+
+	if (!(ent->flags & FL_NOSTAMINA))
+	{
+		msg = "nostamina OFF\n";
+	}
+	else
+	{
+		msg = "nostamina ON\n";
+	}
+
+	trap_SendServerCommand(ent - g_entities, va("print \"%s\"", msg));
+}
+
+/**
  * @brief Cmd_Kill_f
  * @param[in,out] ent
  */
@@ -4997,6 +5038,10 @@ void ClientCommand(int clientNum)
 	else if (Q_stricmp(cmd, "noclip") == 0)
 	{
 		Cmd_Noclip_f(ent);
+	}
+    else if (Q_stricmp(cmd, "nostamina") == 0)
+	{
+		Cmd_Nostamina_f(ent);
 	}
 	else if (Q_stricmp(cmd, "kill") == 0)
 	{
