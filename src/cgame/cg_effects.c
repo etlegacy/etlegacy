@@ -578,83 +578,77 @@ int CG_GetOriginForTag(centity_t *cent, refEntity_t *parent, const char *tagName
  */
 void CG_GibPlayer(centity_t *cent, vec3_t playerOrigin, vec3_t gdir)
 {
-	vec3_t         origin;
-	trace_t        trace;
-	clientInfo_t   *ci;
-	bg_character_t *character;
-	vec4_t         projection;
-	// BloodCloud
-	qboolean newjunction[MAXJUNCTIONS];
-	vec3_t   junctionOrigin[MAXJUNCTIONS];
-	vec3_t   axis[3];
-
-	static const char *JunctiongibTags[] =
-	{
-		// leg tag
-		"tag_footright",
-		"tag_footleft",
-		"tag_legright",
-		"tag_legleft",
-
-		// torsotags
-		"tag_armright",
-		"tag_armleft",
-
-		"tag_torso",
-		"tag_chest"
-	};
-
-	static const char *ConnectTags[] =
-	{
-		// legs tags
-		"tag_legright",
-		"tag_legleft",
-		"tag_torso",
-		"tag_torso",
-
-		// torso tags
-		"tag_chest",
-		"tag_chest",
-
-		"tag_chest",
-		"tag_torso",
-	};
-
-	static const char *gibTags[] =
-	{
-		// tags in the legs
-		"tag_footright",
-		"tag_footleft",
-		"tag_legright",
-		"tag_legleft",
-		"tag_torso",
-
-		// tags in the torso
-		"tag_chest",
-		"tag_armright",
-		"tag_armleft",
-		"tag_head",
-		NULL
-	};
-
 	if (cg_blood.integer && cg_bloodTime.integer)
 	{
+		vec3_t         origin;
+		trace_t        trace;
+		clientInfo_t   *ci;
+		bg_character_t *character;
+		vec4_t         projection;
+		// BloodCloud
+		qboolean newjunction[MAXJUNCTIONS] = { 0 };
+		vec3_t   junctionOrigin[MAXJUNCTIONS];
+		vec3_t   axis[3];
+
 		vec4_t      color;
 		vec3_t      velocity, dir, angles;
-		refEntity_t *re;
+		refEntity_t *re = &cent->pe.bodyRefEnt;
 		int         i, j, count = 0;
 		int         tagIndex, gibIndex, junction;
 		int         clientNum = cent->currentState.clientNum;
-		qboolean    foundtag;
+
+		static const char *JunctiongibTags[] =
+		{
+			// leg tag
+			"tag_footright",
+			"tag_footleft",
+			"tag_legright",
+			"tag_legleft",
+
+			// torsotags
+			"tag_armright",
+			"tag_armleft",
+
+			"tag_torso",
+			"tag_chest"
+		};
+
+		static const char *ConnectTags[] =
+		{
+			// legs tags
+			"tag_legright",
+			"tag_legleft",
+			"tag_torso",
+			"tag_torso",
+
+			// torso tags
+			"tag_chest",
+			"tag_chest",
+
+			"tag_chest",
+			"tag_torso",
+		};
+
+		static const char *gibTags[] =
+		{
+			// tags in the legs
+			"tag_footright",
+			"tag_footleft",
+			"tag_legright",
+			"tag_legleft",
+			"tag_torso",
+
+			// tags in the torso
+			"tag_chest",
+			"tag_armright",
+			"tag_armleft",
+			"tag_head",
+			NULL
+		};
 
 		if (clientNum < 0 || clientNum >= MAX_CLIENTS)
 		{
 			CG_Error("Bad clientNum on player entity\n");
-		}
-
-		for (i = 0; i < MAXJUNCTIONS; i++)
-		{
-			newjunction[i] = qfalse;
 		}
 
 		ci        = &cgs.clientinfo[clientNum];
@@ -662,22 +656,15 @@ void CG_GibPlayer(centity_t *cent, vec3_t playerOrigin, vec3_t gdir)
 
 		// fetch the various positions of the tag_gib*'s
 		// and spawn the gibs from the correct places (especially the head)
-		for (gibIndex = 0, count = 0, foundtag = qtrue; foundtag && gibIndex < MAX_GIB_MODELS && gibTags[gibIndex]; gibIndex++)
+		for (gibIndex = 0, count = 0; gibIndex < MAX_GIB_MODELS && gibTags[gibIndex]; gibIndex++)
 		{
-			re       = 0;
-			foundtag = qfalse;
-
 			if (!character->gibModels[gibIndex])
 			{
-				continue;
+				break;
 			}
-
-			re = &cent->pe.bodyRefEnt;
 
 			for (tagIndex = 0; (tagIndex = CG_GetOriginForTag(cent, re, gibTags[gibIndex], tagIndex, origin, axis)) >= 0; count++, tagIndex++)
 			{
-				foundtag = qtrue;
-
 				VectorSubtract(origin, re->origin, dir);
 				VectorNormalize(dir);
 
