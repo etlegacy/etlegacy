@@ -94,6 +94,11 @@ STATE COMBAT
 {
 	dead	
 	{
+		suicide
+		{
+			both dead_rifle_head_2
+		}
+	
 		default
 		{
 			both dead_machinegun_1
@@ -3041,6 +3046,11 @@ climbdismount
 
 DEATH
 {
+	suicide
+	{
+		both death_rifle_head_2
+	}
+
 	enemy_weapon knives, enemy_position behind
 	{
 		both death_machinegun_1

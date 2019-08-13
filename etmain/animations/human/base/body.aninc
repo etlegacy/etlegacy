@@ -6,9 +6,9 @@
 		death_rifle_head_2	33	52	0	20	0	0	0
 		dead_rifle_head_2	84	1	1	20	0	0	0
 		death_machinegun_2	85	38	0	20	0	0	0
-		dead_machinegun_2	122	1	1	20	0	0	0
+		dead_machinegun_2	122	1	1	20	0	0	0	// same as dead_machinegun_1
 		death_gut			130	41	0	20	0	0	0
-		dead_gut			170	1	1	20	0	0	0
+		dead_gut			170	1	1	20	0	0	0	// same as dead_machinegun_1
 
 		wounded_idle_1		173	144	144	20	0	0	0
 

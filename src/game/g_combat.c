@@ -636,6 +636,9 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 		// set enemy location
 		BG_UpdateConditionValue(self->s.number, ANIM_COND_ENEMY_POSITION, 0, qfalse);
 
+        // play specific anim on suicide
+        BG_UpdateConditionValue(self->s.number, ANIM_COND_SUICIDE, meansOfDeath == MOD_SUICIDE, qtrue);
+
 		// FIXME: add POSITION_RIGHT, POSITION_LEFT
 		if (infront(self, inflictor))
 		{
@@ -1537,13 +1540,20 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 		BG_UpdateConditionValue(targ->client->ps.clientNum, ANIM_COND_IMPACT_POINT, (rand() + 1) ? IMPACTPOINT_SHOULDER_RIGHT : IMPACTPOINT_SHOULDER_LEFT, qtrue);
 		BG_AnimScriptEvent(&targ->client->ps, targ->client->pers.character->animModelInfo, ANIM_ET_PAIN, qfalse, qtrue);
 	}
-	else if (targ->client && targ->health > 0 && GetMODTableData(mod)->isHeadshot)
+	else if (targ->client && targ->health > 0)
 	{
-		G_LogRegionHit(attacker, HR_BODY);
-		hr = HR_BODY;
-		if (g_debugBullets.integer)
+		if (GetMODTableData(mod)->isHeadshot)
 		{
-			trap_SendServerCommand(attacker - g_entities, "print \"Body Shot\n\"");
+			G_LogRegionHit(attacker, HR_BODY);
+			hr = HR_BODY;
+			if (g_debugBullets.integer)
+			{
+				trap_SendServerCommand(attacker - g_entities, "print \"Body Shot\n\"");
+			}
+		}
+		else if (GetMODTableData(mod)->isExplosive)
+		{
+			BG_UpdateConditionValue(targ->client->ps.clientNum, ANIM_COND_STUNNED, 1, qtrue);
 		}
 
 		BG_AnimScriptEvent(&targ->client->ps, targ->client->pers.character->animModelInfo, ANIM_ET_PAIN, qfalse, qtrue);

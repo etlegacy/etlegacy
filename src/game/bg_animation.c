@@ -256,7 +256,7 @@ typedef struct
 	animStringItem_t *values;
 } animConditionTable_t;
 
-static animStringItem_t animConditionsStr[] =
+static animStringItem_t animConditionsStr[NUM_ANIM_CONDITIONS + 1] =
 {
 	{ "WEAPONS",        -1 },
 	{ "ENEMY_POSITION", -1 },
@@ -279,6 +279,7 @@ static animStringItem_t animConditionsStr[] =
 	{ "FLAILING_TYPE",  -1 },
 	{ "GEN_BITFLAG",    -1 },
 	{ "AISTATE",        -1 },
+    { "SUICIDE",        -1 },
 
 	{ NULL,             -1 },
 };
@@ -306,6 +307,7 @@ static animConditionTable_t animConditionsTable[NUM_ANIM_CONDITIONS] =
 	{ ANIM_CONDTYPE_VALUE,    animFlailTypeStr             },
 	{ ANIM_CONDTYPE_BITFLAGS, animGenBitFlagStr            },
 	{ ANIM_CONDTYPE_VALUE,    animAIStateStr               },
+	{ ANIM_CONDTYPE_VALUE,    NULL                         },
 };
 
 //------------------------------------------------------------
@@ -1997,4 +1999,6 @@ void BG_AnimUpdatePlayerStateConditions(pmove_t *pmove)
 	}
 
 	BG_UpdateConditionValue(ps->clientNum, ANIM_COND_IMPACT_POINT, IMPACTPOINT_UNUSED, qtrue);
+	BG_UpdateConditionValue(ps->clientNum, ANIM_COND_STUNNED, 0, qtrue);
+    BG_UpdateConditionValue(ps->clientNum, ANIM_COND_SUICIDE, 0, qtrue);
 }
