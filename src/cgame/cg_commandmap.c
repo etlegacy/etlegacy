@@ -1636,8 +1636,8 @@ int CG_DrawSpawnPointInfo(float px, float py, float pw, float ph, qboolean draw,
 			}
 		}
 
-		if (((cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR) &&
-		     (cg.spawnTeams[i] != team)) ||
+		if (!(cg.spawnTeams[i] & 0xF) ||
+		    (cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR && cg.spawnTeams[i] != team) ||
 		    ((cg.spawnTeams[i] & 256) && changetime == 0.f))
 		{
 			continue;

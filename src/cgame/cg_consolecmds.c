@@ -1856,25 +1856,15 @@ static void CG_ListSpawnPoints_f()
 		// autospawn
 		if (i == 0)
 		{
-			if (cgs.clientinfo[cg.clientNum].team == TEAM_SPECTATOR)
-			{
-				CG_Printf("^7[^2%2i^7]   ^o%-26s\n", i, cg.spawnPoints[i]);
-			}
-			else
-			{
-				CG_Printf("^7[^2%2i^7] %s ^o%-26s\n", i, (cgs.clientinfo[cg.clientNum].team == TEAM_AXIS) ? "^1X" : "^$A", cg.spawnPoints[i]);
-			}
+			CG_Printf("^7[^2%2i^7]   ^o%-26s\n", i, cg.spawnPoints[i]);
+		}
+		else if ((cg.spawnTeams[i] & 0xF) == 0)
+		{
+			continue;
 		}
 		else if (cg.spawnTeams[i] & 256) // inactive
 		{
-			if (cgs.clientinfo[cg.clientNum].team == TEAM_SPECTATOR)
-			{
-				CG_Printf("^9[%2i]   %-26s\n", i, cg.spawnPoints[i]);
-			}
-			else
-			{
-				CG_Printf("^9[%2i] %s %-26s\n", i, ((cg.spawnTeams[i] & 0xF) == TEAM_AXIS) ? "X" : "A", cg.spawnPoints[i]);
-			}
+			CG_Printf("^9[%2i] %s %-26s\n", i, ((cg.spawnTeams[i] & 0xF) == TEAM_AXIS) ? "X" : "A", cg.spawnPoints[i]);
 		}
 		else
 		{
