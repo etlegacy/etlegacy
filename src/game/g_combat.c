@@ -1513,8 +1513,8 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 		G_LogRegionHit(attacker, HR_HEAD);
 		hr = HR_HEAD;
 
-		BG_UpdateConditionValue(targ->client->ps.clientNum, ANIM_COND_IMPACT_POINT, IMPACTPOINT_HEAD, qtrue);
-		BG_AnimScriptEvent(&targ->client->ps, targ->client->pers.character->animModelInfo, ANIM_ET_PAIN, qfalse, qtrue);
+		//BG_UpdateConditionValue(targ->client->ps.clientNum, ANIM_COND_IMPACT_POINT, IMPACTPOINT_HEAD, qtrue);
+		//BG_AnimScriptEvent(&targ->client->ps, targ->client->pers.character->animModelInfo, ANIM_ET_PAIN, qfalse, qtrue);
 	}
 	else if (IsLegShot(targ, dir, point, mod, &refent, qfalse))
 	{
@@ -1525,8 +1525,8 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 			trap_SendServerCommand(attacker - g_entities, "print \"Leg Shot\n\"");
 		}
 
-		BG_UpdateConditionValue(targ->client->ps.clientNum, ANIM_COND_IMPACT_POINT, (rand() + 1) ? IMPACTPOINT_KNEE_RIGHT : IMPACTPOINT_KNEE_LEFT, qtrue);
-		BG_AnimScriptEvent(&targ->client->ps, targ->client->pers.character->animModelInfo, ANIM_ET_PAIN, qfalse, qtrue);
+		//BG_UpdateConditionValue(targ->client->ps.clientNum, ANIM_COND_IMPACT_POINT, (rand() + 1) ? IMPACTPOINT_KNEE_RIGHT : IMPACTPOINT_KNEE_LEFT, qtrue);
+		//BG_AnimScriptEvent(&targ->client->ps, targ->client->pers.character->animModelInfo, ANIM_ET_PAIN, qfalse, qtrue);
 	}
 	else if (IsArmShot(targ, attacker, point, mod))
 	{
@@ -1537,8 +1537,8 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 			trap_SendServerCommand(attacker - g_entities, "print \"Arm Shot\n\"");
 		}
 
-		BG_UpdateConditionValue(targ->client->ps.clientNum, ANIM_COND_IMPACT_POINT, (rand() + 1) ? IMPACTPOINT_SHOULDER_RIGHT : IMPACTPOINT_SHOULDER_LEFT, qtrue);
-		BG_AnimScriptEvent(&targ->client->ps, targ->client->pers.character->animModelInfo, ANIM_ET_PAIN, qfalse, qtrue);
+		//BG_UpdateConditionValue(targ->client->ps.clientNum, ANIM_COND_IMPACT_POINT, (rand() + 1) ? IMPACTPOINT_SHOULDER_RIGHT : IMPACTPOINT_SHOULDER_LEFT, qtrue);
+		//BG_AnimScriptEvent(&targ->client->ps, targ->client->pers.character->animModelInfo, ANIM_ET_PAIN, qfalse, qtrue);
 	}
 	else if (targ->client && targ->health > 0)
 	{
@@ -1553,10 +1553,10 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 		}
 		else if (GetMODTableData(mod)->isExplosive)
 		{
-			BG_UpdateConditionValue(targ->client->ps.clientNum, ANIM_COND_STUNNED, 1, qtrue);
+			//BG_UpdateConditionValue(targ->client->ps.clientNum, ANIM_COND_STUNNED, 1, qtrue);
 		}
 
-		BG_AnimScriptEvent(&targ->client->ps, targ->client->pers.character->animModelInfo, ANIM_ET_PAIN, qfalse, qtrue);
+		//BG_AnimScriptEvent(&targ->client->ps, targ->client->pers.character->animModelInfo, ANIM_ET_PAIN, qfalse, qtrue);
 	}
 
 #ifndef DEBUG_STATS

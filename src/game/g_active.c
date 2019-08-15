@@ -98,7 +98,7 @@ void P_DamageFeedback(gentity_t *player)
 	{
 		player->pain_debounce_time = level.time + 700;
 		G_AddEvent(player, EV_PAIN, player->health);
-		BG_AnimScriptEvent(&client->ps, client->pers.character->animModelInfo, ANIM_ET_PAIN, qfalse, qtrue);
+		//BG_AnimScriptEvent(&client->ps, client->pers.character->animModelInfo, ANIM_ET_PAIN, qfalse, qtrue);
 	}
 
 	client->ps.damageEvent++;   // always increment this since we do multiple view damage anims
