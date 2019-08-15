@@ -29,12 +29,13 @@ menuDef {
 
 // Selection //
 #define SELECTION_Y 32
-	SUBWINDOW( 6, SELECTION_Y, (SUBWINDOW_WIDTH), 40, _("SELECTION MENUS" ))
+	SUBWINDOW( 6, SELECTION_Y, (SUBWINDOW_WIDTH), 52, _("SELECTION MENUS" ))
 	BIND( 8, SELECTION_Y+16, (SUBWINDOW_WIDTH)-4, 10, _("Team selection:"), .2, 8, "teammenu", "" )
 	BIND( 8, SELECTION_Y+28, (SUBWINDOW_WIDTH)-4, 10, _("Class selection:"), .2, 8, "classmenu", "" )
+	BIND( 8, SELECTION_Y+40, (SUBWINDOW_WIDTH)-4, 10, _("Spawn selection:"), .2, 8, "spawnmenu", "" )
 
 // Fire-Teams //
-#define FIRETEAM_Y 78
+#define FIRETEAM_Y 90
 	SUBWINDOW( 6, FIRETEAM_Y, (SUBWINDOW_WIDTH), 148, _("FIRE-TEAMS" ))
 	BIND( 8, FIRETEAM_Y+16, (SUBWINDOW_WIDTH)-4, 10, _("Fire-Team Admin:"), .2, 8, "mp_fireteamadmin", "" )
 	BIND( 8, FIRETEAM_Y+28, (SUBWINDOW_WIDTH)-4, 10, _("Select All Members:"), .2, 8, "selectbuddy -2", "" )
@@ -49,7 +50,7 @@ menuDef {
 	BIND( 8, FIRETEAM_Y+136, (SUBWINDOW_WIDTH)-4, 10, _("Select Member #8:"), .2, 8, "selectbuddy 7", "" )
 
 // Joystick //
-#define JOYSTICK_Y 232
+#define JOYSTICK_Y 244
 	SUBWINDOW( 6, JOYSTICK_Y, (SUBWINDOW_WIDTH), 64, _("JOYSTICK") )
 	MULTI( 8, JOYSTICK_Y+16, (SUBWINDOW_WIDTH)-4, 10, _("Enable Joysticks:"), .2, 8, "in_joystick", cvarFloatList { "No" 0 "Yes" 1 }, _("General joystick initialization. Requires vid_restart.") )
 	EDITFIELD( 8, JOYSTICK_Y+28, (SUBWINDOW_WIDTH)-4, 10, _("Use Joystick#:"), .2, 8, "in_joystickNo", 64, 18, _("Specifies active joystick") )

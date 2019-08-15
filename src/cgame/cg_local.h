@@ -1232,6 +1232,7 @@ typedef struct
 	qboolean showCampaignBriefing;
 	qboolean showGameView;
 	qboolean showFireteamMenu;
+	qboolean showSpawnpointsMenu;
 
 	char spawnPoints[MAX_SPAWNPOINTS][MAX_SPAWNDESC];
 	vec3_t spawnCoordsUntransformed[MAX_SPAWNPOINTS];
@@ -3671,6 +3672,15 @@ void CG_Fireteams_Setup(void);
 
 void CG_Fireteams_MenuText_Draw(panel_button_t *button);
 void CG_Fireteams_MenuTitleText_Draw(panel_button_t *button);
+
+// cg_spawnpoints.c
+void CG_Spawnpoints_KeyHandling(int key, qboolean down);
+qboolean CG_SpawnpointsCheckExecKey(int key, qboolean doaction);
+void CG_Spawnpoints_Draw(void);
+void CG_Spawnpoints_Setup(void);
+
+void CG_Spawnpoints_MenuText_Draw(panel_button_t *button);
+void CG_Spawnpoints_MenuTitleText_Draw(panel_button_t *button);
 
 // hitsounds flags
 /**

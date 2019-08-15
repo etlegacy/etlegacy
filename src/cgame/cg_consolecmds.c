@@ -722,6 +722,24 @@ static void CG_SelectBuddy_f(void)
 	}
 }
 
+/**
+ * @brief CG_QuickSpawnpoints_f
+ */
+static void CG_QuickSpawnpoint_f(void)
+{
+	if (cgs.clientinfo[cg.clientNum].team == TEAM_SPECTATOR || cgs.clientinfo[cg.clientNum].team == TEAM_FREE)
+	{
+		return;
+	}
+
+	if (cg.showSpawnpointsMenu)
+	{
+		CG_EventHandling(CGAME_EVENT_NONE, qfalse);
+	}
+
+	CG_EventHandling(CGAME_EVENT_SPAWNPOINTMSG, qfalse);
+}
+
 extern void CG_AdjustAutomapZoom(int zoomIn);
 
 /**
@@ -1902,6 +1920,7 @@ static consoleCommand_t commands[] =
 	{ "wm_sayPlayerClass",   CG_SayPlayerClass_f       },
 	{ "wm_ftsayPlayerClass", CG_FTSayPlayerClass_f     },
 
+	{ "spawnmenu",           CG_QuickSpawnpoint_f      },
 
 	{ "VoiceChat",           CG_VoiceChat_f            },
 	{ "VoiceTeamChat",       CG_TeamVoiceChat_f        },

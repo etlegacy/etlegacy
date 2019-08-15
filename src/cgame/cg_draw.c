@@ -3586,6 +3586,11 @@ static void CG_Draw2D(void)
 		CG_Fireteams_Draw();
 	}
 
+	if (cg.showSpawnpointsMenu)
+	{
+		CG_Spawnpoints_Draw();
+	}
+
 	// Info overlays
 	CG_DrawOverlays();
 

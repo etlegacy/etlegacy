@@ -1818,6 +1818,8 @@ static void CG_RegisterGraphics(void)
 
 	CG_Fireteams_Setup();
 
+	CG_Spawnpoints_Setup();
+
 	cgs.media.railCoreShader = trap_R_RegisterShaderNoMip("railCore");       // for debugging server traces
 	cgs.media.ropeShader     = trap_R_RegisterShader("textures/props/cable_m01");
 
@@ -2884,12 +2886,17 @@ void CG_Shutdown(void)
  */
 qboolean CG_CheckExecKey(int key)
 {
-	if (!cg.showFireteamMenu)
+	if (cg.showFireteamMenu)
 	{
-		return qfalse;
+		return CG_FireteamCheckExecKey(key, qfalse);
 	}
 
-	return CG_FireteamCheckExecKey(key, qfalse);
+	if (cg.showSpawnpointsMenu)
+	{
+		return CG_SpawnpointsCheckExecKey(key, qfalse);
+	}
+
+	return qfalse;
 }
 
 /**

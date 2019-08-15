@@ -67,9 +67,9 @@
 	loadMenu { "ui/wm_class.menu" }
 	loadMenu { "ui/wm_classAlt.menu" }
 
-    // team menu
-    loadMenu { "ui/wm_team.menu" }
-    loadMenu { "ui/wm_teamAlt.menu" }
+	// team menu
+	loadMenu { "ui/wm_team.menu" }
+	loadMenu { "ui/wm_teamAlt.menu" }
 
 	// ingame
 	loadMenu { "ui/ingame_main.menu" }
