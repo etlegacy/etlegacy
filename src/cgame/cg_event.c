@@ -2310,7 +2310,6 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 		int    effect;
 
 		effect = (CG_PointContents(position, 0) & CONTENTS_WATER) ? PS_FX_WATER : PS_FX_NONE;
-
 		ByteToDir(es->eventParm, dir);
 		if (es->weapon == WP_ARTY || es->weapon == WP_AIRSTRIKE || es->weapon == WP_SMOKE_MARKER)
 		{
@@ -2331,7 +2330,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 
 			i = rand() % i;
 
-			trap_S_StartSoundVControl(NULL, es->number, CHAN_AUTO, cg_weapons[es->weapon].missileFallSound.sounds[i], 255);
+			trap_S_StartSoundVControl(position, es->number, CHAN_AUTO, cg_weapons[es->weapon].missileFallSound.sounds[i], 255);
 		}
 		CG_MortarImpact(cent, position);
 		break;
