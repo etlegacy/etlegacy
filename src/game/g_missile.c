@@ -38,15 +38,13 @@
 #include "g_etbot_interface.h"
 #endif
 
-#define MISSILE_PRESTEP_TIME    50
-
 /**
  * @brief G_RealExplodedMissile
  * @param[in,out] ent
  * @param[in] dir
  * @param[in] hit
  */
-void G_RealExplodedMissile(gentity_t *ent, vec3_t dir, qboolean hit)
+void G_RealExplodedMissile(gentity_t *ent, vec3_t dir, gentity_t *other)
 {
 	gentity_t      *tent;
 	entity_event_t event;
@@ -76,7 +74,7 @@ void G_RealExplodedMissile(gentity_t *ent, vec3_t dir, qboolean hit)
 		}
 	}
 
-	if (hit)
+	if (other)
 	{
 		event = EV_MISSILE_HIT;
 		//G_AddEvent(ent, EV_MISSILE_HIT, DirToByte(dir));
@@ -103,12 +101,13 @@ void G_RealExplodedMissile(gentity_t *ent, vec3_t dir, qboolean hit)
 	// TODO: is it cheaper in bandwidth to just remove this ent and create a new
 	// one, rather than changing the missile into the explosion?
 	// G_AddEvent don't work as expected in this case ...
-	tent                   = G_TempEntity(ent->r.currentOrigin, event);
-	tent->s.otherEntityNum = ent->r.ownerNum;
-	tent->r.svFlags        = ent->r.svFlags;
-	tent->s.eventParm      = DirToByte(dir);
-	tent->s.weapon         = ent->s.weapon;
-	tent->s.clientNum      = ent->r.ownerNum;
+	tent                    = G_TempEntity(ent->r.currentOrigin, event);
+	tent->s.otherEntityNum  = ent->s.number;
+	tent->s.otherEntityNum2 = other ? other->s.number : -1;
+	tent->r.svFlags         = ent->r.svFlags;
+	tent->s.eventParm       = DirToByte(dir);
+	tent->s.weapon          = ent->s.weapon;
+	tent->s.clientNum       = ent->r.ownerNum;
 
 	ent->freeAfterEvent = qtrue;
 
@@ -379,7 +378,7 @@ qboolean G_MissileImpact(gentity_t *ent, trace_t *trace, int impactDamage)
 
 	if (other->takedamage && other->client)
 	{
-		G_RealExplodedMissile(ent, trace->plane.normal, qtrue);
+		G_RealExplodedMissile(ent, trace->plane.normal, other);
 	}
 	else
 	{
@@ -389,7 +388,7 @@ qboolean G_MissileImpact(gentity_t *ent, trace_t *trace, int impactDamage)
 		BG_EvaluateTrajectoryDelta(&ent->s.pos, level.time, dir, qfalse, ent->s.effect2Time);
 		BG_GetMarkDir(dir, trace->plane.normal, dir);
 
-		G_RealExplodedMissile(ent, dir, qfalse);
+		G_RealExplodedMissile(ent, dir, NULL);
 	}
 
 	return qtrue;
@@ -404,7 +403,7 @@ void G_ExplodeMissile(gentity_t *ent)
 	vec3_t dir = { 0, 0, 1 };
 
 	// we don't have a valid direction, so just point straight up
-	G_RealExplodedMissile(ent, dir, qfalse);
+	G_RealExplodedMissile(ent, dir, NULL);
 }
 
 /**
@@ -462,7 +461,7 @@ void G_RunMissile(gentity_t *ent)
 	BG_EvaluateTrajectory(&ent->s.apos, level.time, angle, qtrue, ent->s.effect2Time);
 
 	// ignore body
-	if ((ent->clipmask & CONTENTS_BODY) && ((GetWeaponTableData(ent->s.weapon)->firingMode & WEAPON_FIRING_MODE_THROWABLE) || ent->s.weapon == WP_ARTY || ent->s.weapon == WP_AIRSTRIKE))
+	if ((ent->clipmask & CONTENTS_BODY) && (GetWeaponTableData(ent->s.weapon)->firingMode & WEAPON_FIRING_MODE_THROWABLE))
 	{
 		if (ent->s.pos.trDelta[0] == 0.f && ent->s.pos.trDelta[1] == 0.f && ent->s.pos.trDelta[2] == 0.f)
 		{
@@ -487,7 +486,7 @@ void G_RunMissile(gentity_t *ent)
 				tent->r.svFlags  |= SVF_BROADCAST;
 				tent->s.density   = 1;  // angular
 
-				G_RealExplodedMissile(ent, tv(0, 0, 1), qfalse);
+				G_ExplodeMissile(ent);
 				return;     // delete it and play explode sound
 			}
 			else
@@ -506,7 +505,7 @@ void G_RunMissile(gentity_t *ent)
 					tent->r.svFlags  |= SVF_BROADCAST;
 					tent->s.density   = 0;  // direct
 
-					G_RealExplodedMissile(ent, tv(0, 0, 1), qfalse);
+					G_ExplodeMissile(ent);
 					return; // delete it and play explode sound
 				}
 
@@ -544,52 +543,38 @@ void G_RunMissile(gentity_t *ent)
 				ent->count2 = 1;
 			}
 		}
+
+		if (ent->count2 == 1 && ent->r.currentOrigin[2] > origin[2] && origin[2] - BG_GetGroundHeightAtPoint(origin) < 1024)
+		{
+			gentity_t *tent;
+			vec3_t    impactpos;
+			trace_t   mortar_tr;
+
+			VectorSubtract(origin, ent->r.currentOrigin, impactpos);
+			VectorMA(origin, 1024, impactpos, impactpos);
+
+			trap_Trace(&mortar_tr, origin, ent->r.mins, ent->r.maxs, impactpos, ent->r.ownerNum, ent->clipmask);
+
+//			if (mortar_tr.fraction != 1.f)
+//			{
+
+			//G_AddEvent(ent, EV_MORTAR_IMPACT, DirToByte(mortar_tr.endpos));
+			tent                   = G_TempEntity(mortar_tr.endpos, EV_MORTAR_IMPACT);
+			tent->s.clientNum      = ent->r.ownerNum;
+			tent->r.svFlags       |= SVF_BROADCAST;
+			tent->s.weapon         = ent->s.weapon;
+			tent->s.otherEntityNum = ent->s.number;
+			VectorCopy(origin, tent->s.origin2);
+			tent->s.eventParm = DirToByte(origin);
+
+			ent->count2 = 2;                                        // missile is about to impact, no more check in worldspace are required
+//			}
+		}
 	}
 
 	// trace a line from the previous position to the current position,
 	// ignoring interactions with the missile owner
 	trap_Trace(&tr, ent->r.currentOrigin, ent->r.mins, ent->r.maxs, origin, ent->r.ownerNum, ent->clipmask);
-
-	if ((CHECKBITWISE(GetWeaponTableData(ent->s.weapon)->type, WEAPON_TYPE_MORTAR | WEAPON_TYPE_SET) ||
-	     ent->s.weapon == WP_AIRSTRIKE || ent->s.weapon == WP_ARTY) && ent->count2 == 1)
-	{
-		if (ent->r.currentOrigin[2] > origin[2] && origin[2] - BG_GetGroundHeightAtPoint(origin) < 512)
-		{
-			vec3_t  impactpos;
-			trace_t mortar_tr;
-
-			VectorSubtract(origin, ent->r.currentOrigin, impactpos);
-			VectorMA(origin, 8, impactpos, impactpos);
-
-			trap_Trace(&mortar_tr, origin, ent->r.mins, ent->r.maxs, impactpos, ent->r.ownerNum, ent->clipmask);
-
-			if (mortar_tr.fraction != 1.f)
-			{
-				gentity_t *tent;
-
-				impactpos[2] = BG_GetGroundHeightAtPoint(impactpos);
-
-				tent              = G_TempEntity(impactpos, EV_MORTAR_IMPACT);
-				tent->s.clientNum = ent->r.ownerNum;
-				tent->r.svFlags  |= SVF_BROADCAST;
-				tent->s.weapon    = ent->s.weapon;
-
-				ent->count2 = 2;                        // missile is about to impact, no more check in worldspace are required
-
-				/*{
-				    gentity_t *tent;
-
-				    tent = G_TempEntity( origin, EV_RAILTRAIL );
-				    VectorCopy( impactpos, tent->s.origin2 );
-				    tent->s.dmgFlags = 0;
-
-				    tent = G_TempEntity( origin, EV_RAILTRAIL );
-				    VectorCopy( ent->r.currentOrigin, tent->s.origin2 );
-				    tent->s.dmgFlags = 0;
-				}*/
-			}
-		}
-	}
 
 	VectorCopy(tr.endpos, ent->r.currentOrigin);
 	VectorCopy(angle, ent->r.currentAngles);

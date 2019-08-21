@@ -2846,7 +2846,7 @@ void CG_DrawTracer(const vec3_t start, const vec3_t finish);
 void CG_MG42EFX(centity_t *cent);
 void CG_MortarEFX(centity_t *cent);
 
-void CG_MissileHitPlayer(centity_t *cent, int weapon, vec3_t origin, vec3_t dir, int entityNum);
+void CG_MissileHitPlayer(int entityNum, int weapon, vec3_t origin, vec3_t dir, int fleshEntityNum);
 qboolean CG_CalcMuzzlePoint(int entityNum, vec3_t muzzle);
 void CG_Bullet(int weapon, vec3_t end, int sourceEntityNum, qboolean flesh, int fleshEntityNum, int otherEntNum2, float waterfraction, int seed);
 

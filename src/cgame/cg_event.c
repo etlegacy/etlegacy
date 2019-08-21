@@ -2281,7 +2281,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 		vec3_t dir;
 
 		ByteToDir(es->eventParm, dir);
-		CG_MissileHitPlayer(cent, es->weapon, position, dir, es->otherEntityNum);
+		CG_MissileHitPlayer(es->otherEntityNum, es->weapon, position, dir, es->otherEntityNum2);
 	}
 	break;
 	case EV_MISSILE_MISS_SMALL:
@@ -2301,7 +2301,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 		effect = (CG_PointContents(position, 0) & CONTENTS_WATER) ? PS_FX_WATER : PS_FX_NONE;
 
 		ByteToDir(es->eventParm, dir);
-		CG_MissileHitWall(es->weapon, effect, position, dir, 0, -1);
+		CG_MissileHitWall(es->weapon, effect, position, dir, 0, es->otherEntityNum);
 	}
 	break;
 	case EV_MISSILE_MISS_LARGE:
@@ -2313,11 +2313,11 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 		ByteToDir(es->eventParm, dir);
 		if (es->weapon == WP_ARTY || es->weapon == WP_AIRSTRIKE || es->weapon == WP_SMOKE_MARKER)
 		{
-			CG_MissileHitWall(es->weapon, effect, position, dir, 0, -1);
+			CG_MissileHitWall(es->weapon, effect, position, dir, 0, es->otherEntityNum);
 		}
 		else
 		{
-			CG_MissileHitWall(VERYBIGEXPLOSION, effect, position, dir, 0, -1);
+			CG_MissileHitWall(VERYBIGEXPLOSION, effect, position, dir, 0, es->otherEntityNum);
 		}
 	}
 	break;
@@ -2330,8 +2330,9 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 
 			i = rand() % i;
 
-			trap_S_StartSoundVControl(position, es->number, CHAN_AUTO, cg_weapons[es->weapon].missileFallSound.sounds[i], 255);
+			trap_S_StartSoundVControl(es->origin2, es->otherEntityNum, CHAN_AUTO, cg_weapons[es->weapon].missileFallSound.sounds[i], 255);
 		}
+
 		CG_MortarImpact(cent, position);
 		break;
 	}

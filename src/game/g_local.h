@@ -54,6 +54,8 @@
 
 #define MG42_MULTIPLAYER_HEALTH 350
 
+#define MISSILE_PRESTEP_TIME    50
+
 /**
  * @def BODY_TIME
  * @brief How long do bodies last? (in ms)

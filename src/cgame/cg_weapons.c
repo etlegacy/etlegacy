@@ -5735,10 +5735,11 @@ void CG_DynamiteExplosionImpact(int weapon, int missileEffect, vec3_t origin, ve
  * @param[in] origin
  * @param[in] dir
  * @param[in] surfFlags
+ * @param[in] sourceEnt
  *
  * @note modified to send missilehitwall surface parameters
  */
-void CG_MissileHitWall(int weapon, int missileEffect, vec3_t origin, vec3_t dir, int surfFlags, int entityNum)
+void CG_MissileHitWall(int weapon, int missileEffect, vec3_t origin, vec3_t dir, int surfFlags, int sourceEnt)
 {
 	soundSurface_t soundSurfaceIndex = W_SND_SURF_DEFAULT;
 	qhandle_t      mark;
@@ -5785,7 +5786,7 @@ void CG_MissileHitWall(int weapon, int missileEffect, vec3_t origin, vec3_t dir,
 
 	if (sfx)
 	{
-		trap_S_StartSoundVControl(origin, -1, CHAN_AUTO, sfx, cg_weapons[weapon].impactSoundVolume);
+		trap_S_StartSoundExVControl(origin, sourceEnt, CHAN_AUTO, sfx, SND_CUTOFF_ALL, cg_weapons[weapon].impactSoundVolume);
 	}
 
 	// distant sounds for weapons with a broadcast fire sound (so you /always/ hear dynamite explosions)
@@ -5803,7 +5804,7 @@ void CG_MissileHitWall(int weapon, int missileEffect, vec3_t origin, vec3_t dir,
 		{
 			VectorMA(cg.refdef_current->vieworg, cg_weapons[weapon].impactSoundRange, norm, gorg);           // non-distance falloff makes more sense; sfx2range was gdist*0.2
 			// sfx2range is variable to give us minimum volume control different explosion sizes (see mortar, panzerfaust, and grenade)
-			trap_S_StartSoundEx(gorg, -1, CHAN_WEAPON, sfx2, SND_NOCUT);
+			trap_S_StartSoundEx(gorg, sourceEnt, CHAN_WEAPON, sfx2, SND_NOCUT);
 		}
 	}
 
@@ -5869,15 +5870,15 @@ void CG_MissileHitWallSmall(vec3_t origin, vec3_t dir)
 
 /**
  * @brief CG_MissileHitPlayer
- * @param cent - unused
+ * @param[in] entityNum
  * @param[in] weapon
  * @param[in] origin
  * @param[in] dir
- * @param[in] entityNum
+ * @param[in] fleshEntityNum
  */
-void CG_MissileHitPlayer(centity_t *cent, int weapon, vec3_t origin, vec3_t dir, int entityNum)
+void CG_MissileHitPlayer(int entityNum, int weapon, vec3_t origin, vec3_t dir, int fleshEntityNum)
 {
-	CG_Bleed(origin, entityNum);
+	CG_Bleed(origin, fleshEntityNum);
 
 	// some weapons will make an explosion with the blood, while
 	// others will just make the blood
@@ -5888,7 +5889,7 @@ void CG_MissileHitPlayer(centity_t *cent, int weapon, vec3_t origin, vec3_t dir,
 
 		effect = (CG_PointContents(origin, 0) & CONTENTS_WATER) ? PS_FX_WATER : PS_FX_NONE;
 
-		CG_MissileHitWall(weapon, effect, origin, dir, 0, entityNum);       // like the old one
+		CG_MissileHitWall(weapon, effect, origin, dir, 0, entityNum);               // like the old one
 	}
 	else if (GetWeaponTableData(weapon)->type & WEAPON_TYPE_MELEE)
 	{
