@@ -491,12 +491,13 @@ void G_RunMissile(gentity_t *ent)
 			}
 			else
 			{
-				float skyHeight;
+				float skyHeight, groundFloor;
 
-				skyHeight = BG_GetSkyHeightAtPoint(origin);
+				skyHeight   = BG_GetSkyHeightAtPoint(origin);
+				groundFloor = BG_GetTracemapGroundFloor();
 
-				// is ent under the ground limit
-				if (origin[2] < BG_GetTracemapGroundFloor())
+				// is ent under the ground limit, and ground valid
+				if (origin[2] < groundFloor && groundFloor != MAX_MAP_SIZE)
 				{
 					gentity_t *tent;
 
@@ -543,32 +544,25 @@ void G_RunMissile(gentity_t *ent)
 				ent->count2 = 1;
 			}
 		}
-
-		if (ent->count2 == 1 && ent->r.currentOrigin[2] > origin[2] && origin[2] - BG_GetGroundHeightAtPoint(origin) < 1024)
+		else if (ent->count2 == 1 && !(ent->s.eFlags & (EF_BOUNCE | EF_BOUNCE_HALF))
+		         && ent->r.currentOrigin[2] > origin[2]
+		         && origin[2] - BG_GetGroundHeightAtPoint(origin) < 1024)
 		{
-			gentity_t *tent;
-			vec3_t    impactpos;
-			trace_t   mortar_tr;
+			vec3_t  impactpos;
+			trace_t mortar_tr;
 
 			VectorSubtract(origin, ent->r.currentOrigin, impactpos);
-			VectorMA(origin, 1024, impactpos, impactpos);
+			VectorMA(origin, MAX_TRACE, impactpos, impactpos);
 
 			trap_Trace(&mortar_tr, origin, ent->r.mins, ent->r.maxs, impactpos, ent->r.ownerNum, ent->clipmask);
 
-//			if (mortar_tr.fraction != 1.f)
-//			{
+			if (mortar_tr.fraction != 1.f && !(mortar_tr.surfaceFlags & SURF_NOIMPACT))
+			{
+				G_AddEvent(ent, EV_MORTAR_IMPACT, 0);
+				VectorCopy(mortar_tr.endpos, ent->s.origin2);       // impact point
 
-			//G_AddEvent(ent, EV_MORTAR_IMPACT, DirToByte(mortar_tr.endpos));
-			tent                   = G_TempEntity(mortar_tr.endpos, EV_MORTAR_IMPACT);
-			tent->s.clientNum      = ent->r.ownerNum;
-			tent->r.svFlags       |= SVF_BROADCAST;
-			tent->s.weapon         = ent->s.weapon;
-			tent->s.otherEntityNum = ent->s.number;
-			VectorCopy(origin, tent->s.origin2);
-			tent->s.eventParm = DirToByte(origin);
-
-			ent->count2 = 2;                                        // missile is about to impact, no more check in worldspace are required
-//			}
+				ent->count2 = 2;                                    // missile is about to impact, no more check in worldspace are required
+			}
 		}
 	}
 

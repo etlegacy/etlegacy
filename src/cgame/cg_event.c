@@ -2322,7 +2322,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 	}
 	break;
 	case EV_MORTAR_IMPACT:
-	{
+	{            
 		// Sound effect for spotter round, had to do this as half-second bomb warning
 		if (cg_weapons[es->weapon].missileFallSound.count)
 		{
@@ -2330,10 +2330,10 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 
 			i = rand() % i;
 
-			trap_S_StartSoundVControl(es->origin2, es->otherEntityNum, CHAN_AUTO, cg_weapons[es->weapon].missileFallSound.sounds[i], 255);
+			trap_S_StartSoundVControl(position, es->number, CHAN_AUTO, cg_weapons[es->weapon].missileFallSound.sounds[i], 255);
 		}
 
-		CG_MortarImpact(cent, position);
+                CG_MortarImpact(cent, es->origin2);
 		break;
 	}
 	case EV_MORTAR_MISS:

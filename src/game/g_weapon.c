@@ -2648,10 +2648,6 @@ void G_AirStrikeThink(gentity_t *ent)
 		{
 			bomb->count = 1;         // may start through the sky
 		}
-		else
-		{
-			bomb->count2 = 1;        // start in world map limit (under the sky)
-		}
 
 		bomb->s.apos.trType = TR_LINEAR;
 		bomb->s.apos.trTime = level.time;
@@ -2935,10 +2931,6 @@ void artillerySpotterThink(gentity_t *ent)
 	if (bomboffset[2] >= BG_GetSkyHeightAtPoint(bomboffset))
 	{
 		bomb->count = 1;     // may start through the sky
-	}
-	else
-	{
-		bomb->count2 = 1;    // start in world map limit (under the sky)
 	}
 
 	// no more bomb to drop
@@ -4113,7 +4105,7 @@ weapFireTable_t weapFireTable[] =
 	{ WP_MORTAR2_SET,          weapon_mortar_fire,          NULL,                       NULL,               ET_MISSILE,            EF_NONE,                    SVF_BROADCAST,                CONTENTS_NONE,   TR_GRAVITY,     -MISSILE_PRESTEP_TIME, { { -4.f, -4.f, 0.f }, { 4.f, 4.f, 6.f } },      MASK_MISSILESHOT, 0,         0,       0,     0,        999,         },
 	{ WP_BAZOOKA,              weapon_antitank_fire,        G_ExplodeMissile,           NULL,               ET_MISSILE,            EF_NONE,                    SVF_BROADCAST,                CONTENTS_NONE,   TR_LINEAR,      -MISSILE_PRESTEP_TIME, { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_MISSILESHOT, 20000,     4,       0,     0,        999,         },
 	{ WP_MP34,                 Bullet_Fire,                 NULL,                       NULL,               ET_GENERAL,            EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_LINEAR,      0,                     { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_SHOT,        0,         0,       0,     0,        0,           },
-        { WP_AIRSTRIKE,            NULL,                        NULL,                       NULL,               ET_MISSILE,            EF_NONE,                    SVF_BROADCAST,                CONTENTS_NONE,   TR_GRAVITY,     1,                     { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_MISSILESHOT, 0,         2,       0,     0,        20,          },
+        { WP_AIRSTRIKE,            NULL,                        NULL,                       NULL,               ET_MISSILE,            EF_NONE,                    SVF_BROADCAST,                CONTENTS_NONE,   TR_GRAVITY,     -MISSILE_PRESTEP_TIME, { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_MISSILESHOT, 0,         2,       0,     0,        20,          },
 };
 // *INDENT-ON*
 
