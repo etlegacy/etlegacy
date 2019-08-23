@@ -46,6 +46,8 @@ static void CG_ResetEntity(centity_t *cent)
 {
 	// if an event is set, assume it is new enough to use
 	// if the event had timed out, it would have been cleared
+	// WARNING: by doing this, events from new entity in snap will be skipped,
+	// temp entity are not affected
 	cent->previousEvent         = 0;
 	cent->previousEventSequence = cent->currentState.eventSequence;
 
@@ -117,8 +119,8 @@ static void CG_TransitionEntity(centity_t *cent)
 	// so previousEvent will never return to 0 (condition cg_entities[id].currentValid == qfalse).
 	// this ensures cent->previousEvent is 0 when a new event occurs
 	if (cent->nextState.eType < ET_EVENTS ||
-		cent->currentState.otherEntityNum != cent->nextState.otherEntityNum ||
-		cent->currentState.otherEntityNum2 != cent->nextState.otherEntityNum2)
+	    cent->currentState.otherEntityNum != cent->nextState.otherEntityNum ||
+	    cent->currentState.otherEntityNum2 != cent->nextState.otherEntityNum2)
 	{
 		cent->previousEvent = 0;
 	}
