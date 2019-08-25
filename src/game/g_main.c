@@ -4892,7 +4892,7 @@ void G_RunEntity(gentity_t *ent, int msec)
 		return;
 	}
 
-	if (g_debugHitboxes.integer || g_debugHitboxes.string[0])
+	if (g_debugHitboxes.integer > 0)
 	{
 		G_DrawEntBBox(ent);
 	}
