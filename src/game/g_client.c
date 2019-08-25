@@ -2184,29 +2184,7 @@ char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 		//value = Info_ValueForKey (userinfo, "ip");
 		if (!strcmp(cs_ip, "localhost"))
 		{
-			// give bots country flag of the server location g_countryflags 2
-			if (isBot && (g_countryflags.integer & CF_BOTS))
-			{
-				char          server_ip[MAX_IP4_LENGTH];
-				unsigned int  ret;
-				unsigned long ip;
-
-				// get the server flag
-				trap_Cvar_VariableStringBuffer("net_ip", server_ip, sizeof(server_ip));
-				ip  = GeoIP_addr_to_num(server_ip);
-				ret = GeoIP_seek_record(gidb, ip);
-
-				if (ret > 0)
-				{
-					client->sess.uci = ret;
-				}
-				else
-				{
-					// default
-					client->sess.uci = 0;
-				}
-			}
-			else if (isBot)
+			if (isBot)
 			{
 				client->sess.uci = 0; // bots
 			}

@@ -1613,8 +1613,7 @@ void reinforce(gentity_t *ent);
 char *G_SHA1(const char *string);
 
 #define CF_ENABLE    1 ///< enables common countryflags functionallity
-#define CF_BOTS      2 ///< uses server country for bots
-#define CF_CONNECT   4 ///< draws country name in connect announcer
+#define CF_CONNECT   2 ///< draws country name in connect announcer
 
 // g_character.c
 qboolean G_RegisterCharacter(const char *characterFile, bg_character_t *character);
