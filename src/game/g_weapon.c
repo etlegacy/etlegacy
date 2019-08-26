@@ -2902,7 +2902,7 @@ void artillerySpotterThink(gentity_t *ent)
 		bomboffset[2] = 0;
 		VectorAdd(bomboffset, ent->s.pos.trBase, bomboffset);
 
-		bomb = fire_missile((ent->parent && ent->parent->client) ? ent->parent : ent, bomboffset, tv(0.f, 0.f, -750.f), ent->s.weapon);
+		bomb = fire_missile((ent->parent && ent->parent->client) ? ent->parent : ent, bomboffset, tv(0.f, 0.f, -1350.f), ent->s.weapon);
 
 		bomb->nextthink    += 3950; // overwrite, add delay between 1st bomb and 2nd one
 		bomb->splashDamage  = 90;   // overwrite
@@ -2919,7 +2919,7 @@ void artillerySpotterThink(gentity_t *ent)
 		bomboffset[2] = 0;
 		VectorAdd(bomboffset, ent->s.pos.trBase, bomboffset);
 
-		bomb = fire_missile((ent->parent && ent->parent->client) ? ent->parent : ent, bomboffset, tv(0.f, 0.f, -750.f), ent->s.weapon);
+		bomb = fire_missile((ent->parent && ent->parent->client) ? ent->parent : ent, bomboffset, tv(0.f, 0.f, -1350.f), ent->s.weapon);
 	}
 
 	// next bomb drop, add randomness
