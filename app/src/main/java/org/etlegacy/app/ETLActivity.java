@@ -131,6 +131,21 @@ public class ETLActivity extends SDLActivity implements JoyStickListener
 
         mLayout.addView(btn2, lp);
 
+        Button esc_btn = new Button(getApplicationContext());
+        esc_btn.setText("ESC");
+        esc_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SDLActivity.onNativeKeyDown(111);
+            }
+        });
+
+        RelativeLayout.LayoutParams lp2 = new RelativeLayout.LayoutParams(100, 95);
+
+        lp2.addRule(RelativeLayout.RIGHT_OF, btn.getId());
+
+        mLayout.addView(esc_btn, lp2);
+
         JoyStick joyStick = new JoyStick(getApplicationContext());
 
         joyStick.setListener(this);
