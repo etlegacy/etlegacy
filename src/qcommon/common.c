@@ -108,7 +108,6 @@ cvar_t *com_timedemo;
 cvar_t *com_sv_running;
 cvar_t *com_cl_running;
 cvar_t *com_logfile;        // 1 = buffer log, 2 = flush after each print
-cvar_t *com_cleanwhitelist;
 cvar_t *com_showtrace;
 cvar_t *com_version;
 cvar_t *com_buildScript;    // for automated data building scripts
@@ -2815,8 +2814,6 @@ void Com_Init(char *commandLine)
 	FS_InitFilesystem();
 
 	Com_InitJournaling();
-
-	com_cleanwhitelist = Cvar_Get("com_cleanwhitelist", "z_hdet", CVAR_PROTECTED);
 
 	Cbuf_AddText(va("exec %s\n", CONFIG_NAME_DEFAULT));
 
