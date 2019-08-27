@@ -23,7 +23,6 @@
 	loadMenu { "ui/viewreplay.menu" }
 	loadMenu { "ui/viewreplay_delete.menu" }
 	loadMenu { "ui/options.menu" }
-	loadMenu { "ui/options_clean.menu" }
 	loadMenu { "ui/options_customise_game.menu" }
 	loadMenu { "ui/options_customise_hud.menu" }
 	loadMenu { "ui/options_controls.menu" }
