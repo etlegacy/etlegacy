@@ -163,7 +163,7 @@ static void checkDownloadName(char *filename)
 
 	for (i = 0; i < strlen(filename); i++)
 	{
-		if (filename[i] <= 31 || filename[i] >= 123)
+		if (filename[i] <= 31 || filename[i] >= 127)
 		{
 			Cvar_Set("com_missingFiles", "");
 			Com_Error(ERR_DROP, "Disconnected from server.\n\nServer file name \"%s\" is containing an invalid character for the ET: Legacy file structure.\n\nDownloading file denied.", filename);
