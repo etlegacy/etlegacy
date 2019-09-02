@@ -1109,8 +1109,11 @@ void R_Register(void)
 	r_drawBuffer   = ri.Cvar_Get("r_drawBuffer", "GL_BACK", CVAR_CHEAT);
 	r_lockPvs      = ri.Cvar_Get("r_lockpvs", "0", CVAR_CHEAT);
 	r_noportals    = ri.Cvar_Get("r_noportals", "0", CVAR_CHEAT);
+#ifndef __ANDROID__
 	r_shadows      = ri.Cvar_Get("cg_shadows", "1", 0);
-
+#else
+	r_shadows      = ri.Cvar_Get("cg_shadows", "0", 0);
+#endif
 	r_screenshotJpegQuality = ri.Cvar_Get("r_screenshotJpegQuality", "90", CVAR_ARCHIVE);
 
 	r_portalSky = ri.Cvar_Get("cg_skybox", "1", 0);

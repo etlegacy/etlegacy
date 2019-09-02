@@ -371,7 +371,11 @@ static cvarTable_t cvarTable[] =
 	{ &cg_fov,                    "cg_fov",                    "90",          CVAR_ARCHIVE,                 0 },
 	{ &cg_muzzleFlash,            "cg_muzzleFlash",            "1",           CVAR_ARCHIVE,                 0 },
 	{ &cg_letterbox,              "cg_letterbox",              "0",           CVAR_TEMP,                    0 },
+#ifndef __ANDROID__
 	{ &cg_shadows,                "cg_shadows",                "1",           CVAR_ARCHIVE,                 0 },
+#else
+	{ &cg_shadows,                "cg_shadows",                "0",           CVAR_ARCHIVE,                 0 },
+#endif
 	{ &cg_gibs,                   "cg_gibs",                   "1",           CVAR_ARCHIVE,                 0 },
 	// we now draw reticles always in non demoplayback
 	//  { &cg_draw2D, "cg_draw2D", "1", CVAR_CHEAT }, // JPW NERVE changed per atvi req to prevent sniper rifle zoom cheats
