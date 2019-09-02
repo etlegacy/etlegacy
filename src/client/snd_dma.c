@@ -658,6 +658,7 @@ void S_Base_StartSoundEx(vec3_t origin, int entnum, int entchannel, sfxHandle_t 
 	time = Sys_Milliseconds();
 	ch   = s_channels;
 
+	// shut off other sounds on this channel if necessary
 	for (i = 0; i < MAX_CHANNELS ; i++, ch++)
 	{
 		if (ch->entnum == entnum && ch->thesfx)
@@ -666,9 +667,24 @@ void S_Base_StartSoundEx(vec3_t origin, int entnum, int entchannel, sfxHandle_t 
 			{
 				return;
 			}
-			else if (ch->entchannel == entchannel && (flags & SND_CUTOFF_ALL)) // cut the sounds that are flagged to be cut
+			else if (ch->entchannel == entchannel)
 			{
-				S_ChannelFree(ch);
+				if ((flags & SND_CUTOFF_ALL)) // cut the sounds that are flagged to be cut
+				{
+					S_ChannelFree(ch);
+				}
+				else if (ch->flags & SND_NOCUT) // don't cutoff
+				{
+					continue;
+				}
+				else if (ch->flags & SND_OKTOCUT) // cutoff sounds that expect to be overwritten
+				{
+					S_ChannelFree(ch);
+				}
+				else if ((ch->flags & SND_REQUESTCUT) && (flags & SND_CUTOFF)) // cutoff 'weak' sounds on channel
+				{
+					S_ChannelFree(ch);
+				}
 			}
 		}
 	}
