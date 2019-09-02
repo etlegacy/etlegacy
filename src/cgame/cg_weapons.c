@@ -5786,7 +5786,7 @@ void CG_MissileHitWall(int weapon, int missileEffect, vec3_t origin, vec3_t dir,
 
 	if (sfx)
 	{
-		trap_S_StartSoundExVControl(origin, sourceEnt, CHAN_AUTO, sfx, SND_CUTOFF_ALL, cg_weapons[weapon].impactSoundVolume);
+		trap_S_StartSoundVControl(origin, sourceEnt, CHAN_AUTO, sfx, cg_weapons[weapon].impactSoundVolume);
 	}
 
 	// distant sounds for weapons with a broadcast fire sound (so you /always/ hear dynamite explosions)
