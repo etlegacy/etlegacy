@@ -120,6 +120,7 @@ public class ETLActivity extends SDLActivity implements JoyStickListener
             @Override
             public void onClick(View v) {
                 SDLActivity.onNativeKeyDown(68);
+                SDLActivity.onNativeKeyUp(68);
             }
         });
 
@@ -137,6 +138,7 @@ public class ETLActivity extends SDLActivity implements JoyStickListener
             @Override
             public void onClick(View v) {
                 SDLActivity.onNativeKeyDown(111);
+                SDLActivity.onNativeKeyUp(111);
             }
         });
 
