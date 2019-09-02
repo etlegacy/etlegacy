@@ -2330,7 +2330,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 
 			i = rand() % i;
 
-			trap_S_StartSoundExVControl(position, es->number, CHAN_AUTO, cg_weapons[es->weapon].missileFallSound.sounds[i], SND_OKTOCUT, 255);
+			trap_S_StartSoundExVControl(NULL, es->number, CHAN_AUTO, cg_weapons[es->weapon].missileFallSound.sounds[i], SND_OKTOCUT, 255);
 		}
 
 		CG_MortarImpact(cent, es->origin2);
