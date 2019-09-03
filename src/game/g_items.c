@@ -904,7 +904,8 @@ gentity_t *LaunchItem(gitem_t *item, vec3_t origin, vec3_t velocity, int ownerNu
 	temp[ROLL]  = 0;
 	G_SetAngle(dropped, temp);
 
-	dropped->s.eFlags |= EF_BOUNCE_HALF;
+	dropped->s.eFlags     |= EF_BOUNCE_HALF;
+	dropped->physicsBounce = 0.25;
 
 	if (item->giType == IT_TEAM)     // Special case for CTF flags
 	{
