@@ -1167,7 +1167,15 @@ void G_FadeItems(gentity_t *ent, int modType)
 		e->parent     = NULL;
 		e->r.ownerNum = ENTITYNUM_NONE;
 
-		G_FreeEntity(e);
+		// don't sink flying item
+		if (e->s.pos.trType != TR_STATIONARY)
+		{
+			G_FreeEntity(e);
+		}
+		else
+		{
+			G_MagicSink(e);
+		}
 	}
 }
 
