@@ -2873,6 +2873,12 @@ void G_PreFilledMissileEntity(gentity_t *ent, int weaponNum, int realWeapon, int
 	SnapVector(ent->s.pos.trDelta);            // save net bandwidth
 }
 
+/**
+ * @brief G_GetEnemyPosition
+ * @param[in] ent
+ * @param[in] targ
+ * @return
+ */
 int G_GetEnemyPosition(gentity_t *ent, gentity_t *targ)
 {
 	float	angle = 0;
@@ -2887,10 +2893,29 @@ int G_GetEnemyPosition(gentity_t *ent, gentity_t *targ)
 	{
 		return POSITION_BEHIND;
 	}
-	if (angle <-0.6f)
+	if (angle < -0.6f)
 	{
 		return POSITION_INFRONT;
 	}
 
 	return POSITION_UNUSED;
+}
+
+/**
+ * @brief Magically sink given entity before freeing
+ * @param[in,out] self The entity to sink
+ * @note Make it TR_LINEAR so it doesnt chew bandwidth...
+ */
+void G_MagicSink(gentity_t *self)
+{
+    self->clipmask   = 0;
+    self->r.contents = 0;
+    
+    self->nextthink = level.time + 4000;
+    self->think     = G_FreeEntity;
+    
+    self->s.pos.trType = TR_LINEAR;
+    self->s.pos.trTime = level.time;
+    VectorCopy(self->r.currentOrigin, self->s.pos.trBase);
+    VectorSet(self->s.pos.trDelta, 0, 0, -5);
 }

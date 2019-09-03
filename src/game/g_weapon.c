@@ -148,24 +148,6 @@ gentity_t *Weapon_Knife(gentity_t *ent)
 }
 
 /**
- * @brief Make it TR_LINEAR so it doesnt chew bandwidth...
- * @param[in,out] self
- */
-void MagicSink(gentity_t *self)
-{
-	self->clipmask   = 0;
-	self->r.contents = 0;
-
-	self->nextthink = level.time + 4000;
-	self->think     = G_FreeEntity;
-
-	self->s.pos.trType = TR_LINEAR;
-	self->s.pos.trTime = level.time;
-	VectorCopy(self->r.currentOrigin, self->s.pos.trBase);
-	VectorSet(self->s.pos.trDelta, 0, 0, -5);
-}
-
-/**
  * @brief Class-specific in multiplayer
  * @param[in] ent
  */
@@ -232,7 +214,7 @@ void Weapon_Medic_Ext(gentity_t *ent, vec3_t viewpos, vec3_t tosspos, vec3_t vel
 	}
 
 	ent2            = LaunchItem(BG_GetItem(ITEM_HEALTH), tosspos, velocity, ent->s.number);
-	ent2->think     = MagicSink;
+	ent2->think     = G_MagicSink;
 	ent2->nextthink = level.time + 30000;
 
 	ent2->parent = ent; // so we can score properly later
@@ -310,7 +292,7 @@ void Weapon_MagicAmmo_Ext(gentity_t *ent, vec3_t viewpos, vec3_t tosspos, vec3_t
 	}
 
 	ent2            = LaunchItem(BG_GetItem(ent->client->sess.skill[SK_SIGNALS] >= 1 ? ITEM_WEAPON_MAGICAMMO2 : ITEM_WEAPON_MAGICAMMO), tosspos, velocity, ent->s.number);
-	ent2->think     = MagicSink;
+	ent2->think     = G_MagicSink;
 	ent2->nextthink = level.time + 30000;
 
 	ent2->parent = ent;
@@ -4057,14 +4039,14 @@ weapFireTable_t weapFireTable[] =
     //
 	{ WP_STEN,                 Bullet_Fire,                 NULL,                       NULL,               ET_GENERAL,            EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_LINEAR,      0,                     { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_SHOT,        0,         0,       0,     0,        0,           },
 	{ WP_MEDIC_SYRINGE,        Weapon_Syringe,              NULL,                       NULL,               ET_GENERAL,            EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_LINEAR,      0,                     { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_SHOT,        0,         0,       0,     0,        0,           },
-	{ WP_AMMO,                 Weapon_MagicAmmo,            MagicSink,                  NULL,               ET_ITEM,               EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_GRAVITY,     0,                     { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_SHOT,        30000,     0,       0,     0,        0,           },
+	{ WP_AMMO,                 Weapon_MagicAmmo,            G_MagicSink,                NULL,               ET_ITEM,               EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_GRAVITY,     0,                     { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_SHOT,        30000,     0,       0,     0,        0,           },
 	{ WP_ARTY,                 NULL,                        NULL,                       G_ArtilleryExplode, ET_MISSILE,            EF_NONE,                    SVF_BROADCAST,                CONTENTS_NONE,   TR_GRAVITY,     -MISSILE_PRESTEP_TIME, { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_MISSILESHOT, 2000,      2,       0,     0,        20,          },
 	{ WP_SILENCER,             Bullet_Fire,                 NULL,                       NULL,               ET_GENERAL,            EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_LINEAR,      0,                     { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_SHOT,        0,         0,       0,     0,        0,           },
 	{ WP_DYNAMITE,             weapon_grenadelauncher_fire, DynaSink,                   DynaFree,           ET_MISSILE,            EF_BOUNCE_HALF | EF_BOUNCE, SVF_BROADCAST,                CONTENTS_CORPSE, TR_GRAVITY,     -MISSILE_PRESTEP_TIME, { { -12.f, -12.f, 0.f }, { 12.f, 12.f, 20.f } }, MASK_MISSILESHOT, 15000,     0,       5,     16500,    20,          },
 	{ WP_SMOKETRAIL,           NULL,                        artilleryGoAway,            NULL,               ET_MISSILE,            EF_BOUNCE,                  SVF_NONE,                     CONTENTS_NONE,   TR_GRAVITY,     -MISSILE_PRESTEP_TIME, { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_MISSILESHOT, 1000,      0,       0,     0,        20,          },
 	{ WP_MAPMORTAR,            NULL,                        G_ExplodeMissile,           NULL,               ET_MISSILE,            EF_NONE,                    SVF_BROADCAST,                CONTENTS_NONE,   TR_GRAVITY,     -MISSILE_PRESTEP_TIME, { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_MISSILESHOT, 20000,     4,       0,     0,        999,         },
 	{ VERYBIGEXPLOSION,        NULL,                        NULL,                       NULL,               ET_GENERAL,            EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_STATIONARY,  0,                     { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_ALL,         0,         0,       0,     0,        0,           },
-	{ WP_MEDKIT,               Weapon_Medic,                MagicSink,                  NULL,               ET_ITEM,               EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_GRAVITY,     0,                     { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_SHOT,        30000,     0,       0,     0,        0,           },
+	{ WP_MEDKIT,               Weapon_Medic,                G_MagicSink,                NULL,               ET_ITEM,               EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_GRAVITY,     0,                     { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_SHOT,        30000,     0,       0,     0,        0,           },
     //
 	{ WP_BINOCULARS,           NULL,                        NULL,                       NULL,               ET_GENERAL,            EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_STATIONARY,  0,                     { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_ALL,         0,         0,       0,     0,        0,           },
 	{ WP_PLIERS,               Weapon_Engineer,             NULL,                       NULL,               ET_GENERAL,            EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_STATIONARY,  0,                     { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_ALL,         0,         0,       0,     0,        0,           },

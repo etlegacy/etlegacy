@@ -924,7 +924,7 @@ gentity_t *LaunchItem(gitem_t *item, vec3_t origin, vec3_t velocity, int ownerNu
 	}
 	else     // auto-remove after 30 seconds
 	{
-		dropped->think     = G_FreeEntity;
+		dropped->think     = G_MagicSink;
 		dropped->nextthink = level.time + 30000;
 	}
 

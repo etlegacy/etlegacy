@@ -1574,6 +1574,8 @@ void G_PreFilledMissileEntity(gentity_t *ent, int weaponNum, int realWeapon, int
 
 int G_GetEnemyPosition(gentity_t *ent, gentity_t *targ);
 
+void G_MagicSink(gentity_t *self);
+
 // g_weapon.c
 qboolean AccuracyHit(gentity_t *target, gentity_t *attacker);
 void CalcMuzzlePoint(gentity_t *ent, int weapon, vec3_t forward, vec3_t right, vec3_t up, vec3_t muzzlePoint);
