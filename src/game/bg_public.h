@@ -2005,6 +2005,8 @@ qboolean BG_PlayerTouchesItem(playerState_t *ps, entityState_t *item, int atTime
 qboolean BG_PlayerSeesItem(playerState_t *ps, entityState_t *item, int atTime);
 qboolean BG_AddMagicAmmo(playerState_t *ps, int *skill, team_t teamNum, int numOfClips);
 
+int PM_IdleAnimForWeapon(int weapon);
+
 #define OVERCLIP        1.001f
 
 void PM_ClipVelocity(vec3_t in, vec3_t normal, vec3_t out, float overbounce);

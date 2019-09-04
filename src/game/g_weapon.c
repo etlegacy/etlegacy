@@ -370,7 +370,11 @@ void ReviveEntity(gentity_t *ent, gentity_t *traceEnt)
 	}
 
 	traceEnt->client->ps.weapon          = oldweapon;
+	traceEnt->client->ps.weaponstate     = WEAPON_READY;
 	traceEnt->client->ps.classWeaponTime = oldclasstime;
+
+	// set idle animation on weapon
+	traceEnt->client->ps.weapAnim = PM_IdleAnimForWeapon(traceEnt->client->ps.weapon);
 
 	traceEnt->health = healamt;
 	VectorCopy(org, traceEnt->s.origin);
