@@ -1791,9 +1791,7 @@ void ClientUserinfoChanged(int clientNum)
 			Q_strncpyz(cs_name, cs_value, MAX_NETNAME);
 			break;
 		case TOK_cl_guid:
-			if (!(ent->r.svFlags & SVF_BOT) &&
-			    strcmp(client->pers.cl_guid, "unknown") &&
-			    strcmp(client->pers.cl_guid, cs_value))
+			if (!(ent->r.svFlags & SVF_BOT) && strcmp(client->pers.cl_guid, cs_value))
 			{
 				// They're trying to hack their guid...
 				G_Printf("ClientUserinfoChanged: client %d hacking cl_guid, old=%s, new=%s\n", clientNum, client->pers.cl_guid, cs_value);
@@ -2066,6 +2064,12 @@ char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 		default:
 			continue;
 		}
+	}
+
+	// don't allow empty, unknown or 'NO_GUID' guid
+	if (strlen(cs_guid) < MAX_GUID_LENGTH)
+	{
+		return "Bad GUID: Invalid etkey. Please use the ET:Legacy client or add an etkey.";
 	}
 
 	// IP filtering
