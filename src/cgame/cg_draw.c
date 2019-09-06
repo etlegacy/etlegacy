@@ -518,10 +518,12 @@ static int CG_FormatCenterPrint(char *s)
 {
 	char     *lastSpace = NULL;
 	int      i, len, lastLR = 0;
-	int      lineNumber  = 1;
+	int      lineWidth, lineNumber = 1;
 	qboolean neednewline = qfalse;
 
-	len = Q_UTF8_PrintStrlen(s);
+	len       = Q_UTF8_PrintStrlen(s);
+	lineWidth = CP_LINEWIDTH;
+
 	for (i = 0; i < len; i++)
 	{
 		if (Q_IsColorString(s))
@@ -529,7 +531,7 @@ static int CG_FormatCenterPrint(char *s)
 			s += 2;
 		}
 
-		if ((i - lastLR) >= CP_LINEWIDTH)
+		if ((i - lastLR) >= lineWidth)
 		{
 			neednewline = qtrue;
 		}
@@ -541,8 +543,10 @@ static int CG_FormatCenterPrint(char *s)
 
 		if (neednewline && lastSpace)
 		{
-			*lastSpace  = '\n';
-			lastSpace   = NULL;
+			*lastSpace = '\n';
+			lastSpace  = NULL;
+			lastLR     = i;
+			lineNumber++;
 			neednewline = qfalse;
 		}
 
