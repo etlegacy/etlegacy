@@ -521,7 +521,7 @@ static void CL_UpdateGUID(void)
 	if (len < ETKEY_SIZE)
 	{
 		Com_Printf(S_COLOR_RED "ERROR: Could not set etkey (size mismatch).\n");
-		Cvar_Set("cl_guid", "");
+		Cvar_Set("cl_guid", "unknown");
 	}
 	else
 	{
