@@ -43,7 +43,7 @@
  */
 static void R_CullMDV(mdvModel_t *model, trRefEntity_t *ent)
 {
-	int    i;
+	int i;
 	// compute frame pointers
 	mdvFrame_t *newFrame = model->frames + ent->e.frame;
 	mdvFrame_t *oldFrame = model->frames + ent->e.oldframe;
@@ -52,9 +52,9 @@ static void R_CullMDV(mdvModel_t *model, trRefEntity_t *ent)
 	for (i = 0; i < 3; i++)
 	{
 		ent->localBounds[0][i] =
-		    oldFrame->bounds[0][i] < newFrame->bounds[0][i] ? oldFrame->bounds[0][i] : newFrame->bounds[0][i];
+			oldFrame->bounds[0][i] < newFrame->bounds[0][i] ? oldFrame->bounds[0][i] : newFrame->bounds[0][i];
 		ent->localBounds[1][i] =
-		    oldFrame->bounds[1][i] > newFrame->bounds[1][i] ? oldFrame->bounds[1][i] : newFrame->bounds[1][i];
+			oldFrame->bounds[1][i] > newFrame->bounds[1][i] ? oldFrame->bounds[1][i] : newFrame->bounds[1][i];
 	}
 
 	// setup world bounds for intersection tests
@@ -294,7 +294,7 @@ void R_AddMDVSurfaces(trRefEntity_t *ent)
 	    || (ent->e.frame < 0) || (ent->e.oldframe >= tr.currentModel->mdv[lod]->numFrames) || (ent->e.oldframe < 0))
 	{
 		//Only spam if the lod level is 0 (lods usually don't have animation frames as they are only seen from a far)
-		if (lod == 0)
+		if (lod == 0 || tr.currentModel->mdv[lod]->numFrames != 1)
 		{
 			Ren_Developer("R_AddMDVSurfaces: no such frame %d to %d for '%s' (%d)\n",
 			              ent->e.oldframe, ent->e.frame, tr.currentModel->name, tr.currentModel->mdv[lod]->numFrames);
