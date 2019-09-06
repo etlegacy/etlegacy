@@ -1506,7 +1506,14 @@ void G_CheckForCursorHints(gentity_t *ent)
 				{
 					hintType = traceEnt->s.dmgFlags;
 				}
-
+				break;
+			case ET_CABINET_A:
+				hintDist = CH_ACTIVATE_DIST;
+				hintType = HINT_HEALTH;
+				break;
+			case ET_CABINET_H:
+				hintDist = CH_ACTIVATE_DIST;
+				hintType = HINT_AMMO;
 				break;
 			default:
 				break;

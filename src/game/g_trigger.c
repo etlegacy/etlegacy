@@ -727,6 +727,20 @@ void heal_touch(gentity_t *self, gentity_t *other, trace_t *trace)
 	{
 		return;
 	}
+
+	if (self->target_ent && self->target_ent->s.eType == ET_CABINET_H)
+	{
+		if (other->client->pers.autoActivate == PICKUP_ACTIVATE)
+		{
+			return;
+		}
+
+		if (other->client->pers.autoActivate == PICKUP_FORCE)            // autoactivate probably forced by the "Cmd_Activate_f()" function
+		{
+			other->client->pers.autoActivate = PICKUP_ACTIVATE;          // so reset it.
+		}
+	}
+
 	self->timestamp = level.time + 1000;
 
 	for (i = 0; i < level.numConnectedClients; i++)
@@ -806,6 +820,8 @@ void trigger_heal_setup(gentity_t *self)
 	{
 		G_Error("trigger_heal failed to find target: %s\n", self->target);
 	}
+
+	self->target_ent->parent = self;
 
 	if (TRIGGER_HEAL_CANTHINK(self))
 	{
@@ -945,6 +961,19 @@ void ammo_touch(gentity_t *self, gentity_t *other, trace_t *trace)
 	}
 	self->timestamp = level.time + 1000;
 
+	if (self->target_ent && self->target_ent->s.eType == ET_CABINET_A)
+	{
+		if (other->client->pers.autoActivate == PICKUP_ACTIVATE)
+		{
+			return;
+		}
+
+		if (other->client->pers.autoActivate == PICKUP_FORCE)            // autoactivate probably forced by the "Cmd_Activate_f()" function
+		{
+			other->client->pers.autoActivate = PICKUP_ACTIVATE;          // so reset it.
+		}
+	}
+
 	for (i = 0; i < level.numConnectedClients; i++)
 	{
 		j = level.sortedClients[i];
@@ -1018,6 +1047,8 @@ void trigger_ammo_setup(gentity_t *self)
 	{
 		G_Error("trigger_ammo failed to find target: %s\n", self->target);
 	}
+
+	self->target_ent->parent = self;
 
 	if (TRIGGER_AMMO_CANTHINK(self))
 	{

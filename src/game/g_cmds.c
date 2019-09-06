@@ -3775,6 +3775,28 @@ qboolean Do_Activate_f(gentity_t *ent, gentity_t *traceEnt)
 			traceEnt->touch(traceEnt, ent, &trace);
 		}
 	}
+	else if (traceEnt->s.eType == ET_CABINET_A || traceEnt->s.eType == ET_CABINET_H)
+	{
+		trace_t trace;
+
+		if (ent->client->sess.sessionTeam == TEAM_SPECTATOR)
+		{
+			return qfalse;
+		}
+
+		Com_Memset(&trace, 0, sizeof(trace));
+
+		// parent trigger hold touch
+		if (traceEnt->parent && traceEnt->parent->touch)
+		{
+			if (ent->client->pers.autoActivate == PICKUP_ACTIVATE)
+			{
+				ent->client->pers.autoActivate = PICKUP_FORCE;          // force pickup
+			}
+
+			traceEnt->parent->touch(traceEnt->parent, ent, &trace);
+		}
+	}
 	else if (traceEnt->s.eType == ET_MOVER && G_TankIsMountable(traceEnt, ent))
 	{
 		G_Script_ScriptEvent(traceEnt, "mg42", "mount");
@@ -5039,7 +5061,7 @@ void ClientCommand(int clientNum)
 	{
 		Cmd_Noclip_f(ent);
 	}
-    else if (Q_stricmp(cmd, "nostamina") == 0)
+	else if (Q_stricmp(cmd, "nostamina") == 0)
 	{
 		Cmd_Nostamina_f(ent);
 	}
