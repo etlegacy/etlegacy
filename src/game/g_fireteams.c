@@ -957,10 +957,6 @@ int G_FireteamNumberForString(const char *name, team_t team)
 		{
 			fireteam = i + 1;
 		}
-
-		//if(!Q_stricmp(level.fireTeams[i].name, name)) {
-		//  fireteam = i+1;
-		//}
 	}
 
 	if (fireteam <= 0)
