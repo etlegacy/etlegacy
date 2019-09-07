@@ -550,8 +550,10 @@ void G_SkillRatingGetUserRating(gclient_t *cl, qboolean firstTime)
 		if (result == SQLITE_ROW)
 		{
 			// assign user data
-			sr_data.mu    = sqlite3_column_double(sqlstmt, 1);
-			sr_data.sigma = sqlite3_column_double(sqlstmt, 2);
+			sr_data.mu          = sqlite3_column_double(sqlstmt, 1);
+			sr_data.sigma       = sqlite3_column_double(sqlstmt, 2);
+			sr_data.time_axis   = 0; // failsafe
+			sr_data.time_allies = 0; // failsafe
 		}
 		else
 		{
@@ -559,8 +561,10 @@ void G_SkillRatingGetUserRating(gclient_t *cl, qboolean firstTime)
 			if (result == SQLITE_DONE)
 			{
 				// assign default values
-				sr_data.mu    = MU;
-				sr_data.sigma = SIGMA;
+				sr_data.mu          = MU;
+				sr_data.sigma       = SIGMA;
+				sr_data.time_axis   = 0; // failsafe
+				sr_data.time_allies = 0; // failsafe
 			}
 			else
 			{
@@ -581,8 +585,10 @@ void G_SkillRatingGetUserRating(gclient_t *cl, qboolean firstTime)
 		}
 
 		// assign user data to session
-		cl->sess.mu    = sr_data.mu;
-		cl->sess.sigma = sr_data.sigma;
+		cl->sess.mu          = sr_data.mu;
+		cl->sess.sigma       = sr_data.sigma;
+		cl->sess.time_axis   = sr_data.time_axis;   // failsafe
+		cl->sess.time_allies = sr_data.time_allies; // failsafe
 
 		// prepare delta rating
 		if (!level.intermissionQueued)
@@ -1085,20 +1091,18 @@ void G_UpdateSkillRating(int winner)
 
 	int       i, playerTeam, rankFactor;
 	float     c, v, w, t, winningMu, losingMu, muFactor, sigmaFactor;
-	float     mapProb, mapMu, mapSigma, mapBeta;
 	gclient_t *cl;
 
-	float teamMuX      = 0;
-	float teamMuL      = 0;
-	float teamSigmaSqX = 0;
-	float teamSigmaSqL = 0;
+	float teamMuX      = 0.f;
+	float teamMuL      = 0.f;
+	float teamSigmaSqX = 0.f;
+	float teamSigmaSqL = 0.f;
 	int   numPlayersX  = 0;
 	int   numPlayersL  = 0;
-
-	mapProb  = 0.f;
-	mapMu    = 0.f;
-	mapSigma = 0.f;
-	mapBeta  = 0.f;
+	float mapProb      = 0.f;
+	float mapMu        = 0.f;
+	float mapSigma     = 0.f;
+	float mapBeta      = 0.f;
 
 	// total play time
 	int totalTime = level.intermissionQueued - level.startTime - level.timeDelta;
@@ -1287,20 +1291,18 @@ float G_CalculateWinProbability(int team)
 {
 	int       i;
 	float     c, t, winningMu, losingMu;
-	float     mapProb, mapMu, mapSigma, mapBeta;
 	gclient_t *cl;
 
-	float teamMuX      = 0;
-	float teamMuL      = 0;
-	float teamSigmaSqX = 0;
-	float teamSigmaSqL = 0;
+	float teamMuX      = 0.f;
+	float teamMuL      = 0.f;
+	float teamSigmaSqX = 0.f;
+	float teamSigmaSqL = 0.f;
 	int   numPlayersX  = 0;
 	int   numPlayersL  = 0;
-
-	mapProb  = 0.f;
-	mapMu    = 0.f;
-	mapSigma = 0.f;
-	mapBeta  = 0.f;
+	float mapProb      = 0.f;
+	float mapMu        = 0.f;
+	float mapSigma     = 0.f;
+	float mapBeta      = 0.f;
 
 	// current play time
 	int currentTime = level.timeCurrent - level.startTime - level.timeDelta;
