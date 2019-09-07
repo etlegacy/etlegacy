@@ -73,7 +73,7 @@
 
 /**
  * @brief G_SkillRatingDB_Init
- * @return 0 if database is successfully initiallized, 1 otherwise.
+ * @return 0 if database is successfully initialized, 1 otherwise.
  */
 int G_SkillRatingDB_Init()
 {
@@ -229,16 +229,16 @@ int G_SkillRatingDB_DeInit()
 
 /**
  * @brief Checks if database exists, if tables exist and if schemas are correct
- * @param[in] dbpath
+ * @param[in] db_path
  * @param[in] db_mode
  * @return 0 if database check is successful, 1 otherwise.
  */
-int G_SkillRatingDB_Check(char *dbpath, int db_mode)
+int G_SkillRatingDB_Check(char *db_path, int db_mode)
 {
 	int     result;
 	sqlite3 *db;
 
-	if (!dbpath || dbpath[0] == '\0')
+	if (!db_path || db_path[0] == '\0')
 	{
 		G_Printf("G_SkillRatingDB_Check: invalid path specified\n");
 		return 1;
@@ -247,11 +247,11 @@ int G_SkillRatingDB_Check(char *dbpath, int db_mode)
 	// check if database can be opened
 	if (db_mode == 1)
 	{
-		result = sqlite3_open_v2(dbpath, &db, (SQLITE_OPEN_READWRITE | SQLITE_OPEN_MEMORY | SQLITE_OPEN_SHAREDCACHE), NULL);
+		result = sqlite3_open_v2(db_path, &db, (SQLITE_OPEN_READWRITE | SQLITE_OPEN_MEMORY | SQLITE_OPEN_SHAREDCACHE), NULL);
 	}
 	else // db_mode 2
 	{
-		result = sqlite3_open_v2(dbpath, &db, SQLITE_OPEN_READWRITE, NULL);
+		result = sqlite3_open_v2(db_path, &db, SQLITE_OPEN_READWRITE, NULL);
 	}
 
 	if (result != SQLITE_OK)
@@ -308,7 +308,7 @@ int G_SkillRatingDB_Check(char *dbpath, int db_mode)
 
 /**
  * @brief Ensure rating_match table is empty
- * @return 0 if rating_table is successful emptied, 1 otherwise.
+ * @return 0 if rating_table is successfully emptied, 1 otherwise.
  */
 int G_SkillRatingPrepareMatchRating(void)
 {
@@ -614,8 +614,6 @@ void G_SkillRatingGetUserRating(gclient_t *cl, qboolean firstTime)
 			cl->sess.oldsigma = sr_data.sigma;
 		}
 	}
-
-	return;
 }
 
 /**
@@ -722,8 +720,6 @@ void G_SkillRatingSetUserRating(gclient_t *cl)
 			return;
 		}
 	}
-
-	return;
 }
 
 /**
@@ -956,8 +952,6 @@ void G_SkillRatingSetMapRating(char *mapname, int winner)
 		G_Printf("G_SkillRatingSetMapRating: sqlite3_finalize failed\n");
 		return;
 	}
-
-	return;
 }
 
 /**

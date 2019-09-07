@@ -2416,7 +2416,7 @@ typedef struct srData_s
 
 int G_SkillRatingDB_Init(void);
 int G_SkillRatingDB_DeInit(void);
-int G_SkillRatingDB_Check(char *dbpath, int db_mode);
+int G_SkillRatingDB_Check(char *db_path, int db_mode);
 int G_SkillRatingPrepareMatchRating(void);
 int G_SkillRatingGetMatchRating(srData_t *sr_data);
 int G_SkillRatingSetMatchRating(srData_t *sr_data);
