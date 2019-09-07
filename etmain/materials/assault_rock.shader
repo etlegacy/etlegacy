@@ -65,6 +65,5 @@ textures/assault_rock/concrete_m02
     qer_editorimage textures/assault_rock/concrete_m02.tga
 	diffuseMap textures/assault_rock/concrete_m02.tga
 	bumpMap textures/assault_rock/concrete_m02_n.tga
-	specularMap textures/assault_rock/concrete_m02_r.tga
 	implicitMap -
 }
