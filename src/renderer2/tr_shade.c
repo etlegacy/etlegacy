@@ -3178,18 +3178,18 @@ void Tess_StageIteratorGeneric()
 		}
 		case ST_LIGHTMAP:
 		{
-			if (tess.lightmapNum >= 0)
-			{
+			//if (tess.lightmapNum >= 0)
+			//{
 				// render the lightmap
 				Render_lightMapping(stage, qtrue, qfalse); // no normalmapping.. it's added in a later stage
-			}
-			else
+			//}
+			/*else
 			{
 				// LIGHTMAP_BY_VERTEX. Render only the vertex-colors.
 				// Because we use the generic shader for this, which needs a color map, we pass a "dummy" whiteImage
 				pStage->bundle[TB_COLORMAP].image[0] = tr.whiteImage;
 				Render_generic(stage);
-			}
+			}*/
 			break;
 		}
 		case ST_DIFFUSEMAP:
