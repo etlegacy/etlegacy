@@ -3436,6 +3436,7 @@ void R_CreateBuiltinImages(void)
 	Com_Memset(data, 0, sizeof(data));
 	tr.blackImage = R_CreateImage("_black", (byte *) data, 8, 8, IF_NOPICMIP, FT_LINEAR, WT_REPEAT);
 
+	// this is for depth rendering
 	// red
 	for (x = 0; x < DEFAULT_SIZE; x++)
 	{
@@ -3449,7 +3450,7 @@ void R_CreateBuiltinImages(void)
 	}
 	tr.redImage = R_CreateImage("_red", (byte *) data, 8, 8, IF_NOPICMIP, FT_LINEAR, WT_REPEAT);
 
-	// green
+	/* green
 	for (x = 0; x < DEFAULT_SIZE; x++)
 	{
 		for (y = 0; y < DEFAULT_SIZE; y++)
@@ -3474,7 +3475,7 @@ void R_CreateBuiltinImages(void)
 		}
 	}
 	tr.blueImage = R_CreateImage("_blue", (byte *) data, 8, 8, IF_NOPICMIP, FT_LINEAR, WT_REPEAT);
-
+	*/
 	// generate a default normalmap with a zero heightmap
 	for (x = 0; x < DEFAULT_SIZE; x++)
 	{
