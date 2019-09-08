@@ -40,7 +40,7 @@ menuDef {
 	SUBWINDOW( 6, GRAPHICS_Y, (SUBWINDOW_WIDTH_L), 160, _("GRAPHICS") )
 #ifdef LEGACY
 	COMBO( 8, GRAPHICS_Y+16, (SUBWINDOW_WIDTH_L)-4, 10, _("Renderer:"), .2, 8, "cl_renderer", LEGACY_RENDERERS, exec vid_restart, _("Set your desired renderer (does a video restart)") )
-	MULTIACTION( 8, GRAPHICS_Y+28, (SUBWINDOW_WIDTH_L)-4, 10, _("Overall Quality:"), .2, 8, "ui_glCustom", cvarFloatList { "fastest" 3 "fast" 2 "normal" 1 "high" 0 }, uiScript update "ui_glCustom", _("Set overall video quality") )
+	MULTIACTION( 8, GRAPHICS_Y+28, (SUBWINDOW_WIDTH_L)-4, 10, _("Overall Quality:"), .2, 8, "ui_glCustom", cvarFloatList { "Android" 4 "fastest" 3 "fast" 2 "normal" 1 "high" 0 }, uiScript update "ui_glCustom", _("Set overall video quality") )
 	COMBO( 8, GRAPHICS_Y+40, (SUBWINDOW_WIDTH_L)-4, 10, _("Resolution:"), .2, 8, "ui_r_mode", LEGACY_RESOLUTIONS, uiScript glCustom, _("Set video resolution of the game") )
 	NUMERICFIELD( 8, GRAPHICS_Y+52, (SUBWINDOW_WIDTH_L)-4, 10, _("Custom Width:"), .2, 8, "r_customwidth", 5, _("Specifies custom resolution width (requires custom resolution set - *Use at your own risk*)") )
 	NUMERICFIELD( 8, GRAPHICS_Y+64, (SUBWINDOW_WIDTH_L)-4, 10, _("Custom Height:"), .2, 8, "r_customheight", 5, _("Specifies custom resolution height (requires custom resolution set - *Use at your own risk*)") )
@@ -108,7 +108,7 @@ menuDef {
 // Downloads //
 #define DOWNLOADS_Y 224
 	SUBWINDOW( 6+(SUBWINDOW_WIDTH_L)+6, DOWNLOADS_Y, (SUBWINDOW_WIDTH_R), 40, _("DOWNLOADS") )
-	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, DOWNLOADS_Y+16, (SUBWINDOW_WIDTH_L)-4, 10, _("Get Missing Files:"), .2, 8, "cl_allowDownload", cvarFloatList { "Disabled" 0 "Enabled" 1 "Enabled & no sound" 2 }, _("Download missing files when available") )	
+	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, DOWNLOADS_Y+16, (SUBWINDOW_WIDTH_L)-4, 10, _("Get Missing Files:"), .2, 8, "cl_allowDownload", cvarFloatList { "Disabled" 0 "Enabled" 1 "Enabled & no sound" 2 }, _("Download missing files when available") )
 	YESNO( 6+(SUBWINDOW_WIDTH_L)+6+2, DOWNLOADS_Y+28, (SUBWINDOW_WIDTH_L)-4, 10, _("Use HTTP/FTP Downloads:"), .2, 8, "cl_wwwDownload", _("Enables or disables http/ftp downloads") )
 
 // IRC //
