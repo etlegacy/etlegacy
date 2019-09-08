@@ -3660,7 +3660,7 @@ void R_InitImages(void)
 	Com_Memset(r_imageHashTable, 0, sizeof(r_imageHashTable));
 	Com_InitGrowList(&tr.images, 4096);
 	Com_InitGrowList(&tr.lightmaps, 128);
-	Com_InitGrowList(&tr.deluxemaps, 128);
+	//Com_InitGrowList(&tr.deluxemaps, 128);
 
 	// build brightness translation tables
 	R_SetColorMappings();
@@ -3708,7 +3708,7 @@ void R_ShutdownImages(void)
 
 	Com_DestroyGrowList(&tr.images);
 	Com_DestroyGrowList(&tr.lightmaps);
-	Com_DestroyGrowList(&tr.deluxemaps);
+	//Com_DestroyGrowList(&tr.deluxemaps);
 	Com_DestroyGrowList(&tr.cubeProbes);
 #if 0 // cubeProbe hash values
 	// the cubeProbe hash values can also be freed (the images have just been removed)

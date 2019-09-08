@@ -3489,7 +3489,7 @@ typedef struct
 	int frameSceneNum;                      ///< zeroed at RE_BeginFrame
 
 	qboolean worldMapLoaded;
-	qboolean worldDeluxeMapping;
+	//qboolean worldDeluxeMapping;
 	qboolean worldHDR_RGBE;
 	world_t *world;
 
@@ -3573,7 +3573,7 @@ typedef struct
 
 	int numLightmaps;
 	growList_t lightmaps;
-	growList_t deluxemaps;
+	//growList_t deluxemaps;
 
 	image_t *fatLightmap;
 	int fatLightmapSize;
@@ -3839,7 +3839,7 @@ extern cvar_t *r_showLightGrid;
 extern cvar_t *r_showOcclusionQueries;
 extern cvar_t *r_showBatches;
 extern cvar_t *r_showLightMaps;                 ///< render lightmaps only
-extern cvar_t *r_showDeluxeMaps;
+//extern cvar_t *r_showDeluxeMaps;
 extern cvar_t *r_showCubeProbes;
 extern cvar_t *r_showBspNodes;
 extern cvar_t *r_showParallelShadowSplits;
