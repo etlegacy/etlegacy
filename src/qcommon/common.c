@@ -2629,6 +2629,11 @@ static void Com_Crash_f(void)
  */
 void Com_SetRecommended()
 {
+#ifdef __ANDROID__
+	Com_Printf("Found Android Device\n");
+	Cbuf_AddText("exec preset_android.cfg\n");
+	Cvar_Set("com_recommended", "1");
+#else
 	cvar_t   *r_highQualityVideo;
 	qboolean goodVideo;
 	// will use this for recommended settings as well.. do i outside the lower check so it gets done even with command line stuff
@@ -2647,6 +2652,7 @@ void Com_SetRecommended()
 		Cbuf_AddText("exec preset_normal.cfg\n");
 		Cvar_Set("com_recommended", "1");
 	}
+#endif
 }
 
 /**
