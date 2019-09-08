@@ -1335,7 +1335,7 @@ void R_Register(void)
 	r_parallaxDepthScale = ri.Cvar_Get("r_parallaxDepthScale", "0.03", CVAR_CHEAT);
 	// toon lightning
 	r_wrapAroundLighting  = ri.Cvar_Get("r_wrapAroundLighting", "0", CVAR_CHEAT | CVAR_LATCH);
-	r_diffuseLighting = ri.Cvar_Get("r_diffuseLighting", "0.2", CVAR_ARCHIVE | CVAR_LATCH);      // cheat?
+	r_diffuseLighting = ri.Cvar_Get("r_diffuseLighting", "0.35", CVAR_ARCHIVE | CVAR_LATCH);      // cheat?
 	//rim light gives your shading a nice volumentric effect which can greatly enhance the contrast with the background
 	r_rimLighting = ri.Cvar_Get("r_rimLighting", "0", CVAR_CHEAT | CVAR_LATCH); // was CVAR_ARCHIVE | CVAR_LATCH
 	                                                                            // FIXME: make rim lighting work with diffuse maps/textures
