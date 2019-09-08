@@ -5,7 +5,6 @@ textures/doors/door_c01b
     qer_editorimage textures/doors/door_c01b.tga
 	diffusemap textures/doors/door_c01b.tga
 	bumpmap textures/doors/door_c01b_n.tga
-	specularmap textures/doors/door_c01b_r.tga
 	surfaceparm woodsteps
 	implicitMap -
 }
@@ -15,7 +14,6 @@ textures/doors/door_c05
     qer_editorimage textures/doors/door_c05.tga
 	diffusemap textures/doors/door_c05.tga
 	bumpmap textures/doors/door_c05_n.tga
-	specularmap textures/doors/door_c05_r.tga
 	surfaceparm woodsteps
 	implicitMap -
 }
@@ -25,7 +23,6 @@ textures/doors/door_c08
     qer_editorimage textures/doors/door_c08.tga
 	diffusemap textures/doors/door_c08.tga
 	bumpmap textures/doors/door_c08_n.tga
-	specularmap textures/doors/door_c08_r.tga
 	surfaceparm woodsteps
 	implicitMap -
 }
@@ -35,7 +32,6 @@ textures/doors/door_c13
     qer_editorimage textures/doors/door_c13.tga
 	diffusemap textures/doors/door_c13.tga
 	bumpmap textures/doors/door_c13_n.tga
-	specularmap textures/doors/door_c13_r.tga
 	surfaceparm woodsteps
 	implicitMap -
 }

@@ -5,7 +5,6 @@ textures/egypt_windows_sd/windowtrim01
     qer_editorimage textures/egypt_windows_sd/windowtrim01.tga
 	diffusemap textures/egypt_windows_sd/windowtrim01.tga
 	bumpmap textures/egypt_windows_sd/windowtrim01_n.tga
-	specularmap textures/egypt_windows_sd/windowtrim01_r.tga
 	cull disable
 	nomipmaps
 	surfaceparm metalsteps
