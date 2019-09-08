@@ -4300,6 +4300,9 @@ void UI_Update(const char *name)
 		case 3:     // fastest
 			trap_Cmd_ExecuteText(EXEC_APPEND, "exec preset_fastest_ui.cfg\n");
 			break;
+		case 4:     // Android
+			trap_Cmd_ExecuteText(EXEC_APPEND, "exec preset_android_ui.cfg\n");
+			break;
 		}
 	}
 	else if (Q_stricmp(name, "ui_mousePitch") == 0)
@@ -4339,7 +4342,7 @@ void UI_GLCustom()
 		break;
 	}
 
-	trap_Cvar_Set("ui_glCustom", "4");
+	trap_Cvar_Set("ui_glCustom", "5");
 }
 
 
@@ -8673,7 +8676,7 @@ vmCvar_t ui_serverBrowserSettings;
 static cvarTable_t cvarTable[] =
 {
 	{ NULL,                             "ui_textfield_temp",                   "",                           CVAR_TEMP,                      0 },
-	{ &ui_glCustom,                     "ui_glCustom",                         "4",                          CVAR_ARCHIVE,                   0 },
+	{ &ui_glCustom,                     "ui_glCustom",                         "5",                          CVAR_ARCHIVE,                   0 },
 
 	{ &ui_friendlyFire,                 "g_friendlyFire",                      "1",                          CVAR_ARCHIVE,                   0 },
 
