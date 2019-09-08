@@ -6,7 +6,6 @@ Enemy Territory: Legacy [![Travis Status](https://travis-ci.org/etlegacy/etlegac
 * Website: [https://www.etlegacy.com](https://www.etlegacy.com)
 * Downloads: [https://www.etlegacy.com/download](https://www.etlegacy.com/download)
 * Wiki/FAQ: [https://dev.etlegacy.com/projects/etlegacy/wiki](https://dev.etlegacy.com/projects/etlegacy/wiki)
-* Forums: [https://dev.etlegacy.com/projects/etlegacy/boards](https://dev.etlegacy.com/projects/etlegacy/boards)
 * Development (bug reports and feature requests): [https://dev.etlegacy.com](https://dev.etlegacy.com)
 * Repository: [https://github.com/etlegacy/etlegacy](https://github.com/etlegacy/etlegacy)
 * Assets Repository: [https://drive.google.com](https://drive.google.com/drive/folders/0Bw7Yu-pqzcSaLXEtVEVjZF82UEU)
@@ -32,14 +31,20 @@ For more information consult our [changelog](https://dev.etlegacy.com/projects/e
 ET: Legacy development is a collaborative effort done in an open, transparent and friendly manner.
 Anyone is welcome to join our efforts!
 
+### Get involved
+
+If you are interested to join us, ensure to read first our contribution guidelines:
+
+* [How to commit your code](https://dev.etlegacy.com/projects/etlegacy/wiki/How_to_commit_Your_Code)
+* [Coding conventions](https://dev.etlegacy.com/projects/etlegacy/wiki/Coding_Conventions)
 
 ### Donations
 
-By request, we have finally managed to create a PayPal account for donations. So if you like the
-ET: Legacy project or our game server, don't hesitate to send us some cash at **Paypal: etlegacy@liebt-dich.info**
+By request, we set up a PayPal account for donations. So if you like the ET: Legacy project or our game server, don't
+hesitate to send us some cash at **Paypal: etlegacy@liebt-dich.info**
 
 Your contribution will be used to pay for our server and domain. To clarify, the project is not dependant
-on donations. But we don't reject them if you want to honor our work. Thank you!
+on donations, but we don't reject them if you want to honor our work. Thank you!
 
 
 GENERAL NOTES
@@ -47,7 +52,7 @@ GENERAL NOTES
 
 ### Game data
 
-Wolfenstein: Enemy Territory is a free release, and can be downloaded from [Splash Damage](http://www.splashdamage.com/content/download-wolfenstein-enemy-territory).
+Wolfenstein: Enemy Territory is a free release, and can be downloaded from [Splash Damage](https://www.splashdamage.com/games/wolfenstein-enemy-territory/).
 
 This source release contains only the engine and mod code but not any game data,
 which is still covered by the original EULA and must be obeyed as usual.
@@ -68,7 +73,7 @@ ET: Legacy clients also cannot connect to servers running the ETPro mod.
 
 Please remember that 64 bit ET: Legacy clients can only connect to servers running
 mods providing a 64 bit version. You will be able to play 32 bit-only mods only if
-you compile ET: Legacy on a 32 bit system or crosscompile it for 32 bit architecture
+you compile ET: Legacy on a 32 bit system or cross-compile it for 32 bit architecture
 on a 64 bit system.
 
 At the moment, only the Legacy mod is available in 64 bit version, while all other
@@ -192,7 +197,7 @@ By default, MinGW name is set to *i686-w64-mingw32*. You may have to change it i
 
 Install:
 
-  1. [Visual Studio Community](http://www.visualstudio.com/)
+  1. [Visual Studio Community](http://www.visualstudio.com/) with the _Desktop Development with C++_ workload
   2. [CMake](http://www.cmake.org/) and make sure it is added to your system PATH
 
 * option A: **easybuild**
@@ -213,7 +218,7 @@ In the command prompt, run:
 
 or
 
-    cmake -G "Visual Studio 10" -DBUNDLED_LIBS=YES ..
+    cmake -G "Visual Studio 16" -DBUNDLED_LIBS=YES ..
 
 and open the resulting project in Visual Studio.
 
@@ -228,10 +233,6 @@ and open the resulting project in Visual Studio.
   [GnuWin](http://gnuwin32.sourceforge.net/packages/sed.htm) and place it into your system path or
   copy it into `MSVC/VC/bin`. It also comes with Git and can be placed into your system path
   automatically if you select that option during Git installation.
-
-  * In order to compile the jpeg library properly there is a need for a file named 'win32.mak'.
-  Unfortunately this file isn't shipped with Windows 8.0 and 8.1 SDK versions.
-  Solution: Get the Windows SDK 7 and copy 'win32.mak' to `libs/jpeturbo/`.
 
 
 ### Mac OS X
