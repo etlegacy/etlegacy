@@ -550,10 +550,8 @@ void G_SkillRatingGetUserRating(gclient_t *cl, qboolean firstTime)
 		if (result == SQLITE_ROW)
 		{
 			// assign user data
-			sr_data.mu          = sqlite3_column_double(sqlstmt, 1);
-			sr_data.sigma       = sqlite3_column_double(sqlstmt, 2);
-			sr_data.time_axis   = 0; // failsafe
-			sr_data.time_allies = 0; // failsafe
+			sr_data.mu    = sqlite3_column_double(sqlstmt, 1);
+			sr_data.sigma = sqlite3_column_double(sqlstmt, 2);
 		}
 		else
 		{
@@ -561,10 +559,8 @@ void G_SkillRatingGetUserRating(gclient_t *cl, qboolean firstTime)
 			if (result == SQLITE_DONE)
 			{
 				// assign default values
-				sr_data.mu          = MU;
-				sr_data.sigma       = SIGMA;
-				sr_data.time_axis   = 0; // failsafe
-				sr_data.time_allies = 0; // failsafe
+				sr_data.mu    = MU;
+				sr_data.sigma = SIGMA;
 			}
 			else
 			{
@@ -585,10 +581,8 @@ void G_SkillRatingGetUserRating(gclient_t *cl, qboolean firstTime)
 		}
 
 		// assign user data to session
-		cl->sess.mu          = sr_data.mu;
-		cl->sess.sigma       = sr_data.sigma;
-		cl->sess.time_axis   = sr_data.time_axis;   // failsafe
-		cl->sess.time_allies = sr_data.time_allies; // failsafe
+		cl->sess.mu    = sr_data.mu;
+		cl->sess.sigma = sr_data.sigma;
 
 		// prepare delta rating
 		if (!level.intermissionQueued)
