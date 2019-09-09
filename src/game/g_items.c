@@ -553,25 +553,19 @@ int Pickup_Weapon(gentity_t *ent, gentity_t *other)
 			other->client->ps.ammoclip[GetWeaponTableData(ent->item->giWeapon)->clipIndex] = 0;
 			other->client->ps.ammo[GetWeaponTableData(ent->item->giWeapon)->ammoIndex]     = 0;
 
-			if (GetWeaponTableData(ent->item->giWeapon)->type & WEAPON_TYPE_MORTAR)
+			if (GetWeaponTableData(ent->item->giWeapon)->useClip)
 			{
-				other->client->ps.ammo[GetWeaponTableData(ent->item->giWeapon)->clipIndex] = quantity;
-
-				// secondary weapon ammo
-				if (ent->delay != 0.f)
-				{
-					Add_Ammo(other, GetWeaponTableData(ent->item->giWeapon)->weapAlts, ent->delay, qfalse);
-				}
+				other->client->ps.ammoclip[GetWeaponTableData(ent->item->giWeapon)->clipIndex] = quantity;
 			}
 			else
 			{
-				other->client->ps.ammoclip[GetWeaponTableData(ent->item->giWeapon)->clipIndex] = quantity;
+				other->client->ps.ammo[GetWeaponTableData(ent->item->giWeapon)->clipIndex] = quantity;
+			}
 
-				// secondary weapon ammo
-				if (ent->delay != 0.f)
-				{
-					other->client->ps.ammo[GetWeaponTableData(ent->item->giWeapon)->weapAlts] = ent->delay;
-				}
+			// secondary weapon ammo (riflenade)
+			if (ent->delay != 0.f)
+			{
+				other->client->ps.ammo[GetWeaponTableData(ent->item->giWeapon)->weapAlts] = ent->delay;
 			}
 		}
 		else
