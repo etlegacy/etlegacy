@@ -3753,6 +3753,10 @@ void BG_PlayerStateToEntityState(playerState_t *ps, entityState_t *s, int time, 
 		s->eventParm = ps->eventParms[seq];
 		ps->entityEventSequence++;
 	}
+	else if (ps->eventSequence == 0)
+	{
+		s->eventSequence = 0;
+	}
 
 	// now using a circular list of events for all entities
 	// add any new events that have been added to the playerState_t

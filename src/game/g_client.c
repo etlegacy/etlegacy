@@ -2831,7 +2831,7 @@ void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean
 	client->ps.stats[STAT_MAX_HEALTH] = client->pers.maxHealth;
 	client->ps.eFlags                 = flags;
 	client->deathTime                 = savedDeathTime;
-
+	
 	// Reset/restore special weapon time
 	if (
 		((g_stickyCharge.integer & STICKYCHARGE_SELFKILL) && isMortalSelfDamage(ent))
