@@ -619,7 +619,7 @@ typedef struct
 
 	// callbacks to test the world
 	// these will be different functions during game and cgame
-	void (*trace)(trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask);
+	void (*trace)(trace_t * results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask);
 	int (*pointcontents)(const vec3_t point, int passEntityNum);
 
 	/// used to determine if the player move is for prediction if it is, the movement should trigger no events
@@ -628,7 +628,7 @@ typedef struct
 } pmove_t;
 
 // if a full pmove isn't done on the client, you can just update the angles
-void PM_UpdateViewAngles(playerState_t *ps, pmoveExt_t *pmext, usercmd_t *cmd, void(trace) (trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask), int tracemask);
+void PM_UpdateViewAngles(playerState_t *ps, pmoveExt_t *pmext, usercmd_t *cmd, void (trace) (trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask), int tracemask);
 int Pmove(pmove_t *pmove);
 void PmovePredict(pmove_t *pmove, float frametime);
 
@@ -1124,51 +1124,51 @@ typedef struct
  */
 typedef struct weapontable_s
 {
-	int weapon;                     ///< bg - the weapon id reference
-	int item;                       ///< bg - the item id linked to the weapon entity
-	int team;                       ///< bg -
-	skillType_t skillBased;         ///< bg -
-	weapon_t weapAlts;              ///< bg - the id of the alternative weapon
-	weapon_t weapEquiv;             ///< bg - the id of the opposite team's weapon (but not for WP_GPG40 <-> WP_M7 - see CG_OutOfAmmoChange).
-	weapon_t akimboSideArm;         ///< bg -
+	int weapon;                     ///< bg      - the weapon id reference
+	int item;                       ///< bg g    - the item id linked to the weapon entity
+	int team;                       ///< bg g    -
+	skillType_t skillBased;         ///< bg g cg -
+	weapon_t weapAlts;              ///< bg g cg - the id of the alternative weapon
+	weapon_t weapEquiv;             ///< g cg    - the id of the opposite team's weapon (but not for WP_GPG40 <-> WP_M7 - see CG_OutOfAmmoChange).
+	weapon_t akimboSideArm;         ///< bg g cg -
 
-	weapon_t ammoIndex;             ///< bg - type of weapon ammo this uses.
-	weapon_t clipIndex;             ///< bg - which clip this weapon uses. This allows the sniper rifle to use the same clip as the garand, etc.
+	weapon_t ammoIndex;             ///< bg g cg - type of weapon ammo this uses.
+	weapon_t clipIndex;             ///< bg g cg - which clip this weapon uses. This allows the sniper rifle to use the same clip as the garand, etc.
 
-	int damage;                     ///< g -
-	float spread;                   ///< bg -
-	float spreadScale;              ///< bg -
-	int splashDamage;               ///< g -
-	int splashRadius;               ///< g -
+	int damage;                     ///< g    -
+	float spread;                   ///< g cg -
+	float spreadScale;              ///< bg   -
+	int splashDamage;               ///< g    -
+	int splashRadius;               ///< g    -
 
-	int type;                       ///< bg -
-	int firingMode;                 ///< bg -
-	int attributes;                 ///< bg -
+	int type;                       ///< bg g cg -
+	int firingMode;                 ///< bg g cg -
+	int attributes;                 ///< bg g cg -
 
 	int zoomOut;                    ///< cg -
 	int zoomIn;                     ///< cg -
 
 	// client
 	// icons
-	const char *desc;               ///< bg - description for spawn weapons
+	const char *desc;               ///< g cg  - description for spawn weapons
 
-	unsigned int indexWeaponStat;   ///< bg - index for weapon stat info
+	unsigned int indexWeaponStat;   ///< g cg  - index for weapon stat info
 
-	qboolean useAmmo;               ///< bg -
-	qboolean useClip;               ///< bg -
+	qboolean useAmmo;               ///< bg g cg -
+	qboolean useClip;               ///< bg g cg -
 
-	int maxAmmo;                    ///< bg - max player ammo carrying capacity.
-	int uses;                       ///< bg - how many 'rounds' it takes/costs to fire one cycle.
-	int maxClip;                    ///< bg - max 'rounds' in a clip.
-	int reloadTime;                 ///< bg - time from start of reload until ready to fire.
-	int fireDelayTime;              ///< bg - time from pressing 'fire' until first shot is fired. (used for delaying fire while weapon is 'readied' in animation)
-	int nextShotTime;               ///< bg - when firing continuously, this is the time between shots
-	int grenadeTime;                ///< bg -
-	int aimSpreadScaleAdd;          ///< bg -
+	int maxAmmo;                    ///< bg      - max player ammo carrying capacity.
+	int uses;                       ///< bg      - how many 'rounds' it takes/costs to fire one cycle.
+	int maxClip;                    ///< bg g    - max 'rounds' in a clip.
+	int reloadTime;                 ///< bg      - time from start of reload until ready to fire.
+	int fireDelayTime;              ///< bg      - time from pressing 'fire' until first shot is fired. (used for delaying fire while weapon is 'readied' in animation)
+	int nextShotTime;               ///< bg      - when firing continuously, this is the time between shots
+	int grenadeTime;                ///< bg g cg -
+	int aimSpreadScaleAdd;          ///< bg      -
 
-	int maxHeat;                    ///< bg - max active firing time before weapon 'overheats' (at which point the weapon will fail)
-	int coolRate;                   ///< bg - how fast the weapon cools down. (per second)
-	int heatRecoveryTime;           ///< bg - time from overheats until weapon can fire again
+	int maxHeat;                    ///< bg g cg - max active firing time before weapon 'overheats' (at which point the weapon will fail)
+	int coolRate;                   ///< bg      - how fast the weapon cools down. (per second)
+	int heatRecoveryTime;           ///< bg      - time from overheats until weapon can fire again
 
 	int switchTimeBegin;            ///< bg -
 	int switchTimeFinish;           ///< bg -
@@ -1176,7 +1176,7 @@ typedef struct weapontable_s
 	int altSwitchTimeTo;            ///< bg -
 
 	float knockback;                ///< bg -
-	int muzzlePointOffset[3];       ///< g - forward, left, up
+	int muzzlePointOffset[3];       ///< g  - forward, left, up
 
 	int weapRecoilDuration;         ///< bg -
 	float weapRecoilPitch[2];       ///< bg -
@@ -1185,7 +1185,7 @@ typedef struct weapontable_s
 	const char *className;          ///< g -
 	const char *weapFile;           ///< cg -
 
-	float chargeTimeCoeff[NUM_SKILL_LEVELS];      ///< bg -
+	float chargeTimeCoeff[NUM_SKILL_LEVELS];      ///< bg cg -
 
 	meansOfDeath_t mod;                           ///< g - means of death
 	meansOfDeath_t splashMod;                     ///< g - splash means of death
@@ -1205,17 +1205,17 @@ typedef struct weapontable_s
 typedef struct modtable_s
 {
 	meansOfDeath_t mod;                             ///< reference
-	weapon_t weaponIcon;                            ///< g
+	weapon_t weaponIcon;                            ///< cg g
 
 	qboolean isHeadshot;                            ///< g
 	qboolean isExplosive;                           ///< g
 
 	int weaponClassForMOD;                          ///< g
 	int noYellMedic;                                ///< g
-	const char *obituaryKillMessage1;               ///< g
-	const char *obituaryKillMessage2;               ///< g
-	const char *obituarySelfKillMessage;            ///< g
-	const char *obituaryNoAttackerMessage;          ///< g
+	const char *obituaryKillMessage1;               ///< cg
+	const char *obituaryKillMessage2;               ///< cg
+	const char *obituarySelfKillMessage;            ///< cg
+	const char *obituaryNoAttackerMessage;          ///< cg
 	const char *modName;                            ///< g - These are just for logging, the client prints its own messages
 	skillType_t skillType;                          ///< g
 	float defaultKillPoints;                        ///< g
@@ -1888,23 +1888,23 @@ typedef enum item_s
  */
 typedef struct gitem_s
 {
-	item_t id;                  ///< identifier
-	const char *classname;      ///< spawning name
-	const char *pickup_sound;
-	const char *world_model[MAX_ITEM_MODELS];
+	item_t id;                  ///< g - identifier
+	const char *classname;      ///< g cg bg - spawning name
+	const char *pickup_sound;   ///< cg -
+	const char *world_model[MAX_ITEM_MODELS];   ///< g cg -
 
-	const char *icon;
-	const char *ammoicon;
-	const char *pickup_name;    ///< for printing on pickup
+	const char *icon;           ///< cg
+	const char *ammoicon;       ///< unused
+	const char *pickup_name;    ///< bg cg - for printing on pickup
 
-	int quantity;               ///< for ammo how much, or duration of powerup (value not necessary for ammo/health.  that value set in gameskillnumber[] below)
-	itemType_t giType;          ///< IT_* flags
+	int quantity;               ///< g - for ammo how much, or duration of powerup (value not necessary for ammo/health.  that value set in gameskillnumber[] below)
+	itemType_t giType;          ///< g cg bg - IT_* flags
 
-	weapon_t giWeapon;
-	powerup_t giPowerUp;
+	weapon_t giWeapon;          ///< g cg bg -
+	powerup_t giPowerUp;        ///< g cg bg -
 
 #ifdef CGAMEDLL
-	itemInfo_t itemInfo;
+	itemInfo_t itemInfo;        ///< cg -
 #endif
 
 } gitem_t;
@@ -2909,8 +2909,8 @@ typedef enum popupMessageBigType_e
 #define HITBOXBIT_LEGS   2048
 #define HITBOXBIT_CLIENT 4096
 
-void PM_TraceLegs(trace_t *trace, float *legsOffset, vec3_t start, vec3_t end, trace_t *bodytrace, vec3_t viewangles, void(tracefunc)(trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask), int ignoreent, int tracemask);
-void PM_TraceHead(trace_t *trace, vec3_t start, vec3_t end, trace_t *bodytrace, vec3_t viewangles, void(tracefunc)(trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask), int ignoreent, int tracemask);
+void PM_TraceLegs(trace_t *trace, float *legsOffset, vec3_t start, vec3_t end, trace_t *bodytrace, vec3_t viewangles, void (tracefunc)(trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask), int ignoreent, int tracemask);
+void PM_TraceHead(trace_t *trace, vec3_t start, vec3_t end, trace_t *bodytrace, vec3_t viewangles, void (tracefunc)(trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask), int ignoreent, int tracemask);
 void PM_TraceAllParts(trace_t *trace, float *legsOffset, vec3_t start, vec3_t end);
 void PM_TraceAll(trace_t *trace, vec3_t start, vec3_t end);
 
