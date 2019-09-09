@@ -494,7 +494,7 @@ int Pickup_Weapon(gentity_t *ent, gentity_t *other)
 	{
 		Add_Ammo(other, ent->item->giWeapon, quantity, qfalse);
 
-		// secondary weapon ammo
+		// secondary weapon ammo (riflenade)
 		if (ent->delay != 0.f)
 		{
 			Add_Ammo(other, GetWeaponTableData(ent->item->giWeapon)->weapAlts, ent->delay, qfalse);
@@ -502,6 +502,9 @@ int Pickup_Weapon(gentity_t *ent, gentity_t *other)
 	}
 	else
 	{
+		weapon_t primaryWeapon;
+		qboolean canPickup;
+
 		if (level.time - other->client->dropWeaponTime < 1000)
 		{
 			return 0;
@@ -514,63 +517,61 @@ int Pickup_Weapon(gentity_t *ent, gentity_t *other)
 		}
 
 		// see if we can pick it up
-		if (G_CanPickupWeapon(ent->item->giWeapon, other))
+		canPickup = G_CanPickupWeapon(ent->item->giWeapon, other);
+
+		if (!canPickup)
 		{
-			weapon_t primaryWeapon;
+			return 0;
+		}
 
-			if (other->client->sess.playerType == PC_SOLDIER && other->client->sess.skill[SK_HEAVY_WEAPONS] >= 4)
-			{
-				primaryWeapon = G_GetPrimaryWeaponForClientSoldier(ent->item->giWeapon, other->client);
-			}
-			else
-			{
-				primaryWeapon = G_GetPrimaryWeaponForClient(other->client);
-			}
-
-			// drop our primary weapon if one exist
-			if (primaryWeapon)
-			{
-				G_DropWeapon(other, primaryWeapon);
-			}
-
-			// now pickup the other one
-			other->client->dropWeaponTime = level.time;
-
-			// add the weapon
-			COM_BitSet(other->client->ps.weapons, ent->item->giWeapon);
-
-			// fixup mauser/sniper issues
-			if (GetWeaponTableData(ent->item->giWeapon)->weapAlts)
-			{
-				weapon_t weapAlts = GetWeaponTableData(ent->item->giWeapon)->weapAlts;
-
-				if (GetWeaponTableData(weapAlts)->type & (WEAPON_TYPE_RIFLENADE | WEAPON_TYPE_SCOPED | WEAPON_TYPE_SET))
-				{
-					COM_BitSet(other->client->ps.weapons, weapAlts);
-				}
-			}
-
-			other->client->ps.ammoclip[GetWeaponTableData(ent->item->giWeapon)->clipIndex] = 0;
-			other->client->ps.ammo[GetWeaponTableData(ent->item->giWeapon)->ammoIndex]     = 0;
-
-			if (GetWeaponTableData(ent->item->giWeapon)->useClip)
-			{
-				other->client->ps.ammoclip[GetWeaponTableData(ent->item->giWeapon)->clipIndex] = quantity;
-			}
-			else
-			{
-				other->client->ps.ammo[GetWeaponTableData(ent->item->giWeapon)->clipIndex] = quantity;
-			}
-
-			// secondary weapon ammo (riflenade)
-			if (ent->delay != 0.f)
-			{
-				other->client->ps.ammo[GetWeaponTableData(ent->item->giWeapon)->weapAlts] = ent->delay;
-			}
+		if (other->client->sess.playerType == PC_SOLDIER && other->client->sess.skill[SK_HEAVY_WEAPONS] >= 4)
+		{
+			primaryWeapon = G_GetPrimaryWeaponForClientSoldier(ent->item->giWeapon, other->client);
 		}
 		else
 		{
-			return 0;
+			primaryWeapon = G_GetPrimaryWeaponForClient(other->client);
+		}
+
+		// drop our primary weapon if one exist
+		if (primaryWeapon)
+		{
+			G_DropWeapon(other, primaryWeapon);
+		}
+
+		// now pickup the other one
+		other->client->dropWeaponTime = level.time;
+
+		// add the weapon
+		COM_BitSet(other->client->ps.weapons, ent->item->giWeapon);
+
+		// fixup mauser/sniper issues
+		if (GetWeaponTableData(ent->item->giWeapon)->weapAlts)
+		{
+			weapon_t weapAlts = GetWeaponTableData(ent->item->giWeapon)->weapAlts;
+
+			if (GetWeaponTableData(weapAlts)->type & (WEAPON_TYPE_RIFLENADE | WEAPON_TYPE_SCOPED | WEAPON_TYPE_SET))
+			{
+				COM_BitSet(other->client->ps.weapons, weapAlts);
+			}
+		}
+
+		other->client->ps.ammoclip[GetWeaponTableData(ent->item->giWeapon)->clipIndex] = 0;
+		other->client->ps.ammo[GetWeaponTableData(ent->item->giWeapon)->ammoIndex]     = 0;
+
+		if (GetWeaponTableData(ent->item->giWeapon)->useClip)
+		{
+			other->client->ps.ammoclip[GetWeaponTableData(ent->item->giWeapon)->clipIndex] = quantity;
+		}
+		else
+		{
+			other->client->ps.ammo[GetWeaponTableData(ent->item->giWeapon)->clipIndex] = quantity;
+		}
+
+		// secondary weapon ammo (riflenade)
+		if (ent->delay != 0.f)
+		{
+			other->client->ps.ammo[GetWeaponTableData(ent->item->giWeapon)->weapAlts] = ent->delay;
 		}
 	}
 
