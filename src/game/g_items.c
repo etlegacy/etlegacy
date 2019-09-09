@@ -527,51 +527,50 @@ int Pickup_Weapon(gentity_t *ent, gentity_t *other)
 				primaryWeapon = G_GetPrimaryWeaponForClient(other->client);
 			}
 
-			// added parens around ambiguous &&
+			// drop our primary weapon if one exist
 			if (primaryWeapon)
 			{
-				// drop our primary weapon
 				G_DropWeapon(other, primaryWeapon);
+			}
 
-				// now pickup the other one
-				other->client->dropWeaponTime = level.time;
+			// now pickup the other one
+			other->client->dropWeaponTime = level.time;
 
-				// add the weapon
-				COM_BitSet(other->client->ps.weapons, ent->item->giWeapon);
+			// add the weapon
+			COM_BitSet(other->client->ps.weapons, ent->item->giWeapon);
 
-				// fixup mauser/sniper issues
-				if (GetWeaponTableData(ent->item->giWeapon)->weapAlts)
+			// fixup mauser/sniper issues
+			if (GetWeaponTableData(ent->item->giWeapon)->weapAlts)
+			{
+				weapon_t weapAlts = GetWeaponTableData(ent->item->giWeapon)->weapAlts;
+
+				if (GetWeaponTableData(weapAlts)->type & (WEAPON_TYPE_RIFLENADE | WEAPON_TYPE_SCOPED | WEAPON_TYPE_SET))
 				{
-					weapon_t weapAlts = GetWeaponTableData(ent->item->giWeapon)->weapAlts;
-
-					if (GetWeaponTableData(weapAlts)->type & (WEAPON_TYPE_RIFLENADE | WEAPON_TYPE_SCOPED | WEAPON_TYPE_SET))
-					{
-						COM_BitSet(other->client->ps.weapons, weapAlts);
-					}
+					COM_BitSet(other->client->ps.weapons, weapAlts);
 				}
+			}
 
-				other->client->ps.ammoclip[GetWeaponTableData(ent->item->giWeapon)->clipIndex] = 0;
-				other->client->ps.ammo[GetWeaponTableData(ent->item->giWeapon)->ammoIndex]     = 0;
+			other->client->ps.ammoclip[GetWeaponTableData(ent->item->giWeapon)->clipIndex] = 0;
+			other->client->ps.ammo[GetWeaponTableData(ent->item->giWeapon)->ammoIndex]     = 0;
 
-				if (GetWeaponTableData(ent->item->giWeapon)->type & WEAPON_TYPE_MORTAR)
+			if (GetWeaponTableData(ent->item->giWeapon)->type & WEAPON_TYPE_MORTAR)
+			{
+				other->client->ps.ammo[GetWeaponTableData(ent->item->giWeapon)->clipIndex] = quantity;
+
+				// secondary weapon ammo
+				if (ent->delay != 0.f)
 				{
-					other->client->ps.ammo[GetWeaponTableData(ent->item->giWeapon)->clipIndex] = quantity;
-
-					// secondary weapon ammo
-					if (ent->delay != 0.f)
-					{
-						Add_Ammo(other, GetWeaponTableData(ent->item->giWeapon)->weapAlts, ent->delay, qfalse);
-					}
+					Add_Ammo(other, GetWeaponTableData(ent->item->giWeapon)->weapAlts, ent->delay, qfalse);
 				}
-				else
-				{
-					other->client->ps.ammoclip[GetWeaponTableData(ent->item->giWeapon)->clipIndex] = quantity;
+			}
+			else
+			{
+				other->client->ps.ammoclip[GetWeaponTableData(ent->item->giWeapon)->clipIndex] = quantity;
 
-					// secondary weapon ammo
-					if (ent->delay != 0.f)
-					{
-						other->client->ps.ammo[GetWeaponTableData(ent->item->giWeapon)->weapAlts] = ent->delay;
-					}
+				// secondary weapon ammo
+				if (ent->delay != 0.f)
+				{
+					other->client->ps.ammo[GetWeaponTableData(ent->item->giWeapon)->weapAlts] = ent->delay;
 				}
 			}
 		}
