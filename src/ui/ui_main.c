@@ -4342,7 +4342,7 @@ void UI_GLCustom()
 		break;
 	}
 
-	trap_Cvar_Set("ui_glCustom", "5");
+	trap_Cvar_Set("ui_glCustom", "4");
 }
 
 
@@ -8676,7 +8676,7 @@ vmCvar_t ui_serverBrowserSettings;
 static cvarTable_t cvarTable[] =
 {
 	{ NULL,                             "ui_textfield_temp",                   "",                           CVAR_TEMP,                      0 },
-	{ &ui_glCustom,                     "ui_glCustom",                         "5",                          CVAR_ARCHIVE,                   0 },
+	{ &ui_glCustom,                     "ui_glCustom",                         "4",                          CVAR_ARCHIVE,                   0 },
 
 	{ &ui_friendlyFire,                 "g_friendlyFire",                      "1",                          CVAR_ARCHIVE,                   0 },
 
