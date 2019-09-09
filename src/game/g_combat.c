@@ -672,7 +672,7 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 #endif
 		limbo(self, qfalse);   // but no corpse
 	}
-	else if ((meansOfDeath == MOD_SUICIDE && g_gamestate.integer == GS_PLAYING))
+	else if (meansOfDeath == MOD_SUICIDE)
 	{
 #ifdef FEATURE_SERVERMDX
 		self->client->deathAnim = qtrue;    // add animation time
