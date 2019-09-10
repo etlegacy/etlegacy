@@ -784,10 +784,10 @@ void CG_DrawPMItemsBig(void)
 		return;
 	}
 
-	t = cg_pmWaitingListBig->time + PM_BIGPOPUP_TIME + PM_WAITTIME_BIG;
+	t = cg_pmWaitingListBig->time + PM_BIGPOPUP_TIME + cg_popupStayTime.value;
 	if (cg.time > t)
 	{
-		colourText[3] = 1 - ((cg.time - t) / (float)PM_FADETIME_BIG);
+		colourText[3] = cg_popupFadeTime.integer ? 1 - ((cg.time - t) / cg_popupFadeTime.value) : 0;
 	}
 
 	trap_R_SetColor(colourText);
