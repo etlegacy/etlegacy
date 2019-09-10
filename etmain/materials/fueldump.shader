@@ -908,7 +908,9 @@ textures/fueldump/icelake_top
 		blendfunc blend
 	}
 	{  
-		map textures/snow_sd/icelake3.tga
+		diffusemap textures/snow_sd/icelake3.tga
+	bumpmap textures/snow_sd/icelake3_n.tga
+	specularmap textures/snow_sd/icelake3_r.tga
 		blendfunc blend
 	}
 	{
