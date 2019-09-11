@@ -384,7 +384,7 @@ void CG_LaunchGib(centity_t *cent, vec3_t origin, vec3_t angles, vec3_t velocity
 	localEntity_t *le;
 	refEntity_t   *re;
 
-	if (!cg_blood.integer)
+	if (!cg_blood.integer || !cg_gibs.integer)
 	{
 		return;
 	}
