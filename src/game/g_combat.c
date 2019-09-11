@@ -1659,6 +1659,10 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 				{
 					limbo(targ, qtrue);
 				}
+				if( targ->health <= GIB_HEALTH )
+				{
+					GibEntity(targ, 0);
+				}
 			}
 			else
 			{
