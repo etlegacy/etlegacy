@@ -567,11 +567,6 @@ textures/fueldump/cave_dark
 	q3map_nonplanar
 	q3map_shadeangle 60
 	qer_editorimage textures/stone/mxrock3_a.tga
-	
-	{
-		map $lightmap
-		rgbGen identity
-	}
 	{
 		stage diffusemap
 		map textures/stone/mxrock3_a.tga
@@ -587,6 +582,11 @@ textures/fueldump/cave_dark
 	    map textures/stone/mxrock3_a_r.tga
 		rgbGen identity
 	}
+	{
+		lightmap $lightmap
+		blendFunc GL_DST_COLOR GL_ZERO
+		rgbgen identity
+	}
 }
 
 textures/fueldump/cave_floor
@@ -595,10 +595,7 @@ textures/fueldump/cave_floor
 	q3map_nonplanar
 	q3map_shadeangle 60
 	qer_editorimage textures/stone/mxrock1aa.tga
-	{
-		map $lightmap
-		rgbGen identity
-	}
+	
 	{
 		stage diffusemap
 		map textures/stone/mxrock1aa.tga
@@ -609,10 +606,11 @@ textures/fueldump/cave_floor
 		map textures/stone/mxrock1aa_n.tga
 		rgbGen identity
 	}
+	
 	{
-		stage specularmap
-		map textures/stone/mxrock1aa_r.tga
-		rgbGen identity
+		lightmap $lightmap
+		blendFunc GL_DST_COLOR GL_ZERO
+		rgbgen identity
 	}
 }
 
@@ -908,10 +906,8 @@ textures/fueldump/icelake_top
 		blendfunc blend
 	}
 	{  
-		diffusemap textures/snow_sd/icelake3.tga
-	bumpmap textures/snow_sd/icelake3_n.tga
-	specularmap textures/snow_sd/icelake3_r.tga
-		blendfunc blend
+	map textures/snow_sd/icelake3.tga
+	blendfunc blend
 	}
 	{
 		map $lightmap
