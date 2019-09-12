@@ -968,15 +968,14 @@ static void Render_lightMapping(int stage, qboolean asColorMap, qboolean normalM
 		//}
 	}
 
-	SelectTexture(TEX_LIGHTMAP);
+	
 	if (asColorMap)
 	{
+		SelectTexture(TEX_LIGHTMAP);
+	
 		BindLightMap(); // bind lightMap
 	}
-	else //if (tess.lightmapNum == LIGHTMAP_WHITEIMAGE)
-	{
-		GL_Bind(tr.whiteImage);
-	}
+	
 
 	GLSL_SetRequiredVertexPointers(trProg.gl_lightMappingShader);
 
@@ -1299,14 +1298,9 @@ static void Render_forwardLighting_DBS_omni(shaderStage_t *diffuseStage,
 
 		// bind u_SpecularMap
 		SelectTexture(TEX_SPECULAR);
-		if (r_forceSpecular->integer)
-		{
-			GL_Bind(diffuseStage->bundle[TB_DIFFUSEMAP].image[0]);
-		}
-		else
-		{
-			BindTexture(diffuseStage->bundle[TB_SPECULARMAP].image[0], tr.blackImage);
-		}
+		
+		BindTexture(diffuseStage->bundle[TB_SPECULARMAP].image[0], tr.blackImage);
+	
 		SetUniformMatrix16(UNIFORM_SPECULARTEXTUREMATRIX, tess.svars.texMatrices[TB_SPECULARMAP]);
 	}
 
@@ -1461,14 +1455,9 @@ static void Render_forwardLighting_DBS_proj(shaderStage_t *diffuseStage,
 
 		// bind u_SpecularMap
 		SelectTexture(TEX_SPECULAR);
-		if (r_forceSpecular->integer)
-		{
-			GL_Bind(diffuseStage->bundle[TB_DIFFUSEMAP].image[0]);
-		}
-		else
-		{
-			BindTexture(diffuseStage->bundle[TB_SPECULARMAP].image[0], tr.blackImage);
-		}
+		
+		BindTexture(diffuseStage->bundle[TB_SPECULARMAP].image[0], tr.blackImage);
+		
 
 		SetUniformMatrix16(UNIFORM_SPECULARTEXTUREMATRIX, tess.svars.texMatrices[TB_SPECULARMAP]);
 	}
@@ -1633,14 +1622,9 @@ static void Render_forwardLighting_DBS_directional(shaderStage_t *diffuseStage,
 
 		// bind u_SpecularMap
 		SelectTexture(TEX_SPECULAR);
-		if (r_forceSpecular->integer)
-		{
-			GL_Bind(diffuseStage->bundle[TB_DIFFUSEMAP].image[0]);
-		}
-		else
-		{
-			BindTexture(diffuseStage->bundle[TB_SPECULARMAP].image[0],tr.blackImage);
-		}
+		
+		BindTexture(diffuseStage->bundle[TB_SPECULARMAP].image[0],tr.blackImage);
+		
 		SetUniformMatrix16(UNIFORM_SPECULARTEXTUREMATRIX, tess.svars.texMatrices[TB_SPECULARMAP]);
 	}
 

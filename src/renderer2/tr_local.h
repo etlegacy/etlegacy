@@ -3774,7 +3774,7 @@ extern cvar_t *r_extGenerateMipmap;
 
 extern cvar_t *r_collapseStages;
 
-extern cvar_t *r_forceSpecular;
+
 extern cvar_t *r_specularExponent;
 extern cvar_t *r_specularExponent2;
 extern cvar_t *r_specularScale;
