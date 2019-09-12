@@ -336,8 +336,8 @@ models/mapobjects/cmarker/c_sandbag_allied
 {
 	qer_editorimage models/mapobjects/cmarker/allied_sack.tga
 	diffuseMap models/mapobjects/cmarker/allied_sack.tga
-	diffuseMap models/mapobjects/cmarker/allied_sack_n.tga
-	diffuseMap models/mapobjects/cmarker/allied_sack_r.tga    
+	bumpMap models/mapobjects/cmarker/allied_sack_n.tga
+	   
 }
 
 models/mapobjects/cmarker/c_sandbag_axis
@@ -345,7 +345,7 @@ models/mapobjects/cmarker/c_sandbag_axis
 	qer_editorimage models/mapobjects/cmarker/axis_sack.tga
 	diffuseMap models/mapobjects/cmarker/axis_sack.tga
 	bumpMap models/mapobjects/cmarker/axis_sack_n.tga
-	specularMap models/mapobjects/cmarker/axis_sack_r.tga
+
 }
 
 models/mapobjects/cmarker/c_shovel
@@ -470,7 +470,7 @@ models/mapobjects/flag/flag_dam
 models/mapobjects/furniture/sherman_s
 {
 	{
-		map models/mapobjects/furniture/sherman_r.tga
+		map models/mapobjects/furniture/sherman_s.tga
 		blendfunc blend
 		rgbGen identity
 	}
