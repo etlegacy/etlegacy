@@ -231,9 +231,6 @@ textures/decals/maps
 textures/decals/oil_slick
 {
     qer_editorimage textures/decals/oil_slick.tga
-	diffusemap textures/decals/oil_slick.tga
-	bumpmap textures/decals/oil_slick_n.tga
-	specularmap textures/decals/oil_slick_r.tga
 	surfaceparm slick
 	surfaceparm trans 
 	surfaceparm nonsolid 
