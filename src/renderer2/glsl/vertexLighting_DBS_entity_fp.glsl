@@ -159,10 +159,10 @@ void main()
 #else // USE_NORMAL_MAPPING
 
     vec4 color = vec4(diffuse.rgb, 1.0);
-
+	
 #endif // end USE_NORMAL_MAPPING
-
-    //color.rgb *= (u_LightColor + u_AmbientColor); // i really think mapper's ambient values are too high..use this if you want "glowing" entities :P
-    color.rgb *= u_LightColor;
+    //we need this for shadows on ents, see flag and stuff
+    color.rgb *= u_LightColor + u_AmbientColor* dotNL; 
+    //color.rgb *= u_LightColor;
 	gl_FragColor = color;
 }
