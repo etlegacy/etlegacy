@@ -1072,6 +1072,7 @@ models/mapobjects/pak75_sd/pak75-a
 	diffuseMap models/mapobjects/pak75_sd/pak75-a.tga
 	bumpMap models/mapobjects/pak75_sd/pak75-a_n.tga
 	specularMap models/mapobjects/pak75_sd/pak75-a_r.tga
+	implicitMask -
 }
 
 models/mapobjects/pak75_sd/pak75-a_s
@@ -1079,6 +1080,7 @@ models/mapobjects/pak75_sd/pak75-a_s
 	diffuseMap models/mapobjects/pak75_sd/pak75-a_s.tga
 	bumpMap models/mapobjects/pak75_sd/pak75-a_n.tga
 	specularMap models/mapobjects/pak75_sd/pak75-a_r.tga
+	implicitMask -
 }
 
 //**********************************************************************
