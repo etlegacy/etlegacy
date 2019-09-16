@@ -303,6 +303,18 @@ qhandle_t RE_RegisterModel(const char *name)
 
 			if (!buf)
 			{
+				if (lod == 0 && mod->numLods > 1)
+				{
+					if (mod->type == MOD_MESH)
+					{
+						mod->model.md3[0] = Com_AnyOf((void **)mod->model.md3, Com_Nelem(mod->model.md3));
+					}
+					else if (mod->type == MOD_MDC)
+					{
+						mod->model.mdc[0] = Com_AnyOf((void **)mod->model.mdc, Com_Nelem(mod->model.mdc));
+					}
+					Ren_Warning("RE_RegisterModel: found lods, but main model '%s' is missing\n", name);
+				}
 				continue;
 			}
 		}
@@ -823,8 +835,8 @@ static qboolean R_MDC_ConvertMD3(model_t *mod, int lod, const char *name)
 			{
 				// copy this baseFrame from the md3
 				Com_Memcpy((byte *)cSurf + cSurf->ofsXyzNormals + (sizeof(md3XyzNormal_t) * cSurf->numVerts * i),
-				       (byte *)surf + surf->ofsXyzNormals + (sizeof(md3XyzNormal_t) * cSurf->numVerts * f),
-				       sizeof(md3XyzNormal_t) * cSurf->numVerts);
+				           (byte *)surf + surf->ofsXyzNormals + (sizeof(md3XyzNormal_t) * cSurf->numVerts * f),
+				           sizeof(md3XyzNormal_t) * cSurf->numVerts);
 				i++;
 				frameCompFrames[f] = -1;
 				frameBaseFrames[f] = i - 1;
@@ -950,7 +962,7 @@ static qboolean R_LoadMDC(model_t *mod, int lod, void *buffer, const char *name)
 	// swap all the tags
 	if (LittleLong(1) != 1)
 	{
-        tag = ( mdcTag_t * )((byte *)mod->model.mdc[lod] + mod->model.mdc[lod]->ofsTags);
+		tag = ( mdcTag_t * )((byte *)mod->model.mdc[lod] + mod->model.mdc[lod]->ofsTags);
 
 		for (i = 0 ; i < mod->model.mdc[lod]->numTags * mod->model.mdc[lod]->numFrames ; i++, tag++)
 		{
@@ -1908,7 +1920,7 @@ void R_Modellist_f(void)
 	// not working right with new hunk
 	// if (tr.world)
 	// {
-	// 	ri.Printf(PRINT_ALL, "\n%8i : %s\n", tr.world->dataSize, tr.world->name);
+	//  ri.Printf(PRINT_ALL, "\n%8i : %s\n", tr.world->dataSize, tr.world->name);
 	// }
 
 }
@@ -2296,7 +2308,7 @@ void *R_Hunk_Alloc(int size)
 	//Ren_Print("R_Hunk_Alloc(%d)\n", size);
 
 	// round to cacheline
-	size = PAD(size,32);
+	size = PAD(size, 32);
 
 #ifdef _WIN32
 

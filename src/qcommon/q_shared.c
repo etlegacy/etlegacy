@@ -217,8 +217,8 @@ qboolean COM_BitCheck(const int array[], unsigned int bitNum)
 {
 	unsigned int i = bitNum / 32;
 	unsigned int bitmask;
-	bitNum = bitNum % 32;
-	bitmask= 1u << bitNum;
+	bitNum  = bitNum % 32;
+	bitmask = 1u << bitNum;
 	return ((array[i] & bitmask) != 0);
 }
 
@@ -231,8 +231,8 @@ void COM_BitSet(int array[], unsigned int bitNum)
 {
 	unsigned int i = bitNum / 32;
 	unsigned int bitmask;
-	bitNum = bitNum % 32;
-	bitmask= 1u << bitNum;
+	bitNum  = bitNum % 32;
+	bitmask = 1u << bitNum;
 
 	array[i] |= bitmask;
 }
@@ -246,8 +246,8 @@ void COM_BitClear(int array[], unsigned int bitNum)
 {
 	unsigned int i = bitNum / 32;
 	unsigned int bitmask;
-	bitNum = bitNum % 32;
-	bitmask= ~(1u << bitNum);
+	bitNum  = bitNum % 32;
+	bitmask = ~(1u << bitNum);
 
 	array[i] &= bitmask;
 }
@@ -286,14 +286,14 @@ short ShortNoSwap(short l)
  */
 int LongSwap(int l)
 {
-	/* is compiled to bswap on gcc/clang/msvc */	
+	/* is compiled to bswap on gcc/clang/msvc */
 	unsigned int tmp = l;
 	unsigned int b1  = (tmp & 0x000000ff) << 24;
 	unsigned int b2  = (tmp & 0x0000ff00) <<  8;
 	unsigned int b3  = (tmp & 0x00ff0000) >>  8;
 	unsigned int b4  = (tmp & 0xff000000) >> 24;
 
-	return ( b1 | b2 | b3 | b4);
+	return (b1 | b2 | b3 | b4);
 }
 
 /**
@@ -2668,4 +2668,23 @@ qboolean CompareIPNoPort(char const *ip1, char const *ip2)
 	{
 		return qfalse;
 	}
+}
+
+/**
+ * @brief Com_AnyOf returns first valid pointer from the set
+ * @param[in] ptr list of pointers
+ * @param[in] n pointer count
+ * @return first non-null pointer
+ */
+void *Com_AnyOf(void **ptr, int n)
+{
+	int i;
+	for (i = 0; i < n; i++)
+	{
+		if (ptr[i])
+		{
+			return ptr[i];
+		}
+	}
+	return NULL;
 }

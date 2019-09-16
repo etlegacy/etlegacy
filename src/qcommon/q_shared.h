@@ -402,8 +402,8 @@ typedef int clipHandle_t;
 
 /**
  * @def Check whether input value is present or not in given bitwise.
- */ 
-#define CHECKBITWISE(x, y) (((x) & (y)) == (y)) 
+ */
+#define CHECKBITWISE(x, y) (((x) & (y)) == (y))
 
 //#define   SND_NORMAL          0x000   ///< (default) Allow sound to be cut off only by the same sound on this channel
 #define     SND_OKTOCUT         0x001   ///< Allow sound to be cut off by any following sounds on this channel
@@ -605,6 +605,8 @@ qboolean Com_PowerOf2(int x);
 
 #define Com_ByteClamp(x) ((x < 0) ? 0 : (x > 255) ? 255 : x)
 #define Com_Clamp(min, max, value) ((value < min) ? min : (value > max) ? max : value)
+#define Com_Nelem(a) (int)(sizeof(a) / sizeof(a)[0])
+void *Com_AnyOf(void **ptr, int n);
 
 char *COM_SkipPath(char *pathname);
 void COM_FixPath(char *pathname);
@@ -1431,10 +1433,10 @@ typedef enum
 	ET_WOLF_OBJECTIVE,
 
 	ET_AIRSTRIKE_PLANE,
-    
+
 	ET_EVENTS                   ///< any of the EV_* events can be added freestanding
-                                ///< by setting eType to ET_EVENTS + eventNum
-                                ///< this avoids having to set eFlags and eventNum
+	                            ///< by setting eType to ET_EVENTS + eventNum
+	                            ///< this avoids having to set eFlags and eventNum
 } entityType_t;
 
 /**

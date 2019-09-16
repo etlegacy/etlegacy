@@ -237,6 +237,14 @@ qhandle_t RE_RegisterModel(const char *name)
 			}
 			if (!buffer)
 			{
+				if (lod == 0 && mod->numLods > 1)
+				{
+					if (mod->type == MOD_MESH)
+					{
+						mod->mdv[0] = Com_AnyOf((void **)mod->mdv, Com_Nelem(mod->mdv));
+					}
+					Ren_Warning("RE_RegisterModel: found lods, but main model '%s' is missing\n", name);
+				}
 				continue;
 			}
 		}
