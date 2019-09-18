@@ -973,8 +973,8 @@ static void CG_DrawWeapRecharge(rectDef_t *rect)
 	}
 	else
 	{
-		color[0] = 1.0f;
-		color[1] = color[2] = barFrac;
+		color[0] = color[1] = 1.0f;
+		color[2] = barFrac;
 		color[3] = 0.25f + barFrac * 0.5f;
 	}
 
