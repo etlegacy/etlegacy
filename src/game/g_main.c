@@ -2699,6 +2699,15 @@ void G_ShutdownGame(int restart)
 	time_t aclock;
 	char   timeFt[32];
 
+#ifdef FEATURE_RATING
+	if (g_skillRating.integer && level.database.initialized)
+	{
+		// deinitialize db at the last moment to ensure bots/players connecting
+		// after intermission but before next map is loaded still have db access
+		G_SkillRatingDB_DeInit();
+	}
+#endif
+
 #ifdef FEATURE_LUA
 	G_LuaHook_ShutdownGame(restart);
 	G_LuaShutdown();
@@ -4036,15 +4045,6 @@ void CheckIntermissionExit(void)
 			return;
 		}
 	}
-
-#ifdef FEATURE_RATING
-	if (g_skillRating.integer && level.database.initialized)
-	{
-		// deinitialize db at the last moment to ensure bots/players
-		// connecting in intermission still have db access
-		G_SkillRatingDB_DeInit();
-	}
-#endif
 
 	ExitLevel();
 }
