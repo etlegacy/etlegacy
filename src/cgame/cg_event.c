@@ -2281,7 +2281,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 		vec3_t dir;
 
 		ByteToDir(es->eventParm, dir);
-		CG_MissileHitPlayer(es->number, es->weapon, es->origin, dir, es->otherEntityNum);
+		CG_MissileHitPlayer(es->number, es->weapon, position, dir, es->otherEntityNum);
 	}
 	break;
 	case EV_MISSILE_MISS_SMALL:
@@ -2290,7 +2290,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 
 		ByteToDir(es->eventParm, dir);
 
-		CG_MissileHitWallSmall(es->origin, dir);
+		CG_MissileHitWallSmall(position, dir);
 	}
 	break;
 	case EV_MISSILE_MISS:
@@ -2301,7 +2301,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 		effect = (CG_PointContents(position, 0) & CONTENTS_WATER) ? PS_FX_WATER : PS_FX_NONE;
 
 		ByteToDir(es->eventParm, dir);
-		CG_MissileHitWall(es->weapon, effect, es->origin, dir, 0, es->number);
+		CG_MissileHitWall(es->weapon, effect, position, dir, 0, es->number);
 	}
 	break;
 	case EV_MISSILE_MISS_LARGE:
@@ -2313,11 +2313,11 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 		ByteToDir(es->eventParm, dir);
 		if (es->weapon == WP_ARTY || es->weapon == WP_AIRSTRIKE || es->weapon == WP_SMOKE_MARKER)
 		{
-			CG_MissileHitWall(es->weapon, effect, es->origin, dir, 0, es->number);
+			CG_MissileHitWall(es->weapon, effect, position, dir, 0, es->number);
 		}
 		else
 		{
-			CG_MissileHitWall(VERYBIGEXPLOSION, effect, es->origin, dir, 0, es->number);
+			CG_MissileHitWall(VERYBIGEXPLOSION, effect, position, dir, 0, es->number);
 		}
 	}
 	break;
@@ -2653,7 +2653,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 		}
 #endif
 
-		len = VectorDistance(cg.snap->ps.origin, es->origin);
+		len = VectorDistance(cg.snap->ps.origin, cent->lerpOrigin);
 
 		if (len > cent->currentState.onFireStart)
 		{

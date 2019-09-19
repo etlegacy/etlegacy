@@ -46,6 +46,7 @@
  */
 void G_RealExplodedMissile(gentity_t *ent, vec3_t dir, gentity_t *other)
 {
+	gentity_t      *tent;
 	entity_event_t event;
 
 	// splash damage
@@ -96,9 +97,15 @@ void G_RealExplodedMissile(gentity_t *ent, vec3_t dir, gentity_t *other)
 		event = EV_MISSILE_MISS;
 	}
 
-	G_AddEvent(ent, event, DirToByte(dir));
-	ent->s.otherEntityNum = other ? other->s.number : -1;   // hit entity
-	VectorCopy(ent->r.currentOrigin, ent->s.origin);        // keep old origin
+	// TODO: is it cheaper in bandwidth to just remove this ent and create a new
+	// one, rather than changing the missile into the explosion?
+	// G_AddEvent don't work as expected in this case ...
+	tent                   = G_TempEntity(ent->r.currentOrigin, event);
+	tent->s.otherEntityNum = other ? ent->r.ownerNum : -1;      // hit entity
+	tent->r.svFlags        = ent->r.svFlags;
+	tent->s.eventParm      = DirToByte(dir);
+	tent->s.weapon         = ent->s.weapon;
+	tent->s.clientNum      = ent->r.ownerNum;
 
 	ent->freeAfterEvent = qtrue;
 
@@ -183,8 +190,10 @@ void G_RealExplodedMissile(gentity_t *ent, vec3_t dir, gentity_t *other)
 	// give big weapons the shakey shakey
 	if (GetWeaponTableData(ent->s.weapon)->attributes & WEAPON_ATTRIBUT_SHAKE)
 	{
-		G_AddEvent(ent, EV_SHAKE, 0);
-		ent->s.onFireStart = ent->splashDamage * 4;
+		tent = G_TempEntity(ent->r.currentOrigin, EV_SHAKE);
+
+		tent->s.onFireStart = ent->splashDamage * 4;
+		tent->r.svFlags    |= SVF_BROADCAST;
 	}
 }
 
