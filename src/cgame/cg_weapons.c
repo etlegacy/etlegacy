@@ -3984,7 +3984,9 @@ void CG_AltWeapon_f(void)
 		}
 	}
 
-	if (CG_WeaponSelectable(GetWeaponTableData(cg.weaponSelect)->weapAlts))        // new weapon is valid
+	if ((!(GetWeaponTableData(GetWeaponTableData(cg.weaponSelect)->weapAlts)->type & WEAPON_TYPE_RIFLENADE) // allow alt switch (but for riflenade) even if out-of-ammo
+	     && (COM_BitCheck(cg.predictedPlayerState.weapons, GetWeaponTableData(cg.weaponSelect)->weapAlts)))      // and ensure the alt weapon is there
+	    || CG_WeaponSelectable(GetWeaponTableData(cg.weaponSelect)->weapAlts))                                       // or check if new weapon is valid (riflenade need ammo for switching to)
 	{
 		CG_FinishWeaponChange(cg.weaponSelect, GetWeaponTableData(cg.weaponSelect)->weapAlts);
 	}
