@@ -3534,8 +3534,12 @@ static void PM_Weapon(void)
 			}
 			else if (CHECKBITWISE(GetWeaponTableData(pm->ps->weapon)->type, WEAPON_TYPE_MORTAR | WEAPON_TYPE_SET))
 			{
-				PM_AddEvent(EV_SPINUP);
-				PM_StartWeaponAnim(WEAP_ATTACK2);     // FIXME: returns WEAP_ATTACK1 anyway
+				// don't play sound/animation if out of ammo
+				if (GetWeaponTableData(pm->ps->weapon)->uses <= PM_WeaponAmmoAvailable(pm->ps->weapon))
+				{
+					PM_AddEvent(EV_SPINUP);
+					PM_StartWeaponAnim(WEAP_ATTACK2);
+				}
 			}
 			else if (pm->ps->weapon == WP_SATCHEL_DET)
 			{
