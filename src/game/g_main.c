@@ -2277,7 +2277,9 @@ void G_InitGame(int levelTime, int randomSeed, int restart, int legacyServer, in
 	char   timeFt[32];
 	char   *logDate;
 
-	G_Printf("------- Game Initialization -------\ngamename: %s\ngamedate: %s\n", GAMEVERSION, __DATE__);
+	G_Printf("------- Game Initialization -------\n");
+	G_Printf("gamename: %s\n", GAMEVERSION);
+	G_Printf("gamedate: %s\n", __DATE__);
 
 	srand(randomSeed);
 
