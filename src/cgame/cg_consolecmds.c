@@ -1553,7 +1553,7 @@ static void CG_Class_f(void)
 		CG_PriorityCenterPrint(va(CG_TranslateString("You will spawn as an %s %s with a %s and a %s."), teamstring, BG_ClassnameForNumber(playerclass), GetWeaponTableData(weapon1)->desc, GetWeaponTableData(weapon2)->desc), 400, cg_fontScaleCP.value, -1);
 	}
 	// Send the switch command to the server
-	trap_SendClientCommand(va("team %s %i %i %i\n", classtype, playerclass, weapon1, weapon2));
+	trap_SendClientCommand(va("team %s %i %i %i", classtype, playerclass, weapon1, weapon2));
 }
 
 /**
@@ -1814,11 +1814,11 @@ static void CG_NoClip_f(void)
 	{
 		if (trap_Argc() > 1)
 		{
-			trap_SendClientCommand(va("noclip %s\n", state));
+			trap_SendClientCommand(va("noclip %s", state));
 		}
 		else
 		{
-			trap_SendClientCommand("noclip\n");
+			trap_SendClientCommand("noclip");
 		}
 	}
 	else

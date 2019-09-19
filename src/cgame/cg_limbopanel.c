@@ -1137,7 +1137,7 @@ qboolean CG_LimboPanel_SpawnPointButton_KeyDown(panel_button_t *button, int key)
 	{
 		SOUND_SELECT;
 
-		trap_SendClientCommand("setspawnpt 0\n");
+		trap_SendClientCommand("setspawnpt 0");
 		cgs.ccSelectedSpawnPoint = 0;
 
 		return qtrue;
@@ -1330,7 +1330,7 @@ void CG_LimboPanel_SendSetupMsg(qboolean forceteam)
 		{
 			if (cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR)
 			{
-				trap_SendClientCommand("team s 0 0 0\n");
+				trap_SendClientCommand("team s 0 0 0");
 			}
 			CG_EventHandling(CGAME_EVENT_NONE, qfalse);
 		}
@@ -1360,7 +1360,7 @@ void CG_LimboPanel_SendSetupMsg(qboolean forceteam)
 		return;
 	}
 
-	trap_SendClientCommand(va("team %s %i %i %i\n", str, CG_LimboPanel_GetClass(), weap1, weap2));
+	trap_SendClientCommand(va("team %s %i %i %i", str, CG_LimboPanel_GetClass(), weap1, weap2));
 
 	if (forceteam)
 	{

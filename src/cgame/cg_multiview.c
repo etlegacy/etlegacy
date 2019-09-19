@@ -72,7 +72,7 @@ void CG_mvNew_f(void)
 
 		if (pID >= 0 && !CG_mvMergedClientLocate(pID))
 		{
-			trap_SendClientCommand(va("mvadd %d\n", pID));
+			trap_SendClientCommand(va("mvadd %d", pID));
 		}
 	}
 }
@@ -115,7 +115,7 @@ void CG_mvDelete_f(void)
 
 		if (pID >= 0 && CG_mvMergedClientLocate(pID))
 		{
-			trap_SendClientCommand(va("mvdel %d\n", pID));
+			trap_SendClientCommand(va("mvdel %d", pID));
 		}
 	}
 }
@@ -227,7 +227,7 @@ void CG_mvToggleAll_f(void)
 
 	if (!cg.demoPlayback)
 	{
-		trap_SendClientCommand((cg.mvTotalClients > 0) ? "mvnone\n" : "mvall\n");
+		trap_SendClientCommand((cg.mvTotalClients > 0) ? "mvnone" : "mvall");
 
 		if (cg.mvTotalClients > 0)
 		{
