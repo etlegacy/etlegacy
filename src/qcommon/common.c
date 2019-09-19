@@ -223,6 +223,8 @@ void QDECL Com_Printf(const char *fmt, ...)
 	va_list         argptr;
 	char            msg[MAXPRINTMSG];
 	static qboolean opening_qconsole = qfalse;
+	qtime_t         timestamp;
+	int l;
 
 	va_start(argptr, fmt);
 	Q_vsnprintf(msg, sizeof(msg), fmt, argptr);
@@ -246,6 +248,16 @@ void QDECL Com_Printf(const char *fmt, ...)
 #ifndef DEDICATED
 	CL_ConsolePrint(msg);
 #endif
+
+	// add server timestamp in dedicated console and log
+	Com_RealTime(&timestamp);
+	Com_sprintf(msg, sizeof(msg), "%02i:%02i:%02i ", timestamp.tm_hour, timestamp.tm_min, timestamp.tm_sec);
+
+	l = strlen(msg);
+
+	va_start(argptr, fmt);
+	Q_vsnprintf(msg + l, sizeof(msg) - l, fmt, argptr);
+	va_end(argptr);
 
 	// echo to dedicated console and early console
 	Sys_Print(msg);
@@ -285,6 +297,7 @@ void QDECL Com_Printf(const char *fmt, ...)
 
 			opening_qconsole = qfalse;
 		}
+
 		if (logfile && FS_Initialized())
 		{
 			FS_Write(msg, strlen(msg), logfile);
