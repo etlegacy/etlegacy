@@ -543,7 +543,7 @@ gotnewcl:
 		denied = VM_ExplicitArgPtr(gvm, (intptr_t)denied);
 
 		NET_OutOfBandPrint(NS_SERVER, from, "print\n[err_dialog]%s\n", denied);
-		Com_DPrintf("Game rejected a connection: %s.\n", denied);
+		Com_DPrintf("Game rejected a connection: %s\n", denied);
 		return;
 	}
 
