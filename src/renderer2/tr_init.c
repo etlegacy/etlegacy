@@ -1480,7 +1480,7 @@ void R_Init(void)
 {
 	int i;
 
-	Ren_Print("----- R_Init -----\n");
+	Ren_Print("----- Initializing Renderer ----\n");
 
 	//Swap_Init();
 
@@ -1576,7 +1576,7 @@ void R_Init(void)
 
 	GL_CheckErrors();
 
-	Ren_Print("----- finished R_Init -----\n");
+	Ren_Print("--------------------------------\n");
 }
 
 /**

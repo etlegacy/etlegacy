@@ -388,7 +388,7 @@ static qboolean Sys_StringToSockaddr(const char *s, struct sockaddr *sadr, int s
 		}
 		else
 		{
-			Com_Printf("Sys_StringToSockaddr: Error resolving %s: No address of required type found.\n", s);
+			Com_Printf("Sys_StringToSockaddr: Error resolving %s: No address of required type found\n", s);
 		}
 	}
 	else
@@ -1124,13 +1124,13 @@ int NET_IPSocket(const char *net_interface, int port, int *err)
 	if ((newsocket = socket(PF_INET, SOCK_DGRAM, IPPROTO_UDP)) == INVALID_SOCKET)
 	{
 		*err = socketError;
-		Com_Printf("WARNING: NET_IPSocket - socket: %s\n", NET_ErrorString());
+		Com_Printf(S_COLOR_YELLOW "WARNING: NET_IPSocket - socket: %s\n", NET_ErrorString());
 		return newsocket;
 	}
 	// make it non-blocking
 	if (ioctlsocket(newsocket, FIONBIO, &_true) == SOCKET_ERROR)
 	{
-		Com_Printf("WARNING: NET_IPSocket - ioctl FIONBIO: %s\n", NET_ErrorString());
+		Com_Printf(S_COLOR_YELLOW "WARNING: NET_IPSocket - ioctl FIONBIO: %s\n", NET_ErrorString());
 		*err = socketError;
 		closesocket(newsocket);
 		return INVALID_SOCKET;
@@ -1139,7 +1139,7 @@ int NET_IPSocket(const char *net_interface, int port, int *err)
 	// make it broadcast capable
 	if (setsockopt(newsocket, SOL_SOCKET, SO_BROADCAST, (char *)&i, sizeof(i)) == SOCKET_ERROR)
 	{
-		Com_Printf("WARNING: NET_IPSocket - setsockopt SO_BROADCAST: %s\n", NET_ErrorString());
+		Com_Printf(S_COLOR_YELLOW "WARNING: NET_IPSocket - setsockopt SO_BROADCAST: %s\n", NET_ErrorString());
 	}
 
 	// set socket timeout
@@ -1148,7 +1148,7 @@ int NET_IPSocket(const char *net_interface, int port, int *err)
 #endif
 	if (setsockopt(newsocket, SOL_SOCKET, SO_RCVTIMEO, (char *)&timeout, sizeof(timeout)) < 0)
 	{
-		Com_Printf("WARNING: NET_IPSocket - can't set RCVTIMEO: %s\n", NET_ErrorString());
+		Com_Printf(S_COLOR_YELLOW "WARNING: NET_IPSocket - can't set RCVTIMEO: %s\n", NET_ErrorString());
 	}
 
 	if (!net_interface || !net_interface[0])
@@ -1176,7 +1176,7 @@ int NET_IPSocket(const char *net_interface, int port, int *err)
 
 	if (bind(newsocket, (void *)&address, sizeof(address)) == SOCKET_ERROR)
 	{
-		Com_Printf("WARNING: NET_IPSocket - bind: %s\n", NET_ErrorString());
+		Com_Printf(S_COLOR_YELLOW "WARNING: NET_IPSocket - bind: %s\n", NET_ErrorString());
 		*err = socketError;
 		closesocket(newsocket);
 		return INVALID_SOCKET;
@@ -1223,14 +1223,14 @@ int NET_IP6Socket(const char *net_interface, int port, struct sockaddr_in6 *bind
 	if ((newsocket = socket(PF_INET6, SOCK_DGRAM, IPPROTO_UDP)) == INVALID_SOCKET)
 	{
 		*err = socketError;
-		Com_Printf("WARNING: NET_IP6Socket: socket: %s\n", NET_ErrorString());
+		Com_Printf(S_COLOR_YELLOW "WARNING: NET_IP6Socket: socket: %s\n", NET_ErrorString());
 		return newsocket;
 	}
 
 	// make it non-blocking
 	if (ioctlsocket(newsocket, FIONBIO, &_true) == SOCKET_ERROR)
 	{
-		Com_Printf("WARNING: NET_IP6Socket: ioctl FIONBIO: %s\n", NET_ErrorString());
+		Com_Printf(S_COLOR_YELLOW "WARNING: NET_IP6Socket: ioctl FIONBIO: %s\n", NET_ErrorString());
 		*err = socketError;
 		closesocket(newsocket);
 		return INVALID_SOCKET;
@@ -1244,7 +1244,7 @@ int NET_IP6Socket(const char *net_interface, int port, struct sockaddr_in6 *bind
 		if (setsockopt(newsocket, IPPROTO_IPV6, IPV6_V6ONLY, (char *) &i, sizeof(i)) == SOCKET_ERROR)
 		{
 			// win32 systems don't seem to support this anyways.
-			Com_DPrintf("WARNING: NET_IP6Socket: setsockopt IPV6_V6ONLY: %s\n", NET_ErrorString());
+			Com_Printf(S_COLOR_YELLOW "WARNING: NET_IP6Socket: setsockopt IPV6_V6ONLY: %s\n", NET_ErrorString());
 		}
 	}
 #endif
@@ -1274,7 +1274,7 @@ int NET_IP6Socket(const char *net_interface, int port, struct sockaddr_in6 *bind
 
 	if (bind(newsocket, (void *)&address, sizeof(address)) == SOCKET_ERROR)
 	{
-		Com_Printf("WARNING: NET_IP6Socket: bind: %s\n", NET_ErrorString());
+		Com_Printf(S_COLOR_YELLOW "WARNING: NET_IP6Socket: bind: %s\n", NET_ErrorString());
 		*err = socketError;
 		closesocket(newsocket);
 		return INVALID_SOCKET;
@@ -1297,7 +1297,7 @@ void NET_SetMulticast6(void)
 
 	if (!*net_mcast6addr->string || !Sys_StringToSockaddr(net_mcast6addr->string, (struct sockaddr *) &addr, sizeof(addr), AF_INET6))
 	{
-		Com_Printf("WARNING: NET_JoinMulticast6: Incorrect multicast address given, "
+		Com_Printf(S_COLOR_YELLOW "WARNING: NET_JoinMulticast6: Incorrect multicast address given, "
 		           "please set cvar %s to a sane value.\n", net_mcast6addr->name);
 
 		Cvar_SetValue(net_enabled->name, net_enabled->integer | NET_DISABLEMCAST);
@@ -1352,7 +1352,7 @@ void NET_JoinMulticast6(void)
 		if (setsockopt(multicast6_socket, IPPROTO_IPV6, IPV6_MULTICAST_IF,
 		               (char *) &curgroup.ipv6mr_interface, sizeof(curgroup.ipv6mr_interface)) < 0)
 		{
-			Com_Printf("NET_JoinMulticast6: Couldn't set scope on multicast socket: %s\n", NET_ErrorString());
+			Com_Printf(S_COLOR_YELLOW "WARNING: NET_JoinMulticast6: Couldn't set scope on multicast socket: %s\n", NET_ErrorString());
 
 			if (multicast6_socket != ip6_socket)
 			{
@@ -1365,7 +1365,7 @@ void NET_JoinMulticast6(void)
 
 	if (setsockopt(multicast6_socket, IPPROTO_IPV6, IPV6_JOIN_GROUP, (char *) &curgroup, sizeof(curgroup)))
 	{
-		Com_Printf("NET_JoinMulticast6: Couldn't join multicast group: %s\n", NET_ErrorString());
+		Com_Printf(S_COLOR_YELLOW "WARNING: NET_JoinMulticast6: Couldn't join multicast group: %s\n", NET_ErrorString());
 
 		if (multicast6_socket != ip6_socket)
 		{
@@ -1422,34 +1422,34 @@ void NET_OpenSocks(int port)
 
 	if ((socks_socket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)) == INVALID_SOCKET)
 	{
-		Com_Printf("WARNING: NET_OpenSocks: socket: %s\n", NET_ErrorString());
+		Com_Printf(S_COLOR_YELLOW "WARNING: NET_OpenSocks: socket: %s\n", NET_ErrorString());
 		return;
 	}
 
 	// Disable Nagle for this TCP socket
 	if (setsockopt(socks_socket, IPPROTO_TCP, TCP_NODELAY, (char *)&i, sizeof(i)) == SOCKET_ERROR)
 	{
-		Com_Printf("WARNING: NET_OpenSocks: setsockopt: %s\n", NET_ErrorString());
+		Com_Printf(S_COLOR_YELLOW "WARNING: NET_OpenSocks: setsockopt: %s\n", NET_ErrorString());
 		return;
 	}
 
 	if (getaddrinfo(net_socksServer->string, net_socksPort->string, &hints, &res) != 0)
 	{
-		Com_Printf("WARNING: NET_OpenSocks: getaddrinfo: %s\n", NET_ErrorString());
+		Com_Printf(S_COLOR_YELLOW "WARNING: NET_OpenSocks: getaddrinfo: %s\n", NET_ErrorString());
 		return;
 	}
 
 	if (res->ai_addr->sa_family != AF_INET)
 	{
 		freeaddrinfo(res);
-		Com_Printf("WARNING: NET_OpenSocks: getaddrinfo: address type was not AF_INET\n");
+		Com_Printf(S_COLOR_YELLOW "WARNING: NET_OpenSocks: getaddrinfo: address type was not AF_INET\n");
 		return;
 	}
 
 	if (connect(socks_socket, res->ai_addr, res->ai_addrlen) != 0)
 	{
 		freeaddrinfo(res);
-		Com_Printf("NET_OpenSocks: connect: %s\n", NET_ErrorString());
+		Com_Printf(S_COLOR_YELLOW "WARNING: NET_OpenSocks: connect: %s\n", NET_ErrorString());
 		return;
 	}
 
@@ -1484,7 +1484,7 @@ void NET_OpenSocks(int port)
 	}
 	if (send(socks_socket, (void *)buf, len, 0) == SOCKET_ERROR)
 	{
-		Com_Printf("NET_OpenSocks: send: %s\n", NET_ErrorString());
+		Com_Printf(S_COLOR_YELLOW "WARNING: NET_OpenSocks: send: %s\n", NET_ErrorString());
 		return;
 	}
 
@@ -1492,12 +1492,12 @@ void NET_OpenSocks(int port)
 	len = recv(socks_socket, (void *)buf, 64, 0);
 	if (len == SOCKET_ERROR)
 	{
-		Com_Printf("NET_OpenSocks: recv: %s\n", NET_ErrorString());
+		Com_Printf(S_COLOR_YELLOW "WARNING: NET_OpenSocks: recv: %s\n", NET_ErrorString());
 		return;
 	}
 	if (len != 2 || buf[0] != 5)
 	{
-		Com_Printf("NET_OpenSocks: bad response\n");
+		Com_Printf(S_COLOR_YELLOW "WARNING: NET_OpenSocks: bad response\n");
 		return;
 	}
 	switch (buf[1])
@@ -1507,7 +1507,7 @@ void NET_OpenSocks(int port)
 	case 2: // username/password authentication
 		break;
 	default:
-		Com_Printf("NET_OpenSocks: request denied\n");
+		Com_Printf(S_COLOR_YELLOW "WARNING: NET_OpenSocks: request denied\n");
 		return;
 	}
 
@@ -1536,7 +1536,7 @@ void NET_OpenSocks(int port)
 		// send it
 		if (send(socks_socket, (void *)buf, 3 + ulen + plen, 0) == SOCKET_ERROR)
 		{
-			Com_Printf("NET_OpenSocks: send: %s\n", NET_ErrorString());
+			Com_Printf(S_COLOR_YELLOW "WARNING: NET_OpenSocks: send: %s\n", NET_ErrorString());
 			return;
 		}
 
@@ -1544,17 +1544,17 @@ void NET_OpenSocks(int port)
 		len = recv(socks_socket, (void *)buf, 64, 0);
 		if (len == SOCKET_ERROR)
 		{
-			Com_Printf("NET_OpenSocks: recv: %s\n", NET_ErrorString());
+			Com_Printf(S_COLOR_YELLOW "WARNING: NET_OpenSocks: recv: %s\n", NET_ErrorString());
 			return;
 		}
 		if (len != 2 || buf[0] != 1)
 		{
-			Com_Printf("NET_OpenSocks: bad response\n");
+			Com_Printf(S_COLOR_YELLOW "WARNING: NET_OpenSocks: bad response\n");
 			return;
 		}
 		if (buf[1] != 0)
 		{
-			Com_Printf("NET_OpenSocks: authentication failed\n");
+			Com_Printf(S_COLOR_YELLOW "WARNING: NET_OpenSocks: authentication failed\n");
 			return;
 		}
 	}
@@ -1568,7 +1568,7 @@ void NET_OpenSocks(int port)
 	*(short *)&buf[8] = htons((short)port);         // port
 	if (send(socks_socket, (void *)buf, 10, 0) == SOCKET_ERROR)
 	{
-		Com_Printf("NET_OpenSocks: send: %s\n", NET_ErrorString());
+		Com_Printf(S_COLOR_YELLOW "WARNING: NET_OpenSocks: send: %s\n", NET_ErrorString());
 		return;
 	}
 
@@ -1576,23 +1576,23 @@ void NET_OpenSocks(int port)
 	len = recv(socks_socket, (void *)buf, 64, 0);
 	if (len == SOCKET_ERROR)
 	{
-		Com_Printf("NET_OpenSocks: recv: %s\n", NET_ErrorString());
+		Com_Printf(S_COLOR_YELLOW "WARNING: NET_OpenSocks: recv: %s\n", NET_ErrorString());
 		return;
 	}
 	if (len < 2 || buf[0] != 5)
 	{
-		Com_Printf("NET_OpenSocks: bad response\n");
+		Com_Printf(S_COLOR_YELLOW "WARNING: NET_OpenSocks: bad response\n");
 		return;
 	}
 	// check completion code
 	if (buf[1] != 0)
 	{
-		Com_Printf("NET_OpenSocks: request denied: %i\n", buf[1]);
+		Com_Printf(S_COLOR_YELLOW "WARNING: NET_OpenSocks: request denied: %i\n", buf[1]);
 		return;
 	}
 	if (buf[3] != 1)
 	{
-		Com_Printf("NET_OpenSocks: relay address is not IPV4: %i\n", buf[3]);
+		Com_Printf(S_COLOR_YELLOW "WARNING: NET_OpenSocks: relay address is not IPV4: %i\n", buf[3]);
 		return;
 	}
 	((struct sockaddr_in *)&socksRelayAddr)->sin_family      = AF_INET;
@@ -1653,7 +1653,7 @@ static void NET_AddLocalAddress(const char *ifname, struct sockaddr *addr, struc
 	}
 	else
 	{
-		Com_Printf("WARNING: NET_AddLocalAddress - numIP >= MAX_IPS\n");
+		Com_Printf(S_COLOR_YELLOW "WARNING: NET_AddLocalAddress - numIP >= MAX_IPS\n");
 	}
 }
 
@@ -1668,7 +1668,7 @@ static void NET_GetLocalAddress(void)
 
 	if (getifaddrs(&ifap))
 	{
-		Com_Printf("NET_GetLocalAddress: Unable to get list of network interfaces: %s\n", NET_ErrorString());
+		Com_Printf(S_COLOR_YELLOW "WARNING: NET_GetLocalAddress: Unable to get list of network interfaces: %s\n", NET_ErrorString());
 	}
 	else
 	{
@@ -1794,7 +1794,7 @@ void NET_OpenIP(void)
 		}
 		if (ip6_socket == INVALID_SOCKET)
 		{
-			Com_Printf("WARNING: NET_OpenIP - Couldn't bind to a v6 ip address.\n");
+			Com_Printf(S_COLOR_YELLOW "WARNING: NET_OpenIP - Couldn't bind to a v6 ip address\n");
 		}
 	}
 #endif
@@ -1826,7 +1826,7 @@ void NET_OpenIP(void)
 
 		if (ip_socket == INVALID_SOCKET)
 		{
-			Com_Printf("WARNING: NET_OpenIP - Couldn't bind to a v4 ip address.\n");
+			Com_Printf(S_COLOR_YELLOW "WARNING: NET_OpenIP - Couldn't bind to a v4 ip address\n");
 		}
 	}
 }
@@ -1936,7 +1936,7 @@ static void NET_Config(qboolean enableNetworking)
 	// if enable state is the same and no cvars were modified, we have nothing to do
 	if (enableNetworking == networkingEnabled && !modified)
 	{
-		Com_Printf("Network not modified.\n");
+		Com_Printf("Network not modified\n");
 		return;
 	}
 
@@ -2000,7 +2000,7 @@ static void NET_Config(qboolean enableNetworking)
 			socks_socket = INVALID_SOCKET;
 		}
 
-		Com_Printf("Network shutdown.\n");
+		Com_Printf("Network shutdown\n");
 	}
 
 	if (start)
@@ -2012,7 +2012,7 @@ static void NET_Config(qboolean enableNetworking)
 			NET_SetMulticast6();
 #endif
 		}
-		Com_Printf("Network initialized.\n");
+		Com_Printf("Network initialized\n");
 	}
 }
 
@@ -2027,12 +2027,12 @@ void NET_Init(void)
 	r = WSAStartup(MAKEWORD(1, 1), &winsockdata);
 	if (r)
 	{
-		Com_Printf("WARNING: NET_Init: Winsock initialization failed, returned %d\n", r);
+		Com_Printf(S_COLOR_YELLOW "WARNING: NET_Init: Winsock initialization failed, returned %d\n", r);
 		return;
 	}
 
 	winsockInitialized = qtrue;
-	Com_Printf("Winsock initialized.\n");
+	Com_Printf("Winsock initialized\n");
 #endif
 
 	NET_Config(qtrue);
@@ -2148,7 +2148,7 @@ void NET_Sleep(int msec)
 
 	if (retval == SOCKET_ERROR)
 	{
-		Com_Printf("Warning: select() syscall failed: %s\n", NET_ErrorString());
+		Com_Printf(S_COLOR_YELLOW "WARNING: select() syscall failed: %s\n", NET_ErrorString());
 	}
 	else if (retval > 0)
 	{

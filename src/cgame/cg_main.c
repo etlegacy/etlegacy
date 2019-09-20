@@ -612,7 +612,7 @@ void CG_RegisterCvars(void)
 	cvarTable_t  *cv;
 	char         var[MAX_TOKEN_CHARS];
 
-	CG_Printf("%d client cvars in use.\n", cvarTableSize);
+	CG_Printf("%d client cvars in use\n", cvarTableSize);
 
 	trap_Cvar_Set("cg_letterbox", "0");   // force this for people who might have it in their cfg
 

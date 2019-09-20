@@ -117,6 +117,8 @@ qboolean DB_Init(void)
 	char *to_ospath;
 	int  msec;
 
+	Com_Printf("----- Database Initialization --\n");
+
 	msec = Sys_Milliseconds();
 
 	isDBActive = qfalse;
@@ -219,7 +221,7 @@ qboolean DB_Init(void)
 		if (!DB_Create())
 		{
 			(void) sqlite3_close(db);
-			Com_Printf("... WARNING can't create database\n");
+			Com_Printf(S_COLOR_YELLOW "WARNING: can't create database\n");
 			return qfalse;
 		}
 	}
@@ -227,11 +229,11 @@ qboolean DB_Init(void)
 	// this has to be enabled here to perform DB_CheckUpdates
 	isDBActive = qtrue;
 
-	Com_Printf("SQLite3 ETL: DB init #%i%s in [%i] ms - autocommit %i\n", SQL_DBMS_SCHEMA_VERSION, to_ospath, (Sys_Milliseconds() - msec), sqlite3_get_autocommit(db));
+	Com_Printf("SQLite3 ETL: database init #%i %s in [%i] ms - autocommit %i\n", SQL_DBMS_SCHEMA_VERSION, to_ospath, (Sys_Milliseconds() - msec), sqlite3_get_autocommit(db));
 
 	if (!DB_CheckUpdates())
 	{
-		Com_Printf("SQLite3 ETL: Update failed.\n");
+		Com_Printf(S_COLOR_YELLOW "WARNING: SQLite3 ETL: update failed\n");
 		(void) sqlite3_close(db);
 		isDBActive = qfalse;
 		return qfalse;
@@ -242,12 +244,14 @@ qboolean DB_Init(void)
 	{
 		if (!DB_SaveMemDB())
 		{
-			Com_Printf("... WARNING can't save memory database file\n");
+			Com_Printf(S_COLOR_YELLOW "WARNING: can't save memory database file\n");
 			(void) sqlite3_close(db);
 			isDBActive = qfalse;
 			return qfalse;
 		}
 	}
+
+	Com_Printf("--------------------------------\n");
 
 	return qtrue;
 }
@@ -272,7 +276,7 @@ static qboolean DB_CreateOrUpdateSchema(int startSchemaVersion)
 
 		if (result != SQLITE_OK)
 		{
-			Com_Printf("SQLite3 failed to create schema version %i: %s\n", i + 1, err_msg);
+			Com_Printf(S_COLOR_YELLOW "WARNING: SQLite3 failed to create schema version %i: %s\n", i + 1, err_msg);
 			sqlite3_free(err_msg);
 			return qfalse;
 		}
@@ -290,7 +294,7 @@ static qboolean DB_CreateOrUpdateSchema(int startSchemaVersion)
 
 		if (result != SQLITE_OK)
 		{
-			Com_Printf("SQLite3 failed to write ETL version %i: %s\n", i + 1, err_msg);
+			Com_Printf(S_COLOR_YELLOW "WARNING: SQLite3 failed to write ETL version %i: %s\n", i + 1, err_msg);
 			sqlite3_free(err_msg);
 			return qfalse;
 		}
@@ -345,7 +349,7 @@ qboolean DB_CheckUpdates(void)
 
 	if (version == SQL_DBMS_SCHEMA_VERSION) // we are done
 	{
-		Com_Printf("SQLite3 ETL: DB schema version #%i is up to date!\n", version);
+		Com_Printf("SQLite3 ETL: DB schema version #%i is up to date\n", version);
 		sqlite3_finalize(res);
 		return qtrue;
 	}
@@ -353,7 +357,7 @@ qboolean DB_CheckUpdates(void)
 	{
 		char *to_ospath;
 
-		Com_Printf("SQLite3 ETL: Old DB schema #%i detected - performing backup & update ...\n", version);
+		Com_Printf("SQLite3 ETL: Old DB schema #%i detected - performing backup and update ...\n", version);
 
 		sqlite3_finalize(res);
 		
@@ -373,7 +377,7 @@ qboolean DB_CheckUpdates(void)
 
 		if (result != SQLITE_OK)
 		{
-			Com_Printf("... WARNING can't save database backup file [%i]\n", result);
+			Com_Printf(S_COLOR_YELLOW "WARNING: can't save database backup file [%i]\n", result);
 			return qfalse;
 		}
 
@@ -384,18 +388,18 @@ qboolean DB_CheckUpdates(void)
 			return qfalse;
 		}
 		
-		Com_Printf("SQLite3 ETL: Old DB schema has been updated to version #%i...\n", SQL_DBMS_SCHEMA_VERSION);
+		Com_Printf("SQLite3 ETL: Old database schema has been updated to version #%i...\n", SQL_DBMS_SCHEMA_VERSION);
 		
 		return qtrue;
 	}
 
 	if (version == 0)
 	{
-		Com_Printf("Warning: DB update can't find a valid schema! Game and database are not in sync!\n");
+		Com_Printf(S_COLOR_YELLOW "WARNING: database update can't find a valid schema. Game and database are not in sync!\n");
 	}
 	else 	// downgrade case ... we can't ensure a working system
 	{
-		Com_Printf("Warning: DB update has detected an unknown schema #%i! Game and database are not in sync!\n", version);
+		Com_Printf(S_COLOR_YELLOW "WARNING: database update has detected an unknown schema #%i. Game and database are not in sync!\n", version);
 	}
 
 	sqlite3_finalize(res);

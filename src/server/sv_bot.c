@@ -162,19 +162,19 @@ static __attribute__ ((format(printf, 2, 3))) void QDECL BotImport_Print(int typ
 		break;
 	}
 	case PRT_WARNING: {
-		Com_Printf(S_COLOR_YELLOW "Warning: %s", str);
+		Com_Printf(S_COLOR_YELLOW "WARNING: %s", str);
 		break;
 	}
 	case PRT_ERROR: {
-		Com_Printf(S_COLOR_RED "Error: %s", str);
+		Com_Printf(S_COLOR_RED "ERROR: %s", str);
 		break;
 	}
 	case PRT_FATAL: {
-		Com_Printf(S_COLOR_RED "Fatal: %s", str);
+		Com_Printf(S_COLOR_RED "FATAL: %s", str);
 		break;
 	}
 	case PRT_EXIT: {
-		Com_Error(ERR_DROP, S_COLOR_RED "Exit: %s", str);
+		Com_Error(ERR_DROP, S_COLOR_RED "EXIT: %s", str);
 		break;
 	}
 	default: {

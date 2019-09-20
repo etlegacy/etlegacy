@@ -4145,7 +4145,7 @@ static void FS_Startup(const char *gameName)
 {
 	const char *homePath;
 
-	Com_Printf("----- FS_Startup -----\n");
+	Com_Printf("----- Initializing Filesystem --\n");
 
 	fs_packFiles = 0;
 
@@ -4221,8 +4221,6 @@ static void FS_Startup(const char *gameName)
 
 	fs_gamedirvar->modified = qfalse; // We just loaded, it's not modified
 
-	Com_Printf("----------------------\n");
-
 #ifdef FS_MISSING
 	if (missingFiles == NULL)
 	{
@@ -4254,6 +4252,8 @@ static void FS_Startup(const char *gameName)
 #endif // FEATURE_GETTEXT
 
 #endif // ifndef DEDICATED
+
+	Com_Printf("--------------------------------\n");
 }
 
 /**
@@ -4754,7 +4754,7 @@ void FS_InitFilesystem(void)
 #endif
 	// ET: Legacy start
 	// if fs_game is not specified, set 'legacy' mod as default fs_game
-	// this 'optimization' grants us 2.60b compatibilty w/o deeper changes and users
+	// this 'optimization' grants us 2.60b compatibility w/o deeper changes and users
 	// don't have to set fs_game param to run latest mod code
 	tmp_fs_game = Cvar_Get("fs_game", "", 0);
 	if (!strcmp(tmp_fs_game->string, ""))
@@ -4763,7 +4763,7 @@ void FS_InitFilesystem(void)
 		tmp_fs_game         = Cvar_Get("fs_game", "", 0);
 		tmp_fs_game->flags |= CVAR_USER_CREATED; // deal as startup var
 
-		Com_Printf("Info: fs_game now defaults to '%s' mod instead of 'etmain'\n", tmp_fs_game->string);
+		Com_Printf("INFO: fs_game now defaults to '%s' mod instead of 'etmain'\n", tmp_fs_game->string);
 	}
 
 	FS_CalcModHashes();
@@ -5458,7 +5458,7 @@ void FS_InitWhitelist()
 	file = Sys_FOpen(fileMetaPath, "rb");
 	if (!file)
 	{
-		Com_Printf("^3Warning: " META_FILE_NAME " was not found.\n");
+		Com_Printf(S_COLOR_YELLOW "WARNING: " META_FILE_NAME " was not found\n");
 		return;
 	}
 
@@ -5466,7 +5466,7 @@ void FS_InitWhitelist()
     fileLen = ftell(file);
     if (fileLen == -1)
 	{
-		Com_Printf("^3Warning: unable to get current position in stream of file " META_FILE_NAME ".\n");
+		Com_Printf(S_COLOR_YELLOW "WARNING: unable to get current position in stream of file " META_FILE_NAME "\n");
 		return;
 	}
 	fseek(file, 0, SEEK_SET);
@@ -5474,12 +5474,12 @@ void FS_InitWhitelist()
     buf = Com_Allocate(fileLen + 1);
 	if (!buf)
 	{
-		Com_Printf("^3Warning: unable to allocate buffer for " META_FILE_NAME " contents.\n");
+		Com_Printf(S_COLOR_YELLOW "WARNING: unable to allocate buffer for " META_FILE_NAME " contents\n");
 		return;
 	}
     if (fread(buf, 1, fileLen, file) != fileLen)
 	{
-		Com_Printf("3Warning: FS_InitWhitelist: short read.");
+		Com_Printf(S_COLOR_YELLOW "WARNING: FS_InitWhitelist: short read");
 		Com_Dealloc(buf);
 		return;
 	}

@@ -127,7 +127,7 @@ void SV_UpdateConfigStrings(void)
 				// warn admins
 				if (strlen(sv.configstrings[index]) > BIG_INFO_VALUE - 800)
 				{
-					Com_Printf("WARNING: Your server nearly reached a configstring limit [%i chars left] - reduce the ammount of maps/pk3s in path.\n", (int) (BIG_INFO_VALUE - strlen(sv.configstrings[index])));
+					Com_Printf(S_COLOR_YELLOW "WARNING: Your server nearly reached a configstring limit [%i chars left] - reduce the ammount of maps/pk3s in path\n", (int) (BIG_INFO_VALUE - strlen(sv.configstrings[index])));
 				}
 			}
 		}
@@ -195,7 +195,7 @@ void SV_UpdateConfigStrings(void)
 		// warn admins
 		if (cstotal > MAX_GAMESTATE_CHARS - 800) // 5% of MAX_GAMESTATE_CHARS
 		{
-			Com_Printf("WARNING: Your clients might be disconnected by configstring limit [%i chars left] - reduce the ammount of maps/pk3s in path.\n", MAX_GAMESTATE_CHARS - cstotal);
+			Com_Printf(S_COLOR_YELLOW "WARNING: Your clients might be disconnected by configstring limit [%i chars left] - reduce the ammount of maps/pk3s in path\n", MAX_GAMESTATE_CHARS - cstotal);
 		}
 	}
 }
@@ -661,7 +661,7 @@ void SV_SpawnServer(const char *server)
 	// shut down the existing game if it is running
 	SV_ShutdownGameProgs();
 
-	Com_Printf("------ Server Initialization ------\n");
+	Com_Printf("----- Server Initialization ----\n");
 	Com_Printf("Server: %s\n", server);
 
 	// if not running a dedicated server CL_MapLoading will connect the client to the server
@@ -886,14 +886,14 @@ void SV_SpawnServer(const char *server)
 	}
 	else // let admin's know it's disabled
 	{
-		Com_Printf("Not sending heartbeats to master servers - disabled by sv_advert.\n");
+		Com_Printf("Not sending heartbeats to master servers - disabled by sv_advert\n");
 	}
 
 	Hunk_SetMark();
 
 	SV_UpdateConfigStrings();
 
-	Com_Printf("-----------------------------------\n");
+	Com_Printf("---------------------------------\n");
 
 	// start recording a demo
 	if (sv_autoDemo->integer)
@@ -931,7 +931,7 @@ void SV_InitAttackLog()
 {
 	if (sv_protectLog->string[0] == '\0')
 	{
-		Com_Printf("Not logging server attacks to disk.\n");
+		Com_Printf("Not logging server attacks to disk\n");
 	}
 	else
 	{
@@ -940,7 +940,7 @@ void SV_InitAttackLog()
 
 		if (attHandle <= 0)
 		{
-			Com_Printf("WARNING: Couldn't open server attack logfile %s\n", sv_protectLog->string);
+			Com_Printf(S_COLOR_YELLOW "WARNING: Couldn't open server attack logfile %s\n", sv_protectLog->string);
 		}
 		else
 		{
@@ -962,7 +962,7 @@ void SV_CloseAttackLog()
 		SV_WriteAttackLog("-------------------------------------------------------------------------------\n");
 		SV_WriteAttackLog("End server attack log\n");
 		SV_WriteAttackLog("-------------------------------------------------------------------------------\n");
-		Com_Printf("Server attack log closed.\n");
+		Com_Printf("Server attack log closed\n");
 	}
 
 	FS_FCloseFile(attHandle);
@@ -1211,7 +1211,7 @@ void SV_Shutdown(const char *finalmsg)
 	IRC_WaitShutdown();
 #endif
 
-	Com_Printf("----- Server Shutdown -----\n");
+	Com_Printf("----- Server Shutdown ----------\n");
 
 	if (svs.clients && !com_errorEntered)
 	{
@@ -1246,7 +1246,7 @@ void SV_Shutdown(const char *finalmsg)
 
 	Cvar_Set("sv_running", "0");
 
-	Com_Printf("---------------------------\n");
+	Com_Printf("--------------------------------\n");
 
 	// disconnect any local clients
 	CL_Disconnect(qfalse);

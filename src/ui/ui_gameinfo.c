@@ -280,7 +280,7 @@ void UI_LoadArenas(void)
 	// Unfortunately the game  isn't designed to keep tons of pk3s in paths (game & mod)
 	if (uiInfo.mapCount >= 30) // 30 should be fail safe
 	{
-		trap_Print(va(S_COLOR_YELLOW "Warning: Too many pk3 files in path - %i files found.\nWe strongly do recommend to reduce the number of map/pk3 files to max. 30 in path\nif you want to start a listen server with connected players.\n", uiInfo.mapCount));
+		trap_Print(va(S_COLOR_YELLOW "WARNING: Too many pk3 files in path - %i files found.\nWe strongly do recommend to reduce the number of map/pk3 files to max. 30 in path\nif you want to start a listen server with connected players.\n", uiInfo.mapCount));
 	}
 
 	// sorting the maplist

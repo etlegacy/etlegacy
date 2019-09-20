@@ -2767,7 +2767,7 @@ void Com_Init(char *commandLine)
 	int               qport;
 	qboolean          test;
 
-	Com_Printf(ET_VERSION "\n");
+	Com_Printf(S_COLOR_GREEN ET_VERSION "\n");
 
 	if (setjmp(abortframe))
 	{
@@ -3065,7 +3065,7 @@ void Com_Init(char *commandLine)
 	}
 
 	com_fullyInitialized = qtrue;
-	Com_Printf("--- Common Initialization Complete ---\n");
+	Com_Printf("----- Common Initialized -------\n");
 }
 
 //==================================================================

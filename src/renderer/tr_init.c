@@ -1148,7 +1148,7 @@ void R_Init(void)
 	int  i;
 	byte *ptr;
 
-	Ren_Print("----- R_Init -----\n");
+	Ren_Print("----- Initializing Renderer ----\n");
 
 	// clear all our internal state
 	Com_Memset(&tr, 0, sizeof(tr));
@@ -1221,7 +1221,7 @@ void R_Init(void)
 		Ren_Print("R_Init: glGetError() = 0x%x\n", err);
 	}
 
-	Ren_Print("----- finished R_Init -----\n");
+	Ren_Print("--------------------------------\n");
 }
 
 void R_PurgeCache(void)

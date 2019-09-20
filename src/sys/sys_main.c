@@ -511,7 +511,7 @@ void *Sys_LoadDll(const char *name, qboolean useSystemLib)
 	// Don't load any DLLs that end with the pk3 extension or try to traverse directories
 	if (!Sys_DllExtension(name))
 	{
-		Com_Printf("Refusing to attempt to load library \"%s\": Extension not allowed.\n", name);
+		Com_Printf("Refusing to attempt to load library \"%s\": Extension not allowed\n", name);
 		return NULL;
 	}
 
@@ -606,7 +606,7 @@ static void *Sys_TryLibraryLoad(const char *base, const char *gamedir, const cha
 			libHandle = Sys_LoadLibrary(fn);
 			if (!libHandle)
 			{
-				Com_Printf("failed: \"%s\"\n", Sys_LibraryError());
+				Com_Printf("failed: %s", Sys_LibraryError());
 			}
 			else
 			{
@@ -615,7 +615,7 @@ static void *Sys_TryLibraryLoad(const char *base, const char *gamedir, const cha
 		}
 		else
 		{
-			Com_Printf("failed. (Not a valid zip).\n");
+			Com_Printf("failed (not a valid zip)\n");
 		}
 	}
 
@@ -628,7 +628,7 @@ static void *Sys_TryLibraryLoad(const char *base, const char *gamedir, const cha
 		libHandle = Sys_LoadLibrary(fn);
 		if (!libHandle)
 		{
-			Com_Printf("failed: \"%s\"\n", Sys_LibraryError());
+			Com_Printf("failed: %s", Sys_LibraryError());
 		}
 		else
 		{
@@ -647,7 +647,7 @@ static void *Sys_TryLibraryLoad(const char *base, const char *gamedir, const cha
 		libHandle = Sys_LoadLibrary(fn);
 		if (!libHandle)
 		{
-			Com_Printf("failed: \"%s\"\n", Sys_LibraryError());
+			Com_Printf("failed: %s", Sys_LibraryError());
 		}
 		else
 		{
@@ -664,7 +664,7 @@ static void *Sys_TryLibraryLoad(const char *base, const char *gamedir, const cha
 
 	if (!libHandle)
 	{
-		Com_Printf("failed: \"%s\"\n", Sys_LibraryError());
+		Com_Printf("failed: %s", Sys_LibraryError());
 		return NULL;
 	}
 
@@ -803,7 +803,7 @@ void *Sys_LoadGameDll(const char *name, qboolean extract,
 
 	if (!*entryPoint || !dllEntry)
 	{
-		Com_Printf("Sys_LoadDll(%s/%s) failed to find vmMain function:\n\"%s\" !\n", gamedir, name, Sys_LibraryError());
+		Com_Printf("Sys_LoadDll(%s/%s) failed to find vmMain function:\n%s\n", gamedir, name, Sys_LibraryError());
 		Sys_UnloadLibrary(libHandle);
 
 		return NULL;

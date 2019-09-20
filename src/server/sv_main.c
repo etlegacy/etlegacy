@@ -351,7 +351,7 @@ void SV_MasterHeartbeat(const char *msg)
 				}
 				else
 				{
-					Com_Printf("%s has no IPv4 address.\n", master);
+					Com_Printf("%s has no IPv4 address\n", master);
 				}
 			}
 		}
@@ -376,7 +376,7 @@ void SV_MasterHeartbeat(const char *msg)
 				}
 				else
 				{
-					Com_Printf("%s has no IPv6 address.\n", master);
+					Com_Printf("%s has no IPv6 address\n", master);
 				}
 			}
 		}
@@ -469,7 +469,7 @@ void SV_MasterGameCompleteStatus()
 				}
 				else
 				{
-					Com_Printf("%s has no IPv4 address.\n", master);
+					Com_Printf("%s has no IPv4 address\n", master);
 				}
 			}
 		}
@@ -494,7 +494,7 @@ void SV_MasterGameCompleteStatus()
 				}
 				else
 				{
-					Com_Printf("%s has no IPv6 address.\n", master);
+					Com_Printf("%s has no IPv6 address\n", master);
 				}
 			}
 		}
@@ -575,7 +575,7 @@ static long SVC_HashForAddress(netadr_t address)
 
 	if (!ip)
 	{
-		Com_Printf("SVC_HashForAddress: Invalid IP - hash value is 0.\n");
+		Com_Printf("SVC_HashForAddress: Invalid IP - hash value is 0\n");
 		return 0;
 	}
 
@@ -1133,11 +1133,11 @@ static void SVC_RemoteCommand(netadr_t from, msg_t *msg)
 
 	if (!strlen(sv_rconPassword->string))
 	{
-		Com_Printf("No rconpassword set on the server.\n");
+		Com_Printf("No rconpassword set on the server\n");
 	}
 	else if (!valid)
 	{
-		Com_Printf("Bad rconpassword.\n");
+		Com_Printf("Bad rconpassword\n");
 		SV_WriteAttackLog(va("Bad rconpassword from %s\n", NET_AdrToString(from)));
 	}
 	else
@@ -1795,12 +1795,12 @@ void SV_Frame(int msec)
 		// TODO: inspect/adjust these values and/or add cvars
 		if (svs.stats.cpu > CPU_USAGE_WARNING)
 		{
-			Com_Printf("^3WARNING: Server CPU has reached a critical usage of %i%%\n", (int) svs.stats.cpu);
+			Com_Printf(S_COLOR_YELLOW "WARNING: Server CPU has reached a critical usage of %i%%\n", (int) svs.stats.cpu);
 		}
 
 		if (svs.stats.avg > FRAME_TIME_WARNING)
 		{
-			Com_Printf("^3WARNING: Average frame time has reached a critical value of %ims\n", (int) svs.stats.avg);
+			Com_Printf(S_COLOR_YELLOW "WARNING: Average frame time has reached a critical value of %ims\n", (int) svs.stats.avg);
 		}
 	}
 }

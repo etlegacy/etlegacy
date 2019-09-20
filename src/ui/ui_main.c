@@ -8856,7 +8856,7 @@ void UI_RegisterCvars(void)
 	unsigned int i;
 	cvarTable_t  *cv;
 
-	Com_Printf("%u UI cvars in use.\n", cvarTableSize);
+	Com_Printf("%u UI cvars in use\n", cvarTableSize);
 
 	for (i = 0, cv = cvarTable ; i < cvarTableSize ; i++, cv++)
 	{

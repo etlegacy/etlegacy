@@ -343,12 +343,12 @@ void CL_WriteWaveOpen(void)
 		}
 	}
 
-	Com_Printf("Recording to %s.\n", name);
+	Com_Printf("Recording to %s\n", name);
 	clc.wavefile = FS_FOpenFileWrite(name);
 
 	if (!clc.wavefile)
 	{
-		Com_Printf("ERROR: couldn't open %s for writing.\n", name);
+		Com_Printf(S_COLOR_RED "ERROR: couldn't open %s for writing\n", name);
 		return;
 	}
 
@@ -520,7 +520,7 @@ static void CL_UpdateGUID(void)
 
 	if (len < ETKEY_SIZE)
 	{
-		Com_Printf(S_COLOR_RED "ERROR: Could not set etkey (size mismatch).\n");
+		Com_Printf(S_COLOR_RED "ERROR: Could not set etkey (size mismatch)\n");
 		Cvar_Set("cl_guid", "unknown");
 	}
 	else
@@ -550,7 +550,7 @@ static void CL_GenerateETKey(void)
 	FS_FCloseFile(f);
 	if (len > 0)
 	{
-		Com_Printf("ETKEY found.\n");
+		Com_Printf("ETKEY found\n");
 		return;
 	}
 	else
@@ -569,16 +569,16 @@ static void CL_GenerateETKey(void)
 		f = FS_SV_FOpenFileWrite(BASEGAME "/" ETKEY_FILE);
 		if (!f)
 		{
-			Com_Printf(S_COLOR_RED "ERROR: Could not open %s for write.\n", ETKEY_FILE);
+			Com_Printf(S_COLOR_RED "ERROR: Could not open %s for write\n", ETKEY_FILE);
 			return;
 		}
 		if (FS_Write(buff, sizeof(buff), f) > 0)
 		{
-			Com_Printf(S_COLOR_CYAN "ETKEY file generated.\n");
+			Com_Printf(S_COLOR_CYAN "ETKEY file generated\n");
 		}
 		else
 		{
-			Com_Printf(S_COLOR_RED "ERROR: Could not write file %s.\n", ETKEY_FILE);
+			Com_Printf(S_COLOR_RED "ERROR: Could not write file %s\n", ETKEY_FILE);
 		}
 		FS_FCloseFile(f);
 	}
@@ -740,7 +740,7 @@ static void CL_RequestMotd(void)
 
 	if (!NET_StringToAdr(va("%s:%i", MOTD_SERVER_NAME, PORT_MOTD), &autoupdate.motdServer, NA_UNSPEC))
 	{
-		Com_Printf("couldn't resolve address\n");
+		Com_Printf(S_COLOR_YELLOW "couldn't resolve address\n");
 		return;
 	}
 	else
@@ -804,7 +804,7 @@ static void CL_ForwardToServer_f(void)
 {
 	if (cls.state != CA_ACTIVE || clc.demoplaying)
 	{
-		Com_Printf("Not connected to a server.\n");
+		Com_Printf("Not connected to a server\n");
 		return;
 	}
 
@@ -835,7 +835,7 @@ static void CL_Reconnect_f(void)
 {
 	if (!strlen(cls.servername) || !strcmp(cls.servername, "localhost"))
 	{
-		Com_Printf("Can't reconnect to localhost.\n");
+		Com_Printf("Can't reconnect to localhost\n");
 		return;
 	}
 	Cbuf_AddText(va("connect %s\n", cls.servername));
@@ -873,7 +873,7 @@ static void CL_Connect_f(void)
 		}
 		else
 		{
-			Com_Printf("warning: only -4 or -6 as address type understood.\n");
+			Com_Printf(S_COLOR_YELLOW "WARNING: only -4 or -6 as address type understood\n");
 		}
 
 		server = Cmd_Argv(2);
@@ -1017,8 +1017,7 @@ static void CL_Rcon_f(void)
 
 	if (!rcon_client_password->string[0])
 	{
-		Com_Printf("You must set 'rconpassword' before\n"
-		           "issuing an rcon command.\n");
+		Com_Printf("You must set 'rconpassword' before issuing a rcon command\n");
 		return;
 	}
 
@@ -1043,9 +1042,7 @@ static void CL_Rcon_f(void)
 	{
 		if (!strlen(rconAddress->string))
 		{
-			Com_Printf("You must either be connected,\n"
-			           "or set the 'rconAddress' cvar\n"
-			           "to issue rcon commands\n");
+			Com_Printf("You must either be connected, or set the 'rconAddress' cvar to issue rcon commands\n");
 			return;
 		}
 		NET_StringToAdr(rconAddress->string, &rcon_address, NA_UNSPEC);
@@ -1231,7 +1228,7 @@ static void CL_Configstrings_f(void)
 
 	if (cls.state != CA_ACTIVE)
 	{
-		Com_Printf("Not connected to a server.\n");
+		Com_Printf("Not connected to a server\n");
 		return;
 	}
 
@@ -1315,7 +1312,7 @@ void CL_AddFavServer_f(void)
 {
 	if (cls.state != CA_ACTIVE)
 	{
-		Com_Printf("Not connected to a server.\n");
+		Com_Printf("Not connected to a server\n");
 		return;
 	}
 
@@ -1766,7 +1763,7 @@ void CL_ConnectionlessPacket(netadr_t from, msg_t *msg)
 	{
 		if (cls.state != CA_CONNECTING)
 		{
-			Com_Printf("Unwanted challenge response received. '%s' ignored.\n", c);
+			Com_Printf("Unwanted challenge response received, '%s' ignored\n", c);
 		}
 		else
 		{
@@ -2140,7 +2137,7 @@ void CL_CaptureFrameVideo(void)
 		{
 			CL_StartVideoRecording(NULL);
 			CL_TakeVideoFrame();
-			//Com_Printf("Error while recording avi, the file is not open.\n");
+			//Com_Printf("Error while recording avi, the file is not open\n");
 		}
 		break;
 	default:
@@ -2592,8 +2589,6 @@ void CL_InitRef(void)
 	char        dllName[MAX_OSPATH];
 #endif
 
-	Com_Printf("----- Initializing Renderer ----\n");
-
 #ifdef USE_RENDERER_DLOPEN
 	cl_renderer = Cvar_Get("cl_renderer", "opengl1", CVAR_ARCHIVE | CVAR_LATCH);
 
@@ -2708,8 +2703,6 @@ void CL_InitRef(void)
 
 	ret = GetRefAPI(REF_API_VERSION, &ri);
 
-	Com_Printf("-------------------------------\n");
-
 	if (!ret)
 	{
 		Com_Error(ERR_FATAL, "Couldn't initialize renderer library");
@@ -2728,7 +2721,7 @@ void CL_InitRef(void)
  */
 void CL_Init(void)
 {
-	Com_Printf("----- Client Initialization -----\n");
+	Com_Printf("----- Client Initialization ----\n");
 
 	Con_Init();
 
@@ -2939,7 +2932,7 @@ void CL_Init(void)
 	// Initialize random number to be used in pairing of messages with replies
 	srand(Com_Milliseconds());
 
-	Com_Printf("----- Client Initialization Complete -----\n");
+	Com_Printf("--------------------------------\n");
 }
 
 /**
@@ -2949,11 +2942,11 @@ void CL_Shutdown(void)
 {
 	static qboolean recursive = qfalse;
 
-	Com_Printf("----- CL_Shutdown -----\n");
+	Com_Printf("----- Client Shutdown ----------\n");
 
 	if (recursive)
 	{
-		Com_Printf("WARNING: Recursive shutdown\n");
+		Com_Printf(S_COLOR_YELLOW "WARNING: Recursive shutdown\n");
 		return;
 	}
 	recursive = qtrue;
@@ -3044,7 +3037,7 @@ void CL_Shutdown(void)
 	Com_Memset(&cls, 0, sizeof(cls));
 	//Key_SetCatcher( 0 );
 
-	Com_Printf("-----------------------\n");
+	Com_Printf("--------------------------------\n");
 }
 
 /**

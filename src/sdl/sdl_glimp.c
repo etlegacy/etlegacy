@@ -746,7 +746,7 @@ static int GLimp_SetMode(glconfig_t *glConfig, int mode, qboolean fullscreen, qb
 		glConfig->depthBits   = testDepthBits;
 		glConfig->stencilBits = testStencilBits;
 
-		Com_Printf("Using %d color bits, %d depth, %d stencil display.\n",
+		Com_Printf("Using %d color bits, %d depth, %d stencil display\n",
 		           glConfig->colorBits, glConfig->depthBits, glConfig->stencilBits);
 		break;
 	}
@@ -882,7 +882,7 @@ void GLimp_Init(glconfig_t *glConfig, windowContext_t *context)
 	SDL_VERSION(&compiled);
 	SDL_GetVersion(&linked);
 
-	Com_Printf("SDL build version %d.%d.%d - link version %d.%d.%d.\n", compiled.major, compiled.minor, compiled.patch, linked.major, linked.minor, linked.patch);
+	Com_Printf("SDL build version %d.%d.%d - link version %d.%d.%d\n", compiled.major, compiled.minor, compiled.patch, linked.major, linked.minor, linked.patch);
 
 	GLimp_InitCvars();
 
