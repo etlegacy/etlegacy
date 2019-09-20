@@ -3569,6 +3569,7 @@ static void PM_Weapon(void)
 		PM_AddEvent(EV_NOAMMO);
 		PM_ContinueWeaponAnim(PM_IdleAnimForWeapon(pm->ps->weapon));
 		pm->ps->weaponTime += 500;
+		pm->ps->weaponDelay = 0;            // avoid unwanted 2nd click firing on delayed weapon attacks
 
 		return;
 	}
