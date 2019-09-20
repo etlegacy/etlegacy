@@ -636,8 +636,8 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 		// set enemy location
 		BG_UpdateConditionValue(self->s.number, ANIM_COND_ENEMY_POSITION, 0, qfalse);
 
-        // play specific anim on suicide
-        BG_UpdateConditionValue(self->s.number, ANIM_COND_SUICIDE, meansOfDeath == MOD_SUICIDE, qtrue);
+		// play specific anim on suicide
+		BG_UpdateConditionValue(self->s.number, ANIM_COND_SUICIDE, meansOfDeath == MOD_SUICIDE, qtrue);
 
 		// FIXME: add POSITION_RIGHT, POSITION_LEFT
 		if (infront(self, inflictor))
@@ -660,7 +660,11 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 		self->die = body_die;
 	}
 
-	G_FadeItems(self, MOD_SATCHEL);
+	// don't fade our own satchel if suicide with it, explosion effect will not be done
+	if (meansOfDeath == MOD_SATCHEL && attacker == self)
+	{
+		G_FadeItems(self, MOD_SATCHEL);
+	}
 
 	CalculateRanks();
 
@@ -1659,7 +1663,7 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 				{
 					limbo(targ, qtrue);
 				}
-				if( targ->health <= GIB_HEALTH )
+				if (targ->health <= GIB_HEALTH)
 				{
 					GibEntity(targ, 0);
 				}
