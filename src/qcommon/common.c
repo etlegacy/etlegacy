@@ -40,6 +40,7 @@
 #ifndef DEDICATED
 #include "../sys/sys_local.h"
 #endif
+#include "../server/server.h"
 
 #if defined (_WIN32)
 #   include <winsock2.h>
@@ -223,8 +224,7 @@ void QDECL Com_Printf(const char *fmt, ...)
 	va_list         argptr;
 	char            msg[MAXPRINTMSG];
 	static qboolean opening_qconsole = qfalse;
-	qtime_t         timestamp;
-	int l;
+	int             l;
 
 	va_start(argptr, fmt);
 	Q_vsnprintf(msg, sizeof(msg), fmt, argptr);
@@ -250,8 +250,7 @@ void QDECL Com_Printf(const char *fmt, ...)
 #endif
 
 	// add server timestamp in dedicated console and log
-	Com_RealTime(&timestamp);
-	Com_sprintf(msg, sizeof(msg), "%02i:%02i:%02i ", timestamp.tm_hour, timestamp.tm_min, timestamp.tm_sec);
+	Com_sprintf(msg, sizeof(msg), "%8i ", svs.time);
 
 	l = strlen(msg);
 

@@ -3648,16 +3648,9 @@ void QDECL G_LogPrintf(const char *fmt, ...)
 {
 	va_list argptr;
 	char    string[1024];
-	int     min, tens, sec, l;
+	int     l;
 
-	sec = level.time / 1000;
-
-	min  = sec / 60;
-	sec -= min * 60;
-	tens = sec / 10;
-	sec -= tens * 10;
-
-	Com_sprintf(string, sizeof(string), "%i:%i%i ", min, tens, sec);
+	Com_sprintf(string, sizeof(string), "%8i ", level.time);
 
 	l = strlen(string);
 
