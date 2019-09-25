@@ -3502,8 +3502,8 @@ typedef struct
 	image_t *whiteImage;                    ///< full of 0xff
 	image_t *blackImage;                    ///< full of 0x0
 	image_t *redImage;
-	image_t *greenImage;
-	image_t *blueImage;
+	//image_t *greenImage;
+	//image_t *blueImage;
 	image_t *flatImage;                     ///< use this as default normalmap
 	//image_t *randomNormalsImage;
 	image_t *noFalloffImage;
