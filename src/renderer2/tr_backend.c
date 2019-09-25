@@ -2347,12 +2347,22 @@ void RB_RenderGlobalFog()
 
 		SetUniformVec4(UNIFORM_FOGDISTANCEVECTOR, fogDistanceVector);
 		SetUniformVec4(UNIFORM_COLOR, fog->color);
-		SetUniformFloat(UNIFORM_FOGDENSITY, 0.6f); // FIXME: fog->fogParms.density?!
+
+		//if there is a density set
+		if (fog->fogParms.density > 0)
+		{
+			SetUniformFloat(UNIFORM_FOGDENSITY, fog->fogParms.density);
+		}
+		else// use the depthforOpaque wich is set in shader fogparms for end of fog aka where fog is 1.0
+		{
+			SetUniformFloat(UNIFORM_FOGDENSITY, fog->fogParms.depthForOpaque);
+		}
+		// FIXME: fog->fogParms.density?!.. density dont seem to get any value?!
 	}
 
 	SetUniformMatrix16(UNIFORM_VIEWMATRIX, backEnd.viewParms.world.viewMatrix);
 	SetUniformMatrix16(UNIFORM_UNPROJECTMATRIX, backEnd.viewParms.unprojectionMatrix);
-
+	
 	// bind u_ColorMap
 	SelectTexture(TEX_COLOR);
 	GL_Bind(tr.fogImage);

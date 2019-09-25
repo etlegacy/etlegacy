@@ -4098,11 +4098,11 @@ static qboolean ParseShader(char *_text)
 				return qfalse;
 			}
 
-			// FIXME: inspect - this and tcScale (see below) are set in R_SetFrameFog
-			//
-			//shader.fogParms.colorInt = ColorBytes4(shader.fogParms.color[0] * tr.identityLight,
-			//                                       shader.fogParms.color[1] * tr.identityLight,
-			//                                       shader.fogParms.color[2] * tr.identityLight, 1.0);
+			
+			//set read color based on current light
+			shader.fogParms.colorInt = ColorBytes4(shader.fogParms.color[0] * tr.identityLight,
+			                                      shader.fogParms.color[1] * tr.identityLight,
+			                                      shader.fogParms.color[2] * tr.identityLight, 1.0);
 
 			token = COM_ParseExt2(text, qfalse);
 			if (!token[0])
@@ -4115,7 +4115,9 @@ static qboolean ParseShader(char *_text)
 				shader.fogParms.depthForOpaque = atof(token);
 				shader.fogParms.depthForOpaque = shader.fogParms.depthForOpaque < 1 ? 1 : shader.fogParms.depthForOpaque;
 			}
-			//shader.fogParms.tcScale        = 1.0f / shader.fogParms.depthForOpaque;
+			//this is correct and SHOULD be here, it makes the tcScale correct. this is textures scale wich is "1" and divided
+			//on the opacity
+			shader.fogParms.tcScale        = 1.0f / shader.fogParms.depthForOpaque;
 
 			shader.fogVolume = qtrue;
 			shader.sort      = SS_FOG;
