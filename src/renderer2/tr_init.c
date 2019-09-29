@@ -1441,7 +1441,7 @@ void R_Register(void)
 	r_showParallelShadowSplits = ri.Cvar_Get("r_showParallelShadowSplits", "0", CVAR_CHEAT | CVAR_LATCH);
 	r_showDecalProjectors      = ri.Cvar_Get("r_showDecalProjectors", "0", CVAR_CHEAT);
 
-	r_detailTextures = ri.Cvar_Get("r_detailtextures", "1", CVAR_ARCHIVE | CVAR_LATCH);
+	r_detailTextures = ri.Cvar_Get("r_detailtextures", "0", CVAR_ARCHIVE | CVAR_LATCH);
 
 	// FOR sdl_glimp.c
 	r_extMultitexture  = ri.Cvar_Get("r_ext_multitexture", "1", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE);
