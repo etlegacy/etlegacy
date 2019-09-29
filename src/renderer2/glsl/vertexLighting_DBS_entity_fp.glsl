@@ -32,8 +32,8 @@ varying vec2 var_TexNormal;
 #if defined(USE_REFLECTIONS) || defined(USE_SPECULAR)
 varying vec2 var_TexSpecular;
 #endif // USE_REFLECTIONS || USE_SPECULAR
-varying vec3 var_LightDirection;
-varying vec3 var_ViewOrigin; // position - vieworigin
+
+
 #if defined(USE_PARALLAX_MAPPING)
 varying vec2 var_S; // size and start position of search in texture space
 #endif // USE_PARALLAX_MAPPING
@@ -41,7 +41,8 @@ varying vec2 var_S; // size and start position of search in texture space
 #if defined(USE_PORTAL_CLIPPING)
 varying float var_BackSide; // in front, or behind, the portalplane
 #endif // USE_PORTAL_CLIPPING
-
+varying vec3 var_LightDirection;
+varying vec3 var_ViewOrigin; // position - vieworigin
 
 void main()
 {
@@ -53,7 +54,26 @@ void main()
 	}
 #endif // end USE_PORTAL_CLIPPING
 
+#if defined(USE_NORMAL_MAPPING)
+     vec3 N;
+	 // light direction
+	vec3 L = var_LightDirection;
+	vec3 V = var_ViewOrigin;
+#else
+ vec3 N = var_Normal;
+	// view direction
+	vec3 V = var_ViewOrigin;
+	// light direction
+	vec3 L = -var_LightDirection;
+	
+// the cosine of the angle N L
+	float dotNL = dot(N, L);
+#endif
+  
+	
 
+	
+	
 
 	// compute the diffuse term
 	vec2 texDiffuse = var_TexDiffuse.st; // diffuse texture coordinates st
@@ -102,18 +122,13 @@ void main()
 #endif // end USE_PARALLAX_MAPPING
 
 
-	// view direction
-	vec3 V = var_ViewOrigin;
-
-	// light direction
-	vec3 L = var_LightDirection;
+	
 
 	// normal
 	vec3 Ntex = texture2D(u_NormalMap, texNormal).xyz * 2.0 - 1.0;
 	// transform normal from tangentspace to worldspace
-	vec3 N = normalize(var_tangentMatrix * Ntex); // we must normalize to get a vector of unit-length..  reflect() needs it
+	 N = normalize(var_tangentMatrix * Ntex); // we must normalize to get a vector of unit-length..  reflect() needs it
 
-	// the cosine of the angle N L
 	float dotNL = dot(N, L);
 
 
@@ -158,11 +173,24 @@ void main()
 
 #else // USE_NORMAL_MAPPING
 
+
     vec4 color = vec4(diffuse.rgb, 1.0);
 	
 #endif // end USE_NORMAL_MAPPING
-    //we need this for shadows on ents, see flag and stuff
-    color.rgb *= u_LightColor + u_AmbientColor* dotNL; 
-    //color.rgb *= u_LightColor;
+
+     //keep this from getting zero, black looks ugly in ET
+	 //normalmapping can be closer as it also has specular
+#if defined(USE_NORMAL_MAPPING)
+     float DotNL2 = max(dot(N,L),0.02);
+	 //we need this for shadows on ents, see flag and stuff
+    color.rgb *=(u_LightColor * DotNL2) + u_AmbientColor; 
+#else
+    
+    float DotNL2 = max(dot(N,L),0.2);
+    color.rgb *= (u_LightColor + u_AmbientColor)* DotNL2;
+#endif
+
+    
+    //
 	gl_FragColor = color;
 }

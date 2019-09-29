@@ -23,8 +23,7 @@ uniform mat4 u_ModelMatrix;
 uniform mat4 u_ModelViewProjectionMatrix;
 uniform mat4 u_DiffuseTextureMatrix;
 uniform vec3  u_LightColor;
-uniform vec3  u_LightDir;
-uniform vec3  u_ViewOrigin;
+
 uniform float u_DepthScale;
 #if defined(USE_NORMAL_MAPPING)
 uniform mat4 u_NormalTextureMatrix;
@@ -51,8 +50,8 @@ varying vec2 var_TexNormal;
 #if defined(USE_REFLECTIONS) || defined(USE_SPECULAR)
 varying vec2 var_TexSpecular;
 #endif // USE_REFLECTIONS || USE_SPECULAR
-varying vec3 var_LightDirection;
-varying vec3 var_ViewOrigin; // position - vieworigin
+
+
 #if defined(USE_PARALLAX_MAPPING)
 varying vec2 var_S; // size and start position of search in texture space
 #endif // USE_PARALLAX_MAPPING
@@ -60,7 +59,10 @@ varying vec2 var_S; // size and start position of search in texture space
 #if defined(USE_PORTAL_CLIPPING)
 varying float var_BackSide; // in front, or behind, the portalplane
 #endif // USE_PORTAL_CLIPPING
-
+varying vec3 var_ViewOrigin; // position - vieworigin
+varying vec3 var_LightDirection;
+uniform vec3  u_LightDir;
+uniform vec3  u_ViewOrigin;
 
 void main()
 {
@@ -141,9 +143,7 @@ void main()
 	var_TexSpecular = (u_SpecularTextureMatrix * attr_TexCoord0).st;
 #endif // USE_REFLECTIONS || USE_SPECULAR
 
-	var_LightDirection = -normalize(u_LightDir);
-
-	var_ViewOrigin = normalize(var_Position - u_ViewOrigin);
+	
 
 #if defined(USE_PARALLAX_MAPPING)
 	// transform the vieworigin from tangentspace to worldspace
@@ -151,6 +151,10 @@ void main()
 	var_S = viewOrigin2.xy * -u_DepthScale / viewOrigin2.z;
 #endif // USE_PARALLAX_MAPPING
 #endif // USE_NORMAL_MAPPING
+
+var_LightDirection = -normalize(u_LightDir);
+
+var_ViewOrigin = normalize(var_Position - u_ViewOrigin);
 
 #if defined(USE_PORTAL_CLIPPING)
 	// in front, or behind, the portalplane
