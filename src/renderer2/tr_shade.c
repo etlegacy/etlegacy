@@ -680,17 +680,46 @@ static void Render_vertexLighting_DBS_entity(int stage)
 
 	GLSL_SetUniform_AlphaTest(pStage->stateBits);
 
-	if (r_normalMapping->integer)
-	{
-		SetUniformVec3(UNIFORM_VIEWORIGIN, backEnd.viewParms.orientation.origin); // in world space
-	}
+	
+	SetUniformVec3(UNIFORM_VIEWORIGIN, backEnd.viewParms.orientation.origin); // in world space
+	
 
 	SetUniformMatrix16(UNIFORM_MODELMATRIX, MODEL_MATRIX); // same as backEnd.orientation.transformMatrix);
 	SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
 
-	SetUniformVec3(UNIFORM_AMBIENTCOLOR, backEnd.currentEntity->ambientLight);
-	SetUniformVec3(UNIFORM_LIGHTDIR, backEnd.currentEntity->lightDir);
-	SetUniformVec3(UNIFORM_LIGHTCOLOR, backEnd.currentEntity->directedLight);
+	
+     //if ents miss ambient color, use tess
+	if (!backEnd.currentEntity->ambientLight)
+	{
+		//lets use the ambient color in map
+		SetUniformVec3(UNIFORM_AMBIENTCOLOR, tr.worldEntity.ambientLight);
+		
+	}
+	else
+	{
+		SetUniformVec3(UNIFORM_AMBIENTCOLOR, backEnd.currentEntity->ambientLight);
+	}
+
+	//if we miss lightdir from ents, use sun
+	if (!backEnd.currentEntity->lightDir)
+	{
+		SetUniformVec3(UNIFORM_LIGHTDIR, tr.sunDirection);
+	}
+	else
+	{
+		SetUniformVec3(UNIFORM_LIGHTDIR, backEnd.currentEntity->lightDir);
+	}
+	//if we miss directed light use tess
+	if (!backEnd.currentEntity->directedLight)
+	{
+		SetUniformVec3(UNIFORM_LIGHTCOLOR, tess.svars.color);
+	}
+	else
+	{
+		SetUniformVec3(UNIFORM_LIGHTCOLOR, backEnd.currentEntity->directedLight);
+	}
+
+	
 
 	if (r_wrapAroundLighting->integer)
 	{
