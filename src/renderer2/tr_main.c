@@ -1278,10 +1278,7 @@ void R_RotateForViewer(void)
 static void SetFarClip(void)
 {
 	float farthestCornerDistance;
-	int   i; //j;
-	//vec3_t          v;
-	//vec3_t          eye;
-	//float          *modelMatrix;
+	int   i;
 
 	// if not rendering the world (icons, menus, etc)
 	// set a 2k far clip plane
@@ -1291,143 +1288,23 @@ static void SetFarClip(void)
 		return;
 	}
 
+	// this lets you use r_zfar from the command line to experiment with different
+	// distances, but setting it back to 0 uses the map (or procedurally generated) default
+	if (r_zFar->value != 0.f)
+	{
+		tr.viewParms.zFar = r_zFar->integer;
+		R_SetFrameFog();
+
+		if (r_speeds->integer == RSPEEDS_FOG)
+		{
+			Ren_Print("r_zfar value forcing farclip at: %f\n", tr.viewParms.zFar);
+		}
+
+		return;
+	}
+
 	// set far clipping planes dynamically
-
-/// Berserker: setup the more precision zFar - convert corners from world to eye coordinates, and take the farthest X local coordinate
-#if 0
-	modelMatrix            = tr.viewParms.world.viewMatrix2;
 	farthestCornerDistance = 0;
-	// check visBounds
-	for (i = 0; i < 8; i++)
-	{
-		if (i & 1)
-		{
-			v[0] = tr.viewParms.visBounds[0][0];
-		}
-		else
-		{
-			v[0] = tr.viewParms.visBounds[1][0];
-		}
-
-		if (i & 2)
-		{
-			v[1] = tr.viewParms.visBounds[0][1];
-		}
-		else
-		{
-			v[1] = tr.viewParms.visBounds[1][1];
-		}
-
-		if (i & 4)
-		{
-			v[2] = tr.viewParms.visBounds[0][2];
-		}
-		else
-		{
-			v[2] = tr.viewParms.visBounds[1][2];
-		}
-
-		for (j = 0; j < 3; j++)
-		{
-			eye[j] =
-			    v[0] * modelMatrix[j + 0 * 4] +
-			    v[1] * modelMatrix[j + 1 * 4] + v[2] * modelMatrix[j + 2 * 4] + modelMatrix[j + 3 * 4];
-		}
-
-		farthestCornerDistance = max(farthestCornerDistance, eye[0] * eye[0] + eye[1] * eye[1] + eye[2] * eye[2]);
-	}
-
-#if 0
-	// check lightBounds
-	if (tr.refdef.numLights)
-	{
-		for (i = 0; i < 8; i++)
-		{
-			if (i & 1)
-			{
-				v[0] = tr.viewParms.lightBounds[0][0];
-			}
-			else
-			{
-				v[0] = tr.viewParms.lightBounds[1][0];
-			}
-
-			if (i & 2)
-			{
-				v[1] = tr.viewParms.lightBounds[0][1];
-			}
-			else
-			{
-				v[1] = tr.viewParms.lightBounds[1][1];
-			}
-
-			if (i & 4)
-			{
-				v[2] = tr.viewParms.lightBounds[0][2];
-			}
-			else
-			{
-				v[2] = tr.viewParms.lightBounds[1][2];
-			}
-
-			for (j = 0; j < 3; j++)
-			{
-				eye[j] =
-				    v[0] * modelMatrix[j + 0 * 4] +
-				    v[1] * modelMatrix[j + 1 * 4] + v[2] * modelMatrix[j + 2 * 4] + modelMatrix[j + 3 * 4];
-			}
-
-			farthestCornerDistance = max(farthestCornerDistance, eye[0] * eye[0] + eye[1] * eye[1] + eye[2] * eye[2]);
-		}
-	}
-#endif
-
-#else
-	farthestCornerDistance = 0;
-
-	// check visBounds
-	for (i = 0; i < 8; i++)
-	{
-		vec3_t v;
-		float  distance;
-
-		if (i & 1)
-		{
-			v[0] = tr.viewParms.visBounds[0][0];
-		}
-		else
-		{
-			v[0] = tr.viewParms.visBounds[1][0];
-		}
-
-		if (i & 2)
-		{
-			v[1] = tr.viewParms.visBounds[0][1];
-		}
-		else
-		{
-			v[1] = tr.viewParms.visBounds[1][1];
-		}
-
-		if (i & 4)
-		{
-			v[2] = tr.viewParms.visBounds[0][2];
-		}
-		else
-		{
-			v[2] = tr.viewParms.visBounds[1][2];
-		}
-
-		distance = DistanceSquared(v, tr.viewParms.orientation.origin);
-
-		if (distance > farthestCornerDistance)
-		{
-			farthestCornerDistance = distance;
-		}
-	}
-
-#if 0
-	// check lightBounds
 	for (i = 0; i < 8; i++)
 	{
 		vec3_t v;
@@ -1436,29 +1313,29 @@ static void SetFarClip(void)
 
 		if (i & 1)
 		{
-			v[0] = tr.viewParms.lightBounds[0][0];
+			v[0] = tr.viewParms.visBounds[0][0];
 		}
 		else
 		{
-			v[0] = tr.viewParms.lightBounds[1][0];
+			v[0] = tr.viewParms.visBounds[1][0];
 		}
 
 		if (i & 2)
 		{
-			v[1] = tr.viewParms.lightBounds[0][1];
+			v[1] = tr.viewParms.visBounds[0][1];
 		}
 		else
 		{
-			v[1] = tr.viewParms.lightBounds[1][1];
+			v[1] = tr.viewParms.visBounds[1][1];
 		}
 
 		if (i & 4)
 		{
-			v[2] = tr.viewParms.lightBounds[0][2];
+			v[2] = tr.viewParms.visBounds[0][2];
 		}
 		else
 		{
-			v[2] = tr.viewParms.lightBounds[1][2];
+			v[2] = tr.viewParms.visBounds[1][2];
 		}
 
 		VectorSubtract(v, tr.viewParms.orientation.origin, vecTo);
@@ -1470,16 +1347,16 @@ static void SetFarClip(void)
 			farthestCornerDistance = distance;
 		}
 	}
-#endif
 
-#endif
 	tr.viewParms.zFar = sqrt(farthestCornerDistance);
 	
 	// add global q3/ET 'gl' fog 'wall'
 	if (r_wolfFog->integer && tr.world != NULL && tr.world->globalFog >= 0 && tr.world->fogs[tr.world->globalFog].fogParms.depthForOpaque < tr.viewParms.zFar)
 	{
 		tr.viewParms.zFar = tr.world->fogs[tr.world->globalFog].fogParms.depthForOpaque;
-	}
+	}			
+	
+	R_SetFrameFog();
 }
 
 // *INDENT-OFF*
@@ -1497,7 +1374,12 @@ static void R_SetupProjection(qboolean infiniteFarClip)
 
 	// dynamically compute far clip plane distance
 	SetFarClip();
-
+	   
+    
+	// set frustum planes (this happens here because of zfar manipulation)
+	R_SetupFrustum();
+	
+    // set up projection matrix
 	zNear = tr.viewParms.zNear = r_zNear->value;
 
 	if (r_zFar->value != 0.f)
@@ -1602,15 +1484,15 @@ static void R_SetupUnprojection(void)
 /**
  * @brief Setup that culling frustum planes for the current view
  */
-static void R_SetupFrustum(void)
+void R_SetupFrustum(void)
 {
 	int    i;
 	float  xs, xc;
-	float  ang = tr.viewParms.fovX / 180 * M_PI * 0.5;
+	float  ang = (float)tr.viewParms.fovX / 180 * M_PI * 0.5;
 	vec3_t planeOrigin;
 
-	xs = sin(ang);
-	xc = cos(ang);
+	xs = (float)sin(ang);
+	xc = (float)cos(ang);
 
 	VectorScale(tr.viewParms.orientation.axis[0], xs, tr.viewParms.frustums[0][0].normal);
 	VectorMA(tr.viewParms.frustums[0][0].normal, xc, tr.viewParms.orientation.axis[1], tr.viewParms.frustums[0][0].normal);
@@ -1618,9 +1500,9 @@ static void R_SetupFrustum(void)
 	VectorScale(tr.viewParms.orientation.axis[0], xs, tr.viewParms.frustums[0][1].normal);
 	VectorMA(tr.viewParms.frustums[0][1].normal, -xc, tr.viewParms.orientation.axis[1], tr.viewParms.frustums[0][1].normal);
 
-	ang = tr.viewParms.fovY / 180 * M_PI * 0.5;
-	xs  = sin(ang);
-	xc  = cos(ang);
+	ang = (float)tr.viewParms.fovY / 180 * M_PI * 0.5;
+	xs  = (float)sin(ang);
+	xc  = (float)cos(ang);
 
 	VectorScale(tr.viewParms.orientation.axis[0], xs, tr.viewParms.frustums[0][2].normal);
 	VectorMA(tr.viewParms.frustums[0][2].normal, xc, tr.viewParms.orientation.axis[2], tr.viewParms.frustums[0][2].normal);
