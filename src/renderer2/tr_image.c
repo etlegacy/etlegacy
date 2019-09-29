@@ -3431,9 +3431,10 @@ void R_CreateBuiltinImages(void)
 	// we use a solid white image instead of disabling texturing
 	Com_Memset(data, 255, sizeof(data));
 	tr.whiteImage = R_CreateImage("_white", (byte *) data, 8, 8, IF_NOPICMIP, FT_LINEAR, WT_REPEAT);
-
+	//TODO: we need a fake one for this as a specular, specular shouldnt be zero
+	//adjusted to 0.2 wich seems pretty fine
 	// we use a solid black image instead of disabling texturing
-	Com_Memset(data, 0, sizeof(data));
+	Com_Memset(data, 0.2, sizeof(data));
 	tr.blackImage = R_CreateImage("_black", (byte *) data, 8, 8, IF_NOPICMIP, FT_LINEAR, WT_REPEAT);
 
 	// this is for depth rendering
