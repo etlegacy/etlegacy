@@ -2747,6 +2747,8 @@ void CG_DrawTeamBackground(int x, int y, int w, int h, float alpha, int team);
 void CG_Text_Paint_Ext(float x, float y, float scalex, float scaley, vec4_t color, const char *text, float adjust, int limit, int style, fontHelper_t *font);
 void CG_Text_Paint_Centred_Ext(float x, float y, float scalex, float scaley, vec4_t color, const char *text, float adjust, int limit, int style, fontHelper_t *font);
 void CG_Text_Paint(float x, float y, float scale, vec4_t color, const char *text, float adjust, int limit, int style);
+void CG_Text_PaintWithCursor_Ext(float x, float y, float scale, vec4_t color, const char *text, int cursorPos, const char *cursor, int limit, int style, fontHelper_t *font);
+void CG_Text_PaintWithCursor(float x, float y, float scale, vec4_t color, const char *text, int cursorPos, const char *cursor, int limit, int style);
 void CG_Text_SetActiveFont(int font);
 int CG_Text_Width_Ext(const char *text, float scale, int limit, fontHelper_t *font);
 int CG_Text_Width(const char *text, float scale, int limit);

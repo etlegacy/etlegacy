@@ -43,7 +43,7 @@ int QDECL CG_SortPlayersByXP(const void *a, const void *b);
 panel_button_text_t debriefPlayerHeadingSmallerFont =
 {
 	0.2f,                  0.2f,
-	{ 0.6f,                0.6f, 0.6f,    1.f },
+	{ 0.6f,                0.6f,0.6f,    1.f },
 	0,                     0,
 	&cgs.media.limboFont2,
 };
@@ -505,7 +505,7 @@ panel_button_t debriefPlayerListScroll =
 panel_button_text_t debriefPlayerInfoFont =
 {
 	0.2f,                  0.2f,
-	{ 0.6f,                0.6f, 0.6f,    1.f },
+	{ 0.6f,                0.6f,0.6f,    1.f },
 	0,                     0,
 	&cgs.media.limboFont2,
 };
@@ -642,11 +642,11 @@ panel_button_t debriefPlayerInfoHitRegions =
 {
 	NULL,
 	NULL,
-	{ 146,                      156, 0, 0 },
-	{ 0,                        0,  0, 0, 0, 0, 0, 0 },
-	&debriefPlayerInfoFont,     // font
-	NULL,                       // keyDown
-	NULL,                       // keyUp
+	{ 146,                              156,   0, 0 },
+	{ 0,                                0,     0, 0, 0, 0, 0, 0},
+	&debriefPlayerInfoFont,             // font
+	NULL,                               // keyDown
+	NULL,                               // keyUp
 	CG_Debriefing_PlayerHitRegions_Draw,
 	NULL,
 };
@@ -655,8 +655,8 @@ panel_button_t debriefPlayerInfoHitRegions =
 	panel_button_t debriefPlayerInfoSkills ## number = {      \
 		NULL,                                       \
 		NULL,                                       \
-		{ 24,                            136 + (number * 14),  12, 12 }, \
-		{ number,                        0,                     0,  0, 0, 0, 0, 0},  \
+		{ 24,                            136 + (number * 14), 12, 12 }, \
+		{ number,                        0,                   0,  0, 0, 0, 0, 0},  \
 		&debriefPlayerInfoFont,          /* font     */  \
 		NULL,                            /* keyDown  */  \
 		NULL,                            /* keyUp    */  \
@@ -844,8 +844,8 @@ panel_button_t chatPanelVoteButton =
 {
 	NULL,
 	"MAP VOTE",
-	{ SCREEN_WIDTH - 10 - 60 - 4 - 60 - 4, SCREEN_HEIGHT - 30,               60, 16 },
-	{ 0,                          0,                                         0,  0, 0, 0, 0, 0},
+	{ SCREEN_WIDTH - 10 - 60 - 4 - 60 - 4,SCREEN_HEIGHT - 30,                             60, 16 },
+	{ 0,                          0,                                              0,  0, 0, 0, 0, 0},
 	NULL,                         // font
 	CG_Debriefing_VoteButton_KeyDown,// keyDown
 	NULL,                         // keyUp
@@ -858,8 +858,8 @@ panel_button_t chatPanelQCButton =
 {
 	NULL,
 	"QUICK CHAT",
-	{ SCREEN_WIDTH - 10 - 60 - 4 - 60 - 4 - 80 - 4, SCREEN_HEIGHT - 30,      80, 16 },
-	{ 0,                         0,                                          0,  0, 0, 0, 0, 0},
+	{ SCREEN_WIDTH - 10 - 60 - 4 - 60 - 4 - 80 - 4,SCREEN_HEIGHT - 30,                                    80, 16 },
+	{ 0,                         0,                                                     0,  0, 0, 0, 0, 0},
 	NULL,                        // font
 	CG_Debriefing_QCButton_KeyDown,// keyDown
 	NULL,                        // keyUp
@@ -872,8 +872,8 @@ panel_button_t chatPanelReadyButton =
 {
 	NULL,
 	"READY",
-	{ SCREEN_WIDTH - 10 - 60 - 4 - 60 - 4 - 80 - 4 - 60 - 4, SCREEN_HEIGHT - 30, 60, 16 },
-	{ 0,                           0,                                            0,  0, 0, 0, 0, 0},
+	{ SCREEN_WIDTH - 10 - 60 - 4 - 60 - 4 - 80 - 4 - 60 - 4,SCREEN_HEIGHT - 30,                                                  60, 16 },
+	{ 0,                           0,                                                                   0,  0, 0, 0, 0, 0},
 	NULL,                          // font
 	CG_Debriefing_ReadyButton_KeyDown,// keyDown
 	NULL,                          // keyUp
@@ -1100,7 +1100,7 @@ void CG_MapVoteList_Draw(panel_button_t *button)
 		CG_Text_Paint_Ext(DB_MAPVOTE_X + cgs.wideXoffset, y, button->font->scalex,
 		                  button->font->scaley, button->font->colour,
 		                  va("%3d%% (%d)", cgs.dbMapVotesSum > 0 ? 100 * cgs.dbMapVotes[i + cgs.dbMapVoteListOffset] / cgs.dbMapVotesSum : 0,
-		                                  cgs.dbMapVotes[i + cgs.dbMapVoteListOffset]),
+		                     cgs.dbMapVotes[i + cgs.dbMapVoteListOffset]),
 		                  0, 0, 0, button->font->font);
 		y += 12;
 	}
@@ -1235,8 +1235,8 @@ panel_button_t mapVoteHeadingVotes =
 {
 	NULL,
 	"Votes",
-	{ DB_MAPVOTE_X,            DB_MAPVOTE_Y,              0, 0 },
-	{ 0,                       0,                         0, 0, 0, 0, 0, 0},
+	{ DB_MAPVOTE_X,            DB_MAPVOTE_Y,         0, 0 },
+	{ 0,                       0,                    0, 0, 0, 0, 0, 0},
 	&mapVoteFont,              // font
 	NULL,                      // keyDown
 	NULL,                      // keyUp
@@ -1378,27 +1378,11 @@ panel_button_t mapVoteBorder3 =
  */
 void CG_Debriefing_ChatEdit_Draw(panel_button_t *button)
 {
-	int        offset = -1;
-	char       buffer[256 + 1];
-	const char *cs;
+	int    offset = -1;
+	char   buffer[MAX_EDITFIELD + 1];
+	vec4_t *color;
 
 	trap_Cvar_VariableStringBuffer(button->text, buffer, sizeof(buffer));
-
-	if ((cg.time / 1000) % 2)
-	{
-		if (trap_Key_GetOverstrikeMode())
-		{
-			Q_strcat(buffer, sizeof(buffer), "^7|");
-		}
-		else
-		{
-			Q_strcat(buffer, sizeof(buffer), "^7_");
-		}
-	}
-	else
-	{
-		Q_strcat(buffer, sizeof(buffer), " ");
-	}
 
 	do
 	{
@@ -1413,20 +1397,20 @@ void CG_Debriefing_ChatEdit_Draw(panel_button_t *button)
 	switch (cgs.dbChatMode)
 	{
 	case 0:
-		cs = va("^7%s", buffer + offset);
+		color = &colorWhite;
 		break;
 	case 1:
-		cs = va("^5%s", buffer + offset);
+		color = &colorCyan;
 		break;
 	case 2:
-		cs = va("^3%s", buffer + offset);
+		color = &colorYellow;
 		break;
 	default:
-		cs = "";
+		color = &button->font->colour;
 		break;
 	}
 
-	CG_Text_Paint_Ext(button->rect.x, button->rect.y + button->rect.h, button->font->scalex, button->font->scaley, button->font->colour, cs, 0, 0, button->font->style, button->font->font);
+	CG_Text_PaintWithCursor_Ext(button->rect.x, button->rect.y + button->rect.h, button->font->scalex, *color, va("%s", buffer + offset), button->data[2], trap_Key_GetOverstrikeMode() ? "_" : "|", offset, button->font->style, button->font->font);
 }
 
 /**
@@ -1493,7 +1477,7 @@ void CG_Debriefing_ChatBox_Draw(panel_button_t *button)
 panel_button_t *chatPanelButtons[] =
 {
 	&chatPanelWindow,       &chatPanelText,
-	&chatPanelNextButton,   &chatPanelVoteButton, &chatPanelQCButton, &chatTypeButton, &chatPanelReadyButton,
+	&chatPanelNextButton,   &chatPanelVoteButton,&chatPanelQCButton,  &chatTypeButton, &chatPanelReadyButton,
 	&charPanelEditSurround, &charPanelEdit,
 	NULL
 };
@@ -2602,13 +2586,13 @@ qhandle_t imgL;
 /**
  * @brief
  */
-void CG_Debriefing_PlayerHitRegions_Draw(panel_button_t* button)
+void CG_Debriefing_PlayerHitRegions_Draw(panel_button_t *button)
 {
 	int    totalHits = cgs.dbHitRegions[HR_HEAD] + cgs.dbHitRegions[HR_ARMS] + cgs.dbHitRegions[HR_BODY] + cgs.dbHitRegions[HR_LEGS];
-	float  hitsHead  = (totalHits && cgs.dbHitRegions[HR_HEAD]) ? (cgs.dbHitRegions[HR_HEAD]/(float)totalHits) : 0.0f;
-	float  hitsArms  = (totalHits && cgs.dbHitRegions[HR_ARMS]) ? (cgs.dbHitRegions[HR_ARMS]/(float)totalHits) : 0.0f;
-	float  hitsBody  = (totalHits && cgs.dbHitRegions[HR_BODY]) ? (cgs.dbHitRegions[HR_BODY]/(float)totalHits) : 0.0f;
-	float  hitsLegs  = (totalHits && cgs.dbHitRegions[HR_LEGS]) ? (cgs.dbHitRegions[HR_LEGS]/(float)totalHits) : 0.0f;
+	float  hitsHead  = (totalHits && cgs.dbHitRegions[HR_HEAD]) ? (cgs.dbHitRegions[HR_HEAD] / (float)totalHits) : 0.0f;
+	float  hitsArms  = (totalHits && cgs.dbHitRegions[HR_ARMS]) ? (cgs.dbHitRegions[HR_ARMS] / (float)totalHits) : 0.0f;
+	float  hitsBody  = (totalHits && cgs.dbHitRegions[HR_BODY]) ? (cgs.dbHitRegions[HR_BODY] / (float)totalHits) : 0.0f;
+	float  hitsLegs  = (totalHits && cgs.dbHitRegions[HR_LEGS]) ? (cgs.dbHitRegions[HR_LEGS] / (float)totalHits) : 0.0f;
 	float  alphaH    = hitsHead > 0.f ? (hitsHead * 0.8f) + 0.2f : 0.0f;
 	float  alphaA    = hitsArms > 0.f ? (hitsArms * 0.8f) + 0.2f : 0.0f;
 	float  alphaB    = hitsBody > 0.f ? (hitsBody * 0.8f) + 0.2f : 0.0f;
@@ -2670,7 +2654,7 @@ void CG_Debriefing_PlayerHitRegions_Draw(panel_button_t* button)
 
 	if (alphaA)
 	{
-		Vector4Set(colorA, 1.0f, 0.f, 0.f, alphaA );
+		Vector4Set(colorA, 1.0f, 0.f, 0.f, alphaA);
 		trap_R_SetColor(colorA);
 		CG_DrawPic(button->rect.x + 4, button->rect.y + 12, 54, 54, imgA);
 		trap_R_SetColor(NULL);
@@ -3127,8 +3111,8 @@ void CG_Debriefing_NextButton_Draw(panel_button_t *button)
  */
 void CG_Debriefing_ChatEditFinish(panel_button_t *button)
 {
-	char buffer[256];
-	trap_Cvar_VariableStringBuffer(button->text, buffer, 256);
+	char buffer[MAX_EDITFIELD];
+	trap_Cvar_VariableStringBuffer(button->text, buffer, MAX_EDITFIELD);
 
 	switch (cgs.dbChatMode)
 	{
@@ -3142,6 +3126,8 @@ void CG_Debriefing_ChatEditFinish(panel_button_t *button)
 		trap_SendClientCommand(va("say_buddy %s", buffer));
 		break;
 	}
+
+	button->data[2] = 0;
 
 	trap_Cvar_Set(button->text, "");
 }

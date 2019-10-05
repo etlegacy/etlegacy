@@ -208,8 +208,6 @@ void CG_Text_PaintChar_Ext(float x, float y, float w, float h, float scalex, flo
  * @param[in] s2
  * @param[in] t2
  * @param[in] hShader
- *
- * @note Unused
  */
 void CG_Text_PaintChar(float x, float y, float width, float height, float scale, float s, float t, float s2, float t2, qhandle_t hShader)
 {
@@ -332,6 +330,131 @@ void CG_Text_Paint(float x, float y, float scale, vec4_t color, const char *text
 	fontHelper_t *font = &cgDC.Assets.fonts[activeFont];
 
 	CG_Text_Paint_Ext(x, y, scale, scale, color, text, adjust, limit, style, font);
+}
+
+/**
+ * @brief CG_Text_PaintWithCursor_Ext
+ * @param[in] x
+ * @param[in] y
+ * @param[in] scale
+ * @param[in] color
+ * @param[in] text
+ * @param[in] cursorPos
+ * @param[in] cursor
+ * @param[in] limit
+ * @param[in] style
+ */
+void CG_Text_PaintWithCursor_Ext(float x, float y, float scale, vec4_t color, const char *text, int cursorPos, const char *cursor, int limit, int style, fontHelper_t *font)
+{
+	vec4_t      newColor = { 0, 0, 0, 0 };
+	glyphInfo_t *glyph, *glyph2;
+	float       useScale = scale * Q_UTF8_GlyphScale(font);
+
+	if (text)
+	{
+		float      yadj;
+		int        len   = Q_UTF8_Strlen(text);
+		int        count = 0;
+		const char *s    = text;
+
+		trap_R_SetColor(color);
+		Com_Memcpy(&newColor[0], &color[0], sizeof(vec4_t));
+
+		if (limit > 0 && len > limit)
+		{
+			len = limit;
+		}
+
+		glyph2 = Q_UTF8_GetGlyph(font, cursor);
+		while (s && *s && count < len)
+		{
+			glyph = Q_UTF8_GetGlyph(font, s);
+			yadj  = useScale * glyph->top;
+
+			if (style == ITEM_TEXTSTYLE_SHADOWED || style == ITEM_TEXTSTYLE_SHADOWEDMORE)
+			{
+				int ofs = style == ITEM_TEXTSTYLE_SHADOWED ? 1 : 2;
+
+				colorBlack[3] = newColor[3];
+				trap_R_SetColor(colorBlack);
+				CG_Text_PaintChar(x + (glyph->pitch * useScale) + ofs, y - yadj + ofs,
+				                  glyph->imageWidth,
+				                  glyph->imageHeight,
+				                  useScale,
+				                  glyph->s,
+				                  glyph->t,
+				                  glyph->s2,
+				                  glyph->t2,
+				                  glyph->glyph);
+				colorBlack[3] = 1.0;
+				trap_R_SetColor(newColor);
+			}
+			CG_Text_PaintChar(x + (glyph->pitch * useScale), y - yadj,
+			                  glyph->imageWidth,
+			                  glyph->imageHeight,
+			                  useScale,
+			                  glyph->s,
+			                  glyph->t,
+			                  glyph->s2,
+			                  glyph->t2,
+			                  glyph->glyph);
+
+			// CG_DrawPic(x, y - yadj, scale * uiDC.Assets.textFont.glyphs[text[i]].imageWidth, scale * uiDC.Assets.textFont.glyphs[text[i]].imageHeight, uiDC.Assets.textFont.glyphs[text[i]].glyph);
+			yadj = useScale * glyph2->top;
+			if (count == cursorPos && !((cgDC.realTime / BLINK_DIVISOR) & 1))
+			{
+				CG_Text_PaintChar(x + (glyph->pitch * useScale), y - yadj,
+				                  glyph2->imageWidth,
+				                  glyph2->imageHeight,
+				                  useScale,
+				                  glyph2->s,
+				                  glyph2->t,
+				                  glyph2->s2,
+				                  glyph2->t2,
+				                  glyph2->glyph);
+			}
+
+			x += (glyph->xSkip * useScale);
+			s += Q_UTF8_Width(s);
+			count++;
+
+		}
+		// need to paint cursor at end of text
+		if (cursorPos == len && !((cgDC.realTime / BLINK_DIVISOR) & 1))
+		{
+			yadj = useScale * glyph2->top;
+			CG_Text_PaintChar(x + (glyph2->pitch * useScale), y - yadj,
+			                  glyph2->imageWidth,
+			                  glyph2->imageHeight,
+			                  useScale,
+			                  glyph2->s,
+			                  glyph2->t,
+			                  glyph2->s2,
+			                  glyph2->t2,
+			                  glyph2->glyph);
+		}
+
+		trap_R_SetColor(NULL);
+	}
+}
+
+/**
+ * @brief CG_Text_PaintWithCursor
+ * @param[in] x
+ * @param[in] y
+ * @param[in] scale
+ * @param[in] color
+ * @param[in] text
+ * @param[in] cursorPos
+ * @param[in] cursor
+ * @param[in] limit
+ * @param[in] style
+ */
+void CG_Text_PaintWithCursor(float x, float y, float scale, vec4_t color, const char *text, int cursorPos, const char *cursor, int limit, int style)
+{
+	fontHelper_t *font = &cgDC.Assets.fonts[activeFont];
+
+	CG_Text_PaintWithCursor_Ext(x, y, scale, color, text, cursorPos, cursor, limit, style, font);
 }
 
 /**

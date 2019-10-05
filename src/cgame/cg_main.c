@@ -981,7 +981,7 @@ char *CG_generateFilename(void)
 #endif
 	          ""
 #ifdef FEATURE_MULTIVIEW
-	          : "-MVD"
+			  : "-MVD"
 #endif
 	          ));
 }
@@ -2386,24 +2386,6 @@ float CG_Cvar_Get(const char *cvar)
 }
 
 /**
- * @brief CG_Text_PaintWithCursor
- * @param[in] x
- * @param[in] y
- * @param[in] scale
- * @param[in] color
- * @param[in] text
- * @param cursorPos - unused
- * @param cursor - unused
- * @param[in] limit
- * @param[in] style
- * @todo Unused. Cursor is ignored
- */
-void CG_Text_PaintWithCursor(float x, float y, float scale, vec4_t color, const char *text, int cursorPos, const char *cursor, int limit, int style)
-{
-	CG_Text_Paint(x, y, scale, color, text, 0, limit, style);
-}
-
-/**
  * @brief CG_OwnerDrawWidth
  * @param ownerDraw - unused
  * @param scale - unused
@@ -2466,49 +2448,50 @@ static void CG_RunCinematicFrame(int handle)
  */
 void CG_LoadHudMenu(void)
 {
-	cgDC.registerShaderNoMip = &trap_R_RegisterShaderNoMip;
-	cgDC.setColor            = &trap_R_SetColor;
-	cgDC.drawHandlePic       = &CG_DrawPic;
-	cgDC.drawStretchPic      = &trap_R_DrawStretchPic;
-	cgDC.drawText            = &CG_Text_Paint;
-	cgDC.drawTextExt         = &CG_Text_Paint_Ext;
-	cgDC.textWidth           = &CG_Text_Width;
-	cgDC.textWidthExt        = &CG_Text_Width_Ext;
-	cgDC.textHeight          = &CG_Text_Height;
-	cgDC.textHeightExt       = &CG_Text_Height_Ext;
-	cgDC.textFont            = &CG_Text_SetActiveFont;
-	cgDC.registerModel       = &trap_R_RegisterModel;
-	cgDC.modelBounds         = &trap_R_ModelBounds;
-	cgDC.fillRect            = &CG_FillRect;
-	cgDC.drawRect            = &CG_DrawRect;
-	cgDC.drawSides           = &CG_DrawSides;
-	cgDC.drawTopBottom       = &CG_DrawTopBottom;
-	cgDC.clearScene          = &trap_R_ClearScene;
-	cgDC.addRefEntityToScene = &trap_R_AddRefEntityToScene;
-	cgDC.renderScene         = &trap_R_RenderScene;
-	cgDC.registerFont        = &trap_R_RegisterFont;
-	cgDC.ownerDrawItem       = NULL;
-	cgDC.getValue            = &CG_GetValue;
-	cgDC.ownerDrawVisible    = &CG_OwnerDrawVisible;
-	cgDC.runScript           = &CG_RunMenuScript;
-	cgDC.getTeamColor        = &CG_GetTeamColor;
-	cgDC.setCVar             = trap_Cvar_Set;
-	cgDC.getCVarString       = trap_Cvar_VariableStringBuffer;
-	cgDC.getCVarValue        = CG_Cvar_Get;
-	cgDC.drawTextWithCursor  = &CG_Text_PaintWithCursor;
-	cgDC.setOverstrikeMode   = &trap_Key_SetOverstrikeMode;
-	cgDC.getOverstrikeMode   = &trap_Key_GetOverstrikeMode;
-	cgDC.startLocalSound     = &trap_S_StartLocalSound;
-	cgDC.ownerDrawHandleKey  = &CG_OwnerDrawHandleKey;
-	cgDC.feederCount         = &CG_FeederCount;
-	cgDC.feederItemImage     = &CG_FeederItemImage;
-	cgDC.feederItemText      = &CG_FeederItemText;
-	cgDC.feederSelection     = &CG_FeederSelection;
-	cgDC.setBinding          = &trap_Key_SetBinding;
-	cgDC.getBindingBuf       = &trap_Key_GetBindingBuf;
-	cgDC.getKeysForBinding   = &trap_Key_KeysForBinding;
-	cgDC.keynumToStringBuf   = &trap_Key_KeynumToStringBuf;
-	cgDC.translateString     = &CG_TranslateString;
+	cgDC.registerShaderNoMip   = &trap_R_RegisterShaderNoMip;
+	cgDC.setColor              = &trap_R_SetColor;
+	cgDC.drawHandlePic         = &CG_DrawPic;
+	cgDC.drawStretchPic        = &trap_R_DrawStretchPic;
+	cgDC.drawText              = &CG_Text_Paint;
+	cgDC.drawTextExt           = &CG_Text_Paint_Ext;
+	cgDC.textWidth             = &CG_Text_Width;
+	cgDC.textWidthExt          = &CG_Text_Width_Ext;
+	cgDC.textHeight            = &CG_Text_Height;
+	cgDC.textHeightExt         = &CG_Text_Height_Ext;
+	cgDC.textFont              = &CG_Text_SetActiveFont;
+	cgDC.registerModel         = &trap_R_RegisterModel;
+	cgDC.modelBounds           = &trap_R_ModelBounds;
+	cgDC.fillRect              = &CG_FillRect;
+	cgDC.drawRect              = &CG_DrawRect;
+	cgDC.drawSides             = &CG_DrawSides;
+	cgDC.drawTopBottom         = &CG_DrawTopBottom;
+	cgDC.clearScene            = &trap_R_ClearScene;
+	cgDC.addRefEntityToScene   = &trap_R_AddRefEntityToScene;
+	cgDC.renderScene           = &trap_R_RenderScene;
+	cgDC.registerFont          = &trap_R_RegisterFont;
+	cgDC.ownerDrawItem         = NULL;
+	cgDC.getValue              = &CG_GetValue;
+	cgDC.ownerDrawVisible      = &CG_OwnerDrawVisible;
+	cgDC.runScript             = &CG_RunMenuScript;
+	cgDC.getTeamColor          = &CG_GetTeamColor;
+	cgDC.setCVar               = trap_Cvar_Set;
+	cgDC.getCVarString         = trap_Cvar_VariableStringBuffer;
+	cgDC.getCVarValue          = CG_Cvar_Get;
+	cgDC.drawTextWithCursor    = &CG_Text_PaintWithCursor;
+	cgDC.drawTextWithCursorExt = &CG_Text_PaintWithCursor_Ext;
+	cgDC.setOverstrikeMode     = &trap_Key_SetOverstrikeMode;
+	cgDC.getOverstrikeMode     = &trap_Key_GetOverstrikeMode;
+	cgDC.startLocalSound       = &trap_S_StartLocalSound;
+	cgDC.ownerDrawHandleKey    = &CG_OwnerDrawHandleKey;
+	cgDC.feederCount           = &CG_FeederCount;
+	cgDC.feederItemImage       = &CG_FeederItemImage;
+	cgDC.feederItemText        = &CG_FeederItemText;
+	cgDC.feederSelection       = &CG_FeederSelection;
+	cgDC.setBinding            = &trap_Key_SetBinding;
+	cgDC.getBindingBuf         = &trap_Key_GetBindingBuf;
+	cgDC.getKeysForBinding     = &trap_Key_KeysForBinding;
+	cgDC.keynumToStringBuf     = &trap_Key_KeynumToStringBuf;
+	cgDC.translateString       = &CG_TranslateString;
 	//cgDC.executeText = &trap_Cmd_ExecuteText;
 	cgDC.Error          = &Com_Error;
 	cgDC.Print          = &Com_Printf;

@@ -1222,10 +1222,12 @@ void CG_LimboPanel_BriefingButton_Draw(panel_button_t *button)
  */
 void CG_LimboPanel_NameEditFinish(panel_button_t *button)
 {
-	char buffer[256];
+	char buffer[MAX_EDITFIELD];
 
-	trap_Cvar_VariableStringBuffer(button->text, buffer, 256);
+	trap_Cvar_VariableStringBuffer(button->text, buffer, MAX_EDITFIELD);
 	trap_Cvar_Set("name", buffer);
+
+	BG_PanelButtons_SetFocusButton(NULL);
 }
 
 /**

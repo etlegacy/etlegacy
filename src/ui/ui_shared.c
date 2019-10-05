@@ -1250,15 +1250,15 @@ void Display_CacheAll(void)
  * @note Unused
 qboolean PC_String_Parse_Trans(int handle, const char **out)
 {
-	pc_token_t token;
+    pc_token_t token;
 
-	if (!trap_PC_ReadToken(handle, &token))
-	{
-		return qfalse;
-	}
+    if (!trap_PC_ReadToken(handle, &token))
+    {
+        return qfalse;
+    }
 
-	*(out) = String_Alloc(DC->translateString(token.string));
-	return qtrue;
+    *(out) = String_Alloc(DC->translateString(token.string));
+    return qtrue;
 }
 */
 
@@ -1336,22 +1336,6 @@ void BG_PanelButton_RenderEdit(panel_button_t *button)
 
 		trap_Cvar_VariableStringBuffer(button->text, buffer, sizeof(buffer));
 
-		if (BG_PanelButtons_GetFocusButton() == button && ((DC->realTime / 1000) % 2))
-		{
-			if (trap_Key_GetOverstrikeMode())
-			{
-				Q_strcat(buffer, sizeof(buffer), "^0|");
-			}
-			else
-			{
-				Q_strcat(buffer, sizeof(buffer), "^0_");
-			}
-		}
-		else
-		{
-			Q_strcat(buffer, sizeof(buffer), " ");
-		}
-
 		do
 		{
 			offset++;
@@ -1362,27 +1346,18 @@ void BG_PanelButton_RenderEdit(panel_button_t *button)
 		}
 		while (DC->textWidthExt(buffer + offset, button->font->scalex, 0, button->font->font) > button->rect.w);
 
-		DC->drawTextExt(button->rect.x, button->rect.y + button->rect.h, button->font->scalex, button->font->scaley, button->font->colour, va("^7%s", buffer + offset), 0, 0, button->font->style, button->font->font);
-	}
-	else
-	{
-		char *s;
-
-		if (BG_PanelButtons_GetFocusButton() == button && ((DC->realTime / 1000) % 2))
+		if (BG_PanelButtons_GetFocusButton() == button)
 		{
-			if (DC->getOverstrikeMode())
-			{
-				s = va("^7%s^0|", button->text);
-			}
-			else
-			{
-				s = va("^7%s^0_", button->text);
-			}
+			DC->drawTextWithCursorExt(button->rect.x, button->rect.y + button->rect.h, button->font->scalex, button->font->colour, va("%s", buffer + offset), button->data[2], trap_Key_GetOverstrikeMode() ? "_" : "|", offset, button->font->style, button->font->font);
 		}
 		else
 		{
-			s = va("^7%s ", button->text);   // space hack to make the text not blink
+			DC->drawTextExt(button->rect.x, button->rect.y + button->rect.h, button->font->scalex, button->font->scaley, button->font->colour, va("^7%s", buffer + offset), 0, 0, button->font->style, button->font->font);
 		}
+	}
+	else
+	{
+		char *s = button->text;
 
 		do
 		{
@@ -1394,7 +1369,14 @@ void BG_PanelButton_RenderEdit(panel_button_t *button)
 		}
 		while (DC->textWidthExt(s + offset, button->font->scalex, 0, button->font->font) > button->rect.w);
 
-		DC->drawTextExt(button->rect.x, button->rect.y + button->rect.h, button->font->scalex, button->font->scaley, button->font->colour, s + offset, 0, 0, button->font->style, button->font->font);
+		if (BG_PanelButtons_GetFocusButton())
+		{
+			DC->drawTextWithCursorExt(button->rect.x, button->rect.y + button->rect.h, button->font->scalex, button->font->colour, s + offset, button->data[2], trap_Key_GetOverstrikeMode() ? "|" : "_", offset, button->font->style, button->font->font);
+		}
+		else
+		{
+			DC->drawTextExt(button->rect.x, button->rect.y + button->rect.h, button->font->scalex, button->font->scaley, button->font->colour, s + offset, 0, 0, button->font->style, button->font->font);
+		}
 	}
 }
 
@@ -1430,7 +1412,7 @@ qboolean BG_PanelButton_EditClick(panel_button_t *button, int key)
 	}
 	else
 	{
-		char     buffer[256];
+		char     buffer[MAX_EDITFIELD];
 		char     *s = NULL;
 		size_t   len, maxlen;
 		qboolean useCvar = button->data[0] ? qfalse : qtrue;
@@ -1454,17 +1436,21 @@ qboolean BG_PanelButton_EditClick(panel_button_t *button, int key)
 
 			if (key == 'h' - 'a' + 1)          // ctrl-h is backspace
 			{
-				if (len)
+				if (len && button->data[2])
 				{
 					if (useCvar)
 					{
+						memmove(&buffer[button->data[2] - 1], &buffer[button->data[2]], len - button->data[2]);
 						buffer[len - 1] = '\0';
-						DC->setCVar(button->text, buffer);
+						trap_Cvar_Set(button->text, buffer);
 					}
 					else
 					{
+						memmove(&s[button->data[2] - 1], &buffer[button->data[2]], len - button->data[2]);
 						s[len - 1] = '\0';
 					}
+
+					button->data[2]--;
 				}
 
 				return qtrue;
@@ -1497,21 +1483,108 @@ qboolean BG_PanelButton_EditClick(panel_button_t *button, int key)
 
 			if (useCvar)
 			{
-				buffer[len]     = (char)key;
-				buffer[len + 1] = '\0';
+				if (button->data[2] == len)
+				{
+					buffer[len]     = (char)key;
+					buffer[len + 1] = '\0';
+				}
+				else
+				{
+					if (trap_Key_GetOverstrikeMode())
+					{
+						buffer[button->data[2]] = (char)key;
+					}
+					else
+					{
+						memmove(&buffer[button->data[2] + 1], &buffer[button->data[2]], len - button->data[2]);
+						buffer[button->data[2]] = (char)key;
+						buffer[len + 2]         = '\0';
+					}
+				}
+
 				trap_Cvar_Set(button->text, buffer);
 			}
 			else
 			{
-				s[len]     = (char)key;
-				s[len + 1] = '\0';
+				if (button->data[2] == len)
+				{
+					s[len]     = (char)key;
+					s[len + 1] = '\0';
+				}
+				else
+				{
+					if (trap_Key_GetOverstrikeMode())
+					{
+						s[button->data[2]] = (char)key;
+					}
+					else
+					{
+						memmove(&s[button->data[2] + 1], &buffer[button->data[2]], len - button->data[2]);
+						s[button->data[2]] = (char)key;
+						s[len + 2]         = '\0';
+					}
+				}
 			}
+
+			button->data[2]++;
 
 			return qtrue;
 		}
 		else
 		{
-			if (key == K_ENTER || key == K_KP_ENTER)
+			if (key == K_DEL || key == K_KP_DEL)
+			{
+				if (button->data[2] < len)
+				{
+					if (useCvar)
+					{
+						memmove(&buffer[button->data[2]], &buffer[button->data[2] + 1], len - button->data[2]);
+						buffer[len] = '\0';
+						trap_Cvar_Set(button->text, buffer);
+					}
+					else
+					{
+						memmove(&s[button->data[2]], &buffer[button->data[2] + 1], len - button->data[2]);
+						s[len] = '\0';
+					}
+				}
+
+				return qtrue;
+			}
+			else if (key == K_RIGHTARROW || key == K_KP_RIGHTARROW)
+			{
+				if (button->data[2] < len)
+				{
+					button->data[2]++;
+				}
+
+				return qtrue;
+			}
+			else if (key == K_LEFTARROW || key == K_KP_LEFTARROW)
+			{
+				if (button->data[2] > 0)
+				{
+					button->data[2]--;
+				}
+
+				return qtrue;
+			}
+			else if (key == K_HOME || key == K_KP_HOME)
+			{
+				button->data[2] = 0;
+				return qtrue;
+			}
+			else if (key == K_END || key == K_KP_END)
+			{
+				button->data[2] = len;
+				return qtrue;
+			}
+			else if (key == K_INS || key == K_KP_INS)
+			{
+				trap_Key_SetOverstrikeMode(!trap_Key_GetOverstrikeMode());
+				return qtrue;
+			}
+			else if (key == K_ENTER || key == K_KP_ENTER)
 			{
 				if (button->onFinish)
 				{

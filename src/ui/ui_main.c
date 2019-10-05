@@ -668,7 +668,7 @@ void Text_Paint(float x, float y, float scale, vec4_t color, const char *text, f
 }
 
 /**
- * @brief Text_PaintWithCursor
+ * @brief Text_PaintWithCursor_Ext
  * @param[in] x
  * @param[in] y
  * @param[in] scale
@@ -679,12 +679,11 @@ void Text_Paint(float x, float y, float scale, vec4_t color, const char *text, f
  * @param[in] limit
  * @param[in] style
  */
-void Text_PaintWithCursor(float x, float y, float scale, vec4_t color, const char *text, int cursorPos, const char *cursor, int limit, int style)
+void Text_PaintWithCursor_Ext(float x, float y, float scale, vec4_t color, const char *text, int cursorPos, const char *cursor, int limit, int style, fontHelper_t *font)
 {
-	vec4_t       newColor = { 0, 0, 0, 0 };
-	glyphInfo_t  *glyph, *glyph2;
-	fontHelper_t *font    = &uiInfo.uiDC.Assets.fonts[uiInfo.activeFont];
-	float        useScale = scale * Q_UTF8_GlyphScale(font);
+	vec4_t      newColor = { 0, 0, 0, 0 };
+	glyphInfo_t *glyph, *glyph2;
+	float       useScale = scale * Q_UTF8_GlyphScale(font);
 
 	if (text)
 	{
@@ -772,6 +771,25 @@ void Text_PaintWithCursor(float x, float y, float scale, vec4_t color, const cha
 
 		trap_R_SetColor(NULL);
 	}
+}
+
+/**
+ * @brief Text_PaintWithCursor
+ * @param[in] x
+ * @param[in] y
+ * @param[in] scale
+ * @param[in] color
+ * @param[in] text
+ * @param[in] cursorPos
+ * @param[in] cursor
+ * @param[in] limit
+ * @param[in] style
+ */
+void Text_PaintWithCursor(float x, float y, float scale, vec4_t color, const char *text, int cursorPos, const char *cursor, int limit, int style)
+{
+	fontHelper_t *font = &uiInfo.uiDC.Assets.fonts[uiInfo.activeFont];
+
+	Text_PaintWithCursor_Ext(x, y, scale, color, text, cursorPos, cursor, limit, style, font);
 }
 
 /**
@@ -8061,70 +8079,71 @@ void UI_Init(int legacyClient, int clientVersion)
 	}
 
 	//UI_Load();
-	uiInfo.uiDC.registerShaderNoMip  = &trap_R_RegisterShaderNoMip;
-	uiInfo.uiDC.setColor             = &trap_R_SetColor;
-	uiInfo.uiDC.drawHandlePic        = &UI_DrawHandlePic;
-	uiInfo.uiDC.drawStretchPic       = &trap_R_DrawStretchPic;
-	uiInfo.uiDC.drawText             = &Text_Paint;
-	uiInfo.uiDC.drawTextExt          = &Text_Paint_Ext;
-	uiInfo.uiDC.textWidth            = &Text_Width;
-	uiInfo.uiDC.textWidthExt         = &Text_Width_Ext;
-	uiInfo.uiDC.multiLineTextWidth   = &Multiline_Text_Width;
-	uiInfo.uiDC.textHeight           = &Text_Height;
-	uiInfo.uiDC.textHeightExt        = &Text_Height_Ext;
-	uiInfo.uiDC.multiLineTextHeight  = &Multiline_Text_Height;
-	uiInfo.uiDC.textFont             = &Text_SetActiveFont;
-	uiInfo.uiDC.registerModel        = &trap_R_RegisterModel;
-	uiInfo.uiDC.modelBounds          = &trap_R_ModelBounds;
-	uiInfo.uiDC.fillRect             = &UI_FillRect;
-	uiInfo.uiDC.drawRect             = &_UI_DrawRect;
-	uiInfo.uiDC.drawSides            = &_UI_DrawSides;
-	uiInfo.uiDC.drawTopBottom        = &_UI_DrawTopBottom;
-	uiInfo.uiDC.clearScene           = &trap_R_ClearScene;
-	uiInfo.uiDC.addRefEntityToScene  = &trap_R_AddRefEntityToScene;
-	uiInfo.uiDC.renderScene          = &trap_R_RenderScene;
-	uiInfo.uiDC.registerFont         = &trap_R_RegisterFont;
-	uiInfo.uiDC.ownerDrawItem        = &UI_OwnerDraw;
-	uiInfo.uiDC.getValue             = &UI_GetValue;
-	uiInfo.uiDC.ownerDrawVisible     = &UI_OwnerDrawVisible;
-	uiInfo.uiDC.runScript            = &UI_RunMenuScript;
-	uiInfo.uiDC.getTeamColor         = &UI_GetTeamColor;    // not implemented
-	uiInfo.uiDC.setCVar              = trap_Cvar_Set;
-	uiInfo.uiDC.getCVarString        = trap_Cvar_VariableStringBuffer;
-	uiInfo.uiDC.getCVarValue         = trap_Cvar_VariableValue;
-	uiInfo.uiDC.drawTextWithCursor   = &Text_PaintWithCursor;
-	uiInfo.uiDC.setOverstrikeMode    = &trap_Key_SetOverstrikeMode;
-	uiInfo.uiDC.getOverstrikeMode    = &trap_Key_GetOverstrikeMode;
-	uiInfo.uiDC.startLocalSound      = &trap_S_StartLocalSound;
-	uiInfo.uiDC.ownerDrawHandleKey   = &UI_OwnerDrawHandleKey;
-	uiInfo.uiDC.feederCount          = &UI_FeederCount;
-	uiInfo.uiDC.feederItemImage      = &UI_FeederItemImage;
-	uiInfo.uiDC.feederItemText       = &UI_FeederItemText;
-	uiInfo.uiDC.fileText             = &UI_FileText;
-	uiInfo.uiDC.feederSelection      = &UI_FeederSelection;
-	uiInfo.uiDC.feederSelectionClick = &UI_FeederSelectionClick;
-	uiInfo.uiDC.feederAddItem        = &UI_FeederAddItem; // not implemented
-	uiInfo.uiDC.setBinding           = &trap_Key_SetBinding;
-	uiInfo.uiDC.getBindingBuf        = &trap_Key_GetBindingBuf;
-	uiInfo.uiDC.getKeysForBinding    = &trap_Key_KeysForBinding;
-	uiInfo.uiDC.keynumToStringBuf    = &trap_Key_KeynumToStringBuf;
-	uiInfo.uiDC.keyIsDown            = &trap_Key_IsDown;
-	uiInfo.uiDC.getClipboardData     = &trap_GetClipboardData;
-	uiInfo.uiDC.executeText          = &trap_Cmd_ExecuteText;
-	uiInfo.uiDC.Error                = &Com_Error;
-	uiInfo.uiDC.Print                = &Com_Printf;
-	uiInfo.uiDC.Pause                = &UI_Pause;
-	uiInfo.uiDC.ownerDrawWidth       = &UI_OwnerDrawWidth;
-	uiInfo.uiDC.registerSound        = &trap_S_RegisterSound;
-	uiInfo.uiDC.startBackgroundTrack = &trap_S_StartBackgroundTrack;
-	uiInfo.uiDC.stopBackgroundTrack  = &trap_S_StopBackgroundTrack;
-	uiInfo.uiDC.playCinematic        = &UI_PlayCinematic;
-	uiInfo.uiDC.stopCinematic        = &UI_StopCinematic;
-	uiInfo.uiDC.drawCinematic        = &UI_DrawCinematic;
-	uiInfo.uiDC.runCinematicFrame    = &UI_RunCinematicFrame;
-	uiInfo.uiDC.translateString      = &trap_TranslateString;
-	uiInfo.uiDC.checkAutoUpdate      = &trap_CheckAutoUpdate;
-	uiInfo.uiDC.getAutoUpdate        = &trap_GetAutoUpdate;
+	uiInfo.uiDC.registerShaderNoMip   = &trap_R_RegisterShaderNoMip;
+	uiInfo.uiDC.setColor              = &trap_R_SetColor;
+	uiInfo.uiDC.drawHandlePic         = &UI_DrawHandlePic;
+	uiInfo.uiDC.drawStretchPic        = &trap_R_DrawStretchPic;
+	uiInfo.uiDC.drawText              = &Text_Paint;
+	uiInfo.uiDC.drawTextExt           = &Text_Paint_Ext;
+	uiInfo.uiDC.textWidth             = &Text_Width;
+	uiInfo.uiDC.textWidthExt          = &Text_Width_Ext;
+	uiInfo.uiDC.multiLineTextWidth    = &Multiline_Text_Width;
+	uiInfo.uiDC.textHeight            = &Text_Height;
+	uiInfo.uiDC.textHeightExt         = &Text_Height_Ext;
+	uiInfo.uiDC.multiLineTextHeight   = &Multiline_Text_Height;
+	uiInfo.uiDC.textFont              = &Text_SetActiveFont;
+	uiInfo.uiDC.registerModel         = &trap_R_RegisterModel;
+	uiInfo.uiDC.modelBounds           = &trap_R_ModelBounds;
+	uiInfo.uiDC.fillRect              = &UI_FillRect;
+	uiInfo.uiDC.drawRect              = &_UI_DrawRect;
+	uiInfo.uiDC.drawSides             = &_UI_DrawSides;
+	uiInfo.uiDC.drawTopBottom         = &_UI_DrawTopBottom;
+	uiInfo.uiDC.clearScene            = &trap_R_ClearScene;
+	uiInfo.uiDC.addRefEntityToScene   = &trap_R_AddRefEntityToScene;
+	uiInfo.uiDC.renderScene           = &trap_R_RenderScene;
+	uiInfo.uiDC.registerFont          = &trap_R_RegisterFont;
+	uiInfo.uiDC.ownerDrawItem         = &UI_OwnerDraw;
+	uiInfo.uiDC.getValue              = &UI_GetValue;
+	uiInfo.uiDC.ownerDrawVisible      = &UI_OwnerDrawVisible;
+	uiInfo.uiDC.runScript             = &UI_RunMenuScript;
+	uiInfo.uiDC.getTeamColor          = &UI_GetTeamColor;   // not implemented
+	uiInfo.uiDC.setCVar               = trap_Cvar_Set;
+	uiInfo.uiDC.getCVarString         = trap_Cvar_VariableStringBuffer;
+	uiInfo.uiDC.getCVarValue          = trap_Cvar_VariableValue;
+	uiInfo.uiDC.drawTextWithCursor    = &Text_PaintWithCursor;
+	uiInfo.uiDC.drawTextWithCursorExt = &Text_PaintWithCursor_Ext;
+	uiInfo.uiDC.setOverstrikeMode     = &trap_Key_SetOverstrikeMode;
+	uiInfo.uiDC.getOverstrikeMode     = &trap_Key_GetOverstrikeMode;
+	uiInfo.uiDC.startLocalSound       = &trap_S_StartLocalSound;
+	uiInfo.uiDC.ownerDrawHandleKey    = &UI_OwnerDrawHandleKey;
+	uiInfo.uiDC.feederCount           = &UI_FeederCount;
+	uiInfo.uiDC.feederItemImage       = &UI_FeederItemImage;
+	uiInfo.uiDC.feederItemText        = &UI_FeederItemText;
+	uiInfo.uiDC.fileText              = &UI_FileText;
+	uiInfo.uiDC.feederSelection       = &UI_FeederSelection;
+	uiInfo.uiDC.feederSelectionClick  = &UI_FeederSelectionClick;
+	uiInfo.uiDC.feederAddItem         = &UI_FeederAddItem; // not implemented
+	uiInfo.uiDC.setBinding            = &trap_Key_SetBinding;
+	uiInfo.uiDC.getBindingBuf         = &trap_Key_GetBindingBuf;
+	uiInfo.uiDC.getKeysForBinding     = &trap_Key_KeysForBinding;
+	uiInfo.uiDC.keynumToStringBuf     = &trap_Key_KeynumToStringBuf;
+	uiInfo.uiDC.keyIsDown             = &trap_Key_IsDown;
+	uiInfo.uiDC.getClipboardData      = &trap_GetClipboardData;
+	uiInfo.uiDC.executeText           = &trap_Cmd_ExecuteText;
+	uiInfo.uiDC.Error                 = &Com_Error;
+	uiInfo.uiDC.Print                 = &Com_Printf;
+	uiInfo.uiDC.Pause                 = &UI_Pause;
+	uiInfo.uiDC.ownerDrawWidth        = &UI_OwnerDrawWidth;
+	uiInfo.uiDC.registerSound         = &trap_S_RegisterSound;
+	uiInfo.uiDC.startBackgroundTrack  = &trap_S_StartBackgroundTrack;
+	uiInfo.uiDC.stopBackgroundTrack   = &trap_S_StopBackgroundTrack;
+	uiInfo.uiDC.playCinematic         = &UI_PlayCinematic;
+	uiInfo.uiDC.stopCinematic         = &UI_StopCinematic;
+	uiInfo.uiDC.drawCinematic         = &UI_DrawCinematic;
+	uiInfo.uiDC.runCinematicFrame     = &UI_RunCinematicFrame;
+	uiInfo.uiDC.translateString       = &trap_TranslateString;
+	uiInfo.uiDC.checkAutoUpdate       = &trap_CheckAutoUpdate;
+	uiInfo.uiDC.getAutoUpdate         = &trap_GetAutoUpdate;
 
 	uiInfo.uiDC.descriptionForCampaign = &UI_DescriptionForCampaign;
 	uiInfo.uiDC.nameForCampaign        = &UI_NameForCampaign;
