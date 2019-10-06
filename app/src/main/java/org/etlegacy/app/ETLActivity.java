@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.AssetManager;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -28,6 +29,10 @@ public class ETLActivity extends SDLActivity implements JoyStickListener
 {
     private String dir_etl;
     private static Context context;
+
+    public static int pxToDp(int px) {
+        return (int) (px / Resources.getSystem().getDisplayMetrics().density);
+    }
 
     private boolean checkGameFiles() {
 
@@ -222,7 +227,7 @@ public class ETLActivity extends SDLActivity implements JoyStickListener
         lp_activate.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
         lp_activate.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
         lp_activate.bottomMargin = -20;
-        lp_activate.leftMargin = 400;
+        lp_activate.leftMargin = pxToDp(400);
 
         mLayout.addView(btn_activate, lp_activate);
 
@@ -244,7 +249,7 @@ public class ETLActivity extends SDLActivity implements JoyStickListener
         lp_alternative.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
         lp_alternative.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
         lp_alternative.bottomMargin = -20;
-        lp_alternative.rightMargin = 400;
+        lp_alternative.rightMargin = pxToDp(400);
 
         mLayout.addView(btn_alternative, lp_alternative);
 
