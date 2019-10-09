@@ -1122,9 +1122,9 @@ void Key_Bindlist_f(void)
 {
 	int i;
 	int freeKeys = 0;
-	
+
 	Com_Printf("key             bind\n");
-	
+
 	Com_Printf("-----------------------------------\n");
 
 	for (i = 0 ; i < MAX_KEYS ; i++)
@@ -1146,7 +1146,7 @@ void Key_Bindlist_f(void)
 			}
 		}
 	}
-	
+
 	Com_Printf("-----------------------------------\n");
 	Com_Printf("%i free keys available.\n", freeKeys);
 	Com_Printf("Enter /bindlist -f to see free keys.\n"); // or any other param ... :)
@@ -1270,7 +1270,7 @@ void CL_KeyEvent(int key, qboolean down, unsigned time)
 	}
 
 	// special handling for numbers of numeric keypad & NUM pressed
-	if (IN_IsNumLockDown() && (cls.keyCatchers & (KEYCATCH_CONSOLE | KEYCATCH_UI)) && down)
+	if (IN_IsNumLockDown() && down)
 	{
 		onlybinds = CL_NumPadEvent(key);
 	}
