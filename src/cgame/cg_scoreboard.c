@@ -38,10 +38,10 @@
 char *Binding_FromName(const char *cvar);
 
 // colors and fonts for overlays
-vec4_t SB_bg = { 0.16f, 0.2f, 0.17f, 0.8f };
-vec4_t SB_bg2 = { 0.0f, 0.0f, 0.0f, 0.6f };
+vec4_t SB_bg     = { 0.16f, 0.2f, 0.17f, 0.8f };
+vec4_t SB_bg2    = { 0.0f, 0.0f, 0.0f, 0.6f };
 vec4_t SB_border = { 1.0f, 1.0f, 1.0f, 0.3f };
-vec4_t SB_text = { 0.6f, 0.6f, 0.6f, 1.0f };
+vec4_t SB_text   = { 0.6f, 0.6f, 0.6f, 1.0f };
 
 #define FONT_HEADER         &cgs.media.limboFont1
 #define FONT_TEXT           &cgs.media.limboFont2
@@ -120,7 +120,14 @@ int WM_DrawObjectives(int x, int y, int width, float fade)
 
 	if (cg.snap->ps.pm_type == PM_INTERMISSION)
 	{
-		const char *buf, *flagshader = NULL, *nameshader = NULL;
+		static qhandle_t alliesFlag = 0;
+		static qhandle_t textAllies = 0;
+		static qhandle_t axisFlag   = 0;
+		static qhandle_t textAxis   = 0;
+		static qhandle_t textWin    = 0;
+
+		const char *buf;
+		qhandle_t  *flagshader = NULL, *nameshader = NULL;
 		int        rows = 8;
 
 		y += 16 * (rows - 1);
@@ -145,28 +152,55 @@ int WM_DrawObjectives(int x, int y, int width, float fade)
 		else if (atoi(buf))
 		{
 			// "ALLIES";
-			flagshader = "ui/assets/portraits/allies_win_flag.tga";
-			nameshader = "ui/assets/portraits/text_allies.tga";
+
+			if (!alliesFlag)
+			{
+				alliesFlag = trap_R_RegisterShaderNoMip("ui/assets/portraits/allies_win_flag.tga");
+			}
+
+			if (!textAllies)
+			{
+				textAllies = trap_R_RegisterShaderNoMip("ui/assets/portraits/text_allies.tga");
+			}
+
+			flagshader = &alliesFlag;
+			nameshader = &textAllies;
 		}
 		else
 		{
 			// "AXIS";
-			flagshader = "ui/assets/portraits/axis_win_flag.tga";
-			nameshader = "ui/assets/portraits/text_axis.tga";
+
+			if (!axisFlag)
+			{
+				axisFlag = trap_R_RegisterShaderNoMip("ui/assets/portraits/allies_win_flag.tga");
+			}
+
+			if (!textAxis)
+			{
+				textAxis = trap_R_RegisterShaderNoMip("ui/assets/portraits/text_allies.tga");
+			}
+
+			flagshader = &axisFlag;
+			nameshader = &textAxis;
 		}
 
 		y += 16 * ((rows - 2) / 2);
 
 		if (flagshader)
 		{
-			CG_DrawPic(100 + cgs.wideXoffset, 10, 210, 136, trap_R_RegisterShaderNoMip(flagshader));
-			CG_DrawPic(325 + cgs.wideXoffset, 10, 210, 136, trap_R_RegisterShaderNoMip(flagshader));
+			CG_DrawPic(100 + cgs.wideXoffset, 10, 210, 136, *flagshader);
+			CG_DrawPic(325 + cgs.wideXoffset, 10, 210, 136, *flagshader);
 		}
 
 		if (nameshader)
 		{
-			CG_DrawPic(140 + cgs.wideXoffset, 50, 127, 64, trap_R_RegisterShaderNoMip(nameshader));
-			CG_DrawPic(365 + cgs.wideXoffset, 50, 127, 64, trap_R_RegisterShaderNoMip("ui/assets/portraits/text_win.tga"));
+			if (!textWin)
+			{
+				textWin = trap_R_RegisterShaderNoMip("ui/assets/portraits/text_win.tga");
+			}
+
+			CG_DrawPic(140 + cgs.wideXoffset, 50, 127, 64, *nameshader);
+			CG_DrawPic(365 + cgs.wideXoffset, 50, 127, 64, textWin);
 		}
 		return y;
 	}
@@ -271,7 +305,7 @@ int WM_DrawObjectives(int x, int y, int width, float fade)
 				else
 				{
 					s = va("%s   %s%i", CG_TranslateString("REINFORCE TIME:"), (seconds <= 2 &&
-						cgs.clientinfo[cg.clientNum].health == 0 && !(cg.snap->ps.pm_flags & PMF_FOLLOW)) ? "^3" : "^F", seconds);
+					                                                            cgs.clientinfo[cg.clientNum].health == 0 && !(cg.snap->ps.pm_flags & PMF_FOLLOW)) ? "^3" : "^F", seconds);
 				}
 				CG_Text_Paint_Ext(SCREEN_WIDTH - 20 - CG_Text_Width_Ext(s, 0.25f, 0, FONT_HEADER) + cgs.wideXoffset, y, 0.25f, 0.25f, SB_text, s, 0, 0, 0, FONT_HEADER);
 			}
@@ -729,7 +763,7 @@ static void WM_DrawClientScore_Small(int x, int y, score_t *score, float *color,
 	{
 		for (j = 0; j < ci->medals[i]; j++)
 		{
-			Q_strcat(buf, sizeof(buf), va("^%c%c", COLOR_RED + i,GetSkillTableData(i)->skillNames[0]));
+			Q_strcat(buf, sizeof(buf), va("^%c%c", COLOR_RED + i, GetSkillTableData(i)->skillNames[0]));
 		}
 		maxchars--;
 	}
@@ -915,11 +949,11 @@ static int WM_TeamScoreboard(int x, int y, team_t team, float fade, int maxrows,
 	vec4_t     hcolor;
 	float      tempx, tempy;
 	int        i;
-	int        count          = 0;
-	int        width          = INFO_TOTAL_WIDTH;
+	int        count = 0;
+	int        width = INFO_TOTAL_WIDTH;
 	qboolean   use_mini_chars = qfalse, livesleft = qfalse;
-	const char *buffer        = CG_ConfigString(CS_SERVERINFO);
-	const char *str           = Info_ValueForKey(buffer, "g_maxlives");
+	const char *buffer = CG_ConfigString(CS_SERVERINFO);
+	const char *str    = Info_ValueForKey(buffer, "g_maxlives");
 
 	if (str && *str && atoi(str))
 	{
@@ -1263,7 +1297,7 @@ qboolean CG_DrawScoreboard(void)
 {
 	int   x = 20, y = 6, x_right = SCREEN_WIDTH - x - (INFO_TOTAL_WIDTH - 5);
 	float fade;
-	int width = SCREEN_WIDTH - 2 * x + 5;
+	int   width = SCREEN_WIDTH - 2 * x + 5;
 #ifdef FEATURE_RATING
 	int        w;
 	const char *s, *s2, *s3;
@@ -1339,7 +1373,7 @@ qboolean CG_DrawScoreboard(void)
 		//Skill Rating
 		// XP view
 		s3 = (cgs.skillRating && cg_scoreboard.integer == SCOREBOARD_SR) ? CG_TranslateString("Skill Rating view") : CG_TranslateString("XP view");
-		s = va(CG_TranslateString("%s - Press double-%s quickly to switch scoreboard"), s3, s2);
+		s  = va(CG_TranslateString("%s - Press double-%s quickly to switch scoreboard"), s3, s2);
 
 		w = CG_Text_Width_Ext(s, fontScale, 0, &cgs.media.limboFont2);
 		x = Ccg_WideX(SCREEN_WIDTH / 2) - w / 2;

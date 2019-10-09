@@ -3563,6 +3563,23 @@ void CG_Debriefing_Maps_Draw(panel_button_t *button)
  */
 void CG_Debriefing_Mission_Draw(panel_button_t *button)
 {
+	static qhandle_t pinAxis = 0, pinAllied = 0, pinNeutral = 0;
+
+	if (!pinAxis)
+	{
+		pinAxis = trap_R_RegisterShaderNoMip("gfx/loading/pin_axis");
+	}
+
+	if (!pinAllied)
+	{
+		pinAllied = trap_R_RegisterShaderNoMip("gfx/loading/pin_allied");
+	}
+
+	if (!pinNeutral)
+	{
+		pinNeutral = trap_R_RegisterShaderNoMip("gfx/loading/pin_neutral");
+	}
+
 	if (cg_gameType.integer == GT_WOLF_CAMPAIGN)
 	{
 		if (!cgs.campaignInfoLoaded)
@@ -3605,13 +3622,13 @@ void CG_Debriefing_Mission_Draw(panel_button_t *button)
 				switch (CG_Debriefing_FindWinningTeamForPos(i + 1))
 				{
 				case TEAM_AXIS:
-					CG_DrawPic(x - 12, y - 12, 24, 24, trap_R_RegisterShaderNoMip("gfx/loading/pin_axis"));
+					CG_DrawPic(x - 12, y - 12, 24, 24, pinAxis);
 					break;
 				case TEAM_ALLIES:
-					CG_DrawPic(x - 12, y - 12, 24, 24, trap_R_RegisterShaderNoMip("gfx/loading/pin_allied"));
+					CG_DrawPic(x - 12, y - 12, 24, 24, pinAllied);
 					break;
 				default:
-					CG_DrawPic(x - 12, y - 12, 24, 24, trap_R_RegisterShaderNoMip("gfx/loading/pin_neutral"));
+					CG_DrawPic(x - 12, y - 12, 24, 24, pinNeutral);
 					break;
 				}
 
@@ -3633,12 +3650,13 @@ void CG_Debriefing_Mission_Draw(panel_button_t *button)
 				switch (CG_Debriefing_FindWinningTeamForPos(cgs.tdbSelectedMap))
 				{
 				case TEAM_AXIS:
-					CG_DrawPic(x - 12, y - 12, 24, 24, trap_R_RegisterShaderNoMip("gfx/loading/pin_axis"));
+					CG_DrawPic(x - 12, y - 12, 24, 24, pinAxis);
 					break;
 				case TEAM_ALLIES:
-					CG_DrawPic(x - 12, y - 12, 24, 24, trap_R_RegisterShaderNoMip("gfx/loading/pin_allied"));
+					CG_DrawPic(x - 12, y - 12, 24, 24, pinAllied);
 					break;
 				default:
+					CG_DrawPic(x - 12, y - 12, 24, 24, pinNeutral);
 					break;
 				}
 			}
@@ -3658,9 +3676,10 @@ void CG_Debriefing_Mission_Draw(panel_button_t *button)
 
 	if (cgs.arenaData.mappos[0] != 0.f && cgs.arenaData.mappos[1] != 0.f)
 	{
-		float  x, y, w;
-		vec2_t tl, br;
-		vec4_t colourFadedBlack = { 0.f, 0.f, 0.f, 0.4f };
+		float            x, y, w;
+		vec2_t           tl, br;
+		vec4_t           colourFadedBlack = { 0.f, 0.f, 0.f, 0.4f };
+		static qhandle_t campMap          = 0;
 
 		tl[0] = cgs.arenaData.mappos[0] - .5f * 650.f;
 		if (tl[0] < 0)
@@ -3686,7 +3705,12 @@ void CG_Debriefing_Mission_Draw(panel_button_t *button)
 			tl[1] = br[1] - 650.f;
 		}
 
-		CG_DrawPicST(button->rect.x, button->rect.y, button->rect.w, button->rect.h, tl[0] / 1024.f, tl[1] / 1024.f, br[0] / 1024.f, br[1] / 1024.f, trap_R_RegisterShaderNoMip("gfx/loading/camp_map"));
+		if (!campMap)
+		{
+			campMap = trap_R_RegisterShaderNoMip("gfx/loading/camp_map");
+		}
+
+		CG_DrawPicST(button->rect.x, button->rect.y, button->rect.w, button->rect.h, tl[0] / 1024.f, tl[1] / 1024.f, br[0] / 1024.f, br[1] / 1024.f, campMap);
 
 		x = button->rect.x + ((cgs.arenaData.mappos[0] - tl[0]) / 650.f * button->rect.w);
 		y = button->rect.y + ((cgs.arenaData.mappos[1] - tl[1]) / 650.f * button->rect.h);
@@ -3713,13 +3737,13 @@ void CG_Debriefing_Mission_Draw(panel_button_t *button)
 		switch (CG_Debriefing_FindWinningTeam())
 		{
 		case TEAM_AXIS:
-			CG_DrawPic(x - 12, y - 12, 24, 24, trap_R_RegisterShaderNoMip("gfx/loading/pin_axis"));
+			CG_DrawPic(x - 12, y - 12, 24, 24, pinAxis);
 			break;
 		case TEAM_ALLIES:
-			CG_DrawPic(x - 12, y - 12, 24, 24, trap_R_RegisterShaderNoMip("gfx/loading/pin_allied"));
+			CG_DrawPic(x - 12, y - 12, 24, 24, pinAllied);
 			break;
 		default:
-			CG_DrawPic(x - 12, y - 12, 24, 24, trap_R_RegisterShaderNoMip("gfx/loading/pin_neutral"));
+			CG_DrawPic(x - 12, y - 12, 24, 24, pinNeutral);
 			break;
 		}
 
