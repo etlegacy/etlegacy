@@ -68,6 +68,8 @@ matrix:
           - libasound2-dev
           - pulseaudio
           - libpulse-dev
+          
+          - doxygen
 
     - os: linux
       compiler: gcc
@@ -87,6 +89,8 @@ matrix:
           - libasound2-dev
           - pulseaudio
           - libpulse-dev
+          
+          - doxygen
 
     - os: linux
       env: RELEASE_TYPE=release
@@ -106,6 +110,8 @@ matrix:
           - libasound2-dev
           - pulseaudio
           - libpulse-dev
+          
+          - doxygen
 
     - os: linux
       env: RELEASE_TYPE=debug
@@ -126,6 +132,8 @@ matrix:
           - pulseaudio
           - libpulse-dev
           
+          - doxygen
+          
     #- os: osx
     #  osx_image: xcode8.3
     #  before_install:
@@ -135,13 +143,7 @@ matrix:
     #    - brew outdated autoconf || brew upgrade autoconf
     #  env:
     #    - CXX=clang++ CC=clang
-    #    - CXXFLAGS="-g -lstdc++"
-
-# Install dependencies
-addons:
-  apt:
-    packages:
-      - doxygen
+    #    - CXXFLAGS="-g -lstdc++"    
     
 install:
   ############################################################################
