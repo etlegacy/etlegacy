@@ -137,6 +137,12 @@ matrix:
     #    - CXX=clang++ CC=clang
     #    - CXXFLAGS="-g -lstdc++"
 
+# Install dependencies
+addons:
+  apt:
+    packages:
+      - doxygen
+    
 install:
   ############################################################################
   # All the dependencies are installed in ${TRAVIS_BUILD_DIR}/deps/
@@ -154,6 +160,7 @@ install:
 
 script:
   - ./easybuild.sh
+  - doxygen Doxyfile
 
 notifications:
   irc:
@@ -169,3 +176,12 @@ notifications:
     on_success: change
     on_failure: always
     on_start: never
+    
+    # Generate and deploy documentation
+deploy:
+  provider: pages
+  skip_cleanup: true
+  local_dir: html
+  github_token: $GH_REPO_TOKEN
+  on:
+    branch: master
