@@ -117,8 +117,8 @@ public class ETLActivity extends SDLActivity implements JoyStickListener
                 ViewGroup.LayoutParams.WRAP_CONTENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT);
 
-        keyboard_layout.leftMargin = 210;
-        keyboard_layout.topMargin = -20;
+        keyboard_layout.leftMargin = pxToDp(210);
+        keyboard_layout.topMargin = pxToDp(-20);
         mLayout.addView(btn, keyboard_layout);
 
         ImageButton esc_btn = new ImageButton(getApplicationContext());
@@ -137,8 +137,8 @@ public class ETLActivity extends SDLActivity implements JoyStickListener
                 ViewGroup.LayoutParams.WRAP_CONTENT);
 
         lp2.addRule(RelativeLayout.RIGHT_OF, btn.getId());
-        lp2.leftMargin = -15;
-        lp2.topMargin = -20;
+        lp2.leftMargin = pxToDp(-15);
+        lp2.topMargin = -pxToDp(20);
 
         mLayout.addView(esc_btn, lp2);
 
@@ -180,10 +180,10 @@ public class ETLActivity extends SDLActivity implements JoyStickListener
                 ViewGroup.LayoutParams.WRAP_CONTENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT);
 
-        lp_reload.addRule(RelativeLayout.BELOW, btn2.getId());
+        lp_reload.addRule(RelativeLayout.BELOW, btn.getId());
         lp_reload.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
         lp_reload.addRule(RelativeLayout.CENTER_VERTICAL);
-        lp_reload.rightMargin = 90;
+        lp_reload.rightMargin = pxToDp(90);
 
         mLayout.addView(btn_reload, lp_reload);
 
@@ -205,7 +205,7 @@ public class ETLActivity extends SDLActivity implements JoyStickListener
 
         lp_jump.addRule(RelativeLayout.CENTER_HORIZONTAL);
         lp_jump.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-        lp_jump.bottomMargin = -20;
+        lp_jump.bottomMargin = pxToDp(-20);
 
         mLayout.addView(btn_jump, lp_jump);
 
@@ -226,7 +226,7 @@ public class ETLActivity extends SDLActivity implements JoyStickListener
 
         lp_activate.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
         lp_activate.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-        lp_activate.bottomMargin = -20;
+        lp_activate.bottomMargin = pxToDp(-20);
         lp_activate.leftMargin = pxToDp(400);
 
         mLayout.addView(btn_activate, lp_activate);
@@ -248,7 +248,7 @@ public class ETLActivity extends SDLActivity implements JoyStickListener
 
         lp_alternative.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
         lp_alternative.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-        lp_alternative.bottomMargin = -20;
+        lp_alternative.bottomMargin = pxToDp(-20);
         lp_alternative.rightMargin = pxToDp(400);
 
         mLayout.addView(btn_alternative, lp_alternative);
