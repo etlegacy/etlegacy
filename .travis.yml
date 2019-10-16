@@ -126,23 +126,6 @@ matrix:
           - pulseaudio
           - libpulse-dev
           
-    - os: linux
-        env: RELEASE_TYPE=debug
-        addons:
-        apt:
-          packages:
-            - doxygen
-        # Generate and deploy documentation.
-        script: 
-            - doxygen Doxyfile
-        deploy:
-            provider: pages
-            skip_cleanup: true
-            local_dir: html
-            github_token: $GH_REPO_TOKEN
-            on:
-                branch: master  
-          
     #- os: osx
     #  osx_image: xcode8.3
     #  before_install:
@@ -152,8 +135,8 @@ matrix:
     #    - brew outdated autoconf || brew upgrade autoconf
     #  env:
     #    - CXX=clang++ CC=clang
-    #    - CXXFLAGS="-g -lstdc++"    
-    
+    #    - CXXFLAGS="-g -lstdc++"
+
 install:
   ############################################################################
   # All the dependencies are installed in ${TRAVIS_BUILD_DIR}/deps/
