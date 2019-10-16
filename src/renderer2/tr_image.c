@@ -3434,9 +3434,23 @@ void R_CreateBuiltinImages(void)
 	//TODO: we need a fake one for this as a specular, specular shouldnt be zero
 	//adjusted to 0.2 wich seems pretty fine
 	// we use a solid black image instead of disabling texturing
-	Com_Memset(data, 0.2, sizeof(data));
+	Com_Memset(data, 0, sizeof(data));
 	tr.blackImage = R_CreateImage("_black", (byte *) data, 8, 8, IF_NOPICMIP, FT_LINEAR, WT_REPEAT);
 
+
+	//this can be used later as a specular created image..
+	/*for (x = 0; x < DEFAULT_SIZE; x++)
+	{
+		for (y = 0; y < DEFAULT_SIZE; y++)
+		{
+			data[y][x][0] = 123;
+			data[y][x][1] = 118;
+			data[y][x][2] = 117;
+			data[y][x][3] = 255;
+		}
+	}
+	
+	tr.SpecImage = R_CreateImage("_Spec", (byte *) data, 8, 8, IF_NOPICMIP, FT_LINEAR, WT_REPEAT);*/
 	// this is for depth rendering
 	// red
 	for (x = 0; x < DEFAULT_SIZE; x++)
