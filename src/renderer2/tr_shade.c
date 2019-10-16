@@ -466,12 +466,12 @@ typedef struct rgbaGen_s {
 	alphaGen_t alpha;
 } rgbaGen_t;
 
-/**
+/*
  * @brief getRgbaGen
  *
  * @param pStage
  * @param lightmapNum
- */
+ 
 static rgbaGen_t getRgbaGen(shaderStage_t *pStage, int lightmapNum)
 {
     // always exclude the sky
@@ -499,7 +499,7 @@ static rgbaGen_t getRgbaGen(shaderStage_t *pStage, int lightmapNum)
  *
  * @param pStage
  * @param lightmapNum
- */
+ *
 static rgbaGen_t getRgbaGenForColorModulation(shaderStage_t *pStage, int lightmapNum)
 {
 	rgbaGen_t rgbaGen;
@@ -559,7 +559,7 @@ void SetLightUniforms(qboolean setLightColor)
 static void Render_generic(int stage)
 {
 	shaderStage_t *pStage = tess.surfaceStages[stage];
-	rgbaGen_t     rgbaGen;
+	
 
 	Ren_LogComment("--- Render_generic ---\n");
 
@@ -587,9 +587,9 @@ static void Render_generic(int stage)
 	// u_AlphaTest
 	GLSL_SetUniform_AlphaTest(pStage->stateBits);
 
-	rgbaGen = getRgbaGenForColorModulation(pStage, tess.lightmapNum);
+	
 
-	GLSL_SetUniform_ColorModulate(trProg.gl_genericShader, rgbaGen.color, rgbaGen.alpha);
+	GLSL_SetUniform_ColorModulate(trProg.gl_genericShader, pStage->rgbGen, pStage->alphaGen);
 	SetUniformVec4(UNIFORM_COLOR, tess.svars.color);
 	SetUniformMatrix16(UNIFORM_MODELMATRIX, MODEL_MATRIX);
 	SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
@@ -776,7 +776,6 @@ static void Render_vertexLighting_DBS_entity(int stage)
 static void Render_vertexLighting_DBS_world(int stage)
 {
 	shaderStage_t *pStage = tess.surfaceStages[stage];
-	rgbaGen_t     rgbaGen;
 	qboolean      use_parallaxMapping = (r_normalMapping->integer && r_parallaxMapping->integer && tess.surfaceShader->parallax);
 	qboolean      use_specular        = (r_normalMapping->integer && qtrue);
 	qboolean      use_reflections     = qfalse; //(normalMapping && r_reflectionMapping->integer && tr.cubeProbes.currentElements > 0 && !tr.refdef.pixelTarget);
@@ -805,8 +804,8 @@ static void Render_vertexLighting_DBS_world(int stage)
 		SetUniformFloat(UNIFORM_TIME, tess.shaderTime);
 	}
 
-	rgbaGen = getRgbaGenForColorModulation(pStage, tess.lightmapNum);
-	GLSL_SetUniform_ColorModulate(trProg.gl_vertexLightingShader_DBS_world, rgbaGen.color, rgbaGen.alpha);
+	
+	GLSL_SetUniform_ColorModulate(trProg.gl_vertexLightingShader_DBS_world, pStage->rgbGen, pStage->alphaGen);
 	SetUniformVec4(UNIFORM_COLOR, tess.svars.color);
 
 	GLSL_SetUniform_AlphaTest(pStage->stateBits);
@@ -889,7 +888,6 @@ static void Render_lightMapping(int stage, qboolean asColorMap, qboolean normalM
 {
 	shaderStage_t *pStage   = tess.surfaceStages[stage];
 	uint32_t      stateBits = pStage->stateBits;
-	rgbaGen_t     rgbaGen;
 	qboolean      use_parallaxMapping = (normalMapping && r_parallaxMapping->integer && tess.surfaceShader->parallax);
 	//qboolean use_deluxeMapping = (normalMapping && qfalse); // r_showDeluxeMaps->integer == 1 AND a deluxemap exists!    because there is no code that does anything with deluxemaps, we disable it..
 	qboolean use_specular    = (normalMapping && qtrue);
@@ -934,8 +932,8 @@ static void Render_lightMapping(int stage, qboolean asColorMap, qboolean normalM
 
 	GLSL_SetUniform_AlphaTest(pStage->stateBits);
 
-	rgbaGen = getRgbaGenForColorModulation(pStage, tess.lightmapNum);
-	GLSL_SetUniform_ColorModulate(trProg.gl_lightMappingShader, rgbaGen.color, rgbaGen.alpha);
+	
+	GLSL_SetUniform_ColorModulate(trProg.gl_lightMappingShader, pStage->rgbGen, pStage->alphaGen);
 	SetUniformVec4(UNIFORM_COLOR, tess.svars.color);
 
 	if (use_parallaxMapping)
@@ -1211,7 +1209,7 @@ static void Render_forwardLighting_DBS_omni(shaderStage_t *diffuseStage,
 {
 	float      shadowTexelSize;
 	qboolean   shadowCompare;
-	rgbaGen_t  rgbaGen;
+	
 
 	Ren_LogComment("--- Render_forwardLighting_DBS_omni ---\n");
 
@@ -1238,8 +1236,8 @@ static void Render_forwardLighting_DBS_omni(shaderStage_t *diffuseStage,
 	// now we are ready to set the shader program uniforms
 
 	// u_ColorModulate
-	rgbaGen = getRgbaGenForColorModulation(diffuseStage, tess.lightmapNum);
-	GLSL_SetUniform_ColorModulate(trProg.gl_forwardLightingShader_omniXYZ, rgbaGen.color, rgbaGen.alpha);
+	
+	GLSL_SetUniform_ColorModulate(trProg.gl_forwardLightingShader_omniXYZ, diffuseStage->rgbGen, diffuseStage->alphaGen);
 	SetUniformVec4(UNIFORM_COLOR, tess.svars.color);
 
 	if (r_parallaxMapping->integer)
@@ -1372,7 +1370,6 @@ static void Render_forwardLighting_DBS_proj(shaderStage_t *diffuseStage,
 {
 	float      shadowTexelSize;
 	qboolean   shadowCompare = qfalse;
-	rgbaGen_t  rgbaGen;
 
 	Ren_LogComment("--- Render_fowardLighting_DBS_proj ---\n");
 
@@ -1396,9 +1393,9 @@ static void Render_forwardLighting_DBS_proj(shaderStage_t *diffuseStage,
 	// now we are ready to set the shader program uniforms
 
 	// u_ColorModulate
-	rgbaGen = getRgbaGenForColorModulation(diffuseStage, tess.lightmapNum);
+	
 
-	GLSL_SetUniform_ColorModulate(trProg.gl_forwardLightingShader_projXYZ, rgbaGen.color, rgbaGen.alpha);
+	GLSL_SetUniform_ColorModulate(trProg.gl_forwardLightingShader_projXYZ, diffuseStage->rgbGen, diffuseStage->alphaGen);
 	SetUniformVec4(UNIFORM_COLOR, tess.svars.color);
 
 	if (r_parallaxMapping->integer)
@@ -1530,7 +1527,7 @@ static void Render_forwardLighting_DBS_directional(shaderStage_t *diffuseStage,
 {
 	float      shadowTexelSize;
 	qboolean   shadowCompare = qfalse;
-	rgbaGen_t  rgbaGen;
+	
 
 	Ren_LogComment("--- Render_forwardLighting_DBS_directional ---\n");
 
@@ -1555,9 +1552,8 @@ static void Render_forwardLighting_DBS_directional(shaderStage_t *diffuseStage,
 	// now we are ready to set the shader program uniforms
 
 	// u_ColorModulate
-	rgbaGen = getRgbaGenForColorModulation(diffuseStage, tess.lightmapNum);
 
-	GLSL_SetUniform_ColorModulate(trProg.gl_forwardLightingShader_directionalSun, rgbaGen.color, rgbaGen.alpha);
+	GLSL_SetUniform_ColorModulate(trProg.gl_forwardLightingShader_directionalSun, diffuseStage->rgbGen, diffuseStage->alphaGen);
 	SetUniformVec4(UNIFORM_COLOR, tess.svars.color);
 
 	if (r_parallaxMapping->integer)
@@ -1987,11 +1983,11 @@ static void Render_heatHaze(int stage)
 	{
 		FBO_t     *previousFBO;
 		uint32_t  stateBits;
-		rgbaGen_t rgbaGen;
+		
 
 		Ren_LogComment("--- HEATHAZE FIX BEGIN ---\n");
 
-		rgbaGen = getRgbaGenForColorModulation(pStage, tess.lightmapNum);
+	
 
 		// capture current color buffer for u_CurrentMap
 		/*
@@ -2046,7 +2042,7 @@ static void Render_heatHaze(int stage)
 		                          USE_TCGEN_ENVIRONMENT, qfalse);
 		// end choose right shader program ------------------------------
 
-		GLSL_SetUniform_ColorModulate(trProg.gl_genericShader, rgbaGen.color, rgbaGen.alpha);
+		GLSL_SetUniform_ColorModulate(trProg.gl_genericShader, pStage->rgbGen, pStage->alphaGen);
 		SetUniformVec4(UNIFORM_COLOR, colorRed);
 		SetUniformMatrix16(UNIFORM_MODELMATRIX, backEnd.orientation.transformMatrix);
 		SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
@@ -2574,14 +2570,14 @@ void Tess_ComputeColor(shaderStage_t *pStage)
 	float     red;
 	float     green;
 	float     blue;
-	rgbaGen_t rgbaGen;
+	
 
-	rgbaGen = getRgbaGen(pStage, tess.lightmapNum);
+	
 
 	Ren_LogComment("--- Tess_ComputeColor ---\n");
 
 	// rgbGen
-	switch (rgbaGen.color)
+	switch (pStage->rgbGen)
 	{
 	case CGEN_IDENTITY:
 	{
@@ -2741,7 +2737,7 @@ void Tess_ComputeColor(shaderStage_t *pStage)
 	}
 
 	// alphaGen
-	switch (rgbaGen.alpha)
+	switch (pStage->alphaGen)
 	{
 	default:
 	case AGEN_IDENTITY:
@@ -3191,18 +3187,24 @@ void Tess_StageIteratorGeneric()
 		}
 		case ST_LIGHTMAP:
 		{
-			//if (tess.lightmapNum >= 0)
-			//{
+			if (tess.lightmapNum >= 0)
+			{
 				// render the lightmap
 				Render_lightMapping(stage, qtrue, qfalse); // no normalmapping.. it's added in a later stage
-			//}
-			/*else
+			}
+			else
 			{
-				// LIGHTMAP_BY_VERTEX. Render only the vertex-colors.
+				// LIGHTMAP_BY_VERTEX
+				//if shader stage references a lightmap, but no lightmap is present
+			    // (vertex-approximated surfaces), then set cgen to vertex
 				// Because we use the generic shader for this, which needs a color map, we pass a "dummy" whiteImage
+				//this should be done here and rgbgen should not be changed elsewhere.. see oasis,radar and 1944_beach
 				pStage->bundle[TB_COLORMAP].image[0] = tr.whiteImage;
+				
+				pStage->rgbGen = CGEN_VERTEX;
+				//Render_lightMapping(stage, qtrue, qfalse);
 				Render_generic(stage);
-			}*/
+			}
 			break;
 		}
 		case ST_DIFFUSEMAP:
