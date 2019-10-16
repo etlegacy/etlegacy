@@ -68,8 +68,6 @@ matrix:
           - libasound2-dev
           - pulseaudio
           - libpulse-dev
-          
-          - doxygen
 
     - os: linux
       compiler: gcc
@@ -89,8 +87,6 @@ matrix:
           - libasound2-dev
           - pulseaudio
           - libpulse-dev
-          
-          - doxygen
 
     - os: linux
       env: RELEASE_TYPE=release
@@ -110,8 +106,6 @@ matrix:
           - libasound2-dev
           - pulseaudio
           - libpulse-dev
-          
-          - doxygen
 
     - os: linux
       env: RELEASE_TYPE=debug
@@ -132,7 +126,22 @@ matrix:
           - pulseaudio
           - libpulse-dev
           
-          - doxygen
+    - os: linux
+        env: RELEASE_TYPE=debug
+        addons:
+        apt:
+          packages:
+            - doxygen
+        # Generate and deploy documentation.
+        script: 
+            - doxygen Doxyfile
+        deploy:
+            provider: pages
+            skip_cleanup: true
+            local_dir: html
+            github_token: $GH_REPO_TOKEN
+            on:
+                branch: master  
           
     #- os: osx
     #  osx_image: xcode8.3
@@ -162,7 +171,6 @@ install:
 
 script:
   - ./easybuild.sh
-  - doxygen Doxyfile
 
 notifications:
   irc:
@@ -178,12 +186,3 @@ notifications:
     on_success: change
     on_failure: always
     on_start: never
-    
-    # Generate and deploy documentation
-deploy:
-  provider: pages
-  skip_cleanup: true
-  local_dir: html
-  github_token: $GH_REPO_TOKEN
-  on:
-    branch: master
