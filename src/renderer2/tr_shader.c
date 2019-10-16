@@ -1536,6 +1536,11 @@ qboolean LoadMap(shaderStage_t *stage, char *buffer)
 		stage->type = ST_LIGHTMAP;
 		return qtrue;
 	}
+	//skip normalmap on sky .... for now
+	else if (!Q_stricmp(token, "sky") )
+	{
+		imageBits |= !IF_NORMALMAP;
+	}
 
 	// determine image options
 	if (stage->overrideNoPicMip || shader.noPicMip || stage->highQuality || stage->forceHighQuality)
@@ -1596,16 +1601,16 @@ qboolean LoadMap(shaderStage_t *stage, char *buffer)
 		//makes terrain black and orange,also on some
 		//maps loads model textures it didnt before.
 		//better just to print a warning for now
-		//return qfalse;
+		return qfalse;
 	}
 
-/*
+
 	// try to load additional normal and specular images & create stages (r1 shader compatible mode/treat COLORMAPS as DIFFUSEMAPS)
 	// - if this stage isn't already a normal map or a specular map (FIXME & test)
 	// - also check the stageOffset stage and don't overwrite existing stages !!!
-	//if (stage->type == ST_DIFFUSEMAP && shader.type != SHADER_2D && shader.type != SHADER_LIGHT && r_normalMapping->integer > 0 && !(imageBits & IF_NORMALMAP))
+	if (stage->type == ST_DIFFUSEMAP && shader.type != SHADER_2D && shader.type != SHADER_LIGHT && r_normalMapping->integer > 0 && !(imageBits & IF_NORMALMAP))
 	//if (stage->type == ST_DIFFUSEMAP && shader.type != SHADER_2D && shader.type != SHADER_LIGHT && r_normalMapping->integer > 0)
-	if (shader.type != SHADER_2D && shader.type != SHADER_LIGHT && r_normalMapping->integer > 0 && !(imageBits & IF_NORMALMAP))
+	//if (shader.type != SHADER_2D && shader.type != SHADER_LIGHT && r_normalMapping->integer > 0 && !(imageBits & IF_NORMALMAP))
 	{
 		// image loading of
 		image_t *tmpImage;
@@ -1629,7 +1634,7 @@ qboolean LoadMap(shaderStage_t *stage, char *buffer)
 		}
 		else
 		{
-			Ren_Warning("LoadMap Warning: Normalmap image '%s' type %i not found.\n", va("%s_n.tga", strippedName), shader.type);
+			Ren_Developer("LoadMap Warning: Normalmap image '%s' type %i not found.\n", va("%s_n.tga", strippedName), shader.type);
 		}
 
 		// Note/FIXME: image file name has to be including extension, we use tga - make this more generic one day
@@ -1646,10 +1651,10 @@ qboolean LoadMap(shaderStage_t *stage, char *buffer)
 		}
 		else
 		{
-			Ren_Warning("LoadMap Warning: Specularmap image '%s' type %i not found.\n", va("%s_r.tga", strippedName), shader.type);
+			Ren_Developer("LoadMap Warning: Specularmap image '%s' type %i not found.\n", va("%s_r.tga", strippedName), shader.type);
 		}
 	}
-*/
+
 	return qtrue;
 }
 
@@ -6359,7 +6364,7 @@ void R_ShaderExp_f(void)
 /**
  * @brief Finds and loads all .guide files, combining them into
  * a single large text block that can be scanned for shader template names
- */
+ * NOTE not used
 static void ScanAndLoadGuideFiles(void)
 {
 	char **guideFiles;
@@ -7013,7 +7018,7 @@ void R_InitShaders(void)
 
 	CreateInternalShaders();
 
-	ScanAndLoadGuideFiles();
+	//ScanAndLoadGuideFiles(); never seen in ET
 
 	if(r_materialScan->integer & R_SCAN_MATERIAL_FOLDER)
 	{
