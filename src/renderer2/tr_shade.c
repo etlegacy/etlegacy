@@ -139,6 +139,7 @@ static void BindLightMap()
 	}
 	else
 	{
+
 		GL_Bind(tr.whiteImage);
 	}
 }
@@ -3180,10 +3181,29 @@ void Tess_StageIteratorGeneric()
 
 		switch (pStage->type)
 		{
+			
+
 		case ST_COLORMAP:
 		case ST_DIFFUSEMAP:
 		{
-			Render_generic(stage);
+			
+			// check if we render the world or an entity
+			qboolean isWorld = (backEnd.currentEntity == &tr.worldEntity);
+			if (!isWorld)
+			{
+				// treat brushmodels as world
+				model_t *pmodel = R_GetModelByHandle(backEnd.currentEntity->e.hModel);
+				isWorld = (pmodel && pmodel->type == MOD_BSP && pmodel->bsp) && r_worldInlineModels->integer; // FIXME: remove r_worldInlineModels?
+			}
+			
+			if (isWorld ||tess.surfaceShader->type == SHADER_2D|| tess.surfaceShader->isSky|| tr.sunShader)
+			{
+				Render_generic(stage);
+			}
+			else 
+			{
+				Render_vertexLighting_DBS_entity(stage);
+			}
 			break;
 		}
 		case ST_LIGHTMAP:
@@ -3192,6 +3212,20 @@ void Tess_StageIteratorGeneric()
 			{
 				// render the lightmap
 				Render_lightMapping(stage, qtrue, qfalse); // no normalmapping.. it's added in a later stage
+			}
+			// if there's a lightmapNum given, but there's no ST_LIGHTMAP stage: create a lightmap stage
+			else if (!tess.surfaceShader->has_lightmapStage && tess.lightmapNum >= 0)
+			{
+				tess.surfaceShader->has_lightmapStage = qtrue;
+
+				//pStage.type[0] = ST_LIGHTMAP;
+
+				pStage[0].alphaGen = AGEN_IDENTITY;
+
+				pStage[0].rgbGen = CGEN_IDENTITY;
+
+				pStage[0].stateBits = (GLS_SRCBLEND_ZERO | GLS_SRCBLEND_DST_COLOR | GLS_DEPTHMASK_TRUE);
+				Render_lightMapping(stage, qtrue, qfalse);
 			}
 			else
 			{
@@ -3217,12 +3251,11 @@ void Tess_StageIteratorGeneric()
 			{
 				// check if we render the world or an entity
 				qboolean isWorld = (backEnd.currentEntity == &tr.worldEntity);
-
 				if (!isWorld)
 				{
 					// treat brushmodels as world
 					model_t *pmodel = R_GetModelByHandle(backEnd.currentEntity->e.hModel);
-					isWorld         = (pmodel && pmodel->type == MOD_BSP && pmodel->bsp) && r_worldInlineModels->integer; // FIXME: remove r_worldInlineModels?
+					isWorld = (pmodel && pmodel->type == MOD_BSP && pmodel->bsp) && r_worldInlineModels->integer; // FIXME: remove r_worldInlineModels?
 				}
 				// vertex lighting superseeds precomputed lighting (lightmap rendering)
 				if (r_vertexLighting->integer)
@@ -3240,6 +3273,14 @@ void Tess_StageIteratorGeneric()
 				else
 				//if (r_precomputedLighting->integer)
 				{
+					// check if we render the world or an entity
+					qboolean isWorld = (backEnd.currentEntity == &tr.worldEntity);
+					if (!isWorld)
+					{
+						// treat brushmodels as world
+						model_t *pmodel = R_GetModelByHandle(backEnd.currentEntity->e.hModel);
+						isWorld = (pmodel && pmodel->type == MOD_BSP && pmodel->bsp) && r_worldInlineModels->integer; // FIXME: remove r_worldInlineModels?
+					}
 					// render lightmapped
 					if (isWorld)
 						// if there is no ST_LIGHTMAP stage, but a lightmapNum is given: render as lightmapped.
