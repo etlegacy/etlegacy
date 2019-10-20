@@ -4620,7 +4620,7 @@ static collapse_t collapse[] = {
  */
 static void CollapseStages()
 {
-//	int             abits, bbits;
+
 	int j, i, ji;
 
 	qboolean hasDiffuseStage;
@@ -4628,6 +4628,7 @@ static void CollapseStages()
 	qboolean hasSpecularStage;
 	qboolean hasReflectionStage;
 	qboolean hasLiquidStage;
+	qboolean hasColorStage;
 
 	shaderStage_t tmpDiffuseStage;
 	shaderStage_t tmpNormalStage;
@@ -4635,10 +4636,10 @@ static void CollapseStages()
 	shaderStage_t tmpReflectionStage;
 	shaderStage_t tmpLiquidStage;
 
-	//int           idxColorStage;
-	//shaderStage_t tmpColorStage;
-	//int           idxLightmapStage;
-	//shaderStage_t tmpLightmapStage;
+	
+	shaderStage_t tmpColorStage;
+	
+	shaderStage_t tmpLightmapStage;
 
 	shader_t tmpShader;
 
@@ -4666,18 +4667,17 @@ static void CollapseStages()
 		hasSpecularStage   = qfalse;
 		hasReflectionStage = qfalse;
 		hasLiquidStage     = qfalse;
-
+		hasColorStage      = qfalse;
 		Com_Memset(&tmpDiffuseStage, 0, sizeof(shaderStage_t));
 		Com_Memset(&tmpNormalStage, 0, sizeof(shaderStage_t));
 		Com_Memset(&tmpSpecularStage, 0, sizeof(shaderStage_t));
 		Com_Memset(&tmpLiquidStage, 0, sizeof(shaderStage_t));
-#if 0
-		idxColorStage = -1;
-		//Com_Memset(&tmpColorStage, 0, sizeof(shaderStage_t));
 
-		idxLightmapStage = -1;
-		//Com_Memset(&tmpLightmapStage, 0, sizeof(shaderStage_t));
-#endif
+		Com_Memset(&tmpColorStage, 0, sizeof(shaderStage_t));
+
+		
+		Com_Memset(&tmpLightmapStage, 0, sizeof(shaderStage_t));
+
 		if (!stages[j].active)
 		{
 			continue;
@@ -4686,6 +4686,8 @@ static void CollapseStages()
 		if (stages[j].type == ST_LIGHTMAP)
 		{
 			tmpShader.has_lightmapStage = qtrue;
+			
+			tmpLightmapStage = stages[j];
 		}
 		else if (stages[j].type == ST_REFRACTIONMAP ||
 			stages[j].type == ST_DISPERSIONMAP ||
@@ -4702,95 +4704,7 @@ static void CollapseStages()
 			continue;
 		}
 
-#if 0 //defined(COMPAT_Q3A) || defined(COMPAT_ET) FIXME?
-		//for (i = 0; i < 2; i++)
-/*		for (i = 0; i < MAX_SHADER_STAGES; i++)
-		{
-			if (i >= MAX_SHADER_STAGES)
-			{
-				break; //continue 
-			}
 
-			if (!stages[i].active)
-			{
-				continue;
-			}
-
-			if (stages[i].type == ST_COLORMAP && idxColorStage == -1)
-			{
-				idxColorStage = i;
-				//tmpColorStage = stages[i];
-			}
-			else
-			if (stages[i].type == ST_LIGHTMAP && idxLightmapStage == -1)
-			{
-				idxLightmapStage = i;
-				//tmpLightmapStage = stages[i];
-				break;
-			}
-		}
-*/		
-		// if there's a lightmapNum given, but there's no ST_LIGHTMAP stage: create a lightmap stage
-		if (!tmpShader.has_lightmapStage && tess.lightmapNum >= 0) //tess.lightmapNum >= 0 && tr.lightmaps.currentElements && tess.lightmapNum < tr.lightmaps.currentElements)
-		{
-			Ren_Print("color/lightmap combo\n");
-
-//			if (numStages) tmpStages[numStages] = tmpStages[0];
-
-			// create a new st_lightmap stage as the first stage
-			//tmpShader.collapseType = COLLAPSE_color_lightmap;
-//			tmpShader.defaultShader =
-			tmpShader.has_lightmapStage = qtrue;
-			tmpStages[j].type           = ST_LIGHTMAP;
-			tmpStages[j].alphaGen       = AGEN_IDENTITY;
-			tmpStages[j].rgbGen         = CGEN_IDENTITY;
-			tmpStages[j].stateBits      = (GLS_SRCBLEND_ZERO | GLS_SRCBLEND_DST_COLOR | GLS_DEPTHMASK_TRUE); // | GLS_SRCBLEND_BITS); //516;
-			//tmpStages[j].bundle[0].image[0] = tmpColorStage.bundle[0].image[0];
-			tmpStages[j].active = qtrue;
-/*
-			image_t *lightmap = tr.whiteImage;
-			if (tr.lightmaps.currentElements && tess.lightmapNum >= 0 && tess.lightmapNum < tr.lightmaps.currentElements) {
-				lightmap = (image_t *)Com_GrowListElement(&tr.lightmaps, tess.lightmapNum);
-				if (!lightmap) lightmap = tr.whiteImage;
-			}
-			tmpStages[numStages].bundle[0].image[0] = lightmap;
-*/
-/*
-//tmpStages[numStages] = tmpLightmapStage;
-			tmpStages[numStages].type = ST_LIGHTMAP;
-//tmpStages[numStages].type = ST_LIGHTMAP;
-//tmpStages[numStages].bundle[TB_DIFFUSEMAP] = tmpColorStage.bundle[0];
-			//			tmpStages[numStages].stateBits &= ~(GLS_DSTBLEND_BITS | GLS_SRCBLEND_BITS);
-//			tmpStages[numStages].stateBits |= GLS_DEPTHMASK_TRUE;
-//tmpStages[numStages].stateBits = (GLS_SRCBLEND_SRC_ALPHA | GLS_DSTBLEND_ONE_MINUS_SRC_ALPHA | GLS_DEPTHMASK_TRUE);
-//			tmpStages[numStages].tcGen_Lightmap = qtrue;
-			//tmpStages[numStages].bundle[TB_NORMALMAP] = tmpNormalStage.bundle[0];
-*/
-			numStages++;
-			//j += 1;
-			continue;
-		}
-		/*
-		else if(idxLightmapStage > idxColorStage)
-		{
-		tmpStages[numStages] = tmpColorStage;
-		numStages++;
-
-		tmpStages[numStages] = tmpLightmapStage;
-		numStages++;
-		continue;
-		}
-		else
-		{
-		tmpStages[numStages] = tmpLightmapStage;
-		numStages++;
-
-		tmpStages[numStages] = tmpColorStage;
-		numStages++;
-		continue;
-		}
-		*/
-#endif
 
 		for (i = 0; i < 3; i++)
 		{
@@ -4805,8 +4719,13 @@ static void CollapseStages()
 			{
 				continue;
 			}
+			if (stages[ji].type == ST_COLORMAP &&!hasColorStage)
+			{
+				hasColorStage = qtrue;
+				tmpColorStage = stages[ji];
+			}
 
-			if (stages[ji].type == ST_DIFFUSEMAP && !hasDiffuseStage)
+			if (stages[ji].type == ST_DIFFUSEMAP &&!hasDiffuseStage)
 			{
 				hasDiffuseStage = qtrue;
 				tmpDiffuseStage = stages[ji];
@@ -4835,8 +4754,37 @@ static void CollapseStages()
 
 		// NOTE: merge as many stages as possible
 
+		//try to merge colormap and normalmap
+		if (hasColorStage && hasNormalStage)
+		{
+			tmpShader.collapseType = COLLAPSE_lighting_DB;
+
+			tmpStages[numStages] = tmpColorStage;
+			tmpStages[numStages].type = ST_COLLAPSE_lighting_DB;
+
+			tmpStages[numStages].bundle[TB_NORMALMAP] = tmpNormalStage.bundle[0];
+
+			numStages++;
+			j += 1;
+			continue;
+		}
+		//try to merge colormap,normalmap and specularmap 
+		else if (hasColorStage && hasNormalStage && hasSpecularStage)
+		{
+			tmpShader.collapseType = COLLAPSE_lighting_DBS;
+
+			tmpStages[numStages] = tmpColorStage;
+			tmpStages[numStages].type = ST_COLLAPSE_lighting_DBS;
+
+			tmpStages[numStages].bundle[TB_NORMALMAP] = tmpNormalStage.bundle[0];
+			tmpStages[numStages].bundle[TB_SPECULARMAP] = tmpSpecularStage.bundle[0];
+
+			numStages++;
+			j += 2;
+			continue;
+		}
 		// try to merge diffuse/normal/specular
-		if (hasDiffuseStage && hasNormalStage && hasSpecularStage)
+	    else if (hasDiffuseStage && hasNormalStage && hasSpecularStage)
 		{
 			//Ren_Print("lighting_DBS\n");
 
