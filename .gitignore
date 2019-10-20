@@ -52,8 +52,9 @@ win_resource.aps
 /cmake-build-*
 
 # Visual Studio 2017
-/.vs/
-CMakeSettings.json
+# CMakeSettings.json
+/.vs/*
+!/.vs/launch.vs.json
 
 # Visual Studio Code
 /.vscode/

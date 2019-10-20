@@ -28,11 +28,25 @@ else(buildtype_upper MATCHES DEBUG)
 	SET(DEBUG_BUILD 0)
 endif(buildtype_upper MATCHES DEBUG)
 
-if(MSVC AND NOT NMAKE_BUILD)
+if(WIN32 AND buildgen_upper MATCHES "NINJA")
+	SET(NINJA_BUILD 1)
+else()
+	SET(NINJA_BUILD 0)
+endif()
+
+# message(FATAL_ERROR "Using buildgen: ${buildgen_upper} ${NINJA_BUILD}")
+
+if(MSVC AND NOT NMAKE_BUILD AND NOT NINJA_BUILD)
 	SET(VSTUDIO 1)
-else(MSVC AND NOT NMAKE_BUILD)
+else()
 	SET(VSTUDIO 0)
-endif(MSVC AND NOT NMAKE_BUILD)
+endif()
+
+if(NMAKE_BUILD OR NINJA_BUILD)
+	set(VS_BUILD 1)
+else()
+	set(VS_BUILD 0)
+endif()
 
 if(APPLE AND CMAKE_GENERATOR STREQUAL Xcode)
 	SET(XCODE 1)

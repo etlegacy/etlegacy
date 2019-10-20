@@ -1824,18 +1824,6 @@ int R_MDM_GetBoneTag(orientation_t *outTag, mdmHeader_t *mdm, int startTagIndex,
 
 /*
 =============================================================
-IMAGE LOADERS
-=============================================================
-*/
-
-void R_LoadBMP(const char *name, byte **pic, int *width, int *height, byte alphaByte);
-void R_LoadJPG(const char *name, byte **pic, int *width, int *height, byte alphaByte);
-void R_LoadPCX(const char *name, byte **pic, int *width, int *height, byte alphaByte);
-void R_LoadPNG(const char *name, byte **pic, int *width, int *height, byte alphaByte);
-void R_LoadTGA(const char *name, byte **pic, int *width, int *height, byte alphaByte);
-
-/*
-=============================================================
 =============================================================
 */
 void R_TransformModelToClip(const vec3_t src, const float *modelMatrix, const float *projectionMatrix,

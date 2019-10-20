@@ -987,29 +987,6 @@ image_t *R_CreateImage(const char *name, const byte *pic, int width, int height,
 
 //===================================================================
 
-typedef struct
-{
-	char *ext;
-	void (*ImageLoader)(const char *, unsigned char **, int *, int *, byte);
-} imageExtToLoaderMap_t;
-
-/**
- * @var imageLoaders
- * @brief Note that the ordering indicates the order of preference used
- * when there are multiple images of different formats available
- */
-static imageExtToLoaderMap_t imageLoaders[] =
-{
-	{ "tga",  R_LoadTGA },
-	{ "jpg",  R_LoadJPG },
-	{ "jpeg", R_LoadJPG },
-	{ "png",  R_LoadPNG },
-	{ "pcx",  R_LoadPCX },
-	{ "bmp",  R_LoadBMP }
-};
-
-static int numImageLoaders = sizeof(imageLoaders) / sizeof(imageLoaders[0]);
-
 /**
  * @brief Loads any of the supported image types into a cannonical 32 bit format.
  *

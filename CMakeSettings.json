@@ -1,0 +1,30 @@
+{
+  "configurations": [
+    {
+      "buildCommandArgs": "-v",
+      "buildRoot": "${workspaceRoot}\\build\\${name}",
+      "cmakeCommandArgs": "",
+      "configurationType": "Debug",
+      "ctestCommandArgs": "",
+      "generator": "Ninja",
+      "inheritEnvironments": [
+        "msvc_x86"
+      ],
+      "installRoot": "${workspaceRoot}\\build\\${name}\\install",
+      "name": "x86-Debug"
+    },
+    {
+      "buildCommandArgs": "-v",
+      "buildRoot": "${workspaceRoot}\\build\\${name}",
+      "cmakeCommandArgs": "",
+      "configurationType": "Release",
+      "ctestCommandArgs": "",
+      "generator": "Ninja",
+      "inheritEnvironments": [
+        "msvc_x86"
+      ],
+      "installRoot": "${workspaceRoot}\\build\\${name}\\install",
+      "name": "x86-Release"
+    }
+  ]
+}

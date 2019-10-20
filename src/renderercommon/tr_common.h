@@ -235,4 +235,29 @@ typedef enum
 
 } renderSpeeds_t;
 
+/**
+ * @struct imageExtToLoaderMap_s
+ * @brief
+ */
+typedef struct
+{
+	char *ext;
+	void(*ImageLoader)(const char *, unsigned char **, int *, int *, byte);
+} imageExtToLoaderMap_t;
+
+extern imageExtToLoaderMap_t imageLoaders[];
+extern int numImageLoaders;
+/*
+=============================================================
+IMAGE LOADERS
+=============================================================
+*/
+
+void R_LoadBMP(const char *name, byte **pic, int *width, int *height, byte alphaByte);
+void R_LoadJPG(const char *name, byte **pic, int *width, int *height, byte alphaByte);
+void R_LoadPCX(const char *name, byte **pic, int *width, int *height, byte alphaByte);
+void R_LoadPNG(const char *name, byte **pic, int *width, int *height, byte alphaByte);
+void R_LoadTGA(const char *name, byte **pic, int *width, int *height, byte alphaByte);
+void R_LoadSVG(const char *name, byte **pic, int *width, int *height, byte alphaByte);
+
 #endif  // INCLUDE_TR_COMMON_H

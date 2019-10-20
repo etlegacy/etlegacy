@@ -1261,7 +1261,7 @@ static void CL_Clientinfo_f(void)
  * @note Unused
 void CL_EatMe_f(void)
 {
-    // do nothing kthxbye
+	// do nothing kthxbye
 }
 */
 
@@ -1806,7 +1806,7 @@ void CL_ConnectionlessPacket(netadr_t from, msg_t *msg)
 		{
 			Com_Printf("connectResponse from a different address.  Ignored.\n");
 			Com_Printf("%s should have been %s\n", NET_AdrToString(from),
-			           NET_AdrToString(clc.serverAddress));
+					   NET_AdrToString(clc.serverAddress));
 			return;
 		}
 
@@ -1976,9 +1976,9 @@ void CL_CheckTimeout(void)
 {
 	// check timeout
 	if ((!cl_paused->integer || !sv_paused->integer)
-	    && cls.state >= CA_CONNECTED && cls.state != CA_CINEMATIC
-	    && cls.realtime - clc.lastPacketTime > cl_timeout->value * 1000
-	    && !(clc.demoplaying && cl_freezeDemo->integer))
+		&& cls.state >= CA_CONNECTED && cls.state != CA_CINEMATIC
+		&& cls.realtime - clc.lastPacketTime > cl_timeout->value * 1000
+		&& !(clc.demoplaying && cl_freezeDemo->integer))
 	{
 		if (++cl.timeoutcount > 5)        // timeoutcount saves debugger
 		{
@@ -2158,7 +2158,7 @@ void CL_Frame(int msec)
 	}
 
 	if (cls.state == CA_DISCONNECTED && !(cls.keyCatchers & KEYCATCH_UI)
-	    && !com_sv_running->integer)
+		&& !com_sv_running->integer)
 	{
 		// if disconnected, bring up the menu
 		S_StopAllSounds();
@@ -2187,7 +2187,7 @@ void CL_Frame(int msec)
 		//clc.aviVideoFrameRemainder = frameDuration + msec;
 	}
 	else if ((!cl_avidemo->integer && CL_VideoRecording())
-	         || (cl_avidemo->integer && (cls.state != CA_ACTIVE || !cl_forceavidemo->integer)))
+			 || (cl_avidemo->integer && (cls.state != CA_ACTIVE || !cl_forceavidemo->integer)))
 	{
 		CL_StopVideo_f();
 	}

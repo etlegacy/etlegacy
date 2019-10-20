@@ -4566,15 +4566,9 @@ void RB_CalcTexMatrix(const textureBundle_t *bundle, mat4_t matrix);
 RENDERER IMAGE FUNCTIONS
 =============================================================
 */
-
-void R_LoadJPG(const char *filename, unsigned char **pic, int *width, int *height, byte alphaByte);
 size_t RE_SaveJPGToBuffer(byte *buffer, size_t bufSize, int quality, int image_width, int image_height, byte *image_buffer, int padding);
 void RE_SaveJPG(const char *filename, int quality, int image_width, int image_height, byte *image_buffer, int padding);
 
-void R_LoadPNG(const char *name, byte **pic, int *width, int *height, byte alphaByte);
-void R_LoadBMP(const char *name, byte **pic, int *width, int *height, byte alphaByte);
-void R_LoadTGA(const char *name, byte **pic, int *width, int *height, byte alphaByte);
-void R_LoadPCX(const char *filename, byte **pic, int *width, int *height, byte alphaByte);
 
 /*
 =============================================================

@@ -1,0 +1,20 @@
+{
+  "version": "0.2.1",
+  "defaults": {},
+  "configurations": [
+    {
+      "type": "default",
+      "project": "CMakeLists.txt",
+      "projectTarget": "etl.exe",
+      "name": "etl.exe",
+      "args": [
+        "+set",
+        "developer",
+        "1",
+        "+set",
+        "omnibot_path",
+        "./legacy/omni-bot"
+      ]
+    }
+  ]
+}

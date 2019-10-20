@@ -42,6 +42,29 @@
 #   include "../renderer/tr_local.h"
 #endif
 
+ /**
+  * @var imageLoaders
+  * @brief Note that the ordering indicates the order of preference used
+  * when there are multiple images of different formats available
+  */
+imageExtToLoaderMap_t imageLoaders[] =
+{
+	{ "svg",  R_LoadSVG },
+#if defined(FEATURE_RENDERER2)
+	{ "png",  R_LoadPNG },
+#endif
+	{ "tga",  R_LoadTGA },
+	{ "jpg",  R_LoadJPG },
+	{ "jpeg", R_LoadJPG },
+#if !defined(FEATURE_RENDERER2)
+	{ "png",  R_LoadPNG },
+#endif
+	{ "pcx",  R_LoadPCX },
+	{ "bmp",  R_LoadBMP }
+};
+
+int numImageLoaders = sizeof(imageLoaders) / sizeof(imageLoaders[0]);
+
 /**
  * @brief GL_CheckForExtension
  * @param[in] ext
