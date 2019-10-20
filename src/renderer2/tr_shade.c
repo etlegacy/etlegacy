@@ -3181,7 +3181,6 @@ void Tess_StageIteratorGeneric()
 		switch (pStage->type)
 		{
 		case ST_COLORMAP:
-		case ST_DIFFUSEMAP:
 		{
 			Render_generic(stage);
 			break;
@@ -3208,7 +3207,7 @@ void Tess_StageIteratorGeneric()
 			}
 			break;
 		}
-		
+		case ST_DIFFUSEMAP:
 		case ST_COLLAPSE_lighting_DB:
 		case ST_COLLAPSE_lighting_DBS:
 		{
