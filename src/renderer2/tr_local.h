@@ -195,11 +195,11 @@ static ID_INLINE void RemoveLink(link_t *l)
  * @note Unused
 static ID_INLINE void InsertLinkBefore(link_t *l, link_t *sentinel)
 {
-    l->next = sentinel;
-    l->prev = sentinel->prev;
+	l->next = sentinel;
+	l->prev = sentinel->prev;
 
-    l->prev->next = l;
-    l->next->prev = l;
+	l->prev->next = l;
+	l->next->prev = l;
 }
 */
 
@@ -341,14 +341,14 @@ static ID_INLINE void EnQueue(link_t *sentinel, void *data)
  * @note Unused
 static ID_INLINE void EnQueue2(link_t *sentinel, void *data, void *(*mallocFunc)(size_t __size))
 {
-    link_t *l;
+	link_t *l;
 
-    l = mallocFunc(sizeof(*l));
-    InitLink(l, data);
+	l = mallocFunc(sizeof(*l));
+	InitLink(l, data);
 
-    InsertLink(l, sentinel);
+	InsertLink(l, sentinel);
 
-    sentinel->numElements++;
+	sentinel->numElements++;
 }
 */
 
@@ -584,9 +584,9 @@ typedef enum
 typedef struct image_s
 {
 	char name[1024];                        ///< formerly MAX_QPATH, game path, including extension
-	                                        ///< can contain stuff like this now:
-	                                        ///< addnormals ( textures/base_floor/stetile4_local.tga ,
-	                                        ///< heightmap ( textures/base_floor/stetile4_bmp.tga , 4 ) )
+											///< can contain stuff like this now:
+											///< addnormals ( textures/base_floor/stetile4_local.tga ,
+											///< heightmap ( textures/base_floor/stetile4_bmp.tga , 4 ) )
 	GLenum type;
 	GLuint texnum;                          ///< gl texture binding
 
@@ -729,7 +729,7 @@ typedef enum
 
 	SS_DECAL,                   ///< scorch marks, etc.
 	SS_SEE_THROUGH,             ///< ladders, grates, grills that may have small blended edges
-	                            ///< in addition to alpha test
+								///< in addition to alpha test
 	SS_BANNER,
 
 	SS_FOG,
@@ -1099,15 +1099,15 @@ typedef struct
 
 	// used for TMOD_TRANSFORM
 	mat4_t matrix;  // s' = s * m[0][0] + t * m[1][0] + trans[0]
-                    // t' = s * m[0][1] + t * m[0][1] + trans[1]
+					// t' = s * m[0][1] + t * m[0][1] + trans[1]
 
 	// used for TMOD_SCALE
 	float scale[2]; // s *= scale[0]
-                    // t *= scale[1]
+					// t *= scale[1]
 
 	// used for TMOD_SCROLL
 	float scroll[2]; // s' = s + scroll[0] * time
-                     // t' = t + scroll[1] * time
+					 // t' = t + scroll[1] * time
 
 	// + = clockwise
 	// - = counterclockwise
@@ -1411,10 +1411,10 @@ typedef struct shader_s
 	float sort;                         ///< lower numbered shaders draw before higher numbered
 
 	qboolean defaultShader;             ///< we want to return index 0 if the shader failed to
-	                                    ///< load for some reason, but R_FindShader should
-	                                    ///< still keep a name allocated for it, so if
-	                                    ///< something calls RE_RegisterShader again with
-	                                    ///< the same name, we don't try looking for it again
+										///< load for some reason, but R_FindShader should
+										///< still keep a name allocated for it, so if
+										///< something calls RE_RegisterShader again with
+										///< the same name, we don't try looking for it again
 
 	qboolean explicitlyDefined;         ///< found in a .shader file
 	qboolean createdByGuide;            ///< created using a shader .guide template
@@ -1531,14 +1531,14 @@ enum
 	GLS_SRCBLEND_ALPHA_SATURATE      = (1 << 8),
 
 	GLS_SRCBLEND_BITS = GLS_SRCBLEND_ZERO
-	                    | GLS_SRCBLEND_ONE
-	                    | GLS_SRCBLEND_DST_COLOR
-	                    | GLS_SRCBLEND_ONE_MINUS_DST_COLOR
-	                    | GLS_SRCBLEND_SRC_ALPHA
-	                    | GLS_SRCBLEND_ONE_MINUS_SRC_ALPHA
-	                    | GLS_SRCBLEND_DST_ALPHA
-	                    | GLS_SRCBLEND_ONE_MINUS_DST_ALPHA
-	                    | GLS_SRCBLEND_ALPHA_SATURATE,
+						| GLS_SRCBLEND_ONE
+						| GLS_SRCBLEND_DST_COLOR
+						| GLS_SRCBLEND_ONE_MINUS_DST_COLOR
+						| GLS_SRCBLEND_SRC_ALPHA
+						| GLS_SRCBLEND_ONE_MINUS_SRC_ALPHA
+						| GLS_SRCBLEND_DST_ALPHA
+						| GLS_SRCBLEND_ONE_MINUS_DST_ALPHA
+						| GLS_SRCBLEND_ALPHA_SATURATE,
 
 	GLS_DSTBLEND_ZERO                = (1 << 9),
 	GLS_DSTBLEND_ONE                 = (1 << 10),
@@ -1550,13 +1550,13 @@ enum
 	GLS_DSTBLEND_ONE_MINUS_DST_ALPHA = (1 << 16),
 
 	GLS_DSTBLEND_BITS = GLS_DSTBLEND_ZERO
-	                    | GLS_DSTBLEND_ONE
-	                    | GLS_DSTBLEND_SRC_COLOR
-	                    | GLS_DSTBLEND_ONE_MINUS_SRC_COLOR
-	                    | GLS_DSTBLEND_SRC_ALPHA
-	                    | GLS_DSTBLEND_ONE_MINUS_SRC_ALPHA
-	                    | GLS_DSTBLEND_DST_ALPHA
-	                    | GLS_DSTBLEND_ONE_MINUS_DST_ALPHA,
+						| GLS_DSTBLEND_ONE
+						| GLS_DSTBLEND_SRC_COLOR
+						| GLS_DSTBLEND_ONE_MINUS_SRC_COLOR
+						| GLS_DSTBLEND_SRC_ALPHA
+						| GLS_DSTBLEND_ONE_MINUS_SRC_ALPHA
+						| GLS_DSTBLEND_DST_ALPHA
+						| GLS_DSTBLEND_ONE_MINUS_DST_ALPHA,
 
 	GLS_DEPTHMASK_TRUE = (1 << 17),
 
@@ -1568,7 +1568,7 @@ enum
 	GLS_DEPTHFUNC_EQUAL = (1 << 21),
 
 	GLS_DEPTHFUNC_BITS = GLS_DEPTHFUNC_LESS
-	                     | GLS_DEPTHFUNC_EQUAL,
+						 | GLS_DEPTHFUNC_EQUAL,
 
 	GLS_ATEST_GT_0   = (1 << 22),
 	GLS_ATEST_LT_128 = (1 << 23),
@@ -1576,8 +1576,8 @@ enum
 //	GLS_ATEST_GE_CUSTOM					= (1 << 25),
 
 	GLS_ATEST_BITS = GLS_ATEST_GT_0
-	                 | GLS_ATEST_LT_128
-	                 | GLS_ATEST_GE_128,
+					 | GLS_ATEST_LT_128
+					 | GLS_ATEST_GE_128,
 //											| GLS_ATEST_GT_CUSTOM,
 
 	GLS_REDMASK_FALSE   = (1 << 26),
@@ -1586,9 +1586,9 @@ enum
 	GLS_ALPHAMASK_FALSE = (1 << 29),
 
 	GLS_COLORMASK_BITS = GLS_REDMASK_FALSE
-	                     | GLS_GREENMASK_FALSE
-	                     | GLS_BLUEMASK_FALSE
-	                     | GLS_ALPHAMASK_FALSE,
+						 | GLS_GREENMASK_FALSE
+						 | GLS_BLUEMASK_FALSE
+						 | GLS_ALPHAMASK_FALSE,
 
 	GLS_STENCILTEST_ENABLE = (1 << 30),
 
@@ -1955,7 +1955,7 @@ typedef struct
 	int modelNum;                   ///< bsp model the fog belongs to
 	int originalBrushNumber;
 	vec3_t bounds[2];
-   	shader_t *shader;               ///< fog shader to get colorInt and tcScale from
+	shader_t *shader;               ///< fog shader to get colorInt and tcScale from
 	vec4_t color;               ///< in packed byte format
 	float tcScale;              ///< texture coordinate vector scales
 	fogParms_t fogParms;
@@ -2641,11 +2641,11 @@ typedef struct
  * @note Unused
 typedef struct
 {
-    int             numMarkSurfaces;
-    bspSurface_t  **markSurfaces;
+	int             numMarkSurfaces;
+	bspSurface_t  **markSurfaces;
 
-    int             numVBOSurfaces;
-    srfVBOMesh_t  **vboSurfaces;
+	int             numVBOSurfaces;
+	srfVBOMesh_t  **vboSurfaces;
 } bspArea_t;
 */
 
@@ -2656,9 +2656,9 @@ typedef struct
  * @note Unused
 typedef struct
 {
-    int             areas[2];
+	int             areas[2];
 
-    vec3_t          points[4];
+	vec3_t          points[4];
 } bspAreaPortal_t;
 */
 
@@ -2961,8 +2961,8 @@ typedef struct
  * @note Unused
 typedef struct
 {
-    int             indexes[3];
-    int             neighbors[3];
+	int             indexes[3];
+	int             neighbors[3];
 } md5Triangle_t;
 */
 
@@ -3484,7 +3484,7 @@ typedef struct
 	int viewCount;                          ///< incremented every view (twice a scene if portaled)
 	int viewCountNoReset;
 	int lightCount;                         ///< incremented every time a dlight traverses the world
-	                                        ///< and every R_MarkFragments call
+											///< and every R_MarkFragments call
 
 	int frameSceneNum;                      ///< zeroed at RE_BeginFrame
 
@@ -3954,24 +3954,24 @@ qboolean R_CompareVert(srfVert_t *v1, srfVert_t *v2, qboolean checkST);
 void R_CalcNormalForTriangle(vec3_t normal, const vec3_t v0, const vec3_t v1, const vec3_t v2);
 
 void R_CalcTangentsForTriangle(vec3_t tangent, vec3_t binormal,
-                               const vec3_t v0, const vec3_t v1, const vec3_t v2,
-                               const vec2_t t0, const vec2_t t1, const vec2_t t2);
+							   const vec3_t v0, const vec3_t v1, const vec3_t v2,
+							   const vec2_t t0, const vec2_t t1, const vec2_t t2);
 
 void R_CalcTangentsForTriangle2(vec3_t tangent, vec3_t binormal,
-                                const vec3_t v0, const vec3_t v1, const vec3_t v2,
-                                const vec2_t t0, const vec2_t t1, const vec2_t t2);
+								const vec3_t v0, const vec3_t v1, const vec3_t v2,
+								const vec2_t t0, const vec2_t t1, const vec2_t t2);
 
 void R_CalcTangentSpace(vec3_t tangent, vec3_t binormal, vec3_t normal,
-                        const vec3_t v0, const vec3_t v1, const vec3_t v2,
-                        const vec2_t t0, const vec2_t t1, const vec2_t t2);
+						const vec3_t v0, const vec3_t v1, const vec3_t v2,
+						const vec2_t t0, const vec2_t t1, const vec2_t t2);
 
 void R_CalcTangentSpaceFast(vec3_t tangent, vec3_t binormal, vec3_t normal,
-                            const vec3_t v0, const vec3_t v1, const vec3_t v2,
-                            const vec2_t t0, const vec2_t t1, const vec2_t t2);
+							const vec3_t v0, const vec3_t v1, const vec3_t v2,
+							const vec2_t t0, const vec2_t t1, const vec2_t t2);
 
 void R_CalcTBN(vec3_t tangent, vec3_t bitangent, vec3_t normal,
-               const vec3_t v1, const vec3_t v2, const vec3_t v3,
-               const vec2_t w1, const vec2_t w2, const vec2_t w3);
+			   const vec3_t v1, const vec3_t v2, const vec3_t v3,
+			   const vec2_t w1, const vec2_t w2, const vec2_t w3);
 
 qboolean R_CalcTangentVectors(srfVert_t * dv[3]);
 
@@ -4105,11 +4105,11 @@ image_t *R_FindImageFile(const char *imageName, int bits, filterType_t filterTyp
 image_t *R_FindCubeImage(const char *imageName, int bits, filterType_t filterType, wrapType_t wrapType, const char *materialName);
 
 image_t *R_CreateImage(const char *name, const byte *pic, int width, int height, int bits, filterType_t filterType,
-                       wrapType_t wrapType);
+					   wrapType_t wrapType);
 
 image_t *R_CreateCubeImage(const char *name,
-                           const byte *pic[6],
-                           int width, int height, int bits, filterType_t filterType, wrapType_t wrapType);
+						   const byte *pic[6],
+						   int width, int height, int bits, filterType_t filterType, wrapType_t wrapType);
 
 image_t *R_AllocImage(const char *name, qboolean linkIntoHashTable);
 void R_UploadImage(const byte **dataArray, int numData, image_t *image);
@@ -4232,12 +4232,12 @@ void GLSL_BindNullProgram(void);
 
 // *INDENT-OFF*
 void Tess_Begin(void (*stageIteratorFunc)(),
-                void (*stageIteratorFunc2)(),
-                shader_t *surfaceShader, shader_t *lightShader,
-                qboolean skipTangentSpaces,
-                qboolean skipVBO,
-                int lightmapNum,
-                int fogNum);
+				void (*stageIteratorFunc2)(),
+				shader_t *surfaceShader, shader_t *lightShader,
+				qboolean skipTangentSpaces,
+				qboolean skipVBO,
+				int lightmapNum,
+				int fogNum);
 // *INDENT-ON*
 void Tess_End(void);
 void Tess_EndBegin();
@@ -4318,7 +4318,7 @@ void R_SetupLightFrustum(trRefLight_t *light);
 void R_SetupLightProjection(trRefLight_t *light);
 
 qboolean R_AddLightInteraction(trRefLight_t *light, surfaceType_t *surface, shader_t *surfaceShader, byte cubeSideBits,
-                               interactionType_t iaType);
+							   interactionType_t iaType);
 
 void R_SortInteractions(trRefLight_t *light);
 
@@ -4384,7 +4384,7 @@ MARKERS, POLYGON PROJECTION ON WORLD POLYGONS, tr_marks.c
 */
 
 int R_MarkFragments(int numPoints, const vec3_t *points, const vec3_t projection,
-                    int maxPoints, vec3_t pointBuffer, int maxFragments, markFragment_t *fragmentBuffer);
+					int maxPoints, vec3_t pointBuffer, int maxFragments, markFragment_t *fragmentBuffer);
 
 /*
 ============================================================
@@ -4442,7 +4442,7 @@ DECALS - tr_decals.c
 */
 
 void RE_ProjectDecal(qhandle_t hShader, int numPoints, vec3_t *points, vec4_t projection, vec4_t color, int lifeTime,
-                     int fadeTime);
+					 int fadeTime);
 void RE_ClearDecals(void);
 
 //void R_AddModelShadow(refEntity_t *ent);
@@ -4503,7 +4503,7 @@ void R_AddMD5Interactions(trRefEntity_t *ent, trRefLight_t *light);
 #if defined(USE_REFENTITY_ANIMATIONSYSTEM)
 int RE_CheckSkeleton(refSkeleton_t *skel, qhandle_t hModel, qhandle_t hAnim);
 int RE_BuildSkeleton(refSkeleton_t *skel, qhandle_t hAnim, int startFrame, int endFrame, float frac,
-                     qboolean clearOrigin);
+					 qboolean clearOrigin);
 int RE_BlendSkeleton(refSkeleton_t *skel, const refSkeleton_t *blend, float frac);
 int RE_AnimNumFrames(qhandle_t hAnim);
 int RE_AnimFrameRate(qhandle_t hAnim);
@@ -4520,7 +4520,7 @@ void R_MakeAnimModel(model_t * model);
 void R_AddAnimSurfaces(trRefEntity_t * ent);
 void RB_SurfaceAnim(mdsSurface_t * surfType);
 int R_GetBoneTag(orientation_t * outTag, mdsHeader_t * mds, int startTagIndex, const refEntity_t * refent,
-                             const char *tagName);
+							 const char *tagName);
 */
 
 /*
@@ -4533,7 +4533,7 @@ void R_MDM_AddAnimSurfaces(trRefEntity_t *ent);
 void R_AddMDMInteractions(trRefEntity_t *ent, trRefLight_t *light);
 
 int R_MDM_GetBoneTag(orientation_t *outTag, mdmModel_t *mdm, int startTagIndex, const refEntity_t *refent,
-                     const char *tagName);
+					 const char *tagName);
 
 void Tess_MDM_SurfaceAnim(mdmSurfaceIntern_t *surface);
 void Tess_SurfaceVBOMDMMesh(srfVBOMDMMesh_t *surface);
@@ -4545,9 +4545,9 @@ void Tess_SurfaceVBOMDMMesh(srfVBOMDMMesh_t *surface);
 */
 
 void R_TransformWorldToClip(const vec3_t src, const float *cameraViewMatrix,
-                            const float *projectionMatrix, vec4_t eye, vec4_t dst);
+							const float *projectionMatrix, vec4_t eye, vec4_t dst);
 void R_TransformModelToClip(const vec3_t src, const float *modelMatrix,
-                            const float *projectionMatrix, vec4_t eye, vec4_t dst);
+							const float *projectionMatrix, vec4_t eye, vec4_t dst);
 void R_TransformClipToWindow(const vec4_t clip, const viewParms_t *view, vec4_t normalized, vec4_t window);
 float R_ProjectRadius(float r, vec3_t location);
 
@@ -4831,8 +4831,8 @@ void RE_SetClipRegion(const float *region);
 void RE_StretchPic(float x, float y, float w, float h, float s1, float t1, float s2, float t2, qhandle_t hShader);
 void RE_RotatedPic(float x, float y, float w, float h, float s1, float t1, float s2, float t2, qhandle_t hShader, float angle);
 void RE_StretchPicGradient(float x, float y, float w, float h,
-                           float s1, float t1, float s2, float t2, qhandle_t hShader, const float *gradientColor,
-                           int gradientType);
+						   float s1, float t1, float s2, float t2, qhandle_t hShader, const float *gradientColor,
+						   int gradientType);
 void RE_2DPolyies(polyVert_t *verts, int numverts, qhandle_t hShader);
 
 // video stuff

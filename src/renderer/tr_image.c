@@ -220,7 +220,7 @@ void R_ImageList_f(void)
 
 		texels += image->uploadWidth * image->uploadHeight;
 		Ren_Print("%4i: %4i %4i  %s   %d   ",
-		          i, image->uploadWidth, image->uploadHeight, yesno[image->mipmap], image->TMU);
+				  i, image->uploadWidth, image->uploadHeight, yesno[image->mipmap], image->TMU);
 		switch (image->internalFormat)
 		{
 		case 1:
@@ -301,7 +301,7 @@ void R_ImageList_f(void)
  * @param[in] outheight
  */
 static void ResampleTexture(unsigned *in, int inwidth, int inheight, unsigned *out,
-                            int outwidth, int outheight)
+							int outwidth, int outheight)
 {
 	int      i, j;
 	unsigned *inrow, *inrow2;
@@ -436,25 +436,25 @@ static void R_MipMap2(unsigned *in, int inWidth, int inHeight)
 			for (k = 0 ; k < 4 ; k++)
 			{
 				total =
-				    1 * ((byte *)&in[((i * 2 - 1) & inHeightMask) * inWidth + ((j * 2 - 1) & inWidthMask)])[k] +
-				    2 * ((byte *)&in[((i * 2 - 1) & inHeightMask) * inWidth + ((j * 2) & inWidthMask)])[k] +
-				    2 * ((byte *)&in[((i * 2 - 1) & inHeightMask) * inWidth + ((j * 2 + 1) & inWidthMask)])[k] +
-				    1 * ((byte *)&in[((i * 2 - 1) & inHeightMask) * inWidth + ((j * 2 + 2) & inWidthMask)])[k] +
+					1 * ((byte *)&in[((i * 2 - 1) & inHeightMask) * inWidth + ((j * 2 - 1) & inWidthMask)])[k] +
+					2 * ((byte *)&in[((i * 2 - 1) & inHeightMask) * inWidth + ((j * 2) & inWidthMask)])[k] +
+					2 * ((byte *)&in[((i * 2 - 1) & inHeightMask) * inWidth + ((j * 2 + 1) & inWidthMask)])[k] +
+					1 * ((byte *)&in[((i * 2 - 1) & inHeightMask) * inWidth + ((j * 2 + 2) & inWidthMask)])[k] +
 
-				    2 * ((byte *)&in[((i * 2) & inHeightMask) * inWidth + ((j * 2 - 1) & inWidthMask)])[k] +
-				    4 * ((byte *)&in[((i * 2) & inHeightMask) * inWidth + ((j * 2) & inWidthMask)])[k] +
-				    4 * ((byte *)&in[((i * 2) & inHeightMask) * inWidth + ((j * 2 + 1) & inWidthMask)])[k] +
-				    2 * ((byte *)&in[((i * 2) & inHeightMask) * inWidth + ((j * 2 + 2) & inWidthMask)])[k] +
+					2 * ((byte *)&in[((i * 2) & inHeightMask) * inWidth + ((j * 2 - 1) & inWidthMask)])[k] +
+					4 * ((byte *)&in[((i * 2) & inHeightMask) * inWidth + ((j * 2) & inWidthMask)])[k] +
+					4 * ((byte *)&in[((i * 2) & inHeightMask) * inWidth + ((j * 2 + 1) & inWidthMask)])[k] +
+					2 * ((byte *)&in[((i * 2) & inHeightMask) * inWidth + ((j * 2 + 2) & inWidthMask)])[k] +
 
-				    2 * ((byte *)&in[((i * 2 + 1) & inHeightMask) * inWidth + ((j * 2 - 1) & inWidthMask)])[k] +
-				    4 * ((byte *)&in[((i * 2 + 1) & inHeightMask) * inWidth + ((j * 2) & inWidthMask)])[k] +
-				    4 * ((byte *)&in[((i * 2 + 1) & inHeightMask) * inWidth + ((j * 2 + 1) & inWidthMask)])[k] +
-				    2 * ((byte *)&in[((i * 2 + 1) & inHeightMask) * inWidth + ((j * 2 + 2) & inWidthMask)])[k] +
+					2 * ((byte *)&in[((i * 2 + 1) & inHeightMask) * inWidth + ((j * 2 - 1) & inWidthMask)])[k] +
+					4 * ((byte *)&in[((i * 2 + 1) & inHeightMask) * inWidth + ((j * 2) & inWidthMask)])[k] +
+					4 * ((byte *)&in[((i * 2 + 1) & inHeightMask) * inWidth + ((j * 2 + 1) & inWidthMask)])[k] +
+					2 * ((byte *)&in[((i * 2 + 1) & inHeightMask) * inWidth + ((j * 2 + 2) & inWidthMask)])[k] +
 
-				    1 * ((byte *)&in[((i * 2 + 2) & inHeightMask) * inWidth + ((j * 2 - 1) & inWidthMask)])[k] +
-				    2 * ((byte *)&in[((i * 2 + 2) & inHeightMask) * inWidth + ((j * 2) & inWidthMask)])[k] +
-				    2 * ((byte *)&in[((i * 2 + 2) & inHeightMask) * inWidth + ((j * 2 + 1) & inWidthMask)])[k] +
-				    1 * ((byte *)&in[((i * 2 + 2) & inHeightMask) * inWidth + ((j * 2 + 2) & inWidthMask)])[k];
+					1 * ((byte *)&in[((i * 2 + 2) & inHeightMask) * inWidth + ((j * 2 - 1) & inWidthMask)])[k] +
+					2 * ((byte *)&in[((i * 2 + 2) & inHeightMask) * inWidth + ((j * 2) & inWidthMask)])[k] +
+					2 * ((byte *)&in[((i * 2 + 2) & inHeightMask) * inWidth + ((j * 2 + 1) & inWidthMask)])[k] +
+					1 * ((byte *)&in[((i * 2 + 2) & inHeightMask) * inWidth + ((j * 2 + 2) & inWidthMask)])[k];
 				outpix[k] = total / 36;
 			}
 		}
@@ -571,13 +571,13 @@ byte mipBlendColors[16][4] =
  * @param[in] noCompress
  */
 static void Upload32(unsigned *data,
-                     int width, int height,
-                     qboolean mipmap,
-                     qboolean picmip,
-                     qboolean lightMap,
-                     int *format,
-                     int *pUploadWidth, int *pUploadHeight,
-                     qboolean noCompress)
+					 int width, int height,
+					 qboolean mipmap,
+					 qboolean picmip,
+					 qboolean lightMap,
+					 int *format,
+					 int *pUploadWidth, int *pUploadHeight,
+					 qboolean noCompress)
 {
 	int      samples;
 	unsigned *scaledBuffer    = NULL;
@@ -631,7 +631,7 @@ static void Upload32(unsigned *data,
 	// scale both axis down equally so we don't have to
 	// deal with a half mip resampling
 	while (scaled_width > glConfig.maxTextureSize
-	       || scaled_height > glConfig.maxTextureSize)
+		   || scaled_height > glConfig.maxTextureSize)
 	{
 		scaled_width  >>= 1;
 		scaled_height >>= 1;
@@ -764,7 +764,7 @@ static void Upload32(unsigned *data,
 
 	// copy or resample data as appropriate for first MIP level
 	if ((scaled_width == width) &&
-	    (scaled_height == height))
+		(scaled_height == height))
 	{
 		if (!mipmap)
 		{
@@ -839,7 +839,7 @@ done:
 		if (textureFilterAnisotropic)
 		{
 			qglTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT,
-			                 (GLint)Com_Clamp(1, maxAnisotropy, r_extMaxAnisotropy->integer));
+							 (GLint)Com_Clamp(1, maxAnisotropy, r_extMaxAnisotropy->integer));
 		}
 
 		qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, gl_filter_min);
@@ -880,7 +880,7 @@ done:
  * @return
  */
 image_t *R_CreateImage(const char *name, const byte *pic, int width, int height,
-                       qboolean mipmap, qboolean allowPicmip, int wrapClampMode)
+					   qboolean mipmap, qboolean allowPicmip, int wrapClampMode)
 {
 	image_t  *image;
 	qboolean isLightmap = qfalse;
@@ -958,13 +958,13 @@ image_t *R_CreateImage(const char *name, const byte *pic, int width, int height,
 	GL_Bind(image);
 
 	Upload32((unsigned *)pic, image->width, image->height,
-	         image->mipmap,
-	         allowPicmip,
-	         isLightmap,
-	         &image->internalFormat,
-	         &image->uploadWidth,
-	         &image->uploadHeight,
-	         noCompress);
+			 image->mipmap,
+			 allowPicmip,
+			 isLightmap,
+			 &image->internalFormat,
+			 &image->uploadWidth,
+			 &image->uploadHeight,
+			 noCompress);
 
 	qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrapClampMode);
 	qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrapClampMode);
@@ -1159,7 +1159,7 @@ static void R_CreateDlightImage(void)
 		for (y = 0 ; y < DLIGHT_SIZE ; y++)
 		{
 			d = (DLIGHT_SIZE / 2 - 0.5f - x) * (DLIGHT_SIZE / 2 - 0.5f - x) +
-			    (DLIGHT_SIZE / 2 - 0.5f - y) * (DLIGHT_SIZE / 2 - 0.5f - y);
+				(DLIGHT_SIZE / 2 - 0.5f - y) * (DLIGHT_SIZE / 2 - 0.5f - y);
 			b = 4000 / d;
 			if (b > 255)
 			{
@@ -1170,8 +1170,8 @@ static void R_CreateDlightImage(void)
 				b = 0;
 			}
 			data[y][x][0]         =
-			    data[y][x][1]     =
-			        data[y][x][2] = b;
+				data[y][x][1]     =
+					data[y][x][2] = b;
 			data[y][x][3]         = 255;
 		}
 	}
@@ -1221,8 +1221,8 @@ static void R_CreateFogImage(void)
 			}
 
 			data[(y * FOG_S + x) * 4 + 0]         =
-			    data[(y * FOG_S + x) * 4 + 1]     =
-			        data[(y * FOG_S + x) * 4 + 2] = 255;
+				data[(y * FOG_S + x) * 4 + 1]     =
+					data[(y * FOG_S + x) * 4 + 2] = 255;
 			data[(y * FOG_S + x) * 4 + 3]         = alpha; //%	255*d;
 		}
 	}
@@ -1303,8 +1303,8 @@ void R_CreateBuiltinImages(void)
 		for (y = 0 ; y < DEFAULT_SIZE ; y++)
 		{
 			data[y][x][0]         =
-			    data[y][x][1]     =
-			        data[y][x][2] = tr.identityLightByte;
+				data[y][x][1]     =
+					data[y][x][2] = tr.identityLightByte;
 			data[y][x][3]         = 255;
 		}
 	}
@@ -1764,10 +1764,10 @@ qhandle_t RE_RegisterSkin(const char *name)
 	// this check breaks the loading of such skins
 	/*
 	if (strcmp( name + strlen( name ) - 5, ".skin")) {
-	    skin->numSurfaces = 1;
-	    skin->surfaces = ri.Hunk_Alloc( sizeof( skinSurface_t ), h_low );
-	    skin->surfaces[0].shader = R_FindShader( name, LIGHTMAP_NONE, qtrue );
-	    return hSkin;
+		skin->numSurfaces = 1;
+		skin->surfaces = ri.Hunk_Alloc( sizeof( skinSurface_t ), h_low );
+		skin->surfaces[0].shader = R_FindShader( name, LIGHTMAP_NONE, qtrue );
+		return hSkin;
 	}
 	*/
 
@@ -1850,7 +1850,7 @@ qhandle_t RE_RegisterSkin(const char *name)
 	if (totalSurfaces > MAX_SKIN_SURFACES)
 	{
 		ri.Printf(PRINT_WARNING, "WARNING: Ignoring excess surfaces (found %d, max is %d) in skin '%s'!\n",
-		          totalSurfaces, MAX_SKIN_SURFACES, name);
+				  totalSurfaces, MAX_SKIN_SURFACES, name);
 	}
 
 	// never let a skin have 0 shaders
@@ -1993,9 +1993,9 @@ qboolean R_TouchImage(image_t *inImage)
 	int     hash;
 
 	if (inImage == tr.dlightImage ||
-	    inImage == tr.whiteImage ||
-	    inImage == tr.defaultImage ||
-	    inImage->imgName[0] == '*')     // can't use lightmaps since they might have the same name, but different maps will have different actual lightmap pixels
+		inImage == tr.whiteImage ||
+		inImage == tr.defaultImage ||
+		inImage->imgName[0] == '*')     // can't use lightmaps since they might have the same name, but different maps will have different actual lightmap pixels
 	{
 		return qfalse;
 	}

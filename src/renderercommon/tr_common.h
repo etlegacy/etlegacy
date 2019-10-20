@@ -132,9 +132,9 @@ extern cvar_t *r_lodScale;
 
 extern cvar_t *r_fastSky;                       ///< controls whether sky should be cleared or drawn
 extern cvar_t *r_drawSun;                       ///< controls drawing of sun quad
-                                                ///< "0" no sun
-                                                ///< "1" draw sun
-                                                ///< "2" also draw lens flare effect centered on sun
+												///< "0" no sun
+												///< "1" draw sun
+												///< "2" also draw lens flare effect centered on sun
 extern cvar_t *r_dynamicLight;                  ///< dynamic lights enabled/disabled
 
 extern cvar_t *r_noreFresh;                     ///< bypasses the ref rendering
