@@ -1085,8 +1085,9 @@ void RB_CalcTexMatrix(const textureBundle_t *bundle, mat4_t matrix)
 		switch (bundle->texMods[j].type)
 		{
 		case TMOD_NONE:
-			j = TR_MAX_TEXMODS; // break out of for loop
-			break;
+			//j = TR_MAX_TEXMODS; // break out of for loop
+			//break;
+			return; //exit this function
 		case TMOD_TURBULENT:
 		{
 			waveForm_t *wf = &bundle->texMods[j].wave;
