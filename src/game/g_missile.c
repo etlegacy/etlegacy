@@ -101,7 +101,7 @@ void G_RealExplodedMissile(gentity_t *ent, vec3_t dir, gentity_t *other)
 	// one, rather than changing the missile into the explosion?
 	// G_AddEvent don't work as expected in this case ...
 	tent                   = G_TempEntity(ent->r.currentOrigin, event);
-	tent->s.otherEntityNum = other ? ent->r.ownerNum : -1;      // hit entity
+	tent->s.otherEntityNum = other ? other->s.number : -1;          // hit entity
 	tent->r.svFlags        = ent->r.svFlags;
 	tent->s.eventParm      = DirToByte(dir);
 	tent->s.weapon         = ent->s.weapon;
@@ -485,8 +485,9 @@ void G_RunMissile(gentity_t *ent)
 				tent->r.svFlags  |= SVF_BROADCAST;
 				tent->s.density   = 1;  // angular
 
-				G_ExplodeMissile(ent);
-				return;     // delete it and play explode sound
+				G_ExplodeMissile(ent);  // play explode sound
+				G_FreeEntity(ent);      // and delete it
+				return;
 			}
 			else
 			{
@@ -505,8 +506,9 @@ void G_RunMissile(gentity_t *ent)
 					tent->r.svFlags  |= SVF_BROADCAST;
 					tent->s.density   = 0;  // direct
 
-					G_ExplodeMissile(ent);
-					return; // delete it and play explode sound
+					G_ExplodeMissile(ent);  // play explode sound
+					G_FreeEntity(ent);      // and delete it
+					return;
 				}
 
 				// are we in worldspace again - or did we hit a ceiling from the outside of the world
@@ -613,7 +615,8 @@ void G_RunMissile(gentity_t *ent)
 
 		if (exploded)
 		{
-			return;     // exploded
+			G_FreeEntity(ent); // delete it
+			return;            // already exploded
 		}
 	}
 	else if (VectorLengthSquared(ent->s.pos.trDelta) != 0.f)           // free fall/no intersection
