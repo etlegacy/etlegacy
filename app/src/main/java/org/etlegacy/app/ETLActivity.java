@@ -9,6 +9,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -117,7 +118,7 @@ public class ETLActivity extends SDLActivity implements JoyStickListener
                 ViewGroup.LayoutParams.WRAP_CONTENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT);
 
-        keyboard_layout.leftMargin = pxToDp(210);
+        keyboard_layout.leftMargin = pxToDp(390);
         keyboard_layout.topMargin = pxToDp(-20);
         mLayout.addView(btn, keyboard_layout);
 
@@ -194,8 +195,13 @@ public class ETLActivity extends SDLActivity implements JoyStickListener
         btn_jump.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    public void run() {
+                        SDLActivity.onNativeKeyDown(62);
+                    }
+                }, 20);
                 SDLActivity.onNativeKeyUp(62);
-                SDLActivity.onNativeKeyDown(62);
             }
         });
 
