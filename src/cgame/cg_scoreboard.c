@@ -172,12 +172,12 @@ int WM_DrawObjectives(int x, int y, int width, float fade)
 
 			if (!axisFlag)
 			{
-				axisFlag = trap_R_RegisterShaderNoMip("ui/assets/portraits/allies_win_flag.tga");
+				axisFlag = trap_R_RegisterShaderNoMip("ui/assets/portraits/axis_win_flag.tga");
 			}
 
 			if (!textAxis)
 			{
-				textAxis = trap_R_RegisterShaderNoMip("ui/assets/portraits/text_allies.tga");
+				textAxis = trap_R_RegisterShaderNoMip("ui/assets/portraits/text_axis.tga");
 			}
 
 			flagshader = &axisFlag;
