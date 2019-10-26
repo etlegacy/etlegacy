@@ -2502,15 +2502,25 @@ qboolean ParseStage(shaderStage_t *stage, char **text)
 			{
 				stage->tcGen_Environment = qtrue;
 				stage->tcGen_Lightmap    = qfalse;
+				//this has to be colormap as it does has tcgen and atm tcgen doesnt get handled as
+				//normal map or spec
+				stage->type = ST_COLORMAP;
 			}
 			else if (!Q_stricmp(token, "lightmap"))
 			{
 				stage->tcGen_Lightmap    = qtrue;
 				stage->tcGen_Environment = qfalse;
+				//this has to be colormap as it does has tcgen and atm tcgen doesnt get handled as
+				//normal map or spec
+				stage->type = ST_COLORMAP;
 			}
 			else if (!Q_stricmp(token, "texture") || !Q_stricmp(token, "base"))
+
 			{
-				Ren_Warning("WARNING: texGen texture/base keyword not supported in shader '%s'\n", shader.name);
+				//this has to be colormap as it does has tcgen and atm tcgen doesnt get handled as
+				//normal map or spec
+				stage->type = ST_COLORMAP;
+				//Ren_Warning("WARNING: texGen texture/base keyword not supported in shader '%s'\n", shader.name);
 			}
 			else if (!Q_stricmp(token, "vector"))
 			{
@@ -2562,7 +2572,7 @@ qboolean ParseStage(shaderStage_t *stage, char **text)
 			ParseExpression(text, &tmi->sExp);
 			ParseExpression(text, &tmi->tExp);
 
-			tmi->type = TMOD_SCROLL2;
+			tmi->type = TMOD_SCROLL;
 		}
 		// scale
 		else if (!Q_stricmp(token, "scale"))
@@ -2581,7 +2591,7 @@ qboolean ParseStage(shaderStage_t *stage, char **text)
 			ParseExpression(text, &tmi->sExp);
 			ParseExpression(text, &tmi->tExp);
 
-			tmi->type = TMOD_SCALE2;
+			tmi->type = TMOD_SCALE;
 		}
 		// centerScale
 		else if (!Q_stricmp(token, "centerScale"))
@@ -2637,7 +2647,7 @@ qboolean ParseStage(shaderStage_t *stage, char **text)
 
 			ParseExpression(text, &tmi->rExp);
 
-			tmi->type = TMOD_ROTATE2;
+			tmi->type = TMOD_ROTATE;
 		}
 		// depthwrite
 		else if (!Q_stricmp(token, "depthwrite"))
@@ -4636,8 +4646,8 @@ static void CollapseStages()
 	shaderStage_t tmpLiquidStage;
 
 	
-	//shaderStage_t tmpColorStage;
-	//shaderStage_t tmpLightmapStage;
+	shaderStage_t tmpColorStage;
+	shaderStage_t tmpLightmapStage;
 
 	shader_t tmpShader;
 
@@ -4671,8 +4681,8 @@ static void CollapseStages()
 		Com_Memset(&tmpSpecularStage, 0, sizeof(shaderStage_t));
 		Com_Memset(&tmpLiquidStage, 0, sizeof(shaderStage_t));
 
-		//Com_Memset(&tmpColorStage, 0, sizeof(shaderStage_t));
-        //Com_Memset(&tmpLightmapStage, 0, sizeof(shaderStage_t));
+		Com_Memset(&tmpColorStage, 0, sizeof(shaderStage_t));
+        Com_Memset(&tmpLightmapStage, 0, sizeof(shaderStage_t));
 
 		if (!stages[j].active)
 		{
@@ -4682,6 +4692,7 @@ static void CollapseStages()
 		if (stages[j].type == ST_LIGHTMAP)
 		{
 			tmpShader.has_lightmapStage = qtrue;
+			
 		}
 		else if (stages[j].type == ST_REFRACTIONMAP ||
 			stages[j].type == ST_DISPERSIONMAP ||
@@ -4710,6 +4721,11 @@ static void CollapseStages()
 			if (!stages[ji].active)
 			{
 				continue;
+			}
+			if (stages[ji].type == ST_COLORMAP)
+			{
+				
+				tmpColorStage= stages[ji];
 			}
 
 			if (stages[ji].type == ST_DIFFUSEMAP && !hasDiffuseStage)
@@ -4756,6 +4772,22 @@ static void CollapseStages()
 
 			numStages++;
 			j += 2;
+			continue;
+		}
+		// try to merge diffuse/normal
+		else if (stages[ji].type == ST_COLORMAP && hasNormalStage)
+		{
+			//Ren_Print("lighting_DB\n");
+
+			tmpShader.collapseType = COLLAPSE_lighting_DB;
+
+			tmpStages[numStages] = tmpDiffuseStage;
+			tmpStages[numStages].type = ST_COLLAPSE_lighting_DB;
+
+			tmpStages[numStages].bundle[TB_NORMALMAP] = tmpNormalStage.bundle[0];
+
+			numStages++;
+			j += 1;
 			continue;
 		}
 		// try to merge diffuse/normal
