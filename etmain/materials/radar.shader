@@ -6,14 +6,8 @@ textures/radar/dirt_m03icmp_brown
 	diffuseMap textures/temperate_sd/dirt_m03icmp_brown.tga
 	bumpMap textures/temperate_sd/dirt_m03icmp_brown_n.tga
 	
-	cull twosided
 	surfaceparm trans
-	rgbGen identity	
-	{
-		lightmap $lightmap
-		blendFunc GL_DST_COLOR GL_ZERO
-		rgbgen identity
-	}
+	implicitMap textures/temperate_sd/dirt_m03icmp_brown.tga
 }    
 
 textures/radar/dirt_m04cmp_brown
@@ -22,14 +16,10 @@ textures/radar/dirt_m04cmp_brown
 	diffuseMap textures/temperate_sd/dirt_m04cmp_brown.tga
 	bumpMap textures/temperate_sd/dirt_m04cmp_brown_n.tga
 	
-	cull twosided
 	surfaceparm trans
-	rgbGen identity	
-	{
-		lightmap $lightmap
-		blendFunc GL_DST_COLOR GL_ZERO
-		rgbgen identity
-	}
+	implicitMap textures/temperate_sd/dirt_m04cmp_brown.tga
+
+}
 
 }
 // could be fun to make this move... thoughts for later
