@@ -2920,15 +2920,16 @@ void Tess_ComputeColor(shaderStage_t *pStage)
 static void Tess_ComputeTexMatrices(shaderStage_t *pStage)
 {
 	int   i;
-	vec_t *matrix;
+	
 
 	Ren_LogComment("--- Tess_ComputeTexMatrices ---\n");
 
 	// This is the older code that supported tcMod for any stage (diffuse, and bump seperately, and sprecular...)
 	for (i = 0; i < MAX_TEXTURE_BUNDLES; i++)
 	{
-		matrix = tess.svars.texMatrices[i];
-		RB_CalcTexMatrix(&pStage->bundle[i], matrix);
+		
+		RB_CalcTexMatrix(&pStage->bundle[i], tess.svars.texMatrices[i]);
+
 		if (i == TB_COLORMAP && pStage->tcGen_Lightmap)
 		{
 			MatrixMultiplyScale(tess.svars.texMatrices[i], tr.fatLightmapStep, tr.fatLightmapStep, tr.fatLightmapStep);
@@ -3290,6 +3291,10 @@ void Tess_StageIteratorGeneric()
 			if (r_reflectionMapping->integer)
 			{
 				Render_reflection_CB(stage);
+			}
+			else
+			{
+				Render_generic(stage);
 			}
 			break;
 		}
