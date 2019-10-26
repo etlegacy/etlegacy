@@ -2919,11 +2919,11 @@ void Tess_ComputeColor(shaderStage_t *pStage)
  */
 static void Tess_ComputeTexMatrices(shaderStage_t *pStage)
 {
-	//int   i;
+	int   i;
 	vec_t *matrix;
 
 	Ren_LogComment("--- Tess_ComputeTexMatrices ---\n");
-/*
+
 	// This is the older code that supported tcMod for any stage (diffuse, and bump seperately, and sprecular...)
 	for (i = 0; i < MAX_TEXTURE_BUNDLES; i++)
 	{
@@ -2931,25 +2931,10 @@ static void Tess_ComputeTexMatrices(shaderStage_t *pStage)
 		RB_CalcTexMatrix(&pStage->bundle[i], matrix);
 		if (i == TB_COLORMAP && pStage->tcGen_Lightmap)
 		{
-			MatrixMultiplyScale(matrix, tr.fatLightmapStep, tr.fatLightmapStep, tr.fatLightmapStep);
+			MatrixMultiplyScale(tess.svars.texMatrices[i], tr.fatLightmapStep, tr.fatLightmapStep, tr.fatLightmapStep);
 		}
 	}
-*/
-	// Now we only support tcMod for the diffuse stage, and all the texturemaps "follow" the diffusemap texture.
-	// This makes it much easier for mappers to specify tcMod textures (textures that have their Texture Coordinates MODified).
-	// In far most cases, a mapper wants the specularmap to stay in-sync with the diffuse, if that diffuse is moving around.. anyway.
-	// The same for any other texturemap. A bumpmap specifies where the bumps are on a diffuse texture, for every pixel of that texture.
-	// We therefore transform only the diffuse/colormap texture coordinates.
-	// In the glsl shaders, when we need to read (say) a bumpmap, we simply use the (possibly) transformed diffuse texture coords.
-	// We now only need to pass one diffuseMatrix to a shader, instead of multiple (bump,specular,reflection). performance++
-	// However, we do lose some fancy functionality (not being able to make weird, extra ordinary, special materials that are rarely made).
-	// The shaders benefit, of course, with less traffic to the GPU.
-	matrix = tess.svars.texMatrices[0];
-	RB_CalcTexMatrix(&pStage->bundle[0], matrix);
-	if (pStage->tcGen_Lightmap)
-	{
-		MatrixMultiplyScale(matrix, tr.fatLightmapStep, tr.fatLightmapStep, tr.fatLightmapStep);
-	}
+
 }
 
 
