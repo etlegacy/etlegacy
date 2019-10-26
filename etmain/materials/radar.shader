@@ -21,7 +21,7 @@ textures/radar/dirt_m04cmp_brown
 
 }
 
-}
+
 // could be fun to make this move... thoughts for later
 textures/radar/fog
 {
