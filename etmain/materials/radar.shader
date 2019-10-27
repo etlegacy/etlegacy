@@ -966,6 +966,7 @@ textures/radar/road_puddle1
 	}
 	{
 		map textures/temperate_sd/road_puddle1.tga
+		bumpmap textures/temperate_sd/road_puddle1_n.tga
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
 		rgbGen identity
 	}

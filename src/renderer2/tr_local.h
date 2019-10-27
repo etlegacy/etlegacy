@@ -884,7 +884,7 @@ typedef enum
 	CGEN_VERTEX,                ///< tess.vertexColors * tr.identityLight
 	CGEN_ONE_MINUS_VERTEX,
 	CGEN_WAVEFORM,              ///< programmatically generated
-	//CGEN_LIGHTING_DIFFUSE,
+	//CGEN_LIGHTING_DIFFUSE,      /// and tr.identitylight
 	CGEN_FOG,                   ///< standard fog
 	CGEN_CONST,                 ///< fixed color
 	CGEN_CUSTOM_RGB,            ///< like fixed color but generated dynamically, single arithmetic expression
@@ -1179,7 +1179,8 @@ typedef enum
 
 	// light shader stage types
 	ST_ATTENUATIONMAP_XY,
-	ST_ATTENUATIONMAP_Z
+	ST_ATTENUATIONMAP_Z,
+	ST_TCGEN
 } stageType_t;
 
 /**

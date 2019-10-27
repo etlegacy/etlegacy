@@ -890,9 +890,6 @@ textures/fueldump/icelake_top
 {
 	qer_trans 0.80
 	qer_editorimage textures/snow_sd/icelake3.tga
-	diffusemap textures/snow_sd/icelake3.tga
-	bumpmap textures/snow_sd/icelake3_n.tga
-	specularmap textures/snow_sd/icelake3_r.tga
 	sort seethrough
 	surfaceparm slick
 	surfaceparm trans
@@ -901,13 +898,14 @@ textures/fueldump/icelake_top
 	tesssize 256
 
 	{
-		map textures/effects/envmap_ice2
+		map textures/effects/envmap_ice2.tga
 		tcgen environment
 		blendfunc blend
 	}
-	{  
-	map textures/snow_sd/icelake3.tga
-	blendfunc blend
+	{
+		map textures/snow_sd/icelake3.tga
+		bumpmap textures/snow_sd/icelake3_n.tga
+		blendfunc blend
 	}
 	{
 		map $lightmap
@@ -915,22 +913,20 @@ textures/fueldump/icelake_top
 		rgbGen identity
 		depthWrite
 	}
-	
+
 }
 
 textures/fueldump/icelake_bottom
 {
 	qer_trans 0.80
 	qer_editorimage textures/snow_sd/icelake3.tga
-	diffusemap textures/snow_sd/icelake3.tga
-	bumpmap textures/snow_sd/icelake3_n.tga
-	specularmap textures/snow_sd/icelake3_r.tga
 	sort seethrough
 	surfaceparm trans
 	cull disable
 	
 	{
 		map textures/snow_sd/icelake3.tga
+		bumpmap textures/snow_sd/icelake3_n.tga
 		blendfunc filter
 	}
 }

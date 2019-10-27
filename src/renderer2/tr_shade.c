@@ -1730,25 +1730,28 @@ static void Render_reflection_CB(int stage)
 		clipPortalPlane();
 	}
 
-#if 1
-	// bind 2 cubemaps, and interpolate between them (so you don't see reflections suddenly switch to the next cubemap)
-	BindCubeMaps();
-#else
+	if (r_reflectionMapping->integer)
+	{
+		// bind 2 cubemaps, and interpolate between them (so you don't see reflections suddenly switch to the next cubemap)
+		BindCubeMaps();
+	}
 	// bind u_ColorMap
 	SelectTexture(TEX_COLOR);
-#if 1
-	if (backEnd.currentEntity && (backEnd.currentEntity != &tr.worldEntity))
+	if (r_reflectionMapping->integer)
 	{
-		GL_BindNearestCubeMap(backEnd.currentEntity->e.origin);
+		if (backEnd.currentEntity && (backEnd.currentEntity != &tr.worldEntity))
+		{
+			GL_BindNearestCubeMap(backEnd.currentEntity->e.origin);
+		}
+		else
+		{
+			GL_BindNearestCubeMap(backEnd.viewParms.orientation.origin);
+		}
 	}
 	else
 	{
-		GL_BindNearestCubeMap(backEnd.viewParms.orientation.origin);
+		GL_Bind(pStage->bundle[TB_COLORMAP].image[0]);
 	}
-#else
-	GL_Bind(pStage->bundle[TB_COLORMAP].image[0]);
-#endif
-#endif
 
 	// bind u_NormalMap
 	if (r_normalMapping->integer)
@@ -3184,14 +3187,17 @@ void Tess_StageIteratorGeneric()
 
 		switch (pStage->type)
 		{
+			//2d maps
 		case ST_COLORMAP:
-		{
+			//Envap maps
+	    case ST_TCGEN:
+		{   
 			Render_generic(stage);
 			break;
 		}
 		case ST_LIGHTMAP:
 		{
-			if (tess.lightmapNum >= 0)
+			if (tess.lightmapNum >= 0 &&tess.surfaceShader->has_lightmapStage)
 			{
 				// render the lightmap
 				Render_lightMapping(stage, qtrue, qfalse); // no normalmapping.. it's added in a later stage
@@ -3211,6 +3217,7 @@ void Tess_StageIteratorGeneric()
 			}
 			break;
 		}
+		
 		case ST_DIFFUSEMAP:
 		case ST_COLLAPSE_lighting_DB:
 		case ST_COLLAPSE_lighting_DBS:
@@ -3225,7 +3232,7 @@ void Tess_StageIteratorGeneric()
 				{
 					// treat brushmodels as world
 					model_t *pmodel = R_GetModelByHandle(backEnd.currentEntity->e.hModel);
-					isWorld         = (pmodel && pmodel->type == MOD_BSP && pmodel->bsp) && r_worldInlineModels->integer; // FIXME: remove r_worldInlineModels?
+					isWorld         = pmodel->bsp && r_worldInlineModels->integer; // FIXME: remove r_worldInlineModels?
 				}
 				// vertex lighting superseeds precomputed lighting (lightmap rendering)
 				if (r_vertexLighting->integer)
@@ -3248,7 +3255,7 @@ void Tess_StageIteratorGeneric()
 						// if there is no ST_LIGHTMAP stage, but a lightmapNum is given: render as lightmapped.
 						// if an ST_LIGHTMAP stage does exist in this shader, then now render as vertex lit.
 						if (!tess.surfaceShader->has_lightmapStage &&
-							tess.lightmapNum >= 0 && tr.lightmaps.currentElements && tess.lightmapNum < tr.lightmaps.currentElements)
+							tess.lightmapNum >= 0 )//&& tr.lightmaps.currentElements && tess.lightmapNum < tr.lightmaps.currentElements)
 						{
 							if (r_normalMapping->integer)
 							{
@@ -3258,44 +3265,35 @@ void Tess_StageIteratorGeneric()
 							{
 								Render_lightMapping(stage, qtrue, qfalse); //not normalmapped
 							}
+							break;
 						}
 
-						else
+						else 
 						{
 							Render_vertexLighting_DBS_world(stage); // LIGHTMAP_BY_VERTEX
 							//Render_generic(stage); // no bump/specular/reflection
+							break;
 						}
-					else
+					else if(!isWorld)
 					{
 						Render_vertexLighting_DBS_entity(stage); // this is an entity
+						break;
 					}
 				}
 			}
 			else
 			{
 				//this should be more propper for the renderer
-				if (r_normalMapping->integer)
-				{
-					Render_vertexLighting_DBS_world(stage);
-				}
-				else
-				{
-					Render_generic(stage); // doesn't do normalmapped stuff
-				}
+	            Render_vertexLighting_DBS_world(stage);
+				
+				
 			}
 			break;
 		}
 		case ST_COLLAPSE_reflection_CB:
 		case ST_REFLECTIONMAP:
 		{
-			if (r_reflectionMapping->integer)
-			{
-				Render_reflection_CB(stage);
-			}
-			else
-			{
-				Render_generic(stage);
-			}
+		   Render_reflection_CB(stage);
 			break;
 		}
 		case ST_REFRACTIONMAP:
