@@ -44,34 +44,47 @@
  * @param[in] dir
  * @param[in] hit
  */
-void G_RealExplodedMissile(gentity_t *ent, vec3_t dir, gentity_t *other)
+void G_RealExplodedMissile(gentity_t *ent, vec3_t dir, vec3_t origin, gentity_t *other)
 {
 	gentity_t      *tent;
 	entity_event_t event;
+	vec3_t         curOrigin;
 
 	// splash damage
 	if (ent->splashDamage)
 	{
-		vec3_t origin;
-
-		VectorCopy(ent->r.currentOrigin, origin);
+		if (!origin)
+		{
+			VectorCopy(ent->r.currentOrigin, curOrigin);
+		}
+		else
+		{
+			VectorCopy(origin, curOrigin);
+		}
 
 		if (ent->s.weapon == WP_DYNAMITE)
 		{
-			origin[2] += 4;
+			curOrigin[2] += 4;
 		}
 
 		if ((ent->s.weapon == WP_DYNAMITE && (ent->etpro_misc_1 & 1)) || ent->s.weapon == WP_SATCHEL)
 		{
-			etpro_RadiusDamage(origin, ent, ent->parent, ent->splashDamage, ent->splashRadius, ent, ent->splashMethodOfDeath, qtrue);
+			etpro_RadiusDamage(curOrigin, ent, ent->parent, ent->splashDamage, ent->splashRadius, ent, ent->splashMethodOfDeath, qtrue);
 			G_TempTraceIgnorePlayersAndBodies();
-			etpro_RadiusDamage(origin, ent, ent->parent, ent->splashDamage, ent->splashRadius, ent, ent->splashMethodOfDeath, qfalse);
+			etpro_RadiusDamage(curOrigin, ent, ent->parent, ent->splashDamage, ent->splashRadius, ent, ent->splashMethodOfDeath, qfalse);
 			G_ResetTempTraceIgnoreEnts();
 		}
 		else
 		{
-			G_RadiusDamage(origin, ent, ent->parent, ent->splashDamage, ent->splashRadius, ent, ent->splashMethodOfDeath);
+			G_RadiusDamage(curOrigin, ent, ent->parent, ent->splashDamage, ent->splashRadius, other ? other : ent, ent->splashMethodOfDeath);
 		}
+	}
+
+	if (!origin)
+	{
+		BG_EvaluateTrajectory(&ent->s.pos, level.time, curOrigin, qfalse, ent->s.effect2Time);
+		SnapVector(curOrigin);
+		G_SetOrigin(ent, curOrigin);
 	}
 
 	if (other)
@@ -100,7 +113,7 @@ void G_RealExplodedMissile(gentity_t *ent, vec3_t dir, gentity_t *other)
 	// TODO: is it cheaper in bandwidth to just remove this ent and create a new
 	// one, rather than changing the missile into the explosion?
 	// G_AddEvent don't work as expected in this case ...
-	tent                   = G_TempEntity(ent->r.currentOrigin, event);
+	tent                   = G_TempEntity(origin ? origin : ent->r.currentOrigin, event);
 	tent->s.otherEntityNum = other ? other->s.number : -1;          // hit entity
 	tent->r.svFlags        = ent->r.svFlags;
 	tent->s.eventParm      = DirToByte(dir);
@@ -109,7 +122,10 @@ void G_RealExplodedMissile(gentity_t *ent, vec3_t dir, gentity_t *other)
 
 	ent->freeAfterEvent = qtrue;
 
-	trap_LinkEntity(ent);
+	if (!origin)
+	{
+		trap_LinkEntity(ent);
+	}
 
 	if (ent->s.weapon == WP_LANDMINE)
 	{
@@ -190,7 +206,7 @@ void G_RealExplodedMissile(gentity_t *ent, vec3_t dir, gentity_t *other)
 	// give big weapons the shakey shakey
 	if (GetWeaponTableData(ent->s.weapon)->attributes & WEAPON_ATTRIBUT_SHAKE)
 	{
-		tent = G_TempEntity(ent->r.currentOrigin, EV_SHAKE);
+		tent = G_TempEntity(origin ? origin : ent->r.currentOrigin, EV_SHAKE);
 
 		tent->s.onFireStart = ent->splashDamage * 4;
 		tent->r.svFlags    |= SVF_BROADCAST;
@@ -377,7 +393,7 @@ qboolean G_MissileImpact(gentity_t *ent, trace_t *trace, int impactDamage)
 
 	if (other->takedamage && other->client)
 	{
-		G_RealExplodedMissile(ent, trace->plane.normal, other);
+		G_RealExplodedMissile(ent, trace->plane.normal, trace->endpos, other);
 	}
 	else
 	{
@@ -387,7 +403,7 @@ qboolean G_MissileImpact(gentity_t *ent, trace_t *trace, int impactDamage)
 		BG_EvaluateTrajectoryDelta(&ent->s.pos, level.time, dir, qfalse, ent->s.effect2Time);
 		BG_GetMarkDir(dir, trace->plane.normal, dir);
 
-		G_RealExplodedMissile(ent, dir, NULL);
+		G_RealExplodedMissile(ent, dir, trace->endpos, NULL);
 	}
 
 	return qtrue;
@@ -402,7 +418,7 @@ void G_ExplodeMissile(gentity_t *ent)
 	vec3_t dir = { 0, 0, 1 };
 
 	// we don't have a valid direction, so just point straight up
-	G_RealExplodedMissile(ent, dir, NULL);
+	G_RealExplodedMissile(ent, dir, NULL, NULL);
 }
 
 /**
