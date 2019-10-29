@@ -2862,7 +2862,7 @@ extern skilltable_t skillTable[SK_NUM_SKILLS];
 
 // Lookup table to find rank table entry
 extern ranktable_t rankTable[2][NUM_EXPERIENCE_LEVELS];
-#define GetRankTableData(team, rankIndex) ((ranktable_t *)(&rankTable[team - 1][rankIndex]))
+#define GetRankTableData(team, rankIndex) ((ranktable_t *)(&rankTable[team == TEAM_AXIS ? 0 : 1][rankIndex]))
 
 #define MAX_MAP_SIZE 65536
 
