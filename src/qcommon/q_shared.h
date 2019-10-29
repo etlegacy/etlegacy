@@ -62,7 +62,11 @@
 #ifdef DEDICATED
 #define CONFIG_NAME             "etconfig_server.cfg"
 #else
+#ifdef __ANDROID__
+#define CONFIG_NAME             "default_android.cfg"
+#else
 #define CONFIG_NAME             "etconfig.cfg"
+#endif
 // widescreen monitor support
 #define RATIO43     (4.0f / 3.0f)   ///< 4:3 aspectratio is the default for this game engine ...
 #define RPRATIO43   (1 / RATIO43)   ///<
