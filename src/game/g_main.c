@@ -2497,7 +2497,11 @@ void G_InitGame(int levelTime, int randomSeed, int restart, int legacyServer, in
 
 		Q_strncpyz(mapConfig, "exec ", sizeof(mapConfig));
 		Q_strcat(mapConfig, sizeof(mapConfig), g_mapConfigs.string);
+#ifdef __ANDROID__
+		Q_strcat(mapConfig, sizeof(mapConfig), "/default_android.cfg\n");
+#else
 		Q_strcat(mapConfig, sizeof(mapConfig), "/default.cfg\n");
+#endif
 		trap_SendConsoleCommand(EXEC_APPEND, mapConfig);
 
 		Q_strncpyz(mapConfig, "exec ", sizeof(mapConfig));
