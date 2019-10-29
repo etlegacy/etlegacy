@@ -1406,7 +1406,7 @@ int Add_Ammo(gentity_t *ent, weapon_t weapon, int count, qboolean fillClip);
 void Touch_Item(gentity_t *ent, gentity_t *other, trace_t *trace);
 qboolean AddMagicAmmo(gentity_t *receiver, int numOfClips);
 weapon_t G_GetPrimaryWeaponForClient(gclient_t *client);
-weapon_t G_GetPrimaryWeaponForClientSoldier(weapon_t weapon, gclient_t *client);
+weapon_t G_GetPrimaryWeaponForClientSoldier(gclient_t *client);
 void G_DropWeapon(gentity_t *ent, weapon_t weapon);
 
 // Touch_Item_Auto is bound by the rules of autoactivation (if cg_autoactivate is 0, only touch on "activate")

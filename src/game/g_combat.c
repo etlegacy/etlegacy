@@ -162,7 +162,14 @@ void TossWeapons(gentity_t *self)
 		return;
 	}
 
-	primaryWeapon = G_GetPrimaryWeaponForClient(self->client);
+	if (self->client->sess.playerType == PC_SOLDIER && self->client->sess.skill[SK_HEAVY_WEAPONS] >= 4)
+	{
+		primaryWeapon = G_GetPrimaryWeaponForClientSoldier(self->client);
+	}
+	else
+	{
+		primaryWeapon = G_GetPrimaryWeaponForClient(self->client);
+	}
 
 	if (primaryWeapon)
 	{

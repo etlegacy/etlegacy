@@ -269,7 +269,7 @@ weapon_t G_GetSecondaryWeaponForClient(gclient_t *client, weapon_t primary)
  * @param[in] client
  * @return the primary weapon of the soldier client
  */
-weapon_t G_GetPrimaryWeaponForClientSoldier(weapon_t weapon, gclient_t *client)
+weapon_t G_GetPrimaryWeaponForClientSoldier(gclient_t *client)
 {
 	int i, team;
 
@@ -278,38 +278,28 @@ weapon_t G_GetPrimaryWeaponForClientSoldier(weapon_t weapon, gclient_t *client)
 		return WP_NONE;
 	}
 
-	if (COM_BitCheck(client->ps.weapons, WP_PANZERFAUST) ||
-	    COM_BitCheck(client->ps.weapons, WP_BAZOOKA) ||
-	    COM_BitCheck(client->ps.weapons, WP_FLAMETHROWER) ||
-	    COM_BitCheck(client->ps.weapons, WP_MOBILE_MG42) ||
-	    COM_BitCheck(client->ps.weapons, WP_MOBILE_BROWNING) ||
-	    COM_BitCheck(client->ps.weapons, WP_MORTAR) ||
-	    COM_BitCheck(client->ps.weapons, WP_MORTAR2))
+	for (team = TEAM_AXIS; team <= TEAM_ALLIES; team++)
 	{
-		for (team = TEAM_AXIS; team <= TEAM_ALLIES; team++)
-		{
-			// if weapons are SMS & HW, return HW if picking up HW
-			bg_playerclass_t *classInfo = GetPlayerClassesData(team, client->sess.playerType);
+		// if weapons are SMG & HW, return HW if picking up HW
+		bg_playerclass_t *classInfo = GetPlayerClassesData(team, client->sess.playerType);
 
-			for (i = 0; i < MAX_WEAPS_PER_CLASS; i++)
+		for (i = 1; i < MAX_WEAPS_PER_CLASS; i++)
+		{
+			if (COM_BitCheck(client->ps.weapons, classInfo->classPrimaryWeapons[i].weapon))
 			{
-				if (COM_BitCheck(client->ps.weapons, classInfo->classPrimaryWeapons[i].weapon))
-				{
-					return classInfo->classPrimaryWeapons[i].weapon;
-				}
+				return classInfo->classPrimaryWeapons[i].weapon;
 			}
 		}
 	}
-	else
+
+	for (team = TEAM_AXIS; team <= TEAM_ALLIES; team++)
 	{
-		// if weapons are SMS and pistols, return SMS if picking up SMS or HW
-		if (COM_BitCheck(client->ps.weapons, WP_THOMPSON))
+		// if weapons are SMG & HW, return HW if picking up HW
+		bg_playerclass_t *classInfo = GetPlayerClassesData(team, client->sess.playerType);
+
+		if (COM_BitCheck(client->ps.weapons, classInfo->classPrimaryWeapons[0].weapon))
 		{
-			return WP_THOMPSON;
-		}
-		if (COM_BitCheck(client->ps.weapons, WP_MP40))
-		{
-			return WP_MP40;
+			return classInfo->classPrimaryWeapons[0].weapon;
 		}
 	}
 
@@ -526,7 +516,7 @@ int Pickup_Weapon(gentity_t *ent, gentity_t *other)
 
 		if (other->client->sess.playerType == PC_SOLDIER && other->client->sess.skill[SK_HEAVY_WEAPONS] >= 4)
 		{
-			primaryWeapon = G_GetPrimaryWeaponForClientSoldier(ent->item->giWeapon, other->client);
+			primaryWeapon = G_GetPrimaryWeaponForClientSoldier(other->client);
 		}
 		else
 		{
