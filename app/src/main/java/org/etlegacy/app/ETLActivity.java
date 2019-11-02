@@ -30,6 +30,8 @@ public class ETLActivity extends SDLActivity implements JoyStickListener
 {
     private String dir_etl;
     private static Context context;
+    JoyStick joyStick_left;
+    JoyStick joyStick_right;
 
     public static int pxToDp(int px) {
         return (int) (px / Resources.getSystem().getDisplayMetrics().density);
@@ -143,29 +145,7 @@ public class ETLActivity extends SDLActivity implements JoyStickListener
 
         mLayout.addView(esc_btn, lp2);
 
-        ImageButton btn2 = new ImageButton(getApplicationContext());
-        btn2.setId(2);
-        btn2.setImageBitmap(getBitmapFromAsset("btn_sht.png"));
-        btn2.setBackgroundResource(0);
-        btn2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                SDLActivity.onNativeKeyDown(42);
-                SDLActivity.onNativeKeyUp(42);
-            }
-        });
-
-        RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(
-                150,
-                150);
-
-        lp.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-        lp.addRule(RelativeLayout.CENTER_VERTICAL);
-        lp.rightMargin = 200;
-
-        mLayout.addView(btn2, lp);
-
-
+        
         ImageButton btn_reload = new ImageButton(getApplicationContext());
         btn_reload.setImageBitmap(getBitmapFromAsset("btn_reload.png"));
         btn_reload.setBackgroundResource(0);
@@ -259,8 +239,7 @@ public class ETLActivity extends SDLActivity implements JoyStickListener
 
         mLayout.addView(btn_alternative, lp_alternative);
 
-
-        JoyStick joyStick_left = new JoyStick(getApplicationContext());
+        joyStick_left = new JoyStick(getApplicationContext());
 
         joyStick_left.setListener(this);
         joyStick_left.setPadColor(Color.TRANSPARENT);
@@ -273,70 +252,92 @@ public class ETLActivity extends SDLActivity implements JoyStickListener
 
         joystick_layout.addRule(RelativeLayout.ALIGN_LEFT);
         joystick_layout.addRule(RelativeLayout.CENTER_VERTICAL);
-        joystick_layout.leftMargin = 10;
+        joystick_layout.leftMargin = pxToDp(10);
 
         mLayout.addView(joyStick_left, joystick_layout);
 
+        joyStick_right = new JoyStick(getApplicationContext());
+
+        joyStick_right.setListener(this);
+        joyStick_right.setPadBackground(getBitmapFromAsset("btn_sht.png"));
+        joyStick_right.setButtonDrawable(getBitmapFromAsset("btn_sht.png"));
+        joyStick_right.setButtonRadiusScale(50);
+
+        RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(
+                150,
+                150);
+
+        lp.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+        lp.addRule(RelativeLayout.CENTER_VERTICAL);
+        lp.rightMargin = pxToDp(200);
+
+        mLayout.addView(joyStick_right, lp);
     }
 
     @Override
     public void onMove(JoyStick joyStick, double angle, double power, int direction) {
 
-        switch (direction) {
-            case JoyStick.DIRECTION_CENTER:
-                SDLActivity.onNativeKeyUp(51);
-                SDLActivity.onNativeKeyUp(32);
-                SDLActivity.onNativeKeyUp(47);
-                SDLActivity.onNativeKeyUp(29);
-                break;
-            case JoyStick.DIRECTION_UP:
-                SDLActivity.onNativeKeyUp(32);
-                SDLActivity.onNativeKeyUp(47);
-                SDLActivity.onNativeKeyUp(29);
-                SDLActivity.onNativeKeyDown(51);
-                break;
-            case JoyStick.DIRECTION_UP_RIGHT:
-                SDLActivity.onNativeKeyUp(47);
-                SDLActivity.onNativeKeyUp(29);
-                SDLActivity.onNativeKeyDown(51);
-                SDLActivity.onNativeKeyDown(32);
-                break;
-            case JoyStick.DIRECTION_RIGHT:
-                SDLActivity.onNativeKeyUp(51);
-                SDLActivity.onNativeKeyUp(47);
-                SDLActivity.onNativeKeyUp(29);
-                SDLActivity.onNativeKeyDown(32);
-                break;
-            case JoyStick.DIRECTION_RIGHT_DOWN:
-                SDLActivity.onNativeKeyUp(51);
-                SDLActivity.onNativeKeyUp(29);
-                SDLActivity.onNativeKeyDown(32);
-                SDLActivity.onNativeKeyDown(47);
-                break;
-            case JoyStick.DIRECTION_DOWN:
-                SDLActivity.onNativeKeyUp(51);
-                SDLActivity.onNativeKeyUp(32);
-                SDLActivity.onNativeKeyUp(29);
-                SDLActivity.onNativeKeyDown(47);
-                break;
-            case JoyStick.DIRECTION_DOWN_LEFT:
-                SDLActivity.onNativeKeyUp(51);
-                SDLActivity.onNativeKeyUp(32);
-                SDLActivity.onNativeKeyDown(47);
-                SDLActivity.onNativeKeyDown(29);
-                break;
-            case JoyStick.DIRECTION_LEFT:
-                SDLActivity.onNativeKeyUp(51);
-                SDLActivity.onNativeKeyUp(32);
-                SDLActivity.onNativeKeyUp(47);
-                SDLActivity.onNativeKeyDown(29);
-                break;
-            case JoyStick.DIRECTION_LEFT_UP:
-                SDLActivity.onNativeKeyUp(32);
-                SDLActivity.onNativeKeyUp(47);
-                SDLActivity.onNativeKeyDown(29);
-                SDLActivity.onNativeKeyDown(51);
-                break;
+        if (joyStick_left.equals(joyStick)) {
+            switch (direction) {
+                case JoyStick.DIRECTION_CENTER:
+                    SDLActivity.onNativeKeyUp(51);
+                    SDLActivity.onNativeKeyUp(32);
+                    SDLActivity.onNativeKeyUp(47);
+                    SDLActivity.onNativeKeyUp(29);
+                    break;
+                case JoyStick.DIRECTION_UP:
+                    SDLActivity.onNativeKeyUp(32);
+                    SDLActivity.onNativeKeyUp(47);
+                    SDLActivity.onNativeKeyUp(29);
+                    SDLActivity.onNativeKeyDown(51);
+                    break;
+                case JoyStick.DIRECTION_UP_RIGHT:
+                    SDLActivity.onNativeKeyUp(47);
+                    SDLActivity.onNativeKeyUp(29);
+                    SDLActivity.onNativeKeyDown(51);
+                    SDLActivity.onNativeKeyDown(32);
+                    break;
+                case JoyStick.DIRECTION_RIGHT:
+                    SDLActivity.onNativeKeyUp(51);
+                    SDLActivity.onNativeKeyUp(47);
+                    SDLActivity.onNativeKeyUp(29);
+                    SDLActivity.onNativeKeyDown(32);
+                    break;
+                case JoyStick.DIRECTION_RIGHT_DOWN:
+                    SDLActivity.onNativeKeyUp(51);
+                    SDLActivity.onNativeKeyUp(29);
+                    SDLActivity.onNativeKeyDown(32);
+                    SDLActivity.onNativeKeyDown(47);
+                    break;
+                case JoyStick.DIRECTION_DOWN:
+                    SDLActivity.onNativeKeyUp(51);
+                    SDLActivity.onNativeKeyUp(32);
+                    SDLActivity.onNativeKeyUp(29);
+                    SDLActivity.onNativeKeyDown(47);
+                    break;
+                case JoyStick.DIRECTION_DOWN_LEFT:
+                    SDLActivity.onNativeKeyUp(51);
+                    SDLActivity.onNativeKeyUp(32);
+                    SDLActivity.onNativeKeyDown(47);
+                    SDLActivity.onNativeKeyDown(29);
+                    break;
+                case JoyStick.DIRECTION_LEFT:
+                    SDLActivity.onNativeKeyUp(51);
+                    SDLActivity.onNativeKeyUp(32);
+                    SDLActivity.onNativeKeyUp(47);
+                    SDLActivity.onNativeKeyDown(29);
+                    break;
+                case JoyStick.DIRECTION_LEFT_UP:
+                    SDLActivity.onNativeKeyUp(32);
+                    SDLActivity.onNativeKeyUp(47);
+                    SDLActivity.onNativeKeyDown(29);
+                    SDLActivity.onNativeKeyDown(51);
+                    break;
+            }
+
+        } else if (joyStick_right.equals(joyStick)) {
+            SDLActivity.onNativeKeyDown(42);
+            SDLActivity.onNativeKeyUp(42);
         }
     }
 
