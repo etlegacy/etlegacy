@@ -273,7 +273,7 @@ public class ETLActivity extends SDLActivity implements JoyStickListener
 
         joystick_layout.addRule(RelativeLayout.ALIGN_LEFT);
         joystick_layout.addRule(RelativeLayout.CENTER_VERTICAL);
-        joystick_layout.leftMargin = 10;
+        joystick_layout.leftMargin = pxToDp(10);
 
         mLayout.addView(joyStick_left, joystick_layout);
 
