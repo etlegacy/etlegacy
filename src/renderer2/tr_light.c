@@ -370,11 +370,11 @@ void R_SetupEntityLighting(const trRefdef_t *refdef, trRefEntity_t *ent, vec3_t 
 
 	// force an ambient light value or scale by given r_ambientscale
 	// note: this will also affect ambient light for hilightIntensity and RF_MINLIGHT ...
-	if (VectorLength(ent->ambientLight) < r_forceAmbient->value)
+	if (VectorLength(ent->ambientLight) < r_ambientScale->value)
 	{
-		ent->ambientLight[0] = r_forceAmbient->value;
-		ent->ambientLight[1] = r_forceAmbient->value;
-		ent->ambientLight[2] = r_forceAmbient->value;
+		ent->ambientLight[0] = r_ambientScale->value;
+		ent->ambientLight[1] = r_ambientScale->value;
+		ent->ambientLight[2] = r_ambientScale->value;
 	}
 	else
 	{

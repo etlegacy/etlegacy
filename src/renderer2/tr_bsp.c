@@ -5538,11 +5538,11 @@ void R_LoadEntities(lump_t *l)
 		// check for ambient color
 		else if (!Q_stricmp(keyname, "_color") || !Q_stricmp(keyname, "color"))
 		{
-			if (r_forceAmbient->value <= 0)
-			{
+			
+			
 				sscanf(value, "%f %f %f", &tr.worldEntity.ambientLight[0], &tr.worldEntity.ambientLight[1],
 				       &tr.worldEntity.ambientLight[2]);
-			}
+			
 		}
 		// check for ambient scale constant
 		else if (!Q_stricmp(keyname, "ambientColor") || !Q_stricmp(keyname, "ambient") || !Q_stricmp(keyname, "_ambient"))
@@ -8674,9 +8674,9 @@ void RE_LoadWorldMap(const char *name)
 	tr.fogDensity = 0;
 
 	// set default ambient color
-	tr.worldEntity.ambientLight[0] = r_forceAmbient->value;
-	tr.worldEntity.ambientLight[1] = r_forceAmbient->value;
-	tr.worldEntity.ambientLight[2] = r_forceAmbient->value;
+	tr.worldEntity.ambientLight[0] = r_ambientScale->value;
+	tr.worldEntity.ambientLight[1] = r_ambientScale->value;
+	tr.worldEntity.ambientLight[2] = r_ambientScale->value;
 
 	tr.worldMapLoaded = qtrue;
 

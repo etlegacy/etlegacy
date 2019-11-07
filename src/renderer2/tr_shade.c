@@ -1053,12 +1053,7 @@ static void Render_depthFill(int stage)
 		VectorCopy(backEnd.currentEntity->ambientLight, ambientColor);
 		ClampColor(ambientColor);
 	}
-	else if (r_forceAmbient->integer)
-	{
-		ambientColor[0] = r_forceAmbient->value;
-		ambientColor[1] = r_forceAmbient->value;
-		ambientColor[2] = r_forceAmbient->value;
-	}
+	
 	else
 	{
 		VectorClear(ambientColor);

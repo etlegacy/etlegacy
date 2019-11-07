@@ -197,7 +197,7 @@ cvar_t *r_showImages;
 cvar_t *r_wolfFog;
 cvar_t *r_noFog;
 
-cvar_t *r_forceAmbient;
+
 cvar_t *r_ambientScale;
 cvar_t *r_lightScale;
 cvar_t *r_debugLight;
@@ -1177,8 +1177,7 @@ void R_Register(void)
 	r_reflectionMapping        = ri.Cvar_Get("r_reflectionMapping", "0", CVAR_ARCHIVE | CVAR_LATCH);
 	r_highQualityNormalMapping = ri.Cvar_Get("r_highQualityNormalMapping", "0", CVAR_ARCHIVE | CVAR_LATCH);
 
-	r_forceAmbient = ri.Cvar_Get("r_forceAmbient", "0", CVAR_CHEAT | CVAR_LATCH);
-	ri.Cvar_CheckRange(r_forceAmbient, 0.0f, 0.3f, qfalse);
+	
 
 	// temporary latched variables that can only change over a restart
 	r_overBrightBits    = ri.Cvar_Get("r_overBrightBits", "0", CVAR_ARCHIVE | CVAR_LATCH);
