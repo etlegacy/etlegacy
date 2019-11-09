@@ -2487,9 +2487,9 @@ void G_AddAirstrikeToCounters(gentity_t *ent)
 {
 	if (ent->client->sess.sessionTeam == TEAM_AXIS)
 	{
-		if (team_maxAirstrikes.integer)
+		if (team_maxAirstrikes.value)
 		{
-			level.axisAirstrikeCounter += 60000 / team_maxAirstrikes.integer;
+			level.axisAirstrikeCounter += 60000 / team_maxAirstrikes.value;
 		}
 		else
 		{
@@ -2498,9 +2498,9 @@ void G_AddAirstrikeToCounters(gentity_t *ent)
 	}
 	else
 	{
-		if (team_maxAirstrikes.integer)
+		if (team_maxAirstrikes.value)
 		{
-			level.alliedAirstrikeCounter += 60000 / team_maxAirstrikes.integer;
+			level.alliedAirstrikeCounter += 60000 / team_maxAirstrikes.value;
 		}
 		else
 		{
@@ -2517,9 +2517,9 @@ void G_AddArtilleryToCounters(gentity_t *ent)
 {
 	if (ent->client->sess.sessionTeam == TEAM_AXIS)
 	{
-		if (team_maxArtillery.integer)
+		if (team_maxArtillery.value)
 		{
-			level.axisArtilleryCounter += 60000 / team_maxArtillery.integer;
+			level.axisArtilleryCounter += 60000 / team_maxArtillery.value;
 		}
 		else
 		{
@@ -2528,9 +2528,9 @@ void G_AddArtilleryToCounters(gentity_t *ent)
 	}
 	else
 	{
-		if (team_maxArtillery.integer)
+		if (team_maxArtillery.value)
 		{
-			level.alliedArtilleryCounter += 60000 / team_maxArtillery.integer;
+			level.alliedArtilleryCounter += 60000 / team_maxArtillery.value;
 		}
 		else
 		{
