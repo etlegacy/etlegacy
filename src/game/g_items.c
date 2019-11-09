@@ -1066,7 +1066,7 @@ void FinishSpawningItem(gentity_t *ent)
 		{
 		}
 
-		ent->s.density = i - 1;   // store number of stages in 'density' for client (most will have '1')
+		ent->s.density = i;   // store number of stages in 'density' for client (most will have '1')
 	}
 
 	trap_LinkEntity(ent);
