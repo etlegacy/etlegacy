@@ -143,15 +143,14 @@ void main()
 	// compute the diffuse light term
 	diffuse.rgb *= computeDiffuseLighting2(dotNL);
 #endif // r_diffuseLighting
-
-
+float DotNL2 = max(dot(N,L),0.75);
 
 	// compute final color
 	vec4 color = diffuse;
 #if defined(USE_REFLECTIONS) || defined(USE_SPECULAR)
 	color.rgb += specular;
 #endif // USE_REFLECTIONS || USE_SPECULAR
-	color *= var_LightColor;
+	color *= var_LightColor* DotNL2;
 	gl_FragColor = color;
 
 
