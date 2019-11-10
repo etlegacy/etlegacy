@@ -592,7 +592,7 @@ models/mapobjects/xlab_props/light_1_oasis
 models/mapobjects/lamps/bel_lamp2k
 {
 	qer_editorimage models/mapobjects/light/bel_lamp.tga
-	q3map_lightimage models/colors/amber
+	q3map_lightimage models/colors/amber.tga
 	q3map_surfaceLight 1000
 	surfaceparm nomarks
 	{
@@ -609,7 +609,7 @@ models/mapobjects/lamps/bel_lamp2k
 models/mapobjects/lamps/bel_lamp2k_gm		// for misc_gamemodel
 {
 	qer_editorimage models/mapobjects/light/bel_lamp.tga
-	q3map_lightimage models/colors/amber
+	q3map_lightimage models/colors/amber.tga
 	q3map_surfaceLight 1000
 	surfaceparm nomarks
 	{
@@ -625,7 +625,7 @@ models/mapobjects/lamps/bel_lamp2k_gm		// for misc_gamemodel
 
 models/mapobjects/light/bel_lamp
 {
-	q3map_lightimage models/colors/amber
+	q3map_lightimage models/colors/amber.tga
 	q3map_surfaceLight 5000
 	surfaceparm nomarks
 	{
@@ -639,11 +639,10 @@ models/mapobjects/light/bel_lamp
 	}
 }
 
-// for misc_gamemodels
-models/mapobjects/light/bel_lamp_gm
+models/mapobjects/light/bel_lamp_gm		// for misc_gamemodels
 {
 	qer_editorimage models/mapobjects/light/bel_lamp.tga
-	q3map_lightimage models/colors/amber
+	q3map_lightimage models/colors/amber.tga
 	q3map_surfaceLight 5000
 	surfaceparm nomarks
 	{
@@ -660,7 +659,7 @@ models/mapobjects/light/bel_lamp_gm
 models/mapobjects/light/bel_lampb
 {
 	qer_editorimage models/mapobjects/light/bel_lamp.tga
-	q3map_lightimage models/colors/amber
+	q3map_lightimage models/colors/amber.tga
 	q3map_surfaceLight 10000
 	surfaceparm nomarks
 	{
@@ -677,7 +676,7 @@ models/mapobjects/light/bel_lampb
 models/mapobjects/light/bel_lampm
 {
 	qer_editorimage models/mapobjects/light/bel_lamp.tga
-	q3map_lightimage models/colors/amber
+	q3map_lightimage models/colors/amber.tga
 	q3map_surfaceLight 7000
 	surfaceparm nomarks
 	{
@@ -691,11 +690,10 @@ models/mapobjects/light/bel_lampm
 	}
 }
 
-// for misc_gamemodels
-models/mapobjects/light/bel_lampm_gm
+models/mapobjects/light/bel_lampm_gm		// for misc_gamemodels
 {
 	qer_editorimage models/mapobjects/light/bel_lamp.tga
-	q3map_lightimage models/colors/amber
+	q3map_lightimage models/colors/amber.tga
 	q3map_surfaceLight 7000
 	surfaceparm nomarks
 	{
@@ -719,7 +717,7 @@ models/mapobjects/light/cage_lightn
 		rgbGen vertex
 	}
 	{
-		map models/mapobjects/light/cage_light.blend.tga
+		map models/mapobjects/light/cage_light.blendn.tga
 		blendfunc GL_ONE GL_ONE
 		rgbGen identity
 	}
@@ -962,6 +960,7 @@ models/mapobjects/light/sd_sconce
 	surfaceparm nomarks
 	implicitMask -
 }
+
 
 //**************************************************************
 
