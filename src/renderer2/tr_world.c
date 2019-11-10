@@ -479,8 +479,8 @@ void R_AddBSPModelSurfaces(trRefEntity_t *ent)
 	}
 
 	VectorAdd(ent->worldBounds[0], ent->worldBounds[1], boundsCenter);
-	VectorScale(boundsCenter, 0.5f, boundsCenter);
-
+	VectorScale(boundsCenter,0.1, boundsCenter);
+	boundsCenter[1] += 0.5;
 	// BSP inline models should always use vertex lighting
 	R_SetupEntityLighting(&tr.refdef, ent, boundsCenter);
 
