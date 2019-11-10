@@ -8822,12 +8822,8 @@ static cvarTable_t cvarTable[] =
 	{ NULL,                             "vote_allow_nextmap",                  "1",                          CVAR_ARCHIVE,                   0 },
 	{ NULL,                             "vote_allow_config",                   "1",                          CVAR_ARCHIVE,                   0 },
 	{ NULL,                             "vote_allow_referee",                  "0",                          CVAR_ARCHIVE,                   0 },
-	{ NULL,                             "vote_allow_shuffleteamsxp",           "1",                          CVAR_ARCHIVE,                   0 },
-	{ NULL,                             "vote_allow_shuffleteamsxp_norestart", "1",                          CVAR_ARCHIVE,                   0 },
-#ifdef FEATURE_RATING
-	{ NULL,                             "vote_allow_shuffleteamssr",           "1",                          CVAR_ARCHIVE,                   0 },
-	{ NULL,                             "vote_allow_shuffleteamssr_norestart", "1",                          CVAR_ARCHIVE,                   0 },
-#endif
+	{ NULL,                             "vote_allow_shuffleteams",             "1",                          CVAR_ARCHIVE,                   0 },
+	{ NULL,                             "vote_allow_shuffleteams_norestart",   "1",                          CVAR_ARCHIVE,                   0 },
 	{ NULL,                             "vote_allow_swapteams",                "1",                          CVAR_ARCHIVE,                   0 },
 	{ NULL,                             "vote_allow_friendlyfire",             "1",                          CVAR_ARCHIVE,                   0 },
 	{ NULL,                             "vote_allow_timelimit",                "0",                          CVAR_ARCHIVE,                   0 },

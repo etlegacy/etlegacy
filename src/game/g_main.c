@@ -194,12 +194,8 @@ vmCvar_t vote_allow_matchreset;
 vmCvar_t vote_allow_mutespecs;
 vmCvar_t vote_allow_nextmap;
 vmCvar_t vote_allow_referee;
-vmCvar_t vote_allow_shuffleteamsxp;
-vmCvar_t vote_allow_shuffleteamsxp_norestart;
-#ifdef FEATURE_RATING
-vmCvar_t vote_allow_shuffleteamssr;
-vmCvar_t vote_allow_shuffleteamssr_norestart;
-#endif
+vmCvar_t vote_allow_shuffleteams;
+vmCvar_t vote_allow_shuffleteams_norestart;
 vmCvar_t vote_allow_swapteams;
 vmCvar_t vote_allow_friendlyfire;
 vmCvar_t vote_allow_timelimit;
@@ -499,12 +495,8 @@ cvarTable_t gameCvarTable[] =
 	{ &vote_allow_mutespecs,                "vote_allow_mutespecs",                "1",                          0,                                               0, qfalse, qfalse },
 	{ &vote_allow_nextmap,                  "vote_allow_nextmap",                  "1",                          0,                                               0, qfalse, qfalse },
 	{ &vote_allow_referee,                  "vote_allow_referee",                  "0",                          0,                                               0, qfalse, qfalse },
-	{ &vote_allow_shuffleteamsxp,           "vote_allow_shuffleteamsxp",           "1",                          0,                                               0, qfalse, qfalse },
-	{ &vote_allow_shuffleteamsxp_norestart, "vote_allow_shuffleteamsxp_norestart", "1",                          0,                                               0, qfalse, qfalse },
-#ifdef FEATURE_RATING
-	{ &vote_allow_shuffleteamssr,           "vote_allow_shuffleteamssr",           "1",                          0,                                               0, qfalse, qfalse },
-	{ &vote_allow_shuffleteamssr_norestart, "vote_allow_shuffleteamssr_norestart", "1",                          0,                                               0, qfalse, qfalse },
-#endif
+	{ &vote_allow_shuffleteams,             "vote_allow_shuffleteams",             "1",                          0,                                               0, qfalse, qfalse },
+	{ &vote_allow_shuffleteams_norestart,   "vote_allow_shuffleteams_norestart",   "1",                          0,                                               0, qfalse, qfalse },
 	{ &vote_allow_swapteams,                "vote_allow_swapteams",                "1",                          0,                                               0, qfalse, qfalse },
 	{ &vote_allow_friendlyfire,             "vote_allow_friendlyfire",             "1",                          0,                                               0, qfalse, qfalse },
 	{ &vote_allow_timelimit,                "vote_allow_timelimit",                "0",                          0,                                               0, qfalse, qfalse },
@@ -2013,14 +2005,11 @@ void G_UpdateCvars(void)
 				if (cv->vmCvar == &vote_allow_kick          || cv->vmCvar == &vote_allow_map            ||
 				    cv->vmCvar == &vote_allow_matchreset    || cv->vmCvar == &vote_allow_gametype       ||
 				    cv->vmCvar == &vote_allow_mutespecs     || cv->vmCvar == &vote_allow_nextmap        ||
-				    cv->vmCvar == &vote_allow_config           || cv->vmCvar == &vote_allow_referee     ||
-				    cv->vmCvar == &vote_allow_shuffleteamsxp  ||  cv->vmCvar == &vote_allow_shuffleteamsxp_norestart ||
-#ifdef FEATURE_RATING
-				    cv->vmCvar == &vote_allow_shuffleteamssr  ||  cv->vmCvar == &vote_allow_shuffleteamssr_norestart ||
-#endif
-				    cv->vmCvar == &vote_allow_swapteams  || cv->vmCvar == &vote_allow_friendlyfire  ||
-				    cv->vmCvar == &vote_allow_timelimit      || cv->vmCvar == &vote_allow_warmupdamage  ||
-				    cv->vmCvar == &vote_allow_antilag        || cv->vmCvar == &vote_allow_balancedteams ||
+				    cv->vmCvar == &vote_allow_config        || cv->vmCvar == &vote_allow_referee        ||
+				    cv->vmCvar == &vote_allow_shuffleteams  ||  cv->vmCvar == &vote_allow_shuffleteams_norestart ||
+				    cv->vmCvar == &vote_allow_swapteams     || cv->vmCvar == &vote_allow_friendlyfire   ||
+				    cv->vmCvar == &vote_allow_timelimit     || cv->vmCvar == &vote_allow_warmupdamage   ||
+				    cv->vmCvar == &vote_allow_antilag       || cv->vmCvar == &vote_allow_balancedteams  ||
 				    cv->vmCvar == &vote_allow_muting || cv->vmCvar == &vote_allow_surrender ||
 				    cv->vmCvar == &vote_allow_restartcampaign || cv->vmCvar == &vote_allow_nextcampaign ||
 				    cv->vmCvar == &vote_allow_poll || cv->vmCvar == &vote_allow_maprestart

@@ -4470,12 +4470,8 @@ const voteType_t voteToggles[] =
 	{ "vote_allow_mutespecs",                CV_SVF_MUTESPECS                },
 	{ "vote_allow_nextmap",                  CV_SVF_NEXTMAP                  },
 	{ "vote_allow_referee",                  CV_SVF_REFEREE                  },
-	{ "vote_allow_shuffleteamsxp",           CV_SVF_SHUFFLETEAMSXP           },
-	{ "vote_allow_shuffleteamsxp_norestart", CV_SVF_SHUFFLETEAMSXP_NORESTART },
-#ifdef FEATURE_RATING
-	{ "vote_allow_shuffleteamssr",           CV_SVF_SHUFFLETEAMSSR           },
-	{ "vote_allow_shuffleteamssr_norestart", CV_SVF_SHUFFLETEAMSSR_NORESTART },
-#endif
+	{ "vote_allow_shuffleteams",             CV_SVF_SHUFFLETEAMS             },
+	{ "vote_allow_shuffleteams_norestart",   CV_SVF_SHUFFLETEAMS_NORESTART   },
 	{ "vote_allow_swapteams",                CV_SVF_SWAPTEAMS                },
 	{ "vote_allow_friendlyfire",             CV_SVF_FRIENDLYFIRE             },
 	{ "vote_allow_timelimit",                CV_SVF_TIMELIMIT                },

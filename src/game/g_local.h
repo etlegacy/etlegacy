@@ -1971,12 +1971,8 @@ extern vmCvar_t vote_allow_matchreset;
 extern vmCvar_t vote_allow_mutespecs;
 extern vmCvar_t vote_allow_nextmap;
 extern vmCvar_t vote_allow_referee;
-extern vmCvar_t vote_allow_shuffleteamsxp;
-extern vmCvar_t vote_allow_shuffleteamsxp_norestart;
-#ifdef FEATURE_RATING
-extern vmCvar_t vote_allow_shuffleteamssr;
-extern vmCvar_t vote_allow_shuffleteamssr_norestart;
-#endif
+extern vmCvar_t vote_allow_shuffleteams;
+extern vmCvar_t vote_allow_shuffleteams_norestart;
 extern vmCvar_t vote_allow_swapteams;
 extern vmCvar_t vote_allow_friendlyfire;
 extern vmCvar_t vote_allow_timelimit;
@@ -2525,12 +2521,8 @@ int G_MatchReset_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *ar
 int G_Mutespecs_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd);
 int G_Nextmap_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd);
 int G_Referee_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd);
-int G_ShuffleTeamsXP_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd);
-int G_ShuffleTeamsXP_NoRestart_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd);
-#ifdef FEATURE_RATING
-int G_ShuffleTeamsSR_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd);
-int G_ShuffleTeamsSR_NoRestart_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd);
-#endif
+int G_ShuffleTeams_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd);
+int G_ShuffleTeams_NoRestart_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd);
 int G_StartMatch_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd);
 int G_SwapTeams_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd);
 int G_FriendlyFire_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd);

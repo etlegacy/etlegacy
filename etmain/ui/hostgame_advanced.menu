@@ -84,7 +84,7 @@ menuDef {
 	MULTI( 6+(SUBWINDOW_WIDTH)+6+2, VOTING_Y+28, (SUBWINDOW_WIDTH)-4, 10, _("Successful voting:"), .2, 8, "vote_percent", cvarFloatList { "25%" 25 "50%" 50 "60%" 60 "75%" 75 "100%" 100 }, _("Specifies the minimum percentage required for a vote to pass") )
 
 #define VOTES_Y 160
-	SUBWINDOW( 6+(SUBWINDOW_WIDTH)+6, VOTES_Y, (SUBWINDOW_WIDTH), 162, _("ALLOW VOTES") )
+	SUBWINDOW( 6+(SUBWINDOW_WIDTH)+6, VOTES_Y, (SUBWINDOW_WIDTH), 150, _("ALLOW VOTES") )
 	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2, VOTES_Y+16, .5*((SUBWINDOW_WIDTH)-6), 10, _("Game config:"), .2, 24, 8, "vote_allow_config", _("Allow players to vote for game config") )
 	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2, VOTES_Y+28, .5*((SUBWINDOW_WIDTH)-6), 10, _("Game Type:"), .2, 24, 8, "vote_allow_gametype", _("Allow players to vote for a change in game type") )
 	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2, VOTES_Y+40, .5*((SUBWINDOW_WIDTH)-6), 10, _("Player Kick:"), .2, 24, 8, "vote_allow_kick", _("Allow players to vote for other players to be kicked") )
@@ -97,21 +97,19 @@ menuDef {
 	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2, VOTES_Y+124, .5*((SUBWINDOW_WIDTH)-6), 10, _("Surrender:"), .2, 24, 8, "vote_allow_surrender", _("Allow players to vote for surrender") )
 	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2, VOTES_Y+136, .5*((SUBWINDOW_WIDTH)-6), 10, _("Referee:"), .2, 24, 8, "vote_allow_referee", _("Allow players to vote for a referee") )
 
-	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2+(.5*((SUBWINDOW_WIDTH)-6))+2, VOTES_Y+16, .5*((SUBWINDOW_WIDTH)-6), 10, _("XP Shuffle:"), .2, 24, 8, "vote_allow_shuffleteamsxp", _("Allow players to vote for teams to be shuffled by XP") )
-	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2+(.5*((SUBWINDOW_WIDTH)-6))+2, VOTES_Y+28, .5*((SUBWINDOW_WIDTH)-6), 10, _("XP Shuffle No Rstrt:"), .2, 24, 8, "vote_allow_shuffleteamsxp_norestart", _("Allow players to vote for teams to be shuffled by XP without a restart") )
-	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2+(.5*((SUBWINDOW_WIDTH)-6))+2, VOTES_Y+40, .5*((SUBWINDOW_WIDTH)-6), 10, _("SR Shuffle:"), .2, 24, 8, "vote_allow_shuffleteamssr", _("Allow players to vote for teams to be shuffled by SR") )
-	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2+(.5*((SUBWINDOW_WIDTH)-6))+2, VOTES_Y+52, .5*((SUBWINDOW_WIDTH)-6), 10, _("SR Shuffle No Rstrt:"), .2, 24, 8, "vote_allow_shuffleteamssr_norestart", _("Allow players to vote for teams to be shuffled by SR without a restart") )
-	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2+(.5*((SUBWINDOW_WIDTH)-6))+2, VOTES_Y+64, .5*((SUBWINDOW_WIDTH)-6), 10, _("Swap Teams:"), .2, 24, 8, "vote_allow_swapteams", _("Allow players to vote for teams to swap sides") )
-	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2+(.5*((SUBWINDOW_WIDTH)-6))+2, VOTES_Y+76, .5*((SUBWINDOW_WIDTH)-6), 10, _("Friendly Fire:"), .2, 24, 8, "vote_allow_friendlyfire", _("Allow players to vote for friendly fire to be enabled or disabled") )
-	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2+(.5*((SUBWINDOW_WIDTH)-6))+2, VOTES_Y+88, .5*((SUBWINDOW_WIDTH)-6), 10, _("Timelimit:"), .2, 24, 8, "vote_allow_timelimit", _("Allow players to vote for a different time limit") )
-	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2+(.5*((SUBWINDOW_WIDTH)-6))+2, VOTES_Y+100, .5*((SUBWINDOW_WIDTH)-6), 10, _("Warmup Damage:"), .2, 24, 8, "vote_allow_warmupdamage", _("Allow players to vote for warmup damage to be enabled or disabled") )
-	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2+(.5*((SUBWINDOW_WIDTH)-6))+2, VOTES_Y+112, .5*((SUBWINDOW_WIDTH)-6), 10, _("Anti-Lag:"), .2, 24, 8, "vote_allow_antilag", _("Allow players to vote for antilag to be enabled or disabled") )
-	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2+(.5*((SUBWINDOW_WIDTH)-6))+2, VOTES_Y+124, .5*((SUBWINDOW_WIDTH)-6), 10, _("Restart Campaign:"), .2, 24, 8, "vote_allow_restartcampaign", _("Allow players to vote for restarting campaign") )
-	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2+(.5*((SUBWINDOW_WIDTH)-6))+2, VOTES_Y+136, .5*((SUBWINDOW_WIDTH)-6), 10, _("Next Campaign:"), .2, 24, 8, "vote_allow_nextcampaign", _("Allow players to vote for next campaign") )
-	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2+(.5*((SUBWINDOW_WIDTH)-6))+2, VOTES_Y+148, .5*((SUBWINDOW_WIDTH)-6), 10, _("Poll:"), .2, 24, 8, "vote_allow_poll", _("Allow players to vote for custom votes") )
+	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2+(.5*((SUBWINDOW_WIDTH)-6))+2, VOTES_Y+16, .5*((SUBWINDOW_WIDTH)-6), 10, _("Shuffle:"), .2, 24, 8, "vote_allow_shuffleteams", _("Allow players to vote for teams to be shuffled") )
+	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2+(.5*((SUBWINDOW_WIDTH)-6))+2, VOTES_Y+28, .5*((SUBWINDOW_WIDTH)-6), 10, _("Shuffle No Restart:"), .2, 24, 8, "vote_allow_shuffleteams_norestart", _("Allow players to vote for teams to be shuffled without a restart") )
+	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2+(.5*((SUBWINDOW_WIDTH)-6))+2, VOTES_Y+40, .5*((SUBWINDOW_WIDTH)-6), 10, _("Swap Teams:"), .2, 24, 8, "vote_allow_swapteams", _("Allow players to vote for teams to swap sides") )
+	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2+(.5*((SUBWINDOW_WIDTH)-6))+2, VOTES_Y+52, .5*((SUBWINDOW_WIDTH)-6), 10, _("Friendly Fire:"), .2, 24, 8, "vote_allow_friendlyfire", _("Allow players to vote for friendly fire to be enabled or disabled") )
+	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2+(.5*((SUBWINDOW_WIDTH)-6))+2, VOTES_Y+64, .5*((SUBWINDOW_WIDTH)-6), 10, _("Timelimit:"), .2, 24, 8, "vote_allow_timelimit", _("Allow players to vote for a different time limit") )
+	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2+(.5*((SUBWINDOW_WIDTH)-6))+2, VOTES_Y+76, .5*((SUBWINDOW_WIDTH)-6), 10, _("Warmup Damage:"), .2, 24, 8, "vote_allow_warmupdamage", _("Allow players to vote for warmup damage to be enabled or disabled") )
+	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2+(.5*((SUBWINDOW_WIDTH)-6))+2, VOTES_Y+88, .5*((SUBWINDOW_WIDTH)-6), 10, _("Anti-Lag:"), .2, 24, 8, "vote_allow_antilag", _("Allow players to vote for antilag to be enabled or disabled") )
+	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2+(.5*((SUBWINDOW_WIDTH)-6))+2, VOTES_Y+100, .5*((SUBWINDOW_WIDTH)-6), 10, _("Restart Campaign:"), .2, 24, 8, "vote_allow_restartcampaign", _("Allow players to vote for restarting campaign") )
+	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2+(.5*((SUBWINDOW_WIDTH)-6))+2, VOTES_Y+112, .5*((SUBWINDOW_WIDTH)-6), 10, _("Next Campaign:"), .2, 24, 8, "vote_allow_nextcampaign", _("Allow players to vote for next campaign") )
+	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2+(.5*((SUBWINDOW_WIDTH)-6))+2, VOTES_Y+124, .5*((SUBWINDOW_WIDTH)-6), 10, _("Poll:"), .2, 24, 8, "vote_allow_poll", _("Allow players to vote for custom votes") )
 
 // Message of the Day //
-#define MOTD_Y 328
+#define MOTD_Y 316
 	SUBWINDOW( 6+(SUBWINDOW_WIDTH)+6, MOTD_Y, (SUBWINDOW_WIDTH), 80, _("MESSAGE OF THE DAY") )
 
 	itemDef {
