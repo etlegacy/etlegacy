@@ -86,7 +86,10 @@ typedef enum
 
 #define HDR_ENABLED() ((r_hdrRendering->integer && glConfig2.textureFloatAvailable && glConfig2.framebufferObjectAvailable && glConfig2.framebufferBlitAvailable))
 
+// The cubeProbes used for reflections:
+// The width/height (in pixels) of a cubemap texture
 #define REF_CUBEMAP_SIZE        32
+// The width/height (in pixels) of a 'cm' image (1 cm image contains multiple cubemaps)
 #define REF_CUBEMAP_STORE_SIZE  1024
 #define REF_CUBEMAP_STORE_SIDE  (REF_CUBEMAP_STORE_SIZE / REF_CUBEMAP_SIZE)
 #define REF_CUBEMAPS_PER_FILE   (REF_CUBEMAP_STORE_SIDE * REF_CUBEMAP_STORE_SIDE)
@@ -1128,7 +1131,10 @@ enum
 	TB_DIFFUSEMAP = 0,
 	TB_NORMALMAP,
 	TB_SPECULARMAP,
-	MAX_TEXTURE_BUNDLES = 3
+	TB_REFLECTIONMAP,
+	MAX_TEXTURE_BUNDLES // = 4    If you don't explicitely assign a value here,
+						//        the enum will get the correct value automatically.
+						//        And if you add a new TB_ type, you wouldn't forget to change this value manually.
 };
 
 /**
@@ -1137,7 +1143,7 @@ enum
  */
 typedef struct
 {
-	uint8_t numImages;
+	uint8_t numImages; // the number of animation images
 	double imageAnimationSpeed;
 	image_t *image[MAX_IMAGE_ANIMATIONS];
 
@@ -1180,7 +1186,7 @@ typedef enum
 	// light shader stage types
 	ST_ATTENUATIONMAP_XY,
 	ST_ATTENUATIONMAP_Z,
-	ST_TCGEN
+	ST_TCGEN					   ///< tcGen environment reflection
 } stageType_t;
 
 /**
