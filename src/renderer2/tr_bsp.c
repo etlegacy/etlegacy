@@ -3041,7 +3041,7 @@ static void R_CreateClusters()
 
 
 			// add cluster surfaces
-			Com_InitGrowList(&clusterSurfaces, 10000);
+			Com_InitGrowList(&clusterSurfaces, 100); //Com_InitGrowList(&clusterSurfaces, 10000);
 
 			ClearBounds(mins, maxs);
 			for (j = 0, node = s_worldData.nodes; j < s_worldData.numnodes; j++, node++)
@@ -3107,7 +3107,7 @@ static void R_CreateClusters()
 	}
 
 	// create a super cluster that will be always used when no view cluster can be found
-	Com_InitGrowList(&clusterSurfaces, 10000);
+	Com_InitGrowList(&clusterSurfaces, 100); //Com_InitGrowList(&clusterSurfaces, 10000);
 
 	for (i = 0, surface = s_worldData.surfaces; i < s_worldData.numWorldSurfaces; i++, surface++)
 	{
@@ -6005,7 +6005,7 @@ static void R_RecursivePrecacheInteractionNode(bspNode_t *node, trRefLight_t *li
 
 		node->lightCount = s_lightCount;
 
-		if (node->contents != -1)
+		if (node->contents != CONTENTS_NODE)
 		{
 			break;
 		}
@@ -6072,7 +6072,7 @@ static void R_RecursiveAddInteractionNode(bspNode_t *node, trRefLight_t *light)
 
 		node->lightCount = s_lightCount;
 
-		if (node->contents != -1)
+		if (node->contents != CONTENTS_NODE)
 		{
 			break;
 		}
@@ -7509,7 +7509,7 @@ void R_PrecacheInteractions()
 		surface->lightCount = -1;
 	}
 
-	Com_InitGrowList(&s_interactions, 10000);
+	Com_InitGrowList(&s_interactions, 100); //Com_InitGrowList(&s_interactions, 10000);
 
 	c_vboWorldSurfaces  = 0;
 	c_vboLightSurfaces  = 0;
