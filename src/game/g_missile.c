@@ -219,9 +219,8 @@ void G_MissileImpact(gentity_t *ent, trace_t *trace, int impactDamage)
 		}
 	}
 
-	// is it cheaper in bandwidth to just remove this ent and create a new
+	// TODO: is it cheaper in bandwidth to just remove this ent and create a new
 	// one, rather than changing the missile into the explosion?
-
 	if (other->takedamage && other->client)
 	{
 		event       = EV_MISSILE_HIT;
@@ -240,16 +239,20 @@ void G_MissileImpact(gentity_t *ent, trace_t *trace, int impactDamage)
 		param = DirToByte(dir);
 	}
 
+	// temp impact mark event
 	temp                   = G_TempEntity(trace->endpos, event);
 	temp->s.otherEntityNum = otherentnum;
-	//temp->r.svFlags |= SVF_BROADCAST;
-	temp->s.eventParm = param;
-	temp->s.weapon    = ent->s.weapon;
-	temp->s.clientNum = ent->r.ownerNum;
+	temp->r.svFlags       |= SVF_BROADCAST;
+	temp->s.eventParm      = param;
+	temp->s.weapon         = ent->s.weapon;
+	temp->s.clientNum      = ent->r.ownerNum;
 
-	if (CHECKBITWISE(GetWeaponTableData(ent->s.weapon)->type, WEAPON_TYPE_MORTAR | WEAPON_TYPE_SET))
+	// give big weapons the shakey shakey
+	if (GetWeaponTableData(ent->s.weapon)->attributes & WEAPON_ATTRIBUT_SHAKE)
 	{
-		temp->r.svFlags |= SVF_BROADCAST;
+		temp                = G_TempEntity(ent->r.currentOrigin, EV_SHAKE);
+		temp->s.onFireStart = ent->splashDamage * 4;
+		temp->r.svFlags    |= SVF_BROADCAST;
 	}
 
 	// splash damage (doesn't apply to person directly hit)
@@ -633,12 +636,6 @@ void G_RunMissile(gentity_t *ent)
 
 		if (ent->s.eType != ET_MISSILE)
 		{
-			gentity_t *tent;
-
-			tent = G_TempEntity(ent->r.currentOrigin, EV_SHAKE);
-
-			tent->s.onFireStart = ent->splashDamage * 4;
-			tent->r.svFlags    |= SVF_BROADCAST;
 			return;             // exploded
 		}
 	}
