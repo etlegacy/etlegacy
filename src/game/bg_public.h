@@ -2519,7 +2519,7 @@ const char *BG_ClassLetterForNumber(int classNum);
 const char *BG_TeamnameForNumber(team_t teamNum);
 
 extern bg_playerclass_t bg_playerClasses[2][NUM_PLAYER_CLASSES];
-#define GetPlayerClassesData(team, classe) ((bg_playerclass_t *)(&bg_playerClasses[(team) - 1][classe]))
+#define GetPlayerClassesData(team, classe) ((bg_playerclass_t *)(&bg_playerClasses[(team) == TEAM_AXIS ? 0 : 1][classe]))
 
 #define MAX_PATH_CORNERS        512
 
