@@ -642,7 +642,7 @@ void CopyToBodyQue(gentity_t *ent)
 	BODY_TEAM(body)      = ent->client->sess.sessionTeam;
 	BODY_CLASS(body)     = ent->client->sess.playerType;
 	BODY_CHARACTER(body) = ent->client->pers.characterIndex;
-	BODY_VALUE(body) = 0;
+	BODY_VALUE(body)     = 0;
 
 	//if ( ent->client->ps.eFlags & EF_PANTSED ){
 	//	body->s.time2 =	1;
@@ -1174,9 +1174,7 @@ void SetWolfSpawnWeapons(gclient_t *client)
 
 	// Communicate it to cgame
 	client->ps.stats[STAT_PLAYER_CLASS] = pc;
-
-	// Abuse teamNum to store player class as well (can't see stats for all clients in cgame)
-	client->ps.teamNum = pc;
+	client->ps.teamNum                  = team;
 
 	// zero out all ammo counts
 	Com_Memset(client->ps.ammo, 0, MAX_WEAPONS * sizeof(int));
@@ -2831,7 +2829,7 @@ void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean
 	client->ps.stats[STAT_MAX_HEALTH] = client->pers.maxHealth;
 	client->ps.eFlags                 = flags;
 	client->deathTime                 = savedDeathTime;
-	
+
 	// Reset/restore special weapon time
 	if (
 		((g_stickyCharge.integer & STICKYCHARGE_SELFKILL) && isMortalSelfDamage(ent))

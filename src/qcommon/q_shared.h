@@ -1179,10 +1179,7 @@ typedef struct playerState_s
 	int nextWeapon;
 
 	// player class
-	int teamNum;                        ///< doesn't seem to be communicated over the net ..
-	                                    ///< -> it's in playerStateFields of msg.c
-	                                    ///< IMPORTANT NOTE: This is actually the player class !!!
-	                                    ///< (and we can't change playerState_s w/o breaking 2.60)
+	int teamNum;                        
 
 	// RF, burning effect is required for view blending effect
 	int onFireStart;

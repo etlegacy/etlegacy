@@ -1881,7 +1881,7 @@ static void CG_DrawCrosshairNames(void)
 		if (cg_drawCrosshairInfo.integer & CROSSHAIR_CLASS)
 		{
 			// - 16 - 110/2
-			CG_DrawPic(middle - 71, 187, 16, 16, cgs.media.skillPics[SkillNumForClass(cg_entities[cg.crosshairClientNum].currentState.teamNum)]);
+                        CG_DrawPic(middle - 71, 187, 16, 16, cgs.media.skillPics[SkillNumForClass(cgs.clientinfo[cg.crosshairClientNum].cls)]);
 		}
 		if (cgs.clientinfo[cg.crosshairClientNum].rank > 0 && (cg_drawCrosshairInfo.integer & CROSSHAIR_RANK))
 		{

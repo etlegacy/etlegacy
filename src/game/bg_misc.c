@@ -2676,8 +2676,7 @@ qboolean BG_CanItemBeGrabbed(const entityState_t *ent, const playerState_t *ps, 
 	case IT_AMMO:
 		return qfalse;
 	case IT_HEALTH:
-		// ps->teamNum is really class.... thx whoever decided on that...
-		if (ps->teamNum == PC_MEDIC)
+		if (ps->stats[STAT_PLAYER_CLASS] == PC_MEDIC)
 		{
 			// medics can go up to 12% extra on max health as they have perm. regen
 			if (ps->stats[STAT_HEALTH] >= (int)(ps->stats[STAT_MAX_HEALTH] * 1.12))
@@ -4462,28 +4461,28 @@ const char *bg_fireteamNamesAxis[MAX_FIRETEAMS / 2] =
 
 const voteType_t voteToggles[] =
 {
-	{ "vote_allow_config",                   CV_SVF_CONFIG                   },
-	{ "vote_allow_gametype",                 CV_SVF_GAMETYPE                 },
-	{ "vote_allow_kick",                     CV_SVF_KICK                     },
-	{ "vote_allow_map",                      CV_SVF_MAP                      },
-	{ "vote_allow_matchreset",               CV_SVF_MATCHRESET               },
-	{ "vote_allow_mutespecs",                CV_SVF_MUTESPECS                },
-	{ "vote_allow_nextmap",                  CV_SVF_NEXTMAP                  },
-	{ "vote_allow_referee",                  CV_SVF_REFEREE                  },
-	{ "vote_allow_shuffleteams",             CV_SVF_SHUFFLETEAMS             },
-	{ "vote_allow_shuffleteams_norestart",   CV_SVF_SHUFFLETEAMS_NORESTART   },
-	{ "vote_allow_swapteams",                CV_SVF_SWAPTEAMS                },
-	{ "vote_allow_friendlyfire",             CV_SVF_FRIENDLYFIRE             },
-	{ "vote_allow_timelimit",                CV_SVF_TIMELIMIT                },
-	{ "vote_allow_warmupdamage",             CV_SVF_WARMUPDAMAGE             },
-	{ "vote_allow_antilag",                  CV_SVF_ANTILAG                  },
-	{ "vote_allow_balancedteams",            CV_SVF_BALANCEDTEAMS            },
-	{ "vote_allow_muting",                   CV_SVF_MUTING                   },
-	{ "vote_allow_surrender",                CV_SVF_SURRENDER                },
-	{ "vote_allow_restartcampaign",          CV_SVF_RESTARTCAMPAIGN          },
-	{ "vote_allow_nextcampaign",             CV_SVF_NEXTCAMPAIGN             },
-	{ "vote_allow_poll",                     CV_SVF_POLL                     },
-	{ "vote_allow_maprestart",               CV_SVF_MAPRESTART               }
+	{ "vote_allow_config",                 CV_SVF_CONFIG                 },
+	{ "vote_allow_gametype",               CV_SVF_GAMETYPE               },
+	{ "vote_allow_kick",                   CV_SVF_KICK                   },
+	{ "vote_allow_map",                    CV_SVF_MAP                    },
+	{ "vote_allow_matchreset",             CV_SVF_MATCHRESET             },
+	{ "vote_allow_mutespecs",              CV_SVF_MUTESPECS              },
+	{ "vote_allow_nextmap",                CV_SVF_NEXTMAP                },
+	{ "vote_allow_referee",                CV_SVF_REFEREE                },
+	{ "vote_allow_shuffleteams",           CV_SVF_SHUFFLETEAMS           },
+	{ "vote_allow_shuffleteams_norestart", CV_SVF_SHUFFLETEAMS_NORESTART },
+	{ "vote_allow_swapteams",              CV_SVF_SWAPTEAMS              },
+	{ "vote_allow_friendlyfire",           CV_SVF_FRIENDLYFIRE           },
+	{ "vote_allow_timelimit",              CV_SVF_TIMELIMIT              },
+	{ "vote_allow_warmupdamage",           CV_SVF_WARMUPDAMAGE           },
+	{ "vote_allow_antilag",                CV_SVF_ANTILAG                },
+	{ "vote_allow_balancedteams",          CV_SVF_BALANCEDTEAMS          },
+	{ "vote_allow_muting",                 CV_SVF_MUTING                 },
+	{ "vote_allow_surrender",              CV_SVF_SURRENDER              },
+	{ "vote_allow_restartcampaign",        CV_SVF_RESTARTCAMPAIGN        },
+	{ "vote_allow_nextcampaign",           CV_SVF_NEXTCAMPAIGN           },
+	{ "vote_allow_poll",                   CV_SVF_POLL                   },
+	{ "vote_allow_maprestart",             CV_SVF_MAPRESTART             }
 };
 
 int numVotesAvailable = sizeof(voteToggles) / sizeof(voteType_t);

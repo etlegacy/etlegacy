@@ -511,7 +511,7 @@ void CG_mvTransitionPlayerState(playerState_t *ps)
 	cg.predictedPlayerState.eFlags = cent->currentState.eFlags;
 	cg.zoomedBinoc                 = ((cent->currentState.eFlags & EF_ZOOMING) != 0 && ci->health > 0);
 
-	x = cent->currentState.teamNum;
+	x = ci->cls;
 	if (x == PC_MEDIC)
 	{
 		mult = cg.medicChargeTime[ci->team - 1];
@@ -677,8 +677,8 @@ void CG_mvDraw(cg_window_t *sw)
 	refdef.height = rd_h;
 
 	refdef.fov_x = (cgs.clientinfo[pID].health > 0 &&
-	                (/*cent->currentState.weapon == WP_SNIPERRIFLE ||*/   // WARNING: WARNOUT: this needs updating?
-	                    (cent->currentState.eFlags & EF_ZOOMING))) ?
+					(/*cent->currentState.weapon == WP_SNIPERRIFLE ||*/   // WARNING: WARNOUT: this needs updating?
+						(cent->currentState.eFlags & EF_ZOOMING))) ?
 	               cg_zoomDefaultSniper.value :
 	               (cgs.clientinfo[pID].fCrewgun) ?
 	               55 : cg_fov.value;
@@ -808,7 +808,7 @@ void CG_mvWindowOverlay(int pID, float b_x, float b_y, float b_w, float b_h, flo
 	// Text info
 	fw *= s;
 	fh *= s;
-	x   = cent->currentState.teamNum;
+	x   = ci->cls;
 	if (x == PC_SOLDIER)
 	{
 		p_class        = "^1S";
@@ -945,7 +945,7 @@ void CG_mvOverlayClientUpdate(int pID, int index)
 	cg_window_t *w;
 
 	cg.mvOverlay[index].pID     = pID;
-	cg.mvOverlay[index].classID = cg_entities[pID].currentState.teamNum;
+	cg.mvOverlay[index].classID = cgs.clientinfo[pID].cls;
 	w                           = CG_mvClientLocate(pID);
 	cg.mvOverlay[index].w       = w;
 	if (w != NULL)
@@ -954,16 +954,16 @@ void CG_mvOverlayClientUpdate(int pID, int index)
 		                                        strClassHighlights[cg.mvOverlay[index].classID * 2],
 		                                        (w == cg.mvCurrentMainview) ? "*" : "",
 		                                        pID),
-		                                        sizeof(cg.mvOverlay[0].info)
-		       );
+		           sizeof(cg.mvOverlay[0].info)
+		           );
 	}
 	else
 	{
 		Q_strncpyz(cg.mvOverlay[index].info, va("%s%2d",
 		                                        strClassHighlights[(cg.mvOverlay[index].classID * 2) + 1],
 		                                        pID),
-		                                        sizeof(cg.mvOverlay[0].info)
-		       );
+		           sizeof(cg.mvOverlay[0].info)
+		           );
 	}
 
 	cg.mvOverlay[index].width = CG_Text_Width_Ext(cg.mvOverlay[index].info, cg_fontScaleSP.value, 0, &cgs.media.limboFont2);
@@ -1071,7 +1071,7 @@ void CG_mvOverlayDisplay(void)
 			cg.mvTotalTeam[j]++;
 
 			// Update any class changes
-			if (o->classID != cg_entities[pID].currentState.teamNum)
+			if (o->classID != cgs.clientinfo[pID].cls)
 			{
 				CG_mvOverlayClientUpdate(o->pID, i);
 			}
