@@ -1271,6 +1271,7 @@ static void IN_ProcessEvents(void)
 			case SDL_WINDOWEVENT_MINIMIZED:
 				Cvar_SetValue("com_minimized", 1);
 				break;
+			case SDL_WINDOWEVENT_SHOWN:
 			case SDL_WINDOWEVENT_RESTORED:
 			case SDL_WINDOWEVENT_MAXIMIZED:
 				Cvar_SetValue("com_minimized", 0);
