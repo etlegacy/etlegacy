@@ -430,8 +430,6 @@ void R_AddBSPModelSurfaces(trRefEntity_t *ent)
 	bspModel_t   *bspModel;
 	model_t      *pModel;
 	unsigned int i;
-	vec3_t       v;
-	vec3_t       transformed;
 	vec3_t       boundsCenter;
 	int          fogNum;
 	//float	   boundsRadius;
@@ -466,21 +464,15 @@ void R_AddBSPModelSurfaces(trRefEntity_t *ent)
 	// setup world bounds for intersection tests
 	ClearBounds(ent->worldBounds[0], ent->worldBounds[1]);
 
-	for (i = 0; i < 8; i++)
-	{
-		v[0] = ent->localBounds[i & 1][0];
-		v[1] = ent->localBounds[(i >> 1) & 1][1];
-		v[2] = ent->localBounds[(i >> 2) & 1][2];
-
-		// transform local bounds vertices into world space
-		R_LocalPointToWorld(v, transformed);
-
-		AddPointToBounds(transformed, ent->worldBounds[0], ent->worldBounds[1]);
-	}
+	//use a transformmatrix instead as it is faster
+	mat4_transform_vec3(tr.orientation.transformMatrix, bspModel->bounds[0], ent->worldBounds[0]);
+	mat4_transform_vec3(tr.orientation.transformMatrix, bspModel->bounds[1], ent->worldBounds[1]);
+		
 
 	VectorAdd(ent->worldBounds[0], ent->worldBounds[1], boundsCenter);
-	VectorScale(boundsCenter,0.1, boundsCenter);
-	boundsCenter[1] += 0.5;
+	//rotate the "forcedorigin to be right?
+	VectorScale(boundsCenter,0.5, boundsCenter);
+	
 	// BSP inline models should always use vertex lighting
 	R_SetupEntityLighting(&tr.refdef, ent, boundsCenter);
 
