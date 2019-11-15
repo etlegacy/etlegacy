@@ -335,6 +335,12 @@ void R_SetupEntityLighting(const trRefdef_t *refdef, trRefEntity_t *ent, vec3_t 
 		
 		
 	// ambient light adds
+	if (forcedOrigin)
+	{
+		//this is inlinemodels wich should be lit by lightmap, therefore we have to SET the lights on them 
+		VectorScale(ent->ambientLight, 0.5, ent->ambientLight);
+		VectorScale(ent->directedLight, 0.75, ent->directedLight);
+	}
 	if (ent->e.hilightIntensity != 0.f)
 	{
 		// level of intensity was set because the item was looked at
