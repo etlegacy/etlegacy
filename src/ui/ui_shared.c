@@ -1348,11 +1348,11 @@ void BG_PanelButton_RenderEdit(panel_button_t *button)
 
 		if (BG_PanelButtons_GetFocusButton() == button)
 		{
-			DC->drawTextWithCursorExt(button->rect.x, button->rect.y + button->rect.h, button->font->scalex, button->font->colour, va("%s", buffer + offset), button->data[2], trap_Key_GetOverstrikeMode() ? "_" : "|", offset, button->font->style, button->font->font);
+			DC->drawTextWithCursorExt(button->rect.x, button->rect.y + button->rect.h, button->font->scalex, button->font->colour, buffer + (button->data[2] <= offset ? button->data[2] : offset), button->data[2] <= offset ? 0 : button->data[2] - offset, trap_Key_GetOverstrikeMode() ? "_" : "|", offset ? Q_UTF8_Strlen(buffer + offset) : 0, button->font->style, button->font->font);
 		}
 		else
 		{
-			DC->drawTextExt(button->rect.x, button->rect.y + button->rect.h, button->font->scalex, button->font->scaley, button->font->colour, va("^7%s", buffer + offset), 0, 0, button->font->style, button->font->font);
+			DC->drawTextExt(button->rect.x, button->rect.y + button->rect.h, button->font->scalex, button->font->scaley, button->font->colour, buffer + offset, 0, 0, button->font->style, button->font->font);
 		}
 	}
 	else
@@ -1371,7 +1371,7 @@ void BG_PanelButton_RenderEdit(panel_button_t *button)
 
 		if (BG_PanelButtons_GetFocusButton())
 		{
-			DC->drawTextWithCursorExt(button->rect.x, button->rect.y + button->rect.h, button->font->scalex, button->font->colour, s + offset, button->data[2], trap_Key_GetOverstrikeMode() ? "|" : "_", offset, button->font->style, button->font->font);
+                        DC->drawTextWithCursorExt(button->rect.x, button->rect.y + button->rect.h, button->font->scalex, button->font->colour, s + (button->data[2] <= offset ? button->data[2] : offset), button->data[2] <= offset ? 0 : button->data[2] - offset, trap_Key_GetOverstrikeMode() ? "_" : "|", offset ? Q_UTF8_Strlen(s + offset) : 0, button->font->style, button->font->font);
 		}
 		else
 		{

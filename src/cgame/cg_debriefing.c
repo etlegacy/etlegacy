@@ -1393,7 +1393,7 @@ void CG_Debriefing_ChatEdit_Draw(panel_button_t *button)
 		}
 	}
 	while (CG_Text_Width_Ext(buffer + offset, button->font->scalex, 0, button->font->font) > button->rect.w);
-
+        
 	switch (cgs.dbChatMode)
 	{
 	case 0:
@@ -1410,7 +1410,7 @@ void CG_Debriefing_ChatEdit_Draw(panel_button_t *button)
 		break;
 	}
 
-	CG_Text_PaintWithCursor_Ext(button->rect.x, button->rect.y + button->rect.h, button->font->scalex, *color, va("%s", buffer + offset), button->data[2], trap_Key_GetOverstrikeMode() ? "_" : "|", offset, button->font->style, button->font->font);
+        CG_Text_PaintWithCursor_Ext(button->rect.x, button->rect.y + button->rect.h, button->font->scalex, *color, buffer + (button->data[2] <= offset ? button->data[2] : offset), button->data[2] <= offset ? 0 : button->data[2] - offset, trap_Key_GetOverstrikeMode() ? "_" : "|", offset ? Q_UTF8_Strlen(buffer + offset) : 0, button->font->style, button->font->font);
 }
 
 /**
