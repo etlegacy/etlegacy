@@ -1596,8 +1596,8 @@ qboolean LoadMap(shaderStage_t *stage, char *buffer)
 	
 	if (!stage->bundle[0].image[0])
 	{
-		Ren_Warning("WARNING: LoadMap could not find image '%s' in shader '%s'\n", buffer, shader.name);
-		return qfalse;
+		Ren_Developer("WARNING: LoadMap could not find image '%s' in shader '%s'\n", buffer, shader.name);
+		//return qfalse;
 	}
 
 	return qtrue;
