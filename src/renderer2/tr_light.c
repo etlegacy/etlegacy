@@ -319,13 +319,13 @@ void R_SetupEntityLighting(const trRefdef_t *refdef, trRefEntity_t *ent, vec3_t 
 	}
 	else
 	{
-		ent->ambientLight[0] = tr.identityLight * (64.0f / 255.0f);
-		ent->ambientLight[1] = tr.identityLight * (64.0f / 255.0f);
-		ent->ambientLight[2] = tr.identityLight * (96.0f / 255.0f);
+		ent->ambientLight[0] = tr.identityLight * 0.25;
+		ent->ambientLight[1] = tr.identityLight * 0.25;
+		ent->ambientLight[2] = tr.identityLight * 0.37;
 
 		ent->directedLight[0] = tr.identityLight; // * (255.0f / 255.0f);
-		ent->directedLight[1] = tr.identityLight * (232.0f / 255.0f);
-		ent->directedLight[2] = tr.identityLight * (224.0f / 255.0f);
+		ent->directedLight[1] = tr.identityLight * 0.9;
+		ent->directedLight[2] = tr.identityLight * 0.87;
 
 		//VectorCopy(tr.sunDirection, ent->lightDir);
 		VectorSet(ent->lightDir, -1, 1, 1.25);
@@ -337,29 +337,35 @@ void R_SetupEntityLighting(const trRefdef_t *refdef, trRefEntity_t *ent, vec3_t 
 	// ambient light adds
 	if (forcedOrigin)
 	{
-		//this is inlinemodels wich should be lit by lightmap, therefore we have to SET the lights on them 
+		/*this is inlinemodels(brushmodels) wich should be lit by lightmap,
+		therefore we set sundirection as lightdirection on them
+		because then they have sort of the same as world brushes.
+		also adjusting lights on these so they arent glowing or too dark*/
 		VectorScale(ent->ambientLight, 0.5, ent->ambientLight);
 		VectorScale(ent->directedLight, 0.75, ent->directedLight);
+		VectorCopy(tr.sunDirection, ent->lightDir);
 	}
 	if (ent->e.hilightIntensity != 0.f)
 	{
 		// level of intensity was set because the item was looked at
-		ent->ambientLight[0] += tr.identityLight * 128.0f / 255.0f * ent->e.hilightIntensity;
-		ent->ambientLight[1] += tr.identityLight * 128.0f / 255.0f * ent->e.hilightIntensity;
-		ent->ambientLight[2] += tr.identityLight * 128.0f / 255.0f * ent->e.hilightIntensity;
+		ent->ambientLight[0] += tr.identityLight * 0.5 * ent->e.hilightIntensity;
+		ent->ambientLight[1] += tr.identityLight * 0.5 * ent->e.hilightIntensity;
+		ent->ambientLight[2] += tr.identityLight * 0.5 * ent->e.hilightIntensity;
 	}
 	else if (ent->e.renderfx & RF_MINLIGHT)  // && VectorLength(ent->ambientLight) <= 0)
 	{
 		// give everything a minimum light add
-		ent->ambientLight[0] += tr.identityLight * 32 / 255.0f;
-		ent->ambientLight[1] += tr.identityLight * 32 / 255.0f;
-		ent->ambientLight[2] += tr.identityLight * 32 / 255.0f;
+		ent->ambientLight[0] += tr.identityLight * 0.125;
+		ent->ambientLight[1] += tr.identityLight * 0.125;
+		ent->ambientLight[2] += tr.identityLight * 0.125;
 	}
 
 
 
 	// force an ambient light value or scale by given r_ambientscale
 	// note: this will also affect ambient light for hilightIntensity and RF_MINLIGHT ...
+
+	// this will keep weapons and characters from becoming black when no lightgrid is present..
 	if (VectorLength(ent->ambientLight) < r_ambientScale->value)
 	{
 		ent->ambientLight[0] = r_ambientScale->value;
@@ -368,10 +374,12 @@ void R_SetupEntityLighting(const trRefdef_t *refdef, trRefEntity_t *ent, vec3_t 
 	}
 	else
 	{
+		//HUD
 		if (refdef->rdflags & RDF_NOWORLDMODEL) // no scaling for no world models set world ambient light instead
 		{
 			VectorCopy(tr.worldEntity.ambientLight, ent->ambientLight);
 		}
+		//SCOPED WEAPON
 		if (refdef->rdflags & RDF_SNOOPERVIEW) // nightscope
 		{
 			VectorSet(ent->ambientLight, 0.96f, 0.96f, 0.96f);  // allow a little room for flicker from directed light
