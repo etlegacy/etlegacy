@@ -1518,6 +1518,7 @@ qboolean LoadMap(shaderStage_t *stage, char *buffer)
 	{
 		stage->bundle[0].image[0] = tr.whiteImage;
 		return qtrue;
+		
 	}
 	else if (!Q_stricmp(token, "$blackimage") || !Q_stricmp(token, "$black") || !Q_stricmp(token, "_black") ||
 	         !Q_stricmp(token, "*black"))
@@ -2387,7 +2388,11 @@ qboolean ParseStage(shaderStage_t *stage, char **text)
 			{
 				stage->alphaGen         = AGEN_CONST; // AGEN_PORTAL
 				stage->constantColor[3] = 0;
-
+				//set shader as portal
+				tess.surfaceShader->isPortal = qtrue;
+				backEnd.viewParms.isPortal = qtrue;
+				shader.sort = SS_PORTAL;
+				stage->type = ST_PORTALMAP;
 				token           = COM_ParseExt(text, qfalse);
 				if (token[0] == 0)
 				{
@@ -2438,6 +2443,8 @@ qboolean ParseStage(shaderStage_t *stage, char **text)
 		// tcGen <function>
 		else if (!Q_stricmp(token, "texGen") || !Q_stricmp(token, "tcGen"))
 		{
+		    stage->type = ST_TCGEN;
+
 			token = COM_ParseExt2(text, qfalse);
 			if (token[0] == 0)
 			{
@@ -2450,7 +2457,8 @@ qboolean ParseStage(shaderStage_t *stage, char **text)
 				stage->tcGen_Environment = qtrue;
 				stage->tcGen_Lightmap    = qfalse;
 				
-				stage->type = ST_TCGEN;
+				
+				
 			}
 			else if (!Q_stricmp(token, "lightmap"))
 			{
@@ -3779,6 +3787,8 @@ static qboolean ParseShader(char *_text)
 			SkipRestOfLine(text);
 			continue;
 		}
+		
+		
 		// skip description
 		else if (!Q_stricmp(token, "description"))
 		{
@@ -4096,7 +4106,7 @@ static qboolean ParseShader(char *_text)
 		{
 			shader.sort     = SS_PORTAL;
 			shader.isPortal = qtrue;
-
+			backEnd.viewParms.isPortal = qtrue;
 			continue;
 		}
 		// portal or mirror
@@ -4104,6 +4114,7 @@ static qboolean ParseShader(char *_text)
 		{
 			shader.sort     = SS_PORTAL;
 			shader.isPortal = qtrue;
+			backEnd.viewParms.isMirror = qtrue;
 			continue;
 		}
 		// skyparms <cloudheight> <outerbox> <innerbox>
@@ -4848,6 +4859,7 @@ static shader_t *GeneratePermanentShader(void)
 	{
 		if (!stages[i].active)
 		{
+			newShader->stages[i] = NULL;    // make sure it's null
 			break;
 		}
 		newShader->stages[i]  = (shaderStage_t *)ri.Hunk_Alloc(sizeof(stages[i]), h_low);
@@ -5015,7 +5027,8 @@ static shader_t *FinishShader(void)
 			if (!pStage->bundle[0].image[0])
 			{
 				Ren_Warning("Shader %s has a diffusemap stage with no image - default image set\n", shader.name);
-				pStage->bundle[0].image[0] = tr.defaultImage; // the missing-texture image
+				pStage->active = qfalse;
+				continue;
 			}
 			if (!shader.isSky)
 			{
@@ -5026,7 +5039,8 @@ static shader_t *FinishShader(void)
 			if (!pStage->bundle[0].image[0])
 			{
 				Ren_Warning("Shader %s has a normalmap stage with no image - flat image set\n", shader.name);
-				pStage->bundle[0].image[0] = tr.flatImage;
+				pStage->active = qfalse;
+				continue;
 			}
 /*			else if (!shader.isSky)
 			{
@@ -5077,7 +5091,8 @@ static shader_t *FinishShader(void)
 			if (!pStage->bundle[0].image[0])
 			{
 				Ren_Warning("Shader %s has a colormap stage with no image - default image set\n", shader.name);
-				pStage->bundle[0].image[0] = tr.defaultImage; // the missing-texture image
+				pStage->active = qfalse;
+				continue;
 			}
 			break;
 		default:
@@ -6836,7 +6851,7 @@ static void CreateInternalShaders(void)
 
 	shader.type                  = SHADER_3D_DYNAMIC;
 	stages[0].type               = ST_DIFFUSEMAP;
-	stages[0].bundle[0].image[0] = tr.defaultImage;
+	//stages[0].bundle[0].image[0] = tr.defaultImage;
 	stages[0].active             = qtrue;
 	stages[0].stateBits          = GLS_DEFAULT;
 	tr.defaultShader             = FinishShader();
