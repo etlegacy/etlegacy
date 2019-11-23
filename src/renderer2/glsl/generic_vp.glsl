@@ -63,7 +63,7 @@ void main()
 
 		vec3 reflected = attr_Normal * 2.0 * d - viewer;
 
-		texCoord.s = 0.5 + reflected.y * 0.5;
+		texCoord.s = 0.5 + reflected.x * 0.5;
 		texCoord.t = 0.5 - reflected.z * 0.5;
 		texCoord.q = 0;
 		texCoord.w = 1;
