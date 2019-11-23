@@ -181,13 +181,13 @@ void main()
      //keep this from getting zero, black looks ugly in ET
 	 //normalmapping can be closer as it also has specular
 #if defined(USE_NORMAL_MAPPING)
-     float DotNL2 = max(dot(N,L),0.02);
+   
 	 //we need this for shadows on ents, see flag and stuff
-    color.rgb *=(u_LightColor * DotNL2) + u_AmbientColor; 
+    color.rgb *=(u_LightColor  + u_AmbientColor); 
 #else
     
-    float DotNL2 = max(dot(N,L),0.2);
-    color.rgb *= (u_LightColor + u_AmbientColor)* DotNL2;
+   
+    color.rgb *= (u_LightColor + u_AmbientColor);
 #endif
 
     

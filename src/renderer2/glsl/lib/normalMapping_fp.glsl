@@ -97,7 +97,7 @@
 		#if defined(r_diffuseLighting)
 			// half-Lambert starts at 0.5, and fills the range 0.5 to 1.0    (dotNL*0.5+0.5)
 			// example: We want it a bit brighter, so we start at 0.875 (to 1.0)   //float lambert = dotNL * 0.125 + 0.875;
-			float lambert = (1.0 - r_diffuseLighting) + (dotNL * r_diffuseLighting);
+			float lambert = dotNL*0.5+0.5;
 			//return lambert*lambert; // square the result (this also makes the result always >0)
 			return abs(lambert); // don't square, but abs instead. (the most useful values are so low already. squaring them lowers them even more)
 		#elif defined(r_WrapAroundLighting)

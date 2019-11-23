@@ -171,8 +171,8 @@ float parallaxHeight = parallax.z;
 	color.rgb += specular;
 #endif // USE_REFLECTIONS || USE_SPECULAR
 #endif // USE_NORMAL_MAPPING
-    float DotNL2 = max(dot(N,L),0.75);
-	color *= lightmapColor * DotNL2; // we must blend using the lightmap.a
+   
+	color *= lightmapColor; // we must blend using the lightmap.a
 
 #else // USE_NORMAL_MAPPING
 																  
