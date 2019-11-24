@@ -2300,7 +2300,7 @@ void RB_RenderGlobalFog()
 
 	Ren_LogComment("--- RB_RenderGlobalFog ---\n");
 
-	if (r_noFog->integer)
+	if (!tr.world || tr.world->globalFog < 0||!r_wolfFog->integer)
 	{
 		return;
 	}
@@ -2316,10 +2316,8 @@ void RB_RenderGlobalFog()
 		return;
 	}
 
-	if (!tr.world || tr.world->globalFog < 0)
-	{
-		return;
-	}
+	
+	
 
 	GL_Cull(CT_TWO_SIDED);
 
@@ -2370,7 +2368,8 @@ void RB_RenderGlobalFog()
 	// bind u_ColorMap
 	SelectTexture(TEX_COLOR);
 	GL_Bind(tr.fogImage);
-
+	
+	
 	// bind u_DepthMap
 	SelectTexture(TEX_DEPTH);
 	if (HDR_ENABLED())

@@ -3742,7 +3742,7 @@ extern cvar_t *r_railCoreWidth;
 extern cvar_t *r_lodTest;
 
 extern cvar_t *r_wolfFog;
-extern cvar_t *r_noFog;
+
 
 
 extern cvar_t *r_ambientScale;

@@ -2324,7 +2324,7 @@ static void Render_fog_brushes()
 	
 	Ren_LogComment("--- Render_fog_brushes ---\n");
 
-	if (!r_wolfFog->integer && r_noFog->integer)
+	if (!r_wolfFog->integer)
 	{
 		return;
 	}
