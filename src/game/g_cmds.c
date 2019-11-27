@@ -266,7 +266,7 @@ static void G_SendSkillRating(gentity_t *ent)
 	for (i = 0; i < level.numConnectedClients; i++)
 	{
 		cl = &level.clients[level.sortedClients[i]];
-		Q_strcat(buffer, sizeof(buffer), va("%.3f ", MIN(MAX(cl->sess.mu - 3 * cl->sess.sigma, 0.f), 2 * MU)));
+		Q_strcat(buffer, sizeof(buffer), va("%.3f ", cl->sess.mu - 3 * cl->sess.sigma));
 	}
 
 	trap_SendServerCommand(ent - g_entities, buffer);
@@ -4508,7 +4508,7 @@ void Cmd_IntermissionSkillRating_f(gentity_t *ent)
 		{
 			cl = &level.clients[i];
 			Q_strcat(buffer, sizeof(buffer), va("%.3f %.3f ",
-			                                    MIN(MAX(cl->sess.mu - 3 * cl->sess.sigma, 0.f), 2 * MU),
+			                                    cl->sess.mu - 3 * cl->sess.sigma,
 			                                    cl->sess.mu - 3 * cl->sess.sigma - (cl->sess.oldmu - 3 * cl->sess.oldsigma)));
 		}
 		else

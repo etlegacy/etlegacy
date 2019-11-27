@@ -472,7 +472,7 @@ char *G_createStats(gentity_t *refEnt)
 #ifdef FEATURE_RATING
 	// Add skill rating info
 	Q_strcat(strSkillRatingInfo, sizeof(strSkillRatingInfo), va(" %.2f %.2f",
-	                                                            MIN(MAX(refEnt->client->sess.mu - 3 * refEnt->client->sess.sigma, 0.f), 2 * MU),
+	                                                            refEnt->client->sess.mu - 3 * refEnt->client->sess.sigma,
 	                                                            refEnt->client->sess.mu - 3 * refEnt->client->sess.sigma - (refEnt->client->sess.oldmu - 3 * refEnt->client->sess.oldsigma)));
 #endif
 
@@ -699,7 +699,7 @@ void G_printMatchInfo(gentity_t *ent)
 			                                            (g_gametype.integer == GT_WOLF_LMS) ? cl->ps.persistant[PERS_SCORE] : cl->ps.stats[STAT_XP]
 #ifdef FEATURE_RATING
 			                                            ,
-			                                            MIN(MAX(cl->sess.mu - 3 * cl->sess.sigma, 0.f), 2 * MU),
+			                                            cl->sess.mu - 3 * cl->sess.sigma,
 			                                            (cl->sess.mu - 3 * cl->sess.sigma) - (cl->sess.oldmu - 3 * cl->sess.oldsigma)
 #endif
 			                                            ));
