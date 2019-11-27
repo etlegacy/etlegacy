@@ -124,7 +124,7 @@ int G_SkillRatingDB_Init()
 	// open db
 	if (db_mode == 1)
 	{
-		result = sqlite3_open_v2(level.database.path, &level.database.db, (SQLITE_OPEN_READWRITE | SQLITE_OPEN_MEMORY | SQLITE_OPEN_SHAREDCACHE), NULL);
+		result = sqlite3_open_v2(level.database.path, &level.database.db, SQLITE_OPEN_READWRITE | SQLITE_OPEN_MEMORY | SQLITE_OPEN_SHAREDCACHE, NULL);
 
 		if (result != SQLITE_OK)
 		{
@@ -146,7 +146,7 @@ int G_SkillRatingDB_Init()
 		char         *err_msg = NULL;
 		sqlite3_stmt *sqlstmt;
 
-		result = sqlite3_open_v2(level.database.path, &level.database.db, (SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE), NULL);
+		result = sqlite3_open_v2(level.database.path, &level.database.db, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE,NULL);
 
 		if (result != SQLITE_OK)
 		{
@@ -200,7 +200,7 @@ int G_SkillRatingDB_Init()
 
 /**
  * @brief G_SkillRatingDB_DeInit
- * @return 0 if database is successfully deinitiallized, 1 otherwise.
+ * @return 0 if database is successfully deinitialized, 1 otherwise.
  */
 int G_SkillRatingDB_DeInit()
 {
@@ -247,7 +247,7 @@ int G_SkillRatingDB_Check(char *db_path, int db_mode)
 	// check if database can be opened
 	if (db_mode == 1)
 	{
-		result = sqlite3_open_v2(db_path, &db, (SQLITE_OPEN_READWRITE | SQLITE_OPEN_MEMORY | SQLITE_OPEN_SHAREDCACHE), NULL);
+		result = sqlite3_open_v2(db_path, &db, SQLITE_OPEN_READWRITE | SQLITE_OPEN_MEMORY | SQLITE_OPEN_SHAREDCACHE, NULL);
 	}
 	else // db_mode 2
 	{
@@ -359,7 +359,7 @@ int G_SkillRatingPrepareMatchRating(void)
 /**
  * @brief Retrieve rating from the rating_match table
  * @param[in] sr_data
- * @return 0 if if successful, 0 otherwise.
+ * @return 0 if successful, 1 otherwise.
  */
 int G_SkillRatingGetMatchRating(srData_t *sr_data)
 {
@@ -430,7 +430,7 @@ int G_SkillRatingGetMatchRating(srData_t *sr_data)
 /**
  * @brief Sets or updates rating and time played in the rating_match table
  * @param[in] sr_data
- * @return 0 if if successful, 0 otherwise.
+ * @return 0 if successful, 1 otherwise.
  */
 int G_SkillRatingSetMatchRating(srData_t *sr_data)
 {
@@ -531,7 +531,7 @@ void G_SkillRatingGetUserRating(gclient_t *cl, qboolean firstTime)
 
 	// retrieve current rating_users or assign default values
 	// use level.startTime workaround for warmup players not getting rating_users data when GS_PLAYING starts
-	if (firstTime || level.warmupTime || level.intermissiontime || level.intermissionQueued || (level.time - level.startTime) < 1000)
+	if (firstTime || level.warmupTime || level.intermissiontime || level.intermissionQueued || ((level.time - level.startTime) < 1000))
 	{
 		// check general rating_users values or generate new default values
 		sql = va(SRUSERS_SQLWRAP_SELECT, guid);
@@ -725,7 +725,7 @@ void G_SkillRatingSetUserRating(gclient_t *cl)
 /**
  * @brief Sets or updates rating and timestamps in the rating_user table
  * @param[in] sr_data
- * @return 0 if if successful, 0 otherwise.
+ * @return 0 if successful, 1 otherwise.
  */
 int G_SkillRatingSetUserRatingData(srData_t *sr_data)
 {
@@ -1009,7 +1009,7 @@ void G_CalculateSkillRatings(void)
  */
 float pdf(float x)
 {
-	return exp(-0.5f * pow(x, 2)) / sqrt(M_TAU_F);
+	return exp(-0.5f * pow(x, 2)) / sqrtf(M_TAU_F);
 }
 
 /**
@@ -1112,7 +1112,7 @@ void G_UpdateSkillRating(int winner)
 	{
 		mapProb  = G_MapWinProb(winner);
 		mapMu    = 2 * MU * mapProb;
-		mapSigma = 2 * MU * sqrt(mapProb * (1.0f - mapProb));
+		mapSigma = 2 * MU * sqrtf(mapProb * (1.0f - mapProb));
 		mapBeta  = mapSigma / 2;
 	}
 
@@ -1306,7 +1306,7 @@ float G_CalculateWinProbability(int team)
 	{
 		mapProb  = G_MapWinProb(team);
 		mapMu    = 2 * MU * mapProb;
-		mapSigma = 2 * MU * sqrt(mapProb * (1.0f - mapProb));
+		mapSigma = 2 * MU * sqrtf(mapProb * (1.0f - mapProb));
 		mapBeta  = mapSigma / 2;
 	}
 
