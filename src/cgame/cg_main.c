@@ -474,7 +474,7 @@ static cvarTable_t cvarTable[] =
 	{ &cf_wstats,                 "cf_wstats",                 "1.2",         CVAR_ARCHIVE,                 0 },
 	{ &cf_wtopshots,              "cf_wtopshots",              "1.0",         CVAR_ARCHIVE,                 0 },
 
-	{ &cg_autoAction,             "cg_autoAction",             "0",           CVAR_ARCHIVE,                 0 },
+	{ &cg_autoAction,             "cg_autoAction",             "4",           CVAR_ARCHIVE,                 0 },
 	{ &cg_autoReload,             "cg_autoReload",             "1",           CVAR_ARCHIVE,                 0 },
 	{ &cg_bloodDamageBlend,       "cg_bloodDamageBlend",       "1.0",         CVAR_ARCHIVE,                 0 },
 	{ &cg_bloodFlash,             "cg_bloodFlash",             "1.0",         CVAR_ARCHIVE,                 0 },
