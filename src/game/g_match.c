@@ -594,6 +594,7 @@ void G_printMatchInfo(gentity_t *ent)
 	int       tot_timex, tot_timel, tot_timep, tot_kills, tot_deaths, tot_gibs, tot_sk, tot_tk, tot_tg, tot_dg, tot_dr, tot_tdg, tot_tdr, tot_xp;
 	gclient_t *cl;
 	char      *ref;
+	char      guid[MAX_GUID_LENGTH];
 	char      n2[MAX_STRING_CHARS];
 
 	for (i = TEAM_AXIS; i <= TEAM_SPECTATOR; i++)
@@ -620,11 +621,11 @@ void G_printMatchInfo(gentity_t *ent)
 
 		CP("sc \"\n\"");
 #ifdef FEATURE_RATING
-		CP("sc \"^7TEAM       Player         ^1 TmX^$ TmL^7 TmP^7 Kll Dth Gib  SK  TK  TG^7 Eff^2    DG^1    DR^6  TDG^$  TDR^3  Score^8  Rating^5  Delta\n\"");
-		CP("sc \"^7--------------------------------------------------------------------------------------------------------------\n\"");
+		CP("sc \"^7GUID      TEAM       Player         ^1 TmX^$ TmL^7 TmP^7 Kll Dth Gib  SK  TK  TG^7 Eff^2    DG^1    DR^6  TDG^$  TDR^3  Score^8  Rating^5  Delta\n\"");
+		CP("sc \"^7------------------------------------------------------------------------------------------------------------------------\n\"");
 #else
-		CP("sc \"^7TEAM       Player         ^1 TmX^$ TmL^7 TmP^7 Kll Dth Gib  SK  TK  TG^7 Eff^2    DG^1    DR^6  TDG^$  TDR^3  Score\n\"");
-		CP("sc \"^7-----------------------------------------------------------------------------------------------\n\"");
+		CP("sc \"^7GUID      TEAM       Player         ^1 TmX^$ TmL^7 TmP^7 Kll Dth Gib  SK  TK  TG^7 Eff^2    DG^1    DR^6  TDG^$  TDR^3  Score\n\"");
+		CP("sc \"^7---------------------------------------------------------------------------------------------------------\n\"");
 #endif
 
 		for (j = 0; j < level.numConnectedClients; j++)
@@ -634,6 +635,17 @@ void G_printMatchInfo(gentity_t *ent)
 			if (cl->pers.connected != CON_CONNECTED || cl->sess.sessionTeam != i)
 			{
 				continue;
+			}
+
+			SanitizeString(cl->pers.cl_guid, guid, qfalse);
+			if (ent->r.svFlags & SVF_BOT)
+			{
+				guid[9] = 0;
+			}
+			else
+			{
+				guid[8] = 0;
+				strcat(guid, "*");
 			}
 
 			SanitizeString(cl->pers.netname, n2, qfalse);
@@ -673,10 +685,11 @@ void G_printMatchInfo(gentity_t *ent)
 
 			cnt++;
 #ifdef FEATURE_RATING
-			trap_SendServerCommand(ent - g_entities, va("sc \"%-14s %s%-15s^1%4d^$%4d^7%s%4d^3%4d%4d%4d%4d%4d%4d%s%4d^2%6d^1%6d^6%5d^$%5d^3%7d^8%8.2f^5%+7.2f\n\"",
+			trap_SendServerCommand(ent - g_entities, va("sc \"%-9s %-14s %s%-15s^1%4d^$%4d^7%s%4d^3%4d%4d%4d%4d%4d%4d%s%4d^2%6d^1%6d^6%5d^$%5d^3%7d^8%8.2f^5%+7.2f\n\"",
 #else
-			trap_SendServerCommand(ent - g_entities, va("sc \"%-14s %s%-15s^1%4d^$%4d^7%s%4d^3%4d%4d%4d%4d%4d%4d%s%4d^2%6d^1%6d^6%5d^$%5d^3%7d\n\"",
+			trap_SendServerCommand(ent - g_entities, va("sc \"%-9s %-14s %s%-15s^1%4d^$%4d^7%s%4d^3%4d%4d%4d%4d%4d%4d%s%4d^2%6d^1%6d^6%5d^$%5d^3%7d\n\"",
 #endif
+			                                            guid,
 			                                            aTeams[i],
 			                                            ref,
 			                                            n2,
@@ -714,11 +727,12 @@ void G_printMatchInfo(gentity_t *ent)
 		time_eff = (tot_timex + tot_timel == 0) ? 0 : 100 * tot_timep / (tot_timex + tot_timel);
 
 #ifdef FEATURE_RATING
-		CP("sc \"^7--------------------------------------------------------------------------------------------------------------\n\"");
+		CP("sc \"^7------------------------------------------------------------------------------------------------------------------------\n\"");
 #else
-		CP("sc \"^7-----------------------------------------------------------------------------------------------\n\"");
+		CP("sc \"^7---------------------------------------------------------------------------------------------------------\n\"");
 #endif
-		trap_SendServerCommand(ent - g_entities, va("sc \"%-14s ^5%-15s^1%4d^$%4d^5%4d%4d%4d%4d%4d%4d%4d^5%4d^2%6d^1%6d^6%5d^$%5d^3%7d\n\"",
+		trap_SendServerCommand(ent - g_entities, va("sc \"%-9s %-14s ^5%-15s^1%4d^$%4d^5%4d%4d%4d%4d%4d%4d%4d^5%4d^2%6d^1%6d^6%5d^$%5d^3%7d\n\"",
+		                                            "",
 		                                            aTeams[i],
 		                                            "Totals",
 		                                            tot_timex / 60000,
