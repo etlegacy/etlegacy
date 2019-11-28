@@ -379,33 +379,33 @@ void G_players_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fDump)
 	int       user_rate, user_snaps;
 	gclient_t *cl;
 	gentity_t *cl_ent;
-	char      n2[MAX_NETNAME], ready[16], ref[8], rate[32];
+	char      guid[MAX_GUID_LENGTH], n2[MAX_NETNAME], ready[16], ref[8], rate[32];
 	char      *s, *tc, *sc, *ign, *muted, userinfo[MAX_INFO_STRING];
 
 	if (g_gamestate.integer == GS_PLAYING)
 	{
 		if (ent)
 		{
-			CP("print \"^7 ID : Player                    Nudge  Rate  MaxPkts  Snaps  Specials\n\"");
-			CP("print \"^7---------------------------------------------------------------------\n\"");
+			CP("print \"^7GUID       ID : Player                    Nudge  Rate  MaxPkts  Snaps  Specials\n\"");
+			CP("print \"^7-------------------------------------------------------------------------------\n\"");
 		}
 		else
 		{
-			G_Printf(" ID : Player                    Nudge  Rate  MaxPkts  Snaps  Specials\n");
-			G_Printf("---------------------------------------------------------------------\n");
+			G_Printf("GUID       ID : Player                    Nudge  Rate  MaxPkts  Snaps  Specials\n");
+			G_Printf("-------------------------------------------------------------------------------\n");
 		}
 	}
 	else
 	{
 		if (ent)
 		{
-			CP("print \"^7Status   : ID : Player                    Nudge  Rate  MaxPkts  Snaps  Specials\n\"");
-			CP("print \"^7-------------------------------------------------------------------------------\n\"");
+			CP("print \"^7GUID      Status   : ID : Player                    Nudge  Rate  MaxPkts  Snaps  Specials\n\"");
+			CP("print \"^7-----------------------------------------------------------------------------------------\n\"");
 		}
 		else
 		{
-			G_Printf("Status   : ID : Player                    Nudge  Rate  MaxPkts  Snaps  Specials\n");
-			G_Printf("-------------------------------------------------------------------------------\n");
+			G_Printf("GUID      Status   : ID : Player                    Nudge  Rate  MaxPkts  Snaps  Specials\n");
+			G_Printf("-----------------------------------------------------------------------------------------\n");
 		}
 	}
 
@@ -417,10 +417,24 @@ void G_players_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fDump)
 		cl     = &level.clients[idnum];
 		cl_ent = g_entities + idnum;
 
+		SanitizeString(cl->pers.cl_guid, guid, qfalse);
 		SanitizeString(cl->pers.netname, n2, qfalse);
 		n2[26]   = 0;
 		ref[0]   = 0;
 		ready[0] = 0;
+
+		// GUID
+		if (cl_ent->r.svFlags & SVF_BOT)
+		{
+			// omnibot requires 9 chars (OMNIBOT01)
+			guid[9] = 0;
+		}
+		else
+		{
+			// display only 8 char with * for humans
+			guid[8] = 0;
+			strcat(guid, "*");
+		}
 
 		// Rate info
 		if (cl_ent->r.svFlags & SVF_BOT)
@@ -513,11 +527,11 @@ void G_players_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fDump)
 
 		if (ent)
 		{
-			CP(va("print \"%s%s%2d :%s %-26s^7%s  ^3%s%s%s%s^7\n\"", ready, tc, idnum, ((ref[0]) ? "^3" : "^7"), n2, rate, ref, sc, ign, muted));
+			CP(va("print \"%-9s %s%s%2d : %s%-26s^7%s  ^3%s%s%s%s^7\n\"", guid, ready, tc, idnum, ((ref[0]) ? "^3" : "^7"), n2, rate, ref, sc, ign, muted));
 		}
 		else
 		{
-			G_Printf("%s%s%2d : %-26s%s  %s%s%s\n", ready, tc, idnum, n2, rate, ref, sc, muted);
+			G_Printf("%-9s %s%s%2d : %-26s%s  %s%s%s\n", guid, ready, tc, idnum, n2, rate, ref, sc, muted);
 		}
 
 		cnt++;
