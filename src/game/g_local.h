@@ -2416,9 +2416,9 @@ int G_SkillRatingDB_Check(char *db_path, int db_mode);
 int G_SkillRatingPrepareMatchRating(void);
 int G_SkillRatingGetMatchRating(srData_t *sr_data);
 int G_SkillRatingSetMatchRating(srData_t *sr_data);
-void G_SkillRatingGetUserRating(gclient_t *cl, qboolean firstTime);
-void G_SkillRatingSetUserRating(gclient_t *cl);
-int G_SkillRatingSetUserRatingData(srData_t *sr_data);
+int G_SkillRatingSetUserRating(srData_t *sr_data);
+void G_SkillRatingGetClientRating(gclient_t *cl);
+void G_SkillRatingSetClientRating(gclient_t *cl);
 float G_SkillRatingGetMapRating(char *mapname);
 void G_SkillRatingSetMapRating(char *mapname, int winner);
 #endif

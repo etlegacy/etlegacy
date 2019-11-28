@@ -2288,7 +2288,7 @@ char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 #ifdef FEATURE_RATING
 	if (g_skillRating.integer)
 	{
-		G_SkillRatingGetUserRating(client, firstTime);
+		G_SkillRatingGetClientRating(client);
 		G_CalcRank(client);
 	}
 #endif
@@ -3134,10 +3134,10 @@ void ClientDisconnect(int clientNum)
 	}
 
 #ifdef FEATURE_RATING
+	// rating already recorded before intermission
 	if (g_skillRating.integer && !level.intermissiontime)
 	{
-		// rating already recorded before intermission
-		G_SkillRatingSetUserRating(ent->client);
+		G_SkillRatingSetClientRating(ent->client);
 	}
 #endif
 

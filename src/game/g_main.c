@@ -3694,7 +3694,7 @@ void G_LogExit(const char *string)
 			}
 
 			// record match rating before intermission
-			G_SkillRatingSetUserRating(ent->client);
+			G_SkillRatingSetClientRating(ent->client);
 		}
 	}
 #endif
