@@ -604,8 +604,9 @@ cvar_t *Cvar_Get(const char *varName, const char *value, int flags)
 }
 
 #define FOREIGN_MSG "Foreign characters are not allowed in userinfo variables.\n"
-#define FOREIGN_NICK "There are not supported characters in nickname variable.\n"
-
+#ifndef DEDICATED
+const char *CL_TranslateStringBuf(const char *string);
+#endif
 /**
  * @brief Cvar_Set2
  * @param[in] var_name
@@ -660,8 +661,7 @@ cvar_t *Cvar_Set2(const char *var_name, const char *value, qboolean force)
 #ifdef DEDICATED
 			Com_Printf(FOREIGN_MSG);
 #else
-			Sys_Dialog(DT_ERROR, FOREIGN_NICK, "Error: Nickname");
-			Sys_Quit();
+			Com_Printf("%s", CL_TranslateStringBuf(FOREIGN_MSG));
 #endif
 			Com_Printf("Using %s instead of %s\n", cleaned, value);
 			return Cvar_Set2(var_name, cleaned, force);
