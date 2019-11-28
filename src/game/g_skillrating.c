@@ -983,7 +983,7 @@ void G_CalculateSkillRatings(void)
 	}
 
 	// log
-	G_LogPrintf("SKILL_RATING: Map: %s, Winner: %d, Time: %d, Timelimit: %d\n",
+	G_LogPrintf("SkillRating: Map: %s, Winner: %d, Time: %d, Timelimit: %d\n",
 	            level.rawmapname, winner, level.intermissionQueued - level.startTime - level.timeDelta, g_timelimit.integer * 60000);
 
 	// update map rating
@@ -991,6 +991,8 @@ void G_CalculateSkillRatings(void)
 	{
 		G_SkillRatingSetMapRating(level.rawmapname, winner);
 		level.mapProb = G_SkillRatingGetMapRating(level.rawmapname);
+
+		G_LogPrintf("SkillRating: Map bias: %.6f\n", level.mapProb);
 
 		// update map bias on intermission scoreboard
 		trap_GetConfigstring(CS_LEGACYINFO, cs, sizeof(cs));
@@ -1085,6 +1087,7 @@ void G_UpdateSkillRating(int winner)
 
 	int       i, playerTeam, rankFactor;
 	float     c, v, w, t, winningMu, losingMu, muFactor, sigmaFactor;
+	float     oldMu, oldSigma;
 	gclient_t *cl;
 
 	float teamMuX      = 0.f;
@@ -1217,6 +1220,10 @@ void G_UpdateSkillRating(int winner)
 		sr_data.time_axis   = sqlite3_column_int(sqlstmt, 3);
 		sr_data.time_allies = sqlite3_column_int(sqlstmt, 4);
 
+		// track old data
+		oldMu = sr_data.mu;
+		oldSigma = sr_data.sigma;
+
 		// player has not played at all
 		if (sr_data.time_axis == 0 && sr_data.time_allies == 0)
 		{
@@ -1252,6 +1259,13 @@ void G_UpdateSkillRating(int winner)
 		{
 			return;
 		}
+
+		G_LogPrintf("SkillRating: GUID: %s, Delta SR: %+.6f, SR: %.6f (%.6f, %.6f), Old SR: %.6f (%.6f, %.6f), Time X/L: %d/%d\n",
+		            sr_data.guid,
+		            (sr_data.mu - 3 * sr_data.sigma) - (oldMu - 3 * oldSigma),
+		            sr_data.mu - 3 * sr_data.sigma, sr_data.mu, sr_data.sigma,
+		            oldMu - 3 * oldSigma, oldMu, oldSigma,
+		            sr_data.time_axis, sr_data.time_allies);
 	}
 
 	result = sqlite3_finalize(sqlstmt);
