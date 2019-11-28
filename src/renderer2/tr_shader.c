@@ -6248,7 +6248,8 @@ void R_ShaderExp_f(void)
 /**
  * @brief Finds and loads all .guide files, combining them into
  * a single large text block that can be scanned for shader template names
- * NOTE not used
+ * this is glsl shaders found in renderer2/glsl
+ */
 static void ScanAndLoadGuideFiles(void)
 {
 	char **guideFiles;
@@ -6902,7 +6903,7 @@ void R_InitShaders(void)
 
 	CreateInternalShaders();
 
-	//ScanAndLoadGuideFiles(); never seen in ET
+	ScanAndLoadGuideFiles(); //GLSL guide files found in glsl folder
 
 	if(r_materialScan->integer & R_SCAN_MATERIAL_FOLDER)
 	{
