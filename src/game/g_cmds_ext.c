@@ -539,11 +539,11 @@ void G_players_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fDump)
 
 	if (ent)
 	{
-		CP(va("print \"\n^3%2d^7 total players\n\n\"", cnt));
+		CP(va("print \"\n^3%2d^7 total player%s\n\n\"", cnt, cnt > 1 ? "s" : ""));
 	}
 	else
 	{
-		G_Printf("\n%2d total players\n\n", cnt);
+		G_Printf("\n%2d total player%s\n\n", cnt, cnt > 1 ? "s" : "");
 	}
 
 	// Team speclock info
