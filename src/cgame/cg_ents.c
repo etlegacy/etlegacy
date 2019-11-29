@@ -697,13 +697,17 @@ static void CG_Item(centity_t *cent)
 			}
 			else
 			{
-				if (CG_PlayerCanPickupWeapon(cg.snap->ps.clientNum, item->giWeapon))
+				if (cgs.clientinfo[cg.snap->ps.clientNum].weapon == item->giWeapon)
+				{
+					Vector4Set(accentColor, 255, 255, 25, 255);
+				}
+				else if (CG_PlayerCanPickupWeapon(cg.snap->ps.clientNum, item->giWeapon))
 				{
 					Vector4Set(accentColor, 192, 192, 192, 255);
 				}
 				else
 				{
-					Vector4Set(accentColor, 63, 63, 63, 255);
+					Vector4Set(accentColor, 85, 85, 85, 255);
 				}
 			}
 			break;
