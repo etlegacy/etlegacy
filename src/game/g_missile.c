@@ -239,31 +239,51 @@ void G_MissileImpact(gentity_t *ent, trace_t *trace, int impactDamage)
 		param = DirToByte(dir);
 	}
 
-	// temp impact mark event
-	temp                   = G_TempEntity(trace->endpos, event);
-	temp->s.otherEntityNum = otherentnum;
-	temp->r.svFlags       |= SVF_BROADCAST;
-	temp->s.eventParm      = param;
-	temp->s.weapon         = ent->s.weapon;
-	temp->s.clientNum      = ent->r.ownerNum;
-
-	// give big weapons the shakey shakey
-	if (GetWeaponTableData(ent->s.weapon)->attributes & WEAPON_ATTRIBUT_SHAKE)
-	{
-		temp                = G_TempEntity(ent->r.currentOrigin, EV_SHAKE);
-		temp->s.onFireStart = ent->splashDamage * 4;
-		temp->r.svFlags    |= SVF_BROADCAST;
-	}
-
 	// splash damage (doesn't apply to person directly hit)
 	if (ent->splashDamage)
 	{
 		G_RadiusDamage(trace->endpos, ent, ent->parent, ent->splashDamage, ent->splashRadius, other, ent->splashMethodOfDeath);
 	}
 
-	//trap_LinkEntity( ent );
+	// the missile exploded right after being fired
+	// client doesn't even received the new ent in a frame time delay
+	if (ent->spawnTime + FRAMETIME >= level.time)
+	{
 
-	G_FreeEntity(ent);
+		// temp impact mark event
+		temp                   = G_TempEntity(trace->endpos, event);
+		temp->s.otherEntityNum = otherentnum;
+		temp->r.svFlags       |= SVF_BROADCAST;
+		temp->s.eventParm      = param;
+		temp->s.weapon         = ent->s.weapon;
+		temp->s.clientNum      = ent->r.ownerNum;
+
+		// give big weapons the shakey shakey
+		if (GetWeaponTableData(ent->s.weapon)->attributes & WEAPON_ATTRIBUT_SHAKE)
+		{
+			temp                = G_TempEntity(ent->r.currentOrigin, EV_SHAKE);
+			temp->s.onFireStart = ent->splashDamage * 4;
+			temp->r.svFlags    |= SVF_BROADCAST;
+		}
+
+		G_FreeEntity(ent);
+	}
+	else
+	{
+		G_AddEvent(ent, event, param);
+		G_SetOrigin(ent, trace->endpos);
+		ent->s.otherEntityNum = otherentnum;
+
+		// give big weapons the shakey shakey
+		if (GetWeaponTableData(ent->s.weapon)->attributes & WEAPON_ATTRIBUT_SHAKE)
+		{
+			G_AddEvent(ent, EV_SHAKE, param);
+			ent->s.onFireStart = ent->splashDamage * 4;
+		}
+
+		ent->s.eType        = ET_GENERAL;
+		ent->freeAfterEvent = qtrue;
+	}
 }
 
 /**
