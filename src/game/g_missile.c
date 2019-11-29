@@ -533,7 +533,7 @@ void G_RunMissile(gentity_t *ent)
 				}
 
 				// are we in worldspace again - or did we hit a ceiling from the outside of the world
-				if (skyHeight == MAX_MAP_SIZE)
+				if (skyHeight == MAX_MAP_SIZE && ent->r.currentOrigin[2] <= origin[2])
 				{
 					G_RunThink(ent);
 					VectorCopy(origin, ent->r.currentOrigin);   // keep the previous origin to don't go too far
@@ -607,7 +607,7 @@ void G_RunMissile(gentity_t *ent)
 		/*qboolean exploded = qfalse;*/
 
 		if (level.tracemapLoaded && ent->s.pos.trType == TR_GRAVITY && ent->r.contents != CONTENTS_CORPSE
-		    && ((!tr.surfaceFlags && tr.startsolid) || (tr.surfaceFlags & SURF_SKY)))
+		    && (tr.surfaceFlags & SURF_SKY))
 		{
 			// goes through sky
 			ent->count = 1;
