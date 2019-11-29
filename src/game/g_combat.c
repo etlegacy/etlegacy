@@ -668,7 +668,7 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 	}
 
 	// don't fade our own satchel if suicide with it, explosion effect will not be done
-	if (meansOfDeath == MOD_SATCHEL && attacker == self)
+	if (meansOfDeath != MOD_SATCHEL || attacker != self)
 	{
 		G_FadeItems(self, MOD_SATCHEL);
 	}
