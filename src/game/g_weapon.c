@@ -2630,10 +2630,25 @@ void G_AirStrikeThink(gentity_t *ent)
 
 		bomb->s.pos.trTime = (int)(level.time + crandom() * 50);
 
-		if (bomboffset[2] >= BG_GetSkyHeightAtPoint(bomboffset))
-		{
-			bomb->count = 1;         // may start through the sky
-		}
+                if (level.tracemapLoaded)
+                {
+                    if (bomboffset[2] >= BG_GetSkyHeightAtPoint(bomboffset))
+                    {
+                        bomb->count = 1;         // may start through the sky
+                    }
+                }
+                else        // old behaviour
+                {
+                    trace_t tr;
+                    vec3_t  tmp;
+                    
+                    VectorCopy(bomb->r.currentOrigin, tmp);
+                    tmp[2] -= MAX_TRACE;
+                    
+                    trap_Trace(&tr, bomb->r.currentOrigin, bomb->r.mins, bomb->r.maxs, tmp, bomb->r.ownerNum, bomb->clipmask);
+                    bomb->r.currentOrigin[2] = tr.endpos[2];
+                    bomb->s.pos.trBase[2]    = tr.endpos[2];
+                }
 
 		bomb->s.apos.trType = TR_LINEAR;
 		bomb->s.apos.trTime = level.time;
@@ -2798,9 +2813,9 @@ void weapon_callAirStrike(gentity_t *ent)
 			// some maps block missile throws sky by defining a thin sky surface and adding
 			// a surface as SURF_NODRAW and SURF_NOMARK, this to ensure no map exploit.
 			// in case we encounter this kind of sky, simply check if the sky have an height
-			if (skyFloor != skyCeil)
+			if (level.tracemapLoaded && skyFloor != skyCeil)
 			{
-				pos[2] = BG_GetTracemapSkyGroundCeil();
+				pos[2] = skyCeil;
 			}
 			else            // don't draw plane at all, sky box is totaly wrong
 			{
@@ -2914,9 +2929,24 @@ void artillerySpotterThink(gentity_t *ent)
 	// overwrite
 	bomb->nextthink = 0;
 
-	if (bomboffset[2] >= BG_GetSkyHeightAtPoint(bomboffset))
+	if (level.tracemapLoaded)
 	{
-		bomb->count = 1;     // may start through the sky
+		if (bomboffset[2] >= BG_GetSkyHeightAtPoint(bomboffset))
+		{
+			bomb->count = 1;         // may start through the sky
+		}
+	}
+	else        // old behaviour
+	{
+		trace_t tr;
+		vec3_t  tmp;
+
+		VectorCopy(bomb->r.currentOrigin, tmp);
+		tmp[2] -= MAX_TRACE;
+
+		trap_Trace(&tr, bomb->r.currentOrigin, bomb->r.mins, bomb->r.maxs, tmp, bomb->r.ownerNum, bomb->clipmask);
+		bomb->r.currentOrigin[2] = tr.endpos[2];
+		bomb->s.pos.trBase[2]    = tr.endpos[2];
 	}
 
 	// no more bomb to drop
