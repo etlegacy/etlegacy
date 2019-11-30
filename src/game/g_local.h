@@ -632,14 +632,14 @@ typedef struct
 	int spectatorTime;                                  ///< for determining next-in-line to play
 	spectatorState_t spectatorState;
 	int spectatorClient;                                ///< for chasecam and follow mode
-	int playerType;                                     ///< for GT_WOLF
-	weapon_t playerWeapon;                              ///< for GT_WOLF
+	int playerType;                                     ///< class
+	weapon_t playerWeapon;                              ///< primary weapon
 	weapon_t playerWeapon2;                             ///< secondary weapon
 	int userSpawnPointValue;                            ///< index of objective to spawn nearest to (returned from UI)
 	int resolvedSpawnPointIndex;                        ///< most possible objective to spawn nearest to
-	int latchPlayerType;                                ///< for GT_WOLF not archived
-	weapon_t latchPlayerWeapon;                         ///< for GT_WOLF not archived
-	weapon_t latchPlayerWeapon2;                        ///< secondary weapon
+	int latchPlayerType;                                ///< latched class
+	weapon_t latchPlayerWeapon;                         ///< latched primary weapon
+	weapon_t latchPlayerWeapon2;                        ///< latched secondary weapon
 	int ignoreClients[MAX_CLIENTS / (sizeof(int) * 8)];
 	qboolean muted;
 	float skillpoints[SK_NUM_SKILLS];                   ///< skillpoints

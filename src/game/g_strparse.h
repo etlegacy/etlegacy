@@ -94,13 +94,10 @@ typedef enum
 	TOK_g,                              ///< 45
 	TOK_gs,                             ///< 46
 	TOK_mu,                             ///< 47
-
-	// FIXME: general rework - see also obsolete tokens
-	// TOK_tv                           ///< 48
-	// TOK_sc                           ///< 49
+	TOK_lsw,                            ///< 48
 
 	//// Don't add anything below here
-	TOK_UNKNOWN                         ///< 50
+	TOK_UNKNOWN                         ///< 49
 } g_StringToken_t;
 
 extern g_StringToken_t G_GetTokenForString(char const *str);

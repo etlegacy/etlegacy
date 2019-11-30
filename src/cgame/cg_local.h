@@ -618,6 +618,7 @@ typedef struct clientInfo_s
 	int weapon;
 	int secondaryweapon;
 	int latchedweapon;
+	int latchedsecondaryweapon;
 
 	int refStatus;
 	int shoutcaster;
