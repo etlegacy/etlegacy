@@ -697,7 +697,9 @@ static void CG_Item(centity_t *cent)
 			}
 			else
 			{
-				if (cgs.clientinfo[cg.snap->ps.clientNum].weapon == item->giWeapon)
+				if (cgs.clientinfo[cg.snap->ps.clientNum].weapon == item->giWeapon ||
+				    (cgs.clientinfo[cg.snap->ps.clientNum].cls == PC_SOLDIER && cgs.clientinfo[cg.snap->ps.clientNum].skill[SK_HEAVY_WEAPONS] >= 4 &&
+				     (cgs.clientinfo[cg.snap->ps.clientNum].secondaryweapon == item->giWeapon)))
 				{
 					Vector4Set(accentColor, 255, 255, 25, 255);
 				}
