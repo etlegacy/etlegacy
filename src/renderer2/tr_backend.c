@@ -531,7 +531,7 @@ static void Render_lightVolume(interaction_t *ia)
 			continue;
 		}
 
-		if (!RB_EvalExpression(&attenuationXYStage->ifExp, 1.0f))
+		if (RB_EvalExpression(&attenuationXYStage->ifExp, 1.0f) == 0.f)
 		{
 			continue;
 		}
@@ -1464,7 +1464,7 @@ static void RB_RenderInteractionsShadowMapped()
 							for (j = 0; j < 8; j++)
 							{
 								VectorCopy(splitFrustumCorners[j], point);
-								point[3] = 1;
+								//point[3] = 1.0f; // initialized once, ..no need to keep setting it.
 #if 1
 								mat4_transform_vec4(light->viewMatrix, point, transf);
 								transf[0] /= transf[3];
