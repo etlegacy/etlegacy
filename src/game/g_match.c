@@ -966,10 +966,11 @@ void G_statsPrint(gentity_t *ent, int nType)
 
 	cmd = (nType == 0) ? "ws" : ((nType == 1) ? "wws" : "gstats");         // Yes, not the cleanest
 
-	// If requesting stats for self, its easy.
+	// If requesting stats for self, its easy
 	if (trap_Argc() < 2)
 	{
-		if (ent->client->sess.sessionTeam != TEAM_SPECTATOR)
+		// Always send to everybody at end of match
+		if (ent->client->sess.sessionTeam != TEAM_SPECTATOR || level.intermissiontime)
 		{
 			CP(va("%s %s\n", cmd, G_createStats(ent)));
 			// Specs default to players they are chasing
@@ -980,8 +981,8 @@ void G_statsPrint(gentity_t *ent, int nType)
 		}
 		else
 		{
-			CP("print \"Type ^3\\weaponstats <player_id>^7 to see stats on an active player.\n\"");
-			return;
+			CP(va("%s %s\n", cmd, G_createStats(ent)));
+			CP("print \"\nType ^3\\weaponstats <player_id>^7 to see stats on an active player.\n\"");
 		}
 	}
 	else
