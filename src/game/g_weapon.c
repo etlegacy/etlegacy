@@ -2630,25 +2630,25 @@ void G_AirStrikeThink(gentity_t *ent)
 
 		bomb->s.pos.trTime = (int)(level.time + crandom() * 50);
 
-                if (level.tracemapLoaded)
-                {
-                    if (bomboffset[2] >= BG_GetSkyHeightAtPoint(bomboffset))
-                    {
-                        bomb->count = 1;         // may start through the sky
-                    }
-                }
-                else        // old behaviour
-                {
-                    trace_t tr;
-                    vec3_t  tmp;
-                    
-                    VectorCopy(bomb->r.currentOrigin, tmp);
-                    tmp[2] -= MAX_TRACE;
-                    
-                    trap_Trace(&tr, bomb->r.currentOrigin, bomb->r.mins, bomb->r.maxs, tmp, bomb->r.ownerNum, bomb->clipmask);
-                    bomb->r.currentOrigin[2] = tr.endpos[2];
-                    bomb->s.pos.trBase[2]    = tr.endpos[2];
-                }
+		if (level.tracemapLoaded)
+		{
+			if (bomboffset[2] >= BG_GetSkyHeightAtPoint(bomboffset))
+			{
+				bomb->count = 1;                 // may start through the sky
+			}
+		}
+		else                // old behaviour
+		{
+			trace_t tr;
+			vec3_t  tmp;
+
+			VectorCopy(bomb->r.currentOrigin, tmp);
+			tmp[2] -= MAX_TRACE;
+
+			trap_Trace(&tr, bomb->r.currentOrigin, bomb->r.mins, bomb->r.maxs, tmp, bomb->r.ownerNum, bomb->clipmask);
+			bomb->r.currentOrigin[2] = tr.endpos[2];
+			bomb->s.pos.trBase[2]    = tr.endpos[2];
+		}
 
 		bomb->s.apos.trType = TR_LINEAR;
 		bomb->s.apos.trTime = level.time;
@@ -3294,13 +3294,13 @@ gentity_t *Bullet_Fire(gentity_t *ent)
 	}
 	else if (GetWeaponTableData(ent->s.weapon)->type & WEAPON_TYPE_MG)
 	{
-		if ((GetWeaponTableData(ent->s.weapon)->type & WEAPON_TYPE_SETTABLE) && ((ent->client->ps.pm_flags & PMF_DUCKED) || (ent->client->ps.eFlags & EF_PRONE)))
-		{
-			spread *= .6f;
-		}
-		else
+		if (GetWeaponTableData(ent->s.weapon)->type & WEAPON_TYPE_SET)
 		{
 			spread *= .05f;
+		}
+		else if ((ent->client->ps.pm_flags & PMF_DUCKED) || (ent->client->ps.eFlags & EF_PRONE))
+		{
+			spread *= .6f;
 		}
 	}
 
@@ -4113,7 +4113,7 @@ weapFireTable_t weapFireTable[] =
 	{ WP_AKIMBO_SILENCEDCOLT,  Bullet_Fire,                 NULL,                       NULL,               ET_GENERAL,            EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_LINEAR,      0,                     { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_SHOT,        0,         0,       0,     0,        0,           },
 	{ WP_AKIMBO_SILENCEDLUGER, Bullet_Fire,                 NULL,                       NULL,               ET_GENERAL,            EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_LINEAR,      0,                     { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_SHOT,        0,         0,       0,     0,        0,           },
 	{ WP_MOBILE_MG42_SET,      Bullet_Fire,                 NULL,                       NULL,               ET_GENERAL,            EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_LINEAR,      0,                     { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_SHOT,        0,         0,       0,     0,        0,           },
-	// legacy weapons                                                                                                                                                                                                                                
+	// legacy weapons
 	{ WP_KNIFE_KABAR,          Weapon_Knife,                NULL,                       NULL,               ET_GENERAL,            EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_LINEAR,      0,                     { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_SHOT,        0,         0,       0,     0,        0,           },
 	{ WP_MOBILE_BROWNING,      Bullet_Fire,                 NULL,                       NULL,               ET_GENERAL,            EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_LINEAR,      0,                     { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_SHOT,        0,         0,       0,     0,        0,           },
 	{ WP_MOBILE_BROWNING_SET,  Bullet_Fire,                 NULL,                       NULL,               ET_GENERAL,            EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_LINEAR,      0,                     { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_SHOT,        0,         0,       0,     0,        0,           },
