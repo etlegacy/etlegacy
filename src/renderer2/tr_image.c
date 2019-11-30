@@ -637,8 +637,8 @@ static void R_MipNormalMap(byte *in, int width, int height)
 	}
 
 	out = in;
-	//width >>= 1;
-	width  <<= 2;
+	width >>= 1;
+	//width  <<= 2; // why is this *4 ??  mipmaps that get wider and wider?
 	height >>= 1;
 
 	for (i = 0; i < height; i++, in += width)
@@ -669,9 +669,10 @@ static void R_MipNormalMap(byte *in, int width, int height)
 
 			if (length != 0.f)
 			{
-				n[0] /= length;
-				n[1] /= length;
-				n[2] /= length;
+				float length1 = 1.0 / length;
+				n[0] *= length1;
+				n[1] *= length1;
+				n[2] *= length1;
 			}
 			else
 			{
