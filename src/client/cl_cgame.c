@@ -1023,9 +1023,6 @@ intptr_t CL_CgameSystemCalls(intptr_t *args)
 	case CG_PUMPEVENTLOOP:
 	case CG_INGAME_CLOSEPOPUP:
 	case CG_R_LIGHTFORPOINT: // re-added to avoid a crash when called - still in enum of cgameImport_t
-
-		// This shows (developer 1) when the vanilla mod code is loaded or mods using obsolete system calls - see cases.
-		Com_DPrintf("Obsolete cgame system trap: %ld\n", (long int) args[0]);
 		return 0;
 
 	default:
