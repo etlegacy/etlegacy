@@ -134,6 +134,10 @@ typedef enum
 
 typedef cplane_t frustum_t[6];
 
+/**
+ * @enum cubesides
+ * @brief -- this is used for culling
+ */
 enum
 {
 	CUBESIDE_PX      = (1 << 0),
