@@ -3146,7 +3146,7 @@ void Tess_StageIteratorGeneric()
 			continue;
 		}
 
-		// per stage fogging (detail textures)
+		/* per stage fogging (detail textures)
 		if (tess.surfaceShader->noFog && pStage->isFogged)
 		{
 			RB_FogOn();
@@ -3159,7 +3159,7 @@ void Tess_StageIteratorGeneric()
 		{
 			// make sure it's on
 			RB_FogOn();
-		}
+		}*/
 
 		Tess_ComputeColor(pStage);
 		Tess_ComputeTexMatrices(pStage);
