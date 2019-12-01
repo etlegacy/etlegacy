@@ -139,6 +139,7 @@ static void BindLightMap()
 	}
 	else
 	{
+		tess.surfaceShader->has_lightmapStage = qfalse;
 		GL_Bind(tr.whiteImage);
 	}
 }
@@ -738,7 +739,7 @@ static void Render_vertexLighting_DBS_entity(int stage)
 
 	// bind u_DiffuseMap
 	SelectTexture(TEX_DIFFUSE);
-	GL_Bind(pStage->bundle[TB_DIFFUSEMAP].image[0]);
+	BindTexture(pStage->bundle[TB_DIFFUSEMAP].image[0],tr.whiteImage);
 	SetUniformMatrix16(UNIFORM_DIFFUSETEXTUREMATRIX, tess.svars.texMatrices[TB_DIFFUSEMAP]);
 
 	if (r_normalMapping->integer)
@@ -847,7 +848,7 @@ static void Render_vertexLighting_DBS_world(int stage)
 
 	// bind u_DiffuseMap
 	SelectTexture(TEX_DIFFUSE);
-	GL_Bind(pStage->bundle[TB_DIFFUSEMAP].image[0]);
+	BindTexture(pStage->bundle[TB_DIFFUSEMAP].image[0],tr.whiteImage);
 	SetUniformMatrix16(UNIFORM_DIFFUSETEXTUREMATRIX, tess.svars.texMatrices[TB_DIFFUSEMAP]);
 
 	if (r_normalMapping->integer)
@@ -957,18 +958,11 @@ static void Render_lightMapping(int stage, qboolean asColorMap, qboolean normalM
 	SetUniformVec3(UNIFORM_LIGHTCOLOR, tess.svars.color);
 
 	SelectTexture(TEX_DIFFUSE);
-	image_t* image = pStage->bundle[TB_DIFFUSEMAP].image[0];
-
-	if (image)
-	{
-		GL_Bind(image);
-		SetUniformMatrix16(UNIFORM_DIFFUSETEXTUREMATRIX, tess.svars.texMatrices[TB_DIFFUSEMAP]);
-	} 
-	else
-	{
-		GL_Bind(tr.whiteImage);
-		SetUniformMatrix16(UNIFORM_DIFFUSETEXTUREMATRIX, matrixIdentity);
-	}
+	
+	BindTexture(pStage->bundle[TB_DIFFUSEMAP].image[0], tr.whiteImage);
+	SetUniformMatrix16(UNIFORM_DIFFUSETEXTUREMATRIX, tess.svars.texMatrices[TB_DIFFUSEMAP]);
+	
+	
 
 	if (normalMapping)
 	{
@@ -1304,7 +1298,7 @@ static void Render_forwardLighting_DBS_omni(shaderStage_t *diffuseStage,
 
 	// bind u_DiffuseMap
 	SelectTexture(TEX_DIFFUSE);
-	GL_Bind(diffuseStage->bundle[TB_DIFFUSEMAP].image[0]);
+	BindTexture(diffuseStage->bundle[TB_DIFFUSEMAP].image[0], tr.whiteImage);
 	SetUniformMatrix16(UNIFORM_DIFFUSETEXTUREMATRIX, tess.svars.texMatrices[TB_DIFFUSEMAP]);
 
 	// FIXME: don't bind testures for r_DebugShadowMaps
@@ -1464,7 +1458,7 @@ static void Render_forwardLighting_DBS_proj(shaderStage_t *diffuseStage,
 
 	// bind u_DiffuseMap
 	SelectTexture(TEX_DIFFUSE);
-	GL_Bind(diffuseStage->bundle[TB_DIFFUSEMAP].image[0]);
+	BindTexture(diffuseStage->bundle[TB_DIFFUSEMAP].image[0], tr.whiteImage);
 	SetUniformMatrix16(UNIFORM_DIFFUSETEXTUREMATRIX, tess.svars.texMatrices[TB_DIFFUSEMAP]);
 
 	if (r_normalMapping->integer)
@@ -1630,7 +1624,7 @@ static void Render_forwardLighting_DBS_directional(shaderStage_t *diffuseStage,
 
 	// bind u_DiffuseMap
 	SelectTexture(TEX_DIFFUSE);
-	GL_Bind(diffuseStage->bundle[TB_DIFFUSEMAP].image[0]);
+	BindTexture(diffuseStage->bundle[TB_DIFFUSEMAP].image[0], tr.whiteImage);
 	SetUniformMatrix16(UNIFORM_DIFFUSETEXTUREMATRIX, tess.svars.texMatrices[TB_DIFFUSEMAP]);
 
 	if (r_normalMapping->integer)
@@ -1745,14 +1739,15 @@ static void Render_reflection_CB(int stage)
 	}
 	else
 	{
-		GL_Bind(pStage->bundle[TB_COLORMAP].image[0]);
+		BindTexture(pStage->bundle[TB_COLORMAP].image[0], tr.whiteImage);
+		SetUniformMatrix16(UNIFORM_COLORTEXTUREMATRIX, tess.svars.texMatrices[TB_COLORMAP]);
 	}
 
 	// bind u_NormalMap
 	if (r_normalMapping->integer)
 	{
 		SelectTexture(TEX_NORMAL);
-		GL_Bind(pStage->bundle[TB_NORMALMAP].image[0]);
+		BindTexture(pStage->bundle[TB_NORMALMAP].image[0],tr.flatImage);
 		SetUniformMatrix16(UNIFORM_NORMALTEXTUREMATRIX, tess.svars.texMatrices[TB_NORMALMAP]);
 	}
 
@@ -1796,7 +1791,7 @@ static void Render_refraction_C(int stage)
 
 	// bind u_ColorMap
 	SelectTexture(TEX_COLOR);
-	GL_Bind(pStage->bundle[TB_COLORMAP].image[0]);
+	BindTexture(pStage->bundle[TB_COLORMAP].image[0],tr.whiteImage);
 
 	Tess_DrawElements();
 
@@ -1846,7 +1841,7 @@ static void Render_dispersion_C(int stage)
 
 	// bind u_ColorMap
 	SelectTexture(TEX_COLOR);
-	GL_Bind(pStage->bundle[TB_COLORMAP].image[0]);
+	BindTexture(pStage->bundle[TB_COLORMAP].image[0],tr.whiteImage);
 
 	Tess_DrawElements();
 
@@ -1879,7 +1874,7 @@ static void Render_skybox(int stage)
 
 	// bind u_ColorMap
 	SelectTexture(TEX_COLOR);
-	GL_Bind(pStage->bundle[TB_COLORMAP].image[0]);
+	BindTexture(pStage->bundle[TB_COLORMAP].image[0],tr.whiteImage);
 
 	GLSL_SetRequiredVertexPointers(trProg.gl_skyboxShader);
 
@@ -3247,18 +3242,19 @@ void Tess_StageIteratorGeneric()
 				{
 					// render lightmapped
 					if (isWorld)
-						// if there is no ST_LIGHTMAP stage, but a lightmapNum is given: render as lightmapped.
-						// if an ST_LIGHTMAP stage does exist in this shader, then now render as vertex lit.
-						if (!tess.surfaceShader->has_lightmapStage &&
+						// if there is ST_LIGHTMAP stage and a lightmapNum is given: render as lightmapped.
+						// else render as vertexlit
+						if (tess.surfaceShader->has_lightmapStage &&
 							tess.lightmapNum >= 0 )//&& tr.lightmaps.currentElements && tess.lightmapNum < tr.lightmaps.currentElements)
 						{
 							if (r_normalMapping->integer)
 							{
-								Render_lightMapping(stage, qtrue, qtrue); // normalmapped
+								//this isnt a ST_LIGHTMAP stage, so we do NOT render colormap
+								Render_lightMapping(stage, qfalse, qtrue); // normalmapped
 							}
 							else
 							{
-								Render_lightMapping(stage, qtrue, qfalse); //not normalmapped
+								Render_lightMapping(stage, qfalse, qfalse); //not normalmapped
 							}
 							break;
 						}
@@ -3279,9 +3275,8 @@ void Tess_StageIteratorGeneric()
 			else
 			{
 				//this should be more propper for the renderer
+				//as it renders bot normalmap and not
 	            Render_vertexLighting_DBS_world(stage);
-				
-				
 			}
 			break;
 		}
