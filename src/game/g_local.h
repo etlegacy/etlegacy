@@ -2353,6 +2353,7 @@ void G_makesc_cmd(void);
 void G_removesc_cmd(void);
 void G_scores_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fValue);
 void G_specinvite_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fLock);
+void G_specuninvite_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fLock);
 void G_speclock_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fLock);
 void G_statsall_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fDump);
 void G_teamready_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fDump);

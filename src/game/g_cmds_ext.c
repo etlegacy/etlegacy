@@ -84,6 +84,7 @@ static const cmd_reference_t aCommandInfo[] =
 	{ "sclogout",       qtrue,  qfalse, G_sclogout_cmd,        ":^7 Removes shoutcaster status"                                                             },
 	{ "scores",         qtrue,  qtrue,  G_scores_cmd,          ":^7 Displays current match stat info"                                                       },
 	{ "specinvite",     qtrue,  qtrue,  G_specinvite_cmd,      ":^7 Invites a player to spectate a speclock'ed team"                                        },
+	{ "specuninvite",   qtrue,  qtrue,  G_specuninvite_cmd,    ":^7 Uninvites a spectator of a speclock'ed team"                                        },
 	{ "speclock",       qtrue,  qtrue,  G_speclock_cmd,        ":^7 Locks a player's team from spectators"                                                  },
 //  { "speconly",       qtrue,  qtrue,  NULL, ":^7 Toggles option to stay as a spectator in 1v1" },
 	{ "specunlock",     qtrue,  qfalse, G_speclock_cmd,        ":^7 Unlocks a player's team from spectators"                                                },
@@ -880,7 +881,7 @@ void G_specinvite_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fLock)
 			return;
 		}
 
-		// Find the player to invite.
+		// Find the player to invite
 		trap_Argv(1, arg, sizeof(arg));
 		if ((pid = ClientNumberFromString(ent, arg)) == -1)
 		{
@@ -896,7 +897,7 @@ void G_specinvite_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fLock)
 			return;
 		}
 
-		// Can't invite an active player.
+		// Can't invite an active player
 		if (player->client->sess.sessionTeam != TEAM_SPECTATOR)
 		{
 			CP("cpm \"You can't specinvite a non-spectator!\n\"");
@@ -913,6 +914,113 @@ void G_specinvite_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fLock)
 	else
 	{
 		CP("cpm \"Spectators can't specinvite players!\n\"");
+	}
+}
+
+/**
+ * @brief Remove invitation of a player to spectate a team.
+ * @param[in] ent
+ * @param[in] dwCommand
+ * @param fLock - unused
+ */
+void G_specuninvite_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fLock)
+{
+	gentity_t *player;
+	char      arg[MAX_TOKEN_CHARS];
+
+	if (team_nocontrols.integer)
+	{
+		G_noTeamControls(ent);
+		return;
+	}
+	if (!G_cmdDebounce(ent, aCommandInfo[dwCommand].pszCommandName))
+	{
+		return;
+	}
+
+	if (ent->client->sess.sessionTeam == TEAM_AXIS || ent->client->sess.sessionTeam == TEAM_ALLIES)
+	{
+		int pid;
+
+		if (!teamInfo[ent->client->sess.sessionTeam].spec_lock)
+		{
+			CP("cpm \"Your team isn't locked from spectators!\n\"");
+			return;
+		}
+
+		// Find the player to invite
+		trap_Argv(1, arg, sizeof(arg));
+		if ((pid = ClientNumberFromString(ent, arg)) == -1)
+		{
+			return;
+		}
+
+		player = g_entities + pid;
+
+		// Can't uninvite self
+		if (player->client == ent->client)
+		{
+			CP("cpm \"You can't specuninvite yourself!\n\"");
+			return;
+		}
+
+		// Can't uninvite an active player
+		if (player->client->sess.sessionTeam != TEAM_SPECTATOR)
+		{
+			CP("cpm \"You can't specuninvite a non-spectator!\n\"");
+			return;
+		}
+
+		// Can't uninvite referre
+		if (player->client->sess.referee)
+		{
+			CP("cpm \"You can't specuninvite a referee!\n\"");
+			return;
+		}
+
+		// Can't uninvite shoutcaster
+		if (player->client->sess.shoutcaster)
+		{
+			CP("cpm \"You can't specuninvite a shoutcaster!\n\"");
+			return;
+		}
+
+		if (player->client->sess.spectatorState == SPECTATOR_FOLLOW)
+		{
+			StopFollowing(player);
+			player->client->sess.spec_team &= ~ent->client->sess.sessionTeam;
+		}
+		player->client->sess.spec_invite &= ~ent->client->sess.sessionTeam;
+
+		// Notify sender/recipient
+		CP(va("print \"%s^7 has been sent an uninvite spectator notification.\n\"", player->client->pers.netname));
+		G_printFull(va("*** You've been uninvited to spectate the %s team!", aTeams[ent->client->sess.sessionTeam]), player);
+
+	}
+	else
+	{
+		// Referee can't specuninvite oneself
+		if (ent->client->sess.referee)
+		{
+			CP("cpm \"Referee can't specuninvite oneself!\n\"");
+			return;
+		}
+
+		// Shoutcaster can't specuninvite oneself
+		if (ent->client->sess.shoutcaster)
+		{
+			CP("cpm \"Shoutcaster can't specuninvite oneself!\n\"");
+			return;
+		}
+
+		// Spectators can uninvite themselves from current spectated team
+		if (ent->client->sess.spectatorState == SPECTATOR_FOLLOW)
+		{
+			StopFollowing(ent);
+			ent->client->sess.spec_team &= ~ent->client->sess.sessionTeam;
+		}
+		ent->client->sess.spec_invite &= ~ent->client->sess.sessionTeam;
+		CP("cpm \"You have uninvited yourself!\n\"");
 	}
 }
 
