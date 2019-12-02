@@ -381,7 +381,7 @@ void G_players_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fDump)
 	gclient_t *cl;
 	gentity_t *cl_ent;
 	char      guid[MAX_GUID_LENGTH], n2[MAX_NETNAME], ready[16], ref[8], rate[32];
-	char      *s, *tc, *sc, *ign, *muted, userinfo[MAX_INFO_STRING];
+	char      *s, *tc, *spec, *ign, *muted, userinfo[MAX_INFO_STRING];
 
 	if (g_gamestate.integer == GS_PLAYING)
 	{
@@ -480,11 +480,23 @@ void G_players_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fDump)
 
 		if (cl->sess.shoutcaster && !(cl_ent->r.svFlags & SVF_BOT))
 		{
-			sc = "SC ";
+			spec = "SC ";
+		}
+		else if ((cl->sess.spec_invite & TEAM_AXIS) && (cl->sess.spec_invite & TEAM_ALLIES))
+		{
+			spec = "SB ";
+		}
+		else if (cl->sess.spec_invite & TEAM_AXIS)
+		{
+			spec = "SX ";
+		}
+		else if (cl->sess.spec_invite & TEAM_ALLIES)
+		{
+			spec = "SL ";
 		}
 		else
 		{
-			sc = "";
+			spec = "";
 		}
 
 		if (ent && COM_BitCheck(ent->client->sess.ignoreClients, idnum))
@@ -528,11 +540,11 @@ void G_players_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fDump)
 
 		if (ent)
 		{
-			CP(va("print \"%-9s %s%s%2d : %s%-26s^7%s  ^3%s%s%s%s^7\n\"", guid, ready, tc, idnum, ((ref[0]) ? "^3" : "^7"), n2, rate, ref, sc, ign, muted));
+			CP(va("print \"%-9s %s%s%2d : %s%-26s^7%s  ^3%s%s%s%s^7\n\"", guid, ready, tc, idnum, ((ref[0]) ? "^3" : "^7"), n2, rate, ref, spec, ign, muted));
 		}
 		else
 		{
-			G_Printf("%-9s %s%s%2d : %-26s%s  %s%s%s\n", guid, ready, tc, idnum, n2, rate, ref, sc, muted);
+			G_Printf("%-9s %s%s%2d : %-26s%s  %s%s%s\n", guid, ready, tc, idnum, n2, rate, ref, spec, muted);
 		}
 
 		cnt++;
