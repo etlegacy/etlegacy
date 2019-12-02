@@ -892,9 +892,26 @@ void Svcmd_SwapTeams_f(void)
  */
 void Svcmd_ShuffleTeamsXP_f(qboolean restart)
 {
+	int       i;
+	gentity_t *ent;
+
 	if (restart)
 	{
 		G_resetRoundState();
+	}
+
+	// ensure objectives are dropped with no restart
+	if (!restart)
+	{
+		for (i = 0; i < level.numConnectedClients; i++)
+		{
+			ent = g_entities + level.sortedClients[i];
+
+			if (ent->client->ps.powerups[PW_BLUEFLAG] || ent->client->ps.powerups[PW_REDFLAG])
+			{
+				G_DropItems(ent);
+			}
+		}
 	}
 
 	G_shuffleTeamsXP();
@@ -905,6 +922,7 @@ void Svcmd_ShuffleTeamsXP_f(qboolean restart)
 	{
 		return;
 	}
+
 	if (restart)
 	{
 		G_resetModeState();
@@ -935,9 +953,26 @@ void Svcmd_ShuffleTeamsXPNoRestart(void)
  */
 void Svcmd_ShuffleTeamsSR_f(qboolean restart)
 {
+	int       i;
+	gentity_t *ent;
+
 	if (restart)
 	{
 		G_resetRoundState();
+	}
+
+	// ensure objectives are dropped with no restart
+	if (!restart)
+	{
+		for (i = 0; i < level.numConnectedClients; i++)
+		{
+			ent = g_entities + level.sortedClients[i];
+
+			if (ent->client->ps.powerups[PW_BLUEFLAG] || ent->client->ps.powerups[PW_REDFLAG])
+			{
+				G_DropItems(ent);
+			}
+		}
 	}
 
 	G_shuffleTeamsSR();
@@ -948,6 +983,7 @@ void Svcmd_ShuffleTeamsSR_f(qboolean restart)
 	{
 		return;
 	}
+
 	if (restart)
 	{
 		G_resetModeState();
