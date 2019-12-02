@@ -521,8 +521,8 @@ void CIN_Init(void)
 	int i;
 
 	// Add commands
-	Cmd_AddCommand("cinematic", CIN_PlayCinematic_f, "Plays a cinematic", CIN_Completion_VideoName);
-	Cmd_AddCommand("listCinematics", CIN_ListCinematics_f, "Lists playing cinematics", NULL);
+	Cmd_AddCommand("cinematic", CIN_PlayCinematic_f, "Plays a cinematic.", CIN_Completion_VideoName);
+	Cmd_AddCommand("listCinematics", CIN_ListCinematics_f, "Lists playing cinematics.", NULL);
 
 	Com_Memset(cin_cinematics, 0, sizeof(cin_cinematics));
 

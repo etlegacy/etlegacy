@@ -1826,7 +1826,7 @@ void Cvar_Init(void)
 	Cmd_AddCommand("setu", Cvar_Set_f, "Allows setting and defining of cvars from console. Userinfo flag is set.", Cvar_CompleteCvarName);
 	Cmd_AddCommand("seta", Cvar_Set_f, "Allows setting and defining of cvars from console. Archive flag is set.", Cvar_CompleteCvarName);
 	Cmd_AddCommand("reset", Cvar_Reset_f, "Resets a specific cvar.", Cvar_CompleteCvarName);
-	Cmd_AddCommand("unset", Cvar_Unset_f, "Unsets a userdefined cvar", Cvar_CompleteCvarName);
-	Cmd_AddCommand("cvarlist", Cvar_List_f, "Prints a list of all cvars");
+	Cmd_AddCommand("unset", Cvar_Unset_f, "Unsets a userdefined cvar.", Cvar_CompleteCvarName);
+	Cmd_AddCommand("cvarlist", Cvar_List_f, "Prints a list of all cvars.");
 	Cmd_AddCommand("cvar_restart", Cvar_Restart_f, "Resets all cvars to their hardcoded values.");
 }
