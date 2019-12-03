@@ -552,6 +552,8 @@ typedef struct pmoveExt_s
 
 	float proneLegsOffset;         ///< offset legs bounding box
 
+	vec3_t mountedWeaponAngles;    ///< mortar, mg42 (prone), etc
+
 	int weapRecoilTime;            ///< time at which a weapon that has a recoil kickback has been fired last
 	int weapRecoilDuration;
 	float weapRecoilYaw;

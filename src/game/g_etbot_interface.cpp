@@ -4966,7 +4966,7 @@ public:
 					}
 					if (pMsg->m_WeaponId == ET_WP_MOBILE_MG42 || pMsg->m_WeaponId == ET_WP_MOBILE_MG42_SET)
 					{
-						AngleVectors(pEnt->client->ps.mountedWeaponAngles, pMsg->m_CenterFacing, NULL, NULL);
+						AngleVectors(pEnt->client->pmext.mountedWeaponAngles, pMsg->m_CenterFacing, NULL, NULL);
 						pMsg->m_Limited = True;
 						pMsg->m_MinYaw = -20.f;
 						pMsg->m_MaxYaw = 20.f;

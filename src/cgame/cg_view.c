@@ -595,7 +595,7 @@ static void CG_OffsetFirstPersonView(void)
 		vec3_t forward, point;
 		float  oldZ = origin[2];
 
-		AngleVectors(cg.snap->ps.mountedWeaponAngles, forward, NULL, NULL);
+		AngleVectors(cg.pmext.mountedWeaponAngles, forward, NULL, NULL);
 
 		VectorMA(origin, 31, forward, point);
 		AngleVectors(cg.refdefViewAngles, forward, NULL, NULL);
@@ -608,7 +608,7 @@ static void CG_OffsetFirstPersonView(void)
 		vec3_t forward, point;
 		float  oldZ = origin[2];
 
-		AngleVectors(cg.snap->ps.mountedWeaponAngles, forward, NULL, NULL);
+		AngleVectors(cg.pmext.mountedWeaponAngles, forward, NULL, NULL);
 
 		VectorMA(origin, 31, forward, point);
 		AngleVectors(cg.refdefViewAngles, forward, NULL, NULL);

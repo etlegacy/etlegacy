@@ -2308,7 +2308,7 @@ static void CG_CalculateWeaponPosition(vec3_t origin, vec3_t angles)
 	if (!cg.renderingThirdPerson && (GetWeaponTableData(cg.predictedPlayerState.weapon)->type & WEAPON_TYPE_SET) &&
 	    cg.predictedPlayerState.weaponstate != WEAPON_RAISING)
 	{
-		angles[PITCH] = cg.snap->ps.mountedWeaponAngles[PITCH];
+		angles[PITCH] = cg.pmext.mountedWeaponAngles[PITCH];
 	}
 
 	if (cg.predictedPlayerState.eFlags & EF_PRONE_MOVING)
@@ -2594,7 +2594,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 		vec3_t angles;
 
 		angles[YAW]   = angles[ROLL] = 0.f;
-		angles[PITCH] = -.4f * AngleNormalize180(cg.snap->ps.mountedWeaponAngles[PITCH] - ps->viewangles[PITCH]);
+		angles[PITCH] = -.4f * AngleNormalize180(cg.pmext.mountedWeaponAngles[PITCH] - ps->viewangles[PITCH]);
 
 		AnglesToAxis(angles, gun.axis);
 
@@ -2692,7 +2692,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 					if (ps && !cg.renderingThirdPerson && cg.predictedPlayerState.weaponstate != WEAPON_RAISING)
 					{
 						angles[PITCH] = angles[YAW] = 0.f;
-						angles[ROLL]  = .8f * AngleNormalize180(cg.snap->ps.mountedWeaponAngles[YAW] - ps->viewangles[YAW]);
+						angles[ROLL]  = .8f * AngleNormalize180(cg.pmext.mountedWeaponAngles[YAW] - ps->viewangles[YAW]);
 						spunpart      = qtrue;
 					}
 				}
@@ -2701,7 +2701,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 					if (ps && !cg.renderingThirdPerson && cg.predictedPlayerState.weaponstate != WEAPON_RAISING)
 					{
 						angles[YAW]   = angles[ROLL] = 0.f;
-						angles[PITCH] = -.4f * AngleNormalize180(cg.snap->ps.mountedWeaponAngles[PITCH] - ps->viewangles[PITCH]);
+						angles[PITCH] = -.4f * AngleNormalize180(cg.pmext.mountedWeaponAngles[PITCH] - ps->viewangles[PITCH]);
 						spunpart      = qtrue;
 					}
 				}
