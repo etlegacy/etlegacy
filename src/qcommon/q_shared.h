@@ -1142,6 +1142,7 @@ typedef struct playerState_s
 
 	int weapon;                 ///< weapon info, copied to entityState_t->weapon
 	int weaponstate;            ///< weapon info
+	vec3_t mountedWeaponAngles; ///< mortar, mg42 (prone), etc
 
 	int item;                   ///< item info
 

@@ -2434,7 +2434,7 @@ static void PM_BeginWeaponChange(weapon_t oldWeapon, weapon_t newWeapon, qboolea
 				VectorCopy(pml.forward, axis[0]);
 				VectorCopy(pml.right, axis[2]);
 				CrossProduct(axis[0], axis[2], axis[1]);
-				AxisToAngles(axis, pm->pmext->mountedWeaponAngles);
+				AxisToAngles(axis, pm->ps->mountedWeaponAngles);
 			}
 		}
 	}
@@ -4193,7 +4193,7 @@ void PM_UpdateViewAngles(playerState_t *ps, pmoveExt_t *pmext, usercmd_t *cmd, v
 		}
 
 		// yaw
-		yawDiff = ps->viewangles[YAW] - pmext->mountedWeaponAngles[YAW];
+		yawDiff = ps->viewangles[YAW] - ps->mountedWeaponAngles[YAW];
 
 		if (yawDiff > 180)
 		{
@@ -4206,21 +4206,21 @@ void PM_UpdateViewAngles(playerState_t *ps, pmoveExt_t *pmext, usercmd_t *cmd, v
 
 		if (yawDiff > 30)
 		{
-			ps->viewangles[YAW] = AngleNormalize180(pmext->mountedWeaponAngles[YAW] + 30.f);
+			ps->viewangles[YAW] = AngleNormalize180(ps->mountedWeaponAngles[YAW] + 30.f);
 
 			// Set delta_angles properly
 			ps->delta_angles[YAW] = ANGLE2SHORT(ps->viewangles[YAW]) - cmd->angles[YAW];
 		}
 		else if (yawDiff < -30)
 		{
-			ps->viewangles[YAW] = AngleNormalize180(pmext->mountedWeaponAngles[YAW] - 30.f);
+			ps->viewangles[YAW] = AngleNormalize180(ps->mountedWeaponAngles[YAW] - 30.f);
 
 			// Set delta_angles properly
 			ps->delta_angles[YAW] = ANGLE2SHORT(ps->viewangles[YAW]) - cmd->angles[YAW];
 		}
 
 		// pitch
-		pitchDiff = ps->viewangles[PITCH] - pmext->mountedWeaponAngles[PITCH];
+		pitchDiff = ps->viewangles[PITCH] - ps->mountedWeaponAngles[PITCH];
 
 		if (pitchDiff > 180)
 		{
@@ -4233,14 +4233,14 @@ void PM_UpdateViewAngles(playerState_t *ps, pmoveExt_t *pmext, usercmd_t *cmd, v
 
 		if (pitchDiff > (pitchMax - 10.f))
 		{
-			ps->viewangles[PITCH] = AngleNormalize180(pmext->mountedWeaponAngles[PITCH] + (pitchMax - 10.f));
+			ps->viewangles[PITCH] = AngleNormalize180(ps->mountedWeaponAngles[PITCH] + (pitchMax - 10.f));
 
 			// Set delta_angles properly
 			ps->delta_angles[PITCH] = ANGLE2SHORT(ps->viewangles[PITCH]) - cmd->angles[PITCH];
 		}
 		else if (pitchDiff < -(pitchMax))
 		{
-			ps->viewangles[PITCH] = AngleNormalize180(pmext->mountedWeaponAngles[PITCH] - (pitchMax));
+			ps->viewangles[PITCH] = AngleNormalize180(ps->mountedWeaponAngles[PITCH] - (pitchMax));
 
 			// Set delta_angles properly
 			ps->delta_angles[PITCH] = ANGLE2SHORT(ps->viewangles[PITCH]) - cmd->angles[PITCH];
@@ -4289,7 +4289,7 @@ void PM_UpdateViewAngles(playerState_t *ps, pmoveExt_t *pmext, usercmd_t *cmd, v
 			pitchMax = 20.f;
 
 			// yaw
-			yawDiff = ps->viewangles[YAW] - pmext->mountedWeaponAngles[YAW];
+			yawDiff = ps->viewangles[YAW] - ps->mountedWeaponAngles[YAW];
 
 			if (yawDiff > 180)
 			{
@@ -4302,14 +4302,14 @@ void PM_UpdateViewAngles(playerState_t *ps, pmoveExt_t *pmext, usercmd_t *cmd, v
 
 			if (yawDiff > 20)
 			{
-				ps->viewangles[YAW] = AngleNormalize180(pmext->mountedWeaponAngles[YAW] + 20.f);
+				ps->viewangles[YAW] = AngleNormalize180(ps->mountedWeaponAngles[YAW] + 20.f);
 
 				// Set delta_angles properly
 				ps->delta_angles[YAW] = ANGLE2SHORT(ps->viewangles[YAW]) - cmd->angles[YAW];
 			}
 			else if (yawDiff < -20)
 			{
-				ps->viewangles[YAW] = AngleNormalize180(pmext->mountedWeaponAngles[YAW] - 20.f);
+				ps->viewangles[YAW] = AngleNormalize180(ps->mountedWeaponAngles[YAW] - 20.f);
 
 				// Set delta_angles properly
 				ps->delta_angles[YAW] = ANGLE2SHORT(ps->viewangles[YAW]) - cmd->angles[YAW];
@@ -4317,7 +4317,7 @@ void PM_UpdateViewAngles(playerState_t *ps, pmoveExt_t *pmext, usercmd_t *cmd, v
 		}
 
 		// pitch
-		pitchDiff = ps->viewangles[PITCH] - pmext->mountedWeaponAngles[PITCH];
+		pitchDiff = ps->viewangles[PITCH] - ps->mountedWeaponAngles[PITCH];
 
 		if (pitchDiff > 180)
 		{
@@ -4330,14 +4330,14 @@ void PM_UpdateViewAngles(playerState_t *ps, pmoveExt_t *pmext, usercmd_t *cmd, v
 
 		if (pitchDiff > pitchMax)
 		{
-			ps->viewangles[PITCH] = AngleNormalize180(pmext->mountedWeaponAngles[PITCH] + pitchMax);
+			ps->viewangles[PITCH] = AngleNormalize180(ps->mountedWeaponAngles[PITCH] + pitchMax);
 
 			// Set delta_angles properly
 			ps->delta_angles[PITCH] = ANGLE2SHORT(ps->viewangles[PITCH]) - cmd->angles[PITCH];
 		}
 		else if (pitchDiff < -pitchMax)
 		{
-			ps->viewangles[PITCH] = AngleNormalize180(pmext->mountedWeaponAngles[PITCH] - pitchMax);
+			ps->viewangles[PITCH] = AngleNormalize180(ps->mountedWeaponAngles[PITCH] - pitchMax);
 
 			// Set delta_angles properly
 			ps->delta_angles[PITCH] = ANGLE2SHORT(ps->viewangles[PITCH]) - cmd->angles[PITCH];

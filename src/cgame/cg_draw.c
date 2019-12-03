@@ -962,8 +962,8 @@ static void CG_DrawMortarReticle(void)
 
 	// the extremes
 	// 30 degrees plus a 15 degree border
-	angleMin = AngleNormalize360(360 - (cg.pmext.mountedWeaponAngles[YAW] - 90.f) - (30.f + 15.f));
-	angleMax = AngleNormalize360(360 - (cg.pmext.mountedWeaponAngles[YAW] - 90.f) + (30.f + 15.f));
+	angleMin = AngleNormalize360(360 - (cg.snap->ps.mountedWeaponAngles[YAW] - 90.f) - (30.f + 15.f));
+	angleMax = AngleNormalize360(360 - (cg.snap->ps.mountedWeaponAngles[YAW] - 90.f) + (30.f + 15.f));
 
 	// right
 	localOffset = (AngleNormalize360(angle - angleMin) / 5.f) * 10.f;
@@ -1126,8 +1126,8 @@ static void CG_DrawMortarReticle(void)
 	// the extremes
 	// 30 degrees up
 	// 20 degrees down
-	angleMin = AngleNormalize180(360 - (cg.pmext.mountedWeaponAngles[PITCH] - 60)) - 20.f;
-	angleMax = AngleNormalize180(360 - (cg.pmext.mountedWeaponAngles[PITCH] - 60)) + 30.f;
+	angleMin = AngleNormalize180(360 - (cg.snap->ps.mountedWeaponAngles[PITCH] - 60)) - 20.f;
+	angleMax = AngleNormalize180(360 - (cg.snap->ps.mountedWeaponAngles[PITCH] - 60)) + 30.f;
 
 	// top
 	localOffset = angleMax - angle;
