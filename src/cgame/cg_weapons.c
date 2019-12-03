@@ -114,7 +114,7 @@ void CG_MachineGunEjectBrass(centity_t *cent)
 	localEntity_t *le;
 	refEntity_t   *re;
 	vec3_t        velocity, xvelocity;
-	vec3_t        offset = { 0, 0, 0 };
+	vec3_t        offset     = { 0, 0, 0 };
 	float         waterScale = 1.0f;
 	vec3_t        v[3], end;
 	qboolean      isFirstPerson = ((cent->currentState.clientNum == cg.snap->ps.clientNum) && !cg.renderingThirdPerson);
@@ -2462,6 +2462,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 	int             clientNum     = ps ? ps->clientNum : cent->currentState.clientNum;
 	team_t          team;
 	modelViewType_t modelViewType = ps ? W_FP_MODEL : W_TP_MODEL;
+	float           x, y;
 
 	// don't draw any weapons when the binocs are up
 	if (cent->currentState.eFlags & EF_ZOOMING)
@@ -2569,6 +2570,27 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 		CG_Printf("returning due to: !ps && cg.snap->ps.pm_flags & PMF_LADDER\n");
 #endif
 		return;
+	}
+
+	if (ps && cg.clientNum != cg.snap->ps.clientNum)
+	{
+		// calculate mounted weapon angles if spectating client
+		if (CHECKBITWISE(GetWeaponTableData(cg.snap->ps.weapon)->type, WEAPON_TYPE_MG | WEAPON_TYPE_SET) ||
+		    CHECKBITWISE(GetWeaponTableData(cg.snap->ps.weapon)->type, WEAPON_TYPE_MORTAR | WEAPON_TYPE_SET))
+		{
+			// update it only once
+			if (cg.weaponSetTime == 0)
+			{
+				x = angle_mod(360.f + cg.snap->ps.viewangles[0]);
+				y = angle_mod(360.f + cg.snap->ps.viewangles[1]);
+				VectorSet(cg.pmext.mountedWeaponAngles, x, y, 0);
+				cg.weaponSetTime = cg.time;
+			}
+		}
+		else
+		{
+			cg.weaponSetTime = 0;
+		}
 	}
 
 	if (!ps)
@@ -4004,7 +4026,7 @@ void CG_AltWeapon_f(void)
  */
 void CG_NextWeap(qboolean switchBanks)
 {
-	int      bank = 0, cycle = 0, newbank = 0, newcycle = 0;
+	int      bank     = 0, cycle = 0, newbank = 0, newcycle = 0;
 	int      num      = cg.weaponSelect;
 	int      curweap  = cg.weaponSelect;
 	qboolean nextbank = qfalse;     // need to switch to the next bank of weapons?
@@ -4151,7 +4173,7 @@ void CG_NextWeap(qboolean switchBanks)
  */
 void CG_PrevWeap(qboolean switchBanks)
 {
-	int      bank = 0, cycle = 0, newbank = 0, newcycle = 0;
+	int      bank     = 0, cycle = 0, newbank = 0, newcycle = 0;
 	int      num      = cg.weaponSelect;
 	int      curweap  = cg.weaponSelect;
 	qboolean prevbank = qfalse;     // need to switch to the next bank of weapons?

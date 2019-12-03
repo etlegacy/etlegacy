@@ -1016,6 +1016,8 @@ typedef struct
 	float duckChange;                       ///< for duck viewheight smoothing
 	int duckTime;
 
+	int weaponSetTime;                      ///< mg/mortar set time
+
 	float landChange;                       ///< for landing hard
 	int landTime;
 
