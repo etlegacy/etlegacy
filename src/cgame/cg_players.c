@@ -390,8 +390,6 @@ void CG_NewClientInfo(int clientNum)
 		{
 			if (newInfo.shoutcaster <= 0)
 			{
-				const char *info = CG_ConfigString(CS_SERVERINFO);
-
 				CG_Printf("[cgnotify]^3*** You have been stripped of your shoutcaster status! ***\n");
 			}
 			else
