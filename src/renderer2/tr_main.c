@@ -1600,14 +1600,15 @@ void R_SetupFrustum2(frustum_t frustum, const mat4_t mvp)
  * @param[in] in
  * @param[out] out
  */
-static void CopyPlane(const cplane_t *in, cplane_t *out)
+__inline void CopyPlane(const cplane_t *in, cplane_t *out)
 {
-	VectorCopy(in->normal, out->normal);
+	/*VectorCopy(in->normal, out->normal);
 	out->dist     = in->dist;
 	out->type     = in->type;
 	out->signbits = in->signbits;
 	out->pad[0]   = in->pad[0];
-	out->pad[1]   = in->pad[1];
+	out->pad[1]   = in->pad[1];*/
+	Com_Memcpy(out->normal, in->normal, sizeof(cplane_t));
 }
 
 /**
@@ -1615,22 +1616,23 @@ static void CopyPlane(const cplane_t *in, cplane_t *out)
  */
 static void R_SetupSplitFrustums(void)
 {
-	int    i, j;
+	int    i, i1; // , j;
 	float  lambda = r_parallelShadowSplitWeight->value;
 	float  ratio  = tr.viewParms.zFar / tr.viewParms.zNear;
 	vec3_t planeOrigin;
 	float  zNear, zFar;
 
-	for (j = 0; j < 5; j++)
+	/*for (j = 0; j < 5; j++)
 	{
 		CopyPlane(&tr.viewParms.frustums[0][j], &tr.viewParms.frustums[1][j]);
-	}
+	}*/
+	Com_Memcpy(&tr.viewParms.frustums[1], &tr.viewParms.frustums[0], 5 * sizeof(frustum_t));
 
-	for (i = 1; i <= (r_parallelShadowSplits->integer + 1); i++)
+	for (i = 1, i1 = 2; i <= (r_parallelShadowSplits->integer + 1); i++, i1++)
 	{
 		float si = i / (float)(r_parallelShadowSplits->integer + 1);
 
-		zFar = 1.005f * lambda * (tr.viewParms.zNear * powf(ratio, si)) + (1 - lambda) * (tr.viewParms.zNear + (tr.viewParms.zFar - tr.viewParms.zNear) * si);
+		zFar = 1.005f * lambda * (tr.viewParms.zNear * powf(ratio, si)) + (1.f - lambda) * (tr.viewParms.zNear + (tr.viewParms.zFar - tr.viewParms.zNear) * si);
 
 		if (i <= r_parallelShadowSplits->integer)
 		{
@@ -1655,10 +1657,16 @@ static void R_SetupSplitFrustums(void)
 			SetPlaneSignbits(&tr.viewParms.frustums[i + 1][FRUSTUM_NEAR]);
 		}
 
-		for (j = 0; j < 4; j++)
+		/*for (j = 0; j < 4; j++)
 		{
 			CopyPlane(&tr.viewParms.frustums[0][j], &tr.viewParms.frustums[i][j]);
-		}
+		}*/
+		// unrolled..
+		CopyPlane(&tr.viewParms.frustums[0][FRUSTUM_LEFT], &tr.viewParms.frustums[i][FRUSTUM_LEFT]);
+		CopyPlane(&tr.viewParms.frustums[0][FRUSTUM_RIGHT], &tr.viewParms.frustums[i][FRUSTUM_RIGHT]);
+		CopyPlane(&tr.viewParms.frustums[0][FRUSTUM_BOTTOM], &tr.viewParms.frustums[i][FRUSTUM_BOTTOM]);
+		CopyPlane(&tr.viewParms.frustums[0][FRUSTUM_TOP], &tr.viewParms.frustums[i][FRUSTUM_TOP]);
+		//Com_Memcpy(&tr.viewParms.frustums[i], &tr.viewParms.frustums[0], 4 * sizeof(frustum_t));
 	}
 }
 
@@ -2007,7 +2015,7 @@ static qboolean SurfIsOffscreen(const drawSurf_t *drawSurf, vec4_t clipDest[128]
 		tr.orientation = tr.viewParms.world;
 	}
 
-	Tess_Begin(Tess_StageIteratorGeneric, NULL, drawSurf->shader, NULL, qtrue, qtrue, -1, 0);
+	Tess_Begin(Tess_StageIteratorGeneric, NULL, drawSurf->shader, NULL, qtrue, qtrue, LIGHTMAP_NONE, FOG_NONE);
 	rb_surfaceTable[*drawSurf->surface] (drawSurf->surface);
 
 	// former assertion
@@ -2736,7 +2744,7 @@ void R_AddLightInteractions()
 			R_SetupLightOrigin(light);
 
 			// set up model to light view matrix
-			R_SetupLightView(light);
+			MatrixAffineInverse(light->transformMatrix, light->viewMatrix); // R_SetupLightView(light);
 
 			// set up projection
 			R_SetupLightProjection(light);
@@ -2764,14 +2772,13 @@ void R_AddLightInteractions()
 			}
 
 			// setup world bounds for intersection tests
-			R_SetupLightWorldBounds(light);
+			MatrixTransformBounds(light->transformMatrix, light->localBounds[0], light->localBounds[1], light->worldBounds[0], light->worldBounds[1]); // R_SetupLightWorldBounds(light);
 
 			// setup frustum planes for intersection tests
 			R_SetupLightFrustum(light);
 
 			// ignore if not in visible bounds
-			if (!BoundsIntersect
-			        (light->worldBounds[0], light->worldBounds[1], tr.viewParms.visBounds[0], tr.viewParms.visBounds[1]))
+			if (!BoundsIntersect(light->worldBounds[0], light->worldBounds[1], tr.viewParms.visBounds[0], tr.viewParms.visBounds[1]))
 			{
 				light->cull = CULL_OUT;
 				continue;
@@ -2851,6 +2858,8 @@ void R_AddLightBoundsToVisBounds()
 	{
 		light = tr.currentLight = &tr.refdef.lights[i];
 
+		if (r_dynamicLightShadows->integer)
+		{
 		if (light->isStatic)
 		{
 			if (!r_staticLight->integer || ((r_precomputedLighting->integer || r_vertexLighting->integer) && light->noRadiosity))
@@ -2859,11 +2868,9 @@ void R_AddLightBoundsToVisBounds()
 				continue;
 			}
 		}
-		else
-		{
-			if (!r_dynamicLight->integer)
+			else if (!r_dynamicLight->integer)
 			{
-				//light->cull = CULL_OUT;
+				light->cull = CULL_OUT;
 				continue;
 			}
 		}
@@ -2935,16 +2942,16 @@ void R_AddLightBoundsToVisBounds()
 			}
 
 			// look if we have to draw the light including its interactions
-			switch (R_CullLocalBox(light->localBounds))
+/*			switch (R_CullLocalBox(light->localBounds))
 			{
-			case CULL_IN:
-			default:
-				break;
-			case CULL_CLIP:
-				break;
 			case CULL_OUT:
 				continue;
-			}
+			case CULL_IN:
+			case CULL_CLIP:
+			default:
+				break;
+			}*/
+			if (R_CullLocalBox(light->localBounds) == CULL_OUT) continue;
 		}
 		else
 		{
@@ -2955,7 +2962,7 @@ void R_AddLightBoundsToVisBounds()
 			R_SetupLightOrigin(light);
 
 			// set up model to light view matrix
-			R_SetupLightView(light);
+			MatrixAffineInverse(light->transformMatrix, light->viewMatrix); // R_SetupLightView(light);
 
 			// set up projection
 			R_SetupLightProjection(light);
@@ -2964,7 +2971,7 @@ void R_AddLightBoundsToVisBounds()
 			R_SetupLightLocalBounds(light);
 
 			// look if we have to draw the light including its interactions
-			switch (R_CullLocalBox(light->localBounds))
+			/*switch (R_CullLocalBox(light->localBounds))
 			{
 			case CULL_IN:
 			default:
@@ -2973,10 +2980,11 @@ void R_AddLightBoundsToVisBounds()
 				break;
 			case CULL_OUT:
 				continue;
-			}
+			}*/
+			if (R_CullLocalBox(light->localBounds) == CULL_OUT) continue;
 
 			// setup world bounds for intersection tests
-			R_SetupLightWorldBounds(light);
+			MatrixTransformBounds(light->transformMatrix, light->localBounds[0], light->localBounds[1], light->worldBounds[0], light->worldBounds[1]); // R_SetupLightWorldBounds(light);
 		}
 
 		// add to z buffer bounds
@@ -3252,6 +3260,7 @@ void R_RenderView(viewParms_t *parms)
 	// matrix for lod calculation
 	R_SetupProjection(qfalse);
 
+	// This will handle any transition from one fog to another fog.
 	R_SetFrameFog();
 
 	R_SetupUnprojection();
