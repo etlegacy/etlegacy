@@ -151,7 +151,7 @@ static qboolean SV_isClientIPValidToConnect(netadr_t from)
 		return qtrue;
 	}
 
-	clientIP =  NET_AdrToString(from);
+	clientIP = NET_AdrToString(from);
 
 	// let localhost connect
 	// FIXME: see above note: We might use a free flag of sv_protect cvar to include local addresses
@@ -310,16 +310,17 @@ void SV_DirectConnect(netadr_t from)
 	char     *password;
 	int      startIndex;
 	char     *denied;
+	char     *etVersion;
 
 	Com_DPrintf("SVC_DirectConnect ()\n");
 
 	// Prevent using connect as an amplifier
 	if (sv_protect->integer & SVP_IOQ3)
 	{
-		if(SVC_RateLimitAddress(from, 10, 1000))
+		if (SVC_RateLimitAddress(from, 10, 1000))
 		{
 			SV_WriteAttackLog(va("Bad direct connect - rate limit from %s exceeded, dropping request\n",
-		                     NET_AdrToString(from)));
+			                     NET_AdrToString(from)));
 			return;
 		}
 	}
@@ -584,6 +585,14 @@ gotnewcl:
 
 	// newcl->protocol = PROTOCOL_VERSION;
 	newcl->protocol = atoi(Info_ValueForKey(userinfo, "protocol"));
+
+	// check client's engine or fallback to version set by cgame
+	if (!(etVersion = Info_ValueForKey(userinfo, "etVersion")))
+	{
+		etVersion = Info_ValueForKey(userinfo, "cg_etVersion");
+	}
+	// get user agent information
+	Com_ParseUA(&newcl->agent, etVersion);
 }
 
 /**
@@ -1658,11 +1667,11 @@ void SV_UserinfoChanged(client_t *cl)
 	val = Info_ValueForKey(cl->userinfo, "handicap");
 	if (strlen(val))
 	{
-		i = atoi(val);
-		if (i <= -100 || i > 100 || strlen(val) > 4)
-		{
-			Info_SetValueForKey(cl->userinfo, "handicap", "0");
-		}
+	    i = atoi(val);
+	    if (i <= -100 || i > 100 || strlen(val) > 4)
+	    {
+	        Info_SetValueForKey(cl->userinfo, "handicap", "0");
+	    }
 	}
 	*/
 

@@ -496,8 +496,9 @@ void CL_MapLoading(void)
 		Cvar_Set("nextmap", "");
 		CL_Disconnect(qtrue);
 		Q_strncpyz(cls.servername, "localhost", sizeof(cls.servername));
-		cls.state       = CA_CHALLENGING; // so the connect screen is drawn
-		cls.keyCatchers = 0;
+		cls.state          = CA_CHALLENGING; // so the connect screen is drawn
+		cls.challengeState = CA_CHALLENGING_INFO;
+		cls.keyCatchers    = 0;
 		SCR_UpdateScreen();
 		clc.connectTime = -RETRANSMIT_TIMEOUT;
 		NET_StringToAdr(cls.servername, &clc.serverAddress, NA_UNSPEC);
@@ -671,21 +672,17 @@ void CL_Disconnect(qboolean showMainMenu)
 	// not connected to a pure server anymore
 	cl_connectedToPureServer = qfalse;
 
+	// reset connection state
+	cls.state = CA_DISCONNECTED;
+
 	// don't try a restart if uivm is NULL, as we might be in the middle of a restart already
 	if (uivm && cls.state > CA_DISCONNECTED)
 	{
-		// restart the UI
-		cls.state = CA_DISCONNECTED;
-
 		// shutdown the UI
 		CL_ShutdownUI();
 
 		// init the UI
 		CL_InitUI();
-	}
-	else
-	{
-		cls.state = CA_DISCONNECTED;
 	}
 }
 
@@ -956,7 +953,8 @@ static void CL_Connect_f(void)
 	// if we aren't playing on a lan, we need to request a challenge
 	if (NET_IsLocalAddress(clc.serverAddress))
 	{
-		cls.state = CA_CHALLENGING;
+		cls.state          = CA_CHALLENGING;
+		cls.challengeState = CA_CHALLENGING_INFO;
 	}
 	else
 	{
@@ -1261,7 +1259,7 @@ static void CL_Clientinfo_f(void)
  * @note Unused
 void CL_EatMe_f(void)
 {
-	// do nothing kthxbye
+    // do nothing kthxbye
 }
 */
 
@@ -1310,18 +1308,18 @@ void CL_SaveFavServersToFile_f(void)
  * DO NOT ACTIVATE UNTIL WE HAVE CLARIFIED SECURITY! (command execution vie ascripts)
 void CL_AddFavServer_f(void)
 {
-	if (cls.state != CA_ACTIVE)
-	{
-		Com_Printf("Not connected to a server\n");
-		return;
-	}
+    if (cls.state != CA_ACTIVE)
+    {
+        Com_Printf("Not connected to a server\n");
+        return;
+    }
 
-	if (clc.demoplaying)
-	{
-		return;
-	}
+    if (clc.demoplaying)
+    {
+        return;
+    }
 
-	(void) LAN_AddServer(AS_FAVORITES, "", NET_AdrToString(clc.netchan.remoteAddress));
+    (void) LAN_AddServer(AS_FAVORITES, "", NET_AdrToString(clc.netchan.remoteAddress));
 }
 */
 
@@ -1371,6 +1369,7 @@ void CL_DownloadsComplete(void)
  */
 void CL_CheckForResend(void)
 {
+	char buffer[64];
 	// don't send anything if playing back a demo
 	if (clc.demoplaying)
 	{
@@ -1395,34 +1394,41 @@ void CL_CheckForResend(void)
 	{
 	case CA_CONNECTING:
 	{
-		char pkt[1024 + 1];
-
-		strcpy(pkt, "getchallenge");
-		NET_OutOfBandPrint(NS_CLIENT, clc.serverAddress, pkt);
+		strcpy(buffer, "getchallenge");
+		NET_OutOfBandPrint(NS_CLIENT, clc.serverAddress, buffer);
 	}
 	break;
 	case CA_CHALLENGING:
 	{
-		int  port;
-		char info[MAX_INFO_STRING];
-		char data[MAX_INFO_STRING + 10];
+		// first get the server information
+		if (cls.challengeState == CA_CHALLENGING_INFO)
+		{
+			Com_sprintf(buffer, sizeof(buffer), "getinfo %i", clc.challenge);
+			NET_OutOfBandPrint(NS_CLIENT, clc.serverAddress, buffer);
+		}
+		// then attempt to connect
+		else
+		{
+			int  port;
+			char info[MAX_INFO_STRING];
+			char data[MAX_INFO_STRING + 10];
 
-		// received and confirmed the challenge, now responding with a connect packet
-		port = (int)(Cvar_VariableValue("net_qport"));
+			// received and confirmed the challenge, now responding with a connect packet
+			port = (int)(Cvar_VariableValue("net_qport"));
 
-		Q_strncpyz(info, Cvar_InfoString(CVAR_USERINFO), sizeof(info));
-		Info_SetValueForKey(info, "protocol", va("%i", PROTOCOL_VERSION));
-		Info_SetValueForKey(info, "qport", va("%i", port));
-		Info_SetValueForKey(info, "challenge", va("%i", clc.challenge));
-		Info_SetValueForKey(info, "etVersion", Q3_VERSION); // send product info
+			Q_strncpyz(info, Cvar_InfoString(CVAR_USERINFO), sizeof(info));
+			Info_SetValueForKey(info, "protocol", va("%i", PROTOCOL_VERSION));
+			Info_SetValueForKey(info, "qport", va("%i", port));
+			Info_SetValueForKey(info, "challenge", va("%i", clc.challenge));
+			Info_SetValueForKey(info, "etVersion", Q3_VERSION); // send product info
 
-		Com_sprintf(data, sizeof(data), "connect \"%s\"", info);
-		NET_OutOfBandData(NS_CLIENT, clc.serverAddress, (const char *) data, strlen(data));
+			Com_sprintf(data, sizeof(data), "connect \"%s\"", info);
+			NET_OutOfBandData(NS_CLIENT, clc.serverAddress, (const char *) data, strlen(data));
 
-		// the most current userinfo has been sent, so watch for any
-		// newer changes to userinfo variables
-		cvar_modifiedFlags &= ~CVAR_USERINFO;
-
+			// the most current userinfo has been sent, so watch for any
+			// newer changes to userinfo variables
+			cvar_modifiedFlags &= ~CVAR_USERINFO;
+		}
 	}
 	break;
 	default:
@@ -1600,7 +1606,7 @@ void CL_ServersResponsePacket(const netadr_t *from, msg_t *msg, qboolean extende
 	unsigned int i, numservers = 0;
 	int          j, count, total;
 	netadr_t     addresses[MAX_SERVERSPERPACKET];
-	byte         *buffptr = msg->data; 	// parse through server response string
+	byte         *buffptr = msg->data;  // parse through server response string
 	byte         *buffend = buffptr + msg->cursize;
 
 	//Com_Printf("CL_ServersResponsePacket\n");
@@ -1779,6 +1785,7 @@ void CL_ConnectionlessPacket(netadr_t from, msg_t *msg)
 				clc.onlyVisibleClients = 0;
 			}
 			cls.state              = CA_CHALLENGING;
+			cls.challengeState     = CA_CHALLENGING_INFO;
 			clc.connectPacketCount = 0;
 			clc.connectTime        = -99999;
 
@@ -1807,7 +1814,7 @@ void CL_ConnectionlessPacket(netadr_t from, msg_t *msg)
 		{
 			Com_Printf("connectResponse from a different address.  Ignored.\n");
 			Com_Printf("%s should have been %s\n", NET_AdrToString(from),
-					   NET_AdrToString(clc.serverAddress));
+			           NET_AdrToString(clc.serverAddress));
 			return;
 		}
 
@@ -1822,6 +1829,12 @@ void CL_ConnectionlessPacket(netadr_t from, msg_t *msg)
 	// server responding to an info broadcast
 	if (!Q_stricmp(c, "infoResponse"))
 	{
+		if (cls.state == CA_CHALLENGING && cls.challengeState == CA_CHALLENGING_INFO)
+		{
+			CL_ServerInfoPacketCheck(from, msg);
+			cls.challengeState = CA_CHALLENGING_REQUEST;
+			return;
+		}
 		CL_ServerInfoPacket(from, msg);
 		return;
 	}
@@ -1977,9 +1990,9 @@ void CL_CheckTimeout(void)
 {
 	// check timeout
 	if ((!cl_paused->integer || !sv_paused->integer)
-		&& cls.state >= CA_CONNECTED && cls.state != CA_CINEMATIC
-		&& cls.realtime - clc.lastPacketTime > cl_timeout->value * 1000
-		&& !(clc.demoplaying && cl_freezeDemo->integer))
+	    && cls.state >= CA_CONNECTED && cls.state != CA_CINEMATIC
+	    && cls.realtime - clc.lastPacketTime > cl_timeout->value * 1000
+	    && !(clc.demoplaying && cl_freezeDemo->integer))
 	{
 		if (++cl.timeoutcount > 5)        // timeoutcount saves debugger
 		{
@@ -2159,7 +2172,7 @@ void CL_Frame(int msec)
 	}
 
 	if (cls.state == CA_DISCONNECTED && !(cls.keyCatchers & KEYCATCH_UI)
-		&& !com_sv_running->integer)
+	    && !com_sv_running->integer)
 	{
 		// if disconnected, bring up the menu
 		S_StopAllSounds();
@@ -2188,7 +2201,7 @@ void CL_Frame(int msec)
 		//clc.aviVideoFrameRemainder = frameDuration + msec;
 	}
 	else if ((!cl_avidemo->integer && CL_VideoRecording())
-			 || (cl_avidemo->integer && (cls.state != CA_ACTIVE || !cl_forceavidemo->integer)))
+	         || (cl_avidemo->integer && (cls.state != CA_ACTIVE || !cl_forceavidemo->integer)))
 	{
 		CL_StopVideo_f();
 	}
@@ -3225,6 +3238,46 @@ void CL_ServerInfoPacket(netadr_t from, msg_t *msg)
 }
 
 /**
+ * @brief CL_ServerInfoPacketCheck
+ * @param[in] from
+ * @param[in] msg
+ */
+void CL_ServerInfoPacketCheck(netadr_t from, msg_t *msg)
+{
+	int  prot;
+	char *infoString;
+	char *gameName;
+
+	infoString = MSG_ReadString(msg);
+
+	// if this isn't the correct protocol version, ignore it
+	prot = atoi(Info_ValueForKey(infoString, "protocol"));
+	if (prot != PROTOCOL_VERSION)
+	{
+		Com_DPrintf("Different protocol info packet: %s\n", infoString);
+		Com_Error(ERR_FATAL, "Game server uses unsupported protocol: %i, expected %i (%s)", prot, PROTOCOL_VERSION, GAMENAME_STRING);
+		return;
+	}
+
+	// if this isn't the correct game, ignore it
+	gameName = Info_ValueForKey(infoString, "gamename");
+	if (!gameName[0] || Q_stricmp(gameName, GAMENAME_STRING))
+	{
+		Com_DPrintf("Different game info packet: %s\n", infoString);
+		Com_Error(ERR_FATAL, "Unsupported game server: %s", gameName);
+		return;
+	}
+
+	// upon challenging we request server info to obtain user agent information
+	// btw, old clients dont store version in getinfoResponse body, however, all etl clients do
+	if (cls.state == CA_CHALLENGING && cls.challengeState == CA_CHALLENGING_INFO)
+	{
+		Com_ParseUA(&clc.agent, Info_ValueForKey(infoString, "version"));
+	}
+
+}
+
+/**
  * @brief CL_GetServerStatus
  * @param[in] from
  * @return
@@ -3525,7 +3578,7 @@ void CL_GlobalServers_f(void)
 	}
 
 	// request from all master servers
-	if ( masterNum == 0 )
+	if (masterNum == 0)
 	{
 		int numAddress = 0;
 
@@ -3586,7 +3639,7 @@ void CL_GlobalServers_f(void)
 	{
 		int v4enabled = Cvar_VariableIntegerValue("net_enabled") & NET_ENABLEV4;
 
-		if(v4enabled)
+		if (v4enabled)
 		{
 			Com_sprintf(command, sizeof(command), "getserversExt %s %s", GAMENAME_STRING, Cmd_Argv(2));
 		}

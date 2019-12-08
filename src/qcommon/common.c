@@ -87,7 +87,7 @@ static fileHandle_t logfile;
 fileHandle_t        com_journalFile;        // events are written here
 fileHandle_t        com_journalDataFile;    // config files are written here
 
-cvar_t *com_ansiColor;				// set console color
+cvar_t *com_ansiColor;              // set console color
 
 cvar_t *com_crashed = NULL;         // set in case of a crash, prevents CVAR_UNSAFE variables from being set from a cfg
                                     // explicit NULL to make win32 teh happy
@@ -135,8 +135,8 @@ cvar_t *com_updatefiles;
 int (*Q_VMftol)(void); // Unused in ET:L. Used in ioquake’s VM code
 #elif id386
 //long (QDECL *Q_ftol)(float f);
-int(QDECL * Q_VMftol)(void);  // Unused.
-void(QDECL * Q_SnapVector)(vec3_t vec);
+int (QDECL *Q_VMftol)(void);  // Unused.
+void (QDECL *Q_SnapVector)(vec3_t vec);
 #endif
 
 cvar_t *com_recommendedSet;
@@ -278,7 +278,7 @@ void QDECL Com_Printf(const char *fmt, ...)
 			if (logfile)
 			{
 				time(&aclock);
-				strftime(timeFt, sizeof(timeFt), "%a %b %d %X %Y",  localtime(&aclock));
+				strftime(timeFt, sizeof(timeFt), "%a %b %d %X %Y", localtime(&aclock));
 				Com_Printf("logfile opened on %s\n", timeFt);
 
 				if (com_logfile->integer > 1)
@@ -989,7 +989,7 @@ static void Z_ClearZone(memzone_t *zone, int size)
 	// set the entire zone to one free block
 
 	zone->blocklist.next = zone->blocklist.prev = block =
-													  ( memblock_t * )((byte *)zone + sizeof(memzone_t));
+	                                                  ( memblock_t * )((byte *)zone + sizeof(memzone_t));
 	zone->blocklist.tag  = 1;   // in use block
 	zone->blocklist.id   = 0;
 	zone->blocklist.size = 0;
@@ -2955,8 +2955,8 @@ void Com_Init(char *commandLine)
 	com_cl_running  = Cvar_Get("cl_running", "0", CVAR_ROM);
 	com_buildScript = Cvar_Get("com_buildScript", "0", 0);
 
-	con_drawnotify = Cvar_Get("con_drawnotify", "0", CVAR_CHEAT);
-    con_numNotifies = Cvar_Get("con_numNotifies", "4", CVAR_CHEAT);
+	con_drawnotify  = Cvar_Get("con_drawnotify", "0", CVAR_CHEAT);
+	con_numNotifies = Cvar_Get("con_numNotifies", "4", CVAR_CHEAT);
 
 	com_introPlayed = Cvar_Get("com_introplayed", "0", CVAR_ARCHIVE);
 
@@ -3331,12 +3331,12 @@ void Com_Frame(void)
 		else
 		{
 			if (com_minimized->integer && !Cvar_VariableString("cl_downloadName")[0] // don't set different minMsec while downloading
-				&& Cvar_VariableIntegerValue("cl_demorecording") == 0) // don't set different minMsec while recording
+			    && Cvar_VariableIntegerValue("cl_demorecording") == 0) // don't set different minMsec while recording
 			{
 				minMsec = 100; // = 1000/10;
 			}
 			else if (com_unfocused->integer && com_maxfps->integer > 1 && !Cvar_VariableString("cl_downloadName")[0]  // don't set different minMsec while downloading
-				&& Cvar_VariableIntegerValue("cl_demorecording") == 0) // don't set different minMsec while recording
+			         && Cvar_VariableIntegerValue("cl_demorecording") == 0) // don't set different minMsec while recording
 			{
 				minMsec = 1000 / (com_maxfps->integer / 2);
 			}
@@ -3930,7 +3930,7 @@ void Com_GetHunkInfo(int *hunkused, int *hunkexpected)
  */
 static int Field_LastWhiteSpace(field_t *field)
 {
-	int      i = 0, lastSpace = 0;
+	int      i            = 0, lastSpace = 0;
 	qboolean insideQuotes = qfalse;
 
 	for (; i < strlen(field->buffer); i++)
@@ -4097,5 +4097,21 @@ void Com_RandomBytes(byte *string, int len)
 	for (i = 0; i < len; i++)
 	{
 		string[i] = (unsigned char)(rand() % 256);
+	}
+}
+
+void Com_ParseUA(userAgent_t *ua, const char *string)
+{
+	// store any full et version string
+	if (string)
+	{
+		strncpy(ua->string, string, sizeof(ua->string));
+	}
+	// check for compatibility (only accept of own kind)
+	if (string && !Q_strncmp(string, PRODUCT_LABEL, strlen(PRODUCT_LABEL)))
+	{
+		ua->compatible = 0x1; // basic level compatibility
+		// match version string, or leave it as zero
+		sscanf(string, PRODUCT_LABEL " v%17[0-9.]-*", ua->version);
 	}
 }

@@ -258,9 +258,11 @@ typedef struct
 
 	//float aviVideoFrameRemainder;
 	//float aviSoundFrameRemainder;
+	userAgent_t agent;                          ///< holds server engine information
 
 	/// big stuff at end of structure so most offsets are 15 bits or less
 	netchan_t netchan;
+
 } clientConnection_t;
 
 extern clientConnection_t clc;
@@ -320,12 +322,14 @@ typedef struct
  */
 typedef struct
 {
-	connstate_t state;              ///< connection status
-	int keyCatchers;                ///< bit flags
+	connstate_t state;               ///< connection status
+	challengeState_t challengeState; ///< challenge status
 
-	qboolean doCachePurge;          ///< empty the renderer cache as soon as possible
+	int keyCatchers;                 ///< bit flags
 
-	char servername[MAX_OSPATH];    ///< name of server from original connect (used by reconnect)
+	qboolean doCachePurge;           ///< empty the renderer cache as soon as possible
+
+	char servername[MAX_OSPATH];     ///< name of server from original connect (used by reconnect)
 
 	// when the server clears the hunk, all of these must be restarted
 	qboolean rendererStarted;
@@ -578,6 +582,7 @@ void CL_ParseServerMessage(msg_t *msg);
 //====================================================================
 
 void CL_ServerInfoPacket(netadr_t from, msg_t *msg);
+void CL_ServerInfoPacketCheck(netadr_t from, msg_t *msg);
 void CL_LocalServers_f(void);
 void CL_GlobalServers_f(void);
 void CL_Ping_f(void);

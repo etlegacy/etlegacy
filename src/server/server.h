@@ -275,6 +275,8 @@ typedef struct client_s
 	int protocol; ///< We can access clients protocol any time
 
 	qboolean demoClient; ///< is this a demoClient?
+
+	userAgent_t agent;
 } client_t;
 
 //=============================================================================

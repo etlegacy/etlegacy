@@ -1179,7 +1179,7 @@ typedef struct playerState_s
 	int nextWeapon;
 
 	// player class
-	int teamNum;                        
+	int teamNum;
 
 	// RF, burning effect is required for view blending effect
 	int onFireStart;
@@ -1525,6 +1525,16 @@ typedef enum
 	CA_CINEMATIC        ///< playing a cinematic or a static pic, not connected to a server
 } connstate_t;
 
+/**
+ * @enum challengeState_t
+ * @brief CA_CHALLENGING substates
+ */
+typedef enum
+{
+	CA_CHALLENGING_INFO,  ///< acquiring server info
+	CA_CHALLENGING_REQUEST ///< requesting connection
+} challengeState_t;
+
 // font support
 
 #define GLYPH_START 0
@@ -1713,6 +1723,21 @@ typedef struct demoPlayInfo_s
 	int firstTime;
 	int lastTime;
 } demoPlayInfo_t;
+
+/**
+ * @struct userAgent_s
+ * @typedef userAgent_t
+ * @brief Holds information about server/client engine on the other end
+ */
+typedef struct userAgent_s
+{
+	int compatible;      ///< is it compatible with the engine? note: this can be flag based in future.
+	char string[64];     ///< holds engine name and version string
+	char version[18];    ///< holds engine version
+} userAgent_t;
+
+void Com_ParseUA(userAgent_t *ua, const char *string);
+#define Com_IsCompatible(ua, flag) ((ua)->compatible & flag)
 
 //c99 issue pre 2013 VS do not have support for this
 #if defined(_MSC_VER) && (_MSC_VER < 1800)
