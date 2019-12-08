@@ -64,6 +64,7 @@ typedef struct
 	int uncompsize;             ///< net debugging
 	int readcount;
 	int bit;                    ///< for bitwise reads and writes
+	int strip;                  ///< strip >= 0x80 chars from message, old clients don't like them
 } msg_t;
 
 void MSG_Init(msg_t *buf, byte *data, int length);
@@ -73,6 +74,7 @@ void *MSG_GetSpace(msg_t *buf, int length);
 void MSG_WriteData(msg_t *buf, const void *data, int length);
 void MSG_Bitstream(msg_t *buf);
 void MSG_Uncompressed(msg_t *buf);
+#define MSG_EnableCharStrip(buf) (buf)->strip = 0x1;
 
 /**
  * copy a msg_t in case we need to store it as is for a bit
@@ -95,7 +97,7 @@ void MSG_WriteFloat(msg_t *msg, float f);
 void MSG_WriteString(msg_t *msg, const char *s);
 void MSG_WriteBigString(msg_t *msg, const char *s);
 void MSG_WriteAngle16(msg_t *msg, float f);
-int MSG_HashKey(const char *string, int maxlen);
+int MSG_HashKey(const char *string, int maxlen, int strip);
 
 void MSG_BeginReading(msg_t *msg);
 void MSG_BeginReadingOOB(msg_t *msg);
@@ -555,9 +557,9 @@ void Cbuf_AddText(const char *text); ///< Adds command text at the end of the bu
 void Cbuf_ExecuteText(int exec_when, const char *text); ///< this can be used in place of either Cbuf_AddText or Cbuf_InsertText
 
 void Cbuf_Execute(void);    ///< Pulls off \n terminated lines of text from the command buffer and sends
-							///< them through Cmd_ExecuteString.  Stops when the buffer is empty.
-							///< Normally called once per frame, but may be explicitly invoked.
-							///< Do not call inside a command function, or current args will be destroyed.
+                            ///< them through Cmd_ExecuteString.  Stops when the buffer is empty.
+                            ///< Normally called once per frame, but may be explicitly invoked.
+                            ///< Do not call inside a command function, or current args will be destroyed.
 
 //===========================================================================
 
@@ -929,7 +931,7 @@ qboolean FS_InvalidGameDir(const char *gamedir);
 void FS_Rename(const char *from, const char *to);
 
 void FS_FilenameCompletion(const char *dir, int numext, const char **ext,
-						   qboolean stripExt, void (*callback)(const char *s), qboolean allowNonPureFilesOnDisk);
+                           qboolean stripExt, void (*callback)(const char *s), qboolean allowNonPureFilesOnDisk);
 
 #if !defined(DEDICATED)
 extern int cl_connectedToPureServer;

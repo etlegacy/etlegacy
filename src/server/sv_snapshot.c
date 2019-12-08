@@ -64,7 +64,7 @@ A normal server packet will look like:
  */
 static void SV_EmitPacketEntities(clientSnapshot_t *from, clientSnapshot_t *to, msg_t *msg)
 {
-	entityState_t *oldent  = NULL, *newent = NULL;
+	entityState_t *oldent = NULL, *newent = NULL;
 	int           oldindex = 0, newindex = 0;
 	int           oldnum, newnum;
 	int           from_num_entities;
@@ -862,6 +862,11 @@ void SV_SendClientIdle(client_t *client)
 	MSG_Init(&msg, msg_buf, sizeof(msg_buf));
 	msg.allowoverflow = qtrue;
 
+	if (!Com_IsCompatible(&client->agent, 0x1))
+	{
+		MSG_EnableCharStrip(&msg);
+	}
+
 	// NOTE, MRE: all server->client messages now acknowledge
 	// let the client know which reliable clientCommands we have received
 	MSG_WriteLong(&msg, client->lastClientCommand);
@@ -928,6 +933,11 @@ void SV_SendClientSnapshot(client_t *client)
 	MSG_Init(&msg, msg_buf, sizeof(msg_buf));
 	msg.allowoverflow = qtrue;
 
+	if (!Com_IsCompatible(&client->agent, 0x1))
+	{
+		MSG_EnableCharStrip(&msg);
+	}
+
 	// NOTE, MRE: all server->client messages now acknowledge
 	// let the client know which reliable clientCommands we have received
 	MSG_WriteLong(&msg, client->lastClientCommand);
@@ -990,7 +1000,7 @@ void SV_SendClientMessages(void)
 			continue;
 		}
 
-		if (svs.time - c->lastSnapshotTime < c->snapshotMsec * com_timescale->value )
+		if (svs.time - c->lastSnapshotTime < c->snapshotMsec * com_timescale->value)
 		{
 			continue;       // It's not time yet
 		}

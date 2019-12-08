@@ -529,7 +529,7 @@ void MSG_WriteString(msg_t *msg, const char *s)
 		// get rid of 0x80+ and '%' chars, because old clients don't like them
 		for (i = 0 ; i < l ; i++)
 		{
-			if ((!IS_LEGACY_MOD && (byte)string[i] > 127) || string[i] == '%')
+			if ((msg->strip && (byte)string[i] > 127) || string[i] == '%')
 			{
 				string[i] = '.';
 			}
@@ -567,7 +567,7 @@ void MSG_WriteBigString(msg_t *msg, const char *s)
 		// get rid of 0x80+ and '%' chars, because old clients don't like them
 		for (i = 0 ; i < l ; i++)
 		{
-			if ((!IS_LEGACY_MOD && (byte)string[i] > 127) || string[i] == '%')
+			if ((msg->strip && (byte)string[i] > 127) || string[i] == '%')
 			{
 				string[i] = '.';
 			}
@@ -599,13 +599,13 @@ void MSG_WriteAngle16(msg_t *msg, float f)
 
 // a string hasher which gives the same hash value even if the
 // string is later modified via the legacy MSG read/write code
-int MSG_HashKey(const char *string, int maxlen)
+int MSG_HashKey(const char *string, int maxlen, int strip)
 {
 	int hash = 0, i;
 
 	for (i = 0; i < maxlen && string[i] != '\0'; i++)
 	{
-		if ((!IS_LEGACY_MOD && (string[i] & 0x80)) || string[i] == '%')
+		if ((strip && (string[i] & 0x80)) || string[i] == '%')
 		{
 			hash += '.' * (119 + i);
 		}
@@ -737,7 +737,7 @@ char *MSG_ReadString(msg_t *msg)
 
 		// translate all '%' fmt spec to avoid crash bugs
 		// don't allow higher ascii values
-		if ((!IS_LEGACY_MOD && (c & 0x80)) || c == '%')
+		if ((msg->strip && (c & 0x80)) || c == '%')
 		{
 			c = '.';
 		}
@@ -749,7 +749,8 @@ char *MSG_ReadString(msg_t *msg)
 		}
 
 		string[l++] = c;
-	} while (1);
+	}
+	while (1);
 
 	string[l] = '\0';
 
@@ -777,7 +778,7 @@ char *MSG_ReadBigString(msg_t *msg)
 
 		// translate all '%' fmt spec to avoid crash bugs
 		// don't allow higher ascii values
-		if ((!IS_LEGACY_MOD && (c & 0x80)) || c == '%')
+		if ((msg->strip && (c & 0x80)) || c == '%')
 		{
 			c = '.';
 		}
@@ -788,7 +789,8 @@ char *MSG_ReadBigString(msg_t *msg)
 			break;
 		}
 		string[l++] = c;
-	} while (1);
+	}
+	while (1);
 
 	string[l] = '\0';
 
@@ -816,7 +818,7 @@ char *MSG_ReadStringLine(msg_t *msg)
 
 		// translate all '%' fmt spec to avoid crash bugs
 		// don't allow higher ascii values
-		if ((!IS_LEGACY_MOD && (c & 0x80)) || c == '%')
+		if ((msg->strip && (c & 0x80)) || c == '%')
 		{
 			c = '.';
 		}
@@ -827,7 +829,8 @@ char *MSG_ReadStringLine(msg_t *msg)
 			break;
 		}
 		string[l++] = c;
-	} while (1);
+	}
+	while (1);
 
 	string[l] = '\0';
 

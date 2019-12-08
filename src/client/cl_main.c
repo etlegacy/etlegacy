@@ -1369,6 +1369,7 @@ void CL_DownloadsComplete(void)
  */
 void CL_CheckForResend(void)
 {
+	int  i;
 	char buffer[64];
 	// don't send anything if playing back a demo
 	if (clc.demoplaying)
@@ -1417,6 +1418,23 @@ void CL_CheckForResend(void)
 			port = (int)(Cvar_VariableValue("net_qport"));
 
 			Q_strncpyz(info, Cvar_InfoString(CVAR_USERINFO), sizeof(info));
+
+			// make sure nothing restricted can slip through
+			if (!Com_IsCompatible(&clc.agent, 0x1))
+			{
+				for (i = 0; i < MAX_INFO_STRING; ++i)
+				{
+					if (!info[i])
+					{
+						break;
+					}
+					if ((byte)info[i] > 127 || info[i] == '%')
+					{
+						info[i] = '.';
+					}
+				}
+			}
+
 			Info_SetValueForKey(info, "protocol", va("%i", PROTOCOL_VERSION));
 			Info_SetValueForKey(info, "qport", va("%i", port));
 			Info_SetValueForKey(info, "challenge", va("%i", clc.challenge));

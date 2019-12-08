@@ -84,10 +84,6 @@ static void CL_Netchan_Encode(msg_t *msg)
 			index = 0;
 		}
 
-		if ((!IS_LEGACY_MOD && (byte)string[index] > 127) || string[index] == '%')
-		{
-			string[index] = '.';
-		}
 		key ^= string[index] << (i & 1);
 
 		index++;
@@ -133,10 +129,11 @@ static void CL_Netchan_Decode(msg_t *msg)
 			index = 0;
 		}
 
-		if ((!IS_LEGACY_MOD && (byte)string[index] > 127) || string[index] == '%')
+		if ((!Com_IsCompatible(&clc.agent, 0x1) && (byte)string[index] > 127) || string[index] == '%')
 		{
 			string[index] = '.';
 		}
+
 		key ^= string[index] << (i & 1);
 
 		index++;

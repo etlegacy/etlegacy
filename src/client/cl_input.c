@@ -1267,6 +1267,11 @@ void CL_WritePacket(void)
 
 	MSG_Init(&buf, data, sizeof(data));
 
+	if (!Com_IsCompatible(&clc.agent, 0x1))
+	{
+		MSG_EnableCharStrip(&buf);
+	}
+
 	MSG_Bitstream(&buf);
 	// write the current serverId so the server
 	// can tell if this is from the current gameState
@@ -1305,8 +1310,8 @@ void CL_WritePacket(void)
 	count        = cl.cmdNumber - cl.outPackets[oldPacketNum].p_cmdNumber;
 	if (count > MAX_PACKET_USERCMDS)
 	{
+		Com_DPrintf("WARNING: exceeded max usercmds per packet limit %i/%i\n", count, MAX_PACKET_USERCMDS);
 		count = MAX_PACKET_USERCMDS;
-		Com_Printf("MAX_PACKET_USERCMDS\n");
 	}
 	if (count >= 1)
 	{
@@ -1334,7 +1339,7 @@ void CL_WritePacket(void)
 		// also use the message acknowledge
 		key ^= clc.serverMessageSequence;
 		// also use the last acknowledged server command in the key
-		key ^= MSG_HashKey(clc.serverCommands[clc.serverCommandSequence & (MAX_RELIABLE_COMMANDS - 1)], 32);
+		key ^= MSG_HashKey(clc.serverCommands[clc.serverCommandSequence & (MAX_RELIABLE_COMMANDS - 1)], 32, 0);
 
 		// write all the commands, including the predicted command
 		for (i = 0 ; i < count ; i++)

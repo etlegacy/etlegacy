@@ -135,8 +135,8 @@ cvar_t *com_updatefiles;
 int (*Q_VMftol)(void); // Unused in ET:L. Used in ioquake’s VM code
 #elif id386
 //long (QDECL *Q_ftol)(float f);
-int (QDECL *Q_VMftol)(void);  // Unused.
-void (QDECL *Q_SnapVector)(vec3_t vec);
+int(QDECL * Q_VMftol)(void);  // Unused.
+void(QDECL * Q_SnapVector)(vec3_t vec);
 #endif
 
 cvar_t *com_recommendedSet;
@@ -989,7 +989,7 @@ static void Z_ClearZone(memzone_t *zone, int size)
 	// set the entire zone to one free block
 
 	zone->blocklist.next = zone->blocklist.prev = block =
-	                                                  ( memblock_t * )((byte *)zone + sizeof(memzone_t));
+		( memblock_t * )((byte *)zone + sizeof(memzone_t));
 	zone->blocklist.tag  = 1;   // in use block
 	zone->blocklist.id   = 0;
 	zone->blocklist.size = 0;
@@ -3930,7 +3930,7 @@ void Com_GetHunkInfo(int *hunkused, int *hunkexpected)
  */
 static int Field_LastWhiteSpace(field_t *field)
 {
-	int      i            = 0, lastSpace = 0;
+	int      i = 0, lastSpace = 0;
 	qboolean insideQuotes = qfalse;
 
 	for (; i < strlen(field->buffer); i++)
@@ -4102,13 +4102,14 @@ void Com_RandomBytes(byte *string, int len)
 
 void Com_ParseUA(userAgent_t *ua, const char *string)
 {
-	// store any full et version string
-	if (string)
+	if (!string)
 	{
-		strncpy(ua->string, string, sizeof(ua->string));
+		return;
 	}
+	// store any full et version string
+	strncpy(ua->string, string, sizeof(ua->string));
 	// check for compatibility (only accept of own kind)
-	if (string && !Q_strncmp(string, PRODUCT_LABEL, strlen(PRODUCT_LABEL)))
+	if (!Q_strncmp(string, PRODUCT_LABEL, strlen(PRODUCT_LABEL)))
 	{
 		ua->compatible = 0x1; // basic level compatibility
 		// match version string, or leave it as zero

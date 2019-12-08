@@ -83,10 +83,7 @@ static void SV_Netchan_Encode(client_t *client, msg_t *msg, char *commandString)
 		{
 			index = 0;
 		}
-		if ((!IS_LEGACY_MOD && (byte)string[index] > 127) || string[index] == '%')
-		{
-			string[index] = '.';
-		}
+
 		key ^= string[index] << (i & 1);
 
 		index++;
@@ -110,9 +107,9 @@ static void SV_Netchan_Decode(client_t *client, msg_t *msg)
 	int      serverId, messageAcknowledge, reliableAcknowledge;
 	int      i;
 	int      index = 0;
-	int      srdc  = msg->readcount;
-	int      sbit  = msg->bit;
-	qboolean soob  = msg->oob;
+	int      srdc = msg->readcount;
+	int      sbit = msg->bit;
+	qboolean soob = msg->oob;
 	byte     key, *string;
 
 	msg->oob = qfalse;
@@ -136,10 +133,11 @@ static void SV_Netchan_Decode(client_t *client, msg_t *msg)
 			index = 0;
 		}
 
-		if ((!IS_LEGACY_MOD && (byte)string[index] > 127) || string[index] == '%')
+		if ((!Com_IsCompatible(&client->agent, 0x1) && (byte)string[index] > 127) || string[index] == '%')
 		{
 			string[index] = '.';
 		}
+
 		key ^= string[index] << (i & 1);
 
 		index++;
