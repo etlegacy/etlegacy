@@ -1414,6 +1414,7 @@ void CL_CheckForResend(void)
 		Info_SetValueForKey(info, "protocol", va("%i", PROTOCOL_VERSION));
 		Info_SetValueForKey(info, "qport", va("%i", port));
 		Info_SetValueForKey(info, "challenge", va("%i", clc.challenge));
+		Info_SetValueForKey(info, "etVersion", Q3_VERSION); // send product info
 
 		Com_sprintf(data, sizeof(data), "connect \"%s\"", info);
 		NET_OutOfBandData(NS_CLIENT, clc.serverAddress, (const char *) data, strlen(data));

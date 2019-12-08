@@ -539,8 +539,9 @@ static cvarTable_t cvarTable[] =
 
 	{ &cg_instanttapout,          "cg_instanttapout",          "0",           CVAR_ARCHIVE,                 0 },
 	{ &cg_debugSkills,            "cg_debugSkills",            "0",           0,                            0 },
-#if 0 // not used
 	{ NULL,                       "cg_etVersion",              "",            CVAR_USERINFO | CVAR_ROM,     0 },
+#if 0
+	{ NULL,                       "cg_legacyVersion",          "",            CVAR_USERINFO | CVAR_ROM,     0 },
 #endif
 	{ &cg_drawFireteamOverlay,    "cg_drawFireteamOverlay",    "1",           CVAR_ARCHIVE,                 0 },
 	{ &cg_drawSmallPopupIcons,    "cg_drawSmallPopupIcons",    "1",           CVAR_ARCHIVE,                 0 },
@@ -2703,8 +2704,18 @@ void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qbo
 	{
 		CG_Error("Client/Server game mismatch: '%s/%s'\n", GAME_VERSION, s);
 	}
-#if 0 // not used
-	trap_Cvar_Set("cg_etVersion", GAME_VERSION_DATED);   // So server can check
+
+	/* mark old and new clients */
+	if (cg.legacyClient <= 0) {
+		trap_Cvar_Set("cg_etVersion", "Enemy Territory, ET 2.60b");
+	} 
+	else 
+	{
+		trap_Cvar_Set("cg_etVersion", Q3_VERSION);
+	}
+
+#if 0
+	trap_Cvar_Set("cg_legacyVersion", ETLEGACY_VERSION);
 #endif
 
 	s                  = CG_ConfigString(CS_LEVEL_START_TIME);

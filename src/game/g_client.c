@@ -2670,14 +2670,14 @@ gentity_t *SelectSpawnPointFromList(char *list, vec3_t spawn_origin, vec3_t spaw
  */
 static char *G_CheckVersion(gentity_t *ent)
 {
-	// Prevent nasty version mismatches (or people sticking in Q3Aimbot cgames)
+	// Check cgame version against qagame's one
 
 	char userinfo[MAX_INFO_STRING];
 	char *s;
 
 	trap_GetUserinfo(ent->s.number, userinfo, sizeof(userinfo));
-	s = Info_ValueForKey(userinfo, "cg_etVersion");
-	if (!s || strcmp(s, GAME_VERSION_DATED))
+	s = Info_ValueForKey(userinfo, "cg_legacyVersion");
+	if (!s || strcmp(s, LEGACY_VERSION))
 	{
 		return(s);
 	}
@@ -2729,7 +2729,7 @@ void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean
         char *clientMismatchedVersion = G_CheckVersion( ent );	// returns NULL if version is identical
 
         if( clientMismatchedVersion ) {
-            trap_DropClient( ent - g_entities, va( "Client/Server game mismatch: '%s/%s'", clientMismatchedVersion, GAME_VERSION_DATED ) );
+            trap_DropClient( ent - g_entities, va( "Client/Server game mismatch: '%s/%s'", clientMismatchedVersion, LEGACY_VERSION ) );
         } else {
             client->sess.versionOK = qtrue;
         }
