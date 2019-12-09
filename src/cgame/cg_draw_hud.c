@@ -630,8 +630,8 @@ void CG_ReadHudScripts(void)
 // HUD DRAWING FUNCTIONS BELLOW
 
 vec4_t HUD_Background = { 0.16f, 0.2f, 0.17f, 0.8f };
-vec4_t HUD_Border     = { 0.5f, 0.5f, 0.5f, 0.5f };
-vec4_t HUD_Text       = { 0.6f, 0.6f, 0.6f, 1.0f };
+vec4_t HUD_Border = { 0.5f, 0.5f, 0.5f, 0.5f };
+vec4_t HUD_Text = { 0.6f, 0.6f, 0.6f, 1.0f };
 
 /**
  * @brief CG_DrawPicShadowed
@@ -827,14 +827,7 @@ static void CG_DrawPlayerHealthBar(rectDef_t *rect)
 	CG_ColorForHealth(colour);
 	colour[3] = 0.5f;
 
-	if (cgs.clientinfo[cg.snap->ps.clientNum].cls == PC_MEDIC)
-	{
-		frac = cg.snap->ps.stats[STAT_HEALTH] / ((float) cg.snap->ps.stats[STAT_MAX_HEALTH] * 1.12f);
-	}
-	else
-	{
-		frac = cg.snap->ps.stats[STAT_HEALTH] / (float) cg.snap->ps.stats[STAT_MAX_HEALTH];
-	}
+	frac = cg.snap->ps.stats[STAT_HEALTH] / (float) cg.snap->ps.stats[STAT_MAX_HEALTH];
 
 	CG_FilledBar(rect->x, rect->y + (rect->h * 0.1f), rect->w, rect->h * 0.84f, colour, NULL, bgcolor, frac, flags);
 
@@ -2568,7 +2561,7 @@ void CG_AddLagometerSnapshotInfo(snapshot_t *snap)
 
 	cgs.sampledStat.avg = cgs.sampledStat.samplesTotalElpased > 0
 	                      ? (int) (cgs.sampledStat.count / (cgs.sampledStat.samplesTotalElpased / 1000.0f) + 0.5f)
-	                      : 0;
+						  : 0;
 }
 
 /**

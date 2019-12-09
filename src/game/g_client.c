@@ -1334,6 +1334,11 @@ void AddMedicTeamBonus(gclient_t *client)
 		client->pers.maxHealth = 125;
 	}
 
+	if (client->sess.playerType == PC_MEDIC)
+	{
+		client->pers.maxHealth *= 1.12;
+	}
+
 	if (client->sess.skill[SK_BATTLE_SENSE] >= 3)
 	{
 		client->pers.maxHealth += 15;
