@@ -2158,11 +2158,15 @@ void Cmd_Team_f(gentity_t *ent, unsigned int dwCommand, qboolean fValue)
 		return;
 	}
 
-	playerType = -1;
 	if (*ptype)
 	{
 		playerType = atoi(ptype);
 	}
+	else
+	{
+		playerType = ent->client->sess.playerType;
+	}
+
 	if (playerType < PC_SOLDIER || playerType > PC_COVERTOPS)
 	{
 		playerType = PC_SOLDIER;
@@ -2181,6 +2185,32 @@ void Cmd_Team_f(gentity_t *ent, unsigned int dwCommand, qboolean fValue)
 	else
 	{
 		classChange = qfalse;
+
+		// "swap" team, try to keep the previous selected weapons or equivalent if no one were selected
+		if (ent->client->sess.sessionTeam != TEAM_SPECTATOR)
+		{
+			// primary weapon
+			if (!w)
+			{
+				w = ent->client->sess.playerWeapon;
+
+				if (GetWeaponTableData(ent->client->sess.playerWeapon)->weapEquiv)
+				{
+					w = GetWeaponTableData(ent->client->sess.playerWeapon)->weapEquiv;
+				}
+			}
+
+			// secondary weapon
+			if (!w2)
+			{
+				w2 = ent->client->sess.playerWeapon2;
+
+				if (GetWeaponTableData(ent->client->sess.playerWeapon2)->weapEquiv)
+				{
+					w2 = GetWeaponTableData(ent->client->sess.playerWeapon2)->weapEquiv;
+				}
+			}
+		}
 	}
 
 	ent->client->sess.latchPlayerType = playerType;

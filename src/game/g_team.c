@@ -1586,6 +1586,18 @@ void G_swapTeams(void)
 			continue;
 		}
 
+		// swap primary weapon
+		if (GetWeaponTableData(cl->sess.playerWeapon)->weapEquiv)
+		{
+			cl->sess.playerWeapon = cl->sess.latchPlayerWeapon = GetWeaponTableData(cl->sess.playerWeapon)->weapEquiv;
+		}
+
+		// swap secondary weapon
+		if (GetWeaponTableData(cl->sess.playerWeapon2)->weapEquiv)
+		{
+			cl->sess.playerWeapon = cl->sess.latchPlayerWeapon2 = GetWeaponTableData(cl->sess.playerWeapon2)->weapEquiv;
+		}
+
 		G_UpdateCharacter(cl);
 		ClientUserinfoChanged(level.sortedClients[i]);
 		ClientBegin(level.sortedClients[i]);

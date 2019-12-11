@@ -161,10 +161,34 @@ void G_ClientSwap(gclient_t *client)
 	if (client->sess.sessionTeam == TEAM_AXIS)
 	{
 		client->sess.sessionTeam = TEAM_ALLIES;
+                
+                // swap primary weapon
+                if (GetWeaponTableData(client->sess.playerWeapon)->weapEquiv)
+                {
+                    client->sess.playerWeapon = client->sess.latchPlayerWeapon = GetWeaponTableData(client->sess.playerWeapon)->weapEquiv;
+                }
+                
+                // swap secondary weapon
+                if (GetWeaponTableData(client->sess.playerWeapon2)->weapEquiv)
+                {
+                    client->sess.playerWeapon = client->sess.latchPlayerWeapon2 = GetWeaponTableData(client->sess.playerWeapon2)->weapEquiv;
+                }
 	}
 	else if (client->sess.sessionTeam == TEAM_ALLIES)
 	{
 		client->sess.sessionTeam = TEAM_AXIS;
+                
+                // swap primary weapon
+                if (GetWeaponTableData(client->sess.playerWeapon)->weapEquiv)
+                {
+                    client->sess.playerWeapon = client->sess.latchPlayerWeapon = GetWeaponTableData(client->sess.playerWeapon)->weapEquiv;
+                }
+                
+                // swap secondary weapon
+                if (GetWeaponTableData(client->sess.playerWeapon2)->weapEquiv)
+                {
+                    client->sess.playerWeapon = client->sess.latchPlayerWeapon2 = GetWeaponTableData(client->sess.playerWeapon2)->weapEquiv;
+                }
 	}
 
 	// Swap spec invites as well
