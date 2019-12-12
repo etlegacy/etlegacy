@@ -2264,7 +2264,15 @@ static void CG_DrawTimersAlt(rectDef_t *respawn, rectDef_t *spawntimer, rectDef_
 		s = va("%s", rt);
 	}
 
-	w = CG_Text_Width_Ext(s, 0.19f, 0, &cgs.media.limboFont1) - ((cgs.gamestate != GS_PLAYING || (msec < 0 && cgs.timelimit > 0.0f)) ? CG_Text_Width_Ext("00:00", 0.19f, 0, &cgs.media.limboFont1) : 0);
+	if (cgs.gamestate != GS_PLAYING)
+	{
+		w = CG_Text_Width_Ext(s, 0.19f, 0, &cgs.media.limboFont1) - (CG_Text_Width_Ext(CG_TranslateString("WARMUP"), 0.19f, 0, &cgs.media.limboFont1));
+	}
+	else
+	{
+		w = CG_Text_Width_Ext(s, 0.19f, 0, &cgs.media.limboFont1) - ((msec < 0 && cgs.timelimit > 0.0f) ? CG_Text_Width_Ext("00:00", 0.19f, 0, &cgs.media.limboFont1) : 0);
+	}
+
 	CG_Text_Paint_Ext(respawn->x - w, respawn->y, 0.19f, 0.19f, color, s, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
 
 	// spawntimer
