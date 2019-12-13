@@ -1865,6 +1865,66 @@ static void CG_RemoveChatEscapeChar(char *text)
 	text[l] = '\0';
 }
 
+static char *CG_FindNeedle(const char *haystack, const char *needle, size_t needle_len)
+{
+	if (needle_len == 0)
+	{
+		return (char *)haystack;
+	}
+	while (haystack[0])
+	{
+		if ((tolower(haystack[0]) == tolower(needle[0])) && (Q_stricmpn(haystack, needle, needle_len) == 0))
+		{
+			return (char *)haystack;
+		}
+		haystack++;
+	}
+	return NULL;
+}
+
+static const char *CG_AddChatMention(char *text, int clientNum)
+{
+	static char message[MAX_SAY_TEXT + 8];
+	message[0] = 0;
+	if (cg_teamChatMention.integer && cg.clientNum != clientNum)
+	{
+		char *mntStart, *mntEnd, *msgPart = text;
+		if (clientNum < 0)
+		{
+			msgPart += strlen("console");
+		}
+		else
+		{
+			msgPart += strlen(cgs.clientinfo[clientNum].name);
+		}
+		if ((mntStart = strchr(msgPart, '@')))
+		{
+			// check that the previous character was whitespace
+			if (*(mntStart - 1) != ' ')
+			{
+				return text;
+			}
+			mntStart++; // skip @ char
+			mntEnd = mntStart;
+			while (*mntEnd && *mntEnd != ' ')
+			{
+				mntEnd++;
+			}
+			if (mntEnd - mntStart < 3)
+			{
+				return text;
+			}
+			if (CG_FindNeedle(cgs.clientinfo[cg.clientNum].name, mntStart, mntEnd - mntStart))
+			{
+				Q_strcat(message, sizeof(message), "^3> ^7");
+				Q_strcat(message, sizeof(message), text);
+				return message;
+			}
+		}
+	}
+	return text;
+}
+
 /**
  * @brief Localize string sent from server
  * @details
@@ -2925,9 +2985,10 @@ static void CG_ServerCommand(void)
 
 		Q_strncpyz(text, s, MAX_SAY_TEXT);
 		CG_RemoveChatEscapeChar(text);
-		CG_AddToTeamChat(text, clientNum);
-		CG_Printf("%s\n", text);
-		CG_WriteToLog("%s\n", text);
+		s = CG_AddChatMention(text, clientNum);
+		CG_AddToTeamChat(s, clientNum);
+		CG_Printf("%s\n", s);
+		CG_WriteToLog("%s\n", s);
 		return;
 	}
 	case VCHAT_HASH:                              // "vchat"
@@ -2973,9 +3034,10 @@ static void CG_ServerCommand(void)
 		}
 #endif
 		CG_RemoveChatEscapeChar(text);
-		CG_AddToTeamChat(text, clientNum); // disguise ?
-		CG_Printf("%s\n", text);
-		CG_WriteToLog("%s\n", text);
+		s = CG_AddChatMention(text, clientNum);
+		CG_AddToTeamChat(s, clientNum); // disguise ?
+		CG_Printf("%s\n", s);
+		CG_WriteToLog("%s\n", s);
 		return;
 	}
 	case VTCHAT_HASH:                                // "vtchat"
