@@ -114,7 +114,7 @@ extern vec3_t playerlegsProneMaxs;
 #define SAY_TEAMNL  3
 
 #define MAX_FIRETEAMS           12
-#define MAX_FIRETEAM_MEMBERS    8
+#define MAX_FIRETEAM_MEMBERS    6
 
 #define MAX_SVCVARS 128
 
