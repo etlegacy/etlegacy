@@ -1660,6 +1660,12 @@ qboolean CG_Debriefing_Draw(void)
 		trap_Key_SetCatcher(KEYCATCH_CGAME);
 	}
 
+	// build award list asap to avoid empty name if awarded players disconnect early
+	if (!cgs.dbAwardsParsed)
+	{
+		CG_Debriefing_ParseAwards();
+	}
+
 	switch (cgs.dbMode)
 	{
 	case 0: // player list
@@ -3469,6 +3475,7 @@ void CG_Debriefing_Awards_Draw(panel_button_t *button)
 	int   i, j;
 	float y = button->rect.y + 1;
 
+	// fallback - should be done already
 	if (!cgs.dbAwardsParsed)
 	{
 		CG_Debriefing_ParseAwards();
