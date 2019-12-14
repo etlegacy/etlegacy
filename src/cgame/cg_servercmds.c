@@ -2230,6 +2230,7 @@ void CG_parseWeaponStatsGS_cmd(void)
 	if (cgs.skillRating)
 	{
 		ci->rating = (float)atof(CG_Argv(iArg++));
+		//ci->deltaRating = (float)atof(CG_Argv(iArg++));
 		Q_strncpyz(gs->strRank, va("%-20s %-16d %4.2f", GetRankTableData(ci->team, ci->rank)->names, xp, (double)ci->rating), sizeof(gs->strRank));
 	}
 	else

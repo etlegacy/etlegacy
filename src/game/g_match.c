@@ -402,9 +402,6 @@ char *G_createStats(gentity_t *refEnt)
 	unsigned int i, dwWeaponMask = 0, dwSkillPointMask = 0;
 	char         strWeapInfo[MAX_STRING_CHARS]  = { 0 };
 	char         strSkillInfo[MAX_STRING_CHARS] = { 0 };
-#ifdef FEATURE_RATING
-	char strSkillRatingInfo[MAX_STRING_CHARS] = { 0 };
-#endif
 
 	if (!refEnt)
 	{
@@ -470,17 +467,11 @@ char *G_createStats(gentity_t *refEnt)
 	}
 
 #ifdef FEATURE_RATING
-	// Add skill rating info
-	Q_strcat(strSkillRatingInfo, sizeof(strSkillRatingInfo), va(" %.2f %.2f",
-	                                                            refEnt->client->sess.mu - 3 * refEnt->client->sess.sigma,
-	                                                            refEnt->client->sess.mu - 3 * refEnt->client->sess.sigma - (refEnt->client->sess.oldmu - 3 * refEnt->client->sess.oldsigma)));
-#endif
-
-#ifdef FEATURE_RATING
-	return(va("%d %d %d%s %d%s %s", (int)(refEnt - g_entities),
+	return(va("%d %d %d%s %d%s %.2f %.2f",
 #else
-	return (va("%d %d %d%s %d%s", (int)(refEnt - g_entities),
+	return (va("%d %d %d%s %d%s",
 #endif
+	          (int)(refEnt - g_entities),
 	          refEnt->client->sess.rounds,
 	          dwWeaponMask,
 	          strWeapInfo,
@@ -488,7 +479,8 @@ char *G_createStats(gentity_t *refEnt)
 	          strSkillInfo
 #ifdef FEATURE_RATING
 	          ,
-	          strSkillRatingInfo
+	          refEnt->client->sess.mu - 3 * refEnt->client->sess.sigma,
+	          refEnt->client->sess.mu - 3 * refEnt->client->sess.sigma - (refEnt->client->sess.oldmu - 3 * refEnt->client->sess.oldsigma)
 #endif
 	          ));
 }

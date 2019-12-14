@@ -1106,7 +1106,7 @@ typedef struct config_s
 	qboolean publicConfig;
 } config_t;
 
-#ifdef FEATURE_RATING
+#ifdef FEATURE_DBMS
 #include "sqlite3.h"
 
 typedef struct database_s
