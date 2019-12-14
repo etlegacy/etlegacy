@@ -987,8 +987,15 @@ void CG_GameStatsDraw(void)
 #ifdef FEATURE_RATING
 		if (cgs.skillRating)
 		{
-			x += 96;
+			x += 52;
 			CG_Text_Paint_Ext(x + 4, y, hScale2, hScaleY2, hdrColor, "Skill Rating", 0.0f, 0, hStyle2, hFont2);
+		}
+#endif
+#ifdef FEATURE_PRESTIGE
+		if (cgs.prestige)
+		{
+			x += 85;
+			CG_Text_Paint_Ext(x + 4, y, hScale2, hScaleY2, hdrColor, "Prestige", 0.0f, 0, hStyle2, hFont2);
 		}
 #endif
 

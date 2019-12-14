@@ -485,8 +485,12 @@ char *G_createStats(gentity_t *ent)
 		strSkillInfo[0]  = '\0';
 	}
 
-#ifdef FEATURE_RATING
+#if defined(FEATURE_RATING) && defined (FEATURE_PRESTIGE)
+	return(va("%d %d %d%s %d%s %.2f %.2f %d",
+#elif defined(FEATURE_RATING)
 	return(va("%d %d %d%s %d%s %.2f %.2f",
+#elif defined (FEATURE_PRESTIGE)
+	return(va("%d %d %d%s %d%s %d",
 #else
 	return (va("%d %d %d%s %d%s",
 #endif
@@ -500,6 +504,10 @@ char *G_createStats(gentity_t *ent)
 	          ,
 	          ent->client->sess.mu - 3 * ent->client->sess.sigma,
 	          ent->client->sess.mu - 3 * ent->client->sess.sigma - (ent->client->sess.oldmu - 3 * ent->client->sess.oldsigma)
+#endif
+#ifdef FEATURE_PRESTIGE
+	          ,
+	          ent->client->sess.prestige
 #endif
 	          ));
 }
@@ -533,6 +541,9 @@ void G_deleteStats(int nClient)
 	cl->sess.sigma    = SIGMA;
 	cl->sess.oldmu    = cl->sess.mu;
 	cl->sess.oldsigma = cl->sess.sigma;
+#endif
+#ifdef FEATURE_PRESTIGE
+	cl->sess.prestige = 0;
 #endif
 	cl->sess.startskillpoints[SK_BATTLE_SENSE]                             = 0;
 	cl->sess.startskillpoints[SK_EXPLOSIVES_AND_CONSTRUCTION]              = 0;

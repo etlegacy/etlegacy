@@ -74,12 +74,14 @@ qboolean isDBActive;
 
 const char *sql_Version_Statements[SQL_DBMS_SCHEMA_VERSION] =
 {
-		//version 1
+		// version 1
 		"CREATE TABLE IF NOT EXISTS etl_version (Id INT PRIMARY KEY NOT NULL, name TEXT, sql TEXT, created TEXT);"  // both
 		"CREATE TABLE IF NOT EXISTS rating_users (guid TEXT PRIMARY KEY NOT NULL, mu REAL, sigma REAL, created TEXT, updated TEXT, UNIQUE (guid));"     // server table
 		"CREATE TABLE IF NOT EXISTS rating_match (guid TEXT PRIMARY KEY NOT NULL, mu REAL, sigma REAL, time_axis INT, time_allies INT, UNIQUE (guid));" // server table
 		"CREATE TABLE IF NOT EXISTS rating_maps (mapname TEXT PRIMARY KEY NOT NULL, win_axis INT, win_allies INT, UNIQUE (mapname));",                  // server table
 		// version 2
+		"CREATE TABLE IF NOT EXISTS prestige_users (guid TEXT PRIMARY KEY NOT NULL, prestige INT, created TEXT, updated TEXT, UNIQUE (guid));"                // server table
+
 		"CREATE TABLE IF NOT EXISTS client_servers (profile TEXT NOT NULL, source INT NOT NULL, address TEXT NOT NULL, name TEXT NOT NULL, mod TEXT NOT NULL, updated DATETIME, created DATETIME);"
 		"CREATE INDEX IF NOT EXISTS client_servers_profile_idx ON client_servers(profile);"
 		"CREATE INDEX IF NOT EXISTS client_servers_address_idx ON client_servers(address);" // client table
@@ -92,7 +94,6 @@ const char *sql_Version_Statements[SQL_DBMS_SCHEMA_VERSION] =
 };
 
 /*
-  	  	// version 3?!
 		// ban/mute table (ensure we can also do IP range ban entries)
 		// type = mute/ban
 		// af = AddressFamily

@@ -1527,6 +1527,9 @@ void CG_Debriefing_Startup(void)
 #ifdef FEATURE_RATING
 	cgs.dbSkillRatingReceived = qfalse;
 #endif
+#ifdef FEATURE_PRESTIGE
+	cgs.dbPrestigeReceived = qfalse;
+#endif
 
 	cgs.dbLastRequestTime = 0;
 	cgs.dbSelectedClient  = cg.clientNum;
@@ -1605,6 +1608,14 @@ void CG_Debriefing_InfoRequests(void)
 	if (!cgs.dbSkillRatingReceived && cgs.skillRating)
 	{
 		trap_SendClientCommand("imsr");
+		return;
+	}
+#endif
+
+#ifdef FEATURE_PRESTIGE
+	if (!cgs.dbPrestigeReceived && cgs.prestige)
+	{
+		trap_SendClientCommand("impr");
 		return;
 	}
 #endif
@@ -2083,6 +2094,22 @@ void CG_Debriefing_ParseSkillRating(void)
 		cgs.clientinfo[i].deltaRating = atof(CG_Argv(i * 2 + 2));
 	}
 	cgs.dbSkillRatingReceived = qtrue;
+}
+#endif
+
+#ifdef FEATURE_PRESTIGE
+/**
+ * @brief CG_Debriefing_ParsePrestige
+ */
+void CG_Debriefing_ParsePrestige(void)
+{
+	int i;
+
+	for (i = 0; i < cgs.maxclients; i++)
+	{
+		cgs.clientinfo[i].prestige = atoi(CG_Argv(i + 1));
+	}
+	cgs.dbPrestigeReceived = qtrue;
 }
 #endif
 

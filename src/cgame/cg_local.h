@@ -576,6 +576,9 @@ typedef struct
 	// skill rating
 	float rating;
 #endif
+#ifdef FEATURE_PRESTIGE
+	int prestige;
+#endif
 } score_t;
 
 /**
@@ -648,6 +651,10 @@ typedef struct clientInfo_s
 	// skill rating
 	float rating;
 	float deltaRating;
+#endif
+
+#ifdef FEATURE_PRESTIGE
+	int prestige;
 #endif
 
 #ifdef FEATURE_MULTIVIEW
@@ -1374,15 +1381,21 @@ typedef struct
 	int redFlagCounter;
 	int blueFlagCounter;
 
+#if defined(FEATURE_RATING) || defined(FEATURE_PRESTIGE)
+	// scoreboard
+	int scoresDownTime;
+	int scoreToggleTime;
+#endif
+
 #ifdef FEATURE_RATING
 	// skill rating
 	float rating[MAX_CLIENTS];
 	float axisProb;
 	float alliesProb;
+#endif
 
-	// scoreboard
-	int scoresDownTime;
-	int scoreToggleTime;
+#ifdef FEATURE_PRESTIGE
+	int prestige[MAX_CLIENTS];
 #endif
 } cg_t;
 
@@ -2305,6 +2318,9 @@ typedef struct cgs_s
 #ifdef FEATURE_RATING
 	qboolean dbSkillRatingReceived;
 #endif
+#ifdef FEATURE_PRESTIGE
+	qboolean dbPrestigeReceived;
+#endif
 	qboolean dbWeaponStatsReceived;
 	qboolean dbAwardsParsed;
 	char *dbAwardNames[NUM_ENDGAME_AWARDS];
@@ -2370,6 +2386,9 @@ typedef struct cgs_s
 #ifdef FEATURE_RATING
 	int skillRating;
 	float mapProb;
+#endif
+#ifdef FEATURE_PRESTIGE
+	int prestige;
 #endif
 #ifdef FEATURE_MULTIVIEW
 	int mvAllowed;
@@ -2607,14 +2626,12 @@ extern vmCvar_t cg_fontScaleCN;
 extern vmCvar_t cg_optimizePrediction;
 extern vmCvar_t cg_debugPlayerHitboxes;
 
-#ifdef FEATURE_RATING
-// ratings scoreboard
+// scoreboard
 extern vmCvar_t cg_scoreboard;
 
-// scoreboard
 #define SCOREBOARD_XP    0
 #define SCOREBOARD_SR    1
-#endif
+#define SCOREBOARD_PR    2
 
 extern vmCvar_t cg_quickchat;
 
@@ -3643,6 +3660,9 @@ void CG_Debriefing_ParsePlayerKillsDeaths(void);
 void CG_Debriefing_ParsePlayerTime(void);
 void CG_Debriefing_ParseAwards(void);
 void CG_Debriefing_ParseSkillRating(void);
+#ifdef FEATURE_PRESTIGE
+void CG_Debriefing_ParsePrestige(void);
+#endif
 
 void CG_TeamDebriefingTeamSkillXP_Draw(panel_button_t *button);
 

@@ -61,15 +61,31 @@ void G_WriteClientSessionData(gclient_t *client, qboolean restart)
 
 #ifdef FEATURE_MULTIVIEW
 #ifdef FEATURE_RATING
+#ifdef FEATURE_PRESTIGE
+	s = va("%i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %f %f %f %f %i %i %i %i %i %i %i %i %i",
+#else
 	s = va("%i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %f %f %f %f %i %i %i %i %i %i %i %i",
+#endif
+#else
+#ifdef FEATURE_PRESTIGE
+	s = va("%i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i",
 #else
 	s = va("%i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i",
 #endif
+#endif
 #else
 #ifdef FEATURE_RATING
+#ifdef FEATURE_PRESTIGE
+	s = va("%i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %f %f %f %f %i %i %i %i %i %i %i",
+#else
 	s = va("%i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %f %f %f %f %i %i %i %i %i %i",
+#endif
+#else
+#ifdef FEATURE_PRESTIGE
+	s = va("%i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i",
 #else
 	s = va("%i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i",
+#endif
 #endif
 #endif
 	       client->sess.sessionTeam,
@@ -102,6 +118,9 @@ void G_WriteClientSessionData(gclient_t *client, qboolean restart)
 	       client->sess.sigma,
 	       client->sess.oldmu,
 	       client->sess.oldsigma,
+#endif
+#ifdef FEATURE_PRESTIGE
+	       client->sess.prestige,
 #endif
 #ifdef FEATURE_MULTIVIEW
 	       (mvc & 0xFFFF),
@@ -312,15 +331,31 @@ void G_ReadSessionData(gclient_t *client)
 
 #ifdef FEATURE_MULTIVIEW
 #ifdef FEATURE_RATING
+#ifdef FEATURE_PRESTIGE
+	sscanf(s, "%i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %f %f %f %f %i %i %i %i %i %i %i %i %i",
+#else
 	sscanf(s, "%i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %f %f %f %f %i %i %i %i %i %i %i %i",
+#endif
+#else
+#ifdef FEATURE_PRESTIGE
+	sscanf(s, "%i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i",
 #else
 	sscanf(s, "%i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i",
 #endif
+#endif
 #else
 #ifdef FEATURE_RATING
+#ifdef FEATURE_PRESTIGE
+	sscanf(s, "%i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %f %f %f %f %i %i %i %i %i %i %i",
+#else
 	sscanf(s, "%i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %f %f %f %f %i %i %i %i %i %i",
+#endif
+#else
+#ifdef FEATURE_PRESTIGE
+	sscanf(s, "%i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i",
 #else
 	sscanf(s, "%i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i",
+#endif
 #endif
 #endif
 	       (int *)&client->sess.sessionTeam,
@@ -353,6 +388,9 @@ void G_ReadSessionData(gclient_t *client)
 	       &client->sess.sigma,
 	       &client->sess.oldmu,
 	       &client->sess.oldsigma,
+#endif
+#ifdef FEATURE_PRESTIGE
+	       &client->sess.prestige,
 #endif
 #ifdef FEATURE_MULTIVIEW
 	       &mvc_l,

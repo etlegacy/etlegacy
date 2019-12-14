@@ -295,6 +295,10 @@ if(BUILD_MOD)
 		add_definitions(-DFEATURE_RATING)
 	endif(FEATURE_RATING)
 
+	if(FEATURE_PRESTIGE)
+		add_definitions(-DFEATURE_PRESTIGE)
+	endif(FEATURE_PRESTIGE)
+
 	if(FEATURE_LUA)
 		if(NOT BUNDLED_LUA)
 			find_package(Lua 5.3 REQUIRED)

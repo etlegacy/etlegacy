@@ -1049,6 +1049,9 @@ static const gentity_field_t gclient_fields[] =
 	_et_gclient_addfield(sess.oldmu,                        FIELD_FLOAT,               FIELD_FLAG_READONLY),
 	_et_gclient_addfield(sess.oldsigma,                     FIELD_FLOAT,               FIELD_FLAG_READONLY),
 #endif
+#ifdef FEATURE_PRESTIGE
+	_et_gclient_addfield(sess.prestige,                     FIELD_INT,                 FIELD_FLAG_READONLY),
+#endif
 	_et_gclient_addfield(sess.uci,                          FIELD_INT,                 0),
 
 	_et_gclient_addfield(sess.aWeaponStats,                 FIELD_WEAPONSTAT,          FIELD_FLAG_READONLY),

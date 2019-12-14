@@ -588,12 +588,17 @@ static void WM_DrawClientScore(int x, int y, score_t *score, float *color, float
 		CG_Text_Paint_Ext(tempx + 8, y, 0.24f, 0.28f, colorWhite, va("^7%5.2f", (double)score->rating), 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
 	}
 	else
+#endif
+#ifdef FEATURE_PRESTIGE
+	if (cgs.prestige && cg_scoreboard.integer == SCOREBOARD_PR)
+	{
+		CG_Text_Paint_Ext(tempx, y, 0.24f, 0.28f, colorWhite, va("^7%6i", score->prestige), 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
+	}
+	else
+#endif
 	{
 		CG_Text_Paint_Ext(tempx, y, 0.24f, 0.28f, colorWhite, va("^7%6i", score->score), 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
 	}
-#else
-	CG_Text_Paint_Ext(tempx, y, 0.24, 0.28, colorWhite, va("^7%6i", score->score), 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
-#endif
 
 	if (cg_gameType.integer == GT_WOLF_LMS)
 	{
@@ -820,12 +825,17 @@ static void WM_DrawClientScore_Small(int x, int y, score_t *score, float *color,
 		CG_Text_Paint_Ext(tempx + 6, y, 0.20f, 0.25f, colorWhite, va("^7%5.2f", (double)score->rating), 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
 	}
 	else
+#endif
+#ifdef FEATURE_PRESTIGE
+	if (cgs.prestige && cg_scoreboard.integer == SCOREBOARD_PR)
+	{
+		CG_Text_Paint_Ext(tempx, y, 0.20f, 0.25f, colorWhite, va("^7%6i", score->prestige), 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
+	}
+	else
+#endif
 	{
 		CG_Text_Paint_Ext(tempx, y, 0.20f, 0.25f, colorWhite, va("^7%6i", score->score), 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
 	}
-#else
-	CG_Text_Paint_Ext(tempx, y, 0.20, 0.25, colorWhite, va("^7%6i", score->score), 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
-#endif
 
 	if (cg_gameType.integer == GT_WOLF_LMS)
 	{
@@ -1005,10 +1015,7 @@ static int WM_TeamScoreboard(int x, int y, team_t team, float fade, int maxrows,
 	}
 	else
 	{
-#ifdef FEATURE_RATING
-		char *s;
-#endif
-		char *s2;
+		char *s, *s2;
 
 		if (team == TEAM_AXIS)
 		{
@@ -1036,6 +1043,17 @@ static int WM_TeamScoreboard(int x, int y, team_t team, float fade, int maxrows,
 				}
 			}
 			else
+#endif
+#ifdef FEATURE_PRESTIGE
+			if (cgs.prestige && cg_scoreboard.integer == SCOREBOARD_PR)
+			{
+				s = va("%s (%d %s)", CG_TranslateString("AXIS"), cg.teamPlayers[team], cg.teamPlayers[team] < 2 ? CG_TranslateString("PLAYER") : CG_TranslateString("PLAYERS"));
+
+				s2 = va("%s", CG_TranslateString("PRESTIGE"));
+				CG_Text_Paint_Ext(x + width - 5 - CG_Text_Width_Ext(s2, 0.19f, 0, FONT_HEADER), y + 13, 0.19f, 0.19f, SB_text, s2, 0, 0, 0, FONT_HEADER);
+			}
+			else
+#endif
 			{
 				s = va("%s [%d] (%d %s)", CG_TranslateString("AXIS"), cg.teamScores[0], cg.teamPlayers[team], cg.teamPlayers[team] < 2 ? CG_TranslateString("PLAYER") : CG_TranslateString("PLAYERS"));
 
@@ -1044,12 +1062,6 @@ static int WM_TeamScoreboard(int x, int y, team_t team, float fade, int maxrows,
 			}
 
 			CG_Text_Paint_Ext(x, y + 13, 0.25f, 0.25f, SB_text, s, 0, 0, 0, FONT_HEADER);
-#else
-			CG_Text_Paint_Ext(x, y + 13, 0.25f, 0.25f, SB_text, va("%s [%d] (%d %s)", CG_TranslateString("AXIS"), cg.teamScores[0], cg.teamPlayers[team], cg.teamPlayers[team] < 2 ? CG_TranslateString("PLAYER") : CG_TranslateString("PLAYERS")), 0, 0, 0, FONT_HEADER);
-
-			s2 = va("%s: %.0f±%.0fms", CG_TranslateString("AVG PING"), (double)cg.teamPingMean[team], (double)cg.teamPingSd[team]);
-			CG_Text_Paint_Ext(x + width - 5 - CG_Text_Width_Ext(s2, 0.19f, 0, FONT_HEADER), y + 13, 0.19f, 0.19f, SB_text, s2, 0, 0, 0, FONT_HEADER);
-#endif
 		}
 		else if (team == TEAM_ALLIES)
 		{
@@ -1077,6 +1089,17 @@ static int WM_TeamScoreboard(int x, int y, team_t team, float fade, int maxrows,
 				}
 			}
 			else
+#endif
+#ifdef FEATURE_PRESTIGE
+			if (cgs.prestige && cg_scoreboard.integer == SCOREBOARD_PR)
+			{
+				s = va("%s (%d %s)", CG_TranslateString("ALLIES"),cg.teamPlayers[team], cg.teamPlayers[team] < 2 ? CG_TranslateString("PLAYER") : CG_TranslateString("PLAYERS"));
+
+				s2 = va("%s", CG_TranslateString("PRESTIGE"));
+				CG_Text_Paint_Ext(x + width - 5 - CG_Text_Width_Ext(s2, 0.19f, 0, FONT_HEADER), y + 13, 0.19f, 0.19f, SB_text, s2, 0, 0, 0, FONT_HEADER);
+			}
+			else
+#endif
 			{
 				s = va("%s [%d] (%d %s)", CG_TranslateString("ALLIES"), cg.teamScores[1], cg.teamPlayers[team], cg.teamPlayers[team] < 2 ? CG_TranslateString("PLAYER") : CG_TranslateString("PLAYERS"));
 
@@ -1085,12 +1108,6 @@ static int WM_TeamScoreboard(int x, int y, team_t team, float fade, int maxrows,
 			}
 
 			CG_Text_Paint_Ext(x, y + 13, 0.25f, 0.25f, SB_text, s, 0, 0, 0, FONT_HEADER);
-#else
-			CG_Text_Paint_Ext(x, y + 13, 0.25f, 0.25f, SB_text, va("%s [%d] (%d %s)", CG_TranslateString("ALLIES"), cg.teamScores[1], cg.teamPlayers[team], cg.teamPlayers[team] < 2 ? CG_TranslateString("PLAYER") : CG_TranslateString("PLAYERS")), 0, 0, 0, FONT_HEADER);
-
-			s2 = va("%s: %.0f±%.0fms", CG_TranslateString("AVG PING"), (double)cg.teamPingMean[team], (double)cg.teamPingSd[team]);
-			CG_Text_Paint_Ext(x + width - 5 - CG_Text_Width_Ext(s2, 0.19f, 0, FONT_HEADER), y + 13, 0.19f, 0.19f, SB_text, s2, 0, 0, 0, FONT_HEADER);
-#endif
 		}
 	}
 
@@ -1129,12 +1146,17 @@ static int WM_TeamScoreboard(int x, int y, team_t team, float fade, int maxrows,
 			CG_Text_Paint_Ext(tempx + 30, y + 13, 0.24f, 0.28f, colorWhite, "SR", 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
 		}
 		else
+#endif
+#ifdef FEATURE_PRESTIGE
+		if (cgs.prestige && cg_scoreboard.integer == SCOREBOARD_PR)
+		{
+			CG_Text_Paint_Ext(tempx + 30, y + 13, 0.24f, 0.28f, colorWhite, "PR", 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
+		}
+		else
+#endif
 		{
 			CG_Text_Paint_Ext(tempx + 30, y + 13, 0.24f, 0.28f, colorWhite, CG_TranslateString("XP"), 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
 		}
-#else
-		CG_Text_Paint_Ext(tempx + 30, y + 13, 0.24, 0.28, colorWhite, CG_TranslateString("XP"), 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
-#endif
 		tempx += INFO_XP_WIDTH;
 	}
 
@@ -1298,7 +1320,7 @@ qboolean CG_DrawScoreboard(void)
 	int   x = 20, y = 6, x_right = SCREEN_WIDTH - x - (INFO_TOTAL_WIDTH - 5);
 	float fade;
 	int   width = SCREEN_WIDTH - 2 * x + 5;
-#ifdef FEATURE_RATING
+#if defined(FEATURE_RATING) || defined(FEATURE_PRESTIGE)
 	int        w;
 	const char *s, *s2, *s3;
 #endif
@@ -1361,7 +1383,7 @@ qboolean CG_DrawScoreboard(void)
 		}
 	}
 
-#ifdef FEATURE_RATING
+#if defined(FEATURE_RATING) || defined(FEATURE_PRESTIGE)
 	if (cg_descriptiveText.integer && cgs.gamestate != GS_INTERMISSION)
 	{
 		s2 = Binding_FromName("+scores");
@@ -1370,9 +1392,23 @@ qboolean CG_DrawScoreboard(void)
 			s2 = "TAB";
 		}
 
-		//Skill Rating
-		// XP view
-		s3 = (cgs.skillRating && cg_scoreboard.integer == SCOREBOARD_SR) ? CG_TranslateString("Skill Rating view") : CG_TranslateString("XP view");
+#ifdef FEATURE_RATING
+		if (cgs.skillRating && cg_scoreboard.integer == SCOREBOARD_SR) // Skill Rating
+		{
+			s3 = CG_TranslateString("Skill Rating view");
+		}
+		else
+#endif
+#ifdef FEATURE_PRESTIGE
+		if (cgs.prestige && cg_scoreboard.integer == SCOREBOARD_PR)
+		{
+			s3 = CG_TranslateString("Prestige view");
+		}
+		else
+#endif
+		{
+			s3 = CG_TranslateString("XP view");
+		}
 		s  = va(CG_TranslateString("%s - Press double-%s quickly to switch scoreboard"), s3, s2);
 
 		w = CG_Text_Width_Ext(s, fontScale, 0, &cgs.media.limboFont2);

@@ -273,6 +273,42 @@ static void G_SendSkillRating(gentity_t *ent)
 }
 #endif
 
+#ifdef FEATURE_PRESTIGE
+/**
+ * @brief G_SendPrestige
+ * @param[in] ent
+ */
+static void G_SendPrestige(gentity_t *ent)
+{
+	char      buffer[1024];
+	int       i, clientNum;
+	gclient_t *cl;
+
+	if (!ent || !ent->client)
+	{
+		return;
+	}
+
+	trap_Argv(1, buffer, sizeof(buffer));
+
+	clientNum = atoi(buffer);
+	if (clientNum < 0 || clientNum > g_maxclients.integer)
+	{
+		return;
+	}
+
+	Q_strncpyz(buffer, "pr ", sizeof(buffer));
+
+	for (i = 0; i < level.numConnectedClients; i++)
+	{
+		cl = &level.clients[level.sortedClients[i]];
+		Q_strcat(buffer, sizeof(buffer), va("%i ", cl->sess.prestige));
+	}
+
+	trap_SendServerCommand(ent - g_entities, buffer);
+}
+#endif
+
 /**
  * @brief Add score with clientNum at index i of level.sortedClients[] to the string buf.
  *
@@ -396,6 +432,13 @@ void G_SendScore(gentity_t *ent)
 	if (g_skillRating.integer)
 	{
 		G_SendSkillRating(ent);
+	}
+#endif
+
+#ifdef FEATURE_PRESTIGE
+	if (g_prestige.integer)
+	{
+		G_SendPrestige(ent);
 	}
 #endif
 
@@ -4556,6 +4599,45 @@ void Cmd_IntermissionSkillRating_f(gentity_t *ent)
 }
 #endif
 
+#ifdef FEATURE_PRESTIGE
+/**
+ * @brief Cmd_IntermissionPrestige_f
+ * @param[in] ent
+ */
+void Cmd_IntermissionPrestige_f(gentity_t *ent)
+{
+	char      buffer[1024];
+	int       i;
+	gclient_t *cl;
+
+	if (!ent || !ent->client)
+	{
+		return;
+	}
+
+	if (!g_prestige.integer)
+	{
+		return;
+	}
+
+	Q_strncpyz(buffer, "impr ", sizeof(buffer));
+	for (i = 0; i < g_maxclients.integer; i++)
+	{
+		if (g_entities[i].inuse)
+		{
+			cl = &level.clients[i];
+			Q_strcat(buffer, sizeof(buffer), va("%i ", cl->sess.prestige));
+		}
+		else
+		{
+			Q_strcat(buffer, sizeof(buffer), "0 ");
+		}
+	}
+
+	trap_SendServerCommand(ent - g_entities, buffer);
+}
+#endif
+
 /**
  * @brief G_CalcClientAccuracies
  */
@@ -4985,6 +5067,13 @@ void ClientCommand(int clientNum)
 	else if (!Q_stricmp(cmd, "imsr"))
 	{
 		Cmd_IntermissionSkillRating_f(ent);
+		return;
+	}
+#endif
+#ifdef FEATURE_PRESTIGE
+	else if (!Q_stricmp(cmd, "impr"))
+	{
+		Cmd_IntermissionPrestige_f(ent);
 		return;
 	}
 #endif

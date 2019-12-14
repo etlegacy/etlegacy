@@ -352,6 +352,10 @@ vmCvar_t g_extendedNames;
 vmCvar_t g_skillRating;
 #endif
 
+#ifdef FEATURE_PRESTIGE
+vmCvar_t g_prestige;
+#endif
+
 #ifdef FEATURE_MULTIVIEW
 vmCvar_t g_multiview; // 0 - off, other - enabled
 #endif
@@ -637,6 +641,9 @@ cvarTable_t gameCvarTable[] =
 	{ &g_extendedNames,                     "g_extendedNames",                     "1",                          0,                                               0, qfalse, qfalse },
 #ifdef FEATURE_RATING
 	{ &g_skillRating,                       "g_skillRating",                       "2",                          CVAR_LATCH | CVAR_ARCHIVE,                       0, qfalse, qfalse },
+#endif
+#ifdef FEATURE_PRESTIGE
+	{ &g_prestige,                          "g_prestige",                          "1",                          CVAR_LATCH | CVAR_ARCHIVE,                       0, qfalse, qfalse },
 #endif
 #ifdef FEATURE_MULTIVIEW
 	{ &g_multiview,                         "g_multiview",                         "0",                          CVAR_LATCH | CVAR_ARCHIVE,                       0, qfalse, qfalse },
@@ -1991,6 +1998,10 @@ void G_UpdateCvars(void)
 					}
 #endif
 
+#ifdef FEATURE_PRESTIGE
+					Info_SetValueForKey(cs, "P", va("%i", g_prestige.integer));
+#endif
+
 #ifdef FEATURE_MULTIVIEW
 					Info_SetValueForKey(cs, "MV", va("%i", g_multiview.integer));
 #endif
@@ -2609,6 +2620,14 @@ void G_InitGame(int levelTime, int randomSeed, int restart, int legacyServer, in
 		{
 			G_Printf("^3WARNING: g_skillRating changed to 0\n");
 			trap_Cvar_Set("g_skillRating", "0");
+		}
+#endif
+
+#ifdef FEATURE_PRESTIGE
+		if (g_prestige.integer)
+		{
+			G_Printf("^^3WARNING: g_prestige changed to 0\n");
+			trap_Cvar_Set("g_prestige", "0");
 		}
 #endif
 	}

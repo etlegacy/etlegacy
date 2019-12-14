@@ -78,6 +78,13 @@ int G_DB_Init()
 	}
 #endif
 
+#ifdef FEATURE_PRESTIGE
+	if (G_PrestigeDBCheck(level.database.path, db_mode))
+	{
+		return 1;
+	}
+#endif
+
 	// open db
 	if (db_mode == 1)
 	{

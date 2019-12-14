@@ -58,6 +58,25 @@ static void CG_ParseSkillRating(int version)
 }
 #endif
 
+#ifdef FEATURE_PRESTIGE
+/**
+ * @brief CG_ParsePrestige
+ */
+static void CG_ParsePrestige()
+{
+	int        i = 0;
+	const char *s;
+
+	s = CG_Argv(i);
+	while (*s)
+	{
+		cg.prestige[i] = (float)atof(CG_Argv(i + 1));
+		i++;
+		s = CG_Argv(i);
+	}
+}
+#endif
+
 /**
  * @brief CG_ParseScore
  * @param[in] team
@@ -112,6 +131,13 @@ static void CG_ParseScore(team_t team)
 		if (cgs.skillRating)
 		{
 			cg.scores[i].rating = cg.rating[i];
+		}
+#endif
+
+#ifdef FEATURE_PRESTIGE
+		if (cgs.prestige)
+		{
+			cg.scores[i].prestige = cg.prestige[i];
 		}
 #endif
 
@@ -313,6 +339,9 @@ void CG_ParseLegacyinfo(void)
 	{
 		cgs.mapProb = (float)atof(Info_ValueForKey(info, "M"));
 	}
+#endif
+#ifdef FEATURE_PRESTIGE
+	cgs.prestige = atoi(Info_ValueForKey(info, "P"));
 #endif
 
 #ifdef FEATURE_MULTIVIEW
@@ -2231,17 +2260,41 @@ void CG_parseWeaponStatsGS_cmd(void)
 #ifdef FEATURE_RATING
 	if (cgs.skillRating)
 	{
-		ci->rating = (float)atof(CG_Argv(iArg++));
-		//ci->deltaRating = (float)atof(CG_Argv(iArg++));
-		Q_strncpyz(gs->strRank, va("%-20s %-16d %4.2f", GetRankTableData(ci->team, ci->rank)->names, xp, (double)ci->rating), sizeof(gs->strRank));
+		ci->rating      = (float) atof(CG_Argv(iArg++));
+		ci->deltaRating = (float) atof(CG_Argv(iArg++));
+	}
+#endif
+#ifdef FEATURE_PRESTIGE
+	if (cgs.prestige)
+	{
+		ci->prestige = atoi(CG_Argv(iArg++));
+	}
+#endif
+
+#if defined(FEATURE_RATING) && defined(FEATURE_PRESTIGE)
+	if (cgs.skillRating && cgs.prestige)
+	{
+		Q_strncpyz(gs->strRank, va("%-21s %-8d %-14.2f %-3i", GetRankTableData(ci->team, ci->rank)->names, xp, (double)ci->rating, ci->prestige), sizeof(gs->strRank));
 	}
 	else
-	{
-		Q_strncpyz(gs->strRank, va("%-20s %-12d", GetRankTableData(ci->team, ci->rank)->names, xp), sizeof(gs->strRank));
-	}
-#else
-	Q_strncpyz(gs->strRank, va("%-20s %-12d", GetRankTableData(ci->team, ci->rank)->names, xp), sizeof(gs->strRank));
 #endif
+#ifdef FEATURE_RATING
+	if (cgs.skillRating)
+	{
+		Q_strncpyz(gs->strRank, va("%-21s %-8d %-14.2f", GetRankTableData(ci->team, ci->rank)->names, xp, (double)ci->rating), sizeof(gs->strRank));
+	}
+	else
+#endif
+#ifdef FEATURE_PRESTIGE
+	if (cgs.prestige)
+	{
+		Q_strncpyz(gs->strRank, va("%-21s %-8d %-14i", GetRankTableData(ci->team, ci->rank)->names, xp, ci->prestige), sizeof(gs->strRank));
+	}
+	else
+#endif
+	{
+		Q_strncpyz(gs->strRank, va("%-21s %-8d", GetRankTableData(ci->team, ci->rank)->names, xp), sizeof(gs->strRank));
+	}
 
 	if (skillMask != 0)
 	{
@@ -2456,6 +2509,17 @@ void CG_parseWeaponStats_cmd(void(txt_dump) (const char *))
 		deltaRating = atof(CG_Argv(iArg++));
 
 		txt_dump(va("^2Skill Rating: ^7%5.2f   (^5%+5.2f^7)\n", rating, deltaRating));
+	}
+#endif
+
+#ifdef FEATURE_PRESTIGE
+	if (cgs.prestige)
+	{
+		int prestige;
+
+		prestige = atoi(CG_Argv(iArg++));
+
+		txt_dump(va("^2Prestige: ^7%i\n", prestige));
 	}
 #endif
 
@@ -2804,6 +2868,8 @@ void CG_dumpStats(void)
 #define IMSR_HASH           53398
 #define SR_HASH             27365
 #define SRA_HASH            39102
+#define IMPR_HASH           53035
+#define PR_HASH             27008
 #define MU_START_HASH       107698
 #define MU_PLAY_HASH        92607
 #define MU_STOP_HASH        94568
@@ -3295,6 +3361,20 @@ static void CG_ServerCommand(void)
 		if (cgs.skillRating)
 		{
 			CG_ParseSkillRating(2);
+		}
+		return;
+#endif
+#ifdef FEATURE_PRESTIGE
+	case IMPR_HASH:                                        // "impr"
+		if (cgs.prestige)
+		{
+			CG_Debriefing_ParsePrestige();
+		}
+		return;
+	case PR_HASH:                                          // "pr"
+		if (cgs.prestige)
+		{
+			CG_ParsePrestige();
 		}
 		return;
 #endif

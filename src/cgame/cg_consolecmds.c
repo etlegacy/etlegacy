@@ -210,15 +210,48 @@ void CG_objectivesUp_f(void)
  */
 void CG_ScoresDown_f(void)
 {
-#ifdef FEATURE_RATING
-	if (cgs.skillRating && cgs.gametype != GT_WOLF_STOPWATCH && cgs.gametype != GT_WOLF_LMS)
+#if defined(FEATURE_RATING) || defined(FEATURE_PRESTIGE)
+	if (
+#if defined(FEATURE_RATING)
+		cgs.skillRating
+#endif
+#if defined(FEATURE_RATING) && defined(FEATURE_PRESTIGE)
+		||
+#endif
+#if defined(FEATURE_PRESTIGE)
+		cgs.prestige
+#endif
+		)
 	{
 		if (!cg.showScores && cg.scoresDownTime + 250 > cg.time && cg.scoreToggleTime < (cg.time - 500))
 		{
 			int sb = cg_scoreboard.integer + 1;
 
+#ifdef FEATURE_RATING
+			if (cgs.skillRating && sb == SCOREBOARD_SR && (cgs.gametype == GT_WOLF_STOPWATCH || cgs.gametype == GT_WOLF_LMS))
+			{
+				sb += 1;
+			}
+#else
+			if (sb == SCOREBOARD_SR)
+			{
+				sb += 1;
+			}
+#endif
+
+#ifdef FEATURE_PRESTIGE
+			if (cgs.prestige && sb == SCOREBOARD_PR && (cgs.gametype == GT_WOLF_STOPWATCH || cgs.gametype == GT_WOLF_LMS || cgs.gametype == GT_WOLF_CAMPAIGN))
+			{
+				sb += 1;
+			}
+#else
+			if (sb == SCOREBOARD_PR)
+			{
+				sb += 1;
+			}
+#endif
 			// cycle scoreboard type with a quick tap of +scores
-			if (sb < SCOREBOARD_XP || sb > SCOREBOARD_SR)
+			if (sb < SCOREBOARD_XP || sb > SCOREBOARD_PR)
 			{
 				sb = SCOREBOARD_XP;
 			}

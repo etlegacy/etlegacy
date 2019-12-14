@@ -341,7 +341,7 @@ vmCvar_t cg_fontScaleCN; // crosshair name
 vmCvar_t cg_optimizePrediction;
 vmCvar_t cg_debugPlayerHitboxes;
 
-#ifdef FEATURE_RATING
+#if defined(FEATURE_RATING) || defined(FEATURE_PRESTIGE)
 // ratings scoreboard
 vmCvar_t cg_scoreboard;
 #endif
@@ -592,9 +592,7 @@ static cvarTable_t cvarTable[] =
 
 	{ &cg_optimizePrediction,     "cg_optimizePrediction",     "1",           CVAR_ARCHIVE,                 0 }, // unlagged optimized prediction
 
-#ifdef FEATURE_RATING
-	{ &cg_scoreboard,             "cg_scoreboard",             "1",           CVAR_ARCHIVE,                 0 },
-#endif
+	{ &cg_scoreboard,             "cg_scoreboard",             "0",           CVAR_ARCHIVE,                 0 },
 
 	{ &cg_quickchat,              "cg_quickchat",              "0",           CVAR_ARCHIVE,                 0 },
 
