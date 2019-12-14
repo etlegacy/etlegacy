@@ -668,7 +668,7 @@ void Script_ConditionalScript(itemDef_t *item, qboolean *bAbort, char **args)
 				    ui_r_noborder != r_noborder ||
 				    ui_r_intensity != r_intensity ||
 				    ui_r_mapoverbrightbits != r_mapoverbrightbits ||
-				   	ui_r_overBrightBits != r_overBrightBits ||
+				    ui_r_overBrightBits != r_overBrightBits ||
 				    ui_r_texturebits != r_texturebits ||
 				    ui_r_depthbits != r_depthbits ||
 				    ui_r_ext_compressed_textures != r_ext_compressed_textures ||
@@ -676,7 +676,7 @@ void Script_ConditionalScript(itemDef_t *item, qboolean *bAbort, char **args)
 				    ui_r_detailtextures != r_detailtextures ||
 				    ui_r_subdivisions != r_subdivisions ||
 				    ui_r_ext_texture_filter_anisotropic != r_ext_texture_filter_anisotropic ||
-					ui_r_ext_multisample != r_ext_multisample ||
+				    ui_r_ext_multisample != r_ext_multisample ||
 				    ui_cg_shadows != cg_shadows ||
 				    ui_s_khz != s_khz ||
 				    ui_s_initsound != s_initsound ||
@@ -839,7 +839,7 @@ void Script_Orbit(itemDef_t *item, qboolean *bAbort, char **args)
 
 	if (String_Parse(args, &name))
 	{
-		float cx   = 0.0f, cy = 0.0f, x = 0.0f, y = 0.0f;
+		float cx = 0.0f, cy = 0.0f, x = 0.0f, y = 0.0f;
 		int   time = 0;
 
 		if (Float_Parse(args, &x) && Float_Parse(args, &y) && Float_Parse(args, &cx) && Float_Parse(args, &cy) && Int_Parse(args, &time))
@@ -1392,6 +1392,92 @@ void Script_SetTextStyle(itemDef_t *item, qboolean *bAbort, char **args)
 	}
 }
 
+static char *UI_FindNeedle(const char *haystack, const char *needle, size_t needle_len)
+{
+	if (needle_len == 0)
+	{
+		return (char *)haystack;
+	}
+	while (haystack[0])
+	{
+		if ((tolower(haystack[0]) == tolower(needle[0])) && (Q_stricmpn(haystack, needle, needle_len) == 0))
+		{
+			return (char *)haystack;
+		}
+		haystack++;
+	}
+	return NULL;
+}
+
+void Item_CalcTextFieldCursor(itemDef_t *item);
+
+/**
+ * @brief Script_Autocomplete autocompletes text in cvar using feeder
+ * @param item - unused
+ * @param bAbort - unused
+ * @param args - unused
+ */
+void Script_Autocomplete(itemDef_t *item, qboolean *bAbort, char **args)
+{
+	int        i, count, numHandles;
+	const char *text;
+	char       cvarValue[256], nameCopy[64], *inText, *inTextEnd;
+	if (!(item->cvar && item->cvar[0]))
+	{
+		return;
+	}
+	count = DC->feederCount(item->special);
+	DC->getCVarString(item->cvar, cvarValue, sizeof(cvarValue));
+	if (cvarValue[0] == '\0')
+	{
+		return;
+	}
+	inText = strrchr(cvarValue, ' ');
+	if (!inText)
+	{
+		inText = cvarValue;
+	}
+	else if (*(inText + 1) == '\0')
+	{
+		return;
+	}
+	else
+	{
+		inText++;
+	}
+	if (inText[0] == '@')
+	{
+		inText++;
+	}
+	inTextEnd = strchr(inText, '\0');
+	if (!inTextEnd)
+	{
+		return;
+	}
+	if (inTextEnd - inText < 3)
+	{
+		return;
+	}
+	for (i = 0; i < count; i++)
+	{
+		text = DC->feederItemText(item->special, i, 0, NULL, &numHandles);
+		Q_strncpyz(nameCopy, text, sizeof(nameCopy));
+		Q_CleanStr(nameCopy);
+		if (UI_FindNeedle(nameCopy, inText, inTextEnd - inText))
+		{
+			inText[0] = 0;
+			Q_strcat(cvarValue, sizeof(cvarValue), nameCopy);
+			DC->setCVar(item->cvar, cvarValue);
+			// update view
+			if ((item->window.flags & WINDOW_HASFOCUS) && g_editingField)
+			{
+				Item_CalcTextFieldCursor(item);
+			}
+			return;
+		}
+	}
+}
+
 /**
  * @brief Script_Skip
  * @param item - unused
@@ -1449,6 +1535,7 @@ commandDef_t commandList[] =
 	{ "getclipboard",       &Script_GetClipboard       },
 	{ "togglecvarbit",      &Script_ToggleCvarBit      },
 	{ "settextstyle",       &Script_SetTextStyle       },
+	{ "autocomplete",       &Script_Autocomplete       },
 	{ "none",               &Script_Skip               }, // skip execution (used as a placeholder)
 };
 

@@ -2860,7 +2860,7 @@ void Item_Multi_Paint(itemDef_t *item)
 void Item_Combo_Paint(itemDef_t *item)
 {
 	vec4_t     itemColor, backColor;
-	const char *text              = Item_Multi_Setting(item);
+	const char *text = Item_Multi_Setting(item);
 	int        selectedTextOffset = 0, selectorOffset = 0, temp = 0, widestText = 0, selectorSize = 0;
 	//menuDef_t    *parent            = (menuDef_t *)item->parent;
 	rectDef_t    rect, selectorRect;
@@ -2986,8 +2986,8 @@ void Item_Combo_Paint(itemDef_t *item)
  */
 void Item_Slider_Paint(itemDef_t *item)
 {
-	vec4_t    sliderColor;
-	float     x, y;
+	vec4_t sliderColor;
+	float  x, y;
 	///menuDef_t *parent = (menuDef_t *)item->parent;
 
 	if ((item->window.flags & WINDOW_HASFOCUS) && (item->window.flags & WINDOW_FOCUSPULSE))
@@ -3488,6 +3488,7 @@ void Item_ListBox_Paint(itemDef_t *item)
 				y += listPtr->elementHeight;
 			}
 		}
+		// LISTBOX_TEXT
 		else
 		{
 			x = fillRect.x /*+ 1*/;
