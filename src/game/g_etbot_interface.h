@@ -102,7 +102,7 @@ void Bot_Event_Death(int _client, gentity_t *_killer, const char *_meansofdeath)
 void Bot_Event_KilledSomeone(int _client, gentity_t *_victim, const char *_meansofdeath);
 void Bot_Event_Revived(int _client, gentity_t *_whodoneit);
 void Bot_Event_Healed(int _client, gentity_t *_whodoneit);
-void Bot_Event_RecievedAmmo(int _client, gentity_t *_whodoneit);
+void Bot_Event_ReceivedAmmo(int _client, gentity_t *_whodoneit);
 
 void Bot_Event_FireWeapon(int _client, int _weaponId, gentity_t *_projectile);
 void Bot_Event_PreTriggerMine(int _client, gentity_t *_mine);

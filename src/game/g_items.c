@@ -464,7 +464,7 @@ int Pickup_Weapon(gentity_t *ent, gentity_t *other)
 				//omni-bot event
 				if (ent->parent)
 				{
-					Bot_Event_RecievedAmmo(other - g_entities, ent->parent);
+					Bot_Event_ReceivedAmmo(other - g_entities, ent->parent);
 				}
 #endif
 				// extracted code originally here into AddMagicAmmo

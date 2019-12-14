@@ -1520,12 +1520,12 @@ void CG_Debriefing_Startup(void)
 	const char *s, *buf;
 
 	cgs.dbShowing                   = qtrue;
-	cgs.dbAccuraciesRecieved        = qfalse;
-	cgs.dbWeaponStatsRecieved       = qfalse;
-	cgs.dbPlayerKillsDeathsRecieved = qfalse;
-	cgs.dbPlayerTimeRecieved        = qfalse;
+	cgs.dbAccuraciesReceived        = qfalse;
+	cgs.dbWeaponStatsReceived       = qfalse;
+	cgs.dbPlayerKillsDeathsReceived = qfalse;
+	cgs.dbPlayerTimeReceived        = qfalse;
 #ifdef FEATURE_RATING
-	cgs.dbSkillRatingRecieved = qfalse;
+	cgs.dbSkillRatingReceived = qfalse;
 #endif
 
 	cgs.dbLastRequestTime = 0;
@@ -1595,33 +1595,33 @@ void CG_Debriefing_InfoRequests(void)
 		return;
 	}
 
-	if (!cgs.dbPlayerTimeRecieved)
+	if (!cgs.dbPlayerTimeReceived)
 	{
 		trap_SendClientCommand("impt");
 		return;
 	}
 
 #ifdef FEATURE_RATING
-	if (!cgs.dbSkillRatingRecieved && cgs.skillRating)
+	if (!cgs.dbSkillRatingReceived && cgs.skillRating)
 	{
 		trap_SendClientCommand("imsr");
 		return;
 	}
 #endif
 
-	if (!cgs.dbPlayerKillsDeathsRecieved)
+	if (!cgs.dbPlayerKillsDeathsReceived)
 	{
 		trap_SendClientCommand("impkd");
 		return;
 	}
 
-	if (!cgs.dbAccuraciesRecieved)
+	if (!cgs.dbAccuraciesReceived)
 	{
 		trap_SendClientCommand("imwa");
 		return;
 	}
 
-	if (!cgs.dbWeaponStatsRecieved)
+	if (!cgs.dbWeaponStatsReceived)
 	{
 		trap_SendClientCommand(va("imws %i", cgs.dbSelectedClient));
 		return;
@@ -1762,7 +1762,7 @@ void CG_DebriefingPlayerWeaponStats_Draw(panel_button_t *button)
 	float y = button->rect.y + 12;
 	int   pos;
 
-	if (!cgs.dbWeaponStatsRecieved)
+	if (!cgs.dbWeaponStatsReceived)
 	{
 		return;
 	}
@@ -1953,7 +1953,7 @@ void CG_DebriefingPlayerList_Draw(panel_button_t *button)
 
 		CG_Text_Paint_Ext(DB_XP_X + cgs.wideXoffset, y, button->font->scalex, button->font->scaley, button->font->colour, va("%i", ci->score), 0, 0, 0, button->font->font);
 
-		if (cgs.dbPlayerKillsDeathsRecieved)
+		if (cgs.dbPlayerKillsDeathsReceived)
 		{
 			CG_Text_Paint_Ext(DB_KILLS_X + cgs.wideXoffset, y, button->font->scalex, button->font->scaley, button->font->colour, va("%i", ci->kills), 0, 0, 0, button->font->font);
 			CG_Text_Paint_Ext(DB_DEATHS_X + cgs.wideXoffset, y, button->font->scalex, button->font->scaley, button->font->colour, va("%i", ci->deaths), 0, 0, 0, button->font->font);
@@ -2050,7 +2050,7 @@ void CG_Debriefing_ParseWeaponAccuracies(void)
 		cgs.clientinfo[i].totalWeapAcc   = (float)atof(CG_Argv(i * 2 + 1));
 		cgs.clientinfo[i].totalWeapHSpct = (float)atof(CG_Argv(i * 2 + 2));
 	}
-	cgs.dbAccuraciesRecieved = qtrue;
+	cgs.dbAccuraciesReceived = qtrue;
 }
 
 /**
@@ -2066,7 +2066,7 @@ void CG_Debriefing_ParsePlayerTime(void)
 		cgs.clientinfo[i].timeAllies = atoi(CG_Argv(i * 3 + 2));
 		cgs.clientinfo[i].timePlayed = atoi(CG_Argv(i * 3 + 3));
 	}
-	cgs.dbPlayerTimeRecieved = qtrue;
+	cgs.dbPlayerTimeReceived = qtrue;
 }
 
 #ifdef FEATURE_RATING
@@ -2082,7 +2082,7 @@ void CG_Debriefing_ParseSkillRating(void)
 		cgs.clientinfo[i].rating      = atof(CG_Argv(i * 2 + 1));
 		cgs.clientinfo[i].deltaRating = atof(CG_Argv(i * 2 + 2));
 	}
-	cgs.dbSkillRatingRecieved = qtrue;
+	cgs.dbSkillRatingReceived = qtrue;
 }
 #endif
 
@@ -2102,7 +2102,7 @@ void CG_Debriefing_ParsePlayerKillsDeaths(void)
 		cgs.clientinfo[i].teamKills = atoi(CG_Argv((i * 6) + 5));
 		cgs.clientinfo[i].teamGibs  = atoi(CG_Argv((i * 6) + 6));
 	}
-	cgs.dbPlayerKillsDeathsRecieved = qtrue;
+	cgs.dbPlayerKillsDeathsReceived = qtrue;
 }
 
 /**
@@ -2124,7 +2124,7 @@ void CG_Debriefing_ParseWeaponStats(void)
 		cgs.dbWeaponStats[i].numKills = atoi(CG_Argv((i * 3) + 7));
 	}
 
-	cgs.dbWeaponStatsRecieved = qtrue;
+	cgs.dbWeaponStatsReceived = qtrue;
 }
 
 /**
@@ -2231,7 +2231,7 @@ int CG_Debriefing_ScrollGetCount(panel_button_t *button)
 		return cgs.maxclients;
 	case 1:    // weapon stats
 	{
-		if (!cgs.dbWeaponStatsRecieved)
+		if (!cgs.dbWeaponStatsReceived)
 		{
 			return 0;
 		}
@@ -2907,7 +2907,7 @@ void CG_Debrieing_SetSelectedClient(int clientNum)
 	if (clientNum != cgs.dbSelectedClient)
 	{
 		cgs.dbSelectedClient      = clientNum;
-		cgs.dbWeaponStatsRecieved = qfalse;
+		cgs.dbWeaponStatsReceived = qfalse;
 	}
 }
 

@@ -2297,13 +2297,13 @@ typedef struct cgs_s
 
 	int dbMode;
 	qboolean dbShowing;
-	qboolean dbAccuraciesRecieved;
-	qboolean dbPlayerKillsDeathsRecieved;
-	qboolean dbPlayerTimeRecieved;
+	qboolean dbAccuraciesReceived;
+	qboolean dbPlayerKillsDeathsReceived;
+	qboolean dbPlayerTimeReceived;
 #ifdef FEATURE_RATING
-	qboolean dbSkillRatingRecieved;
+	qboolean dbSkillRatingReceived;
 #endif
-	qboolean dbWeaponStatsRecieved;
+	qboolean dbWeaponStatsReceived;
 	qboolean dbAwardsParsed;
 	char *dbAwardNames[NUM_ENDGAME_AWARDS];
 	team_t dbAwardTeams[NUM_ENDGAME_AWARDS];

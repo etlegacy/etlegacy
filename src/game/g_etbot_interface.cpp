@@ -6830,7 +6830,7 @@ void Bot_Event_Healed(int _client, gentity_t *_whodoneit)
 	}
 }
 
-void Bot_Event_RecievedAmmo(int _client, gentity_t *_whodoneit)
+void Bot_Event_ReceivedAmmo(int _client, gentity_t *_whodoneit)
 {
 	if (IsOmnibotLoaded())
 	{
