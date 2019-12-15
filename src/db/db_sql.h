@@ -52,7 +52,7 @@ extern qboolean isDBActive; // general flag for active dbms (db_mode is latched)
 
 qboolean DB_Init(void);
 qboolean DB_Create(void);
-qboolean DB_Close(void);
+qboolean DB_DeInit(void);
 qboolean DB_CheckUpdates(void);
 int DB_LoadOrSaveDb(sqlite3 *, const char *, int);
 // int DB_BackupDB(const char *, void *));
@@ -60,7 +60,7 @@ qboolean DB_SaveMemDB(void); // use in code
 
 int DB_Callback(void *, int, char **, char **);
 qboolean DB_BeginTransaction(void);
-qboolean DB_BndTransaction(void);
+qboolean DB_EndTransaction(void);
 
 void DB_SaveMemDB_f(void); // console command to store memory db at any time to disk
 void DB_ExecSQLCommand_f(void);

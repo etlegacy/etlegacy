@@ -38,13 +38,11 @@
 #include "db_sql.h"
 
 // FIXME: - move cvars to qcommon?
-
 cvar_t *db_mode;
 cvar_t *db_uri;
 
 sqlite3  *db;
 qboolean isDBActive;
-
 
 // Important Note
 // Always create optional feature tables see f.e. rating tables otherwise we can't ensure db integrity for updates
@@ -52,11 +50,8 @@ qboolean isDBActive;
 // version 1
 //
 // table etl_version
-//
 // table rating_users
-//
 // table rating_match
-//
 // table rating_maps
 
 // version 2
@@ -257,7 +252,7 @@ qboolean DB_Init(void)
 }
 
 /**
- * @brief creates tables and populates our scheme.
+ * @brief Creates tables and populates our scheme.
  * @param[in]
  *
  * @return qtrue on success
@@ -546,11 +541,11 @@ qboolean DB_SaveMemDB(void)
 }
 
 /**
- * @brief Closes the database properly.
+ * @brief Deinits and closes the database properly.
  *
  * @return qtrue on success
  */
-qboolean DB_Close(void)
+qboolean DB_DeInit(void)
 {
 	int result = 0;
 

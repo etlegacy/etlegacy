@@ -3551,7 +3551,7 @@ void Com_Shutdown(qboolean badProfile)
 	}
 
 #ifdef FEATURE_DBMS
-	(void) DB_Close();
+	(void) DB_DeInit();
 #endif
 
 	if (logfile)
