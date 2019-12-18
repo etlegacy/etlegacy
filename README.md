@@ -102,7 +102,6 @@ DEPENDENCIES
 * **Freetype** (optional, enabled by default)
 * **SQLite** (optional, enabled by default)
 * **OpenAL** (optional, enabled by default)
-* **Jansson** (optional)
 
 
 Grab info about current lib versions from our wiki page [ET: Legacy Libs_Changelog](https://dev.etlegacy.com/projects/etlegacy/wiki/Libs_Changelog)
