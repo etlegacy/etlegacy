@@ -114,7 +114,7 @@ void CG_MachineGunEjectBrass(centity_t *cent)
 	localEntity_t *le;
 	refEntity_t   *re;
 	vec3_t        velocity, xvelocity;
-	vec3_t        offset     = { 0, 0, 0 };
+	vec3_t        offset = { 0, 0, 0 };
 	float         waterScale = 1.0f;
 	vec3_t        v[3], end;
 	qboolean      isFirstPerson = ((cent->currentState.clientNum == cg.snap->ps.clientNum) && !cg.renderingThirdPerson);
@@ -4026,7 +4026,7 @@ void CG_AltWeapon_f(void)
  */
 void CG_NextWeap(qboolean switchBanks)
 {
-	int      bank     = 0, cycle = 0, newbank = 0, newcycle = 0;
+	int      bank = 0, cycle = 0, newbank = 0, newcycle = 0;
 	int      num      = cg.weaponSelect;
 	int      curweap  = cg.weaponSelect;
 	qboolean nextbank = qfalse;     // need to switch to the next bank of weapons?
@@ -4173,7 +4173,7 @@ void CG_NextWeap(qboolean switchBanks)
  */
 void CG_PrevWeap(qboolean switchBanks)
 {
-	int      bank     = 0, cycle = 0, newbank = 0, newcycle = 0;
+	int      bank = 0, cycle = 0, newbank = 0, newcycle = 0;
 	int      num      = cg.weaponSelect;
 	int      curweap  = cg.weaponSelect;
 	qboolean prevbank = qfalse;     // need to switch to the next bank of weapons?
@@ -6166,6 +6166,13 @@ qboolean CG_CalcMuzzlePoint(int entityNum, vec3_t muzzle)
 
 	cent = &cg_entities[entityNum];
 
+	// entity is invalid this frame, don't use the old position value to calc muzzle position
+	// otherwise the start position will be wrong
+	if (!cent->currentValid)
+	{
+		return qfalse;
+	}
+
 	if (cent->currentState.eFlags & EF_MG42_ACTIVE)
 	{
 		if (cent->currentState.eType == ET_MG42_BARREL)
@@ -6397,6 +6404,11 @@ void CG_Bullet(int weapon, vec3_t end, int sourceEntityNum, qboolean flesh, int 
 
 			if (cg_tracers.integer)
 			{
+#ifdef DEBUG
+				vec3_t color = { 0, 0, 1 };
+
+				CG_RailTrail(color, start, end, 0, 0);
+#endif
 				// if not flesh, then do a moving tracer
 				if (flesh)
 				{
