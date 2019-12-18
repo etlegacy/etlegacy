@@ -727,6 +727,11 @@ static void CG_SelectBuddy_f(void)
  */
 static void CG_QuickSpawnpoint_f(void)
 {
+	if (cg.demoPlayback)
+	{
+		return;
+	}
+
 	if (cgs.clientinfo[cg.clientNum].team == TEAM_SPECTATOR || cgs.clientinfo[cg.clientNum].team == TEAM_FREE)
 	{
 		return;
@@ -1399,6 +1404,11 @@ qboolean CG_IsWeaponDisabled(weapon_t weapon)
  */
 static void CG_ClassMenu_f(void)
 {
+	if (cg.demoPlayback)
+	{
+		return;
+	}
+
 	if (cgs.clientinfo[cg.clientNum].team == TEAM_SPECTATOR)
 	{
 		return;
@@ -1561,6 +1571,11 @@ static void CG_Class_f(void)
  */
 static void CG_TeamMenu_f(void)
 {
+	if (cg.demoPlayback)
+	{
+		return;
+	}
+
 	CG_EventHandling(CGAME_EVENT_NONE, qfalse);
 
 	if (cg_quickMessageAlt.integer)
