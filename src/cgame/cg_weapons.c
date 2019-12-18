@@ -6404,7 +6404,7 @@ void CG_Bullet(int weapon, vec3_t end, int sourceEntityNum, qboolean flesh, int 
 
 			if (cg_tracers.integer)
 			{
-#ifdef DEBUG
+#if 0
 				vec3_t color = { 0, 0, 1 };
 
 				CG_RailTrail(color, start, end, 0, 0);
