@@ -99,14 +99,6 @@ if(BUILD_CLIENT)
 		include_directories(SYSTEM ${JPEG_BUNDLED_INCLUDE_DIR})
 	endif()
 
-	if(FEATURE_JANSSON)
-		list(APPEND CLIENT_LIBRARIES ${BUNDLED_JANSSON_LIBRARY})
-		include_directories(SYSTEM ${BUNDLED_JANSSON_INCLUDE_DIR})
-		set(CLIENT_SRC ${CLIENT_SRC} "src/qcommon/json.c")
-	else(FEATURE_JANSSON)
-		set(CLIENT_SRC ${CLIENT_SRC} "src/qcommon/json_stubs.c")
-	endif(FEATURE_JANSSON)
-
 	if(FEATURE_GETTEXT)
 		add_definitions(-DFEATURE_GETTEXT)
 		FILE(GLOB GETTEXT_SRC

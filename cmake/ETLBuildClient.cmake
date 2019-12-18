@@ -42,10 +42,6 @@ if(BUNDLED_CURL)
 	add_dependencies(etl bundled_curl)
 endif(BUNDLED_CURL)
 
-if(BUNDLED_JANSSON)
-	add_dependencies(etl bundled_jansson)
-endif(BUNDLED_JANSSON)
-
 if(BUNDLED_OGG_VORBIS)
 	add_dependencies(etl bundled_ogg bundled_ogg_vorbis bundled_ogg_vorbis_file)
 endif(BUNDLED_OGG_VORBIS)
