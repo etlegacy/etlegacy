@@ -561,7 +561,7 @@ void Con_DrawClock(void)
 	{
 		re.SetColor(g_color_table[ColorIndex(COLOR_MDGREY)]);
 
-		SCR_DrawSmallChar(cls.glconfig.vidWidth - (i - x + 2) * SMALLCHAR_WIDTH, 0.5f * SMALLCHAR_HEIGHT, clock[x]);
+		SCR_DrawSmallChar(cls.glconfig.vidWidth - (i - x + 3) * SMALLCHAR_WIDTH, 0.5f * SMALLCHAR_HEIGHT, clock[x]);
 	}
 }
 
