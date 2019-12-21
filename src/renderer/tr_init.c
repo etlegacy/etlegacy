@@ -160,6 +160,7 @@ cvar_t *r_bonesDebug;
 
 cvar_t *r_wolfFog;
 
+cvar_t *r_screenshotFormat;
 cvar_t *r_screenshotJpegQuality;
 
 cvar_t *r_maxPolys;
@@ -789,8 +790,7 @@ void R_ScreenShot_f(void)
 	qboolean   silent;
 	char       *ext = "";
 
-	// FIXME: allow multiple format
-	ssFormat_t format = SSF_PNG;
+	ssFormat_t format = r_screenshotFormat->integer;
 
 	switch (format)
 	{
@@ -1147,6 +1147,7 @@ void R_Register(void)
 	r_noportals    = ri.Cvar_Get("r_noportals", "0", CVAR_CHEAT);
 	r_shadows      = ri.Cvar_Get("cg_shadows", "1", 0);
 
+	r_screenshotFormat      = ri.Cvar_Get("r_screenshotFormat", "2", CVAR_ARCHIVE);
 	r_screenshotJpegQuality = ri.Cvar_Get("r_screenshotJpegQuality", "90", CVAR_ARCHIVE);
 
 	r_portalSky = ri.Cvar_Get("cg_skybox", "1", 0);

@@ -206,6 +206,7 @@ extern cvar_t *r_debugSort;
 extern cvar_t *r_printShaders;
 //extern cvar_t *r_saveFontData;
 
+//extern cvar_t *r_screenshotFormat;            ///< FIXME: both!
 //extern cvar_t *r_screenshotJpegQuality;       ///< FIXME: both!
 
 extern cvar_t *r_maxPolys;
