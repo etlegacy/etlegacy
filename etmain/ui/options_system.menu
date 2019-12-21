@@ -86,8 +86,15 @@ menuDef {
 	//MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, LANGUAGE_Y+16, (SUBWINDOW_WIDTH_L)-4, 10, _("Language:"), .2, 8, "ui_cl_lang", LEGACY_LANGUAGES, _("Set your desired language") )
 	COMBO( 6+(SUBWINDOW_WIDTH_L)+6+2, LANGUAGE_Y+16, (SUBWINDOW_WIDTH_L)-4, 10, _("Language:"), .2, 8, "ui_cl_lang", LEGACY_LANGUAGES, none, _("Set your desired language") )
 
+// SCREENSHOTS //
+#define SCREENSHOTS_Y 64
+	SUBWINDOW( 6+(SUBWINDOW_WIDTH_L)+6, SCREENSHOTS_Y, (SUBWINDOW_WIDTH_R), 42, _("SCREENSHOTS") )
+	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, SCREENSHOTS_Y+16, (SUBWINDOW_WIDTH_L)-4, 10, _("Format:"), .2, 8, "r_screenshotFormat", cvarFloatList { "TGA (lossless)" 0 "JPEG (lossy)" 1 "PNG (lossless)" 2 }, _("Set your preferred screenshot format") )
+	CVARFLOATLABEL( 6+(SUBWINDOW_WIDTH_L)+6+2, SCREENSHOTS_Y+28, (SUBWINDOW_WIDTH_L)-4, 10, "r_screenshotJpegQuality", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-6), 8 )
+	SLIDER( 6+(SUBWINDOW_WIDTH_L)+6+2, SCREENSHOTS_Y+28, (SUBWINDOW_WIDTH_L)-4, 10, _("JPEG Quality:"), .2, 8, "r_screenshotJpegQuality" 90 50 100, _("Set the JPEG quality") )
+
 // Audio //
-#define AUDIO_Y 66
+#define AUDIO_Y 110
 	SUBWINDOW( 6+(SUBWINDOW_WIDTH_L)+6, AUDIO_Y, (SUBWINDOW_WIDTH_R), 102, _("AUDIO") )
 	CVARFLOATLABEL( 6+(SUBWINDOW_WIDTH_L)+6+2, AUDIO_Y+16, (SUBWINDOW_WIDTH_L)-4, 10, "s_volume", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-6), 8 )
 	SLIDER( 6+(SUBWINDOW_WIDTH_L)+6+2, AUDIO_Y+16, (SUBWINDOW_WIDTH_L)-4, 10, _("Effects Volume:"), .2, 8, "s_volume" .7 0 1, _("Set the effects volume") )
@@ -100,19 +107,19 @@ menuDef {
 	MULTIACTION( 6+(SUBWINDOW_WIDTH_L)+6+2, AUDIO_Y+88, (SUBWINDOW_WIDTH_L)-4, 10, _("System Sound Control:"), .2, 8, "ui_s_initsound", cvarFloatList { "SDL2" 1 "OpenAL" 2 }, uiScript update "ui_s_initsound", _("Set the system sound control") )
 
 // Networking //
-#define NETWORK_Y 174
+#define NETWORK_Y 216
 	SUBWINDOW( 6+(SUBWINDOW_WIDTH_L)+6, NETWORK_Y, (SUBWINDOW_WIDTH_R), 42, _("NETWORK") )
 	MULTIACTION( 6+(SUBWINDOW_WIDTH_L)+6+2, NETWORK_Y+16, (SUBWINDOW_WIDTH_L)-4, 10, _("Max Packets:"), .2, 8, "ui_cl_maxpackets", cvarFloatList { "Very Low (15)" 15 "Low (30)" 30 "Medium (60)" 60 "High (100)" 100 "Very High (125)" 125 }, uiScript update "ui_cl_maxpackets", _("Cap for upstream data packet transmissions") )
 	MULTIACTION( 6+(SUBWINDOW_WIDTH_L)+6+2, NETWORK_Y+28, (SUBWINDOW_WIDTH_L)-4, 10, _("Packet Duplication:"), .2, 8, "ui_cl_packetdup", cvarFloatList { "No" 0 "x1" 1 "x2" 2 }, uiScript update "ui_cl_packetdup", _("Number of duplicates for every data packet sent upstream, minimized packetloss") )
 
 // Downloads //
-#define DOWNLOADS_Y 224
-	SUBWINDOW( 6+(SUBWINDOW_WIDTH_L)+6, DOWNLOADS_Y, (SUBWINDOW_WIDTH_R), 40, _("DOWNLOADS") )
+#define DOWNLOADS_Y 262
+	SUBWINDOW( 6+(SUBWINDOW_WIDTH_L)+6, DOWNLOADS_Y, (SUBWINDOW_WIDTH_R), 42, _("DOWNLOADS") )
 	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, DOWNLOADS_Y+16, (SUBWINDOW_WIDTH_L)-4, 10, _("Get Missing Files:"), .2, 8, "cl_allowDownload", cvarFloatList { "Disabled" 0 "Enabled" 1 "Enabled & no sound" 2 }, _("Download missing files when available") )	
 	YESNO( 6+(SUBWINDOW_WIDTH_L)+6+2, DOWNLOADS_Y+28, (SUBWINDOW_WIDTH_L)-4, 10, _("Use HTTP/FTP Downloads:"), .2, 8, "cl_wwwDownload", _("Enables or disables http/ftp downloads") )
 
 // IRC //
-#define IRC_Y 272
+#define IRC_Y 308
 	SUBWINDOW( 6+(SUBWINDOW_WIDTH_L)+6, IRC_Y, (SUBWINDOW_WIDTH_R), 102, _("IRC CLIENT") )
 	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, IRC_Y+16, (SUBWINDOW_WIDTH_R)-4, 10, _("Mode:"), .2, 8, "irc_mode", cvarFloatList { "Disabled" 0 "Direct connect" 1 "Override nickname" 2 "Mute channel" 4 "Direct + Override" 3 "Direct + Mute" 5 "Override + Mute" 6 "Direct + Over. + Mute" 7 }, _("Specifies IRC client behavior") )
 	EDITFIELD( 6+(SUBWINDOW_WIDTH_L)+6+2, IRC_Y+28, (SUBWINDOW_WIDTH_L)-4, 10, _("Server:"), .2, 8, "irc_server", 25, 18, _("Name of IRC server") )
