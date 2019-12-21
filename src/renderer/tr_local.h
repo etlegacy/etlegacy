@@ -2119,12 +2119,12 @@ void RE_2DPolyies(polyVert_t *verts, int numverts, qhandle_t hShader);
 void RE_SetGlobalFog(qboolean restore, int duration, float r, float g, float b, float depthForOpaque);
 void RE_BeginFrame(void);
 void RE_EndFrame(int *frontEndMsec, int *backEndMsec);
-void RE_SaveJPG(char *filename, int quality, int image_width, int image_height,
-				unsigned char *image_buffer, int padding);
-size_t RE_SaveJPGToBuffer(byte *buffer, size_t bufSize, int quality,
-						  int image_width, int image_height, byte *image_buffer, int padding);
-void RE_TakeVideoFrame(int width, int height,
-					   byte *captureBuffer, byte *encodeBuffer, qboolean motionJpeg);
+void RE_SaveJPG(char *filename, int quality, int image_width, int image_height, unsigned char *image_buffer, int padding);
+size_t RE_SaveJPGToBuffer(byte *buffer, size_t bufSize, int quality, int image_width, int image_height, byte *image_buffer, int padding);
+#ifdef FEATURE_PNG
+void RE_SavePNG(char *filename, int image_width, int image_height, unsigned char *image_buffer, int padding);
+#endif
+void RE_TakeVideoFrame(int width, int height, byte *captureBuffer, byte *encodeBuffer, qboolean motionJpeg);
 
 // caching system
 // NOTE: to disable this for development, set "r_cache 0" in autoexec.cfg

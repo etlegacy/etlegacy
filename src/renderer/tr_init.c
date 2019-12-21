@@ -505,6 +505,35 @@ void RB_TakeScreenshotJPEG(int x, int y, int width, int height, char *fileName)
 	ri.Hunk_FreeTempMemory(buffer);
 }
 
+#ifdef FEATURE_PNG
+/**
+ * @brief RB_TakeScreenshotPNG
+ * @param[in] x
+ * @param[in] y
+ * @param[in] width
+ * @param[in] height
+ * @param[in] fileName
+ */
+void RB_TakeScreenshotPNG(int x, int y, int width, int height, char *fileName)
+{
+	byte   *buffer;
+	size_t offset = 0, memcount;
+	int    padlen;
+
+	buffer   = RB_ReadPixels(x, y, width, height, &offset, &padlen);
+	memcount = (width * 3 + padlen) * height;
+
+	// gamma correct
+	if (glConfig.deviceSupportsGamma)
+	{
+		R_GammaCorrect(buffer + offset, memcount);
+	}
+
+	RE_SavePNG(fileName, width, height, buffer + offset, padlen);
+	ri.Hunk_FreeTempMemory(buffer);
+}
+#endif
+
 /**
  * @brief RB_TakeScreenshotCmd
  * @param[in] data
@@ -522,9 +551,11 @@ const void *RB_TakeScreenshotCmd(const void *data)
 		case SSF_JPEG:
 			RB_TakeScreenshotJPEG(cmd->x, cmd->y, cmd->width, cmd->height, cmd->fileName);
 			break;
+#ifdef FEATURE_PNG
 		case SSF_PNG:
-			Ren_Print("PNG output is not implemented");
+			RB_TakeScreenshotPNG(cmd->x, cmd->y, cmd->width, cmd->height, cmd->fileName);
 			break;
+#endif
 	}
 
 	return ( const void * ) (cmd + 1);
@@ -759,7 +790,7 @@ void R_ScreenShot_f(void)
 	char       *ext = "";
 
 	// FIXME: allow multiple format
-	ssFormat_t format = SSF_JPEG;
+	ssFormat_t format = SSF_PNG;
 
 	switch (format)
 	{
@@ -769,9 +800,11 @@ void R_ScreenShot_f(void)
 		case SSF_JPEG:
 			ext = "jpg";
 			break;
+#ifdef FEATURE_PNG
 		case SSF_PNG:
 			ext = "png";
 			break;
+#endif
 		default:
 			return;
 	}

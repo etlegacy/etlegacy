@@ -39,6 +39,10 @@
 
 #define REF_API_VERSION     10
 
+#ifdef FEATURE_PNG
+#include "zlib.h"
+#endif
+
 /**
  * @struct refexport_s
  * @brief these are the functions exported by the refresh module
@@ -240,6 +244,11 @@ typedef struct
 	/// avi output stuff
 	qboolean (*CL_VideoRecording)(void);
 	void (*CL_WriteAVIVideoFrame)(const byte *buffer, int size);
+
+#ifdef FEATURE_PNG
+	int (*zlib_compress) (Bytef *dest, uLongf *destLen, const Bytef *source, uLong sourceLen);
+	uLong (*zlib_crc32) (uLong crc, const Bytef *buf, uInt len);
+#endif
 
 	void (*Sys_GLimpSafeInit)(void);
 	void (*Sys_GLimpInit)(void);

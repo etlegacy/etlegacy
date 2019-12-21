@@ -2085,3 +2085,205 @@ void R_LoadPNG(const char *name, byte **pic, int *width, int *height, byte alpha
 	//  We have all data, so close the file.
 	CloseBufferedFile(ThePNG);
 }
+
+#ifdef FEATURE_PNG
+/**
+ * @brief Encode a non-interlaced 8-bit true color image
+ * @param[in] filename
+ * @param[in] width
+ * @param[in] height
+ * @param[in] data
+ * @param[in] padding
+ */
+static qboolean EncodeImageNonInterlaced8True(uint32_t IHDR_Width, uint32_t IHDR_Height, byte *InBuffer,
+                                              uint32_t InBytesPerPixel, uint32_t Padding, uint8_t *ImageData)
+{
+	uint32_t BytesPerScanline, BytesPerPixel, PixelsPerByte;
+	uint32_t w, h;
+	byte     *InPtr;
+	uint8_t  *OutPtr;
+
+	// input verification
+	if (!InBuffer)
+	{
+		return(qfalse);
+	}
+
+	// information for un-filtering
+	// PNG_ColourType_True, PNG_BitDepth_8
+	BytesPerPixel = PNG_NumColourComponents_True;
+	PixelsPerByte = 1;
+
+	// Calculate the size of one scanline
+	BytesPerScanline = (IHDR_Width * BytesPerPixel + (PixelsPerByte - 1)) / PixelsPerByte;
+
+	// Set the working pointers to the beginning of the buffers.
+	InPtr  = InBuffer;
+	OutPtr = ImageData;
+
+	// Create the output image.
+	for (h = IHDR_Height; h > 0; h--)
+	{
+		InPtr = InBuffer + (BytesPerScanline + Padding) * (h - 1);
+
+		// set FilterType
+		OutPtr[0] = PNG_FilterType_None;
+		OutPtr++;
+
+		for (w = 0; w < (BytesPerScanline / BytesPerPixel); w++)
+		{
+			OutPtr[0] = InPtr[0];
+			OutPtr[1] = InPtr[1];
+			OutPtr[2] = InPtr[2];
+
+			InPtr  += InBytesPerPixel;
+			OutPtr += BytesPerPixel;
+		}
+	}
+
+	return(qtrue);
+}
+
+/**
+ * @brief Write data to buffer
+ * @param[in] buffer
+ * @param[in] data
+ * @param[in] length
+ */
+void WriteToBuffer(void **buffer, const void *data, size_t length)
+{
+	memcpy(*buffer, data, length);
+	*(byte **)buffer += length;
+}
+
+/**
+ * @brief Write PNG chuck header to buffer
+ * @param[in] buffer
+ * @param[in] data
+ * @param[in] length
+ */
+void WriteChunkHeader(void **buffer, void **crcPtr, PNG_ChunkCRC *CRC, int type, int length)
+{
+	struct PNG_ChunkHeader CH;
+
+	// Write chuck header
+	CH.Type   = BigLong(type);
+	CH.Length = BigLong(length);
+
+	WriteToBuffer(buffer, &CH, PNG_ChunkHeader_Size);
+
+	// Init CRC
+	*CRC    = ri.zlib_crc32(0, Z_NULL, 0);
+	*CRC    = ri.zlib_crc32(*CRC, *(byte **)buffer - 4, 4);
+	*crcPtr = *buffer;
+}
+
+/**
+ * @brief Write CRC to buffer
+ * @param[in] buffer
+ * @param[in] crcPtr
+ * @param[in] CRC
+ */
+void WriteCRC(void **buffer, void **crcPtr, PNG_ChunkCRC CRC)
+{
+	int size = (intptr_t)*buffer - (intptr_t)*crcPtr;
+
+	// Update CRC
+	if (size > 0)
+	{
+		CRC = ri.zlib_crc32(CRC, *crcPtr, size);
+	}
+
+	// Write CRC
+	CRC = BigLong(CRC);
+	WriteToBuffer(buffer, &CRC, PNG_ChunkCRC_Size);
+}
+
+/**
+ * @brief The PNG saver
+ * @param[in] filename
+ * @param[in] width
+ * @param[in] height
+ * @param[in] data
+ * @param[in] padding
+ */
+void RE_SavePNG(const char *filename, int width, int height, byte *data, int padding)
+{
+	void                  *pngData;
+	size_t                pngSize;
+	void                  *buffer;
+	struct PNG_Chunk_IHDR IHDR;
+	PNG_ChunkCRC          CRC;
+	void                  *crcPtr;
+
+	int      i;
+	uint8_t  *imageData;
+	uint32_t imageLength;
+
+	Bytef  *compressedData = NULL;
+	uLongf compressedDataLength;
+
+	// Create the png image data from buffer
+	imageLength = (width * PNG_NumColourComponents_True + 1) * height;
+	imageData   = ri.Z_Malloc(imageLength);
+
+	EncodeImageNonInterlaced8True(width, height, data, 3, padding, imageData);
+
+	// Compress the png image data
+	compressedDataLength = imageLength * 1.01f + 12;
+	compressedData       = ri.Z_Malloc(compressedDataLength);
+
+	if (ri.zlib_compress(compressedData, &compressedDataLength, imageData, imageLength) != Z_OK)
+	{
+		ri.Free(compressedData);
+		ri.Free(imageData);
+		ri.Printf(PRINT_WARNING, "RE_SavePNG: Failed to compress image data.\n");
+		return;
+	}
+
+	// Calculate the size of the image
+	pngSize = PNG_Signature_Size + PNG_ChunkHeader_Size + PNG_Chunk_IHDR_Size + PNG_ChunkCRC_Size;
+
+	pngSize += PNG_ChunkHeader_Size + compressedDataLength + PNG_ChunkCRC_Size
+	           + PNG_ChunkHeader_Size + PNG_ChunkCRC_Size;
+
+	// Allocate memory to hold the full png image data
+	buffer = pngData = ri.Hunk_AllocateTempMemory(pngSize);
+
+	// Setup CRC
+	CRC    = ri.zlib_crc32(0, Z_NULL, 0);
+	crcPtr = (byte *)buffer + PNG_Signature_Size + 4;
+
+	// Header
+	WriteToBuffer(&buffer, PNG_Signature, PNG_Signature_Size);
+
+	WriteChunkHeader(&buffer, &crcPtr, &CRC, PNG_ChunkType_IHDR, PNG_Chunk_IHDR_Size);
+	IHDR.Width             = BigLong(width);
+	IHDR.Height            = BigLong(height);
+	IHDR.BitDepth          = PNG_BitDepth_8;
+	IHDR.ColourType        = PNG_ColourType_True;
+	IHDR.CompressionMethod = PNG_CompressionMethod_0;
+	IHDR.FilterMethod      = PNG_FilterMethod_0;
+	IHDR.InterlaceMethod   = PNG_InterlaceMethod_NonInterlaced;
+	WriteToBuffer(&buffer, &IHDR, PNG_Chunk_IHDR_Size);
+	WriteCRC(&buffer, &crcPtr, CRC);
+
+	// IDAT, Image Data
+	WriteChunkHeader(&buffer, &crcPtr, &CRC, PNG_ChunkType_IDAT, compressedDataLength);
+	WriteToBuffer(&buffer, compressedData, compressedDataLength);
+	WriteCRC(&buffer, &crcPtr, CRC);
+
+	// IEND, Image End
+	WriteChunkHeader(&buffer, &crcPtr, &CRC, PNG_ChunkType_IEND, 0);
+	WriteCRC(&buffer, &crcPtr, CRC);
+
+	// Write the image to file
+	ri.FS_WriteFile(filename, pngData, pngSize);
+
+	// Free memory
+	ri.Hunk_FreeTempMemory(pngData);
+	ri.Free(compressedData);
+	ri.Free(imageData);
+}
+
+#endif

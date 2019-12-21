@@ -42,6 +42,10 @@
 #include "../sys/sys_loadlib.h"
 #include "../renderercommon/tr_public.h"
 
+#ifdef FEATURE_PNG
+#include "zlib.h"
+#endif
+
 #ifdef USE_RENDERER_DLOPEN
 cvar_t *cl_renderer;
 #endif
@@ -2712,6 +2716,11 @@ void CL_InitRef(void)
 
 	ri.CL_VideoRecording     = CL_VideoRecording;
 	ri.CL_WriteAVIVideoFrame = CL_WriteAVIVideoFrame;
+
+#ifdef FEATURE_PNG
+	ri.zlib_crc32    = crc32;
+	ri.zlib_compress = compress;
+#endif
 
 	ri.Sys_GLimpSafeInit = Sys_GLimpSafeInit;
 	ri.Sys_GLimpInit     = Sys_GLimpInit;
