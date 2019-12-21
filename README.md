@@ -100,6 +100,7 @@ DEPENDENCIES
 * **Ogg Vorbis** (optional, enabled by default)
 * **Theora** (optional, enabled by default)
 * **Freetype** (optional, enabled by default)
+* **libpng** (optional, enabled by default)
 * **SQLite** (optional, enabled by default)
 * **OpenAL** (optional, enabled by default)
 

@@ -246,6 +246,7 @@ parse_commandline() {
 			BUNDLED_OPENAL=0
 			BUNDLED_GLEW=0
 			BUNDLED_FREETYPE=0
+			BUNDLED_PNG=0
 			BUNDLED_SQLITE3=0
 		elif [ "$var" = "-noextra" ]; then
 			einfo "Will disable installation of Omni-bot, GeoIP and WolfAdmin"
@@ -293,6 +294,7 @@ parse_commandline() {
 			FEATURE_THEORA=0
 			FEATURE_OPENAL=0
 			FEATURE_FREETYPE=0
+			FEATURE_PNG=0
 
 			BUNDLED_SDL=0
 			# FIXME: this needs to be fixed in cmake, we do not want zlib or minizip if we are not building the client or server
@@ -303,6 +305,7 @@ parse_commandline() {
 			BUNDLED_THEORA=0
 			BUNDLED_GLEW=0
 			BUNDLED_FREETYPE=0
+			BUNDLED_PNG=0
 			BUNDLED_CURL=0
 			BUNDLED_OPENAL=0
 		elif [ "$var" = "-server" ]; then
@@ -318,6 +321,7 @@ parse_commandline() {
 			FEATURE_THEORA=0
 			FEATURE_OPENAL=0
 			FEATURE_FREETYPE=0
+			FEATURE_PNG=0
 
 			BUNDLED_SDL=0
 			BUNDLED_ZLIB=1
@@ -327,6 +331,7 @@ parse_commandline() {
 			BUNDLED_THEORA=0
 			BUNDLED_GLEW=0
 			BUNDLED_FREETYPE=0
+			BUNDLED_PNG=0
 			BUNDLED_CURL=0
 			BUNDLED_OPENAL=0
 		else
@@ -367,6 +372,7 @@ generate_configuration() {
 	BUNDLED_THEORA=${BUNDLED_THEORA:-1}
 	BUNDLED_GLEW=${BUNDLED_GLEW:-1}
 	BUNDLED_FREETYPE=${BUNDLED_FREETYPE:-1}
+	BUNDLED_PNG=${BUNDLED_PNG:-1}
 	BUNDLED_SQLITE3=${BUNDLED_SQLITE3:-1}
 
 	if [ "${PLATFORMSYS}" == "Mac OS X" ]; then
@@ -389,6 +395,7 @@ generate_configuration() {
 	FEATURE_THEORA=${FEATURE_THEORA:-1}
 	FEATURE_OPENAL=${FEATURE_OPENAL:-1}
 	FEATURE_FREETYPE=${FEATURE_FREETYPE:-1}
+	FEATURE_PNG=${FEATURE_PNG:-1}
 	FEATURE_GETTEXT=${FEATURE_GETTEXT:-1}
 	FEATURE_DBMS=${FEATURE_DBMS:-1}
 	FEATURE_LUA=${FEATURE_LUA:-1}
@@ -426,6 +433,7 @@ generate_configuration() {
 		-DBUNDLED_OPENAL=${BUNDLED_OPENAL}
 		-DBUNDLED_GLEW=${BUNDLED_GLEW}
 		-DBUNDLED_FREETYPE=${BUNDLED_FREETYPE}
+		-DBUNDLED_PNG=${BUNDLED_PNG}
 		-DBUNDLED_SQLITE3=${BUNDLED_SQLITE3}
 		-DFEATURE_CURL=${FEATURE_CURL}
 		-DFEATURE_OPENSSL=${FEATURE_OPENSSL}
@@ -433,6 +441,7 @@ generate_configuration() {
 		-DFEATURE_THEORA=${FEATURE_THEORA}
 		-DFEATURE_OPENAL=${FEATURE_OPENAL}
 		-DFEATURE_FREETYPE=${FEATURE_FREETYPE}
+		-DFEATURE_PNG=${FEATURE_PNG}
 		-DFEATURE_LUA=${FEATURE_LUA}
 		-DFEATURE_MULTIVIEW=${FEATURE_MULTIVIEW}
 		-DFEATURE_EDV=${FEATURE_EDV}
@@ -528,6 +537,10 @@ run_clean() {
 		if [ "${BUNDLED_OPENAL}" == 1 ]; then
 			einfo "Cleaning openAL..."
 			cd ${_SRC}/libs/openal; make clean
+		fi
+		if [ "${BUNDLED_PNG}" == 1 ]; then
+			einfo "Cleaning libpng..."
+			cd ${_SRC}/libs/libpng; make clean
 		fi
 
 		cd ${_SRC}/libs
