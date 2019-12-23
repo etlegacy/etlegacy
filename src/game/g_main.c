@@ -337,12 +337,9 @@ vmCvar_t g_corpses; // dynamic body que FIXME: limit max bodies by var value
 vmCvar_t g_oss; //   0 - vanilla/unknown/ET:L auto setup
                 //   1 - Windows
                 //   2 - Linux
-                //   4 - Linux64
-                //   8 - Apple
-                //  16 - AROS
-                //  32 - Pandora
-                //  64 - MorphOS
-                // 128 - Android
+                //   4 - Linux 64
+                //   8 - Mac OS X
+                //  16 - Android
 
 vmCvar_t g_realHead; // b_realHead functionality from ETPro
 
@@ -385,7 +382,7 @@ cvarTable_t gameCvarTable[] =
 	{ &g_covertopsChargeTime,               "g_covertopsChargeTime",               "30000",                      CVAR_SERVERINFO | CVAR_LATCH,                    0, qfalse, qtrue  },
 	{ &g_landminetimeout,                   "g_landminetimeout",                   "1",                          CVAR_ARCHIVE,                                    0, qfalse, qtrue  },
 
-	{ &g_oss,                               "g_oss",                               "11",                         CVAR_SERVERINFO | CVAR_LATCH,                    0, qfalse, qfalse },
+	{ &g_oss,                               "g_oss",                               "15",                         CVAR_SERVERINFO | CVAR_LATCH,                    0, qfalse, qfalse },
 
 	{ &g_maxclients,                        "sv_maxclients",                       "20",                         CVAR_SERVERINFO | CVAR_LATCH | CVAR_ARCHIVE,     0, qfalse, qfalse },
 	{ &g_maxGameClients,                    "g_maxGameClients",                    "0",                          CVAR_SERVERINFO | CVAR_LATCH | CVAR_ARCHIVE,     0, qfalse, qfalse },
