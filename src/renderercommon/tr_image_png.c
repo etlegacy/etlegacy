@@ -2216,7 +2216,6 @@ void RE_SavePNG(const char *filename, int width, int height, byte *data, int pad
 	PNG_ChunkCRC          CRC;
 	void                  *crcPtr;
 
-	int      i;
 	uint8_t  *imageData;
 	uint32_t imageLength;
 
