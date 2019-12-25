@@ -152,7 +152,7 @@ if(BUILD_CLIENT)
 
 	if(FEATURE_PNG)
 		if(NOT BUNDLED_PNG)
-			find_package(libpng REQUIRED)
+			find_package(PNG REQUIRED)
 			list(APPEND RENDERER_LIBRARIES ${LIBPNG_LIBRARIES})
 			include_directories(SYSTEM ${LIBPNG_INCLUDE_DIRS})
 		else()
