@@ -2676,9 +2676,20 @@ qboolean BG_CanItemBeGrabbed(const entityState_t *ent, const playerState_t *ps, 
 	case IT_AMMO:
 		return qfalse;
 	case IT_HEALTH:
-		if (ps->stats[STAT_HEALTH] >= ps->stats[STAT_MAX_HEALTH])
+		if (ps->stats[STAT_PLAYER_CLASS] == PC_MEDIC)
 		{
-			return qfalse;
+			// medics can go up to 12% extra on max health as they have perm. regen
+			if (ps->stats[STAT_HEALTH] >= (int)(ps->stats[STAT_MAX_HEALTH] * 1.12))
+			{
+				return qfalse;
+			}
+		}
+		else
+		{
+			if (ps->stats[STAT_HEALTH] >= ps->stats[STAT_MAX_HEALTH])
+			{
+				return qfalse;
+			}
 		}
 		return qtrue;
 	case IT_TEAM:     // team items, such as flags
