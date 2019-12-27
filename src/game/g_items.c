@@ -563,6 +563,10 @@ int Pickup_Weapon(gentity_t *ent, gentity_t *other)
 		{
 			other->client->ps.ammo[GetWeaponTableData(ent->item->giWeapon)->weapAlts] = ent->delay;
 		}
+
+		// update userinfo
+		other->client->sess.playerWeapon = ent->item->giWeapon;
+		ClientUserinfoChanged(other->client->ps.clientNum);
 	}
 
 #ifdef FEATURE_OMNIBOT
