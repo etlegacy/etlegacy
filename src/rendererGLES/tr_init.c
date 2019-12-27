@@ -160,6 +160,7 @@ cvar_t *r_bonesDebug;
 
 cvar_t *r_wolfFog;
 
+cvar_t *r_screenshotFormat;
 cvar_t *r_screenshotJpegQuality;
 
 cvar_t *r_maxPolys;
@@ -505,6 +506,35 @@ void RB_TakeScreenshotJPEG(int x, int y, int width, int height, char *fileName)
 	ri.Hunk_FreeTempMemory(buffer);
 }
 
+#ifdef FEATURE_PNG
+/**
+ * @brief RB_TakeScreenshotPNG
+ * @param[in] x
+ * @param[in] y
+ * @param[in] width
+ * @param[in] height
+ * @param[in] fileName
+ */
+void RB_TakeScreenshotPNG(int x, int y, int width, int height, char *fileName)
+{
+	byte   *buffer;
+	size_t offset = 0, memcount;
+	int    padlen;
+
+	buffer   = RB_ReadPixels(x, y, width, height, &offset, &padlen);
+	memcount = (width * 3 + padlen) * height;
+
+	// gamma correct
+	if (glConfig.deviceSupportsGamma)
+	{
+		R_GammaCorrect(buffer + offset, memcount);
+	}
+
+	RE_SavePNG(fileName, width, height, buffer + offset, padlen);
+	ri.Hunk_FreeTempMemory(buffer);
+}
+#endif
+
 /**
  * @brief RB_TakeScreenshotCmd
  * @param[in] data
@@ -522,9 +552,11 @@ const void *RB_TakeScreenshotCmd(const void *data)
 		case SSF_JPEG:
 			RB_TakeScreenshotJPEG(cmd->x, cmd->y, cmd->width, cmd->height, cmd->fileName);
 			break;
+#ifdef FEATURE_PNG
 		case SSF_PNG:
-			Ren_Print("PNG output is not implemented");
+			RB_TakeScreenshotPNG(cmd->x, cmd->y, cmd->width, cmd->height, cmd->fileName);
 			break;
+#endif
 	}
 
 	return ( const void * ) (cmd + 1);
@@ -758,8 +790,7 @@ void R_ScreenShot_f(void)
 	qboolean   silent;
 	char       *ext = "";
 
-	// FIXME: allow multiple format
-	ssFormat_t format = SSF_JPEG;
+	ssFormat_t format = r_screenshotFormat->integer;
 
 	switch (format)
 	{
@@ -769,9 +800,11 @@ void R_ScreenShot_f(void)
 		case SSF_JPEG:
 			ext = "jpg";
 			break;
+#ifdef FEATURE_PNG
 		case SSF_PNG:
 			ext = "png";
 			break;
+#endif
 		default:
 			return;
 	}
@@ -1110,6 +1143,7 @@ void R_Register(void)
 	r_noportals    = ri.Cvar_Get("r_noportals", "0", CVAR_CHEAT);
 	r_shadows      = ri.Cvar_Get("cg_shadows", "1", 0);
 
+	r_screenshotFormat      = ri.Cvar_Get("r_screenshotFormat", "2", CVAR_ARCHIVE);
 	r_screenshotJpegQuality = ri.Cvar_Get("r_screenshotJpegQuality", "90", CVAR_ARCHIVE);
 
 	r_portalSky = ri.Cvar_Get("cg_skybox", "1", 0);

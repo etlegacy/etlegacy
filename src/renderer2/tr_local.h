@@ -4579,7 +4579,9 @@ RENDERER IMAGE FUNCTIONS
 */
 size_t RE_SaveJPGToBuffer(byte *buffer, size_t bufSize, int quality, int image_width, int image_height, byte *image_buffer, int padding);
 void RE_SaveJPG(const char *filename, int quality, int image_width, int image_height, byte *image_buffer, int padding);
-
+#ifdef FEATURE_PNG
+void RE_SavePNG(char *filename, int image_width, int image_height, unsigned char *image_buffer, int padding);
+#endif
 
 /*
 =============================================================
