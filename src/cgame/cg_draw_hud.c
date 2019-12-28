@@ -2245,7 +2245,9 @@ static void CG_DrawTimersAlt(rectDef_t *respawn, rectDef_t *spawntimer, rectDef_
 		color[3] = 1.f;
 		if (cgs.timelimit > 0.0f)
 		{
-			CG_Text_Paint_Ext(roundtimer->x, roundtimer->y, 0.19f, 0.19f, color, va("^7%2.f:%i%i", (float)mins, tens, seconds), 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
+			s = va("^7%i:%i%i", mins, tens, seconds);
+			w = (mins < 10) ? CG_Text_Width_Ext("0", 0.19f, 0, &cgs.media.limboFont1) : 0;
+			CG_Text_Paint_Ext(roundtimer->x + w, roundtimer->y, 0.19f, 0.19f, color, s, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
 		}
 
 		if (cgs.gametype != GT_WOLF_LMS && (cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR || (cg.snap->ps.pm_flags & PMF_FOLLOW)) && cg_drawReinforcementTime.integer > 0)
@@ -2399,7 +2401,7 @@ static float CG_DrawTimerNormal(float y)
 		}
 		else
 		{
-			s = va("%s ^7%2.f:%i%i", rt, (float)mins, tens, seconds);
+			s = va("%s ^7%2i:%i%i", rt, mins, tens, seconds);
 		}
 
 		color[3] = 1.f;
