@@ -570,7 +570,7 @@ static void CG_MessageMode_f(void)
 	trap_Argv(0, cmd, 64);
 
 	// team say
-	if (!Q_stricmp(cmd, "messagemode2") && cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR)
+	if (!Q_stricmp(cmd, "messagemode2"))
 	{
 		trap_Cvar_Set("cg_messageType", "2");
 	}
