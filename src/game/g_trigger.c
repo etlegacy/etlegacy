@@ -106,12 +106,12 @@ void multi_trigger(gentity_t *ent, gentity_t *activator)
 		}
 	}
 
+	G_Script_ScriptEvent(ent, "activate", activator->client->sess.sessionTeam == TEAM_AXIS ? "axis" : "allies");
+
 	if (ent->nextthink)
 	{
 		return;     // can't retrigger until the wait is over
 	}
-
-	G_Script_ScriptEvent(ent, "activate", activator->client->sess.sessionTeam == TEAM_AXIS ? "axis" : "allies");
 
 	G_UseTargets(ent, ent->activator);
 
