@@ -1077,6 +1077,7 @@ static void CG_AddToTeamChat(const char *str, int clientnum) // FIXME: add disgu
 	char *p, *ls;
 	char lastcolor;
 	int  chatHeight;
+	int  chatWidth;
 
 	// -1 is sent when console is chatting
 	if (clientnum < -1 || clientnum >= MAX_CLIENTS) // FIXME: never return for console chat?
@@ -1100,7 +1101,8 @@ static void CG_AddToTeamChat(const char *str, int clientnum) // FIXME: add disgu
 		return;
 	}
 
-	len = 0;
+	len       = 0;
+	chatWidth = (cgs.gamestate == GS_INTERMISSION) ? TEAMCHAT_WIDTH + 30 : TEAMCHAT_WIDTH;
 
 	p  = cgs.teamChatMsgs[cgs.teamChatPos % chatHeight];
 	*p = 0;
@@ -1110,7 +1112,7 @@ static void CG_AddToTeamChat(const char *str, int clientnum) // FIXME: add disgu
 	ls = NULL;
 	while (*str)
 	{
-		if (len > TEAMCHAT_WIDTH - 1)
+		if (len > chatWidth - 1)
 		{
 			if (ls)
 			{
