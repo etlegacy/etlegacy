@@ -466,6 +466,17 @@ char *G_createStats(gentity_t *refEnt)
 		}
 	}
 
+	// workaround to always hide previous map stats in warmup
+	// Stats will be cleared correctly when the match actually starts
+	if ((g_gamestate.integer == GS_WARMUP || g_gamestate.integer == GS_WARMUP_COUNTDOWN) &&
+	    !(g_gametype.integer == GT_WOLF_STOPWATCH && g_currentRound.integer == 1))
+	{
+		dwWeaponMask     = 0;
+		strWeapInfo[0]   = '\0';
+		dwSkillPointMask = 0;
+		strSkillInfo[0]  = '\0';
+	}
+
 #ifdef FEATURE_RATING
 	return(va("%d %d %d%s %d%s %.2f %.2f",
 #else
