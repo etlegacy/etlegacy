@@ -1895,7 +1895,7 @@ void ClientUserinfoChanged(int clientNum)
 			}
 			if (!client->pers.clientMaxPackets)
 			{
-				client->pers.clientMaxPackets = 30;
+				client->pers.clientMaxPackets = 125;
 			}
 		}
 
