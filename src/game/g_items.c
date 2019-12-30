@@ -584,8 +584,6 @@ int Pickup_Weapon(gentity_t *ent, gentity_t *other)
  */
 int Pickup_Health(gentity_t *ent, gentity_t *other)
 {
-	int max;
-
 	if (ent->parent && ent->parent->client)
 	{
 		other->client->pers.lasthealth_client = ent->parent->s.clientNum;
@@ -598,16 +596,10 @@ int Pickup_Health(gentity_t *ent, gentity_t *other)
 		G_DebugAddSkillPoints(ent->parent, SK_FIRST_AID, 1.f, "health pack picked up");
 	}
 
-	max = other->client->ps.stats[STAT_MAX_HEALTH];
-	if (other->client->sess.playerType == PC_MEDIC)
-	{
-		max *= 1.12f;
-	}
-
 	other->health += ent->item->quantity;
-	if (other->health > max)
+	if (other->health > other->client->ps.stats[STAT_MAX_HEALTH])
 	{
-		other->health = max;
+		other->health = other->client->ps.stats[STAT_MAX_HEALTH];
 	}
 	other->client->ps.stats[STAT_HEALTH] = other->health;
 

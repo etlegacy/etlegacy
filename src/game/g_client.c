@@ -1333,6 +1333,11 @@ void AddMedicTeamBonus(gclient_t *client)
 		client->pers.maxHealth += 15;
 	}
 
+	if (client->sess.playerType == PC_MEDIC)
+	{
+		client->pers.maxHealth *= 1.12;
+	}
+
 	client->ps.stats[STAT_MAX_HEALTH] = client->pers.maxHealth;
 }
 

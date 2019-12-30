@@ -858,32 +858,35 @@ void ClientTimerActions(gentity_t *ent, int msec)
 		client->timeResidual -= 1000;
 
 		// regenerate
-		if (client->sess.playerType == PC_MEDIC)
+		if (ent->health < client->ps.stats[STAT_MAX_HEALTH])
 		{
-			if (ent->health < client->ps.stats[STAT_MAX_HEALTH])
+			// medic only
+			if (client->sess.playerType == PC_MEDIC)
 			{
 				ent->health += 3;
-				if (ent->health > client->ps.stats[STAT_MAX_HEALTH] * 1.1)
+				if (ent->health > client->ps.stats[STAT_MAX_HEALTH] / 1.11)
 				{
-					ent->health = client->ps.stats[STAT_MAX_HEALTH] * 1.1;
+					ent->health += 2;
+
+					if (ent->health > client->ps.stats[STAT_MAX_HEALTH])
+					{
+						ent->health = client->ps.stats[STAT_MAX_HEALTH];
+					}
+				}
+				else
+				{
+					ent->health += 3;
+					if (ent->health > client->ps.stats[STAT_MAX_HEALTH] / 1.1)
+					{
+						ent->health = client->ps.stats[STAT_MAX_HEALTH] / 1.1;
+					}
 				}
 			}
-			else if (ent->health < client->ps.stats[STAT_MAX_HEALTH] * 1.12)
-			{
-				ent->health += 2;
-				if (ent->health > client->ps.stats[STAT_MAX_HEALTH] * 1.12)
-				{
-					ent->health = client->ps.stats[STAT_MAX_HEALTH] * 1.12;
-				}
-			}
+
 		}
-		else
+		else if (ent->health > client->ps.stats[STAT_MAX_HEALTH])               // count down health when over max
 		{
-			// count down health when over max
-			if (ent->health > client->ps.stats[STAT_MAX_HEALTH])
-			{
-				ent->health--;
-			}
+			ent->health--;
 		}
 	}
 }
@@ -2224,7 +2227,27 @@ void ClientEndFrame(gentity_t *ent)
 	// apply all the damage taken this frame
 	P_DamageFeedback(ent);
 
-	ent->client->ps.stats[STAT_HEALTH] = ent->health;
+	// increases stats[STAT_MAX_HEALTH] based on # of medics in game
+	// AddMedicTeamBonus() now adds medic team bonus and stores in ps.stats[STAT_MAX_HEALTH].
+	AddMedicTeamBonus(ent->client);
+
+	// all players are init in game, we can set properly starting health
+	if (level.startTime == level.time - (GAME_INIT_FRAMES * FRAMETIME))
+	{
+		if (ent->client->sess.skill[SK_BATTLE_SENSE] >= 3)
+		{
+			// We get some extra max health, but don't spawn with that much
+			ent->health = ent->client->ps.stats[STAT_HEALTH] = ent->client->ps.stats[STAT_MAX_HEALTH] - 15;
+		}
+		else
+		{
+			ent->health = ent->client->ps.stats[STAT_HEALTH] = ent->client->ps.stats[STAT_MAX_HEALTH];
+		}
+	}
+	else
+	{
+		ent->client->ps.stats[STAT_HEALTH] = ent->health;
+	}
 
 	G_SetClientSound(ent);
 
