@@ -380,8 +380,8 @@ void G_players_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fDump)
 	int       user_rate, user_snaps;
 	gclient_t *cl;
 	gentity_t *cl_ent;
-	char      guid[MAX_GUID_LENGTH], n2[MAX_NETNAME], ready[16], ref[8], rate[32];
-	char      *s, *tc, *spec, *ign, *muted, userinfo[MAX_INFO_STRING];
+	char      guid[MAX_GUID_LENGTH], n2[MAX_NETNAME], ready[16], ref[8], rate[32], version[32];
+	char      *s, *tc, *spec, *ign, *muted, *special, userinfo[MAX_INFO_STRING], *user_version;
 
 	if (g_gamestate.integer == GS_PLAYING)
 	{
@@ -457,6 +457,15 @@ void G_players_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fDump)
 			Q_strncpyz(rate, va("%5d%6d%9d%7d", cl->pers.clientTimeNudge, user_rate, cl->pers.clientMaxPackets, user_snaps), sizeof(rate));
 		}
 
+		// Version info
+		if (!(cl_ent->r.svFlags & SVF_BOT))
+		{
+			trap_GetUserinfo(idnum, userinfo, sizeof(userinfo));
+			user_version = Info_ValueForKey(userinfo, "cg_etVersion");
+
+			Q_strncpyz(version, user_version, sizeof(version));
+		}
+
 		if (g_gamestate.integer != GS_PLAYING)
 		{
 			if (cl->sess.sessionTeam == TEAM_SPECTATOR || cl->pers.connected == CON_CONNECTING)
@@ -517,6 +526,8 @@ void G_players_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fDump)
 			muted = "";
 		}
 
+		special = va("%s%s%s%s", ref, spec, ign, muted);
+
 		tc = (ent) ? "^7 " : " ";
 		if (g_gametype.integer >= GT_WOLF)
 		{
@@ -540,11 +551,11 @@ void G_players_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fDump)
 
 		if (ent)
 		{
-			CP(va("print \"%-9s %s%s%2d : %s%-26s^7%s  ^3%s%s%s%s^7\n\"", guid, ready, tc, idnum, ((ref[0]) ? "^3" : "^7"), n2, rate, ref, spec, ign, muted));
+			CP(va("print \"%-9s %s%s%2d : %s%-26s^7%s  ^3%-8s^7  ^9%s^7\n\"", guid, ready, tc, idnum, ((ref[0]) ? "^3" : "^7"), n2, rate, special, version));
 		}
 		else
 		{
-			G_Printf("%-9s %s%s%2d : %-26s%s  %s%s%s\n", guid, ready, tc, idnum, n2, rate, ref, spec, muted);
+			G_Printf("%-9s %s%s%2d : %-26s%s  %-8s  %s\n", guid, ready, tc, idnum, n2, rate, special, version);
 		}
 
 		cnt++;
