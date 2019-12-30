@@ -38,7 +38,7 @@
 #include "../qcommon/q_unicode.h"
 
 #define CONSOLE_COLOR  COLOR_WHITE
-#define DEFAULT_CONSOLE_WIDTH   99
+#define DEFAULT_CONSOLE_WIDTH   158
 
 int g_console_field_width = DEFAULT_CONSOLE_WIDTH;
 
