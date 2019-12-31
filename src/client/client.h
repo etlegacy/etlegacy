@@ -612,8 +612,6 @@ typedef struct
 	int totalLines;                     ///< total text filled lines in console scrollback
 	int maxTotalLines;                  ///< total lines in console scrollback
 
-	float xadjust;                      ///< for wide aspect screens
-
 	float displayFrac;                  ///< aproaches finalFrac at con_openspeed
 	float finalFrac;                    ///< 0.0 to 1.0 lines of console to display
 	float desiredFrac;                  ///< for variable console heights
@@ -629,8 +627,6 @@ typedef struct
 } console_t;
 
 extern console_t con;
-
-void Con_DrawCharacter(int cx, int line, int num);
 
 void Con_ToggleConsole_f(void);
 void Con_DrawNotify(void);
@@ -676,8 +672,7 @@ void SCR_DrawStringExt(int x, int y, float w, float h, const char *string, float
 
 #define SCR_DrawSmallChar(x, y, ch) SCR_DrawChar(x, y, SMALLCHAR_WIDTH, SMALLCHAR_HEIGHT, ch, qtrue)
 // ignores embedded color control characters
-#define SCR_DrawBigString(x, y, s, color, noColorEscape) SCR_DrawStringExt(x, y, BIGCHAR_WIDTH, BIGCHAR_HEIGHT, s, color, qtrue, noColorEscape, qtrue, qfalse)
-#define SCR_DrawSmallString(x, y, string, setColor, forceColor, noColorEscape) SCR_DrawStringExt(x, y, SMALLCHAR_WIDTH, BIGCHAR_HEIGHT, string, setColor, forceColor, noColorEscape, qfalse, qtrue)
+#define SCR_DrawSmallString(x, y, string, setColor, forceColor, noColorEscape) SCR_DrawStringExt(x, y, SMALLCHAR_WIDTH, SMALLCHAR_HEIGHT, string, setColor, forceColor, noColorEscape, qfalse, qtrue)
 
 // cl_cin.c
 

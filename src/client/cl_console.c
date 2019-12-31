@@ -585,7 +585,7 @@ void Con_DrawInput(void)
 		if (strlen(g_consoleField.buffer) > 0)
 		{
 			re.SetColor(console_highlightcolor);
-			re.DrawStretchPic(con.xadjust + (2 + con.highlightOffset) * SMALLCHAR_WIDTH,
+			re.DrawStretchPic((2 + con.highlightOffset) * SMALLCHAR_WIDTH,
 			                  y + 2,
 			                  (strlen(g_consoleField.buffer) - con.highlightOffset) * SMALLCHAR_WIDTH,
 			                  SMALLCHAR_HEIGHT - 2, 0, 0, 0, 0, cls.whiteShader);
@@ -594,9 +594,9 @@ void Con_DrawInput(void)
 
 	re.SetColor(con.color);
 
-	SCR_DrawSmallChar(con.xadjust + 1 * SMALLCHAR_WIDTH, y, ']');
+	SCR_DrawSmallChar(SMALLCHAR_WIDTH, y, ']');
 
-	Field_Draw(&g_consoleField, con.xadjust + 2 * SMALLCHAR_WIDTH, y,
+	Field_Draw(&g_consoleField, 2 * SMALLCHAR_WIDTH, y,
 	           SCREEN_WIDTH - 3 * SMALLCHAR_WIDTH, qtrue, qtrue);
 }
 
@@ -666,7 +666,7 @@ void Con_DrawNotify(void)
 				re.SetColor(g_color_table[currentColor]);
 			}
 
-			SCR_DrawSmallChar(cl_conXOffset->integer + con.xadjust + (x + 1) * SMALLCHAR_WIDTH, v, text[x]);
+			SCR_DrawSmallChar(cl_conXOffset->integer + (x + 1) * SMALLCHAR_WIDTH, v, text[x]);
 		}
 
 		v += SMALLCHAR_HEIGHT;
@@ -736,10 +736,6 @@ void Con_DrawSolidConsole(float frac)
 
 	con.scanLines = frac * cls.glconfig.vidHeight;
 
-	// on wide screens, we will center the text
-	con.xadjust = 0;
-	SCR_AdjustFrom640(&con.xadjust, NULL, NULL, NULL);
-
 	// draw the background
 	y = frac * SCREEN_HEIGHT;
 
@@ -749,17 +745,7 @@ void Con_DrawSolidConsole(float frac)
 	}
 	else
 	{
-		// adjust console background shader for widescreens
-		if (cls.glconfig.windowAspect > RATIO43)
-		{
-			int z = 0.25 * (cls.glconfig.vidWidth - (cls.glconfig.vidHeight * RATIO43));
-
-			SCR_DrawPic(-z, 0, SCREEN_WIDTH + z, y, cls.consoleShader);
-		}
-		else
-		{
-			SCR_DrawPic(0, 0, SCREEN_WIDTH, y, cls.consoleShader);
-		}
+		SCR_DrawPic(0, 0, SCREEN_WIDTH, y, cls.consoleShader);
 
 		/*
 		// draw the logo
@@ -813,7 +799,7 @@ void Con_DrawSolidConsole(float frac)
 
 		for (x = 0; x < con.linewidth; x += 4)
 		{
-			SCR_DrawSmallChar(con.xadjust + (x + 1) * SMALLCHAR_WIDTH, y + 0.75f * SMALLCHAR_HEIGHT, '^');
+			SCR_DrawSmallChar((x + 1) * SMALLCHAR_WIDTH, y + 0.75f * SMALLCHAR_HEIGHT, '^');
 		}
 
 		re.SetColor(NULL);
@@ -857,8 +843,7 @@ void Con_DrawSolidConsole(float frac)
 				currentColor = textColor[x];
 				re.SetColor(g_color_table[currentColor]);
 			}
-
-			SCR_DrawSmallChar(con.xadjust + (x + 1) * SMALLCHAR_WIDTH, y, text[x]);
+			SCR_DrawSmallChar((x + 1) * SMALLCHAR_WIDTH, y, text[x]);
 		}
 	}
 
