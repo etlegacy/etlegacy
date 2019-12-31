@@ -553,7 +553,7 @@ void Con_DrawClock(void)
 	time(&longTime);
 	localTime = localtime(&longTime);
 
-	Com_sprintf(clock, sizeof(clock), _("%02d:%02d"), localTime->tm_hour, localTime->tm_min);
+	Com_sprintf(clock, sizeof(clock), _("%02d%c%02d"), localTime->tm_hour, localTime->tm_sec & 1 ? ':' : ' ', localTime->tm_min);
 
 	i = strlen(clock);
 
