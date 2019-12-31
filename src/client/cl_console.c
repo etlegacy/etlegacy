@@ -791,7 +791,7 @@ void Con_DrawSolidConsole(float frac)
 	// draw the input prompt, user text, and cursor
 	Con_DrawInput();
 	// draw scrollbar
-	Con_DrawScrollbar(y - 1.5f * SMALLCHAR_HEIGHT, SCREEN_WIDTH - 5, 3);
+	Con_DrawScrollbar(y - SMALLCHAR_HEIGHT, SCREEN_WIDTH - 5, 3);
 	// draw the version number
 	Con_DrawVersion();
 	// draw system clock
