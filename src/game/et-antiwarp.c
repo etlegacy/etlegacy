@@ -271,7 +271,7 @@ void DoClientThinks(gentity_t *ent)
 
 		// erh.  hack, really. make it run for the proper amount of time.
 		ent->client->ps.commandTime = lastTime;
-		ClientThink_cmd(ent, cmd, qtrue);
+		ClientThink_cmd(ent, cmd);
 		lastTime = ent->client->ps.commandTime;
 
 		if (deltahax)

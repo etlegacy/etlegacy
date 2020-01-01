@@ -1149,7 +1149,7 @@ void WolfFindMedic(gentity_t *self)
  *
  * @param[in,out] ent Entity
  */
-void ClientThink_real(gentity_t *ent, qboolean skipServerTime)
+void ClientThink_real(gentity_t *ent)
 {
 	int       msec, oldEventSequence;
 	pmove_t   pm;
@@ -1205,18 +1205,15 @@ void ClientThink_real(gentity_t *ent, qboolean skipServerTime)
 	// end zinx etpro antiwarp
 
 	// sanity check the command time to prevent speedup cheating
-	if (!skipServerTime)
+	if (ucmd->serverTime > level.time + 200 && !G_DoAntiwarp(ent))
 	{
-		if (ucmd->serverTime > level.time + 200)
-		{
-			ucmd->serverTime = level.time + 200;
-			//G_Printf("serverTime <<<<<\n" );
-		}
-		if (ucmd->serverTime < level.time - 1000)
-		{
-			ucmd->serverTime = level.time - 1000;
-			//G_Printf("serverTime >>>>>\n" );
-		}
+		ucmd->serverTime = level.time + 200;
+		//G_Printf("serverTime <<<<<\n" );
+	}
+	if (ucmd->serverTime < level.time - 1000 && !G_DoAntiwarp(ent))
+	{
+		ucmd->serverTime = level.time - 1000;
+		//G_Printf("serverTime >>>>>\n" );
 	}
 
 	msec = ucmd->serverTime - client->ps.commandTime;
@@ -1243,7 +1240,7 @@ void ClientThink_real(gentity_t *ent, qboolean skipServerTime)
 
 	// zinx etpro antiwarp
 	client->pers.pmoveMsec = pmove_msec.integer;
-	if (!skipServerTime && (pmove_fixed.integer || client->pers.pmoveFixed))
+	if (G_DoAntiwarp(ent) && (pmove_fixed.integer || client->pers.pmoveFixed))
 	{
 		ucmd->serverTime = ((ucmd->serverTime + client->pers.pmoveMsec - 1) /
 		                    client->pers.pmoveMsec) * client->pers.pmoveMsec;
@@ -1633,11 +1630,11 @@ void ClientThink_real(gentity_t *ent, qboolean skipServerTime)
  * @param[in,out] ent Entity
  * @param[in]     cmd User Command
  */
-void ClientThink_cmd(gentity_t *ent, usercmd_t *cmd, qboolean skipServerTime)
+void ClientThink_cmd(gentity_t *ent, usercmd_t *cmd)
 {
 	ent->client->pers.oldcmd = ent->client->pers.cmd;
 	ent->client->pers.cmd    = *cmd;
-	ClientThink_real(ent, skipServerTime);
+	ClientThink_real(ent);
 }
 
 /**
@@ -1663,7 +1660,7 @@ void ClientThink(int clientNum)
 		}
 		else
 		{
-			ClientThink_cmd(ent, &newcmd, qfalse);
+			ClientThink_cmd(ent, &newcmd);
 		}
 	}
 }
