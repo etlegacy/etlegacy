@@ -458,7 +458,11 @@ void G_players_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fDump)
 		}
 
 		// Version info
-		if (!(cl_ent->r.svFlags & SVF_BOT))
+		if (cl_ent->r.svFlags & SVF_BOT)
+		{
+			Q_strncpyz(version, va("%s", "--"), sizeof(version));
+		}
+		else
 		{
 			trap_GetUserinfo(idnum, userinfo, sizeof(userinfo));
 			user_version = Info_ValueForKey(userinfo, "cg_etVersion");
