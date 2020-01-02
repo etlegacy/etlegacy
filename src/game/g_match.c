@@ -643,11 +643,11 @@ void G_printMatchInfo(gentity_t *ent)
 			SanitizeString(cl->pers.cl_guid, guid, qfalse);
 			if (ent->r.svFlags & SVF_BOT)
 			{
-				guid[9] = 0;
+				guid[9] = '\0';
 			}
 			else
 			{
-				guid[8] = 0;
+				guid[8] = '\0';
 				strcat(guid, "*");
 			}
 

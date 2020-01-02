@@ -428,12 +428,12 @@ void G_players_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fDump)
 		if (cl_ent->r.svFlags & SVF_BOT)
 		{
 			// omnibot requires 9 chars (OMNIBOT01)
-			guid[9] = 0;
+			guid[9] = '\0';
 		}
 		else
 		{
 			// display only 8 char with * for humans
-			guid[8] = 0;
+			guid[8] = '\0';
 			strcat(guid, "*");
 		}
 
