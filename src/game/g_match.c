@@ -597,7 +597,7 @@ void G_printMatchInfo(gentity_t *ent)
 	int       tot_timex, tot_timel, tot_timep, tot_kills, tot_deaths, tot_gibs, tot_sk, tot_tk, tot_tg, tot_dg, tot_dr, tot_tdg, tot_tdr, tot_xp;
 	gclient_t *cl;
 	char      *ref;
-	char      guid[MAX_GUID_LENGTH];
+	char      guid[MAX_GUID_LENGTH + 1];
 	char      n2[MAX_STRING_CHARS];
 
 	for (i = TEAM_AXIS; i <= TEAM_SPECTATOR; i++)
