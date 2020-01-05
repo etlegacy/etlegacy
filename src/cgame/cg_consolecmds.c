@@ -1444,7 +1444,7 @@ static void CG_Class_f(void)
 
 	if (trap_Argc() < 2)
 	{
-		CG_Printf("Invalid command format.\n");
+		CG_Printf("Usage: class [class] <weapon1> <weapon2>\n");
 		return;
 	}
 
@@ -1462,7 +1462,7 @@ static void CG_Class_f(void)
 		teamstring = CG_TranslateString("Allies");
 		break;
 	default:
-		CG_Printf("class: Invalid team.\n");
+		CG_Printf("class: must be in a team.\n");
 		return;
 	}
 
