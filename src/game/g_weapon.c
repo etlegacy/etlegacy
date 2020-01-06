@@ -2905,10 +2905,11 @@ void artillerySpotterThink(gentity_t *ent)
 
 		bomb = fire_missile((ent->parent && ent->parent->client) ? ent->parent : ent, bomboffset, tv(0.f, 0.f, -1350.f), ent->s.weapon);
 
-		bomb->nextthink    += 3950; // overwrite, add delay between 1st bomb and 2nd one
-		bomb->splashDamage  = 90;   // overwrite
-		bomb->splashRadius  = 50;   // overwrite
-		bomb->s.effect1Time = 1;    // first bomb, make smoke appear
+		bomb->nextthink        += 3950; // overwrite, add delay between 1st bomb and 2nd one
+		bomb->splashDamage      = 90;   // overwrite
+		bomb->splashRadius      = 50;   // overwrite
+		bomb->s.effect1Time     = 1;    // first bomb, make smoke appear
+		bomb->s.otherEntityNum2 = ent->s.otherEntityNum2; // hud mortar marker
 
 		// spotter, first bomb dropped
 		ent->count2 = 0;
@@ -3053,17 +3054,18 @@ void Weapon_Artillery(gentity_t *ent)
 	G_GlobalClientEvent(EV_ARTYMESSAGE, 2, ent - g_entities);
 
 	// spotter
-	spotter               = G_Spawn();
-	spotter->parent       = ent;
-	spotter->think        = artillerySpotterThink;
-	spotter->s.weapon     = WP_ARTY;
-	spotter->s.teamNum    = ent->client->sess.sessionTeam;
-	spotter->s.clientNum  = ent->client->ps.clientNum;
-	spotter->r.ownerNum   = ent->s.number;
-	spotter->nextthink    = level.time + 5000;
-	spotter->r.svFlags    = SVF_BROADCAST;
-	spotter->count2       = 1;                      // first bomb
-	spotter->s.pos.trType = TR_STATIONARY;
+	spotter                    = G_Spawn();
+	spotter->parent            = ent;
+	spotter->think             = artillerySpotterThink;
+	spotter->s.weapon          = WP_ARTY;
+	spotter->s.teamNum         = ent->client->sess.sessionTeam;
+	spotter->s.clientNum       = ent->client->ps.clientNum;
+	spotter->r.ownerNum        = ent->s.number;
+	spotter->nextthink         = level.time + 5000;
+	spotter->r.svFlags         = SVF_BROADCAST;
+	spotter->count2            = 1;                      // first bomb
+	spotter->s.pos.trType      = TR_STATIONARY;
+	spotter->s.otherEntityNum2 = 1;                      // hud mortar marker
 	SnapVector(pos);
 	VectorCopy(pos, spotter->r.currentOrigin);
 	VectorCopy(pos, spotter->s.pos.trBase);

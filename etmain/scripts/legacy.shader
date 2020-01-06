@@ -429,7 +429,7 @@ gfx/limbo/cm_tug
 	}
 }
 
-gfx/limbo/mort_hit
+gfx/limbo/cm_mort_hit
 {
 	nopicmip
 	nocompress
@@ -443,7 +443,7 @@ gfx/limbo/mort_hit
 	}
 }
 
-gfx/limbo/mort_target
+gfx/limbo/cm_mort_target
 {
 	nopicmip
 	nocompress

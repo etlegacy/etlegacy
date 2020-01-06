@@ -1673,7 +1673,8 @@ typedef struct
 	qhandle_t skillPics[SK_NUM_SKILLS];
 	qhandle_t ccMortarHit;
 	qhandle_t ccMortarTarget;
-	qhandle_t ccMortarTargetArrow;
+	qhandle_t mortarTarget;
+	qhandle_t mortarTargetArrow;
 
 	// for commandmap
 	qhandle_t medicIcon;

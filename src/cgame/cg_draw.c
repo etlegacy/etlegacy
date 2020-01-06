@@ -1048,7 +1048,7 @@ static void CG_DrawMortarReticle(void)
 				if (!hasLeftTarget)
 				{
 					trap_R_SetColor(color_firerequest);
-					CG_DrawPic(136 + 2 + cgs.wideXoffset, 236 + 38 - 10 + 1, 8, 8, cgs.media.ccMortarTargetArrow);
+					CG_DrawPic(136 + 2 + cgs.wideXoffset, 236 + 38 - 10 + 1, 8, 8, cgs.media.mortarTargetArrow);
 					trap_R_SetColor(NULL);
 
 					hasLeftTarget = qtrue;
@@ -1059,7 +1059,7 @@ static void CG_DrawMortarReticle(void)
 				if (!hasRightTarget)
 				{
 					trap_R_SetColor(color_firerequest);
-					CG_DrawPic(350 + 154 - 10 + cgs.wideXoffset, 236 + 38 - 10 + 1, -8, 8, cgs.media.ccMortarTargetArrow);
+					CG_DrawPic(350 + 154 - 10 + cgs.wideXoffset, 236 + 38 - 10 + 1, -8, 8, cgs.media.mortarTargetArrow);
 					trap_R_SetColor(NULL);
 
 					hasRightTarget = qtrue;
@@ -1070,7 +1070,7 @@ static void CG_DrawMortarReticle(void)
 				localOffset = ((AngleSubtract(angle, attackRequestAngle)) / 5.f) * 10.f;
 
 				trap_R_SetColor(color_firerequest);
-				CG_DrawPic(320 - localOffset - 8 + cgs.wideXoffset, 264 - 8, 16, 16, cgs.media.ccMortarTarget);
+				CG_DrawPic(320 - localOffset - 8 + cgs.wideXoffset, 264 - 8, 16, 16, cgs.media.mortarTarget);
 				trap_R_SetColor(NULL);
 			}
 		}

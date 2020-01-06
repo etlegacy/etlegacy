@@ -1801,9 +1801,10 @@ static void CG_RegisterGraphics(void)
 	cgs.media.ccCmdPost[0] = trap_R_RegisterShaderNoMip("gfx/limbo/cm_bo_axis");
 	cgs.media.ccCmdPost[1] = trap_R_RegisterShaderNoMip("gfx/limbo/cm_bo_allied");
 
-	cgs.media.ccMortarHit         = trap_R_RegisterShaderNoMip("gfx/limbo/mort_hit");
-	cgs.media.ccMortarTarget      = trap_R_RegisterShaderNoMip("gfx/limbo/mort_target");
-	cgs.media.ccMortarTargetArrow = trap_R_RegisterShaderNoMip("gfx/limbo/mort_targetarrow");
+	cgs.media.ccMortarHit         = trap_R_RegisterShaderNoMip("gfx/limbo/cm_mort_hit");
+	cgs.media.ccMortarTarget      = trap_R_RegisterShaderNoMip("gfx/limbo/cm_mort_target");
+	cgs.media.mortarTarget        = trap_R_RegisterShaderNoMip("gfx/limbo/mort_target");
+	cgs.media.mortarTargetArrow   = trap_R_RegisterShaderNoMip("gfx/limbo/mort_targetarrow");
 
 	cgs.media.skillPics[SK_BATTLE_SENSE]                             = trap_R_RegisterShaderNoMip("gfx/limbo/ic_battlesense");
 	cgs.media.skillPics[SK_EXPLOSIVES_AND_CONSTRUCTION]              = trap_R_RegisterShaderNoMip("gfx/limbo/ic_engineer");
