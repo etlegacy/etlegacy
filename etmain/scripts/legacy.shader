@@ -429,7 +429,7 @@ gfx/limbo/cm_tug
 	}
 }
 
-gfx/limbo/mort_hit
+gfx/limbo/cm_mort_hit
 {
 	nopicmip
 	nocompress
@@ -443,69 +443,13 @@ gfx/limbo/mort_hit
 	}
 }
 
-gfx/limbo/mort_target
+gfx/limbo/cm_mort_target
 {
 	nopicmip
 	nocompress
 	nomipmaps
 	{
 		map gfx/limbo/mort_target.tga
-		depthFunc equal
-		blendfunc blend
-		rgbGen vertex
-		alphaGen vertex
-	}
-}
-
-gfx/loading/pin_allied
-{
-	nopicmip
-	nocompress
-	nomipmaps
-	{
-		map gfx/loading/pin_allied.tga
-		depthFunc equal
-		blendfunc blend
-		rgbGen vertex
-		alphaGen vertex
-	}
-}
-
-gfx/loading/pin_axis
-{
-	nopicmip
-	nocompress
-	nomipmaps
-	{
-		map gfx/loading/pin_axis.tga
-		depthFunc equal
-		blendfunc blend
-		rgbGen vertex
-		alphaGen vertex
-	}
-}
-
-gfx/loading/pin_neutral
-{
-	nopicmip
-	nocompress
-	nomipmaps
-	{
-		map gfx/loading/pin_neutral.tga
-		depthFunc equal
-		blendfunc blend
-		rgbGen vertex
-		alphaGen vertex
-	}
-}
-
-gfx/loading/pin_shot
-{
-	nopicmip
-	nocompress
-	nomipmaps
-	{
-		map gfx/loading/pin_shot.tga
 		depthFunc equal
 		blendfunc blend
 		rgbGen vertex

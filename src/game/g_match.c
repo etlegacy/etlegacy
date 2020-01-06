@@ -596,8 +596,9 @@ void G_printMatchInfo(gentity_t *ent)
 	int       i, j, cnt = 0, eff, time_eff;
 	int       tot_timex, tot_timel, tot_timep, tot_kills, tot_deaths, tot_gibs, tot_sk, tot_tk, tot_tg, tot_dg, tot_dr, tot_tdg, tot_tdr, tot_xp;
 	gclient_t *cl;
+	gentity_t *cl_ent;
 	char      *ref;
-	char      guid[MAX_GUID_LENGTH];
+	char      guid[MAX_GUID_LENGTH + 1];
 	char      n2[MAX_STRING_CHARS];
 
 	for (i = TEAM_AXIS; i <= TEAM_SPECTATOR; i++)
@@ -633,7 +634,8 @@ void G_printMatchInfo(gentity_t *ent)
 
 		for (j = 0; j < level.numConnectedClients; j++)
 		{
-			cl = level.clients + level.sortedClients[j];
+			cl     = level.clients + level.sortedClients[j];
+			cl_ent = g_entities + level.sortedClients[j];
 
 			if (cl->pers.connected != CON_CONNECTED || cl->sess.sessionTeam != i)
 			{
@@ -641,13 +643,13 @@ void G_printMatchInfo(gentity_t *ent)
 			}
 
 			SanitizeString(cl->pers.cl_guid, guid, qfalse);
-			if (ent->r.svFlags & SVF_BOT)
+			if (cl_ent->r.svFlags & SVF_BOT)
 			{
-				guid[9] = 0;
+				guid[9] = '\0';
 			}
 			else
 			{
-				guid[8] = 0;
+				guid[8] = '\0';
 				strcat(guid, "*");
 			}
 

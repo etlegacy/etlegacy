@@ -380,7 +380,7 @@ void G_players_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fDump)
 	int       user_rate, user_snaps;
 	gclient_t *cl;
 	gentity_t *cl_ent;
-	char      guid[MAX_GUID_LENGTH], n2[MAX_NETNAME], ready[16], ref[8], rate[32], version[32];
+	char      guid[MAX_GUID_LENGTH + 1], n2[MAX_NETNAME], ready[16], ref[8], rate[32], version[32];
 	char      *s, *tc, *spec, *ign, *muted, *special, userinfo[MAX_INFO_STRING], *user_version;
 
 	if (g_gamestate.integer == GS_PLAYING)
@@ -428,12 +428,12 @@ void G_players_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fDump)
 		if (cl_ent->r.svFlags & SVF_BOT)
 		{
 			// omnibot requires 9 chars (OMNIBOT01)
-			guid[9] = 0;
+			guid[9] = '\0';
 		}
 		else
 		{
 			// display only 8 char with * for humans
-			guid[8] = 0;
+			guid[8] = '\0';
 			strcat(guid, "*");
 		}
 
@@ -458,7 +458,11 @@ void G_players_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fDump)
 		}
 
 		// Version info
-		if (!(cl_ent->r.svFlags & SVF_BOT))
+		if (cl_ent->r.svFlags & SVF_BOT)
+		{
+			Q_strncpyz(version, va("%s", "--"), sizeof(version));
+		}
+		else
 		{
 			trap_GetUserinfo(idnum, userinfo, sizeof(userinfo));
 			user_version = Info_ValueForKey(userinfo, "cg_etVersion");

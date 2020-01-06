@@ -73,14 +73,8 @@ extern vec3_t bytedirs[NUMVERTEXNORMALS];
 #define SCREEN_WIDTH        640
 #define SCREEN_HEIGHT       480
 
-#define MINICHAR_WIDTH      8
-#define MINICHAR_HEIGHT     12
-
 #define SMALLCHAR_WIDTH     8
 #define SMALLCHAR_HEIGHT    16
-
-#define BIGCHAR_WIDTH       16
-#define BIGCHAR_HEIGHT      16
 
 extern vec4_t colorBlack;
 extern vec4_t colorRed;

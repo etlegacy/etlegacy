@@ -1015,7 +1015,6 @@ int main(int argc, char **argv)
 		else if (quarantine_status == 4)
 		{
 			//user canceled the dialog box
-			Sys_Dialog(DT_ERROR, "Running ET Legacy with enabled App Translocation isn't possible. Please remove the quarantine flag by using the following command in the terminal and restart the game:\r\n\r\nxattr -cr /Applications/ET\\ Legacy/", "App Translocation detected");
 			Sys_Exit(EXIT_FAILURE);
 		}
 		else if (quarantine_status >= 2)

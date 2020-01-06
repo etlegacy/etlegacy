@@ -110,10 +110,6 @@ extern vmCvar_t ui_serverBrowserSettings;
 #define UI_BROWSER_ALLOW_HUMANS_COUNT BIT(1)
 #define UI_BROWSER_ALLOW_MAX_CLIENTS  BIT(2)
 
-// ui_qmenu.c
-#define RCOLUMN_OFFSET          (BIGCHAR_WIDTH)
-#define LCOLUMN_OFFSET          (-BIGCHAR_WIDTH)
-
 #define SLIDER_RANGE            10
 #define MAX_EDIT_LINE           256
 
