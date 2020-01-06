@@ -457,62 +457,6 @@ gfx/limbo/cm_mort_target
 	}
 }
 
-gfx/loading/pin_allied
-{
-	nopicmip
-	nocompress
-	nomipmaps
-	{
-		map gfx/loading/pin_allied.tga
-		depthFunc equal
-		blendfunc blend
-		rgbGen vertex
-		alphaGen vertex
-	}
-}
-
-gfx/loading/pin_axis
-{
-	nopicmip
-	nocompress
-	nomipmaps
-	{
-		map gfx/loading/pin_axis.tga
-		depthFunc equal
-		blendfunc blend
-		rgbGen vertex
-		alphaGen vertex
-	}
-}
-
-gfx/loading/pin_neutral
-{
-	nopicmip
-	nocompress
-	nomipmaps
-	{
-		map gfx/loading/pin_neutral.tga
-		depthFunc equal
-		blendfunc blend
-		rgbGen vertex
-		alphaGen vertex
-	}
-}
-
-gfx/loading/pin_shot
-{
-	nopicmip
-	nocompress
-	nomipmaps
-	{
-		map gfx/loading/pin_shot.tga
-		depthFunc equal
-		blendfunc blend
-		rgbGen vertex
-		alphaGen vertex
-	}
-}
-
 sprites/landmine_allied
 {
 	nopicmip
