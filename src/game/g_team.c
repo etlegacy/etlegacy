@@ -1595,7 +1595,7 @@ void G_swapTeams(void)
 		// swap secondary weapon
 		if (GetWeaponTableData(cl->sess.playerWeapon2)->weapEquiv)
 		{
-			cl->sess.playerWeapon = cl->sess.latchPlayerWeapon2 = GetWeaponTableData(cl->sess.playerWeapon2)->weapEquiv;
+			cl->sess.playerWeapon2 = cl->sess.latchPlayerWeapon2 = GetWeaponTableData(cl->sess.playerWeapon2)->weapEquiv;
 		}
 
 		G_UpdateCharacter(cl);
