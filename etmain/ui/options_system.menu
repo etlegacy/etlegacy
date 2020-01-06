@@ -42,9 +42,17 @@ menuDef {
 	COMBO( 8, GRAPHICS_Y+16, (SUBWINDOW_WIDTH_L)-4, 10, _("Renderer:"), .2, 8, "cl_renderer", LEGACY_RENDERERS, exec vid_restart, _("Set your desired renderer (does a video restart)") )
 	MULTIACTION( 8, GRAPHICS_Y+28, (SUBWINDOW_WIDTH_L)-4, 10, _("Overall Quality:"), .2, 8, "ui_glCustom", cvarFloatList { "fastest" 3 "fast" 2 "normal" 1 "high" 0 }, uiScript update "ui_glCustom", _("Set overall video quality") )
 	COMBO( 8, GRAPHICS_Y+40, (SUBWINDOW_WIDTH_L)-4, 10, _("Resolution:"), .2, 8, "ui_r_mode", LEGACY_RESOLUTIONS, uiScript glCustom, _("Set video resolution of the game") )
+#else
+	MULTI( 8, GRAPHICS_Y+16, (SUBWINDOW_WIDTH_L)-4, 10, _("Renderer:"), .2, 8, "cl_renderer", cvarStrList { "Default"; "" }, _("Set your desired renderer (does a video restart)") )
+	MULTIACTION( 8, GRAPHICS_Y+28, (SUBWINDOW_WIDTH_L)-4, 10, _("Overall Quality:"), .2, 8, "ui_glCustom", cvarFloatList { "fastest" 3 "fast" 2 "normal" 1 "high" 0 }, uiScript update "ui_glCustom", _("Set overall video quality") )
+	MULTI( 8, GRAPHICS_Y+40, (SUBWINDOW_WIDTH_L)-4, 10, _("Resolution:"), .2, 8, "ui_r_mode", VANILLA_RESOLUTIONS, _("Set video resolution of the game") )
+#endif
 	NUMERICFIELD( 8, GRAPHICS_Y+52, (SUBWINDOW_WIDTH_L)-4, 10, _("Custom Width:"), .2, 8, "r_customwidth", 5, _("Specifies custom resolution width (requires custom resolution set - *Use at your own risk*)") )
 	NUMERICFIELD( 8, GRAPHICS_Y+64, (SUBWINDOW_WIDTH_L)-4, 10, _("Custom Height:"), .2, 8, "r_customheight", 5, _("Specifies custom resolution height (requires custom resolution set - *Use at your own risk*)") )
+#ifdef LEGACY
 	COMBO( 8, GRAPHICS_Y+76, (SUBWINDOW_WIDTH_L)-4, 10, _("Window mode:"), .2, 8, "ui_r_windowmode", LEGACY_WINDOWMODES, uiScript glCustom, _("Toggle fullscreen") )
+#else
+	MULTI( 8, GRAPHICS_Y+76, (SUBWINDOW_WIDTH_L)-4, 10, _("Window mode:"), .2, 8, "ui_r_windowmode", cvarStrList { "Default"; "" }, _("Toggle fullscreen") )
 #endif
 	CVARFLOATLABEL( 8, GRAPHICS_Y+88, (SUBWINDOW_WIDTH_L)-6, 10, "r_gamma", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-6), 8 )
 	SLIDER( 8, GRAPHICS_Y+88, (SUBWINDOW_WIDTH_L)-4, 10, _("Brightness:"), .2, 8, "r_gamma" 1.3 1 3, _("Set the brightness of the game") )
