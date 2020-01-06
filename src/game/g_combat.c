@@ -700,6 +700,12 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 			limbo(self, qtrue);
 		}
 	}
+	else
+	{
+#ifdef FEATURE_SERVERMDX
+		self->client->deathAnim = qtrue;    // add animation time
+#endif
+	}
 }
 
 #define REALHEAD_HEAD 1
