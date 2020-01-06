@@ -2909,7 +2909,7 @@ void artillerySpotterThink(gentity_t *ent)
 		bomb->splashDamage      = 90;   // overwrite
 		bomb->splashRadius      = 50;   // overwrite
 		bomb->s.effect1Time     = 1;    // first bomb, make smoke appear
-		bomb->s.otherEntityNum2 = ent->s.otherEntityNum2; // hud mortar marker
+		bomb->s.otherEntityNum2 = 1;    // hud mortar marker
 
 		// spotter, first bomb dropped
 		ent->count2 = 0;
@@ -3065,7 +3065,6 @@ void Weapon_Artillery(gentity_t *ent)
 	spotter->r.svFlags         = SVF_BROADCAST;
 	spotter->count2            = 1;                      // first bomb
 	spotter->s.pos.trType      = TR_STATIONARY;
-	spotter->s.otherEntityNum2 = 1;                      // hud mortar marker
 	SnapVector(pos);
 	VectorCopy(pos, spotter->r.currentOrigin);
 	VectorCopy(pos, spotter->s.pos.trBase);
