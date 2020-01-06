@@ -1698,6 +1698,18 @@ void G_shuffleTeamsXP(void)
 				G_ExplodeMines(g_entities + sortClients[i]);
 			}
 			G_FadeItems(g_entities + sortClients[i], MOD_SATCHEL);
+
+			// swap primary weapon
+			if (GetWeaponTableData(cl->sess.playerWeapon)->weapEquiv)
+			{
+				cl->sess.playerWeapon = cl->sess.latchPlayerWeapon = GetWeaponTableData(cl->sess.playerWeapon)->weapEquiv;
+			}
+
+			// swap secondary weapon
+			if (GetWeaponTableData(cl->sess.playerWeapon2)->weapEquiv)
+			{
+				cl->sess.playerWeapon2 = cl->sess.latchPlayerWeapon2 = GetWeaponTableData(cl->sess.playerWeapon2)->weapEquiv;
+			}
 		}
 
 		cl->sess.sessionTeam = cTeam;
@@ -1770,6 +1782,18 @@ void G_shuffleTeamsSR(void)
 				G_ExplodeMines(g_entities + sortClients[i]);
 			}
 			G_FadeItems(g_entities + sortClients[i], MOD_SATCHEL);
+
+			// swap primary weapon
+			if (GetWeaponTableData(cl->sess.playerWeapon)->weapEquiv)
+			{
+				cl->sess.playerWeapon = cl->sess.latchPlayerWeapon = GetWeaponTableData(cl->sess.playerWeapon)->weapEquiv;
+			}
+
+			// swap secondary weapon
+			if (GetWeaponTableData(cl->sess.playerWeapon2)->weapEquiv)
+			{
+				cl->sess.playerWeapon2 = cl->sess.latchPlayerWeapon2 = GetWeaponTableData(cl->sess.playerWeapon2)->weapEquiv;
+			}
 		}
 
 		cl->sess.sessionTeam = cTeam;
