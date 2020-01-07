@@ -1133,7 +1133,13 @@ void G_BounceItem(gentity_t *ent, trace_t *trace)
 	if (trace->startsolid || (trace->plane.normal[2] > 0 && ent->s.pos.trDelta[2] < 40))
 	{
 		vectoangles(trace->plane.normal, ent->s.angles);
-		ent->s.angles[0] += 90;
+
+		// don't rotate corpse, looking too ugly
+		if (ent->s.eType != ET_CORPSE)
+		{
+			ent->s.angles[0] += 90;
+		}
+
 		if (ent->s.angles[0] > 0.0f && ent->s.angles[0] < 50.0f)
 		{
 			// align items on inclined ground
