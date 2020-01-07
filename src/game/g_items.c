@@ -1130,7 +1130,7 @@ void G_BounceItem(gentity_t *ent, trace_t *trace)
 	VectorScale(ent->s.pos.trDelta, ent->physicsBounce, ent->s.pos.trDelta);
 
 	// check for stop
-	if (trace->plane.normal[2] > 0 && ent->s.pos.trDelta[2] < 40)
+	if (trace->startsolid || (trace->plane.normal[2] > 0 && ent->s.pos.trDelta[2] < 40))
 	{
 		vectoangles(trace->plane.normal, ent->s.angles);
 		ent->s.angles[0] += 90;
@@ -1147,6 +1147,7 @@ void G_BounceItem(gentity_t *ent, trace_t *trace)
 		SnapVector(trace->endpos);
 		G_SetOrigin(ent, trace->endpos);
 		ent->s.groundEntityNum = trace->entityNum;
+		ent->s.pos.trType      = TR_GRAVITY_PAUSED;        // overwrite
 		return;
 	}
 
@@ -1211,7 +1212,7 @@ void G_RunItem(gentity_t *ent)
 	vec3_t  origin;
 	trace_t tr;
 	int     contents;
-	int     mask;
+	int     mask = ent->clipmask ? ent->clipmask : MASK_SOLID;
 
 	// if groundentity has been set to -1, it may have been pushed off an edge
 	if (ent->s.groundEntityNum == -1)
@@ -1223,13 +1224,30 @@ void G_RunItem(gentity_t *ent)
 		}
 	}
 
-	if (ent->s.pos.trType == TR_STATIONARY || ent->s.pos.trType == TR_GRAVITY_PAUSED) // check think function
+	if (ent->s.pos.trType == TR_STATIONARY) // check think function
 	{
 		G_RunThink(ent);
 		return;
 	}
+	else if (ent->s.pos.trType == TR_GRAVITY_PAUSED)    // check if ent can start falling again
+	{
+		vec3_t newOrigin;
 
-	if (ent->s.pos.trType == TR_LINEAR && (!ent->clipmask && !ent->r.contents))
+		VectorCopy(ent->r.currentOrigin, newOrigin);
+		newOrigin[2] -= 4;
+		trap_Trace(&tr, ent->r.currentOrigin, ent->r.mins, ent->r.maxs, newOrigin, ent->s.number, mask);
+
+		if (tr.fraction > 0.5f && !tr.startsolid)
+		{
+			VectorClear(ent->s.pos.trDelta);
+			ent->s.pos.trType = TR_GRAVITY;
+			ent->s.pos.trTime = level.time;
+		}
+
+		G_RunThink(ent);
+		return;
+	}
+	else if (ent->s.pos.trType == TR_LINEAR && (!ent->clipmask && !ent->r.contents))
 	{
 		// check think function
 		G_RunThink(ent);
@@ -1240,14 +1258,6 @@ void G_RunItem(gentity_t *ent)
 	BG_EvaluateTrajectory(&ent->s.pos, level.time, origin, qfalse, ent->s.effect2Time);
 
 	// trace a line from the previous position to the current position
-	if (ent->clipmask)
-	{
-		mask = ent->clipmask;
-	}
-	else
-	{
-		mask = MASK_SOLID;
-	}
 	trap_Trace(&tr, ent->r.currentOrigin, ent->r.mins, ent->r.maxs, origin,
 	           ent->r.ownerNum, mask);
 

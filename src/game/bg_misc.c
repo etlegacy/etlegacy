@@ -3302,8 +3302,6 @@ void BG_EvaluateTrajectory(const trajectory_t *tr, int atTime, vec3_t result, qb
 		}
 
 		break;
-	// TODO : case not handle
-	//case TR_LINEAR_STOP_BACK:
 	default:
 		Com_Error(ERR_DROP, "BG_EvaluateTrajectory: unknown trType: %i", tr->trTime);
 	}
@@ -3326,6 +3324,7 @@ void BG_EvaluateTrajectoryDelta(const trajectory_t *tr, int atTime, vec3_t resul
 	{
 	case TR_STATIONARY:
 	case TR_INTERPOLATE:
+	case TR_GRAVITY_PAUSED:
 		VectorClear(result);
 		break;
 	case TR_LINEAR:
@@ -3384,9 +3383,6 @@ void BG_EvaluateTrajectoryDelta(const trajectory_t *tr, int atTime, vec3_t resul
 	case TR_LINEAR_PATH:
 		VectorClear(result);
 		break;
-	// TODO : case not handle
-	//case TR_LINEAR_STOP_BACK:
-	//case TR_GRAVITY_PAUSED:
 	default:
 		Com_Error(ERR_DROP, "BG_EvaluateTrajectoryDelta: unknown trType: %i", tr->trTime);
 	}
