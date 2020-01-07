@@ -655,6 +655,12 @@ void G_SkillRatingGetClientRating(gclient_t *cl)
 	int          clientNum;
 	srData_t     sr_data;
 
+	// disable for these game types
+	if (g_gametype.integer == GT_WOLF_STOPWATCH || g_gametype.integer == GT_WOLF_LMS)
+	{
+		return;
+	}
+
 	if (!level.database.initialized)
 	{
 		G_Printf("G_SkillRatingGetClientRating: access to non-initialized database\n");
@@ -744,6 +750,12 @@ void G_SkillRatingSetClientRating(gclient_t *cl)
 	int          clientNum;
 	srData_t     sr_data;
 
+	// disable for these game types
+	if (g_gametype.integer == GT_WOLF_STOPWATCH || g_gametype.integer == GT_WOLF_LMS)
+	{
+		return;
+	}
+
 	if (!level.database.initialized)
 	{
 		G_Printf("G_SkillRatingSetClientRating: access to non-initialized database\n");
@@ -812,6 +824,12 @@ float G_SkillRatingGetMapRating(char *mapname)
 	char         *err_msg = NULL;
 	char         *sql;
 	sqlite3_stmt *sqlstmt;
+
+	// disable for these game types
+	if (g_gametype.integer == GT_WOLF_STOPWATCH || g_gametype.integer == GT_WOLF_LMS)
+	{
+		return 0.5f;
+	}
 
 	if (!level.database.initialized)
 	{
@@ -972,6 +990,12 @@ void G_CalculateSkillRatings(void)
 	char cs[MAX_STRING_CHARS];
 	char *buf;
 	int  winner;
+
+	// disable for these game types
+	if (g_gametype.integer == GT_WOLF_STOPWATCH || g_gametype.integer == GT_WOLF_LMS)
+	{
+		return;
+	}
 
 	// determine winner
 	trap_GetConfigstring(CS_MULTI_MAPWINNER, cs, sizeof(cs));
@@ -1320,6 +1344,12 @@ float G_CalculateWinProbability(int team)
 	float mapMu        = 0.f;
 	float mapSigma     = 0.f;
 	float mapBeta      = 0.f;
+
+	// disable for these game types
+	if (g_gametype.integer == GT_WOLF_STOPWATCH || g_gametype.integer == GT_WOLF_LMS)
+	{
+		return 0.5f;
+	}
 
 	// current play time
 	int currentTime = level.timeCurrent - level.startTime - level.timeDelta;

@@ -3679,7 +3679,7 @@ void G_LogExit(const char *string)
 
 #ifdef FEATURE_RATING
 	// record match ratings
-	if (g_skillRating.integer && (g_gametype.integer != GT_WOLF_STOPWATCH && g_gametype.integer != GT_WOLF_LMS))
+	if (g_skillRating.integer)
 	{
 		for (i = 0; i < level.numConnectedClients; i++)
 		{
@@ -3730,7 +3730,7 @@ void G_LogExit(const char *string)
 
 #ifdef FEATURE_RATING
 	// calculate skill ratings once intermission is queued
-	if (g_skillRating.integer && (g_gametype.integer != GT_WOLF_STOPWATCH && g_gametype.integer != GT_WOLF_LMS))
+	if (g_skillRating.integer)
 	{
 		G_CalculateSkillRatings();
 	}

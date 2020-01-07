@@ -4979,7 +4979,7 @@ void ClientCommand(int clientNum)
 #ifdef FEATURE_RATING
 	else if (!Q_stricmp(cmd, "imsr"))
 	{
-		if (g_skillRating.integer > 0)
+		if (g_skillRating.integer)
 		{
 			Cmd_IntermissionSkillRating_f(ent);
 		}
