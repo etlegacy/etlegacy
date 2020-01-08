@@ -676,17 +676,21 @@ void CL_Disconnect(qboolean showMainMenu)
 	// not connected to a pure server anymore
 	cl_connectedToPureServer = qfalse;
 
-	// reset connection state
-	cls.state = CA_DISCONNECTED;
-
 	// don't try a restart if uivm is NULL, as we might be in the middle of a restart already
 	if (uivm && cls.state > CA_DISCONNECTED)
 	{
+		// restart the UI	
+		cls.state = CA_DISCONNECTED;
+
 		// shutdown the UI
 		CL_ShutdownUI();
 
 		// init the UI
 		CL_InitUI();
+	}
+	else	
+	{	
+		cls.state = CA_DISCONNECTED;
 	}
 }
 
