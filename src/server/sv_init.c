@@ -1211,7 +1211,7 @@ void SV_Shutdown(const char *finalmsg)
 	IRC_WaitShutdown();
 #endif
 
-	Com_Printf("----- Server Shutdown ----------\n");
+	Com_Printf("----- Server Shutdown (%s) -----\n", finalmsg ? finalmsg : "n/a");
 
 	if (svs.clients && !com_errorEntered)
 	{
