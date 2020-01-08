@@ -4689,12 +4689,14 @@ void UI_RunMenuScript(char **args)
 			{
 				trap_Cvar_Set("sv_killserver", "1");
 			}
-
-			trap_Cmd_ExecuteText(EXEC_APPEND, "disconnect\n");
-			trap_Key_SetCatcher(KEYCATCH_UI);
-			Menus_CloseAll();
-			Menus_ActivateByName("backgroundmusic", qtrue);
-			Menus_ActivateByName("main_opener", qtrue);
+			else
+			{
+				trap_Cmd_ExecuteText(EXEC_APPEND, "disconnect\n");
+				trap_Key_SetCatcher(KEYCATCH_UI);
+				Menus_CloseAll();
+				Menus_ActivateByName("backgroundmusic", qtrue);
+				Menus_ActivateByName("main_opener", qtrue);
+			}
 		}
 		else if (Q_stricmp(name, "ServerSort") == 0)
 		{
