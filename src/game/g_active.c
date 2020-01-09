@@ -2106,8 +2106,7 @@ void ClientEndFrame(gentity_t *ent)
 	{
 		// ensure time played is always smaller or equal than time spent in teams
 		// work around for unreset data of slow connecters
-		if ((ent->client->sess.time_played > (ent->client->sess.time_axis + ent->client->sess.time_allies)) &&
-		    !(g_gametype.integer == GT_WOLF_STOPWATCH && g_currentRound.integer == 1))
+		if (ent->client->sess.time_played > (ent->client->sess.time_axis + ent->client->sess.time_allies))
 		{
 			ent->client->sess.time_played = 0;
 		}
