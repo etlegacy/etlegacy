@@ -29,8 +29,24 @@ REM SET platform_toolset=-T v142
 set i=0
 :loop
 IF NOT "%1"=="" (
-	IF /I "%1"=="--help" (
-		ECHO Write some help text here....
+	IF /I "%1"=="-help" (
+		ECHO.
+		ECHO ET Legacy Easy Builder Help
+		ECHO ===============================
+		ECHO clean - clean up the build
+		ECHO build - run the build process
+		ECHO package - run the package process
+		ECHO install - install the game into the system
+		ECHO download - download assets
+		ECHO crust - run the uncrustify to the source
+		ECHO project - generate the project files for your platform
+		ECHO release - run the entire release process
+		ECHO open - open explorer to game path
+		ECHO help - print this help
+		ECHO.
+		ECHO Properties
+		ECHO -64, -debug, -mod, -noupdate, -noextra, -nor2, -generator [generator], -toolset [version] -build_dir [dir]
+		ECHO.
 		GOTO:EOF
 	) ELSE IF /I "%1"=="-64" (
 		SET build_64=1
