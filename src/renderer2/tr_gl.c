@@ -46,7 +46,7 @@ void GL_Bind(image_t *image)
 	if (!image)
 	{
 		Ren_Warning("GL_Bind: NULL image\n");
-		texnum = tr.defaultImage->texnum;
+		image = tr.defaultImage;
 	}
 	
 	else
@@ -73,7 +73,7 @@ void GL_Bind(image_t *image)
 		}
 
 		glState.currenttextures[glState.currenttmu] = texnum;
-		glBindTexture(GL_TEXTURE_2D, texnum);
+		glBindTexture(image->type, texnum);
 	}
 }
 
