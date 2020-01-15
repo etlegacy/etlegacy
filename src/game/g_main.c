@@ -3732,6 +3732,25 @@ void G_LogExit(const char *string)
 	}
 #endif
 
+#ifdef FEATURE_PRESTIGE
+	// record prestige
+	if (g_prestige.integer)
+	{
+		for (i = 0; i < level.numConnectedClients; i++)
+		{
+			gentity_t *ent = &g_entities[level.sortedClients[i]];
+
+			if (!ent->inuse)
+			{
+				continue;
+			}
+
+			// record prestige before intermission
+			G_SetClientPrestige(ent->client);
+		}
+	}
+#endif
+
 	level.intermissionQueued = level.time;
 
 	// this will keep the clients from playing any voice sounds

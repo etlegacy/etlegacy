@@ -2303,6 +2303,18 @@ char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 	}
 #endif
 
+#ifdef FEATURE_PRESTIGE
+	if (g_prestige.integer)
+	{
+		G_GetClientPrestige(client);
+
+		for (int i = 0; i < SK_NUM_SKILLS; i++)
+		{
+			G_SetPlayerSkill(client, i);
+		}
+	}
+#endif
+
 	ClientUserinfoChanged(clientNum);
 
 	// don't do the "xxx connected" messages if they were caried over from previous level
@@ -3152,6 +3164,13 @@ void ClientDisconnect(int clientNum)
 	if (g_skillRating.integer && !level.intermissiontime)
 	{
 		G_SkillRatingSetClientRating(ent->client);
+	}
+#endif
+
+#ifdef FEATURE_PRESTIGE
+	if (g_prestige.integer && !level.intermissiontime)
+	{
+		G_SetClientPrestige(ent->client);
 	}
 #endif
 

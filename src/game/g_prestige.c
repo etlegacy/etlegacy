@@ -30,11 +30,11 @@
 #endif
 
 #define PRCHECK_SQLWRAP_TABLES "SELECT * FROM prestige_users;"
-#define PRCHECK_SQLWRAP_SCHEMA "SELECT guid, prestige, created, updated FROM prestige_users;"
+#define PRCHECK_SQLWRAP_SCHEMA "SELECT guid, prestige, skill0, skill1, skill2, skill3, skill4, skill5, skill6, created, updated FROM prestige_users;"
 #define PRUSERS_SQLWRAP_SELECT "SELECT * FROM prestige_users WHERE guid = '%s';"
 #define PRUSERS_SQLWRAP_INSERT "INSERT INTO prestige_users " \
-	                           "(guid, prestige, created, updated) VALUES ('%s', '%i', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);"
-#define PRUSERS_SQLWRAP_UPDATE "UPDATE prestige_users SET updated = CURRENT_TIMESTAMP WHERE guid = '%s';"
+	                           "(guid, prestige, skill0, skill1, skill2, skill3, skill4, skill5, skill6, created, updated) VALUES ('%s', '%i', '%i', '%i', '%i', '%i', '%i', '%i', '%i', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);"
+#define PRUSERS_SQLWRAP_UPDATE "UPDATE prestige_users SET prestige = '%i', skill0 = '%i', skill1 = '%i', skill2 = '%i', skill3 = '%i', skill4 = '%i', skill5 = '%i', skill6 = '%i', updated = CURRENT_TIMESTAMP WHERE guid = '%s';"
 
 /**
  * @brief Checks if database exists, if tables exist and if schemas are correct
@@ -109,6 +109,296 @@ int G_PrestigeDBCheck(char *db_path, int db_mode)
 	if (result != SQLITE_OK)
 	{
 		G_Printf("G_PrestigeDBCheck: sqlite3_close failed: %s\n", sqlite3_errstr(result));
+		return 1;
+	}
+
+	return 0;
+}
+
+/**
+ * @brief Retrieve prestige for client
+ *         Called on ClientConnect
+ * @param[in] cl
+ */
+void G_GetClientPrestige(gclient_t *cl)
+{
+	char         userinfo[MAX_INFO_STRING];
+	char         *guid;
+	int          clientNum, i;
+	prData_t     pr_data;
+
+	// disable for these game types
+	if (g_gametype.integer == GT_WOLF_CAMPAIGN || g_gametype.integer == GT_WOLF_STOPWATCH || g_gametype.integer == GT_WOLF_LMS)
+	{
+		return;
+	}
+
+	if (!level.database.initialized)
+	{
+		G_Printf("G_GetClientPrestige: access to non-initialized database\n");
+		return;
+	}
+
+	if (!cl)
+	{
+		return;
+	}
+
+	clientNum = cl - level.clients;
+
+	// retrieve guid
+	trap_GetUserinfo(clientNum, userinfo, sizeof(userinfo));
+	guid = Info_ValueForKey(userinfo, "cl_guid");
+
+	// assign guid
+	pr_data.guid = (const unsigned char *)guid;
+
+	// retrieve current prestige or assign default values
+	if (G_ReadPrestige(&pr_data))
+	{
+		return;
+	}
+
+	// assign user data to session
+	cl->sess.prestige = pr_data.prestige;
+
+	for (i = 0; i < SK_NUM_SKILLS; i++)
+	{
+		cl->sess.skillpoints[i]      = pr_data.skillpoints[i];
+		cl->sess.startskillpoints[i] = pr_data.skillpoints[i];
+	}
+}
+
+/**
+ * @brief Sets or updates prestige and timestamp for client
+ *         Called on ClientDisconnect and on G_LogExit before intermissionQueued
+ * @param[in] cl
+ */
+void G_SetClientPrestige(gclient_t *cl)
+{
+	char         userinfo[MAX_INFO_STRING];
+	char         *guid;
+	int          clientNum, i;
+	prData_t     pr_data;
+
+	// disable for these game types
+	if (g_gametype.integer == GT_WOLF_CAMPAIGN || g_gametype.integer == GT_WOLF_STOPWATCH || g_gametype.integer == GT_WOLF_LMS)
+	{
+		return;
+	}
+
+	if (!level.database.initialized)
+	{
+		G_Printf("G_SetClientPrestige: access to non-initialized database\n");
+		return;
+	}
+
+	if (!cl)
+	{
+		return;
+	}
+
+	// don't record any data in warmup
+	if (level.warmupTime)
+	{
+		return;
+	}
+
+	clientNum = cl - level.clients;
+
+	// retrieve guid
+	trap_GetUserinfo(clientNum, userinfo, sizeof(userinfo));
+	guid = Info_ValueForKey(userinfo, "cl_guid");
+
+	// assign match data
+	pr_data.guid     = (const unsigned char *)guid;
+	pr_data.prestige = cl->sess.prestige;
+
+	for (i = 0; i < SK_NUM_SKILLS; i++)
+	{
+		pr_data.skillpoints[i] = cl->sess.skillpoints[i];
+	}
+
+	// save or update user prestige
+	if (!level.intermissionQueued)
+	{
+		// save or update prestige
+		if (G_WritePrestige(&pr_data))
+		{
+			return;
+		}
+	}
+	else
+	{
+		// increase prestige and reset skill points
+		// TODO: but only if all skills are maxed out
+		pr_data.prestige = cl->sess.prestige + 1;
+
+		for (i = 0; i < SK_NUM_SKILLS; i++)
+		{
+			pr_data.skillpoints[i] = 0;
+		}
+
+		G_WritePrestige(&pr_data);
+	}
+}
+
+/**
+ * @brief Retrieve prestige from the prestige_users table
+ * @param[in] pr_data
+ * @return 0 if successful, 1 otherwise.
+ */
+int G_ReadPrestige(prData_t *pr_data)
+{
+	int          result, i;
+	char         *err_msg = NULL;
+	char         *sql;
+	sqlite3_stmt *sqlstmt;
+
+	if (!level.database.initialized)
+	{
+		G_Printf("G_ReadPrestige: access to non-initialized database\n");
+		return 1;
+	}
+
+	sql = va(PRUSERS_SQLWRAP_SELECT, pr_data->guid);
+
+	result = sqlite3_prepare(level.database.db, sql, strlen(sql), &sqlstmt, NULL);
+
+	if (result != SQLITE_OK)
+	{
+		G_Printf("G_ReadPrestige: sqlite3_prepare failed: %s\n", err_msg);
+		sqlite3_free(err_msg);
+		return 1;
+	}
+
+	result = sqlite3_step(sqlstmt);
+
+	if (result == SQLITE_ROW)
+	{
+		// assign prestige data
+		pr_data->prestige = sqlite3_column_int(sqlstmt, 1);
+
+		for (i= 0; i < SK_NUM_SKILLS; i++)
+		{
+			pr_data->skillpoints[i] = sqlite3_column_int(sqlstmt, i + 2);
+		}
+	}
+	else
+	{
+		// no entry found or other failure
+		if (result == SQLITE_DONE)
+		{
+			// assign default values
+			pr_data->prestige = 0;
+
+			for (i = 0; i < SK_NUM_SKILLS; i++)
+			{
+				pr_data->skillpoints[i] = 0;
+			}
+		}
+		else
+		{
+			sqlite3_finalize(sqlstmt);
+
+			G_Printf("G_ReadPrestige: sqlite3_step failed: %s\n", err_msg);
+			sqlite3_free(err_msg);
+			return 1;
+		}
+	}
+
+	result = sqlite3_finalize(sqlstmt);
+
+	if (result != SQLITE_OK)
+	{
+		G_Printf("G_ReadPrestige: sqlite3_finalize failed\n");
+		return 1;
+	}
+
+	return 0;
+}
+
+/**
+ * @brief Sets or updates skills and prestige points
+ * @param[in] pr_data
+ * @return 0 if successful, 1 otherwise.
+ */
+int G_WritePrestige(prData_t *pr_data)
+{
+	int          result;
+	char         *err_msg = NULL;
+	char         *sql;
+	sqlite3_stmt *sqlstmt;
+
+	if (!level.database.initialized)
+	{
+		G_Printf("G_WritePrestige: access to non-initialized database\n");
+		return 1;
+	}
+
+	sql = va(PRUSERS_SQLWRAP_SELECT, pr_data->guid);
+
+	result = sqlite3_prepare(level.database.db, sql, strlen(sql), &sqlstmt, NULL);
+
+	if (result != SQLITE_OK)
+	{
+		G_Printf("G_WritePrestige: sqlite3_prepare failed: %s\n", err_msg);
+		sqlite3_free(err_msg);
+		return 1;
+	}
+
+	result = sqlite3_step(sqlstmt);
+
+	if (result == SQLITE_DONE)
+	{
+		sql = va(PRUSERS_SQLWRAP_INSERT,
+				pr_data->guid,
+				pr_data->prestige,
+				pr_data->skillpoints[0],
+				pr_data->skillpoints[1],
+				pr_data->skillpoints[2],
+				pr_data->skillpoints[3],
+				pr_data->skillpoints[4],
+				pr_data->skillpoints[5],
+				pr_data->skillpoints[6]);
+
+		result = sqlite3_exec(level.database.db, sql, NULL, NULL, &err_msg);
+
+		if (result != SQLITE_OK)
+		{
+			G_Printf("G_WritePrestige: sqlite3_exec:INSERT failed: %s\n", err_msg);
+			sqlite3_free(err_msg);
+			return 1;
+		}
+	}
+	else
+	{
+		sql = va(PRUSERS_SQLWRAP_UPDATE,
+				pr_data->prestige,
+				(int)pr_data->skillpoints[0],
+				(int)pr_data->skillpoints[1],
+				(int)pr_data->skillpoints[2],
+				(int)pr_data->skillpoints[3],
+				(int)pr_data->skillpoints[4],
+				(int)pr_data->skillpoints[5],
+				(int)pr_data->skillpoints[6],
+				pr_data->guid);
+
+		result = sqlite3_exec(level.database.db, sql, NULL, NULL, &err_msg);
+
+		if (result != SQLITE_OK)
+		{
+			G_Printf("G_WritePrestige: sqlite3_exec:UPDATE failed: %s\n", err_msg);
+			sqlite3_free(err_msg);
+			return 1;
+		}
+	}
+
+	result = sqlite3_finalize(sqlstmt);
+
+	if (result != SQLITE_OK)
+	{
+		G_Printf("G_WritePrestige: sqlite3_finalize failed\n");
 		return 1;
 	}
 
