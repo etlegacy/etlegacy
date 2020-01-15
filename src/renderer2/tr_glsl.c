@@ -463,7 +463,7 @@ void GLSL_LoadDefinitions(void)
 	// FIXME: Also load from external files in the future...
 	// For now just copy the existing data to our search able string
 	const char *defaultShaderDef = GetFallbackShaderDef();
-	int        size              = strlen(defaultShaderDef) * sizeof(char);
+	size_t        size              = strlen(defaultShaderDef) * sizeof(char);
 
 	definitionText = (char *)Com_Allocate(size + 1);
 	Com_Memset(definitionText, '\0', size + 1);
@@ -1284,7 +1284,7 @@ static void GLSL_PreprocessShaderText(char *shaderBuffer, char *filetext, GLenum
 	GLchar       *ref   = filetext;
 	char         *token = NULL;
 	int          c      = 0;
-	unsigned int offset = 0;
+	size_t offset = 0;
 
 	while ((c = *ref))
 	{
@@ -1323,7 +1323,7 @@ static void GLSL_PreprocessShaderText(char *shaderBuffer, char *filetext, GLenum
 				// handle include
 				GLchar       *libBuffer         = NULL;
 				size_t       libBufferSize      = 0;
-				unsigned int currentOffset      = strlen(shaderBuffer);
+				size_t       currentOffset      = strlen(shaderBuffer);
 				char         *shaderBufferPoint = NULL;
 
 				if (!currentOffset)

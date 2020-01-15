@@ -974,7 +974,7 @@ void printBits(size_t const size, void const *const ptr)
 {
 	unsigned char *b = (unsigned char *) ptr;
 	unsigned char byte;
-	int           i, j;
+	size_t           i, j;
 
 	for (i = size - 1; i >= 0; i--)
 	{

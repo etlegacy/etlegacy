@@ -1754,7 +1754,7 @@ typedef struct shaderProgramList_s
 {
 	shaderProgram_t *programs;
 	shaderProgram_t *current;
-	int permutations;
+	size_t permutations;
 	int currentPermutation;
 	int currentMacros;
 	int macromap[MAX_MACROS];
