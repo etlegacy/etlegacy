@@ -193,7 +193,7 @@ typedef struct
 #else
 	void * (*Hunk_Alloc)(unsigned int size, ha_pref pref);
 #endif
-	void * (*Hunk_AllocateTempMemory)(unsigned int size);
+	void * (*Hunk_AllocateTempMemory)(size_t size);
 	void (*Hunk_FreeTempMemory)(void *block);
 
 	/// dynamic memory allocator for things that need to be freed
