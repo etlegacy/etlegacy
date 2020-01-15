@@ -384,7 +384,11 @@ typedef int clipHandle_t;
 #endif
 
 #ifndef BIT
+#ifdef _WIN64
+#define BIT(x)              (1i64 << x)
+#else
 #define BIT(x)              (1 << x)
+#endif
 #endif
 
 #define SIZE_KB(bytes) ((bytes) >> 10)
