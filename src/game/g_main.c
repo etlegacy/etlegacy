@@ -2404,46 +2404,9 @@ void G_InitGame(int levelTime, int randomSeed, int restart, int legacyServer, in
 		G_ClearMapXP();
 	}
 
-	trap_GetServerinfo(cs, sizeof(cs));
-	Q_strncpyz(level.rawmapname, Info_ValueForKey(cs, "mapname"), sizeof(level.rawmapname));
-
-	G_Printf("map: %s\n", level.rawmapname);
-
-	// array acces check is done in G_RegisterCvars - we won't execute this with invalid gametype
-	G_Printf("gametype: %s\n", gameNames[g_gametype.integer]);
-
 	// time
 	time(&aclock);
 	strftime(timeFt, sizeof(timeFt), "%a %b %d %X %Y", localtime(&aclock));
-	G_Printf("gametime: %s\n", timeFt);
-
-	G_ParseCampaigns();
-	if (g_gametype.integer == GT_WOLF_CAMPAIGN)
-	{
-		if (g_campaigns[level.currentCampaign].current == 0 || level.newCampaign)
-		{
-			trap_Cvar_Set("g_axiswins", "0");
-			trap_Cvar_Set("g_alliedwins", "0");
-
-			G_ClearMapXP();
-
-			trap_Cvar_Update(&g_axiswins);
-			trap_Cvar_Update(&g_alliedwins);
-		}
-		else
-		{
-			G_GetMapXP();
-		}
-
-		//FIXME? - print more info about campaign status? current map/total map num
-		//int campaignCount;
-		//int currentCampaign;
-		//qboolean newCampaign;
-	}
-
-	trap_SetConfigstring(CS_SCRIPT_MOVER_NAMES, "");     // clear out
-
-	G_DebugOpenSkillLog();
 
 	if (g_log.string[0])
 	{
@@ -2483,6 +2446,44 @@ void G_InitGame(int levelTime, int randomSeed, int restart, int legacyServer, in
 	{
 		G_Printf("Not logging to disk.\n");
 	}
+
+	trap_GetServerinfo(cs, sizeof(cs));
+	Q_strncpyz(level.rawmapname, Info_ValueForKey(cs, "mapname"), sizeof(level.rawmapname));
+
+	G_LogPrintf("map: %s\n", level.rawmapname);
+
+	// array acces check is done in G_RegisterCvars - we won't execute this with invalid gametype
+	G_LogPrintf("gametype: %s\n", gameNames[g_gametype.integer]);
+
+	G_LogPrintf("gametime: %s\n", timeFt);
+
+	G_ParseCampaigns();
+	if (g_gametype.integer == GT_WOLF_CAMPAIGN)
+	{
+		if (g_campaigns[level.currentCampaign].current == 0 || level.newCampaign)
+		{
+			trap_Cvar_Set("g_axiswins", "0");
+			trap_Cvar_Set("g_alliedwins", "0");
+
+			G_ClearMapXP();
+
+			trap_Cvar_Update(&g_axiswins);
+			trap_Cvar_Update(&g_alliedwins);
+		}
+		else
+		{
+			G_GetMapXP();
+		}
+
+		//FIXME? - print more info about campaign status? current map/total map num
+		//int campaignCount;
+		//int currentCampaign;
+		//qboolean newCampaign;
+	}
+
+	trap_SetConfigstring(CS_SCRIPT_MOVER_NAMES, "");     // clear out
+
+	G_DebugOpenSkillLog();
 
 	G_ResetRemappedShaders();
 
