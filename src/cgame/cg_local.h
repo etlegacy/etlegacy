@@ -615,6 +615,9 @@ typedef struct clientInfo_s
 	int medals[SK_NUM_SKILLS];
 	int skill[SK_NUM_SKILLS];
 	int skillpoints[SK_NUM_SKILLS];      ///< filled OOB by +wstats
+#ifdef FEATURE_PRESTIGE
+	int deltaskillpoints[SK_NUM_SKILLS];
+#endif
 
 	int disguiseClientNum;
 

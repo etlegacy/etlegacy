@@ -2252,8 +2252,19 @@ void CG_parseWeaponStatsGS_cmd(void)
 	{
 		if (skillMask & (1 << i))
 		{
-			ci->skillpoints[i] = atoi(CG_Argv(iArg++));
-			xp                += ci->skillpoints[i];
+#ifdef FEATURE_PRESTIGE
+			if (cgs.prestige && cgs.gametype != GT_WOLF_CAMPAIGN && cgs.gametype != GT_WOLF_STOPWATCH && cgs.gametype != GT_WOLF_LMS)
+			{
+				ci->skillpoints[i]      = atoi(CG_Argv(iArg++));
+				ci->deltaskillpoints[i] = atoi(CG_Argv(iArg++));
+				xp                     += ci->deltaskillpoints[i];
+			}
+			else
+#endif
+			{
+				ci->skillpoints[i] = atoi(CG_Argv(iArg++));
+				xp                += ci->skillpoints[i];
+			}
 		}
 	}
 
@@ -2307,13 +2318,29 @@ void CG_parseWeaponStatsGS_cmd(void)
 				continue;
 			}
 
-			if (ci->skill[i] < NUM_SKILL_LEVELS - 1)
+#ifdef FEATURE_PRESTIGE
+			if (cgs.prestige && cgs.gametype != GT_WOLF_CAMPAIGN && cgs.gametype != GT_WOLF_STOPWATCH && cgs.gametype != GT_WOLF_LMS)
 			{
-				str = va("%10d/%-10d", ci->skillpoints[i], GetSkillTableData(i)->skillLevels[ci->skill[i] + 1]);
+				if (ci->skill[i] < NUM_SKILL_LEVELS - 1)
+				{
+					str = va("%10d (%d/%d)", ci->deltaskillpoints[i], ci->skillpoints[i], GetSkillTableData(i)->skillLevels[ci->skill[i] + 1]);
+				}
+				else
+				{
+					str = va("%10d (%d)", ci->deltaskillpoints[i], ci->skillpoints[i]);
+				}
 			}
 			else
+#endif
 			{
-				str = va("%10d", ci->skillpoints[i]);
+				if (ci->skill[i] < NUM_SKILL_LEVELS - 1)
+				{
+					str = va("%10d/%-10d", ci->skillpoints[i], GetSkillTableData(i)->skillLevels[ci->skill[i] + 1]);
+				}
+				else
+				{
+					str = va("%10d", ci->skillpoints[i]);
+				}
 			}
 
 			if (cgs.gametype == GT_WOLF_CAMPAIGN)
@@ -2491,8 +2518,19 @@ void CG_parseWeaponStats_cmd(void(txt_dump) (const char *))
 	{
 		if (dwSkillPointMask & (1 << i))
 		{
-			ci->skillpoints[i] = atoi(CG_Argv(iArg++));
-			xp                += ci->skillpoints[i];
+#ifdef FEATURE_PRESTIGE
+			if (cgs.prestige && cgs.gametype != GT_WOLF_CAMPAIGN && cgs.gametype != GT_WOLF_STOPWATCH && cgs.gametype != GT_WOLF_LMS)
+			{
+				ci->skillpoints[i]      = atoi(CG_Argv(iArg++));
+				ci->deltaskillpoints[i] = atoi(CG_Argv(iArg++));
+				xp                     += ci->skillpoints[i];
+			}
+			else
+#endif
+			{
+				ci->skillpoints[i] = atoi(CG_Argv(iArg++));
+				xp                += ci->skillpoints[i];
+			}
 		}
 	}
 

@@ -461,6 +461,19 @@ char *G_createStats(gentity_t *ent)
 			}
 		}
 	}
+#ifdef FEATURE_PRESTIGE
+	else if (g_prestige.integer && g_gametype.integer != GT_WOLF_CAMPAIGN && g_gametype.integer != GT_WOLF_STOPWATCH && g_gametype.integer != GT_WOLF_LMS)
+	{
+		for (i = SK_BATTLE_SENSE; i < SK_NUM_SKILLS; i++)
+		{
+			if (ent->client->sess.skillpoints[i] != 0.f) // Skillpoints can be negative
+			{
+				dwSkillPointMask |= (1 << i);
+				Q_strcat(strSkillInfo, sizeof(strSkillInfo), va(" %d %d", (int)ent->client->sess.skillpoints[i], (int)(ent->client->sess.skillpoints[i] - ent->client->sess.startskillpoints[i])));
+			}
+		}
+	}
+#endif
 	else
 	{
 		for (i = SK_BATTLE_SENSE; i < SK_NUM_SKILLS; i++)
