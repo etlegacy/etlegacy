@@ -638,17 +638,34 @@ panel_button_t debriefPlayerInfoHS =
 	0
 };
 
+#ifdef FEATURE_PRESTIGE
+panel_button_t debriefPlayerInfoPrestige =
+{
+	NULL,
+	NULL,
+	{ 170,                        142, 0, 0 },
+	{ 0,                          0,   0, 0, 0, 0, 0, 0},
+	&debriefPlayerInfoFont,       // font
+	NULL,                         // keyDown
+	NULL,                         // keyUp
+	CG_Debriefing_PlayerPrestige_Draw,
+	NULL,
+	0
+};
+#endif
+
 panel_button_t debriefPlayerInfoHitRegions =
 {
 	NULL,
 	NULL,
-	{ 146,                              156,   0, 0 },
+	{ 146,                              170,   0, 0 },
 	{ 0,                                0,     0, 0, 0, 0, 0, 0},
 	&debriefPlayerInfoFont,             // font
 	NULL,                               // keyDown
 	NULL,                               // keyUp
 	CG_Debriefing_PlayerHitRegions_Draw,
 	NULL,
+	0
 };
 
 #define PLAYERHEADER_SKILLS(number)           \
@@ -691,6 +708,9 @@ panel_button_t *debriefPanelButtons[] =
 	&debriefPlayerInfoSkills4,
 	&debriefPlayerInfoSkills5,
 	&debriefPlayerInfoSkills6,
+#ifdef FEATURE_PRESTIGE
+	&debriefPlayerInfoPrestige,
+#endif
 	&debriefPlayerInfoHitRegions,
 	&debriefPlayerWeaponStatsHeader,&debriefPlayerWeaponStatsNameHeader,  &debriefPlayerWeaponStatsShotsHeader,&debriefPlayerWeaponStatsHitsHeader,  &debriefPlayerWeaponStatsKillsHeader,
 	&debriefPlayerWeaponStatsList,  &debriefPlayerWeaponStatsListScroll,
@@ -2657,7 +2677,7 @@ void CG_Debriefing_PlayerHitRegions_Draw(panel_button_t *button)
 		imgL = trap_R_RegisterShaderNoMip("gfx/misc/hitregion_legs.tga");
 	}
 
-	CG_Text_Paint_Ext(button->rect.x - w, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, "Region Hits:", 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
+	CG_Text_Paint_Ext(button->rect.x - w, button->rect.y + 8, button->font->scalex, button->font->scaley, button->font->colour, "Region Hits:", 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
 
 	CG_Text_Paint_Ext(button->rect.x - w, button->rect.y + 2 * 12, button->font->scalex, button->font->scaley, button->font->colour, "Head:", 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
 	CG_Text_Paint_Ext(button->rect.x, button->rect.y + 2 * 12, button->font->scalex, button->font->scaley, button->font->colour, va("%2.0f%%", hitsHead * 100), 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
@@ -2709,6 +2729,29 @@ void CG_Debriefing_PlayerHitRegions_Draw(panel_button_t *button)
 		trap_R_SetColor(NULL);
 	}
 }
+
+#ifdef FEATURE_PRESTIGE
+/**
+ * @brief CG_Debriefing_PlayerPrestige_Draw
+ * @param[in] button
+ */
+void CG_Debriefing_PlayerPrestige_Draw(panel_button_t *button)
+{
+	clientInfo_t *ci;
+	float        w;
+
+	if (!cgs.prestige)
+	{
+		return;
+	}
+
+	ci = CG_Debriefing_GetSelectedClientInfo();
+	w  = CG_Text_Width_Ext("Prestige: ", button->font->scalex, 0, button->font->font);
+
+	CG_Text_Paint_Ext(button->rect.x - w, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, CG_TranslateString("Prestige:"), 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
+	CG_Text_Paint_Ext(button->rect.x, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, va("^2%i", ci->prestige), 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
+}
+#endif
 
 /**
  * @brief CG_Debriefing_PlayerACC_Draw

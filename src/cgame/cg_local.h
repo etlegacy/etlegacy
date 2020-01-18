@@ -3637,6 +3637,7 @@ void CG_Debriefing_PlayerSR_Draw(panel_button_t *button);
 void CG_Debriefing_PlayerACC_Draw(panel_button_t *button);
 void CG_Debriefing_PlayerHS_Draw(panel_button_t *button);
 void CG_Debriefing_PlayerSkills_Draw(panel_button_t *button);
+void CG_Debriefing_PlayerPrestige_Draw(panel_button_t *button);
 void CG_Debriefing_PlayerHitRegions_Draw(panel_button_t *button);
 
 void CG_DebriefingPlayerWeaponStats_Draw(panel_button_t *button);
