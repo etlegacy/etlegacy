@@ -292,7 +292,8 @@ void CG_NewClientInfo(int clientNum)
 	// into spectator on map starts.
 	if (clientNum == cg.clientNum && cgs.clientinfo[cg.clientNum].team > 0)
 	{
-		int i;
+		int i, j;
+		int cnt = 0;
 
 		if (newInfo.team != cgs.clientinfo[cg.clientNum].team)
 		{
@@ -331,7 +332,7 @@ void CG_NewClientInfo(int clientNum)
 				// NOTE: slick hack so that funcs we call use the new value now
 				cgs.clientinfo[cg.clientNum].skill[i] = newInfo.skill[i];
 
-				if (newInfo.skill[i] == 4 && (i == SK_HEAVY_WEAPONS || i == SK_LIGHT_WEAPONS))
+				if (newInfo.skill[i] == (NUM_SKILL_LEVELS - 1) && (i == SK_HEAVY_WEAPONS || i == SK_LIGHT_WEAPONS))
 				{
 					bg_playerclass_t *classinfo;
 					classinfo = BG_GetPlayerClassInfo(cgs.clientinfo[cg.clientNum].team, cgs.clientinfo[cg.clientNum].cls);
@@ -346,16 +347,40 @@ void CG_NewClientInfo(int clientNum)
 
 #ifdef FEATURE_EDV
 				if (!cgs.demoCamera.renderingFreeCam && !cgs.demoCamera.renderingWeaponCam)
-				{
 #endif
-				if (!(cg_popupBigFilter.integer & POPUP_BIG_FILTER_SKILL))
 				{
-					CG_AddPMItemBig(PM_SKILL, va(CG_TranslateString("Increased %s skill to level %i!"), CG_TranslateString(GetSkillTableData(i)->skillNames), newInfo.skill[i]), cgs.media.skillPics[i]);
+					if (!(cg_popupBigFilter.integer & POPUP_BIG_FILTER_SKILL))
+					{
+						CG_AddPMItemBig(PM_SKILL, va(CG_TranslateString("Increased %s skill to level %i!"), CG_TranslateString(GetSkillTableData(i)->skillNames), newInfo.skill[i]), cgs.media.skillPics[i]);
+					}
+
+					CG_PriorityCenterPrint(va(CG_TranslateString("You have been rewarded with %s"), CG_TranslateString(cg_skillRewards[i][newInfo.skill[i] - 1])), 400, cg_fontScaleCP.value, 99999);
 				}
 
-				CG_PriorityCenterPrint(va(CG_TranslateString("You have been rewarded with %s"), CG_TranslateString(cg_skillRewards[i][newInfo.skill[i] - 1])), 400, cg_fontScaleCP.value, 99999);
-#ifdef FEATURE_EDV
-			}
+#ifdef FEATURE_PRESTIGE
+				if (cgs.prestige && newInfo.skill[i] == NUM_SKILL_LEVELS - 1)
+				{
+					// count the number of maxed out skills
+					for (j = 0; j < SK_NUM_SKILLS; j++)
+					{
+						if (cgs.clientinfo[cg.clientNum].skill[j] >= NUM_SKILL_LEVELS - 1)
+						{
+							cnt++;
+						}
+					}
+
+					if (!(cg_popupBigFilter.integer & POPUP_BIG_FILTER_SKILL))
+					{
+						if (cnt < SK_NUM_SKILLS)
+						{
+							CG_AddPMItemBig(PM_PRESTIGE, va(CG_TranslateString("Prestige point progression: %i/7"), cnt), cgs.media.prestigePics[1]);
+						}
+						else
+						{
+							CG_AddPMItemBig(PM_PRESTIGE, va(CG_TranslateString("Prestige point ready to be collected!"), cnt), cgs.media.prestigePics[2]);
+						}
+					}
+				}
 #endif
 			}
 		}

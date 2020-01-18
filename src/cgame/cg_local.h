@@ -1688,6 +1688,9 @@ typedef struct
 	qhandle_t ccDestructIcon[3][2];
 	qhandle_t ccTankIcon;
 	qhandle_t skillPics[SK_NUM_SKILLS];
+#ifdef FEATURE_PRESTIGE
+	qhandle_t prestigePics[3];
+#endif
 	qhandle_t ccMortarHit;
 	qhandle_t ccMortarTarget;
 	qhandle_t mortarTarget;

@@ -1812,6 +1812,12 @@ static void CG_RegisterGraphics(void)
 	cgs.media.skillPics[SK_HEAVY_WEAPONS]                            = trap_R_RegisterShaderNoMip("gfx/limbo/ic_soldier");
 	cgs.media.skillPics[SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS] = trap_R_RegisterShaderNoMip("gfx/limbo/ic_covertops");
 
+#ifdef FEATURE_PRESTIGE
+	cgs.media.prestigePics[0] = trap_R_RegisterShaderNoMip("gfx/hud/prestige/prestige");
+	cgs.media.prestigePics[1] = trap_R_RegisterShaderNoMip("gfx/hud/prestige/prestige_stamp");
+	cgs.media.prestigePics[2] = trap_R_RegisterShaderNoMip("gfx/hud/prestige/prestige_collect");
+#endif
+
 	CG_LoadRankIcons();
 
 	// limbo menu setup

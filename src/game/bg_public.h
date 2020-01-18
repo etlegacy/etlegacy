@@ -2903,7 +2903,9 @@ typedef enum popupMessageBigType_e
 {
 	PM_SKILL = 0,
 	PM_RANK,
-	PM_DISGUISE,
+#ifdef FEATURE_PRESTIGE
+	PM_PRESTIGE,
+#endif
 	PM_BIG_NUM_TYPES
 } popupMessageBigType_t;
 
