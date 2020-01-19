@@ -652,6 +652,20 @@ panel_button_t debriefPlayerInfoPrestige =
 	NULL,
 	0
 };
+
+panel_button_t debriefPlayerPrestigeButton =
+{
+	NULL,
+	"^3COLLECT POINT",
+	{ 110, 150,                        88, 16 },
+	{ 0,                          0,                                         0,  0, 0, 0, 0, 0},
+	NULL,                         // font
+	CG_Debriefing_PrestigeButton_KeyDown,// keyDown
+	NULL,                         // keyUp
+	CG_Debriefing_PrestigeButton_Draw,
+	NULL,
+	0
+};
 #endif
 
 panel_button_t debriefPlayerInfoHitRegions =
@@ -710,6 +724,7 @@ panel_button_t *debriefPanelButtons[] =
 	&debriefPlayerInfoSkills6,
 #ifdef FEATURE_PRESTIGE
 	&debriefPlayerInfoPrestige,
+	&debriefPlayerPrestigeButton,
 #endif
 	&debriefPlayerInfoHitRegions,
 	&debriefPlayerWeaponStatsHeader,&debriefPlayerWeaponStatsNameHeader,  &debriefPlayerWeaponStatsShotsHeader,&debriefPlayerWeaponStatsHitsHeader,  &debriefPlayerWeaponStatsKillsHeader,
@@ -2610,7 +2625,6 @@ void CG_Debriefing_PlayerSkills_Draw(panel_button_t *button)
 	x += button->rect.w + 8;
 	for (i = ci->skill[button->data[0]]; i > 0; i--)
 	{
-
 		CG_DrawPicST(x, button->rect.y, button->rect.w, button->rect.h, 0, 0, 1.f, 0.5f, cgs.media.limboStar_roll);
 
 		x += button->rect.w + 2;
@@ -3158,6 +3172,37 @@ qboolean CG_Debriefing_NextButton_KeyDown(panel_button_t *button, int key)
 	return qfalse;
 }
 
+#ifdef FEATURE_PRESTIGE
+/**
+ * @brief CG_Debriefing_PrestigeButton_KeyDown
+ * @param button - unused
+ * @param[in] key
+ * @return
+ */
+qboolean CG_Debriefing_PrestigeButton_KeyDown(panel_button_t *button, int key)
+{
+	int i;
+
+	if (key == K_MOUSE1)
+	{
+		if (!cg.snap)
+		{
+			return qfalse;
+		}
+
+		trap_SendClientCommand("imcollectpr");
+
+		// refresh data
+		cgs.dbPrestigeReceived = qfalse;
+		CG_Debriefing_InfoRequests();
+
+		return qtrue;
+	}
+
+	return qfalse;
+}
+#endif
+
 /**
  * @brief CG_Debriefing_VoteButton_Draw
  * @param[in] button
@@ -3180,6 +3225,50 @@ void CG_Debriefing_NextButton_Draw(panel_button_t *button)
 {
 	CG_PanelButtonsRender_Button(button);
 }
+
+#ifdef FEATURE_PRESTIGE
+/**
+ * @brief CG_Debriefing_PrestigeButton_Draw
+ * @param[in] button
+ */
+void CG_Debriefing_PrestigeButton_Draw(panel_button_t *button)
+{
+	int i, cnt;
+
+	if (cgs.gametype == GT_WOLF_CAMPAIGN || cgs.gametype == GT_WOLF_STOPWATCH || cgs.gametype == GT_WOLF_LMS)
+	{
+		return;
+	}
+
+	if (!cgs.prestige)
+	{
+		return;
+	}
+
+	if (cgs.dbSelectedClient != cg.clientNum)
+	{
+		return;
+	}
+
+	cnt = 0;
+
+	// count the number of maxed out skills
+	for (i = 0; i < SK_NUM_SKILLS; i++)
+	{
+		if (cgs.clientinfo[cg.clientNum].skill[i] >= NUM_SKILL_LEVELS - 1)
+		{
+			cnt++;
+		}
+	}
+
+	if (cnt < SK_NUM_SKILLS)
+	{
+		return;
+	}
+
+	CG_PanelButtonsRender_Button(button);
+}
+#endif
 
 /**
  * @brief CG_Debriefing_ChatEditFinish

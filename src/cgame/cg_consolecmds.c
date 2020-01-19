@@ -2180,6 +2180,7 @@ void CG_InitConsoleCommands(void)
 	trap_AddCommand("vsay_team");
 	trap_AddCommand("where");
 	trap_AddCommand("dropobj");
+	trap_AddCommand("imcollectpr");
 #ifdef FEATURE_LUA
 	trap_AddCommand("lua_status");
 #endif

@@ -122,10 +122,10 @@ int G_PrestigeDBCheck(char *db_path, int db_mode)
  */
 void G_GetClientPrestige(gclient_t *cl)
 {
-	char         userinfo[MAX_INFO_STRING];
-	char         *guid;
-	int          clientNum, i;
-	prData_t     pr_data;
+	char     userinfo[MAX_INFO_STRING];
+	char     *guid;
+	int      clientNum, i;
+	prData_t pr_data;
 
 	// disable for these game types
 	if (g_gametype.integer == GT_WOLF_CAMPAIGN || g_gametype.integer == GT_WOLF_STOPWATCH || g_gametype.integer == GT_WOLF_LMS)
@@ -176,10 +176,10 @@ void G_GetClientPrestige(gclient_t *cl)
  */
 void G_SetClientPrestige(gclient_t *cl)
 {
-	char         userinfo[MAX_INFO_STRING];
-	char         *guid;
-	int          clientNum, i;
-	prData_t     pr_data;
+	char     userinfo[MAX_INFO_STRING];
+	char     *guid;
+	int      clientNum, i, cnt = 0;
+	prData_t pr_data;
 
 	// disable for these game types
 	if (g_gametype.integer == GT_WOLF_CAMPAIGN || g_gametype.integer == GT_WOLF_STOPWATCH || g_gametype.integer == GT_WOLF_LMS)
@@ -210,36 +210,53 @@ void G_SetClientPrestige(gclient_t *cl)
 	trap_GetUserinfo(clientNum, userinfo, sizeof(userinfo));
 	guid = Info_ValueForKey(userinfo, "cl_guid");
 
+	pr_data.guid = (const unsigned char *)guid;
+
+	// prestige button clicked in intermission
+	if (level.intermissionQueued || level.intermissiontime)
+	{
+		// count the number of maxed out skills
+		for (i = 0; i < SK_NUM_SKILLS; i++)
+		{
+			if (cl->sess.skillpoints[i] >= NUM_SKILL_LEVELS - 1)
+			{
+				cnt++;
+			}
+		}
+
+		if (cnt < SK_NUM_SKILLS)
+		{
+			return;
+		}
+
+		// increase prestige and reset skill points
+		cl->sess.prestige = cl->sess.prestige + 1;
+
+		for (i = 0; i < SK_NUM_SKILLS; i++)
+		{
+			cl->sess.skillpoints[i] = 0;
+		}
+
+		// reset skills and starting points for correct debriefing display
+		for (i = 0; i < SK_NUM_SKILLS; i++)
+		{
+			cl->sess.skill[i]            = 0;
+			cl->sess.startskillpoints[i] = 0;
+		}
+	}
+
 	// assign match data
-	pr_data.guid     = (const unsigned char *)guid;
 	pr_data.prestige = cl->sess.prestige;
 
 	for (i = 0; i < SK_NUM_SKILLS; i++)
 	{
-		pr_data.skillpoints[i] = cl->sess.skillpoints[i];
+		pr_data.skillpoints[i] = (int)cl->sess.skillpoints[i];
 	}
 
-	// save or update user prestige
-	if (!level.intermissionQueued)
+	// save or update prestige
+	if (G_WritePrestige(&pr_data))
 	{
-		// save or update prestige
-		if (G_WritePrestige(&pr_data))
-		{
-			return;
-		}
-	}
-	else
-	{
-		// increase prestige and reset skill points
-		// TODO: but only if all skills are maxed out
-		pr_data.prestige = cl->sess.prestige + 1;
-
-		for (i = 0; i < SK_NUM_SKILLS; i++)
-		{
-			pr_data.skillpoints[i] = 0;
-		}
-
-		G_WritePrestige(&pr_data);
+		return;
 	}
 }
 
@@ -279,7 +296,7 @@ int G_ReadPrestige(prData_t *pr_data)
 		// assign prestige data
 		pr_data->prestige = sqlite3_column_int(sqlstmt, 1);
 
-		for (i= 0; i < SK_NUM_SKILLS; i++)
+		for (i = 0; i < SK_NUM_SKILLS; i++)
 		{
 			pr_data->skillpoints[i] = sqlite3_column_int(sqlstmt, i + 2);
 		}
@@ -352,15 +369,15 @@ int G_WritePrestige(prData_t *pr_data)
 	if (result == SQLITE_DONE)
 	{
 		sql = va(PRUSERS_SQLWRAP_INSERT,
-				pr_data->guid,
-				pr_data->prestige,
-				pr_data->skillpoints[0],
-				pr_data->skillpoints[1],
-				pr_data->skillpoints[2],
-				pr_data->skillpoints[3],
-				pr_data->skillpoints[4],
-				pr_data->skillpoints[5],
-				pr_data->skillpoints[6]);
+		         pr_data->guid,
+		         pr_data->prestige,
+		         pr_data->skillpoints[0],
+		         pr_data->skillpoints[1],
+		         pr_data->skillpoints[2],
+		         pr_data->skillpoints[3],
+		         pr_data->skillpoints[4],
+		         pr_data->skillpoints[5],
+		         pr_data->skillpoints[6]);
 
 		result = sqlite3_exec(level.database.db, sql, NULL, NULL, &err_msg);
 
@@ -374,15 +391,15 @@ int G_WritePrestige(prData_t *pr_data)
 	else
 	{
 		sql = va(PRUSERS_SQLWRAP_UPDATE,
-				pr_data->prestige,
-				(int)pr_data->skillpoints[0],
-				(int)pr_data->skillpoints[1],
-				(int)pr_data->skillpoints[2],
-				(int)pr_data->skillpoints[3],
-				(int)pr_data->skillpoints[4],
-				(int)pr_data->skillpoints[5],
-				(int)pr_data->skillpoints[6],
-				pr_data->guid);
+		         pr_data->prestige,
+		         (int)pr_data->skillpoints[0],
+		         (int)pr_data->skillpoints[1],
+		         (int)pr_data->skillpoints[2],
+		         (int)pr_data->skillpoints[3],
+		         (int)pr_data->skillpoints[4],
+		         (int)pr_data->skillpoints[5],
+		         (int)pr_data->skillpoints[6],
+		         pr_data->guid);
 
 		result = sqlite3_exec(level.database.db, sql, NULL, NULL, &err_msg);
 

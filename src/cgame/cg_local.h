@@ -3618,11 +3618,13 @@ void CG_Debriefing_VoteButton_Draw(panel_button_t *button);
 void CG_Debriefing_NextButton_Draw(panel_button_t *button);
 void CG_Debriefing_ChatButton_Draw(panel_button_t *button);
 void CG_Debriefing_ReadyButton_Draw(panel_button_t *button);
+void CG_Debriefing_PrestigeButton_Draw(panel_button_t *button);
 qboolean CG_Debriefing_ChatButton_KeyDown(panel_button_t *button, int key);
 qboolean CG_Debriefing_ReadyButton_KeyDown(panel_button_t *button, int key);
 qboolean CG_Debriefing_QCButton_KeyDown(panel_button_t *button, int key);
 qboolean CG_Debriefing_VoteButton_KeyDown(panel_button_t *button, int key);
 qboolean CG_Debriefing_NextButton_KeyDown(panel_button_t *button, int key);
+qboolean CG_Debriefing_PrestigeButton_KeyDown(panel_button_t *button, int key);
 
 void CG_PanelButtonsRender_Button_Ext(rectDef_t *r, const char *text);
 

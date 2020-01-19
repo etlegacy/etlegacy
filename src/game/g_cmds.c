@@ -4636,6 +4636,37 @@ void Cmd_IntermissionPrestige_f(gentity_t *ent)
 
 	trap_SendServerCommand(ent - g_entities, buffer);
 }
+
+/**
+ * @brief Cmd_IntermissionCollectPrestige_f
+ * @param[in,out] ent
+ */
+void Cmd_IntermissionCollectPrestige_f(gentity_t *ent)
+{
+	if (!ent || !ent->client)
+	{
+		return;
+	}
+
+	if (g_gametype.integer == GT_WOLF_CAMPAIGN || g_gametype.integer == GT_WOLF_STOPWATCH || g_gametype.integer == GT_WOLF_LMS)
+	{
+		trap_SendServerCommand(ent - g_entities, "print \"'imcollectpr' not allowed during current gametype!\n\"");
+		return;
+	}
+
+	if (!g_prestige.integer)
+	{
+		return;
+	}
+
+	if (g_gamestate.integer != GS_INTERMISSION)
+	{
+		trap_SendServerCommand(ent - g_entities, "print \"'imcollectpr' only allowed during intermission!\n\"");
+		return;
+	}
+
+	G_SetClientPrestige(ent->client);
+}
 #endif
 
 /**
@@ -5074,6 +5105,11 @@ void ClientCommand(int clientNum)
 	else if (!Q_stricmp(cmd, "impr"))
 	{
 		Cmd_IntermissionPrestige_f(ent);
+		return;
+	}
+	else if (!Q_stricmp(cmd, "imcollectpr"))
+	{
+		Cmd_IntermissionCollectPrestige_f(ent);
 		return;
 	}
 #endif
