@@ -134,7 +134,7 @@ void SV_GetChallenge(netadr_t from)
  *
  * @note maybe we want to have more control over localhost clients in future.
  * So we let localhost connect since bots don't connect from SV_DirectConnect
- * where SV_IsFakeIpConnection is done.
+ * where SV_isClientIPValidToConnect is done.
  */
 static qboolean SV_isClientIPValidToConnect(netadr_t from)
 {
@@ -180,7 +180,7 @@ static qboolean SV_isClientIPValidToConnect(netadr_t from)
 			if (count > max)
 			{
 				// no dev print - let admins see this
-				Com_Printf("SV_IsFakeIpConnection: too many connections from %s\n", clientIP);
+				Com_Printf("SV_isClientIPValidToConnect: too many connections from %s\n", clientIP);
 
 				return qfalse;
 			}
