@@ -3600,6 +3600,9 @@ void CG_Debriefing_MissionTitle_Draw(panel_button_t *button)
 
 const char *awardNames[NUM_ENDGAME_AWARDS] =
 {
+#ifdef FEATURE_PRESTIGE
+	"Most Prestigious Player",
+#endif
 	"Highest Ranking Officer",
 #ifdef FEATURE_RATING
 	"Highest Skill Rating",

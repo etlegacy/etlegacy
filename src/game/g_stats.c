@@ -695,6 +695,47 @@ void G_BuildEndgameStats(void)
 
 	*buffer = '\0';
 
+#ifdef FEATURE_PRESTIGE
+	// most prestigious player - check prestige > 0, then XPs
+	for (i = 0; i < level.numConnectedClients; i++)
+	{
+		gclient_t *cl = &level.clients[level.sortedClients[i]];
+
+		if (cl->sess.sessionTeam == TEAM_FREE)
+		{
+			continue;
+		}
+
+		if (cl->sess.prestige <= 0)
+		{
+			continue;
+		}
+
+		if (!best || cl->sess.prestige > best->sess.prestige)
+		{
+			best          = cl;
+			bestClientNum = level.sortedClients[i];
+		}
+		else if (cl->sess.prestige == best->sess.prestige && cl->ps.persistant[PERS_SCORE] > best->ps.persistant[PERS_SCORE])
+		{
+			best          = cl;
+			bestClientNum = level.sortedClients[i];
+		}
+	}
+
+	if (best)
+	{
+		best->hasaward = qtrue;
+		Q_strcat(buffer, 1024, va("%i %i %i ", bestClientNum, best->sess.prestige, best->sess.sessionTeam));
+	}
+	else
+	{
+		Q_strcat(buffer, 1024, "-1 0 0 ");
+	}
+
+	best = NULL;
+#endif
+
 	// highest ranking officer - check rank, then medals and XP
 	for (i = 0; i < level.numConnectedClients; i++)
 	{
