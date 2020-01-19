@@ -2604,7 +2604,7 @@ void G_InitGame(int levelTime, int randomSeed, int restart, int legacyServer, in
 	// check and initialize db
 	if (g_skillRating.integer && G_SkillRatingDB_Init() != 0)
 	{
-		G_Printf("^1ERROR: g_skillrating changed to 0\n");
+		G_Printf("^1ERROR: g_skillRating changed to 0\n");
 		trap_Cvar_Set("g_skillRating", "0");
 	}
 

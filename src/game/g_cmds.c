@@ -4531,6 +4531,11 @@ void Cmd_IntermissionSkillRating_f(gentity_t *ent)
 		return;
 	}
 
+	if (!g_skillRating.integer)
+	{
+		return;
+	}
+
 	Q_strncpyz(buffer, "imsr ", sizeof(buffer));
 	for (i = 0; i < g_maxclients.integer; i++)
 	{
@@ -4979,10 +4984,7 @@ void ClientCommand(int clientNum)
 #ifdef FEATURE_RATING
 	else if (!Q_stricmp(cmd, "imsr"))
 	{
-		if (g_skillRating.integer)
-		{
-			Cmd_IntermissionSkillRating_f(ent);
-		}
+		Cmd_IntermissionSkillRating_f(ent);
 		return;
 	}
 #endif
