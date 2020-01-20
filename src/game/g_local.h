@@ -2374,7 +2374,7 @@ void G_ReloadConfig(void);
 void G_addStats(gentity_t *targ, gentity_t *attacker, int damage, meansOfDeath_t mod);
 void G_addStatsHeadShot(gentity_t *attacker, meansOfDeath_t mod);
 int G_checkServerToggle(vmCvar_t *cv);
-char *G_createStats(gentity_t *refEnt);
+char *G_createStats(gentity_t *ent);
 void G_deleteStats(int nClient);
 qboolean G_desiredFollow(gentity_t *ent, int nTeam);
 void G_globalSound(const char *sound);

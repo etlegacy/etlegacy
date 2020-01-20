@@ -397,13 +397,13 @@ void G_addStatsHeadShot(gentity_t *attacker, meansOfDeath_t mod)
  * @param[in] refEnt
  * @return
  */
-char *G_createStats(gentity_t *refEnt)
+char *G_createStats(gentity_t *ent)
 {
 	unsigned int i, dwWeaponMask = 0, dwSkillPointMask = 0;
 	char         strWeapInfo[MAX_STRING_CHARS]  = { 0 };
 	char         strSkillInfo[MAX_STRING_CHARS] = { 0 };
 
-	if (!refEnt)
+	if (!ent)
 	{
 		return NULL;
 	}
@@ -412,14 +412,14 @@ char *G_createStats(gentity_t *refEnt)
 	// The client also expects stats when kills are above 0
 	for (i = WS_KNIFE; i < WS_MAX; i++)
 	{
-		if (refEnt->client->sess.aWeaponStats[i].atts || refEnt->client->sess.aWeaponStats[i].hits ||
-		    refEnt->client->sess.aWeaponStats[i].deaths || refEnt->client->sess.aWeaponStats[i].kills)
+		if (ent->client->sess.aWeaponStats[i].atts || ent->client->sess.aWeaponStats[i].hits ||
+		    ent->client->sess.aWeaponStats[i].deaths || ent->client->sess.aWeaponStats[i].kills)
 		{
 			dwWeaponMask |= (1 << i);
 			Q_strcat(strWeapInfo, sizeof(strWeapInfo), va(" %d %d %d %d %d",
-			                                              refEnt->client->sess.aWeaponStats[i].hits, refEnt->client->sess.aWeaponStats[i].atts,
-			                                              refEnt->client->sess.aWeaponStats[i].kills, refEnt->client->sess.aWeaponStats[i].deaths,
-			                                              refEnt->client->sess.aWeaponStats[i].headshots));
+			                                              ent->client->sess.aWeaponStats[i].hits, ent->client->sess.aWeaponStats[i].atts,
+			                                              ent->client->sess.aWeaponStats[i].kills, ent->client->sess.aWeaponStats[i].deaths,
+			                                              ent->client->sess.aWeaponStats[i].headshots));
 		}
 	}
 
@@ -428,15 +428,15 @@ char *G_createStats(gentity_t *refEnt)
 	if (dwWeaponMask != 0)
 	{
 		Q_strcat(strWeapInfo, sizeof(strWeapInfo), va(" %d %d %d %d %d %d %d %d %.1f",
-		                                              refEnt->client->sess.damage_given,
-		                                              refEnt->client->sess.damage_received,
-		                                              refEnt->client->sess.team_damage_given,
-		                                              refEnt->client->sess.team_damage_received,
-		                                              refEnt->client->sess.gibs,
-		                                              refEnt->client->sess.self_kills,
-		                                              refEnt->client->sess.team_kills,
-		                                              refEnt->client->sess.team_gibs,
-		                                              (refEnt->client->sess.time_axis + refEnt->client->sess.time_allies) == 0 ? 0 : 100.0 * refEnt->client->sess.time_played / (refEnt->client->sess.time_axis + refEnt->client->sess.time_allies)
+		                                              ent->client->sess.damage_given,
+		                                              ent->client->sess.damage_received,
+		                                              ent->client->sess.team_damage_given,
+		                                              ent->client->sess.team_damage_received,
+		                                              ent->client->sess.gibs,
+		                                              ent->client->sess.self_kills,
+		                                              ent->client->sess.team_kills,
+		                                              ent->client->sess.team_gibs,
+		                                              (ent->client->sess.time_axis + ent->client->sess.time_allies) == 0 ? 0 : 100.0 * ent->client->sess.time_played / (ent->client->sess.time_axis + ent->client->sess.time_allies)
 		                                              ));
 	}
 
@@ -446,10 +446,10 @@ char *G_createStats(gentity_t *refEnt)
 	{
 		for (i = SK_BATTLE_SENSE; i < SK_NUM_SKILLS; i++)
 		{
-			if (refEnt->client->sess.skillpoints[i] != 0.f) // Skillpoints can be negative
+			if (ent->client->sess.skillpoints[i] != 0.f) // Skillpoints can be negative
 			{
 				dwSkillPointMask |= (1 << i);
-				Q_strcat(strSkillInfo, sizeof(strSkillInfo), va(" %d", (int)refEnt->client->sess.skillpoints[i]));
+				Q_strcat(strSkillInfo, sizeof(strSkillInfo), va(" %d", (int)ent->client->sess.skillpoints[i]));
 			}
 		}
 	}
@@ -458,10 +458,10 @@ char *G_createStats(gentity_t *refEnt)
 		for (i = SK_BATTLE_SENSE; i < SK_NUM_SKILLS; i++)
 		{
 			// current map XPs only
-			if ((refEnt->client->sess.skillpoints[i] - refEnt->client->sess.startskillpoints[i]) != 0.f) // Skillpoints can be negative
+			if ((ent->client->sess.skillpoints[i] - ent->client->sess.startskillpoints[i]) != 0.f) // Skillpoints can be negative
 			{
 				dwSkillPointMask |= (1 << i);
-				Q_strcat(strSkillInfo, sizeof(strSkillInfo), va(" %d", (int)(refEnt->client->sess.skillpoints[i] - refEnt->client->sess.startskillpoints[i])));
+				Q_strcat(strSkillInfo, sizeof(strSkillInfo), va(" %d", (int)(ent->client->sess.skillpoints[i] - ent->client->sess.startskillpoints[i])));
 			}
 		}
 	}
@@ -482,16 +482,16 @@ char *G_createStats(gentity_t *refEnt)
 #else
 	return (va("%d %d %d%s %d%s",
 #endif
-	          (int)(refEnt - g_entities),
-	          refEnt->client->sess.rounds,
+	          (int)(ent - g_entities),
+	          ent->client->sess.rounds,
 	          dwWeaponMask,
 	          strWeapInfo,
 	          dwSkillPointMask,
 	          strSkillInfo
 #ifdef FEATURE_RATING
 	          ,
-	          refEnt->client->sess.mu - 3 * refEnt->client->sess.sigma,
-	          refEnt->client->sess.mu - 3 * refEnt->client->sess.sigma - (refEnt->client->sess.oldmu - 3 * refEnt->client->sess.oldsigma)
+	          ent->client->sess.mu - 3 * ent->client->sess.sigma,
+	          ent->client->sess.mu - 3 * ent->client->sess.sigma - (ent->client->sess.oldmu - 3 * ent->client->sess.oldsigma)
 #endif
 	          ));
 }
