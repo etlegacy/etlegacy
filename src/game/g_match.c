@@ -402,8 +402,16 @@ char *G_createStats(gentity_t *ent)
 	unsigned int i, dwWeaponMask = 0, dwSkillPointMask = 0;
 	char         strWeapInfo[MAX_STRING_CHARS]  = { 0 };
 	char         strSkillInfo[MAX_STRING_CHARS] = { 0 };
+	gclient_t    *cl;
 
-	if (!ent)
+	if (!ent || !ent->client)
+	{
+		return NULL;
+	}
+
+	cl = ent->client;
+
+	if (cl->pers.connected != CON_CONNECTED)
 	{
 		return NULL;
 	}
@@ -963,6 +971,7 @@ void G_statsPrint(gentity_t *ent, int nType)
 {
 	const char *cmd;
 	char       arg[MAX_TOKEN_CHARS];
+	int        spectatorClient;
 
 	if (!ent || (ent->r.svFlags & SVF_BOT))
 	{
@@ -982,7 +991,16 @@ void G_statsPrint(gentity_t *ent, int nType)
 		}
 		else if (ent->client->sess.spectatorState == SPECTATOR_FOLLOW)
 		{
-			CP(va("%s %s\n", cmd, G_createStats(g_entities + ent->client->sess.spectatorClient)));
+			spectatorClient = ent->client->sess.spectatorClient; 
+			if (spectatorClient == -1)
+			{
+				spectatorClient = level.follow1;
+			}
+			else if (spectatorClient == -2)
+			{
+				spectatorClient = level.follow2;
+			}
+			CP(va("%s %s\n", cmd, G_createStats(g_entities + spectatorClient)));
 		}
 		else
 		{
