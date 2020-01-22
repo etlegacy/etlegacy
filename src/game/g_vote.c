@@ -712,9 +712,9 @@ int G_Map_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qbo
 		}
 	}
 
-#ifdef FEATURE_RATING
+#ifdef FEATURE_DBMS
 	// deinitialize db
-	G_SkillRatingDB_DeInit();
+	G_DB_DeInit();
 #endif
 
 	return G_OK;
@@ -768,9 +768,9 @@ int G_Campaign_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2
 		trap_SendConsoleCommand(EXEC_APPEND, va("campaign %s%s\n", level.voteInfo.vote_value, ((*s) ? va("; set nextcampaign \"%s\"", s) : "")));
 	}
 
-#ifdef FEATURE_RATING
+#ifdef FEATURE_DBMS
 	// deinitialize db
-	G_SkillRatingDB_DeInit();
+	G_DB_DeInit();
 #endif
 
 	return G_OK;
@@ -963,9 +963,9 @@ int G_Nextmap_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2,
 		}
 	}
 
-#ifdef FEATURE_RATING
+#ifdef FEATURE_DBMS
 	// deinitialize db
-	G_SkillRatingDB_DeInit();
+	G_DB_DeInit();
 #endif
 
 	return G_OK;
@@ -1816,9 +1816,9 @@ int G_NextCampaign_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *
 		}
 	}
 
-#ifdef FEATURE_RATING
+#ifdef FEATURE_DBMS
 	// deinitialize db
-	G_SkillRatingDB_DeInit();
+	G_DB_DeInit();
 #endif
 
 	return G_OK;

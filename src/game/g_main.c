@@ -2600,18 +2600,34 @@ void G_InitGame(int levelTime, int randomSeed, int restart, int legacyServer, in
 	level.redFlagCounter  = 0;
 	level.blueFlagCounter = 0;
 
-#ifdef FEATURE_RATING
+#ifdef FEATURE_DBMS
 	// check and initialize db
-	if (g_skillRating.integer && G_SkillRatingDB_Init() != 0)
+	if (G_DB_Init() != 0)
 	{
-		G_Printf("^1ERROR: g_skillRating changed to 0\n");
-		trap_Cvar_Set("g_skillRating", "0");
+#ifdef FEATURE_RATING
+		if (g_skillRating.integer)
+		{
+			G_Printf("^3WARNING: g_skillRating changed to 0\n");
+			trap_Cvar_Set("g_skillRating", "0");
+		}
+#endif
 	}
+#endif
 
-	// get map rating
-	if (g_skillRating.integer > 1)
+#ifdef FEATURE_RATING
+	if (g_skillRating.integer)
 	{
-		level.mapProb = G_SkillRatingGetMapRating(level.rawmapname);
+		// ensure temporary table is empty
+		if (G_SkillRatingPrepareMatchRating())
+		{
+			trap_Cvar_Set("g_skillRating", "0");
+		}
+
+		// get map rating
+		if (g_skillRating.integer > 1)
+		{
+			level.mapProb = G_SkillRatingGetMapRating(level.rawmapname);
+		}
 	}
 #endif
 
@@ -2688,12 +2704,12 @@ void G_ShutdownGame(int restart)
 	time_t aclock;
 	char   timeFt[32];
 
-#ifdef FEATURE_RATING
-	if (g_skillRating.integer && level.database.initialized)
+#ifdef FEATURE_DBMS
+	if (level.database.initialized)
 	{
 		// deinitialize db at the last moment to ensure bots/players connecting
 		// after intermission but before next map is loaded still have db access
-		G_SkillRatingDB_DeInit();
+		G_DB_DeInit();
 	}
 #endif
 

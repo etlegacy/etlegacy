@@ -2390,6 +2390,11 @@ void G_resetRoundState(void);
 void G_spawnPrintf(int print_type, int print_time, gentity_t *owner);
 void G_statsPrint(gentity_t *ent, int nType);
 
+#ifdef FEATURE_DBMS
+int G_DB_Init(void);
+int G_DB_DeInit(void);
+#endif
+
 #ifdef FEATURE_RATING
 // g_skillrating.c
 #define MU      25.f            ///< mean
@@ -2412,9 +2417,7 @@ typedef struct srData_s
 	int time_allies;
 } srData_t;
 
-int G_SkillRatingDB_Init(void);
-int G_SkillRatingDB_DeInit(void);
-int G_SkillRatingDB_Check(char *db_path, int db_mode);
+int G_SkillRatingDBCheck(char *db_path, int db_mode);
 int G_SkillRatingPrepareMatchRating(void);
 int G_SkillRatingGetMatchRating(srData_t *sr_data);
 int G_SkillRatingSetMatchRating(srData_t *sr_data);
