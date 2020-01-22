@@ -193,9 +193,14 @@ void Team_ResetFlag(gentity_t *ent)
 		{
 			RespawnItem(ent);
 
-			// unset objective indicator
-			switch (ent->item->giPowerUp == PW_REDFLAG ? TEAM_AXIS : TEAM_ALLIES)
-			{
+#ifdef FEATURE_OMNIBOT
+			Bot_Util_SendTrigger(ent, NULL, va("Flag returned %s!", _GetEntityName(ent)), "returned");
+#endif
+		}
+
+		// unset objective indicator
+		switch (ent->item->giPowerUp == PW_REDFLAG ? TEAM_AXIS : TEAM_ALLIES)
+		{
 			case TEAM_AXIS:
 				if (!level.redFlagCounter)
 				{
@@ -210,13 +215,8 @@ void Team_ResetFlag(gentity_t *ent)
 				break;
 			default:
 				break;
-			}
-			G_globalFlagIndicator();
-
-#ifdef FEATURE_OMNIBOT
-			Bot_Util_SendTrigger(ent, NULL, va("Flag returned %s!", _GetEntityName(ent)), "returned");
-#endif
 		}
+		G_globalFlagIndicator();
 	}
 }
 
