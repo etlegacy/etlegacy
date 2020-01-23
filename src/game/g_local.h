@@ -1316,6 +1316,9 @@ typedef struct level_locals_s
 	float alliesProb;
 	float axisProb;
 	float mapProb;             ///< win prob of Axis team
+#endif
+
+#ifdef FEATURE_DBMS
 	database_t database;
 #endif
 } level_locals_t;
