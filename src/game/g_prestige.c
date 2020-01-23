@@ -122,10 +122,11 @@ int G_PrestigeDBCheck(char *db_path, int db_mode)
  */
 void G_GetClientPrestige(gclient_t *cl)
 {
-	char     userinfo[MAX_INFO_STRING];
-	char     *guid;
-	int      clientNum, i;
-	prData_t pr_data;
+	char      userinfo[MAX_INFO_STRING];
+	char      *guid;
+	int       clientNum, i;
+	prData_t  pr_data;
+	gentity_t *ent;
 
 	// disable for these game types
 	if (g_gametype.integer == GT_WOLF_CAMPAIGN || g_gametype.integer == GT_WOLF_STOPWATCH || g_gametype.integer == GT_WOLF_LMS)
@@ -145,6 +146,14 @@ void G_GetClientPrestige(gclient_t *cl)
 	}
 
 	clientNum = cl - level.clients;
+
+	// ignore bots
+	ent = g_entities + clientNum;
+
+	if (ent->r.svFlags & SVF_BOT)
+	{
+		return;
+	}
 
 	// retrieve guid
 	trap_GetUserinfo(clientNum, userinfo, sizeof(userinfo));
@@ -176,10 +185,11 @@ void G_GetClientPrestige(gclient_t *cl)
  */
 void G_SetClientPrestige(gclient_t *cl)
 {
-	char     userinfo[MAX_INFO_STRING];
-	char     *guid;
-	int      clientNum, i, cnt = 0;
-	prData_t pr_data;
+	char      userinfo[MAX_INFO_STRING];
+	char      *guid;
+	int       clientNum, i, cnt = 0;
+	prData_t  pr_data;
+	gentity_t *ent;
 
 	// disable for these game types
 	if (g_gametype.integer == GT_WOLF_CAMPAIGN || g_gametype.integer == GT_WOLF_STOPWATCH || g_gametype.integer == GT_WOLF_LMS)
@@ -205,6 +215,14 @@ void G_SetClientPrestige(gclient_t *cl)
 	}
 
 	clientNum = cl - level.clients;
+
+	// ignore bots
+	ent = g_entities + clientNum;
+
+	if (ent->r.svFlags & SVF_BOT)
+	{
+		return;
+	}
 
 	// retrieve guid
 	trap_GetUserinfo(clientNum, userinfo, sizeof(userinfo));
