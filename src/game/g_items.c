@@ -1130,7 +1130,7 @@ void G_BounceItem(gentity_t *ent, trace_t *trace)
 	VectorScale(ent->s.pos.trDelta, ent->physicsBounce, ent->s.pos.trDelta);
 
 	// check for stop
-	if (trace->startsolid || (trace->plane.normal[2] > 0 && ent->s.pos.trDelta[2] < 40))
+	if (trace->plane.normal[2] > 0 && ent->s.pos.trDelta[2] < 40)
 	{
 		vectoangles(trace->plane.normal, ent->s.angles);
 
@@ -1153,13 +1153,14 @@ void G_BounceItem(gentity_t *ent, trace_t *trace)
 		SnapVector(trace->endpos);
 		G_SetOrigin(ent, trace->endpos);
 		ent->s.groundEntityNum = trace->entityNum;
-		ent->s.pos.trType      = TR_GRAVITY_PAUSED;        // overwrite
+		ent->s.pos.trType      = TR_GRAVITY_PAUSED; // allow entity to be affected by gravity again
+
 		return;
 	}
 
-	VectorAdd(ent->r.currentOrigin, trace->plane.normal, ent->r.currentOrigin);
 	VectorCopy(ent->r.currentOrigin, ent->s.pos.trBase);
 	ent->s.pos.trTime = level.time;
+	VectorAdd(ent->r.currentOrigin, trace->plane.normal, ent->r.currentOrigin);
 }
 
 /**

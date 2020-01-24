@@ -558,9 +558,19 @@ void CopyToBodyQue(gentity_t *ent)
 	VectorCopy(ent->client->ps.viewangles, body->s.angles);
 	VectorCopy(ent->client->ps.viewangles, body->r.currentAngles);
 
-	body->s.pos.trType = TR_GRAVITY;
-	body->s.pos.trTime = level.time;
-	VectorCopy(ent->client->ps.velocity, body->s.pos.trDelta);
+	if (body->s.groundEntityNum == ENTITYNUM_NONE)
+	{
+		body->s.pos.trType = TR_GRAVITY;
+		body->s.pos.trTime = level.time;
+		VectorCopy(ent->client->ps.velocity, body->s.pos.trDelta);
+	}
+	else
+	{
+		body->s.pos.trType     = TR_GRAVITY_PAUSED;
+		body->s.pos.trTime     = 0;
+		body->s.pos.trDuration = 0;
+		VectorClear(body->s.pos.trDelta);
+	}
 
 	body->s.event = 0;
 
