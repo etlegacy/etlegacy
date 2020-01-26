@@ -292,8 +292,8 @@ void CG_NewClientInfo(int clientNum)
 	// into spectator on map starts.
 	if (clientNum == cg.clientNum && cgs.clientinfo[cg.clientNum].team > 0)
 	{
-		int i, j;
-		int cnt = 0;
+		int i, j, k;
+		int skillMax, cnt = 0;
 
 		if (newInfo.team != cgs.clientinfo[cg.clientNum].team)
 		{
@@ -358,19 +358,43 @@ void CG_NewClientInfo(int clientNum)
 				}
 
 #ifdef FEATURE_PRESTIGE
-				if (cgs.prestige && newInfo.skill[i] == NUM_SKILL_LEVELS - 1)
+				if (cgs.prestige)
 				{
-					// count the number of maxed out skills
-					for (j = 0; j < SK_NUM_SKILLS; j++)
+					skillMax = 0;
+
+					// check skill max level
+					for (j = NUM_SKILL_LEVELS - 1; j >= 0; j--)
 					{
-						if (cgs.clientinfo[cg.clientNum].skill[j] >= NUM_SKILL_LEVELS - 1)
+						if (GetSkillTableData(i)->skillLevels[j] >= 0)
 						{
-							cnt++;
+							skillMax = j;
+							break;
 						}
 					}
 
-					if (!(cg_popupBigFilter.integer & POPUP_BIG_FILTER_SKILL))
+					if (newInfo.skill[i] == skillMax)
 					{
+						// count the number of maxed out skills
+						for (j = 0; j < SK_NUM_SKILLS; j++)
+						{
+							skillMax = 0;
+
+							// check skill max level
+							for (k = NUM_SKILL_LEVELS - 1; k >= 0; k--)
+							{
+								if (GetSkillTableData(j)->skillLevels[k] >= 0)
+								{
+									skillMax = k;
+									break;
+								}
+							}
+
+							if (cgs.clientinfo[cg.clientNum].skill[j] >= skillMax)
+							{
+								cnt++;
+							}
+						}
+
 						if (cnt < SK_NUM_SKILLS)
 						{
 							CG_AddPMItemBig(PM_PRESTIGE, va(CG_TranslateString("Prestige point progression: %i/7"), cnt), cgs.media.prestigePics[1]);

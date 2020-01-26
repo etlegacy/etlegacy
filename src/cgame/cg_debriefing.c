@@ -3181,11 +3181,37 @@ qboolean CG_Debriefing_NextButton_KeyDown(panel_button_t *button, int key)
  */
 qboolean CG_Debriefing_PrestigeButton_KeyDown(panel_button_t *button, int key)
 {
-	int i;
+	int i, j, skillMax, cnt = 0;
 
 	if (key == K_MOUSE1)
 	{
 		if (!cg.snap)
+		{
+			return qfalse;
+		}
+
+		// count the number of maxed out skills
+		for (i = 0; i < SK_NUM_SKILLS; i++)
+		{
+			skillMax = 0;
+
+			// check skill max level
+			for (j = NUM_SKILL_LEVELS - 1; j >= 0; j--)
+			{
+				if (GetSkillTableData(i)->skillLevels[j] >= 0)
+				{
+					skillMax = j;
+					break;
+				}
+			}
+
+			if (cgs.clientinfo[cg.clientNum].skill[i] >= skillMax)
+			{
+				cnt++;
+			}
+		}
+
+		if (cnt < SK_NUM_SKILLS)
 		{
 			return qfalse;
 		}
@@ -3233,7 +3259,7 @@ void CG_Debriefing_NextButton_Draw(panel_button_t *button)
  */
 void CG_Debriefing_PrestigeButton_Draw(panel_button_t *button)
 {
-	int i, cnt;
+	int i, j, cnt, skillMax;
 
 	if (cgs.gametype == GT_WOLF_CAMPAIGN || cgs.gametype == GT_WOLF_STOPWATCH || cgs.gametype == GT_WOLF_LMS)
 	{
@@ -3255,7 +3281,19 @@ void CG_Debriefing_PrestigeButton_Draw(panel_button_t *button)
 	// count the number of maxed out skills
 	for (i = 0; i < SK_NUM_SKILLS; i++)
 	{
-		if (cgs.clientinfo[cg.clientNum].skill[i] >= NUM_SKILL_LEVELS - 1)
+		skillMax = 0;
+
+		// check skill max level
+		for (j = NUM_SKILL_LEVELS - 1; j >= 0; j--)
+		{
+			if (GetSkillTableData(i)->skillLevels[j] >= 0)
+			{
+				skillMax = j;
+				break;
+			}
+		}
+
+		if (cgs.clientinfo[cg.clientNum].skill[i] >= skillMax)
 		{
 			cnt++;
 		}

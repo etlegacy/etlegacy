@@ -187,7 +187,7 @@ void G_SetClientPrestige(gclient_t *cl)
 {
 	char      userinfo[MAX_INFO_STRING];
 	char      *guid;
-	int       clientNum, i, cnt = 0;
+	int       clientNum, i, j, skillMax, cnt = 0;
 	prData_t  pr_data;
 	gentity_t *ent;
 
@@ -236,7 +236,19 @@ void G_SetClientPrestige(gclient_t *cl)
 		// count the number of maxed out skills
 		for (i = 0; i < SK_NUM_SKILLS; i++)
 		{
-			if (cl->sess.skillpoints[i] >= NUM_SKILL_LEVELS - 1)
+			skillMax = 0;
+
+			// check skill max level
+			for (j = NUM_SKILL_LEVELS - 1; j >= 0; j--)
+			{
+				if (GetSkillTableData(i)->skillLevels[j] >= 0)
+				{
+					skillMax = j;
+					break;
+				}
+			}
+
+			if (cl->sess.skill[i] >= skillMax)
 			{
 				cnt++;
 			}

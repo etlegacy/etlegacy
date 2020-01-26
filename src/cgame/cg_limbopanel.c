@@ -3035,6 +3035,7 @@ void CG_LimboPanel_RenderPrestige(panel_button_t *button)
 {
 	qhandle_t shader;
 	vec4_t    color = { 1.0f, 1.0f, 1.0f, 0.3f };
+	int       i, skillMax = 0;
 
 	if (cgs.gametype == GT_WOLF_CAMPAIGN || cgs.gametype == GT_WOLF_STOPWATCH || cgs.gametype == GT_WOLF_LMS)
 	{
@@ -3075,7 +3076,17 @@ void CG_LimboPanel_RenderPrestige(panel_button_t *button)
 
 	CG_DrawPic(button->rect.x, button->rect.y, button->rect.w, button->rect.h, cgs.media.limboObjectiveBack[2]);
 
-	if (cgs.clientinfo[cg.clientNum].skill[button->data[0]] >= NUM_SKILL_LEVELS - 1)
+	// check skill max level
+	for (i = NUM_SKILL_LEVELS - 1; i >= 0; i--)
+	{
+		if (GetSkillTableData(button->data[0])->skillLevels[i] >= 0)
+		{
+			skillMax = i;
+			break;
+		}
+	}
+
+	if (cgs.clientinfo[cg.clientNum].skill[button->data[0]] >= skillMax)
 	{
 		trap_R_SetColor(color);
 		CG_DrawPic(button->rect.x + 2, button->rect.y + 4, button->rect.w - 4, button->rect.h - 8, shader);
