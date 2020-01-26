@@ -1556,10 +1556,10 @@ void G_SetSkillLevels(int skill, const char *string)
 {
 	char **temp = (char **) &string;
 	char *nextLevel;
-	int  levels[4];
+	int  levels[NUM_SKILL_LEVELS - 1];
 	int  count;
 
-	for (count = 0; count < 4; count++)
+	for (count = 0; count < NUM_SKILL_LEVELS - 1; count++)
 	{
 		nextLevel = COM_ParseExt(temp, qfalse);
 		if (nextLevel[0])
