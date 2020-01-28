@@ -192,11 +192,11 @@ void Team_ResetFlag(gentity_t *ent)
 		if (ent->s.density == 1)
 		{
 			RespawnItem(ent);
+		}
 
 #ifdef FEATURE_OMNIBOT
-			Bot_Util_SendTrigger(ent, NULL, va("Flag returned %s!", _GetEntityName(ent)), "returned");
+		Bot_Util_SendTrigger(ent, NULL, va("Flag returned %s!", _GetEntityName(ent)), "returned");
 #endif
-		}
 
 		// unset objective indicator
 		switch (ent->item->giPowerUp == PW_REDFLAG ? TEAM_AXIS : TEAM_ALLIES)
