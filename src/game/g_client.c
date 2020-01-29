@@ -1954,12 +1954,19 @@ void ClientUserinfoChanged(int clientNum)
 
 	// send over a subset of the userinfo keys so other clients can
 	// print scoreboards, display models, and play custom sounds
+#ifdef FEATURE_PRESTIGE
+	s = va("n\\%s\\t\\%i\\c\\%i\\lc\\%i\\r\\%i\\p\\%i\\m\\%s\\s\\%s\\dn\\%i\\w\\%i\\lw\\%i\\sw\\%i\\lsw\\%i\\mu\\%i\\ref\\%i\\sc\\%i\\u\\%u",
+#else
 	s = va("n\\%s\\t\\%i\\c\\%i\\lc\\%i\\r\\%i\\m\\%s\\s\\%s\\dn\\%i\\w\\%i\\lw\\%i\\sw\\%i\\lsw\\%i\\mu\\%i\\ref\\%i\\sc\\%i\\u\\%u",
+#endif
 	       client->pers.netname,
 	       client->sess.sessionTeam,
 	       client->sess.playerType,
 	       client->sess.latchPlayerType,
 	       client->sess.rank,
+#ifdef FEATURE_PRESTIGE
+	       client->sess.prestige,
+#endif
 	       medalStr,
 	       skillStr,
 	       client->disguiseClientNum,

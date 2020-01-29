@@ -223,6 +223,12 @@ void CG_NewClientInfo(int clientNum)
 	v            = Info_ValueForKey(configstring, "r");
 	newInfo.rank = atoi(v);
 
+#ifdef FEATURE_PRESTIGE
+	// prestige
+	v                = Info_ValueForKey(configstring, "p");
+	newInfo.prestige = atoi(v);
+#endif
+
 	// fireteam
 	v                = Info_ValueForKey(configstring, "f");
 	newInfo.fireteam = atoi(v);
