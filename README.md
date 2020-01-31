@@ -38,14 +38,6 @@ If you are interested to join us, ensure to read first our contribution guidelin
 * [How to commit your code](https://dev.etlegacy.com/projects/etlegacy/wiki/How_to_commit_Your_Code)
 * [Coding conventions](https://dev.etlegacy.com/projects/etlegacy/wiki/Coding_Conventions)
 
-### Donations
-
-By request, we set up a PayPal account for donations. So if you like the ET: Legacy project or our game server, don't
-hesitate to send us some cash at **Paypal: etlegacy@liebt-dich.info**
-
-Your contribution will be used to pay for our server and domain. To clarify, the project is not dependant
-on donations, but we don't reject them if you want to honor our work. Thank you!
-
 
 GENERAL NOTES
 =============
