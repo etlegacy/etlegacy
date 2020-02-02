@@ -386,7 +386,7 @@ static cvarTable_t cvarTable[] =
 	{ &cg_lagometer,              "cg_lagometer",              "0",           CVAR_ARCHIVE,                 0 },
 	{ &cg_drawSnapshot,           "cg_drawSnapshot",           "0",           CVAR_ARCHIVE,                 0 },
 	{ &cg_drawCrosshair,          "cg_drawCrosshair",          "1",           CVAR_ARCHIVE,                 0 },
-	{ &cg_drawCrosshairInfo,      "cg_drawCrosshairInfo",      "3",           CVAR_ARCHIVE,                 0 },
+	{ &cg_drawCrosshairInfo,      "cg_drawCrosshairInfo",      "7",           CVAR_ARCHIVE,                 0 },
 	{ &cg_drawCrosshairNames,     "cg_drawCrosshairNames",     "1",           CVAR_ARCHIVE,                 0 },
 	{ &cg_drawCrosshairPickups,   "cg_drawCrosshairPickups",   "1",           CVAR_ARCHIVE,                 0 },
 	{ &cg_useWeapsForZoom,        "cg_useWeapsForZoom",        "1",           CVAR_ARCHIVE,                 0 },

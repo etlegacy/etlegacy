@@ -1637,6 +1637,7 @@ static void CG_DrawCrosshairNames(void)
 	int        playerHealth = 0;
 	qboolean   drawStuff    = qfalse;
 	qboolean   isTank       = qfalse;
+	qboolean   hasRank      = qfalse;
 	int        maxHealth    = 1;
 	float      dist; // Distance to the entity under the crosshair
 	float      zChange;
@@ -1813,6 +1814,15 @@ static void CG_DrawCrosshairNames(void)
 					// + 110/2
 					CG_DrawPic(middle + 55, 187, 16, 16, rankicons[cgs.clientinfo[cgs.clientinfo[cg.crosshairClientNum].disguiseClientNum].rank][cgs.clientinfo[cg.crosshairClientNum].team != TEAM_AXIS ? 1 : 0][0].shader);
 				}
+#ifdef FEATURE_PRESTIGE
+				if (cgs.prestige && cgs.clientinfo[cgs.clientinfo[cg.crosshairClientNum].disguiseClientNum].prestige > 0 && (cg_drawCrosshairInfo.integer & CROSSHAIR_PRESTIGE))
+				{
+					hasRank = (cg_drawCrosshairInfo.integer & CROSSHAIR_RANK) && cgs.clientinfo[cgs.clientinfo[cg.crosshairClientNum].disguiseClientNum].rank > 0;
+					// + 110/2
+					CG_DrawPic(middle + 55 + (hasRank ? 18 : 0), 187, 16, 16, cgs.media.prestigePics[0]);
+					CG_Text_Paint_Ext(middle + 55 + (hasRank ? 18 : 0), 198, fontScale, fontScale, color, va("%d", cgs.clientinfo[cgs.clientinfo[cg.crosshairClientNum].disguiseClientNum].prestige), 0, 0, 0, &cgs.media.limboFont2);
+				}
+#endif
 
 				// set the health
 				// - make sure it's the health for the right entity;
@@ -1881,13 +1891,22 @@ static void CG_DrawCrosshairNames(void)
 		if (cg_drawCrosshairInfo.integer & CROSSHAIR_CLASS)
 		{
 			// - 16 - 110/2
-                        CG_DrawPic(middle - 71, 187, 16, 16, cgs.media.skillPics[SkillNumForClass(cgs.clientinfo[cg.crosshairClientNum].cls)]);
+			CG_DrawPic(middle - 71, 187, 16, 16, cgs.media.skillPics[SkillNumForClass(cgs.clientinfo[cg.crosshairClientNum].cls)]);
 		}
 		if (cgs.clientinfo[cg.crosshairClientNum].rank > 0 && (cg_drawCrosshairInfo.integer & CROSSHAIR_RANK))
 		{
 			//  + 110/2
 			CG_DrawPic(middle + 55, 187, 16, 16, rankicons[cgs.clientinfo[cg.crosshairClientNum].rank][cgs.clientinfo[cg.crosshairClientNum].team == TEAM_AXIS ? 1 : 0][0].shader);
 		}
+#ifdef FEATURE_PRESTIGE
+		if (cgs.prestige && cgs.clientinfo[cg.crosshairClientNum].prestige > 0 && (cg_drawCrosshairInfo.integer & CROSSHAIR_PRESTIGE))
+		{
+			hasRank = (cg_drawCrosshairInfo.integer & CROSSHAIR_RANK) && cgs.clientinfo[cg.crosshairClientNum].rank > 0;
+			// + 110/2
+			CG_DrawPic(middle + 55 + (hasRank ? 18 : 0), 187, 16, 16, cgs.media.prestigePics[0]);
+			CG_Text_Paint_Ext(middle + 71 + (hasRank ? 18 : 0), 198, fontScale, fontScale, color, va("%d", cgs.clientinfo[cg.crosshairClientNum].prestige), 0, 0, 0, &cgs.media.limboFont2);
+		}
+#endif
 
 		// set the health
 		if (cg.crosshairClientNum == cg.snap->ps.identifyClient)

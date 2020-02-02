@@ -2657,6 +2657,9 @@ extern vmCvar_t cg_visualEffects;  ///< turn invisible (0) / visible (1) visual 
 // crosshair name flags
 #define CROSSHAIR_CLASS             0x01
 #define CROSSHAIR_RANK              0x02
+#ifdef FEATURE_PRESTIGE
+#define CROSSHAIR_PRESTIGE          0x04
+#endif
 
 // projectile spawn effects at destination
 #define PS_FX_NONE   0
