@@ -532,8 +532,9 @@ void G_RunMissile(gentity_t *ent)
 			}
 			else
 			{
-				float skyHeight, groundFloor;
+				float skyFloor, skyHeight, groundFloor;
 
+				skyFloor    = BG_GetTracemapSkyGroundFloor();   // lowest sky height point
 				skyHeight   = BG_GetSkyHeightAtPoint(origin);
 				groundFloor = BG_GetTracemapGroundFloor();
 
@@ -553,9 +554,10 @@ void G_RunMissile(gentity_t *ent)
 				}
 
 				// are we in worldspace again - or did we hit a ceiling from the outside of the world
-				if (skyHeight == MAX_MAP_SIZE && ent->r.currentOrigin[2] <= origin[2])
+				if (skyHeight == MAX_MAP_SIZE && origin[2] >= skyFloor)
 				{
 					G_RunThink(ent);
+
 					VectorCopy(origin, ent->r.currentOrigin);   // keep the previous origin to don't go too far
 					VectorCopy(angle, ent->r.currentAngles);
 

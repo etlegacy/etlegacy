@@ -2632,7 +2632,11 @@ void G_AirStrikeThink(gentity_t *ent)
 
 		if (level.tracemapLoaded)
 		{
-			if (bomboffset[2] >= BG_GetSkyHeightAtPoint(bomboffset))
+			int skyHeight;
+
+			skyHeight = (int)(BG_GetSkyHeightAtPoint(bomboffset));
+
+			if (bomboffset[2] >= skyHeight || skyHeight == MAX_MAP_SIZE)
 			{
 				bomb->count = 1;                 // may start through the sky
 			}
@@ -2932,7 +2936,11 @@ void artillerySpotterThink(gentity_t *ent)
 
 	if (level.tracemapLoaded)
 	{
-		if (bomboffset[2] >= BG_GetSkyHeightAtPoint(bomboffset))
+		int skyHeight;
+
+		skyHeight = (int)(BG_GetSkyHeightAtPoint(bomboffset));
+
+		if (bomboffset[2] >= skyHeight || skyHeight == MAX_MAP_SIZE)
 		{
 			bomb->count = 1;         // may start through the sky
 		}
@@ -3054,17 +3062,17 @@ void Weapon_Artillery(gentity_t *ent)
 	G_GlobalClientEvent(EV_ARTYMESSAGE, 2, ent - g_entities);
 
 	// spotter
-	spotter                    = G_Spawn();
-	spotter->parent            = ent;
-	spotter->think             = artillerySpotterThink;
-	spotter->s.weapon          = WP_ARTY;
-	spotter->s.teamNum         = ent->client->sess.sessionTeam;
-	spotter->s.clientNum       = ent->client->ps.clientNum;
-	spotter->r.ownerNum        = ent->s.number;
-	spotter->nextthink         = level.time + 5000;
-	spotter->r.svFlags         = SVF_BROADCAST;
-	spotter->count2            = 1;                      // first bomb
-	spotter->s.pos.trType      = TR_STATIONARY;
+	spotter               = G_Spawn();
+	spotter->parent       = ent;
+	spotter->think        = artillerySpotterThink;
+	spotter->s.weapon     = WP_ARTY;
+	spotter->s.teamNum    = ent->client->sess.sessionTeam;
+	spotter->s.clientNum  = ent->client->ps.clientNum;
+	spotter->r.ownerNum   = ent->s.number;
+	spotter->nextthink    = level.time + 5000;
+	spotter->r.svFlags    = SVF_BROADCAST;
+	spotter->count2       = 1;                           // first bomb
+	spotter->s.pos.trType = TR_STATIONARY;
 	SnapVector(pos);
 	VectorCopy(pos, spotter->r.currentOrigin);
 	VectorCopy(pos, spotter->s.pos.trBase);
