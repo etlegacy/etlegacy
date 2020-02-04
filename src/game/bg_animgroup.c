@@ -202,6 +202,11 @@ static qboolean BG_RAG_ParseAnimation(int handle, animation_t *animation)
 		animation->initialLerp = 40;
 	}
 
+	if (strstr(animation->name, "reload"))
+	{
+		animation->flags |= ANIMFL_RELOADINGANIM;
+	}
+
 	return qtrue;
 }
 

@@ -1606,9 +1606,10 @@ typedef enum hudHeadAnimNumber_e
 	MAX_HD_ANIMATIONS
 } hudHeadAnimNumber_t;
 
-#define ANIMFL_LADDERANIM   0x1
-#define ANIMFL_FIRINGANIM   0x2
-#define ANIMFL_REVERSED     0x4
+#define ANIMFL_LADDERANIM    0x1
+#define ANIMFL_FIRINGANIM    0x2
+#define ANIMFL_REVERSED      0x4
+#define ANIMFL_RELOADINGANIM 0x8
 
 /**
  * @struct animation_s
