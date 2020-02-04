@@ -2018,7 +2018,7 @@ static void PM_Footsteps(void)
 
 		if (pm->ps->eFlags & EF_PRONE)
 		{
-			if (pm->ps->eFlags & EF_TALK)
+			if (pm->ps->eFlags & EF_TALK && !(GetWeaponTableData(pm->ps->weapon)->type & (WEAPON_TYPE_SET | WEAPON_TYPE_SCOPED)))
 			{
 				animResult = BG_AnimScriptAnimation(pm->ps, pm->character->animModelInfo, ANIM_MT_RADIOPRONE, qtrue);
 			}
@@ -2029,7 +2029,7 @@ static void PM_Footsteps(void)
 		}
 		else if (pm->ps->pm_flags & PMF_DUCKED)
 		{
-			if (pm->ps->eFlags & EF_TALK)
+			if (pm->ps->eFlags & EF_TALK && !(GetWeaponTableData(pm->ps->weapon)->type & (WEAPON_TYPE_SET | WEAPON_TYPE_SCOPED)))
 			{
 				animResult = BG_AnimScriptAnimation(pm->ps, pm->character->animModelInfo, ANIM_MT_RADIOCR, qtrue);
 			}
@@ -2041,7 +2041,7 @@ static void PM_Footsteps(void)
 
 		if (animResult < 0)
 		{
-			if (pm->ps->eFlags & EF_TALK)
+			if (pm->ps->eFlags & EF_TALK && !(GetWeaponTableData(pm->ps->weapon)->type & (WEAPON_TYPE_SET | WEAPON_TYPE_SCOPED)))
 			{
 				animResult = BG_AnimScriptAnimation(pm->ps, pm->character->animModelInfo, ANIM_MT_RADIO, qtrue);
 			}

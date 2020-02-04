@@ -2943,11 +2943,26 @@ void CG_Player(centity_t *cent)
 	// add the gun / barrel / flash
 	if (!(cent->currentState.eFlags & EF_DEAD) /*&& !usingBinocs*/)
 	{
-		if (cent->currentState.eFlags & EF_TALK)
+		if ((cent->currentState.eFlags & EF_TALK)
+		    && !(cent->currentState.eFlags & (EF_FIRING | EF_MOUNTEDTANK | EF_ZOOMING))
+		    && !(cent->pe.torso.animation->flags & ANIMFL_LADDERANIM)
+		    && !(GetWeaponTableData(cent->currentState.weapon)->type & (WEAPON_TYPE_SET | WEAPON_TYPE_SCOPED)))
 		{
-			acc.hModel = cg_weapons[WP_SATCHEL_DET].weaponModel[W_TP_MODEL].model;
-			CG_PositionEntityOnTag(&acc, &body, "tag_weapon", 0, NULL);
-			CG_AddRefEntityWithPowerups(&acc, cent->currentState.powerups, ci->team, &cent->currentState, cent->fireRiseDir);
+			int contents;
+
+			contents = CG_PointContents(head.origin, 0);
+
+			// don't attach radio on hand when player is underwater
+			if (!(contents & CONTENTS_WATER))
+			{
+				acc.hModel = cg_weapons[WP_SATCHEL_DET].weaponModel[W_TP_MODEL].model;
+				CG_PositionEntityOnTag(&acc, &body, "tag_weapon", 0, NULL);
+				CG_AddRefEntityWithPowerups(&acc, cent->currentState.powerups, ci->team, &cent->currentState, cent->fireRiseDir);
+			}
+			else
+			{
+				CG_AddPlayerWeapon(&body, NULL, cent);
+			}
 		}
 		else
 		{
