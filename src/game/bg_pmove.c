@@ -346,6 +346,7 @@ void PM_TraceHead(trace_t *trace, vec3_t start, vec3_t end, trace_t *bodytrace, 
                   int tracemask)
 {
 	vec3_t ofs;
+	vec3_t org;
 	vec3_t flatforward;
 	vec3_t point;
 	float  angle;
@@ -353,6 +354,9 @@ void PM_TraceHead(trace_t *trace, vec3_t start, vec3_t end, trace_t *bodytrace, 
 	// player model that extends out (weapons and arms too)
 	vec3_t mins = { -18.f, -18.f, -2.f };
 	vec3_t maxs = { 18.f, 18.f, 10.f };
+
+//        vec3_t mins = { -6, -6, -2 };
+//        vec3_t maxs = { 6, 6, 10 };
 
 	// don't let players block head
 	tracemask &= ~(CONTENTS_BODY | CONTENTS_CORPSE);
@@ -371,8 +375,33 @@ void PM_TraceHead(trace_t *trace, vec3_t start, vec3_t end, trace_t *bodytrace, 
 		VectorScale(flatforward, -36, ofs);
 	}
 
+//        VectorAdd(end, ofs, point);
+//        tracefunc(trace, start, mins, maxs, point, ignoreent, tracemask);
+
+	VectorAdd(start, ofs, org);
 	VectorAdd(end, ofs, point);
-	tracefunc(trace, start, mins, maxs, point, ignoreent, tracemask);
+	tracefunc(trace, org, mins, maxs, point, ignoreent, tracemask);
+	if (!bodytrace || trace->fraction < bodytrace->fraction ||
+	    trace->allsolid)
+	{
+		trace_t steptrace;
+
+		// head are clipping sooner than body
+		// see if our head can step up
+
+		// give it a try with the new height
+		ofs[2] += STEPSIZE;
+
+		VectorAdd(start, ofs, org);
+		VectorAdd(end, ofs, point);
+		tracefunc(&steptrace, org, mins, maxs, point, ignoreent, tracemask);
+		if (!steptrace.allsolid && !steptrace.startsolid &&
+		    steptrace.fraction > trace->fraction)
+		{
+			// the step trace did better -- use it instead
+			*trace = steptrace;
+		}
+	}
 }
 
 /**
@@ -4343,11 +4372,11 @@ void PM_UpdateViewAngles(playerState_t *ps, pmoveExt_t *pmext, usercmd_t *cmd, v
 			ps->delta_angles[PITCH] = ANGLE2SHORT(ps->viewangles[PITCH]) - cmd->angles[PITCH];
 		}
 
-		// Check if we rotated into a wall with our legs, if so, undo yaw
+		// Check if we rotated into a wall with our legs or head, if so, undo yaw
 		if (ps->viewangles[YAW] != oldYaw)
 		{
 			// see if we have the space to go prone
-			// we know our main body isn't in a solid, check for our legs
+			// we know our main body isn't in a solid, check for our legs then head
 
 			// bugfix - use supplied trace - pm may not be set
 			PM_TraceLegs(&traceres, &pmext->proneLegsOffset, ps->origin, ps->origin, NULL, ps->viewangles, pm->trace, ps->clientNum, tracemask);
@@ -4360,8 +4389,20 @@ void PM_UpdateViewAngles(playerState_t *ps, pmoveExt_t *pmext, usercmd_t *cmd, v
 			}
 			else
 			{
-				// all fine
-				ps->delta_angles[YAW] = newDeltaAngle;
+				// bugfix - use supplied trace - pm may not be set
+				PM_TraceHead(&traceres, ps->origin, ps->origin, NULL, ps->viewangles, pm->trace, ps->clientNum, tracemask);
+
+				if (traceres.allsolid /* && trace.entityNum >= MAX_CLIENTS */)
+				{
+					// starting in a solid, no space
+					ps->viewangles[YAW]   = oldYaw;
+					ps->delta_angles[YAW] = ANGLE2SHORT(ps->viewangles[YAW]) - cmd->angles[YAW];
+				}
+				else
+				{
+					// all fine
+					ps->delta_angles[YAW] = newDeltaAngle;
+				}
 			}
 		}
 	}
