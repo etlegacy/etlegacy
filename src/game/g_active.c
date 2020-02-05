@@ -2351,6 +2351,36 @@ void ClientEndFrame(gentity_t *ent)
 		}
 	}
 
+	// debug head for collision (see PM_TraceHead)
+	if (g_debugPlayerHitboxes.integer & 4)
+	{
+//		vec3_t ofs;
+//		vec3_t flatforward;
+//		float  angle;
+
+		vec3_t mins = { -18.f, -18.f, -2.f };
+		vec3_t maxs = { 18.f, 18.f, 10.f };
+
+//		angle          = DEG2RAD(ent->client->ps.viewangles[YAW]);
+//		flatforward[0] = cos(angle);
+//		flatforward[1] = sin(angle);
+//		flatforward[2] = 0;
+
+//		if (ent->client->ps.eFlags & EF_PRONE)
+//		{
+//			VectorScale(flatforward, 36, ofs);
+//		}
+//		else
+//		{
+//			VectorScale(flatforward, -36, ofs);
+//		}
+
+//		VectorAdd(ent->r.currentOrigin, ofs, ofs);
+
+		// green
+		G_RailBox(ent->r.currentOrigin, mins, maxs, tv(0.f, 1.f, 0.f), ent->s.number | HITBOXBIT_HEAD);
+	}
+
 	// store the client's current position for antilag traces
 	G_StoreClientPosition(ent);
 }
