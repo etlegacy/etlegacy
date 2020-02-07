@@ -1015,6 +1015,7 @@ typedef struct
 
 	float duckChange;                       ///< for duck viewheight smoothing
 	int duckTime;
+	qboolean wasProne;
 
 	int weaponSetTime;                      ///< mg/mortar set time
 

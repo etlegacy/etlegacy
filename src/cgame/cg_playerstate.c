@@ -202,8 +202,8 @@ void CG_Respawn(qboolean revived)
 	// clear even more things on respawn
 	cg.zoomedBinoc = qfalse;
 	cg.zoomed      = qfalse;
-	cg.zoomTime = 0;
-	cg.zoomval  = 0;
+	cg.zoomTime    = 0;
+	cg.zoomval     = 0;
 
 	trap_SendConsoleCommand("-zoom\n");
 	cg.binocZoomTime = 0;
@@ -616,5 +616,6 @@ void CG_TransitionPlayerState(playerState_t *ps, playerState_t *ops)
 	{
 		cg.duckChange = ps->viewheight - ops->viewheight;
 		cg.duckTime   = cg.time;
+		cg.wasProne   = ops->eFlags & EF_PRONE;
 	}
 }

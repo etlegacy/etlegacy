@@ -755,8 +755,11 @@ static void CG_OffsetFirstPersonView(void)
 		}
 		if (timeDelta < DUCK_TIME)
 		{
-			cg.refdef_current->vieworg[0] += (forward[0] * 24) * (DUCK_TIME - timeDelta) / DUCK_TIME;
-			cg.refdef_current->vieworg[1] += (forward[1] * 24) * (DUCK_TIME - timeDelta) / DUCK_TIME;
+			if (cg.wasProne)
+			{
+				cg.refdef_current->vieworg[0] += (forward[0] * 24) * (DUCK_TIME - timeDelta) / DUCK_TIME;
+				cg.refdef_current->vieworg[1] += (forward[1] * 24) * (DUCK_TIME - timeDelta) / DUCK_TIME;
+			}
 			cg.refdef_current->vieworg[2] -= cg.duckChange * (DUCK_TIME - timeDelta) / DUCK_TIME;
 		}
 	}
