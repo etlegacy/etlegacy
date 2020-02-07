@@ -2351,34 +2351,40 @@ void ClientEndFrame(gentity_t *ent)
 		}
 	}
 
-	// debug head for collision (see PM_TraceHead)
+	// debug head and legs hitboxes for collision (see PM_TraceHead and PM_TraceLegs)
 	if (g_debugPlayerHitboxes.integer & 4)
 	{
-//		vec3_t ofs;
-//		vec3_t flatforward;
-//		float  angle;
+		vec3_t headOffset, legsOffset;
+		vec3_t flatforward;
+		float  angle;
 
 		vec3_t mins = { -18.f, -18.f, -2.f };
 		vec3_t maxs = { 18.f, 18.f, 10.f };
 
-//		angle          = DEG2RAD(ent->client->ps.viewangles[YAW]);
-//		flatforward[0] = cos(angle);
-//		flatforward[1] = sin(angle);
-//		flatforward[2] = 0;
+		angle          = DEG2RAD(ent->client->ps.viewangles[YAW]);
+		flatforward[0] = cos(angle);
+		flatforward[1] = sin(angle);
+		flatforward[2] = 0;
 
-//		if (ent->client->ps.eFlags & EF_PRONE)
-//		{
-//			VectorScale(flatforward, 36, ofs);
-//		}
-//		else
-//		{
-//			VectorScale(flatforward, -36, ofs);
-//		}
+		if (ent->client->ps.eFlags & EF_PRONE)
+		{
+			VectorScale(flatforward, 36, headOffset);
+			VectorScale(flatforward, -32, legsOffset);
+		}
+		else
+		{
+			VectorScale(flatforward, -36, headOffset);
+			VectorScale(flatforward, 32, legsOffset);
+		}
 
-//		VectorAdd(ent->r.currentOrigin, ofs, ofs);
+		VectorAdd(ent->client->ps.origin, headOffset, headOffset);
+		VectorAdd(ent->client->ps.origin, legsOffset, legsOffset);
 
 		// green
-		G_RailBox(ent->r.currentOrigin, mins, maxs, tv(0.f, 1.f, 0.f), ent->s.number | HITBOXBIT_HEAD);
+		G_RailBox(headOffset, mins, maxs, tv(0.f, 1.f, 0.f), ent->s.number | HITBOXBIT_HEAD);
+
+		// blue
+		G_RailBox(legsOffset, playerlegsProneMins, playerlegsProneMaxs, tv(0.f, 0.f, 1.f), ent->s.number | HITBOXBIT_LEGS);
 	}
 
 	// store the client's current position for antilag traces
