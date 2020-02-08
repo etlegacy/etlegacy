@@ -31,7 +31,7 @@ menuDef {
 // Hud Display //
 #define HUD_Y 32
 	SUBWINDOW( 6, HUD_Y, (SUBWINDOW_WIDTH_L), 232, _("HUD DISPLAY") )
-	YESNO( 8, HUD_Y+16, (SUBWINDOW_WIDTH_L)-4, 10, _("Draw Gun:"), .2, 8, "cg_drawGun", _("Shows gun model on-screen") )
+	MULTI( 8, HUD_Y+16, (SUBWINDOW_WIDTH_L)-4, 10, _("Draw Gun:"), .2, 8, "cg_drawGun",  cvarFloatList { "Off" 0 "On" 1 "Hide Weapons Only" 2 }, _("Shows gun model on-screen") )
 	YESNO( 8, HUD_Y+28, (SUBWINDOW_WIDTH_L)-4, 10, _("Show Compass:"), .2, 8, "cg_drawCompass", _("Displays compass (with icons when near select events)") )
 	CVARFLOATLABEL( 8, HUD_Y+40, (SUBWINDOW_WIDTH_L)-4, 10, "cg_automapZoom", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-6), 8 )
 	SLIDER( 8, HUD_Y+40, (SUBWINDOW_WIDTH_L)-4, 10, _("Auto Map Zoom:"), .2, 8, "cg_automapZoom" 5.159 1 7.43, _("Sets Zoom Level Automatically When Map Loads") )
