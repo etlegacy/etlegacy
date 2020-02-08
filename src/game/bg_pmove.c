@@ -456,7 +456,10 @@ void PM_TraceAllParts(trace_t *trace, float *legsOffset, vec3_t start, vec3_t en
 
 		if (adjust)
 		{
-			Com_Printf("%i:adjust\n", c_pmove);
+			if (pm->debugLevel)
+			{
+				Com_Printf("%i:adjust\n", c_pmove);
+			}
 
 			VectorSubtract(end, start, trace->endpos);
 			VectorMA(start, trace->fraction, trace->endpos,
