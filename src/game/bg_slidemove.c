@@ -382,7 +382,7 @@ void PM_StepSlideMove(qboolean gravity)
 	down[2] -= STEPSIZE;
 
 	// check legs&head separately
-	if (pm->ps->eFlags & EF_PRONE)
+	if (pm->ps->eFlags & (EF_PRONE | EF_DEAD))
 	{
 		Com_Memset(&trace, 0, sizeof(trace));
 		PM_TraceLegs(&trace, NULL, pm->ps->origin, down, NULL, pm->ps->viewangles, pm->trace, pm->ps->clientNum, pm->tracemask);

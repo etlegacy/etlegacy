@@ -254,7 +254,7 @@ void PM_ClipVelocity(vec3_t in, vec3_t normal, vec3_t out, float overbounce)
  * @param[in] ignoreent
  * @param[in] tracemask
  */
-void PM_TraceLegs(trace_t *trace, float *legsOffset, vec3_t start, vec3_t end, trace_t *bodytrace, vec3_t viewangles, void (tracefunc) (trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask), int ignoreent, int tracemask)
+void PM_TraceLegs(trace_t *trace, float *legsOffset, vec3_t start, vec3_t end, trace_t *bodytrace, vec3_t viewangles, void(tracefunc) (trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask), int ignoreent, int tracemask)
 {
 	vec3_t ofs, org, point;
 	vec3_t flatforward;
@@ -282,9 +282,9 @@ void PM_TraceLegs(trace_t *trace, float *legsOffset, vec3_t start, vec3_t end, t
 		VectorScale(flatforward, 32, ofs);
 	}
 
-	VectorAdd(start, ofs, org);
+	//VectorAdd(start, ofs, org);
 	VectorAdd(end, ofs, point);
-	tracefunc(trace, org, playerlegsProneMins, playerlegsProneMaxs, point, ignoreent, tracemask);
+	tracefunc(trace, start, playerlegsProneMins, playerlegsProneMaxs, point, ignoreent, tracemask);
 	if (!bodytrace || trace->fraction < bodytrace->fraction ||
 	    trace->allsolid)
 	{
@@ -296,9 +296,9 @@ void PM_TraceLegs(trace_t *trace, float *legsOffset, vec3_t start, vec3_t end, t
 		// give it a try with the new height
 		ofs[2] += STEPSIZE;
 
-		VectorAdd(start, ofs, org);
+		//VectorAdd(start, ofs, org);
 		VectorAdd(end, ofs, point);
-		tracefunc(&steptrace, org, playerlegsProneMins, playerlegsProneMaxs, point, ignoreent, tracemask);
+		tracefunc(&steptrace, start, playerlegsProneMins, playerlegsProneMaxs, point, ignoreent, tracemask);
 		if (!steptrace.allsolid && !steptrace.startsolid &&
 		    steptrace.fraction > trace->fraction)
 		{
@@ -335,13 +335,13 @@ void PM_TraceLegs(trace_t *trace, float *legsOffset, vec3_t start, vec3_t end, t
  * @param[in] tracemask
  */
 void PM_TraceHead(trace_t *trace, vec3_t start, vec3_t end, trace_t *bodytrace, vec3_t viewangles,
-                  void (tracefunc) (trace_t *results,
-                                    const vec3_t start,
-                                    const vec3_t mins,
-                                    const vec3_t maxs,
-                                    const vec3_t end,
-                                    int passEntityNum,
-                                    int contentMask),
+                  void(tracefunc) (trace_t *results,
+                                   const vec3_t start,
+                                   const vec3_t mins,
+                                   const vec3_t maxs,
+                                   const vec3_t end,
+                                   int passEntityNum,
+                                   int contentMask),
                   int ignoreent,
                   int tracemask)
 {
@@ -378,9 +378,9 @@ void PM_TraceHead(trace_t *trace, vec3_t start, vec3_t end, trace_t *bodytrace, 
 //        VectorAdd(end, ofs, point);
 //        tracefunc(trace, start, mins, maxs, point, ignoreent, tracemask);
 
-	VectorAdd(start, ofs, org);
+	//VectorAdd(start, ofs, org);
 	VectorAdd(end, ofs, point);
-	tracefunc(trace, org, mins, maxs, point, ignoreent, tracemask);
+	tracefunc(trace, start, mins, maxs, point, ignoreent, tracemask);
 	if (!bodytrace || trace->fraction < bodytrace->fraction ||
 	    trace->allsolid)
 	{
@@ -392,9 +392,9 @@ void PM_TraceHead(trace_t *trace, vec3_t start, vec3_t end, trace_t *bodytrace, 
 		// give it a try with the new height
 		ofs[2] += STEPSIZE;
 
-		VectorAdd(start, ofs, org);
+		//VectorAdd(start, ofs, org);
 		VectorAdd(end, ofs, point);
-		tracefunc(&steptrace, org, mins, maxs, point, ignoreent, tracemask);
+		tracefunc(&steptrace, start, mins, maxs, point, ignoreent, tracemask);
 		if (!steptrace.allsolid && !steptrace.startsolid &&
 		    steptrace.fraction > trace->fraction)
 		{
@@ -413,7 +413,11 @@ void PM_TraceHead(trace_t *trace, vec3_t start, vec3_t end, trace_t *bodytrace, 
  */
 void PM_TraceAllParts(trace_t *trace, float *legsOffset, vec3_t start, vec3_t end)
 {
-	pm->trace(trace, start, pm->mins, pm->maxs, end, pm->ps->clientNum, pm->tracemask);
+	trace_t bodytrace;
+
+	pm->trace(&bodytrace, start, pm->mins, pm->maxs, end, pm->ps->clientNum, pm->tracemask);
+
+	*trace = bodytrace;
 
 	// legs and head
 	if ((pm->ps->eFlags & EF_PRONE) ||
@@ -424,7 +428,7 @@ void PM_TraceAllParts(trace_t *trace, float *legsOffset, vec3_t start, vec3_t en
 		trace_t  headtrace;
 		qboolean adjust = qfalse;
 
-		PM_TraceLegs(&legtrace, legsOffset, start, end, trace,
+		PM_TraceLegs(&legtrace, legsOffset, start, end, &bodytrace,
 		             pm->ps->viewangles, pm->trace, pm->ps->clientNum,
 		             pm->tracemask);
 
@@ -437,7 +441,7 @@ void PM_TraceAllParts(trace_t *trace, float *legsOffset, vec3_t start, vec3_t en
 			adjust = qtrue;
 		}
 
-		PM_TraceHead(&headtrace, start, end, trace,
+		PM_TraceHead(&headtrace, start, end, &bodytrace,
 		             pm->ps->viewangles, pm->trace, pm->ps->clientNum,
 		             pm->tracemask);
 
@@ -452,6 +456,8 @@ void PM_TraceAllParts(trace_t *trace, float *legsOffset, vec3_t start, vec3_t en
 
 		if (adjust)
 		{
+			Com_Printf("%i:adjust\n", c_pmove);
+
 			VectorSubtract(end, start, trace->endpos);
 			VectorMA(start, trace->fraction, trace->endpos,
 			         trace->endpos);
@@ -3997,7 +4003,7 @@ void PM_UpdateLean(playerState_t *ps, usercmd_t *cmd, pmove_t *tpm)
  *
  * @note Tnused trace parameter
  */
-void PM_UpdateViewAngles(playerState_t *ps, pmoveExt_t *pmext, usercmd_t *cmd, void (trace) (trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask), int tracemask)                  //   modified
+void PM_UpdateViewAngles(playerState_t *ps, pmoveExt_t *pmext, usercmd_t *cmd, void(trace) (trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask), int tracemask)                   //   modified
 {
 	short  temp;
 	int    i;
