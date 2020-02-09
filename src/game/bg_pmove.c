@@ -346,7 +346,6 @@ void PM_TraceHead(trace_t *trace, vec3_t start, vec3_t end, trace_t *bodytrace, 
                   int tracemask)
 {
 	vec3_t ofs;
-	vec3_t org;
 	vec3_t flatforward;
 	vec3_t point;
 	float  angle;
