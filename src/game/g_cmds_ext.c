@@ -465,7 +465,14 @@ void G_players_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fDump)
 		else
 		{
 			trap_GetUserinfo(idnum, userinfo, sizeof(userinfo));
-			user_version = Info_ValueForKey(userinfo, "cg_etVersion");
+
+			user_version = Info_ValueForKey(userinfo, "etVersion");
+
+			// no engine version found, check cgame version as a fallback
+			if (user_version[0] == 0)
+			{
+				user_version = Info_ValueForKey(userinfo, "cg_etVersion");
+			}
 
 			Q_strncpyz(version, user_version, sizeof(version));
 		}
