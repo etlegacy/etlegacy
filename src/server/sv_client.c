@@ -335,6 +335,11 @@ void SV_DirectConnect(netadr_t from)
 	challenge = atoi(Info_ValueForKey(userinfo, "challenge"));
 	qport     = atoi(Info_ValueForKey(userinfo, "qport"));
 
+	// we don't need these keys after connection, release some space in userinfo
+	Info_RemoveKey(userinfo, "challenge");
+	Info_RemoveKey(userinfo, "qport");
+	Info_RemoveKey(userinfo, "protocol");
+
 	// quick reject
 	for (i = 0, cl = svs.clients ; i < sv_maxclients->integer ; i++, cl++)
 	{
