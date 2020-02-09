@@ -2358,8 +2358,8 @@ void ClientEndFrame(gentity_t *ent)
 		vec3_t flatforward;
 		float  angle;
 
-		vec3_t mins = { -18.f, -18.f, -2.f };
-		vec3_t maxs = { 18.f, 18.f, 10.f };
+		vec3_t mins = { -18.f, -18.f, -24.f };
+		vec3_t maxs = { 18.f, 18.f, -12.f };
 
 		angle          = DEG2RAD(ent->client->ps.viewangles[YAW]);
 		flatforward[0] = cos(angle);

@@ -352,8 +352,8 @@ void PM_TraceHead(trace_t *trace, vec3_t start, vec3_t end, trace_t *bodytrace, 
 	float  angle;
 	// more than just head, try to make a box for all the
 	// player model that extends out (weapons and arms too)
-	vec3_t mins = { -18.f, -18.f, -2.f };
-	vec3_t maxs = { 18.f, 18.f, 10.f };
+	vec3_t mins = { -18.f, -18.f, -24.f };
+	vec3_t maxs = { 18.f, 18.f, -12.f };
 
 //        vec3_t mins = { -6, -6, -2 };
 //        vec3_t maxs = { 6, 6, 10 };
