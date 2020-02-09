@@ -537,7 +537,14 @@ void G_players_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fDump)
 			muted = "";
 		}
 
-		special = va("%s%s%s%s", ref, spec, ign, muted);
+		if (cl->pers.connected == CON_CONNECTING)
+		{
+			special = va("%s", "                 ");
+		}
+		else
+		{
+			special = va("%s%s%s%s", ref, spec, ign, muted);
+		}
 
 		tc = (ent) ? "^7 " : " ";
 		if (g_gametype.integer >= GT_WOLF)
