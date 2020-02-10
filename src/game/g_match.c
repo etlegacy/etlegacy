@@ -770,7 +770,8 @@ void G_printMatchInfo(gentity_t *ent)
 	// display map bias
 	if (g_skillRating.integer > 1)
 	{
-		CP(va("sc \"\n^2Map bias: ^1%+.1f^7/^$%+.1f^7 pct\n\" 0", 100.f * (level.mapProb - 0.5f), 100.f * (0.5f - level.mapProb)));
+		CP(va("sc \"\n^2Map bias:        ^1%+.1f^7/^$%+.1f^7 pct\n\" 0", 100.f * (level.mapProb - 0.5f), 100.f * (0.5f - level.mapProb)));
+		CP(va("sc \"\n^2Win probability: ^1%+.1f^7/^$%+.1f^7 pct\n\" 0", 100.f * level.axisProb, 100.f * level.alliesProb));
 	}
 #endif
 

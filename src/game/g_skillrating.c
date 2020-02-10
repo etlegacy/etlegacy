@@ -866,6 +866,9 @@ void G_CalculateSkillRatings(void)
 		trap_SetConfigstring(CS_LEGACYINFO, cs);
 	}
 
+	// log last estimated win probability
+	G_LogPrintf("SkillRating: Win probability X/L: %.6f/%.6f\n", level.axisProb, level.alliesProb);
+
 	G_UpdateSkillRating(winner);
 }
 
