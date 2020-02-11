@@ -773,7 +773,7 @@ void G_printMatchInfo(gentity_t *ent)
 		CP(va("sc \"\n^2Map bias: ^1%+.1f^7/^$%+.1f^7 pct\n^2Win prob: ^1%+.1f^7/^$%+.1f^7 pct\n\" 0",
 		      100.f * (level.mapProb - 0.5f), 100.f * (0.5f - level.mapProb), 100.f * level.axisProb, 100.f * level.alliesProb));
 	}
-	else
+	else if (g_skillRating.integer)
 	{
 		CP(va("sc \"\n^2Win prob: ^1%+.1f^7/^$%+.1f^7 pct\n\" 0", 100.f * level.axisProb, 100.f * level.alliesProb));
 	}
