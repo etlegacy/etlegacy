@@ -247,7 +247,7 @@ void OB_ShowLastError(const char *context)
 
 	if (!pMessage)
 	{
-		pMessage = "<unknown error>";
+		pMessage = (char *)"<unknown error>";
 	}
 	Omnibot_Load_PrintErr(OB_VA("%s Failed with Error: %s", context, pMessage));
 
