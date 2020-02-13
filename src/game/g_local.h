@@ -2444,12 +2444,13 @@ typedef struct prData_s
 {
 	const unsigned char *guid;
 	int prestige;
+	int streak;
 	int skillpoints[SK_NUM_SKILLS];
 } prData_t;
 
 int G_PrestigeDBCheck(char *db_path, int db_mode);
 void G_GetClientPrestige(gclient_t *cl);
-void G_SetClientPrestige(gclient_t *cl);
+void G_SetClientPrestige(gclient_t *cl, qboolean streak);
 int G_ReadPrestige(prData_t *pr_data);
 int G_WritePrestige(prData_t *pr_data);
 #endif

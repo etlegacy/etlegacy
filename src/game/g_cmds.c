@@ -4665,7 +4665,7 @@ void Cmd_IntermissionCollectPrestige_f(gentity_t *ent)
 		return;
 	}
 
-	G_SetClientPrestige(ent->client);
+	G_SetClientPrestige(ent->client, qtrue);
 }
 #endif
 

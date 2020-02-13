@@ -3177,7 +3177,7 @@ void ClientDisconnect(int clientNum)
 #ifdef FEATURE_PRESTIGE
 	if (g_prestige.integer && !level.intermissiontime)
 	{
-		G_SetClientPrestige(ent->client);
+		G_SetClientPrestige(ent->client, qfalse);
 	}
 #endif
 

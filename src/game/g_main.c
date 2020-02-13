@@ -3746,7 +3746,7 @@ void G_LogExit(const char *string)
 			}
 
 			// record prestige before intermission
-			G_SetClientPrestige(ent->client);
+			G_SetClientPrestige(ent->client, qtrue);
 		}
 	}
 #endif

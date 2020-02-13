@@ -30,11 +30,11 @@
 #endif
 
 #define PRCHECK_SQLWRAP_TABLES "SELECT * FROM prestige_users;"
-#define PRCHECK_SQLWRAP_SCHEMA "SELECT guid, prestige, skill0, skill1, skill2, skill3, skill4, skill5, skill6, created, updated FROM prestige_users;"
+#define PRCHECK_SQLWRAP_SCHEMA "SELECT guid, prestige, streak, skill0, skill1, skill2, skill3, skill4, skill5, skill6, created, updated FROM prestige_users;"
 #define PRUSERS_SQLWRAP_SELECT "SELECT * FROM prestige_users WHERE guid = '%s';"
 #define PRUSERS_SQLWRAP_INSERT "INSERT INTO prestige_users " \
-	                           "(guid, prestige, skill0, skill1, skill2, skill3, skill4, skill5, skill6, created, updated) VALUES ('%s', '%i', '%i', '%i', '%i', '%i', '%i', '%i', '%i', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);"
-#define PRUSERS_SQLWRAP_UPDATE "UPDATE prestige_users SET prestige = '%i', skill0 = '%i', skill1 = '%i', skill2 = '%i', skill3 = '%i', skill4 = '%i', skill5 = '%i', skill6 = '%i', updated = CURRENT_TIMESTAMP WHERE guid = '%s';"
+	                           "(guid, prestige, streak, skill0, skill1, skill2, skill3, skill4, skill5, skill6, created, updated) VALUES ('%s', '%i', '%i', '%i', '%i', '%i', '%i', '%i', '%i', '%i', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);"
+#define PRUSERS_SQLWRAP_UPDATE "UPDATE prestige_users SET prestige = '%i', streak = '%i', skill0 = '%i', skill1 = '%i', skill2 = '%i', skill3 = '%i', skill4 = '%i', skill5 = '%i', skill6 = '%i', updated = CURRENT_TIMESTAMP WHERE guid = '%s';"
 
 /**
  * @brief Checks if database exists, if tables exist and if schemas are correct
@@ -183,7 +183,7 @@ void G_GetClientPrestige(gclient_t *cl)
  *         Called on ClientDisconnect and on G_LogExit before intermissionQueued
  * @param[in] cl
  */
-void G_SetClientPrestige(gclient_t *cl)
+void G_SetClientPrestige(gclient_t *cl, qboolean streak)
 {
 	char      userinfo[MAX_INFO_STRING];
 	char      *guid;
@@ -230,30 +230,41 @@ void G_SetClientPrestige(gclient_t *cl)
 
 	pr_data.guid = (const unsigned char *)guid;
 
-	// prestige button clicked in intermission
-	if (level.intermissionQueued || level.intermissiontime)
+	// count the number of maxed out skills
+	for (i = 0; i < SK_NUM_SKILLS; i++)
 	{
-		// count the number of maxed out skills
-		for (i = 0; i < SK_NUM_SKILLS; i++)
+		skillMax = 0;
+
+		// check skill max level
+		for (j = NUM_SKILL_LEVELS - 1; j >= 0; j--)
 		{
-			skillMax = 0;
-
-			// check skill max level
-			for (j = NUM_SKILL_LEVELS - 1; j >= 0; j--)
+			if (GetSkillTableData(i)->skillLevels[j] >= 0)
 			{
-				if (GetSkillTableData(i)->skillLevels[j] >= 0)
-				{
-					skillMax = j;
-					break;
-				}
-			}
-
-			if (cl->sess.skill[i] >= skillMax)
-			{
-				cnt++;
+				skillMax = j;
+				break;
 			}
 		}
 
+		if (cl->sess.skill[i] >= skillMax)
+		{
+			cnt++;
+		}
+	}
+
+	// increase streak if all skills are maxed out
+	if (cnt >= SK_NUM_SKILLS)
+	{
+		// retrieve current prestige or assign default values
+		if (G_ReadPrestige(&pr_data))
+		{
+			return;
+		}
+		pr_data.streak += 1;
+	}
+
+	// prestige button clicked in intermission
+	if (level.intermissionQueued || level.intermissiontime)
+	{
 		if (cnt < SK_NUM_SKILLS)
 		{
 			return;
@@ -273,6 +284,9 @@ void G_SetClientPrestige(gclient_t *cl)
 			cl->sess.skill[i]            = 0;
 			cl->sess.startskillpoints[i] = 0;
 		}
+
+		// reset streak
+		pr_data.streak = 0;
 	}
 
 	// assign match data
@@ -325,10 +339,11 @@ int G_ReadPrestige(prData_t *pr_data)
 	{
 		// assign prestige data
 		pr_data->prestige = sqlite3_column_int(sqlstmt, 1);
+		pr_data->streak   = sqlite3_column_int(sqlstmt, 2);
 
 		for (i = 0; i < SK_NUM_SKILLS; i++)
 		{
-			pr_data->skillpoints[i] = sqlite3_column_int(sqlstmt, i + 2);
+			pr_data->skillpoints[i] = sqlite3_column_int(sqlstmt, i + 3);
 		}
 	}
 	else
@@ -338,6 +353,7 @@ int G_ReadPrestige(prData_t *pr_data)
 		{
 			// assign default values
 			pr_data->prestige = 0;
+			pr_data->streak   = 0;
 
 			for (i = 0; i < SK_NUM_SKILLS; i++)
 			{
@@ -401,6 +417,7 @@ int G_WritePrestige(prData_t *pr_data)
 		sql = va(PRUSERS_SQLWRAP_INSERT,
 		         pr_data->guid,
 		         pr_data->prestige,
+		         pr_data->streak,
 		         pr_data->skillpoints[0],
 		         pr_data->skillpoints[1],
 		         pr_data->skillpoints[2],
@@ -422,6 +439,7 @@ int G_WritePrestige(prData_t *pr_data)
 	{
 		sql = va(PRUSERS_SQLWRAP_UPDATE,
 		         pr_data->prestige,
+		         pr_data->streak,
 		         (int)pr_data->skillpoints[0],
 		         (int)pr_data->skillpoints[1],
 		         (int)pr_data->skillpoints[2],
