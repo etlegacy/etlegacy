@@ -1150,7 +1150,7 @@ static int WM_TeamScoreboard(int x, int y, team_t team, float fade, int maxrows,
 #ifdef FEATURE_PRESTIGE
 		if (cgs.prestige && cg_scoreboard.integer == SCOREBOARD_PR)
 		{
-			CG_Text_Paint_Ext(tempx + 30, y + 13, 0.24f, 0.28f, colorWhite, "PR", 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
+			CG_DrawPic(tempx + 30, y + 2, 14, 14, cgs.media.prestigePics[0]);
 		}
 		else
 #endif
