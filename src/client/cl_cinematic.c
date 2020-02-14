@@ -715,7 +715,7 @@ void CIN_UploadCinematic(int handle)
 
 	cin = CIN_GetCinematicByHandle(handle);
 
-	if (!cin->currentData.image)
+	if (!cin->currentData.image || !cin->currentData.image[0])
 	{
 		return;
 	}
