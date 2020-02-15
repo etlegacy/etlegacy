@@ -285,9 +285,6 @@ void G_SetClientPrestige(gclient_t *cl, qboolean streak)
 			cl->sess.startskillpoints[i] = 0;
 		}
 
-		// update userinfo
-		ClientUserinfoChanged(clientNum);
-
 		// reset streak
 		pr_data.streak = 0;
 	}
@@ -305,6 +302,9 @@ void G_SetClientPrestige(gclient_t *cl, qboolean streak)
 	{
 		return;
 	}
+
+	// update userinfo
+	ClientUserinfoChanged(clientNum);
 }
 
 /**
