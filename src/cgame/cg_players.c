@@ -364,7 +364,7 @@ void CG_NewClientInfo(int clientNum)
 				}
 
 #ifdef FEATURE_PRESTIGE
-				if (cgs.prestige)
+				if (cgs.prestige && cgs.gametype != GT_WOLF_STOPWATCH && cgs.gametype != GT_WOLF_LMS && cgs.gametype != GT_WOLF_CAMPAIGN)
 				{
 					skillMax = 0;
 
