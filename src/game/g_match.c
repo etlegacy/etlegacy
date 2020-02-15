@@ -792,14 +792,17 @@ void G_printMatchInfo(gentity_t *ent)
 
 #ifdef FEATURE_RATING
 	// display map bias
-	if (g_skillRating.integer > 1)
+	if (g_skillRating.integer && g_gametype.integer != GT_WOLF_STOPWATCH && g_gametype.integer != GT_WOLF_LMS)
 	{
-		CP(va("sc \"\n^2Map bias: ^1%+.1f^7/^$%+.1f^7 pct\n^2Win prob: ^1%+.1f^7/^$%+.1f^7 pct\n\" 0",
-		      100.f * (level.mapProb - 0.5f), 100.f * (0.5f - level.mapProb), 100.f * level.axisProb, 100.f * level.alliesProb));
-	}
-	else if (g_skillRating.integer)
-	{
-		CP(va("sc \"\n^2Win prob: ^1%+.1f^7/^$%+.1f^7 pct\n\" 0", 100.f * level.axisProb, 100.f * level.alliesProb));
+		if (g_skillRating.integer > 1)
+		{
+			CP(va("sc \"\n^2Map bias: ^1%+.1f^7/^$%+.1f^7 pct\n^2Win prob: ^1%+.1f^7/^$%+.1f^7 pct\n\" 0",
+			      100.f * (level.mapProb - 0.5f), 100.f * (0.5f - level.mapProb), 100.f * level.axisProb, 100.f * level.alliesProb));
+		}
+		else
+		{
+			CP(va("sc \"\n^2Win prob: ^1%+.1f^7/^$%+.1f^7 pct\n\" 0", 100.f * level.axisProb, 100.f * level.alliesProb));
+		}
 	}
 #endif
 

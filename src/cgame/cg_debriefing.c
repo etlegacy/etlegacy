@@ -2754,7 +2754,7 @@ void CG_Debriefing_PlayerPrestige_Draw(panel_button_t *button)
 	clientInfo_t *ci;
 	float        w;
 
-	if (!cgs.prestige)
+	if (!cgs.prestige || cgs.gametype == GT_WOLF_STOPWATCH || cgs.gametype == GT_WOLF_LMS || cgs.gametype == GT_WOLF_CAMPAIGN)
 	{
 		return;
 	}
@@ -2823,7 +2823,7 @@ void CG_Debriefing_PlayerXP_Draw(panel_button_t *button)
  */
 void CG_Debriefing_PlayerSR_Draw(panel_button_t *button)
 {
-	if (cgs.skillRating)
+	if (cgs.skillRating && cgs.gametype != GT_WOLF_STOPWATCH && cgs.gametype != GT_WOLF_LMS)
 	{
 		clientInfo_t *ci;
 		float        w;

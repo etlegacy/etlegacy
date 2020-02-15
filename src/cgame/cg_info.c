@@ -985,14 +985,14 @@ void CG_GameStatsDraw(void)
 		x += 120;
 		CG_Text_Paint_Ext(x + 4, y, hScale2, hScaleY2, hdrColor, "XP", 0.0f, 0, hStyle2, hFont2);
 #ifdef FEATURE_RATING
-		if (cgs.skillRating)
+		if (cgs.skillRating && cgs.gametype != GT_WOLF_STOPWATCH && cgs.gametype != GT_WOLF_LMS)
 		{
 			x += 52;
 			CG_Text_Paint_Ext(x + 4, y, hScale2, hScaleY2, hdrColor, "Skill Rating", 0.0f, 0, hStyle2, hFont2);
 		}
 #endif
 #ifdef FEATURE_PRESTIGE
-		if (cgs.prestige)
+		if (cgs.prestige && cgs.gametype != GT_WOLF_STOPWATCH && cgs.gametype != GT_WOLF_LMS && cgs.gametype != GT_WOLF_CAMPAIGN)
 		{
 			x += 85;
 			CG_Text_Paint_Ext(x + 4, y, hScale2, hScaleY2, hdrColor, "Prestige", 0.0f, 0, hStyle2, hFont2);

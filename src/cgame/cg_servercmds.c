@@ -2283,21 +2283,28 @@ void CG_parseWeaponStatsGS_cmd(void)
 #endif
 
 #if defined(FEATURE_RATING) && defined(FEATURE_PRESTIGE)
-	if (cgs.skillRating && cgs.prestige)
+	if (cgs.skillRating && cgs.gametype != GT_WOLF_STOPWATCH && cgs.gametype != GT_WOLF_LMS)
 	{
-		Q_strncpyz(gs->strRank, va("%-21s %-8d %-14.2f %-3i", GetRankTableData(ci->team, ci->rank)->names, xp, (double)ci->rating, ci->prestige), sizeof(gs->strRank));
+		if (cgs.prestige && cgs.gametype != GT_WOLF_CAMPAIGN)
+		{
+			Q_strncpyz(gs->strRank, va("%-21s %-8d %-14.2f %-3i", GetRankTableData(ci->team, ci->rank)->names, xp, (double)ci->rating, ci->prestige), sizeof(gs->strRank));
+		}
+		else
+		{
+			Q_strncpyz(gs->strRank, va("%-21s %-8d %-14.2f", GetRankTableData(ci->team, ci->rank)->names, xp, (double)ci->rating), sizeof(gs->strRank));
+		}
 	}
 	else
 #endif
 #ifdef FEATURE_RATING
-	if (cgs.skillRating)
+	if (cgs.skillRating && cgs.gametype != GT_WOLF_STOPWATCH && cgs.gametype != GT_WOLF_LMS)
 	{
 		Q_strncpyz(gs->strRank, va("%-21s %-8d %-14.2f", GetRankTableData(ci->team, ci->rank)->names, xp, (double)ci->rating), sizeof(gs->strRank));
 	}
 	else
 #endif
 #ifdef FEATURE_PRESTIGE
-	if (cgs.prestige)
+	if (cgs.prestige && cgs.gametype != GT_WOLF_STOPWATCH && cgs.gametype != GT_WOLF_LMS && cgs.gametype != GT_WOLF_CAMPAIGN)
 	{
 		Q_strncpyz(gs->strRank, va("%-21s %-8d %-14i", GetRankTableData(ci->team, ci->rank)->names, xp, ci->prestige), sizeof(gs->strRank));
 	}
@@ -2537,7 +2544,7 @@ void CG_parseWeaponStats_cmd(void(txt_dump) (const char *))
 	txt_dump(va("^2Rank: ^7%s (%d XP)\n", GetRankTableData(ci->team, ci->rank)->names, xp));
 
 #ifdef FEATURE_RATING
-	if (cgs.skillRating)
+	if (cgs.skillRating && cgs.gametype != GT_WOLF_STOPWATCH && cgs.gametype != GT_WOLF_LMS)
 	{
 		float rating;
 		float deltaRating;
@@ -2551,7 +2558,7 @@ void CG_parseWeaponStats_cmd(void(txt_dump) (const char *))
 #endif
 
 #ifdef FEATURE_PRESTIGE
-	if (cgs.prestige)
+	if (cgs.prestige && cgs.gametype != GT_WOLF_STOPWATCH && cgs.gametype != GT_WOLF_LMS && cgs.gametype != GT_WOLF_CAMPAIGN)
 	{
 		int prestige;
 
