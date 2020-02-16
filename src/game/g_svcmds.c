@@ -787,6 +787,8 @@ void Svcmd_ForceTeam_f(void)
 {
 	gclient_t *cl;
 	char      str[MAX_TOKEN_CHARS];
+	int w = 0; 
+	int w2 = 0;
 
 	// find the player
 	trap_Argv(1, str, sizeof(str));
@@ -798,7 +800,28 @@ void Svcmd_ForceTeam_f(void)
 
 	// set the team
 	trap_Argv(2, str, sizeof(str));
-	SetTeam(&g_entities[cl - level.clients], str, qtrue, cl->sess.playerWeapon, cl->sess.playerWeapon2, qtrue);
+
+	// "swap" team, try to keep the previous selected weapons or equivalent if no one were selected
+	if (cl->sess.sessionTeam != TEAM_SPECTATOR)
+	{
+		// primary weapon
+		w = cl->sess.playerWeapon;
+
+		if (GetWeaponTableData(cl->sess.playerWeapon)->weapEquiv)
+		{
+			w = GetWeaponTableData(cl->sess.playerWeapon)->weapEquiv;
+		}
+
+		// secondary weapon
+		w2 = cl->sess.playerWeapon2;
+
+		if (GetWeaponTableData(cl->sess.playerWeapon2)->weapEquiv)
+		{
+			w2 = GetWeaponTableData(cl->sess.playerWeapon2)->weapEquiv;
+		}
+	}
+
+	SetTeam(&g_entities[cl - level.clients], str, qtrue, w, w2, qtrue);
 }
 
 /**
