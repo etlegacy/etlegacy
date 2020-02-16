@@ -674,6 +674,7 @@ static void CG_Item(centity_t *cent)
 		unsigned char accentColor[4];
 		float         simpleItemScaleX = 1.f;
 		float         simpleItemScaleY = 1.f;
+		int           weap = cg_entities[cg.snap->ps.clientNum].currentState.weapon;
 
 		VectorCopy(cent->lerpOrigin, origin);
 		Vector4Set(accentColor, 255, 255, 255, 255); // default white color
@@ -697,7 +698,7 @@ static void CG_Item(centity_t *cent)
 			}
 			else
 			{
-				if (cgs.clientinfo[cg.snap->ps.clientNum].weapon == item->giWeapon ||
+				if (weap == item->giWeapon ||
 				    (cgs.clientinfo[cg.snap->ps.clientNum].cls == PC_SOLDIER && cgs.clientinfo[cg.snap->ps.clientNum].skill[SK_HEAVY_WEAPONS] >= 4 &&
 				     (cgs.clientinfo[cg.snap->ps.clientNum].secondaryweapon == item->giWeapon)))
 				{
