@@ -448,7 +448,9 @@ void CG_DrawCursorhint(rectDef_t *rect)
 	case HINT_DYNAMITE:
 		icon = cgs.media.dynamiteHintShader;
 		break;
-
+	case HINT_BAD_USER:
+		icon = cgs.media.friendShader; // for unexpected cases
+		break;
 	case HINT_ACTIVATE:
 	default:
 		icon = cgs.media.usableHintShader;

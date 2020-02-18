@@ -1353,7 +1353,9 @@ void G_CheckForCursorHints(gentity_t *ent)
 			case ET_ALARMBOX:
 				if (checkEnt->health > 0)
 				{
+					hintDist = CH_ACTIVATE_DIST;
 					hintType = HINT_ACTIVATE;
+					hintVal  = ps->serverCursorHintVal = 0;
 				}
 				break;
 			case ET_ITEM:
