@@ -2377,22 +2377,17 @@ void ClientEndFrame(gentity_t *ent)
 			VectorScale(flatforward, -32, legsOffset);
 		}
 
-		//Com_Printf("from g_debugPlayerHitboxes %f %f %f\n", ent->client->ps.origin[0], ent->client->ps.origin[1], ent->client->ps.origin[2]);
-
-		//VectorAdd(ent->client->ps.origin, headOffset, headOffset);
-		//VectorAdd(ent->client->ps.origin, legsOffset, legsOffset);
-
-		//headOffset[2] -= 18;    // 18 - STEPSIZE
-		//legsOffset[2] -= 18;    // 18 - STEPSIZE
+		VectorAdd(ent->client->ps.origin, headOffset, headOffset);
+		VectorAdd(ent->client->ps.origin, legsOffset, legsOffset);
 
 		// cyan
-		G_RailBox(ent->client->ps.origin, ent->client->ps.mins, ent->client->ps.maxs, tv(0.f, 1.f, 1.f), ent->s.number);
+		G_RailBox(ent->client->ps.origin, ent->r.mins, ent->r.maxs, tv(0.f, 1.f, 1.f), ent->s.number);
 
 		// green
-		G_RailBox(ent->client->ps.origin, mins, maxs, tv(0.f, 1.f, 0.f), ent->s.number | HITBOXBIT_HEAD);
+		G_RailBox(headOffset, mins, maxs, tv(0.f, 1.f, 0.f), ent->s.number | HITBOXBIT_HEAD);
 
 		// blue
-		G_RailBox(ent->client->ps.origin, playerlegsProneMins, playerlegsProneMaxs, tv(0.f, 0.f, 1.f), ent->s.number | HITBOXBIT_LEGS);
+		G_RailBox(legsOffset, playerlegsProneMins, playerlegsProneMaxs, tv(0.f, 0.f, 1.f), ent->s.number | HITBOXBIT_LEGS);
 	}
 
 	// store the client's current position for antilag traces

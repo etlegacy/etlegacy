@@ -110,7 +110,7 @@ qboolean PM_SlideMove(qboolean gravity)
 		VectorMA(pm->ps->origin, time_left, pm->ps->velocity, end);
 
 		// see if we can make it there
-		PM_TraceAll(&trace, pm->ps->origin, end);
+		PM_TraceAll(&trace, pm->ps->origin, end, qtrue, qfalse);
 		if (pm->debugLevel > 1)
 		{
 			Com_Printf("%i:%d %d (%f %f %f)\n",
@@ -123,6 +123,11 @@ qboolean PM_SlideMove(qboolean gravity)
 
 		if (trace.allsolid)
 		{
+			if (pm->debugLevel)
+			{
+				Com_Printf("%i:trappedinsolid\n", c_pmove);
+			}
+
 			// entity is completely trapped in another solid
 			pm->ps->velocity[2] = 0;    // don't build up falling damage, but allow sideways acceleration
 			return qtrue;
@@ -136,6 +141,10 @@ qboolean PM_SlideMove(qboolean gravity)
 
 		if (trace.fraction == 1.f)
 		{
+			if (pm->debugLevel > 1)
+			{
+				Com_Printf("%i:moved the entire distance at bump %d\n", c_pmove, bumpcount);
+			}
 			break;      // moved the entire distance
 		}
 
@@ -146,6 +155,11 @@ qboolean PM_SlideMove(qboolean gravity)
 
 		if (numplanes >= MAX_CLIP_PLANES)
 		{
+			if (pm->debugLevel)
+			{
+				Com_Printf("%i:MAX_CLIP_PLANES reached (this shouldn't really happen)\n", c_pmove);
+			}
+
 			// this shouldn't really happen
 			VectorClear(pm->ps->velocity);
 			return qtrue;
@@ -176,7 +190,7 @@ qboolean PM_SlideMove(qboolean gravity)
 					// and trace it, to make sure we don't end up in a solid
 
 					VectorAdd(pm->ps->origin, trace.plane.normal, end);
-					PM_TraceAll(&trace, pm->ps->origin, end);
+					PM_TraceAll(&trace, pm->ps->origin, end, qtrue, qtrue);
 					VectorCopy(trace.endpos, pm->ps->origin);
 
 					if (pm->debugLevel)
@@ -250,7 +264,7 @@ qboolean PM_SlideMove(qboolean gravity)
 				d = DotProduct(dir, endVelocity);
 				VectorScale(dir, d, endClipVelocity);
 
-				// see if there is a third plane the the new move enters
+				// see if there is a third plane the new move enters
 				for (k = 0 ; k < numplanes ; k++)
 				{
 					if (k == i || k == j)
@@ -260,6 +274,11 @@ qboolean PM_SlideMove(qboolean gravity)
 					if (DotProduct(clipVelocity, planes[k]) >= 0.1f)
 					{
 						continue;       // move doesn't interact with the plane
+					}
+
+					if (pm->debugLevel)
+					{
+						Com_Printf("%i:third plane interaction\n", c_pmove);
 					}
 
 					// stop dead at a tripple plane interaction
@@ -307,12 +326,12 @@ void PM_StepSlideMove(qboolean gravity)
 	{
 		qboolean wassolid, slidesucceed;
 
-		PM_TraceAll(&trace, pm->ps->origin, pm->ps->origin);
+		PM_TraceAll(&trace, pm->ps->origin, pm->ps->origin, qfalse, qfalse);
 		wassolid = trace.allsolid;
 
 		slidesucceed = (PM_SlideMove(gravity) == 0);
 
-		PM_TraceAll(&trace, pm->ps->origin, pm->ps->origin);
+		PM_TraceAll(&trace, pm->ps->origin, pm->ps->origin, qfalse, qfalse);
 		if (trace.allsolid && !wassolid)
 		{
 			Com_Printf("%i:PM_SlideMove solidified! (%f %f %f) -> (%f %f %f)\n", c_pmove,
@@ -346,7 +365,7 @@ void PM_StepSlideMove(qboolean gravity)
 	VectorCopy(start_o, down);
 	down[2] -= STEPSIZE;
 
-	PM_TraceAll(&trace, start_o, down);
+	PM_TraceAll(&trace, start_o, down, qtrue, qtrue);
 	VectorSet(up, 0, 0, 1);
 	// never step up when you still have up velocity
 	if (pm->ps->velocity[2] > 0 && (trace.fraction == 1.0f || DotProduct(trace.plane.normal, up) < 0.7f))
@@ -361,7 +380,7 @@ void PM_StepSlideMove(qboolean gravity)
 	up[2] += STEPSIZE;
 
 	// test the player position if they were a stepheight higher
-	PM_TraceAll(&trace, up, up);
+	PM_TraceAll(&trace, up, up, qtrue, qfalse);
 	if (trace.allsolid)
 	{
 		if (pm->debugLevel)
@@ -382,10 +401,11 @@ void PM_StepSlideMove(qboolean gravity)
 	down[2] -= STEPSIZE;
 
 	// check legs&head separately
-	if (pm->ps->eFlags & (EF_PRONE | EF_DEAD))
+	if (pm->ps->eFlags & EF_PRONE ||
+	    pm->ps->eFlags & EF_DEAD)
 	{
 		Com_Memset(&trace, 0, sizeof(trace));
-		PM_TraceLegs(&trace, NULL, pm->ps->origin, down, NULL, pm->ps->viewangles, pm->trace, pm->ps->clientNum, pm->tracemask);
+		PM_TraceLegs(&trace, NULL, pm->ps->origin, down, NULL, pm->ps->viewangles, pm->trace, pm->ps->clientNum, pm->tracemask, qtrue);
 		if (trace.fraction < 1.0f)
 		{
 			// legs don't step, just fuzz.
@@ -398,7 +418,7 @@ void PM_StepSlideMove(qboolean gravity)
 			return;
 		}
 		Com_Memset(&trace, 0, sizeof(trace));
-		PM_TraceHead(&trace, pm->ps->origin, down, NULL, pm->ps->viewangles, pm->trace, pm->ps->clientNum, pm->tracemask);
+		PM_TraceHead(&trace, pm->ps->origin, down, NULL, pm->ps->viewangles, pm->trace, pm->ps->clientNum, pm->tracemask, qtrue);
 		if (trace.fraction < 1.0f)
 		{
 			VectorCopy(down_o, pm->ps->origin);
@@ -412,7 +432,7 @@ void PM_StepSlideMove(qboolean gravity)
 	}
 
 	Com_Memset(&trace, 0, sizeof(trace));
-	pm->trace(&trace, pm->ps->origin, pm->mins, pm->maxs, down, pm->ps->clientNum, pm->tracemask);
+	PM_TraceAll(&trace, pm->ps->origin, down, qtrue, qfalse);
 	if (!trace.allsolid)
 	{
 		VectorCopy(trace.endpos, pm->ps->origin);

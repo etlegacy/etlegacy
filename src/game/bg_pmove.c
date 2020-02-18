@@ -254,7 +254,17 @@ void PM_ClipVelocity(vec3_t in, vec3_t normal, vec3_t out, float overbounce)
  * @param[in] ignoreent
  * @param[in] tracemask
  */
-void PM_TraceLegs(trace_t *trace, float *legsOffset, vec3_t start, vec3_t end, trace_t *bodytrace, vec3_t viewangles, void(tracefunc) (trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask), int ignoreent, int tracemask)
+void PM_TraceLegs(trace_t *trace, float *legsOffset, vec3_t start, vec3_t end, trace_t *bodytrace, vec3_t viewangles,
+                  void (tracefunc) (trace_t *results,
+                                    const vec3_t start,
+                                    const vec3_t mins,
+                                    const vec3_t maxs,
+                                    const vec3_t end,
+                                    int passEntityNum,
+                                    int contentMask),
+                  int ignoreent,
+                  int tracemask,
+                  qboolean checkStepping)
 {
 	vec3_t ofs, org, point;
 	vec3_t flatforward;
@@ -277,14 +287,14 @@ void PM_TraceLegs(trace_t *trace, float *legsOffset, vec3_t start, vec3_t end, t
 	{
 		VectorScale(flatforward, -32, ofs);
 	}
-	else
+	else    // EF_DEAD
 	{
 		VectorScale(flatforward, 32, ofs);
 	}
 
-	//VectorAdd(start, ofs, org);
+	VectorAdd(start, ofs, org);
 	VectorAdd(end, ofs, point);
-	tracefunc(trace, start, playerlegsProneMins, playerlegsProneMaxs, point, ignoreent, tracemask);
+	tracefunc(trace, org, playerlegsProneMins, playerlegsProneMaxs, point, ignoreent, tracemask);
 	if (!bodytrace || trace->fraction < bodytrace->fraction ||
 	    trace->allsolid)
 	{
@@ -294,11 +304,18 @@ void PM_TraceLegs(trace_t *trace, float *legsOffset, vec3_t start, vec3_t end, t
 		// see if our legs can step up
 
 		// give it a try with the new height
-		ofs[2] += STEPSIZE;
+		if (checkStepping)
+		{
+			ofs[2] += STEPSIZE;
+		}
+		else
+		{
+			ofs[2] += playerlegsProneMaxs[2] - playerlegsProneMins[2];
+		}
 
-		//VectorAdd(start, ofs, org);
+		VectorAdd(start, ofs, org);
 		VectorAdd(end, ofs, point);
-		tracefunc(&steptrace, start, playerlegsProneMins, playerlegsProneMaxs, point, ignoreent, tracemask);
+		tracefunc(&steptrace, org, playerlegsProneMins, playerlegsProneMaxs, point, ignoreent, tracemask);
 		if (!steptrace.allsolid && !steptrace.startsolid &&
 		    steptrace.fraction > trace->fraction)
 		{
@@ -335,17 +352,19 @@ void PM_TraceLegs(trace_t *trace, float *legsOffset, vec3_t start, vec3_t end, t
  * @param[in] tracemask
  */
 void PM_TraceHead(trace_t *trace, vec3_t start, vec3_t end, trace_t *bodytrace, vec3_t viewangles,
-                  void(tracefunc) (trace_t *results,
-                                   const vec3_t start,
-                                   const vec3_t mins,
-                                   const vec3_t maxs,
-                                   const vec3_t end,
-                                   int passEntityNum,
-                                   int contentMask),
+                  void (tracefunc) (trace_t *results,
+                                    const vec3_t start,
+                                    const vec3_t mins,
+                                    const vec3_t maxs,
+                                    const vec3_t end,
+                                    int passEntityNum,
+                                    int contentMask),
                   int ignoreent,
-                  int tracemask)
+                  int tracemask,
+                  qboolean checkStepping)
 {
 	vec3_t ofs;
+	vec3_t org;
 	vec3_t flatforward;
 	vec3_t point;
 	float  angle;
@@ -369,7 +388,7 @@ void PM_TraceHead(trace_t *trace, vec3_t start, vec3_t end, trace_t *bodytrace, 
 	{
 		VectorScale(flatforward, 36, ofs);
 	}
-	else
+	else    // EF_DEAD
 	{
 		VectorScale(flatforward, -36, ofs);
 	}
@@ -377,9 +396,9 @@ void PM_TraceHead(trace_t *trace, vec3_t start, vec3_t end, trace_t *bodytrace, 
 //        VectorAdd(end, ofs, point);
 //        tracefunc(trace, start, mins, maxs, point, ignoreent, tracemask);
 
-	//VectorAdd(start, ofs, org);
+	VectorAdd(start, ofs, org);
 	VectorAdd(end, ofs, point);
-	tracefunc(trace, start, mins, maxs, point, ignoreent, tracemask);
+	tracefunc(trace, org, mins, maxs, point, ignoreent, tracemask);
 	if (!bodytrace || trace->fraction < bodytrace->fraction ||
 	    trace->allsolid)
 	{
@@ -389,11 +408,18 @@ void PM_TraceHead(trace_t *trace, vec3_t start, vec3_t end, trace_t *bodytrace, 
 		// see if our head can step up
 
 		// give it a try with the new height
-		ofs[2] += STEPSIZE;
+		if (checkStepping)
+		{
+			ofs[2] += STEPSIZE;
+		}
+		else
+		{
+			ofs[2] += maxs[2] - mins[2];
+		}
 
-		//VectorAdd(start, ofs, org);
+		VectorAdd(start, ofs, org);
 		VectorAdd(end, ofs, point);
-		tracefunc(&steptrace, start, mins, maxs, point, ignoreent, tracemask);
+		tracefunc(&steptrace, org, mins, maxs, point, ignoreent, tracemask);
 		if (!steptrace.allsolid && !steptrace.startsolid &&
 		    steptrace.fraction > trace->fraction)
 		{
@@ -410,7 +436,7 @@ void PM_TraceHead(trace_t *trace, vec3_t start, vec3_t end, trace_t *bodytrace, 
  * @param[in] start
  * @param[in] end
  */
-void PM_TraceAllParts(trace_t *trace, float *legsOffset, vec3_t start, vec3_t end)
+void PM_TraceAllParts(trace_t *trace, float *legsOffset, vec3_t start, vec3_t end, qboolean allowAdjust, qboolean checkStepping)
 {
 	trace_t bodytrace;
 
@@ -419,22 +445,24 @@ void PM_TraceAllParts(trace_t *trace, float *legsOffset, vec3_t start, vec3_t en
 	*trace = bodytrace;
 
 	// legs and head
-	if ((pm->ps->eFlags & EF_PRONE) ||
-	    (pm->ps->eFlags & EF_DEAD))
+	if (pm->ps->eFlags & (EF_PRONE | EF_DEAD))
 	{
-
 		trace_t  legtrace;
 		trace_t  headtrace;
 		qboolean adjust = qfalse;
 
 		PM_TraceLegs(&legtrace, legsOffset, start, end, &bodytrace,
 		             pm->ps->viewangles, pm->trace, pm->ps->clientNum,
-		             pm->tracemask);
+		             pm->tracemask, checkStepping);
 
 		if (legtrace.fraction < trace->fraction ||
 		    legtrace.startsolid ||
 		    legtrace.allsolid)
 		{
+			if (pm->debugLevel)
+			{
+				Com_Printf("%i:legs collide\n", c_pmove);
+			}
 
 			*trace = legtrace;
 			adjust = qtrue;
@@ -442,18 +470,22 @@ void PM_TraceAllParts(trace_t *trace, float *legsOffset, vec3_t start, vec3_t en
 
 		PM_TraceHead(&headtrace, start, end, &bodytrace,
 		             pm->ps->viewangles, pm->trace, pm->ps->clientNum,
-		             pm->tracemask);
+		             pm->tracemask, checkStepping);
 
 		if (headtrace.fraction < trace->fraction ||
 		    headtrace.startsolid ||
 		    headtrace.allsolid)
 		{
+			if (pm->debugLevel)
+			{
+				Com_Printf("%i:head collide\n", c_pmove);
+			}
 
 			*trace = headtrace;
 			adjust = qtrue;
 		}
 
-		if (adjust)
+		if (allowAdjust && adjust)
 		{
 			if (pm->debugLevel)
 			{
@@ -473,9 +505,9 @@ void PM_TraceAllParts(trace_t *trace, float *legsOffset, vec3_t start, vec3_t en
  * @param[in] start
  * @param[in] end
  */
-void PM_TraceAll(trace_t *trace, vec3_t start, vec3_t end)
+void PM_TraceAll(trace_t *trace, vec3_t start, vec3_t end, qboolean allowAdjust, qboolean checkStepping)
 {
-	PM_TraceAllParts(trace, NULL, start, end);
+	PM_TraceAllParts(trace, NULL, start, end, allowAdjust, checkStepping);
 }
 
 /**
@@ -908,7 +940,7 @@ static qboolean PM_CheckProne(void)
 			pm->maxs[2] = pm->ps->crouchMaxZ;
 
 			pm->ps->eFlags |= EF_PRONE;
-			PM_TraceAll(&trace, pm->ps->origin, pm->ps->origin);
+			PM_TraceAll(&trace, pm->ps->origin, pm->ps->origin, qtrue, qtrue);
 			pm->ps->eFlags &= ~EF_PRONE;
 
 			if (PM_PRONEDELAY)
@@ -947,7 +979,7 @@ static qboolean PM_CheckProne(void)
 			pm->maxs[2] = pm->ps->crouchMaxZ;
 
 			pm->ps->eFlags &= ~EF_PRONE;
-			PM_TraceAll(&trace, pm->ps->origin, pm->ps->origin);
+			PM_TraceAll(&trace, pm->ps->origin, pm->ps->origin, qtrue, qtrue);
 			pm->ps->eFlags |= EF_PRONE;
 
 			if (trace.fraction == 1.0f)
@@ -1665,14 +1697,14 @@ static int PM_CorrectAllSolid(trace_t *trace)
 				point[0] += (float) i;
 				point[1] += (float) j;
 				point[2] += (float) k;
-				PM_TraceAll(trace, point, point);
+				PM_TraceAll(trace, point, point, qtrue, qtrue);
 				if (!trace->allsolid)
 				{
 					point[0] = pm->ps->origin[0];
 					point[1] = pm->ps->origin[1];
 					point[2] = pm->ps->origin[2] - 0.25f;
 
-					PM_TraceAll(trace, pm->ps->origin, point);
+					PM_TraceAll(trace, pm->ps->origin, point, qtrue, qtrue);
 					pml.groundTrace = *trace;
 					return qtrue;
 				}
@@ -1708,7 +1740,7 @@ static void PM_GroundTraceMissed(void)
 		VectorCopy(pm->ps->origin, point);
 		point[2] -= 64;
 
-		PM_TraceAll(&trace, pm->ps->origin, point);
+		PM_TraceAll(&trace, pm->ps->origin, point, qtrue, qtrue);
 		if (trace.fraction == 1.0f)
 		{
 			if (pm->cmd.forwardmove >= 0)
@@ -1756,7 +1788,7 @@ static void PM_GroundTrace(void)
 		point[2] = pm->ps->origin[2] - 0.25f;
 	}
 
-	PM_TraceAllParts(&trace, &pm->pmext->proneLegsOffset, pm->ps->origin, point);
+	PM_TraceAllParts(&trace, &pm->pmext->proneLegsOffset, pm->ps->origin, point, qtrue, qtrue);
 	pml.groundTrace = trace;
 
 	// do something corrective if the trace starts in a solid...
@@ -1935,7 +1967,7 @@ static void PM_CheckDuck(void)
 
 			// try to stand up
 			pm->maxs[2] = pm->ps->maxs[2];
-			PM_TraceAll(&trace, pm->ps->origin, pm->ps->origin);
+			PM_TraceAll(&trace, pm->ps->origin, pm->ps->origin, qtrue, qtrue);
 			if (trace.fraction == 1.0f)
 			{
 				pm->ps->pm_flags &= ~PMF_DUCKED;
@@ -4005,7 +4037,7 @@ void PM_UpdateLean(playerState_t *ps, usercmd_t *cmd, pmove_t *tpm)
  *
  * @note Tnused trace parameter
  */
-void PM_UpdateViewAngles(playerState_t *ps, pmoveExt_t *pmext, usercmd_t *cmd, void(trace) (trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask), int tracemask)                   //   modified
+void PM_UpdateViewAngles(playerState_t *ps, pmoveExt_t *pmext, usercmd_t *cmd, void (trace) (trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask), int tracemask)                   //   modified
 {
 	short  temp;
 	int    i;
@@ -4387,7 +4419,7 @@ void PM_UpdateViewAngles(playerState_t *ps, pmoveExt_t *pmext, usercmd_t *cmd, v
 			// we know our main body isn't in a solid, check for our legs then head
 
 			// bugfix - use supplied trace - pm may not be set
-			PM_TraceLegs(&traceres, &pmext->proneLegsOffset, ps->origin, ps->origin, NULL, ps->viewangles, pm->trace, ps->clientNum, tracemask);
+			PM_TraceAllParts(&traceres, &pmext->proneLegsOffset, ps->origin, ps->origin, qfalse, qtrue);
 
 			if (traceres.allsolid /* && trace.entityNum >= MAX_CLIENTS */)
 			{
@@ -4397,20 +4429,8 @@ void PM_UpdateViewAngles(playerState_t *ps, pmoveExt_t *pmext, usercmd_t *cmd, v
 			}
 			else
 			{
-				// bugfix - use supplied trace - pm may not be set
-				PM_TraceHead(&traceres, ps->origin, ps->origin, NULL, ps->viewangles, pm->trace, ps->clientNum, tracemask);
-
-				if (traceres.allsolid /* && trace.entityNum >= MAX_CLIENTS */)
-				{
-					// starting in a solid, no space
-					ps->viewangles[YAW]   = oldYaw;
-					ps->delta_angles[YAW] = ANGLE2SHORT(ps->viewangles[YAW]) - cmd->angles[YAW];
-				}
-				else
-				{
-					// all fine
-					ps->delta_angles[YAW] = newDeltaAngle;
-				}
+				// all fine
+				ps->delta_angles[YAW] = newDeltaAngle;
 			}
 		}
 	}
