@@ -1427,6 +1427,24 @@ static void PM_DeadMove(void)
 {
 	float forward;
 
+	// push back from ladder
+	if (pm->ps->pm_flags & PMF_LADDER)
+	{
+		float  angle;
+		vec3_t flatforward;
+
+		angle          = DEG2RAD(pm->ps->viewangles[YAW]);
+		flatforward[0] = cos(angle);
+		flatforward[1] = sin(angle);
+		flatforward[2] = 0;
+
+		VectorMA(pm->ps->origin, -32, flatforward, pm->ps->origin);
+
+		PM_StepSlideMove(qtrue);
+
+		pm->ps->pm_flags &= ~PMF_LADDER;
+	}
+
 	if (!pml.walking)
 	{
 		return;
