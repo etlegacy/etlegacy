@@ -635,7 +635,7 @@ static panel_button_t mapTimeCounterText =
 {
 	NULL,
 	"MISSION TIME",
-	{ 176,                     16, 0, 0 },
+	{ 186,                     16, 0, 0 },
 	{ 0,                       0,  0, 0, 0, 0, 0, 0},
 	&spawnLimboFont,           /* font        */
 	NULL,                      // keyDown
@@ -665,7 +665,7 @@ static panel_button_t respawnCounterText =
 {
 	NULL,
 	"REINFORCEMENTS",
-	{ 300,                     16, 0, 0 },
+	{ 312,                     16, 0, 0 },
 	{ 0,                       0,  0, 0, 0, 0, 0, 0},
 	&spawnLimboFont,           /* font        */
 	NULL,                      // keyDown
