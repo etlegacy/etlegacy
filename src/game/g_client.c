@@ -2313,9 +2313,11 @@ char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 #ifdef FEATURE_PRESTIGE
 	if (g_prestige.integer)
 	{
+		int i;
+
 		G_GetClientPrestige(client);
 
-		for (int i = 0; i < SK_NUM_SKILLS; i++)
+		for (i = 0; i < SK_NUM_SKILLS; i++)
 		{
 			G_SetPlayerSkill(client, i);
 		}
