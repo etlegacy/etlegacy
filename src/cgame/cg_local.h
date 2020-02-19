@@ -3534,12 +3534,14 @@ void CG_LimboPanel_RenderHead(panel_button_t *button);
 void CG_LimboPanel_WeaponPanel(panel_button_t *button);
 void CG_LimboPanel_Border_Draw(panel_button_t *button);
 void CG_LimboPanel_RenderMedal(panel_button_t *button);
-#ifdef FEATURE_PRESTIGE
-void CG_LimboPanel_RenderPrestige(panel_button_t *button);
-#endif
 void CG_LimboPanel_RenderCounter(panel_button_t *button);
 void CG_LimboPanelRenderText_NoLMS(panel_button_t *button);
 void CG_LimboPanelRenderText_SkillsText(panel_button_t *button);
+#ifdef FEATURE_PRESTIGE
+void CG_LimboPanel_RenderPrestige(panel_button_t *button);
+void CG_LimboPanel_RenderPrestigeIcon(panel_button_t *button);
+void CG_LimboPanel_Prestige_Draw(panel_button_t *button);
+#endif
 
 void CG_LimboPanel_NameEditFinish(panel_button_t *button);
 

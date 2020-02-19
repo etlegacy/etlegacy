@@ -543,6 +543,36 @@ static panel_button_t playerSkillIcon2 =
 	0
 };
 
+#ifdef FEATURE_PRESTIGE
+static panel_button_t playerPrestigeText =
+{
+	NULL,
+	NULL,
+	{ 576,                        16,   60, 16 },
+	{ 0,                          0,     0,  0, 0, 0, 0, 0},
+	&spawnLimboFont,              // font
+	NULL,                         // keyDown
+	NULL,                         // keyUp
+	CG_LimboPanel_Prestige_Draw,
+	NULL,
+	0
+};
+
+static panel_button_t playerPrestigeIcon =
+{
+	NULL,
+	NULL,
+	{ 616,                        4,   16, 16 },
+	{ 2,                          0,    0,  0, 0, 0, 0, 0},
+	NULL,                         // font
+	NULL,                         // keyDown
+	NULL,                         // keyUp
+	CG_LimboPanel_RenderPrestigeIcon,
+	NULL,
+	0
+};
+#endif
+
 // =======================
 
 static panel_button_t spawnPointText =
@@ -1119,6 +1149,9 @@ static panel_button_t *limboPanelButtons[] =
 	&teamButton0,             &teamButton1,               &teamButton2,
 
 	&playerLimboHead,
+#ifdef FEATURE_PRESTIGE
+	&playerPrestigeText,      &playerPrestigeIcon,
+#endif
 	&playerXPCounter,         &playerXPCounterText,
 
 	&respawnCounter,          &respawnCounterText,
@@ -2343,6 +2376,84 @@ void CG_LimboPanel_RenderSkillIcon(panel_button_t *button)
 
 	CG_DrawPic(button->rect.x, button->rect.y, button->rect.w, button->rect.h, shader);
 }
+
+#ifdef FEATURE_PRESTIGE
+/**
+ * @brief CG_LimboPanel_Prestige_Draw
+ * @param[in] button
+ */
+void CG_LimboPanel_Prestige_Draw(panel_button_t *button)
+{
+	const char *text = NULL;
+	float      w;
+
+	if (cg_gameType.integer == GT_WOLF_STOPWATCH || cg_gameType.integer == GT_WOLF_LMS || cg_gameType.integer == GT_WOLF_CAMPAIGN)
+	{
+		return;
+	}
+
+	if (!cgs.prestige)
+	{
+		return;
+	}
+
+	text = va("%3i", cgs.clientinfo[cg.clientNum].prestige);
+
+	w = CG_Text_Width_Ext(text, button->font->scalex, 0, button->font->font);
+	CG_Text_Paint_Ext(button->rect.x + (button->rect.w - w) * 0.5f, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, CG_TranslateString(text), 0, 0, button->font->style, button->font->font);
+}
+
+/**
+ * @brief CG_LimboPanel_RenderPrestigeIcon
+ * @param[in] button
+ */
+void CG_LimboPanel_RenderPrestigeIcon(panel_button_t *button)
+{
+	int i, j, skillMax, cnt = 0;
+
+	if (cg_gameType.integer == GT_WOLF_STOPWATCH || cg_gameType.integer == GT_WOLF_LMS || cg_gameType.integer == GT_WOLF_CAMPAIGN)
+	{
+		return;
+	}
+
+	if (!cgs.prestige)
+	{
+		return;
+	}
+
+	// count the number of maxed out skills
+	for (i = 0; i < SK_NUM_SKILLS; i++)
+	{
+		skillMax = 0;
+
+		// check skill max level
+		for (j = NUM_SKILL_LEVELS - 1; j >= 0; j--)
+		{
+			if (GetSkillTableData(i)->skillLevels[j] >= 0)
+			{
+				skillMax = j;
+				break;
+			}
+		}
+
+		if (cgs.clientinfo[cg.clientNum].skill[i] >= skillMax)
+		{
+			cnt++;
+		}
+	}
+
+	if (cnt < SK_NUM_SKILLS)
+	{
+		CG_DrawPic(button->rect.x, button->rect.y, button->rect.w, button->rect.h, cgs.media.prestigePics[0]);
+	}
+	else
+	{
+		trap_R_SetColor(colorYellow);
+		CG_DrawPic(button->rect.x, button->rect.y, button->rect.w, button->rect.h, cgs.media.prestigePics[2]);
+		trap_R_SetColor(NULL);
+	}
+}
+#endif
 
 /**
  * @brief CG_LimboPanel_WeaponLights_KeyDown
