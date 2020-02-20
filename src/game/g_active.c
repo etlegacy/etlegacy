@@ -2358,9 +2358,6 @@ void ClientEndFrame(gentity_t *ent)
 		vec3_t flatforward;
 		float  angle;
 
-		vec3_t mins = { -18.f, -18.f, -24.f };
-		vec3_t maxs = { 18.f, 18.f, -12.f };
-
 		angle          = DEG2RAD(ent->client->ps.viewangles[YAW]);
 		flatforward[0] = cos(angle);
 		flatforward[1] = sin(angle);
@@ -2384,7 +2381,7 @@ void ClientEndFrame(gentity_t *ent)
 		G_RailBox(ent->client->ps.origin, ent->r.mins, ent->r.maxs, tv(0.f, 1.f, 1.f), ent->s.number);
 
 		// green
-		G_RailBox(headOffset, mins, maxs, tv(0.f, 1.f, 0.f), ent->s.number | HITBOXBIT_HEAD);
+		G_RailBox(headOffset, playerHeadProneMins, playerHeadProneMaxs, tv(0.f, 1.f, 0.f), ent->s.number | HITBOXBIT_HEAD);
 
 		// blue
 		G_RailBox(legsOffset, playerlegsProneMins, playerlegsProneMaxs, tv(0.f, 0.f, 1.f), ent->s.number | HITBOXBIT_LEGS);

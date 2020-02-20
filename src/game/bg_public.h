@@ -94,6 +94,20 @@
 extern vec3_t playerlegsProneMins;
 extern vec3_t playerlegsProneMaxs;
 
+/**
+ * @var playerHeadProneMins
+ * @brief more than just head, try to make a box for all the
+ * player model that extends out (weapons and arms too)
+ */
+extern vec3_t playerHeadProneMins;
+
+/**
+ * @var playerHeadProneMaxs
+ * @brief more than just head, try to make a box for all the
+ * player model that extends out (weapons and arms too)
+ */
+extern vec3_t playerHeadProneMaxs;
+
 #define MAX_COMMANDMAP_LAYERS   16
 
 // on fire effects

@@ -368,13 +368,6 @@ void PM_TraceHead(trace_t *trace, vec3_t start, vec3_t end, trace_t *bodytrace, 
 	vec3_t flatforward;
 	vec3_t point;
 	float  angle;
-	// more than just head, try to make a box for all the
-	// player model that extends out (weapons and arms too)
-	vec3_t mins = { -18.f, -18.f, -24.f };
-	vec3_t maxs = { 18.f, 18.f, -12.f };
-
-//        vec3_t mins = { -6, -6, -2 };
-//        vec3_t maxs = { 6, 6, 10 };
 
 	// don't let players block head
 	tracemask &= ~(CONTENTS_BODY | CONTENTS_CORPSE);
@@ -393,12 +386,9 @@ void PM_TraceHead(trace_t *trace, vec3_t start, vec3_t end, trace_t *bodytrace, 
 		VectorScale(flatforward, -36, ofs);
 	}
 
-//        VectorAdd(end, ofs, point);
-//        tracefunc(trace, start, mins, maxs, point, ignoreent, tracemask);
-
 	VectorAdd(start, ofs, org);
 	VectorAdd(end, ofs, point);
-	tracefunc(trace, org, mins, maxs, point, ignoreent, tracemask);
+	tracefunc(trace, org, playerHeadProneMins, playerHeadProneMaxs, point, ignoreent, tracemask);
 	if (!bodytrace || trace->fraction < bodytrace->fraction ||
 	    trace->allsolid)
 	{
@@ -414,12 +404,12 @@ void PM_TraceHead(trace_t *trace, vec3_t start, vec3_t end, trace_t *bodytrace, 
 		}
 		else
 		{
-			ofs[2] += maxs[2] - mins[2];
+			ofs[2] += playerHeadProneMaxs[2] - playerHeadProneMins[2];
 		}
 
 		VectorAdd(start, ofs, org);
 		VectorAdd(end, ofs, point);
-		tracefunc(&steptrace, org, mins, maxs, point, ignoreent, tracemask);
+		tracefunc(&steptrace, org, playerHeadProneMins, playerHeadProneMaxs, point, ignoreent, tracemask);
 		if (!steptrace.allsolid && !steptrace.startsolid &&
 		    steptrace.fraction > trace->fraction)
 		{
