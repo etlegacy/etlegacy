@@ -169,12 +169,14 @@ void G_GetClientPrestige(gclient_t *cl)
 	}
 
 	// assign user data to session
-	cl->sess.prestige = pr_data.prestige;
+	cl->sess.prestige     = pr_data.prestige;
+	cl->sess.startxptotal = 0;
 
 	for (i = 0; i < SK_NUM_SKILLS; i++)
 	{
 		cl->sess.skillpoints[i]      = pr_data.skillpoints[i];
 		cl->sess.startskillpoints[i] = pr_data.skillpoints[i];
+		cl->sess.startxptotal       += pr_data.skillpoints[i];
 	}
 }
 
