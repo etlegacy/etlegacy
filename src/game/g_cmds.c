@@ -2224,6 +2224,18 @@ void Cmd_Team_f(gentity_t *ent, unsigned int dwCommand, qboolean fValue)
 	if (ent->client->sess.playerType != playerType || ent->client->sess.latchPlayerType != playerType)
 	{
 		classChange = qtrue;
+
+		// default primary weapon for class and team
+		if (!IS_VALID_WEAPON(w))
+		{
+			w = GetPlayerClassesData(team, playerType)->classPrimaryWeapons[0].weapon;
+		}
+
+		// default secondary weapon for class and team
+		if (!IS_VALID_WEAPON(w2))
+		{
+			w2 = GetPlayerClassesData(team, playerType)->classSecondaryWeapons[0].weapon;
+		}
 	}
 	else
 	{
@@ -2233,7 +2245,7 @@ void Cmd_Team_f(gentity_t *ent, unsigned int dwCommand, qboolean fValue)
 		if (ent->client->sess.sessionTeam != TEAM_SPECTATOR)
 		{
 			// primary weapon
-			if (!w)
+			if (!IS_VALID_WEAPON(w))
 			{
 				w = ent->client->sess.playerWeapon;
 
@@ -2244,7 +2256,7 @@ void Cmd_Team_f(gentity_t *ent, unsigned int dwCommand, qboolean fValue)
 			}
 
 			// secondary weapon
-			if (!w2)
+			if (!IS_VALID_WEAPON(w2))
 			{
 				w2 = ent->client->sess.playerWeapon2;
 
