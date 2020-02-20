@@ -310,7 +310,7 @@ void PM_TraceLegs(trace_t *trace, float *legsOffset, vec3_t start, vec3_t end, t
 		}
 		else
 		{
-			ofs[2] += playerlegsProneMaxs[2] - playerlegsProneMins[2];
+			ofs[2] += STEPSIZE / 2;
 		}
 
 		VectorAdd(start, ofs, org);
@@ -404,7 +404,7 @@ void PM_TraceHead(trace_t *trace, vec3_t start, vec3_t end, trace_t *bodytrace, 
 		}
 		else
 		{
-			ofs[2] += playerHeadProneMaxs[2] - playerHeadProneMins[2];
+			ofs[2] += STEPSIZE / 2;
 		}
 
 		VectorAdd(start, ofs, org);
@@ -1023,7 +1023,7 @@ static qboolean PM_CheckProne(void)
 		// it appears that 12 is the magic number
 		// for the minimum maxs[2] that prevents
 		// player from getting stuck into the world.
-		pm->maxs[2]        = 12;
+		pm->maxs[2]        = PRONE_BODYHEIGHT_BBOX;
 		pm->ps->viewheight = PRONE_VIEWHEIGHT;
 
 		return qtrue;

@@ -608,8 +608,8 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 	self->client->ps.viewangles[0] = 0;
 	self->client->ps.viewangles[2] = 0;
 
-	self->r.maxs[2]          = self->client->ps.crouchMaxZ; //% 0;  // so bodies don't clip into world
-	self->client->ps.maxs[2] = self->client->ps.crouchMaxZ; //% 0;  // so bodies don't clip into world
+	self->r.maxs[2]          = DEAD_BODYHEIGHT_BBOX;     // so bodies don't clip into world, was crouchMaxZ => 24
+	self->client->ps.maxs[2] = DEAD_BODYHEIGHT_BBOX;     // so bodies don't clip into world, was crouchMaxZ => 24
 	trap_LinkEntity(self);
 
 	// don't allow respawn until the death anim is done

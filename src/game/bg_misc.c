@@ -85,7 +85,7 @@ vec3_t playerlegsProneMins = { -13.5f, -13.5f, -24.f };
 vec3_t playerlegsProneMaxs = { 13.5f, 13.5f, -14.4f };
 
 vec3_t playerHeadProneMins = { -18.f, -18.f, -24.f };
-vec3_t playerHeadProneMaxs = { 18.f, 18.f, -12.f };
+vec3_t playerHeadProneMaxs = { 18.f, 18.f, 0.f };
 
 int          numSplinePaths;
 splinePath_t splinePaths[MAX_SPLINE_PATHS];

@@ -2351,7 +2351,7 @@ void ClientEndFrame(gentity_t *ent)
 		}
 	}
 
-	// debug head and legs hitboxes for collision (see PM_TraceHead and PM_TraceLegs)
+	// debug head and legs box for collision (see PM_TraceHead and PM_TraceLegs)
 	if (g_debugPlayerHitboxes.integer & 4)
 	{
 		vec3_t headOffset, legsOffset;
