@@ -380,7 +380,7 @@ void PM_StepSlideMove(qboolean gravity)
 	up[2] += STEPSIZE;
 
 	// test the player position if they were a stepheight higher
-	PM_TraceAll(&trace, up, up, qtrue, qfalse);
+	PM_TraceAll(&trace, up, up, qfalse, qfalse);
 	if (trace.allsolid)
 	{
 		if (pm->debugLevel)

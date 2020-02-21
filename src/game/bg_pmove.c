@@ -930,7 +930,7 @@ static qboolean PM_CheckProne(void)
 			pm->maxs[2] = pm->ps->crouchMaxZ;
 
 			pm->ps->eFlags |= EF_PRONE;
-			PM_TraceAll(&trace, pm->ps->origin, pm->ps->origin, qtrue, qtrue);
+			PM_TraceAll(&trace, pm->ps->origin, pm->ps->origin, qfalse, qtrue);
 			pm->ps->eFlags &= ~EF_PRONE;
 
 			if (PM_PRONEDELAY)
@@ -969,7 +969,7 @@ static qboolean PM_CheckProne(void)
 			pm->maxs[2] = pm->ps->crouchMaxZ;
 
 			pm->ps->eFlags &= ~EF_PRONE;
-			PM_TraceAll(&trace, pm->ps->origin, pm->ps->origin, qtrue, qtrue);
+			PM_TraceAll(&trace, pm->ps->origin, pm->ps->origin, qfalse, qtrue);
 			pm->ps->eFlags |= EF_PRONE;
 
 			if (trace.fraction == 1.0f)
@@ -1705,7 +1705,7 @@ static int PM_CorrectAllSolid(trace_t *trace)
 				point[0] += (float) i;
 				point[1] += (float) j;
 				point[2] += (float) k;
-				PM_TraceAll(trace, point, point, qtrue, qtrue);
+				PM_TraceAll(trace, point, point, qfalse, qtrue);
 				if (!trace->allsolid)
 				{
 					point[0] = pm->ps->origin[0];
@@ -1975,7 +1975,7 @@ static void PM_CheckDuck(void)
 
 			// try to stand up
 			pm->maxs[2] = pm->ps->maxs[2];
-			PM_TraceAll(&trace, pm->ps->origin, pm->ps->origin, qtrue, qtrue);
+			PM_TraceAll(&trace, pm->ps->origin, pm->ps->origin, qfalse, qtrue);
 			if (trace.fraction == 1.0f)
 			{
 				pm->ps->pm_flags &= ~PMF_DUCKED;
