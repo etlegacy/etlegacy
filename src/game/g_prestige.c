@@ -185,7 +185,7 @@ void G_GetClientPrestige(gclient_t *cl)
  *         Called on ClientDisconnect and on G_LogExit before intermissionQueued
  * @param[in] cl
  */
-void G_SetClientPrestige(gclient_t *cl, qboolean streak)
+void G_SetClientPrestige(gclient_t *cl, qboolean streakUp)
 {
 	char      userinfo[MAX_INFO_STRING];
 	char      *guid;
@@ -254,7 +254,7 @@ void G_SetClientPrestige(gclient_t *cl, qboolean streak)
 	}
 
 	// increase streak if all skills are maxed out
-	if (cnt >= SK_NUM_SKILLS)
+	if (cnt >= SK_NUM_SKILLS && streakUp)
 	{
 		// retrieve current prestige or assign default values
 		if (G_ReadPrestige(&pr_data))

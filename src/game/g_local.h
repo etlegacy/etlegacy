@@ -2450,7 +2450,7 @@ typedef struct prData_s
 
 int G_PrestigeDBCheck(char *db_path, int db_mode);
 void G_GetClientPrestige(gclient_t *cl);
-void G_SetClientPrestige(gclient_t *cl, qboolean streak);
+void G_SetClientPrestige(gclient_t *cl, qboolean streakUp);
 int G_ReadPrestige(prData_t *pr_data);
 int G_WritePrestige(prData_t *pr_data);
 #endif
