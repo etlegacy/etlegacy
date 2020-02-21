@@ -148,7 +148,7 @@ panel_button_t debriefPlayerWeaponStatsListScroll =
 {
 	NULL,
 	NULL,
-	{ 18 + 168,                  262,        16, 80 },
+	{ 18 + 168,                  256,        16, 96 },
 	{ 1,                         0,          0,  0, 0, 0, 0, 0},
 	NULL,                        // font
 	CG_Debriefing_Scrollbar_KeyDown,// keyDown
@@ -643,11 +643,11 @@ panel_button_t debriefPlayerInfoPrestige =
 {
 	NULL,
 	NULL,
-	{ 170,                        142, 0, 0 },
-	{ 0,                          0,   0, 0, 0, 0, 0, 0},
-	&debriefPlayerInfoFont,       // font
-	NULL,                         // keyDown
-	NULL,                         // keyUp
+	{ 170,                            142,   0, 0 },
+	{ 0,                              0,     0, 0, 0, 0, 0, 0},
+	&debriefPlayerInfoFont,           // font
+	NULL,                             // keyDown
+	NULL,                             // keyUp
 	CG_Debriefing_PlayerPrestige_Draw,
 	NULL,
 	0
@@ -657,12 +657,26 @@ panel_button_t debriefPlayerPrestigeButton =
 {
 	NULL,
 	"^3COLLECT POINT",
-	{ 110, 150,                        88, 16 },
-	{ 0,                          0,                                         0,  0, 0, 0, 0, 0},
-	NULL,                         // font
+	{ 110,                            216,88, 16 },
+	{ 0,                              0,  0,  0, 0, 0, 0, 0},
+	NULL,                             // font
 	CG_Debriefing_PrestigeButton_KeyDown,// keyDown
-	NULL,                         // keyUp
+	NULL,                             // keyUp
 	CG_Debriefing_PrestigeButton_Draw,
+	NULL,
+	0
+};
+
+panel_button_t debriefPlayerPrestigeNote =
+{
+	NULL,
+	NULL,
+	{ 110,                               162,   0, 0 },
+	{ 0,                                 0,     0, 0, 0, 0, 0, 0},
+	&debriefPlayerInfoFont,              // font
+NULL,                                // keyDown
+NULL,                                // keyUp
+	CG_Debriefing_PlayerPrestige_Note,
 	NULL,
 	0
 };
@@ -725,6 +739,7 @@ panel_button_t *debriefPanelButtons[] =
 #ifdef FEATURE_PRESTIGE
 	&debriefPlayerInfoPrestige,
 	&debriefPlayerPrestigeButton,
+	&debriefPlayerPrestigeNote,
 #endif
 	&debriefPlayerInfoHitRegions,
 	&debriefPlayerWeaponStatsHeader,&debriefPlayerWeaponStatsNameHeader,  &debriefPlayerWeaponStatsShotsHeader,&debriefPlayerWeaponStatsHitsHeader,  &debriefPlayerWeaponStatsKillsHeader,
@@ -1428,7 +1443,7 @@ void CG_Debriefing_ChatEdit_Draw(panel_button_t *button)
 		}
 	}
 	while (CG_Text_Width_Ext(buffer + offset, button->font->scalex, 0, button->font->font) > button->rect.w);
-        
+
 	switch (cgs.dbChatMode)
 	{
 	case 0:
@@ -1445,7 +1460,7 @@ void CG_Debriefing_ChatEdit_Draw(panel_button_t *button)
 		break;
 	}
 
-        CG_Text_PaintWithCursor_Ext(button->rect.x, button->rect.y + button->rect.h, button->font->scalex, *color, buffer + (button->data[2] <= offset ? button->data[2] : offset), button->data[2] <= offset ? 0 : button->data[2] - offset, trap_Key_GetOverstrikeMode() ? "_" : "|", offset ? Q_UTF8_Strlen(buffer + offset) : 0, button->font->style, button->font->font);
+	CG_Text_PaintWithCursor_Ext(button->rect.x, button->rect.y + button->rect.h, button->font->scalex, *color, buffer + (button->data[2] <= offset ? button->data[2] : offset), button->data[2] <= offset ? 0 : button->data[2] - offset, trap_Key_GetOverstrikeMode() ? "_" : "|", offset ? Q_UTF8_Strlen(buffer + offset) : 0, button->font->style, button->font->font);
 }
 
 /**
@@ -2667,6 +2682,40 @@ void CG_Debriefing_PlayerHitRegions_Draw(panel_button_t *button)
 	float  w;
 	vec4_t colorH, colorA, colorB, colorL;
 
+#ifdef FEATURE_PRESTIGE
+	int i, j, cnt = 0, skillMax;
+
+	// hide if we need to display prestige collection note
+	if (cgs.prestige && cgs.gametype != GT_WOLF_STOPWATCH && cgs.gametype != GT_WOLF_LMS && cgs.gametype != GT_WOLF_CAMPAIGN)
+	{
+		// count the number of maxed out skills
+		for (i = 0; i < SK_NUM_SKILLS; i++)
+		{
+			skillMax = 0;
+
+			// check skill max level
+			for (j = NUM_SKILL_LEVELS - 1; j >= 0; j--)
+			{
+				if (GetSkillTableData(i)->skillLevels[j] >= 0)
+				{
+					skillMax = j;
+					break;
+				}
+			}
+
+			if (cgs.clientinfo[cg.clientNum].skill[i] >= skillMax)
+			{
+				cnt++;
+			}
+		}
+
+		if (cnt >= SK_NUM_SKILLS)
+		{
+			return;
+		}
+	}
+#endif
+
 	w = CG_Text_Width_Ext("Head: ", button->font->scalex, 0, button->font->font);
 
 	// register hitregions only once (when required)
@@ -2764,6 +2813,52 @@ void CG_Debriefing_PlayerPrestige_Draw(panel_button_t *button)
 
 	CG_Text_Paint_Ext(button->rect.x - w, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, CG_TranslateString("Prestige:"), 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
 	CG_Text_Paint_Ext(button->rect.x, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, va("^2%i", ci->prestige), 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
+}
+
+/**
+ * @brief CG_Debriefing_PlayerPrestige_Note
+ * @param[in] button
+ */
+void CG_Debriefing_PlayerPrestige_Note(panel_button_t *button)
+{
+	int i, j, cnt = 0, skillMax;
+
+	if (!cgs.prestige || cgs.gametype == GT_WOLF_STOPWATCH || cgs.gametype == GT_WOLF_LMS || cgs.gametype == GT_WOLF_CAMPAIGN)
+	{
+		return;
+	}
+
+	// count the number of maxed out skills
+	for (i = 0; i < SK_NUM_SKILLS; i++)
+	{
+		skillMax = 0;
+
+		// check skill max level
+		for (j = NUM_SKILL_LEVELS - 1; j >= 0; j--)
+		{
+			if (GetSkillTableData(i)->skillLevels[j] >= 0)
+			{
+				skillMax = j;
+				break;
+			}
+		}
+
+		if (cgs.clientinfo[cg.clientNum].skill[i] >= skillMax)
+		{
+			cnt++;
+		}
+	}
+
+	if (cnt < SK_NUM_SKILLS)
+	{
+		return;
+	}
+
+	CG_Text_Paint_Ext(button->rect.x, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, CG_TranslateString("You may collect"), 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
+	CG_Text_Paint_Ext(button->rect.x, button->rect.y + 12, button->font->scalex, button->font->scaley, button->font->colour, CG_TranslateString("a prestige point"), 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
+	CG_Text_Paint_Ext(button->rect.x, button->rect.y + 24, button->font->scalex, button->font->scaley, button->font->colour, CG_TranslateString("now. Collection"), 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
+	CG_Text_Paint_Ext(button->rect.x, button->rect.y + 36, button->font->scalex, button->font->scaley, button->font->colour, CG_TranslateString("resets skill"), 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
+	CG_Text_Paint_Ext(button->rect.x, button->rect.y + 48, button->font->scalex, button->font->scaley, button->font->colour, CG_TranslateString("levels."), 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
 }
 #endif
 
@@ -3259,7 +3354,7 @@ void CG_Debriefing_NextButton_Draw(panel_button_t *button)
  */
 void CG_Debriefing_PrestigeButton_Draw(panel_button_t *button)
 {
-	int i, j, cnt, skillMax;
+	int i, j, cnt = 0, skillMax;
 
 	if (cgs.gametype == GT_WOLF_CAMPAIGN || cgs.gametype == GT_WOLF_STOPWATCH || cgs.gametype == GT_WOLF_LMS)
 	{
@@ -3275,8 +3370,6 @@ void CG_Debriefing_PrestigeButton_Draw(panel_button_t *button)
 	{
 		return;
 	}
-
-	cnt = 0;
 
 	// count the number of maxed out skills
 	for (i = 0; i < SK_NUM_SKILLS; i++)

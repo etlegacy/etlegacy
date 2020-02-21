@@ -3630,13 +3630,17 @@ void CG_Debriefing_VoteButton_Draw(panel_button_t *button);
 void CG_Debriefing_NextButton_Draw(panel_button_t *button);
 void CG_Debriefing_ChatButton_Draw(panel_button_t *button);
 void CG_Debriefing_ReadyButton_Draw(panel_button_t *button);
+#ifdef FEATURE_PRESTIGE
 void CG_Debriefing_PrestigeButton_Draw(panel_button_t *button);
+#endif
 qboolean CG_Debriefing_ChatButton_KeyDown(panel_button_t *button, int key);
 qboolean CG_Debriefing_ReadyButton_KeyDown(panel_button_t *button, int key);
 qboolean CG_Debriefing_QCButton_KeyDown(panel_button_t *button, int key);
 qboolean CG_Debriefing_VoteButton_KeyDown(panel_button_t *button, int key);
 qboolean CG_Debriefing_NextButton_KeyDown(panel_button_t *button, int key);
+#ifdef FEATURE_PRESTIGE
 qboolean CG_Debriefing_PrestigeButton_KeyDown(panel_button_t *button, int key);
+#endif
 
 void CG_PanelButtonsRender_Button_Ext(rectDef_t *r, const char *text);
 
@@ -3651,7 +3655,10 @@ void CG_Debriefing_PlayerSR_Draw(panel_button_t *button);
 void CG_Debriefing_PlayerACC_Draw(panel_button_t *button);
 void CG_Debriefing_PlayerHS_Draw(panel_button_t *button);
 void CG_Debriefing_PlayerSkills_Draw(panel_button_t *button);
+#ifdef FEATURE_PRESTIGE
 void CG_Debriefing_PlayerPrestige_Draw(panel_button_t *button);
+void CG_Debriefing_PlayerPrestige_Note(panel_button_t *button);
+#endif
 void CG_Debriefing_PlayerHitRegions_Draw(panel_button_t *button);
 
 void CG_DebriefingPlayerWeaponStats_Draw(panel_button_t *button);
