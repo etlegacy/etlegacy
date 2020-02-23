@@ -231,6 +231,7 @@ static animStringItem_t animFlailTypeStr[] =
 static animStringItem_t animGenBitFlagStr[] =
 {
 	{ "ZOOMING", -1 },   // zooming with binoculars
+	{ "HOLDING", -1 },
 };
 
 // sorts of duplicate aistateEnum_t.
@@ -279,7 +280,7 @@ static animStringItem_t animConditionsStr[NUM_ANIM_CONDITIONS + 1] =
 	{ "FLAILING_TYPE",  -1 },
 	{ "GEN_BITFLAG",    -1 },
 	{ "AISTATE",        -1 },
-    { "SUICIDE",        -1 },
+	{ "SUICIDE",        -1 },
 
 	{ NULL,             -1 },
 };
@@ -2000,5 +2001,5 @@ void BG_AnimUpdatePlayerStateConditions(pmove_t *pmove)
 
 	BG_UpdateConditionValue(ps->clientNum, ANIM_COND_IMPACT_POINT, IMPACTPOINT_UNUSED, qtrue);
 	BG_UpdateConditionValue(ps->clientNum, ANIM_COND_STUNNED, 0, qtrue);
-    BG_UpdateConditionValue(ps->clientNum, ANIM_COND_SUICIDE, 0, qtrue);
+	BG_UpdateConditionValue(ps->clientNum, ANIM_COND_SUICIDE, 0, qtrue);
 }

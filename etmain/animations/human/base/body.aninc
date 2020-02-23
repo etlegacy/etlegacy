@@ -98,8 +98,12 @@
 
 		raise_grenade		2702	25	0	20	0	0	0
 		stand_grenade		2734	24	24	10	0	0	0
-		firing_grenadeB		2788	15	0	20	0	0	0
-		firing_grenadeA		2838	24	0	20	0	0	0
+		holding_grenadeB    2759    12  0   20  0   0   0
+		throw_underhand		2788    21  0   20  0   0   0
+		firing_grenadeB		2772	37	0	40	0	0	0 
+		holding_grenadeA    2811	10	0	20	0	0	0
+		firing_grenadeA		2822	40	0	40	0	0	0 
+		throw				2838	24	0	20  0   0   0 
 
 		stand_mg42			2863	1	1	15	0	0	0
 		firing_mg42			2865	6	0	15	0	0	0

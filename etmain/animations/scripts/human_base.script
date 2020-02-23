@@ -167,6 +167,11 @@ STATE COMBAT
 		{
 			both stand_knife
 		}
+		weapons throwables, gen_bitflag holding
+		{
+			both holding_grenadeA
+			both holding_grenadeB
+		}
 		weapons throwables AND throwables_underhand
 		{
 			both stand_grenade
@@ -376,6 +381,11 @@ STATE COMBAT
 		{
 			legs alert_crchidle_2h torso stand_machinegun
 		}
+		weapons throwables, gen_bitflag holding
+		{
+			legs alert_crchidle_1h torso  holding_grenadeA
+			legs alert_crchidle_1h torso  holding_grenadeB
+		}
 		weapons throwables AND throwables_underhand
 		{
 			legs alert_crchidle_1h torso stand_grenade
@@ -442,6 +452,11 @@ STATE COMBAT
 		weapons special
 		{
 			both relaxed_walk_1h_1
+		}
+		weapons throwables, gen_bitflag holding
+		{
+			legs relaxed_walk_1h_1 torso holding_grenadeA
+			legs relaxed_walk_1h_1 torso holding_grenadeB
 		}
 		weapons throwables AND throwables_underhand
 		{
@@ -570,6 +585,11 @@ STATE COMBAT
 		{
 			both alert_bk_1h
 		}
+		weapons throwables, gen_bitflag holding
+		{
+			legs alert_bk_1h torso holding_grenadeA
+			legs alert_bk_1h torso holding_grenadeB
+		}
 		weapons throwables AND throwables_underhand
 		{
 			both alert_bk_1h
@@ -692,6 +712,11 @@ STATE COMBAT
 		weapons special
 		{
 			both alert_crch_1h
+		}
+		weapons throwables, gen_bitflag holding
+		{
+			legs alert_crch_1h torso holding_grenadeA
+			legs alert_crch_1h torso holding_grenadeB
 		}
 		weapons throwables AND throwables_underhand
 		{
@@ -817,6 +842,11 @@ STATE COMBAT
 		{
 			both alert_crbk_1h
 		}
+		weapons throwables, gen_bitflag holding
+		{
+			legs alert_crbk_1h torso holding_grenadeA
+			legs alert_crbk_1h torso holding_grenadeB
+		}
 		weapons throwables AND throwables_underhand
 		{
 			both alert_crbk_1h
@@ -935,6 +965,11 @@ STATE COMBAT
 		weapons special
 		{
 			both alert_run_1h
+		}
+		weapons throwables, gen_bitflag holding
+		{
+			legs alert_run_no torso holding_grenadeA
+			legs alert_run_no torso holding_grenadeB
 		}
 		weapons throwables AND throwables_underhand
 		{
@@ -1067,6 +1102,11 @@ STATE COMBAT
 		{
 			both alert_bk_1h
 		}
+		weapons throwables, gen_bitflag holding
+		{
+			legs alert_bk_1h torso holding_grenadeA
+			legs alert_bk_1h torso holding_grenadeB
+		}
 		weapons throwables AND throwables_underhand
 		{
 			both alert_bk_1h
@@ -1190,6 +1230,11 @@ STATE COMBAT
 		{
 			both alert_run_1h
 		}
+		weapons throwables, gen_bitflag holding
+		{
+			legs alert_run_no torso holding_grenadeA
+			legs alert_run_no torso holding_grenadeB
+		}
 		weapons throwables AND throwables_underhand
 		{
 			both alert_run_no
@@ -1312,6 +1357,11 @@ STATE COMBAT
 		weapons special
 		{
 			both alert_run_1h
+		}
+		weapons throwables, gen_bitflag holding
+		{
+			legs alert_run_no torso holding_grenadeA
+			legs alert_run_no torso holding_grenadeB
 		}
 		weapons throwables AND throwables_underhand
 		{
@@ -1504,6 +1554,11 @@ STATE COMBAT
 		{
 			legs prone_legs torso prone_poke_idle
 		}
+		weapons throwables, gen_bitflag holding
+		{
+			legs prone_legs torso holding_grenadeA
+			legs prone_legs torso holding_grenadeB
+		}
 		weapons throwables AND throwables_underhand
 		{
 			legs prone_legs torso prone_grenade_idle
@@ -1688,7 +1743,7 @@ fireweapon
 // SATCHEL CHARGE
 	weapons Satchel Charge
 	{
-		torso firing_grenadeB
+		torso throw_underhand
 	}
 // SATCHEL CHARGE DETONATOR
 	weapons Satchel Charge Detonator
@@ -1710,24 +1765,10 @@ fireweapon
 	{
 		torso firing_grenadeA
 	}
-// SATCHEL CHARGES
-	weapons Satchel Charge
+// MEDICHEAL, AMMOPACK, LANDMINE
+	weapons medicheal AND Ammo Pack AND Landmine
 	{
-		torso firing_grenadeB
-	}
-	weapons Satchel Charge Detonator
-	{
-		torso satchel_remote_fire
-	}
-// AMMOPACK, LANDMINE
-	weapons Ammo Pack AND Landmine
-	{
-		torso firing_grenadeB
-	}
-// MEDICHEAL
-	weapons medicheal
-	{
-		torso firing_grenadeB
+		torso throw_underhand
 	}
 // SPECIAL
 	weapons special
@@ -1794,11 +1835,11 @@ fireweapon
 	// only dynamite is still handled here, always underhand
 	weapons throwables_underhand, movetype idle
 	{
-		torso firing_grenadeB
+		torso throw_underhand
 	}
 	weapons throwables_underhand, movetype run AND walk AND straferight AND strafeleft AND backstep AND turnleft AND turnright AND idlecr
 	{
-		torso firing_grenadeB
+		torso throw_underhand
 	}
 
 // KNIVES
