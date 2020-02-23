@@ -741,7 +741,7 @@ static void CG_DrawCenterString(void)
 	char  *start, *end;
 	int   len;
 	char  currentColor[3] = S_COLOR_WHITE;
-	char  nextColor[3] = { 0, 0, 0 };
+	char  nextColor[3]    = { 0, 0, 0 };
 	int   x, y, w;
 	float *color;
 
@@ -889,10 +889,10 @@ static void CG_DrawScopedReticle(void)
  */
 static void CG_DrawMortarReticle(void)
 {
-	vec4_t   color = { 1.f, 1.f, 1.f, .5f };
-	vec4_t   color_back = { 0.f, 0.f, 0.f, .25f };
-	vec4_t   color_extends = { .77f, .73f, .1f, 1.f };
-	vec4_t   color_lastfire = { .77f, .1f, .1f, 1.f };
+	vec4_t   color             = { 1.f, 1.f, 1.f, .5f };
+	vec4_t   color_back        = { 0.f, 0.f, 0.f, .25f };
+	vec4_t   color_extends     = { .77f, .73f, .1f, 1.f };
+	vec4_t   color_lastfire    = { .77f, .1f, .1f, 1.f };
 	vec4_t   color_firerequest = { 1.f, 1.f, 1.f, 1.f };
 	float    offset, localOffset;
 	int      i, min, majorOffset, val, printval, fadeTime, requestFadeTime;
@@ -1266,9 +1266,9 @@ static void CG_DrawCrosshair(void)
             }
             else */if (
 #ifdef FEATURE_MULTIVIEW
-				cg.mvTotalClients < 1 ||
+			    cg.mvTotalClients < 1 ||
 #endif
-				cg.snap->ps.stats[STAT_HEALTH] > 0)
+			    cg.snap->ps.stats[STAT_HEALTH] > 0)
 			{
 				CG_DrawScopedReticle();
 			}
@@ -2431,7 +2431,7 @@ static void CG_DrawSpectatorMessage(void)
 {
 	const char *str, *str2;
 	static int lastconfigGet = 0;
-	float      fontScale = cg_fontScaleSP.value;
+	float      fontScale     = cg_fontScaleSP.value;
 	int        y, charHeight;
 
 	charHeight = CG_Text_Height_Ext("A", fontScale, 0, &cgs.media.limboFont2);
@@ -2995,9 +2995,9 @@ static void CG_DrawFlashFade(void)
 	{
 		if (
 #ifdef FEATURE_MULTIVIEW
-			cg.mvTotalClients < 1 &&
+		    cg.mvTotalClients < 1 &&
 #endif
-			cg.snap->ps.powerups[PW_BLACKOUT] > 0)
+		    cg.snap->ps.powerups[PW_BLACKOUT] > 0)
 		{
 			trap_Cvar_Set("ui_blackout", va("%d", cg.snap->ps.powerups[PW_BLACKOUT]));
 		}
@@ -3235,7 +3235,7 @@ static void CG_DrawObjectiveInfo(void)
 	char   *start, *end;
 	int    len;
 	char   currentColor[3] = S_COLOR_WHITE;
-	char   nextColor[3] = { 0, 0, 0 };
+	char   nextColor[3]    = { 0, 0, 0 };
 	int    x, y, w;
 	int    x1, y1, x2, y2;
 	float  *color;
@@ -3596,6 +3596,33 @@ void CG_DrawOnScreenLabels(void)
 }
 
 /**
+ * @brief CG_DrawBannerPrint
+ */
+static void CG_DrawBannerPrint(void)
+{
+	float *color;
+	int   lineHeight;
+	int   bptime = cg_bannerPrintTime.integer;
+
+	if ((cg_drawBannerPrint.integer <= 0) || (bptime <= 0) || !cg.bannerPrintTime)
+	{
+		return;
+	}
+
+	color = CG_FadeColor(cg.bannerPrintTime, bptime);
+
+	if (!color)
+	{
+		cg.bannerPrintTime = 0;
+		return;
+	}
+
+	lineHeight = ((float)CG_Text_Height_Ext("M", 0.25, 0, &cgs.media.limboFont1) * 1.5f);
+
+	CG_DrawMultilineText(Ccg_WideX(320), 20, 0.25, 0.25, color, cg.bannerPrint, lineHeight, 0, 0, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, &cgs.media.limboFont1);
+}
+
+/**
  * @brief CG_Draw2D
  */
 static void CG_Draw2D(void)
@@ -3684,6 +3711,8 @@ static void CG_Draw2D(void)
 	// don't draw center string if scoreboard is up
 	if (!CG_DrawScoreboard())
 	{
+		CG_DrawBannerPrint();
+
 		CG_SetHud();
 
 #ifdef FEATURE_EDV

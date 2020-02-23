@@ -1400,6 +1400,10 @@ typedef struct
 #ifdef FEATURE_PRESTIGE
 	int prestige[MAX_CLIENTS];
 #endif
+
+	// banner printing
+	int bannerPrintTime;
+	char bannerPrint[1024];
 } cg_t;
 
 #define MAX_LOCKER_DEBRIS   5
@@ -2648,6 +2652,8 @@ extern vmCvar_t cg_quickchat;
 extern vmCvar_t cg_drawspeed;
 
 extern vmCvar_t cg_visualEffects;  ///< turn invisible (0) / visible (1) visual effect (i.e airstrike plane, debris ...)
+extern vmCvar_t cg_drawBannerPrint;
+extern vmCvar_t cg_bannerPrintTime;
 
 // local clock flags
 #define LOCALTIME_ON                0x01
@@ -2757,6 +2763,11 @@ void CG_GetColorForHealth(int health, vec4_t hcolor);
 
 qboolean CG_WorldCoordToScreenCoordFloat(vec3_t point, float *x, float *y);
 void CG_AddOnScreenText(const char *text, vec3_t origin);
+
+// string word wrapper
+char* CG_WordWrapString(const char *input, int maxLineChars, char *output, int maxOutputSize);
+// draws multiline strings
+void CG_DrawMultilineText(float x, float y, float scalex, float scaley, vec4_t color, const char *text, int lineHeight, float adjust, int limit, int style, int align, fontHelper_t *font);
 
 // new hud stuff
 void CG_DrawRect(float x, float y, float width, float height, float size, const float *color);

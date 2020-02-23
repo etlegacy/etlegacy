@@ -56,6 +56,7 @@ int Q_UTF8_Width(const char *str);
 int Q_UTF8_WidthCP(int ch);
 int Q_UTF8_Strlen(const char *str);
 int Q_UTF8_PrintStrlen(const char *str);
+int Q_UTF8_PrintStrlenExt(const char *str, int length);
 int Q_UTF8_ByteOffset(const char *str, int offset);
 void Q_UTF8_Insert(char *dest, int size, int offset, int key, qboolean overstrike);
 void Q_UTF8_Move(char *data, size_t offset1, size_t offset2, size_t size);

@@ -127,15 +127,17 @@ int Q_UTF8_Strlen(const char *str)
 }
 
 /**
- * @brief Q_UTF8_PrintStrlen
+ * @brief Q_UTF8_PrintStrlen2
  * @param[in] str
+ * @param[in] length string length
  * @return
  */
-int Q_UTF8_PrintStrlen(const char *str)
+int Q_UTF8_PrintStrlenExt(const char *str, int length)
 {
-	int l = 0;
+	int        l      = 0;
+	const char *start = str;
 
-	while (*str)
+	while (*str && (str - start) < length)
 	{
 		if (Q_IsColorString(str))
 		{
@@ -153,6 +155,16 @@ int Q_UTF8_PrintStrlen(const char *str)
 	}
 
 	return l;
+}
+
+/**
+ * @brief Q_UTF8_PrintStrlen
+ * @param[in] str
+ * @return
+ */
+int Q_UTF8_PrintStrlen(const char *str)
+{
+	return Q_UTF8_PrintStrlenExt(str, MAX_QINT);
 }
 
 /**

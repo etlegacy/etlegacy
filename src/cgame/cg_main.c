@@ -351,6 +351,8 @@ vmCvar_t cg_quickchat;
 vmCvar_t cg_drawspeed;
 
 vmCvar_t cg_visualEffects;
+vmCvar_t cg_drawBannerPrint;
+vmCvar_t cg_bannerPrintTime;
 
 
 typedef struct
@@ -598,7 +600,9 @@ static cvarTable_t cvarTable[] =
 
 	{ &cg_drawspeed,              "cg_drawspeed",              "0",           CVAR_ARCHIVE,                 0 },
 
-	{ &cg_visualEffects,          "cg_visualEffects",          "1",           CVAR_ARCHIVE,                 0 }  // Draw visual effects (i.e : airstrike plane, debris ...)
+	{ &cg_visualEffects,          "cg_visualEffects",          "1",           CVAR_ARCHIVE,                 0 },  // Draw visual effects (i.e : airstrike plane, debris ...)
+	{ &cg_drawBannerPrint,        "cg_drawBannerPrint",        "1",           CVAR_ARCHIVE,                 0 },
+	{ &cg_bannerPrintTime,        "cg_bannerPrintTime",        "10000",       CVAR_ARCHIVE,                 0 },
 };
 
 static const unsigned int cvarTableSize = sizeof(cvarTable) / sizeof(cvarTable[0]);

@@ -1970,7 +1970,7 @@ const char *CG_LocalizeServerCommand(const char *buf)
 	static char token[MAX_TOKEN_CHARS];
 	char        temp[MAX_TOKEN_CHARS];
 	qboolean    togloc = qtrue;
-	const char  *s = buf;
+	const char  *s     = buf;
 	int         i, prev = 0;
 
 	Com_Memset(token, 0, sizeof(token));
@@ -2365,7 +2365,7 @@ void CG_parseWeaponStatsGS_cmd(void)
 /**
  * @brief Client-side stat presentation
  */
-void CG_parseWeaponStats_cmd(void(txt_dump) (const char *))
+void CG_parseWeaponStats_cmd(void (txt_dump) (const char *))
 {
 	clientInfo_t *ci;
 	qboolean     fFull;
@@ -2629,7 +2629,7 @@ void CG_parseWeaponStats_cmd(void(txt_dump) (const char *))
  * @brief CG_parseBestShotsStats_cmd
  * @param[in] doTop
  */
-static void CG_parseBestShotsStats_cmd(qboolean doTop, void(txt_dump) (const char *))
+static void CG_parseBestShotsStats_cmd(qboolean doTop, void (txt_dump) (const char *))
 {
 	int      iArg = 1;
 	qboolean fFull;
@@ -2707,7 +2707,7 @@ static void CG_parseBestShotsStats_cmd(qboolean doTop, void(txt_dump) (const cha
  * @brief CG_parseTopShotsStats_cmd
  * @param[in] doTop
  */
-static void CG_parseTopShotsStats_cmd(qboolean doTop, void(txt_dump) (const char *))
+static void CG_parseTopShotsStats_cmd(qboolean doTop, void (txt_dump) (const char *))
 {
 	int i, iArg = 1;
 	int cClients;
@@ -2921,6 +2921,7 @@ void CG_dumpStats(void)
 #define MU_FADE_HASH        87906
 #define SND_FADE_HASH       100375
 #define ROCKANDROLL_HASH    146207
+#define BP_HASH             25102
 // -----------
 
 /**
@@ -3478,6 +3479,10 @@ static void CG_ServerCommand(void)
 	case ROCKANDROLL_HASH: // "rockandroll"
 		trap_S_FadeAllSound(1.0f, 1000, qfalse);      // fade sound up
 		return;
+	case BP_HASH: // "bp"
+		CG_WordWrapString(CG_Argv(1), 50, cg.bannerPrint, sizeof(cg.bannerPrint));
+		cg.bannerPrintTime = cg.time;
+		break;
 	default:
 		CG_Printf("Unknown client game command: %s [%lu]\n", cmd, BG_StringHashValue(cmd));
 		break;
