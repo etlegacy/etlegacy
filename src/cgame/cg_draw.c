@@ -3602,14 +3602,13 @@ static void CG_DrawBannerPrint(void)
 {
 	float *color;
 	int   lineHeight;
-	int   bptime = cg_bannerPrintTime.integer;
 
-	if ((cg_drawBannerPrint.integer <= 0) || (bptime <= 0) || !cg.bannerPrintTime)
+	if ((cg_bannerTime.integer <= 0) || !cg.bannerPrintTime)
 	{
 		return;
 	}
 
-	color = CG_FadeColor(cg.bannerPrintTime, bptime);
+	color = CG_FadeColor(cg.bannerPrintTime, cg_bannerTime.integer);
 
 	if (!color)
 	{
