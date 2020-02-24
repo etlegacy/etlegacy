@@ -671,11 +671,11 @@ panel_button_t debriefPlayerPrestigeNote =
 {
 	NULL,
 	NULL,
-	{ 110,                               162,   0, 0 },
-	{ 0,                                 0,     0, 0, 0, 0, 0, 0},
-	&debriefPlayerInfoFont,              // font
-NULL,                                // keyDown
-NULL,                                // keyUp
+	{ 110,                            162,   0, 0 },
+	{ 0,                              0,     0, 0, 0, 0, 0, 0},
+	&debriefPlayerInfoFont,           // font
+	NULL,                             // keyDown
+	NULL,                             // keyUp
 	CG_Debriefing_PlayerPrestige_Note,
 	NULL,
 	0
@@ -2821,7 +2821,7 @@ void CG_Debriefing_PlayerPrestige_Draw(panel_button_t *button)
  */
 void CG_Debriefing_PlayerPrestige_Note(panel_button_t *button)
 {
-	int i, j, cnt = 0, skillMax;
+	int i, j, cnt = 0, skillMax, h;
 
 	if (!cgs.prestige || cgs.gametype == GT_WOLF_STOPWATCH || cgs.gametype == GT_WOLF_LMS || cgs.gametype == GT_WOLF_CAMPAIGN)
 	{
@@ -2854,11 +2854,11 @@ void CG_Debriefing_PlayerPrestige_Note(panel_button_t *button)
 		return;
 	}
 
-	CG_Text_Paint_Ext(button->rect.x, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, CG_TranslateString("You may collect"), 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
-	CG_Text_Paint_Ext(button->rect.x, button->rect.y + 12, button->font->scalex, button->font->scaley, button->font->colour, CG_TranslateString("a prestige point"), 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
-	CG_Text_Paint_Ext(button->rect.x, button->rect.y + 24, button->font->scalex, button->font->scaley, button->font->colour, CG_TranslateString("now. Collection"), 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
-	CG_Text_Paint_Ext(button->rect.x, button->rect.y + 36, button->font->scalex, button->font->scaley, button->font->colour, CG_TranslateString("resets skill"), 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
-	CG_Text_Paint_Ext(button->rect.x, button->rect.y + 48, button->font->scalex, button->font->scaley, button->font->colour, CG_TranslateString("levels."), 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
+	h = CG_Text_Height_Ext("A", button->font->scalex, 0, button->font->font);
+
+	CG_DrawMultilineText(button->rect.x, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour,
+	                     CG_TranslateString("You may now collect\na prestige point.\n\nCollection resets\nskill levels."),
+	                     2 * h, 0, 0, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_LEFT, button->font->font);
 }
 #endif
 
