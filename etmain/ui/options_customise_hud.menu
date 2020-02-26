@@ -107,16 +107,18 @@ menuDef {
 
 // Popup //
 #define POPUP_Y 200
-	SUBWINDOW( 6+(SUBWINDOW_WIDTH_L)+6, POPUP_Y, (SUBWINDOW_WIDTH_R), 66, _("POPUPS") )
-	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, POPUP_Y+16, (SUBWINDOW_WIDTH_R)-4, 10, _("Filter messages:"), .2, 8, "cg_popupFilter", cvarFloatList { "None" 0 "Connection" 1 "Pickup" 8 "Death" 16 "Connection, Pickup" 9 "Connection, Death" 17 "Connect, Pickup, Death" 25}, _("Set filter on popup messages") )
-	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, POPUP_Y+28, (SUBWINDOW_WIDTH_R)-4, 10, _("Filter promotions:"), .2, 8, "cg_popupBigFilter", cvarFloatList { "None" 0 "Skill upgrades" 1 "Rank upgrades" 2 "Skill + Rank upgrades" 3}, _("Set filter on popup promotion messages") )
+	SUBWINDOW( 6+(SUBWINDOW_WIDTH_L)+6, POPUP_Y, (SUBWINDOW_WIDTH_R), 78, _("POPUPS AND BANNER") )
+	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, POPUP_Y+16, (SUBWINDOW_WIDTH_R)-4, 10, _("Filter Messages:"), .2, 8, "cg_popupFilter", cvarFloatList { "None" 0 "Connection" 1 "Pickup" 8 "Death" 16 "Connection, Pickup" 9 "Connection, Death" 17 "Connect, Pickup, Death" 25}, _("Set filter on popup messages") )
+	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, POPUP_Y+28, (SUBWINDOW_WIDTH_R)-4, 10, _("Filter Promotions:"), .2, 8, "cg_popupBigFilter", cvarFloatList { "None" 0 "Skill upgrades" 1 "Rank upgrades" 2 "Skill + Rank upgrades" 3}, _("Set filter on popup promotion messages") )
 	CVARFLOATLABEL( 6+(SUBWINDOW_WIDTH_L)+6+2, POPUP_Y+40, (SUBWINDOW_WIDTH_L)-6, 10, "cg_popupStayTime", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-4), 8 )
-	SLIDER( 6+(SUBWINDOW_WIDTH_L)+6+2, POPUP_Y+40, (SUBWINDOW_WIDTH_L)-4, 10, _("Stay Time:"), .2, 8, "cg_popupStayTime" 2500 0 6000, _("Set the time a pop-up stays visible") )
+	SLIDER( 6+(SUBWINDOW_WIDTH_L)+6+2, POPUP_Y+40, (SUBWINDOW_WIDTH_L)-4, 10, _("Popup Stay Time:"), .2, 8, "cg_popupStayTime" 2500 0 6000, _("Set the time a pop-up stays visible") )
 	CVARFLOATLABEL( 6+(SUBWINDOW_WIDTH_L)+6+2, POPUP_Y+52, (SUBWINDOW_WIDTH_L)-6, 10, "cg_popupFadeTime", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-4), 8 )
-	SLIDER( 6+(SUBWINDOW_WIDTH_L)+6+2, POPUP_Y+52, (SUBWINDOW_WIDTH_L)-4, 10, _("Fade Time:"), .2, 8, "cg_popupFadeTime" 2500 0 6000, _("Set the time a pop-up fades away") )
+	SLIDER( 6+(SUBWINDOW_WIDTH_L)+6+2, POPUP_Y+52, (SUBWINDOW_WIDTH_L)-4, 10, _("Popup Fade Time:"), .2, 8, "cg_popupFadeTime" 2500 0 6000, _("Set the time a pop-up fades away") )
+	CVARFLOATLABEL( 6+(SUBWINDOW_WIDTH_L)+6+2, POPUP_Y+64, (SUBWINDOW_WIDTH_L)-6, 10, "cg_bannerTime", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-4), 8 )
+	SLIDER( 6+(SUBWINDOW_WIDTH_L)+6+2, POPUP_Y+64, (SUBWINDOW_WIDTH_L)-4, 10, _("Banner Time:"), .2, 8, "cg_bannerTime" 2500 0 10000, _("Set the time a banner stays visible") )
 
 // Fonts //
-#define FONTS_Y 270
+#define FONTS_Y 282
 	SUBWINDOW( 6+(SUBWINDOW_WIDTH_L)+6, FONTS_Y, (SUBWINDOW_WIDTH_R), 78, _("FONTS") )
 	MULTIACTION( 6+(SUBWINDOW_WIDTH_L)+6+2, FONTS_Y+16, (SUBWINDOW_WIDTH_R)-4, 10, _("Fonts Size:"), .2, 8, "cg_fontScale", cvarFloatList { "Tiny" 2 "Small" 1 "Normal" 0 }, uiScript SetFontScale, _("Sets the size of the in-game fonts") )
 	CVARFLOATLABEL( 6+(SUBWINDOW_WIDTH_L)+6+2, FONTS_Y+28, (SUBWINDOW_WIDTH_L)-6, 10, "cg_fontScaleTP", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-4), 8 )
@@ -129,7 +131,7 @@ menuDef {
 	SLIDER( 6+(SUBWINDOW_WIDTH_L)+6+2, FONTS_Y+64, (SUBWINDOW_WIDTH_L)-4, 10, _("Crosshair Name:"), .2, 8, "cg_fontScaleCN" 0.15 0 0.5, _("Set font size for Crosshair Name label") )
 
 // Geolocation //
-#define GEOLOCATION_Y 352
+#define GEOLOCATION_Y 364
 	SUBWINDOW( 6+(SUBWINDOW_WIDTH_L)+6, GEOLOCATION_Y, (SUBWINDOW_WIDTH_R), 40, _("GEOLOCATION") )
 	YESNO( 6+(SUBWINDOW_WIDTH_L)+6+2, GEOLOCATION_Y+16, (SUBWINDOW_WIDTH_R)-4, 10, _("Country Flags:"), .2, 8, "cg_countryflags", _("Displays players country flags in score board") )
 	YESNO( 6+(SUBWINDOW_WIDTH_L)+6+2, GEOLOCATION_Y+28, (SUBWINDOW_WIDTH_R)-4, 10, _("Share Location:"), .2, 8, "cg_allowGeoIP", _("Displays your own location in score board") )
