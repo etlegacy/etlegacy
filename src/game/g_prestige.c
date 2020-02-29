@@ -253,14 +253,15 @@ void G_SetClientPrestige(gclient_t *cl, qboolean streakUp)
 		}
 	}
 
+	// retrieve current streak or assign default values
+	if (G_ReadPrestige(&pr_data))
+	{
+		return;
+	}
+
 	// increase streak if all skills are maxed out
 	if (cnt >= SK_NUM_SKILLS && streakUp)
 	{
-		// retrieve current prestige or assign default values
-		if (G_ReadPrestige(&pr_data))
-		{
-			return;
-		}
 		pr_data.streak += 1;
 	}
 
