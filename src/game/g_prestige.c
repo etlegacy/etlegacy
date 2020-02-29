@@ -307,8 +307,8 @@ void G_SetClientPrestige(gclient_t *cl, qboolean streakUp)
 		}
 	}
 
-	// player has not collected any new point at all
-	if (!hasMapXPs)
+	// player has not collected any new point and can't collect
+	if (!hasMapXPs && cnt < SK_NUM_SKILLS)
 	{
 		return;
 	}
