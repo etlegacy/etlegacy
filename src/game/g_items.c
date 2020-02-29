@@ -907,6 +907,7 @@ gentity_t *LaunchItem(gitem_t *item, vec3_t origin, vec3_t velocity, int ownerNu
 	{
 		dropped->think     = G_MagicSink;
 		dropped->nextthink = level.time + 30000;
+		dropped->s.time    = level.time + 30000; // for simple items colouring
 	}
 
 	dropped->flags = FL_DROPPED_ITEM;

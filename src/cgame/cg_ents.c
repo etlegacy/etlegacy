@@ -738,6 +738,12 @@ static void CG_Item(centity_t *cent)
 			Vector4Set(accentColor, 188, 200, 202, 255);
 		}
 
+		// remove colour when item is sinking
+		if (item->giType != IT_TEAM && es->time < cg.time)
+		{
+			Vector4Set(accentColor, 85, 85, 85, 255);
+		}
+
 		if (weaponInfo)
 		{
 			// fallback to weapon icon
