@@ -192,6 +192,7 @@ void G_SetClientPrestige(gclient_t *cl, qboolean streakUp)
 	int       clientNum, i, j, skillMax, cnt = 0;
 	prData_t  pr_data;
 	gentity_t *ent;
+	qboolean  hasMapXPs = qfalse;
 
 	// disable for these game types
 	if (g_gametype.integer == GT_WOLF_CAMPAIGN || g_gametype.integer == GT_WOLF_STOPWATCH || g_gametype.integer == GT_WOLF_LMS)
@@ -298,6 +299,18 @@ void G_SetClientPrestige(gclient_t *cl, qboolean streakUp)
 	for (i = 0; i < SK_NUM_SKILLS; i++)
 	{
 		pr_data.skillpoints[i] = (int)cl->sess.skillpoints[i];
+
+		// check for new points this map
+		if (!hasMapXPs && (cl->sess.skillpoints[i] - cl->sess.startskillpoints[i]) != 0.f) // Skillpoints can be negative
+		{
+			hasMapXPs = qtrue;
+		}
+	}
+
+	// player has not collected any new point at all
+	if (!hasMapXPs)
+	{
+		return;
 	}
 
 	// save or update prestige
