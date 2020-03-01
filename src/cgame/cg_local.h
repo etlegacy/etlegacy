@@ -2755,6 +2755,7 @@ void CG_FilledBar(float x, float y, float w, float h, float *startColor, float *
 void CG_DrawStretchPic(float x, float y, float width, float height, qhandle_t hShader);
 
 float *CG_FadeColor(int startMsec, int totalMsec);
+float *CG_LerpColorWithAttack(vec4_t from, vec4_t to, int startMsec, int totalMsec, int attackMsec);
 float *CG_TeamColor(int team);
 void CG_TileClear(void);
 void CG_ColorForHealth(vec4_t hcolor);

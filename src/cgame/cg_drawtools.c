@@ -557,9 +557,54 @@ float *CG_FadeColor(int startMsec, int totalMsec)
 	return color;
 }
 
-static vec4_t red = { 1.0f, 0.2f, 0.2f, 1.0f };
-static vec4_t blue = { 0.2f, 0.2f, 1.0f, 1.0f };
-static vec4_t other = { 1.0f, 1.0f, 1.0f, 1.0f };
+/**
+ * @brief CG_LerpColorWithAttack, interpolates colors
+ * @param[in] from
+ * @param[in] to
+ * @param[in] startMsec
+ * @oaram[in] totalMsec
+ * @param[in] attackMsec (attack delay)
+ * @return
+ */
+float *CG_LerpColorWithAttack(vec4_t from, vec4_t to, int startMsec, int totalMsec, int attackMsec)
+{
+	static vec4_t color;
+	int           t;
+	int           i;
+
+	if (startMsec == 0)
+	{
+		return from;
+	}
+
+	t = cg.time - startMsec;
+
+	if (t >= totalMsec)
+	{
+		return to;
+	}
+
+	// compute transition
+	if (t > attackMsec)
+	{
+		float progress = (float)(t - attackMsec) / (float)(totalMsec - attackMsec);
+		color[0] = from[0] + (to[0] - from[0]) * progress;
+		color[1] = from[1] + (to[1] - from[1]) * progress;
+		color[2] = from[2] + (to[2] - from[2]) * progress;
+		color[3] = from[3] + (to[3] - from[3]) * progress;
+	}
+	else
+	{
+		return from;
+	}
+
+	return color;
+}
+
+
+static vec4_t red       = { 1.0f, 0.2f, 0.2f, 1.0f };
+static vec4_t blue      = { 0.2f, 0.2f, 1.0f, 1.0f };
+static vec4_t other     = { 1.0f, 1.0f, 1.0f, 1.0f };
 static vec4_t spectator = { 0.7f, 0.7f, 0.7f, 1.0f };
 
 /**
@@ -805,7 +850,7 @@ void CG_AddOnScreenText(const char *text, vec3_t origin)
  */
 char *CG_WordWrapString(const char *input, int maxLineChars, char *output, int maxOutputSize)
 {
-	int i         = 0, o = 0, l, k;
+	int i = 0, o = 0, l, k;
 	int lineSplit = 0;
 	int lineWidth = 0;
 
@@ -943,8 +988,8 @@ void CG_DrawMultilineText(float x, float y, float scalex, float scaley, vec4_t c
 	glyphInfo_t *glyph;
 	const char  *s = text;
 	float       yadj;
-	int         count     = 0, ofs;
-	int         lineX     = x, lineY = y;
+	int         count = 0, ofs;
+	int         lineX = x, lineY = y;
 	float       fontSizeX = scalex;
 	float       fontSizeY = scaley;
 
