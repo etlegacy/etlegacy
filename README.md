@@ -5,9 +5,8 @@ Enemy Territory: Legacy [![Travis Status](https://travis-ci.org/etlegacy/etlegac
 
 * Website: [https://www.etlegacy.com](https://www.etlegacy.com)
 * Downloads: [https://www.etlegacy.com/download](https://www.etlegacy.com/download)
-* Wiki/FAQ: [https://dev.etlegacy.com/projects/etlegacy/wiki](https://dev.etlegacy.com/projects/etlegacy/wiki)
-* Development (bug reports and feature requests): [https://dev.etlegacy.com](https://dev.etlegacy.com)
-* Repository: [https://github.com/etlegacy/etlegacy](https://github.com/etlegacy/etlegacy)
+* Wiki/FAQ: [https://github.com/etlegacy/etlegacy/wiki](https://github.com/etlegacy/etlegacy/wiki)
+* Development (bug reports and feature requests): [https://github.com/etlegacy/etlegacy](https://github.com/etlegacy/etlegacy)
 * Assets Repository: [https://drive.google.com](https://drive.google.com/drive/folders/0Bw7Yu-pqzcSaLXEtVEVjZF82UEU)
 * Legacy Lua API: [http://legacy-lua-api.readthedocs.io](http://legacy-lua-api.readthedocs.io)
 * Translation: [https://www.transifex.com/projects/p/etlegacy/](https://www.transifex.com/projects/p/etlegacy/)
@@ -26,7 +25,7 @@ The Legacy mod is the default mod shipped with ET: Legacy. It aims to add many u
 improvements, while staying close to the original gameplay, as well as being lightweight and extensible
 through Lua scripts.
 
-For more information consult our [changelog](https://dev.etlegacy.com/projects/etlegacy/wiki/Changelog).
+For more information consult our [changelog](https://github.com/etlegacy/etlegacy/wiki/Changelog).
 
 ET: Legacy development is a collaborative effort done in an open, transparent and friendly manner.
 Anyone is welcome to join our efforts!
@@ -35,8 +34,8 @@ Anyone is welcome to join our efforts!
 
 If you are interested to join us, ensure to read first our contribution guidelines:
 
-* [How to commit your code](https://dev.etlegacy.com/projects/etlegacy/wiki/How_to_commit_Your_Code)
-* [Coding conventions](https://dev.etlegacy.com/projects/etlegacy/wiki/Coding_Conventions)
+* [How to commit your code](https://github.com/etlegacy/etlegacy/wiki/How-to-commit-Your-Code)
+* [Coding conventions](https://github.com/etlegacy/etlegacy/wiki/Coding-Conventions)
 
 
 GENERAL NOTES
@@ -97,7 +96,7 @@ DEPENDENCIES
 * **OpenAL** (optional, enabled by default)
 
 
-Grab info about current lib versions from our wiki page [ET: Legacy Libs_Changelog](https://dev.etlegacy.com/projects/etlegacy/wiki/Libs_Changelog)
+Grab info about current lib versions from our [Libs_Changelog](https://github.com/etlegacy/etlegacy/wiki/Libs-Changelog) wiki page.
 
 To get the latest source code install [git](http://git-scm.com/) and
 clone our repository hosted at [Github.com](https://github.com/etlegacy/etlegacy):

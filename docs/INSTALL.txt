@@ -54,7 +54,7 @@ ET: Legacy remains compatible with the ET 2.60b version as much as possible.
 Please note that ET: Legacy is *not* compatible with PunkBuster enabled servers. ET: Legacy clients
 also cannot connect to servers running the ETPro mod.
 
-See http://dev.etlegacy.com/projects/etlegacy/wiki/Compatible_Mods for more information.
+See https://github.com/etlegacy/etlegacy/wiki/Compatible-Mods for more information.
 
 
 Linux 64 bit
@@ -71,9 +71,9 @@ are available in 32 bit only version.
 INSTALLATION
 ============
 
-Installation Guides are provided at http://dev.etlegacy.com/projects/etlegacy/wiki/Installation
+Installation Guides are provided at https://github.com/etlegacy/etlegacy/wiki/Installation
 
-To run a server, please refer to http://dev.etlegacy.com/projects/etlegacy/wiki/Features
+To run a server, please refer to https://github.com/etlegacy/etlegacy/wiki/Set-up-Features
 
 
 LUA SCRIPTS
@@ -87,7 +87,7 @@ The Lua API documentation can be found at https://legacy-lua-api.readthedocs.io
 FREQUENTLY ASKED QUESTIONS
 ==========================
 
-See our FAQ at http://dev.etlegacy.com/projects/etlegacy/wiki/FAQ
+See our FAQ at https://github.com/etlegacy/etlegacy/wiki/FAQ
 
 
 WEBSITE
