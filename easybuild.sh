@@ -606,6 +606,12 @@ create_osx_dmg() {
 	# brew install graphicsmagick
 	gm convert ../misc/osx-dmg-background.jpg -resize 640x360 -font ../misc/din1451alt.ttf -pointsize 20 -fill 'rgb(85,85,85)'  -draw "text 75,352 '${SHORT_VERSION}'" osx-dmg-background.jpg
 
+
+	etdirbuild=`find ./_CPack_Packages/Darwin/TGZ -type d -d 1`/etmain
+	curl https://mirror.etlegacy.com/etmain/pak0.pk3 -o ${etdirbuild}/pak0.pk3
+	curl https://mirror.etlegacy.com/etmain/pak1.pk3 -o ${etdirbuild}/pak1.pk3
+	curl https://mirror.etlegacy.com/etmain/pak2.pk3 -o ${etdirbuild}/pak2.pk3
+
 	# Needs to be the osx:s default python install!
 	python << END
 import Cocoa

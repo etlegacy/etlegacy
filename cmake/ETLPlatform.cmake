@@ -77,7 +77,7 @@ if(UNIX)
 		set(CMAKE_INCLUDE_SYSTEM_FLAG_C "-isystem")
 
 		# Must specify a target, otherwise it will require the OS version used at compile time.
-		set(CMAKE_OSX_DEPLOYMENT_TARGET "10.7")
+		set(CMAKE_OSX_DEPLOYMENT_TARGET "10.15")
 		execute_process(COMMAND xcrun -show-sdk-path OUTPUT_VARIABLE XCODE_SDK_PATH OUTPUT_STRIP_TRAILING_WHITESPACE)
 		set(CMAKE_OSX_SYSROOT "${XCODE_SDK_PATH}")
 		set(CMAKE_CXX_FLAGS "-isysroot ${CMAKE_OSX_SYSROOT} ${CMAKE_CXX_FLAGS}")
