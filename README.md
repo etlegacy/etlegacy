@@ -1,229 +1,8 @@
-Enemy Territory: Legacy [![Travis Status](https://travis-ci.org/etlegacy/etlegacy.svg?branch=master)](https://travis-ci.org/etlegacy/etlegacy) [![AppVeyor status](https://ci.appveyor.com/api/projects/status/468s0285u3w4vfom/branch/master?svg=true)](https://ci.appveyor.com/project/rmarquis/etlegacy/branch/master) [![Analysis Status](https://scan.coverity.com/projects/1160/badge.svg)](https://scan.coverity.com/projects/1160) [![chat](https://img.shields.io/discord/260750790203932672.svg?logo=discord)](https://discord.gg/UBAZFys)
-==========
+**This is an experimental build for MacOSX Catalina.**
 
-*A second breath of life for Wolfenstein: Enemy Territory*
+Please follow the original repository https://github.com/etlegacy/etlegacy to keep posted about the original project. Sooner or later they will provide a more reliable solution for this.
 
-* Website: [https://www.etlegacy.com](https://www.etlegacy.com)
-* Downloads: [https://www.etlegacy.com/download](https://www.etlegacy.com/download)
-* Wiki/FAQ: [https://github.com/etlegacy/etlegacy/wiki](https://github.com/etlegacy/etlegacy/wiki)
-* Development (bug reports and feature requests): [https://github.com/etlegacy/etlegacy](https://github.com/etlegacy/etlegacy)
-* Assets Repository: [https://drive.google.com](https://drive.google.com/drive/folders/0Bw7Yu-pqzcSaLXEtVEVjZF82UEU)
-* Legacy Lua API: [http://legacy-lua-api.readthedocs.io](http://legacy-lua-api.readthedocs.io)
-* Translation: [https://www.transifex.com/projects/p/etlegacy/](https://www.transifex.com/projects/p/etlegacy/)
-* Contact: [\#etlegacy](http://webchat.freenode.net/?channels=#etlegacy) on irc.freenode.net and [etlegacy/#development](https://discordapp.com/channels/260750790203932672/346956915814957067) on Discord.
-
-INTRODUCTION
-============
-
-Enemy Territory: Legacy is based on the [raedwulf-et](https://bitbucket.org/tcmreastwood/raedwulf-et/)
-project which in turn is based on the [GPL'd source code](https://github.com/id-Software/Enemy-Territory) of Wolfenstein: Enemy Territory.
-
-The main goals of the project are fixing bugs, cleaning up the codebase and adding useful features
-while remaining compatible with the ET 2.60b version.
-
-The Legacy mod is the default mod shipped with ET: Legacy. It aims to add many useful features and
-improvements, while staying close to the original gameplay, as well as being lightweight and extensible
-through Lua scripts.
-
-For more information consult our [changelog](https://github.com/etlegacy/etlegacy/wiki/Changelog).
-
-ET: Legacy development is a collaborative effort done in an open, transparent and friendly manner.
-Anyone is welcome to join our efforts!
-
-### Get involved
-
-If you are interested to join us, ensure to read first our contribution guidelines:
-
-* [How to commit your code](https://github.com/etlegacy/etlegacy/wiki/How-to-commit-Your-Code)
-* [Coding conventions](https://github.com/etlegacy/etlegacy/wiki/Coding-Conventions)
-
-
-GENERAL NOTES
-=============
-
-### Game data
-
-Wolfenstein: Enemy Territory is a free release, and can be downloaded from [Splash Damage](https://www.splashdamage.com/games/wolfenstein-enemy-territory/).
-
-This source release contains only the engine and mod code but not any game data,
-which is still covered by the original EULA and must be obeyed as usual.
-
-In order to run ET: Legacy you will need to copy the original assets files
-(*pak0.pk3*, *pak1.pk3* and *pak2.pk3*) to the etmain folder.
-
-
-### Compatibility with Enemy Territory 2.60b
-
-ET: Legacy remains compatible with the ET 2.60b version as much as possible.
-
-Please note that ET: Legacy is *not* compatible with PunkBuster enabled servers.
-ET: Legacy clients also cannot connect to servers running the ETPro mod.
-
-
-### Linux 64 bit
-
-Please remember that 64 bit ET: Legacy clients can only connect to servers running
-mods providing a 64 bit version. You will be able to play 32 bit-only mods only if
-you compile ET: Legacy on a 32 bit system or cross-compile it for 32 bit architecture
-on a 64 bit system.
-
-At the moment, only the Legacy mod is available in 64 bit version, while all other
-existing mods are available in 32 bit only version.
-
-In case you are a running a 64 bit system, you probably might want to use the
-**bundled libraries** which are located in a separate *etlegacy-libs* repository and
-can be automatically downloaded using the `git submodule` command. See the next
-section for more details.
-
-
-DEPENDENCIES
-============
-
-* **CMake** (compile-time only)
-* **OpenGL**
-* **GLEW**
-* **SDL**
-* **ZLib**
-* **MiniZip**
-* **libjpeg-turbo** or **libjpeg**
-* **libcurl** (optional, enabled by default)
-* **Lua** (optional, enabled by default)
-* **Ogg Vorbis** (optional, enabled by default)
-* **Theora** (optional, enabled by default)
-* **Freetype** (optional, enabled by default)
-* **libpng** (optional, enabled by default)
-* **SQLite** (optional, enabled by default)
-* **OpenAL** (optional, enabled by default)
-
-
-Grab info about current lib versions from our [Libs_Changelog](https://github.com/etlegacy/etlegacy/wiki/Libs-Changelog) wiki page.
-
-To get the latest source code install [git](http://git-scm.com/) and
-clone our repository hosted at [Github.com](https://github.com/etlegacy/etlegacy):
-
-    $ git clone git://github.com/etlegacy/etlegacy.git
-
-If the required dependencies are not installed on your system run:
-
-    $ git submodule init
-    $ git submodule update
-
-This downloads the essential dependencies into the `libs/`directory. You can choose
-whether to use bundled libraries instead of the system ones by changing the
-`BUNDLED_LIBS` variable in the CMakeList.txt configuration file. You can then select
-which bundled libraries to use by toggling the respective `BUNDLED_XXX` variable.
-
-
-COMPILE AND INSTALL
-===================
-
-To install the binaries system-wide, you need to compile ET: Legacy with hardcoded
-fs_basepath.
-
-The following variables can be adjusted in CMake:
-
-  * **INSTALL_DEFAULT_BASEDIR**: sets default *fs_basepath*, i.e. where etl and etlded
-    executables look for data files. In most cases it is CMAKE_INSTALL_PREFIX+INSTALL_DEFAULT_MODDIR.
-    Defaults to empty value, because we want *fs_basepath* to be the current working directory
-    when not installing the game system-wide.
-
-  * (optional) **INSTALL_DEFAULT_BINDIR**: Location for executables. Appended to CMAKE_INSTALL_PREFIX.
-    Defaults to "bin".
-
-  * (optional) **INSTALL_DEFAULT_MODDIR**: Location for libraries and paks. Appended to
-    CMAKE_INSTALL_PREFIX. Defaults to "share/etlegacy" and then "legacy" is appended to it.
-
-
-### Linux
-
-Install required dependencies.
-
-* option A: **easybuild**
-
-In terminal, run:
-
-    $ ./easybuild.sh
-
-ET: Legacy will be installed in `~/etlegacy`.
-
-* option B: **command line**
-
-In terminal, run:
-
-    $ mkdir build && cd build && cmake ..
-
-To compile, run:
-
-    $ make
-
-If you wish to install ET: Legacy system-wide, run:
-
-    # make install
-
-Be sure to set the CMake variables (see above) beforehand.
-
-
-**NOTES:**
-
-  * Even if you have a 64 bit linux distribution which provides 32 bit versions of all
-  the required libraries, you might also need the development libraries (-devel packages)
-  installed on your system.
-
-  * In order to compile the jpeg-turbo library properly you will need the **nasm** assembler.
-
-
-### Crosscompiling on Linux with MinGW-w64
-
-In terminal, run:
-
-    $ mkdir build && cd build
-    $ cmake -DCMAKE_TOOLCHAIN_FILE=../cmake/Toolchain-cross-mingw-linux.cmake ..
-    $ make
-
-By default, MinGW name is set to *i686-w64-mingw32*. You may have to change it in
-`cmake/Toolchain-cross-mingw-linux.cmake` depending on how it is called on your system.
-
-
-### Windows
-
-Install:
-
-  1. [Visual Studio Community](http://www.visualstudio.com/) with the _Desktop Development with C++_ workload
-  2. [CMake](http://www.cmake.org/) and make sure it is added to your system PATH
-
-* option A: **easybuild**
-
-    1. run easybuild.bat
-
-ET: Legacy will be installed in `My Documents\ETLegacy-Build`.
-
-* option B: **Visual Studio**
-
-    1. create a `build` directory inside the directory which contains ET: Legacy sources
-    2. open *Visual Studio Command Prompt* in the Start menu
-    3. change directory with `cd` to the newly created build directory
-
-In the command prompt, run:
-
-    cmake -G "NMake Makefiles" -DBUNDLED_LIBS=YES .. && nmake
-
-or
-
-    cmake -G "Visual Studio 16" -DBUNDLED_LIBS=YES ..
-
-and open the resulting project in Visual Studio.
-
-
-**NOTES:**
-
-  * If compilation of bundled libraries is aborted for any reason, you will probably need to clean the
-  libs directory and start over. This can be done by executing `git clean -df && git reset --hard HEAD`
-  inside `libs/` directory.
-
-  * If the build fails during libcurl compilation because of missing *sed* utility, download it from
-  [GnuWin](http://gnuwin32.sourceforge.net/packages/sed.htm) and place it into your system path or
-  copy it into `MSVC/VC/bin`. It also comes with Git and can be placed into your system path
-  automatically if you select that option during Git installation.
+A big thank you to mukmuk etlegacy@discord for their help.
 
 
 ### Mac OS X
@@ -237,40 +16,35 @@ Install:
 Then brew the following packages in the terminal app:
 
     $ brew cask install xquartz
-    $ brew install --universal gnu-sed cmake glew sdl2 minizip jpeg-turbo curl lua libogg libvorbis theora freetype sqlite openal-soft
-
-The --universal flag ensures both 32bit and 64bit libraries are installed. Although your system curl library supports both architectures, you also need to install its headers.
+    $ brew install gnu-sed cmake glew sdl2 minizip jpeg-turbo curl lua libogg libvorbis theora freetype sqlite openal-soft nasm automake libtool
+	
+	To create the .dmg package you need install
+	$ brew install GraphicsMagick nodejs librsvg
+	$ npm install -g appdmg
 
 * option A: **easybuild**
 
 In Terminal, run:
 
-    $ ./easybuild.sh
+    $ ./easybuild.sh -64
+	
+* This will put an 'etlegacy' folder into your user folder.
 
-This will put an 'etlegacy' folder into your user folder.
+* It also generates an DMG package that you can use to install ETLegacy. This package already contains the Original ET dependencies. You can find the dmg installer in the **build** directory.
 
-* option B: **command line**
+To see all the easybuild options:
+    $ ./easybuild help
 
-In terminal, run:
+### Known Issues.
 
-    $ mkdir build && cd build && cmake ..
+In my setup i'm experiencing visual problems when I start ETLegacy in the second time. A weird orange box appears, and we are not able to see the game menu. To solve that issue you must delete your etl_bin_v2.76.pk3 file and re-start the game.
 
-To compile, run:
+```bash
+rm /Users/$(whoami)/Library/Application\ Support/etlegacy/legacy/etl_bin_v2.76.pk3
+```
 
-    $ make
+Your game settings will kept untouched.
 
-If you wish to install ET: Legacy system-wide, run:
-
-    # make install
-
-Be sure to set the CMake variables (see above) beforehand.
-
-
-**NOTES**:
-
-  * In the legacy mod folder, the cgame_mac and ui_mac files are redundant since they are in the 
-  etl_bin.pk3 and will be extracted at runtime, so you can delete those. The client is named etl.app
-  (and can safely be renamed), while the dedicated server is just a command-line binary named "etlded".
 
 
 LICENSE
