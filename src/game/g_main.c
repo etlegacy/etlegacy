@@ -606,8 +606,6 @@ cvarTable_t gameCvarTable[] =
 	{ &team_maxFlamers,                     "team_maxFlamers",                     "-1",                         0,                                               0, qfalse, qfalse },
 	{ &team_maxMachineguns,                 "team_maxMachineguns",                 "-1",                         0,                                               0, qfalse, qfalse },
 	{ &team_maxRockets,                     "team_maxRockets",                     "-1",                         0,                                               0, qfalse, qfalse },
-	{ &team_maxMachineguns,                 "team_maxMg42s",                       "-1",                         0,                                               0, qfalse, qfalse }, // keep ETPro compatibility
-	{ &team_maxRockets,                     "team_maxPanzers",                     "-1",                         0,                                               0, qfalse, qfalse }, // keep ETPro compatibility
 	{ &team_maxRiflegrenades,               "team_maxRiflegrenades",               "-1",                         0,                                               0, qfalse, qfalse },
 	{ &team_maxLandmines,                   "team_maxLandmines",                   "10",                         0,                                               0, qfalse, qfalse },
 	//misc
