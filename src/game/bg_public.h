@@ -2006,10 +2006,11 @@ typedef enum
 	HINT_TANK,                  ///< 45
 	HINT_SATCHELCHARGE,
 	//HINT_LOCKPICK,            ///< unused
+	HINT_RESTRICTED = 48,       ///< invisible user with no target
 
-	HINT_BAD_USER = 48,         ///< invisible user with no target
+	HINT_BAD_USER,              ///< invisible user with no target
 
-	HINT_NUM_HINTS = 49,
+	HINT_NUM_HINTS = 50,
 } hintType_t;
 
 void BG_EvaluateTrajectory(const trajectory_t *tr, int atTime, vec3_t result, qboolean isAngle, int splinePath);

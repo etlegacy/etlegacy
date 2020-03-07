@@ -1385,6 +1385,22 @@ void G_CheckForCursorHints(gentity_t *ent)
 					{
 						hintType = HINT_WEAPON;
 					}
+					else
+					{
+						int weapon = checkEnt->item->giWeapon;
+
+						// get an equivalent weapon if the client team is different of the weapon team, if not keep the current
+						if (ent->client->sess.sessionTeam != GetWeaponTableData(weapon)->team && GetWeaponTableData(weapon)->weapEquiv)
+						{
+							weapon = GetWeaponTableData(weapon)->weapEquiv;
+						}
+
+						if (BG_WeaponIsPrimaryForClassAndTeam(ent->client->sess.playerType, ent->client->sess.sessionTeam, weapon) &&
+						    G_IsWeaponDisabled(ent, weapon))
+						{
+							hintType = HINT_RESTRICTED;
+						}
+					}
 					break;
 				}
 				case IT_AMMO:

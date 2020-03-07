@@ -424,10 +424,16 @@ qboolean G_CanPickupWeapon(weapon_t weapon, gentity_t *ent)
 		return qfalse;
 	}
 
-	// get an equivalent weapon if the cleint team is different of the weapon team, if not keep the current
+	// get an equivalent weapon if the client team is different of the weapon team, if not keep the current
 	if (ent->client->sess.sessionTeam != GetWeaponTableData(weapon)->team && GetWeaponTableData(weapon)->weapEquiv)
 	{
 		weapon = GetWeaponTableData(weapon)->weapEquiv;
+	}
+
+	// single weapon restrictions
+	if (G_IsWeaponDisabled(ent, weapon))
+	{
+		return qfalse;
 	}
 
 	return BG_WeaponIsPrimaryForClassAndTeam(ent->client->sess.playerType, ent->client->sess.sessionTeam, weapon);
