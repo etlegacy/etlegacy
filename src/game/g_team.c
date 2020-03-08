@@ -201,20 +201,20 @@ void Team_ResetFlag(gentity_t *ent)
 		// unset objective indicator
 		switch (ent->item->giPowerUp == PW_REDFLAG ? TEAM_AXIS : TEAM_ALLIES)
 		{
-			case TEAM_AXIS:
-				if (!level.redFlagCounter)
-				{
-					level.flagIndicator &= ~(1 << PW_REDFLAG);
-				}
-				break;
-			case TEAM_ALLIES:
-				if (!level.blueFlagCounter)
-				{
-					level.flagIndicator &= ~(1 << PW_BLUEFLAG);
-				}
-				break;
-			default:
-				break;
+		case TEAM_AXIS:
+			if (!level.redFlagCounter)
+			{
+				level.flagIndicator &= ~(1 << PW_REDFLAG);
+			}
+			break;
+		case TEAM_ALLIES:
+			if (!level.blueFlagCounter)
+			{
+				level.flagIndicator &= ~(1 << PW_BLUEFLAG);
+			}
+			break;
+		default:
+			break;
 		}
 		G_globalFlagIndicator();
 	}
@@ -487,6 +487,8 @@ int Pickup_Team(gentity_t *ent, gentity_t *other)
 		return 0;
 	}
 
+	trap_SendServerCommand(other - g_entities, "cp \"You picked up the objective!\"");
+
 	// set timer
 	cl->pickObjectiveTime = level.time;
 
@@ -494,9 +496,7 @@ int Pickup_Team(gentity_t *ent, gentity_t *other)
 	other->message           = ent->message;
 	other->s.otherEntityNum2 = ent->s.modelindex2;
 
-	return ((team == cl->sess.sessionTeam) ?
-	        Team_TouchOurFlag : Team_TouchEnemyFlag)
-	           (ent, other, team);
+	return ((team == cl->sess.sessionTeam) ? Team_TouchOurFlag : Team_TouchEnemyFlag)(ent, other, team);
 }
 
 /**
