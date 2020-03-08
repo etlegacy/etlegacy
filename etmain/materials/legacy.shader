@@ -1485,6 +1485,19 @@ gfx/2d/friendlycross
 	}
 }
 
+// fireteam
+sprites/fireteam
+{
+	nocompress
+	nopicmip
+	{
+		map sprites/fireteam.tga
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbGen vertex
+		alphaGen vertex
+	}
+}
+
 // sharp crosshairs
 gfx/2d/crosshairk
 {

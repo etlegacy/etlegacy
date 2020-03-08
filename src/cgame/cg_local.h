@@ -1814,7 +1814,7 @@ typedef struct
 	qhandle_t cm_spec_icon;
 	qhandle_t cm_arrow_spec;
 
-	qhandle_t fireteamicons[6];
+	qhandle_t fireteamIcon;
 
 	qhandle_t countryFlags;         ///< GeoIP
 
