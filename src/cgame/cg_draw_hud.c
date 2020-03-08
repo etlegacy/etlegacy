@@ -1903,17 +1903,19 @@ static void CG_DrawNewCompass(rectDef_t location)
 				continue;
 			}
 
+			// draw objective icon (if they are carrying one)
+			if (cgs.clientinfo[ent->clientNum].powerups & ((1 << PW_REDFLAG) | (1 << PW_BLUEFLAG)))
+			{
+				CG_DrawCompassIcon(basex, basey, basew, baseh, cg.predictedPlayerState.origin, ent->pos.trBase, cgs.media.objectiveShader);
+			}
+
 			if (!CG_IsOnSameFireteam(cg.clientNum, ent->clientNum) && !cgs.clientinfo[cg.clientNum].shoutcaster)
 			{
 				continue;
 			}
 
-			// draw disguise or objective (if they are carrying one) or default buddy icon
-			if (cgs.clientinfo[ent->clientNum].powerups & ((1 << PW_REDFLAG) | (1 << PW_BLUEFLAG)))
-			{
-				CG_DrawCompassIcon(basex, basey, basew, baseh, cg.predictedPlayerState.origin, ent->pos.trBase, cgs.media.objectiveShader);
-			}
-			else if (!cgs.clientinfo[cg.clientNum].shoutcaster)
+			// draw disguise or default buddy icon
+			if (!cgs.clientinfo[cg.clientNum].shoutcaster)
 			{
 				// draw overlapping no-shoot icon if disguised
 				if (cgs.clientinfo[ent->clientNum].powerups & (1 << PW_OPS_DISGUISED))
