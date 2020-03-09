@@ -1149,15 +1149,29 @@ void G_BounceItem(gentity_t *ent, trace_t *trace)
 
 		if (ent->s.angles[0] > 0.0f && ent->s.angles[0] < 50.0f)
 		{
+			trace_t tr;
+			vec3_t  pos, end;
+
+			VectorCopy(trace->endpos, pos);
+
 			// align items on inclined ground
 			G_SetAngle(ent, ent->s.angles);
-			trace->endpos[2] -= (tan(DEG2RAD(ent->s.angles[0])) * ITEM_RADIUS);
+			pos[2] -= (tan(DEG2RAD(ent->s.angles[0])) * ITEM_RADIUS);
+
+			// ensure the position isn't in free fall
+			VectorMA(pos, -64, trace->plane.normal, end);
+			trap_Trace(&tr, pos, ent->r.maxs, ent->r.mins, end, ent->s.number, MASK_SOLID);
+
+			if (tr.fraction != 1.0f)
+			{
+				VectorCopy(pos, trace->endpos);
+			}
 		}
 		else
 		{
-			trace->endpos[2] += 1.0f;    // make sure it is off ground
+			trace->endpos[2] += 1.0f;                    // make sure it is off ground
 		}
-		SnapVector(trace->endpos);
+		//SnapVector(trace->endpos);
 		G_SetOrigin(ent, trace->endpos);
 		ent->s.groundEntityNum = trace->entityNum;
 		ent->s.pos.trType      = TR_GRAVITY_PAUSED; // allow entity to be affected by gravity again
@@ -1251,11 +1265,12 @@ void G_RunItem(gentity_t *ent)
 		newOrigin[2] -= 4;
 		trap_Trace(&tr, ent->r.currentOrigin, ent->r.mins, ent->r.maxs, newOrigin, ent->s.number, mask);
 
-		if (tr.fraction > 0.5f && !tr.startsolid)
+		if (tr.fraction == 1.f && !tr.startsolid)
 		{
 			VectorClear(ent->s.pos.trDelta);
-			ent->s.pos.trType = TR_GRAVITY;
-			ent->s.pos.trTime = level.time;
+			ent->s.pos.trType      = TR_GRAVITY;
+			ent->s.pos.trTime      = level.time;
+			ent->s.groundEntityNum = -1;
 		}
 
 		G_RunThink(ent);
