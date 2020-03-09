@@ -3145,7 +3145,7 @@ void CG_LimboPanel_RenderMedal(panel_button_t *button)
 void CG_LimboPanel_RenderPrestige(panel_button_t *button)
 {
 	qhandle_t shader;
-	vec4_t    color = { 1.0f, 1.0f, 1.0f, 0.3f };
+	vec4_t    color = { 1.0f, 1.0f, 1.0f, 0.4f };
 	int       i, skillMax = 0;
 
 	if (cgs.gametype == GT_WOLF_CAMPAIGN || cgs.gametype == GT_WOLF_STOPWATCH || cgs.gametype == GT_WOLF_LMS)
