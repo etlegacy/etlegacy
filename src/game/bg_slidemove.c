@@ -190,7 +190,7 @@ qboolean PM_SlideMove(qboolean gravity)
 					// and trace it, to make sure we don't end up in a solid
 
 					VectorAdd(pm->ps->origin, trace.plane.normal, end);
-					PM_TraceAll(&trace, pm->ps->origin, end, qtrue, qtrue);
+					PM_TraceAll(&trace, pm->ps->origin, end, qtrue, qfalse);
 					VectorCopy(trace.endpos, pm->ps->origin);
 
 					if (pm->debugLevel)
@@ -365,7 +365,7 @@ void PM_StepSlideMove(qboolean gravity)
 	VectorCopy(start_o, down);
 	down[2] -= STEPSIZE;
 
-	PM_TraceAll(&trace, start_o, down, qtrue, qtrue);
+	PM_TraceAll(&trace, start_o, down, qfalse, qfalse);
 	VectorSet(up, 0, 0, 1);
 	// never step up when you still have up velocity
 	if (pm->ps->velocity[2] > 0 && (trace.fraction == 1.0f || DotProduct(trace.plane.normal, up) < 0.7f))
@@ -404,7 +404,6 @@ void PM_StepSlideMove(qboolean gravity)
 	if (pm->ps->eFlags & EF_PRONE ||
 	    pm->ps->eFlags & EF_DEAD)
 	{
-		Com_Memset(&trace, 0, sizeof(trace));
 		PM_TraceLegs(&trace, NULL, pm->ps->origin, down, NULL, pm->ps->viewangles, pm->trace, pm->ps->clientNum, pm->tracemask, qtrue);
 		if (trace.fraction < 1.0f)
 		{
@@ -417,7 +416,7 @@ void PM_StepSlideMove(qboolean gravity)
 			}
 			return;
 		}
-		Com_Memset(&trace, 0, sizeof(trace));
+
 		PM_TraceHead(&trace, pm->ps->origin, down, NULL, pm->ps->viewangles, pm->trace, pm->ps->clientNum, pm->tracemask, qtrue);
 		if (trace.fraction < 1.0f)
 		{
@@ -431,8 +430,13 @@ void PM_StepSlideMove(qboolean gravity)
 		}
 	}
 
-	Com_Memset(&trace, 0, sizeof(trace));
-	PM_TraceAll(&trace, pm->ps->origin, down, qtrue, qfalse);
+	pm->trace(&trace, pm->ps->origin, pm->mins, pm->maxs, down, pm->ps->clientNum, pm->tracemask);
+
+	PM_TraceAll(&trace, pm->ps->origin, down, qfalse, qfalse);
+
+	trace.endpos[0] = pm->ps->origin[0];
+	trace.endpos[1] = pm->ps->origin[1];
+
 	if (!trace.allsolid)
 	{
 		VectorCopy(trace.endpos, pm->ps->origin);
