@@ -318,9 +318,6 @@ void G_SetClientPrestige(gclient_t *cl, qboolean streakUp)
 	{
 		return;
 	}
-
-	// update userinfo
-	ClientUserinfoChanged(clientNum);
 }
 
 /**

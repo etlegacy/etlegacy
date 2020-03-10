@@ -142,6 +142,11 @@ static void CG_ParseScore(team_t team)
 #endif
 
 		cg.numScores++;
+
+		if (cg.intermissionStarted)
+		{
+			cgs.dbLastScoreReceived = qtrue;
+		}
 	}
 }
 

@@ -1580,6 +1580,7 @@ void CG_Debriefing_Startup(void)
 #ifdef FEATURE_PRESTIGE
 	cgs.dbPrestigeReceived = qfalse;
 #endif
+	cgs.dbLastScoreReceived = qfalse;
 
 	cgs.dbLastRequestTime = 0;
 	cgs.dbSelectedClient  = cg.clientNum;
@@ -1689,9 +1690,8 @@ void CG_Debriefing_InfoRequests(void)
 	}
 
 	// if nothing else is pending, ask for scores
-	if (!cgs.dbLastScoreRequest || (cg.time - cgs.dbLastScoreRequest) > 1000)
+	if (!cgs.dbLastScoreReceived)
 	{
-		cgs.dbLastScoreRequest = cg.time;
 		trap_SendClientCommand("score");
 	}
 }
@@ -3321,7 +3321,16 @@ qboolean CG_Debriefing_PrestigeButton_KeyDown(panel_button_t *button, int key)
 
 		// refresh data
 		cgs.dbPrestigeReceived = qfalse;
-		CG_Debriefing_InfoRequests();
+
+		// refresh value display immediately to hide delayed effect
+		cgs.clientinfo[cg.clientNum].prestige += 1;
+
+		// reset skills client side only to keep current XPs value display
+		// server sync will happen at next map
+		for (i = 0; i < SK_NUM_SKILLS; i++)
+		{
+			cgs.clientinfo[cg.clientNum].skill[i] = 0;
+		}
 
 		return qtrue;
 	}

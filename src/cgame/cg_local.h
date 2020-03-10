@@ -2336,13 +2336,13 @@ typedef struct cgs_s
 	qboolean dbPrestigeReceived;
 #endif
 	qboolean dbWeaponStatsReceived;
+	qboolean dbLastScoreReceived;
 	qboolean dbAwardsParsed;
 	char *dbAwardNames[NUM_ENDGAME_AWARDS];
 	team_t dbAwardTeams[NUM_ENDGAME_AWARDS];
 	char dbAwardNamesBuffer[1024];
 	int dbAwardsListOffset;
 	int dbLastRequestTime;
-	int dbLastScoreRequest;
 	int dbPlayerListOffset;
 	int dbWeaponListOffset;
 	cg_weaponstats_t dbWeaponStats[WS_MAX];
