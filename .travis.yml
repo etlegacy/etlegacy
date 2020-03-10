@@ -168,8 +168,18 @@ notifications:
     skip_join: true
     use_notice: true
   webhooks:
-    urls: # Travis-Ci doesn't want to add Discord support :/ (https://github.com/travis-ci/travis-tasks/pull/71)
-      - https://discordapp.com/api/webhooks/640313661931520000/b60EN72GtQ_pHRdMw44L0d9kxvlwWAUvwQpM5nKZnK7EbZ8tPjHJjKr1j98aRmSVkdwx
+    urls:
+      - https://xzy.com/api/webhooks/12345
     on_success: change
     on_failure: always
     on_start: never
+
+# Discord notification
+#after_success:
+#  - wget https://raw.githubusercontent.com/DiscordHooks/travis-ci-discord-webhook/master/send.sh
+#  - chmod +x send.sh
+#  - ./send.sh success $WEBHOOK_URL
+after_failure:
+  - wget https://raw.githubusercontent.com/DiscordHooks/travis-ci-discord-webhook/master/send.sh
+  - chmod +x send.sh
+  - ./send.sh failure $WEBHOOK_URL
