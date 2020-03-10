@@ -1,10 +1,11 @@
 # default in trusty is GCC 4.8, Clang 3.5, cmake 3.2
+# default in xenial is GCC 5.4, Clang 7.0, cmake 3.12
 # https://github.com/travis-ci/apt-source-whitelist
 
 language: cpp
-#dist: trusty
 dist: xenial
-sudo: false
+
+os: linux
 
 env:
   global:
@@ -19,7 +20,7 @@ env:
     - BUNDLED_OGG=1
     - INSTALL_EXTRA=0
 
-matrix:
+jobs:
   include:
 
 # 32 bit
@@ -55,9 +56,9 @@ matrix:
       env: RELEASE_TYPE=release
       compiler: gcc
       addons:
-        sources:
-        - ubuntu-toolchain-r-test
         apt:
+          sources:
+          - ubuntu-toolchain-r-test
           packages:
           - nasm
 
@@ -74,9 +75,9 @@ matrix:
       compiler: gcc
       env: RELEASE_TYPE=debug
       addons:
-        sources:
-        - ubuntu-toolchain-r-test
         apt:
+          sources:
+          - ubuntu-toolchain-r-test
           packages:
           - nasm
 
@@ -93,9 +94,9 @@ matrix:
       env: RELEASE_TYPE=release
       compiler: clang
       addons:
-        sources:
-        - llvm-toolchain-trusty
         apt:
+          sources:
+          - llvm-toolchain-trusty
           packages:
           - nasm
 
@@ -112,9 +113,9 @@ matrix:
       env: RELEASE_TYPE=debug
       compiler: clang
       addons:
-        sources:
-        - llvm-toolchain-trusty
         apt:
+          sources:
+          - llvm-toolchain-trusty
           packages:
           - nasm
 
@@ -162,11 +163,13 @@ notifications:
       - "%{repository}#%{build_number} %{commit} %{author}: %{message} %{build_url}"
     channels:
       - "irc.freenode.org#etlegacy"
-    use_notice: true
+    on_success: change
+    on_failure: always
     skip_join: true
+    use_notice: true
   webhooks:
-    urls:
-      - https://webhooks.gitter.im/e/5a93d4b59447e6129a58
+    urls: # Travis-Ci doesn't want to add Discord support :/ (https://github.com/travis-ci/travis-tasks/pull/71)
+      - https://discordapp.com/api/webhooks/640313661931520000/b60EN72GtQ_pHRdMw44L0d9kxvlwWAUvwQpM5nKZnK7EbZ8tPjHJjKr1j98aRmSVkdwx
     on_success: change
     on_failure: always
     on_start: never
