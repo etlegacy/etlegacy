@@ -2686,7 +2686,8 @@ void CG_Debriefing_PlayerHitRegions_Draw(panel_button_t *button)
 	int i, j, cnt = 0, skillMax;
 
 	// hide if we need to display prestige collection note
-	if (cgs.prestige && cgs.gametype != GT_WOLF_STOPWATCH && cgs.gametype != GT_WOLF_LMS && cgs.gametype != GT_WOLF_CAMPAIGN)
+	if (cgs.prestige && cgs.dbSelectedClient == cg.clientNum &&
+	    cgs.gametype != GT_WOLF_STOPWATCH && cgs.gametype != GT_WOLF_LMS && cgs.gametype != GT_WOLF_CAMPAIGN)
 	{
 		// count the number of maxed out skills
 		for (i = 0; i < SK_NUM_SKILLS; i++)
@@ -2824,6 +2825,11 @@ void CG_Debriefing_PlayerPrestige_Note(panel_button_t *button)
 	int i, j, cnt = 0, skillMax, h;
 
 	if (!cgs.prestige || cgs.gametype == GT_WOLF_STOPWATCH || cgs.gametype == GT_WOLF_LMS || cgs.gametype == GT_WOLF_CAMPAIGN)
+	{
+		return;
+	}
+
+	if (cgs.dbSelectedClient != cg.clientNum)
 	{
 		return;
 	}
