@@ -935,7 +935,7 @@ static qboolean GLimp_StartDriverAndSetMode(glconfig_t *glConfig, int mode, qboo
  */
 void GLimp_Splash(glconfig_t *glConfig)
 {
-	unsigned char splashData[144000]; // width * height * bytes_per_pixel
+	unsigned char splashData[SPLASH_DATA_SIZE]; // width * height * bytes_per_pixel
 	SDL_Surface *splashImage = NULL;
 
 	// decode splash image
