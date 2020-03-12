@@ -435,7 +435,7 @@ void PM_TraceAllParts(trace_t *trace, float *legsOffset, vec3_t start, vec3_t en
 		    legtrace.startsolid ||
 		    legtrace.allsolid)
 		{
-			if (pm->debugLevel)
+			if (pm->debugLevel > 3)
 			{
 				Com_Printf("%i:legs collide\n", c_pmove);
 			}
@@ -452,7 +452,7 @@ void PM_TraceAllParts(trace_t *trace, float *legsOffset, vec3_t start, vec3_t en
 		    headtrace.startsolid ||
 		    headtrace.allsolid)
 		{
-			if (pm->debugLevel)
+			if (pm->debugLevel > 3)
 			{
 				Com_Printf("%i:head collide\n", c_pmove);
 			}
@@ -1691,14 +1691,14 @@ static int PM_CorrectAllSolid(trace_t *trace)
 				point[0] += (float) i;
 				point[1] += (float) j;
 				point[2] += (float) k;
-				PM_TraceAll(trace, point, point, qtrue, qfalse);
+				PM_TraceAll(trace, point, point, qfalse, qfalse);
 				if (!trace->allsolid)
 				{
 					point[0] = pm->ps->origin[0];
 					point[1] = pm->ps->origin[1];
 					point[2] = pm->ps->origin[2] - 0.25f;
 
-					PM_TraceAll(trace, pm->ps->origin, point, qtrue, qfalse);
+					PM_TraceAll(trace, pm->ps->origin, point, qfalse, qfalse);
 					pml.groundTrace = *trace;
 					return qtrue;
 				}
@@ -1782,7 +1782,7 @@ static void PM_GroundTrace(void)
 		point[2] = pm->ps->origin[2] - 0.25f;
 	}
 
-	PM_TraceAllParts(&trace, &pm->pmext->proneLegsOffset, pm->ps->origin, point, qtrue, qfalse);
+	PM_TraceAllParts(&trace, &pm->pmext->proneLegsOffset, pm->ps->origin, point, qfalse, qfalse);
 	pml.groundTrace = trace;
 
 	// do something corrective if the trace starts in a solid...
@@ -4037,7 +4037,7 @@ void PM_UpdateLean(playerState_t *ps, usercmd_t *cmd, pmove_t *tpm)
 
 /**
  * @brief This can be used as another entry point when only the viewangles
- * are being updated isntead of a full move
+ * are being updated instead of a full move
  *
  * @param[in,out] ps
  * @param[in,out] pmext
@@ -4046,7 +4046,7 @@ void PM_UpdateLean(playerState_t *ps, usercmd_t *cmd, pmove_t *tpm)
  *
  * @note Any changes to mounted/prone view should be duplicated in BotEntityWithinView()
  *
- * @note Tnused trace parameter
+ * @note Unused trace parameter
  */
 void PM_UpdateViewAngles(playerState_t *ps, pmoveExt_t *pmext, usercmd_t *cmd, void (trace) (trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask), int tracemask)                    //   modified
 {
@@ -4439,20 +4439,23 @@ void PM_UpdateViewAngles(playerState_t *ps, pmoveExt_t *pmext, usercmd_t *cmd, v
 
 				if (traceres.allsolid /* && trace.entityNum >= MAX_CLIENTS */)
 				{
+					if (pm->debugLevel)
+					{
+						Com_Printf("%i:can't rotate\n", c_pmove);
+					}
+
 					// starting in a solid, no space
 					ps->viewangles[YAW]   = oldYaw;
 					ps->delta_angles[YAW] = ANGLE2SHORT(ps->viewangles[YAW]) - cmd->angles[YAW];
+
+					return;
 				}
-				else
-				{
-					PM_StepSlideMove(qfalse);
-				}
+
+				PM_SlideMove(qtrue);
 			}
-			else
-			{
-				// all fine
-				ps->delta_angles[YAW] = newDeltaAngle;
-			}
+
+			// all fine
+			ps->delta_angles[YAW] = newDeltaAngle;
 		}
 	}
 }

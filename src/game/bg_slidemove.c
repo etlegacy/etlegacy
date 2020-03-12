@@ -370,6 +370,11 @@ void PM_StepSlideMove(qboolean gravity)
 	// never step up when you still have up velocity
 	if (pm->ps->velocity[2] > 0 && (trace.fraction == 1.0f || DotProduct(trace.plane.normal, up) < 0.7f))
 	{
+		if (pm->debugLevel)
+		{
+			Com_Printf("%i:up velocity can't step\n", c_pmove);
+		}
+
 		return;
 	}
 
@@ -399,38 +404,6 @@ void PM_StepSlideMove(qboolean gravity)
 	// push down the final amount
 	VectorCopy(pm->ps->origin, down);
 	down[2] -= STEPSIZE;
-
-	// check legs&head separately
-	if (pm->ps->eFlags & EF_PRONE ||
-	    pm->ps->eFlags & EF_DEAD)
-	{
-		PM_TraceLegs(&trace, NULL, pm->ps->origin, down, NULL, pm->ps->viewangles, pm->trace, pm->ps->clientNum, pm->tracemask, qtrue);
-		if (trace.fraction < 1.0f)
-		{
-			// legs don't step, just fuzz.
-			VectorCopy(down_o, pm->ps->origin);
-			VectorCopy(down_v, pm->ps->velocity);
-			if (pm->debugLevel)
-			{
-				Com_Printf("%i:legs unsteppable\n", c_pmove);
-			}
-			return;
-		}
-
-		PM_TraceHead(&trace, pm->ps->origin, down, NULL, pm->ps->viewangles, pm->trace, pm->ps->clientNum, pm->tracemask, qtrue);
-		if (trace.fraction < 1.0f)
-		{
-			VectorCopy(down_o, pm->ps->origin);
-			VectorCopy(down_v, pm->ps->velocity);
-			if (pm->debugLevel)
-			{
-				Com_Printf("%i:head unsteppable\n", c_pmove);
-			}
-			return;
-		}
-	}
-
-	pm->trace(&trace, pm->ps->origin, pm->mins, pm->maxs, down, pm->ps->clientNum, pm->tracemask);
 
 	PM_TraceAll(&trace, pm->ps->origin, down, qfalse, qfalse);
 
