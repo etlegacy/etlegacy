@@ -22,10 +22,10 @@ RequestExecutionLevel admin
 Name "ET: Legacy ${VERSION}"
 OutFile "@CPACK_PACKAGE_FILE_NAME@.exe"
 BrandingText "ET: Legacy ${VERSION} | http://www.etlegacy.com"
-!define PRODUCT_DIR_REGKEY "SOFTWARE\Enemy Territory - Legacy"
-!define PRODUCT_UNINST_KEY "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Enemy Territory - Legacy"
+!define PRODUCT_DIR_REGKEY "SOFTWARE\ETLegacy"
+!define PRODUCT_UNINST_KEY "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\ETLegacy"
 InstallDirRegKey HKLM "${PRODUCT_DIR_REGKEY}" "InstallPath"
-InstallDir "$PROGRAMFILES\Enemy Territory - Legacy\"
+InstallDir "$PROGRAMFILES\ETLegacy\"
 
 ; Header file
 !include MUI2.nsh
@@ -358,8 +358,8 @@ Section "Omni-bot" OMNIBOT
 
     END:
         SetOutPath $INSTDIR
-        CreateDirectory "$SMPROGRAMS\Enemy Territory - Legacy"
-        CreateShortCut "$SMPROGRAMS\Enemy Territory - Legacy\Launch Enemy Territory - Legacy with Omni-bot.lnk" "$INSTDIR\etl.exe"  "+set omnibot_enable 1 +set omnibot_path legacy\omni-bot\"
+        CreateDirectory "$SMPROGRAMS\ETLegacy"
+        CreateShortCut "$SMPROGRAMS\ETLegacy\Launch ET Legacy with Omni-bot.lnk" "$INSTDIR\etl.exe"  "+set omnibot_enable 1 +set omnibot_path legacy\omni-bot\"
 SectionEnd
 
 Section "GeoIP" GEOIP
@@ -437,13 +437,13 @@ SectionEnd
 
 Section -Shortcuts
     SetOutPath $INSTDIR
-    CreateDirectory "$SMPROGRAMS\Enemy Territory - Legacy"
-    CreateShortCut "$SMPROGRAMS\Enemy Territory - Legacy\Visit ET: Legacy Homepage.lnk" "http://www.etlegacy.com" "" "$INSTDIR\etl.ico"
-    CreateShortCut "$SMPROGRAMS\Enemy Territory - Legacy\Launch ET: Legacy - Legacy.lnk" "$INSTDIR\etl.exe" "+set cl_renderer opengl1 +set com_hunkmegs 128"
-    CreateShortCut "$SMPROGRAMS\Enemy Territory - Legacy\Launch ET: Legacy Renderer2 - Legacy.lnk" "$INSTDIR\etl.exe" "+set cl_renderer opengl2 +set com_hunkmegs 512"
-    CreateShortCut "$SMPROGRAMS\Enemy Territory - Legacy\Play on Official Server.lnk" "et://etlegacy.com:27960" "" "$INSTDIR\etl.ico"
-    CreateShortCut "$SMPROGRAMS\Enemy Territory - Legacy\Uninstall.lnk" "$INSTDIR\uninstall.exe"
-    CreateShortCut "$DESKTOP\Enemy Territory - Legacy.lnk" "$INSTDIR\etl.exe"
+    CreateDirectory "$SMPROGRAMS\ETLegacy"
+    CreateShortCut "$SMPROGRAMS\ETLegacy\Visit ET Legacy Homepage.lnk" "http://www.etlegacy.com" "" "$INSTDIR\etl.ico"
+    CreateShortCut "$SMPROGRAMS\ETLegacy\Launch ET Legacy.lnk" "$INSTDIR\etl.exe" "+set cl_renderer opengl1 +set com_hunkmegs 128"
+    CreateShortCut "$SMPROGRAMS\ETLegacy\Launch ET Legacy - Renderer2.lnk" "$INSTDIR\etl.exe" "+set cl_renderer opengl2 +set com_hunkmegs 512"
+    CreateShortCut "$SMPROGRAMS\ETLegacy\Play on Official Server.lnk" "et://etlegacy.com:27960" "" "$INSTDIR\etl.ico"
+    CreateShortCut "$SMPROGRAMS\ETLegacy\Uninstall.lnk" "$INSTDIR\uninstall.exe"
+    CreateShortCut "$DESKTOP\ET Legacy.lnk" "$INSTDIR\etl.exe"
 SectionEnd
 
 Section -Post
@@ -510,8 +510,8 @@ Section "un.ET: Legacy" UNFILES
     DeleteRegKey HKLM "${PRODUCT_DIR_REGKEY}"
     DeleteRegKey HKLM "${PRODUCT_UNINST_KEY}"
     DeleteRegKey HKCR "et"
-    RMDir /r "$SMPROGRAMS\Enemy Territory - Legacy"
-    Delete "$DESKTOP\Enemy Territory - Legacy.lnk"
+    RMDir /r "$SMPROGRAMS\ETLegacy"
+    Delete "$DESKTOP\ET Legacy.lnk"
     SimpleFC::RemoveApplication "$INSTDIR\etl.exe"
     SimpleFC::RemoveApplication "$INSTDIR\etlded.exe"
 SectionEnd
