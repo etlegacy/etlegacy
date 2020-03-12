@@ -40,7 +40,6 @@ static int sortedFireTeamClients[MAX_CLIENTS];
 static vec4_t FT_bg = { 0.16f, 0.2f, 0.17f, 0.8f };               // header
 static vec4_t FT_bg2 = { 0.0f, 0.0f, 0.0f, 0.3f };                // box itself
 static vec4_t FT_border = { 0.5f, 0.5f, 0.5f, 0.5f };
-static vec4_t FT_noselect = { 0.0f, 0.0f, 0.0f, 0.1f };           // not selected
 static vec4_t FT_select = { 0.5f, 0.5f, 0.2f, 0.3f };             // selected member
 static vec4_t FT_text = { 0.6f, 0.6f, 0.6f, 1.0f };
 
@@ -501,11 +500,7 @@ void CG_DrawFireTeamOverlay(rectDef_t *rect)
 		// hilight selected players
 		if (ci->selected)
 		{
-			CG_FillRect(x, y + FT_BAR_YSPACING, boxWidth - 2, FT_BAR_HEIGHT, FT_select);
-		}
-		else
-		{
-			CG_FillRect(x, y + FT_BAR_YSPACING, boxWidth - 2, FT_BAR_HEIGHT, FT_noselect);
+			CG_FillRect(x, y, boxWidth - 2, FT_BAR_HEIGHT + FT_BAR_YSPACING, FT_select);
 		}
 
 		x += 4;
