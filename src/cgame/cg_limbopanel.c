@@ -2397,6 +2397,11 @@ void CG_LimboPanel_Prestige_Draw(panel_button_t *button)
 		return;
 	}
 
+	if (cgs.clientinfo[cg.clientNum].shoutcaster)
+	{
+		return;
+	}
+
 	text = va("%3i", cgs.clientinfo[cg.clientNum].prestige);
 
 	w = CG_Text_Width_Ext(text, button->font->scalex, 0, button->font->font);
@@ -2417,6 +2422,11 @@ void CG_LimboPanel_RenderPrestigeIcon(panel_button_t *button)
 	}
 
 	if (!cgs.prestige)
+	{
+		return;
+	}
+
+	if (cgs.clientinfo[cg.clientNum].shoutcaster)
 	{
 		return;
 	}
