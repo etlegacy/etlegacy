@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ET:Legacy\n"
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
-"PO-Revision-Date: 2015-07-22 09:02+0000\n"
+"PO-Revision-Date: 2018-09-21 14:30+0000\n"
 "Last-Translator: Artem Vorotnikov <artem@vorotnikov.me>\n"
 "Language-Team: English (http://www.transifex.com/etlegacy/etlegacy/language/en/)\n"
 "MIME-Version: 1.0\n"
@@ -15,18 +15,6 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Language: en\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-
-#: src/client/cl_console.c:674
-msgid "say_team:"
-msgstr ""
-
-#: src/client/cl_console.c:682
-msgid "say_fireteam:"
-msgstr ""
-
-#: src/client/cl_console.c:690
-msgid "say:"
-msgstr ""
 
 #: src/client/cl_console.c:803
 #, c-format

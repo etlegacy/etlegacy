@@ -2,14 +2,14 @@
 # Copyright (C) 2012-2018 ET: Legacy Team
 # This file is distributed under the same license as the ET:Legacy package.
 # Translators:
-# Kyu-Seok Yang <lklk9110@gmail.com>, 2016-2017
+# Kyu-Seok Yang <lklk9110@gmail.com>, 2016-2017,2020
 msgid ""
 msgstr ""
 "Project-Id-Version: ET:Legacy\n"
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
-"PO-Revision-Date: 2017-04-05 15:25+0000\n"
-"Last-Translator: rafal1137 <rafal1137@yahoo.pl>\n"
+"PO-Revision-Date: 2020-02-05 07:55+0000\n"
+"Last-Translator: Kyu-Seok Yang <lklk9110@gmail.com>\n"
 "Language-Team: Korean (http://www.transifex.com/etlegacy/etlegacy/language/ko/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -257,7 +257,7 @@ msgid "^1WEBSITE"
 msgstr ""
 
 #: etmain/ui/credits_etlegacy.menu:193 etmain/ui/credits_quit.menu:260
-msgid "© 2012-2015 ET Legacy Team - under the terms of GPL version 3."
+msgid "© 2012-2019 ET:Legacy Team - under the terms of GPL version 3."
 msgstr ""
 
 #: etmain/ui/credits_etlegacy.menu:201
@@ -1261,12 +1261,16 @@ msgstr ""
 msgid "VOTE"
 msgstr ""
 
-#: etmain/ui/ingame_main.menu:39 etmain/ui/ingame_vote.menu:53
+#: etmain/ui/ingame_main.menu:38 etmain/ui/ingame_vote.menu:53
 msgid "REFEREE"
 msgstr ""
 
-#: etmain/ui/ingame_main.menu:40 etmain/ui/ingame_vote.menu:71
+#: etmain/ui/ingame_main.menu:39 etmain/ui/ingame_vote.menu:71
 msgid "RCON"
+msgstr ""
+
+#: etmain/ui/ingame_main.menu:40
+msgid "LIMBO MENU"
 msgstr ""
 
 #: etmain/ui/ingame_main.menu:41 etmain/ui/ingame_serverinfo.menu:52
@@ -1981,7 +1985,7 @@ msgid "Use (Activate):"
 msgstr ""
 
 #: etmain/ui/options_controls.menu:87
-msgid "SELECT WEAPONS"
+msgid "SELECT CLASS AND WEAPONS"
 msgstr ""
 
 #: etmain/ui/options_controls.menu:88
@@ -3227,7 +3231,7 @@ msgid "Intensity:"
 msgstr ""
 
 #: etmain/ui/options_graphics.menu:46
-msgid "The Intensity Of Textures (requires vid_restart)"
+msgid "The intensity of textures (requires vid_restart)"
 msgstr ""
 
 #: etmain/ui/options_graphics.menu:47
@@ -3235,7 +3239,7 @@ msgid "Map overbright bits:"
 msgstr ""
 
 #: etmain/ui/options_graphics.menu:47
-msgid "The World Gets Brighter, But Paler (requires vid_restart)"
+msgid "The world gets brighter, but paler (requires vid_restart)"
 msgstr ""
 
 #: etmain/ui/options_graphics.menu:48
@@ -5228,7 +5232,7 @@ msgstr ""
 
 #: src/cgame/cg_servercmds.c:1941
 #, c-format
-msgid "Gibs:   %3d    Team Gibs:  %3d"
+msgid "Gibs:   %3d    Team Gibs:  %3d    Playtime:  %5.1f%%"
 msgstr ""
 
 #: src/cgame/cg_servercmds.c:1879
@@ -6874,6 +6878,9 @@ msgstr ""
 msgid "Most Deaths"
 msgstr ""
 
+msgid "Highest Skill Rating"
+msgstr ""
+
 msgid ""
 "\n"
 "ET: Legacy with OpenGL 3.x renderer can not run on this machine since it is missing one or more required OpenGL extensions. Please update your video card drivers and try again.\n"
@@ -7116,23 +7123,22 @@ msgid "Custom Width:"
 msgstr ""
 
 msgid ""
-"Specifies custom resolution width - requires custom resolution set. *Use on "
-"your own risk!"
+"Specifies custom resolution width (requires custom resolution set - *Use at "
+"your own risk*)"
 msgstr ""
 
 msgid "Custom Height:"
 msgstr ""
 
 msgid ""
-"Specifies custom resolution height - requires custom resolution set .*Use on"
-" your own risk!"
+"Specifies custom resolution height (requires custom resolution set - *Use at"
+" your own risk*)"
 msgstr ""
 
 msgid "Max. Frames Per Second:"
 msgstr ""
 
-msgid ""
-"Sets the limit of frames per second - keep the values between 20 and 333"
+msgid "Sets the limit of frames per second"
 msgstr ""
 
 msgid "JOYSTICK"
@@ -7232,6 +7238,9 @@ msgstr ""
 msgid "IRC nickame in channel"
 msgstr ""
 
+msgid "Kick rejoin time ms:"
+msgstr ""
+
 msgid "Auto rejoin time after kick"
 msgstr ""
 
@@ -7265,19 +7274,17 @@ msgstr ""
 msgid "COVERT OPS"
 msgstr ""
 
-msgid "Includes or excludes ET:Legacy servers with humans from the server list"
+msgid ""
+"Includes or excludes ET:Legacy servers with humans from the server list"
 msgstr ""
 
 msgid "Specify receiver of quick radio messages"
 msgstr ""
 
-msgid "Renderer:"
-msgstr ""
-
 msgid "High Quality Video:"
 msgstr ""
 
-msgid "Sets high quality video."
+msgid "Sets high quality video"
 msgstr ""
 
 msgid "Port:"
@@ -7286,7 +7293,9 @@ msgstr ""
 msgid "^1JOIN US"
 msgstr ""
 
-msgid "ET: Legacy development is a collaborative effort done in an open, transparent and friendly manner. Anyone is welcome to join our efforts!"
+msgid ""
+"ET: Legacy development is a collaborative effort done in an open, "
+"transparent and friendly manner. Anyone is welcome to join our efforts!"
 msgstr ""
 
 msgid "CHOOSE CLASS/WEAPON"
@@ -7371,4 +7380,169 @@ msgid "2. Automatic Rifle"
 msgstr ""
 
 msgid "3. Sniper Rifle"
+msgstr ""
+
+msgid "desktop resolution"
+msgstr ""
+
+msgid "custom resolution"
+msgstr ""
+
+msgid "856*480 Wide Screen"
+msgstr ""
+
+msgid "Windowed"
+msgstr ""
+
+msgid "Fullscreen"
+msgstr ""
+
+msgid "Windowed Fullscreen"
+msgstr ""
+
+msgid "Original"
+msgstr ""
+
+msgid "Other"
+msgstr ""
+
+msgid "Show Speed:"
+msgstr ""
+
+msgid "UPS + highest speed"
+msgstr ""
+
+msgid "KPH + highest speed"
+msgstr ""
+
+msgid "MPH + highest speed"
+msgstr ""
+
+msgid "Displays speed of player"
+msgstr ""
+
+msgid "Vanilla (default)  "
+msgstr ""
+
+msgid "Direct connect"
+msgstr ""
+
+msgid "Override nickname"
+msgstr ""
+
+msgid "Mute channel"
+msgstr ""
+
+msgid "Direct + Override"
+msgstr ""
+
+msgid "Direct + Mute"
+msgstr ""
+
+msgid "Override + Mute"
+msgstr ""
+
+msgid "Direct + Over. + Mute"
+msgstr ""
+
+msgid "Custom"
+msgstr ""
+
+msgid "Displays help text"
+msgstr ""
+
+msgid "Low (43 FPS)"
+msgstr ""
+
+msgid "Medium (76 FPS)"
+msgstr ""
+
+msgid "Default (85 FPS)"
+msgstr ""
+
+msgid "High (125 FPS)"
+msgstr ""
+
+msgid "ADD FAVORITE"
+msgstr ""
+
+msgid "Add this server to your favorites? IP:"
+msgstr ""
+
+msgid "Select your team, class, weapon and spawnpoint"
+msgstr ""
+
+msgid "Print all server info"
+msgstr ""
+
+msgid "Set available game options"
+msgstr ""
+
+msgid "Add this server to your favorites"
+msgstr ""
+
+msgid "Look at the legacy hall of fame"
+msgstr ""
+
+msgid "Disconnect your connection from current server"
+msgstr ""
+
+msgid "Don't press this. Be warned!"
+msgstr ""
+
+msgid "Skill Rating view"
+msgstr ""
+
+msgid "%s - Press double-%s quickly to switch scoreboard"
+msgstr ""
+
+msgid "XP view"
+msgstr ""
+
+msgid "^1CHOOSE YOUR INITIAL SETTINGS"
+msgstr ""
+
+msgid "FAVORITES"
+msgstr ""
+
+msgid "Shows all favorite servers"
+msgstr ""
+
+msgid "GEOLOCATION"
+msgstr ""
+
+msgid "Share Location:"
+msgstr ""
+
+msgid "Displays your own location in score board"
+msgstr ""
+
+msgid "Class selection:"
+msgstr ""
+
+msgid "Sets the frames per second limit for a stable render rate"
+msgstr ""
+
+msgid "LANGUAGE"
+msgstr ""
+
+msgid "Very Low (15)"
+msgstr ""
+
+msgid "Low (30)"
+msgstr ""
+
+msgid "Medium (60)"
+msgstr ""
+
+msgid "High (100)"
+msgstr ""
+
+msgid "Very High (125)"
+msgstr ""
+
+msgid "Enabled & no sound"
+msgstr ""
+
+msgid "RANDOM"
 msgstr ""

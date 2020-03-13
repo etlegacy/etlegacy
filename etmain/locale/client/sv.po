@@ -23,10 +23,10 @@ msgid "%s (UPDATE AVAILABLE)"
 msgstr "%s (UPPDATERING TILLGÄNGLIG)"
 
 msgid "MOUSE1"
-msgstr "MUS 1"
+msgstr ""
 
 msgid "MOUSE2"
-msgstr "MUS 2"
+msgstr ""
 
 msgid "SPACE"
-msgstr "BLANKSTEG"
+msgstr ""

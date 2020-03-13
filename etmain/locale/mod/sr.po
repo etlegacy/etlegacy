@@ -3,13 +3,15 @@
 # This file is distributed under the same license as the ET:Legacy package.
 # Translators:
 # Col Serra, 2018
+# Dušan V <payday47@outlook.com>, 2018
+# Dušan Vučetić <avgn234@gmail.com>, 2020
 msgid ""
 msgstr ""
 "Project-Id-Version: ET:Legacy\n"
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
-"PO-Revision-Date: 2018-11-30 14:41+0000\n"
-"Last-Translator: Artem Vorotnikov <artem@vorotnikov.me>\n"
+"PO-Revision-Date: 2020-02-23 19:09+0000\n"
+"Last-Translator: Dušan Vučetić <avgn234@gmail.com>\n"
 "Language-Team: Serbian (http://www.transifex.com/etlegacy/etlegacy/language/sr/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -257,8 +259,8 @@ msgid "^1WEBSITE"
 msgstr "^1ВЕБСАЈТ"
 
 #: etmain/ui/credits_etlegacy.menu:193 etmain/ui/credits_quit.menu:260
-msgid "© 2012-2018 ET:Legacy Team - under the terms of GPL version 3."
-msgstr "© 2012-2018 ET:Legacy Team - под условима наведеним у 3. верзији GPL лиценце."
+msgid "© 2012-2019 ET:Legacy Team - under the terms of GPL version 3."
+msgstr ""
 
 #: etmain/ui/credits_etlegacy.menu:201
 msgid "HALL OF FAME"
@@ -1069,7 +1071,7 @@ msgstr "Да"
 
 #: etmain/ui/hostgame_extended.menu:32
 msgid "Enable country flags on the server"
-msgstr "Омогућите заставе држава на серверу"
+msgstr ""
 
 #: etmain/ui/hostgame_extended.menu:36 etmain/ui/hostgame.menu:195
 msgid "ADVANCED"
@@ -1985,8 +1987,8 @@ msgid "Use (Activate):"
 msgstr "Коришћење (активирање):"
 
 #: etmain/ui/options_controls.menu:87
-msgid "SELECT WEAPONS"
-msgstr "ОДАБИР ОРУЖЈА"
+msgid "SELECT CLASS AND WEAPONS"
+msgstr ""
 
 #: etmain/ui/options_controls.menu:88
 msgid "Next Weapon:"
@@ -2126,7 +2128,7 @@ msgstr "Увек трчати:"
 
 #: etmain/ui/options_customise_game.menu:41
 msgid "Toggle walk/run"
-msgstr "Мењање ходања/трчања"
+msgstr ""
 
 #: etmain/ui/options_customise_game.menu:42
 msgid "Double-Tap Prone:"
@@ -3231,16 +3233,16 @@ msgid "Intensity:"
 msgstr "Јачина:"
 
 #: etmain/ui/options_graphics.menu:46
-msgid "The Intensity Of Textures (requires vid_restart)"
-msgstr "Јачина текстура (захтева vid_restart)"
+msgid "The intensity of textures (requires vid_restart)"
+msgstr ""
 
 #: etmain/ui/options_graphics.menu:47
 msgid "Map overbright bits:"
 msgstr "Појачано осветљење мапе:"
 
 #: etmain/ui/options_graphics.menu:47
-msgid "The World Gets Brighter, But Paler (requires vid_restart)"
-msgstr "Свет постаје светлији, али блеђи (захтева vid_restart)"
+msgid "The world gets brighter, but paler (requires vid_restart)"
+msgstr ""
 
 #: etmain/ui/options_graphics.menu:48
 msgid "Overbright Bits:"
@@ -5232,8 +5234,8 @@ msgstr "Убиства: %3d Уб. сабораца: %3d Прецизност: %5
 
 #: src/cgame/cg_servercmds.c:1941
 #, c-format
-msgid "Gibs:   %3d    Team Gibs:  %3d"
-msgstr "Разнесено: %3d Разнесено у тиму: %3d"
+msgid "Gibs:   %3d    Team Gibs:  %3d    Playtime:  %5.1f%%"
+msgstr ""
 
 #: src/cgame/cg_servercmds.c:1879
 #, c-format
@@ -6878,6 +6880,9 @@ msgstr "Највише самоубистава"
 msgid "Most Deaths"
 msgstr "Највише смрти"
 
+msgid "Highest Skill Rating"
+msgstr ""
+
 msgid ""
 "\n"
 "ET: Legacy with OpenGL 3.x renderer can not run on this machine since it is missing one or more required OpenGL extensions. Please update your video card drivers and try again.\n"
@@ -7120,24 +7125,23 @@ msgid "Custom Width:"
 msgstr "Произв. ширина:"
 
 msgid ""
-"Specifies custom resolution width - requires custom resolution set. *Use on "
-"your own risk!"
-msgstr "Одређује произв. ширину резолуције за жељену резолуцију. *Користити на сопствени ризик!"
+"Specifies custom resolution width (requires custom resolution set - *Use at "
+"your own risk*)"
+msgstr ""
 
 msgid "Custom Height:"
 msgstr "Произв. висина:"
 
 msgid ""
-"Specifies custom resolution height - requires custom resolution set .*Use on"
-" your own risk!"
-msgstr "Одређује произв. висину резолуције за жељену резолуцију. *Користити на сопствени ризик!"
+"Specifies custom resolution height (requires custom resolution set - *Use at"
+" your own risk*)"
+msgstr ""
 
 msgid "Max. Frames Per Second:"
 msgstr "Макс. слика у секунди:"
 
-msgid ""
-"Sets the limit of frames per second - keep the values between 20 and 333"
-msgstr "Ограничава слике у секунди - држати број између 20 и 333"
+msgid "Sets the limit of frames per second"
+msgstr ""
 
 msgid "JOYSTICK"
 msgstr "ЏОЈСТИК"
@@ -7282,8 +7286,8 @@ msgstr "Одредите примаоца брзих радио порука"
 msgid "High Quality Video:"
 msgstr "Видео високог квалитета:"
 
-msgid "Sets high quality video."
-msgstr "Подешава квалитет видеа."
+msgid "Sets high quality video"
+msgstr ""
 
 msgid "Port:"
 msgstr "Порт:"
@@ -7380,60 +7384,6 @@ msgstr "2. Аутоматска пушка"
 msgid "3. Sniper Rifle"
 msgstr "3. Снајперска пушка"
 
-msgid "English (default)  "
-msgstr "Енглески (стандардни)"
-
-msgid "Czech"
-msgstr "Чешки"
-
-msgid "Dutch"
-msgstr "Холандски"
-
-msgid "Finnish"
-msgstr "Фински"
-
-msgid "French"
-msgstr "Француски"
-
-msgid "German"
-msgstr "Немачки"
-
-msgid "Greek"
-msgstr "Грчки"
-
-msgid "Hungarian"
-msgstr "Мађарски"
-
-msgid "Italian"
-msgstr "Италијански"
-
-msgid "Norwegian"
-msgstr "Норвешки"
-
-msgid "Polish"
-msgstr "Пољски"
-
-msgid "Portuguese"
-msgstr "Португалски"
-
-msgid "Russian"
-msgstr "Руски"
-
-msgid "Spanish"
-msgstr "Шпански"
-
-msgid "Turkish"
-msgstr "Турски"
-
-msgid "Bulgarian"
-msgstr ""
-
-msgid "Serbian"
-msgstr ""
-
-msgid "Swedish"
-msgstr ""
-
 msgid "desktop resolution"
 msgstr "резолуција десктопа"
 
@@ -7498,4 +7448,103 @@ msgid "Direct + Over. + Mute"
 msgstr "Директно + Пром. + Пригуш."
 
 msgid "Custom"
+msgstr ""
+
+msgid "Displays help text"
+msgstr ""
+
+msgid "Low (43 FPS)"
+msgstr ""
+
+msgid "Medium (76 FPS)"
+msgstr ""
+
+msgid "Default (85 FPS)"
+msgstr ""
+
+msgid "High (125 FPS)"
+msgstr ""
+
+msgid "ADD FAVORITE"
+msgstr ""
+
+msgid "Add this server to your favorites? IP:"
+msgstr ""
+
+msgid "Select your team, class, weapon and spawnpoint"
+msgstr ""
+
+msgid "Print all server info"
+msgstr ""
+
+msgid "Set available game options"
+msgstr ""
+
+msgid "Add this server to your favorites"
+msgstr ""
+
+msgid "Look at the legacy hall of fame"
+msgstr ""
+
+msgid "Disconnect your connection from current server"
+msgstr ""
+
+msgid "Don't press this. Be warned!"
+msgstr ""
+
+msgid "Skill Rating view"
+msgstr ""
+
+msgid "%s - Press double-%s quickly to switch scoreboard"
+msgstr ""
+
+msgid "XP view"
+msgstr ""
+
+msgid "^1CHOOSE YOUR INITIAL SETTINGS"
+msgstr ""
+
+msgid "FAVORITES"
+msgstr ""
+
+msgid "Shows all favorite servers"
+msgstr ""
+
+msgid "GEOLOCATION"
+msgstr ""
+
+msgid "Share Location:"
+msgstr ""
+
+msgid "Displays your own location in score board"
+msgstr ""
+
+msgid "Class selection:"
+msgstr ""
+
+msgid "Sets the frames per second limit for a stable render rate"
+msgstr ""
+
+msgid "LANGUAGE"
+msgstr ""
+
+msgid "Very Low (15)"
+msgstr ""
+
+msgid "Low (30)"
+msgstr ""
+
+msgid "Medium (60)"
+msgstr ""
+
+msgid "High (100)"
+msgstr ""
+
+msgid "Very High (125)"
+msgstr ""
+
+msgid "Enabled & no sound"
+msgstr ""
+
+msgid "RANDOM"
 msgstr ""

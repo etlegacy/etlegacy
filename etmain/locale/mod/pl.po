@@ -12,8 +12,8 @@ msgstr ""
 "Project-Id-Version: ET:Legacy\n"
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
-"PO-Revision-Date: 2019-01-25 16:42+0000\n"
-"Last-Translator: rafal1137 <rafal1137@yahoo.pl>\n"
+"PO-Revision-Date: 2019-02-03 21:45+0000\n"
+"Last-Translator: Jakub Strelcow <jakubstrelcow@gmail.com>\n"
 "Language-Team: Polish (http://www.transifex.com/etlegacy/etlegacy/language/pl/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1085,7 +1085,7 @@ msgstr "ZAAWANSOWANA GRAFIKA"
 
 #: etmain/ui/hostgame.menu:31 etmain/ui/main.menu:106
 msgid "HOST GAME"
-msgstr "STWÓRZ GRE"
+msgstr "STWÓRZ GRĘ"
 
 #: etmain/ui/hostgame.menu:37
 msgid "SETTINGS"
@@ -2118,7 +2118,7 @@ msgstr "Język:"
 #: etmain/ui/options_customise_game.menu:36
 #: etmain/ui/profile_create_initial.menu:101 etmain/ui/profile_create.menu:94
 msgid "Set your desired language"
-msgstr "Ustaw pożądany język"
+msgstr "Wybierz pożądany język"
 
 #: etmain/ui/options_customise_game.menu:40
 msgid "PHYSICS"
@@ -4023,7 +4023,7 @@ msgstr "2. Potrzebuje Amunicji!"
 #: etmain/ui/wm_ftquickmessageAlt.menu:112
 #: etmain/ui/wm_quickmessageAlt.menu:112
 msgid "3. Need Backup!"
-msgstr "3. Potrzebuje Pomocy!"
+msgstr "3. Potrzebuje Wsparcia!"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:113
 #: etmain/ui/wm_quickmessageAlt.menu:113
@@ -4033,7 +4033,7 @@ msgstr "4. Potrzebuje Inżyniera!"
 #: etmain/ui/wm_ftquickmessageAlt.menu:114
 #: etmain/ui/wm_quickmessageAlt.menu:114
 msgid "5. Cover Me!"
-msgstr "6. Osłaniaj Mnie!"
+msgstr "5. Osłaniaj Mnie!"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:115
 #: etmain/ui/wm_quickmessageAlt.menu:115
@@ -4309,7 +4309,7 @@ msgstr "A. Potrzebuje Amunicje!"
 
 #: etmain/ui/wm_ftquickmessage.menu:112 etmain/ui/wm_quickmessage.menu:112
 msgid "B. Need Backup!"
-msgstr "B. Potrzebuje Pomocy!"
+msgstr "B. Potrzebuje Wsparcia!"
 
 #: etmain/ui/wm_ftquickmessage.menu:113 etmain/ui/wm_quickmessage.menu:113
 msgid "E. Need Engineer!"
@@ -5459,7 +5459,7 @@ msgid "vaporized himself"
 msgstr "zniszczył samego siebie"
 
 msgid "played with fire"
-msgstr "bawił się ogniem"
+msgstr "za bardzo bawił się ogniem"
 
 msgid "obliterated himself"
 msgstr "ostrzelał samego siebie"
@@ -5596,7 +5596,7 @@ msgid "Spectators"
 msgstr "Obserwatorów"
 
 msgid "You must be a player or following a player to use +stats\n"
-msgstr "Musisz być graczem lub obserwować gracza aby użyć +stats\n"
+msgstr "Musisz być graczem lub obserwować gracza, aby użyć +stats\n"
 
 msgid "You must be alive to use ^3/kill^7."
 msgstr "Musisz być żywy aby użyć ^3/kill^7."
@@ -5664,13 +5664,13 @@ msgid "Mines cleared."
 msgstr "Pole oczyszczone z min."
 
 msgid "Enemy in disguise."
-msgstr "Wróg w Przebraniu."
+msgstr "Wróg w przebraniu."
 
 msgid "Need a Medic!"
 msgstr "Potrzebuję Medyka!"
 
 msgid "I need ammo!"
-msgstr "Potrzebuję Amunicji!"
+msgstr "Potrzebuję amunicji!"
 
 msgid "I need backup!"
 msgstr "Potrzebuję wsparcia!"
@@ -5745,7 +5745,7 @@ msgid "Sorry!"
 msgstr "Przepraszam!"
 
 msgid "Oops!"
-msgstr "Oops!"
+msgstr "Ups!"
 
 msgid "Yes!"
 msgstr "Tak!"
@@ -5760,7 +5760,7 @@ msgid "Hi!"
 msgstr "Cześć!"
 
 msgid "Hello!"
-msgstr "Cześć!"
+msgstr "Witaj!"
 
 msgid "Hallo!"
 msgstr "Cześć!"
@@ -5772,7 +5772,7 @@ msgid "Auf wiedersehen."
 msgstr "Do widzenia."
 
 msgid "Bye."
-msgstr "Nara."
+msgstr "Na razie."
 
 msgid "Great shot!"
 msgstr "Świetny Strzał!"
@@ -5799,7 +5799,7 @@ msgid "Yeehaa!"
 msgstr "Yeehaa!"
 
 msgid "'Atta way, baby!"
-msgstr "Tak trzymać, maleńka!"
+msgstr "Tak trzymać maleńka!"
 
 msgid "Jahaa!"
 msgstr "Jahaa!"
@@ -5901,7 +5901,7 @@ msgid "Arming dynamite..."
 msgstr "Podkładanie dynamitu..."
 
 msgid "Dynamite is now armed with a 30 second timer!"
-msgstr "Dynamit jest uzbrojony z czasem 30 sekund!"
+msgstr "Dynamit jest uzbrojony i wybuchnie za 30 sekund!"
 
 msgid "Defusing landmine..."
 msgstr "Rozbrajanie miny..."
@@ -5919,7 +5919,7 @@ msgid "^1Spam Protection^7: VoiceChat ignored"
 msgstr "^1Ochrona przed Spamem^7: Czat Głosowy zignorowany"
 
 msgid "Mines have been reported in this area."
-msgstr "Miny zostały zgłoszone w tym terenie."
+msgstr "W tym obszarze wykryto miny."
 
 msgid "'s Landmine"
 msgstr " Miny"
@@ -5931,10 +5931,10 @@ msgid "'s Mobile Browning"
 msgstr " Mobilny Browning"
 
 msgid "'s rifle grenade"
-msgstr " granatem od rifli"
+msgstr " granatem od karabinu"
 
 msgid "'s support fire"
-msgstr " ogniem wsparcia"
+msgstr "wsparciem ogniowym"
 
 msgid "'s crew-served MG"
 msgstr " seriami z MG"
@@ -5960,7 +5960,7 @@ msgid ""
 msgstr "^3Wszyscy gracze gotowi!^7\nRozpoczęcie meczu...\n"
 
 msgid "You are on the Allied team"
-msgstr "Jesteś w Zespole Alliantów"
+msgstr "Jesteś w zespole Aliantów"
 
 msgid "^1*** Match Reset! ***\n"
 msgstr "^1*** Restart Meczu! ***\n"
@@ -6027,7 +6027,7 @@ msgid "You cannot arm dynamite near a friendly construction!"
 msgstr "Nie możesz podłożyć dynamitu w pobliżu przyjaznej konstrukcji!"
 
 msgid "Countdown started.... ^3notready^7 ignored!\n"
-msgstr "Odliczanie rozpoczęte.... ^3niegotowy^7 zignorowane!\n"
+msgstr "Odliczanie rozpoczęte.... ^3notready^7 zignorowane!\n"
 
 msgid "No complaint filed against you.\n"
 msgstr "Nie wysłano skargi przeciwko tobie.\n"
@@ -6039,7 +6039,7 @@ msgid "You have been warned by your Fireteam Commander\n"
 msgstr "Zostałeś ostrzeżony przez twojego Dowódcę Oddziału\n"
 
 msgid "You have been kicked from the fireteam"
-msgstr "Zostałeś wywalony z oddziału"
+msgstr "Zostałeś wyrzucony z oddziału"
 
 msgid "You are now the leader of your fireteam"
 msgstr "Jesteś teraz liderem twojego oddziału"
@@ -6048,7 +6048,7 @@ msgid "The fireteam you are on has been disbanded"
 msgstr "Oddział w którym jesteś rozpadł się"
 
 msgid "You have been given fireteam admin rights"
-msgstr "Dostałeś prawa Dowódcy oddziału"
+msgstr "Dostałeś prawa dowódcy oddziału"
 
 msgid "Too many players already on this Fireteam"
 msgstr "Zbyt dużo graczy już w tym Oddziale"
@@ -6095,10 +6095,10 @@ msgstr "Jesteś już w oddziale, najpierw odejdź z oddziału"
 msgid ""
 "The other player must be on the same fireteam for you to give admin rights "
 "to"
-msgstr "Dany gracz musi być w tym samym oddziale, abyś mógł dać mu prawa Dowódcy"
+msgstr "Dany gracz musi być w tym samym oddziale, abyś mógł dać mu prawa dowódcy"
 
 msgid "You must be a fireteam admin to give admin rights to someone else"
-msgstr "Musisz być Dowódcą oddziału, aby dać prawa Dowódcy komuś innemu"
+msgstr "Musisz być dowódcą oddziału, aby dać prawa dowódcy komuś innemu"
 
 msgid "Invalid referee password!\n"
 msgstr "Nieprawidłowe hasło sędziego!\n"
@@ -6135,7 +6135,7 @@ msgid "You have UNLOCKED teams\n"
 msgstr "ODBLOKOWAŁEŚ zespoły\n"
 
 msgid "The ^4Allies^7 team is LOCKED!\n"
-msgstr "Zespół ^4Alliantów^7 jest ZABLOKOWANY!\n"
+msgstr "Zespół ^4Aliantów^7 jest ZABLOKOWANY!\n"
 
 msgid "The ^1Axis^7 team is LOCKED!\n"
 msgstr "Zespół ^1Osi^7 jest ZABLOKOWANY!\n"
@@ -6174,7 +6174,7 @@ msgid "is not on the server\n"
 msgstr "nie jest na serwerze\n"
 
 msgid "^5You've been removed from the ^4Allies^7 team\n"
-msgstr "^5Zostałeś usunięty z zespołu ^4Alliantów\n"
+msgstr "^5Zostałeś usunięty z zespołu ^4Aliantów\n"
 
 msgid "^5You've been removed from the ^1Axis^7 team\n"
 msgstr "^5Zostałeś usunięty z ^7zespołu ^1Osi\n"
@@ -6238,13 +6238,13 @@ msgid "Spectators can't lock a team!\n"
 msgstr "Widzowie nie mogą zablokować zespołu!\n"
 
 msgid "The ^4Allies^7 team is now locked!\n"
-msgstr "Zespół ^4Alliancki^7 jest teraz zablokowany!\n"
+msgstr "Zespół ^4Aliantów^7 jest teraz zablokowany!\n"
 
 msgid "^3Your team is already locked!\n"
 msgstr "^3Twój zespół jest już zablokowany!\n"
 
 msgid "The ^4Allies^7 team is now unlocked!\n"
-msgstr "Zespół ^4Alliancki^7 jest już odblokowany!\n"
+msgstr "Zespół ^4Aliantów^7 jest już odblokowany!\n"
 
 msgid "^3Your team is already unlocked!\n"
 msgstr "^3Twój zespół jest juz odblokowany!\n"
@@ -6279,13 +6279,13 @@ msgid ""
 msgstr "\nUżycie: ^3\\callvote <komenda> <parametry>\n^7Dla bieżących ustawień/pomocy, użyj: ^3\\callvote <komenda> ?\n"
 
 msgid "Type ^3\\stats <player_id>^7 to see stats on an active player.\n"
-msgstr "Napisz ^3\\stats <id_gracza>^7 aby zobaczyć statystyki aktywnego gracza.\n"
+msgstr "Napisz ^3\\stats <id_gracza>^7, aby zobaczyć statystyki aktywnego gracza.\n"
 
 msgid "Spectators can't ready a team!\n"
 msgstr "Widzowie nie mogą być gotowi!\n"
 
 msgid "The ^4Allies^7 team is ready!\n"
-msgstr "Zespół ^4Alliantów^7 jest gotowy!\n"
+msgstr "Zespół ^4Aliantów^7 jest gotowy!\n"
 
 msgid "The ^1Axis^7 team is ready!\n"
 msgstr "Zespół ^1Osi^7 jest gotowy!\n"
@@ -6294,7 +6294,7 @@ msgid "A vote is already in progress.\n"
 msgstr "Głosowanie jest już w toku.\n"
 
 msgid "called a vote.\n"
-msgstr "wybrał głosowanie.\n"
+msgstr "zwołał głosowanie.\n"
 
 msgid "^5Vote passed!\n"
 msgstr "^5Głosownie zaliczone!\n"
@@ -6399,7 +6399,7 @@ msgid "^1Covert Ops^7 is not available! Choose another class!\n"
 msgstr "^1Szpieg^7 nie jest dostępny! Wybierz inną klasę!\n"
 
 msgid "You must be alive to use this command.\n"
-msgstr "Musisz być żywy, aby użyć tę komendę.\n"
+msgstr "Musisz być żywy, aby użyć tej komendy.\n"
 
 msgid "The ^1Axis^7 team is empty!  Follow command ignored.\n"
 msgstr "Zespół ^1Osi^7 jest pusty!  Komenda Follow zignorowana.\n"
@@ -6750,7 +6750,7 @@ msgid "First Aid"
 msgstr "Pierwszej Pomocy"
 
 msgid "Signals"
-msgstr "Wsparcia"
+msgstr "Radiooperatora"
 
 msgid "Light Weapons"
 msgstr "Lekkiej Broni"
@@ -6817,7 +6817,7 @@ msgid "Change privacy"
 msgstr "Zmień prywatność"
 
 msgid "Kick"
-msgstr "Wywal"
+msgstr "Wyrzuć"
 
 msgid "Warn"
 msgstr "Ostrzeż"
@@ -7024,7 +7024,7 @@ msgstr "OpenAL"
 
 #: etmain/ui/options_system.menu:48
 msgid "Set the system sound control"
-msgstr "Wybierz sterownik dźwięku"
+msgstr "Ustawia wybrany sterownik dźwięku"
 
 msgid "No can do!"
 msgstr "Nie można wykonać!"
@@ -7189,7 +7189,7 @@ msgid "Allow players to vote for teams to be shuffled by SR"
 msgstr "Pozwól graczom, aby głosowali za wymieszanie zespołów poprzez wielkość SR"
 
 msgid "SR Shuffle No Rstrt:"
-msgstr "Pomieszanie SR Bez Restartu:"
+msgstr "Pomieszanie SR Bez Rest.:"
 
 msgid "Allow players to vote for teams to be shuffled by SR without a restart"
 msgstr "Pozwól graczom, aby głosowali za wymieszanie zespołów poprzez wielkość SR bez resetu"
@@ -7516,10 +7516,10 @@ msgid "GEOLOCATION"
 msgstr "GEOLOKACJA"
 
 msgid "Share Location:"
-msgstr "Dzielenie Lokalizacji:"
+msgstr "Udostępnianie Lokalizacji:"
 
 msgid "Displays your own location in score board"
-msgstr "Wyświetla swoją lokalizację w tablicy wyników"
+msgstr "Wyświetla twoją lokalizację w tablicy wyników"
 
 msgid "Class selection:"
 msgstr "Wybór Klasy:"

@@ -3,14 +3,15 @@
 # This file is distributed under the same license as the ET:Legacy package.
 # Translators:
 # Artem Vorotnikov <artem@vorotnikov.me>, 2015
+# Jakub Strelcow <jakubstrelcow@gmail.com>, 2018
 # rafal1137 <rafal1137@yahoo.pl>, 2015
 msgid ""
 msgstr ""
 "Project-Id-Version: ET:Legacy\n"
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
-"PO-Revision-Date: 2015-07-22 11:00+0000\n"
-"Last-Translator: rafal1137 <rafal1137@yahoo.pl>\n"
+"PO-Revision-Date: 2018-09-21 14:30+0000\n"
+"Last-Translator: Artem Vorotnikov <artem@vorotnikov.me>\n"
 "Language-Team: Polish (http://www.transifex.com/etlegacy/etlegacy/language/pl/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -18,22 +19,10 @@ msgstr ""
 "Language: pl\n"
 "Plural-Forms: nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && (n%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && n%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);\n"
 
-#: src/client/cl_console.c:674
-msgid "say_team:"
-msgstr "powiedz_zespół:"
-
-#: src/client/cl_console.c:682
-msgid "say_fireteam:"
-msgstr "powiedz_oddział:"
-
-#: src/client/cl_console.c:690
-msgid "say:"
-msgstr "powiedz:"
-
 #: src/client/cl_console.c:803
 #, c-format
 msgid "%s (UPDATE AVAILABLE)"
-msgstr "%s (AKTUALIZACJA DOSTĘPNA)"
+msgstr "%s (DOSTĘPNA AKTUALIZACJA )"
 
 msgid "MOUSE1"
 msgstr "MYSZ1"

@@ -2,14 +2,14 @@
 # Copyright (C) 2012-2018 ET: Legacy Team
 # This file is distributed under the same license as the ET:Legacy package.
 # Translators:
-# Bálint Tóth-Lukács <hatcher.tb@gmail.com>, 2018
+# Bálint Tóth-Lukács <hatcher.tb@gmail.com>, 2018-2019
 msgid ""
 msgstr ""
 "Project-Id-Version: ET:Legacy\n"
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
-"PO-Revision-Date: 2018-11-30 14:41+0000\n"
-"Last-Translator: Artem Vorotnikov <artem@vorotnikov.me>\n"
+"PO-Revision-Date: 2019-01-25 16:57+0000\n"
+"Last-Translator: rafal1137 <rafal1137@yahoo.pl>\n"
 "Language-Team: Hungarian (http://www.transifex.com/etlegacy/etlegacy/language/hu/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -257,8 +257,8 @@ msgid "^1WEBSITE"
 msgstr "^1HONLAP"
 
 #: etmain/ui/credits_etlegacy.menu:193 etmain/ui/credits_quit.menu:260
-msgid "© 2012-2018 ET:Legacy Team - under the terms of GPL version 3."
-msgstr "© 2012-2018 ET:Legacy Team - a GPL v3.0 felhasználási feltételeivel védve"
+msgid "© 2012-2019 ET:Legacy Team - under the terms of GPL version 3."
+msgstr ""
 
 #: etmain/ui/credits_etlegacy.menu:201
 msgid "HALL OF FAME"
@@ -1069,7 +1069,7 @@ msgstr "Igen"
 
 #: etmain/ui/hostgame_extended.menu:32
 msgid "Enable country flags on the server"
-msgstr "Országzászlók engedélyezése a szerveren"
+msgstr ""
 
 #: etmain/ui/hostgame_extended.menu:36 etmain/ui/hostgame.menu:195
 msgid "ADVANCED"
@@ -1985,8 +1985,8 @@ msgid "Use (Activate):"
 msgstr "Használ (aktivál)"
 
 #: etmain/ui/options_controls.menu:87
-msgid "SELECT WEAPONS"
-msgstr "FEGYVEREK KIVÁLASZTÁSA"
+msgid "SELECT CLASS AND WEAPONS"
+msgstr ""
 
 #: etmain/ui/options_controls.menu:88
 msgid "Next Weapon:"
@@ -2126,7 +2126,7 @@ msgstr "Játékos mindig fut:"
 
 #: etmain/ui/options_customise_game.menu:41
 msgid "Toggle walk/run"
-msgstr "Annak beállítása, hogy a játékos alapból fusson vagy sétáljon"
+msgstr ""
 
 #: etmain/ui/options_customise_game.menu:42
 msgid "Double-Tap Prone:"
@@ -3231,16 +3231,16 @@ msgid "Intensity:"
 msgstr "Intenzitás:"
 
 #: etmain/ui/options_graphics.menu:46
-msgid "The Intensity Of Textures (requires vid_restart)"
-msgstr "A texturák intenzítiása (vid_restartot igényel)"
+msgid "The intensity of textures (requires vid_restart)"
+msgstr ""
 
 #: etmain/ui/options_graphics.menu:47
 msgid "Map overbright bits:"
 msgstr "Map overbright bits:"
 
 #: etmain/ui/options_graphics.menu:47
-msgid "The World Gets Brighter, But Paler (requires vid_restart)"
-msgstr "A világ világosabb lesz, de fakóbb is (vid_restartot igényel)"
+msgid "The world gets brighter, but paler (requires vid_restart)"
+msgstr ""
 
 #: etmain/ui/options_graphics.menu:48
 msgid "Overbright Bits:"
@@ -5232,8 +5232,8 @@ msgstr "Ölés:  %3d    Csapattárs ölés: %3d    Pontosság:  %5.1f%%"
 
 #: src/cgame/cg_servercmds.c:1941
 #, c-format
-msgid "Gibs:   %3d    Team Gibs:  %3d"
-msgstr "Gibbelés:   %3d    Csapat gibbelés:  %3d"
+msgid "Gibs:   %3d    Team Gibs:  %3d    Playtime:  %5.1f%%"
+msgstr ""
 
 #: src/cgame/cg_servercmds.c:1879
 #, c-format
@@ -6878,6 +6878,9 @@ msgstr "Legtöbb selfkill"
 msgid "Most Deaths"
 msgstr "Legtöbb halál"
 
+msgid "Highest Skill Rating"
+msgstr ""
+
 msgid ""
 "\n"
 "ET: Legacy with OpenGL 3.x renderer can not run on this machine since it is missing one or more required OpenGL extensions. Please update your video card drivers and try again.\n"
@@ -7120,24 +7123,23 @@ msgid "Custom Width:"
 msgstr "Egyéni szélesség:"
 
 msgid ""
-"Specifies custom resolution width - requires custom resolution set. *Use on "
-"your own risk!"
-msgstr "Meghatározza az egyéni felbontás szélességét. Az egyéni felbontás beállítása szükséges hozzá. *Saját felelősségedre használd!"
+"Specifies custom resolution width (requires custom resolution set - *Use at "
+"your own risk*)"
+msgstr ""
 
 msgid "Custom Height:"
 msgstr "Egyéni magasság:"
 
 msgid ""
-"Specifies custom resolution height - requires custom resolution set .*Use on"
-" your own risk!"
-msgstr "Meghatározza az egyéni felbontás magasságát. Az egyéni felbontás beállítása szükséges hozzá. *Saját felelősségedre használd!"
+"Specifies custom resolution height (requires custom resolution set - *Use at"
+" your own risk*)"
+msgstr ""
 
 msgid "Max. Frames Per Second:"
 msgstr "Maximum képkockaszám másodpercenként:"
 
-msgid ""
-"Sets the limit of frames per second - keep the values between 20 and 333"
-msgstr "Beállítja a másodpercenként mutatott képkockák maximum határát. Tartsd ezt az értéket 20 és 333 között."
+msgid "Sets the limit of frames per second"
+msgstr ""
 
 msgid "JOYSTICK"
 msgstr "JOYSTICK"
@@ -7282,8 +7284,8 @@ msgstr "Gyors rádióüzenet vevőjének meghatározása"
 msgid "High Quality Video:"
 msgstr "Magas minőségű videó:"
 
-msgid "Sets high quality video."
-msgstr "Beállítja a videók minőségét magasra."
+msgid "Sets high quality video"
+msgstr ""
 
 msgid "Port:"
 msgstr "Port:"
@@ -7380,122 +7382,167 @@ msgstr "2. Automata karabély"
 msgid "3. Sniper Rifle"
 msgstr "3. Mesterlövész puska"
 
-msgid "English (default)  "
-msgstr "Angol (alap)"
-
-msgid "Czech"
-msgstr "Cseh"
-
-msgid "Dutch"
-msgstr "Holland"
-
-msgid "Finnish"
-msgstr "Finn"
-
-msgid "French"
-msgstr "Francia"
-
-msgid "German"
-msgstr "Német"
-
-msgid "Greek"
-msgstr "Görög"
-
-msgid "Hungarian"
-msgstr "Magyar"
-
-msgid "Italian"
-msgstr "Olasz"
-
-msgid "Norwegian"
-msgstr "Norvég"
-
-msgid "Polish"
-msgstr "Lengyel"
-
-msgid "Portuguese"
-msgstr "Portugál"
-
-msgid "Russian"
-msgstr "Orosz"
-
-msgid "Spanish"
-msgstr "Spanyol"
-
-msgid "Turkish"
-msgstr "Török"
-
-msgid "Bulgarian"
-msgstr ""
-
-msgid "Serbian"
-msgstr ""
-
-msgid "Swedish"
-msgstr ""
-
 msgid "desktop resolution"
-msgstr "asztal felbontása"
+msgstr ""
 
 msgid "custom resolution"
-msgstr "egyedi felbontás"
+msgstr ""
 
 msgid "856*480 Wide Screen"
-msgstr "856*480 szélesvásznú"
+msgstr ""
 
 msgid "Windowed"
-msgstr "Ablakos"
+msgstr ""
 
 msgid "Fullscreen"
-msgstr "Teljes képernyős"
+msgstr ""
 
 msgid "Windowed Fullscreen"
-msgstr "Teljes képernyő ablakban"
+msgstr ""
 
 msgid "Original"
-msgstr "Eredeti"
+msgstr ""
 
 msgid "Other"
-msgstr "Más"
+msgstr ""
 
 msgid "Show Speed:"
-msgstr "Sebesség mutatása:"
+msgstr ""
 
 msgid "UPS + highest speed"
-msgstr "UPS + legnagyobb sebesség"
+msgstr ""
 
 msgid "KPH + highest speed"
-msgstr "KPH + legnagyobb sebesség"
+msgstr ""
 
 msgid "MPH + highest speed"
-msgstr "MPH + legnagyobb sebesség"
+msgstr ""
 
 msgid "Displays speed of player"
-msgstr "Kijelzi a játékos sebességét"
+msgstr ""
 
 msgid "Vanilla (default)  "
-msgstr "Vanilla (alap)  "
+msgstr ""
 
 msgid "Direct connect"
-msgstr "Közvetlen kapcsolat"
+msgstr ""
 
 msgid "Override nickname"
-msgstr "Becenév felülírása"
+msgstr ""
 
 msgid "Mute channel"
-msgstr "Csatorna némítása"
+msgstr ""
 
 msgid "Direct + Override"
-msgstr "Közvetlen + felülírás"
+msgstr ""
 
 msgid "Direct + Mute"
-msgstr "Közvetlen + némítás"
+msgstr ""
 
 msgid "Override + Mute"
-msgstr "Felülírás + némítás"
+msgstr ""
 
 msgid "Direct + Over. + Mute"
-msgstr "Közvetlen + felülírás + némítás"
+msgstr ""
 
 msgid "Custom"
+msgstr ""
+
+msgid "Displays help text"
+msgstr ""
+
+msgid "Low (43 FPS)"
+msgstr ""
+
+msgid "Medium (76 FPS)"
+msgstr ""
+
+msgid "Default (85 FPS)"
+msgstr ""
+
+msgid "High (125 FPS)"
+msgstr ""
+
+msgid "ADD FAVORITE"
+msgstr ""
+
+msgid "Add this server to your favorites? IP:"
+msgstr ""
+
+msgid "Select your team, class, weapon and spawnpoint"
+msgstr ""
+
+msgid "Print all server info"
+msgstr ""
+
+msgid "Set available game options"
+msgstr ""
+
+msgid "Add this server to your favorites"
+msgstr ""
+
+msgid "Look at the legacy hall of fame"
+msgstr ""
+
+msgid "Disconnect your connection from current server"
+msgstr ""
+
+msgid "Don't press this. Be warned!"
+msgstr ""
+
+msgid "Skill Rating view"
+msgstr ""
+
+msgid "%s - Press double-%s quickly to switch scoreboard"
+msgstr ""
+
+msgid "XP view"
+msgstr ""
+
+msgid "^1CHOOSE YOUR INITIAL SETTINGS"
+msgstr ""
+
+msgid "FAVORITES"
+msgstr ""
+
+msgid "Shows all favorite servers"
+msgstr ""
+
+msgid "GEOLOCATION"
+msgstr ""
+
+msgid "Share Location:"
+msgstr ""
+
+msgid "Displays your own location in score board"
+msgstr ""
+
+msgid "Class selection:"
+msgstr ""
+
+msgid "Sets the frames per second limit for a stable render rate"
+msgstr ""
+
+msgid "LANGUAGE"
+msgstr ""
+
+msgid "Very Low (15)"
+msgstr ""
+
+msgid "Low (30)"
+msgstr ""
+
+msgid "Medium (60)"
+msgstr ""
+
+msgid "High (100)"
+msgstr ""
+
+msgid "Very High (125)"
+msgstr ""
+
+msgid "Enabled & no sound"
+msgstr ""
+
+msgid "RANDOM"
 msgstr ""

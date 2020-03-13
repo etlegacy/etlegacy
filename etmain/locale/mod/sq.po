@@ -2,8 +2,6 @@
 # Copyright (C) 2012-2018 ET: Legacy Team
 # This file is distributed under the same license as the ET:Legacy package.
 # Translators:
-# jack bohlen <hahftmxpknvuu@gmail.com>, 2018
-# Oscar Vestlund <macchute@gmail.com>, 2018
 msgid ""
 msgstr ""
 "Project-Id-Version: ET:Legacy\n"
@@ -11,24 +9,24 @@ msgstr ""
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
 "PO-Revision-Date: 2019-01-25 16:57+0000\n"
 "Last-Translator: rafal1137 <rafal1137@yahoo.pl>\n"
-"Language-Team: Swedish (http://www.transifex.com/etlegacy/etlegacy/language/sv/)\n"
+"Language-Team: Albanian (http://www.transifex.com/etlegacy/etlegacy/language/sq/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: sv\n"
+"Language: sq\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: etmain/ui/credits_activision.menu:66
 msgid "PRODUCED BY ACTIVISION"
-msgstr "PRODUCERAT AV ACTIVISION"
+msgstr ""
 
 #: etmain/ui/credits_activision.menu:82
 msgid "Producer"
-msgstr "Producent"
+msgstr ""
 
 #: etmain/ui/credits_activision.menu:84
 msgid "Associate Producer"
-msgstr "Assisterande Producent"
+msgstr ""
 
 #: etmain/ui/credits_activision.menu:86
 msgid "Installer"
@@ -68,7 +66,7 @@ msgstr ""
 
 #: etmain/ui/credits_activision.menu:110
 msgid "Network"
-msgstr "Nätverk"
+msgstr ""
 
 #: etmain/ui/credits_activision.menu:112
 msgid "Compatibility"
@@ -199,35 +197,35 @@ msgstr ""
 
 #: etmain/ui/credits_etlegacy.menu:66 etmain/ui/credits_quit.menu:62
 msgid "DEVELOPED BY ET: LEGACY TEAM"
-msgstr "Utvecklat av ET:LEGACY TEAM"
+msgstr ""
 
 #: etmain/ui/credits_etlegacy.menu:85
 msgid "^1PROGRAMMING"
-msgstr "^1PROGRAMMERING"
+msgstr ""
 
 #: etmain/ui/credits_etlegacy.menu:98
 msgid "Project founder, coding & management"
-msgstr "Projektgrundare, Kodning och Förvaltning"
+msgstr ""
 
 #: etmain/ui/credits_etlegacy.menu:100
 msgid "Coding, mod development & bad boy"
-msgstr "Kodning, modutveckling & tuffing"
+msgstr ""
 
 #: etmain/ui/credits_etlegacy.menu:102
 msgid "Main windows coder & renderer"
-msgstr "Huvudsaklig windowskodare & renderare"
+msgstr ""
 
 #: etmain/ui/credits_etlegacy.menu:104
 msgid "Website, coding & scripts"
-msgstr "Webbsida, kodning & skript"
+msgstr ""
 
 #: etmain/ui/credits_etlegacy.menu:106
 msgid "Coding, mod development"
-msgstr "Kodning, modutveckling"
+msgstr ""
 
 #: etmain/ui/credits_etlegacy.menu:113
 msgid "^1PORTS"
-msgstr "^1PORTAR"
+msgstr ""
 
 #: etmain/ui/credits_etlegacy.menu:126
 msgid "AROS and MorphOS"
@@ -242,20 +240,20 @@ msgid ""
 "Many thanks to Splash Damage for their release of the source code, ioWolfET "
 "& raedwulf-et (especially Ralph Eastwood) for our code base and ioQuake3 for"
 " their inspirations."
-msgstr "Stort tack till Splash Damage som släppte källkoden, ioWolfET & raedwulf-et (speciellt Ralph Eastwood) för våran kodbas och ioQuake3 för deras inspiration."
+msgstr ""
 
 #: etmain/ui/credits_etlegacy.menu:159 etmain/ui/credits_halloffame.menu:85
 msgid "^1CONTRIBUTORS"
-msgstr "^1BIDRAGANDE"
+msgstr ""
 
 #: etmain/ui/credits_etlegacy.menu:171
 msgid "See HALL OF FAME below"
-msgstr "Se HALL OF FAME nedan"
+msgstr ""
 
 #: etmain/ui/credits_etlegacy.menu:178 etmain/ui/credits_quit.menu:245
 #: etmain/ui/profile_create_initial.menu:127
 msgid "^1WEBSITE"
-msgstr "^1HEMSIDA"
+msgstr ""
 
 #: etmain/ui/credits_etlegacy.menu:193 etmain/ui/credits_quit.menu:260
 msgid "© 2012-2019 ET:Legacy Team - under the terms of GPL version 3."
@@ -263,19 +261,19 @@ msgstr ""
 
 #: etmain/ui/credits_etlegacy.menu:201
 msgid "HALL OF FAME"
-msgstr "HALL OF FAME"
+msgstr ""
 
 #: etmain/ui/credits_et260.menu:66
 msgid "ET 2.60 UPDATE"
-msgstr "ET 2.60 UPPDATERINGEN"
+msgstr ""
 
 #: etmain/ui/credits_et260.menu:86
 msgid "ET PRO DEVELOPMENT TEAM"
-msgstr "ET PRO UTVECKLINGSTEAM"
+msgstr ""
 
 #: etmain/ui/credits_et260.menu:114
 msgid "MAC OS X PORT"
-msgstr "MAC OS X PORT"
+msgstr ""
 
 #: etmain/ui/credits_et260.menu:127 etmain/ui/credits_splashdamage.menu:128
 msgid "Lead Programmer"
@@ -390,7 +388,7 @@ msgstr ""
 
 #: etmain/ui/credits_splashdamage.menu:161
 msgid "LEVEL DESIGN"
-msgstr "Bandesign"
+msgstr ""
 
 #: etmain/ui/credits_splashdamage.menu:174
 msgid "Lead Level Designer"
@@ -435,7 +433,7 @@ msgstr ""
 #: etmain/ui/vid_confirm.menu:84 etmain/ui/vid_confirm.menu:86
 #: etmain/ui/vid_restart.menu:50 etmain/ui/viewreplay_delete.menu:53
 msgid "YES"
-msgstr "JA"
+msgstr ""
 
 #: etmain/ui/etlegacywebsite.menu:53 etmain/ui/etlegacywebsite.menu:55
 #: etmain/ui/hostgame_advanced_default.menu:127
@@ -448,129 +446,129 @@ msgstr "JA"
 #: etmain/ui/vid_confirm.menu:89 etmain/ui/vid_restart.menu:51
 #: etmain/ui/viewreplay_delete.menu:54
 msgid "NO"
-msgstr "NEJ"
+msgstr ""
 
 #: etmain/ui/hostgame_advanced_default.menu:123
 msgid "DEFAULT SERVER SETTINGS"
-msgstr "STANDARDINSTÄLLNINGAR FÖR SERVER"
+msgstr ""
 
 #: etmain/ui/hostgame_advanced_default.menu:124
 msgid "Reset server settings to default?"
-msgstr "Återställ till standardinställningar?"
+msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:25
 msgid "HOST GAME: ADVANCED"
-msgstr "SKAPA SPEL: AVANCERAT"
+msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:31
 msgid "GENERAL"
-msgstr "GENERELLT"
+msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:32
 msgid "Minimum Ping:"
-msgstr "Lägsta Ping:"
+msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:32
 msgid "Setting the minimum ping can be used to exclude LPBs (0 = No Minimum)"
-msgstr "Begränsar den lägsta ping tiden som kan användas (0 = ingen begränsning)"
+msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:33
 msgid "Maximum Ping:"
-msgstr "Högsta Ping:"
+msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:33
 msgid "Setting the maximum ping can be used to exclude HPBs (0 = No Maximum)"
-msgstr "Begränsar den högsta ping tiden som kan användas (0 = ingen begränsning)"
+msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:34
 msgid "Maximum Game Rate:"
-msgstr "Högsta Datahastighet (Rate):"
+msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:34
 msgid ""
 "Maximum rate to send game data to clients (0 = match client rate settings)"
-msgstr "Maximal hastighet som servern kan sända data till spelaren (0 = ingen begränsning)"
+msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:35
 msgid "Player Inactivity:"
-msgstr "Spelarfrånvaro:"
+msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:35
 msgid ""
 "Max time (in sec) a player can remain idle before being kicked from the "
 "server (0 = disabled)"
-msgstr "Tidgräns (i sekunder) för hur länge en spelare kan vara frånvarande innan server sparkar ut spelaren (0 = ingen begränsning)"
+msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:36
 msgid "Spectator Inactivity:"
-msgstr "Åskådarfrånvaro:"
+msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:36
 msgid ""
 "Max time (in sec) a spectator can remain idle before being kicked from the "
 "server (0 = disabled)"
-msgstr "Tidgränsen för hur länge en åskådare kan vara frånvarande innan server sparkar ut åskådaren (0 = ingen begränsning)"
+msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:37
 msgid "Intermission Time:"
-msgstr "Tid för resultattavla:"
+msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:37
 msgid "Time of intermission"
-msgstr "Tidgräns för hur länge resultattavlan visas"
+msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:38
 msgid "Intermission Ready %:"
-msgstr "Redograd för resultattavla %:"
+msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:38
 msgid "Percentage of 'ready' players to start next map"
-msgstr "Hur många spelare i procent ska vara redo för att starta nästa bana"
+msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:41
 msgid "MATCH"
-msgstr "MATCH"
+msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:42
 msgid "Wait for Ready:"
-msgstr "Vänta för redo:"
+msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:42
 msgid ""
 "Whether the server should require players to be ready before a match can "
 "start"
-msgstr "Om servern ska vänta på att spelare är redo innan en match kan startas"
+msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:43
 msgid "Minimum Players:"
-msgstr "Lägsta antal spelare:"
+msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:43
 msgid ""
 "Specifies the minimum number of players required before a match can start"
-msgstr "Hur många spelare som måste vara med innan en match kan starta"
+msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:44
 msgid "Ready percentage:"
-msgstr "Redograd:"
+msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:44
 msgid ""
 "Specifies the minimum percentage of players that must hit their ready key "
 "before a match can start"
-msgstr "Hur många procent som måste trycka \"redo\" innan en match kan starta"
+msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:45
 msgid "Allow Late Joins:"
-msgstr "Tillåt sena ankomster:"
+msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:45
 msgid "Whether a player can join a team once a match has started"
-msgstr "Om spelare kan gå med i ett lag när matchen startat"
+msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:46
 msgid "Mute Spectators:"
-msgstr "Tysta Åskådare:"
+msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:46
 msgid "Whether spectators are muted"
@@ -584,28 +582,28 @@ msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:47
 msgid "Nobody"
-msgstr "Ingen"
+msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:47
 msgid "Enemies Only"
-msgstr "Endast Fiender"
+msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:47 etmain/ui/ingame_vote_misc.menu:61
 #: etmain/ui/ingame_vote_misc_refrcon.menu:60
 msgid "Everyone"
-msgstr "Alla"
+msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:47
 msgid "Whether you can damage players during the match's warmup period"
-msgstr "Tillåta att skada andra spelare under uppvärmingsperioden"
+msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:48
 msgid "Max Players Per Team:"
-msgstr "Max antal spelare per lag:"
+msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:48
 msgid "Specifies the maximum number of players per team"
-msgstr "Specificerar max antal spelare per lag"
+msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:49
 msgid "Disable Team Controls:"
@@ -668,108 +666,108 @@ msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:53
 msgid "Map Time Limit:"
-msgstr "Banans tidsgräns:"
+msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:53
 msgid "Override the default time limit"
-msgstr "Skriv över normal tidsgräns"
+msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:54
 msgid "Allied Spawn Time:"
-msgstr "Allierades Återskapelse:"
+msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:54
 msgid "Override the default Allied spawn time"
-msgstr "Skriv över de allierades normala återskapelsetid"
+msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:55
 msgid "Axis Spawn Time:"
-msgstr "Axelmakternas Återskapelse:"
+msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:55
 msgid "Override the default Axis spawn time"
-msgstr "Skriv över axelmakternas normala återskaplsetid"
+msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:56
 msgid "Allied Max Lives:"
-msgstr "De allierades extraliv:"
+msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:56
 msgid "Specify the number of Allied lives in a max lives game"
-msgstr "Fyll i antalet extraliv för de allierade"
+msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:57
 msgid "Axis Max Lives:"
-msgstr "Axelmakternas extraliv:"
+msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:57
 msgid "Specify the number of Axis lives in a max lives game"
-msgstr "Fyll i antalet extraliv för axelmakterna"
+msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:58
 msgid "Stopwatch Round-Type:"
-msgstr "Stopklocka, rundtyp"
+msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:58
 msgid ""
 "Determines the type of Stopwatch round (ABBA = swap sides, ABAB = retain "
 "sides)"
-msgstr "Avgör typen av stopklocksrunda (ABBA = byt sidor, ABAB = behåll sidor)"
+msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:61
 msgid "LAST MAN STANDING"
-msgstr "SISTA MANNEN SOM STÅR"
+msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:63
 msgid "LMS Rounds Per Match:"
-msgstr "SMSS-rundor per match:"
+msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:63
 msgid "Override the default LMS rounds per match"
-msgstr "Skriv över standard för SMSS rundor per match"
+msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:64
 msgid "LMS Matches Per Map:"
-msgstr "SMSS matcher per bana:"
+msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:64
 msgid "Override the default LMS matches (comprising of rounds) per map"
-msgstr "Skriv över standard för SMSS matcher per bana"
+msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:65
 msgid "LMS Spectate Team Only:"
-msgstr "SMSS åskåda endast laget:"
+msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:65
 msgid "Stops players spectating the enemy team"
-msgstr "Förbjuder döda spelare att se vad det andra laget gör"
+msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:66
 msgid "LMS Locked Teams:"
-msgstr "SMSS låsta lag:"
+msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:66
 msgid "Stops players being able to switch teams"
-msgstr "Förbjuder spelare att byta lag"
+msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:69
 msgid "ADMIN"
-msgstr "ADMIN"
+msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:70
 msgid "Pure Server:"
-msgstr "Ren Server:"
+msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:70
 msgid ""
 "Limits game content to that contained in PK3 files on both the client and "
 "server with matching CRCs"
-msgstr "Begränsar PK3 paket så spelare bara får det innehåll som laddas av servern."
+msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:71 etmain/ui/hostgame.menu:44
 #: etmain/ui/popup_password.menu:84
 msgid "Password:"
-msgstr "Lösenord:"
+msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:71
 msgid "Sets the password required for players to join the server"

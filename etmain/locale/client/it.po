@@ -9,26 +9,14 @@ msgstr ""
 "Project-Id-Version: ET:Legacy\n"
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
-"PO-Revision-Date: 2016-01-09 21:51+0000\n"
-"Last-Translator: Jacker <shogaiam@gmail.com>\n"
+"PO-Revision-Date: 2018-09-21 14:30+0000\n"
+"Last-Translator: Artem Vorotnikov <artem@vorotnikov.me>\n"
 "Language-Team: Italian (http://www.transifex.com/etlegacy/etlegacy/language/it/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Language: it\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-
-#: src/client/cl_console.c:674
-msgid "say_team:"
-msgstr "messaggio_team:"
-
-#: src/client/cl_console.c:682
-msgid "say_fireteam:"
-msgstr "messaggio_fireteam:"
-
-#: src/client/cl_console.c:690
-msgid "say:"
-msgstr "messaggio:"
 
 #: src/client/cl_console.c:803
 #, c-format

@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ET:Legacy\n"
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
-"PO-Revision-Date: 2015-08-13 12:14+0000\n"
+"PO-Revision-Date: 2018-09-21 14:30+0000\n"
 "Last-Translator: Artem Vorotnikov <artem@vorotnikov.me>\n"
 "Language-Team: Russian (http://www.transifex.com/etlegacy/etlegacy/language/ru/)\n"
 "MIME-Version: 1.0\n"
@@ -16,18 +16,6 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Language: ru\n"
 "Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n%100>=11 && n%100<=14)? 2 : 3);\n"
-
-#: src/client/cl_console.c:674
-msgid "say_team:"
-msgstr "сообщить_команде:"
-
-#: src/client/cl_console.c:682
-msgid "say_fireteam:"
-msgstr "сообщить_звену:"
-
-#: src/client/cl_console.c:690
-msgid "say:"
-msgstr "сообщить:"
 
 #: src/client/cl_console.c:803
 #, c-format

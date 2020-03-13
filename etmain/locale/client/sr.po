@@ -20,13 +20,13 @@ msgstr ""
 #: src/client/cl_console.c:803
 #, c-format
 msgid "%s (UPDATE AVAILABLE)"
-msgstr "%s(АПДЕЈТ ДОСТУПАН)"
+msgstr ""
 
 msgid "MOUSE1"
-msgstr "MOUSE1"
+msgstr ""
 
 msgid "MOUSE2"
-msgstr "MOUSE2"
+msgstr ""
 
 msgid "SPACE"
-msgstr "SPACE"
+msgstr ""
