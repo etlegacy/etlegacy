@@ -3729,14 +3729,7 @@ void CG_Debriefing_MissionTitle_Draw(panel_button_t *button)
 
 	secs = MAX(60 - (cg.time - cgs.intermissionStartTime) / 1000, 0);
 
-	if (secs > 1)
-	{
-		s = va("^2%i ^9%s", secs, CG_TranslateString("SECS TO NEXT MAP"));
-	}
-	else
-	{
-		s = va("^2%i ^9%s", secs, CG_TranslateString("SEC TO NEXT MAP"));
-	}
+	s = va("%s%i ^9%s", secs < 4 ? "^1" : "^2", secs, secs > 1 ? CG_TranslateString("SECS TO NEXT MAP") : CG_TranslateString("SEC TO NEXT MAP"));
 
 	w = CG_Text_Width_Ext(s, 0.25f, 0, &cgs.media.limboFont1);
 	x = button->rect.x + button->rect.w - w - 4;
