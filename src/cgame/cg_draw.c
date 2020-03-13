@@ -1820,7 +1820,7 @@ static void CG_DrawCrosshairNames(void)
 					hasRank = (cg_drawCrosshairInfo.integer & CROSSHAIR_RANK) && cgs.clientinfo[cgs.clientinfo[cg.crosshairClientNum].disguiseClientNum].rank > 0;
 					// + 110/2
 					CG_DrawPic(middle + 55 + (hasRank ? 18 : 0), 187, 16, 16, cgs.media.prestigePics[0]);
-					CG_Text_Paint_Ext(middle + 55 + (hasRank ? 18 : 0), 198, fontScale, fontScale, color, va("%d", cgs.clientinfo[cgs.clientinfo[cg.crosshairClientNum].disguiseClientNum].prestige), 0, 0, 0, &cgs.media.limboFont2);
+					CG_Text_Paint_Ext(middle + 71 + (hasRank ? 18 : 0), 198, fontScale, fontScale, color, va("%d", cgs.clientinfo[cgs.clientinfo[cg.crosshairClientNum].disguiseClientNum].prestige), 0, 0, 0, &cgs.media.limboFont2);
 				}
 #endif
 
