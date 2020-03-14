@@ -1324,7 +1324,7 @@ static void CG_Missile(centity_t *cent)
 				if (cgs.clientinfo[cg.clientNum].shoutcaster)
 				{
 					// shoutcasters can see landmines
-					CG_DrawLandmine(cent, &ent);
+					CG_DrawMineMarkerFlag(cent, &ent, weapon);
 				}
 				else
 				{
