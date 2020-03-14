@@ -2245,20 +2245,20 @@ static void CG_DrawTimersAlt(rectDef_t *respawn, rectDef_t *spawntimer, rectDef_
 			CG_Text_Paint_Ext(roundtimer->x + w, roundtimer->y, 0.19f, 0.19f, color, s, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
 		}
 
-		if (cgs.gametype != GT_WOLF_LMS && (cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR || (cg.snap->ps.pm_flags & PMF_FOLLOW)) && cg_drawReinforcementTime.integer > 0)
+		if (cgs.gametype != GT_WOLF_LMS && cgs.clientinfo[cg.clientNum].shoutcaster && cg_drawReinforcementTime.integer > 0)
+		{
+			int reinfTimeAx = CG_CalculateShoutcasterReinfTime(TEAM_AXIS);
+			int reinfTimeAl = CG_CalculateShoutcasterReinfTime(TEAM_ALLIES);
+
+			rt = va("^1%2.0i ^$%2.0i ", reinfTimeAx, reinfTimeAl);
+		}
+		else if (cgs.gametype != GT_WOLF_LMS && (cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR || (cg.snap->ps.pm_flags & PMF_FOLLOW)) && cg_drawReinforcementTime.integer > 0)
 		{
 			int  reinfTime  = CG_CalculateReinfTime(qfalse);
 			char *teamColor = (cgs.clientinfo[cg.clientNum].shoutcaster ? (cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_AXIS ? "^1" : "^$") : "^F");
 
 			rt = va("%s%d%s", (reinfTime <= 2 && cgs.clientinfo[cg.clientNum].health == 0 &&
 			                   !(cg.snap->ps.pm_flags & PMF_FOLLOW)) ? "^3" : teamColor, reinfTime, ((cgs.timelimit <= 0.0f) ? "" : " "));
-		}
-		else if (cgs.gametype != GT_WOLF_LMS && cgs.clientinfo[cg.clientNum].shoutcaster && cg_drawReinforcementTime.integer > 0)
-		{
-			int reinfTimeAx = CG_CalculateShoutcasterReinfTime(TEAM_AXIS);
-			int reinfTimeAl = CG_CalculateShoutcasterReinfTime(TEAM_ALLIES);
-
-			rt = va("^1%2.0i ^$%2.0i ", reinfTimeAx, reinfTimeAl);
 		}
 		else
 		{
@@ -2370,20 +2370,20 @@ static float CG_DrawTimerNormal(float y)
 	}
 	else
 	{
-		if (cgs.gametype != GT_WOLF_LMS && (cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR || (cg.snap->ps.pm_flags & PMF_FOLLOW)) && cg_drawReinforcementTime.integer > 0)
+		if (cgs.gametype != GT_WOLF_LMS && cgs.clientinfo[cg.clientNum].shoutcaster && cg_drawReinforcementTime.integer > 0)
+		{
+			int reinfTimeAx = CG_CalculateShoutcasterReinfTime(TEAM_AXIS);
+			int reinfTimeAl = CG_CalculateShoutcasterReinfTime(TEAM_ALLIES);
+
+			rt = va("^1%2.0i ^$%2.0i", reinfTimeAx, reinfTimeAl);
+		}
+		else if (cgs.gametype != GT_WOLF_LMS && (cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR || (cg.snap->ps.pm_flags & PMF_FOLLOW)) && cg_drawReinforcementTime.integer > 0)
 		{
 			int  reinfTime = CG_CalculateReinfTime(qfalse);
 			char *c        = (cgs.clientinfo[cg.clientNum].shoutcaster ? (cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_AXIS ? "^1" : "^$") : "^F");
 
 			rt = va("%s%s%d", (reinfTime <= 2 && cgs.clientinfo[cg.clientNum].health == 0 &&
 			                   !(cg.snap->ps.pm_flags & PMF_FOLLOW)) ? "^3" : c, ((cgs.timelimit <= 0.0f) ? "" : " "), reinfTime);
-		}
-		else if (cgs.gametype != GT_WOLF_LMS && cgs.clientinfo[cg.clientNum].shoutcaster && cg_drawReinforcementTime.integer > 0)
-		{
-			int reinfTimeAx = CG_CalculateShoutcasterReinfTime(TEAM_AXIS);
-			int reinfTimeAl = CG_CalculateShoutcasterReinfTime(TEAM_ALLIES);
-
-			rt = va("^1%2.0i ^$%2.0i", reinfTimeAx, reinfTimeAl);
 		}
 		else
 		{
