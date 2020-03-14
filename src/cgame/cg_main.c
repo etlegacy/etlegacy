@@ -1718,6 +1718,7 @@ static void CG_RegisterGraphics(void)
 	cgs.media.spawnInvincibleShader = trap_R_RegisterShader("sprites/shield");
 	cgs.media.scoreEliminatedShader = trap_R_RegisterShader("sprites/skull");
 	cgs.media.medicReviveShader     = trap_R_RegisterShader("sprites/medic_revive");
+	cgs.media.disguisedShader       = trap_R_RegisterShader("sprites/undercover");
 
 	cgs.media.destroyShader = trap_R_RegisterShader("sprites/destroy");
 

@@ -2046,7 +2046,7 @@ static void CG_PlayerSprites(centity_t *cent)
 		}
 		if (cent->currentState.powerups & (1 << PW_OPS_DISGUISED) && cgs.clientinfo[cg.clientNum].shoutcaster)
 		{
-			CG_PlayerFloatSprite(cent, cgs.media.friendShader, height, numIcons++);
+			CG_PlayerFloatSprite(cent, cgs.media.disguisedShader, height, numIcons++);
 		}
 		return;
 	}
@@ -2104,6 +2104,12 @@ static void CG_PlayerSprites(centity_t *cent)
 			    && cgs.clientinfo[cgs.clientinfo[cent->currentState.number].disguiseClientNum].selected)
 			{
 				CG_PlayerFloatSprite(cent, cgs.media.fireteamIcon, height, numIcons++);
+			}
+
+			// shoutcasters see undercover enemies
+			if (cgs.clientinfo[cent->currentState.number].disguiseClientNum > -1 && cgs.clientinfo[cg.clientNum].shoutcaster)
+			{
+				CG_PlayerFloatSprite(cent, cgs.media.disguisedShader, height, numIcons++);
 			}
 		}
 	}

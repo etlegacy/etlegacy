@@ -1457,6 +1457,7 @@ typedef struct
 	qhandle_t scoreEliminatedShader;
 
 	qhandle_t medicReviveShader;
+	qhandle_t disguisedShader;
 	qhandle_t voiceChatShader;
 	qhandle_t balloonShader;
 	qhandle_t objectiveShader;
