@@ -3647,7 +3647,7 @@ static void CG_Draw2D(void)
 		return;
 	}
 
-	if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR)
+	if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR || cgs.clientinfo[cg.clientNum].shoutcaster)
 	{
 		CG_DrawOnScreenLabels();
 	}
