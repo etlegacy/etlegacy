@@ -630,8 +630,8 @@ void CG_ReadHudScripts(void)
 // HUD DRAWING FUNCTIONS BELLOW
 
 vec4_t HUD_Background = { 0.16f, 0.2f, 0.17f, 0.8f };
-vec4_t HUD_Border = { 0.5f, 0.5f, 0.5f, 0.5f };
-vec4_t HUD_Text = { 0.6f, 0.6f, 0.6f, 1.0f };
+vec4_t HUD_Border     = { 0.5f, 0.5f, 0.5f, 0.5f };
+vec4_t HUD_Text       = { 0.6f, 0.6f, 0.6f, 1.0f };
 
 /**
  * @brief CG_DrawPicShadowed
@@ -1885,9 +1885,12 @@ static void CG_DrawNewCompass(rectDef_t location)
 
 			if (ent->eFlags & EF_DEAD)
 			{
-				if ((cg.predictedPlayerState.stats[STAT_PLAYER_CLASS] == PC_MEDIC && ent->number == ent->clientNum) || cgs.clientinfo[cg.clientNum].shoutcaster) // && !(cgs.ccFilter & CC_FILTER_REQUESTS)
+				qboolean sameTeam = ((cg.predictedPlayerState.persistant[PERS_TEAM] == cgs.clientinfo[ent->clientNum].team) ? qtrue : qfalse);
+
+				if ((cg.predictedPlayerState.stats[STAT_PLAYER_CLASS] == PC_MEDIC && cg.predictedPlayerState.stats[STAT_HEALTH] > 0 && ent->number == ent->clientNum && sameTeam) ||
+				    (!(cg.snap->ps.pm_flags & PMF_FOLLOW) && cgs.clientinfo[cg.clientNum].shoutcaster)) // && !(cgs.ccFilter & CC_FILTER_REQUESTS)
 				{
-					if (!cgs.clientinfo[ent->clientNum].infoValid || (cg.predictedPlayerState.persistant[PERS_TEAM] != cgs.clientinfo[ent->clientNum].team && !cgs.clientinfo[cg.clientNum].shoutcaster))
+					if (!cgs.clientinfo[ent->clientNum].infoValid)
 					{
 						continue;
 					}
@@ -2574,7 +2577,7 @@ void CG_AddLagometerSnapshotInfo(snapshot_t *snap)
 
 	cgs.sampledStat.avg = cgs.sampledStat.samplesTotalElpased > 0
 	                      ? (int) (cgs.sampledStat.count / (cgs.sampledStat.samplesTotalElpased / 1000.0f) + 0.5f)
-						  : 0;
+	                      : 0;
 }
 
 /**
