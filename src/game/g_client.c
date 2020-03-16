@@ -566,7 +566,7 @@ void CopyToBodyQue(gentity_t *ent)
 	}
 	else
 	{
-		body->s.pos.trType     = TR_GRAVITY_PAUSED;
+		body->s.pos.trType     = TR_STATIONARY;
 		body->s.pos.trTime     = 0;
 		body->s.pos.trDuration = 0;
 		VectorClear(body->s.pos.trDelta);

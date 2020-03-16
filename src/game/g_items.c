@@ -1125,58 +1125,81 @@ void G_BounceItem(gentity_t *ent, trace_t *trace)
 {
 	vec3_t velocity;
 	float  dot;
-	int    hitTime = level.previousTime + (level.time - level.previousTime) * trace->fraction;
+	int    hitTime = (int)(level.previousTime + (level.time - level.previousTime) * trace->fraction);
 
 	// reflect the velocity on the trace plane
-
 	BG_EvaluateTrajectoryDelta(&ent->s.pos, hitTime, velocity, qfalse, ent->s.effect2Time);
 	dot = DotProduct(velocity, trace->plane.normal);
 	VectorMA(velocity, -2 * dot, trace->plane.normal, ent->s.pos.trDelta);
 
-	// cut the velocity to keep from bouncing forever
-	VectorScale(ent->s.pos.trDelta, ent->physicsBounce, ent->s.pos.trDelta);
-
-	// check for stop
-	if (trace->plane.normal[2] > 0 && ent->s.pos.trDelta[2] < 40)
+	if (trace->plane.normal[2] >= 0.7f || VectorLength(ent->s.pos.trDelta) < 16)
 	{
-		vectoangles(trace->plane.normal, ent->s.angles);
+		// cut the velocity to keep from bouncing forever
+		VectorScale(ent->s.pos.trDelta, ent->physicsBounce, ent->s.pos.trDelta);
 
-		// don't rotate corpse, looking too ugly
-		if (ent->s.eType != ET_CORPSE)
+		if (VectorLength(ent->s.pos.trDelta) < 40 && trace->plane.normal[2] > 0)
 		{
-			ent->s.angles[0] += 90;
-		}
-
-		if (ent->s.angles[0] > 0.0f && ent->s.angles[0] < 50.0f)
-		{
-			trace_t tr;
-			vec3_t  pos, end;
-
-			VectorCopy(trace->endpos, pos);
-
-			// align items on inclined ground
-			G_SetAngle(ent, ent->s.angles);
-			pos[2] -= (tan(DEG2RAD(ent->s.angles[0])) * ITEM_RADIUS);
-
-			// ensure the position isn't in free fall
-			VectorMA(pos, -64, trace->plane.normal, end);
-			trap_Trace(&tr, pos, ent->r.maxs, ent->r.mins, end, ent->s.number, MASK_SOLID);
-
-			if (tr.fraction != 1.0f)
+			if (trace->plane.normal[2] > 0.7f &&
+			    (trace->plane.normal[0] != 0.0f || trace->plane.normal[1] != 0.0f ||
+			     trace->plane.normal[2] != 1.0f))
 			{
-				VectorCopy(pos, trace->endpos);
-			}
-		}
-		else
-		{
-			trace->endpos[2] += 1.0f;                    // make sure it is off ground
-		}
-		//SnapVector(trace->endpos);
-		G_SetOrigin(ent, trace->endpos);
-		ent->s.groundEntityNum = trace->entityNum;
-		ent->s.pos.trType      = TR_GRAVITY_PAUSED; // allow entity to be affected by gravity again
+				vec3_t  forward, start, end;
+				trace_t tr;
+				vec3_t  outAxis[3];
 
-		return;
+				AngleVectors(ent->r.currentAngles, forward, NULL, NULL);
+				VectorCopy(trace->plane.normal, outAxis[2]);
+				ProjectPointOnPlane(outAxis[0], forward, outAxis[2]);
+
+				if (!VectorNormalize(outAxis[0]))
+				{
+					AngleVectors(ent->r.currentAngles, NULL, NULL, forward);
+					ProjectPointOnPlane(outAxis[0], forward, outAxis[2]);
+					VectorNormalize(outAxis[0]);
+				}
+
+				CrossProduct(outAxis[0], outAxis[2], outAxis[1]);
+
+				VectorNegate(outAxis[1], outAxis[1]);
+
+				AxisToAngles(outAxis, ent->r.currentAngles);
+				VectorMA(trace->endpos, -64.f, trace->plane.normal, end);
+				VectorMA(trace->endpos, 1.f, trace->plane.normal, start);
+
+				trap_Trace(&tr, start, NULL, NULL, end, ent->s.number, MASK_SOLID);
+
+				if (!tr.startsolid)
+				{
+					VectorMA(trace->endpos, tr.fraction * -64.f, trace->plane.normal, trace->endpos);
+				}
+
+				// make sure it is off ground
+				VectorMA(trace->endpos, 1.0f, trace->plane.normal, trace->endpos);
+			}
+			else
+			{
+				trace->endpos[2] += 1.0f;
+			}
+
+			G_SetAngle(ent, ent->r.currentAngles);
+			SnapVector(trace->endpos);
+			G_SetOrigin(ent, trace->endpos);
+			ent->s.groundEntityNum = trace->entityNum;
+
+			if (ent->s.groundEntityNum != ENTITYNUM_WORLD)
+			{
+				ent->s.pos.trType = TR_GRAVITY_PAUSED;  // allow entity to be affected by gravity again
+			}
+
+			return;
+		}
+
+		// bounce the angles
+		if (ent->s.apos.trType != TR_STATIONARY)
+		{
+			VectorScale(ent->s.apos.trDelta, ent->physicsBounce, ent->s.apos.trDelta);
+			ent->s.apos.trTime = level.time;
+		}
 	}
 
 	VectorCopy(ent->r.currentOrigin, ent->s.pos.trBase);
