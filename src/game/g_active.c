@@ -1742,7 +1742,7 @@ void SpectatorClientEndFrame(gentity_t *ent)
 	// if we are doing a chase cam or a remote view, grab the latest info
 	if (ent->client->sess.spectatorState == SPECTATOR_FOLLOW || (ent->client->ps.pm_flags & PMF_LIMBO))
 	{
-		int       clientNum, testtime;
+		int       testtime;
 		gclient_t *cl;
 		qboolean  do_respawn = qfalse;
 
@@ -1816,22 +1816,9 @@ void SpectatorClientEndFrame(gentity_t *ent)
 			return;
 		}
 #endif
-
-		clientNum = ent->client->sess.spectatorClient;
-
-		// team follow1 and team follow2 go to whatever clients are playing
-		if (clientNum == -1)
+		if (ent->client->sess.spectatorClient >= 0)
 		{
-			clientNum = level.follow1;
-		}
-		else if (clientNum == -2)
-		{
-			clientNum = level.follow2;
-		}
-
-		if (clientNum >= 0)
-		{
-			cl = &level.clients[clientNum];
+			cl = &level.clients[ent->client->sess.spectatorClient];
 			if (cl->pers.connected == CON_CONNECTED && cl->sess.sessionTeam != TEAM_SPECTATOR)
 			{
 				int flags = (cl->ps.eFlags & ~(EF_VOTED)) | (ent->client->ps.eFlags & (EF_VOTED));
@@ -1876,24 +1863,10 @@ void SpectatorClientEndFrame(gentity_t *ent)
 
 				return;
 			}
-			else
-			{
-				// drop them to free spectators unless they are dedicated camera followers
-				if (ent->client->sess.spectatorClient >= 0)
-				{
-					ent->client->sess.spectatorState = SPECTATOR_FREE;
-					ClientBegin(ent->client - level.clients);
-				}
-			}
 		}
-		else
-		{
-			if (clientNum == -1) // level.follow1/follow2 couldn't be found
-			{
-				ent->client->sess.spectatorState = SPECTATOR_FREE;
-				ClientBegin(ent->client - level.clients);
-			}
-		}
+
+		ent->client->sess.spectatorState = SPECTATOR_FREE;
+		ClientBegin(ent->client - level.clients);
 	}
 
 	// we are at a free-floating spec state for a player,
