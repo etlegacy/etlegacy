@@ -740,6 +740,12 @@ void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, float h,
 				}
 			}
 
+			// hide ghost icon for following shoutcaster
+			if (cgs.clientinfo[cg.clientNum].shoutcaster && (cg.snap->ps.pm_flags & PMF_FOLLOW) && cg.snap->ps.clientNum == mEnt->data)
+			{
+				return;
+			}
+
 			c_clr[3] = 1.0f;
 
 			trap_R_SetColor(c_clr);
