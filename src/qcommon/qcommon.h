@@ -654,6 +654,7 @@ modules of the program.
 */
 
 cvar_t *Cvar_Get(const char *varName, const char *value, int flags);
+cvar_t *Cvar_GetAndDescribe(const char *varName, const char *value, int flags, const char *description);
 // creates the variable if it doesn't exist, or returns the existing one
 // if it exists, the value will not be changed, but flags will be ORed in
 // that allows variables to be unarchived without needing bitflags
