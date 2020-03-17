@@ -44,8 +44,6 @@
 #include "sdl_icon.h"
 #include "sdl_splash.h"
 
-//static qboolean SDL_VIDEODRIVER_externallySet = qfalse;
-
 #ifdef __APPLE__
 #define MACOS_X_GAMMA_RESET_FIX
 #ifdef MACOS_X_GAMMA_RESET_FIX

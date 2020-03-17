@@ -699,23 +699,12 @@ dialogResult_t Sys_Dialog(dialogType_t type, const char *message, const char *ti
 	}
 }
 
-#ifndef DEDICATED
-static qboolean SDL_VIDEODRIVER_externallySet = qfalse;
-#endif
-
 /**
  * @brief Windows specific "safe" GL implementation initialisation
  */
 void Sys_GLimpSafeInit(void)
 {
-#ifndef DEDICATED
-	if (!SDL_VIDEODRIVER_externallySet)
-	{
-		// Here, we want to let SDL decide what do to unless
-		// explicitly requested otherwise
-		Sys_SetEnv("SDL_VIDEODRIVER", "");
-	}
-#endif
+	// NOP
 }
 
 /**
@@ -723,27 +712,7 @@ void Sys_GLimpSafeInit(void)
  */
 void Sys_GLimpInit(void)
 {
-#ifndef DEDICATED
-	if (!SDL_VIDEODRIVER_externallySet)
-	{
-		// It's a little bit weird having in_mouse control the
-		// video driver, but from ioq3's point of view they're
-		// virtually the same except for the mouse input anyway
-		if (Cvar_VariableIntegerValue("in_mouse") == -1)
-		{
-			// Use the windib SDL backend, which is closest to
-			// the behaviour of idq3 with in_mouse set to -1
-			Sys_SetEnv("SDL_VIDEODRIVER", "windib");
-		}
-#if 0
-		else
-		{
-			// Use the DirectX SDL backend
-			Sys_SetEnv("SDL_VIDEODRIVER", "directx");
-		}
-#endif
-	}
-#endif
+	// NOP
 }
 
 /**
@@ -1016,21 +985,6 @@ void Sys_PlatformInit(void)
 
 	// no abort/retry/fail errors
 	SetErrorMode(SEM_FAILCRITICALERRORS);
-
-#ifndef DEDICATED
-	const char *SDL_VIDEODRIVER = getenv("SDL_VIDEODRIVER");
-
-	if (SDL_VIDEODRIVER)
-	{
-		Com_Printf("SDL_VIDEODRIVER is externally set to \"%s\", "
-		           "in_mouse -1 will have no effect\n", SDL_VIDEODRIVER);
-		SDL_VIDEODRIVER_externallySet = qtrue;
-	}
-	else
-	{
-		SDL_VIDEODRIVER_externallySet = qfalse;
-	}
-#endif
 }
 
 /**
