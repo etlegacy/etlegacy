@@ -514,26 +514,18 @@ static void G_AdjustClientPositions(gentity_t *ent, int time, qboolean forward)
 	for (i = 0; i < level.numConnectedClients; i++, list++)
 	{
 		list = g_entities + level.sortedClients[i];
-		// ok lets test everything under the sun
-		if (list->client &&
-		    list->inuse &&
-		    (list->client->sess.sessionTeam == TEAM_AXIS || list->client->sess.sessionTeam == TEAM_ALLIES) &&
-		    (list != ent) &&
-		    list->r.linked &&
-		    (list->health > 0) &&
-		    !(list->client->ps.pm_flags & PMF_LIMBO) &&
-		    (list->client->ps.pm_type == PM_NORMAL)
-		    )
-		{
-			if (forward)
-			{
-				G_AdjustSingleClientPosition(list, time);
-			}
-			else
-			{
-				G_ReAdjustSingleClientPosition(list);
-			}
-		}
+
+		// dont adjust the firing client entity
+		if (list == ent) continue;
+
+        if (forward)
+        {
+            G_AdjustSingleClientPosition(list, time);
+        }
+        else
+        {
+            G_ReAdjustSingleClientPosition(list);
+        }
 	}
 }
 
@@ -547,7 +539,7 @@ void G_ResetMarkers(gentity_t *ent)
 	float period = sv_fps.value;
 	int   eFlags;
 
-	if (period == 0.f)
+	if (period <= 0.f)
 	{
 		period = 50;
 	}
@@ -869,7 +861,7 @@ void G_Trace(gentity_t *ent, trace_t *results, const vec3_t start, const vec3_t 
  * @param[in] ent
  * @return
  */
-qboolean G_SkipCorrectionSafe(gentity_t *ent)
+static qboolean G_SkipCorrectionSafe(gentity_t *ent)
 {
 	if (!ent)
 	{

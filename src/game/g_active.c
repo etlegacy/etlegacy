@@ -534,7 +534,8 @@ qboolean G_SpectatorAttackFollow(gentity_t *ent)
 	// also put the start-point a bit forward, so we don't start the trace in solid..
 	VectorMA(start, 75.0f, forward, start);
 
-	trap_Trace(&tr, start, mins, maxs, end, ent->client->ps.clientNum, CONTENTS_BODY | CONTENTS_CORPSE);
+	// trap_Trace(&tr, start, mins, maxs, end, ent->client->ps.clientNum, CONTENTS_BODY | CONTENTS_CORPSE);
+    G_HistoricalTrace(ent, &tr, start, mins, maxs, end, ent->s.number,CONTENTS_BODY | CONTENTS_CORPSE);
 
 	if ((&g_entities[tr.entityNum])->client)
 	{
@@ -1007,7 +1008,17 @@ void ClientEvents(gentity_t *ent, int oldEventSequence)
 			ent->client->ps.powerups[PW_OPS_DISGUISED] = 0;
 			ent->client->disguiseClientNum             = -1;
 
+			if (g_antilag.integer)
+            {
+                G_HistoricalTraceBegin(ent);
+            }
+
 			mg42_fire(ent);
+
+            if (g_antilag.integer)
+            {
+                G_HistoricalTraceEnd(ent);
+            }
 
 			// Only 1 stats bin for mg42
 #ifndef DEBUG_STATS
@@ -1025,7 +1036,17 @@ void ClientEvents(gentity_t *ent, int oldEventSequence)
 			ent->client->ps.powerups[PW_OPS_DISGUISED] = 0;
 			ent->client->disguiseClientNum             = -1;
 
+            if (g_antilag.integer)
+            {
+                G_HistoricalTraceBegin(ent);
+            }
+
 			mountedmg42_fire(ent);
+
+            if (g_antilag.integer)
+            {
+                G_HistoricalTraceEnd(ent);
+            }
 
 			// Only 1 stats bin for mg42
 #ifndef DEBUG_STATS
@@ -1047,7 +1068,15 @@ void ClientEvents(gentity_t *ent, int oldEventSequence)
 			ent->client->ps.powerups[PW_OPS_DISGUISED] = 0;
 			ent->client->disguiseClientNum             = -1;
 
+            if (g_antilag.integer)
+            {
+                G_HistoricalTraceBegin(ent);
+            }
 			aagun_fire(ent);
+            if (g_antilag.integer)
+            {
+                G_HistoricalTraceEnd(ent);
+            }
 			break;
 		case EV_FIRE_WEAPON:
 		case EV_FIRE_WEAPONB:
