@@ -43,6 +43,7 @@ cvar_t *sv_timeout;             // seconds without any message
 cvar_t *sv_zombietime;          // seconds to sink messages after disconnect
 cvar_t *sv_rconPassword;        // password for remote server commands
 cvar_t *sv_privatePassword;     // password for the privateClient slots
+cvar_t *sv_hidden;
 cvar_t *sv_allowDownload;
 cvar_t *sv_maxclients;
 cvar_t *sv_democlients;         // number of slots reserved for playing a demo
@@ -297,7 +298,7 @@ void SV_MasterHeartbeat(const char *msg)
 	int             netenabled;
 	char            *master;
 
-	if (!(sv_advert->integer & SVA_MASTER))
+	if (!(sv_advert->integer & SVA_MASTER) || sv_hidden->integer)
 	{
 		return;
 	}
@@ -1198,6 +1199,11 @@ static void SV_ConnectionlessPacket(netadr_t from, msg_t *msg)
 
 	if (!Q_stricmp(c, "getstatus"))
 	{
+	    if(sv_hidden->integer)
+        {
+	        return;
+        }
+
 		if ((sv_protect->integer & SVP_OWOLF) && SV_CheckDRDoS(from))
 		{
 			return;
@@ -1207,6 +1213,11 @@ static void SV_ConnectionlessPacket(netadr_t from, msg_t *msg)
 	}
 	else if (!Q_stricmp(c, "getinfo"))
 	{
+        if(sv_hidden->integer)
+        {
+            return;
+        }
+
 		if ((sv_protect->integer & SVP_OWOLF) && SV_CheckDRDoS(from))
 		{
 			return;
