@@ -75,7 +75,7 @@ void DB_ExecSQLCommand_f(void)
 		return;
 	}
 
-	return;
+	Com_DPrintf("Executed SQL query: '%s'\n", sql);
 }
 
 /**

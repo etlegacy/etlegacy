@@ -41,7 +41,7 @@
 cvar_t *db_mode;
 cvar_t *db_uri;
 
-sqlite3  *db;
+sqlite3  *db = NULL;
 qboolean isDBActive;
 
 // Important Note
@@ -113,6 +113,13 @@ qboolean DB_Init(void)
 	char *to_ospath;
 	int  msec;
 
+	if(db)
+    {
+	    Com_Printf("Database has already been initialized but not closed properly. Closing now.\n");
+	    sqlite3_close(db);
+	    db = NULL;
+    }
+
 	Com_Printf("----- Database Initialization --\n");
 
 	msec = Sys_Milliseconds();
@@ -166,6 +173,7 @@ qboolean DB_Init(void)
 			{
 				Com_Printf("... failed to open memory database - error: %s\n", sqlite3_errstr(result));
 				(void) sqlite3_close(db);
+				db = NULL;
 				return qfalse;
 			}
 
@@ -175,6 +183,7 @@ qboolean DB_Init(void)
 			{
 				Com_Printf("... failed to share memory database - error: %s\n", sqlite3_errstr(result));
 				(void) sqlite3_close(db);
+                db = NULL;
 				return qfalse;
 			}
 			else
@@ -217,6 +226,7 @@ qboolean DB_Init(void)
 		if (!DB_Create())
 		{
 			(void) sqlite3_close(db);
+			db = NULL;
 			Com_Printf(S_COLOR_YELLOW "WARNING: can't create database\n");
 			return qfalse;
 		}
@@ -231,6 +241,7 @@ qboolean DB_Init(void)
 	{
 		Com_Printf(S_COLOR_YELLOW "WARNING: SQLite3 ETL: update failed\n");
 		(void) sqlite3_close(db);
+        db = NULL;
 		isDBActive = qfalse;
 		return qfalse;
 	}
@@ -242,6 +253,7 @@ qboolean DB_Init(void)
 		{
 			Com_Printf(S_COLOR_YELLOW "WARNING: can't save memory database file\n");
 			(void) sqlite3_close(db);
+            db = NULL;
 			isDBActive = qfalse;
 			return qfalse;
 		}
@@ -567,6 +579,7 @@ qboolean DB_DeInit(void)
 	}
 
 	result     = sqlite3_close(db);
+    db         = NULL;
 	isDBActive = qfalse;
 
 	if (result != SQLITE_OK)
