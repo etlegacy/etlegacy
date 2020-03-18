@@ -1101,6 +1101,16 @@ static void IN_WindowResize(SDL_Event *e)
 	}
 }
 
+static void IN_WindowMoved(SDL_Event *e)
+{
+    int displayIndex = 0;
+    displayIndex = SDL_GetWindowDisplayIndex(GLimp_MainWindow());
+    if (displayIndex >= 0)
+    {
+        Cvar_Set("r_windowLocation", va("%d,%d,%d", displayIndex, e->window.data1, e->window.data2));
+    }
+}
+
 /*
  * @brief IN_WindowFocusLost
  * @note Unused
@@ -1294,6 +1304,9 @@ static void IN_ProcessEvents(void)
 				}
 			}
 			break;
+			case SDL_WINDOWEVENT_MOVED:
+			    IN_WindowMoved(&e);
+			    break;
 			}
 			break;
 		default:
