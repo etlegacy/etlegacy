@@ -60,7 +60,6 @@ menuDef {
 	MULTIACTION( 8, GRAPHICS_Y+112, (SUBWINDOW_WIDTH_L)-4, 10, _("Map overbright bits:"), .2, 8, "ui_r_mapoverbrightbits", cvarFloatList { "0" 0 "1" 1 "2" 2 "3" 3 }, uiScript update "ui_glCustom", _("The world gets brighter, but paler (requires vid_restart)") )
 	YESNOACTION( 8, GRAPHICS_Y+124, (SUBWINDOW_WIDTH_L)-4, 10, _("Overbright Bits:"), .2, 8, "ui_r_overBrightBits", uiScript update "ui_glCustom", _("Map shines brighter (requires vid_restart)") )
 	MULTIACTION( 8, GRAPHICS_Y+136, (SUBWINDOW_WIDTH_L)-4, 10, _("Max. Frames Per Second:"), .2, 8, "com_maxfps", cvarFloatList { "Very Low (43 FPS)" 43 "Low (76 FPS)" 76 "Medium (85 FPS)" 85 "High (125 FPS)" 125 "Very High (250 FPS)" 250 }, uiScript update "ui_glCustom", _("Sets the frames per second limit for a stable render rate") )
-	YESNOACTION( 8, GRAPHICS_Y+148, (SUBWINDOW_WIDTH_L)-4, 10, _("High Quality Video:"), .2, 8, "r_highQualityVideo", uiScript update "ui_glCustom", _("Sets high quality video") )
 
 // Advanced graphics //
 #define GRAPHICSADVANCED_Y 196

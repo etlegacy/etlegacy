@@ -130,7 +130,7 @@ menuDef {
 		( "abort" )
 
 		conditionalscript com_recommended 3
-		( "setcvar ui_glCustom 1 ; setcvar r_highQualityVideo 1 ; uiScript update ui_glCustom" )
+		( "setcvar ui_glCustom 1 ; uiScript update ui_glCustom" )
 		( "copycvar com_recommended ui_glCustom ; uiScript update ui_glCustom" ) "-1" )
 
 	LABEL( 6, SUBWINDOW_Y+304, .7*(WINDOW_WIDTH-24), 10, _("^1LET'S KEEP ET ALIVE!"), .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
