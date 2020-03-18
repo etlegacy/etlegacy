@@ -2204,9 +2204,17 @@ void CG_parseWeaponStatsGS_cmd(void)
 					Q_strcat(strName, sizeof(strName), va("                "));
 				}
 
-				Q_strncpyz(gs->strWS[gs->cWeapons++],
-				           va("%s%5d %6d%s", strName, nKills, nDeaths, aWeaponInfo[i].fHasHeadShots ? va(" %8d", nHeadshots) : ""),
-				           sizeof(gs->strWS[0]));
+				// syringe doesn't have kill/death stats
+				if (i == WS_SYRINGE)
+				{
+					Q_strncpyz(gs->strWS[gs->cWeapons++], va("%s", strName), sizeof(gs->strWS[0]));
+				}
+				else
+				{
+					Q_strncpyz(gs->strWS[gs->cWeapons++],
+					           va("%s%5d %6d%s", strName, nKills, nDeaths, aWeaponInfo[i].fHasHeadShots ? va(" %8d", nHeadshots) : ""),
+					           sizeof(gs->strWS[0]));
+				}
 
 				if (nShots > 0 || nHits > 0 || nKills > 0 || nDeaths)
 				{
@@ -2471,7 +2479,12 @@ void CG_parseWeaponStats_cmd(void (txt_dump) (const char *))
 					}
 				}
 
-				if (fFull)
+				// syringe doesn't have kill/death stats
+				if (i == WS_SYRINGE)
+				{
+					txt_dump(va("%s\n", strName));
+				}
+				else if (fFull)
 				{
 					txt_dump(va("%s^2%5d ^1%6d%s\n", strName, kills, deaths, aWeaponInfo[i].fHasHeadShots ? va(" ^3%9d", headshots) : ""));
 				}
