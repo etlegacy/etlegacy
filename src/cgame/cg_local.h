@@ -2428,9 +2428,7 @@ extern weaponInfo_t cg_weapons[MAX_WEAPONS];
 extern markPoly_t   cg_markPolys[MAX_MARK_POLYS];
 
 extern vmCvar_t cg_centertime;
-extern vmCvar_t cg_bobup;
-extern vmCvar_t cg_bobpitch;
-extern vmCvar_t cg_bobroll;
+extern vmCvar_t cg_bobbing;
 
 extern vmCvar_t cg_swingSpeed;
 extern vmCvar_t cg_shadows;

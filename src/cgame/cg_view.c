@@ -581,7 +581,6 @@ static void CG_OffsetFirstPersonView(void)
 	float    speed;
 	float    f;
 	int      timeDelta;
-	qboolean useLastValidBob = qfalse;
 
 	if (cg.snap->ps.pm_type == PM_INTERMISSION)
 	{
@@ -682,42 +681,46 @@ static void CG_OffsetFirstPersonView(void)
 #endif
 
 	// add angles based on bob
-
-	// make sure the bob is visible even at low speeds
-	speed = cg.xyspeed > 200 ? cg.xyspeed : 200;
-
-	if (cg.bobfracsin == 0.f && cg.lastvalidBobfracsin > 0)
+	if (cg_bobbing.integer)
 	{
-		// 200 msec to get back to center from 1
-		// that's 1/200 per msec = 0.005 per msec
-		cg.lastvalidBobfracsin -= 0.005 * cg.frametime;
-		useLastValidBob         = qtrue;
-	}
+		qboolean useLastValidBob = qfalse;
 
-	delta = useLastValidBob ? cg.lastvalidBobfracsin * cg_bobpitch.value * speed : cg.bobfracsin * cg_bobpitch.value * speed;
-	if (cg.predictedPlayerState.pm_flags & PMF_DUCKED)
-	{
-		delta *= 3;     // crouching
-	}
+		// make sure the bob is visible even at low speeds
+		speed = cg.xyspeed > 200 ? cg.xyspeed : 200;
 
-	angles[PITCH] += delta;
-	delta          = useLastValidBob ? cg.lastvalidBobfracsin * cg_bobroll.value * speed : cg.bobfracsin * cg_bobroll.value * speed;
-	if (cg.predictedPlayerState.pm_flags & PMF_DUCKED)
-	{
-		delta *= 3;     // crouching accentuates roll
-	}
-	if (useLastValidBob)
-	{
-		if (cg.lastvalidBobcycle & 1)
+		if (cg.bobfracsin == 0.f && cg.lastvalidBobfracsin > 0)
+		{
+			// 200 msec to get back to center from 1
+			// that's 1/200 per msec = 0.005 per msec
+			cg.lastvalidBobfracsin -= 0.005 * cg.frametime;
+			useLastValidBob         = qtrue;
+		}
+
+		delta = useLastValidBob ? cg.lastvalidBobfracsin * 0.002 * speed : cg.bobfracsin * 0.002 * speed;
+		if (cg.predictedPlayerState.pm_flags & PMF_DUCKED)
+		{
+			delta *= 3;     // crouching
+		}
+
+		angles[PITCH] += delta;
+		delta          = useLastValidBob ? cg.lastvalidBobfracsin * 0.002 * speed : cg.bobfracsin * 0.002 * speed;
+		if (cg.predictedPlayerState.pm_flags & PMF_DUCKED)
+		{
+			delta *= 3;     // crouching accentuates roll
+		}
+		if (useLastValidBob)
+		{
+			if (cg.lastvalidBobcycle & 1)
+			{
+				delta = -delta;
+			}
+		}
+		else if (cg.bobcycle & 1)
 		{
 			delta = -delta;
 		}
+		angles[ROLL] += delta;
 	}
-	else if (cg.bobcycle & 1)
-	{
-		delta = -delta;
-	}
-	angles[ROLL] += delta;
 
 //===================================
 
@@ -765,17 +768,20 @@ static void CG_OffsetFirstPersonView(void)
 	}
 
 	// add bob height
-	bob = cg.bobfracsin * cg.xyspeed * cg_bobup.value;
-	if (bob > 6)
+	if (cg_bobbing.integer)
 	{
-		bob = 6;
-	}
-	if (bob < 0)
-	{
-		bob = 0;
-	}
+		bob = cg.bobfracsin * cg.xyspeed * 0.005;
+		if (bob > 6)
+		{
+			bob = 6;
+		}
+		if (bob < 0)
+		{
+			bob = 0;
+		}
 
-	origin[2] += bob;
+		origin[2] += bob;
+	}
 
 	// add fall height
 	delta = cg.time - cg.landTime;

@@ -122,9 +122,7 @@ centity_t    cg_entities[MAX_GENTITIES];
 weaponInfo_t cg_weapons[MAX_WEAPONS];
 
 vmCvar_t cg_centertime;
-vmCvar_t cg_bobup;
-vmCvar_t cg_bobpitch;
-vmCvar_t cg_bobroll;
+vmCvar_t cg_bobbing;
 vmCvar_t cg_swingSpeed;
 vmCvar_t cg_shadows;
 vmCvar_t cg_gibs;
@@ -403,9 +401,7 @@ static cvarTable_t cvarTable[] =
 	{ &cg_gun_y,                  "cg_gunY",                   "0",           CVAR_TEMP,                    0 },
 	{ &cg_gun_z,                  "cg_gunZ",                   "0",           CVAR_TEMP,                    0 },
 	{ &cg_centertime,             "cg_centertime",             "5",           CVAR_ARCHIVE,                 0 }, // changed from 3 to 5
-	{ &cg_bobup,                  "cg_bobup",                  "0.005",       CVAR_ARCHIVE,                 0 },
-	{ &cg_bobpitch,               "cg_bobpitch",               "0.002",       CVAR_ARCHIVE,                 0 },
-	{ &cg_bobroll,                "cg_bobroll",                "0.002",       CVAR_ARCHIVE,                 0 },
+	{ &cg_bobbing,                "cg_bobbing",                "1",           CVAR_ARCHIVE,                 0 },
 
 	{ &cg_autoactivate,           "cg_autoactivate",           "1",           CVAR_ARCHIVE,                 0 },
 
