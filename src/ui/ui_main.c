@@ -5635,6 +5635,7 @@ void UI_RunMenuScript(char **args)
 			int   ui_r_colorbits                      = (int)(trap_Cvar_VariableValue("r_colorbits"));
 			int   ui_r_fullscreen                     = (int)(trap_Cvar_VariableValue("r_fullscreen"));
 			int   ui_r_noborder                       = (int)(trap_Cvar_VariableValue("r_noborder"));
+			int   ui_r_centerwindow                   = (int)(trap_Cvar_VariableValue("r_centerwindow"));
 			float ui_r_intensity                      = trap_Cvar_VariableValue("r_intensity");
 			int   ui_r_mapoverbrightbits              = (int)(trap_Cvar_VariableValue("r_mapoverbrightbits"));
 			int   ui_r_overBrightBits                 = (int)(trap_Cvar_VariableValue("r_overBrightBits"));
@@ -5679,6 +5680,7 @@ void UI_RunMenuScript(char **args)
 
 			trap_Cvar_Set("ui_r_fullscreen", va("%i", ui_r_fullscreen));
 			trap_Cvar_Set("ui_r_noborder", va("%i", ui_r_noborder));
+			trap_Cvar_Set("ui_r_centerwindow", va("%i", ui_r_centerwindow));
 			trap_Cvar_Set("ui_r_mapoverbrightbits", va("%i", ui_r_mapoverbrightbits));
 			trap_Cvar_Set("ui_r_overBrightBits", va("%i", ui_r_overBrightBits));
 			trap_Cvar_Set("ui_r_lodbias", va("%i", ui_r_lodbias));
@@ -5742,6 +5744,7 @@ void UI_RunMenuScript(char **args)
 			int   ui_r_colorbits                      = (int)(trap_Cvar_VariableValue("ui_r_colorbits"));
 			int   ui_r_fullscreen                     = (int)(trap_Cvar_VariableValue("ui_r_fullscreen"));
 			int   ui_r_noborder                       = (int)(trap_Cvar_VariableValue("ui_r_noborder"));
+			int   ui_r_centerwindow                   = (int)(trap_Cvar_VariableValue("ui_r_centerwindow"));
 			float ui_r_intensity                      = trap_Cvar_VariableValue("ui_r_intensity");
 			int   ui_r_mapoverbrightbits              = (int)(trap_Cvar_VariableValue("ui_r_mapoverbrightbits"));
 			int   ui_r_overBrightBits                 = (int)(trap_Cvar_VariableValue("ui_r_overBrightBits"));
@@ -5792,6 +5795,7 @@ void UI_RunMenuScript(char **args)
 			}
 
 			trap_Cvar_Set("r_noborder", va("%i", ui_r_noborder));
+			trap_Cvar_Set("r_centerwindow", va("%i", ui_r_centerwindow));
 			trap_Cvar_Set("r_intensity", va("%f", ui_r_intensity));
 			trap_Cvar_Set("r_mapoverbrightbits", va("%i", ui_r_mapoverbrightbits));
 			trap_Cvar_Set("r_overBrightBits", va("%i", ui_r_overBrightBits));
@@ -5822,6 +5826,7 @@ void UI_RunMenuScript(char **args)
 			trap_Cvar_Set("ui_r_colorbits", "");
 			trap_Cvar_Set("ui_r_fullscreen", "");
 			trap_Cvar_Set("ui_r_noborder", "");
+			trap_Cvar_Set("ui_r_centerwindow", "");
 			trap_Cvar_Set("ui_r_intensity", "");
 			trap_Cvar_Set("ui_r_mapoverbrightbits", "");
 			trap_Cvar_Set("ui_r_overBrightBits", "");
