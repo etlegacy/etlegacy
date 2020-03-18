@@ -257,8 +257,9 @@ void GLimp_Shutdown(void)
 	if (main_window)
 	{
 	    int tmpX = SDL_WINDOWPOS_UNDEFINED, tmpY = SDL_WINDOWPOS_UNDEFINED;
+	    int displayIndex = SDL_GetWindowDisplayIndex(main_window);
         SDL_GetWindowPosition(main_window, &tmpX, &tmpY);
-        Cvar_Set("r_windowLocation", va("%d,%d", tmpX, tmpY));
+        Cvar_Set("r_windowLocation", va("%d,%d,%d", displayIndex, tmpX, tmpY));
 
 		SDL_DestroyWindow(main_window);
 		main_window = NULL;
