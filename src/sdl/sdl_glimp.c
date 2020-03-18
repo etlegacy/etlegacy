@@ -404,7 +404,7 @@ static void GLimp_DetectAvailableModes(void)
 }
 
 /**
- * Setup the window location based on the previous sessions location and display
+ * @brief Setup the window location based on the previous sessions location and display
  * @param glConfig[in] current gl configuration
  * @param x[in,out] X location
  * @param y[in,out] Y location
