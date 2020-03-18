@@ -483,6 +483,14 @@ static void GLimp_WindowLocation(glconfig_t *glConfig, int *x, int *y, const qbo
     SDL_Rect rect;
     SDL_GetDisplayBounds(displayIndex, &rect);
 
+    // SDL resets the values to displays origins when switching between windowed and fullscreen, so just move it a bit
+    if(tmpX == rect.x && tmpY == rect.y)
+    {
+        *x = SDL_WINDOWPOS_UNDEFINED_DISPLAY(displayIndex);
+        *y = SDL_WINDOWPOS_UNDEFINED_DISPLAY(displayIndex);
+        return;
+    }
+
     // Make sure we have at least half of the game screen visible on the display its supposed to be in
     if ((tmpX + (glConfig->vidWidth / 2)) > rect.x && (tmpX + (glConfig->vidWidth / 2)) < (rect.x + rect.w)
     && (tmpY + (glConfig->vidHeight / 2)) > rect.y && (tmpY + (glConfig->vidHeight / 2)) < (rect.y + rect.h))
