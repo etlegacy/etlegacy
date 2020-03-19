@@ -1798,10 +1798,10 @@ static void CG_RegisterGraphics(void)
 	cgs.media.ccCmdPost[0] = trap_R_RegisterShaderNoMip("gfx/limbo/cm_bo_axis");
 	cgs.media.ccCmdPost[1] = trap_R_RegisterShaderNoMip("gfx/limbo/cm_bo_allied");
 
-	cgs.media.ccMortarHit         = trap_R_RegisterShaderNoMip("gfx/limbo/cm_mort_hit");
-	cgs.media.ccMortarTarget      = trap_R_RegisterShaderNoMip("gfx/limbo/cm_mort_target");
-	cgs.media.mortarTarget        = trap_R_RegisterShaderNoMip("gfx/limbo/mort_target");
-	cgs.media.mortarTargetArrow   = trap_R_RegisterShaderNoMip("gfx/limbo/mort_targetarrow");
+	cgs.media.ccMortarHit       = trap_R_RegisterShaderNoMip("gfx/limbo/cm_mort_hit");
+	cgs.media.ccMortarTarget    = trap_R_RegisterShaderNoMip("gfx/limbo/cm_mort_target");
+	cgs.media.mortarTarget      = trap_R_RegisterShaderNoMip("gfx/limbo/mort_target");
+	cgs.media.mortarTargetArrow = trap_R_RegisterShaderNoMip("gfx/limbo/mort_targetarrow");
 
 	cgs.media.skillPics[SK_BATTLE_SENSE]                             = trap_R_RegisterShaderNoMip("gfx/limbo/ic_battlesense");
 	cgs.media.skillPics[SK_EXPLOSIVES_AND_CONSTRUCTION]              = trap_R_RegisterShaderNoMip("gfx/limbo/ic_engineer");
@@ -2573,6 +2573,7 @@ void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qbo
 {
 	const char *s;
 	int        i;
+	char       versionString[128];
 	DEBUG_INITPROFILE_INIT
 
 	//int startat = trap_Milliseconds();
@@ -2712,11 +2713,13 @@ void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qbo
 	/* mark old and new clients */
 	if (cg.legacyClient <= 0)
 	{
-		trap_Cvar_Set("cg_etVersion", "Enemy Territory, ET 2.60b");
+		trap_Cvar_VariableStringBuffer("version", versionString, sizeof(versionString));
+		trap_Cvar_Set("cg_etVersion", versionString[0] ? versionString : "(undetected)");
 	}
 	else
 	{
-		trap_Cvar_Set("cg_etVersion", Q3_VERSION);
+		sprintf(versionString, "%i", clientVersion);
+		trap_Cvar_Set("cg_etVersion", va(PRODUCT_LABEL " v%c.%s %s", versionString[0], versionString + 1, CPUSTRING));
 	}
 
 #if 0
