@@ -1377,9 +1377,9 @@ qboolean CG_DrawScoreboard(void)
 		}
 		else
 		{
-			WM_TeamScoreboard(x, y, TEAM_AXIS, fade, 22, 30);
+			WM_TeamScoreboard(x, y, TEAM_AXIS, fade, 18, 30);
 			x = x_right;
-			WM_TeamScoreboard(x, y, TEAM_ALLIES, fade, 22, 30);
+			WM_TeamScoreboard(x, y, TEAM_ALLIES, fade, 18, 30);
 		}
 	}
 
