@@ -1250,99 +1250,7 @@ static void CG_DrawPowerUps(rectDef_t rect)
 		// show the class to the client
 		CG_DrawPic(rect.x + 9, rect.y + 9, 18, 18, cgs.media.skillPics[BG_ClassSkillForClass((cg_entities[ps->clientNum].currentState.powerups >> PW_OPS_CLASS_1) & 7)]);
 	}
-	else if (ps->powerups[PW_INVULNERABLE] && !(ps->pm_flags & PMF_LIMBO))       // spawn shield
-	{
-		CG_DrawPic(rect.x, rect.y, rect.w, rect.h, cgs.media.spawnInvincibleShader);
-	}
-	// adrenaline
-	else if (ps->powerups[PW_ADRENALINE] > 0)
-	{
-		vec4_t color = { 1.0, 0.0, 0.0, 1.0 };
-		color[3] *= 0.5 + 0.5 * sin(cg.time / 150.0);
-		trap_R_SetColor(color);
-		CG_DrawPic(rect.x, rect.y, rect.w, rect.h, cgs.media.hudAdrenaline);
-		trap_R_SetColor(NULL);
-	}
-	else if (cgs.clientinfo[cg.clientNum].shoutcaster && !(cg.snap->ps.pm_flags & PMF_FOLLOW))
-	{
-		// simplified version for shoutcaster when not following players
-		vec4_t color = { 1.f, 1.f, 1.f, 1.f };
-		color[3] *= 0.67 + 0.33 * sin(cg.time / 200.0);
-		trap_R_SetColor(color);
-
-		if (cg.flagIndicator & (1 << PW_REDFLAG) && cg.flagIndicator & (1 << PW_BLUEFLAG))
-		{
-			if (cg.redFlagCounter > 0 && cg.blueFlagCounter > 0)
-			{
-				// both team stole an enemy flags
-				CG_DrawPic(rect.x, rect.y, rect.w, rect.h, cgs.media.objectiveTeamShader);
-			}
-			else if ((cg.redFlagCounter > 0 && !cg.blueFlagCounter) || (!cg.redFlagCounter && cg.blueFlagCounter > 0))
-			{
-				// one flag stolen and the other flag dropped
-				CG_DrawPic(rect.x, rect.y, rect.w, rect.h, cgs.media.objectiveTeamShader);
-			}
-			else
-			{
-				// both team dropped flags
-				CG_DrawPic(rect.x, rect.y, rect.w, rect.h, cgs.media.objectiveDroppedShader);
-			}
-			trap_R_SetColor(NULL);
-
-			// display team flag
-			color[3] = 1.f;
-			trap_R_SetColor(color);
-			CG_DrawPic(rect.x + rect.w / 2 - 20, rect.y + 28, 12, 8, cgs.media.axisFlag);
-			CG_DrawPic(rect.x + rect.w / 2 + 8, rect.y + 28, 12, 8, cgs.media.alliedFlag);
-		}
-		else if (cg.flagIndicator & (1 << PW_REDFLAG))
-		{
-			if (cg.redFlagCounter > 0)
-			{
-				CG_DrawPic(rect.x, rect.y, rect.w, rect.h, cgs.media.objectiveTeamShader);
-			}
-			else
-			{
-				CG_DrawPic(rect.x, rect.y, rect.w, rect.h, cgs.media.objectiveDroppedShader);
-			}
-			trap_R_SetColor(NULL);
-
-			// display team flag
-			color[3] = 1.f;
-			trap_R_SetColor(color);
-			CG_DrawPic(rect.x + rect.w / 2 + 8, rect.y + 28, 12, 8, cgs.media.alliedFlag);
-		}
-		else if (cg.flagIndicator & (1 << PW_BLUEFLAG))
-		{
-			if (cg.blueFlagCounter > 0)
-			{
-				CG_DrawPic(rect.x, rect.y, rect.w, rect.h, cgs.media.objectiveTeamShader);
-			}
-			else
-			{
-				CG_DrawPic(rect.x, rect.y, rect.w, rect.h, cgs.media.objectiveDroppedShader);
-			}
-			trap_R_SetColor(NULL);
-
-			// display team flag
-			color[3] = 1.f;
-			trap_R_SetColor(color);
-			CG_DrawPic(rect.x + rect.w / 2 - 20, rect.y + 28, 12, 8, cgs.media.axisFlag);
-		}
-
-		// display active flag counter
-		if (cg.redFlagCounter > 1)
-		{
-			CG_Text_Paint_Ext(rect.x + rect.w / 2 + 12, rect.y + 38, 0.18, 0.18, colorWhite, va("%i", cg.redFlagCounter), 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
-		}
-		if (cg.blueFlagCounter > 1)
-		{
-			CG_Text_Paint_Ext(rect.x + rect.w / 2 - 16, rect.y + 38, 0.18, 0.18, colorWhite, va("%i", cg.blueFlagCounter), 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
-		}
-
-		trap_R_SetColor(NULL);
-	}
-	else
+	else if (cg.flagIndicator & (1 << PW_REDFLAG) || cg.flagIndicator & (1 << PW_BLUEFLAG))
 	{
 		// draw objective info icon (if teammates or enemies are carrying one)
 		vec4_t color = { 1.f, 1.f, 1.f, 1.f };
@@ -1422,6 +1330,97 @@ static void CG_DrawPowerUps(rectDef_t rect)
 		if (cg.blueFlagCounter > 1)
 		{
 			CG_Text_Paint_Ext(rect.x + rect.w / 2 + (ps->persistant[PERS_TEAM] == TEAM_AXIS ? -16 : 12), rect.y + 38, 0.18, 0.18, colorWhite, va("%i", cg.blueFlagCounter), 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
+		}
+
+		trap_R_SetColor(NULL);
+	}
+	else if (ps->powerups[PW_ADRENALINE] > 0)       // adrenaline
+	{
+		vec4_t color = { 1.0, 0.0, 0.0, 1.0 };
+		color[3] *= 0.5 + 0.5 * sin(cg.time / 150.0);
+		trap_R_SetColor(color);
+		CG_DrawPic(rect.x, rect.y, rect.w, rect.h, cgs.media.hudAdrenaline);
+		trap_R_SetColor(NULL);
+	}
+	else if (ps->powerups[PW_INVULNERABLE] && !(ps->pm_flags & PMF_LIMBO))       // spawn shield
+	{
+		CG_DrawPic(rect.x, rect.y, rect.w, rect.h, cgs.media.spawnInvincibleShader);
+	}
+	else if (cgs.clientinfo[cg.clientNum].shoutcaster && !(cg.snap->ps.pm_flags & PMF_FOLLOW))
+	{
+		// simplified version for shoutcaster when not following players
+		vec4_t color = { 1.f, 1.f, 1.f, 1.f };
+		color[3] *= 0.67 + 0.33 * sin(cg.time / 200.0);
+		trap_R_SetColor(color);
+
+		if (cg.flagIndicator & (1 << PW_REDFLAG) && cg.flagIndicator & (1 << PW_BLUEFLAG))
+		{
+			if (cg.redFlagCounter > 0 && cg.blueFlagCounter > 0)
+			{
+				// both team stole an enemy flags
+				CG_DrawPic(rect.x, rect.y, rect.w, rect.h, cgs.media.objectiveTeamShader);
+			}
+			else if ((cg.redFlagCounter > 0 && !cg.blueFlagCounter) || (!cg.redFlagCounter && cg.blueFlagCounter > 0))
+			{
+				// one flag stolen and the other flag dropped
+				CG_DrawPic(rect.x, rect.y, rect.w, rect.h, cgs.media.objectiveTeamShader);
+			}
+			else
+			{
+				// both team dropped flags
+				CG_DrawPic(rect.x, rect.y, rect.w, rect.h, cgs.media.objectiveDroppedShader);
+			}
+			trap_R_SetColor(NULL);
+
+			// display team flag
+			color[3] = 1.f;
+			trap_R_SetColor(color);
+			CG_DrawPic(rect.x + rect.w / 2 - 20, rect.y + 28, 12, 8, cgs.media.axisFlag);
+			CG_DrawPic(rect.x + rect.w / 2 + 8, rect.y + 28, 12, 8, cgs.media.alliedFlag);
+		}
+		else if (cg.flagIndicator & (1 << PW_REDFLAG))
+		{
+			if (cg.redFlagCounter > 0)
+			{
+				CG_DrawPic(rect.x, rect.y, rect.w, rect.h, cgs.media.objectiveTeamShader);
+			}
+			else
+			{
+				CG_DrawPic(rect.x, rect.y, rect.w, rect.h, cgs.media.objectiveDroppedShader);
+			}
+			trap_R_SetColor(NULL);
+
+			// display team flag
+			color[3] = 1.f;
+			trap_R_SetColor(color);
+			CG_DrawPic(rect.x + rect.w / 2 + 8, rect.y + 28, 12, 8, cgs.media.alliedFlag);
+		}
+		else if (cg.flagIndicator & (1 << PW_BLUEFLAG))
+		{
+			if (cg.blueFlagCounter > 0)
+			{
+				CG_DrawPic(rect.x, rect.y, rect.w, rect.h, cgs.media.objectiveTeamShader);
+			}
+			else
+			{
+				CG_DrawPic(rect.x, rect.y, rect.w, rect.h, cgs.media.objectiveDroppedShader);
+			}
+			trap_R_SetColor(NULL);
+
+			// display team flag
+			color[3] = 1.f;
+			trap_R_SetColor(color);
+			CG_DrawPic(rect.x + rect.w / 2 - 20, rect.y + 28, 12, 8, cgs.media.axisFlag);
+		}
+
+		// display active flag counter
+		if (cg.redFlagCounter > 1)
+		{
+			CG_Text_Paint_Ext(rect.x + rect.w / 2 + 12, rect.y + 38, 0.18, 0.18, colorWhite, va("%i", cg.redFlagCounter), 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
+		}
+		if (cg.blueFlagCounter > 1)
+		{
+			CG_Text_Paint_Ext(rect.x + rect.w / 2 - 16, rect.y + 38, 0.18, 0.18, colorWhite, va("%i", cg.blueFlagCounter), 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
 		}
 
 		trap_R_SetColor(NULL);
