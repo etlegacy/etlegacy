@@ -1008,17 +1008,9 @@ void ClientEvents(gentity_t *ent, int oldEventSequence)
 			ent->client->ps.powerups[PW_OPS_DISGUISED] = 0;
 			ent->client->disguiseClientNum             = -1;
 
-			if (g_antilag.integer)
-            {
-                G_HistoricalTraceBegin(ent);
-            }
-
+			G_HistoricalTraceBegin(ent);
 			mg42_fire(ent);
-
-            if (g_antilag.integer)
-            {
-                G_HistoricalTraceEnd(ent);
-            }
+			G_HistoricalTraceEnd(ent);
 
 			// Only 1 stats bin for mg42
 #ifndef DEBUG_STATS
@@ -1036,17 +1028,9 @@ void ClientEvents(gentity_t *ent, int oldEventSequence)
 			ent->client->ps.powerups[PW_OPS_DISGUISED] = 0;
 			ent->client->disguiseClientNum             = -1;
 
-            if (g_antilag.integer)
-            {
-                G_HistoricalTraceBegin(ent);
-            }
-
+			G_HistoricalTraceBegin(ent);
 			mountedmg42_fire(ent);
-
-            if (g_antilag.integer)
-            {
-                G_HistoricalTraceEnd(ent);
-            }
+			G_HistoricalTraceEnd(ent);
 
 			// Only 1 stats bin for mg42
 #ifndef DEBUG_STATS
@@ -1068,15 +1052,9 @@ void ClientEvents(gentity_t *ent, int oldEventSequence)
 			ent->client->ps.powerups[PW_OPS_DISGUISED] = 0;
 			ent->client->disguiseClientNum             = -1;
 
-            if (g_antilag.integer)
-            {
-                G_HistoricalTraceBegin(ent);
-            }
+			G_HistoricalTraceBegin(ent);
 			aagun_fire(ent);
-            if (g_antilag.integer)
-            {
-                G_HistoricalTraceEnd(ent);
-            }
+			G_HistoricalTraceEnd(ent);
 			break;
 		case EV_FIRE_WEAPON:
 		case EV_FIRE_WEAPONB:
@@ -1244,6 +1222,8 @@ void ClientThink_real(gentity_t *ent)
 		ucmd->serverTime = level.time - 1000;
 		//G_Printf("serverTime >>>>>\n" );
 	}
+
+	client->frameOffset = trap_Milliseconds() - level.frameStartTime;
 
 	msec = ucmd->serverTime - client->ps.commandTime;
 	// following others may result in bad times, but we still want

@@ -1323,6 +1323,8 @@ typedef struct level_locals_s
 #ifdef FEATURE_DBMS
 	database_t database;
 #endif
+
+	int frameStartTime;
 } level_locals_t;
 
 /**

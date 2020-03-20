@@ -5230,6 +5230,8 @@ void G_RunFrame(int levelTime)
 #ifdef FEATURE_LUA
 	G_LuaHook_RunFrame(levelTime);
 #endif
+
+	level.frameStartTime = trap_Milliseconds();
 }
 
 // MAPVOTE

@@ -418,7 +418,6 @@ void ReviveEntity(gentity_t *ent, gentity_t *traceEnt)
 * @brief Shoot the syringe, do the old lazarus bit
 *
 * @param[in,out] ent
-* @param[out] firedShot - unused
 *
 */
 gentity_t *Weapon_Syringe(gentity_t *ent)

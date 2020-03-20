@@ -2800,6 +2800,7 @@ void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean
 
 	// unlagged reset history markers
 	G_ResetMarkers(ent);
+	ent->client->backupMarker.time = 0;
 	// unlagged
 
 	flags |= (client->ps.eFlags & EF_VOTED);
@@ -2945,7 +2946,7 @@ void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean
 	client->pmext.sprintTime   = SPRINTTIME;
 	client->ps.sprintExertTime = 0;
 
-	client->ps.friction = 1.0;
+	client->ps.friction = 1.0f;
 
 	// retrieve from the persistant storage (we use this in pmoveExt_t beause we need it in bg_*)
 	client->pmext.bAutoReload = client->pers.bAutoReloadAux;
@@ -3130,7 +3131,7 @@ void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean
 	// clear entity state values
 	BG_PlayerStateToEntityState(&client->ps, &ent->s, level.time, qtrue);
 
-	G_ResetMarkers(ent);
+	// G_ResetMarkers(ent);
 
 	// start the scripting system
 	if (!revived && client->sess.sessionTeam != TEAM_SPECTATOR)
