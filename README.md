@@ -6,40 +6,29 @@ ET: Legacy [![Travis Status](https://travis-ci.org/etlegacy/etlegacy.svg?branch=
 * Website: [https://www.etlegacy.com](https://www.etlegacy.com)
 * Downloads: [https://www.etlegacy.com/download](https://www.etlegacy.com/download)
 * Wiki/FAQ: [https://github.com/etlegacy/etlegacy/wiki](https://github.com/etlegacy/etlegacy/wiki)
-* Development (bug reports and feature requests): [https://github.com/etlegacy/etlegacy](https://github.com/etlegacy/etlegacy)
+* Development: [https://github.com/etlegacy/etlegacy](https://github.com/etlegacy/etlegacy)
 * Assets Repository: [https://drive.google.com](https://drive.google.com/drive/folders/0Bw7Yu-pqzcSaLXEtVEVjZF82UEU)
 * Legacy Lua API: [http://legacy-lua-api.readthedocs.io](http://legacy-lua-api.readthedocs.io)
 * Translation: [https://www.transifex.com/projects/p/etlegacy/](https://www.transifex.com/projects/p/etlegacy/)
-* Contact: [\#etlegacy](http://webchat.freenode.net/?channels=#etlegacy) on irc.freenode.net and [etlegacy/#development](https://discordapp.com/channels/260750790203932672/346956915814957067) on Discord.
+* Contact: [\#etlegacy](http://webchat.freenode.net/?channels=#etlegacy) on irc.freenode.net and [etlegacy/#etlegacy](https://discordapp.com/channels/260750790203932672/346956915814957067) on Discord.
 
-INTRODUCTION
-============
+## INTRODUCTION
 
-ET: Legacy is based on the [raedwulf-et](https://bitbucket.org/tcmreastwood/raedwulf-et/)
-project which in turn is based on the [GPL'd source code](https://github.com/id-Software/Enemy-Territory) of Wolfenstein: Enemy Territory.
+ET: Legacy is an open source project based on the code of [Wolfenstein: Enemy Territory](https://www.splashdamage.com/games/wolfenstein-enemy-territory/) which [was released](https://www.splashdamage.com/news/wolfenstein-enemy-territory-goes-open-source/) in 2010 under the terms of the GPLv3.
 
-The main goals of the project are fixing bugs, cleaning up the codebase and adding useful features
-while remaining compatible with the ET 2.60b version.
+There are two aspects to this project:
 
-The Legacy mod is the default mod shipped with ET: Legacy. It aims to add many useful features and
-improvements, while staying close to the original gameplay, as well as being lightweight and extensible
-through Lua scripts.
+* An updated game engine, **ET: Legacy**, which aims to fix bugs and security exploits, remove old dependencies, add useful features and modernize its graphics while still remaining compatible with ET 2.60b and as many of its mods as possible.
+* A new mod, **Legacy**, which aims to add many useful features and improvements while staying close to the original gameplay, as well as being lightweight and extensible through Lua scripts.
 
-For more information consult our [changelog](https://github.com/etlegacy/etlegacy/wiki/Changelog).
+For more information consult our [wiki](https://github.com/etlegacy/etlegacy/wiki).
 
-ET: Legacy development is a collaborative effort done in an open, transparent and friendly manner.
-Anyone is welcome to join our efforts!
+## CONTRIBUTING
 
-### Get involved
-
-If you are interested to join us, ensure to read first our contribution guidelines:
-
-* [How to commit your code](https://github.com/etlegacy/etlegacy/wiki/How-to-commit-Your-Code)
-* [Coding conventions](https://github.com/etlegacy/etlegacy/wiki/Coding-Conventions)
+See [CONTRIBUTING](CONTRIBUTING.md).
 
 
-GENERAL NOTES
-=============
+## GENERAL NOTES
 
 ### Game data
 
@@ -76,8 +65,7 @@ can be automatically downloaded using the `git submodule` command. See the next
 section for more details.
 
 
-DEPENDENCIES
-============
+## DEPENDENCIES
 
 * **CMake** (compile-time only)
 * **OpenGL**
@@ -95,8 +83,7 @@ DEPENDENCIES
 * **SQLite** (optional, enabled by default)
 * **OpenAL** (optional, enabled by default)
 
-
-Grab info about current lib versions from our [Libs_Changelog](https://github.com/etlegacy/etlegacy/wiki/Libs-Changelog) wiki page.
+Grab info about current lib versions from our [Libs Changelog](https://github.com/etlegacy/etlegacy/wiki/Libs-Changelog) wiki page.
 
 To get the latest source code install [git](http://git-scm.com/) and
 clone our repository hosted at [Github.com](https://github.com/etlegacy/etlegacy):
@@ -114,24 +101,23 @@ whether to use bundled libraries instead of the system ones by changing the
 which bundled libraries to use by toggling the respective `BUNDLED_XXX` variable.
 
 
-COMPILE AND INSTALL
-===================
+## COMPILE AND INSTALL
 
 To install the binaries system-wide, you need to compile ET: Legacy with hardcoded
-fs_basepath.
+`fs_basepath`.
 
 The following variables can be adjusted in CMake:
 
-  * **INSTALL_DEFAULT_BASEDIR**: sets default *fs_basepath*, i.e. where etl and etlded
-    executables look for data files. In most cases it is CMAKE_INSTALL_PREFIX+INSTALL_DEFAULT_MODDIR.
-    Defaults to empty value, because we want *fs_basepath* to be the current working directory
+  * **`INSTALL_DEFAULT_BASEDIR`**: sets default `fs_basepath`, i.e. where etl and etlded
+    executables look for data files. In most cases it is `CMAKE_INSTALL_PREFIX`+`INSTALL_DEFAULT_MODDIR`.
+    Defaults to empty value, because we want `fs_basepath` to be the current working directory
     when not installing the game system-wide.
 
-  * (optional) **INSTALL_DEFAULT_BINDIR**: Location for executables. Appended to CMAKE_INSTALL_PREFIX.
-    Defaults to "bin".
+  * (optional) **`INSTALL_DEFAULT_BINDIR`**: Location for executables. Appended to `CMAKE_INSTALL_PREFIX`.
+    Defaults to `bin`.
 
-  * (optional) **INSTALL_DEFAULT_MODDIR**: Location for libraries and paks. Appended to
-    CMAKE_INSTALL_PREFIX. Defaults to "share/etlegacy" and then "legacy" is appended to it.
+  * (optional) **`INSTALL_DEFAULT_MODDIR`**: Location for libraries and paks. Appended to
+    `CMAKE_INSTALL_PREFIX`. Defaults to `share/etlegacy` and then `legacy` is appended to it.
 
 
 ### Linux
@@ -180,7 +166,7 @@ In terminal, run:
     $ cmake -DCMAKE_TOOLCHAIN_FILE=../cmake/Toolchain-cross-mingw-linux.cmake ..
     $ make
 
-By default, MinGW name is set to *i686-w64-mingw32*. You may have to change it in
+By default, MinGW name is set to **`i686-w64-mingw32`**. You may have to change it in
 `cmake/Toolchain-cross-mingw-linux.cmake` depending on how it is called on your system.
 
 
@@ -237,7 +223,7 @@ Install:
 Then brew the following packages in the terminal app:
 
     $ brew cask install xquartz
-    $ brew install --universal gnu-sed cmake glew sdl2 minizip jpeg-turbo curl lua libogg libvorbis theora freetype sqlite openal-soft
+    $ brew install --universal gnu-sed cmake glew sdl2 minizip jpeg-turbo curl lua libogg libvorbis theora freetype libpng sqlite openal-soft
 
 The --universal flag ensures both 32bit and 64bit libraries are installed. Although your system curl library supports both architectures, you also need to install its headers.
 
@@ -273,8 +259,7 @@ Be sure to set the CMake variables (see above) beforehand.
   (and can safely be renamed), while the dedicated server is just a command-line binary named "etlded".
 
 
-LICENSE
-=======
+## LICENSE
 
 ### ET: Legacy
 
