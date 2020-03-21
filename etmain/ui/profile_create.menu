@@ -77,7 +77,7 @@ menuDef {
 
 	SUBWINDOWBLACK( SUBWINDOW_X, SUBWINDOW_Y, SUBWINDOW_WIDTH, SUBWINDOW_HEIGHT, _("CREATE PROFILE") )
 
-	LABEL( SUBWINDOW_X+4, SUBWINDOW_Y+16, (SUBWINDOW_WIDTH)-8, 10, _("Please choose your initial settings below. You can change these at any time and access more advanced options by visiting the Options Menu. Should more than one person wish to play Enemy Territory: Legacy, you can create additional profiles by visiting the Profiles Menu."), .2, ITEM_ALIGN_LEFT, 0, 8 )
+	LABEL( SUBWINDOW_X+4, SUBWINDOW_Y+16, (SUBWINDOW_WIDTH)-8, 10, _("Please choose your initial settings below. You can change these at any time and access more advanced options by visiting the Options Menu. Should more than one person wish to play ET: Legacy, you can create additional profiles by visiting the Profiles Menu."), .2, ITEM_ALIGN_LEFT, 0, 8 )
 
 	itemDef {
 		name		"efleftbackPlayer Alias:"

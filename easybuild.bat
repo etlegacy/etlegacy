@@ -31,7 +31,7 @@ set i=0
 IF NOT "%1"=="" (
 	IF /I "%1"=="-help" (
 		ECHO.
-		ECHO ET Legacy Easy Builder Help
+		ECHO ET: Legacy Easy Builder Help
 		ECHO ===============================
 		ECHO clean - clean up the build
 		ECHO build - run the build process

@@ -50,7 +50,7 @@ static int C_gentity_ptr_to_entNum(unsigned long addr)
 
 /**
  * -------------------------------------
- * ET Legacy mod function calls from lua
+ * Mod function calls from lua
  * -------------------------------------
  * @addtogroup lua_etfncs
  * @{

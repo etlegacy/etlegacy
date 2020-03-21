@@ -413,7 +413,7 @@ msgid "Additional Level Design"
 msgstr ""
 
 #: etmain/ui/etlegacywebsite.menu:49
-msgid "ET Legacy Website"
+msgid "ET: Legacy Website"
 msgstr ""
 
 #: etmain/ui/etlegacywebsite.menu:50
@@ -3756,8 +3756,8 @@ msgstr ""
 msgid ""
 "Please choose your initial settings below. You can change these at any time "
 "and access more advanced options by visiting the Options Menu. Should more "
-"than one person wish to play Enemy Territory: Legacy, you can create "
-"additional profiles by visiting the Profiles Menu."
+"than one person wish to play ET: Legacy, you can create additional profiles "
+"by visiting the Profiles Menu."
 msgstr ""
 
 #: etmain/ui/profile_create_initial.menu:98 etmain/ui/profile_create.menu:91

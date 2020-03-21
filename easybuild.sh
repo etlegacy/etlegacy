@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 # encoding: utf-8
 
-# Made by the ET Legacy team!
+# Made by the ET: Legacy team!
 # script checks for needed applications
-# and builds ET Legacy
+# and builds ET: Legacy
 
 # Mandatory variables
 _SRC=`pwd`
@@ -172,10 +172,10 @@ check_compiler() {
 
 print_startup() {
 	echo
-	ehead "ET Legacy Easy Builder"
+	ehead "ET: Legacy Easy Builder"
 	ehead "==============================="
-	ehead "This script will check for binaries needed to compile ET Legacy"
-	ehead "Then it will build ET Legacy into ${BUILDDIR}/ directory"
+	ehead "This script will check for binaries needed to compile ET: Legacy"
+	ehead "Then it will build ET: Legacy into ${BUILDDIR}/ directory"
 	echo
 
 	einfo "Checking for needed apps to compile..."
@@ -419,7 +419,7 @@ generate_configuration() {
 		INSTALL_OMNIBOT=0
 	fi
 
-	einfo "Configuring ET Legacy..."
+	einfo "Configuring ET: Legacy..."
 	_CFGSTRING="
 		-DCMAKE_BUILD_TYPE=${RELEASE_TYPE}
 		-DCROSS_COMPILE32=${CROSS_COMPILE32}
@@ -614,7 +614,7 @@ import os
 import glob
 import shutil
 iconfile = "icon.png"
-foldername = "ET Legacy"
+foldername = "ETLegacy"
 if os.path.isdir(foldername):
 	shutil.rmtree(foldername)
 files = [f for f in glob.glob('./_CPack_Packages/Darwin/TGZ/etlegacy*') if os.path.isdir(f)]
@@ -640,7 +640,7 @@ END
   },
   "contents": [
     { "x": 456, "y": 250, "type": "link", "path": "/Applications" },
-    { "x": 192, "y": 250, "type": "file", "path": "ET Legacy" }
+    { "x": 192, "y": 250, "type": "file", "path": "ETLegacy" }
   ]
 }
 END
@@ -727,7 +727,7 @@ run_default() {
 }
 
 print_help() {
-	ehead "ET Legacy Easy Builder Help"
+	ehead "ET: Legacy Easy Builder Help"
 	ehead "==============================="
 	ehead "clean - clean up the build"
 	ehead "build - run the build process"

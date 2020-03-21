@@ -6191,7 +6191,7 @@ static void UI_BuildServerDisplayList(int force)
 	len = Q_UTF8_Strlen(uiInfo.serverStatus.motd);
 	if (len == 0)
 	{
-		Q_strncpyz(uiInfo.serverStatus.motd, va("Enemy Territory: Legacy - Version: %s", ETLEGACY_VERSION), sizeof(uiInfo.serverStatus.motd));
+		Q_strncpyz(uiInfo.serverStatus.motd, va("ET: Legacy - Version: %s", ETLEGACY_VERSION), sizeof(uiInfo.serverStatus.motd));
 		len = Q_UTF8_Strlen(uiInfo.serverStatus.motd);
 	}
 	if (len != uiInfo.serverStatus.motdLen)
@@ -6538,7 +6538,7 @@ static void UI_BuildServerDisplayList(int force)
 				}
 			}
 
-			// ET Legacy doesn't display etpro servers :/
+			// ET: Legacy doesn't display etpro servers :/
 			{
 				const char *gamename = Info_ValueForKey(info, "game");
 

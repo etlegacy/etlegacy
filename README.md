@@ -1,4 +1,4 @@
-Enemy Territory: Legacy [![Travis Status](https://travis-ci.org/etlegacy/etlegacy.svg?branch=master)](https://travis-ci.org/etlegacy/etlegacy) [![AppVeyor status](https://ci.appveyor.com/api/projects/status/468s0285u3w4vfom/branch/master?svg=true)](https://ci.appveyor.com/project/rmarquis/etlegacy/branch/master) [![Analysis Status](https://scan.coverity.com/projects/1160/badge.svg)](https://scan.coverity.com/projects/1160) [![chat](https://img.shields.io/discord/260750790203932672.svg?logo=discord)](https://discord.gg/UBAZFys)
+ET: Legacy [![Travis Status](https://travis-ci.org/etlegacy/etlegacy.svg?branch=master)](https://travis-ci.org/etlegacy/etlegacy) [![AppVeyor status](https://ci.appveyor.com/api/projects/status/468s0285u3w4vfom/branch/master?svg=true)](https://ci.appveyor.com/project/rmarquis/etlegacy/branch/master) [![Analysis Status](https://scan.coverity.com/projects/1160/badge.svg)](https://scan.coverity.com/projects/1160) [![chat](https://img.shields.io/discord/260750790203932672.svg?logo=discord)](https://discord.gg/UBAZFys)
 ==========
 
 *A second breath of life for Wolfenstein: Enemy Territory*
@@ -15,7 +15,7 @@ Enemy Territory: Legacy [![Travis Status](https://travis-ci.org/etlegacy/etlegac
 INTRODUCTION
 ============
 
-Enemy Territory: Legacy is based on the [raedwulf-et](https://bitbucket.org/tcmreastwood/raedwulf-et/)
+ET: Legacy is based on the [raedwulf-et](https://bitbucket.org/tcmreastwood/raedwulf-et/)
 project which in turn is based on the [GPL'd source code](https://github.com/id-Software/Enemy-Territory) of Wolfenstein: Enemy Territory.
 
 The main goals of the project are fixing bugs, cleaning up the codebase and adding useful features
@@ -276,7 +276,7 @@ Be sure to set the CMake variables (see above) beforehand.
 LICENSE
 =======
 
-### Enemy Territory: Legacy
+### ET: Legacy
 
 Wolfenstein: Enemy Territory GPL Source Code
 Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.

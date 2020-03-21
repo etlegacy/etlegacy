@@ -2084,7 +2084,7 @@ char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 	// don't allow empty, unknown or 'NO_GUID' guid
 	if (strlen(cs_guid) < MAX_GUID_LENGTH)
 	{
-		return "Bad GUID: Invalid etkey. Please use the ET:Legacy client or add an etkey.";
+		return "Bad GUID: Invalid etkey. Please use the ET: Legacy client or add an etkey.";
 	}
 
 	// IP filtering

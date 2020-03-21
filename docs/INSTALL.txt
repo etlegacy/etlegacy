@@ -11,7 +11,7 @@ consistently refused to go down.
 
 Ambition
 ----------------------------------------------------------------------------
-There are two aspects to this project: an updated game version "Enemy Territory: Legacy" and a new mod "legacy".
+There are two aspects to this project: an updated game version "ET: Legacy" and a new mod "Legacy".
 
 * The main goal of ET: Legacy is to fix bugs and security exploits, remove old dependencies, add useful features and
   modernize its graphics while still remaining compatible with ET 2.60b and as many of its mods as possible.
