@@ -1570,10 +1570,13 @@ void CG_CheckForCursorHints(void)
 		// might be water
 		if ((CG_PointContents(trace.endpos, -1) & CONTENTS_WATER) && !(CG_PointContents(cg.refdef.vieworg, -1) & CONTENTS_WATER))
 		{
-			cg.cursorHintIcon  = HINT_WATER;
-			cg.cursorHintTime  = cg.time;
-			cg.cursorHintFade  = 500;
-			cg.cursorHintValue = 0;
+			if (dist <= CH_WATER_DIST)
+			{
+				cg.cursorHintIcon  = HINT_WATER;
+				cg.cursorHintTime  = cg.time;
+				cg.cursorHintFade  = 500;
+				cg.cursorHintValue = 0;
+			}
 		}
 		return;
 	}
