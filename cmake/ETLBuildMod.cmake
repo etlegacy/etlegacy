@@ -12,15 +12,14 @@ set_target_properties(cgame${LIB_SUFFIX}${ARCH}
 	LIBRARY_OUTPUT_DIRECTORY "legacy"
 	LIBRARY_OUTPUT_DIRECTORY_DEBUG "legacy"
 	LIBRARY_OUTPUT_DIRECTORY_RELEASE "legacy"
-	OSX_ARCHITECTURES "i386;x86_64"
 )
 
 #
 # qagame
 #
 add_library(qagame${LIB_SUFFIX}${ARCH} MODULE ${QAGAME_SRC})
-if(FEATURE_LUASQL)
-	add_definitions(-DFEATURE_LUASQL)
+if(FEATURE_LUASQL AND FEATURE_DBMS)
+	target_compile_definitions(qagame${LIB_SUFFIX}${ARCH} PRIVATE FEATURE_DBMS FEATURE_LUASQL)
 
 	if(BUNDLED_SQLITE3)
 		add_dependencies(qagame${LIB_SUFFIX}${ARCH} bundled_sqlite3)
@@ -38,7 +37,7 @@ if(FEATURE_LUASQL)
 		"src/luasql/ls_sqlite3.c"
 	)
 	set(QAGAME_SRC ${QAGAME_SRC} ${LUASQL_SRC})
-endif(FEATURE_LUASQL)
+endif()
 
 if(FEATURE_LUA)
 	if(BUNDLED_LUA)
@@ -50,13 +49,14 @@ endif(FEATURE_LUA)
 
 
 if(FEATURE_SERVERMDX)
-	set(QAGAME_DEFINES "GAMEDLL;FEATURE_SERVERMDX")
-else()
-	set(QAGAME_DEFINES "GAMEDLL")
+	target_compile_definitions(qagame${LIB_SUFFIX}${ARCH} PRIVATE FEATURE_SERVERMDX)
 endif()
 
+target_compile_definitions(qagame${LIB_SUFFIX}${ARCH} PRIVATE GAMEDLL)
+
 set_target_properties(qagame${LIB_SUFFIX}${ARCH}
-	PROPERTIES COMPILE_DEFINITIONS "${QAGAME_DEFINES}"
+	PROPERTIES
+	# COMPILE_DEFINITIONS "${QAGAME_DEFINES}"
 	PREFIX ""
 	LIBRARY_OUTPUT_DIRECTORY "legacy"
 	LIBRARY_OUTPUT_DIRECTORY_DEBUG "legacy"
@@ -76,8 +76,19 @@ set_target_properties(ui${LIB_SUFFIX}${ARCH}
 	LIBRARY_OUTPUT_DIRECTORY "legacy"
 	LIBRARY_OUTPUT_DIRECTORY_DEBUG "legacy"
 	LIBRARY_OUTPUT_DIRECTORY_RELEASE "legacy"
-	OSX_ARCHITECTURES "i386;x86_64"
 )
+
+# Build both arhitectures on older xcode versions
+if(APPLE AND CMAKE_OSX_DEPLOYMENT_TARGET LESS_EQUAL "10.12" AND NOT OSX_NOX86)
+	set_target_properties(cgame${LIB_SUFFIX}${ARCH}
+		PROPERTIES
+		OSX_ARCHITECTURES "i386;x86_64"
+	)
+	set_target_properties(ui${LIB_SUFFIX}${ARCH}
+		PROPERTIES
+		OSX_ARCHITECTURES "i386;x86_64"
+	)
+endif()
 
 # install bins of cgame, ui and qgame
 if(BUILD_MOD_PK3)
