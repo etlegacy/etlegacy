@@ -2,7 +2,7 @@ INTRODUCTION
 ============
 
 ET: Legacy is an open source project based on the code of Wolfenstein: Enemy Territory, which was released in 2010 under
-the terms of General Public License v3.
+the terms of GPLv3.
 
 Set during World War II and heavily focused on team work, the game was initially released in 2003 by Splash Damage and
 id Software. More than a decade after its release, after spending countless hours of escorting tanks and trucks,
@@ -11,22 +11,14 @@ consistently refused to go down.
 
 Ambition
 ----------------------------------------------------------------------------
-There are two aspects to this project: an updated game version "ET: Legacy" and a new mod "Legacy".
+There are two aspects to this project:
 
-* The main goal of ET: Legacy is to fix bugs and security exploits, remove old dependencies, add useful features and
-  modernize its graphics while still remaining compatible with ET 2.60b and as many of its mods as possible.
-* The main goal of legacy is to stay close to the original gameplay experience and provide a viable alternative to ETPro
-  for competitive play while staying lightweight but extensible through additional Lua scripts.
+* An updated game engine, ET: Legacy, which aims to fix bugs and security exploits, remove old dependencies, add useful
+  features and modernize its graphics while still remaining compatible with ET 2.60b and as many of its mods as possible.
+* A new mod, Legacy, which aims to add many useful features and improvements while staying close to the original
+  gameplay, as well as being lightweight and extensible through Lua scripts.
 
-Community
-----------------------------------------------------------------------------
-Under the wing of ET: Legacy, players from all corners of the Wolfenstein: Enemy Territory community came together to
-continuously update a game that is well over a decade old, which despite its considerable age is still home to hundreds
-of concurrent players a day. ET: Legacy development is a collaborative effort done in an open, transparent and friendly
-manner. We do appreciate any contribution to the project may it be in the form of patches, suggestions, reports or
-comments.
-
-Anyone is welcome to join our efforts!
+See https://github.com/etlegacy/etlegacy/wiki/ for more information.
 
 
 GENERAL NOTES
@@ -36,11 +28,11 @@ Game data
 -----------------------------------------------------------------------------
 
 This package release contains only the engine and mod code but not any game data, which is still
-covered by the original EULA and must be obeyed as usual. The ET: Legacy installer have downloaded
+covered by the original EULA and must be obeyed as usual. The ET: Legacy installer has downloaded
 them for you automatically.
 
 In case you have not used the installer, you can download the free Wolfenstein: Enemy Territory
-release from Splash Damage at http://www.splashdamage.com/content/download-wolfenstein-enemy-territory.
+release from Splash Damage at https://www.splashdamage.com/games/wolfenstein-enemy-territory/.
 
 In order to run ET: Legacy you will need to copy the original assets files
 (*pak0.pk3*, *pak1.pk3* and *pak2.pk3*) to the etmain folder.
