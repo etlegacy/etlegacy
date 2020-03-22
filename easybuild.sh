@@ -14,6 +14,7 @@ PROJECTDIR="${_SRC}/project"
 LEGACYETMAIN="${HOME}/.etlegacy/etmain"
 LEGACY_MIRROR="https://mirror.etlegacy.com/etmain/"
 LEGACY_VERSION=`git describe 2>/dev/null`
+INSTALL_PREFIX=${HOME}/etlegacy
 
 # Set this to false to disable colors
 color=true
@@ -24,8 +25,8 @@ x86_build=true
 # Command that can be run
 # first array has the cmd names which can be given
 # second array holds the functions which match the cmd names
-easy_keys=(clean build package install download crust release project help)
-easy_cmd=(run_clean run_build run_package run_install run_download run_uncrustify run_release run_project print_help)
+easy_keys=(clean build generate package install download crust release project help)
+easy_cmd=(run_clean run_build run_generate run_package run_install run_download run_uncrustify run_release run_project print_help)
 easy_count=`expr ${#easy_keys[*]} - 1`
 
 check_exit() {
@@ -206,10 +207,21 @@ print_startup() {
 parse_commandline() {
 	for var in "$@"
 	do
-		if [ "$var" = "-64" ]; then
+		if [[ $var == --build=* ]]; then
+			BUILDDIR=$(echo $var| cut -d'=' -f 2)
+			einfo "Will use build dir of: ${BUILDDIR}"
+		elif [[ $var == --prefix=* ]]; then
+			INSTALL_PREFIX=$(echo $var| cut -d'=' -f 2)
+			einfo "Will use installation dir of: ${INSTALL_PREFIX}"
+		elif [[ $var == --osx=* ]]; then
+			MACOSX_DEPLOYMENT_TARGET=$(echo $var| cut -d'=' -f 2)
+			einfo "Will use OSX target version: ${MACOSX_DEPLOYMENT_TARGET}"
+		elif [ "$var" = "-64" ]; then
 			einfo "Will disable crosscompile"
 			CROSS_COMPILE32=0
 			x86_build=false
+		elif [ "$var" = "-zip" ]; then
+			ZIP_ONLY=1
 		elif [ "$var" = "-clang" ]; then
 			einfo "Will use clang"
 			set_compiler clang clang++ $x86_build
@@ -362,6 +374,7 @@ generate_configuration() {
 	BUILD_MOD=${BUILD_MOD:-1}
 	BUILD_MOD_PK3=${BUILD_MOD_PK3:-1}
 	BUILD_PAK_PK3=${BUILD_PAK_PK3:-1}
+	ZIP_ONLY=${ZIP_ONLY:-0}
 	BUNDLED_LIBS=${BUNDLED_LIBS:-1}
 	BUNDLED_SDL=${BUNDLED_SDL:-1}
 	BUNDLED_ZLIB=${BUNDLED_ZLIB:-1}
@@ -383,6 +396,7 @@ generate_configuration() {
 		BUNDLED_CURL=${BUNDLED_CURL:-0}
 		BUNDLED_OPENSSL=${BUNDLED_OPENSSL:-0}
 		BUNDLED_OPENAL=${BUNDLED_OPENAL:-0}
+		CMAKE_OSX_DEPLOYMENT_TARGET=${MACOSX_DEPLOYMENT_TARGET:-10.12}
 	fi
 
 	FEATURE_RENDERER2=${FEATURE_RENDERER2:-1}
@@ -423,6 +437,7 @@ generate_configuration() {
 	_CFGSTRING="
 		-DCMAKE_BUILD_TYPE=${RELEASE_TYPE}
 		-DCROSS_COMPILE32=${CROSS_COMPILE32}
+		-DZIP_ONLY=${ZIP_ONLY}
 		-DBUILD_SERVER=${BUILD_SERVER}
 		-DBUILD_CLIENT=${BUILD_CLIENT}
 		-DBUILD_MOD=${BUILD_MOD}
@@ -472,15 +487,16 @@ generate_configuration() {
 
 	if [ "${DEV}" != 1 ]; then
 	if [ "${PLATFORMSYS}" == "Mac OS X" ]; then
-		PREFIX=${HOME}/etlegacy
+		PREFIX=${INSTALL_PREFIX}
 		_CFGSTRING="${_CFGSTRING}
 		-DCMAKE_INSTALL_PREFIX=${PREFIX}
+		-DCMAKE_OSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET}
 		-DINSTALL_DEFAULT_MODDIR=./
 		-DINSTALL_DEFAULT_BINDIR=./
 		-DINSTALL_DEFAULT_BASEDIR=./
 		"
 	else
-		PREFIX=${HOME}/etlegacy
+		PREFIX=${INSTALL_PREFIX}
 		_CFGSTRING="${_CFGSTRING}
 		-DCMAKE_INSTALL_PREFIX=${PREFIX}
 
@@ -564,6 +580,14 @@ run_build() {
 	cmake ${_CFGSTRING} ..
 	check_exit
 	make ${CMD_ARGS}
+	check_exit
+}
+
+run_generate() {
+	einfo "Generating makefiles..."
+	mkdir -p ${BUILDDIR}
+	cd ${BUILDDIR}
+	cmake ${_CFGSTRING} ..
 	check_exit
 }
 
@@ -731,6 +755,7 @@ print_help() {
 	ehead "==============================="
 	ehead "clean - clean up the build"
 	ehead "build - run the build process"
+	ehead "generate - generate the build files"
 	ehead "package - run the package process"
 	ehead "install - install the game into the system"
 	ehead "download - download assets"
@@ -741,6 +766,7 @@ print_help() {
 	echo
 	einfo "Properties"
 	ehead "-64, -debug, -clang, -nodb -nor2, -nodynamic, -systemlib, -noextra, -noupdate, -mod, -server"
+	ehead "--build=*, --prefix=*, --osx=*"
 	echo
 }
 

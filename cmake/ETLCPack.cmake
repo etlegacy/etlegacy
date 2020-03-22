@@ -44,6 +44,11 @@ else()
 endif()
 set(CPACK_PROJECT_CONFIG_FILE "${CMAKE_CURRENT_BINARY_DIR}/CPackOptions.cmake")
 
+# Probably only in use with the CI
+if(ZIP_ONLY)
+	set(CPACK_GENERATOR "ZIP")
+endif()
+
 # CPack generator-specific configuration
 configure_file(
 	"${CMAKE_CURRENT_SOURCE_DIR}/cmake/CPackOptions.cmake.in"
