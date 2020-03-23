@@ -4342,18 +4342,19 @@ void UI_GLCustom()
 
 	switch (ui_r_windowmode)
 	{
-	case 1:
+	case 1: // fullscreen
 		DC->setCVar("ui_r_fullscreen", "1");
 		DC->setCVar("ui_r_noborder", "0");
 		break;
-	case 2:
+	case 2: // windowed fullscreen
 		DC->setCVar("ui_r_fullscreen", "0");
 		DC->setCVar("ui_r_mode", "-2");
 		DC->setCVar("ui_r_noborder", "1");
 		break;
-	case 0:
+	case 0: // windowed
 	default:
 		DC->setCVar("ui_r_fullscreen", "0");
+		DC->setCVar("ui_r_noborder", "0");
 		break;
 	}
 
