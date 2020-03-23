@@ -1894,24 +1894,24 @@ static void Svcmd_Kick_f(void)
 					{
 
 						// kick but dont ban bots, they arent that lame
-						if ((g_entities[cl->ps.clientNum].r.svFlags & SVF_BOT))
+						if ((g_entities[cl - level.clients].r.svFlags & SVF_BOT))
 						{
 							timeout = 0;
 						}
 
-						trap_DropClient(cl->ps.clientNum, "player kicked", timeout);
+						trap_DropClient(cl - level.clients, "player kicked", timeout);
 					}
 					else
 					{
-						trap_DropClient(cl->ps.clientNum, "player kicked", 0);
+						trap_DropClient(cl - level.clients, "player kicked", 0);
 
 						// kick but dont ban bots, they arent that lame
-						if (!(g_entities[cl->ps.clientNum].r.svFlags & SVF_BOT))
+						if (!(g_entities[cl - level.clients].r.svFlags & SVF_BOT))
 						{
 							char *ip;
 							char userinfo[MAX_INFO_STRING];
 
-							trap_GetUserinfo(cl->ps.clientNum, userinfo, sizeof(userinfo));
+							trap_GetUserinfo(cl - level.clients, userinfo, sizeof(userinfo));
 							ip = Info_ValueForKey(userinfo, "ip");
 							AddIPBan(ip);
 						}
@@ -1919,7 +1919,7 @@ static void Svcmd_Kick_f(void)
 				}
 				else
 				{
-					trap_DropClient(cl->ps.clientNum, "player kicked", 0);
+					trap_DropClient(cl - level.clients, "player kicked", 0);
 				}
 			}
 		}
@@ -1941,23 +1941,23 @@ static void Svcmd_Kick_f(void)
 			if (USE_ENGINE_BANLIST)
 			{
 				// kick but dont ban bots, they arent that lame
-				if ((g_entities[cl->ps.clientNum].r.svFlags & SVF_BOT))
+				if ((g_entities[cl - level.clients].r.svFlags & SVF_BOT))
 				{
 					timeout = 0;
 				}
-				trap_DropClient(cl->ps.clientNum, "player kicked", timeout);
+				trap_DropClient(cl - level.clients, "player kicked", timeout);
 			}
 			else
 			{
-				trap_DropClient(cl->ps.clientNum, "player kicked", 0);
+				trap_DropClient(cl - level.clients, "player kicked", 0);
 
 				// kick but dont ban bots, they arent that lame
-				if (!(g_entities[cl->ps.clientNum].r.svFlags & SVF_BOT))
+				if (!(g_entities[cl - level.clients].r.svFlags & SVF_BOT))
 				{
 					char *ip;
 					char userinfo[MAX_INFO_STRING];
 
-					trap_GetUserinfo(cl->ps.clientNum, userinfo, sizeof(userinfo));
+					trap_GetUserinfo(cl - level.clients, userinfo, sizeof(userinfo));
 					ip = Info_ValueForKey(userinfo, "ip");
 					AddIPBan(ip);
 				}
@@ -1965,7 +1965,7 @@ static void Svcmd_Kick_f(void)
 		}
 		else
 		{
-			trap_DropClient(cl->ps.clientNum, "player kicked", 0);
+			trap_DropClient(cl - level.clients, "player kicked", 0);
 		}
 	}
 }
@@ -2024,20 +2024,20 @@ static void Svcmd_KickNum_f(void)
 	if (USE_ENGINE_BANLIST)
 	{
 		// kick but dont ban bots, they arent that lame
-		if ((g_entities[cl->ps.clientNum].r.svFlags & SVF_BOT))
+		if ((g_entities[cl - level.clients].r.svFlags & SVF_BOT))
 		{
 			timeout = 0;
 		}
-		trap_DropClient(cl->ps.clientNum, "player kicked", timeout);
+		trap_DropClient(cl - level.clients, "player kicked", timeout);
 	}
 	else
 	{
-		trap_DropClient(cl->ps.clientNum, "player kicked", 0);
+		trap_DropClient(cl - level.clients, "player kicked", 0);
 
 		// kick but dont ban bots, they arent that lame
-		if (!(g_entities[cl->ps.clientNum].r.svFlags & SVF_BOT))
+		if (!(g_entities[cl - level.clients].r.svFlags & SVF_BOT))
 		{
-			trap_GetUserinfo(cl->ps.clientNum, userinfo, sizeof(userinfo));
+			trap_GetUserinfo(cl - level.clients, userinfo, sizeof(userinfo));
 			ip = Info_ValueForKey(userinfo, "ip");
 			AddIPBan(ip);
 		}
