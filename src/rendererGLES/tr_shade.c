@@ -175,44 +175,15 @@ static void DrawTris(shaderCommands_t *input)
 		GL_State(stateBits);
 		qglDepthRange(0, 0);
 	}
-#ifdef CELSHADING_HACK
-	else if (r_showtris->integer == 3)
-	{
-		stateBits |= (GLS_POLYMODE_LINE | GLS_DEPTHMASK_TRUE);
-		GL_State(stateBits);
-		qglEnable(GL_POLYGON_OFFSET_LINE);
-		qglPolygonOffset(4.0, 0.5);
-		qglLineWidth(5.0);
-	}
-#endif
-	else
-	{
-		stateBits |= (GLS_POLYMODE_LINE);
-		GL_State(stateBits);
-		qglEnable(GL_POLYGON_OFFSET_LINE);
-		qglPolygonOffset(r_offsetFactor->value, r_offsetUnits->value);
-	}
 
 	qglDisableClientState(GL_COLOR_ARRAY);
 	qglDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
 	qglVertexPointer(3, GL_FLOAT, 16, input->xyz);   // padded for SIMD
 
-	if (qglLockArraysEXT)
-	{
-		qglLockArraysEXT(0, input->numVertexes);
-		Ren_LogComment("glLockArraysEXT\n");
-	}
-
 	R_DrawElements(input->numIndexes, input->indexes);
 
-	if (qglUnlockArraysEXT)
-	{
-		qglUnlockArraysEXT();
-		Ren_LogComment("glUnlockArraysEXT\n");
-	}
 	qglDepthRange(0, 1);
-	qglDisable(GL_POLYGON_OFFSET_LINE);
 }
 
 /**
@@ -228,61 +199,18 @@ static void DrawNormals(shaderCommands_t *input)
 	qglDepthRange(0, 0);    // never occluded
 	GL_State(GLS_POLYMODE_LINE | GLS_DEPTHMASK_TRUE);
 
-	// light direction
-	if (r_showNormals->integer == 2)
-	{
-		trRefEntity_t *ent = backEnd.currentEntity;
-		vec3_t        temp2;
+    int i;
+    vec3_t vtx[2];
 
-		if (ent->e.renderfx & RF_LIGHTING_ORIGIN)
-		{
-			VectorSubtract(ent->e.lightingOrigin, backEnd.orientation.origin, temp2);
-		}
-		else
-		{
-			VectorClear(temp2);
-		}
-		temp[0] = DotProduct(temp2, backEnd.orientation.axis[0]);
-		temp[1] = DotProduct(temp2, backEnd.orientation.axis[1]);
-		temp[2] = DotProduct(temp2, backEnd.orientation.axis[2]);
+    for (i = 0 ; i < input->numVertexes ; i++)
+    {
+        VectorMA(input->xyz[i], r_normalLength->value, input->normal[i], temp);
 
-		qglColor3f(ent->ambientLight[0] / 255, ent->ambientLight[1] / 255, ent->ambientLight[2] / 255);
-		qglPointSize(5);
-		qglBegin(GL_POINTS);
-		qglVertex3fv(temp);
-		qglEnd();
-		qglPointSize(1);
-
-		if (Q_fabs(VectorLengthSquared(ent->lightDir) - 1.0f) > 0.2f)
-		{
-			qglColor3f(1, 0, 0);
-		}
-		else
-		{
-			qglColor3f(ent->directedLight[0] / 255, ent->directedLight[1] / 255, ent->directedLight[2] / 255);
-		}
-		qglLineWidth(3);
-		qglBegin(GL_LINES);
-		qglVertex3fv(temp);
-		VectorMA(temp, 32, ent->lightDir, temp);
-		qglVertex3fv(temp);
-		qglEnd();
-		qglLineWidth(1);
-	}
-	// normals drawing
-	else
-	{
-		int i;
-
-		qglBegin(GL_LINES);
-		for (i = 0 ; i < input->numVertexes ; i++)
-		{
-			qglVertex3fv(input->xyz[i]);
-			VectorMA(input->xyz[i], r_normalLength->value, input->normal[i], temp);
-			qglVertex3fv(temp);
-		}
-		qglEnd();
-	}
+        memcpy(vtx, input->xyz[i], sizeof(GLfloat)*3);
+        memcpy(vtx+1, temp, sizeof(GLfloat)*3);
+        qglVertexPointer (3, GL_FLOAT, 16, vtx);
+        qglDrawArrays(GL_LINES, 0, 2);
+    }
 
 	qglDepthRange(0, 1);
 }
@@ -343,13 +271,6 @@ static void DrawMultitextured(shaderCommands_t *input, int stage)
 	}
 
 	GL_State(pStage->stateBits);
-
-	// this is an ugly hack to work around a GeForce driver
-	// bug with multitexture and clip planes
-	if (backEnd.viewParms.isPortal)
-	{
-		qglPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	}
 
 	// base
 	GL_SelectTexture(0);
@@ -1381,13 +1302,7 @@ void RB_StageIteratorGeneric(void)
 		qglTexCoordPointer(2, GL_FLOAT, 0, tess.svars.texcoords[0]);
 	}
 
-	// lock XYZ
 	qglVertexPointer(3, GL_FLOAT, 16, input->xyz);   // padded for SIMD
-	if (qglLockArraysEXT)
-	{
-		qglLockArraysEXT(0, input->numVertexes);
-		Ren_LogComment("glLockArraysEXT\n");
-	}
 
 	// enable color and texcoord arrays after the lock if necessary
 	if (!setArraysOnce)
@@ -1419,13 +1334,6 @@ void RB_StageIteratorGeneric(void)
 	if (tess.fogNum && tess.shader->fogPass)
 	{
 		RB_FogPass();
-	}
-
-	// unlock arrays
-	if (qglUnlockArraysEXT)
-	{
-		qglUnlockArraysEXT();
-		Ren_LogComment("glUnlockArraysEXT\n");
 	}
 
 	// reset polygon offset
@@ -1462,12 +1370,6 @@ void RB_StageIteratorVertexLitTexture(void)
 	qglTexCoordPointer(2, GL_FLOAT, 16, tess.texCoords[0][0]);
 	qglVertexPointer(3, GL_FLOAT, 16, input->xyz);
 
-	if (qglLockArraysEXT)
-	{
-		qglLockArraysEXT(0, input->numVertexes);
-		Ren_LogComment("glLockArraysEXT\n");
-	}
-
 	// call special shade routine
 	R_BindAnimatedImage(&tess.xstages[0]->bundle[0]);
 	GL_State(tess.xstages[0]->stateBits);
@@ -1492,13 +1394,6 @@ void RB_StageIteratorVertexLitTexture(void)
 	if (tess.fogNum && tess.shader->fogPass)
 	{
 		RB_FogPass();
-	}
-
-	// unlock arrays
-	if (qglUnlockArraysEXT)
-	{
-		qglUnlockArraysEXT();
-		Ren_LogComment("glUnlockArraysEXT\n");
 	}
 }
 
@@ -1565,13 +1460,6 @@ void RB_StageIteratorLightmappedMultitexture(void)
 	qglEnableClientState(GL_TEXTURE_COORD_ARRAY);
 	qglTexCoordPointer(2, GL_FLOAT, 16, tess.texCoords[0][1]);
 
-	// lock arrays
-	if (qglLockArraysEXT)
-	{
-		qglLockArraysEXT(0, input->numVertexes);
-		Ren_LogComment("glLockArraysEXT\n");
-	}
-
 	R_DrawElements(input->numIndexes, input->indexes);
 
 	// disable texturing on TEXTURE1, then select TEXTURE0
@@ -1603,13 +1491,6 @@ void RB_StageIteratorLightmappedMultitexture(void)
 	if (tess.fogNum && tess.shader->fogPass)
 	{
 		RB_FogPass();
-	}
-
-	// unlock arrays
-	if (qglUnlockArraysEXT)
-	{
-		qglUnlockArraysEXT();
-		Ren_LogComment("glUnlockArraysEXT\n");
 	}
 }
 

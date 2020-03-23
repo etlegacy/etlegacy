@@ -321,7 +321,7 @@ byte *RB_ReadPixels(int x, int y, int width, int height, size_t *offset, int *pa
 	return buffer;
 }
 
-/**
+/*
  * @brief RB_ReadZBuffer
  * @param[in] x
  * @param[in] y
@@ -331,7 +331,6 @@ byte *RB_ReadPixels(int x, int y, int width, int height, size_t *offset, int *pa
  * @return
  *
  * @note Unused
- */
 byte *RB_ReadZBuffer(int x, int y, int width, int height, int *padlen)
 {
 	byte  *buffer, *bufstart;
@@ -354,6 +353,7 @@ byte *RB_ReadZBuffer(int x, int y, int width, int height, int *padlen)
 
 	return buffer;
 }
+*/
 
 /*
  * @brief zbuffer writer for the future implementation of the Depth of field effect
@@ -906,7 +906,8 @@ void GL_SetDefaultState(void)
 	// make sure our GL state vector is set correctly
 	glState.glStateBits = GLS_DEPTHTEST_DISABLE | GLS_DEPTHMASK_TRUE;
 
-	qglPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	qglPixelStorei(GL_PACK_ALIGNMENT, 1);
+	qglPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 	qglDepthMask(GL_TRUE);
 	qglDisable(GL_DEPTH_TEST);
 	qglEnable(GL_SCISSOR_TEST);
@@ -962,47 +963,10 @@ void GfxInfo_f(void)
 		Ren_Print("GAMMA: software w/ %d overbright bits\n", tr.overbrightBits);
 	}
 
-	// rendering primitives
-	{
-		int primitives;
-
-		// default is to use triangles if compiled vertex arrays are present
-		Ren_Print("rendering primitives: ");
-		primitives = r_primitives->integer;
-		if (primitives == 0)
-		{
-			if (qglLockArraysEXT)
-			{
-				primitives = 2;
-			}
-			else
-			{
-				primitives = 1;
-			}
-		}
-		if (primitives == -1)
-		{
-			Ren_Print("none\n");
-		}
-		else if (primitives == 2)
-		{
-			Ren_Print("single glDrawElements\n");
-		}
-		else if (primitives == 1)
-		{
-			Ren_Print("multiple glArrayElement\n");
-		}
-		else if (primitives == 3)
-		{
-			Ren_Print("multiple glColor4ubv + glTexCoord2fv + glVertex3fv\n");
-		}
-	}
-
 	Ren_Print("texturemode: %s\n", r_textureMode->string);
 	Ren_Print("picmip: %d\n", r_picMip->integer);
 	Ren_Print("texture bits: %d\n", r_textureBits->integer);
 	Ren_Print("multitexture: %s\n", enablestrings[qglActiveTextureARB != 0]);
-	Ren_Print("compiled vertex arrays: %s\n", enablestrings[qglLockArraysEXT != 0]);
 	Ren_Print("texenv add: %s\n", enablestrings[glConfig.textureEnvAddAvailable != 0]);
 	Ren_Print("compressed textures: %s\n", enablestrings[glConfig.textureCompression != TC_NONE]);
 

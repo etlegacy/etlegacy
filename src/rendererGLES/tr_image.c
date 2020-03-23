@@ -235,22 +235,6 @@ void R_ImageList_f(void)
 		case 4:
 			Ren_Print("RGBA ");
 			break;
-		case GL_RGBA8:
-			Ren_Print("RGBA8");
-			break;
-		case GL_RGB8:
-			Ren_Print("RGB8");
-			break;
-		case GL_COMPRESSED_RGBA_S3TC_DXT3_EXT:
-			Ren_Print("DXT3 ");
-			break;
-		case GL_COMPRESSED_RGBA_S3TC_DXT5_EXT:
-			Ren_Print("DXT5 ");
-			break;
-		case GL_RGB4_S3TC:
-		case GL_COMPRESSED_RGBA_S3TC_DXT1_EXT:
-			Ren_Print("S3TC ");
-			break;
 		case GL_RGBA4:
 			Ren_Print("RGBA4");
 			break;
@@ -863,16 +847,16 @@ static void Upload32(unsigned *data,
 		qglTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, scaled_width, scaled_height, 0, GL_RGB, GL_UNSIGNED_BYTE, temp);
 		ri.Free(temp);
 		break;
-	case 1:
-		temp = gles_convertLuminance((byte *)data, width, height);
-		qglTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE, width, height, 0, GL_LUMINANCE, GL_UNSIGNED_BYTE, temp);
-		ri.Free(temp);
-		break;
-	case 2:
-		temp = gles_convertLuminanceAlpha((byte *)data, width, height);
-		qglTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE_ALPHA, width, height, 0, GL_LUMINANCE_ALPHA, GL_UNSIGNED_BYTE, temp);
-		ri.Free(temp);
-		break;
+	case GL_LUMINANCE:
+        temp = gles_convertLuminance((byte*)scaledBuffer, width, height);
+        qglTexImage2D (GL_TEXTURE_2D, 0, GL_LUMINANCE, scaled_width, scaled_height, 0, GL_LUMINANCE, GL_UNSIGNED_BYTE, temp);
+        ri.Free(temp);
+        break;
+     case GL_LUMINANCE_ALPHA:
+        temp = gles_convertLuminanceAlpha((byte*)scaledBuffer, width, height);
+        qglTexImage2D (GL_TEXTURE_2D, 0, GL_LUMINANCE_ALPHA, scaled_width, scaled_height, 0, GL_LUMINANCE_ALPHA, GL_UNSIGNED_BYTE, temp);
+        ri.Free(temp);
+        break;
 	default:
 		internalFormat = GL_RGBA;
 		qglTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, scaled_width, scaled_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, scaledBuffer);
@@ -891,7 +875,7 @@ static void Upload32(unsigned *data,
 		if (textureFilterAnisotropic)
 		{
 			qglTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT,
-			                 (GLint)Com_Clamp(1, maxAnisotropy, r_ext_max_anisotropy->integer));
+			                 (GLint)Com_Clamp(1, maxAnisotropy, r_extMaxAnisotropy->integer));
 		}
 
 		qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, gl_filter_min);
@@ -1179,7 +1163,7 @@ image_t *R_FindImageFile(const char *name, qboolean mipmap, qboolean allowPicmip
 
 	if (((width - 1) & width) || ((height - 1) & height))
 	{
-		Ren_Developer("WARNING: Image not power of 2 scaled: %s\n", name);
+		Ren_Developer("WARNING: Image not power of 2 scaled: %s (%i:%i)\n", name, width, height);
 		return NULL;
 	}
 
@@ -1284,14 +1268,6 @@ static void R_CreateFogImage(void)
 	// what we want.
 	tr.fogImage = R_CreateImage("*fog", (byte *)data, FOG_S, FOG_T, qfalse, qfalse, GL_CLAMP_TO_EDGE);
 	ri.Hunk_FreeTempMemory(data);
-
-	// FIXME: the following lines are unecessary for new GL_CLAMP_TO_EDGE fog (?)
-	borderColor[0] = 1.0;
-	borderColor[1] = 1.0;
-	borderColor[2] = 1.0;
-	borderColor[3] = 1;
-
-	qglTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
 }
 
 #define DEFAULT_SIZE    16
@@ -1470,7 +1446,7 @@ void R_SetColorMappings(void)
 		s_intensitytable[i] = j;
 	}
 
-	if (glConfig.deviceSupportsGamma && !GLEW_ARB_fragment_program)
+	if (glConfig.deviceSupportsGamma)
 	{
 		ri.GLimp_SetGamma(s_gammatable, s_gammatable, s_gammatable);
 	}
@@ -1699,6 +1675,11 @@ qhandle_t RE_GetShaderFromModel(qhandle_t modelid, int surfnum, int withlightmap
 		{
 			msurface_t *surf;
 			shader_t   *shd;
+
+			if (bmodel->numSurfaces == 0)
+			{
+				return 0;
+			}
 
 			if (surfnum >= bmodel->numSurfaces)     // if it's out of range, return the first surface
 			{

@@ -752,6 +752,12 @@ static int GLimp_SetMode(glconfig_t *glConfig, int mode, qboolean fullscreen, qb
 		SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 1);
 #endif
 
+#ifdef FEATURE_RENDERER_GLES
+		SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
+		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 1);
+		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
+#endif
+
 		SDL_GL_SetAttribute(SDL_GL_RED_SIZE, perChannelColorBits);
 		SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, perChannelColorBits);
 		SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, perChannelColorBits);
@@ -805,6 +811,7 @@ static int GLimp_SetMode(glconfig_t *glConfig, int mode, qboolean fullscreen, qb
 
 		SDL_SetWindowIcon(main_window, icon);
 
+#ifndef FEATURE_RENDERER_GLES
 		if (context && context->versionMajor > 0)
 		{
 			SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, context->versionMajor);
@@ -827,6 +834,7 @@ static int GLimp_SetMode(glconfig_t *glConfig, int mode, qboolean fullscreen, qb
 				break;
 			}
 		}
+#endif
 
 		if ((SDL_glContext = SDL_GL_CreateContext(main_window)) == NULL)
 		{
@@ -936,27 +944,27 @@ static qboolean GLimp_StartDriverAndSetMode(glconfig_t *glConfig, int mode, qboo
 void GLimp_Splash(glconfig_t *glConfig)
 {
 	unsigned char splashData[SPLASH_DATA_SIZE]; // width * height * bytes_per_pixel
-	SDL_Surface *splashImage = NULL;
+	SDL_Surface   *splashImage = NULL;
 
 	// decode splash image
 	SPLASH_IMAGE_RUN_LENGTH_DECODE(splashData,
-	    CLIENT_WINDOW_SPLASH.rle_pixel_data,
-	    CLIENT_WINDOW_SPLASH.width * CLIENT_WINDOW_SPLASH.height,
-	    CLIENT_WINDOW_SPLASH.bytes_per_pixel);
+	                               CLIENT_WINDOW_SPLASH.rle_pixel_data,
+	                               CLIENT_WINDOW_SPLASH.width * CLIENT_WINDOW_SPLASH.height,
+	                               CLIENT_WINDOW_SPLASH.bytes_per_pixel);
 
 	// get splash image
 	splashImage = SDL_CreateRGBSurfaceFrom(
-	    (void *)splashData,
-	    CLIENT_WINDOW_SPLASH.width,
-	    CLIENT_WINDOW_SPLASH.height,
-	    CLIENT_WINDOW_SPLASH.bytes_per_pixel * 8,
-	    CLIENT_WINDOW_SPLASH.bytes_per_pixel * CLIENT_WINDOW_SPLASH.width,
+			(void *)splashData,
+			CLIENT_WINDOW_SPLASH.width,
+			CLIENT_WINDOW_SPLASH.height,
+			CLIENT_WINDOW_SPLASH.bytes_per_pixel * 8,
+			CLIENT_WINDOW_SPLASH.bytes_per_pixel * CLIENT_WINDOW_SPLASH.width,
 #ifdef Q3_LITTLE_ENDIAN
-	    0x000000FF, 0x0000FF00, 0x00FF0000, 0xFF000000
+			0x000000FF, 0x0000FF00, 0x00FF0000, 0xFF000000
 #else
-	    0xFF000000, 0x00FF0000, 0x0000FF00, 0x000000FF
+			0xFF000000, 0x00FF0000, 0x0000FF00, 0x000000FF
 #endif
-	    );
+	);
 
 	SDL_Rect dstRect;
 	dstRect.x = glConfig->vidWidth / 2 - splashImage->w / 2;
@@ -965,8 +973,14 @@ void GLimp_Splash(glconfig_t *glConfig)
 	dstRect.h = splashImage->h;
 
 	// apply image on surface
-	SDL_BlitSurface(splashImage, NULL, SDL_GetWindowSurface(main_window), &dstRect);
-	SDL_UpdateWindowSurface(main_window);
+	if (SDL_BlitSurface(splashImage, NULL, SDL_GetWindowSurface(main_window), &dstRect) == 0)
+	{
+		SDL_UpdateWindowSurface(main_window);
+	}
+	else
+	{
+		Com_Printf(S_COLOR_YELLOW "SDL_BlitSurface failed - %s\n", SDL_GetError());
+	}
 
 	SDL_FreeSurface(splashImage);
 }

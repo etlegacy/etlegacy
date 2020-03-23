@@ -217,7 +217,7 @@ static void R_LoadLightmaps(lump_t *l)
 	byte         *buf;
 	unsigned int len;
 	byte         image[LIGHTMAP_SIZE * LIGHTMAP_SIZE * 4];
-	int          i //, j;
+	int          i;
 	float        intensity, maxIntensity = 0;
 
 	// clear lightmaps first

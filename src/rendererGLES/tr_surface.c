@@ -909,8 +909,8 @@ static void LerpMeshVertexes(md3Surface_t *surf, float backlerp)
 	unsigned lat, lng;
 	int      numVerts;
 
-	outXyz    = tess.xyz[tess.numVertexes].v;
-	outNormal = tess.normal[tess.numVertexes].v;
+	outXyz    = tess.xyz[tess.numVertexes];
+	outNormal = tess.normal[tess.numVertexes];
 
 	newXyz = ( short * )((byte *)surf + surf->ofsXyzNormals)
 	         + (backEnd.currentEntity->e.frame * surf->numVerts * 4);
@@ -1753,7 +1753,6 @@ void RB_SurfaceDisplayList(srfDisplayList_t *surf)
 {
 	// all apropriate state must be set in RB_BeginSurface
 	// this isn't implemented yet...
-	qglCallList(surf->listNum);
 }
 
 /**
