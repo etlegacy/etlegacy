@@ -485,6 +485,18 @@ sprites/landmine_axis
 	}
 }
 
+sprites/ready
+{
+	nocompress
+	nomipmaps
+	nopicmip
+	{
+		map gfx/2d/ready.tga
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbGen vertex
+	}
+}
+
 ui/assets/mp_ammo_blue
 {
 	nopicmip
