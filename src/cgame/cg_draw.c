@@ -1565,6 +1565,8 @@ void CG_CheckForCursorHints(void)
 
 	CG_Trace(&trace, start, vec3_origin, vec3_origin, end, cg.snap->ps.clientNum, MASK_PLAYERSOLID);
 
+	dist = trace.fraction * CH_DIST;
+
 	if (trace.fraction == 1.f)
 	{
 		// might be water
@@ -1580,8 +1582,6 @@ void CG_CheckForCursorHints(void)
 		}
 		return;
 	}
-
-	dist = trace.fraction * CH_DIST;
 
 	tracent = &cg_entities[trace.entityNum];
 
