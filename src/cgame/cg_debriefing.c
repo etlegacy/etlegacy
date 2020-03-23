@@ -1839,7 +1839,11 @@ void CG_DebriefingPlayerWeaponStats_Draw(panel_button_t *button)
 		CG_Text_Paint_Ext(button->rect.x, y, button->font->scalex, button->font->scaley, button->font->colour, aWeaponInfo[pos].pszName, 0, 0, 0, button->font->font);
 		CG_Text_Paint_Ext(button->rect.x + 62, y, button->font->scalex, button->font->scaley, button->font->colour, va("%i", cgs.dbWeaponStats[pos].numShots), 0, 0, 0, button->font->font);
 		CG_Text_Paint_Ext(button->rect.x + 102, y, button->font->scalex, button->font->scaley, button->font->colour, va("%i", cgs.dbWeaponStats[pos].numHits), 0, 0, 0, button->font->font);
-		CG_Text_Paint_Ext(button->rect.x + 132, y, button->font->scalex, button->font->scaley, button->font->colour, va("%i", cgs.dbWeaponStats[pos].numKills), 0, 0, 0, button->font->font);
+		// syringe doesn't have kill stats
+		if (pos != WS_SYRINGE)
+		{
+			CG_Text_Paint_Ext(button->rect.x + 132, y, button->font->scalex, button->font->scaley, button->font->colour, va("%i", cgs.dbWeaponStats[pos].numKills), 0, 0, 0, button->font->font);
+		}
 
 		y += 12;
 	}

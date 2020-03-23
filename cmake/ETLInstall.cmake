@@ -30,19 +30,18 @@ if(UNIX)
 	install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/misc/etl.svg"
 		DESTINATION "${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/scalable/apps"
 	)
-	install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/misc/etlegacy.desktop"
+	install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/misc/com.etlegacy.ETLegacy.desktop"
 		DESTINATION "${CMAKE_INSTALL_PREFIX}/share/applications"
 	)
 	install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/misc/etlegacy.xml"
 		DESTINATION "${CMAKE_INSTALL_PREFIX}/share/mime/packages"
 	)
-		install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/docs/linux/man/man6/"
+	install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/misc/com.etlegacy.ETLegacy.metainfo.xml"
+		DESTINATION "${CMAKE_INSTALL_PREFIX}/share/metainfo"
+	)
+	install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/docs/linux/man/man6/"
 		DESTINATION "${CMAKE_INSTALL_PREFIX}/share/man/man6"
 	)
-else(UNIX)
-	#install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/misc/etl.ico"
-	#	DESTINATION "${INSTALL_DEFAULT_MODDIR}"
-	#)
 endif(UNIX)
 
 # project adds

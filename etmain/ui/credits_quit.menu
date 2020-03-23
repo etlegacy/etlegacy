@@ -259,7 +259,7 @@ menuDef {
 
 
 // Copyright Notices //
-	LABEL( 6, CREDITS_Y+290, WINDOW_WIDTH-12, 10, _("© 2012-2020 ET:Legacy Team - under the terms of GPL version 3."), .15, ITEM_ALIGN_LEFT, 0, 8 )
+	LABEL( 6, CREDITS_Y+290, WINDOW_WIDTH-12, 10, _("© 2012-2020 ET: Legacy Team - under the terms of GPL version 3."), .15, ITEM_ALIGN_LEFT, 0, 8 )
 	LABEL( 6, CREDITS_Y+300, WINDOW_WIDTH-12, 10, _("© 1999-2010 id Software LLC, a ZeniMax Media company. All rights reserved. id Software, the id Software logo, Wolfenstein, the Wolfenstein logo, Enemy Territory, the Enemy Territory logo, ZeniMax and related logos are registered trademarks or trademarks of ZeniMax Media Inc. in the U.S. and/or other countries. All other trademarks belong to their respective owners."), .15, ITEM_ALIGN_LEFT, 0, 8 )
 
 // Buttons //

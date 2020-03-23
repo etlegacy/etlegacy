@@ -2644,24 +2644,8 @@ static void Com_Crash_f(void)
  */
 void Com_SetRecommended()
 {
-	cvar_t   *r_highQualityVideo;
-	qboolean goodVideo;
-	// will use this for recommended settings as well.. do i outside the lower check so it gets done even with command line stuff
-	r_highQualityVideo = Cvar_Get("r_highQualityVideo", "1", CVAR_ARCHIVE);
-	goodVideo          = (r_highQualityVideo && r_highQualityVideo->integer);
-
-	if (goodVideo)
-	{
-		Com_Printf("Found high quality video and fast CPU\n");
-		Cbuf_AddText("exec preset_high.cfg\n");
-		Cvar_Set("com_recommended", "0");
-	}
-	else
-	{
-		Com_Printf("Found low quality video and fast CPU\n");
-		Cbuf_AddText("exec preset_normal.cfg\n");
-		Cvar_Set("com_recommended", "1");
-	}
+	Cbuf_AddText("exec preset_high.cfg\n");
+	Cvar_Set("com_recommended", "0");
 }
 
 /**

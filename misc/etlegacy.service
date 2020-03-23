@@ -1,5 +1,5 @@
 [Unit]
-Description=Enemy Territory Legacy dedicated server
+Description=ET: Legacy dedicated server
 After=network.target
 
 [Service]

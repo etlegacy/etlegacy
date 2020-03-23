@@ -1019,7 +1019,7 @@ int main(int argc, char **argv)
 		}
 		else if (quarantine_status >= 2)
 		{
-			Sys_Dialog(DT_ERROR, "An error occured while removing the app quarantine flag automatically. Please read the installation instructions on removing the app quarantine on the ET Legacy wiki:\r\n\r\nhttps://github.com/etlegacy/etlegacy/wiki/Mac-OS-X", "Can't remove app quarantine");
+			Sys_Dialog(DT_ERROR, "An error occured while removing the app quarantine flag automatically. Please read the installation instructions on removing the app quarantine on the ET: Legacy wiki:\r\n\r\nhttps://github.com/etlegacy/etlegacy/wiki/Mac-OS-X", "Can't remove app quarantine");
 			Sys_Exit(EXIT_FAILURE);
 		}
 

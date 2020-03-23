@@ -36,37 +36,22 @@
 
 /**
  * @brief Used below to interpolate between two previous vectors
- * @param[in] start
- * @param[in] end
- * @param[in] frac
+ * @param[in] start start vector
+ * @param[in] end end vector
+ * @param[in] frac fraction with which to interpolate
  * @param[out] result A vector "frac" times the distance between "start" and "end"
  */
-static void TimeShiftLerp(vec3_t start, vec3_t end, float frac, vec3_t result)
+static void TimeShiftLerp(const vec3_t start, const vec3_t end, float frac, vec3_t result)
 {
-// From CG_InterpolateEntityPosition in cg_ents.c:
-/*
-    cent->lerpOrigin[0] = current[0] + f * ( next[0] - current[0] );
-    cent->lerpOrigin[1] = current[1] + f * ( next[1] - current[1] );
-    cent->lerpOrigin[2] = current[2] + f * ( next[2] - current[2] );
-
-  Angles would be done in a different function, but here they are only the s.angles
-  lerpAngles is copied over from ent->s.angles
-    cent->lerpAngles[0] = LerpAngle( current[0], next[0], f );
-    cent->lerpAngles[1] = LerpAngle( current[1], next[1], f );
-    cent->lerpAngles[2] = LerpAngle( current[2], next[2], f );
-
-*/
-// Making these exactly the same should avoid floating-point error
-
 	result[0] = start[0] + frac * (end[0] - start[0]);
 	result[1] = start[1] + frac * (end[1] - start[1]);
 	result[2] = start[2] + frac * (end[2] - start[2]);
 }
 
 /**
- * @brief G_AntilagSafe
- * @param[in] ent
- * @return
+ * @brief Check if this entity can be antilagged safely
+ * @param[in] ent which to check
+ * @return if it is safe to antilag this entity
  */
 static qboolean G_AntilagSafe(gentity_t *ent)
 {
@@ -86,6 +71,12 @@ static qboolean G_AntilagSafe(gentity_t *ent)
 	}
 
 	if (!ent->client)
+	{
+		return qfalse;
+	}
+
+	// No bots allowed
+	if(ent->r.svFlags & SVF_BOT)
 	{
 		return qfalse;
 	}
@@ -128,8 +119,8 @@ static qboolean G_AntilagSafe(gentity_t *ent)
 }
 
 /**
- * @brief G_StoreClientPosition
- * @param[in,out] ent
+ * @brief Store client entity's position and other related data which is required to shift time (B2TF)
+ * @param[in,out] ent target client entity
  */
 void G_StoreClientPosition(gentity_t *ent)
 {
@@ -187,9 +178,9 @@ void G_StoreClientPosition(gentity_t *ent)
 }
 
 /**
- * @brief G_AdjustSingleClientPosition
- * @param[in,out] ent
- * @param[in] time
+ * @brief Move a client back to where he was at the specified "time"
+ * @param[in,out] ent client entity which to shift
+ * @param[in] time timestamp which to use
  */
 static void G_AdjustSingleClientPosition(gentity_t *ent, int time)
 {
@@ -228,7 +219,7 @@ static void G_AdjustSingleClientPosition(gentity_t *ent, int time)
 		return;
 	}
 
-	// save current position to backup
+	// save current position to backup if we have not already done so ( no need to re-save )
 	if (ent->client->backupMarker.time != level.time)
 	{
 		VectorCopy(ent->r.currentOrigin, ent->client->backupMarker.origin);
@@ -267,16 +258,13 @@ static void G_AdjustSingleClientPosition(gentity_t *ent, int time)
 		ent->client->backupMarker.legsPitching      = ent->legsFrame.pitching;
 	}
 
+	// if we haven't wrapped back to the head, we've sandwiched, so
+	// we shift the client's position back to where he was at "time"
 	if (i != ent->client->topMarker)
 	{
 		float frac = (float)(time - ent->client->clientMarkers[i].time) /
 		             (float)(ent->client->clientMarkers[j].time - ent->client->clientMarkers[i].time);
-
-		//LerpPosition(ent->client->clientMarkers[i].origin, ent->client->clientMarkers[j].origin, frac, ent->r.currentOrigin);
-		//LerpPosition(ent->client->clientMarkers[i].mins, ent->client->clientMarkers[j].mins, frac, ent->r.mins);
-		//LerpPosition(ent->client->clientMarkers[i].maxs, ent->client->clientMarkers[j].maxs, frac, ent->r.maxs);
-
-		// Using TimeShiftLerp since it follows the client exactly meaning less roundoff error
+		// Using TimeShiftLerp since it follows the client exactly meaning less roundoff error instead of LerpPosition()
 		TimeShiftLerp(
 		    ent->client->clientMarkers[i].origin,
 		    ent->client->clientMarkers[j].origin,
@@ -444,8 +432,8 @@ static void G_AdjustSingleClientPosition(gentity_t *ent, int time)
 }
 
 /**
- * @brief G_ReAdjustSingleClientPosition
- * @param[in,out] ent
+ * @brief Move a client back to where he was before the time shift
+ * @param[in,out] ent client entity which to shift
  */
 void G_ReAdjustSingleClientPosition(gentity_t *ent)
 {
@@ -501,12 +489,12 @@ void G_ReAdjustSingleClientPosition(gentity_t *ent)
 }
 
 /**
- * @brief G_AdjustClientPositions
- * @param[in] ent
- * @param[in] time
- * @param[in] forward
+ * @brief Move ALL clients back to where they were at the specified "time", except for "skip"
+ * @param[in] skip Client to skip (the one shooting currently)
+ * @param[in] time timestamp which to use
+ * @param[in] backwards are we going back or forward in time (are we restoring the original location)
  */
-static void G_AdjustClientPositions(gentity_t *ent, int time, qboolean forward)
+static void G_AdjustClientPositions(gentity_t *skip, int time, qboolean backwards)
 {
 	int       i;
 	gentity_t *list;
@@ -514,32 +502,27 @@ static void G_AdjustClientPositions(gentity_t *ent, int time, qboolean forward)
 	for (i = 0; i < level.numConnectedClients; i++, list++)
 	{
 		list = g_entities + level.sortedClients[i];
-		// ok lets test everything under the sun
-		if (list->client &&
-		    list->inuse &&
-		    (list->client->sess.sessionTeam == TEAM_AXIS || list->client->sess.sessionTeam == TEAM_ALLIES) &&
-		    (list != ent) &&
-		    list->r.linked &&
-		    (list->health > 0) &&
-		    !(list->client->ps.pm_flags & PMF_LIMBO) &&
-		    (list->client->ps.pm_type == PM_NORMAL)
-		    )
+
+		// dont adjust the firing client entity
+		if (list == skip)
 		{
-			if (forward)
-			{
-				G_AdjustSingleClientPosition(list, time);
-			}
-			else
-			{
-				G_ReAdjustSingleClientPosition(list);
-			}
+			continue;
 		}
+
+        if (backwards)
+        {
+            G_AdjustSingleClientPosition(list, time);
+        }
+        else
+        {
+            G_ReAdjustSingleClientPosition(list);
+        }
 	}
 }
 
 /**
- * @brief G_ResetMarkers
- * @param[in,out] ent
+ * @brief Clear out the given client's history (should be called on client spawn or teleport)
+ * @param[in,out] ent client entity which to reset history
  */
 void G_ResetMarkers(gentity_t *ent)
 {
@@ -547,7 +530,7 @@ void G_ResetMarkers(gentity_t *ent)
 	float period = sv_fps.value;
 	int   eFlags;
 
-	if (period == 0.f)
+	if (period <= 0.f)
 	{
 		period = 50;
 	}
@@ -704,8 +687,6 @@ void G_HistoricalTrace(gentity_t *ent, trace_t *results, const vec3_t start, con
 	vec3_t dir;
 	int    res, clientNum, i;
 
-	Com_Memset(&maxsBackup, 0, sizeof(maxsBackup));
-
 	if (!g_antilag.integer || !ent->client)
 	{
 		G_AttachBodyParts(ent);
@@ -719,9 +700,11 @@ void G_HistoricalTrace(gentity_t *ent, trace_t *results, const vec3_t start, con
 		return;
 	}
 
+	Com_Memset(&maxsBackup, 0, sizeof(maxsBackup));
+
 	G_AdjustClientPositions(ent, ent->client->pers.cmd.serverTime, qtrue);
 
-	G_AttachBodyParts(ent) ;
+	G_AttachBodyParts(ent);
 
 	for (i = 0; i < level.numConnectedClients; ++i)
 	{
@@ -869,7 +852,7 @@ void G_Trace(gentity_t *ent, trace_t *results, const vec3_t start, const vec3_t 
  * @param[in] ent
  * @return
  */
-qboolean G_SkipCorrectionSafe(gentity_t *ent)
+static qboolean G_SkipCorrectionSafe(gentity_t *ent)
 {
 	if (!ent)
 	{

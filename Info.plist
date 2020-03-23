@@ -7,7 +7,7 @@
 	<key>CFBundleExecutable</key>
 	<string>etl</string>
 	<key>CFBundleGetInfoString</key>
-	<string>Wolfenstein Enemy Territory: Legacy</string>
+	<string>ET: Legacy</string>
 	<key>CFBundleIconFile</key>
 	<string>etl.icns</string>
 	<key>CFBundleIdentifier</key>

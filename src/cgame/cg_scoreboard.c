@@ -1093,7 +1093,7 @@ static int WM_TeamScoreboard(int x, int y, team_t team, float fade, int maxrows,
 #ifdef FEATURE_PRESTIGE
 			if (cgs.prestige && cg_scoreboard.integer == SCOREBOARD_PR)
 			{
-				s = va("%s (%d %s)", CG_TranslateString("ALLIES"),cg.teamPlayers[team], cg.teamPlayers[team] < 2 ? CG_TranslateString("PLAYER") : CG_TranslateString("PLAYERS"));
+				s = va("%s (%d %s)", CG_TranslateString("ALLIES"), cg.teamPlayers[team], cg.teamPlayers[team] < 2 ? CG_TranslateString("PLAYER") : CG_TranslateString("PLAYERS"));
 
 				s2 = va("%s", CG_TranslateString("PRESTIGE"));
 				CG_Text_Paint_Ext(x + width - 5 - CG_Text_Width_Ext(s2, 0.19f, 0, FONT_HEADER), y + 13, 0.19f, 0.19f, SB_text, s2, 0, 0, 0, FONT_HEADER);
@@ -1171,14 +1171,19 @@ static int WM_TeamScoreboard(int x, int y, team_t team, float fade, int maxrows,
 
 	y += 18;
 
-	cg.teamPlayers[team]  = 0;
-	cg.teamPingMean[team] = 0.f;
-	cg.teamPingSd[team]   = 0.f;
+	cg.teamPlayers[TEAM_SPECTATOR] = 0;
+	cg.teamPlayers[team]           = 0;
+	cg.teamPingMean[team]          = 0.f;
+	cg.teamPingSd[team]            = 0.f;
 
 	for (i = 0; i < cg.numScores; i++)
 	{
 		if (team != cgs.clientinfo[cg.scores[i].client].team)
 		{
+			if (cgs.clientinfo[cg.scores[i].client].team == TEAM_SPECTATOR)
+			{
+				cg.teamPlayers[TEAM_SPECTATOR]++;
+			}
 			continue;
 		}
 
@@ -1203,11 +1208,19 @@ static int WM_TeamScoreboard(int x, int y, team_t team, float fade, int maxrows,
 		cg.teamPingSd[team] = sqrtf(cg.teamPingSd[team] / cg.teamPlayers[team]);
 	}
 
-	if (cg.teamPlayers[team] > maxrows)
+	// adjust also for spectator rows in game, but ignore them in debriefing
+	if (cg.snap->ps.pm_type != PM_INTERMISSION && cg.teamPlayers[TEAM_SPECTATOR] > 0 &&
+	    (cg.teamPlayers[team] + 1 + (cg.teamPlayers[TEAM_SPECTATOR] + 1) / 2) > maxrows)
 	{
 		maxrows        = absmaxrows;
 		use_mini_chars = qtrue;
 	}
+	else if (cg.teamPlayers[team] > maxrows)
+	{
+		maxrows        = absmaxrows;
+		use_mini_chars = qtrue;
+	}
+
 	// save off y val
 	tempy = y;
 
@@ -1409,7 +1422,7 @@ qboolean CG_DrawScoreboard(void)
 		{
 			s3 = CG_TranslateString("XP view");
 		}
-		s  = va(CG_TranslateString("%s - Press double-%s quickly to switch scoreboard"), s3, s2);
+		s = va(CG_TranslateString("%s - Press double-%s quickly to switch scoreboard"), s3, s2);
 
 		w = CG_Text_Width_Ext(s, fontScale, 0, &cgs.media.limboFont2);
 		x = Ccg_WideX(SCREEN_WIDTH / 2) - w / 2;

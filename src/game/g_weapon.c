@@ -418,7 +418,6 @@ void ReviveEntity(gentity_t *ent, gentity_t *traceEnt)
 * @brief Shoot the syringe, do the old lazarus bit
 *
 * @param[in,out] ent
-* @param[out] firedShot - unused
 *
 */
 gentity_t *Weapon_Syringe(gentity_t *ent)
@@ -462,12 +461,10 @@ gentity_t *Weapon_Syringe(gentity_t *ent)
 		ReviveEntity(ent, traceEnt);
 
 		// syringe "hit"
-		// we no longer track the syringe - it's no real weapon and messes up the total weapon stats (see acc)
-		// FIXME: add a new award 'most revives' instead?
-		//if (g_gamestate.integer == GS_PLAYING)
-		//{
-		//ent->client->sess.aWeaponStats[WS_SYRINGE].hits++;
-		//}
+		if (g_gamestate.integer == GS_PLAYING)
+		{
+			ent->client->sess.aWeaponStats[WS_SYRINGE].hits++;
+		}
 
 		G_LogPrintf("Medic_Revive: %d %d\n", (int)(ent - g_entities), (int)(traceEnt - g_entities));
 

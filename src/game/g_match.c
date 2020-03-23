@@ -1002,8 +1002,6 @@ int G_checkServerToggle(vmCvar_t *cv)
 void G_statsPrint(gentity_t *ent, int nType)
 {
 	const char *cmd;
-	char       arg[MAX_TOKEN_CHARS];
-	int        spectatorClient;
 
 	if (!ent || (ent->r.svFlags & SVF_BOT))
 	{
@@ -1023,16 +1021,7 @@ void G_statsPrint(gentity_t *ent, int nType)
 		}
 		else if (ent->client->sess.spectatorState == SPECTATOR_FOLLOW)
 		{
-			spectatorClient = ent->client->sess.spectatorClient; 
-			if (spectatorClient == -1)
-			{
-				spectatorClient = level.follow1;
-			}
-			else if (spectatorClient == -2)
-			{
-				spectatorClient = level.follow2;
-			}
-			CP(va("%s %s\n", cmd, G_createStats(g_entities + spectatorClient)));
+			CP(va("%s %s\n", cmd, G_createStats(g_entities + ent->client->sess.spectatorClient)));
 		}
 		else
 		{
@@ -1042,7 +1031,8 @@ void G_statsPrint(gentity_t *ent, int nType)
 	}
 	else
 	{
-		int pid;
+		int  pid;
+                char arg[MAX_TOKEN_CHARS];
 
 		// Find the player to poll stats.
 		trap_Argv(1, arg, sizeof(arg));

@@ -324,7 +324,10 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 
 	// unlagged - backward reconciliation #2
 	// make sure the body shows up in the client's current position
-	G_ReAdjustSingleClientPosition(self);
+	if(g_antilag.integer)
+	{
+		G_ReAdjustSingleClientPosition(self);
+	}
 	// unlagged - backward reconciliation #2
 
 	if (attacker == self)
@@ -959,8 +962,9 @@ qboolean IsHeadShot(gentity_t *targ, vec3_t dir, vec3_t point, meansOfDeath_t mo
 			G_RailTrail(start, end, tv(1.f, 0.f, 0.f));
 		}
 
-		if (g_antilag.integer)
+		if(g_antilag.integer)
 		{
+			// Why??
 			G_ReAdjustSingleClientPosition(targ);
 		}
 
@@ -1037,7 +1041,7 @@ qboolean IsLegShot(gentity_t *targ, vec3_t dir, vec3_t point, meansOfDeath_t mod
 				G_RailTrail(start, end, tv(1.f, 0.f, 0.f));
 			}
 
-			if (g_antilag.integer)
+			if(g_antilag.integer)
 			{
 				G_ReAdjustSingleClientPosition(targ);
 			}

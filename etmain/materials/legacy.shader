@@ -1485,6 +1485,18 @@ gfx/2d/friendlycross
 	}
 }
 
+// enemy disguised shader
+sprites/undercover
+{
+	nocompress
+	nopicmip
+	{
+		map sprites/undercover.tga
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbGen vertex
+	}
+}
+
 // fireteam
 sprites/fireteam
 {

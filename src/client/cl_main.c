@@ -2887,7 +2887,7 @@ void CL_Init(void)
 	Cvar_Get("name", "ETLegacyPlayer", CVAR_USERINFO | CVAR_ARCHIVE);
 	Cvar_Get("rate", "25000", CVAR_USERINFO | CVAR_ARCHIVE);
 	Cvar_Get("snaps", "20", CVAR_USERINFO | CVAR_ARCHIVE);
-	Cvar_Get("etVersion", Q3_VERSION, CVAR_USERINFO | CVAR_ROM);
+	Cvar_Get("etVersion", ET_VERSION, CVAR_USERINFO | CVAR_ROM);
 
 	Cvar_Get("password", "", CVAR_USERINFO);
 	Cvar_Get("cg_predictItems", "1", CVAR_ARCHIVE);

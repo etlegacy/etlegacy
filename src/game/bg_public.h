@@ -1753,6 +1753,7 @@ typedef enum extWeaponStats_e
 	WS_GARAND,         ///< 24
 	WS_K43,            ///< 25
 	WS_MP34,           ///< 26
+	WS_SYRINGE,        ///< 27
 
 	WS_MAX
 } extWeaponStats_t;

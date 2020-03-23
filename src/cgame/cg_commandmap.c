@@ -682,7 +682,7 @@ void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, float h,
 			reviveClr[3] = .5f + .5f * (float)((sin(sqrt((double)msec) * 25 * M_TAU_F) + 1) * 0.5);
 
 			trap_R_SetColor(reviveClr);
-			CG_DrawPic(icon_pos[0] + 3, icon_pos[1] + 3, icon_extends[0] - 3, icon_extends[1] - 3, cgs.media.medicIcon);
+			CG_DrawPic(icon_pos[0] + 2, icon_pos[1] + 2, icon_extends[0] - 2, icon_extends[1] - 2, cgs.media.medicIcon);
 		}
 		else
 		{
@@ -738,6 +738,12 @@ void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, float h,
 				{
 					CG_DrawPic(icon_pos[0] + 12, icon_pos[1], icon_extends[0] * 0.5f, icon_extends[1] * 0.5f, cent->voiceChatSprite);
 				}
+			}
+
+			// hide ghost icon for following shoutcaster
+			if (cgs.clientinfo[cg.clientNum].shoutcaster && (cg.snap->ps.pm_flags & PMF_FOLLOW) && cg.snap->ps.clientNum == mEnt->data)
+			{
+				return;
 			}
 
 			c_clr[3] = 1.0f;
@@ -1046,7 +1052,7 @@ void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, float h,
 				icon_extends[1] *= cgs.ccZoomFactor;
 			}
 
-			CG_DrawPic(icon_pos[0] - (icon_extends[0] * 0.5f), icon_pos[1] - (icon_extends[1] * 0.5f), icon_extends[0], icon_extends[1], pic);
+			CG_DrawPic(icon_pos[0] - icon_extends[0] * 0.5f, icon_pos[1] - icon_extends[1] * 0.5f, icon_extends[0], icon_extends[1], pic);
 		}
 		trap_R_SetColor(NULL);
 		return;
@@ -1157,7 +1163,7 @@ void CG_DrawMap(float x, float y, float w, float h, int mEntFilter, mapScissor_t
 {
 	int             i;
 	snapshot_t      *snap;
-	mapEntityData_t *mEnt = &mapEntities[0];
+	mapEntityData_t *mEnt;
 	int             icon_size;
 	int             exspawn;
 	team_t          RealTeam = CG_LimboPanel_GetRealTeam();
@@ -1326,8 +1332,8 @@ void CG_DrawMap(float x, float y, float w, float h, int mEntFilter, mapScissor_t
 		if (snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR)
 		{
 			// draw a arrow when free-spectating
-			CG_DrawPic(icon_pos[0] - (icon_extends[0] * 0.5f), icon_pos[1] - (icon_extends[1] * 0.5f), icon_extends[0], icon_extends[1], cgs.media.cm_spec_icon);
-			CG_DrawRotatedPic(icon_pos[0] - (icon_extends[0] * 0.5f) - 1, icon_pos[1] - (icon_extends[1] * 0.5f) - 1, icon_extends[0] + 2, icon_extends[1] + 2, cgs.media.cm_arrow_spec, (0.5f - (cg.predictedPlayerState.viewangles[YAW] - 180.f) / 360.f));
+			CG_DrawPic(icon_pos[0] - icon_extends[0] * 0.5f, icon_pos[1] - icon_extends[1] * 0.5f, icon_extends[0], icon_extends[1], cgs.media.cm_spec_icon);
+			CG_DrawRotatedPic(icon_pos[0] - icon_extends[0] * 0.5f - 1, icon_pos[1] - icon_extends[1] * 0.5f - 1, icon_extends[0] + 2, icon_extends[1] + 2, cgs.media.cm_arrow_spec, (0.5f - (cg.predictedPlayerState.viewangles[YAW] - 180.f) / 360.f));
 		}
 		else
 		{
@@ -1336,19 +1342,52 @@ void CG_DrawMap(float x, float y, float w, float h, int mEntFilter, mapScissor_t
 
 			if (snap->ps.powerups[PW_OPS_DISGUISED])
 			{
-				CG_DrawPic(icon_pos[0] - (icon_extends[0] * 0.5f), icon_pos[1] - (icon_extends[1] * 0.5f), icon_extends[0], icon_extends[1], classInfo->icon);
-				CG_DrawPic(icon_pos[0] - (icon_extends[0] * 0.5f), icon_pos[1] - (icon_extends[1] * 0.5f), icon_extends[0], icon_extends[1], cgs.media.friendShader);
+				CG_DrawPic(icon_pos[0] - icon_extends[0] * 0.5f, icon_pos[1] - icon_extends[1] * 0.5f, icon_extends[0], icon_extends[1], classInfo->icon);
+				CG_DrawPic(icon_pos[0] - icon_extends[0] * 0.5f, icon_pos[1] - icon_extends[1] * 0.5f, icon_extends[0], icon_extends[1], cgs.media.friendShader);
 			}
 			else if (snap->ps.powerups[PW_REDFLAG] || snap->ps.powerups[PW_BLUEFLAG])
 			{
-				CG_DrawPic(icon_pos[0] - (icon_extends[0] * 0.5f), icon_pos[1] - (icon_extends[1] * 0.5f), icon_extends[0], icon_extends[1], cgs.media.objectiveShader);
+				CG_DrawPic(icon_pos[0] - icon_extends[0] * 0.5f, icon_pos[1] - icon_extends[1] * 0.5f, icon_extends[0], icon_extends[1], cgs.media.objectiveShader);
+			}
+			else if (snap->ps.eFlags & EF_DEAD && !(snap->ps.powerups[PW_INVULNERABLE]))
+			{
+				float  msec;
+				vec4_t reviveClr = { 1.f, 1.f, 1.f, 1.f };
+
+				if (snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR || cgs.clientinfo[cg.clientNum].shoutcaster)
+				{
+					if (cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_AXIS || (cgs.clientinfo[cg.clientNum].shoutcaster && mEnt->team == TEAM_AXIS))
+					{
+						msec = (cg_redlimbotime.integer - (cg.time % cg_redlimbotime.integer)) / (float)cg_redlimbotime.integer;
+					}
+					else if (cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_ALLIES || (cgs.clientinfo[cg.clientNum].shoutcaster && mEnt->team == TEAM_ALLIES))
+					{
+						msec = (cg_bluelimbotime.integer - (cg.time % cg_bluelimbotime.integer)) / (float)cg_bluelimbotime.integer;
+					}
+					else
+					{
+						msec = 0;
+					}
+
+					reviveClr[3] = .5f + .5f * (float)((sin(sqrt((double)msec) * 25 * M_TAU_F) + 1) * 0.5);
+				}
+				else
+				{
+					// following spectator can't guess reinforcement timer
+					reviveClr[3] = .5f + fabs(sin(cg.time * 0.002)) * 0.5;
+				}
+
+				trap_R_SetColor(reviveClr);
+				CG_DrawPic(icon_pos[0] - icon_extends[0] * 0.5f + 2, icon_pos[1] - icon_extends[1] * 0.5f + 2, icon_extends[0] - 2, icon_extends[1] - 2, cgs.media.medicIcon);
+				trap_R_SetColor(NULL);
+				return;
 			}
 			else
 			{
-				CG_DrawPic(icon_pos[0] - (icon_extends[0] * 0.5f), icon_pos[1] - (icon_extends[1] * 0.5f), icon_extends[0], icon_extends[1], classInfo->icon);
+				CG_DrawPic(icon_pos[0] - icon_extends[0] * 0.5f, icon_pos[1] - icon_extends[1] * 0.5f, icon_extends[0], icon_extends[1], classInfo->icon);
 			}
 
-			CG_DrawRotatedPic(icon_pos[0] - (icon_extends[0] * 0.5f) - 1, icon_pos[1] - (icon_extends[1] * 0.5f) - 1, icon_extends[0] + 2, icon_extends[1] + 2, classInfo->arrow, (0.5f - (cg.predictedPlayerState.viewangles[YAW] - 180.f) / 360.f));
+			CG_DrawRotatedPic(icon_pos[0] - icon_extends[0] * 0.5f - 1, icon_pos[1] - icon_extends[1] * 0.5f - 1, icon_extends[0] + 2, icon_extends[1] + 2, classInfo->arrow, (0.5f - (cg.predictedPlayerState.viewangles[YAW] - 180.f) / 360.f));
 		}
 	}
 }

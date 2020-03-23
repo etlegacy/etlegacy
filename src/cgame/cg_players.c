@@ -2005,7 +2005,6 @@ static void CG_PlayerFloatText(centity_t *cent, const char *text, int height)
  */
 static void CG_PlayerSprites(centity_t *cent)
 {
-	int team;
 	int numIcons     = 0;
 	int height       = 56;
 	clientInfo_t *ci = &cgs.clientinfo[cent->currentState.clientNum];
@@ -2022,7 +2021,9 @@ static void CG_PlayerSprites(centity_t *cent)
 		height = 8;
 	}
 
-	if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR)
+	sameTeam = ((cg.snap->ps.persistant[PERS_TEAM] == ci->team) ? qtrue : qfalse);
+
+	if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR || (cg.snap->ps.pm_flags & PMF_FOLLOW && cgs.clientinfo[cg.clientNum].shoutcaster))
 	{
 		if (cg_drawCrosshairNames.integer > 0 || cgs.clientinfo[cg.clientNum].shoutcaster)
 		{
@@ -2035,7 +2036,9 @@ static void CG_PlayerSprites(centity_t *cent)
 			CG_PlayerFloatSprite(cent, cgs.media.disconnectIcon, height, numIcons++);
 			return;
 		}
-		if (cent->currentState.eFlags & EF_DEAD && cgs.clientinfo[cg.clientNum].shoutcaster)
+		if (cent->currentState.eFlags & EF_DEAD &&
+		    ((cg.snap->ps.stats[STAT_PLAYER_CLASS] == PC_MEDIC && cg.snap->ps.stats[STAT_HEALTH] > 0 && sameTeam) ||
+		     (!(cg.snap->ps.pm_flags & PMF_FOLLOW) && cgs.clientinfo[cg.clientNum].shoutcaster)))
 		{
 			CG_PlayerFloatSprite(cent, cgs.media.medicReviveShader, height, numIcons++);
 			return;
@@ -2046,7 +2049,7 @@ static void CG_PlayerSprites(centity_t *cent)
 		}
 		if (cent->currentState.powerups & (1 << PW_OPS_DISGUISED) && cgs.clientinfo[cg.clientNum].shoutcaster)
 		{
-			CG_PlayerFloatSprite(cent, cgs.media.friendShader, height, numIcons++);
+			CG_PlayerFloatSprite(cent, cgs.media.disguisedShader, height, numIcons++);
 		}
 		return;
 	}
@@ -2055,9 +2058,6 @@ static void CG_PlayerSprites(centity_t *cent)
 	{
 		CG_PlayerFloatSprite(cent, cgs.media.spawnInvincibleShader, height, numIcons++);
 	}
-
-	team     = ci->team;
-	sameTeam = ((cg.snap->ps.persistant[PERS_TEAM] == team) ? qtrue : qfalse);
 
 	// If this client is a medic, draw a 'revive' icon over
 	// dead players that are not in limbo yet.
@@ -2104,6 +2104,12 @@ static void CG_PlayerSprites(centity_t *cent)
 			    && cgs.clientinfo[cgs.clientinfo[cent->currentState.number].disguiseClientNum].selected)
 			{
 				CG_PlayerFloatSprite(cent, cgs.media.fireteamIcon, height, numIcons++);
+			}
+
+			// shoutcasters see undercover enemies
+			if (cgs.clientinfo[cent->currentState.number].disguiseClientNum > -1 && cgs.clientinfo[cg.clientNum].shoutcaster)
+			{
+				CG_PlayerFloatSprite(cent, cgs.media.disguisedShader, height, numIcons++);
 			}
 		}
 	}

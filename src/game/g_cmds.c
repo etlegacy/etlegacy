@@ -1237,53 +1237,11 @@ void Cmd_DropObjective_f(gentity_t *ent)
  * @param[out] sState
  * @param[in,out] specClient
  */
-void G_TeamDataForString(const char *teamstr, int clientNum, team_t *team, spectatorState_t *sState, int *specClient)
+void G_TeamDataForString(const char *teamstr, int clientNum, team_t *team, spectatorState_t *sState)
 {
 	*sState = SPECTATOR_NOT;
-	if (!Q_stricmp(teamstr, "follow1")) // follow player 1 as a spectator (we do require at least 1 playing client)
-	{
-		*team = TEAM_SPECTATOR;
-		if (TeamCount(clientNum, TEAM_AXIS) + TeamCount(clientNum, TEAM_ALLIES) > 0)
-		{
-			*sState = SPECTATOR_FOLLOW;
-		}
-		else
-		{
-			*sState = SPECTATOR_FREE;
-		}
 
-		if (specClient)
-		{
-			*specClient = -1;
-		}
-	}
-	else if (!Q_stricmp(teamstr, "follow2")) // follow player 2 as a spectator (we do require at least 2 playing clients)
-	{
-		int specClientNum = -2;
-		int playerCount   = TeamCount(clientNum, TEAM_AXIS) + TeamCount(clientNum, TEAM_ALLIES);
-
-		*team = TEAM_SPECTATOR;
-		if (playerCount > 1)
-		{
-			*sState = SPECTATOR_FOLLOW;
-		}
-		// if there is no 2nd player to follow, follow the first one
-		else if (playerCount > 0)
-		{
-			*sState       = SPECTATOR_FOLLOW;
-			specClientNum = -1;
-		}
-		else
-		{
-			*sState = SPECTATOR_FREE;
-		}
-
-		if (specClient)
-		{
-			*specClient = specClientNum;
-		}
-	}
-	else if (!Q_stricmp(teamstr, "spectator") || !Q_stricmp(teamstr, "s"))
+	if (!Q_stricmp(teamstr, "spectator") || !Q_stricmp(teamstr, "s"))
 	{
 		*team   = TEAM_SPECTATOR;
 		*sState = SPECTATOR_FREE;
@@ -1416,12 +1374,11 @@ qboolean SetTeam(gentity_t *ent, const char *s, qboolean force, weapon_t w1, wea
 	gclient_t        *client   = ent->client;
 	int              clientNum = client - level.clients;
 	spectatorState_t specState;
-	int              specClient   = 0;
 	int              respawnsLeft = client->ps.persistant[PERS_RESPAWNS_LEFT]; // preserve respawn count
 
 	// see what change is requested
 
-	G_TeamDataForString(s, client - level.clients, &team, &specState, &specClient);
+	G_TeamDataForString(s, client - level.clients, &team, &specState);
 
 	if (ent->client->freezed)
 	{
@@ -1573,7 +1530,7 @@ qboolean SetTeam(gentity_t *ent, const char *s, qboolean force, weapon_t w1, wea
 	client->sess.spec_team       = 0;
 	client->sess.sessionTeam     = team;
 	client->sess.spectatorState  = specState;
-	client->sess.spectatorClient = specClient;
+	client->sess.spectatorClient = 0;
 	client->pers.ready           = qfalse;
 
 	// During team switching you can sometime spawn immediately
@@ -2155,7 +2112,6 @@ void Cmd_Team_f(gentity_t *ent, unsigned int dwCommand, qboolean fValue)
 	int              playerType;
 	team_t           team;
 	spectatorState_t specState;
-	int              specClient;
 	qboolean         classChange;
 
 	if (trap_Argc() < 2)
@@ -2191,7 +2147,7 @@ void Cmd_Team_f(gentity_t *ent, unsigned int dwCommand, qboolean fValue)
 	w  = atoi(weap);
 	w2 = atoi(weap2);
 
-	G_TeamDataForString(s, ent->s.clientNum, &team, &specState, &specClient);
+	G_TeamDataForString(s, ent->s.clientNum, &team, &specState);
 
 	// don't allow shoutcasters to join teams
 	if (ent->client->sess.shoutcaster && (team == TEAM_ALLIES || team == TEAM_AXIS))
@@ -2452,7 +2408,6 @@ void Cmd_Follow_f(gentity_t *ent, unsigned int dwCommand, qboolean fValue)
 void Cmd_FollowCycle_f(gentity_t *ent, int dir, qboolean skipBots)
 {
 	int clientnum;
-	int original;
 
 	// first set them to spectator
 	if ((ent->client->sess.spectatorState == SPECTATOR_NOT) && (!(ent->client->ps.pm_flags & PMF_LIMBO))) // for limbo state
@@ -2465,22 +2420,7 @@ void Cmd_FollowCycle_f(gentity_t *ent, int dir, qboolean skipBots)
 		G_Error("Cmd_FollowCycle_f: bad dir %i\n", dir);
 	}
 
-	// if dedicated follow client, just switch between the two auto clients
-	if (ent->client->sess.spectatorClient < 0)
-	{
-		if (ent->client->sess.spectatorClient == -1)
-		{
-			ent->client->sess.spectatorClient = -2;
-		}
-		else if (ent->client->sess.spectatorClient == -2)
-		{
-			ent->client->sess.spectatorClient = -1;
-		}
-		return;
-	}
-
 	clientnum = ent->client->sess.spectatorClient;
-	original  = clientnum;
 	do
 	{
 		clientnum += dir;
@@ -2539,7 +2479,7 @@ void Cmd_FollowCycle_f(gentity_t *ent, int dir, qboolean skipBots)
 		ent->client->sess.spectatorState  = SPECTATOR_FOLLOW;
 		return;
 	}
-	while (clientnum != original);
+	while (clientnum != ent->client->sess.spectatorClient);
 
 	// leave it where it was
 }
@@ -2550,25 +2490,19 @@ void Cmd_FollowCycle_f(gentity_t *ent, int dir, qboolean skipBots)
  */
 qboolean G_FollowSame(gentity_t *ent)
 {
-	int clientnum = ent->client->sess.spectatorClient;
-
-	if (clientnum >= level.maxclients)
-	{
-		return qfalse;
-	}
-	if (clientnum < 0)
+	if (ent->client->sess.spectatorClient < 0 || ent->client->sess.spectatorClient >= level.maxclients)
 	{
 		return qfalse;
 	}
 
 	// can only follow connected clients
-	if (level.clients[clientnum].pers.connected != CON_CONNECTED)
+	if (level.clients[ent->client->sess.spectatorClient].pers.connected != CON_CONNECTED)
 	{
 		return qfalse;
 	}
 
 	// can't follow another spectator
-	if (level.clients[clientnum].sess.sessionTeam == TEAM_SPECTATOR)
+	if (level.clients[ent->client->sess.spectatorClient].sess.sessionTeam == TEAM_SPECTATOR)
 	{
 		return qfalse;
 	}
@@ -2576,18 +2510,18 @@ qboolean G_FollowSame(gentity_t *ent)
 	// couple extra checks for limbo mode
 	if (ent->client->ps.pm_flags & PMF_LIMBO)
 	{
-		if (level.clients[clientnum].sess.sessionTeam != ent->client->sess.sessionTeam)
+		if (level.clients[ent->client->sess.spectatorClient].sess.sessionTeam != ent->client->sess.sessionTeam)
 		{
 			return qfalse;
 		}
 	}
 
-	if (level.clients[clientnum].ps.pm_flags & PMF_LIMBO)
+	if (level.clients[ent->client->sess.spectatorClient].ps.pm_flags & PMF_LIMBO)
 	{
 		return qfalse;
 	}
 
-	if (!G_desiredFollow(ent, level.clients[clientnum].sess.sessionTeam))
+	if (!G_desiredFollow(ent, level.clients[ent->client->sess.spectatorClient].sess.sessionTeam))
 	{
 		return qfalse;
 	}

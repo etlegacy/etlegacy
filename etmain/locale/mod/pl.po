@@ -3,7 +3,7 @@
 # This file is distributed under the same license as the ET:Legacy package.
 # Translators:
 # Jakub Strelcow <jakubstrelcow@gmail.com>, 2015
-# Jakub Strelcow <jakubstrelcow@gmail.com>, 2018-2019
+# Jakub Strelcow <jakubstrelcow@gmail.com>, 2018-2020
 # Mateusz Olejnik <matti@gamesboard.pl>, 2018
 # rafal1137 <rafal1137@yahoo.pl>, 2016,2018-2019
 # rafal1137 <rafal1137@yahoo.pl>, 2015-2016
@@ -12,7 +12,7 @@ msgstr ""
 "Project-Id-Version: ET:Legacy\n"
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
-"PO-Revision-Date: 2019-02-03 21:45+0000\n"
+"PO-Revision-Date: 2020-03-20 19:30+0000\n"
 "Last-Translator: Jakub Strelcow <jakubstrelcow@gmail.com>\n"
 "Language-Team: Polish (http://www.transifex.com/etlegacy/etlegacy/language/pl/)\n"
 "MIME-Version: 1.0\n"
@@ -7498,7 +7498,7 @@ msgid "Skill Rating view"
 msgstr "Widok Skill Rating"
 
 msgid "%s - Press double-%s quickly to switch scoreboard"
-msgstr "%s - Szybko i podwójnie wciśnij - %s, aby przełączyć widok tablicy wyników"
+msgstr "%s - Wciśnij dwukrotnie - %s, aby przełączyć widok tablicy wyników"
 
 msgid "XP view"
 msgstr "Widok XP"

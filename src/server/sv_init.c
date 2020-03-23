@@ -1067,6 +1067,8 @@ void SV_Init(void)
 
 	sv_allowDownload = Cvar_Get("sv_allowDownload", "1", CVAR_ARCHIVE);
 
+	sv_hidden = Cvar_GetAndDescribe("sv_hidden", "0", CVAR_ARCHIVE, "Hide the server from queries and from master servers.");
+
 	// master servers
 	Cvar_Get("sv_master1", "etmaster.idsoftware.com", CVAR_PROTECTED);
 	Cvar_Get("sv_master2", "master.etlegacy.com", CVAR_PROTECTED);

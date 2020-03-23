@@ -619,6 +619,7 @@ void Script_ConditionalScript(itemDef_t *item, qboolean *bAbort, char **args)
 				int  ui_r_colorbits                      = (int)(DC->getCVarValue("ui_r_colorbits"));
 				int  ui_r_fullscreen                     = (int)(DC->getCVarValue("ui_r_fullscreen"));
 				int  ui_r_noborder                       = (int)(DC->getCVarValue("ui_r_noborder"));
+				int  ui_r_centerwindow                   = (int)(DC->getCVarValue("ui_r_centerwindow"));
 				int  ui_r_intensity                      = (int)(DC->getCVarValue("ui_r_intensity"));
 				int  ui_r_mapoverbrightbits              = (int)(DC->getCVarValue("ui_r_mapoverbrightbits"));
 				int  ui_r_overBrightBits                 = (int)(DC->getCVarValue("ui_r_overBrightBits"));
@@ -640,6 +641,7 @@ void Script_ConditionalScript(itemDef_t *item, qboolean *bAbort, char **args)
 				int  r_colorbits                      = (int)(DC->getCVarValue("r_colorbits"));
 				int  r_fullscreen                     = (int)(DC->getCVarValue("r_fullscreen"));
 				int  r_noborder                       = (int)(DC->getCVarValue("r_noborder"));
+				int  r_centerwindow                   = (int)(DC->getCVarValue("r_centerwindow"));
 				int  r_intensity                      = (int)(DC->getCVarValue("r_intensity"));
 				int  r_mapoverbrightbits              = (int)(DC->getCVarValue("r_mapoverbrightbits"));
 				int  r_overBrightBits                 = (int)(DC->getCVarValue("r_overBrightBits"));
@@ -666,6 +668,7 @@ void Script_ConditionalScript(itemDef_t *item, qboolean *bAbort, char **args)
 				    ui_r_colorbits != r_colorbits ||
 				    ui_r_fullscreen != r_fullscreen ||
 				    ui_r_noborder != r_noborder ||
+				    ui_r_centerwindow != r_centerwindow ||
 				    ui_r_intensity != r_intensity ||
 				    ui_r_mapoverbrightbits != r_mapoverbrightbits ||
 				    ui_r_overBrightBits != r_overBrightBits ||

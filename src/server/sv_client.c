@@ -595,6 +595,27 @@ gotnewcl:
 }
 
 /**
+ * @brief Check if the message has overflowed and if it has then drop the client.
+ *
+ * @param client[in,out] client to whon the message would be sent
+ * @param msg[in,out] the message data which would be sent
+ * @return did the message buffer overflow
+ */
+qboolean SV_CheckForMsgOverflow(client_t *client, msg_t *msg)
+{
+    if (!msg->overflowed)
+    {
+        return qfalse;
+    }
+
+    Com_Printf("WARNING: msg overflowed for %s\n", client->name);
+    MSG_Clear(msg);
+
+    SV_DropClient(client, "Msg overflowed");
+    return qtrue;
+}
+
+/**
  * @brief Called when the player is totally leaving the server, either willingly
  * or unwillingly.  This is NOT called if the entire server is quiting
  * or crashing -- SV_FinalCommand() will handle that
@@ -763,6 +784,11 @@ void SV_SendClientGameState(client_t *client)
 
 	// write the checksum feed
 	MSG_WriteLong(&msg, sv.checksumFeed);
+
+    if (SV_CheckForMsgOverflow(client, &msg))
+    {
+        return;
+    }
 
 	// debug info
 	Com_DPrintf("Sending %i bytes in gamestate to client: %i\n", msg.cursize, (int) (client - svs.clients));

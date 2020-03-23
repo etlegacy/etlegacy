@@ -22,10 +22,10 @@ RequestExecutionLevel admin
 Name "ET: Legacy ${VERSION}"
 OutFile "@CPACK_PACKAGE_FILE_NAME@.exe"
 BrandingText "ET: Legacy ${VERSION} | http://www.etlegacy.com"
-!define PRODUCT_DIR_REGKEY "SOFTWARE\Enemy Territory - Legacy"
-!define PRODUCT_UNINST_KEY "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Enemy Territory - Legacy"
+!define PRODUCT_DIR_REGKEY "SOFTWARE\ETLegacy"
+!define PRODUCT_UNINST_KEY "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\ETLegacy"
 InstallDirRegKey HKLM "${PRODUCT_DIR_REGKEY}" "InstallPath"
-InstallDir "$PROGRAMFILES\Enemy Territory - Legacy\"
+InstallDir "$PROGRAMFILES\ETLegacy\"
 
 ; Header file
 !include MUI2.nsh
@@ -111,10 +111,10 @@ LangString DESC_Section12 ${LANG_ENGLISH} "Make sure to copy W:ET assets files (
 LangString DESC_Section13 ${LANG_ENGLISH} "Download Error: Couldn't fetch Omni-bot files."
 LangString DESC_Section14 ${LANG_ENGLISH} "Fatal Error: Omni-bot extraction failed."
 LangString DESC_Section15 ${LANG_ENGLISH} "No ETKEY found. ET: Legacy will create a new ETKEY upon start. If you got a backup of your own ETKEY copy it to $DOCUMENTS\ETLegacy\etmain."
-LangString DESC_Section16 ${LANG_ENGLISH} "Install Enemy Territory: Legacy files."
+LangString DESC_Section16 ${LANG_ENGLISH} "Install ET: Legacy files."
 LangString DESC_Section17 ${LANG_ENGLISH} "Retrieve Wolfenstein: Enemy Territory .pk3 assets. Data files will be downloaded if not found locally."
 LangString DESC_Section18 ${LANG_ENGLISH} "Install Omni-bot files for your server or offline training. The latest version will be downloaded."
-LangString DESC_Section19 ${LANG_ENGLISH} "Uninstall Enemy Territory: Legacy and Omni-bot files."
+LangString DESC_Section19 ${LANG_ENGLISH} "Uninstall ET: Legacy and Omni-bot files."
 LangString DESC_Section20 ${LANG_ENGLISH} "Delete Wolfenstein: Enemy Territory .pk3 assets (pak0.pk3, pak1.pk3, pak2.pk3)."
 LangString DESC_Section21 ${LANG_ENGLISH} "Delete ETKEY and all created or downloaded files inside the $DOCUMENTS\ETLegacy folder."
 LangString DESC_Section22 ${LANG_ENGLISH} "ET: Legacy requires MS VC++ 2013 Redistributable, do you want to install it?"
@@ -125,7 +125,7 @@ LangString DESC_Section26 ${LANG_ENGLISH} "Download Error: Couldn't fetch WolfAd
 LangString DESC_Section27 ${LANG_ENGLISH} "Fatal Error: WolfAdmin extraction failed."
 LangString DESC_Section28 ${LANG_ENGLISH} "Install WolfAdmin files."
 VIProductVersion "@FILE_VERSION@"
-VIAddVersionKey /LANG=${LANG_ENGLISH} "ProductName" "Enemy Territory Legacy Installer"
+VIAddVersionKey /LANG=${LANG_ENGLISH} "ProductName" "ET: Legacy Installer"
 VIAddVersionKey /LANG=${LANG_ENGLISH} "Comments" "ETL game installer"
 VIAddVersionKey /LANG=${LANG_ENGLISH} "CompanyName" "Legacy Team"
 VIAddVersionKey /LANG=${LANG_ENGLISH} "LegalTrademarks" "© 2012-2020 ET: Legacy Team"
@@ -150,10 +150,10 @@ LangString DESC_Section12 ${LANG_POLISH} "Pamietaj, aby skopiowac glowne pliki W
 LangString DESC_Section13 ${LANG_POLISH} "Blad Pobierania: Nie udalo sie sciagnac plikow Omni-bot."
 LangString DESC_Section14 ${LANG_POLISH} "Blad Krytyczny: Wypakowywanie Omni-bot nie powiodlo sie."
 LangString DESC_Section15 ${LANG_POLISH} "Nie znaleziono ETKEY-a. ET: Legacy stworzy nowy ETKEY na starcie. Jesli masz kopie zapasowa swojego wlasnego ETKEY-a, skopiuj go do $DOCUMENTS\ETLegacy\etmain."
-LangString DESC_Section16 ${LANG_POLISH} "Zainstaluj pliki Enemy Territory: Legacy."
+LangString DESC_Section16 ${LANG_POLISH} "Zainstaluj pliki ET: Legacy."
 LangString DESC_Section17 ${LANG_POLISH} "Skopiuj glowne pliki .pk3 Wolfenstein: Enemy Territory. W przypadku nieznalezienia na dysku twardym zostana one sciagniete."
 LangString DESC_Section18 ${LANG_POLISH} "Zainstaluj pliki Omni-bot dla twojego serwera lub treningu offline. Pobrana zostanie najnowsza wersja."
-LangString DESC_Section19 ${LANG_POLISH} "Odinstaluj Enemy Territory: Legacy i pliki Omni-bot."
+LangString DESC_Section19 ${LANG_POLISH} "Odinstaluj ET: Legacy i pliki Omni-bot."
 LangString DESC_Section20 ${LANG_POLISH} "Usun glowne pliki .pk3 Wolfenstein: Enemy Territory (pak0.pk3, pak1.pk3, pak2.pk3)."
 LangString DESC_Section21 ${LANG_POLISH} "Usun ETKEY i wszystkie inne pliki z folderu $DOCUMENTS\ETLegacy."
 LangString DESC_Section22 ${LANG_POLISH} "ET: Legacy wymaga MS VC++ 2013 Redistributable, czy chcesz to zaintalowac?"
@@ -161,7 +161,7 @@ LangString DESC_Section23 ${LANG_POLISH} "Blad Pobierania: Nie udalo sie sciagna
 LangString DESC_Section24 ${LANG_POLISH} "Blad Krytyczny: Wypakowywanie GeoIP nie powiodlo sie."
 LangString DESC_Section25 ${LANG_POLISH} "Zainstaluj GeoIP"
 
-VIAddVersionKey /LANG=${LANG_POLISH} "ProductName" "Instalator Enemy Territory Legacy"
+VIAddVersionKey /LANG=${LANG_POLISH} "ProductName" "Instalator ET: Legacy"
 VIAddVersionKey /LANG=${LANG_POLISH} "Comments" "Instalator gry ETL"
 VIAddVersionKey /LANG=${LANG_POLISH} "CompanyName" "Legacy Team"
 VIAddVersionKey /LANG=${LANG_POLISH} "LegalTrademarks" "© 2012-2020 ET: Legacy Team"
@@ -187,10 +187,10 @@ LangString DESC_Section12 ${LANG_GERMAN} "Wichtig: Kopiere die ET Asset Dateien 
 LangString DESC_Section13 ${LANG_GERMAN} "Download Fehler: Omni-bot Dateien nicht erreichbar."
 LangString DESC_Section14 ${LANG_GERMAN} "Fataler Fehler: Omni-bot Extrahierung fehlgeschlagen."
 LangString DESC_Section15 ${LANG_GERMAN} "ET Schlüssel Datei nicht gefunden. ET: Legacy wird diese beim Start erzeugen. Falls du eine Kopie von dem Schlüssel hast, kopiere diesen nach $DOCUMENTS\ETLegacy\etmain."
-LangString DESC_Section16 ${LANG_GERMAN} "Installiere Enemy Territory: Legacy Dateien."
+LangString DESC_Section16 ${LANG_GERMAN} "Installiere ET: Legacy Dateien."
 LangString DESC_Section17 ${LANG_GERMAN} "Wolfenstein: Enemy Territory .pk3 Assets abrufen. Die Dateien werden heruntergeladen wenn diese lokal nicht gefunden werden."
 LangString DESC_Section18 ${LANG_GERMAN} "Installiere Omni-bot Dateien für deinen Server oder für dein offline Training? Die letzte Version wird heruntergeladen."
-LangString DESC_Section19 ${LANG_GERMAN} "Deinstalliere Enemy Territory: Legacy and Omni-bot Dateien."
+LangString DESC_Section19 ${LANG_GERMAN} "Deinstalliere ET: Legacy and Omni-bot Dateien."
 LangString DESC_Section20 ${LANG_GERMAN} "Lösche Wolfenstein: Enemy Territory .pk3 Assets (pak0.pk3, pak1.pk3, pak2.pk3)."
 LangString DESC_Section21 ${LANG_GERMAN} "Lösche den ETKEY und alle erzeugten Dateienim Ordner $DOCUMENTS\ETLegacy ."
 LangString DESC_Section22 ${LANG_GERMAN} "ET: Legacy benötigt MS VC++ 2013 Redistributable Bibliothek, soll diese installiert werden?"
@@ -201,7 +201,7 @@ LangString DESC_Section26 ${LANG_GERMAN} "Download Fehler: WolfAdmin Dateien nic
 LangString DESC_Section27 ${LANG_GERMAN} "Fataler Fehler: WolfAdmin Extrahierung fehlgeschlagen."
 LangString DESC_Section28 ${LANG_GERMAN} "Installiere WolfAdmin Dateien."
 
-VIAddVersionKey /LANG=${LANG_GERMAN} "ProductName" "Enemy Territory Legacy Installer"
+VIAddVersionKey /LANG=${LANG_GERMAN} "ProductName" "ET: Legacy Installer"
 VIAddVersionKey /LANG=${LANG_GERMAN} "Comments" "ETL game installer"
 VIAddVersionKey /LANG=${LANG_GERMAN} "CompanyName" "Legacy Team"
 VIAddVersionKey /LANG=${LANG_GERMAN} "LegalTrademarks" "© 2012-2020 ET: Legacy Team"
@@ -214,7 +214,7 @@ VIAddVersionKey /LANG=${LANG_GERMAN} "FileVersion" "@FILE_VERSION@"
 ; ------------------------
 
 ; Sections
-Section "Enemy Territory: Legacy" FILES
+Section "ET: Legacy" FILES
     SectionIn RO
     SetOverwrite ifnewer
     SetOutPath $INSTDIR
@@ -358,8 +358,8 @@ Section "Omni-bot" OMNIBOT
 
     END:
         SetOutPath $INSTDIR
-        CreateDirectory "$SMPROGRAMS\Enemy Territory - Legacy"
-        CreateShortCut "$SMPROGRAMS\Enemy Territory - Legacy\Launch Enemy Territory - Legacy with Omni-bot.lnk" "$INSTDIR\etl.exe"  "+set omnibot_enable 1 +set omnibot_path legacy\omni-bot\"
+        CreateDirectory "$SMPROGRAMS\ETLegacy"
+        CreateShortCut "$SMPROGRAMS\ETLegacy\Launch ETLegacy with Omni-bot.lnk" "$INSTDIR\etl.exe"  "+set omnibot_enable 1 +set omnibot_path legacy\omni-bot\"
 SectionEnd
 
 Section "GeoIP" GEOIP
@@ -437,20 +437,20 @@ SectionEnd
 
 Section -Shortcuts
     SetOutPath $INSTDIR
-    CreateDirectory "$SMPROGRAMS\Enemy Territory - Legacy"
-    CreateShortCut "$SMPROGRAMS\Enemy Territory - Legacy\Visit ET: Legacy Homepage.lnk" "http://www.etlegacy.com" "" "$INSTDIR\etl.ico"
-    CreateShortCut "$SMPROGRAMS\Enemy Territory - Legacy\Launch ET: Legacy - Legacy.lnk" "$INSTDIR\etl.exe" "+set cl_renderer opengl1 +set com_hunkmegs 128"
-    CreateShortCut "$SMPROGRAMS\Enemy Territory - Legacy\Launch ET: Legacy Renderer2 - Legacy.lnk" "$INSTDIR\etl.exe" "+set cl_renderer opengl2 +set com_hunkmegs 512"
-    CreateShortCut "$SMPROGRAMS\Enemy Territory - Legacy\Play on Official Server.lnk" "et://etlegacy.com:27960" "" "$INSTDIR\etl.ico"
-    CreateShortCut "$SMPROGRAMS\Enemy Territory - Legacy\Uninstall.lnk" "$INSTDIR\uninstall.exe"
-    CreateShortCut "$DESKTOP\Enemy Territory - Legacy.lnk" "$INSTDIR\etl.exe"
+    CreateDirectory "$SMPROGRAMS\ETLegacy"
+    CreateShortCut "$SMPROGRAMS\ETLegacy\Visit ETLegacy Homepage.lnk" "http://www.etlegacy.com" "" "$INSTDIR\etl.ico"
+    CreateShortCut "$SMPROGRAMS\ETLegacy\Launch ETLegacy.lnk" "$INSTDIR\etl.exe" "+set cl_renderer opengl1 +set com_hunkmegs 128"
+    CreateShortCut "$SMPROGRAMS\ETLegacy\Launch ETLegacy - Renderer2.lnk" "$INSTDIR\etl.exe" "+set cl_renderer opengl2 +set com_hunkmegs 512"
+    CreateShortCut "$SMPROGRAMS\ETLegacy\Play on Official Server.lnk" "et://etlegacy.com:27960" "" "$INSTDIR\etl.ico"
+    CreateShortCut "$SMPROGRAMS\ETLegacy\Uninstall.lnk" "$INSTDIR\uninstall.exe"
+    CreateShortCut "$DESKTOP\ETLegacy.lnk" "$INSTDIR\etl.exe"
 SectionEnd
 
 Section -Post
     WriteUninstaller "$INSTDIR\uninstall.exe"
     WriteRegStr HKLM "${PRODUCT_DIR_REGKEY}" "InstallPath" "$INSTDIR"
     WriteRegStr HKLM "${PRODUCT_DIR_REGKEY}" "Version" "${VERSION}"
-    WriteRegStr HKLM "${PRODUCT_UNINST_KEY}" "DisplayName" "Enemy Territory: Legacy"
+    WriteRegStr HKLM "${PRODUCT_UNINST_KEY}" "DisplayName" "ET: Legacy"
     WriteRegStr HKLM "${PRODUCT_UNINST_KEY}" "DisplayVersion" "${VERSION}"
     WriteRegStr HKLM "${PRODUCT_UNINST_KEY}" "Publisher" "ET: Legacy Team"
     WriteRegStr HKLM "${PRODUCT_UNINST_KEY}" "URLInfoAbout" "http://www.etlegacy.com"
@@ -510,8 +510,8 @@ Section "un.ET: Legacy" UNFILES
     DeleteRegKey HKLM "${PRODUCT_DIR_REGKEY}"
     DeleteRegKey HKLM "${PRODUCT_UNINST_KEY}"
     DeleteRegKey HKCR "et"
-    RMDir /r "$SMPROGRAMS\Enemy Territory - Legacy"
-    Delete "$DESKTOP\Enemy Territory - Legacy.lnk"
+    RMDir /r "$SMPROGRAMS\ETLegacy"
+    Delete "$DESKTOP\ETLegacy.lnk"
     SimpleFC::RemoveApplication "$INSTDIR\etl.exe"
     SimpleFC::RemoveApplication "$INSTDIR\etlded.exe"
 SectionEnd

@@ -603,6 +603,22 @@ cvar_t *Cvar_Get(const char *varName, const char *value, int flags)
 	return var;
 }
 
+/**
+ * @brief If the variable already exists, the value will not be set unless CVAR_ROM
+ * The flags will be or'ed in if the variable exists.
+ * @param[in] varName cvar's techical name
+ * @param[in] value default value, if not set by config or console
+ * @param[in] flags
+ * @param[in] description The description of this cvar
+ * @return new cvar registered cvar instance
+ */
+cvar_t *Cvar_GetAndDescribe(const char *varName, const char *value, int flags, const char *description)
+{
+    cvar_t *tmp = Cvar_Get(varName, value, flags);
+    Cvar_SetDescription(tmp, description);
+    return tmp;
+}
+
 #define FOREIGN_MSG "Foreign characters are not allowed in userinfo variables.\n"
 
 /**

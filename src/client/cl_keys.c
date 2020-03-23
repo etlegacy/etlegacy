@@ -1319,8 +1319,13 @@ void CL_KeyEvent(int key, qboolean down, unsigned time)
 		{
 			return;
 		}
+
 		Con_ToggleConsole_f();
-		Key_ClearStates();
+
+		if (!keys[K_LCTRL].down && !keys[K_RCTRL].down && !keys[K_LALT].down && !keys[K_RALT].down)
+		{
+			Key_ClearStates();
+		}
 
 		// the console key should never be used as a char
 		consoleButtonWasPressed = qtrue;
@@ -1357,7 +1362,11 @@ void CL_KeyEvent(int key, qboolean down, unsigned time)
 			else
 			{
 				Con_ToggleConsole_f();
-				Key_ClearStates();
+
+				if (!keys[K_LCTRL].down && !keys[K_RCTRL].down && !keys[K_LALT].down && !keys[K_RALT].down)
+				{
+					Key_ClearStates();
+				}
 			}
 
 			return;
@@ -1553,12 +1562,11 @@ void Key_ClearStates(void)
 
 	anykeydown = 0;
 
-	for (i = 0 ; i < MAX_KEYS ; i++)
+	for (i = 0; i < MAX_KEYS; i++)
 	{
 		if (keys[i].down)
 		{
 			CL_KeyEvent(i, qfalse, 0);
-
 		}
 		keys[i].down    = 0;
 		keys[i].repeats = 0;

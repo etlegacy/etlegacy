@@ -1169,7 +1169,6 @@ typedef struct level_locals_s
 	int numNonSpectatorClients;                 ///< includes connecting clients
 	int numPlayingClients;                      ///< connected, non-spectators
 	int sortedClients[MAX_CLIENTS];             ///< sorted by score
-	int follow1, follow2;                       ///< clientNums for auto-follow spectators
 
 	int warmupModificationCount;                ///< for detecting if g_warmup is changed
 
@@ -1324,6 +1323,8 @@ typedef struct level_locals_s
 #ifdef FEATURE_DBMS
 	database_t database;
 #endif
+
+	int frameStartTime;
 } level_locals_t;
 
 /**
@@ -1374,7 +1375,7 @@ void G_ParseField(const char *key, const char *value, gentity_t *ent);
 // g_cmds.c
 void Cmd_Score_f(gentity_t *ent);
 void StopFollowing(gentity_t *ent);
-void G_TeamDataForString(const char *teamstr, int clientNum, team_t *team, spectatorState_t *sState, int *specClient);
+void G_TeamDataForString(const char *teamstr, int clientNum, team_t *team, spectatorState_t *sState);
 qboolean SetTeam(gentity_t *ent, const char *s, qboolean force, weapon_t w1, weapon_t w2, qboolean setweapons);
 void G_SetClientWeapons(gentity_t *ent, weapon_t w1, weapon_t w2, qboolean updateclient);
 void Cmd_FollowCycle_f(gentity_t *ent, int dir, qboolean skipBots);
