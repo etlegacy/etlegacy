@@ -280,7 +280,7 @@ ET: Legacy supports both OpenGL and OpenGL ES on the Raspberry Pi.
 **Tested devices**: 3B+, 4B.
 
 
-** Required dependencies **
+**Required dependencies**
 
 ```
 sudo apt-get install build-essential libfreeimage-dev libopenal-dev libpango1.0-dev libsndfile-dev libudev-dev \
@@ -302,7 +302,7 @@ You may be able to increase the overclock more than this, but increasing too far
 your Pi. If you experience crashes whilst having the overclock in place, decrease the values accordingly.
 
 
-** Pi 3B+ install instructions **
+**Pi 3B+ install instructions**
 
 Install using experimental OpenGL driver:
 
@@ -321,7 +321,7 @@ Install using OpenGLES:
 1.  Exit X11 to terminal in order to enable hardware accelerated rendering.
 
 
-** Pi 4B install instructions **
+**Pi 4B install instructions**
 
 The OpenGL driver used is the Fake KMS driver and currently both OpenGL and GLES are ran within an X11 session.
 If you want to switch between OpenGL and GLES when installing ET: Legacy on the Pi 4, simply set the `FEATURE_RENDERER_GLES` flag to 0
