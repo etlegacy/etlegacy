@@ -273,6 +273,61 @@ Be sure to set the CMake variables (see above) beforehand.
   (and can safely be renamed), while the dedicated server is just a command-line binary named "etlded".
 
 
+### Raspberry Pi
+
+ET: Legacy supports both OpenGL and OpenGL ES on the Raspberry Pi.
+
+**Tested devices**: 3B+, 4B.
+
+
+** Required dependencies **
+
+```
+sudo apt-get install build-essential libfreeimage-dev libopenal-dev libpango1.0-dev libsndfile-dev libudev-dev \
+libasound2-dev libjpeg8-dev libwebp-dev automake libgl1-mesa-glx libjpeg62-turbo libogg0 libopenal1 libvorbis0a \
+libvorbisfile3 zlib1g libraspberrypi0 libraspberrypi-bin libraspberrypi-dev libx11-dev libglew-dev libegl1-mesa-dev \
+nasm autoconf git cmake zip gcc g++ libtool libxrandr-dev x11proto-randr-dev
+```
+
+
+On the Pi 3B+, it is advised to add a slight overclock to the GPU to provide a better experience. Run `sudo nano /boot/config.txt` and
+add the following to the config file:
+
+```
+core_freq=500
+v3d_freq=500
+```
+
+You may be able to increase the overclock more than this, but increasing too far will be unstable and will likely crash
+your Pi. If you experience crashes whilst having the overclock in place, decrease the values accordingly.
+
+
+** Pi 3B+ install instructions **
+
+Install using experimental OpenGL driver:
+
+1.  Enable experimental OpenGL driver via the `raspi-config` command line application.
+1.  Modify `easybuild.sh` and set the `FEATURE_RENDERER_GLES` flag to 0 under the `RPI` section.
+1.  Increase GPU memory split to at least 256mb.
+1.  Run `./easybuild.sh -RPI -j4` to build for Raspberry Pi.
+1.  Start the game in windowed mode. Full screen mode has issues currently.
+
+Install using OpenGLES:
+
+1.  Ensure the legacy OpenGL driver is enabled via the `raspi-config` command line application (it is by default).
+1.  Modify `easybuild.sh` and set the `FEATURE_RENDERER_GLES` flag to 1 under the `RPI` section.
+1.  Increase GPU memory split to at least 256mb.
+1.  Run `./easybuild.sh -RPI -j4` to build for Raspberry Pi.
+1.  Exit X11 to terminal in order to enable hardware accelerated rendering.
+
+
+** Pi 4B install instructions **
+
+The OpenGL driver used is the Fake KMS driver and currently both OpenGL and GLES are ran within an X11 session.
+If you want to switch between OpenGL and GLES when installing ET: Legacy on the Pi 4, simply set the `FEATURE_RENDERER_GLES` flag to 0
+or 1 under the `RPI` section within the `easybuild.sh` script.
+
+
 LICENSE
 =======
 

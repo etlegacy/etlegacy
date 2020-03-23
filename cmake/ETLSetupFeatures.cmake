@@ -17,10 +17,38 @@ endif(NOT OLD_CROSS_COMPILE32 STREQUAL CROSS_COMPILE32)
 # Client features
 #-----------------------------------------------------------------
 if(BUILD_CLIENT)
-	if(NOT WIN32) # Dependency of GLEW and SDL_syswm.h
+
+	if(NOT WIN32) # Dependency of GLEW and SDL_syswm.h		
 		find_package(X11 REQUIRED)
 		include_directories(${X11_INCLUDE_DIR})
 	endif(NOT WIN32)
+
+	if(ARM)
+		#check if we're running on Raspberry Pi
+		MESSAGE("Looking for bcm_host.h")
+		if(EXISTS "/opt/vc/include/bcm_host.h")
+			MESSAGE("bcm_host.h found")
+			set(BCMHOST found)
+		else()
+			MESSAGE("bcm_host.h not found")
+		endif()
+
+		if(DEFINED BCMHOST)
+			set(COMMON_INCLUDE_DIRS
+					"/opt/vc/include"
+					"/opt/vc/include/interface/vcos/pthreads"
+					"/opt/vc/include/interface/vmcs_host/linux"
+					)
+			include_directories(${COMMON_INCLUDE_DIRS})
+
+			link_directories("/opt/vc/lib")
+
+			LIST(APPEND CLIENT_LIBRARIES
+					bcm_host
+					pthread
+					)
+		endif()			
+	endif(ARM)
 
 	if(NOT FEATURE_RENDERER_GLES)
 		if(NOT BUNDLED_GLEW)
@@ -37,18 +65,18 @@ if(BUILD_CLIENT)
 		find_package(OpenGL REQUIRED)
 		list(APPEND RENDERER_LIBRARIES ${OPENGL_LIBRARIES})
 		include_directories(SYSTEM ${OPENGL_INCLUDE_DIR})
-	else() # FEATURE_RENDERER_GLES
+	else() # FEATURE_RENDERER_GLES	
 		find_package(GLES REQUIRED)
 		list(APPEND RENDERER_LIBRARIES ${GLES_LIBRARY})
 		include_directories(SYSTEM ${GLES_INCLUDE_DIR})
 	endif()
 
 	if(NOT BUNDLED_SDL)
-		# specials for ARM - currently set for RPI raspdian/ubuntu mate
-		# system sdl lib isn't latest & sndio lib is required
+		# specials for ARM - currently set for RPI Raspbian/ubuntu mate
+		# system sdl lib isn't latest & sndio lib is required			
 		if(ARM)
-			find_package(SDL2 2.0.4 REQUIRED) # sdl2-dev
-			list(APPEND SDL_LIBRARIES ${SDL32_BUNDLED_LIBRARIES} sndio)
+			find_package(SDL2 2.0.8 REQUIRED)
+			list(APPEND SDL_LIBRARIES ${SDL2_LIBRARY})
 			include_directories(SYSTEM ${SDL2_INCLUDE_DIR})
 		else()
 			find_package(SDL2 2.0.8 REQUIRED) # FindSDL doesn't detect 32bit lib when crosscompiling
