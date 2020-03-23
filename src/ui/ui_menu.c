@@ -327,7 +327,6 @@ void Menu_UpdatePosition(menuDef_t *menu)
 	qboolean   fullscreenItem = qfalse;
 	qboolean   fullscreenMenu = qfalse;
 	qboolean   centered       = qfalse;
-	const char *menuName      = NULL;
 	const char *itemName      = NULL;
 
 	if (menu == NULL)
@@ -341,7 +340,6 @@ void Menu_UpdatePosition(menuDef_t *menu)
 	r              = &menu->window.rect;
 	fullscreenMenu = (r->x == 0.f && r->y == 0.f && r->w == SCREEN_WIDTH && r->h == SCREEN_HEIGHT);
 	centered       = (r->x == 16.f && r->w == 608.f);
-	menuName       = menu->window.name;
 
 	// add offset to windows
 	if (centered)

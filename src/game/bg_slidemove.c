@@ -315,7 +315,6 @@ qboolean PM_SlideMove(qboolean gravity)
 void PM_StepSlideMove(qboolean gravity)
 {
 	vec3_t  start_o, start_v;
-	vec3_t  down_o, down_v;
 	trace_t trace;
 	vec3_t  up, down;
 
@@ -377,9 +376,6 @@ void PM_StepSlideMove(qboolean gravity)
 
 		return;
 	}
-
-	VectorCopy(pm->ps->origin, down_o);
-	VectorCopy(pm->ps->velocity, down_v);
 
 	VectorCopy(start_o, up);
 	up[2] += STEPSIZE;

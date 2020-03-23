@@ -570,7 +570,6 @@ float *CG_LerpColorWithAttack(vec4_t from, vec4_t to, int startMsec, int totalMs
 {
 	static vec4_t color;
 	int           t;
-	int           i;
 
 	if (startMsec == 0)
 	{
