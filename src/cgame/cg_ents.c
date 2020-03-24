@@ -1291,7 +1291,16 @@ static void CG_Missile(centity_t *cent)
 				}
 				else if (cgs.clientinfo[cg.clientNum].shoutcaster)
 				{
-					CG_DrawLandmine(cent, &ent);
+					if (cent->currentState.modelindex2)
+					{
+						// team or spotted landmine
+						CG_DrawMineMarkerFlag(cent, &ent, weapon);
+					}
+					else
+					{
+						// unspotted landmine
+						CG_DrawLandmine(cent, &ent);
+					}
 				}
 				else if (!cent->currentState.modelindex2)
 				{
@@ -1323,7 +1332,7 @@ static void CG_Missile(centity_t *cent)
 			{
 				if (cgs.clientinfo[cg.clientNum].shoutcaster)
 				{
-					// shoutcasters can see landmines
+					// shoutcasters can see team landmines
 					CG_DrawMineMarkerFlag(cent, &ent, weapon);
 				}
 				else
