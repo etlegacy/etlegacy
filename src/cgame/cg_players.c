@@ -407,7 +407,7 @@ void CG_NewClientInfo(int clientNum)
 						}
 						else
 						{
-							CG_AddPMItemBig(PM_PRESTIGE, va(CG_TranslateString("Prestige point ready to be collected!"), cnt), cgs.media.prestigePics[2]);
+							CG_AddPMItemBig(PM_PRESTIGE, CG_TranslateString("Prestige point ready to be collected!"), cgs.media.prestigePics[2]);
 						}
 					}
 				}
