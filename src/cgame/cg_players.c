@@ -401,13 +401,16 @@ void CG_NewClientInfo(int clientNum)
 							}
 						}
 
-						if (cnt < SK_NUM_SKILLS)
+						if (!(cg_popupBigFilter.integer & POPUP_BIG_FILTER_PRESTIGE))
 						{
-							CG_AddPMItemBig(PM_PRESTIGE, va(CG_TranslateString("Prestige point progression: %i/7"), cnt), cgs.media.prestigePics[1]);
-						}
-						else
-						{
-							CG_AddPMItemBig(PM_PRESTIGE, CG_TranslateString("Prestige point ready to be collected!"), cgs.media.prestigePics[2]);
+							if (cnt < SK_NUM_SKILLS)
+							{
+								CG_AddPMItemBig(PM_PRESTIGE, va(CG_TranslateString("Prestige point progression: %i/7"), cnt), cgs.media.prestigePics[1]);
+							}
+							else
+							{
+								CG_AddPMItemBig(PM_PRESTIGE, CG_TranslateString("Prestige point ready to be collected!"), cgs.media.prestigePics[2]);
+							}
 						}
 					}
 				}

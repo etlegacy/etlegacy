@@ -1955,8 +1955,9 @@ enum
 // Big popup filters
 enum
 {
-	POPUP_BIG_FILTER_SKILL = BIT(0),
-	POPUP_BIG_FILTER_RANK  = BIT(1),
+	POPUP_BIG_FILTER_SKILL     = BIT(0),
+	POPUP_BIG_FILTER_RANK      = BIT(1),
+	POPUP_BIG_FILTER_PRESTIGE  = BIT(2),
 };
 
 /// Locations

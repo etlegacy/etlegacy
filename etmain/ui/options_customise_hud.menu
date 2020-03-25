@@ -109,7 +109,7 @@ menuDef {
 #define POPUP_Y 200
 	SUBWINDOW( 6+(SUBWINDOW_WIDTH_L)+6, POPUP_Y, (SUBWINDOW_WIDTH_R), 78, _("POPUPS AND BANNER") )
 	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, POPUP_Y+16, (SUBWINDOW_WIDTH_R)-4, 10, _("Filter Messages:"), .2, 8, "cg_popupFilter", cvarFloatList { "None" 0 "Connection" 1 "Pickup" 8 "Death" 16 "Connection, Pickup" 9 "Connection, Death" 17 "Connect, Pickup, Death" 25}, _("Set filter on popup messages") )
-	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, POPUP_Y+28, (SUBWINDOW_WIDTH_R)-4, 10, _("Filter Promotions:"), .2, 8, "cg_popupBigFilter", cvarFloatList { "None" 0 "Skill upgrades" 1 "Rank upgrades" 2 "Skill + Rank upgrades" 3}, _("Set filter on popup promotion messages") )
+	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, POPUP_Y+28, (SUBWINDOW_WIDTH_R)-4, 10, _("Filter Promotions:"), .2, 8, "cg_popupBigFilter", cvarFloatList { "None" 0 "Skill upgrades" 1 "Rank upgrades" 2 "Prestige upgrades" 4 "Skill + Rank" 3 "Skill + Prestige" 5 "Rank + Prestige" 6 "Skill + Rank + Prestige" 7 }, _("Set filter on popup promotion messages") )
 	CVARFLOATLABEL( 6+(SUBWINDOW_WIDTH_L)+6+2, POPUP_Y+40, (SUBWINDOW_WIDTH_L)-6, 10, "cg_popupStayTime", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-4), 8 )
 	SLIDER( 6+(SUBWINDOW_WIDTH_L)+6+2, POPUP_Y+40, (SUBWINDOW_WIDTH_L)-4, 10, _("Popup Stay Time:"), .2, 8, "cg_popupStayTime" 2500 0 6000, _("Set the time a pop-up stays visible") )
 	CVARFLOATLABEL( 6+(SUBWINDOW_WIDTH_L)+6+2, POPUP_Y+52, (SUBWINDOW_WIDTH_L)-6, 10, "cg_popupFadeTime", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-4), 8 )
