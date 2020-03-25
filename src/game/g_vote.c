@@ -81,7 +81,7 @@ static const vote_reference_t aVoteInfo[] =
 	{ 0x1ff, "nextmap",                  G_Nextmap_v,                  "Load Next Map",                    "^7\n  Loads the next map or campaign in the map queue"               },
 	{ 0x1ff, "referee",                  G_Referee_v,                  "Referee",                          " <player_id>^7\n  Elects a player to have admin abilities"           },
 	{ 0x1ff, "shuffleteams",             G_ShuffleTeams_v,             "Shuffle Teams",                    " ^7\n  Randomly place players on each team"                          },
-	{ 0x1ff, "shuffleteams_norestart",   G_ShuffleTeams_NoRestart_v,   "Shuffle Teams by (No Restart)",    " ^7\n  Randomly place players on each team"                          },
+	{ 0x1ff, "shuffleteams_norestart",   G_ShuffleTeams_NoRestart_v,   "Shuffle Teams (No Restart)",       " ^7\n  Randomly place players on each team"                          },
 	{ 0x1ff, "startmatch",               G_StartMatch_v,               "Start Match",                      " ^7\n  Sets all players to \"ready\" status to start the match"      },
 	{ 0x1ff, "swapteams",                G_SwapTeams_v,                "Swap Teams",                       " ^7\n  Switch the players on each team"                              },
 	{ 0x1ff, "friendlyfire",             G_FriendlyFire_v,             "Friendly Fire",                    " <0|1>^7\n  Toggles ability to hurt teammates"                       },
