@@ -945,13 +945,14 @@ void GLimp_Splash(glconfig_t *glConfig)
 {
 	unsigned char splashData[SPLASH_DATA_SIZE]; // width * height * bytes_per_pixel
 	SDL_Surface *splashImage = NULL;
+	int blitResult;
 
 	// decode splash image
 	SPLASH_IMAGE_RUN_LENGTH_DECODE(splashData,
 	    CLIENT_WINDOW_SPLASH.rle_pixel_data,
 	    CLIENT_WINDOW_SPLASH.width * CLIENT_WINDOW_SPLASH.height,
 	    CLIENT_WINDOW_SPLASH.bytes_per_pixel);
-
+	
 	// get splash image
 	splashImage = SDL_CreateRGBSurfaceFrom(
 	    (void *)splashData,
@@ -973,10 +974,17 @@ void GLimp_Splash(glconfig_t *glConfig)
 	dstRect.h = splashImage->h;
 
 	// apply image on surface
-	SDL_BlitSurface(splashImage, NULL, SDL_GetWindowSurface(main_window), &dstRect);
-	SDL_UpdateWindowSurface(main_window);
+	blitResult = SDL_BlitSurface(splashImage, NULL, SDL_GetWindowSurface(main_window), &dstRect);
 
-	SDL_FreeSurface(splashImage);
+	if (blitResult < 0)
+	{		
+		Com_Printf(S_COLOR_YELLOW "SDL_BlitSurface failed - %s\n", SDL_GetError());
+		return;			
+	}
+	
+	SDL_UpdateWindowSurface(main_window);
+	
+	SDL_FreeSurface(splashImage);	
 }
 
 /**
@@ -1041,10 +1049,8 @@ success:
 
 	Cvar_Get("r_availableModes", "", CVAR_ROM);
 
-	// Display splash screen
-#ifndef FEATURE_RENDERER_GLES		   
+	// Display splash screen	   
 	GLimp_Splash(glConfig);
-#endif
 
 	// This depends on SDL_INIT_VIDEO, hence having it here
 	IN_Init();
