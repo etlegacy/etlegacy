@@ -296,7 +296,6 @@ Install using experimental OpenGL driver:
 1.  Modify `easybuild.sh` and set the `FEATURE_RENDERER_GLES` flag to 0 under the `RPI` section.
 1.  Increase GPU memory split to at least 256mb.
 1.  Run `./easybuild.sh -RPI -j4` to build for Raspberry Pi.
-1.  Start the game in windowed mode. Full screen mode has issues currently.
 
 Install using OpenGLES:
 
