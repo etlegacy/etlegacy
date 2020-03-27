@@ -446,10 +446,10 @@ void CG_DrawCursorhint(rectDef_t *rect)
 		icon = cgs.media.dynamiteHintShader;
 		break;
 	case HINT_RESTRICTED:
-	case HINT_BAD_USER:
 		icon = cgs.media.friendShader;
 		break;
 	case HINT_ACTIVATE:
+	case HINT_BAD_USER:
 	default:
 		icon = cgs.media.usableHintShader;
 		break;

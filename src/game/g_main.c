@@ -1156,7 +1156,7 @@ void G_CheckForCursorHints(gentity_t *ent)
 					if (!checkEnt)         // no target found
 					{
 						hintType = HINT_BAD_USER;
-						hintDist = CH_MAX_DIST_ZOOM;    // show this one from super far for debugging
+						hintDist = CH_ACTIVATE_DIST;
 					}
 				}
 			}
