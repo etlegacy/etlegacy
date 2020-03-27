@@ -2362,11 +2362,14 @@ void ClientEndFrame(gentity_t *ent)
 		// cyan
 		G_RailBox(ent->client->ps.origin, ent->r.mins, ent->r.maxs, tv(0.f, 1.f, 1.f), ent->s.number);
 
-		// green
-		G_RailBox(headOffset, playerHeadProneMins, playerHeadProneMaxs, tv(0.f, 1.f, 0.f), ent->s.number | HITBOXBIT_HEAD);
+		if (ent->client->ps.eFlags & (EF_PRONE | EF_DEAD))
+		{
+			// cyan
+			G_RailBox(headOffset, playerHeadProneMins, playerHeadProneMaxs, tv(0.f, 1.f, 1.f), ent->s.number | HITBOXBIT_HEAD);
 
-		// blue
-		G_RailBox(legsOffset, playerlegsProneMins, playerlegsProneMaxs, tv(0.f, 0.f, 1.f), ent->s.number | HITBOXBIT_LEGS);
+			// cyan
+			G_RailBox(legsOffset, playerlegsProneMins, playerlegsProneMaxs, tv(0.f, 1.f, 1.f), ent->s.number | HITBOXBIT_LEGS);
+		}
 	}
 
 	// store the client's current position for antilag traces
