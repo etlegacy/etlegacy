@@ -921,11 +921,14 @@ void Sys_SetUpConsoleAndSignals(void)
 	CON_Init();
 #endif
 
+// don't set signal handlers for anything that will generate coredump (in DEBUG builds)
+#if !defined(LEGACY_DEBUG)
 	signal(SIGILL, Sys_SigHandler);
 	signal(SIGFPE, Sys_SigHandler);
 	signal(SIGSEGV, Sys_SigHandler);
-	signal(SIGTERM, Sys_SigHandler);
+#endif
 	signal(SIGINT, Sys_SigHandler);
+	signal(SIGTERM, Sys_SigHandler);
 }
 
 /**

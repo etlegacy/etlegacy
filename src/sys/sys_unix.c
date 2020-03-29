@@ -1081,11 +1081,14 @@ void Sys_PlatformInit(void)
 {
 	const char *term = getenv("TERM");
 
-	signal(SIGHUP, Sys_SigHandler);
-	signal(SIGQUIT, Sys_SigHandler);
+// don't set signal handlers for anything that will generate coredump (in DEBUG builds)
+#if !defined(LEGACY_DEBUG)
 	signal(SIGTRAP, Sys_SigHandler);
-	signal(SIGABRT, Sys_SigHandler);
 	signal(SIGBUS, Sys_SigHandler);
+#endif
+	signal(SIGHUP, Sys_SigHandler);
+	signal(SIGABRT, Sys_SigHandler);
+	signal(SIGQUIT, Sys_SigHandler);
 
 	stdinIsATTY = isatty(STDIN_FILENO) &&
 	              !(term && (!strcmp(term, "raw") || !strcmp(term, "dumb")));
