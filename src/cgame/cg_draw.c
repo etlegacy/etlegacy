@@ -3619,9 +3619,11 @@ static void CG_DrawBannerPrint(void)
 		return;
 	}
 
-	lineHeight = ((float)CG_Text_Height_Ext("M", 0.25, 0, &cgs.media.limboFont1) * 1.5f);
+	color[3] *= 0.75;
 
-	CG_DrawMultilineText(Ccg_WideX(320), 20, 0.25, 0.25, color, cg.bannerPrint, lineHeight, 0, 0, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, &cgs.media.limboFont1);
+	lineHeight = ((float)CG_Text_Height_Ext("M", 0.23, 0, &cgs.media.limboFont2) * 1.5f);
+
+	CG_DrawMultilineText(Ccg_WideX(320), 20, 0.23, 0.23, color, cg.bannerPrint, lineHeight, 0, 0, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, &cgs.media.limboFont2);
 }
 
 /**

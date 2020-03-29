@@ -3509,7 +3509,7 @@ static void CG_ServerCommand(void)
 		trap_S_FadeAllSound(1.0f, 1000, qfalse);      // fade sound up
 		return;
 	case BP_HASH: // "bp"
-		CG_WordWrapString(CG_Argv(1), 50, cg.bannerPrint, sizeof(cg.bannerPrint));
+		CG_WordWrapString(CG_Argv(1), Com_Clamp(50, 80, (int)(cgs.screenXScale * 40.f)), cg.bannerPrint, sizeof(cg.bannerPrint));
 		cg.bannerPrintTime = cg.time;
 		break;
 	default:
