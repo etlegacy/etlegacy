@@ -5208,7 +5208,7 @@ void CG_AddDebris(vec3_t origin, vec3_t dir, int speed, int duration, int count,
 				// scale
 				for (j = 0; j < 3; j++)
 				{
-					VectorScale(le->refEntity.axis[i], (rand() % 10 + 1) * .1f, le->refEntity.axis[i]);
+					VectorScale(le->refEntity.axis[j], (rand() % 10 + 1) * .1f, le->refEntity.axis[j]);
 				}
 
 				le->leBounceSoundType = LEBS_METAL;
