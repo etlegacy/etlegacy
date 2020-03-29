@@ -624,6 +624,9 @@ void CG_ReadHudScripts(void)
 		Com_Printf("^1ERROR while reading hud file\n");
 	}
 
+	// This needs to be a .dat file to go around the file extension restrictions of the engine.
+	CG_ReadHudFile("hud.dat");
+
 	Com_Printf("...hud count: %i\n", hudCount);
 }
 
