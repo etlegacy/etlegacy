@@ -250,7 +250,7 @@ FILE *Sys_FOpen(const char *ospath, const char *mode)
 
 	// Windows API ignores all trailing spaces and periods which can get around Quake 3 file system restrictions.
 	length = strlen(ospath);
-	if (length == 0 || ospath[length-1] == ' ' || ospath[length-1] == '.')
+	if (length == 0 || ospath[length - 1] == ' ' || ospath[length - 1] == '.')
 	{
 		return NULL;
 	}
@@ -504,7 +504,14 @@ char **Sys_ListFiles(const char *directory, const char *extension, const char *f
 
 			if (invalid)
 			{
-				remove(va("%s%c%s", directory, PATH_SEP, findinfo.name));
+				int error;
+
+				error = remove(va("%s%c%s", directory, PATH_SEP, findinfo.name));
+
+				if (error != 0)
+				{
+					Com_Printf(S_COLOR_RED "ERROR: cannot delete '%s'.\n", findinfo.name);
+				}
 #ifdef DEDICATED
 				Sys_Error("Invalid character in file name '%s'. The file has been removed. Start the server again.", findinfo.name);
 #else

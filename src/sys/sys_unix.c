@@ -557,7 +557,15 @@ char **Sys_ListFiles(const char *directory, const char *extension, const char *f
 
 		if (invalid)
 		{
+			int error;
+
 			remove(va("%s%c%s", directory, PATH_SEP, d->d_name));
+
+			if (error != 0)
+			{
+				Com_Printf(S_COLOR_RED "ERROR: cannot delete '%s'.\n", d->d_name);
+			}
+
 #ifdef DEDICATED
 			Sys_Error("Invalid character in file name '%s'. The file has been removed. Start the server again.", d->d_name);
 #else
@@ -1146,7 +1154,7 @@ qboolean Sys_DllExtension(const char *name)
 	}
 
 	// Check for format of filename.so.1.2.3
-	p = strstr(name, DLL_EXT "." );
+	p = strstr(name, DLL_EXT ".");
 
 	if (p)
 	{
