@@ -1752,8 +1752,8 @@ void G_ParseCampaigns(void)
 			}
 
 			dirlen = strlen(dirptr);
-			strcpy(filename, "scripts/");
-			strcat(filename, dirptr);
+			Q_strcpy(filename, "scripts/");
+			Q_strcat(filename, MAX_QPATH, dirptr);
 
 			if (G_LoadCampaignsFromFile(filename))
 			{
