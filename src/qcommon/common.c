@@ -993,7 +993,7 @@ static void Z_ClearZone(memzone_t *zone, int size)
 	// set the entire zone to one free block
 
 	zone->blocklist.next = zone->blocklist.prev = block =
-		( memblock_t * )((byte *)zone + sizeof(memzone_t));
+													  ( memblock_t * )((byte *)zone + sizeof(memzone_t));
 	zone->blocklist.tag  = 1;   // in use block
 	zone->blocklist.id   = 0;
 	zone->blocklist.size = 0;
@@ -4088,14 +4088,20 @@ void Com_RandomBytes(byte *string, int len)
 	}
 }
 
+/**
+ * @brief Com_ParseUA
+ * @param[in,out] ua
+ * @param[in] string
+ */
 void Com_ParseUA(userAgent_t *ua, const char *string)
 {
 	if (!string)
 	{
 		return;
 	}
+
 	// store any full et version string
-	strncpy(ua->string, string, sizeof(ua->string));
+	Q_strncpyz(ua->string, string, sizeof(ua->string));
 	// check for compatibility (only accept of own kind)
 	if (!Q_strncmp(string, PRODUCT_LABEL, strlen(PRODUCT_LABEL)))
 	{
