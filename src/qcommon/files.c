@@ -5478,6 +5478,7 @@ void FS_InitWhitelist()
 	if (fileLen == -1)
 	{
 		Com_Printf(S_COLOR_YELLOW "WARNING: unable to get current position in stream of file " META_FILE_NAME "\n");
+		fclose(file);
 		return;
 	}
 	fseek(file, 0, SEEK_SET);
@@ -5486,11 +5487,13 @@ void FS_InitWhitelist()
 	if (!buf)
 	{
 		Com_Printf(S_COLOR_YELLOW "WARNING: unable to allocate buffer for " META_FILE_NAME " contents\n");
+		fclose(file);
 		return;
 	}
 	if (fread(buf, 1, fileLen, file) != fileLen)
 	{
 		Com_Printf(S_COLOR_YELLOW "WARNING: FS_InitWhitelist: short read");
+		fclose(file);
 		Com_Dealloc(buf);
 		return;
 	}
