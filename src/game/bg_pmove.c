@@ -4451,7 +4451,7 @@ void PM_UpdateViewAngles(playerState_t *ps, pmoveExt_t *pmext, usercmd_t *cmd, v
 					return;
 				}
 
-				PM_SlideMove(qtrue);
+				PM_StepSlideMove(qtrue);
 			}
 
 			// all fine

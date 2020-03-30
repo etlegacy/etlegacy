@@ -400,10 +400,8 @@ static qboolean G_IsPositionOK(gentity_t *ent, vec3_t newOrigin)
 		VectorCopy(trace.endpos, ent->s.pos.trBase);
 		return qtrue;
 	}
-	else
-	{
-		return qfalse;
-	}
+
+	return qfalse;
 }
 
 /**
@@ -514,7 +512,6 @@ static void G_StepSlideCorpse(gentity_t *ent, vec3_t newOrigin)
 void CopyToBodyQue(gentity_t *ent)
 {
 	gentity_t *body;
-	int       i;
 
 	trap_UnlinkEntity(ent);
 
@@ -575,10 +572,7 @@ void CopyToBodyQue(gentity_t *ent)
 	body->s.event = 0;
 
 	// Clear out event system
-	for (i = 0; i < MAX_EVENTS; i++)
-	{
-		body->s.events[i] = 0;
-	}
+	Com_Memset(body->s.events, 0, sizeof(body->s.events));
 	body->s.eventSequence = 0;
 
 	// time needed to complete animation
@@ -590,7 +584,7 @@ void CopyToBodyQue(gentity_t *ent)
 	VectorCopy(ent->r.maxs, body->r.maxs);
 
 	//  bodies have lower bounding box
-	body->r.maxs[2] = 0;
+	body->r.maxs[2] = DEAD_BODYHEIGHT_BBOX;
 
 	body->s.effect1Time = ent->client->deathAnimTime;
 
@@ -661,14 +655,7 @@ void CopyToBodyQue(gentity_t *ent)
 	body->die       = body_die;
 
 	// don't take more damage if already gibbed
-	if (ent->health <= GIB_HEALTH)
-	{
-		body->takedamage = qfalse;
-	}
-	else
-	{
-		body->takedamage = qtrue;
-	}
+	body->takedamage = ent->health <= GIB_HEALTH;
 
 	trap_LinkEntity(body);
 }
