@@ -543,7 +543,7 @@ static void SV_ConSay_f(void)
 		return;
 	}
 
-	strcpy(text, "console: ");
+	Q_strcpy(text, "console: ");
 
 	if (*p == '"')
 	{
@@ -551,7 +551,7 @@ static void SV_ConSay_f(void)
 		p[strlen(p) - 1] = '\0';
 	}
 
-	strcat(text, p);
+	Q_strcat(text, 1024, p);
 
 	SV_SendServerCommand(NULL, "chat \"%s\"", text);
 }
