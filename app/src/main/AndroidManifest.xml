@@ -19,7 +19,11 @@
     <uses-feature
         android:name="android.hardware.gamepad"
         android:required="false" />
-
+    
+    <uses-feature
+        android:name="android.hardware.usb.host"
+        android:required="false" />
+    
     <!-- External mouse input events -->
     <uses-feature
         android:name="android.hardware.type.pc"
@@ -56,24 +60,19 @@
         <meta-data android:name="SDL_ENV.SDL_ACCELEROMETER_AS_JOYSTICK" android:value="0"/>
          -->
 
-        <activity android:name="ETLActivity"
+        <activity android:name=".ETLActivity"
             android:label="@string/app_name"
+            android:alwaysRetainTaskState="true"
             android:screenOrientation="landscape"
-            android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
+            android:launchMode="singleInstance"
+            android:configChanges="orientation|uiMode|screenLayout|screenSize|smallestScreenSize|keyboard|keyboardHidden|navigation"
             android:largeHeap="true"
             >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-            <!-- Drop file event -->
-            <!--
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <data android:mimeType="*/*" />
-            </intent-filter>
-            -->
+
         </activity>
     </application>
 
