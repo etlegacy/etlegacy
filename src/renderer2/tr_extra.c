@@ -969,12 +969,12 @@ float MemStreamGetFloat(memStream_t *s)
  * @param[in] ptr
  *
  * @note Unused
- */
+ *
 void printBits(size_t const size, void const *const ptr)
 {
 	unsigned char *b = (unsigned char *) ptr;
 	unsigned char byte;
-	size_t           i, j;
+	int           i, j;
 
 	for (i = size - 1; i >= 0; i--)
 	{
@@ -986,3 +986,4 @@ void printBits(size_t const size, void const *const ptr)
 		}
 	}
 }
+*/

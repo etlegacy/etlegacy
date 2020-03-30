@@ -368,6 +368,6 @@ float           MemStreamGetFloat(memStream_t *s);
 
 //=============================================
 
-void printBits(size_t const size, void const *const ptr);
+//void printBits(size_t const size, void const *const ptr);
 
 #endif
