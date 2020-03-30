@@ -302,6 +302,8 @@ void DB_UpdateFavorite(const char *profile, const char *address)
 				sqlite3_free(err_msg);
 				return;
 			}
+			
+			sqlite3_free(err_msg);
 		}
 		else if(result == SQLITE_ERROR)
 		{
