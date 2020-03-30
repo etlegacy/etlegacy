@@ -5382,12 +5382,19 @@ int FS_CalculateFileSHA1(const char *path, char *hash)
 
 	fseek(f, 0, SEEK_END);
 	len = ftell(f);
-	if (len == -1) return 1;
+    
+    if (len == -1)
+    {
+        fclose(f);
+        return 1;
+    }
+    
 	fseek(f, 0, SEEK_SET);
 
 	buf = Com_Allocate(MAX_BUFFER_SIZE);
 	if (!buf)
 	{
+        fclose(f);
 		return 1;
 	}
 
@@ -5403,6 +5410,8 @@ int FS_CalculateFileSHA1(const char *path, char *hash)
 
 	if (!SHA1Result(&sha))
 	{
+        fclose(f);
+		Com_Dealloc(buf);
 		return 1;
 	}
 
@@ -5416,6 +5425,7 @@ int FS_CalculateFileSHA1(const char *path, char *hash)
 	), 40);
 	
 	fclose(f);
+	Com_Dealloc(buf);
 
 	return 0;
 }
