@@ -583,15 +583,15 @@ static void IN_GobbleMotionEvents(void)
 static void IN_GrabMouse(qboolean grab, qboolean relative)
 {
 	static qboolean mouse_grabbed   = qfalse, mouse_relative = qfalse;
-#ifndef __ANDROID__
+#if __ANDROID_API__ >= 23
 	int             relative_result = 0;
 #endif
 
 	if (relative == !mouse_relative)
 	{
 		SDL_ShowCursor(!relative);
-#ifndef __ANDROID__
-		// On Android Phones with API <= 23 this is causing to App to close since it could not
+#if __ANDROID_API__ >= 23
+		// On Android Phones with API <= 23 this is causing App to close since it could not
 		// set relative mouse location (Mouse location is always at top left side of screen)
 		if ((relative_result = SDL_SetRelativeMouseMode((SDL_bool)relative)) != 0)
 		{
