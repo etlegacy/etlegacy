@@ -48,30 +48,23 @@ void GL_Bind(image_t *image)
 		Ren_Warning("GL_Bind: NULL image\n");
 		image = tr.defaultImage;
 	}
-	
 	else
 	{
-	texnum = image->texnum;
-	
-	Ren_LogComment("--- GL_Bind( %s ) ---\n", image->name);
+		Ren_LogComment("--- GL_Bind( %s ) ---\n", image->name);
 	}
 
-	
+	texnum = image->texnum;
 
 	/*if (r_noBind->integer && tr.blackImage)
 	{
-		// performance evaluation option
-		texnum = tr.blackImage->texnum;
-		image  = tr.blackImage;
+	    // performance evaluation option
+	    texnum = tr.blackImage->texnum;
+	    image  = tr.blackImage;
 	}*/
 
 	if (glState.currenttextures[glState.currenttmu] != texnum)
 	{
-		if (image)
-		{
-			image->frameUsed = tr.frameCount;
-		}
-
+		image->frameUsed                            = tr.frameCount;
 		glState.currenttextures[glState.currenttmu] = texnum;
 		glBindTexture(image->type, texnum);
 	}
@@ -120,8 +113,8 @@ void BindAnimatedImage(textureBundle_t *bundle)
 	// exactly with waveforms of the same frequency
 	//index   = Q_ftol(backEnd.refdef.floatTime * bundle->imageAnimationSpeed * FUNCTABLE_SIZE);
 	//index = (int64_t)(backEnd.refdef.floatTime * bundle->imageAnimationSpeed * FUNCTABLE_SIZE);
-	
-	index = (int64_t)(tess.shaderTime * bundle->imageAnimationSpeed * FUNCTABLE_SIZE);
+
+	index   = (int64_t)(tess.shaderTime * bundle->imageAnimationSpeed * FUNCTABLE_SIZE);
 	index >>= FUNCTABLE_SIZE2; // ??! what is this? it does slow down the flames
 	//index %= FUNCTABLE_SIZE;
 
