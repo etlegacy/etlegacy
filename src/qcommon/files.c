@@ -466,7 +466,7 @@ static fileHandle_t FS_HandleForFile(void)
 		}
 	}
 	Com_Error(ERR_DROP, "FS_HandleForFile: none free");
-	
+
 	return 0;
 }
 
@@ -754,10 +754,10 @@ void FS_CheckFilenameIsNotExecutable(const char *fileName, const char *function)
 static void FS_CheckFilenameIsMutable(const char *filename, const char *function)
 {
 	// Check if the filename ends with the library or pk3 extension
-	if(Sys_DllExtension(filename) || COM_CompareExtension(filename, ".pk3"))
+	if (Sys_DllExtension(filename) || COM_CompareExtension(filename, ".pk3"))
 	{
 		Com_Error(ERR_FATAL, "%s: Denied to manipulate '%s' due "
-			"to %s extension", function, filename, COM_GetExtension(filename));
+		                     "to %s extension", function, filename, COM_GetExtension(filename));
 	}
 }
 
@@ -1483,8 +1483,8 @@ long FS_FOpenFileReadDir(const char *fileName, searchpath_t *search, fileHandle_
 						    !FS_IsExt(fileName, ".menu", len) &&
 						    Q_stricmp(fileName, Sys_GetDLLName("qagame")) != 0 &&
 						    !strstr(fileName, "levelshots") &&
-							!FS_IsExt(fileName, ".campaign", len) // don't referernce for gametype != 4 - see below
-							)
+						    !FS_IsExt(fileName, ".campaign", len) // don't referernce for gametype != 4 - see below
+						    )
 						{
 							pak->referenced |= FS_GENERAL_REF;
 						}
@@ -2968,7 +2968,7 @@ void FS_FreeFileList(char **list)
  */
 int FS_GetFileList(const char *path, const char *extension, char *listbuf, int bufsize)
 {
-	int  nFiles   = 0, i, nTotal = 0, nLen;
+	int  nFiles = 0, i, nTotal = 0, nLen;
 	char **pFiles = NULL;
 
 	*listbuf = 0;
@@ -3043,7 +3043,7 @@ static unsigned int Sys_CountFileList(char **list)
 static char **Sys_ConcatenateFileLists(char **list0, char **list1, char **list2)
 {
 	int  totalLength = 0;
-	char **cat       = NULL, **dst, **src;
+	char **cat = NULL, **dst, **src;
 
 	totalLength += Sys_CountFileList(list0);
 	totalLength += Sys_CountFileList(list1);
@@ -3099,7 +3099,7 @@ static char **Sys_ConcatenateFileLists(char **list0, char **list1, char **list2)
  */
 int FS_GetModList(char *listbuf, int bufsize)
 {
-	int          nMods   = 0, i, j, nTotal = 0, nLen, nPaks, nPotential, nDescLen;
+	int          nMods = 0, i, j, nTotal = 0, nLen, nPaks, nPotential, nDescLen;
 	char         **pPaks = NULL;
 	char         *name, *path;
 	char         descPath[MAX_OSPATH];
@@ -3173,9 +3173,9 @@ int FS_GetModList(char *listbuf, int bufsize)
 				// nLen is the length of the mod path
 				// we need to see if there is a description available
 				descPath[0] = '\0';
-				
-				Com_sprintf(descPath, sizeof (descPath), "%s%cdescription.txt", name, PATH_SEP);
-				
+
+				Com_sprintf(descPath, sizeof(descPath), "%s%cdescription.txt", name, PATH_SEP);
+
 				nDescLen = FS_SV_FOpenFileRead(descPath, &descHandle);
 				if (nDescLen > 0)
 				{
@@ -3856,7 +3856,7 @@ qboolean FS_CheckDirTraversal(const char *checkdir)
 qboolean FS_InvalidGameDir(const char *gamedir)
 {
 	if (!strcmp(gamedir, ".") || !strcmp(gamedir, "..")
-		|| strchr(gamedir, '/') || strchr(gamedir, '\\'))
+	    || strchr(gamedir, '/') || strchr(gamedir, '\\'))
 	{
 		return qtrue;
 	}
@@ -4122,7 +4122,8 @@ static void FS_AddBothGameDirectories(const char *subpath)
 		{
 			FS_AddGameDirectory(fs_homepath->string, subpath);
 #if defined(FEATURE_PAKISOLATION) && !defined(DEDICATED)
-			if (fs_containerName->string[0]) {
+			if (fs_containerName->string[0])
+			{
 				char contPath[MAX_OSPATH];
 				Com_sprintf(contPath, sizeof(contPath), "%s%c%s", subpath, PATH_SEP, fs_containerName->string);
 				FS_AddGameDirectory(fs_homepath->string, contPath);
@@ -4174,15 +4175,15 @@ static void FS_Startup(const char *gameName)
 
 	if (FS_InvalidGameDir(gameName))
 	{
-		Com_Error( ERR_DROP, "Invalid com_basegame '%s'", gameName );
+		Com_Error(ERR_DROP, "Invalid com_basegame '%s'", gameName);
 	}
 	if (FS_InvalidGameDir(fs_basegame->string))
 	{
-		Com_Error( ERR_DROP, "Invalid fs_basegame '%s'", fs_basegame->string );
+		Com_Error(ERR_DROP, "Invalid fs_basegame '%s'", fs_basegame->string);
 	}
 	if (FS_InvalidGameDir(fs_gamedirvar->string))
 	{
-		Com_Error( ERR_DROP, "Invalid fs_game '%s'", fs_gamedirvar->string );
+		Com_Error(ERR_DROP, "Invalid fs_game '%s'", fs_gamedirvar->string);
 	}
 #if defined(FEATURE_PAKISOLATION) && !defined(DEDICATED)
 	if (FS_InvalidContainerName(fs_containerName->string))
@@ -4895,7 +4896,7 @@ int FS_FOpenFileByMode(const char *qpath, fileHandle_t *f, fsMode_t mode)
 		}
 		break;
 	default:
-		Com_Error(ERR_FATAL, "FS_FOpenFileByMode: bad mode [%i] of file '%s'", mode , qpath);
+		Com_Error(ERR_FATAL, "FS_FOpenFileByMode: bad mode [%i] of file '%s'", mode, qpath);
 		return -1;
 	}
 
@@ -5373,7 +5374,7 @@ int FS_CalculateFileSHA1(const char *path, char *hash)
 
 	Com_Memset(hash, 0, 40);
 	SHA1Reset(&sha);
-	
+
 	f = Sys_FOpen(path, "rb");
 	if (!f)
 	{
@@ -5382,19 +5383,19 @@ int FS_CalculateFileSHA1(const char *path, char *hash)
 
 	fseek(f, 0, SEEK_END);
 	len = ftell(f);
-    
-    if (len == -1)
-    {
-        fclose(f);
-        return 1;
-    }
-    
+
+	if (len == -1)
+	{
+		fclose(f);
+		return 1;
+	}
+
 	fseek(f, 0, SEEK_SET);
 
 	buf = Com_Allocate(MAX_BUFFER_SIZE);
 	if (!buf)
 	{
-        fclose(f);
+		fclose(f);
 		return 1;
 	}
 
@@ -5410,20 +5411,20 @@ int FS_CalculateFileSHA1(const char *path, char *hash)
 
 	if (!SHA1Result(&sha))
 	{
-        fclose(f);
+		fclose(f);
 		Com_Dealloc(buf);
 		return 1;
 	}
 
 	Com_Memcpy(hash, va(
-		"%08x%08x%08x%08x%08x",
-		sha.Message_Digest[0],
-		sha.Message_Digest[1],
-		sha.Message_Digest[2],
-		sha.Message_Digest[3],
-		sha.Message_Digest[4]
-	), 40);
-	
+				   "%08x%08x%08x%08x%08x",
+				   sha.Message_Digest[0],
+				   sha.Message_Digest[1],
+				   sha.Message_Digest[2],
+				   sha.Message_Digest[3],
+				   sha.Message_Digest[4]
+				   ), 40);
+
 	fclose(f);
 	Com_Dealloc(buf);
 
@@ -5454,10 +5455,10 @@ extern qboolean DB_IsWhitelisted(const char *pakName, const char *hash);
 */
 void FS_InitWhitelist()
 {
-    int            i = 0, p = 0, lc = 0, div, len, msec, pakNameHash, fileLen;
+	int            i = 0, p = 0, lc = 0, div, len, msec, pakNameHash, fileLen;
 	pakMetaEntry_t *pakEntry;
 	FILE           *file;
-    char           *fileMetaPath, *buf, *line;
+	char           *fileMetaPath, *buf, *line;
 
 	msec = Sys_Milliseconds();
 
@@ -5465,7 +5466,7 @@ void FS_InitWhitelist()
 	Com_Memset(pakMetaEntryMap, 0, MAX_META_ENTRIES);
 
 	fileMetaPath = va("%s%c%s", fs_homepath->string, PATH_SEP, META_FILE_NAME);
-	file = Sys_FOpen(fileMetaPath, "rb");
+	file         = Sys_FOpen(fileMetaPath, "rb");
 	if (!file)
 	{
 		Com_Printf(S_COLOR_YELLOW "WARNING: " META_FILE_NAME " was not found\n");
@@ -5473,89 +5474,90 @@ void FS_InitWhitelist()
 	}
 
 	fseek(file, 0, SEEK_END);
-    fileLen = ftell(file);
-    if (fileLen == -1)
+	fileLen = ftell(file);
+	if (fileLen == -1)
 	{
 		Com_Printf(S_COLOR_YELLOW "WARNING: unable to get current position in stream of file " META_FILE_NAME "\n");
 		return;
 	}
 	fseek(file, 0, SEEK_SET);
 
-    buf = Com_Allocate(fileLen + 1);
+	buf = Com_Allocate(fileLen + 1);
 	if (!buf)
 	{
 		Com_Printf(S_COLOR_YELLOW "WARNING: unable to allocate buffer for " META_FILE_NAME " contents\n");
 		return;
 	}
-    if (fread(buf, 1, fileLen, file) != fileLen)
+	if (fread(buf, 1, fileLen, file) != fileLen)
 	{
 		Com_Printf(S_COLOR_YELLOW "WARNING: FS_InitWhitelist: short read");
 		Com_Dealloc(buf);
 		return;
 	}
 
-    fclose(file);
+	fclose(file);
 
-    buf[fileLen] = 0;
-    line = buf;
+	buf[fileLen] = 0;
+	line         = buf;
 
 #ifdef FEATURE_DBMS
-    (void) DB_BeginTransaction();
+	(void) DB_BeginTransaction();
 #endif
 
-    while (i < MAX_META_ENTRIES)
+	while (i < MAX_META_ENTRIES)
 	{
-        if (p >= fileLen)
-        {
-            break;
-        }
-        if (buf[p] == '\n' || !buf[p + 1])
-        {
-            lc++;
-            len = &buf[p] - line;
-            if (len == 0)
-            {
-                line = &buf[++p];
-                continue;
-            }
-            for (div = len; div > 0; div--)
-            {
-                if (*(line + div) == ' ')
-                {
-                    break;
-                }
-            }
-            if (div == 0 || div == len || (len - div != 41))
-            {
-                Com_Printf("^1FS_InitWhitelist: Erroneous line %i found, ignoring the rest of file\n", lc);
-                break;
-            }
-            pakEntry = &pakMetaEntries[i++];
-            Com_Memcpy(pakEntry->name, line, (size_t)div);
-            Com_Memcpy(pakEntry->hash, line + div + 1, 40);
-            pakNameHash = FS_HashFileName(pakEntry->name, MAX_META_ENTRIES);
-            pakMetaEntryMap[pakNameHash] = pakEntry;
+		if (p >= fileLen)
+		{
+			break;
+		}
+		if (buf[p] == '\n' || !buf[p + 1])
+		{
+			lc++;
+			len = &buf[p] - line;
+			if (len == 0)
+			{
+				line = &buf[++p];
+				continue;
+			}
+			for (div = len; div > 0; div--)
+			{
+				if (*(line + div) == ' ')
+				{
+					break;
+				}
+			}
+			if (div == 0 || div == len || (len - div != 41))
+			{
+				Com_Printf("^1FS_InitWhitelist: Erroneous line %i found, ignoring the rest of file\n", lc);
+				break;
+			}
+			pakEntry = &pakMetaEntries[i++];
+			Com_Memcpy(pakEntry->name, line, (size_t)div);
+			Com_Memcpy(pakEntry->hash, line + div + 1, 40);
+			pakNameHash                  = FS_HashFileName(pakEntry->name, MAX_META_ENTRIES);
+			pakMetaEntryMap[pakNameHash] = pakEntry;
 #ifdef FEATURE_DBMS
-            DB_InsertWhitelist(pakEntry->hash, pakEntry->name);
+			DB_InsertWhitelist(pakEntry->hash, pakEntry->name);
 #endif
-            line = &buf[p + 1];
-        }
-        else if (buf[p] == '/' && buf[p + 1] == '/')
-        {
-            while (++p < fileLen && (buf[p] && buf[p] != '\n')) /* skip line */;
-            line = &buf[p + 1];
-            lc++;
-        }
-        p++;
+			line = &buf[p + 1];
+		}
+		else if (buf[p] == '/' && buf[p + 1] == '/')
+		{
+			while (++p < fileLen && (buf[p] && buf[p] != '\n')) /* skip line */
+				;
+			line = &buf[p + 1];
+			lc++;
+		}
+		p++;
 	}
 
 #ifdef FEATURE_DBMS
-    (void) DB_EndTransaction();
+	(void) DB_EndTransaction();
 #endif
 
 	Com_Dealloc(buf);
 
-    Com_Printf("%i entries imported from whitelist in %i ms\n", i, (Sys_Milliseconds() - msec));
+	Com_Printf("%i entries imported from whitelist in %i ms\n", i, (Sys_Milliseconds() - msec));
 }
 
 /**
@@ -5571,10 +5573,10 @@ qboolean FS_IsWhitelisted(const char *pakName, const char *hash)
 	pakMetaEntry_t *pakEntry;
 
 #ifdef FEATURE_DBMS
-    if (DB_IsWhitelisted(pakName, hash))
-    {
-    	return qtrue;
-    }
+	if (DB_IsWhitelisted(pakName, hash))
+	{
+		return qtrue;
+	}
 #endif
 
 	pakNameHash = FS_HashFileName(pakName, MAX_META_ENTRIES);
@@ -5582,7 +5584,7 @@ qboolean FS_IsWhitelisted(const char *pakName, const char *hash)
 
 	if (!pakEntry)
 	{
-		// try manual search on hash miss 
+		// try manual search on hash miss
 		for (i = 0; i < MAX_META_ENTRIES; i++)
 		{
 			pakEntry = &pakMetaEntries[i];
