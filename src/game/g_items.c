@@ -1202,9 +1202,9 @@ void G_BounceItem(gentity_t *ent, trace_t *trace)
 		}
 	}
 
+	VectorAdd(ent->r.currentOrigin, trace->plane.normal, ent->r.currentOrigin);
 	VectorCopy(ent->r.currentOrigin, ent->s.pos.trBase);
 	ent->s.pos.trTime = level.time;
-	VectorAdd(ent->r.currentOrigin, trace->plane.normal, ent->r.currentOrigin);
 }
 
 /**
@@ -1323,9 +1323,12 @@ void G_RunItem(gentity_t *ent)
 	if (tr.startsolid)
 	{
 		tr.fraction = 0;
+
+		// don't let item stutter while stuck in solid
+		ent->s.pos.trType = TR_STATIONARY;
 	}
 
-	trap_LinkEntity(ent);   // FIXME: avoid this for stationary?
+	trap_LinkEntity(ent);
 
 	// check think function
 	G_RunThink(ent);
