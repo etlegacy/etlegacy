@@ -688,8 +688,8 @@ static void Render_vertexLighting_DBS_entity(int stage)
 	SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
 
 	
-     //if ents miss ambient color, use tess
-	if (!backEnd.currentEntity->ambientLight)
+        // if ents miss ambient color, use tess
+        if (backEnd.currentEntity->ambientLight[0] == 0.f && backEnd.currentEntity->ambientLight[1] == 0.f && backEnd.currentEntity->ambientLight[2] == 0.f)
 	{
 		//lets use the ambient color in map
 		SetUniformVec3(UNIFORM_AMBIENTCOLOR, tr.worldEntity.ambientLight);
@@ -700,8 +700,8 @@ static void Render_vertexLighting_DBS_entity(int stage)
 		SetUniformVec3(UNIFORM_AMBIENTCOLOR, backEnd.currentEntity->ambientLight);
 	}
 
-	//if we miss lightdir from ents, use sun
-	if (!backEnd.currentEntity->lightDir)
+	// if we miss lightdir from ents, use sun
+	if (backEnd.currentEntity->lightDir[0] == 0.f && backEnd.currentEntity->lightDir[1] == 0.f && backEnd.currentEntity->lightDir[2] == 0.f)
 	{
 		SetUniformVec3(UNIFORM_LIGHTDIR, tr.sunDirection);
 	}
@@ -709,8 +709,9 @@ static void Render_vertexLighting_DBS_entity(int stage)
 	{
 		SetUniformVec3(UNIFORM_LIGHTDIR, backEnd.currentEntity->lightDir);
 	}
-	//if we miss directed light use tess
-	if (!backEnd.currentEntity->directedLight)
+        
+	// if we miss directed light, use tess
+	if (backEnd.currentEntity->directedLight[0] == 0.f && backEnd.currentEntity->directedLight[1] == 0.f && backEnd.currentEntity->directedLight[2] == 0.f)
 	{
 		SetUniformVec3(UNIFORM_LIGHTCOLOR, tess.svars.color);
 	}
