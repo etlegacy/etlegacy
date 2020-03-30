@@ -1446,7 +1446,7 @@ qboolean BG_PanelButton_EditClick(panel_button_t *button, int key)
 					}
 					else
 					{
-						memmove(&s[button->data[2] - 1], &buffer[button->data[2]], len - button->data[2]);
+						memmove(&s[button->data[2] - 1], &s[button->data[2]], len - button->data[2]);
 						s[len - 1] = '\0';
 					}
 
@@ -1519,7 +1519,7 @@ qboolean BG_PanelButton_EditClick(panel_button_t *button, int key)
 					}
 					else
 					{
-						memmove(&s[button->data[2] + 1], &buffer[button->data[2]], len - button->data[2]);
+						memmove(&s[button->data[2] + 1], &s[button->data[2]], len - button->data[2]);
 						s[button->data[2]] = (char)key;
 						s[len + 2]         = '\0';
 					}
@@ -1544,7 +1544,7 @@ qboolean BG_PanelButton_EditClick(panel_button_t *button, int key)
 					}
 					else
 					{
-						memmove(&s[button->data[2]], &buffer[button->data[2] + 1], len - button->data[2]);
+						memmove(&s[button->data[2]], &s[button->data[2] + 1], len - button->data[2]);
 						s[len] = '\0';
 					}
 				}
