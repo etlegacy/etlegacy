@@ -572,7 +572,9 @@ nextInstruction2:
 #endif
 				*(int *)&image[programStack + 4] = -1 - programCounter;
 
-				//VM_LogSyscalls( (int *)&image[ programStack + 4 ] );
+#ifdef DEBUG_VM
+				VM_LogSyscalls( (int *)&image[ programStack + 4 ] );
+#endif
 				r = vm->systemCall((intptr_t *)&image[programStack + 4]);
 
 #ifdef DEBUG_VM

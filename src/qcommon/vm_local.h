@@ -206,6 +206,8 @@ int VM_CallInterpreted(vm_t *vm, int *args);
 vmSymbol_t *VM_ValueToFunctionSymbol(vm_t *vm, int value);
 int VM_SymbolToValue(vm_t *vm, const char *symbol);
 const char *VM_ValueToSymbol(vm_t *vm, int value);
+#ifdef DEBUG_VM
 void VM_LogSyscalls(int *args);
+#endif
 
 #endif // #ifndef INCLUDE_VM_LOCAL_H

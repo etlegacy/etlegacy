@@ -891,9 +891,10 @@ void VM_VmInfo_f(void)
 	}
 }
 
+#ifdef DEBUG_VM
 /**
  * @brief Insert calls to this while debugging the vm compiler
- * @param args
+ * @param[in] args
  */
 void VM_LogSyscalls(int *args)
 {
@@ -903,8 +904,15 @@ void VM_LogSyscalls(int *args)
 	if (!f)
 	{
 		f = fopen("syscalls.log", "w");
+
+		if (!f)
+		{
+			Com_Printf("Cannot open syscalls.log\n");
+			return;
+		}
 	}
 	callnum++;
 	fprintf(f, "%i: %p (%i) = %i %i %i %i\n", callnum, (void *)(args - (int *)currentVM->dataBase),
 	        args[0], args[1], args[2], args[3], args[4]);
 }
+#endif
