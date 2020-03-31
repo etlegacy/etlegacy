@@ -8007,9 +8007,17 @@ qboolean R_LoadCubeProbe(int cubeProbeNum, int totalCubeProbes, byte *cubeTemp[6
 			ri.FS_FreeFile(buffer);
 			buffer = NULL;
 		}
+            
 		lastFileNum = fileNum + 1;
 		filename = va("cm/%s/cm_%04d.tga", s_worldData.baseName, fileNum + 1);
+                
+		if (ri.FS_FOpenFileRead(filename, NULL, qfalse) <= 0)
+		{
+			return qfalse;
+		}
+                
 		bytesRead = ri.FS_ReadFile(filename, (void **)&buffer);
+                
 		if (bytesRead <= 0)
 		{
 			//Ren_Print("loadCubeProbes: %s not found", filename);
@@ -8092,7 +8100,7 @@ void R_BuildCubeMaps(void)
 	fileName = va("cm/%s/cm_0000.tga", s_worldData.baseName);
 	if (!ri.FS_FileExists(fileName))
 	{
-		pixeldata = ri.Z_Malloc(REF_CUBEMAP_STORE_SIZE * REF_CUBEMAP_STORE_SIZE * 4);
+		//pixeldata = ri.Z_Malloc(REF_CUBEMAP_STORE_SIZE * REF_CUBEMAP_STORE_SIZE * 4);
 		createCM = qtrue;
 		//Ren_Developer("Cubemaps not found!\n");
 	}
@@ -8328,6 +8336,11 @@ void R_BuildCubeMaps(void)
 
 		if (createCM)
 		{
+			if (!pixeldata)
+			{
+                                pixeldata = ri.Z_Malloc(REF_CUBEMAP_STORE_SIZE * REF_CUBEMAP_STORE_SIZE * 4);
+			}
+                    
 			// render the cubemap
 			VectorCopy(cubeProbe->origin, rf.vieworg);
 		
@@ -8557,11 +8570,15 @@ void R_BuildCubeMaps(void)
 		}
 
 		Ren_Print("Wrote %d cubemaps in %d files.\n", j, fileCount + 1);
-		ri.Free(pixeldata);
 	}
 	else
 	{
 		Ren_Print("Read %d cubemaps from files.\n", tr.cubeProbes.currentElements -1);
+	}
+        
+	if (pixeldata)
+	{
+		ri.Free(pixeldata);   
 	}
 
 	// turn pixel targets off
