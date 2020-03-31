@@ -5591,22 +5591,26 @@ qboolean FS_IsWhitelisted(const char *pakName, const char *hash)
 		for (i = 0; i < MAX_META_ENTRIES; i++)
 		{
 			pakEntry = &pakMetaEntries[i];
+
 			// list end, bail out
 			if (!pakEntry->name[0] || !pakEntry->hash[0])
 			{
 				return qfalse;
 			}
+
 			// found it?
 			if (!strcmp(pakEntry->name, pakName))
 			{
 				break;
 			}
 		}
-		if (!pakEntry)
+
+		if (i == MAX_META_ENTRIES)
 		{
 			return qfalse;
 		}
 	}
+
 	// got match?
 	if (!strcmp(pakEntry->hash, hash))
 	{
