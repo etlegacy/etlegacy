@@ -62,6 +62,7 @@ if(BUILD_CLIENT)
 			add_definitions(-DGLEW_STATIC)
 		endif()
 
+		cmake_policy(SET CMP0072 NEW) # use GLVND by default
 		find_package(OpenGL REQUIRED)
 		list(APPEND RENDERER_LIBRARIES ${OPENGL_LIBRARIES})
 		include_directories(SYSTEM ${OPENGL_INCLUDE_DIR})
