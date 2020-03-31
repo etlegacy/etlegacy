@@ -559,7 +559,7 @@ char **Sys_ListFiles(const char *directory, const char *extension, const char *f
 		{
 			int error;
 
-			remove(va("%s%c%s", directory, PATH_SEP, d->d_name));
+			error = remove(va("%s%c%s", directory, PATH_SEP, d->d_name));
 
 			if (error != 0)
 			{
