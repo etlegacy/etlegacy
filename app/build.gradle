@@ -13,7 +13,7 @@ android {
         if (buildAsApplication) {
             applicationId "org.etlegacy.app"
         }
-        minSdkVersion 16
+        minSdkVersion 21
         targetSdkVersion 26
         versionCode 1
         versionName "1.0"
