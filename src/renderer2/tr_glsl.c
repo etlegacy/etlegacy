@@ -2489,7 +2489,7 @@ void GLSL_SetMacroState(programInfo_t *programlist, int macro, int enabled)
 
 	if (programlist->list->permutations < programlist->list->currentPermutation)
 	{
-		Ren_Fatal("GLSL_SetMacroState: Trying to set macro state to impossible result for shader: %s with macro: %i permutation number %u", programlist->name, macro, programlist->list->permutations);
+		Ren_Fatal("GLSL_SetMacroState: Trying to set macro state to impossible result for shader: %s with macro: %i permutation number %zu", programlist->name, macro, programlist->list->permutations);
 	}
 }
 
