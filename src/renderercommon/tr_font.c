@@ -90,7 +90,7 @@
 FT_Library ftLibrary = NULL;
 
 const char *supportedFormats[] = { "ttf", "otf" };
-const int  formatCount = ARRAY_LEN(supportedFormats);
+const int  formatCount         = ARRAY_LEN(supportedFormats);
 
 #endif
 
@@ -188,9 +188,10 @@ static glyphInfo_t *RE_ConstructGlyphInfo(int imageSize, unsigned char *imageOut
 	// make sure everything is here
 	if (face != NULL)
 	{
-		FT_UInt index = FT_Get_Char_Index(face, codepoint);
-		float   scaled_width, scaled_height;
-		int     i;
+		FT_UInt  index = FT_Get_Char_Index(face, codepoint);
+		FT_Error rc;
+		float    scaled_width, scaled_height;
+		int      i;
 
 		if (index == 0)
 		{
@@ -203,7 +204,14 @@ static glyphInfo_t *RE_ConstructGlyphInfo(int imageSize, unsigned char *imageOut
 		FT_Library_SetLcdFilter(ftLibrary, FT_LCD_FILTER_LIGHT);
 		flags |= FT_LOAD_TARGET_LCD;
 
-		FT_Load_Glyph(face, index, flags);
+		rc = FT_Load_Glyph(face, index, flags);
+
+		if (rc)
+		{
+			Ren_Warning("RE_ConstructGlyphInfo: cannot load a glyph into the glyph slot of a face object.\n");
+			return &glyph;         // nothing to render
+		}
+
 		bitmap = R_RenderGlyph(face->glyph, &glyph);
 		if (!bitmap)
 		{
@@ -327,7 +335,7 @@ static byte *fdFile;
  */
 int readInt(void)
 {
-	int i = ((unsigned int)fdFile[fdOffset] | ((unsigned int)fdFile[fdOffset + 1] << 8) | ((unsigned int)fdFile[fdOffset +2 ] << 16) | ((unsigned int)fdFile[fdOffset + 3] << 24));
+	int i = ((unsigned int)fdFile[fdOffset] | ((unsigned int)fdFile[fdOffset + 1] << 8) | ((unsigned int)fdFile[fdOffset + 2] << 16) | ((unsigned int)fdFile[fdOffset + 3] << 24));
 
 	fdOffset += 4;
 	return i;
