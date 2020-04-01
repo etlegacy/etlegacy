@@ -646,14 +646,14 @@ void UI_LoadCampaigns(void)
 	for (i = 0; i < numdirs && uiInfo.campaignCount < MAX_CAMPAIGNS; i++, dirptr += dirlen + 1)
 	{
 		dirlen = strlen(dirptr);
-		strcpy(filename, "scripts/");
-		strcat(filename, dirptr);
+		Q_strcpy(filename, "scripts/");
+		Q_strcat(filename, 128, dirptr);
 		UI_LoadCampaignsFromFile(filename);
 	}
 
 	if (UI_OutOfMemory())
 	{
-		trap_Print(S_COLOR_YELLOW "WARNING: not anough memory in pool to load all campaigns\n");
+		trap_Print(S_COLOR_YELLOW "WARNING: not enough memory in pool to load all campaigns\n");
 	}
 
 	// Sort the campaigns for single player
