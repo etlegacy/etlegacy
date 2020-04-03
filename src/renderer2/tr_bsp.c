@@ -8280,12 +8280,12 @@ void R_BuildCubeMaps(void)
 	}
 
 #if 1
-	ticsPerProbe = 50 / tr.cubeProbes.currentElements; // currentElements is != 0 for sure
+	ticsPerProbe = 50.f / (float)tr.cubeProbes.currentElements; // currentElements is != 0 for sure
 #endif
 	Ren_Print("...creating %d cubemaps\n", tr.cubeProbes.currentElements);
 	ri.Cvar_Set("viewlog", "1");
 	Ren_Print("0%%  10   20   30   40   50   60   70   80   90   100%%\n");
-	Ren_Print("|----|----|----|----|----|----|----|----|----|----|\n");
+	Ren_Print("|----|----|----|----|----|----|----|----|----|----|\n ");
 	for (j = 0; j < tr.cubeProbes.currentElements; j++)
 	{
 		cubeProbe = (cubemapProbe_t *)Com_GrowListElement(&tr.cubeProbes, j);
@@ -8294,7 +8294,7 @@ void R_BuildCubeMaps(void)
 		//		  (int)cubeProbe->origin[2]);
 #if 1
 		// we are at probe j
-		int currentTics = j * ticsPerProbe; // implicit typecast from float to int. This will floor() the result (which is what we want)
+		int currentTics = (int)(j * ticsPerProbe); // explicit typecast from float to int. This will floor() the result (which is what we want)
 		
 		if (currentTics != tics)
 		{
@@ -8557,7 +8557,7 @@ void R_BuildCubeMaps(void)
 
 		glBindTexture(cubeProbe->cubemap->type, 0);
 	}
-	//Ren_Print("\n");
+	Ren_Print("\n");
 
 	if (createCM)
 	{
