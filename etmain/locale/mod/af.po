@@ -7,8 +7,8 @@ msgstr ""
 "Project-Id-Version: ET:Legacy\n"
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
-"PO-Revision-Date: 2020-03-21 17:15+0000\n"
-"Last-Translator: Transifex Bot <>\n"
+"PO-Revision-Date: 2020-03-27 23:43+0000\n"
+"Last-Translator: rafal1137 <rafal1137@yahoo.pl>\n"
 "Language-Team: Afrikaans (http://www.transifex.com/etlegacy/etlegacy/language/af/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -256,7 +256,7 @@ msgid "^1WEBSITE"
 msgstr ""
 
 #: etmain/ui/credits_etlegacy.menu:193 etmain/ui/credits_quit.menu:260
-msgid "© 2012-2019 ET:Legacy Team - under the terms of GPL version 3."
+msgid "© 2012-2020 ET: Legacy Team - under the terms of GPL version 3."
 msgstr ""
 
 #: etmain/ui/credits_etlegacy.menu:201
@@ -1338,7 +1338,7 @@ msgid "REFRESH"
 msgstr ""
 
 #: etmain/ui/ingame_serverinfo.menu:78
-msgid "ADD TO FAVORITES"
+msgid "ADD FAVORITE"
 msgstr ""
 
 #: etmain/ui/ingame_tapoutlms.menu:49 etmain/ui/ingame_tapout.menu:49
@@ -1463,11 +1463,6 @@ msgstr ""
 #: etmain/ui/ingame_vote_misc.menu:47
 #: etmain/ui/ingame_vote_misc_refrcon.menu:46
 msgid "ANTI-LAG OFF"
-msgstr ""
-
-#: etmain/ui/ingame_vote_misc.menu:49
-#: etmain/ui/ingame_vote_misc_refrcon.menu:48
-msgid "XP SHUFFLE"
 msgstr ""
 
 #: etmain/ui/ingame_vote_misc.menu:50
@@ -2702,7 +2697,7 @@ msgid "Med"
 msgstr ""
 
 #: etmain/ui/options_customise_hud.menu:56
-msgid "Sets the duration ejected bullet shells etc. last for"
+msgid "Sets the duration ejected bullet shells last for"
 msgstr ""
 
 #: etmain/ui/options_customise_hud.menu:58
@@ -2726,12 +2721,19 @@ msgid "Sets the maximum distance light corona is displayed"
 msgstr ""
 
 #: etmain/ui/options_customise_hud.menu:60
-msgid "Particles:"
+msgid "Particles Effects:"
 msgstr ""
 
 #: etmain/ui/options_customise_hud.menu:60
-msgid ""
-"Toggles display of particle effects - e.g. explosions, some smoke effects"
+msgid "Toggles display of particle effects (explosions, some smoke effects)"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:69
+msgid "Visual Effects:"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:69
+msgid "Draws additional visual effects (airstrike planes, debris)"
 msgstr ""
 
 #: etmain/ui/options_customise_hud.menu:61
@@ -2739,7 +2741,7 @@ msgid "Wall Mark Lifetime:"
 msgstr ""
 
 #: etmain/ui/options_customise_hud.menu:61
-msgid "Duration of bullet marks on walls etc"
+msgid "Duration of bullet marks on walls"
 msgstr ""
 
 #: etmain/ui/options_customise_hud.menu:62
@@ -2786,7 +2788,7 @@ msgid "Show Blood:"
 msgstr ""
 
 #: etmain/ui/options_customise_hud.menu:64
-msgid "Toggles showing blood spurt effect when player's are shot"
+msgid "Toggles showing blood spurt effect when players are shot"
 msgstr ""
 
 #: etmain/ui/options_customise_hud.menu:65
@@ -2876,6 +2878,18 @@ msgstr ""
 
 #: etmain/ui/options_customise_hud.menu:74
 msgid "Class + Rank"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:74
+msgid "Prestige"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:74
+msgid "Rank + Prestige"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:74
+msgid "Class + Rank + Prestige"
 msgstr ""
 
 #: etmain/ui/options_customise_hud.menu:74
@@ -3098,7 +3112,7 @@ msgid "Set font size for Crosshair Name label"
 msgstr ""
 
 #: etmain/ui/options_customise_hud.menu:128
-msgid "PopUpTimeStay:"
+msgid "Popup Stay Time::"
 msgstr ""
 
 #: etmain/ui/options_customise_hud.menu:128
@@ -3106,7 +3120,7 @@ msgid "Set the time a pop-up stays visible"
 msgstr ""
 
 #: etmain/ui/options_customise_hud.menu:130
-msgid "PopUpTimeFade:"
+msgid "Popup Fade Time:"
 msgstr ""
 
 #: etmain/ui/options_customise_hud.menu:130
@@ -3217,7 +3231,7 @@ msgstr ""
 
 #: etmain/ui/options_graphics.menu:42
 #: etmain/ui/profile_create_initial.menu:105 etmain/ui/profile_create.menu:99
-msgid "Window mode:"
+msgid "Window Mode"
 msgstr ""
 
 #: etmain/ui/options_graphics.menu:42
@@ -3234,7 +3248,7 @@ msgid "The intensity of textures (requires vid_restart)"
 msgstr ""
 
 #: etmain/ui/options_graphics.menu:47
-msgid "Map overbright bits:"
+msgid "Map Overbright Bits:"
 msgstr ""
 
 #: etmain/ui/options_graphics.menu:47
@@ -3498,10 +3512,6 @@ msgstr ""
 
 #: etmain/ui/options_system.menu:52
 msgid "Max Packets:"
-msgstr ""
-
-#: etmain/ui/options_system.menu:52
-msgid "Very Low"
 msgstr ""
 
 #: etmain/ui/options_system.menu:52
@@ -7074,7 +7084,7 @@ msgstr ""
 msgid "SURRENDER"
 msgstr ""
 
-msgid "NO XP SHUFFLE"
+msgid "NO RESTART SHUFFLE"
 msgstr ""
 
 msgid "Multiview:"
@@ -7249,10 +7259,7 @@ msgstr ""
 msgid "Reconnect time in ms"
 msgstr ""
 
-msgid "SR SHUFFLE"
-msgstr ""
-
-msgid "NO SR SHUFFLE"
+msgid "SHUFFLE"
 msgstr ""
 
 msgid "JOIN A TEAM"
@@ -7293,11 +7300,11 @@ msgid "^1JOIN US"
 msgstr ""
 
 msgid ""
-"ET: Legacy development is a collaborative effort done in an open, "
-"transparent and friendly manner. Anyone is welcome to join our efforts!"
+"ET: Legacy is a collaborative effort done in an open, transparent and "
+"friendly manner. Anyone is welcome to join our efforts!"
 msgstr ""
 
-msgid "CHOOSE CLASS/WEAPON"
+msgid "CHOOSE CLASS AND WEAPONS"
 msgstr ""
 
 msgid "S. Soldier"
@@ -7462,10 +7469,7 @@ msgstr ""
 msgid "High (125 FPS)"
 msgstr ""
 
-msgid "ADD FAVORITE"
-msgstr ""
-
-msgid "Add this server to your favorites? IP:"
+msgid "Add this server to your favorites?"
 msgstr ""
 
 msgid "Select your team, class, weapon and spawnpoint"
@@ -7519,6 +7523,12 @@ msgstr ""
 msgid "Class selection:"
 msgstr ""
 
+msgid "Team selection:"
+msgstr ""
+
+msgid "Spawn selection:"
+msgstr ""
+
 msgid "Sets the frames per second limit for a stable render rate"
 msgstr ""
 
@@ -7544,4 +7554,230 @@ msgid "Enabled & no sound"
 msgstr ""
 
 msgid "RANDOM"
+msgstr ""
+
+msgid "WELCOME"
+msgstr ""
+
+msgid "English (default)  "
+msgstr ""
+
+msgid "Shows all Internet servers"
+msgstr ""
+
+msgid "Shows all local servers"
+msgstr ""
+
+msgid "LOCAL"
+msgstr ""
+
+msgid "^5Local"
+msgstr ""
+
+msgid "^3Favorites"
+msgstr ""
+
+msgid ""
+"Includes or excludes ET: Legacy servers with humans from the server list"
+msgstr ""
+
+msgid "Shoutcast Password:"
+msgstr ""
+
+msgid "Password to access the shoutcaster status for live match commentaries"
+msgstr ""
+
+msgid "Bobbing effect:"
+msgstr ""
+
+msgid "Toggle bobbing"
+msgstr ""
+
+msgid "ITEMS"
+msgstr ""
+
+msgid "Simple Items:"
+msgstr ""
+
+msgid "Yes except objectives"
+msgstr ""
+
+msgid "Draw simple items"
+msgstr ""
+
+msgid "Play startup announcer voice"
+msgstr ""
+
+msgid "Hide Weapons Only"
+msgstr ""
+
+msgid "Coordinates Only"
+msgstr ""
+
+msgid "Screenshot"
+msgstr ""
+
+msgid "Coordinates Only"
+msgstr ""
+
+msgid "Fireteam Overlay"
+msgstr ""
+
+msgid "Team and Fireteam Chat"
+msgstr ""
+
+msgid "Chat + FT Overlay"
+msgstr ""
+
+msgid "UPS + MAX speed"
+msgstr ""
+
+msgid "KPH + MAX speed"
+msgstr ""
+
+msgid "MPH + MAX speed"
+msgstr ""
+
+msgid "Toggles display of weapon fire (muzzle flash)"
+msgstr ""
+
+msgid "POPUPS AND BANNER"
+msgstr ""
+
+msgid "Filter Messages:"
+msgstr ""
+
+msgid "Connection"
+msgstr ""
+
+msgid "Pickup"
+msgstr ""
+
+msgid "Death"
+msgstr ""
+
+msgid "Connection, Pickup"
+msgstr ""
+
+msgid "Connection, Death"
+msgstr ""
+
+msgid "Connect, Pickup, Death"
+msgstr ""
+
+msgid "Set filter on popup messages"
+msgstr ""
+
+msgid "Filter Promotions:"
+msgstr ""
+
+msgid "Skill upgrades"
+msgstr ""
+
+msgid "Skill + Rank upgrades"
+msgstr ""
+
+msgid "Set filter on popup promotion messages"
+msgstr ""
+
+msgid "Banner Time:"
+msgstr ""
+
+msgid "Set the time a banner stays visible"
+msgstr ""
+
+msgid "Drop Objective"
+msgstr ""
+
+msgid "SELECTION MENUS"
+msgstr ""
+
+msgid "Center Window:"
+msgstr ""
+
+msgid "Center window in windowed mode"
+msgstr ""
+
+msgid "Very Low (43 FPS)"
+msgstr ""
+
+msgid "Low (76 FPS)"
+msgstr ""
+
+msgid "Medium (85 FPS)"
+msgstr ""
+
+msgid "SCREENSHOTS"
+msgstr ""
+
+msgid "TGA (lossless)"
+msgstr ""
+
+msgid "JPEG (lossy)"
+msgstr ""
+
+msgid "PNG (lossless)"
+msgstr ""
+
+msgid "Set your preferred screenshot format"
+msgstr ""
+
+msgid "JPEG Quality:"
+msgstr ""
+
+msgid "Set the JPEG quality"
+msgstr ""
+
+msgid "REMOVE FAVORITE"
+msgstr ""
+
+msgid "Remove this server from your favorites?"
+msgstr ""
+
+msgid "P. Pistol"
+msgstr ""
+
+msgid "A. Akimbo"
+msgstr ""
+
+msgid "P. Silenced Pistol"
+msgstr ""
+
+msgid "A. Silenced Akimbo"
+msgstr ""
+
+msgid "1. Pistol"
+msgstr ""
+
+msgid "2. Akimbo"
+msgstr ""
+
+msgid "3. SMG"
+msgstr ""
+
+msgid "CHOOSE TEAM"
+msgstr ""
+
+msgid "R. Axis"
+msgstr ""
+
+msgid "B. Allies"
+msgstr ""
+
+msgid "S. Spectators"
+msgstr ""
+
+msgid "1. Axis"
+msgstr ""
+
+msgid "2. Allies"
+msgstr ""
+
+msgid "3. Spectators"
+msgstr ""
+
+msgid "Set or unset this server as favorite"
+msgstr ""
+
+msgid "MAKE SHOUTCASTER"
 msgstr ""
