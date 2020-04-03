@@ -99,14 +99,6 @@ static void R_MD3_CreateVBO_Surfaces(mdvModel_t *mdvModel)
 	int vertexesNum;
 	int f;
 
-	const float *v0, *v1, *v2;
-	const float *t0, *t1, *t2;
-	vec3_t      tangent;
-	vec3_t      binormal;
-	vec3_t      normal;
-
-	float       *v;
-
 	Com_InitGrowList(&vboSurfaces, 32);
 
 	for (i = 0, surf = mdvModel->surfaces; i < mdvModel->numSurfaces; i++, surf++)
@@ -127,13 +119,17 @@ static void R_MD3_CreateVBO_Surfaces(mdvModel_t *mdvModel)
 			{
 				for (j = 0, tri = surf->triangles; j < surf->numTriangles; j++, tri++)
 				{
-					v0 = surf->verts[surf->numVerts * f + tri->indexes[0]].xyz;
-					v1 = surf->verts[surf->numVerts * f + tri->indexes[1]].xyz;
-					v2 = surf->verts[surf->numVerts * f + tri->indexes[2]].xyz;
+					vec3_t tangent  = { 0, 0, 0 };
+					vec3_t binormal = { 0, 0, 0 };
+					vec3_t normal   = { 0, 0, 0 };
 
-					t0 = surf->st[tri->indexes[0]].st;
-					t1 = surf->st[tri->indexes[1]].st;
-					t2 = surf->st[tri->indexes[2]].st;
+					const float *v0 = surf->verts[surf->numVerts * f + tri->indexes[0]].xyz;
+					const float *v1 = surf->verts[surf->numVerts * f + tri->indexes[1]].xyz;
+					const float *v2 = surf->verts[surf->numVerts * f + tri->indexes[2]].xyz;
+
+					const float *t0 = surf->st[tri->indexes[0]].st;
+					const float *t1 = surf->st[tri->indexes[1]].st;
+					const float *t2 = surf->st[tri->indexes[2]].st;
 #if 1
 					R_CalcTangentSpace(tangent, binormal, normal, v0, v1, v2, t0, t1, t2);
 #else
@@ -143,7 +139,7 @@ static void R_MD3_CreateVBO_Surfaces(mdvModel_t *mdvModel)
 
 					for (k = 0; k < 3; k++)
 					{
-						v = vertexes[surf->numVerts * f + tri->indexes[k]].tangent;
+						float *v = vertexes[surf->numVerts * f + tri->indexes[k]].tangent;
 						VectorAdd(v, tangent, v);
 
 						v = vertexes[surf->numVerts * f + tri->indexes[k]].binormal;
@@ -162,88 +158,88 @@ static void R_MD3_CreateVBO_Surfaces(mdvModel_t *mdvModel)
 				VectorNormalize(vert->normal);
 			}
 /* FIXME: Hunk_FreeTempMemory: not the final block
- 	 	 	// Note: This does basically work - vanilla truck is fine with smoothed normals
- 	 	 	//       ... but new r2 truck model fails ... :/ looks better w/o
-			if (r_smoothNormals->integer & FLAGS_SMOOTH_MD3) // do another extra smoothing for normals to avoid flat shading
-			{
-				int vf, vfj, vfk, numSame;
-				vec3_t   vertexj, vertexk, avgVector;
-				int *same;
-				qboolean *done;
+            // Note: This does basically work - vanilla truck is fine with smoothed normals
+            //       ... but new r2 truck model fails ... :/ looks better w/o
+            if (r_smoothNormals->integer & FLAGS_SMOOTH_MD3) // do another extra smoothing for normals to avoid flat shading
+            {
+                int vf, vfj, vfk, numSame;
+                vec3_t   vertexj, vertexk, avgVector;
+                int *same;
+                qboolean *done;
 
-				// allocate temp memory for the "points already checked" array
-				done = (qboolean *)ri.Hunk_AllocateTempMemory(sizeof(done) * surf->numVerts);
+                // allocate temp memory for the "points already checked" array
+                done = (qboolean *)ri.Hunk_AllocateTempMemory(sizeof(done) * surf->numVerts);
 
-				 // allocate temp memory for the "points are the same" array
-				same = (int *)ri.Hunk_AllocateTempMemory(sizeof(same) * surf->numVerts);
+                 // allocate temp memory for the "points are the same" array
+                same = (int *)ri.Hunk_AllocateTempMemory(sizeof(same) * surf->numVerts);
 
-				for (f = 0; f < mdvModel->numFrames; f++)
-				{
-					// clear 'done' array:
-					for (j = 0; j < surf->numVerts; j++)
-					{
-						done[j] = qfalse; // use memset(&done[0], 0, surf->numVerts) ?
-					}
+                for (f = 0; f < mdvModel->numFrames; f++)
+                {
+                    // clear 'done' array:
+                    for (j = 0; j < surf->numVerts; j++)
+                    {
+                        done[j] = qfalse; // use memset(&done[0], 0, surf->numVerts) ?
+                    }
 
-					vf = surf->numVerts * f;
-					for (j = 0; j < surf->numVerts; j++)
-					{
-						if (done[j])
-						{
-							continue; // skip what is done
-						}
+                    vf = surf->numVerts * f;
+                    for (j = 0; j < surf->numVerts; j++)
+                    {
+                        if (done[j])
+                        {
+                            continue; // skip what is done
+                        }
 
-						done[j] = qtrue; // , mark as done, and process..
+                        done[j] = qtrue; // , mark as done, and process..
 
-						vfj = vf + j;
+                        vfj = vf + j;
 
-						numSame = 0; // new test, so reset the count..
+                        numSame = 0; // new test, so reset the count..
 
-						// store this vertex number, and increment the found total of same vertices
-						same[numSame++] = vfj;
+                        // store this vertex number, and increment the found total of same vertices
+                        same[numSame++] = vfj;
 
-						VectorCopy(surf->verts[vfj].xyz, vertexj);
+                        VectorCopy(surf->verts[vfj].xyz, vertexj);
 
-						// so far, there is only 1 vertex, so the average normal is simply the vertex's normal
-						VectorCopy(avgVector, vertexes[vfj].normal);
+                        // so far, there is only 1 vertex, so the average normal is simply the vertex's normal
+                        VectorCopy(avgVector, vertexes[vfj].normal);
 
-						for (k = j + 1; k < surf->numVerts; k++)
-						{
-							if (done[k])
-							{
-								continue;
-							}
+                        for (k = j + 1; k < surf->numVerts; k++)
+                        {
+                            if (done[k])
+                            {
+                                continue;
+                            }
 
-							vfk = vf + k;
+                            vfk = vf + k;
 
-							VectorCopy(surf->verts[vfk].xyz, vertexk);
+                            VectorCopy(surf->verts[vfk].xyz, vertexk);
 
-							//if (VectorCompare(vertexj, vertexk))
-							if (VectorCompareEpsilon(vertexj, vertexk, 0.02f))
-							{
-								done[k] = qtrue;
+                            //if (VectorCompare(vertexj, vertexk))
+                            if (VectorCompareEpsilon(vertexj, vertexk, 0.02f))
+                            {
+                                done[k] = qtrue;
 
-								VectorAdd(avgVector, vertexes[vfk].normal, avgVector);
+                                VectorAdd(avgVector, vertexes[vfk].normal, avgVector);
 
-								// store this vertex number, and increment the found total of same vertices
-								same[numSame++] = vfk;
-							}
-						}
+                                // store this vertex number, and increment the found total of same vertices
+                                same[numSame++] = vfk;
+                            }
+                        }
 
-						// average the vector
-						VectorScale(avgVector, 1.0 / (float)numSame, avgVector);
-						//VectorNormalize(avgVector); //?!
+                        // average the vector
+                        VectorScale(avgVector, 1.0 / (float)numSame, avgVector);
+                        //VectorNormalize(avgVector); //?!
 
-						// now write back the newly calculated average normal for all the same vertices
-						for (k = 0; k < numSame; k++)
-						{
-							VectorCopy(avgVector, vertexes[same[k]].normal);
-						}
-					}
-				}
-				ri.Hunk_FreeTempMemory(done);
-				ri.Hunk_FreeTempMemory(same);
-			}
+                        // now write back the newly calculated average normal for all the same vertices
+                        for (k = 0; k < numSame; k++)
+                        {
+                            VectorCopy(avgVector, vertexes[same[k]].normal);
+                        }
+                    }
+                }
+                ri.Hunk_FreeTempMemory(done);
+                ri.Hunk_FreeTempMemory(same);
+            }
 */
 		}
 
