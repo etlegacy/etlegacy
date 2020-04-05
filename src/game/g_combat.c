@@ -324,7 +324,7 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 
 	// unlagged - backward reconciliation #2
 	// make sure the body shows up in the client's current position
-	if(g_antilag.integer)
+	if (g_antilag.integer)
 	{
 		G_ReAdjustSingleClientPosition(self);
 	}
@@ -962,7 +962,7 @@ qboolean IsHeadShot(gentity_t *targ, vec3_t dir, vec3_t point, meansOfDeath_t mo
 			G_RailTrail(start, end, tv(1.f, 0.f, 0.f));
 		}
 
-		if(g_antilag.integer)
+		if (g_antilag.integer)
 		{
 			// Why??
 			G_ReAdjustSingleClientPosition(targ);
@@ -1041,7 +1041,7 @@ qboolean IsLegShot(gentity_t *targ, vec3_t dir, vec3_t point, meansOfDeath_t mod
 				G_RailTrail(start, end, tv(1.f, 0.f, 0.f));
 			}
 
-			if(g_antilag.integer)
+			if (g_antilag.integer)
 			{
 				G_ReAdjustSingleClientPosition(targ);
 			}
@@ -1330,33 +1330,25 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 		VectorNormalize(dir);
 	}
 
-	knockback = damage;
-	if (knockback > 200)
-	{
-		knockback = 200;
-	}
-	if (targ->flags & FL_NO_KNOCKBACK)
+	if ((targ->flags & FL_NO_KNOCKBACK) || (dflags & DAMAGE_NO_KNOCKBACK) ||
+	    (targ->client && g_friendlyFire.integer && (onSameTeam || (attacker->client && targ->client->sess.sessionTeam == G_GetTeamFromEntity(inflictor)))))
 	{
 		knockback = 0;
 	}
-	if (dflags & DAMAGE_NO_KNOCKBACK)
+	else
 	{
-		knockback = 0;
-	}
-	else if (dflags & DAMAGE_HALF_KNOCKBACK)
-	{
-		knockback *= 0.5f;
-	}
+		knockback = (damage > 200) ? 200 : damage;
 
-	// set weapons means less knockback
-	if (targ->client && (GetWeaponTableData(targ->client->ps.weapon)->type & WEAPON_TYPE_SET))
-	{
-		knockback *= 0.5;
-	}
+		if (dflags & DAMAGE_HALF_KNOCKBACK)
+		{
+			knockback *= 0.5;
+		}
 
-	if (targ->client && g_friendlyFire.integer && (onSameTeam || (attacker->client && targ->client->sess.sessionTeam == G_GetTeamFromEntity(inflictor))))
-	{
-		knockback = 0;
+		// set weapons means less knockback
+		if (targ->client && (GetWeaponTableData(targ->client->ps.weapon)->type & WEAPON_TYPE_SET))
+		{
+			knockback *= 0.5;
+		}
 	}
 
 	// figure momentum add, even if the damage won't be taken
@@ -1385,7 +1377,7 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 		                          && mod != MOD_LANDMINE
 		                          ))
 		{
-			targ->client->ps.velocity[2] *= 0.25;
+			targ->client->ps.velocity[2] *= 0.25f;
 		}
 
 		// set the timer so that the other client can't cancel
