@@ -182,17 +182,16 @@ void DB_DeleteFavorite(const char *profile, const char *address)
 }
 
 /**
- * @brief Callback function for DB_LoadFavorites
- * @param[out]
- * @param[out]
- * @param[out]
- * @param[out]
+ * @brief DB_callbackFavorites
+ * @param[in] NotUsed
+ * @param[in] argc
+ * @param[in] argv
+ * @param[in] azColName
+ * @return 
  */
-static int DB_callbackFavorites(void *NotUsed, int argc, char **argv, char **azColName)
+static int DB_callbackFavorites(__attribute__((unused)) void *NotUsed, int argc, char **argv, char **azColName)
 {
 	netadr_t addr;
-
-    NotUsed = 0;
 
     // avoid array overflows
 	if (cls.numfavoriteservers >= MAX_FAVOURITE_SERVERS - 1)

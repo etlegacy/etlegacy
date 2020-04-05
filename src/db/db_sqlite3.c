@@ -315,10 +315,15 @@ static qboolean DB_CreateOrUpdateSchema(int startSchemaVersion)
 
 /**
  * @brief DB_CallbackVersion
+ * @param NotUsed
+ * @param[in] argc
+ * @param[in] argv
+ * @param[in] azColName
+ * 
+ * @return 0
  */
-int DB_CallbackVersion(void *NotUsed, int argc, char **argv, char **azColName)
+int DB_CallbackVersion(__attribute__((unused)) void *NotUsed, int argc, char **argv, char **azColName)
 {
-	NotUsed = 0;
 	int       i;
 
 	for (i = 0; i < argc; i++)
@@ -743,7 +748,7 @@ int DB_LoadOrSaveDb(sqlite3 *pInMemory, const char *zFilename, int isSave)
  *
  * @return 0
  */
-int DB_Callback(void *NotUsed, int argc, char **argv, char **azColName)
+int DB_Callback(__attribute__((unused)) void *NotUsed, int argc, char **argv, char **azColName)
 {
 	int i;
 	// NotUsed = 0;
