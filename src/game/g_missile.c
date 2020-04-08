@@ -578,19 +578,11 @@ void G_RunMissile(gentity_t *ent)
 				ent->count2 = 1;
 			}
 		}
-		else if (!ent->count2 && BG_GetSkyHeightAtPoint(origin) - BG_GetGroundHeightAtPoint(origin) > 512)
+		else if (!ent->count2 && BG_GetSkyHeightAtPoint(origin) - BG_GetGroundHeightAtPoint(origin) > 1024)
 		{
-			vec3_t delta;
-
-			VectorSubtract(origin, ent->r.currentOrigin, delta);
-			if (delta[2] < 0)
-			{
-				ent->count2 = 1;
-			}
+			ent->count2 = ent->r.currentOrigin[2] > origin[2];
 		}
-		else if ((ent->count2 == 1 || ent->count2 == 2) && !(ent->s.eFlags & (EF_BOUNCE | EF_BOUNCE_HALF))
-		         && ent->r.currentOrigin[2] > origin[2]
-		         && origin[2] - BG_GetGroundHeightAtPoint(origin) < 1024)
+		else if ((ent->count2 == 1 || ent->count2 == 2) && !(ent->s.eFlags & (EF_BOUNCE | EF_BOUNCE_HALF)))
 		{
 			vec3_t  impactpos;
 			trace_t mortar_tr;
@@ -598,7 +590,7 @@ void G_RunMissile(gentity_t *ent)
 			if (ent->count2 == 1)
 			{
 				VectorSubtract(origin, ent->r.currentOrigin, impactpos);
-				VectorMA(origin, 512, impactpos, impactpos);
+				VectorMA(origin, 16, impactpos, impactpos);
 
 				trap_Trace(&mortar_tr, origin, ent->r.mins, ent->r.maxs, impactpos, ent->r.ownerNum, ent->clipmask);
 
@@ -615,7 +607,7 @@ void G_RunMissile(gentity_t *ent)
 
 			trap_Trace(&mortar_tr, origin, ent->r.mins, ent->r.maxs, impactpos, ent->r.ownerNum, ent->clipmask);
 
-			if (mortar_tr.fraction != 1.f)
+			if (mortar_tr.fraction != 1.f && !(mortar_tr.surfaceFlags & SURF_NOIMPACT))
 			{
 				G_AddEvent(ent, EV_MORTAR_IMPACT, 0);
 				VectorCopy(mortar_tr.endpos, ent->s.origin2);           // impact point
