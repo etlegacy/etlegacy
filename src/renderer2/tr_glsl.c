@@ -463,7 +463,7 @@ void GLSL_LoadDefinitions(void)
 	// FIXME: Also load from external files in the future...
 	// For now just copy the existing data to our search able string
 	const char *defaultShaderDef = GetFallbackShaderDef();
-	size_t        size              = strlen(defaultShaderDef) * sizeof(char);
+	size_t     size              = strlen(defaultShaderDef) * sizeof(char);
 
 	definitionText = (char *)Com_Allocate(size + 1);
 	Com_Memset(definitionText, '\0', size + 1);
@@ -896,7 +896,7 @@ static void GLSL_BuildShaderExtraDef()
 	        "#define DGEN_WAVE_TRIANGLE %i\n"
 	        "#define DGEN_WAVE_SAWTOOTH %i\n"
 	        "#define DGEN_WAVE_INVERSE_SAWTOOTH %i\n"
-			"#define DGEN_WAVE_NOISE %i\n"
+	        "#define DGEN_WAVE_NOISE %i\n"
 	        "#define DGEN_BULGE %i\n"
 	        "#define DGEN_MOVE %i\n"
 	        "#endif\n",
@@ -905,7 +905,7 @@ static void GLSL_BuildShaderExtraDef()
 	        DGEN_WAVE_TRIANGLE,
 	        DGEN_WAVE_SAWTOOTH,
 	        DGEN_WAVE_INVERSE_SAWTOOTH,
-			DGEN_WAVE_NOISE,
+	        DGEN_WAVE_NOISE,
 	        DGEN_BULGE,
 	        DGEN_MOVE);
 
@@ -1198,7 +1198,7 @@ static int GLSL_CompileGPUShader(GLhandleARB program, GLhandleARB *prevShader, c
 static void GLSL_GetShaderText(const char *name, GLenum shaderType, char **data, size_t *size, qboolean append)
 {
 	char   fullname[MAX_QPATH];
-	size_t dataSize = 0;
+	size_t dataSize    = 0;
 	char   *dataBuffer = NULL;
 
 	if (shaderType == GL_VERTEX_SHADER)
@@ -1281,9 +1281,9 @@ static void GLSL_GetShaderText(const char *name, GLenum shaderType, char **data,
  */
 static void GLSL_PreprocessShaderText(char *shaderBuffer, char *filetext, GLenum shadertype)
 {
-	GLchar       *ref   = filetext;
-	char         *token = NULL;
-	int          c      = 0;
+	GLchar *ref   = filetext;
+	char   *token = NULL;
+	int    c      = 0;
 	size_t offset = 0;
 
 	while ((c = *ref))
@@ -1321,10 +1321,10 @@ static void GLSL_PreprocessShaderText(char *shaderBuffer, char *filetext, GLenum
 			if (!Q_stricmp(token, "include"))
 			{
 				// handle include
-				GLchar       *libBuffer         = NULL;
-				size_t       libBufferSize      = 0;
-				size_t       currentOffset      = strlen(shaderBuffer);
-				char         *shaderBufferPoint = NULL;
+				GLchar *libBuffer         = NULL;
+				size_t libBufferSize      = 0;
+				size_t currentOffset      = strlen(shaderBuffer);
+				char   *shaderBufferPoint = NULL;
 
 				if (!currentOffset)
 				{
@@ -1733,7 +1733,7 @@ void GLSL_SetUniformFloat(shaderProgram_t *program, int uniformNum, GLfloat valu
  */
 void GLSL_SetUniformDouble(shaderProgram_t *program, int uniformNum, GLdouble value)
 {
-	GLint   *uniforms = program->uniforms;
+	GLint    *uniforms = program->uniforms;
 	GLdouble *compare  = (GLdouble *)(program->uniformBuffer + program->uniformBufferOffsets[uniformNum]);
 
 	if (uniforms[uniformNum] == -1)
@@ -2169,6 +2169,8 @@ static void GLSL_SetInitialUniformValues(programInfo_t *info, int permutation)
 		{
 			Ren_Warning("Cannot find uniform \"%s\" from program: %s %d\n", info->uniformValues[i].type.name, info->name, location);
 			Ren_LogComment("Cannot find uniform \"%s\" from program: %s %d\n", info->uniformValues[i].type.name, info->name, location);
+
+			continue;
 		}
 
 		switch (info->uniformValues[i].type.type)
@@ -2197,20 +2199,20 @@ static void GLSL_SetInitialUniformValues(programInfo_t *info, int permutation)
 		case GLSL_VEC4:
 			GLSL_SetUniformVec4(&info->list->programs[permutation], location, *((vec4_t *)info->uniformValues[i].value));
 			break;
-        /*	FIXME:
-                case GLSL_MAT16:
-                    GLSL_SetUniformMatrix16(&info->list->programs[permutation],location,**((mat4_t *)info->uniformValues[i].value));
-                    break;
-                case GLSL_FLOATARR:
-                    GLSL_SetUniformFloatARR(&info->list->programs[permutation],location,**((float *)info->uniformValues[i].value));
-                    break;
-                case GLSL_VEC4ARR:
-                    GLSL_SetUniformVec4ARR(&info->list->programs[permutation],location,**((vec4_t *)info->uniformValues[i].value));
-                    break;
-                case GLSL_MAT16ARR:
-                    GLSL_SetUniformMatrix16ARR(&info->list->programs[permutation],location,**((mat4_t *)info->uniformValues[i].value));
-                    break;
-        */
+		/*	FIXME:
+		        case GLSL_MAT16:
+		            GLSL_SetUniformMatrix16(&info->list->programs[permutation],location,**((mat4_t *)info->uniformValues[i].value));
+		            break;
+		        case GLSL_FLOATARR:
+		            GLSL_SetUniformFloatARR(&info->list->programs[permutation],location,**((float *)info->uniformValues[i].value));
+		            break;
+		        case GLSL_VEC4ARR:
+		            GLSL_SetUniformVec4ARR(&info->list->programs[permutation],location,**((vec4_t *)info->uniformValues[i].value));
+		            break;
+		        case GLSL_MAT16ARR:
+		            GLSL_SetUniformMatrix16ARR(&info->list->programs[permutation],location,**((mat4_t *)info->uniformValues[i].value));
+		            break;
+		*/
 		default:
 			Ren_Fatal("Only INT supported atm");
 		}
