@@ -970,12 +970,14 @@ models/mapobjects/logs_sd/log
    diffuseMap models/mapobjects/logs_sd/log.tga
    bumpMap models/mapobjects/logs_sd/log_n.tga
    specularMap models/mapobjects/logs_sd/log_r.tga
+   implicitMap models/mapobjects/logs_sd/log.tga
 }
 models/mapobjects/logs_sd/ring
 {
 	diffuseMap models/mapobjects/logs_sd/ring.tga
 	bumpMap models/mapobjects/logs_sd/ring_n.tga
 	specularMap models/mapobjects/logs_sd/ring_r.tga
+        implicitMap models/mapobjects/logs_sd/ring.tga
 }
 
 models/mapobjects/logs_sd/snow
@@ -985,12 +987,12 @@ models/mapobjects/logs_sd/snow
 	specularMap textures/snow_sd/snow_var01_r.tga
         implicitMap textures/snow_sd/snow_var01.tga
 }
-
 models/mapobjects/logs_sd/trunk_cut_snow
 {
 	diffuseMap models/mapobjects/logs_sd/trunk_cut_snow.tga
 	bumpMap models/mapobjects/logs_sd/trunk_cut_snow_n.tga
 	specularMap models/mapobjects/logs_sd/trunk_cut_snow_r.tga
+        implicitMap models/mapobjects/logs_sd/trunk_cut_snow.tga
 }
 
 models/mapobjects/logs_sd/trunk_snow
@@ -998,6 +1000,7 @@ models/mapobjects/logs_sd/trunk_snow
 	diffuseMap models/mapobjects/logs_sd/trunk_snow.tga
 	bumpMap models/mapobjects/logs_sd/trunk_snow_n.tga
 	specularMap models/mapobjects/logs_sd/trunk_snow_r.tga
+        implicitMap models/mapobjects/logs_sd/trunk_snow.tga
 }
 
 models/mapobjects/logs_sd/winterbranch01
@@ -1005,6 +1008,7 @@ models/mapobjects/logs_sd/winterbranch01
 	diffuseMap models/mapobjects/logs_sd/winterbranch01.tga
 	bumpMap models/mapobjects/logs_sd/winterbranch01_n.tga
 	specularMap models/mapobjects/logs_sd/winterbranch01_r.tga
+        implicitMap models/mapobjects/logs_sd/winterbranch01.tga
 }
 
 models/mapobjects/logs_sd/wintertrunk01
@@ -1012,6 +1016,7 @@ models/mapobjects/logs_sd/wintertrunk01
 	diffuseMap models/mapobjects/logs_sd/wintertrunk01.tga
 	bumpMap models/mapobjects/logs_sd/wintertrunk01_n.tga
 	specularMap models/mapobjects/logs_sd/wintertrunk01_r.tga
+        implicitMap models/mapobjects/logs_sd/wintertrunk01.tga
 }
 
 //************************************************************************
