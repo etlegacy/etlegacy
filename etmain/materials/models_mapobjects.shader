@@ -980,9 +980,10 @@ models/mapobjects/logs_sd/ring
 
 models/mapobjects/logs_sd/snow
 {
-	diffuseMap models/mapobjects/logs_sd/snow.tga
-	bumpMap models/mapobjects/logs_sd/snow_n.tga
-	specularMap models/mapobjects/logs_sd/snow_r.tga
+	diffuseMap textures/snow_sd/snow_var01.tga
+	bumpMap textures/snow_sd/snow_var01_n.tga
+	specularMap textures/snow_sd/snow_var01_r.tga
+        implicitMap textures/snow_sd/snow_var01.tga
 }
 
 models/mapobjects/logs_sd/trunk_cut_snow
