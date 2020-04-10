@@ -4011,7 +4011,7 @@ OpenGL WRAPPERS, tr_gl.c
 
 void GL_Bind(image_t *image);
 void GL_BindNearestCubeMap(const vec3_t xyz);
-void GL_Unbind();
+void GL_Unbind(void);
 void BindAnimatedImage(textureBundle_t *bundle);
 //void GL_TextureFilter(image_t *image, filterType_t filterType);
 void GL_SetDefaultState(void);
@@ -4030,8 +4030,8 @@ void GL_DrawBuffer(GLenum mode);
 void GL_FrontFace(GLenum mode);
 void GL_LoadModelViewMatrix(const mat4_t m);
 void GL_LoadProjectionMatrix(const mat4_t m);
-void GL_PushMatrix();
-void GL_PopMatrix();
+void GL_PushMatrix(void);
+void GL_PopMatrix(void);
 void GL_PolygonMode(GLenum face, GLenum mode);
 void GL_Scissor(GLint x, GLint y, GLsizei width, GLsizei height);
 void GL_Viewport(GLint x, GLint y, GLsizei width, GLsizei height);
@@ -4099,7 +4099,7 @@ const void *RB_TakeScreenshotCmd(const void *data);
 void R_InitSkins(void);
 skin_t *R_GetSkinByHandle(qhandle_t hSkin);
 
-void R_DeleteSurfaceVBOs();
+void R_DeleteSurfaceVBOs(void);
 
 /*
 ====================================================================
@@ -4155,7 +4155,7 @@ void R_RemapShader(const char *shaderName, const char *newShaderName, const char
 tr_shade.c
 ====================================================================
 */
-void clipPortalPlane();
+void clipPortalPlane(void);
 
 /*
 ====================================================================
@@ -4226,8 +4226,8 @@ typedef struct shaderCommands_s
 	mat4_t boneMatrices[MAX_BONES];
 
 	// info extracted from current shader or backend mode
-	void (*stageIteratorFunc)();
-	void (*stageIteratorFunc2)();
+	void (*stageIteratorFunc)(void);
+	void (*stageIteratorFunc2)(void);
 
 	int numSurfaceStages;
 	shaderStage_t **surfaceStages;
@@ -4237,13 +4237,13 @@ extern shaderCommands_t tess;
 
 void GLSL_InitGPUShaders(void);
 void GLSL_CompileGPUShaders(void);
-void GLSL_ShutdownGPUShaders();
+void GLSL_ShutdownGPUShaders(void);
 void GLSL_BindProgram(shaderProgram_t *program);
 void GLSL_BindNullProgram(void);
 
 // *INDENT-OFF*
-void Tess_Begin(void (*stageIteratorFunc)(),
-				void (*stageIteratorFunc2)(),
+void Tess_Begin(void (*stageIteratorFunc)(void),
+				void (*stageIteratorFunc2)(void),
 				shader_t *surfaceShader, shader_t *lightShader,
 				qboolean skipTangentSpaces,
 				qboolean skipVBO,
@@ -4251,18 +4251,18 @@ void Tess_Begin(void (*stageIteratorFunc)(),
 				int fogNum);
 // *INDENT-ON*
 void Tess_End(void);
-void Tess_EndBegin();
-void Tess_DrawElements();
+void Tess_EndBegin(void);
+void Tess_DrawElements(void);
 void Tess_CheckOverflow(int verts, int indexes);
 
 void Tess_ComputeColor(shaderStage_t *pStage);
 
-void Tess_StageIteratorDebug();
-void Tess_StageIteratorGeneric();
+void Tess_StageIteratorDebug(void);
+void Tess_StageIteratorGeneric(void);
 //void Tess_StageIteratorDepthFill();
-void Tess_StageIteratorShadowFill();
-void Tess_StageIteratorLighting();
-void Tess_StageIteratorSky();
+void Tess_StageIteratorShadowFill(void);
+void Tess_StageIteratorLighting(void);
+void Tess_StageIteratorSky(void);
 
 void Tess_AddQuadStamp(vec3_t origin, vec3_t left, vec3_t up, const vec4_t color);
 void Tess_AddQuadStampExt(vec3_t origin, vec3_t left, vec3_t up, const vec4_t color, float s1, float t1, float s2, float t2);
@@ -4297,7 +4297,7 @@ qboolean R_inPVS(const vec3_t p1, const vec3_t p2);
 
 void R_AddWorldInteractions(trRefLight_t *light);
 void R_AddPrecachedWorldInteractions(trRefLight_t *light);
-void R_ShutdownVBOs();
+void R_ShutdownVBOs(void);
 
 /*
 ============================================================
@@ -4353,10 +4353,10 @@ FOG, tr_fog.c
 ============================================================
 */
 
-void R_SetFrameFog();
+void R_SetFrameFog(void);
 void RB_Fog(glfog_t *curfog);
-void RB_FogOff();
-void RB_FogOn();
+void RB_FogOff(void);
+void RB_FogOn(void);
 void RE_SetFog(int fogvar, int var1, int var2, float r, float g, float b, float density);
 void RE_SetGlobalFog(qboolean restore, int duration, float r, float g, float b, float depthForOpaque);
 
@@ -4366,7 +4366,7 @@ SHADOWS, tr_shadows.c
 ============================================================
 */
 
-void RB_ProjectionShadowDeform();
+void RB_ProjectionShadowDeform(void);
 
 /*
 ============================================================
@@ -4564,7 +4564,7 @@ float R_ProjectRadius(float r, vec3_t location);
 
 
 qboolean ShaderRequiresCPUDeforms(const shader_t *shader);
-void Tess_DeformGeometry();
+void Tess_DeformGeometry(void);
 
 float RB_EvalWaveForm(const waveForm_t *wf);
 float RB_EvalWaveFormClamped(const waveForm_t *wf);

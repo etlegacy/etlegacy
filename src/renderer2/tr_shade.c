@@ -366,8 +366,8 @@ static void DrawTris()
  * @param[in] lightmapNum
  * @param[in] fogNum
  */
-void Tess_Begin(void (*stageIteratorFunc)(),
-                void (*stageIteratorFunc2)(),
+void Tess_Begin(void (*stageIteratorFunc)(void),
+                void (*stageIteratorFunc2)(void),
                 shader_t *surfaceShader, shader_t *lightShader,
                 qboolean skipTangentSpaces,
                 qboolean skipVBO,
@@ -779,8 +779,8 @@ static void Render_vertexLighting_DBS_world(int stage)
 {
 	shaderStage_t *pStage             = tess.surfaceStages[stage];
 	qboolean      use_parallaxMapping = (r_normalMapping->integer && r_parallaxMapping->integer && tess.surfaceShader->parallax);
-	qboolean      use_specular        = (r_normalMapping->integer && qtrue);
-	qboolean      use_reflections     = qfalse; //(normalMapping && r_reflectionMapping->integer && tr.cubeProbes.currentElements > 0 && !tr.refdef.pixelTarget);
+	qboolean      use_specular        = (qboolean)r_normalMapping->integer;
+	qboolean      use_reflections     = (r_normalMapping->integer && r_reflectionMapping->integer && tr.cubeProbes.currentElements > 0 && !tr.refdef.pixelTarget);
 
 	Ren_LogComment("--- Render_vertexLighting_DBS_world ---\n");
 
@@ -892,8 +892,8 @@ static void Render_lightMapping(int stage, qboolean asColorMap, qboolean normalM
 	uint32_t      stateBits           = pStage->stateBits;
 	qboolean      use_parallaxMapping = (normalMapping && r_parallaxMapping->integer && tess.surfaceShader->parallax);
 	//qboolean use_deluxeMapping = (normalMapping && qfalse); // r_showDeluxeMaps->integer == 1 AND a deluxemap exists!    because there is no code that does anything with deluxemaps, we disable it..
-	qboolean use_specular    = (normalMapping && qtrue);
-	qboolean use_reflections = qfalse; //(normalMapping && r_reflectionMapping->integer && tr.cubeProbes.currentElements > 0 && !tr.refdef.pixelTarget);
+	qboolean use_specular    = normalMapping;
+	qboolean use_reflections = (normalMapping && r_reflectionMapping->integer && tr.cubeProbes.currentElements > 0 && !tr.refdef.pixelTarget);
 	// TODO: and when surface has something environment mappy assigned..
 	// !tr.refdef.pixelTarget to prevent using reflections before buildcubemaps() has finished. This is anti eye-cancer..
 
