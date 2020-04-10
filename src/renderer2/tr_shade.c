@@ -76,7 +76,7 @@ void Tess_DrawElements()
 		{
 			int i;
 
-			glMultiDrawElements(GL_TRIANGLES, tess.multiDrawCounts, GL_INDEX_TYPE, (const GLvoid **) tess.multiDrawIndexes, tess.multiDrawPrimitives);
+			glMultiDrawElements(GL_TRIANGLES, tess.multiDrawCounts, GL_INDEX_TYPE, (const GLvoid *) tess.multiDrawIndexes, tess.multiDrawPrimitives);
 
 			backEnd.pc.c_multiDrawElements++;
 			backEnd.pc.c_multiDrawPrimitives += tess.multiDrawPrimitives;
