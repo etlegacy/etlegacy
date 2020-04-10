@@ -3171,13 +3171,30 @@ static void R_CreateDepthToColorFBOImages(void)
  */
 static void R_CreateDownScaleFBOImages(void)
 {
-	if (r_hdrRendering->integer && glConfig2.textureFloatAvailable)
+	byte           *data;
+	int				width, height;
+
+
+	if (glConfig2.textureNPOTAvailable)
 	{
-		tr.downScaleFBOImage_quarter = R_CreateRenderImage("_downScaleFBOImage_quarter", qtrue, IF_RGBA16F, FT_NEAREST, WT_EDGE_CLAMP);
+		width = glConfig.vidWidth * 0.25f;
+		height = glConfig.vidHeight * 0.25f;
 	}
 	else
 	{
-		tr.downScaleFBOImage_quarter = R_CreateRenderImage("_downScaleFBOImage_quarter", qtrue, IF_NOCOMPRESSION, FT_NEAREST, WT_EDGE_CLAMP);
+		width = NearestPowerOfTwo(glConfig.vidWidth * 0.25f);
+		height = NearestPowerOfTwo(glConfig.vidHeight * 0.25f);
+	}
+
+	data = ri.Hunk_AllocateTempMemory(width * height * 4);
+
+	if (r_hdrRendering->integer && glConfig2.textureFloatAvailable)
+	{
+		tr.downScaleFBOImage_quarter = R_CreateRenderImageSize("_downScaleFBOImage_quarter", width, height, IF_RGBA16F, FT_NEAREST, WT_EDGE_CLAMP);
+	}
+	else
+	{
+		tr.downScaleFBOImage_quarter = R_CreateRenderImageSize("_downScaleFBOImage_quarter", width, height, IF_NOCOMPRESSION, FT_NEAREST, WT_EDGE_CLAMP);
 	}
 
 	if (r_hdrRendering->integer && glConfig2.textureFloatAvailable)
@@ -3189,7 +3206,13 @@ static void R_CreateDownScaleFBOImages(void)
 		tr.downScaleFBOImage_64x64 = R_CreateRenderImageSize("_downScaleFBOImage_64x64", 64, 64, IF_NOCOMPRESSION, FT_NEAREST, WT_EDGE_CLAMP);
 	}
 
+	ri.Hunk_FreeTempMemory(data);
+
 #if 0
+
+	width = height = 16;
+	data = ri.Hunk_AllocateTempMemory(width * height * 4);
+
 	if (r_hdrRendering->integer && glConfig2.textureFloatAvailable)
 	{
 		tr.downScaleFBOImage_16x16 = R_CreateRenderImageSize("_downScaleFBOImage_16x16", 16, 16, IF_RGBA16F, FT_NEAREST, WT_CLAMP);
@@ -3216,6 +3239,8 @@ static void R_CreateDownScaleFBOImages(void)
 	{
 		tr.downScaleFBOImage_1x1 = R_CreateRenderImageSize("_downScaleFBOImage_1x1", 1, 1, IF_NOCOMPRESSION, FT_NEAREST, WT_CLAMP);
 	}
+
+	ri.Hunk_FreeTempMemory(data);
 #endif
 }
 
