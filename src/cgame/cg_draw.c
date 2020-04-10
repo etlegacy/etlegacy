@@ -852,7 +852,7 @@ static void CG_DrawScopedReticle(void)
 		CG_DrawPic(80 + cgs.wideXoffset, 0, SCREEN_HEIGHT, SCREEN_HEIGHT, cgs.media.reticleShaderSimple);
 	}
 
-	if (weapon == WP_FG42SCOPE)
+	if (weapon == WP_FG42_SCOPE)
 	{
 		// hairs
 		CG_FillRect(84 + cgs.wideXoffset, 239, 150, 3, colorBlack);     // left

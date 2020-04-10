@@ -3730,7 +3730,7 @@ static void PM_Weapon(void)
 
 	// weapon firing animation
 	// FG42 is exclude because the continue animation don't look great with it (no recoil, look stuck)
-	if ((GetWeaponTableData(pm->ps->weapon)->firingMode & WEAPON_FIRING_MODE_AUTOMATIC) && pm->ps->weapon != WP_FG42 && pm->ps->weapon != WP_FG42SCOPE)
+	if ((GetWeaponTableData(pm->ps->weapon)->firingMode & WEAPON_FIRING_MODE_AUTOMATIC) && pm->ps->weapon != WP_FG42 && pm->ps->weapon != WP_FG42_SCOPE)
 	{
 		PM_ContinueWeaponAnim(weapattackanim);
 	}
@@ -3753,7 +3753,7 @@ static void PM_Weapon(void)
 	// handle case depending of player skill and position for weapon recoil
 	if (GetWeaponTableData(pm->ps->weapon)->type & WEAPON_TYPE_SCOPED)
 	{
-		if (pm->ps->weapon == WP_FG42SCOPE)
+		if (pm->ps->weapon == WP_FG42_SCOPE)
 		{
 			if (pm->skill[SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS] >= 3)
 			{

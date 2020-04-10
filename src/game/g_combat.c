@@ -132,7 +132,7 @@ void TossWeapons(gentity_t *self)
 	    case WP_GARAND_SCOPE:
 	        weapon = WP_GARAND;
 	        break;
-	    case WP_FG42SCOPE:
+	    case WP_FG42_SCOPE:
 	        weapon = WP_FG42;
 	        break;
 	    case WP_M7:

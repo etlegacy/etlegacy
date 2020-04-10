@@ -632,7 +632,7 @@ static weapon_t _weaponBotToGame(int weapon)
 	case ET_WP_FG42:
 		return WP_FG42;
 	case ET_WP_FG42_SCOPE:
-		return WP_FG42SCOPE;
+		return WP_FG42_SCOPE;
 	case ET_WP_FLAMETHROWER:
 		return WP_FLAMETHROWER;
 	case ET_WP_GARAND:
@@ -786,7 +786,7 @@ int Bot_WeaponGameToBot(int weapon)
 		return ET_WP_DYNAMITE;
 	case WP_FG42:
 		return ET_WP_FG42;
-	case WP_FG42SCOPE:
+	case WP_FG42_SCOPE:
 		return ET_WP_FG42_SCOPE;
 	case WP_FLAMETHROWER:
 		return ET_WP_FLAMETHROWER;
@@ -2618,7 +2618,7 @@ public:
 		case WP_GARAND_SCOPE:
 			cmd.weapon = WP_GARAND;
 			break;
-		case WP_FG42SCOPE:
+		case WP_FG42_SCOPE:
 			cmd.weapon = WP_FG42;
 			break;
 		case WP_K43_SCOPE:
@@ -2735,8 +2735,8 @@ public:
 				cmd.weapon = WP_GARAND_SCOPE;
 				break;
 			case WP_FG42:
-			case WP_FG42SCOPE:
-				cmd.weapon = WP_FG42SCOPE;
+			case WP_FG42_SCOPE:
+				cmd.weapon = WP_FG42_SCOPE;
 				break;
 			case WP_K43:
 			case WP_K43_SCOPE:
@@ -3723,7 +3723,7 @@ public:
 				switch (pEnt->client->ps.weapon)
 				{
 				case WP_GARAND_SCOPE:
-				case WP_FG42SCOPE:
+				case WP_FG42_SCOPE:
 				case WP_K43_SCOPE:
 					_flags.SetFlag(ENT_FLAG_ZOOMING);
 					break;
@@ -6734,7 +6734,7 @@ void Bot_Event_AddWeapon(int _client, int _weaponId)
 			}
 			case ET_WP_FG42:
 			{
-				if (COM_BitCheck(g_entities[_client].client->ps.weapons, WP_FG42SCOPE))
+				if (COM_BitCheck(g_entities[_client].client->ps.weapons, WP_FG42_SCOPE))
 				{
 					// remove the unscoped to give the scoped
 					Event_RemoveWeapon d = { ET_WP_FG42 };

@@ -2521,7 +2521,7 @@ static void registerWeaponConstants(lua_vm_t *vm)
 
 	lua_regconstinteger(vm->L, WP_GARAND_SCOPE);         // 40
 	lua_regconstinteger(vm->L, WP_K43_SCOPE);            // 41
-	lua_regconstinteger(vm->L, WP_FG42SCOPE);            // 42
+	lua_regconstinteger(vm->L, WP_FG42_SCOPE);           // 42
 	lua_regconstinteger(vm->L, WP_MORTAR_SET);           // 43
 	lua_regconstinteger(vm->L, WP_MEDIC_ADRENALINE);     // 44
 	lua_regconstinteger(vm->L, WP_AKIMBO_SILENCEDCOLT);  // 45

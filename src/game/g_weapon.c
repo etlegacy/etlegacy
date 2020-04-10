@@ -3981,7 +3981,7 @@ void CalcMuzzlePoints(gentity_t *ent, int weapon)
 	{
 		float pitchMinAmp, yawMinAmp, phase;
 
-		if (weapon == WP_FG42SCOPE)
+		if (weapon == WP_FG42_SCOPE)
 		{
 			pitchMinAmp = 4 * ZOOM_PITCH_MIN_AMPLITUDE;
 			yawMinAmp   = 4 * ZOOM_YAW_MIN_AMPLITUDE;
@@ -4113,7 +4113,7 @@ weapFireTable_t weapFireTable[] =
     //
 	{ WP_GARAND_SCOPE,         Bullet_Fire,                 NULL,                       NULL,               ET_GENERAL,            EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_LINEAR,      0,                     { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_SHOT,        0,         0,       0,     0,        0,           },
 	{ WP_K43_SCOPE,            Bullet_Fire,                 NULL,                       NULL,               ET_GENERAL,            EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_LINEAR,      0,                     { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_SHOT,        0,         0,       0,     0,        0,           },
-	{ WP_FG42SCOPE,            Bullet_Fire,                 NULL,                       NULL,               ET_GENERAL,            EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_LINEAR,      0,                     { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_SHOT,        0,         0,       0,     0,        0,           },
+	{ WP_FG42_SCOPE,           Bullet_Fire,                 NULL,                       NULL,               ET_GENERAL,            EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_LINEAR,      0,                     { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_SHOT,        0,         0,       0,     0,        0,           },
 	{ WP_MORTAR_SET,           weapon_mortar_fire,          NULL,                       NULL,               ET_MISSILE,            EF_NONE,                    SVF_BROADCAST,                CONTENTS_NONE,   TR_GRAVITY,     -MISSILE_PRESTEP_TIME, { { -4.f, -4.f, 0.f }, { 4.f, 4.f, 6.f } },      MASK_MISSILESHOT, 0,         0,       0,     0,        999,         },
 	{ WP_MEDIC_ADRENALINE,     Weapon_AdrenalineSyringe,    NULL,                       NULL,               ET_GENERAL,            EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_LINEAR,      0,                     { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_SHOT,        0,         0,       0,     0,        0,           },
 	{ WP_AKIMBO_SILENCEDCOLT,  Bullet_Fire,                 NULL,                       NULL,               ET_GENERAL,            EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_LINEAR,      0,                     { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_SHOT,        0,         0,       0,     0,        0,           },
