@@ -1537,11 +1537,6 @@ qboolean LoadMap(shaderStage_t *stage, char *buffer)
 		stage->type = ST_LIGHTMAP;
 		return qtrue;
 	}
-	//skip normalmap on sky .... for now
-	else if (!Q_stricmp(token, "sky") )
-	{
-		imageBits |= !IF_NORMALMAP;
-	}
 
 	// determine image options
 	if (stage->overrideNoPicMip || shader.noPicMip || stage->highQuality || stage->forceHighQuality)
