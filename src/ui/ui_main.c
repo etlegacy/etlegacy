@@ -1332,11 +1332,6 @@ void UI_LoadMenus(const char *menuFile, qboolean reset)
 			break;
 		}
 
-		if (token.string[0] == '}')
-		{
-			break;
-		}
-
 		if (Q_stricmp(token.string, "loadmenu") == 0)
 		{
 			if (Load_Menu(handle))
