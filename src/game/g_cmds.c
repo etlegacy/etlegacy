@@ -1812,7 +1812,7 @@ int G_TeamCount(gentity_t *ent, int weap)
 qboolean G_IsWeaponDisabled(gentity_t *ent, weapon_t weapon)
 {
 	int        playerCount, weaponCount, maxCount = -1;
-	const char *weaponString;
+	const char *weaponString = "";
 
 	// allow selecting weapons as spectator for bots (to avoid endless loops in pfnChangeTeam())
 	if (ent->client->sess.sessionTeam == TEAM_SPECTATOR && !(ent->r.svFlags & SVF_BOT))
