@@ -470,7 +470,7 @@ void R_CalcTBN2(vec3_t tangent, vec3_t binormal, vec3_t normal,
 
 	// Calculate c2c1_T and c2c1_B
 	c2c1_T = t2[0] - t1[0];
-	c2c1_B = t2[1] - t2[1];
+	c2c1_B = t2[1] - t1[1];
 
 	// Calculate c3c1_T and c3c1_B
 	c3c1_T = t3[0] - t1[0];
