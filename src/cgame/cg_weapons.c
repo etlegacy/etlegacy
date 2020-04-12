@@ -1342,6 +1342,8 @@ static qboolean CG_RW_ParseImpactMark(int handle, weaponInfo_t *weaponInfo)
 		return CG_RW_ParseError(handle, "expected '{'");
 	}
 
+	filename[0] = '\0';
+
 	while (1)
 	{
 		if (!trap_PC_ReadToken(handle, &token))
