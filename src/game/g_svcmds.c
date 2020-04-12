@@ -2123,6 +2123,10 @@ void CC_svcvar(void)
 	{
 		trap_Argv(4, cvarValue2, sizeof(cvarValue2));
 	}
+	else
+	{
+		cvarValue2[0] = '\0';
+	}
 
 	// is this cvar already in the array?.. (maybe they have a double entry)
 	for (i = 0; i < level.svCvarsCount; i++)

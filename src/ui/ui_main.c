@@ -1368,6 +1368,11 @@ void UI_Load(void)
 	{
 		Q_strncpyz(lastName, menu->window.name, sizeof(lastName));
 	}
+	else
+	{
+		lastName[0] = '\0';
+	}
+
 	if (menuSet == NULL || menuSet[0] == '\0')
 	{
 		menuSet = "ui/menus.txt";
