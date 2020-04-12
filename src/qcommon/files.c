@@ -5308,7 +5308,7 @@ const char *FS_Dirpath(const char *path)
 	int         index               = 0;
 	int         lastSepPos          = 0;
 
-	while (path[index] && index < MAX_OSPATH)
+	while (index < MAX_OSPATH && path[index])
 	{
 		if (IsPathSep(path[index]))
 		{
