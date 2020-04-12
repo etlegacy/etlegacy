@@ -1327,12 +1327,8 @@ void UI_LoadMenus(const char *menuFile, qboolean reset)
 		{
 			break;
 		}
-		if (token.string[0] == '\0' || token.string[0] == '}')
-		{
-			break;
-		}
 
-		if (token.string[0] == '}')
+		if (token.string[0] == '\0' || token.string[0] == '}')
 		{
 			break;
 		}
