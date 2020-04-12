@@ -1700,16 +1700,16 @@ static void CG_DrawCrosshairNames(void)
 	// scan the known entities to see if the crosshair is sighted on one
 	dist = CG_ScanForCrosshairEntity(&zChange, &hitClient);
 
+	// world-entity or no-entity..
+	if (cg.crosshairClientNum < 0)
+	{
+	  return;
+	}
+
 	// don't draw crosshair names in shoutcast mode
 	// shoutcasters can see tank and truck health
 	if (cgs.clientinfo[cg.clientNum].team == TEAM_SPECTATOR && cgs.clientinfo[cg.clientNum].shoutcaster &&
 	    cg_entities[cg.crosshairClientNum].currentState.eType != ET_MOVER)
-	{
-		return;
-	}
-
-	// world-entity or no-entity..
-	if (cg.crosshairClientNum < 0)
 	{
 		return;
 	}
