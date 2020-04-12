@@ -1991,11 +1991,11 @@ static void SV_Demo_Record_f(void)
 	}
 	else
 	{
-		int number;
+		int number = 0;
 		// scan for a free demo name
-		for (number = 0; number >= 0; number++)
+		while (1)
 		{
-			Com_sprintf(sv.demoName, sizeof(sv.demoName), "svdemos/%d.%s%d", number, SVDEMOEXT, PROTOCOL_VERSION);
+			Com_sprintf(sv.demoName, sizeof(sv.demoName), "svdemos/%d.%s%d", number++, SVDEMOEXT, PROTOCOL_VERSION);
 			if (!FS_FileExists(sv.demoName))
 			{
 				break;  // file doesn't exist
