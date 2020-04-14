@@ -259,6 +259,26 @@ public class ETLActivity extends SDLActivity implements JoyStickListener
 
         mLayout.addView(btn_alternative, lp_alternative);
 
+        ImageButton btn_crouch = new ImageButton(getApplicationContext());
+        btn_crouch.setImageBitmap(getBitmapFromAsset("btn_crouch.png"));
+        btn_crouch.setBackgroundResource(0);
+        btn_crouch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SDLActivity.onNativeKeyDown(31);
+                SDLActivity.onNativeKeyUp(31);
+            }
+        });
+
+        RelativeLayout.LayoutParams lp_crouch = new RelativeLayout.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT);
+
+        lp_crouch.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+        lp_crouch.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+        lp_crouch.bottomMargin = pxToDp(-20);
+
+        mLayout.addView(btn_crouch, lp_crouch);
 
         JoyStick joyStick_left = new JoyStick(getApplicationContext());
 
