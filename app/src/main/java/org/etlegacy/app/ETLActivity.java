@@ -265,7 +265,12 @@ public class ETLActivity extends SDLActivity implements JoyStickListener
         btn_crouch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SDLActivity.onNativeKeyDown(31);
+                Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    public void run() {
+                        SDLActivity.onNativeKeyDown(31);
+                    }
+                }, 20);
                 SDLActivity.onNativeKeyUp(31);
             }
         });
