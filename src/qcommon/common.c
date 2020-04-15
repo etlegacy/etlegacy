@@ -39,6 +39,7 @@
 
 #ifndef DEDICATED
 #include "../sys/sys_local.h"
+#include "../client/client.h"
 #endif
 #include "../server/server.h"
 
@@ -226,12 +227,22 @@ void Com_EndRedirect(void)
 void QDECL Com_Printf(const char *fmt, ...)
 {
 	va_list         argptr;
-	char            msg[MAXPRINTMSG];
+	char            buffer[MAXPRINTMSG];
+	char            *msg;
 	static qboolean opening_qconsole = qfalse;
-	int             l;
+	int             timestamp;
+
+#ifdef DEDICATED
+	timestamp = svs.time;
+#else
+	timestamp = cl.snap.serverTime;
+#endif
+
+	// add server timestamp in dedicated console and log
+	msg = buffer + Com_sprintf(buffer, sizeof(buffer), "%8i ", timestamp);
 
 	va_start(argptr, fmt);
-	Q_vsnprintf(msg, sizeof(msg), fmt, argptr);
+	Q_vsnprintf(msg, sizeof(buffer), fmt, argptr);
 	va_end(argptr);
 
 	if (rd_buffer)
@@ -253,14 +264,7 @@ void QDECL Com_Printf(const char *fmt, ...)
 	CL_ConsolePrint(msg);
 #endif
 
-	// add server timestamp in dedicated console and log
-	Com_sprintf(msg, sizeof(msg), "%8i ", svs.time);
-
-	l = strlen(msg);
-
-	va_start(argptr, fmt);
-	Q_vsnprintf(msg + l, sizeof(msg) - l, fmt, argptr);
-	va_end(argptr);
+	msg = buffer;
 
 	// echo to dedicated console and early console
 	Sys_Print(msg);
@@ -4099,7 +4103,6 @@ void Com_ParseUA(userAgent_t *ua, const char *string)
 	{
 		return;
 	}
-
 	// store any full et version string
 	Q_strncpyz(ua->string, string, sizeof(ua->string));
 	// check for compatibility (only accept of own kind)
