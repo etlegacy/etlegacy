@@ -1340,7 +1340,7 @@ void IN_Frame(void)
 		return;
 
 	jfieldID f_id = (*env)->GetStaticFieldID(env, clazz, "UiMenu", "Z");
-	jboolean f_boolean = (*env)->GetStaticBooleanField(env, cls, f_id);
+	jboolean f_boolean = (*env)->GetStaticBooleanField(env, clazz, f_id);
 
 	if (cls.state == CA_ACTIVE)
 	{
