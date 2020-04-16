@@ -1344,10 +1344,8 @@ void IN_Frame(void)
 
 	if (cls.state == CA_ACTIVE)
 	{
-		if (f_boolean == JNI_TRUE)
-			return;
-
-		(*env)->SetStaticBooleanField(env, clazz, f_id, JNI_TRUE);
+		if (f_boolean != JNI_TRUE)
+			(*env)->SetStaticBooleanField(env, clazz, f_id, JNI_TRUE);
 	}
 	else
 	{
@@ -1355,8 +1353,8 @@ void IN_Frame(void)
 			(*env)->SetStaticBooleanField(env, clazz, f_id, JNI_FALSE);
 	}
 
-	(*env)->DeleteLocalRef(env, activity);
 	(*env)->DeleteLocalRef(env, clazz);
+	(*env)->DeleteLocalRef(env, activity);
 
 #endif // __ANDROID__
 
