@@ -84,7 +84,10 @@ int G_DB_Init()
 		return 1;
 	}
 #endif
-
+	if (G_XPSaver_CheckDB(level.database.path, db_mode))
+	{
+		return 1;
+	}
 	// open db
 	if (db_mode == 1)
 	{

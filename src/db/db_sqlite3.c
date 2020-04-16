@@ -81,6 +81,7 @@ const char *sql_Version_Statements[SQL_DBMS_SCHEMA_VERSION] =
 		"CREATE TABLE IF NOT EXISTS rating_maps (mapname TEXT PRIMARY KEY NOT NULL, win_axis INT, win_allies INT, UNIQUE (mapname));",                  // server table
 		// version 2
 		"CREATE TABLE IF NOT EXISTS prestige_users (guid TEXT PRIMARY KEY NOT NULL, prestige INT, streak INT, skill0 INT, skill1 INT, skill2 INT, skill3 INT, skill4 INT, skill5 INT, skill6 INT, created TEXT, updated TEXT, UNIQUE (guid));" // server table
+		"CREATE TABLE IF NOT EXISTS xpsave_users (guid TEXT PRIMARY KEY NOT NULL, skills BLOB NOT NULL, medals BLOB NOT NULL, created TEXT, updated TEXT, UNIQUE (guid));" // server table
 
 		"CREATE TABLE IF NOT EXISTS client_servers (profile TEXT NOT NULL, source INT NOT NULL, address TEXT NOT NULL, name TEXT NOT NULL, mod TEXT NOT NULL, updated DATETIME, created DATETIME);"
 		"CREATE INDEX IF NOT EXISTS client_servers_profile_idx ON client_servers(profile);"

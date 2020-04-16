@@ -2101,6 +2101,7 @@ extern vmCvar_t g_multiview;
 #define STICKYCHARGE_SELFKILL 1 // keep charge after selfkill, mortal self damage, teamkill, mortal world damage
 #define STICKYCHARGE_ANYDEATH 2 // keep charge after any death (for eg. death by enemy)
 extern vmCvar_t g_stickyCharge;
+extern vmCvar_t g_xpSaver;
 
 /**
  * @struct GeoIPTag
@@ -2455,6 +2456,11 @@ void G_SetClientPrestige(gclient_t *cl, qboolean streakUp);
 int G_ReadPrestige(prData_t *pr_data);
 int G_WritePrestige(prData_t *pr_data);
 #endif
+
+int G_XPSaver_CheckDB(char *db_path, int db_mode);
+void G_XPSaver_Load(gclient_t *cl);
+void G_XPSaver_Store(gclient_t *cl);
+int G_XPSaver_Clear();
 
 // g_stats.c
 void G_UpgradeSkill(gentity_t *ent, skillType_t skill);

@@ -2308,8 +2308,18 @@ char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 		{
 			G_SetPlayerSkill(client, i);
 		}
-	}
+	} else
 #endif
+	if (firstTime && g_xpSaver.integer && g_gametype.integer == GT_WOLF_CAMPAIGN)
+	{
+		int i;
+		G_XPSaver_Load(client);
+
+		for (i = 0; i < SK_NUM_SKILLS; i++)
+		{
+			G_SetPlayerSkill(client, i);
+		}
+	}
 
 	ClientUserinfoChanged(clientNum);
 
@@ -3168,8 +3178,12 @@ void ClientDisconnect(int clientNum)
 	if (g_prestige.integer && !level.intermissiontime)
 	{
 		G_SetClientPrestige(ent->client, qfalse);
-	}
+	} else
 #endif
+	if (g_xpSaver.integer && g_gametype.integer == GT_WOLF_CAMPAIGN && !level.intermissiontime)
+	{
+		G_XPSaver_Store(ent->client);
+	}
 
 #ifdef FEATURE_LUA
 	// LUA API callbacks
