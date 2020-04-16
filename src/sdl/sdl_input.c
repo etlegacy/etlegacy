@@ -37,6 +37,9 @@
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
+#ifdef __ANDROID__
+#include <jni.h>
+#endif
 
 #include "../client/client.h"
 #include "../sys/sys_local.h"
@@ -1318,6 +1321,44 @@ void IN_Frame(void)
 
 	// Get the timestamp to give the next frame's input events (not the ones we're gathering right now, though)
 	int start = Sys_Milliseconds();
+
+#ifdef __ANDROID__
+
+	JNIEnv *env = (JNIEnv*) SDL_AndroidGetJNIEnv();
+
+	if (env == NULL)
+		return;
+
+	jobject activity = (jobject)SDL_AndroidGetActivity();
+
+	if (activity == NULL)
+		return;
+
+	jclass clazz = (*env)->GetObjectClass(env, activity);
+
+	if (clazz == NULL)
+		return;
+
+	jfieldID f_id = (*env)->GetStaticFieldID(env, clazz, "UiMenu", "Z");
+	jboolean f_boolean = (*env)->GetStaticBooleanField(env, cls, f_id);
+
+	if (cls.state == CA_ACTIVE)
+	{
+		if (f_boolean == JNI_TRUE)
+			return;
+
+		(*env)->SetStaticBooleanField(env, clazz, f_id, JNI_TRUE);
+	}
+	else
+	{
+		if (f_boolean != JNI_FALSE)
+			(*env)->SetStaticBooleanField(env, clazz, f_id, JNI_FALSE);
+	}
+
+	(*env)->DeleteLocalRef(env, activity);
+	(*env)->DeleteLocalRef(env, clazz);
+
+#endif // __ANDROID__
 
 	if (!cls.glconfig.isFullscreen && (Key_GetCatcher() & KEYCATCH_CONSOLE))
 	{
