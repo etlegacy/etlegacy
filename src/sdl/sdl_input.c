@@ -1340,17 +1340,17 @@ void IN_Frame(void)
 		return;
 
 	jfieldID f_id = (*env)->GetStaticFieldID(env, clazz, "UiMenu", "Z");
-	jboolean f_boolean = (*env)->GetStaticBooleanField(env, clazz, f_id);
+	qboolean f_boolean = (*env)->GetStaticBooleanField(env, clazz, f_id);
 
 	if (cls.state == CA_ACTIVE)
 	{
-		if (f_boolean != JNI_TRUE)
-			(*env)->SetStaticBooleanField(env, clazz, f_id, JNI_TRUE);
+		if (f_boolean != qtrue)
+			(*env)->SetStaticBooleanField(env, clazz, f_id, qtrue);
 	}
 	else
 	{
-		if (f_boolean != JNI_FALSE)
-			(*env)->SetStaticBooleanField(env, clazz, f_id, JNI_FALSE);
+		if (f_boolean != qfalse)
+			(*env)->SetStaticBooleanField(env, clazz, f_id, qfalse);
 	}
 
 	(*env)->DeleteLocalRef(env, clazz);
