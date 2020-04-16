@@ -361,6 +361,7 @@ vmCvar_t g_multiview; // 0 - off, other - enabled
 #endif
 
 vmCvar_t g_stickyCharge;
+vmCvar_t g_xpSaver;
 
 cvarTable_t gameCvarTable[] =
 {
@@ -647,6 +648,7 @@ cvarTable_t gameCvarTable[] =
 	{ &g_multiview,                       "g_multiview",                       "0",                          CVAR_LATCH | CVAR_ARCHIVE,                       0, qfalse, qfalse },
 #endif
 	{ &g_stickyCharge,                    "g_stickyCharge",                    "0",                          CVAR_ARCHIVE,                                    0, qfalse, qfalse },
+	{ &g_xpSaver,                         "g_xpSaver",                         "0",                          CVAR_ARCHIVE,                                    0, qfalse, qfalse },
 };
 
 /**
@@ -2642,10 +2644,15 @@ void G_InitGame(int levelTime, int randomSeed, int restart, int legacyServer, in
 #ifdef FEATURE_PRESTIGE
 		if (g_prestige.integer)
 		{
-			G_Printf("^^3WARNING: g_prestige changed to 0\n");
+			G_Printf("^3WARNING: g_prestige changed to 0\n");
 			trap_Cvar_Set("g_prestige", "0");
 		}
 #endif
+		if (g_xpSaver.integer) 
+		{
+			G_Printf("^3WARNING: g_xpSaver changed to 0\n");
+			trap_Cvar_Set("g_xpSaver", "0");
+		}
 	}
 #endif
 
@@ -2665,6 +2672,14 @@ void G_InitGame(int levelTime, int randomSeed, int restart, int legacyServer, in
 		}
 	}
 #endif
+
+	if (g_xpSaver.integer && g_gametype.integer == GT_WOLF_CAMPAIGN)
+	{
+		if (g_campaigns[level.currentCampaign].current == 0 || level.newCampaign)
+		{
+			G_XPSaver_Clear();
+		}
+	}
 
 #ifdef FEATURE_LUA
 	G_LuaInit();
@@ -2926,7 +2941,8 @@ int QDECL SortRanks(const void *a, const void *b)
 			totalXP[1] += cb->sess.skillpoints[i];
 		}
 
-		if (!((g_gametype.integer == GT_WOLF_CAMPAIGN && (g_campaigns[level.currentCampaign].current != 0 && !level.newCampaign)) ||
+		if ((g_gametype.integer == GT_WOLF_CAMPAIGN && g_xpSaver.integer) ||
+			!((g_gametype.integer == GT_WOLF_CAMPAIGN && (g_campaigns[level.currentCampaign].current != 0 && !level.newCampaign)) ||
 		      (g_gametype.integer == GT_WOLF_LMS && g_currentRound.integer != 0)))
 		{
 			// current map XPs only
@@ -3743,8 +3759,23 @@ void G_LogExit(const char *string)
 			// record prestige before intermission
 			G_SetClientPrestige(ent->client, qtrue);
 		}
-	}
+	} else
 #endif
+	if (g_xpSaver.integer && g_gametype.integer == GT_WOLF_CAMPAIGN)
+	{
+		for (i = 0; i < level.numConnectedClients; i++)
+		{
+			gentity_t *ent = &g_entities[level.sortedClients[i]];
+
+			if (!ent->inuse)
+			{
+				continue;
+			}
+
+			// record xp before intermission
+			G_XPSaver_Store(ent->client);
+		}
+	}
 
 	level.intermissionQueued = level.time;
 
