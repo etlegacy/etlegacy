@@ -2875,7 +2875,7 @@ void G_Voice(gentity_t *ent, gentity_t *target, int mode, const char *id, const 
 		ent->voiceChatSquelch = 0;
 	}
 
-	// Only do the spam check for MP
+	// spam check
 	if (ent->voiceChatSquelch >= 30000)
 	{
 		trap_SendServerCommand(ent - g_entities, "cp \"^1Spam Protection^7: VoiceChat ignored\"");
@@ -2884,7 +2884,7 @@ void G_Voice(gentity_t *ent, gentity_t *target, int mode, const char *id, const 
 
 	if (g_voiceChatsAllowed.integer)
 	{
-		ent->voiceChatSquelch += (34000 / g_voiceChatsAllowed.integer);
+		ent->voiceChatSquelch += (30000 / g_voiceChatsAllowed.integer);
 	}
 	else
 	{
