@@ -2941,8 +2941,8 @@ int QDECL SortRanks(const void *a, const void *b)
 			totalXP[1] += cb->sess.skillpoints[i];
 		}
 
-		if ((g_gametype.integer == GT_WOLF_CAMPAIGN && g_xpSaver.integer) ||
-			!((g_gametype.integer == GT_WOLF_CAMPAIGN && (g_campaigns[level.currentCampaign].current != 0 && !level.newCampaign)) ||
+		if (!((g_gametype.integer == GT_WOLF_CAMPAIGN && g_xpSaver.integer) ||
+			  (g_gametype.integer == GT_WOLF_CAMPAIGN && (g_campaigns[level.currentCampaign].current != 0 && !level.newCampaign)) ||
 		      (g_gametype.integer == GT_WOLF_LMS && g_currentRound.integer != 0)))
 		{
 			// current map XPs only
