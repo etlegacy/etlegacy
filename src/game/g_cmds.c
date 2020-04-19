@@ -3072,6 +3072,7 @@ qboolean Cmd_CallVote_f(gentity_t *ent, unsigned int dwCommand, qboolean fRefCom
 	char arg1[MAX_STRING_TOKENS];
 	char arg2[MAX_STRING_TOKENS];
 	char voteDesc[VOTE_MAXSTRING];
+	char *voteStringFormat;
 
 	// Normal checks, if its not being issued as a referee command
 	if (!fRefCommand)
@@ -3147,7 +3148,8 @@ qboolean Cmd_CallVote_f(gentity_t *ent, unsigned int dwCommand, qboolean fRefCom
 		return qfalse;
 	}
 
-	Com_sprintf(level.voteInfo.voteString, sizeof(level.voteInfo.voteString), "%s %s", arg1, arg2);
+	voteStringFormat = arg2[0] ? "%s %s" : "%s";
+	Com_sprintf(level.voteInfo.voteString, sizeof(level.voteInfo.voteString), voteStringFormat, arg1, arg2);
 
 	// start the voting, the caller automatically votes yes
 	// If a referee, vote automatically passes.
@@ -3177,7 +3179,7 @@ qboolean Cmd_CallVote_f(gentity_t *ent, unsigned int dwCommand, qboolean fRefCom
 		{
 			level.voteInfo.voteYes = 0;
 		}
-		AP(va("print \"[lof]%s^7 [lon]called a vote.[lof]  Voting for: %s\n\"", ent->client->pers.netname, level.voteInfo.voteString));
+		AP(va("print \"[lof]%s^7 [lon]called a vote.[lof] Voting for: %s\n\"", ent->client->pers.netname, level.voteInfo.voteString));
 
 		G_LogPrintf("callvote: %i %s\n", (int)(ent - g_entities), level.voteInfo.voteString);
 
