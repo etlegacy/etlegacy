@@ -19,7 +19,7 @@
 							setcvar g_intermissionReadyPercent 50;	\
 							setcvar g_friendlyFire 1 ;				\
 							setcvar g_antilag 1 ;					\
-							setcvar g_maxlives 5 ;					\
+							setcvar g_maxlives 0 ;					\
 							setcvar g_heavyWeaponRestriction 100 ;	\
 							setcvar g_teamforcebalance 0 ;			\
 							setcvar g_lms_teamforcebalance 0 ;		\
