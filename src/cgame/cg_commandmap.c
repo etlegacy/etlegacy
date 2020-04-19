@@ -1827,17 +1827,19 @@ int CG_DrawSpawnPointInfo(float px, float py, float pw, float ph, qboolean draw,
  */
 void CG_DrawMortarMarker(float px, float py, float pw, float ph, qboolean draw, mapScissor_t *scissor, int expand)
 {
+	vec3_t point;
+	int    i, fadeTime;
+
 	if (CHECKBITWISE(GetWeaponTableData(cg.lastFiredWeapon)->type, WEAPON_TYPE_MORTAR | WEAPON_TYPE_SET) && cg.mortarImpactTime >= 0)
 	{
+		vec4_t colour = { 1.f, 1.f, 1.f, 1.f };
+
 		if (!(CHECKBITWISE(GetWeaponTableData(cg.snap->ps.weapon)->type, WEAPON_TYPE_MORTAR | WEAPON_TYPE_SET)))
 		{
 			cg.mortarImpactTime = 0;
 		}
 		else
 		{
-			vec4_t colour = { 1.f, 1.f, 1.f, 1.f };
-			vec3_t point;
-
 			if (scissor)
 			{
 				point[0] = ((cg.mortarImpactPos[0] - cg.mapcoordsMins[0]) * cg.mapcoordsScale[0]) * pw * scissor->zoomFactor;
@@ -1891,50 +1893,46 @@ void CG_DrawMortarMarker(float px, float py, float pw, float ph, qboolean draw, 
 		}
 	}
 
-	if (COM_BitCheck(cg.snap->ps.weapons, WP_MORTAR_SET) || COM_BitCheck(cg.snap->ps.weapons, WP_MORTAR2_SET))
+	// display arty target to all teammates
+	for (i = 0; i < cgs.maxclients; i++)
 	{
 		vec4_t colour = { 1.f, 1.f, 1.f, 1.f };
-		vec3_t point;
-		int    i, fadeTime;
 
-		for (i = 0; i < cgs.maxclients; i++)
+		fadeTime = cg.time - (cg.artilleryRequestTime[i] + 25000);
+
+		if (fadeTime < 5000)
 		{
-			fadeTime = cg.time - (cg.artilleryRequestTime[i] + 25000);
-
-			if (fadeTime < 5000)
+			if (fadeTime > 0)
 			{
-				if (fadeTime > 0)
-				{
-					colour[3] = 1.f - (fadeTime / 5000.f);
-				}
-
-				if (scissor)
-				{
-					point[0] = ((cg.artilleryRequestPos[i][0] - cg.mapcoordsMins[0]) * cg.mapcoordsScale[0]) * pw * scissor->zoomFactor;
-					point[1] = ((cg.artilleryRequestPos[i][1] - cg.mapcoordsMins[1]) * cg.mapcoordsScale[1]) * ph * scissor->zoomFactor;
-				}
-				else
-				{
-					point[0] = px + (((cg.artilleryRequestPos[i][0] - cg.mapcoordsMins[0]) * cg.mapcoordsScale[0]) * pw);
-					point[1] = py + (((cg.artilleryRequestPos[i][1] - cg.mapcoordsMins[1]) * cg.mapcoordsScale[1]) * ph);
-				}
-
-				// don't return if the marker is culled, just skip it (so we draw the rest, if any)
-				if (scissor && CG_ScissorPointIsCulled(point, scissor))
-				{
-					continue;
-				}
-
-				if (scissor)
-				{
-					point[0] += px - scissor->tl[0];
-					point[1] += py - scissor->tl[1];
-				}
-
-				trap_R_SetColor(colour);
-				CG_DrawPic(point[0] - 8.f, point[1] - 8.f, 16, 16, cgs.media.ccMortarTarget);
-				trap_R_SetColor(NULL);
+				colour[3] = 1.f - (fadeTime / 5000.f);
 			}
+
+			if (scissor)
+			{
+				point[0] = ((cg.artilleryRequestPos[i][0] - cg.mapcoordsMins[0]) * cg.mapcoordsScale[0]) * pw * scissor->zoomFactor;
+				point[1] = ((cg.artilleryRequestPos[i][1] - cg.mapcoordsMins[1]) * cg.mapcoordsScale[1]) * ph * scissor->zoomFactor;
+			}
+			else
+			{
+				point[0] = px + (((cg.artilleryRequestPos[i][0] - cg.mapcoordsMins[0]) * cg.mapcoordsScale[0]) * pw);
+				point[1] = py + (((cg.artilleryRequestPos[i][1] - cg.mapcoordsMins[1]) * cg.mapcoordsScale[1]) * ph);
+			}
+
+			// don't return if the marker is culled, just skip it (so we draw the rest, if any)
+			if (scissor && CG_ScissorPointIsCulled(point, scissor))
+			{
+				continue;
+			}
+
+			if (scissor)
+			{
+				point[0] += px - scissor->tl[0];
+				point[1] += py - scissor->tl[1];
+			}
+
+			trap_R_SetColor(colour);
+			CG_DrawPic(point[0] - 8.f, point[1] - 8.f, 16, 16, cgs.media.ccMortarTarget);
+			trap_R_SetColor(NULL);
 		}
 	}
 }
