@@ -210,6 +210,7 @@ vmCvar_t vote_allow_restartcampaign;
 vmCvar_t vote_allow_nextcampaign;
 vmCvar_t vote_allow_poll;
 vmCvar_t vote_allow_maprestart;
+vmCvar_t vote_allow_cointoss;
 
 vmCvar_t refereePassword;
 vmCvar_t shoutcastPassword;
@@ -513,6 +514,7 @@ cvarTable_t gameCvarTable[] =
 	{ &vote_allow_nextcampaign,           "vote_allow_nextcampaign",           "1",                          0,                                               0, qfalse, qfalse },
 	{ &vote_allow_poll,                   "vote_allow_poll",                   "1",                          0,                                               0, qfalse, qfalse },
 	{ &vote_allow_maprestart,             "vote_allow_maprestart",             "1",                          0,                                               0, qfalse, qfalse },
+	{ &vote_allow_cointoss,               "vote_allow_cointoss",               "1",                          0,                                               0, qfalse, qfalse },
 
 	{ &g_voting,                          "g_voting",                          "0",                          0,                                               0, qfalse, qfalse },
 
@@ -2028,18 +2030,18 @@ void G_UpdateCvars(void)
 				}
 
 				// Update vote info for clients, if necessary
-				if (cv->vmCvar == &vote_allow_kick          || cv->vmCvar == &vote_allow_map            ||
-				    cv->vmCvar == &vote_allow_matchreset    || cv->vmCvar == &vote_allow_gametype       ||
-				    cv->vmCvar == &vote_allow_mutespecs     || cv->vmCvar == &vote_allow_nextmap        ||
-				    cv->vmCvar == &vote_allow_config        || cv->vmCvar == &vote_allow_referee        ||
-				    cv->vmCvar == &vote_allow_shuffleteams  ||  cv->vmCvar == &vote_allow_shuffleteams_norestart ||
-				    cv->vmCvar == &vote_allow_swapteams     || cv->vmCvar == &vote_allow_friendlyfire   ||
-				    cv->vmCvar == &vote_allow_timelimit     || cv->vmCvar == &vote_allow_warmupdamage   ||
-				    cv->vmCvar == &vote_allow_antilag       || cv->vmCvar == &vote_allow_balancedteams  ||
-				    cv->vmCvar == &vote_allow_muting || cv->vmCvar == &vote_allow_surrender ||
-				    cv->vmCvar == &vote_allow_restartcampaign || cv->vmCvar == &vote_allow_nextcampaign ||
-				    cv->vmCvar == &vote_allow_poll || cv->vmCvar == &vote_allow_maprestart
-				    )
+				if (cv->vmCvar == &vote_allow_kick            || cv->vmCvar == &vote_allow_map            ||
+				    cv->vmCvar == &vote_allow_matchreset      || cv->vmCvar == &vote_allow_gametype       ||
+				    cv->vmCvar == &vote_allow_mutespecs       || cv->vmCvar == &vote_allow_nextmap        ||
+				    cv->vmCvar == &vote_allow_config          || cv->vmCvar == &vote_allow_referee        ||
+				    cv->vmCvar == &vote_allow_shuffleteams    || cv->vmCvar == &vote_allow_shuffleteams_norestart ||
+				    cv->vmCvar == &vote_allow_swapteams       || cv->vmCvar == &vote_allow_friendlyfire   ||
+				    cv->vmCvar == &vote_allow_timelimit       || cv->vmCvar == &vote_allow_warmupdamage   ||
+				    cv->vmCvar == &vote_allow_antilag         || cv->vmCvar == &vote_allow_balancedteams  ||
+				    cv->vmCvar == &vote_allow_muting          || cv->vmCvar == &vote_allow_surrender      ||
+				    cv->vmCvar == &vote_allow_restartcampaign || cv->vmCvar == &vote_allow_nextcampaign   ||
+				    cv->vmCvar == &vote_allow_poll            || cv->vmCvar == &vote_allow_maprestart     ||
+				    cv->vmCvar == &vote_allow_cointoss)
 				{
 					fVoteFlags = qtrue;
 				}

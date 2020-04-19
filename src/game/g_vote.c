@@ -75,10 +75,10 @@ static const vote_reference_t aVoteInfo[] =
 	{ 0x1ff, "unmute",                   G_UnMute_v,                   "UN-MUTE",                          " <player_id>^7\n  Restores the chat capabilities of a player"        },
 	{ 0x1ff, "map",                      G_Map_v,                      "Change map to",                    " <mapname>^7\n  Votes for a new map to be loaded"                    },
 	{ 0x1ff, "campaign",                 G_Campaign_v,                 "Change campaign to",               " <campaign>^7\n  Votes for a new map to be loaded"                   },
-	{ 0x1ff, "maprestart",               G_MapRestart_v,               "Map Restart",                      "^7\n  Restarts the current map in progress"                          },
-	{ 0x1ff, "matchreset",               G_MatchReset_v,               "Match Reset",                      "^7\n  Resets the entire match"                                       },
+	{ 0x1ff, "maprestart",               G_MapRestart_v,               "Map Restart",                      " ^7\n  Restarts the current map in progress"                         },
+	{ 0x1ff, "matchreset",               G_MatchReset_v,               "Match Reset",                      " ^7\n  Resets the entire match"                                      },
 	{ 0x1ff, "mutespecs",                G_Mutespecs_v,                "Mute Spectators",                  " <0|1>^7\n  Mutes in-game spectator chat"                            },
-	{ 0x1ff, "nextmap",                  G_Nextmap_v,                  "Load Next Map",                    "^7\n  Loads the next map or campaign in the map queue"               },
+	{ 0x1ff, "nextmap",                  G_Nextmap_v,                  "Load Next Map",                    " ^7\n  Loads the next map or campaign in the map queue"              },
 	{ 0x1ff, "referee",                  G_Referee_v,                  "Referee",                          " <player_id>^7\n  Elects a player to have admin abilities"           },
 	{ 0x1ff, "shuffleteams",             G_ShuffleTeams_v,             "Shuffle Teams",                    " ^7\n  Randomly place players on each team"                          },
 	{ 0x1ff, "shuffleteams_norestart",   G_ShuffleTeams_NoRestart_v,   "Shuffle Teams (No Restart)",       " ^7\n  Randomly place players on each team"                          },
@@ -90,11 +90,12 @@ static const vote_reference_t aVoteInfo[] =
 	{ 0x1ff, "warmupdamage",             G_Warmupfire_v,               "Warmup Damage",                    " <0|1|2>^7\n  Specifies if players can inflict damage during warmup" },
 	{ 0x1ff, "antilag",                  G_AntiLag_v,                  "Anti-Lag",                         " <0|1>^7\n  Toggles Anit-Lag on the server"                          },
 	{ 0x1ff, "balancedteams",            G_BalancedTeams_v,            "Balanced Teams",                   " <0|1>^7\n  Toggles team balance forcing"                            },
-	{ 0x1ff, "surrender",                G_Surrender_v,                "Surrender",                        "  ^7\n  Ends the match."                                             },
-	{ 0x1ff, "restartcampaign",          G_RestartCampaign_v,          "Restart Campaign",                 " ^7\n  Restarts the current Campaign"                               },
-	{ 0x1ff, "nextcampaign",             G_NextCampaign_v,             "Next Campaign",                    " ^7\n  Ends the current campaign and starts the next one."           },
-	{ 0x1ff, "poll",                     G_Poll_v,                     "[poll]",                           " <text>^7\n  Poll majority opinion."                                 },
+	{ 0x1ff, "surrender",                G_Surrender_v,                "Surrender",                        " ^7\n  Ends the match"                                               },
+	{ 0x1ff, "restartcampaign",          G_RestartCampaign_v,          "Restart Campaign",                 " ^7\n  Restarts the current Campaign"                                },
+	{ 0x1ff, "nextcampaign",             G_NextCampaign_v,             "Next Campaign",                    " ^7\n  Ends the current campaign and starts the next one"            },
+	{ 0x1ff, "poll",                     G_Poll_v,                     "[poll]",                           " <text>^7\n  Poll majority opinion"                                  },
 	{ 0x1ff, "config",                   G_Config_v,                   "Game config",                      " <configname>^7\n  Loads up the server game config"                  },
+	{ 0x1ff, "cointoss",                 G_CoinToss_v,                 "Coin toss",                        " ^7\n  Tosses a coin and displays result to all players"             },
 	{ 0,     0,                          NULL,                         0,                                  0                                                                     },
 };
 
@@ -1882,5 +1883,37 @@ int G_Poll_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qb
 		}
 		Com_sprintf(arg2, VOTE_MAXSTRING, "%s", ConcatArgs(2));
 	}
+	return G_OK;
+}
+
+/**
+ * @brief G_CoinToss_v
+ * @param ent         - unused
+ * @param dwVoteIndex - unused
+ * @param[in] arg
+ * @param[out] arg2
+ * @param fRefereeCmd - unused
+ * @return
+ */
+int G_CoinToss_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd)
+{
+	// Vote request (vote is being initiated)
+	if (arg)
+	{
+		if (!vote_allow_cointoss.integer && ent && !ent->client->sess.referee)
+		{
+			return G_INVALID;
+		}
+		Com_sprintf(arg2, VOTE_MAXSTRING, "%s", ConcatArgs(2));
+	}
+	// Vote action (vote has passed)
+	else
+	{
+		int roll = rand() % 2;	// 0 or 1, 50/50 chance
+		char *result = roll == 0 ? "HEADS" : "TAILS";
+
+		G_printFull(va("Result of the coin toss is ^3%s^7!", result), NULL);
+	}
+
 	return G_OK;
 }
