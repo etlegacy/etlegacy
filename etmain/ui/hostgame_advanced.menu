@@ -106,7 +106,8 @@ menuDef {
 	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2+(.5*((SUBWINDOW_WIDTH)-6))+2, VOTES_Y+88, .5*((SUBWINDOW_WIDTH)-6), 10, _("Anti-Lag:"), .2, 24, 8, "vote_allow_antilag", _("Allow players to vote for antilag to be enabled or disabled") )
 	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2+(.5*((SUBWINDOW_WIDTH)-6))+2, VOTES_Y+100, .5*((SUBWINDOW_WIDTH)-6), 10, _("Restart Campaign:"), .2, 24, 8, "vote_allow_restartcampaign", _("Allow players to vote for restarting campaign") )
 	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2+(.5*((SUBWINDOW_WIDTH)-6))+2, VOTES_Y+112, .5*((SUBWINDOW_WIDTH)-6), 10, _("Next Campaign:"), .2, 24, 8, "vote_allow_nextcampaign", _("Allow players to vote for next campaign") )
-	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2+(.5*((SUBWINDOW_WIDTH)-6))+2, VOTES_Y+124, .5*((SUBWINDOW_WIDTH)-6), 10, _("Poll:"), .2, 24, 8, "vote_allow_poll", _("Allow players to vote for custom votes") )
+	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2+(.5*((SUBWINDOW_WIDTH)-6))+2, VOTES_Y+124, .5*((SUBWINDOW_WIDTH)-6), 10, _("Coin toss:"), .2, 24, 8, "vote_allow_cointoss", _("Allow players to vote for coin toss") )
+	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2+(.5*((SUBWINDOW_WIDTH)-6))+2, VOTES_Y+136, .5*((SUBWINDOW_WIDTH)-6), 10, _("Poll:"), .2, 24, 8, "vote_allow_poll", _("Allow players to vote for custom votes") )
 
 // Message of the Day //
 #define MOTD_Y 316

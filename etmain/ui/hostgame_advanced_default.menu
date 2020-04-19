@@ -76,7 +76,8 @@
 							setcvar vote_allow_surrender 1 ;		\
 							setcvar vote_allow_restartcampaign 1 ;	\
 							setcvar vote_allow_nextcampaign 1 ;		\
-							setcvar vote_allow_poll 1;              \
+							setcvar vote_allow_cointoss 1 ;			\
+							setcvar vote_allow_poll 1 ;				\
 							setcvar server_motd0 " ^NEnemy Territory ^7MOTD " ; \
 							clearcvar server_motd1 ;				\
 							clearcvar server_motd2 ;				\

@@ -8842,6 +8842,7 @@ static cvarTable_t cvarTable[] =
 	{ NULL,                             "vote_allow_surrender",                "1",                          CVAR_ARCHIVE,                   0 },
 	{ NULL,                             "vote_allow_restartcampaign",          "1",                          CVAR_ARCHIVE,                   0 },
 	{ NULL,                             "vote_allow_nextcampaign",             "1",                          CVAR_ARCHIVE,                   0 },
+	{ NULL,                             "vote_allow_cointoss",                 "1",                          CVAR_ARCHIVE,                   0 },
 	{ NULL,                             "vote_allow_poll",                     "1",                          CVAR_ARCHIVE,                   0 },
 
 	{ NULL,                             "ui_cl_lang",                          "",                           CVAR_ARCHIVE,                   0 },
