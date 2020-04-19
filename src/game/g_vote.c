@@ -95,6 +95,7 @@ static const vote_reference_t aVoteInfo[] =
 	{ 0x1ff, "nextcampaign",             G_NextCampaign_v,             "Next Campaign",                    " ^7\n  Ends the current campaign and starts the next one."           },
 	{ 0x1ff, "poll",                     G_Poll_v,                     "[poll]",                           " <text>^7\n  Poll majority opinion."                                 },
 	{ 0x1ff, "config",                   G_Config_v,                   "Game config",                      " <configname>^7\n  Loads up the server game config"                  },
+	{ 0x1ff, "cointoss",                 G_CoinToss_v,                 "Coin toss",                        "  ^7\n  Tosses a coin and result is displayed to all players."       },
 	{ 0,     0,                          NULL,                         0,                                  0                                                                     },
 };
 
@@ -1882,5 +1883,28 @@ int G_Poll_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qb
 		}
 		Com_sprintf(arg2, VOTE_MAXSTRING, "%s", ConcatArgs(2));
 	}
+	return G_OK;
+}
+
+/**
+ * @brief G_CoinToss_v
+ * @param ent         - unused
+ * @param dwVoteIndex - unused
+ * @param[in] arg
+ * @param[out] arg2
+ * @param fRefereeCmd - unused
+ * @return
+ */
+int G_CoinToss_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd)
+{
+	if (!arg)
+	// Vote action (vote has passed)
+	{
+		int roll = rand() % 2;	// 0 or 1, 50/50 chance
+		char *result = roll == 0 ? "HEADS" : "TAILS";
+
+		G_printFull(va("Result of the coin toss is ^3%s^7!", result), NULL);
+	}
+
 	return G_OK;
 }
