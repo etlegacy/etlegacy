@@ -951,10 +951,9 @@ static int WM_DrawInfoLine(int x, int y, float fade)
  * @param[in] team
  * @param[in] fade
  * @param[in] maxrows
- * @param[in] absmaxrows
  * @return
  */
-static int WM_TeamScoreboard(int x, int y, team_t team, float fade, int maxrows, int absmaxrows)
+static int WM_TeamScoreboard(int x, int y, team_t team, float fade, int maxrows, qboolean use_mini_chars)
 {
 	vec4_t     hcolor;
 	float      tempx, tempy;
@@ -962,7 +961,7 @@ static int WM_TeamScoreboard(int x, int y, team_t team, float fade, int maxrows,
 	int        count = 0;
 	int        width = INFO_TOTAL_WIDTH;
 	int        row_height;
-	qboolean   use_mini_chars = qfalse, livesleft = qfalse;
+	qboolean   livesleft = qfalse;
 	const char *buffer = CG_ConfigString(CS_SERVERINFO);
 	const char *str    = Info_ValueForKey(buffer, "g_maxlives");
 
@@ -1209,19 +1208,6 @@ static int WM_TeamScoreboard(int x, int y, team_t team, float fade, int maxrows,
 		cg.teamPingSd[team] = sqrtf(cg.teamPingSd[team] / cg.teamPlayers[team]);
 	}
 
-	// adjust also for spectator rows in game, but ignore them in debriefing
-	if (cg.snap->ps.pm_type != PM_INTERMISSION && cg.teamPlayers[TEAM_SPECTATOR] > 0 &&
-	    (cg.teamPlayers[team] + 1 + (cg.teamPlayers[TEAM_SPECTATOR] + 1) / 2) > maxrows)
-	{
-		maxrows        = absmaxrows;
-		use_mini_chars = qtrue;
-	}
-	else if (cg.teamPlayers[team] > maxrows)
-	{
-		maxrows        = absmaxrows;
-		use_mini_chars = qtrue;
-	}
-
 	row_height = use_mini_chars ? 12 : 16;
 
 	// save off y val
@@ -1324,6 +1310,7 @@ qboolean CG_DrawScoreboard(void)
 	float fontScale = cg_fontScaleSP.value;
 	int maxrows;
 	int absmaxrows;
+	qboolean use_mini_chars = qfalse;
 
 	x       += cgs.wideXoffset;
 	x_right += cgs.wideXoffset;
@@ -1376,9 +1363,21 @@ qboolean CG_DrawScoreboard(void)
 		absmaxrows = 30;
 	}
 
-	WM_TeamScoreboard(x, y, TEAM_AXIS, fade, maxrows, absmaxrows);
+	qboolean players_with_specs_exceed_limit = cg.teamPlayers[TEAM_SPECTATOR] > 0 && (
+			(cg.teamPlayers[TEAM_AXIS] + 1 + (cg.teamPlayers[TEAM_SPECTATOR] + 1) / 2) > maxrows ||
+			(cg.teamPlayers[TEAM_ALLIES] + 1 + (cg.teamPlayers[TEAM_SPECTATOR] + 1) / 2) > maxrows
+	);
+	qboolean players_without_specs_exceed_limit = cg.teamPlayers[TEAM_AXIS] > maxrows || cg.teamPlayers[TEAM_ALLIES] > maxrows;
+
+	if ((cg.snap->ps.pm_type != PM_INTERMISSION && players_with_specs_exceed_limit) || players_without_specs_exceed_limit)
+	{
+		maxrows = absmaxrows;
+		use_mini_chars = qtrue;
+	}
+
+	WM_TeamScoreboard(x, y, TEAM_AXIS, fade, maxrows, use_mini_chars);
 	x = x_right;
-	WM_TeamScoreboard(x, y, TEAM_ALLIES, fade, maxrows, absmaxrows);
+	WM_TeamScoreboard(x, y, TEAM_ALLIES, fade, maxrows, use_mini_chars);
 
 #if defined(FEATURE_RATING) || defined(FEATURE_PRESTIGE)
 	if (cg_descriptiveText.integer && cgs.gamestate != GS_INTERMISSION)
