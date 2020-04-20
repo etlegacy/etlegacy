@@ -961,6 +961,7 @@ static int WM_TeamScoreboard(int x, int y, team_t team, float fade, int maxrows,
 	int        i;
 	int        count = 0;
 	int        width = INFO_TOTAL_WIDTH;
+	int        row_height;
 	qboolean   use_mini_chars = qfalse, livesleft = qfalse;
 	const char *buffer = CG_ConfigString(CS_SERVERINFO);
 	const char *str    = Info_ValueForKey(buffer, "g_maxlives");
@@ -1221,6 +1222,8 @@ static int WM_TeamScoreboard(int x, int y, team_t team, float fade, int maxrows,
 		use_mini_chars = qtrue;
 	}
 
+	row_height = use_mini_chars ? 12 : 16;
+
 	// save off y val
 	tempy = y;
 
@@ -1237,22 +1240,11 @@ static int WM_TeamScoreboard(int x, int y, team_t team, float fade, int maxrows,
 		}
 		hcolor[3] = fade * 0.3f;
 
-		if (use_mini_chars)
-		{
-			CG_FillRect(x - 5, y, width + 5, 12, hcolor);
-			trap_R_SetColor(colorBlack);
-			CG_DrawBottom_NoScale(x - 5, y, width + 5, 12, 1);
-			trap_R_SetColor(NULL);
-			y += 12;
-		}
-		else
-		{
-			CG_FillRect(x - 5, y, width + 5, 16, hcolor);
-			trap_R_SetColor(colorBlack);
-			CG_DrawBottom_NoScale(x - 5, y, width + 5, 16, 1);
-			trap_R_SetColor(NULL);
-			y += 16;
-		}
+		CG_FillRect(x - 5, y, width + 5, row_height, hcolor);
+		trap_R_SetColor(colorBlack);
+		CG_DrawBottom_NoScale(x - 5, y, width + 5, row_height, 1);
+		trap_R_SetColor(NULL);
+		y += row_height;
 	}
 
 	hcolor[3] = 1;
@@ -1273,26 +1265,18 @@ static int WM_TeamScoreboard(int x, int y, team_t team, float fade, int maxrows,
 		if (use_mini_chars)
 		{
 			WM_DrawClientScore_Small(x, y, &cg.scores[i], hcolor, fade, livesleft);
-			y += 12;
 		}
 		else
 		{
 			WM_DrawClientScore(x, y, &cg.scores[i], hcolor, fade, livesleft);
-			y += 16;
 		}
+		y += row_height;
 
 		count++;
 	}
 
 	// draw spectators
-	if (use_mini_chars)
-	{
-		y += 12;
-	}
-	else
-	{
-		y += 16;
-	}
+	y += row_height;
 
 	for (i = 0; i < cg.numScores; i++)
 	{
@@ -1312,12 +1296,12 @@ static int WM_TeamScoreboard(int x, int y, team_t team, float fade, int maxrows,
 		if (use_mini_chars)
 		{
 			WM_DrawClientScore_Small(x, y, &cg.scores[i], hcolor, fade, livesleft);
-			y += 12;
+			y += row_height;
 		}
 		else
 		{
 			WM_DrawClientScore(x, y, &cg.scores[i], hcolor, fade, livesleft);
-			y += 16;
+			y += row_height;
 		}
 	}
 
