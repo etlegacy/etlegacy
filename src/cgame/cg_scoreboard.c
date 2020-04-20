@@ -1322,6 +1322,8 @@ qboolean CG_DrawScoreboard(void)
 	const char *s, *s2, *s3;
 #endif
 	float fontScale = cg_fontScaleSP.value;
+	int maxrows;
+	int absmaxrows;
 
 	x       += cgs.wideXoffset;
 	x_right += cgs.wideXoffset;
@@ -1360,25 +1362,23 @@ qboolean CG_DrawScoreboard(void)
 	{
 		y = WM_DrawInfoLine(x, 155, fade);
 
-		WM_TeamScoreboard(x, y, TEAM_AXIS, fade, 8, 10);
-		x = x_right;
-		WM_TeamScoreboard(x, y, TEAM_ALLIES, fade, 8, 10);
+		maxrows = 8;
+		absmaxrows = 10;
+	}
+	else if (cg.snap->ps.pm_type == PM_INTERMISSION)
+	{
+		maxrows = 9;
+		absmaxrows = 12;
 	}
 	else
 	{
-		if (cg.snap->ps.pm_type == PM_INTERMISSION)
-		{
-			WM_TeamScoreboard(x, y, TEAM_AXIS, fade, 9, 12);
-			x = x_right;
-			WM_TeamScoreboard(x, y, TEAM_ALLIES, fade, 9, 12);
-		}
-		else
-		{
-			WM_TeamScoreboard(x, y, TEAM_AXIS, fade, 22, 30);
-			x = x_right;
-			WM_TeamScoreboard(x, y, TEAM_ALLIES, fade, 22, 30);
-		}
+		maxrows = 22;
+		absmaxrows = 30;
 	}
+
+	WM_TeamScoreboard(x, y, TEAM_AXIS, fade, maxrows, absmaxrows);
+	x = x_right;
+	WM_TeamScoreboard(x, y, TEAM_ALLIES, fade, maxrows, absmaxrows);
 
 #if defined(FEATURE_RATING) || defined(FEATURE_PRESTIGE)
 	if (cg_descriptiveText.integer && cgs.gamestate != GS_INTERMISSION)
