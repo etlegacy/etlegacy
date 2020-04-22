@@ -422,6 +422,7 @@ static void G_StepSlideCorpse(gentity_t *ent, vec3_t newOrigin)
 	if (G_IsPositionOK(ent, newOrigin))
 	{
 		// so check if we can fall even more down
+
 		VectorCopy(ent->s.pos.trBase, down);
 		down[2] -= 16;
 		// item code is using these
@@ -617,10 +618,11 @@ void CopyToBodyQue(gentity_t *ent)
 
 		// change bounding box to be off the origin of the corpse
 		// that will make correct box agains model
-		body->r.maxs[0] = offset[0] + 18;
-		body->r.maxs[1] = offset[1] + 18;
-		body->r.mins[0] = offset[0] - 18;
-		body->r.mins[1] = offset[1] - 18;
+		// NOTE: we force rounding number for avoiding unwanted colision
+		body->r.maxs[0] = (int)(offset[0] + playerMaxs[0]);
+		body->r.maxs[1] = (int)(offset[1] + playerMaxs[1]);
+		body->r.mins[0] = (int)(offset[0] + playerMins[0]);
+		body->r.mins[1] = (int)(offset[1] + playerMins[1]);
 
 		body->r.currentOrigin[0] = origin[0] - offset[0];
 		body->r.currentOrigin[1] = origin[1] - offset[1];
@@ -2323,7 +2325,8 @@ char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 		{
 			G_SetPlayerSkill(client, i);
 		}
-	} else
+	}
+	else
 #endif
 	if (firstTime && g_xpSaver.integer && g_gametype.integer == GT_WOLF_CAMPAIGN)
 	{
@@ -3193,7 +3196,8 @@ void ClientDisconnect(int clientNum)
 	if (g_prestige.integer && !level.intermissiontime)
 	{
 		G_SetClientPrestige(ent->client, qfalse);
-	} else
+	}
+	else
 #endif
 	if (g_xpSaver.integer && g_gametype.integer == GT_WOLF_CAMPAIGN && !level.intermissiontime)
 	{

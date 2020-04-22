@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -1323,9 +1323,6 @@ void G_RunItem(gentity_t *ent)
 	if (tr.startsolid)
 	{
 		tr.fraction = 0;
-
-		// don't let item stutter while stuck in solid
-		ent->s.pos.trType = TR_STATIONARY;
 	}
 
 	trap_LinkEntity(ent);
