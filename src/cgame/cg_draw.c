@@ -239,6 +239,26 @@ void CG_Text_Paint_Centred_Ext(float x, float y, float scalex, float scaley, vec
 }
 
 /**
+ * @brief CG_Text_Paint_RightAligned_Ext
+ * @param[in] x
+ * @param[in] y
+ * @param[in] scalex
+ * @param[in] scaley
+ * @param[in] color
+ * @param[in] text
+ * @param[in] adjust
+ * @param[in] limit
+ * @param[in] style
+ * @param[in] font
+ */
+void CG_Text_Paint_RightAligned_Ext(float x, float y, float scalex, float scaley, vec4_t color, const char *text, float adjust, int limit, int style, fontHelper_t *font)
+{
+	x -= CG_Text_Width_Ext(text, scalex, limit, font);
+
+	CG_Text_Paint_Ext(x, y, scalex, scaley, color, text, adjust, limit, style, font);
+}
+
+/**
  * @brief CG_Text_Paint_Ext
  * @param[in] x
  * @param[in] y
