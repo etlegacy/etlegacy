@@ -413,7 +413,7 @@ int CG_drawStrlen(const char *str)
  */
 static void WM_DrawClientScore(int x, int y, score_t *score, float fade, qboolean livesleft)
 {
-	int          maxchars = 16, offset = 0;
+	int          maxchars = 16;
 	int          rowHeight = 16;
 	float        scaleX = 0.24f, scaleY = 0.28f;
 	int          extraChars = 2;
@@ -457,7 +457,6 @@ static void WM_DrawClientScore(int x, int y, score_t *score, float fade, qboolea
 	{
 		if (CG_DrawFlag(tempx - 3, y - 11, fade, ci->clientNum))
 		{
-			offset   += 15;
 			tempx    += 15;
 			maxchars -= 2;
 		}
@@ -469,7 +468,6 @@ static void WM_DrawClientScore(int x, int y, score_t *score, float fade, qboolea
 		if ((score->scoreflags & 1) && cgs.gamestate != GS_PLAYING)
 		{
 			CG_DrawPic(tempx - 1, y - 9, 10, 10, cgs.media.readyShader);
-			offset   += 12;
 			tempx    += 12;
 			maxchars -= 2;
 		}
@@ -477,7 +475,6 @@ static void WM_DrawClientScore(int x, int y, score_t *score, float fade, qboolea
 		if (ci->powerups & ((1 << PW_REDFLAG) | (1 << PW_BLUEFLAG)) && cgs.gamestate != GS_INTERMISSION)
 		{
 			CG_DrawPic(tempx - 1, y - 9, 10, 10, cgs.media.objectiveShader);
-			offset   += 12;
 			tempx    += 12;
 			maxchars -= 2;
 		}
@@ -485,7 +482,6 @@ static void WM_DrawClientScore(int x, int y, score_t *score, float fade, qboolea
 		         && (ci->powerups & (1 << PW_OPS_DISGUISED)) && cgs.gamestate != GS_INTERMISSION)
 		{
 			CG_DrawPic(tempx - 1, y - 9, 10, 10, ci->team == TEAM_AXIS ? cgs.media.alliedUniformShader : cgs.media.axisUniformShader);
-			offset   += 12;
 			tempx    += 12;
 			maxchars -= 2;
 		}
@@ -493,7 +489,6 @@ static void WM_DrawClientScore(int x, int y, score_t *score, float fade, qboolea
 		         && cgs.clientinfo[score->client].health > 0 && (ci->powerups & (1 << PW_INVULNERABLE)) && cgs.gamestate != GS_INTERMISSION)
 		{
 			CG_DrawPic(tempx - 1, y - 9, 10, 10, cgs.media.spawnInvincibleShader);
-			offset   += 12;
 			tempx    += 12;
 			maxchars -= 2;
 		}
@@ -502,7 +497,6 @@ static void WM_DrawClientScore(int x, int y, score_t *score, float fade, qboolea
 		if (score->respawnsLeft == -2 || (cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR && ci->team == cgs.clientinfo[cg.clientNum].team && cgs.clientinfo[score->client].health == -1))
 		{
 			CG_DrawPic(tempx - 1, y - 9, 10, 10, cgs.media.scoreEliminatedShader);
-			offset   += 12;
 			tempx    += 12;
 			maxchars -= 2;
 		}
@@ -510,7 +504,6 @@ static void WM_DrawClientScore(int x, int y, score_t *score, float fade, qboolea
 		         && cgs.clientinfo[score->client].health == 0 && cgs.gamestate != GS_INTERMISSION)
 		{
 			CG_DrawPic(tempx - 1, y - 9, 10, 10, cgs.media.medicIcon);
-			offset   += 12;
 			tempx    += 12;
 			maxchars -= 2;
 		}
@@ -537,7 +530,7 @@ static void WM_DrawClientScore(int x, int y, score_t *score, float fade, qboolea
 		CG_Text_Paint_Ext(tempx + (CG_drawStrlen(ci->name) * 8 + 8), y, scaleX, scaleY, colorWhite, buf, 0, maxchars, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
 	}
 
-	tempx += INFO_PLAYER_WIDTH - offset;
+	tempx = x + INFO_PLAYER_WIDTH;
 
 	// add the extra room here
 	if (cg_gameType.integer != GT_WOLF_LMS && !livesleft)
@@ -679,7 +672,7 @@ const char *WM_TimeToString(float msec)
  */
 static void WM_DrawClientScore_Small(int x, int y, score_t *score, float fade, qboolean livesleft)
 {
-	int          maxchars = 23, offset = 0;
+	int          maxchars = 23;
 	int          rowHeight = 12;
 	float        scaleX = 0.20f, scaleY = 0.25f;
 	int          extraChars = 0;
@@ -723,7 +716,6 @@ static void WM_DrawClientScore_Small(int x, int y, score_t *score, float fade, q
 	{
 		if (CG_DrawFlag(tempx - 3, y - 11, fade, ci->clientNum))
 		{
-			offset   += 15;
 			tempx    += 15;
 			maxchars -= 2;
 		}
@@ -735,7 +727,6 @@ static void WM_DrawClientScore_Small(int x, int y, score_t *score, float fade, q
 		if ((score->scoreflags & 1) && cgs.gamestate != GS_PLAYING)
 		{
 			CG_DrawPic(tempx - 1, y - 9, 10, 10, cgs.media.readyShader);
-			offset   += 12;
 			tempx    += 12;
 			maxchars -= 2;
 		}
@@ -743,7 +734,6 @@ static void WM_DrawClientScore_Small(int x, int y, score_t *score, float fade, q
 		if (ci->powerups & ((1 << PW_REDFLAG) | (1 << PW_BLUEFLAG)) && cgs.gamestate != GS_INTERMISSION)
 		{
 			CG_DrawPic(tempx - 1, y - 9, 10, 10, cgs.media.objectiveShader);
-			offset   += 12;
 			tempx    += 12;
 			maxchars -= 2;
 		}
@@ -751,7 +741,6 @@ static void WM_DrawClientScore_Small(int x, int y, score_t *score, float fade, q
 		         && (ci->powerups & (1 << PW_OPS_DISGUISED)) && cgs.gamestate != GS_INTERMISSION)
 		{
 			CG_DrawPic(tempx - 1, y - 9, 10, 10, ci->team == TEAM_AXIS ? cgs.media.alliedUniformShader : cgs.media.axisUniformShader);
-			offset   += 12;
 			tempx    += 12;
 			maxchars -= 2;
 		}
@@ -759,7 +748,6 @@ static void WM_DrawClientScore_Small(int x, int y, score_t *score, float fade, q
 		         && cgs.clientinfo[score->client].health > 0 && (ci->powerups & (1 << PW_INVULNERABLE)) && cgs.gamestate != GS_INTERMISSION)
 		{
 			CG_DrawPic(tempx - 1, y - 9, 10, 10, cgs.media.spawnInvincibleShader);
-			offset   += 12;
 			tempx    += 12;
 			maxchars -= 2;
 		}
@@ -768,7 +756,6 @@ static void WM_DrawClientScore_Small(int x, int y, score_t *score, float fade, q
 		if (score->respawnsLeft == -2 || (cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR && ci->team == cgs.clientinfo[cg.clientNum].team && cgs.clientinfo[score->client].health == -1))
 		{
 			CG_DrawPic(tempx - 1, y - 9, 10, 10, cgs.media.scoreEliminatedShader);
-			offset   += 12;
 			tempx    += 12;
 			maxchars -= 2;
 		}
@@ -776,7 +763,6 @@ static void WM_DrawClientScore_Small(int x, int y, score_t *score, float fade, q
 		         && cgs.clientinfo[score->client].health == 0 && cgs.gamestate != GS_INTERMISSION)
 		{
 			CG_DrawPic(tempx - 1, y - 9, 10, 10, cgs.media.medicIcon);
-			offset   += 12;
 			tempx    += 12;
 			maxchars -= 2;
 		}
@@ -803,7 +789,7 @@ static void WM_DrawClientScore_Small(int x, int y, score_t *score, float fade, q
 		CG_Text_Paint_Ext(tempx + (CG_drawStrlen(ci->name) * 8 + 8), y, scaleX, scaleY, colorWhite, buf, 0, maxchars, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
 	}
 
-	tempx += INFO_PLAYER_WIDTH - offset;
+	tempx = x + INFO_PLAYER_WIDTH;
 
 	// add the extra room here
 	if (cg_gameType.integer != GT_WOLF_LMS && !livesleft)
