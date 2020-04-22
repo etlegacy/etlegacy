@@ -408,11 +408,10 @@ int CG_drawStrlen(const char *str)
  * @param[in] x
  * @param[in] y
  * @param[in] score
- * @param color - unused
  * @param[in] fade
  * @param[in] livesleft
  */
-static void WM_DrawClientScore(int x, int y, score_t *score, float *color, float fade, qboolean livesleft)
+static void WM_DrawClientScore(int x, int y, score_t *score, float fade, qboolean livesleft)
 {
 	int          maxchars = 16, offset = 0;
 	int          rowHeight = 16;
@@ -675,11 +674,10 @@ const char *WM_TimeToString(float msec)
  * @param[in] x
  * @param[in] y
  * @param[in] score
- * @param color - unused
  * @param[in] fade
  * @param[in] livesleft
  */
-static void WM_DrawClientScore_Small(int x, int y, score_t *score, float *color, float fade, qboolean livesleft)
+static void WM_DrawClientScore_Small(int x, int y, score_t *score, float fade, qboolean livesleft)
 {
 	int          maxchars = 23, offset = 0;
 	int          rowHeight = 12;
@@ -1299,11 +1297,11 @@ static int WM_TeamScoreboard(int x, int y, team_t team, float fade, int maxrows,
 
 		if (use_mini_chars)
 		{
-			WM_DrawClientScore_Small(x, y, &cg.scores[i], hcolor, fade, livesleft);
+			WM_DrawClientScore_Small(x, y, &cg.scores[i], fade, livesleft);
 		}
 		else
 		{
-			WM_DrawClientScore(x, y, &cg.scores[i], hcolor, fade, livesleft);
+			WM_DrawClientScore(x, y, &cg.scores[i], fade, livesleft);
 		}
 		y += row_height;
 
@@ -1330,12 +1328,12 @@ static int WM_TeamScoreboard(int x, int y, team_t team, float fade, int maxrows,
 
 		if (use_mini_chars)
 		{
-			WM_DrawClientScore_Small(x, y, &cg.scores[i], hcolor, fade, livesleft);
+			WM_DrawClientScore_Small(x, y, &cg.scores[i], fade, livesleft);
 			y += row_height;
 		}
 		else
 		{
-			WM_DrawClientScore(x, y, &cg.scores[i], hcolor, fade, livesleft);
+			WM_DrawClientScore(x, y, &cg.scores[i], fade, livesleft);
 			y += row_height;
 		}
 	}
