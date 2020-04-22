@@ -2023,6 +2023,8 @@ char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 	char reason[MAX_STRING_CHARS] = "";
 #endif
 	qboolean allowGeoIP = qtrue;
+	int      i;
+
 	trap_GetUserinfo(clientNum, userinfo, sizeof(userinfo));
 
 	// grab the values we need in just one pass
@@ -2072,6 +2074,15 @@ char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 	if (strlen(cs_guid) < MAX_GUID_LENGTH)
 	{
 		return "Bad GUID: Invalid etkey. Please use the ET: Legacy client or add an etkey.";
+	}
+
+	// check guid format
+	for (i = 0; i < MAX_GUID_LENGTH; i++)
+	{
+		if (cs_guid[i] < 48 || (cs_guid[i] > 57 && cs_guid[i] < 65) || cs_guid[i] > 70)
+		{
+			return "Bad GUID: Invalid etkey.";
+		}
 	}
 
 	// IP filtering
