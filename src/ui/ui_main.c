@@ -67,7 +67,7 @@ static void UI_StopServerRefresh(void);
 static void UI_DoServerRefresh(void);
 static void UI_FeederSelection(int feederID, int index);
 static qboolean UI_FeederSelectionClick(itemDef_t *item);
-static void UI_BuildServerDisplayList(int force);
+static void UI_BuildServerDisplayList(qboolean force);
 static void UI_BuildServerStatus(qboolean force);
 static int QDECL UI_ServersQsortCompare(const void *arg1, const void *arg2);
 static int UI_MapCountByGameType(qboolean singlePlayer);
@@ -3775,7 +3775,7 @@ static qboolean UI_NetFilter_HandleKey(int flags, int *special, int key)
 		{
 			ui_serverFilterType.integer = numServerFilters - 1;
 		}
-		UI_BuildServerDisplayList(1);
+		UI_BuildServerDisplayList(qtrue);
 		return qtrue;
 	}
 	return qfalse;
@@ -4499,12 +4499,12 @@ void UI_RunMenuScript(char **args)
 		else if (Q_stricmp(name, "RefreshServers") == 0)
 		{
 			UI_StartServerRefresh(qtrue);
-			UI_BuildServerDisplayList(1);
+			UI_BuildServerDisplayList(qtrue);
 		}
 		else if (Q_stricmp(name, "RefreshFilter") == 0)
 		{
 			UI_StartServerRefresh(uiInfo.serverStatus.numDisplayServers ? qfalse : qtrue);      // if we don't have any valid servers, it's kinda safe to assume we would like to get a full new list
-			UI_BuildServerDisplayList(1);
+			UI_BuildServerDisplayList(qtrue);
 		}
 		else if (Q_stricmp(name, "LoadDemos") == 0)
 		{
@@ -4552,7 +4552,7 @@ void UI_RunMenuScript(char **args)
 				UI_StopServerRefresh();
 				uiInfo.serverStatus.nextDisplayRefresh = 0;
 				uiInfo.nextServerStatusRefresh         = 0;
-				UI_BuildServerDisplayList(1);
+				UI_BuildServerDisplayList(qtrue);
 			}
 			else
 			{
@@ -4573,7 +4573,7 @@ void UI_RunMenuScript(char **args)
 			{
 				UI_StartServerRefresh(qtrue);
 			}
-			UI_BuildServerDisplayList(1);
+			UI_BuildServerDisplayList(qtrue);
 			UI_FeederSelection(FEEDER_SERVERS, 0);
 		}
 		else if (Q_stricmp(name, "check_ServerStatus") == 0)
@@ -4890,7 +4890,7 @@ void UI_RunMenuScript(char **args)
 		else if (Q_stricmp(name, "removeFavorites") == 0)
 		{
 			UI_RemoveAllFavourites_f();
-			UI_BuildServerDisplayList(1);
+			UI_BuildServerDisplayList(qtrue);
 		}
 		else if (Q_stricmp(name, "createFavorite") == 0)
 		{
@@ -6170,21 +6170,15 @@ static void UI_BinaryServerInsertion(int num)
  * @brief UI_BuildServerDisplayList
  * @param[in] force
  */
-static void UI_BuildServerDisplayList(int force)
+static void UI_BuildServerDisplayList(qboolean force)
 {
 	int        i, count, total, clients, humans, maxClients, ping, game, len, friendlyFire, maxlives, punkbuster, antilag, password, weaponrestricted, balancedteams;
 	char       info[MAX_STRING_CHARS];
 	static int numinvisible;
 
-	if (!(force > 0 || uiInfo.uiDC.realTime > uiInfo.serverStatus.nextDisplayRefresh))
+	if (!(force || uiInfo.uiDC.realTime > uiInfo.serverStatus.nextDisplayRefresh))
 	{
 		return;
-	}
-
-	// if we shouldn't reset
-	if (force == 2)
-	{
-		force = 0;
 	}
 
 	// do motd updates here too
@@ -6203,13 +6197,14 @@ static void UI_BuildServerDisplayList(int force)
 
 	uiInfo.serverStatus.numInvalidServers = 0;
 
-	if (force == 1)
+	if (force)
 	{
 		numinvisible = 0;
 		// clear number of displayed servers
 		uiInfo.serverStatus.numIncompatibleServers = 0;
 		uiInfo.serverStatus.numDisplayServers      = 0;
 		uiInfo.serverStatus.numPlayersOnServers    = 0;
+		uiInfo.serverStatus.numHumansOnServers     = 0;
 		// set list box index to zero
 		Menu_SetFeederSelection(NULL, FEEDER_SERVERS, 0, NULL);
 		// mark all servers as visible so we store ping updates for them
@@ -6225,6 +6220,7 @@ static void UI_BuildServerDisplayList(int force)
 		uiInfo.serverStatus.numIncompatibleServers = 0;
 		uiInfo.serverStatus.numDisplayServers      = 0;
 		uiInfo.serverStatus.numPlayersOnServers    = 0;
+		uiInfo.serverStatus.numHumansOnServers     = 0;
 		uiInfo.serverStatus.nextDisplayRefresh     = uiInfo.uiDC.realTime + 500;
 		uiInfo.serverStatus.currentServerPreview   = 0;
 		return;
@@ -6556,8 +6552,24 @@ static void UI_BuildServerDisplayList(int force)
 			}
 
 			// player count after removing incompatible/filtered out servers
-			clients                                  = atoi(Info_ValueForKey(info, "clients"));
-			uiInfo.serverStatus.numPlayersOnServers += clients;
+			clients = atoi(Info_ValueForKey(info, "clients"));
+			if ((ui_serverBrowserSettings.integer & UI_BROWSER_ALLOW_HUMANS_COUNT) &&
+			    strstr(Info_ValueForKey(info, "version"), PRODUCT_LABEL) != NULL)
+			{
+				humans = atoi(Info_ValueForKey(info, "humans"));
+				uiInfo.serverStatus.numPlayersOnServers += clients;
+				uiInfo.serverStatus.numHumansOnServers  += humans;
+			}
+			else if (Q_stristr(Info_ValueForKey(info, "game"), "legacy") != 0 &&
+			         strstr(Info_ValueForKey(info, "version"), PRODUCT_LABEL) != NULL)
+			{
+				uiInfo.serverStatus.numPlayersOnServers += clients;
+				uiInfo.serverStatus.numHumansOnServers  += humans;
+			}
+			else
+			{
+				uiInfo.serverStatus.numPlayersOnServers += clients;
+			}
 
 			// make sure we never add a favorite server twice
 			if (ui_netSource.integer == AS_FAVORITES)
@@ -7781,7 +7793,7 @@ static qboolean UI_FeederSelectionClick(itemDef_t *item)
 					trap_LAN_RemoveServer(AS_FAVORITES, addr);
 					if (ui_netSource.integer == AS_FAVORITES)
 					{
-						UI_BuildServerDisplayList(1);
+						UI_BuildServerDisplayList(qtrue);
 						UI_FeederSelection(FEEDER_SERVERS, 0);
 					}
 				}
@@ -8981,9 +8993,20 @@ static void UI_StopServerRefresh(void)
 		Com_Printf(trap_TranslateString("^3%d^7 servers not listed (filtered out by browser settings)\n"), total);
 	}
 
-	Com_Printf(trap_TranslateString("^2%d^7 servers listed with ^3%d^7 players\n"),
-	           uiInfo.serverStatus.numDisplayServers,
-	           uiInfo.serverStatus.numPlayersOnServers);
+	// FIXME: number of humans is wrong for favorites, why?
+	if (uiInfo.serverStatus.numHumansOnServers > 0 && ui_netSource.integer != AS_FAVORITES)
+	{
+		Com_Printf(trap_TranslateString("^2%d^7 servers listed with ^3%d^7 players (including ^3%d^7 humans at least)\n"),
+		           uiInfo.serverStatus.numDisplayServers,
+		           uiInfo.serverStatus.numPlayersOnServers,
+		           uiInfo.serverStatus.numHumansOnServers);
+	}
+	else
+	{
+		Com_Printf(trap_TranslateString("^2%d^7 servers listed with ^3%d^7 players\n"),
+		           uiInfo.serverStatus.numDisplayServers,
+		           uiInfo.serverStatus.numPlayersOnServers);
+	}
 }
 
 /**
@@ -9032,12 +9055,12 @@ static void UI_DoServerRefresh(void)
 	else if (!wait)
 	{
 		// get the last servers in the list
-		UI_BuildServerDisplayList(2);
+		UI_BuildServerDisplayList(qtrue);
 		// stop the refresh
 		UI_StopServerRefresh();
 	}
 
-	UI_BuildServerDisplayList(0);
+	UI_BuildServerDisplayList(qfalse);
 }
 
 /**
@@ -9066,6 +9089,7 @@ static void UI_StartServerRefresh(qboolean full)
 	uiInfo.serverStatus.numIncompatibleServers = 0;
 	uiInfo.serverStatus.numDisplayServers      = 0;
 	uiInfo.serverStatus.numPlayersOnServers    = 0;
+	uiInfo.serverStatus.numHumansOnServers     = 0;
 	// mark all servers as visible so we store ping updates for them
 	trap_LAN_MarkServerVisible(ui_netSource.integer, -1, qtrue);
 	// reset all the pings

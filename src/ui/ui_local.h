@@ -489,6 +489,7 @@ typedef struct serverStatus_s
 	int numIncompatibleServers;
 	int numInvalidServers;
 	int numPlayersOnServers;
+	int numHumansOnServers;
 	int nextDisplayRefresh;
 	qhandle_t currentServerPreview;
 	int currentServerCinematic;
