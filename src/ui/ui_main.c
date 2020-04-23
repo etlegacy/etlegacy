@@ -6172,7 +6172,7 @@ static void UI_BinaryServerInsertion(int num)
  */
 static void UI_BuildServerDisplayList(int force)
 {
-	int        i, count, clients, humans, maxClients, ping, game, len, friendlyFire, maxlives, punkbuster, antilag, password, weaponrestricted, balancedteams;
+	int        i, count, total, clients, humans, maxClients, ping, game, len, friendlyFire, maxlives, punkbuster, antilag, password, weaponrestricted, balancedteams;
 	char       info[MAX_STRING_CHARS];
 	static int numinvisible;
 
@@ -6201,12 +6201,15 @@ static void UI_BuildServerDisplayList(int force)
 		uiInfo.serverStatus.motdWidth = -1;
 	}
 
+	uiInfo.serverStatus.numInvalidServers = 0;
+
 	if (force == 1)
 	{
 		numinvisible = 0;
 		// clear number of displayed servers
-		uiInfo.serverStatus.numDisplayServers   = 0;
-		uiInfo.serverStatus.numPlayersOnServers = 0;
+		uiInfo.serverStatus.numIncompatibleServers = 0;
+		uiInfo.serverStatus.numDisplayServers      = 0;
+		uiInfo.serverStatus.numPlayersOnServers    = 0;
 		// set list box index to zero
 		Menu_SetFeederSelection(NULL, FEEDER_SERVERS, 0, NULL);
 		// mark all servers as visible so we store ping updates for them
@@ -6215,13 +6218,15 @@ static void UI_BuildServerDisplayList(int force)
 
 	// get the server count (comes from the master)
 	count = trap_LAN_GetServerCount(ui_netSource.integer);
+
 	if (count == -1 || (ui_netSource.integer == AS_LOCAL && count == 0))
 	{
 		// still waiting on a response from the master
-		uiInfo.serverStatus.numDisplayServers    = 0;
-		uiInfo.serverStatus.numPlayersOnServers  = 0;
-		uiInfo.serverStatus.nextDisplayRefresh   = uiInfo.uiDC.realTime + 500;
-		uiInfo.serverStatus.currentServerPreview = 0;
+		uiInfo.serverStatus.numIncompatibleServers = 0;
+		uiInfo.serverStatus.numDisplayServers      = 0;
+		uiInfo.serverStatus.numPlayersOnServers    = 0;
+		uiInfo.serverStatus.nextDisplayRefresh     = uiInfo.uiDC.realTime + 500;
+		uiInfo.serverStatus.currentServerPreview   = 0;
 		return;
 	}
 
@@ -6244,15 +6249,34 @@ static void UI_BuildServerDisplayList(int force)
 		{
 			trap_LAN_GetServerInfo(ui_netSource.integer, i, info, MAX_STRING_CHARS);
 
-			clients                                  = atoi(Info_ValueForKey(info, "clients"));
-			maxClients                               = atoi(Info_ValueForKey(info, "sv_maxclients"));
-			uiInfo.serverStatus.numPlayersOnServers += clients;
-
 			// drop obvious phony servers
+			maxClients = atoi(Info_ValueForKey(info, "sv_maxclients"));
 			if (maxClients > MAX_CLIENTS && !(ui_serverBrowserSettings.integer & UI_BROWSER_ALLOW_MAX_CLIENTS))
 			{
+				uiInfo.serverStatus.numIncompatibleServers++;
 				trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
 				continue;
+			}
+
+			// don't show PunkBuster servers for ET: Legacy
+			punkbuster = atoi(Info_ValueForKey(info, "punkbuster"));
+			if (punkbuster)
+			{
+				uiInfo.serverStatus.numIncompatibleServers++;
+				trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
+				continue;
+			}
+
+			// don't show ETPro servers for ET: Legacy :/
+			{
+				const char *gamename = Info_ValueForKey(info, "game");
+
+				if (Q_stricmp(gamename, "etpro") == 0)
+				{
+					uiInfo.serverStatus.numIncompatibleServers++;
+					trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
+					continue;
+				}
 			}
 
 			trap_Cvar_Update(&ui_browserShowEmptyOrFull);
@@ -6310,14 +6334,6 @@ static void UI_BuildServerDisplayList(int force)
 					trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
 					continue;
 				}
-			}
-
-			// don't show PunkBuster servers for ET: Legacy
-			punkbuster = atoi(Info_ValueForKey(info, "punkbuster"));
-			if (punkbuster)
-			{
-				trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
-				continue;
 			}
 
 			trap_Cvar_Update(&ui_browserShowAntilag);
@@ -6539,16 +6555,9 @@ static void UI_BuildServerDisplayList(int force)
 				}
 			}
 
-			// ET: Legacy doesn't display etpro servers :/
-			{
-				const char *gamename = Info_ValueForKey(info, "game");
-
-				if (Q_stricmp(gamename, "etpro") == 0)
-				{
-					trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
-					continue;
-				}
-			}
+			// player count after removing incompatible/filtered out servers
+			clients                                  = atoi(Info_ValueForKey(info, "clients"));
+			uiInfo.serverStatus.numPlayersOnServers += clients;
 
 			// make sure we never add a favorite server twice
 			if (ui_netSource.integer == AS_FAVORITES)
@@ -6571,6 +6580,7 @@ static void UI_BuildServerDisplayList(int force)
 			}
 
 			UI_BinaryServerInsertion(i);
+
 			// done with this server
 			if (ping > /*=*/ 0)
 			{
@@ -6578,20 +6588,28 @@ static void UI_BuildServerDisplayList(int force)
 				numinvisible++;
 			}
 		}
+		else
+		{
+			// invalid data
+			uiInfo.serverStatus.numInvalidServers++;
+		}
 	}
 
 	uiInfo.serverStatus.refreshtime = uiInfo.uiDC.realTime;
 
+	// Adjust server count
+	total = count - uiInfo.serverStatus.numInvalidServers - uiInfo.serverStatus.numIncompatibleServers;
+
 	// Set the filter text
-	if (count > 0)
+	if (total > 0)
 	{
 		if (numinvisible > 0)
 		{
-			DC->setCVar("ui_tmp_ServersFiltered", va(trap_TranslateString("Filtered/Total: %03i/%03i"), numinvisible, count));
+			DC->setCVar("ui_tmp_ServersFiltered", va(trap_TranslateString("Filtered/Total: %03i/%03i"), numinvisible, total));
 		}
 		else
 		{
-			DC->setCVar("ui_tmp_ServersFiltered", va(trap_TranslateString("^3Check your filters - no servers found!              ^9Filtered/Total: ^3%03i^9/%03i"), numinvisible, count));
+			DC->setCVar("ui_tmp_ServersFiltered", va(trap_TranslateString("^3Check your filters - no servers found!              ^9Filtered/Total: ^3%03i^9/%03i"), numinvisible, total));
 		}
 	}
 	else
@@ -8931,7 +8949,7 @@ void UI_UpdateCvars(void)
  */
 static void UI_StopServerRefresh(void)
 {
-	int count;
+	int count, total;
 
 	if (!uiInfo.serverStatus.refreshActive)
 	{
@@ -8939,15 +8957,33 @@ static void UI_StopServerRefresh(void)
 		return;
 	}
 	uiInfo.serverStatus.refreshActive = qfalse;
-	Com_Printf(trap_TranslateString("%d servers listed in browser with %d players.\n"),
+
+	// invalid data
+	//if (uiInfo.serverStatus.numInvalidServers > 0)
+	//{
+	//	Com_Printf(trap_TranslateString("^9%d^7 servers not listed (invalid data)\n"),
+	//	           uiInfo.serverStatus.numInvalidServers);
+	//}
+
+	if (uiInfo.serverStatus.numIncompatibleServers > 0)
+	{
+		Com_Printf(trap_TranslateString("^1%d^7 servers not listed (incompatible or fake)\n"),
+		           uiInfo.serverStatus.numIncompatibleServers);
+	}
+
+	count = trap_LAN_GetServerCount(ui_netSource.integer);
+
+	// adjust count for invalid data
+	total = count - uiInfo.serverStatus.numInvalidServers - uiInfo.serverStatus.numIncompatibleServers - uiInfo.serverStatus.numDisplayServers;
+
+	if (total > 0)
+	{
+		Com_Printf(trap_TranslateString("^3%d^7 servers not listed (filtered out by browser settings)\n"), total);
+	}
+
+	Com_Printf(trap_TranslateString("^2%d^7 servers listed with ^3%d^7 players\n"),
 	           uiInfo.serverStatus.numDisplayServers,
 	           uiInfo.serverStatus.numPlayersOnServers);
-	count = trap_LAN_GetServerCount(ui_netSource.integer);
-	if (count - uiInfo.serverStatus.numDisplayServers > 0)
-	{
-		Com_Printf(trap_TranslateString("%d servers not listed (filtered out by game browser settings)\n"),
-		           count - uiInfo.serverStatus.numDisplayServers);
-	}
 }
 
 /**
@@ -9027,8 +9063,9 @@ static void UI_StartServerRefresh(qboolean full)
 	uiInfo.serverStatus.refreshActive      = qtrue;
 	uiInfo.serverStatus.nextDisplayRefresh = uiInfo.uiDC.realTime + 1000;
 	// clear number of displayed servers
-	uiInfo.serverStatus.numDisplayServers   = 0;
-	uiInfo.serverStatus.numPlayersOnServers = 0;
+	uiInfo.serverStatus.numIncompatibleServers = 0;
+	uiInfo.serverStatus.numDisplayServers      = 0;
+	uiInfo.serverStatus.numPlayersOnServers    = 0;
 	// mark all servers as visible so we store ping updates for them
 	trap_LAN_MarkServerVisible(ui_netSource.integer, -1, qtrue);
 	// reset all the pings
