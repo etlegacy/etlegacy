@@ -1166,7 +1166,14 @@ void G_BounceItem(gentity_t *ent, trace_t *trace)
 				VectorMA(trace->endpos, -64.f, trace->plane.normal, end);
 				VectorMA(trace->endpos, 1.f, trace->plane.normal, start);
 
-				trap_Trace(&tr, start, NULL, NULL, end, ent->s.number, MASK_SOLID);
+				if (ent->s.eType == ET_CORPSE)
+				{
+					trap_TraceCapsule(&tr, start, NULL, NULL, end, ent->s.number, MASK_SOLID);
+				}
+				else
+				{
+					trap_Trace(&tr, start, NULL, NULL, end, ent->s.number, MASK_SOLID);
+				}
 
 				if (!tr.startsolid)
 				{
@@ -1286,7 +1293,15 @@ void G_RunItem(gentity_t *ent)
 
 		VectorCopy(ent->r.currentOrigin, newOrigin);
 		newOrigin[2] -= 4;
-		trap_Trace(&tr, ent->r.currentOrigin, ent->r.mins, ent->r.maxs, newOrigin, ent->s.number, mask);
+
+		if (ent->s.eType == ET_CORPSE)
+		{
+			trap_TraceCapsule(&tr, ent->r.currentOrigin, ent->r.mins, ent->r.maxs, newOrigin, ent->s.number, mask);
+		}
+		else
+		{
+			trap_Trace(&tr, ent->r.currentOrigin, ent->r.mins, ent->r.maxs, newOrigin, ent->s.number, mask);
+		}
 
 		if (tr.fraction == 1.f && !tr.startsolid)
 		{
@@ -1310,8 +1325,16 @@ void G_RunItem(gentity_t *ent)
 	BG_EvaluateTrajectory(&ent->s.pos, level.time, origin, qfalse, ent->s.effect2Time);
 
 	// trace a line from the previous position to the current position
-	trap_Trace(&tr, ent->r.currentOrigin, ent->r.mins, ent->r.maxs, origin,
-	           ent->r.ownerNum, mask);
+	if (ent->s.eType == ET_CORPSE)
+	{
+		trap_TraceCapsule(&tr, ent->r.currentOrigin, ent->r.mins, ent->r.maxs, origin,
+		                  ent->r.ownerNum, mask);
+	}
+	else
+	{
+		trap_Trace(&tr, ent->r.currentOrigin, ent->r.mins, ent->r.maxs, origin,
+		           ent->r.ownerNum, mask);
+	}
 
 	if (ent->isProp && ent->takedamage)
 	{

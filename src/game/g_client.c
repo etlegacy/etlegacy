@@ -426,7 +426,7 @@ static void G_StepSlideCorpse(gentity_t *ent, vec3_t newOrigin)
 		VectorCopy(ent->s.pos.trBase, down);
 		down[2] -= 16;
 		// item code is using these
-		trap_Trace(&trace, ent->s.pos.trBase, ent->r.mins, ent->r.maxs, down, ent->s.number, MASK_PLAYERSOLID);
+		trap_TraceCapsule(&trace, ent->s.pos.trBase, ent->r.mins, ent->r.maxs, down, ent->s.number, MASK_PLAYERSOLID);
 		if (trace.fraction == 1.f)
 		{
 			// begin with falling again
@@ -490,7 +490,7 @@ static void G_StepSlideCorpse(gentity_t *ent, vec3_t newOrigin)
 	{
 		down[2] -= 16;
 		// item code is using these
-		trap_Trace(&trace, ent->s.pos.trBase, ent->r.mins, ent->r.maxs, down, ent->s.number, MASK_PLAYERSOLID);
+		trap_TraceCapsule(&trace, ent->s.pos.trBase, ent->r.mins, ent->r.maxs, down, ent->s.number, MASK_PLAYERSOLID);
 		if (trace.fraction == 1.f)
 		{
 			// begin with falling again
@@ -626,7 +626,7 @@ void CopyToBodyQue(gentity_t *ent)
 
 		body->r.currentOrigin[0] = origin[0] - offset[0];
 		body->r.currentOrigin[1] = origin[1] - offset[1];
-		body->r.currentOrigin[2] = origin[2];
+		body->r.currentOrigin[2] = origin[2] + 1;           // make sure it is off ground
 
 		// ok set it und Fertig!
 		VectorCopy(body->r.currentOrigin, body->s.pos.trBase);
