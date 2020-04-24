@@ -75,6 +75,8 @@ weaponDef
 		
 		firstPerson {
 			model			"models/multiplayer/m1_garand/v_m1_garand.md3"
+			axisskin	"models/multiplayer/m1_garand/m1_garand_axis.skin"
+			alliedskin	"models/multiplayer/m1_garand/m1_garand_allied.skin"
 			flashModel		"models/multiplayer/m1_garand/v_m1_garand_flash.mdc"
 
 			// weapon building
@@ -94,6 +96,8 @@ weaponDef
 				part 2
 				{
 					tag		"tag_barrel3"
+					axisskin	"models/multiplayer/m1_garand/m1_garand_axis.skin"
+					alliedskin	"models/multiplayer/m1_garand/m1_garand_allied.skin"
 					model	"models/multiplayer/m1_garand/v_m1_garand_barrel3.md3"
 				}
 				part 3
@@ -104,6 +108,8 @@ weaponDef
 				part 4
 				{
 					tag		"tag_barrel5"
+					axisskin	"models/multiplayer/m1_garand/m1_garand_axis.skin"
+					alliedskin	"models/multiplayer/m1_garand/m1_garand_allied.skin"
 					model	"models/multiplayer/m1_garand/v_m1_garand_barrel5.md3"
 				}
 				//part 5
