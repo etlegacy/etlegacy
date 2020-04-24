@@ -1,0 +1,13 @@
+allied_sign,models/mapobjects/radios_sd/allied_sign
+crate,models/mapobjects/radios_sd/crate1
+command1a,models/mapobjects/radios_sd/command1a
+command2a,models/mapobjects/radios_sd/command2
+command3a,models/mapobjects/radios_sd/command3
+command4a,models/mapobjects/radios_sd/command4
+command5a,models/mapobjects/radios_sd/command5
+command6a,models/mapobjects/radios_sd/command6
+command7a,models/mapobjects/radios_sd/command7
+grid,models/mapobjects/radios_sd/grid
+circle_broken,models/mapobjects/radios_sd/screen_broken
+screen_circle,models/mapobjects/radios_sd/screen_circle_fx
+screen_broken,models/mapobjects/radios_sd/screen_broken

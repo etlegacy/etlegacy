@@ -1,0 +1,7 @@
+tools,models/mapobjects/cmarker/c_shovel
+crate01,models/mapobjects/cmarker/c_box
+crate02,models/mapobjects/cmarker/c_box
+crate03,models/mapobjects/cmarker/c_box
+crateside01,models/mapobjects/cmarker/c_box_axis
+crateside02,models/mapobjects/cmarker/c_box_axis
+crateside03,models/mapobjects/cmarker/c_box_axis

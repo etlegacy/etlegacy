@@ -1,0 +1,8 @@
+md3_back,		"models/players/temperate/axis/fieldops/acc/backpack.md3"
+md3_hat,		"models/players/temperate/axis/helmet.md3"
+md3_rank,		"models/players/temperate/common/rank_helmet.md3"
+
+l_legs,			"models/players/temperate/axis/legs01.tga"
+u_body,			"models/players/temperate/axis/fieldops/body_fieldops.tga"
+u_rthand,		"models/players/temperate/axis/fieldops/body_fieldops.tga"
+u_lfthand,		"models/players/temperate/axis/fieldops/body_fieldops.tga"

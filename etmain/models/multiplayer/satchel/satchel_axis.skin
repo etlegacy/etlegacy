@@ -1,0 +1,7 @@
+Satchel,"models/multiplayer/satchel/satchel_axis"
+lightoff1, "models/multiplayer/satchel/light_ref"
+lightoff2, "models/multiplayer/satchel/light_ref"
+button1, "models/multiplayer/satchel/radio"
+button2, "models/multiplayer/satchel/radio"
+buttonred, "models/multiplayer/satchel/lightred_on"
+buttongreen, "models/multiplayer/satchel/lightgreen_on"
