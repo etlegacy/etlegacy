@@ -5,7 +5,7 @@
 #define WINDOW_X		16
 #define WINDOW_Y		16
 #define WINDOW_WIDTH	608
-#define WINDOW_HEIGHT	456
+#define WINDOW_HEIGHT	448
 #define GROUP_NAME		"grpOptionsCustomiseHud"
 
 // Subwindows //
@@ -53,7 +53,7 @@ menuDef {
 
 // In-Game Display //
 #define DISPLAY_Y 268
-	SUBWINDOW( 6, DISPLAY_Y, (SUBWINDOW_WIDTH_L), 160, _("IN-GAME DISPLAY") )
+	SUBWINDOW( 6, DISPLAY_Y, (SUBWINDOW_WIDTH_L), 148, _("IN-GAME DISPLAY") )
 	YESNO( 8, DISPLAY_Y+16, (SUBWINDOW_WIDTH_L)-4, 10, _("Muzzle Flash:"), .2, 8, "cg_muzzleflash", _("Toggles display of weapon fire (muzzle flash)") )
 	MULTI( 8, DISPLAY_Y+28, (SUBWINDOW_WIDTH_L)-4, 10, _("Ejecting Brass:"), .2, 8, "cg_brassTime", cvarFloatList { "High" 15000 "Med" 2500 "Off" 0 }, _("Sets the duration ejected bullet shells last for") )
 	MULTI( 8, DISPLAY_Y+40, (SUBWINDOW_WIDTH_L)-4, 10, _("Bullet Tracers:"), .2, 8, "cg_tracers", cvarFloatList { "Off" 0 "On" 1 "Only own tracers" 2 "Only others tracers" 3 }, _("Toggles display of bullet tracers") )
@@ -64,13 +64,12 @@ menuDef {
 	MULTI( 8, DISPLAY_Y+88, (SUBWINDOW_WIDTH_L)-4, 10, _("Blood Flash:"), .2, 8, "cg_bloodFlash", cvarFloatList { "None" 0.0 "Light" 0.25 "Medium" 0.5 "Heavy" 0.75 "Full" 1.0 }, _("Red blood \"flash\" scale when receiving damage") )
 	MULTI( 8, DISPLAY_Y+100, (SUBWINDOW_WIDTH_L)-4, 10, _("Blood Splatter:"), .2, 8, "cg_bloodDamageBlend", cvarFloatList { "None" 0.0 "Light" 0.25 "Medium" 0.5 "Heavy" 0.75 "Full" 1.0 }, _("Blood \"splatter\" transparency when taking damage from other players") )
 	YESNO( 8, DISPLAY_Y+112, (SUBWINDOW_WIDTH_L)-4, 10, _("Show Blood:"), .2, 8, "cg_showblood", _("Toggles showing blood spurt effect when players are shot") )
-	YESNO( 8, DISPLAY_Y+124, (SUBWINDOW_WIDTH_L)-4, 10, _("Particles Effects:"), .2, 8, "cg_wolfparticles", _("Toggles display of particle effects (explosions, some smoke effects)") )
-	YESNO( 8, DISPLAY_Y+136, (SUBWINDOW_WIDTH_L)-4, 10, _("Atmospheric Effects:"), .2, 8, "cg_atmosphericEffects", _("Draws atmospheric effects (snow/rain) on-screen") )
-	YESNO( 8, DISPLAY_Y+148, (SUBWINDOW_WIDTH_L)-4, 10, _("Visual Effects:"), .2, 8, "cg_visualEffects", _("Draws additional visual effects (airstrike planes, debris)") )
+	YESNO( 8, DISPLAY_Y+124, (SUBWINDOW_WIDTH_L)-4, 10, _("Atmospheric Effects:"), .2, 8, "cg_atmosphericEffects", _("Draws atmospheric effects (snow/rain) on-screen") )
+	YESNO( 8, DISPLAY_Y+136, (SUBWINDOW_WIDTH_L)-4, 10, _("Visual Effects:"), .2, 8, "cg_visualEffects", _("Draws additional visual effects (airstrike planes, debris)") )
 
 // Crosshair //
 #define CROSSHAIR_Y 32
-	SUBWINDOW( 6+(SUBWINDOW_WIDTH_L)+6, CROSSHAIR_Y, (SUBWINDOW_WIDTH_R), 164, _("CROSSHAIR") )
+	SUBWINDOW( 6+(SUBWINDOW_WIDTH_L)+6, CROSSHAIR_Y, (SUBWINDOW_WIDTH_R), 166, _("CROSSHAIR") )
 	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, CROSSHAIR_Y+16, (SUBWINDOW_WIDTH_R)-4, 10, _("Crosshair Size:"), .2, 8, "cg_crosshairsize", cvarFloatList { "Tiny" 24 "Small" 32 "Medium" 48 "Large" 64 "Huge" 96 }, _("Sets the size of the displayed crosshair") )
 	YESNO( 6+(SUBWINDOW_WIDTH_L)+6+2, CROSSHAIR_Y+28, (SUBWINDOW_WIDTH_R)-4, 10, _("Crosshair Pulsing:"), .2, 8, "cg_crosshairPulse", _("Toggles crosshair spread sizing while moving/firing") )
 	YESNO( 6+(SUBWINDOW_WIDTH_L)+6+2, CROSSHAIR_Y+40, (SUBWINDOW_WIDTH_R)-4, 10, _("Crosshair Health Info:"), .2, 8, "cg_crosshairHealth", _("Colors the crosshair based on current health (overrides crosshair color settings)") )
@@ -106,7 +105,7 @@ menuDef {
 	SLIDER( 6+(SUBWINDOW_WIDTH_L)+6+2, CROSSHAIR_Y+152, (SUBWINDOW_WIDTH_R)-4, 10, _("Secondary Alpha:"), .2, 8, "cg_crosshairAlphaAlt" 1 0 1, _("Set the transparency level for the secondary crosshair") )
 
 // Popup //
-#define POPUP_Y 200
+#define POPUP_Y 204
 	SUBWINDOW( 6+(SUBWINDOW_WIDTH_L)+6, POPUP_Y, (SUBWINDOW_WIDTH_R), 78, _("POPUPS AND BANNER") )
 	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, POPUP_Y+16, (SUBWINDOW_WIDTH_R)-4, 10, _("Filter Messages:"), .2, 8, "cg_popupFilter", cvarFloatList { "None" 0 "Connection" 1 "Pickup" 8 "Death" 16 "Connection, Pickup" 9 "Connection, Death" 17 "Connect, Pickup, Death" 25}, _("Set filter on popup messages") )
 	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, POPUP_Y+28, (SUBWINDOW_WIDTH_R)-4, 10, _("Filter Promotions:"), .2, 8, "cg_popupBigFilter", cvarFloatList { "None" 0 "Skill upgrades" 1 "Rank upgrades" 2 "Prestige upgrades" 4 "Skill + Rank" 3 "Skill + Prestige" 5 "Rank + Prestige" 6 "Skill + Rank + Prestige" 7 }, _("Set filter on popup promotion messages") )
@@ -118,7 +117,7 @@ menuDef {
 	SLIDER( 6+(SUBWINDOW_WIDTH_L)+6+2, POPUP_Y+64, (SUBWINDOW_WIDTH_L)-4, 10, _("Banner Time:"), .2, 8, "cg_bannerTime" 2500 0 10000, _("Set the time a banner stays visible") )
 
 // Fonts //
-#define FONTS_Y 282
+#define FONTS_Y 288
 	SUBWINDOW( 6+(SUBWINDOW_WIDTH_L)+6, FONTS_Y, (SUBWINDOW_WIDTH_R), 78, _("FONTS") )
 	MULTIACTION( 6+(SUBWINDOW_WIDTH_L)+6+2, FONTS_Y+16, (SUBWINDOW_WIDTH_R)-4, 10, _("Fonts Size:"), .2, 8, "cg_fontScale", cvarFloatList { "Tiny" 2 "Small" 1 "Normal" 0 }, uiScript SetFontScale, _("Sets the size of the in-game fonts") )
 	CVARFLOATLABEL( 6+(SUBWINDOW_WIDTH_L)+6+2, FONTS_Y+28, (SUBWINDOW_WIDTH_L)-6, 10, "cg_fontScaleTP", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-4), 8 )
@@ -131,8 +130,8 @@ menuDef {
 	SLIDER( 6+(SUBWINDOW_WIDTH_L)+6+2, FONTS_Y+64, (SUBWINDOW_WIDTH_L)-4, 10, _("Crosshair Name:"), .2, 8, "cg_fontScaleCN" 0.15 0 0.5, _("Set font size for Crosshair Name label") )
 
 // Geolocation //
-#define GEOLOCATION_Y 364
-	SUBWINDOW( 6+(SUBWINDOW_WIDTH_L)+6, GEOLOCATION_Y, (SUBWINDOW_WIDTH_R), 40, _("GEOLOCATION") )
+#define GEOLOCATION_Y 372
+	SUBWINDOW( 6+(SUBWINDOW_WIDTH_L)+6, GEOLOCATION_Y, (SUBWINDOW_WIDTH_R), 42, _("GEOLOCATION") )
 	YESNO( 6+(SUBWINDOW_WIDTH_L)+6+2, GEOLOCATION_Y+16, (SUBWINDOW_WIDTH_R)-4, 10, _("Country Flags:"), .2, 8, "cg_countryflags", _("Displays players country flags in score board") )
 	YESNO( 6+(SUBWINDOW_WIDTH_L)+6+2, GEOLOCATION_Y+28, (SUBWINDOW_WIDTH_R)-4, 10, _("Share Location:"), .2, 8, "cg_allowGeoIP", _("Displays your own location in score board") )
 

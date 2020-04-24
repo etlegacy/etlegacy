@@ -196,9 +196,6 @@ vmCvar_t cg_autoactivate;
 vmCvar_t pmove_fixed;
 vmCvar_t pmove_msec;
 
-// particle switch
-vmCvar_t cg_wolfparticles;
-
 vmCvar_t cg_gameType;
 vmCvar_t cg_bloodTime;
 vmCvar_t cg_skybox;
@@ -460,8 +457,6 @@ static cvarTable_t cvarTable[] =
 	{ &cg_synchronousClients,     "g_synchronousClients",      "0",           CVAR_SYSTEMINFO | CVAR_CHEAT, 0 }, // communicated by systeminfo
 #endif // ALLOW_GSYNC
 
-	// Rafael - particle switch
-	{ &cg_wolfparticles,          "cg_wolfparticles",          "1",           CVAR_ARCHIVE,                 0 },
 	{ &cg_gameType,               "g_gametype",                "0",           0,                            0 }, // communicated by systeminfo
 	{ &cg_bluelimbotime,          "",                          "30000",       0,                            0 }, // communicated by systeminfo
 	{ &cg_redlimbotime,           "",                          "30000",       0,                            0 }, // communicated by systeminfo

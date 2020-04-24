@@ -886,11 +886,6 @@ void CG_AddParticleToScene(cparticle_t *p, vec3_t org, float alpha)
 		break;
 	}
 
-	if (!cg_wolfparticles.integer)
-	{
-		return;
-	}
-
 	if (!p->pshader)
 	{
 		CG_Printf("CG_AddParticleToScene type %d p->pshader == ZERO\n", p->type);

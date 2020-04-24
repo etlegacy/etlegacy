@@ -8799,7 +8799,6 @@ static cvarTable_t cvarTable[] =
 	{ NULL,                             "cg_crosshairAlpha",                   "1.0",                        CVAR_ARCHIVE,                   0 },
 	{ NULL,                             "cg_crosshairColorAlt",                "White",                      CVAR_ARCHIVE,                   0 },
 	{ NULL,                             "cg_coronafardist",                    "1536",                       CVAR_ARCHIVE,                   0 },
-	{ NULL,                             "cg_wolfparticles",                    "1",                          CVAR_ARCHIVE,                   0 },
 	{ NULL,                             "g_password",                          "none",                       CVAR_USERINFO,                  0 },
 	{ NULL,                             "g_antilag",                           "1",                          CVAR_SERVERINFO | CVAR_ARCHIVE, 0 },
 	{ NULL,                             "g_warmup",                            "60",                         CVAR_ARCHIVE,                   0 },

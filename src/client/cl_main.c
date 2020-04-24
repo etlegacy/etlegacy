@@ -2834,9 +2834,6 @@ void CL_Init(void)
 	// disabled autoswitch by default
 	Cvar_Get("cg_autoswitch", "0", CVAR_ARCHIVE);
 
-	// particle switch
-	Cvar_Get("cg_wolfparticles", "1", CVAR_ARCHIVE);
-
 	cl_conXOffset = Cvar_Get("cl_conXOffset", "0", 0);
 
 	cl_serverStatusResendTime = Cvar_Get("cl_serverStatusResendTime", "750", 0);

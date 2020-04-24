@@ -2508,9 +2508,6 @@ extern vmCvar_t cg_timescale;
 
 extern vmCvar_t cg_voiceSpriteTime;
 
-// particle switch
-extern vmCvar_t cg_wolfparticles;
-
 extern vmCvar_t cg_gameType;
 extern vmCvar_t cg_bloodTime;
 extern vmCvar_t cg_skybox;
