@@ -362,7 +362,7 @@ qboolean G_SendScore_Add(gentity_t *ent, int i, char *buf, int bufsize)
 		int j;
 
 		if ((g_gametype.integer == GT_WOLF_CAMPAIGN && g_xpSaver.integer) ||
-			(g_gametype.integer == GT_WOLF_CAMPAIGN && (g_campaigns[level.currentCampaign].current != 0 && !level.newCampaign)) ||
+		    (g_gametype.integer == GT_WOLF_CAMPAIGN && (g_campaigns[level.currentCampaign].current != 0 && !level.newCampaign)) ||
 		    (g_gametype.integer == GT_WOLF_LMS && g_currentRound.integer != 0))
 		{
 			for (j = SK_BATTLE_SENSE; j < SK_NUM_SKILLS; j++)
@@ -799,12 +799,21 @@ void Cmd_Give_f(gentity_t *ent)
 		// modified
 		if (amount)
 		{
-			ent->health += amount;
+			if (amount > 0)
+			{
+				ent->health += amount;
+			}
+			else
+			{
+				// health amount could be negative and deal damage
+				G_Damage(ent, ent, ent, NULL, NULL, -amount, DAMAGE_NO_PROTECTION, MOD_UNKNOWN);
+			}
 		}
 		else
 		{
 			ent->health = ent->client->ps.stats[STAT_MAX_HEALTH];
 		}
+
 		if (!give_all)
 		{
 			return;
