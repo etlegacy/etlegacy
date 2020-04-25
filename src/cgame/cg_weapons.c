@@ -2760,22 +2760,17 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 
 				if (drawpart)
 				{
-					if ((ps->persistant[PERS_TEAM] == TEAM_AXIS ||
-					     (ps->persistant[PERS_TEAM] == TEAM_ALLIES && (cent->currentState.powerups & (1 << PW_OPS_DISGUISED)))) &&
-					    weapon->partModels[modelViewType][i].skin[TEAM_AXIS])
+					if (team == TEAM_AXIS && weapon->partModels[modelViewType][i].skin[TEAM_AXIS])
 					{
 						barrel.customSkin = weapon->partModels[modelViewType][i].skin[TEAM_AXIS];
 					}
-					else if ((ps->persistant[PERS_TEAM] == TEAM_ALLIES ||
-					          (ps->persistant[PERS_TEAM] == TEAM_AXIS && (cent->currentState.powerups & (1 << PW_OPS_DISGUISED)))) &&
-					         weapon->partModels[modelViewType][i].skin[TEAM_ALLIES])
+					else if (team == TEAM_ALLIES && weapon->partModels[modelViewType][i].skin[TEAM_ALLIES])
 					{
 						barrel.customSkin = weapon->partModels[modelViewType][i].skin[TEAM_ALLIES];
 					}
 					else
 					{
 						barrel.customSkin = weapon->partModels[modelViewType][i].skin[0];  // if not loaded it's 0 so doesn't do any harm
-
 					}
 
 					if (weaponNum == WP_MEDIC_SYRINGE && i == W_PART_1)
