@@ -31,7 +31,7 @@ menuDef {
 		group		GROUP_NAME
 		rect		0 0 WINDOW_WIDTH WINDOW_HEIGHT
 		style		WINDOW_STYLE_FILLED
-		backcolor	0 0 0 1
+		backcolor	0 0 0 .8
 		border		WINDOW_BORDER_FULL
 		bordercolor	.5 .5 .5 .5
 		visible		1
@@ -75,14 +75,16 @@ menuDef {
 		decoration
 	}
 
-// Credits Sections //
-#define CREDITS_Y	104
+	LABELWHITE( 6, 106, WINDOW_WIDTH-12, 10, "Continuing Wolfenstein: Enemy Territory's legacy", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-12), 8 )
+
+// Credits Section //
+#define CREDITS_Y	64
 
 	itemDef {
-		name		"headerProgramming"
+		name		"headerContributors"
 		group		GROUP_NAME
-		rect		6 $evalfloat(CREDITS_Y) $evalfloat(WINDOW_WIDTH-12) 12
-		text		_("^1THE TEAM")
+		rect		6 $evalfloat(CREDITS_Y+70) $evalfloat(WINDOW_WIDTH-12) 12
+		text		_("^1THE TEAM ^7/ ^1CONTRIBUTORS ^7/ ^1HELPING HANDS")
 		textfont	UI_FONT_ARIBLK_16
 		textstyle	ITEM_TEXTSTYLE_SHADOWED
 		textscale	.19
@@ -94,37 +96,13 @@ menuDef {
 		decoration
 	}
 
-	LABELWHITE( 6, CREDITS_Y+12, .5*(WINDOW_WIDTH-24), 10, "Arnaud 'Aranud' Marty", .2, ITEM_ALIGN_RIGHT, .5*(WINDOW_WIDTH-24), 8 )
-	LABELWHITE( 6+.5*(WINDOW_WIDTH-24)+12, CREDITS_Y+12, .5*(WINDOW_WIDTH-24), 10, _("Almighty Developer"), .2, ITEM_ALIGN_LEFT, 0, 8 )
-	LABELWHITE( 6, CREDITS_Y+24, .5*(WINDOW_WIDTH-24), 10, "Olaf 'IR4T4' R.", .2, ITEM_ALIGN_RIGHT, .5*(WINDOW_WIDTH-24), 8 )
-	LABELWHITE( 6+.5*(WINDOW_WIDTH-24)+12, CREDITS_Y+24, .5*(WINDOW_WIDTH-24), 10, _("Almighty Developer"), .2, ITEM_ALIGN_LEFT, 0, 8 )
-	LABELWHITE( 6, CREDITS_Y+36, .5*(WINDOW_WIDTH-24), 10, "Jere 'Jacker' S.", .2, ITEM_ALIGN_RIGHT, .5*(WINDOW_WIDTH-24), 8 )
-	LABELWHITE( 6+.5*(WINDOW_WIDTH-24)+12, CREDITS_Y+36, .5*(WINDOW_WIDTH-24), 10, _("Almighty Developer"), .2, ITEM_ALIGN_LEFT, 0, 8 )
-	LABELWHITE( 6, CREDITS_Y+48, .5*(WINDOW_WIDTH-24), 10, "Cedric 'Kemon' E.", .2, ITEM_ALIGN_RIGHT, .5*(WINDOW_WIDTH-24), 8 )
-	LABELWHITE( 6+.5*(WINDOW_WIDTH-24)+12, CREDITS_Y+48, .5*(WINDOW_WIDTH-24), 10, _("2D artist & Marketing"), .2, ITEM_ALIGN_LEFT, 0, 8 )
-	LABELWHITE( 6, CREDITS_Y+60, .5*(WINDOW_WIDTH-24), 10, "Konrad 'morsik' Moson", .2, ITEM_ALIGN_RIGHT, .5*(WINDOW_WIDTH-24), 8 )
-	LABELWHITE( 6+.5*(WINDOW_WIDTH-24)+12, CREDITS_Y+60, .5*(WINDOW_WIDTH-24), 10, _("Infrastructure management"), .2, ITEM_ALIGN_LEFT, 0, 8 )
-	LABELWHITE( 6, CREDITS_Y+72, .5*(WINDOW_WIDTH-24), 10, "Jan 'Radegast' Simek", .2, ITEM_ALIGN_RIGHT, .5*(WINDOW_WIDTH-24), 8 )
-	LABELWHITE( 6+.5*(WINDOW_WIDTH-24)+12, CREDITS_Y+72, .5*(WINDOW_WIDTH-24), 10, _("Project founder, semi-retired"), .2, ITEM_ALIGN_LEFT, 0, 8 )
-	LABELWHITE( 6, CREDITS_Y+84, .5*(WINDOW_WIDTH-24), 10, "Rafal 'RaFal' Pawlak", .2, ITEM_ALIGN_RIGHT, .5*(WINDOW_WIDTH-24), 8 )
-	LABELWHITE( 6+.5*(WINDOW_WIDTH-24)+12, CREDITS_Y+84, .5*(WINDOW_WIDTH-24), 10, _("Almighty Developer"), .2, ITEM_ALIGN_LEFT, 0, 8 )
-	LABELWHITE( 6, CREDITS_Y+96, .5*(WINDOW_WIDTH-24), 10, "Sauli 'Saukko' V.", .2, ITEM_ALIGN_RIGHT, .5*(WINDOW_WIDTH-24), 8 )
-	LABELWHITE( 6+.5*(WINDOW_WIDTH-24)+12, CREDITS_Y+96, .5*(WINDOW_WIDTH-24), 10, _("Quality Assurance"), .2, ITEM_ALIGN_LEFT, 0, 8 )
-	LABELWHITE( 6, CREDITS_Y+108, .5*(WINDOW_WIDTH-24), 10, "Remy 'Spyhawk' M.", .2, ITEM_ALIGN_RIGHT, .5*(WINDOW_WIDTH-24), 8 )
-	LABELWHITE( 6+.5*(WINDOW_WIDTH-24)+12, CREDITS_Y+108, .5*(WINDOW_WIDTH-24), 10, _("Almighty Developer"), .2, ITEM_ALIGN_LEFT, 0, 8 )
-	LABELWHITE( 6, CREDITS_Y+120, .5*(WINDOW_WIDTH-24), 10, "Are 'Thunder' Kristiansen", .2, ITEM_ALIGN_RIGHT, .5*(WINDOW_WIDTH-24), 8 )
-	LABELWHITE( 6+.5*(WINDOW_WIDTH-24)+12, CREDITS_Y+120, .5*(WINDOW_WIDTH-24), 10, _("3D artist & Shaders"), .2, ITEM_ALIGN_LEFT, 0, 8 )
-	LABELWHITE( 6, CREDITS_Y+132, .5*(WINDOW_WIDTH-24), 10, "Timo 'Timothy' S.", .2, ITEM_ALIGN_RIGHT, .5*(WINDOW_WIDTH-24), 8 )
-	LABELWHITE( 6+.5*(WINDOW_WIDTH-24)+12, CREDITS_Y+132, .5*(WINDOW_WIDTH-24), 10, _("Administration Suite"), .2, ITEM_ALIGN_LEFT, 0, 8 )
-	LABELWHITE( 6, CREDITS_Y+144, .5*(WINDOW_WIDTH-24), 10, "'WuTangH'", .2, ITEM_ALIGN_RIGHT, .5*(WINDOW_WIDTH-24), 8 )
-    LABELWHITE( 6+.5*(WINDOW_WIDTH-24)+12, CREDITS_Y+144, .5*(WINDOW_WIDTH-24), 10, _("3D artist"), .2, ITEM_ALIGN_LEFT, 0, 8 )
+	LABELWHITE( 6, CREDITS_Y+86, WINDOW_WIDTH-12, 10, _("See HALL OF FAME below"), .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-12), 8 )
 
-// Contributors //
 	itemDef {
-		name		"headerContributors"
+		name		"headerGreetings"
 		group		GROUP_NAME
-		rect		6 $evalfloat(CREDITS_Y+170) $evalfloat(WINDOW_WIDTH-12) 12
-		text		_("^1CONTRIBUTORS")
+		rect		6 $evalfloat(CREDITS_Y+112) $evalfloat(WINDOW_WIDTH-12) 12
+		text		_("^1GREETINGS")
 		textfont	UI_FONT_ARIBLK_16
 		textstyle	ITEM_TEXTSTYLE_SHADOWED
 		textscale	.19
@@ -136,12 +114,12 @@ menuDef {
 		decoration
 	}
 
-	LABELWHITE( 6, CREDITS_Y+186, WINDOW_WIDTH-12, 10, _("See HALL OF FAME below"), .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-12), 8 )
+	LABELWHITE( 6, CREDITS_Y+128, WINDOW_WIDTH-12, 10, "ETPro Team - ETPub Team - ioQuake3 - ioWolfET - Jaymod Team\nNoQuarter Team - Omni-Bot Team - Q3MME Team - QtZ Team - Raedwulf-ET\nRTCW COOP Team - Unvanquished Team - Xreal Team - and more!", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-12), 8 )
 
 	itemDef {
-		name		"headerContributors"
+		name		"headerJoin"
 		group		GROUP_NAME
-		rect		6 $evalfloat(CREDITS_Y+212) $evalfloat(WINDOW_WIDTH-12) 12
+		rect		6 $evalfloat(CREDITS_Y+176) $evalfloat(WINDOW_WIDTH-12) 12
 		text		_("^1JOIN US")
 		textfont	UI_FONT_ARIBLK_16
 		textstyle	ITEM_TEXTSTYLE_SHADOWED
@@ -154,7 +132,90 @@ menuDef {
 		decoration
 	}
 
-	LABELWHITE( 6, CREDITS_Y+228, WINDOW_WIDTH-12, 10, "ET: Legacy is a collaborative effort done in an open, transparent\nand friendly manner. Anyone is welcome to join our efforts!", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-12), 8 )
+	LABELWHITE( 6, CREDITS_Y+192, WINDOW_WIDTH-12, 10, "ET: Legacy is a collaborative effort done in an open, transparent\nand friendly manner. Anyone is welcome to join our efforts!", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-12), 8 )
+
+// Community buttons
+	itemDef {
+		name		"logo_etlegacy"
+		rect		$evalfloat(.15*(WINDOW_WIDTH-48)-1) $evalfloat(320-1) 48 48
+		style		WINDOW_STYLE_SHADER
+		background	"ui/assets/logo_etlegacy"
+		forecolor	1 1 1 1
+		visible		1
+		decoration
+	}
+
+	itemDef {
+		name		"headerNews"
+		group		GROUP_NAME
+		rect		6 294 $evalfloat(WINDOW_WIDTH-12) 12
+		text		_("^1NEWS")
+		textfont	UI_FONT_ARIBLK_16
+		textstyle	ITEM_TEXTSTYLE_SHADOWED
+		textscale	.19
+		textalign	ITEM_ALIGN_CENTER
+		textalignx	$evalfloat(.175*(WINDOW_WIDTH-12))
+		textaligny	10
+		forecolor	1 1 1 1
+		visible		1
+		decoration
+	}
+
+	itemDef {
+		name		"logo_discord"
+		rect		$evalfloat(.5*(WINDOW_WIDTH-48)-1) $evalfloat(320-1) 48 48
+		style		WINDOW_STYLE_SHADER
+		background	"ui/assets/logo_discord"
+		forecolor	1 1 1 1
+		visible		1
+		decoration
+	}
+
+	itemDef {
+		name		"headerChat"
+		group		GROUP_NAME
+		rect		6 294 $evalfloat(WINDOW_WIDTH-12) 12
+		text		_("^1CHAT")
+		textfont	UI_FONT_ARIBLK_16
+		textstyle	ITEM_TEXTSTYLE_SHADOWED
+		textscale	.19
+		textalign	ITEM_ALIGN_CENTER
+		textalignx	$evalfloat(.5*(WINDOW_WIDTH-12))
+		textaligny	10
+		forecolor	1 1 1 1
+		visible		1
+		decoration
+	}
+
+	itemDef {
+		name		"logo_github"
+		rect		$evalfloat(.85*(WINDOW_WIDTH-48)-1) $evalfloat(320-1) 48 48
+		style		WINDOW_STYLE_SHADER
+		background	"ui/assets/logo_github"
+		forecolor	1 1 1 1
+		visible		1
+		decoration
+	}
+
+	itemDef {
+		name		"headerDevelopment"
+		group		GROUP_NAME
+		rect		6 294 $evalfloat(WINDOW_WIDTH-12) 12
+		text		_("^1DEVELOPMENT")
+		textfont	UI_FONT_ARIBLK_16
+		textstyle	ITEM_TEXTSTYLE_SHADOWED
+		textscale	.19
+		textalign	ITEM_ALIGN_CENTER
+		textalignx	$evalfloat(.825*(WINDOW_WIDTH-12))
+		textaligny	10
+		forecolor	1 1 1 1
+		visible		1
+		decoration
+	}
+
+	BUTTON( .1125*(WINDOW_WIDTH - 100), 388, 100, 18, _("WEBSITE"), .3, 14, clearFocus ; open etlegacy_website )
+	BUTTON( .5*(WINDOW_WIDTH - 100), 388, 100, 18, _("DISCORD"), .3, 14, clearFocus ; open etlegacy_discord )
+	BUTTON( .8875*(WINDOW_WIDTH - 100), 388, 100, 18, _("GITHUB"), .3, 14, clearFocus ; open etlegacy_github )
 
 // Buttons //
 #ifdef FUI
@@ -162,6 +223,6 @@ menuDef {
 #else
 	BUTTON( 6, WINDOW_HEIGHT - 24, .33 * (WINDOW_WIDTH - 24), 18, _("BACK"), .3, 14, close credits_etlegacy ; open ingame_main )
 #endif
-	BUTTON( 6 + .33 * (WINDOW_WIDTH - 24) + 6, WINDOW_HEIGHT - 24, .34 * (WINDOW_WIDTH - 24), 18, _("HALL OF FAME"), .3, 14, close credits_etlegacy ; open credits_halloffame )
+	BUTTON( 6 + .33 * (WINDOW_WIDTH - 24) + 6, WINDOW_HEIGHT - 24, .34 * (WINDOW_WIDTH - 24), 18, _("HALL OF FAME"), .3, 14, clearFocus ; open etlegacy_halloffame )
 	BUTTON( 6 + .33 * (WINDOW_WIDTH - 24) + 6 + .34 * (WINDOW_WIDTH - 24) + 6, WINDOW_HEIGHT - 24, .33 * (WINDOW_WIDTH - 24), 18, "SPLASH DAMAGE", .3, 14, close credits_etlegacy ; open credits_splashdamage )
 }

@@ -54,7 +54,7 @@ menuDef {
 	}
 
 // Window //
-	WINDOW( _("PLAY ONLINE"), 146 )
+	WINDOW( _("PLAY"), 146 )
 
 // Subwindows //
 	#define SUBWINDOW_WIDTH		WINDOW_WIDTH-12

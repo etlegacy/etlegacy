@@ -7,7 +7,7 @@
 #define WINDOW_WIDTH	__WINDOW_WIDTH-32
 #define WINDOW_HEIGHT	448
 #define MENU_WIDTH		128
-#define MENU_HEIGHT		248
+#define MENU_HEIGHT		224
 #define GROUP_NAME		"grpMain"
 
 // Opener //
@@ -104,15 +104,14 @@ menuDef {
 	CVARLABEL( 6+((MENU_WIDTH-12)/2), 18, MENU_WIDTH-12, 10, "cl_profile", .2, ITEM_ALIGN_CENTER, 0, 8 )
 
 // Buttons //
-	BUTTON( 6, 32, MENU_WIDTH-12, 18, _("PLAY ONLINE"), .3, 14, close main ; /*close backgroundmusic ; open backgroundmusic_server ;*/ uiScript UpdateFilter ; uiScript ServerSort 2 ; open playonline )
-	BUTTON( 6, 56, MENU_WIDTH-12, 18, _("HOST GAME"), .3, 14, close main ; /*close backgroundmusic ; open backgroundmusic_server ;*/ uiScript loadArenas ; uiScript initHostGameFeatures ; open hostgame )
-	BUTTON( 6, 80, MENU_WIDTH-12, 18, _("REPLAYS"), .3, 14, close main ; open viewreplay )
+	BUTTON( 6, 32, MENU_WIDTH-12, 18, _("PLAY"), .3, 14, close main ; /*close backgroundmusic ; open backgroundmusic_server ;*/ uiScript UpdateFilter ; uiScript ServerSort 2 ; open playonline )
+	BUTTON( 6, 56, MENU_WIDTH-12, 18, _("HOST"), .3, 14, close main ; /*close backgroundmusic ; open backgroundmusic_server ;*/ uiScript loadArenas ; uiScript initHostGameFeatures ; open hostgame )
+	BUTTON( 6, 80, MENU_WIDTH-12, 18, _("WATCH"), .3, 14, close main ; open viewreplay )
 	BUTTON( 6, 104, MENU_WIDTH-12, 18, _("OPTIONS"), .3, 14, close main ; open options )
 	BUTTON( 6, 128, MENU_WIDTH-12, 18, _("PROFILE"), .3, 14, close main ; open profile )
 	BUTTON( 6, 152, MENU_WIDTH-12, 18, _("MODS"), .3, 14, close main ; open mods )
 	BUTTON( 6, 176, MENU_WIDTH-12, 18, _("CREDITS"), .3, 14, close main ; open credits_etlegacy )
-	BUTTON( 6, 200, MENU_WIDTH-12, 18, _("WEBSITE"), .3, 14, clearFocus ; open website_etlegacy )
-	BUTTON( 6, 224, MENU_WIDTH-12, 18, _("EXIT GAME"), .3, 14, clearFocus ; open quit )
+	BUTTON( 6, 200, MENU_WIDTH-12, 18, _("EXIT"), .3, 14, clearFocus ; open quit )
 
 // Vanilla client warning //
 #ifndef LEGACY

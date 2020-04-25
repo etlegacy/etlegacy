@@ -13,7 +13,7 @@
 // WWW Confirmation Menu //
 menuDef
 {
-	name "website_etlegacy"
+	name "etlegacy_website"
 	visible		0
 	fullscreen	0
 	rect		WINDOW_X WINDOW_Y WINDOW_WIDTH WINDOW_HEIGHT
@@ -32,12 +32,7 @@ menuDef
 
 	onESC
 	{
-		close website_etlegacy ;
-#ifdef FUI
-		open main
-#else
-		open ingame_main
-#endif
+		close etlegacy_website ; open credits_etlegacy
 	}
 
 // Background //
@@ -58,11 +53,7 @@ menuDef
 #define SUBWINDOW_Y .5 * (WINDOW_HEIGHT - SUBWINDOW_HEIGHT)
 
 	SUBWINDOWBLACK( SUBWINDOW_X, SUBWINDOW_Y, SUBWINDOW_WIDTH, SUBWINDOW_HEIGHT, _("WEBSITE") )
-	LABEL( SUBWINDOW_X+2, SUBWINDOW_Y+16, (SUBWINDOW_WIDTH)-8, 10, _("Do you want to open\n www.etlegacy.com ?"), .2, ITEM_ALIGN_CENTER, .5*((SUBWINDOW_WIDTH)-4), 8 )
-	BUTTON( SUBWINDOW_X+6, SUBWINDOW_Y+SUBWINDOW_HEIGHT-24, .5*(SUBWINDOW_WIDTH-18), 18, _("YES"), .3, 14, close website_etlegacy ; uiScript validate_openURL )
-#ifdef FUI
-	BUTTON( SUBWINDOW_X+6+.5*(SUBWINDOW_WIDTH-18)+6, SUBWINDOW_Y+SUBWINDOW_HEIGHT-24, .5*(SUBWINDOW_WIDTH-18), 18, _("NO"), .3, 14, close website_etlegacy ; open main )
-#else
-	BUTTON( SUBWINDOW_X+6+.5*(SUBWINDOW_WIDTH-18)+6, SUBWINDOW_Y+SUBWINDOW_HEIGHT-24, .5*(SUBWINDOW_WIDTH-18), 18, _("NO"), .3, 14, close website_etlegacy ; open ingame_main )
-#endif // FUI
+	LABEL( SUBWINDOW_X+2, SUBWINDOW_Y+16, (SUBWINDOW_WIDTH)-8, 10, _("Minimize and open\n www.etlegacy.com?"), .2, ITEM_ALIGN_CENTER, .5*((SUBWINDOW_WIDTH)-4), 8 )
+	BUTTON( SUBWINDOW_X+6, SUBWINDOW_Y+SUBWINDOW_HEIGHT-24, .5*(SUBWINDOW_WIDTH-18), 18, _("YES"), .3, 14, close etlegacy_website ; uiScript validate_openURL )
+	BUTTON( SUBWINDOW_X+6+.5*(SUBWINDOW_WIDTH-18)+6, SUBWINDOW_Y+SUBWINDOW_HEIGHT-24, .5*(SUBWINDOW_WIDTH-18), 18, _("NO"), .3, 14, close etlegacy_website ; open credits_etlegacy )
 }

@@ -31,7 +31,7 @@ menuDef {
 		group		GROUP_NAME
 		rect		0 0 WINDOW_WIDTH WINDOW_HEIGHT
 		style		WINDOW_STYLE_FILLED
-		backcolor	0 0 0 1
+		backcolor	0 0 0 .8
 		border		WINDOW_BORDER_FULL
 		bordercolor	.5 .5 .5 .5
 		visible		1

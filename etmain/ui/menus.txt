@@ -31,13 +31,15 @@
 	loadMenu { "ui/options_system.menu" }
 	loadMenu { "ui/options_system_gamma.menu" }
 	loadMenu { "ui/credits_etlegacy.menu" }
-	loadMenu { "ui/credits_halloffame.menu" }
 	loadMenu { "ui/credits_splashdamage.menu" }
 	loadMenu { "ui/credits_idsoftware.menu" }
 	loadMenu { "ui/credits_activision.menu" }
 	loadMenu { "ui/credits_additional.menu" }
 	loadMenu { "ui/credits_et260.menu" }
-	loadMenu { "ui/website_etlegacy.menu" }
+	loadMenu { "ui/etlegacy_halloffame.menu" }
+	loadMenu { "ui/etlegacy_website.menu" }
+	loadMenu { "ui/etlegacy_discord.menu" }
+	loadMenu { "ui/etlegacy_github.menu" }
 	loadMenu { "ui/credits_quit.menu" }
 	loadMenu { "ui/quit.menu" }
 

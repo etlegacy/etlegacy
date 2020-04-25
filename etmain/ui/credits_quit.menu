@@ -27,7 +27,7 @@ menuDef {
 		group		GROUP_NAME
 		rect		0 0 WINDOW_WIDTH WINDOW_HEIGHT
 		style		WINDOW_STYLE_FILLED
-		backcolor	0 0 0 1
+		backcolor	0 0 0 .8
 		border		WINDOW_BORDER_FULL
 		bordercolor	.5 .5 .5 .5
 		visible		1
@@ -47,7 +47,7 @@ menuDef {
 
 	itemDef {
 		name		"logo"
-		rect		$evalfloat(.5*(WINDOW_WIDTH-200)-1) $evalfloat(56-1) 200 100
+		rect		$evalfloat(.5*(WINDOW_WIDTH-200)-1) $evalfloat(36-1) 200 100
 		style		WINDOW_STYLE_SHADER
 		background	"ui/assets/etl_logo"
 		forecolor	1 1 1 1
@@ -58,7 +58,7 @@ menuDef {
 	itemDef {
 		name		"headerLogo"
 		group		GROUP_NAME
-		rect		6 152 $evalfloat(WINDOW_WIDTH-12) 16
+		rect		6 132 $evalfloat(WINDOW_WIDTH-12) 16
 		text		_("DEVELOPED BY ET: LEGACY TEAM")
 		textfont	UI_FONT_ARIBLK_16
 		textstyle	ITEM_TEXTSTYLE_SHADOWED
@@ -71,10 +71,10 @@ menuDef {
 		decoration
 	}
 
+	LABELWHITE( 6, 158, WINDOW_WIDTH-12, 10, "Continuing Wolfenstein: Enemy Territory's legacy", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-12), 8 )
+
 // Credits Sections //
 #define CREDITS_Y	108
-
-	//LABELWHITE( 6, CREDITS_Y+72, .5*(WINDOW_WIDTH-24), 10, "Let's keep ET alive!", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
 
 // Original Developers //
 	itemDef {

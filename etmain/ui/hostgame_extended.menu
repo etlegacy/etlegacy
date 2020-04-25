@@ -22,7 +22,7 @@ menuDef {
 	}
 
 // Window //
-	WINDOW( _("HOST GAME: EXTENDED"), 90)
+	WINDOW( _("HOST: EXTENDED"), 90)
 
 // Subwindows //
 #define SUBWINDOW_WIDTH		.5*(WINDOW_WIDTH-18)
