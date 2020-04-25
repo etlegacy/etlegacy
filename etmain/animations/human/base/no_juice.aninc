@@ -1,0 +1,11 @@
+		// <animation name>	<first frame> <length> <looping> <fps> <move speed> <transition> <reversed>
+
+		e_no_juice	0	30	0	15	0	0	0
+
+		// <animation name>	<first frame>
+		//			     <length>
+		//			     	    <looping>
+		//			     	    	       <fps> 
+		//			     	    	       	   <move speed> 
+		//			     	    	       	           <transition>
+		//			     	    	       	                    <reversed>

@@ -1,0 +1,9 @@
+		// <animation name>	<first frame> <length> <looping> <fps> <move speed> <transition> <reversed>
+
+		e_prone_pistols_switch	0	6	0	24	0	0	0
+		e_prone_pistols_idle    6	1	1	24	0	0	0
+		e_prone_pistols_fire	6	3	0	15	0	0	0
+		e_prone_pistols_fire2	10	3	0	15	0	0	0
+		e_prone_pistols_reload	15	50	0	18	0	0	0		
+		
+		

@@ -1,0 +1,4 @@
+		// <animation name>	<first frame> <length> <looping> <fps> <move speed> <transition> <reversed>
+
+		e_swim_2h			0	30	30	20	0	0	0
+		e_swim_1h			31	33	33	20	0	0	0

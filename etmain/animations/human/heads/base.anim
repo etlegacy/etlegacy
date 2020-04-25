@@ -1,0 +1,38 @@
+///////////////////////
+//
+// Base head anim
+//
+///////////////////////
+
+// config file for head hud animations
+
+//    first     length      fps      looping
+//     /      ___/          /         /
+//    /      /       ______/         /
+//   /      /       /       ________/
+//  /      /   	   /   	   /
+// /   	  /   	  /   	  /
+///   	 /   	 /   	 /
+//   	/   	/   	/
+
+148	40	8	40 // HD_IDLE1	(small eye movements, played all the time)
+63	5	10	0  // HD_IDLE2  (big blink)
+68	13	10	0  // HD_IDLE3	(look to his left)
+5	46	10	41 // HD_IDLE4	(large head movements)
+80	27	10	0  // HD_IDLE5  (look up)
+107	25	10	0  // HD_IDLE6  (look left and right with little head movements)
+131	18	5	0  // HD_IDLE7	(look right)
+178	2	10	0  // HD_IDLE8  (blink)
+203	50	10	50 // HD_DAMAGED_IDLE1  (head idle in pain, played all the time)
+253	75	10	0  // HD_DAMAGED_IDLE2	(not quite dead) 
+238	37	10	0  // HD_DAMAGED_IDLE3  (no hope left)
+68	13	10	0  // HD_LEFT
+131	18	10	0  // HD_RIGHT
+51	9	30	2  // HD_ATTACK
+59	6	20	0  // HD_ATTACK_END
+191	7	15	0  // HD_PAIN 1
+384	10	15	0  // HD_PAIN 2
+364	20	15	0  // SMILE (looks shit)
+
+
+

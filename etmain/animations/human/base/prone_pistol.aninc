@@ -1,0 +1,16 @@
+		// <animation name>	<first frame> <length> <looping> <fps> <move speed> <transition> <reversed>
+
+		e_prone_pistol_switch	0	11	0	24	0	0	0
+		e_prone_pistol_idle     11	1	1	24	0	0	0
+		e_prone_pistol_fire	11	4	0	15	0	0	0
+		e_prone_pistol_reload	15	51	0	18	0	0	0
+		e_prone_pistol_attach	69	28	0	18	0	0	0
+		e_prone_pistol_detach	69	28	0	18	0	0	1
+		
+		// <animation name>	<first frame>
+		//			     <length>
+		//			     	    <looping>
+		//			     	    	       <fps> 
+		//			     	    	       	   <move speed> 
+		//			     	    	       	           <transition>
+		//			     	    	       	                    <reversed>

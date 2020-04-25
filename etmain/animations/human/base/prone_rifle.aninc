@@ -1,0 +1,21 @@
+		// <animation name>	<first frame> <length> <looping> <fps> <move speed> <transition> <reversed>
+
+		e_prone_rifle_switch	0	10	0	24	0	0	0
+		e_prone_rifle_idle      107	1	1	24	0	0	0
+		e_prone_rifle_altidle   57	1	1	24	0	0	0
+		e_prone_rifle_fire	12	4	0	15	0	0	0
+		e_prone_rifle_reload	16	38	0	16	0	0	0
+		e_prone_rifle_attach	65	39	0	19	0	0	0
+		e_prone_rifle_altfire	107	3	0	24	0	0	0
+		e_prone_rifle_detach	65	39	0	19	0	0	1
+		e_prone_rifle_snipe	54	7	0	18	0	0	0
+		e_prone_rifle_snipefire	58	3	0	18	0	0	0
+		e_prone_rifle_snipeidle	57	1	0	18	0	0	0
+		
+		// <animation name>	<first frame>
+		//			     <length>
+		//			     	    <looping>
+		//			     	    	       <fps> 
+		//			     	    	       	   <move speed> 
+		//			     	    	       	           <transition>
+		//			     	    	       	                    <reversed>
