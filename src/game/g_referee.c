@@ -450,9 +450,9 @@ void G_refSpeclockTeams_cmd(gentity_t *ent, qboolean fLock)
 {
 	char *status;
 
-	// Ensure proper locking
-	G_updateSpecLock(TEAM_AXIS, (TeamCount(-1, TEAM_AXIS)) ? fLock : qfalse);
-	G_updateSpecLock(TEAM_ALLIES, (TeamCount(-1, TEAM_ALLIES)) ? fLock : qfalse);
+	// Both teams are spec locked
+	G_updateSpecLock(TEAM_AXIS, fLock);
+	G_updateSpecLock(TEAM_ALLIES, fLock);
 
 	status = va("Referee has ^3SPECTATOR %sLOCKED^7 teams", ((fLock) ? "" : "UN"));
 
