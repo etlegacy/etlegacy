@@ -95,6 +95,8 @@ weaponDef
 				part 3
 				{
 					tag		"tag_barrel4"
+					axisskin	"models/weapons2/silencer/silencer_axis.skin"
+					alliedskin	"models/weapons2/silencer/silencer_allied.skin"
 					model	"models/weapons2/silencer/v_silencer_barrel4.mdc"
 				}
 				part 4
@@ -105,6 +107,8 @@ weaponDef
 				part 5
 				{
 					tag		"tag_barrel6"
+					axisskin	"models/weapons2/silencer/silencer_axis.skin"
+					alliedskin	"models/weapons2/silencer/silencer_allied.skin"
 					model	"models/weapons2/silencer/v_silencer_barrel6.mdc"
 				}
 			}
