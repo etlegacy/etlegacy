@@ -1399,6 +1399,8 @@ void CL_PlayDemo_f(void)
 
 	CL_Disconnect(qtrue);
 
+	Cvar_Set("cl_autorecord", "0");
+
 	// open the demo file
 	arg = Cmd_Argv(1);
 	// check for an extension .DEMOEXT_?? (?? is protocol)
