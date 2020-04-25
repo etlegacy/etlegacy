@@ -1919,7 +1919,7 @@ void G_verifyMatchState(team_t nTeam)
 				teamInfo[nTeam].team_lock = qfalse;
 			}
 
-			G_teamReset(nTeam, qtrue);
+			G_teamReset(nTeam, qfalse);
 		}
 	}
 
@@ -1940,7 +1940,7 @@ qboolean G_teamJoinCheck(team_t nTeam, gentity_t *ent)
 	// Sanity check
 	if (cnt == 0)
 	{
-		G_teamReset(nTeam, qtrue);
+		G_teamReset(nTeam, qfalse);
 		teamInfo[nTeam].team_lock = qfalse;
 	}
 
@@ -2121,18 +2121,6 @@ qboolean G_allowFollow(gentity_t *ent, int nTeam)
 		    ent->client->sess.sessionTeam != nTeam)
 		{
 			return qfalse;
-		}
-	}
-
-	if (level.time - level.startTime > 2500)
-	{
-		if (TeamCount(-1, TEAM_AXIS) == 0)
-		{
-			teamInfo[TEAM_AXIS].spec_lock = qfalse;
-		}
-		if (TeamCount(-1, TEAM_ALLIES) == 0)
-		{
-			teamInfo[TEAM_ALLIES].spec_lock = qfalse;
 		}
 	}
 
