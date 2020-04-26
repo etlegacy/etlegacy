@@ -1,0 +1,10 @@
+// Set scenario information
+wm_mapdescription axis "The Allies and Axis are put face to face in the Crimea. They fight for the total control of the 80cm L/40.6 'Dora' railway gun, it's an all-or-nothing battle." 
+wm_mapdescription allied "The Allies and Axis are put face to face in the Crimea. They fight for the total control of the 80cm L/40.6 'Dora' railway gun, it's an all-or-nothing battle."
+wm_mapdescription neutral "The Allies and Axis are put face to face in the Crimea. They fight for the total control of the 80cm L/40.6 'Dora' railway gun, it's an all-or-nothing battle."
+
+// Axis Objective Descriptions
+wm_objective_axis_desc	1	"Primary Objective:**Eliminate the Allied force."
+
+// Allied Objective Descriptions
+wm_objective_allied_desc	1	"Primary Objective:**Eliminate the Axis force."

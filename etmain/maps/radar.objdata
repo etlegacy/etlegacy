@@ -1,0 +1,18 @@
+// scenario information
+wm_mapdescription	axis	"We are currently perfecting the new Würzburg 62A radar at your installation. Protect the prototypes from any Allied attempts at sabotage or theft."
+wm_mapdescription	allied	"We need to examine the new Würzburg radar: blast your way into the installation, steal the components and escape by truck." 
+wm_mapdescription	neutral	"The Allies are attempting to steal components of the new Axis Würzburg 62A radar for technical analysis. The Axis must guard their two prototype radars and prevent the Allies from escaping with any stolen parts."
+
+// Axis Objective Descriptions
+wm_objective_axis_desc	1	"Primary Objective:**Defend the Radar Installation's Main and Side Doors."
+wm_objective_axis_desc	2	"Primary Objective:**Prevent both Radar Circuit Boards from being stolen."
+wm_objective_axis_desc	3	"Secondary Objective:**Defend the Forward Bunker from the Allies."
+wm_objective_axis_desc	4	"Secondary Objective:**Build a Command Post in the Side Bunker."
+wm_objective_axis_desc	5	"Secondary Objective:**Stop the Allies from constructing a Command Post in the Side Bunker."
+
+// Allied Objective Descriptions
+wm_objective_allied_desc	1	"Primary Objective:**Dynamite the Radar Installation Doors."
+wm_objective_allied_desc	2	"Primary Objective:**Steal both of the Würzburg Radar Circuit Boards."
+wm_objective_allied_desc	3	"Secondary Objective:**Capture the Forward Bunker from the Axis."
+wm_objective_allied_desc	4	"Secondary Objective:**Stop the Axis from constructing a Command Post in the Side Bunker."
+wm_objective_allied_desc	5	"Secondary Objective:**Build a Command Post in the Side Bunker."

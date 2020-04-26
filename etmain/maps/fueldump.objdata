@@ -1,0 +1,22 @@
+// Set scenario information
+wm_mapdescription axis "Protect your fuel depot from attack: demolish any Allied assault bridges and immobilize their armoured vehicles with Panzerfausts or grenades."
+wm_mapdescription allied "Escort a Churchill AVRE demolition tank to destroy an armored Axis fuel depot. Construct and reinforce a bridge, protect and repair the Churchill and smash your way through to victory."
+wm_mapdescription neutral "The Allies are attacking an Axis fuel depot and must escort their Churchill AVRE Demolition Tank as it blasts through the defences. The Axis can disable and delay the Tank with Panzerfausts, grenades, mines or explosives."
+
+// Axis Objective Descriptions
+wm_objective_axis_desc	1	"Primary Objective:**Prevent the Allies from constructing and reinforcing a Bridge over the frozen river."
+wm_objective_axis_desc	2	"Primary Objective:**Prevent the Allied Tank from destroying the Tunnel Doors."
+wm_objective_axis_desc	3	"Primary Objective:**Disable the Allied Tank before it can blow open the Depot Gates."
+wm_objective_axis_desc	4	"Primary Objective:**Defend the Depot Fuel Dump."
+wm_objective_axis_desc	5	"Secondary Objective:**Defend the damaged Side Wall."
+wm_objective_axis_desc	6	"Secondary Objective:**Build your Command Post for improved charge times."
+wm_objective_axis_desc	7	"Secondary Objective:**Stop the Allies from constructing a Command Post."
+
+// Allied Objective Descriptions
+wm_objective_allied_desc	1	"Primary Objective:**Construct and reinforce a Bridge over the frozen river."
+wm_objective_allied_desc	2	"Primary Objective:**Escort the Tank over the Bridge to destroy the Tunnel Doors."
+wm_objective_allied_desc	3	"Primary Objective:**Cover the Tank as it destroys the Axis Depot Gates."
+wm_objective_allied_desc	4	"Primary Objective:**Dynamite the Axis Fuel Dump."
+wm_objective_allied_desc	5	"Secondary Objective:**Escort the Tank to destroy the Side Wall to the rear of the Depot."
+wm_objective_allied_desc	6	"Secondary Objective:**Stop the Axis from constructing a Command Post."
+wm_objective_allied_desc	7	"Secondary Objective:**Build a Command Post for faster charge times."

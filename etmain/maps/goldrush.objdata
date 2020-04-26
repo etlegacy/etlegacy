@@ -1,0 +1,22 @@
+// Set scenario information
+wm_mapdescription allied "Millions of dollars worth of Axis gold lie in a bank in Tobruk: liberate it. Enter under cover of darkness, steal a Jagdpanther, blow open the bank and make your escape."
+wm_mapdescription axis "Gold bars worth millions of Reichsmarks lie in the Tobruk Central Bank. Guard the bank closely and ensure that the Allies cannot steal any getaway vehicles."
+wm_mapdescription neutral "The Axis are guarding a hoard of gold in the Tobruk Central Bank. The Allies must steal an Axis Jagdpanther to blow the bank open, steal the gold bars and drive them to safety in a Truck."
+
+// Axis Objective Descriptions
+wm_objective_axis_desc	1	"Primary Objective:**Stop the Allies from stealing the Tank from the Axis Tank Depot."
+wm_objective_axis_desc	2	"Primary Objective:**Disable or obstruct the Allied-held Tank to prevent it reaching the Bank Courtyard."
+wm_objective_axis_desc	3	"Primary Objective:**Prevent the Allies from using the Tank to blow open the Bank Doors."
+wm_objective_axis_desc	4	"Primary Objective:**Stop the Allies from stealing the Gold from the Bank Vault."
+wm_objective_axis_desc	5	"Primary Objective:**Stop the Allies from escaping with the Gold via a Truck in the Courtyard."
+wm_objective_axis_desc	6	"Secondary Objective:**Prevent the Allies from establishing a Command Post inside the Tank Depot."
+wm_objective_axis_desc	7	"Secondary Objective:**Set up a Command Post inside the Tank Depot."
+
+// Allied Objective Descriptions
+wm_objective_allied_desc	1	"Primary Objective:**Steal a Tank from the Axis Tank Depot."
+wm_objective_allied_desc	2	"Primary Objective:**Protect the Tank and escort it to the Bank Courtyard, clearing any obstructions along the route."
+wm_objective_allied_desc	3	"Primary Objective:**Escort the Tank into position to blow the Bank Doors open."
+wm_objective_allied_desc	4	"Primary Objective:**Steal two crates of Gold from the Bank Vault."
+wm_objective_allied_desc	5	"Primary Objective:**Escape with the crates of Gold using the Truck in the Courtyard."
+wm_objective_allied_desc	6	"Secondary Objective:**Establish a Command Post inside the Tank Depot"
+wm_objective_allied_desc	7	"Secondary Objective:**Prevent the Axis from fortifying their position with a Command Post inside the Tank Depot."

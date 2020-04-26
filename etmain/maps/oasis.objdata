@@ -1,0 +1,24 @@
+// Set scenario information
+wm_mapdescription axis "Protect the 75mm anti-tank guns in the Oasis garrison at all costs. Beware of attacks through the Old City or the flooded cave system to your rear."
+wm_mapdescription allied "Destroy the Axis 75mm anti-tank guns in the Oasis garrison. Infiltrate the position: Either over the rooftops of the Old City or repair pumps, drain the flooded caves and attack through them."
+wm_mapdescription neutral "The Allies must infiltrate the Axis Oasis garrison to destroy two anti-tank guns: either through the Old City or a flooded cave system. The Axis must protect their anti-tank guns and repel the Allied raiders."
+
+// Axis Objective Descriptions
+wm_objective_axis_desc	1	"Primary Objective:**Protect the North Pak 75mm Gun in the Axis Garrison."
+wm_objective_axis_desc	2	"Primary Objective:**Protect the South Pak 75mm Gun in the Axis Garrison."
+wm_objective_axis_desc	3	"Primary Objective:**Defend the Old City Wall from being breached."
+wm_objective_axis_desc	4	"Secondary Objective:**Defend the Old City."
+wm_objective_axis_desc	5	"Secondary Objective:**Keep the Caves between the Oasis and the Old City flooded by preventing the repair of the Oasis Water Pump."
+wm_objective_axis_desc	6	"Secondary Objective:**Keep the Caves between the Old City and the Axis Garrison flooded by preventing the repair of the Old City Water Pump."
+wm_objective_axis_desc	7	"Secondary Objective:**Prevent the Allies from establishing a Command Post at the Oasis."
+wm_objective_axis_desc	8	"Secondary Objective:**Set up a Command Post inside the Upper Garrison."
+
+// Allied Objective Descriptions
+wm_objective_allied_desc	1	"Primary Objective:**Destroy the North Pak 75mm Gun in the Axis Garrison."
+wm_objective_allied_desc	2	"Primary Objective:**Destroy the South Pak 75mm Gun in the Axis Garrison."
+wm_objective_allied_desc	3	"Primary Objective:**Breach the Old City Wall."
+wm_objective_allied_desc	4	"Secondary Objective:**Capture the Old City."
+wm_objective_allied_desc	5	"Secondary Objective:**Repair the Oasis Water Pump and drain the water out of the Caves leading to the Old City."
+wm_objective_allied_desc	6	"Secondary Objective:**Repair the Old City Water Pump and drain the water out of the Caves leading to the Axis Garrison."
+wm_objective_allied_desc	7	"Secondary Objective:**Establish a forward Command Post at the Oasis."
+wm_objective_allied_desc	8	"Secondary Objective:**Prevent the Axis from fortifying their position with a Command Post in the Upper Garrison."

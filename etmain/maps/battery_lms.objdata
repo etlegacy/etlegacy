@@ -1,0 +1,10 @@
+// Set scenario information
+wm_mapdescription axis "A giant lurks on the coast of North Africa. Built into the very living rock of the Tunisian coastline, the Siegfried battery dominates the Southern Mediterranean. Siegfried's colossal 15 inch gun is terrorizing Allied shipping and protects Sicily from all Allied attempts at invasion. Here in North Africa, the Allies and Axis are put face to face, it's a fight to the death."
+wm_mapdescription allied "A giant lurks on the coast of North Africa. Built into the very living rock of the Tunisian coastline, the Siegfried battery dominates the Southern Mediterranean. Siegfried's colossal 15 inch gun is terrorizing Allied shipping and protects Sicily from all Allied attempts at invasion. Here in North Africa, the Allies and Axis are put face to face, it's a fight to the death."
+wm_mapdescription neutral "A giant lurks on the coast of North Africa. Built into the very living rock of the Tunisian coastline, the Siegfried battery dominates the Southern Mediterranean. Siegfried's colossal 15 inch gun is terrorizing Allied shipping and protects Sicily from all Allied attempts at invasion. Here in North Africa, the Allies and Axis are put face to face, it's a fight to the death."
+
+// Axis Objective Descriptions
+wm_objective_axis_desc	1	"Primary Objective:**Eliminate the Allied force."
+
+// Allied Objective Descriptions
+wm_objective_allied_desc	1	"Primary Objective:**Eliminate the Axis force."

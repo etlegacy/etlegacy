@@ -1,0 +1,24 @@
+// Set scenario information
+wm_mapdescription axis "Our 80cm L/40.6 Dora railway gun will force the Allies into retreat. Get the Ammo to the gun, protect the firing controls, fire the gun and win!"
+wm_mapdescription allied "Prevent the firing of this enormous railway gun, codenamed Dora, either by preventing the movement of ammunition or destroying the gun's firing controls. The Axis must not fire Dora!"
+wm_mapdescription neutral "The Allies must prevent the Axis from loading and firing Dora, a colossal railway gun. The Axis must transport and load Dora's ammunition, protect her firing controls and fire her to win."
+
+// Axis Objective Descriptions
+wm_objective_axis_desc	1	"Primary Objective:**Drive the Ammo Tug to the Depot and load the Ammo onto it."
+wm_objective_axis_desc	2	"Primary Objective:**Transport the Ammo to the North Crane."
+wm_objective_axis_desc	3	"Primary Objective:**Transfer the Ammo to the Gun Tug."
+wm_objective_axis_desc	4	"Primary Objective:**Drive the Ammo to the Rail Gun."
+wm_objective_axis_desc	5	"Primary Objective:**Fire the Rail Gun."
+wm_objective_axis_desc	6	"Secondary Objective:**Capture the Depot Yard Building."
+wm_objective_axis_desc	7	"Secondary Objective:**Prevent the Allies from establishing a Command Post inside the Central Bunker."
+wm_objective_axis_desc	8	"Secondary Objective:**Set up a Command Post inside the Central Bunker."
+
+// Allied Objective Descriptions
+wm_objective_allied_desc	1	"Primary Objective:**Prevent the Axis from loading the Ammo onto the Ammo Tug."
+wm_objective_allied_desc	2	"Primary Objective:**Delay the transport of the Ammo to the North Crane."
+wm_objective_allied_desc	3	"Primary Objective:**Prevent the Axis from transferring the Ammo to the Gun Tug."
+wm_objective_allied_desc	4	"Primary Objective:**Delay the transport of the Ammo to the Rail Gun."
+wm_objective_allied_desc	5	"Primary Objective:**Prevent the Axis from firing the Rail Gun."
+wm_objective_allied_desc	6	"Secondary Objective:**Capture the Depot yard Building."
+wm_objective_allied_desc	7	"Secondary Objective:**Establish a Command Post inside the Central Bunker."
+wm_objective_allied_desc	8	"Secondary Objective:**Prevent the Axis from fortifying their position with a Command Post inside the Central Bunker."
