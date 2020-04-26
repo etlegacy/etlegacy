@@ -632,7 +632,7 @@ qboolean mat4_inverse(const mat4_t in, mat4_t out);
 qboolean mat4_inverse_self(mat4_t matrix);
 void mat4_from_angles(mat4_t m, vec_t pitch, vec_t yaw, vec_t roll);
 
-#ifdef SSE2
+#if defined SSE2 && defined _WIN32
 #define SinCos(rad, s, c) { \
 	double radD = rad, SD, CD; \
 	__asm { \
@@ -643,6 +643,13 @@ void mat4_from_angles(mat4_t m, vec_t pitch, vec_t yaw, vec_t roll);
 		__asm fwait \
 	} \
 	s = (float)SD; \
+	c = (float)CD; \
+}
+#elif defined SSE2 && defined __linux__
+#define SinCos(rad, s, c) { \
+	double radD = rad, SD, CD; \
+    __asm__ ("fsincos" : "=t" (CD), "=u" (SD) : "0" (radD)); \
+    s = (float)SD; \
 	c = (float)CD; \
 }
 #else
