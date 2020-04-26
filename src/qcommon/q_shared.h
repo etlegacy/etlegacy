@@ -281,6 +281,11 @@ static ID_INLINE float idSqrt(float x)
 // just waste space and make big arrays static...
 #ifdef __linux__
 
+#ifdef __SSE3__
+#include "pmmintrin.h"
+#define SSE2
+#endif
+
 #ifdef __i386__
 #define CPUSTRING   "linux-i386"
 #elif defined __x86_64__
