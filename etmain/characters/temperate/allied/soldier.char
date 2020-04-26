@@ -1,0 +1,15 @@
+characterDef
+{
+	skin					"soldier"
+
+	mesh					"models/players/temperate/allied/soldier/body.mdm"
+	animationgroup			"animations/human_base.anim"
+	animationscript			"animations/scripts/human_base.script"
+
+	undressedCorpseModel	"models/players/temperate/common/naked.mdm"
+	undressedCorpseSkin		"allied_soldier"
+
+	hudhead					"models/players/hud/head.md3"
+	hudheadanims			"animations/human/heads/base.anim"
+	hudheadskin				"models/players/hud/allied_soldier.skin"
+}

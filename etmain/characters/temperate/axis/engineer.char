@@ -1,0 +1,15 @@
+characterDef
+{
+	skin					"engineer"
+
+	mesh					"models/players/temperate/axis/engineer/body.mdm"
+	animationgroup			"animations/human_base.anim"
+	animationscript			"animations/scripts/human_base.script"
+
+	undressedCorpseModel	"models/players/temperate/common/naked.mdm"
+	undressedCorpseSkin		"axis_engineer"
+
+	hudhead					"models/players/hud/head.md3"
+	hudheadanims			"animations/human/heads/base.anim"
+	hudheadskin				"models/players/hud/axis_engineer.skin"
+}

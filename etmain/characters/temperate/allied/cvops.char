@@ -1,0 +1,15 @@
+characterDef
+{
+	skin					"cvops"
+
+	mesh					"models/players/temperate/allied/cvops/body.mdm"
+	animationgroup			"animations/human_base.anim"
+	animationscript			"animations/scripts/human_base.script"
+
+	undressedCorpseModel	"models/players/temperate/common/naked.mdm"
+	undressedCorpseSkin		"allied_cvops"
+
+	hudhead					"models/players/hud/head.md3"
+	hudheadanims			"animations/human/heads/base.anim"
+	hudheadskin				"models/players/hud/allied_cvops.skin"
+}
