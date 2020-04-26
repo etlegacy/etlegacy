@@ -194,6 +194,11 @@ int Q_vsnprintf(char *str, size_t size, const char *format, va_list args);
 #undef QDECL
 #define QDECL   __cdecl
 
+#if (defined(_MSC_VER) && defined(_M_IX86_FP) && _M_IX86_FP == 2)
+#include "pmmintrin.h"
+#define SSE2
+#endif
+
 /**
  * @def CPUSTRING
  * @brief Platform and architecture string incorporated into the version string.
