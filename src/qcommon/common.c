@@ -3005,7 +3005,7 @@ void Com_Init(char *commandLine)
 	}
 #endif
 
-	com_version = Cvar_Get("version", FAKE_VERSION, CVAR_ROM | CVAR_SERVERINFO);
+	com_version = Cvar_Get("version", ET_VERSION, CVAR_ROM | CVAR_SERVERINFO);
 
 	com_motd       = Cvar_Get("com_motd", "1", 0);
 	com_motdString = Cvar_Get("com_motdString", "", CVAR_ROM);

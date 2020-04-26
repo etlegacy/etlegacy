@@ -1770,6 +1770,21 @@ void G_FindTeams(void)
 }
 
 /**
+ * @brief G_ServerCheck
+ */
+void G_ServerCheck(void)
+{
+	static char versionString[64];
+
+	trap_Cvar_VariableStringBuffer("version", versionString, sizeof(versionString));
+
+	if (!strstr(versionString, PRODUCT_LABEL))
+	{
+		G_Error("Error: %s does not support server version %s\n", GAMEVERSION, versionString);
+	}
+}
+
+/**
  * @brief G_RegisterCvars
  */
 void G_RegisterCvars(void)
@@ -2294,6 +2309,12 @@ void G_InitGame(int levelTime, int randomSeed, int restart, int legacyServer, in
 	char   timeFt[32];
 	char   *logDate;
 
+	// server version check
+	G_ServerCheck();
+
+	// mod version check
+	MOD_CHECK_LEGACY(legacyServer, serverVersion, level.legacyServer);
+
 	G_Printf("------- Game Initialization -------\n");
 	G_Printf("gamename: %s\n", GAMEVERSION);
 	G_Printf("gamedate: %s\n", __DATE__);
@@ -2333,8 +2354,6 @@ void G_InitGame(int levelTime, int randomSeed, int restart, int legacyServer, in
 	{
 		trap_Cvar_Set("gamestate", va("%i", GS_WARMUP));
 	}
-
-	MOD_CHECK_LEGACY(legacyServer, serverVersion, level.legacyServer);
 
 	// set some level globals
 	i = level.server_settings;
