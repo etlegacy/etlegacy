@@ -2,6 +2,9 @@
 # Platform
 #-----------------------------------------------------------------
 
+# Include FindSSE to check for available SSE extensions
+include(cmake/FindSSE.cmake)
+
 # Used to store real system processor when we overwrite CMAKE_SYSTEM_PROCESSOR for cross-compile builds
 set(ETLEGACY_SYSTEM_PROCESSOR ${CMAKE_SYSTEM_PROCESSOR})
 
@@ -15,8 +18,8 @@ if(UNIX AND CROSS_COMPILE32 AND NOT ARM) # 32-bit build
 	set(CMAKE_SYSTEM_PROCESSOR i386)
 	message(STATUS "Forcing ${CMAKE_SYSTEM_PROCESSOR} to cross compile 32bit")
 	set_property(GLOBAL PROPERTY FIND_LIBRARY_USE_LIB64_PATHS OFF)
-	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -m32")
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -m32")
+	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -m32 ${SSE_FLAGS}")
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -m32 ${SSE_FLAGS}")
 	set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -m32")
 	set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -m32")
 	set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} -m32")
@@ -49,17 +52,17 @@ endif(APPLE)
 
 if(UNIX)
 	# optimization/debug flags
-	set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -ffast-math")
+	set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} ${SSE_FLAGS}")
 	if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
 		set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -s")
 		set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -ggdb")
 	elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
 		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D__extern_always_inline=inline")
 	endif()
-	set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -Wall")
+	set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -Wall ${SSE_FLAGS}")
 
-	set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -ffast-math")
-	set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall")
+	set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} ${SSE_FLAGS}")
+	set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall ${SSE_FLAGS}")
 
 	if(CMAKE_SYSTEM MATCHES "OpenBSD*")
 		set(OS_LIBRARIES m pthread)
