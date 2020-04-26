@@ -122,7 +122,7 @@ GOTO:EOF
 	IF /I "!curvar!"=="package" CALL:DOPACKAGE
 	IF /I "!curvar!"=="crust" GOTO:UNCRUSTCODE
 	IF /I "!curvar!"=="project" CALL:OPENPROJECT
-	:: download pak0 - 2 to the homepath if they do not exist
+	:: download assets to the homepath if they do not exist
 	IF /I "!curvar!"=="download" CALL:DOWNLOADPAKS "https://mirror.etlegacy.com/etmain/"
 	IF /I "!curvar!"=="open" explorer !game_basepath!
 	IF /I "!curvar!"=="release" CALL:DORELEASE
@@ -291,12 +291,6 @@ GOTO:EOF
 
 	IF NOT EXIST "!game_homepath!\etmain\pak0.pk3" (
 		bitsadmin /transfer "pak0" %~1pak0.pk3 "!game_homepath!\etmain\pak0.pk3"
-	)
-	IF NOT EXIST "!game_homepath!\etmain\pak1.pk3" (
-		bitsadmin /transfer "pak1" %~1pak1.pk3 "!game_homepath!\etmain\pak1.pk3"
-	)
-	IF NOT EXIST "!game_homepath!\etmain\pak2.pk3" (
-		bitsadmin /transfer "pak2" %~1pak2.pk3 "!game_homepath!\etmain\pak2.pk3"
 	)
 GOTO:EOF
 

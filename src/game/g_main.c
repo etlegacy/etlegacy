@@ -2321,10 +2321,6 @@ void G_InitGame(int levelTime, int randomSeed, int restart, int legacyServer, in
 
 	srand(randomSeed);
 
-	// make sure pak2.pk3 gets referenced on server so pure checks pass
-	trap_FS_FOpenFile("pak2.dat", &i, FS_READ);
-	trap_FS_FCloseFile(i);
-
 	G_RegisterCvars();
 
 	// enforcemaxlives stuff

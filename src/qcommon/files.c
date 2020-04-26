@@ -4730,7 +4730,7 @@ static void FS_CheckRequiredFiles(int checksumFeed)
 			Com_Error(ERR_DROP, "Invalid game folder");
 		}
 
-		Com_Error(ERR_FATAL, "FS_InitFilesystem: Original game data files not found.\n\nPlease copy pak0.pk3, pak1.pk3 and pak2.pk3 from the 'etmain' path of your Wolfenstein: Enemy Territory installation to:\n\n\"%s%c%s\"\n\n",
+		Com_Error(ERR_FATAL, "FS_InitFilesystem: Original game data files not found.\n\nPlease copy pak0.pk3 from the 'etmain' path of your Wolfenstein: Enemy Territory installation to:\n\n\"%s%c%s\"\n\n",
 		          Cvar_VariableString("fs_basepath"), PATH_SEP, BASEGAME);
 	}
 }

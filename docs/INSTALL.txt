@@ -34,8 +34,8 @@ them for you automatically.
 In case you have not used the installer, you can download the free Wolfenstein: Enemy Territory
 release from Splash Damage at https://www.splashdamage.com/games/wolfenstein-enemy-territory/.
 
-In order to run ET: Legacy you will need to copy the original assets files
-(*pak0.pk3*, *pak1.pk3* and *pak2.pk3*) to the etmain folder.
+In order to run ET: Legacy you will need to copy the original assets (*pak0.pk3*) to the etmain
+folder.
 
 
 Compatibility with Enemy Territory 2.60b

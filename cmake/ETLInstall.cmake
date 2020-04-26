@@ -61,16 +61,6 @@ if(ET_FS_BASEPATH AND INSTALL_DEFAULT_BASEDIR)
 		PERMISSIONS OWNER_WRITE OWNER_READ GROUP_READ WORLD_READ
 	)
 
-	install(FILES "${ET_FS_BASEPATH}/etmain/pak1.pk3"
-		DESTINATION "${INSTALL_DEFAULT_BASEDIR}/etmain"
-		PERMISSIONS OWNER_WRITE OWNER_READ GROUP_READ WORLD_READ
-	)
-
-	install(FILES "${ET_FS_BASEPATH}/etmain/pak2.pk3"
-		DESTINATION "${INSTALL_DEFAULT_BASEDIR}/etmain"
-		PERMISSIONS OWNER_WRITE OWNER_READ GROUP_READ WORLD_READ
-	)
-
 	# personal data (owner only)
 	install(FILES "${ET_FS_BASEPATH}/etmain/video/etintro.roq"
 		DESTINATION "${INSTALL_DEFAULT_BASEDIR}/etmain/video"
@@ -86,8 +76,7 @@ if(ET_FS_BASEPATH AND INSTALL_DEFAULT_BASEDIR)
 elseif(NOT ET_FS_BASEPATH AND INSTALL_DEFAULT_BASEDIR)
 	message(STATUS "***********************************************************")
 	message(STATUS "Genuine ET files are not copied - ET: Legacy won't start !!!")
-	message(STATUS "In order to start the game copy")
-	message(STATUS "pak0.pk3, pak1.pk3 and pak2.pk3")
+	message(STATUS "In order to start the game, copy the pak0.pk3 assets file")
 	message(STATUS "to ${INSTALL_DEFAULT_BASEDIR}/etmain")
 	message(STATUS "***********************************************************")
 endif()
