@@ -1,7 +1,6 @@
 package org.etlegacy.app;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.res.AssetManager;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -21,7 +20,6 @@ import com.erz.joysticklibrary.JoyStick.JoyStickListener;
 
 import org.libsdl.app.SDLActivity;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
