@@ -185,6 +185,10 @@ int Q_vsnprintf(char *str, size_t size, const char *format, va_list args);
 #endif // defined (_MSC_VER) && (_MSC_VER >= 1600)
 #endif // Q3_VM
 
+#ifdef ETL_SSE
+#include "pmmintrin.h"
+#endif
+
 #include "q_platform.h"
 
 //======================= WIN32 DEFINES =================================
@@ -193,11 +197,6 @@ int Q_vsnprintf(char *str, size_t size, const char *format, va_list args);
 
 #undef QDECL
 #define QDECL   __cdecl
-
-#if (defined(_MSC_VER) && defined(_M_IX86_FP) && _M_IX86_FP == 2)
-#include "pmmintrin.h"
-#define ETL_SSE
-#endif
 
 /**
  * @def CPUSTRING
@@ -280,11 +279,6 @@ static ID_INLINE float idSqrt(float x)
 // the mac compiler can't handle >32k of locals, so we
 // just waste space and make big arrays static...
 #ifdef __linux__
-
-#ifdef __SSE3__
-#include "pmmintrin.h"
-#define ETL_SSE
-#endif
 
 #ifdef __i386__
 #define CPUSTRING   "linux-i386"

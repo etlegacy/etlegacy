@@ -23,6 +23,7 @@ if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)
 	if(HAS_SSE3_EXTENSIONS)
 		message(STATUS "Using SSE3 extensions")
 		set(SSE_FLAGS "-msse3 -mfpmath=sse")
+		add_definitions(-DETL_SSE)
 	else()
 		set(SSE_FLAGS "-ffast-math") # no SSE flags
 	endif()
@@ -45,7 +46,8 @@ elseif(MSVC)
 
 	if(HAS_SSE2_EXTENSIONS)
 		message(STATUS "Using SSE2 extensions")
-		add_definitions("/arch:SSE2 /fp:fast -D__SSE__ -D__SSE2__")
+		#add_definitions("/arch:SSE2 /fp:fast -D__SSE__ -D__SSE2__")
+		add_definitions(-DETL_SSE)
 	else()
 		set(SSE_FLAGS "-ffast-math") # no SSE flags
 	endif()

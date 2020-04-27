@@ -2,9 +2,6 @@
 # Platform
 #-----------------------------------------------------------------
 
-# Include FindSSE to check for available SSE extensions
-include(cmake/FindSSE.cmake)
-
 # Used to store real system processor when we overwrite CMAKE_SYSTEM_PROCESSOR for cross-compile builds
 set(ETLEGACY_SYSTEM_PROCESSOR ${CMAKE_SYSTEM_PROCESSOR})
 
@@ -13,6 +10,9 @@ set(CMAKE_SHARED_LIBRARY_LINK_C_FLAGS "")
 
 message(STATUS "System: ${CMAKE_SYSTEM} (${ETLEGACY_SYSTEM_PROCESSOR})")
 message(STATUS "Lib arch: ${CMAKE_LIBRARY_ARCHITECTURE}")
+
+# check for available SSE extensions
+include(cmake/FindSSE.cmake)
 
 if(UNIX AND CROSS_COMPILE32 AND NOT ARM) # 32-bit build
 	set(CMAKE_SYSTEM_PROCESSOR i386)
@@ -154,8 +154,8 @@ elseif(WIN32)
 	if(MINGW AND NOT DEBUG_BUILD)
 		set(CMAKE_C_LINK_EXECUTABLE "${CMAKE_C_LINK_EXECUTABLE} -static-libgcc")
 		set(CMAKE_CXX_LINK_EXECUTABLE "${CMAKE_CXX_LINK_EXECUTABLE} -static-libgcc -static-libstdc++")
-		set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -static-libgcc")
-		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -static-libgcc -static-libstdc++")
+		set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${SSE_FLAGS} -static-libgcc")
+		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${SSE_FLAGS} -static-libgcc -static-libstdc++")
 		set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -static-libgcc -static-libstdc++ -s")
 		set(CMAKE_SHARED_LIBRARY_LINK_C_FLAGS "${CMAKE_SHARED_LIBRARY_LINK_C_FLAGS} -static-libgcc -liconv -s")
 		set(CMAKE_SHARED_LIBRARY_LINK_CXX_FLAGS "${CMAKE_SHARED_LIBRARY_LINK_CXX_FLAGS} -static-libgcc -static-libstdc++ -liconv -s")
