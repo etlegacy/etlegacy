@@ -1,6 +1,5 @@
 package org.etlegacy.app;
 
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.AssetManager;
@@ -33,56 +32,6 @@ public class ETLActivity extends SDLActivity implements JoyStickListener
 
     public static int pxToDp(int px) {
         return (int) (px / Resources.getSystem().getDisplayMetrics().density);
-    }
-
-    private boolean checkGameFiles() {
-
-        File etmain_dir = new File(dir_etl.concat("etmain"));
-        if(etmain_dir.exists() == false)
-        {
-            Log.e("SDL","Creating" + etmain_dir + "etmain");
-            etmain_dir.mkdir();
-        }
-
-        File legacy_dir = new File(dir_etl.concat("legacy"));
-        if(legacy_dir.exists() == false)
-        {
-            Log.e("SDL", "Creating" + legacy_dir + "legacy");
-            legacy_dir.mkdir();
-        }
-
-        /* Draw Dialog Box */
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getApplicationContext());
-        alertDialogBuilder.setTitle("ET Legacy");
-        alertDialogBuilder.setMessage("Do you want to download files required by game to run ?")
-                .setCancelable(false)
-                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        // TODO:Implement DownloadManager here.
-                        dialog.cancel();
-                    }
-                })
-                .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        // if clicked no finish activity and close app
-                        ETLActivity.this.finish();
-                    }
-                });
-        AlertDialog alertDialog = alertDialogBuilder.create();
-
-        /* Check if pak0.pk3-pak2.pk3 are around */
-        for(int i=0; i<3; i++)
-        {
-            String pak_filename = "pak" + i + ".pk3";
-            File etl_pak_file = new File(dir_etl.concat("etmain").concat("/") + pak_filename);
-            if(etl_pak_file.exists() == false)
-            {
-                alertDialog.show();
-            }
-        }
-        return true;
     }
 
     private Bitmap getBitmapFromAsset(String strName) {
