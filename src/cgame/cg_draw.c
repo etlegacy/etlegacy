@@ -3610,7 +3610,7 @@ void CG_DrawOnScreenLabels(void)
 			continue;                           // no alpha = nothing to draw..
 		}
 
-		CG_Text_Paint_Ext(specLabel->x, specLabel->y, specLabel->scale, specLabel->scale, white, specLabel->text, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
+		CG_Text_Paint_Ext(specLabel->x, specLabel->y, specLabel->scale, specLabel->scale, white, specLabel->text, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 		// expect update next frame again
 		specLabel->visible = qfalse;
 	}

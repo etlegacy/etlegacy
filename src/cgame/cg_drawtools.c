@@ -817,8 +817,8 @@ void CG_AddOnScreenText(const char *text, vec3_t origin)
 			scale = 0.05f;
 		}
 
-		w = CG_Text_Width_Ext(text, scale, 0, &cgs.media.limboFont1);
-		h = CG_Text_Height_Ext(text, scale, 0, &cgs.media.limboFont1);
+		w = CG_Text_Width_Ext(text, scale, 0, &cgs.media.limboFont2);
+		h = CG_Text_Height_Ext(text, scale, 0, &cgs.media.limboFont2);
 
 		x -= w / 2;
 		y -= h / 2;

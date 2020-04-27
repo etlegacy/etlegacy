@@ -2031,7 +2031,7 @@ static void CG_PlayerSprites(centity_t *cent)
 	{
 		if (cg_drawCrosshairNames.integer > 0 || cgs.clientinfo[cg.clientNum].shoutcaster)
 		{
-			CG_PlayerFloatText(cent, ci->name, height + 8);
+			CG_PlayerFloatText(cent, cg_drawCrosshairNames.integer == 1 ? ci->cleanname : ci->name, height + 8);
 		}
 
 		// show some useful icons to spectators
