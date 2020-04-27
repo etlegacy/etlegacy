@@ -196,7 +196,7 @@ int Q_vsnprintf(char *str, size_t size, const char *format, va_list args);
 
 #if (defined(_MSC_VER) && defined(_M_IX86_FP) && _M_IX86_FP == 2)
 #include "pmmintrin.h"
-#define SSE2
+#define ETL_SSE
 #endif
 
 /**
@@ -283,7 +283,7 @@ static ID_INLINE float idSqrt(float x)
 
 #ifdef __SSE3__
 #include "pmmintrin.h"
-#define SSE2
+#define ETL_SSE
 #endif
 
 #ifdef __i386__
