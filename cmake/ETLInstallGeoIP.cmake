@@ -4,10 +4,8 @@
 
 message(STATUS "Installing GeoIP")
 
-# set(ETLEGACY_GEOIP_ARCHIVE "GeoIP.dat.gz")
-# set(ETLEGACY_GEOIP_ARCHIVE_URL "http://geolite.maxmind.com/download/geoip/database/GeoLiteCountry/GeoIP.dat.gz")
-set(ETLEGACY_GEOIP_ARCHIVE "GeoIP.dat.zip")
-set(ETLEGACY_GEOIP_ARCHIVE_URL "https://mirror.etlegacy.com/GeoIP.dat.zip")
+set(ETLEGACY_GEOIP_ARCHIVE "GeoIP.dat.tar.gz")
+set(ETLEGACY_GEOIP_ARCHIVE_URL "https://mirror.etlegacy.com/geoip/GeoIP.dat.tar.gz")
 
 LEG_DOWNLOAD(
 	"GeoIP archive"
