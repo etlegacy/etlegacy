@@ -294,7 +294,7 @@ void ByteToDir(int b, vec3_t dir);
 /************************************************************************/
 #define vec2_set(v, x, y)         ((v)[0] = (x), (v)[1] = (y))
 
-#ifdef ETL_SSE
+#ifdef SSE2
 #define vec2_copy(a,b) \
 { \
 	__m128 xmm0; \
@@ -317,7 +317,7 @@ void ByteToDir(int b, vec3_t dir);
 /************************************************************************/
 /* Vector 3                                                             */
 /************************************************************************/
-#ifdef ETL_SSE
+#ifdef SSE2
 #define vec3_clear(a) \
 { \
 	__m128 xmm0; \
@@ -440,7 +440,7 @@ void vec3_per(const vec3_t src, vec3_t dst);
 
 static inline void VectorMin(const vec3_t a, const vec3_t b, vec3_t out)
 {
-#ifdef ETL_SSE
+#ifdef SSE2
 	__m128 xmm0, xmm1, xmm2;
 		xmm1 = _mm_loadh_pi(_mm_load_ss(&a[0]), (const __m64 *)(&a[1]));
 		xmm2 = _mm_loadh_pi(_mm_load_ss(&b[0]), (const __m64 *)(&b[1]));
@@ -456,7 +456,7 @@ static inline void VectorMin(const vec3_t a, const vec3_t b, vec3_t out)
 
 static inline void VectorMax(const vec3_t a, const vec3_t b, vec3_t out)
 {
-#ifdef ETL_SSE
+#ifdef SSE2
 	__m128 xmm0, xmm1, xmm2;
 		xmm1 = _mm_loadh_pi(_mm_load_ss(&a[0]), (const __m64 *)(&a[1]));
 		xmm2 = _mm_loadh_pi(_mm_load_ss(&b[0]), (const __m64 *)(&b[1]));
@@ -473,7 +473,7 @@ static inline void VectorMax(const vec3_t a, const vec3_t b, vec3_t out)
 /************************************************************************/
 /* Vector 4                                                             */
 /************************************************************************/
-#ifdef ETL_SSE
+#ifdef SSE2
 #define vec4_set(o, x, y, z, w) \
 { \
 	_mm_storeu_ps(o, _mm_set_ps(w, z, y, x)); \
@@ -494,7 +494,7 @@ static inline void VectorMax(const vec3_t a, const vec3_t b, vec3_t out)
 #define vec4_scale(v, s, o)    ((o)[0] = (v)[0] * (s), (o)[1] = (v)[1] * (s), (o)[2] = (v)[2] * (s), (o)[3] = (v)[3] * (s))
 #endif
 // Vector multiply & add
-#ifdef ETL_SSE
+#ifdef SSE2
 #define vec4_ma(v, s, b, o) \
 { \
 	__m128 xmm2, xmm3; \
@@ -550,7 +550,7 @@ void angles_vectors(const vec3_t angles, vec3_t forward, vec3_t right, vec3_t up
 /************************************************************************/
 /* Matrix3x3                                                            */
 /************************************************************************/
-#ifdef ETL_SSE
+#ifdef SSE2
 #define mat3_mult(in1, in2, o) \
 { \
 	__m128 xmm0, xmm1, xmm2, xmm3, xmm4, xmm5, xmm6, xmm7; \
@@ -632,7 +632,7 @@ qboolean mat4_inverse(const mat4_t in, mat4_t out);
 qboolean mat4_inverse_self(mat4_t matrix);
 void mat4_from_angles(mat4_t m, vec_t pitch, vec_t yaw, vec_t roll);
 
-#if defined ETL_SSE && defined _WIN32
+#ifdef SSE2
 #define SinCos(rad, s, c) { \
 	double radD = rad, SD, CD; \
 	__asm { \
@@ -643,13 +643,6 @@ void mat4_from_angles(mat4_t m, vec_t pitch, vec_t yaw, vec_t roll);
 		__asm fwait \
 	} \
 	s = (float)SD; \
-	c = (float)CD; \
-}
-#elif defined ETL_SSE && defined __linux__
-#define SinCos(rad, s, c) { \
-	double radD = rad, SD, CD; \
-    __asm__ ("fsincos" : "=t" (CD), "=u" (SD) : "0" (radD)); \
-    s = (float)SD; \
 	c = (float)CD; \
 }
 #else
