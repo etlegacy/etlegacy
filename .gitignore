@@ -1,0 +1,12 @@
+
+.gradle/
+
+.idea/
+
+app/.externalNativeBuild/
+
+app/build/
+
+build/
+
+gradle/
