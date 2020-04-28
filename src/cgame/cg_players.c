@@ -2118,12 +2118,9 @@ static void CG_PlayerSprites(centity_t *cent)
 		}
 	}
 
-	if ((ft = CG_IsOnFireteam(cent->currentState.number)))
+	if (CG_IsOnFireteam(cent->currentState.number) == CG_IsOnFireteam(cg.clientNum))
 	{
-		if ((ft == CG_IsOnFireteam(cg.clientNum)) && cgs.clientinfo[cent->currentState.number].selected)
-		{
-			CG_PlayerFloatSprite(cent, cgs.media.fireteamIcon, height, numIcons++);
-		}
+		CG_PlayerFloatSprite(cent, cgs.media.fireteamIcon, height, numIcons++);
 	}
 }
 
