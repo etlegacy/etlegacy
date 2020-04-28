@@ -6278,6 +6278,8 @@ static void UI_BuildServerDisplayList(qboolean force)
 			trap_Cvar_Update(&ui_browserShowEmptyOrFull);
 			if (ui_browserShowEmptyOrFull.integer)
 			{
+				clients = atoi(Info_ValueForKey(info, "clients"));
+
 				if (clients < maxClients && (
 						(!clients && ui_browserShowEmptyOrFull.integer == 2) ||
 						(clients && ui_browserShowEmptyOrFull.integer == 1)))
@@ -6553,10 +6555,11 @@ static void UI_BuildServerDisplayList(qboolean force)
 
 			// player count after removing incompatible/filtered out servers
 			clients = atoi(Info_ValueForKey(info, "clients"));
+			humans  = atoi(Info_ValueForKey(info, "humans"));
+
 			if ((ui_serverBrowserSettings.integer & UI_BROWSER_ALLOW_HUMANS_COUNT) &&
 			    strstr(Info_ValueForKey(info, "version"), PRODUCT_LABEL) != NULL)
 			{
-				humans = atoi(Info_ValueForKey(info, "humans"));
 				uiInfo.serverStatus.numPlayersOnServers += clients;
 				uiInfo.serverStatus.numHumansOnServers  += humans;
 			}
