@@ -359,12 +359,12 @@ void R_SetupEntityLighting(const trRefdef_t *refdef, trRefEntity_t *ent, vec3_t 
 		//ent->ambientLight[0] = ent->ambientLight[1] = ent->ambientLight[2] = tr.identityLight * 150;
 		//ent->directedLight[0] = ent->directedLight[1] = ent->directedLight[2] = tr.identityLight * 150;
 		//VectorCopy(tr.sunDirection, ent->lightDir);
-		ent->ambientLight[0]  = tr.identityLight * 64/255;
-		ent->ambientLight[1]  = tr.identityLight * 64/255;
-		ent->ambientLight[2]  = tr.identityLight * 96/255;
-		ent->directedLight[0] = tr.identityLight * 255/255;
-		ent->directedLight[1] = tr.identityLight * 232/255;
-		ent->directedLight[2] = tr.identityLight * 224/255;
+		ent->ambientLight[0]  = tr.identityLight * 0.25;
+		ent->ambientLight[1]  = tr.identityLight * 0.25;
+		ent->ambientLight[2]  = tr.identityLight * 0.37;
+		ent->directedLight[0] = tr.identityLight;
+		ent->directedLight[1] = tr.identityLight * 0.9;
+		ent->directedLight[2] = tr.identityLight * 0.87;
 		VectorSet(ent->lightDir, -1, 1, 1.25);
 		VectorNormalize(ent->lightDir);
 	}
@@ -372,22 +372,22 @@ void R_SetupEntityLighting(const trRefdef_t *refdef, trRefEntity_t *ent, vec3_t 
 	if (ent->e.hilightIntensity != 0.f)
 	{
 		// level of intensity was set because the item was looked at
-		ent->ambientLight[0] += tr.identityLight * 128/255 * ent->e.hilightIntensity;
-		ent->ambientLight[1] += tr.identityLight * 128/255 * ent->e.hilightIntensity;
-		ent->ambientLight[2] += tr.identityLight * 128/255 * ent->e.hilightIntensity;
+		ent->ambientLight[0] += tr.identityLight * 0.5 * ent->e.hilightIntensity;
+		ent->ambientLight[1] += tr.identityLight * 0.5 * ent->e.hilightIntensity;
+		ent->ambientLight[2] += tr.identityLight * 0.5 * ent->e.hilightIntensity;
 	}
 	else if (ent->e.renderfx & RF_MINLIGHT)
 	{
 		// give everything a minimum light add
-		ent->ambientLight[0] += tr.identityLight * 32/255;
-		ent->ambientLight[1] += tr.identityLight * 32/255;
-		ent->ambientLight[2] += tr.identityLight * 32/255;
+		ent->ambientLight[0] += tr.identityLight * 0.125;
+		ent->ambientLight[1] += tr.identityLight * 0.125;
+		ent->ambientLight[2] += tr.identityLight * 0.125;
 	}
 
 
 	if (ent->e.entityNum < MAX_CLIENTS && (refdef->rdflags & RDF_SNOOPERVIEW))
 	{
-		VectorSet(ent->ambientLight, 245/255, 245/255, 245/255);      // allow a little room for flicker from directed light
+		VectorSet(ent->ambientLight, 0.96, 0.96, 0.96);      // allow a little room for flicker from directed light
 	}
 	
 	
