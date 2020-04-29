@@ -53,7 +53,7 @@ android {
         }
         externalNativeBuild {
             cmake {
-                path '/home/rafal/Pulpit/etlegacy/CMakeLists.txt'
+                path '../etlegacy/CMakeLists.txt'
             }
         }
 
