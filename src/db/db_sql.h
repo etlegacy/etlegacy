@@ -59,8 +59,6 @@ int DB_LoadOrSaveDb(sqlite3 *, const char *, int);
 qboolean DB_SaveMemDB(void); // use in code
 
 int DB_Callback(void *, int, char **, char **);
-qboolean DB_BeginTransaction(void);
-qboolean DB_EndTransaction(void);
 
 void DB_SaveMemDB_f(void); // console command to store memory db at any time to disk
 void DB_ExecSQLCommand_f(void);

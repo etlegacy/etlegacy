@@ -65,12 +65,6 @@ qboolean isDBActive;
 //   updated (last visit)
 //   created
 //
-// table etl_whitelist
-//   key
-//   filename
-//   type (map or mod)
-//   created
-//
 
 const char *sql_Version_Statements[SQL_DBMS_SCHEMA_VERSION] =
 {
@@ -86,9 +80,6 @@ const char *sql_Version_Statements[SQL_DBMS_SCHEMA_VERSION] =
 		"CREATE TABLE IF NOT EXISTS client_servers (profile TEXT NOT NULL, source INT NOT NULL, address TEXT NOT NULL, name TEXT NOT NULL, mod TEXT NOT NULL, updated DATETIME, created DATETIME);"
 		"CREATE INDEX IF NOT EXISTS client_servers_profile_idx ON client_servers(profile);"
 		"CREATE INDEX IF NOT EXISTS client_servers_address_idx ON client_servers(address);" // client table
-
-		"CREATE TABLE IF NOT EXISTS etl_whitelist (key TEXT PRIMARY KEY NOT NULL, filename TEXT NOT NULL, updated DATETIME , created DATETIME NOT NULL);"
-		"CREATE INDEX IF NOT EXISTS etl_whitelist_idx ON etl_whitelist(filename);" // client table (no use for server atm)
 
 		// Version 3
 		// ...
@@ -768,61 +759,4 @@ int DB_Callback(__attribute__((unused)) void *NotUsed, int argc, char **argv, ch
 	Com_Printf("\n");
 
 	return 0;
-}
-
-/**
- * @brief Disables autocommit
- */
-qboolean DB_BeginTransaction(void)
-{
-	char *err_msg = 0;
-
-	if (!isDBActive)
-	{
-		Com_DPrintf("DB_BeginTransaction warning: DB not active error\n");
-		return qfalse;
-	}
-
-	if (sqlite3_exec(db, "BEGIN TRANSACTION", 0, 0, &err_msg) != SQLITE_OK)
-	{
-		Com_Printf("SQL BEGIN TRANSACTION failed: %s\n", err_msg);
-		sqlite3_free(err_msg);
-		return qfalse;
-	}
-	else
-	{
-		Com_DPrintf("SQL ET: autocommit disabled\n");
-	}
-
-	sqlite3_free(err_msg);
-	return qtrue;
-}
-
-/**
- * @brief Enables autocommit
- *
- */
-qboolean DB_EndTransaction(void)
-{
-	char *err_msg = 0;
-
-	if (!isDBActive)
-	{
-		Com_DPrintf("DB_EndTransaction warning: DB not active error\n");
-		return qfalse;
-	}
-
-	if (sqlite3_exec(db, "END TRANSACTION", 0, 0, &err_msg) != SQLITE_OK)
-	{
-		Com_Printf("SQL END TRANSACTION failed: %s\n", err_msg);
-		sqlite3_free(err_msg);
-		return qfalse;
-	}
-	else
-	{
-		Com_DPrintf("SQL ET: autocommit enabled\n");
-	}
-
-	sqlite3_free(err_msg);
-	return qtrue;
 }
