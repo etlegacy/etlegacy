@@ -5,7 +5,6 @@ android:
   components:
   - tools
   - platform-tools
-  - build-tools-25.0.3
   - android-26
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
@@ -21,6 +20,7 @@ licenses:
     - 'google-gdk-license-.+'
 install:
   - echo y | sdkmanager "ndk-bundle"
+  - echo y | sdkmanager "ndk;16.1.4479499"
   - echo y | sdkmanager "cmake;3.10.2.4988404"
 before_script:
   - sudo chmod +x gradlew
