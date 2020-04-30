@@ -341,21 +341,18 @@ void ByteToDir(int b, vec3_t dir);
 	_mm_storeh_pi((__m64 *)(&b[1]), xmm0); \
 }
 #define vec3_dot(x, y)         ((x)[0] * (y)[0] + (x)[1] * (y)[1] + (x)[2] * (y)[2])
-//#define vec3_dot(x, y) \ This one nees fixing
-//{ \
-//	__m128 xmm0, xmm1, xmm2, xmm3; \
-//	__m128i xmm4; \
-//	xmm0 = _mm_loadh_pi(_mm_load_ss(&x[0]), (const __m64 *)(&x[1])); \
-//	xmm3 = _mm_loadh_pi(_mm_load_ss(&y[0]), (const __m64 *)(&y[1])); \
-//	xmm0 = _mm_mul_ps(xmm0, xmm3); \
-//	xmm1 = _mm_movehdup_ps(xmm0); \
-//	xmm2 = _mm_add_ps(xmm0, xmm1); \
-//	xmm1 = _mm_movehl_ps(xmm1, xmm2); \
-//	xmm2 = _mm_add_ss(xmm2, xmm1); \
-//	/*_mm_store_ss(&x, xmm2); \*/
-//	__m128i vi = _mm_cvttps_epi32(xmm2);
-//	_mm_storeu_si128((__m128i *)x, vi);
-//}
+/*#define vec3_dot(x, y) \ This one nees fixing
+{ \
+	__m128 xmm0, xmm1, xmm2, xmm3; \
+	__m128i xmm4; \
+	xmm0 = _mm_loadh_pi(_mm_load_ss(&x[0]), (const __m64 *)(&x[1])); \
+	xmm3 = _mm_loadh_pi(_mm_load_ss(&y[0]), (const __m64 *)(&y[1])); \
+	xmm0 = _mm_mul_ps(xmm0, xmm3); \
+	xmm1 = _mm_movehdup_ps(xmm0); \
+	xmm2 = _mm_add_ps(xmm0, xmm1); \
+	xmm1 = _mm_movehl_ps(xmm1, xmm2); \
+	xmm2 = _mm_add_ss(xmm2, xmm1); \
+}*/
 #define vec3_sub(a, b, c) \
 { \
 	__m128 xmm1, xmm3; \
