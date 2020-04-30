@@ -9,6 +9,8 @@ android:
   - tools
   - platform-tools
   - android-26
+  - cmake
+  - ndk-bundle
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
   - rm -rf $HOME/.gradle/caches/*/plugin-resolution/
@@ -27,10 +29,10 @@ before_script:
   - export ANDROID_NDK_HOME=$HOME/NDK_ETL/ndk-bundle
   - export PATH=$PATH:$ANDROID_NDK_HOME
   - echo "24333f8a63b6825ea9c5514f83c2829b004d1fee" > "$ANDROID_HOME/licenses/android-sdk-license"
-install:
-  - echo y | $HOME/android-sdk/tools/bin/sdkmanager "platforms;android-26" > /dev/null
-  - echo y | sdkmanager "ndk-bundle"
-  - echo y | sdkmanager "ndk;16.1.4479499"
-  - echo y | sdkmanager "cmake;3.10.2.4988404"
+#install:
+#  - echo y | $HOME/android-sdk/tools/bin/sdkmanager "platforms;android-26" > /dev/null
+#  - echo y | sdkmanager "ndk-bundle"
+#  - echo y | sdkmanager "ndk;16.1.4479499"
+#  - echo y | sdkmanager "cmake;3.10.2.4988404"
 script:
   - ./gradlew --stacktrace assembleDebug
