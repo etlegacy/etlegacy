@@ -24,8 +24,7 @@ option(BUILD_SERVER		"Build the dedicated server executable"							ON)
 option(BUILD_CLIENT		"Build the client executable"									ON)
 option(BUILD_MOD		"Build the mod libraries"										ON)
 
-option(BUILD_MOD_PK3	"Pack the mod libraries into etl_bin.pk3"						ON)
-option(BUILD_PAK3_PK3	"Pack updated game scripts into pak3.pk3"						ON)
+option(BUILD_MOD_PK3	"Pack the mod libraries and game scripts into mod pk3"			ON)
 
 option(BUNDLED_LIBS		"Use all available bundled libraries instead of system libs"	ON)
 
@@ -147,10 +146,6 @@ endif(BUILD_SERVER)
 if(BUILD_MOD)
 	include(cmake/ETLBuildMod.cmake)
 endif(BUILD_MOD)
-
-if(BUILD_PAK3_PK3)
-	include(cmake/ETLBuildPack.cmake)
-endif(BUILD_PAK3_PK3)
 
 #-----------------------------------------------------------------
 # Post build

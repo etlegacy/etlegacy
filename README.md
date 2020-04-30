@@ -255,7 +255,7 @@ Be sure to set the CMake variables (see above) beforehand.
 **NOTES**:
 
   * In the legacy mod folder, the cgame_mac and ui_mac files are redundant since they are in the 
-  etl_bin.pk3 and will be extracted at runtime, so you can delete those. The client is named etl.app
+  mod .pk3 and will be extracted at runtime, so you can delete those. The client is named etl.app
   (and can safely be renamed), while the dedicated server is just a command-line binary named "etlded".
 
 

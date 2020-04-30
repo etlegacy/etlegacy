@@ -1,5 +1,5 @@
 #-----------------------------------------------------------------
-# Build mod
+# Build mod pack
 #-----------------------------------------------------------------
 
 #
@@ -106,26 +106,37 @@ else()
 endif()
 
 #
-# etl_bin.pk3
+# mod pk3
 #
 if(BUILD_MOD_PK3)
-	add_custom_target(mod_pk3 ALL DEPENDS legacy/etl_bin_${ETL_CMAKE_VERSION_SHORT}.pk3)
+	add_custom_target(mod_pk3 ALL DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/legacy/legacy_${ETL_CMAKE_VERSION_SHORT}.pk3)
 
+	# binaries
 	if(APPLE)
 		set(ZIP_FILE_LIST cgame${LIB_SUFFIX}${ARCH} ui${LIB_SUFFIX}${ARCH})
 	else()
 		set(ZIP_FILE_LIST cgame${LIB_SUFFIX}${ARCH}${CMAKE_SHARED_LIBRARY_SUFFIX} ui${LIB_SUFFIX}${ARCH}${CMAKE_SHARED_LIBRARY_SUFFIX})
 	endif()
 
+	# etmain
+	file(GLOB ETMAIN_FILES_IN "${CMAKE_CURRENT_SOURCE_DIR}/etmain/*")
+	foreach(FILE ${ETMAIN_FILES_IN})
+		file(RELATIVE_PATH REL "${CMAKE_CURRENT_SOURCE_DIR}/etmain" ${FILE})
+		list(APPEND ETMAIN_FILES_LIST ${REL})
+		file(COPY ${FILE} DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/legacy")
+	endforeach()
+
+	list(APPEND ZIP_FILE_LIST ${ETMAIN_FILES_LIST})
+
 	add_custom_command(
-		OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/legacy/etl_bin_${ETL_CMAKE_VERSION_SHORT}.pk3
-		COMMAND ${CMAKE_COMMAND} -E tar c etl_bin_${ETL_CMAKE_VERSION_SHORT}.pk3 --format=zip ${ZIP_FILE_LIST}
+		OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/legacy/legacy_${ETL_CMAKE_VERSION_SHORT}.pk3
+		COMMAND ${CMAKE_COMMAND} -E tar c ${CMAKE_CURRENT_BINARY_DIR}/legacy/legacy_${ETL_CMAKE_VERSION_SHORT}.pk3 --format=zip ${ZIP_FILE_LIST}
 		DEPENDS cgame${LIB_SUFFIX}${ARCH} ui${LIB_SUFFIX}${ARCH}
 		WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/legacy/
 		VERBATIM
 	)
 
-	install(FILES ${CMAKE_CURRENT_BINARY_DIR}/legacy/etl_bin_${ETL_CMAKE_VERSION_SHORT}.pk3
+	install(FILES ${CMAKE_CURRENT_BINARY_DIR}/legacy/legacy_${ETL_CMAKE_VERSION_SHORT}.pk3
 		DESTINATION "${INSTALL_DEFAULT_MODDIR}/legacy"
 	)
 endif()
