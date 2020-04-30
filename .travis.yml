@@ -26,6 +26,7 @@ before_script:
   - git clone https://github.com/rafal1137/NDK_ETL.git
   - mv NDK_ETL $HOME
   - export ANDROID_NDK_HOME=$HOME/NDK_ETL/ndk-bundle
+  - chmod -R 775 $HOME/NDK_ETL/ndk-bundle
   - echo "24333f8a63b6825ea9c5514f83c2829b004d1fee" > "$ANDROID_HOME/licenses/android-sdk-license"
 before_install:
   - echo y | sdkmanager "cmake;3.10.2.4988404"
