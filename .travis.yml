@@ -19,6 +19,9 @@ licenses:
     - 'android-sdk-preview-license-52d11cd2'
     - 'android-sdk-license-.+'
     - 'google-gdk-license-.+'
+install:
+  - echo y | sdkmanager "ndk-bundle"
+  - echo y | sdkmanager "cmake;3.10.2.4988404"
 before_script:
   - sudo chmod +x gradlew
   - git clone https://github.com/rafal1137/NDK_ETL.git
