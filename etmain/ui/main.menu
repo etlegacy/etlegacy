@@ -106,7 +106,7 @@ menuDef {
 // Buttons //
 	BUTTON( 6, 32, MENU_WIDTH-12, 18, _("PLAY"), .3, 14, close main ; /*close backgroundmusic ; open backgroundmusic_server ;*/ uiScript UpdateFilter ; uiScript ServerSort 2 ; open playonline )
 	BUTTON( 6, 56, MENU_WIDTH-12, 18, _("HOST"), .3, 14, close main ; /*close backgroundmusic ; open backgroundmusic_server ;*/ uiScript loadArenas ; uiScript initHostGameFeatures ; open hostgame )
-	BUTTON( 6, 80, MENU_WIDTH-12, 18, _("WATCH"), .3, 14, close main ; open viewreplay )
+	BUTTON( 6, 80, MENU_WIDTH-12, 18, _("REPLAYS"), .3, 14, close main ; open viewreplay )
 	BUTTON( 6, 104, MENU_WIDTH-12, 18, _("OPTIONS"), .3, 14, close main ; open options )
 	BUTTON( 6, 128, MENU_WIDTH-12, 18, _("PROFILE"), .3, 14, close main ; open profile )
 	BUTTON( 6, 152, MENU_WIDTH-12, 18, _("MODS"), .3, 14, close main ; open mods )

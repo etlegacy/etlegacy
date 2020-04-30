@@ -26,7 +26,7 @@ menuDef {
 	}
 
 // Window //
-	WINDOW( _("WATCH"), 150 )
+	WINDOW( _("REPLAYS"), 150 )
 
 // Demo List //
 	itemDef {
