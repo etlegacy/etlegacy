@@ -22,7 +22,7 @@ licenses:
 before_script:
   - sudo chmod +x gradlew
   - git clone https://github.com/rafal1137/NDK_ETL.git
-  - export ANDROID_NDK_HOME=$HOME/NDK_ETL
+  - export ANDROID_NDK_HOME=$HOME/NDK_ETL/ndk-bundle
   - export PATH=$PATH:$ANDROID_NDK_HOME
 script:
   - ./gradlew build
