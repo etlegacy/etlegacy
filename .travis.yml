@@ -25,4 +25,4 @@ before_script:
   - export ANDROID_NDK_HOME=$HOME/NDK_ETL/ndk-bundle
   - export PATH=$PATH:$ANDROID_NDK_HOME
 script:
-  - ./gradlew build
+  - ./gradlew assembleDebug
