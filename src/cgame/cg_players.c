@@ -2118,8 +2118,7 @@ static void CG_PlayerSprites(centity_t *cent)
 		}
 	}
 
-	if (CG_IsOnFireteam(cent->currentState.number) &&
-	    CG_IsOnFireteam(cent->currentState.number) == CG_IsOnFireteam(cg.clientNum))
+	if (CG_IsOnFireteam(cent->currentState.number) && CG_IsOnSameFireteam(cent->currentState.number, cg.clientNum))
 	{
 		CG_PlayerFloatSprite(cent, cgs.media.fireteamIcon, height, numIcons++);
 	}
