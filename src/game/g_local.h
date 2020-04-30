@@ -1206,7 +1206,7 @@ typedef struct level_locals_s
 	/// player/AI model scripting (server repository)
 	animScriptData_t animScriptData;
 
-	qboolean lastRestartTime;
+	int lastRestartTime;
 
 	int numFinalDead[2];                        ///< unable to respawn and in limbo (per team)
 	int numOidTriggers;

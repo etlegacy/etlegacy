@@ -2665,7 +2665,7 @@ void G_InitGame(int levelTime, int randomSeed, int restart, int legacyServer, in
 			trap_Cvar_Set("g_prestige", "0");
 		}
 #endif
-		if (g_xpSaver.integer) 
+		if (g_xpSaver.integer)
 		{
 			G_Printf("^3WARNING: g_xpSaver changed to 0\n");
 			trap_Cvar_Set("g_xpSaver", "0");
@@ -4360,7 +4360,7 @@ void CheckWolfMP(void)
 		case  GS_WARMUP: // check warmup latch
 			if (!g_doWarmup.integer ||
 			    (level.numPlayingClients >= match_minplayers.integer &&
-			     level.lastRestartTime + 1000.f < level.time && G_readyMatchState()))
+			     level.lastRestartTime + 1000 < level.time && G_readyMatchState()))
 			{
 				int delay = (g_warmup.integer < 10) ? 11 : g_warmup.integer + 1;
 

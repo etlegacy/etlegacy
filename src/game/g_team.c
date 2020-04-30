@@ -1884,7 +1884,7 @@ qboolean G_readyMatchState(void)
 		{
 			AP("cp \"^1COUNTDOWN STOPPED!^7  Back to warmup...\n\"");
 		}
-		level.lastRestartTime = (qboolean)(level.time);
+		level.lastRestartTime = level.time;
 		trap_SendConsoleCommand(EXEC_APPEND, va("map_restart 0 %i\n", GS_WARMUP));
 	}
 
