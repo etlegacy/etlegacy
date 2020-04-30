@@ -947,17 +947,21 @@ qboolean FS_UnzipTo(const char *fileName, const char *outpath, qboolean quiet);
 qboolean FS_Unzip(const char *fileName, qboolean quiet);
 
 void FS_HomeRemove(const char *homePath);
+
 qboolean FS_FileInPathExists(const char *testpath);
+int FS_CalculateFileSHA1(const char *path, char *hash);
+const char *FS_Dirpath(const char *path);
+const char *FS_Basename(const char *path);
+qboolean FS_MatchFileInPak(const char *filepath, const char *match);
+#define IsPathSep(X) ((X) == '\\' || (X) == '/' || (X) == PATH_SEP)
 
 #if defined(FEATURE_PAKISOLATION) && !defined(DEDICATED)
+const char* DL_ContainerizePath(const char *temp, const char *dest);
 void FS_InitWhitelist(void);
-const char *FS_Basename(const char *path);
-const char *FS_Dirpath(const char *path);
-void FS_CreateContainerName(const char *id, char *output);
-qboolean FS_MatchFileInPak(const char *filepath, const char *match);
-int FS_CalculateFileSHA1(const char *path, char *hash);
 qboolean FS_IsWhitelisted(const char *pakName, const char *hash);
+#define FS_CONTAINER "dlcache"
 #endif
+
 
 /*
 ==============================================================
@@ -1088,11 +1092,6 @@ extern int com_hunkusedvalue;
 extern qboolean com_errorEntered;
 
 extern cvar_t *com_downloadURL;
-
-#if defined(FEATURE_PAKISOLATION) && !defined(DEDICATED)
-extern cvar_t *dl_whitelistModPaks;
-extern cvar_t *dl_whitelistMapPaks;
-#endif
 
 extern fileHandle_t com_journalFile;
 extern fileHandle_t com_journalDataFile;

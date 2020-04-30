@@ -42,6 +42,35 @@
 #define Com_AddReliableCommand(x) CL_AddReliableCommand(x)
 #endif
 
+#if defined(FEATURE_PAKISOLATION) && !defined(DEDICATED)
+/**
+ * @brief DL_ContainerizePath target destination path to container if needed
+ */
+const char* DL_ContainerizePath(const char *temp, const char *dest)
+{
+	char       hash[41] = { 0 };
+	const char *pakname = FS_Basename(dest);
+	const char *gamedir = FS_Dirpath(dest);
+
+	FS_CalculateFileSHA1(temp, hash);
+
+	// generate container for valid gamedirs only
+	if (!Q_stricmp(gamedir, BASEGAME) || !Q_stricmp(gamedir, DEFAULT_MODGAME))
+	{
+		// whitelist check
+		// FIXME: error out if not whitelisted
+		if (FS_MatchFileInPak(temp, "*.dll") && !FS_IsWhitelisted(pakname, hash))
+		{
+			Com_DPrintf(S_COLOR_YELLOW "WARNING: Checksum verification - '%s' is not whitelisted\n", pakname);
+		}
+
+		return va("%s%c%s%c%s", gamedir, PATH_SEP, FS_CONTAINER, PATH_SEP, pakname);
+	}
+
+	return dest;
+}
+#endif
+
 /**
  * @brief Com_ClearDownload
  */
@@ -278,51 +307,6 @@ void Com_InitDownloads(void)
 	Com_DownloadsComplete();
 }
 
-#if defined(FEATURE_PAKISOLATION) && !defined(DEDICATED)
-static const char* GetDownloadDestPath(const char *temp, const char *dest)
-{
-	const char *destBasename = FS_Basename(dest);
-	const char *destDirpath  = FS_Dirpath(dest);
-	const char *homePath     = Cvar_VariableString("fs_homepath");
-	char       hash[41]      = { 0 };
-	qboolean   isWhitelisted;
-
-	FS_CalculateFileSHA1(temp, hash);
-
-	isWhitelisted = FS_IsWhitelisted(destBasename, hash);
-
-	if (!isWhitelisted)
-	{
-		// disabled whitelisting for maps means all maps are whitelisted by default
-		if (!dl_whitelistMapPaks->integer)
-		{
-			if (FS_MatchFileInPak(temp, "maps/*.bsp"))
-			{
-				isWhitelisted = qtrue;
-			}
-		}
-		if (!isWhitelisted)
-		{
-			// disabled whitelisting for mods means all mods are whitelisted by default
-			if (!dl_whitelistModPaks->integer)
-			{
-				if (FS_MatchFileInPak(temp, "*.dll")) // FIXME: make this more precise and check for all dlls (ui, cg &game)
-				{
-					isWhitelisted = qtrue;
-				}
-			}
-		}
-	}
-
-	if (!isWhitelisted)
-	{
-		return FS_BuildOSPath(homePath, destDirpath, va("%s%c%s", Cvar_VariableString("fs_containerName"), PATH_SEP, destBasename));
-	}
-
-	return FS_BuildOSPath(homePath, dest, NULL);
-}
-#endif
-
 /**
  * @brief Com_WWWDownload
  */
@@ -360,7 +344,8 @@ void Com_WWWDownload(void)
 
 		dld.download = 0;
 #if defined(FEATURE_PAKISOLATION) && !defined(DEDICATED)
-		to_ospath = GetDownloadDestPath(dld.downloadTempName, dld.originalDownloadName);
+		to_ospath = FS_BuildOSPath(Cvar_VariableString("fs_homepath"), 
+		                           DL_ContainerizePath(dld.downloadTempName, dld.originalDownloadName), NULL);
 #else
 		to_ospath = FS_BuildOSPath(Cvar_VariableString("fs_homepath"), dld.originalDownloadName, NULL);
 #endif

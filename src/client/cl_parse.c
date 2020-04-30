@@ -701,22 +701,6 @@ void CL_SystemInfoChanged(void)
 	}
 }
 
-#if defined(FEATURE_PAKISOLATION) && !defined(DEDICATED)
-static const char *CreateContainerName()
-{
-	static char containerName[64];
-	FS_CreateContainerName(va(
-		"%i_%i_%i_%i_%i",
-		clc.serverAddress.ip[0],
-		clc.serverAddress.ip[1],
-		clc.serverAddress.ip[2],
-		clc.serverAddress.ip[3],
-		((clc.serverAddress.port & 0xff) << 8) | (clc.serverAddress.port >> 8)
-	), containerName);
-	return containerName;
-}
-#endif
-
 /**
  * @brief CL_ParseGamestate
  * @param[in] msg
@@ -805,8 +789,7 @@ void CL_ParseGamestate(msg_t *msg)
 	}
 
 #if defined(FEATURE_PAKISOLATION) && !defined(DEDICATED)
-	// set contaner name based of server address
-	Cvar_Set("fs_containerName", CreateContainerName());
+	Cvar_Set("fs_containerMount", "1");
 #endif
 
 	// reinitialize the filesystem if the game directory has changed
@@ -832,6 +815,7 @@ void CL_ParseDownload(msg_t *msg)
 	int           size;
 	unsigned char data[MAX_MSGLEN];
 	int           block;
+	const char    *dlDestPath;
 
 	if (!*cls.download.downloadTempName)
 	{
@@ -985,9 +969,13 @@ void CL_ParseDownload(msg_t *msg)
 		{
 			FS_FCloseFile(cls.download.download);
 			cls.download.download = 0;
-
+		#if defined(FEATURE_PAKISOLATION) && !defined(DEDICATED)
+			dlDestPath = DL_ContainerizePath(cls.download.downloadTempName, cls.download.downloadName);
+		#else
+			dlDestPath = cls.download.downloadTempName;
+		#endif
 			// rename the file
-			FS_SV_Rename(cls.download.downloadTempName, cls.download.downloadName);
+			FS_SV_Rename(cls.download.downloadTempName, dlDestPath);
 		}
 		*cls.download.downloadTempName = *cls.download.downloadName = 0;
 		Cvar_Set("cl_downloadName", "");
