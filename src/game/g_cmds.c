@@ -3102,6 +3102,11 @@ qboolean Cmd_CallVote_f(gentity_t *ent, unsigned int dwCommand, qboolean fRefCom
 			CP("cp \"You cannot call a vote during intermission.\"");
 			return qfalse;
 		}
+		else if (g_gamestate.integer == GS_WARMUP_COUNTDOWN)
+		{
+			CP("cp \"You cannot call a vote when warmup is ending.\"");
+			return qfalse;
+		}
 		else if (!ent->client->sess.referee)
 		{
 			if (voteFlags.integer == VOTING_DISABLED)
