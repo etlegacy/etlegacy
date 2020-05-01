@@ -2,6 +2,10 @@
 # Build mod pack
 #-----------------------------------------------------------------
 
+# find libm where it exists and link game modules against it
+include(CheckLibraryExists)
+check_library_exists(m pow "" LIBM)
+
 #
 # cgame
 #
@@ -13,6 +17,10 @@ set_target_properties(cgame${LIB_SUFFIX}${ARCH}
 	LIBRARY_OUTPUT_DIRECTORY_DEBUG "${MODNAME}"
 	LIBRARY_OUTPUT_DIRECTORY_RELEASE "${MODNAME}"
 )
+
+if(LIBM)
+	target_link_libraries(cgame${LIB_SUFFIX}${ARCH} PRIVATE m)
+endif()
 
 #
 # qagame
@@ -77,6 +85,10 @@ set_target_properties(ui${LIB_SUFFIX}${ARCH}
 	LIBRARY_OUTPUT_DIRECTORY_DEBUG "${MODNAME}"
 	LIBRARY_OUTPUT_DIRECTORY_RELEASE "${MODNAME}"
 )
+
+if(LIBM)
+	target_link_libraries(ui${LIB_SUFFIX}${ARCH} PRIVATE m)
+endif()
 
 # Build both arhitectures on older xcode versions
 if(APPLE AND CMAKE_OSX_DEPLOYMENT_TARGET LESS_EQUAL "10.12" AND NOT OSX_NOX86)
