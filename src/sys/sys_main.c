@@ -606,7 +606,7 @@ static void *Sys_TryLibraryLoad(const char *base, const char *gamedir, const cha
 			libHandle = Sys_LoadLibrary(fn);
 			if (!libHandle)
 			{
-				Com_Printf("failed: %s", Sys_LibraryError());
+				Com_Printf("failed: %s\n", Sys_LibraryError());
 			}
 			else
 			{
@@ -628,7 +628,7 @@ static void *Sys_TryLibraryLoad(const char *base, const char *gamedir, const cha
 		libHandle = Sys_LoadLibrary(fn);
 		if (!libHandle)
 		{
-			Com_Printf("failed: %s", Sys_LibraryError());
+			Com_Printf("failed: %s\n", Sys_LibraryError());
 		}
 		else
 		{
@@ -647,7 +647,7 @@ static void *Sys_TryLibraryLoad(const char *base, const char *gamedir, const cha
 		libHandle = Sys_LoadLibrary(fn);
 		if (!libHandle)
 		{
-			Com_Printf("failed: %s", Sys_LibraryError());
+			Com_Printf("failed: %s\n", Sys_LibraryError());
 		}
 		else
 		{
@@ -664,7 +664,7 @@ static void *Sys_TryLibraryLoad(const char *base, const char *gamedir, const cha
 
 	if (!libHandle)
 	{
-		Com_Printf("failed: %s", Sys_LibraryError());
+		Com_Printf("failed: %s\n", Sys_LibraryError());
 		return NULL;
 	}
 
@@ -803,7 +803,7 @@ void *Sys_LoadGameDll(const char *name, qboolean extract,
 
 	if (!*entryPoint || !dllEntry)
 	{
-		Com_Printf("Sys_LoadDll(%s/%s) failed to find vmMain function:\n%s\n", gamedir, name, Sys_LibraryError());
+		Com_Printf("Sys_LoadDll(%s/%s) failed to find vmMain function: %s\n", gamedir, name, Sys_LibraryError());
 		Sys_UnloadLibrary(libHandle);
 
 		return NULL;
