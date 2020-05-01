@@ -11,7 +11,7 @@
 // Quit Credits Menu //
 menuDef {
 	name		"credits_quit"
-	visible		0
+	visible		1
 	fullscreen	0
 	rect		WINDOW_X WINDOW_Y WINDOW_WIDTH WINDOW_HEIGHT
 	style		WINDOW_STYLE_FILLED
@@ -35,19 +35,9 @@ menuDef {
 	}
 
 // Logo //
-//	itemDef {
-//		name		"logoShadow"
-//		rect		$evalfloat(.5*(WINDOW_WIDTH-200)+1) $evalfloat(80+1) 200 100
-//		style		WINDOW_STYLE_SHADER
-//		background	"ui/assets/etl_logo"
-//		forecolor	0 0 0 1
-//		visible		1
-//		decoration
-//	}
-
 	itemDef {
 		name		"logo"
-		rect		$evalfloat(.5*(WINDOW_WIDTH-200)-1) $evalfloat(36-1) 200 100
+		rect		$evalfloat(.5*(WINDOW_WIDTH-200)) $evalfloat(36) 200 100
 		style		WINDOW_STYLE_SHADER
 		background	"ui/assets/etl_logo"
 		forecolor	1 1 1 1
@@ -109,7 +99,7 @@ menuDef {
 
 	itemDef {
 		name		"logoSD"
-		rect		$evalfloat(.5*(WINDOW_WIDTH-(LOGOMAIN_WIDTH))+1) $evalfloat(200+8+8+1) 64 64
+		rect		$evalfloat(.5*(WINDOW_WIDTH-(LOGOMAIN_WIDTH))-1) $evalfloat(200+8+8-1) 64 64
 		style		WINDOW_STYLE_SHADER
 		background	"ui/assets/logo_sd"
 		forecolor	1 1 1 1
@@ -129,7 +119,7 @@ menuDef {
 
 	itemDef {
 		name		"logoiD"
-		rect		$evalfloat(.5*(WINDOW_WIDTH-(LOGOMAIN_WIDTH))+64+16+1) $evalfloat(200+8+8+1) 64 64
+		rect		$evalfloat(.5*(WINDOW_WIDTH-(LOGOMAIN_WIDTH))+64+16-1) $evalfloat(200+8+8-1) 64 64
 		style		WINDOW_STYLE_SHADER
 		background	"ui/assets/logo_id"
 		forecolor	1 1 1 1
@@ -149,7 +139,7 @@ menuDef {
 
 	itemDef {
 		name		"logoAtvi"
-		rect		$evalfloat(.5*(WINDOW_WIDTH-(LOGOMAIN_WIDTH))+64+16+64+16+1) $evalfloat(214+8+8+1) 144 36
+		rect		$evalfloat(.5*(WINDOW_WIDTH-(LOGOMAIN_WIDTH))+64+16+64+16-1) $evalfloat(214+8+8-1) 144 36
 		style		WINDOW_STYLE_SHADER
 		background	"ui/assets/logo_atvi"
 		forecolor	1 1 1 1

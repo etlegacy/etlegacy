@@ -39,19 +39,9 @@ menuDef {
 	}
 
 // Logo //
-//	itemDef {
-//		name		"logoShadow"
-//		rect		$evalfloat(.5*(WINDOW_WIDTH-128)+1) $evalfloat(12+1) 128 64
-//		style		WINDOW_STYLE_SHADER
-//		background	"ui/assets/etl_logo"
-//		forecolor	0 0 0 1
-//		visible		1
-//		decoration
-//	}
-
 	itemDef {
 		name		"logo"
-		rect		$evalfloat(.5*(WINDOW_WIDTH-128)-1) $evalfloat(12-1) 128 64
+		rect		$evalfloat(.5*(WINDOW_WIDTH-128)) $evalfloat(12) 128 64
 		style		WINDOW_STYLE_SHADER
 		background	"ui/assets/etl_logo"
 		forecolor	1 1 1 1
@@ -136,7 +126,17 @@ menuDef {
 
 // Community buttons
 	itemDef {
-		name		"logo_etlegacy"
+		name		"logoETLegacyShadow"
+		rect		$evalfloat(.15*(WINDOW_WIDTH-48)+1) $evalfloat(320+1) 48 48
+		style		WINDOW_STYLE_SHADER
+		background	"ui/assets/logo_etlegacy"
+		forecolor	0 0 0 1
+		visible		1
+		decoration
+	}
+
+	itemDef {
+		name		"logoETLegacy"
 		rect		$evalfloat(.15*(WINDOW_WIDTH-48)-1) $evalfloat(320-1) 48 48
 		style		WINDOW_STYLE_SHADER
 		background	"ui/assets/logo_etlegacy"
@@ -162,7 +162,17 @@ menuDef {
 	}
 
 	itemDef {
-		name		"logo_discord"
+		name		"logoDiscordShadow"
+		rect		$evalfloat(.5*(WINDOW_WIDTH-48)+1) $evalfloat(320+1) 48 48
+		style		WINDOW_STYLE_SHADER
+		background	"ui/assets/logo_discord"
+		forecolor	0 0 0 1
+		visible		1
+		decoration
+	}
+
+	itemDef {
+		name		"logoDiscord"
 		rect		$evalfloat(.5*(WINDOW_WIDTH-48)-1) $evalfloat(320-1) 48 48
 		style		WINDOW_STYLE_SHADER
 		background	"ui/assets/logo_discord"
@@ -188,7 +198,17 @@ menuDef {
 	}
 
 	itemDef {
-		name		"logo_github"
+		name		"logoGithubShadow"
+		rect		$evalfloat(.85*(WINDOW_WIDTH-48)+1) $evalfloat(320+1) 48 48
+		style		WINDOW_STYLE_SHADER
+		background	"ui/assets/logo_github"
+		forecolor	0 0 0 1
+		visible		1
+		decoration
+	}
+
+	itemDef {
+		name		"logoGithub"
 		rect		$evalfloat(.85*(WINDOW_WIDTH-48)-1) $evalfloat(320-1) 48 48
 		style		WINDOW_STYLE_SHADER
 		background	"ui/assets/logo_github"
