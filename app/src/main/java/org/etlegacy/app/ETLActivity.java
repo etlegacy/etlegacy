@@ -9,6 +9,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
@@ -46,11 +47,19 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
                     btn2.setId(2);
                     btn2.setImageBitmap(getBitmapFromAsset("btn_sht.png"));
                     btn2.setBackgroundResource(0);
-                    btn2.setOnClickListener(new View.OnClickListener() {
+                    btn2.setOnTouchListener(new View.OnTouchListener() {
                         @Override
-                        public void onClick(View v) {
-                            SDLActivity.onNativeKeyDown(42);
-                            SDLActivity.onNativeKeyUp(42);
+                        public boolean onTouch(View v, MotionEvent event) {
+                            switch (event.getAction()) {
+                                case MotionEvent.ACTION_DOWN:
+                                    SDLActivity.onNativeKeyDown(42);
+                                    break;
+                                case MotionEvent.ACTION_UP:
+                                case MotionEvent.ACTION_CANCEL:
+                                    SDLActivity.onNativeKeyUp(42);
+                                    break;
+                            }
+                            return false;
                         }
                     });
 
@@ -91,16 +100,19 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
                     ImageButton btn_jump = new ImageButton(getApplicationContext());
                     btn_jump.setImageBitmap(getBitmapFromAsset("btn_jump.png"));
                     btn_jump.setBackgroundResource(0);
-                    btn_jump.setOnClickListener(new View.OnClickListener() {
+                    btn_jump.setOnTouchListener(new View.OnTouchListener() {
                         @Override
-                        public void onClick(View v) {
-                            Handler handler = new Handler();
-                            handler.postDelayed(new Runnable() {
-                                public void run() {
+                        public boolean onTouch(View v, MotionEvent event) {
+                            switch (event.getAction()) {
+                                case MotionEvent.ACTION_DOWN:
                                     SDLActivity.onNativeKeyDown(62);
-                                }
-                            }, 20);
-                            SDLActivity.onNativeKeyUp(62);
+                                    break;
+                                case MotionEvent.ACTION_UP:
+                                case MotionEvent.ACTION_CANCEL:
+                                    SDLActivity.onNativeKeyUp(62);
+                                    break;
+                            }
+                            return false;
                         }
                     });
 
