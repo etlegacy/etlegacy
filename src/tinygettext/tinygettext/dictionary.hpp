@@ -140,8 +140,15 @@ public:
 	}
 
 private:
+
+// Prohib copy constructor
+#if __cplusplus >= 201103L  // use explicit forbid copy constructor in c++ 11
 	Dictionary(const Dictionary&)            = delete;
 	Dictionary& operator=(const Dictionary&) = delete;
+#else
+	Dictionary(const Dictionary&);
+	Dictionary& operator=(const Dictionary&);
+#endif
 };
 
 } // namespace tinygettext
