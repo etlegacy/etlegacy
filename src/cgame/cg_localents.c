@@ -239,6 +239,7 @@ void CG_LoadLocations(void)
 			// check for multiline comment
 			else if (fBuffer[p] == '*')
 			{
+				p++;
 				while (p < fLen && (fBuffer[p] != '*' && fBuffer[p + 1] != '/'))
 				{
 					p++;
