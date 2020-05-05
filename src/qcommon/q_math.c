@@ -1742,7 +1742,9 @@ vec_t _DotProduct(const vec3_t v1, const vec3_t v2)
 		xmm2 = _mm_add_ps(xmm0, xmm1);
 		xmm1 = _mm_movehl_ps(xmm1, xmm2);
 		xmm2 = _mm_add_ss(xmm2, xmm1);
-		_mm_store_ss(&v1, xmm2);
+		vec_t r;
+		_mm_store_ss(&r, xmm2);
+		return r;
 #else
 	return v1[0] * v2[0] + v1[1] * v2[1] + v1[2] * v2[2];
 #endif
