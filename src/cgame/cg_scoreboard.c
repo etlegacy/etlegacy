@@ -1183,6 +1183,11 @@ static int WM_TeamScoreboard(int x, int y, team_t team, float fade, int maxrows,
 			continue;
 		}
 
+		if (y + row_height >= 470)
+		{
+			continue;
+		}
+
 		if (use_mini_chars)
 		{
 			WM_DrawClientScore_Small(x, y, &cg.scores[i], fade, livesleft);
