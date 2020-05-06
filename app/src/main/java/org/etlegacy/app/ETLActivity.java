@@ -15,7 +15,6 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
-
 import com.erz.joysticklibrary.JoyStick;
 import com.erz.joysticklibrary.JoyStick.JoyStickListener;
 
@@ -50,12 +49,43 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
                     btn2.setOnTouchListener(new View.OnTouchListener() {
                         @Override
                         public boolean onTouch(View v, MotionEvent event) {
-                            switch (event.getAction()) {
+                            final int touchDevId = event.getDeviceId();
+                            final int pointerCount = event.getPointerCount();
+                            int action = event.getActionMasked();
+                            int pointerFingerId;
+                            int i = -1;
+                            float x,y,p;
+                            float mWidth = Resources.getSystem().getDisplayMetrics().widthPixels;
+                            float mHeight = Resources.getSystem().getDisplayMetrics().heightPixels;
+                            switch (action) {
                                 case MotionEvent.ACTION_DOWN:
+                                    i = 0;
+                                    pointerFingerId = event.getPointerId(i);
+                                    x = event.getX(i) / mWidth;
+                                    y = event.getY(i) / mHeight;
+                                    p = event.getPressure(i);
+
+                                    SDLActivity.onNativeTouch(touchDevId, pointerFingerId, action, x, y, p);
                                     SDLActivity.onNativeKeyDown(42);
+                                    break;
+                                case MotionEvent.ACTION_MOVE:
+                                    for (i = 0; i < pointerCount; i++) {
+                                        pointerFingerId = event.getPointerId(i);
+                                        x = event.getX(i) / mWidth;
+                                        y = event.getY(i) / mHeight;
+                                        p = event.getPressure(i);
+                                        SDLActivity.onNativeTouch(touchDevId, pointerFingerId, action, x, y, p);
+                                    }
                                     break;
                                 case MotionEvent.ACTION_UP:
                                 case MotionEvent.ACTION_CANCEL:
+                                    for (i = 0; i < pointerCount; i++) {
+                                        pointerFingerId = event.getPointerId(i);
+                                        x = event.getX(i) / mWidth;
+                                        y = event.getY(i) / mHeight;
+                                        p = event.getPressure(i);
+                                        SDLActivity.onNativeTouch(touchDevId, pointerFingerId, MotionEvent.ACTION_UP, x, y, p);
+                                    }
                                     SDLActivity.onNativeKeyUp(42);
                                     break;
                             }
@@ -64,8 +94,8 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
                     });
 
                     RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(
-                            150,
-                            150);
+                            350,
+                            300);
 
                     lp.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
                     lp.addRule(RelativeLayout.CENTER_VERTICAL);
