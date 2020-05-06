@@ -173,16 +173,19 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
                     ImageButton btn_crouch = new ImageButton(getApplicationContext());
                     btn_crouch.setImageBitmap(getBitmapFromAsset("btn_crouch.png"));
                     btn_crouch.setBackgroundResource(0);
-                    btn_crouch.setOnClickListener(new View.OnClickListener() {
+                    btn_crouch.setOnTouchListener(new View.OnTouchListener() {
                         @Override
-                        public void onClick(View v) {
-                            Handler handler = new Handler();
-                            handler.postDelayed(new Runnable() {
-                                public void run() {
+                        public boolean onTouch(View v, MotionEvent event) {
+                            switch (event.getAction()) {
+                                case MotionEvent.ACTION_DOWN:
                                     SDLActivity.onNativeKeyDown(31);
-                                }
-                            }, 20);
-                            SDLActivity.onNativeKeyUp(31);
+                                    break;
+                                case MotionEvent.ACTION_UP:
+                                case MotionEvent.ACTION_CANCEL:
+                                    SDLActivity.onNativeKeyUp(31);
+                                    break;
+                            }
+                            return false;
                         }
                     });
 
