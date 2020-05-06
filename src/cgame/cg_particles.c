@@ -204,6 +204,11 @@ void CG_AddParticleToScene(cparticle_t *p, vec3_t org, float alpha)
 	case P_BUBBLE:
 	case P_BUBBLE_TURBULENT:  // create a front facing polygon
 	{
+		if (!cg_visualEffects.integer)
+		{
+			return;
+		}
+
 		if (p->type != P_WEATHER_FLURRY)
 		{
 			if (p->type == P_BUBBLE || p->type == P_BUBBLE_TURBULENT)
@@ -346,6 +351,11 @@ void CG_AddParticleToScene(cparticle_t *p, vec3_t org, float alpha)
 		float  width  = p->width + (ratio * (p->endwidth - p->width));
 		float  height = p->height + (ratio * (p->endheight - p->height));
 
+		if (!cg_visualEffects.integer)
+		{
+			return;
+		}
+
 		if (p->roll)
 		{
 			vectoangles(cg.refdef_current->viewaxis[0], rotate_ang);
@@ -425,6 +435,11 @@ void CG_AddParticleToScene(cparticle_t *p, vec3_t org, float alpha)
 	{
 		vec3_t point, rup2, rright2, color;
 		float  invratio, time, time2, ratio, width, height;
+
+		if (!cg_visualEffects.integer)
+		{
+			return;
+		}
 
 		if (p->type == P_SMOKE_IMPACT && VectorDistanceSquared(cg.snap->ps.origin, org) > Square(1024))
 		{
@@ -595,6 +610,11 @@ void CG_AddParticleToScene(cparticle_t *p, vec3_t org, float alpha)
 		vec3_t point, rr, ru, rotate_ang;
 		float  alpha = p->alpha;
 
+		if (!cg_visualEffects.integer)
+		{
+			return;
+		}
+
 		if (p->roll)
 		{
 			vectoangles(cg.refdef_current->viewaxis[0], rotate_ang);
@@ -656,6 +676,11 @@ void CG_AddParticleToScene(cparticle_t *p, vec3_t org, float alpha)
 		float  time  = cg.time - p->time;
 		float  time2 = p->endtime - p->time;
 		float  ratio = time / time2;
+
+		if (!cg_visualEffects.integer)
+		{
+			return;
+		}
 
 		if (p->color == BLOODRED)
 		{
@@ -725,6 +750,11 @@ void CG_AddParticleToScene(cparticle_t *p, vec3_t org, float alpha)
 	break;
 	case P_FLAT:
 	{
+		if (!cg_visualEffects.integer)
+		{
+			return;
+		}
+
 		VectorCopy(org, verts[0].xyz);
 		verts[0].xyz[0]     -= p->height;
 		verts[0].xyz[1]     -= p->width;

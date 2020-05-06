@@ -5146,6 +5146,11 @@ void CG_AddDebris(vec3_t origin, vec3_t dir, int speed, int duration, int count,
 	float         timeAdd;
 	int           i;
 
+	if (!cg_visualEffects.integer)
+	{
+		return;
+	}
+
 	for (i = 0; i < count; i++)
 	{
 		le = CG_AllocLocalEntity();
@@ -5184,7 +5189,7 @@ void CG_AddDebris(vec3_t origin, vec3_t dir, int speed, int duration, int count,
 		// TODO: find better models and/or extend ...
 		// TODO: make dependant from surface (snow etc and use related models/sounds) and or weapon
 		// TODO: find a client cvar so purists can disable (see CG_AddLocalEntities)
-		if (cg_visualEffects.integer && trace) // && user enabled
+		if (trace) // && user enabled
 		{
 			// airborn or solid with no surface set - just throw projectile fragments
 			if (trace->fraction == 1.0f || ((trace->contents & CONTENTS_SOLID) && !trace->surfaceFlags))
@@ -5461,8 +5466,11 @@ void CG_BulletImpact(int weapon, int missileEffect, vec3_t origin, vec3_t dir, i
 		CG_AddDirtBulletParticles(origin, dir, 190, 900, 5, 0.5f, 80, 16, 0.125f, cgs.media.dirtParticle2Shader);
 
 		// play a water splash
-		le = CG_MakeExplosion(origin, dir, cgs.media.waterSplashModel, cgs.media.waterSplashShader, 250, qfalse);
-		VectorSet(le->lightColor, 1, 1, 0);
+		if (cg_visualEffects.integer)
+		{
+			le = CG_MakeExplosion(origin, dir, cgs.media.waterSplashModel, cgs.media.waterSplashShader, 250, qfalse);
+			VectorSet(le->lightColor, 1, 1, 0);
+		}
 	}
 }
 
@@ -5496,9 +5504,12 @@ void CG_SmallExplosionImpact(int weapon, int missileEffect, vec3_t origin, vec3_
 		CG_AddDirtBulletParticles(trace.endpos, dir, 400, 900, 15, 0.5f, 256, 128, 0.125f, cgs.media.dirtParticle2Shader);
 
 		// play a water splash
-		le        = CG_MakeExplosion(origin, dir, cgs.media.waterSplashModel, cgs.media.waterSplashShader, 1000, qtrue);
-		le->light = 300;
-		VectorSet(le->lightColor, 0.75f, 0.5f, 0.1f);
+		if (cg_visualEffects.integer)
+		{
+			le = CG_MakeExplosion(origin, dir, cgs.media.waterSplashModel, cgs.media.waterSplashShader, 1000, qtrue);
+			le->light = 300;
+			VectorSet(le->lightColor, 0.75f, 0.5f, 0.1f);
+		}
 	}
 	else
 	{
@@ -5555,9 +5566,12 @@ void CG_BigExplosionImpact(int weapon, int missileEffect, vec3_t origin, vec3_t 
 		CG_AddDirtBulletParticles(trace.endpos, dir, (int)(400 + random() * 600), 1400, 15, 0.5f, 128, 512, 0.125f, cgs.media.dirtParticle2Shader);
 
 		// play a water splash
-		le        = CG_MakeExplosion(origin, dir, cgs.media.waterSplashModel, cgs.media.waterSplashShader, 1000, qtrue);
-		le->light = 600;
-		VectorSet(le->lightColor, 0.75f, 0.5f, 0.1f);
+		if (cg_visualEffects.integer)
+		{
+			le = CG_MakeExplosion(origin, dir, cgs.media.waterSplashModel, cgs.media.waterSplashShader, 1000, qtrue);
+			le->light = 600;
+			VectorSet(le->lightColor, 0.75f, 0.5f, 0.1f);
+		}
 	}
 	else
 	{
@@ -5627,9 +5641,12 @@ void CG_MapMortarImpact(int weapon, int missileEffect, vec3_t origin, vec3_t dir
 		CG_AddDirtBulletParticles(trace.endpos, dir, 900, 1800, 15, 0.5f, 350, 128, 0.125f, cgs.media.dirtParticle2Shader);
 
 		// play a water splash
-		le        = CG_MakeExplosion(origin, dir, cgs.media.waterSplashModel, cgs.media.waterSplashShader, 1000, qtrue);
-		le->light = 300;
-		VectorSet(le->lightColor, 0.75f, 0.5f, 0.1f);
+		if (cg_visualEffects.integer)
+		{
+			le = CG_MakeExplosion(origin, dir, cgs.media.waterSplashModel, cgs.media.waterSplashShader, 1000, qtrue);
+			le->light = 300;
+			VectorSet(le->lightColor, 0.75f, 0.5f, 0.1f);
+		}
 	}
 	else
 	{
@@ -5699,9 +5716,12 @@ void CG_DynamiteExplosionImpact(int weapon, int missileEffect, vec3_t origin, ve
 		CG_AddDirtBulletParticles(trace.endpos, dir, (int)(400 + random() * 600), 1400, 15, 0.5f, 128, 512, 0.125f, cgs.media.dirtParticle2Shader);
 
 		// play a water splash
-		le        = CG_MakeExplosion(origin, dir, cgs.media.waterSplashModel, cgs.media.waterSplashShader, 1000, qtrue);
-		le->light = 300;
-		VectorSet(le->lightColor, 0.75f, 0.5f, 0.1f);
+		if (cg_visualEffects.integer)
+		{
+			le = CG_MakeExplosion(origin, dir, cgs.media.waterSplashModel, cgs.media.waterSplashShader, 1000, qtrue);
+			le->light = 300;
+			VectorSet(le->lightColor, 0.75f, 0.5f, 0.1f);
+		}
 	}
 	else
 	{
