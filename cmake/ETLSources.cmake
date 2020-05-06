@@ -5,6 +5,8 @@
 FILE(GLOB COMMON_SRC
 	"src/qcommon/*.c"
 	"src/qcommon/*.h"
+	"src/qcommon/crypto/sha-1/sha1.h"
+	"src/qcommon/crypto/sha-1/sha1.c"
 )
 
 FILE(GLOB COMMON_SRC_REMOVE
@@ -63,8 +65,6 @@ FILE(GLOB CLIENT_SRC
 	"src/sdl/*.h"
 	"src/qcommon/update.c"
 	"src/qcommon/download.c"
-	"src/qcommon/crypto/sha-1/sha1.h"
-	"src/qcommon/crypto/sha-1/sha1.c"
 )
 
 # These files are shared with the CGAME from the UI library
