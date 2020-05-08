@@ -252,6 +252,11 @@ const char *Sys_Dirname(char *path)
 	return dirname(path);
 }
 
+const char *Sys_Subdirname(const char *path)
+{
+	return path;
+}
+
 /**
  * @brief Safe function to open a file and preventing TOCTOU attacks
  * @param[in] ospath The file path to open

@@ -3659,7 +3659,7 @@ void FS_AddGameDirectory(const char *path, const char *dir)
 
 			Q_strncpyz(pak->pakPathname, curpath, sizeof(pak->pakPathname));
 			// store the game name for downloading
-			Q_strncpyz(pak->pakGamename, dir, sizeof(pak->pakGamename));
+			Q_strncpyz(pak->pakGamename, Sys_Subdirname(dir), sizeof(pak->pakGamename));
 
 			fs_packFiles += pak->numfiles;
 

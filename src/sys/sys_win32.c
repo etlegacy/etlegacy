@@ -239,6 +239,25 @@ const char *Sys_Dirname(char *path)
 }
 
 /**
+ * @brief Sys_SubDirname
+ * @param path
+ * @return path with unix style PATH_SEP
+ */
+const char *Sys_Subdirname(const char *path)
+{
+#if defined(FEATURE_PAKISOLATION) && !defined(DEDICATED)
+	static char dir[MAX_OSPATH] = { 0 };
+
+	Q_strncpyz(dir, path, sizeof(dir));
+	Q_strncpyz(dir, Q_StrReplace(dir, "\\", "/"), sizeof(dir));
+
+	return dir;
+#else
+	return path;
+#endif
+}
+
+/**
  * @brief Sys_FOpen
  * @param[in] ospath
  * @param[in] mode
