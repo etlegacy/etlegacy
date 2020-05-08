@@ -68,5 +68,7 @@ android {
 
 dependencies {
     api 'com.github.erz05:JoyStick:1.1.0'
+    implementation 'com.loopj.android:android-async-http:1.4.10'
+    implementation 'com.google.guava:guava:29.0-android'
     implementation fileTree(include: ['*.jar'], dir: 'libs')
 }
