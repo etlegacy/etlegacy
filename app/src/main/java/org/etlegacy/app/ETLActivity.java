@@ -17,11 +17,17 @@ import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import com.erz.joysticklibrary.JoyStick;
 import com.erz.joysticklibrary.JoyStick.JoyStickListener;
+import com.google.common.io.Files;
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.FileAsyncHttpResponseHandler;
 
 import org.libsdl.app.SDLActivity;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+
+import cz.msebera.android.httpclient.Header;
 
 public class ETLActivity extends SDLActivity implements JoyStickListener {
 
@@ -256,6 +262,7 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
 
 
 
+
     public static int pxToDp(int px) {
         return (int) (px / Resources.getSystem().getDisplayMetrics().density);
     }
@@ -276,6 +283,29 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        /*
+        TODO: Keep it for now. Find a way to download pak0 before ETL lib is launched.
+        AsyncHttpClient client = new AsyncHttpClient();
+        client.get("http://mirror.etlegacy.com/etmain/pak0.pk3", new FileAsyncHttpResponseHandler(this) {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, File response) {
+                // Do something with the file `response`
+                if (response.exists()) {
+                    try {
+                        Files.move(response.getAbsoluteFile(), new File(getExternalFilesDir(null), "pak2.pk3"));
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, File file) {
+
+            }
+        });
+         */
+
     }
 
     @Override
