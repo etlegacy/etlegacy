@@ -311,7 +311,7 @@ void ClampColor(vec4_t color)
  * @return
  *
  * @note This isn't a real cheap function to call!
- *
+ */
 int DirToByte(vec3_t dir)
 {
 	int   i, best;
@@ -341,7 +341,7 @@ int DirToByte(vec3_t dir)
  * @brief ByteToDir
  * @param[in] b
  * @param[out] dir
- *
+ */
 void ByteToDir(int b, vec3_t dir)
 {
 	if (b < 0 || b >= NUMVERTEXNORMALS)
@@ -350,48 +350,8 @@ void ByteToDir(int b, vec3_t dir)
 		return;
 	}
 	VectorCopy(bytedirs[b], dir);
-}*/
-
-/**
- * @brief DirToByte
- * @param[in] dir
- * @return
- *
- * @note A new version was made. It runs much faster because it does not..
- * ..lookup a vector from an array, compare it with the input vector, the best matching vector's index in the array is returned.
- * But instead, it stores the vector's xyz in 30 bits (10 bits per component).
- * No need to lookup all vectors, compare vectors. Just split the components, and scale to float range values.
- */
-int DirToByte(vec3_t dir)
-{
-	// We use 30 bits of the eventParm integer to store in a vector.
-	// convert vector values from [-1,1] to [0,1] range, then to a range that fits 10 bits. 2^10 == 4096
-	int x = (int)((dir[0] * 0.5f + 0.5f) * 4096.f - 1.f); // the greatest value that fits is 4096-1
-	int y = (int)((dir[1] * 0.5f + 0.5f) * 4096.f - 1.f);
-	int z = (int)((dir[2] * 0.5f + 0.5f) * 4096.f - 1.f);
-
-	return (x << 20) | (y << 10) | z;
 }
 
-/**
- * @brief ByteToDir
- * @param[in] b
- * @param[out] dir
- */
-void ByteToDir(int b, vec3_t dir)
-{
-	// now we must go back from an integer to a vector.
-	// First seperate to the coordinate components x, y & z.
-	// then convert back to a range [-1,1]
-	// 0x3FF -> 1024-1
-	int         x = (b >> 20) & 0x3FF;
-	int         y = (b >> 10) & 0x3FF;
-	int         z = b & 0x3FF;
-	const float r2048 = 1 / 2048.f;
-	dir[0] = (float)(x)* r2048 - 1.f; // / 4096 * 2.0 - 1.0
-	dir[1] = (float)(y)* r2048 - 1.f;
-	dir[2] = (float)(z)* r2048 - 1.f;
-}
 /*
  * @brief ColorBytes3
  * @param[in] r
