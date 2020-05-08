@@ -91,15 +91,17 @@ if(LIBM)
 endif()
 
 # Build both arhitectures on older xcode versions
-if(APPLE AND CMAKE_OSX_DEPLOYMENT_TARGET LESS_EQUAL "10.12" AND NOT OSX_NOX86)
-	set_target_properties(cgame${LIB_SUFFIX}${ARCH}
-		PROPERTIES
-		OSX_ARCHITECTURES "i386;x86_64"
-	)
-	set_target_properties(ui${LIB_SUFFIX}${ARCH}
-		PROPERTIES
-		OSX_ARCHITECTURES "i386;x86_64"
-	)
+if(APPLE)
+	if(CMAKE_OSX_DEPLOYMENT_TARGET LESS_EQUAL "10.14")
+		# Force universal mod on osx up to Mojave
+		set(OSX_MOD_ARCH "i386;x86_64")
+	else()
+		# 64bit mod only as of Catalina and higher
+		set(OSX_MOD_ARCH "x86_64")
+	endif()
+
+	set_target_properties(cgame${LIB_SUFFIX}${ARCH} PROPERTIES OSX_ARCHITECTURES "${OSX_MOD_ARCH}" )
+	set_target_properties(ui${LIB_SUFFIX}${ARCH} PROPERTIES OSX_ARCHITECTURES "${OSX_MOD_ARCH}" )
 endif()
 
 # install bins of cgame, ui and qgame

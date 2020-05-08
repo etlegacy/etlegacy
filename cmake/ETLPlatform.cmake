@@ -81,8 +81,8 @@ if(UNIX)
 			set(CMAKE_OSX_DEPLOYMENT_TARGET "10.12")
 		endif()
 
-		# After version 10.12 it's no longer possible to build 32 bit applications with this script
-		if(CMAKE_OSX_DEPLOYMENT_TARGET GREATER "10.12" AND CROSS_COMPILE32)
+		# After version 10.14 it's no longer possible to build 32 bit applications with this script
+		if(CMAKE_OSX_DEPLOYMENT_TARGET GREATER "10.14" AND CROSS_COMPILE32)
 			message(FATAL_ERROR "Can't build a 32bit build on this OSX version")
 		endif()
 
