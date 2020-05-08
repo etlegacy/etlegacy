@@ -3,14 +3,14 @@
 # This file is distributed under the same license as the ET:Legacy package.
 # Translators:
 # Nerwitz Panzerfizt, 2018
-# Nerwitz Panzerfizt, 2018-2019
+# Nerwitz Panzerfizt, 2018-2020
 msgid ""
 msgstr ""
 "Project-Id-Version: ET:Legacy\n"
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
-"PO-Revision-Date: 2020-03-27 23:43+0000\n"
-"Last-Translator: rafal1137 <rafal1137@yahoo.pl>\n"
+"PO-Revision-Date: 2020-05-07 11:13+0000\n"
+"Last-Translator: Nerwitz Panzerfizt\n"
 "Language-Team: Bulgarian (http://www.transifex.com/etlegacy/etlegacy/language/bg/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
