@@ -578,6 +578,21 @@ static void FS_ReplaceSeparators(char *path)
 }
 
 /**
+ * @brief Normalize slashes in a file path to be posix/unix-like forward slashes
+ * @param path
+ * @return path
+ */
+char *FS_NormalizePath(const char *path)
+{
+	static char dir[MAX_OSPATH] = { 0 };
+
+	Q_strncpyz(dir, path, sizeof(dir));
+	Q_strncpyz(dir, Q_StrReplace(dir, "\\", "/"), sizeof(dir));
+
+	return dir;
+}
+
+/**
  * @brief Qpath may have either forward or backwards slashes
  * @param[in] base
  * @param[in] game
@@ -3659,7 +3674,7 @@ void FS_AddGameDirectory(const char *path, const char *dir)
 
 			Q_strncpyz(pak->pakPathname, curpath, sizeof(pak->pakPathname));
 			// store the game name for downloading
-			Q_strncpyz(pak->pakGamename, Sys_Subdirname(dir), sizeof(pak->pakGamename));
+			Q_strncpyz(pak->pakGamename, FS_NormalizePath(dir), sizeof(pak->pakGamename));
 
 			fs_packFiles += pak->numfiles;
 

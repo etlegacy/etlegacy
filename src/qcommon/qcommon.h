@@ -818,6 +818,7 @@ void FS_CheckFilenameIsNotExecutable(const char *fileName, const char *function)
 //void FS_CheckFilenameIsMutable(const char *filename, const char *function);
 void FS_Remove(const char *osPath);
 
+char *FS_NormalizePath(const char *path);
 char *FS_BuildOSPath(const char *base, const char *game, const char *qpath);
 
 int FS_LoadStack(void);
@@ -1398,7 +1399,6 @@ char *Sys_DefaultInstallPath(void);
 char *Sys_DefaultHomePath(void);
 const char *Sys_Basename(char *path);
 const char *Sys_Dirname(char *path);
-const char *Sys_Subdirname(const char *path);
 char *Sys_ConsoleInput(void);
 
 qboolean Sys_RandomBytes(byte *string, int len);
