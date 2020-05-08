@@ -973,7 +973,7 @@ void CL_ParseDownload(msg_t *msg)
 		#if defined(FEATURE_PAKISOLATION) && !defined(DEDICATED)
 			dlDestPath = DL_ContainerizePath(cls.download.downloadTempName, cls.download.downloadName);
 		#else
-			dlDestPath = cls.download.downloadTempName;
+			dlDestPath = cls.download.downloadName;
 		#endif
 			// rename the file
 			FS_SV_Rename(cls.download.downloadTempName, dlDestPath);
