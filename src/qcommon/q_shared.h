@@ -63,7 +63,7 @@
 #define CONFIG_NAME             "etconfig_server.cfg"
 #else
 #ifdef __ANDROID__
-#define CONFIG_NAME             "default_android.cfg"
+#define CONFIG_NAME             "etconfig_android.cfg"
 #else
 #define CONFIG_NAME             "etconfig.cfg"
 #endif
