@@ -1317,16 +1317,12 @@ void CG_AddDebrisElements(localEntity_t *le)
 
 		le->lastTrailTime = t;
 	}
-}
 
-/**
- * @brief CG_AddDebrisElementsExtended
- * @param[in,out] le
- */
-void CG_AddDebrisElementsExtended(localEntity_t *le)
-{
-	vec3_t  newOrigin;
-	trace_t trace;
+	// extended debris elements
+	if (!cg_visualEffects.integer)
+	{
+		return;
+	}
 
 	if (le->pos.trType == TR_STATIONARY)
 	{
@@ -1671,17 +1667,8 @@ void CG_AddLocalEntities(void)
 			CG_AddFuseSparkElements(le);
 			break;
 		case LE_DEBRIS:
-		{
 			CG_AddDebrisElements(le);
-
-			// reuses debris le for more debris - we don't allocate extra local ents for this
-			// setup is done in CG_AddDebris
-			if (cg_visualEffects.integer)
-			{
-				CG_AddDebrisElementsExtended(le);             // TODO merge with CG_AddDebrisElements
-			}
-		}
-		break;
+			break;
 		case LE_BLOOD:
 			CG_AddBloodElements(le);
 			break;

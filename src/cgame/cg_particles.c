@@ -179,7 +179,6 @@ void CG_ClearParticles(void)
 				shaderAnims[i][j] = trap_R_RegisterShader(va("%s%i", shaderAnimNames[i], j + 1));
 			}
 		}
-		//numShaderAnims = i;
 
 		initparticles = qtrue;
 	}
@@ -253,7 +252,7 @@ void CG_AddParticleToScene(cparticle_t *p, vec3_t org, float alpha)
 				return;
 			}
 
-			p->alpha = 1;
+			p->alpha = 1.f;
 		}
 
 		// had to do this or MAX_POLYS is being exceeded in village1.bsp
@@ -608,7 +607,6 @@ void CG_AddParticleToScene(cparticle_t *p, vec3_t org, float alpha)
 	case P_BLEED:
 	{
 		vec3_t point, rr, ru, rotate_ang;
-		float  alpha = p->alpha;
 
 		if (!cg_visualEffects.integer)
 		{
@@ -635,7 +633,7 @@ void CG_AddParticleToScene(cparticle_t *p, vec3_t org, float alpha)
 		verts[0].modulate[0] = 111;
 		verts[0].modulate[1] = 19;
 		verts[0].modulate[2] = 9;
-		verts[0].modulate[3] = (byte)(255 * alpha);
+		verts[0].modulate[3] = (byte)(255 * p->alpha);
 
 		VectorMA(org, -p->height, ru, point);
 		VectorMA(point, p->width, rr, point);
@@ -645,7 +643,7 @@ void CG_AddParticleToScene(cparticle_t *p, vec3_t org, float alpha)
 		verts[1].modulate[0] = 111;
 		verts[1].modulate[1] = 19;
 		verts[1].modulate[2] = 9;
-		verts[1].modulate[3] = (byte)(255 * alpha);
+		verts[1].modulate[3] = (byte)(255 * p->alpha);
 
 		VectorMA(org, p->height, ru, point);
 		VectorMA(point, p->width, rr, point);
@@ -655,7 +653,7 @@ void CG_AddParticleToScene(cparticle_t *p, vec3_t org, float alpha)
 		verts[2].modulate[0] = 111;
 		verts[2].modulate[1] = 19;
 		verts[2].modulate[2] = 9;
-		verts[2].modulate[3] = (byte)(255 * alpha);
+		verts[2].modulate[3] = (byte)(255 * p->alpha);
 
 		VectorMA(org, p->height, ru, point);
 		VectorMA(point, -p->width, rr, point);
@@ -665,7 +663,7 @@ void CG_AddParticleToScene(cparticle_t *p, vec3_t org, float alpha)
 		verts[3].modulate[0] = 111;
 		verts[3].modulate[1] = 19;
 		verts[3].modulate[2] = 9;
-		verts[3].modulate[3] = (byte)(255 * alpha);
+		verts[3].modulate[3] = (byte)(255 * p->alpha);
 	}
 	break;
 	case P_FLAT_SCALEUP:
