@@ -570,7 +570,7 @@ char **Sys_ListFiles(const char *directory, const char *extension, const char *f
 			Sys_Error("Invalid character in file name '%s'. The file has been removed. Start the server again.", d->d_name);
 #else
 			Cvar_Set("com_missingFiles", "");
-			Com_Error(ERR_DROP, "Invalid file name detected & removed\nFile \"%s\" did contain an invalid character for ET: L file structure.\nSome admins take advantage of this to ensure their menu loads last.\nThe file has been removed.", d->d_name);
+			Com_Error(ERR_DROP, "Invalid file name detected and removed\nFile \"%s\" contains an invalid character for ET: Legacy file structure.\nSome admins take advantage of this to ensure their menu loads last.\nThe file has been removed.", d->d_name);
 #endif
 		}
 
