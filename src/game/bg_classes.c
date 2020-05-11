@@ -427,15 +427,15 @@ const char *BG_ClassnameForNumberFilename(int classNum)
 	switch (classNum)
 	{
 	case PC_SOLDIER:
-		return "Soldier";
+		return "soldier";
 	case PC_MEDIC:
-		return "Medic";
+		return "medic";
 	case PC_ENGINEER:
-		return "Engineer";
+		return "engineer";
 	case PC_FIELDOPS:
-		return "Fieldops";
+		return "fieldops";
 	case PC_COVERTOPS:
-		return "Covertops";
+		return "covertops";
 	default:
 		return "^1ERROR";
 	}
