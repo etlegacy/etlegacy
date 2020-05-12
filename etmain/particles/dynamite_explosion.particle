@@ -26,6 +26,7 @@ weaponImpactParticleDef
 	particleEffect
 	{
 		particleEffectType	     "water"
+		particleEffectShader     "water_splash"
 		particleEffectSpeed	     400	
 		particleEffectSpeedRand  200	// random coef for speed (0 -> disable)
 		particleEffectDuration   900 
@@ -39,8 +40,9 @@ weaponImpactParticleDef
 	// water particle
 	particleEffect
 	{
-		particleEffectType	   "water"
-		particleEffectSpeed	   400	
+		particleEffectType	     "water"
+		particleEffectShader     "dirt_splash"
+		particleEffectSpeed	     400	
 		particleEffectSpeedRand  600		// random coef for speed (0 -> disable)
 		particleEffectDuration   1400
 		particleEffectCount      15
@@ -54,7 +56,8 @@ weaponImpactParticleDef
 	particleEffect
 	{
 		particleEffectType       "grass"
-		particleEffectSpeed	   400	
+		particleEffectShader     "dirt_splash"
+		particleEffectSpeed	     400	
 		particleEffectSpeedRand  200 
 		particleEffectDuration   3000
 		particleEffectCount      10
@@ -68,7 +71,7 @@ weaponImpactParticleDef
 	particleEffect
 	{
 		particleEffectType       "gravel"
-		particleEffectSpeed	   400	
+		particleEffectSpeed	     400	
 		particleEffectSpeedRand  200 
 		particleEffectDuration   3000
 		particleEffectCount      10

@@ -26,6 +26,7 @@ weaponImpactParticleDef
 	particleEffect
 	{
 		particleEffectType	     "water"
+		particleEffectShader     "water_splash"
 		particleEffectSpeed	     190			
 		particleEffectSpeedRand  0			// random coef for speed (0 -> disable)
 		particleEffectDuration   900

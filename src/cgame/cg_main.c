@@ -1747,10 +1747,6 @@ static void CG_RegisterGraphics(void)
 	//cgs.media.bulletParticleTrailShader = trap_R_RegisterShader("bulletParticleTrail"); // unused FIXME: remove from shader def
 	cgs.media.smokeParticleShader = trap_R_RegisterShader("smokeParticle");
 
-	// bullet hitting dirt
-	cgs.media.dirtParticle1Shader = trap_R_RegisterShader("dirt_splash");
-	cgs.media.dirtParticle2Shader = trap_R_RegisterShader("water_splash");
-
 	cgs.media.genericConstructionShader = trap_R_RegisterShader("textures/sfx/construction");
 	cgs.media.shoutcastLandmineShader   = trap_R_RegisterShader("textures/sfx/shoutcast_landmine");
 

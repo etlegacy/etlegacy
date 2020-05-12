@@ -1387,6 +1387,7 @@ static qboolean CG_RW_ParseImpactMark(int handle, weaponInfo_t *weaponInfo)
 static qboolean CG_RW_ParseParticleEffect(int handle, impactParticle_t *impactParticle)
 {
 	int                    index;
+	char                   filename[MAX_QPATH];
 	char                   surfaceType[8] = { 0 };
 	pc_token_t             token;
 	soundSurface_t         impactSurface;
@@ -1448,7 +1449,16 @@ static qboolean CG_RW_ParseParticleEffect(int handle, impactParticle_t *impactPa
 			break;
 		}
 
-		if (!Q_stricmp(token.string, "particleEffectSpeed"))
+		if (!Q_stricmp(token.string, "particleEffectShader"))
+		{
+			if (!PC_String_ParseNoAlloc(handle, filename, sizeof(filename)))
+			{
+				return CG_RW_ParseError(handle, "expected particleEffectShader filename");
+			}
+
+			weaponParticleEffect->particleEffectShader = trap_R_RegisterShader(filename);
+		}
+		else if (!Q_stricmp(token.string, "particleEffectSpeed"))
 		{
 			if (!PC_Int_Parse(handle, &weaponParticleEffect->particleEffectSpeed))
 			{
@@ -5898,7 +5908,7 @@ static void CG_AddImpactParticles(impactParticle_t *particleEffect, int missileE
 			                          effect->particleEffectWidth,
 			                          effect->particleEffectHeight,
 			                          effect->particleEffectAlpha,
-			                          cgs.media.dirtParticle2Shader);
+			                          effect->particleEffectShader);
 		}
 
 		// play a water splash
@@ -5941,7 +5951,7 @@ static void CG_AddImpactParticles(impactParticle_t *particleEffect, int missileE
 				                          effect->particleEffectWidth,
 				                          effect->particleEffectHeight,
 				                          effect->particleEffectAlpha,
-				                          cgs.media.dirtParticle1Shader);
+				                          effect->particleEffectShader);
 			}
 			else if (particleEffect->extraEffect[i].extraEffectUsed)
 			{

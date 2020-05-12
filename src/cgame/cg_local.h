@@ -789,6 +789,7 @@ typedef struct weaponSounds_s
 typedef struct impactParticleEffect_s
 {
 	qboolean particleEffectUsed;
+	qhandle_t particleEffectShader;
 	int particleEffectSpeed;
 	float particleEffectSpeedRand;
 	int particleEffectDuration;
@@ -842,7 +843,7 @@ typedef struct impactParticle_s
 	int waterSplashDuration;
 	int waterSplashLight;
 	vec3_t waterSplashLightColor;
-        
+
 	// particle effect
 	impactParticleEffect_t particleEffect[W_MAX_SND_SURF][MAX_IMPACT_PARTICLE_EFFECT];
 
@@ -878,9 +879,9 @@ typedef struct impactParticle_s
  */
 typedef struct impactParticleTable_s
 {
-    char impactParticleName[MAX_QPATH];
-    impactParticle_t impactParticle;
-    
+	char impactParticleName[MAX_QPATH];
+	impactParticle_t impactParticle;
+
 }impactParticleTable_t;
 
 /**
@@ -1716,10 +1717,6 @@ typedef struct
 	qhandle_t spotLightBeamShader;
 
 	qhandle_t smokeParticleShader;
-
-	// bullet hitting dirt
-	qhandle_t dirtParticle1Shader;
-	qhandle_t dirtParticle2Shader;
 
 	qhandle_t genericConstructionShader;
 	qhandle_t shoutcastLandmineShader;
@@ -3209,7 +3206,7 @@ void CG_AddToNotify(const char *str);
 const char *CG_LocalizeServerCommand(const char *buf);
 void CG_wstatsParse_cmd(void);
 
-void CG_parseWeaponStats_cmd(void (txt_dump) (const char *));
+void CG_parseWeaponStats_cmd(void(txt_dump) (const char *));
 //void CG_parseBestShotsStats_cmd(qboolean doTop, void(txt_dump) (const char *));
 //void CG_parseTopShotsStats_cmd(qboolean doTop, void(txt_dump) (const char *));
 //void CG_scores_cmd(void);
