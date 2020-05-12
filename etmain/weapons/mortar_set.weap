@@ -47,7 +47,7 @@ weaponDef
 		impactDurationCoeff 3
 		impactMarkMaxRange  -1	// -1 infinite
                 impactSoundRange  400
-                impactParticle    "sprites/small_explosion.particle"  
+                impactParticle    "particles/small_explosion.particle"  
                 impactSoundVolume 127
                 impactMarkRadius  64
                 impactSound {

@@ -54,7 +54,7 @@ weaponDef
 		impactDurationCoeff 3
 		impactMarkMaxRange  -1	// -1 infinite
                 impactSoundRange 400
-                impactParticle   "sprites/dynamite_explosion.particle" 
+                impactParticle   "particles/dynamite_explosion.particle" 
                 impactSoundVolume 127
                 impactMarkRadius  128
                 impactSound {                       // each surface supports up to 5 hits sounds. available surface : default, far, wood, metal, roof, gravel, glass, snow, water, flesh

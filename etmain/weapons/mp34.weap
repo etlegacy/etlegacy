@@ -53,7 +53,7 @@ weaponDef
                 
 		impactDurationCoeff 1
 		impactMarkMaxRange  384	// -1 infinite
-                impactParticle    "sprites/bullet.particle" 
+                impactParticle    "particles/bullet.particle" 
                 impactSoundVolume 64
                 impactMarkRadius  1.5
                 impactSound {                   // each surface supports up to 5 hits sounds. available surface : default, far, wood, metal, roof, gravel, glass, snow, water, flesh

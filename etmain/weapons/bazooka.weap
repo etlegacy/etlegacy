@@ -53,7 +53,7 @@ weaponDef
                 impactSoundRange 800    
                 impactSoundVolume 127
                 impactMarkRadius  128
-                impactParticle    "sprites/big_explosion.particle"  
+                impactParticle    "particles/big_explosion.particle"  
                 impactSound {                           // each surface supports up to 5 hits sounds. available surface : default, far, wood, metal, roof, gravel, glass, snow, water, flesh
                 
                     default "sound/weapons/rocket/rocket_expl.wav"

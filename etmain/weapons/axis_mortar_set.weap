@@ -49,7 +49,7 @@ weaponDef
                 impactSoundRange  400
                 impactSoundVolume 127
                 impactMarkRadius  64
-                impactParticle    "sprites/small_explosion.particle"  
+                impactParticle    "particles/small_explosion.particle"  
                 
                 impactSound {
                     default   "sound/weapons/mortar/mortar_expl.wav"
