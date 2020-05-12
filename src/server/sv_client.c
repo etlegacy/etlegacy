@@ -726,8 +726,13 @@ void SV_SendClientGameState(client_t *client)
 	msg_t         msg;
 	byte          msgBuffer[MAX_MSGLEN];
 
-	Com_DPrintf("SV_SendClientGameState() for %s\n", client->name);
-	Com_DPrintf("Going from CS_CONNECTED to CS_PRIMED for %s\n", client->name);
+	Com_DPrintf( "SV_SendClientGameState() for %s\n", client->name );
+
+	if (client->state != CS_PRIMED)
+	{
+		Com_DPrintf("Going from CS_CONNECTED to CS_PRIMED for %s\n", client->name);
+	}
+
 	client->state         = CS_PRIMED;
 	client->pureAuthentic = 0;
 	client->gotCP         = qfalse;
@@ -2050,25 +2055,17 @@ static void SV_UserMove(client_t *cl, msg_t *msg, qboolean delta)
 	// save time for ping calculation
 	cl->frames[cl->messageAcknowledge & PACKET_MASK].messageAcked = svs.time;
 
-	// catch the no-cp-yet situation before SV_ClientEnterWorld
-	// if CS_ACTIVE, then it's time to trigger a new gamestate emission
-	// if not, then we are getting remaining parasite usermove commands, which we should ignore
-	if (sv_pure->integer != 0 && cl->pureAuthentic == 0 && !cl->gotCP)
-	{
-		if (cl->state == CS_ACTIVE)
-		{
-			// we didn't get a cp yet, don't assume anything and just send the gamestate all over again
-			Com_DPrintf("%s: didn't get cp command, resending gamestate\n", rc(cl->name));
-			SV_SendClientGameState(cl);
-		}
-
-		return;
-	}
-
 	// if this is the first usercmd we have received
 	// this gamestate, put the client into the world
 	if (cl->state == CS_PRIMED)
 	{
+		if (sv_pure->integer != 0 && !cl->gotCP) 
+		{
+			// we didn't get a cp yet, don't assume anything and just send the gamestate all over again
+			Com_DPrintf( "%s: didn't get cp command, resending gamestate\n", cl->name );
+			SV_SendClientGameState( cl );
+			return;
+		}
 		SV_ClientEnterWorld(cl, &cmds[0]);
 		// the moves can be processed normaly
 	}
