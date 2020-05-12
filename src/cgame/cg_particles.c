@@ -105,7 +105,9 @@ static const char *shaderAnimNames[MAX_SHADER_ANIMS] =
 	"explode1",
 	"blacksmokeanim",
 	"twiltb2",
-	"blacksmokeanimc",
+	//"expblue",
+	"blacksmokeanimb",       // uses 'explode1' sequence
+	//"blood",
 	NULL
 };
 
@@ -116,9 +118,9 @@ static int shaderAnimCounts[MAX_SHADER_ANIMS] =
 	23,
 	23, // removing warning messages from startup
 	45,
-	23,
+	//23,
 	25,
-	23,
+	//23,
 	5,
 };
 
@@ -127,9 +129,9 @@ static float shaderAnimSTRatio[MAX_SHADER_ANIMS] =
 	1, // changed from 1.405 to 1
 	1,
 	1,
+	//1,
 	1,
-	1,
-	1,
+	//1,
 	1,
 };
 //static int numShaderAnims;
