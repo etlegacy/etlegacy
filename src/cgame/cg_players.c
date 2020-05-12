@@ -1711,7 +1711,7 @@ static void CG_PlayerAngles(centity_t *cent, vec3_t legs[3], vec3_t torso[3], ve
 
 	// allow yaw to drift a bit, unless these conditions don't allow them
 	if (!(BG_GetConditionBitFlag(cent->currentState.clientNum, ANIM_COND_MOVETYPE, ANIM_MT_IDLE) ||
-	      BG_GetConditionBitFlag(cent->currentState.clientNum, ANIM_COND_MOVETYPE, ANIM_MT_IDLECR))/*
+	      BG_GetConditionBitFlag(cent->currentState.clientNum, ANIM_COND_MOVETYPE, ANIM_MT_IDLECR)) /*
 	    ||   (BG_GetConditionValue( cent->currentState.clientNum, ANIM_COND_MOVETYPE, qfalse ) & ((1<<ANIM_MT_STRAFELEFT) | (1<<ANIM_MT_STRAFERIGHT)) )*/)
 	{
 
@@ -2067,7 +2067,7 @@ static void CG_PlayerSprites(centity_t *cent)
 	// dead players that are not in limbo yet.
 	if ((cent->currentState.eFlags & EF_DEAD)
 	    && cent->currentState.number == cent->currentState.clientNum
-	    && cg.snap->ps.stats[STAT_PLAYER_CLASS] == PC_MEDIC
+	    && cgs.clientinfo[cg.snap->ps.clientNum].cls == PC_MEDIC
 	    && cg.snap->ps.stats[STAT_HEALTH] > 0
 	    && sameTeam)
 	{
