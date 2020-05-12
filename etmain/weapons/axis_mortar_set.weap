@@ -44,10 +44,12 @@ weaponDef
 		
 		//modModel 1		""
                 
+		impactDurationCoeff 3
+		impactMarkMaxRange  -1	// -1 infinite
                 impactSoundRange  400
                 impactSoundVolume 127
                 impactMarkRadius  64
-                impactFunction    "SmallExplosionImpact"  // supports "MeleeImpact", "BulletImpact", "SmallExplosionImpact", "BigExplosionImpact", "MapMortarImpact" and "DynamiteExplosionImpact"
+                impactParticle    "sprites/small_explosion.particle"  
                 
                 impactSound {
                     default   "sound/weapons/mortar/mortar_expl.wav"

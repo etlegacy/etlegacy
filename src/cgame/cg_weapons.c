@@ -1378,12 +1378,498 @@ static qboolean CG_RW_ParseImpactMark(int handle, weaponInfo_t *weaponInfo)
 	return qtrue;
 }
 
-void CG_MeleeImpact(int weapon, int missileEffect, vec3_t origin, vec3_t dir, int surfFlags, float *radius, int *markDuration);
-void CG_BulletImpact(int weapon, int missileEffect, vec3_t origin, vec3_t dir, int surfFlags, float *radius, int *markDuration);
-void CG_SmallExplosionImpact(int weapon, int missileEffect, vec3_t origin, vec3_t dir, int surfFlags, float *radius, int *markDuration);
-void CG_BigExplosionImpact(int weapon, int missileEffect, vec3_t origin, vec3_t dir, int surfFlags, float *radius, int *markDuration);
-void CG_MapMortarImpact(int weapon, int missileEffect, vec3_t origin, vec3_t dir, int surfFlags, float *radius, int *markDuration);
-void CG_DynamiteExplosionImpact(int weapon, int missileEffect, vec3_t origin, vec3_t dir, int surfFlags, float *radius, int *markDuration);
+/**
+ * @brief CG_RW_ParseImpactMark
+ * @param[in] handle
+ * @param[out] impactParticle
+ * @return
+ */
+static qboolean CG_RW_ParseParticleEffect(int handle, impactParticle_t *impactParticle)
+{
+	int                    index;
+	char                   surfaceType[8] = { 0 };
+	pc_token_t             token;
+	soundSurface_t         impactSurface;
+	impactParticleEffect_t *weaponParticleEffect = NULL;
+
+	if (!trap_PC_ReadToken(handle, &token) || Q_stricmp(token.string, "{"))
+	{
+		return CG_RW_ParseError(handle, "expected '{'");
+	}
+
+	if (!trap_PC_ReadToken(handle, &token) || Q_stricmp(token.string, "particleEffectType"))
+	{
+		return CG_RW_ParseError(handle, "expected particleEffectType");
+	}
+
+	if (!PC_String_ParseNoAlloc(handle, surfaceType, sizeof(surfaceType)))
+	{
+		return CG_RW_ParseError(handle, "expected particleEffectType");
+	}
+
+	for (impactSurface = 0; impactSurface < W_MAX_SND_SURF; impactSurface++)
+	{
+		if (!Q_stricmp(surfaceType, soundSurfaceTable[impactSurface].surfaceName))
+		{
+			break;
+		}
+	}
+
+	if (impactSurface == W_MAX_SND_SURF || !impactParticle->particleEffect[impactSurface])
+	{
+		return CG_RW_ParseError(handle, "unknown token '%s'", token.string);
+	}
+
+	for (index = 0; index < MAX_IMPACT_PARTICLE_EFFECT; index++)
+	{
+		if (!impactParticle->particleEffect[impactSurface][index].particleEffectUsed)
+		{
+			impactParticle->particleEffect[impactSurface][index].particleEffectUsed = qtrue;
+			weaponParticleEffect                                                    = &impactParticle->particleEffect[impactSurface][index];
+			break;
+		}
+	}
+
+	if (index == MAX_IMPACT_PARTICLE_EFFECT /*|| !weaponParticleEffect*/)
+	{
+		CG_Printf(S_COLOR_YELLOW "WARNING: only up to %i particle effect per surface\n", MAX_IMPACT_PARTICLE_EFFECT);
+		return qfalse;
+	}
+
+	while (1)
+	{
+		if (!trap_PC_ReadToken(handle, &token))
+		{
+			break;
+		}
+
+		if (token.string[0] == '}')
+		{
+			break;
+		}
+
+		if (!Q_stricmp(token.string, "particleEffectSpeed"))
+		{
+			if (!PC_Int_Parse(handle, &weaponParticleEffect->particleEffectSpeed))
+			{
+				return CG_RW_ParseError(handle, "expected particleEffectSpeed");
+			}
+		}
+		else if (!Q_stricmp(token.string, "particleEffectSpeedRand"))
+		{
+			if (!PC_Float_Parse(handle, &weaponParticleEffect->particleEffectSpeedRand))
+			{
+				return CG_RW_ParseError(handle, "expected particleEffectSpeedRand");
+			}
+		}
+		else if (!Q_stricmp(token.string, "particleEffectDuration"))
+		{
+			if (!PC_Int_Parse(handle, &weaponParticleEffect->particleEffectDuration))
+			{
+				return CG_RW_ParseError(handle, "expected particleEffectDuration");
+			}
+		}
+		else if (!Q_stricmp(token.string, "particleEffectCount"))
+		{
+			if (!PC_Int_Parse(handle, &weaponParticleEffect->particleEffectCount))
+			{
+				return CG_RW_ParseError(handle, "expected particleEffectCount");
+			}
+		}
+		else if (!Q_stricmp(token.string, "particleEffectRandScale"))
+		{
+			if (!PC_Float_Parse(handle, &weaponParticleEffect->particleEffectRandScale))
+			{
+				return CG_RW_ParseError(handle, "expected particleEffectRandScale");
+			}
+		}
+		else if (!Q_stricmp(token.string, "particleEffectWidth"))
+		{
+			if (!PC_Int_Parse(handle, &weaponParticleEffect->particleEffectWidth))
+			{
+				return CG_RW_ParseError(handle, "expected particleEffectWidth");
+			}
+		}
+		else if (!Q_stricmp(token.string, "particleEffectHeight"))
+		{
+			if (!PC_Int_Parse(handle, &weaponParticleEffect->particleEffectHeight))
+			{
+				return CG_RW_ParseError(handle, "expected particleEffectHeight");
+			}
+		}
+		else if (!Q_stricmp(token.string, "particleEffectAlpha"))
+		{
+			if (!PC_Float_Parse(handle, &weaponParticleEffect->particleEffectAlpha))
+			{
+				return CG_RW_ParseError(handle, "expected particleEffectAlpha");
+			}
+		}
+	}
+
+	return qtrue;
+}
+
+/**
+ * @brief CG_RW_ParseExtraEffect
+ * @param[in] handle
+ * @param[out] impactParticle
+ * @return
+ */
+static qboolean CG_RW_ParseExtraEffect(int handle, impactParticle_t *impactParticle)
+{
+	int                 index;
+	pc_token_t          token;
+	impactExtraEffect_t *impactExtraEffect = NULL;
+
+	if (!trap_PC_ReadToken(handle, &token) || Q_stricmp(token.string, "{"))
+	{
+		return CG_RW_ParseError(handle, "expected '{'");
+	}
+
+	for (index = 0; index < MAX_IMPACT_PARTICLE_EFFECT; index++)
+	{
+		if (!impactParticle->extraEffect[index].extraEffectUsed)
+		{
+			impactParticle->extraEffect[index].extraEffectUsed = qtrue;
+			impactExtraEffect                                  = &impactParticle->extraEffect[index];
+			break;
+		}
+	}
+
+	if (index == MAX_IMPACT_PARTICLE_EFFECT /*|| !impactExtraEffect*/)
+	{
+		CG_Printf(S_COLOR_YELLOW "WARNING: only up to %i particle effect per surface\n", MAX_IMPACT_PARTICLE_EFFECT);
+		return qfalse;
+	}
+
+	while (1)
+	{
+		if (!trap_PC_ReadToken(handle, &token))
+		{
+			break;
+		}
+
+		if (token.string[0] == '}')
+		{
+			break;
+		}
+
+		if (!Q_stricmp(token.string, "extraEffectCount"))
+		{
+			if (!PC_Int_Parse(handle, &impactExtraEffect->extraEffectCount))
+			{
+				return CG_RW_ParseError(handle, "expected extraEffectCount");
+			}
+		}
+		else if (!Q_stricmp(token.string, "extraEffectOriginRand"))
+		{
+			if (!PC_Float_Parse(handle, &impactExtraEffect->extraEffectOriginRand))
+			{
+				return CG_RW_ParseError(handle, "expected extraEffectOriginRand");
+			}
+		}
+		else if (!Q_stricmp(token.string, "extraEffectVelocityRand"))
+		{
+			if (!PC_Float_Parse(handle, &impactExtraEffect->extraEffectVelocityRand))
+			{
+				return CG_RW_ParseError(handle, "expected extraEffectVelocityRand");
+			}
+		}
+		else if (!Q_stricmp(token.string, "extraEffectVelocityScaling"))
+		{
+			if (!PC_Float_Parse(handle, &impactExtraEffect->extraEffectVelocityScaling))
+			{
+				return CG_RW_ParseError(handle, "expected extraEffectVelocityScaling");
+			}
+		}
+		else if (!Q_stricmp(token.string, "extraEffectShaderName"))
+		{
+			if (!PC_String_ParseNoAlloc(handle, impactExtraEffect->extraEffectShaderName, sizeof(impactExtraEffect->extraEffectShaderName)))
+			{
+				return CG_RW_ParseError(handle, "expected particleEffectRandScale");
+			}
+		}
+		else if (!Q_stricmp(token.string, "extraEffectDuration"))
+		{
+			if (!PC_Int_Parse(handle, &impactExtraEffect->extraEffectDuration))
+			{
+				return CG_RW_ParseError(handle, "expected extraEffectDuration");
+			}
+		}
+		else if (!Q_stricmp(token.string, "extraEffectDurationRand"))
+		{
+			if (!PC_Float_Parse(handle, &impactExtraEffect->extraEffectDurationRand))
+			{
+				return CG_RW_ParseError(handle, "expected extraEffectDurationRand");
+			}
+		}
+		else if (!Q_stricmp(token.string, "extraEffectSizeStart"))
+		{
+			if (!PC_Int_Parse(handle, &impactExtraEffect->extraEffectSizeStart))
+			{
+				return CG_RW_ParseError(handle, "expected extraEffectSizeStart");
+			}
+		}
+		else if (!Q_stricmp(token.string, "extraEffectSizeStartRand"))
+		{
+			if (!PC_Float_Parse(handle, &impactExtraEffect->extraEffectSizeStartRand))
+			{
+				return CG_RW_ParseError(handle, "expected extraEffectSizeStartRand");
+			}
+		}
+		else if (!Q_stricmp(token.string, "extraEffectSizeEnd"))
+		{
+			if (!PC_Int_Parse(handle, &impactExtraEffect->extraEffectSizeEnd))
+			{
+				return CG_RW_ParseError(handle, "expected extraEffectSizeEnd");
+			}
+		}
+		else if (!Q_stricmp(token.string, "extraEffectSizeEndRand"))
+		{
+			if (!PC_Float_Parse(handle, &impactExtraEffect->extraEffectSizeEndRand))
+			{
+				return CG_RW_ParseError(handle, "expected extraEffectSizeEndRand");
+			}
+		}
+		else if (!Q_stricmp(token.string, "extraEffectLightAnim"))
+		{
+			impactExtraEffect->extraEffectLightAnim = qtrue;
+		}
+	}
+
+	return qtrue;
+}
+
+static impactParticleTable_t impactParticleTable[MAX_IMPACT_PARTICLE] = { { { 0 } } };
+
+/**
+ * @brief CG_ParseWeaponImpactParticle
+ * @param filename
+ * @param wip
+ * @return
+ */
+static qboolean CG_ParseWeaponImpactParticle(const char *filename, impactParticle_t **pImpactParticle)
+{
+	pc_token_t       token;
+	int              handle;
+	impactParticle_t *impactParticle = NULL;
+	int              i;
+
+	for (i = 0; i < MAX_IMPACT_PARTICLE; i++)
+	{
+		if (impactParticleTable[i].impactParticleName[0] == 0)
+		{
+			Q_strcpy(impactParticleTable[i].impactParticleName, filename);
+			*pImpactParticle = impactParticle = &impactParticleTable[i].impactParticle;
+			break;
+		}
+		else if (!Q_stricmp(filename, &impactParticleTable[i].impactParticleName[0]))
+		{
+			*pImpactParticle = impactParticle = &impactParticleTable[i].impactParticle;
+			return qtrue;
+		}
+	}
+
+	if (i == MAX_IMPACT_PARTICLE)
+	{
+		CG_Printf(S_COLOR_RED "WARNING: too much impact particle declared. Max is %i\n", MAX_IMPACT_PARTICLE);
+		return qfalse;
+	}
+
+	handle = trap_PC_LoadSource(filename);
+
+	if (!handle)
+	{
+		return qfalse;
+	}
+
+	if (!trap_PC_ReadToken(handle, &token) || Q_stricmp(token.string, "weaponImpactParticleDef"))
+	{
+		return CG_RW_ParseError(handle, "expected 'weaponImpactParticleDef'");
+	}
+
+	if (!trap_PC_ReadToken(handle, &token) || Q_stricmp(token.string, "{"))
+	{
+		return CG_RW_ParseError(handle, "expected '{'");
+	}
+
+	while (1)
+	{
+		if (!trap_PC_ReadToken(handle, &token))
+		{
+			break;
+		}
+
+		if (token.string[0] == '}')
+		{
+			break;
+		}
+
+		if (!Q_stricmp(token.string, "particleDirectionOffset"))
+		{
+			if (!PC_Float_Parse(handle, &impactParticle->particleDirectionOffset))
+			{
+				return CG_RW_ParseError(handle, "expected particleDirectionOffset");
+			}
+		}
+		else if (!Q_stricmp(token.string, "particleDirectionScaling"))
+		{
+			if (!PC_Float_Parse(handle, &impactParticle->particleDirectionScaling))
+			{
+				return CG_RW_ParseError(handle, "expected particleDirectionScaling");
+			}
+		}
+		else if (!Q_stricmp(token.string, "waterRippleRadius"))
+		{
+			if (!PC_Int_Parse(handle, &impactParticle->waterRippleRadius))
+			{
+				return CG_RW_ParseError(handle, "expected waterRippleRadius");
+			}
+		}
+		else if (!Q_stricmp(token.string, "waterRippleLifeTime"))
+		{
+			if (!PC_Int_Parse(handle, &impactParticle->waterRippleLifeTime))
+			{
+				return CG_RW_ParseError(handle, "expected waterRippleLifeTime");
+			}
+		}
+		else if (!Q_stricmp(token.string, "waterSplashDuration"))
+		{
+			if (!PC_Int_Parse(handle, &impactParticle->waterSplashDuration))
+			{
+				return CG_RW_ParseError(handle, "expected waterSplashDuration");
+			}
+		}
+		else if (!Q_stricmp(token.string, "waterSplashLight"))
+		{
+			if (!PC_Int_Parse(handle, &impactParticle->waterSplashLight))
+			{
+				return CG_RW_ParseError(handle, "expected waterSplashLight");
+			}
+		}
+		else if (!Q_stricmp(token.string, "waterSplashLightColor"))
+		{
+			if (!PC_Vec_Parse(handle, &impactParticle->waterSplashLightColor))
+			{
+				return CG_RW_ParseError(handle, "expected waterSplashLightColor");
+			}
+		}
+		else if (!Q_stricmp(token.string, "explosionShaderName"))
+		{
+			if (!PC_String_ParseNoAlloc(handle, impactParticle->explosionShaderName, sizeof(impactParticle->explosionShaderName)))
+			{
+				return CG_RW_ParseError(handle, "expected explosionShaderName");
+			}
+		}
+		else if (!Q_stricmp(token.string, "explosionDuration"))
+		{
+			if (!PC_Int_Parse(handle, &impactParticle->explosionDuration))
+			{
+				return CG_RW_ParseError(handle, "expected explosionDuration");
+			}
+		}
+		else if (!Q_stricmp(token.string, "explosionSizeStart"))
+		{
+			if (!PC_Int_Parse(handle, &impactParticle->explosionSizeStart))
+			{
+				return CG_RW_ParseError(handle, "expected explosionSizeStart");
+			}
+		}
+		else if (!Q_stricmp(token.string, "explosionSizeStartRand"))
+		{
+			if (!PC_Float_Parse(handle, &impactParticle->explosionSizeStartRand))
+			{
+				return CG_RW_ParseError(handle, "expected explosionSizeStartRand");
+			}
+		}
+		else if (!Q_stricmp(token.string, "explosionSizeEnd"))
+		{
+			if (!PC_Int_Parse(handle, &impactParticle->explosionSizeEnd))
+			{
+				return CG_RW_ParseError(handle, "expected explosionSizeEnd");
+			}
+		}
+		else if (!Q_stricmp(token.string, "explosionSizeEndRand"))
+		{
+			if (!PC_Float_Parse(handle, &impactParticle->explosionSizeEndRand))
+			{
+				return CG_RW_ParseError(handle, "expected explosionSizeEndRand");
+			}
+		}
+		else if (!Q_stricmp(token.string, "explosionLightAnim"))
+		{
+			impactParticle->explosionLightAnim = qtrue;
+		}
+		else if (!Q_stricmp(token.string, "debrisSpeed"))
+		{
+			if (!PC_Int_Parse(handle, &impactParticle->debrisSpeed))
+			{
+				return CG_RW_ParseError(handle, "expected debrisSpeed");
+			}
+		}
+		else if (!Q_stricmp(token.string, "debrisSpeedRand"))
+		{
+			if (!PC_Float_Parse(handle, &impactParticle->debrisSpeedRand))
+			{
+				return CG_RW_ParseError(handle, "expected debrisSpeedRand");
+			}
+		}
+		else if (!Q_stricmp(token.string, "debrisDuration"))
+		{
+			if (!PC_Int_Parse(handle, &impactParticle->debrisDuration))
+			{
+				return CG_RW_ParseError(handle, "expected debrisDuration");
+			}
+		}
+		else if (!Q_stricmp(token.string, "debrisDurationRand"))
+		{
+			if (!PC_Float_Parse(handle, &impactParticle->debrisDurationRand))
+			{
+				return CG_RW_ParseError(handle, "expected debrisDurationRand");
+			}
+		}
+		else if (!Q_stricmp(token.string, "debrisCount"))
+		{
+			if (!PC_Int_Parse(handle, &impactParticle->debrisCount))
+			{
+				return CG_RW_ParseError(handle, "expected debrisCount");
+			}
+		}
+		else if (!Q_stricmp(token.string, "debrisCountExtra"))
+		{
+			if (!PC_Int_Parse(handle, &impactParticle->debrisCountExtra))
+			{
+				return CG_RW_ParseError(handle, "expected debrisCountExtra");
+			}
+		}
+		else if (!Q_stricmp(token.string, "debrisForBullet"))
+		{
+			impactParticle->debrisForBullet = qtrue;
+		}
+		else if (!Q_stricmp(token.string, "particleEffect"))
+		{
+			if (!CG_RW_ParseParticleEffect(handle, impactParticle))
+			{
+				return qfalse;
+			}
+		}
+		else if (!Q_stricmp(token.string, "extraEffect"))
+		{
+			if (!CG_RW_ParseExtraEffect(handle, impactParticle))
+			{
+				return qfalse;
+			}
+		}
+		else
+		{
+			return CG_RW_ParseError(handle, "unknown token '%s'", token.string);
+		}
+	}
+
+	trap_PC_FreeSource(handle);
+
+	return qtrue;
+}
 
 /**
  * @brief CG_RW_ParseClient
@@ -1770,6 +2256,20 @@ static qboolean CG_RW_ParseClient(int handle, weaponInfo_t *weaponInfo)
 				return CG_RW_ParseError(handle, "expected adjustLean as pitch yaw roll");
 			}
 		}
+		else if (!Q_stricmp(token.string, "impactDurationCoeff"))
+		{
+			if (!PC_Int_Parse(handle, &weaponInfo->impactDurationCoeff))
+			{
+				return CG_RW_ParseError(handle, "expected impactDurationCoeff value");
+			}
+		}
+		else if (!Q_stricmp(token.string, "impactMarkMaxRange"))
+		{
+			if (!PC_Int_Parse(handle, &weaponInfo->impactMarkMaxRange))
+			{
+				return CG_RW_ParseError(handle, "expected impactMarkMaxRange value");
+			}
+		}
 		else if (!Q_stricmp(token.string, "impactSoundRange"))
 		{
 			if (!PC_Int_Parse(handle, &weaponInfo->impactSoundRange))
@@ -1791,36 +2291,16 @@ static qboolean CG_RW_ParseClient(int handle, weaponInfo_t *weaponInfo)
 				return CG_RW_ParseError(handle, "expected impactMarkRadius value");
 			}
 		}
-		else if (!Q_stricmp(token.string, "impactFunction"))
+		else if (!Q_stricmp(token.string, "impactParticle"))
 		{
 			if (!PC_String_ParseNoAlloc(handle, filename, sizeof(filename)))
 			{
-				return CG_RW_ParseError(handle, "expected impactFunction");
+				return CG_RW_ParseError(handle, "expected impactParticle filename");
 			}
 
-			if (!Q_stricmp(filename, "MeleeImpact"))
+			if (!CG_ParseWeaponImpactParticle(filename, &weaponInfo->impactParticle))
 			{
-				weaponInfo->impactFunc = CG_MeleeImpact;
-			}
-			else if (!Q_stricmp(filename, "BulletImpact"))
-			{
-				weaponInfo->impactFunc = CG_BulletImpact;
-			}
-			else if (!Q_stricmp(filename, "SmallExplosionImpact"))
-			{
-				weaponInfo->impactFunc = CG_SmallExplosionImpact;
-			}
-			else if (!Q_stricmp(filename, "BigExplosionImpact"))
-			{
-				weaponInfo->impactFunc = CG_BigExplosionImpact;
-			}
-			else if (!Q_stricmp(filename, "DynamiteExplosionImpact"))
-			{
-				weaponInfo->impactFunc = CG_DynamiteExplosionImpact;
-			}
-			else if (!Q_stricmp(filename, "MapMortarImpact"))
-			{
-				weaponInfo->impactFunc = CG_MapMortarImpact;
+				return qfalse;
 			}
 		}
 		else if (!Q_stricmp(token.string, "impactSound"))
@@ -5375,395 +5855,153 @@ sfxHandle_t CG_GetRandomSoundSurface(weaponSounds_t *weaponSounds, soundSurface_
 	return 0;
 }
 
+
 /**
- * @brief CG_MeleeImpact
- * @param[in] weapon
+ * @brief CG_AddImpactParticles
+ * @param[in] particleEffect
  * @param[in] missileEffect
  * @param[in] origin
  * @param[in] dir
  * @param[in] surfFlags
- * @param[in,out] radius
- * @param[in,out] markDuration
  */
-void CG_MeleeImpact(int weapon, int missileEffect, vec3_t origin, vec3_t dir, int surfFlags, float *radius, int *markDuration)
+static void CG_AddImpactParticles(impactParticle_t *particleEffect, int missileEffect, vec3_t origin, vec3_t dir, soundSurface_t surfFlags)
 {
-	if (missileEffect == PS_FX_COMMON)
+	if (missileEffect == PS_FX_WATER)
 	{
-		*radius = 1 + rand() % 2;
+		trace_t trace;
+		vec3_t  tmpv;
+		int     i = 0;
 
-		CG_AddBulletParticles(origin, dir, 20, 800, 3 + rand() % 6, 1.0f);
+		VectorCopy(origin, tmpv);
+		tmpv[2] += MAX_TRACE;
 
-		*markDuration = cg_markTime.integer;
-	}
-}
+		trap_CM_BoxTrace(&trace, tmpv, origin, NULL, NULL, 0, MASK_WATER);
 
-/**
- * @brief CG_BulletImpact
- * @param[in] weapon
- * @param[in] missileEffect
- * @param[in] origin
- * @param[in] dir
- * @param[in] surfFlags
- * @param[in,out] radius
- * @param[in,out] markDuration
- */
-void CG_BulletImpact(int weapon, int missileEffect, vec3_t origin, vec3_t dir, int surfFlags, float *radius, int *markDuration)
-{
-	if (missileEffect == PS_FX_NONE)
-	{
-		CG_AddSparks(origin, dir, 350, 200, 15 + rand() % 7, 0.2f);
-	}
-	else if (missileEffect == PS_FX_COMMON)       // just do a little smoke puff
-	{
-		vec3_t d, o;
-		VectorMA(origin, 12, dir, o);
-		VectorScale(dir, 7, d);
-		d[2] += 16;
+		// ripple
+		CG_WaterRipple(cgs.media.wakeMarkShaderAnim, trace.endpos, dir, particleEffect->waterRippleRadius, particleEffect->waterRippleLifeTime);
 
-		//  use dirt images
-		if ((surfFlags & SURF_GRASS) || (surfFlags & SURF_GRAVEL))       // added SURF_SNOW
-		{   // some debris particles
-			CG_AddDirtBulletParticles(origin, dir, 190, 900, 5, 0.5f, 80, 16, 0.5f, cgs.media.dirtParticle1Shader);
-		}
-		else if (surfFlags & SURF_SNOW)
+		// particle
+		for (i = 0; i < MAX_IMPACT_PARTICLE_EFFECT; i++)
 		{
-			CG_AddDirtBulletParticles(origin, dir, 190, 900, 5, 0.25f, 80, 32, 0.5f, cgs.media.dirtParticle2Shader);
+			impactParticleEffect_t *effect = &particleEffect->particleEffect[W_SND_SURF_WATER][i];
+
+			if (!effect->particleEffectUsed)
+			{
+				break;
+			}
+
+			CG_AddDirtBulletParticles(trace.endpos, dir,
+			                          (int)(effect->particleEffectSpeed + random() * effect->particleEffectSpeedRand),
+			                          effect->particleEffectDuration,
+			                          effect->particleEffectCount,
+			                          effect->particleEffectRandScale,
+			                          effect->particleEffectWidth,
+			                          effect->particleEffectHeight,
+			                          effect->particleEffectAlpha,
+			                          cgs.media.dirtParticle2Shader);
+		}
+
+		// play a water splash
+		if (cg_visualEffects.integer)
+		{
+			localEntity_t *le;
+			le        = CG_MakeExplosion(origin, dir, cgs.media.waterSplashModel, cgs.media.waterSplashShader, particleEffect->waterSplashDuration, qtrue);
+			le->light = particleEffect->waterSplashLight;
+			VectorCopy(le->lightColor, particleEffect->waterSplashLightColor);
+		}
+	}
+	else if (missileEffect == PS_FX_COMMON)
+	{
+		trace_t trace;
+		int     i;
+		vec3_t  tmpv, tmpv2, sprOrg, sprVel;
+
+		// explosion sprite animation
+		VectorMA(origin, particleEffect->particleDirectionOffset, dir, sprOrg);
+		VectorScale(dir, particleEffect->particleDirectionScaling, sprVel);
+
+		VectorCopy(origin, tmpv);
+		tmpv[2] += 20;
+		VectorCopy(origin, tmpv2);
+		tmpv2[2] -= 20;
+		trap_CM_BoxTrace(&trace, tmpv, tmpv2, NULL, NULL, 0, MASK_SHOT);
+
+		// particle
+		for (i = 0; i < MAX_IMPACT_PARTICLE_EFFECT; i++)
+		{
+			if (particleEffect->particleEffect[surfFlags][i].particleEffectUsed)
+			{
+				impactParticleEffect_t *effect = &particleEffect->particleEffect[surfFlags][i];
+
+				CG_AddDirtBulletParticles(trace.endpos, dir,
+				                          (int)(effect->particleEffectSpeed + random() * effect->particleEffectSpeedRand),
+				                          effect->particleEffectDuration,
+				                          effect->particleEffectCount,
+				                          effect->particleEffectRandScale,
+				                          effect->particleEffectWidth,
+				                          effect->particleEffectHeight,
+				                          effect->particleEffectAlpha,
+				                          cgs.media.dirtParticle1Shader);
+			}
+			else if (particleEffect->extraEffect[i].extraEffectUsed)
+			{
+				impactExtraEffect_t *effect = &particleEffect->extraEffect[i];
+				int                 j, count;
+
+				for (count = 0; count < effect->extraEffectCount; count++)
+				{
+					for (j = 0; j < 3; j++)
+					{
+						sprOrg[j] = origin[j] + effect->extraEffectOriginRand * crandom();
+						sprVel[j] = effect->extraEffectVelocityRand * crandom();
+					}
+
+					VectorAdd(sprVel, trace.plane.normal, sprVel);
+					VectorScale(sprVel, effect->extraEffectVelocityScaling, sprVel);
+					CG_ParticleExplosion(effect->extraEffectShaderName,
+					                     sprOrg,
+					                     sprVel,
+					                     (int)(effect->extraEffectDuration + random() * effect->extraEffectDurationRand),
+					                     (int)(effect->extraEffectSizeStart + random() * effect->extraEffectSizeStartRand),
+					                     (int)(effect->extraEffectSizeEnd + random() * effect->extraEffectSizeEndRand),
+					                     effect->extraEffectLightAnim);
+				}
+			}
+		}
+
+		// explosion
+		if (particleEffect->explosionShaderName[0] != 0)
+		{
+			CG_ParticleExplosion(particleEffect->explosionShaderName,
+			                     sprOrg,
+			                     sprVel,
+			                     particleEffect->explosionDuration,
+			                     (int)(particleEffect->explosionSizeStart + random() * particleEffect->explosionSizeStartRand),
+			                     (int)(particleEffect->explosionSizeEnd + random() * particleEffect->explosionSizeEndRand),
+			                     particleEffect->explosionLightAnim);
+		}
+
+		// debris
+		if (particleEffect->debrisForBullet)
+		{
+			vec3_t o;
+			VectorMA(origin, particleEffect->particleDirectionOffset, dir, o);
+			CG_ParticleImpactSmokePuff(cgs.media.smokeParticleShader, o);
+
+			CG_AddBulletParticles(origin, dir,
+			                      (int)(particleEffect->debrisSpeed + random() * particleEffect->debrisSpeedRand),
+			                      (int)(particleEffect->debrisDuration + random() * particleEffect->debrisDurationRand),
+			                      (int)(particleEffect->debrisCount + random() * particleEffect->debrisCountExtra),
+			                      1.0f);      // rand scale
 		}
 		else
 		{
-			CG_ParticleImpactSmokePuff(cgs.media.smokeParticleShader, o);
-
-			// some debris particles
-			CG_AddBulletParticles(origin, dir, 20, 800, 3 + rand() % 6, 1.0f);      // rand scale
-
-			// just do a little one
-			//if (rand() % 3 == 0)
-			//{
-			//	CG_AddSparks(origin, dir, 450, 300, 3 + rand() % 3, 0.5);     // rand scale
-			//}
+			CG_AddDebris(origin, dir,
+			             (int)(particleEffect->debrisSpeed + random() * particleEffect->debrisSpeedRand),
+			             (int)(particleEffect->debrisDuration + random() * particleEffect->debrisDurationRand),
+			             (int)(particleEffect->debrisCount + random() * particleEffect->debrisCountExtra),
+			             &trace);
 		}
-
-		// optimization, only spawn the bullet hole if we are close
-		// enough to see it, this way we can leave other marks around a lot
-		// longer, since most of the time we can't actually see the bullet holes
-		// - small modification.  only do this for non-rifles (so you can see your shots hitting when you're zooming with a rifle scope)
-		if ((GetWeaponTableData(weapon)->type & WEAPON_TYPE_SCOPED) || (Distance(cg.refdef_current->vieworg, origin) < 384))
-		{
-			// mark and sound can potentially use the surface for override values
-			//mark   = cgs.media.bulletMarkShader;    // default
-			*radius = 1.0f + 0.5f * (rand() % 2);
-
-			// set mark duration
-			*markDuration = cg_markTime.integer;
-		}
-	}
-	else if (missileEffect == PS_FX_WATER)
-	{
-		localEntity_t *le;
-
-		// needed to do the CG_WaterRipple using a localent since I needed the timer reset on the shader for each shot
-		CG_WaterRipple(cgs.media.wakeMarkShaderAnim, origin, tv(0, 0, 1), 32, 1000);
-		CG_AddDirtBulletParticles(origin, dir, 190, 900, 5, 0.5f, 80, 16, 0.125f, cgs.media.dirtParticle2Shader);
-
-		// play a water splash
-		if (cg_visualEffects.integer)
-		{
-			le = CG_MakeExplosion(origin, dir, cgs.media.waterSplashModel, cgs.media.waterSplashShader, 250, qfalse);
-			VectorSet(le->lightColor, 1, 1, 0);
-		}
-	}
-}
-
-/**
- * @brief CG_SmallExplosionImpact
- * @param[in] weapon
- * @param[in] missileEffect
- * @param[in] origin
- * @param[in] dir
- * @param[in] surfFlags
- * @param[in,out] radius
- * @param[in,out] markDuration
- */
-void CG_SmallExplosionImpact(int weapon, int missileEffect, vec3_t origin, vec3_t dir, int surfFlags, float *radius, int *markDuration)
-{
-	trace_t trace;
-	vec3_t  tmpv;
-
-	*markDuration = cg_markTime.integer * 3;
-
-	if (missileEffect == PS_FX_WATER)
-	{
-		localEntity_t *le;
-
-		VectorCopy(origin, tmpv);
-		tmpv[2] += 10000;
-
-		trap_CM_BoxTrace(&trace, tmpv, origin, NULL, NULL, 0, MASK_WATER);
-		CG_WaterRipple(cgs.media.wakeMarkShaderAnim, trace.endpos, dir, 150, 1000);
-
-		CG_AddDirtBulletParticles(trace.endpos, dir, 400, 900, 15, 0.5f, 256, 128, 0.125f, cgs.media.dirtParticle2Shader);
-
-		// play a water splash
-		if (cg_visualEffects.integer)
-		{
-			le = CG_MakeExplosion(origin, dir, cgs.media.waterSplashModel, cgs.media.waterSplashShader, 1000, qtrue);
-			le->light = 300;
-			VectorSet(le->lightColor, 0.75f, 0.5f, 0.1f);
-		}
-	}
-	else
-	{
-		vec3_t tmpv2, sprOrg, sprVel;
-
-		// explosion sprite animation
-		VectorMA(origin, 16, dir, sprOrg);
-		VectorScale(dir, 100, sprVel);
-
-		VectorCopy(origin, tmpv);
-		tmpv[2] += 20;
-		VectorCopy(origin, tmpv2);
-		tmpv2[2] -= 20;
-		trap_CM_BoxTrace(&trace, tmpv, tmpv2, NULL, NULL, 0, MASK_SHOT);
-
-		if ((trace.surfaceFlags & SURF_GRASS) || (trace.surfaceFlags & SURF_GRAVEL))
-		{
-			CG_AddDirtBulletParticles(origin, dir, 400, 2000, 10, 0.5f, 200, 75, 0.25f, cgs.media.dirtParticle1Shader);
-		}
-
-		CG_ParticleExplosion("explode1", sprOrg, sprVel, 700, 60, 240, qtrue);
-		CG_AddDebris(origin, dir, 280, 1400, 7 + rand() % 2, &trace);
-	}
-}
-
-/**
- * @brief CG_BigExplosionImpact
- * @param[in] weapon
- * @param[in] missileEffect
- * @param[in] origin
- * @param[in] dir
- * @param[in] surfFlags
- * @param[in,out] radius
- * @param[in,out] markDuration
- */
-void CG_BigExplosionImpact(int weapon, int missileEffect, vec3_t origin, vec3_t dir, int surfFlags, float *radius, int *markDuration)
-{
-	trace_t trace;
-	vec3_t  tmpv;
-
-	*markDuration = cg_markTime.integer * 3;
-
-	if (missileEffect == PS_FX_WATER)
-	{
-		localEntity_t *le;
-
-		VectorCopy(origin, tmpv);
-		tmpv[2] += 10000;
-
-		trap_CM_BoxTrace(&trace, tmpv, origin, NULL, NULL, 0, MASK_WATER);
-		CG_WaterRipple(cgs.media.wakeMarkShaderAnim, trace.endpos, dir, 300, 2000);
-
-		CG_AddDirtBulletParticles(trace.endpos, dir, (int)(400 + random() * 200), 900, 15, 0.5f, 512, 128, 0.125f, cgs.media.dirtParticle2Shader);
-		CG_AddDirtBulletParticles(trace.endpos, dir, (int)(400 + random() * 600), 1400, 15, 0.5f, 128, 512, 0.125f, cgs.media.dirtParticle2Shader);
-
-		// play a water splash
-		if (cg_visualEffects.integer)
-		{
-			le = CG_MakeExplosion(origin, dir, cgs.media.waterSplashModel, cgs.media.waterSplashShader, 1000, qtrue);
-			le->light = 600;
-			VectorSet(le->lightColor, 0.75f, 0.5f, 0.1f);
-		}
-	}
-	else
-	{
-		int    i, j;
-		vec3_t tmpv2, sprOrg, sprVel;
-
-		// explosion sprite animation
-		VectorMA(origin, 24, dir, sprOrg);
-		VectorScale(dir, 64, sprVel);
-
-		VectorCopy(origin, tmpv);
-		tmpv[2] += 20;
-		VectorCopy(origin, tmpv2);
-		tmpv2[2] -= 20;
-		trap_CM_BoxTrace(&trace, tmpv, tmpv2, NULL, NULL, 0, MASK_SHOT);
-
-		if ((trace.surfaceFlags & SURF_GRASS) || (trace.surfaceFlags & SURF_GRAVEL))
-		{
-			CG_AddDirtBulletParticles(origin, dir, (int)(400 + random() * 200), 3000, 10, 0.5f, 400, 256, 0.25f, cgs.media.dirtParticle1Shader);
-		}
-
-		CG_ParticleExplosion("explode1", sprOrg, sprVel, 1600, 20, (int)(200 + random() * 400), qtrue);
-
-		for (i = 0; i < 4; i++)     // random vector based on plane normal so explosions move away from walls/dirt/etc
-		{
-			for (j = 0; j < 3; j++)
-			{
-				sprOrg[j] = origin[j] + 50 * crandom();
-				sprVel[j] = 0.35f * crandom();
-			}
-
-			VectorAdd(sprVel, trace.plane.normal, sprVel);
-			VectorScale(sprVel, 300, sprVel);
-			CG_ParticleExplosion("explode1", sprOrg, sprVel, 1600, 40, 260 + rand() % 120, qfalse);
-		}
-
-		CG_AddDebris(origin, dir, (int)(400 + random() * 200), rand() % 2000 + 1000, 5 + rand() % 5, &trace);
-	}
-}
-
-/**
- * @brief CG_MapMortarImpact
- * @param[in] weapon
- * @param[in] missileEffect
- * @param[in] origin
- * @param[in] dir
- * @param[in] surfFlags
- * @param[in,out] radius
- * @param[in,out] markDuration
- */
-void CG_MapMortarImpact(int weapon, int missileEffect, vec3_t origin, vec3_t dir, int surfFlags, float *radius, int *markDuration)
-{
-	trace_t trace;
-	vec3_t  tmpv;
-
-	*markDuration = cg_markTime.integer * 3;
-
-	if (missileEffect == PS_FX_WATER)
-	{
-		localEntity_t *le;
-
-		VectorCopy(origin, tmpv);
-		tmpv[2] += 10000;
-
-		trap_CM_BoxTrace(&trace, tmpv, origin, NULL, NULL, 0, MASK_WATER);
-		CG_WaterRipple(cgs.media.wakeMarkShaderAnim, trace.endpos, dir, 150, 1000);
-		CG_AddDirtBulletParticles(trace.endpos, dir, 900, 1800, 15, 0.5f, 350, 128, 0.125f, cgs.media.dirtParticle2Shader);
-
-		// play a water splash
-		if (cg_visualEffects.integer)
-		{
-			le = CG_MakeExplosion(origin, dir, cgs.media.waterSplashModel, cgs.media.waterSplashShader, 1000, qtrue);
-			le->light = 300;
-			VectorSet(le->lightColor, 0.75f, 0.5f, 0.1f);
-		}
-	}
-	else
-	{
-		int    i, j;
-		vec3_t tmpv2, sprOrg, sprVel;
-
-		VectorScale(dir, 16, sprVel);
-
-		VectorCopy(origin, tmpv);
-		tmpv[2] += 20;
-		VectorCopy(origin, tmpv2);
-		tmpv2[2] -= 20;
-		trap_CM_BoxTrace(&trace, tmpv, tmpv2, NULL, NULL, 0, MASK_SHOT);
-
-		if ((trace.surfaceFlags & SURF_GRASS) || (trace.surfaceFlags & SURF_GRAVEL))
-		{
-			CG_AddDirtBulletParticles(origin, dir, 600, 2000, 10, 0.5f, 275, 125, 0.25f, cgs.media.dirtParticle1Shader);
-		}
-
-		for (i = 0; i < 5; i++)
-		{
-			for (j = 0; j < 3; j++)
-			{
-				sprOrg[j] = origin[j] + 64 * dir[j] + 24 * crandom();
-			}
-
-			sprVel[2] += rand() % 50;
-			CG_ParticleExplosion("blacksmokeanim", sprOrg, sprVel, 3500 + rand() % 250, 10, 250 + rand() % 60, qfalse);
-		}
-
-		VectorMA(origin, 24, dir, sprOrg);
-		VectorScale(dir, 64, sprVel);
-		CG_ParticleExplosion("explode1", sprOrg, sprVel, 1000, 20, 300, qtrue);
-	}
-}
-
-/**
- * @brief CG_DynamiteExplosionImpact
- * @param[in] weapon
- * @param[in] missileEffect
- * @param[in] origin
- * @param[in] dir
- * @param[in] surfFlags
- * @param[in,out] radius
- * @param[in,out] markDuration
- */
-void CG_DynamiteExplosionImpact(int weapon, int missileEffect, vec3_t origin, vec3_t dir, int surfFlags, float *radius, int *markDuration)
-{
-	trace_t trace;
-	vec3_t  tmpv;
-
-	*markDuration = cg_markTime.integer * 3;
-
-	// biggie dynamite explosions that mean it -- dynamite is biggest explode, so it gets extra crap thrown on
-	// check for water/dirt spurt
-	if (missileEffect == PS_FX_WATER)
-	{
-		localEntity_t *le;
-
-		VectorCopy(origin, tmpv);
-		tmpv[2] += 10000;
-
-		trap_CM_BoxTrace(&trace, tmpv, origin, NULL, NULL, 0, MASK_WATER);
-		CG_WaterRipple(cgs.media.wakeMarkShaderAnim, trace.endpos, dir, 300, 2000);
-
-		CG_AddDirtBulletParticles(trace.endpos, dir, (int)(400 + random() * 200), 900, 15, 0.5f, 512, 128, 0.125f, cgs.media.dirtParticle2Shader);
-		CG_AddDirtBulletParticles(trace.endpos, dir, (int)(400 + random() * 600), 1400, 15, 0.5f, 128, 512, 0.125f, cgs.media.dirtParticle2Shader);
-
-		// play a water splash
-		if (cg_visualEffects.integer)
-		{
-			le = CG_MakeExplosion(origin, dir, cgs.media.waterSplashModel, cgs.media.waterSplashShader, 1000, qtrue);
-			le->light = 300;
-			VectorSet(le->lightColor, 0.75f, 0.5f, 0.1f);
-		}
-	}
-	else
-	{
-		int    i, j;
-		vec3_t tmpv2, sprOrg, sprVel;
-
-		VectorSet(tmpv, origin[0], origin[1], origin[2] + 20);
-		VectorSet(tmpv2, origin[0], origin[1], origin[2] - 20);
-		trap_CM_BoxTrace(&trace, tmpv, tmpv2, NULL, NULL, 0, MASK_SHOT);
-
-		if ((trace.surfaceFlags & SURF_GRASS) || (trace.surfaceFlags & SURF_GRAVEL))
-		{
-			CG_AddDirtBulletParticles(origin, dir, (int)(400 + random() * 200), 3000, 10, 0.5f, 400, 256, 0.25f, cgs.media.dirtParticle1Shader);
-		}
-
-		for (i = 0; i < 3; i++)
-		{
-			for (j = 0; j < 3; j++)
-			{
-				sprOrg[j] = origin[j] + 150 * crandom();
-				sprVel[j] = 0.35f * crandom();
-			}
-
-			VectorAdd(sprVel, trace.plane.normal, sprVel);
-			VectorScale(sprVel, 130, sprVel);
-			CG_ParticleExplosion("blacksmokeanim", sprOrg, sprVel, (int)(6000 + random() * 2000), 40, (int)(400 + random() * 200), qfalse);
-		}
-
-		for (i = 0; i < 4; i++)     // random vector based on plane normal so explosions move away from walls/dirt/etc
-		{
-			for (j = 0; j < 3; j++)
-			{
-				sprOrg[j] = origin[j] + 100 * crandom();
-				sprVel[j] = 0.65f * crandom(); // wider fireball spread
-			}
-
-			VectorAdd(sprVel, trace.plane.normal, sprVel);
-			VectorScale(sprVel, random() * 100 + 300, sprVel);
-			CG_ParticleExplosion("explode1", sprOrg, sprVel, 1000 + rand() % 1450, 40, (int)(400 + random() * 200), (i == 0 ? qtrue : qfalse));
-		}
-
-		CG_AddDebris(origin, dir, (int)(400 + random() * 200), rand() % 2000 + 1400, 12 + rand() % 12, &trace);
 	}
 }
 
@@ -5783,14 +6021,9 @@ void CG_MissileHitWall(int weapon, int missileEffect, vec3_t origin, vec3_t dir,
 	soundSurface_t soundSurfaceIndex = W_SND_SURF_DEFAULT;
 	qhandle_t      mark;
 	sfxHandle_t    sfx, sfx2;
-	int            markDuration = 0;
+	int            markDuration;
 	float          radius;
-
-	// no impact
-	if (!cg_weapons[weapon].impactFunc)
-	{
-		return;
-	}
+	qboolean       impactInRange;
 
 	if (surfFlags & SURF_SKY)
 	{
@@ -5810,12 +6043,24 @@ void CG_MissileHitWall(int weapon, int missileEffect, vec3_t origin, vec3_t dir,
 		soundSurfaceIndex = W_SND_SURF_FLESH;
 	}
 
-	sfx    = CG_GetRandomSoundSurface(cg_weapons[weapon].impactSound, soundSurfaceIndex, qtrue);
-	sfx2   = CG_GetRandomSoundSurface(cg_weapons[weapon].impactSound, W_SND_SURF_FAR, qfalse);
-	mark   = cg_weapons[weapon].impactMark[soundSurfaceIndex];
-	radius = cg_weapons[weapon].impactMarkRadius;
+	sfx          = CG_GetRandomSoundSurface(cg_weapons[weapon].impactSound, soundSurfaceIndex, qtrue);
+	sfx2         = CG_GetRandomSoundSurface(cg_weapons[weapon].impactSound, W_SND_SURF_FAR, qfalse);
+	mark         = cg_weapons[weapon].impactMark[soundSurfaceIndex];
+	radius       = cg_weapons[weapon].impactMarkRadius + crandom();
+	markDuration = cg_markTime.integer * cg_weapons[weapon].impactDurationCoeff;
 
-	cg_weapons[weapon].impactFunc(weapon, missileEffect, origin, dir, surfFlags, &radius, &markDuration);
+	// optimization, only spawn the bullet hole if we are close
+	// enough to see it, this way we can leave other marks around a lot
+	// longer, since most of the time we can't actually see the bullet holes
+	// - small modification.  only do this for non-rifles (so you can see your shots hitting when you're zooming with a rifle scope)
+	impactInRange = (GetWeaponTableData(cg.snap->ps.weapon)->type & WEAPON_TYPE_SCOPED)
+	                || cg_weapons[weapon].impactMarkMaxRange < 0 ||
+	                (Distance(cg.refdef_current->vieworg, origin) < cg_weapons[weapon].impactMarkMaxRange);
+
+	if (cg_weapons[weapon].impactParticle && impactInRange)
+	{
+		CG_AddImpactParticles(cg_weapons[weapon].impactParticle, missileEffect, origin, dir, soundSurfaceIndex);
+	}
 
 	// no mark found for given surface, force using default one if exist
 	if (!mark)
@@ -5848,7 +6093,7 @@ void CG_MissileHitWall(int weapon, int missileEffect, vec3_t origin, vec3_t dir,
 	}
 
 	// markDuration = cg_markTime.integer * x
-	if (markDuration)
+	if (markDuration && impactInRange)
 	{
 		vec4_t projection;
 

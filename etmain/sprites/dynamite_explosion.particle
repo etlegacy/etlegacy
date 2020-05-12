@@ -1,0 +1,143 @@
+weaponImpactParticleDef
+{
+	particleDirectionOffset   24
+	particleDirectionScaling  64
+
+	//////////////////////////////////
+	// specific for water effect
+	//////////////////////////////////
+	
+	// ripple
+	waterRippleRadius		300			// radius size
+	waterRippleLifeTime		2000		// ms
+	
+	// splash
+	waterSplashDuration    1000			// ms
+	waterSplashLight       300
+	waterSplashLightColor  0.75 0.5 0.1
+	
+	//////////////////////////////////
+	// particle effect
+	//////////////////////////////////
+	
+	// each surface supports up to 2 effects per surface type. available surface : default, far (non-sense), wood, metal, roof, gravel, glass, snow, water, flesh
+	
+	// water particle
+	particleEffect
+	{
+		particleEffectType	     "water"
+		particleEffectSpeed	     400	
+		particleEffectSpeedRand  200	// random coef for speed (0 -> disable)
+		particleEffectDuration   900 
+		particleEffectCount      15  
+		particleEffectRandScale  0.5 
+		particleEffectWidth      512 
+		particleEffectHeight     128 
+		particleEffectAlpha      0.125
+	}
+	
+	// water particle
+	particleEffect
+	{
+		particleEffectType	   "water"
+		particleEffectSpeed	   400	
+		particleEffectSpeedRand  600		// random coef for speed (0 -> disable)
+		particleEffectDuration   1400
+		particleEffectCount      15
+		particleEffectRandScale  0.5
+		particleEffectWidth      128
+		particleEffectHeight     512
+		particleEffectAlpha      0.125
+	}
+	
+	// grass particle
+	particleEffect
+	{
+		particleEffectType       "grass"
+		particleEffectSpeed	   400	
+		particleEffectSpeedRand  200 
+		particleEffectDuration   3000
+		particleEffectCount      10
+		particleEffectRandScale  0.5
+		particleEffectWidth      400
+		particleEffectHeight     256
+		particleEffectAlpha      0.25
+	}
+	
+	// gravel particle
+	particleEffect
+	{
+		particleEffectType       "gravel"
+		particleEffectSpeed	   400	
+		particleEffectSpeedRand  200 
+		particleEffectDuration   3000
+		particleEffectCount      10
+		particleEffectRandScale  0.5
+		particleEffectWidth      400
+		particleEffectHeight     256
+		particleEffectAlpha      0.25
+	}
+	
+	//////////////////////////////////
+	// particle explosion effect
+	//////////////////////////////////
+	
+	// main explosion (position on missile origin)
+	explosionShaderName    "explode1"	// if empty, no explosion
+	explosionDuration      1600
+	explosionSizeStart     20
+	explosionSizeStartRand 0
+	explosionSizeEnd       200
+	explosionSizeEndRand   400
+	explosionLightAnim	               // if this field is present, dligh the explosion
+	
+	// up to 4 extra effect
+	extraEffect
+	{
+		// extra effect
+		extraEffectCount            3			// if 0, no extra effect
+		extraEffectOriginRand       150
+		extraEffectVelocityRand     0.35
+		extraEffectVelocityScaling  130
+		extraEffectShaderName       "blacksmokeanim"	// if empty, no effect
+		extraEffectDuration         6000
+		extraEffectDurationRand     2000
+		extraEffectSizeStart        40
+		extraEffectSizeStartRand    0
+		extraEffectSizeEnd          400
+		extraEffectSizeEndRand      200
+		//extraEffectLightAnim	          		// if this field is present, dligh the effect
+	}
+	
+	// up to 4 extra effect
+	extraEffect
+	{
+		// extra effect
+		extraEffectCount            4			// if 0, no extra effect
+		extraEffectOriginRand       100
+		extraEffectVelocityRand     0.65
+		extraEffectVelocityScaling  300
+		extraEffectShaderName       "explode1"	// if empty, no effect
+		extraEffectDuration         1000
+		extraEffectDurationRand     1450
+		extraEffectSizeStart        40
+		extraEffectSizeStartRand    0
+		extraEffectSizeEnd          400
+		extraEffectSizeEndRand      200
+		//extraEffectLightAnim	          		// if this field is present, dligh the effect
+	}
+	
+	//////////////////////////////////
+	// debris effect
+	//////////////////////////////////
+	
+	// debris
+	debrisSpeed           400
+	debrisSpeedRand       200
+	debrisDuration        1400
+	debrisDurationRand    2000
+	debrisCount           12		// minimum number of debris generate
+	debrisCountExtra      12		// random extra debris
+	//debrisForBullet				// if this field is present, play different effect for bullet impact
+	
+}

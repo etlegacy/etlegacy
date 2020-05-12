@@ -60,10 +60,12 @@ weaponDef
 		modModel 0			"models/multiplayer/m1_garand/v_m1_garand_scope.md3"
 		modModel 1			"models/multiplayer/m1_garand/m1_garand_att.md3"
                 
+		impactDurationCoeff 3
+		impactMarkMaxRange  -1	// -1 infinite
                 impactSoundRange  400
-                impactFunction    "SmallExplosionImpact"  // supports "MeleeImpact", "BulletImpact", "SmallExplosionImpact", "BigExplosionImpact", "MapMortarImpact" and "DynamiteExplosionImpact"
+                impactParticle    "sprites/small_explosion.particle"  
                 impactSoundVolume 64
-                impactMarkRadius  32
+                impactMarkRadius  1.5
                 impactSound {                           // each surface supports up to 5 hits sounds. available surface : default, far, wood, metal, roof, gravel, glass, snow, water, flesh
                 
                     default "sound/weapons/grenade/gren_expl.wav"

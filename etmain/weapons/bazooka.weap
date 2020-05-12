@@ -48,10 +48,12 @@ weaponDef
 		
 		//modModel 1		""
                 
+		impactDurationCoeff 3
+		impactMarkMaxRange  -1	// -1 infinite
                 impactSoundRange 800    
                 impactSoundVolume 127
                 impactMarkRadius  128
-                impactFunction    "BigExplosionImpact"  // supports "MeleeImpact", "BulletImpact", "SmallExplosionImpact", "BigExplosionImpact", "MapMortarImpact" and "DynamiteExplosionImpact"
+                impactParticle    "sprites/big_explosion.particle"  
                 impactSound {                           // each surface supports up to 5 hits sounds. available surface : default, far, wood, metal, roof, gravel, glass, snow, water, flesh
                 
                     default "sound/weapons/rocket/rocket_expl.wav"

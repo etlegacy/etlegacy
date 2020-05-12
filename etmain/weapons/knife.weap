@@ -46,9 +46,11 @@ weaponDef
                 
                 adjustLean 1 1 1
                 
-                impactFunction    "MeleeImpact" // supports "MeleeImpact", "BulletImpact", "SmallExplosionImpact", "BigExplosionImpact", "MapMortarImpact" and "DynamiteExplosionImpact"
+		impactDurationCoeff 1
+	        impactMarkMaxRange  384	// -1 infinite
+                impactParticle    "sprites/melee.particle" 
                 impactSoundVolume 127
-                impactMarkRadius  32
+                impactMarkRadius  1
                 impactSound {                   // each surface supports up to 5 hits sounds. available surface : default, far, wood, metal, roof, gravel, glass, snow, water, flesh
                 
                     default "sound/weapons/knife/knife_hitwall1.wav" 

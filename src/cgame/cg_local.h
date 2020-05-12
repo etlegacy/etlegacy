@@ -769,14 +769,119 @@ typedef struct weaponModel_s
 
 /**
  * @struct weaponSounds_s
- * @typedef impactSounds_t
+ * @typedef weaponSounds_t
  * @brief
  */
 typedef struct weaponSounds_s
 {
 	int count;
 	sfxHandle_t sounds[MAX_WEAPON_SOUNDS];
-}weaponSounds_t;
+} weaponSounds_t;
+
+#define MAX_IMPACT_PARTICLE 8
+#define MAX_IMPACT_PARTICLE_EFFECT 2
+
+/**
+ * @struct impactParticleEffect_s
+ * @typedef impactParticleEffect_t
+ * @brief
+ */
+typedef struct impactParticleEffect_s
+{
+	qboolean particleEffectUsed;
+	int particleEffectSpeed;
+	float particleEffectSpeedRand;
+	int particleEffectDuration;
+	int particleEffectCount;
+	float particleEffectRandScale;
+	int particleEffectWidth;
+	int particleEffectHeight;
+	float particleEffectAlpha;
+
+} impactParticleEffect_t;
+
+/**
+ * @struct impactExtraEffect_s
+ * @typedef impactExtraEffect_t
+ * @brief
+ */
+typedef struct impactExtraEffect_s
+{
+	qboolean extraEffectUsed;
+	int extraEffectCount;
+	float extraEffectOriginRand;
+	float extraEffectVelocityRand;
+	float extraEffectVelocityScaling;
+	char extraEffectShaderName[16];
+	int extraEffectDuration;
+	float extraEffectDurationRand;
+	int extraEffectSizeStart;
+	float extraEffectSizeStartRand;
+	int extraEffectSizeEnd;
+	float extraEffectSizeEndRand;
+	qboolean extraEffectLightAnim;
+
+} impactExtraEffect_t;
+
+/**
+ * @struct impactParticle_s
+ * @typedef impactParticle_t
+ * @brief
+ */
+typedef struct impactParticle_s
+{
+	float particleDirectionOffset;
+	float particleDirectionScaling;
+
+	// specific for water effect
+	// ripple
+	int waterRippleRadius;
+	int waterRippleLifeTime;
+
+	// splash
+	int waterSplashDuration;
+	int waterSplashLight;
+	vec3_t waterSplashLightColor;
+        
+	// particle effect
+	impactParticleEffect_t particleEffect[W_MAX_SND_SURF][MAX_IMPACT_PARTICLE_EFFECT];
+
+	// particle explosion effect
+
+	// main explosion (position on missile origin)
+	char explosionShaderName[16];
+	int explosionDuration;
+	int explosionSizeStart;
+	float explosionSizeStartRand;
+	int explosionSizeEnd;
+	float explosionSizeEndRand;
+	qboolean explosionLightAnim;
+
+	impactExtraEffect_t extraEffect[MAX_IMPACT_PARTICLE_EFFECT];
+
+	// debris
+	int debrisSpeed;
+	float debrisSpeedRand;
+	int debrisDuration;
+	float debrisDurationRand;
+	int debrisCount;
+	int debrisCountExtra;
+	qboolean debrisForBullet;
+
+} impactParticle_t;
+
+
+/**
+ * @struct impactParticleTable_s
+ * @typedef impactParticleTable_t
+ * @brief
+ */
+typedef struct impactParticleTable_s
+{
+    char impactParticleName[MAX_QPATH];
+    impactParticle_t impactParticle;
+    
+}impactParticleTable_t;
 
 /**
  * @struct weaponInfo_s
@@ -844,12 +949,14 @@ typedef struct weaponInfo_s
 	sfxHandle_t switchSound;
 	sfxHandle_t noAmmoSound;
 
+	int impactDurationCoeff;
+	int impactMarkMaxRange;
 	int impactSoundRange;
 	int impactSoundVolume;
 	float impactMarkRadius;
 	sfxHandle_t impactMark[W_MAX_SND_SURF];
 	weaponSounds_t impactSound[W_MAX_SND_SURF];
-	void (*impactFunc)(int weapon, int missileEffect, vec3_t origin, vec3_t dir, int surfFlags, float *radius, int *markDuration);
+	impactParticle_t *impactParticle;
 } weaponInfo_t;
 
 #define MAX_VIEWDAMAGE  8
@@ -1955,9 +2062,9 @@ enum
 // Big popup filters
 enum
 {
-	POPUP_BIG_FILTER_SKILL     = BIT(0),
-	POPUP_BIG_FILTER_RANK      = BIT(1),
-	POPUP_BIG_FILTER_PRESTIGE  = BIT(2),
+	POPUP_BIG_FILTER_SKILL    = BIT(0),
+	POPUP_BIG_FILTER_RANK     = BIT(1),
+	POPUP_BIG_FILTER_PRESTIGE = BIT(2),
 };
 
 /// Locations
@@ -2762,7 +2869,7 @@ qboolean CG_WorldCoordToScreenCoordFloat(vec3_t point, float *x, float *y);
 void CG_AddOnScreenText(const char *text, vec3_t origin);
 
 // string word wrapper
-char* CG_WordWrapString(const char *input, int maxLineChars, char *output, int maxOutputSize);
+char *CG_WordWrapString(const char *input, int maxLineChars, char *output, int maxOutputSize);
 // draws multiline strings
 void CG_DrawMultilineText(float x, float y, float scalex, float scaley, vec4_t color, const char *text, int lineHeight, float adjust, int limit, int style, int align, fontHelper_t *font);
 
@@ -3102,7 +3209,7 @@ void CG_AddToNotify(const char *str);
 const char *CG_LocalizeServerCommand(const char *buf);
 void CG_wstatsParse_cmd(void);
 
-void CG_parseWeaponStats_cmd(void(txt_dump) (const char *));
+void CG_parseWeaponStats_cmd(void (txt_dump) (const char *));
 //void CG_parseBestShotsStats_cmd(qboolean doTop, void(txt_dump) (const char *));
 //void CG_parseTopShotsStats_cmd(qboolean doTop, void(txt_dump) (const char *));
 //void CG_scores_cmd(void);

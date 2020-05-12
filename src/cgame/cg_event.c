@@ -1390,7 +1390,7 @@ void CG_Effect(centity_t *cent, vec3_t origin, vec3_t dir)
 	{
 		int effect;
 
-		effect = (CG_PointContents(origin, 0) & CONTENTS_WATER) ? PS_FX_WATER : PS_FX_NONE;
+		effect = (CG_PointContents(origin, 0) & CONTENTS_WATER) ? PS_FX_WATER : PS_FX_COMMON;
 
 		CG_MissileHitWall(WP_DYNAMITE, effect, origin, dir, 0, -1);
 		return;
@@ -2297,7 +2297,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 		vec3_t dir;
 		int    effect;
 
-		effect = (CG_PointContents(position, 0) & CONTENTS_WATER) ? PS_FX_WATER : PS_FX_NONE;
+		effect = (CG_PointContents(position, 0) & CONTENTS_WATER) ? PS_FX_WATER : PS_FX_COMMON;
 
 		ByteToDir(es->eventParm, dir);
 		CG_MissileHitWall(es->weapon, effect, position, dir, 0, es->number);
@@ -2308,7 +2308,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 		vec3_t dir;
 		int    effect;
 
-		effect = (CG_PointContents(position, 0) & CONTENTS_WATER) ? PS_FX_WATER : PS_FX_NONE;
+		effect = (CG_PointContents(position, 0) & CONTENTS_WATER) ? PS_FX_WATER : PS_FX_COMMON;
 		ByteToDir(es->eventParm, dir);
 		if (es->weapon == WP_ARTY || es->weapon == WP_AIRSTRIKE || es->weapon == WP_SMOKE_MARKER)
 		{
