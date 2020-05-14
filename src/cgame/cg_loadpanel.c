@@ -340,7 +340,7 @@ void CG_DrawConnectScreen(qboolean interactive, qboolean forcerefresh)
 		int        i;
 		qboolean   enabled = qfalse;
 
-		CG_Text_Paint_Centred_Ext(x, y, 0.22f, 0.22f, clr3, ("^1" LEGACY_MOD " ^0" ETLEGACY_VERSION), 0, 0, 0, &cgs.media.bg_loadscreenfont1);
+		CG_Text_Paint_Centred_Ext(x, y, 0.22f, 0.22f, clr3, va("^1%s ^0%s", MODNAME, ETLEGACY_VERSION), 0, 0, 0, &cgs.media.bg_loadscreenfont1);
 
 		y   = 340;
 		str = Info_ValueForKey(buffer, "sv_hostname");

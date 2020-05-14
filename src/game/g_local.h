@@ -46,7 +46,7 @@
  * @def GAMEVERSION
  * @brief The "gameversion" client command will print this plus compile date.
  */
-#define GAMEVERSION         "legacy"
+#define GAMEVERSION         MODNAME
 
 #define BODY_QUEUE_SIZE     8
 

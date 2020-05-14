@@ -21,6 +21,7 @@ include(cmake/ETLFunctions.cmake)
 #-----------------------------------------------------------------
 
 set(MODNAME "legacy" CACHE STRING "Default mod name")
+set(MODURL "www.etlegacy.com" CACHE STRING "Default mod URL")
 
 #-----------------------------------------------------------------
 # Options

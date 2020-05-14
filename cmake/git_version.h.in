@@ -1,4 +1,16 @@
 /**
+ * @def MODNAME
+ * @brief Mod name
+ */
+#define MODNAME "@MODNAME@"
+
+/**
+ * @def MODURL
+ * @brief Mod URL
+ */
+#define MODURL "@MODURL@"
+
+/**
  * @def ETLEGACY_VERSION
  * @brief Version in long format.
  *
