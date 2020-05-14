@@ -482,6 +482,12 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 
 		// fixes premature grenade explosion, ta bani ;)
 		fire_missile(self, launchspot, launchvel, self->s.weapon);
+
+		// decrease ammo
+		if (GetWeaponTableData(self->s.weapon)->type & WEAPON_TYPE_GRENADE)
+		{
+			self->client->ps.ammo[GetWeaponTableData(self->s.weapon)->ammoIndex]--;
+		}
 	}
 
 	if (attackerClient)
