@@ -30,7 +30,7 @@ public class ETLMain extends SDLActivity {
             public void onFinish() {
                 super.onFinish();
                 try {
-                    Files.move(getApplication().getCacheDir().getAbsoluteFile(), new File(getExternalFilesDir(null), "pak2.pk3"));
+                    Files.move(file.getAbsoluteFile(), new File(getExternalFilesDir(null), "pak2.pk3"));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
