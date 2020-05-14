@@ -472,6 +472,7 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 	if (self->client->ps.grenadeTimeLeft)
 	{
 		vec3_t launchvel, launchspot;
+		weapon_t ammoIndex;
 
 		launchvel[0] = crandom();
 		launchvel[1] = crandom();
@@ -482,6 +483,13 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 
 		// fixes premature grenade explosion, ta bani ;)
 		fire_missile(self, launchspot, launchvel, self->s.weapon);
+
+		// decrease ammo
+		ammoIndex = GetWeaponTableData(self->client->ps.weapon)->ammoIndex;
+		if (self->client->ps.ammo[ammoIndex] > 0)
+		{
+			self->client->ps.ammo[ammoIndex]--;
+		}
 	}
 
 	if (attackerClient)
