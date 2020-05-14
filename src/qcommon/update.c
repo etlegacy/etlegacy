@@ -89,10 +89,8 @@ void Com_CheckAutoUpdate(void)
 	Info_SetValueForKey(info, "lang", Cvar_VariableString("cl_lang"));
 #endif  // DEDICATED
 
-	Info_SetValueForKey(info, va("etl_bin_%s.pk3", ETLEGACY_VERSION_SHORT),
-	                    Com_MD5File(va("legacy/etl_bin_%s.pk3", ETLEGACY_VERSION_SHORT), 0, NULL, 0));
-	Info_SetValueForKey(info, va("pak3_%s.pk3", ETLEGACY_VERSION_SHORT),
-	                    Com_MD5File(va("legacy/pak3_%s.pk3", ETLEGACY_VERSION_SHORT), 0, NULL, 0));
+	Info_SetValueForKey(info, va("%s_%s.pk3", MODNAME, ETLEGACY_VERSION_SHORT),
+	                    Com_MD5File(va("%s/%s_%s.pk3", MODNAME, MODNAME, ETLEGACY_VERSION_SHORT), 0, NULL, 0));
 
 	NET_OutOfBandPrint(
 #ifdef DEDICATED
