@@ -19,29 +19,42 @@ public class ETLMain extends SDLActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        AsyncHttpClient client = new AsyncHttpClient();
-        client.get("http://mirror.etlegacy.com/etmain/pak2.pk3", new FileAsyncHttpResponseHandler(this) {
 
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, File file) {
-            }
+        File etl_pak = new File(getExternalFilesDir(null), "pak2.pk3");
+        final Intent intent = new Intent(ETLMain.this, ETLActivity.class);
 
-            @Override
-            public void onFinish() {
-                super.onFinish();
-                try {
-                    Files.move(file.getAbsoluteFile(), new File(getExternalFilesDir(null), "pak2.pk3"));
-                } catch (IOException e) {
-                    e.printStackTrace();
+        if (etl_pak.exists()) {
+            finish();
+            startActivity(intent);
+        }
+        else {
+            AsyncHttpClient client = new AsyncHttpClient();
+            client.get("http://mirror.etlegacy.com/etmain/pak2.pk3", new FileAsyncHttpResponseHandler(this) {
+
+                @Override
+                public void onSuccess(int statusCode, Header[] headers, File file) {
                 }
-                startActivity(new Intent(getApplicationContext(), ETLActivity.class));
-                finish();
-            }
 
-            @Override
-            public void onFailure(int statusCode, Header[] headers, Throwable throwable, File file) {
+                @Override
+                public void onFinish() {
+                    super.onFinish();
+                    if (file.getAbsoluteFile().exists()) {
+                        try {
+                            Files.move(file.getAbsoluteFile(), new File(getExternalFilesDir(null), "pak2.pk3"));
+                            finish();
+                            startActivity(intent);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
 
-            }
-        });
+                @Override
+                public void onFailure(int statusCode, Header[] headers, Throwable throwable, File file) {
+
+                }
+            });
+        }
+
     }
 }
