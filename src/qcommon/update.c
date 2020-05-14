@@ -123,9 +123,7 @@ void Com_GetAutoUpdate(void)
 	{
 #ifndef DEDICATED
 		Sys_OpenURL("http://www.etlegacy.com", qtrue);
-
 #endif
-
 		return;
 	}
 
@@ -166,7 +164,7 @@ void Com_GetAutoUpdate(void)
 	CL_Disconnect(qtrue);
 	Con_Close();
 
-	Q_strncpyz(cls.servername, "ET:L Update Server", sizeof(cls.servername));
+	Q_strncpyz(cls.servername, "ET:Legacy Update Server", sizeof(cls.servername));
 #endif
 
 	if (autoupdate.autoupdateServer.type == NA_BAD)
@@ -195,7 +193,7 @@ void Com_GetAutoUpdate(void)
 	clc.connectPacketCount = 0;
 
 	// server connection string
-	Cvar_Set("cl_currentServerAddress", "ET:L Update Server");
+	Cvar_Set("cl_currentServerAddress", "ET:Legacy Update Server");
 #endif
 
 	Com_CheckUpdateStarted();
