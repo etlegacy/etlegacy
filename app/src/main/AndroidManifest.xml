@@ -32,6 +32,7 @@
         android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
         <activity
             android:name=".ETLMain"
+            android:hardwareAccelerated="true"
             android:screenOrientation="landscape" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -44,15 +45,11 @@
         -->
         <activity
             android:name=".ETLActivity"
-            android:alwaysRetainTaskState="true"
             android:configChanges="orientation|uiMode|screenLayout|screenSize|smallestScreenSize|keyboard|keyboardHidden|navigation"
             android:hardwareAccelerated="true"
             android:label="@string/app_name"
             android:largeHeap="true"
-            android:screenOrientation="landscape" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-            </intent-filter>
+            android:screenOrientation="sensorLandscape" >
         </activity>
     </application>
 

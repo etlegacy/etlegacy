@@ -1,20 +1,20 @@
 package org.etlegacy.app;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.google.common.io.Files;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.FileAsyncHttpResponseHandler;
-
-import org.libsdl.app.SDLActivity;
 
 import java.io.File;
 import java.io.IOException;
 
 import cz.msebera.android.httpclient.Header;
 
-public class ETLMain extends SDLActivity {
+public class ETLMain extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,8 +24,8 @@ public class ETLMain extends SDLActivity {
         final Intent intent = new Intent(ETLMain.this, ETLActivity.class);
 
         if (etl_pak.exists()) {
-            finish();
             startActivity(intent);
+            finish();
         }
         else {
             AsyncHttpClient client = new AsyncHttpClient();

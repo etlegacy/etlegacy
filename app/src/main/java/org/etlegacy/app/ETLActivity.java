@@ -401,8 +401,8 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
     @Override
     protected String[] getLibraries() {
         return new String[] {
-//                "hidapi",
-//                "SDL2",
+                "hidapi",
+                "SDL2",
                 "etl"
         };
     }
