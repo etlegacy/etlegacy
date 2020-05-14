@@ -744,7 +744,7 @@ issues.
 */
 
 #define BASEGAME "etmain"
-#define DEFAULT_MODGAME "legacy" /// see files.c
+#define DEFAULT_MODGAME MODNAME /// see files.c
 
 /**
  * @struct modHash
