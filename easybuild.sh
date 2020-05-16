@@ -11,9 +11,9 @@ _SRC=`pwd`
 BUILDDIR="${BUILD_DIR:-${_SRC}/build}"
 SOURCEDIR="${_SRC}/src"
 PROJECTDIR="${_SRC}/project"
-LEGACYETMAIN="${HOME}/.etlegacy/etmain"
-LEGACY_MIRROR="https://mirror.etlegacy.com/etmain/"
-LEGACY_VERSION=`git describe 2>/dev/null`
+MODMAIN="${HOME}/.etlegacy/etmain"
+ETLEGACY_MIRROR="https://mirror.etlegacy.com/etmain/"
+ETLEGACY_VERSION=`git describe 2>/dev/null`
 INSTALL_PREFIX=${HOME}/etlegacy
 
 # Set this to false to disable colors
@@ -654,13 +654,13 @@ files = [f for f in glob.glob('./_CPack_Packages/Darwin/TGZ/etlegacy*') if os.pa
 if len(files) == 1 :
 	packfolder = files[0]
 	shutil.copytree(packfolder, foldername)
-	print 'Copied the legacy install folder'
+	print 'Copied the mod install folder'
 	Cocoa.NSWorkspace.sharedWorkspace().setIcon_forFile_options_(Cocoa.NSImage.alloc().initWithContentsOfFile_(iconfile), foldername, 0) or sys.exit("Unable to set file icon")
 	print 'The icon succesfully set'
 END
 
 	# Create the DMG json
-	cat << END > legacy-dmg.json
+	cat << END > etlegacy-dmg.json
 {
 	"title": "ET Legacy $SHORT_VERSION",
 	"icon": "../misc/etl.icns",
@@ -681,7 +681,7 @@ END
 	# using appdmg nodejs application to generate the actual DMG installer
 	# https://github.com/LinusU/node-appdmg
 	# npm install -g appdmg
-	appdmg legacy-dmg.json "ETLegacy-${LEGACY_VERSION}.dmg"
+	appdmg etlegacy-dmg.json "ETLegacy-${ETLEGACY_VERSION}.dmg"
 }
 
 run_package() {
@@ -705,17 +705,17 @@ run_install() {
 handle_download() {
 	if [ ! -f $1 ]; then
 		if [ -f /usr/bin/curl  ]; then
-			curl -O "${LEGACY_MIRROR}$1"
+			curl -O "${ETLEGACY_MIRROR}$1"
 		else
-			wget "${LEGACY_MIRROR}$1"
+			wget "${ETLEGACY_MIRROR}$1"
 		fi
 	fi
 }
 
 run_download() {
 	einfo "Downloading packages..."
-	mkdir -p ${LEGACYETMAIN}
-	cd ${LEGACYETMAIN}
+	mkdir -p ${MODMAIN}
+	cd ${MODMAIN}
 	handle_download "pak0.pk3"
 }
 

@@ -11,6 +11,7 @@
 :: variables
 SET game_homepath=%USERPROFILE%\Documents\ETLegacy
 SET game_basepath=%USERPROFILE%\Documents\ETLegacy-Build
+SET modname=legacy
 SET build_type=Release
 SET batloc=%~dp0
 SET build_dir=!batloc!build
@@ -149,13 +150,13 @@ GOTO:EOF
 		mkdir "!game_basepath!"
 	)
 	CD !build_dir!
-	CALL:CLEANPATH "!game_basepath!\legacy\" "*.pk3 *.dll *.dat"
-	CALL:CLEANPATH "!game_homepath!\legacy\" "*.pk3 *.dll *.dat"
-	CALL:COPYFROMPATH "%cd%\" "et*.exe renderer_openg*.dll SDL2.dll" "!game_basepath!\"
-	CALL:COPYFROMPATH "%cd%\legacy\" "*.pk3 qagame*.dll *.dat" "!game_basepath!\legacy\"
+	CALL:CLEANPATH "!game_basepath!\%modname%\" "*.pk3 *.dll *.dat"
+	CALL:CLEANPATH "!game_homepath!\%modname%\" "*.pk3 *.dll *.dat"
+	CALL:COPYFROMPATH "%cd%\" "et*.exe renderer_opengl*.dll SDL2.dll" "!game_basepath!\"
+	CALL:COPYFROMPATH "%cd%\legacy\" "*.pk3 qagame*.dll *.dat" "!game_basepath!\%modname%\"
 	CD !batloc!
 	CALL:COPYFROMPATH "%cd%\misc\etmain\" "*" "!game_basepath!\etmain\"
-	CALL:COPYFROMPATH "%cd%\misc\" "description.txt" "!game_basepath!\legacy\"
+	CALL:COPYFROMPATH "%cd%\misc\" "description.txt" "!game_basepath!\%modname%\"
 	CALL:COPYFROMPATH "%cd%\docs\" "INSTALL.txt" "!game_basepath!"
 	CALL:COPYFROMPATH "%cd%\" "COPYING.txt" "!game_basepath!"
 GOTO:EOF
