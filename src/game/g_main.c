@@ -370,7 +370,7 @@ cvarTable_t gameCvarTable[] =
 	{ &g_cheats,                          "sv_cheats",                         "",                           0,                                               0, qfalse, qfalse },
 
 	// noset vars
-	{ NULL,                               "gamename",                          GAMEVERSION,                  CVAR_SERVERINFO | CVAR_ROM,                      0, qfalse, qfalse },
+	{ NULL,                               "gamename",                          MODNAME,                      CVAR_SERVERINFO | CVAR_ROM,                      0, qfalse, qfalse },
 	{ NULL,                               "gamedate",                          __DATE__,                     CVAR_ROM,                                        0, qfalse, qfalse },
 	{ &g_restarted,                       "g_restarted",                       "0",                          CVAR_ROM,                                        0, qfalse, qfalse },
 	{ NULL,                               "sv_mapname",                        "",                           CVAR_SERVERINFO | CVAR_ROM,                      0, qfalse, qfalse },
@@ -531,7 +531,7 @@ cvarTable_t gameCvarTable[] =
 
 #ifdef FEATURE_OMNIBOT
 	// Omni-bot user defined path to load bot library from.
-	{ &g_OmniBotPath,                     "omnibot_path",                      GAMEVERSION "/omni-bot",      CVAR_ARCHIVE | CVAR_NORESTART,                   0, qfalse, qfalse },
+	{ &g_OmniBotPath,                     "omnibot_path",                      MODNAME "/omni-bot",          CVAR_ARCHIVE | CVAR_NORESTART,                   0, qfalse, qfalse },
 	{ &g_OmniBotEnable,                   "omnibot_enable",                    "0",                          CVAR_ARCHIVE | CVAR_NORESTART,                   0, qfalse, qfalse },
 	{ &g_OmniBotPlaying,                  "omnibot_playing",                   "0",                          CVAR_SERVERINFO_NOUPDATE | CVAR_ROM,             0, qfalse, qfalse },
 	{ &g_OmniBotFlags,                    "omnibot_flags",                     "0",                          CVAR_ARCHIVE | CVAR_NORESTART,                   0, qfalse, qfalse },
@@ -712,7 +712,7 @@ Q_EXPORT intptr_t vmMain(intptr_t command, intptr_t arg0, intptr_t arg1, intptr_
 	case GAME_INIT:
 	{
 		float time = trap_Milliseconds();
-		Com_Printf(S_COLOR_MDGREY "Initializing Legacy game " S_COLOR_GREEN ETLEGACY_VERSION "\n");
+		Com_Printf(S_COLOR_MDGREY "Initializing %s game " S_COLOR_GREEN ETLEGACY_VERSION "\n", MODNAME);
 #ifdef FEATURE_OMNIBOT
 
 		Bot_Interface_InitHandles();
@@ -1780,7 +1780,7 @@ void G_ServerCheck(void)
 
 	if (!strstr(versionString, PRODUCT_LABEL))
 	{
-		G_Error("Error: %s does not support server version %s\n", GAMEVERSION, versionString);
+		G_Error("Error: %s does not support server version %s\n", MODNAME, versionString);
 	}
 }
 
@@ -2201,8 +2201,8 @@ void G_ClearMapXP(void)
 	trap_SetConfigstring(CS_AXIS_MAPS_XP, "");
 	trap_SetConfigstring(CS_ALLIED_MAPS_XP, "");
 
-	trap_Cvar_Set(va("%s_axismapxp0", GAMEVERSION), "");
-	trap_Cvar_Set(va("%s_alliedmapxp0", GAMEVERSION), "");
+	trap_Cvar_Set(va("%s_axismapxp0", MODNAME), "");
+	trap_Cvar_Set(va("%s_alliedmapxp0", MODNAME), "");
 }
 
 /**
@@ -2232,7 +2232,7 @@ void G_StoreMapXP(void)
 		{
 			strcat(u, "+");
 		}
-		trap_Cvar_Set(va("%s_axismapxp%i", GAMEVERSION, j), u);
+		trap_Cvar_Set(va("%s_axismapxp%i", MODNAME, j), u);
 		j++;
 		k = strcut(u, k, SNIPSIZE);
 	}
@@ -2254,7 +2254,7 @@ void G_StoreMapXP(void)
 		{
 			strcat(u, "+");
 		}
-		trap_Cvar_Set(va("%s_alliedmapxp%i", GAMEVERSION, j), u);
+		trap_Cvar_Set(va("%s_alliedmapxp%i", MODNAME, j), u);
 		j++;
 		k = strcut(u, k, SNIPSIZE);
 	}
@@ -2269,25 +2269,25 @@ void G_GetMapXP(void)
 	char s[MAX_STRING_CHARS];
 	char t[MAX_STRING_CHARS];
 
-	trap_Cvar_VariableStringBuffer(va("%s_axismapxp%i", GAMEVERSION, j), s, sizeof(s));
+	trap_Cvar_VariableStringBuffer(va("%s_axismapxp%i", MODNAME, j), s, sizeof(s));
 	// reassemble string...
 	while (strrchr(s, '+'))
 	{
 		j++;
 		*strrchr(s, '+') = (char)0;
-		trap_Cvar_VariableStringBuffer(va("%s_axismapxp%i", GAMEVERSION, j), t, sizeof(t));
+		trap_Cvar_VariableStringBuffer(va("%s_axismapxp%i", MODNAME, j), t, sizeof(t));
 		strcat(s, t);
 	}
 	trap_SetConfigstring(CS_AXIS_MAPS_XP, s);
 
 	j = 0;
-	trap_Cvar_VariableStringBuffer(va("%s_alliedmapxp%i", GAMEVERSION, j), s, sizeof(s));
+	trap_Cvar_VariableStringBuffer(va("%s_alliedmapxp%i", MODNAME, j), s, sizeof(s));
 	// reassemble string...
 	while (strrchr(s, '+'))
 	{
 		j++;
 		*strrchr(s, '+') = (char)0;
-		trap_Cvar_VariableStringBuffer(va("%s_alliedmapxp%i", GAMEVERSION, j), t, sizeof(t));
+		trap_Cvar_VariableStringBuffer(va("%s_alliedmapxp%i", MODNAME, j), t, sizeof(t));
 		strcat(s, t);
 	}
 	trap_SetConfigstring(CS_ALLIED_MAPS_XP, s);
@@ -2316,7 +2316,7 @@ void G_InitGame(int levelTime, int randomSeed, int restart, int legacyServer, in
 	MOD_CHECK_LEGACY(legacyServer, serverVersion, level.legacyServer);
 
 	G_Printf("------- Game Initialization -------\n");
-	G_Printf("gamename: %s\n", GAMEVERSION);
+	G_Printf("gamename: %s\n", MODNAME);
 	G_Printf("gamedate: %s\n", __DATE__);
 
 	srand(randomSeed);

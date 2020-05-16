@@ -1347,7 +1347,7 @@ gentity_t *G_Lua_CreateEntity(char *params)
 
 		if (g_scriptDebug.integer)
 		{
-			G_Printf("%s API %d: set [%s] [%s] [%s]\n", LUA_VERSION, level.time, GAMEVERSION, key, value);
+			G_Printf("%s API %d: set [%s] [%s] [%s]\n", LUA_VERSION, level.time, MODNAME, key, value);
 		}
 
 		if (level.numSpawnVars == MAX_SPAWN_VARS)

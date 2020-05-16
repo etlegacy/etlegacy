@@ -7,7 +7,7 @@
  * http://etpub.org
  * http://shitstorm.org
  *
- * @defgroup lua_api Lua API for the Legacy mod
+ * @defgroup lua_api Lua API
  * @{
  * Most exported variables and function can be accessed from the *et* namespace.
  *

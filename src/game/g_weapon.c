@@ -3003,7 +3003,7 @@ void Weapon_Artillery(gentity_t *ent)
 
 	// FIXME: decide if we want to do charge costs for 'Insufficient fire support' calls
 	//        and remove ReadyToCallArtillery() function
-	// FIXME: check omnibot legacy mod interface to deal with this
+	// FIXME: check omnibot interface to deal with this
 	if (!ReadyToCallArtillery(ent))
 	{
 		return;

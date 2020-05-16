@@ -38,14 +38,7 @@
 
 //#define NO_BOT_SUPPORT
 
-/**
- * @def OMNIBOT_NAME
- * @brief
- * @warning IMPORTANT: when changed this has to be copied manually to GAMEVERSION (g_local.h)
- */
-#define OMNIBOT_NAME "Legacy"
-
-#define OMNIBOT_MODNAME    GAMEVERSION
+#define OMNIBOT_MODNAME    MODNAME
 #define OMNIBOT_MODVERSION ETLEGACY_VERSION_SHORT
 
 //////////////////////////////////////////////////////////////////////////

@@ -225,7 +225,7 @@ void Touch_Multi(gentity_t *self, gentity_t *other, trace_t *trace)
 		}
 	}
 
-	// legacy mod only spawnflags
+	// mod specific spawnflags
 
 	if (self->spawnflags & MULTI_TRIGGER_DISGUISEDSONLY)
 	{

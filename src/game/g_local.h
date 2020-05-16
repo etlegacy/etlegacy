@@ -42,12 +42,6 @@
 
 //==================================================================
 
-/**
- * @def GAMEVERSION
- * @brief The "gameversion" client command will print this plus compile date.
- */
-#define GAMEVERSION         MODNAME
-
 #define BODY_QUEUE_SIZE     8
 
 #define EVENT_VALID_MSEC    300
@@ -2678,8 +2672,8 @@ qboolean G_LandmineSnapshotCallback(int entityNum, int clientNum);
 #define MULTI_TRIGGER_MEDICONLY         64
 #define MULTI_TRIGGER_ENGINEERONLY      128
 #define MULTI_TRIGGER_COVERTOPSONLY     256
-#define MULTI_TRIGGER_DISGUISEDSONLY    512  ///< legacy only
-#define MULTI_TRIGGER_OBJECTIVEONLY     1024 ///< legacy only
+#define MULTI_TRIGGER_DISGUISEDSONLY    512  ///< mod specific only
+#define MULTI_TRIGGER_OBJECTIVEONLY     1024 ///< mod specific only
 
 #define TARGET_PUSH_BOUNCEPAD           1
 

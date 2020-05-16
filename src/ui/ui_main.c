@@ -6376,7 +6376,7 @@ static void UI_BuildServerDisplayList(qboolean force)
 			trap_Cvar_Update(&ui_browserShowHumans);
 			if (ui_browserShowHumans.integer)
 			{
-				// Legacy mod or ETL servers only
+				// Default mod or ETL servers only
 				// FIXME: check for ping and compute humans/bots number for vanilla server?
 				if (strstr(Info_ValueForKey(info, "version"), PRODUCT_LABEL) == NULL)
 				{
@@ -8083,7 +8083,7 @@ static void UI_RunCinematicFrame(int handle)
 void UI_Init(int legacyClient, int clientVersion)
 {
 	int x;
-	Com_Printf(S_COLOR_MDGREY "Initializing Legacy ui " S_COLOR_GREEN ETLEGACY_VERSION "\n");
+	Com_Printf(S_COLOR_MDGREY "Initializing %s ui " S_COLOR_GREEN ETLEGACY_VERSION "\n", MODNAME);
 
 	UI_RegisterCvars();
 	UI_InitMemory();
