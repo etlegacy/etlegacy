@@ -1257,10 +1257,8 @@ static void CG_TimerSet_f(void)
 		}
 		else
 		{
-			int msec = (int)(cgs.timelimit * 60000.f) - (cg.time - cgs.levelStartTime);  // 60.f * 1000.f
-
 			trap_Cvar_Set("cg_spawnTimer_period", buff);
-			trap_Cvar_Set("cg_spawnTimer_set", va("%d", msec / 1000));
+			trap_Cvar_Set("cg_spawnTimer_set", va("%i", (cg.time - cgs.levelStartTime)));
 		}
 	}
 	else
