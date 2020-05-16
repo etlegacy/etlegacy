@@ -5432,8 +5432,8 @@ void FS_InitWhitelist()
 
 	msec = Sys_Milliseconds();
 
-	Com_Memset(pakMetaEntries, 0, sizeof(pakMetaEntry_t) * WL_MAX_ENTRIES);
-	Com_Memset(pakMetaEntryMap, 0, sizeof(pakMetaEntry_t) * WL_MAX_ENTRIES);
+	Com_Memset(pakMetaEntries, 0, sizeof(pakMetaEntries));
+	Com_Memset(pakMetaEntryMap, 0, sizeof(pakMetaEntryMap));
 
 	fileListPath = va("%s%c%s", fs_homepath->string, PATH_SEP, WL_FILENAME);
 	file         = Sys_FOpen(fileListPath, "rb");
