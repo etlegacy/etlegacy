@@ -2869,9 +2869,9 @@ void CL_Init(void)
 	Cvar_Get("cg_drawCompass", "1", CVAR_ARCHIVE);
 	Cvar_Get("cg_drawNotifyText", "1", CVAR_ARCHIVE);
 	Cvar_Get("cg_quickMessageAlt", "1", CVAR_ARCHIVE);
-	Cvar_Get("cg_popupLimboMenu", "1", CVAR_ARCHIVE);  // not used in legacy mod, kept for compatibility
+	Cvar_Get("cg_popupLimboMenu", "1", CVAR_ARCHIVE);  // not used, kept for compatibility
 	Cvar_Get("cg_descriptiveText", "1", CVAR_ARCHIVE);
-	Cvar_Get("cg_drawTeamOverlay", "2", CVAR_ARCHIVE); // not used in legacy mod, kept for compatibility
+	Cvar_Get("cg_drawTeamOverlay", "2", CVAR_ARCHIVE); // not used, kept for compatibility
 	Cvar_Get("cg_drawGun", "1", CVAR_ARCHIVE);
 	Cvar_Get("cg_cursorHints", "1", CVAR_ARCHIVE);
 	Cvar_Get("cg_voiceSpriteTime", "6000", CVAR_ARCHIVE);
@@ -3097,7 +3097,7 @@ static void CL_SetServerInfo(serverInfo_t *server, const char *info, int ping)
 			Q_strncpyz(server->version, Info_ValueForKey(info, "version"), MAX_NAME_LENGTH);
 			server->clients = atoi(Info_ValueForKey(info, "clients"));
 			server->humans  = atoi(Info_ValueForKey(info, "humans"));
-			Q_strncpyz(server->hostName, Info_ValueForKey(info, "hostname"), IS_LEGACY_MOD ? MAX_SERVER_NAME_LENGTH : MAX_NAME_LENGTH);
+			Q_strncpyz(server->hostName, Info_ValueForKey(info, "hostname"), IS_DEFAULT_MOD ? MAX_SERVER_NAME_LENGTH : MAX_NAME_LENGTH);
 			server->load = atoi(Info_ValueForKey(info, "serverload"));
 			Q_strncpyz(server->mapName, Info_ValueForKey(info, "mapname"), MAX_NAME_LENGTH);
 			server->maxClients = atoi(Info_ValueForKey(info, "sv_maxclients"));

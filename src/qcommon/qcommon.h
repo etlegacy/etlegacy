@@ -744,7 +744,7 @@ issues.
 */
 
 #define BASEGAME "etmain"
-#define DEFAULT_MODGAME MODNAME /// see files.c
+#define DEFAULT_MODGAME MODNAME
 
 /**
  * @struct modHash
@@ -757,8 +757,8 @@ typedef struct
 } modHash;
 extern modHash modHashes;
 
-//#define IS_LEGACY_MOD (Q_stricmp(Cvar_VariableString("fs_game"), DEFAULT_MODGAME) == 0)
-#define IS_LEGACY_MOD (modHashes.defaultMod == modHashes.currentMod)
+//#define IS_DEFAULT_MOD (Q_stricmp(Cvar_VariableString("fs_game"), DEFAULT_MODGAME) == 0)
+#define IS_DEFAULT_MOD (modHashes.defaultMod == modHashes.currentMod)
 
 // referenced flags
 // these are in loop specific order so don't change the order

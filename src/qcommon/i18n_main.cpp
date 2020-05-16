@@ -65,7 +65,7 @@ cvar_t      *cl_langDebug;
 static char cl_lang_last[3];
 
 qboolean doTranslate    = qfalse; // we don't translate english in general
-qboolean doTranslateMod = qtrue; // translate legacy mod only
+qboolean doTranslateMod = qtrue; // only translate default mod only
 
 std::map <std::string, std::string> strings; // original text / translated text
 

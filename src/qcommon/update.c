@@ -243,7 +243,7 @@ static void Com_RunUpdateBinary(const char *updateBinary, const char *updateConf
 	Sys_StartProcess(cmdBuffer, qtrue);
 
 	// reinitialize the filesystem if the game directory or checksum has changed
-	// - after Legacy mod update
+	// - after mod update
 #ifdef DEDICATED
 	FS_ConditionalRestart(sv.checksumFeed);
 #else

@@ -4244,7 +4244,7 @@ static void FS_Startup(const char *gameName)
 	}
 
 #ifdef FEATURE_GETTEXT
-	// only translate legacy mod
+	// only translate default mod
 	// - other mods don't support our unicode translation files
 	// - mods have own strings to translate - we avoid language mixes
 	if (!Q_stricmp(fs_gamedirvar->string, DEFAULT_MODGAME))

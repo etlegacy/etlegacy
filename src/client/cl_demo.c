@@ -462,9 +462,9 @@ static void CL_RewindDemo(double wantedTime)
 	int             i;
 	rewindBackups_t *rb;
 
-	if (!IS_LEGACY_MOD)
+	if (!IS_DEFAULT_MOD)
 	{
-		Com_FuncPrinf("Rewind is only supported on legacy mod, sorry\n");
+		Com_FuncPrinf("Rewind is only supported on %s mod, sorry\n", DEFAULT_MODGAME);
 		return;
 	}
 
@@ -1752,9 +1752,9 @@ void CL_PauseDemo_f(void)
 		return;
 	}
 
-	if (!IS_LEGACY_MOD)
+	if (!IS_DEFAULT_MOD)
 	{
-		Com_FuncPrinf("Demo pausing is only supported on legacy mod, sorry\n");
+		Com_FuncPrinf("Demo pausing is only supported on %s mod, sorry\n", DEFAULT_MODGAME);
 		return;
 	}
 
