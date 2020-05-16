@@ -48,8 +48,6 @@
 #define _attribute(x)
 #endif
 
-#define LEGACY              ///< for omnibot
-
 #if defined(CGAMEDLL) || defined(FEATURE_SERVERMDX)
 #define USE_MDXFILE
 #endif
