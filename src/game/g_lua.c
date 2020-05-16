@@ -2425,7 +2425,7 @@ static void registerConfigstringConstants(lua_vm_t *vm)
 	lua_regconstinteger(vm->L, CS_CHARGETIMES);
 	lua_regconstinteger(vm->L, CS_FILTERCAMS);
 
-	lua_regconstinteger(vm->L, CS_LEGACYINFO);
+	lua_regconstinteger(vm->L, CS_MODINFO);
 	lua_regconstinteger(vm->L, CS_SVCVAR);
 	lua_regconstinteger(vm->L, CS_CONFIGNAME);
 

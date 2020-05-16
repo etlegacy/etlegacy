@@ -2826,7 +2826,7 @@ void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qbo
 
 	CG_UpdateSvCvars();
 
-	CG_ParseLegacyinfo();
+	CG_ParseModInfo();
 
 	cg.crosshairMine = -1;
 	cg.crosshairDyna = -1;

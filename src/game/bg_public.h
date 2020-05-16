@@ -411,7 +411,7 @@ extern const int aReinfSeeds[MAX_REINFSEEDS];
 #define CS_CHARGETIMES                  38
 #define CS_FILTERCAMS                   39
 
-#define CS_LEGACYINFO                   40
+#define CS_MODINFO                   40
 #define CS_SVCVAR                       41
 #define CS_CONFIGNAME                   42
 

@@ -328,13 +328,13 @@ void CG_ParseSysteminfo(void)
 
 
 /**
- * @brief CG_ParseLegacyinfo
+ * @brief CG_ParseModInfo
  */
-void CG_ParseLegacyinfo(void)
+void CG_ParseModInfo(void)
 {
 	const char *info;
 
-	info = CG_ConfigString(CS_LEGACYINFO);
+	info = CG_ConfigString(CS_MODINFO);
 
 	cgs.mapVoteMapX = atoi(Info_ValueForKey(info, "X"));
 	cgs.mapVoteMapY = atoi(Info_ValueForKey(info, "Y"));
@@ -1012,8 +1012,8 @@ static void CG_ConfigStringModified(void)
 	case CS_FILTERCAMS:
 		cg.filtercams = atoi(CG_ConfigString(num)) ? qtrue : qfalse;
 		break;
-	case CS_LEGACYINFO:
-		CG_ParseLegacyinfo();
+	case CS_MODINFO:
+		CG_ParseModInfo();
 		break;
 	case CS_SYSTEMINFO:
 		CG_ParseSysteminfo();

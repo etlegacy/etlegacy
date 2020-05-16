@@ -2011,7 +2011,7 @@ void G_UpdateCvars(void)
 #endif
 
 				{
-					// CS_LEGACYINFO
+					// CS_MODINFO
 					char cs[MAX_INFO_STRING];
 
 					cs[0] = '\0';
@@ -2041,7 +2041,7 @@ void G_UpdateCvars(void)
 					Info_SetValueForKey(cs, "MV", va("%i", g_multiview.integer));
 #endif
 
-					trap_SetConfigstring(CS_LEGACYINFO, cs);
+					trap_SetConfigstring(CS_MODINFO, cs);
 				}
 
 				// Update vote info for clients, if necessary

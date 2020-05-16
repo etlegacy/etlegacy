@@ -3190,7 +3190,7 @@ void CG_parseMapVoteTally(void);
 void CG_ExecuteNewServerCommands(int latestSequence);
 void CG_ParseServerinfo(void);
 void CG_ParseSysteminfo(void);
-void CG_ParseLegacyinfo(void);
+void CG_ParseModInfo(void);
 void CG_ParseWolfinfo(void);
 void CG_ParseSpawns(void);
 void CG_ParseServerVersionInfo(const char *pszVersionInfo);

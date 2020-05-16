@@ -861,9 +861,9 @@ void G_CalculateSkillRatings(void)
 		G_LogPrintf("SkillRating: Map bias: %.6f\n", level.mapProb);
 
 		// update map bias on intermission scoreboard
-		trap_GetConfigstring(CS_LEGACYINFO, cs, sizeof(cs));
+		trap_GetConfigstring(CS_MODINFO, cs, sizeof(cs));
 		Info_SetValueForKey(cs, "M", va("%f", level.mapProb));
-		trap_SetConfigstring(CS_LEGACYINFO, cs);
+		trap_SetConfigstring(CS_MODINFO, cs);
 	}
 
 	// log last estimated win probability

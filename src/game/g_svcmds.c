@@ -2393,8 +2393,8 @@ void Svcmd_CSInfo_f(void)
 		case CS_FILTERCAMS:
 			str = "CS_FILTERCAMS";
 			break;
-		case CS_LEGACYINFO:
-			str = "CS_LEGACYINFO";
+		case CS_MODINFO:
+			str = "CS_MODINFO";
 			break;
 		case CS_TEAMRESTRICTIONS:
 			str = "CS_TEAMRESTRICTIONS";

@@ -137,7 +137,7 @@ int WM_DrawObjectives(int x, int y, int width, float fade)
 		// update intermission scoreboard
 		if (cgs.skillRating > 1)
 		{
-			const char *info = CG_ConfigString(CS_LEGACYINFO);
+			const char *info = CG_ConfigString(CS_MODINFO);
 
 			cgs.mapProb = (float)atof(Info_ValueForKey(info, "M"));
 		}
