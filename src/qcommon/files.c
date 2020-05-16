@@ -3449,6 +3449,8 @@ void FS_Path_f(void)
 	searchpath_t *s;
 	int          i;
 
+	Com_Printf("Current working directory:\n");
+	Com_Printf("    %s\n", Sys_Cwd());
 	Com_Printf("Current search path:\n");
 	for (s = fs_searchpaths; s; s = s->next)
 	{
@@ -4058,6 +4060,7 @@ void FS_Shutdown(qboolean closemfp)
 
 	// any FS_ calls will now be an error until reinitialized
 	fs_searchpaths = NULL;
+	fs_checksumFeed = 0;
 
 	Cmd_RemoveCommand("path");
 	Cmd_RemoveCommand("dir");
@@ -4133,8 +4136,8 @@ static void FS_AddBothGameDirectories(const char *subpath)
 		{
 			FS_AddGameDirectory(fs_homepath->string, subpath);
 #if defined(FEATURE_PAKISOLATION) && !defined(DEDICATED)
-			/* only mount container for certain directories */
-			if (!Q_stricmp(subpath, BASEGAME) || (!Q_stricmp(subpath, DEFAULT_MODGAME) && fs_containerMount->integer))
+			/* only mount containers for certain directories and if in pure mode */
+			if (fs_numServerPaks && (!Q_stricmp(subpath, BASEGAME) || (!Q_stricmp(subpath, DEFAULT_MODGAME) && fs_containerMount->integer)))
 			{
 				char contPath[MAX_OSPATH];
 				Com_sprintf(contPath, sizeof(contPath), "%s%c%s", subpath, PATH_SEP, FS_CONTAINER);
@@ -4535,6 +4538,7 @@ void FS_ClearPureServerPacks(void)
 	// but does not cause the tokenizing of strings..
 	fs_numServerPaks           = 0;
 	fs_numServerReferencedPaks = 0;
+	fs_checksumFeed            = 0;
 
 	if (fs_reordered)
 	{
@@ -5428,8 +5432,8 @@ void FS_InitWhitelist()
 
 	msec = Sys_Milliseconds();
 
-	Com_Memset(pakMetaEntries, 0, WL_MAX_ENTRIES);
-	Com_Memset(pakMetaEntryMap, 0, WL_MAX_ENTRIES);
+	Com_Memset(pakMetaEntries, 0, sizeof(pakMetaEntry_t) * WL_MAX_ENTRIES);
+	Com_Memset(pakMetaEntryMap, 0, sizeof(pakMetaEntry_t) * WL_MAX_ENTRIES);
 
 	fileListPath = va("%s%c%s", fs_homepath->string, PATH_SEP, WL_FILENAME);
 	file         = Sys_FOpen(fileListPath, "rb");

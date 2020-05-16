@@ -590,6 +590,20 @@ int cl_connectedToCheatServer;
 
 void CL_PurgeCache(void);
 
+static void CL_SetPurePaks(void)
+{
+	const char *s, *t;
+	char *systemInfo = cl.gameState.stringData + cl.gameState.stringOffsets[CS_SYSTEMINFO];
+	// check pure server string
+	s = Info_ValueForKey(systemInfo, "sv_paks");
+	t = Info_ValueForKey(systemInfo, "sv_pakNames");
+	FS_PureServerSetLoadedPaks(s, t);
+
+	s = Info_ValueForKey(systemInfo, "sv_referencedPaks");
+	t = Info_ValueForKey(systemInfo, "sv_referencedPakNames");
+	FS_PureServerSetReferencedPaks(s, t);
+}
+
 /**
  * @brief The systeminfo configstring has been changed, so parse new information out of it.
  * This will happen at every gamestate, and possibly during gameplay.
@@ -611,6 +625,11 @@ void CL_SystemInfoChanged(void)
 	// don't set any vars when playing a demo
 	if (clc.demoplaying)
 	{
+		// allow running demo in pure mode to simulate server environment
+		if (Cvar_VariableValue("sv_pure") != 0.f) 
+		{
+			CL_SetPurePaks();
+		}
 		return;
 	}
 
@@ -621,14 +640,7 @@ void CL_SystemInfoChanged(void)
 		Cvar_SetCheatState();
 	}
 
-	// check pure server string
-	s = Info_ValueForKey(systemInfo, "sv_paks");
-	t = Info_ValueForKey(systemInfo, "sv_pakNames");
-	FS_PureServerSetLoadedPaks(s, t);
-
-	s = Info_ValueForKey(systemInfo, "sv_referencedPaks");
-	t = Info_ValueForKey(systemInfo, "sv_referencedPakNames");
-	FS_PureServerSetReferencedPaks(s, t);
+	CL_SetPurePaks();
 
 	gameSet = qfalse;
 	// scan through all the variables in the systeminfo and locally set cvars to match
