@@ -706,6 +706,12 @@ void G_BuildEndgameStats(void)
 			continue;
 		}
 
+		// no reward for non players
+		if (!cl->sess.time_axis && !cl->sess.time_allies)
+		{
+			continue;
+		}
+
 		if (cl->sess.prestige <= 0)
 		{
 			continue;
@@ -782,6 +788,12 @@ void G_BuildEndgameStats(void)
 		gclient_t *cl = &level.clients[level.sortedClients[i]];
 
 		if (cl->sess.sessionTeam == TEAM_FREE)
+		{
+			continue;
+		}
+
+		// no reward for non players
+		if (!cl->sess.time_axis && !cl->sess.time_allies)
 		{
 			continue;
 		}
