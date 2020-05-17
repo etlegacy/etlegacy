@@ -26,7 +26,7 @@ import cz.msebera.android.httpclient.Header;
 
 public class ETLMain extends Activity {
 
-    private Drawable getBitmapFromAsset(String strName) {
+    private Drawable getSplashScreenFromAsset(String strName) {
         AssetManager assetManager = getAssets();
         InputStream istr = null;
         try {
@@ -38,7 +38,6 @@ public class ETLMain extends Activity {
         // It somehow looks ugly and expensive, find a better solution
         Bitmap bitmap = BitmapFactory.decodeStream(istr);
         Drawable etl_drawable = new BitmapDrawable(getResources(), bitmap);
-        //Bitmap resized = Bitmap.createScaledBitmap(bitmap, 80, 80, true);
         return etl_drawable;
     }
 
@@ -53,7 +52,7 @@ public class ETLMain extends Activity {
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         ImageView imageView = new ImageView(this);
-        imageView.setBackground(getBitmapFromAsset("etl_splashscreen.png"));
+        imageView.setBackground(getSplashScreenFromAsset("etl_splashscreen.png"));
 
         LinearLayout etl_Layout = new LinearLayout(this);
 
