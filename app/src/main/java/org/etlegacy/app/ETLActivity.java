@@ -30,10 +30,17 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
     static volatile boolean UiMenu = false;
     ImageButton btn;
 
+    /**
+     * Get an uiMenu boolean variable
+     * @return UiMenu
+     */
     public static boolean getUiMenu() {
         return UiMenu;
     }
 
+    /**
+     * RunUI Function
+     */
     public void runUI() {
 
 //         Use runThread() instead ?
@@ -256,10 +263,20 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
         });
     }
 
+    /**
+     * Convert pixel metrics to dp
+     * @param px value of px to be converted
+     * @return dp
+     */
     public static int pxToDp(int px) {
         return (int) (px / Resources.getSystem().getDisplayMetrics().density);
     }
 
+    /**
+     * Get an image stored from Asset Dir of an App
+     * @param strName name of the image to get
+     * @return "resized" image
+     */
     private Bitmap getBitmapFromAsset(String strName) {
         AssetManager assetManager = getAssets();
         InputStream istr = null;

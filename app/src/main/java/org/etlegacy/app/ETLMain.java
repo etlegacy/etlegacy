@@ -26,6 +26,11 @@ import cz.msebera.android.httpclient.Header;
 
 public class ETLMain extends Activity {
 
+    /**
+     * Get an splash screen image from Asset Dir of an App
+     * @param strName name of the splash screen image
+     * @return image
+     */
     private Drawable getSplashScreenFromAsset(String strName) {
         AssetManager assetManager = getAssets();
         InputStream istr = null;
@@ -41,6 +46,11 @@ public class ETLMain extends Activity {
         return etl_drawable;
     }
 
+    /**
+     * Convert pixel metrics to dp
+     * @param px value of px to be converted
+     * @return dp
+     */
     public static int pxToDp(int px) {
         return (int) (px / Resources.getSystem().getDisplayMetrics().density);
     }
