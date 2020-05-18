@@ -9,10 +9,12 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.google.common.io.Files;
 import com.loopj.android.http.AsyncHttpClient;
@@ -64,6 +66,10 @@ public class ETLMain extends Activity {
         ImageView imageView = new ImageView(this);
         imageView.setBackground(getSplashScreenFromAsset("etl_splashscreen.png"));
 
+        TextView textView = new TextView(this);
+        textView.append("Downloading Game Data ...");
+        textView.setTextSize(25);
+
         LinearLayout etl_Layout = new LinearLayout(this);
 
         RelativeLayout.LayoutParams etl_Params = new RelativeLayout.LayoutParams(
@@ -72,9 +78,14 @@ public class ETLMain extends Activity {
         etl_Params.leftMargin = pxToDp(Resources.getSystem().getDisplayMetrics().widthPixels / 2);
         etl_Params.topMargin = pxToDp(Resources.getSystem().getDisplayMetrics().heightPixels / 2);
 
-        etl_Layout.addView(imageView, etl_Params);
-        setContentView(etl_Layout);
+        LinearLayout.LayoutParams etl_Params_download = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT, 1.0f);
 
+        etl_Params_download.setMargins(-600, 600, -700,-50);
+
+        etl_Layout.addView(imageView, etl_Params);
+        etl_Layout.addView(textView, etl_Params_download);
+        setContentView(etl_Layout);
 
         File etl_pak = new File(getExternalFilesDir(null), "/etlegacy/etmain/pak0.pk3");
         final Intent intent = new Intent(ETLMain.this, ETLActivity.class);
@@ -89,6 +100,7 @@ public class ETLMain extends Activity {
 
                 @Override
                 public void onSuccess(int statusCode, Header[] headers, File file) {
+
                 }
 
                 @Override
