@@ -363,12 +363,6 @@ qboolean G_VisibleFromBinoculars(gentity_t *viewer, gentity_t *ent, vec3_t origi
 	VectorCopy(viewer->client->ps.origin, vieworg);
 	vieworg[2] += viewer->client->ps.viewheight;
 
-	// check if head is visible
-	if (ent->methodOfDeath != MOD_LANDMINE)
-	{
-		origin[2] += ent->client->ps.viewheight;
-	}
-
 	if (!G_CullPointAndRadius(origin, 0))
 	{
 		return qfalse;
@@ -380,56 +374,6 @@ qboolean G_VisibleFromBinoculars(gentity_t *viewer, gentity_t *ent, vec3_t origi
 	}
 
 	trap_Trace(&trace, vieworg, NULL, NULL, origin, viewer->s.number, MASK_SHOT);
-
-	if (trace.fraction != 1.f)
-	{
-		if (trace.entityNum != ent->s.number)
-		{
-			return qfalse;
-		}
-		else
-		{
-			return qtrue;
-		}
-	}
-
-	return qtrue;
-}
-
-/**
- * @brief G_VisibleFromBinoculars_Box
- * @param[in] viewer
- * @param[in] ent
- * @param[in,out] origin
- * @param[in] mins
- * @param[in] maxs
- * @return
- */
-qboolean G_VisibleFromBinoculars_Box(gentity_t *viewer, gentity_t *ent, vec3_t origin, vec3_t mins, vec3_t maxs)
-{
-	vec3_t  vieworg;
-	trace_t trace;
-
-	VectorCopy(viewer->client->ps.origin, vieworg);
-	vieworg[2] += viewer->client->ps.viewheight;
-
-	// check if head is visible
-	if (ent->methodOfDeath != MOD_LANDMINE)
-	{
-		origin[2] += ent->client->ps.viewheight;
-	}
-
-	if (!G_CullPointAndRadius(origin, 0))
-	{
-		return qfalse;
-	}
-
-	if (!trap_InPVS(vieworg, origin))
-	{
-		return qfalse;
-	}
-
-	trap_Trace(&trace, vieworg, mins, maxs, origin, viewer->s.number, MASK_SHOT);
 
 	if (trace.fraction != 1.f)
 	{
@@ -1000,7 +944,7 @@ void G_SendSpectatorMapEntityInfo(gentity_t *e)
 		if (!e->client->sess.shoutcaster)
 		{
 			if (mEnt->type != ME_CONSTRUCT && mEnt->type != ME_DESTRUCT && mEnt->type != ME_DESTRUCT_2 &&
-				mEnt->type != ME_TANK && mEnt->type != ME_TANK_DEAD && mEnt->type != ME_COMMANDMAP_MARKER)
+			    mEnt->type != ME_TANK && mEnt->type != ME_TANK_DEAD && mEnt->type != ME_COMMANDMAP_MARKER)
 			{
 				continue;
 			}
@@ -1450,10 +1394,14 @@ void G_UpdateTeamMapData(void)
 				}
 
 				VectorCopy(ent2->client->ps.origin, pos[0]);
-				VectorCopy(ent2->client->ps.mins, pos[1]);
-				VectorCopy(ent2->client->ps.maxs, pos[2]);
+				pos[0][2] += ent2->client->ps.mins[2];
+				VectorCopy(ent2->client->ps.origin, pos[1]);
+				VectorCopy(ent2->client->ps.origin, pos[2]);
+				pos[2][2] += ent2->client->ps.maxs[2];
 
-				if (G_VisibleFromBinoculars_Box(ent, ent2, pos[0], pos[1], pos[2]))
+				if (G_VisibleFromBinoculars(ent, ent2, pos[0]) ||
+				    G_VisibleFromBinoculars(ent, ent2, pos[1]) ||
+				    G_VisibleFromBinoculars(ent, ent2, pos[2]))
 				{
 					G_UpdateTeamMapData_DisguisedPlayer(ent, ent2, f1, f2);
 				}
@@ -1499,10 +1447,14 @@ void G_UpdateTeamMapData(void)
 				}
 
 				VectorCopy(ent2->client->ps.origin, pos[0]);
-				VectorCopy(ent2->client->ps.mins, pos[1]);
-				VectorCopy(ent2->client->ps.maxs, pos[2]);
+				pos[0][2] += ent2->client->ps.mins[2];
+				VectorCopy(ent2->client->ps.origin, pos[1]);
+				VectorCopy(ent2->client->ps.origin, pos[2]);
+				pos[2][2] += ent2->client->ps.maxs[2];
 
-				if (G_VisibleFromBinoculars_Box(ent, ent2, pos[0], pos[1], pos[2]))
+				if (G_VisibleFromBinoculars(ent, ent2, pos[0]) ||
+				    G_VisibleFromBinoculars(ent, ent2, pos[1]) ||
+				    G_VisibleFromBinoculars(ent, ent2, pos[2]))
 				{
 					G_UpdateTeamMapData_Player(ent2, f1, f2);
 				}

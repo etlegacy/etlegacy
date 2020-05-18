@@ -2254,7 +2254,6 @@ void G_UpdateTeamMapData(void);
 void G_SetupFrustum(gentity_t *ent);
 void G_SetupFrustum_ForBinoculars(gentity_t *ent);
 qboolean G_VisibleFromBinoculars(gentity_t *viewer, gentity_t *ent, vec3_t origin);
-qboolean G_VisibleFromBinoculars_Box(gentity_t *viewer, gentity_t *ent, vec3_t origin, vec3_t mins, vec3_t maxs);
 
 void G_LogTeamKill(gentity_t *ent, weapon_t weap);
 void G_LogDeath(gentity_t *ent, weapon_t weap);
