@@ -1416,7 +1416,7 @@ static qboolean CG_RW_ParseParticleEffect(int handle, impactParticle_t *impactPa
 		}
 	}
 
-	if (impactSurface == W_MAX_SND_SURF || !impactParticle->particleEffect[impactSurface])
+	if (impactSurface == W_MAX_SND_SURF)
 	{
 		return CG_RW_ParseError(handle, "unknown token '%s'", token.string);
 	}
@@ -1650,12 +1650,12 @@ static qboolean CG_RW_ParseExtraEffect(int handle, impactParticle_t *impactParti
 	return qtrue;
 }
 
-static impactParticleTable_t impactParticleTable[MAX_IMPACT_PARTICLE] = { { { 0 } } };
+static impactParticleTable_t impactParticleTable[MAX_IMPACT_PARTICLE] = { { { 0 }, { 0 } } };
 
 /**
  * @brief CG_ParseWeaponImpactParticle
- * @param filename
- * @param wip
+ * @param[in] filename
+ * @param[in] pImpactParticle
  * @return
  */
 static qboolean CG_ParseWeaponImpactParticle(const char *filename, impactParticle_t **pImpactParticle)
@@ -1669,7 +1669,7 @@ static qboolean CG_ParseWeaponImpactParticle(const char *filename, impactParticl
 	{
 		if (impactParticleTable[i].impactParticleName[0] == 0)
 		{
-			Q_strcpy(impactParticleTable[i].impactParticleName, filename);
+			Q_strncpyz(impactParticleTable[i].impactParticleName, filename, MAX_QPATH);
 			*pImpactParticle = impactParticle = &impactParticleTable[i].impactParticle;
 			break;
 		}
