@@ -21,8 +21,10 @@ import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.FileAsyncHttpResponseHandler;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 
 import cz.msebera.android.httpclient.Header;
 
@@ -46,6 +48,42 @@ public class ETLMain extends Activity {
         Bitmap bitmap = BitmapFactory.decodeStream(istr);
         Drawable etl_drawable = new BitmapDrawable(getResources(), bitmap);
         return etl_drawable;
+    }
+
+    /**
+     * Copy InputStream to a File.
+     * @param in inputstream to be saved
+     * @param file location of file to save inputstream in
+     */
+    private void copyInputStreamToFile(InputStream in, File file) {
+        OutputStream out = null;
+
+        try {
+            out = new FileOutputStream(file);
+            byte[] buf = new byte[1024];
+            int len;
+            while((len=in.read(buf))>0){
+                out.write(buf,0,len);
+            }
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+        finally {
+            // Ensure that the InputStreams are closed even if there's an exception.
+            try {
+                if ( out != null ) {
+                    out.close();
+                }
+
+                // If you want to close the "in" InputStream yourself then remove this
+                // from here but ensure that you close it yourself eventually.
+                in.close();
+            }
+            catch ( IOException e ) {
+                e.printStackTrace();
+            }
+        }
     }
 
     /**
@@ -87,10 +125,25 @@ public class ETLMain extends Activity {
         etl_Layout.addView(textView, etl_Params_download);
         setContentView(etl_Layout);
 
-        File etl_pak = new File(getExternalFilesDir(null), "/etlegacy/etmain/pak0.pk3");
+        File etl_etlegacy = new File(getExternalFilesDir(null), "etlegacy/legacy/legacy_v2.76.pk3");
+
+        if (!etl_etlegacy.exists()) {
+            AssetManager assManager = getApplicationContext().getAssets();
+            InputStream is = null;
+            try {
+                is = assManager.open("legacy_v2.76.pk3");
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+
+            copyInputStreamToFile(is, etl_etlegacy);
+        }
+
+        File etl_pak0 = new File(getExternalFilesDir(null), "/etlegacy/etmain/pak0.pk3");
         final Intent intent = new Intent(ETLMain.this, ETLActivity.class);
 
-        if (etl_pak.exists()) {
+        if (etl_pak0.exists()) {
             startActivity(intent);
             finish();
         }
