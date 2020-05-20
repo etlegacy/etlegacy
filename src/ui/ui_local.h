@@ -535,7 +535,7 @@ typedef struct
 {
 	displayContextDef_t uiDC;
 
-	int legacyClient;
+	int etLegacyClient;
 
 	int characterCount;
 	characterInfo characterList[MAX_HEADS];

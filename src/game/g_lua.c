@@ -2,13 +2,10 @@
  * @file g_lua.c
  * @brief ET <-> *Lua* interface source file.
  *
- * @copyright This code is taken from ETPub and NQ.
+ * @copyright This code is derived from ETPub and NQ, and inspired from ETPro
  * All credits go to their teams especially to quad and pheno!
- * http://etpub.org
- * http://shitstorm.org
  *
- * [ETPro Lua mods]: http://wolfwiki.anime.net/index.php/Lua_Mod_API "ETPro Lua API"
- * [Legacy Lua API]: http://legacy-lua-api.readthedocs.io/
+ * [League Lua API]: https://etlegacy-lua-docs.readthedocs.io
  */
 #ifdef FEATURE_LUA
 
@@ -2528,7 +2525,7 @@ static void registerWeaponConstants(lua_vm_t *vm)
 	lua_regconstinteger(vm->L, WP_AKIMBO_SILENCEDLUGER); // 46
 	lua_regconstinteger(vm->L, WP_MOBILE_MG42_SET);      // 47
 
-	// legacy weapons
+	// league weapons
 	lua_regconstinteger(vm->L, WP_KNIFE_KABAR);          // 48
 	lua_regconstinteger(vm->L, WP_MOBILE_BROWNING);      // 49
 	lua_regconstinteger(vm->L, WP_MOBILE_BROWNING_SET);  // 50

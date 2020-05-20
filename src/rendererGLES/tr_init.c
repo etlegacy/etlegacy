@@ -266,9 +266,7 @@ void GL_CheckErrors(void)
  *                                                SCREEN SHOTS
  *
  * NOTE: some thoughts about the screenshots system:
- * screenshots get written in fs_homepath + fs_gamedir
- * vanilla W:ET .. etmain/screenshots/<FILE>.tga
- * ET: Legacy   .. legacy/screenshots/<FILE>.tga
+ * screenshots get written in fs_homepath/fs_gamedir/screenshots/<FILE>.jpg
  *
  * one commands: "screenshot"
  * we use statics to store a count and start writing the first screenshot/screenshot????.jpg available

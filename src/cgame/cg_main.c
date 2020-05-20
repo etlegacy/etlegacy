@@ -37,7 +37,7 @@
 
 displayContextDef_t cgDC;
 
-void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qboolean demoPlayback, int legacyClient, demoPlayInfo_t *info, int clientVersion);
+void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qboolean demoPlayback, int etLegacyClient, demoPlayInfo_t *info, int clientVersion);
 void CG_Shutdown(void);
 qboolean CG_CheckExecKey(int key);
 extern itemDef_t *g_bindItem;
@@ -2556,11 +2556,11 @@ void CG_AssetCache(void)
  * @param serverCommandSequence
  * @param clientNum
  * @param demoPlayback
- * @param legacyClient
+ * @param etLegacyClient
  * @param info
  * @param clientVersion
  */
-void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qboolean demoPlayback, int legacyClient, demoPlayInfo_t *info, int clientVersion)
+void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qboolean demoPlayback, int etLegacyClient, demoPlayInfo_t *info, int clientVersion)
 {
 	const char *s;
 	int        i;
@@ -2601,7 +2601,7 @@ void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qbo
 
 	cg.demoPlayback = demoPlayback;
 
-	MOD_CHECK_LEGACY(legacyClient, clientVersion, cg.legacyClient);
+	MOD_CHECK_LEGACY(etLegacyClient, clientVersion, cg.etLegacyClient);
 
 	// get the rendering configuration from the client system
 	trap_GetGlconfig(&cgs.glconfig);
@@ -2609,7 +2609,7 @@ void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qbo
 	cgs.screenYScale = cgs.glconfig.vidHeight / 480.0f;
 
 
-	if (cg.legacyClient <= 0)
+	if (cg.etLegacyClient <= 0)
 	{
 		cgs.glconfig.windowAspect = (float)cgs.glconfig.vidWidth / (float)cgs.glconfig.vidHeight;
 	}
@@ -2702,7 +2702,7 @@ void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qbo
 	}
 
 	/* mark old and new clients */
-	if (cg.legacyClient <= 0)
+	if (cg.etLegacyClient <= 0)
 	{
 		trap_Cvar_VariableStringBuffer("version", versionString, sizeof(versionString));
 		trap_Cvar_Set("cg_etVersion", versionString[0] ? versionString : "(undetected)");

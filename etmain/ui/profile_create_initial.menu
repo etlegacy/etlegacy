@@ -107,13 +107,13 @@ menuDef {
 	EDITFIELDLEFT( SUBWINDOW_X+4+32, SUBWINDOW_Y+122, (SUBWINDOW_WIDTH)-8-64, 10, _("Player Alias:"), .2, 8, "ui_profile", 36, 23, _("Enter the alias here that you would like displayed to others on servers") )
 
 	// TODO: use FEEDER_LANGUAGES to automatically show available localizations
-#ifdef LEGACY
+#ifdef ETLEGACY
 	COMBO( SUBWINDOW_X+4, SUBWINDOW_Y+146, (SUBWINDOW_WIDTH)-8, 10, _("Language:"), .2, 8, "ui_cl_lang", LEGACY_LANGUAGES, none, _("Set your desired language") )
 #else
 	MULTI( SUBWINDOW_X+4, SUBWINDOW_Y+146, (SUBWINDOW_WIDTH)-8, 10, _("Language:"), .2, 8, "ui_cl_lang", LEGACY_LANGUAGES, _("Set your desired language") )
 #endif
 	MULTIACTION( SUBWINDOW_X+4, SUBWINDOW_Y+170, (SUBWINDOW_WIDTH)-8, 10, _("Video Quality:"), .2, 8, "ui_glCustom", cvarFloatList { "Fastest" 3 "Fast" 2 "Normal" 1 "High" 0 }, uiScript update "ui_glCustom", _("Select your initial video settings, these can be changed later via the options menu") )
-#ifdef LEGACY
+#ifdef ETLEGACY
 	COMBO( SUBWINDOW_X+4, SUBWINDOW_Y+184, (SUBWINDOW_WIDTH)-8, 10, _("Resolution:"), .2, 8, "ui_r_mode", LEGACY_RESOLUTIONS, uiScript glCustom, _("Choose your preferred video resolution, if unsure leave it as the default") )
 	COMBO( SUBWINDOW_X+4, SUBWINDOW_Y+198, (SUBWINDOW_WIDTH)-8, 10, _("Window mode:"), .2, 8, "ui_r_windowmode", LEGACY_WINDOWMODES, uiScript glCustom, _("Toggle fullscreen") )
 #endif

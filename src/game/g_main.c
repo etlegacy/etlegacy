@@ -1814,7 +1814,7 @@ void G_RegisterCvars(void)
 		trap_Cvar_Set("g_gametype", va("%i", GT_WOLF));
 		trap_Cvar_Update(&g_gametype);
 		// FIXME: auto restart?
-		// g_gametype is latched and won't use the above value for current game. but running legacy with invalid gametype is resulting in bad behaviour
+		// g_gametype is latched and won't use the above value for current game. but running league with invalid gametype is resulting in bad behaviour
 		// let's drop the game... (unfortunately we can't immediately restart the server here (exec map_restart isn't working)
 		G_Error("Invalid game type %i detected - defaulting to %s (%i). Start your server again with no gametype set!\n", g_gametype.integer, gameNames[GT_WOLF], GT_WOLF);
 	}

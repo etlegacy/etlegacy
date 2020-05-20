@@ -352,7 +352,7 @@ void UI_LoadPanel_RenderLoadingText(panel_button_t *button)
 
 	if (trap_Cvar_VariableValue("com_updateavailable") != 0.f)
 	{
-		Q_strcat(buff, sizeof(buff), "\n\nYour ET:Legacy client is outdated. New update is available for download at www.etlegacy.com");
+		Q_strcat(buff, sizeof(buff), "\n\nYour ET: Legacy client is outdated. New update is available for download at www.etlegacy.com");
 	}
 
 	trap_Cvar_VariableStringBuffer("cl_downloadName", downloadName, sizeof(downloadName));

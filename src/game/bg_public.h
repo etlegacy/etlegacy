@@ -885,7 +885,7 @@ typedef enum
 	WP_AKIMBO_SILENCEDLUGER,   ///< 46
 	WP_MOBILE_MG42_SET,        ///< 47
 
-	// legacy weapons
+	// league weapons
 	WP_KNIFE_KABAR,            ///< 48
 	WP_MOBILE_BROWNING,        ///< 49
 	WP_MOBILE_BROWNING_SET,    ///< 50
