@@ -1911,7 +1911,7 @@ static void CG_BreathPuffs(centity_t *cent, refEntity_t *head)
  * @param[in] height
  * @param[in] off
  */
-static void CG_PlayerFloatSprite(centity_t *cent, qhandle_t shader, int height, int off)
+static void CG_PlayerFloatSprite(centity_t *cent, qhandle_t shader, int height, int off, vec4_t color)
 {
 	int         rf;
 	vec3_t      right;
@@ -1972,10 +1972,16 @@ static void CG_PlayerFloatSprite(centity_t *cent, qhandle_t shader, int height, 
 	ent.customShader  = shader;
 	ent.radius        = 6.66f;
 	ent.renderfx      = rf;
-	ent.shaderRGBA[0] = 255;
-	ent.shaderRGBA[1] = 255;
-	ent.shaderRGBA[2] = 255;
-	ent.shaderRGBA[3] = 255;
+
+	if (color == NULL)
+	{
+		color = colorWhite;
+	}
+
+	ent.shaderRGBA[0] = 255 * color[0];
+	ent.shaderRGBA[1] = 255 * color[1];
+	ent.shaderRGBA[2] = 255 * color[2];
+	ent.shaderRGBA[3] = 255 * color[3];
 	trap_R_AddRefEntityToScene(&ent);
 }
 
@@ -2016,7 +2022,7 @@ static void CG_PlayerSprites(centity_t *cent)
 
 	if ((cent->currentState.powerups & (1 << PW_REDFLAG)) || (cent->currentState.powerups & (1 << PW_BLUEFLAG)))
 	{
-		CG_PlayerFloatSprite(cent, cgs.media.objectiveShader, height, numIcons++);
+		CG_PlayerFloatSprite(cent, cgs.media.objectiveShader, height, numIcons++, NULL);
 	}
 
 	if (cent->currentState.eFlags & EF_DEAD)
@@ -2036,30 +2042,30 @@ static void CG_PlayerSprites(centity_t *cent)
 		// show some useful icons to spectators
 		if (cent->currentState.eFlags & EF_CONNECTION)
 		{
-			CG_PlayerFloatSprite(cent, cgs.media.disconnectIcon, height, numIcons++);
+			CG_PlayerFloatSprite(cent, cgs.media.disconnectIcon, height, numIcons++, NULL);
 			return;
 		}
 		if (cent->currentState.eFlags & EF_DEAD &&
 		    ((cg.snap->ps.stats[STAT_PLAYER_CLASS] == PC_MEDIC && cg.snap->ps.stats[STAT_HEALTH] > 0 && sameTeam) ||
 		     (!(cg.snap->ps.pm_flags & PMF_FOLLOW) && cgs.clientinfo[cg.clientNum].shoutcaster)))
 		{
-			CG_PlayerFloatSprite(cent, cgs.media.medicReviveShader, height, numIcons++);
+			CG_PlayerFloatSprite(cent, cgs.media.medicReviveShader, height, numIcons++, NULL);
 			return;
 		}
 		if (cent->currentState.powerups & (1 << PW_INVULNERABLE))
 		{
-			CG_PlayerFloatSprite(cent, cgs.media.spawnInvincibleShader, height, numIcons++);
+			CG_PlayerFloatSprite(cent, cgs.media.spawnInvincibleShader, height, numIcons++, NULL);
 		}
 		if (cent->currentState.powerups & (1 << PW_OPS_DISGUISED) && cgs.clientinfo[cg.clientNum].shoutcaster)
 		{
-			CG_PlayerFloatSprite(cent, cgs.media.disguisedShader, height, numIcons++);
+			CG_PlayerFloatSprite(cent, cgs.media.disguisedShader, height, numIcons++, NULL);
 		}
 		return;
 	}
 
 	if (cent->currentState.powerups & (1 << PW_INVULNERABLE))
 	{
-		CG_PlayerFloatSprite(cent, cgs.media.spawnInvincibleShader, height, numIcons++);
+		CG_PlayerFloatSprite(cent, cgs.media.spawnInvincibleShader, height, numIcons++, NULL);
 	}
 
 	// If this client is a medic, draw a 'revive' icon over
@@ -2070,12 +2076,12 @@ static void CG_PlayerSprites(centity_t *cent)
 	    && cg.snap->ps.stats[STAT_HEALTH] > 0
 	    && sameTeam)
 	{
-		CG_PlayerFloatSprite(cent, cgs.media.medicReviveShader, height, numIcons++);
+		CG_PlayerFloatSprite(cent, cgs.media.medicReviveShader, height, numIcons++, NULL);
 	}
 
 	if (cent->currentState.eFlags & EF_CONNECTION)
 	{
-		CG_PlayerFloatSprite(cent, cgs.media.disconnectIcon, height, numIcons++);
+		CG_PlayerFloatSprite(cent, cgs.media.disconnectIcon, height, numIcons++, NULL);
 	}
 
 	// show voice chat signal so players know who's talking
@@ -2083,14 +2089,14 @@ static void CG_PlayerSprites(centity_t *cent)
 	{
 		if (sameTeam)
 		{
-			CG_PlayerFloatSprite(cent, cent->voiceChatSprite, height, numIcons++);
+			CG_PlayerFloatSprite(cent, cent->voiceChatSprite, height, numIcons++, NULL);
 		}
 	}
 
 	// only show talk icon to team-mates
 	if ((cent->currentState.eFlags & EF_TALK) && sameTeam)
 	{
-		CG_PlayerFloatSprite(cent, cgs.media.balloonShader, height, numIcons++);
+		CG_PlayerFloatSprite(cent, cgs.media.balloonShader, height, numIcons++, NULL);
 	}
 
 	// draw disguised icon over disguised teammates and the fireteam icon of uniform source for enemies
@@ -2098,7 +2104,7 @@ static void CG_PlayerSprites(centity_t *cent)
 	{
 		if (sameTeam)
 		{
-			CG_PlayerFloatSprite(cent, cgs.media.friendShader, height, numIcons++);
+			CG_PlayerFloatSprite(cent, cgs.media.friendShader, height, numIcons++, NULL);
 		}
 		else // !sameTeam
 		{
@@ -2106,20 +2112,22 @@ static void CG_PlayerSprites(centity_t *cent)
 			    && CG_IsOnFireteam(cgs.clientinfo[cent->currentState.number].disguiseClientNum)
 			    && cgs.clientinfo[cgs.clientinfo[cent->currentState.number].disguiseClientNum].selected)
 			{
-				CG_PlayerFloatSprite(cent, cgs.media.fireteamIcon, height, numIcons++);
+				vec4_t color = { 0.f, 1.f, 0.f, 1.f };
+
+				CG_PlayerFloatSprite(cent, cgs.media.fireteamIcon, height, numIcons++, color);
 			}
 
 			// shoutcasters see undercover enemies
 			if (cgs.clientinfo[cent->currentState.number].disguiseClientNum > -1 && cgs.clientinfo[cg.clientNum].shoutcaster)
 			{
-				CG_PlayerFloatSprite(cent, cgs.media.disguisedShader, height, numIcons++);
+				CG_PlayerFloatSprite(cent, cgs.media.disguisedShader, height, numIcons++, NULL);
 			}
 		}
 	}
 
 	if (CG_IsOnFireteam(cent->currentState.number) && CG_IsOnSameFireteam(cent->currentState.number, cg.clientNum))
 	{
-		CG_PlayerFloatSprite(cent, cgs.media.fireteamIcon, height, numIcons++);
+		CG_PlayerFloatSprite(cent, cgs.media.fireteamIcon, height, numIcons++, colorGreen);
 	}
 }
 
