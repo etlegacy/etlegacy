@@ -657,7 +657,7 @@ void CopyToBodyQue(gentity_t *ent)
 	body->die       = body_die;
 
 	// don't take more damage if already gibbed
-	body->takedamage = ent->health <= GIB_HEALTH;
+	body->takedamage = ent->health > GIB_HEALTH;
 
 	trap_LinkEntity(body);
 }
