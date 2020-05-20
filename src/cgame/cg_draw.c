@@ -2858,7 +2858,7 @@ static void CG_DrawWarmup(void)
 	CG_Text_Paint_Ext(x, 208, fontScale, fontScale, colorWhite, s, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 
 	// pre start actions
-	if (sec == 3 && !announced)
+	if (sec == 10 && !announced)
 	{
 		if (cg_announcer.integer)
 		{
@@ -2874,7 +2874,7 @@ static void CG_DrawWarmup(void)
 
 		announced = qtrue;
 	}
-	else if (sec != 3)
+	else if (sec != 10)
 	{
 		announced = qfalse;
 	}
