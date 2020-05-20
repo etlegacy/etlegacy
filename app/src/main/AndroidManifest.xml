@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="org.etlegacy.app"
-    android:installLocation="preferExternal"
+    android:installLocation="auto"
     android:versionCode="1"
     android:versionName="1.0" >
     <!-- OpenGL ES 1.1 -->
