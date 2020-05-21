@@ -83,7 +83,7 @@ vmCvar_t g_OmniBotPath;
 vmCvar_t g_OmniBotEnable;
 vmCvar_t g_OmniBotFlags;
 vmCvar_t g_OmniBotPlaying;
-#ifdef LEGACY_DEBUG
+#ifdef ETLEGACY_DEBUG
 vmCvar_t g_allowBotSwap;
 #endif
 #endif
@@ -535,7 +535,7 @@ cvarTable_t gameCvarTable[] =
 	{ &g_OmniBotEnable,                   "omnibot_enable",                    "0",                          CVAR_ARCHIVE | CVAR_NORESTART,                   0, qfalse, qfalse },
 	{ &g_OmniBotPlaying,                  "omnibot_playing",                   "0",                          CVAR_SERVERINFO_NOUPDATE | CVAR_ROM,             0, qfalse, qfalse },
 	{ &g_OmniBotFlags,                    "omnibot_flags",                     "0",                          CVAR_ARCHIVE | CVAR_NORESTART,                   0, qfalse, qfalse },
-#ifdef LEGACY_DEBUG
+#ifdef ETLEGACY_DEBUG
 	{ &g_allowBotSwap,                    "g_allowBotSwap",                    "0",                          CVAR_ARCHIVE,                                    0, qfalse, qfalse },
 #endif
 #endif

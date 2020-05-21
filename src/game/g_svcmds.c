@@ -1293,7 +1293,7 @@ static void Svcmd_Die(void)
 	return;
 }
 
-#ifdef LEGACY_DEBUG
+#ifdef ETLEGACY_DEBUG
 extern animStringItem_t animEventTypesStr[];
 
 /**
@@ -2618,7 +2618,7 @@ static consoleCommandTable_t consoleCommandTable[] =
 	{ "burn",                       Svcmd_Burn                    },
 	{ "pip",                        Svcmd_Pip                     },
 	{ "throw",                      Svcmd_Fling                   },
-#ifdef LEGACY_DEBUG
+#ifdef ETLEGACY_DEBUG
 	{ "ae",                         Svcmd_PlayerAnimEvent         },    //ae <playername> <animEvent>
 #endif
 	{ "ref",                        Svcmd_Ref_f                   },    // console also gets ref commands

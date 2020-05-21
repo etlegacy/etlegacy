@@ -1591,7 +1591,7 @@ long FS_FOpenFileReadDir(const char *fileName, searchpath_t *search, fileHandle_
 			    !FS_IsExt(fileName, ".game", len) &&    // menu files
 			    !FS_IsExt(fileName, ".dat", len) &&     // for journal files
 			    !FS_IsExt(fileName, ".bin", len) &&     // glsl shader binary
-#ifdef LEGACY_DEBUG
+#ifdef ETLEGACY_DEBUG
 			    !FS_IsExt(fileName, ".glsl", len) &&
 #endif
 			    !FS_IsDemoExt(fileName, len))           // demos
@@ -4818,7 +4818,7 @@ void FS_Restart(int checksumFeed)
 				// check existing pid file and make sure it's ok
 				if (!Com_CheckProfile())
 				{
-#ifndef LEGACY_DEBUG
+#ifndef ETLEGACY_DEBUG
 					Com_Printf(S_COLOR_YELLOW "WARNING: profile.pid found for profile '%s' - system settings will revert to defaults\n", cl_profileStr);
 					// set crashed state
 					Cbuf_AddText("set com_crashed 1\n");

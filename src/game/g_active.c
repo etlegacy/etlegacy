@@ -679,7 +679,7 @@ void SpectatorThink(gentity_t *ent, usercmd_t *ucmd)
 	{
 		Cmd_FollowCycle_f(ent, -1, (client->buttons & BUTTON_SPRINT));
 	}
-#ifdef LEGACY_DEBUG
+#ifdef ETLEGACY_DEBUG
 #ifdef FEATURE_OMNIBOT
 	// activate button swaps places with bot
 	else if (client->sess.sessionTeam != TEAM_SPECTATOR && g_allowBotSwap.integer &&

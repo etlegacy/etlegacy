@@ -12,7 +12,7 @@ IF(NOT CMAKE_BUILD_TYPE)
 	MESSAGE("No CMAKE_BUILD_TYPE specified, defaulting to ${CMAKE_BUILD_TYPE}")
 ENDIF(NOT CMAKE_BUILD_TYPE)
 
-# set LEGACY_DEBUG definition for debug build type
+# set ETLEGACY_DEBUG definition for debug build type
 # and set up properties to check if the build is visual studio or nmake on windows
 string(TOUPPER "${CMAKE_BUILD_TYPE}" buildtype_upper)
 string(TOUPPER "${CMAKE_GENERATOR}" buildgen_upper)
@@ -55,14 +55,14 @@ else()
 endif()
 
 if(DEBUG_BUILD OR FORCE_DEBUG)
-	add_definitions(-DLEGACY_DEBUG=1)
+	add_definitions(-DETLEGACY_DEBUG=1)
 else()
 	if(MSVC)
-		set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} /DLEGACY_DEBUG=1")
-		set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /DLEGACY_DEBUG=1")
+		set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} /DETLEGACY_DEBUG=1")
+		set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /DETLEGACY_DEBUG=1")
 	else()
-		set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -DLEGACY_DEBUG=1")
-		set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DLEGACY_DEBUG=1")
+		set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -DETLEGACY_DEBUG=1")
+		set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DETLEGACY_DEBUG=1")
 	endif()
 endif()
 

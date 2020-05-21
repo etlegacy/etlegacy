@@ -3017,7 +3017,7 @@ void CG_Hud_Setup(void)
 	CG_ReadHudScripts();
 }
 
-#ifdef LEGACY_DEBUG
+#ifdef ETLEGACY_DEBUG
 
 /**
  * @brief CG_PrintHudComponent
@@ -3071,7 +3071,7 @@ void CG_SetHud(void)
 			return;
 		}
 
-#ifdef LEGACY_DEBUG
+#ifdef ETLEGACY_DEBUG
 		CG_PrintHud(activehud);
 #endif
 

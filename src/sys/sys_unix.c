@@ -1090,7 +1090,7 @@ void Sys_PlatformInit(void)
 	const char *term = getenv("TERM");
 
 // don't set signal handlers for anything that will generate coredump (in DEBUG builds)
-#if !defined(LEGACY_DEBUG)
+#if !defined(ETLEGACY_DEBUG)
 	signal(SIGTRAP, Sys_SigHandler);
 	signal(SIGBUS, Sys_SigHandler);
 #endif

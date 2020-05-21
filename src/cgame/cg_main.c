@@ -2541,13 +2541,13 @@ void CG_AssetCache(void)
 	cgDC.Assets.sliderThumb         = trap_R_RegisterShaderNoMip(ASSET_SLIDER_THUMB);
 }
 
-#ifdef LEGACY_DEBUG
+#ifdef ETLEGACY_DEBUG
 #define DEBUG_INITPROFILE_INIT int elapsed, dbgTime = trap_Milliseconds();
 #define DEBUG_INITPROFILE_EXEC(f) if (developer.integer) { CG_Printf("^5%s passed in %i msec\n", f, elapsed = trap_Milliseconds() - dbgTime);  dbgTime += elapsed; }
 #else
 #define DEBUG_INITPROFILE_INIT
 #define DEBUG_INITPROFILE_EXEC(f)
-#endif // LEGACY_DEBUG
+#endif // ETLEGACY_DEBUG
 
 /**
  * @brief Called after every level change or subsystem restart

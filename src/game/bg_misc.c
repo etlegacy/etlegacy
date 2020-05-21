@@ -3587,7 +3587,7 @@ const char *eventnames[EV_MAX_EVENTS] =
 	//"EV_MAX_EVENTS",
 };
 
-#ifdef LEGACY_DEBUG
+#ifdef ETLEGACY_DEBUG
 void trap_Cvar_VariableStringBuffer(const char *var_name, char *buffer, int bufsize);
 #endif
 
@@ -3599,7 +3599,7 @@ void trap_Cvar_VariableStringBuffer(const char *var_name, char *buffer, int bufs
  */
 void BG_AddPredictableEventToPlayerstate(int newEvent, int eventParm, playerState_t *ps)
 {
-#ifdef LEGACY_DEBUG
+#ifdef ETLEGACY_DEBUG
 	{
 		char buf[256];
 		trap_Cvar_VariableStringBuffer("showevents", buf, sizeof(buf));

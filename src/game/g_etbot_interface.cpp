@@ -5918,7 +5918,7 @@ int Bot_Interface_Init()
 		return 1;
 	}
 
-#if defined(LEGACY_DEBUG)
+#if defined(ETLEGACY_DEBUG)
 	trap_Cvar_Set("sv_cheats", "1");
 	trap_Cvar_Update(&g_cheats);
 #endif
@@ -5996,7 +5996,7 @@ void Bot_Interface_Update()
 	{
 		char buf[1024] = { 0 };
 
-//#if defined(LEGACY_DEBUG)
+//#if defined(ETLEGACY_DEBUG)
 //		trap_Cvar_Set( "sv_cheats", "1" );
 //		trap_Cvar_Update(&g_cheats);
 //#endif

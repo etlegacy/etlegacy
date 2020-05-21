@@ -550,7 +550,7 @@ void SV_ChangeMaxClients(void);
 void SV_SpawnServer(const char *server);
 void SV_WriteAttackLog(const char *log);
 
-#ifdef LEGACY_DEBUG
+#ifdef ETLEGACY_DEBUG
 #define SV_WriteAttackLogD(x) SV_WriteAttackLog(x)
 #else
 #define SV_WriteAttackLogD(x)
