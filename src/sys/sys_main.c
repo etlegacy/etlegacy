@@ -415,7 +415,7 @@ void Sys_Print(const char *msg)
 	CON_Print(msg);
 #endif
 
-#if defined(LEGACY_DEBUG) && defined(_WIN32)
+#if defined(ETLEGACY_DEBUG) && defined(_WIN32)
 	OutputDebugString(msg);
 #endif
 }
@@ -730,7 +730,7 @@ void *Sys_LoadGameDll(const char *name, qboolean extract,
 	// loaded from homepath or the basepath, let's pull it out of the pak.
 	// This means we only *need* the copy that's in the pak, and will use
 	// it if another copy isn't found first.
-#ifdef LEGACY_DEBUG
+#ifdef ETLEGACY_DEBUG
 #define SEARCHPATH1 basepath
 #define SEARCHPATH2 homepath
 #define LIB_DO_UNPACK Cvar_VariableIntegerValue("sv_pure")
@@ -777,7 +777,7 @@ void *Sys_LoadGameDll(const char *name, qboolean extract,
 			libHandle = Sys_TryLibraryLoad(homepath, gamedir, fname);
 		}
 
-		// use legacy ui for download process (mod binary pk3 isn't extracted)
+		// use League ui for download process (mod binary pk3 isn't extracted)
 		if (!strcmp(name, "ui") && !libHandle && strcmp(gamedir, DEFAULT_MODGAME))
 		{
 			Com_Printf("Sys_LoadDll: mod initialisation - ui fallback\n");
@@ -922,7 +922,7 @@ void Sys_SetUpConsoleAndSignals(void)
 #endif
 
 // don't set signal handlers for anything that will generate coredump (in DEBUG builds)
-#if !defined(LEGACY_DEBUG)
+#if !defined(ETLEGACY_DEBUG)
 	signal(SIGILL, Sys_SigHandler);
 	signal(SIGFPE, Sys_SigHandler);
 	signal(SIGSEGV, Sys_SigHandler);
@@ -936,7 +936,7 @@ void Sys_SetUpConsoleAndSignals(void)
  */
 void Sys_GameLoop(void)
 {
-#ifdef LEGACY_DEBUG
+#ifdef ETLEGACY_DEBUG
 	int startTime, endTime, totalMsec, countMsec;
 	totalMsec = countMsec = 0;
 #endif
@@ -945,7 +945,7 @@ void Sys_GameLoop(void)
 #pragma clang diagnostic ignored "-Wmissing-noreturn"
 	while (qtrue)
 	{
-#if defined(_MSC_VER) && defined(LEGACY_DEBUG) && !defined(_WIN64)
+#if defined(_MSC_VER) && defined(ETLEGACY_DEBUG) && !defined(_WIN64)
 		// set low precision every frame, because some system calls
 		// reset it arbitrarily
 		_controlfp(_PC_24, _MCW_PC);
@@ -953,7 +953,7 @@ void Sys_GameLoop(void)
 		// syscall turns them back on!
 #endif
 
-#ifdef LEGACY_DEBUG
+#ifdef ETLEGACY_DEBUG
 		startTime = Sys_Milliseconds();
 #endif
 
@@ -961,7 +961,7 @@ void Sys_GameLoop(void)
 		//IN_Frame();
 		Com_Frame();
 
-#ifdef LEGACY_DEBUG
+#ifdef ETLEGACY_DEBUG
 		endTime    = Sys_Milliseconds();
 		totalMsec += endTime - startTime;
 		countMsec++;
@@ -1075,7 +1075,7 @@ int main(int argc, char **argv)
 
 	// hide the early console since we've reached the point where we
 	// have a working graphics subsystems
-#ifndef LEGACY_DEBUG
+#ifndef ETLEGACY_DEBUG
 	if (!com_dedicated->integer && !com_viewlog->integer)
 	{
 		Sys_ShowConsoleWindow(0, qfalse);

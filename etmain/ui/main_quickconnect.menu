@@ -31,7 +31,7 @@ menuDef {
 		open main
 	}
 
-#ifdef LEGACY
+#ifdef ETLEGACY
 	onPaste {
 		//placeholder
 		getclipboard cvar ui_connectToIPAddress ;

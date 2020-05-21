@@ -45,8 +45,7 @@
 #ifndef INCLUDE_Q_UNICODE_H
 #define INCLUDE_Q_UNICODE_H
 
-// The version in which unicode was added..
-// FIXME: change this to 273 before release...!!!
+// The version in which unicode was added
 #define UNICODE_SUPPORT_VERSION 273
 
 // the cross sign which is used in place of invalid chars

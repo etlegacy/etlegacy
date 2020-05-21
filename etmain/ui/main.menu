@@ -114,7 +114,7 @@ menuDef {
 	BUTTON( 6, 200, MENU_WIDTH-12, 18, _("EXIT"), .3, 14, clearFocus ; open quit )
 
 // Vanilla client warning //
-#ifndef LEGACY
+#ifndef ETLEGACY
 #define SECURITY_WIDTH	200
 	LABEL( __WINDOW_WIDTH/2-100-16, 368, SECURITY_WIDTH, 18, _("^1SECURITY INFORMATION"), .3, ITEM_ALIGN_CENTER, .5*SECURITY_WIDTH, 8 )
 	LABELWHITE( __WINDOW_WIDTH/2-100-16, 384, SECURITY_WIDTH, 9, _("You are running old software"), .2, ITEM_ALIGN_CENTER, .5*SECURITY_WIDTH, 8 )

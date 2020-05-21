@@ -387,7 +387,7 @@ void Con_Linefeed(qboolean skipnotify)
 }
 
 
-#if defined(_WIN32) && !defined(LEGACY_DEBUG)
+#if defined(_WIN32) && !defined(ETLEGACY_DEBUG)
 #pragma optimize( "g", off ) // msvc totally screws this function up with optimize on
 #endif
 
@@ -507,7 +507,7 @@ void CL_ConsolePrint(char *txt)
 	}
 }
 
-#if defined(_WIN32) && !defined(LEGACY_DEBUG)
+#if defined(_WIN32) && !defined(ETLEGACY_DEBUG)
 #pragma optimize( "g", on ) // re-enabled optimization
 #endif
 

@@ -82,15 +82,15 @@ void Com_CheckAutoUpdate(void)
 	}
 
 	info[0] = 0;
-	Info_SetValueForKey(info, "version", ETLEGACY_VERSION_SHORT);
+	Info_SetValueForKey(info, "version", ETLEGACY_VERSION);
 	Info_SetValueForKey(info, "platform", CPUSTRING);
 
 #ifndef DEDICATED
 	Info_SetValueForKey(info, "lang", Cvar_VariableString("cl_lang"));
 #endif  // DEDICATED
 
-	Info_SetValueForKey(info, va("%s_%s.pk3", MODNAME, ETLEGACY_VERSION_SHORT),
-	                    Com_MD5File(va("%s/%s_%s.pk3", MODNAME, MODNAME, ETLEGACY_VERSION_SHORT), 0, NULL, 0));
+	Info_SetValueForKey(info, va("%s_%s.pk3", MODNAME, ETLEGACY_VERSION),
+	                    Com_MD5File(va("%s/%s_%s.pk3", MODNAME, MODNAME, ETLEGACY_VERSION), 0, NULL, 0));
 
 	NET_OutOfBandPrint(
 #ifdef DEDICATED

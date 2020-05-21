@@ -83,7 +83,7 @@ vmCvar_t g_OmniBotPath;
 vmCvar_t g_OmniBotEnable;
 vmCvar_t g_OmniBotFlags;
 vmCvar_t g_OmniBotPlaying;
-#ifdef LEGACY_DEBUG
+#ifdef ETLEGACY_DEBUG
 vmCvar_t g_allowBotSwap;
 #endif
 #endif
@@ -535,7 +535,7 @@ cvarTable_t gameCvarTable[] =
 	{ &g_OmniBotEnable,                   "omnibot_enable",                    "0",                          CVAR_ARCHIVE | CVAR_NORESTART,                   0, qfalse, qfalse },
 	{ &g_OmniBotPlaying,                  "omnibot_playing",                   "0",                          CVAR_SERVERINFO_NOUPDATE | CVAR_ROM,             0, qfalse, qfalse },
 	{ &g_OmniBotFlags,                    "omnibot_flags",                     "0",                          CVAR_ARCHIVE | CVAR_NORESTART,                   0, qfalse, qfalse },
-#ifdef LEGACY_DEBUG
+#ifdef ETLEGACY_DEBUG
 	{ &g_allowBotSwap,                    "g_allowBotSwap",                    "0",                          CVAR_ARCHIVE,                                    0, qfalse, qfalse },
 #endif
 #endif
@@ -1814,7 +1814,7 @@ void G_RegisterCvars(void)
 		trap_Cvar_Set("g_gametype", va("%i", GT_WOLF));
 		trap_Cvar_Update(&g_gametype);
 		// FIXME: auto restart?
-		// g_gametype is latched and won't use the above value for current game. but running legacy with invalid gametype is resulting in bad behaviour
+		// g_gametype is latched and won't use the above value for current game. but running league with invalid gametype is resulting in bad behaviour
 		// let's drop the game... (unfortunately we can't immediately restart the server here (exec map_restart isn't working)
 		G_Error("Invalid game type %i detected - defaulting to %s (%i). Start your server again with no gametype set!\n", g_gametype.integer, gameNames[GT_WOLF], GT_WOLF);
 	}

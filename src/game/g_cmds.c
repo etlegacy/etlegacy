@@ -4813,7 +4813,7 @@ void Cmd_UnIgnore_f(gentity_t *ent)
 	}
 }
 
-#ifdef LEGACY_DEBUG
+#ifdef ETLEGACY_DEBUG
 #ifdef FEATURE_OMNIBOT
 
 /**
@@ -4885,7 +4885,7 @@ void Cmd_SwapPlacesWithBot_f(gentity_t *ent, int botNum)
 	client->pers.lastReinforceTime = 0;
 }
 #endif  // FEATURE_OMNIBOT
-#endif  // LEGACY_DEBUG
+#endif  // ETLEGACY_DEBUG
 
 /**
  * @brief ClientCommand

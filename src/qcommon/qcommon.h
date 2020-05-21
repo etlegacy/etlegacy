@@ -1128,7 +1128,7 @@ temp file loading
 --- high memory ---
 */
 
-#ifdef LEGACY_DEBUG
+#ifdef ETLEGACY_DEBUG
 #define ZONE_DEBUG
 #endif
 

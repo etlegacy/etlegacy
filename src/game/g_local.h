@@ -1376,7 +1376,7 @@ void Cmd_FollowCycle_f(gentity_t *ent, int dir, qboolean skipBots);
 qboolean G_FollowSame(gentity_t *ent);
 void Cmd_Kill_f(gentity_t *ent);
 
-#ifdef LEGACY_DEBUG
+#ifdef ETLEGACY_DEBUG
 #ifdef FEATURE_OMNIBOT
 void Cmd_SwapPlacesWithBot_f(gentity_t *ent, int botNum);
 #endif
@@ -1834,7 +1834,7 @@ extern vmCvar_t g_OmniBotPath;
 extern vmCvar_t g_OmniBotEnable;
 extern vmCvar_t g_OmniBotFlags;
 extern vmCvar_t g_OmniBotPlaying;
-#ifdef LEGACY_DEBUG
+#ifdef ETLEGACY_DEBUG
 extern vmCvar_t g_allowBotSwap;
 #endif
 #endif

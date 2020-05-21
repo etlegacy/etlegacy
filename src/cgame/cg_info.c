@@ -1873,7 +1873,7 @@ void CG_DemoHelpDraw(void)
 			y += DH_Y - h;
 		}
 
-		if (cg.legacyClient && cg.demoinfo)
+		if (cg.etLegacyClient && cg.demoinfo)
 		{
 			CG_DrawDemoControls(x, y - 62, w, borderColor, bgColor, tSpacing, bgColorTitle, borderColorTitle, hScale, hScaleY, hdrColor, hStyle, hFont);
 			y += 10;

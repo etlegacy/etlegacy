@@ -2769,7 +2769,7 @@ void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean
 	client->pers.lastHQMineReportTime     = level.timeCurrent;
 
 /*
-#ifndef LEGACY_DEBUG
+#ifndef ETLEGACY_DEBUG
     if( !client->sess.versionOK ) {
         char *clientMismatchedVersion = G_CheckVersion( ent );	// returns NULL if version is identical
 

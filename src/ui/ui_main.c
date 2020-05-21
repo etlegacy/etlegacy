@@ -84,7 +84,7 @@ void Menu_ShowItemByName(menuDef_t *menu, const char *p, qboolean bShow);
 
 static char translated_yes[4], translated_no[4];
 
-void UI_Init(int legacyClient, int clientVersion);
+void UI_Init(int etLegacyClient, int clientVersion);
 void UI_Shutdown(void);
 void UI_KeyEvent(int key, qboolean down);
 void UI_MouseEvent(int dx, int dy);
@@ -1296,10 +1296,10 @@ void UI_LoadMenus(const char *menuFile, qboolean reset)
 		trap_PC_AddGlobalDefine("FUI");
 	}
 
-	//We can now add elements which only work with legacy client
-	if (uiInfo.legacyClient)
+	// we can now add elements which only work with ET:Legacy client
+	if (uiInfo.etLegacyClient)
 	{
-		trap_PC_AddGlobalDefine("LEGACY");
+		trap_PC_AddGlobalDefine("ETLEGACY");
 	}
 
 	trap_PC_AddGlobalDefine(va("__WINDOW_WIDTH %f", (uiInfo.uiDC.glconfig.windowAspect / RATIO43) * 640));
@@ -8077,10 +8077,10 @@ static void UI_RunCinematicFrame(int handle)
 
 /**
  * @brief _UI_Init
- * @param[in] legacyClient
+ * @param[in] etLegacyClient
  * @param[in] clientVersion
  */
-void UI_Init(int legacyClient, int clientVersion)
+void UI_Init(int etLegacyClient, int clientVersion)
 {
 	int x;
 	Com_Printf(S_COLOR_MDGREY "Initializing %s ui " S_COLOR_GREEN ETLEGACY_VERSION "\n", MODNAME);
@@ -8110,9 +8110,9 @@ void UI_Init(int legacyClient, int clientVersion)
 		uiInfo.uiDC.bias = 0;
 	}
 
-	MOD_CHECK_LEGACY(legacyClient, clientVersion, uiInfo.legacyClient);
+	MOD_CHECK_LEGACY(etLegacyClient, clientVersion, uiInfo.etLegacyClient);
 
-	if (uiInfo.legacyClient <= 0)
+	if (uiInfo.etLegacyClient <= 0)
 	{
 		uiInfo.uiDC.glconfig.windowAspect = (float)uiInfo.uiDC.glconfig.vidWidth / (float)uiInfo.uiDC.glconfig.vidHeight;
 	}

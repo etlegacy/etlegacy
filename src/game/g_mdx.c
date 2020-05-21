@@ -84,7 +84,7 @@ static vec3_t *mdx_bones    = NULL;
 #define QHANDLETOINDEX(qh)      ((qh >= 1) ? ((int)(qh) - 1) : 0)
 #define QHANDLETOINDEX_SAFE(qh, old) ((qh >= 1) ? (int)(qh) - 1 : QHANDLETOINDEX(old))
 
-#ifdef LEGACY_DEBUG
+#ifdef ETLEGACY_DEBUG
 /**
  * @brief Draw debug lines
  * @param origin - unused
@@ -1183,7 +1183,7 @@ static qboolean hit_load(hit_t *hitModel, const animModelInfo_t *animModelInfo, 
 	len = trap_FS_FOpenFile(filename, &fh, FS_READ);
 	if (len <= 0)
 	{
-#if LEGACY_DEBUG // don't show this normally, for now..
+#if ETLEGACY_DEBUG // don't show this normally, for now..
 		G_Printf(S_COLOR_YELLOW GAME_VERSION " MDX WARNING: Missing %s (only needed for per-bone hits)\n", filename);
 #endif
 		return qfalse;
@@ -1508,7 +1508,7 @@ static void mdx_calculate_bones(/*const*/ grefEntity_t *refent)
 	mdx_t *torsoFrameModel    = &mdx_models[QHANDLETOINDEX(refent->torsoFrameModel)];
 	mdx_t *oldTorsoFrameModel = &mdx_models[QHANDLETOINDEX_SAFE(refent->oldTorsoFrameModel, refent->torsoFrameModel)];
 
-#ifdef LEGACY_DEBUG
+#ifdef ETLEGACY_DEBUG
 	if (frameModel->bone_count != torsoFrameModel->bone_count
 	    || frameModel->bone_count != oldFrameModel->bone_count
 	    || frameModel->bone_count != oldTorsoFrameModel->bone_count)
@@ -1543,7 +1543,7 @@ void mdx_calculate_bones_single(/*const*/ grefEntity_t *refent, int i)
 	mdx_t *torsoFrameModel    = &mdx_models[QHANDLETOINDEX(refent->torsoFrameModel)];
 	mdx_t *oldTorsoFrameModel = &mdx_models[QHANDLETOINDEX_SAFE(refent->oldTorsoFrameModel, refent->torsoFrameModel)];
 
-#ifdef LEGACY_DEBUG
+#ifdef ETLEGACY_DEBUG
 	if (frameModel->bone_count != torsoFrameModel->bone_count
 	    || frameModel->bone_count != oldFrameModel->bone_count
 	    || frameModel->bone_count != oldTorsoFrameModel->bone_count)
@@ -2801,14 +2801,14 @@ qboolean mdx_hit_test(const vec3_t start, const vec3_t end, /*const*/ gentity_t 
 
 			if (g_debugBullets.integer >= 3)
 			{
-#ifdef LEGACY_DEBUG
+#ifdef ETLEGACY_DEBUG
 				legacy_AddDebugLine(o1, o2, 1);
 #endif
 
 				VectorScale(a2[0], hit->scale[0][0], a1[0]);
 				VectorScale(a2[1], hit->scale[0][1], a1[1]);
 				VectorScale(a2[2], hit->scale[0][2], a1[2]);
-#ifdef LEGACY_DEBUG
+#ifdef ETLEGACY_DEBUG
 				legacy_AddDebugLine(o1, a1[0], 1);
 				legacy_AddDebugLine(o1, a1[1], 2);
 				legacy_AddDebugLine(o1, a1[2], 3);
@@ -2817,7 +2817,7 @@ qboolean mdx_hit_test(const vec3_t start, const vec3_t end, /*const*/ gentity_t 
 				VectorScale(a2[0], hit->scale[1][0], a1[0]);
 				VectorScale(a2[1], hit->scale[1][1], a1[1]);
 				VectorScale(a2[2], hit->scale[1][2], a1[2]);
-#ifdef LEGACY_DEBUG
+#ifdef ETLEGACY_DEBUG
 				legacy_AddDebugLine(o2, a1[0], 1);
 				legacy_AddDebugLine(o2, a1[1], 2);
 				legacy_AddDebugLine(o2, a1[2], 3);
@@ -2860,7 +2860,7 @@ qboolean mdx_hit_test(const vec3_t start, const vec3_t end, /*const*/ gentity_t 
 				VectorScale(a2[0], hit->scale[0][0], a1[0]);
 				VectorScale(a2[1], hit->scale[0][1], a1[1]);
 				VectorScale(a2[2], hit->scale[0][2], a1[2]);
-#ifdef LEGACY_DEBUG
+#ifdef ETLEGACY_DEBUG
 				legacy_AddDebugLine(o1, a1[0], 1);
 				legacy_AddDebugLine(o1, a1[1], 2);
 				legacy_AddDebugLine(o1, a1[2], 3);

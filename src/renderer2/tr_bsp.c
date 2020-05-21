@@ -3161,7 +3161,7 @@ static void R_CreateWorldVBO()
 	//int             numSurfaces;
 	bspSurface_t *surface;
 	//trRefLight_t   *light;
-#ifdef LEGACY_DEBUG
+#ifdef ETLEGACY_DEBUG
 	int startTime, endTime;
 
 	startTime = ri.Milliseconds();
@@ -3465,7 +3465,7 @@ static void R_CreateWorldVBO()
 
 	s_worldData.ibo = R_CreateIBO2(va("staticBspModel0_IBO %i", 0), numTriangles, triangles, VBO_USAGE_STATIC);
 
-#ifdef LEGACY_DEBUG
+#ifdef ETLEGACY_DEBUG
 	endTime = ri.Milliseconds();
 	Ren_Developer("world VBO calculation time = %5.2f seconds\n", (endTime - startTime) / 1000.0);
 #endif
@@ -7496,7 +7496,7 @@ void R_PrecacheInteractions()
 	int          i;
 	trRefLight_t *light;
 	bspSurface_t *surface;
-#ifdef LEGACY_DEBUG
+#ifdef ETLEGACY_DEBUG
 	int startTime, endTime;
 
 	startTime = ri.Milliseconds();
@@ -7596,7 +7596,7 @@ void R_PrecacheInteractions()
 
 	Com_DestroyGrowList(&s_interactions);
 
-#ifdef LEGACY_DEBUG
+#ifdef ETLEGACY_DEBUG
 	Ren_Developer("%i interactions precached\n", s_worldData.numInteractions);
 
 	if (r_shadows->integer >= SHADOWING_ESM16)
@@ -8080,7 +8080,7 @@ void R_BuildCubeMaps(void)
 	size_t ticsNeeded;
 #endif
 
-#ifdef LEGACY_DEBUG
+#ifdef ETLEGACY_DEBUG
 	int endTime, startTime = ri.Milliseconds();
 #endif
 
@@ -8638,7 +8638,7 @@ void R_BuildCubeMaps(void)
 	}
 #endif
 
-#ifdef LEGACY_DEBUG
+#ifdef ETLEGACY_DEBUG
 	endTime = ri.Milliseconds();
 	Ren_Developer("cubemap probes pre-rendering time of %i cubes = %5.2f seconds\n", tr.cubeProbes.currentElements,
 	              (endTime - startTime) / 1000.0);

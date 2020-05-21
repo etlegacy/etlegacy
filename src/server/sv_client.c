@@ -2154,7 +2154,7 @@ void SV_ExecuteClientMessage(client_t *cl, msg_t *msg)
 	{
 		// usually only hackers create messages like this
 		// it is more annoying for them to let them hanging
-#ifdef LEGACY_DEBUG
+#ifdef ETLEGACY_DEBUG
 		SV_DropClient(cl, "DEBUG: illegible client message or invalid server id");
 #endif
 		return;
@@ -2169,7 +2169,7 @@ void SV_ExecuteClientMessage(client_t *cl, msg_t *msg)
 	{
 		// usually only hackers create messages like this
 		// it is more annoying for them to let them hanging
-#ifdef LEGACY_DEBUG
+#ifdef ETLEGACY_DEBUG
 		SV_DropClient(cl, "DEBUG: illegible client message");
 #endif
 		cl->reliableAcknowledge = cl->reliableSequence;

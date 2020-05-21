@@ -1204,7 +1204,7 @@ void Script_ExecWolfConfig(itemDef_t *item, qboolean *bAbort, char **args)
 		{
 			if (!Script_CheckProfile(va("profiles/%s/profile.pid", cl_profileStr)))
 			{
-#ifndef LEGACY_DEBUG
+#ifndef ETLEGACY_DEBUG
 				Com_Printf("^3WARNING: profile.pid found for profile '%s' - not executing %s\n", cl_profileStr, CONFIG_NAME);
 #else
 				DC->executeText(EXEC_NOW, va("exec profiles/%s/%s\n", cl_profileStr, CONFIG_NAME));

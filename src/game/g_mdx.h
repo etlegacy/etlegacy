@@ -31,7 +31,7 @@
 
 //TODO: enable this later on when fixed (&& figured out how the fuck it works)
 /*
-#ifdef LEGACY_DEBUG
+#ifdef ETLEGACY_DEBUG
 #define BONE_HITTESTS 1
 #endif
 */

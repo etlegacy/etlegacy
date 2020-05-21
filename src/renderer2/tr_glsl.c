@@ -2749,7 +2749,7 @@ void GLSL_DeleteShaderProgramInfo(programInfo_t *program)
  */
 void GLSL_InitGPUShaders(void)
 {
-#ifdef LEGACY_DEBUG
+#ifdef ETLEGACY_DEBUG
 	int startTime, endTime;
 #endif
 
@@ -2757,7 +2757,7 @@ void GLSL_InitGPUShaders(void)
 
 	R_IssuePendingRenderCommands();
 
-#ifdef LEGACY_DEBUG
+#ifdef ETLEGACY_DEBUG
 	startTime = ri.Milliseconds();
 #endif
 
@@ -2765,7 +2765,7 @@ void GLSL_InitGPUShaders(void)
 	GLSL_LoadDefinitions();
 	GLSL_BuildShaderExtraDef();
 
-#ifdef LEGACY_DEBUG
+#ifdef ETLEGACY_DEBUG
 	endTime = ri.Milliseconds();
 
 	Ren_Developer("Initialized GLSL system in %5.2f seconds\n", (endTime - startTime) / 1000.0);
@@ -2777,7 +2777,7 @@ void GLSL_InitGPUShaders(void)
  */
 void GLSL_CompileGPUShaders(void)
 {
-#ifdef LEGACY_DEBUG
+#ifdef ETLEGACY_DEBUG
 	int startTime, endTime;
 #endif
 
@@ -2788,7 +2788,7 @@ void GLSL_CompileGPUShaders(void)
 	//R_BindFBO(tr.deferredRenderFBO);
 
 	// Init simple shader and draw loading screen
-#ifdef LEGACY_DEBUG
+#ifdef ETLEGACY_DEBUG
 	startTime = ri.Milliseconds();
 #endif
 
@@ -2833,7 +2833,7 @@ void GLSL_CompileGPUShaders(void)
 
 	trProg.gl_colorCorrection = GLSL_GetShaderProgram("colorCorrection");
 
-#ifdef LEGACY_DEBUG
+#ifdef ETLEGACY_DEBUG
 	endTime = ri.Milliseconds();
 
 	Ren_Developer("Compiled default shader programs in %5.2f seconds\n", (endTime - startTime) / 1000.0);

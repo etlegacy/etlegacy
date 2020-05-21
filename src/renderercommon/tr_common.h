@@ -68,7 +68,7 @@ IMPLEMENTATION SPECIFIC GLIMP FUNCTIONS
 */
 extern int gl_NormalFontBase;
 
-#ifdef LEGACY_DEBUG
+#ifdef ETLEGACY_DEBUG
 #define RENLOG r_logFile->integer
 #define Ren_LogComment(...) if (RENLOG) { ri.Printf(PRINT_DEVELOPER, __VA_ARGS__); }
 #define Ren_Developer(...) ri.Printf(PRINT_DEVELOPER, __VA_ARGS__)

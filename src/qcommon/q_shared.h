@@ -47,7 +47,7 @@
 
 #define Q3_VERSION              PRODUCT_LABEL " " ETLEGACY_VERSION
 
-#ifdef LEGACY_DEBUG
+#ifdef ETLEGACY_DEBUG
 #define ET_VERSION              Q3_VERSION " " CPUSTRING " " __DATE__ " DEBUG"
 #else
 #define ET_VERSION              Q3_VERSION " " CPUSTRING " " __DATE__
@@ -559,7 +559,7 @@ typedef enum
 //#define UI_MENUFULL     0x00080000
 //#define UI_SMALLFONT75  0x00100000
 
-#ifdef LEGACY_DEBUG
+#ifdef ETLEGACY_DEBUG
 #define HUNK_DEBUG
 #endif
 
@@ -1778,7 +1778,7 @@ void Com_ParseUA(userAgent_t *ua, const char *string);
 #define NUMARGS(...)  (sizeof((int[]) { 0, ## __VA_ARGS__ }) / sizeof(int) - 1)
 #endif
 
-#ifdef LEGACY_DEBUG
+#ifdef ETLEGACY_DEBUG
 #if defined(_MSC_VER)
 #define etl_assert(x) if (!(x)) __debugbreak()
 #elif defined(_WIN32)
