@@ -1078,7 +1078,7 @@ extern cvar_t *com_watchdog_cmd;
 extern cvar_t *cl_paused;
 extern cvar_t *sv_paused;
 
-extern cvar_t *cl_packetdelay;
+//cvar_t *cl_packetdelay;
 extern cvar_t *sv_packetdelay;
 
 // com_speeds times

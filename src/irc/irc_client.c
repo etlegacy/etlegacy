@@ -41,6 +41,14 @@
 #include "htable.h"
 #include "irc_client.h"
 
+cvar_t *irc_mode;
+cvar_t *irc_server;
+cvar_t *irc_channel;
+cvar_t *irc_port;
+cvar_t *irc_nickname;
+cvar_t *irc_kick_rejoin;
+cvar_t *irc_reconnect_delay;
+
 #ifdef DEDICATED
 #include "../server/server.h"
 #endif

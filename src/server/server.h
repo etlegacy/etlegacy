@@ -42,7 +42,21 @@
 #include "../game/bg_public.h"
 
 #if defined(FEATURE_IRC_SERVER) && defined(DEDICATED)
-	#include "../irc/irc_client.h"
+//	#include "../irc/irc_client.h"
+extern cvar_t *irc_mode;
+extern cvar_t *irc_server;
+extern cvar_t *irc_channel;
+extern cvar_t *irc_port;
+extern cvar_t *irc_nickname;
+extern cvar_t *irc_kick_rejoin;
+extern cvar_t *irc_reconnect_delay;
+void IRC_Init(void);
+void IRC_Connect(void);
+void IRC_InitiateShutdown(void);
+void IRC_WaitShutdown(void);
+void IRC_Say(void);
+qboolean IRC_IsConnected(void);
+qboolean IRC_IsRunning(void);
 #endif
 
 #define PERS_SCORE              0   ///< !!! MUST NOT CHANGE, SERVER AND GAME BOTH REFERENCE !!!

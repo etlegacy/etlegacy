@@ -84,7 +84,7 @@ cvar_t *sv_wwwFallbackURL; // URL to send to if an http/ftp fails or is refused 
 
 cvar_t *sv_cheats;
 cvar_t *sv_packetloss;
-cvar_t *sv_packetdelay;
+//cvar_t *sv_packetdelay;
 
 cvar_t *sv_fullmsg;
 
@@ -112,7 +112,11 @@ cvar_t *sv_wh_check_fov;
 cvar_t *sv_demopath;
 cvar_t *sv_demoState;
 cvar_t *sv_autoDemo;
+#ifdef DEDICATED
 cvar_t *cl_freezeDemo;  // to freeze server-side demos
+#else
+extern cvar_t *cl_freezeDemo;  // to freeze server-side demos
+#endif
 cvar_t *sv_demoTolerant;
 
 cvar_t *sv_ipMaxClients;

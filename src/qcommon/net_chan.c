@@ -493,7 +493,7 @@ void NET_SendLoopPacket(netsrc_t sock, int length, const void *data, netadr_t to
 //=============================================================================
 
 extern cvar_t *sv_packetloss;
-extern cvar_t *sv_packetdelay;
+//extern cvar_t *sv_packetdelay;
 #ifndef DEDICATED
 extern cvar_t *cl_packetloss;
 extern cvar_t *cl_packetdelay;

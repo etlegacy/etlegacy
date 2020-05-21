@@ -113,7 +113,7 @@ cvar_t *cl_wavefilename;
 cvar_t *cl_waveoffset;
 
 cvar_t *cl_packetloss;
-cvar_t *cl_packetdelay;
+extern cvar_t *cl_packetdelay;
 
 cvar_t *cl_consoleKeys;
 
