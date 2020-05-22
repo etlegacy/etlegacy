@@ -59,7 +59,7 @@ public class ETLMain extends Activity {
         OutputStream out = null;
 
         try {
-            out = new FileOutputStream(file);
+            out = new FileOutputStream(new File(getExternalFilesDir("etlegacy/legacy"), file.getName()));
             byte[] buf = new byte[1024];
             int len;
             while((len=in.read(buf))>0){
@@ -136,18 +136,16 @@ public class ETLMain extends Activity {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
-
             copyInputStreamToFile(is, etl_etlegacy);
         }
 
-        File etl_pak0 = new File(getExternalFilesDir(null), "/etlegacy/etmain/pak0.pk3");
+        final File etl_pak0 = new File(getExternalFilesDir(null), "/etlegacy/etmain/pak0.pk3");
         final Intent intent = new Intent(ETLMain.this, ETLActivity.class);
 
         if (etl_pak0.exists()) {
             startActivity(intent);
             finish();
-        }
-        else {
+        } else {
             final AsyncHttpClient client = new AsyncHttpClient();
             client.get("http://mirror.etlegacy.com/etmain/pak0.pk3", new FileAsyncHttpResponseHandler(this) {
 
@@ -161,7 +159,7 @@ public class ETLMain extends Activity {
                     super.onFinish();
                     if (file.getAbsoluteFile().exists()) {
                         try {
-                            Files.move(file.getAbsoluteFile(), new File(getExternalFilesDir(null), "/etlegacy/etmain/pak0.pk3"));
+                            Files.move(file.getAbsoluteFile(), new File(getExternalFilesDir("etlegacy/etmain"), etl_pak0.getName()));
                             client.cancelAllRequests(true);
                             startActivity(intent);
                             finish();
@@ -177,6 +175,5 @@ public class ETLMain extends Activity {
                 }
             });
         }
-
     }
 }
