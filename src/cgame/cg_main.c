@@ -1989,7 +1989,7 @@ static void CG_RegisterGraphics(void)
 	}
 
 	CG_LoadingString(" - particles -");
-	CG_ClearParticles();
+	CG_InitParticles();
 
 	InitSmokeSprites();
 

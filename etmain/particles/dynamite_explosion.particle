@@ -86,7 +86,7 @@ weaponImpactParticleDef
 	//////////////////////////////////
 	
 	// main explosion (position on missile origin)
-	explosionShaderName    "explode1"	// if empty, no explosion
+	explosionShaderName    "explode1anim"	// if empty, no explosion
 	explosionDuration      1600
 	explosionSizeStart     20
 	explosionSizeStartRand 0
@@ -120,7 +120,7 @@ weaponImpactParticleDef
 		extraEffectOriginRand       100
 		extraEffectVelocityRand     0.65
 		extraEffectVelocityScaling  300
-		extraEffectShaderName       "explode1"	// if empty, no effect
+		extraEffectShaderName       "explode1anim"	// if empty, no effect
 		extraEffectDuration         1000
 		extraEffectDurationRand     1450
 		extraEffectSizeStart        40

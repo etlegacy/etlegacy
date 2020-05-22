@@ -25,9 +25,9 @@ weaponImpactParticleDef
 	// water particle
 	particleEffect
 	{
-		particleEffectType	     "water"
+		particleEffectType	 "water"
 		particleEffectShader     "water_splash"
-		particleEffectSpeed	     400			
+		particleEffectSpeed	 400			
 		particleEffectSpeedRand  0			// random coef for speed (0 -> disable)
 		particleEffectDuration   900
 		particleEffectCount      15
@@ -40,9 +40,9 @@ weaponImpactParticleDef
 	// grass particle
 	particleEffect
 	{
-		particleEffectType	     "grass"
+		particleEffectType	 "grass"
 		particleEffectShader     "dirt_splash"
-		particleEffectSpeed	     400		
+		particleEffectSpeed	 400		
 		particleEffectSpeedRand  0			// random coef for speed (0 -> disable)
 		particleEffectDuration   2000
 		particleEffectCount      10
@@ -55,9 +55,9 @@ weaponImpactParticleDef
 	// gravel particle
 	particleEffect
 	{
-		particleEffectType	     "gravel"
+		particleEffectType	 "gravel"
 		particleEffectShader     "dirt_splash"
-		particleEffectSpeed	     400		
+		particleEffectSpeed	 400		
 		particleEffectSpeedRand  0			// random coef for speed (0 -> disable)
 		particleEffectDuration   2000
 		particleEffectCount      10
@@ -72,11 +72,11 @@ weaponImpactParticleDef
 	//////////////////////////////////
 	
 	// main explosion (position on missile origin)
-	explosionShaderName    "explode1"		// if empty, no explosion
+	explosionShaderName    "explode1anim"		// if empty, no explosion
 	explosionDuration      700
 	explosionSizeStart     60
 	explosionSizeStartRand 0
-	explosionSizeEnd       240
+	explosionSizeEnd       120			// was 240
 	explosionSizeEndRand   0
 	explosionLightAnim	               		// if this field is present, dligh the explosion
 	
@@ -88,7 +88,7 @@ weaponImpactParticleDef
 		//extraEffectOriginRand   0
 		//extraEffectVelocityRand 0
 		//extraEffectVelocityScaling  0
-		//extraEffectShaderName      "explode1"	// if empty, no effect
+		//extraEffectShaderName      "explode1anim"	// if empty, no effect
 		//extraEffectDuration        700
 		//extraEffectDurationRand    0
 		//extraEffectSizeStart       60
