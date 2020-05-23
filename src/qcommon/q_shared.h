@@ -78,10 +78,9 @@
 
 #define SLASH_COMMAND 1        ///< Will the client require a '/' sign in front of commands
 
-/// Added after 272 release these are used by mod code
-#define MOD_VERSION_DATA_CHECK(x) (x && x >= 272 && x < 3000)
-#define MOD_CHECK_LEGACY(islegacy, versionNum, outputValue) outputValue = (islegacy == qtrue ? qtrue : qfalse); \
-	if (outputValue && MOD_VERSION_DATA_CHECK(versionNum)) { outputValue = versionNum; }
+// ET: Legacy specific - used by mod code
+#define MOD_CHECK_ETLEGACY(isETLegacy, versionNum, outputValue) outputValue = (isETLegacy == qtrue ? qtrue : qfalse); \
+	if (outputValue) { outputValue = versionNum; }
 
 #ifdef _MSC_VER
 #pragma warning(disable : 4018) // signed/unsigned mismatch

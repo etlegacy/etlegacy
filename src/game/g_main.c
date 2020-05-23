@@ -2298,10 +2298,10 @@ void G_GetMapXP(void)
  * @param[in] levelTime
  * @param[in] randomSeed
  * @param[in] restart
- * @param[in] legacyServer
+ * @param[in] etLegacyServer
  * @param[in] serverVersion
  */
-void G_InitGame(int levelTime, int randomSeed, int restart, int legacyServer, int serverVersion)
+void G_InitGame(int levelTime, int randomSeed, int restart, int etLegacyServer, int serverVersion)
 {
 	int    i;
 	char   cs[MAX_INFO_STRING];
@@ -2313,7 +2313,7 @@ void G_InitGame(int levelTime, int randomSeed, int restart, int legacyServer, in
 	G_ServerCheck();
 
 	// mod version check
-	MOD_CHECK_LEGACY(legacyServer, serverVersion, level.legacyServer);
+	MOD_CHECK_ETLEGACY(etLegacyServer, serverVersion, level.etLegacyServer);
 
 	G_Printf("------- Game Initialization -------\n");
 	G_Printf("gamename: %s\n", MODNAME);

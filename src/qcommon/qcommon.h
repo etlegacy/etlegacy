@@ -743,7 +743,8 @@ issues.
 ==============================================================
 */
 
-#define BASEGAME "etmain"
+// ET: Legacy specific - used by engine code
+#define BASEGAME        "etmain"
 #define DEFAULT_MODGAME MODNAME
 
 /**
