@@ -231,7 +231,7 @@ static void GLimp_InitCvars(void)
 	r_colorbits       = Cvar_Get("r_colorbits", "0", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE);
 	r_ignorehwgamma   = Cvar_Get("r_ignorehwgamma", "0", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE);
 	r_ext_multisample = Cvar_Get("r_ext_multisample", "0", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE);
-	Cvar_CheckRange(r_ext_multisample, 0, 4, qtrue);
+	Cvar_CheckRange(r_ext_multisample, 0, 8, qtrue);
 
 	// Old modes (these are used by the UI code)
 	Cvar_Get("r_oldFullscreen", "", CVAR_ARCHIVE);
