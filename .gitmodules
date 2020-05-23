@@ -1,6 +1,5 @@
 [submodule "libs"]
 	path = libs
-	url = /var/scm/etlegacy-libs
-#   url = https://github.com/Bonpournickel/etlegacy-libs.git
+    url = https://github.com/Bonpournickel/etlegacy-libs.git
 	branch = master
 	ignore = dirty
