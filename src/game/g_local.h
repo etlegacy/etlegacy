@@ -1140,7 +1140,7 @@ typedef struct level_locals_s
 
 	fileHandle_t logFile;
 
-	qboolean legacyServer;
+	qboolean etLegacyServer;
 
 	char rawmapname[MAX_QPATH];
 

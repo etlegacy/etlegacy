@@ -4754,7 +4754,7 @@ void FS_InitFilesystem(void)
 	Com_StartupVariable("fs_game");
 
 	// ET: Legacy start
-	// if fs_game is not specified, set 'legacy' mod as default fs_game
+	// if fs_game is not specified, set 'DEFAULT_MODGAME' mod as default fs_game
 	// this 'optimization' grants us 2.60b compatibility w/o deeper changes and users
 	// don't have to set fs_game param to run latest mod code
 	tmp_fs_game = Cvar_Get("fs_game", "", 0);
