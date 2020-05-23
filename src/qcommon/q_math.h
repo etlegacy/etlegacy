@@ -293,113 +293,17 @@ void ByteToDir(int b, vec3_t dir);
 /* Vector 2                                                             */
 /************************************************************************/
 #define vec2_set(v, x, y)         ((v)[0] = (x), (v)[1] = (y))
-
-#ifdef SSE2
-#define vec2_copy(a,b) \
-{ \
-	__m128 xmm0; \
-	_mm_storeh_pi((__m64 *)b, _mm_loadh_pi(xmm0, (const __m64 *)a)); \
-}
-#define vec2_sub(a, b, c) \
-{ \
-	__m128 xmm0, xmm1; \
-	xmm0 = _mm_loadl_pi(xmm0, (const __m64 *)&a[0]); \
-	xmm1 = _mm_loadl_pi(xmm1, (const __m64 *)&b[0]); \
-	xmm0 = _mm_sub_ps(xmm0, xmm1); \
-	_mm_storel_pi((__m64 *)&c[0], xmm0); \
-}
-#else
 #define vec2_copy(a, b)            ((b)[0] = (a)[0], (b)[1] = (a)[1])
+// Subtract
 #define vec2_sub(a, b, c)      ((c)[0] = (a)[0] - (b)[0], (c)[1] = (a)[1] - (b)[1])
-#endif
 #define vec2_snap(v) { v[0] = ((int)(v[0])); v[1] = ((int)(v[1])); }
 
 /************************************************************************/
 /* Vector 3                                                             */
 /************************************************************************/
-#ifdef SSE2
-#define vec3_clear(a) \
-{ \
-	__m128 xmm0; \
-	xmm0 = _mm_setzero_ps(); \
-	_mm_store_ss(&a[0], xmm0); \
-	_mm_storeh_pi((__m64 *)(&a[1]), xmm0); \
-}
-#define vec3_set(v, x, y, z) \
-{ \
-	__m128 xmm0; \
-	xmm0 = _mm_set_ps(z, y, 0.0f, x); \
-	_mm_store_ss(&v[0], xmm0); \
-	_mm_storeh_pi((__m64 *)(&v[1]), xmm0); \
-}
-#define vec3_negate(a, b) \
-{ \
-	__m128 xmm0, xmm1; \
-	xmm1 = _mm_loadh_pi(_mm_load_ss(&a[0]), (const __m64 *)(&a[1])); \
-	xmm0 = _mm_sub_ps(_mm_setzero_ps(), xmm1); \
-	_mm_store_ss(&b[0], xmm0); \
-	_mm_storeh_pi((__m64 *)(&b[1]), xmm0); \
-}
-#define vec3_dot(x, y)         ((x)[0] * (y)[0] + (x)[1] * (y)[1] + (x)[2] * (y)[2])
-/*#define vec3_dot(x, y) \ This one nees fixing
-{ \
-	__m128 xmm0, xmm1, xmm2, xmm3; \
-	__m128i xmm4; \
-	xmm0 = _mm_loadh_pi(_mm_load_ss(&x[0]), (const __m64 *)(&x[1])); \
-	xmm3 = _mm_loadh_pi(_mm_load_ss(&y[0]), (const __m64 *)(&y[1])); \
-	xmm0 = _mm_mul_ps(xmm0, xmm3); \
-	xmm1 = _mm_movehdup_ps(xmm0); \
-	xmm2 = _mm_add_ps(xmm0, xmm1); \
-	xmm1 = _mm_movehl_ps(xmm1, xmm2); \
-	xmm2 = _mm_add_ss(xmm2, xmm1); \
-}*/
-#define vec3_sub(a, b, c) \
-{ \
-	__m128 xmm1, xmm3; \
-	xmm1 = _mm_loadh_pi(_mm_load_ss((const float *)a), (const __m64 *)(a+1)); \
-	xmm3 = _mm_loadh_pi(_mm_load_ss((const float *)b), (const __m64 *)(b+1)); \
-	xmm1 = _mm_sub_ps(xmm1, xmm3); \
-	_mm_store_ss(&c[0], xmm1); \
-	_mm_storeh_pi((__m64 *)(&c[1]), xmm1); \
-}
-#define vec3_add(a, b, c) \
-{ \
-	__m128 xmm1, xmm3; \
-	xmm1 = _mm_loadh_pi(_mm_load_ss((const float *)a), (const __m64 *)(a+1)); \
-	xmm3 = _mm_loadh_pi(_mm_load_ss((const float *)b), (const __m64 *)(b+1)); \
-	xmm1 = _mm_add_ps(xmm1, xmm3); \
-	_mm_store_ss((float *)c, xmm1); \
-	_mm_storeh_pi((__m64 *)(c+1), xmm1); \
-}
-#define vec3_copy(a, b) \
-{ \
-	__m128 xmm0; \
-	xmm0 = _mm_loadh_pi(_mm_load_ss((const float *)a), (const __m64 *)(a+1)); \
-	_mm_store_ss((float *)b, xmm0); \
-	_mm_storeh_pi((__m64 *)(b+1), xmm0); \
-}
-#define vec3_scale(v, s, o) \
-{ \
-	__m128 xmm3; \
-	xmm3 = _mm_loadh_pi(_mm_load_ss((const float *)v), (const __m64 *)(v+1)); \
-	xmm3 = _mm_mul_ps(xmm3, _mm_set_ps1(s)); \
-	_mm_store_ss((float *)o, xmm3); \
-	_mm_storeh_pi((__m64 *)(o+1), xmm3); \
-}
-#define vec3_ma(v, s, b, o) \
-{ \
-	__m128 xmm2, xmm3; \
-	xmm3 = _mm_loadh_pi( _mm_load_ss((const float *)b), (const __m64 *)(b+1)); \
-	xmm3 = _mm_mul_ps(xmm3, _mm_set_ps1(s)); \
-	xmm2 = _mm_loadh_pi(_mm_load_ss((const float *)v), (const __m64 *)(v+1)); \
-	xmm2 = _mm_add_ps(xmm2, xmm3); \
-	_mm_store_ss((float *)o, xmm2); \
-	_mm_storeh_pi((__m64 *)(o+1), xmm2); \
-}
-#else
 #define vec3_clear(a)              ((a)[0] = (a)[1] = (a)[2] = 0)
-#define vec3_set(v, x, y, z)       ((v)[0] = (x), (v)[1] = (y), (v)[2] = (z))
 #define vec3_negate(a, b)           ((b)[0] = -(a)[0], (b)[1] = -(a)[1], (b)[2] = -(a)[2])
+#define vec3_set(v, x, y, z)       ((v)[0] = (x), (v)[1] = (y), (v)[2] = (z))
 //dot product
 #define vec3_dot(x, y)         ((x)[0] * (y)[0] + (x)[1] * (y)[1] + (x)[2] * (y)[2])
 #define vec3_sub(a, b, c)   ((c)[0] = (a)[0] - (b)[0], (c)[1] = (a)[1] - (b)[1], (c)[2] = (a)[2] - (b)[2])
@@ -408,7 +312,6 @@ void ByteToDir(int b, vec3_t dir);
 #define vec3_scale(v, s, o)    ((o)[0] = (v)[0] * (s), (o)[1] = (v)[1] * (s), (o)[2] = (v)[2] * (s))
 // Vector multiply & add
 #define vec3_ma(v, s, b, o)    ((o)[0] = (v)[0] + (b)[0] * (s), (o)[1] = (v)[1] + (b)[1] * (s), (o)[2] = (v)[2] + (b)[2] * (s))
-#endif
 #define vec3_snap(v) { v[0] = ((int)(v[0])); v[1] = ((int)(v[1])); v[2] = ((int)(v[2])); }
 void vec3_to_angles(const vec3_t value1, vec3_t angles);
 void vec3_cross(const vec3_t v1, const vec3_t v2, vec3_t cross);
@@ -437,73 +340,26 @@ void vec3_per(const vec3_t src, vec3_t dst);
 
 static inline void VectorMin(const vec3_t a, const vec3_t b, vec3_t out)
 {
-#ifdef SSE2
-	__m128 xmm0, xmm1, xmm2;
-		xmm1 = _mm_loadh_pi(_mm_load_ss(&a[0]), (const __m64 *)(&a[1]));
-		xmm2 = _mm_loadh_pi(_mm_load_ss(&b[0]), (const __m64 *)(&b[1]));
-		xmm0 = _mm_min_ps(xmm1, xmm2);
-		_mm_store_ss(&out[0], xmm0);
-		_mm_storeh_pi((__m64 *)(&out[1]), xmm0);
-#else
 	out[0] = a[0] < b[0] ? a[0] : b[0];
 	out[1] = a[1] < b[1] ? a[1] : b[1];
 	out[2] = a[2] < b[2] ? a[2] : b[2];
-#endif
 }
 
 static inline void VectorMax(const vec3_t a, const vec3_t b, vec3_t out)
 {
-#ifdef SSE2
-	__m128 xmm0, xmm1, xmm2;
-		xmm1 = _mm_loadh_pi(_mm_load_ss(&a[0]), (const __m64 *)(&a[1]));
-		xmm2 = _mm_loadh_pi(_mm_load_ss(&b[0]), (const __m64 *)(&b[1]));
-		xmm0 = _mm_max_ps(xmm1, xmm2);
-		_mm_store_ss(&out[0], xmm0);
-		_mm_storeh_pi((__m64 *)(&out[1]), xmm0);
-#else
 	out[0] = a[0] > b[0] ? a[0] : b[0];
 	out[1] = a[1] > b[1] ? a[1] : b[1];
 	out[2] = a[2] > b[2] ? a[2] : b[2];
-#endif
 }
 
 /************************************************************************/
 /* Vector 4                                                             */
 /************************************************************************/
-#ifdef SSE2
-#define vec4_set(o, x, y, z, w) \
-{ \
-	_mm_storeu_ps(o, _mm_set_ps(w, z, y, x)); \
-}
-#define vec4_copy(a, b) \
-{ \
-	_mm_storeu_ps((float *)b, _mm_loadu_ps((const float *)a)); \
-}
-#define vec4_scale(v, s, o) \
-{ \
-	__m128 xmm0; \
-	xmm0 = _mm_mul_ps(_mm_loadu_ps((const float *)v), _mm_set_ps1(s)); \
-	_mm_storeu_ps((float *)o, xmm0); \
-}
-#else
 #define vec4_set(v, x, y, z, n)   ((v)[0] = (x), (v)[1] = (y), (v)[2] = (z), (v)[3] = (n))
 #define vec4_copy(a, b)            ((b)[0] = (a)[0], (b)[1] = (a)[1], (b)[2] = (a)[2], (b)[3] = (a)[3])
 #define vec4_scale(v, s, o)    ((o)[0] = (v)[0] * (s), (o)[1] = (v)[1] * (s), (o)[2] = (v)[2] * (s), (o)[3] = (v)[3] * (s))
-#endif
 // Vector multiply & add
-#ifdef SSE2
-#define vec4_ma(v, s, b, o) \
-{ \
-	__m128 xmm2, xmm3; \
-	xmm3 = _mm_loadu_ps((const float *)b); \
-	xmm2 = _mm_loadu_ps((const float *)v); \
-	xmm3 = _mm_mul_ps(xmm3, _mm_set_ps1(s)); \
-	xmm2 = _mm_add_ps(xmm2, xmm3); \
-	_mm_storeu_ps((float *)o, xmm2); \
-}
-#else
 #define vec4_ma(v, s, b, o)       ((o)[0] = (v)[0] + (b)[0] * (s), (o)[1] = (v)[1] + (b)[1] * (s), (o)[2] = (v)[2] + (b)[2] * (s), (o)[3] = (v)[3] + (b)[3] * (s))
-#endif
 #define vec4_average(v, b, s, o)  ((o)[0] = ((v)[0] * (1 - (s))) + ((b)[0] * (s)), (o)[1] = ((v)[1] * (1 - (s))) + ((b)[1] * (s)), (o)[2] = ((v)[2] * (1 - (s))) + ((b)[2] * (s)), (o)[3] = ((v)[3] * (1 - (s))) + ((b)[3] * (s)))
 #define vec4_snap(v) { v[0] = ((int)(v[0])); v[1] = ((int)(v[1])); v[2] = ((int)(v[2])); v[3] = ((int)(v[3])); }
 
@@ -547,48 +403,6 @@ void angles_vectors(const vec3_t angles, vec3_t forward, vec3_t right, vec3_t up
 /************************************************************************/
 /* Matrix3x3                                                            */
 /************************************************************************/
-#ifdef SSE2
-#define mat3_mult(in1, in2, o) \
-{ \
-	__m128 xmm0, xmm1, xmm2, xmm3, xmm4, xmm5, xmm6, xmm7; \
-	xmm1 = _mm_loadu_ps((&in2[0][0])); \
-	xmm3 = _mm_loadu_ps((&in2[1][0])); \
-	xmm5 = _mm_loadu_ps((&in2[1][2])); \
-	xmm5 = _mm_shuffle_ps(xmm5, xmm5, 0b00111001); \
-	xmm7 = _mm_loadu_ps((&in1[0][0])); \
-	xmm0 = _mm_shuffle_ps(xmm7, xmm7, 0); \
-	xmm2 = _mm_shuffle_ps(xmm7, xmm7, 0b01010101); \
-	xmm4 = _mm_shuffle_ps(xmm7, xmm7, 0b10101010); \
-	xmm0 = _mm_mul_ps(xmm0, xmm1); \
-	xmm2 = _mm_mul_ps(xmm2, xmm3); \
-	xmm4 = _mm_mul_ps(xmm4, xmm5); \
-	xmm0 = _mm_add_ps(xmm0, xmm2); \
-	xmm0 = _mm_add_ps(xmm0, xmm4); \
-	_mm_storeu_ps((float *)(&o[0][0]), xmm0); \
-	xmm7 = _mm_loadu_ps((&in1[1][0])); \
-	xmm0 = _mm_shuffle_ps(xmm7, xmm7, 0); \
-	xmm2 = _mm_shuffle_ps(xmm7, xmm7, 0b01010101); \
-	xmm4 = _mm_shuffle_ps(xmm7, xmm7, 0b10101010); \
-	xmm0 = _mm_mul_ps(xmm0, xmm1); \
-	xmm2 = _mm_mul_ps(xmm2, xmm3); \
-	xmm4 = _mm_mul_ps(xmm4, xmm5); \
-	xmm0 = _mm_add_ps(xmm0, xmm2); \
-	xmm6 = _mm_add_ps(xmm0, xmm4); \
-	_mm_storeu_ps((float *)(&o[1][0]), xmm6); \
-	xmm7 = _mm_loadu_ps((&in1[1][2])); \
-	xmm0 = _mm_shuffle_ps(xmm7, xmm7, 0b01010101); \
-	xmm2 = _mm_shuffle_ps(xmm7, xmm7, 0b10101010); \
-	xmm4 = _mm_shuffle_ps(xmm7, xmm7, 0b11111111); \
-	xmm0 = _mm_mul_ps(xmm0, xmm1); \
-	xmm2 = _mm_mul_ps(xmm2, xmm3); \
-	xmm4 = _mm_mul_ps(xmm4, xmm5); \
-	xmm0 = _mm_add_ps(xmm0, xmm2); \
-	xmm0 = _mm_add_ps(xmm0, xmm4); \
-	xmm6 = _mm_shuffle_ps(xmm6, xmm0, 0b00001010); \
-	xmm6 = _mm_shuffle_ps(xmm6, xmm0, 0b10011100); \
-	_mm_storeu_ps((float *)(&o[1][2]), xmm6); \
-}
-#else
 #define mat3_mult(in1, in2, o)                                                                          \
 	o[0][0] = (in1)[0][0] * (in2)[0][0] + (in1)[0][1] * (in2)[1][0] + (in1)[0][2] * (in2)[2][0],        \
 	o[0][1] = (in1)[0][0] * (in2)[0][1] + (in1)[0][1] * (in2)[1][1] + (in1)[0][2] * (in2)[2][1],        \
@@ -599,7 +413,6 @@ void angles_vectors(const vec3_t angles, vec3_t forward, vec3_t right, vec3_t up
 	o[2][0] = (in1)[2][0] * (in2)[0][0] + (in1)[2][1] * (in2)[1][0] + (in1)[2][2] * (in2)[2][0],        \
 	o[2][1] = (in1)[2][0] * (in2)[0][1] + (in1)[2][1] * (in2)[1][1] + (in1)[2][2] * (in2)[2][1],        \
 	o[2][2] = (in1)[2][0] * (in2)[0][2] + (in1)[2][1] * (in2)[1][2] + (in1)[2][2] * (in2)[2][2]
-#endif
 
 void mat3_transpose(vec3_t matrix[3], vec3_t transpose[3]);
 
@@ -629,24 +442,9 @@ qboolean mat4_inverse(const mat4_t in, mat4_t out);
 qboolean mat4_inverse_self(mat4_t matrix);
 void mat4_from_angles(mat4_t m, vec_t pitch, vec_t yaw, vec_t roll);
 
-#ifdef SSE2
-#define SinCos(rad, s, c) { \
-	double radD = rad, SD, CD; \
-	__asm { \
-		__asm fld QWORD PTR[radD] \
-		__asm fsincos \
-		__asm fstp QWORD PTR[CD] \
-		__asm fstp QWORD PTR[SD] \
-		__asm fwait \
-	} \
-	s = (float)SD; \
-	c = (float)CD; \
-}
-#else
 #define SinCos(rad, s, c)     \
 	(s) = sin((rad));     \
 	(c) = cos((rad));
-#endif
 
 #ifdef __LCC__
 #ifdef VectorCopy
