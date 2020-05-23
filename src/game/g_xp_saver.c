@@ -206,7 +206,6 @@ void G_XPSaver_Store(gclient_t *cl)
 	int       clientNum, i;
 	xpData_t  xp_data;
 	gentity_t *ent;
-	qboolean  hasMapXPs = qfalse;
 
 	if (!level.database.initialized)
 	{

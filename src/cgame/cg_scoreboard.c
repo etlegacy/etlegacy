@@ -697,7 +697,6 @@ static void WM_DrawClientScore(int x, int y, score_t *score, float fade, qboolea
 	int          maxchars = 16;
 	int          rowHeight = 16;
 	float        scaleX = 0.24f, scaleY = 0.28f;
-	int          extraChars = 2;
 	int          offsetY    = 12;
 	clientInfo_t *ci        = &cgs.clientinfo[score->client];
 
@@ -1039,7 +1038,6 @@ static int WM_TeamScoreboard(int x, int y, team_t team, float fade, int maxrows,
 	else
 	{
 		tempx += INFO_XP_WIDTH;
-		int w;
 #ifdef FEATURE_RATING
 		if (cgs.skillRating && cg_scoreboard.integer == SCOREBOARD_SR)
 		{
