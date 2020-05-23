@@ -98,55 +98,114 @@ typedef enum
 	P_SPRITE
 } particle_type_t;
 
+#define PARTICLES_CFG_NAME "particles/particles.cfg"
 #define MAX_SHADER_ANIMS        8
 #define MAX_SHADER_ANIM_FRAMES  64
-static const char *shaderAnimNames[MAX_SHADER_ANIMS] =
+
+typedef struct shaderAnim_s
 {
-	"explode1",
-	"blacksmokeanim",
-	"twiltb2",
-	//"expblue",
-	"blacksmokeanimb",       // uses 'explode1' sequence
-	//"blood",
-	NULL
-};
+	char names[MAX_QPATH];
+	int counts;
+	float STRatio;
+	qhandle_t anims[MAX_SHADER_ANIM_FRAMES];
 
-static qhandle_t shaderAnims[MAX_SHADER_ANIMS][MAX_SHADER_ANIM_FRAMES];
+} shaderAnim_t;
 
-static int shaderAnimCounts[MAX_SHADER_ANIMS] =
+static shaderAnim_t shaderAnims[MAX_SHADER_ANIMS];
+
+#define MAX_PARTICLES   1024 * 8
+
+static cparticle_t *active_particles, *free_particles;
+static cparticle_t particles[MAX_PARTICLES];
+
+static vec3_t vforward, vright, vup;
+static vec3_t rforward, rright, rup;
+
+static float oldtime;
+
+/**
+ * @brief CG_ParsePatriclesConfig
+ */
+static qboolean CG_ParsePatriclesConfig(void)
 {
-	23,
-	23, // removing warning messages from startup
-	45,
-	//23,
-	25,
-	//23,
-	5,
-};
+	char         *text_p;
+	int          len;
+	int          i;
+	char         *token;
+	char         text[1024];
+	fileHandle_t f;
 
-static float shaderAnimSTRatio[MAX_SHADER_ANIMS] =
-{
-	1, // changed from 1.405 to 1
-	1,
-	1,
-	//1,
-	1,
-	//1,
-	1,
-};
-//static int numShaderAnims;
+	// load the file
+	len = trap_FS_FOpenFile(PARTICLES_CFG_NAME, &f, FS_READ);
 
+	if (len <= 0)
+	{
+		CG_Printf("CG_ParseWeaponConfig: File not found: %s\n", PARTICLES_CFG_NAME);
+		return qfalse;
+	}
 
-#define     MAX_PARTICLES   1024 * 8
+	if (len >= sizeof(text) - 1)
+	{
+		CG_Printf("CG_ParseWeaponConfig: File %s too long\n", PARTICLES_CFG_NAME);
+		trap_FS_FCloseFile(f);
+		return qfalse;
+	}
 
-cparticle_t *active_particles, *free_particles;
-cparticle_t particles[MAX_PARTICLES];
+	trap_FS_Read(text, len, f);
+	text[len] = 0;
+	trap_FS_FCloseFile(f);
 
-qboolean initparticles = qfalse;
-vec3_t   vforward, vright, vup;
-vec3_t   rforward, rright, rup;
+	// parse the text
+	text_p = text;
 
-float oldtime;
+	COM_BeginParseSession("CG_ParseParticlesConfig");
+
+	for (i = 0 ; i < MAX_SHADER_ANIMS ; i++)
+	{
+		int j;
+
+		token = COM_Parse(&text_p);     // shader name
+
+		if (!token[0])
+		{
+			break;
+		}
+
+		Q_strncpyz(shaderAnims[i].names, token, MAX_QPATH);
+
+		token = COM_Parse(&text_p);     // shader count
+
+		if (!token[0])
+		{
+			break;
+		}
+
+		shaderAnims[i].counts = atoi(token);
+
+		token = COM_Parse(&text_p);     // ST Ratio
+
+		if (!token[0])
+		{
+			break;
+		}
+
+		shaderAnims[i].STRatio = (float)atof(token);
+
+		// parse shader animation
+		for (j = 0; j < shaderAnims[i].counts; j++)
+		{
+			shaderAnims[i].anims[j] = trap_R_RegisterShader(va("%s%i", shaderAnims[i].names, j + 1));
+		}
+	}
+
+	if (i == MAX_SHADER_ANIMS)
+	{
+		CG_Printf("CG_ParseParticlesConfig: Error parsing particles animation file: %s\n", PARTICLES_CFG_NAME);
+		return qfalse;
+	}
+
+	return qtrue;
+}
 
 /**
  * @brief CG_ClearParticles
@@ -168,22 +227,16 @@ void CG_ClearParticles(void)
 	particles[MAX_PARTICLES - 1].next = NULL;
 
 	oldtime = cg.time;
+}
 
-	// init the shaderAnims
-	if (!initparticles) // CG_ClearParticles is also called on maprestart - we don't have to register twice ...
-	{
-		int j;
+/**
+ * @brief CG_InitParticles
+ */
+void CG_InitParticles(void)
+{
+	CG_ClearParticles();
 
-		for (i = 0; shaderAnimNames[i]; i++)
-		{
-			for (j = 0; j < shaderAnimCounts[i]; j++)
-			{
-				shaderAnims[i][j] = trap_R_RegisterShader(va("%s%i", shaderAnimNames[i], j + 1));
-			}
-		}
-
-		initparticles = qtrue;
-	}
+	CG_ParsePatriclesConfig();
 }
 
 /**
@@ -801,9 +854,10 @@ void CG_AddParticleToScene(cparticle_t *p, vec3_t org, float alpha)
 	{
 		vec3_t point, rr, ru, rotate_ang;
 		float  width, height;
-		float  time = cg.time - p->time;
+		float  time  = cg.time - p->time;
 		float  time2 = p->endtime - p->time;
 		float  ratio = time / time2;
+		double invratio;
 		int    i, j;
 
 		if (ratio >= 1)
@@ -835,8 +889,23 @@ void CG_AddParticleToScene(cparticle_t *p, vec3_t org, float alpha)
 		}
 
 		i          = p->shaderAnim;
-		j          = (int)floor((double)ratio * shaderAnimCounts[p->shaderAnim]);
-		p->pshader = shaderAnims[i][j];
+		j          = (int)floor((double)ratio * shaderAnims[p->shaderAnim].counts);
+		p->pshader = shaderAnims[i].anims[j];
+
+		if (cg.time > p->startfade)
+		{
+			//invratio = 1 - (cg.time - p->startfade) / (p->endtime - p->startfade);  // linear
+			invratio = pow(0.01, (double)((cg.time - p->startfade) / (p->endtime - p->startfade)));
+
+			if (invratio > 1)
+			{
+				invratio = 1;
+			}
+		}
+		else
+		{
+			invratio = 1;
+		}
 
 		if (p->roll)
 		{
@@ -861,7 +930,7 @@ void CG_AddParticleToScene(cparticle_t *p, vec3_t org, float alpha)
 		verts[0].modulate[0] = 255;
 		verts[0].modulate[1] = 255;
 		verts[0].modulate[2] = 255;
-		verts[0].modulate[3] = 255;
+		verts[0].modulate[3] = (byte)(255 * invratio);
 
 		if (p->roll)
 		{
@@ -877,7 +946,7 @@ void CG_AddParticleToScene(cparticle_t *p, vec3_t org, float alpha)
 		verts[1].modulate[0] = 255;
 		verts[1].modulate[1] = 255;
 		verts[1].modulate[2] = 255;
-		verts[1].modulate[3] = 255;
+		verts[1].modulate[3] = (byte)(255 * invratio);
 
 		if (p->roll)
 		{
@@ -893,7 +962,7 @@ void CG_AddParticleToScene(cparticle_t *p, vec3_t org, float alpha)
 		verts[2].modulate[0] = 255;
 		verts[2].modulate[1] = 255;
 		verts[2].modulate[2] = 255;
-		verts[2].modulate[3] = 255;
+		verts[2].modulate[3] = (byte)(255 * invratio);
 
 		if (p->roll)
 		{
@@ -909,7 +978,7 @@ void CG_AddParticleToScene(cparticle_t *p, vec3_t org, float alpha)
 		verts[3].modulate[0] = 255;
 		verts[3].modulate[1] = 255;
 		verts[3].modulate[2] = 255;
-		verts[3].modulate[3] = 255;
+		verts[3].modulate[3] = (byte)(255 * invratio);
 	}
 	break;
 	default:
@@ -946,11 +1015,6 @@ void CG_AddParticles(void)
 	vec3_t      org;
 	cparticle_t *active = NULL, *tail = NULL;
 	vec3_t      rotate_ang;
-
-	if (!initparticles)
-	{
-		CG_ClearParticles();
-	}
 
 	VectorCopy(cg.refdef_current->viewaxis[0], vforward);
 	VectorCopy(cg.refdef_current->viewaxis[1], vright);
@@ -1515,14 +1579,14 @@ void CG_ParticleExplosion(const char *animStr, vec3_t origin, vec3_t vel, int du
 	int         anim;
 
 	// find the animation string
-	for (anim = 0; shaderAnimNames[anim]; anim++)
+	for (anim = 0; anim < MAX_SHADER_ANIMS; anim++)
 	{
-		if (!Q_stricmp(animStr, shaderAnimNames[anim]))
+		if (!Q_stricmp(animStr, shaderAnims[anim].names))
 		{
 			break;
 		}
 	}
-	if (!shaderAnimNames[anim])
+	if (anim == MAX_SHADER_ANIMS)
 	{
 		CG_Error("CG_ParticleExplosion: unknown animation string: %s\n", animStr);
 	}
@@ -1553,12 +1617,13 @@ void CG_ParticleExplosion(const char *animStr, vec3_t origin, vec3_t vel, int du
 	p->shaderAnim = anim;
 
 	p->width  = sizeStart;
-	p->height = sizeStart * shaderAnimSTRatio[anim];  // for sprites that are stretch in either direction
+	p->height = sizeStart * shaderAnims[anim].STRatio;      // for sprites that are stretch in either direction
 
 	p->endheight = sizeEnd;
-	p->endwidth  = sizeEnd * shaderAnimSTRatio[anim];
+	p->endwidth  = sizeEnd * shaderAnims[anim].STRatio;
 
-	p->endtime = cg.time + duration;
+	p->endtime   = cg.time + duration;
+	p->startfade = cg.time;
 
 	if (dlight)
 	{
@@ -1574,97 +1639,98 @@ void CG_ParticleExplosion(const char *animStr, vec3_t origin, vec3_t vel, int du
 	VectorClear(p->accel);
 }
 
-/**
+/*
  * @brief CG_NewParticleArea
  * @param[in] num
  * @return
  *
  * @note Unused
- */
+ *
 int CG_NewParticleArea(int num)
 {
-	char   *str;
-	char   *token;
-	int    type;
-	vec3_t origin, origin2;
-	int    i;
-	float  range;
-	int    turb;
-	int    numparticles;
-	int    snum;
+    char   *str;
+    char   *token;
+    int    type;
+    vec3_t origin, origin2;
+    int    i;
+    float  range;
+    int    turb;
+    int    numparticles;
+    int    snum;
 
-	str = (char *) CG_ConfigString(num);
-	if (!str[0])
-	{
-		return (0);
-	}
+    str = (char *) CG_ConfigString(num);
+    if (!str[0])
+    {
+        return (0);
+    }
 
-	// returns type 128 64 or 32
-	token = COM_Parse(&str);
-	type  = atoi(token);
+    // returns type 128 64 or 32
+    token = COM_Parse(&str);
+    type  = atoi(token);
 
-	switch (type)
-	{
-	case 0:
-		range = 256;
-		break;
-	case 1:
-		range = 128;
-		break;
-	case 2:
-	case 7:
-		range = 64;
-		break;
-	case 3:
-	case 6:
-		range = 32;
-		break;
-	case 4:
-		range = 8;
-		break;
-	case 5:
-		range = 16;
-		break;
-	default:
-		range = 0;
-		break;
-	}
+    switch (type)
+    {
+    case 0:
+        range = 256;
+        break;
+    case 1:
+        range = 128;
+        break;
+    case 2:
+    case 7:
+        range = 64;
+        break;
+    case 3:
+    case 6:
+        range = 32;
+        break;
+    case 4:
+        range = 8;
+        break;
+    case 5:
+        range = 16;
+        break;
+    default:
+        range = 0;
+        break;
+    }
 
-	for (i = 0; i < 3; i++)
-	{
-		token     = COM_Parse(&str);
-		origin[i] = (float)atof(token);
-	}
+    for (i = 0; i < 3; i++)
+    {
+        token     = COM_Parse(&str);
+        origin[i] = (float)atof(token);
+    }
 
-	for (i = 0; i < 3; i++)
-	{
-		token      = COM_Parse(&str);
-		origin2[i] = (float)atof(token);
-	}
+    for (i = 0; i < 3; i++)
+    {
+        token      = COM_Parse(&str);
+        origin2[i] = (float)atof(token);
+    }
 
-	token        = COM_Parse(&str);
-	numparticles = atoi(token);
+    token        = COM_Parse(&str);
+    numparticles = atoi(token);
 
-	token = COM_Parse(&str);
-	turb  = atoi(token);
+    token = COM_Parse(&str);
+    turb  = atoi(token);
 
-	token = COM_Parse(&str);
-	snum  = atoi(token);
+    token = COM_Parse(&str);
+    snum  = atoi(token);
 
-	for (i = 0; i < numparticles; i++)
-	{
-		if (type >= 4)
-		{
-			CG_ParticleBubble(cgs.media.waterBubbleShader, origin, origin2, turb, range, snum);
-		}
-		else
-		{
-			CG_ParticleSnow(cgs.media.snowShader, origin, origin2, turb, range, snum);
-		}
-	}
+    for (i = 0; i < numparticles; i++)
+    {
+        if (type >= 4)
+        {
+            CG_ParticleBubble(cgs.media.waterBubbleShader, origin, origin2, turb, range, snum);
+        }
+        else
+        {
+            CG_ParticleSnow(cgs.media.snowShader, origin, origin2, turb, range, snum);
+        }
+    }
 
-	return 1;
+    return 1;
 }
+*/
 
 /**
  * @brief CG_ParticleImpactSmokePuffExtended

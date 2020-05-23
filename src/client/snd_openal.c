@@ -3296,7 +3296,7 @@ qboolean S_AL_Init(soundInterface_t *si)
 		//streamBufIndex[i]      = 0;
 	}
 	
-	Com_Memset(ssRestart, 0, MAX_STREAMING_SOUNDS);
+	Com_Memset(ssRestart, 0, sizeof(ssRestart));
 	
 	// New console variables
 	s_alPrecache      = Cvar_Get("s_alPrecache", "1", CVAR_ARCHIVE);

@@ -450,8 +450,11 @@ void CG_AddPMItem(popupMessageType_t type, const char *message, const char *mess
 	}
 
 	// colored obituaries
-	listItem->color[0] = listItem->color[1] = listItem->color[2] = 1.f;
-	if (color != NULL)
+	if (color == NULL)
+	{
+		listItem->color[0] = listItem->color[1] = listItem->color[2] = 1.f;
+	}
+	else
 	{
 		VectorCopy(color, listItem->color);
 	}
@@ -744,17 +747,17 @@ void CG_DrawPMItems(rectDef_t rect, int style)
 
 		if (listItem->weaponShader > 0)
 		{
-			for (i = 0; i < 3; i++)
+			for (j = 0; j < 3; j++)
 			{
-				colourText[i] = listItem->color[i];
+				colourText[j] = listItem->color[j];
 			}
 			trap_R_SetColor(colourText);
 
 			CG_DrawPic(size + w + 12, ICON_Y_OFFSET(y), sizew * listItem->scaleShader, sizew, listItem->weaponShader);
 
-			for (i = 0; i < 3; i++)
+			for (j = 0; j < 3; j++)
 			{
-				colourText[i] = 1.f;
+				colourText[j] = 1.f;
 			}
 			trap_R_SetColor(NULL);
 		}

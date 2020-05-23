@@ -715,14 +715,10 @@ void ProjectPointOnPlane(vec3_t dst, const vec3_t p, const vec3_t normal)
 	vec3_t n;
 	float  inv_denom;
 
-	inv_denom = 1.0f / DotProduct(normal, normal);
+	inv_denom = 1.0F / DotProduct(normal, normal);
 
 	d = DotProduct(normal, p) * inv_denom;
 
-#ifdef SSE2
-	VectorScale(normal, d, n);
-	VectorSubtract(p, n, dst);
-#else
 	n[0] = normal[0] * inv_denom;
 	n[1] = normal[1] * inv_denom;
 	n[2] = normal[2] * inv_denom;
@@ -730,7 +726,6 @@ void ProjectPointOnPlane(vec3_t dst, const vec3_t p, const vec3_t normal)
 	dst[0] = p[0] - d * n[0];
 	dst[1] = p[1] - d * n[1];
 	dst[2] = p[2] - d * n[2];
-#endif
 }
 
 /**
@@ -743,6 +738,7 @@ void ProjectPointOnPlane(vec3_t dst, const vec3_t p, const vec3_t normal)
 void MakeNormalVectors(const vec3_t forward, vec3_t right, vec3_t up)
 {
 	float d;
+
 	// this rotate and negate guarantees a vector
 	// not colinear with the original
 	right[1] = -forward[0];
@@ -768,33 +764,9 @@ void vec3_rotate(const vec3_t in, vec3_t matrix[3], vec3_t out)
 	out[1] = DotProduct(in, matrix[1]);
 	out[2] = DotProduct(in, matrix[2]);
 	*/
-#ifdef SSE2
-	__m128 xmm0, xmm1, xmm2, xmm3, xmm4, xmm5;
-		xmm2 = _mm_load_ss(&in[2]);
-		xmm2 = _mm_shuffle_ps(xmm2, xmm2, 0);
-		xmm1 = _mm_loadh_pi(xmm2, (const __m64 *)(&in[0]));
-		xmm0 = _mm_shuffle_ps(xmm1, xmm1, 0b10101010);
-		xmm1 = _mm_shuffle_ps(xmm1, xmm1, 0b11111111);
-		xmm3 = _mm_loadu_ps(&matrix[0][0]);
-		xmm4 = _mm_loadu_ps(&matrix[1][1]);
-		xmm5 = _mm_load_ss(&matrix[2][2]);
-		xmm5 = _mm_shuffle_ps(xmm5, xmm4, 0b11100100);
-		xmm5 = _mm_shuffle_ps(xmm5, xmm5, 0b01001110);
-		xmm4 = _mm_shuffle_ps(xmm4, xmm3, 0b11110100);
-		xmm4 = _mm_shuffle_ps(xmm4, xmm4, 0b11010010);
-		xmm3 = _mm_mul_ps(xmm3, xmm0);
-		xmm4 = _mm_mul_ps(xmm4, xmm1);
-		xmm5 = _mm_mul_ps(xmm5, xmm2);
-		xmm5 = _mm_add_ps(xmm5, xmm3);
-		xmm5 = _mm_add_ps(xmm5, xmm4);
-		xmm5 = _mm_shuffle_ps(xmm5, xmm5, 0b10011100);
-		_mm_store_ss(&out[0], xmm5);
-		_mm_storeh_pi((__m64 *)(&out[1]), xmm5);
-#else
 	out[0] = in[0] * matrix[0][0] + in[1] * matrix[1][0] + in[2] * matrix[2][0];
 	out[1] = in[0] * matrix[0][1] + in[1] * matrix[1][1] + in[2] * matrix[2][1];
 	out[2] = in[0] * matrix[0][2] + in[1] * matrix[1][2] + in[2] * matrix[2][2];
-#endif
 }
 
 //============================================================================
@@ -972,14 +944,6 @@ float angle_delta(float angle1, float angle2)
  */
 void SetPlaneSignbits(struct cplane_s *out)
 {
-#ifdef SSE2
-	struct cplane_s *ppp = (struct cplane_s *)out;
-		__m128 xmm1, xmm2;
-		xmm1 = _mm_loadh_pi(_mm_load_ss((const float *)&ppp->normal[0]), (const __m64 *)&ppp->normal[1]);
-		xmm1 = _mm_shuffle_ps(xmm1, xmm1, 0b01111000);
-		xmm2 = _mm_cmplt_ps(xmm1, _mm_setzero_ps());
-		out->signbits = (byte)(_mm_movemask_ps(xmm2));
-#else
 	byte bits = 0, j;
 
 	// for fast box on planeside test
@@ -992,7 +956,6 @@ void SetPlaneSignbits(struct cplane_s *out)
 		}
 	}
 	out->signbits = bits;
-#endif
 }
 
 /*
@@ -1403,18 +1366,8 @@ float RadiusFromBounds(const vec3_t mins, const vec3_t maxs)
  */
 void ClearBounds(vec3_t mins, vec3_t maxs)
 {
-#ifdef SSE2
-	__m128 xmm0, xmm1;
-		xmm0 = _mm_set_ps1(99999.0f);
-		xmm1 = _mm_sub_ps(_mm_setzero_ps(), xmm0);
-		_mm_store_ss(&mins[0], xmm0);
-		_mm_storeh_pi((__m64 *)(&mins[1]), xmm0);
-		_mm_store_ss(&maxs[0], xmm1);
-		_mm_storeh_pi((__m64 *)(&maxs[1]), xmm1);
-#else
 	mins[0] = mins[1] = mins[2] = 99999;
 	maxs[0] = maxs[1] = maxs[2] = -99999;
-#endif
 }
 
 /**
@@ -1425,18 +1378,6 @@ void ClearBounds(vec3_t mins, vec3_t maxs)
  */
 void AddPointToBounds(const vec3_t v, vec3_t mins, vec3_t maxs)
 {
-#ifdef SSE2
-	__m128 xmm0, xmm1, xmm2;
-		xmm0 = _mm_loadh_pi(_mm_load_ss(&v[0]), (const __m64 *)(&v[1]));
-		xmm1 = _mm_loadh_pi(_mm_load_ss(&mins[0]), (const __m64 *)(&mins[1]));
-		xmm2 = _mm_loadh_pi(_mm_load_ss(&maxs[0]), (const __m64 *)(&maxs[1]));
-		xmm1 = _mm_min_ps(xmm1, xmm0);
-		xmm2 = _mm_max_ps(xmm2, xmm0);
-		_mm_store_ss(&mins[0], xmm1);
-		_mm_storeh_pi((__m64 *)(&mins[1]), xmm1);
-		_mm_store_ss(&maxs[0], xmm2);
-		_mm_storeh_pi((__m64 *)(&maxs[1]), xmm2);
-#else
 	if (v[0] < mins[0])
 	{
 		mins[0] = v[0];
@@ -1463,7 +1404,6 @@ void AddPointToBounds(const vec3_t v, vec3_t mins, vec3_t maxs)
 	{
 		maxs[2] = v[2];
 	}
-#endif
 }
 
 /*
@@ -1516,19 +1456,6 @@ qboolean PointInBounds(const vec3_t v, const vec3_t mins, const vec3_t maxs)
  */
 void BoundsAdd(vec3_t mins, vec3_t maxs, const vec3_t mins2, const vec3_t maxs2)
 {
-#ifdef SSE2
-	__m128 xmm1, xmm2, xmm3, xmm4;
-		xmm1 = _mm_loadh_pi(_mm_load_ss(&mins[0]), (const __m64 *)(&mins[1]));
-		xmm2 = _mm_loadh_pi(_mm_load_ss(&mins2[0]), (const __m64 *)(&mins2[1]));
-		xmm3 = _mm_loadh_pi(_mm_load_ss(&maxs[0]), (const __m64 *)(&maxs[1]));
-		xmm4 = _mm_loadh_pi(_mm_load_ss(&maxs2[0]), (const __m64 *)(&maxs2[1]));
-		xmm1 = _mm_min_ps(xmm1, xmm2);
-		xmm3 = _mm_max_ps(xmm3, xmm4);
-		_mm_store_ss(&mins[0], xmm1);
-		_mm_storeh_pi((__m64 *)(&mins[1]), xmm1);
-		_mm_store_ss(&maxs[0], xmm3);
-		_mm_storeh_pi((__m64 *)(&maxs[1]), xmm3);
-#else
 	if (mins2[0] < mins[0])
 	{
 		mins[0] = mins2[0];
@@ -1558,7 +1485,6 @@ void BoundsAdd(vec3_t mins, vec3_t maxs, const vec3_t mins2, const vec3_t maxs2)
 	{
 		maxs[2] = maxs2[2];
 	}
-#endif
 }
 
 /**
@@ -1607,21 +1533,6 @@ vec_t vec3_norm(vec3_t v)
  */
 void vec3_norm_fast(vec3_t v)
 {
-#ifdef SSE2
-	__m128 xmm0, xmm2, xmm3, xmm4, xmm6;
-		xmm2 = _mm_loadh_pi(_mm_load_ss(&v[2]), (const __m64 *)(&v[0]));
-		xmm3 = xmm2;
-		xmm2 = _mm_mul_ps(xmm2, xmm3);
-		xmm4 = _mm_movehdup_ps(xmm2);
-		xmm6 = _mm_add_ps(xmm2, xmm4);
-		xmm4 = _mm_movehl_ps(xmm4, xmm6);
-		xmm2 = _mm_add_ss(xmm6, xmm4);
-		xmm0 = _mm_rsqrt_ss(xmm2);
-		xmm0 = _mm_shuffle_ps(xmm0, xmm0, 0);
-		xmm3 = _mm_mul_ps(xmm3, xmm0);
-		_mm_store_ss(&v[2], xmm3);
-		_mm_storeh_pi((__m64 *)(&v[0]), xmm3);
-#else
 	float ilength;
 
 	ilength = Q_rsqrt(DotProduct(v, v));
@@ -1629,7 +1540,6 @@ void vec3_norm_fast(vec3_t v)
 	v[0] *= ilength;
 	v[1] *= ilength;
 	v[2] *= ilength;
-#endif
 }
 
 /**
@@ -1670,19 +1580,9 @@ vec_t vec3_norm2(const vec3_t v, vec3_t out)
  */
 void _VectorMA(const vec3_t veca, float scale, const vec3_t vecb, vec3_t vecc)
 {
-#ifdef SSE2
-	__m128 xmm2, xmm3;
-		xmm3 = _mm_loadh_pi(_mm_load_ss((const float *)vecb), (const __m64 *)(vecb + 1));
-		xmm3 = _mm_mul_ps(xmm3, _mm_set_ps1(scale));
-		xmm2 = _mm_loadh_pi(_mm_load_ss((const float *)veca), (const __m64 *)(veca + 1));
-		xmm2 = _mm_add_ps(xmm2, xmm3);
-		_mm_store_ss((float *)vecc, xmm2);
-		_mm_storeh_pi((__m64 *)(vecc + 1), xmm2);
-#else
 	vecc[0] = veca[0] + scale * vecb[0];
 	vecc[1] = veca[1] + scale * vecb[1];
 	vecc[2] = veca[2] + scale * vecb[2];
-#endif
 }
 
 /**
@@ -1693,19 +1593,7 @@ void _VectorMA(const vec3_t veca, float scale, const vec3_t vecb, vec3_t vecc)
  */
 vec_t _DotProduct(const vec3_t v1, const vec3_t v2)
 {
-#ifdef SSE2
-	__m128 xmm0, xmm1, xmm2, xmm3;
-		xmm0 = _mm_loadh_pi(_mm_load_ss(&v1[0]), (const __m64 *)(&v1[1]));
-		xmm3 = _mm_loadh_pi(_mm_load_ss(&v2[0]), (const __m64 *)(&v2[1]));
-		xmm0 = _mm_mul_ps(xmm0, xmm3);
-		xmm1 = _mm_movehdup_ps(xmm0);
-		xmm2 = _mm_add_ps(xmm0, xmm1);
-		xmm1 = _mm_movehl_ps(xmm1, xmm2);
-		xmm2 = _mm_add_ss(xmm2, xmm1);
-		_mm_store_ss(&v1, xmm2);
-#else
 	return v1[0] * v2[0] + v1[1] * v2[1] + v1[2] * v2[2];
-#endif
 }
 
 /**
@@ -1716,18 +1604,9 @@ vec_t _DotProduct(const vec3_t v1, const vec3_t v2)
  */
 void _VectorSubtract(const vec3_t veca, const vec3_t vecb, vec3_t out)
 {
-#ifdef SSE2
-	__m128 xmm1, xmm3;
-		xmm1 = _mm_loadh_pi(_mm_load_ss((const float *)veca), (const __m64 *)(veca + 1));
-		xmm3 = _mm_loadh_pi(_mm_load_ss((const float *)vecb), (const __m64 *)(vecb + 1));
-		xmm1 = _mm_sub_ps(xmm1, xmm3);
-		_mm_store_ss(&out[0], xmm1);
-		_mm_storeh_pi((__m64 *)(&out[1]), xmm1);
-#else
 	out[0] = veca[0] - vecb[0];
 	out[1] = veca[1] - vecb[1];
 	out[2] = veca[2] - vecb[2];
-#endif
 }
 
 /**
@@ -1738,18 +1617,9 @@ void _VectorSubtract(const vec3_t veca, const vec3_t vecb, vec3_t out)
  */
 void _VectorAdd(const vec3_t veca, const vec3_t vecb, vec3_t out)
 {
-#ifdef SSE2
-	__m128 xmm1, xmm3;
-		xmm1 = _mm_loadh_pi(_mm_load_ss((const float *)veca), (const __m64 *)(veca + 1));
-		xmm3 = _mm_loadh_pi(_mm_load_ss((const float *)vecb), (const __m64 *)(vecb + 1));
-		xmm1 = _mm_add_ps(xmm1, xmm3);
-		_mm_store_ss((float *)out, xmm1);
-		_mm_storeh_pi((__m64 *)(out + 1), xmm1);
-#else
 	out[0] = veca[0] + vecb[0];
 	out[1] = veca[1] + vecb[1];
 	out[2] = veca[2] + vecb[2];
-#endif
 }
 
 /**
@@ -1759,16 +1629,9 @@ void _VectorAdd(const vec3_t veca, const vec3_t vecb, vec3_t out)
  */
 void _VectorCopy(const vec3_t in, vec3_t out)
 {
-#ifdef SSE2
-	__m128 xmm0;
-		xmm0 = _mm_loadh_pi(_mm_load_ss((const float *)in), (const __m64 *)(in + 1));
-		_mm_store_ss((float *)out, xmm0);
-		_mm_storeh_pi((__m64 *)(out + 1), xmm0);
-#else
 	out[0] = in[0];
 	out[1] = in[1];
 	out[2] = in[2];
-#endif
 }
 
 /**
@@ -1779,17 +1642,9 @@ void _VectorCopy(const vec3_t in, vec3_t out)
  */
 void _VectorScale(const vec3_t in, vec_t scale, vec3_t out)
 {
-#ifdef SSE2
-	__m128 xmm3;
-		xmm3 = _mm_loadh_pi(_mm_load_ss((const float *)in), (const __m64 *)(in + 1));
-		xmm3 = _mm_mul_ps(xmm3, _mm_set_ps1(scale));
-		_mm_store_ss((float *)out, xmm3);
-		_mm_storeh_pi((__m64 *)(out + 1), xmm3);
-#else
 	out[0] = in[0] * scale;
 	out[1] = in[1] * scale;
 	out[2] = in[2] * scale;
-#endif
 }
 
 /**
@@ -1800,23 +1655,9 @@ void _VectorScale(const vec3_t in, vec_t scale, vec3_t out)
  */
 void vec3_cross(const vec3_t v1, const vec3_t v2, vec3_t cross)
 {
-#ifdef SSE2
-	__m128 xmm1, xmm2, xmm4;
-		xmm1 = _mm_loadh_pi(_mm_load_ss(&v1[2]), (const __m64 *)(&v1[0]));
-		xmm2 = _mm_loadh_pi(_mm_load_ss(&v2[0]), (const __m64 *)(&v2[1]));
-		xmm4 = xmm2;
-		xmm2 = _mm_mul_ps(xmm2, xmm1);
-		xmm4 = _mm_shuffle_ps(xmm4, xmm4, 0b00110110);
-		xmm4 = _mm_mul_ps(xmm4, xmm1);
-		xmm2 = _mm_shuffle_ps(xmm2, xmm2, 0b10000111);
-		xmm2 = _mm_sub_ps(xmm2, xmm4);
-		_mm_store_ss(&cross[0], xmm2);
-		_mm_storeh_pi((__m64 *)(&cross[1]), xmm2);
-#else
 	cross[0] = v1[1] * v2[2] - v1[2] * v2[1];
 	cross[1] = v1[2] * v2[0] - v1[0] * v2[2];
 	cross[2] = v1[0] * v2[1] - v1[1] * v2[0];
-#endif
 }
 
 /**
@@ -1873,17 +1714,9 @@ vec_t vec3_distance_squared(const vec3_t p1, const vec3_t p2)
  */
 void vec3_inv(vec3_t v)
 {
-#ifdef SSE2
-	__m128 xmm0, xmm1;
-		xmm1 = _mm_loadh_pi(_mm_load_ss(&v[0]), (const __m64 *)(&v[1]));
-		xmm0 = _mm_sub_ps(_mm_setzero_ps(), xmm1);
-		_mm_store_ss(&v[0], xmm0);
-		_mm_storeh_pi((__m64 *)(&v[1]), xmm0);
-#else
 	v[0] = -v[0];
 	v[1] = -v[1];
 	v[2] = -v[2];
-#endif
 }
 
 /*
@@ -1928,45 +1761,6 @@ int PlaneTypeForNormal (vec3_t normal) {
  */
 void _MatrixMultiply(float in1[3][3], float in2[3][3], float out[3][3])
 {
-#ifdef SSE2
-	__m128 xmm0, xmm1, xmm2, xmm3, xmm4, xmm5, xmm6, xmm7;
-		xmm1 = _mm_loadu_ps((&in2[0][0]));
-		xmm3 = _mm_loadu_ps((&in2[1][0]));
-		xmm5 = _mm_loadu_ps((&in2[1][2]));
-		xmm5 = _mm_shuffle_ps(xmm5, xmm5, 0b00111001);
-		xmm7 = _mm_loadu_ps((&in1[0][0]));
-		xmm0 = _mm_shuffle_ps(xmm7, xmm7, 0);
-		xmm2 = _mm_shuffle_ps(xmm7, xmm7, 0b01010101);
-		xmm4 = _mm_shuffle_ps(xmm7, xmm7, 0b10101010);
-		xmm0 = _mm_mul_ps(xmm0, xmm1);
-		xmm2 = _mm_mul_ps(xmm2, xmm3);
-		xmm4 = _mm_mul_ps(xmm4, xmm5);
-		xmm0 = _mm_add_ps(xmm0, xmm2);
-		xmm0 = _mm_add_ps(xmm0, xmm4);
-		_mm_storeu_ps((float *)(&out[0][0]), xmm0);
-		xmm7 = _mm_loadu_ps((&in1[1][0]));
-		xmm0 = _mm_shuffle_ps(xmm7, xmm7, 0);
-		xmm2 = _mm_shuffle_ps(xmm7, xmm7, 0b01010101);
-		xmm4 = _mm_shuffle_ps(xmm7, xmm7, 0b10101010);
-		xmm0 = _mm_mul_ps(xmm0, xmm1);
-		xmm2 = _mm_mul_ps(xmm2, xmm3);
-		xmm4 = _mm_mul_ps(xmm4, xmm5);
-		xmm0 = _mm_add_ps(xmm0, xmm2);
-		xmm6 = _mm_add_ps(xmm0, xmm4);
-		_mm_storeu_ps((float *)(&out[1][0]), xmm6);
-		xmm7 = _mm_loadu_ps((&in1[1][2]));
-		xmm0 = _mm_shuffle_ps(xmm7, xmm7, 0b01010101);
-		xmm2 = _mm_shuffle_ps(xmm7, xmm7, 0b10101010);
-		xmm4 = _mm_shuffle_ps(xmm7, xmm7, 0b11111111);
-		xmm0 = _mm_mul_ps(xmm0, xmm1);
-		xmm2 = _mm_mul_ps(xmm2, xmm3);
-		xmm4 = _mm_mul_ps(xmm4, xmm5);
-		xmm0 = _mm_add_ps(xmm0, xmm2);
-		xmm0 = _mm_add_ps(xmm0, xmm4);
-		xmm6 = _mm_shuffle_ps(xmm6, xmm0, 0b00001010);
-		xmm6 = _mm_shuffle_ps(xmm6, xmm0, 0b10011100);
-		_mm_storeu_ps((float *)(&out[1][2]), xmm6);
-#else
 	out[0][0] = in1[0][0] * in2[0][0] + in1[0][1] * in2[1][0] + in1[0][2] * in2[2][0];
 	out[0][1] = in1[0][0] * in2[0][1] + in1[0][1] * in2[1][1] + in1[0][2] * in2[2][1];
 	out[0][2] = in1[0][0] * in2[0][2] + in1[0][1] * in2[1][2] + in1[0][2] * in2[2][2];
@@ -1976,7 +1770,6 @@ void _MatrixMultiply(float in1[3][3], float in2[3][3], float out[3][3])
 	out[2][0] = in1[2][0] * in2[0][0] + in1[2][1] * in2[1][0] + in1[2][2] * in2[2][0];
 	out[2][1] = in1[2][0] * in2[0][1] + in1[2][1] * in2[1][1] + in1[2][2] * in2[2][1];
 	out[2][2] = in1[2][0] * in2[0][2] + in1[2][1] * in2[1][2] + in1[2][2] * in2[2][2];
-#endif
 }
 
 /**
@@ -1996,17 +1789,6 @@ void mat3_transpose(vec3_t matrix[3], vec3_t transpose[3])
 			transpose[i][j] = matrix[j][i];
 		}
 	}
-#elif defined SSE2
-	__m128 xmm0, xmm1, xmm3, xmm4, xmm5;
-		xmm0 = _mm_loadu_ps(&matrix[0][0]);
-		xmm1 = _mm_loadu_ps(&matrix[1][1]);
-		xmm3 = _mm_shuffle_ps(xmm0, xmm1, 0b10100100);
-		xmm4 = _mm_shuffle_ps(xmm0, xmm3, 0b01111100);
-		_mm_storeu_ps(&transpose[0][0], xmm4);
-		xmm3 = _mm_shuffle_ps(xmm0, xmm1, 0b01011010);
-		xmm5 = _mm_shuffle_ps(xmm1, xmm3, 0b11011100);
-		_mm_storeu_ps(&transpose[1][1], xmm5);
-		_mm_store_ss(&transpose[2][2], _mm_load_ss(&matrix[2][2]));
 #else
 	transpose[0][0] = matrix[0][0];
 	transpose[0][1] = matrix[1][0];
@@ -2786,11 +2568,6 @@ void mat4_copy(const mat4_t in, mat4_t out)
 		: "a" (out), "d" (in)
 		: "memory"
 	);
-#elif defined SSE2
-	_mm_storeu_ps(&out[0], _mm_loadu_ps(&in[0]));
-	_mm_storeu_ps(&out[4], _mm_loadu_ps(&in[4]));
-	_mm_storeu_ps(&out[8], _mm_loadu_ps(&in[8]));
-	_mm_storeu_ps(&out[12], _mm_loadu_ps(&in[12]));
 #else
 	out[0] = in[0];       out[4] = in[4];       out[8] = in[8];       out[12] = in[12];
 	out[1] = in[1];       out[5] = in[5];       out[9] = in[9];       out[13] = in[13];
@@ -2853,25 +2630,6 @@ void mat4_transform_vec4(const mat4_t m, const vec4_t in, vec4_t out)
 	_t0 = _mm_add_ps(_t0, _t1);
 
 	_mm_storeu_ps(out, _t0);
-#elif defined SSE2
-	__m128 xmm0, xmm1, xmm2, xmm3, xmm4, xmm5, xmm6, xmm7;
-		xmm7 = _mm_loadu_ps((const float *)in);
-		xmm0 = _mm_loadu_ps((const float *)m);
-		xmm1 = _mm_loadu_ps((const float *)(m + 4));
-		xmm2 = _mm_loadu_ps((const float *)(m + 8));
-		xmm3 = _mm_loadu_ps((const float *)(m + 12));
-		xmm4 = _mm_shuffle_ps(xmm7, xmm7, 0b00000000);
-		xmm5 = _mm_shuffle_ps(xmm7, xmm7, 0b01010101);
-		xmm6 = _mm_shuffle_ps(xmm7, xmm7, 0b10101010);
-		xmm7 = _mm_shuffle_ps(xmm7, xmm7, 0b11111111);
-		xmm0 = _mm_mul_ps(xmm0, xmm4);
-		xmm1 = _mm_mul_ps(xmm1, xmm5);
-		xmm2 = _mm_mul_ps(xmm2, xmm6);
-		xmm3 = _mm_mul_ps(xmm3, xmm7);
-		xmm1 = _mm_add_ps(xmm1, xmm0);
-		xmm3 = _mm_add_ps(xmm3, xmm2);
-		xmm3 = _mm_add_ps(xmm3, xmm1);
-		_mm_storeu_ps(out, xmm3);
 #else
 	out[0] = m[0] * in[0] + m[4] * in[1] + m[8] * in[2] + m[12] * in[3];
 	out[1] = m[1] * in[0] + m[5] * in[1] + m[9] * in[2] + m[13] * in[3];
@@ -2889,17 +2647,10 @@ void mat4_transform_vec4(const mat4_t m, const vec4_t in, vec4_t out)
  */
 void mat4_reset_translate(mat4_t m, vec_t x, vec_t y, vec_t z)
 {
-#ifdef SSE2
-	_mm_storeu_ps(&m[0], _mm_set_ps(0.0f, 0.0f, 0.0f, 1.0f));
-	_mm_storeu_ps(&m[4], _mm_set_ps(0.0f, 0.0f, 1.0f, 0.0f));
-	_mm_storeu_ps(&m[8], _mm_set_ps(0.0f, 1.0f, 0.0f, 0.0f));
-	_mm_storeu_ps(&m[12], _mm_set_ps(1.0f, z, y, x));
-#else
 	m[0] = 1;      m[4] = 0;      m[8] = 0;      m[12] = x;
 	m[1] = 0;      m[5] = 1;      m[9] = 0;      m[13] = y;
 	m[2] = 0;      m[6] = 0;      m[10] = 1;      m[14] = z;
 	m[3] = 0;      m[7] = 0;      m[11] = 0;      m[15] = 1;
-#endif
 }
 
 /**
@@ -2921,17 +2672,10 @@ void mat4_reset_translate_vec3(mat4_t m, vec3_t position)
  */
 void mat4_reset_scale(mat4_t m, vec_t x, vec_t y, vec_t z)
 {
-#ifdef SSE2
-	_mm_storeu_ps(&m[0], _mm_set_ps(0.0f, 0.0f, 0.0f, x));
-	_mm_storeu_ps(&m[4], _mm_set_ps(0.0f, 0.0f, y, 0.0f));
-	_mm_storeu_ps(&m[8], _mm_set_ps(0.0f, z, 0.0f, 0.0f));
-	_mm_storeu_ps(&m[12], _mm_set_ps(1.0f, 0.0f, 0.0f, 0.0f));
-#else
 	m[0] = x;      m[4] = 0;      m[8] = 0;      m[12] = 0;
 	m[1] = 0;      m[5] = y;      m[9] = 0;      m[13] = 0;
 	m[2] = 0;      m[6] = 0;      m[10] = z;      m[14] = 0;
 	m[3] = 0;      m[7] = 0;      m[11] = 0;      m[15] = 1;
-#endif
 }
 
 /**
@@ -2973,64 +2717,6 @@ void mat4_mult(const mat4_t a, const mat4_t b, mat4_t out)
 		_mm_storeu_ps(&out[i * 4], _t3);
 	}
 
-#elif defined SSE2
-	__m128 xmm0, xmm1, xmm2, xmm3, xmm4, xmm5, xmm6, xmm7;
-		xmm4 = _mm_loadu_ps(&a[0]);
-		xmm5 = _mm_loadu_ps(&a[4]);
-		xmm6 = _mm_loadu_ps(&a[8]);
-		xmm7 = _mm_loadu_ps(&a[12]);
-		xmm0 = _mm_loadu_ps(&b[0]);
-		xmm3 = _mm_shuffle_ps(xmm0, xmm0, 0b11111111);
-		xmm2 = _mm_shuffle_ps(xmm0, xmm0, 0b10101010);
-		xmm1 = _mm_shuffle_ps(xmm0, xmm0, 0b01010101);
-		xmm0 = _mm_shuffle_ps(xmm0, xmm0, 0b00000000);
-		xmm3 = _mm_mul_ps(xmm3, xmm7);
-		xmm2 = _mm_mul_ps(xmm2, xmm6);
-		xmm1 = _mm_mul_ps(xmm1, xmm5);
-		xmm0 = _mm_mul_ps(xmm0, xmm4);
-		xmm3 = _mm_add_ps(xmm3, xmm2);
-		xmm0 = _mm_add_ps(xmm0, xmm1);
-		xmm0 = _mm_add_ps(xmm0, xmm3);
-		_mm_storeu_ps(&out[0], xmm0);
-		xmm0 = _mm_loadu_ps(&b[4]);
-		xmm3 = _mm_shuffle_ps(xmm0, xmm0, 0b11111111);
-		xmm2 = _mm_shuffle_ps(xmm0, xmm0, 0b10101010);
-		xmm1 = _mm_shuffle_ps(xmm0, xmm0, 0b01010101);
-		xmm0 = _mm_shuffle_ps(xmm0, xmm0, 0b00000000);
-		xmm3 = _mm_mul_ps(xmm3, xmm7);
-		xmm2 = _mm_mul_ps(xmm2, xmm6);
-		xmm1 = _mm_mul_ps(xmm1, xmm5);
-		xmm0 = _mm_mul_ps(xmm0, xmm4);
-		xmm3 = _mm_add_ps(xmm3, xmm2);
-		xmm0 = _mm_add_ps(xmm0, xmm1);
-		xmm0 = _mm_add_ps(xmm0, xmm3);
-		_mm_storeu_ps(&out[4], xmm0);
-		xmm0 = _mm_loadu_ps(&b[8]);
-		xmm3 = _mm_shuffle_ps(xmm0, xmm0, 0b11111111);
-		xmm2 = _mm_shuffle_ps(xmm0, xmm0, 0b10101010);
-		xmm1 = _mm_shuffle_ps(xmm0, xmm0, 0b01010101);
-		xmm0 = _mm_shuffle_ps(xmm0, xmm0, 0b00000000);
-		xmm3 = _mm_mul_ps(xmm3, xmm7);
-		xmm2 = _mm_mul_ps(xmm2, xmm6);
-		xmm1 = _mm_mul_ps(xmm1, xmm5);
-		xmm0 = _mm_mul_ps(xmm0, xmm4);
-		xmm3 = _mm_add_ps(xmm3, xmm2);
-		xmm0 = _mm_add_ps(xmm0, xmm1);
-		xmm0 = _mm_add_ps(xmm0, xmm3);
-		_mm_storeu_ps(&out[8], xmm0);
-		xmm0 = _mm_loadu_ps(&b[12]);
-		xmm3 = _mm_shuffle_ps(xmm0, xmm0, 0b11111111);
-		xmm2 = _mm_shuffle_ps(xmm0, xmm0, 0b10101010);
-		xmm1 = _mm_shuffle_ps(xmm0, xmm0, 0b01010101);
-		xmm0 = _mm_shuffle_ps(xmm0, xmm0, 0b00000000);
-		xmm3 = _mm_mul_ps(xmm3, xmm7);
-		xmm2 = _mm_mul_ps(xmm2, xmm6);
-		xmm1 = _mm_mul_ps(xmm1, xmm5);
-		xmm0 = _mm_mul_ps(xmm0, xmm4);
-		xmm3 = _mm_add_ps(xmm3, xmm2);
-		xmm0 = _mm_add_ps(xmm0, xmm1);
-		xmm0 = _mm_add_ps(xmm0, xmm3);
-		_mm_storeu_ps(&out[12], xmm0);
 #else
 	out[0] = b[0] * a[0] + b[1] * a[4] + b[2] * a[8] + b[3] * a[12];
 	out[1] = b[0] * a[1] + b[1] * a[5] + b[2] * a[9] + b[3] * a[13];
@@ -3073,17 +2759,10 @@ void mat4_mult_self(mat4_t m, const mat4_t m2)
  */
 void mat4_ident(mat4_t m)
 {
-#ifdef SSE2
-	_mm_storeu_ps(&m[0], _mm_set_ps(0.0f, 0.0f, 0.0f, 1.0f));
-	_mm_storeu_ps(&m[4], _mm_set_ps(0.0f, 0.0f, 1.0f, 0.0f));
-	_mm_storeu_ps(&m[8], _mm_set_ps(0.0f, 1.0f, 0.0f, 0.0f));
-	_mm_storeu_ps(&m[12], _mm_set_ps(1.0f, 0.0f, 0.0f, 0.0f));
-#else
 	m[0] = 1;      m[4] = 0;      m[8] = 0;      m[12] = 0;
 	m[1] = 0;      m[5] = 1;      m[9] = 0;      m[13] = 0;
 	m[2] = 0;      m[6] = 0;      m[10] = 1;      m[14] = 0;
 	m[3] = 0;      m[7] = 0;      m[11] = 0;      m[15] = 1;
-#endif
 }
 
 /**
@@ -3094,30 +2773,9 @@ void mat4_ident(mat4_t m)
  */
 void mat4_transform_vec3(const mat4_t m, const vec3_t in, vec3_t out)
 {
-#ifdef SSE2
-	__m128 xmm0, xmm1, xmm2, xmm3, xmm4, xmm5, xmm6;
-		xmm1 = _mm_loadh_pi(_mm_load_ss((const float *)in), (const __m64 *)(in + 1));
-		xmm2 = _mm_shuffle_ps(xmm1, xmm1, 0b11111111);
-		xmm0 = _mm_shuffle_ps(xmm1, xmm1, 0b00000000);
-		xmm1 = _mm_shuffle_ps(xmm1, xmm1, 0b10101010);
-		xmm3 = _mm_loadu_ps((const float *)m);
-		xmm4 = _mm_loadu_ps((const float *)(m + 4));
-		xmm5 = _mm_loadu_ps((const float *)(m + 8));
-		xmm6 = _mm_loadu_ps((const float *)(m + 12));
-		xmm0 = _mm_mul_ps(xmm0, xmm3);
-		xmm1 = _mm_mul_ps(xmm1, xmm4);
-		xmm2 = _mm_mul_ps(xmm2, xmm5);
-		xmm0 = _mm_add_ps(xmm0, xmm1);
-		xmm0 = _mm_add_ps(xmm0, xmm2);
-		xmm0 = _mm_add_ps(xmm0, xmm6);
-		xmm0 = _mm_shuffle_ps(xmm0, xmm0, 0b10010100);
-		_mm_store_ss((float *)out, xmm0);
-		_mm_storeh_pi((__m64 *)(out + 1), xmm0);
-#else
 	out[0] = m[0] * in[0] + m[4] * in[1] + m[8] * in[2] + m[12];
 	out[1] = m[1] * in[0] + m[5] * in[1] + m[9] * in[2] + m[13];
 	out[2] = m[2] * in[0] + m[6] * in[1] + m[10] * in[2] + m[14];
-#endif
 }
 
 /**
@@ -3159,24 +2817,6 @@ void mat4_transpose(const mat4_t in, mat4_t out)
 		: "a" (out)
 		: "memory"
 	);
-#elif defined SSE2
-	__m128 xmm0, xmm1, xmm2, xmm3, xmm4, xmm5, xmm6, xmm7;
-		xmm0 = _mm_loadu_ps(&in[0]);
-		xmm1 = _mm_loadu_ps(&in[4]);
-		xmm2 = _mm_loadu_ps(&in[8]);
-		xmm3 = _mm_loadu_ps(&in[12]);
-		xmm4 = _mm_shuffle_ps(xmm1, xmm0, 0b11101110);
-		xmm5 = _mm_shuffle_ps(xmm3, xmm2, 0b11101011);
-		xmm6 = _mm_shuffle_ps(xmm5, xmm4, 0b11011100);
-		_mm_storeu_ps((float *)&out[0], xmm6);
-		xmm7 = _mm_shuffle_ps(xmm5, xmm4, 0b10001001);
-		_mm_storeu_ps((float *)&out[4], xmm7);
-		xmm4 = _mm_shuffle_ps(xmm1, xmm0, 0b01000100);
-		xmm5 = _mm_shuffle_ps(xmm3, xmm2, 0b01000001);
-		xmm6 = _mm_shuffle_ps(xmm5, xmm4, 0b11011100);
-		_mm_storeu_ps((float *)&out[8], xmm6);
-		xmm7 = _mm_shuffle_ps(xmm5, xmm4, 0b10001001);
-		_mm_storeu_ps((float *)&out[12], xmm7);
 #else
 	out[0]  = in[0];       out[1] = in[4];       out[2] = in[8];       out[3] = in[12];
 	out[4]  = in[1];       out[5] = in[5];       out[6] = in[9];       out[7] = in[13];
@@ -3192,28 +2832,6 @@ void mat4_transpose(const mat4_t in, mat4_t out)
  */
 void mat4_from_quat(mat4_t m, const quat_t q)
 {
-#ifdef SSE2
-	vec4_t q2, qz2, qq2, qy2;
-		float xx2;
-		__m128 xmm0, xmm1, xmm2, xmm3, xmm4;
-		xmm0 = _mm_loadu_ps(&q[0]);
-		xmm1 = _mm_add_ps(xmm0, xmm0);
-		xmm2 = _mm_shuffle_ps(xmm1, xmm1, 0b01010101);
-		xmm2 = _mm_mul_ps(xmm2, xmm0);
-		xmm3 = _mm_shuffle_ps(xmm1, xmm1, 0b10101010);
-		xmm3 = _mm_mul_ps(xmm3, xmm0);
-		xmm4 = _mm_shuffle_ps(xmm1, xmm1, 0b11111111);
-		xmm4 = _mm_mul_ps(xmm4, xmm1);
-		_mm_storeu_ps((float *)&q2, xmm1);
-		_mm_storeu_ps((float *)&qy2, xmm2);
-		_mm_storeu_ps((float *)&qz2, xmm3);
-		_mm_storeu_ps((float *)&qq2, xmm4);
-		xx2 = q[0] * q2[0];
-		_mm_storeu_ps(&m[0], _mm_set_ps(0.0f, qz2[0] - qq2[1], qy2[0] + qq2[2], -qy2[1] - qz2[2] + 1.0f));
-		_mm_storeu_ps(&m[4], _mm_set_ps(0.0f, qz2[1] + qq2[0], -xx2 - qz2[2] + 1.0f, qy2[0] - qq2[2]));
-		_mm_storeu_ps(&m[8], _mm_set_ps(0.0f, -xx2 - qy2[1] + 1.0f, qz2[1] - qq2[0], qz2[0] + qq2[1]));
-		_mm_storeu_ps(&m[12], _mm_set_ps(1.0f, 0.0f, 0.0f, 0.0f));
-#else
 #if 1
 	/*
 	From Quaternion to Matrix and Back
@@ -3310,7 +2928,6 @@ void mat4_from_quat(mat4_t m, const quat_t q)
 	m[3]  = m[7] = m[11] = m[12] = m[13] = m[14] = 0;
 	m[15] = 1;
 #endif
-#endif
 }
 
 /**
@@ -3322,17 +2939,10 @@ void mat4_from_quat(mat4_t m, const quat_t q)
  */
 void MatrixFromVectorsFLU(mat4_t m, const vec3_t forward, const vec3_t left, const vec3_t up)
 {
-#ifdef SSE2
-	_mm_storeu_ps(&m[0], _mm_set_ps(0.0f, forward[2], forward[1], forward[0]));
-	_mm_storeu_ps(&m[4], _mm_set_ps(0.0f, left[2], left[1], left[0]));
-	_mm_storeu_ps(&m[8], _mm_set_ps(0.0f, up[2], up[1], up[0]));
-	_mm_storeu_ps(&m[12], _mm_set_ps(1.0f, 0.0f, 0.0f, 0.0f));
-#else
 	m[0] = forward[0];     m[4] = left[0];        m[8] = up[0];  m[12] = 0;
 	m[1] = forward[1];     m[5] = left[1];        m[9] = up[1];  m[13] = 0;
 	m[2] = forward[2];     m[6] = left[2];        m[10] = up[2];  m[14] = 0;
 	m[3] = 0;              m[7] = 0;              m[11] = 0;      m[15] = 1;
-#endif
 }
 
 /**
@@ -3345,17 +2955,10 @@ void MatrixFromVectorsFLU(mat4_t m, const vec3_t forward, const vec3_t left, con
  */
 void MatrixSetupTransformFromVectorsFLU(mat4_t m, const vec3_t forward, const vec3_t left, const vec3_t up, const vec3_t origin)
 {
-#ifdef SSE2
-	_mm_storeu_ps(&m[0], _mm_set_ps(0.0f, forward[2], forward[1], forward[0]));
-	_mm_storeu_ps(&m[4], _mm_set_ps(0.0f, left[2], left[1], left[0]));
-	_mm_storeu_ps(&m[8], _mm_set_ps(0.0f, up[2], up[1], up[0]));
-	_mm_storeu_ps(&m[12], _mm_set_ps(1.0f, origin[2], origin[1], origin[0]));
-#else
 	m[0] = forward[0];     m[4] = left[0];        m[8] = up[0];  m[12] = origin[0];
 	m[1] = forward[1];     m[5] = left[1];        m[9] = up[1];  m[13] = origin[1];
 	m[2] = forward[2];     m[6] = left[2];        m[10] = up[2];  m[14] = origin[2];
 	m[3] = 0;              m[7] = 0;              m[11] = 0;      m[15] = 1;
-#endif
 }
 
 /**
@@ -3367,16 +2970,6 @@ void MatrixSetupTransformFromVectorsFLU(mat4_t m, const vec3_t forward, const ve
  */
 void MatrixToVectorsFLU(const mat4_t m, vec3_t forward, vec3_t left, vec3_t up)
 {
-#ifdef SSE2
-	if (forward)
-		VectorCopy(&m[0], forward);
-
-	if (left)
-		VectorCopy(&m[4], left);
-
-	if (up)
-		VectorCopy(&m[8], up);
-#else
 	if (forward)
 	{
 		forward[0] = m[0];      // cp*cy;
@@ -3397,7 +2990,6 @@ void MatrixToVectorsFLU(const mat4_t m, vec3_t forward, vec3_t left, vec3_t up)
 		up[1] = m[9];   // cr*sp*sy+-sr*cy;
 		up[2] = m[10];  // cr*cp;
 	}
-#endif
 }
 
 /**
@@ -3427,19 +3019,6 @@ void MatrixSetupTransformFromVectorsFRU(mat4_t m, const vec3_t forward, const ve
  */
 void MatrixToVectorsFRU(const mat4_t m, vec3_t forward, vec3_t right, vec3_t up)
 {
-#ifdef SSE2
-	if (forward)
-		VectorCopy(&m[0], forward);
-
-	if (right)
-	{
-		VectorCopy(&m[4], right);
-		VectorInverse(right);
-	}
-
-	if (up)
-		VectorCopy(&m[8], up);
-#else
 	if (forward)
 	{
 		forward[0] = m[0];
@@ -3460,7 +3039,6 @@ void MatrixToVectorsFRU(const mat4_t m, vec3_t forward, vec3_t right, vec3_t up)
 		up[1] = m[9];
 		up[2] = m[10];
 	}
-#endif
 }
 
 /**

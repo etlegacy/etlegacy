@@ -3837,8 +3837,8 @@ static void ScanAndLoadShaderFiles(void)
 	int  i;
 	long sum = 0;
 
-	Com_Memset(buffers, 0, MAX_SHADER_FILES);
-	Com_Memset(buffersize, 0, sizeof(int) * MAX_SHADER_FILES);
+	Com_Memset(buffers, 0, sizeof(buffers));
+	Com_Memset(buffersize, 0, sizeof(buffersize));
 
 	// scan for shader files
 	shaderFiles = ri.FS_ListFiles("scripts", ".shader", &numShaders);

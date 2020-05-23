@@ -69,8 +69,8 @@ static void R_ChopPolyBehindPlane(int numInPoints, vec3_t inPoints[MAX_VERTS_ON_
 	float *p1, *p2, *clip;
 	float d;
 
-	Com_Memset(dists, 0, MAX_VERTS_ON_POLY + 4);
-	Com_Memset(sides, 0, MAX_VERTS_ON_POLY + 4);
+	Com_Memset(dists, 0, sizeof(dists));
+	Com_Memset(sides, 0, sizeof(sides));
 
 	// don't clip if it might overflow
 	if (numInPoints >= MAX_VERTS_ON_POLY - 2)

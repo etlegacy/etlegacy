@@ -280,6 +280,8 @@ static void CG_SoundParseSounds(const char *filename, char *buffer)
 	soundScriptSound_t *scriptSound = NULL;
 	qboolean           inSound = qfalse, wantSoundName = qtrue;
 
+	sound.soundList = NULL;
+
 	while (1)
 	{
 		token = COM_ParseExt(text, qtrue);

@@ -491,8 +491,8 @@ void ChopWindingInPlace(winding_t **w, vec3_t normal, vec_t dist, vec_t epsilon)
 	winding_t    *f;
 	int          maxpts;
 
-	Com_Memset(dists, 0, MAX_POINTS_ON_WINDING + 4);
-	Com_Memset(sides, 0, MAX_POINTS_ON_WINDING + 4);
+	Com_Memset(dists, 0, sizeof(dists));
+	Com_Memset(sides, 0, sizeof(sides));
 
 	// determine sides for each point
 	for (i = 0 ; i < in->numpoints ; i++)

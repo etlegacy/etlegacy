@@ -1537,11 +1537,6 @@ qboolean LoadMap(shaderStage_t *stage, char *buffer)
 		stage->type = ST_LIGHTMAP;
 		return qtrue;
 	}
-	//skip normalmap on sky .... for now
-	else if (!Q_stricmp(token, "sky") )
-	{
-		imageBits |= !IF_NORMALMAP;
-	}
 
 	// determine image options
 	if (stage->overrideNoPicMip || shader.noPicMip || stage->highQuality || stage->forceHighQuality)
@@ -6508,8 +6503,8 @@ static int ScanAndLoadShaderFiles(void)
 	char filename[MAX_QPATH];
 	long sum = 0, summand;
 
-	Com_Memset(buffers, 0, MAX_SHADER_FILES);
-	Com_Memset(shaderTextHashTableSizes, 0, MAX_SHADER_FILES);
+	Com_Memset(buffers, 0, sizeof(buffers));
+	Com_Memset(shaderTextHashTableSizes, 0, sizeof(shaderTextHashTableSizes));
 
 	// scan for shader files
 	shaderFiles = ri.FS_ListFiles("materials", ".shader", &numShaderFiles);

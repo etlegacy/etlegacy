@@ -115,7 +115,7 @@ const char *BuildShaderStateConfig()
 	int         i;
 	int         i1, i2;
 
-	Com_Memset(buff, 0, MAX_STRING_CHARS);
+	Com_Memset(buff, 0, sizeof(buff));
 	for (i = 0; i < remapCount; i++)
 	{
 		i1 = G_ShaderIndex(remappedShaders[i].oldShader);

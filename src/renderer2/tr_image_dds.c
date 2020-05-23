@@ -669,7 +669,7 @@ image_t *R_LoadDDSImageData(void *pImageData, const char *name, int bits, filter
 	vec4_t   zeroClampBorder      = { 0, 0, 0, 1 };
 	vec4_t   alphaZeroClampBorder = { 0, 0, 0, 0 };
 
-	Com_Memset(mipOffsets, 0, R_LoadDDSImage_MAX_MIPS + 1);
+	Com_Memset(mipOffsets, 0, sizeof(mipOffsets));
 
 	// comes from R_CreateImage
 	/*

@@ -2937,10 +2937,6 @@ void CG_NewClientInfo(int clientNum);
 sfxHandle_t CG_CustomSound(int clientNum, const char *soundName);
 void CG_ParseTeamXPs(int n);
 
-// particles
-extern qboolean initparticles;
-int CG_NewParticleArea(int num);
-
 // cg_predict.c
 void CG_BuildSolidList(void);
 int CG_PointContents(const vec3_t point, int passEntityNum);
@@ -3024,6 +3020,7 @@ void CG_ImpactMark(qhandle_t markShader,
 
 // cg_particles.c
 void CG_ClearParticles(void);
+void CG_InitParticles(void);
 void CG_AddParticles(void);
 void CG_ParticleSnow(qhandle_t pshader, vec3_t origin, vec3_t origin2, int turb, float range, int snum);
 void CG_ParticleSmoke(qhandle_t pshader, centity_t *cent);

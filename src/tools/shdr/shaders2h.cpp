@@ -1,4 +1,4 @@
-﻿/*
+/*
 * Wolfenstein: Enemy Territory GPL Source Code
 * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
 *
@@ -186,7 +186,7 @@ static void make_c_string(string &in)
 			// Don't add white spaces before newline
 			if (i + 1 < in.size() && in[i + 1] != '\n')
 			{
-				if (i + 2 < in.size() && in[i + 1] != '/' && (in[i + 2] != '/' || in[i + 2] != '*'))
+				if (i + 2 < in.size() && in[i + 1] != '/' && (in[i + 2] != '/' && in[i + 2] != '*'))
 				{
 					out += ' ';
 				}

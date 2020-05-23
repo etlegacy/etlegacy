@@ -1327,12 +1327,8 @@ void UI_LoadMenus(const char *menuFile, qboolean reset)
 		{
 			break;
 		}
-		if (token.string[0] == '\0' || token.string[0] == '}')
-		{
-			break;
-		}
 
-		if (token.string[0] == '}')
+		if (token.string[0] == '\0' || token.string[0] == '}')
 		{
 			break;
 		}
@@ -1368,6 +1364,11 @@ void UI_Load(void)
 	{
 		Q_strncpyz(lastName, menu->window.name, sizeof(lastName));
 	}
+	else
+	{
+		lastName[0] = '\0';
+	}
+
 	if (menuSet == NULL || menuSet[0] == '\0')
 	{
 		menuSet = "ui/menus.txt";
