@@ -87,6 +87,23 @@ public class ETLMain extends Activity {
     }
 
     /**
+     * Shows ProgressBar
+     * @return progressBar obj
+     */
+    private ProgressDialog DownloadBar() {
+        ProgressDialog asyncDialog = new ProgressDialog(this);
+        asyncDialog.setTitle("Downloading Game Data ..");
+        asyncDialog.setIndeterminate(false);
+        asyncDialog.setProgress(0);
+        asyncDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+        asyncDialog.setCancelable(false);
+        asyncDialog.setCanceledOnTouchOutside(false);
+        asyncDialog.show();
+
+        return asyncDialog;
+    }
+
+    /**
      * Convert pixel metrics to dp
      * @param px value of px to be converted
      * @return dp
@@ -135,14 +152,7 @@ public class ETLMain extends Activity {
             startActivity(intent);
             finish();
         } else {
-            final ProgressDialog asyncDialog = new ProgressDialog(this);
-            asyncDialog.setTitle("Downloading Game Data ..");
-            asyncDialog.setIndeterminate(false);
-            asyncDialog.setProgress(0);
-            asyncDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-            asyncDialog.setCancelable(false);
-            asyncDialog.setCanceledOnTouchOutside(false);
-            asyncDialog.show();
+            final ProgressDialog etl_Dialog = DownloadBar();
             final AsyncHttpClient client = new AsyncHttpClient();
             client.get("http://mirror.etlegacy.com/etmain/pak0.pk3", new FileAsyncHttpResponseHandler(this) {
 
@@ -155,11 +165,11 @@ public class ETLMain extends Activity {
                     super.onProgress(bytesWritten, totalSize);
                     final int etl_bytesWritten = (int) (bytesWritten / Math.pow(1024, 2));
                     int etl_totalSize = (int) (totalSize / Math.pow(1024, 2));
-                    asyncDialog.setMax(etl_totalSize);
+                    etl_Dialog.setMax(etl_totalSize);
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            asyncDialog.setProgress(etl_bytesWritten);
+                            etl_Dialog.setProgress(etl_bytesWritten);
                         }
                     });
                 }
@@ -171,7 +181,7 @@ public class ETLMain extends Activity {
                         try {
                             Files.move(file.getAbsoluteFile(), new File(getExternalFilesDir("etlegacy/etmain"), etl_pak0.getName()));
                             client.cancelAllRequests(true);
-                            asyncDialog.dismiss();
+                            etl_Dialog.dismiss();
                             startActivity(intent);
                             finish();
                         } catch (IOException e) {
@@ -182,7 +192,7 @@ public class ETLMain extends Activity {
 
                 @Override
                 public void onFailure(int statusCode, Header[] headers, Throwable throwable, File file) {
-                    asyncDialog.dismiss();
+                    etl_Dialog.dismiss();
                 }
             });
         }
