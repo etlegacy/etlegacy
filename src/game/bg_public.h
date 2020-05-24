@@ -52,7 +52,6 @@
 #define LEGACY///< for omnibot
 
 #ifdef __ANDROID__
-#undef ANDROID
 #define ANDROID ///< for setting defualt ui_glCustom "4" for Android etc.
 #endif
 
