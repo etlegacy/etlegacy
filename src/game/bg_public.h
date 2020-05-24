@@ -51,10 +51,6 @@
 #define LEGACY_MOD         "Legacy"
 #define LEGACY///< for omnibot
 
-#ifdef __ANDROID__
-#define ANDROID ///< for setting defualt ui_glCustom "4" for Android etc.
-#endif
-
 #if defined(CGAMEDLL) || defined(FEATURE_SERVERMDX)
 #define USE_MDXFILE
 #endif
