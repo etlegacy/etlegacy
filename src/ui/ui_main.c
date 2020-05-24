@@ -6672,6 +6672,7 @@ static void UI_SortServerStatusInfo(serverStatusInfo_t *info)
 			{
 				continue;
 			}
+
 			if (!Q_stricmp(serverStatusCvars[i].name, info->lines[j][0]))
 			{
 				// swap lines
@@ -6688,6 +6689,12 @@ static void UI_SortServerStatusInfo(serverStatusInfo_t *info)
 				}
 				index++;
 			}
+		}
+
+		// Name
+		if (i == 0)
+		{
+			info->lines[i][3] = Q_TrimStr(info->lines[i][3]);
 		}
 	}
 }
@@ -7184,6 +7191,9 @@ const char *UI_FeederItemText(int feederID, int index, int column, qhandle_t *ha
 					Com_sprintf(hostname, sizeof(hostname), "%s", Info_ValueForKey(info, "hostname"));
 				}
 
+				// trim
+				Q_TrimStr(hostname);
+
 				if (Q_PrintStrlen(hostname) > MAX_NAME_LENGTH)
 				{
 					int        lenght = 0;
@@ -7207,7 +7217,6 @@ const char *UI_FeederItemText(int feederID, int index, int column, qhandle_t *ha
 
 					hostname[pos - hostname] = 0;
 				}
-
 				return hostname;
 			case SORT_MAP:
 				return Info_ValueForKey(info, "mapname");

@@ -739,6 +739,9 @@ void Q_strcat(char *dest, size_t size, const char *src);
 /// strlen that discounts Quake color sequences
 int Q_PrintStrlen(const char *string);
 
+/// removes leading and trailing whitespaces from string
+char *Q_TrimStr(char *string);
+
 /// Encodes a plain un-colored string so that it'll be drawn with the given color code.
 void Q_ColorizeString(char colorCode, const char *inStr, char *outStr, size_t outBufferLen);
 

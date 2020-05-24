@@ -592,7 +592,7 @@ int COM_Compress(char *data_p)
  */
 char *COM_ParseExt(char **data_p, qboolean allowLineBreaks)
 {
-	int      c           = 0, len = 0;
+	int      c = 0, len = 0;
 	qboolean hasNewLines = qfalse;
 	char     *data       = *data_p;
 
@@ -1701,6 +1701,40 @@ int Q_PrintStrlen(const char *string)
 	}
 
 	return len;
+}
+
+/**
+ * @brief Remove all leading and trailing whitespace and special characters from string.
+ * @param[in,out] string
+ * @return
+ */
+char *Q_TrimStr(char *string)
+{
+	char   *s     = string;
+	char   *start = string;
+	size_t len    = 0;
+
+	while (*s <= 0x20 || *s >= 0x7F)
+	{
+		s++;
+	}
+	if (*s)
+	{
+		char *p = s;
+		while (*p)
+		{
+			p++;
+		}
+		while (*p <= 0x20 || *p >= 0x7F)
+		{
+			--p;
+		}
+
+		p[1] = '\0';
+		len  = (size_t) (p - s + 1);
+	}
+
+	return (s == start) ? s : memmove(start, s, len + 1);
 }
 
 /**
