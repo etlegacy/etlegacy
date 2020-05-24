@@ -4342,11 +4342,7 @@ void UI_GLCustom()
 		break;
 	}
 
-#ifdef __ANDROID__
-    trap_Cvar_Set("ui_glCustom", "4");
-#else
-	trap_Cvar_Set("ui_glCustom", "1");
-#endif
+	trap_Cvar_Set("ui_glCustom", "4");
 }
 
 
@@ -8680,11 +8676,8 @@ vmCvar_t ui_serverBrowserSettings;
 static cvarTable_t cvarTable[] =
 {
 	{ NULL,                             "ui_textfield_temp",                   "",                           CVAR_TEMP,                      0 },
-#ifdef __ANDROID__
 	{ &ui_glCustom,                     "ui_glCustom",                         "4",                          CVAR_ARCHIVE,                   0 },
-#else
-    { &ui_glCustom,                     "ui_glCustom",                         "1",                          CVAR_ARCHIVE,                   0 },
-#endif
+
 	{ &ui_friendlyFire,                 "g_friendlyFire",                      "1",                          CVAR_ARCHIVE,                   0 },
 
 	{ &ui_userAlliedRespawnTime,        "ui_userAlliedRespawnTime",            "0",                          0,                              0 },
