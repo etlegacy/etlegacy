@@ -9,6 +9,16 @@
 #define GROUP_NAME		"grpProfileCreateInitial"
 
 // Create Profile Menu //
+#ifdef ANDROID
+#define INITIAL_PROFILEDEFAULT_SETTINGS		uiScript systemCvarsGet ;				\
+											uiScript profileCvarsGet ;				\
+											setcvar ui_glCustom 4 ;					\
+											setcvar ui_sensitivity 5 ;				\
+											setcvar ui_profile_mousePitch 0 ;		\
+											setcvar ui_handedness 0 ;				\
+											setcvar ui_rate 25000 ;					\
+											uiScript update ui_glCustom;
+#else
 #define INITIAL_PROFILEDEFAULT_SETTINGS		uiScript systemCvarsGet ;				\
 											uiScript profileCvarsGet ;				\
 											setcvar ui_glCustom 1 ;					\
@@ -16,8 +26,8 @@
 											setcvar ui_profile_mousePitch 0 ;		\
 											setcvar ui_handedness 0 ;				\
 											setcvar ui_rate 25000 ;					\
-											uiScript update ui_glCustom				\
-
+											uiScript update ui_glCustom;
+#endif
 // Opener //
 menuDef {
 	name		"profile_create_initial_opener"
@@ -36,7 +46,11 @@ menuDef {
 			( "abort" )
 
 		conditionalscript com_recommended 3
-			( "setcvar ui_glCustom 1 ; uiScript update ui_glCustom" )
+#ifdef ANDROID
+			( "setcvar ui_glCustom 4 ; uiScript update ui_glCustom" )
+#else
+            ( "setcvar ui_glCustom 1 ; uiScript update ui_glCustom" )
+#endif
 			( "copycvar com_recommended ui_glCustom ; uiScript update ui_glCustom" ) "-1"
 	}
 }
@@ -127,7 +141,11 @@ menuDef {
 		( "abort" )
 
 		conditionalscript com_recommended 3
+#ifdef ANDROID
+        ( "setcvar ui_glCustom 4 ; setcvar r_highQualityVideo 1 ; uiScript update ui_glCustom" )
+#else
 		( "setcvar ui_glCustom 1 ; setcvar r_highQualityVideo 1 ; uiScript update ui_glCustom" )
+#endif
 		( "copycvar com_recommended ui_glCustom ; uiScript update ui_glCustom" ) "-1" )
 
 	LABEL( 6, SUBWINDOW_Y+304, .7*(WINDOW_WIDTH-24), 10, _("^1LET'S KEEP ET ALIVE!"), .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
