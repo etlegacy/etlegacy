@@ -1,6 +1,7 @@
 package org.etlegacy.app;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.res.AssetManager;
 import android.content.res.Resources;
@@ -14,7 +15,6 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import com.google.common.io.Files;
 import com.loopj.android.http.AsyncHttpClient;
@@ -104,28 +104,17 @@ public class ETLMain extends Activity {
         ImageView imageView = new ImageView(this);
         imageView.setBackground(getSplashScreenFromAsset("etl_splashscreen.png"));
 
-        TextView textView = new TextView(this);
-        textView.append("Downloading Game Data ...");
-        textView.setTextSize(25);
-
         LinearLayout etl_Layout = new LinearLayout(this);
 
         RelativeLayout.LayoutParams etl_Params = new RelativeLayout.LayoutParams(
-                600, 300);
+                ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 
-        etl_Params.leftMargin = pxToDp(Resources.getSystem().getDisplayMetrics().widthPixels / 2);
         etl_Params.topMargin = pxToDp(Resources.getSystem().getDisplayMetrics().heightPixels / 2);
 
-        LinearLayout.LayoutParams etl_Params_download = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.MATCH_PARENT, 1.0f);
-
-        etl_Params_download.setMargins(-600, 600, -700,-50);
-
         etl_Layout.addView(imageView, etl_Params);
-        etl_Layout.addView(textView, etl_Params_download);
         setContentView(etl_Layout);
 
-        File etl_etlegacy = new File(getExternalFilesDir(null), "etlegacy/legacy/legacy_v2.76.pk3");
+        final File etl_etlegacy = new File(getExternalFilesDir(null), "etlegacy/legacy/legacy_v2.76.pk3");
 
         if (!etl_etlegacy.exists()) {
             AssetManager assManager = getApplicationContext().getAssets();
@@ -146,12 +135,33 @@ public class ETLMain extends Activity {
             startActivity(intent);
             finish();
         } else {
+            final ProgressDialog asyncDialog = new ProgressDialog(this);
+            asyncDialog.setTitle("Downloading Game Data ..");
+            asyncDialog.setIndeterminate(false);
+            asyncDialog.setProgress(0);
+            asyncDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+            asyncDialog.setCancelable(false);
+            asyncDialog.setCanceledOnTouchOutside(false);
+            asyncDialog.show();
             final AsyncHttpClient client = new AsyncHttpClient();
             client.get("http://mirror.etlegacy.com/etmain/pak0.pk3", new FileAsyncHttpResponseHandler(this) {
 
                 @Override
                 public void onSuccess(int statusCode, Header[] headers, File file) {
+                }
 
+                @Override
+                public void onProgress(long bytesWritten, long totalSize) {
+                    super.onProgress(bytesWritten, totalSize);
+                    final int etl_bytesWritten = (int) (bytesWritten / Math.pow(1024, 2));
+                    int etl_totalSize = (int) (totalSize / Math.pow(1024, 2));
+                    asyncDialog.setMax(etl_totalSize);
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            asyncDialog.setProgress(etl_bytesWritten);
+                        }
+                    });
                 }
 
                 @Override
@@ -161,6 +171,7 @@ public class ETLMain extends Activity {
                         try {
                             Files.move(file.getAbsoluteFile(), new File(getExternalFilesDir("etlegacy/etmain"), etl_pak0.getName()));
                             client.cancelAllRequests(true);
+                            asyncDialog.dismiss();
                             startActivity(intent);
                             finish();
                         } catch (IOException e) {
@@ -171,7 +182,7 @@ public class ETLMain extends Activity {
 
                 @Override
                 public void onFailure(int statusCode, Header[] headers, Throwable throwable, File file) {
-
+                    asyncDialog.dismiss();
                 }
             });
         }
