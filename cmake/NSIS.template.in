@@ -274,10 +274,6 @@ Section "Wolfenstein: Enemy Territory assets" ASSETS
         IfFileExists "$TEMP\WolfET.exe" CHECK_INSTALL
         NSISdl::download "http://mirror.etlegacy.com/WolfET.exe" WolfET.exe
         IfFileExists "$TEMP\WolfET.exe" CHECK_INSTALL
-        NSISdl::download "http://ftp.games.skynet.be/pub/wolfenstein/WolfET.exe" WolfET.exe
-        IfFileExists "$TEMP\WolfET.exe" CHECK_INSTALL
-        NSISdl::download "http://download.hirntot.org/misc/WolfET.exe" WolfET.exe
-        IfFileExists "$TEMP\WolfET.exe" CHECK_INSTALL
         MessageBox MB_RETRYCANCEL|MB_ICONEXCLAMATION $(DESC_Section2) \
         IDCANCEL USERCANCEL IDRETRY GET_INSTALL
 
