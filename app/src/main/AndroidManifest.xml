@@ -5,23 +5,29 @@
     android:versionCode="1"
     android:versionName="1.0" >
     <!-- OpenGL ES 1.1 -->
-    <uses-feature android:glEsVersion="0x00010001" /> <!-- Touchscreen support -->
+    <uses-feature android:glEsVersion="0x00010001" />
+    <!-- Touchscreen support -->
     <uses-feature
         android:name="android.hardware.touchscreen"
-        android:required="false" /> <!-- Game controller support -->
+        android:required="false" />
+    <!-- Game controller support -->
     <uses-feature
         android:name="android.hardware.gamepad"
         android:required="false" />
     <uses-feature
         android:name="android.hardware.usb.host"
-        android:required="false" /> <!-- External mouse input events -->
+        android:required="false" />
+    <!-- External mouse input events -->
     <uses-feature
         android:name="android.hardware.type.pc"
-        android:required="false" /> <!-- Allow access to internet -->
-    <uses-permission android:name="android.permission.INTERNET" /> <!-- Allow writing to external storage and reading from it -->
+        android:required="false" />
+    <!-- Allow access to internet -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <!-- Allow writing to external storage and reading from it -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" /> <!-- Allow access to bluetooth -->
-    <uses-permission android:name="android.permission.BLUETOOTH" /> <!-- Allow access to the vibrator -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <!-- Allow access to bluetooth -->
+    <uses-permission android:name="android.permission.BLUETOOTH" />
 
     <application
         android:allowBackup="true"
