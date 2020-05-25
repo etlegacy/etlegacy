@@ -178,3 +178,14 @@ include(cmake/ETLInstall.cmake)
 include(cmake/ETLCPack.cmake)
 
 set_target_properties(uninstall PROPERTIES FOLDER ${CMAKE_TARGETS_FOLDER})
+
+MESSAGE(STATUS "<<< ETL configuration >>>
+Build type      ${CMAKE_BUILD_TYPE}
+Install path    ${CMAKE_INSTALL_PREFIX}
+Compiler flags:
+C               ${CMAKE_C_FLAGS}
+C++             ${CMAKE_CXX_FLAGS}
+Linker flags:
+Executable      ${CMAKE_EXE_LINKER_FLAGS}
+Module          ${CMAKE_MODULE_LINKER_FLAGS}
+Shared          ${CMAKE_SHARED_LINKER_FLAGS}\n")

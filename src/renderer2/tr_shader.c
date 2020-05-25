@@ -37,6 +37,17 @@
 
 #include "tr_shader.h"
 
+//shaderTable_t *shaderTableHashTable[MAX_SHADERTABLE_HASH];
+shader_t     *shaderHashTable[FILE_HASH_SIZE];
+texModInfo_t texMods[MAX_SHADER_STAGES][TR_MAX_TEXMODS];
+
+shader_t        shader;
+dynamicShader_t *dshader;
+shaderTable_t   table;
+shaderStage_t   stages[MAX_SHADER_STAGES];
+char            implicitMap[MAX_QPATH];
+unsigned        implicitStateBits;
+cullType_t      implicitCullType;
 
 static char **guideTextHashTable[MAX_GUIDETEXT_HASH];
 static char **shaderTextHashTable[MAX_SHADERTEXT_HASH];
@@ -103,7 +114,7 @@ void R_RemapShader(const char *shaderName, const char *newShaderName, const char
 			}
 		}
 	}
-	
+
 	if (timeOffset)
 	{
 		sh2->timeOffset = atoi(timeOffset);
@@ -1518,7 +1529,7 @@ qboolean LoadMap(shaderStage_t *stage, char *buffer)
 	{
 		stage->bundle[0].image[0] = tr.whiteImage;
 		return qtrue;
-		
+
 	}
 	else if (!Q_stricmp(token, "$blackimage") || !Q_stricmp(token, "$black") || !Q_stricmp(token, "_black") ||
 	         !Q_stricmp(token, "*black"))
@@ -1589,7 +1600,7 @@ qboolean LoadMap(shaderStage_t *stage, char *buffer)
 
 	// try to load the image
 	stage->bundle[0].image[0] = R_FindImageFile(buffer, imageBits, filterType, wrapType, shader.name);
-	
+
 	if (!stage->bundle[0].image[0])
 	{
 		Ren_Developer("WARNING: LoadMap could not find image '%s' in shader '%s'\n", buffer, shader.name);
@@ -1607,9 +1618,9 @@ qboolean LoadMap(shaderStage_t *stage, char *buffer)
  */
 qboolean ParseStage(shaderStage_t *stage, char **text)
 {
-	char *token;
-	int  colorMaskBits             = 0;
-	int  depthMaskBits             = GLS_DEPTHMASK_TRUE, blendSrcBits = 0, blendDstBits = 0, atestBits = 0, depthFuncBits = 0, polyModeBits = 0;
+	char         *token;
+	int          colorMaskBits = 0;
+	int          depthMaskBits = GLS_DEPTHMASK_TRUE, blendSrcBits = 0, blendDstBits = 0, atestBits = 0, depthFuncBits = 0, polyModeBits = 0;
 	qboolean     depthMaskExplicit = qfalse;
 	int          imageBits         = 0;
 	filterType_t filterType;
@@ -2247,7 +2258,7 @@ qboolean ParseStage(shaderStage_t *stage, char **text)
 				//Ren_Warning( "WARNING: obsolete rgbGen lightingDiffuse keyword not supported in shader '%s'\n", shader.name);
 				stage->type   = ST_DIFFUSEMAP;
 				stage->rgbGen = CGEN_IDENTITY_LIGHTING;
-				
+
 			}
 			else if (!Q_stricmp(token, "oneMinusVertex"))
 			{
@@ -2385,10 +2396,10 @@ qboolean ParseStage(shaderStage_t *stage, char **text)
 				stage->constantColor[3] = 0;
 				//set shader as portal
 				tess.surfaceShader->isPortal = qtrue;
-				backEnd.viewParms.isPortal = qtrue;
-				shader.sort = SS_PORTAL;
-				stage->type = ST_PORTALMAP;
-				token           = COM_ParseExt(text, qfalse);
+				backEnd.viewParms.isPortal   = qtrue;
+				shader.sort                  = SS_PORTAL;
+				stage->type                  = ST_PORTALMAP;
+				token                        = COM_ParseExt(text, qfalse);
 				if (token[0] == 0)
 				{
 					shader.portalRange = 256;
@@ -2438,7 +2449,7 @@ qboolean ParseStage(shaderStage_t *stage, char **text)
 		// tcGen <function>
 		else if (!Q_stricmp(token, "texGen") || !Q_stricmp(token, "tcGen"))
 		{
-		    stage->type = ST_TCGEN;
+			stage->type = ST_TCGEN;
 
 			token = COM_ParseExt2(text, qfalse);
 			if (token[0] == 0)
@@ -2451,21 +2462,20 @@ qboolean ParseStage(shaderStage_t *stage, char **text)
 			{
 				stage->tcGen_Environment = qtrue;
 				stage->tcGen_Lightmap    = qfalse;
-				
-				
-				
+
+
+
 			}
 			else if (!Q_stricmp(token, "lightmap"))
 			{
 				stage->tcGen_Lightmap    = qtrue;
 				stage->tcGen_Environment = qfalse;
-				
+
 				//stage->type = ST_TCGEN;
 			}
 			else if (!Q_stricmp(token, "texture") || !Q_stricmp(token, "base"))
-
 			{
-				
+
 				//stage->type = ST_TCGEN;
 				//Ren_Warning("WARNING: texGen texture/base keyword not supported in shader '%s'\n", shader.name);
 			}
@@ -3782,8 +3792,6 @@ static qboolean ParseShader(char *_text)
 			SkipRestOfLine(text);
 			continue;
 		}
-		
-		
 		// skip description
 		else if (!Q_stricmp(token, "description"))
 		{
@@ -4062,11 +4070,11 @@ static qboolean ParseShader(char *_text)
 				return qfalse;
 			}
 
-			
+
 			//set read color based on current light
 			shader.fogParms.colorInt = ColorBytes4(shader.fogParms.color[0] * tr.identityLight,
-			                                      shader.fogParms.color[1] * tr.identityLight,
-			                                      shader.fogParms.color[2] * tr.identityLight, 1.0);
+			                                       shader.fogParms.color[1] * tr.identityLight,
+			                                       shader.fogParms.color[2] * tr.identityLight, 1.0);
 
 			token = COM_ParseExt2(text, qfalse);
 			if (!token[0])
@@ -4081,7 +4089,7 @@ static qboolean ParseShader(char *_text)
 			}
 			//this is correct and SHOULD be here, it makes the tcScale correct. this is textures scale wich is "1" and divided
 			//on the opacity
-			shader.fogParms.tcScale        = 1.0f / shader.fogParms.depthForOpaque;
+			shader.fogParms.tcScale = 1.0f / shader.fogParms.depthForOpaque;
 
 			shader.fogVolume = qtrue;
 			shader.sort      = SS_FOG;
@@ -4099,16 +4107,16 @@ static qboolean ParseShader(char *_text)
 		// portal
 		else if (!Q_stricmp(token, "portal"))
 		{
-			shader.sort     = SS_PORTAL;
-			shader.isPortal = qtrue;
+			shader.sort                = SS_PORTAL;
+			shader.isPortal            = qtrue;
 			backEnd.viewParms.isPortal = qtrue;
 			continue;
 		}
 		// portal or mirror
 		else if (!Q_stricmp(token, "mirror"))
 		{
-			shader.sort     = SS_PORTAL;
-			shader.isPortal = qtrue;
+			shader.sort                = SS_PORTAL;
+			shader.isPortal            = qtrue;
 			backEnd.viewParms.isMirror = qtrue;
 			continue;
 		}
@@ -4489,8 +4497,8 @@ static qboolean ParseShader(char *_text)
 		// Doom 3 DECAL_MACRO
 		else if (!Q_stricmp(token, "DECAL_MACRO"))
 		{
-			shader.polygonOffset      = qtrue;
-			shader.sort               = SS_DECAL;
+			shader.polygonOffset = qtrue;
+			shader.sort          = SS_DECAL;
 			SurfaceParm("discrete");
 			SurfaceParm("noShadows");
 			continue;
@@ -4499,8 +4507,8 @@ static qboolean ParseShader(char *_text)
 		else if (!Q_stricmp(token, "DECAL_ALPHATEST_MACRO"))
 		{
 			// what's different?
-			shader.polygonOffset      = qtrue;
-			shader.sort               = SS_DECAL;
+			shader.polygonOffset = qtrue;
+			shader.sort          = SS_DECAL;
 			SurfaceParm("discrete");
 			SurfaceParm("noShadows");
 			continue;
@@ -4583,7 +4591,7 @@ static void CollapseStages()
 //	int             abits, bbits;
 	int j, i, ji;
 
-	
+
 
 	shaderStage_t tmpDiffuseStage;
 	shaderStage_t tmpNormalStage;
@@ -4592,8 +4600,8 @@ static void CollapseStages()
 	shaderStage_t tmpLiquidStage;
 
 	shaderStage_t tmpTcgenStage;
-	
-	
+
+
 
 	shader_t tmpShader;
 
@@ -4628,8 +4636,8 @@ static void CollapseStages()
 		Com_Memset(&tmpSpecularStage, 0, sizeof(shaderStage_t));
 		Com_Memset(&tmpLiquidStage, 0, sizeof(shaderStage_t));
 		Com_Memset(&tmpTcgenStage, 0, sizeof(shaderStage_t));
-		
-        
+
+
 
 		if (!stages[j].active)
 		{
@@ -4639,7 +4647,7 @@ static void CollapseStages()
 		if (stages[j].type == ST_LIGHTMAP)
 		{
 			tmpShader.has_lightmapStage = qtrue;
-			
+
 		}
 		else if (stages[j].type == ST_REFRACTIONMAP ||
 			stages[j].type == ST_DISPERSIONMAP ||
@@ -4674,7 +4682,7 @@ static void CollapseStages()
 				hasTcgenStage = qtrue;
 				tmpTcgenStage = stages[ji];
 			}
-			
+
 			if (stages[ji].type == ST_DIFFUSEMAP && !hasDiffuseStage)
 			{
 				hasDiffuseStage = qtrue;
@@ -4703,7 +4711,7 @@ static void CollapseStages()
 		}
 
 		// NOTE: merge as many stages as possible
-		
+
 		// try to merge diffuse/normal/specular
 		if (hasDiffuseStage && hasNormalStage && hasSpecularStage)
 		{
@@ -4721,7 +4729,7 @@ static void CollapseStages()
 			j += 2;
 			continue;
 		}
-		
+
 		// try to merge diffuse/normal
 		else if (hasDiffuseStage && hasNormalStage)
 		{
@@ -4738,8 +4746,8 @@ static void CollapseStages()
 			j += 1;
 			continue;
 		}
-		
-	
+
+
 		// try to merge env/normal
 		else if (hasReflectionStage && hasNormalStage)
 		{
@@ -5582,7 +5590,7 @@ shader_t *R_FindShader(const char *name, shaderType_t type, qboolean mipRawImage
 				// there are some shaders (textures/common/clipweap and others ..) which are ignored (see ParseShader())
 				// sothis might report false positives but since FindShader is always returning the default shader
 				// and we've had no real warnings about buggy shaders here nobody did notice that ...
-				
+
 				// ParseShader: ignore shaders that don't have any stages, unless it is a sky or fog
 				//if (s == 0 && !shader.forceOpaque && !shader.isSky && !(shader.contentFlags & CONTENTS_FOG) && implicitMap[0] == '\0')	
 				Ren_Developer("R_FindShader Warning: Couldn't parse shader %s (%s)- returning default shader - this might be a bug\n", strippedName, name);
@@ -5779,7 +5787,7 @@ shader_t *R_FindShader(const char *name, shaderType_t type, qboolean mipRawImage
 			}
 			else
 			{
-			
+
 				Ren_Developer("R_FindShader Warning: Specularmap image '%s' type %i not found.\n", va("%s_r.tga", strippedName), shader.type);
 			}
 
@@ -6908,7 +6916,7 @@ void R_InitShaders(void)
 	{
 		Ren_Print("...scanning of legacy shader files disabled by CVAR r_materialScan\n");
 	}
-	
+
 	if(r_materialScan->integer & R_SCAN_SCRIPTS_FOLDER)
 	{	
 		numShaderFiles   = ScanAndLoadShaderFilesR1();
@@ -6917,7 +6925,7 @@ void R_InitShaders(void)
 	{
 		Ren_Print("...scanning of vanilla shader files disabled by CVAR r_materialScan\n");
 	}
-	
+
 	if (numMaterialFiles + numShaderFiles == 0)
 	{
 		Ren_Drop("No shader/material files found!");

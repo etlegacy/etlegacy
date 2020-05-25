@@ -36,6 +36,15 @@
 
 #include "tr_shader.h"
 
+//extern shaderTable_t *shaderTableHashTable[MAX_SHADERTABLE_HASH];
+extern shader_t        shader;
+extern dynamicShader_t *dshader;
+extern shaderTable_t   table;
+extern shaderStage_t   stages[MAX_SHADER_STAGES];
+extern char            implicitMap[MAX_QPATH];
+extern unsigned        implicitStateBits;
+extern cullType_t      implicitCullType;
+
 static char **shaderTextHashTableR1[MAX_SHADERTEXT_HASH];
 static char *s_shaderTextR1;
 
@@ -837,8 +846,8 @@ qboolean ParseShaderR1(char *_text)
 		// Doom 3 DECAL_MACRO
 		else if (!Q_stricmp(token, "DECAL_MACRO"))
 		{
-			shader.polygonOffset      = qtrue;
-			shader.sort               = SS_DECAL;
+			shader.polygonOffset = qtrue;
+			shader.sort          = SS_DECAL;
 			SurfaceParm("discrete");
 			SurfaceParm("noShadows");
 			continue;
@@ -847,8 +856,8 @@ qboolean ParseShaderR1(char *_text)
 		else if (!Q_stricmp(token, "DECAL_ALPHATEST_MACRO"))
 		{
 			// what's different?
-			shader.polygonOffset      = qtrue;
-			shader.sort               = SS_DECAL;
+			shader.polygonOffset = qtrue;
+			shader.sort          = SS_DECAL;
 			SurfaceParm("discrete");
 			SurfaceParm("noShadows");
 			continue;
