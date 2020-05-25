@@ -2307,7 +2307,6 @@ void G_InitGame(int levelTime, int randomSeed, int restart, int etLegacyServer, 
 	char   cs[MAX_INFO_STRING];
 	time_t aclock;
 	char   timeFt[32];
-	char   *logDate;
 
 	// server version check
 	G_ServerCheck();

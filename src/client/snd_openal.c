@@ -55,7 +55,6 @@ cvar_t *s_alDevice;
 //cvar_t *s_alInputDevice;
 cvar_t *s_alAvailableDevices;
 //cvar_t *s_alAvailableInputDevices;
-cvar_t *s_debugStreams;
 
 static qboolean enumeration_ext     = qfalse;
 static qboolean enumeration_all_ext = qfalse;

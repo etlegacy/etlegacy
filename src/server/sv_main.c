@@ -112,7 +112,7 @@ cvar_t *sv_wh_check_fov;
 cvar_t *sv_demopath;
 cvar_t *sv_demoState;
 cvar_t *sv_autoDemo;
-cvar_t *cl_freezeDemo;  // to freeze server-side demos
+cvar_t *sv_freezeDemo;  // to freeze server-side demos
 cvar_t *sv_demoTolerant;
 
 cvar_t *sv_ipMaxClients;

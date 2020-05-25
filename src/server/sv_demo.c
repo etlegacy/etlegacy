@@ -1807,7 +1807,7 @@ void SV_DemoReadFrame(void)
 read_next_demo_frame: // used to read another whole demo frame
 
 	// Demo freezed? Just stop reading the demo frames
-	if (Cvar_VariableIntegerValue("cl_freezeDemo"))
+	if (Cvar_VariableIntegerValue("sv_freezeDemo"))
 	{
 		svs.time = memsvtime; // reset server time to the same time as the previous frame, to avoid the time going backward when resuming the demo (which will disconnect every players)
 		return;

@@ -40,13 +40,13 @@
 #define IRC_CLIENT_H
 
 /* IRC control cvars */
-cvar_t *irc_mode;
-cvar_t *irc_server;
-cvar_t *irc_channel;
-cvar_t *irc_port;
-cvar_t *irc_nickname;
-cvar_t *irc_kick_rejoin;
-cvar_t *irc_reconnect_delay;
+extern cvar_t *irc_mode;
+extern cvar_t *irc_server;
+extern cvar_t *irc_channel;
+extern cvar_t *irc_port;
+extern cvar_t *irc_nickname;
+extern cvar_t *irc_kick_rejoin;
+extern cvar_t *irc_reconnect_delay;
 
 #define IRCM_AUTO_CONNECT           1
 #define IRCM_AUTO_OVERRIDE_NICKNAME 2

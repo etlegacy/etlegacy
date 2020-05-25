@@ -76,6 +76,8 @@ hudStucture_t hudlist[MAXHUDS];
 hudStucture_t *activehud;
 hudStucture_t hud0;
 
+lagometer_t lagometer;
+
 /*
  * @brief CG_getRect
  * @param x
