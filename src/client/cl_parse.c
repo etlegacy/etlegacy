@@ -611,7 +611,7 @@ static void CL_SetPurePaks(void)
 void CL_SystemInfoChanged(void)
 {
 	char       *systemInfo = cl.gameState.stringData + cl.gameState.stringOffsets[CS_SYSTEMINFO];
-	const char *s, *t;
+	const char *s;
 	char       key[BIG_INFO_KEY];
 	char       value[BIG_INFO_VALUE];
 	qboolean   gameSet;

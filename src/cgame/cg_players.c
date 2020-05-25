@@ -2012,7 +2012,6 @@ static void CG_PlayerSprites(centity_t *cent)
 	int            numIcons = 0;
 	int            height   = 56;
 	clientInfo_t   *ci      = &cgs.clientinfo[cent->currentState.clientNum];
-	fireteamData_t *ft;
 	qboolean       sameTeam;
 
 	if ((cent->currentState.powerups & (1 << PW_REDFLAG)) || (cent->currentState.powerups & (1 << PW_BLUEFLAG)))
