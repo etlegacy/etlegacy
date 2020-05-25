@@ -277,7 +277,7 @@ FILE *Sys_FOpen(const char *ospath, const char *mode)
 	}
 	else if (*mode == 'a')
 	{
-		oflag |= O_WRONLY | O_APPEND;
+		oflag |= O_WRONLY | O_CREAT | O_APPEND;
 	}
 	else
 	{
@@ -294,7 +294,7 @@ FILE *Sys_FOpen(const char *ospath, const char *mode)
 			Com_Printf("Sys_FOpen: first stat('%s')  failed: errno %d\n", ospath, errno);
 			return NULL;
 		}
-		else if (*mode != 'w')
+		else if (*mode == 'r')
 		{
 			return NULL;
 		}
