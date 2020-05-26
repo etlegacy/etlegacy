@@ -54,7 +54,7 @@ install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/COPYING.txt"
 
 # copy required genuine files
 if(ET_FS_BASEPATH AND INSTALL_DEFAULT_BASEDIR)
-	message(STATUS "Installing genuine ET files")
+	message(STATUS "Installing genuine W:ET files")
 
 	install(FILES "${ET_FS_BASEPATH}/etmain/pak0.pk3"
 		DESTINATION "${INSTALL_DEFAULT_BASEDIR}/etmain"
@@ -75,7 +75,7 @@ if(ET_FS_BASEPATH AND INSTALL_DEFAULT_BASEDIR)
 	endif(ET_KEY)
 elseif(NOT ET_FS_BASEPATH AND INSTALL_DEFAULT_BASEDIR)
 	message(STATUS "***********************************************************")
-	message(STATUS "Genuine ET files are not copied - ET: Legacy won't start !!!")
+	message(STATUS "Genuine W:ET files are not copied - ET: Legacy won't start!")
 	message(STATUS "In order to start the game, copy the pak0.pk3 assets file")
 	message(STATUS "to ${INSTALL_DEFAULT_BASEDIR}/etmain")
 	message(STATUS "***********************************************************")
