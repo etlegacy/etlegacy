@@ -220,30 +220,42 @@ and open the resulting project in Visual Studio.
 
 Install:
 
-    1. [Xcode](https://developer.apple.com/xcode/downloads/)
-    2. [Homebrew](http://brew.sh/)
-    3. [Homebrew Cask](http://caskroom.io/)
+1. Xcode:
+ * At least a recent Version of Xcode Command Line Tools (Terminal -> `xcode-select --install`)
+ * or a complete Xcode IDE (through App Store or https://developer.apple.com/xcode/downloads/)
+2. Homebrew (http://brew.sh/)
 
 Then brew the following packages in the terminal app:
 
     $ brew cask install xquartz
-    $ brew install --universal gnu-sed cmake glew sdl2 minizip jpeg-turbo curl lua libogg libvorbis theora freetype libpng sqlite openal-soft
+    $ brew install gnu-sed cmake glew sdl2 minizip jpeg-turbo curl lua libogg libvorbis theora freetype libpng sqlite openal-soft autoconf nasm automake libtool
 
-The --universal flag ensures both 32bit and 64bit libraries are installed. Although your system curl library supports both architectures, you also need to install its headers.
+Depending on what brew version you're using (mostly older ones), you have to specify `brew install --universal` to get both 32bit and 64bit libs. If it throws an error, just use the command listed above. Although your system curl library supports both architectures, you also need to install its headers.
 
 * option A: **easybuild**
 
-In Terminal, run:
+There are many flags and options provided by easybuild.sh. The ET: Legacy version you can compile depends on the used Mac OS version.
 
-    $ ./easybuild.sh
+If you're running **up to Mojave (10.14)**, use one the following flags in Terminal.app:
 
-This will put an 'etlegacy' folder into your user folder.
+    $ ./easybuild.sh        # for compiling a 32 bit version or
+    $ ./easybuild.sh -64    # for compiling a 64 bit version
+
+This will put an 'etlegacy' folder with the selected arch into your user folder.
+
+With Mac OS **Catalina (10.15) and above**, your only option is to compile and run a 64 bit client. Therefore you need to use the following flags:
+
+    $ ./easybuild.sh -64 --osx=10.15    #watch out for the double dash at --osx !
+
+Take a look into easybuild.sh for more information and further options/flags.
 
 * option B: **command line**
 
 In terminal, run:
 
     $ mkdir build && cd build && cmake ..
+
+Look into easybuild.sh for all available CMake options.
 
 To compile, run:
 
