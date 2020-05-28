@@ -43,8 +43,8 @@ menuDef {
 	BUTTONEXT( 6, 104, WINDOW_WIDTH-12, 18, _("OPTIONS"), .3, 14, close ingame_main ; open options, tooltip _("Set available game options") )
 	BUTTONEXT( 6, 128, WINDOW_WIDTH-12, 18, _("FAVORITE"), .3, 14, uiScript clientCheckFavorite ;
 		conditionalScript cg_ui_favorite 0
-		( "open popupAddFavorite" )
-		( "open popupRemoveFavorite" ), tooltip _("Set or unset this server as favorite") )
+		( "open popupRemoveFavorite" )
+        ( "open popupAddFavorite" ), tooltip _("Set or unset this server as favorite") )
 	BUTTONEXT( 6, 152, WINDOW_WIDTH-12, 18, _("CREDITS"), .3, 14, close ingame_main ; open credits_etlegacy, tooltip _("Look at the legacy hall of fame") )
 	BUTTONEXT( 6, 176, WINDOW_WIDTH-12, 18, _("DISCONNECT"), .3, 14, clearFocus ; open ingame_disconnect, tooltip _("Disconnect your connection from current server") )
 	BUTTONEXT( 6, 200, WINDOW_WIDTH-12, 18, _("EXIT"), .3, 14, clearFocus ; open quit, tooltip _("Don't press this. Be warned!") )
