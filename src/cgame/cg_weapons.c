@@ -5636,7 +5636,7 @@ void CG_AddDebris(vec3_t origin, vec3_t dir, int speed, int duration, int count,
 	refEntity_t   *re;
 	vec3_t        velocity, unitvel;
 	float         timeAdd;
-	int           i;
+	int           i, j;
 
 	if (!cg_visualEffects.integer)
 	{
@@ -5676,11 +5676,15 @@ void CG_AddDebris(vec3_t origin, vec3_t dir, int speed, int duration, int count,
 
 		//le->leMarkType = LEMT_BLOOD;
 
-		// WIP
+		// scale
+		for (j = 0; j < 3; j++)
+		{
+			VectorScale(le->refEntity.axis[j], (rand() % 10 + 1) * .1f, le->refEntity.axis[j]);
+		}
+
 		// add model & properties of extended debris elements
-		// TODO: find better models and/or extend ...
-		// TODO: make dependant from surface (snow etc and use related models/sounds) and or weapon
-		// TODO: find a client cvar so purists can disable (see CG_AddLocalEntities)
+		// FIXME: find better models and/or extend ...
+		// FIXME: make dependant from surface (snow etc and use related models/sounds) and or weapon
 		if (trace) // && user enabled
 		{
 			// airborn or solid with no surface set - just throw projectile fragments
@@ -5695,12 +5699,6 @@ void CG_AddDebris(vec3_t origin, vec3_t dir, int speed, int duration, int count,
 				else
 				{
 					le->refEntity.hModel = cgs.media.shardMetal2;
-				}
-
-				// scale
-				for (j = 0; j < 3; j++)
-				{
-					VectorScale(le->refEntity.axis[j], (rand() % 10 + 1) * .1f, le->refEntity.axis[j]);
 				}
 
 				le->leBounceSoundType = LEBS_METAL;

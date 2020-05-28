@@ -562,14 +562,8 @@ void CG_Explode(centity_t *cent, vec3_t origin, vec3_t dir, qhandle_t shader)
 		}
 	}
 
-	CG_Explodef(origin,
-	            dir,
-	            cent->currentState.density,             // mass
-	            cent->currentState.frame,               // type
-	            CG_GetSoundFx(cent),                    // sound
-	            cent->currentState.weapon,              // forceLowGrav
-	            shader
-	            );
+	CG_Explodef(origin, dir, cent->currentState.density, cent->currentState.frame,
+	            CG_GetSoundFx(cent), cent->currentState.weapon, shader);
 }
 
 /**
