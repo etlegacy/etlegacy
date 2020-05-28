@@ -469,7 +469,7 @@ extern cvar_t *sv_wh_check_fov;
 extern cvar_t *sv_demopath;
 extern cvar_t *sv_demoState;
 extern cvar_t *sv_autoDemo;
-extern cvar_t *cl_freezeDemo;
+extern cvar_t *sv_freezeDemo;
 extern cvar_t *sv_demoTolerant;
 
 extern cvar_t *sv_ipMaxClients; ///< limit client connection

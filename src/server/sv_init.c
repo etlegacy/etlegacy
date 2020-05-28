@@ -1130,7 +1130,7 @@ void SV_Init(void)
 	sv_demoState    = Cvar_Get("sv_demoState", "0", CVAR_ROM);
 	sv_democlients  = Cvar_Get("sv_democlients", "0", CVAR_ROM);
 	sv_autoDemo     = Cvar_Get("sv_autoDemo", "0", CVAR_ARCHIVE);
-	cl_freezeDemo   = Cvar_Get("cl_freezeDemo", "0", CVAR_TEMP); // port from client-side to freeze server-side demos
+	sv_freezeDemo   = Cvar_Get("cl_freezeDemo", "0", CVAR_TEMP); // port from client-side to freeze server-side demos
 	sv_demoTolerant = Cvar_Get("sv_demoTolerant", "0", CVAR_ARCHIVE);
 	sv_demopath     = Cvar_Get("sv_demopath", "", CVAR_ARCHIVE);
 

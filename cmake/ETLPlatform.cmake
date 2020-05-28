@@ -8,9 +8,6 @@ set(ETLEGACY_SYSTEM_PROCESSOR ${CMAKE_SYSTEM_PROCESSOR})
 # has to be set to "", otherwise CMake will pass -rdynamic resulting in a client crash
 set(CMAKE_SHARED_LIBRARY_LINK_C_FLAGS "")
 
-message(STATUS "System: ${CMAKE_SYSTEM} (${ETLEGACY_SYSTEM_PROCESSOR})")
-message(STATUS "Lib arch: ${CMAKE_LIBRARY_ARCHITECTURE}")
-
 if(UNIX AND CROSS_COMPILE32 AND NOT ARM) # 32-bit build
 	set(CMAKE_SYSTEM_PROCESSOR i386)
 	message(STATUS "Forcing ${CMAKE_SYSTEM_PROCESSOR} to cross compile 32bit")
@@ -183,3 +180,16 @@ if(NOT APPLE)
 		message(STATUS "Warning: processor architecture not recognised (${CMAKE_SYSTEM_PROCESSOR})")
 	endif()
 endif(NOT APPLE)
+
+# summary
+message(STATUS "System: ${CMAKE_SYSTEM} (${ETLEGACY_SYSTEM_PROCESSOR})")
+message(STATUS "Lib arch: ${CMAKE_LIBRARY_ARCHITECTURE}")
+message(STATUS "Build type:      ${CMAKE_BUILD_TYPE}")
+message(STATUS "Install path:    ${CMAKE_INSTALL_PREFIX}")
+message(STATUS "Compiler flags:")
+message(STATUS "- C             ${CMAKE_C_FLAGS}")
+message(STATUS "- C++           ${CMAKE_CXX_FLAGS}")
+message(STATUS "Linker flags:")
+message(STATUS "- Executable    ${CMAKE_EXE_LINKER_FLAGS}")
+message(STATUS "- Module        ${CMAKE_MODULE_LINKER_FLAGS}")
+message(STATUS "- Shared        ${CMAKE_SHARED_LINKER_FLAGS}")
