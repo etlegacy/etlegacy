@@ -5530,13 +5530,13 @@ void UI_RunMenuScript(char **args)
 		}
 		else if (Q_stricmp(name, "clientCheckFavorite") == 0)
 		{
-			if (trap_LAN_ServerIsInFavoriteList(AS_FAVORITES, uiInfo.serverStatus.displayServers[uiInfo.serverStatus.currentServer]))
+			if (trap_LAN_ServerIsInFavoriteList(ui_netSource.integer, uiInfo.serverStatus.displayServers[uiInfo.serverStatus.currentServer]))
 			{
-				trap_Cvar_SetValue("cg_ui_favorite", 0);
+				trap_Cvar_SetValue("cg_ui_favorite", 1);
 			}
 			else
 			{
-				trap_Cvar_SetValue("cg_ui_favorite", 1);
+				trap_Cvar_SetValue("cg_ui_favorite", 0);
 			}
 		}
 		else if (Q_stricmp(name, "clientCheckSecondaryWeapon") == 0)
