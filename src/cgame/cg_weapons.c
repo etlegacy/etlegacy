@@ -5587,7 +5587,7 @@ void CG_AddDirtBulletParticles(vec3_t origin, vec3_t dir, int speed, int duratio
  */
 void CG_RandomDebris(localEntity_t *le)
 {
-	int i = rand() % 6;
+	int i = rand() % POSSIBLE_PIECES;
 
 	if (i == 0)
 	{

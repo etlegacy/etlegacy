@@ -36,8 +36,6 @@
 #include "cg_local.h"
 #include "../game/bg_local.h"
 
-#define POSSIBLE_PIECES 6
-
 extern void CG_StartShakeCamera(float param);
 extern void CG_Tracer(vec3_t source, vec3_t dest, int sparks);
 //==========================================================================
@@ -989,8 +987,6 @@ pass:
 	}
 }
 
-#define POSSIBLE_PIECES 6
-
 /**
  * @brief Made this more generic for spawning hits and breaks without needing a *cent
  * @param[in] origin
@@ -1007,7 +1003,7 @@ void CG_Explodef(vec3_t origin, vec3_t dir, int mass, int type, qhandle_t sound,
 	localEntity_t       *le;
 	refEntity_t         *re;
 	int                 howmany, total, totalsounds = 0;
-	int                 pieces[6];     // how many of each piece
+	int                 pieces[POSSIBLE_PIECES];  // how many of each piece
 	qhandle_t           modelshader = 0;
 	float               materialmul = 1;     // multiplier for different types
 	leBounceSoundType_t snd;
@@ -1330,7 +1326,6 @@ void CG_Explodef(vec3_t origin, vec3_t dir, int mass, int type, qhandle_t sound,
 			le->angles.trDelta[0] = ((100 + (rand() & 500)) - 300) * materialmul;
 			le->angles.trDelta[1] = ((100 + (rand() & 500)) - 300) * materialmul;
 			le->angles.trDelta[2] = ((100 + (rand() & 500)) - 300) * materialmul;
-
 
 			VectorCopy(origin, le->pos.trBase);
 			VectorNormalize(dir);

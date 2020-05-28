@@ -1514,7 +1514,8 @@ typedef struct
 	char bannerPrint[1024];
 } cg_t;
 
-#define MAX_LOCKER_DEBRIS   5
+#define MAX_LOCKER_DEBRIS 5
+#define POSSIBLE_PIECES   6
 
 /**
  * @struct cgMedia_t
