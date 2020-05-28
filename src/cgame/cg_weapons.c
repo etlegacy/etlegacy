@@ -5690,8 +5690,6 @@ void CG_AddDebris(vec3_t origin, vec3_t dir, int speed, int duration, int count,
 			// airborn or solid with no surface set - just throw projectile fragments
 			if (trace->fraction == 1.0f || ((trace->contents & CONTENTS_SOLID) && !trace->surfaceFlags))
 			{
-				int j;
-
 				if (rand() % 2)
 				{
 					le->refEntity.hModel = cgs.media.shardMetal1;  // FIXME: find some other models
@@ -5712,13 +5710,29 @@ void CG_AddDebris(vec3_t origin, vec3_t dir, int speed, int duration, int count,
 				continue;
 			}
 
-			/*
-			CG_Printf("--> c:%i sf:%i\n", trace->contents, trace->surfaceFlags);
-
 			if (trace->surfaceFlags & SURF_GRAVEL)
 			{
-			    CG_Printf("ON GRAVEL\n");
+				le->refEntity.hModel  = cgs.media.debRock[rand() % 3];
+				le->leBounceSoundType = LEBS_ROCK;
+				continue;
 			}
+
+			if (trace->surfaceFlags & SURF_METAL)
+			{
+				le->refEntity.hModel  = rand() % 2 ? cgs.media.shardMetal1 : cgs.media.shardMetal2;
+				le->leBounceSoundType = LEBS_METAL;
+				continue;
+			}
+
+			if (trace->surfaceFlags & SURF_CARPET)
+			{
+				le->refEntity.hModel  = cgs.media.debFabric[rand() % 3];
+				le->leBounceSoundType = LEBS_WOOD;
+				continue;
+			}
+
+			/*
+			CG_Printf("--> c:%i sf:%i\n", trace->contents, trace->surfaceFlags);
 
 			if (trace->surfaceFlags & SURF_SNOW)
 			{
@@ -5742,19 +5756,9 @@ void CG_AddDebris(vec3_t origin, vec3_t dir, int speed, int duration, int count,
 			    CG_Printf("ON GLASS\n");
 			}
 
-			if (trace->surfaceFlags & SURF_METAL)
-			{
-			    CG_Printf("ON METAL\n");
-			}
-
 			if (trace->surfaceFlags & SURF_ROOF)
 			{
 			    CG_Printf("ON ROOF\n");
-			}
-
-			if (trace->surfaceFlags & SURF_CARPET)
-			{
-			    CG_Printf("ON CARPET\n");
 			}
 
 			// --
