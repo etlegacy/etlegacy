@@ -6641,15 +6641,18 @@ typedef struct
 
 serverStatusCvar_t serverStatusCvars[] =
 {
-	{ "sv_hostname", "Name"      },
-	{ "Address",     ""          },
-	{ "gamename",    "Game name" },
-	{ "g_gametype",  "Game type" },
-	{ "mapname",     "Map"       },
-	{ "version",     ""          },
-	{ "protocol",    ""          },
-	{ "timelimit",   ""          },
-	{ NULL,          NULL        }
+	{ "sv_hostname", "Name"       },
+	{ "Address",     ""           },
+	{ "version",     "Version"    },
+	{ "protocol",    "Protocol"   },
+	{ "gamename",    "Game name"  },
+	{ "g_gametype",  "Game type"  },
+	{ "mapname",     "Map"        },
+	{ "timelimit",   "Time limit" },
+	{ "P",           "Players"    }, // from here, keep mod specific cvars at the bottom
+	{ "mod_version", "Mod version"},
+	{ "mod_url",     "Mod URL"    },
+	{ NULL,          NULL         }
 };
 
 /**
@@ -6660,9 +6663,6 @@ static void UI_SortServerStatusInfo(serverStatusInfo_t *info)
 {
 	int  i, j, index = 0;
 	char *tmp1, *tmp2;
-
-	// FIXME: replace the gametype number by game type
-	//        e.g. Objective, Stopwatch, Map Voting, Custom, etc.
 
 	for (i = 0; serverStatusCvars[i].name; i++)
 	{
@@ -6695,6 +6695,12 @@ static void UI_SortServerStatusInfo(serverStatusInfo_t *info)
 		if (i == 0)
 		{
 			info->lines[i][3] = Q_TrimStr(info->lines[i][3]);
+		}
+
+		// Game type
+		if (i == 5)
+		{
+			info->lines[i][3] = va("%s", uiInfo.gameTypes[atoi(info->lines[i][3])].gameType);
 		}
 	}
 }
