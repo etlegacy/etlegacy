@@ -2179,6 +2179,14 @@ void CC_svcvar(void)
 	{
 		level.svCvars[index].mode = SVC_EXCLUDE;
 	}
+	else if (!Q_stricmp(mode, "WB") || !Q_stricmp(mode, "WITHBITS"))
+	{
+		level.svCvars[index].mode = SVC_WITHBITS;
+	}
+	else if (!Q_stricmp(mode, "WOB") || !Q_stricmp(mode, "WITHOUTBITS"))
+	{
+		level.svCvars[index].mode = SVC_WITHOUTBITS;
+	}
 	else
 	{
 		G_Printf("sv_cvar: invalid mode\n");

@@ -1836,7 +1836,7 @@ void CG_ProcessCvars()
 {
 	char currentVal[256];
 	float cvalF, val1F, val2F;
-	int i, val1I, val2I;      // cvalI,
+	int i, cvalI, val1I, val2I;
 	qboolean cvalIsF, val1IsF, val2IsF;
 
 	for (i = 0; i < cg.svCvarCount; ++i)
@@ -1846,7 +1846,7 @@ void CG_ProcessCvars()
 		cvalF = (float)atof(currentVal);
 		val1F = (float)atof(cg.svCvars[i].Val1);
 		val2F = (float)atof(cg.svCvars[i].Val2);
-		//cvalI   = atoi(currentVal);
+		cvalI   = atoi(currentVal);
 		val1I   = atoi(cg.svCvars[i].Val1);
 		val2I   = atoi(cg.svCvars[i].Val2);
 		cvalIsF = (strstr(currentVal, ".")) ? qtrue : qfalse;
@@ -1968,6 +1968,18 @@ void CG_ProcessCvars()
 			if (strstr(currentVal, cg.svCvars[i].Val1))
 			{
 				trap_Cvar_Set(cg.svCvars[i].cvarName, cg.svCvars[i].Val2);
+			}
+			break;
+		case SVC_WITHBITS:
+			if (!(cvalI & val1I))
+			{
+				trap_Cvar_Set(cg.svCvars[i].cvarName, va("%i", cvalI + val1I));
+			}
+			break;
+		case SVC_WITHOUTBITS:
+			if (cvalI & val1I)
+			{
+				trap_Cvar_Set(cg.svCvars[i].cvarName, va("%i", cvalI - val1I));
 			}
 			break;
 		}

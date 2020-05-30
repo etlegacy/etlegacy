@@ -141,6 +141,8 @@ extern vec3_t playerHeadProneMaxs;
 #define SVC_OUTSIDE         6
 #define SVC_INCLUDE         7
 #define SVC_EXCLUDE         8
+#define SVC_WITHBITS        9
+#define SVC_WITHOUTBITS     10
 
 /**
  * entity->svFlags
