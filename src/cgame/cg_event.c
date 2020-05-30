@@ -40,9 +40,6 @@ extern void CG_StartShakeCamera(float param);
 extern void CG_Tracer(vec3_t source, vec3_t dest, int sparks);
 //==========================================================================
 
-static vec3_t OB_YELLOW = { 1.f, 1.f, 0.f };
-static vec3_t OB_RED    = { 1.f, 0.f, 0.f };
-
 /**
  * @brief CG_GetObituaryIcon
  * @param[in] mod
@@ -177,11 +174,11 @@ static void CG_Obituary(entityState_t *ent)
 
 			CG_GetObituaryIcon(mod, weapon, &weaponShader, &scaleShader);
 
-			CG_AddPMItem(PM_DEATH, targetName, " ", 0, weaponShader, scaleShader, OB_YELLOW);
+			CG_AddPMItem(PM_DEATH, targetName, " ", 0, weaponShader, scaleShader, colorYellow);
 		}
 		else
 		{
-			CG_AddPMItem(PM_DEATH, va("%s %s.", targetName, CG_TranslateString(message)), " ", shader, 0, 0, OB_YELLOW);
+			CG_AddPMItem(PM_DEATH, va("%s %s.", targetName, CG_TranslateString(message)), " ", shader, 0, 0, colorYellow);
 		}
 		trap_Print(va("^7%s^7 %s\n", targetName, CG_TranslateString(message)));
 
@@ -285,18 +282,18 @@ static void CG_Obituary(entityState_t *ent)
 
 				if (cg_graphicObituaries.integer == 1)
 				{
-					CG_AddPMItem(PM_DEATH, targetName, attackerName, 0, weaponShader, scaleShader, (ci->team == ca->team ? OB_RED : NULL));
+					CG_AddPMItem(PM_DEATH, targetName, attackerName, 0, weaponShader, scaleShader, (ci->team == ca->team ? colorRed : NULL));
 				}
 				else
 				{
-					CG_AddPMItem(PM_DEATH, attackerName, targetName, 0, weaponShader, scaleShader, (ci->team == ca->team ? OB_RED : NULL));
+					CG_AddPMItem(PM_DEATH, attackerName, targetName, 0, weaponShader, scaleShader, (ci->team == ca->team ? colorRed : NULL));
 				}
 			}
 			else
 			{
 				if (ci->team == ca->team)
 				{
-					CG_AddPMItem(PM_DEATH, va("%s^1 %s^7 ", targetName, CG_TranslateString(message)), va("%s^1%s", attackerName, CG_TranslateString(message2)), shader, 0, 0, OB_RED);
+					CG_AddPMItem(PM_DEATH, va("%s^1 %s^7 ", targetName, CG_TranslateString(message)), va("%s^1%s", attackerName, CG_TranslateString(message2)), shader, 0, 0, colorRed);
 				}
 				else
 				{
