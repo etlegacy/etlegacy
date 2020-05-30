@@ -733,7 +733,7 @@ void G_Script_ScriptEvent(gentity_t *ent, const char *eventStr, const char *para
 		G_Script_ScriptChange(ent, i);
 	}
 
-	// log script trigger stolen & returned actions (ETPro behavior)
+	// log script trigger stolen & returned actions
 	if (!Q_stricmp(eventStr, "trigger"))
 	{
 		if (!Q_stricmp(params, "stolen"))
@@ -764,7 +764,7 @@ void G_Script_ScriptEvent(gentity_t *ent, const char *eventStr, const char *para
 #ifdef FEATURE_OMNIBOT
 		Bot_Util_SendTrigger(ent, NULL, va("Defused at %s.", ent->parent ? ent->parent->track : ent->track), eventStr);
 #endif
-		// log script defused actions (ETPro behavior)
+		// log script defused actions
 		G_LogPrintf("%s popup: ^7%s^7 defused \"%s\"\n", MODNAME, params, ent->parent ? ent->parent->track : ent->track);
 	}
 	else if (!Q_stricmp(eventStr, "dynamited"))
@@ -772,7 +772,7 @@ void G_Script_ScriptEvent(gentity_t *ent, const char *eventStr, const char *para
 #ifdef FEATURE_OMNIBOT
 		Bot_Util_SendTrigger(ent, NULL, va("Planted at %s.", ent->parent ? ent->parent->track : ent->track), eventStr);
 #endif
-		// log script dynamited actions (ETPro behavior)
+		// log script dynamited actions
 		G_LogPrintf("%s popup: ^7%s^7 planted \"%s\"\n", MODNAME, params, ent->parent ? ent->parent->track : ent->track);
 	}
 #ifdef FEATURE_OMNIBOT

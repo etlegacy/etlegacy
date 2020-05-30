@@ -2282,7 +2282,7 @@ weapengineergoto3:
 
 							if (hit->target_ent)
 							{
-								G_Script_ScriptEvent(hit->target_ent, "defused", "");
+								G_Script_ScriptEvent(hit->target_ent, "defused", ent->client->sess.sessionTeam == TEAM_AXIS ? "axis" : "allies");
 							}
 
 							pm = G_PopupMessage(PM_DYNAMITE);

@@ -3811,7 +3811,7 @@ qboolean G_ScriptAction_Announce_Icon(gentity_t *ent, char *params)
 	Bot_Util_SendTrigger(ent, NULL, token, "announce_icon");
 #endif
 
-	// log script wm_announce_icon actions (ETPro behavior)
+	// log script wm_announce_icon actions
 	G_LogPrintf("%s announce: \"^7%s\"\n", MODNAME, token);
 
 	return qtrue;
@@ -3845,7 +3845,7 @@ qboolean G_ScriptAction_Announce(gentity_t *ent, char *params)
 	Bot_Util_SendTrigger(ent, NULL, token, "announce");
 #endif
 
-	// log script wm_announce actions (ETPro behavior)
+	// log script wm_announce actions
 	G_LogPrintf("%s announce: \"^7%s\"\n", MODNAME, token);
 
 	return qtrue;
