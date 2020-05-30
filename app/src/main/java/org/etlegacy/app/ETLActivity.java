@@ -114,12 +114,8 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
                         }
                     });
 
-                    if (buttonPopUpMenu.getParent() != null)
-                        mLayout.removeView(buttonPopUpMenu);
-
-                    mLayout.addView(buttonPopUpMenu);
-
-                    etl_linearLayout.removeAllViewsInLayout();
+                    if (buttonPopUpMenu.getParent() == null)
+                        mLayout.addView(buttonPopUpMenu);
 
                     btn2.setOnTouchListener(new View.OnTouchListener() {
                         @Override
@@ -176,7 +172,8 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
                     lp.addRule(RelativeLayout.CENTER_VERTICAL);
                     lp.rightMargin = pxToDp(300);
 
-                    etl_linearLayout.addView(btn2, lp);
+                    if (btn2.getParent() == null)
+                        etl_linearLayout.addView(btn2, lp);
 
                     btn_reload.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -195,7 +192,8 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
                     lp_reload.topMargin = pxToDp(220);
                     lp_reload.rightMargin = pxToDp(90);
 
-                    etl_linearLayout.addView(btn_reload, lp_reload);
+                    if (btn_reload.getParent() == null)
+                        etl_linearLayout.addView(btn_reload, lp_reload);
 
                     btn_jump.setOnTouchListener(new View.OnTouchListener() {
                         @Override
@@ -221,6 +219,7 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
                     lp_jump.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
                     lp_jump.bottomMargin = pxToDp(-20);
 
+                    if (btn_jump.getParent() == null)
                     etl_linearLayout.addView(btn_jump, lp_jump);
 
                     btn_activate.setOnClickListener(new View.OnClickListener() {
@@ -240,7 +239,8 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
                     lp_activate.bottomMargin = pxToDp(-20);
                     lp_activate.leftMargin = pxToDp(400);
 
-                    etl_linearLayout.addView(btn_activate, lp_activate);
+                    if (btn_activate.getParent() == null)
+                        etl_linearLayout.addView(btn_activate, lp_activate);
 
                     btn_alternative.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -259,7 +259,8 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
                     lp_alternative.bottomMargin = pxToDp(-20);
                     lp_alternative.rightMargin = pxToDp(400);
 
-                    etl_linearLayout.addView(btn_alternative, lp_alternative);
+                    if (btn_alternative.getParent() == null)
+                        etl_linearLayout.addView(btn_alternative, lp_alternative);
 
                     btn_crouch.setOnTouchListener(new View.OnTouchListener() {
                         @Override
@@ -285,7 +286,8 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
                     lp_crouch.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
                     lp_crouch.bottomMargin = pxToDp(-20);
 
-                    etl_linearLayout.addView(btn_crouch, lp_crouch);
+                    if ( btn_crouch.getParent() == null)
+                        etl_linearLayout.addView(btn_crouch, lp_crouch);
 
                     joyStick_left.setListener(ETLActivity.this);
                     joyStick_left.setPadColor(Color.TRANSPARENT);
@@ -300,14 +302,14 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
                     joystick_layout.addRule(RelativeLayout.CENTER_VERTICAL);
                     joystick_layout.leftMargin = pxToDp(10);
 
-                    if (joyStick_left.getParent() != null)
-                        mLayout.removeView(joyStick_left);
-
-                    mLayout.addView(joyStick_left, joystick_layout);
+                    if (joyStick_left.getParent() == null)
+                        mLayout.addView(joyStick_left, joystick_layout);
 
                     handler.postDelayed(this, 2000);
                     }
                 else {
+                    mLayout.removeView(buttonPopUpMenu);
+                    mLayout.removeView(joyStick_left);
                     etl_linearLayout.removeAllViews();
                     handler.postDelayed(this, 500);
                 }
