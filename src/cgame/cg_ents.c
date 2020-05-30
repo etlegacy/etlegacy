@@ -737,7 +737,7 @@ static void CG_Item(centity_t *cent)
 			Vector4Set(accentColor, 0.73f, 0.78f, 0.79f, 1.f);
 		}
 
-		// remove colour when item is sinking
+		// remove color when item is sinking
 		if (item->giType != IT_TEAM && (es->time - 1000) < cg.time)
 		{
 			vec4_t fadeColor;

@@ -3054,7 +3054,7 @@ static void CG_ServerCommand(void)
 		{
 			pmType = PM_MESSAGE;
 		}
-		CG_AddPMItem(pmType, CG_LocalizeServerCommand(CG_Argv(1)), " ", cgs.media.pmImages[iconnumber], 0, 0, NULL);
+		CG_AddPMItem(pmType, CG_LocalizeServerCommand(CG_Argv(1)), " ", cgs.media.pmImages[iconnumber], 0, 0, colorWhite);
 		return;
 	}
 	case CP_HASH:                         // "cp"

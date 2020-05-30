@@ -315,7 +315,7 @@ static void CG_DrawGrid(float x, float y, float w, float h, mapScissor_t *scisso
 	float  xscale, yscale;
 	float  grid_x, grid_y;
 	vec2_t dist;
-	vec4_t gridColour;
+	vec4_t gridColor;
 	float  Max0Min0 = cg.mapcoordsMaxs[0] - cg.mapcoordsMins[0];
 	float  Max1Min1 = cg.mapcoordsMaxs[1] - cg.mapcoordsMins[1];
 	float  Min1Max1 = cg.mapcoordsMins[1] - cg.mapcoordsMaxs[1];
@@ -372,8 +372,8 @@ static void CG_DrawGrid(float x, float y, float w, float h, mapScissor_t *scisso
 		step[1] = gridStep[1] * yscale;
 
 		// draw
-		Vector4Set(gridColour, clrBrownLine[0], clrBrownLine[1], clrBrownLine[2], .4f);
-		trap_R_SetColor(gridColour);
+		Vector4Set(gridColor, clrBrownLine[0], clrBrownLine[1], clrBrownLine[2], .4f);
+		trap_R_SetColor(gridColor);
 		for ( ; grid_x < dim_x[1]; grid_x += step[0])
 		{
 			if (grid_x < dim_x[0])
@@ -476,7 +476,7 @@ static void CG_DrawGrid(float x, float y, float w, float h, mapScissor_t *scisso
 		textOrigin[0] = grid_x;
 		textOrigin[1] = grid_y;
 
-		Vector4Set(gridColour, clrBrownLine[0], clrBrownLine[1], clrBrownLine[2], 1.f);
+		Vector4Set(gridColor, clrBrownLine[0], clrBrownLine[1], clrBrownLine[2], 1.f);
 
 		coord_char[1] = '\0';
 		for (coord_char[0] = ('A' - 1); grid_x < dim_x[1]; grid_x += step[0], coord_char[0]++)
@@ -487,7 +487,7 @@ static void CG_DrawGrid(float x, float y, float w, float h, mapScissor_t *scisso
 				text_height = CG_Text_Height_Ext(coord_char, 0.2f, 0, &cgs.media.limboFont2);
 				CG_Text_Paint_Ext((x + grid_x) - (.5f * step[0]) - (.5f * text_width), y + dim_y[0] + textOrigin[1] + 1.5f * text_height, 0.2f, 0.2f, colorBlack, coord_char, 0, 0, 0, &cgs.media.limboFont2);
 			}
-			trap_R_SetColor(gridColour);
+			trap_R_SetColor(gridColor);
 
 			Vector4Set(line, x + grid_x, y + dim_y[0], 1, dim_x[1] - dim_x[0]);
 			CG_AdjustFrom640(&line[0], &line[1], &line[2], &line[3]);
@@ -503,7 +503,7 @@ static void CG_DrawGrid(float x, float y, float w, float h, mapScissor_t *scisso
 				text_height = CG_Text_Height_Ext(coord_char, 0.2f, 0, &cgs.media.limboFont2);
 				CG_Text_Paint_Ext(x + dim_x[0] + textOrigin[0] + .5f * text_width, (y + grid_y) - (.5f * step[1]) + (.5f * text_height), 0.2f, 0.2f, colorBlack, coord_char, 0, 0, 0, &cgs.media.limboFont2);
 			}
-			trap_R_SetColor(gridColour);
+			trap_R_SetColor(gridColor);
 
 			Vector4Set(line, x + dim_x[0], y + grid_y, dim_y[1] - dim_y[0], 1);
 			CG_AdjustFrom640(&line[0], &line[1], &line[2], &line[3]);
@@ -1832,7 +1832,7 @@ void CG_DrawMortarMarker(float px, float py, float pw, float ph, qboolean draw, 
 
 	if (CHECKBITWISE(GetWeaponTableData(cg.lastFiredWeapon)->type, WEAPON_TYPE_MORTAR | WEAPON_TYPE_SET) && cg.mortarImpactTime >= 0)
 	{
-		vec4_t colour = { 1.f, 1.f, 1.f, 1.f };
+		vec4_t color = { 1.f, 1.f, 1.f, 1.f };
 
 		if (!(CHECKBITWISE(GetWeaponTableData(cg.snap->ps.weapon)->type, WEAPON_TYPE_MORTAR | WEAPON_TYPE_SET)))
 		{
@@ -1883,10 +1883,10 @@ void CG_DrawMortarMarker(float px, float py, float pw, float ph, qboolean draw, 
 							point[1] += 8.f;
 						}
 					}
-					colour[3] = .5f;
+					color[3] = .5f;
 				}
 
-				trap_R_SetColor(colour);
+				trap_R_SetColor(color);
 				CG_DrawRotatedPic(point[0] - 8.f, point[1] - 8.f, 16, 16, cgs.media.ccMortarHit, .5f - (cg.mortarFireAngles[YAW] /*- 180.f */ + 45.f) / 360.f);
 				trap_R_SetColor(NULL);
 			}
@@ -1896,7 +1896,7 @@ void CG_DrawMortarMarker(float px, float py, float pw, float ph, qboolean draw, 
 	// display arty target to all teammates
 	for (i = 0; i < cgs.maxclients; i++)
 	{
-		vec4_t colour = { 1.f, 1.f, 1.f, 1.f };
+		vec4_t color = { 1.f, 1.f, 1.f, 1.f };
 
 		fadeTime = cg.time - (cg.artilleryRequestTime[i] + 25000);
 
@@ -1904,7 +1904,7 @@ void CG_DrawMortarMarker(float px, float py, float pw, float ph, qboolean draw, 
 		{
 			if (fadeTime > 0)
 			{
-				colour[3] = 1.f - (fadeTime / 5000.f);
+				color[3] = 1.f - (fadeTime / 5000.f);
 			}
 
 			if (scissor)
@@ -1930,7 +1930,7 @@ void CG_DrawMortarMarker(float px, float py, float pw, float ph, qboolean draw, 
 				point[1] += py - scissor->tl[1];
 			}
 
-			trap_R_SetColor(colour);
+			trap_R_SetColor(color);
 			CG_DrawPic(point[0] - 8.f, point[1] - 8.f, 16, 16, cgs.media.ccMortarTarget);
 			trap_R_SetColor(NULL);
 		}

@@ -1214,7 +1214,7 @@ static void CG_CPM_f(void)
 	}
 
 	// this is custom, don't localize!
-	CG_AddPMItem(PM_MESSAGE, CG_Argv(1), " ", cgs.media.pmImages[iconnumber], 0, 0, NULL);
+	CG_AddPMItem(PM_MESSAGE, CG_Argv(1), " ", cgs.media.pmImages[iconnumber], 0, 0, colorWhite);
 }
 
 qboolean resetmaxspeed = qfalse;

@@ -180,7 +180,7 @@ typedef enum
 
 typedef struct cg_atmosphericParticle_s
 {
-	vec3_t pos, delta, deltaNormalized, colour;
+	vec3_t pos, delta, deltaNormalized, color;
 	float height, weight;
 	active_t active;
 	qhandle_t *effectshader;
@@ -302,18 +302,18 @@ static qboolean CG_ParticleGenerate(cg_atmosphericParticle_t *particle, vec3_t c
 		particle->weight = currweight;
 
 		// special color
-		particle->colour[0] = 0.6f + 0.2f * random() * 0xFF;
-		particle->colour[1] = 0.6f + 0.2f * random() * 0xFF;
-		particle->colour[2] = 0.6f + 0.2f * random() * 0xFF;
+		particle->color[0] = 0.6f + 0.2f * random() * 0xFF;
+		particle->color[1] = 0.6f + 0.2f * random() * 0xFF;
+		particle->color[2] = 0.6f + 0.2f * random() * 0xFF;
 	}
 	else
 	{
 		particle->height = ATMOSPHERIC_SNOW_HEIGHT + random() * 2;
 		particle->weight = particle->height * 0.5f;
 
-		particle->colour[0] = 255;
-		particle->colour[1] = 255;
-		particle->colour[2] = 255;
+		particle->color[0] = 255;
+		particle->color[1] = 255;
+		particle->color[2] = 255;
 	}
 
 	//particle->effectshader = &cg_atmFx.effectshaders[ (int) (random() * ( 2 )) + 1 ];
@@ -480,25 +480,25 @@ static void CG_ParticleRender(cg_atmosphericParticle_t *particle)
 		VectorMA(finish, -particleWidth, right, verts[0].xyz);
 		verts[0].st[0]       = 0;
 		verts[0].st[1]       = 0;
-		verts[0].modulate[0] = particle->colour[0];
-		verts[0].modulate[1] = particle->colour[1];
-		verts[0].modulate[2] = particle->colour[2];
+		verts[0].modulate[0] = particle->color[0];
+		verts[0].modulate[1] = particle->color[1];
+		verts[0].modulate[2] = particle->color[2];
 		verts[0].modulate[3] = 255;
 
 		VectorMA(start, -particleWidth, right, verts[1].xyz);
 		verts[1].st[0]       = 0;
 		verts[1].st[1]       = 1;
-		verts[1].modulate[0] = particle->colour[0];
-		verts[1].modulate[1] = particle->colour[1];
-		verts[1].modulate[2] = particle->colour[2];
+		verts[1].modulate[0] = particle->color[0];
+		verts[1].modulate[1] = particle->color[1];
+		verts[1].modulate[2] = particle->color[2];
 		verts[1].modulate[3] = 255;
 
 		VectorMA(start, particleWidth, right, verts[2].xyz);
 		verts[2].st[0]       = 1;
 		verts[2].st[1]       = 1;
-		verts[2].modulate[0] = particle->colour[0];
-		verts[2].modulate[1] = particle->colour[1];
-		verts[2].modulate[2] = particle->colour[2];
+		verts[2].modulate[0] = particle->color[0];
+		verts[2].modulate[1] = particle->color[1];
+		verts[2].modulate[2] = particle->color[2];
 		verts[2].modulate[3] = 255;
 	}
 	else // ATM_RAIN
@@ -506,25 +506,25 @@ static void CG_ParticleRender(cg_atmosphericParticle_t *particle)
 		VectorCopy(finish, verts[0].xyz);
 		verts[0].st[0]       = 0.5f;
 		verts[0].st[1]       = 0;
-		verts[0].modulate[0] = particle->colour[0];
-		verts[0].modulate[1] = particle->colour[1];
-		verts[0].modulate[2] = particle->colour[2];
+		verts[0].modulate[0] = particle->color[0];
+		verts[0].modulate[1] = particle->color[1];
+		verts[0].modulate[2] = particle->color[2];
 		verts[0].modulate[3] = 100 * dist;
 
 		VectorMA(start, -particle->weight, right, verts[1].xyz);
 		verts[1].st[0]       = 0;
 		verts[1].st[1]       = 1;
-		verts[1].modulate[0] = particle->colour[0];
-		verts[1].modulate[1] = particle->colour[1];
-		verts[1].modulate[2] = particle->colour[2];
+		verts[1].modulate[0] = particle->color[0];
+		verts[1].modulate[1] = particle->color[1];
+		verts[1].modulate[2] = particle->color[2];
 		verts[1].modulate[3] = 200 * dist;
 
 		VectorMA(start, particle->weight, right, verts[2].xyz);
 		verts[2].st[0]       = 1;
 		verts[2].st[1]       = 1;
-		verts[2].modulate[0] = particle->colour[0];
-		verts[2].modulate[1] = particle->colour[1];
-		verts[2].modulate[2] = particle->colour[2];
+		verts[2].modulate[0] = particle->color[0];
+		verts[2].modulate[1] = particle->color[1];
+		verts[2].modulate[2] = particle->color[2];
 		verts[2].modulate[3] = 200 * dist;
 	}
 	CG_AddPolyToPool(*particle->effectshader, verts);

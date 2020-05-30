@@ -282,11 +282,11 @@ static void CG_Obituary(entityState_t *ent)
 
 				if (cg_graphicObituaries.integer == 1)
 				{
-					CG_AddPMItem(PM_DEATH, targetName, attackerName, 0, weaponShader, scaleShader, (ci->team == ca->team ? colorRed : NULL));
+					CG_AddPMItem(PM_DEATH, targetName, attackerName, 0, weaponShader, scaleShader, (ci->team == ca->team ? colorRed : colorWhite));
 				}
 				else
 				{
-					CG_AddPMItem(PM_DEATH, attackerName, targetName, 0, weaponShader, scaleShader, (ci->team == ca->team ? colorRed : NULL));
+					CG_AddPMItem(PM_DEATH, attackerName, targetName, 0, weaponShader, scaleShader, (ci->team == ca->team ? colorRed : colorWhite));
 				}
 			}
 			else
@@ -297,7 +297,7 @@ static void CG_Obituary(entityState_t *ent)
 				}
 				else
 				{
-					CG_AddPMItem(PM_DEATH, va("%s %s ", targetName, CG_TranslateString(message)), va("%s%s", attackerName, CG_TranslateString(message2)), shader, 0, 0, NULL);
+					CG_AddPMItem(PM_DEATH, va("%s %s ", targetName, CG_TranslateString(message)), va("%s%s", attackerName, CG_TranslateString(message2)), shader, 0, 0, colorWhite);
 				}
 			}
 			trap_Print(va((ci->team == ca->team ? "^7%s^1 %s ^7%s^1%s\n" : "^7%s^7 %s ^7%s^7%s\n"), targetName, CG_TranslateString(message), attackerName, CG_TranslateString(message2)));
@@ -306,7 +306,7 @@ static void CG_Obituary(entityState_t *ent)
 	}
 
 	// we don't know what it was
-	CG_AddPMItem(PM_DEATH, va("%s %s.", targetName, CG_TranslateString("died")), " ", shader, 0, 0, NULL);
+	CG_AddPMItem(PM_DEATH, va("%s %s.", targetName, CG_TranslateString("died")), " ", shader, 0, 0, colorWhite);
 	trap_Print(va("^7%s^7 died\n", targetName));
 }
 
@@ -356,10 +356,10 @@ static void CG_ItemPickup(int itemNum)
 #ifdef FEATURE_EDV
 	if (!cgs.demoCamera.renderingFreeCam && !cgs.demoCamera.renderingWeaponCam)
 	{
-		CG_AddPMItem(giType, va(CG_TranslateString("Picked up %s"), CG_TranslateString(CG_PickupItemText(itemNum))), " ", cgs.media.pmImages[giType], 0, 0, NULL);
+		CG_AddPMItem(giType, va(CG_TranslateString("Picked up %s"), CG_TranslateString(CG_PickupItemText(itemNum))), " ", cgs.media.pmImages[giType], 0, 0, colorWhite);
 	}
 #else
-	CG_AddPMItem(giType, va(CG_TranslateString("Picked up %s"), CG_TranslateString(CG_PickupItemText(itemNum))), " ", cgs.media.pmImages[giType], 0, 0, NULL);
+	CG_AddPMItem(giType, va(CG_TranslateString("Picked up %s"), CG_TranslateString(CG_PickupItemText(itemNum))), " ", cgs.media.pmImages[giType], 0, 0, colorWhite);
 #endif
 
 	// see if it should be the grabbed weapon
@@ -2665,7 +2665,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 
 		if (str)
 		{
-			CG_AddPMItem((popupMessageType_t)cent->currentState.effect1Time, str, " ", shader, 0, 0, NULL);
+			CG_AddPMItem((popupMessageType_t)cent->currentState.effect1Time, str, " ", shader, 0, 0, colorWhite);
 		}
 		CG_PlayPMItemSound(cent);
 	}

@@ -450,14 +450,7 @@ void CG_AddPMItem(popupMessageType_t type, const char *message, const char *mess
 	}
 
 	// colored obituaries
-	if (color == NULL)
-	{
-		VectorCopy(colorWhite, listItem->color);
-	}
-	else
-	{
-		VectorCopy(color, listItem->color);
-	}
+	VectorCopy(color != NULL ? color : colorWhite, listItem->color);
 
 	listItem->inuse = qtrue;
 	listItem->type  = type;
@@ -614,10 +607,10 @@ void CG_AddPMItemBig(popupMessageBigType_t type, const char *message, qhandle_t 
  */
 void CG_DrawPMItems(rectDef_t rect, int style)
 {
-	vec4_t       color     = {0.f, 0.f, 0.f, 1.f };
-	vec4_t       colorText = {1.f, 1.f, 1.f, 1.f };
+	vec4_t       color     = { 0.f, 0.f, 0.f, 1.f };
+	vec4_t       colorText = { 1.f, 1.f, 1.f, 1.f };
 	float        t;
-	int          i, j, size, w, sizew;
+	int          i, size, w, sizew;
 	pmListItem_t *listItem = cg_pmOldList;
 	float        y         = rect.y; //360;
 	float        fontScale = cg_fontScaleSP.value;
@@ -733,18 +726,14 @@ void CG_DrawPMItems(rectDef_t rect, int style)
 
 		if (listItem->weaponShader > 0)
 		{
-			for (j = 0; j < 3; j++)
-			{
-				colorText[j] = listItem->color[j];
-			}
+			// colorize
+			VectorCopy(listItem->color, colorText);
 			trap_R_SetColor(colorText);
 
 			CG_DrawPic(size + w + 12, ICON_Y_OFFSET(y), sizew * listItem->scaleShader, sizew, listItem->weaponShader);
 
-			for (j = 0; j < 3; j++)
-			{
-				colorText[j] = 1.f;
-			}
+			// decolorize
+			VectorCopy(colorWhite, colorText);
 			trap_R_SetColor(NULL);
 		}
 		else
@@ -755,7 +744,6 @@ void CG_DrawPMItems(rectDef_t rect, int style)
 
 		if (listItem->message2[0])
 		{
-			//size + w + sizew * listItem->scaleShader + 16
 			CG_Text_Paint_Ext(size + w + sizew * listItem->scaleShader + 16, y + 12, fontScale, fontScale, colorText, listItem->message2, 0, 0, style, &cgs.media.limboFont2);
 		}
 	}
@@ -766,7 +754,7 @@ void CG_DrawPMItems(rectDef_t rect, int style)
  */
 void CG_DrawPMItemsBig(void)
 {
-	vec4_t colourText = { 1.f, 1.f, 1.f, 1.f };
+	vec4_t colorText = { 1.f, 1.f, 1.f, 1.f };
 	float  t, w;
 	float  y         = 270;
 	float  fontScale = cg_fontScaleSP.value;
@@ -779,15 +767,15 @@ void CG_DrawPMItemsBig(void)
 	t = cg_pmWaitingListBig->time + PM_BIGPOPUP_TIME + cg_popupStayTime.value;
 	if (cg.time > t)
 	{
-		colourText[3] = cg_popupFadeTime.integer ? 1 - ((cg.time - t) / cg_popupFadeTime.value) : 0;
+		colorText[3] = cg_popupFadeTime.integer ? 1 - ((cg.time - t) / cg_popupFadeTime.value) : 0;
 	}
 
-	trap_R_SetColor(colourText);
+	trap_R_SetColor(colorText);
 	CG_DrawPic(Ccg_WideX(SCREEN_WIDTH) - 116, y, 48, 48, cg_pmWaitingListBig->shader);
 	trap_R_SetColor(NULL);
 
 	w = CG_Text_Width_Ext(cg_pmWaitingListBig->message, fontScale, 0, &cgs.media.limboFont2);
-	CG_Text_Paint_Ext(Ccg_WideX(SCREEN_WIDTH) - 64 - w, y + 56, fontScale, fontScale, colourText, cg_pmWaitingListBig->message, 0, 0, 0, &cgs.media.limboFont2);
+	CG_Text_Paint_Ext(Ccg_WideX(SCREEN_WIDTH) - 64 - w, y + 56, fontScale, fontScale, colorText, cg_pmWaitingListBig->message, 0, 0, 0, &cgs.media.limboFont2);
 }
 
 /**
