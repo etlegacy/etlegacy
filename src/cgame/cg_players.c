@@ -2112,9 +2112,7 @@ static void CG_PlayerSprites(centity_t *cent)
 			    && CG_IsOnFireteam(cgs.clientinfo[cent->currentState.number].disguiseClientNum)
 			    && cgs.clientinfo[cgs.clientinfo[cent->currentState.number].disguiseClientNum].selected)
 			{
-				vec4_t color = { 0.f, 1.f, 0.f, 1.f };
-
-				CG_PlayerFloatSprite(cent, cgs.media.fireteamIcon, height, numIcons++, color);
+				CG_PlayerFloatSprite(cent, cgs.media.fireteamIcon, height, numIcons++, colorGreen);
 			}
 
 			// shoutcasters see undercover enemies
