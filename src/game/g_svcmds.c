@@ -446,14 +446,14 @@ void Svcmd_RemoveIP_f(void)
 		    ipFilters.ipFilters[i].compare == f.compare)
 		{
 			ipFilters.ipFilters[i].compare = 0xffffffffu;
-			G_Printf("Removed.\n");
+			G_Printf("Removed\n");
 
 			UpdateIPBans(&ipFilters);
 			return;
 		}
 	}
 
-	G_Printf("Didn't find %s.\n", str);
+	G_Printf("Didn't find %s\n", str);
 }
 
 /**
@@ -713,7 +713,7 @@ gclient_t *G_GetPlayerByNum(int clientNum)
 
 	if (trap_Argc() < 2)
 	{
-		G_Printf("No player specified.\n");
+		G_Printf("No player specified\n");
 		return NULL;
 	}
 
@@ -724,6 +724,12 @@ gclient_t *G_GetPlayerByNum(int clientNum)
 	}
 
 	cl = &level.clients[clientNum];
+
+	if (!cl)
+	{
+		G_Printf("Client %i is not on the server\n", clientNum);
+		return NULL;
+	}
 
 	if (cl->pers.connected == CON_DISCONNECTED)
 	{
@@ -753,7 +759,7 @@ gclient_t *G_GetPlayerByName(const char *name)
 
 	if (trap_Argc() < 2)
 	{
-		G_Printf("No player specified.\n");
+		G_Printf("No player specified\n");
 		return NULL;
 	}
 
@@ -1091,7 +1097,7 @@ void Svcmd_ListCampaigns_f(void)
 	}
 	else
 	{
-		G_Printf("No campaigns found.\n");
+		G_Printf("No campaigns found\n");
 		return;
 	}
 
@@ -1122,7 +1128,7 @@ void Svcmd_RevivePlayer(void)
 
 	if (!*name)
 	{
-		G_Printf("usage: revive <clientname>.\n");
+		G_Printf("usage: revive <clientname>\n");
 		return;
 	}
 

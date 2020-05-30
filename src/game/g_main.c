@@ -718,14 +718,14 @@ Q_EXPORT intptr_t vmMain(intptr_t command, intptr_t arg0, intptr_t arg1, intptr_
 		Bot_Interface_InitHandles();
 #endif
 		G_InitGame(arg0, arg1, arg2, arg3, arg4);
-		G_Printf("Game Initialization completed in %.2f seconds.\n", ((float)trap_Milliseconds() - time) / 1000.f);
+		G_Printf("Game Initialization completed in %.2f seconds\n", ((float)trap_Milliseconds() - time) / 1000.f);
 #ifdef FEATURE_OMNIBOT
 
 		time = trap_Milliseconds();
 
 		if (!Bot_Interface_Init())
 		{
-			G_Printf(S_COLOR_RED "Unable to Initialize Omni-Bot.\n");
+			G_Printf(S_COLOR_RED "Unable to Initialize Omni-Bot\n");
 		}
 
 		if (g_OmniBotEnable.integer >= 1)
@@ -733,7 +733,7 @@ Q_EXPORT intptr_t vmMain(intptr_t command, intptr_t arg0, intptr_t arg1, intptr_
 			// that's the only way to print the used bot version atm
 			trap_SendConsoleCommand(EXEC_APPEND, va("%s", "bot version\n"));
 
-			G_Printf(S_COLOR_GREEN "Omni-Bot Initialization completed in %.2f seconds.\n", ((float)trap_Milliseconds() - time) / 1000.f);
+			G_Printf(S_COLOR_GREEN "Omni-Bot Initialization completed in %.2f seconds\n", ((float)trap_Milliseconds() - time) / 1000.f);
 		}
 #endif
 	}
@@ -2476,7 +2476,7 @@ void G_InitGame(int levelTime, int randomSeed, int restart, int etLegacyServer, 
 	}
 	else
 	{
-		G_Printf("Not logging to disk.\n");
+		G_Printf("Not logging to disk\n");
 	}
 
 	trap_GetServerinfo(cs, sizeof(cs));
@@ -2687,7 +2687,7 @@ void G_InitGame(int levelTime, int randomSeed, int restart, int etLegacyServer, 
 #ifdef FEATURE_LUA
 	G_LuaInit();
 #else
-	G_Printf("%sNo Lua API available.\n", S_COLOR_BLUE);
+	G_Printf("%sNo Lua API available\n", S_COLOR_BLUE);
 #endif
 
 	// parse the key/value pairs and spawn gentities
@@ -2797,7 +2797,7 @@ void G_ShutdownGame(int restart)
 #ifdef FEATURE_OMNIBOT
 	if (!Bot_Interface_Shutdown())
 	{
-		G_Printf(S_COLOR_RED "Error shutting down Omni-Bot.\n");
+		G_Printf(S_COLOR_RED "Error shutting down Omni-Bot\n");
 	}
 	else
 	{
@@ -4149,7 +4149,7 @@ void CheckExitRules(void)
 		// if ExitLevel has run, but still no new map was loaded, try restarting the map
 		if (level.intermissiontime == 0)
 		{
-			G_Printf("^3%s\n", "WARNING: failed to load the next map or campaign!");
+			G_Printf("^3%s\n", "WARNING: failed to load the next map or campaign");
 			G_Printf("^3%s\n", "Restarting level...");
 			trap_SendConsoleCommand(EXEC_APPEND, "map_restart 0\n");
 			return;
@@ -5321,7 +5321,7 @@ void G_MapVoteInfoWrite()
 			count++;
 		}
 	}
-	G_Printf("mapvoteinfo: wrote %d of %d map vote stats \n", count, MAX_VOTE_MAPS);
+	G_Printf("mapvoteinfo: wrote %d of %d map vote stats\n", count, MAX_VOTE_MAPS);
 
 	trap_FS_FCloseFile(f);
 	return;
