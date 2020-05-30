@@ -106,12 +106,12 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
                     });
 
                     RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(
-                            350,
-                            300);
+                            pxToDp(450),
+                            pxToDp(350));
 
                     lp.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
                     lp.addRule(RelativeLayout.CENTER_VERTICAL);
-                    lp.rightMargin = 120;
+                    lp.rightMargin = pxToDp(300);
 
                     etl_linearLayout.addView(btn2, lp);
 
