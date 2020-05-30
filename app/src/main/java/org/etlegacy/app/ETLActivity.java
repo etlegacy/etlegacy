@@ -9,11 +9,13 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageButton;
+import android.widget.PopupMenu;
 import android.widget.RelativeLayout;
 
 import com.erz.joysticklibrary.JoyStick;
@@ -53,6 +55,37 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
             public void run() {
 
                 if (getUiMenu() == true) {
+
+                    final ImageButton buttonPopUpMenu = new ImageButton(getApplicationContext());
+                    buttonPopUpMenu.setImageBitmap(getBitmapFromAsset("btn_menu.png"));
+                    buttonPopUpMenu.setBackgroundResource(0);
+                    mLayout.addView(buttonPopUpMenu);
+                    buttonPopUpMenu.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            PopupMenu etl_PopMenu = new PopupMenu(getApplicationContext(), buttonPopUpMenu);
+                            etl_PopMenu.getMenu().add(0, 0, 0, "F1");
+                            etl_PopMenu.getMenu().add(1, 1, 1, "F2");
+                            etl_PopMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                                @Override
+                                public boolean onMenuItemClick(MenuItem item) {
+
+                                    switch (item.getItemId()) {
+                                        case 0:
+                                            SDLActivity.onNativeKeyDown(131);
+                                            SDLActivity.onNativeKeyUp(131);
+                                            break;
+                                        case 1:
+                                            SDLActivity.onNativeKeyDown(132);
+                                            SDLActivity.onNativeKeyUp(132);
+                                            break;
+                                    }
+                                    return false;
+                                }
+                            });
+                            etl_PopMenu.show();
+                        }
+                    });
 
                     ImageButton btn2 = new ImageButton(getApplicationContext());
                     btn2.setId(2);
