@@ -725,12 +725,6 @@ gclient_t *G_GetPlayerByNum(int clientNum)
 
 	cl = &level.clients[clientNum];
 
-	if (!cl)
-	{
-		G_Printf("Client %i is not on the server\n", clientNum);
-		return NULL;
-	}
-
 	if (cl->pers.connected == CON_DISCONNECTED)
 	{
 		G_Printf("Client %i is not connected\n", clientNum);
