@@ -91,18 +91,22 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
                         @Override
                         public void onClick(View v) {
                             PopupMenu etl_PopMenu = new PopupMenu(getApplicationContext(), buttonPopUpMenu);
-                            etl_PopMenu.getMenu().add(0, 0, 0, "F1");
-                            etl_PopMenu.getMenu().add(1, 1, 1, "F2");
+                            etl_PopMenu.getMenu().add(0, 0, 0, "~");
+                            etl_PopMenu.getMenu().add(1, 1, 1, "F1");
+                            etl_PopMenu.getMenu().add(2, 2, 2, "F2");
                             etl_PopMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                                 @Override
                                 public boolean onMenuItemClick(MenuItem item) {
 
                                     switch (item.getItemId()) {
                                         case 0:
+                                            SDLActivity.onNativeKeyDown(68);
+                                            SDLActivity.onNativeKeyUp(68);
+                                        case 1:
                                             SDLActivity.onNativeKeyDown(131);
                                             SDLActivity.onNativeKeyUp(131);
                                             break;
-                                        case 1:
+                                        case 2:
                                             SDLActivity.onNativeKeyDown(132);
                                             SDLActivity.onNativeKeyUp(132);
                                             break;
