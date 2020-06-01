@@ -3584,6 +3584,7 @@ const char *eventnames[EV_MAX_EVENTS] =
 	"EV_SHOVE_SOUND",
 	"EV_BODY_DP",
 	"EV_FLAG_INDICATOR",
+	"EV_MISSILE_FALLING",
 	//"EV_MAX_EVENTS",
 };
 
