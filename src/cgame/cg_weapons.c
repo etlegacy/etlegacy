@@ -1766,6 +1766,10 @@ static qboolean CG_ParseWeaponImpactParticle(const char *filename, impactParticl
 				return CG_RW_ParseError(handle, "expected waterSplashLightColor");
 			}
 		}
+		else if (!Q_stricmp(token.string, "waterSplashIsSprite"))
+		{
+			impactParticle->waterSplashIsSprite = qtrue;
+		}
 		else if (!Q_stricmp(token.string, "explosionShaderName"))
 		{
 			if (!PC_String_ParseNoAlloc(handle, impactParticle->explosionShaderName, sizeof(impactParticle->explosionShaderName)))
@@ -5919,9 +5923,13 @@ static void CG_AddImpactParticles(impactParticle_t *particleEffect, int missileE
 		if (cg_visualEffects.integer)
 		{
 			localEntity_t *le;
-			le        = CG_MakeExplosion(origin, dir, cgs.media.waterSplashModel, cgs.media.waterSplashShader, particleEffect->waterSplashDuration, qtrue);
+			le = CG_MakeExplosion(origin, dir, cgs.media.waterSplashModel,
+			                      cgs.media.waterSplashShader,
+			                      particleEffect->waterSplashDuration,
+			                      particleEffect->waterSplashIsSprite);
+
 			le->light = particleEffect->waterSplashLight;
-			VectorCopy(le->lightColor, particleEffect->waterSplashLightColor);
+			VectorCopy(particleEffect->waterSplashLightColor, le->lightColor);
 		}
 	}
 	else if (missileEffect == PS_FX_COMMON)
@@ -6071,7 +6079,7 @@ void CG_MissileHitWall(int weapon, int missileEffect, vec3_t origin, vec3_t dir,
 	                || cg_weapons[weapon].impactMarkMaxRange < 0 ||
 	                (Distance(cg.refdef_current->vieworg, origin) < cg_weapons[weapon].impactMarkMaxRange);
 
-	if (cg_weapons[weapon].impactParticle && impactInRange)
+	if (cg_weapons[weapon].impactParticle)
 	{
 		CG_AddImpactParticles(cg_weapons[weapon].impactParticle, missileEffect, origin, dir, soundSurfaceIndex);
 	}
@@ -6185,7 +6193,7 @@ void CG_MissileHitPlayer(int entityNum, int weapon, vec3_t origin, vec3_t dir, i
 	{
 		int effect;
 
-		effect = (CG_PointContents(origin, 0) & CONTENTS_WATER) ? PS_FX_WATER : PS_FX_NONE;
+		effect = (CG_PointContents(origin, 0) & CONTENTS_WATER) ? PS_FX_WATER : PS_FX_COMMON;
 
 		CG_MissileHitWall(weapon, effect, origin, dir, 0, entityNum);               // like the old one
 	}

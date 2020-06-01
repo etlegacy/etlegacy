@@ -843,6 +843,7 @@ typedef struct impactParticle_s
 	int waterSplashDuration;
 	int waterSplashLight;
 	vec3_t waterSplashLightColor;
+	qboolean waterSplashIsSprite;
 
 	// particle effect
 	impactParticleEffect_t particleEffect[W_MAX_SND_SURF][MAX_IMPACT_PARTICLE_EFFECT];
@@ -3202,7 +3203,7 @@ void CG_AddToNotify(const char *str);
 const char *CG_LocalizeServerCommand(const char *buf);
 void CG_wstatsParse_cmd(void);
 
-void CG_parseWeaponStats_cmd(void(txt_dump) (const char *));
+void CG_parseWeaponStats_cmd(void (txt_dump) (const char *));
 //void CG_parseBestShotsStats_cmd(qboolean doTop, void(txt_dump) (const char *));
 //void CG_parseTopShotsStats_cmd(qboolean doTop, void(txt_dump) (const char *));
 //void CG_scores_cmd(void);

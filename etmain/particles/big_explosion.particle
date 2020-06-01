@@ -15,6 +15,7 @@ weaponImpactParticleDef
 	waterSplashDuration    1000			// ms
 	waterSplashLight       600
 	waterSplashLightColor  0.75 0.5 0.1
+	waterSplashIsSprite					// if this field is present, use water shader as sprite
 	
 	//////////////////////////////////
 	// particle effect
