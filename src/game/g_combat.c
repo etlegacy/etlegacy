@@ -2052,7 +2052,8 @@ qboolean G_RadiusDamage(vec3_t origin, gentity_t *inflictor, gentity_t *attacker
 		{
 			continue;
 		}
-		if (!ent->takedamage && (!ent->dmgparent || !ent->dmgparent->takedamage))
+		if (!ent->takedamage && (!ent->dmgparent || !ent->dmgparent->takedamage)
+		    && !(mod == MOD_DYNAMITE && ent->s.weapon == WP_DYNAMITE))
 		{
 			continue;
 		}
@@ -2063,6 +2064,20 @@ qboolean G_RadiusDamage(vec3_t origin, gentity_t *inflictor, gentity_t *attacker
 		if (dist >= radius)
 		{
 			continue;
+		}
+
+		// dyno chaining
+		// only if within blast radius and both on the same objective or both or no objectives
+		if (mod == MOD_DYNAMITE && ent->s.weapon == WP_DYNAMITE)
+		{
+			G_DPrintf("dyno chaining: inflictor: %p, ent: %p\n", inflictor->onobjective, ent->onobjective);
+
+			if (inflictor->onobjective == ent->onobjective)
+			{
+				// blow up the other dynamite now too since they are peers
+				// set the nextthink just past us by a 1/4 of a second or so
+				ent->nextthink = level.time + 250;
+			}
 		}
 
 		points = damage * (1.0f - dist / radius);
@@ -2185,6 +2200,20 @@ qboolean etpro_RadiusDamage(vec3_t origin, gentity_t *inflictor, gentity_t *atta
 	{
 		ent = &g_entities[entityList[e]];
 
+		// dyno chaining
+		// only if within blast radius and both on the same objective or both or no objectives
+		if (mod == MOD_DYNAMITE && ent->s.weapon == WP_DYNAMITE)
+		{
+			G_DPrintf("dyno chaining: inflictor: %p, ent: %p\n", inflictor->onobjective, ent->onobjective);
+
+			if (inflictor->onobjective == ent->onobjective)
+			{
+				// blow up the other dynamite now too since they are peers
+				// set the nextthink just past us by a 1/4 of a second or so
+				ent->nextthink = level.time + 250;
+			}
+		}
+
 		if (ent == ignore)
 		{
 			continue;
@@ -2194,7 +2223,7 @@ qboolean etpro_RadiusDamage(vec3_t origin, gentity_t *inflictor, gentity_t *atta
 			continue;
 		}
 
-		// need to include corpses in clientsonly since they
+		// need to include corpses in clients only since they
 		// will be neglected from G_TempTraceIgnorePlayersAndBodies()
 		if (clientsonly && !ent->client && ent->s.eType != ET_CORPSE)
 		{

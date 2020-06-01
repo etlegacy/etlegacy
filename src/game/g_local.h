@@ -535,10 +535,13 @@ struct gentity_s
 
 	int numPlayers;
 
-	// forty - realistic hitboxes
+	// realistic hitboxes
 	glerpFrame_t legsFrame;
 	glerpFrame_t torsoFrame;
 	int timeShiftTime;
+
+	// dyno chaining
+	gentity_t *onobjective;
 
 #ifdef FEATURE_OMNIBOT
 	int numPlanted;                     ///< Omni-bot increment dyno count

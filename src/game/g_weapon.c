@@ -1875,6 +1875,9 @@ weapengineergoto3:
 					return NULL;
 				}
 
+				// dyno chaining
+				traceEnt->onobjective = NULL;
+
 				G_PrintClientSpammyCenterPrint(ent - g_entities, "Arming dynamite...");
 
 				// Give health until it is full, don't continue
@@ -2092,6 +2095,10 @@ weapengineergoto3:
 									G_LogPrintf("Dynamite_Plant: %d\n", (int)(traceEnt->parent - g_entities));
 								}
 								traceEnt->parent = ent;     // give explode score to guy who armed it
+
+								// dyno chaining
+								traceEnt->onobjective = hit;
+								G_DPrintf("dyno chaining: hit: %p\n", hit);
 							}
 							traceEnt->etpro_misc_1 |= 1;
 							traceEnt->etpro_misc_2  = hit->s.number;
@@ -2181,6 +2188,10 @@ weapengineergoto3:
 									G_LogPrintf("Dynamite_Plant: %d\n", (int)(traceEnt->parent - g_entities));
 								}
 								traceEnt->parent = ent;     // give explode score to guy who armed it
+
+								// dyno chaining
+								traceEnt->onobjective = hit;
+								G_DPrintf("dyno chaining: hit: %p\n", hit);
 							}
 							traceEnt->etpro_misc_1 |= 1;
 						}
