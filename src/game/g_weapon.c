@@ -2352,7 +2352,7 @@ weapengineergoto3:
 								continue;
 							}
 
-							// we got somthing to destroy
+							// we got something to destroy
 							if (hit->s.teamNum == ent->client->sess.sessionTeam && (!scored))
 							{
 								G_LogPrintf("Dynamite_Diffuse: %d\n", (int)(ent - g_entities));
@@ -2361,7 +2361,7 @@ weapengineergoto3:
 								scored++;
 							}
 
-							G_Script_ScriptEvent(hit, "defused", "");
+							G_Script_ScriptEvent(hit, "defused", ent->client->sess.sessionTeam == TEAM_AXIS ? "axis" : "allies");
 
 							pm = G_PopupMessage(PM_DYNAMITE);
 
