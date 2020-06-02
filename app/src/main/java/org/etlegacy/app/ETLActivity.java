@@ -357,6 +357,8 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
 
+        mLayout.requestFocus();
+
         btn = new ImageButton(getApplicationContext());
         btn.setImageBitmap(getBitmapFromAsset("btn_keyboard.png"));
         btn.setBackgroundResource(0);
