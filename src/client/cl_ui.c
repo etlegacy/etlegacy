@@ -632,9 +632,9 @@ static int LAN_CompareServers(int source, int sortKey, int sortDir, int s1, int 
 	{
 	case SORT_HOST:
 		Q_strncpyz(name1, server1->hostName, sizeof(name1));
-		Q_CleanStr(Q_TrimStr(name1));
+		Q_TrimStr(Q_CleanStr(name1));
 		Q_strncpyz(name2, server2->hostName, sizeof(name2));
-		Q_CleanStr(Q_TrimStr(name2));
+		Q_TrimStr(Q_CleanStr(name2));
 		res = Q_stricmp(name1, name2);
 		break;
 

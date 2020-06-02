@@ -1714,8 +1714,12 @@ char *Q_TrimStr(char *string)
 	char   *start = string;
 	size_t len    = 0;
 
-	while (*s <= 0x20 || *s >= 0x7F)
+	while (*s <= 0x20 || *s >= 0x7F || (Q_IsColorString(s) && *(s + 2) == 0x20))
 	{
+		if (Q_IsColorString(s) && *(s + 2) == 0x20)
+		{
+			s++;
+		}
 		s++;
 	}
 	if (*s)
