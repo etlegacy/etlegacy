@@ -224,8 +224,9 @@ void QDECL Com_Printf(const char *fmt, ...)
 {
 	va_list         argptr;
 	char            buffer[MAXPRINTMSG];
-	char            *msg;
+	char            *msg, *bufferEnd;
 	static qboolean opening_qconsole = qfalse;
+	static qboolean lineWasEnded = qtrue;
 	int             timestamp;
 
 #ifdef DEDICATED
@@ -234,11 +235,11 @@ void QDECL Com_Printf(const char *fmt, ...)
 	timestamp = cl.snap.serverTime;
 #endif
 
-	// add server timestamp in dedicated console and log
+	// write message timestamp
 	msg = buffer + Com_sprintf(buffer, sizeof(buffer), "%8i ", timestamp);
 
 	va_start(argptr, fmt);
-	Q_vsnprintf(msg, sizeof(buffer), fmt, argptr);
+	bufferEnd = msg + Q_vsnprintf(msg, sizeof(buffer), fmt, argptr);
 	va_end(argptr);
 
 	if (rd_buffer)
@@ -260,7 +261,10 @@ void QDECL Com_Printf(const char *fmt, ...)
 	CL_ConsolePrint(msg);
 #endif
 
-	msg = buffer;
+	if (lineWasEnded)
+	{
+		msg = buffer; // start message with timestamp
+	}
 
 	// echo to dedicated console and early console
 	Sys_Print(msg);
@@ -306,6 +310,9 @@ void QDECL Com_Printf(const char *fmt, ...)
 			FS_Write(msg, strlen(msg), logfile);
 		}
 	}
+
+	// note lf for next message to avoid several timestamps on a single line
+	lineWasEnded = (bufferEnd > 0 && *(--bufferEnd) == '\n') ? qtrue : qfalse;
 }
 
 /**
