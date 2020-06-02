@@ -1966,11 +1966,6 @@ void WolfRevivePushEnt(gentity_t *self, gentity_t *other)
 {
 	vec3_t dir, push;
 
-	if (self->props_frame_state == -1)
-	{
-		return;
-	}
-
 	VectorSubtract(self->r.currentOrigin, other->r.currentOrigin, dir);
 	dir[2] = 0;
 	VectorNormalizeFast(dir);
@@ -2055,8 +2050,11 @@ void WolfReviveBbox(gentity_t *self)
 
 	if (touchnum == 0)
 	{
-		G_DPrintf("WolfReviveBbox:  Player is solid now!\n");
+		G_DPrintf("WolfReviveBbox: Player is solid now!\n");
 		self->r.contents = CONTENTS_BODY;
+
+		// Reset value so we don't continue to warp them
+		self->props_frame_state = -1;
 	}
 }
 
@@ -2241,13 +2239,6 @@ void ClientEndFrame(gentity_t *ent)
 	// set the latest infor
 
 	BG_PlayerStateToEntityState(&ent->client->ps, &ent->s, level.time, qtrue);
-
-	// If it's been a couple frames since being revived, and props_frame_state
-	// wasn't reset, go ahead and reset it
-	if (ent->props_frame_state >= 0 && ((level.time - ent->s.effect3Time) > 100))
-	{
-		ent->props_frame_state = -1;
-	}
 
 	if (ent->health > 0 && StuckInClient(ent))
 	{
