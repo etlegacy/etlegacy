@@ -4904,3 +4904,53 @@ int BG_SurfaceForFootstep(int surfaceFlags)
 
 	return 0;
 }
+
+/**
+ * @brief BG_HeadCollisionBoxOffset
+ * @param[in] ps
+ * @param[out] headOffset
+ */
+void BG_HeadCollisionBoxOffset(vec3_t viewangles, int eFlags, vec3_t headOffset)
+{
+	vec3_t flatforward;
+	float  angle;
+
+	angle          = DEG2RAD(viewangles[YAW]);
+	flatforward[0] = cos(angle);
+	flatforward[1] = sin(angle);
+	flatforward[2] = 0;
+
+	if (eFlags & EF_DEAD)
+	{
+		VectorScale(flatforward, -36, headOffset);
+	}
+	else            // EF_PRONE
+	{
+		VectorScale(flatforward, 36, headOffset);
+	}
+}
+
+/**
+ * @brief BG_LegsCollisionBoxOffset
+ * @param[in] ps
+ * @param[out] legOffset
+ */
+void BG_LegsCollisionBoxOffset(vec3_t viewangles, int eFlags, vec3_t legsOffset)
+{
+	vec3_t flatforward;
+	float  angle;
+
+	angle          = DEG2RAD(viewangles[YAW]);
+	flatforward[0] = cos(angle);
+	flatforward[1] = sin(angle);
+	flatforward[2] = 0;
+
+	if (eFlags & EF_DEAD)
+	{
+		VectorScale(flatforward, 32, legsOffset);
+	}
+	else            // EF_PRONE
+	{
+		VectorScale(flatforward, -32, legsOffset);
+	}
+}

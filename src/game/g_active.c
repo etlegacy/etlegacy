@@ -535,7 +535,7 @@ qboolean G_SpectatorAttackFollow(gentity_t *ent)
 	VectorMA(start, 75.0f, forward, start);
 
 	// trap_Trace(&tr, start, mins, maxs, end, ent->client->ps.clientNum, CONTENTS_BODY | CONTENTS_CORPSE);
-    G_HistoricalTrace(ent, &tr, start, mins, maxs, end, ent->s.number,CONTENTS_BODY | CONTENTS_CORPSE);
+	G_HistoricalTrace(ent, &tr, start, mins, maxs, end, ent->s.number, CONTENTS_BODY | CONTENTS_CORPSE);
 
 	if ((&g_entities[tr.entityNum])->client)
 	{
@@ -1731,8 +1731,8 @@ void SpectatorClientEndFrame(gentity_t *ent)
 		ent->client->ps.stats[STAT_XP] = 0;
 
 		if ((g_gametype.integer == GT_WOLF_CAMPAIGN && g_xpSaver.integer) ||
-			(g_gametype.integer == GT_WOLF_CAMPAIGN && (g_campaigns[level.currentCampaign].current != 0 && !level.newCampaign)) ||
-			(g_gametype.integer == GT_WOLF_LMS && g_currentRound.integer != 0))
+		    (g_gametype.integer == GT_WOLF_CAMPAIGN && (g_campaigns[level.currentCampaign].current != 0 && !level.newCampaign)) ||
+		    (g_gametype.integer == GT_WOLF_LMS && g_currentRound.integer != 0))
 		{
 			for (i = 0; i < SK_NUM_SKILLS; ++i)
 			{
@@ -2157,7 +2157,7 @@ void ClientEndFrame(gentity_t *ent)
 
 	ent->client->ps.stats[STAT_XP] = 0;
 	if ((g_gametype.integer == GT_WOLF_CAMPAIGN && g_xpSaver.integer) ||
-		(g_gametype.integer == GT_WOLF_CAMPAIGN && (g_campaigns[level.currentCampaign].current != 0 && !level.newCampaign)) ||
+	    (g_gametype.integer == GT_WOLF_CAMPAIGN && (g_campaigns[level.currentCampaign].current != 0 && !level.newCampaign)) ||
 	    (g_gametype.integer == GT_WOLF_LMS && g_currentRound.integer != 0))
 	{
 		for (i = 0; i < SK_NUM_SKILLS; ++i)
@@ -2338,34 +2338,19 @@ void ClientEndFrame(gentity_t *ent)
 	// debug head and legs box for collision (see PM_TraceHead and PM_TraceLegs)
 	if (g_debugPlayerHitboxes.integer & 4)
 	{
-		vec3_t headOffset, legsOffset;
-		vec3_t flatforward;
-		float  angle;
-
-		angle          = DEG2RAD(ent->client->ps.viewangles[YAW]);
-		flatforward[0] = cos(angle);
-		flatforward[1] = sin(angle);
-		flatforward[2] = 0;
-
-		if (ent->client->ps.eFlags & EF_DEAD)
-		{
-			VectorScale(flatforward, -36, headOffset);
-			VectorScale(flatforward, 32, legsOffset);
-		}
-		else    // EF_PRONE
-		{
-			VectorScale(flatforward, 36, headOffset);
-			VectorScale(flatforward, -32, legsOffset);
-		}
-
-		VectorAdd(ent->client->ps.origin, headOffset, headOffset);
-		VectorAdd(ent->client->ps.origin, legsOffset, legsOffset);
-
 		// cyan
 		G_RailBox(ent->client->ps.origin, ent->r.mins, ent->r.maxs, tv(0.f, 1.f, 1.f), ent->s.number);
 
 		if (ent->client->ps.eFlags & (EF_PRONE | EF_DEAD))
 		{
+			vec3_t headOffset, legsOffset;
+
+			BG_HeadCollisionBoxOffset(ent->client->ps.viewangles, ent->client->ps.eFlags, headOffset);
+			BG_LegsCollisionBoxOffset(ent->client->ps.viewangles, ent->client->ps.eFlags, legsOffset);
+
+			VectorAdd(ent->client->ps.origin, headOffset, headOffset);
+			VectorAdd(ent->client->ps.origin, legsOffset, legsOffset);
+
 			// cyan
 			G_RailBox(headOffset, playerHeadProneMins, playerHeadProneMaxs, tv(0.f, 1.f, 1.f), ent->s.number | HITBOXBIT_HEAD);
 

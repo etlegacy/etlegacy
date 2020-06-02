@@ -2739,6 +2739,9 @@ skillType_t BG_ClassSkillForClass(int classnum);
 int BG_FootstepForSurface(int surfaceFlags);
 int BG_SurfaceForFootstep(int surfaceFlags);
 
+void BG_HeadCollisionBoxOffset(vec3_t viewangles, int eFlags, vec3_t headOffset);
+void BG_LegsCollisionBoxOffset(vec3_t viewangles, int eFlags, vec3_t legsOffset);
+
 #define MATCH_MINPLAYERS "4"///<"1"	// Minimum # of players needed to start a match
 
 #ifdef FEATURE_MULTIVIEW

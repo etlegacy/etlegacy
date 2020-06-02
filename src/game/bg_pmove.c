@@ -267,8 +267,6 @@ void PM_TraceLegs(trace_t *trace, float *legsOffset, vec3_t start, vec3_t end, t
                   qboolean checkStepping)
 {
 	vec3_t ofs, org, point;
-	vec3_t flatforward;
-	float  angle;
 
 	// zinx - don't let players block legs
 	tracemask &= ~(CONTENTS_BODY | CONTENTS_CORPSE);
@@ -278,22 +276,11 @@ void PM_TraceLegs(trace_t *trace, float *legsOffset, vec3_t start, vec3_t end, t
 		*legsOffset = 0;
 	}
 
-	angle          = DEG2RAD(viewangles[YAW]);
-	flatforward[0] = cos(angle);
-	flatforward[1] = sin(angle);
-	flatforward[2] = 0;
-
-	if (pm->ps->eFlags & EF_PRONE)
-	{
-		VectorScale(flatforward, -32, ofs);
-	}
-	else    // EF_DEAD
-	{
-		VectorScale(flatforward, 32, ofs);
-	}
-
+	// legs position
+	BG_LegsCollisionBoxOffset(viewangles, pm->ps->eFlags, ofs);
 	VectorAdd(start, ofs, org);
 	VectorAdd(end, ofs, point);
+
 	tracefunc(trace, org, playerlegsProneMins, playerlegsProneMaxs, point, ignoreent, tracemask);
 	if (checkStepping && (!bodytrace || trace->fraction < bodytrace->fraction ||
 	                      trace->allsolid))
@@ -356,31 +343,16 @@ void PM_TraceHead(trace_t *trace, vec3_t start, vec3_t end, trace_t *bodytrace, 
                   int tracemask,
                   qboolean checkStepping)
 {
-	vec3_t ofs;
-	vec3_t org;
-	vec3_t flatforward;
-	vec3_t point;
-	float  angle;
+	vec3_t ofs, org, point;
 
 	// don't let players block head
 	tracemask &= ~(CONTENTS_BODY | CONTENTS_CORPSE);
 
-	angle          = DEG2RAD(viewangles[YAW]);
-	flatforward[0] = cos(angle);
-	flatforward[1] = sin(angle);
-	flatforward[2] = 0;
-
-	if (pm->ps->eFlags & EF_PRONE)
-	{
-		VectorScale(flatforward, 36, ofs);
-	}
-	else    // EF_DEAD
-	{
-		VectorScale(flatforward, -36, ofs);
-	}
-
+	// head position
+	BG_HeadCollisionBoxOffset(viewangles, pm->ps->eFlags, ofs);
 	VectorAdd(start, ofs, org);
 	VectorAdd(end, ofs, point);
+
 	tracefunc(trace, org, playerHeadProneMins, playerHeadProneMaxs, point, ignoreent, tracemask);
 	if (checkStepping && (!bodytrace || trace->fraction < bodytrace->fraction ||
 	                      trace->allsolid))
@@ -4428,15 +4400,106 @@ void PM_UpdateViewAngles(playerState_t *ps, pmoveExt_t *pmext, usercmd_t *cmd, v
 		{
 			// see if we have the space to go prone
 			// we know our main body isn't in a solid, check for our legs then head
-
-			// bugfix - use supplied trace - pm may not be set
-			PM_TraceAllParts(&traceres, &pmext->proneLegsOffset, ps->origin, ps->origin, qfalse, qfalse);
-
-			if (traceres.allsolid /* && trace.entityNum >= MAX_CLIENTS */)
+			if (pm->ps->eFlags & (EF_DEAD | EF_PRONE))
 			{
-				// bugfix - use supplied trace - pm may not be set
-				PM_TraceAllParts(&traceres, &pmext->proneLegsOffset, ps->origin, ps->origin, qfalse, qtrue);
+				// check the new angles position
+				PM_TraceLegs(&traceres, &pmext->proneLegsOffset, ps->origin, ps->origin, NULL,
+				             pm->ps->viewangles, pm->trace, pm->ps->clientNum,
+				             pm->tracemask, qtrue);
 
+				if (traceres.allsolid)
+				{
+					vec3_t start, end;
+
+					BG_LegsCollisionBoxOffset(pm->ps->viewangles, pm->ps->eFlags, start);
+					BG_LegsCollisionBoxOffset(oldViewAngles, pm->ps->eFlags, end);
+
+					VectorAdd(pm->ps->origin, start, start);
+					VectorAdd(pm->ps->origin, end, end);
+
+					pm->trace(&traceres, start, playerlegsProneMins, playerlegsProneMaxs, end, pm->ps->clientNum, tracemask);
+
+					VectorSubtract(traceres.endpos, start, traceres.endpos);
+					VectorMA(ps->origin, traceres.fraction, traceres.endpos,
+					         end);
+
+					// check the new position
+					PM_TraceHead(&traceres, end, end, NULL,
+					             pm->ps->viewangles, pm->trace, pm->ps->clientNum,
+					             pm->tracemask, qtrue);
+
+					if (traceres.allsolid /* && trace.entityNum >= MAX_CLIENTS */)
+					{
+						if (pm->debugLevel)
+						{
+							Com_Printf("%i:can't rotate\n", c_pmove);
+						}
+
+						// starting in a solid, no space
+						ps->viewangles[YAW]   = oldYaw;
+						ps->delta_angles[YAW] = ANGLE2SHORT(ps->viewangles[YAW]) - cmd->angles[YAW];
+
+						return;
+					}
+
+					VectorCopy(end, ps->origin);
+				}
+				else
+				{
+					// check the new angles position
+					PM_TraceHead(&traceres, ps->origin, ps->origin, NULL,
+					             pm->ps->viewangles, pm->trace, pm->ps->clientNum,
+					             pm->tracemask, qtrue);
+
+					if (traceres.allsolid)
+					{
+						vec3_t start, end;
+
+						BG_HeadCollisionBoxOffset(pm->ps->viewangles, pm->ps->eFlags, start);
+						BG_HeadCollisionBoxOffset(oldViewAngles, pm->ps->eFlags, end);
+
+						VectorAdd(pm->ps->origin, start, start);
+						VectorAdd(pm->ps->origin, end, end);
+
+						pm->trace(&traceres, start, playerHeadProneMins, playerHeadProneMaxs, end, pm->ps->clientNum, tracemask);
+
+						VectorSubtract(traceres.endpos, start, traceres.endpos);
+						VectorMA(ps->origin, traceres.fraction, traceres.endpos,
+						         end);
+
+						// check the new position
+						PM_TraceLegs(&traceres, &pmext->proneLegsOffset, ps->origin, ps->origin, NULL,
+						             pm->ps->viewangles, pm->trace, pm->ps->clientNum,
+						             pm->tracemask, qtrue);
+
+						if (traceres.allsolid /* && trace.entityNum >= MAX_CLIENTS */)
+						{
+							if (pm->debugLevel)
+							{
+								Com_Printf("%i:can't rotate\n", c_pmove);
+							}
+
+							// starting in a solid, no space
+							ps->viewangles[YAW]   = oldYaw;
+							ps->delta_angles[YAW] = ANGLE2SHORT(ps->viewangles[YAW]) - cmd->angles[YAW];
+
+							return;
+						}
+
+						VectorCopy(end, ps->origin);
+					}
+				}
+
+				PM_StepSlideMove(qtrue);
+
+				// bugfix - use supplied trace - pm may not be set
+				//PM_TraceAllParts(&traceres, &pmext->proneLegsOffset, ps->origin, ps->origin, qfalse, qfalse);
+
+				//if (traceres.allsolid /* && trace.entityNum >= MAX_CLIENTS */)
+				//{
+				//	// bugfix - use supplied trace - pm may not be set
+				//	PM_TraceAllParts(&traceres, &pmext->proneLegsOffset, ps->origin, ps->origin, qfalse, qtrue);
+				//
 				if (traceres.allsolid /* && trace.entityNum >= MAX_CLIENTS */)
 				{
 					if (pm->debugLevel)
@@ -4450,8 +4513,9 @@ void PM_UpdateViewAngles(playerState_t *ps, pmoveExt_t *pmext, usercmd_t *cmd, v
 
 					return;
 				}
-
-				PM_StepSlideMove(qtrue);
+				//
+				//	PM_StepSlideMove(qtrue);
+				//}
 			}
 
 			// all fine
