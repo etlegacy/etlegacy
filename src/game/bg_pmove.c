@@ -4491,31 +4491,6 @@ void PM_UpdateViewAngles(playerState_t *ps, pmoveExt_t *pmext, usercmd_t *cmd, v
 				}
 
 				PM_StepSlideMove(qtrue);
-
-				// bugfix - use supplied trace - pm may not be set
-				//PM_TraceAllParts(&traceres, &pmext->proneLegsOffset, ps->origin, ps->origin, qfalse, qfalse);
-
-				//if (traceres.allsolid /* && trace.entityNum >= MAX_CLIENTS */)
-				//{
-				//	// bugfix - use supplied trace - pm may not be set
-				//	PM_TraceAllParts(&traceres, &pmext->proneLegsOffset, ps->origin, ps->origin, qfalse, qtrue);
-				//
-				if (traceres.allsolid /* && trace.entityNum >= MAX_CLIENTS */)
-				{
-					if (pm->debugLevel)
-					{
-						Com_Printf("%i:can't rotate\n", c_pmove);
-					}
-
-					// starting in a solid, no space
-					ps->viewangles[YAW]   = oldYaw;
-					ps->delta_angles[YAW] = ANGLE2SHORT(ps->viewangles[YAW]) - cmd->angles[YAW];
-
-					return;
-				}
-				//
-				//	PM_StepSlideMove(qtrue);
-				//}
 			}
 
 			// all fine
