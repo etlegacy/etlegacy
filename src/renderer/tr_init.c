@@ -933,14 +933,13 @@ void GfxInfo_f(void)
 	Ren_Print("GL_VENDOR: %s\n", glConfig.vendor_string);
 	Ren_Print("GL_RENDERER: %s\n", glConfig.renderer_string);
 	Ren_Print("GL_VERSION: %s\n", glConfig.version_string);
-
-	// FIXME: implicit declaration
-	//Ren_Print("SDL using driver \"%s\"\n", SDL_GetCurrentVideoDriver());
+	Ren_Print("GL_SHADING_LANGUAGE_VERSION: %s\n", glConfig.shadingLanguageVersion);
 
 	if (r_gfxInfo->integer > 0)
 	{
 		Ren_Print("GL_EXTENSIONS: ");
 		R_PrintLongString((const char *)qglGetString(GL_EXTENSIONS));
+		Ren_Print("\n");
 	}
 
 	Ren_Print("GL_MAX_TEXTURE_SIZE: %d\n", glConfig.maxTextureSize);
@@ -1169,7 +1168,7 @@ void R_Register(void)
 	ri.Cmd_AddSystemCommand("skinlist", R_SkinList_f, "Print out the list of skins", NULL);
 	ri.Cmd_AddSystemCommand("modellist", R_Modellist_f, "Print out the list of loaded models", NULL);
 	ri.Cmd_AddSystemCommand("screenshot", R_ScreenShot_f, "Take a screenshot of current frame", NULL);
-	ri.Cmd_AddSystemCommand("gfxinfo", GfxInfo_f, "GFX info of current system", NULL);
+	ri.Cmd_AddSystemCommand("gfxinfo", GfxInfo_f, "Print GFX info of current system", NULL);
 	ri.Cmd_AddSystemCommand("taginfo", R_TagInfo_f, "Print the list of loaded tags", NULL);
 }
 

@@ -88,13 +88,6 @@ void RB_Fog(glfog_t *curfog)
 		glFogf(GL_FOG_END, curfog->end);
 	}
 
-	// from SP NV fog code
-	// NV fog mode
-	if (glConfig.NVFogAvailable)
-	{
-		glFogi(GL_FOG_DISTANCE_MODE_NV, glConfig.NVFogMode);
-	}
-
 	GL_ClearColor(curfog->color[0], curfog->color[1], curfog->color[2], curfog->color[3]);
 }
 

@@ -399,38 +399,6 @@ typedef enum
 } textureCompression_t;
 
 /**
- * @enum glDriverType_t
- * @brief
- */
-typedef enum
-{
-	GLDRV_ICD,              ///< driver is integrated with window system
-	GLDRV_STANDALONE,       ///< deprecated
-	GLDRV_VOODOO,           ///< deprecated
-} glDriverType_t;
-
-/**
- * @enum glHardwareType_t
- * @brief
- */
-typedef enum
-{
-	GLHW_GENERIC,           ///< where everthing works the way it should
-	GLHW_3DFX_2D3D,         ///< deprecated
-	GLHW_RIVA128,           ///< deprecated
-	GLHW_RAGEPRO,           ///< deprecated
-	GLHW_PERMEDIA2,         ///< deprecated
-	/*
-	// renderer2 BEGIN
-	GLHW_ATI,               ///< where you don't have proper GLSL support
-	GLHW_ATI_DX10,          ///< ATI Radeon HD series DX10 hardware
-	GLHW_NV_DX10,           ///< Geforce 8/9 class DX10 hardware
-	GLHW_GENERIC_GL3        ///< other OpenGL 3.2 capable hardware (Intel Mesa)
-	// renderer2 END
-	 */
-} glHardwareType_t;
-
-/**
  * @struct glconfig_t
  *
  * @brief Contains variables specific to the OpenGL configuration
@@ -442,6 +410,13 @@ typedef struct
 	char renderer_string[MAX_STRING_CHARS];
 	char vendor_string[MAX_STRING_CHARS];
 	char version_string[MAX_STRING_CHARS];
+
+	char shadingLanguageVersion[MAX_STRING_CHARS];
+	int glslMajorVersion;
+	int glslMinorVersion;
+
+	int contextCombined;
+
 	char extensions_string[MAX_STRING_CHARS * 4];   ///< bumping, some cards have a big extension string
 	                                                ///< - no need to increase MAX_STRING_CHARS *4 - console doesn't print more
 	                                                ///< ET:L also stores this data in char* to fix extensions_string overflow issues
@@ -452,23 +427,11 @@ typedef struct
 
 	int colorBits, depthBits, stencilBits;
 
-	glDriverType_t driverType;
-	glHardwareType_t hardwareType;
-
 	qboolean deviceSupportsGamma;
 	textureCompression_t textureCompression;
 	qboolean textureEnvAddAvailable;
 	qboolean anisotropicAvailable;
 	float maxAnisotropy;
-
-	// vendor-specific support
-	// NVidia
-	qboolean NVFogAvailable;
-	int NVFogMode;
-	// ATI
-	int ATIMaxTruformTess;                          ///< for truform support
-	int ATINormalMode;                              ///< for truform support
-	int ATIPointMode;                               ///< for truform support
 
 	int vidWidth, vidHeight;
 	// aspect is the screen's physical width / height, which may be different

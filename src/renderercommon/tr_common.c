@@ -38,7 +38,7 @@
 #   include "../renderer2/tr_local.h"
 #elif defined(FEATURE_RENDERER_GLES)
 #   include "../rendererGLES/tr_local.h"
-#else // OpenGL 2 renderer
+#else
 #   include "../renderer/tr_local.h"
 #endif
 
@@ -50,56 +50,19 @@
 imageExtToLoaderMap_t imageLoaders[] =
 {
 	{ "svg",  R_LoadSVG },
-#if defined(FEATURE_RENDERER2)
 	{ "png",  R_LoadPNG },
-#endif
 	{ "tga",  R_LoadTGA },
 	{ "jpg",  R_LoadJPG },
 	{ "jpeg", R_LoadJPG },
-#if !defined(FEATURE_RENDERER2)
-	{ "png",  R_LoadPNG },
-#endif
 	{ "pcx",  R_LoadPCX },
 	{ "bmp",  R_LoadBMP }
 };
 
 int numImageLoaders = sizeof(imageLoaders) / sizeof(imageLoaders[0]);
 
-/**
- * @brief GL_CheckForExtension
- * @param[in] ext
- * @return
- */
-qboolean GL_CheckForExtension(const char *ext)
-{
-#ifdef FEATURE_RENDERER2
-	int i = 0, exts = 0;
-	
-	glGetIntegerv(GL_NUM_EXTENSIONS, &exts);
-	for (i = 0; i < exts; i++)
-	{
-		if (!Q_stricmp(ext, (char *)glGetStringi(GL_EXTENSIONS, i)))
-		{
-			return qtrue;
-		}
-	}
-	return qfalse;
-#else
-	const char *ptr = Q_stristr(glConfig.extensions_string, ext);
-	
-	if (ptr == NULL)
-	{
-		return qfalse;
-	}
-	ptr += strlen(ext);
-	return ((*ptr == ' ') || (*ptr == '\0'));  // verify it's complete string.
-#endif
-}
-
-
-#define MSG_ERR_OLD_VIDEO_DRIVER                                                       \
-	"\nET: Legacy with OpenGL 3.x renderer can not run on this "                             \
-	"machine since it is missing one or more required OpenGL "                             \
+#define MSG_ERR_OLD_VIDEO_DRIVER                                        \
+	"\nET: Legacy with OpenGL 3.3+ renderer can not run on this "       \
+	"machine since it is missing one or more required OpenGL "          \
 	"extensions. Please update your video card drivers and try again.\n"
 
 /**
@@ -108,26 +71,6 @@ qboolean GL_CheckForExtension(const char *ext)
  */
 static qboolean GLimp_InitOpenGLContext()
 {
-#ifndef FEATURE_RENDERER2 // vanilla or GLES
-	// get vendor
-	Q_strncpyz(glConfig.vendor_string, (const char *) qglGetString(GL_VENDOR), sizeof(glConfig.vendor_string));
-
-	// get renderer
-	Q_strncpyz(glConfig.renderer_string, (const char *) qglGetString(GL_RENDERER), sizeof(glConfig.renderer_string));
-	if (*glConfig.renderer_string && glConfig.renderer_string[strlen(glConfig.renderer_string) - 1] == '\n')
-	{
-		glConfig.renderer_string[strlen(glConfig.renderer_string) - 1] = 0;
-	}
-
-	// get GL version
-	Q_strncpyz(glConfig.version_string, (const char *) qglGetString(GL_VERSION), sizeof(glConfig.version_string));
-
-	Com_Printf("GL_VENDOR: %s\n", glConfig.vendor_string);
-	Com_Printf("GL_RENDERER: %s\n", glConfig.renderer_string);
-	Com_Printf("GL_VERSION: %s\n", glConfig.version_string);
-
-	Com_Printf("Using vanilla renderer\n");
-#else // FEATURE_RENDERER2
 	int GLmajor, GLminor;
 
 	// get vendor
@@ -143,36 +86,61 @@ static qboolean GLimp_InitOpenGLContext()
 	// get GL version
 	Q_strncpyz(glConfig.version_string, (const char *) glGetString(GL_VERSION), sizeof(glConfig.version_string));
 
+	// get shading language version
+	Q_strncpyz(glConfig.shadingLanguageVersion, (char *)glGetString(GL_SHADING_LANGUAGE_VERSION), sizeof(glConfig.shadingLanguageVersion));
+	sscanf(glConfig.shadingLanguageVersion, "%d.%d", &glConfig.glslMajorVersion, &glConfig.glslMinorVersion);
+
 	Com_Printf("GL_VENDOR: %s\n", glConfig.vendor_string);
 	Com_Printf("GL_RENDERER: %s\n", glConfig.renderer_string);
 	Com_Printf("GL_VERSION: %s\n", glConfig.version_string);
-
-	// get shading language version
-	Q_strncpyz(glConfig2.shadingLanguageVersion, (char *)glGetString(GL_SHADING_LANGUAGE_VERSION), sizeof(glConfig2.shadingLanguageVersion));
-	sscanf(glConfig2.shadingLanguageVersion, "%d.%d", &glConfig2.glslMajorVersion, &glConfig2.glslMinorVersion);
-	Com_Printf("GL_SHADING_LANGUAGE_VERSION: %s\n", glConfig2.shadingLanguageVersion);
+	Com_Printf("GL_SHADING_LANGUAGE_VERSION: %s\n", glConfig.shadingLanguageVersion);
 
 	// get GL context version
 	sscanf(( const char * ) glGetString(GL_VERSION), "%d.%d", &GLmajor, &GLminor);
-	glConfig2.contextCombined = (GLmajor * 100) + (GLminor * 10);
+	glConfig.contextCombined = (GLmajor * 100) + (GLminor * 10);
 
-	if (GLmajor < 2)
+#ifdef FEATURE_RENDERER2
+	if (!glewIsSupported("GL_VERSION_3_3"))
 	{
-		// missing shader support
 		return qfalse;
 	}
-
-	if (GLmajor < 3 || (GLmajor == 3 && GLminor < 2))
-	{
-		// shaders are supported, but not all GL3.x features
-		Com_Printf("Using enhanced renderer in GL 2.x mode\n");
-		return qtrue;
-	}
-
-	Com_Printf("Using enhanced renderer in GL 3.x mode\n");
+	Com_Printf("Using OpenGL 3.3+ renderer\n");
+#else // vanilla or GLES
+	Com_Printf("Using vanilla renderer\n");
 #endif
 
 	return qtrue;
+}
+
+/**
+ * @brief GL_CheckForExtension
+ * @param[in] ext
+ * @return
+ */
+qboolean GL_CheckForExtension(const char *ext)
+{
+#ifdef FEATURE_RENDERER2
+	int i = 0, exts = 0;
+
+	glGetIntegerv(GL_NUM_EXTENSIONS, &exts);
+	for (i = 0; i < exts; i++)
+	{
+		if (!Q_stricmp(ext, (char *)glGetStringi(GL_EXTENSIONS, i)))
+		{
+			return qtrue;
+		}
+	}
+	return qfalse;
+#else
+	const char *ptr = Q_stristr(glConfig.extensions_string, ext);
+
+	if (ptr == NULL)
+	{
+		return qfalse;
+	}
+	ptr += strlen(ext);
+	return ((*ptr == ' ') || (*ptr == '\0'));  // verify it's complete string.
+#endif
 }
 
 #ifdef FEATURE_RENDERER2
@@ -204,7 +172,7 @@ static qboolean GLimp_CheckForVersionExtension(const char *ext, int coresince, q
 {
 	qboolean result = qfalse;
 
-	if ((coresince >= 0 && coresince <= glConfig2.contextCombined) || GL_CheckForExtension(ext))
+	if ((coresince >= 0 && coresince <= glConfig.contextCombined) || GL_CheckForExtension(ext))
 	{
 		if (var && var->integer)
 		{
@@ -292,8 +260,8 @@ static void GLimp_InitExtensionsR2(void)
 	// GL_ARB_shading_language_100
 	if (GLimp_CheckForVersionExtension("GL_ARB_shading_language_100", 210, qtrue, NULL))
 	{
-		Q_strncpyz(glConfig2.shadingLanguageVersion, (char *)glGetString(GL_SHADING_LANGUAGE_VERSION_ARB), sizeof(glConfig2.shadingLanguageVersion));
-		sscanf(glConfig2.shadingLanguageVersion, "%d.%d", &glConfig2.glslMajorVersion, &glConfig2.glslMinorVersion);
+		Q_strncpyz(glConfig.shadingLanguageVersion, (char *)glGetString(GL_SHADING_LANGUAGE_VERSION_ARB), sizeof(glConfig.shadingLanguageVersion));
+		sscanf(glConfig.shadingLanguageVersion, "%d.%d", &glConfig.glslMajorVersion, &glConfig.glslMinorVersion);
 	}
 	GL_CheckErrors();
 
@@ -413,7 +381,7 @@ static void GLimp_InitExtensionsR2(void)
 #ifdef GL_DEBUG_OUTPUT
 		glEnable(GL_DEBUG_OUTPUT);
 
-		if (410 <= glConfig2.contextCombined)
+		if (410 <= glConfig.contextCombined)
 		{
 			glDebugMessageCallback(Glimp_DebugCallback, NULL);
 			glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
@@ -445,7 +413,7 @@ static void GLimp_InitExtensions(void)
 
 	glConfig.textureCompression = TC_NONE;
 
-#if !defined(FEATURE_RENDERER_GLES)
+#ifndef FEATURE_RENDERER_GLES
 	// GL_EXT_texture_compression_s3tc
 	if (GLEW_ARB_texture_compression &&
 	    GLEW_EXT_texture_compression_s3tc)
@@ -461,12 +429,12 @@ static void GLimp_InitExtensions(void)
 		}
 	}
 	else
-#endif
 	{
 		Com_Printf("...GL_EXT_texture_compression_s3tc not found\n");
 	}
+#endif
 
-#if !defined(FEATURE_RENDERER_GLES)
+#ifndef FEATURE_RENDERER_GLES
 	// GL_S3_s3tc ... legacy extension before GL_EXT_texture_compression_s3tc.
 	if (glConfig.textureCompression == TC_NONE)
 	{
@@ -516,7 +484,7 @@ static void GLimp_InitExtensions(void)
 
 	// GL_ARB_multitexture
 	glConfig.maxActiveTextures = 1;
-#if defined(FEATURE_RENDERER_GLES)
+#ifdef FEATURE_RENDERER_GLES
 	GLint glint = 0;
 	qglGetIntegerv(GL_MAX_TEXTURE_UNITS, &glint);
 	glConfig.maxActiveTextures = (int)glint;
@@ -587,11 +555,9 @@ int RE_InitOpenGlSubsystems(void)
 {
 #ifndef FEATURE_RENDERER_GLES
 	GLenum glewResult;
-#endif
-
-#if !defined(FEATURE_RENDERER_GLES)
 
 #if defined(FEATURE_RENDERER2)
+	// expose all extensions if using experimental drivers
 	glewExperimental = GL_TRUE;
 #endif
 
@@ -623,9 +589,6 @@ void RE_InitOpenGl(void)
 {
 	//Clear the screen with a black color thanks
 	Glimp_ClearScreen();
-
-	glConfig.driverType   = GLDRV_ICD;
-	glConfig.hardwareType = GLHW_GENERIC;
 
 	// Get extension strings
 #ifndef FEATURE_RENDERER2

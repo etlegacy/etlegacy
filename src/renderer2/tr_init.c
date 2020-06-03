@@ -306,22 +306,19 @@ cvar_t *r_smoothNormals; // do another extra smoothing for normals to avoid flat
 */
 static qboolean InitOpenGL(void)
 {
-	char renderer_buffer[1024];
-
 	// initialize OS specific portions of the renderer
 	//
 	// GLimp_Init directly or indirectly references the following cvars:
 	//      - r_fullscreen
-	//      - r_glDriver
 	//      - r_mode
 	//      - r_(color|depth|stencil)bits
 	//      - r_ignorehwgamma
 	//      - r_gamma
-	//
 
 	if (glConfig.vidWidth == 0)
 	{
-		windowContext_t windowContext = { 3, 2, GL_CONTEXT_CORE };
+		char            renderer_buffer[1024];
+		windowContext_t windowContext = { 3, 3, GL_CONTEXT_CORE };
 		GLint           temp;
 
 		Com_Memset(&glConfig, 0, sizeof(glConfig));
@@ -1178,14 +1175,13 @@ void GfxInfo_f(void)
 	Ren_Print("GL_VENDOR: %s\n", glConfig.vendor_string);
 	Ren_Print("GL_RENDERER: %s\n", glConfig.renderer_string);
 	Ren_Print("GL_VERSION: %s\n", glConfig.version_string);
+	Ren_Print("GL_SHADING_LANGUAGE_VERSION: %s\n", glConfig.shadingLanguageVersion);
 
-	// FIXME: implicit declaration
-	//Ren_Print("SDL using driver \"%s\"\n", SDL_GetCurrentVideoDriver());
-
-	//Lets not do this on gl3.2 context as the functionality is not supported.
+	//Lets not do this on gl3.3 context as the functionality is not supported.
 	/*
 	Ren_Print("GL_EXTENSIONS: ");
 	R_PrintLongString((char *)glGetString(GL_EXTENSIONS));
+	Ren_Print("\n");
 	*/
 
 	Ren_Print("GL_MAX_TEXTURE_SIZE: %d\n", glConfig.maxTextureSize);
@@ -1197,8 +1193,6 @@ void GfxInfo_f(void)
 	   Ren_Print("GL_MAX_TEXTURE_IMAGE_UNITS_ARB: %d\n", glConfig.maxTextureImageUnits);
 	   }
 	 */
-
-	Ren_Print("GL_SHADING_LANGUAGE_VERSION_ARB: %s\n", glConfig2.shadingLanguageVersion);
 
 	Ren_Print("GL_MAX_VERTEX_UNIFORM_COMPONENTS_ARB %d\n", glConfig2.maxVertexUniforms);
 	//Ren_Print("GL_MAX_VARYING_FLOATS_ARB %d\n", glConfig2.maxVaryingFloats);
@@ -1256,28 +1250,28 @@ void GfxInfo_f(void)
 	{
 		int contextFlags, profile;
 
-		Ren_Print(S_COLOR_GREEN "Using OpenGL 3.x context\n");
+		Ren_Print("Using OpenGL 3.3 context\n");
 
 		// check if we have a core-profile
 		glGetIntegerv(GL_CONTEXT_PROFILE_MASK, &profile);
 		if (profile == GL_CONTEXT_CORE_PROFILE_BIT)
 		{
-			Ren_Print(S_COLOR_GREEN "Having a core profile\n");
+			Ren_Print("...core profile\n");
 		}
 		else
 		{
-			Ren_Print(S_COLOR_RED "Having a compatibility profile\n");
+			Ren_Print(S_COLOR_YELLOW "...compatibility profile\n");
 		}
 
 		// check if context is forward compatible
 		glGetIntegerv(GL_CONTEXT_FLAGS, &contextFlags);
 		if (contextFlags & GL_CONTEXT_FLAG_FORWARD_COMPATIBLE_BIT)
 		{
-			Ren_Print(S_COLOR_GREEN "Context is forward compatible\n");
+			Ren_Print("...forward compatible\n");
 		}
 		else
 		{
-			Ren_Print(S_COLOR_RED "Context is NOT forward compatible\n");
+			Ren_Print(S_COLOR_YELLOW "...NOT forward compatible\n");
 		}
 	}
 
@@ -1290,7 +1284,6 @@ void GfxInfo_f(void)
 	{
 		Ren_Print("Forcing glFinish\n");
 	}
-	Ren_Print("Renderer: legacy\n");
 }
 
 /**

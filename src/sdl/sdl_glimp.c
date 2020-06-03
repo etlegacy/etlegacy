@@ -872,7 +872,7 @@ static int GLimp_SetMode(glconfig_t *glConfig, int mode, qboolean fullscreen, qb
 
 	if (!re.InitOpenGLSubSystem())
 	{
-		Com_Printf("Too old openGL driver or hardware");
+		Com_Printf("Too old OpenGL driver or hardware");
 		return RSERR_OLD_GL;
 	}
 
@@ -926,7 +926,7 @@ static qboolean GLimp_StartDriverAndSetMode(glconfig_t *glConfig, int mode, qboo
 		Com_Printf("...WARNING: could not set the given mode (%d)\n", mode);
 		break;
 	case RSERR_OLD_GL:
-		Com_Error(ERR_VID_FATAL, "Could not create opengl 3 context");
+		Com_Error(ERR_VID_FATAL, "Could not create OpenGL context");
 	case RSERR_UNKNOWN: // fall through
 	default:
 		Com_Error(ERR_VID_FATAL, "Can't set mode - an unknown error occured");

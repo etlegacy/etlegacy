@@ -60,8 +60,6 @@ typedef struct
 	qboolean occlusionQueryAvailable;
 	int occlusionQueryBits;
 
-	char shadingLanguageVersion[MAX_STRING_CHARS];
-
 	int maxVertexUniforms;
 	//	int             maxVaryingFloats;
 	int maxVertexAttribs;
@@ -90,11 +88,6 @@ typedef struct
 	qboolean framebufferBlitAvailable;
 
 	qboolean generateMipmapAvailable;
-
-	int contextCombined;
-
-	int glslMajorVersion;
-	int glslMinorVersion;
 
 	qboolean getProgramBinaryAvailable;
 } glconfig2_t;
