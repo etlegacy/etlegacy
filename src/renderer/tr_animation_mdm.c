@@ -1897,32 +1897,32 @@ void RB_MDM_SurfaceAnim(mdmSurface_t *surface)
 				GL_Bind(tr.whiteImage);
 				if (r_bonesDebug->integer != 9)
 				{
-					qglLineWidth(1);
-					qglBegin(GL_LINES);
+					glLineWidth(1);
+					glBegin(GL_LINES);
 					for (j = 0; j < 3; j++)
 					{
 						VectorClear(vec);
 						vec[j] = 1;
-						qglColor3fv(vec);
-						qglVertex3fv(bonePtr->translation);
+						glColor3fv(vec);
+						glVertex3fv(bonePtr->translation);
 						VectorMA(bonePtr->translation, (r_bonesDebug->integer == 8 ? 1.5f : 5), bonePtr->matrix[j], vec);
-						qglVertex3fv(vec);
+						glVertex3fv(vec);
 					}
-					qglEnd();
+					glEnd();
 				}
 
 				// connect to our parent if it's valid
 				if (validBones[boneInfo[*boneRefs].parent])
 				{
-					qglLineWidth(r_bonesDebug->integer == 8 ? 4 : 2);
-					qglBegin(GL_LINES);
-					qglColor3f(.6f, .6f, .6f);
-					qglVertex3fv(bonePtr->translation);
-					qglVertex3fv(bones[boneInfo[*boneRefs].parent].translation);
-					qglEnd();
+					glLineWidth(r_bonesDebug->integer == 8 ? 4 : 2);
+					glBegin(GL_LINES);
+					glColor3f(.6f, .6f, .6f);
+					glVertex3fv(bonePtr->translation);
+					glVertex3fv(bones[boneInfo[*boneRefs].parent].translation);
+					glEnd();
 				}
 
-				qglLineWidth(1);
+				glLineWidth(1);
 			}
 
 			if (r_bonesDebug->integer == 8)
@@ -1932,8 +1932,8 @@ void RB_MDM_SurfaceAnim(mdmSurface_t *surface)
 				mdxHeader_t *mdxHeader = R_GetModelByHandle(refent->frameModel)->model.mdx;
 				boneRefs = ( int * )((byte *)surface + surface->ofsBoneReferences);
 
-				qglDepthRange(0, 0);        // never occluded
-				qglBlendFunc(GL_SRC_ALPHA, GL_ONE);
+				glDepthRange(0, 0);        // never occluded
+				glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 
 				for (i = 0; i < surface->numBoneReferences; i++, boneRefs++)
 				{
@@ -1948,18 +1948,18 @@ void RB_MDM_SurfaceAnim(mdmSurface_t *surface)
 					vec[1] = vec[1] + diff[1] * 6;
 					vec[2] = vec[2] + diff[2] * 3;
 
-					qglEnable(GL_BLEND);
-					qglBegin(GL_LINES);
-					qglColor4f(1.f, .4f, .05f, .35f);
-					qglVertex3fv(bonePtr->translation);
-					qglVertex3fv(vec);
-					qglEnd();
-					qglDisable(GL_BLEND);
+					glEnable(GL_BLEND);
+					glBegin(GL_LINES);
+					glColor4f(1.f, .4f, .05f, .35f);
+					glVertex3fv(bonePtr->translation);
+					glVertex3fv(vec);
+					glEnd();
+					glDisable(GL_BLEND);
 
 					R_DebugText(vec, 1.f, 1.f, 1.f, mdxBoneInfo->name, qfalse);         // qfalse, as there is no reason to set depthrange again
 				}
 
-				qglDepthRange(0, 1);
+				glDepthRange(0, 1);
 				//}
 			}
 			else if (r_bonesDebug->integer == 9)
@@ -1968,8 +1968,8 @@ void RB_MDM_SurfaceAnim(mdmSurface_t *surface)
 				{
 					mdmTag_t *pTag = ( mdmTag_t * )((byte *)header + header->ofsTags);
 
-					qglDepthRange(0, 0);    // never occluded
-					qglBlendFunc(GL_SRC_ALPHA, GL_ONE);
+					glDepthRange(0, 0);    // never occluded
+					glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 
 					for (i = 0; i < header->numTags; i++)
 					{
@@ -1987,18 +1987,18 @@ void RB_MDM_SurfaceAnim(mdmSurface_t *surface)
 						}
 
 						GL_Bind(tr.whiteImage);
-						qglLineWidth(2);
-						qglBegin(GL_LINES);
+						glLineWidth(2);
+						glBegin(GL_LINES);
 						for (j = 0; j < 3; j++)
 						{
 							VectorClear(vec);
 							vec[j] = 1;
-							qglColor3fv(vec);
-							qglVertex3fv(outTag.origin);
+							glColor3fv(vec);
+							glVertex3fv(outTag.origin);
 							VectorMA(outTag.origin, 5, outTag.axis[j], vec);
-							qglVertex3fv(vec);
+							glVertex3fv(vec);
 						}
-						qglEnd();
+						glEnd();
 
 						VectorSet(vec, 0.f, 0.f, 32.f);
 						VectorSubtract(outTag.origin, vec, diff);
@@ -2006,20 +2006,20 @@ void RB_MDM_SurfaceAnim(mdmSurface_t *surface)
 						vec[1] = vec[1] + diff[1] * 2;
 						vec[2] = vec[2] + diff[2] * 1.5f;
 
-						qglLineWidth(1);
-						qglEnable(GL_BLEND);
-						qglBegin(GL_LINES);
-						qglColor4f(1.f, .4f, .05f, .35f);
-						qglVertex3fv(outTag.origin);
-						qglVertex3fv(vec);
-						qglEnd();
-						qglDisable(GL_BLEND);
+						glLineWidth(1);
+						glEnable(GL_BLEND);
+						glBegin(GL_LINES);
+						glColor4f(1.f, .4f, .05f, .35f);
+						glVertex3fv(outTag.origin);
+						glVertex3fv(vec);
+						glEnd();
+						glDisable(GL_BLEND);
 
 						R_DebugText(vec, 1.f, 1.f, 1.f, pTag->name, qfalse);    // qfalse, as there is no reason to set depthrange again
 
 						pTag = ( mdmTag_t * )((byte *)pTag + pTag->ofsEnd);
 					}
-					qglDepthRange(0, 1);
+					glDepthRange(0, 1);
 				}
 			}
 		}
@@ -2033,24 +2033,24 @@ void RB_MDM_SurfaceAnim(mdmSurface_t *surface)
 			tempNormal = ( float * )(tess.normal + baseVertex);
 
 			GL_Bind(tr.whiteImage);
-			qglLineWidth(1);
-			qglBegin(GL_LINES);
-			qglColor3f(.0, .0, .8f);
+			glLineWidth(1);
+			glBegin(GL_LINES);
+			glColor3f(.0, .0, .8f);
 
 			pIndexes = &tess.indexes[oldIndexes];
 			for (j = 0; j < render_indexes / 3; j++, pIndexes += 3)
 			{
-				qglVertex3fv(tempVert + 4 * pIndexes[0]);
-				qglVertex3fv(tempVert + 4 * pIndexes[1]);
+				glVertex3fv(tempVert + 4 * pIndexes[0]);
+				glVertex3fv(tempVert + 4 * pIndexes[1]);
 
-				qglVertex3fv(tempVert + 4 * pIndexes[1]);
-				qglVertex3fv(tempVert + 4 * pIndexes[2]);
+				glVertex3fv(tempVert + 4 * pIndexes[1]);
+				glVertex3fv(tempVert + 4 * pIndexes[2]);
 
-				qglVertex3fv(tempVert + 4 * pIndexes[2]);
-				qglVertex3fv(tempVert + 4 * pIndexes[0]);
+				glVertex3fv(tempVert + 4 * pIndexes[2]);
+				glVertex3fv(tempVert + 4 * pIndexes[0]);
 			}
 
-			qglEnd();
+			glEnd();
 
 
 			if (r_bonesDebug->integer == 4) // track debug stats
@@ -2073,29 +2073,29 @@ void RB_MDM_SurfaceAnim(mdmSurface_t *surface)
 			v        = ( mdmVertex_t * )((byte *)surface + surface->ofsVerts);
 			tempVert = ( float * )(tess.xyz + baseVertex);
 			GL_Bind(tr.whiteImage);
-			qglPointSize(5);
-			qglBegin(GL_POINTS);
+			glPointSize(5);
+			glBegin(GL_POINTS);
 			for (j = 0; j < render_count; j++, tempVert += 4)
 			{
 				if (v->numWeights > 1)
 				{
 					if (v->numWeights == 2)
 					{
-						qglColor3f(.4f, .4f, 0.f);
+						glColor3f(.4f, .4f, 0.f);
 					}
 					else if (v->numWeights == 3)
 					{
-						qglColor3f(.8f, .4f, 0.f);
+						glColor3f(.8f, .4f, 0.f);
 					}
 					else
 					{
-						qglColor3f(1.f, .4f, 0.f);
+						glColor3f(1.f, .4f, 0.f);
 					}
-					qglVertex3fv(tempVert);
+					glVertex3fv(tempVert);
 				}
 				v = (mdmVertex_t *)&v->weights[v->numWeights];
 			}
-			qglEnd();
+			glEnd();
 		}
 	}
 
@@ -2109,9 +2109,9 @@ void RB_MDM_SurfaceAnim(mdmSurface_t *surface)
         // show model bounds
         GL_Bind( tr.whiteImage );
         GL_State( GLS_POLYMODE_LINE | GLS_DEPTHMASK_TRUE );
-        qglLineWidth( 1 );
-        qglColor3f( .0,.8,.0 );
-        qglBegin( GL_LINES );
+        glLineWidth( 1 );
+        glColor3f( .0,.8,.0 );
+        glBegin( GL_LINES );
 
         VectorSubtract( mdxFrame->bounds[0], mdxFrame->bounds[1], diff);
 
@@ -2121,12 +2121,12 @@ void RB_MDM_SurfaceAnim(mdmSurface_t *surface)
         v1[0] -= diff[0];
         v2[1] -= diff[1];
         v3[2] -= diff[2];
-        qglVertex3fv( mdxFrame->bounds[0] );
-        qglVertex3fv( v1 );
-        qglVertex3fv( mdxFrame->bounds[0] );
-        qglVertex3fv( v2 );
-        qglVertex3fv( mdxFrame->bounds[0] );
-        qglVertex3fv( v3 );
+        glVertex3fv( mdxFrame->bounds[0] );
+        glVertex3fv( v1 );
+        glVertex3fv( mdxFrame->bounds[0] );
+        glVertex3fv( v2 );
+        glVertex3fv( mdxFrame->bounds[0] );
+        glVertex3fv( v3 );
 
         VectorCopy( mdxFrame->bounds[1], v4 );
         VectorCopy( mdxFrame->bounds[1], v5 );
@@ -2134,28 +2134,28 @@ void RB_MDM_SurfaceAnim(mdmSurface_t *surface)
         v4[0] += diff[0];
         v5[1] += diff[1];
         v6[2] += diff[2];
-        qglVertex3fv( mdxFrame->bounds[1] );
-        qglVertex3fv( v4 );
-        qglVertex3fv( mdxFrame->bounds[1] );
-        qglVertex3fv( v5 );
-        qglVertex3fv( mdxFrame->bounds[1] );
-        qglVertex3fv( v6 );
+        glVertex3fv( mdxFrame->bounds[1] );
+        glVertex3fv( v4 );
+        glVertex3fv( mdxFrame->bounds[1] );
+        glVertex3fv( v5 );
+        glVertex3fv( mdxFrame->bounds[1] );
+        glVertex3fv( v6 );
 
-        qglVertex3fv( v2 );
-        qglVertex3fv( v6 );
-        qglVertex3fv( v6 );
-        qglVertex3fv( v1 );
-        qglVertex3fv( v1 );
-        qglVertex3fv( v5 );
+        glVertex3fv( v2 );
+        glVertex3fv( v6 );
+        glVertex3fv( v6 );
+        glVertex3fv( v1 );
+        glVertex3fv( v1 );
+        glVertex3fv( v5 );
 
-        qglVertex3fv( v2 );
-        qglVertex3fv( v4 );
-        qglVertex3fv( v4 );
-        qglVertex3fv( v3 );
-        qglVertex3fv( v3 );
-        qglVertex3fv( v5 );
+        glVertex3fv( v2 );
+        glVertex3fv( v4 );
+        glVertex3fv( v4 );
+        glVertex3fv( v3 );
+        glVertex3fv( v3 );
+        glVertex3fv( v5 );
 
-        qglEnd();
+        glEnd();
     }*/
 
 	if (r_bonesDebug->integer > 1)

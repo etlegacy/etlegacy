@@ -486,7 +486,7 @@ static void GLimp_InitExtensions(void)
 	glConfig.maxActiveTextures = 1;
 #ifdef FEATURE_RENDERER_GLES
 	GLint glint = 0;
-	qglGetIntegerv(GL_MAX_TEXTURE_UNITS, &glint);
+	glGetIntegerv(GL_MAX_TEXTURE_UNITS, &glint);
 	glConfig.maxActiveTextures = (int)glint;
 
 	if (glConfig.maxActiveTextures > 1)
@@ -537,7 +537,7 @@ static void GLimp_InitExtensions(void)
  */
 void Glimp_ClearScreen(void)
 {
-#ifndef FEATURE_RENDERER2 // vanilla or GLES
+#ifdef FEATURE_RENDERER_GLES
 	qglClearColor(0, 0, 0, 1);
 	qglClear(GL_COLOR_BUFFER_BIT);
 #else

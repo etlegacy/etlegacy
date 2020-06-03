@@ -140,18 +140,18 @@ void R_ScreenGamma(void)
 	{
 		glUseProgramObjectARB(gammaProgram.program);
 
-		qglActiveTextureARB(GL_TEXTURE0_ARB);
-		qglClientActiveTextureARB(GL_TEXTURE0_ARB);
+		glActiveTextureARB(GL_TEXTURE0_ARB);
+		glClientActiveTextureARB(GL_TEXTURE0_ARB);
 
 		GL_Bind(screenImage);
 		// We will copy the current buffer into the screenImage
-		qglCopyTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, 0, 0, glConfig.vidWidth, glConfig.vidHeight, 0);
+		glCopyTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, 0, 0, glConfig.vidWidth, glConfig.vidHeight, 0);
 
-		qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-		qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-		qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
 		glUniform1f(gammaProgram.gammaUniform, r_gamma->value);
 
@@ -223,16 +223,16 @@ void R_ShutdownGamma(void)
 		if (gammaProgram.vertexShader)
 		{
 			glDetachObjectARB(gammaProgram.program, gammaProgram.vertexShader);
-			qglDeleteObjectARB(gammaProgram.vertexShader);
+			glDeleteObjectARB(gammaProgram.vertexShader);
 		}
 
 		if (gammaProgram.fragmentShader)
 		{
 			glDetachObjectARB(gammaProgram.program, gammaProgram.fragmentShader);
-			qglDeleteObjectARB(gammaProgram.fragmentShader);
+			glDeleteObjectARB(gammaProgram.fragmentShader);
 		}
 
-		qglDeleteObjectARB(gammaProgram.program);
+		glDeleteObjectARB(gammaProgram.program);
 		Com_Memset(&gammaProgram, 0, sizeof(shaderProgram_t));
 	}
 

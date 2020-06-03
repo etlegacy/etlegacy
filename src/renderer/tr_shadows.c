@@ -120,12 +120,12 @@ void R_RenderShadowEdges(void)
 			// triangle, it is a sil edge
 			if (hit[1] == 0)
 			{
-				qglBegin(GL_TRIANGLE_STRIP);
-				qglVertex3fv(tess.xyz[i]);
-				qglVertex3fv(tess.xyz[i + tess.numVertexes]);
-				qglVertex3fv(tess.xyz[i2]);
-				qglVertex3fv(tess.xyz[i2 + tess.numVertexes]);
-				qglEnd();
+				glBegin(GL_TRIANGLE_STRIP);
+				glVertex3fv(tess.xyz[i]);
+				glVertex3fv(tess.xyz[i + tess.numVertexes]);
+				glVertex3fv(tess.xyz[i2]);
+				glVertex3fv(tess.xyz[i2 + tess.numVertexes]);
+				glEnd();
 				// c_edges++;
 			}
 			/*
@@ -218,44 +218,44 @@ void RB_ShadowTessEnd(void)
 	// draw the silhouette edges
 
 	GL_Bind(tr.whiteImage);
-	qglEnable(GL_CULL_FACE);
+	glEnable(GL_CULL_FACE);
 	GL_State(GLS_SRCBLEND_ONE | GLS_DSTBLEND_ZERO);
-	qglColor3f(0.2f, 0.2f, 0.2f);
+	glColor3f(0.2f, 0.2f, 0.2f);
 
 	// don't write to the color buffer
-	qglColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+	glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
 
-	qglEnable(GL_STENCIL_TEST);
-	qglStencilFunc(GL_ALWAYS, 1, 255);
+	glEnable(GL_STENCIL_TEST);
+	glStencilFunc(GL_ALWAYS, 1, 255);
 
 	// mirrors have the culling order reversed
 	if (backEnd.viewParms.isMirror)
 	{
-		qglCullFace(GL_FRONT);
-		qglStencilOp(GL_KEEP, GL_KEEP, GL_INCR);
+		glCullFace(GL_FRONT);
+		glStencilOp(GL_KEEP, GL_KEEP, GL_INCR);
 
 		R_RenderShadowEdges();
 
-		qglCullFace(GL_BACK);
-		qglStencilOp(GL_KEEP, GL_KEEP, GL_DECR);
+		glCullFace(GL_BACK);
+		glStencilOp(GL_KEEP, GL_KEEP, GL_DECR);
 
 		R_RenderShadowEdges();
 	}
 	else
 	{
-		qglCullFace(GL_BACK);
-		qglStencilOp(GL_KEEP, GL_KEEP, GL_INCR);
+		glCullFace(GL_BACK);
+		glStencilOp(GL_KEEP, GL_KEEP, GL_INCR);
 
 		R_RenderShadowEdges();
 
-		qglCullFace(GL_FRONT);
-		qglStencilOp(GL_KEEP, GL_KEEP, GL_DECR);
+		glCullFace(GL_FRONT);
+		glStencilOp(GL_KEEP, GL_KEEP, GL_DECR);
 
 		R_RenderShadowEdges();
 	}
 
 	// reenable writing to the color buffer
-	qglColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 }
 
 /**
@@ -275,28 +275,28 @@ void RB_ShadowFinish(void)
 	{
 		return;
 	}
-	qglEnable(GL_STENCIL_TEST);
-	qglStencilFunc(GL_NOTEQUAL, 0, 255);
+	glEnable(GL_STENCIL_TEST);
+	glStencilFunc(GL_NOTEQUAL, 0, 255);
 
-	qglDisable(GL_CLIP_PLANE0);
-	qglDisable(GL_CULL_FACE);
+	glDisable(GL_CLIP_PLANE0);
+	glDisable(GL_CULL_FACE);
 
 	GL_Bind(tr.whiteImage);
 
-	qglLoadIdentity();
+	glLoadIdentity();
 
-	qglColor3f(0.6f, 0.6f, 0.6f);
+	glColor3f(0.6f, 0.6f, 0.6f);
 	GL_State(GLS_DEPTHMASK_TRUE | GLS_SRCBLEND_DST_COLOR | GLS_DSTBLEND_ZERO);
 
-	qglBegin(GL_QUADS);
-	qglVertex3f(-100, 100, -10);
-	qglVertex3f(100, 100, -10);
-	qglVertex3f(100, -100, -10);
-	qglVertex3f(-100, -100, -10);
-	qglEnd();
+	glBegin(GL_QUADS);
+	glVertex3f(-100, 100, -10);
+	glVertex3f(100, 100, -10);
+	glVertex3f(100, -100, -10);
+	glVertex3f(-100, -100, -10);
+	glEnd();
 
-	qglColor4f(1, 1, 1, 1);
-	qglDisable(GL_STENCIL_TEST);
+	glColor4f(1, 1, 1, 1);
+	glDisable(GL_STENCIL_TEST);
 }
 
 /**

@@ -36,15 +36,7 @@
 #ifndef INCLUDE_QGL_H
 #define INCLUDE_QGL_H
 
-#ifdef FEATURE_RENDERER_GLES
-#   include <GLES/gl.h>
-#else
-#   ifdef BUNDLED_GLEW
-#       include "GL/glew.h"
-#   else
-#       include <GL/glew.h>
-#   endif
-#endif // FEATURE_RENDERER_GLES
+#include <GLES/gl.h>
 
 #ifdef FEATURE_RENDERER_GLES
 #   define qglMultiTexCoord2fARB(t, s)                             glMultiTexCoord4f(t, s, 0, 1.0f)

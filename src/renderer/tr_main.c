@@ -95,26 +95,26 @@ void R_Fog(glfog_t *curfog)
 
 	R_FogOn();
 
-	qglFogi(GL_FOG_MODE, curfog->mode);
+	glFogi(GL_FOG_MODE, curfog->mode);
 
-	qglFogfv(GL_FOG_COLOR, curfog->color);
+	glFogfv(GL_FOG_COLOR, curfog->color);
 
-	qglFogf(GL_FOG_DENSITY, curfog->density);
+	glFogf(GL_FOG_DENSITY, curfog->density);
 
-	qglHint(GL_FOG_HINT, curfog->hint);
+	glHint(GL_FOG_HINT, curfog->hint);
 
-	qglFogf(GL_FOG_START, curfog->start);
+	glFogf(GL_FOG_START, curfog->start);
 
 	if (r_zFar->value != 0.f)                 // allow override for helping level designers test fog distances
 	{
-		qglFogf(GL_FOG_END, r_zFar->value);
+		glFogf(GL_FOG_END, r_zFar->value);
 	}
 	else
 	{
-		qglFogf(GL_FOG_END, curfog->end);
+		glFogf(GL_FOG_END, curfog->end);
 	}
 
-	qglClearColor(curfog->color[0], curfog->color[1], curfog->color[2], curfog->color[3]);
+	glClearColor(curfog->color[0], curfog->color[1], curfog->color[2], curfog->color[3]);
 }
 
 /**
@@ -126,7 +126,7 @@ void R_FogOff(void)
 	{
 		return;
 	}
-	qglDisable(GL_FOG);
+	glDisable(GL_FOG);
 	fogIsOn = qfalse;
 }
 
@@ -157,7 +157,7 @@ void R_FogOn(void)
 		return;
 	}
 
-	qglEnable(GL_FOG);
+	glEnable(GL_FOG);
 	fogIsOn = qtrue;
 }
 
@@ -1780,25 +1780,25 @@ void R_DebugPolygon(int color, int numPoints, float *points)
 	GL_State(GLS_DEPTHMASK_TRUE | GLS_SRCBLEND_ONE | GLS_DSTBLEND_ONE);
 
 	// draw solid shade
-	qglColor3f(color & 1, (color >> 1) & 1, (color >> 2) & 1);
-	qglBegin(GL_POLYGON);
+	glColor3f(color & 1, (color >> 1) & 1, (color >> 2) & 1);
+	glBegin(GL_POLYGON);
 	for (i = 0 ; i < numPoints ; i++)
 	{
-		qglVertex3fv(points + i * 3);
+		glVertex3fv(points + i * 3);
 	}
-	qglEnd();
+	glEnd();
 
 	// draw wireframe outline
 	GL_State(GLS_POLYMODE_LINE | GLS_DEPTHMASK_TRUE | GLS_SRCBLEND_ONE | GLS_DSTBLEND_ONE);
-	qglDepthRange(0, 0);
-	qglColor3f(1, 1, 1);
-	qglBegin(GL_POLYGON);
+	glDepthRange(0, 0);
+	glColor3f(1, 1, 1);
+	glBegin(GL_POLYGON);
 	for (i = 0 ; i < numPoints ; i++)
 	{
-		qglVertex3fv(points + i * 3);
+		glVertex3fv(points + i * 3);
 	}
-	qglEnd();
-	qglDepthRange(0, 1);
+	glEnd();
+	glDepthRange(0, 1);
 }
 
 /**
@@ -1817,19 +1817,19 @@ void R_DebugText(const vec3_t org, float r, float g, float b, const char *text, 
 	Ren_Print("TODO: R_DebugText Unimplemented!\n");
 	/*
 	if ( neverOcclude ) {
-	    qglDepthRange( 0, 0 );  // never occluded
+	    glDepthRange( 0, 0 );  // never occluded
 
 	}
-	qglColor3f( r, g, b );
-	qglRasterPos3fv( org );
-	qglPushAttrib( GL_LIST_BIT );
-	qglListBase( gl_NormalFontBase );
-	qglCallLists( strlen( text ), GL_UNSIGNED_BYTE, text );
-	qglListBase( 0 );
-	qglPopAttrib();
+	glColor3f( r, g, b );
+	glRasterPos3fv( org );
+	glPushAttrib( GL_LIST_BIT );
+	glListBase( gl_NormalFontBase );
+	glCallLists( strlen( text ), GL_UNSIGNED_BYTE, text );
+	glListBase( 0 );
+	glPopAttrib();
 
 	if ( neverOcclude ) {
-	    qglDepthRange( 0, 1 );
+	    glDepthRange( 0, 1 );
 	}
 	*/
 }

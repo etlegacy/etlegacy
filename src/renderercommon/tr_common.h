@@ -38,13 +38,13 @@
 #include "../qcommon/q_shared.h"
 #include "tr_public.h"
 #include "iqm.h"
-#ifndef FEATURE_RENDERER2 // vanilla or GLES
-#   include "qgl.h"
-#else // include GLEW for r2 (only!) - see qgl.h for r1 and rGLES
+#ifdef FEATURE_RENDERER_GLES
+#   include "../rendererGLES/qgl.h"
+#else
 #   ifdef BUNDLED_GLEW
-#       include "GL/glew.h"
+#      include "GL/glew.h"
 #   else
-#       include <GL/glew.h>
+#      include <GL/glew.h>
 #   endif
 #endif
 

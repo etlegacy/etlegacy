@@ -464,11 +464,11 @@ void RE_BeginFrame(void)
 		else
 		{
 			R_IssuePendingRenderCommands();
-			qglEnable(GL_STENCIL_TEST);
-			qglStencilMask(~0U);
-			qglClearStencil(0U);
-			qglStencilFunc(GL_ALWAYS, 0U, ~0U);
-			qglStencilOp(GL_KEEP, GL_INCR, GL_INCR);
+			glEnable(GL_STENCIL_TEST);
+			glStencilMask(~0U);
+			glClearStencil(0U);
+			glStencilFunc(GL_ALWAYS, 0U, ~0U);
+			glStencilOp(GL_KEEP, GL_INCR, GL_INCR);
 		}
 		r_measureOverdraw->modified = qfalse;
 	}
@@ -478,7 +478,7 @@ void RE_BeginFrame(void)
 		if (r_measureOverdraw->modified)
 		{
 			R_IssuePendingRenderCommands();
-			qglDisable(GL_STENCIL_TEST);
+			glDisable(GL_STENCIL_TEST);
 		}
 		r_measureOverdraw->modified = qfalse;
 	}
@@ -506,7 +506,7 @@ void RE_BeginFrame(void)
 		unsigned int err;
 
 		R_IssuePendingRenderCommands();
-		if ((err = qglGetError()) != GL_NO_ERROR)
+		if ((err = glGetError()) != GL_NO_ERROR)
 		{
 			Ren_Fatal("RE_BeginFrame() - glGetError() failed (0x%x)!\n", err);
 		}
