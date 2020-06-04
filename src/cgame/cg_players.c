@@ -195,6 +195,7 @@ void CG_NewClientInfo(int clientNum)
 	newInfo.health       = ci->health;
 	newInfo.fireteamData = ci->fireteamData;
 	newInfo.clientNum    = clientNum;
+	newInfo.selected     = ci->selected;
 
 	// isolate the player's name
 	v = Info_ValueForKey(configstring, "n");
@@ -1967,10 +1968,10 @@ static void CG_PlayerFloatSprite(centity_t *cent, qhandle_t shader, int height, 
 		}
 	}
 
-	ent.reType        = RT_SPRITE;
-	ent.customShader  = shader;
-	ent.radius        = 6.66f;
-	ent.renderfx      = rf;
+	ent.reType       = RT_SPRITE;
+	ent.customShader = shader;
+	ent.radius       = 6.66f;
+	ent.renderfx     = rf;
 
 	if (color == NULL)
 	{
@@ -2014,10 +2015,10 @@ static void CG_PlayerFloatText(centity_t *cent, const char *text, int height)
  */
 static void CG_PlayerSprites(centity_t *cent)
 {
-	int            numIcons = 0;
-	int            height   = 56;
-	clientInfo_t   *ci      = &cgs.clientinfo[cent->currentState.clientNum];
-	qboolean       sameTeam;
+	int          numIcons = 0;
+	int          height   = 56;
+	clientInfo_t *ci      = &cgs.clientinfo[cent->currentState.clientNum];
+	qboolean     sameTeam;
 
 	if ((cent->currentState.powerups & (1 << PW_REDFLAG)) || (cent->currentState.powerups & (1 << PW_BLUEFLAG)))
 	{
@@ -2110,7 +2111,8 @@ static void CG_PlayerSprites(centity_t *cent)
 			if (cgs.clientinfo[cent->currentState.number].disguiseClientNum > -1
 			    && CG_IsOnFireteam(cgs.clientinfo[cent->currentState.number].disguiseClientNum))
 			{
-				CG_PlayerFloatSprite(cent, cgs.media.fireteamIcon, height, numIcons++, colorGreen);
+				CG_PlayerFloatSprite(cent, cgs.media.fireteamIcon, height, numIcons++,
+				                     cgs.clientinfo[cgs.clientinfo[cent->currentState.number].disguiseClientNum].selected ? colorRed : colorGreen);
 			}
 
 			// shoutcasters see undercover enemies
@@ -2123,7 +2125,8 @@ static void CG_PlayerSprites(centity_t *cent)
 
 	if (CG_IsOnFireteam(cent->currentState.number) && CG_IsOnSameFireteam(cent->currentState.number, cg.clientNum))
 	{
-		CG_PlayerFloatSprite(cent, cgs.media.fireteamIcon, height, numIcons++, colorGreen);
+		CG_PlayerFloatSprite(cent, cgs.media.fireteamIcon, height, numIcons++,
+		                     cgs.clientinfo[cent->currentState.number].selected ? colorRed : colorGreen);
 	}
 }
 
