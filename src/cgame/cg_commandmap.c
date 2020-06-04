@@ -688,7 +688,7 @@ void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, float h,
 		{
 			if (cg.clientNum == mEnt->data)
 			{
-				if (ci->ccSelected)
+				if (ci->selected)
 				{
 					trap_R_SetColor(colorRed);
 				}
@@ -707,9 +707,13 @@ void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, float h,
 			}
 			else if (/*!(cgs.ccFilter & CC_FILTER_BUDDIES) &&*/ CG_IsOnSameFireteam(cg.clientNum, mEnt->data))
 			{
-				if (ci->ccSelected)
+				if (ci->selected)
 				{
 					trap_R_SetColor(colorRed);
+				}
+				else
+				{
+					trap_R_SetColor(colorGreen);
 				}
 
 				CG_DrawPic(icon_pos[0], icon_pos[1], icon_extends[0], icon_extends[1], cgs.media.ccPlayerHighlight);
@@ -727,7 +731,7 @@ void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, float h,
 			}
 			else if (ci->team == snap->ps.persistant[PERS_TEAM])
 			{
-				if (ci->ccSelected)
+				if (ci->selected)
 				{
 					trap_R_SetColor(colorRed);
 					CG_DrawPic(icon_pos[0], icon_pos[1], icon_extends[0], icon_extends[1], cgs.media.ccPlayerHighlight);

@@ -610,7 +610,7 @@ typedef struct clientInfo_s
 	int latchedcls;
 
 	int rank;
-	qboolean ccSelected;
+
 	int fireteam;
 	int medals[SK_NUM_SKILLS];
 	int skill[SK_NUM_SKILLS];
