@@ -195,7 +195,6 @@ void CG_NewClientInfo(int clientNum)
 	newInfo.health       = ci->health;
 	newInfo.fireteamData = ci->fireteamData;
 	newInfo.clientNum    = clientNum;
-	newInfo.selected     = ci->selected;
 
 	// isolate the player's name
 	v = Info_ValueForKey(configstring, "n");
@@ -2109,8 +2108,7 @@ static void CG_PlayerSprites(centity_t *cent)
 		else // !sameTeam
 		{
 			if (cgs.clientinfo[cent->currentState.number].disguiseClientNum > -1
-			    && CG_IsOnFireteam(cgs.clientinfo[cent->currentState.number].disguiseClientNum)
-			    && cgs.clientinfo[cgs.clientinfo[cent->currentState.number].disguiseClientNum].selected)
+			    && CG_IsOnFireteam(cgs.clientinfo[cent->currentState.number].disguiseClientNum))
 			{
 				CG_PlayerFloatSprite(cent, cgs.media.fireteamIcon, height, numIcons++, colorGreen);
 			}
