@@ -37,8 +37,6 @@ menuDef {
 	style		WINDOW_STYLE_FILLED
 
 	onOpen {
-		exec "set cl_noprint 1; exec etlegacy.cfg; set cl_noprint 0"
-
 		conditionalscript cl_profile 1
 			( "clearFocus" )
 			( "close main ; open profile_create_initial_opener" )	// do we want an abort here?

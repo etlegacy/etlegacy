@@ -5494,14 +5494,6 @@ void UI_RunMenuScript(char **args)
 				trap_Cvar_Set("g_heavyWeaponRestriction", "100");
 			}
 		}
-		else if (Q_stricmp(name, "openModURL") == 0)
-		{
-			trap_Cvar_Set("ui_finalURL", UI_Cvar_VariableString("ui_modURL"));
-		}
-		else if (Q_stricmp(name, "openServerURL") == 0)
-		{
-			trap_Cvar_Set("ui_finalURL", UI_Cvar_VariableString("ui_URL"));
-		}
 		else if (Q_stricmp(name, "validate_openURL") == 0)
 		{
 			if (String_Parse(args, &name2))
@@ -5510,9 +5502,7 @@ void UI_RunMenuScript(char **args)
 			}
 			else
 			{
-				// this is the only one that effectively triggers the URL, after the disclaimers are done with
-				// we use ui_finalURL as an auxiliary variable to gather URLs from various sources
-				trap_openURL(UI_Cvar_VariableString("ui_finalURL"));
+				trap_openURL(PRODUCT_URL);
 			}
 		}
 		else if (Q_stricmp(name, "clientCheckVote") == 0)

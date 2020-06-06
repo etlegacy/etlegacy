@@ -27,7 +27,6 @@ menuDef
 	{
 		setitemcolor background backcolor 0 0 0 0 ;
 		fadein background
-		exec "set cl_noprint 1 ; exec etlegacy.cfg ; set cl_noprint 0"
 	}
 
 	onESC

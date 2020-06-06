@@ -120,7 +120,7 @@ void Com_GetAutoUpdate(void)
 	if (com_updateavailable->integer != 2)
 	{
 #ifndef DEDICATED
-		Sys_OpenURL("http://www.etlegacy.com", qtrue);
+		Sys_OpenURL(PRODUCT_URL, qtrue);
 #endif
 		return;
 	}

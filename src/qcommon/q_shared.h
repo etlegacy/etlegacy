@@ -42,6 +42,7 @@
 
 #define PRODUCT_NAME            "etlegacy"
 #define PRODUCT_LABEL           "ET Legacy"
+#define PRODUCT_URL             "https://www.etlegacy.com"
 #define CLIENT_WINDOW_TITLE     PRODUCT_LABEL
 #define CLIENT_WINDOW_MIN_TITLE PRODUCT_LABEL
 
