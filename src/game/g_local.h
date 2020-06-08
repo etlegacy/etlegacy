@@ -2636,7 +2636,9 @@ void G_GlobalClientEvent(entity_event_t event, int param, int client);
 void G_InitTempTraceIgnoreEnts(void);
 void G_ResetTempTraceIgnoreEnts(void);
 void G_TempTraceIgnoreEntity(gentity_t *ent);
+void G_TeamTraceIgnoreBodies(void);
 void G_TempTraceIgnorePlayersAndBodies(void);
+void G_TempTraceIgnorePlayersFromTeam(int team);
 
 qboolean G_CanPickupWeapon(weapon_t weapon, gentity_t *ent);
 

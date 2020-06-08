@@ -1000,7 +1000,7 @@ void Fire_Lead_Ext(gentity_t *ent, gentity_t *activator, float spread, int damag
 	// use activator for historicaltrace, not ent which may be
 	// the weapon itself (e.g. for mg42s)
 	// G_HistoricalTrace(activator, &tr, muzzle, NULL, NULL, end, ent->s.number, MASK_SHOT);
-    G_Trace(activator, &tr, muzzle, NULL, NULL, end, ent->s.number, MASK_SHOT, qfalse);
+	G_Trace(activator, &tr, muzzle, NULL, NULL, end, ent->s.number, MASK_SHOT, qfalse);
 
 	// bullet debugging using Q3A's railtrail
 	if (g_debugBullets.integer & 1)
@@ -2505,16 +2505,11 @@ void G_TempTraceIgnoreEntity(gentity_t *ent)
 }
 
 /**
- * @brief G_TempTraceIgnorePlayersAndBodies
+ * @brief G_TeamTraceIgnoreBodies
  */
-void G_TempTraceIgnorePlayersAndBodies(void)
+void G_TeamTraceIgnoreBodies(void)
 {
 	int i;
-
-	for (i = 0; i < MAX_CLIENTS; i++)
-	{
-		G_TempTraceIgnoreEntity(&g_entities[i]);
-	}
 
 	if (g_corpses.integer == 0)
 	{
@@ -2532,6 +2527,39 @@ void G_TempTraceIgnorePlayersAndBodies(void)
 			{
 				G_TempTraceIgnoreEntity(&g_entities[i]);
 			}
+		}
+	}
+}
+
+/**
+ * @brief G_TempTraceIgnorePlayersAndBodies
+ */
+void G_TempTraceIgnorePlayersAndBodies(void)
+{
+	int i;
+
+	for (i = 0; i < MAX_CLIENTS; i++)
+	{
+		G_TempTraceIgnoreEntity(&g_entities[i]);
+	}
+
+	G_TeamTraceIgnoreBodies();
+}
+
+
+/**
+ * @brief G_TempTraceIgnorePlayersAndBodiesFromTeam
+ * @param[in] team
+ */
+void G_TempTraceIgnorePlayersFromTeam(int team)
+{
+	int i;
+
+	for (i = 0; i < MAX_CLIENTS; i++)
+	{
+		if (g_entities[i].s.teamNum == team)
+		{
+			G_TempTraceIgnoreEntity(&g_entities[i]);
 		}
 	}
 }
@@ -2882,11 +2910,11 @@ void G_PreFilledMissileEntity(gentity_t *ent, int weaponNum, int realWeapon, int
  */
 int G_GetEnemyPosition(gentity_t *ent, gentity_t *targ)
 {
-	float	angle = 0;
-	vec3_t	pforward, eforward;
+	float  angle = 0;
+	vec3_t pforward, eforward;
 
-	AngleVectors (ent->client->ps.viewangles,	pforward, NULL, NULL);
-	AngleVectors (targ->client->ps.viewangles,	eforward, NULL, NULL);
+	AngleVectors(ent->client->ps.viewangles, pforward, NULL, NULL);
+	AngleVectors(targ->client->ps.viewangles, eforward, NULL, NULL);
 
 	angle = DotProduct(eforward, pforward);
 
@@ -2909,14 +2937,14 @@ int G_GetEnemyPosition(gentity_t *ent, gentity_t *targ)
  */
 void G_MagicSink(gentity_t *self)
 {
-    self->clipmask   = 0;
-    self->r.contents = 0;
-    
-    self->nextthink = level.time + 4000;
-    self->think     = G_FreeEntity;
-    
-    self->s.pos.trType = TR_LINEAR;
-    self->s.pos.trTime = level.time;
-    VectorCopy(self->r.currentOrigin, self->s.pos.trBase);
-    VectorSet(self->s.pos.trDelta, 0, 0, -5);
+	self->clipmask   = 0;
+	self->r.contents = 0;
+
+	self->nextthink = level.time + 4000;
+	self->think     = G_FreeEntity;
+
+	self->s.pos.trType = TR_LINEAR;
+	self->s.pos.trTime = level.time;
+	VectorCopy(self->r.currentOrigin, self->s.pos.trBase);
+	VectorSet(self->s.pos.trDelta, 0, 0, -5);
 }

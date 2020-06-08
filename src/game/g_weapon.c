@@ -429,8 +429,12 @@ gentity_t *Weapon_Syringe(gentity_t *ent)
 	AngleVectors(ent->client->ps.viewangles, forward, right, up);
 	CalcMuzzlePointForActivate(ent, forward, right, up, muzzleTrace);
 	VectorMA(muzzleTrace, CH_REVIVE_DIST, forward, end);
+
 	// right on top of intended revivee.
+	G_TempTraceIgnorePlayersFromTeam(ent->s.teamNum == TEAM_AXIS ? TEAM_ALLIES : TEAM_AXIS);
+	G_TeamTraceIgnoreBodies();
 	G_HistoricalTrace(ent, &tr, muzzleTrace, NULL, NULL, end, ent->s.number, MASK_SHOT);
+	G_ResetTempTraceIgnoreEnts();
 
 	if (tr.startsolid)
 	{
