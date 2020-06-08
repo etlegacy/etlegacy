@@ -2551,13 +2551,13 @@ void G_TempTraceIgnorePlayersAndBodies(void)
  * @brief G_TempTraceIgnorePlayersAndBodiesFromTeam
  * @param[in] team
  */
-void G_TempTraceIgnorePlayersFromTeam(int team)
+void G_TempTraceIgnorePlayersFromTeam(team_t team)
 {
 	int i;
 
 	for (i = 0; i < MAX_CLIENTS; i++)
 	{
-		if (g_entities[i].s.teamNum == team)
+		if (g_entities[i].client && g_entities[i].client->sess.sessionTeam == team)
 		{
 			G_TempTraceIgnoreEntity(&g_entities[i]);
 		}

@@ -2638,7 +2638,7 @@ void G_ResetTempTraceIgnoreEnts(void);
 void G_TempTraceIgnoreEntity(gentity_t *ent);
 void G_TeamTraceIgnoreBodies(void);
 void G_TempTraceIgnorePlayersAndBodies(void);
-void G_TempTraceIgnorePlayersFromTeam(int team);
+void G_TempTraceIgnorePlayersFromTeam(team_t team);
 
 qboolean G_CanPickupWeapon(weapon_t weapon, gentity_t *ent);
 
