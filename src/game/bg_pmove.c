@@ -255,13 +255,13 @@ void PM_ClipVelocity(vec3_t in, vec3_t normal, vec3_t out, float overbounce)
  * @param[in] tracemask
  */
 void PM_TraceLegs(trace_t *trace, float *legsOffset, vec3_t start, vec3_t end, trace_t *bodytrace, vec3_t viewangles,
-                  void (tracefunc) (trace_t *results,
-                                    const vec3_t start,
-                                    const vec3_t mins,
-                                    const vec3_t maxs,
-                                    const vec3_t end,
-                                    int passEntityNum,
-                                    int contentMask),
+                  void(tracefunc) (trace_t *results,
+                                   const vec3_t start,
+                                   const vec3_t mins,
+                                   const vec3_t maxs,
+                                   const vec3_t end,
+                                   int passEntityNum,
+                                   int contentMask),
                   int ignoreent,
                   int tracemask,
                   qboolean checkStepping)
@@ -332,13 +332,13 @@ void PM_TraceLegs(trace_t *trace, float *legsOffset, vec3_t start, vec3_t end, t
  * @param[in] tracemask
  */
 void PM_TraceHead(trace_t *trace, vec3_t start, vec3_t end, trace_t *bodytrace, vec3_t viewangles,
-                  void (tracefunc) (trace_t *results,
-                                    const vec3_t start,
-                                    const vec3_t mins,
-                                    const vec3_t maxs,
-                                    const vec3_t end,
-                                    int passEntityNum,
-                                    int contentMask),
+                  void(tracefunc) (trace_t *results,
+                                   const vec3_t start,
+                                   const vec3_t mins,
+                                   const vec3_t maxs,
+                                   const vec3_t end,
+                                   int passEntityNum,
+                                   int contentMask),
                   int ignoreent,
                   int tracemask,
                   qboolean checkStepping)
@@ -877,6 +877,7 @@ static qboolean PM_CheckProne(void)
 		     (pm->cmd.wbuttons & WBUTTON_PRONE)) && pm->cmd.serverTime - -pm->pmext->proneTime > pronedelay)
 		{
 			trace_t trace;
+			vec3_t  end;
 
 			pm->mins[0] = pm->ps->mins[0];
 			pm->mins[1] = pm->ps->mins[1];
@@ -887,9 +888,51 @@ static qboolean PM_CheckProne(void)
 			pm->mins[2] = pm->ps->mins[2];
 			pm->maxs[2] = pm->ps->crouchMaxZ;
 
-			pm->ps->eFlags |= EF_PRONE;
-			PM_TraceAll(&trace, pm->ps->origin, pm->ps->origin, qfalse, qtrue);
-			pm->ps->eFlags &= ~EF_PRONE;
+			BG_LegsCollisionBoxOffset(pm->ps->viewangles, EF_PRONE, end);
+			VectorAdd(pm->ps->origin, end, end);
+
+			pm->trace(&trace, pm->ps->origin, playerlegsProneMins, playerlegsProneMaxs, end, pm->ps->clientNum, pm->tracemask);
+
+			if (trace.fraction != 1.f)
+			{
+				BG_LegsCollisionBoxOffset(pm->ps->viewangles, EF_DEAD, end);
+				VectorAdd(trace.endpos, end, end);
+
+				pm->ps->eFlags |= EF_PRONE;
+				PM_TraceHead(&trace, end, end, NULL, pm->ps->viewangles, pm->trace, pm->ps->clientNum, pm->tracemask, qfalse);
+				pm->ps->eFlags &= ~EF_PRONE;
+
+				if (trace.allsolid || trace.fraction != 1.f)
+				{
+					return qfalse;
+				}
+
+				VectorCopy(end, pm->ps->origin);
+			}
+			else
+			{
+				BG_HeadCollisionBoxOffset(pm->ps->viewangles, EF_PRONE, end);
+				VectorAdd(pm->ps->origin, end, end);
+
+				pm->trace(&trace, pm->ps->origin, playerHeadProneMins, playerHeadProneMaxs, end, pm->ps->clientNum, pm->tracemask);
+
+				if (trace.fraction != 1.f)
+				{
+					BG_HeadCollisionBoxOffset(pm->ps->viewangles, EF_DEAD, end);
+					VectorAdd(trace.endpos, end, end);
+
+					pm->ps->eFlags |= EF_PRONE;
+					PM_TraceLegs(&trace, &pm->pmext->proneLegsOffset, end, end, NULL, pm->ps->viewangles, pm->trace, pm->ps->clientNum, pm->tracemask, qfalse);
+					pm->ps->eFlags &= ~EF_PRONE;
+
+					if (trace.allsolid || trace.fraction != 1.f)
+					{
+						return qfalse;
+					}
+
+					VectorCopy(end, pm->ps->origin);
+				}
+			}
 
 			if (PM_PRONEDELAY)
 			{
@@ -897,13 +940,10 @@ static qboolean PM_CheckProne(void)
 				pm->ps->aimSpreadScaleFloat = AIMSPREAD_MAXSPREAD;
 			}
 
-			if (trace.fraction == 1.0f)
-			{
-				// go prone
-				pm->ps->pm_flags    |= PMF_DUCKED;       // crouched as well
-				pm->ps->eFlags      |= EF_PRONE;
-				pm->pmext->proneTime = pm->cmd.serverTime;       // timestamp 'go prone'
-			}
+			// go prone
+			pm->ps->pm_flags    |= PMF_DUCKED;               // crouched as well
+			pm->ps->eFlags      |= EF_PRONE;
+			pm->pmext->proneTime = pm->cmd.serverTime;               // timestamp 'go prone'
 		}
 	}
 
@@ -4020,7 +4060,7 @@ void PM_UpdateLean(playerState_t *ps, usercmd_t *cmd, pmove_t *tpm)
  *
  * @note Unused trace parameter
  */
-void PM_UpdateViewAngles(playerState_t *ps, pmoveExt_t *pmext, usercmd_t *cmd, void (trace) (trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask), int tracemask)                    //   modified
+void PM_UpdateViewAngles(playerState_t *ps, pmoveExt_t *pmext, usercmd_t *cmd, void(trace) (trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask), int tracemask)                     //   modified
 {
 	short  temp;
 	int    i;

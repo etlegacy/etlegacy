@@ -2348,6 +2348,46 @@ void ClientEndFrame(gentity_t *ent)
 			// cyan
 			G_RailBox(legsOffset, playerlegsProneMins, playerlegsProneMaxs, tv(0.f, 1.f, 1.f), ent->s.number | HITBOXBIT_LEGS);
 		}
+		else
+		{
+			trace_t trace;
+			vec3_t  end;
+
+			BG_LegsCollisionBoxOffset(ent->client->ps.viewangles, EF_PRONE, end);
+			VectorAdd(ent->client->ps.origin, end, end);
+
+			trap_Trace(&trace, ent->client->ps.origin, playerlegsProneMins, playerlegsProneMaxs, end, ent->client->ps.clientNum, ent->clipmask);
+
+			if (trace.fraction != 1.f)
+			{
+				Com_Printf("Legs Hurt something %f\n", trace.fraction);
+
+				BG_LegsCollisionBoxOffset(ent->client->ps.viewangles, EF_DEAD, end);
+				VectorAdd(trace.endpos, end, end);
+
+				// cyan
+				G_RailBox(end, playerlegsProneMins, playerlegsProneMaxs, tv(0.f, 1.f, 1.f), ent->s.number | HITBOXBIT_LEGS);
+			}
+			else
+			{
+				BG_HeadCollisionBoxOffset(ent->client->ps.viewangles, EF_PRONE, end);
+				VectorAdd(ent->client->ps.origin, end, end);
+
+				trap_Trace(&trace, ent->client->ps.origin, playerHeadProneMins, playerHeadProneMaxs, end, ent->client->ps.clientNum, ent->clipmask);
+
+				if (trace.fraction != 1.f)
+				{
+					Com_Printf("Head Hurt something %f\n", trace.fraction);
+
+					BG_HeadCollisionBoxOffset(ent->client->ps.viewangles, EF_DEAD, end);
+					VectorAdd(trace.endpos, end, end);
+
+					// cyan
+					G_RailBox(end, playerHeadProneMins, playerHeadProneMaxs, tv(0.f, 1.f, 1.f), ent->s.number | HITBOXBIT_HEAD);
+
+				}
+			}
+		}
 	}
 
 	// store the client's current position for antilag traces
