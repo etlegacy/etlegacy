@@ -3089,23 +3089,6 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 		}
 	}
 
-	if (!ps)
-	{
-		// add weapon ready sound
-		cent->pe.lightningFiring = qfalse;
-
-		if ((cent->currentState.eFlags & EF_FIRING) && weapon->firingSound)
-		{
-			// lightning gun and guantlet make a different sound when fire is held down
-			trap_S_AddLoopingSound(cent->lerpOrigin, vec3_origin, weapon->firingSound, 255, 0);
-			cent->pe.lightningFiring = qtrue;
-		}
-		else if (weapon->readySound)
-		{
-			trap_S_AddLoopingSound(cent->lerpOrigin, vec3_origin, weapon->readySound, 255, 0);
-		}
-	}
-
 	if (ps && !cg.renderingThirdPerson && CHECKBITWISE(GetWeaponTableData(cg.predictedPlayerState.weapon)->type, WEAPON_TYPE_MORTAR | WEAPON_TYPE_SET)
 	    && cg.predictedPlayerState.weaponstate != WEAPON_RAISING)
 	{
@@ -3881,6 +3864,57 @@ void CG_AddViewWeapon(playerState_t *ps)
 
 		// add everything onto the hand
 		CG_AddPlayerWeapon(hand, ps, &cg.predictedPlayerEntity);
+	}
+}
+
+/**
+ * @brief CG_AddSoundWeapon
+ * @param[in] cent
+ */
+void CG_AddSoundWeapon(centity_t *cent)
+{
+	weaponInfo_t *weapon = &cg_weapons[cent->currentState.weapon];
+
+	// add weapon ready sound
+	cent->pe.lightningFiring = qfalse;
+
+	if ((cent->currentState.eFlags & EF_FIRING) && weapon->firingSound)
+	{
+		// lightning gun and guantlet make a different sound when fire is held down
+		trap_S_AddLoopingSound(cent->lerpOrigin, vec3_origin, weapon->firingSound, 255, 0);
+		cent->pe.lightningFiring = qtrue;
+	}
+	else if (weapon->readySound)
+	{
+		trap_S_AddLoopingSound(cent->lerpOrigin, vec3_origin, weapon->readySound, 255, 0);
+	}
+
+	if (cent->currentState.clientNum == cg.snap->ps.clientNum)
+	{
+		// tick sound to help the player 'count' in their head
+		if (cg.predictedPlayerState.grenadeTimeLeft)
+		{
+			if (((cg.grenLastTime) % 1000) < ((cg.predictedPlayerState.grenadeTimeLeft) % 1000))
+			{
+				switch (cg.predictedPlayerState.grenadeTimeLeft / 1000)
+				{
+				case 3:
+					trap_S_StartLocalSound(cgs.media.grenadePulseSound[3], CHAN_LOCAL_SOUND);
+					break;
+				case 2:
+					trap_S_StartLocalSound(cgs.media.grenadePulseSound[2], CHAN_LOCAL_SOUND);
+					break;
+				case 1:
+					trap_S_StartLocalSound(cgs.media.grenadePulseSound[1], CHAN_LOCAL_SOUND);
+					break;
+				case 0:
+					trap_S_StartLocalSound(cgs.media.grenadePulseSound[0], CHAN_LOCAL_SOUND);
+					break;
+				}
+			}
+
+			cg.grenLastTime = cg.predictedPlayerState.grenadeTimeLeft;
+		}
 	}
 }
 

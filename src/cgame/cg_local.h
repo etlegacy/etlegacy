@@ -3002,6 +3002,7 @@ void CG_RailTrail2(vec3_t color, vec3_t start, vec3_t end, int index, int sideNu
 
 void CG_AddViewWeapon(playerState_t *ps);
 void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent);
+void CG_AddSoundWeapon(centity_t *cent);
 
 void CG_OutOfAmmoChange(qboolean allowforceswitch);
 

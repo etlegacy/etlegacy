@@ -273,29 +273,8 @@ void CG_DrawPlayerWeaponIcon(rectDef_t *rect, qboolean drawHighlighted, int alig
 	// pulsing grenade icon to help the player 'count' in their head
 	if (cg.predictedPlayerState.grenadeTimeLeft)
 	{
-		if (((cg.grenLastTime) % 1000) < ((cg.predictedPlayerState.grenadeTimeLeft) % 1000))
-		{
-			switch (cg.predictedPlayerState.grenadeTimeLeft / 1000)
-			{
-			case 3:
-				trap_S_StartLocalSound(cgs.media.grenadePulseSound[3], CHAN_LOCAL_SOUND);
-				break;
-			case 2:
-				trap_S_StartLocalSound(cgs.media.grenadePulseSound[2], CHAN_LOCAL_SOUND);
-				break;
-			case 1:
-				trap_S_StartLocalSound(cgs.media.grenadePulseSound[1], CHAN_LOCAL_SOUND);
-				break;
-			case 0:
-				trap_S_StartLocalSound(cgs.media.grenadePulseSound[0], CHAN_LOCAL_SOUND);
-				break;
-			}
-		}
-
 		scale     = (float)((cg.predictedPlayerState.grenadeTimeLeft) % 1000) / 100.0f;
 		halfScale = scale * 0.5f;
-
-		cg.grenLastTime = cg.predictedPlayerState.grenadeTimeLeft;
 	}
 	else
 	{

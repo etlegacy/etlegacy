@@ -3037,6 +3037,8 @@ void CG_Player(centity_t *cent)
 		{
 			CG_AddPlayerWeapon(&body, NULL, cent);
 		}
+
+		CG_AddSoundWeapon(cent);
 	}
 
 	// add binoculars (if it's not the player)
