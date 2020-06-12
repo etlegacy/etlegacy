@@ -233,7 +233,7 @@ tr.world->fogs[tr.world->globalFog].fogParms.tcScale = 1.0f / (tr.world->fogs[tr
 	}
 */
 	// still fading
-	if (tr.glfogsettings[FOG_TARGET].finishTime && tr.glfogsettings[FOG_TARGET].finishTime >= tr.refdef.time)
+	if (tr.glfogsettings[FOG_TARGET].finishTime && tr.glfogsettings[FOG_TARGET].finishTime > tr.refdef.time)
 	{
 		float lerpPos;
 		int   fadeTime;
@@ -257,44 +257,51 @@ tr.world->fogs[tr.world->globalFog].fogParms.tcScale = 1.0f / (tr.world->fogs[tr
 			fadeTime = tr.glfogsettings[FOG_TARGET].finishTime - tr.glfogsettings[FOG_TARGET].startTime;
 			if (fadeTime <= 0)
 			{
-				fadeTime = 1;   // avoid divide by zero
+				Com_Memcpy(&tr.glfogsettings[FOG_CURRENT], &tr.glfogsettings[FOG_TARGET], sizeof(glfog_t));
+				tr.glfogsettings[FOG_TARGET].finishTime = 0;
 			}
-			lerpPos = (float)(tr.refdef.time - tr.glfogsettings[FOG_TARGET].startTime) / (float)fadeTime;
-			if (lerpPos > 1)
-			{
-				lerpPos = 1;
-			}
+			else {
+				lerpPos = (float)(tr.refdef.time - tr.glfogsettings[FOG_TARGET].startTime) / (float)fadeTime;
+				if (lerpPos > 1)
+				{
+					lerpPos = 1;
+				}
 /*
-			// lerp
-			tr.glfogsettings[FOG_CURRENT].start =
-				tr.glfogsettings[FOG_LAST].start + ((tr.glfogsettings[FOG_TARGET].start - tr.glfogsettings[FOG_LAST].start) * lerpPos);
-			tr.glfogsettings[FOG_CURRENT].end =
-				tr.glfogsettings[FOG_LAST].end + ((tr.glfogsettings[FOG_TARGET].end - tr.glfogsettings[FOG_LAST].end) * lerpPos);
+				// lerp
+				tr.glfogsettings[FOG_CURRENT].start =
+					tr.glfogsettings[FOG_LAST].start + ((tr.glfogsettings[FOG_TARGET].start - tr.glfogsettings[FOG_LAST].start) * lerpPos);
+				tr.glfogsettings[FOG_CURRENT].end =
+					tr.glfogsettings[FOG_LAST].end + ((tr.glfogsettings[FOG_TARGET].end - tr.glfogsettings[FOG_LAST].end) * lerpPos);
 */
-			// lerp color
-			tr.glfogsettings[FOG_CURRENT].color[0] =
-				tr.glfogsettings[FOG_LAST].color[0] +
-				((tr.glfogsettings[FOG_TARGET].color[0] - tr.glfogsettings[FOG_LAST].color[0]) * lerpPos);
-			tr.glfogsettings[FOG_CURRENT].color[1] =
-				tr.glfogsettings[FOG_LAST].color[1] +
-				((tr.glfogsettings[FOG_TARGET].color[1] - tr.glfogsettings[FOG_LAST].color[1]) * lerpPos);
-			tr.glfogsettings[FOG_CURRENT].color[2] =
-				tr.glfogsettings[FOG_LAST].color[2] +
-				((tr.glfogsettings[FOG_TARGET].color[2] - tr.glfogsettings[FOG_LAST].color[2]) * lerpPos);
+				// lerp color
+				tr.glfogsettings[FOG_CURRENT].color[0] =
+					tr.glfogsettings[FOG_LAST].color[0] +
+					((tr.glfogsettings[FOG_TARGET].color[0] - tr.glfogsettings[FOG_LAST].color[0]) * lerpPos);
+				tr.glfogsettings[FOG_CURRENT].color[1] =
+					tr.glfogsettings[FOG_LAST].color[1] +
+					((tr.glfogsettings[FOG_TARGET].color[1] - tr.glfogsettings[FOG_LAST].color[1]) * lerpPos);
+				tr.glfogsettings[FOG_CURRENT].color[2] =
+					tr.glfogsettings[FOG_LAST].color[2] +
+					((tr.glfogsettings[FOG_TARGET].color[2] - tr.glfogsettings[FOG_LAST].color[2]) * lerpPos);
 
-			tr.glfogsettings[FOG_CURRENT].density    = tr.glfogsettings[FOG_TARGET].density;
-			tr.glfogsettings[FOG_CURRENT].mode       = tr.glfogsettings[FOG_TARGET].mode;
-			tr.glfogsettings[FOG_CURRENT].registered = qtrue;
+				tr.glfogsettings[FOG_CURRENT].density    = tr.glfogsettings[FOG_TARGET].density;
+				tr.glfogsettings[FOG_CURRENT].mode       = tr.glfogsettings[FOG_TARGET].mode;
+				tr.glfogsettings[FOG_CURRENT].registered = qtrue;
 
-			// if either fog in the transition clears the screen, clear the background this frame to avoid hall of mirrors
-			tr.glfogsettings[FOG_CURRENT].clearscreen = (tr.glfogsettings[FOG_TARGET].clearscreen || tr.glfogsettings[FOG_LAST].clearscreen);
+				// if either fog in the transition clears the screen, clear the background this frame to avoid hall of mirrors
+				tr.glfogsettings[FOG_CURRENT].clearscreen = (tr.glfogsettings[FOG_TARGET].clearscreen || tr.glfogsettings[FOG_LAST].clearscreen);
+			}
 		}
 	}
 	else
 	{
-		// probably usually not necessary to copy the whole thing.
-		// potential FIXME: since this is the most common occurance, diff first and only set changes
-		Com_Memcpy(&tr.glfogsettings[FOG_CURRENT], &tr.glfogsettings[FOG_TARGET], sizeof(glfog_t));
+		if (tr.glfogsettings[FOG_TARGET].finishTime)
+		{
+			tr.glfogsettings[FOG_TARGET].finishTime = 0;
+			// probably usually not necessary to copy the whole thing.
+			// potential FIXME: since this is the most common occurance, diff first and only set changes
+			Com_Memcpy(&tr.glfogsettings[FOG_CURRENT], &tr.glfogsettings[FOG_TARGET], sizeof(glfog_t));
+		}
 	}
 
 

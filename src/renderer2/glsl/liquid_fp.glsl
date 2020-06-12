@@ -97,9 +97,6 @@ void main()
 
 #if defined(USE_PARALLAX_MAPPING)
 	// compute texcoords offset
-//	vec2 texOffset = RayIntersectDisplaceMap(texNormal, var_S, u_NormalMap);
-//	texScreen  += texOffset;
-//	texNormal  += texOffset;
 	texScreen = parallax(u_NormalMap, texDiffuse, var_ViewDirT, u_DepthScale);
 	texNormal = texDiffuse; // needs same resolution normalmap as diffusemap..
 #if defined(USE_DIFFUSE)

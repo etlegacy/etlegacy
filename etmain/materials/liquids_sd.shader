@@ -15,7 +15,7 @@ textures/liquids_sd/siwa_water
 	nopicmip
 	// the next 2 lines are commented out, because waterfogvars is not functional at this moment.
 	//nofog
-	waterfogvars ( 1.0 0.0 0.0 ) 20480.0 // this needs all the spaces inside the ( x x x )
+	waterfogvars ( 0.0 0.0 1.0 ) 20480.0 // this needs all the spaces inside the ( x x x )
 	sort underwater
 
 	// collapsed layer 1 : ST_BUNDLE_WDB,  liquid/water + diffuse + bump
@@ -113,7 +113,7 @@ textures/liquids_sd/siwa_water_2
 	sort underwater
 	// the next 2 lines are commented out, because waterfogvars is not functional at this moment.
 	//nofog
-	waterfogvars ( 1.0 0.0 0.0 ) 20480.0 // this needs all the spaces inside the ( x x x )
+	waterfogvars ( 0.0 0.0 1.0 ) 20480.0 // this needs all the spaces inside the ( x x x )
 	//waterfogvars ( 0.11 0.13 0.15 ) 0.2 // this needs all the spaces inside the ( x x x )
 
 	// collapsed layer 1 : ST_BUNDLE_WDB,  water/liquid + diffuse + bump
