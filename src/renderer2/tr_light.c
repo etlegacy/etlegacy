@@ -1387,7 +1387,7 @@ ID_INLINE void R_AddPointToLightScissor(trRefLight_t *light, const vec3_t world)
 	VectorCopy(world, src2); //Vector4Set(src2, world[0], world[1], world[2], 1.f);
 	Vector4TransformM4(tr.viewParms.world.viewMatrix, src2, eye);
 	Vector4TransformM4(tr.viewParms.projectionMatrix, eye, clip);
-
+	 
 	///R_TransformClipToWindow(clip, &tr.viewParms, normalized, window);
 	Vector2Scale(&clip[0], rcp(clip[3]), &normalized[0]);
 	//window[0] = ((1.0f + normalized[0]) * 0.5f * (float)tr.viewParms.viewportWidth) + (float)tr.viewParms.viewportX;
@@ -1834,8 +1834,8 @@ byte R_CalcLightCubeSideBits(trRefLight_t *light, vec3_t worldBounds[2])
 	float     fovX, fovY;
 	float     *proj;
 	vec3_t    angles;
-	mat4_t    tmpMatrix, viewMatrix, projectionMatrix, rotationMatrix, transformMatrix, viewProjectionMatrix;
-	mat4_t    *rotMatrix, *rotMatrix_r;
+	mat4_t    tmpMatrix, projectionMatrix, rotationMatrix, transformMatrix, viewProjectionMatrix;
+//	mat4_t    *rotMatrix, *rotMatrix_r, viewMatrix;
 	frustum_t frustum;
 	cplane_t  *clipPlane;
 	int       r;
@@ -1855,7 +1855,7 @@ byte R_CalcLightCubeSideBits(trRefLight_t *light, vec3_t worldBounds[2])
 	return cubeSideBits;
 #endif
 
-	if (light->l.rlType != RL_OMNI || r_shadows->integer < SHADOWING_ESM16 || r_noShadowPyramids->integer)
+	if (light->l.rlType != RL_OMNI || r_shadows->integer < SHADOWING_EVSM32 || r_noShadowPyramids->integer)
 	{
 		return CUBESIDE_CLIPALL;
 	}
@@ -2105,7 +2105,7 @@ byte R_CalcLightCubeSideBits(trRefLight_t *light, vec3_t worldBounds[2])
 	return cubeSideBits;
 #endif
 
-	if (light->l.rlType != RL_OMNI || r_shadows->integer < SHADOWING_ESM16 || r_noShadowPyramids->integer)
+	if (light->l.rlType != RL_OMNI || r_shadows->integer < SHADOWING_EVSM32 || r_noShadowPyramids->integer)
 	{
 		return CUBESIDE_CLIPALL;
 	}
@@ -2563,7 +2563,7 @@ void R_SetupLightLOD(trRefLight_t *light)
 	}
 	else if (lod >= numLods)
 	{
-		//lod = numLods - 1;
+		lod = numLods - 1; //!!
 	}
 
 	lod += r_shadowLodBias->integer;
@@ -2576,9 +2576,9 @@ void R_SetupLightLOD(trRefLight_t *light)
 	if (lod >= numLods)
 	{
 		// don't draw any shadow
-		lod = -1;
+//!!		lod = -1;
 
-		//lod = numLods - 1;
+		lod = numLods - 1; //!! i still want shadow..
 	}
 
 	// never give ultra quality for point lights

@@ -1355,6 +1355,8 @@ qboolean ParseTexMod(char **text, shaderStage_t *stage)
 	else if (!Q_stricmp(token, "transform"))
 	{
 		Matrix4Identity(tmi->matrix);
+		// s' = s * m[0][0] + t * m[1][0] + trans[0]
+		// t' = s * m[0][1] + t * m[0][1] + trans[1]
 
 		token = COM_ParseExt2(text, qfalse);
 		if (token[0] == 0)
@@ -4383,11 +4385,13 @@ static qboolean ParseShader(char *_text)
 				//implicitStateBits = GLS_DEPTHMASK_TRUE | GLS_SRCBLEND_SRC_ALPHA | GLS_DSTBLEND_ONE_MINUS_SRC_ALPHA;
 				implicitStateBits = GLS_DEPTHMASK_TRUE | GLS_ATEST_GE_128;
 				implicitCullType  = CT_TWO_SIDED;
+//shader.alphaTest = qtrue;
 			}
 			else if (!Q_stricmp(token, "implicitMask"))
 			{
 				implicitStateBits = GLS_DEPTHMASK_TRUE | GLS_ATEST_GE_128;
 				implicitCullType  = CT_TWO_SIDED;
+//shader.alphaTest = qtrue;
 			}
 			else                // "implicitMap"
 			{
@@ -4578,11 +4582,11 @@ static collapse_t collapse[] = {
  */
 static void OptimizeStages()
 {
-	int j, i;
+	int i, j, k;
 	int tmpDiffuseStage, tmpNormalStage, tmpSpecularStage, tmpReflectmapStage, tmpLiquidStage, tmpCubeReflectStage;
 
 	// the result will be assembled in the following variables
-	int           numStages = 0; // this will be written to the shader.numStages
+	int numStages = 0; // this will be written to the shader.numStages
 	shaderStage_t tmpStages[MAX_SHADER_STAGES]; // these written to stages[]
 
 	//Ren_Print("...collapsing '%s'\n", shader.name);
@@ -4594,58 +4598,88 @@ static void OptimizeStages()
 	// Also check for any existence of a liquid & lightmap stage (for some non-related collapsing code elsewhere).
 	shader.has_lightmapStage = qfalse;
 	shader.has_liquidStage = qfalse;
-	// 'numStages' counts the final number of stages, after collapsing has been done.
+
+	// 'numStages' counts the number of non-collapsed stages that are active
 	numStages = 0;
-/*$
-	// first find out if there is a lightmap stage, and if so, make it the first stage.
-	for (j = 0; j < MAX_SHADER_STAGES; j++)
+	// remove all the empty stages so there are no gaps, and count the stages
+	for (j = MAX_SHADER_STAGES-1; j >= 0; j--)
 	{
 		if (!stages[j].active)
 		{
-			continue; // ignore inactive stages
+			// remove this inactive stage, and close the gap
+			for (i = j; i < MAX_SHADER_STAGES - 1; i++) {
+				stages[i] = stages[i+1];
+				for (k = 0; k < MAX_TEXTURE_BUNDLES; k++) { // i don't know if this is needed.. /test
+					stages[i].bundle[k] = stages[i + 1].bundle[k];
+				}
+			}
+			stages[MAX_SHADER_STAGES - 1].active = qfalse;
 		}
+		else {
+			numStages++;
+		}
+	}
 
+	// find out if there is a lightmap stage, and if so, make it the last stage.
+	for (j = 0; j < numStages; j++)
+	{
 		// check for a lightmap or liquid stage
 		if (stages[j].type == ST_LIGHTMAP)
 		{
-			// keep the lightmap stage uncollapsed..
-			shader.has_lightmapStage = qtrue;
-			tmpStages[numStages] = stages[j];
-			numStages++;
+//			if (j == 0) break; // lightmap is already the first. we're done
+			if (j == numStages-1) break; // lightmap is already the last. we're done
+			// lightmap to tmpStage
+			shaderStage_t tmpStage = stages[j];
+			for (k = 0; k < MAX_TEXTURE_BUNDLES; k++) { // bundles too?..
+				tmpStage.bundle[k] = stages[j].bundle[k];
+			}
+/*
+			// shift array
+			for (i = j; i > 0; i--) {
+				stages[i] = stages[i-1];
+				for (k = 0; k < MAX_TEXTURE_BUNDLES; k++) {
+					stages[i].bundle[k] = stages[i-1].bundle[k];
+				}
+			}
+			// insert lightmap stage
+			stages[0] = tmpStage; // make first
+			for (k = 0; k < MAX_TEXTURE_BUNDLES; k++) {
+				stages[0].bundle[k] = tmpStage.bundle[k];
+			}
+*/
+			// shift array
+			for (i = j; i < numStages - 1; i++) {
+				stages[i] = stages[i+1];
+				for (k = 0; k < MAX_TEXTURE_BUNDLES; k++) {
+					stages[i].bundle[k] = stages[i+1].bundle[k];
+				}
+			}
+			// append lightmap stage
+			stages[numStages - 1] = tmpStage; // make last
+			for (k = 0; k < MAX_TEXTURE_BUNDLES; k++) {
+				stages[numStages - 1].bundle[k] = tmpStage.bundle[k];
+			}
+
 			break; // for
 		}
 	}
-*/
+
+	numStages = 0; // now count the possibly collapsed stages
 	for (j = 0; j < MAX_SHADER_STAGES; j++)
 	{
-		if (!stages[j].active)
-		{
-			continue; // ignore inactive stages
-		}
-
 		// check for a lightmap or liquid stage
-		switch (stages[j].type)
-		{
-		case ST_LIGHTMAP:
+		// This has nothing to do with collapsing, but we need that info later.
+		if (stages[j].type == ST_LIGHTMAP) {
 			shader.has_lightmapStage = qtrue;
-//$			continue; // lightmap is already handled, skip it now
-			break;
-		case ST_LIQUIDMAP:
-			//case ST_BUNDLE_WB:  // there are none yet..
-			//case ST_BUNDLE_WDB: // ..this is the collapse function :)
+		}
+		if (stages[j].type == ST_LIQUIDMAP) {
 			shader.has_liquidStage = qtrue;
-			break; // switch
 		}
 
 		// check up to 4 next maps to find out what type of maps they are
 		tmpDiffuseStage = tmpNormalStage = tmpSpecularStage = tmpReflectmapStage = tmpLiquidStage = tmpCubeReflectStage = -1; // invalidate
 		for (i = j; i < j + MAX_TEXTURE_BUNDLES && i < MAX_SHADER_STAGES; i++)
 		{
-			if (!stages[i].active)
-			{
-				continue;
-			}
-
 			if ((stages[i].type == ST_DIFFUSEMAP || stages[i].type == ST_COLORMAP) && tmpDiffuseStage < 0)
 			{
 				tmpDiffuseStage = i;
@@ -4673,7 +4707,7 @@ static void OptimizeStages()
 
 		}
 
-		// NOTE: merge as many stages as possible: bigger combinations first,  less common ones first.
+		// NOTE: merge as many stages as possible: bigger combinations first, then less common first.
 
 		// try to merge diffuse/normal/specular/reflectionmap
 		if (tmpDiffuseStage >= 0 && tmpNormalStage >= 0 && tmpSpecularStage >= 0 && tmpReflectmapStage >= 0)
@@ -4719,7 +4753,7 @@ static void OptimizeStages()
 			tmpStages[numStages].bundle[TB_NORMALMAP] = stages[tmpNormalStage].bundle[0];
 		}
 		// try to merge liquid/diffuse
-		else if (tmpLiquidStage >= 0 && tmpNormalStage >= 0)
+		else if (tmpLiquidStage >= 0 && tmpDiffuseStage >= 0)
 		{
 			shader.collapseType = COLLAPSE_WD;
 			tmpStages[numStages] = stages[tmpLiquidStage];
@@ -4754,6 +4788,36 @@ static void OptimizeStages()
 
 		// we have added a stage (collapsed or not)..
 		numStages++;
+	}
+
+	// if this is a liquid, re-order the stages so the liquid stage is last.
+	// This will render all the additional stages first, and then make it a water-surface.
+	if (shader.has_liquidStage)
+	{
+		for (j = 0; j < numStages; j++)
+		{
+			if (j == numStages - 1) break; // liquid is already the last. we're done
+			if (stages[j].type == ST_LIQUIDMAP || stages[j].type == ST_BUNDLE_WDB || stages[j].type == ST_BUNDLE_WB || stages[j].type == ST_BUNDLE_WD)
+			{ // this stage must be the last stage
+				shaderStage_t tmpStage = stages[j];
+				for (k = 0; k < MAX_TEXTURE_BUNDLES; k++) { // bundles too?..
+					tmpStage.bundle[k] = stages[j].bundle[k];
+				}
+				// shift array
+				for (i = j; i < numStages - 1; i++) {
+					stages[i] = stages[i + 1];
+					for (k = 0; k < MAX_TEXTURE_BUNDLES; k++) {
+						stages[i].bundle[k] = stages[i + 1].bundle[k];
+					}
+				}
+				// append liquid stage
+				stages[numStages - 1] = tmpStage; // make last
+				for (k = 0; k < MAX_TEXTURE_BUNDLES; k++) {
+					stages[numStages - 1].bundle[k] = tmpStage.bundle[k];
+				}
+				break; // for
+			}
+		}
 	}
 
 	// copy result
@@ -4960,7 +5024,7 @@ static shader_t *FinishShader(void)
 			pStage->type = ST_ATTENUATIONMAP_XY;
 		}
 	}
-
+	
 	// set appropriate stage information:
 	// We must check all stages.
 	numStages = 0;
@@ -5153,9 +5217,9 @@ static shader_t *FinishShader(void)
 
 
 	// HACK: allow alpha tested surfaces to create shadowmaps
-	if (r_shadows->integer >= SHADOWING_ESM16)
+	if (r_shadows->integer >= SHADOWING_EVSM32)
 	{
-		if (shader.noShadows && shader.alphaTest)
+		if (/*shader.noShadows &&*/ shader.alphaTest)
 		{
 			shader.noShadows = qfalse;
 		}
@@ -5703,6 +5767,12 @@ shader_t *R_FindShader(const char *name, shaderType_t type, qboolean mipRawImage
 
 		image_t *tmpImage;
 		i = 1; // start adding stages from stages[i]
+
+		// there are special suffixes for texturemaps:
+		// _n = normalmap/bumpmap
+		// _p = parallax normalmap    (that's a usual normalmap, but the alpha-channel contains a heightmap
+		// _r = specularmap
+		// _x = relectionmap
 
 		// ETL: suffix for normalmaps is '_n'
 		tmpImage = R_FindImageFile(va("%s_n.tga", strippedName), !shader.noPicMip ? IF_NONE : IF_NOPICMIP, !shader.noPicMip ? FT_DEFAULT : FT_LINEAR, !shader.noPicMip ? WT_REPEAT : WT_EDGE_CLAMP, shader.name);
@@ -6785,7 +6855,7 @@ textEnd += bufferslen[i] + 1;
 		}
 		else
 		{
-			hash                                                        = generateHashValue(token, MAX_SHADERTEXT_HASH);
+			hash  = generateHashValue(token, MAX_SHADERTEXT_HASH);
 			shaderTextHashTable[hash][shaderTextHashTableSizes[hash]++] = oldp;
 
 			SkipBracedSection(&p);

@@ -1,4 +1,4 @@
-/* vertexLighting_DBS_entity_vp.glsl */
+/* entity_vp.glsl */
 #if defined(USE_VERTEX_SKINNING)
 #include "lib/vertexSkinning"
 #endif // USE_VERTEX_SKINNING
@@ -51,9 +51,10 @@ varying vec3 var_Normal;
 #if defined(USE_NORMAL_MAPPING)
 varying mat3 var_tangentMatrix;
 varying vec3 var_LightDirection;
-varying vec3 var_ViewOrigin;
+varying vec3 var_ViewDirW;           // view direction in world space
 #if defined(USE_PARALLAX_MAPPING)
-varying vec2 var_S;
+varying vec3 var_ViewDirT;           // view direction in tangentspace
+varying float var_distanceToCam;     //
 #endif // USE_PARALLAX_MAPPING
 #endif // USE_NORMAL_MAPPING
 #if defined(USE_PORTAL_CLIPPING)
@@ -120,23 +121,24 @@ void main()
 	// transform diffusemap texcoords
 	var_TexDiffuse = (u_DiffuseTextureMatrix * attr_TexCoord0).st;
 
-	// transform tangentspace axis
 	var_Normal.xyz = (u_ModelMatrix * vec4(normal, 0.0)).xyz;
-#if defined(USE_NORMAL_MAPPING)
-	tangent  = (u_ModelMatrix * vec4(tangent, 0.0)).xyz;
-	binormal = (u_ModelMatrix * vec4(binormal, 0.0)).xyz;
 
-	// in a vertex-shader there exists no gl_FrontFacing
+#if defined(USE_NORMAL_MAPPING)
+	tangent  = normalize((u_ModelMatrix * vec4(tangent, 0.0)).xyz);
+	binormal = normalize((u_ModelMatrix * vec4(binormal, 0.0)).xyz);
+
 	var_tangentMatrix = mat3(-tangent, -binormal, -var_Normal.xyz);
+//var_tangentMatrix = transpose(mat3(tangent, binormal, var_Normal.xyz)); // somehow this looks weird.. TODO: check
 
 	var_LightDirection = -normalize(u_LightDir);
 
-	var_ViewOrigin = normalize(var_Position - u_ViewOrigin);
+	vec3 viewVec = var_Position - u_ViewOrigin;
+	var_ViewDirW = normalize(viewVec);
 
 #if defined(USE_PARALLAX_MAPPING)
-	// transform the vieworigin from tangentspace to worldspace
-	vec3 viewOrigin2 = normalize(var_tangentMatrix * var_ViewOrigin);
-	var_S = viewOrigin2.xy * -u_DepthScale / viewOrigin2.z;
+	var_distanceToCam = length(viewVec);
+	mat3 tangentMatrix = transpose(mat3(tangent, binormal, var_Normal.xyz)); // this works with parallax, but specular is woot
+	var_ViewDirT = tangentMatrix * viewVec; // do not normalize..
 #endif // USE_PARALLAX_MAPPING
 #endif // USE_NORMAL_MAPPING
 

@@ -985,7 +985,7 @@ static void R_UpdateClusterSurfaces()
 		shader      = surface->shader;
 		lightmapNum = surface->lightmapNum;
 
-		if (shader != oldShader || (r_precomputedLighting->integer ? lightmapNum != oldLightmapNum : 0))
+		if (shader != oldShader || lightmapNum != oldLightmapNum)
 		{
 			oldShader      = shader;
 			oldLightmapNum = lightmapNum;
@@ -2597,7 +2597,7 @@ void R_AddPrecachedWorldInteractions(trRefLight_t *light)
 			// into this view
 			if (surface->viewCount != tr.viewCountNoReset)
 			{
-				if (r_shadows->integer < SHADOWING_ESM16 || light->l.noShadows)
+				if (r_shadows->integer < SHADOWING_EVSM32 || light->l.noShadows)
 				{
 					continue;
 				}
@@ -2629,7 +2629,7 @@ void R_AddPrecachedWorldInteractions(trRefLight_t *light)
 			// into this view
 			if (surface->viewCount != tr.viewCountNoReset)
 			{
-				if (r_shadows->integer < SHADOWING_ESM16 || light->l.noShadows)
+				if (r_shadows->integer < SHADOWING_EVSM32 || light->l.noShadows)
 				{
 					continue;
 				}

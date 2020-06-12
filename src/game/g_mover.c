@@ -4362,9 +4362,10 @@ void func_explosive_explode(gentity_t *self, gentity_t *inflictor, gentity_t *at
 	// find target, aim at that
 	if (self->target)
 	{
+
 		// FIXME: use self->targetnamehash one day ...
 		hash = BG_StringHashValue(self->target);
-
+		
 		// since the explosive might need to fire the target rather than
 		// aim at it, only aim at 'info_notnull' ents
 		while (1)

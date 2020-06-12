@@ -1248,6 +1248,7 @@ static void Tess_SurfaceFace(srfSurfaceFace_t *srf)
  * @brief Tess_SurfaceGrid
  * @param[in] srf
  */
+#pragma warning(disable:4700)
 static void Tess_SurfaceGrid(srfGridMesh_t *srf)
 {
 	int           i, i3;
@@ -1343,12 +1344,14 @@ static void Tess_SurfaceGrid(srfGridMesh_t *srf)
 	tess.attribsSet |= ATTR_POSITION | ATTR_COLOR | ATTR_TEXCOORD | ATTR_TANGENT | ATTR_BINORMAL | ATTR_NORMAL | ATTR_LIGHTCOORD;
 
 	tess.numVertexes += srf->numVerts;
+#pragma warning(default:4700)
 }
 
 /**
  * @brief Tess_SurfaceTriangles
  * @param srf
  */
+#pragma warning(disable:4700)
 static void Tess_SurfaceTriangles(srfTriangles_t *srf)
 {
 	unsigned int  i, i3;
@@ -1443,12 +1446,14 @@ static void Tess_SurfaceTriangles(srfTriangles_t *srf)
 	tess.attribsSet |= ATTR_POSITION | ATTR_COLOR | ATTR_TEXCOORD | ATTR_TANGENT | ATTR_BINORMAL | ATTR_NORMAL | ATTR_LIGHTCOORD;
 
 	tess.numVertexes += srf->numVerts;
+#pragma warning(default:4700)
 }
 
 /**
  * @brief Tess_SurfaceFoliage
  * @param[in] srf
  */
+#pragma warning(disable:4700)
 static void Tess_SurfaceFoliage(srfFoliage_t *srf)
 {
 	int               o, i, i3;
@@ -1617,6 +1622,7 @@ static void Tess_SurfaceFoliage(srfFoliage_t *srf)
 		tess.numVertexes += numVerts;
 	}
 	tess.attribsSet |= ATTR_POSITION | ATTR_COLOR | ATTR_TEXCOORD | ATTR_NORMAL | ATTR_LIGHTCOORD;
+#pragma warning(default:4700)
 }
 
 /**

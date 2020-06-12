@@ -203,6 +203,7 @@ models/weapons2/fg42/fg42_2
 
 models/weapons2/flamethrower/flame1
 {
+/*
 	{
 		map textures/effects/envmap_slate.tga
 		rgbGen lightingdiffuse
@@ -213,6 +214,11 @@ models/weapons2/flamethrower/flame1
 		blendFunc GL_ONE GL_ONE_MINUS_SRC_ALPHA
 		rgbGen lightingdiffuse
 	}
+*/
+diffuseMap models/weapons2/flamethrower/flame1_yd.tga
+bumpMap models/weapons2/flamethrower/flame1_yd_n.tga
+specularMap models/weapons2/flamethrower/flame1_yd_x.tga // this specmap _r is no good (check: if specmap is low, then also not much reflections?)
+reflectionMap models/weapons2/flamethrower/flame1_yd_x.tga
 }
 
 models/weapons2/grenade/grenade

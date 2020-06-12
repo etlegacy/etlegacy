@@ -35,17 +35,19 @@ uniform float u_Time;
 varying vec4 var_LightColor;
 varying float var_alphaGen;
 varying vec3 var_Position;
+uniform vec4 u_Color;
 varying vec3 var_Normal;
 #if defined(USE_DIFFUSE)
-varying vec2 var_TexDiffuse; // possibly moving coords
+varying vec2 var_TexDiffuse;        // possibly moving coords
 #endif // USE_DIFFUSE
 #if defined(USE_NORMAL_MAPPING)
-varying vec3 var_ViewOrigin;
 varying mat3 var_tangentMatrix;
-varying vec2 var_TexNormal; // these coords are never moving
+varying vec2 var_TexNormal;         // these coords are never moving
 varying vec3 var_LightDirection;
+varying vec3 var_ViewDirW;          // view direction in world space
 #if defined(USE_PARALLAX_MAPPING)
-varying vec2 var_S;
+varying vec3 var_ViewDirT;          // view direction in tangentspace
+varying float var_distanceToCam;    //
 #endif // USE_PARALLAX_MAPPING
 #endif // USE_NORMAL_MAPPING
 #if defined(USE_PORTAL_CLIPPING)
@@ -67,35 +69,39 @@ void main()
 	// transform position into world space
 	var_Position = (u_ModelMatrix * position).xyz;
 
-	var_LightColor = attr_Color;
+	var_LightColor = attr_Color; // * u_ColorModulate + u_Color;
 
 #if defined(USE_DIFFUSE)
 	var_TexDiffuse = (u_DiffuseTextureMatrix * attr_TexCoord0).st;
 
 	// the alpha value is the one set by alphaGen const <value>
-	var_alphaGen = u_ColorModulate.a * 0.5 + 0.5;
+//	var_alphaGen = u_ColorModulate.a; // * 0.5 + 0.5;
+//!	var_alphaGen = u_Color.a;
 #endif // USE_DIFFUSE
+	var_alphaGen = u_Color.a;
 
 	// transform normal into world space
 	var_Normal = (u_ModelMatrix * vec4(attr_Normal, 0.0)).xyz;
 
 #if defined(USE_NORMAL_MAPPING)
-	vec3 tangent = (u_ModelMatrix * vec4(attr_Tangent, 0.0)).xyz;
-	vec3 binormal = (u_ModelMatrix * vec4(attr_Binormal, 0.0)).xyz;
+	vec3 tangent = normalize(u_ModelMatrix * vec4(attr_Tangent, 0.0)).xyz;
+	vec3 binormal = normalize(u_ModelMatrix * vec4(attr_Binormal, 0.0)).xyz;
 
-	// in a vertex-shader there exists no gl_FrontFacing
 	var_tangentMatrix = mat3(-tangent, -binormal, -var_Normal.xyz);
+//var_tangentMatrix = transpose(mat3(tangent, binormal, var_Normal.xyz));
 
 	// normalmap texcoords are not transformed
 	var_TexNormal = attr_TexCoord0.st;
 
 	var_LightDirection = -normalize(u_LightDir);
 
-	var_ViewOrigin = normalize(var_Position - u_ViewOrigin);
+	vec3 viewVec = var_Position - u_ViewOrigin;
+	var_ViewDirW = normalize(viewVec);
 
 #if defined(USE_PARALLAX_MAPPING)
-	vec3 viewOrigin2 = normalize(var_tangentMatrix * var_ViewOrigin);
-	var_S = viewOrigin2.xy * -u_DepthScale / viewOrigin2.z;
+	var_distanceToCam = length(viewVec);
+	mat3 tangentMatrix = transpose(mat3(tangent, binormal, var_Normal.xyz)); // this works with parallax, but specular is woot
+	var_ViewDirT = tangentMatrix * viewVec; // do not normalize..
 #endif // USE_PARALLAX_MAPPING
 #endif // USE_NORMAL_MAPPING
 

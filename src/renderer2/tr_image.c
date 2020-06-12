@@ -960,38 +960,37 @@ static void R_HeightMapToNormalMap(byte *in, int width, int height, float scale)
 static void R_DisplaceMap(byte *in, byte *in2, int width, int height)
 {
 	int x, y, idx = 0;
-	float avg;
 	byte *out = in;
-//	float  inv255 = 1.0f / 255.0f;
+	float  inv255 = 1.0f / 255.0f;
 //	vec3_t n;
+//	float avg;
 
 	for (y = 0; y < height; y++)
 	{
 		for (x = 0; x < width; x++)
 		{
 			//idx = (y * width + x) * 4; // ..if we make idx=0 at start, we can simply add+4
+/*
+			n[0] = (in[idx + 0] * inv255 - 0.5f) * 2.0f;
+			n[1] = (in[idx + 1] * inv255 - 0.5f) * 2.0f;
+			n[2] = (in[idx + 2] * inv255 - 0.5f) * 2.0f;
 
-	//		n[0] = (in[idx + 0] * inv255 - 0.5f) * 2.0f;
-	//		n[1] = (in[idx + 1] * inv255 - 0.5f) * 2.0f;
-	//		n[2] = (in[idx + 2] * inv255 - 0.5f) * 2.0f;
+			*out = (byte)(128 + 127 * n[0]);
+			out++;
+			*out = (byte)(128 + 127 * n[1]);
+			out++;
+			*out = (byte)(128 + 127 * n[2]);
+			out++;
 
-//			*out = (byte)(128 + 127 * n[0]);
-//			out++;
-//			*out = (byte)(128 + 127 * n[1]);
-//			out++;
-//			*out = (byte)(128 + 127 * n[2]);
-//			out++;
-
-	//		avg = (n[0] + n[1] + n[2]) / 3.0f;
-	//		avg = avg * 255.0f;
-avg = (in[idx] + in[idx + 1] + in[idx + 2]) / 3.0;
-out[idx + 3] = (byte)avg;
-//			out++;
-
+			avg = (n[0] + n[1] + n[2]) / 3.0f;
+			avg = avg * 255.0f;
+			*out = (byte)avg;
+			out++;
+*/
 			//out[idx] = in[idx];
 			//out[idx+1] = in[idx+1];
 			//out[idx+2] = in[idx+2];
-//			out[idx+3] = (byte)((unsigned int)((unsigned int)in[idx] + (unsigned int)in[idx] + (unsigned int)in[idx]) / 3);
+			out[idx+3] = (byte)((unsigned int)((unsigned int)in[idx] + (unsigned int)in[idx] + (unsigned int)in[idx]) / 3);
 			idx += 4;
 		}
 	}
@@ -3368,6 +3367,16 @@ static void R_CreateOcclusionRenderFBOImage(void)
 }
 
 /**
+ * @brief R_CreateCurrentCubemapFBOImage
+ */
+/*
+static void R_CreateCurrentCubemapFBOImage(void)
+{
+	tr.currentCubemapFBOImage = R_CreateCubeRenderImage("_currentCubemapFBOImage", 0, REF_CUBEMAP_SIZE, REF_CUBEMAP_SIZE, 0, FT_LINEAR, WT_EDGE_CLAMP);
+}
+*/
+
+/**
  * @brief R_CreateDepthToColorFBOImages
  */
 static void R_CreateDepthToColorFBOImages(void)
@@ -3457,7 +3466,7 @@ static void R_CreateShadowMapFBOImage(void)
 	int          i, size, bits;
 	filterType_t filter = FT_NEAREST;
 
-	if (!glConfig2.textureFloatAvailable || r_shadows->integer < SHADOWING_ESM16)
+	if (!glConfig2.textureFloatAvailable || r_shadows->integer < SHADOWING_EVSM32)
 	{
 		return;
 	}
@@ -3470,31 +3479,8 @@ static void R_CreateShadowMapFBOImage(void)
 	for (i = 0; i < MAX_SHADOWMAPS; i++)
 	{
 		size = shadowMapResolutions[i];
-
 		// we can do the most expensive filtering types with OpenGL 3 hardware
-		if (r_shadows->integer == SHADOWING_ESM32)
-		{
-			bits = IF_ALPHA32F;
-		}
-		else if (r_shadows->integer == SHADOWING_VSM32)
-		{
-			bits = IF_LA32F;
-		}
-		else if (r_shadows->integer == SHADOWING_EVSM32)
-		{
-			if (r_evsmPostProcess->integer)
-			{
-				bits = IF_ALPHA32F;
-			}
-			else
-			{
-				bits = IF_RGBA32F;
-			}
-		}
-		else
-		{
-			bits = IF_RGBA16F;
-		}
+		bits = IF_ALPHA32F;
 
 		tr.shadowMapFBOImage[i] = R_CreateRenderImageSize(va("_shadowMapFBO%d", i), size, size, bits, filter, WT_EDGE_CLAMP);
 	}
@@ -3503,31 +3489,8 @@ static void R_CreateShadowMapFBOImage(void)
 	for (i = 0; i < MAX_SHADOWMAPS; i++)
 	{
 		size = sunShadowMapResolutions[i];
-
 		// we can do the most expensive filtering types with OpenGL 3 hardware
-		if (r_shadows->integer == SHADOWING_ESM32)
-		{
-			bits = IF_ALPHA32F;
-		}
-		else if (r_shadows->integer == SHADOWING_VSM32)
-		{
-			bits = IF_LA32F;
-		}
-		else if (r_shadows->integer == SHADOWING_EVSM32)
-		{
-			if (r_evsmPostProcess->integer)
-			{
-				bits = IF_DEPTH24;
-			}
-			else
-			{
-				bits = IF_RGBA32F;
-			}
-		}
-		else
-		{
-			bits = IF_RGBA16F;
-		}
+		bits = IF_DEPTH24;
 
 		tr.sunShadowMapFBOImage[i] = R_CreateRenderImageSize(va("_sunShadowMapFBO%d", i), size, size, bits, filter, WT_EDGE_CLAMP);
 	}
@@ -3541,7 +3504,7 @@ static void R_CreateShadowCubeFBOImage(void)
 	int          j, size, bits;
 	filterType_t filter = FT_NEAREST;
 
-	if (!glConfig2.textureFloatAvailable || r_shadows->integer < SHADOWING_ESM16)
+	if (!glConfig2.textureFloatAvailable || r_shadows->integer < SHADOWING_EVSM32)
 	{
 		return;
 	}
@@ -3554,30 +3517,7 @@ static void R_CreateShadowCubeFBOImage(void)
 	for (j = 0; j < 5; j++)
 	{
 		size = shadowMapResolutions[j];
-
-		if (r_shadows->integer == SHADOWING_ESM32)
-		{
-			bits = IF_ALPHA32F;
-		}
-		else if (r_shadows->integer == SHADOWING_VSM32)
-		{
-			bits = IF_LA32F;
-		}
-		else if (r_shadows->integer == SHADOWING_EVSM32)
-		{
-			if (r_evsmPostProcess->integer)
-			{
-				bits = IF_ALPHA32F;
-			}
-			else
-			{
-				bits = IF_RGBA32F;
-			}
-		}
-		else
-		{
-			bits = IF_RGBA16F;
-		}
+		bits = IF_ALPHA32F;
 
 		tr.shadowCubeFBOImage[j] = R_CreateCubeRenderImage(va("_shadowCubeFBO%d", j), 0, size, size, bits, filter, WT_EDGE_CLAMP);
 	}
@@ -3710,9 +3650,10 @@ void R_CreateBuiltinImages(void)
 	R_CreateDepthToColorFBOImages();
 	R_CreateDownScaleFBOImages();
 	R_CreateDeferredRenderFBOImages();
-	R_CreateShadowMapFBOImage();
-	R_CreateShadowCubeFBOImage();
+	R_CreateShadowMapFBOImage(); // use 0.2 GB GPU memory..
+	R_CreateShadowCubeFBOImage(); // use 0.5 GB GPU memory..
 	R_CreateColorCubeImages();
+//	R_CreateCurrentCubemapFBOImage(); // the reflections cubemap from the current position..
 }
 
 /**
@@ -3838,8 +3779,8 @@ void R_InitImages(void)
 	Ren_Developer("------- R_InitImages -------\n");
 
 	Com_Memset(r_imageHashTable, 0, sizeof(r_imageHashTable));
-	Com_InitGrowList(&tr.images, 100); //Com_InitGrowList(&tr.images, 4096);
-	Com_InitGrowList(&tr.lightmaps, 20);
+	Com_InitGrowList(&tr.images, 10); // 100); //Com_InitGrowList(&tr.images, 4096);
+	Com_InitGrowList(&tr.lightmaps, 5); // 20);
 	Com_InitGrowList(&tr.deluxemaps, 0); //Com_InitGrowList(&tr.deluxemaps, 128);
 
 	// build brightness translation tables

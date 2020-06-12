@@ -1483,6 +1483,7 @@ void R_SwapBuffers(int);
 
 void R_RenderView(viewParms_t *parms);
 
+
 void R_AddMD3Surfaces(trRefEntity_t *ent);
 
 void R_TagInfo_f(void);

@@ -59,6 +59,9 @@
  *   rgb = color
  *   density is density, and is used to derive the values of 'mode', 'drawsky', and 'clearscreen'
  * }
+ *
+ * note: If the map loads: skyfogvars, waterfogvars, fogvars,   these fogs are set.
+ *       However, all stock maps seem to use global fog only. Global fog is loaded as one of the bsp lumps.
  */
 void RE_SetFog(int fogvar, int var1, int var2, float r, float g, float b, float density)
 {
@@ -79,22 +82,25 @@ void RE_SetFog(int fogvar, int var1, int var2, float r, float g, float b, float 
 
 		// transitioning to new fog, store the current values as the 'from'
 
-		if (tr.glfogsettings[FOG_CURRENT].registered)
-		{
+// FOG_CURRENT never gets registered? in old code
+//		if (tr.glfogsettings[FOG_CURRENT].registered)
+//		{
 			Com_Memcpy(&tr.glfogsettings[FOG_LAST], &tr.glfogsettings[FOG_CURRENT], sizeof(glfog_t));
-		}
-		else
-		{
-			// if no current fog fall back to world fog
-			// FIXME: handle transition if there is no FOG_MAP fog
-			Com_Memcpy(&tr.glfogsettings[FOG_LAST], &tr.glfogsettings[FOG_MAP], sizeof(glfog_t));
-		}
+//		}
+//		else
+//		{
+//			// if no current fog fall back to world fog
+//			// FIXME: handle transition if there is no FOG_MAP fog
+//			Com_Memcpy(&tr.glfogsettings[FOG_LAST], &tr.glfogsettings[FOG_MAP], sizeof(glfog_t));
+//		}
 
 		Com_Memcpy(&tr.glfogsettings[FOG_TARGET], &tr.glfogsettings[tr.glfogNum], sizeof(glfog_t));
 
 		// setup transition times
 		tr.glfogsettings[FOG_TARGET].startTime = tr.refdef.time;
 		tr.glfogsettings[FOG_TARGET].finishTime = tr.refdef.time + var2;
+tr.glfogsettings[FOG_TARGET].registered = qtrue;
+tr.glfogsettings[FOG_CURRENT].registered = qtrue;
 	}
 	else
 	{
@@ -146,46 +152,71 @@ void RE_SetFog(int fogvar, int var1, int var2, float r, float g, float b, float 
 void R_SetFrameFog(void)
 {
 	// new style global fog transitions
-	// NOTE: This will crash with an exception..
+
 	if (tr.world->globalFogTransEndTime)
+//if (tr.world->globalFogTransEndTime && tr.world->fogs[tr.world->globalFog].shader)
 	{
 		if (tr.world->globalFogTransEndTime >= tr.refdef.time)
 		{
 			int   fadeTime = tr.world->globalFogTransEndTime - tr.world->globalFogTransStartTime;
-			float lerpPos  = (float)(tr.refdef.time - tr.world->globalFogTransStartTime) / (float)fadeTime;
+float lerpPos;
+if (fadeTime == 0) {
+	lerpPos = 1.f;
+}
+else {
+			/*float*/ lerpPos = (float)(tr.refdef.time - tr.world->globalFogTransStartTime) / (float)fadeTime;
 
 			if (lerpPos > 1)
 			{
 				lerpPos = 1;
 			}
-
+}
+/*
 			tr.world->fogs[tr.world->globalFog].shader->fogParms.color[0] = tr.world->globalTransStartFog[0] + ((tr.world->globalTransEndFog[0] - tr.world->globalTransStartFog[0]) * lerpPos);
 			tr.world->fogs[tr.world->globalFog].shader->fogParms.color[1] = tr.world->globalTransStartFog[1] + ((tr.world->globalTransEndFog[1] - tr.world->globalTransStartFog[1]) * lerpPos);
 			tr.world->fogs[tr.world->globalFog].shader->fogParms.color[2] = tr.world->globalTransStartFog[2] + ((tr.world->globalTransEndFog[2] - tr.world->globalTransStartFog[2]) * lerpPos);
 
 			tr.world->fogs[tr.world->globalFog].shader->fogParms.colorInt = ColorBytes4(tr.world->fogs[tr.world->globalFog].shader->fogParms.color[0] * tr.identityLight,
-			                                                                            tr.world->fogs[tr.world->globalFog].shader->fogParms.color[1] * tr.identityLight,
-			                                                                            tr.world->fogs[tr.world->globalFog].shader->fogParms.color[2] * tr.identityLight, 1.0);
+				tr.world->fogs[tr.world->globalFog].shader->fogParms.color[1] * tr.identityLight,
+				tr.world->fogs[tr.world->globalFog].shader->fogParms.color[2] * tr.identityLight, 1.0);
 
 			tr.world->fogs[tr.world->globalFog].shader->fogParms.depthForOpaque = tr.world->globalTransStartFog[3] + ((tr.world->globalTransEndFog[3] - tr.world->globalTransStartFog[3]) * lerpPos);
-			//tr.world->fogs[tr.world->globalFog].shader->fogParms.tcScale        = 1.0f / (tr.world->fogs[tr.world->globalFog].shader->fogParms.depthForOpaque * 8.f);
-			tr.world->fogs[tr.world->globalFog].shader->fogParms.tcScale = rcp(tr.world->fogs[tr.world->globalFog].shader->fogParms.depthForOpaque * 8.f);
+			tr.world->fogs[tr.world->globalFog].shader->fogParms.tcScale        = 1.0f / (tr.world->fogs[tr.world->globalFog].shader->fogParms.depthForOpaque * 8.f);
+//!			tr.world->fogs[tr.world->globalFog].shader->fogParms.tcScale = rcp(tr.world->fogs[tr.world->globalFog].shader->fogParms.depthForOpaque * 8.f);
+*/
+tr.world->fogs[tr.world->globalFog].color[0] = tr.world->globalTransStartFog[0] + ((tr.world->globalTransEndFog[0] - tr.world->globalTransStartFog[0]) * lerpPos); //! color, not fogparms.color
+tr.world->fogs[tr.world->globalFog].color[1] = tr.world->globalTransStartFog[1] + ((tr.world->globalTransEndFog[1] - tr.world->globalTransStartFog[1]) * lerpPos);
+tr.world->fogs[tr.world->globalFog].color[2] = tr.world->globalTransStartFog[2] + ((tr.world->globalTransEndFog[2] - tr.world->globalTransStartFog[2]) * lerpPos);
+
+
+tr.world->fogs[tr.world->globalFog].fogParms.colorInt = ColorBytes4(tr.world->fogs[tr.world->globalFog].fogParms.color[0] * tr.identityLight, tr.world->fogs[tr.world->globalFog].fogParms.color[1] * tr.identityLight, tr.world->fogs[tr.world->globalFog].fogParms.color[2] * tr.identityLight, 1.0);
+tr.world->fogs[tr.world->globalFog].fogParms.depthForOpaque = tr.world->globalTransStartFog[3] + ((tr.world->globalTransEndFog[3] - tr.world->globalTransStartFog[3]) * lerpPos);
+tr.world->fogs[tr.world->globalFog].fogParms.tcScale = 1.0f / (tr.world->fogs[tr.world->globalFog].fogParms.depthForOpaque * 8.f);
 		}
 		else
 		{
 			// transition complete
-			VectorCopy(tr.world->globalTransEndFog, tr.world->fogs[tr.world->globalFog].shader->fogParms.color);
+/*			VectorCopy(tr.world->globalTransEndFog, tr.world->fogs[tr.world->globalFog].shader->fogParms.color);
 			tr.world->fogs[tr.world->globalFog].shader->fogParms.colorInt = ColorBytes4(tr.world->globalTransEndFog[0] * tr.identityLight,
 			                                                                            tr.world->globalTransEndFog[1] * tr.identityLight,
 				            tr.world->globalTransEndFog[2] * tr.identityLight, 1.0);
 			tr.world->fogs[tr.world->globalFog].shader->fogParms.depthForOpaque = tr.world->globalTransEndFog[3];
 			//tr.world->fogs[tr.world->globalFog].shader->fogParms.tcScale        = 1.0f / (tr.world->fogs[tr.world->globalFog].shader->fogParms.depthForOpaque * 8.f);
-			tr.world->fogs[tr.world->globalFog].shader->fogParms.tcScale = rcp(tr.world->fogs[tr.world->globalFog].shader->fogParms.depthForOpaque * 8.f);
+//!			tr.world->fogs[tr.world->globalFog].shader->fogParms.tcScale = rcp(tr.world->fogs[tr.world->globalFog].shader->fogParms.depthForOpaque * 8.f);
+tr.world->fogs[tr.world->globalFog].shader->fogParms.tcScale = 1.0f / (tr.world->fogs[tr.world->globalFog].shader->fogParms.depthForOpaque * 8.f);
+*/
+VectorCopy(tr.world->globalTransEndFog, tr.world->fogs[tr.world->globalFog].color);
+tr.world->fogs[tr.world->globalFog].fogParms.colorInt = ColorBytes4(tr.world->globalTransEndFog[0] * tr.identityLight, tr.world->globalTransEndFog[1] * tr.identityLight, tr.world->globalTransEndFog[2] * tr.identityLight, 1.0);
+tr.world->fogs[tr.world->globalFog].fogParms.depthForOpaque = tr.world->globalTransEndFog[3];
+tr.world->fogs[tr.world->globalFog].fogParms.tcScale = 1.0f / (tr.world->fogs[tr.world->globalFog].fogParms.depthForOpaque * 8.f);
 
 			tr.world->globalFogTransEndTime = 0;
 		}
-	}
 
+		// do we need to exit this function now?..
+
+	}
+/*
 	if (r_speeds->integer == RSPEEDS_FOG)
 	{
 		if (!tr.glfogsettings[FOG_TARGET].registered)
@@ -200,7 +231,7 @@ void R_SetFrameFog(void)
 	{
 		return;
 	}
-
+*/
 	// still fading
 	if (tr.glfogsettings[FOG_TARGET].finishTime && tr.glfogsettings[FOG_TARGET].finishTime >= tr.refdef.time)
 	{
@@ -233,13 +264,13 @@ void R_SetFrameFog(void)
 			{
 				lerpPos = 1;
 			}
-
-			// lerp near/far
+/*
+			// lerp
 			tr.glfogsettings[FOG_CURRENT].start =
 				tr.glfogsettings[FOG_LAST].start + ((tr.glfogsettings[FOG_TARGET].start - tr.glfogsettings[FOG_LAST].start) * lerpPos);
 			tr.glfogsettings[FOG_CURRENT].end =
 				tr.glfogsettings[FOG_LAST].end + ((tr.glfogsettings[FOG_TARGET].end - tr.glfogsettings[FOG_LAST].end) * lerpPos);
-
+*/
 			// lerp color
 			tr.glfogsettings[FOG_CURRENT].color[0] =
 				tr.glfogsettings[FOG_LAST].color[0] +
@@ -325,11 +356,11 @@ void RE_SetGlobalFog(qboolean restore, int duration, float r, float g, float b, 
 
 			tr.world->fogs[tr.world->globalFog].fogParms.colorInt =
 				ColorBytes4(tr.world->globalOriginalFog[0] * tr.identityLight, tr.world->globalOriginalFog[1] * tr.identityLight,
-				            tr.world->globalOriginalFog[2] * tr.identityLight, 1.0);
+				            tr.world->globalOriginalFog[2] * tr.identityLight, 1.0); // 1.0 alpha?
 
 			tr.world->fogs[tr.world->globalFog].fogParms.depthForOpaque = tr.world->globalOriginalFog[3];
-			//tr.world->fogs[tr.world->globalFog].tcScale = 1.0f / (tr.world->fogs[tr.world->globalFog].fogParms.depthForOpaque); // *8?
-			tr.world->fogs[tr.world->globalFog].tcScale = rcp(tr.world->fogs[tr.world->globalFog].fogParms.depthForOpaque); // *8?
+//			tr.world->fogs[tr.world->globalFog].tcScale = 1.0f / (tr.world->fogs[tr.world->globalFog].fogParms.depthForOpaque * 8); // *8?
+			tr.world->fogs[tr.world->globalFog].tcScale = rcp(tr.world->fogs[tr.world->globalFog].fogParms.depthForOpaque * 8); // *8? yes..needed.
 		}
 	}
 	else
@@ -354,8 +385,8 @@ void RE_SetGlobalFog(qboolean restore, int duration, float r, float g, float b, 
 			                                                                    b * tr.identityLight, 1.0);
 
 			tr.world->fogs[tr.world->globalFog].fogParms.depthForOpaque = depthForOpaque < 1 ? 1 : depthForOpaque;
-			//tr.world->fogs[tr.world->globalFog].tcScale = 1.0f / (tr.world->fogs[tr.world->globalFog].fogParms.depthForOpaque); // *8?
-			tr.world->fogs[tr.world->globalFog].tcScale = rcp(tr.world->fogs[tr.world->globalFog].fogParms.depthForOpaque); // *8?
+			//tr.world->fogs[tr.world->globalFog].tcScale = 1.0f / (tr.world->fogs[tr.world->globalFog].fogParms.depthForOpaque);
+			tr.world->fogs[tr.world->globalFog].tcScale = rcp(tr.world->fogs[tr.world->globalFog].fogParms.depthForOpaque * 8);
 		}
 	}
 }

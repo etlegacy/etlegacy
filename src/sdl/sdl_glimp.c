@@ -669,6 +669,13 @@ static int GLimp_SetMode(glconfig_t *glConfig, int mode, qboolean fullscreen, qb
 			SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
 		}
 
+		// if on Windows:
+		//SetProcessDpiAwareness(PROCESS_PER_MONITOR_DPI_AWARE);
+
+		// added flag SDL_WINDOW_ALLOW_HIGHDPI to prevent Windows from scaling the app window.
+		//SDL_GL_SetAttribute(SDL_HINT_VIDEO_HIGHDPI_DISABLED, 1); // error. is a string, no enum/const (and it seems for mac only)
+		flags |= SDL_WINDOW_ALLOW_HIGHDPI;
+
 		main_window = SDL_CreateWindow(CLIENT_WINDOW_TITLE, x, y, glConfig->vidWidth, glConfig->vidHeight, flags | SDL_WINDOW_SHOWN);
 
 		if (!main_window)

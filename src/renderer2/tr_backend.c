@@ -552,11 +552,12 @@ static void Render_lightVolume(interaction_t *ia)
 			GL_Cull(CT_TWO_SIDED);
 			GL_State(GLS_DEPTHTEST_DISABLE | GLS_SRCBLEND_ONE | GLS_DSTBLEND_ONE);
 
-			shadowCompare = (r_shadows->integer >= SHADOWING_ESM16 && !light->l.noShadows && light->shadowLOD >= 0);
+			shadowCompare = (r_shadows->integer >= SHADOWING_EVSM32 && !light->l.noShadows && light->shadowLOD >= 0);
 
 			SetUniformVec3(UNIFORM_VIEWORIGIN, backEnd.viewParms.orientation.origin); // in world space
 			SetUniformVec3(UNIFORM_LIGHTORIGIN, light->origin);
-			SetUniformVec3(UNIFORM_LIGHTCOLOR, tess.svars.color);
+//			SetUniformVec3(UNIFORM_LIGHTCOLOR, tess.svars.color);
+SetUniformVec3(UNIFORM_LIGHTCOLOR, light->l.color);
 			SetUniformFloat(UNIFORM_LIGHTRADIUS, light->sphereRadius);
 			SetUniformFloat(UNIFORM_LIGHTSCALE, light->l.scale);
 			SetUniformMatrix16(UNIFORM_LIGHTATTENUATIONMATRIX, light->attenuationMatrix2);
@@ -889,7 +890,8 @@ static void RB_RenderInteractions()
 		Tess_End();
 
 		// begin a new batch
-		Tess_Begin(Tess_StageIteratorLighting, NULL, shader, light->shader, qfalse, qfalse, LIGHTMAP_NONE, FOG_NONE);
+//		Tess_Begin(Tess_StageIteratorLighting, NULL, shader, light->shader, qfalse, qfalse, LIGHTMAP_NONE, FOG_NONE);
+Tess_Begin(Tess_StageIteratorLighting, NULL, shader, light->shader, qtrue, qfalse, LIGHTMAP_NONE, FOG_NONE);
 
 		// change the modelview matrix if needed
 		if (entity != oldEntity)
@@ -1495,14 +1497,8 @@ Vector4Set(&light->viewMatrix[12], -viewMatrix[13], viewMatrix[14], -viewMatrix[
 						Ren_LogComment("--- Rendering directional shadowMap ---\n");
 
 						R_BindFBO(tr.sunShadowMapFBO[splitFrustumIndex]);
-						if (!r_evsmPostProcess->integer)
-						{
-							R_AttachFBOTexture2D(GL_TEXTURE_2D, tr.sunShadowMapFBOImage[splitFrustumIndex]->texnum, 0);
-						}
-						else
-						{
-							R_AttachFBOTextureDepth(tr.sunShadowMapFBOImage[splitFrustumIndex]->texnum);
-						}
+						R_AttachFBOTextureDepth(tr.sunShadowMapFBOImage[splitFrustumIndex]->texnum);
+
 						if (!r_ignoreGLErrors->integer)
 						{
 							R_CheckFBO(tr.sunShadowMapFBO[splitFrustumIndex]);
@@ -1520,7 +1516,6 @@ Vector4Set(&light->viewMatrix[12], -viewMatrix[13], viewMatrix[14], -viewMatrix[
 						VectorCopy(light->direction, lightDirection);
 #endif
 
-						if (r_parallelShadowSplits->integer)
 						{
 							int numCasters;
 
@@ -1671,7 +1666,7 @@ Vector4Set(&light->viewMatrix[12], -viewMatrix[13], viewMatrix[14], -viewMatrix[
 							for (j = 0; j < 8; j++)
 							{
 								VectorCopy(splitFrustumCorners[j], point);
-								//point[3] = 1.0f; // initialized once, ..no need to keep setting it.
+								point[3] = 1.0f; // initialized once, ..no need to keep setting it.
 #if 1
 								Vector4TransformM4(light->viewMatrix, point, transf);
 								/*transf[0] /= transf[3];
@@ -1745,54 +1740,6 @@ Vector4Set(&light->viewMatrix[12], -viewMatrix[13], viewMatrix[14], -viewMatrix[
 
 							GL_LoadProjectionMatrix(light->projectionMatrix);
 						}
-						else
-						{
-							// original light direction is from surface to light
-							VectorInverse(lightDirection);
-
-							// Quake -> OpenGL view matrix from light perspective
-#if 1
-							VectorToAngles(lightDirection, angles);
-							mat4_from_angles(rotationMatrix, angles[PITCH], angles[YAW], angles[ROLL]);
-							MatrixSetupTransformFromRotation(transformMatrix, rotationMatrix, backEnd.viewParms.orientation.origin);
-							MatrixAffineInverse(transformMatrix, viewMatrix);
-							Matrix4Multiply(quakeToOpenGLMatrix, viewMatrix, light->viewMatrix);
-#else
-							MatrixLookAtRH(light->viewMatrix, backEnd.viewParms.orientation.origin, lightDirection, backEnd.viewParms.orientation.axis[0]);
-#endif
-
-							ClearBounds(splitFrustumBounds[0], splitFrustumBounds[1]);
-							//BoundsAdd(splitFrustumBounds[0], splitFrustumBounds[1], backEnd.viewParms.visBounds[0], backEnd.viewParms.visBounds[1]);
-							BoundsAdd(splitFrustumBounds[0], splitFrustumBounds[1], light->worldBounds[0], light->worldBounds[1]);
-
-							ClearBounds(cropBounds[0], cropBounds[1]);
-							for (j = 0; j < 8; j++)
-							{
-								point[0] = splitFrustumBounds[j & 1][0];
-								point[1] = splitFrustumBounds[(j >> 1) & 1][1];
-								point[2] = splitFrustumBounds[(j >> 2) & 1][2];
-								point[3] = 1;
-
-								Vector4TransformM4(light->viewMatrix, point, transf);
-								/*transf[0] /= transf[3];
-								transf[1] /= transf[3];
-								transf[2] /= transf[3];*/
-								//VectorScale(transf, 1.0f / transf[3], transf);
-								VectorScale(transf, rcp(transf[3]), transf);
-
-								AddPointToBounds(transf, cropBounds[0], cropBounds[1]);
-							}
-
-							// transform from OpenGL's right handed into D3D's left handed coordinate system
-#if 0
-							MatrixScaleTranslateToUnitCube(projectionMatrix, cropBounds[0], cropBounds[1]);
-							MatrixMultiplyMOD(flipZMatrix, projectionMatrix, light->projectionMatrix);
-#else
-							//MatrixOrthogonalProjectionRH(light->projectionMatrix, cropBounds[0][0], cropBounds[1][0], cropBounds[0][1], cropBounds[1][1], -cropBounds[1][2], -cropBounds[0][2]);
-							MatrixOrthogonalProjectionRH(light->projectionMatrix, cropBounds);
-#endif
-							GL_LoadProjectionMatrix(light->projectionMatrix);
-						}
 						break;
 					}
 					case RL_PROJ:
@@ -1827,6 +1774,8 @@ Vector4Set(&light->viewMatrix[12], -viewMatrix[13], viewMatrix[14], -viewMatrix[
 				Ren_LogComment("--- Rendering lighting ---\n");
 				Ren_LogComment("----- First Light Interaction: %i -----\n", iaCount);
 
+if (tr.refdef.pixelTarget == NULL)
+{
 				if (r_hdrRendering->integer)
 				{
 					R_BindFBO(tr.deferredRenderFBO);
@@ -1835,7 +1784,7 @@ Vector4Set(&light->viewMatrix[12], -viewMatrix[13], viewMatrix[14], -viewMatrix[
 				{
 					R_BindNullFBO();
 				}
-
+}
 				// set the window clipping
 				GL_Viewport(backEnd.viewParms.viewportX, backEnd.viewParms.viewportY,
 				            backEnd.viewParms.viewportWidth, backEnd.viewParms.viewportHeight);
@@ -1870,7 +1819,7 @@ Vector4Set(&light->viewMatrix[12], -viewMatrix[13], viewMatrix[14], -viewMatrix[
 						GL_PushMatrix();
 						RB_SetViewMVPM();
 
-						for (frustumIndex = 0; frustumIndex <= r_parallelShadowSplits->integer; frustumIndex++)
+						for (frustumIndex = 0; frustumIndex <= MAX_SHADOWMAPS - 1; frustumIndex++)
 						{
 							GL_Cull(CT_TWO_SIDED);
 							GL_State(GLS_DEPTHTEST_DISABLE);
@@ -1884,7 +1833,7 @@ Vector4Set(&light->viewMatrix[12], -viewMatrix[13], viewMatrix[14], -viewMatrix[
 							w = 200.f;
 							h = 200.f;
 
-							x = 205.f * (float)frustumIndex;
+							x = 205.f * (float)frustumIndex; // was 205?..  ?
 							y = 70.f;
 
 							Vector4Set(quadVerts[0], x, y, 0.f, 1.f);
@@ -1944,25 +1893,25 @@ Vector4Set(&light->viewMatrix[12], -viewMatrix[13], viewMatrix[14], -viewMatrix[
 								// draw outer surfaces
 								for (j = 0; j < 4; j++)
 								{
-									Vector4Set(quadVerts[0], nearCorners[j][0], nearCorners[j][1], nearCorners[j][2], 1);
-									Vector4Set(quadVerts[1], farCorners[j][0], farCorners[j][1], farCorners[j][2], 1);
-									Vector4Set(quadVerts[2], farCorners[(j + 1) % 4][0], farCorners[(j + 1) % 4][1], farCorners[(j + 1) % 4][2], 1);
-									Vector4Set(quadVerts[3], nearCorners[(j + 1) % 4][0], nearCorners[(j + 1) % 4][1], nearCorners[(j + 1) % 4][2], 1);
+									Vector4Set(quadVerts[0], nearCorners[j][0], nearCorners[j][1], nearCorners[j][2], 1.f);
+									Vector4Set(quadVerts[1], farCorners[j][0], farCorners[j][1], farCorners[j][2], 1.f);
+									Vector4Set(quadVerts[2], farCorners[(j + 1) % 4][0], farCorners[(j + 1) % 4][1], farCorners[(j + 1) % 4][2], 1.f);
+									Vector4Set(quadVerts[3], nearCorners[(j + 1) % 4][0], nearCorners[(j + 1) % 4][1], nearCorners[(j + 1) % 4][2], 1.f);
 									Tess_AddQuadStamp2(quadVerts, colorCyan);
 								}
 
 								// draw far cap
-								Vector4Set(quadVerts[0], farCorners[3][0], farCorners[3][1], farCorners[3][2], 1);
-								Vector4Set(quadVerts[1], farCorners[2][0], farCorners[2][1], farCorners[2][2], 1);
-								Vector4Set(quadVerts[2], farCorners[1][0], farCorners[1][1], farCorners[1][2], 1);
-								Vector4Set(quadVerts[3], farCorners[0][0], farCorners[0][1], farCorners[0][2], 1);
+								Vector4Set(quadVerts[0], farCorners[3][0], farCorners[3][1], farCorners[3][2], 1.f);
+								Vector4Set(quadVerts[1], farCorners[2][0], farCorners[2][1], farCorners[2][2], 1.f);
+								Vector4Set(quadVerts[2], farCorners[1][0], farCorners[1][1], farCorners[1][2], 1.f);
+								Vector4Set(quadVerts[3], farCorners[0][0], farCorners[0][1], farCorners[0][2], 1.f);
 								Tess_AddQuadStamp2(quadVerts, colorBlue);
 
 								// draw near cap
-								Vector4Set(quadVerts[0], nearCorners[0][0], nearCorners[0][1], nearCorners[0][2], 1);
-								Vector4Set(quadVerts[1], nearCorners[1][0], nearCorners[1][1], nearCorners[1][2], 1);
-								Vector4Set(quadVerts[2], nearCorners[2][0], nearCorners[2][1], nearCorners[2][2], 1);
-								Vector4Set(quadVerts[3], nearCorners[3][0], nearCorners[3][1], nearCorners[3][2], 1);
+								Vector4Set(quadVerts[0], nearCorners[0][0], nearCorners[0][1], nearCorners[0][2], 1.f);
+								Vector4Set(quadVerts[1], nearCorners[1][0], nearCorners[1][1], nearCorners[1][2], 1.f);
+								Vector4Set(quadVerts[2], nearCorners[2][0], nearCorners[2][1], nearCorners[2][2], 1.f);
+								Vector4Set(quadVerts[3], nearCorners[3][0], nearCorners[3][1], nearCorners[3][2], 1.f);
 								Tess_AddQuadStamp2(quadVerts, colorGreen);
 
 								Tess_UpdateVBOs(tess.attribsSet); // set by Tess_AddQuadStamp2
@@ -2074,7 +2023,8 @@ Vector4Set(&light->viewMatrix[12], -viewMatrix[13], viewMatrix[14], -viewMatrix[
 					Ren_LogComment("----- Beginning Shadow Interaction: %i -----\n", iaCount);
 
 					// we don't need tangent space calculations here
-					Tess_Begin(Tess_StageIteratorShadowFill, NULL, shader, light->shader, qtrue, qfalse, LIGHTMAP_NONE, FOG_NONE);
+//					Tess_Begin(Tess_StageIteratorShadowFill, NULL, shader, light->shader, qfalse, qfalse, LIGHTMAP_NONE, FOG_NONE);
+Tess_Begin(Tess_StageIteratorShadowFill, NULL, shader, light->shader, qtrue, qfalse, LIGHTMAP_NONE, FOG_NONE);
 				}
 				break;
 			}
@@ -2325,9 +2275,8 @@ skipInteraction:
 
 					Matrix4Multiply(light->projectionMatrix, light->viewMatrix, light->shadowMatrices[splitFrustumIndex]);
 
-					if (r_parallelShadowSplits->integer)
 					{
-						if (splitFrustumIndex == r_parallelShadowSplits->integer)
+						if (splitFrustumIndex == MAX_SHADOWMAPS - 1)
 						{
 							splitFrustumIndex = 0;
 							drawShadows       = qfalse;
@@ -2340,13 +2289,6 @@ skipInteraction:
 						// jump back to first interaction of this light
 						ia      = &backEnd.viewParms.interactions[iaFirst];
 						iaCount = iaFirst;
-					}
-					else
-					{
-						// jump back to first interaction of this light and start lighting
-						ia          = &backEnd.viewParms.interactions[iaFirst];
-						iaCount     = iaFirst;
-						drawShadows = qfalse;
 					}
 					break;
 				}
@@ -4862,7 +4804,7 @@ static void RB_RenderDebugUtils()
 
 			SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
 
-			if (r_shadows->integer >= SHADOWING_ESM16 && light->l.rlType == RL_OMNI)
+			if (r_shadows->integer >= SHADOWING_EVSM32 && light->l.rlType == RL_OMNI)
 			{
 #if 0
 				Vector4Copy(colorMdGrey, lightColor);
@@ -5387,12 +5329,15 @@ static void RB_RenderDebugUtils()
 		vec3_t mins = { -8, -8, -8 };
 		vec3_t maxs = { 8, 8, 8 };
 		//vec3_t			viewOrigin;
+		trRefEntity_t* backEndEnt = backEnd.currentEntity;
 
 		if (backEnd.refdef.rdflags & (RDF_NOWORLDMODEL | RDF_NOCUBEMAP))
 		{
 			return;
 		}
 
+/*
+ // use the reflection shader
 		SetMacrosAndSelectProgram(trProg.gl_reflectionShader,
 		                          USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal,
 		                          USE_VERTEX_SKINNING, qfalse,
@@ -5403,10 +5348,10 @@ static void RB_RenderDebugUtils()
 
 		GLSL_SetUniform_ColorModulate(trProg.gl_reflectionShader, CGEN_IDENTITY, AGEN_IDENTITY); //CGEN_CUSTOM_RGB, AGEN_CUSTOM);
 		//GLSL_SetUniform_ColorModulate(trProg.gl_genericShader, CGEN_IDENTITY, AGEN_IDENTITY);
-		SetUniformVec4(UNIFORM_COLOR, colorBlack);
+		SetUniformVec4(UNIFORM_COLOR, colorWhite);
 
 		//GL_State(GLS_SRCBLEND_ONE | GLS_DSTBLEND_ZERO);
-		GL_State(0);
+		GL_State(GLS_DEFAULT);
 		GL_Cull(CT_FRONT_SIDED); // the inside of the cube is textured, and the normals all point to the center of the cube: that's the front side (we don't want to see)
 		SetUniformInt(UNIFORM_ALPHATEST, ATEST_NONE);
 
@@ -5421,11 +5366,14 @@ static void RB_RenderDebugUtils()
 		GLSL_SetRequiredVertexPointers(trProg.gl_reflectionShader);
 		//GLSL_SetRequiredVertexPointers(trProg.gl_genericShader);
 
+		backEnd.currentEntity = &tr.worldEntity;
+
 		for (j = 0; j < tr.cubeProbes.currentElements; j++)
 		{
 			cubeProbe = (cubemapProbe_t *) Com_GrowListElement(&tr.cubeProbes, j);
 
 			Tess_Begin(Tess_StageIteratorDebug, NULL, NULL, NULL, qtrue, qtrue, LIGHTMAP_NONE, FOG_NONE);
+			Tess_AddCubeWithNormals(cubeProbe->origin, mins, maxs, colorWhite);
 #if 1
             // the glsl shader needs 2 cubemaps and an interpolation factor,
             // but now we just want to render a single cubemap..
@@ -5440,17 +5388,62 @@ static void RB_RenderDebugUtils()
             GL_Bind(cubeProbe->cubemap);
 
             // u_EnvironmentInterpolation
-            SetUniformFloat(UNIFORM_ENVIRONMENTINTERPOLATION, 1.0);
+            SetUniformFloat(UNIFORM_ENVIRONMENTINTERPOLATION, 0.0);
 #else
             SelectTexture(TEX_COLOR);
             GL_Bind(cubeProbe->cubemap);
 #endif
-
-			Tess_AddCubeWithNormals(cubeProbe->origin, mins, maxs, colorWhite);
 			Tess_End();
 		}
 		//Tess_UpdateVBOs(tess.attribsSet); // set by Tess_AddCube
+		backEnd.currentEntity = backEndEnt;
+*/
 
+		// use the generic shader
+		SetMacrosAndSelectProgram(trProg.gl_genericShader,
+								  USE_ALPHA_TESTING, qfalse,
+								  USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal,
+								  USE_VERTEX_SKINNING, qfalse,
+								  USE_VERTEX_ANIMATION, qfalse,
+								  USE_DEFORM_VERTEXES, qfalse,
+								  USE_TCGEN_ENVIRONMENT, qfalse,
+								  USE_TCGEN_LIGHTMAP, qfalse);
+
+		GLSL_SetRequiredVertexPointers(trProg.gl_genericShader);
+
+		GLSL_SetUniform_ColorModulate(trProg.gl_genericShader, CGEN_IDENTITY, AGEN_IDENTITY);
+		SetUniformVec4(UNIFORM_COLOR, colorWhite);
+		SetUniformMatrix16(UNIFORM_COLORTEXTUREMATRIX, matrixIdentity);
+		SetUniformMatrix16(UNIFORM_MODELMATRIX, MODEL_MATRIX);
+		SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
+
+		// USE_PORTAL_CLIPPING
+		if (backEnd.viewParms.isPortal)
+		{
+			clipPortalPlane();
+		}
+
+		GL_State(GLS_DEFAULT);
+		GL_Cull(CT_FRONT_SIDED); // the inside of the cube is textured, and the normals all point to the center of the cube: that's the front side (we don't want to see)
+
+		backEnd.orientation = backEnd.viewParms.world;
+
+		Tess_Begin(Tess_StageIteratorDebug, NULL, NULL, NULL, qtrue, qtrue, LIGHTMAP_NONE, FOG_NONE);
+		for (j = 0; j < tr.cubeProbes.currentElements; j++)
+		{
+			cubeProbe = (cubemapProbe_t*)Com_GrowListElement(&tr.cubeProbes, j);
+
+			// bind u_ColorMap
+			SelectTexture(TEX_COLOR);
+			GL_Bind(cubeProbe->cubemap);
+
+			Tess_AddCubeWithNormals(cubeProbe->origin, mins, maxs, colorWhite);
+		}
+		//Tess_UpdateVBOs(tess.attribsSet); // set by Tess_AddCube
+		Tess_End();
+		GL_CheckErrors();
+
+		backEnd.currentEntity = backEndEnt;
 
 #if 0	// color the 2 closest cubeProbes (green/red/yellow?/blue?)
 		// (disabled because, when you want to inspect a cubeProbe up close, no textures can be seen.. not handy)
@@ -6018,6 +6011,11 @@ static void RB_RenderDebugUtils()
 
 /**
  * @brief RB_RenderViewFront
+ *
+ * Note: If we are rendering offscreen, or when we are rendering the cubeprobe reflection cubemaps,
+ * we don't want this function to mess up the framebuffer we render to offscreen.
+ * In any case, when we are rendering the cubemaps offscreen, they do not have fog,coronas,decals,shadows,light, or any posteffects (hdr,bloom...).
+ * We can skip a lot if there is a pixeltarget set.. (then we are rendering to a cubemap, offscreen)
  */
 static void RB_RenderViewFront(void)
 {
@@ -6037,6 +6035,10 @@ static void RB_RenderViewFront(void)
 	}
 
 	// disable offscreen rendering
+	// But we want to render-to-texture (offscreen) if we are rendering a cubemap (for the reflections),
+	// so we also check if no pixeltarget is set..
+if (tr.refdef.pixelTarget == NULL)
+{//!
 	if (glConfig2.framebufferObjectAvailable)
 	{
 		if (r_hdrRendering->integer && glConfig2.textureFloatAvailable)
@@ -6048,6 +6050,7 @@ static void RB_RenderViewFront(void)
 			R_BindNullFBO();
 		}
 	}
+}//!
 
 	// we will need to change the projection matrix before drawing
 	// 2D images again
@@ -6074,7 +6077,6 @@ static void RB_RenderViewFront(void)
 		if (!(backEnd.refdef.rdflags & RDF_NOWORLDMODEL))
 		{
 			clearBits |= GL_COLOR_BUFFER_BIT;
-
 			GL_ClearColor(tr.world->fogs[tr.world->globalFog].color[0],
 							tr.world->fogs[tr.world->globalFog].color[1],
 							tr.world->fogs[tr.world->globalFog].color[2], 1.0);
@@ -6259,10 +6261,12 @@ static void RB_RenderViewFront(void)
 		backEnd.pc.c_forwardAmbientTime = ri.Milliseconds() - startTime;
 	}
 
+if (tr.refdef.pixelTarget == NULL)
+{//!
 	// try to cull lights using hardware occlusion queries
 	RB_RenderLightOcclusionQueries();
 
-	if (r_shadows->integer >= SHADOWING_ESM16)
+	if (r_shadows->integer >= SHADOWING_EVSM32)
 	{
 		// render dynamic shadowing and lighting using shadow mapping
 		RB_RenderInteractionsShadowMapped();
@@ -6286,20 +6290,21 @@ static void RB_RenderViewFront(void)
 	}
 
 	// render global fog effect
-	// This is the fog that fills the world.
-	// It is not the fog that is rendered on brushes.
 	RB_RenderGlobalFog();
+}//!
 
 	// draw everything that is translucent
 	RB_RenderDrawSurfaces(qfalse, DRAWSURFACES_ALL);
 
+if (tr.refdef.pixelTarget == NULL)
+{//!
 	// scale down rendered HDR scene to 1 / 4th
 	if (HDR_ENABLED())
 	{
 		//if (glConfig2.framebufferBlitAvailable)
 		//{
-			R_CopyToFBO(tr.deferredRenderFBO, tr.downScaleFBO_quarter, GL_COLOR_BUFFER_BIT, GL_LINEAR);
-			R_CopyToFBO(tr.deferredRenderFBO, tr.downScaleFBO_64x64, GL_COLOR_BUFFER_BIT, GL_LINEAR);
+		R_CopyToFBO(tr.deferredRenderFBO, tr.downScaleFBO_quarter, GL_COLOR_BUFFER_BIT, GL_LINEAR);
+		R_CopyToFBO(tr.deferredRenderFBO, tr.downScaleFBO_64x64, GL_COLOR_BUFFER_BIT, GL_LINEAR);
 		//}
 		//else
 		//{
@@ -6308,23 +6313,23 @@ static void RB_RenderViewFront(void)
 
 		RB_CalculateAdaptation();
 	}
-		/*
+	/*
+else
+{
+	FIXME this causes: caught OpenGL error:
+	GL_INVALID_OPERATION in file code/renderer/tr_backend.c line xxxx
+
+	if(glConfig2.framebufferBlitAvailable)
+	{
+		// copy deferredRenderFBO to downScaleFBO_quarter
+		R_CopyToFBO(NULL,tr.downScaleFBO_quarter,GL_COLOR_BUFFER_BIT,GL_NEAREST);
+	}
 	else
 	{
-		FIXME this causes: caught OpenGL error:
-		GL_INVALID_OPERATION in file code/renderer/tr_backend.c line 6479
-
-		if(glConfig2.framebufferBlitAvailable)
-		{
-		    // copy deferredRenderFBO to downScaleFBO_quarter
-		    R_CopyToFBO(NULL,tr.downScaleFBO_quarter,GL_COLOR_BUFFER_BIT,GL_NEAREST);
-		}
-		else
-		{
-		    // FIXME add non EXT_framebuffer_blit code
-		}
+		// FIXME add non EXT_framebuffer_blit code
 	}
-		*/
+}
+	*/
 
 	GL_CheckErrors();
 
@@ -6339,16 +6344,21 @@ static void RB_RenderViewFront(void)
 
 	// render rotoscope post process effect
 	RB_RenderRotoscope();
+}//!
 
 	// add the sun flare
 	RB_DrawSun();
 
+if (tr.refdef.pixelTarget == NULL)
+{//!
 	// add light flares on lights that aren't obscured
 	RB_RenderFlares(); // this initiates calls to the very slow glReadPixels()..
-
+}//!
 	// wait until all bsp node occlusion queries are back
 	RB_CollectBspOcclusionQueries();
 
+if (tr.refdef.pixelTarget == NULL)
+{//!
 	// render debug information
 	RB_RenderDebugUtils();
 
@@ -6378,6 +6388,7 @@ static void RB_RenderViewFront(void)
 		}
 		backEnd.pc.c_portals++;
 	}
+}//!
 
 #if 0
 	if (r_dynamicBspOcclusionCulling->integer)
@@ -6408,6 +6419,7 @@ static void RB_RenderView(void)
 	{
 		RB_CameraPostFX();
 	}
+/*
 	// copy to given byte buffer that is NOT a FBO.
 	// This will copy the current screen content to a texture.
 	// The given texture, pixelTarget, is (a pointer to) a cubeProbe's cubemap.
@@ -6416,10 +6428,13 @@ static void RB_RenderView(void)
 	{
 		// Bugfix: drivers absolutely hate running in high res and using glReadPixels near the top or bottom edge.
 		// Soo.. lets do it in the middle.
-		// Note: i don't know how old that^^ comment above is. The issue could long be history.. todo: check it
-		glReadPixels(glConfig.vidWidth / 2, glConfig.vidHeight / 2, REF_CUBEMAP_SIZE, REF_CUBEMAP_SIZE, GL_RGBA, GL_UNSIGNED_BYTE, tr.refdef.pixelTarget);
+		// We also render the cubemaps with one extra border pixel (so we render a 33x33 image).
+		// and now we read the pixels in the 32x32 middle of the image.
+		// This ensures that we get the correct colors at the edges of an image.
+		// (otherwise we'll get a stripe of wrong colors on the images, and the cubemap images do not align colors).
+		glReadPixels(glConfig.vidWidth / 2 + 1, glConfig.vidHeight / 2 + 1, REF_CUBEMAP_SIZE, REF_CUBEMAP_SIZE, GL_RGBA, GL_UNSIGNED_BYTE, tr.refdef.pixelTarget);
 	}
-
+*/
 	GL_CheckErrors();
 
 	backEnd.pc.c_views++;
@@ -6664,7 +6679,8 @@ const void *RB_StretchPic(const void *data)
 			Tess_End();
 		}
 		backEnd.currentEntity = &backEnd.entity2D;
-		Tess_Begin(Tess_StageIteratorGeneric, NULL, shader, NULL, qfalse, qfalse, LIGHTMAP_NONE, FOG_NONE);
+//		Tess_Begin(Tess_StageIteratorGeneric, NULL, shader, NULL, qfalse, qfalse, LIGHTMAP_NONE, FOG_NONE);
+Tess_Begin(Tess_StageIteratorGeneric, NULL, shader, NULL, qtrue, qfalse, LIGHTMAP_NONE, FOG_NONE);
 	}
 
 	Tess_CheckOverflow(4, 6);
@@ -6758,7 +6774,8 @@ const void *RB_Draw2dPolys(const void *data)
 			Tess_End();
 		}
 		backEnd.currentEntity = &backEnd.entity2D;
-		Tess_Begin(Tess_StageIteratorGeneric, NULL, shader, NULL, qfalse, qfalse, LIGHTMAP_NONE, FOG_NONE);
+//		Tess_Begin(Tess_StageIteratorGeneric, NULL, shader, NULL, qfalse, qfalse, LIGHTMAP_NONE, FOG_NONE);
+Tess_Begin(Tess_StageIteratorGeneric, NULL, shader, NULL, qtrue, qfalse, LIGHTMAP_NONE, FOG_NONE);
 	}
 
 	Tess_CheckOverflow(cmd->numverts, (cmd->numverts - 2) * 3);
@@ -6818,7 +6835,8 @@ const void *RB_RotatedPic(const void *data)
 			Tess_End();
 		}
 		backEnd.currentEntity = &backEnd.entity2D;
-		Tess_Begin(Tess_StageIteratorGeneric, NULL, shader, NULL, qfalse, qfalse, LIGHTMAP_NONE, FOG_NONE);
+//		Tess_Begin(Tess_StageIteratorGeneric, NULL, shader, NULL, qfalse, qfalse, LIGHTMAP_NONE, FOG_NONE);
+Tess_Begin(Tess_StageIteratorGeneric, NULL, shader, NULL, qtrue, qfalse, LIGHTMAP_NONE, FOG_NONE);
 	}
 
 	Tess_CheckOverflow(4, 6);
@@ -6915,7 +6933,8 @@ const void *RB_StretchPicGradient(const void *data)
 			Tess_End();
 		}
 		backEnd.currentEntity = &backEnd.entity2D;
-		Tess_Begin(Tess_StageIteratorGeneric, NULL, shader, NULL, qfalse, qfalse, LIGHTMAP_NONE, FOG_NONE);
+//		Tess_Begin(Tess_StageIteratorGeneric, NULL, shader, NULL, qfalse, qfalse, LIGHTMAP_NONE, FOG_NONE);
+Tess_Begin(Tess_StageIteratorGeneric, NULL, shader, NULL, qtrue, qfalse, LIGHTMAP_NONE, FOG_NONE);
 	}
 
 	Tess_CheckOverflow(4, 6);

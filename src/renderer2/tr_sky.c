@@ -965,7 +965,7 @@ void RB_DrawSun(void)
 	GL_LoadModelViewMatrix(modelViewMatrix);
 
 	dist = backEnd.viewParms.zFar / 1.75f; // div sqrt(3)
-	// shrunk the size of the sun
+	// shrink the size of the sun
 	size = dist * 0.2f;
 
 	VectorScale(tr.sunDirection, dist, origin);

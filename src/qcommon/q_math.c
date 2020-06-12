@@ -35,8 +35,6 @@
 
 #include "q_shared.h"
 
-#pragma warning(disable:4700)
-
 vec3_t vec3_origin = { 0.f, 0.f, 0.f };
 vec3_t vec3_1 = { 1.f, 1.f, 1.f };
 vec3_t vec3_minus1 = { -1.f, -1.f, -1.f };
@@ -202,6 +200,25 @@ vec3_t bytedirs[NUMVERTEXNORMALS] =
 
 //==============================================================
 
+
+#ifdef ETL_SSE
+// The SSE version checks 16 bytes at once
+size_t __cdecl SSE_strlen(_In_z_ char const* _Str)
+{
+	__m128i xmm0, xmm1, xmm2;
+	uint32_t ofs = 0xFFFFFFF0, bit, mask;
+	xmm0 = _mm_setzero_si128();
+nextchar:
+	ofs += 16;
+	xmm1 = _mm_loadu_si128((__m128i const*)(_Str + ofs));
+	xmm2 = _mm_cmpeq_epi8(xmm1, xmm0);
+	mask = (uint32_t)_mm_movemask_epi8(xmm2);
+	if (mask == 0) goto nextchar;
+	_BitScanForward(&bit, mask);
+	return (size_t)(ofs + bit);
+}
+#endif
+
 /**
  * @brief Q_rand
  * @param[in,out] seed
@@ -353,14 +370,14 @@ int DirToByte(vec3_t dir)
 	return best;
 #else
 	// We use 30 bits of the eventParm integer to store in a vector.
-	// convert vector values from [-1,1] to [0,1] range, then to a range that fits 10 bits. 2^10 == 4096
-	int x = (int)((dir[0] * 0.5f + 0.5f) * 4096.f - 1.f); // the greatest value that fits is 4096-1
-	int y = (int)((dir[1] * 0.5f + 0.5f) * 4096.f - 1.f);
-	int z = (int)((dir[2] * 0.5f + 0.5f) * 4096.f - 1.f);
+	// convert vector values from [-1,1] to [0,1] range, then to a range that fits 10 bits. 2^10 == 1024   << yes 1024 :)
+	int x = (int)((dir[0] * 0.5f + 0.5f) * 1024.f - 1.f); // the greatest value that fits is 1024-1
+	int y = (int)((dir[1] * 0.5f + 0.5f) * 1024.f - 1.f);
+	int z = (int)((dir[2] * 0.5f + 0.5f) * 1024.f - 1.f);
 	/*vec3_t v;
 	VectorScale(dir, 0.5f, v);
 	VectorAdd(v, vec3_half, v);
-	VectorScale(v, 4096.f, v);
+	VectorScale(v, 1024.f, v);
 	VectorAdd(v, vec3_minus1, v);
 	int x = (int)v[0];
 	int y = (int)v[1];
@@ -390,10 +407,10 @@ void ByteToDir(int b, vec3_t dir)
 	int x = (b >> 20) & 0b1111111111;
 	int y = (b >> 10) & 0b1111111111;
 	int z = b & 0b1111111111;
-	const float r2048 = rcp(2048.f); // rcp(2048) == 1/2048;
-	dir[0] = (float)(x) * r2048 - 1.f; // / 4096 * 2.0 - 1.0
-	dir[1] = (float)(y) * r2048 - 1.f;
-	dir[2] = (float)(z) * r2048 - 1.f;
+	const float r512 = rcp(512.f); // rcp(512) == 1/512;
+	dir[0] = (float)(x) * r512 - 1.f; // / 1024 * 2.0 - 1.0
+	dir[1] = (float)(y) * r512 - 1.f;
+	dir[2] = (float)(z) * r512 - 1.f;
 #endif
 }
 
@@ -425,12 +442,13 @@ unsigned ColorBytes3(float r, float g, float b)
  */
 unsigned int ColorBytes4(float r, float g, float b, float a)
 {
-	unsigned int i;
+/*	unsigned int i;
 	((byte *)&i)[0] = (byte)(r * 255);
 	((byte *)&i)[1] = (byte)(g * 255);
 	((byte *)&i)[2] = (byte)(b * 255);
 	((byte *)&i)[3] = (byte)(a * 255);
-	return i;
+	return i;*/
+	return (((byte)(r * 255) << 24) | ((byte)(g * 255) << 16) | ((byte)(b * 255) << 8) | ((byte)(a * 255)));
 }
 
 /*
@@ -2442,7 +2460,6 @@ void _Vector4AM(const vec4_t veca, const vec4_t vecb, const float scale, vec4_t 
 // We suppress the warning that the compiler would generate (for this function):
 //      "warning C4700: uninitialized local variable 'xmm0' used"
 // https://docs.microsoft.com/en-us/cpp/preprocessor/warning?view=vs-2017
-// compile with: /W1
 #pragma warning(disable:4700)
 void _Vector2AM(const vec2_t veca, const vec2_t vecb, const float scale, vec2_t out)
 {
@@ -5347,5 +5364,3 @@ qboolean CalcTangentBinormal(const vec3_t pos0, const vec3_t pos1, const vec3_t 
 	return qtrue;
 #pragma warning(default:4700)
 }
-
-#pragma warning(default:4700)

@@ -89,7 +89,10 @@ typedef enum
 	DS_STANDARD,                ///< deferred rendering like in Stalker
 } deferredShading_t;
 
-#define HDR_ENABLED() ((r_hdrRendering->integer && glConfig2.textureFloatAvailable && glConfig2.framebufferObjectAvailable && glConfig2.framebufferBlitAvailable))
+// we check for a pixeltarget, because we do not want any hdr code to be executed when we are rendering to a pixeltarget.
+// The pixeltarget is used when creating a cubemap (for the reflections). We render those offscreen.
+// We do not want the offscreen FBO to become inactive while we are rendering the cubeprobes.
+#define HDR_ENABLED() ((r_hdrRendering->integer && glConfig2.textureFloatAvailable && glConfig2.framebufferObjectAvailable && glConfig2.framebufferBlitAvailable && tr.refdef.pixelTarget == NULL))
 
 // The cubeProbes used for reflections:
 // The width/height (in pixels) of a cubemap texture
@@ -400,6 +403,133 @@ static ID_INLINE link_t *QueueFront(link_t *l)
 }
 
 /**
+ * @struct orientationr_t
+ * @brief
+ */
+typedef struct
+{
+	vec3_t origin;          ///< in world coordinates
+	vec3_t axis[3];         ///< orientation in world
+	vec3_t viewOrigin;      ///< viewParms->or.origin in local coordinates
+	mat4_t transformMatrix; ///< transforms object to world: either used by camera, model or light
+	mat4_t viewMatrix;      ///< affine inverse of transform matrix to transform other objects into this space
+	mat4_t viewMatrix2;     ///< without quake2opengl conversion
+	mat4_t modelViewMatrix; ///< only used by models, camera viewMatrix * transformMatrix
+} orientationr_t;
+
+/**
+ * @struct vertexHash_s
+ * @typedef vertexHash_t
+ * @brief Useful helper struct
+ */
+typedef struct vertexHash_s
+{
+	vec3_t xyz;
+	void *data;
+
+	struct vertexHash_s *next;
+} vertexHash_t;
+
+enum
+{
+	IF_NONE,
+	IF_NOPICMIP                = BIT(0),
+	IF_NOCOMPRESSION           = BIT(1),
+	IF_ALPHA                   = BIT(2),
+	IF_NORMALMAP               = BIT(3),
+	IF_RGBA16F                 = BIT(4),
+	IF_RGBA32F                 = BIT(5),
+	IF_LA16F                   = BIT(6),
+	IF_LA32F                   = BIT(7),
+	IF_ALPHA16F                = BIT(8),
+	IF_ALPHA32F                = BIT(9),
+	IF_DEPTH16                 = BIT(10),
+	IF_DEPTH24                 = BIT(11),
+	IF_DEPTH32                 = BIT(12),
+	IF_PACKED_DEPTH24_STENCIL8 = BIT(13),
+	IF_LIGHTMAP                = BIT(14),
+	IF_RGBA16                  = BIT(15),
+	IF_RGBE                    = BIT(16),
+	IF_ALPHATEST               = BIT(17),
+	IF_DISPLACEMAP             = BIT(18)
+};
+
+/**
+ * @struct filterType_t
+ * @brief
+ */
+typedef enum
+{
+	FT_DEFAULT = 0,
+	FT_LINEAR,
+	FT_NEAREST
+} filterType_t;
+
+/**
+ * @struct wrapType_t
+ * @brief
+ */
+typedef enum
+{
+	WT_REPEAT = 0,
+	WT_CLAMP,                   ///< don't repeat the texture for texture coords outside [0, 1]
+	WT_EDGE_CLAMP,
+	WT_ZERO_CLAMP,              ///< guarantee 0,0,0,255 edge for projected textures
+	WT_ALPHA_ZERO_CLAMP         ///< guarante 0 alpha edge for projected textures
+} wrapType_t;
+
+/**
+ * @struct image_s
+ * @typedef image_t
+ * @brief
+ */
+typedef struct image_s
+{
+	char name[1024];                        ///< formerly MAX_QPATH, game path, including extension
+	                                        ///< can contain stuff like this now:
+	                                        ///< addnormals ( textures/base_floor/stetile4_local.tga ,
+	                                        ///< heightmap ( textures/base_floor/stetile4_bmp.tga , 4 ) )
+	GLenum type;
+	GLuint texnum;                          ///< gl texture binding
+
+	uint16_t width, height;                 ///< source image
+	uint16_t uploadWidth, uploadHeight;     ///< after power of two and picmip but not including clamp to MAX_TEXTURE_SIZE
+
+	int frameUsed;                          ///< for texture usage in frame statistics
+
+	uint32_t internalFormat;
+
+	uint32_t bits;
+	filterType_t filterType;
+	wrapType_t wrapType;                    ///< GL_CLAMP or GL_REPEAT
+
+	struct image_s *next;
+} image_t;
+
+/**
+ * @struct cubemapProbe_t
+ * @brief
+ */
+typedef struct
+{
+	vec3_t origin;
+	image_t *cubemap;
+} cubemapProbe_t;
+
+/**
+ * @struct reflectionData_t
+ * @brief
+ * The reflection cubeProbe data needed for the interpolation
+ */
+typedef struct
+{
+	cubemapProbe_t *probe1, *probe2;
+	int startTime, endTime;
+	image_t *env0, *env1;
+	float interpolate;
+} reflectionData_t;
+
+/**
  * @struct trRefLight_s
  * @typedef trRefLight_t
  * @brief A trRefLight_t has all the information passed in by
@@ -509,110 +639,6 @@ typedef struct
 } trRefEntity_t;
 
 /**
- * @struct orientationr_t
- * @brief
- */
-typedef struct
-{
-	vec3_t origin;          ///< in world coordinates
-	vec3_t axis[3];         ///< orientation in world
-	vec3_t viewOrigin;      ///< viewParms->or.origin in local coordinates
-	mat4_t transformMatrix; ///< transforms object to world: either used by camera, model or light
-	mat4_t viewMatrix;      ///< affine inverse of transform matrix to transform other objects into this space
-	mat4_t viewMatrix2;     ///< without quake2opengl conversion
-	mat4_t modelViewMatrix; ///< only used by models, camera viewMatrix * transformMatrix
-} orientationr_t;
-
-/**
- * @struct vertexHash_s
- * @typedef vertexHash_t
- * @brief Useful helper struct
- */
-typedef struct vertexHash_s
-{
-	vec3_t xyz;
-	void *data;
-
-	struct vertexHash_s *next;
-} vertexHash_t;
-
-enum
-{
-	IF_NONE,
-	IF_NOPICMIP                = BIT(0),
-	IF_NOCOMPRESSION           = BIT(1),
-	IF_ALPHA                   = BIT(2),
-	IF_NORMALMAP               = BIT(3),
-	IF_RGBA16F                 = BIT(4),
-	IF_RGBA32F                 = BIT(5),
-	IF_LA16F                   = BIT(6),
-	IF_LA32F                   = BIT(7),
-	IF_ALPHA16F                = BIT(8),
-	IF_ALPHA32F                = BIT(9),
-	IF_DEPTH16                 = BIT(10),
-	IF_DEPTH24                 = BIT(11),
-	IF_DEPTH32                 = BIT(12),
-	IF_PACKED_DEPTH24_STENCIL8 = BIT(13),
-	IF_LIGHTMAP                = BIT(14),
-	IF_RGBA16                  = BIT(15),
-	IF_RGBE                    = BIT(16),
-	IF_ALPHATEST               = BIT(17),
-	IF_DISPLACEMAP             = BIT(18)
-};
-
-/**
- * @struct filterType_t
- * @brief
- */
-typedef enum
-{
-	FT_DEFAULT = 0,
-	FT_LINEAR,
-	FT_NEAREST
-} filterType_t;
-
-/**
- * @struct wrapType_t
- * @brief
- */
-typedef enum
-{
-	WT_REPEAT = 0,
-	WT_CLAMP,                   ///< don't repeat the texture for texture coords outside [0, 1]
-	WT_EDGE_CLAMP,
-	WT_ZERO_CLAMP,              ///< guarantee 0,0,0,255 edge for projected textures
-	WT_ALPHA_ZERO_CLAMP         ///< guarante 0 alpha edge for projected textures
-} wrapType_t;
-
-/**
- * @struct image_s
- * @typedef image_t
- * @brief
- */
-typedef struct image_s
-{
-	char name[1024];                        ///< formerly MAX_QPATH, game path, including extension
-	                                        ///< can contain stuff like this now:
-	                                        ///< addnormals ( textures/base_floor/stetile4_local.tga ,
-	                                        ///< heightmap ( textures/base_floor/stetile4_bmp.tga , 4 ) )
-	GLenum type;
-	GLuint texnum;                          ///< gl texture binding
-
-	uint16_t width, height;                 ///< source image
-	uint16_t uploadWidth, uploadHeight;     ///< after power of two and picmip but not including clamp to MAX_TEXTURE_SIZE
-
-	int frameUsed;                          ///< for texture usage in frame statistics
-
-	uint32_t internalFormat;
-
-	uint32_t bits;
-	filterType_t filterType;
-	wrapType_t wrapType;                    ///< GL_CLAMP or GL_REPEAT
-
-	struct image_s *next;
-} image_t;
-
-/**
  * @struct BufferImage_s
  * @typedef BufferImage_t
  * @brief
@@ -717,6 +743,34 @@ typedef struct IBO_s
 
 //  uint32_t        ofsIndexes;
 } IBO_t;
+
+
+/**
+ * @enum pboUsage_t
+ * @brief
+ */
+typedef enum
+{
+	// read from texture
+	// write to texture
+	// read from framebuffer
+	// write to framebuffer
+	PBO_USAGE_WRITETOPBO = 0,		///< GL_PIXEL_UNPACK_BUFFER. From application to OpenGL
+	PBO_USAGE_READFROMPBO			///< GL_PIXEL_PACK_BUFFER.   From openGL to appliction
+} pboUsage_t;
+
+/**
+ * @struct PBO_s
+ * @typedef PBO_t
+ * @brief
+ * Pixel Buffer Object
+ */
+typedef struct PBO_s
+{
+	char name[MAX_QPATH];
+	uint32_t handle;
+	int usage;
+} PBO_t;
 
 //===============================================================================
 
@@ -1160,6 +1214,9 @@ typedef struct
 
 	int videoMapHandle;
 	qboolean isVideoMap;
+
+	// core: an alpha value for each bundled texture
+
 } textureBundle_t;
 
 /**
@@ -1188,10 +1245,6 @@ typedef enum
 	ST_HEATHAZEMAP,             ///< heatHaze post process effect
 	ST_LIGHTMAP,
 
-//	ST_BUNDLE_LD,               ///< lightmap + diffuse
-//	ST_BUNDLE_LDB,              ///< lightmap + diffuse + bump
-//	ST_BUNDLE_LDBS,             ///< lightmap + diffuse + bump + specular
-//	ST_BUNDLE_LDBSR,            ///< lightmap + diffuse + bump + specular + reflectionmap
 	ST_BUNDLE_DB,               ///<            diffuse + bump
 	ST_BUNDLE_DBS,              ///<            diffuse + bump + specular
 	ST_BUNDLE_DBSR,             ///<            diffuse + bump + specular + reflectionmap
@@ -3493,16 +3546,6 @@ typedef struct
 } backEndState_t;
 
 /**
- * @struct cubemapProbe_t
- * @brief
- */
-typedef struct
-{
-	vec3_t origin;
-	image_t *cubemap;
-} cubemapProbe_t;
-
-/**
  * @struct trGlobals_t
  * @brief Most renderer globals are defined here.
  * backend functions should never modify any of these fields,
@@ -3576,6 +3619,7 @@ typedef struct
 	image_t *shadowMapFBOImage[MAX_SHADOWMAPS];
 	image_t *shadowCubeFBOImage[MAX_SHADOWMAPS];
 	image_t *sunShadowMapFBOImage[MAX_SHADOWMAPS];
+	//image_t* currentCubemapFBOImage;
 
 	// external images
 	image_t *charsetImage;
@@ -3597,6 +3641,7 @@ typedef struct
 	FBO_t *bloomRenderFBO[2];
 	FBO_t *shadowMapFBO[MAX_SHADOWMAPS];
 	FBO_t *sunShadowMapFBO[MAX_SHADOWMAPS];
+//	FBO_t* currentCubemapFBO;               ///< used for rendering a cubemap from the current position
 
 	// vertex buffer objects
 	VBO_t *unitCubeVBO;
@@ -3673,12 +3718,14 @@ typedef struct
 
 	GLuint vao;
 
-	growList_t vbos;
-	growList_t ibos;
+	growList_t vbos;						///< Vertex Buffer Object
+	growList_t ibos;						///< Index Buffer Object
+	growList_t pbos;						//< Pixel Buffer Object
 
 	byte *cubeTemp[6];                      ///< 6 textures for cubemap storage
 	growList_t cubeProbes;                  ///< all cubemaps in a linear growing list
 	vertexHash_t **cubeHashTable;           ///< hash table for faster access
+	reflectionData_t reflectionData;		///< the current reflection cubemap data
 
 	// shader indexes from other modules will be looked up in tr.shaders[]
 	// shader indexes from drawsurfs will be looked up in sortedShaders[]
@@ -3714,9 +3761,9 @@ typedef struct
 typedef struct trPrograms_s
 {
 	programInfo_t *gl_genericShader;
-	programInfo_t *gl_lightMappingShader;
-	programInfo_t *gl_vertexLightingShader_DBS_entity;
-	programInfo_t *gl_vertexLightingShader_DBS_world;
+	programInfo_t *gl_worldShader;                      // was gl_lightmappingShader..
+	programInfo_t *gl_entityShader;                     // was gl_vertexLightingShader_DBS_entity..
+	//programInfo_t *gl_vertexLightingShader_DBS_world; // no longer used..
 	programInfo_t *gl_forwardLightingShader_omniXYZ;
 	programInfo_t *gl_forwardLightingShader_projXYZ;
 	programInfo_t *gl_forwardLightingShader_directionalSun;
@@ -3785,8 +3832,6 @@ extern cvar_t *r_debugLight;
 
 extern cvar_t *r_staticLight;               ///< static lights enabled/disabled
 extern cvar_t *r_dynamicLightShadows;
-extern cvar_t *r_precomputedLighting;
-extern cvar_t *r_vertexLighting;
 extern cvar_t *r_compressDiffuseMaps;
 extern cvar_t *r_compressNormalMaps;
 extern cvar_t *r_compressSpecularMaps;
@@ -3814,13 +3859,13 @@ extern cvar_t *r_extPackedDepthStencil;
 extern cvar_t *r_extFramebufferBlit;
 extern cvar_t *r_extGenerateMipmap;
 
-extern cvar_t *r_specularExponent;  // for the world
-extern cvar_t *r_specularExponent2; // for entities only
-extern cvar_t *r_specularExponent3; // for players only
-extern cvar_t *r_specularScale;  // for the world
-extern cvar_t *r_specularScale2; // for entities only
-extern cvar_t *r_specularScale3; // for players only
-//extern cvar_t *r_normalScale;
+extern cvar_t *r_specularScaleWorld;  // for the world
+extern cvar_t *r_specularScaleEntities; // for entities only
+extern cvar_t *r_specularScalePlayers; // for players only
+extern cvar_t *r_specularExponentWorld;  // for the world
+extern cvar_t *r_specularExponentEntities; // for entities only
+extern cvar_t *r_specularExponentPlayers; // for players only
+extern cvar_t *r_bumpScale; // the scale of the bumpmaps
 extern cvar_t *r_normalMapping;
 extern cvar_t *r_wrapAroundLighting;
 extern cvar_t *r_diffuseLighting;
@@ -3863,8 +3908,8 @@ extern cvar_t *r_shadowMapLinearFilter;
 //extern cvar_t *r_lightBleedReduction;
 //extern cvar_t *r_overDarkeningFactor; // exponential shadow mapping
 extern cvar_t *r_shadowMapDepthScale;
-extern cvar_t *r_parallelShadowSplits;
-extern cvar_t *r_parallelShadowSplitWeight;
+//extern cvar_t *r_parallelShadowSplits; // we always have 4 splits
+//extern cvar_t *r_parallelShadowSplitWeight;
 
 extern cvar_t *r_stitchCurves;
 
@@ -3942,7 +3987,7 @@ extern cvar_t *r_cameraPostFX;
 extern cvar_t *r_cameraVignette;
 extern cvar_t *r_cameraFilmGrainScale;
 
-extern cvar_t *r_evsmPostProcess;
+//extern cvar_t *r_evsmPostProcess;
 
 extern cvar_t *r_recompileShaders;
 extern cvar_t *r_rotoscopeBlur;
@@ -4530,7 +4575,10 @@ void RE_AddPolyBufferToScene(polyBuffer_t *pPolyBuffer);
 void RE_AddDynamicLightToScene(const vec3_t org, float radius, float intensity, float r, float g, float b, qhandle_t hShader, int flags);
 
 void RE_AddCoronaToScene(const vec3_t org, float r, float g, float b, float scale, int id, qboolean visible);
+
 void RE_RenderScene(const refdef_t *fd);
+void RE_RenderSimpleScene(const refdef_t *fd); // render the scene for use on the environment-cubemaps
+void R_RenderSimpleView(viewParms_t* parms); // no fog, no lights, no shadows, no decals ... and more not being rendered
 
 /*
 =============================================================
@@ -4898,7 +4946,7 @@ void RE_TakeVideoFrame(int width, int height, byte *captureBuffer, byte *encodeB
 // cubemap reflections stuff
 void R_BuildCubeMaps(void);
 void R_FindTwoNearestCubeMaps(const vec3_t position, cubemapProbe_t **cubeProbe1, cubemapProbe_t **cubeProbe2, float *distance1, float *distance2);
-void R_FindCubeMaps(const vec3_t position, cubemapProbe_t **cubeProbe1, cubemapProbe_t **cubeProbe2, cubemapProbe_t **cubeProbe3, float *distance1, float *distance2, float *distance3, float *interpolation1, float *interpolation2, float *interpolation3);
+void R_FindCubeprobes(const vec3_t position, trRefEntity_t *entity, image_t** env1, image_t** env2, float* interpolation);
 
 void FreeVertexHashTable(vertexHash_t **hashTable);
 

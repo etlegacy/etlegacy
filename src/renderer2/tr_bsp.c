@@ -1198,14 +1198,7 @@ static void ParseFace(dsurface_t *ds, drawVert_t *verts, bspSurface_t *surf, int
 	int              numVerts, numTriangles;
 
 	// get lightmap
-	if (r_vertexLighting->integer || !r_precomputedLighting->integer)
-	{
-		surf->lightmapNum = LIGHTMAP_NONE;
-	}
-	else
-	{
-		surf->lightmapNum = LittleLong(ds->lightmapNum);
-	}
+	surf->lightmapNum = LittleLong(ds->lightmapNum);
 
 	if (tr.worldDeluxeMapping && surf->lightmapNum >= 2)
 	{
@@ -1377,14 +1370,7 @@ static void ParseMesh(dsurface_t *ds, drawVert_t *verts, bspSurface_t *surf)
 	static surfaceType_t skipData = SF_SKIP;
 
 	// get lightmap
-	if (r_vertexLighting->integer || !r_precomputedLighting->integer)
-	{
-		surf->lightmapNum = LIGHTMAP_NONE;
-	}
-	else
-	{
-		surf->lightmapNum = LittleLong(ds->lightmapNum);
-	}
+	surf->lightmapNum = LittleLong(ds->lightmapNum);
 
 	if (tr.worldDeluxeMapping && surf->lightmapNum >= 2)
 	{
@@ -1477,14 +1463,7 @@ static void ParseTriSurf(dsurface_t *ds, drawVert_t *verts, bspSurface_t *surf, 
 	static surfaceType_t skipData = SF_SKIP;
 
 	// get lightmap
-	if (r_vertexLighting->integer || !r_precomputedLighting->integer)
-	{
-		surf->lightmapNum = LIGHTMAP_NONE;
-	}
-	else
-	{
-		surf->lightmapNum = LittleLong(ds->lightmapNum);
-	}
+	surf->lightmapNum = LittleLong(ds->lightmapNum);
 
 	if (tr.worldDeluxeMapping && surf->lightmapNum >= 2)
 	{
@@ -3574,7 +3553,7 @@ static void R_CreateWorldVBO()
 	{
 		light = &s_worldData.lights[i];
 
-		if ((r_precomputedLighting->integer || r_vertexLighting->integer) && !light->noRadiosity)
+		if (light->noRadiosity)
 		{
 			continue;
 		}
@@ -3701,7 +3680,7 @@ static void R_CreateSubModelVBOs()
 			shader      = surface->shader;
 			lightmapNum = surface->lightmapNum;
 
-			if (shader != oldShader || (r_precomputedLighting->integer ? lightmapNum != oldLightmapNum : qfalse))
+			if (shader != oldShader || lightmapNum != oldLightmapNum)
 			{
 				oldShader      = shader;
 				oldLightmapNum = lightmapNum;
@@ -4956,12 +4935,11 @@ void R_LoadLights(char *lightDefs)
 
 			Q_strncpyz(value, token, sizeof(value));
 
-			// check if this entity is a light
-			if (!Q_stricmp(keyname, "classname") && (!Q_stricmp(value, "light") || !Q_stricmp(value, "lightJunior") || !Q_stricmp(value, "dlight")))
-			//if (!Q_stricmp(keyname, "classname") && (!Q_stricmp(value, "light") || !Q_stricmp(value, "lightJunior")))
+			// check if this entity is a light (don't handle dlight ents, because they get added by the client)
+			if (!Q_stricmp(keyname, "classname") && (!Q_stricmp(value, "light") || !Q_stricmp(value, "lightJunior")))
 			{
 				isLight = qtrue;
-			}
+		}
 		}
 
 		if (*token != '}')
@@ -5016,7 +4994,7 @@ void R_LoadLights(char *lightDefs)
 
 		light->l.inverseShadows = qfalse;
 
-		light->isStatic    = qtrue;
+		light->isStatic = qtrue;
 		light->noRadiosity = qfalse;
 		light->additive    = qtrue;
 
@@ -5080,8 +5058,7 @@ void R_LoadLights(char *lightDefs)
 			Q_strncpyz(value, token, sizeof(value));
 
 			// check if this entity is a light
-			//if (!Q_stricmp(keyname, "classname") && (!Q_stricmp(value, "light") || !Q_stricmp(value, "lightJunior") || !Q_stricmp(value, "dlight")))
-			if (!Q_stricmp(keyname, "classname") && (!Q_stricmp(value, "light") || !Q_stricmp(value, "lightJunior") || !Q_stricmp(value, "dlight")))
+			if (!Q_stricmp(keyname, "classname") && (!Q_stricmp(value, "light") || !Q_stricmp(value, "lightJunior")))
 			{
 				isLight = qtrue;
 			}
@@ -5128,7 +5105,11 @@ void R_LoadLights(char *lightDefs)
 			}
 			else if (!Q_stricmp(keyname, "_sun")) // ETL
 			{
-				// FIXME: inspect (has to be set on spotlight ..., target?!)
+				light->l.rlType = RL_DIRECTIONAL;
+			}
+			// check if this light is a parallel sun light
+			else if (!Q_stricmp(keyname, "parallel") && !Q_stricmp(value, "1"))
+			{
 				light->l.rlType = RL_DIRECTIONAL;
 			}
 			// check for light_right
@@ -5209,11 +5190,6 @@ void R_LoadLights(char *lightDefs)
 			else if (!Q_stricmp(keyname, "noradiosity") && !Q_stricmp(value, "1"))
 			{
 				light->noRadiosity = qtrue;
-			}
-			// check if this light is a parallel sun light
-			else if (!Q_stricmp(keyname, "parallel") && !Q_stricmp(value, "1"))
-			{
-				light->l.rlType = RL_DIRECTIONAL;
 			}
 		}
 
@@ -6082,10 +6058,8 @@ static int UpdateLightTriangles(const srfVert_t *verts, int numTriangles, srfTri
 	int           i;
 	srfTriangle_t *tri;
 	int           numFacing = 0;
-
 #if 1
 	vec3_t lightDirection;
-
 	vec3_t pos[3];
 	vec4_t triPlane;
 	float  d;
@@ -6108,10 +6082,9 @@ static int UpdateLightTriangles(const srfVert_t *verts, int numTriangles, srfTri
 #else
 				VectorCopy(light->direction, lightDirection); // use global light
 #endif
-
+/*
 				//d = DotProduct(triPlane, lightDirection);
 				Dot(triPlane, lightDirection, d);
-
 				if (surfaceShader->cullType == CT_TWO_SIDED || (d > 0 && surfaceShader->cullType != CT_BACK_SIDED))
 				{
 					tri->facingLight = qtrue; // surfaceShader->cullType == CT_TWO_SIDED || ( d > 0 && surfaceShader->cullType != CT_BACK_SIDED );
@@ -6120,14 +6093,35 @@ static int UpdateLightTriangles(const srfVert_t *verts, int numTriangles, srfTri
 				{
 					tri->facingLight = qfalse;
 				}
+*/
+				if (surfaceShader->cullType == CT_TWO_SIDED)
+				{
+					tri->facingLight = qtrue; // surfaceShader->cullType == CT_TWO_SIDED || ( d > 0 && surfaceShader->cullType != CT_BACK_SIDED );
+				}
+				else
+				{
+					if (surfaceShader->cullType != CT_BACK_SIDED) {
+						Dot(triPlane, lightDirection, d);
+						if (d > 0) {
+							tri->facingLight = qtrue;
+						}
+						else {
+							tri->facingLight = qfalse;
+						}
+					}
+					else {
+						tri->facingLight = qfalse;
+					}
+				}
+
 			}
 			else
 			{
 				// check if light origin is behind triangle
+/*
 				//d = DotProduct(triPlane, light->origin) - triPlane[3];
 				Dot(triPlane, light->origin, d);
 				d -= triPlane[3];
-
 				if (surfaceShader->cullType == CT_TWO_SIDED || (d > 0 && surfaceShader->cullType != CT_BACK_SIDED))
 				{
 					tri->facingLight = qtrue;
@@ -6136,11 +6130,33 @@ static int UpdateLightTriangles(const srfVert_t *verts, int numTriangles, srfTri
 				{
 					tri->facingLight = qfalse;
 				}
+*/
+				if (surfaceShader->cullType == CT_TWO_SIDED)
+				{
+					tri->facingLight = qtrue; // surfaceShader->cullType == CT_TWO_SIDED || ( d > 0 && surfaceShader->cullType != CT_BACK_SIDED );
+				}
+				else
+				{
+					if (surfaceShader->cullType != CT_BACK_SIDED) {
+						Dot(triPlane, light->origin, d);
+						d -= triPlane[3];
+						if (d > 0) {
+							tri->facingLight = qtrue;
+						}
+						else {
+							tri->facingLight = qfalse;
+						}
+					}
+					else {
+						tri->facingLight = qfalse;
+					}
+				}
 			}
 		}
 		else
 		{
-			tri->facingLight = qtrue;   // FIXME ?
+//			tri->facingLight = qtrue;   // FIXME ?
+			tri->facingLight = qfalse; // if you can't calculate the plane, then not count this triangle..
 		}
 
 		if (R_CullLightTriangle(light, pos) == CULL_OUT)
@@ -6486,7 +6502,7 @@ static void R_CreateVBOShadowMeshes(trRefLight_t *light)
 		return;
 	}
 
-	if (r_shadows->integer < SHADOWING_ESM16)
+	if (r_shadows->integer < SHADOWING_EVSM32)
 	{
 		return;
 	}
@@ -6871,7 +6887,7 @@ static void R_CreateVBOShadowCubeMeshes(trRefLight_t *light)
 		return;
 	}
 
-	if (r_shadows->integer < SHADOWING_ESM16)
+	if (r_shadows->integer < SHADOWING_EVSM32)
 	{
 		return;
 	}
@@ -7358,7 +7374,7 @@ void R_PrecacheInteractions()
 	{
 		light = &s_worldData.lights[i];
 
-		if (!r_staticLight->integer || ((r_precomputedLighting->integer || r_vertexLighting->integer) && light->noRadiosity))
+		if (!r_staticLight->integer || !light->isStatic || light->noRadiosity )
 		{
 			continue;
 		}
@@ -7436,7 +7452,7 @@ void R_PrecacheInteractions()
 #ifdef LEGACY_DEBUG
 	Ren_Developer("%i interactions precached\n", s_worldData.numInteractions);
 
-	if (r_shadows->integer >= SHADOWING_ESM16)
+	if (r_shadows->integer >= SHADOWING_EVSM32)
 	{
 		// only interesting for omni-directional shadow mapping
 		Ren_Developer("%i omni pyramid tests\n", tr.pc.c_pyramidTests);
@@ -7740,148 +7756,120 @@ void R_FindTwoNearestCubeMaps(const vec3_t position, cubemapProbe_t **cubeProbe1
 	//Ren_Print("iterated through %i cubeprobes\n", j);
 }
 
+
 /**
- * @brief R_FindCubeMaps
+ * @brief R_FindCubeprobes
  * @param[in] position
- * @param[out] cubeProbe1 // nearest
- * @param[out] cubeProbe2 // 2nd nearest
- * @param[out] cubeProbe3 // 3rd nearest
- * @param[out] distance1 // distance to nearest
- * @param[out] distance2 // distance to 2nd nearest
- * @param[out] distance3 // distance to 3rd nearest
- * @param[out] interpolation1 // ratio to nearest
- * @param[out] interpolation2 // ratio to 2nd nearest
- * @param[out] interpolation3 // ratio to 3rd nearest
+ * @param[in] entity
+ * @param[out] cubeProbe1 envmap // nearest
+ * @param[out] cubeProbe2 envmap// 2nd nearest
+ * @param[out] interpolation // ratio from probe1 to probe2
+ *
+ * note that this function will always return 2 valid envmaps and a valid factor for the interpolation between them.
 */
-void R_FindCubeMaps(const vec3_t position,
-					cubemapProbe_t **cubeProbe1, cubemapProbe_t **cubeProbe2, cubemapProbe_t **cubeProbe3,
-					float *distance1, float *distance2, float *distance3,
-					float *interpolation1, float *interpolation2, float *interpolation3)
+// find 1 nearest.
+// interpolate to that one over x milliseconds.
+// when done, find new nearest 1, and interpolate to that new one.
+// This way any transition from cubemap to another cubemap should be smooth,
+// and while interpolating, this function will not search for nearest cubeprobes.
+// It only starts searching a next cube once the interpolation is finished.
+void R_FindCubeprobes(const vec3_t position, trRefEntity_t *entity, image_t** env1, image_t** env2, float* interpolation)
 {
-	int				j;
-	float			distance, distance4, d1, d2, d3;
-	cubemapProbe_t	*cubeProbe, *cubeProbe4;
-	vec3_t			v1, v2, v3;
-#if 0
-	unsigned int   hash;
-	vertexHash_t   *vertexHash;
-#endif
-	Ren_LogComment("--- R_FindTwoNearestCubeMaps ---\n");
+	// We want to make it go from probe1 to probe2 in x milliseconds
+	const int duration = 2000; // milliseconds
+	float distance, mindistance = 99999999.f;
+	cubemapProbe_t *cubeProbe, *closestProbe;
+	int j, t;
+	float i;
+/*
+//!!!DEBUG!!!
+// until we can use this on entities, we just do the world only for now..
+if (backEnd.currentEntity != &tr.worldEntity)
+{
+	cubemapProbe_t *cubeProbe1, *cubeProbe2;
+	float distance1, distance2;
+	R_FindTwoNearestCubeMaps(position, &cubeProbe1, &cubeProbe2, &distance1, &distance2);
 
-	*cubeProbe1 = NULL;
-	*cubeProbe2 = NULL;
-	*cubeProbe3 = NULL;
-	cubeProbe4 = NULL; // we need to know where the closest triangle of probes is
-#if 0 // cubeProbe hash values
-	if (tr.cubeHashTable == NULL || position == NULL)
-#else
-	if (tr.cubeProbes.currentElements == 0 || position == NULL)
-#endif
+	*env1 = cubeProbe1->cubemap;
+	*env2 = cubeProbe2->cubemap;
+	*interpolation = 0.0f; // for now, no interpolation..
+	return;
+}
+*/
+	// are we currently interpolating?
+	if (tr.reflectionData.endTime)
 	{
-		return;
+		if (tr.refdef.time < tr.reflectionData.endTime)
+		{
+			// yes, we are mixing from probe1 to probe2
+			t = tr.refdef.time - tr.reflectionData.startTime;
+			i = (t <= 0)? 0.f : (float)t / (float)duration;
+			*interpolation = (i > 1.f) ? 1.f : i;
+			*env1 = tr.reflectionData.probe1->cubemap;
+			*env2 = tr.reflectionData.probe2->cubemap;
+			return;
+		}
+		else {
+			// we're done interpolating
+			tr.reflectionData.endTime = 0;
+			*interpolation = 1.0f;
+			*env1 = tr.reflectionData.probe1->cubemap;
+			*env2 = tr.reflectionData.probe2->cubemap;
+			// make probe2 the "interpolate-from" probe
+			tr.reflectionData.probe1 = tr.reflectionData.probe2;
+			return;
+		}
 	}
-#if 0
-	hash = VertexCoordGenerateHash(position);
-#endif
-	*distance1 = *distance2 = *distance3 = distance4 = 9999999.0f;
 
-#if 1
+	// when interpolation is active, this will be called only every 'duration' milliseconds..
+	closestProbe = NULL;
 	for (j = 0; j < tr.cubeProbes.currentElements; j++)
 	{
 		cubeProbe = Com_GrowListElement(&tr.cubeProbes, j);
-#else // cubeProbe hash values
-	for (j = 0, vertexHash = tr.cubeHashTable[hash]; vertexHash; vertexHash = vertexHash->next, j++)
-	{
-		cubeProbe = (cubemapProbe_t *)vertexHash->data;
-#endif
-
 		distance = Distance(cubeProbe->origin, position);
-		if (distance < *distance1)
+		if (distance < mindistance)
 		{
-			cubeProbe4 = *cubeProbe3;
-			distance4 = *distance3;
-
-			*cubeProbe3 = *cubeProbe2;
-			*distance3 = *distance2;
-
-			*cubeProbe2 = *cubeProbe1;
-			*distance2 = *distance1;
-
-			*cubeProbe1 = cubeProbe;
-			*distance1 = distance;
-		}
-		else if (distance < *distance2)
-		{
-			cubeProbe4 = *cubeProbe3;
-			distance4 = *distance3;
-
-			*cubeProbe3 = *cubeProbe2;
-			*distance3 = *distance2;
-
-			*cubeProbe2 = cubeProbe;
-			*distance2 = distance;
-		}
-		else if (distance < *distance3)
-		{
-			cubeProbe4 = *cubeProbe3;
-			distance4 = *distance3;
-
-			*cubeProbe3 = cubeProbe;
-			*distance3 = distance;
-		}
-		else if (distance < distance4)
-		{
-			cubeProbe4 = cubeProbe;
-			distance4 = distance;
+			closestProbe = cubeProbe;
+			mindistance = distance;
 		}
 	}
+	if (!closestProbe)
+	{
+		// nothing found
+		*env1 = tr.autoCubeImage;
+		*env2 = tr.autoCubeImage;
+		*interpolation = 0.0f;
+		return;
+	}
 
-	// now check how we should interpolate between the found cubemaps..
-	// The three returned values are ratios (in range 0.0 to 1.0), and together add up to a value of 1.0
-	// get the direction and distance: from cp1 to cp4
-	VectorSubtract(cubeProbe4->origin, (*cubeProbe1)->origin, v1);
-	// halfway this distance, cp1 should have faded out to 0
-	VectorScale(v1, 0.5, v2);
-	// find the ratio we are now on that path, vector v2, halfway from cp1 to cp4..
-	// So if we are at cp1, we are at 0% of our path.
-	// And if we reached v2, that means we traveled 100% of our path.
-	// For that we project our current position onto the path.
-	VectorNormalizeOnly(v2);
-	VectorSubtract(position, (*cubeProbe1)->origin, v3);
-	//d1 = DotProduct(v3, position);
-	Dot(v3, position, d1);
-	d1 = (d1 < 0.0) ? 0.0 : ((d1 > 1.0)? 1.0 : d1); // clamp to a range 0.0 to 1.0
-	d1 = 1.0 - d1; // invert ratio
+	if (!tr.reflectionData.probe1)
+	{
+		// this is the first time we searched for cubeprobes
+		tr.reflectionData.probe1 = closestProbe;
+		*env1 = tr.reflectionData.probe1->cubemap;
+		*env2 = tr.autoCubeImage;
+		*interpolation = 0.0f;
+		return;
+	}
 
-	// now do this for the 2nd closest cubeprobe
-	VectorSubtract(cubeProbe4->origin, (*cubeProbe2)->origin, v1);
-	VectorScale(v1, 0.5, v2);
-	VectorNormalizeOnly(v2);
-	VectorSubtract(position, (*cubeProbe2)->origin, v3);
-	//d2 = DotProduct(v3, position);
-	Dot(v3, position, d2);
-	d2 = (d2 < 0.0) ? 0.0 : ((d2 > 1.0) ? 1.0 : d2);
-	d2 = 1.0 - d2;
+	// we only need to do something when we find another closest probe
+	if (tr.reflectionData.probe1 == closestProbe)
+	{
+		*env1 = tr.reflectionData.probe1->cubemap;
+		*env2 = tr.autoCubeImage;
+		*interpolation = 0.0f;
+		return;
+	}
 
-	// now do this for the 3rd closest cubeprobe
-	VectorSubtract(cubeProbe4->origin, (*cubeProbe3)->origin, v1);
-	VectorScale(v1, 0.5, v2);
-	VectorNormalizeOnly(v2);
-	VectorSubtract(position, (*cubeProbe3)->origin, v3);
-	//d3 = DotProduct(v3, position);
-	Dot(v3, position, d3);
-	d3 = (d3 < 0.0) ? 0.0 : ((d3 > 1.0) ? 1.0 : d3);
-	d3 = 1.0 - d3;
-
-	// now we have 3 values. we put them in a vector, and normalize the vector
-	VectorSet(v1, d1, d2, d3);
-	VectorNormalizeOnly(v1);
-	*interpolation1 = v1[0];
-	*interpolation2 = v1[1];
-	*interpolation3 = v1[2];
-
-	//Ren_Print("iterated through %i cubeprobes\n", j);
+	// now we must start an interpolation to the newly found closest probe
+	tr.reflectionData.probe2 = closestProbe;
+	*env1 = tr.reflectionData.probe1->cubemap;
+	*env2 = tr.reflectionData.probe2->cubemap;
+	*interpolation = 0.0f;
+	tr.reflectionData.startTime = tr.refdef.time;
+	tr.reflectionData.endTime = tr.reflectionData.startTime + duration;
 }
+
 
 /**
  * @brief This is saving our cube probes to special uncompressed pixeldata tga rgb format
@@ -7931,7 +7919,7 @@ void R_SaveCubeProbes(const char *filename, byte *pixeldata, int width, int heig
 }
 
 /**
- * @brief This is loading a single cube (6 probes) from our file into cubeTemp.
+ * @brief This is loading a single cube (6 sides) from our file into cubeTemp.
  * 
  * @param[in] number of cube probe
  * @param[in] total cube probes
@@ -7957,7 +7945,7 @@ qboolean R_LoadCubeProbe(int cubeProbeNum, int totalCubeProbes, byte *cubeTemp[6
 	{
 		lastFileNum = fileNum;
 		filename = va("cm/%s/cm_%04d.tga", s_worldData.baseName, fileNum);
-		bytesRead = ri.FS_ReadFile(filename, (void **)&buffer); // this lso closes he file after reading the full file into the buffer
+		bytesRead = ri.FS_ReadFile(filename, (void **)&buffer); // this also closes he file after reading the full file into the buffer
 		if (bytesRead <= 0)
 		{
 			//Ren_Print("loadCubeProbes: %s not found", filename);
@@ -8374,129 +8362,71 @@ void R_BuildCubeMaps(void)
 		{
 			// render the cubemap
 			VectorCopy(cubeProbe->origin, rf.vieworg);
-		
-			AxisClear(rf.viewaxis);
-		
-			rf.fov_x  = 90;
-			rf.fov_y  = 90;
-			rf.x      = 0;
-			rf.y      = 0;
-			rf.width  = REF_CUBEMAP_SIZE;
-			rf.height = REF_CUBEMAP_SIZE;
-			rf.time   = 0;
-		
+			rf.fov_x   = 94.f;
+			rf.fov_y   = 94.f;
+			rf.x       = 0;
+			rf.y       = 0;
+			rf.time    = 0;
 			rf.rdflags = RDF_NOCUBEMAP | RDF_NOBLOOM;
+			// We render the cubemaps with one extra border pixel (so we render a 33x33 image).
+			// and now we read the pixels in the 32x32 middle of the image.
+			// This ensures that we get the correct colors at the edges of an image.
+			// (otherwise we'll get a stripe of wrong colors on the images, and the cubemap images do not align colors).
+			rf.width   = REF_CUBEMAP_SIZE+2;
+			rf.height  = REF_CUBEMAP_SIZE+2;
 		
 			for (i = 0; i < 6; i++)
 			{
 				switch (i)
 				{
 				case 0:
-				{
 					// X-
-					rf.viewaxis[0][0] = -1;
-					rf.viewaxis[0][1] = 0;
-					rf.viewaxis[0][2] = 0;
-
-					rf.viewaxis[1][0] = 0;
-					rf.viewaxis[1][1] = 0;
-					rf.viewaxis[1][2] = 1;
-
-					rf.viewaxis[2][0] = 0;
-					rf.viewaxis[2][1] = 1;
-					rf.viewaxis[2][2] = 0;
+					VectorSet(rf.viewaxis[0], -1.f, 0.f, 0.f);
+					VectorSet(rf.viewaxis[1], 0.f, 0.f, 1.f);
+					VectorSet(rf.viewaxis[2], 0.f, 1.f, 0.f);
 					break;
-				}
 				case 1:
-				{
 					// X+
-					rf.viewaxis[0][0] = 1;
-					rf.viewaxis[0][1] = 0;
-					rf.viewaxis[0][2] = 0;
-		
-					rf.viewaxis[1][0] = 0;
-					rf.viewaxis[1][1] = 0;
-					rf.viewaxis[1][2] = -1;
-		
-					rf.viewaxis[2][0] = 0;
-					rf.viewaxis[2][1] = 1;
-					rf.viewaxis[2][2] = 0;
-
+					VectorSet(rf.viewaxis[0], 1.f, 0.f, 0.f);
+					VectorSet(rf.viewaxis[1], 0.f, 0.f, -1.f);
+					VectorSet(rf.viewaxis[2], 0.f, 1.f, 0.f);
 					break;
-				}
 				case 2:
-				{
-					// Y+
-					rf.viewaxis[0][0] = 0;
-					rf.viewaxis[0][1] = -1;
-					rf.viewaxis[0][2] = 0;
-		
-					rf.viewaxis[1][0] = 1;
-					rf.viewaxis[1][1] = 0;
-					rf.viewaxis[1][2] = 0;
-		
-					rf.viewaxis[2][0] = 0;
-					rf.viewaxis[2][1] = 0;
-					rf.viewaxis[2][2] = 1;
-					break;
-				}
-				case 3:
-				{
 					// Y-
-					rf.viewaxis[0][0] = 0;
-					rf.viewaxis[0][1] = 1;
-					rf.viewaxis[0][2] = 0;
-
-					rf.viewaxis[1][0] = 1;
-					rf.viewaxis[1][1] = 0;
-					rf.viewaxis[1][2] = 0;
-
-					rf.viewaxis[2][0] = 0;
-					rf.viewaxis[2][1] = 0;
-					rf.viewaxis[2][2] = -1;
+					VectorSet(rf.viewaxis[0], 0.f, -1.f, 0.f);
+					VectorSet(rf.viewaxis[1], 1.f, 0.f, 0.f);
+					VectorSet(rf.viewaxis[2], 0.f, 0.f, 1.f);
 					break;
-				}
+				case 3:
+					// Y+
+					VectorSet(rf.viewaxis[0], 0.f, 1.f, 0.f);
+					VectorSet(rf.viewaxis[1], 1.f, 0.f, 0.f);
+					VectorSet(rf.viewaxis[2], 0.f, 0.f, -1.f);
+					break;
 				case 4:
-				{
 					// Z up
-					rf.viewaxis[0][0] = 0;
-					rf.viewaxis[0][1] = 0;
-					rf.viewaxis[0][2] = 1;
-
-					rf.viewaxis[1][0] = 1;
-					rf.viewaxis[1][1] = 0;
-					rf.viewaxis[1][2] = 0;
-
-					rf.viewaxis[2][0] = 0;
-					rf.viewaxis[2][1] = 1;
-					rf.viewaxis[2][2] = 0;
-
+					VectorSet(rf.viewaxis[0], 0.f, 0.f, 1.f);
+					VectorSet(rf.viewaxis[1], 1.f, 0.f, 0.f);
+					VectorSet(rf.viewaxis[2], 0.f, 1.f, 0.f);
 					break;
-				}
 				case 5:
-				{
 					// Z down
-					rf.viewaxis[0][0] = 0;
-					rf.viewaxis[0][1] = 0;
-					rf.viewaxis[0][2] = -1;
-		
-					rf.viewaxis[1][0] = -1;
-					rf.viewaxis[1][1] = 0;
-					rf.viewaxis[1][2] = 0;
-		
-					rf.viewaxis[2][0] = 0;
-					rf.viewaxis[2][1] = 1;
-					rf.viewaxis[2][2] = 0;
+					VectorSet(rf.viewaxis[0], 0.f, 0.f, -1.f);
+					VectorSet(rf.viewaxis[1], -1.f, 0.f, 0.f);
+					VectorSet(rf.viewaxis[2], 0.f, 1.f, 0.f);
 					break;
 				}
-				}
-		
+
 				tr.refdef.pixelTarget = tr.cubeTemp[i];
-				Com_Memset(tr.cubeTemp[i], 255, REF_CUBEMAP_SIZE * REF_CUBEMAP_SIZE * 4);
+//				Com_Memset(tr.cubeTemp[i], 255, REF_CUBEMAP_SIZE * REF_CUBEMAP_SIZE * 4); // we don't need to do this..
 		
 				RE_BeginFrame();
-				RE_RenderScene(&rf);
+				RE_RenderSimpleScene(&rf); // doesn't render so much as RE_RenderScene (no decals, no coronas, ...)
 				RE_EndFrame(&ii, &jj);
+
+				// Bugfix: drivers absolutely hate running in high res and using glReadPixels near the top or bottom edge.
+				// Soo.. lets do it in the middle.
+				glReadPixels(glConfig.vidWidth / 2 + 1, glConfig.vidHeight / 2 + 1, REF_CUBEMAP_SIZE, REF_CUBEMAP_SIZE, GL_RGBA, GL_UNSIGNED_BYTE, tr.refdef.pixelTarget);
 
 #if 0 // encode the pixel intensity into the alpha channel, saves work in the shader		
 				//if (qtrue)
@@ -8641,7 +8571,7 @@ void R_BuildCubeMaps(void)
 				{
 					continue;
 				}
-//R_FindTwoNearestCubeMaps
+//R_FindNearestCubeMap
 				for (x = 0; x < tr.cubeProbes.currentElements; x++)
 				{
 					vec3_t pos;
@@ -8663,12 +8593,76 @@ void R_BuildCubeMaps(void)
 	}
 #endif
 
+for (i = 0; i < 6; i++)
+{
+if (tr.cubeTemp[i]) ri.Free(tr.cubeTemp[i]);
+}
+//if (pixeldata) ri.Free(pixeldata);
+
+
 #ifdef LEGACY_DEBUG
 	endTime = ri.Milliseconds();
 	Ren_Developer("cubemap probes pre-rendering time of %i cubes = %5.2f seconds\n", tr.cubeProbes.currentElements,
 	              (endTime - startTime) / 1000.0);
 #endif
 }
+
+
+/*
+* Add the sun/moon directional light
+*/
+void AddSunLight()
+{
+	//!!!DEBUG!!!
+	// set the sun shader if there is one
+	if (tr.sunShaderName)
+	{
+		tr.sunShader = R_FindShader(tr.sunShaderName, SHADER_3D_STATIC, qfalse);
+	}
+	else
+	{
+		tr.sunShader = 0;   // clear sunshader so it's not there if the level doesn't specify it
+	}
+
+	// add a directional sun light
+	if (!s_worldData.numLights) { //!!!DEBUG!!! very woot..
+		s_worldData.lights = (trRefLight_t *)ri.Hunk_Alloc(sizeof(trRefLight_t), h_low);  //!!!DEBUG!!!  just test  beware! of what it does..
+	}
+	trRefLight_t *light = &s_worldData.lights[s_worldData.numLights];
+	s_worldData.numLights++;
+
+	light->l.color[0] = tr.sunLight[0];
+	light->l.color[1] = tr.sunLight[1];
+	light->l.color[2] = tr.sunLight[2];
+
+	light->direction[0] = tr.sunDirection[0];
+	light->direction[1] = tr.sunDirection[1];
+	light->direction[2] = tr.sunDirection[2];
+
+	light->l.scale = r_lightScale->value; //!
+
+	light->l.radius[0] = 9999999000.0;
+	light->l.radius[1] = 9999999000.0;
+	light->l.radius[2] = 9999999000.0;
+
+	QuatClear(light->l.rotation);
+	VectorClear(light->l.center);
+
+	VectorClear(light->l.projTarget);
+	VectorClear(light->l.projRight);
+	VectorClear(light->l.projUp);
+	VectorClear(light->l.projStart);
+	VectorClear(light->l.projEnd);
+
+	light->l.inverseShadows = qfalse; // must be false
+	light->isStatic = qtrue; // (must be false to render alpha-masked surfaces).  if true render much faster!
+	light->noRadiosity = qfalse;
+	light->additive = qtrue;
+
+	light->shadowLOD = 0;
+	light->l.rlType = RL_DIRECTIONAL;
+}
+
 
 /**
  * @brief Called directly from cgame
@@ -8792,64 +8786,8 @@ void RE_LoadWorldMap(const char *name)
 	Ren_UpdateScreen();
 	R_LoadLightGrid(&header->lumps[LUMP_LIGHTGRID]);
 
-
-
-//!!!DEBUG!!!
-// set the sun shader if there is one
-if (tr.sunShaderName)
-{
-	tr.sunShader = R_FindShader(tr.sunShaderName, SHADER_3D_STATIC, qfalse);
-}
-else
-{
-	tr.sunShader = 0;   // clear sunshader so it's not there if the level doesn't specify it
-}
-
-
-//!!!DEBUG!!! add a directional sun light
-{
-	if (!s_worldData.numLights) { //!!!DEBUG!!! very woot..
-		s_worldData.lights = (trRefLight_t *)ri.Hunk_Alloc(sizeof(trRefLight_t), h_low);  //!!!DEBUG!!!  just test  beware! of what it does..
-	}
-	trRefLight_t *light = &s_worldData.lights[s_worldData.numLights];
-	s_worldData.numLights++;
-
-	light->l.color[0] = tr.sunLight[0];
-	light->l.color[1] = tr.sunLight[1];
-	light->l.color[2] = tr.sunLight[2];
-
-	light->direction[0] = tr.sunDirection[0];
-	light->direction[1] = tr.sunDirection[1];
-	light->direction[2] = tr.sunDirection[2];
-
-	light->l.scale = r_lightScale->value; //!
-
-	light->l.radius[0] = 9999999000.0;
-	light->l.radius[1] = 9999999000.0;
-	light->l.radius[2] = 9999999000.0;
-
-	QuatClear(light->l.rotation);
-	VectorClear(light->l.center);
-
-	VectorClear(light->l.projTarget);
-	VectorClear(light->l.projRight);
-	VectorClear(light->l.projUp);
-	VectorClear(light->l.projStart);
-	VectorClear(light->l.projEnd);
-
-	light->l.inverseShadows = qfalse; // must be false
-	light->isStatic = qtrue; // must be false to render alpha-masked surfaces.  if true render much faster!
-	light->noRadiosity = qfalse;
-	light->additive = qtrue;
-
-	light->shadowLOD = 0;
-	light->l.rlType = RL_DIRECTIONAL;
-}
-
-
-
-
-
+	// Add the sun/moon directional light..
+	AddSunLight();
 
 	// create static VBOS from the world
 	R_CreateWorldVBO();
@@ -8880,12 +8818,19 @@ else
 	// build cubemaps after the necessary vbo stuff is done
 ///	// FIXME: causes missing vbo error on radar (maps with portal sky or foliage )
 ///	// devmap oasis; set developer 1; set r_showcubeprobes 1
-/// ^^that is an old comment.. i think.
+/// ^^that is an old comment.. i think.  all OK here..
 	//
 	R_BuildCubeMaps();
 
+	// clear the cubeprobe reflections data for this entity
+	tr.reflectionData.probe1 = NULL;
+	tr.reflectionData.probe2 = NULL;
+	tr.reflectionData.startTime = 0;
+	tr.reflectionData.endTime = 0;
+
 	// never move this to RE_BeginFrame because we need it to set it here for the first frame
 	// but we need the information across 2 frames
+	//^^that must be an old comment: i see no call to BeginFrame here..
 	ClearLink(&tr.traversalStack);
 	ClearLink(&tr.occlusionQueryQueue);
 	ClearLink(&tr.occlusionQueryList);

@@ -86,8 +86,6 @@ cvar_t *r_noInteractionSort;
 cvar_t *r_dynamicLight;
 cvar_t *r_staticLight;
 cvar_t *r_dynamicLightShadows;
-cvar_t *r_precomputedLighting;
-cvar_t *r_vertexLighting;
 cvar_t *r_compressDiffuseMaps;
 cvar_t *r_compressNormalMaps;
 cvar_t *r_compressSpecularMaps;
@@ -147,13 +145,13 @@ cvar_t *r_cullShadowPyramidTriangles;
 cvar_t *r_debugShadowMaps;
 cvar_t *r_noShadowFrustums;
 cvar_t *r_noLightFrustums;
-cvar_t *r_shadowMapLuminanceAlpha;
+//cvar_t *r_shadowMapLuminanceAlpha;
 cvar_t *r_shadowMapLinearFilter;
 //cvar_t *r_lightBleedReduction;
 //cvar_t *r_overDarkeningFactor; // exponential shadow mapping
-cvar_t *r_shadowMapDepthScale;
-cvar_t *r_parallelShadowSplits;
-cvar_t *r_parallelShadowSplitWeight;
+//cvar_t *r_shadowMapDepthScale;
+//cvar_t *r_parallelShadowSplits; // we always have 4 splits
+//cvar_t *r_parallelShadowSplitWeight;
 
 cvar_t *r_noBind;
 cvar_t *r_singleShader;
@@ -166,17 +164,17 @@ cvar_t *r_clear;
 cvar_t *r_textureMode;
 cvar_t *r_offsetFactor;
 cvar_t *r_offsetUnits;
-cvar_t *r_specularExponent;
-cvar_t *r_specularExponent2; // for entities only
-cvar_t *r_specularExponent3; // for players only
-cvar_t *r_specularScale;  // for the world
-cvar_t *r_specularScale2; // for entities only
-cvar_t *r_specularScale3; // for players only
+cvar_t *r_specularScaleWorld;
+cvar_t *r_specularScaleEntities;
+cvar_t *r_specularScalePlayers;
+cvar_t *r_specularExponentWorld;
+cvar_t *r_specularExponentEntities;
+cvar_t *r_specularExponentPlayers;
 cvar_t *r_reflectionMapping;
 cvar_t *r_reflectionScale; // 0.07 = 7%
 cvar_t *r_parallaxMapping;
 cvar_t *r_parallaxDepthScale;
-cvar_t *r_normalScale;
+cvar_t *r_bumpScale;
 cvar_t *r_normalMapping;
 cvar_t *r_wrapAroundLighting;
 cvar_t *r_diffuseLighting;
@@ -285,7 +283,7 @@ cvar_t *r_cameraPostFX;
 cvar_t *r_cameraVignette;
 cvar_t *r_cameraFilmGrainScale;
 
-cvar_t *r_evsmPostProcess;
+//cvar_t *r_evsmPostProcess;
 cvar_t *r_detailTextures;
 
 cvar_t *r_extMultitexture;
@@ -1309,17 +1307,14 @@ void R_Register(void)
 
 	r_heatHazeFix = ri.Cvar_Get("r_heatHazeFix", "0", CVAR_CHEAT);
 
-	r_vertexLighting = ri.Cvar_Get("r_vertexLighting", "0", CVAR_ARCHIVE | CVAR_LATCH);
-	r_precomputedLighting = ri.Cvar_Get("r_precomputedLighting", "1", CVAR_ARCHIVE | CVAR_LATCH);
-
 	//These makes the spec spot bigger or smaller, the higher the number the smaller the dot
-	r_specularExponent  = ri.Cvar_Get("r_specularExponent", "256.0", CVAR_ARCHIVE); // for the world
-	r_specularExponent2 = ri.Cvar_Get("r_specularExponent2", "32.0", CVAR_ARCHIVE); // only for entities..  for now
-	r_specularExponent3 = ri.Cvar_Get("r_specularExponent3", "64.0", CVAR_ARCHIVE); // only for players
+	r_specularExponentWorld  = ri.Cvar_Get("r_specularExponentWorld", "256.0", CVAR_ARCHIVE);
+	r_specularExponentEntities = ri.Cvar_Get("r_specularExponentEntities", "32.0", CVAR_ARCHIVE);
+	r_specularExponentPlayers = ri.Cvar_Get("r_specularExponentPlayers", "64.0", CVAR_ARCHIVE);
 	//this one sets the power of specular, the higher the brighter
-	r_specularScale  = ri.Cvar_Get("r_specularScale", "0.005", CVAR_ARCHIVE); // for the world
-	r_specularScale2 = ri.Cvar_Get("r_specularScale2", "2.0", CVAR_ARCHIVE);  // for entities only
-	r_specularScale3 = ri.Cvar_Get("r_specularScale3", "0.5", CVAR_ARCHIVE);  // for players only
+	r_specularScaleWorld  = ri.Cvar_Get("r_specularScaleWorld", "0.005", CVAR_ARCHIVE); // for the world
+	r_specularScaleEntities = ri.Cvar_Get("r_specularScaleEntities", "2.0", CVAR_ARCHIVE);  // for entities only
+	r_specularScalePlayers = ri.Cvar_Get("r_specularScalePlayers", "0.5", CVAR_ARCHIVE);  // for players only
 
 	r_reflectionMapping = ri.Cvar_Get("r_reflectionMapping", "0", CVAR_ARCHIVE | CVAR_LATCH);
 	r_reflectionScale = ri.Cvar_Get("r_reflectionScale", "0.085", CVAR_ARCHIVE); // a percentage (0.07 = 7/100th = 7%)
@@ -1338,7 +1333,7 @@ void R_Register(void)
 
 	r_normalMapping      = ri.Cvar_Get("r_normalMapping", "0", CVAR_ARCHIVE | CVAR_LATCH);
 	r_highQualityNormalMapping = ri.Cvar_Get("r_highQualityNormalMapping", "0", CVAR_ARCHIVE | CVAR_LATCH);
-	r_normalScale = ri.Cvar_Get("r_normalScale", "1.0", CVAR_CHEAT | CVAR_LATCH);
+	r_bumpScale = ri.Cvar_Get("r_bumpScale", "1.0", CVAR_ARCHIVE);
 
 	r_parallaxMapping = ri.Cvar_Get("r_parallaxMapping", "0", CVAR_ARCHIVE | CVAR_LATCH);
 	r_parallaxDepthScale = ri.Cvar_Get("r_parallaxDepthScale", "0.01", CVAR_CHEAT);
@@ -1351,7 +1346,7 @@ void R_Register(void)
 
 	// shadowing
 	r_shadows = ri.Cvar_Get("cg_shadows", "1", CVAR_ARCHIVE | CVAR_LATCH);
-	ri.Cvar_CheckRange(r_shadows, 0, SHADOWING_STENCIL, qtrue);
+	ri.Cvar_CheckRange(r_shadows, 0, SHADOWING_EVSM32, qtrue);
 
 	r_softShadows = ri.Cvar_Get("r_softShadows", "0", CVAR_ARCHIVE | CVAR_LATCH);
 	ri.Cvar_CheckRange(r_softShadows, 0, 6, qtrue);
@@ -1382,20 +1377,20 @@ void R_Register(void)
 	shadowMapResolutions[3] = r_shadowMapSizeMedium->integer;
 	shadowMapResolutions[4] = r_shadowMapSizeLow->integer;
 
-	r_shadowMapSizeSunUltra = ri.Cvar_Get("r_shadowMapSizeSunUltra", "1024", CVAR_ARCHIVE | CVAR_LATCH);
-	ri.Cvar_CheckRange(r_shadowMapSizeSunUltra, 32, 2048, qtrue);
+	r_shadowMapSizeSunUltra = ri.Cvar_Get("r_shadowMapSizeSunUltra", "2048", CVAR_ARCHIVE | CVAR_LATCH);
+	ri.Cvar_CheckRange(r_shadowMapSizeSunUltra, 256, 2048, qtrue);
 
-	r_shadowMapSizeSunVeryHigh = ri.Cvar_Get("r_shadowMapSizeSunVeryHigh", "1024", CVAR_ARCHIVE | CVAR_LATCH);
-	ri.Cvar_CheckRange(r_shadowMapSizeSunVeryHigh, 512, 2048, qtrue);
+	r_shadowMapSizeSunVeryHigh = ri.Cvar_Get("r_shadowMapSizeSunVeryHigh", "2048", CVAR_ARCHIVE | CVAR_LATCH);
+	ri.Cvar_CheckRange(r_shadowMapSizeSunVeryHigh, 256, 2048, qtrue);
 
-	r_shadowMapSizeSunHigh = ri.Cvar_Get("r_shadowMapSizeSunHigh", "1024", CVAR_ARCHIVE | CVAR_LATCH);
-	ri.Cvar_CheckRange(r_shadowMapSizeSunHigh, 512, 2048, qtrue);
+	r_shadowMapSizeSunHigh = ri.Cvar_Get("r_shadowMapSizeSunHigh", "2048", CVAR_ARCHIVE | CVAR_LATCH);
+	ri.Cvar_CheckRange(r_shadowMapSizeSunHigh, 256, 2048, qtrue);
 
-	r_shadowMapSizeSunMedium = ri.Cvar_Get("r_shadowMapSizeSunMedium", "1024", CVAR_ARCHIVE | CVAR_LATCH);
-	ri.Cvar_CheckRange(r_shadowMapSizeSunMedium, 512, 2048, qtrue);
+	r_shadowMapSizeSunMedium = ri.Cvar_Get("r_shadowMapSizeSunMedium", "2048", CVAR_ARCHIVE | CVAR_LATCH);
+	ri.Cvar_CheckRange(r_shadowMapSizeSunMedium, 256, 2048, qtrue);
 
-	r_shadowMapSizeSunLow = ri.Cvar_Get("r_shadowMapSizeSunLow", "1024", CVAR_ARCHIVE | CVAR_LATCH);
-	ri.Cvar_CheckRange(r_shadowMapSizeSunLow, 512, 2048, qtrue);
+	r_shadowMapSizeSunLow = ri.Cvar_Get("r_shadowMapSizeSunLow", "512", CVAR_ARCHIVE | CVAR_LATCH);
+	ri.Cvar_CheckRange(r_shadowMapSizeSunLow, 256, 2048, qtrue);
 
 	sunShadowMapResolutions[0] = r_shadowMapSizeSunUltra->integer;
 	sunShadowMapResolutions[1] = r_shadowMapSizeSunVeryHigh->integer;
@@ -1414,16 +1409,17 @@ void R_Register(void)
 	r_noShadowFrustums           = ri.Cvar_Get("r_noShadowFrustums", "0", CVAR_CHEAT);
 	r_noLightFrustums            = ri.Cvar_Get("r_noLightFrustums", "0", CVAR_CHEAT);
 
-	r_shadowMapLuminanceAlpha = ri.Cvar_Get("r_shadowMapLuminanceAlpha", "1", CVAR_ARCHIVE | CVAR_LATCH);
+	//r_shadowMapLuminanceAlpha = ri.Cvar_Get("r_shadowMapLuminanceAlpha", "1", CVAR_ARCHIVE | CVAR_LATCH);
 	r_shadowMapLinearFilter = ri.Cvar_Get("r_shadowMapLinearFilter", "1", CVAR_CHEAT | CVAR_LATCH);
-	r_shadowMapDepthScale = ri.Cvar_Get("r_shadowMapDepthScale", "1.41", CVAR_CHEAT | CVAR_LATCH);
+	//r_shadowMapDepthScale = ri.Cvar_Get("r_shadowMapDepthScale", "1.41", CVAR_CHEAT | CVAR_LATCH);
 
-	r_parallelShadowSplitWeight = ri.Cvar_Get("r_parallelShadowSplitWeight", "0.9", CVAR_ARCHIVE);
-	r_parallelShadowSplits = ri.Cvar_Get("r_parallelShadowSplits", "2", CVAR_ARCHIVE);
-	ri.Cvar_CheckRange(r_parallelShadowSplits, 0, MAX_SHADOWMAPS - 1, qtrue);
+	//r_parallelShadowSplitWeight = ri.Cvar_Get("r_parallelShadowSplitWeight", "1.0", CVAR_ARCHIVE);
+	//ri.Cvar_CheckRange(r_parallelShadowSplitWeight, 0.0f, 1.0f, qfalse);
+	//r_parallelShadowSplits = ri.Cvar_Get("r_parallelShadowSplits", "4", CVAR_ARCHIVE | CVAR_LATCH);
+	//ri.Cvar_CheckRange(r_parallelShadowSplits, 0, MAX_SHADOWMAPS - 1, qtrue);
 
 	// atm. you need this set to 1, otherwise the EVSM shadows (cgshadows 6) are not shown..  todo
-	r_evsmPostProcess = ri.Cvar_Get("r_evsmPostProcess", "1", CVAR_ARCHIVE | CVAR_LATCH);
+	//r_evsmPostProcess = ri.Cvar_Get("r_evsmPostProcess", "1", CVAR_ARCHIVE | CVAR_LATCH);
 
 
 	// note: MAX_POLYS and MAX_POLYVERTS are heavily increased in ET compared to q3
@@ -1558,7 +1554,7 @@ void R_Init(void)
 
 	R_Register();
 
-	if (!InitOpenGL())
+	if (!InitOpenGL()) // use 0.2 GB GPU memory..
 	{
 		ri.Error(ERR_VID_FATAL, "OpenGL initialization failed!");
 	}
@@ -1570,9 +1566,9 @@ void R_Init(void)
 
 	R_InitNextFrame();
 
-	R_InitImages();
+	R_InitImages(); // uses 0.7 GB GPU memory..
 
-	R_InitFBOs();
+	R_InitFBOs(); // uses 0.4 GB GPU memory..
 
 	{
 		tr.vao = 0;

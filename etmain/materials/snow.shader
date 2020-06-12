@@ -3,13 +3,11 @@
 textures/snow/alpha_ice2
 {		
 	surfaceparm alphashadow
+	surfaceparm trans
 	cull none
-	{
-		map textures/snow/alpha_ice2s.tga
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
-		rgbGen vertex
-	}
+	implicitMask textures/snow/alpha_ice2s.tga
 }
+
 textures/snow/s_bars_m01
 {
     qer_editorimage textures/snow/s_bars_m01.tga

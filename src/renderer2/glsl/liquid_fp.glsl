@@ -40,6 +40,9 @@ uniform samplerCube u_PortalMap;
 // specular
 uniform float u_SpecularScale;
 uniform float u_SpecularExponent;
+#if defined(USE_PARALLAX_MAPPING)
+uniform float u_DepthScale;
+#endif // USE_PARALLAX_MAPPING
 #endif // USE_NORMAL_MAPPING
 
 varying vec3 var_Position;
@@ -50,12 +53,13 @@ varying vec2 var_TexDiffuse;
 varying float var_alphaGen;
 #endif // USE_DIFFUSE
 #if defined(USE_NORMAL_MAPPING)
-varying vec3 var_ViewOrigin;
 varying mat3 var_tangentMatrix;
 varying vec2 var_TexNormal;
 varying vec3 var_LightDirection; 
+varying vec3 var_ViewDirW;          // view direction in world space
 #if defined(USE_PARALLAX_MAPPING)
-varying vec2 var_S;
+varying vec3 var_ViewDirT;          // view direction in tangentspace
+varying float var_distanceToCam;    //
 #endif // USE_PARALLAX_MAPPING
 #endif // USE_NORMAL_MAPPING
 #if defined(USE_PORTAL_CLIPPING)
@@ -74,10 +78,12 @@ void main()
 #endif // USE_PORTAL_CLIPPING
 
 
+	vec4 color; // the final color
 
 #if defined(USE_DIFFUSE)
 	vec2 texDiffuse = var_TexDiffuse;
 #endif
+
 
 #if defined(USE_NORMAL_MAPPING)
 
@@ -91,11 +97,13 @@ void main()
 
 #if defined(USE_PARALLAX_MAPPING)
 	// compute texcoords offset
-	vec2 texOffset = RayIntersectDisplaceMap(texNormal, var_S, u_NormalMap);
-	texScreen  += texOffset;
-	texNormal  += texOffset;
+//	vec2 texOffset = RayIntersectDisplaceMap(texNormal, var_S, u_NormalMap);
+//	texScreen  += texOffset;
+//	texNormal  += texOffset;
+	texScreen = parallax(u_NormalMap, texDiffuse, var_ViewDirT, u_DepthScale);
+	texNormal = texDiffuse; // needs same resolution normalmap as diffusemap..
 #if defined(USE_DIFFUSE)
-	texDiffuse += texOffset;
+	texDiffuse = texNormal;
 #endif
 #endif //USE_PARALLAX_MAPPING
 
@@ -105,7 +113,7 @@ void main()
 	vec3 L = var_LightDirection;
 
 	// view direction
-	vec3 V = var_ViewOrigin;
+	vec3 V = var_ViewDirW;
 
 	// normal
 	vec3 Ntex = texture2D(u_NormalMap, texNormal).xyz * 2.0 - 1.0; // static bumpmap
@@ -113,11 +121,7 @@ void main()
 	vec3 Ntex2 = texture2D(u_NormalMap, texDiffuse).xyz * 2.0 - 1.0; // tcMod moving bumpmap
 	Ntex += Ntex2; // add the waves. interference will cause the final wave's amplitude to vary
 #endif
-	// transform normal from tangentspace to worldspace
 	vec3 N = normalize(var_tangentMatrix * Ntex); // we must normalize to get a vector of unit-length..  reflect() needs it
-
-	// the final color
-	vec4 color;
 
 	// refraction
 	vec3 T = refract(V, N, u_RefractionIndex);
@@ -128,13 +132,16 @@ void main()
 #if defined(USE_REFLECTIONS)
 	// compute fresnel term
 	// ratio reflection/refraction
-	float dotNV = max(0.0, dot(N, V));
-	float fresnel = clamp(u_FresnelBias + pow(dotNV, u_FresnelPower) * u_FresnelScale, 0.0, 1.0);
+//!	float dotNV = max(0.0, dot(N, V));
+float dotNL = max(0.0, dot(N, -L));
+//!	float fresnel = clamp(u_FresnelBias + pow(dotNV, u_FresnelPower) * u_FresnelScale, 0.0, 1.0);
+float fresnel = clamp(u_FresnelBias + pow(dotNL, u_FresnelPower) * u_FresnelScale, 0.0, 1.0);
 #if 1
 	// use the cubeProbes
 	vec3 reflectColor = computeReflections(V, N, u_EnvironmentMap0, u_EnvironmentMap1, u_EnvironmentInterpolation, u_ReflectionScale);
 #else // 1
 	// use a portalmap
+	vec3 R = reflect(V, N); // the reflection vector
 	vec3 reflectColor = textureCube(u_PortalMap, R).rgb;
 #endif // 1
 	color.rgb = mix(reflectColor, refractColor, fresnel);
@@ -149,7 +156,8 @@ void main()
 	// compute the specular term
 	// We don't use u_SpecularExponent here, but instead a constant value, because water is always +- the same.
 	// That's better than a wild value that a client could enter.
-	vec3 specular = computeSpecular(V, N, L, u_LightColor, 512.0, u_SpecularScale); // u_SpecularExponent
+//	vec3 specular = computeSpecular(V, N, L, u_LightColor, 512.0, u_SpecularScale); // u_SpecularExponent
+vec3 specular = computeSpecular(V, N, L, u_LightColor, 256.0, u_SpecularScale); // u_SpecularExponent
 
 
 #else // USE_NORMAL_MAPPING
@@ -158,20 +166,18 @@ void main()
 	// calculate the screen texcoord in the 0.0 to 1.0 range
 	vec2 texScreen = gl_FragCoord.st * r_FBufScale * r_NPOTScale;
 
-	vec4 color;
 	color.rgb = texture2D(u_CurrentMap, texScreen).rgb;
 
 #endif // USE_NORMAL_MAPPING
 
-
-	color.a = 1.0; // do not blend (it would blend the currentMap with the water-surface, and you'd see things double (refracted and currentmap)
 
 
 	// blend a diffuse texture?
 #if defined(USE_DIFFUSE)
 	// compute the diffuse term
 	vec4 diffuse = texture2D(u_DiffuseMap, texDiffuse);
-	color = mix(diffuse, color, var_alphaGen);
+	color.rgb = mix(color.rgb, diffuse.rgb, var_alphaGen);
+//color += diffuse;
 #endif // USE_DIFFUSE
 
 
@@ -203,6 +209,8 @@ void main()
 #if defined(USE_NORMAL_MAPPING)
 	color.rgb += specular; // liquids need no specularmap. Liquids have the specular term calculated from any provided normalmap
 #endif // USE_NORMAL_MAPPING
+
+	color.a = 1.0; // do not blend (it would blend the currentMap with the water-surface, and you'd see things double (refracted and currentmap)
 
 	gl_FragColor = color;
 }

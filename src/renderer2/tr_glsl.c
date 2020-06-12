@@ -796,7 +796,6 @@ static unsigned int GLSL_GetRequiredVertexAttributes(int compilemacro)
 		break;
 	case USE_VERTEX_ANIMATION:
 		attr = ATTR_NORMAL | ATTR_POSITION2 | ATTR_NORMAL2;
-
 		if (r_normalMapping->integer)
 		{
 			attr |= ATTR_TANGENT2 | ATTR_BINORMAL2;
@@ -818,6 +817,7 @@ static unsigned int GLSL_GetRequiredVertexAttributes(int compilemacro)
 		attr = ATTR_NORMAL;
 		break;
 	case USE_TCGEN_LIGHTMAP:
+	case USE_LIGHT_MAPPING:
 		attr = ATTR_LIGHTCOORD;
 		break;
 	default:
@@ -967,42 +967,15 @@ static void GLSL_BuildShaderExtraDef()
 	// It's always: r_FBufScale * r_NPOTScale.. so we the multiplication once (not for every pixel/fragment)
 	BUFFEXT("#ifndef r_FBufNPOTScale\n#define r_FBufNPOTScale vec2(%f, %f)\n#endif\n", fbufWidthScale * npotWidthScale, fbufHeightScale * npotHeightScale);
 
-	if (r_shadows->integer >= SHADOWING_ESM16 && glConfig2.textureFloatAvailable && glConfig2.framebufferObjectAvailable)
+	if (r_shadows->integer >= SHADOWING_EVSM32 && glConfig2.textureFloatAvailable && glConfig2.framebufferObjectAvailable)
 	{
-		if (r_shadows->integer == SHADOWING_ESM16 || r_shadows->integer == SHADOWING_ESM32)
-		{
-			BUFFEXT("#ifndef ESM\n#define ESM 1\n#endif\n");
-		}
-		else if (r_shadows->integer == SHADOWING_EVSM32)
-		{
-			BUFFEXT("#ifndef EVSM\n#define EVSM 1\n#endif\n");
+		BUFFEXT("#ifndef EVSM\n#define EVSM 1\n#endif\n");
 
-			// The exponents for the EVSM techniques should be less than ln(FLT_MAX/FILTER_SIZE)/2 {ln(FLT_MAX/1)/2 ~44.3}
-			//         42.9 is the maximum possible value for FILTER_SIZE=15
-			//         42.0 is the truncated value that we pass into the sample
-			BUFFEXT("#ifndef r_EVSMExponents\n#define r_EVSMExponents vec2(%f, %f)\n#endif\n", 42.0, 42.0);
-
-			if (r_evsmPostProcess->integer)
-			{
-				BUFFEXT("#ifndef r_EVSMPostProcess\n#define r_EVSMPostProcess 1\n#endif\n");
-			}
-		}
-		else
-		{
-			BUFFEXT("#ifndef VSM\n#define VSM 1\n#endif\n");
-
-			// FIXME: this was enabled for ati card.. Should not be needed anymore? Remove from GLSL code in that case
-			//BUFFEXT("#ifndef VSM_CLAMP\n#define VSM_CLAMP 1\n#endif\n");
-		}
-
-		if (r_shadows->integer == SHADOWING_VSM32)
-		{
-			BUFFEXT("#ifndef VSM_EPSILON\n#define VSM_EPSILON 0.000001\n#endif\n");
-		}
-		else
-		{
-			BUFFEXT("#ifndef VSM_EPSILON\n#define VSM_EPSILON 0.0001\n#endif\n");
-		}
+		// The exponents for the EVSM techniques should be less than ln(FLT_MAX/FILTER_SIZE)/2 {ln(FLT_MAX/1)/2 ~44.3}
+		//         42.9 is the maximum possible value for FILTER_SIZE=15
+		//         42.0 is the truncated value that we pass into the sample
+		BUFFEXT("#ifndef r_EVSMExponents\n#define r_EVSMExponents vec2(%f, %f)\n#endif\n", 42.0, 42.0);
+		BUFFEXT("#ifndef VSM_EPSILON\n#define VSM_EPSILON 0.0001\n#endif\n"); // was 0.0001 but that's not enough to get rid of the sawtooth shadows at the edges of some surfaces
 
 		//if (r_lightBleedReduction->value)
 		//{
@@ -1025,6 +998,7 @@ static void GLSL_BuildShaderExtraDef()
 			BUFFEXT("#ifndef r_DebugShadowMaps\n#define r_DebugShadowMaps %i\n#endif\n", r_debugShadowMaps->integer);
 		}
 
+		// this filtering doesn't appear to work: TODO
 		if (r_softShadows->integer == 1)
 		{
 			BUFFEXT("#ifndef PCSS\n#define PCSS 1\n#endif\n");
@@ -1032,12 +1006,13 @@ static void GLSL_BuildShaderExtraDef()
 		else if (r_softShadows->value)
 		{
 			BUFFEXT("#ifndef r_PCFSamples\n#define r_PCFSamples %1.1f\n#endif\n", r_softShadows->value + 1.0f);
+			// note: if you use this softshadows, you must also set r_shadowBlur to a value != 0
 		}
 
-		if (r_parallelShadowSplits->integer)
-		{
-			BUFFEXT("#ifndef r_ParallelShadowSplits_%i\n#define r_ParallelShadowSplits_%i\n#endif\n", r_parallelShadowSplits->integer, r_parallelShadowSplits->integer);
-		}
+		//if (r_parallelShadowSplits->integer)
+		//{
+		//	BUFFEXT("#ifndef r_ParallelShadowSplits_%i\n#define r_ParallelShadowSplits_%i\n#endif\n", r_parallelShadowSplits->integer, r_parallelShadowSplits->integer);
+		//}
 
 		if (r_showParallelShadowSplits->integer)
 		{
@@ -1052,11 +1027,6 @@ static void GLSL_BuildShaderExtraDef()
 		BUFFEXT("#ifndef r_HDRContrastOffset\n#define r_HDRContrastOffset %f\n#endif\n", r_hdrContrastOffset->value);
 		BUFFEXT("#ifndef r_HDRToneMappingOperator\n#define r_HDRToneMappingOperator_%i\n#endif\n", r_hdrToneMappingOperator->integer);
 		BUFFEXT("#ifndef r_HDRGamma\n#define r_HDRGamma %f\n#endif\n", r_hdrGamma->value);
-	}
-
-	if (r_precomputedLighting->integer)
-	{
-		BUFFEXT("#ifndef r_precomputedLighting\n#define r_precomputedLighting 1\n#endif\n");
 	}
 
 	if (r_heatHazeFix->integer && glConfig2.framebufferBlitAvailable)
@@ -1077,6 +1047,7 @@ static void GLSL_BuildShaderExtraDef()
 	if (r_normalMapping->integer)
 	{
 		BUFFEXT("#ifndef r_NormalMapping\n#define r_NormalMapping 1\n#endif\n");
+		//BUFFEXT("#ifndef r_bumpScale\n#define r_bumpScale %f\n#endif\n", r_bumpScale->value); //moved to uniform..
 	}
 
 	if (/* TODO: check for shader model 3 hardware  && */ r_normalMapping->integer && r_parallaxMapping->integer)
@@ -2803,11 +2774,11 @@ void GLSL_CompileGPUShaders(void)
 
 	Com_Memset(&trProg, 0, sizeof(trPrograms_t));
 
-	trProg.gl_genericShader      = GLSL_GetShaderProgram("generic");
-	trProg.gl_lightMappingShader = GLSL_GetShaderProgram("lightMapping");
+	trProg.gl_genericShader        = GLSL_GetShaderProgram("generic");
+	trProg.gl_worldShader          = GLSL_GetShaderProgram("world");
 
-	trProg.gl_vertexLightingShader_DBS_entity = GLSL_GetShaderProgram("vertexLighting_DBS_entity");
-	trProg.gl_vertexLightingShader_DBS_world  = GLSL_GetShaderProgram("vertexLighting_DBS_world");
+	trProg.gl_entityShader         = GLSL_GetShaderProgram("entity");
+//	trProg.gl_vertexLightingShader_DBS_world  = GLSL_GetShaderProgram("vertexLighting_DBS_world");
 
 	trProg.gl_forwardLightingShader_omniXYZ        = GLSL_GetShaderProgram("forwardLighting_omniXYZ");
 	trProg.gl_forwardLightingShader_projXYZ        = GLSL_GetShaderProgram("forwardLighting_projXYZ");

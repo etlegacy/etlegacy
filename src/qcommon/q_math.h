@@ -62,14 +62,24 @@
 #ifndef ETL_SSE
 #define ETL_SSE
 // ..and include the SSE intrinsics once
+#include <intrin.h>
 #include "pmmintrin.h"
 #endif
 #endif
 
 
+#ifdef ETL_SSE
+// the SSE version of strlen()
+#undef strlen
+size_t __cdecl SSE_strlen(_In_z_ char const* _Str);
+#define strlen(x) SSE_strlen(x)
+#endif
+
+
 // i don't know how to make pragma 4700 warning suppression work for inlined macros.
 // It works with normal functions (see _Vector2AM() on how to successfully disable warnings 4700)
-#pragma warning(disable:4700)
+// UPDATE: Inside a macro you need to use:     __pragma(warning(disable:4700)) \
+
 #pragma warning(disable:4010)
 
 typedef float vec_t;
@@ -1096,15 +1106,18 @@ static inline void VectorMax(const vec3_t a, const vec3_t b, vec3_t out)
 	_mm_storeh_pi((__m64 *)(&c[1]), xmm1); \
 }
 
-//!! You'll get a warning on this macro (xmm0 not initialized)
+//!! You'll get a warning 4700 on this macro (xmm0 not initialized)
 ///#define Vector2Subtract(a, b, c) _Vector2Subtract(a, b, c)
 #define Vector2Subtract(a, b, c) \
 { \
 	__m128 xmm0, xmm1; \
+__pragma(warning(push)) \
+__pragma(warning(disable:4700)) \
 	xmm0 = _mm_loadl_pi(xmm0, (const __m64 *)&a[0]); \
 	xmm1 = _mm_loadl_pi(xmm1, (const __m64 *)&b[0]); \
 	xmm0 = _mm_sub_ps(xmm0, xmm1); \
 	_mm_storel_pi((__m64 *)&c[0], xmm0); \
+__pragma(warning(pop)) \
 }
 
 ///#define Vector4Subtract(a, b, c) vec4_sub(a, b, c)
@@ -1131,9 +1144,11 @@ static inline void VectorMax(const vec3_t a, const vec3_t b, vec3_t out)
 #define Vector2AddConst(v, value, out) \
 { \
 	__m128 xmm0; \
+__pragma(warning(disable:4700)) \
 	xmm0 = _mm_loadl_pi(xmm0, (const __m64 *)v); \
 	xmm0 = _mm_add_ps(xmm0, _mm_set_ps1(value)); \
 	_mm_storel_pi((__m64 *)out, xmm0); \
+__pragma(warning(default:4700)) \
 }
 
 ///#define VectorCopy(a, b) _VectorCopy(a, b)
@@ -1150,7 +1165,9 @@ static inline void VectorMax(const vec3_t a, const vec3_t b, vec3_t out)
 #define Vector2Copy(a,b) \
 { \
 	__m128 xmm0; \
+__pragma(warning(disable:4700)) \
 	_mm_storeh_pi((__m64 *)b, _mm_loadh_pi(xmm0, (const __m64 *)a)); \
+__pragma(warning(default:4700)) \
 }
 
 ///#define Vector4Copy(a, b) vec4_copy(a, b)
@@ -1174,9 +1191,11 @@ static inline void VectorMax(const vec3_t a, const vec3_t b, vec3_t out)
 #define Vector2Scale(v, s, o) \
 { \
 	__m128 xmm0; \
+__pragma(warning(disable:4700)) \
 	xmm0 = _mm_loadl_pi(xmm0, (const __m64 *)v); \
 	xmm0 = _mm_mul_ps(xmm0, _mm_set_ps1(s)); \
 	_mm_storel_pi((__m64 *)o, xmm0); \
+__pragma(warning(default:4700)) \
 }
 
 ///#define Vector4Scale(v, s, o) vec4_scale(v, s, o)
@@ -1227,11 +1246,13 @@ static inline void VectorMax(const vec3_t a, const vec3_t b, vec3_t out)
 #define Vector2AM(v, b, s, o) \
 { \
 	__m128 xmm0, xmm1; \
+__pragma(warning(disable:4700)) \
 	xmm0 = _mm_loadl_pi(xmm0, (const __m64 *)v); \
 	xmm1 = _mm_loadl_pi(xmm1, (const __m64 *)b); \
 	xmm0 = _mm_add_ps(xmm0, xmm1); \
 	xmm0 = _mm_mul_ps(xmm0, _mm_set_ps1(s)); \
 	_mm_storel_pi((__m64 *)o, xmm0); \
+__pragma(warning(default:4700)) \
 }
 
 ///#define Vector4AM(v, b, s, o) _Vector4AM(v, b, s, o)
@@ -1863,7 +1884,6 @@ static ID_INLINE int VectorCompareEpsilon(const vec3_t v1, const vec3_t v2, floa
 // rotated the params to match the way other functions are written
 #define PerpendicularVector(out, src) vec3_per(src, out)
 
-#pragma warning(default:4700)
 #pragma warning(default:4010)
 
 #endif

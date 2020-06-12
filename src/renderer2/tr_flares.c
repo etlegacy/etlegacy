@@ -366,7 +366,7 @@ void RB_TestFlare(flare_t *f)
 
 	// read back the z buffer contents
 	glReadPixels(f->windowX, f->windowY, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
-	
+
 	screenZ = backEnd.viewParms.projectionMatrix[14] /
 	          ((2.f * depth - 1.f) * backEnd.viewParms.projectionMatrix[11] - backEnd.viewParms.projectionMatrix[10]);
 
@@ -460,7 +460,8 @@ void RB_RenderFlare(flare_t *f)
 		iColor[1] = color[1] * 255;
 		iColor[2] = color[2] * 255;
 	}
-	Tess_Begin(Tess_StageIteratorGeneric, NULL, tr.flareShader, NULL, qfalse, qfalse, LIGHTMAP_NONE, f->fogNum);
+//	Tess_Begin(Tess_StageIteratorGeneric, NULL, tr.flareShader, NULL, qfalse, qfalse, LIGHTMAP_NONE, f->fogNum);
+Tess_Begin(Tess_StageIteratorGeneric, NULL, tr.flareShader, NULL, qtrue, qfalse, LIGHTMAP_NONE, f->fogNum);
 
 	// FIXME: use quadstamp?
 	/*tess.xyz[tess.numVertexes][0]       = f->windowX - size;
@@ -591,6 +592,11 @@ void RB_RenderFlares(void)
 	}
 
 	// perform z buffer readback on each flare in this view
+
+
+//glNamedFramebufferReadBuffer(tr.deferredRenderFBO, GL_BACK);
+
+
 	draw = qfalse;
 	prev = &r_activeFlares;
 	while ((f = *prev) != NULL)
@@ -626,6 +632,9 @@ void RB_RenderFlares(void)
 
 		prev = &f->next;
 	}
+
+//glNamedFramebufferReadBuffer(0, GL_BACK);
+
 
 	if (!draw)
 	{

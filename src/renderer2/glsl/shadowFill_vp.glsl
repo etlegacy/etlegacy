@@ -29,17 +29,14 @@ uniform float u_VertexInterpolation;
 uniform float u_Time;
 #endif // USE_DEFORM_VERTEXES
 
-#if defined(VSM) || defined(EVSM) || defined(ESM)
+#if defined(EVSM)
 #if !defined(LIGHT_DIRECTIONAL)
 uniform vec3  u_LightOrigin;
 uniform float u_LightRadius;
 
 varying float var_Distance;
-#if defined(VSM)
-varying float var_DistanceSquared;
-#endif
 #endif // LIGHT_DIRECTIONAL
-#endif // VSM, EVSM, ESM
+#endif // EVSM
 
 varying vec3 var_Position;
 #if defined(USE_ALPHA_TESTING)
@@ -48,32 +45,6 @@ varying vec2 var_Tex;
 #if defined(USE_PORTAL_CLIPPING)
 varying float var_BackSide; // in front, or behind, the portalplane
 #endif // USE_PORTAL_CLIPPING
-
-#if !defined(LIGHT_DIRECTIONAL)
-#if defined(EVSM)
-#if !defined(r_EVSMPostProcess)
-varying vec4 var_FragColorEVSM;
-
-
-vec2 WarpDepth(float depth)
-{
-	// rescale depth into [-1, 1]
-	depth = 2.0 * depth - 1.0;
-	float pos = exp(r_EVSMExponents.x * depth);
-	float neg = -exp(-r_EVSMExponents.y * depth);
-
-	return vec2(pos, neg);
-}
-
-vec4 ShadowDepthToEVSM(float depth)
-{
-	vec2 warpedDepth = WarpDepth(depth);
-	return vec4(warpedDepth.xy, warpedDepth.xy * warpedDepth.xy);
-}
-#endif // r_EVSMPostProcess
-#endif // EVSM
-#endif // LIGHT_DIRECTIONAL
-
 
 
 void main()
@@ -91,15 +62,15 @@ void main()
 	                   attr_Normal,   attr_Normal2,
                        u_VertexInterpolation,
                        position,      normal);
-#else
+#else // USE_VERTEX_ANIMATION
 	position = attr_Position;
 	normal   = attr_Normal;
-#endif
+#endif // USE_VERTEX_ANIMATION USE_VERTEX_SKINNING
 
 
 #if defined(USE_DEFORM_VERTEXES)
 	position = DeformPosition2(position, normal, attr_TexCoord0.st, u_Time);
-#endif
+#endif // USE_DEFORM_VERTEXES
 
 
 	// transform vertex position into homogenous clip-space
@@ -108,24 +79,10 @@ void main()
 	// transform position into world space
 #if defined(LIGHT_DIRECTIONAL)
 	var_Position = gl_Position.xyz / gl_Position.w;
-#else
+#else // LIGHT_DIRECTIONAL
 	var_Position = (u_ModelMatrix * position).xyz;
-#endif
-
-#if defined(VSM) || defined(EVSM) || defined(ESM)
-#if !defined(LIGHT_DIRECTIONAL)
-	var_Distance = length(var_Position - u_LightOrigin) / u_LightRadius;
-#if defined(VSM)
-	var_DistanceSquared = var_Distance * var_Distance;
-#endif
-#endif // LIGHT_DIRECTIONAL
-#endif // VSM, EVSM, ESM
-
-#if !defined(LIGHT_DIRECTIONAL)
 #if defined(EVSM)
-#if !defined(r_EVSMPostProcess)
-	var_FragColorEVSM = ShadowDepthToEVSM(var_Distance);
-#endif // r_EVSMPostProcess
+	var_Distance = length(var_Position - u_LightOrigin) / u_LightRadius;
 #endif // EVSM
 #endif // LIGHT_DIRECTIONAL
 

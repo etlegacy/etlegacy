@@ -547,6 +547,7 @@ void R_CalcTBN2(vec3_t tangent, vec3_t binormal, vec3_t normal,
  * @param[in,out] dv
  * @return
  */
+#pragma warning(disable:4700)
 qboolean R_CalcTangentVectors(srfVert_t *dv[3])
 {
 	int    i;
@@ -633,6 +634,7 @@ qboolean R_CalcTangentVectors(srfVert_t *dv[3])
 	}
 
 	return qtrue;
+#pragma warning(default:4700)
 }
 
 /**
@@ -1719,32 +1721,24 @@ static void R_SetupUnprojection(void)
 static void R_SetupFrustum(void)
 {
 	int    i;
-	float  xs, xc;
-	float  ang = DEG2RAD(tr.viewParms.fovX) * 0.5f;
 	vec3_t planeOrigin;
+	float  xs, xc;
+	float  ang = DEG2RAD(tr.viewParms.fovX * 0.5f);
 
-	//xs = sin(ang);
-	//xc = cos(ang);
 	SinCos(ang, xs, xc);
+	VectorScale(tr.viewParms.orientation.axis[0], xs, tr.viewParms.frustums[0][FRUSTUM_LEFT].normal);
+	VectorMA(tr.viewParms.frustums[0][FRUSTUM_LEFT].normal, xc, tr.viewParms.orientation.axis[1], tr.viewParms.frustums[0][FRUSTUM_LEFT].normal);
+	VectorScale(tr.viewParms.orientation.axis[0], xs, tr.viewParms.frustums[0][FRUSTUM_RIGHT].normal);
+	VectorMA(tr.viewParms.frustums[0][FRUSTUM_RIGHT].normal, -xc, tr.viewParms.orientation.axis[1], tr.viewParms.frustums[0][FRUSTUM_RIGHT].normal);
 
-	VectorScale(tr.viewParms.orientation.axis[0], xs, tr.viewParms.frustums[0][0].normal);
-	VectorMA(tr.viewParms.frustums[0][0].normal, xc, tr.viewParms.orientation.axis[1], tr.viewParms.frustums[0][0].normal);
-
-	VectorScale(tr.viewParms.orientation.axis[0], xs, tr.viewParms.frustums[0][1].normal);
-	VectorMA(tr.viewParms.frustums[0][1].normal, -xc, tr.viewParms.orientation.axis[1], tr.viewParms.frustums[0][1].normal);
-
-	ang = DEG2RAD(tr.viewParms.fovY) * 0.5f;
-	//xs  = sin(ang);
-	//xc  = cos(ang);
+	ang = DEG2RAD(tr.viewParms.fovY * 0.5f);
 	SinCos(ang, xs, xc);
+	VectorScale(tr.viewParms.orientation.axis[0], xs, tr.viewParms.frustums[0][FRUSTUM_BOTTOM].normal);
+	VectorMA(tr.viewParms.frustums[0][FRUSTUM_BOTTOM].normal, xc, tr.viewParms.orientation.axis[2], tr.viewParms.frustums[0][FRUSTUM_BOTTOM].normal);
+	VectorScale(tr.viewParms.orientation.axis[0], xs, tr.viewParms.frustums[0][FRUSTUM_TOP].normal);
+	VectorMA(tr.viewParms.frustums[0][FRUSTUM_TOP].normal, -xc, tr.viewParms.orientation.axis[2], tr.viewParms.frustums[0][FRUSTUM_TOP].normal);
 
-	VectorScale(tr.viewParms.orientation.axis[0], xs, tr.viewParms.frustums[0][2].normal);
-	VectorMA(tr.viewParms.frustums[0][2].normal, xc, tr.viewParms.orientation.axis[2], tr.viewParms.frustums[0][2].normal);
-
-	VectorScale(tr.viewParms.orientation.axis[0], xs, tr.viewParms.frustums[0][3].normal);
-	VectorMA(tr.viewParms.frustums[0][3].normal, -xc, tr.viewParms.orientation.axis[2], tr.viewParms.frustums[0][3].normal);
-
-	for (i = 0; i < 4; i++)
+	for (i = FRUSTUM_LEFT; i < FRUSTUM_NEAR; i++)
 	{
 		tr.viewParms.frustums[0][i].type = PLANE_NON_AXIAL;
 		//tr.viewParms.frustums[0][i].dist = DotProduct(tr.viewParms.orientation.origin, tr.viewParms.frustums[0][i].normal);
@@ -1755,7 +1749,6 @@ static void R_SetupFrustum(void)
 	// set extra near plane which is required by the dynamic occlusion culling
 	tr.viewParms.frustums[0][FRUSTUM_NEAR].type = PLANE_NON_AXIAL;
 	VectorCopy(tr.viewParms.orientation.axis[0], tr.viewParms.frustums[0][FRUSTUM_NEAR].normal);
-
 	VectorMA(tr.viewParms.orientation.origin, r_zNear->value, tr.viewParms.frustums[0][FRUSTUM_NEAR].normal, planeOrigin);
 	//tr.viewParms.frustums[0][FRUSTUM_NEAR].dist = DotProduct(planeOrigin, tr.viewParms.frustums[0][FRUSTUM_NEAR].normal);
 	Dot(planeOrigin, tr.viewParms.frustums[0][FRUSTUM_NEAR].normal, tr.viewParms.frustums[0][FRUSTUM_NEAR].dist);
@@ -1873,10 +1866,13 @@ __inline void CopyPlane(const cplane_t *in, cplane_t *out)
 static void R_SetupSplitFrustums(void)
 {
 	int    i, i1; // , j;
-	float  lambda = r_parallelShadowSplitWeight->value;
-	float  ratio  = tr.viewParms.zFar / tr.viewParms.zNear;
+//!	float  lambda = r_parallelShadowSplitWeight->value;
+//!	float  ratio  = tr.viewParms.zFar / tr.viewParms.zNear;
 	vec3_t planeOrigin;
 	float  zNear, zFar;
+	// use fixed distances for the splits.
+	// these values produce the least visible blockyness per shadowfrustum. maybe little fine-tuning required only..
+	float  si[MAX_SHADOWMAPS+1] = {tr.viewParms.zNear, 384.f, 768.f, 1152.f, 8192.f, tr.viewParms.zFar};
 
 	/*for (j = 0; j < 5; j++)
 	{
@@ -1884,13 +1880,14 @@ static void R_SetupSplitFrustums(void)
 	}*/
 	Com_Memcpy(&tr.viewParms.frustums[1], &tr.viewParms.frustums[0], 5 * sizeof(frustum_t));
 
-	for (i = 1, i1 = 2; i <= (r_parallelShadowSplits->integer + 1); i++, i1++)
+	zNear = tr.viewParms.zNear;
+	zFar = zNear; // soon to be increased..
+	for (i = 1, i1 = 2; i <= MAX_SHADOWMAPS; i++, i1++)
 	{
-		float si = i / (float)(r_parallelShadowSplits->integer + 1);
-
-		zFar = 1.005f * lambda * (tr.viewParms.zNear * powf(ratio, si)) + (1.f - lambda) * (tr.viewParms.zNear + (tr.viewParms.zFar - tr.viewParms.zNear) * si);
-
-		if (i <= r_parallelShadowSplits->integer)
+//!		float si = i / (float)(MAX_SHADOWMAPS);
+//!		zFar = 1.005f * lambda * (tr.viewParms.zNear * powf(ratio, si)) + (1.f - lambda) * (tr.viewParms.zNear + (tr.viewParms.zFar - tr.viewParms.zNear) * si);
+		zFar += si[i];
+		if (i <= MAX_SHADOWMAPS)
 		{
 			tr.viewParms.parallelSplitDistances[i - 1] = zFar;
 		}
@@ -1903,9 +1900,10 @@ static void R_SetupSplitFrustums(void)
 		Dot(planeOrigin, tr.viewParms.frustums[i][FRUSTUM_FAR].normal, tr.viewParms.frustums[i][FRUSTUM_FAR].dist);
 		SetPlaneSignbits(&tr.viewParms.frustums[i][FRUSTUM_FAR]);
 
-		if (i <= (r_parallelShadowSplits->integer))
+		if (i <= MAX_SHADOWMAPS)
 		{
-			zNear = zFar - (zFar * 0.005f);
+//!			zNear = zFar - (zFar * 0.005f);
+
 			tr.viewParms.frustums[i1][FRUSTUM_NEAR].type = PLANE_NON_AXIAL;
 			VectorCopy(tr.viewParms.orientation.axis[0], tr.viewParms.frustums[i1][FRUSTUM_NEAR].normal);
 
@@ -1914,6 +1912,7 @@ static void R_SetupSplitFrustums(void)
 			Dot(planeOrigin, tr.viewParms.frustums[i1][FRUSTUM_NEAR].normal, tr.viewParms.frustums[i1][FRUSTUM_NEAR].dist);
 			SetPlaneSignbits(&tr.viewParms.frustums[i1][FRUSTUM_NEAR]);
 		}
+		zNear = zFar;
 
 		/*for (j = 0; j < 4; j++)
 		{
@@ -2768,13 +2767,13 @@ void R_AddEntitySurfaces(void)
 					break;
 				default:
 					Ren_Drop("R_AddEntitySurfaces: Bad modeltype");
-					//break;
+					break;
 				}
 			}
 			break;
 		default:
 			Ren_Drop("R_AddEntitySurfaces: Bad reType");
-			//break;
+			break;
 		}
 	}
 }
@@ -2920,7 +2919,6 @@ void R_AddLightInteractions()
 
 		if (light->isStatic)
 		{
-			//if (!r_staticLight->integer || ((r_precomputedLighting->integer || r_vertexLighting->integer) && light->noRadiosity))
 			if (!r_staticLight->integer || light->noRadiosity)
 			{
 				light->cull = CULL_OUT;
@@ -3151,7 +3149,7 @@ void R_AddLightBoundsToVisBounds()
 		{
 			if (light->isStatic)
 			{
-				if (!r_staticLight->integer || ((r_precomputedLighting->integer || r_vertexLighting->integer) && light->noRadiosity))
+				if (!r_staticLight->integer || light->noRadiosity)
 				{
 					light->cull = CULL_OUT;
 					continue;
@@ -3564,7 +3562,10 @@ void R_RenderView(viewParms_t *parms)
 	R_SetupFrustum2(tr.viewParms.frustums[0], mvp);
 
 	// for parallel split shadow mapping
-	R_SetupSplitFrustums();
+	if (r_staticLight->integer)
+	{
+		R_SetupSplitFrustums();
+	}
 
 	//R_AddWorldSurfaces();
 
@@ -3582,4 +3583,102 @@ void R_RenderView(viewParms_t *parms)
 
 	// draw main system development information (surface outlines, etc)
 	R_DebugGraphics();
+}
+
+
+/**
+ * @brief A simpler view may be either the actual camera view,
+ * or a mirror / remote location
+ * @param[in] parms
+ * This renders no fog, no light, no shadows, no decals
+ */
+void R_RenderSimpleView(viewParms_t *parms)
+{
+	int    firstDrawSurf;
+	int    firstInteraction;
+	mat4_t mvp;
+
+	if (parms->viewportWidth <= 0 || parms->viewportHeight <= 0)
+	{
+		return;
+	}
+
+	tr.viewCount++;
+	tr.viewCountNoReset++;
+
+	if (tr.viewCount >= MAX_VIEWS)
+	{
+		Ren_Print("MAX_VIEWS (%i) hit. Don't add more mirrors or portals. Skipping view ...\n", MAX_VIEWS);
+		return;
+	}
+
+	tr.viewParms               = *parms;
+	tr.viewParms.frameSceneNum = tr.frameSceneNum;
+	tr.viewParms.frameCount    = tr.frameCount;
+	tr.viewParms.viewCount     = tr.viewCount; // % MAX_VIEWS;
+
+	firstDrawSurf    = tr.refdef.numDrawSurfs;
+	firstInteraction = tr.refdef.numInteractions;
+
+	// set viewParms.world
+	R_RotateForViewer();
+
+	// set the projection matrix with the far clip plane set at infinity
+	// this required for the CHC++ algorithm
+	R_SetupProjection(qtrue);
+
+	R_SetupFrustum();
+
+	// RB: cull decal projects before calling R_AddWorldSurfaces
+	// because it requires the decalBits
+//	R_CullDecalProjectors();
+
+	R_AddWorldSurfaces();
+
+	R_AddPolygonSurfaces();
+
+	R_AddPolygonBufferSurfaces();
+
+	// we have tr.viewParms.visBounds set and now we need to add the light bounds
+	// or we get wrong occlusion query results
+//	R_AddLightBoundsToVisBounds();
+
+	// set the projection matrix now that we have the world bounded
+	// this needs to be done before entities are
+	// added, because they use the projection
+	// matrix for lod calculation
+	R_SetupProjection(qfalse);
+
+	// This will handle any transition from one fog to another fog.
+// 	R_SetFrameFog();
+
+	R_SetupUnprojection();
+
+	// set camera frustum planes in world space again, but this time including the far plane
+	tr.orientation = tr.viewParms.world;
+	Matrix4Multiply(tr.viewParms.projectionMatrix, tr.orientation.modelViewMatrix, mvp);
+	R_SetupFrustum2(tr.viewParms.frustums[0], mvp);
+
+//	// for parallel split shadow mapping
+//	if (r_staticLight->integer)
+//	{
+//		R_SetupSplitFrustums();
+//	}
+
+	//R_AddWorldSurfaces();
+
+	R_AddEntitySurfaces();
+
+//	R_AddLightInteractions();
+
+	tr.viewParms.drawSurfs    = tr.refdef.drawSurfs + firstDrawSurf;
+	tr.viewParms.numDrawSurfs = tr.refdef.numDrawSurfs - firstDrawSurf;
+
+//	tr.viewParms.interactions    = tr.refdef.interactions + firstInteraction;
+//	tr.viewParms.numInteractions = tr.refdef.numInteractions - firstInteraction;
+
+	R_SortDrawSurfs();
+
+	// draw main system development information (surface outlines, etc)
+//	R_DebugGraphics();
 }
