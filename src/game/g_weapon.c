@@ -2184,8 +2184,8 @@ weapengineergoto3:
 							Bot_AddDynamiteGoal(traceEnt, traceEnt->s.teamNum, va("%s_%i", Goalname, hit->numPlanted));
 #endif
 
-							if ((!(hit->parent->spawnflags & OBJECTIVE_DESTROYED)) &&
-							    hit->s.teamNum && (hit->s.teamNum == ent->client->sess.sessionTeam))              // ==, as it's inverse
+							if (!(hit->parent->spawnflags & OBJECTIVE_DESTROYED) &&
+							    hit->s.teamNum && hit->s.teamNum != ent->client->sess.sessionTeam)
 							{
 								if (traceEnt->parent && traceEnt->parent->client)
 								{
