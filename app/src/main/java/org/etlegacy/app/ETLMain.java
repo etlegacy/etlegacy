@@ -116,6 +116,8 @@ public class ETLMain extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        String etl_pak = "legacy_v2.76.pk3";
+
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         ImageView imageView = new ImageView(this);
@@ -131,13 +133,13 @@ public class ETLMain extends Activity {
         etl_Layout.addView(imageView, etl_Params);
         setContentView(etl_Layout);
 
-        final File etl_etlegacy = new File(getExternalFilesDir(null), "etlegacy/legacy/legacy_v2.76.pk3");
+        final File etl_etlegacy = new File(getExternalFilesDir(null), "etlegacy/legacy/".concat(etl_pak));
 
         if (!etl_etlegacy.exists()) {
             AssetManager assManager = getApplicationContext().getAssets();
             InputStream is = null;
             try {
-                is = assManager.open("legacy_v2.76.pk3");
+                is = assManager.open(etl_pak);
             } catch (IOException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
