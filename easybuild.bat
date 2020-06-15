@@ -152,7 +152,7 @@ GOTO:EOF
 	CD !build_dir!
 	CALL:CLEANPATH "!game_basepath!\%modname%\" "*.pk3 *.dll *.dat"
 	CALL:CLEANPATH "!game_homepath!\%modname%\" "*.pk3 *.dll *.dat"
-	CALL:COPYFROMPATH "%cd%\" "et*.exe renderer_opengl*.dll SDL2.dll" "!game_basepath!\"
+	CALL:COPYFROMPATH "%cd%\" "et*.exe renderer_opengl*.dll" "!game_basepath!\"
 	CALL:COPYFROMPATH "%cd%\legacy\" "*.pk3 qagame*.dll *.dat" "!game_basepath!\%modname%\"
 	CD !batloc!
 	CALL:COPYFROMPATH "%cd%\misc\etmain\" "*" "!game_basepath!\etmain\"
