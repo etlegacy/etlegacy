@@ -1,7 +1,7 @@
 /*
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
- * Copyright (C) 2012 Stephen Larroque <lrq3000@gmail.com>
+ * Copyright (C) 2012-2017 Stephen Larroque <lrq3000@gmail.com>
  *
  * ET: Legacy
  * Copyright (C) 2012-2018 ET:Legacy team <mail@etlegacy.com>
@@ -848,8 +848,8 @@ void SV_DemoAutoDemoRecord(void)
 	           MAX_QPATH);
 
 	// print a message
-	Com_Printf("DEMO: recording a server-side demo to: %s/svdemos/%s.%s%d\n", strlen(Cvar_VariableString("fs_game")) ? Cvar_VariableString("fs_game") : BASEGAME, demoname, SVDEMOEXT, PROTOCOL_VERSION);
-
+	Com_Printf("DEMO: automatic recording server-side demo to: %s/svdemos/%s.%s%d\n", strlen(Cvar_VariableString("fs_game")) ? Cvar_VariableString("fs_game") : BASEGAME, demoname, SVDEMOEXT, PROTOCOL_VERSION);
+	SV_SendServerCommand( NULL, "chat \"^3DEMO: automatic recording server-side demo to: %s.%s%d.\"", demoname, SVDEMOEXT, PROTOCOL_VERSION );
 	// launch the demo recording
 	Cbuf_AddText(va("demo_record %s\n", demoname));
 }
@@ -1244,9 +1244,9 @@ static void SV_DemoStartPlayback(void)
 	}
 
 	// Start reading the first frame
-	Com_Printf("Playing demo %s.\n", sv.demoName); // log that the demo is started here
-	SV_SendServerCommand(NULL, "chat \"^3Demo replay started!\"");   // send a message to player
-	SV_SendServerCommand(NULL, "cp \"^3Demo replay started!\"");   // send a centerprint message to player
+	Com_Printf("Playing server-side demo %s.\n", sv.demoName); // log that the demo is started here
+	SV_SendServerCommand(NULL, "chat \"^3DEMO: Server-side demo replay started!\"");   // send a message to player
+	SV_SendServerCommand(NULL, "cp \"^3DEMO: Server-side demo replay started!\"");   // send a centerprint message to player
 	sv.demoState = DS_PLAYBACK; // set state to playback
 	Cvar_SetValue("sv_demoState", DS_PLAYBACK);
 	keepSaved = qfalse; // Don't save values anymore: the next time we stop playback, we will restore previous values (because now we are really launching the playback, so anything that might happen now is either a big bug or the end of demo, in any case we want to restore the values)
@@ -1332,10 +1332,14 @@ static void SV_DemoStartRecord(void)
 	// Write entities and players
 	Com_Memset(sv.demoEntities, 0, sizeof(sv.demoEntities));
 	Com_Memset(sv.demoPlayerStates, 0, sizeof(sv.demoPlayerStates));
+	// End of frame
 	SV_DemoWriteFrame();
-	Com_Printf("Recording demo %s.\n", sv.demoName);
+	// Change recording state
 	sv.demoState = DS_RECORDING;
 	Cvar_SetValue("sv_demoState", DS_RECORDING);
+	// Announce we are writing the demo
+	Com_Printf("DEMO: Recording server-side demo %s.\n", sv.demoName);
+	SV_SendServerCommand(NULL, "chat \"^3DEMO: Recording server-side demo %s.\"", sv.demoName);
 }
 
 /**
@@ -1351,10 +1355,14 @@ static void SV_DemoStopRecord(void)
 	MSG_WriteByte(&msg, demo_endDemo);
 	SV_DemoWriteMessage(&msg); // this also writes demo_EOF
 
+	// Close the file (else it won't be openable until the server is closed)
 	FS_FCloseFile(sv.demoFile);
+	// Change recording state
 	sv.demoState = DS_NONE;
 	Cvar_SetValue("sv_demoState", DS_NONE);
-	Com_Printf("Stopped recording demo %s.\n", sv.demoName);
+	// Announce
+	Com_Printf("DEMO: Stopped recording server-side demo %s.\n", sv.demoName);
+	SV_SendServerCommand(NULL, "chat \"^3DEMO: Stopped recording server-side demo %s.\"", sv.demoName);
 }
 
 /***********************************************

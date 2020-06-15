@@ -735,6 +735,8 @@ static void SV_InitGameVM(qboolean restart)
 	// start recording a demo
 	if (sv_autoDemo->integer)
 	{
+		// stop any demos
+		SV_DemoStopAll();
 		SV_DemoAutoDemoRecord();
 	}
 }
