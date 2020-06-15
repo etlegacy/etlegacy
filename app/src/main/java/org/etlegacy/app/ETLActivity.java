@@ -45,8 +45,6 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
      */
     public void runUI() {
 
-        // NOTE: This implementation needs to be tested. Looks heavy on UI Thread
-
         final RelativeLayout etl_linearLayout =  new RelativeLayout(this);
         mLayout.addView(etl_linearLayout);
 
