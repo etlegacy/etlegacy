@@ -29,14 +29,13 @@ before_script:
   - echo "24333f8a63b6825ea9c5514f83c2829b004d1fee" > "$ANDROID_HOME/licenses/android-sdk-license"
 before_install:
   - echo y | sdkmanager "cmake;3.10.2.4988404"
-  - echo y | sdkmanager "system-images;android-28;google_ndk;x86"
-script:
-  - ./gradlew assembleDebugAndroidTest
-after_script:
   # Emulator Management: Create, Start and Wait
   - echo no | android create avd --force -n test -t android-25 --abi google_apis/arm64-v8a
-  - emulator -avd test -no-skin -no-audio -no-window &
+  - emulator -avd test -no-audio -no-window &
   - android-wait-for-emulator
   - adb shell input keyevent 82 &
+script:
+  - ./gradlew assembleDebug
+after_script:
   # now run the tests
   - ./gradlew connectedAndroidTest
