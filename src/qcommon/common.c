@@ -3059,7 +3059,7 @@ void Com_Init(char *commandLine)
 		// Don't play intro movie if already played
 		if (!com_introPlayed->integer)
 		{
-			Cbuf_AddText("cinematic etintro.ogv\n");
+			Cbuf_AddText("cinematic etintro.roq\n");
 			Cvar_Set("com_introPlayed", "1");
 		}
 	}
