@@ -6,7 +6,6 @@ android:
   - tools
   - platform-tools
   - android-28
-  - system-images;android-28;google_ndk;x86
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
   - rm -rf $HOME/.gradle/caches/*/plugin-resolution/
@@ -21,9 +20,6 @@ licenses:
     - 'google-gdk-license-.+'
 before_script:
   - sudo chmod +x gradlew
-  #- wget https://dl.google.com/android/repository/android-ndk-r16b-linux-x86_64.zip
-  #- unzip android-ndk-r16b-linux-x86_64.zip -d $HOME
-  #- export ANDROID_NDK_HOME=$HOME/android-ndk-r16b
   - git clone https://github.com/rafal1137/NDK_ETL.git
   - mv NDK_ETL $HOME
   - export ANDROID_NDK_HOME=$HOME/NDK_ETL/ndk-bundle
@@ -31,7 +27,7 @@ before_script:
   - echo "24333f8a63b6825ea9c5514f83c2829b004d1fee" > "$ANDROID_HOME/licenses/android-sdk-license"
 before_install:
   - echo y | sdkmanager "cmake;3.10.2.4988404"
-#  - echo y | sdkmanager "system-images;android-28;google_ndk;x86"
+  - sdkmanager --install "system-images;android-28;google_ndk;x86"
 script:
   - ./gradlew assembleDebugAndroidTest
 after_script:
