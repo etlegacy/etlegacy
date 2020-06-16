@@ -6,7 +6,6 @@ android:
   - tools
   - platform-tools
   - android-26
-  - system-images;android-28;google_ndk;x86
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
   - rm -rf $HOME/.gradle/caches/*/plugin-resolution/
@@ -31,6 +30,7 @@ before_script:
   - echo "24333f8a63b6825ea9c5514f83c2829b004d1fee" > "$ANDROID_HOME/licenses/android-sdk-license"
 before_install:
   - echo y | sdkmanager "cmake;3.10.2.4988404"
+  - echo y | sdkmanager "system-images;android-28;google_ndk;x86"
 script:
   - ./gradlew assembleDebugAndroidTest
 after_script:
