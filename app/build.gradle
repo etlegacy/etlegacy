@@ -29,6 +29,7 @@ android {
             // libraries Gradle should build and package with your APK.
             abiFilters 'armeabi-v7a', 'arm64-v8a'
         }
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
@@ -70,5 +71,10 @@ dependencies {
     api 'com.github.erz05:JoyStick:1.1.0'
     implementation 'com.loopj.android:android-async-http:1.4.10'
     implementation 'com.google.guava:guava:29.0-android'
+
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'com.jayway.android.robotium:robotium-solo:5.6.0'
+    androidTestImplementation 'com.android.support.test:runner:0.3'
+
     implementation fileTree(include: ['*.jar'], dir: 'libs')
 }
