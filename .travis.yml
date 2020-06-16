@@ -32,10 +32,10 @@ before_install:
   - echo y | sdkmanager "cmake;3.10.2.4988404"
   - echo y | sdkmanager "system-images;android-28;google_ndk;x86"
 script:
-  - ./gradlew assembleDebug
+  - ./gradlew assembleDebugAndroidTest
 after_script:
   # Emulator Management: Create, Start and Wait
-  - android list targets
+  - sdkmanager --list
   - echo no | android create avd --force -n test -t android-28
   - emulator -avd test -no-skin -no-audio -no-window &
   - android-wait-for-emulator
