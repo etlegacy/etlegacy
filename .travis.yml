@@ -8,6 +8,8 @@ android:
   - tools
   - android-25
   - sys-img-arm64-v8a-google_apis-25
+  services:
+  - xvfb
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
   - rm -rf $HOME/.gradle/caches/*/plugin-resolution/
@@ -27,6 +29,11 @@ before_script:
   - export ANDROID_NDK_HOME=$HOME/NDK_ETL/ndk-bundle
   - chmod -R 775 $HOME/NDK_ETL/ndk-bundle
   - echo "24333f8a63b6825ea9c5514f83c2829b004d1fee" > "$ANDROID_HOME/licenses/android-sdk-license"
+  # Run xvfb
+  - "export DISPLAY=:99.0"
+  - "sh -e /etc/init.d/xvfb start"
+  - sleep 3 # give xvfb some time to start
+
 before_install:
   - echo y | sdkmanager "cmake;3.10.2.4988404"
   # Emulator Management: Create, Start and Wait
