@@ -82,7 +82,7 @@ int CG_CurLayerForZ(int z)
  * @param[in] scissor
  * @return
  */
-static qboolean CG_ScissorEntIsCulled(mapEntityData_t *mEnt, mapScissor_t *scissor)
+static qboolean CG_ScissorEntIsCulled(mapEntityData_t *mEnt, mapScissor_t *scissor, float size)
 {
 	if (!scissor->circular)
 	{
@@ -103,7 +103,7 @@ static qboolean CG_ScissorEntIsCulled(mapEntityData_t *mEnt, mapScissor_t *sciss
 		distVec[1]  = mEnt->automapTransformed[1] - (scissor->tl[1] + (0.5f * (scissor->br[1] - scissor->tl[1])));
 		distSquared = distVec[0] * distVec[0] + distVec[1] * distVec[1];
 
-		if (distSquared > Square(0.5f * (scissor->br[0] - scissor->tl[0])))
+		if (distSquared > Square(0.5f * (scissor->br[0] - scissor->tl[0])) + Square(size * 2.0f))
 		{
 			return qtrue;
 		}
@@ -118,7 +118,7 @@ static qboolean CG_ScissorEntIsCulled(mapEntityData_t *mEnt, mapScissor_t *sciss
  * @param[in] scissor
  * @return
  */
-static qboolean CG_ScissorPointIsCulled(vec2_t vec, mapScissor_t *scissor)
+static qboolean CG_ScissorPointIsCulled(vec2_t vec, mapScissor_t *scissor, float size)
 {
 	if (!scissor->circular)
 	{
@@ -139,7 +139,7 @@ static qboolean CG_ScissorPointIsCulled(vec2_t vec, mapScissor_t *scissor)
 		distVec[1]  = vec[1] - (scissor->tl[1] + (0.5f * (scissor->br[1] - scissor->tl[1])));
 		distSquared = distVec[0] * distVec[0] + distVec[1] * distVec[1];
 
-		if (distSquared > Square(0.5f * (scissor->br[0] - scissor->tl[0])))
+		if (distSquared > Square(0.5f * (scissor->br[0] - scissor->tl[0])) + Square(size * 2.0f))
 		{
 			return qtrue;
 		}
@@ -627,7 +627,7 @@ void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, float h,
 		}
 
 		// now check to see if the entity is within our clip region
-		if (scissor && CG_ScissorEntIsCulled(mEnt, scissor))
+		if (scissor && CG_ScissorEntIsCulled(mEnt, scissor, icon_extends[0]))
 		{
 			return;
 		}
@@ -839,7 +839,7 @@ void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, float h,
 		}
 
 		// now check to see if the entity is within our clip region
-		if (scissor && CG_ScissorEntIsCulled(mEnt, scissor))
+		if (scissor && CG_ScissorEntIsCulled(mEnt, scissor, icon_extends[0]))
 		{
 			return;
 		}
@@ -1067,7 +1067,7 @@ void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, float h,
 		}
 
 		// now check to see if the entity is within our clip region
-		if (scissor && CG_ScissorEntIsCulled(mEnt, scissor))
+		if (scissor && CG_ScissorEntIsCulled(mEnt, scissor, icon_extends[0]))
 		{
 			return;
 		}
@@ -1705,19 +1705,9 @@ int CG_DrawSpawnPointInfo(float px, float py, float pw, float ph, qboolean draw,
 			point[1] = py + (((cg.spawnCoordsUntransformed[i][1] - cg.mapcoordsMins[1]) * cg.mapcoordsScale[1]) * ph);
 		}
 
-		if (scissor && CG_ScissorPointIsCulled(point, scissor))
-		{
-			continue;
-		}
-
-		if (scissor)
-		{
-			point[0] += px - scissor->tl[0];
-			point[1] += py - scissor->tl[1];
-		}
-
 		icon_extends[0] = FLAGSIZE_NORMAL;
 		icon_extends[1] = FLAGSIZE_NORMAL;
+
 		if (scissor)
 		{
 			icon_extends[0] *= (scissor->zoomFactor / AUTOMAP_ZOOM);
@@ -1727,6 +1717,17 @@ int CG_DrawSpawnPointInfo(float px, float py, float pw, float ph, qboolean draw,
 		{
 			icon_extends[0] *= cgs.ccZoomFactor;
 			icon_extends[1] *= cgs.ccZoomFactor;
+		}
+
+		if (scissor && CG_ScissorPointIsCulled(point, scissor, icon_extends[0]))
+		{
+			continue;
+		}
+
+		if (scissor)
+		{
+			point[0] += px - scissor->tl[0];
+			point[1] += py - scissor->tl[1];
 		}
 
 		point[0] -= (icon_extends[0] * (39 / 128.f));
@@ -1832,6 +1833,7 @@ int CG_DrawSpawnPointInfo(float px, float py, float pw, float ph, qboolean draw,
 void CG_DrawMortarMarker(float px, float py, float pw, float ph, qboolean draw, mapScissor_t *scissor, int expand)
 {
 	vec3_t point;
+	vec2_t icon_extends;
 	int    i, fadeTime;
 
 	if (CHECKBITWISE(GetWeaponTableData(cg.lastFiredWeapon)->type, WEAPON_TYPE_MORTAR | WEAPON_TYPE_SET) && cg.mortarImpactTime >= 0)
@@ -1856,7 +1858,7 @@ void CG_DrawMortarMarker(float px, float py, float pw, float ph, qboolean draw, 
 			}
 
 			// don't return if the marker is culled, just don't draw it
-			if (!(scissor && CG_ScissorPointIsCulled(point, scissor)))
+			if (!(scissor && CG_ScissorPointIsCulled(point, scissor, icon_extends[0])))
 			{
 				if (scissor)
 				{
@@ -1923,7 +1925,7 @@ void CG_DrawMortarMarker(float px, float py, float pw, float ph, qboolean draw, 
 			}
 
 			// don't return if the marker is culled, just skip it (so we draw the rest, if any)
-			if (scissor && CG_ScissorPointIsCulled(point, scissor))
+			if (scissor && CG_ScissorPointIsCulled(point, scissor, icon_extends[0]))
 			{
 				continue;
 			}
