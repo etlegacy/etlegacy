@@ -34,10 +34,9 @@ before_script:
 
 before_install:
   - echo y | sdkmanager "cmake;3.10.2.4988404"
-  - "/sbin/start-stop-daemon --start --quiet --pidfile /tmp/custom_xvfb_99.pid --make-pidfile --background --exec /usr/bin/Xvfb -- :99 -ac -screen 0 1280x1024x16"  
   # Emulator Management: Create, Start and Wait
   - echo no | android create avd --force -n test -t android-25 --abi google_apis/arm64-v8a
-  - emulator -avd test &
+  - emulator -avd test -no-window &
   - android-wait-for-emulator
   - adb shell input keyevent 82 &
 script:
