@@ -35,6 +35,13 @@ before_script:
   - "export DISPLAY=:99.0"
 
 before_install:
+  - export ANDROID_HOME=~/android-sdk-linux
+  - wget -q "https://dl.google.com/android/repository/sdk-tools-linux-4333796.zip" -O android-sdk-tools.zip
+  - unzip -q android-sdk-tools.zip -d ${ANDROID_HOME}
+  - rm android-sdk-tools.zip
+  - PATH=${PATH}:${ANDROID_HOME}/tools:${ANDROID_HOME}/tools/bin:${ANDROID_HOME}/platform-tools
+  - mkdir -p ~/.android
+  - touch ~/.android/repositories.cfg
   - echo y | sdkmanager "cmake;3.10.2.4988404"
   - "/sbin/start-stop-daemon --start --quiet --pidfile /tmp/custom_xvfb_99.pid --make-pidfile --background --exec /usr/bin/Xvfb -- :99 -ac -screen 0 1280x1024x16"  
   # Emulator Management: Create, Start and Wait
