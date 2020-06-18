@@ -31,8 +31,6 @@ before_script:
   - echo "24333f8a63b6825ea9c5514f83c2829b004d1fee" > "$ANDROID_HOME/licenses/android-sdk-license"
   # Run xvfb
   - "export DISPLAY=:99.0"
-  - "sh -e /etc/init.d/xvfb start"
-  - sleep 3 # give xvfb some time to start
 
 before_install:
   - echo y | sdkmanager "cmake;3.10.2.4988404"
