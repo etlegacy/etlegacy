@@ -1,4 +1,6 @@
-language: android
+dist: xenial
+os: linux
+language: generic
 jdk: oraclejdk8
 sudo: required
 android:
