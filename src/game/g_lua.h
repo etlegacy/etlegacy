@@ -21,7 +21,6 @@
 #ifndef INCLUDE_G_LUA_H
 #define INCLUDE_G_LUA_H
 
-#include "../qcommon/q_shared.h"
 #include "g_local.h"
 
 #ifdef BUNDLED_LUA

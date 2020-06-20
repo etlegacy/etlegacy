@@ -39,7 +39,6 @@
  */
 
 #include "../game/g_local.h"
-#include "../qcommon/q_shared.h"
 
 #ifdef FEATURE_OMNIBOT
 #include "g_etbot_interface.h"

@@ -33,7 +33,6 @@
  */
 
 #include "g_local.h"
-#include "../qcommon/q_shared.h"
 #include "g_mdx.h"
 
 #ifdef FEATURE_OMNIBOT

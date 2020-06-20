@@ -29,9 +29,7 @@
 */
 #ifdef FEATURE_SERVERMDX
 
-#include "../qcommon/q_shared.h"
 #include "g_local.h"
-#include "../qcommon/qfiles.h"
 
 #include "g_mdx.h"
 #include "g_mdx_lut.h"

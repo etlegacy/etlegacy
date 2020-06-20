@@ -38,7 +38,6 @@
 
 #include "g_local.h"
 #include "g_lua.h"
-#include "../qcommon/q_shared.h"
 
 #ifdef FEATURE_OMNIBOT
 #include "g_etbot_interface.h"
