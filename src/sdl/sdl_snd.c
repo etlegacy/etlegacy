@@ -164,6 +164,26 @@ static void SNDDMA_PrintAudiospec(const char *str, const SDL_AudioSpec *spec)
 }
 
 /**
+ * @brief SNDDMA_KHzToHz
+ */
+static int SNDDMA_KHzToHz(int khz)
+{
+	switch (khz)
+	{
+	case 11:
+		return 11025;
+	case 22:
+		return 22050;
+	case 44:
+		return 44100;
+	case 48:
+		return 48000;
+	default:
+		return 22050; // default vanilla
+	}
+}
+
+/**
  * @brief SND_DeviceList
  */
 static void SND_DeviceList(void)
@@ -197,10 +217,6 @@ qboolean SNDDMA_Init(void)
 
 	Cmd_AddCommand("sndlist", SND_DeviceList, "Prints a list of available sound devices.");
 
-	// before rc 2 we have had own s_sdl_ cvars to set this
-	// changed back to use genuine cvar names
-	// - it's more compatible when existing profiles are used
-	// - we don't have to touch menu & ui to make speed/khz work (uses s_khz!)
 	s_bits        = Cvar_Get("s_bits", "16", CVAR_LATCH | CVAR_ARCHIVE);
 	s_khz         = Cvar_Get("s_khz", "44", CVAR_LATCH | CVAR_ARCHIVE);
 	s_sdlChannels = Cvar_Get("s_channels", "2", CVAR_LATCH | CVAR_ARCHIVE);
@@ -241,34 +257,7 @@ qboolean SNDDMA_Init(void)
 		tmp = 16;
 	}
 
-	desired.freq = (int) s_khz->value * 1000; // desired freq expects Hz not kHz
-
-	if (!desired.freq)
-	{
-		desired.freq = 22050; // default vanilla
-	}
-
-	// dirty correction for profile values
-	if (desired.freq == 11000)
-	{
-		desired.freq = 11025;
-	}
-	else if (desired.freq == 22000)
-	{
-		desired.freq = 22050;
-	}
-	else if (desired.freq == 44000)
-	{
-		desired.freq = 44100;
-	}
-	else if (desired.freq == 48000)
-	{
-		desired.freq = 48000;
-	}
-	else
-	{
-		desired.freq = 22050; // default vanilla
-	}
+	desired.freq = SNDDMA_KHzToHz(s_khz->integer); // desired freq expects Hz not kHz
 
 	desired.format = ((tmp == 16) ? AUDIO_S16SYS : AUDIO_U8);
 
