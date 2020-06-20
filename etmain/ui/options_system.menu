@@ -108,7 +108,7 @@ menuDef {
 	SLIDER( 6+(SUBWINDOW_WIDTH_L)+6+2, AUDIO_Y+16, (SUBWINDOW_WIDTH_L)-4, 10, _("Effects Volume:"), .2, 8, "s_volume" .7 0 1, _("Set the effects volume") )
 	CVARFLOATLABEL( 6+(SUBWINDOW_WIDTH_L)+6+2, AUDIO_Y+28, (SUBWINDOW_WIDTH_L)-4, 10, "s_musicvolume", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-6), 8 )
 	SLIDER( 6+(SUBWINDOW_WIDTH_L)+6+2, AUDIO_Y+28, (SUBWINDOW_WIDTH_L)-4, 10, _("Music Volume:"), .2, 8, "s_musicvolume" .25 0 1, _("Set the music volume") )
-	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, AUDIO_Y+40, (SUBWINDOW_WIDTH_L)-4, 10, _("Sound Quality:"), .2, 8, "ui_s_khz", cvarFloatList { "11 khz (low)" 11 "22 khz (high)" 22 "44 khz (ultra high)" 44 }, _("Set the sound quality") )
+	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, AUDIO_Y+40, (SUBWINDOW_WIDTH_L)-4, 10, _("Sound Quality:"), .2, 8, "ui_s_khz", cvarFloatList { "11 khz (low)" 11 "22 khz (medium)" 22 "44 khz (high)" 44 "48 khz (ultra high)" 48 }, _("Set the sound quality") )
 	YESNO( 6+(SUBWINDOW_WIDTH_L)+6+2, AUDIO_Y+52, (SUBWINDOW_WIDTH_L)-4, 10, _("Doppler FX:"), .2, 8, "s_doppler", _("Enables or disables the doppler effect") )
 	YESNO( 6+(SUBWINDOW_WIDTH_L)+6+2, AUDIO_Y+64, (SUBWINDOW_WIDTH_L)-4, 10, _("Mute When Minimized:"), .2, 8, "s_muteWhenMinimized", _("Enables or disables sound when window is minimized") )
 	YESNO( 6+(SUBWINDOW_WIDTH_L)+6+2, AUDIO_Y+76, (SUBWINDOW_WIDTH_L)-4, 10, _("Mute When Unfocused:"), .2, 8, "s_muteWhenUnfocused", _("Enables or disables sound when window is unfocused") )
