@@ -272,7 +272,7 @@ void G_SetupFrustum(gentity_t *ent)
 // Give bots a larger view angle through binoculars than players get - this should help the
 //		landmine detection...
 #define BINOCULAR_ANGLE 13.3f     // 13.3 = 2 * atan(0.75 * tan(10.0/2) * 16/9)
-#define BOT_BINOCULAR_ANGLE 75.2f // 75.2 = 2 * atan(0.75 * tan(60.0/2) * 16/9)
+#define BOT_BINOCULAR_ANGLE 60.0f
 
 /**
  * @brief G_SetupFrustum_ForBinoculars
