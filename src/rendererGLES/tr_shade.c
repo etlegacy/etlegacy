@@ -205,7 +205,7 @@ static void DrawTris(shaderCommands_t *input)
 	 	Ren_LogComment("glLockArraysEXT\n");
 	 }
 #else
-	qglDrawArrays(GL_LINE_STRIP, 0, input->numVertexes);
+	qglDrawArrays(GL_TRIANGLES, 0, input->numVertexes);
 #endif
 
 	qglDrawElements(GL_LINE_STRIP, input->numIndexes, GL_INDEX_TYPE, input->indexes );
@@ -1388,8 +1388,6 @@ void RB_StageIteratorGeneric(void)
 	 	qglLockArraysEXT(0, input->numVertexes);
 	 	Ren_LogComment("glLockArraysEXT\n");
 	 }
-#else
-	 qglDrawArrays(GL_LINE_STRIP, 0, input->numVertexes);
 #endif
 
 	// enable color and texcoord arrays after the lock if necessary
@@ -1473,8 +1471,6 @@ void RB_StageIteratorVertexLitTexture(void)
 	 	qglLockArraysEXT(0, input->numVertexes);
 	 	Ren_LogComment("glLockArraysEXT\n");
 	 }
-#else
-	 qglDrawArrays(GL_LINE_STRIP, 0, input->numVertexes);
 #endif
 
 	// call special shade routine
@@ -1584,7 +1580,7 @@ void RB_StageIteratorLightmappedMultitexture(void)
 	 	Ren_LogComment("glLockArraysEXT\n");
 	 }
 #else
-	 qglDrawArrays(GL_LINE_STRIP, 0, input->numVertexes);
+	 qglDrawArrays(GL_POINTS, 0, input->numVertexes);
 #endif
 
 	R_DrawElements(input->numIndexes, input->indexes);
