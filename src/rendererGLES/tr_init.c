@@ -939,6 +939,7 @@ void GfxInfo_f(void)
 		primitives = r_primitives->integer;
 		if (primitives == 0)
 		{
+#ifndef __ANDROID__
 			if (&qglLockArraysEXT)
 			{
 				primitives = 2;
@@ -947,6 +948,9 @@ void GfxInfo_f(void)
 			{
 				primitives = 1;
 			}
+#else
+			primitives = 2;
+#endif
 		}
 		if (primitives == -1)
 		{
@@ -970,7 +974,9 @@ void GfxInfo_f(void)
 	Ren_Print("picmip: %d\n", r_picMip->integer);
 	Ren_Print("texture bits: %d\n", r_textureBits->integer);
 	Ren_Print("multitexture: %s\n", enablestrings[qglActiveTextureARB != 0]);
+#ifndef __ANDROID__
 	Ren_Print("compiled vertex arrays: %s\n", enablestrings[&qglLockArraysEXT != 0]);
+#endif
 	Ren_Print("texenv add: %s\n", enablestrings[glConfig.textureEnvAddAvailable != 0]);
 	Ren_Print("compressed textures: %s\n", enablestrings[glConfig.textureCompression != TC_NONE]);
 
