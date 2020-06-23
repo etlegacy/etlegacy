@@ -55,27 +55,27 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
 
         final ImageButton btn2 = new ImageButton(getApplicationContext());
         btn2.setId(2);
-        btn2.setImageBitmap(getBitmapFromAsset("btn_sht.png"));
+        btn2.setImageResource(R.drawable.ic_shoot);
         btn2.setBackgroundResource(0);
 
         final ImageButton btn_reload = new ImageButton(getApplicationContext());
-        btn_reload.setImageBitmap(getBitmapFromAsset("btn_reload.png"));
+        btn_reload.setImageResource(R.drawable.ic_reload);
         btn_reload.setBackgroundResource(0);
 
         final ImageButton btn_jump = new ImageButton(getApplicationContext());
-        btn_jump.setImageBitmap(getBitmapFromAsset("btn_jump.png"));
+        btn_jump.setImageResource(R.drawable.ic_jump);
         btn_jump.setBackgroundResource(0);
 
         final ImageButton btn_activate = new ImageButton(getApplicationContext());
-        btn_activate.setImageBitmap(getBitmapFromAsset("btn_activate.png"));
+        btn_activate.setImageResource(R.drawable.ic_use);
         btn_activate.setBackgroundResource(0);
 
         final ImageButton btn_alternative = new ImageButton(getApplicationContext());
-        btn_alternative.setImageBitmap(getBitmapFromAsset("btn_altfire.png"));
+        btn_alternative.setImageResource(R.drawable.ic_alt);
         btn_alternative.setBackgroundResource(0);
 
         final ImageButton btn_crouch = new ImageButton(getApplicationContext());
-        btn_crouch.setImageBitmap(getBitmapFromAsset("btn_crouch.png"));
+        btn_crouch.setImageResource(R.drawable.ic_crouch);
         btn_crouch.setBackgroundResource(0);
 
         final JoyStick joyStick_left = new JoyStick(getApplicationContext());
@@ -358,7 +358,7 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
         mLayout.requestFocus();
 
         btn = new ImageButton(getApplicationContext());
-        btn.setImageBitmap(getBitmapFromAsset("btn_keyboard.png"));
+        btn.setImageResource(R.drawable.ic_keyboard);
         btn.setBackgroundResource(0);
         btn.setId(1);
         btn.setOnClickListener(new View.OnClickListener() {
@@ -378,7 +378,7 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
         mLayout.addView(btn, keyboard_layout);
 
         ImageButton esc_btn = new ImageButton(getApplicationContext());
-        esc_btn.setImageBitmap(getBitmapFromAsset("btn_esc.png"));
+        esc_btn.setImageResource(R.drawable.ic_escape);
         esc_btn.setBackgroundResource(0);
         esc_btn.setOnClickListener(new View.OnClickListener() {
             @Override
