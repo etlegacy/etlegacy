@@ -3,8 +3,9 @@ package org.etlegacy.app;
 import android.content.Context;
 import android.content.res.AssetManager;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -19,12 +20,11 @@ import android.widget.RelativeLayout;
 
 import com.erz.joysticklibrary.JoyStick;
 import com.erz.joysticklibrary.JoyStick.JoyStickListener;
-import com.larvalabs.svgandroid.SVG;
-import com.larvalabs.svgandroid.SVGBuilder;
 
 import org.libsdl.app.SDLActivity;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 
 public class ETLActivity extends SDLActivity implements JoyStickListener {
@@ -50,32 +50,32 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
 
         // This needs some refactoring
         final ImageButton buttonPopUpMenu = new ImageButton(getApplicationContext());
-        //buttonPopUpMenu.setImageDrawable(getSVGFromAsset("btn_menu.png"));
+        buttonPopUpMenu.setImageBitmap(getBitmapFromAsset("btn_menu.png"));
         buttonPopUpMenu.setBackgroundResource(0);
 
         final ImageButton btn2 = new ImageButton(getApplicationContext());
         btn2.setId(2);
-        btn2.setImageDrawable(getSVGFromAsset("shoot.svg"));
+        btn2.setImageBitmap(getBitmapFromAsset("btn_sht.png"));
         btn2.setBackgroundResource(0);
 
         final ImageButton btn_reload = new ImageButton(getApplicationContext());
-        btn_reload.setImageDrawable(getSVGFromAsset("reload.svg"));
+        btn_reload.setImageBitmap(getBitmapFromAsset("btn_reload.png"));
         btn_reload.setBackgroundResource(0);
 
         final ImageButton btn_jump = new ImageButton(getApplicationContext());
-        btn_jump.setImageDrawable(getSVGFromAsset("jump.svg"));
+        btn_jump.setImageBitmap(getBitmapFromAsset("btn_jump.png"));
         btn_jump.setBackgroundResource(0);
 
         final ImageButton btn_activate = new ImageButton(getApplicationContext());
-        btn_activate.setImageDrawable(getSVGFromAsset("activate.svg"));
+        btn_activate.setImageBitmap(getBitmapFromAsset("btn_activate.png"));
         btn_activate.setBackgroundResource(0);
 
         final ImageButton btn_alternative = new ImageButton(getApplicationContext());
-        btn_alternative.setImageDrawable(getSVGFromAsset("alt.svg"));
+        btn_alternative.setImageBitmap(getBitmapFromAsset("btn_altfire.png"));
         btn_alternative.setBackgroundResource(0);
 
         final ImageButton btn_crouch = new ImageButton(getApplicationContext());
-        btn_crouch.setImageDrawable(getSVGFromAsset("crouch.svg"));
+        btn_crouch.setImageBitmap(getBitmapFromAsset("btn_crouch.png"));
         btn_crouch.setBackgroundResource(0);
 
         final JoyStick joyStick_left = new JoyStick(getApplicationContext());
@@ -333,21 +333,17 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
      * @param strName name of the image to get
      * @return "resized" image
      */
-    private Drawable getSVGFromAsset(String strName) {
+    private Bitmap getBitmapFromAsset(String strName) {
         AssetManager assetManager = getAssets();
-        SVG etl_svg = null;
-
-        // Load and parse a SVG
+        InputStream istr = null;
         try {
-            etl_svg = new SVGBuilder().readFromAsset(assetManager, strName).build();
+            istr = assetManager.open(strName);
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        Drawable etl_drawable = etl_svg.getDrawable();
-        etl_drawable.setBounds(0, 0, pxToDp(80), pxToDp(80));
-
-        return etl_drawable;
+        Bitmap bitmap = BitmapFactory.decodeStream(istr);
+        Bitmap resized = Bitmap.createScaledBitmap(bitmap, 80, 80, true);
+        return resized;
     }
 
     @Override
@@ -362,7 +358,7 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
         mLayout.requestFocus();
 
         btn = new ImageButton(getApplicationContext());
-        btn.setImageDrawable(getSVGFromAsset("keyboard.svg"));
+        btn.setImageBitmap(getBitmapFromAsset("btn_keyboard.png"));
         btn.setBackgroundResource(0);
         btn.setId(1);
         btn.setOnClickListener(new View.OnClickListener() {
@@ -382,7 +378,7 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
         mLayout.addView(btn, keyboard_layout);
 
         ImageButton esc_btn = new ImageButton(getApplicationContext());
-        esc_btn.setImageDrawable(getSVGFromAsset("esc.svg"));
+        esc_btn.setImageBitmap(getBitmapFromAsset("btn_esc.png"));
         esc_btn.setBackgroundResource(0);
         esc_btn.setOnClickListener(new View.OnClickListener() {
             @Override
