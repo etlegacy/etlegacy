@@ -50,7 +50,7 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
 
         // This needs some refactoring
         final ImageButton buttonPopUpMenu = new ImageButton(getApplicationContext());
-        buttonPopUpMenu.setImageBitmap(getBitmapFromAsset("btn_menu.png"));
+        buttonPopUpMenu.setImageResource(R.drawable.ic_one_line);
         buttonPopUpMenu.setBackgroundResource(0);
 
         final ImageButton btn2 = new ImageButton(getApplicationContext());

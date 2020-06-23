@@ -121,7 +121,7 @@ public class ETLMain extends Activity {
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         ImageView imageView = new ImageView(this);
-        imageView.setBackground(getSplashScreenFromAsset("etl_splashscreen.png"));
+        imageView.setBackgroundResource(R.drawable.ic_horizontal_black);
 
         LinearLayout etl_Layout = new LinearLayout(this);
 
