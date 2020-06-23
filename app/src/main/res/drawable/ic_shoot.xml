@@ -1,0 +1,19 @@
+<vector android:height="50dp" android:viewportHeight="270.93335"
+    android:viewportWidth="270.93332" android:width="50dp" xmlns:android="http://schemas.android.com/apk/res/android">
+    <path android:fillColor="#000000"
+        android:pathData="M135.467,42.862C84.323,42.862 42.862,84.323 42.862,135.467C42.862,186.611 84.323,228.071 135.467,228.071C186.611,228.071 228.071,186.611 228.071,135.467C228.071,84.323 186.611,42.862 135.467,42.862zM128.285,53.73L142.648,53.73L142.648,63.059C177.099,66.435 204.5,93.835 207.875,128.285L217.204,128.285L217.204,142.648L207.875,142.648C204.5,177.098 177.099,204.499 142.648,207.874L142.648,217.204L128.285,217.204L128.285,207.874C93.835,204.499 66.434,177.098 63.058,142.648L53.73,142.648L53.73,128.285L63.058,128.285C66.434,93.835 93.835,66.435 128.285,63.059L128.285,53.73z"
+        android:strokeColor="#00000000" android:strokeLineCap="butt"
+        android:strokeLineJoin="miter" android:strokeWidth="10.11627197"/>
+    <path android:fillColor="#000000"
+        android:pathData="M131.309,57.32h8.315v156.293h-8.315z"
+        android:strokeColor="#00000000" android:strokeLineCap="butt"
+        android:strokeLineJoin="miter" android:strokeWidth="2.64583325"/>
+    <path android:fillColor="#000000"
+        android:pathData="M213.613,131.309l-0,8.315l-156.293,0l-0,-8.315z"
+        android:strokeColor="#00000000" android:strokeLineCap="butt"
+        android:strokeLineJoin="miter" android:strokeWidth="2.64583325"/>
+    <path android:fillColor="#000000"
+        android:pathData="m135.467,92.307c-23.541,0 -42.625,19.323 -42.625,43.159 0,23.836 19.084,43.159 42.625,43.159 23.541,0 42.625,-19.323 42.625,-43.159 0,-23.836 -19.084,-43.159 -42.625,-43.159zM135.467,101.556c18.497,0 33.491,15.182 33.491,33.911 0,18.728 -14.994,33.911 -33.491,33.911 -18.496,0 -33.491,-15.182 -33.491,-33.911 0,-18.728 14.994,-33.911 33.491,-33.911z"
+        android:strokeColor="#00000000" android:strokeLineCap="butt"
+        android:strokeLineJoin="miter" android:strokeWidth="1.23971152"/>
+</vector>
