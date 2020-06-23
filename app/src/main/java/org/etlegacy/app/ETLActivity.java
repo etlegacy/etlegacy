@@ -328,24 +328,6 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
         return (int) (px / Resources.getSystem().getDisplayMetrics().density);
     }
 
-    /**
-     * Get an image stored from Asset Dir of an App
-     * @param strName name of the image to get
-     * @return "resized" image
-     */
-    private Bitmap getBitmapFromAsset(String strName) {
-        AssetManager assetManager = getAssets();
-        InputStream istr = null;
-        try {
-            istr = assetManager.open(strName);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        Bitmap bitmap = BitmapFactory.decodeStream(istr);
-        Bitmap resized = Bitmap.createScaledBitmap(bitmap, 80, 80, true);
-        return resized;
-    }
-
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

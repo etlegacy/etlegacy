@@ -31,26 +31,6 @@ import cz.msebera.android.httpclient.Header;
 public class ETLMain extends Activity {
 
     /**
-     * Get an splash screen image from Asset Dir of an App
-     * @param strName name of the splash screen image
-     * @return image
-     */
-    private Drawable getSplashScreenFromAsset(String strName) {
-        AssetManager assetManager = getAssets();
-        InputStream istr = null;
-        try {
-            istr = assetManager.open(strName);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        // It somehow looks ugly and expensive, find a better solution
-        Bitmap bitmap = BitmapFactory.decodeStream(istr);
-        Drawable etl_drawable = new BitmapDrawable(getResources(), bitmap);
-        return etl_drawable;
-    }
-
-    /**
      * Copy InputStream to a File.
      * @param in inputstream to be saved
      * @param file location of file to save inputstream in
