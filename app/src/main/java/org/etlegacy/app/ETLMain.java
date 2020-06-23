@@ -101,14 +101,12 @@ public class ETLMain extends Activity {
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         ImageView imageView = new ImageView(this);
-        imageView.setBackgroundResource(R.drawable.ic_horizontal_black);
+        imageView.setBackgroundResource(R.drawable.ic_horizontal_white);
 
         LinearLayout etl_Layout = new LinearLayout(this);
 
-        RelativeLayout.LayoutParams etl_Params = new RelativeLayout.LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-
-        etl_Params.topMargin = pxToDp(Resources.getSystem().getDisplayMetrics().heightPixels / 2);
+        RelativeLayout.LayoutParams etl_Params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                1024);
 
         etl_Layout.addView(imageView, etl_Params);
         setContentView(etl_Layout);
