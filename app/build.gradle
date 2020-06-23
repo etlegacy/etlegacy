@@ -71,7 +71,6 @@ dependencies {
     api 'com.github.erz05:JoyStick:1.1.0'
     implementation 'com.loopj.android:android-async-http:1.4.10'
     implementation 'com.google.guava:guava:29.0-android'
-    implementation 'com.github.bigfishcat.android:svg-android:2.0.8'
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.jayway.android.robotium:robotium-solo:5.6.0'
