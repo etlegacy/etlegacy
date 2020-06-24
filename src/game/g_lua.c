@@ -3820,7 +3820,7 @@ qboolean G_LuaHook_AAGunFire(int clientNum)
 
 /*
  * G_LuaHook_SpawnEntitiesFromString
- * et_LuaSpawnEntitiesFromString()
+ * et_SpawnEntitiesFromString()
  */
 void G_LuaHook_SpawnEntitiesFromString()
 {
@@ -3836,13 +3836,13 @@ void G_LuaHook_SpawnEntitiesFromString()
 			{
 				continue;
 			}
-			if (!G_LuaGetNamedFunction(vm, "et_LuaSpawnEntitiesFromString"))
+			if (!G_LuaGetNamedFunction(vm, "et_SpawnEntitiesFromString"))
 			{
 				continue;
 			}
 
 			// Call
-			if (!G_LuaCall(vm, "et_LuaSpawnEntitiesFromString", 0, 0))
+			if (!G_LuaCall(vm, "et_SpawnEntitiesFromString", 0, 0))
 			{
 				//G_LuaStopVM(vm);
 				continue;
