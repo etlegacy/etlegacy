@@ -31,6 +31,7 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
 
     static volatile boolean UiMenu = false;
     ImageButton btn;
+    PopupMenu etl_PopMenu;
 
     /**
      * Get an uiMenu boolean variable
@@ -49,10 +50,6 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
         mLayout.addView(etl_linearLayout);
 
         // This needs some refactoring
-        final ImageButton buttonPopUpMenu = new ImageButton(getApplicationContext());
-        buttonPopUpMenu.setImageResource(R.drawable.ic_one_line);
-        buttonPopUpMenu.setBackgroundResource(0);
-
         final ImageButton btn2 = new ImageButton(getApplicationContext());
         btn2.setId(2);
         btn2.setImageResource(R.drawable.ic_shoot);
@@ -85,39 +82,9 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
             public void run() {
 
                 if (getUiMenu() == true) {
-                    buttonPopUpMenu.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            PopupMenu etl_PopMenu = new PopupMenu(getApplicationContext(), buttonPopUpMenu);
-                            etl_PopMenu.getMenu().add(0, 0, 0, "~");
-                            etl_PopMenu.getMenu().add(1, 1, 1, "F1");
-                            etl_PopMenu.getMenu().add(2, 2, 2, "F2");
-                            etl_PopMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                                @Override
-                                public boolean onMenuItemClick(MenuItem item) {
 
-                                    switch (item.getItemId()) {
-                                        case 0:
-                                            SDLActivity.onNativeKeyDown(68);
-                                            SDLActivity.onNativeKeyUp(68);
-                                        case 1:
-                                            SDLActivity.onNativeKeyDown(131);
-                                            SDLActivity.onNativeKeyUp(131);
-                                            break;
-                                        case 2:
-                                            SDLActivity.onNativeKeyDown(132);
-                                            SDLActivity.onNativeKeyUp(132);
-                                            break;
-                                    }
-                                    return false;
-                                }
-                            });
-                            etl_PopMenu.show();
-                        }
-                    });
-
-                    if (buttonPopUpMenu.getParent() == null)
-                        mLayout.addView(buttonPopUpMenu);
+                    etl_PopMenu.getMenu().add(1, 1, 1, "F1");
+                    etl_PopMenu.getMenu().add(2, 2, 2, "F2");
 
                     btn2.setOnTouchListener(new View.OnTouchListener() {
                         @Override
@@ -310,7 +277,6 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
                     handler.postDelayed(this, 2000);
                     }
                 else {
-                    mLayout.removeView(buttonPopUpMenu);
                     mLayout.removeView(joyStick_left);
                     etl_linearLayout.removeAllViews();
                     handler.postDelayed(this, 500);
@@ -338,6 +304,42 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
         super.onPostCreate(savedInstanceState);
 
         mLayout.requestFocus();
+
+        final ImageButton buttonPopUpMenu = new ImageButton(getApplicationContext());
+        buttonPopUpMenu.setImageResource(R.drawable.ic_one_line);
+        buttonPopUpMenu.setBackgroundResource(0);
+
+        buttonPopUpMenu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                etl_PopMenu = new PopupMenu(getApplicationContext(), buttonPopUpMenu);
+                etl_PopMenu.getMenu().add(0, 0, 0, "~");
+                etl_PopMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+
+                        switch (item.getItemId()) {
+                            case 0:
+                                SDLActivity.onNativeKeyDown(68);
+                                SDLActivity.onNativeKeyUp(68);
+                                break;
+                            case 1:
+                                SDLActivity.onNativeKeyDown(131);
+                                SDLActivity.onNativeKeyUp(131);
+                                break;
+                            case 2:
+                                SDLActivity.onNativeKeyDown(132);
+                                SDLActivity.onNativeKeyUp(132);
+                                break;
+                        }
+                        return false;
+                    }
+                });
+                etl_PopMenu.show();
+            }
+        });
+
+        mLayout.addView(buttonPopUpMenu);
 
         btn = new ImageButton(getApplicationContext());
         btn.setImageResource(R.drawable.ic_keyboard);
