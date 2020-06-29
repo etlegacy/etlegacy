@@ -42,6 +42,25 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
     }
 
     /**
+     * Creates/Removes Functional Keys from PopUp Menu
+     * to prevent flooding at creating multiple entries
+     */
+    protected void PopUpFunctionalKeys() {
+        etl_PopMenu.getMenu().removeItem(1);
+        etl_PopMenu.getMenu().add(1, 1, 1, "F1");
+        etl_PopMenu.getMenu().removeItem(2);
+        etl_PopMenu.getMenu().add(2, 2, 2, "F2");
+    }
+
+    /**
+     * Dirty Hack to remove Functional Keys at Disconnect
+     */
+    protected void PopUpRemoveFunctionalKeys() {
+        etl_PopMenu.getMenu().removeItem(1);
+        etl_PopMenu.getMenu().removeItem(2);
+    }
+
+    /**
      * RunUI Function
      */
     public void runUI() {
@@ -83,8 +102,7 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
 
                 if (getUiMenu() == true) {
 
-                    etl_PopMenu.getMenu().add(1, 1, 1, "F1");
-                    etl_PopMenu.getMenu().add(2, 2, 2, "F2");
+                    PopUpFunctionalKeys();
 
                     btn2.setOnTouchListener(new View.OnTouchListener() {
                         @Override
@@ -279,6 +297,7 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
                 else {
                     mLayout.removeView(joyStick_left);
                     etl_linearLayout.removeAllViews();
+                    PopUpRemoveFunctionalKeys();
                     handler.postDelayed(this, 500);
                 }
             }
@@ -318,7 +337,6 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
                 etl_PopMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
-
                         switch (item.getItemId()) {
                             case 0:
                                 SDLActivity.onNativeKeyDown(68);
