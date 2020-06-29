@@ -309,11 +309,12 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
         buttonPopUpMenu.setImageResource(R.drawable.ic_one_line);
         buttonPopUpMenu.setBackgroundResource(0);
 
+        etl_PopMenu = new PopupMenu(getApplicationContext(), buttonPopUpMenu);
+        etl_PopMenu.getMenu().add(0, 0, 0, "~");
+
         buttonPopUpMenu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                etl_PopMenu = new PopupMenu(getApplicationContext(), buttonPopUpMenu);
-                etl_PopMenu.getMenu().add(0, 0, 0, "~");
                 etl_PopMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
