@@ -324,7 +324,7 @@ if(BUILD_MOD)
 
 	if(FEATURE_LUA)
 		if(NOT BUNDLED_LUA)
-			find_package(Lua 5.3 REQUIRED)
+			find_package(Lua 5.4 REQUIRED)
 			list(APPEND MOD_LIBRARIES ${LUA_LIBRARIES})
 			include_directories(SYSTEM ${LUA_INCLUDE_DIR})
 		else() # BUNDLED_LUA
