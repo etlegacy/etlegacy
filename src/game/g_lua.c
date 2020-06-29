@@ -2891,10 +2891,6 @@ qboolean G_LuaStartVM(lua_vm_t *vm)
 		G_Printf("%s API: %smemory allocation error #1 ( %s )\n", LUA_VERSION, S_COLOR_BLUE, vm->file_name);
 		vm->err++;
 		return qfalse;
-	case LUA_ERRGCMM:
-		G_Printf("%s API: %serror while running a __gc metamethod caused by garbage collector ( %s )\n", LUA_VERSION, S_COLOR_BLUE, vm->file_name);
-		vm->err++;
-		return qfalse;
 	default:
 		G_Printf("%s API: %sunknown error %i ( %s )\n", LUA_VERSION, S_COLOR_BLUE, res, vm->file_name);
 		vm->err++;

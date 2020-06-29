@@ -2,10 +2,9 @@
  * @file g_lua.h
  * @brief ET <-> *Lua* interface header file.
  *
- * @copyright This code is taken from ETPub.
+ * @copyright This code is based on ETPub implementation.
  * All credits go to their team especially to quad and pheno!
  * http://etpub.org
- * http://shitstorm.org
  *
  * @defgroup lua_api Lua API
  * @{
