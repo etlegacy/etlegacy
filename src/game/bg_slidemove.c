@@ -110,7 +110,7 @@ qboolean PM_SlideMove(qboolean gravity)
 		VectorMA(pm->ps->origin, time_left, pm->ps->velocity, end);
 
 		// see if we can make it there
-		PM_TraceAll(&trace, pm->ps->origin, end, qtrue, qfalse);
+		PM_TraceAll(&trace, pm->ps->origin, end);
 		if (pm->debugLevel > 1)
 		{
 			Com_Printf("%i:%d %d (%f %f %f)\n",
@@ -190,7 +190,7 @@ qboolean PM_SlideMove(qboolean gravity)
 					// and trace it, to make sure we don't end up in a solid
 
 					VectorAdd(pm->ps->origin, trace.plane.normal, end);
-					PM_TraceAll(&trace, pm->ps->origin, end, qtrue, qfalse);
+					PM_TraceAll(&trace, pm->ps->origin, end);
 					VectorCopy(trace.endpos, pm->ps->origin);
 
 					if (pm->debugLevel)
@@ -315,6 +315,7 @@ qboolean PM_SlideMove(qboolean gravity)
 void PM_StepSlideMove(qboolean gravity)
 {
 	vec3_t  start_o, start_v;
+	vec3_t  down_o, down_v;
 	trace_t trace;
 	vec3_t  up, down;
 
@@ -325,12 +326,12 @@ void PM_StepSlideMove(qboolean gravity)
 	{
 		qboolean wassolid, slidesucceed;
 
-		PM_TraceAll(&trace, pm->ps->origin, pm->ps->origin, qfalse, qfalse);
+		PM_TraceAll(&trace, pm->ps->origin, pm->ps->origin);
 		wassolid = trace.allsolid;
 
 		slidesucceed = (PM_SlideMove(gravity) == 0);
 
-		PM_TraceAll(&trace, pm->ps->origin, pm->ps->origin, qfalse, qfalse);
+		PM_TraceAll(&trace, pm->ps->origin, pm->ps->origin);
 		if (trace.allsolid && !wassolid)
 		{
 			Com_Printf("%i:PM_SlideMove solidified! (%f %f %f) -> (%f %f %f)\n", c_pmove,
@@ -364,7 +365,7 @@ void PM_StepSlideMove(qboolean gravity)
 	VectorCopy(start_o, down);
 	down[2] -= STEPSIZE;
 
-	PM_TraceAll(&trace, start_o, down, qfalse, qfalse);
+	PM_TraceAll(&trace, start_o, down);
 	VectorSet(up, 0, 0, 1);
 	// never step up when you still have up velocity
 	if (pm->ps->velocity[2] > 0 && (trace.fraction == 1.0f || DotProduct(trace.plane.normal, up) < 0.7f))
@@ -373,15 +374,17 @@ void PM_StepSlideMove(qboolean gravity)
 		{
 			Com_Printf("%i:up velocity can't step\n", c_pmove);
 		}
-
 		return;
 	}
+
+	VectorCopy(pm->ps->origin, down_o);
+	VectorCopy(pm->ps->velocity, down_v);
 
 	VectorCopy(start_o, up);
 	up[2] += STEPSIZE;
 
 	// test the player position if they were a stepheight higher
-	PM_TraceAll(&trace, up, up, qfalse, qfalse);
+	PM_TraceAll(&trace, up, up);
 	if (trace.allsolid)
 	{
 		if (pm->debugLevel)
@@ -401,11 +404,36 @@ void PM_StepSlideMove(qboolean gravity)
 	VectorCopy(pm->ps->origin, down);
 	down[2] -= STEPSIZE;
 
-	PM_TraceAll(&trace, pm->ps->origin, down, qfalse, qfalse);
+	// check legs&head separately
+	if (pm->ps->eFlags & EF_PRONE)
+	{
+		PM_TraceLegs(&trace, NULL, pm->ps->origin, down, NULL, pm->ps->viewangles, pm->trace, pm->ps->clientNum, pm->tracemask);
+		if (trace.fraction < 1.0f)
+		{
+			// legs don't step, just fuzz.
+			VectorCopy(down_o, pm->ps->origin);
+			VectorCopy(down_v, pm->ps->velocity);
+			if (pm->debugLevel)
+			{
+				Com_Printf("%i:legs unsteppable\n", c_pmove);
+			}
+			return;
+		}
 
-	trace.endpos[0] = pm->ps->origin[0];
-	trace.endpos[1] = pm->ps->origin[1];
+		PM_TraceHead(&trace, pm->ps->origin, down, NULL, pm->ps->viewangles, pm->trace, pm->ps->clientNum, pm->tracemask);
+		if (trace.fraction < 1.0f)
+		{
+			VectorCopy(down_o, pm->ps->origin);
+			VectorCopy(down_v, pm->ps->velocity);
+			if (pm->debugLevel)
+			{
+				Com_Printf("%i:head unsteppable\n", c_pmove);
+			}
+			return;
+		}
+	}
 
+	pm->trace(&trace, pm->ps->origin, pm->mins, pm->maxs, down, pm->ps->clientNum, pm->tracemask);
 	if (!trace.allsolid)
 	{
 		VectorCopy(trace.endpos, pm->ps->origin);
