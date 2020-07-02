@@ -142,8 +142,6 @@ void CG_InitPM(void)
 * #define PM_POPUP_TIME 1000
 */
 
-#define PM_FADETIME_BIG 1000
-#define PM_WAITTIME_BIG 3500
 #define PM_BIGPOPUP_TIME 2500
 
 /**
@@ -164,7 +162,7 @@ void CG_UpdatePMLists(void)
 {
 	pmListItem_t    *listItem;
 	pmListItem_t    *lastItem;
-	pmListItemBig_t *listItem2;
+	pmListItemBig_t *listItemBig;
 
 	if ((listItem = cg_pmWaitingList))
 	{
@@ -234,22 +232,22 @@ void CG_UpdatePMLists(void)
 		listItem = listItem->next;
 	}
 
-	if ((listItem2 = cg_pmWaitingListBig))
+	if ((listItemBig = cg_pmWaitingListBig))
 	{
-		int t = PM_BIGPOPUP_TIME + listItem2->time;
+		int t = PM_BIGPOPUP_TIME + listItemBig->time;
 
 		if (cg.time > t)
 		{
-			if (listItem2->next)
+			if (listItemBig->next)
 			{
 				// there's another item waiting to come on, so kill us and shove the next one to the front
-				cg_pmWaitingListBig       = listItem2->next;
+				cg_pmWaitingListBig       = listItemBig->next;
 				cg_pmWaitingListBig->time = cg.time; // set time we popped up at
 
 				CG_PMItemBigSound(cg_pmWaitingListBig);
 
-				listItem2->inuse = qfalse;
-				listItem2->next  = NULL;
+				listItemBig->inuse = qfalse;
+				listItemBig->next  = NULL;
 			}
 			else
 			{
@@ -257,8 +255,8 @@ void CG_UpdatePMLists(void)
 				{
 					// we're gone completely
 					cg_pmWaitingListBig = NULL;
-					listItem2->inuse    = qfalse;
-					listItem2->next     = NULL;
+					listItemBig->inuse  = qfalse;
+					listItemBig->next   = NULL;
 				}
 				else
 				{
@@ -270,10 +268,10 @@ void CG_UpdatePMLists(void)
 }
 
 /**
- * @brief CG_FindFreePMItem2
+ * @brief CG_FindFreePMItemBig
  * @return
  */
-pmListItemBig_t *CG_FindFreePMItem2(void)
+pmListItemBig_t *CG_FindFreePMItemBig(void)
 {
 	int i = 0;
 
@@ -555,7 +553,7 @@ void CG_AddPMItemBig(popupMessageBigType_t type, const char *message, qhandle_t 
 {
 	pmListItemBig_t *listItem;
 
-	listItem = CG_FindFreePMItem2();
+	listItem = CG_FindFreePMItemBig();
 
 	if (!listItem)
 	{
@@ -751,12 +749,13 @@ void CG_DrawPMItems(rectDef_t rect, int style)
 
 /**
  * @brief CG_DrawPMItemsBig
+ * @param[in] style
+ * @return
  */
-void CG_DrawPMItemsBig(void)
+void CG_DrawPMItemsBig(int style)
 {
 	vec4_t colorText = { 1.f, 1.f, 1.f, 1.f };
 	float  t, w;
-	float  y         = 270;
 	float  fontScale = cg_fontScaleSP.value;
 
 	if (!cg_pmWaitingListBig)
@@ -771,11 +770,11 @@ void CG_DrawPMItemsBig(void)
 	}
 
 	trap_R_SetColor(colorText);
-	CG_DrawPic(Ccg_WideX(SCREEN_WIDTH) - 116, y, 48, 48, cg_pmWaitingListBig->shader);
+	CG_DrawPic(Ccg_WideX(SCREEN_WIDTH) - 116, 270, 48, 48, cg_pmWaitingListBig->shader);
 	trap_R_SetColor(NULL);
 
 	w = CG_Text_Width_Ext(cg_pmWaitingListBig->message, fontScale, 0, &cgs.media.limboFont2);
-	CG_Text_Paint_Ext(Ccg_WideX(SCREEN_WIDTH) - 64 - w, y + 56, fontScale, fontScale, colorText, cg_pmWaitingListBig->message, 0, 0, 0, &cgs.media.limboFont2);
+	CG_Text_Paint_Ext(Ccg_WideX(SCREEN_WIDTH) - 64 - w, 326, fontScale, fontScale, colorText, cg_pmWaitingListBig->message, 0, 0, style, &cgs.media.limboFont2);
 }
 
 /**

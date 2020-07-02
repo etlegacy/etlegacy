@@ -3129,7 +3129,7 @@ void CG_DrawGlobalHud(void)
 		CG_DrawPMItems(hud0.popupmessages.location, (cg_altHudFlags.integer & FLAGS_POPUPS_SHADOW) ? ITEM_TEXTSTYLE_SHADOWED : 0);
 	}
 
-	CG_DrawPMItemsBig();
+	CG_DrawPMItemsBig((cg_altHudFlags.integer & FLAGS_POPUPS_SHADOW) ? ITEM_TEXTSTYLE_SHADOWED : 0);
 
 #ifdef FEATURE_EDV
 	if (cgs.demoCamera.renderingFreeCam || cgs.demoCamera.renderingWeaponCam)
