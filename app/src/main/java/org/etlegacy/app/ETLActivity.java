@@ -1,10 +1,7 @@
 package org.etlegacy.app;
 
 import android.content.Context;
-import android.content.res.AssetManager;
 import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -22,10 +19,6 @@ import com.erz.joysticklibrary.JoyStick;
 import com.erz.joysticklibrary.JoyStick.JoyStickListener;
 
 import org.libsdl.app.SDLActivity;
-
-import java.io.IOException;
-import java.io.InputStream;
-
 
 public class ETLActivity extends SDLActivity implements JoyStickListener {
 
