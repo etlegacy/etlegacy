@@ -39,18 +39,21 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
      * to prevent flooding at creating multiple entries
      */
     protected void PopUpFunctionalKeys() {
-        etl_PopMenu.getMenu().removeItem(1);
-        etl_PopMenu.getMenu().add(1, 1, 1, "F1");
-        etl_PopMenu.getMenu().removeItem(2);
-        etl_PopMenu.getMenu().add(2, 2, 2, "F2");
+
+        for (int i = 1; i < 3; i++) {
+            if (etl_PopMenu.getMenu().findItem(i) == null)
+                etl_PopMenu.getMenu().add(i, i, i, "F".concat(String.valueOf(i)));
+        }
     }
 
     /**
      * Dirty Hack to remove Functional Keys at Disconnect
      */
     protected void PopUpRemoveFunctionalKeys() {
-        etl_PopMenu.getMenu().removeItem(1);
-        etl_PopMenu.getMenu().removeItem(2);
+
+        for (int i = 1; i < 3; i++) {
+            etl_PopMenu.getMenu().removeItem(i);
+        }
     }
 
     /**
