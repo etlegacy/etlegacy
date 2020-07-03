@@ -18,7 +18,7 @@ import android.widget.RelativeLayout;
 import com.erz.joysticklibrary.JoyStick;
 import com.erz.joysticklibrary.JoyStick.JoyStickListener;
 
-import org.libsdl.app.SDLActivity;
+import org.libsdl.app.*;
 
 public class ETLActivity extends SDLActivity implements JoyStickListener {
 
