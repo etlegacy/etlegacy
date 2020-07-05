@@ -932,6 +932,20 @@ panel_button_t chatPanelReadyButton =
 	0
 };
 
+panel_button_t chatPanelTimerButton =
+{
+	NULL,
+	"Timer",
+	{ SCREEN_WIDTH - 10 - 60 - 4 - 60 - 4 - 80 - 4 - 60 - 4 - 60 - 4,SCREEN_HEIGHT - 30,                                                  60, 16 },
+	{ 0,                           0,                                                                   0,  0, 0, 0, 0, 0},
+	NULL,                          // font
+	NULL,// keyDown
+	NULL,                          // keyUp
+	CG_Debriefing_TimerButton_Draw,
+	NULL,
+	0
+};
+
 panel_button_t chatTypeButton =
 {
 	NULL,
@@ -950,7 +964,7 @@ panel_button_t charPanelEditSurround =
 {
 	NULL,
 	NULL,
-	{ 10 + 4 + 80 + 4,           SCREEN_HEIGHT - 30,               252, 16 },
+	{ 10 + 4 + 80 + 4,           SCREEN_HEIGHT - 30,               188, 16 },
 	{ 0,                         0,                                0,   0, 0, 0, 0, 0},
 	NULL,                        // font
 	NULL,                        // keyDown
@@ -964,7 +978,7 @@ panel_button_t charPanelEdit =
 {
 	NULL,
 	"chattext",
-	{ 10 + 4 + 80 + 4 + 8,       SCREEN_HEIGHT - 34,             236, 16 },
+	{ 10 + 4 + 80 + 4 + 8,       SCREEN_HEIGHT - 34,             174, 16 },
 	{ 0,                         0,                              0,   0, 0, 0, 0, 0},
 	&chatPanelButtonFont,        // font
 	NULL,                        /*BG_PanelButton_EditClick,*/ // keyDown
@@ -1527,7 +1541,7 @@ void CG_Debriefing_ChatBox_Draw(panel_button_t *button)
 panel_button_t *chatPanelButtons[] =
 {
 	&chatPanelWindow,       &chatPanelText,
-	&chatPanelNextButton,   &chatPanelVoteButton,&chatPanelQCButton,  &chatTypeButton, &chatPanelReadyButton,
+	&chatPanelNextButton,   &chatPanelVoteButton,&chatPanelQCButton,  &chatTypeButton, &chatPanelTimerButton, &chatPanelReadyButton,
 	&charPanelEditSurround, &charPanelEdit,
 	NULL
 };
@@ -3156,6 +3170,14 @@ void CG_Debriefing_ReadyButton_Draw(panel_button_t *button)
 	{
 		return;
 	}
+
+	CG_PanelButtonsRender_Button(button);
+}
+
+void CG_Debriefing_TimerButton_Draw(panel_button_t *button)
+{
+	int timeleft = MAX(60 - (cg.time - cgs.intermissionStartTime) / 1000, 0);
+	button->text = va("%i:%02i LEFT", timeleft/60, timeleft%60);
 
 	CG_PanelButtonsRender_Button(button);
 }
