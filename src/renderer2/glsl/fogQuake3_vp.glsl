@@ -53,13 +53,9 @@ void main()
 	vec3 normal;
 
 #if defined(USE_VERTEX_SKINNING)
-	VertexSkinning_PN(attr_Position, attr_Normal,
-	                  position,      normal);
+	VertexSkinning_PN(attr_Position, attr_Normal, position, normal);
 #elif defined(USE_VERTEX_ANIMATION)
-	VertexAnimation_PN(attr_Position, attr_Position2,
-	                   attr_Normal,   attr_Normal2,
-					   u_VertexInterpolation,
-					   position,      normal);
+	VertexAnimation_PN(attr_Position, attr_Position2, attr_Normal, attr_Normal2, u_VertexInterpolation, position, normal);
 #else
 	position = attr_Position;
 	normal   = attr_Normal;
@@ -83,24 +79,21 @@ void main()
 #if defined(EYE_OUTSIDE)
 	if (t < 1.0)
 	{
-		//t = 1.0 / 32.0; // point is outside, so no fogging
-		t = 0.03125; // 1.0 / 32.0   // is this optimized by a compiler?..
+		t = 1.0 / 32.0; // point is outside, so no fogging
 	}
 	else
 	{
-		//t = 1.0 / 32.0 + 30.0 / 32.0 * t / (t - u_FogEyeT); // cut the distance at the fog plane
-		t = 0.03125 + 0.9375 * t / (t - u_FogEyeT); // 1.0 / 32.0 + 30.0 / 32.0 * t / (t - u_FogEyeT)
+//!		t = 1.0 / 32.0 + 30.0 / 32.0 * t / (t - u_FogEyeT); // cut the distance at the fog plane
+t = 1.0 / 32.0 + 31.0 / 32.0 * t / (t - u_FogEyeT); // cut the distance at the fog plane
 	}
 #else
 	if (t < 0.0)
 	{
-		//t = 1.0 / 32.0; // point is outside, so no fogging
-		t = 0.03125; // 1.0 / 32.0
+		t = 1.0 / 32.0;
 	}
 	else
 	{
-		//t = 31.0 / 32.0;
-		t = 0.9375; // 31.0 / 32.0
+		t = 31.0 / 32.0;
 	}
 #endif
 

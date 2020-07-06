@@ -4077,8 +4077,9 @@ static qboolean ParseShader(char *_text)
 			{
 				shader.fogParms.depthForOpaque = atof(token);
 				shader.fogParms.depthForOpaque = shader.fogParms.depthForOpaque < 1 ? 1 : shader.fogParms.depthForOpaque;
+				// so, if you provide any value <1, that value is lost here.  It will always yield 1..
 			}
-			//shader.fogParms.tcScale        = 1.0f / shader.fogParms.depthForOpaque;
+			shader.fogParms.tcScale = 1.0f / shader.fogParms.depthForOpaque;
 
 			shader.fogVolume = qtrue;
 			shader.sort      = SS_FOG;
@@ -4178,6 +4179,10 @@ static qboolean ParseShader(char *_text)
 			{  // density "exp" fog
 				RE_SetFog(FOG_WATER, 0, 5, watercolor[0], watercolor[1], watercolor[2], fogvar);
 			}
+
+//shader.fogVolume = qtrue;
+//shader.sort      = SS_FOG;
+
 			continue;
 		}
 		// ET fogvars
@@ -4206,6 +4211,7 @@ static qboolean ParseShader(char *_text)
 			if (fogDensity > 1)
 			{ // linear
 				fogFar = fogDensity;
+fogDensity = 1.0;
 			}
 			else
 			{

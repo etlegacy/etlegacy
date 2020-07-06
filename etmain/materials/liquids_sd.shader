@@ -11,11 +11,12 @@ textures/liquids_sd/siwa_water
 	surfaceparm nomarks
 	surfaceparm lightfilter
 	surfaceparm pointlight
+	surfaceparm fog
 	cull disable
 	nopicmip
 	// the next 2 lines are commented out, because waterfogvars is not functional at this moment.
 	//nofog
-	waterfogvars ( 0.0 0.0 1.0 ) 20480.0 // this needs all the spaces inside the ( x x x )
+	waterfogvars ( 0.4255 0.4804 0.6882 ) 256.0 // this needs all the spaces inside the ( x x x )
 	sort underwater
 
 	// collapsed layer 1 : ST_BUNDLE_WDB,  liquid/water + diffuse + bump
@@ -46,24 +47,22 @@ textures/liquids_sd/siwa_water
 		tcmod scroll -.02 .001
 		tcmod scale 0.5 0.5
 	}
-/*
+
 	// layer 2 : a "dummy" diffusemap that will receive the lightmap (and fancy light/shadows)
-	// but we don't want this to be displayed..
+	// but we don't want this to be displayed, so we use a special blendfunc.
 	// Note this is a workaround /todo
 	{
 		stage diffusemap
 		map $blackimage
 		blendfunc GL_ZERO GL_ONE
-//		alphaGen const 0
 	}
-*/
+
 	// the other stages are not collapsed
 	// Do NOT make the next stages:	stage diffusemap, or else the light/shadow will be too bright
 	{ 
 		map textures/liquids_sd/seawall_ripple1.tga
 		blendFunc blend
 		alphaGen const 0.1
-//		rgbGen vertex
 		rgbGen wave sin 0.3 0.02 0 0.25 
 		tcmod scroll -.001 -.0002
 		tcmod scale 0.01 0.01
@@ -73,7 +72,6 @@ textures/liquids_sd/siwa_water
 		map textures/liquids_sd/seawall_ripple1.tga
 		blendFunc add
 		alphaGen const 0.1
-//		rgbGen vertex
 		rgbGen wave sin 0.1 0.03 0 0.4
 		tcmod scroll -.005 -.001
 		tcmod scale 1 1
@@ -82,7 +80,6 @@ textures/liquids_sd/siwa_water
 		map textures/liquids_sd/siwa_shimshim1.tga
 		blendFunc add
 		alphaGen const 0.1
-//		rgbGen vertex
 		rgbGen wave sin 0.4 0.02 0 0.3
 		tcmod scroll .005 -.001
 		tcmod transform 0 1.5 1 1.5 2 1
@@ -108,13 +105,13 @@ textures/liquids_sd/siwa_water_2
 	surfaceparm nomarks
 	surfaceparm lightfilter
 	surfaceparm pointlight
+	surfaceparm fog
 	cull disable
 	nopicmip
-	sort underwater
 	// the next 2 lines are commented out, because waterfogvars is not functional at this moment.
 	//nofog
-	waterfogvars ( 0.0 0.0 1.0 ) 20480.0 // this needs all the spaces inside the ( x x x )
-	//waterfogvars ( 0.11 0.13 0.15 ) 0.2 // this needs all the spaces inside the ( x x x )
+	waterfogvars ( 0.4255 0.4804 0.4882 ) 256.0 // this needs all the spaces inside the ( x x x )
+	sort underwater
 
 	// collapsed layer 1 : ST_BUNDLE_WDB,  water/liquid + diffuse + bump
 	bumpmap textures/liquids_sd/siwa_water_n.tga

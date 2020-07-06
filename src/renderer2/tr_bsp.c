@@ -4620,6 +4620,7 @@ static void R_LoadFogs(lump_t *l, lump_t *brushesLump, lump_t *sidesLump)
 		}
 
 		// get information from the shader for fog parameters
+		// For Siwa Oasis this shader material is read: textures/skies/sd_siwafog
 		shader = R_FindShader(fogs->shader, SHADER_3D_DYNAMIC, qtrue);
 
 		out->fogParms = shader->fogParms;
@@ -4630,8 +4631,11 @@ static void R_LoadFogs(lump_t *l, lump_t *brushesLump, lump_t *sidesLump)
 		out->color[3] = 1;
 
 		d = shader->fogParms.depthForOpaque < 1 ? 1 : shader->fogParms.depthForOpaque;
+		// any value <1 will get lost here..
+
 		//out->tcScale = 1.0f / (d * 8);
-		out->tcScale = rcp(d * 8.f);
+//		out->tcScale = rcp(d * 8.f);
+out->tcScale = rcp(d);
 
 		// global fog sets clearcolor/zfar
 		if (out->originalBrushNumber == -1)
@@ -7795,6 +7799,8 @@ if (backEnd.currentEntity != &tr.worldEntity)
 	*interpolation = 0.0f; // for now, no interpolation..
 	return;
 }
+
+// code has changed already.. it seems close to impossible to get consistent entitynumbers for ents in the renderer..
 */
 	// are we currently interpolating?
 	if (tr.reflectionData.endTime)
@@ -8362,7 +8368,7 @@ void R_BuildCubeMaps(void)
 		{
 			// render the cubemap
 			VectorCopy(cubeProbe->origin, rf.vieworg);
-			rf.fov_x   = 94.f;
+			rf.fov_x   = 94.f; // should be 90x/90y.. 
 			rf.fov_y   = 94.f;
 			rf.x       = 0;
 			rf.y       = 0;
@@ -8822,7 +8828,7 @@ void RE_LoadWorldMap(const char *name)
 	//
 	R_BuildCubeMaps();
 
-	// clear the cubeprobe reflections data for this entity
+	// clear the cubeprobe reflections data
 	tr.reflectionData.probe1 = NULL;
 	tr.reflectionData.probe2 = NULL;
 	tr.reflectionData.startTime = 0;

@@ -558,7 +558,7 @@ qboolean R_CalcTangentVectors(srfVert_t *dv[3])
 	// barycentric basis
 	Vector2Subtract(dv[1]->st, dv[0]->st, v1sub0); // 2 vectors in the tangentspace plane
 	Vector2Subtract(dv[2]->st, dv[0]->st, v2sub0);
-	bb = (v1sub0[0] * v2sub0[1]) - (v2sub0[0] * v1sub0[1]); // crossproduct
+	bb = (v1sub0[0] * v2sub0[1]) - (v2sub0[0] * v1sub0[1]); // cross
 	if (Q_fabs(bb) < 0.00000001f)
 	{
 		return qfalse;
@@ -1410,8 +1410,10 @@ static void SetFarClip(void)
 
 /// Berserker: setup the more precision zFar - convert corners from world to eye coordinates, and take the farthest X local coordinate
 #if 0
-	modelMatrix            = tr.viewParms.world.viewMatrix2;
 	farthestCornerDistance = 0;
+	vec3_t v, eye;
+	float  distance;
+	int j;
 	// check visBounds
 	for (i = 0; i < 8; i++)
 	{
@@ -1445,11 +1447,16 @@ static void SetFarClip(void)
 		for (j = 0; j < 3; j++)
 		{
 			eye[j] =
-			    v[0] * modelMatrix[j + 0 * 4] +
-			    v[1] * modelMatrix[j + 1 * 4] + v[2] * modelMatrix[j + 2 * 4] + modelMatrix[j + 3 * 4];
+			    v[0] * tr.viewParms.world.viewMatrix2[j + 0 * 4] +
+			    v[1] * tr.viewParms.world.viewMatrix2[j + 1 * 4] + v[2] * tr.viewParms.world.viewMatrix2[j + 2 * 4] + tr.viewParms.world.viewMatrix2[j + 3 * 4];
 		}
 
-		farthestCornerDistance = max(farthestCornerDistance, eye[0] * eye[0] + eye[1] * eye[1] + eye[2] * eye[2]);
+		//farthestCornerDistance = max(farthestCornerDistance, eye[0] * eye[0] + eye[1] * eye[1] + eye[2] * eye[2]);
+		distance = eye[0] * eye[0] + eye[1] * eye[1] + eye[2] * eye[2];
+		if (distance > farthestCornerDistance)
+		{
+			farthestCornerDistance = distance;
+		}
 	}
 
 #if 0
@@ -1588,14 +1595,22 @@ static void SetFarClip(void)
 #endif
 
 #endif
+	//tr.viewParms.zFar = farthestCornerDistance; // the Berzerker distance is not squared
 	tr.viewParms.zFar = sqrt(farthestCornerDistance);
 	
-	// update the zFar distance whenever the global fog's density isn't covering the world completely.
+	// update the zFar distance whenever the global fog's density is covering the world completely.
 	// Otherwise we'd see the world suddenly pop up because the world is clipped before the fog is dense enough.
-	if (tr.world != NULL && tr.world->globalFog >= 0 && tr.world->fogs[tr.world->globalFog].fogParms.depthForOpaque < tr.viewParms.zFar)
+/*
+// this is clipping when the fog is not at max => you see a "wall", the background color.
+	if (tr.world != NULL && tr.world->globalFog >= 0
+		&& tr.world->fogs[tr.world->globalFog].fogParms.depthForOpaque > 1.f // the fogparms must have a distance supplied (no value <1)
+		&& tr.world->fogs[tr.world->globalFog].fogParms.depthForOpaque > tr.viewParms.zNear
+		&& tr.world->fogs[tr.world->globalFog].fogParms.depthForOpaque < tr.viewParms.zFar
+		)
 	{
 		tr.viewParms.zFar = tr.world->fogs[tr.world->globalFog].fogParms.depthForOpaque;
 	}
+*/
 }
 
 // *INDENT-OFF*
@@ -2946,7 +2961,7 @@ void R_AddLightInteractions()
 			// ignore if not in PVS
 			if (!r_noLightVisCull->integer)
 			{
-				if (glConfig2.occlusionQueryBits && r_dynamicBspOcclusionCulling->integer)
+				if (glConfig2.occlusionQueryBits && r_OccludeBsp->integer)
 				{
 					int numVisibleLeafs = 0;
 
@@ -3171,7 +3186,7 @@ void R_AddLightBoundsToVisBounds()
 			// ignore if not in PVS
 			if (!r_noLightVisCull->integer)
 			{
-				if (glConfig2.occlusionQueryBits && r_dynamicBspOcclusionCulling->integer)
+				if (glConfig2.occlusionQueryBits && r_OccludeBsp->integer)
 				{
 					int numVisibleLeafs = 0;
 
@@ -3552,7 +3567,7 @@ void R_RenderView(viewParms_t *parms)
 	R_SetupProjection(qfalse);
 
 	// This will handle any transition from one fog to another fog.
- 	R_SetFrameFog();
+//! 	R_SetFrameFog();
 
 	R_SetupUnprojection();
 
@@ -3570,6 +3585,9 @@ void R_RenderView(viewParms_t *parms)
 	//R_AddWorldSurfaces();
 
 	R_AddEntitySurfaces();
+
+// This will handle any transition from one fog to another fog.
+R_SetFrameFog();
 
 	R_AddLightInteractions();
 
@@ -3650,7 +3668,7 @@ void R_RenderSimpleView(viewParms_t *parms)
 	R_SetupProjection(qfalse);
 
 	// This will handle any transition from one fog to another fog.
-// 	R_SetFrameFog();
+ 	R_SetFrameFog(); // we must render with fog, or else the reflections are too colorful for a fogged world..
 
 	R_SetupUnprojection();
 

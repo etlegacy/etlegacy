@@ -189,7 +189,7 @@ static void BindCubeMaps()
 	image_t        *env0, *env1;
 	float          interpolate;
 
-	R_FindCubeprobes(*position, backEnd.currentEntity, &env0, &env1, &interpolate);
+	R_FindCubeprobes(position, backEnd.currentEntity, &env0, &env1, &interpolate);
 
 	// bind u_EnvironmentMap0
 	SelectTexture(TEX_ENVMAP0);
@@ -203,7 +203,7 @@ static void BindCubeMaps()
 	SetUniformFloat(UNIFORM_ENVIRONMENTINTERPOLATION, interpolate);
 */
 
-	R_FindCubeprobes(&backEnd.viewParms.orientation.origin, &tr.worldEntity, &tr.reflectionData.env0, &tr.reflectionData.env1, &tr.reflectionData.interpolate);
+	R_FindCubeprobes(backEnd.viewParms.orientation.origin, &tr.worldEntity, &tr.reflectionData.env0, &tr.reflectionData.env1, &tr.reflectionData.interpolate);
 	// bind u_EnvironmentMap0
 	SelectTexture(TEX_ENVMAP0);
 	GL_Bind(tr.reflectionData.env0);
@@ -1045,8 +1045,15 @@ if (tr.refdef.pixelTarget != NULL)
 			// USE_SPECULAR
 			if (use_specular)
 			{
-				SetUniformFloat(UNIFORM_SPECULARSCALE, r_specularScaleWorld->value);
-				SetUniformFloat(UNIFORM_SPECULAREXPONENT, r_specularExponentWorld->value);
+				// when underwater we use plenty of specular, so it looks wet
+				if (tr.refdef.rdflags & RDF_UNDERWATER)
+				{
+					SetUniformFloat(UNIFORM_SPECULARSCALE, r_specularScaleWorld->value * 5.f);
+					SetUniformFloat(UNIFORM_SPECULAREXPONENT, 512.f); //r_specularExponentWorld->value * 0.25f);
+				} else {
+					SetUniformFloat(UNIFORM_SPECULARSCALE, r_specularScaleWorld->value);
+					SetUniformFloat(UNIFORM_SPECULAREXPONENT, r_specularExponentWorld->value);
+				}
 
 				// the specularmap
 				SelectTexture(TEX_SPECULAR);
@@ -2100,7 +2107,7 @@ static void Render_heatHaze(int stage)
 static void Render_liquid(int stage)
 {
 	shaderStage_t *pStage = tess.surfaceStages[stage];
-	float fogDensity = RB_EvalExpression(&pStage->fogDensityExp, 0.f);  // 0.0005f as default?
+	float fogDensity = RB_EvalExpression(&pStage->fogDensityExp, 0.0005f);  // 0.0005f as default?
 	rgbaGen_t rgbaGen;
 	qboolean use_diffuseMapping  = (pStage->type == ST_BUNDLE_WDB || pStage->type == ST_BUNDLE_WD);
 	qboolean use_normalMapping   = r_normalMapping->integer && (pStage->type == ST_BUNDLE_WB || pStage->type == ST_BUNDLE_WDB);
@@ -2251,7 +2258,7 @@ SetUniformFloat(UNIFORM_REFLECTIONSCALE, 1.0f);
 }
 
 /**
- * @brief Render_fog_brushes - used to render fog brushes (not the fog)
+ * @brief Render_fog_brushes - used to render fog brushes
  */
 static void Render_fog_brushes()
 {
@@ -2274,10 +2281,10 @@ if (tr.refdef.pixelTarget != NULL) {
 		return;
 	}
 
-	//if (tr.world->fogs + tess.fogNum < 1 || !tess.surfaceShader->fogPass)
-	//{
-	//	return;
-	//}
+	if (tr.world->fogs + tess.fogNum < 1 || !tess.surfaceShader->fogPass)
+	{
+		return;
+	}
 
 	// no fog pass in snooper
 	if ((tr.refdef.rdflags & RDF_SNOOPERVIEW) || tess.surfaceShader->noFog)
@@ -2293,24 +2300,19 @@ if (tr.refdef.pixelTarget != NULL) {
 
 	fog = tr.world->fogs + tess.fogNum;
 
-/*
 	// use this only to render fog brushes (global fog has a brush number of -1)
-	// This is used in combination with any globalfog.
-	// For example in Railgun: The mountains are globalFogged, while the trees are brushFogged.
-	// If you render only one of the fogs, it doesn't look right.
 	if (fog->originalBrushNumber < 0 && tess.surfaceShader->sort <= SS_OPAQUE)
 	{
 		return;
 	}
-*/
 
 	Ren_LogComment("--- Render_fog( fogNum = %i, originalBrushNumber = %i ) ---\n", tess.fogNum, fog->originalBrushNumber);
 
 	// all fogging distance is based on world Z units
-	VectorSubtract(backEnd.orientation.origin, backEnd.viewParms.orientation.origin, local);
 	fogDistanceVector[0] = -backEnd.orientation.modelViewMatrix[2];
 	fogDistanceVector[1] = -backEnd.orientation.modelViewMatrix[6];
 	fogDistanceVector[2] = -backEnd.orientation.modelViewMatrix[10];
+	VectorSubtract(backEnd.orientation.origin, backEnd.viewParms.orientation.origin, local);
 	//fogDistanceVector[3] = DotProduct(local, backEnd.viewParms.orientation.axis[0]);
 	Dot(local, backEnd.viewParms.orientation.axis[0], fogDistanceVector[3]);
 
@@ -2351,7 +2353,7 @@ if (tr.refdef.pixelTarget != NULL) {
 		eyeT = 1.f; // non-surface fog always has eye inside (viewpoint is outside when eyeT < 0)
 	}
 
-	fogDistanceVector[3] += 0.001953125f; // 1.0 / 512.0; // is this optimized with current compiler settings?..  1/(depth*8)?
+//	fogDistanceVector[3] += 0.001953125f; // 1.0 / 512.0; // is this optimized with current compiler settings?..  1/(depth*8)?
 //!!!DEBUG!!! test: what is ^^that^^ doing?..
 
 	if (tess.surfaceShader->fogPass == FP_EQUAL)
@@ -2421,6 +2423,7 @@ if (tr.refdef.pixelTarget != NULL) {
 /**
  * @brief Render_volumetricFog
  * @note see Fog Polygon Volumes documentation by Nvidia for further information
+ * https://developer.download.nvidia.com/SDK/9.5/Samples/DEMOS/Direct3D9/src/FogPolygonVolumes3/docs/FogPolygonVolumes3.pdf
  */
 static void Render_volumetricFog()
 {
@@ -2486,7 +2489,7 @@ static void Render_volumetricFog()
 		SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
 		SetUniformMatrix16(UNIFORM_UNPROJECTMATRIX, backEnd.viewParms.unprojectionMatrix);
 		SetUniformVec3(UNIFORM_VIEWORIGIN, backEnd.viewParms.orientation.origin); // in world space
-		SetUniformFloat(UNIFORM_FOGDENSITY, tess.surfaceShader->fogParms.density);
+		SetUniformFloat(UNIFORM_FOGDENSITY, tess.surfaceShader->fogParms.tcScale); // rcp(  .depthForOpaque));
 		SetUniformVec3(UNIFORM_FOGCOLOR, tess.surfaceShader->fogParms.color);
 
 		// bind u_DepthMap
@@ -3349,7 +3352,7 @@ void Tess_StageIteratorShadowFill()
 		case ST_BUNDLE_DBSR:
 //		case ST_BUNDLE_CB:
 //		case ST_BUNDLE_WDB: // liquid stages have no texture rendered,
-//		case ST_BUNDLE_WB:  // so if you try to add a shadow to it,
+//		case ST_BUNDLE_WB:  // so if you try to add a shadow to it, (by including this 'case'),
 //		case ST_BUNDLE_WD:  // you don't see it, because this surface is "marked done", and rest stages skipped.
 		{
 			Tess_ComputeTexMatrices(pStage);

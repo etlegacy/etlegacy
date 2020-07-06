@@ -71,8 +71,8 @@ vec2 parallax(sampler2D displaceMap, vec2 texCoords, vec3 viewDir, float depthsc
 	float minLayers = 4;
 	float maxLayers = 32;
 	float viewAngle = max(dot(vec3(0.0, 0.0, 1.0), viewDir), 0.0);
-	float numLayers = mix(maxLayers, minLayers, viewAngle);
-//	float numLayers = (maxLayers - minLayers) * viewAngle + minLayers;
+//	float numLayers = mix(maxLayers, minLayers, viewAngle); // this stalls totally.. no error though
+	float numLayers = (maxLayers - minLayers) * viewAngle + minLayers;
 	float layerDepth = 1.0 / numLayers;
 	vec2 p = viewDir.xy / viewDir.z * depthscale * distanceRatio;
 	vec2 deltaTexCoords = p / numLayers;

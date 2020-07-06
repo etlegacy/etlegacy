@@ -1515,7 +1515,7 @@ void R_SetupLightScissor(trRefLight_t *light)
 		light->noOcclusionQueries = qfalse;
 	}
 
-	if (!r_dynamicBspOcclusionCulling->integer)
+	if (!r_OccludeBsp->integer)
 	{
 		// don't calculate the light scissors because there are up to 500 realtime lights in the view frustum
 		// that were not killed by the PVS

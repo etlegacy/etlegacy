@@ -23,14 +23,14 @@ void main()
 
 	// reconstruct vertex position in world space
 	float depth = texture2D(u_DepthMap, st).r;
-	depth *= depth; // make it non linear, so you can see further
-	depth *= depth; // make it non linear, so you can see further.   and some more (any more and the fog is not dense enough anymore)
+//	depth *= depth; // hack to see further  (depth*depth will always yield a smaller value, except when depth equals 1)
+//	depth *= depth;
 	vec4  P = u_UnprojectMatrix * vec4(gl_FragCoord.xy, depth, 1.0);
 	P.xyz /= P.w;
 
 	// calculate the length in fog (t is always 0 if eye is in fog)      <--- is this line copy/paste woot?..
 	st.s = dot(P.xyz, u_FogDistanceVector.xyz) + u_FogDistanceVector.w;
-	st.t = u_FogDensity;
+	st.t = u_FogDensity; // * 0.125; // divided by 8
 
 	gl_FragColor = u_Color * texture2D(u_ColorMap, st);
 }

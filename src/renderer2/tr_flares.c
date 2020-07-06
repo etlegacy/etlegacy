@@ -595,7 +595,7 @@ void RB_RenderFlares(void)
 
 
 //glNamedFramebufferReadBuffer(tr.deferredRenderFBO, GL_BACK);
-
+//glBindFramebuffer(GL_FRAMEBUFFER_EXT, tr.deferredRenderFBO);
 
 	draw = qfalse;
 	prev = &r_activeFlares;
@@ -634,6 +634,7 @@ void RB_RenderFlares(void)
 	}
 
 //glNamedFramebufferReadBuffer(0, GL_BACK);
+//glBindFramebuffer(GL_FRAMEBUFFER_EXT, 0);
 
 
 	if (!draw)

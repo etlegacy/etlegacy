@@ -58,8 +58,9 @@ liquid
 {
 	filename "liquid"
 	macros USE_PORTAL_CLIPPING USE_DEFORM_VERTEXES USE_NORMAL_MAPPING USE_PARALLAX_MAPPING USE_REFLECTIONS USE_WATER USE_DIFFUSE
-	attribs ATTR_POSITION ATTR_TEXCOORD ATTR_TANGENT ATTR_BINORMAL ATTR_NORMAL ATTR_COLOR
+	attribs ATTR_POSITION ATTR_TEXCOORD ATTR_NORMAL ATTR_COLOR
 	vertexLibraries "lib/deformVertexes"
+	fragmentLibraries "lib/reliefMapping lib/normalMapping"
 }
 
 forwardLighting_omniXYZ

@@ -26,6 +26,7 @@ uniform vec4 u_Color;
 	#if defined(USE_NORMAL_MAPPING)
 		uniform vec3 u_ViewOrigin;
 		uniform vec3 u_LightDir;
+		uniform vec3 u_LightColor;
 		#if defined(USE_PARALLAX_MAPPING)
 			uniform float u_DepthScale;
 		#endif // USE_PARALLAX_MAPPING
@@ -48,13 +49,13 @@ varying vec3 var_Normal;
 #if defined(USE_DIFFUSE)
 	varying vec2 var_TexDiffuse;
 	#if defined(USE_NORMAL_MAPPING)
-//		varying mat3 var_tangentMatrix;
+		varying mat3 var_tangentMatrix;
 		varying vec3 var_LightDirection;
-////varying vec3 var_LightDirectionT;
-////varying vec3 var_ViewDirT;          // view direction in tangentspace
+varying vec3 var_LightDirectionT;
+varying vec3 var_ViewDirT;          // view direction in tangentspace
 		varying vec3 var_ViewDirW;              // view direction in world space
 		#if defined(USE_PARALLAX_MAPPING)
-			varying vec3 var_ViewDirT;          // view direction in tangentspace
+///			varying vec3 var_ViewDirT;          // view direction in tangentspace
 			varying float var_distanceToCam;    //
 		#endif // USE_PARALLAX_MAPPING
 	#endif // USE_NORMAL_MAPPING
@@ -93,7 +94,7 @@ void main()
 
 
 	// vertex normal in world space
-	var_Normal.xyz = normalize((u_ModelMatrix * vec4(attr_Normal, 0.0)).xyz);  // 0.0 = direction,  1.0 = position
+	var_Normal = normalize((u_ModelMatrix * vec4(attr_Normal, 0.0)).xyz);  // 0.0 = direction,  1.0 = position
 
 #if defined(USE_NORMAL_MAPPING)
 	// transform tangentspace axis
@@ -103,15 +104,11 @@ void main()
 	mat3 tangentMatrix;
 
 	// world to tangent space
-//!	var_tangentMatrix = mat3(-tangent, -binormal, -var_Normal.xyz); // this works with specular, but parallax is woot
-//var_tangentMatrix = transpose(mat3(tangent, binormal, var_Normal.xyz)); // this works with parallax, but specular is woot
-
-
-//! it seems the normals are in the quake format, and not in the opengl format.   see: quakeToOpenGLMatrix
-// That strange var_tangentMatrix ^^ is woot..
+	var_tangentMatrix = mat3(-tangent, -binormal, -var_Normal); // this works with specular, but parallax is woot
+//var_tangentMatrix = transpose(mat3(tangent, binormal, var_Normal)); // this works with parallax, but specular is woot
 
 	// tangent to world space
-//var_tangentMatrix = mat3(tangent, binormal, var_Normal.xyz); // this works with specular, but parallax is woot
+//var_tangentMatrix = mat3(tangent, binormal, var_Normal);
 
 
 	var_LightDirection = normalize(-u_LightDir);
@@ -120,13 +117,10 @@ void main()
 	vec3 viewVec = var_Position - u_ViewOrigin;
 	var_ViewDirW = normalize(viewVec);
 
-////mat3 tangentMatrix = transpose(mat3(tangent, binormal, var_Normal.xyz)); // this works with parallax, but specular is woot
-////var_LightDirectionT = var_tangentMatrix * var_LightDirection; // i only have a direction. No light position..  hmm
-////var_ViewDirT = tangentMatrix * viewVec;
-// test
-tangentMatrix = transpose(mat3(-tangent, -binormal, -var_Normal.xyz)); // this works with specular, but parallax is woot
-var_LightDirection = tangentMatrix * var_LightDirection;
-var_ViewDirW = tangentMatrix * var_ViewDirW;
+//tangentMatrix = transpose(mat3(tangent, binormal, var_Normal)); // this works with parallax, but specular is woot
+//tangentMatrix = transpose(var_tangentMatrix);
+//var_LightDirectionT = tangentMatrix * var_LightDirection; // i only have a direction. No light position..  hmm
+//var_ViewDirT = tangentMatrix * var_ViewDirW;
 
 
 
@@ -134,6 +128,7 @@ var_ViewDirW = tangentMatrix * var_ViewDirW;
 	var_distanceToCam = length(viewVec);
 	tangentMatrix = transpose(mat3(tangent, binormal, var_Normal.xyz)); // this works with parallax, but specular is woot
 	var_ViewDirT = tangentMatrix * viewVec; // do not normalize..
+//	var_ViewDirT = var_tangentMatrix * viewVec; // do not normalize..
 #endif // USE_PARALLAX_MAPPING
 #endif // USE_NORMAL_MAPPING
 

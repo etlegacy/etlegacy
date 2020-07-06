@@ -3949,12 +3949,14 @@ extern cvar_t *r_mergeClusterCurves;
 extern cvar_t *r_mergeClusterTriangles;
 #endif
 
-extern cvar_t *r_dynamicBspOcclusionCulling;
-extern cvar_t *r_dynamicEntityOcclusionCulling;
+extern cvar_t *r_OccludeBsp; //r_dynamicBspOcclusionCulling;
+extern cvar_t *r_OccludeEntities; // r_dynamicEntityOcclusionCulling;
 // TODO:  !!!
-// one bug found: if r_dynamicLightOcclusionCulling is set to 1, but a map has no cubeProbes yet, an exception is raised.
-// workaround: temporarily set r_dynamicLightOcclusionCulling to 0, load the map, cubeProbes get made, set r_dynamicLightOcclusionCulling 1 again..
-extern cvar_t *r_dynamicLightOcclusionCulling;
+// one bug found: if r_OccludeLights is set to 1, but a map has no cubeProbes yet, an exception is raised.
+// workaround: temporarily set r_OccludeLights to 0, load the map, cubeProbes get made, set r_OccludeLights 1 again..
+// UPDATE:
+// i do not have this issue anymore.  Code has changed..
+extern cvar_t *r_OccludeLights; // r_dynamicLightOcclusionCulling;
 extern cvar_t *r_chcMaxPrevInvisNodesBatchSize;
 extern cvar_t *r_chcMaxVisibleFrames;
 extern cvar_t *r_chcVisibilityThreshold;
@@ -4578,7 +4580,7 @@ void RE_AddCoronaToScene(const vec3_t org, float r, float g, float b, float scal
 
 void RE_RenderScene(const refdef_t *fd);
 void RE_RenderSimpleScene(const refdef_t *fd); // render the scene for use on the environment-cubemaps
-void R_RenderSimpleView(viewParms_t* parms); // no fog, no lights, no shadows, no decals ... and more not being rendered
+void R_RenderSimpleView(viewParms_t* parms); // no lights, no shadows, no decals ... and more not being rendered
 
 /*
 =============================================================

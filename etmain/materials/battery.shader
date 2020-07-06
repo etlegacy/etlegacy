@@ -47,6 +47,7 @@ textures/battery/fog_water
   	surfaceparm nonsolid
   	surfaceparm trans
   	surfaceparm water
+	surfaceparm fog
 }
 
 // nonsolid terrain shader
@@ -83,6 +84,7 @@ textures/battery/ocean_base
 	surfaceparm lightfilter
 	surfaceparm pointlight
 	surfaceparm water
+	surfaceparm fog
 	nopicmip
 }
 
@@ -119,8 +121,9 @@ textures/battery/ocean_0
 		// But if you go underwater, and look into that tunnel, you notice the tunnel has no fog at all.
 		// When you are underwater, and look at the world above the water, you see the world fogged with the same 'color'.
 		// Also here, it's just fog rendered on the watersurface.
+		// Extra note: If you make the 4th parameter have a value of 1.0, then you will not see reflections on the watersurface
 		fog on
-		color 0.2, 0.2, 0.2, 0.2
+		color 0.4, 0.4, 0.4, 0.4
 	}
 	{
 		stage diffusemap
@@ -173,7 +176,7 @@ textures/battery/ocean_0to1
 		fresnelBias 0.1
 		alphaGen const 0.2
 		fog on
-		color 0.2, 0.2, 0.2, 0.2
+		color 0.4, 0.4, 0.4, 0.4
 	}
 	{ 
 		stage diffusemap
@@ -187,9 +190,10 @@ textures/battery/ocean_0to1
 
 	// collapsed layer 2 : ST_BUNDLE_DB,  diffuse + bump
 	{
-		stage diffusemap
+//		stage diffusemap
 		map textures/liquids_sd/seawall_foam.tga
 		blendFunc GL_SRC_ALPHA GL_ONE
+//blendFunc blend
 		alphaGen vertex
 		rgbGen wave sin 0.45 0.1 0.3 0.16
 		tcmod scroll -0.01 0.17
@@ -206,13 +210,14 @@ textures/battery/ocean_0to1
 		map textures/liquids_sd/seawall_foam_n.tga
 	}
 	{ 
-		stage diffusemap
+//		stage diffusemap
 		map textures/liquids_sd/seawall_foam.tga
 		blendFunc GL_SRC_ALPHA GL_ONE
+//blendFunc blend
 		alphaGen vertex
 		rgbGen wave sin 0.25 0.1 0 0.1
 		tcmod scroll -0.01 0.09
-		tcMod turb 0 0.06 0.3 0.38
+		tcMod turb 0 0.16 0.3 0.38
 	}
 
 /*
@@ -245,7 +250,7 @@ textures/battery/ocean_1
 		fresnelBias 0.1
 		alphaGen const 0.2
 		fog on
-		color 0.2, 0.2, 0.2, 0.2
+		color 0.4, 0.4, 0.4, 0.4
 	}
 	{ 
 		stage diffusemap
@@ -264,6 +269,7 @@ textures/battery/ocean_1
 		stage diffusemap
 		map textures/liquids_sd/seawall_foam.tga
 		blendFunc GL_SRC_ALPHA GL_ONE
+//blendFunc blend
 		alphaGen vertex
 		rgbGen wave sin 0.45 0.1 0.3 0.16
 		tcmod scroll -0.01 0.17
@@ -283,10 +289,11 @@ textures/battery/ocean_1
 		stage diffusemap
 		map textures/liquids_sd/seawall_foam.tga
 		blendFunc GL_SRC_ALPHA GL_ONE
+//blendFunc blend
 		alphaGen vertex
 		rgbGen wave sin 0.25 0.1 0 0.1
 		tcmod scroll -0.01 0.09
-		tcMod turb 0 0.06 0.3 0.38
+		tcMod turb 0 0.16 0.3 0.38
 	}
 /*
 	{

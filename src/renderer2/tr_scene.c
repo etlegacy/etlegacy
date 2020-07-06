@@ -658,7 +658,7 @@ void RE_RenderScene(const refdef_t *fd)
 		Ren_Drop("R_RenderScene: NULL worldmodel");
 	}
 	
-//R_FindCubeprobes(&fd->vieworg, &tr.worldEntity, &tr.reflectionData.env0, &tr.reflectionData.env1, &tr.reflectionData.interpolate);
+//R_FindCubeprobes(fd->vieworg, &tr.worldEntity, &tr.reflectionData.env0, &tr.reflectionData.env1, &tr.reflectionData.interpolate);
 //^^that keeps swapping between 2 positions.  as if something else is using renderscene (the hud head?)
 
 	Com_Memcpy(tr.refdef.text, fd->text, sizeof(tr.refdef.text));
@@ -678,23 +678,26 @@ void RE_RenderScene(const refdef_t *fd)
 	tr.refdef.time    = fd->time;
 
 // check if we transit into, or out of, the water
-if (!(tr.refdef.rdflags & RDF_UNDERWATER) && (fd->rdflags & RDF_UNDERWATER))
+// Do this only IF both fogs exist at all..
+// Note: The waterfogvars are registered as FOG_WATER, but the globalfog is not registered as the FOG_MAP
+if (tr.glfogsettings[FOG_WATER].registered && tr.world->globalFog >= 0) //tr.glfogsettings[FOG_MAP].registered)
 {
-	RE_SetFog(FOG_CMD_SWITCHFOG, FOG_WATER, 2000, 0, 0, 0, 0); // entering the water
-	//tess.fogNum = FOG_WATER;
+	if (!(tr.refdef.rdflags & RDF_UNDERWATER) && (fd->rdflags & RDF_UNDERWATER))
+	{
+		// with old code, this was crashing with an exception.  UPDATE: no longer crashes.. but it doesn't do what it's supposed to do.
+// if you use a duration of 0, things go wrong.. TODO
+		RE_SetGlobalFog(qfalse, 10, tr.glfogsettings[FOG_WATER].color[0], tr.glfogsettings[FOG_WATER].color[1], tr.glfogsettings[FOG_WATER].color[2], tr.glfogsettings[FOG_WATER].end); // .density);
 
-	// with old code, this was crashing with an exception.  UPDATE: no longer crashes.. but it doesn't do what it's supposed to do.
-//	RE_SetGlobalFog(qfalse, 0, tr.glfogsettings[FOG_WATER].color[0], tr.glfogsettings[FOG_WATER].color[1], tr.glfogsettings[FOG_WATER].color[2], tr.glfogsettings[FOG_WATER].density);
-//	RE_SetGlobalFog(qfalse, 0, tr.glfogsettings[FOG_WATER].color[0], tr.glfogsettings[FOG_WATER].color[1], tr.glfogsettings[FOG_WATER].color[2], tr.world->fogs[tr.world->globalFog].fogParms.depthForOpaque);
-//	tr.world->globalFogTransEndTime = tr.refdef.time + 1000;
-}
-else if ((tr.refdef.rdflags & RDF_UNDERWATER) && !(fd->rdflags & RDF_UNDERWATER))
-{
-	RE_SetFog(FOG_CMD_SWITCHFOG, FOG_MAP, 2000, 0, 0, 0, 0); // exiting the water
-	//tess.fogNum = FOG_MAP;
+//		RE_SetFog(FOG_CMD_SWITCHFOG, FOG_WATER, 10, 0, 0, 0, 0); // entering the water
+		//tess.fogNum = FOG_WATER;
+	}
+	else if ((tr.refdef.rdflags & RDF_UNDERWATER) && !(fd->rdflags & RDF_UNDERWATER))
+	{
+		RE_SetGlobalFog(qtrue, 10, 0, 0, 0, 0); // restore the fog
 
-//	RE_SetGlobalFog(qtrue, 0, 0, 0, 0, 0);
-//	tr.world->globalFogTransEndTime = tr.refdef.time + 1000;
+//		RE_SetFog(FOG_CMD_SWITCHFOG, FOG_MAP, 10, 0, 0, 0, 0); // exiting the water
+		//tess.fogNum = FOG_MAP;
+	}
 }
 
 	tr.refdef.rdflags = fd->rdflags;

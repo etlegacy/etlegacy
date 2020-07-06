@@ -433,7 +433,7 @@ qboolean ParseShaderR1(char *_text)
 				shader.fogParms.depthForOpaque = atof(token);
 				shader.fogParms.depthForOpaque = shader.fogParms.depthForOpaque < 1 ? 1 : shader.fogParms.depthForOpaque;
 			}
-			//shader.fogParms.tcScale = 1.0f / shader.fogParms.depthForOpaque;
+			shader.fogParms.tcScale = 1.0f / shader.fogParms.depthForOpaque;
 
 			shader.fogVolume = qtrue;
 			shader.sort      = SS_FOG;

@@ -208,7 +208,7 @@ static void RB_RenderDrawSurfaces(qboolean opaque, int drawSurfFilter)
 			break;
 		}
 
-		if (glConfig2.occlusionQueryBits && r_dynamicEntityOcclusionCulling->integer && !entity->occlusionQuerySamples)
+		if (glConfig2.occlusionQueryBits && r_OccludeEntities->integer && !entity->occlusionQuerySamples)
 		{
 			continue;
 		}
@@ -846,12 +846,12 @@ static void RB_RenderInteractions()
 		if (glConfig2.occlusionQueryBits)
 		{
 			// skip all interactions of this light because it failed the occlusion query
-			if (r_dynamicLightOcclusionCulling->integer && !ia->occlusionQuerySamples)
+			if (r_OccludeLights->integer && !ia->occlusionQuerySamples)
 			{
 				goto skipInteraction;
 			}
 
-			if (r_dynamicEntityOcclusionCulling->integer && !entity->occlusionQuerySamples)
+			if (r_OccludeEntities->integer && !entity->occlusionQuerySamples)
 			{
 				goto skipInteraction;
 			}
@@ -890,8 +890,8 @@ static void RB_RenderInteractions()
 		Tess_End();
 
 		// begin a new batch
-//		Tess_Begin(Tess_StageIteratorLighting, NULL, shader, light->shader, qfalse, qfalse, LIGHTMAP_NONE, FOG_NONE);
-Tess_Begin(Tess_StageIteratorLighting, NULL, shader, light->shader, qtrue, qfalse, LIGHTMAP_NONE, FOG_NONE);
+		Tess_Begin(Tess_StageIteratorLighting, NULL, shader, light->shader, qfalse, qfalse, LIGHTMAP_NONE, FOG_NONE);
+//Tess_Begin(Tess_StageIteratorLighting, NULL, shader, light->shader, qtrue, qfalse, LIGHTMAP_NONE, FOG_NONE);
 
 		// change the modelview matrix if needed
 		if (entity != oldEntity)
@@ -1207,7 +1207,7 @@ static void RB_RenderInteractionsShadowMapped()
 			deformType = DEFORM_TYPE_NONE;
 		}
 
-		if (glConfig2.occlusionQueryBits && r_dynamicLightOcclusionCulling->integer && !ia->occlusionQuerySamples)
+		if (glConfig2.occlusionQueryBits && r_OccludeLights->integer && !ia->occlusionQuerySamples)
 		{
 			// skip all interactions of this light because it failed the occlusion query
 			goto skipInteraction;
@@ -2023,8 +2023,8 @@ if (tr.refdef.pixelTarget == NULL)
 					Ren_LogComment("----- Beginning Shadow Interaction: %i -----\n", iaCount);
 
 					// we don't need tangent space calculations here
-//					Tess_Begin(Tess_StageIteratorShadowFill, NULL, shader, light->shader, qfalse, qfalse, LIGHTMAP_NONE, FOG_NONE);
-Tess_Begin(Tess_StageIteratorShadowFill, NULL, shader, light->shader, qtrue, qfalse, LIGHTMAP_NONE, FOG_NONE);
+					Tess_Begin(Tess_StageIteratorShadowFill, NULL, shader, light->shader, qfalse, qfalse, LIGHTMAP_NONE, FOG_NONE);
+//Tess_Begin(Tess_StageIteratorShadowFill, NULL, shader, light->shader, qtrue, qfalse, LIGHTMAP_NONE, FOG_NONE);
 				}
 				break;
 			}
@@ -2044,7 +2044,7 @@ Tess_Begin(Tess_StageIteratorShadowFill, NULL, shader, light->shader, qtrue, qfa
 				goto skipInteraction;
 			}
 
-			if (glConfig2.occlusionQueryBits && r_dynamicEntityOcclusionCulling->integer && !entity->occlusionQuerySamples)
+			if (glConfig2.occlusionQueryBits && r_OccludeEntities->integer && !entity->occlusionQuerySamples)
 			{
 				goto skipInteraction;
 			}
@@ -2529,7 +2529,7 @@ void RB_RenderGlobalFog()
 
 		SetUniformVec4(UNIFORM_FOGDISTANCEVECTOR, fogDistanceVector);
 		SetUniformVec4(UNIFORM_COLOR, fog->color);
-		SetUniformFloat(UNIFORM_FOGDENSITY, 1.0f); // this must be 1
+		SetUniformFloat(UNIFORM_FOGDENSITY, 1.0f); // this must be 1    << why?..it can be 0.0 to 1.0
 	}
 
 	SetUniformMatrix16(UNIFORM_UNPROJECTMATRIX, backEnd.viewParms.unprojectionMatrix);
@@ -3355,7 +3355,7 @@ void RB_RenderLightOcclusionQueries()
 {
 	Ren_LogComment("--- RB_RenderLightOcclusionQueries ---\n");
 
-	if (glConfig2.occlusionQueryBits && r_dynamicLightOcclusionCulling->integer && !(backEnd.refdef.rdflags & RDF_NOWORLDMODEL))
+	if (glConfig2.occlusionQueryBits && r_OccludeLights->integer && !(backEnd.refdef.rdflags & RDF_NOWORLDMODEL))
 	{
 		int           i;
 		interaction_t *ia;
@@ -4073,6 +4073,16 @@ void RB_RenderEntityOcclusionQueries()
 				continue;
 			}
 
+			// we must exclude MOD_BSP (the Oasis wall)
+			if (entity == &tr.worldEntity ||
+				(entity->e.reType == RT_MODEL &&
+					tr.models[entity->e.hModel]->type == MOD_BSP))
+			{
+				entity->occlusionQuerySamples = 1;
+				entity->noOcclusionQueries = qtrue;
+				continue;
+			}
+
 			backEnd.currentEntity = entity;
 
 			entity->occlusionQuerySamples = 1;
@@ -4205,7 +4215,7 @@ void RB_RenderBspOcclusionQueries()
 {
 	Ren_LogComment("--- RB_RenderBspOcclusionQueries ---\n");
 
-	if (glConfig2.occlusionQueryBits && r_dynamicBspOcclusionCulling->integer)
+	if (glConfig2.occlusionQueryBits && r_OccludeBsp->integer)
 	{
 		//int             j;
 		bspNode_t *node;
@@ -4283,7 +4293,7 @@ void RB_CollectBspOcclusionQueries()
 {
 	Ren_LogComment("--- RB_CollectBspOcclusionQueries ---\n");
 
-	if (glConfig2.occlusionQueryBits && r_dynamicBspOcclusionCulling->integer)
+	if (glConfig2.occlusionQueryBits && r_OccludeBsp->integer)
 	{
 		// int       j = 0;
 		bspNode_t *node;
@@ -4448,7 +4458,7 @@ static void RB_RenderDebugUtils()
 						Vector4Copy(colorMdGrey, lightColor);
 					}
 				}
-				else if (r_dynamicLightOcclusionCulling->integer)
+				else if (r_OccludeLights->integer)
 				{
 					if (!ia->occlusionQuerySamples)
 					{
@@ -4986,7 +4996,7 @@ static void RB_RenderDebugUtils()
 			tess.numIndexes          = 0;
 			tess.numVertexes         = 0;
 
-			if (r_dynamicEntityOcclusionCulling->integer)
+			if (r_OccludeEntities->integer)
 			{
 				if (!ent->occlusionQuerySamples)
 				{
@@ -5402,7 +5412,7 @@ static void RB_RenderDebugUtils()
 		// use the generic shader
 		SetMacrosAndSelectProgram(trProg.gl_genericShader,
 								  USE_ALPHA_TESTING, qfalse,
-								  USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal,
+								  USE_PORTAL_CLIPPING, qfalse, //backEnd.viewParms.isPortal,
 								  USE_VERTEX_SKINNING, qfalse,
 								  USE_VERTEX_ANIMATION, qfalse,
 								  USE_DEFORM_VERTEXES, qfalse,
@@ -5428,20 +5438,31 @@ static void RB_RenderDebugUtils()
 
 		backEnd.orientation = backEnd.viewParms.world;
 
-		Tess_Begin(Tess_StageIteratorDebug, NULL, NULL, NULL, qtrue, qtrue, LIGHTMAP_NONE, FOG_NONE);
+//		Tess_Begin(Tess_StageIteratorDebug, NULL, NULL, NULL, qtrue, qtrue, LIGHTMAP_NONE, FOG_NONE);
 		for (j = 0; j < tr.cubeProbes.currentElements; j++)
 		{
 			cubeProbe = (cubemapProbe_t*)Com_GrowListElement(&tr.cubeProbes, j);
 
+			tess.multiDrawPrimitives = 0;
+			tess.numVertexes         = 0;
+			tess.numIndexes          = 0;
+
+			Tess_AddCubeWithNormals(cubeProbe->origin, mins, maxs, colorWhite);
+
 			// bind u_ColorMap
 			SelectTexture(TEX_COLOR);
 			GL_Bind(cubeProbe->cubemap);
+			//SetUniformMatrix16(UNIFORM_COLORTEXTUREMATRIX, matrixIdentity);
 
-			Tess_AddCubeWithNormals(cubeProbe->origin, mins, maxs, colorWhite);
+			Tess_UpdateVBOs(tess.attribsSet);
+			Tess_DrawElements();
 		}
-		//Tess_UpdateVBOs(tess.attribsSet); // set by Tess_AddCube
-		Tess_End();
+//		Tess_End();
 		GL_CheckErrors();
+
+		tess.multiDrawPrimitives = 0;
+		tess.numVertexes         = 0;
+		tess.numIndexes          = 0;
 
 		backEnd.currentEntity = backEndEnt;
 
@@ -5794,7 +5815,7 @@ static void RB_RenderDebugUtils()
 			{
 				node = (bspNode_t *) l->data;
 
-				if (!r_dynamicBspOcclusionCulling->integer)
+				if (!r_OccludeBsp->integer)
 				{
 					if (node->contents != -1)
 					{
@@ -6232,7 +6253,7 @@ if (tr.refdef.pixelTarget == NULL)
 		startTime = ri.Milliseconds();
 	}
 
-	if (r_dynamicEntityOcclusionCulling->integer)
+	if (r_OccludeEntities->integer)
 	{
 		// draw everything from world that is opaque into black so we can benefit from early-z rejections later
 		//RB_RenderOpaqueSurfacesIntoDepth(true);
@@ -6288,10 +6309,10 @@ if (tr.refdef.pixelTarget == NULL)
 	{
 		R_BindFBO(tr.deferredRenderFBO);
 	}
+}//!
 
 	// render global fog effect
 	RB_RenderGlobalFog();
-}//!
 
 	// draw everything that is translucent
 	RB_RenderDrawSurfaces(qfalse, DRAWSURFACES_ALL);
@@ -6373,7 +6394,6 @@ if (tr.refdef.pixelTarget == NULL)
 #endif
 #if 1
 		// FIXME: this trashes the OpenGL context for an unknown reason
-		// update: for me it seems to work just fine..
 		if (glConfig2.framebufferObjectAvailable && glConfig2.framebufferBlitAvailable)
 		{
 			// copy main context to portalRenderFBO
@@ -6391,7 +6411,7 @@ if (tr.refdef.pixelTarget == NULL)
 }//!
 
 #if 0
-	if (r_dynamicBspOcclusionCulling->integer)
+	if (r_OccludeBsp->integer)
 	{
 		// copy depth of the main context to deferredRenderFBO
 		R_CopyToFBO(NULL, tr.occlusionRenderFBO, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
@@ -6679,8 +6699,8 @@ const void *RB_StretchPic(const void *data)
 			Tess_End();
 		}
 		backEnd.currentEntity = &backEnd.entity2D;
-//		Tess_Begin(Tess_StageIteratorGeneric, NULL, shader, NULL, qfalse, qfalse, LIGHTMAP_NONE, FOG_NONE);
-Tess_Begin(Tess_StageIteratorGeneric, NULL, shader, NULL, qtrue, qfalse, LIGHTMAP_NONE, FOG_NONE);
+		Tess_Begin(Tess_StageIteratorGeneric, NULL, shader, NULL, qfalse, qfalse, LIGHTMAP_NONE, FOG_NONE);
+//Tess_Begin(Tess_StageIteratorGeneric, NULL, shader, NULL, qtrue, qfalse, LIGHTMAP_NONE, FOG_NONE);
 	}
 
 	Tess_CheckOverflow(4, 6);
@@ -6774,8 +6794,8 @@ const void *RB_Draw2dPolys(const void *data)
 			Tess_End();
 		}
 		backEnd.currentEntity = &backEnd.entity2D;
-//		Tess_Begin(Tess_StageIteratorGeneric, NULL, shader, NULL, qfalse, qfalse, LIGHTMAP_NONE, FOG_NONE);
-Tess_Begin(Tess_StageIteratorGeneric, NULL, shader, NULL, qtrue, qfalse, LIGHTMAP_NONE, FOG_NONE);
+		Tess_Begin(Tess_StageIteratorGeneric, NULL, shader, NULL, qfalse, qfalse, LIGHTMAP_NONE, FOG_NONE);
+//Tess_Begin(Tess_StageIteratorGeneric, NULL, shader, NULL, qtrue, qfalse, LIGHTMAP_NONE, FOG_NONE);
 	}
 
 	Tess_CheckOverflow(cmd->numverts, (cmd->numverts - 2) * 3);
@@ -6835,8 +6855,8 @@ const void *RB_RotatedPic(const void *data)
 			Tess_End();
 		}
 		backEnd.currentEntity = &backEnd.entity2D;
-//		Tess_Begin(Tess_StageIteratorGeneric, NULL, shader, NULL, qfalse, qfalse, LIGHTMAP_NONE, FOG_NONE);
-Tess_Begin(Tess_StageIteratorGeneric, NULL, shader, NULL, qtrue, qfalse, LIGHTMAP_NONE, FOG_NONE);
+		Tess_Begin(Tess_StageIteratorGeneric, NULL, shader, NULL, qfalse, qfalse, LIGHTMAP_NONE, FOG_NONE);
+//Tess_Begin(Tess_StageIteratorGeneric, NULL, shader, NULL, qtrue, qfalse, LIGHTMAP_NONE, FOG_NONE);
 	}
 
 	Tess_CheckOverflow(4, 6);
@@ -6933,8 +6953,8 @@ const void *RB_StretchPicGradient(const void *data)
 			Tess_End();
 		}
 		backEnd.currentEntity = &backEnd.entity2D;
-//		Tess_Begin(Tess_StageIteratorGeneric, NULL, shader, NULL, qfalse, qfalse, LIGHTMAP_NONE, FOG_NONE);
-Tess_Begin(Tess_StageIteratorGeneric, NULL, shader, NULL, qtrue, qfalse, LIGHTMAP_NONE, FOG_NONE);
+		Tess_Begin(Tess_StageIteratorGeneric, NULL, shader, NULL, qfalse, qfalse, LIGHTMAP_NONE, FOG_NONE);
+//Tess_Begin(Tess_StageIteratorGeneric, NULL, shader, NULL, qtrue, qfalse, LIGHTMAP_NONE, FOG_NONE);
 	}
 
 	Tess_CheckOverflow(4, 6);

@@ -38,7 +38,8 @@ textures/radar/fog
 	surfaceparm nonsolid
 	surfaceparm trans
 	surfaceparm fog
-	fogparms ( 0.09411 0.09803 0.12549 ) 3192
+//	fogparms ( 0.09411 0.09803 0.12549 ) 3192
+	fogparms ( 0.11373 0.12549 0.15294 ) 16000
 }
 
 textures/radar/lmterrain2_base
