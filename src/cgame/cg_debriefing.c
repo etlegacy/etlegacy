@@ -922,7 +922,7 @@ panel_button_t chatPanelReadyButton =
 {
 	NULL,
 	"READY",
-	{ SCREEN_WIDTH - 10 - 60 - 4 - 60 - 4 - 80 - 4 - 60 - 4,SCREEN_HEIGHT - 30,                                                  60, 16 },
+	{ SCREEN_WIDTH - 10 - 60 - 4 - 60 - 4 - 80 - 4 - 80 - 4,SCREEN_HEIGHT - 30,                                                  80, 16 },
 	{ 0,                           0,                                                                   0,  0, 0, 0, 0, 0},
 	NULL,                          // font
 	CG_Debriefing_ReadyButton_KeyDown,// keyDown
@@ -950,7 +950,7 @@ panel_button_t charPanelEditSurround =
 {
 	NULL,
 	NULL,
-	{ 10 + 4 + 80 + 4,           SCREEN_HEIGHT - 30,               252, 16 },
+	{ 10 + 4 + 80 + 4,           SCREEN_HEIGHT - 30,               232, 16 },
 	{ 0,                         0,                                0,   0, 0, 0, 0, 0},
 	NULL,                        // font
 	NULL,                        // keyDown
@@ -964,7 +964,7 @@ panel_button_t charPanelEdit =
 {
 	NULL,
 	"chattext",
-	{ 10 + 4 + 80 + 4 + 8,       SCREEN_HEIGHT - 34,             236, 16 },
+	{ 10 + 4 + 80 + 4 + 8,       SCREEN_HEIGHT - 34,             216, 16 },
 	{ 0,                         0,                              0,   0, 0, 0, 0, 0},
 	&chatPanelButtonFont,        // font
 	NULL,                        /*BG_PanelButton_EditClick,*/ // keyDown
@@ -3140,22 +3140,22 @@ qboolean CG_Debriefing_ChatButton_KeyDown(panel_button_t *button, int key)
  */
 void CG_Debriefing_ReadyButton_Draw(panel_button_t *button)
 {
+	int timeleft = MAX(60 - (cg.time - cgs.intermissionStartTime) / 1000, 0);
+	button->text = va("READY (%i:%02i)", timeleft/60, timeleft%60);
+
 	if (!cg.snap)
 	{
 		return;
 	}
 
-	if (cg.snap->ps.eFlags & EF_READY)
+	// keep on showing the timer when already pressed, or while being
+	// on game type map voting
+	if (cg.snap->ps.eFlags & EF_READY ||
+		cgs.gametype == GT_WOLF_MAPVOTE)
 	{
-		return;
+		button->text = va("(%i:%02i)", timeleft/60, timeleft%60);
 	}
 
-	// disable the ready button so players don't interrupt intermission
-	// (just easier and we don't touch the vote vars for other gametypes)
-	if (cgs.gametype == GT_WOLF_MAPVOTE)
-	{
-		return;
-	}
 
 	CG_PanelButtonsRender_Button(button);
 }
@@ -3202,6 +3202,12 @@ qboolean CG_Debriefing_ReadyButton_KeyDown(panel_button_t *button, int key)
 		}
 
 		if (cg.snap->ps.eFlags & EF_READY)
+		{
+			return qfalse;
+		}
+
+		// disable the ready button so players don't interrupt intermission
+		if (cgs.gametype == GT_WOLF_MAPVOTE)
 		{
 			return qfalse;
 		}
