@@ -365,7 +365,7 @@ static void R_AddWorldSurface(bspSurface_t *surf, int decalBits)
 		shader_t *shader = surf->shader;
 
 		if (r_mergeClusterSurfaces->integer &&
-		    !r_OccludeBsp->integer &&
+		    !r_occludeBsp->integer &&
 		    ((r_mergeClusterFaces->integer && *surf->data == SF_FACE) ||
 		     (r_mergeClusterCurves->integer && *surf->data == SF_GRID) ||
 		     (r_mergeClusterTriangles->integer && *surf->data == SF_TRIANGLES)) &&
@@ -1248,7 +1248,7 @@ static void R_MarkLeaves(void)
 
 	// lockpvs lets designers walk around to determine the
 	// extent of the current pvs
-	if (r_lockPvs->integer) // || r_OccludeBsp->integer)
+	if (r_lockPvs->integer) // || r_occludeBsp->integer)
 	{
 		return;
 	}
@@ -1265,7 +1265,7 @@ static void R_MarkLeaves(void)
 		if (tr.visClusters[i] == cluster)
 		{
 			// if r_showcluster was just turned on, remark everything
-			if (!tr.refdef.areamaskModified && !r_showCluster->modified) // && !r_OccludeBsp->modified)
+			if (!tr.refdef.areamaskModified && !r_showCluster->modified) // && !r_occludeBsp->modified)
 			{
 				if (tr.visClusters[i] != tr.visClusters[tr.visIndex] && r_showCluster->integer)
 				{
@@ -1297,14 +1297,14 @@ static void R_MarkLeaves(void)
 	}
 
 	/*
-	if(r_OccludeBsp->modified)
+	if(r_occludeBsp->modified)
 	{
-	    r_OccludeBsp->modified = qfalse;
+	    r_occludeBsp->modified = qfalse;
 	}
 	*/
 
 #if defined(USE_BSP_CLUSTERSURFACE_MERGING)
-	if (r_mergeClusterSurfaces->integer && !r_OccludeBsp->integer)
+	if (r_mergeClusterSurfaces->integer && !r_occludeBsp->integer)
 	{
 		R_UpdateClusterSurfaces();
 	}
@@ -2166,7 +2166,7 @@ static void R_CoherentHierachicalCulling()
 					{
 						Ren_LogComment("single query node %li visible\n", (long)(node - tr.world->nodes));
 
-						if (r_OccludeBsp->integer == 1)
+						if (r_occludeBsp->integer == 1)
 						{
 							if (!WasVisible(node))
 							{
@@ -2201,7 +2201,7 @@ static void R_CoherentHierachicalCulling()
 				}
 			}
 #if 1
-			else if (r_OccludeBsp->integer == 1)
+			else if (r_occludeBsp->integer == 1)
 			{
 				if (!QueueEmpty(&visibleQueue))
 				{
@@ -2241,7 +2241,7 @@ static void R_CoherentHierachicalCulling()
 				qboolean clipsNearPlane;
 				qboolean leafThatNeedsQuery;
 
-				if (r_OccludeBsp->integer > 1)
+				if (r_occludeBsp->integer > 1)
 				{
 					// reset node's visibility classification
 					//node->visible[tr.viewCount] = !QueryReasonable(node);
@@ -2304,7 +2304,7 @@ static void R_CoherentHierachicalCulling()
 					leafThatNeedsQuery = qtrue;
 				}
 
-				if (r_OccludeBsp->integer == 1)
+				if (r_occludeBsp->integer == 1)
 				{
 					// CHC++
 
@@ -2357,7 +2357,7 @@ static void R_CoherentHierachicalCulling()
 			}
 		}
 
-		if (r_OccludeBsp->integer == 1)
+		if (r_occludeBsp->integer == 1)
 		{
 			if (QueueEmpty(&distanceQueue))
 			//if(StackEmpty(&traversalStack))
@@ -2437,7 +2437,7 @@ void R_AddWorldSurfaces(void)
 		R_MarkLeaves();
 
 		// update the bsp nodes with the dynamic occlusion query results
-		if (glConfig2.occlusionQueryBits && r_OccludeBsp->integer)
+		if (glConfig2.occlusionQueryBits && r_occludeBsp->integer)
 		{
 			R_CoherentHierachicalCulling();
 		}
@@ -2455,7 +2455,7 @@ void R_AddWorldSurfaces(void)
 		R_AddDecalSurfaces(tr.world->models);
 
 #if defined(USE_BSP_CLUSTERSURFACE_MERGING)
-		if (r_mergeClusterSurfaces->integer && !r_OccludeBsp->integer)
+		if (r_mergeClusterSurfaces->integer && !r_occludeBsp->integer)
 		{
 			int          j, i;
 			srfVBOMesh_t *srf;

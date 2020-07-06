@@ -2961,7 +2961,7 @@ void R_AddLightInteractions()
 			// ignore if not in PVS
 			if (!r_noLightVisCull->integer)
 			{
-				if (glConfig2.occlusionQueryBits && r_OccludeBsp->integer)
+				if (glConfig2.occlusionQueryBits && r_occludeBsp->integer)
 				{
 					int numVisibleLeafs = 0;
 
@@ -3186,7 +3186,7 @@ void R_AddLightBoundsToVisBounds()
 			// ignore if not in PVS
 			if (!r_noLightVisCull->integer)
 			{
-				if (glConfig2.occlusionQueryBits && r_OccludeBsp->integer)
+				if (glConfig2.occlusionQueryBits && r_occludeBsp->integer)
 				{
 					int numVisibleLeafs = 0;
 

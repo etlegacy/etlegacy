@@ -3949,14 +3949,14 @@ extern cvar_t *r_mergeClusterCurves;
 extern cvar_t *r_mergeClusterTriangles;
 #endif
 
-extern cvar_t *r_OccludeBsp; //r_dynamicBspOcclusionCulling;
-extern cvar_t *r_OccludeEntities; // r_dynamicEntityOcclusionCulling;
+extern cvar_t *r_occludeBsp; //r_dynamicBspOcclusionCulling;
+extern cvar_t *r_occludeEntities; // r_dynamicEntityOcclusionCulling;
 // TODO:  !!!
 // one bug found: if r_OccludeLights is set to 1, but a map has no cubeProbes yet, an exception is raised.
-// workaround: temporarily set r_OccludeLights to 0, load the map, cubeProbes get made, set r_OccludeLights 1 again..
+// workaround: temporarily set r_OccludeLights to 0, load the map, cubeProbes get made, set r_occludeLights 1 again..
 // UPDATE:
 // i do not have this issue anymore.  Code has changed..
-extern cvar_t *r_OccludeLights; // r_dynamicLightOcclusionCulling;
+extern cvar_t *r_occludeLights; // r_dynamicLightOcclusionCulling;
 extern cvar_t *r_chcMaxPrevInvisNodesBatchSize;
 extern cvar_t *r_chcMaxVisibleFrames;
 extern cvar_t *r_chcVisibilityThreshold;

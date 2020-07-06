@@ -208,7 +208,7 @@ static void RB_RenderDrawSurfaces(qboolean opaque, int drawSurfFilter)
 			break;
 		}
 
-		if (glConfig2.occlusionQueryBits && r_OccludeEntities->integer && !entity->occlusionQuerySamples)
+		if (glConfig2.occlusionQueryBits && r_occludeEntities->integer && !entity->occlusionQuerySamples)
 		{
 			continue;
 		}
@@ -846,12 +846,12 @@ static void RB_RenderInteractions()
 		if (glConfig2.occlusionQueryBits)
 		{
 			// skip all interactions of this light because it failed the occlusion query
-			if (r_OccludeLights->integer && !ia->occlusionQuerySamples)
+			if (r_occludeLights->integer && !ia->occlusionQuerySamples)
 			{
 				goto skipInteraction;
 			}
 
-			if (r_OccludeEntities->integer && !entity->occlusionQuerySamples)
+			if (r_occludeEntities->integer && !entity->occlusionQuerySamples)
 			{
 				goto skipInteraction;
 			}
@@ -1207,7 +1207,7 @@ static void RB_RenderInteractionsShadowMapped()
 			deformType = DEFORM_TYPE_NONE;
 		}
 
-		if (glConfig2.occlusionQueryBits && r_OccludeLights->integer && !ia->occlusionQuerySamples)
+		if (glConfig2.occlusionQueryBits && r_occludeLights->integer && !ia->occlusionQuerySamples)
 		{
 			// skip all interactions of this light because it failed the occlusion query
 			goto skipInteraction;
@@ -2044,7 +2044,7 @@ if (tr.refdef.pixelTarget == NULL)
 				goto skipInteraction;
 			}
 
-			if (glConfig2.occlusionQueryBits && r_OccludeEntities->integer && !entity->occlusionQuerySamples)
+			if (glConfig2.occlusionQueryBits && r_occludeEntities->integer && !entity->occlusionQuerySamples)
 			{
 				goto skipInteraction;
 			}
@@ -3355,7 +3355,7 @@ void RB_RenderLightOcclusionQueries()
 {
 	Ren_LogComment("--- RB_RenderLightOcclusionQueries ---\n");
 
-	if (glConfig2.occlusionQueryBits && r_OccludeLights->integer && !(backEnd.refdef.rdflags & RDF_NOWORLDMODEL))
+	if (glConfig2.occlusionQueryBits && r_occludeLights->integer && !(backEnd.refdef.rdflags & RDF_NOWORLDMODEL))
 	{
 		int           i;
 		interaction_t *ia;
@@ -4215,7 +4215,7 @@ void RB_RenderBspOcclusionQueries()
 {
 	Ren_LogComment("--- RB_RenderBspOcclusionQueries ---\n");
 
-	if (glConfig2.occlusionQueryBits && r_OccludeBsp->integer)
+	if (glConfig2.occlusionQueryBits && r_occludeBsp->integer)
 	{
 		//int             j;
 		bspNode_t *node;
@@ -4293,7 +4293,7 @@ void RB_CollectBspOcclusionQueries()
 {
 	Ren_LogComment("--- RB_CollectBspOcclusionQueries ---\n");
 
-	if (glConfig2.occlusionQueryBits && r_OccludeBsp->integer)
+	if (glConfig2.occlusionQueryBits && r_occludeBsp->integer)
 	{
 		// int       j = 0;
 		bspNode_t *node;
@@ -4458,7 +4458,7 @@ static void RB_RenderDebugUtils()
 						Vector4Copy(colorMdGrey, lightColor);
 					}
 				}
-				else if (r_OccludeLights->integer)
+				else if (r_occludeLights->integer)
 				{
 					if (!ia->occlusionQuerySamples)
 					{
@@ -4996,7 +4996,7 @@ static void RB_RenderDebugUtils()
 			tess.numIndexes          = 0;
 			tess.numVertexes         = 0;
 
-			if (r_OccludeEntities->integer)
+			if (r_occludeEntities->integer)
 			{
 				if (!ent->occlusionQuerySamples)
 				{
@@ -5815,7 +5815,7 @@ static void RB_RenderDebugUtils()
 			{
 				node = (bspNode_t *) l->data;
 
-				if (!r_OccludeBsp->integer)
+				if (!r_occludeBsp->integer)
 				{
 					if (node->contents != -1)
 					{
@@ -6253,7 +6253,7 @@ if (tr.refdef.pixelTarget == NULL)
 		startTime = ri.Milliseconds();
 	}
 
-	if (r_OccludeEntities->integer)
+	if (r_occludeEntities->integer)
 	{
 		// draw everything from world that is opaque into black so we can benefit from early-z rejections later
 		//RB_RenderOpaqueSurfacesIntoDepth(true);
@@ -6411,7 +6411,7 @@ if (tr.refdef.pixelTarget == NULL)
 }//!
 
 #if 0
-	if (r_OccludeBsp->integer)
+	if (r_occludeBsp->integer)
 	{
 		// copy depth of the main context to deferredRenderFBO
 		R_CopyToFBO(NULL, tr.occlusionRenderFBO, GL_DEPTH_BUFFER_BIT, GL_NEAREST);

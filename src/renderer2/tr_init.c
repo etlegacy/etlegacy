@@ -249,9 +249,9 @@ cvar_t *r_mergeClusterCurves;
 cvar_t *r_mergeClusterTriangles;
 #endif
 
-cvar_t *r_OccludeBsp;
-cvar_t *r_OccludeEntities;
-cvar_t *r_OccludeLights;
+cvar_t *r_occludeBsp;
+cvar_t *r_occludeEntities;
+cvar_t *r_occludeLights;
 cvar_t *r_chcMaxPrevInvisNodesBatchSize;
 cvar_t *r_chcMaxVisibleFrames;
 cvar_t *r_chcVisibilityThreshold;
@@ -1231,9 +1231,9 @@ void R_Register(void)
 	r_screenSpaceAmbientOcclusion = ri.Cvar_Get("r_screenSpaceAmbientOcclusion", "0", CVAR_ARCHIVE);
 	ri.Cvar_CheckRange(r_screenSpaceAmbientOcclusion, 0, 2, qtrue);
 
-	r_OccludeBsp      = ri.Cvar_Get("r_OccludeBsp", "1", CVAR_ARCHIVE);
-	r_OccludeEntities = ri.Cvar_Get("r_OccludeEntities", "1", CVAR_ARCHIVE);
-	r_OccludeLights   = ri.Cvar_Get("r_OccludeLights", "1", CVAR_CHEAT);
+	r_occludeBsp      = ri.Cvar_Get("r_occludeBsp", "1", CVAR_ARCHIVE);
+	r_occludeEntities = ri.Cvar_Get("r_occludeEntities", "1", CVAR_ARCHIVE);
+	r_occludeLights   = ri.Cvar_Get("r_occludeLights", "1", CVAR_CHEAT);
 
 	r_chcMaxPrevInvisNodesBatchSize = ri.Cvar_Get("r_chcMaxPrevInvisNodesBatchSize", "50", CVAR_CHEAT);
 	r_chcMaxVisibleFrames           = ri.Cvar_Get("r_chcMaxVisibleFrames", "10", CVAR_CHEAT);
