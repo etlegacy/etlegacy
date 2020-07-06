@@ -735,9 +735,9 @@ static void CG_OffsetFirstPersonView(void)
 	timeDelta = cg.time - cg.duckTime;
 	if (cg.predictedPlayerState.eFlags & EF_PRONE)
 	{
-		// move the view origin a bit forward to match with the head position
-		origin[0] += forward[0] * 24;
-		origin[1] += forward[1] * 24;
+		// move the view origin a bit forward (limit between body and head BBox)
+		origin[0] += forward[0] * 18;
+		origin[1] += forward[1] * 18;
 
 		if (timeDelta < 0)
 		{
@@ -745,8 +745,8 @@ static void CG_OffsetFirstPersonView(void)
 		}
 		if (timeDelta < PRONE_TIME)
 		{
-			cg.refdef_current->vieworg[0] -= (forward[0] * 24) * (PRONE_TIME - timeDelta) / PRONE_TIME;
-			cg.refdef_current->vieworg[1] -= (forward[1] * 24) * (PRONE_TIME - timeDelta) / PRONE_TIME;
+			cg.refdef_current->vieworg[0] -= (forward[0] * 18) * (PRONE_TIME - timeDelta) / PRONE_TIME;
+			cg.refdef_current->vieworg[1] -= (forward[1] * 18) * (PRONE_TIME - timeDelta) / PRONE_TIME;
 			cg.refdef_current->vieworg[2] -= cg.duckChange * (PRONE_TIME - timeDelta) / PRONE_TIME;
 		}
 	}
@@ -760,8 +760,8 @@ static void CG_OffsetFirstPersonView(void)
 		{
 			if (cg.wasProne)
 			{
-				cg.refdef_current->vieworg[0] += (forward[0] * 24) * (DUCK_TIME - timeDelta) / DUCK_TIME;
-				cg.refdef_current->vieworg[1] += (forward[1] * 24) * (DUCK_TIME - timeDelta) / DUCK_TIME;
+				cg.refdef_current->vieworg[0] += (forward[0] * 18) * (DUCK_TIME - timeDelta) / DUCK_TIME;
+				cg.refdef_current->vieworg[1] += (forward[1] * 18) * (DUCK_TIME - timeDelta) / DUCK_TIME;
 			}
 			cg.refdef_current->vieworg[2] -= cg.duckChange * (DUCK_TIME - timeDelta) / DUCK_TIME;
 		}
