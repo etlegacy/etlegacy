@@ -1333,14 +1333,14 @@ void G_DropItems(gentity_t *self)
 			VectorSet(mins, -(ITEM_RADIUS + 8), -(ITEM_RADIUS + 8), 0);
 			VectorSet(maxs, (ITEM_RADIUS + 8), (ITEM_RADIUS + 8), 2 * (ITEM_RADIUS + 8));
 
-			trap_EngineerTrace(&tr, viewpos, mins, maxs, origin, self->s.number, MASK_MISSILESHOT);
+			trap_EngineerTrace(self, &tr, viewpos, mins, maxs, origin, self->s.number, MASK_MISSILESHOT);
 			if (tr.startsolid)
 			{
 				VectorCopy(forward, viewpos);
 				VectorNormalizeFast(viewpos);
 				VectorMA(self->r.currentOrigin, -24.f, viewpos, viewpos);
 
-				trap_EngineerTrace(&tr, viewpos, mins, maxs, origin, self->s.number, MASK_MISSILESHOT);
+				trap_EngineerTrace(self, &tr, viewpos, mins, maxs, origin, self->s.number, MASK_MISSILESHOT);
 
 				VectorCopy(tr.endpos, origin);
 			}

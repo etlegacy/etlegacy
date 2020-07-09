@@ -2591,7 +2591,7 @@ int G_MaxAvailableArtillery(gentity_t *ent);
 
 void G_SetTargetName(gentity_t *ent, char *targetname);
 void G_KillEnts(const char *target, gentity_t *ignore, gentity_t *killer, meansOfDeath_t mod);
-void trap_EngineerTrace(trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentmask);
+void trap_EngineerTrace(gentity_t *ent, trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentmask);
 
 int G_CountTeamMedics(team_t team, qboolean alivecheck);
 int G_CountTeamFieldops(team_t team);
@@ -2628,7 +2628,7 @@ void G_MakeUnready(gentity_t *ent);
 
 void SetPlayerSpawn(gentity_t *ent, int spawn, qboolean update);
 void G_UpdateSpawnPointState(gentity_t *ent);
-void G_UpdateSpawnPointStatePlayerCounts();
+void G_UpdateSpawnPointStatePlayerCounts(void);
 
 void G_SetConfigStringValue(int num, const char *key, const char *value);
 void G_GlobalClientEvent(entity_event_t event, int param, int client);
@@ -2639,6 +2639,8 @@ void G_TempTraceIgnoreEntity(gentity_t *ent);
 void G_TeamTraceIgnoreBodies(void);
 void G_TempTraceIgnorePlayersAndBodies(void);
 void G_TempTraceIgnorePlayersFromTeam(team_t team);
+void G_TempTraceRealHitBox(gentity_t *ent);
+void G_ResetTempTraceRealHitBox(void);
 
 qboolean G_CanPickupWeapon(weapon_t weapon, gentity_t *ent);
 
@@ -2809,6 +2811,7 @@ typedef struct weapFireTable_t
 	int trType;                           ///< -
 	int trTime;                           ///< -
 	float boundingBox[2][3];              ///< - mins / maxs bounding box vectors (for missile ent)
+	float hitBox[2][3];                   ///< - mins / maxs hit box vectors (for missile ent)
 	int clipMask;                         ///< -
 	int nextThink;                        ///< -
 	int accuracy;                         ///< -

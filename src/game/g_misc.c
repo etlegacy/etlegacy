@@ -2564,6 +2564,70 @@ void G_TempTraceIgnorePlayersFromTeam(team_t team)
 	}
 }
 
+static gentity_t *entRealHitBoxList[MAX_GENTITIES];
+static vec3_t    BBoxMinsBackup[MAX_GENTITIES], BBoxMaxsBackup[MAX_GENTITIES];
+
+/**
+ * @brief G_TempTraceRealHitBox
+ * @param[in] ent
+ */
+void G_TempTraceRealHitBox(gentity_t *ent)
+{
+	int           i, counter;
+	int           listLength;
+	int           list[MAX_GENTITIES];
+	gentity_t     *hit;
+	vec3_t        BBmins, BBmaxs;
+	static vec3_t range = { CH_BREAKABLE_DIST, CH_BREAKABLE_DIST, CH_BREAKABLE_DIST };
+
+	if (!ent->client)
+	{
+		return;
+	}
+
+	VectorSubtract(ent->client->ps.origin, range, BBmins);
+	VectorAdd(ent->client->ps.origin, range, BBmaxs);
+
+	listLength = trap_EntitiesInBox(BBmins, BBmaxs, list, MAX_GENTITIES);
+
+	for (i = 0, counter = 0 ; i < listLength; i++)
+	{
+		hit = &g_entities[list[i]];
+
+		if (hit->s.weapon == WP_DYNAMITE || hit->s.weapon == WP_LANDMINE || hit->s.weapon == WP_SATCHEL)
+		{
+			VectorCopy(hit->r.mins, BBoxMinsBackup[counter]);
+			VectorCopy(hit->r.maxs, BBoxMaxsBackup[counter]);
+
+			VectorCopy(GetWeaponFireTableData(hit->s.weapon)->hitBox[0], hit->r.mins);
+			VectorCopy(GetWeaponFireTableData(hit->s.weapon)->hitBox[1], hit->r.maxs);
+
+			entRealHitBoxList[counter] = hit;
+			counter++;
+		}
+	}
+}
+
+/**
+ * @brief G_ResetTempTraceRealHitBox
+ */
+void G_ResetTempTraceRealHitBox()
+{
+	int       i ;
+	gentity_t **hit;
+
+	for (i = 0, hit = entRealHitBoxList; *hit != NULL ; i++, hit++)
+	{
+		VectorCopy(BBoxMinsBackup[i], (*hit)->r.mins);
+		VectorCopy(BBoxMaxsBackup[i], (*hit)->r.maxs);
+
+		*hit = NULL;
+		VectorClear(BBoxMinsBackup[i]);
+		VectorClear(BBoxMaxsBackup[i]);
+	}
+}
+
+
 /**
  * @brief G_ConstructionBegun
  * @param[in] ent

@@ -1029,8 +1029,10 @@ void G_CheckForCursorHints(gentity_t *ent)
 
 	tr = &ps->serverCursorHintTrace;
 
+	G_TempTraceRealHitBox(ent);
 	trace_contents = (CONTENTS_TRIGGER | CONTENTS_SOLID | CONTENTS_MISSILECLIP | CONTENTS_BODY | CONTENTS_CORPSE);
 	trap_Trace(tr, offset, NULL, NULL, end, ps->clientNum, trace_contents);
+	G_ResetTempTraceRealHitBox();
 
 	// reset all
 	hintType = ps->serverCursorHint = HINT_NONE;
@@ -1063,6 +1065,7 @@ void G_CheckForCursorHints(gentity_t *ent)
 	}
 
 	traceEnt = &g_entities[tr->entityNum];
+	G_TempTraceRealHitBox(ent);
 	while (G_CursorHintIgnoreEnt(traceEnt, ent) && numOfIgnoredEnts < 10)
 	{
 		// we may hit multiple invalid ents at the same point
@@ -1083,6 +1086,7 @@ void G_CheckForCursorHints(gentity_t *ent)
 		}
 		traceEnt = &g_entities[tr->entityNum];
 	}
+	G_ResetTempTraceRealHitBox();
 
 	if (tr->entityNum == ENTITYNUM_WORLD)
 	{
@@ -2945,7 +2949,7 @@ int QDECL SortRanks(const void *a, const void *b)
 		}
 
 		if (!((g_gametype.integer == GT_WOLF_CAMPAIGN && g_xpSaver.integer) ||
-			  (g_gametype.integer == GT_WOLF_CAMPAIGN && (g_campaigns[level.currentCampaign].current != 0 && !level.newCampaign)) ||
+		      (g_gametype.integer == GT_WOLF_CAMPAIGN && (g_campaigns[level.currentCampaign].current != 0 && !level.newCampaign)) ||
 		      (g_gametype.integer == GT_WOLF_LMS && g_currentRound.integer != 0)))
 		{
 			// current map XPs only
@@ -3762,7 +3766,8 @@ void G_LogExit(const char *string)
 			// record prestige before intermission
 			G_SetClientPrestige(ent->client, qtrue);
 		}
-	} else
+	}
+	else
 #endif
 	if (g_xpSaver.integer && g_gametype.integer == GT_WOLF_CAMPAIGN)
 	{
