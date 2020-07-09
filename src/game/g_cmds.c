@@ -4074,8 +4074,7 @@ void Cmd_Activate_f(gentity_t *ent)
 		VectorMA(offset, ent->client->ps.leanf, right, offset);
 	}
 
-	//VectorMA( offset, 256, forward, end );
-	VectorMA(offset, 96, forward, end);
+	VectorMA(offset, CH_MAX_DIST, forward, end);
 
 	trap_Trace(&tr, offset, NULL, NULL, end, ent->s.number, (CONTENTS_SOLID | CONTENTS_MISSILECLIP | CONTENTS_BODY | CONTENTS_CORPSE));
 
@@ -4087,9 +4086,12 @@ void Cmd_Activate_f(gentity_t *ent)
 
 	while (!(tr.surfaceFlags & SURF_NOIMPACT) && !(tr.entityNum == ENTITYNUM_WORLD))
 	{
-		qboolean found;
+		qboolean found = qfalse;
 
-		found = Do_Activate_f(ent, &g_entities[tr.entityNum]);
+		if (VectorDistance(offset, tr.endpos) <= CH_ACTIVATE_DIST)
+		{
+			found = Do_Activate_f(ent, &g_entities[tr.entityNum]);
+		}
 
 		if (found || pass2)
 		{
