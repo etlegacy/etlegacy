@@ -1,6 +1,8 @@
 package org.etlegacy.app;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.res.Resources;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 
@@ -8,6 +10,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import com.robotium.solo.Solo;
 
+import static android.os.SystemClock.sleep;
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -20,7 +23,6 @@ public class TestETL {
 
     private Solo solo;
 
-    @Test
     public void useAppContext() throws Exception {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
@@ -31,7 +33,13 @@ public class TestETL {
     @Test
     public void clickOnNickEntry() throws Exception {
         // Perform click on Nickname Entry
-        // TODO: Implement
+        Context context = ETLActivity.this;
+
+        if (!((Activity) context).isFinishing()) {
+            sleep(10000);
+            solo.drag(0, Resources.getSystem().displayMetrics.widthPixels, 0, Resources.getSystem().displayMetrics.heighPixels / 2, 100);
+//            solo.clickOnScreen(Resources.getSystem().displayMetrics.widthPixels, Resources.getSystem().displayMetrics.heighPixels, 1);
+        }
     }
 
 }
