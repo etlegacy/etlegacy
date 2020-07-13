@@ -76,7 +76,7 @@ static qboolean G_AntilagSafe(gentity_t *ent)
 	}
 
 	// No bots allowed
-	if(ent->r.svFlags & SVF_BOT)
+	if (ent->r.svFlags & SVF_BOT)
 	{
 		return qfalse;
 	}
@@ -266,34 +266,34 @@ static void G_AdjustSingleClientPosition(gentity_t *ent, int time)
 		             (float)(ent->client->clientMarkers[j].time - ent->client->clientMarkers[i].time);
 		// Using TimeShiftLerp since it follows the client exactly meaning less roundoff error instead of LerpPosition()
 		TimeShiftLerp(
-		    ent->client->clientMarkers[i].origin,
-		    ent->client->clientMarkers[j].origin,
-		    frac,
-		    ent->r.currentOrigin);
+			ent->client->clientMarkers[i].origin,
+			ent->client->clientMarkers[j].origin,
+			frac,
+			ent->r.currentOrigin);
 		TimeShiftLerp(
-		    ent->client->clientMarkers[i].mins,
-		    ent->client->clientMarkers[j].mins,
-		    frac,
-		    ent->r.mins);
+			ent->client->clientMarkers[i].mins,
+			ent->client->clientMarkers[j].mins,
+			frac,
+			ent->r.mins);
 		TimeShiftLerp(
-		    ent->client->clientMarkers[i].maxs,
-		    ent->client->clientMarkers[j].maxs,
-		    frac,
-		    ent->r.maxs);
+			ent->client->clientMarkers[i].maxs,
+			ent->client->clientMarkers[j].maxs,
+			frac,
+			ent->r.maxs);
 
 		// These are for Head / Legs
 		ent->client->ps.viewangles[0] = LerpAngle(
-		    ent->client->clientMarkers[i].viewangles[0],
-		    ent->client->clientMarkers[j].viewangles[0],
-		    frac);
+			ent->client->clientMarkers[i].viewangles[0],
+			ent->client->clientMarkers[j].viewangles[0],
+			frac);
 		ent->client->ps.viewangles[1] = LerpAngle(
-		    ent->client->clientMarkers[i].viewangles[1],
-		    ent->client->clientMarkers[j].viewangles[1],
-		    frac);
+			ent->client->clientMarkers[i].viewangles[1],
+			ent->client->clientMarkers[j].viewangles[1],
+			frac);
 		ent->client->ps.viewangles[2] = LerpAngle(
-		    ent->client->clientMarkers[i].viewangles[2],
-		    ent->client->clientMarkers[j].viewangles[2],
-		    frac);
+			ent->client->clientMarkers[i].viewangles[2],
+			ent->client->clientMarkers[j].viewangles[2],
+			frac);
 		// Set the ints to the closest ones in time since you can't lerp them.
 		if ((ent->client->clientMarkers[j].time - time) < (time - ent->client->clientMarkers[i].time))
 		{
@@ -509,14 +509,14 @@ static void G_AdjustClientPositions(gentity_t *skip, int time, qboolean backward
 			continue;
 		}
 
-        if (backwards)
-        {
-            G_AdjustSingleClientPosition(list, time);
-        }
-        else
-        {
-            G_ReAdjustSingleClientPosition(list);
-        }
+		if (backwards)
+		{
+			G_AdjustSingleClientPosition(list, time);
+		}
+		else
+		{
+			G_ReAdjustSingleClientPosition(list);
+		}
 	}
 }
 
@@ -711,7 +711,7 @@ void G_HistoricalTrace(gentity_t *ent, trace_t *results, const vec3_t start, con
 		clientNum = level.sortedClients[i];
 		if (&g_entities[clientNum] && g_entities[clientNum].client && g_entities[clientNum].takedamage)
 		{
-			maxsBackup[clientNum]           = g_entities[clientNum].r.maxs[2];
+			maxsBackup[clientNum] = g_entities[clientNum].r.maxs[2];
 			// use higher hitbox for syringe only
 			if (ent->s.weapon != WP_MEDIC_SYRINGE)
 			{
