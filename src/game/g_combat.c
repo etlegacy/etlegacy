@@ -483,9 +483,17 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 		fire_missile(self, launchspot, launchvel, self->s.weapon);
 
 		// decrease ammo
-		if (GetWeaponTableData(self->s.weapon)->type & WEAPON_TYPE_GRENADE)
+		if (GetWeaponTableData(self->client->ps.weapon)->type & WEAPON_TYPE_GRENADE)
 		{
-			self->client->ps.ammo[GetWeaponTableData(self->s.weapon)->ammoIndex]--;
+			// decrease ammo on hand
+			self->client->ps.ammoclip[GetWeaponTableData(self->client->ps.weapon)->ammoIndex]--;
+
+			// check ammo in reserve
+			if (!self->client->ps.ammo[GetWeaponTableData(self->client->ps.weapon)->ammoIndex])
+			{
+				// remove nade from weapon bank
+				COM_BitClear(self->client->ps.weapons, self->client->ps.weapon);
+			}
 		}
 	}
 
