@@ -3112,7 +3112,7 @@ msgid "Set font size for Crosshair Name label"
 msgstr ""
 
 #: etmain/ui/options_customise_hud.menu:128
-msgid "Popup Stay Time::"
+msgid "Popup Stay Time:"
 msgstr ""
 
 #: etmain/ui/options_customise_hud.menu:128
