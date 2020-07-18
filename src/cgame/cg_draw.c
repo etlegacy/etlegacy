@@ -2494,7 +2494,18 @@ static void CG_DrawSpectatorMessage(void)
 	y += charHeight * 2;
 
 	str2 = Binding_FromName("+attack");
-	str  = va(CG_TranslateString("Press %s to follow next player"), str2);
+
+	// we are looking at a client
+	if (!cg.crosshairNotLookingAtClient && cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR)
+	{
+		// draw name with full colors
+		str = va(CG_TranslateString("Press %s to follow %s"), str2, cgs.clientinfo[cg.crosshairClientNum].name);
+	}
+	else
+	{
+		str = va(CG_TranslateString("Press %s to follow next player"), str2);
+	}
+
 	CG_Text_Paint_Ext(INFOTEXT_STARTX, y, fontScale, fontScale, colorWhite, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 	y += charHeight * 2;
 
