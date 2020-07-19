@@ -40,6 +40,18 @@ static qboolean        expanded       = qfalse;
 
 qboolean ccInitial = qtrue;
 
+#define AUTOMAP_ZOOM                5.159f
+#define COMMANDMAP_PLAYER_ICON_SIZE 6
+#define AUTOMAP_PLAYER_ICON_SIZE    5
+#define CONST_ICON_NORMAL_SIZE      32.f
+#define CONST_ICON_EXPANDED_SIZE    48.f
+#define CONST_ICON_LANDMINE_SIZE    12.f
+#define FLAGSIZE_EXPANDED           48.f
+#define FLAGSIZE_NORMAL             32.f
+#define FLAG_LEFTFRAC               0.1953125f // 25/128
+#define FLAG_TOPFRAC                0.7421875f // 95/128
+#define SPAWN_SIZEUPTIME            1000.f
+
 /**
  * @brief CG_TransformToCommandMapCoord
  * @param[in] coord_x
@@ -50,8 +62,6 @@ void CG_TransformToCommandMapCoord(float *coord_x, float *coord_y)
 	*coord_x = CC_2D_X + ((*coord_x - cg.mapcoordsMins[0]) * cg.mapcoordsScale[0]) * CC_2D_W;
 	*coord_y = CC_2D_Y + ((*coord_y - cg.mapcoordsMins[1]) * cg.mapcoordsScale[1]) * CC_2D_H;
 }
-
-#define AUTOMAP_ZOOM 5.159f
 
 /**
  * @brief CG_CurLayerForZ
@@ -82,7 +92,7 @@ int CG_CurLayerForZ(int z)
  * @param[in] scissor
  * @return
  */
-static qboolean CG_ScissorEntIsCulled(mapEntityData_t *mEnt, mapScissor_t *scissor, float size)
+static qboolean CG_ScissorEntIsCulled(mapEntityData_t *mEnt, mapScissor_t *scissor, vec2_t tolerance)
 {
 	if (!scissor->circular)
 	{
@@ -103,7 +113,7 @@ static qboolean CG_ScissorEntIsCulled(mapEntityData_t *mEnt, mapScissor_t *sciss
 		distVec[1]  = mEnt->automapTransformed[1] - (scissor->tl[1] + (0.5f * (scissor->br[1] - scissor->tl[1])));
 		distSquared = distVec[0] * distVec[0] + distVec[1] * distVec[1];
 
-		if (distSquared > Square(0.5f * (scissor->br[0] - scissor->tl[0])) + Square(size * 2.0f))
+		if (distSquared > Square(0.5f * (scissor->br[0] - scissor->tl[0])) + Square(tolerance[0] * 2.0f))
 		{
 			return qtrue;
 		}
@@ -118,7 +128,7 @@ static qboolean CG_ScissorEntIsCulled(mapEntityData_t *mEnt, mapScissor_t *sciss
  * @param[in] scissor
  * @return
  */
-static qboolean CG_ScissorPointIsCulled(vec2_t vec, mapScissor_t *scissor, float size)
+static qboolean CG_ScissorPointIsCulled(vec2_t vec, mapScissor_t *scissor, vec2_t tolerance)
 {
 	if (!scissor->circular)
 	{
@@ -139,7 +149,7 @@ static qboolean CG_ScissorPointIsCulled(vec2_t vec, mapScissor_t *scissor, float
 		distVec[1]  = vec[1] - (scissor->tl[1] + (0.5f * (scissor->br[1] - scissor->tl[1])));
 		distSquared = distVec[0] * distVec[0] + distVec[1] * distVec[1];
 
-		if (distSquared > Square(0.5f * (scissor->br[0] - scissor->tl[0])) + Square(size * 2.0f))
+		if (distSquared > Square(0.5f * (scissor->br[0] - scissor->tl[0])) + Square(tolerance[0] * 2.0f))
 		{
 			return qtrue;
 		}
@@ -513,9 +523,6 @@ static void CG_DrawGrid(float x, float y, float w, float h, mapScissor_t *scisso
 	}
 }
 
-#define COMMANDMAP_PLAYER_ICON_SIZE 6
-#define AUTOMAP_PLAYER_ICON_SIZE 5
-
 // extracted from CG_DrawCommandMap.
 // drawingCommandMap - qfalse: command map; qtrue: auto map (upper left in main game view)
 
@@ -626,12 +633,6 @@ void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, float h,
 			}
 		}
 
-		// now check to see if the entity is within our clip region
-		if (scissor && CG_ScissorEntIsCulled(mEnt, scissor, icon_extends[0]))
-		{
-			return;
-		}
-
 		if (cgs.ccLayers)
 		{
 			if (CG_CurLayerForZ(mEnt->z) != cgs.ccSelectedLayer)
@@ -649,16 +650,24 @@ void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, float h,
 		{
 			icon_pos[0]   = x + mEnt->transformed[0] - icon_size;
 			icon_pos[1]   = y + mEnt->transformed[1] - icon_size;
-			string_pos[0] = x + mEnt->transformed[0];
+			string_pos[0] = x + mEnt->transformed[0] + icon_size;
 			string_pos[1] = y + mEnt->transformed[1] + icon_size;
 		}
 
 		icon_extends[0] = 2 * icon_size;
 		icon_extends[1] = 2 * icon_size;
+
 		if (scissor)
 		{
 			icon_extends[0] *= (scissor->zoomFactor / AUTOMAP_ZOOM);
 			icon_extends[1] *= (scissor->zoomFactor / AUTOMAP_ZOOM);
+		}
+
+		// now check to see if the entity is within our clip region
+		if (scissor && CG_ScissorEntIsCulled(mEnt, scissor, icon_extends))
+		{
+			trap_R_SetColor(NULL);
+			return;
 		}
 
 		if (mEnt->type == ME_PLAYER_REVIVE && !(cent->currentState.powerups & (1 << PW_INVULNERABLE)))
@@ -838,12 +847,6 @@ void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, float h,
 			}
 		}
 
-		// now check to see if the entity is within our clip region
-		if (scissor && CG_ScissorEntIsCulled(mEnt, scissor, icon_extends[0]))
-		{
-			return;
-		}
-
 		if (cgs.ccLayers)
 		{
 			if (CG_CurLayerForZ(mEnt->z) != cgs.ccSelectedLayer)
@@ -902,13 +905,15 @@ void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, float h,
 		case ME_DESTRUCT_2:
 			pic = 0;
 			break;
-		default:
+		case ME_DESTRUCT:
 			if (mEntFilter & CC_FILTER_DESTRUCTIONS)
 			{
 				trap_R_SetColor(NULL);
 				return;
 			}
 			pic = mEnt->team == TEAM_AXIS ? cgs.media.ccDestructIcon[cent->currentState.effect1Time][0] : cgs.media.ccDestructIcon[cent->currentState.effect1Time][1];
+			break;
+		default:
 			break;
 		}
 
@@ -966,19 +971,18 @@ void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, float h,
 			icon_pos[1] = y + mEnt->transformed[1];
 		}
 
-#define CONST_ICON_NORMAL_SIZE 32.f
-#define CONST_ICON_EXPANDED_SIZE 48.f
-
-		if (interactive && !expanded && BG_RectContainsPoint(x + mEnt->transformed[0] - (CONST_ICON_NORMAL_SIZE * 0.5f), y + mEnt->transformed[1] - (CONST_ICON_NORMAL_SIZE * 0.5f), CONST_ICON_NORMAL_SIZE, CONST_ICON_NORMAL_SIZE, cgDC.cursorx, cgDC.cursory))
+		if (interactive && !expanded && BG_RectContainsPoint(x + mEnt->transformed[0] - CONST_ICON_NORMAL_SIZE * 0.5f, y + mEnt->transformed[1] - CONST_ICON_NORMAL_SIZE * 0.5f, CONST_ICON_NORMAL_SIZE, CONST_ICON_NORMAL_SIZE, cgDC.cursorx, cgDC.cursory))
 		{
-			float w;
+			float width;
 
 			icon_extends[0] = CONST_ICON_EXPANDED_SIZE;
 			icon_extends[1] = CONST_ICON_EXPANDED_SIZE;
+
 			if (mEnt->type == ME_TANK_DEAD || mEnt->type == ME_TANK)
 			{
 				icon_extends[1] *= 0.5f;
 			}
+
 			if (scissor)
 			{
 				icon_extends[0] *= (scissor->zoomFactor / AUTOMAP_ZOOM);
@@ -990,7 +994,14 @@ void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, float h,
 				icon_extends[1] *= cgs.ccZoomFactor;
 			}
 
-			CG_DrawPic(icon_pos[0] - (icon_extends[0] * 0.5f), icon_pos[1] - (icon_extends[1] * 0.5f), icon_extends[0], icon_extends[1], pic);
+			// now check to see if the entity is within our clip region
+			if (scissor && CG_ScissorEntIsCulled(mEnt, scissor, icon_extends))
+			{
+				trap_R_SetColor(NULL);
+				return;
+			}
+
+			CG_DrawPic(icon_pos[0] - icon_extends[0] * 0.5f, icon_pos[1] - icon_extends[1] * 0.5f, icon_extends[0], icon_extends[1], pic);
 
 			if (oidInfo)
 			{
@@ -1001,8 +1012,8 @@ void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, float h,
 				name = va("%i", j);
 			}
 
-			w = CG_Text_Width_Ext(name, 0.2f, 0, &cgs.media.limboFont2);
-			CG_CommandMap_SetHighlightText(name, icon_pos[0] - (w * 0.5f), icon_pos[1] - 8);
+			width = CG_Text_Width_Ext(name, 0.2f, 0, &cgs.media.limboFont2);
+			CG_CommandMap_SetHighlightText(name, icon_pos[0] - (width * 0.5f), icon_pos[1] - 8);
 		}
 		else if (interactive && ((mEnt->yaw & 0xFF) & (1 << cgs.ccSelectedObjective)))
 		{
@@ -1020,31 +1031,12 @@ void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, float h,
 
 			icon_extends[0] = CONST_ICON_NORMAL_SIZE + scalesize;
 			icon_extends[1] = CONST_ICON_NORMAL_SIZE + scalesize;
-			if (scissor)
-			{
-				icon_extends[0] *= (scissor->zoomFactor / AUTOMAP_ZOOM);
-				icon_extends[1] *= (scissor->zoomFactor / AUTOMAP_ZOOM);
-			}
-			else
-			{
-				icon_extends[0] *= cgs.ccZoomFactor;
-				icon_extends[1] *= cgs.ccZoomFactor;
-			}
+
 			if (mEnt->type == ME_TANK_DEAD || mEnt->type == ME_TANK)
 			{
 				icon_extends[1] *= 0.5f;
 			}
 
-			CG_DrawPic(icon_pos[0] - (icon_extends[0] * 0.5f), icon_pos[1] - (icon_extends[1] * 0.5f), icon_extends[0], icon_extends[1], pic);
-		}
-		else
-		{
-			icon_extends[0] = CONST_ICON_NORMAL_SIZE;
-			icon_extends[1] = CONST_ICON_NORMAL_SIZE;
-			if (mEnt->type == ME_TANK_DEAD || mEnt->type == ME_TANK)
-			{
-				icon_extends[1] *= 0.5f;
-			}
 			if (scissor)
 			{
 				icon_extends[0] *= (scissor->zoomFactor / AUTOMAP_ZOOM);
@@ -1054,6 +1046,43 @@ void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, float h,
 			{
 				icon_extends[0] *= cgs.ccZoomFactor;
 				icon_extends[1] *= cgs.ccZoomFactor;
+			}
+
+			// now check to see if the entity is within our clip region
+			if (scissor && CG_ScissorEntIsCulled(mEnt, scissor, icon_extends))
+			{
+				trap_R_SetColor(NULL);
+				return;
+			}
+
+			CG_DrawPic(icon_pos[0] - icon_extends[0] * 0.5f, icon_pos[1] - icon_extends[1] * 0.5f, icon_extends[0], icon_extends[1], pic);
+		}
+		else
+		{
+			icon_extends[0] = CONST_ICON_NORMAL_SIZE;
+			icon_extends[1] = CONST_ICON_NORMAL_SIZE;
+
+			if (mEnt->type == ME_TANK_DEAD || mEnt->type == ME_TANK)
+			{
+				icon_extends[1] *= 0.5f;
+			}
+
+			if (scissor)
+			{
+				icon_extends[0] *= (scissor->zoomFactor / AUTOMAP_ZOOM);
+				icon_extends[1] *= (scissor->zoomFactor / AUTOMAP_ZOOM);
+			}
+			else
+			{
+				icon_extends[0] *= cgs.ccZoomFactor;
+				icon_extends[1] *= cgs.ccZoomFactor;
+			}
+
+			// now check to see if the entity is within our clip region
+			if (scissor && CG_ScissorEntIsCulled(mEnt, scissor, icon_extends))
+			{
+				trap_R_SetColor(NULL);
+				return;
 			}
 
 			CG_DrawPic(icon_pos[0] - icon_extends[0] * 0.5f, icon_pos[1] - icon_extends[1] * 0.5f, icon_extends[0], icon_extends[1], pic);
@@ -1062,12 +1091,6 @@ void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, float h,
 		return;
 	case ME_LANDMINE:
 		if (mEntFilter & CC_FILTER_LANDMINES)
-		{
-			return;
-		}
-
-		// now check to see if the entity is within our clip region
-		if (scissor && CG_ScissorEntIsCulled(mEnt, scissor, icon_extends[0]))
 		{
 			return;
 		}
@@ -1095,8 +1118,9 @@ void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, float h,
 			icon_pos[1] = y + mEnt->transformed[1];
 		}
 
-		icon_extends[0] = 12;
-		icon_extends[1] = 12;
+		icon_extends[0] = CONST_ICON_LANDMINE_SIZE;
+		icon_extends[1] = CONST_ICON_LANDMINE_SIZE;
+
 		if (scissor)
 		{
 			icon_extends[0] *= (scissor->zoomFactor / AUTOMAP_ZOOM);
@@ -1106,6 +1130,13 @@ void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, float h,
 		{
 			icon_extends[0] *= cgs.ccZoomFactor;
 			icon_extends[1] *= cgs.ccZoomFactor;
+		}
+
+		// now check to see if the entity is within our clip region
+		if (scissor && CG_ScissorEntIsCulled(mEnt, scissor, icon_extends))
+		{
+			trap_R_SetColor(NULL);
+			return;
 		}
 
 		trap_R_SetColor(c_clr);
@@ -1211,7 +1242,7 @@ void CG_DrawMap(float x, float y, float w, float h, int mEntFilter, mapScissor_t
 			}
 			// FIXME: the code above seems to do weird things to the next trap_R_DrawStretchPic issued.
 			// This hack works around this.
-			trap_R_DrawStretchPic(0, 0, 0, 0, 0, 0, 0, 0, cgs.media.whiteShader);
+			// trap_R_DrawStretchPic(0, 0, 0, 0, 0, 0, 0, 0, cgs.media.whiteShader);
 		}
 
 		// Draw the grid
@@ -1635,12 +1666,6 @@ void CG_DrawAutoMap(float x, float y, float w, float h)
 	CG_DrawMap(x, y, w, h, cgs.ccFilter, &mapScissor, qfalse, 1.f, qfalse);
 }
 
-#define FLAGSIZE_EXPANDED 48.f
-#define FLAGSIZE_NORMAL 32.f
-#define FLAG_LEFTFRAC (25 / 128.f)
-#define FLAG_TOPFRAC (95 / 128.f)
-#define SPAWN_SIZEUPTIME 1000.f
-
 /**
  * @brief CG_DrawSpawnPointInfo
  * @param[in] px
@@ -1719,7 +1744,7 @@ int CG_DrawSpawnPointInfo(float px, float py, float pw, float ph, qboolean draw,
 			icon_extends[1] *= cgs.ccZoomFactor;
 		}
 
-		if (scissor && CG_ScissorPointIsCulled(point, scissor, icon_extends[0]))
+		if (scissor && CG_ScissorPointIsCulled(point, scissor, icon_extends))
 		{
 			continue;
 		}
@@ -1858,7 +1883,7 @@ void CG_DrawMortarMarker(float px, float py, float pw, float ph, qboolean draw, 
 			}
 
 			// don't return if the marker is culled, just don't draw it
-			if (!(scissor && CG_ScissorPointIsCulled(point, scissor, icon_extends[0])))
+			if (!(scissor && CG_ScissorPointIsCulled(point, scissor, icon_extends)))
 			{
 				if (scissor)
 				{
@@ -1925,7 +1950,7 @@ void CG_DrawMortarMarker(float px, float py, float pw, float ph, qboolean draw, 
 			}
 
 			// don't return if the marker is culled, just skip it (so we draw the rest, if any)
-			if (scissor && CG_ScissorPointIsCulled(point, scissor, icon_extends[0]))
+			if (scissor && CG_ScissorPointIsCulled(point, scissor, icon_extends))
 			{
 				continue;
 			}
