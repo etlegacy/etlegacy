@@ -1033,6 +1033,8 @@ if (tr.refdef.pixelTarget != NULL)
 			if (use_parallaxMapping)
 			{
 				SetUniformFloat(UNIFORM_DEPTHSCALE, RB_EvalExpression(&pStage->depthScaleExp, r_parallaxDepthScale->value));
+				// parallax self shadowing
+				SetUniformFloat(UNIFORM_PARALLAXSHADOW, r_parallaxShadow->value);
 			}
 
 			// bind u_NormalMap
@@ -1049,7 +1051,7 @@ if (tr.refdef.pixelTarget != NULL)
 				if (tr.refdef.rdflags & RDF_UNDERWATER)
 				{
 					SetUniformFloat(UNIFORM_SPECULARSCALE, r_specularScaleWorld->value * 5.f);
-					SetUniformFloat(UNIFORM_SPECULAREXPONENT, 512.f); //r_specularExponentWorld->value * 0.25f);
+					SetUniformFloat(UNIFORM_SPECULAREXPONENT, 64.f); //r_specularExponentWorld->value * 0.25f);
 				} else {
 					SetUniformFloat(UNIFORM_SPECULARSCALE, r_specularScaleWorld->value);
 					SetUniformFloat(UNIFORM_SPECULAREXPONENT, r_specularExponentWorld->value);
@@ -1977,7 +1979,7 @@ static void Render_heatHaze(int stage)
 		// choose right shader program ----------------------------------
 		//gl_genericShader->SetAlphaTesting((pStage->stateBits & GLS_ATEST_BITS) != 0);
 		SetMacrosAndSelectProgram(trProg.gl_genericShader,
-		                          USE_ALPHA_TESTING, qfalse,
+		                          USE_ALPHA_TESTING, qfalse,  // (pStage->stateBits & GLS_ATEST_BITS) != 0
 		                          USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal,
 		                          USE_VERTEX_SKINNING, glConfig2.vboVertexSkinningAvailable && tess.vboVertexSkinning,
 		                          USE_VERTEX_ANIMATION, glState.vertexAttribsInterpolation > 0,
@@ -1986,7 +1988,7 @@ static void Render_heatHaze(int stage)
 		// end choose right shader program ------------------------------
 
 		GLSL_SetUniform_ColorModulate(trProg.gl_genericShader, rgbaGen.color, rgbaGen.alpha);
-		SetUniformVec4(UNIFORM_COLOR, colorRed);
+		SetUniformVec4(UNIFORM_COLOR, colorBlack);
 		SetUniformMatrix16(UNIFORM_MODELMATRIX, backEnd.orientation.transformMatrix);
 		SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
 
@@ -2010,7 +2012,12 @@ static void Render_heatHaze(int stage)
 		{
 			clipPortalPlane();
 		}
-
+/*
+if ((pStage->stateBits & GLS_ATEST_BITS) != 0)
+{
+	GLSL_SetUniform_AlphaTest(pStage->stateBits);
+}
+*/
 		// bind u_ColorMap
 		SelectTexture(TEX_COLOR);
 		GL_Bind(tr.whiteImage);
@@ -2027,11 +2034,11 @@ static void Render_heatHaze(int stage)
 		Ren_LogComment("--- HEATHAZE FIX END ---\n");
 	}
 
+
 	// remove alpha test
 	stateBits  = pStage->stateBits;
 	stateBits &= ~GLS_ATEST_BITS;
 	stateBits &= ~GLS_DEPTHMASK_TRUE;
-
 	GL_State(stateBits);
 
 	// choose right shader program ----------------------------------
@@ -2216,7 +2223,7 @@ static void Render_liquid(int stage)
 		SetUniformFloat(UNIFORM_NORMALSCALE, RB_EvalExpression(&pStage->normalScaleExp, 0.05f));
 
 		// specular
-		SetUniformFloat(UNIFORM_SPECULARSCALE, r_specularScaleWorld->value);
+		SetUniformFloat(UNIFORM_SPECULARSCALE, r_specularScaleWorld->value * 5.f); // water always more specular
 		SetUniformFloat(UNIFORM_SPECULAREXPONENT, r_specularExponentWorld->value);
 
 		// refraction
@@ -2815,6 +2822,7 @@ void Tess_ComputeColor(shaderStage_t *pStage)
 		{
 			//dot = DotProduct(tess.normal[i].v, worldUp);
 			//dot = DotProduct(tess.normals[i], worldUp);
+VectorNormalize(worldUp);
 			Dot(tess.normals[i], worldUp, dot);
 
 			// special handling for Zombie fade effect
@@ -2834,17 +2842,19 @@ void Tess_ComputeColor(shaderStage_t *pStage)
 				continue;
 			}
 
-			if (dot < highest)
+			if (dot <= highest)
 			{
-				if (dot > lowest)
+				if (dot >= lowest)
 				{
-					if (dot < lowest + range / 2)
+					range *= 0.5f; // range /= 2
+					if (dot < lowest + range)
 					{
-						alpha = ((float)pStage->constantColor[3] * ((dot - lowest) / (range / 2)));
+						alpha = ((float)pStage->constantColor[3] * ((dot - lowest) / range));
 					}
 					else
 					{
-						alpha = ((float)pStage->constantColor[3] * (1.0f - ((dot - lowest - range / 2) / (range / 2))));
+//						alpha = ((float)pStage->constantColor[3] * (1.0f - ((dot - lowest - range) / range)));
+alpha = ((float)pStage->constantColor[3] * ((dot - range) / range));
 					}
 					if (alpha > 255.0f)
 					{

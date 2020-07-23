@@ -41,6 +41,7 @@ uniform float     u_DiffuseLighting;
 		#endif  // USE_REFLECTIONS
 		#if defined(USE_PARALLAX_MAPPING)
 			uniform float u_DepthScale;
+			uniform float u_ParallaxShadow;
 		#endif // USE_PARALLAX_MAPPING
 	#endif // USE_NORMAL_MAPPING
 #endif // USE_DIFFUSE
@@ -55,9 +56,9 @@ varying vec3 var_Normal;
 	varying vec2 var_TexDiffuse;
 	#if defined(USE_NORMAL_MAPPING)
 		varying mat3 var_tangentMatrix;
-		varying vec3 var_LightDirection; 
+		varying vec3 var_LightDirW; 
 		varying vec3 var_ViewDirW;               // view direction in world space
-varying vec3 var_LightDirectionT;
+varying vec3 var_LightDirT;
 varying vec3 var_ViewDirT;           // view direction in tangentspace
 		#if defined(USE_PARALLAX_MAPPING)
 ///			varying vec3 var_ViewDirT;           // view direction in tangentspace
@@ -103,11 +104,15 @@ void main()
 	// render a lightmapped face
 #if defined(USE_DIFFUSE)
 	vec2 texDiffuse;
+
 #if defined(USE_PARALLAX_MAPPING)
-	// ray intersect in view direction
-//!	texDiffuse += RayIntersectDisplaceMap(var_TexDiffuse, var_S, u_NormalMap);
-	texDiffuse = parallax(u_NormalMap, var_TexDiffuse, var_ViewDirT, u_DepthScale, var_distanceToCam);
-	//if (texDiffuse.x < 0.0 || textDiffuse.x > 1.0 || texDiffuse.y < 0.0 || texDiffuse > 1.0) discard;
+//!	float parallaxHeight; // needed for parallax self shadowing. set by the function parallax()
+//!	texDiffuse = parallax(u_NormalMap, var_TexDiffuse, var_ViewDirT, u_DepthScale, var_distanceToCam, parallaxHeight);
+//!	float parallaxShadow = parallaxSelfShadow(u_NormalMap, texDiffuse, -var_LightDirT, u_DepthScale, var_distanceToCam, parallaxHeight);
+
+	vec3 parallaxResult = parallaxAndShadow(u_NormalMap, var_TexDiffuse, var_ViewDirT, -var_LightDirT, u_DepthScale, var_distanceToCam, u_ParallaxShadow);
+	texDiffuse = parallaxResult.xy;
+	float parallaxShadow = parallaxResult.z;
 #else
 	texDiffuse = var_TexDiffuse;
 #endif // USE_PARALLAX_MAPPING
@@ -154,8 +159,8 @@ void main()
 //vec3 V = normalize(var_ViewDirT); // what we really want is all vectors in tangentspace (calculated in the vertexshader), so we don't have to transform every normal in the fp
 
 	// light direction in world space
-	vec3 L = var_LightDirection;
-//vec3 L = var_LightDirectionT;
+	vec3 L = var_LightDirW;
+//vec3 L = var_LightDirT;
 
 	// normal
 	vec3 Ntex = texture2D(u_NormalMap, texDiffuse).xyz * 2.0 - 1.0;
@@ -195,6 +200,9 @@ void main()
 
 	// compute final color
 	vec4 color = diffuse;
+#if defined(USE_PARALLAX_MAPPING)
+	color.rgb *= parallaxShadow; //pow(parallaxShadow, 2); //pow(parallaxShadow, 4);
+#endif
 #if defined(USE_NORMAL_MAPPING)
 #if defined(USE_SPECULAR)
 	color.rgb += specular;

@@ -1006,7 +1006,7 @@ void R_TransformModelToClip(const vec3_t src, const float *modelMatrix, const fl
  */
 void R_TransformClipToWindow(const vec4_t clip, const viewParms_t *view, vec4_t normalized, vec4_t window)
 {
-	float r_clip3 = 1.f / clip[3];
+	float r_clip3 = rcp(clip[3]); // 1.f / clip[3];
 	normalized[0] = clip[0] * r_clip3;
 	normalized[1] = clip[1] * r_clip3;
 	//normalized[2] = (clip[2] + clip[3]) / (2.f * clip[3]);
@@ -3608,7 +3608,7 @@ R_SetFrameFog();
  * @brief A simpler view may be either the actual camera view,
  * or a mirror / remote location
  * @param[in] parms
- * This renders no fog, no light, no shadows, no decals
+ * This renders no fog, no light, no shadows, no decals...
  */
 void R_RenderSimpleView(viewParms_t *parms)
 {

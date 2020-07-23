@@ -157,7 +157,7 @@ void R_LoadTGA(const char *name, byte **pic, int *width, int *height, byte alpha
 	{
 		if (buf_p + targa_header.id_length > end)
 		{
-			ri.Free(targa_rgba);
+			Com_Dealloc(targa_rgba);
 			ri.FS_FreeFile(buffer.v);
 			Ren_Drop("LoadTGA: header too short (%s)\n", name);
 		}
@@ -169,7 +169,7 @@ void R_LoadTGA(const char *name, byte **pic, int *width, int *height, byte alpha
 	{
 		if (buf_p + columns * rows * targa_header.pixel_size / 8 > end)
 		{
-			ri.Free(targa_rgba);
+			Com_Dealloc(targa_rgba);
 			ri.FS_FreeFile(buffer.v);
 			Ren_Drop("LoadTGA: file truncated (%s)\n", name);
 		}
@@ -212,7 +212,7 @@ void R_LoadTGA(const char *name, byte **pic, int *width, int *height, byte alpha
 					*pixbuf++ = alpha;
 					break;
 				default:
-					ri.Free(targa_rgba);
+					Com_Dealloc(targa_rgba);
 					ri.FS_FreeFile(buffer.v);
 					Ren_Drop("LoadTGA: illegal pixel_size '%d' in file '%s'\n", targa_header.pixel_size, name);
 				}
@@ -255,7 +255,7 @@ void R_LoadTGA(const char *name, byte **pic, int *width, int *height, byte alpha
 						alpha = *buf_p++;
 						break;
 					default:
-						ri.Free(targa_rgba);
+						Com_Dealloc(targa_rgba);
 						ri.FS_FreeFile(buffer.v);
 						Ren_Drop("LoadTGA: illegal pixel_size '%d' in file '%s'\n", targa_header.pixel_size, name);
 					}
@@ -286,7 +286,7 @@ void R_LoadTGA(const char *name, byte **pic, int *width, int *height, byte alpha
 				{
 					if (buf_p + targa_header.pixel_size / 8 * packetSize > end)
 					{
-						ri.Free(targa_rgba);
+						Com_Dealloc(targa_rgba);
 						ri.FS_FreeFile(buffer.v);
 						Ren_Drop("LoadTGA: file truncated (%s)\n", name);
 					}
@@ -314,7 +314,7 @@ void R_LoadTGA(const char *name, byte **pic, int *width, int *height, byte alpha
 							*pixbuf++ = alpha;
 							break;
 						default:
-							ri.Free(targa_rgba);
+							Com_Dealloc(targa_rgba);
 							ri.FS_FreeFile(buffer.v);
 							Ren_Drop("LoadTGA: illegal pixel_size '%d' in file '%s'\n", targa_header.pixel_size, name);
 						}

@@ -311,6 +311,9 @@ void R_ImageList_f(void)
 		case WT_ALPHA_ZERO_CLAMP:
 			Ren_Print("azclmp");
 			break;
+		case WT_MIRROR_REPEAT:
+			Ren_Print("mirrep");
+			break;
 		default:
 			Ren_Print("%4i  ", image->wrapType);
 			break;
@@ -1221,7 +1224,7 @@ void R_UploadImage(const byte **dataArray, int numData, image_t *image)
 	GLenum     target;
 	GLenum     format               = GL_RGBA;
 	GLenum     internalFormat       = GL_RGB;
-	float      rMax                 = 0, gMax = 0, bMax = 0;
+//	float      rMax                 = 0, gMax = 0, bMax = 0;  // these vars are not used..
 	vec4_t     zeroClampBorder      = { 0, 0, 0, 1 };
 	vec4_t     alphaZeroClampBorder = { 0, 0, 0, 0 };
 
@@ -1389,7 +1392,7 @@ void R_UploadImage(const byte **dataArray, int numData, image_t *image)
 		{
 			for (i = 0, i4 = 0; i < c; i++, i4 += 4)
 			{
-				if (scan[i4 + 0] > rMax)
+/*				if (scan[i4 + 0] > rMax)
 				{
 					rMax = scan[i4 + 0];
 				}
@@ -1400,7 +1403,7 @@ void R_UploadImage(const byte **dataArray, int numData, image_t *image)
 				if (scan[i4 + 2] > bMax)
 				{
 					bMax = scan[i4 + 2];
-				}
+				}*/
 				if (scan[i4 + 3] != 255)
 				{
 					samples = 4;
@@ -1622,6 +1625,10 @@ void R_UploadImage(const byte **dataArray, int numData, image_t *image)
 		glTexParameterf(image->type, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
 		glTexParameterf(image->type, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
 		glTexParameterfv(image->type, GL_TEXTURE_BORDER_COLOR, alphaZeroClampBorder);
+		break;
+	case WT_MIRROR_REPEAT:
+		glTexParameterf(image->type, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
+		glTexParameterf(image->type, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
 		break;
 	default:
 		Ren_Warning("WARNING: unknown wrap type for image '%s'\n", image->name);
@@ -2465,17 +2472,19 @@ image_t *R_FindImageFile(const char *imageName, int bits, filterType_t filterTyp
 	{
 		if (!Q_stricmpn(buffer, image->name, sizeof(image->name)))
 		{
+/*
+// note: this next block is only setting a local variable 'diff', but that 'diff' is never used.
+// So, all it does is possibly printing warning messages.
+// I don't need the messages..   who will change their material if it just gives a warning?
 			// the white image can be used with any set of parms, but other mismatches are errors
 			if (Q_stricmp(buffer, "_white"))
 			{
 				diff = bits ^ image->bits;
 
-				/*
-				   if(diff & IF_NOMIPMAPS)
-				   {
-				   Ren_Developer( "WARNING: reused image %s with mixed mipmap parm\n", name);
-				   }
-				 */
+				//if (diff & IF_NOMIPMAPS)
+				//{
+				//Ren_Developer( "WARNING: reused image %s with mixed mipmap parm\n", name);
+				//}
 
 				if (diff & IF_NOPICMIP)
 				{
@@ -2487,6 +2496,7 @@ image_t *R_FindImageFile(const char *imageName, int bits, filterType_t filterTyp
 					Ren_Print("WARNING: reused image '%s' with mixed glWrapType parm for shader '%s'\n", imageName, materialName);
 				}
 			}
+*/
 			return image;
 		}
 	}

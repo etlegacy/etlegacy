@@ -4211,7 +4211,7 @@ static qboolean ParseShader(char *_text)
 			if (fogDensity > 1)
 			{ // linear
 				fogFar = fogDensity;
-fogDensity = 1.0;
+				fogDensity = 1.0;
 			}
 			else
 			{

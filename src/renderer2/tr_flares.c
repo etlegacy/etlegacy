@@ -60,6 +60,9 @@
 
 #include "tr_local.h"
 
+// we do not want to render the query surfaces as 3D objects..
+//#define FLARE_QUERY_3D   1
+
 /**
  * @struct flare_s
  * @typedef flare_t
@@ -83,12 +86,21 @@ typedef struct flare_s
 	qboolean visible;               ///< state of last test
 	float drawIntensity;            ///< may be non 0 even if !visible due to fading
 
-	int windowX, windowY;
-	float eyeZ;
-
+	int windowX, windowY;           ///< the position of the flare in screen coordinates
+	float windowZ;                  ///< the z depth of the 2D ortho surface in 3D perspective space
+	float eyeZ;                     ///< the distance from camera/eye to the flare/corona origin, in world coordinates
 	vec3_t color;
 
 	qboolean isCorona;
+
+	qboolean querying;              ///< occlusion query started on this flare
+	uint32_t occlusionQueryObject;  ///< the handle to the query object
+	uint32_t occlusionQuerySamples; ///< the result of the query (how many pixels are rendered)
+	uint32_t flareSamples;          ///< the total number of samples in the flare
+	vec4_t quadVerts[4];            ///< the quad surface of the query object
+#if FLARE_QUERY_3D
+	vec3_t origin;                  ///< the position of the flare/corona in world coordinates
+#endif
 } flare_t;
 
 #define         MAX_FLARES 128
@@ -97,6 +109,12 @@ flare_t r_flareStructs[MAX_FLARES];
 flare_t *r_activeFlares, *r_inactiveFlares;
 
 int flareCoeff;
+float flareSize; // half the size of a flare/corona (in screen coordinates)
+
+// you start to see coronas/flares from this distance.
+// At this distance, the drawIntensity is 0.0  (drawIntensity is 1.0 at the origin of the corona/flare)
+#define CORONAFARDISTANCE 3000.f
+
 
 /**
  * @brief R_ClearFlares
@@ -124,16 +142,18 @@ void R_ClearFlares(void)
  * @param[in] color
  * @param[in] normal
  * @param[in] visible
+ * @param[in] isCorona
+ * @param[in] flareHandle  (SF_FLARE surface flares have handle 0xFFFFFFFF)
  */
-void RB_AddFlare(void *surface, int fogNum, vec3_t point, vec3_t color, vec3_t normal, qboolean visible, qboolean isCorona)
+void RB_AddFlare(void *surface, int fogNum, vec3_t point, vec3_t color, vec3_t normal, qboolean visible, qboolean isCorona, uint32_t flareHandle)
 {
 	int     i;
-	flare_t *f; // *oldest;
-	vec3_t  local;
+	flare_t *f;
 	vec4_t  eye, clip, normalized, window;
-	float   distBias = 512.0;
-	float   distLerp = 0.5;
-	float   d1       = 0.0f, d2 = 0.0f;
+	vec3_t  local;
+	const float distBias = 512.0;
+	const float distLerp = 0.5;
+	float d1 = 0.0f, d2 = 0.0f;
 
 	backEnd.pc.c_flareAdds++;
 
@@ -159,7 +179,6 @@ void RB_AddFlare(void *surface, int fogNum, vec3_t point, vec3_t color, vec3_t n
 	}
 
 	// see if a flare with a matching surface, scene, and view exists
-	//oldest = r_flareStructs;
 	for (f = r_activeFlares; f; f = f->next)
 	{
 		if (f->surface == surface && f->frameSceneNum == backEnd.viewParms.frameSceneNum &&
@@ -188,6 +207,43 @@ void RB_AddFlare(void *surface, int fogNum, vec3_t point, vec3_t color, vec3_t n
 		f->inPortal      = backEnd.viewParms.isPortal;
 		f->addedFrame    = -1;
 		f->isCorona      = isCorona;
+
+		// occlusion query object stuff:
+		// provide a unique handle that doesn't change when flares are added, or removed from the list
+		f->occlusionQueryObject = 0;
+		if (r_occludeFlares->integer && glConfig2.occlusionQueryBits && !(backEnd.refdef.rdflags & RDF_NOWORLDMODEL))
+		{
+			if (flareHandle != 0xFFFFFFFF) // for now, skip surface-flares SF_FLARE
+			{
+				// make it a number that is guaranteed to be different than any light/ent/bsp query-id
+				// Those numbers go to MAX_OCCLUSION_QUERIES, so we start numbering from that value.
+				f->occlusionQueryObject = MAX_OCCLUSION_QUERIES + flareHandle;
+			}
+			f->occlusionQuerySamples = 0; // so many samples passed the test
+			f->flareSamples = 228803; // tested this by debugging code and check results..
+			f->querying = qfalse; // a query has not been started for this flare
+#if FLARE_QUERY_3D
+			VectorCopy(point, f->origin);
+#endif
+
+			// We must get the ortho z values for some perspecive projected query surface:
+			//	   https://stackoverflow.com/questions/8990735/how-to-use-opengl-orthographic-projection-with-the-depth-buffer
+			//     ndcZ = (2 * winZ) - 1
+			//     clipZ = ndcZ
+			//     cameraZ = ((clipZ + (zFar + zNear)/(zFar - zNear)) * (zFar - zNear))/-2
+			//
+			// That post on stackoverflow explains it perfectly.
+			// RB_SetViewMVPM() sets the orthographic near & far distances to -99999.f & 99999.f
+			// We find the z value of an ortho rendered object, so that the final z is in the same range as the perspective rendered world.
+			// That way, the 2D rendered flares get obscured by the 3D world.
+			// A 3D perspecive rendered object gets smaller the farther away it is, and bigger when it's closer to the camera.
+			// That makes it inpractical to use the query results, because you never know how many samples were tested.
+			// The 2D flares keep the same size, no matter at what distance they are from the camera.
+			// This makes it ideal for testing how many query samples passed the test. The tested query surfaces are always of the same size.
+			f->windowZ = ((window[2] * 2.f - 1.f) * (99999.f - -99999.f)) * -0.5f;
+			// That^^ method produces almost correct results..
+//!!!DEBUG!!! this windowZ value is not quite correct..
+		}
 	}
 
 	f->cgvisible = visible;
@@ -202,38 +258,38 @@ void RB_AddFlare(void *surface, int fogNum, vec3_t point, vec3_t color, vec3_t n
 	f->fogNum     = fogNum;
 
 	VectorCopy(color, f->color);
-
-	d2 = -eye[2];
-	if (d2 > distBias)
-	{
-		if (d2 > (distBias * 2.0f))
-		{
-			d2 = (distBias * 2.0f);
-		}
-		d2 -= distBias;
-		//d2  = 1.0f - (d2 * (1.0f / distBias));
-		d2 = 1.0f - (d2 * rcp(distBias));
-		d2 *= distLerp;
-	}
-	else
-	{
-		d2 = distLerp;
-	}
-
+/*
 	// fade the intensity of the flare down as the
 	// light surface turns away from the viewer
 	if (normal)
 	{
+		d2 = -eye[2];
+		if (d2 > distBias)
+		{
+			if (d2 > (distBias * 2.0f))
+			{
+				d2 = (distBias * 2.0f);
+			}
+			d2 -= distBias;
+			//d2  = 1.0f - (d2 * (1.0f / distBias));
+			d2 = 1.0f - (d2 * rcp(distBias));
+			d2 *= distLerp;
+		}
+		else
+		{
+			d2 = distLerp;
+		}
+
 		VectorSubtract(backEnd.viewParms.orientation.origin, point, local);
 		VectorNormalizeOnly(local);
 		//d1  = DotProduct(local, normal);
 		Dot(local, normal, d1);
 		d1 *= (1.0f - distLerp);
 		d1 += d2;
+
+		VectorScale(f->color, d1, f->color);
 	}
-
-	VectorScale(f->color, d1, f->color);
-
+*/
 	// save info needed to test
 	f->windowX = backEnd.viewParms.viewportX + window[0];
 	f->windowY = backEnd.viewParms.viewportY + window[1];
@@ -287,7 +343,7 @@ void RB_AddLightFlares(void)
 			j = 0;
 		}
 
-		RB_AddFlare((void *)l, j, l->l.origin, l->l.color, NULL, qtrue, qfalse);
+		RB_AddFlare((void *)l, j, l->l.origin, l->l.color, NULL, qtrue, qfalse, i);
 	}
 }
 
@@ -300,7 +356,7 @@ void RB_AddCoronaFlares(void)
 	int      i, j, k;
 	fog_t    *fog;
 
-	if (r_flares->integer != 1 && r_flares->integer != 3)
+	if (r_flares->integer != 1 && r_flares->integer != 3) // 3?
 	{
 		return;
 	}
@@ -334,8 +390,7 @@ void RB_AddCoronaFlares(void)
 		{
 			j = 0;
 		}
-		//RB_AddFlare((void *)cor, j, cor->origin, cor->color, cor->scale, NULL, cor->id, cor->visible);
-		RB_AddFlare((void *)cor, j, cor->origin, cor->color, NULL, cor->visible, qtrue); // cor->scale -> eye
+		RB_AddFlare((void *)cor, j, cor->origin, cor->color, NULL, cor->visible, qtrue, backEnd.refdef.num_coronas + i); // cor->scale -> eye
 	}
 }
 
@@ -345,10 +400,306 @@ FLARE BACK END
 ===============================================================================
 */
 
+// flare occlusion query objects:
+
+qboolean CreateFlareOcclusionSurface(flare_t *f)
+{
+	float size = flareSize;
+#if FLARE_QUERY_3D
+	vec3_t bounds[2];
+#endif
+
+	// the number of samples for this flare
+	// Because the flare images are so big (a small flare in the center, and lots of pixels to fade the image out),
+	// we use a smaller sized query object surface..
+//	size *= 0.50;
+//	f->flareSamples = (2.f * size) * (2.f * size);
+
+#if FLARE_QUERY_3D
+	// make a quad that is always facing the camera (a billboard)
+	vec3_t left, up, q0, q1, q2, q3;
+	VectorScale(backEnd.viewParms.orientation.axis[1], size, left);
+	VectorScale(backEnd.viewParms.orientation.axis[2], size, up);
+
+	VectorAdd(f->origin, left, q0);
+	VectorAdd(f->origin, left, q1);
+	VectorSubtract(f->origin, left, q2);
+	VectorSubtract(f->origin, left, q3);
+
+	VectorSubtract(q0, up, q0);
+	VectorAdd(q1, up, q1);
+	VectorAdd(q2, up, q2);
+	VectorSubtract(q3, up, q3);
+		
+	Vector4Set(f->quadVerts[0], q0[0], q0[1], q0[2], 1.f);
+	Vector4Set(f->quadVerts[1], q1[0], q1[1], q1[2], 1.f);
+	Vector4Set(f->quadVerts[2], q2[0], q2[1], q2[2], 1.f);
+	Vector4Set(f->quadVerts[3], q3[0], q3[1], q3[2], 1.f);
+
+	// if the surface is completely off screen, the surface is invalid for querying
+	VectorCopy(f->quadVerts[0], bounds[0]);
+	VectorCopy(f->quadVerts[2], bounds[1]);
+	if (R_CullBox(bounds) == CULL_OUT) {
+		return qfalse;
+	}
+#else
+//	https://stackoverflow.com/questions/8990735/how-to-use-opengl-orthographic-projection-with-the-depth-buffer
+
+	Vector4Set(f->quadVerts[0], (float)f->windowX - size, (float)f->windowY - size, f->windowZ, 1.f);
+	Vector4Set(f->quadVerts[1], (float)f->windowX - size, (float)f->windowY + size, f->windowZ, 1.f);
+	Vector4Set(f->quadVerts[2], (float)f->windowX + size, (float)f->windowY + size, f->windowZ, 1.f);
+	Vector4Set(f->quadVerts[3], (float)f->windowX + size, (float)f->windowY - size, f->windowZ, 1.f);
+#endif
+	return qtrue;
+}
+
+// render the occulsion query surface
+static void RenderFlareOcclusionSurface(flare_t *f)
+{
+	tess.multiDrawPrimitives = 0;
+	tess.numIndexes          = 0;
+	tess.numVertexes         = 0;
+
+	Tess_AddQuadStamp2(f->quadVerts, colorBlue);
+	Tess_UpdateVBOs(ATTR_POSITION); //tess.attribsSet);
+	Tess_DrawElements();
+}
+
+// execute/start the query
+static qboolean IssueFlareOcclusionQuery(flare_t *f)
+{
+	if (f->occlusionQueryObject == 0)
+	{
+		return qfalse;
+	}
+
+	// the surface must be valid to be used for a query
+	if (!CreateFlareOcclusionSurface(f))
+	{
+		return qfalse;
+	}
+
+	GL_CheckErrors();
+
+	// begin the occlusion query
+	glBeginQuery(GL_SAMPLES_PASSED, f->occlusionQueryObject);
+
+	GL_CheckErrors();
+
+	RenderFlareOcclusionSurface(f);
+
+	// end the query
+	glEndQuery(GL_SAMPLES_PASSED);
+
+	if (!glIsQuery(f->occlusionQueryObject))
+	{
+		Ren_Fatal("IssueFlareOcclusionQuery: flare has no occlusion query object in slot %i: %lu", backEnd.viewParms.viewCount, (unsigned long)f->occlusionQueryObject);
+	}
+
+	backEnd.pc.c_occlusionQueries++;
+
+	GL_CheckErrors();
+
+	return qtrue;
+}
+
+// check if the query is finished (and has a valid result)
+static int FlareOcclusionResultAvailable(flare_t *f)
+{
+	GLint available = 0;
+
+	if (f->occlusionQueryObject == 0)
+	{
+		return available;
+	}
+
+	glGetQueryObjectiv(f->occlusionQueryObject, GL_QUERY_RESULT_AVAILABLE, &available);
+	GL_CheckErrors();
+
+	return available;
+}
+
+// get the result of a finished query
+static void GetFlareOcclusionQueryResult(flare_t *f)
+{
+	uint32_t ocSamples;
+
+	if (f->occlusionQueryObject == 0)
+	{
+		return;
+	}
+
+	// this function is only called when there is a valid query result. No need to explicitely check for an available result
+	//if (!FlareOcclusionResultAvailable(f)) return;
+
+	backEnd.pc.c_occlusionQueriesAvailable++;
+
+	glGetQueryObjectuiv(f->occlusionQueryObject, GL_QUERY_RESULT, &ocSamples);
+
+	GL_CheckErrors();
+
+	f->occlusionQuerySamples = ocSamples;
+}
+
+// render all the needed queries from the list
+void RB_RenderFlareOcclusionQueries()
+{
+	flare_t *f;
+	flare_t **active;
+
+	GL_CheckErrors();
+
+	GL_PushMatrix();
+
+#if FLARE_QUERY_3D
+	GL_LoadProjectionMatrix(backEnd.viewParms.projectionMatrix);
+	backEnd.orientation = backEnd.viewParms.world;
+	GL_LoadModelViewMatrix(backEnd.orientation.modelViewMatrix);
+#else
+	RB_SetViewMVPM(); // orthogonal
+#endif
+
+	glVertexAttrib4f(ATTR_INDEX_COLOR, 1.0f, 0.0f, 0.0f, 0.05f);
+
+	SetMacrosAndSelectProgram(trProg.gl_genericShader,
+								USE_ALPHA_TESTING, qfalse,
+								USE_PORTAL_CLIPPING, qfalse, //backEnd.viewParms.isPortal,
+								USE_VERTEX_SKINNING, qfalse,
+								USE_VERTEX_ANIMATION, qfalse,
+								USE_DEFORM_VERTEXES, qfalse,
+								USE_TCGEN_ENVIRONMENT, qfalse,
+								USE_TCGEN_LIGHTMAP, qfalse);
+
+	GLSL_SetRequiredVertexPointers(trProg.gl_genericShader);
+
+	GL_Cull(CT_TWO_SIDED);
+
+	SetUniformMatrix16(UNIFORM_MODELMATRIX, backEnd.orientation.transformMatrix);
+	SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
+
+	// set uniforms
+	GLSL_SetUniform_ColorModulate(trProg.gl_genericShader, CGEN_CONST, AGEN_CONST);
+	SetUniformVec4(UNIFORM_COLOR, colorBlue);
+
+	// bind u_ColorMap
+	SelectTexture(TEX_COLOR);
+	GL_Bind(tr.whiteImage);
+	SetUniformMatrix16(UNIFORM_COLORTEXTUREMATRIX, matrixIdentity);
+/*
+	if (backEnd.viewParms.isPortal)
+	{
+		clipPortalPlane();
+	}
+*/
+	if (backEnd.viewParms.isPortal)
+	{
+		glDisable(GL_CLIP_PLANE0);
+	}
+
+	if (r_showOcclusionQueries->integer)
+	{
+		GL_State(GLS_SRCBLEND_ONE | GLS_DSTBLEND_ONE);
+	}
+	else
+	{
+		// don't write to the color buffer or depth buffer
+		GL_State(GLS_COLORMASK_BITS);
+	}
+
+	// render all flare query surfaces
+	active = &r_activeFlares;
+	while ((f = *active) != NULL)
+	{
+		// 1st: skip this flare if it currently is being queried already.
+		if (f->querying)
+		{
+			active = &f->next;
+			continue;
+		}
+
+		// 2nd: throw out any flares that weren't added this frame,
+		// but only if the flare isn't currently being queried. (this we did check before).
+		if (f->addedFrame != backEnd.viewParms.frameCount)
+		{
+			*active          = f->next;
+			f->next          = r_inactiveFlares;
+			r_inactiveFlares = f;
+			continue;
+		}
+
+		// 3rd: only draw flares that are from this scene/portal
+		if (f->frameSceneNum != backEnd.viewParms.frameSceneNum || f->inPortal != backEnd.viewParms.isPortal)
+		{
+			active = &f->next;
+			continue;
+		}
+
+		// drawing the query can be rejected, if the object is culled out completely (before drawing).
+		f->querying = IssueFlareOcclusionQuery(f);
+
+		active = &f->next;
+	}
+
+	// The render commands to draw the query objects are now done. 
+	// Checking for errors ensures the render pipeline is flushed.
+	GL_CheckErrors();
+
+	// remove flares that are rendered invisible; The occlusion query result was: 0 samples rendered
+	active = &r_activeFlares;
+	while ((f = *active) != NULL)
+	{
+		// skip this flare if there is no query executing.
+		// only draw flares that are from this scene/portal.
+		if (!f->querying || f->frameSceneNum != backEnd.viewParms.frameSceneNum || f->inPortal != backEnd.viewParms.isPortal)
+		{
+			active = &f->next;
+			continue;
+		}
+
+		// If commented out FlareOcclusionResultAvailable calls, any calls to GetFlareOcclusionQueryResult will make the queries run synchronously
+		// (meaning, GetFlareOcclusionQueryResult will wait for the result to be available, before returning the result)
+		if (FlareOcclusionResultAvailable(f))
+		{
+			GetFlareOcclusionQueryResult(f);
+
+ 			f->querying = qfalse;
+
+			// if nothing of the query surface is rendered, remove the flare from the list
+			if (!f->occlusionQuerySamples)
+			{
+				*active          = f->next;
+				f->next          = r_inactiveFlares;
+				r_inactiveFlares = f;
+				continue;
+			}
+		}
+
+		// set the intensity of the flare: initially by the distance flare to camera
+		f->drawIntensity = (-f->eyeZ >= CORONAFARDISTANCE)? 0.f : 1.f - (-f->eyeZ / CORONAFARDISTANCE);  //cg_coronafardist = 1536
+		// and by the amount of samples rendered
+//		f->drawIntensity *= (f->flareSamples == 0)? 0.f : (f->occlusionQuerySamples >= f->flareSamples) ? 1.f : (float)f->occlusionQuerySamples / (float)f->flareSamples;
+
+		active = &f->next;
+	}
+
+	// go back to the world modelview matrix
+	backEnd.orientation = backEnd.viewParms.world;
+	GL_LoadModelViewMatrix(backEnd.viewParms.world.modelViewMatrix);
+
+	// reenable writes to depth and color buffers
+	GL_State(GLS_DEPTHMASK_TRUE);
+
+	GL_PopMatrix();
+}
+
+///^ end flare occlusion query objects
+
+
+
 /**
  * @brief RB_TestFlare
  * @param[in,out] f
- */
+ */ /* // this function is now unused..
 void RB_TestFlare(flare_t *f)
 {
 	float    depth;
@@ -362,7 +713,9 @@ void RB_TestFlare(flare_t *f)
 
 	// doing a readpixels is as good as doing a glFinish(), so
 	// don't bother with another sync
-	glState.finishCalled = qfalse;
+	glState.finishCalled = qfalse; //? true?
+//glFinish();
+//glState.finishCalled = qtrue;
 
 	// read back the z buffer contents
 	glReadPixels(f->windowX, f->windowY, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
@@ -402,27 +755,25 @@ void RB_TestFlare(flare_t *f)
 
 	f->drawIntensity = fade;
 }
+*/
 
 /**
  * @brief RB_RenderFlare
  * @param[in] f
+ *
+ *   This renders the actual flare image on screen
  */
 void RB_RenderFlare(flare_t *f)
 {
-	float size, distance, intensity, factor;
+	float /*@ size, distance,*/ intensity, factor;
 	vec3_t color;
-	int	iColor[3];
 
 	backEnd.pc.c_flareRenders++;
 
 	if (f->isCorona) // corona case
 	{
-		VectorScale(colorWhite, f->drawIntensity, color);
-		iColor[0] = (int)color[0];
-		iColor[1] = (int)color[1];
-		iColor[2] = (int)color[2];
-
-		size = (float)backEnd.viewParms.viewportWidth * ((r_flareSize->value / 640.0f) + (8.f / -f->eyeZ));
+//@		size = (float)backEnd.viewParms.viewportWidth * ((r_flareSize->value / 640.0f) + (8.f / -f->eyeZ));
+		VectorScale(f->color, f->drawIntensity, color);
 	}
 	else
 	{
@@ -438,7 +789,7 @@ void RB_RenderFlare(flare_t *f)
 
 		   The coefficient flareCoeff will determine the falloff speed with increasing distance.
 		 */
-
+/*@
 		// We don't want too big values anyways when dividing by distance
 		if (f->eyeZ > -1.0f)
 		{
@@ -454,82 +805,34 @@ void RB_RenderFlare(flare_t *f)
 
 		factor    = distance + size * sqrt(flareCoeff);
 		intensity = flareCoeff * size * size / (factor * factor);
-
 		VectorScale(f->color, f->drawIntensity * intensity, color);
-		iColor[0] = color[0] * 255;
-		iColor[1] = color[1] * 255;
-		iColor[2] = color[2] * 255;
+*/
+		factor    = flareSize * sqrt(flareCoeff) - f->eyeZ;
+		intensity = flareCoeff * flareSize * flareSize / (factor * factor);
+		VectorScale(f->color, f->drawIntensity * intensity, color);
 	}
-//	Tess_Begin(Tess_StageIteratorGeneric, NULL, tr.flareShader, NULL, qfalse, qfalse, LIGHTMAP_NONE, f->fogNum);
-Tess_Begin(Tess_StageIteratorGeneric, NULL, tr.flareShader, NULL, qtrue, qfalse, LIGHTMAP_NONE, f->fogNum);
+
+	Tess_Begin(Tess_StageIteratorGeneric, NULL, tr.flareShader, NULL, qtrue, qfalse, LIGHTMAP_NONE, f->fogNum);
 
 	// FIXME: use quadstamp?
-	/*tess.xyz[tess.numVertexes][0]       = f->windowX - size;
-	tess.xyz[tess.numVertexes][1]       = f->windowY - size;
-	tess.xyz[tess.numVertexes][2]       = 0;
-	tess.xyz[tess.numVertexes][3]       = 1;*/
-	Vector4Set(tess.xyz[tess.numVertexes], f->windowX - size, f->windowY - size, 0.f, 1.f);
-	/*tess.texCoords[tess.numVertexes][0] = 0;
-	tess.texCoords[tess.numVertexes][1] = 0;
-	tess.texCoords[tess.numVertexes][2] = 0;
-	tess.texCoords[tess.numVertexes][3] = 1;*/
+	Vector4Set(tess.xyz[tess.numVertexes], f->windowX - flareSize, f->windowY - flareSize, 0.f, 1.f);
 	Vector4Set(tess.texCoords[tess.numVertexes], 0.f, 0.f, 0.f, 1.f);
-	/*tess.colors[tess.numVertexes][0]    = iColor[0];
-	tess.colors[tess.numVertexes][1]    = iColor[1];
-	tess.colors[tess.numVertexes][2]    = iColor[2];
-	tess.colors[tess.numVertexes][3]    = 1;*/
-	Vector4Set(tess.colors[tess.numVertexes], (float)iColor[0], (float)iColor[1], (float)iColor[2], 1.f);
+	Vector4Set(tess.colors[tess.numVertexes], color[0], color[1], color[2], 1.f);
 	tess.numVertexes++;
 
-	/*tess.xyz[tess.numVertexes][0]       = f->windowX - size;
-	tess.xyz[tess.numVertexes][1]       = f->windowY + size;
-	tess.xyz[tess.numVertexes][2]       = 0;
-	tess.xyz[tess.numVertexes][3]       = 1;*/
-	Vector4Set(tess.xyz[tess.numVertexes], f->windowX - size, f->windowY + size, 0.f, 1.f);
-	/*tess.texCoords[tess.numVertexes][0] = 0;
-	tess.texCoords[tess.numVertexes][1] = 1;
-	tess.texCoords[tess.numVertexes][2] = 0;
-	tess.texCoords[tess.numVertexes][3] = 1;*/
+	Vector4Set(tess.xyz[tess.numVertexes], f->windowX - flareSize, f->windowY + flareSize, 0.f, 1.f);
 	Vector4Set(tess.texCoords[tess.numVertexes], 0.f, 1.f, 0.f, 1.f);
-	/*tess.colors[tess.numVertexes][0]    = iColor[0];
-	tess.colors[tess.numVertexes][1]    = iColor[1];
-	tess.colors[tess.numVertexes][2]    = iColor[2];
-	tess.colors[tess.numVertexes][3]    = 1;*/
-	Vector4Set(tess.colors[tess.numVertexes], (float)iColor[0], (float)iColor[1], (float)iColor[2], 1.f);
+	Vector4Set(tess.colors[tess.numVertexes], color[0], color[1], color[2], 1.f);
 	tess.numVertexes++;
 
-	/*tess.xyz[tess.numVertexes][0]       = f->windowX + size;
-	tess.xyz[tess.numVertexes][1]       = f->windowY + size;
-	tess.xyz[tess.numVertexes][2]       = 0;
-	tess.xyz[tess.numVertexes][3]       = 1;*/
-	Vector4Set(tess.xyz[tess.numVertexes], (float)f->windowX + size, (float)f->windowY + size, 0.f, 1.f);
-	/*tess.texCoords[tess.numVertexes][0] = 1;
-	tess.texCoords[tess.numVertexes][1] = 1;
-	tess.texCoords[tess.numVertexes][2] = 0;
-	tess.texCoords[tess.numVertexes][3] = 1;*/
+	Vector4Set(tess.xyz[tess.numVertexes], (float)f->windowX + flareSize, (float)f->windowY + flareSize, 0.f, 1.f);
 	Vector4Set(tess.texCoords[tess.numVertexes], 1.f, 1.f, 0.f, 1.f);
-	/*tess.colors[tess.numVertexes][0]    = iColor[0];
-	tess.colors[tess.numVertexes][1]    = iColor[1];
-	tess.colors[tess.numVertexes][2]    = iColor[2];
-	tess.colors[tess.numVertexes][3]    = 1;*/
-	Vector4Set(tess.colors[tess.numVertexes], (float)iColor[0], (float)iColor[1], (float)iColor[2], 1.f);
+	Vector4Set(tess.colors[tess.numVertexes], color[0], color[1], color[2], 1.f);
 	tess.numVertexes++;
 
-	/*tess.xyz[tess.numVertexes][0]       = f->windowX + size;
-	tess.xyz[tess.numVertexes][1]       = f->windowY - size;
-	tess.xyz[tess.numVertexes][2]       = 0;
-	tess.xyz[tess.numVertexes][3]       = 1;*/
-	Vector4Set(tess.xyz[tess.numVertexes], (float)f->windowX + size, (float)f->windowY -+ size, 0.f, 1.f);
-	/*tess.texCoords[tess.numVertexes][0] = 1;
-	tess.texCoords[tess.numVertexes][1] = 0;
-	tess.texCoords[tess.numVertexes][2] = 0;
-	tess.texCoords[tess.numVertexes][3] = 1;*/
+	Vector4Set(tess.xyz[tess.numVertexes], (float)f->windowX + flareSize, (float)f->windowY - flareSize, 0.f, 1.f);
 	Vector4Set(tess.texCoords[tess.numVertexes], 1.f, 0.f, 0.f, 1.f);
-	/*tess.colors[tess.numVertexes][0]    = iColor[0];
-	tess.colors[tess.numVertexes][1]    = iColor[1];
-	tess.colors[tess.numVertexes][2]    = iColor[2];
-	tess.colors[tess.numVertexes][3]    = 1;*/
-	Vector4Set(tess.colors[tess.numVertexes], (float)iColor[0], (float)iColor[1], (float)iColor[2], 1.f);
+	Vector4Set(tess.colors[tess.numVertexes], color[0], color[1], color[2], 1.f);
 	tess.numVertexes++;
 
 	tess.indexes[tess.numIndexes++] = 0;
@@ -556,9 +859,12 @@ Tess_Begin(Tess_StageIteratorGeneric, NULL, tr.flareShader, NULL, qtrue, qfalse,
  */
 void RB_RenderFlares(void)
 {
-	flare_t  *f;
-	flare_t  **prev;
+	flare_t *f;
+	flare_t **active;
 	qboolean draw;
+
+	// the flare size remains constant.
+	flareSize = (float)backEnd.viewParms.viewportWidth * (r_flareSize->value / 640.0f);
 
 	if (!r_flares->integer)
 	{
@@ -567,15 +873,7 @@ void RB_RenderFlares(void)
 
 	if (r_flareCoeff->modified)
 	{
-		if (r_flareCoeff->value == 0.0f)
-		{
-			flareCoeff = atof("150");
-		}
-		else
-		{
-			flareCoeff = r_flareCoeff->value;
-		}
-
+		flareCoeff = (r_flareCoeff->value == 0.0f)? atof("150") : r_flareCoeff->value;
 		r_flareCoeff->modified = qfalse;
 	}
 
@@ -591,56 +889,54 @@ void RB_RenderFlares(void)
 		RB_AddCoronaFlares();
 	}
 
-	// perform z buffer readback on each flare in this view
-
-
-//glNamedFramebufferReadBuffer(tr.deferredRenderFBO, GL_BACK);
-//glBindFramebuffer(GL_FRAMEBUFFER_EXT, tr.deferredRenderFBO);
-
-	draw = qfalse;
-	prev = &r_activeFlares;
-	while ((f = *prev) != NULL)
+	if (r_occludeFlares->integer && glConfig2.occlusionQueryBits && !(backEnd.refdef.rdflags & RDF_NOWORLDMODEL))
 	{
-		// throw out any flares that weren't added last frame
-		if (f->addedFrame < backEnd.viewParms.frameCount - 1)
-		{
-			*prev            = f->next;
-			f->next          = r_inactiveFlares;
-			r_inactiveFlares = f;
-			continue;
-		}
+		// use occlusion queries to find out how much of a flare is drawn (and how much is occluded)
+		RB_RenderFlareOcclusionQueries();
 
-		// don't draw any here that aren't from this scene / portal
-		f->drawIntensity = 0;
-		if (f->frameSceneNum == backEnd.viewParms.frameSceneNum && f->inPortal == backEnd.viewParms.isPortal)
+	} else {
+		draw = qfalse;
+		active = &r_activeFlares;
+		while ((f = *active) != NULL)
 		{
-			RB_TestFlare(f);
-
-			if (f->drawIntensity != 0.f)
+			// throw out any flares that weren't added last frame
+			if (f->addedFrame < backEnd.viewParms.frameCount - 1)
 			{
-				draw = qtrue;
-			}
-			else
-			{
-				// this flare has completely faded out, so remove it from the chain
-				*prev            = f->next;
+				*active          = f->next;
 				f->next          = r_inactiveFlares;
 				r_inactiveFlares = f;
 				continue;
 			}
+
+			// don't draw any here that aren't from this scene / portal
+			f->drawIntensity = 0;
+			if (f->frameSceneNum == backEnd.viewParms.frameSceneNum && f->inPortal == backEnd.viewParms.isPortal)
+			{
+//				RB_TestFlare(f); // perform z buffer readback on each flare in this view
+				f->drawIntensity = (-f->eyeZ >= CORONAFARDISTANCE)? 0.f : 1.f - (-f->eyeZ / CORONAFARDISTANCE);  //cg_coronafardist = 1536
+
+				if (f->drawIntensity != 0.f)
+				{
+					draw = qtrue;
+				}
+				else
+				{
+					// this flare has completely faded out, so remove it from the chain
+					*active          = f->next;
+					f->next          = r_inactiveFlares;
+					r_inactiveFlares = f;
+					continue;
+				}
+			}
+
+			active = &f->next;
 		}
 
-		prev = &f->next;
-	}
-
-//glNamedFramebufferReadBuffer(0, GL_BACK);
-//glBindFramebuffer(GL_FRAMEBUFFER_EXT, 0);
-
-
-	if (!draw)
-	{
-		// none visible
-		return;
+		if (!draw)
+		{
+			// none visible
+			return;
+		}
 	}
 
 	if (backEnd.viewParms.isPortal)
@@ -651,7 +947,7 @@ void RB_RenderFlares(void)
 	GL_CheckErrors();
 
 	GL_PushMatrix();
-	RB_SetViewMVPM();
+	RB_SetViewMVPM(); // ortho projection
 
 	for (f = r_activeFlares; f; f = f->next)
 	{

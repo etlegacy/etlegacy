@@ -820,6 +820,9 @@ static unsigned int GLSL_GetRequiredVertexAttributes(int compilemacro)
 	case USE_LIGHT_MAPPING:
 		attr = ATTR_LIGHTCOORD;
 		break;
+	case USE_DIFFUSE:
+		attr = ATTR_TEXCOORD;
+		break;
 	default:
 		attr = 0;
 		break;
@@ -2998,7 +3001,7 @@ void GLSL_SetUniform_ColorModulate(programInfo_t *prog, int colorGen, int alphaG
 		break;
 	}
 
-	if ((prog->attributes & ATTR_COLOR) && !(glState.vertexAttribsState & ATTR_COLOR))
+	if ((prog->attributes & ATTR_COLOR) && !(glState.vertexAttribsState & ATTR_COLOR) && glState.currentVBO)
 	{
 		glEnableVertexAttribArray(ATTR_INDEX_COLOR);
 		glState.vertexAttribsState |= ATTR_COLOR;

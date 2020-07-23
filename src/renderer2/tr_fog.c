@@ -99,8 +99,8 @@ void RE_SetFog(int fogvar, int var1, int var2, float r, float g, float b, float 
 		// setup transition times
 		tr.glfogsettings[FOG_TARGET].startTime = tr.refdef.time;
 		tr.glfogsettings[FOG_TARGET].finishTime = tr.refdef.time + var2;
-tr.glfogsettings[FOG_TARGET].registered = qtrue;
-tr.glfogsettings[FOG_CURRENT].registered = qtrue;
+		tr.glfogsettings[FOG_TARGET].registered = qtrue;
+		tr.glfogsettings[FOG_CURRENT].registered = qtrue;
 	}
 	else
 	{
@@ -180,7 +180,7 @@ void R_SetFrameFog(void)
 
 			tr.world->fogs[tr.world->globalFog].fogParms.colorInt = ColorBytes4(tr.world->fogs[tr.world->globalFog].fogParms.color[0] * tr.identityLight, tr.world->fogs[tr.world->globalFog].fogParms.color[1] * tr.identityLight, tr.world->fogs[tr.world->globalFog].fogParms.color[2] * tr.identityLight, 1.0);
 			tr.world->fogs[tr.world->globalFog].fogParms.depthForOpaque = (tr.world->globalTransEndFog[3] - tr.world->globalTransStartFog[3]) * lerpPos + tr.world->globalTransStartFog[3];
-			//tr.world->fogs[tr.world->globalFog].fogParms.tcScale = 1.0f / (tr.world->fogs[tr.world->globalFog].fogParms.depthForOpaque * 8.f);
+//			tr.world->fogs[tr.world->globalFog].fogParms.tcScale = rcp(tr.world->fogs[tr.world->globalFog].fogParms.depthForOpaque * 8.f); // this is a hack..
 			tr.world->fogs[tr.world->globalFog].fogParms.tcScale = rcp(tr.world->fogs[tr.world->globalFog].fogParms.depthForOpaque);
 		}
 		else
@@ -190,7 +190,7 @@ void R_SetFrameFog(void)
 			tr.world->fogs[tr.world->globalFog].fogParms.colorInt = ColorBytes4(tr.world->globalTransEndFog[0] * tr.identityLight, tr.world->globalTransEndFog[1] * tr.identityLight, tr.world->globalTransEndFog[2] * tr.identityLight, 1.0);
 			tr.world->fogs[tr.world->globalFog].fogParms.depthForOpaque = tr.world->globalTransEndFog[3];
 			//tr.world->fogs[tr.world->globalFog].fogParms.density = tr.world->globalTransEndFog[3];
-			//tr.world->fogs[tr.world->globalFog].fogParms.tcScale = 1.0f / (tr.world->globalTransEndFog[3] * 8.f);
+//			tr.world->fogs[tr.world->globalFog].fogParms.tcScale = rcp(tr.world->globalTransEndFog[3] * 8.f); // this is a hack..
 			tr.world->fogs[tr.world->globalFog].fogParms.tcScale = rcp(tr.world->globalTransEndFog[3]);
 			tr.world->globalFogTransEndTime = 0; // stop any transition
 		}
@@ -347,9 +347,8 @@ void RE_SetGlobalFog(qboolean restore, int duration, float r, float g, float b, 
 				            tr.world->globalOriginalFog[2] * tr.identityLight, 1.0); // 1.0 alpha?
 
 			tr.world->fogs[tr.world->globalFog].fogParms.depthForOpaque = tr.world->globalOriginalFog[3];
-//			tr.world->fogs[tr.world->globalFog].tcScale = 1.0f / (tr.world->fogs[tr.world->globalFog].fogParms.depthForOpaque * 8); // *8?
-//			tr.world->fogs[tr.world->globalFog].tcScale = rcp(tr.world->fogs[tr.world->globalFog].fogParms.depthForOpaque * 8); // *8? yes..needed.
-tr.world->fogs[tr.world->globalFog].tcScale = rcp(tr.world->fogs[tr.world->globalFog].fogParms.depthForOpaque);
+//			tr.world->fogs[tr.world->globalFog].tcScale = rcp(tr.world->fogs[tr.world->globalFog].fogParms.depthForOpaque * 8.f); // this is a hack..
+			tr.world->fogs[tr.world->globalFog].tcScale = rcp(tr.world->fogs[tr.world->globalFog].fogParms.depthForOpaque);
 		}
 	}
 	else
@@ -374,9 +373,8 @@ tr.world->fogs[tr.world->globalFog].tcScale = rcp(tr.world->fogs[tr.world->globa
 			                                                                    b * tr.identityLight, 1.0);
 
 			tr.world->fogs[tr.world->globalFog].fogParms.depthForOpaque = depthForOpaque < 1 ? 1 : depthForOpaque;
-			//tr.world->fogs[tr.world->globalFog].tcScale = 1.0f / (tr.world->fogs[tr.world->globalFog].fogParms.depthForOpaque);
-//			tr.world->fogs[tr.world->globalFog].tcScale = rcp(tr.world->fogs[tr.world->globalFog].fogParms.depthForOpaque * 8);
-tr.world->fogs[tr.world->globalFog].tcScale = rcp(tr.world->fogs[tr.world->globalFog].fogParms.depthForOpaque);
+//			tr.world->fogs[tr.world->globalFog].tcScale = rcp(tr.world->fogs[tr.world->globalFog].fogParms.depthForOpaque * 8.f); // this is a hack..
+			tr.world->fogs[tr.world->globalFog].tcScale = rcp(tr.world->fogs[tr.world->globalFog].fogParms.depthForOpaque);
 		}
 	}
 }

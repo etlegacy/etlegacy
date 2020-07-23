@@ -3674,10 +3674,9 @@ static void RenderEntityOcclusionVolume(trRefEntity_t *entity)
 	VectorScale(boundsCenter, 0.5f, boundsCenter);
 
 	MatrixFromVectorsFLU(rot, entity->e.axis[0], entity->e.axis[1], entity->e.axis[2]);
+
 	MatrixTransformNormal2(rot, boundsCenter);
-
 	VectorAdd(entity->e.origin, boundsCenter, boundsCenter);
-
 	MatrixSetupTransformFromVectorsFLU(backEnd.orientation.transformMatrix, axis[0], axis[1], axis[2], boundsCenter);
 
 	MatrixAffineInverse(backEnd.orientation.transformMatrix, backEnd.orientation.viewMatrix);
@@ -4075,8 +4074,7 @@ void RB_RenderEntityOcclusionQueries()
 
 			// we must exclude MOD_BSP (the Oasis wall)
 			if (entity == &tr.worldEntity ||
-				(entity->e.reType == RT_MODEL &&
-					tr.models[entity->e.hModel]->type == MOD_BSP))
+				(entity->e.reType == RT_MODEL && tr.models[entity->e.hModel]->type == MOD_BSP))
 			{
 				entity->occlusionQuerySamples = 1;
 				entity->noOcclusionQueries = qtrue;
@@ -5408,7 +5406,7 @@ static void RB_RenderDebugUtils()
 		//Tess_UpdateVBOs(tess.attribsSet); // set by Tess_AddCube
 		backEnd.currentEntity = backEndEnt;
 */
-
+/*
 		// use the generic shader
 		SetMacrosAndSelectProgram(trProg.gl_genericShader,
 								  USE_ALPHA_TESTING, qfalse,
@@ -5433,7 +5431,7 @@ static void RB_RenderDebugUtils()
 			clipPortalPlane();
 		}
 
-		GL_State(GLS_DEFAULT);
+		GL_State(GLS_SRCBLEND_ONE | GLS_DSTBLEND_ZERO);
 		GL_Cull(CT_FRONT_SIDED); // the inside of the cube is textured, and the normals all point to the center of the cube: that's the front side (we don't want to see)
 
 		backEnd.orientation = backEnd.viewParms.world;
@@ -5454,7 +5452,7 @@ static void RB_RenderDebugUtils()
 			GL_Bind(cubeProbe->cubemap);
 			//SetUniformMatrix16(UNIFORM_COLORTEXTUREMATRIX, matrixIdentity);
 
-			Tess_UpdateVBOs(tess.attribsSet);
+//			Tess_UpdateVBOs(tess.attribsSet);
 			Tess_DrawElements();
 		}
 //		Tess_End();
@@ -5463,8 +5461,57 @@ static void RB_RenderDebugUtils()
 		tess.multiDrawPrimitives = 0;
 		tess.numVertexes         = 0;
 		tess.numIndexes          = 0;
+*/
 
-		backEnd.currentEntity = backEndEnt;
+		// use the world shader
+		GL_State(GLS_SRCBLEND_ONE | GLS_DSTBLEND_ZERO);
+		GL_Cull(CT_FRONT_SIDED); // the inside of the cube is textured, and the normals all point to the center of the cube: that's the front side (we don't want to see)
+
+		SetMacrosAndSelectProgram(trProg.gl_worldShader,
+									USE_PORTAL_CLIPPING, qfalse,
+									USE_ALPHA_TESTING, qfalse,
+									USE_DEFORM_VERTEXES, qfalse,
+									USE_NORMAL_MAPPING, qfalse,
+									USE_PARALLAX_MAPPING, qfalse,
+									//USE_DELUXE_MAPPING, qfalse,
+									USE_REFLECTIONS, qfalse,
+									USE_REFLECTIONMAP, qfalse,
+									USE_SPECULAR, qfalse,
+									USE_DIFFUSE, qtrue,
+									USE_LIGHT_MAPPING, qfalse);
+
+		GLSL_SetRequiredVertexPointers(trProg.gl_worldShader);
+		GLSL_SetUniform_ColorModulate(trProg.gl_worldShader, CGEN_IDENTITY, AGEN_IDENTITY);
+		SetUniformVec4(UNIFORM_COLOR, colorWhite);
+		SetUniformMatrix16(UNIFORM_COLORTEXTUREMATRIX, matrixIdentity);
+		SetUniformMatrix16(UNIFORM_MODELMATRIX, MODEL_MATRIX);
+		SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
+		SetUniformFloat(UNIFORM_DIFFUSELIGHTING, 0.f);
+		SetUniformBoolean(UNIFORM_B_SHOW_LIGHTMAP, GL_FALSE);
+		
+		for (j = 0; j < tr.cubeProbes.currentElements; j++)
+		{
+			cubeProbe = (cubemapProbe_t*)Com_GrowListElement(&tr.cubeProbes, j);
+
+			tess.multiDrawPrimitives = 0;
+			tess.numVertexes         = 0;
+			tess.numIndexes          = 0;
+
+			Tess_AddCubeWithNormals(cubeProbe->origin, mins, maxs, colorWhite);
+
+			// bind u_ColorMap
+			SelectTexture(TEX_DIFFUSE);
+			GL_Bind(cubeProbe->cubemap);
+
+			tess.attribsSet |= ATTR_POSITION | ATTR_TEXCOORD | ATTR_NORMAL | ATTR_COLOR;
+			Tess_UpdateVBOs(tess.attribsSet);
+			Tess_DrawElements();
+		}
+		tess.multiDrawPrimitives = 0;
+		tess.numVertexes         = 0;
+		tess.numIndexes          = 0;
+		GL_CheckErrors();
+
 
 #if 0	// color the 2 closest cubeProbes (green/red/yellow?/blue?)
 		// (disabled because, when you want to inspect a cubeProbe up close, no textures can be seen.. not handy)
@@ -6369,14 +6416,14 @@ else
 
 	// add the sun flare
 	RB_DrawSun();
+	// wait until all bsp node occlusion queries are back
+	RB_CollectBspOcclusionQueries();
 
 if (tr.refdef.pixelTarget == NULL)
 {//!
 	// add light flares on lights that aren't obscured
 	RB_RenderFlares(); // this initiates calls to the very slow glReadPixels()..
 }//!
-	// wait until all bsp node occlusion queries are back
-	RB_CollectBspOcclusionQueries();
 
 if (tr.refdef.pixelTarget == NULL)
 {//!
@@ -6794,8 +6841,8 @@ const void *RB_Draw2dPolys(const void *data)
 			Tess_End();
 		}
 		backEnd.currentEntity = &backEnd.entity2D;
-		Tess_Begin(Tess_StageIteratorGeneric, NULL, shader, NULL, qfalse, qfalse, LIGHTMAP_NONE, FOG_NONE);
-//Tess_Begin(Tess_StageIteratorGeneric, NULL, shader, NULL, qtrue, qfalse, LIGHTMAP_NONE, FOG_NONE);
+//		Tess_Begin(Tess_StageIteratorGeneric, NULL, shader, NULL, qfalse, qfalse, LIGHTMAP_NONE, FOG_NONE);
+Tess_Begin(Tess_StageIteratorGeneric, NULL, shader, NULL, qtrue, qfalse, LIGHTMAP_NONE, FOG_NONE);
 	}
 
 	Tess_CheckOverflow(cmd->numverts, (cmd->numverts - 2) * 3);

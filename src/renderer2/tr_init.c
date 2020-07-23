@@ -174,6 +174,7 @@ cvar_t *r_reflectionMapping;
 cvar_t *r_reflectionScale; // 0.07 = 7%
 cvar_t *r_parallaxMapping;
 cvar_t *r_parallaxDepthScale;
+cvar_t *r_parallaxShadow;
 cvar_t *r_bumpScale;
 cvar_t *r_normalMapping;
 cvar_t *r_wrapAroundLighting;
@@ -252,6 +253,7 @@ cvar_t *r_mergeClusterTriangles;
 cvar_t *r_occludeBsp;
 cvar_t *r_occludeEntities;
 cvar_t *r_occludeLights;
+cvar_t *r_occludeFlares;
 cvar_t *r_chcMaxPrevInvisNodesBatchSize;
 cvar_t *r_chcMaxVisibleFrames;
 cvar_t *r_chcVisibilityThreshold;
@@ -1233,7 +1235,8 @@ void R_Register(void)
 
 	r_occludeBsp      = ri.Cvar_Get("r_occludeBsp", "1", CVAR_ARCHIVE);
 	r_occludeEntities = ri.Cvar_Get("r_occludeEntities", "1", CVAR_ARCHIVE);
-	r_occludeLights   = ri.Cvar_Get("r_occludeLights", "1", CVAR_CHEAT);
+	r_occludeLights   = ri.Cvar_Get("r_occludeLights", "1", CVAR_ARCHIVE);
+	r_occludeFlares   = ri.Cvar_Get("r_occludeFlares", "1", CVAR_ARCHIVE);
 
 	r_chcMaxPrevInvisNodesBatchSize = ri.Cvar_Get("r_chcMaxPrevInvisNodesBatchSize", "50", CVAR_CHEAT);
 	r_chcMaxVisibleFrames           = ri.Cvar_Get("r_chcMaxVisibleFrames", "10", CVAR_CHEAT);
@@ -1305,7 +1308,7 @@ void R_Register(void)
 	r_cameraVignette = ri.Cvar_Get("r_cameraVignette", "1", CVAR_ARCHIVE);
 	r_cameraFilmGrainScale = ri.Cvar_Get("r_cameraFilmGrainScale", "3", CVAR_ARCHIVE);
 
-	r_heatHazeFix = ri.Cvar_Get("r_heatHazeFix", "0", CVAR_CHEAT);
+	r_heatHazeFix = ri.Cvar_Get("r_heatHazeFix", "0", CVAR_CHEAT | CVAR_LATCH);
 
 	//These makes the spec spot bigger or smaller, the higher the number the smaller the dot
 	r_specularExponentWorld  = ri.Cvar_Get("r_specularExponentWorld", "256.0", CVAR_ARCHIVE);
@@ -1313,14 +1316,14 @@ void R_Register(void)
 	r_specularExponentPlayers = ri.Cvar_Get("r_specularExponentPlayers", "64.0", CVAR_ARCHIVE);
 	//this one sets the power of specular, the higher the brighter
 	r_specularScaleWorld  = ri.Cvar_Get("r_specularScaleWorld", "0.005", CVAR_ARCHIVE); // for the world
-	r_specularScaleEntities = ri.Cvar_Get("r_specularScaleEntities", "2.0", CVAR_ARCHIVE);  // for entities only
+	r_specularScaleEntities = ri.Cvar_Get("r_specularScaleEntities", "2.0", CVAR_ARCHIVE);  // for entities only  !! different scaling
 	r_specularScalePlayers = ri.Cvar_Get("r_specularScalePlayers", "0.5", CVAR_ARCHIVE);  // for players only
 
-	r_reflectionMapping = ri.Cvar_Get("r_reflectionMapping", "0", CVAR_ARCHIVE | CVAR_LATCH);
+	r_reflectionMapping = ri.Cvar_Get("r_reflectionMapping", "1", CVAR_ARCHIVE | CVAR_LATCH);
 	r_reflectionScale = ri.Cvar_Get("r_reflectionScale", "0.085", CVAR_ARCHIVE); // a percentage (0.07 = 7/100th = 7%)
 
 	// lambertian diffuse lighting
-	r_diffuseLighting = ri.Cvar_Get("r_diffuseLighting", "0.3", CVAR_ARCHIVE);
+	r_diffuseLighting = ri.Cvar_Get("r_diffuseLighting", "0.0", CVAR_ARCHIVE);
 	// toon lightning
 	r_wrapAroundLighting  = ri.Cvar_Get("r_wrapAroundLighting", "0", CVAR_CHEAT | CVAR_LATCH);
 	//rim light gives your shading a nice volumentric effect which can greatly enhance the contrast with the background
@@ -1331,14 +1334,16 @@ void R_Register(void)
 	r_rimExponent = ri.Cvar_Get("r_rimExponent", "3", CVAR_CHEAT | CVAR_LATCH);
 	ri.Cvar_CheckRange(r_rimExponent, 0.5, 8.0, qfalse);
 
-	r_normalMapping      = ri.Cvar_Get("r_normalMapping", "0", CVAR_ARCHIVE | CVAR_LATCH);
+	r_normalMapping      = ri.Cvar_Get("r_normalMapping", "1", CVAR_ARCHIVE | CVAR_LATCH);
 	r_highQualityNormalMapping = ri.Cvar_Get("r_highQualityNormalMapping", "0", CVAR_ARCHIVE | CVAR_LATCH);
-	r_bumpScale = ri.Cvar_Get("r_bumpScale", "1.0", CVAR_ARCHIVE);
+	r_bumpScale = ri.Cvar_Get("r_bumpScale", "16.0", CVAR_ARCHIVE);
 
 	r_parallaxMapping = ri.Cvar_Get("r_parallaxMapping", "0", CVAR_ARCHIVE | CVAR_LATCH);
 	r_parallaxDepthScale = ri.Cvar_Get("r_parallaxDepthScale", "0.01", CVAR_CHEAT);
+	r_parallaxShadow = ri.Cvar_Get("r_parallaxShadow", "0.0", CVAR_ARCHIVE);
+	ri.Cvar_CheckRange(r_parallaxShadow, 0.0f, 1.0f, qfalse);
 
-	r_staticLight = ri.Cvar_Get("r_staticLight", "1", CVAR_ARCHIVE | CVAR_LATCH);
+	r_staticLight = ri.Cvar_Get("r_staticLight", "0", CVAR_ARCHIVE | CVAR_LATCH);
 	r_dynamicLight = ri.Cvar_Get("r_dynamicLight", "1", CVAR_ARCHIVE);
 	r_dynamicLightShadows = ri.Cvar_Get("r_dynamicLightShadows", "1", CVAR_ARCHIVE);
 

@@ -97,14 +97,14 @@ void BindAnimatedImage(textureBundle_t *bundle)
 
 	if (bundle->numImages <= 1)
 	{
-		//if (bundle->isLightmap && (backEnd.refdef.rdflags & RDF_SNOOPERVIEW))
-		//{
-		//	GL_Bind(tr.whiteImage);
-		//}
-		//else
-		//{
+		if (tess.surfaceShader->has_lightmapStage && (backEnd.refdef.rdflags & RDF_SNOOPERVIEW))
+		{
+			GL_Bind(tr.whiteImage);
+		}
+		else
+		{
 			GL_Bind(bundle->image[0]);
-		//}
+		}
 		return;
 	}
 
@@ -113,7 +113,7 @@ void BindAnimatedImage(textureBundle_t *bundle)
 	//index   = Q_ftol(backEnd.refdef.floatTime * bundle->imageAnimationSpeed * FUNCTABLE_SIZE);
 	//index = (int64_t)(backEnd.refdef.floatTime * bundle->imageAnimationSpeed * FUNCTABLE_SIZE);
 	index = (int64_t)(tess.shaderTime * bundle->imageAnimationSpeed * FUNCTABLE_SIZE);
-	//index >>= FUNCTABLE_BITS; // ??! what is this?
+	index >>= FUNCTABLE_BITS;
 	index %= FUNCTABLE_SIZE;
 
 	if (index < 0)
@@ -122,14 +122,14 @@ void BindAnimatedImage(textureBundle_t *bundle)
 	}
 	index %= bundle->numImages;
 
-	//if (bundle->isLightmap && (backEnd.refdef.rdflags & RDF_SNOOPERVIEW))
-	//{
-	//	GL_Bind(tr.whiteImage);
-	//}
-	//else
-	//{
+	if (tess.surfaceShader->has_lightmapStage && (backEnd.refdef.rdflags & RDF_SNOOPERVIEW))
+	{
+		GL_Bind(tr.whiteImage);
+	}
+	else
+	{
 		GL_Bind(bundle->image[index]);
-	//}
+	}
 }
 
 /*

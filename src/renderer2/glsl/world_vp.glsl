@@ -50,8 +50,8 @@ varying vec3 var_Normal;
 	varying vec2 var_TexDiffuse;
 	#if defined(USE_NORMAL_MAPPING)
 		varying mat3 var_tangentMatrix;
-		varying vec3 var_LightDirection;
-varying vec3 var_LightDirectionT;
+		varying vec3 var_LightDirW;
+varying vec3 var_LightDirT;
 varying vec3 var_ViewDirT;          // view direction in tangentspace
 		varying vec3 var_ViewDirW;              // view direction in world space
 		#if defined(USE_PARALLAX_MAPPING)
@@ -111,15 +111,15 @@ void main()
 //var_tangentMatrix = mat3(tangent, binormal, var_Normal);
 
 
-	var_LightDirection = normalize(-u_LightDir);
+	var_LightDirW = normalize(-u_LightDir);
 
 	// the viewdirection
 	vec3 viewVec = var_Position - u_ViewOrigin;
 	var_ViewDirW = normalize(viewVec);
 
-//tangentMatrix = transpose(mat3(tangent, binormal, var_Normal)); // this works with parallax, but specular is woot
+tangentMatrix = transpose(mat3(tangent, binormal, var_Normal)); // this works with parallax, but specular is woot
 //tangentMatrix = transpose(var_tangentMatrix);
-//var_LightDirectionT = tangentMatrix * var_LightDirection; // i only have a direction. No light position..  hmm
+var_LightDirT = tangentMatrix * var_LightDirW; // i only have a direction. No light position..  hmm
 //var_ViewDirT = tangentMatrix * var_ViewDirW;
 
 

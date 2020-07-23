@@ -97,7 +97,8 @@ void main()
 
 #if defined(USE_PARALLAX_MAPPING)
 	// compute texcoords offset
-	texScreen = parallax(u_NormalMap, texDiffuse, var_ViewDirT, u_DepthScale);
+	float parallaxHeight; // needed for parallax self shadowing. set by the function parallax()
+	texScreen = parallax(u_NormalMap, texDiffuse, var_ViewDirT, u_DepthScale, var_distanceToCam, parallaxHeight);
 	texNormal = texDiffuse; // needs same resolution normalmap as diffusemap..
 #if defined(USE_DIFFUSE)
 	texDiffuse = texNormal;

@@ -65,8 +65,8 @@ void main()
 
 	vec2 texDiffuse = var_TexDiffuse; // diffuse texture coordinates st
 #if defined(USE_PARALLAX_MAPPING)
-//	texDiffuse += RayIntersectDisplaceMap(texDiffuse, var_S, u_NormalMap);
-	texDiffuse = parallax(u_NormalMap, var_TexDiffuse, var_ViewDirT, u_DepthScale);
+	float parallaxHeight; // needed for parallax self shadowing. set by the function parallax()
+	texDiffuse = parallax(u_NormalMap, var_TexDiffuse, var_ViewDirT, u_DepthScale, var_distanceToCam, parallaxHeight);
 #endif // end USE_PARALLAX_MAPPING
 
 

@@ -475,7 +475,8 @@ typedef enum
 	WT_CLAMP,                   ///< don't repeat the texture for texture coords outside [0, 1]
 	WT_EDGE_CLAMP,
 	WT_ZERO_CLAMP,              ///< guarantee 0,0,0,255 edge for projected textures
-	WT_ALPHA_ZERO_CLAMP         ///< guarante 0 alpha edge for projected textures
+	WT_ALPHA_ZERO_CLAMP,        ///< guarante 0 alpha edge for projected textures
+	WT_MIRROR_REPEAT
 } wrapType_t;
 
 /**
@@ -3877,6 +3878,7 @@ extern cvar_t *r_reflectionScale; // value 0.0 to 1.0     (0.07 = 7%)
 
 extern cvar_t *r_parallaxMapping;
 extern cvar_t *r_parallaxDepthScale;
+extern cvar_t *r_parallaxShadow; // value 0.0 to 1.0.  if 0.0 then parallax self shadowing is disabled (and not calculated)
 
 // 3 = stencil shadow volumes
 // 4 = shadow mapping
@@ -3949,14 +3951,15 @@ extern cvar_t *r_mergeClusterCurves;
 extern cvar_t *r_mergeClusterTriangles;
 #endif
 
-extern cvar_t *r_occludeBsp; //r_dynamicBspOcclusionCulling;
-extern cvar_t *r_occludeEntities; // r_dynamicEntityOcclusionCulling;
 // TODO:  !!!
 // one bug found: if r_OccludeLights is set to 1, but a map has no cubeProbes yet, an exception is raised.
 // workaround: temporarily set r_OccludeLights to 0, load the map, cubeProbes get made, set r_occludeLights 1 again..
 // UPDATE:
 // i do not have this issue anymore.  Code has changed..
-extern cvar_t *r_occludeLights; // r_dynamicLightOcclusionCulling;
+extern cvar_t *r_occludeLights;
+extern cvar_t *r_occludeBsp;
+extern cvar_t *r_occludeEntities;
+extern cvar_t *r_occludeFlares;
 extern cvar_t *r_chcMaxPrevInvisNodesBatchSize;
 extern cvar_t *r_chcMaxVisibleFrames;
 extern cvar_t *r_chcVisibilityThreshold;
@@ -4392,7 +4395,7 @@ FLARES, tr_flares.c
 
 void R_ClearFlares(void);
 
-void RB_AddFlare(void *surface, int fogNum, vec3_t point, vec3_t color, vec3_t normal, qboolean visible, qboolean isCorona);
+void RB_AddFlare(void *surface, int fogNum, vec3_t point, vec3_t color, vec3_t normal, qboolean visible, qboolean isCorona, uint32_t flareHandle);
 void RB_AddLightFlares(void);
 void RB_RenderFlares(void);
 

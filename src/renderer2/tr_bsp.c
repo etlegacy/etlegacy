@@ -4634,8 +4634,8 @@ static void R_LoadFogs(lump_t *l, lump_t *brushesLump, lump_t *sidesLump)
 		// any value <1 will get lost here..
 
 		//out->tcScale = 1.0f / (d * 8);
-//		out->tcScale = rcp(d * 8.f);
-out->tcScale = rcp(d);
+//		out->tcScale = rcp(d * 8.f); // this *8 is a hack..
+		out->tcScale = rcp(d);
 
 		// global fog sets clearcolor/zfar
 		if (out->originalBrushNumber == -1)
@@ -8296,7 +8296,8 @@ void R_BuildCubeMaps(void)
 	{
 #if 1
 		// if we could not even create one cubeProbe, we're done.. (don't fake one)
-		return;
+		//return;
+		goto buildcubemaps_finish;
 #else
 		// fake one
 		cubeProbe = (cubemapProbe_t *)ri.Hunk_Alloc(sizeof(*cubeProbe), h_low);
@@ -8368,8 +8369,8 @@ void R_BuildCubeMaps(void)
 		{
 			// render the cubemap
 			VectorCopy(cubeProbe->origin, rf.vieworg);
-			rf.fov_x   = 94.f; // should be 90x/90y.. 
-			rf.fov_y   = 94.f;
+			rf.fov_x   = 90.0f;
+			rf.fov_y   = 90.0f;
 			rf.x       = 0;
 			rf.y       = 0;
 			rf.time    = 0;
@@ -8378,8 +8379,10 @@ void R_BuildCubeMaps(void)
 			// and now we read the pixels in the 32x32 middle of the image.
 			// This ensures that we get the correct colors at the edges of an image.
 			// (otherwise we'll get a stripe of wrong colors on the images, and the cubemap images do not align colors).
-			rf.width   = REF_CUBEMAP_SIZE+2;
-			rf.height  = REF_CUBEMAP_SIZE+2;
+//!			rf.width   = REF_CUBEMAP_SIZE+2;
+//!			rf.height  = REF_CUBEMAP_SIZE+2;
+			rf.width   = REF_CUBEMAP_SIZE;
+			rf.height  = REF_CUBEMAP_SIZE;
 		
 			for (i = 0; i < 6; i++)
 			{
@@ -8432,7 +8435,8 @@ void R_BuildCubeMaps(void)
 
 				// Bugfix: drivers absolutely hate running in high res and using glReadPixels near the top or bottom edge.
 				// Soo.. lets do it in the middle.
-				glReadPixels(glConfig.vidWidth / 2 + 1, glConfig.vidHeight / 2 + 1, REF_CUBEMAP_SIZE, REF_CUBEMAP_SIZE, GL_RGBA, GL_UNSIGNED_BYTE, tr.refdef.pixelTarget);
+//!				glReadPixels(glConfig.vidWidth / 2 + 1, glConfig.vidHeight / 2 + 1, REF_CUBEMAP_SIZE, REF_CUBEMAP_SIZE, GL_RGBA, GL_UNSIGNED_BYTE, tr.refdef.pixelTarget);
+				glReadPixels(glConfig.vidWidth / 2, glConfig.vidHeight / 2, REF_CUBEMAP_SIZE, REF_CUBEMAP_SIZE, GL_RGBA, GL_UNSIGNED_BYTE, tr.refdef.pixelTarget);
 
 #if 0 // encode the pixel intensity into the alpha channel, saves work in the shader		
 				//if (qtrue)
@@ -8514,7 +8518,8 @@ void R_BuildCubeMaps(void)
 
 		cubeProbe->cubemap->bits       = IF_NOPICMIP;
 		cubeProbe->cubemap->filterType = FT_LINEAR;
-		cubeProbe->cubemap->wrapType   = WT_EDGE_CLAMP;
+//		cubeProbe->cubemap->wrapType   = WT_EDGE_CLAMP;
+cubeProbe->cubemap->wrapType   = WT_CLAMP; //WT_MIRROR_REPEAT; //// GL_MIRRORED_REPEAT
 
 		GL_Bind(cubeProbe->cubemap);
 
@@ -8541,9 +8546,6 @@ void R_BuildCubeMaps(void)
 	{
 		Ren_Print("Read %d cubemaps from files.\n", tr.cubeProbes.currentElements -1);
 	}
-
-	// turn pixel targets off
-	tr.refdef.pixelTarget = NULL;
 
 	// assign the surfs a cubemap
 	// (that is done in R_CreateWorldVBO())
@@ -8599,11 +8601,14 @@ void R_BuildCubeMaps(void)
 	}
 #endif
 
-for (i = 0; i < 6; i++)
-{
-if (tr.cubeTemp[i]) ri.Free(tr.cubeTemp[i]);
-}
-//if (pixeldata) ri.Free(pixeldata);
+buildcubemaps_finish:
+	// turn pixel targets off
+	tr.refdef.pixelTarget = NULL;
+
+	for (i = 0; i < 6; i++)
+	{
+		if (tr.cubeTemp[i]) ri.Free(tr.cubeTemp[i]);
+	}
 
 
 #ifdef LEGACY_DEBUG

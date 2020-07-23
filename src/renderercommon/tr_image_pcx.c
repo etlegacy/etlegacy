@@ -161,14 +161,14 @@ void R_LoadPCX(const char *filename, byte **pic, int *width, int *height, byte a
 	{
 		Ren_Print("PCX file truncated: %s\n", filename);
 		ri.FS_FreeFile(pcx);
-		ri.Free(pic8);
+		Com_Dealloc(pic8); //ri.Free(pic8); is wrong
 	}
 
 	if (raw.b - (byte *)pcx >= end - (byte *)769 || end[-769] != 0x0c)
 	{
 		Ren_Print("PCX missing palette: %s\n", filename);
 		ri.FS_FreeFile(pcx);
-		ri.Free(pic8);
+		Com_Dealloc(pic8); //ri.Free(pic8); is wrong
 		return;
 	}
 
@@ -197,5 +197,5 @@ void R_LoadPCX(const char *filename, byte **pic, int *width, int *height, byte a
 	*pic = out;
 
 	ri.FS_FreeFile(pcx);
-	ri.Free(pic8);
+	Com_Dealloc(pic8); //ri.Free(pic8); is wrong
 }

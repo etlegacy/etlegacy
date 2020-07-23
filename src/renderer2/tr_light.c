@@ -1533,7 +1533,7 @@ void R_SetupLightScissor(trRefLight_t *light)
 	{
 	case RL_OMNI:
 	{
-// TODO: There's really a lot of copying data in this function.. and also lots of function calls. => inline
+// There's really a lot of copying data in this function.. and also lots of function calls. => inline
 // Also a lot of double stuff :S  same verts copied
 /*
 		// top plane

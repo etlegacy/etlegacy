@@ -48,6 +48,10 @@ textures/battery/fog_water
   	surfaceparm trans
   	surfaceparm water
 	surfaceparm fog
+	{
+		map $whiteImage
+		rgbGen const ( 0.4 0.4 0.4 )
+	}
 }
 
 // nonsolid terrain shader
@@ -97,6 +101,7 @@ textures/battery/ocean_0
  	deformVertexes wave 317 sin 0 1.5 0 0.30
 	cull none
 	sort underwater
+	waterfogvars ( 0.2 0.22 0.22 ) 32.0 // this needs all the spaces inside the ( x x x )    last value is ignored?..
 
 	// collapsed layer 1 : ST_BUNDLE_WDB,  liquid/water + diffuse + bump
 	// Note: this liquid stage does not have a lightmap rendered (nor will it have light/shadows).
@@ -164,6 +169,7 @@ textures/battery/ocean_0to1
  	deformVertexes wave 317 sin 0 1.5 0 0.30 	
 	cull none
 	sort underwater
+	waterfogvars ( 0.2 0.22 0.22 ) 32.0 // this needs all the spaces inside the ( x x x )    last value is ignored?..
 
 	// collapsed layer 1 : ST_BUNDLE_WDB,  liquid/water + diffuse + bump
 	bumpmap textures/liquids_sd/sea_bright_na_n.tga
@@ -238,6 +244,7 @@ textures/battery/ocean_1
  	deformVertexes wave 317 sin 0 1.5 0 0.30
 	cull none
 	sort underwater
+	waterfogvars ( 0.2 0.22 0.22 ) 32.0 // this needs all the spaces inside the ( x x x )    last value is ignored?..
 
 	// collapsed layer 1 : ST_BUNDLE_WDB,  liquid/water + diffuse + bump
 	bumpmap textures/liquids_sd/sea_bright_na_n.tga

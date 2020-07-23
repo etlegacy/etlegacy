@@ -1264,6 +1264,10 @@ image_t *R_LoadDDSImageData(void *pImageData, const char *name, int bits, filter
 		glTexParameterf(ret->type, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
 		glTexParameterfv(ret->type, GL_TEXTURE_BORDER_COLOR, alphaZeroClampBorder);
 		break;
+	case WT_MIRROR_REPEAT:
+		glTexParameterf(ret->type, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
+		glTexParameterf(ret->type, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
+		break;
 	default:
 		Ren_Warning("WARNING: unknown wrap type for image '%s'\n", ret->name);
 		glTexParameterf(ret->type, GL_TEXTURE_WRAP_S, GL_REPEAT);

@@ -1167,13 +1167,21 @@ dlightshader
 entityonfire1
 {
 	cull none
-	deformVertexes wave 45 sin 0 10 0 -.6
+//	deformVertexes wave 45 sin 0 10 0 -.6
+	deformVertexes wave 25 sin 0 7.4 0 -.6
+	deformVertexes wave 45 sin 0 2.5 40 0.3
 	nomipmap
 	nopicmip
 	{
 		animmap 20 sprites/clnfire/spr000.tga sprites/clnfire/spr001.tga sprites/clnfire/spr002.tga sprites/clnfire/spr003.tga sprites/clnfire/spr004.tga sprites/clnfire/spr005.tga sprites/clnfire/spr006.tga sprites/clnfire/spr007.tga sprites/clnfire/spr008.tga sprites/clnfire/spr009.tga sprites/clnfire/spr010.tga sprites/clnfire/spr011.tga sprites/clnfire/spr012.tga sprites/clnfire/spr013.tga sprites/clnfire/spr014.tga sprites/clnfire/spr015.tga
 		blendFunc GL_SRC_ALPHA GL_ONE
-		alphaGen normalzfade 1.0 -0.7 0.5
+		//alphaGen normalzfade 0.5 -1000.0 -1000.0 // zombie effect: alpha -1000 -1000
+		alphaGen normalzfade 0.35 -0.1 0.4
+	}
+	{
+		stage heathazemap
+		map heightMap(sprites/clnfire/spr000.tga, 1.0)
+		tcMod scroll 0.0 0.8
 	}
 }
 
@@ -1184,12 +1192,17 @@ entityonfire2
 	{
 		animmap 20 sprites/clnfire/spr000.tga sprites/clnfire/spr001.tga sprites/clnfire/spr002.tga sprites/clnfire/spr003.tga sprites/clnfire/spr004.tga sprites/clnfire/spr005.tga sprites/clnfire/spr006.tga sprites/clnfire/spr007.tga sprites/clnfire/spr008.tga sprites/clnfire/spr009.tga sprites/clnfire/spr010.tga sprites/clnfire/spr011.tga sprites/clnfire/spr012.tga sprites/clnfire/spr013.tga sprites/clnfire/spr014.tga sprites/clnfire/spr015.tga
 		blendFunc GL_SRC_ALPHA GL_ONE
-		alphaGen normalzfade 1.0 -0.7 1.3
+		alphaGen normalzfade 0.35 -0.1 0.4
 	}
 	{
 		map sprites/inferno_blue.tga
 		blendFunc GL_SRC_ALPHA GL_ONE
 		alphaGen normalzfade 1.0 -2.0 0.6
+	}
+	{
+		stage heathazemap
+		map heightMap(sprites/clnfire/spr000.tga, 1.0)
+		tcMod scroll 0.0 0.8
 	}
 }
 
