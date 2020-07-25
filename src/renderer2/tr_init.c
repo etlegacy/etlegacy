@@ -1184,7 +1184,7 @@ void R_Register(void)
 	r_mapOverBrightBits = ri.Cvar_Get("r_mapOverBrightBits", "2", CVAR_LATCH);
 	ri.Cvar_CheckRange(r_mapOverBrightBits, 0, 3, qtrue);
 
-	r_intensity = ri.Cvar_Get("r_intensity", "1", CVAR_LATCH);
+	r_intensity = ri.Cvar_Get("r_intensity", "1.0", CVAR_LATCH);
 	ri.Cvar_CheckRange(r_intensity, 0, 1.5, qfalse);
 
 	r_singleShader = ri.Cvar_Get("r_singleShader", "0", CVAR_CHEAT | CVAR_LATCH);
@@ -1210,7 +1210,7 @@ void R_Register(void)
 
 	r_screenshotJpegQuality = ri.Cvar_Get("r_screenshotJpegQuality", "90", CVAR_ARCHIVE);
 
-	r_forceAmbient = ri.Cvar_Get("r_forceAmbient", "0", CVAR_CHEAT | CVAR_LATCH);
+	r_forceAmbient = ri.Cvar_Get("r_forceAmbient", "0.0", CVAR_CHEAT | CVAR_LATCH);
 	ri.Cvar_CheckRange(r_forceAmbient, 0.0f, 0.3f, qfalse);
 	r_ambientScale = ri.Cvar_Get("r_ambientScale", "0.5", CVAR_CHEAT);
 
@@ -1353,10 +1353,9 @@ void R_Register(void)
 	r_shadows = ri.Cvar_Get("cg_shadows", "1", CVAR_ARCHIVE | CVAR_LATCH);
 	ri.Cvar_CheckRange(r_shadows, 0, SHADOWING_EVSM32, qtrue);
 
-	r_softShadows = ri.Cvar_Get("r_softShadows", "0", CVAR_ARCHIVE | CVAR_LATCH);
-	ri.Cvar_CheckRange(r_softShadows, 0, 6, qtrue);
-
 	r_shadowBlur = ri.Cvar_Get("r_shadowBlur", "2", CVAR_ARCHIVE | CVAR_LATCH);
+	r_softShadows = ri.Cvar_Get("r_softShadows", "0", CVAR_ARCHIVE | CVAR_LATCH); // 0 = off, 1 = PCSS, <>1 && r_shadowBlur>0 = PCF
+	ri.Cvar_CheckRange(r_softShadows, 0, 6, qtrue);
 
 //	r_shadowMapQuality = ri.Cvar_Get("r_shadowMapQuality", "3", CVAR_ARCHIVE | CVAR_LATCH);
 //	ri.Cvar_CheckRange(r_shadowMapQuality, 0, 4, qtrue);
@@ -1479,7 +1478,7 @@ void R_Register(void)
 	r_extTextureEnvAdd = ri.Cvar_Get("r_ext_texture_env_add", "1", CVAR_ARCHIVE | CVAR_LATCH);
 	r_allowExtensions  = ri.Cvar_Get("r_allowExtensions", "1", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE);
 
-	r_materialScan = ri.Cvar_Get("r_materialScan", "1", CVAR_ARCHIVE | CVAR_LATCH);
+	r_materialScan = ri.Cvar_Get("r_materialScan", "2", CVAR_ARCHIVE | CVAR_LATCH);
 
 	r_smoothNormals = ri.Cvar_Get("r_smoothNormals", "0", CVAR_ARCHIVE | CVAR_LATCH);
 

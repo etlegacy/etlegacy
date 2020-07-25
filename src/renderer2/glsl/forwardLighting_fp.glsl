@@ -408,7 +408,7 @@ float SumBlocker(vec3 I, float vertexDistance, float filterWidth, float samples)
 {
 	vec3 forward, right, up;
 
-	forward = normalize(I);
+	forward = normalize(-I);
 	MakeNormalVectors(forward, right, up);
 
 	float stepSize = 2.0 * filterWidth / samples;
@@ -644,6 +644,13 @@ void    main()
 	// compute incident ray
 	vec3 I = var_Position.xyz - u_LightOrigin;
 
+	// if the surface is back-facing the light, discard
+	float dotNI = dot(var_Normal.xyz, -normalize(I));
+	if (dotNI <= 0.0) {
+		discard;
+		return;
+	}
+
 	// const float	SHADOW_BIAS = 0.01;
 
 //#if 0
@@ -751,7 +758,6 @@ void    main()
 	}
 
 #endif // USE_SHADOWING
-
 
 	// compute light attenuation
 #if defined(LIGHT_PROJ)

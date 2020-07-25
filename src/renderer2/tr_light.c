@@ -1154,6 +1154,7 @@ qboolean R_AddLightInteraction(trRefLight_t *light, surfaceType_t *surface, shad
 			return qfalse;
 		}
 	}
+
 /*
 	// test: don't interact on the same >1..
 	// update: If you enable this code, playermodel-shadows are not all/fully drawn.
