@@ -1316,11 +1316,11 @@ void R_Register(void)
 	r_specularExponentPlayers = ri.Cvar_Get("r_specularExponentPlayers", "64.0", CVAR_ARCHIVE);
 	//this one sets the power of specular, the higher the brighter
 	r_specularScaleWorld  = ri.Cvar_Get("r_specularScaleWorld", "0.005", CVAR_ARCHIVE); // for the world
-	r_specularScaleEntities = ri.Cvar_Get("r_specularScaleEntities", "2.0", CVAR_ARCHIVE);  // for entities only  !! different scaling
+	r_specularScaleEntities = ri.Cvar_Get("r_specularScaleEntities", "1.0", CVAR_ARCHIVE);  // for entities only  !! different scaling
 	r_specularScalePlayers = ri.Cvar_Get("r_specularScalePlayers", "0.5", CVAR_ARCHIVE);  // for players only
 
 	r_reflectionMapping = ri.Cvar_Get("r_reflectionMapping", "1", CVAR_ARCHIVE | CVAR_LATCH);
-	r_reflectionScale = ri.Cvar_Get("r_reflectionScale", "0.085", CVAR_ARCHIVE); // a percentage (0.07 = 7/100th = 7%)
+	r_reflectionScale = ri.Cvar_Get("r_reflectionScale", "0.3", CVAR_ARCHIVE); // a percentage (0.07 = 7/100th = 7%)
 
 	// lambertian diffuse lighting
 	r_diffuseLighting = ri.Cvar_Get("r_diffuseLighting", "0.0", CVAR_ARCHIVE);
@@ -1336,14 +1336,14 @@ void R_Register(void)
 
 	r_normalMapping      = ri.Cvar_Get("r_normalMapping", "1", CVAR_ARCHIVE | CVAR_LATCH);
 	r_highQualityNormalMapping = ri.Cvar_Get("r_highQualityNormalMapping", "0", CVAR_ARCHIVE | CVAR_LATCH);
-	r_bumpScale = ri.Cvar_Get("r_bumpScale", "16.0", CVAR_ARCHIVE);
+	r_bumpScale = ri.Cvar_Get("r_bumpScale", "8.0", CVAR_ARCHIVE);
 
 	r_parallaxMapping = ri.Cvar_Get("r_parallaxMapping", "0", CVAR_ARCHIVE | CVAR_LATCH);
 	r_parallaxDepthScale = ri.Cvar_Get("r_parallaxDepthScale", "0.01", CVAR_CHEAT);
-	r_parallaxShadow = ri.Cvar_Get("r_parallaxShadow", "0.0", CVAR_ARCHIVE);
+	r_parallaxShadow = ri.Cvar_Get("r_parallaxShadow", "0.0", CVAR_ARCHIVE); // 0.0 = self-shadow calculation disabled, >0.0 factor is calculated
 	ri.Cvar_CheckRange(r_parallaxShadow, 0.0f, 1.0f, qfalse);
 
-	r_staticLight = ri.Cvar_Get("r_staticLight", "0", CVAR_ARCHIVE | CVAR_LATCH);
+	r_staticLight = ri.Cvar_Get("r_staticLight", "0", CVAR_ARCHIVE | CVAR_LATCH); // the sun/moon (and lights baked with -keeplights)
 	r_dynamicLight = ri.Cvar_Get("r_dynamicLight", "1", CVAR_ARCHIVE);
 	r_dynamicLightShadows = ri.Cvar_Get("r_dynamicLightShadows", "1", CVAR_ARCHIVE);
 
@@ -1603,7 +1603,17 @@ void R_Init(void)
 	if (glConfig2.occlusionQueryBits)
 	{
 		glGenQueries(MAX_OCCLUSION_QUERIES, tr.occlusionQueryObjects);
+		glGenQueries(MAX_ASYNC_OCCLUSION_QUERIES, tr.occlusionQueryObjectsAsync);
 	}
+
+	// this will apply filtering across the adjacent 6 cubemap textures,
+	// so the edge from one cubemap to the next cubemap doesn't use any pixels that are off-texture (the edges).
+	// This is what we need to make the cubemap images align, and no seams are seen..
+	// GL_TEXTURE_CUBE_MAP_SEAMLESS is available only if the GL version is 3.2 or greater.
+//	if (glConfig2.contextCombined >= 320)
+//	{
+		glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
+//	}
 
 	GLSL_CompileGPUShaders();
 
@@ -1654,6 +1664,7 @@ void RE_Shutdown(qboolean destroyWindow)
 		if (glConfig2.occlusionQueryBits)
 		{
 			glDeleteQueries(MAX_OCCLUSION_QUERIES, tr.occlusionQueryObjects);
+			glDeleteQueries(MAX_ASYNC_OCCLUSION_QUERIES, tr.occlusionQueryObjectsAsync);
 
 			if (tr.world)
 			{

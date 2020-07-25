@@ -59,7 +59,8 @@ typedef unsigned short glIndex_t;
 #define MAX_SHADER_TABLES       1024
 #define MAX_SHADER_STAGES       16
 
-#define MAX_OCCLUSION_QUERIES   4096
+#define MAX_OCCLUSION_QUERIES         4096
+#define MAX_ASYNC_OCCLUSION_QUERIES   128      // the flare/corona code uses asynchronous querying, and MAX_FLARES is set to 128
 
 #define MAX_FBOS                64
 
@@ -3749,8 +3750,11 @@ typedef struct
 	float noiseTable[FUNCTABLE_SIZE];
 	float fogTable[FOG_TABLE_SIZE];
 
+	// synchronous queries
 	uint32_t occlusionQueryObjects[MAX_OCCLUSION_QUERIES];
 	int numUsedOcclusionQueryObjects;
+	// asynchronous queries
+	uint32_t occlusionQueryObjectsAsync[MAX_ASYNC_OCCLUSION_QUERIES];
 } trGlobals_t;
 
 

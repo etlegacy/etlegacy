@@ -43,8 +43,9 @@ varying vec2 var_TexDiffuse;        // possibly moving coords
 #if defined(USE_NORMAL_MAPPING)
 varying mat3 var_tangentMatrix;
 varying vec2 var_TexNormal;         // these coords are never moving
-varying vec3 var_LightDirection;
-varying vec3 var_ViewDirW;          // view direction in world space
+varying vec3 var_LightDirW;         // light direction in worldspace
+varying vec3 var_LightDirT;         // light direction in tangentspace
+varying vec3 var_ViewDirW;          // view direction in worldspace
 #if defined(USE_PARALLAX_MAPPING)
 varying vec3 var_ViewDirT;          // view direction in tangentspace
 varying float var_distanceToCam;    //
@@ -88,20 +89,25 @@ void main()
 	vec3 tangent = normalize(u_ModelMatrix * vec4(attr_Tangent, 0.0)).xyz;
 	vec3 binormal = normalize(u_ModelMatrix * vec4(attr_Binormal, 0.0)).xyz;
 
+	mat3 tangentMatrix;
+
 	var_tangentMatrix = mat3(-tangent, -binormal, -var_Normal.xyz);
 //var_tangentMatrix = transpose(mat3(tangent, binormal, var_Normal.xyz));
 
 	// normalmap texcoords are not transformed
 	var_TexNormal = attr_TexCoord0.st;
 
-	var_LightDirection = -normalize(u_LightDir);
+	var_LightDirW = -normalize(u_LightDir);
 
 	vec3 viewVec = var_Position - u_ViewOrigin;
 	var_ViewDirW = normalize(viewVec);
 
+	tangentMatrix = transpose(mat3(tangent, binormal, var_Normal));
+	var_LightDirT = tangentMatrix * var_LightDirW;
+
 #if defined(USE_PARALLAX_MAPPING)
 	var_distanceToCam = length(viewVec);
-	mat3 tangentMatrix = transpose(mat3(tangent, binormal, var_Normal.xyz)); // this works with parallax, but specular is woot
+//@	mat3 tangentMatrix = transpose(mat3(tangent, binormal, var_Normal.xyz)); // already done before^^
 	var_ViewDirT = tangentMatrix * viewVec; // do not normalize..
 #endif // USE_PARALLAX_MAPPING
 #endif // USE_NORMAL_MAPPING

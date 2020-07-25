@@ -3248,7 +3248,8 @@ void GLSL_VertexAttribPointers(uint32_t attribBits)
 	{
 		// FIXME: this occures on maps for unknown reasons (uje_marketgarden + r_wolffog and
 		// and on radar when R_BuildCubemaps is called at start)
-		// Update: check if ^^that^^ is still the case
+		// Update: The reason was that tr_backend.c function RB_RenderEntityOcclusionQueries()  sometimes calls
+		//         this function when no glState.currentVBO is set.   That has been fixed..
 		Ren_Warning("GLSL_VertexAttribPointers: no current VBO bound (attribBits %u)\n", attribBits);
 		return;
 		//Ren_Fatal("GLSL_VertexAttribPointers: no current VBO bound\n");

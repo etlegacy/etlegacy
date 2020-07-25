@@ -215,9 +215,7 @@ void RB_AddFlare(void *surface, int fogNum, vec3_t point, vec3_t color, vec3_t n
 		{
 			if (flareHandle != 0xFFFFFFFF) // for now, skip surface-flares SF_FLARE
 			{
-				// make it a number that is guaranteed to be different than any light/ent/bsp query-id
-				// Those numbers go to MAX_OCCLUSION_QUERIES, so we start numbering from that value.
-				f->occlusionQueryObject = MAX_OCCLUSION_QUERIES + flareHandle;
+				f->occlusionQueryObject = tr.occlusionQueryObjectsAsync[flareHandle];
 			}
 			f->occlusionQuerySamples = 0; // so many samples passed the test
 			f->flareSamples = 228803; // tested this by debugging code and check results..
@@ -946,6 +944,7 @@ void RB_RenderFlares(void)
 
 	GL_CheckErrors();
 
+	// this translucent stuff is rendering slow..
 	GL_PushMatrix();
 	RB_SetViewMVPM(); // ortho projection
 

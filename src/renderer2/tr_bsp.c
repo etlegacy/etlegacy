@@ -8098,10 +8098,30 @@ void R_BuildCubeMaps(void)
 	qboolean	dirtyBuf	= qfalse; // true if there is something in the fileBuf, and the fileBuf has not been written to disk yet.
 	qboolean	createCM	= qfalse;
 
+
+	// We render the cubemaps with one extra edge pixel (so we render a 33x33 image).
+	// and now we read the pixels in the 32x32 middle of the image.
+	// This ensures that we get the correct colors at the edges of an image.
+	// (otherwise we'll get a stripe of wrong colors on the images, and the cubemap images do not align colors).
+	// But, we do readpixels the texture as a 32x32 image from screen.
+	// The fov_x & fov_y must be 90 degrees for a 32x32 image. We must render a 33x33 image with an adjusted fov.
+	//
+	// IF the REF_CUBEMAP_SIZE is set to 32, then:
+	//   sin(45 degrees) = sqrt(2)/2 = M_SQRT2 * 0.5 = 16 (pixels) / length camera to cubeplane.
+	//   => length camera to cubeplane = 16 / (M_SQRT2 * 0.5)
+	//   => the adjusted fov angle's sine value is: 16+1 pixels / length camera to cubeplane
+	//   sin(adjusted fov) = 17 / (16 / M_SQRT2 * 0.5) = 0.7513009550107067446758971347364
+	//   => adjusted (half) fov angle in degrees is 48.703196634271687046758736224782
+	//   The full fov_x & fov_y is: 97.406393268543374093517472449563 degrees
+	// 1/(sqrt(2)/2) = 1.4142135623730950488016887242097 = sqrt(2)  !
+	const double halfCube = 0.5 * REF_CUBEMAP_SIZE;
+	float angleFOV = asin((halfCube + 1.0) / (halfCube * 1.4142135623730950488016887242097)) * 360.0 / M_PI;
+//	float angleFOV = RAD2DEG((float)asin((halfCube + 1.0) / (halfCube / (1.4142135623730950488016887242097 * 0.5))) * 2.0);
+
 #if 1
 	// the "progressbar" is 50 characters long
 	// there are n cubeProbes    (n == tr.cubeProbes.currentElements)
-	float ticsPerProbe; // 50 / tr.cubeProbes.currentElements;
+	float ticsPerProbe; // 50.f / tr.cubeProbes.currentElements;
 	int tics = 0; // the current number of tics that have been written
 #else
 	size_t tics         = 0;
@@ -8120,6 +8140,7 @@ void R_BuildCubeMaps(void)
 
 	Com_Memset(&rf, 0, sizeof(refdef_t));
 
+	// this is used for storing the 6 cubesides pixeldata read from screen
 	for (i = 0; i < 6; i++)
 	{
 		tr.cubeTemp[i] = (byte *)ri.Z_Malloc(REF_CUBEMAP_SIZE * REF_CUBEMAP_SIZE * 4);
@@ -8296,7 +8317,6 @@ void R_BuildCubeMaps(void)
 	{
 #if 1
 		// if we could not even create one cubeProbe, we're done.. (don't fake one)
-		//return;
 		goto buildcubemaps_finish;
 #else
 		// fake one
@@ -8311,18 +8331,16 @@ void R_BuildCubeMaps(void)
 //	qsort(&tr.cubeProbes, tr.cubeProbes.currentElements, sizeof(void *), vertexposCompare); crash
 
 #if 1
-	ticsPerProbe = 50 / tr.cubeProbes.currentElements; // currentElements is != 0 for sure
+	ticsPerProbe = 50.f / tr.cubeProbes.currentElements; // currentElements is != 0 for sure
 #endif
 	Ren_Print("...creating %d cubemaps\n", tr.cubeProbes.currentElements);
 	ri.Cvar_Set("viewlog", "1");
 	Ren_Print("0%%  10   20   30   40   50   60   70   80   90   100%%\n");
-	Ren_Print("|----|----|----|----|----|----|----|----|----|----|\n");
+	Ren_Print("|----|----|----|----|----|----|----|----|----|----|\n "); // the extra last space is needed for proper alignment of the tics
 	for (j = 0; j < tr.cubeProbes.currentElements; j++)
 	{
 		cubeProbe = (cubemapProbe_t *)Com_GrowListElement(&tr.cubeProbes, j);
 
-		//Ren_Print("rendering cubemap at (%i %i %i)\n", (int)cubeProbe->origin[0], (int)cubeProbe->origin[1],
-		//		  (int)cubeProbe->origin[2]);
 #if 1
 		// we are at probe j
 		int currentTics = j * ticsPerProbe; // implicit typecast from float to int. This will floor() the result (which is what we want)
@@ -8369,21 +8387,14 @@ void R_BuildCubeMaps(void)
 		{
 			// render the cubemap
 			VectorCopy(cubeProbe->origin, rf.vieworg);
-			rf.fov_x   = 90.0f;
-			rf.fov_y   = 90.0f;
+			rf.fov_x   = angleFOV;
+			rf.fov_y   = angleFOV;
 			rf.x       = 0;
 			rf.y       = 0;
 			rf.time    = 0;
 			rf.rdflags = RDF_NOCUBEMAP | RDF_NOBLOOM;
-			// We render the cubemaps with one extra border pixel (so we render a 33x33 image).
-			// and now we read the pixels in the 32x32 middle of the image.
-			// This ensures that we get the correct colors at the edges of an image.
-			// (otherwise we'll get a stripe of wrong colors on the images, and the cubemap images do not align colors).
-//!			rf.width   = REF_CUBEMAP_SIZE+2;
-//!			rf.height  = REF_CUBEMAP_SIZE+2;
-			rf.width   = REF_CUBEMAP_SIZE;
-			rf.height  = REF_CUBEMAP_SIZE;
-		
+			rf.width   = REF_CUBEMAP_SIZE+2; // 1 extra pixel around the edges
+			rf.height  = REF_CUBEMAP_SIZE+2; // "
 			for (i = 0; i < 6; i++)
 			{
 				switch (i)
@@ -8402,12 +8413,16 @@ void R_BuildCubeMaps(void)
 					break;
 				case 2:
 					// Y-
+rf.fov_x -= 1.8f; // i don't know why, but this makes it look better..
+rf.fov_y -= 1.8f;
 					VectorSet(rf.viewaxis[0], 0.f, -1.f, 0.f);
 					VectorSet(rf.viewaxis[1], 1.f, 0.f, 0.f);
 					VectorSet(rf.viewaxis[2], 0.f, 0.f, 1.f);
 					break;
 				case 3:
 					// Y+
+rf.fov_x -= 1.8f;
+rf.fov_y -= 1.8f;
 					VectorSet(rf.viewaxis[0], 0.f, 1.f, 0.f);
 					VectorSet(rf.viewaxis[1], 1.f, 0.f, 0.f);
 					VectorSet(rf.viewaxis[2], 0.f, 0.f, -1.f);
@@ -8428,15 +8443,15 @@ void R_BuildCubeMaps(void)
 
 				tr.refdef.pixelTarget = tr.cubeTemp[i];
 //				Com_Memset(tr.cubeTemp[i], 255, REF_CUBEMAP_SIZE * REF_CUBEMAP_SIZE * 4); // we don't need to do this..
-		
+
 				RE_BeginFrame();
 				RE_RenderSimpleScene(&rf); // doesn't render so much as RE_RenderScene (no decals, no coronas, ...)
 				RE_EndFrame(&ii, &jj);
 
 				// Bugfix: drivers absolutely hate running in high res and using glReadPixels near the top or bottom edge.
 				// Soo.. lets do it in the middle.
-//!				glReadPixels(glConfig.vidWidth / 2 + 1, glConfig.vidHeight / 2 + 1, REF_CUBEMAP_SIZE, REF_CUBEMAP_SIZE, GL_RGBA, GL_UNSIGNED_BYTE, tr.refdef.pixelTarget);
-				glReadPixels(glConfig.vidWidth / 2, glConfig.vidHeight / 2, REF_CUBEMAP_SIZE, REF_CUBEMAP_SIZE, GL_RGBA, GL_UNSIGNED_BYTE, tr.refdef.pixelTarget);
+				// Note the extra pixel around the edges.. +1
+				glReadPixels(glConfig.vidWidth / 2 + 1, glConfig.vidHeight / 2 + 1, REF_CUBEMAP_SIZE, REF_CUBEMAP_SIZE, GL_RGBA, GL_UNSIGNED_BYTE, tr.refdef.pixelTarget);
 
 #if 0 // encode the pixel intensity into the alpha channel, saves work in the shader		
 				//if (qtrue)
@@ -8477,8 +8492,7 @@ void R_BuildCubeMaps(void)
 				R_SubImageCpy(pixeldata,
 								sideX * REF_CUBEMAP_SIZE, sideY * REF_CUBEMAP_SIZE,
 								REF_CUBEMAP_STORE_SIZE, REF_CUBEMAP_STORE_SIZE,
-								tr.cubeTemp[i],
-								REF_CUBEMAP_SIZE, REF_CUBEMAP_SIZE,
+								tr.cubeTemp[i], REF_CUBEMAP_SIZE, REF_CUBEMAP_SIZE,
 								4, qtrue);
 		
 				dirtyBuf = qtrue;
@@ -8518,16 +8532,25 @@ void R_BuildCubeMaps(void)
 
 		cubeProbe->cubemap->bits       = IF_NOPICMIP;
 		cubeProbe->cubemap->filterType = FT_LINEAR;
-//		cubeProbe->cubemap->wrapType   = WT_EDGE_CLAMP;
-cubeProbe->cubemap->wrapType   = WT_CLAMP; //WT_MIRROR_REPEAT; //// GL_MIRRORED_REPEAT
-
+		cubeProbe->cubemap->wrapType   = WT_EDGE_CLAMP;
+/*
+		// 'edge clamp' doesn't produce aligned textures.
+		// 'clamp' gives me a black border on the texture, but is better aligned.
+		// 'repeat' looks best, but still has some borders (not all black borders though)
+		// If filtering is set to nearest, no borders can be seen, but the image is very pixelized.
+		// ..and what about this post: https://www.khronos.org/opengl/wiki/Common_Mistakes#Texture_edge_color_problem
+		// (1 item above on that^^ webpage is the reference to 'seamless cubemap texturing').
+		// UPDATE: GL_TEXTURE_CUBE_MAP_SEAMLESS is what we need.. (it's now called in tr_init.c function R_Init() ).
+		// GL_TEXTURE_CUBE_MAP_SEAMLESS is available only if the GL version is 3.2 or greater.
+		// Also, when using GL_TEXTURE_CUBE_MAP_SEAMLESS, it is fine to use WT_EDGE_CLAMP.
+*/
 		GL_Bind(cubeProbe->cubemap);
 
 		R_UploadImage((const byte **)tr.cubeTemp, 6, cubeProbe->cubemap);
 
 		glBindTexture(cubeProbe->cubemap->type, 0);
 	}
-	//Ren_Print("\n");
+	Ren_Print("\n");
 
 	if (createCM)
 	{

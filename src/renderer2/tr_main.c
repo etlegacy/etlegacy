@@ -3615,6 +3615,7 @@ void R_RenderSimpleView(viewParms_t *parms)
 	int    firstDrawSurf;
 	int    firstInteraction;
 	mat4_t mvp;
+	int backup_normalMapping = r_normalMapping->integer; // we temporarily disable r_normalMapping. This var is for backup
 
 	if (parms->viewportWidth <= 0 || parms->viewportHeight <= 0)
 	{
@@ -3629,6 +3630,9 @@ void R_RenderSimpleView(viewParms_t *parms)
 		Ren_Print("MAX_VIEWS (%i) hit. Don't add more mirrors or portals. Skipping view ...\n", MAX_VIEWS);
 		return;
 	}
+
+	// disable normalmapping
+	r_normalMapping->integer = 0;
 
 	tr.viewParms               = *parms;
 	tr.viewParms.frameSceneNum = tr.frameSceneNum;
@@ -3699,4 +3703,7 @@ void R_RenderSimpleView(viewParms_t *parms)
 
 	// draw main system development information (surface outlines, etc)
 //	R_DebugGraphics();
+
+	// restore r_normalMapping
+	r_normalMapping->integer = backup_normalMapping;
 }

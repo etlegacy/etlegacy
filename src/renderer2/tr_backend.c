@@ -4028,6 +4028,14 @@ void RB_RenderEntityOcclusionQueries()
 
 		SetMacrosAndSelectProgram(trProg.gl_genericShader);
 
+		// This function is sometimes called when no currentVBO is set,
+		// and that causes a warning to be printed, when GLSL_SetRequiredVertexPointers() is executed.
+		// To avoid this, we set the currentVBO (to the unitcube that is going to be rendered soon anyway).
+		if (!glState.currentVBO)
+		{
+			R_BindVBO(tr.unitCubeVBO);
+			R_BindIBO(tr.unitCubeIBO);
+		}
 		GLSL_SetRequiredVertexPointers(trProg.gl_genericShader);
 
 		GL_Cull(CT_TWO_SIDED);
@@ -5503,7 +5511,7 @@ static void RB_RenderDebugUtils()
 			SelectTexture(TEX_DIFFUSE);
 			GL_Bind(cubeProbe->cubemap);
 
-			tess.attribsSet |= ATTR_POSITION | ATTR_TEXCOORD | ATTR_NORMAL | ATTR_COLOR;
+			tess.attribsSet |= ATTR_POSITION | ATTR_TEXCOORD | ATTR_NORMAL; // | ATTR_COLOR;
 			Tess_UpdateVBOs(tess.attribsSet);
 			Tess_DrawElements();
 		}

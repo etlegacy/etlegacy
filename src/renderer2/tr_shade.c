@@ -740,6 +740,8 @@ if (tr.refdef.pixelTarget != NULL)
 		if (use_parallaxMapping)
 		{
 			SetUniformFloat(UNIFORM_DEPTHSCALE, RB_EvalExpression(&pStage->depthScaleExp, r_parallaxDepthScale->value));
+			// parallax self shadowing
+			SetUniformFloat(UNIFORM_PARALLAXSHADOW, r_parallaxShadow->value);
 		}
 
 		// bind u_NormalMap
@@ -1791,7 +1793,7 @@ static void Render_dispersion_C(int stage)
 		SetUniformMatrix16ARR(UNIFORM_BONEMATRIX, tess.boneMatrices, MAX_BONES);
 	}
 
-	// bind u_ColorMap
+	// bind u_ColorMap, which is a cubemap
 	SelectTexture(TEX_COLOR);
 	GL_Bind(pStage->bundle[TB_COLORMAP].image[0]);
 
@@ -2256,6 +2258,8 @@ SetUniformFloat(UNIFORM_REFLECTIONSCALE, 1.0f);
 		if (use_parallaxMapping)
 		{
 			SetUniformFloat(UNIFORM_DEPTHSCALE, RB_EvalExpression(&pStage->depthScaleExp, r_parallaxDepthScale->value));
+			// parallax self shadowing
+			SetUniformFloat(UNIFORM_PARALLAXSHADOW, r_parallaxShadow->value);
 		}
 	}
 
@@ -3398,6 +3402,11 @@ void Tess_StageIteratorLighting()
 
 	Ren_LogComment("--- Tess_StageIteratorLighting( %s, %s, %i vertices, %i triangles ) ---\n", tess.surfaceShader->name,
 	               tess.lightShader->name, tess.numVertexes, tess.numIndexes / 3);
+
+	if (!light)
+	{
+		return;
+	}
 
 	GL_CheckErrors();
 

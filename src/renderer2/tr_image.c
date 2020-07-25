@@ -1481,8 +1481,7 @@ void R_UploadImage(const byte **dataArray, int numData, image_t *image)
 		switch (image->type)
 		{
 		case GL_TEXTURE_CUBE_MAP_ARB:
-			glTexImage2D(target + i, 0, internalFormat, scaledWidth, scaledHeight, 0, format, GL_UNSIGNED_BYTE,
-			             scaledBuffer);
+			glTexImage2D(target + i, 0, internalFormat, scaledWidth, scaledHeight, 0, format, GL_UNSIGNED_BYTE, scaledBuffer);
 			break;
 		default:
 			if (image->bits & IF_PACKED_DEPTH24_STENCIL8)
@@ -1613,6 +1612,7 @@ void R_UploadImage(const byte **dataArray, int numData, image_t *image)
 		glTexParameterf(image->type, GL_TEXTURE_WRAP_T, GL_CLAMP);
 		break;
 	case WT_EDGE_CLAMP:
+		glTexParameterf(image->type, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE); // for cubemaps
 		glTexParameterf(image->type, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 		glTexParameterf(image->type, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 		break;

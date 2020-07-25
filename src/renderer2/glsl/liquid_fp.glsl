@@ -55,11 +55,13 @@ varying float var_alphaGen;
 #if defined(USE_NORMAL_MAPPING)
 varying mat3 var_tangentMatrix;
 varying vec2 var_TexNormal;
-varying vec3 var_LightDirection; 
-varying vec3 var_ViewDirW;          // view direction in world space
+varying vec3 var_LightDirW;         // light direction in worldspace
+varying vec3 var_LightDirT;         // light direction in tangentspace
+varying vec3 var_ViewDirW;          // view direction in worldspace
 #if defined(USE_PARALLAX_MAPPING)
 varying vec3 var_ViewDirT;          // view direction in tangentspace
 varying float var_distanceToCam;    //
+uniform float u_ParallaxShadow;
 #endif // USE_PARALLAX_MAPPING
 #endif // USE_NORMAL_MAPPING
 #if defined(USE_PORTAL_CLIPPING)
@@ -88,17 +90,14 @@ void main()
 #if defined(USE_NORMAL_MAPPING)
 
 	// calculate the screen texcoord in the 0.0 to 1.0 range
-#if 0
-	vec2 texScreen = gl_FragCoord.st * r_FBufScale * r_NPOTScale;
-#else
 	vec2 texScreen = gl_FragCoord.st * r_FBufNPOTScale;
-#endif
 	vec2 texNormal = var_TexNormal;
 
 #if defined(USE_PARALLAX_MAPPING)
 	// compute texcoords offset
-	float parallaxHeight; // needed for parallax self shadowing. set by the function parallax()
-	texScreen = parallax(u_NormalMap, texDiffuse, var_ViewDirT, u_DepthScale, var_distanceToCam, parallaxHeight);
+	vec3 parallaxResult = parallaxAndShadow(u_NormalMap, texDiffuse, var_ViewDirT, -var_LightDirT, u_DepthScale, var_distanceToCam, u_ParallaxShadow);
+	texScreen = parallaxResult.xy;
+	float parallaxShadow = parallaxResult.z;
 	texNormal = texDiffuse; // needs same resolution normalmap as diffusemap..
 #if defined(USE_DIFFUSE)
 	texDiffuse = texNormal;
@@ -108,7 +107,7 @@ void main()
 
 
 	// light direction in world space
-	vec3 L = var_LightDirection;
+	vec3 L = var_LightDirW;
 
 	// view direction
 	vec3 V = var_ViewDirW;
@@ -202,11 +201,12 @@ vec3 specular = computeSpecular(V, N, L, u_LightColor, 256.0, u_SpecularScale); 
 	// compute the light term
 //	color.rgb *= var_LightColor.rgb;
 
-
 #if defined(USE_NORMAL_MAPPING)
 	color.rgb += specular; // liquids need no specularmap. Liquids have the specular term calculated from any provided normalmap
 #endif // USE_NORMAL_MAPPING
-
+#if defined(USE_PARALLAX_MAPPING)
+	color.rgb *= parallaxShadow; //pow(parallaxShadow, 2); //pow(parallaxShadow, 4);
+#endif
 	color.a = 1.0; // do not blend (it would blend the currentMap with the water-surface, and you'd see things double (refracted and currentmap)
 
 	gl_FragColor = color;

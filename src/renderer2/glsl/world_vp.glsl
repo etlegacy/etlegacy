@@ -104,7 +104,7 @@ void main()
 	mat3 tangentMatrix;
 
 	// world to tangent space
-	var_tangentMatrix = mat3(-tangent, -binormal, -var_Normal); // this works with specular, but parallax is woot
+	var_tangentMatrix = mat3(-tangent, -binormal, -var_Normal);
 //var_tangentMatrix = transpose(mat3(tangent, binormal, var_Normal)); // this works with parallax, but specular is woot
 
 	// tangent to world space
@@ -117,7 +117,7 @@ void main()
 	vec3 viewVec = var_Position - u_ViewOrigin;
 	var_ViewDirW = normalize(viewVec);
 
-tangentMatrix = transpose(mat3(tangent, binormal, var_Normal)); // this works with parallax, but specular is woot
+tangentMatrix = transpose(mat3(tangent, binormal, var_Normal));
 //tangentMatrix = transpose(var_tangentMatrix);
 var_LightDirT = tangentMatrix * var_LightDirW; // i only have a direction. No light position..  hmm
 //var_ViewDirT = tangentMatrix * var_ViewDirW;
@@ -126,7 +126,7 @@ var_LightDirT = tangentMatrix * var_LightDirW; // i only have a direction. No li
 
 #if defined(USE_PARALLAX_MAPPING)
 	var_distanceToCam = length(viewVec);
-	tangentMatrix = transpose(mat3(tangent, binormal, var_Normal.xyz)); // this works with parallax, but specular is woot
+//@	tangentMatrix = transpose(mat3(tangent, binormal, var_Normal.xyz)); // already done before^^
 	var_ViewDirT = tangentMatrix * viewVec; // do not normalize..
 //	var_ViewDirT = var_tangentMatrix * viewVec; // do not normalize..
 #endif // USE_PARALLAX_MAPPING
