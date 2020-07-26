@@ -89,12 +89,12 @@ checkapp() {
 	app_exists APP_FOUND $1
 
 	if [ $APP_FOUND == 1 ]; then
-		printf "  %-8s $boldgreen%s$reset: %s\n" "${1}" "found" "${BINPATH}"
+		printf "  %-10s $boldgreen%s$reset: %s\n" "${1}" "found" "${BINPATH}"
 	else
 		if [ ${ISPROBLEM} == 0 ]; then
-			printf "  %-8s $boldyellow%s$reset\n" "${1}" "not found but no problem"
+			printf "  %-10s $boldyellow%s$reset\n" "${1}" "not found but no problem"
 		else
-			printf "  %-8s $boldred%s$reset\n" "${1}" "not found"
+			printf "  %-10s $boldred%s$reset\n" "${1}" "not found"
 		fi
 	fi
 }
@@ -192,6 +192,7 @@ print_startup() {
 	detectos
 	echo
 	checkapp autoconf
+	checkapp libtoolize
 	checkapp cmake
 	checkapp gcc
 	checkapp g++
