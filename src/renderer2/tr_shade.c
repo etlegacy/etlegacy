@@ -2156,7 +2156,6 @@ static void Render_liquid(int stage)
 	//SetUniformFloat(UNIFORM_DIFFUSELIGHTING, r_diffuseLighting->value); // liquid uses a constant value..
 
 	rgbaGen = getRgbaGenForColorModulation(pStage, tess.lightmapNum);
-//	rgbaGen = getRgbaGenForColorModulation(pStage, LIGHTMAP_NONE);
 	GLSL_SetUniform_ColorModulate(trProg.gl_liquidShader, rgbaGen.color, rgbaGen.alpha);
 	SetUniformVec4(UNIFORM_COLOR, tess.svars.color);
 
@@ -2172,6 +2171,10 @@ static void Render_liquid(int stage)
 	{
 		clipPortalPlane();
 	}
+/*if (backEnd.viewParms.isPortal)
+{
+	glDisable(GL_CLIP_PLANE0);
+}*/
 
 	// this is the fog displayed on the watersurface only (not any underwater fog, nor world fog)
 	SetUniformFloat(UNIFORM_FOGDENSITY, fogDensity);

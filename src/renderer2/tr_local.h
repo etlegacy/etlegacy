@@ -3801,6 +3801,8 @@ typedef struct trPrograms_s
 
 	programInfo_t *gl_colorCorrection;
 
+	programInfo_t *gl_cubemapShader; // a simple cubemap shader for debug purposes..
+
 	/// This is set with the GLSL_SelectPermutation
 	shaderProgram_t *selectedProgram;
 } trPrograms_t;

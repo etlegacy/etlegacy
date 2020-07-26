@@ -1,11 +1,14 @@
 /* cubemap_vp.glsl */
 
 attribute vec4 attr_Position;
+attribute vec3 attr_Normal;
 
 uniform mat4 u_ModelMatrix;
 uniform mat4 u_ModelViewProjectionMatrix;
 uniform vec3 u_ViewOrigin;
 
+varying vec3 var_Position;
+varying vec3 var_Normal;
 varying vec3 var_ViewDirW;
 
 void main()
@@ -14,8 +17,10 @@ void main()
 	gl_Position = u_ModelViewProjectionMatrix * attr_Position;
 
 	// transform position into world space
-	vec3 posW = (u_ModelMatrix * attr_Position).xyz;
+	var_Position = (u_ModelMatrix * attr_Position).xyz;
 
-	// the viewdirection in world space
-	var_ViewDirW = normalize(posW - u_ViewOrigin);
+	// normal in world space
+	var_Normal = (u_ModelMatrix * vec4(attr_Normal, 0.0)).xyz;
+
+	var_ViewDirW = normalize(var_Position - u_ViewOrigin);
 }

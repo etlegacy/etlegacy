@@ -977,7 +977,11 @@ static void Autosprite2Deform(void)
  */
 qboolean ShaderRequiresCPUDeforms(const shader_t *shader)
 {
-//if (shader->alphaTest) return qtrue; // test to make alpha surfaces render alpha shadows (exclude them from static light interactions).
+	if (!shader)
+	{
+		return qfalse;
+	}
+
 	if(shader->numDeforms)
 	{
 		if (shader->numDeforms > 1)

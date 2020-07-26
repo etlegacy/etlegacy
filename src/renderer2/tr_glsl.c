@@ -2816,6 +2816,8 @@ void GLSL_CompileGPUShaders(void)
 
 	trProg.gl_colorCorrection = GLSL_GetShaderProgram("colorCorrection");
 
+	trProg.gl_cubemapShader = GLSL_GetShaderProgram("cubemap");
+
 #ifdef LEGACY_DEBUG
 	endTime = ri.Milliseconds();
 

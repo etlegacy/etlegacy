@@ -3290,6 +3290,7 @@ static void GetLightOcclusionQueryResult(trRefLight_t *light)
 		while (!available)
 		{
 			//if(glIsQuery(node->occlusionQueryObjects[backEnd.viewParms.viewCount]))
+if (glIsQuery(light->occlusionQueryObject))
 			{
 				glGetQueryObjectiv(light->occlusionQueryObject, GL_QUERY_RESULT_AVAILABLE, &available);
 				//GL_CheckErrors();
@@ -3945,6 +3946,7 @@ static void GetEntityOcclusionQueryResult(trRefEntity_t *entity)
 		while (!available)
 		{
 			//if(glIsQuery(node->occlusionQueryObjects[backEnd.viewParms.viewCount]))
+if (glIsQuery(entity->occlusionQueryObject))
 			{
 				glGetQueryObjectiv(entity->occlusionQueryObject, GL_QUERY_RESULT_AVAILABLE, &available);
 				//GL_CheckErrors();
@@ -4252,6 +4254,7 @@ void RB_RenderBspOcclusionQueries()
 		GL_State(GLS_COLORMASK_BITS);
 
 		sentinel = &tr.occlusionQueryList;
+// this list seems always empty..
 		for (l = sentinel->next; l != sentinel; l = next)
 		{
 			next = l->next;
@@ -4317,7 +4320,7 @@ void RB_CollectBspOcclusionQueries()
 
 			if (glIsQuery(node->occlusionQueryObjects[backEnd.viewParms.viewCount]))
 			{
-				ocCount++;
+				ocCount++; // set a breakpoint here, and it's never hit..
 			}
 		}
 
@@ -4333,6 +4336,8 @@ void RB_CollectBspOcclusionQueries()
 				// but this statement was always true.
 				// if (node->issueOcclusionQuery)
 				// TODO: issueOcclusionQuery is never used
+				// ?  in this very loop it's used, to wait for all queries to finish, but..
+				// ..node->issueOcclusionQuery[x] is never set (outside the loop, before the loop starts).
 				if (node->issueOcclusionQuery[backEnd.viewParms.viewCount])
 				{
 					available = 0;
@@ -5342,8 +5347,10 @@ static void RB_RenderDebugUtils()
 		cubemapProbe_t *cubeProbe;
 		int            j;
 		//vec4_t         quadVerts[4];
-		vec3_t mins = { -8, -8, -8 };
-		vec3_t maxs = { 8, 8, 8 };
+//		vec3_t mins = { -8, -8, -8 };
+//		vec3_t maxs = { 8, 8, 8 };
+		vec3_t mins = { -32, -32, -32 }; // i want to see them bigger
+		vec3_t maxs = { 32, 32, 32 };
 		//vec3_t			viewOrigin;
 		trRefEntity_t* backEndEnt = backEnd.currentEntity;
 
@@ -5353,42 +5360,37 @@ static void RB_RenderDebugUtils()
 		}
 
 /*
- // use the reflection shader
+		// use the reflection shader
+		// But we really don't want it to be rendered as a reflection.
+		// We want to render the cubemap without texture transforms.. just the plain textures, fixed on the 6 sides.
+		// For that, we need a shader that renders a 'samplerCube', but that does not use any reflect().  TODO: write such a shader
 		SetMacrosAndSelectProgram(trProg.gl_reflectionShader,
-		                          USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal,
+		                          USE_PORTAL_CLIPPING, qfalse,
 		                          USE_VERTEX_SKINNING, qfalse,
 		                          USE_VERTEX_ANIMATION, qfalse,
 		                          USE_DEFORM_VERTEXES, qfalse,
 		                          USE_NORMAL_MAPPING, qfalse);
-		SetUniformVec3(UNIFORM_VIEWORIGIN, backEnd.viewParms.orientation.origin); // in world space
+
+		GLSL_SetRequiredVertexPointers(trProg.gl_reflectionShader);
 
 		GLSL_SetUniform_ColorModulate(trProg.gl_reflectionShader, CGEN_IDENTITY, AGEN_IDENTITY); //CGEN_CUSTOM_RGB, AGEN_CUSTOM);
-		//GLSL_SetUniform_ColorModulate(trProg.gl_genericShader, CGEN_IDENTITY, AGEN_IDENTITY);
 		SetUniformVec4(UNIFORM_COLOR, colorWhite);
-
-		//GL_State(GLS_SRCBLEND_ONE | GLS_DSTBLEND_ZERO);
-		GL_State(GLS_DEFAULT);
-		GL_Cull(CT_FRONT_SIDED); // the inside of the cube is textured, and the normals all point to the center of the cube: that's the front side (we don't want to see)
-		SetUniformInt(UNIFORM_ALPHATEST, ATEST_NONE);
-
-		// set up the transformation matrix
-		backEnd.orientation = backEnd.viewParms.world;
-		//GL_LoadModelViewMatrix(backEnd.orientation.modelViewMatrix);
-		//SetUniformMatrix16(UNIFORM_MODELMATRIX, backEnd.orientation.transformMatrix);
 		SetUniformMatrix16(UNIFORM_MODELMATRIX, MODEL_MATRIX);
 		SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
-		SetUniformMatrix16(UNIFORM_COLORTEXTUREMATRIX, matrixIdentity);
+		SetUniformVec3(UNIFORM_VIEWORIGIN, backEnd.viewParms.orientation.origin); // in world space
+		SetUniformFloat(UNIFORM_REFLECTIONSCALE, 1.0f);
+
+		GL_State(GLS_SRCBLEND_ONE | GLS_DSTBLEND_ZERO);
+		GL_Cull(CT_FRONT_SIDED); // the inside of the cube is textured, and the normals all point to the center of the cube: that's the front side (we don't want to see)
 		
-		GLSL_SetRequiredVertexPointers(trProg.gl_reflectionShader);
-		//GLSL_SetRequiredVertexPointers(trProg.gl_genericShader);
-
-		backEnd.currentEntity = &tr.worldEntity;
-
 		for (j = 0; j < tr.cubeProbes.currentElements; j++)
 		{
 			cubeProbe = (cubemapProbe_t *) Com_GrowListElement(&tr.cubeProbes, j);
 
-			Tess_Begin(Tess_StageIteratorDebug, NULL, NULL, NULL, qtrue, qtrue, LIGHTMAP_NONE, FOG_NONE);
+			tess.multiDrawPrimitives = 0;
+			tess.numVertexes         = 0;
+			tess.numIndexes          = 0;
+
 			Tess_AddCubeWithNormals(cubeProbe->origin, mins, maxs, colorWhite);
 #if 1
             // the glsl shader needs 2 cubemaps and an interpolation factor,
@@ -5409,97 +5411,29 @@ static void RB_RenderDebugUtils()
             SelectTexture(TEX_COLOR);
             GL_Bind(cubeProbe->cubemap);
 #endif
-			Tess_End();
-		}
-		//Tess_UpdateVBOs(tess.attribsSet); // set by Tess_AddCube
-		backEnd.currentEntity = backEndEnt;
-*/
-/*
-		// use the generic shader
-		SetMacrosAndSelectProgram(trProg.gl_genericShader,
-								  USE_ALPHA_TESTING, qfalse,
-								  USE_PORTAL_CLIPPING, qfalse, //backEnd.viewParms.isPortal,
-								  USE_VERTEX_SKINNING, qfalse,
-								  USE_VERTEX_ANIMATION, qfalse,
-								  USE_DEFORM_VERTEXES, qfalse,
-								  USE_TCGEN_ENVIRONMENT, qfalse,
-								  USE_TCGEN_LIGHTMAP, qfalse);
-
-		GLSL_SetRequiredVertexPointers(trProg.gl_genericShader);
-
-		GLSL_SetUniform_ColorModulate(trProg.gl_genericShader, CGEN_IDENTITY, AGEN_IDENTITY);
-		SetUniformVec4(UNIFORM_COLOR, colorWhite);
-		SetUniformMatrix16(UNIFORM_COLORTEXTUREMATRIX, matrixIdentity);
-		SetUniformMatrix16(UNIFORM_MODELMATRIX, MODEL_MATRIX);
-		SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
-
-		// USE_PORTAL_CLIPPING
-		if (backEnd.viewParms.isPortal)
-		{
-			clipPortalPlane();
-		}
-
-		GL_State(GLS_SRCBLEND_ONE | GLS_DSTBLEND_ZERO);
-		GL_Cull(CT_FRONT_SIDED); // the inside of the cube is textured, and the normals all point to the center of the cube: that's the front side (we don't want to see)
-
-		backEnd.orientation = backEnd.viewParms.world;
-
-//		Tess_Begin(Tess_StageIteratorDebug, NULL, NULL, NULL, qtrue, qtrue, LIGHTMAP_NONE, FOG_NONE);
-		for (j = 0; j < tr.cubeProbes.currentElements; j++)
-		{
-			cubeProbe = (cubemapProbe_t*)Com_GrowListElement(&tr.cubeProbes, j);
-
-			tess.multiDrawPrimitives = 0;
-			tess.numVertexes         = 0;
-			tess.numIndexes          = 0;
-
-			Tess_AddCubeWithNormals(cubeProbe->origin, mins, maxs, colorWhite);
-
-			// bind u_ColorMap
-			SelectTexture(TEX_COLOR);
-			GL_Bind(cubeProbe->cubemap);
-			//SetUniformMatrix16(UNIFORM_COLORTEXTUREMATRIX, matrixIdentity);
-
-//			Tess_UpdateVBOs(tess.attribsSet);
+			Tess_UpdateVBOs(ATTR_POSITION | ATTR_TEXCOORD | ATTR_NORMAL);
 			Tess_DrawElements();
 		}
-//		Tess_End();
-		GL_CheckErrors();
 
 		tess.multiDrawPrimitives = 0;
 		tess.numVertexes         = 0;
 		tess.numIndexes          = 0;
 */
 
-		// use the world shader
-		GL_State(GLS_SRCBLEND_ONE | GLS_DSTBLEND_ZERO);
-		GL_Cull(CT_FRONT_SIDED); // the inside of the cube is textured, and the normals all point to the center of the cube: that's the front side (we don't want to see)
+		// use the cubemap shader
+		SetMacrosAndSelectProgram(trProg.gl_cubemapShader);
+		GLSL_SetRequiredVertexPointers(trProg.gl_cubemapShader);
 
-		SetMacrosAndSelectProgram(trProg.gl_worldShader,
-									USE_PORTAL_CLIPPING, qfalse,
-									USE_ALPHA_TESTING, qfalse,
-									USE_DEFORM_VERTEXES, qfalse,
-									USE_NORMAL_MAPPING, qfalse,
-									USE_PARALLAX_MAPPING, qfalse,
-									//USE_DELUXE_MAPPING, qfalse,
-									USE_REFLECTIONS, qfalse,
-									USE_REFLECTIONMAP, qfalse,
-									USE_SPECULAR, qfalse,
-									USE_DIFFUSE, qtrue,
-									USE_LIGHT_MAPPING, qfalse);
-
-		GLSL_SetRequiredVertexPointers(trProg.gl_worldShader);
-		GLSL_SetUniform_ColorModulate(trProg.gl_worldShader, CGEN_IDENTITY, AGEN_IDENTITY);
-		SetUniformVec4(UNIFORM_COLOR, colorWhite);
-		SetUniformMatrix16(UNIFORM_COLORTEXTUREMATRIX, matrixIdentity);
 		SetUniformMatrix16(UNIFORM_MODELMATRIX, MODEL_MATRIX);
 		SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
-		SetUniformFloat(UNIFORM_DIFFUSELIGHTING, 0.f);
-		SetUniformBoolean(UNIFORM_B_SHOW_LIGHTMAP, GL_FALSE);
+		SetUniformVec3(UNIFORM_VIEWORIGIN, backEnd.viewParms.orientation.origin); // in world space
+
+		GL_State(GLS_SRCBLEND_ONE | GLS_DSTBLEND_ZERO);
+		GL_Cull(CT_FRONT_SIDED); // the inside of the cube is textured, and the normals all point to the center of the cube: that's the front side (we don't want to see)
 		
 		for (j = 0; j < tr.cubeProbes.currentElements; j++)
 		{
-			cubeProbe = (cubemapProbe_t*)Com_GrowListElement(&tr.cubeProbes, j);
+			cubeProbe = (cubemapProbe_t *) Com_GrowListElement(&tr.cubeProbes, j);
 
 			tess.multiDrawPrimitives = 0;
 			tess.numVertexes         = 0;
@@ -5507,18 +5441,17 @@ static void RB_RenderDebugUtils()
 
 			Tess_AddCubeWithNormals(cubeProbe->origin, mins, maxs, colorWhite);
 
-			// bind u_ColorMap
-			SelectTexture(TEX_DIFFUSE);
-			GL_Bind(cubeProbe->cubemap);
+			SelectTexture(TEX_COLOR);
+            GL_Bind(cubeProbe->cubemap);
 
-			tess.attribsSet |= ATTR_POSITION | ATTR_TEXCOORD | ATTR_NORMAL; // | ATTR_COLOR;
-			Tess_UpdateVBOs(tess.attribsSet);
+			Tess_UpdateVBOs(ATTR_POSITION | ATTR_NORMAL);
 			Tess_DrawElements();
 		}
+
 		tess.multiDrawPrimitives = 0;
 		tess.numVertexes         = 0;
 		tess.numIndexes          = 0;
-		GL_CheckErrors();
+
 
 
 #if 0	// color the 2 closest cubeProbes (green/red/yellow?/blue?)
@@ -6324,14 +6257,14 @@ if (tr.refdef.pixelTarget == NULL)
 	{
 		// draw everything that is opaque
 		RB_RenderDrawSurfaces(qtrue, DRAWSURFACES_ALL);
-
-		// try to cull entities using hardware occlusion queries
-		//RB_RenderEntityOcclusionQueries();
 	}
+/*
+	// FIX: this mechanism doesn't work. The used sentinel list is never filled.
+	// The real occlusion querying is done by R_CoherentHierachicalCulling(), in function R_AddWorldSurfaces().
 
 	// try to cull bsp nodes for the next frame using hardware occlusion queries
 	RB_RenderBspOcclusionQueries();
-
+*/
 	R2_TIMING(RSPEEDS_SHADING_TIMES)
 	{
 		backEnd.pc.c_forwardAmbientTime = ri.Milliseconds() - startTime;
@@ -6424,13 +6357,19 @@ else
 
 	// add the sun flare
 	RB_DrawSun();
+
+/*
+	// FIX: this mechanism doesn't work. The used sentinel list is never filled.
+	// This next line goes together with the call to RB_RenderBspOcclusionQueries(), from a few lines up..
+
 	// wait until all bsp node occlusion queries are back
 	RB_CollectBspOcclusionQueries();
+*/
 
 if (tr.refdef.pixelTarget == NULL)
 {//!
 	// add light flares on lights that aren't obscured
-	RB_RenderFlares(); // this initiates calls to the very slow glReadPixels()..
+	RB_RenderFlares();
 }//!
 
 if (tr.refdef.pixelTarget == NULL)

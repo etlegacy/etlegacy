@@ -2102,10 +2102,10 @@ static void R_CoherentHierachicalCulling()
 	}
 
 	ClearLink(&tr.traversalStack);
-	QueueInit(&tr.occlusionQueryQueue);
-	ClearLink(&tr.occlusionQueryList);
+	ClearLink(&tr.occlusionQueryList); // this list is never filled..
 
-	//ClearLink(&traversalStack);
+	QueueInit(&tr.occlusionQueryQueue);
+
 	QueueInit(&distanceQueue);
 	QueueInit(&occlusionQueryQueue);
 	QueueInit(&visibleQueue);
@@ -2375,6 +2375,7 @@ static void R_CoherentHierachicalCulling()
 						node = (bspNode_t *) DeQueue(&visibleQueue);
 
 						IssueOcclusionQuery(&occlusionQueryQueue, node, qtrue);
+
 					}
 				}
 			}

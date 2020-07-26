@@ -264,3 +264,9 @@ SSAO
 	fragfilename "screenSpaceAmbientOcclusion"
 	attribs ATTR_POSITION
 }
+
+cubemap
+{
+	filename "cubemap"
+	attribs ATTR_POSITION
+}

@@ -37,7 +37,6 @@ textures/liquids_sd/seawall_foam
 		rgbgen identity
 	}
 }
-*/
 
 // ocean fog water
 textures/battery/fog_water
@@ -49,7 +48,7 @@ textures/battery/fog_water
   	surfaceparm trans
   	surfaceparm water
 	surfaceparm fog
-	sort underwater
+	sort water
 	{
 		map $whiteImage
 		rgbGen const ( 0.4 0.4 0.4 )
@@ -73,6 +72,7 @@ textures/battery/ocean_terrain
   	surfaceparm trans
   	nopicmip
 }
+*/
 
 // abstract shader for subclassed shaders
 textures/battery/ocean_base
@@ -101,9 +101,9 @@ textures/battery/ocean_0
 	qer_editorimage textures/liquids_sd/seawall_ocean.tga
 	deformVertexes wave 1317 sin 0 2.5 0 0.15
  	deformVertexes wave 317 sin 0 1.5 0 0.30
+	waterfogvars ( 0.2 0.22 0.22 ) 32.0 // this needs all the spaces inside the ( x x x )    last (distance) value is ignored..
 	cull none
 	sort water
-	waterfogvars ( 0.2 0.22 0.22 ) 32.0 // this needs all the spaces inside the ( x x x )    last (distance) value is ignored..
 
 	// collapsed layer 1 : ST_BUNDLE_WDB,  liquid/water + diffuse + bump
 	// Note: this liquid stage does not have a lightmap rendered (nor will it have light/shadows).
@@ -113,7 +113,9 @@ textures/battery/ocean_0
 	{ 
 		stage liquidmap
 		refractionIndex 1.3
-		// (because of current render issues with this Battery water, we do not use refraction)
+		// Because of current render issues with this Battery water, we do not use refraction.
+		// The foam layers on top of the main/this layer will shift when you set normalScale to a value other than 0.00.
+		// That looks bad
 		normalScale 0.00 // this is the scale of the refraction
 		// fresnel determines the ratio reflection/refraction.
 		// At higher angles of incedent, water becomes more reflective than refractive.
@@ -122,7 +124,7 @@ textures/battery/ocean_0
 		fresnelPower 1.0 
 		fresnelScale 2.0
 		fresnelBias 0.1
-		alphaGen const 0.2
+		alphaGen const 0.5
 		// 'color' is the fog-color you see on the watersurface only.
 		// It does not render any fog on objects other than the watersurface.
 		// Example: In Oasis, if you are above the watersurface, looking into the underwater tunnel,
@@ -132,7 +134,7 @@ textures/battery/ocean_0
 		// Also here, it's just fog rendered on the watersurface.
 		// Extra note: If you make the 4th parameter have a value of 1.0, then you will not see reflections on the watersurface
 		fog on
-		color 0.4, 0.4, 0.4, 0.4
+		color 0.4, 0.4, 0.4, 0.2
 	}
 	{
 		stage diffusemap
@@ -143,7 +145,7 @@ textures/battery/ocean_0
 		tcmod turb 0 0.05 0 0.12	// If desired, you can apply >1 tcMod.
 	}
 
-	// layer 2 : a "dummy" diffusemap that will receive the lightmap
+	// layer 2 : a "dummy" diffusemap that will receive the lightmap (this is then the only diffusemap in this material).
 	// but we don't want this to be displayed..
 	// Note this is a workaround /todo
 	{
@@ -151,17 +153,25 @@ textures/battery/ocean_0
 		map $blackimage
 		blendfunc GL_ZERO GL_ONE
 	}
-/*
-	// the glsl liquid shader renders the calculated specular highlights
-	// and the cubeProbes reflections on the watersurface.
-	// That's why i disabled the next stage.
+	// a "dummy" specularmap on the rest of the stages.
+	// This prevents this stage getting specular too,
+	// otherwise we get too much overall reflection
 	{
-		map textures/liquids_sd/seawall_specular.tga
-		blendFunc GL_ONE GL_ONE
-		rgbGen vertex
-		tcGen environment
+		stage specularmap
+		map $blackimage
 	}
-*/
+
+
+//	// the glsl liquid shader renders the calculated specular highlights
+//	// and the cubeProbes reflections on the watersurface.
+//	// That's why i disabled the next stage.
+//	{
+//		map textures/liquids_sd/seawall_specular.tga
+//		blendFunc GL_ONE GL_ONE
+//		rgbGen vertex
+//		tcGen environment
+//	}
+
 }
 
 
@@ -171,9 +181,9 @@ textures/battery/ocean_0to1
 	qer_editorimage textures/liquids_sd/seawall_ocean.tga
 	deformVertexes wave 1317 sin 0 2.5 0 0.15
  	deformVertexes wave 317 sin 0 1.5 0 0.30 	
+	waterfogvars ( 0.2 0.22 0.22 ) 32.0 // this needs all the spaces inside the ( x x x )    last (distance) value is ignored..
 	cull none
 	sort water
-	waterfogvars ( 0.2 0.22 0.22 ) 32.0 // this needs all the spaces inside the ( x x x )    last value is ignored?..
 
 	// collapsed layer 1 : ST_BUNDLE_WDB,  liquid/water + diffuse + bump
 	bumpmap textures/liquids_sd/sea_bright_na_n.tga
@@ -186,9 +196,9 @@ textures/battery/ocean_0to1
 		fresnelPower 1.0 
 		fresnelScale 2.0
 		fresnelBias 0.1
-		alphaGen const 0.2
+		alphaGen const 0.5
 		fog on
-		color 0.4, 0.4, 0.4, 0.4
+		color 0.4, 0.4, 0.4, 0.2
 	}
 	{ 
 		stage diffusemap
@@ -213,9 +223,10 @@ textures/battery/ocean_0to1
 //map displacemap(textures/liquids_sd/seawall_foam_n.tga, textures/liquids_sd/sea_wave_h.tga)
 //tcmod scroll -0.01 0.750
 	}
+	// a "dummy" specularmap on the rest of the stages.
+	// This prevents this stage getting specular too,
+	// otherwise we get too much overall reflection
 	{
-		// a "dummy" specularmap on the rest of the stages
-		// otherwise we get too much reflection overall
 		stage specularmap
 		map $blackimage
 	}
@@ -255,9 +266,9 @@ textures/battery/ocean_1
 	qer_editorimage textures/liquids_sd/seawall_ocean.tga
 	deformVertexes wave 1317 sin 0 2.5 0 0.15
  	deformVertexes wave 317 sin 0 1.5 0 0.30
+	waterfogvars ( 0.2 0.22 0.22 ) 32.0 // this needs all the spaces inside the ( x x x )    last (distance) value is ignored..
 	cull none
 	sort water
-	waterfogvars ( 0.2 0.22 0.22 ) 32.0 // this needs all the spaces inside the ( x x x )    last value is ignored?..
 
 	// collapsed layer 1 : ST_BUNDLE_WDB,  liquid/water + diffuse + bump
 	bumpmap textures/liquids_sd/sea_bright_na_n.tga
@@ -270,9 +281,9 @@ textures/battery/ocean_1
 		fresnelPower 1.0 
 		fresnelScale 2.0
 		fresnelBias 0.1
-		alphaGen const 0.2
+		alphaGen const 0.5
 		fog on
-		color 0.4, 0.4, 0.4, 0.4
+		color 0.4, 0.4, 0.4, 0.2
 	}
 	{ 
 		stage diffusemap
