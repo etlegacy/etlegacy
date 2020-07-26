@@ -1223,6 +1223,8 @@ void ClientThink_real(gentity_t *ent)
 		//G_Printf("serverTime >>>>>\n" );
 	}
 
+	client->attackTime = ucmd->serverTime;
+
 	client->frameOffset = trap_Milliseconds() - level.frameStartTime;
 
 	msec = ucmd->serverTime - client->ps.commandTime;
