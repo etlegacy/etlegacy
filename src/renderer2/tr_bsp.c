@@ -8458,25 +8458,12 @@ void R_BuildCubeMaps(void)
 						etl_assert(cmdList != NULL);
 						*(int *)(cmdList->cmds + cmdList->used) = RC_END_OF_LIST;
 						cmdList->used = 0;
-						//R_PerformanceCounters();
-						if (!r_skipBackEnd->integer)
-						{
-							RB_ExecuteRenderCommands(cmdList->cmds);
-						}
+						RB_ExecuteRenderCommands(cmdList->cmds);
 					}
 					R_InitNextFrame();
-					if (ii)
-					{
-						ii = tr.frontEndMsec;
-					}
 					tr.frontEndMsec = 0;
-					if (jj)
-					{
-						jj = backEnd.pc.msec;
-					}
 					backEnd.pc.msec = 0;
 				}
-
 				GL_Scissor(tr.viewParms.viewportX, tr.viewParms.viewportY, tr.viewParms.viewportWidth, tr.viewParms.viewportHeight);
 
 				// Bugfix: drivers absolutely hate running in high res and using glReadPixels near the top or bottom edge.
