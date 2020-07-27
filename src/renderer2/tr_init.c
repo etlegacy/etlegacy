@@ -1233,7 +1233,7 @@ void R_Register(void)
 	r_screenSpaceAmbientOcclusion = ri.Cvar_Get("r_screenSpaceAmbientOcclusion", "0", CVAR_ARCHIVE);
 	ri.Cvar_CheckRange(r_screenSpaceAmbientOcclusion, 0, 2, qtrue);
 
-	r_occludeBsp      = ri.Cvar_Get("r_occludeBsp", "1", CVAR_ARCHIVE);
+	r_occludeBsp      = ri.Cvar_Get("r_occludeBsp", "0", CVAR_ARCHIVE); // there is an issue with water volumes (the Battery sea), so this is off by default..
 	r_occludeEntities = ri.Cvar_Get("r_occludeEntities", "1", CVAR_ARCHIVE);
 	r_occludeLights   = ri.Cvar_Get("r_occludeLights", "1", CVAR_ARCHIVE);
 	r_occludeFlares   = ri.Cvar_Get("r_occludeFlares", "1", CVAR_ARCHIVE);

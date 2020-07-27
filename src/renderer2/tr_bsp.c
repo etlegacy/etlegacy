@@ -8348,8 +8348,8 @@ void R_BuildCubeMaps(void)
 		if (currentTics != tics)
 		{
 			tics = currentTics;
-			Ren_Print("*");
-			Ren_UpdateScreen();
+//			Ren_Print("*");
+//			Ren_UpdateScreen();
 		}
 #else
 		if ((j + 1) >= nextTicCount)
@@ -8400,53 +8400,51 @@ void R_BuildCubeMaps(void)
 				switch (i)
 				{
 				case 0:
-					// X-
-					VectorSet(rf.viewaxis[0], -1.f, 0.f, 0.f);
+					// X+
+					VectorSet(rf.viewaxis[0], 1.f, 0.f, 0.f); //
 					VectorSet(rf.viewaxis[1], 0.f, 0.f, 1.f);
-					VectorSet(rf.viewaxis[2], 0.f, 1.f, 0.f);
+					VectorSet(rf.viewaxis[2], 0.f, -1.f, 0.f);
 					break;
 				case 1:
-					// X+
-					VectorSet(rf.viewaxis[0], 1.f, 0.f, 0.f);
+					// X-
+					VectorSet(rf.viewaxis[0], -1.f, 0.f, 0.f);//
 					VectorSet(rf.viewaxis[1], 0.f, 0.f, -1.f);
-					VectorSet(rf.viewaxis[2], 0.f, 1.f, 0.f);
+					VectorSet(rf.viewaxis[2], 0.f, -1.f, 0.f);
 					break;
 				case 2:
-					// Y-
-rf.fov_x -= 1.8f; // i don't know why, but this makes it look better..
-rf.fov_y -= 1.8f;
-					VectorSet(rf.viewaxis[0], 0.f, -1.f, 0.f);
-					VectorSet(rf.viewaxis[1], 1.f, 0.f, 0.f);
+					// Y+
+					VectorSet(rf.viewaxis[0], 0.f, 1.f, 0.f); //
+					VectorSet(rf.viewaxis[1], -1.f, 0.f, 0.f);
 					VectorSet(rf.viewaxis[2], 0.f, 0.f, 1.f);
 					break;
 				case 3:
-					// Y+
-rf.fov_x -= 1.8f;
-rf.fov_y -= 1.8f;
-					VectorSet(rf.viewaxis[0], 0.f, 1.f, 0.f);
-					VectorSet(rf.viewaxis[1], 1.f, 0.f, 0.f);
+					// Y-
+					VectorSet(rf.viewaxis[0], 0.f, -1.f, 0.f); //
+					VectorSet(rf.viewaxis[1], -1.f, 0.f, 0.f);
 					VectorSet(rf.viewaxis[2], 0.f, 0.f, -1.f);
 					break;
 				case 4:
-					// Z up
-					VectorSet(rf.viewaxis[0], 0.f, 0.f, 1.f);
-					VectorSet(rf.viewaxis[1], 1.f, 0.f, 0.f);
-					VectorSet(rf.viewaxis[2], 0.f, 1.f, 0.f);
+					// Z+ up
+					VectorSet(rf.viewaxis[0], 0.f, 0.f, 1.f);//
+					VectorSet(rf.viewaxis[1], -1.f, 0.f, 0.f);
+					VectorSet(rf.viewaxis[2], 0.f, -1.f, 0.f);
 					break;
 				case 5:
-					// Z down
-					VectorSet(rf.viewaxis[0], 0.f, 0.f, -1.f);
-					VectorSet(rf.viewaxis[1], -1.f, 0.f, 0.f);
-					VectorSet(rf.viewaxis[2], 0.f, 1.f, 0.f);
+					// Z- down
+					VectorSet(rf.viewaxis[0], 0.f, 0.f, -1.f);//
+					VectorSet(rf.viewaxis[1], 1.f, 0.f, 0.f);
+					VectorSet(rf.viewaxis[2], 0.f, -1.f, 0.f);
 					break;
 				}
 
 				tr.refdef.pixelTarget = tr.cubeTemp[i];
 //				Com_Memset(tr.cubeTemp[i], 255, REF_CUBEMAP_SIZE * REF_CUBEMAP_SIZE * 4); // we don't need to do this..
 
+				GL_Scissor(glConfig.vidWidth / 2 - 1, glConfig.vidHeight / 2 - 1, REF_CUBEMAP_SIZE+2, REF_CUBEMAP_SIZE+2);
 				RE_BeginFrame();
 				RE_RenderSimpleScene(&rf); // doesn't render so much as RE_RenderScene (no decals, no coronas, ...)
 				RE_EndFrame(&ii, &jj);
+				GL_Scissor(tr.viewParms.viewportX, tr.viewParms.viewportY, tr.viewParms.viewportWidth, tr.viewParms.viewportHeight);
 
 				// Bugfix: drivers absolutely hate running in high res and using glReadPixels near the top or bottom edge.
 				// Soo.. lets do it in the middle.
@@ -8521,7 +8519,7 @@ rf.fov_y -= 1.8f;
 		cubeProbe->cubemap = R_AllocImage(va("_autoCube%d", j), qfalse);
 		if (!cubeProbe->cubemap)
 		{
-			Ren_Print("R_BuildCubeMaps: Aborted - can't allocate image.\n");
+//			Ren_Print("R_BuildCubeMaps: Aborted - can't allocate image.\n");
 			return;
 		}
 
@@ -8550,7 +8548,7 @@ rf.fov_y -= 1.8f;
 
 		glBindTexture(cubeProbe->cubemap->type, 0);
 	}
-	Ren_Print("\n");
+//	Ren_Print("\n");
 
 	if (createCM)
 	{

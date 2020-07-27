@@ -477,7 +477,7 @@ typedef enum
 	WT_EDGE_CLAMP,
 	WT_ZERO_CLAMP,              ///< guarantee 0,0,0,255 edge for projected textures
 	WT_ALPHA_ZERO_CLAMP,        ///< guarante 0 alpha edge for projected textures
-	WT_MIRROR_REPEAT
+	WT_MIRROR_REPEAT            ///< This was added for a test, but now not used. I leave it in code..
 } wrapType_t;
 
 /**
@@ -758,7 +758,7 @@ typedef enum
 	// read from framebuffer
 	// write to framebuffer
 	PBO_USAGE_WRITETOPBO = 0,		///< GL_PIXEL_UNPACK_BUFFER. From application to OpenGL
-	PBO_USAGE_READFROMPBO			///< GL_PIXEL_PACK_BUFFER.   From openGL to appliction
+	PBO_USAGE_READFROMPBO			///< GL_PIXEL_PACK_BUFFER.   From openGL to application
 } pboUsage_t;
 
 /**

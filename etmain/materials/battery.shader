@@ -101,14 +101,14 @@ textures/battery/ocean_0
 	qer_editorimage textures/liquids_sd/seawall_ocean.tga
 	deformVertexes wave 1317 sin 0 2.5 0 0.15
  	deformVertexes wave 317 sin 0 1.5 0 0.30
-	waterfogvars ( 0.2 0.22 0.22 ) 32.0 // this needs all the spaces inside the ( x x x )    last (distance) value is ignored..
+	waterfogvars ( 0.2 0.22 0.22 ) 8000.0 // this needs all the spaces inside the ( x x x )    last (distance) value is ignored..
 	cull none
 	sort water
 
 	// collapsed layer 1 : ST_BUNDLE_WDB,  liquid/water + diffuse + bump
 	// Note: this liquid stage does not have a lightmap rendered (nor will it have light/shadows).
 	bumpmap textures/liquids_sd/sea_bright_na_n.tga
-//	bumpmap displaceMap(textures/liquids_sd/sea_bright_na_n.tga, textures/liquids_sd/sea_bright_na_r.tga)
+//	bumpmap displaceMap(textures/liquids_sd/sea_bright_na_n.tga, textures/liquids_sd/sea_wave_h.tga)
 //	parallax
 	{ 
 		stage liquidmap

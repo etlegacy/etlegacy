@@ -2206,7 +2206,6 @@ static void R_CoherentHierachicalCulling()
 				if (!QueueEmpty(&visibleQueue))
 				{
 					node = (bspNode_t *) DeQueue(&visibleQueue);
-
 					IssueOcclusionQuery(&occlusionQueryQueue, node, qtrue);
 				}
 			}
