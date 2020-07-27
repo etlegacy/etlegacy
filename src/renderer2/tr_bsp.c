@@ -8348,8 +8348,11 @@ void R_BuildCubeMaps(void)
 		if (currentTics != tics)
 		{
 			tics = currentTics;
-//			Ren_Print("*");
-//			Ren_UpdateScreen();
+			//$ If you update the screen, a swapbuffers is done.
+			//$ That will show the rendering of the cubemaps in the middle of the screen.
+			//$ It's fun to see the progress-tics in the developer's output panel, but i prefer a clean screen.
+//$			Ren_Print("*");
+//$			Ren_UpdateScreen();
 		}
 #else
 		if ((j + 1) >= nextTicCount)
@@ -8401,37 +8404,37 @@ void R_BuildCubeMaps(void)
 				{
 				case 0:
 					// X+
-					VectorSet(rf.viewaxis[0], 1.f, 0.f, 0.f); //
+					VectorSet(rf.viewaxis[0], 1.f, 0.f, 0.f);
 					VectorSet(rf.viewaxis[1], 0.f, 0.f, 1.f);
 					VectorSet(rf.viewaxis[2], 0.f, -1.f, 0.f);
 					break;
 				case 1:
 					// X-
-					VectorSet(rf.viewaxis[0], -1.f, 0.f, 0.f);//
+					VectorSet(rf.viewaxis[0], -1.f, 0.f, 0.f);
 					VectorSet(rf.viewaxis[1], 0.f, 0.f, -1.f);
 					VectorSet(rf.viewaxis[2], 0.f, -1.f, 0.f);
 					break;
 				case 2:
 					// Y+
-					VectorSet(rf.viewaxis[0], 0.f, 1.f, 0.f); //
+					VectorSet(rf.viewaxis[0], 0.f, 1.f, 0.f);
 					VectorSet(rf.viewaxis[1], -1.f, 0.f, 0.f);
 					VectorSet(rf.viewaxis[2], 0.f, 0.f, 1.f);
 					break;
 				case 3:
 					// Y-
-					VectorSet(rf.viewaxis[0], 0.f, -1.f, 0.f); //
+					VectorSet(rf.viewaxis[0], 0.f, -1.f, 0.f);
 					VectorSet(rf.viewaxis[1], -1.f, 0.f, 0.f);
 					VectorSet(rf.viewaxis[2], 0.f, 0.f, -1.f);
 					break;
 				case 4:
 					// Z+ up
-					VectorSet(rf.viewaxis[0], 0.f, 0.f, 1.f);//
+					VectorSet(rf.viewaxis[0], 0.f, 0.f, 1.f);
 					VectorSet(rf.viewaxis[1], -1.f, 0.f, 0.f);
 					VectorSet(rf.viewaxis[2], 0.f, -1.f, 0.f);
 					break;
 				case 5:
 					// Z- down
-					VectorSet(rf.viewaxis[0], 0.f, 0.f, -1.f);//
+					VectorSet(rf.viewaxis[0], 0.f, 0.f, -1.f);
 					VectorSet(rf.viewaxis[1], 1.f, 0.f, 0.f);
 					VectorSet(rf.viewaxis[2], 0.f, -1.f, 0.f);
 					break;
@@ -8443,7 +8446,37 @@ void R_BuildCubeMaps(void)
 				GL_Scissor(glConfig.vidWidth / 2 - 1, glConfig.vidHeight / 2 - 1, REF_CUBEMAP_SIZE+2, REF_CUBEMAP_SIZE+2);
 				RE_BeginFrame();
 				RE_RenderSimpleScene(&rf); // doesn't render so much as RE_RenderScene (no decals, no coronas, ...)
-				RE_EndFrame(&ii, &jj);
+//				RE_EndFrame(&ii, &jj);
+				{// This is unrolled: RE_EndFrame(&ii, &jj), but without a few lines..
+					// Now the cubemaps are being rendered in the backbuffer, but no swapbuffers is done.
+					// That will keep the screen clean, and the weird visual effects are gone.
+					R_BindNullVBO();
+					R_BindNullIBO();
+					//R_IssueRenderCommands(qtrue);
+					{// This is unrolled: R_IssueRenderCommands(qtrue), but without R_PerformanceCounters()
+						renderCommandList_t *cmdList = &backEndData->commands;
+						etl_assert(cmdList != NULL);
+						*(int *)(cmdList->cmds + cmdList->used) = RC_END_OF_LIST;
+						cmdList->used = 0;
+						//R_PerformanceCounters();
+						if (!r_skipBackEnd->integer)
+						{
+							RB_ExecuteRenderCommands(cmdList->cmds);
+						}
+					}
+					R_InitNextFrame();
+					if (ii)
+					{
+						ii = tr.frontEndMsec;
+					}
+					tr.frontEndMsec = 0;
+					if (jj)
+					{
+						jj = backEnd.pc.msec;
+					}
+					backEnd.pc.msec = 0;
+				}
+
 				GL_Scissor(tr.viewParms.viewportX, tr.viewParms.viewportY, tr.viewParms.viewportWidth, tr.viewParms.viewportHeight);
 
 				// Bugfix: drivers absolutely hate running in high res and using glReadPixels near the top or bottom edge.
@@ -8519,7 +8552,7 @@ void R_BuildCubeMaps(void)
 		cubeProbe->cubemap = R_AllocImage(va("_autoCube%d", j), qfalse);
 		if (!cubeProbe->cubemap)
 		{
-//			Ren_Print("R_BuildCubeMaps: Aborted - can't allocate image.\n");
+//$			Ren_Print("R_BuildCubeMaps: Aborted - can't allocate image.\n");
 			return;
 		}
 
@@ -8548,7 +8581,7 @@ void R_BuildCubeMaps(void)
 
 		glBindTexture(cubeProbe->cubemap->type, 0);
 	}
-//	Ren_Print("\n");
+//$	Ren_Print("\n");
 
 	if (createCM)
 	{
