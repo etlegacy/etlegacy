@@ -115,6 +115,7 @@ elseif(WIN32)
 	endif()
 	set(LIB_SUFFIX "_mp_")
 	if(MSVC)
+		add_definitions(-DWINDOWS_IGNORE_PACKING_MISMATCH) # needed to compile using latest Windows SDK Version
 		set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /EHa /Zp16 /arch:SSE2 /O2 /Ob2 /Oi /Ot")
 		set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /EHa /Zp16 /arch:SSE2 /W3 /Od /Ob2 /Oi /Ot")
 
