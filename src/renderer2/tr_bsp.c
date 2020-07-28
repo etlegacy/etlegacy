@@ -8220,15 +8220,15 @@ void R_BuildCubeMaps(void)
 		{
 			node = &tr.world->nodes[i];
 
-			// check to see if this is a shit location
+			// skip decision nodes
 			if (node->contents == CONTENTS_NODE)
 			{
 				continue;
 			}
 
+			// check if location is in the void
 			if (node->area == -1)
 			{
-				// location is in the void
 				continue;
 			}
 
@@ -8237,15 +8237,14 @@ void R_BuildCubeMaps(void)
 			if (FindVertexInHashTable(tr.cubeHashTable, node->origin, CUBES_MINIMUM_DISTANCE) == NULL)
 			{
 #else
-				isCubeOK = qtrue;
-
+			isCubeOK = qtrue;
 			for (p = 0; p < tr.cubeProbes.currentElements; p++)
 			{
 				cubeProbe = (cubemapProbe_t *)Com_GrowListElement(&tr.cubeProbes, p);
 
 				if (Distance(node->origin, cubeProbe->origin) > CUBES_MINIMUM_DISTANCE)
 				{
-				continue;
+					continue;
 				}
 
 				isCubeOK = qfalse;
@@ -8355,7 +8354,6 @@ void R_BuildCubeMaps(void)
 #if 1
 		// we are at probe j
 		int currentTics = j * ticsPerProbe; // implicit typecast from float to int. This will floor() the result (which is what we want)
-		
 		if (currentTics != tics)
 		{
 			tics = currentTics;
@@ -8591,16 +8589,13 @@ void R_BuildCubeMaps(void)
 	}
 //$	Ren_Print("\n");
 
-	if (createCM)
+	// write buffer if there's any still unwritten
+	// This can only happen with the last file..
+	if (createCM && dirtyBuf)
 	{
-		// write buffer if there's any still unwritten
-		// This can only happen with the last file..
-		if (dirtyBuf)
-		{
-			fileCount = (tr.cubeProbes.currentElements * 6) / REF_CUBEMAPS_PER_FILE;
-			fileName = va("cm/%s/cm_%04d.tga", s_worldData.baseName, fileCount);
-			R_SaveCubeProbes(fileName, pixeldata, REF_CUBEMAP_STORE_SIZE, REF_CUBEMAP_STORE_SIZE);
-		}
+		fileCount = (tr.cubeProbes.currentElements * 6) / REF_CUBEMAPS_PER_FILE;
+		fileName = va("cm/%s/cm_%04d.tga", s_worldData.baseName, fileCount);
+		R_SaveCubeProbes(fileName, pixeldata, REF_CUBEMAP_STORE_SIZE, REF_CUBEMAP_STORE_SIZE);
 	}
 
 	if (countRead) Ren_Print("Read %d cubemaps from files.\n", countRead);
