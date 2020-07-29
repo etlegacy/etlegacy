@@ -551,14 +551,17 @@ static qboolean CG_ParseHUD(int handle)
 		return CG_HUD_ParseError(handle, "unexpected token: %s", token.string);
 	}
 
-	if (CG_isHudNumberAvailable(temphud.hudnumber))
+	hudStucture_t * hud = CG_getHudByNumber(temphud.hudnumber);
+
+	if (!hud)
 	{
-		Com_Printf("...properties for hud %i have been read.\n", temphud.hudnumber);
 		CG_addHudToList(&temphud);
+		Com_Printf("...properties for hud %i have been read.\n", temphud.hudnumber);
 	}
 	else
 	{
-		Com_Printf("^1Hud with number: %i already exists!\n", temphud.hudnumber);
+		memcpy(hud, &temphud, sizeof(temphud));
+		Com_Printf("...properties for hud %i have been updated.\n", temphud.hudnumber);
 	}
 
 	return qtrue;
