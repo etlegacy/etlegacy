@@ -202,20 +202,70 @@ vec3_t bytedirs[NUMVERTEXNORMALS] =
 
 
 #ifdef ETL_SSE
-// The SSE version checks 16 bytes at once
+// The SSE version of strlen() checks 16 bytes at once
 size_t __cdecl SSE_strlen(_In_z_ char const* _Str)
 {
 	__m128i xmm0, xmm1, xmm2;
-	uint32_t ofs = 0xFFFFFFF0, bit, mask;
+	int ofs = 0, bit, mask;
 	xmm0 = _mm_setzero_si128();
 nextchar:
-	ofs += 16;
 	xmm1 = _mm_loadu_si128((__m128i const*)(_Str + ofs));
 	xmm2 = _mm_cmpeq_epi8(xmm1, xmm0);
-	mask = (uint32_t)_mm_movemask_epi8(xmm2);
-	if (mask == 0) goto nextchar;
+	mask = _mm_movemask_epi8(xmm2);
+	if (mask == 0)
+	{
+		ofs += 16;
+		goto nextchar;
+	}
 	_BitScanForward(&bit, mask);
 	return (size_t)(ofs + bit);
+}
+
+// The SSE version of strcmp checks 16 bytes at once
+int __cdecl SSE_strcmp(_In_z_ char const* _Str1, _In_z_ char const* _Str2)
+{
+	if (!_Str1 || !_Str2) return -1;
+	const char *str1 = _Str1, *str2 = _Str2;
+	int mask1, mask2, mask, bit1, bit2, bit;
+	__m128i xmm0, xmm1, xmm2, xmm3, xmm4, xmm5;
+	xmm0 = _mm_setzero_si128();
+nextchunk:
+	xmm1 = _mm_lddqu_si128((const __m128i*)str1);
+	xmm2 = _mm_lddqu_si128((const __m128i*)str2);
+	xmm3 = _mm_cmpeq_epi8(xmm1, xmm0); // find the trailing 0
+	xmm4 = _mm_cmpeq_epi8(xmm2, xmm0); // "
+	xmm5 = _mm_cmpeq_epi8(xmm1, xmm2); // compare strings
+	mask1 = _mm_movemask_epi8(xmm3);
+	mask2 = _mm_movemask_epi8(xmm4);
+	mask = _mm_movemask_epi8(xmm5);
+	if (mask1 != 0 || mask2 != 0) {
+		// (at least) one of the strings is ending in this chunk, so this is the last chunk to check
+		_BitScanForward(&bit1, mask1); // s1[bit1] == 1
+		_BitScanForward(&bit2, mask2); // s2[bit2] == 1
+		_BitScanForward(&bit, ~mask);  // s1[bit] != s2[bit] 
+		if (bit > bit1) {
+			if (bit > bit2) return 0;
+			return -1;
+		}
+		else { // bit <= bit1
+			if (bit > bit2) return 1;
+			// bit <= bit2
+		}
+		str1 += bit;
+		str2 += bit;
+		return ((char)*str1 < (char)*str2) ? -1 : 1;
+	}
+	// no 0 was found in the strings, so all 16 chars can be compared for any difference
+	if (mask == 0x0000FFFF) { // no difference?
+		str1 += 16;
+		str2 += 16;
+		goto nextchunk;
+	}
+	// difference in this chunk (without any 0 in the chunks)
+	_BitScanForward(&bit, mask); // bit = (-mask) & mask; //?
+	str1 += bit;
+	str2 += bit;
+	return ((char)*str1 < (char)*str2) ? -1 : 1;
 }
 #endif
 
@@ -299,11 +349,11 @@ byte ClampByte(int i)
 {
 	if (i < 0)
 	{
-		i = 0;
+		return 0;
 	}
 	else if (i > 255)
 	{
-		i = 255;
+		return 255;
 	}
 	return (byte)i;
 }
@@ -371,17 +421,17 @@ int DirToByte(vec3_t dir)
 #else
 	// We use 30 bits of the eventParm integer to store in a vector.
 	// convert vector values from [-1,1] to [0,1] range, then to a range that fits 10 bits. 2^10 == 1024   << yes 1024 :)
-	int x = (int)((dir[0] * 0.5f + 0.5f) * 1024.f - 1.f); // the greatest value that fits is 1024-1
+/*	int x = (int)((dir[0] * 0.5f + 0.5f) * 1024.f - 1.f); // the greatest value that fits is 1024-1
 	int y = (int)((dir[1] * 0.5f + 0.5f) * 1024.f - 1.f);
-	int z = (int)((dir[2] * 0.5f + 0.5f) * 1024.f - 1.f);
-	/*vec3_t v;
+	int z = (int)((dir[2] * 0.5f + 0.5f) * 1024.f - 1.f);*/
+	vec3_t v;
 	VectorScale(dir, 0.5f, v);
 	VectorAdd(v, vec3_half, v);
 	VectorScale(v, 1024.f, v);
 	VectorAdd(v, vec3_minus1, v);
 	int x = (int)v[0];
 	int y = (int)v[1];
-	int z = (int)v[2];*/
+	int z = (int)v[2];
 	return (x << 20) | (y << 10) | z;
 #endif
 }
@@ -408,9 +458,12 @@ void ByteToDir(int b, vec3_t dir)
 	int y = (b >> 10) & 0b1111111111;
 	int z = b & 0b1111111111;
 	const float r512 = rcp(512.f); // rcp(512) == 1/512;
-	dir[0] = (float)(x) * r512 - 1.f; // / 1024 * 2.0 - 1.0
+/*	dir[0] = (float)(x) * r512 - 1.f; // / 1024 * 2.0 - 1.0
 	dir[1] = (float)(y) * r512 - 1.f;
-	dir[2] = (float)(z) * r512 - 1.f;
+	dir[2] = (float)(z) * r512 - 1.f;*/
+	VectorSet(dir, (float)x, (float)y, (float)z);
+	VectorScale(dir, rcp(512.f), dir);
+	VectorAdd(dir, vec3_minus1, dir);
 #endif
 }
 

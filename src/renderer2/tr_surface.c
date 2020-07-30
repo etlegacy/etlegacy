@@ -704,53 +704,21 @@ void Tess_InstantQuad(vec4_t quadVerts[4])
 	tess.multiDrawPrimitives = 0;
 
 	Vector4Copy(quadVerts[0], tess.xyz[tess.numVertexes]);
-	/*tess.texCoords[tess.numVertexes][0] = 0;
-	tess.texCoords[tess.numVertexes][1] = 0;
-	tess.texCoords[tess.numVertexes][2] = 0;
-	tess.texCoords[tess.numVertexes][3] = 1;
-	tess.colors[tess.numVertexes][0]    = 1;
-	tess.colors[tess.numVertexes][1]    = 1;
-	tess.colors[tess.numVertexes][2]    = 1;
-	tess.colors[tess.numVertexes][3]    = 1;*/
 	Vector4Set(tess.texCoords[tess.numVertexes], 0.f, 0.f, 0.f, 1.f);
 	Vector4Set4(tess.colors[tess.numVertexes], 1.f);
 	tess.numVertexes++;
 
 	Vector4Copy(quadVerts[1], tess.xyz[tess.numVertexes]);
-	/*tess.texCoords[tess.numVertexes][0] = 1;
-	tess.texCoords[tess.numVertexes][1] = 0;
-	tess.texCoords[tess.numVertexes][2] = 0;
-	tess.texCoords[tess.numVertexes][3] = 1;
-	tess.colors[tess.numVertexes][0]    = 1;
-	tess.colors[tess.numVertexes][1]    = 1;
-	tess.colors[tess.numVertexes][2]    = 1;
-	tess.colors[tess.numVertexes][3]    = 1;*/
 	Vector4Set(tess.texCoords[tess.numVertexes], 1.f, 0.f, 0.f, 1.f);
 	Vector4Set4(tess.colors[tess.numVertexes], 1.f);
 	tess.numVertexes++;
 
 	Vector4Copy(quadVerts[2], tess.xyz[tess.numVertexes]);
-	/*tess.texCoords[tess.numVertexes][0] = 1;
-	tess.texCoords[tess.numVertexes][1] = 1;
-	tess.texCoords[tess.numVertexes][2] = 0;
-	tess.texCoords[tess.numVertexes][3] = 1;
-	tess.colors[tess.numVertexes][0]    = 1;
-	tess.colors[tess.numVertexes][1]    = 1;
-	tess.colors[tess.numVertexes][2]    = 1;
-	tess.colors[tess.numVertexes][3]    = 1;*/
 	Vector4Set(tess.texCoords[tess.numVertexes], 1.f, 1.f, 0.f, 1.f);
 	Vector4Set4(tess.colors[tess.numVertexes], 1.f);
 	tess.numVertexes++;
 
 	Vector4Copy(quadVerts[3], tess.xyz[tess.numVertexes]);
-	/*tess.texCoords[tess.numVertexes][0] = 0;
-	tess.texCoords[tess.numVertexes][1] = 1;
-	tess.texCoords[tess.numVertexes][2] = 0;
-	tess.texCoords[tess.numVertexes][3] = 1;
-	tess.colors[tess.numVertexes][0]    = 1;
-	tess.colors[tess.numVertexes][1]    = 1;
-	tess.colors[tess.numVertexes][2]    = 1;
-	tess.colors[tess.numVertexes][3]    = 1;*/
 	Vector4Set(tess.texCoords[tess.numVertexes], 0.f, 1.f, 0.f, 1.f);
 	Vector4Set4(tess.colors[tess.numVertexes], 1.f);
 	tess.numVertexes++;
@@ -830,15 +798,15 @@ static void Tess_SurfaceSprite(void)
 		float s, c;
 		float ang = DEG2RAD(backEnd.currentEntity->e.rotation);
 
-		//s = sin(ang);
-		//c = cos(ang);
 		SinCos(ang, s, c);
+		s *= radius;
+		c *= radius;
 
-		VectorScale(backEnd.viewParms.orientation.axis[1], c * radius, left);
-		VectorMA(left, -s * radius, backEnd.viewParms.orientation.axis[2], left);
+		VectorScale(backEnd.viewParms.orientation.axis[1], c, left);
+		VectorMA(left, -s, backEnd.viewParms.orientation.axis[2], left);
 
-		VectorScale(backEnd.viewParms.orientation.axis[2], c * radius, up);
-		VectorMA(up, s * radius, backEnd.viewParms.orientation.axis[1], up);
+		VectorScale(backEnd.viewParms.orientation.axis[2], c, up);
+		VectorMA(up, s, backEnd.viewParms.orientation.axis[1], up);
 	}
 	if (backEnd.viewParms.isMirror)
 	{

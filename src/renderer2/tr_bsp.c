@@ -4074,8 +4074,7 @@ static void R_LoadSurfaces(lump_t *surfs, lump_t *verts, lump_t *indexLump)
 		}
 	}
 
-	Ren_Print("...loaded %d faces, %i meshes, %i trisurfs, %i flares, %i foliages\n", numFaces, numMeshes, numTriSurfs,
-	          numFlares, numFoliages);
+	Ren_Print("...loaded %d faces, %i meshes, %i trisurfs, %i flares, %i foliages\n", numFaces, numMeshes, numTriSurfs, numFlares, numFoliages);
 
 	if (r_stitchCurves->integer)
 	{
@@ -8556,23 +8555,7 @@ void R_BuildCubeMaps(void)
 			}
 		}
 
-		// build the cubemap
-		cubeProbe->cubemap = R_AllocImage(va("_autoCube%d", j), qfalse);
-		if (!cubeProbe->cubemap)
-		{
-//$			Ren_Print("R_BuildCubeMaps: Aborted - can't allocate image.\n");
-			goto buildcubemaps_finish;
-		}
-
-		cubeProbe->cubemap->type = GL_TEXTURE_CUBE_MAP_ARB;
-
-		cubeProbe->cubemap->width  = REF_CUBEMAP_SIZE;
-		cubeProbe->cubemap->height = REF_CUBEMAP_SIZE;
-
-		cubeProbe->cubemap->bits       = IF_NOPICMIP;
-		cubeProbe->cubemap->filterType = FT_LINEAR;
-		cubeProbe->cubemap->wrapType   = WT_EDGE_CLAMP;
-/*
+		// build the cubemap:
 		// 'edge clamp' doesn't produce aligned textures.
 		// 'clamp' gives me a black border on the texture, but is better aligned.
 		// 'repeat' looks best, but still has some borders (not all black borders though)
@@ -8580,12 +8563,15 @@ void R_BuildCubeMaps(void)
 		// ..and what about this post: https://www.khronos.org/opengl/wiki/Common_Mistakes#Texture_edge_color_problem
 		// (1 item above on that^^ webpage is the reference to 'seamless cubemap texturing').
 		// UPDATE: GL_TEXTURE_CUBE_MAP_SEAMLESS is what we need.. (it's now called in tr_init.c function R_Init() ).
-		// GL_TEXTURE_CUBE_MAP_SEAMLESS is available only if the GL version is 3.2 or greater.
+		// GL_TEXTURE_CUBE_MAP_SEAMLESS is available if the GL version is 3.2 or greater.
 		// Also, when using GL_TEXTURE_CUBE_MAP_SEAMLESS, it is fine to use WT_EDGE_CLAMP (the recommended value).
-*/
-		GL_Bind(cubeProbe->cubemap);
-		R_UploadImage((const byte **)tr.cubeTemp, 6, cubeProbe->cubemap);
-		glBindTexture(cubeProbe->cubemap->type, 0);
+		cubeProbe->cubemap = R_CreateCubeImage(va("_autoCube%d", j), (const byte **)tr.cubeTemp, REF_CUBEMAP_SIZE, REF_CUBEMAP_SIZE, IF_NOPICMIP, FT_LINEAR, WT_EDGE_CLAMP);
+
+		if (!cubeProbe->cubemap)
+		{
+//$			Ren_Print("R_BuildCubeMaps: Aborted - can't allocate image.\n");
+			goto buildcubemaps_finish;
+		}
 	}
 //$	Ren_Print("\n");
 

@@ -347,6 +347,7 @@ static ID_INLINE float idSqrt(float x)
 
 //=============================================================
 
+
 typedef unsigned char byte;
 
 /**

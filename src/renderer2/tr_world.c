@@ -2433,6 +2433,7 @@ void R_AddWorldSurfaces(void)
 	}
 	else
 	{
+
 		// determine which leaves are in the PVS / areamask
 		R_MarkLeaves();
 

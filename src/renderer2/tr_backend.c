@@ -2023,8 +2023,8 @@ if (tr.refdef.pixelTarget == NULL)
 					Ren_LogComment("----- Beginning Shadow Interaction: %i -----\n", iaCount);
 
 					// we don't need tangent space calculations here
-					Tess_Begin(Tess_StageIteratorShadowFill, NULL, shader, light->shader, qfalse, qfalse, LIGHTMAP_NONE, FOG_NONE);
-//Tess_Begin(Tess_StageIteratorShadowFill, NULL, shader, light->shader, qtrue, qfalse, LIGHTMAP_NONE, FOG_NONE);
+//					Tess_Begin(Tess_StageIteratorShadowFill, NULL, shader, light->shader, qfalse, qfalse, LIGHTMAP_NONE, FOG_NONE);
+Tess_Begin(Tess_StageIteratorShadowFill, NULL, shader, light->shader, qtrue, qfalse, LIGHTMAP_NONE, FOG_NONE);
 				}
 				break;
 			}
@@ -6259,7 +6259,7 @@ if (tr.refdef.pixelTarget == NULL)
 		RB_RenderDrawSurfaces(qtrue, DRAWSURFACES_ALL);
 	}
 /*
-	// FIX: this mechanism doesn't work. The used sentinel list is never filled.
+	// TODO FIX: this mechanism doesn't work. The used sentinel list is never filled.
 	// The real occlusion querying is done by R_CoherentHierachicalCulling(), in function R_AddWorldSurfaces().
 
 	// try to cull bsp nodes for the next frame using hardware occlusion queries
@@ -6433,22 +6433,7 @@ static void RB_RenderView(void)
 	{
 		RB_CameraPostFX();
 	}
-/*
-	// copy to given byte buffer that is NOT a FBO.
-	// This will copy the current screen content to a texture.
-	// The given texture, pixelTarget, is (a pointer to) a cubeProbe's cubemap.
-	// R_BuildCubeMaps() is the function that triggers this mechanism.
-	else //if (tr.refdef.pixelTarget != NULL)
-	{
-		// Bugfix: drivers absolutely hate running in high res and using glReadPixels near the top or bottom edge.
-		// Soo.. lets do it in the middle.
-		// We also render the cubemaps with one extra border pixel (so we render a 33x33 image).
-		// and now we read the pixels in the 32x32 middle of the image.
-		// This ensures that we get the correct colors at the edges of an image.
-		// (otherwise we'll get a stripe of wrong colors on the images, and the cubemap images do not align colors).
-		glReadPixels(glConfig.vidWidth / 2 + 1, glConfig.vidHeight / 2 + 1, REF_CUBEMAP_SIZE, REF_CUBEMAP_SIZE, GL_RGBA, GL_UNSIGNED_BYTE, tr.refdef.pixelTarget);
-	}
-*/
+
 	GL_CheckErrors();
 
 	backEnd.pc.c_views++;
@@ -6788,8 +6773,7 @@ const void *RB_Draw2dPolys(const void *data)
 			Tess_End();
 		}
 		backEnd.currentEntity = &backEnd.entity2D;
-//		Tess_Begin(Tess_StageIteratorGeneric, NULL, shader, NULL, qfalse, qfalse, LIGHTMAP_NONE, FOG_NONE);
-Tess_Begin(Tess_StageIteratorGeneric, NULL, shader, NULL, qtrue, qfalse, LIGHTMAP_NONE, FOG_NONE);
+		Tess_Begin(Tess_StageIteratorGeneric, NULL, shader, NULL, qtrue, qfalse, LIGHTMAP_NONE, FOG_NONE);
 	}
 
 	Tess_CheckOverflow(cmd->numverts, (cmd->numverts - 2) * 3);

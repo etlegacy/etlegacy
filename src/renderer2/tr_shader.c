@@ -6631,14 +6631,28 @@ bufferslen[i] = summand;
 			continue;
 		}
 
+// textEnd must have enough memory avaible to contain both strings (using either strcat or memcpy)
+/*
 		strcat(textEnd, buffers[i]);
 		strcat(textEnd, "\n");
 //		textEnd += strlen(textEnd);
 textEnd += bufferslen[i] + 1;
+*/
+		Com_Memcpy(textEnd, buffers[i], bufferslen[i]);
+		textEnd += bufferslen[i];
+		*textEnd = '\n';
+		textEnd++;
+		*textEnd = 0; // this doesn't appear to be necessary
+
+
 		ri.FS_FreeFile(buffers[i]);
 	}
 
 	COM_Compress(s_shaderText);
+	// Now s_shaderText only contains tokens,
+	// and new lines are each single '\n' characters,
+	// and each whitespace is reduced to a single space character,
+	// and comments are gone.
 
 	// free up memory
 	ri.FS_FreeFileList(shaderFiles);

@@ -523,8 +523,8 @@ int COM_Compress(char *data_p)
 				{
 					in++;
 				}
-				// skip /* */ comments
 			}
+			// skip /* */ comments
 			else if (c == '/' && in[1] == '*')
 			{
 				while (*in && (*in != '*' || in[1] != '/'))
@@ -533,20 +533,20 @@ int COM_Compress(char *data_p)
 				{
 					in += 2;
 				}
-				// record when we hit a newline
 			}
+			// record when we hit a newline
 			else if (c == '\n' || c == '\r')
 			{
 				newline = qtrue;
 				in++;
-				// record when we hit whitespace
 			}
+			// record when we hit whitespace
 			else if (c == ' ' || c == '\t')
 			{
 				whitespace = qtrue;
 				in++;
-				// an actual token
 			}
+			// an actual token
 			else
 			{
 				// if we have a pending newline, emit it (and it counts as whitespace)
@@ -820,6 +820,46 @@ char *COM_ParseExt2(char **data_p, qboolean allowLineBreaks)
 			{
 				data++;
 			}
+/*
+{ //  this is a replacement for the while-loop ^^   !!!DEBUG!!!  just testing..
+	int mask1, mask2, bit1, bit2;
+	char *str = data;
+	__m128i xmm0, xmm1, xmm2, xmm3, xmm5;
+	xmm0 = _mm_setzero_si128();
+	xmm5 = _mm_set1_epi8('\n');
+nextchunk:
+	xmm1 = _mm_lddqu_si128((const __m128i*)str);
+	xmm2 = _mm_cmpeq_epi8(xmm1, xmm0); // find the trailing 0
+	xmm3 = _mm_cmpeq_epi8(xmm1, xmm5); // find the '\n'
+	mask1 = _mm_movemask_epi8(xmm2);
+	mask2 = _mm_movemask_epi8(xmm3);
+	if (!mask1) {
+		if (!mask2) {
+			// no 0, no '\n'
+			str += 16;
+			goto nextchunk;
+		} else {
+			// no 0, '\n' found
+			_BitScanForward(&bit2, mask2);
+			data = str + bit2; // point to the \n
+		}
+	} else {
+		_BitScanForward(&bit1, mask1);
+		if (!mask2) {
+			// 0 found, no '\n'
+			data = str + bit1; // point to the 0
+		} else {
+			// 0 found, '\n' found
+			_BitScanForward(&bit2, mask2);
+			if (bit1 < bit2) {
+				data = str + bit1; // point to the 0
+			} else {
+				data = str + bit2; // point to the \n
+			}
+		}
+	}
+}
+*/
 		}
 		// skip /* */ comments
 		else if (c == '/' && data[1] == '*')
@@ -964,15 +1004,51 @@ char *COM_ParseExt2(char **data_p, qboolean allowLineBreaks)
 		((c >= 'a' && c <= 'z') ||
 		 (c >= 'A' && c <= 'Z') ||
 		 (c == '_') ||
-		 (c == '-') ||
-		 (c >= '0' && c <= '9') ||
 		 (c == '/') ||
 		 (c == '\\') ||
+		 (c == '$') || (c == '*') ||
+		 (c >= '0' && c <= '9') ||
+		 (c == '-') ||
 		 (c == ':') ||
 		 (c == '.') ||
-		 (c == '$') ||
-		 (c == '*') ||
 		 (c == '@'));
+/*
+	// An SSE2 version of that while-loop above^^  !!!DEBUG!!!
+	int mask;
+	__m128i xmm0, xmm1, xmm2, xmm3, xmm4, xmm5, xmm6;
+	xmm0 = _mm_set_epi8('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p');
+	xmm1 = _mm_set_epi8('q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '\\', '/', '_', '$', '*', '*');
+	xmm2 = _mm_set_epi8('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P');
+	xmm3 = _mm_set_epi8('Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '*', '*', '*', '*', '*', '*');
+	xmm4 = _mm_set_epi8('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '-', ':', '@', '.', '.', '.');
+	xmm5 = _mm_set1_epi8(c);
+	xmm6 = _mm_or_si128(_mm_cmpeq_epi8(xmm5, xmm0), _mm_cmpeq_epi8(xmm5, xmm1));
+	xmm6 = _mm_or_si128(xmm6, _mm_cmpeq_epi8(xmm5, xmm2));
+	xmm6 = _mm_or_si128(xmm6, _mm_cmpeq_epi8(xmm5, xmm3));
+	mask = _mm_movemask_epi8(xmm6);
+	if (mask)
+	{
+		do
+		{
+			if (len < MAX_TOKEN_CHARS - 1)
+			{
+				com_token[len] = c;
+				len++;
+			}
+			data++;
+
+			c = *data;
+
+			xmm5 = _mm_set1_epi8(c);
+			xmm6 = _mm_or_si128(_mm_cmpeq_epi8(xmm5, xmm0), _mm_cmpeq_epi8(xmm5, xmm1));
+			xmm6 = _mm_or_si128(xmm6, _mm_cmpeq_epi8(xmm5, xmm2));
+			xmm6 = _mm_or_si128(xmm6, _mm_cmpeq_epi8(xmm5, xmm3));
+			xmm6 = _mm_or_si128(xmm6, _mm_cmpeq_epi8(xmm5, xmm4));
+			mask = _mm_movemask_epi8(xmm6);
+
+		}
+		while (mask);
+*/
 
 		if (len == MAX_TOKEN_CHARS)
 		{
@@ -1438,7 +1514,8 @@ void SkipBracedSection(char **program)
  * @param[in,out] data
  */
 void SkipRestOfLine(char **data)
-{
+{	
+#ifndef ETL_SSE
 	char *p = *data;
 	int  c;
 
@@ -1453,6 +1530,47 @@ void SkipRestOfLine(char **data)
 	}
 
 	*data = p;
+#else
+	int mask1, mask2, bit1, bit2;
+	char *str = *data;
+	__m128i xmm0, xmm1, xmm2, xmm3, xmm5;
+	xmm0 = _mm_setzero_si128();
+	xmm5 = _mm_set1_epi8('\n');
+nextchunk:
+	xmm1 = _mm_lddqu_si128((const __m128i*)str);
+	xmm2 = _mm_cmpeq_epi8(xmm1, xmm0); // find the trailing 0
+	xmm3 = _mm_cmpeq_epi8(xmm1, xmm5); // find the '\n'
+	mask1 = _mm_movemask_epi8(xmm2);
+	mask2 = _mm_movemask_epi8(xmm3);
+	if (!mask1) {
+		if (!mask2) {
+			// no 0, no '\n'
+			str += 16;
+			goto nextchunk;
+		} else {
+			// no 0, '\n' found
+			_BitScanForward(&bit2, mask2);
+			com_lines++;
+			*data = str + bit2 + 1; // point to one char after the \n
+		}
+	} else {
+		_BitScanForward(&bit1, mask1);
+		if (!mask2) {
+			// 0 found, no '\n'
+			*data = str + bit1; // point to the 0
+		} else {
+			// 0 found, '\n' found
+			_BitScanForward(&bit2, mask2);
+			if (bit1 < bit2) {
+				*data = str + bit1; // point to the 0
+			} else {
+				*data = str + bit2 + 1; // point to one char after the \n
+				com_lines++;
+			}
+		}
+	}
+	return;
+#endif
 }
 
 
@@ -1927,8 +2045,11 @@ int Q_stricmp(const char *s1, const char *s2)
 #if 1 //ndef ETL_SSE
 	return (s1 && s2) ? Q_stricmpn(s1, s2, 99999) : -1;
 #else
+	// this SSE2 version is working now..
+//!!!DEBUG!!! ..but it has a flaw to fix: lowercase only characters that are in the range 'A' to 'Z'    TODO
 	if (!s1 || !s2) return -1;
 	/*
+		// Some info about how to check if a string is passing the boundries of a memory page:
 		// page base address = s1 & 0xFFFFF000
 		// page length = 4096 bytes = 0x1000 bytes
 		// page end address = page base address + 0x1000
@@ -1938,33 +2059,38 @@ int Q_stricmp(const char *s1, const char *s2)
 		uint32_t valid = pageEnd - (uint32_t)s1; // total # bytes valid to read in this page
 		uint32_t valid16 = valid >> 4; // # chunks of 16 bytes valid to read in this page
 	*/
-	uint32_t mask1, mask2, mask, bit1, bit2, bit;
+	int mask1, mask2, mask, bit1, bit2, bit;
 	char *str1 = s1, *str2 = s2;
-	__m128i xmm0, xmm1, xmm2, xmm3, xmm4;
+	__m128i xmm0, xmm1, xmm2, xmm3, xmm4, xmm5;
 	xmm0 = _mm_setzero_si128();
+	xmm5 = _mm_set1_epi8(0x20);
 nextchunk:
-	str1 += 16;
-	str2 += 16;
 	xmm1 = _mm_lddqu_si128((const __m128i*)str1);
 	xmm2 = _mm_lddqu_si128((const __m128i*)str2);
-	xmm3 = _mm_cmpeq_epi8(xmm1, xmm0);
-	xmm4 = _mm_cmpeq_epi8(xmm2, xmm0);
-	mask1 = (uint32_t)_mm_movemask_epi8(xmm3);
-	mask2 = (uint32_t)_mm_movemask_epi8(xmm4);
+	xmm3 = _mm_cmpeq_epi8(xmm1, xmm0); // find the trailing 0
+	xmm4 = _mm_cmpeq_epi8(xmm2, xmm0); // "
+	xmm1 = _mm_or_si128(xmm1, xmm5); // to lowercase (if these 2 lines are left out, this func is case-sensitive strcmp)
+	xmm2 = _mm_or_si128(xmm2, xmm5); // "
+	mask1 = _mm_movemask_epi8(xmm3);
+	mask2 = _mm_movemask_epi8(xmm4);
 	if (mask1 != 0 || mask2 != 0) goto lastchunk;
 	xmm3 = _mm_cmpeq_epi8(xmm1, xmm2);
-	mask = (uint32_t)_mm_movemask_epi8(xmm3);
-	if (mask == 0x0000FFFF) goto nextchunk; // no difference
+	mask = _mm_movemask_epi8(xmm3);
+	if (mask == 0x0000FFFF) {
+		str1 += 16;
+		str2 += 16;
+		goto nextchunk; // no difference
+	}
 	// difference in this chunk
-	_BitScanForward(&bit, ~mask);
+	_BitScanForward(&bit, mask);
 	str1 += bit;
 	str2 += bit;
-	return (*str1 < *str2) ? -1 : 1;
+	return ((char)*str1 < (char)*str2) ? -1 : 1;
 lastchunk:
-	_BitScanForward(&bit1, ~mask1); // s1[bit1] == 0
-	_BitScanForward(&bit2, ~mask2); // s2[bit2] == 0
+	_BitScanForward(&bit1, mask1); // s1[bit1] == 1
+	_BitScanForward(&bit2, mask2); // s2[bit2] == 1
 	xmm3 = _mm_cmpeq_epi8(xmm1, xmm2);
-	mask = (uint32_t)_mm_movemask_epi8(xmm3);
+	mask = _mm_movemask_epi8(xmm3);
 	_BitScanForward(&bit, ~mask); // s1[bit] != s2[bit]
 	if (bit > bit1) {
 		if (bit > bit2) return 0;
@@ -1976,7 +2102,7 @@ lastchunk:
 	}
 	str1 += bit;
 	str2 += bit;
-	return (*str1 < *str2) ? -1 : 1;
+	return ((char)*str1 < (char)*str2) ? -1 : 1;
 #endif
 }
 

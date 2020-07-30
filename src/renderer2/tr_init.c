@@ -1233,10 +1233,14 @@ void R_Register(void)
 	r_screenSpaceAmbientOcclusion = ri.Cvar_Get("r_screenSpaceAmbientOcclusion", "0", CVAR_ARCHIVE);
 	ri.Cvar_CheckRange(r_screenSpaceAmbientOcclusion, 0, 2, qtrue);
 
-	r_occludeBsp      = ri.Cvar_Get("r_occludeBsp", "0", CVAR_ARCHIVE); // there is an issue with water volumes (the Battery sea), so this is off by default..
-	r_occludeEntities = ri.Cvar_Get("r_occludeEntities", "1", CVAR_ARCHIVE);
-	r_occludeLights   = ri.Cvar_Get("r_occludeLights", "1", CVAR_ARCHIVE);
-	r_occludeFlares   = ri.Cvar_Get("r_occludeFlares", "1", CVAR_ARCHIVE);
+	// Because of a few minor issues with the querying,
+	// and because only the flares use asynchronous queries, (synchronous queries render only slower),
+	// The occlusion querying is disabled.
+	// I made the cvars CVAR_CHEAT, so players don't "accidentally" switch them on..
+	r_occludeBsp      = ri.Cvar_Get("r_occludeBsp", "0", CVAR_CHEAT); // there is an issue with water volumes (the Battery sea), so this is off by default..
+	r_occludeEntities = ri.Cvar_Get("r_occludeEntities", "0", CVAR_CHEAT); // renders much faster when disabled.. When enabled, the hud-head visibility is woot.
+	r_occludeLights   = ri.Cvar_Get("r_occludeLights", "0", CVAR_CHEAT);
+	r_occludeFlares   = ri.Cvar_Get("r_occludeFlares", "0", CVAR_CHEAT); // renders same enabled/disabled. But, i turn it off by default..
 
 	r_chcMaxPrevInvisNodesBatchSize = ri.Cvar_Get("r_chcMaxPrevInvisNodesBatchSize", "50", CVAR_CHEAT);
 	r_chcMaxVisibleFrames           = ri.Cvar_Get("r_chcMaxVisibleFrames", "10", CVAR_CHEAT);

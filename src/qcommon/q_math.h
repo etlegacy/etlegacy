@@ -68,17 +68,28 @@
 #endif
 
 
+// i don't know how to make pragma 4700 warning suppression work for inlined macros.
+// It works with normal functions (see _Vector2AM() on how to successfully disable warnings 4700)
+// UPDATE: Inside a macro you need to use:     __pragma(warning(disable:4700)) \
+
+
+// SSE2 replacement functions for string handling
 #ifdef ETL_SSE
+
 // the SSE version of strlen()
 #undef strlen
 size_t __cdecl SSE_strlen(_In_z_ char const* _Str);
 #define strlen(x) SSE_strlen(x)
+
+// the SSE version of strcmp()
+#undef strcmp
+int __cdecl SSE_strcmp(_In_z_ char const* _Str1, _In_z_ char const* _Str2);
+#define strcmp(x,y) SSE_strcmp(x,y)
+
 #endif
 
 
-// i don't know how to make pragma 4700 warning suppression work for inlined macros.
-// It works with normal functions (see _Vector2AM() on how to successfully disable warnings 4700)
-// UPDATE: Inside a macro you need to use:     __pragma(warning(disable:4700)) \
+
 
 #pragma warning(disable:4010)
 
