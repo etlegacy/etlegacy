@@ -822,7 +822,7 @@ typedef enum
  * @struct shaderTable_s
  * @typedef shaderTable_t
  * @brief
- */
+ *//*
 typedef struct shaderTable_s
 {
 	char name[MAX_QPATH];
@@ -836,7 +836,7 @@ typedef struct shaderTable_s
 	uint16_t numValues;
 
 	struct shaderTable_s *next;
-} shaderTable_t;
+} shaderTable_t;*/
 
 /**
  * @enum genFunc_t
@@ -1052,8 +1052,8 @@ typedef enum
 	OP_FRAMEBUFFEROBJECTS,
 	OP_SOUND,
 	OP_DISTANCE,
-	// table access
-	OP_TABLE
+/*	// table access
+	OP_TABLE*/
 } opcode_t;
 
 /**
@@ -3739,8 +3739,8 @@ typedef struct
 	int numSkins;
 	skin_t *skins[MAX_SKINS];
 
-	int numTables;
-	shaderTable_t *shaderTables[MAX_SHADER_TABLES];
+/*	int numTables;
+	shaderTable_t *shaderTables[MAX_SHADER_TABLES];*/
 
 	float sinTable[FUNCTABLE_SIZE];
 	float squareTable[FUNCTABLE_SIZE];

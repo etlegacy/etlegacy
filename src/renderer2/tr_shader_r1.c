@@ -1149,7 +1149,7 @@ int ScanAndLoadShaderFilesR1()
 			break;
 		}
 
-		// parse shader tables
+/*		// parse shader tables
 		if (!Q_stricmp(token, "table"))
 		{
 			int           depth;
@@ -1266,7 +1266,7 @@ int ScanAndLoadShaderFilesR1()
 				break;
 			}
 		}
-		else
+		else*/
 		{
 			hash                                                          = generateHashValue(token, MAX_SHADERTEXT_HASH);
 			shaderTextHashTableR1[hash][shaderTextHashTableSizes[hash]++] = oldp;

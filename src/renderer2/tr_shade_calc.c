@@ -316,7 +316,7 @@ float RB_EvalExpression(const expression_t *exp, float defaultValue)
 		case OP_DISTANCE:
 			ops[numOps++] = op;
 			break;
-		case OP_TABLE:
+/*		case OP_TABLE:
 		{
 			shaderTable_t *table;
 			int           numValues;
@@ -375,7 +375,7 @@ float RB_EvalExpression(const expression_t *exp, float defaultValue)
 			op.value      = value;
 			ops[numOps++] = op;
 			break;
-		}
+		}*/
 		default:
 		{
 			if (numOps < 2)

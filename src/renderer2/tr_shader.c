@@ -38,7 +38,7 @@
 #include "tr_shader.h"
 
 
-static char **guideTextHashTable[MAX_GUIDETEXT_HASH];
+//static char **guideTextHashTable[MAX_GUIDETEXT_HASH];
 static char **shaderTextHashTable[MAX_SHADERTEXT_HASH];
 
 static char *s_guideText;
@@ -201,7 +201,7 @@ const opstring_t opStrings[] =
 	{ "frameBufferObjects", OP_FRAMEBUFFEROBJECTS },
 	{ "sound",              OP_SOUND              },
 	{ "distance",           OP_DISTANCE           },
-	{ "table",              OP_TABLE              },
+//	{ "table",              OP_TABLE              },
 	{ NULL,                 OP_BAD                }
 };
 
@@ -213,9 +213,9 @@ const opstring_t opStrings[] =
 static void GetOpType(const char *token, expOperation_t *op)
 {
 	const opstring_t *opString;
-	char             tableName[MAX_QPATH];
+/*	char             tableName[MAX_QPATH];
 	int              hash;
-	shaderTable_t    *tb;
+	shaderTable_t    *tb;*/
 
 	if ((token[0] >= '0' && token[0] <= '9') ||
 	    //(token[0] == '-' && token[1] >= '0' && token[1] <= '9')   ||
@@ -226,7 +226,7 @@ static void GetOpType(const char *token, expOperation_t *op)
 		return;
 	}
 
-	Q_strncpyz(tableName, token, sizeof(tableName));
+/*	Q_strncpyz(tableName, token, sizeof(tableName));
 	hash = generateHashValue(tableName, MAX_SHADERTABLE_HASH);
 
 	for (tb = shaderTableHashTable[hash]; tb; tb = tb->next)
@@ -238,7 +238,7 @@ static void GetOpType(const char *token, expOperation_t *op)
 			op->value = tb->index;
 			return;
 		}
-	}
+	}*/
 
 	for (opString = opStrings; opString->s; opString++)
 	{
@@ -316,7 +316,7 @@ static qboolean IsOperator(opcode_t oc)
 	case OP_NEG:
 	case OP_LT:
 	case OP_GT:
-	case OP_TABLE:
+//	case OP_TABLE:
 		return qtrue;
 	default:
 		return qfalse;
@@ -353,8 +353,8 @@ static int GetOpPrecedence(opcode_t oc)
 		return 6;
 	case OP_NEG:
 		return 7;
-	case OP_TABLE:
-		return 8;
+/*	case OP_TABLE:
+		return 8;*/
 	default:
 		return 0;
 	}
@@ -667,10 +667,10 @@ static void ParseExpression(char **text, expression_t *exp)
 			op.value                = atof(token);
 			inFixOps[numInFixOps++] = op;
 			break;
-		case OP_TABLE:
+/*		case OP_TABLE:
 			// value already set by GetOpType
 			inFixOps[numInFixOps++] = op;
-			break;
+			break;*/
 		default:
 			op.value                = 0;
 			inFixOps[numInFixOps++] = op;
@@ -689,7 +689,8 @@ static void ParseExpression(char **text, expression_t *exp)
 		op2 = inFixOps[i + 1];
 
 		// convert OP_SUBs that should be unary into OP_NEG
-		if (op2.type == OP_SUB && op.type != OP_RPAREN && op.type != OP_TABLE && !IsOperand(op.type))
+//		if (op2.type == OP_SUB && op.type != OP_RPAREN && op.type != OP_TABLE && !IsOperand(op.type))
+		if (op2.type == OP_SUB && op.type != OP_RPAREN && !IsOperand(op.type))
 		{
 			inFixOps[i + 1].type = OP_NEG;
 		}
@@ -706,9 +707,9 @@ static void ParseExpression(char **text, expression_t *exp)
 		case OP_NUM:
 			Ren_Print("%f ", op.value);
 			break;
-		case OP_TABLE:
+/*		case OP_TABLE:
 			Ren_Print("%s ", tr.shaderTables[(int)op.value]->name);
-			break;
+			break;*/
 		default:
 			Ren_Print("%s ", opStrings[op.type].s);
 			break;
@@ -817,9 +818,9 @@ static void ParseExpression(char **text, expression_t *exp)
 		case OP_NUM:
 			Ren_Print("%f ", op.value);
 			break;
-		case OP_TABLE:
+/*		case OP_TABLE:
 			Ren_Print("%s ", tr.shaderTables[(int)op.value]->name);
-			break;
+			break;*/
 		default:
 			Ren_Print("%s ", opStrings[op.type].s);
 			break;
@@ -3402,7 +3403,7 @@ void ParseLightFalloffImage(shaderStage_t *stage, char **text)
  * @param[in] guideName
  *
  * @return NULL if not found otherwise it will return a valid template
- */
+ *//*
 static char *FindGuideInGuideText(const char *guideName)
 {
 	char *token, *p;
@@ -3493,14 +3494,14 @@ static char *FindGuideInGuideText(const char *guideName)
 	}
 
 	return NULL;
-}
+}*/
 
 /**
  * @brief CreateShaderByGuide
  * @param[in] guideName
  * @param[in,out] shaderText
  * @return
- */
+ *//*
 static char *CreateShaderByGuide(const char *guideName, char *shaderText)
 {
 	int         i;
@@ -3709,7 +3710,7 @@ static char *CreateShaderByGuide(const char *guideName, char *shaderText)
 	}
 
 	return NULL;
-}
+}*/
 
 /**
  * @brief The current text pointer is at the explicit text definition of the
@@ -3729,13 +3730,13 @@ static qboolean ParseShader(char *_text)
 	token = COM_ParseExt2(text, qtrue);
 	if (token[0] != '{')
 	{
-		if (!(_text = CreateShaderByGuide(token, _text)))
+/*		if (!(_text = CreateShaderByGuide(token, _text)))
 		{
 			Ren_Warning("WARNING: couldn't create shader '%s' by template '%s'\n", shader.name, token);
 			//Ren_Warning( "WARNING: expecting '{', found '%s' instead in shader '%s'\n", token, shader.name);
 			return qfalse;
 		}
-		else
+		else*/
 		{
 			text = &_text;
 		}
@@ -4924,7 +4925,7 @@ static shader_t *GeneratePermanentShader(void)
  * @brief GeneratePermanentShaderTable
  * @param[in] values
  * @param[in] numValues
- */
+ *//*
 void GeneratePermanentShaderTable(float *values, int numValues)
 {
 	shaderTable_t *newTable;
@@ -4964,7 +4965,7 @@ void GeneratePermanentShaderTable(float *values, int numValues)
 	hash                       = generateHashValue(newTable->name, MAX_SHADERTABLE_HASH);
 	newTable->next             = shaderTableHashTable[hash];
 	shaderTableHashTable[hash] = newTable;
-}
+}*/
 
 /**
  * @brief FinishShader
@@ -6282,7 +6283,7 @@ void R_ShaderExp_f(void)
 /**
  * @brief Finds and loads all .guide files, combining them into
  * a single large text block that can be scanned for shader template names
- */
+ *//*
 static void ScanAndLoadGuideFiles(void)
 {
 	char **guideFiles;
@@ -6521,7 +6522,7 @@ static void ScanAndLoadGuideFiles(void)
 
 	// free up memory
 	ri.FS_FreeFileList(guideFiles);
-}
+}*/
 
 /**
  * @brief Finds and loads all .shader files, combining them into
@@ -6756,7 +6757,7 @@ textEnd += bufferslen[i] + 1;
 			break;
 		}
 
-		// parse shader tables
+/*		// parse shader tables
 		if (!Q_stricmp(token, "table"))
 		{
 			int           depth;
@@ -6873,7 +6874,7 @@ textEnd += bufferslen[i] + 1;
 				break;
 			}
 		}
-		else
+		else*/
 		{
 			hash  = generateHashValue(token, MAX_SHADERTEXT_HASH);
 			shaderTextHashTable[hash][shaderTextHashTableSizes[hash]++] = oldp;
@@ -6946,14 +6947,14 @@ void R_InitShaders(void)
 {
 	Ren_Print("----- R_InitShaders -----\n");
 
-	Com_Memset(shaderTableHashTable, 0, sizeof(shaderTableHashTable));
+//	Com_Memset(shaderTableHashTable, 0, sizeof(shaderTableHashTable));
 	Com_Memset(shaderHashTable, 0, sizeof(shaderHashTable));
 
 	dshader = NULL;
 
 	CreateInternalShaders();
 
-	ScanAndLoadGuideFiles();
+//	ScanAndLoadGuideFiles();
 
 	if(r_materialScan->integer & R_SCAN_MATERIAL_FOLDER)
 	{
