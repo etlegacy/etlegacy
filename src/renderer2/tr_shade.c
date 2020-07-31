@@ -2295,7 +2295,8 @@ if (tr.refdef.pixelTarget != NULL) {
 		return;
 	}
 
-	if (tr.world->fogs + tess.fogNum < 1 || !tess.surfaceShader->fogPass)
+//	if (tr.world->fogs + tess.fogNum < 1 || !tess.surfaceShader->fogPass) // this produces a compiler warning
+	if (!tr.world->fogs || tess.fogNum < 1 || !tess.surfaceShader->fogPass)
 	{
 		return;
 	}

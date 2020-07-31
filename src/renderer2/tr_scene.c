@@ -335,7 +335,7 @@ void RE_AddPolyBufferToScene(polyBuffer_t *pPolyBuffer)
  */
 void RE_AddRefEntityToScene(const refEntity_t *ent)
 {
-	int index;
+	/*int index;*/
 
 	if (!tr.registered)
 	{

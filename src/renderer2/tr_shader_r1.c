@@ -994,7 +994,7 @@ int ScanAndLoadShaderFilesR1()
 				break;
 			}
 
-			// Step over the "table"/"guide" and the name
+/*			// Step over the "table"/"guide" and the name
 			if (!Q_stricmp(token, "table") || !Q_stricmp(token, "guide"))
 			{
 				token = COM_ParseExt2(&p, qtrue);
@@ -1003,7 +1003,7 @@ int ScanAndLoadShaderFilesR1()
 				{
 					break;
 				}
-			}
+			}*/
 
 			oldp = p;
 
@@ -1063,7 +1063,7 @@ int ScanAndLoadShaderFilesR1()
 			break;
 		}
 
-		// skip shader tables
+/*		// skip shader tables
 		if (!Q_stricmp(token, "table"))
 		{
 			// skip table name
@@ -1114,7 +1114,7 @@ int ScanAndLoadShaderFilesR1()
 				break;
 			}
 		}
-		else
+		else*/
 		{
 			hash = generateHashValue(token, MAX_SHADERTEXT_HASH);
 			shaderTextHashTableSizes[hash]++;

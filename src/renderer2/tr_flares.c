@@ -150,7 +150,7 @@ void RB_AddFlare(void *surface, int fogNum, vec3_t point, vec3_t color, vec3_t n
 	int     i;
 	flare_t *f;
 	vec4_t  eye, clip, normalized, window;
-	vec3_t  local;
+	/*vec3_t  local;*/
 	const float distBias = 512.0;
 	const float distLerp = 0.5;
 	float d1 = 0.0f, d2 = 0.0f;

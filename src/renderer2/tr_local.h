@@ -56,7 +56,7 @@ typedef unsigned short glIndex_t;
 #define MAX_SHADERS             (1 << 12)
 #define SHADERS_MASK            (MAX_SHADERS - 1)
 
-#define MAX_SHADER_TABLES       1024
+//#define MAX_SHADER_TABLES       1024
 #define MAX_SHADER_STAGES       16
 
 #define MAX_OCCLUSION_QUERIES         4096

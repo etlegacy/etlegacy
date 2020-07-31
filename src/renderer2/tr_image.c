@@ -2455,7 +2455,7 @@ image_t *R_FindImageFile(const char *imageName, int bits, filterType_t filterTyp
 	char buffer[1024];
 	//char ddsName[1024];
 	char *buffer_p;
-	unsigned long diff;
+	/*unsigned long diff;*/
 
 	if (!imageName)
 	{

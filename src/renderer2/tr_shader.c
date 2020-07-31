@@ -5434,7 +5434,7 @@ static char *FindShaderInShaderText(const char *shaderName)
 			return p;
 		}
 		// skip shader tables
-		else if (!Q_stricmp(token, "table"))
+/*		else if (!Q_stricmp(token, "table"))
 		{
 			// skip table name
 			(void) COM_ParseExt2(&p, qtrue);
@@ -5483,7 +5483,7 @@ static char *FindShaderInShaderText(const char *shaderName)
 				break;
 			}
 		}
-		else
+		else*/
 		{
 			// skip the shader body
 			SkipBracedSection(&p);
@@ -6587,7 +6587,7 @@ bufferslen[i] = summand;
 				break;
 			}
 
-			// Step over the "table"/"guide" and the name
+/*			// Step over the "table"/"guide" and the name
 			if (!Q_stricmp(token, "table") || !Q_stricmp(token, "guide"))
 			{
 				token = COM_ParseExt2(&p, qtrue);
@@ -6596,7 +6596,7 @@ bufferslen[i] = summand;
 				{
 					break;
 				}
-			}
+			}*/
 
 			oldp = p;
 
@@ -6652,7 +6652,7 @@ textEnd += bufferslen[i] + 1;
 	COM_Compress(s_shaderText);
 	// Now s_shaderText only contains tokens,
 	// and new lines are each single '\n' characters,
-	// and each whitespace is reduced to a single space character,
+	// and whitespace is reduced to a single space character,
 	// and comments are gone.
 
 	// free up memory
@@ -6671,7 +6671,7 @@ textEnd += bufferslen[i] + 1;
 			break;
 		}
 
-		// skip shader tables
+/*		// skip shader tables
 		if (!Q_stricmp(token, "table"))
 		{
 			// skip table name
@@ -6722,7 +6722,7 @@ textEnd += bufferslen[i] + 1;
 				break;
 			}
 		}
-		else
+		else*/
 		{
 			hash = generateHashValue(token, MAX_SHADERTEXT_HASH);
 			shaderTextHashTableSizes[hash]++;

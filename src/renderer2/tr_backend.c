@@ -1480,7 +1480,7 @@ Vector4Set(&light->viewMatrix[12], -viewMatrix[13], viewMatrix[14], -viewMatrix[
 						vec4_t /*forward,*/ side, up;
 						vec3_t lightDirection;
 						vec3_t viewOrigin, viewDirection;
-						mat4_t rotationMatrix, transformMatrix, viewMatrix, projectionMatrix, viewProjectionMatrix;
+						mat4_t /*rotationMatrix, transformMatrix, viewMatrix,*/ projectionMatrix, viewProjectionMatrix;
 						mat4_t cropMatrix;
 						vec4_t splitFrustum[6];
 						vec3_t splitFrustumCorners[8];
