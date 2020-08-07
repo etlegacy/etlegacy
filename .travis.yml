@@ -158,15 +158,11 @@ script:
   - ./easybuild.sh
 
 notifications:
-  irc:
-    template:
-      - "%{repository}#%{build_number} %{commit} %{author}: %{message} %{build_url}"
-    channels:
-      - "irc.freenode.org#etlegacy"
+  email:
+    recipients:
+      - mail@etlegacy.com
     on_success: change
     on_failure: always
-    skip_join: true
-    use_notice: true
   webhooks:
     urls:
       - https://xzy.com/api/webhooks/12345
