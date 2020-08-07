@@ -596,6 +596,7 @@ void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, float h,
 		// For these, if available, ignore the coordinate data and grab the most up to date pvs data
 		if (cent - cg_entities == cg.clientNum)
 		{
+			// use our own lerp'ed origin
 			if (!scissor)
 			{
 				mEnt->transformed[0] = ((cg.predictedPlayerEntity.lerpOrigin[0] - cg.mapcoordsMins[0]) * cg.mapcoordsScale[0]) * w;
@@ -609,8 +610,25 @@ void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, float h,
 
 			mEnt->yaw = (int)cg.predictedPlayerState.viewangles[YAW];
 		}
-		else if ((ci->team == snap->ps.persistant[PERS_TEAM] || cgs.clientinfo[cg.clientNum].shoutcaster) && cent->currentValid)
+		else if ((cgs.clientinfo[cg.clientNum].team == TEAM_SPECTATOR && snap->ps.clientNum != cg.clientNum && cent-cg_entities == snap->ps.clientNum) || cgs.clientinfo[cg.clientNum].shoutcaster)
 		{
+			// we are following someone, so use their info
+			if (!scissor)
+			{
+				mEnt->transformed[0] = ((snap->ps.origin[0] - cg.mapcoordsMins[0]) * cg.mapcoordsScale[0]) * w;
+				mEnt->transformed[1] = ((snap->ps.origin[1] - cg.mapcoordsMins[1]) * cg.mapcoordsScale[1]) * h;
+			}
+			else
+			{
+				mEnt->automapTransformed[0] = ((snap->ps.origin[0] - cg.mapcoordsMins[0]) * cg.mapcoordsScale[0]) * w * scissor->zoomFactor;
+				mEnt->automapTransformed[1] = ((snap->ps.origin[1] - cg.mapcoordsMins[1]) * cg.mapcoordsScale[1]) * h * scissor->zoomFactor;
+			}
+
+			mEnt->yaw = (int)snap->ps.viewangles[YAW];
+		}
+		else if (cent->currentValid)
+		{
+			// use more up-to-date info from pvs
 			if (!scissor)
 			{
 				mEnt->transformed[0] = ((cent->lerpOrigin[0] - cg.mapcoordsMins[0]) * cg.mapcoordsScale[0]) * w;
@@ -630,6 +648,18 @@ void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, float h,
 			if (mEnt->type == ME_PLAYER_REVIVE)
 			{
 				return;
+			}
+
+			// use the coordinates from clientinfo
+			if (!scissor)
+			{
+				mEnt->transformed[0] = ((ci->location[0] - cg.mapcoordsMins[0]) * cg.mapcoordsScale[0]) * w;
+				mEnt->transformed[1] = ((ci->location[1] - cg.mapcoordsMins[1]) * cg.mapcoordsScale[1]) * h;
+			}
+			else
+			{
+				mEnt->automapTransformed[0] = ((ci->location[0] - cg.mapcoordsMins[0]) * cg.mapcoordsScale[0]) * w * scissor->zoomFactor;
+				mEnt->automapTransformed[1] = ((ci->location[1] - cg.mapcoordsMins[1]) * cg.mapcoordsScale[1]) * h * scissor->zoomFactor;
 			}
 		}
 
