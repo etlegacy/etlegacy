@@ -1961,7 +1961,7 @@ void CG_DrawMortarMarker(float px, float py, float pw, float ph, qboolean draw, 
 
 		fadeTime = cg.time - (cg.artilleryRequestTime[i] + 25000);
 
-		if (fadeTime < 5000)
+		if (fadeTime < 5000 && cg.artilleryRequestTime[i] > 0)
 		{
 			if (fadeTime > 0)
 			{
