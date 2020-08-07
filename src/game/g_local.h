@@ -2784,14 +2784,6 @@ void G_MapVoteInfoRead(void);
 #define VOTEF_NO_POPULIST_PENALTY   2   ///< successful votes do not count against vote_limit
 #define VOTEF_DISP_CALLER           4   ///< append "(called by name)" in vote string
 
-// Server frametime is calculated with the sv_fps
-#define SERVER_FRAMETIME    (1000 / trap_Cvar_VariableIntegerValue("sv_fps"))   ///< (1000/20) default
-#define SERVER_FRAMETIME_F  (1000.f / trap_Cvar_VariableIntegerValue("sv_fps"))
-
-// Calculated deltas
-#define SERVER_FRAMETIME_DELTA      (2 * SERVER_FRAMETIME)          ///< msec
-#define SERVER_FRAMETIME_DELTA_F    (2.f * SERVER_FRAMETIME_F)      ///< msec
-
 void G_RailTrail(vec_t *start, vec_t *end, vec_t *color);
 void G_RailBox(vec_t *origin, vec_t *mins, vec_t *maxs, vec_t *color, int index);
 
