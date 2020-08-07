@@ -660,6 +660,314 @@ gfx/limbo/cm_tug
 	}
 }
 
+gfx/limbo/cm_frostbitedocs
+{
+	nopicmip
+	nocompress
+	nomipmaps
+	{
+		map gfx/limbo/cm_frostbitedocs.tga
+		depthFunc equal
+		blendfunc blend
+		rgbGen vertex
+		alphaGen vertex
+	}
+}
+
+gfx/limbo/cm_frostbitemaindoor
+{
+	nopicmip
+	nocompress
+	nomipmaps
+	{
+		map gfx/limbo/cm_frostbitemaindoor.tga
+		depthFunc equal
+		blendfunc blend
+		rgbGen vertex
+		alphaGen vertex
+	}
+}
+
+gfx/limbo/cm_frostbitenull
+{
+	nopicmip
+	nocompress
+	nomipmaps
+	{
+		map gfx/limbo/cm_frostbitenull.tga
+		depthFunc equal
+		blendfunc blend
+		rgbGen vertex
+		alphaGen vertex
+	}
+}
+
+gfx/limbo/cm_frostbiteservicedoor
+{
+	nopicmip
+	nocompress
+	nomipmaps
+	{
+		map gfx/limbo/cm_frostbiteservicedoor.tga
+		depthFunc equal
+		blendfunc blend
+		rgbGen vertex
+		alphaGen vertex
+	}
+}
+
+gfx/limbo/cm_frostbitestoragewall
+{
+	nopicmip
+	nocompress
+	nomipmaps
+	{
+		map gfx/limbo/cm_frostbitestoragewall.tga
+		depthFunc equal
+		blendfunc blend
+		rgbGen vertex
+		alphaGen vertex
+	}
+}
+
+gfx/limbo/cm_frostbitetransmitter
+{
+	nopicmip
+	nocompress
+	nomipmaps
+	{
+		map gfx/limbo/cm_frostbitetransmitter.tga
+		depthFunc equal
+		blendfunc blend
+		rgbGen vertex
+		alphaGen vertex
+	}
+}
+
+gfx/limbo/cm_adlnernest_drctl
+{
+	nopicmip
+	nocompress
+	nomipmaps
+	{
+		map gfx/limbo/cm_adlnernest_drctl.tga
+		depthFunc equal
+		blendfunc blend
+		rgbGen vertex
+		alphaGen vertex
+	}
+}
+
+gfx/limbo/cm_adlnernest_trans
+{
+	nopicmip
+	nocompress
+	nomipmaps
+	{
+		map gfx/limbo/cm_adlnernest_trans.tga
+		depthFunc equal
+		blendfunc blend
+		rgbGen vertex
+		alphaGen vertex
+	}
+}
+
+gfx/braundorf/cm_controls
+{
+	nopicmip
+	nocompress
+	nomipmaps
+	{
+		map gfx/braundorf/cm_controls.tga
+		depthFunc equal
+		blendfunc blend
+		rgbGen vertex
+		alphaGen vertex
+	}
+}
+
+gfx/braundorf/cm_fence
+{
+	nopicmip
+	nocompress
+	nomipmaps
+	{
+		map gfx/braundorf/cm_fence.tga
+		depthFunc equal
+		blendfunc blend
+		rgbGen vertex
+		alphaGen vertex
+	}
+}
+
+gfx/braundorf/cm_maindoor
+{
+	nopicmip
+	nocompress
+	nomipmaps
+	{
+		map gfx/braundorf/cm_maindoor.tga
+		depthFunc equal
+		blendfunc blend
+		rgbGen vertex
+		alphaGen vertex
+	}
+}
+
+gfx/braundorf/cm_sidedoor
+{
+	nopicmip
+	nocompress
+	nomipmaps
+	{
+		map gfx/braundorf/cm_sidedoor.tga
+		depthFunc equal
+		blendfunc blend
+		rgbGen vertex
+		alphaGen vertex
+	}
+}
+
+gfx/limbo/cm_bremgen
+{
+	nopicmip
+	nocompress
+	nomipmaps
+	{
+		map gfx/limbo/cm_bremgen.tga
+		depthFunc equal
+		blendfunc blend
+		rgbGen vertex
+		alphaGen vertex
+	}
+}
+
+gfx/beer/cm_keycard
+{
+	nopicmip
+	nocompress
+	nomipmaps
+	{
+		map gfx/beer/cm_keycard.tga
+		depthFunc equal
+		blendfunc blend
+		rgbGen vertex
+		alphaGen vertex
+	}
+}
+
+gfx/wb/cm_bellhammer
+{
+	nopicmip
+	nocompress
+	nomipmaps
+	{
+		map gfx/wb/cm_bellhammer.tga
+		depthFunc equal
+		blendfunc blend
+		rgbGen vertex
+		alphaGen vertex
+	}
+}
+
+gfx/wb/cm_ghgate
+{
+	nopicmip
+	nocompress
+	nomipmaps
+	{
+		map gfx/wb/cm_ghgate.tga
+		depthFunc equal
+		blendfunc blend
+		rgbGen vertex
+		alphaGen vertex
+	}
+}
+
+gfx/wb/cm_health
+{
+	nopicmip
+	nocompress
+	nomipmaps
+	{
+		map gfx/wb/cm_health.tga
+		depthFunc equal
+		blendfunc blend
+		rgbGen vertex
+		alphaGen vertex
+	}
+}
+
+gfx/wb/cm_mcgate
+{
+	nopicmip
+	nocompress
+	nomipmaps
+	{
+		map gfx/wb/cm_mcgate.tga
+		depthFunc equal
+		blendfunc blend
+		rgbGen vertex
+		alphaGen vertex
+	}
+}
+
+gfx/wb/cm_mggate
+{
+	nopicmip
+	nocompress
+	nomipmaps
+	{
+		map gfx/wb/cm_mggate.tga
+		depthFunc equal
+		blendfunc blend
+		rgbGen vertex
+		alphaGen vertex
+	}
+}
+
+gfx/wb/cm_mmgate
+{
+	nopicmip
+	nocompress
+	nomipmaps
+	{
+		map gfx/wb/cm_mmgate.tga
+		depthFunc equal
+		blendfunc blend
+		rgbGen vertex
+		alphaGen vertex
+	}
+}
+
+gfx/wb/cm_srwall
+{
+	nopicmip
+	nocompress
+	nomipmaps
+	{
+		map gfx/wb/cm_srwall.tga
+		depthFunc equal
+		blendfunc blend
+		rgbGen vertex
+		alphaGen vertex
+	}
+}
+
+gfx/wb/cm_warbell
+{
+	nopicmip
+	nocompress
+	nomipmaps
+	{
+		map gfx/wb/cm_warbell.tga
+		depthFunc equal
+		blendfunc blend
+		rgbGen vertex
+		alphaGen vertex
+	}
+}
+
 gfx/limbo/mort_hit
 {
 	nopicmip
