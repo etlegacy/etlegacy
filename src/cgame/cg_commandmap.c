@@ -113,7 +113,7 @@ static qboolean CG_ScissorEntIsCulled(mapEntityData_t *mEnt, mapScissor_t *sciss
 		distVec[1]  = mEnt->automapTransformed[1] - (scissor->tl[1] + (0.5f * (scissor->br[1] - scissor->tl[1])));
 		distSquared = distVec[0] * distVec[0] + distVec[1] * distVec[1];
 
-		if (distSquared > Square(0.5f * (scissor->br[0] - scissor->tl[0])) + Square(tolerance[0] * 2.0f))
+		if (distSquared > Square(0.5f * (scissor->br[0] - scissor->tl[0] + tolerance[0])))
 		{
 			return qtrue;
 		}
@@ -149,7 +149,7 @@ static qboolean CG_ScissorPointIsCulled(vec2_t vec, mapScissor_t *scissor, vec2_
 		distVec[1]  = vec[1] - (scissor->tl[1] + (0.5f * (scissor->br[1] - scissor->tl[1])));
 		distSquared = distVec[0] * distVec[0] + distVec[1] * distVec[1];
 
-		if (distSquared > Square(0.5f * (scissor->br[0] - scissor->tl[0])) + Square(tolerance[0] * 2.0f))
+		if (distSquared > Square(0.5f * (scissor->br[0] - scissor->tl[0] + tolerance[0])))
 		{
 			return qtrue;
 		}
