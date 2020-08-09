@@ -1390,6 +1390,9 @@ void R_UploadImage(const byte **dataArray, int numData, image_t *image)
 		}
 		else
 		{
+			// !! Is this doing the correct thing to check if alpha is used?
+			// If you'd have an RGB image, and you go check if any 4th byte != 255,
+			// then that RGB image would classify as an image with an alpha-channel. (big chance anyway)..
 			for (i = 0, i4 = 0; i < c; i++, i4 += 4)
 			{
 /*				if (scan[i4 + 0] > rMax)
@@ -3308,6 +3311,11 @@ image_t *R_CreateRenderImage(const char *name, qboolean quat, int bits, filterTy
  */
 static void R_CreateContrastRenderFBOImage(void)
 {
+	if (!r_bloom->integer)
+	{
+		return;
+	}
+
 	if (r_hdrRendering->integer && glConfig2.textureFloatAvailable)
 	{
 		tr.contrastRenderFBOImage = R_CreateRenderImage("_contrastRenderFBO", qtrue, IF_NOCOMPRESSION | IF_RGBA16F, FT_LINEAR, WT_EDGE_CLAMP);
@@ -3324,6 +3332,12 @@ static void R_CreateContrastRenderFBOImage(void)
 static void R_CreateBloomRenderFBOImage(void)
 {
 	int i;
+
+	if (!r_bloom->integer)
+	{
+		return;
+	}
+
 	for (i = 0; i < 2; i++)
 	{
 		if (r_hdrRendering->integer && glConfig2.textureFloatAvailable)
@@ -3378,13 +3392,11 @@ static void R_CreateOcclusionRenderFBOImage(void)
 
 /**
  * @brief R_CreateCurrentCubemapFBOImage
- */
-/*
+ *//*
 static void R_CreateCurrentCubemapFBOImage(void)
 {
 	tr.currentCubemapFBOImage = R_CreateCubeRenderImage("_currentCubemapFBOImage", 0, REF_CUBEMAP_SIZE, REF_CUBEMAP_SIZE, 0, FT_LINEAR, WT_EDGE_CLAMP);
-}
-*/
+}*/
 
 /**
  * @brief R_CreateDepthToColorFBOImages

@@ -646,7 +646,7 @@ void R_InitFBOs(void)
 		R_CheckFBO(tr.occlusionRenderFBO);
 	}
 
-	if (r_shadows->integer >= SHADOWING_EVSM32 && glConfig2.textureFloatAvailable)
+	if (r_staticLight->integer && r_shadows->integer >= SHADOWING_EVSM32 && glConfig2.textureFloatAvailable)
 	{
 		// shadowMap FBOs for shadow mapping offscreen rendering
 		for (i = 0; i < MAX_SHADOWMAPS; i++)
@@ -711,7 +711,7 @@ void R_InitFBOs(void)
 		R_CheckFBO(tr.portalRenderFBO);
 	}
 
-
+	if (r_hdrRendering->integer && glConfig2.textureFloatAvailable && glConfig2.framebufferObjectAvailable && glConfig2.framebufferBlitAvailable)
 	{
 		if (glConfig2.textureNPOTAvailable)
 		{
@@ -793,7 +793,10 @@ void R_InitFBOs(void)
 		R_AttachFBOTexture2D(GL_TEXTURE_2D, tr.downScaleFBOImage_1x1->texnum, 0);
 		R_CheckFBO(tr.downScaleFBO_1x1);
 #endif
+	}
 
+	if (r_bloom->integer)
+	{
 		if (glConfig2.textureNPOTAvailable)
 		{
 			width  = glConfig.vidWidth * 0.25f;
@@ -851,13 +854,11 @@ void R_InitFBOs(void)
 		}
 		else
 		{
-			R_CreateFBOColorBuffer(tr.currentCubemapFBO, GL_RGBA, 0);
+			R_CreateFBOColorBuffer(tr.currentCubemapFBO, GL_RGBA, 0); // check for rgb, we don't need a
 		}
 		R_AttachFBOTexture2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X, tr.currentCubemapFBOImage->texnum, 0);
 
 		R_CreateFBODepthBuffer(tr.currentCubemapFBO, GL_DEPTH_COMPONENT24);
-//GLenum DrawBuffers[1] = {GL_COLOR_ATTACHMENT0};
-//glDrawBuffers(1, DrawBuffers);
 
 		R_CheckFBO(tr.currentCubemapFBO);
 	}

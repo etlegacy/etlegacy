@@ -90,18 +90,25 @@ typedef enum
 	DS_STANDARD,                ///< deferred rendering like in Stalker
 } deferredShading_t;
 
-// we check for a pixeltarget, because we do not want any hdr code to be executed when we are rendering to a pixeltarget.
-// The pixeltarget is used when creating a cubemap (for the reflections). We render those offscreen.
+// we check for a renderingCubemap, because we do not want any hdr code to be executed when we are rendering a simple scene.
+// renderingCubemap is used when creating a cubemap (for the reflections).
 // We do not want the offscreen FBO to become inactive while we are rendering the cubeprobes.
-#define HDR_ENABLED() ((r_hdrRendering->integer && glConfig2.textureFloatAvailable && glConfig2.framebufferObjectAvailable && glConfig2.framebufferBlitAvailable && tr.refdef.pixelTarget == NULL))
+#define HDR_ENABLED() ((r_hdrRendering->integer && glConfig2.textureFloatAvailable && glConfig2.framebufferObjectAvailable && glConfig2.framebufferBlitAvailable && !tr.refdef.renderingCubemap))
 
 // The cubeProbes used for reflections:
 // The width/height (in pixels) of a cubemap texture
-#define REF_CUBEMAP_SIZE        32
-// The width/height (in pixels) of a 'cm' image (1 cm image contains multiple cubemaps)
-#define REF_CUBEMAP_STORE_SIZE  1024
-#define REF_CUBEMAP_STORE_SIDE  (REF_CUBEMAP_STORE_SIZE / REF_CUBEMAP_SIZE)
-#define REF_CUBEMAPS_PER_FILE   (REF_CUBEMAP_STORE_SIDE * REF_CUBEMAP_STORE_SIDE)
+#define REF_CUBEMAP_SIZE                  32
+#define REF_CUBEMAP_TEXTURE_SIZE          (REF_CUBEMAP_SIZE * REF_CUBEMAP_SIZE * 4)
+#define REF_CUBEMAP_PIXELDATA_SIZE        (6 * REF_CUBEMAP_TEXTURE_SIZE)
+// The width/height (in pixels) of a 'cm' image (1 cm image contains multiple cubemap(texture)s)
+#define REF_CUBEMAP_STORE_SIZE            1024
+#define REF_CUBEMAP_STORE_SIDE            (REF_CUBEMAP_STORE_SIZE / REF_CUBEMAP_SIZE)
+#define REF_CUBEMAP_TEXTURES_PER_FILE     (REF_CUBEMAP_STORE_SIDE * REF_CUBEMAP_STORE_SIDE)
+#define REF_CUBEMAPS_PER_FILE             ((int)(REF_CUBEMAP_TEXTURES_PER_FILE / 6))
+// the TGA file for storing cm/files has an Identification Field.
+// That id-field acts as a bit-array, holding flags to indicate what cubemaps are generated and stored in the file.
+// There are REF_CUBEMAPS_PER_FILE complete cubemaps in a file.
+#define REF_CUBEMAP_TGA_IDFIELD_SIZE      ((int)ceil((float)REF_CUBEMAPS_PER_FILE / 8.f))
 
 /**
  * @enum cullResult_t
@@ -515,7 +522,10 @@ typedef struct image_s
 typedef struct
 {
 	vec3_t origin;
+	int index;                              ///< into array tr.cubeProbes[]
 	image_t *cubemap;
+	qboolean ready;                         ///< false, if this cubemap has not yet been created for rendering
+	qboolean stored;                        ///< true, if this cubemap has been stored to file
 } cubemapProbe_t;
 
 /**
@@ -1977,7 +1987,7 @@ typedef struct
 	int numInteractions;
 	struct interaction_s *interactions;
 
-	byte *pixelTarget;                  ///< set this to Non Null to copy to a buffer after scene rendering
+	qboolean renderingCubemap;          ///< false is default.  true means we are rendering a simple scene (the reflection cubemaps)
 
 	glfog_t glFog;                      ///< added (needed to pass fog infos into the portal sky scene)
 } trRefdef_t;
@@ -3621,7 +3631,7 @@ typedef struct
 	image_t *shadowMapFBOImage[MAX_SHADOWMAPS];
 	image_t *shadowCubeFBOImage[MAX_SHADOWMAPS];
 	image_t *sunShadowMapFBOImage[MAX_SHADOWMAPS];
-	//image_t* currentCubemapFBOImage;
+//	image_t* currentCubemapFBOImage;        ///< the texture of the currentCubemap FBO
 
 	// external images
 	image_t *charsetImage;
@@ -3629,7 +3639,7 @@ typedef struct
 	image_t *vignetteImage;
 
 	// framebuffer objects
-	FBO_t *geometricRenderFBO;              ///< is the G-Buffer for deferred shading
+//	FBO_t *geometricRenderFBO;              ///< is the G-Buffer for deferred shading
 	FBO_t *lightRenderFBO;                  ///< is the light buffer which contains all light properties of the light pre pass
 	FBO_t *deferredRenderFBO;               ///< is used by HDR rendering and deferred shading
 	FBO_t *portalRenderFBO;                 ///< holds a copy of the last currentRender that was rendered into a FBO
@@ -3724,10 +3734,9 @@ typedef struct
 	growList_t ibos;						///< Index Buffer Object
 	growList_t pbos;						//< Pixel Buffer Object
 
-	byte *cubeTemp[6];                      ///< 6 textures for cubemap storage
 	growList_t cubeProbes;                  ///< all cubemaps in a linear growing list
-	vertexHash_t **cubeHashTable;           ///< hash table for faster access
 	reflectionData_t reflectionData;		///< the current reflection cubemap data
+//	vertexHash_t **cubeHashTable;           ///< hash table for faster access (but this is unused because that code is not working)
 
 	// shader indexes from other modules will be looked up in tr.shaders[]
 	// shader indexes from drawsurfs will be looked up in sortedShaders[]
@@ -4104,7 +4113,7 @@ OpenGL WRAPPERS, tr_gl.c
 #define GLCOLOR_NONE 0.0f, 0.0f, 0.0f, 0.0f
 
 void GL_Bind(image_t *image);
-void GL_BindNearestCubeMap(const vec3_t xyz);
+//void GL_BindNearestCubeMap(const vec3_t xyz); // unused
 void GL_Unbind();
 void BindAnimatedImage(textureBundle_t *bundle);
 //void GL_TextureFilter(image_t *image, filterType_t filterType);
@@ -4691,7 +4700,8 @@ RENDERER BACK END FUNCTIONS
 =============================================================
 */
 
-void RB_ExecuteRenderCommands(const void *data);
+//void RB_ExecuteRenderCommands(const void *data); // this one is included later
+
 
 /*
 =============================================================
@@ -4819,6 +4829,17 @@ typedef struct
 } renderToTextureCommand_t;
 
 /**
+ * @struct renderCubeprobeCommand_t
+ * @brief
+ */
+typedef struct
+{
+	int commandId;
+	int cubeprobeIndex; // index in tr.cubeProbes[]
+	byte **pixeldata; // can be NULL. In that case, no readpixels is done (and so, no textures can be saved to file)
+} renderCubeprobeCommand_t;
+
+/**
  * @enum ssFormat_t
  * @brief
  */
@@ -4885,6 +4906,7 @@ typedef enum
 	RC_SCREENSHOT,
 	RC_VIDEOFRAME,
 	RC_RENDERTOTEXTURE,
+	RC_RENDERCUBEPROBE,
 	RC_FINISH
 } renderCommand_t;
 
@@ -4955,13 +4977,15 @@ const void *RB_TakeVideoFrameCmd(const void *data);
 void RE_TakeVideoFrame(int width, int height, byte *captureBuffer, byte *encodeBuffer, qboolean motionJpeg);
 
 // cubemap reflections stuff
-void R_BuildCubeMaps(void);
-void R_FindTwoNearestCubeMaps(const vec3_t position, cubemapProbe_t **cubeProbe1, cubemapProbe_t **cubeProbe2, float *distance1, float *distance2);
+void R_SaveCubeProbe(cubemapProbe_t *cubeProbe, byte **cubePixeldata, qboolean saveAll);
+void R_BuildCubeMaps(qboolean createAll);
+//void R_FindTwoNearestCubeMaps(const vec3_t position, cubemapProbe_t **cubeProbe1, cubemapProbe_t **cubeProbe2, float *distance1, float *distance2); // unused..
 void R_FindCubeprobes(const vec3_t position, trRefEntity_t *entity, image_t** env1, image_t** env2, float* interpolation);
 
 void FreeVertexHashTable(vertexHash_t **hashTable);
 
 void RE_RenderToTexture(int textureid, int x, int y, int w, int h);
+void RE_RenderCubeprobe(int cubeprobeIndex, byte *pixeldataOut[6]); // Render Command function
 void RE_Finish(void);
 
 void LoadRGBEToFloats(const char *name, float **pic, int *width, int *height, qboolean doGamma, qboolean toneMap, qboolean compensate);

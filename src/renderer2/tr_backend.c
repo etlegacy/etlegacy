@@ -1774,17 +1774,18 @@ Vector4Set(&light->viewMatrix[12], -viewMatrix[13], viewMatrix[14], -viewMatrix[
 				Ren_LogComment("--- Rendering lighting ---\n");
 				Ren_LogComment("----- First Light Interaction: %i -----\n", iaCount);
 
-if (tr.refdef.pixelTarget == NULL)
-{
-				if (r_hdrRendering->integer)
+				if (!tr.refdef.renderingCubemap)
 				{
-					R_BindFBO(tr.deferredRenderFBO);
+					if (r_hdrRendering->integer)
+					{
+						R_BindFBO(tr.deferredRenderFBO);
+					}
+					else
+					{
+						R_BindNullFBO();
+					}
 				}
-				else
-				{
-					R_BindNullFBO();
-				}
-}
+
 				// set the window clipping
 				GL_Viewport(backEnd.viewParms.viewportX, backEnd.viewParms.viewportY,
 				            backEnd.viewParms.viewportWidth, backEnd.viewParms.viewportHeight);
@@ -5418,6 +5419,7 @@ static void RB_RenderDebugUtils()
 		tess.multiDrawPrimitives = 0;
 		tess.numVertexes         = 0;
 		tess.numIndexes          = 0;
+		//--- end reflection shader
 */
 
 		// use the cubemap shader
@@ -5429,7 +5431,9 @@ static void RB_RenderDebugUtils()
 		SetUniformVec3(UNIFORM_VIEWORIGIN, backEnd.viewParms.orientation.origin); // in world space
 
 		GL_State(GLS_SRCBLEND_ONE | GLS_DSTBLEND_ZERO);
-		GL_Cull(CT_FRONT_SIDED); // the inside of the cube is textured, and the normals all point to the center of the cube: that's the front side (we don't want to see)
+		// the inside of the cube is textured, and the normals all point to the center of the cube.
+		GL_Cull(CT_FRONT_SIDED);
+//		GL_Cull(CT_TWO_SIDED); // we also want to see the cubemap if we are inside the cube..
 		
 		for (j = 0; j < tr.cubeProbes.currentElements; j++)
 		{
@@ -5451,8 +5455,7 @@ static void RB_RenderDebugUtils()
 		tess.multiDrawPrimitives = 0;
 		tess.numVertexes         = 0;
 		tess.numIndexes          = 0;
-
-
+		//--- end cubemap shader
 
 #if 0	// color the 2 closest cubeProbes (green/red/yellow?/blue?)
 		// (disabled because, when you want to inspect a cubeProbe up close, no textures can be seen.. not handy)
@@ -6023,8 +6026,8 @@ static void RB_RenderDebugUtils()
  *
  * Note: If we are rendering offscreen, or when we are rendering the cubeprobe reflection cubemaps,
  * we don't want this function to mess up the framebuffer we render to offscreen.
- * In any case, when we are rendering the cubemaps offscreen, they do not have fog,coronas,decals,shadows,light, or any posteffects (hdr,bloom...).
- * We can skip a lot if there is a pixeltarget set.. (then we are rendering to a cubemap, offscreen)
+ * In any case, when we are rendering the cubemaps, they do not have fog,coronas,decals,shadows,light, or any posteffects (hdr,bloom...).
+ * We can skip a lot if we are rendering to a cubemap..
  */
 static void RB_RenderViewFront(void)
 {
@@ -6045,21 +6048,21 @@ static void RB_RenderViewFront(void)
 
 	// disable offscreen rendering
 	// But we want to render-to-texture (offscreen) if we are rendering a cubemap (for the reflections),
-	// so we also check if no pixeltarget is set..
-if (tr.refdef.pixelTarget == NULL)
-{//!
-	if (glConfig2.framebufferObjectAvailable)
+	// so we also check if no renderingCubemap is set..
+	if (!tr.refdef.renderingCubemap)
 	{
-		if (r_hdrRendering->integer && glConfig2.textureFloatAvailable)
+		if (glConfig2.framebufferObjectAvailable)
 		{
-			R_BindFBO(tr.deferredRenderFBO);
-		}
-		else
-		{
-			R_BindNullFBO();
+			if (r_hdrRendering->integer && glConfig2.textureFloatAvailable)
+			{
+				R_BindFBO(tr.deferredRenderFBO);
+			}
+			else
+			{
+				R_BindNullFBO();
+			}
 		}
 	}
-}//!
 
 	// we will need to change the projection matrix before drawing
 	// 2D images again
@@ -6270,34 +6273,35 @@ if (tr.refdef.pixelTarget == NULL)
 		backEnd.pc.c_forwardAmbientTime = ri.Milliseconds() - startTime;
 	}
 
-if (tr.refdef.pixelTarget == NULL)
-{//!
-	// try to cull lights using hardware occlusion queries
-	RB_RenderLightOcclusionQueries();
-
-	if (r_shadows->integer >= SHADOWING_EVSM32)
+	if (!tr.refdef.renderingCubemap)
 	{
-		// render dynamic shadowing and lighting using shadow mapping
-		RB_RenderInteractionsShadowMapped();
+		// try to cull lights using hardware occlusion queries
+		RB_RenderLightOcclusionQueries();
 
-		// render player shadows if any
-		//RB_RenderInteractionsDeferredInverseShadows();
-	}
-	else
-	{
-		// render dynamic lighting
-		RB_RenderInteractions();
-	}
+		if (r_shadows->integer >= SHADOWING_EVSM32)
+		{
+			// render dynamic shadowing and lighting using shadow mapping
+			RB_RenderInteractionsShadowMapped();
 
-	// render ambient occlusion process effect
-	// needs way more work
-	RB_RenderScreenSpaceAmbientOcclusion();
+			// render player shadows if any
+			//RB_RenderInteractionsDeferredInverseShadows();
+		}
+		else
+		{
+			// render dynamic lighting
+			RB_RenderInteractions();
+		}
 
-	if (HDR_ENABLED())
-	{
-		R_BindFBO(tr.deferredRenderFBO);
+		// render ambient occlusion process effect
+		// needs way more work
+		RB_RenderScreenSpaceAmbientOcclusion();
+
+		// TODO: check hdr with fog
+		if (HDR_ENABLED())
+		{
+			R_BindFBO(tr.deferredRenderFBO);
+		}
 	}
-}//!
 
 	// render global fog effect
 	RB_RenderGlobalFog();
@@ -6305,55 +6309,48 @@ if (tr.refdef.pixelTarget == NULL)
 	// draw everything that is translucent
 	RB_RenderDrawSurfaces(qfalse, DRAWSURFACES_ALL);
 
-if (tr.refdef.pixelTarget == NULL)
-{//!
-	// scale down rendered HDR scene to 1 / 4th
-	if (HDR_ENABLED())
+	if (!tr.refdef.renderingCubemap)
 	{
-		//if (glConfig2.framebufferBlitAvailable)
-		//{
-		R_CopyToFBO(tr.deferredRenderFBO, tr.downScaleFBO_quarter, GL_COLOR_BUFFER_BIT, GL_LINEAR);
-		R_CopyToFBO(tr.deferredRenderFBO, tr.downScaleFBO_64x64, GL_COLOR_BUFFER_BIT, GL_LINEAR);
-		//}
-		//else
-		//{
-		//	// FIXME add non EXT_framebuffer_blit code
-		//}
+		// scale down rendered HDR scene to 1 / 4th
+		if (HDR_ENABLED())
+		{
+			R_CopyToFBO(tr.deferredRenderFBO, tr.downScaleFBO_quarter, GL_COLOR_BUFFER_BIT, GL_LINEAR);
+			R_CopyToFBO(tr.deferredRenderFBO, tr.downScaleFBO_64x64, GL_COLOR_BUFFER_BIT, GL_LINEAR);
 
-		RB_CalculateAdaptation();
+			RB_CalculateAdaptation();
+		}
+		/*
+		else
+		{
+			FIXME this causes: caught OpenGL error:
+			GL_INVALID_OPERATION in file code/renderer/tr_backend.c line xxxx
+
+			if(glConfig2.framebufferBlitAvailable)
+			{
+				// copy deferredRenderFBO to downScaleFBO_quarter
+				R_CopyToFBO(NULL,tr.downScaleFBO_quarter,GL_COLOR_BUFFER_BIT,GL_NEAREST);
+			}
+			else
+			{
+				// FIXME add non EXT_framebuffer_blit code
+			}
+		}
+		*/
+
+		GL_CheckErrors();
+
+		// render depth of field post process effect
+		RB_RenderDepthOfField();
+
+		// render bloom post process effect
+		RB_RenderBloom();
+
+		// copy offscreen rendered HDR scene to the current OpenGL context
+		RB_RenderHDRResultToFrameBuffer();
+
+		// render rotoscope post process effect
+		RB_RenderRotoscope();
 	}
-	/*
-else
-{
-	FIXME this causes: caught OpenGL error:
-	GL_INVALID_OPERATION in file code/renderer/tr_backend.c line xxxx
-
-	if(glConfig2.framebufferBlitAvailable)
-	{
-		// copy deferredRenderFBO to downScaleFBO_quarter
-		R_CopyToFBO(NULL,tr.downScaleFBO_quarter,GL_COLOR_BUFFER_BIT,GL_NEAREST);
-	}
-	else
-	{
-		// FIXME add non EXT_framebuffer_blit code
-	}
-}
-	*/
-
-	GL_CheckErrors();
-
-	// render depth of field post process effect
-	RB_RenderDepthOfField();
-
-	// render bloom post process effect
-	RB_RenderBloom();
-
-	// copy offscreen rendered HDR scene to the current OpenGL context
-	RB_RenderHDRResultToFrameBuffer();
-
-	// render rotoscope post process effect
-	RB_RenderRotoscope();
-}//!
 
 	// add the sun flare
 	RB_DrawSun();
@@ -6366,43 +6363,40 @@ else
 	RB_CollectBspOcclusionQueries();
 */
 
-if (tr.refdef.pixelTarget == NULL)
-{//!
-	// add light flares on lights that aren't obscured
-	RB_RenderFlares();
-}//!
-
-if (tr.refdef.pixelTarget == NULL)
-{//!
-	// render debug information
-	RB_RenderDebugUtils();
-
-	if (backEnd.viewParms.isPortal)
+	if (!tr.refdef.renderingCubemap)
 	{
-#if 0
-		if (r_hdrRendering->integer && glConfig.textureFloatAvailable && glConfig.framebufferObjectAvailable && glConfig.framebufferBlitAvailable)
+		// add light flares on lights that aren't obscured
+		RB_RenderFlares();
+
+		// render debug information
+		RB_RenderDebugUtils();
+
+		if (backEnd.viewParms.isPortal)
 		{
-			// copy deferredRenderFBO to portalRenderFBO
-			R_CopyToFBO(tr.deferredRenderFBO, tr.portalRenderFBO, GL_COLOR_BUFFER_BIT, GL_NEAREST);
-		}
+#if 0
+			if (r_hdrRendering->integer && glConfig.textureFloatAvailable && glConfig.framebufferObjectAvailable && glConfig.framebufferBlitAvailable)
+			{
+				// copy deferredRenderFBO to portalRenderFBO
+				R_CopyToFBO(tr.deferredRenderFBO, tr.portalRenderFBO, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+			}
 #endif
 #if 1
-		// FIXME: this trashes the OpenGL context for an unknown reason
-		if (glConfig2.framebufferObjectAvailable && glConfig2.framebufferBlitAvailable)
-		{
-			// copy main context to portalRenderFBO
-			R_CopyToFBO(NULL, tr.portalRenderFBO, GL_COLOR_BUFFER_BIT, GL_NEAREST);
-		}
-		//else
+			// FIXME: this trashes the OpenGL context for an unknown reason
+			if (glConfig2.framebufferObjectAvailable && glConfig2.framebufferBlitAvailable)
+			{
+				// copy main context to portalRenderFBO
+				R_CopyToFBO(NULL, tr.portalRenderFBO, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+			}
+			//else
 #endif
-		{
-			// capture current color buffer
-			GL_SelectTexture(0);
-			ImageCopyBackBuffer(tr.portalRenderImage);
+			{
+				// capture current color buffer
+				GL_SelectTexture(0);
+				ImageCopyBackBuffer(tr.portalRenderImage);
+			}
+			backEnd.pc.c_portals++;
 		}
-		backEnd.pc.c_portals++;
 	}
-}//!
 
 #if 0
 	if (r_occludeBsp->integer)
@@ -6429,7 +6423,7 @@ static void RB_RenderView(void)
 	RB_RenderViewFront();
 
 	// render chromatric aberration
-	if (tr.refdef.pixelTarget == NULL) // see comment on next code block.. we don't want postFX on cubemaps
+	if (!tr.refdef.renderingCubemap) // we don't want postFX on cubemaps
 	{
 		RB_CameraPostFX();
 	}
@@ -7254,6 +7248,225 @@ const void *RB_RenderToTexture(const void *data)
 }
 
 /**
+ * @brief RB_RenderCubeprobe
+ * @param[in] (renderCubeprobeCommand_t*)data
+ *
+ * The RB_ functions are called when an RC_RENDERCUBEPROBE command is executed from the Render-Command-Buffer
+ */
+const void *RB_RenderCubeprobe(const void *data)
+{
+	// We render the cubemaps with one extra edge pixel (so we render a 33x33 image).
+	// and then we read the pixels from the 32x32 middle of the image.
+	// This ensures that we get the correct colors at the edges of an image. Opengl processes half-pixels when filtering.
+	// (otherwise we'll get a stripe of wrong colors on the images along the edges, and the cubemap images do not align colors).
+	// But, we do readpixels the texture as a 32x32 image from screen.
+	// The fov_x & fov_y must be 90 degrees for a 32x32 image. We must render a 33x33 image with an adjusted fov.
+	//
+	// IF the REF_CUBEMAP_SIZE is set to 32, then fov angles are calculated like this:
+	//   45 degrees is half of 90 degrees. You can see 45 degrees on either side of the line-of-sight.
+	//   Half a cube is 32/2 pixels = 16 pixels.
+	//   sin(45 degrees) = sqrt(2)/2 = M_SQRT2 * 0.5 = 16 (pixels) / length camera to cubeplane.
+	//   => length camera to cubeplane = 16 / (M_SQRT2 * 0.5)
+	//   => the adjusted fov angle's sine value is: 16+1 pixels / length camera to cubeplane
+	//   sin(adjusted fov) = 17 / (16 / M_SQRT2 * 0.5) = 0.7513009550107067446758971347364 radians
+	//   => adjusted (half) fov angle in degrees is 48.703196634271687046758736224782
+	//   The full fov_x & fov_y is: 97.406393268543374093517472449563 degrees
+	// 1/(sqrt(2)/2) = 1.4142135623730950488016887242097 = sqrt(2)  !
+	const double halfCube = 0.5 * REF_CUBEMAP_SIZE;
+	float angleFOV = asin((halfCube + 1.0) / (halfCube * 1.4142135623730950488016887242097)) * 360.0 / M_PI;
+	int i;
+	refdef_t rf;
+	byte *cubeTemp[6];                      ///< 6 textures for cubemap storage
+	FBO_t *previousFBO;
+
+	const renderCubeprobeCommand_t *cmd = (const renderCubeprobeCommand_t *)data;
+
+	// we can not write to data members from cmd, because it's a constant..
+	// So we look up the probe, and then we can edit the probes properties.
+	cubemapProbe_t *probe = (cubemapProbe_t *)Com_GrowListElement(&tr.cubeProbes, cmd->cubeprobeIndex);
+
+	// this is used for storing the 6 cubesides pixeldata read from screen.
+	// If we supplied a pointer to the pixeldata (pre allocated memory for each of the 6 sides),
+	// then we store the pixeldata to those addresses.
+	// If the cmd->pixeldata == NULL, we don't return any pixeldata (used for storing the cubemap textures to file).
+	// In that case, we allocate/free that memory locally in this function.
+	if (cmd->pixeldata)
+	{
+		for (i = 0; i < 6; i++)
+		{
+			cubeTemp[i] = cmd->pixeldata[i];
+		}
+	} else {
+
+		for (i = 0; i < 6; i++)
+		{
+			cubeTemp[i] = (byte *)ri.Z_Malloc(REF_CUBEMAP_SIZE * REF_CUBEMAP_SIZE * 4);
+		}
+	}
+
+	GL_Viewport(glConfig.vidWidth / 2, glConfig.vidHeight / 2, REF_CUBEMAP_SIZE+2, REF_CUBEMAP_SIZE+2);
+	GL_Scissor(glConfig.vidWidth / 2, glConfig.vidHeight / 2, REF_CUBEMAP_SIZE+2, REF_CUBEMAP_SIZE+2);
+
+	GL_CheckErrors();
+
+	previousFBO = glState.currentFBO;
+
+// Bind the FBO
+//R_BindFBO(tr.currentCubemapFBO);
+//glBindFramebuffer(GL_FRAMEBUFFER, tr.currentCubemapFBO->frameBuffer);
+
+//R_BindFBO(tr.deferredRenderFBO);
+//glBindFramebuffer(GL_FRAMEBUFFER, tr.deferredRenderFBO->frameBuffer);
+
+//GLenum drawBuffers[] = { GL_COLOR_ATTACHMENT0 };
+//glDrawBuffers(1, drawBuffers); 
+//glReadBuffer(GL_COLOR_ATTACHMENT0);
+//glDrawBuffer(GL_COLOR_ATTACHMENT0);
+
+	// render the cubemap
+	Com_Memset(&rf, 0, sizeof(refdef_t));
+	VectorCopy(probe->origin, rf.vieworg);
+	rf.fov_x   = angleFOV;
+	rf.fov_y   = angleFOV;
+	rf.x       = 0;
+	rf.y       = 0;
+	rf.time    = 0;
+	rf.rdflags = RDF_NOCUBEMAP | RDF_NOBLOOM;
+	rf.width   = REF_CUBEMAP_SIZE+2; // 1 extra pixel around the edges
+	rf.height  = REF_CUBEMAP_SIZE+2; // "
+	for (i = 0; i < 6; i++)
+	{
+// select the FBO side texture to render to
+//R_AttachFBOTexture2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, tr.currentCubemapFBOImage->texnum, 0);
+
+		switch (i)
+		{
+		case 0:
+			// X+
+			VectorSet(rf.viewaxis[0], 1.f, 0.f, 0.f);
+			VectorSet(rf.viewaxis[1], 0.f, 0.f, 1.f);
+			VectorSet(rf.viewaxis[2], 0.f, -1.f, 0.f);
+			break;
+		case 1:
+			// X-
+			VectorSet(rf.viewaxis[0], -1.f, 0.f, 0.f);
+			VectorSet(rf.viewaxis[1], 0.f, 0.f, -1.f);
+			VectorSet(rf.viewaxis[2], 0.f, -1.f, 0.f);
+			break;
+		case 2:
+			// Y+
+			VectorSet(rf.viewaxis[0], 0.f, 1.f, 0.f);
+			VectorSet(rf.viewaxis[1], -1.f, 0.f, 0.f);
+			VectorSet(rf.viewaxis[2], 0.f, 0.f, 1.f);
+			break;
+		case 3:
+			// Y-
+			VectorSet(rf.viewaxis[0], 0.f, -1.f, 0.f);
+			VectorSet(rf.viewaxis[1], -1.f, 0.f, 0.f);
+			VectorSet(rf.viewaxis[2], 0.f, 0.f, -1.f);
+			break;
+		case 4:
+			// Z+ up
+			VectorSet(rf.viewaxis[0], 0.f, 0.f, 1.f);
+			VectorSet(rf.viewaxis[1], -1.f, 0.f, 0.f);
+			VectorSet(rf.viewaxis[2], 0.f, -1.f, 0.f);
+			break;
+		case 5:
+			// Z- down
+			VectorSet(rf.viewaxis[0], 0.f, 0.f, -1.f);
+			VectorSet(rf.viewaxis[1], 1.f, 0.f, 0.f);
+			VectorSet(rf.viewaxis[2], 0.f, -1.f, 0.f);
+			break;
+		}
+
+		// when we are busy rendering a cubemap, the rest of code must know.
+		// Therefor we must always set tr.refdef.renderingCubemap to indicate this.
+		tr.refdef.renderingCubemap = qtrue;
+
+		RE_BeginFrame();
+		RE_RenderSimpleScene(&rf); // doesn't render so much as RE_RenderScene (no decals, no coronas, and more...)
+		R_BindNullVBO();
+		R_BindNullIBO();
+		backEnd.refdef    = tr.refdef;
+		backEnd.viewParms = tr.viewParms;
+		RB_RenderViewFront();
+		R_InitNextFrame();
+
+		// Bugfix: drivers absolutely hate running in high res and using glReadPixels near the top or bottom edge.
+		// Soo.. lets do it in the middle.
+		// UPDATE: This is true still today (2020).
+		// Note the extra pixel around the edges.. +1
+		glReadPixels(glConfig.vidWidth / 2 + 1, glConfig.vidHeight / 2 + 1, REF_CUBEMAP_SIZE, REF_CUBEMAP_SIZE, GL_RGBA, GL_UNSIGNED_BYTE, cubeTemp[i]);
+	}
+
+//glBindFramebuffer(GL_FRAMEBUFFER, 0);
+//viewport
+
+//cmd->cubeprobe->cubemap = tr.currentCubemapFBOImage;
+/*{
+	// create the texture object
+	probe->cubemap = R_AllocImage(va("_cubeProbe%d", cmd->cubeprobeIndex), qtrue);
+	if (!probe->cubemap)
+	{
+		probe->ready = qfalse;
+		probe->cubemap = tr.autoCubeImage; // provide a valid texture
+		goto renderCubeProbe_finish;
+	}
+	probe->cubemap->type = GL_TEXTURE_CUBE_MAP_ARB;
+	probe->cubemap->width  = REF_CUBEMAP_SIZE;
+	probe->cubemap->height = REF_CUBEMAP_SIZE;
+	probe->cubemap->bits       = IF_NOPICMIP;
+	probe->cubemap->filterType = FT_LINEAR;
+	probe->cubemap->wrapType   = WT_EDGE_CLAMP;
+	// and copy the cubemap textures to the cubeprobe
+	glReadBuffer(GL_COLOR_ATTACHMENT0);
+	GL_Bind(probe->cubemap);
+	glCopyTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, 0, 0, REF_CUBEMAP_SIZE, REF_CUBEMAP_SIZE, 0);
+	glBindTexture(probe->cubemap->type, 0);
+}*/
+	// create the cubemap texture
+	probe->cubemap = R_CreateCubeImage(va("_cubeProbe%d", cmd->cubeprobeIndex), (const byte **)cubeTemp, REF_CUBEMAP_SIZE, REF_CUBEMAP_SIZE, IF_NOPICMIP, FT_LINEAR, WT_EDGE_CLAMP);
+
+	if (!probe->cubemap)
+	{
+		probe->cubemap = tr.autoCubeImage; // provide a valid texture
+		probe->ready = qfalse; // but indicate this cube is not ready  (maybe try to create it again later?)
+		goto renderCubeProbe_finish;
+	}
+	// this cubemap is now ready for render use
+	probe->ready = qtrue;
+
+
+	// save to file..
+//	R_SaveCubeProbe(probe, cubeTemp, qfalse);  // this makes it (too) slow ?..  try to find a faster way..
+
+
+renderCubeProbe_finish:
+
+	// free allocated memory
+	// If we passed pointers to where the pixeldata needs to be written to, then we do not free that memory here.
+	// That memory is allocated outside this function, so only free memory allocated by this function.
+	if (!cmd->pixeldata)
+	{
+		for (i = 0; i < 6; i++)
+		{
+			if (cubeTemp[i]) ri.Free(cubeTemp[i]);
+		}
+	}
+
+	GL_Viewport(0, 0, glConfig.vidWidth, glConfig.vidHeight);
+	GL_Scissor(0, 0, glConfig.vidWidth, glConfig.vidHeight);
+
+	R_BindFBO(previousFBO);
+	GL_CheckErrors();
+
+	// turn pixel targets off
+	tr.refdef.renderingCubemap = qfalse;
+
+	return (const void *)(cmd + 1);
+}
+
+/**
  * @brief RB_Finish
  * @param[in] data
  * @return
@@ -7318,6 +7531,9 @@ void RB_ExecuteRenderCommands(const void *data)
 			break;
 		case RC_RENDERTOTEXTURE:
 			data = RB_RenderToTexture(data);
+			break;
+		case RC_RENDERCUBEPROBE:
+			data = RB_RenderCubeprobe(data);
 			break;
 		case RC_FINISH:
 			data = RB_Finish(data);

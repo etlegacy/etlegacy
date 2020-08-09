@@ -152,7 +152,6 @@ void R_PerformanceCounters(void)
 	Com_Memset(&backEnd.pc, 0, sizeof(backEnd.pc));
 }
 
-// FIXME: Unused ?
 // int c_blockedOnRender;
 // int c_blockedOnMain;
 
@@ -778,6 +777,32 @@ void RE_RenderToTexture(int textureid, int x, int y, int w, int h)
 	cmd->y         = y;
 	cmd->w         = w;
 	cmd->h         = h;
+}
+
+/**
+ * @brief RB_RenderCubeprobe
+ * @param[in] cubeprobeIndex: the index of the cubeprobe in tr.cubeProbes
+ * @param[in] pixelData: if NULL, no pixeldata is read back (so cpu can use it to store to file)
+ * @return
+ */
+void RE_RenderCubeprobe(int cubeprobeIndex, byte **pixeldataOut)
+{
+	renderCubeprobeCommand_t *cmd;
+
+	if (cubeprobeIndex < 0 || cubeprobeIndex >= tr.cubeProbes.currentElements)
+	{
+		return;
+	}
+
+	cmd = (renderCubeprobeCommand_t *)R_GetCommandBuffer(sizeof(*cmd));
+	if (!cmd)
+	{
+		return;
+	}
+
+	cmd->commandId = RC_RENDERCUBEPROBE;
+	cmd->cubeprobeIndex = cubeprobeIndex;
+	cmd->pixeldata = pixeldataOut;
 }
 
 /**

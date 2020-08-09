@@ -787,8 +787,8 @@ void RE_RenderScene(const refdef_t *fd)
 	Com_Memset(&parms, 0, sizeof(parms));
 
 #if 1
-	// During the building of the cubeprobes (for the reflections), pixelTarget is != null.
-	if (tr.refdef.pixelTarget == NULL)
+	// During the building of the cubeprobes (for the reflections), renderingCubemap == true.
+	if (!tr.refdef.renderingCubemap)
 	{
 		parms.viewportX = tr.refdef.x;
 		parms.viewportY = glConfig.vidHeight - (tr.refdef.y + tr.refdef.height);
@@ -974,8 +974,8 @@ void RE_RenderSimpleScene(const refdef_t *fd)
 	//
 	Com_Memset(&parms, 0, sizeof(parms));
 
-	// During the building of the cubeprobes (for the reflections), pixelTarget is != null.
-	if (tr.refdef.pixelTarget == NULL)
+	// During the building of the cubeprobes (for the reflections), renderingCubemap == true.
+	if (!tr.refdef.renderingCubemap)
 	{
 		parms.viewportX = tr.refdef.x;
 		parms.viewportY = glConfig.vidHeight - (tr.refdef.y + tr.refdef.height);

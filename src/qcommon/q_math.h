@@ -63,7 +63,7 @@
 #define ETL_SSE
 // ..and include the SSE intrinsics once
 #include <intrin.h>
-#include "pmmintrin.h"
+#include <pmmintrin.h>
 #endif
 #endif
 

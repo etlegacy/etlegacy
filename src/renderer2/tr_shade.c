@@ -177,56 +177,6 @@ static void BindDeluxeMap(shaderStage_t *pStage)
 }
 */
 
-/**
-* @brief BindCubeMaps
-*/
-static void BindCubeMaps()
-{
-/*
-	//cubemapProbe_t *cubeProbe1, *cubeProbe2;
-	qboolean       isEntity  = (backEnd.currentEntity && (backEnd.currentEntity != &tr.worldEntity));
-	vec3_t         *position = (isEntity) ? &backEnd.currentEntity->e.origin : &backEnd.viewParms.orientation.origin;
-	image_t        *env0, *env1;
-	float          interpolate;
-
-	R_FindCubeprobes(position, backEnd.currentEntity, &env0, &env1, &interpolate);
-
-	// bind u_EnvironmentMap0
-	SelectTexture(TEX_ENVMAP0);
-	GL_Bind(env0);
-
-	// bind u_EnvironmentMap1
-	SelectTexture(TEX_ENVMAP1);
-	GL_Bind(env1);
-
-	// u_EnvironmentInterpolation
-	SetUniformFloat(UNIFORM_ENVIRONMENTINTERPOLATION, interpolate);
-*/
-
-	R_FindCubeprobes(backEnd.viewParms.orientation.origin, &tr.worldEntity, &tr.reflectionData.env0, &tr.reflectionData.env1, &tr.reflectionData.interpolate);
-	// bind u_EnvironmentMap0
-	SelectTexture(TEX_ENVMAP0);
-	GL_Bind(tr.reflectionData.env0);
-	// bind u_EnvironmentMap1
-	SelectTexture(TEX_ENVMAP1);
-	GL_Bind(tr.reflectionData.env1);
-	// u_EnvironmentInterpolation
-	SetUniformFloat(UNIFORM_ENVIRONMENTINTERPOLATION, tr.reflectionData.interpolate);
-
-/*
-//if (tr.refdef.pixelTarget == NULL)
-//	R_BuildCurrentCubeMap();                       // this is now done in renderscene..   this is now gone..
-	// bind u_EnvironmentMap0
-	SelectTexture(TEX_ENVMAP0);
-	GL_Bind(tr.currentCubemapFBOImage);
-	// bind u_EnvironmentMap1
-	SelectTexture(TEX_ENVMAP1);
-	GL_Bind(tr.currentCubemapFBOImage);
-	// u_EnvironmentInterpolation
-	SetUniformFloat(UNIFORM_ENVIRONMENTINTERPOLATION, 0.f);
-*/
-}
-
 
 bspGridPoint_t *LightgridColor(const vec3_t position)
 {
@@ -556,6 +506,7 @@ static void Render_generic(int stage)
 	{
 		return;
 	}
+	qboolean use_deforms          = tess.surfaceShader->numDeforms > 0;
 	qboolean use_alphaTesting     = (pStage->stateBits & GLS_ATEST_BITS) != 0;
 	qboolean use_vertex_skinning  = glConfig2.vboVertexSkinningAvailable && tess.vboVertexSkinning;
 	qboolean use_vertex_animation = glState.vertexAttribsInterpolation > 0;
@@ -566,13 +517,22 @@ static void Render_generic(int stage)
 
 	GL_State(pStage->stateBits);
 
+	// when rendering to a (reflections) cubemap, a lot is disabled..
+	if (tr.refdef.renderingCubemap)
+	{
+		use_vertex_skinning = qfalse;
+		use_vertex_animation = qfalse;
+		use_deforms = qfalse;
+		use_tcgenEnv = qfalse;
+	}
+
 	// choose right shader program ----------------------------------
 	SetMacrosAndSelectProgram(trProg.gl_genericShader,
 	                          USE_ALPHA_TESTING, use_alphaTesting,
 	                          USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal,
 	                          USE_VERTEX_SKINNING, use_vertex_skinning,
 	                          USE_VERTEX_ANIMATION, use_vertex_animation,
-	                          USE_DEFORM_VERTEXES, tess.surfaceShader->numDeforms,
+	                          USE_DEFORM_VERTEXES, use_deforms,
 	                          USE_TCGEN_ENVIRONMENT, use_tcgenEnv,
 	                          USE_TCGEN_LIGHTMAP, pStage->tcGen_Lightmap);
 	// end choose right shader program ------------------------------
@@ -644,26 +604,40 @@ static void Render_generic(int stage)
 static void Render_entity(int stage)
 {
 	shaderStage_t *pStage = tess.surfaceStages[stage];
-	qboolean use_normalMapping    = r_normalMapping->integer && pStage->type != ST_DIFFUSEMAP;
-	qboolean use_parallaxMapping  = use_normalMapping && r_parallaxMapping->integer && tess.surfaceShader->parallax;
 	qboolean use_alphaTesting     = (pStage->stateBits & GLS_ATEST_BITS) != 0;
-	qboolean use_deform           = tess.surfaceShader->numDeforms > 0;
-	qboolean use_vertex_skinning  = glConfig2.vboVertexSkinningAvailable && tess.vboVertexSkinning;
-	qboolean use_vertex_animation = glState.vertexAttribsInterpolation > 0;
-	qboolean use_specular         = use_normalMapping && (pStage->type == ST_BUNDLE_DBS || pStage->type == ST_BUNDLE_DBSR);
-	qboolean use_reflections      = use_normalMapping && r_reflectionMapping->integer && pStage->type == ST_BUNDLE_DBSR &&
-										tr.cubeProbes.currentElements > 0 && tr.refdef.pixelTarget == NULL;
-	qboolean use_reflectionmap    = use_reflections && pStage->type == ST_BUNDLE_DBSR;
-	// !tr.refdef.pixelTarget to prevent using reflections before buildcubemaps() has finished. This is anti eye-cancer..
-if (tr.refdef.pixelTarget != NULL)
-{
-	use_normalMapping = qfalse;
-	use_parallaxMapping = qfalse;
-	use_deform = qfalse;
-	use_vertex_animation = qfalse;
-	use_specular = qfalse;
-	use_reflections = qfalse;
-}
+	qboolean use_normalMapping;
+	qboolean use_parallaxMapping;
+	qboolean use_deforms;
+	qboolean use_vertex_skinning;
+	qboolean use_vertex_animation;
+	qboolean use_specular;
+	qboolean use_reflections;
+	qboolean use_reflectionmap;
+
+	if (tr.refdef.renderingCubemap)
+	{
+		use_normalMapping = qfalse;
+		use_parallaxMapping = qfalse;
+		use_deforms = qfalse;
+		use_vertex_skinning = qfalse;
+		use_vertex_animation = qfalse;
+		use_specular = qfalse;
+		use_reflections = qfalse;
+		use_reflectionmap = qfalse;
+	} else {
+		use_normalMapping    = r_normalMapping->integer && pStage->type != ST_DIFFUSEMAP;
+		use_parallaxMapping  = use_normalMapping && r_parallaxMapping->integer && tess.surfaceShader->parallax;
+		use_deforms          = tess.surfaceShader->numDeforms > 0; // && !ShaderRequiresCPUDeforms(tess.surfaceShader)
+		use_vertex_skinning  = glConfig2.vboVertexSkinningAvailable && tess.vboVertexSkinning;
+		use_vertex_animation = glState.vertexAttribsInterpolation > 0;
+		use_specular         = use_normalMapping && (pStage->type == ST_BUNDLE_DBS || pStage->type == ST_BUNDLE_DBSR);
+		use_reflections      = use_normalMapping && r_reflectionMapping->integer && pStage->type == ST_BUNDLE_DBSR &&
+								tr.cubeProbes.currentElements > 0; // && !tr.refdef.renderingCubemap;
+		use_reflectionmap    = use_reflections && pStage->type == ST_BUNDLE_DBSR;
+
+//		R_FindCubeprobes(backEnd.viewParms.orientation.origin, &tr.worldEntity, &tr.reflectionData.env0, &tr.reflectionData.env1, &tr.reflectionData.interpolate);
+		R_FindCubeprobes(backEnd.viewParms.orientation.origin, backEnd.currentEntity, &tr.reflectionData.env0, &tr.reflectionData.env1, &tr.reflectionData.interpolate);
+	}
 
 	Ren_LogComment("--- Render_entity ---\n");
 
@@ -674,7 +648,7 @@ if (tr.refdef.pixelTarget != NULL)
 								USE_ALPHA_TESTING, use_alphaTesting,
 								USE_VERTEX_SKINNING, use_vertex_skinning,
 								USE_VERTEX_ANIMATION, use_vertex_animation,
-								USE_DEFORM_VERTEXES, use_deform, // && !ShaderRequiresCPUDeforms(tess.surfaceShader),
+								USE_DEFORM_VERTEXES, use_deforms, // && !ShaderRequiresCPUDeforms(tess.surfaceShader),
 								USE_NORMAL_MAPPING, use_normalMapping,
 								USE_PARALLAX_MAPPING, use_parallaxMapping,
 								USE_REFLECTIONS, use_reflections,
@@ -690,8 +664,18 @@ if (tr.refdef.pixelTarget != NULL)
 
 	//SetUniformFloat(UNIFORM_DIFFUSELIGHTING, r_diffuseLighting->value); // entities use a constant value (half-lambert 0.5)
 
+	if (use_alphaTesting)
+	{
+		GLSL_SetUniform_AlphaTest(pStage->stateBits);
+	}
+
+	if (backEnd.viewParms.isPortal)
+	{
+		clipPortalPlane();
+	}
+
 	// set uniforms
-	if (tess.surfaceShader->numDeforms)
+	if (use_deforms)
 	{
 		// u_DeformGen
 		GLSL_SetUniform_DeformParms(tess.surfaceShader->deforms, tess.surfaceShader->numDeforms);
@@ -709,28 +693,14 @@ if (tr.refdef.pixelTarget != NULL)
 		SetUniformFloat(UNIFORM_VERTEXINTERPOLATION, glState.vertexAttribsInterpolation);
 	}
 
-	if (use_alphaTesting)
-	{
-		GLSL_SetUniform_AlphaTest(pStage->stateBits);
-	}
-
 	if (r_wrapAroundLighting->integer)
 	{
 		SetUniformFloat(UNIFORM_LIGHTWRAPAROUND, RB_EvalExpression(&pStage->wrapAroundLightingExp, 0));
 	}
 
-	if (backEnd.viewParms.isPortal)
-	{
-		clipPortalPlane();
-	}
-
 	// bind u_DiffuseMap
 	SelectTexture(TEX_DIFFUSE);
-//if (pStage->bundle[TB_DIFFUSEMAP].image[0])
 	GL_Bind(pStage->bundle[TB_DIFFUSEMAP].image[0]);
-//else if (pStage->bundle[TB_COLORMAP].image[0])
-//	GL_Bind(pStage->bundle[TB_COLORMAP].image[0]);
-//else GL_Bind(tr.whiteImage);
 	SetUniformMatrix16(UNIFORM_DIFFUSETEXTUREMATRIX, tess.svars.texMatrix);
 
 	if (use_normalMapping)
@@ -769,8 +739,17 @@ else
 		if (use_reflections)
 		{
 			SetUniformFloat(UNIFORM_REFLECTIONSCALE, r_reflectionScale->value);
-			// bind the 2 nearest cubeProbes
-			BindCubeMaps();
+
+			// bind the 2 nearest cubeProbes:
+			// bind u_EnvironmentMap0
+			SelectTexture(TEX_ENVMAP0);
+			GL_Bind(tr.reflectionData.env0);
+			// bind u_EnvironmentMap1
+			SelectTexture(TEX_ENVMAP1);
+			GL_Bind(tr.reflectionData.env1);
+			// u_EnvironmentInterpolation
+			SetUniformFloat(UNIFORM_ENVIRONMENTINTERPOLATION, tr.reflectionData.interpolate);
+
 			// bind the reflectionmap
 			if (use_reflectionmap)
 			{
@@ -804,7 +783,7 @@ static void Render_vertexLighting_DBS_world(int stage)
 	qboolean use_specular        = use_normalMapping && (pStage->type == ST_BUNDLE_DBS || pStage->type == ST_BUNDLE_DBSR);
 	qboolean use_reflections     = r_normalMapping->integer && r_reflectionMapping->integer &&
 										pStage->type == ST_BUNDLE_DBSR &&
-										tr.cubeProbes.currentElements > 0 && !tr.refdef.pixelTarget;
+										tr.cubeProbes.currentElements > 0 && !tr.refdef.renderingCubemap;
 	qboolean use_reflectionmap    = use_reflections && pStage->type == ST_BUNDLE_DBSR;
 	Ren_LogComment("--- Render_vertexLighting_DBS_world ---\n");
 
@@ -926,30 +905,41 @@ static void Render_vertexLighting_DBS_world(int stage)
 */
 static void Render_world(int stage, qboolean use_lightMapping)
 {
+	rgbaGen_t rgbaGen;
 	shaderStage_t *pStage = tess.surfaceStages[stage];
 	uint32_t stateBits = pStage->stateBits;
-	rgbaGen_t rgbaGen;
 	qboolean use_diffuse         = pStage->bundle[TB_DIFFUSEMAP].image[0] != NULL;
 	qboolean use_alphaTesting    = use_diffuse && (pStage->stateBits & GLS_ATEST_BITS);
-	qboolean use_normalMapping   = use_diffuse && r_normalMapping->integer && (pStage->type == ST_BUNDLE_DBS || pStage->type == ST_BUNDLE_DB || pStage->type == ST_BUNDLE_DBSR);
-	qboolean use_parallaxMapping = use_normalMapping && r_parallaxMapping->integer && tess.surfaceShader->parallax;
-	//qboolean use_deluxeMapping = use_normalMapping && qfalse); // r_showDeluxeMaps->integer == 1 AND a deluxemap exists!    because there is no code that does anything with deluxemaps, we disable it..
-	qboolean use_deform          = tess.surfaceShader->numDeforms > 0;
-	qboolean use_specular        = use_normalMapping && (pStage->type == ST_BUNDLE_DBS || pStage->type == ST_BUNDLE_DBSR);
-	qboolean use_reflections     = use_normalMapping && r_reflectionMapping->integer &&
-									pStage->type == ST_BUNDLE_DBSR &&
-									tr.cubeProbes.currentElements > 0 && tr.refdef.pixelTarget == NULL;
-	// !tr.refdef.pixelTarget to prevent using reflections before buildcubemaps() has finished. This is anti eye-cancer..
-	qboolean use_reflectionmap   = use_reflections && (pStage->type == ST_BUNDLE_DBSR);
+	qboolean use_deforms;
+	qboolean use_normalMapping;
+	qboolean use_parallaxMapping;
+	//qboolean use_deluxeMapping;
+	qboolean use_specular;
+	qboolean use_reflections;
+	// tr.refdef.renderingCubemap is to prevent using reflections before buildcubemaps() has finished.
+	qboolean use_reflectionmap;
 	// for now we pass USE_REFLECTIONS & USE_REFLECTIONMAP, but the lightmapping shader will only reflect when there's a reflectionmap assigned.
-if (tr.refdef.pixelTarget != NULL)
-{
-	use_normalMapping = qfalse;
-	use_parallaxMapping = qfalse;
-	use_deform = qfalse;
-	use_specular = qfalse;
-	use_reflections = qfalse;
-}
+
+	if (tr.refdef.renderingCubemap)
+	{
+		use_deforms = qfalse;
+		use_normalMapping = qfalse;
+		use_parallaxMapping = qfalse;
+		use_specular = qfalse;
+		use_reflections = qfalse;
+		use_reflectionmap = qfalse;
+	} else {
+		use_deforms         = tess.surfaceShader->numDeforms > 0; // && !ShaderRequiresCPUDeforms(tess.surfaceShader)
+		use_normalMapping   = use_diffuse && r_normalMapping->integer && (pStage->type == ST_BUNDLE_DBS || pStage->type == ST_BUNDLE_DB || pStage->type == ST_BUNDLE_DBSR);
+		use_parallaxMapping = use_normalMapping && r_parallaxMapping->integer && tess.surfaceShader->parallax;
+		use_specular        = use_normalMapping && (pStage->type == ST_BUNDLE_DBS || pStage->type == ST_BUNDLE_DBSR);
+		use_reflections     = use_normalMapping && r_reflectionMapping->integer &&
+								pStage->type == ST_BUNDLE_DBSR &&
+								tr.cubeProbes.currentElements > 0; // && !tr.refdef.renderingCubemap;
+		use_reflectionmap   = use_reflections && (pStage->type == ST_BUNDLE_DBSR);
+
+		R_FindCubeprobes(backEnd.viewParms.orientation.origin, &tr.worldEntity, &tr.reflectionData.env0, &tr.reflectionData.env1, &tr.reflectionData.interpolate);
+	}
 
 	Ren_LogComment("--- Render_world ---\n");
 
@@ -964,7 +954,7 @@ if (tr.refdef.pixelTarget != NULL)
 	SetMacrosAndSelectProgram(trProg.gl_worldShader,
 								USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal,
 								USE_ALPHA_TESTING, use_alphaTesting,
-								USE_DEFORM_VERTEXES, use_deform, // && !ShaderRequiresCPUDeforms(tess.surfaceShader),
+								USE_DEFORM_VERTEXES, use_deforms,
 								USE_NORMAL_MAPPING, use_normalMapping,
 								USE_PARALLAX_MAPPING, use_parallaxMapping,
 								//USE_DELUXE_MAPPING, use_deluxeMapping,
@@ -989,17 +979,17 @@ if (tr.refdef.pixelTarget != NULL)
 	SetUniformBoolean(UNIFORM_B_SHOW_LIGHTMAP, (r_showLightMaps->integer == 1 ? GL_TRUE : GL_FALSE));
 	//SetUniformBoolean(UNIFORM_B_SHOW_DELUXEMAP, (r_showDeluxeMaps->integer == 1 ? GL_TRUE : GL_FALSE));
 
+	if (use_lightMapping)
+	{
+		// bind lightMap
+		SelectTexture(TEX_LIGHTMAP);
+		BindLightMap();
+	}
+
 	// USE_PORTAL_CLIPPING
 	if (backEnd.viewParms.isPortal)
 	{
 		clipPortalPlane();
-	}
-
-	// USE_DEFORM_VERTEXES
-	if (tess.surfaceShader->numDeforms)
-	{
-		GLSL_SetUniform_DeformParms(tess.surfaceShader->deforms, tess.surfaceShader->numDeforms);
-		SetUniformFloat(UNIFORM_TIME, tess.shaderTime);
 	}
 
 	// USE_ALPHA_TESTING
@@ -1008,11 +998,11 @@ if (tr.refdef.pixelTarget != NULL)
 		GLSL_SetUniform_AlphaTest(pStage->stateBits);
 	}
 
-	if (use_lightMapping)
+	// USE_DEFORM_VERTEXES
+	if (use_deforms)
 	{
-		// bind lightMap
-		SelectTexture(TEX_LIGHTMAP);
-		BindLightMap();
+		GLSL_SetUniform_DeformParms(tess.surfaceShader->deforms, tess.surfaceShader->numDeforms);
+		SetUniformFloat(UNIFORM_TIME, tess.shaderTime);
 	}
 
 	// bind diffuse texture
@@ -1068,7 +1058,16 @@ if (tr.refdef.pixelTarget != NULL)
 			if (use_reflections) //the lightmap shader only renders reflections if there's a reflectionmap
 			{
 				SetUniformFloat(UNIFORM_REFLECTIONSCALE, r_reflectionScale->value);
-				BindCubeMaps();
+
+				// bind u_EnvironmentMap0
+				SelectTexture(TEX_ENVMAP0);
+				GL_Bind(tr.reflectionData.env0);
+				// bind u_EnvironmentMap1
+				SelectTexture(TEX_ENVMAP1);
+				GL_Bind(tr.reflectionData.env1);
+				// u_EnvironmentInterpolation
+				SetUniformFloat(UNIFORM_ENVIRONMENTINTERPOLATION, tr.reflectionData.interpolate);
+
 				if (use_reflectionmap)
 				{
 					// bind u_ReflectionMap
@@ -1280,9 +1279,9 @@ static void Render_forwardLighting_DBS_omni(shaderStage_t *diffuseStage,
 	qboolean use_vertexAnimation = glState.vertexAttribsInterpolation > 0;
 	qboolean use_shadowCompare   = r_shadows->integer >= SHADOWING_EVSM32 && !light->l.noShadows && light->shadowLOD >= 0;
 
-if (tr.refdef.pixelTarget != NULL) {
-	return;
-}
+	if (tr.refdef.renderingCubemap) {
+		return;
+	}
 
 	Ren_LogComment("--- Render_forwardLighting_DBS_omni ---\n");
 
@@ -1384,9 +1383,9 @@ static void Render_forwardLighting_DBS_proj(shaderStage_t *diffuseStage,
 	qboolean use_parallaxMapping = use_normalMapping && r_parallaxMapping->integer && tess.surfaceShader->parallax;
 	qboolean use_specular        = use_normalMapping && (diffuseStage->type == ST_BUNDLE_DBS || diffuseStage->type == ST_BUNDLE_DBSR);
 
-if (tr.refdef.pixelTarget != NULL) {
-	return;
-}
+	if (tr.refdef.renderingCubemap) {
+		return;
+	}
 
 	Ren_LogComment("--- Render_fowardLighting_DBS_proj ---\n");
 
@@ -1525,9 +1524,9 @@ static void Render_forwardLighting_DBS_directional(shaderStage_t *diffuseStage,
 	qboolean use_vertexSkinning = glConfig2.vboVertexSkinningAvailable && tess.vboVertexSkinning;
 	qboolean use_vertexAnimation = glState.vertexAttribsInterpolation > 0;
 
-if (tr.refdef.pixelTarget != NULL) {
-	return;
-}
+	if (tr.refdef.renderingCubemap) {
+		return;
+	}
 
 	Ren_LogComment("--- Render_forwardLighting_DBS_directional ---\n");
 
@@ -1631,7 +1630,7 @@ if (tr.refdef.pixelTarget != NULL) {
  */
 static void Render_reflection_CB(int stage)
 {
-	if (!r_reflectionMapping->integer || tr.refdef.pixelTarget != NULL)
+	if (!r_reflectionMapping->integer || tr.refdef.renderingCubemap)
 	{
 		return;
 	}
@@ -1679,25 +1678,16 @@ static void Render_reflection_CB(int stage)
 		clipPortalPlane();
 	}
 
-#if 1
 	// bind 2 cubemaps, and interpolate between them (so you don't see reflections suddenly switch to the next cubemap)
-	BindCubeMaps();
-#else
-	// bind u_ColorMap
-	SelectTexture(TEX_COLOR);
-#if 1
-	if (backEnd.currentEntity && (backEnd.currentEntity != &tr.worldEntity))
-	{
-		GL_BindNearestCubeMap(backEnd.currentEntity->e.origin);
-	}
-	else
-	{
-		GL_BindNearestCubeMap(backEnd.viewParms.orientation.origin);
-	}
-#else
-	GL_Bind(pStage->bundle[TB_COLORMAP].image[0]);
-#endif
-#endif
+	R_FindCubeprobes(backEnd.viewParms.orientation.origin, &tr.worldEntity, &tr.reflectionData.env0, &tr.reflectionData.env1, &tr.reflectionData.interpolate);
+	// bind u_EnvironmentMap0
+	SelectTexture(TEX_ENVMAP0);
+	GL_Bind(tr.reflectionData.env0);
+	// bind u_EnvironmentMap1
+	SelectTexture(TEX_ENVMAP1);
+	GL_Bind(tr.reflectionData.env1);
+	// u_EnvironmentInterpolation
+	SetUniformFloat(UNIFORM_ENVIRONMENTINTERPOLATION, tr.reflectionData.interpolate);
 
 	// bind u_NormalMap
 	if (use_normalMapping)
@@ -2115,27 +2105,51 @@ if ((pStage->stateBits & GLS_ATEST_BITS) != 0)
 */
 static void Render_liquid(int stage)
 {
+	uint32_t attributebits;
+	rgbaGen_t rgbaGen;
 	shaderStage_t *pStage = tess.surfaceStages[stage];
 	float fogDensity = RB_EvalExpression(&pStage->fogDensityExp, 0.0005f);  // 0.0005f as default?
-	rgbaGen_t rgbaGen;
 	qboolean use_diffuseMapping  = (pStage->type == ST_BUNDLE_WDB || pStage->type == ST_BUNDLE_WD);
-	qboolean use_normalMapping   = r_normalMapping->integer && (pStage->type == ST_BUNDLE_WB || pStage->type == ST_BUNDLE_WDB);
-	qboolean use_parallaxMapping = tess.surfaceShader->parallax && use_normalMapping && r_parallaxMapping->integer;
+	qboolean use_deforms;
+	qboolean use_normalMapping;
+	qboolean use_parallaxMapping;
 	// liquid has its own calculated specular, and doesn't need a specularmap.. maybe in the future
-	qboolean use_reflections     = r_reflectionMapping->integer && use_normalMapping &&
-									tr.cubeProbes.currentElements > 0 && tr.refdef.pixelTarget == NULL;
+	qboolean use_reflections;
 	// fancy water with moving waves.. only when the diffuse texture has some tcMod assigned, otherwise we would get still standing waves.
-	qboolean use_water           = use_normalMapping && use_diffuseMapping && pStage->bundle[TB_DIFFUSEMAP].numTexMods;
-	uint32_t attributebits;
+	qboolean use_water;
 
 	Ren_LogComment("--- Render_liquid ---\n");
 
 	GL_State(pStage->stateBits);
 
+	// when rendering to a (reflections) cubemap, a lot is disabled..
+	if (tr.refdef.renderingCubemap)
+	{
+		use_deforms = qfalse;
+		use_normalMapping = qfalse;
+		use_parallaxMapping = qfalse;
+		use_reflections = qfalse;
+		use_water = qfalse;
+	} else {
+		use_deforms         = tess.surfaceShader->numDeforms > 0; // && !ShaderRequiresCPUDeforms(tess.surfaceShader),
+		use_normalMapping   = r_normalMapping->integer && (pStage->type == ST_BUNDLE_WB || pStage->type == ST_BUNDLE_WDB);
+		use_parallaxMapping = tess.surfaceShader->parallax && use_normalMapping && r_parallaxMapping->integer;
+		use_reflections     = r_reflectionMapping->integer && use_normalMapping &&
+								tr.cubeProbes.currentElements > 0; // && !tr.refdef.renderingCubemap;
+		use_water           = use_normalMapping && use_diffuseMapping && pStage->bundle[TB_DIFFUSEMAP].numTexMods;
+
+		// if renderingCubemap is true, we are not rendering a cubemap.
+		// But if the needed cubemaps are not yet ready for usage (if they need to get rendered),
+		// R_FindCubeprobes() will freshly make them.
+		// Problem is, that rendering a cubemap will mess with the flow of execution of this function. (program + macros don't match).
+		// It is important that SetMacrosAndSelectProgram() is executed after the call to R_FindCubeprobes().
+		R_FindCubeprobes(backEnd.viewParms.orientation.origin, &tr.worldEntity, &tr.reflectionData.env0, &tr.reflectionData.env1, &tr.reflectionData.interpolate);
+	}
+
 	// choose right shader program ----------------------------------
 	SetMacrosAndSelectProgram(trProg.gl_liquidShader,
 								USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal,
-								USE_DEFORM_VERTEXES, tess.surfaceShader->numDeforms, // && !ShaderRequiresCPUDeforms(tess.surfaceShader),
+								USE_DEFORM_VERTEXES, use_deforms,
 								USE_DIFFUSE, use_diffuseMapping,
 								USE_NORMAL_MAPPING, use_normalMapping,
 								USE_PARALLAX_MAPPING, use_parallaxMapping,
@@ -2159,22 +2173,11 @@ static void Render_liquid(int stage)
 	GLSL_SetUniform_ColorModulate(trProg.gl_liquidShader, rgbaGen.color, rgbaGen.alpha);
 	SetUniformVec4(UNIFORM_COLOR, tess.svars.color);
 
-	// deformVertexes
-	if (tess.surfaceShader->numDeforms)
-	{
-		GLSL_SetUniform_DeformParms(tess.surfaceShader->deforms, tess.surfaceShader->numDeforms);
-		SetUniformFloat(UNIFORM_TIME, tess.shaderTime);
-	}
-
 	// portal plane
 	if (backEnd.viewParms.isPortal)
 	{
 		clipPortalPlane();
 	}
-/*if (backEnd.viewParms.isPortal)
-{
-	glDisable(GL_CLIP_PLANE0);
-}*/
 
 	// this is the fog displayed on the watersurface only (not any underwater fog, nor world fog)
 	SetUniformFloat(UNIFORM_FOGDENSITY, fogDensity);
@@ -2214,6 +2217,13 @@ static void Render_liquid(int stage)
 		SetUniformMatrix16(UNIFORM_DIFFUSETEXTUREMATRIX, tess.svars.texMatrix);
 	}
 
+	// deformVertexes
+	if (use_deforms)
+	{
+		GLSL_SetUniform_DeformParms(tess.surfaceShader->deforms, tess.surfaceShader->numDeforms);
+		SetUniformFloat(UNIFORM_TIME, tess.shaderTime);
+	}
+
 	if (use_normalMapping)
 	{
 		SetUniformVec3(UNIFORM_VIEWORIGIN, backEnd.viewParms.orientation.origin); // in world space
@@ -2236,21 +2246,22 @@ static void Render_liquid(int stage)
 		SetUniformFloat(UNIFORM_REFRACTIONINDEX, rcp(RB_EvalExpression(&pStage->refractionIndexExp, (1.0f / 1.3f)))); // 1/refractionIndex
 
 		// reflection
-#if 1 // if you change this #if-0, don't forget to change the liquid shaders also..
 		if (use_reflections)
 		{
+
 //!			SetUniformFloat(UNIFORM_REFLECTIONSCALE, r_reflectionScale->value);
-SetUniformFloat(UNIFORM_REFLECTIONSCALE, 1.0f);
-			BindCubeMaps();
+			SetUniformFloat(UNIFORM_REFLECTIONSCALE, 1.0f);
+
+			// bind the two nearest cubemaps:
+			// bind u_EnvironmentMap0
+			SelectTexture(TEX_ENVMAP0);
+			GL_Bind(tr.reflectionData.env0);
+			// bind u_EnvironmentMap1
+			SelectTexture(TEX_ENVMAP1);
+			GL_Bind(tr.reflectionData.env1);
+			// u_EnvironmentInterpolation
+			SetUniformFloat(UNIFORM_ENVIRONMENTINTERPOLATION, tr.reflectionData.interpolate);
 		}
-		//else
-		//	GL_Bind(tr.blackCubeImage);
-#else
-		// bind u_PortalMap
-		// This is used to make the reflections on the water surface
-		SelectTexture(TEX_PORTAL);
-		GL_Bind(tr.portalRenderImage);
-#endif
 
 		// bumpmap
 		SelectTexture(TEX_NORMAL);
@@ -2283,9 +2294,9 @@ static void Render_fog_brushes()
 	qboolean use_vertex_skinning  = glConfig2.vboVertexSkinningAvailable && tess.vboVertexSkinning;
 	qboolean use_vertex_animation = glState.vertexAttribsInterpolation > 0;
 
-if (tr.refdef.pixelTarget != NULL) {
-	return;
-}
+	if (tr.refdef.renderingCubemap) {
+		return;
+	}
 
 	Ren_LogComment("--- Render_fog_brushes ---\n");
 

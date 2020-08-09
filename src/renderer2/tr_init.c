@@ -1138,7 +1138,7 @@ static void GLSL_restart_f(void)
 
 void R_BuildCubeMaps_f(void)
 {
-	R_BuildCubeMaps(); // qtrue
+	R_BuildCubeMaps(qtrue); // qtrue, to render all missing cubemaps immediately
 }
 
 /**
@@ -1247,7 +1247,7 @@ void R_Register(void)
 	r_chcVisibilityThreshold        = ri.Cvar_Get("r_chcVisibilityThreshold", "20", CVAR_CHEAT);
 	r_chcIgnoreLeaves               = ri.Cvar_Get("r_chcIgnoreLeaves", "0", CVAR_CHEAT);
 
-	r_hdrRendering = ri.Cvar_Get("r_hdrRendering", "0", CVAR_ARCHIVE | CVAR_LATCH);
+	r_hdrRendering           = ri.Cvar_Get("r_hdrRendering", "0", CVAR_ARCHIVE | CVAR_LATCH);
 	r_hdrMinLuminance        = ri.Cvar_Get("r_hdrMinLuminance", "0.18", CVAR_CHEAT);
 	r_hdrMaxLuminance        = ri.Cvar_Get("r_hdrMaxLuminance", "3000", CVAR_CHEAT);
 	r_hdrKey                 = ri.Cvar_Get("r_hdrKey", "0.18", CVAR_ARCHIVE);
@@ -1301,7 +1301,7 @@ void R_Register(void)
 
 	r_depthOfField = ri.Cvar_Get("r_depthOfField", "0", CVAR_ARCHIVE);
 
-	r_bloom = ri.Cvar_Get("r_bloom", "0", CVAR_ARCHIVE);
+	r_bloom = ri.Cvar_Get("r_bloom", "0", CVAR_ARCHIVE | CVAR_LATCH); // we need latch so the fbo+image are created when bloom is enabled
 	r_bloomBlur = ri.Cvar_Get("r_bloomBlur", "1.0", CVAR_ARCHIVE);
 	r_bloomPasses = ri.Cvar_Get("r_bloomPasses", "2", CVAR_CHEAT);
 

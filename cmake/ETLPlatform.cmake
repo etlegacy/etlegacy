@@ -115,7 +115,6 @@ elseif(WIN32)
 	endif()
 	set(LIB_SUFFIX "_mp_")
 	if(MSVC)
-		add_definitions(-DWINDOWS_IGNORE_PACKING_MISMATCH) # needed to compile using latest Windows SDK Version
 		set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /EHa /Zp16 /arch:SSE2 /O2 /Ob2 /Oi /Ot")
 		set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /EHa /Zp16 /arch:SSE2 /W3 /Od /Ob2 /Oi /Ot")
 
@@ -130,7 +129,20 @@ elseif(WIN32)
 
 		foreach(CompilerFlag ${CompilerFlags})
 			string(REPLACE "/MD" "/MT" ${CompilerFlag} "${${CompilerFlag}}")
+			
+			# remove any "Basic Runtime Checks" settings
+			string(REPLACE "/RTCs" "" ${CompilerFlag} "${${CompilerFlag}}")
+			string(REPLACE "/RTCu" "" ${CompilerFlag} "${${CompilerFlag}}")
+			string(REPLACE "/RTC1" "" ${CompilerFlag} "${${CompilerFlag}}")
 		endforeach()
+
+		# The release compiler options
+		#//target_compile_options(/EHa /Zp16 /arch:SSE2 /O2 /Ob2 /Oi /Ot)
+		#target_compile_options(/EHa /Zp16 /arch:SSE2 /Od /Ob2 /Oi /Ot PUBLIC "$<$<CONFIG:DEBUG>:${CMAKE_CXX_FLAGS_DEBUG}>")
+		#target_compile_options(/EHa /Zp16 /arch:SSE2 /O2 /Ob2 /Oi /Ot PUBLIC "$<$<CONFIG:RELEASE>:${CMAKE_CXX_FLAGS_RELEASE}>")
+
+		# add a preprocessor directive (so the compile with latest Windows SDK will work)
+		add_compile_definitions(WINDOWS_IGNORE_PACKING_MISMATCH) # needed to compile using latest Windows SDK Version
 
 		set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /NODEFAULTLIB:MSVCRT.lib /NODEFAULTLIB:MSVCRTD.lib /LARGEADDRESSAWARE")
 		set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /NODEFAULTLIB:MSVCRT.lib /NODEFAULTLIB:MSVCRTD.lib /LARGEADDRESSAWARE")
