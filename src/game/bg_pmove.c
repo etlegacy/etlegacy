@@ -4464,10 +4464,10 @@ void PM_UpdateViewAngles(playerState_t *ps, pmoveExt_t *pmext, usercmd_t *cmd, v
 					VectorCopy(end, ps->origin);
 				}
 			}
-		}
 
-		// all fine
-		ps->delta_angles[YAW] = newDeltaAngle;
+			// all fine
+			ps->delta_angles[YAW] = newDeltaAngle;
+		}
 	}
 }
 
