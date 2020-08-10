@@ -8408,7 +8408,7 @@ void R_BuildCubeMaps(qboolean createAll)
 	}
 
 // quicksort all elements on position
-//	qsort(&tr.cubeProbes, tr.cubeProbes.currentElements, sizeof(void *), vertexposCompare); //crash.    tr.cubeProbes is no array[]
+//	qsort(&tr.cubeProbes, tr.cubeProbes.currentElements, sizeof(void *), vertexposCompare); //crash.    tr.cubeProbes is no array[]?
 
 
 	Ren_Print("......%d cubeprobes created \n", tr.cubeProbes.currentElements);
@@ -8421,9 +8421,13 @@ void R_BuildCubeMaps(qboolean createAll)
 	for (j = 0; j < tr.cubeProbes.currentElements; j++)
 	{
 		cubeProbe = (cubemapProbe_t *)Com_GrowListElement(&tr.cubeProbes, j);
-		cubeProbe->index = j;        // save the index, used later when writing to file
-		cubeProbe->ready = qfalse;
-		cubeProbe->stored = qfalse;
+		cubeProbe->index = j;          // save the index, used later when writing to file
+		cubeProbe->ready = qfalse;     // ready for render use
+		cubeProbe->stored = qfalse;    // stored in file
+		for (i = 0; i < 6; i++)
+		{
+			cubeProbe->pbo[i] = NULL;  // if it needs to be rendered, this pbo is the buffer for pixel transfers from gpu to cpu
+		}
 
 		// Load the cubemap from file if possible, else render a new cubemap (if creatAll is true)
 		if (R_LoadCubeProbe(j, cubeTemp))
@@ -8727,7 +8731,7 @@ void RE_LoadWorldMap(const char *name)
 	//
 	// Here you can select how cubemaps are generated:
 //	R_BuildCubeMaps(qfalse); // qfalse, do not render any missing cubemaps immediately   TODO: make render offscreen..
-	R_BuildCubeMaps(qtrue); // qfalse, render all cubemaps immediately at mapload (old behavior)
+	R_BuildCubeMaps(qtrue); // qtrue, render all cubemaps immediately at mapload (old behavior)
 
 	// clear the cubeprobe reflections data
 	tr.reflectionData.probe1 = NULL;

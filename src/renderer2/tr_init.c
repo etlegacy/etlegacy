@@ -1586,6 +1586,8 @@ void R_Init(void)
 
 	R_InitVBOs();
 
+	R_InitPBOs();
+
 	R_InitShaders();
 
 	R_InitSkins();
@@ -1656,6 +1658,7 @@ void RE_Shutdown(qboolean destroyWindow)
 		R_IssuePendingRenderCommands();
 
 		R_ShutdownImages();
+		R_ShutdownPBOs();
 		R_ShutdownVBOs();
 		R_ShutdownFBOs();
 

@@ -516,32 +516,6 @@ typedef struct image_s
 } image_t;
 
 /**
- * @struct cubemapProbe_t
- * @brief
- */
-typedef struct
-{
-	vec3_t origin;
-	int index;                              ///< into array tr.cubeProbes[]
-	image_t *cubemap;
-	qboolean ready;                         ///< false, if this cubemap has not yet been created for rendering
-	qboolean stored;                        ///< true, if this cubemap has been stored to file
-} cubemapProbe_t;
-
-/**
- * @struct reflectionData_t
- * @brief
- * The reflection cubeProbe data needed for the interpolation
- */
-typedef struct
-{
-	cubemapProbe_t *probe1, *probe2;
-	int startTime, endTime;
-	image_t *env0, *env1;
-	float interpolate;
-} reflectionData_t;
-
-/**
  * @struct trRefLight_s
  * @typedef trRefLight_t
  * @brief A trRefLight_t has all the information passed in by
@@ -763,12 +737,8 @@ typedef struct IBO_s
  */
 typedef enum
 {
-	// read from texture
-	// write to texture
-	// read from framebuffer
-	// write to framebuffer
-	PBO_USAGE_WRITETOPBO = 0,		///< GL_PIXEL_UNPACK_BUFFER. From application to OpenGL
-	PBO_USAGE_READFROMPBO			///< GL_PIXEL_PACK_BUFFER.   From openGL to application
+	PBO_USAGE_WRITE = 0,		    ///< GL_PIXEL_UNPACK_BUFFER. From application to OpenGL. From CPU to GPU
+	PBO_USAGE_READ			        ///< GL_PIXEL_PACK_BUFFER.   From openGL to application. From GPU to CPU
 } pboUsage_t;
 
 /**
@@ -781,8 +751,41 @@ typedef struct PBO_s
 {
 	char name[MAX_QPATH];
 	uint32_t handle;
-	int usage;
+	int target;
+	pboUsage_t usage;
+	image_t *texture;
+	int bufferSize;
+	GLsync sync;
 } PBO_t;
+
+//===============================================================================
+
+/**
+ * @struct cubemapProbe_t
+ * @brief
+ */
+typedef struct
+{
+	vec3_t origin;
+	int index;                              ///< into array tr.cubeProbes[]
+	image_t *cubemap;                       ///< the cubmap texture (all 6 sides in one texture)
+	qboolean ready;                         ///< false, if this cubemap has not yet been created for rendering
+	qboolean stored;                        ///< true, if this cubemap has been stored to file
+	PBO_t *pbo[6];                          ///< the 6 Pixel Buffer Objects associated with this probe (one for each side of the cube)
+} cubemapProbe_t;
+
+/**
+ * @struct reflectionData_t
+ * @brief
+ * The reflection cubeProbe data needed for the interpolation
+ */
+typedef struct
+{
+	cubemapProbe_t *probe1, *probe2;
+	int startTime, endTime;                 ///< used for interpolation, to make transitions from cube to cube smooth
+	image_t *env0, *env1;                   ///< the textures used for interpolation (from & to textures)
+	float interpolate;                      ///< the interpolation ratio (0.0: 100% env0, 0% env1.   1.0: 0% env0, 100% env1)
+} reflectionData_t;
 
 //===============================================================================
 
@@ -3732,7 +3735,7 @@ typedef struct
 
 	growList_t vbos;						///< Vertex Buffer Object
 	growList_t ibos;						///< Index Buffer Object
-	growList_t pbos;						//< Pixel Buffer Object
+	growList_t pbos;						///< Pixel Buffer Object
 
 	growList_t cubeProbes;                  ///< all cubemaps in a linear growing list
 	reflectionData_t reflectionData;		///< the current reflection cubemap data
@@ -4400,7 +4403,7 @@ qboolean R_inPVS(const vec3_t p1, const vec3_t p2);
 
 void R_AddWorldInteractions(trRefLight_t *light);
 void R_AddPrecachedWorldInteractions(trRefLight_t *light);
-void R_ShutdownVBOs();
+//void R_ShutdownVBOs();  //this is also done later in this file..
 
 /*
 ============================================================
@@ -4549,6 +4552,23 @@ void R_BindNullIBO(void);
 void R_InitVBOs(void);
 void R_ShutdownVBOs(void);
 void R_VBOList_f(void);
+
+/*
+============================================================
+PIXEL BUFFER OBJECTS, tr_pbo.c
+============================================================
+*/
+PBO_t* R_CreatePBO(const char* name, pboUsage_t usage, int bufferSize);
+
+void R_BindPBO(PBO_t *pbo);
+void R_BindNullPBO(void);
+
+qboolean R_PBOResultAvailable(PBO_t *pbo);
+
+qboolean R_ReadPBO(PBO_t *pbo, byte *cpumemory, qboolean waitForResult);
+
+void R_InitPBOs(void);
+void R_ShutdownPBOs(void);
 
 /*
 ============================================================

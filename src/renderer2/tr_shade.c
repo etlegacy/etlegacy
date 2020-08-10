@@ -2138,8 +2138,8 @@ static void Render_liquid(int stage)
 								tr.cubeProbes.currentElements > 0; // && !tr.refdef.renderingCubemap;
 		use_water           = use_normalMapping && use_diffuseMapping && pStage->bundle[TB_DIFFUSEMAP].numTexMods;
 
-		// if renderingCubemap is true, we are not rendering a cubemap.
-		// But if the needed cubemaps are not yet ready for usage (if they need to get rendered),
+		// if renderingCubemap is true, we are now rendering a cubemap.
+		// But if the needed cubemaps are not yet ready for usage (if they need to get rendered first),
 		// R_FindCubeprobes() will freshly make them.
 		// Problem is, that rendering a cubemap will mess with the flow of execution of this function. (program + macros don't match).
 		// It is important that SetMacrosAndSelectProgram() is executed after the call to R_FindCubeprobes().

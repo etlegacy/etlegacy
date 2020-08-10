@@ -7253,6 +7253,196 @@ const void *RB_RenderToTexture(const void *data)
  *
  * The RB_ functions are called when an RC_RENDERCUBEPROBE command is executed from the Render-Command-Buffer
  */
+#if 1
+const void *RB_RenderCubeprobe(const void *data)
+{
+	// We render the cubemaps with one extra edge pixel (so we render a 33x33 image).
+	// and then we read the pixels from the 32x32 middle of the image.
+	// This ensures that we get the correct colors at the edges of an image. Opengl processes half-pixels when filtering.
+	// (otherwise we'll get a stripe of wrong colors on the images along the edges, and the cubemap images do not align colors).
+	// But, we do readpixels the texture as a 32x32 image from screen.
+	// The fov_x & fov_y must be 90 degrees for a 32x32 image. We must render a 33x33 image with an adjusted fov.
+	//
+	// IF the REF_CUBEMAP_SIZE is set to 32, then fov angles are calculated like this:
+	//   45 degrees is half of 90 degrees. You can see 45 degrees on either side of the line-of-sight.
+	//   Half a cube is 32/2 pixels = 16 pixels.
+	//   sin(45 degrees) = sqrt(2)/2 = M_SQRT2 * 0.5 = 16 (pixels) / length camera to cubeplane.
+	//   => length camera to cubeplane = 16 / (M_SQRT2 * 0.5)
+	//   => the adjusted fov angle's sine value is: 16+1 pixels / length camera to cubeplane
+	//   sin(adjusted fov) = 17 / (16 / M_SQRT2 * 0.5) = 0.7513009550107067446758971347364 radians
+	//   => adjusted (half) fov angle in degrees is 48.703196634271687046758736224782
+	//   The full fov_x & fov_y is: 97.406393268543374093517472449563 degrees
+	// 1/(sqrt(2)/2) = 1.4142135623730950488016887242097 = sqrt(2)  !
+	const double halfCube = 0.5 * REF_CUBEMAP_SIZE;
+	float angleFOV = asin((halfCube + 1.0) / (halfCube * 1.4142135623730950488016887242097)) * 360.0 / M_PI;
+	int i;
+	refdef_t rf;
+	byte *cubeTemp[6];                      ///< 6 textures for cubemap storage
+	FBO_t *previousFBO;
+
+	const renderCubeprobeCommand_t *cmd = (const renderCubeprobeCommand_t *)data;
+
+	// we can not write to data members from cmd, because it's a constant..
+	// So we look up the probe, and then we can edit the probes properties.
+	cubemapProbe_t *probe = (cubemapProbe_t *)Com_GrowListElement(&tr.cubeProbes, cmd->cubeprobeIndex);
+
+	// this is used for storing the 6 cubesides pixeldata read from screen.
+	// If we supplied a pointer to the pixeldata (pre allocated memory for each of the 6 sides),
+	// then we store the pixeldata to those addresses.
+	// If the cmd->pixeldata == NULL, we don't return any pixeldata (used for storing the cubemap textures to file).
+	// In that case, we allocate/free that memory locally in this function.
+	if (cmd->pixeldata)
+	{
+		for (i = 0; i < 6; i++)
+		{
+			cubeTemp[i] = cmd->pixeldata[i];
+		}
+	} else {
+
+		for (i = 0; i < 6; i++)
+		{
+			cubeTemp[i] = (byte *)ri.Z_Malloc(REF_CUBEMAP_TEXTURE_SIZE);
+		}
+	}
+
+	GL_Viewport(glConfig.vidWidth / 2, glConfig.vidHeight / 2, REF_CUBEMAP_SIZE+2, REF_CUBEMAP_SIZE+2);
+	GL_Scissor(glConfig.vidWidth / 2, glConfig.vidHeight / 2, REF_CUBEMAP_SIZE+2, REF_CUBEMAP_SIZE+2);
+
+	GL_CheckErrors();
+
+	previousFBO = glState.currentFBO;
+
+	// render the cubemap
+	Com_Memset(&rf, 0, sizeof(refdef_t));
+	VectorCopy(probe->origin, rf.vieworg);
+	rf.fov_x   = angleFOV;
+	rf.fov_y   = angleFOV;
+	rf.x       = 0;
+	rf.y       = 0;
+	rf.time    = 0;
+	rf.rdflags = RDF_NOCUBEMAP | RDF_NOBLOOM;
+	rf.width   = REF_CUBEMAP_SIZE+2; // 1 extra pixel around the edges
+	rf.height  = REF_CUBEMAP_SIZE+2; // "
+	for (i = 0; i < 6; i++)
+	{
+		switch (i)
+		{
+		case 0:
+			// X+
+			VectorSet(rf.viewaxis[0], 1.f, 0.f, 0.f);
+			VectorSet(rf.viewaxis[1], 0.f, 0.f, 1.f);
+			VectorSet(rf.viewaxis[2], 0.f, -1.f, 0.f);
+			break;
+		case 1:
+			// X-
+			VectorSet(rf.viewaxis[0], -1.f, 0.f, 0.f);
+			VectorSet(rf.viewaxis[1], 0.f, 0.f, -1.f);
+			VectorSet(rf.viewaxis[2], 0.f, -1.f, 0.f);
+			break;
+		case 2:
+			// Y+
+			VectorSet(rf.viewaxis[0], 0.f, 1.f, 0.f);
+			VectorSet(rf.viewaxis[1], -1.f, 0.f, 0.f);
+			VectorSet(rf.viewaxis[2], 0.f, 0.f, 1.f);
+			break;
+		case 3:
+			// Y-
+			VectorSet(rf.viewaxis[0], 0.f, -1.f, 0.f);
+			VectorSet(rf.viewaxis[1], -1.f, 0.f, 0.f);
+			VectorSet(rf.viewaxis[2], 0.f, 0.f, -1.f);
+			break;
+		case 4:
+			// Z+ up
+			VectorSet(rf.viewaxis[0], 0.f, 0.f, 1.f);
+			VectorSet(rf.viewaxis[1], -1.f, 0.f, 0.f);
+			VectorSet(rf.viewaxis[2], 0.f, -1.f, 0.f);
+			break;
+		case 5:
+			// Z- down
+			VectorSet(rf.viewaxis[0], 0.f, 0.f, -1.f);
+			VectorSet(rf.viewaxis[1], 1.f, 0.f, 0.f);
+			VectorSet(rf.viewaxis[2], 0.f, -1.f, 0.f);
+			break;
+		}
+
+		// when we are busy rendering a cubemap, the rest of code must know.
+		// Therefor we must always set tr.refdef.renderingCubemap to indicate this.
+		tr.refdef.renderingCubemap = qtrue;
+
+		// create and bind a PBO to where the pixels are drawn
+		probe->pbo[i] = R_CreatePBO(va("_cubemapbo%d", i), PBO_USAGE_READ, REF_CUBEMAP_TEXTURE_SIZE);
+		R_BindPBO(probe->pbo[i]);
+
+		RE_BeginFrame();
+		RE_RenderSimpleScene(&rf); // doesn't render so much as RE_RenderScene (no decals, no coronas, and more...)
+		R_BindNullVBO();
+		R_BindNullIBO();
+		backEnd.refdef    = tr.refdef;
+		backEnd.viewParms = tr.viewParms;
+		RB_RenderViewFront();
+		R_InitNextFrame();
+
+		// Bugfix: drivers absolutely hate running in high res and using glReadPixels near the top or bottom edge.
+		// Soo.. lets do it in the middle.
+		// UPDATE: This is true still today (2020).
+		// Note the extra pixel around the edges.. +1
+//		glReadPixels(glConfig.vidWidth / 2 + 1, glConfig.vidHeight / 2 + 1, REF_CUBEMAP_SIZE, REF_CUBEMAP_SIZE, GL_RGBA, GL_UNSIGNED_BYTE, cubeTemp[i]);
+		// ^^this is the old way of reading pixels
+
+		// If we use a PBO to write to, glReadPixels last argument is a byte-offset into the buffer memory.
+		// When a PBO is bound, the call to glReadPixels will return immediately.
+		// The reading of the pixels is actually done when OpenGL sees fit.
+		glReadPixels(glConfig.vidWidth / 2 + 1, glConfig.vidHeight / 2 + 1, REF_CUBEMAP_SIZE, REF_CUBEMAP_SIZE, GL_RGBA, GL_UNSIGNED_BYTE, 0); // pbo address 0
+		// read the pixels back from the PBO immediately. Means we have to wait for the PBO to be ready.
+		// The last argument to R_ReadPBO must be == true, so the function will wait, before doing the copy from gpu->cpu..
+		(void)R_ReadPBO(probe->pbo[i], cubeTemp[i], qtrue); // wait for the result to be available
+		R_BindNullPBO(); // unbind this pbo, we're done.
+// in essence the new way, to read pixels via a pbo, is still doing that in a blocking way. But that will change soon.. todo
+	}
+
+	// create the cubemap texture
+	probe->cubemap = R_CreateCubeImage(va("_cubeProbe%d", cmd->cubeprobeIndex), (const byte **)cubeTemp, REF_CUBEMAP_SIZE, REF_CUBEMAP_SIZE, IF_NOPICMIP, FT_LINEAR, WT_EDGE_CLAMP);
+
+	if (!probe->cubemap)
+	{
+		probe->cubemap = tr.autoCubeImage; // provide a valid texture
+		probe->ready = qfalse; // but indicate this cube is not ready  (maybe try to create it again later?)
+		goto renderCubeProbe_finish;
+	}
+	// this cubemap is now ready for render use
+	probe->ready = qtrue;
+
+
+	// save to file..
+//	R_SaveCubeProbe(probe, cubeTemp, qfalse);  // this makes it (too) slow ?..  try to find a faster way..
+
+
+renderCubeProbe_finish:
+
+	// free allocated memory
+	// If we passed pointers to where the pixeldata needs to be written to, then we do not free that memory here.
+	// That memory is allocated outside this function, so only free memory allocated by this function.
+	if (!cmd->pixeldata)
+	{
+		for (i = 0; i < 6; i++)
+		{
+			if (cubeTemp[i]) ri.Free(cubeTemp[i]);
+		}
+	}
+
+	GL_Viewport(0, 0, glConfig.vidWidth, glConfig.vidHeight);
+	GL_Scissor(0, 0, glConfig.vidWidth, glConfig.vidHeight);
+
+	R_BindFBO(previousFBO);
+	GL_CheckErrors();
+
+	// turn pixel targets off
+	tr.refdef.renderingCubemap = qfalse;
+
+	return (const void *)(cmd + 1);
+}
+
+#else // backup
 const void *RB_RenderCubeprobe(const void *data)
 {
 	// We render the cubemaps with one extra edge pixel (so we render a 33x33 image).
@@ -7465,6 +7655,7 @@ renderCubeProbe_finish:
 
 	return (const void *)(cmd + 1);
 }
+#endif
 
 /**
  * @brief RB_Finish
