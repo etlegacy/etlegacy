@@ -8475,10 +8475,10 @@ void R_BuildCubeMaps(qboolean createAll)
 
 			RE_RenderCubeprobe(j, cubeTemp); // add the render command:  (probe j, and use cubeTemp to store pixeldata)
 			R_IssuePendingRenderCommands(); // and execute it
-			// the cube is now rendered, and the pixeldata is returned in cubeTemp
+			// the cube is now rendered, and the pixeldata is returned in cubeTemp.  cubeProbe->ready should be set
 			if (cubeProbe->ready)
 			{
-				R_SaveCubeProbe(cubeProbe, cubeTemp, qtrue);
+				R_SaveCubeProbe(cubeProbe, cubeTemp, qtrue); // this sets cubeProbe->stored if it succeeded to save to file
 			}
 		}
 	}

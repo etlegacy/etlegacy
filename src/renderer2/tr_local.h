@@ -749,13 +749,13 @@ typedef enum
  */
 typedef struct PBO_s
 {
-	char name[MAX_QPATH];
-	uint32_t handle;
-	int target;
-	pboUsage_t usage;
-	image_t *texture;
-	int bufferSize;
-	GLsync sync;
+//	char name[MAX_QPATH];                   ///< why we need a name?
+	uint32_t handle;                        ///< handle of this PBO
+	int target;                             ///< pack or unpack buffer
+	pboUsage_t usage;                       ///< reading or writing from/to GPU
+	image_t *texture;                       ///< the pbo texture / buffer
+	int bufferSize;                         ///< size of the pixeldata that will be transfered
+	GLsync sync;                            ///< handle for testing if the result is ready
 } PBO_t;
 
 //===============================================================================
@@ -4558,8 +4558,10 @@ void R_VBOList_f(void);
 PIXEL BUFFER OBJECTS, tr_pbo.c
 ============================================================
 */
-PBO_t* R_CreatePBO(const char* name, pboUsage_t usage, int bufferSize);
+//$ PBO_t* R_CreatePBO(const char* name, pboUsage_t usage, int bufferSize);
+PBO_t* R_CreatePBO(pboUsage_t usage, int bufferSize);
 
+void R_BindSyncPBO(PBO_t *pbo); // bind and start a fencesync
 void R_BindPBO(PBO_t *pbo);
 void R_BindNullPBO(void);
 

@@ -118,6 +118,9 @@ elseif(WIN32)
 		set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /EHa /Zp16 /arch:SSE2 /O2 /Ob2 /Oi /Ot")
 		set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /EHa /Zp16 /arch:SSE2 /W3 /Od /Ob2 /Oi /Ot")
 
+		set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} /EHa /Zp16 /arch:SSE2 /O2 /Ob2 /Oi /Ot")
+		set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} /EHa /Zp16 /arch:SSE2 /W3 /Od /Ob2 /Oi /Ot")
+
 		set(CompilerFlags
 			CMAKE_CXX_FLAGS
 			CMAKE_CXX_FLAGS_DEBUG
@@ -136,17 +139,11 @@ elseif(WIN32)
 			string(REPLACE "/RTC1" "" ${CompilerFlag} "${${CompilerFlag}}")
 		endforeach()
 
-		# The release compiler options
-		#//target_compile_options(/EHa /Zp16 /arch:SSE2 /O2 /Ob2 /Oi /Ot)
-		#target_compile_options(/EHa /Zp16 /arch:SSE2 /Od /Ob2 /Oi /Ot PUBLIC "$<$<CONFIG:DEBUG>:${CMAKE_CXX_FLAGS_DEBUG}>")
-		#target_compile_options(/EHa /Zp16 /arch:SSE2 /O2 /Ob2 /Oi /Ot PUBLIC "$<$<CONFIG:RELEASE>:${CMAKE_CXX_FLAGS_RELEASE}>")
-
-		# add a preprocessor directive (so the compile with latest Windows SDK will work)
-		add_compile_definitions(WINDOWS_IGNORE_PACKING_MISMATCH) # needed to compile using latest Windows SDK Version
-
-		set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /NODEFAULTLIB:MSVCRT.lib /NODEFAULTLIB:MSVCRTD.lib /LARGEADDRESSAWARE")
-		set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /NODEFAULTLIB:MSVCRT.lib /NODEFAULTLIB:MSVCRTD.lib /LARGEADDRESSAWARE")
+		set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /LARGEADDRESSAWARE /NODEFAULTLIB:MSVCRT.lib /NODEFAULTLIB:MSVCRTD.lib")
+		set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /LARGEADDRESSAWARE /NODEFAULTLIB:MSVCRT.lib /NODEFAULTLIB:MSVCRTD.lib")
 		add_definitions(-D_CRT_SECURE_NO_WARNINGS) # Do not show CRT warnings
+		# set_target_properties(MyTargetName PROPERTIES LINK_FLAGS "/LARGEADDRESSAWARE") # /LARGEADDRESSAWARE
+		add_definitions(-D_WINDOWS_IGNORE_PACKING_MISMATCH) # To make it work with latest Windows SDK
 	endif(MSVC)
 	if(MINGW AND NOT DEBUG_BUILD)
 		set(CMAKE_C_LINK_EXECUTABLE "${CMAKE_C_LINK_EXECUTABLE} -static-libgcc")

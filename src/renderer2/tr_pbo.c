@@ -38,7 +38,8 @@
 #include "tr_local.h"
 
 
-PBO_t* R_CreatePBO(const char* name, pboUsage_t usage, int bufferSize)
+//$PBO_t* R_CreatePBO(const char* name, pboUsage_t usage, int bufferSize)
+PBO_t* R_CreatePBO(pboUsage_t usage, int bufferSize)
 {
 	PBO_t *pbo;
 	int bufTarget = GL_PIXEL_PACK_BUFFER;
@@ -56,12 +57,13 @@ PBO_t* R_CreatePBO(const char* name, pboUsage_t usage, int bufferSize)
 		bufUsage = GL_STREAM_COPY; //GL_STREAM_READ; // GL_STREAM_COPY
 		break;
 	}
-
+/*$
 	if (strlen(name) >= MAX_QPATH)
 	{
 		Ren_Drop("R_CreatePBO: \"%s\" is too long\n", name);
 		return NULL;
 	}
+*/
 
 	// make sure the render thread is stopped
 //	R_IssuePendingRenderCommands();
@@ -69,7 +71,7 @@ PBO_t* R_CreatePBO(const char* name, pboUsage_t usage, int bufferSize)
 	pbo = (PBO_t *)ri.Hunk_Alloc(sizeof(*pbo), h_low);
 	Com_AddToGrowList(&tr.pbos, pbo);
 
-	Q_strncpyz(pbo->name, name, sizeof(pbo->name));
+//$	Q_strncpyz(pbo->name, name, sizeof(pbo->name));
 	pbo->target = bufTarget;
 	pbo->usage = bufUsage;
 	pbo->bufferSize = bufferSize;
@@ -88,7 +90,7 @@ PBO_t* R_CreatePBO(const char* name, pboUsage_t usage, int bufferSize)
 }
 
 
-void R_BindPBO(PBO_t *pbo)
+void R_BindSyncPBO(PBO_t *pbo)
 {
 	if (!pbo)
 	{
@@ -104,6 +106,24 @@ void R_BindPBO(PBO_t *pbo)
 	pbo->sync = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0); // glFenceSync is only supported if the GL version is 3.2 or greater.
 
 	GL_CheckErrors();
+
+	if (!pbo->sync)
+	{
+		Ren_Drop("R_BindPBO: pbo sync error");
+		return;
+	}
+}
+
+
+void R_BindPBO(PBO_t *pbo)
+{
+	if (!pbo)
+	{
+		Ren_Drop("R_BindPBO: NULL pbo");
+		return;
+	}
+
+	glBindBuffer(pbo->target, pbo->handle);
 }
 
 
@@ -179,7 +199,7 @@ qboolean R_ReadPBO(PBO_t *pbo, byte *cpumemory, qboolean waitForResult)
 		return qfalse;
 	}
 	
-	if (pbo->usage != PBO_USAGE_READ || !pbo->sync)
+	if (pbo->usage != GL_STREAM_COPY || !pbo->sync)
 	{
 		return qfalse;
 	}
@@ -192,7 +212,12 @@ qboolean R_ReadPBO(PBO_t *pbo, byte *cpumemory, qboolean waitForResult)
 			glGetSynciv(pbo->sync, GL_SYNC_STATUS, sizeof(result), NULL, &result);
 		}
 	}
-	// if you don't waitForResult, you must be sure the result is available: R_PBOResultAvailable(pbo) == true
+/*	else {
+		// if you don't waitForResult, you must be sure the result is available: R_PBOResultAvailable(pbo) == true
+		// if (!R_PBOResultAvailable(pbo)) return qfalse;
+		glGetSynciv(pbo->sync, GL_SYNC_STATUS, sizeof(result), NULL, &result);
+		if (result != GL_SIGNALED) return qfalse;
+	}*/
 
     glBindBuffer(GL_PIXEL_PACK_BUFFER, pbo->handle);
     void* mappedBuffer = glMapBuffer(GL_PIXEL_PACK_BUFFER, GL_READ_ONLY);

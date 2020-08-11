@@ -7253,7 +7253,6 @@ const void *RB_RenderToTexture(const void *data)
  *
  * The RB_ functions are called when an RC_RENDERCUBEPROBE command is executed from the Render-Command-Buffer
  */
-#if 1
 const void *RB_RenderCubeprobe(const void *data)
 {
 	// We render the cubemaps with one extra edge pixel (so we render a 33x33 image).
@@ -7277,8 +7276,9 @@ const void *RB_RenderCubeprobe(const void *data)
 	float angleFOV = asin((halfCube + 1.0) / (halfCube * 1.4142135623730950488016887242097)) * 360.0 / M_PI;
 	int i;
 	refdef_t rf;
-	byte *cubeTemp[6];                      ///< 6 textures for cubemap storage
+	byte *cubeTemp[6];  // 6 textures pixeldata
 	FBO_t *previousFBO;
+	uint32_t pboResults = (1<<5) | (1<<4) | (1<<3) | (1<<2) | (1<<1) | (1<<0); // we must wait for pbo results of all 6 sides
 
 	const renderCubeprobeCommand_t *cmd = (const renderCubeprobeCommand_t *)data;
 
@@ -7370,8 +7370,9 @@ const void *RB_RenderCubeprobe(const void *data)
 		tr.refdef.renderingCubemap = qtrue;
 
 		// create and bind a PBO to where the pixels are drawn
-		probe->pbo[i] = R_CreatePBO(va("_cubemapbo%d", i), PBO_USAGE_READ, REF_CUBEMAP_TEXTURE_SIZE);
-		R_BindPBO(probe->pbo[i]);
+//$		probe->pbo[i] = R_CreatePBO(va("_cubemapbo%d", i), PBO_USAGE_READ, REF_CUBEMAP_TEXTURE_SIZE);
+		probe->pbo[i] = R_CreatePBO(PBO_USAGE_READ, REF_CUBEMAP_TEXTURE_SIZE);
+		R_BindSyncPBO(probe->pbo[i]);
 
 		RE_BeginFrame();
 		RE_RenderSimpleScene(&rf); // doesn't render so much as RE_RenderScene (no decals, no coronas, and more...)
@@ -7395,9 +7396,24 @@ const void *RB_RenderCubeprobe(const void *data)
 		glReadPixels(glConfig.vidWidth / 2 + 1, glConfig.vidHeight / 2 + 1, REF_CUBEMAP_SIZE, REF_CUBEMAP_SIZE, GL_RGBA, GL_UNSIGNED_BYTE, 0); // pbo address 0
 		// read the pixels back from the PBO immediately. Means we have to wait for the PBO to be ready.
 		// The last argument to R_ReadPBO must be == true, so the function will wait, before doing the copy from gpu->cpu..
-		(void)R_ReadPBO(probe->pbo[i], cubeTemp[i], qtrue); // wait for the result to be available
+//!* (void)R_ReadPBO(probe->pbo[i], cubeTemp[i], qtrue); // wait for this result to be available
+		// That^^ line above waits after every (1 of 6) textures until rendering has finished.
+		// We can also collect the results later, after all sides have been rendered (better said: after the commands to render have been issued).
+
 		R_BindNullPBO(); // unbind this pbo, we're done.
-// in essence the new way, to read pixels via a pbo, is still doing that in a blocking way. But that will change soon.. todo
+	}
+
+	//!* collect the results, and copy the pixeldata from gpu to cpu.
+	//!* (This is just acting on 6 textures/pbos, but it could be just a jiffie faster on slower systems)
+	while (pboResults)
+	{
+		for (i = 0; i < 6; i++)
+		{
+			if (!probe->pbo[i]->sync) continue;
+			if (!R_PBOResultAvailable(probe->pbo[i])) continue;
+			R_ReadPBO(probe->pbo[i], cubeTemp[i], qfalse);
+			pboResults &= ~(1<<i); // clear bit i
+		}
 	}
 
 	// create the cubemap texture
@@ -7433,6 +7449,7 @@ renderCubeProbe_finish:
 	GL_Viewport(0, 0, glConfig.vidWidth, glConfig.vidHeight);
 	GL_Scissor(0, 0, glConfig.vidWidth, glConfig.vidHeight);
 
+	R_BindNullPBO();
 	R_BindFBO(previousFBO);
 	GL_CheckErrors();
 
@@ -7441,221 +7458,6 @@ renderCubeProbe_finish:
 
 	return (const void *)(cmd + 1);
 }
-
-#else // backup
-const void *RB_RenderCubeprobe(const void *data)
-{
-	// We render the cubemaps with one extra edge pixel (so we render a 33x33 image).
-	// and then we read the pixels from the 32x32 middle of the image.
-	// This ensures that we get the correct colors at the edges of an image. Opengl processes half-pixels when filtering.
-	// (otherwise we'll get a stripe of wrong colors on the images along the edges, and the cubemap images do not align colors).
-	// But, we do readpixels the texture as a 32x32 image from screen.
-	// The fov_x & fov_y must be 90 degrees for a 32x32 image. We must render a 33x33 image with an adjusted fov.
-	//
-	// IF the REF_CUBEMAP_SIZE is set to 32, then fov angles are calculated like this:
-	//   45 degrees is half of 90 degrees. You can see 45 degrees on either side of the line-of-sight.
-	//   Half a cube is 32/2 pixels = 16 pixels.
-	//   sin(45 degrees) = sqrt(2)/2 = M_SQRT2 * 0.5 = 16 (pixels) / length camera to cubeplane.
-	//   => length camera to cubeplane = 16 / (M_SQRT2 * 0.5)
-	//   => the adjusted fov angle's sine value is: 16+1 pixels / length camera to cubeplane
-	//   sin(adjusted fov) = 17 / (16 / M_SQRT2 * 0.5) = 0.7513009550107067446758971347364 radians
-	//   => adjusted (half) fov angle in degrees is 48.703196634271687046758736224782
-	//   The full fov_x & fov_y is: 97.406393268543374093517472449563 degrees
-	// 1/(sqrt(2)/2) = 1.4142135623730950488016887242097 = sqrt(2)  !
-	const double halfCube = 0.5 * REF_CUBEMAP_SIZE;
-	float angleFOV = asin((halfCube + 1.0) / (halfCube * 1.4142135623730950488016887242097)) * 360.0 / M_PI;
-	int i;
-	refdef_t rf;
-	byte *cubeTemp[6];                      ///< 6 textures for cubemap storage
-	FBO_t *previousFBO;
-
-	const renderCubeprobeCommand_t *cmd = (const renderCubeprobeCommand_t *)data;
-
-	// we can not write to data members from cmd, because it's a constant..
-	// So we look up the probe, and then we can edit the probes properties.
-	cubemapProbe_t *probe = (cubemapProbe_t *)Com_GrowListElement(&tr.cubeProbes, cmd->cubeprobeIndex);
-
-	// this is used for storing the 6 cubesides pixeldata read from screen.
-	// If we supplied a pointer to the pixeldata (pre allocated memory for each of the 6 sides),
-	// then we store the pixeldata to those addresses.
-	// If the cmd->pixeldata == NULL, we don't return any pixeldata (used for storing the cubemap textures to file).
-	// In that case, we allocate/free that memory locally in this function.
-	if (cmd->pixeldata)
-	{
-		for (i = 0; i < 6; i++)
-		{
-			cubeTemp[i] = cmd->pixeldata[i];
-		}
-	} else {
-
-		for (i = 0; i < 6; i++)
-		{
-			cubeTemp[i] = (byte *)ri.Z_Malloc(REF_CUBEMAP_SIZE * REF_CUBEMAP_SIZE * 4);
-		}
-	}
-
-	GL_Viewport(glConfig.vidWidth / 2, glConfig.vidHeight / 2, REF_CUBEMAP_SIZE+2, REF_CUBEMAP_SIZE+2);
-	GL_Scissor(glConfig.vidWidth / 2, glConfig.vidHeight / 2, REF_CUBEMAP_SIZE+2, REF_CUBEMAP_SIZE+2);
-
-	GL_CheckErrors();
-
-	previousFBO = glState.currentFBO;
-
-// Bind the FBO
-//R_BindFBO(tr.currentCubemapFBO);
-//glBindFramebuffer(GL_FRAMEBUFFER, tr.currentCubemapFBO->frameBuffer);
-
-//R_BindFBO(tr.deferredRenderFBO);
-//glBindFramebuffer(GL_FRAMEBUFFER, tr.deferredRenderFBO->frameBuffer);
-
-//GLenum drawBuffers[] = { GL_COLOR_ATTACHMENT0 };
-//glDrawBuffers(1, drawBuffers); 
-//glReadBuffer(GL_COLOR_ATTACHMENT0);
-//glDrawBuffer(GL_COLOR_ATTACHMENT0);
-
-	// render the cubemap
-	Com_Memset(&rf, 0, sizeof(refdef_t));
-	VectorCopy(probe->origin, rf.vieworg);
-	rf.fov_x   = angleFOV;
-	rf.fov_y   = angleFOV;
-	rf.x       = 0;
-	rf.y       = 0;
-	rf.time    = 0;
-	rf.rdflags = RDF_NOCUBEMAP | RDF_NOBLOOM;
-	rf.width   = REF_CUBEMAP_SIZE+2; // 1 extra pixel around the edges
-	rf.height  = REF_CUBEMAP_SIZE+2; // "
-	for (i = 0; i < 6; i++)
-	{
-// select the FBO side texture to render to
-//R_AttachFBOTexture2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, tr.currentCubemapFBOImage->texnum, 0);
-
-		switch (i)
-		{
-		case 0:
-			// X+
-			VectorSet(rf.viewaxis[0], 1.f, 0.f, 0.f);
-			VectorSet(rf.viewaxis[1], 0.f, 0.f, 1.f);
-			VectorSet(rf.viewaxis[2], 0.f, -1.f, 0.f);
-			break;
-		case 1:
-			// X-
-			VectorSet(rf.viewaxis[0], -1.f, 0.f, 0.f);
-			VectorSet(rf.viewaxis[1], 0.f, 0.f, -1.f);
-			VectorSet(rf.viewaxis[2], 0.f, -1.f, 0.f);
-			break;
-		case 2:
-			// Y+
-			VectorSet(rf.viewaxis[0], 0.f, 1.f, 0.f);
-			VectorSet(rf.viewaxis[1], -1.f, 0.f, 0.f);
-			VectorSet(rf.viewaxis[2], 0.f, 0.f, 1.f);
-			break;
-		case 3:
-			// Y-
-			VectorSet(rf.viewaxis[0], 0.f, -1.f, 0.f);
-			VectorSet(rf.viewaxis[1], -1.f, 0.f, 0.f);
-			VectorSet(rf.viewaxis[2], 0.f, 0.f, -1.f);
-			break;
-		case 4:
-			// Z+ up
-			VectorSet(rf.viewaxis[0], 0.f, 0.f, 1.f);
-			VectorSet(rf.viewaxis[1], -1.f, 0.f, 0.f);
-			VectorSet(rf.viewaxis[2], 0.f, -1.f, 0.f);
-			break;
-		case 5:
-			// Z- down
-			VectorSet(rf.viewaxis[0], 0.f, 0.f, -1.f);
-			VectorSet(rf.viewaxis[1], 1.f, 0.f, 0.f);
-			VectorSet(rf.viewaxis[2], 0.f, -1.f, 0.f);
-			break;
-		}
-
-		// when we are busy rendering a cubemap, the rest of code must know.
-		// Therefor we must always set tr.refdef.renderingCubemap to indicate this.
-		tr.refdef.renderingCubemap = qtrue;
-
-		RE_BeginFrame();
-		RE_RenderSimpleScene(&rf); // doesn't render so much as RE_RenderScene (no decals, no coronas, and more...)
-		R_BindNullVBO();
-		R_BindNullIBO();
-		backEnd.refdef    = tr.refdef;
-		backEnd.viewParms = tr.viewParms;
-		RB_RenderViewFront();
-		R_InitNextFrame();
-
-		// Bugfix: drivers absolutely hate running in high res and using glReadPixels near the top or bottom edge.
-		// Soo.. lets do it in the middle.
-		// UPDATE: This is true still today (2020).
-		// Note the extra pixel around the edges.. +1
-		glReadPixels(glConfig.vidWidth / 2 + 1, glConfig.vidHeight / 2 + 1, REF_CUBEMAP_SIZE, REF_CUBEMAP_SIZE, GL_RGBA, GL_UNSIGNED_BYTE, cubeTemp[i]);
-	}
-
-//glBindFramebuffer(GL_FRAMEBUFFER, 0);
-//viewport
-
-//cmd->cubeprobe->cubemap = tr.currentCubemapFBOImage;
-/*{
-	// create the texture object
-	probe->cubemap = R_AllocImage(va("_cubeProbe%d", cmd->cubeprobeIndex), qtrue);
-	if (!probe->cubemap)
-	{
-		probe->ready = qfalse;
-		probe->cubemap = tr.autoCubeImage; // provide a valid texture
-		goto renderCubeProbe_finish;
-	}
-	probe->cubemap->type = GL_TEXTURE_CUBE_MAP_ARB;
-	probe->cubemap->width  = REF_CUBEMAP_SIZE;
-	probe->cubemap->height = REF_CUBEMAP_SIZE;
-	probe->cubemap->bits       = IF_NOPICMIP;
-	probe->cubemap->filterType = FT_LINEAR;
-	probe->cubemap->wrapType   = WT_EDGE_CLAMP;
-	// and copy the cubemap textures to the cubeprobe
-	glReadBuffer(GL_COLOR_ATTACHMENT0);
-	GL_Bind(probe->cubemap);
-	glCopyTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, 0, 0, REF_CUBEMAP_SIZE, REF_CUBEMAP_SIZE, 0);
-	glBindTexture(probe->cubemap->type, 0);
-}*/
-	// create the cubemap texture
-	probe->cubemap = R_CreateCubeImage(va("_cubeProbe%d", cmd->cubeprobeIndex), (const byte **)cubeTemp, REF_CUBEMAP_SIZE, REF_CUBEMAP_SIZE, IF_NOPICMIP, FT_LINEAR, WT_EDGE_CLAMP);
-
-	if (!probe->cubemap)
-	{
-		probe->cubemap = tr.autoCubeImage; // provide a valid texture
-		probe->ready = qfalse; // but indicate this cube is not ready  (maybe try to create it again later?)
-		goto renderCubeProbe_finish;
-	}
-	// this cubemap is now ready for render use
-	probe->ready = qtrue;
-
-
-	// save to file..
-//	R_SaveCubeProbe(probe, cubeTemp, qfalse);  // this makes it (too) slow ?..  try to find a faster way..
-
-
-renderCubeProbe_finish:
-
-	// free allocated memory
-	// If we passed pointers to where the pixeldata needs to be written to, then we do not free that memory here.
-	// That memory is allocated outside this function, so only free memory allocated by this function.
-	if (!cmd->pixeldata)
-	{
-		for (i = 0; i < 6; i++)
-		{
-			if (cubeTemp[i]) ri.Free(cubeTemp[i]);
-		}
-	}
-
-	GL_Viewport(0, 0, glConfig.vidWidth, glConfig.vidHeight);
-	GL_Scissor(0, 0, glConfig.vidWidth, glConfig.vidHeight);
-
-	R_BindFBO(previousFBO);
-	GL_CheckErrors();
-
-	// turn pixel targets off
-	tr.refdef.renderingCubemap = qfalse;
-
-	return (const void *)(cmd + 1);
-}
-#endif
 
 /**
  * @brief RB_Finish
