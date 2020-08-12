@@ -7371,8 +7371,9 @@ const void *RB_RenderCubeprobe(const void *data)
 
 		// create and bind a PBO to where the pixels are drawn
 //$		probe->pbo[i] = R_CreatePBO(va("_cubemapbo%d", i), PBO_USAGE_READ, REF_CUBEMAP_TEXTURE_SIZE);
-		probe->pbo[i] = R_CreatePBO(PBO_USAGE_READ, REF_CUBEMAP_TEXTURE_SIZE);
-		R_BindSyncPBO(probe->pbo[i]);
+//		probe->pbo[i] = R_CreatePBO(PBO_USAGE_READ, REF_CUBEMAP_TEXTURE_SIZE);
+		probe->pbo[i] = R_CreatePBO(PBO_USAGE_READ, REF_CUBEMAP_SIZE, REF_CUBEMAP_SIZE);
+		R_SyncPBO(probe->pbo[i]);
 
 		RE_BeginFrame();
 		RE_RenderSimpleScene(&rf); // doesn't render so much as RE_RenderScene (no decals, no coronas, and more...)

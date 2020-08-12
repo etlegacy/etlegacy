@@ -1485,15 +1485,18 @@ void R_UploadImage(const byte **dataArray, int numData, image_t *image)
 		{
 		case GL_TEXTURE_CUBE_MAP_ARB:
 			glTexImage2D(target + i, 0, internalFormat, scaledWidth, scaledHeight, 0, format, GL_UNSIGNED_BYTE, scaledBuffer);
+//R_pboTexImage2D(target + i, 0, internalFormat, scaledWidth, scaledHeight, 0, format, GL_UNSIGNED_BYTE, scaledBuffer);
 			break;
 		default:
 			if (image->bits & IF_PACKED_DEPTH24_STENCIL8)
 			{
 				glTexImage2D(target, 0, internalFormat, scaledWidth, scaledHeight, 0, format, GL_UNSIGNED_INT_24_8_EXT, NULL);
+//R_pboTexImage2D(target, 0, internalFormat, scaledWidth, scaledHeight, 0, format, GL_UNSIGNED_INT_24_8_EXT, NULL);
 			}
 			else
 			{
 				glTexImage2D(target, 0, internalFormat, scaledWidth, scaledHeight, 0, format, GL_UNSIGNED_BYTE, scaledBuffer);
+//R_pboTexImage2D(target, 0, internalFormat, scaledWidth, scaledHeight, 0, format, GL_UNSIGNED_BYTE, scaledBuffer);
 			}
 			break;
 		}

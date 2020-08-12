@@ -754,6 +754,8 @@ typedef struct PBO_s
 	int target;                             ///< pack or unpack buffer
 	pboUsage_t usage;                       ///< reading or writing from/to GPU
 	image_t *texture;                       ///< the pbo texture / buffer
+	int width;                              ///< width in pixels
+	int height;                             //< height in pixels
 	int bufferSize;                         ///< size of the pixeldata that will be transfered
 	GLsync sync;                            ///< handle for testing if the result is ready
 } PBO_t;
@@ -4559,15 +4561,17 @@ PIXEL BUFFER OBJECTS, tr_pbo.c
 ============================================================
 */
 //$ PBO_t* R_CreatePBO(const char* name, pboUsage_t usage, int bufferSize);
-PBO_t* R_CreatePBO(pboUsage_t usage, int bufferSize);
+//PBO_t* R_CreatePBO(pboUsage_t usage, int bufferSize);
+PBO_t* R_CreatePBO(pboUsage_t usage, int width, int height);
 
-void R_BindSyncPBO(PBO_t *pbo); // bind and start a fencesync
 void R_BindPBO(PBO_t *pbo);
 void R_BindNullPBO(void);
 
+void R_SyncPBO(PBO_t *pbo); // start a read fencesync
 qboolean R_PBOResultAvailable(PBO_t *pbo);
 
 qboolean R_ReadPBO(PBO_t *pbo, byte *cpumemory, qboolean waitForResult);
+qboolean R_pboTexImage2D(GLenum target, GLint level, GLint internalformat, GLsizei width, GLsizei height, GLint border, GLenum format, GLenum type, const void *pixels);
 
 void R_InitPBOs(void);
 void R_ShutdownPBOs(void);

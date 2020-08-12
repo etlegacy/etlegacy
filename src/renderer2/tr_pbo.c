@@ -39,7 +39,8 @@
 
 
 //$PBO_t* R_CreatePBO(const char* name, pboUsage_t usage, int bufferSize)
-PBO_t* R_CreatePBO(pboUsage_t usage, int bufferSize)
+//PBO_t* R_CreatePBO(pboUsage_t usage, int bufferSize)
+PBO_t* R_CreatePBO(pboUsage_t usage, int width, int height)
 {
 	PBO_t *pbo;
 	int bufTarget = GL_PIXEL_PACK_BUFFER;
@@ -54,7 +55,7 @@ PBO_t* R_CreatePBO(pboUsage_t usage, int bufferSize)
 	case PBO_USAGE_READ:
 	default:
 		bufTarget = GL_PIXEL_PACK_BUFFER;
-		bufUsage = GL_STREAM_COPY; //GL_STREAM_READ; // GL_STREAM_COPY
+		bufUsage = GL_STREAM_COPY; //GL_STREAM_READ;
 		break;
 	}
 /*$
@@ -72,46 +73,26 @@ PBO_t* R_CreatePBO(pboUsage_t usage, int bufferSize)
 	Com_AddToGrowList(&tr.pbos, pbo);
 
 //$	Q_strncpyz(pbo->name, name, sizeof(pbo->name));
+	pbo->width = width;
+	pbo->height = height;
 	pbo->target = bufTarget;
 	pbo->usage = bufUsage;
-	pbo->bufferSize = bufferSize;
+	pbo->bufferSize = width * height * 4; // RGBA
 
 	glGenBuffers(1, &pbo->handle);
 	glBindBuffer(pbo->target, pbo->handle);
-	glBufferData(pbo->target, pbo->bufferSize, NULL, pbo->usage);
+	glBufferData(pbo->target, pbo->bufferSize, NULL, pbo->usage); // *data is NULL, so no data is copied, only the memory allocated
 
-	pbo->texture = R_AllocImage("pbotexture", qfalse); // perhaps add an index number in the name: pbotexture0
+	if (usage == PBO_USAGE_READ)
+	{
+		pbo->texture = R_AllocImage("pbotexture", qfalse); // perhaps add an index number in the name: pbotexture0
+	}
 
 	glBindBuffer(pbo->target, 0);
 
 	GL_CheckErrors();
 
 	return pbo;
-}
-
-
-void R_BindSyncPBO(PBO_t *pbo)
-{
-	if (!pbo)
-	{
-		Ren_Drop("R_BindPBO: NULL pbo");
-		return;
-	}
-
-	glBindBuffer(pbo->target, pbo->handle);
-
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, pbo->texture->texnum);
-	glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0); // address offset
-	pbo->sync = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0); // glFenceSync is only supported if the GL version is 3.2 or greater.
-
-	GL_CheckErrors();
-
-	if (!pbo->sync)
-	{
-		Ren_Drop("R_BindPBO: pbo sync error");
-		return;
-	}
 }
 
 
@@ -166,6 +147,32 @@ void R_ShutdownPBOs(void)
 }
 
 
+// sync read
+void R_SyncPBO(PBO_t *pbo)
+{
+	if (!pbo)
+	{
+		Ren_Drop("R_BindPBO: NULL pbo");
+		return;
+	}
+
+	glBindBuffer(pbo->target, pbo->handle);
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, pbo->texture->texnum);
+	glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0); // address offset
+	pbo->sync = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0); // glFenceSync is only supported if the GL version is 3.2 or greater.
+
+	GL_CheckErrors();
+
+	if (!pbo->sync)
+	{
+		Ren_Drop("R_BindPBO: pbo sync error");
+		return;
+	}
+}
+
+
 qboolean R_PBOResultAvailable(PBO_t *pbo)
 {
 	GLint result;
@@ -192,13 +199,15 @@ qboolean R_PBOResultAvailable(PBO_t *pbo)
 qboolean R_ReadPBO(PBO_t *pbo, byte *cpumemory, qboolean waitForResult)
 {
 	GLint result = GL_UNSIGNALED;
+	void *mappedBuffer;
 
 	if (!pbo)
 	{
 		Ren_Drop("R_ReadPBO: NULL pbo");
 		return qfalse;
 	}
-	
+
+	// it must be a read buffer, with an active sync
 	if (pbo->usage != GL_STREAM_COPY || !pbo->sync)
 	{
 		return qfalse;
@@ -219,11 +228,38 @@ qboolean R_ReadPBO(PBO_t *pbo, byte *cpumemory, qboolean waitForResult)
 		if (result != GL_SIGNALED) return qfalse;
 	}*/
 
-    glBindBuffer(GL_PIXEL_PACK_BUFFER, pbo->handle);
-    void* mappedBuffer = glMapBuffer(GL_PIXEL_PACK_BUFFER, GL_READ_ONLY);
-	Com_Memcpy(cpumemory, mappedBuffer, pbo->bufferSize);
-    glUnmapBuffer(GL_PIXEL_PACK_BUFFER);
+	glBindBuffer(GL_PIXEL_PACK_BUFFER, pbo->handle);                   // glBindBuffer(pbo->target, pbo->handle);
+	mappedBuffer = glMapBuffer(GL_PIXEL_PACK_BUFFER, GL_READ_ONLY);    // mappedBuffer = glMapBuffer(pbo->target, GL_READ_ONLY);
+	if (mappedBuffer)
+	{
+		Com_Memcpy(cpumemory, mappedBuffer, pbo->bufferSize);          //
+		glUnmapBuffer(GL_PIXEL_PACK_BUFFER);                           // glUnmapBuffer(pbo->target);
+	}
+
+	GL_CheckErrors();
+
 	pbo->sync = 0;
+
+	return qtrue;
+}
+
+
+// glTexImage2D (GLenum target, GLint level, GLint internalformat, GLsizei width, GLsizei height, GLint border, GLenum format, GLenum type, const void *pixels);
+qboolean R_pboTexImage2D(GLenum target, GLint level, GLint internalformat, GLsizei width, GLsizei height, GLint border, GLenum format, GLenum type, const void *pixels)
+{
+	void *mappedBuffer;
+	PBO_t *pbo = R_CreatePBO(PBO_USAGE_WRITE, width, height);
+
+	glBindBuffer(GL_PIXEL_UNPACK_BUFFER, pbo->handle);
+glBufferData(GL_PIXEL_UNPACK_BUFFER, pbo->bufferSize, 0, GL_STREAM_DRAW);
+	mappedBuffer = glMapBuffer(GL_PIXEL_UNPACK_BUFFER, GL_WRITE_ONLY);
+	if (mappedBuffer)
+	{
+		Com_Memcpy(mappedBuffer, pixels, pbo->bufferSize);
+		glUnmapBuffer(GL_PIXEL_UNPACK_BUFFER);
+	}
+	glTexImage2D(target, level, internalformat, width, height, border, format, type, 0); // address 0
+	glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
 
 	GL_CheckErrors();
 
