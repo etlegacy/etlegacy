@@ -1011,7 +1011,7 @@ static void SV_DemoStartPlayback(void)
 			    savedMaxClients < 0 || // if there's no savedMaxClients (so this means we didin't change sv_maxclients yet, and we always need to do so since we need to add sv_democlients)
 			    sv_maxclients->integer <= savedMaxClients)
 			{ // or if maxclients is below or equal to the previous value of maxclients (normally it can only be equal, but if we switch the mod with game_restart, it can get the default value of 8, which can be below, so we need to check that as well)
-				Com_Printf("DEMO: Not enough demo slots, automatically increasing sv_democlients to %d and sv_maxclients to %d.\n", clients, (sv_maxclients->integer + clients > 64) ? 64 : sv_maxclients->integer + clients);
+				Com_Printf("DEMO: Not enough demo slots, automatically increasing sv_democlients to %d and sv_maxclients to %d.\n", clients, (sv_maxclients->integer + clients > MAX_CLIENTS) ? MAX_CLIENTS : sv_maxclients->integer + clients);
 
 				// save the old values of sv_maxclients, sv_democlients and bot_minplayers to later restore them
 				if (savedMaxClients < 0) // save only if it's the first value, the subsequent ones may be default values of the engine
@@ -1021,7 +1021,7 @@ static void SV_DemoStartPlayback(void)
 
 				// automatically adjusting sv_democlients, sv_maxclients and bot_minplayers
 				Cvar_SetValue("sv_democlients", clients);
-				Cvar_SetLatched("sv_maxclients", va("%i", (sv_maxclients->integer + clients > 64) ? 64 : sv_maxclients->integer + clients));
+				Cvar_SetLatched("sv_maxclients", va("%i", (sv_maxclients->integer + clients > MAX_CLIENTS) ? MAX_CLIENTS : sv_maxclients->integer + clients));
 				// BUGGY makes a dedicated server crash
 				//Cvar_Get( "sv_maxclients", "8", 0 );
 				//sv_maxclients->modified = qfalse;
