@@ -7255,6 +7255,10 @@ const void *RB_RenderToTexture(const void *data)
  */
 const void *RB_RenderCubeprobe(const void *data)
 {
+	// Bugfix: drivers absolutely hate running in high res and using glReadPixels near the top or bottom edge.
+	// Soo.. lets do it in the middle of the screen.
+	// UPDATE: This is true still today (2020).
+
 	// We render the cubemaps with one extra edge pixel (so we render a 33x33 image).
 	// and then we read the pixels from the 32x32 middle of the image.
 	// This ensures that we get the correct colors at the edges of an image. Opengl processes half-pixels when filtering.
@@ -7282,29 +7286,38 @@ const void *RB_RenderCubeprobe(const void *data)
 
 	const renderCubeprobeCommand_t *cmd = (const renderCubeprobeCommand_t *)data;
 
+	// for some unknown reason, cmd is not the same at the end of this function call.. so we backup the values we need later.  TODO: check
+	byte **cmd_pixeldata     = cmd->pixeldata;
+	qboolean cmd_commandOnly = cmd->commandOnly;
+
 	// we can not write to data members from cmd, because it's a constant..
 	// So we look up the probe, and then we can edit the probes properties.
 	cubemapProbe_t *probe = (cubemapProbe_t *)Com_GrowListElement(&tr.cubeProbes, cmd->cubeprobeIndex);
 
-	// this is used for storing the 6 cubesides pixeldata read from screen.
+	// The memory used for storing the 6 cubesides pixeldata read from screen or file.
 	// If we supplied a pointer to the pixeldata (pre allocated memory for each of the 6 sides),
 	// then we store the pixeldata to those addresses.
-	// If the cmd->pixeldata == NULL, we don't return any pixeldata (used for storing the cubemap textures to file).
-	// In that case, we allocate/free that memory locally in this function.
-	if (cmd->pixeldata)
+	// If the cmd->pixeldata == NULL, we manage the needed memory locally in this function.
+	// cmd->commandOnly tells us if we only want to issue the render command, or that we also want to create the cubemap texture.
+	// If cmd->commandOnly is false, it means we must wait for the results to be ready, before we can make the cubemap.
+	// If cmd->commandOnly is true, we do not need memory to store pixeldata. We send the render-command, and are done here..
+	if (!cmd->commandOnly)
 	{
-		for (i = 0; i < 6; i++)
+		if (cmd->pixeldata)
 		{
-			cubeTemp[i] = cmd->pixeldata[i];
-		}
-	} else {
-
-		for (i = 0; i < 6; i++)
-		{
-			cubeTemp[i] = (byte *)ri.Z_Malloc(REF_CUBEMAP_TEXTURE_SIZE);
+			for (i = 0; i < 6; i++)
+			{
+				cubeTemp[i] = cmd->pixeldata[i];
+			}
+		} else {
+			for (i = 0; i < 6; i++)
+			{
+				cubeTemp[i] = (byte *)ri.Z_Malloc(REF_CUBEMAP_TEXTURE_SIZE);
+			}
 		}
 	}
 
+	// use just the pixels in the middle of the screen to draw to
 	GL_Viewport(glConfig.vidWidth / 2, glConfig.vidHeight / 2, REF_CUBEMAP_SIZE+2, REF_CUBEMAP_SIZE+2);
 	GL_Scissor(glConfig.vidWidth / 2, glConfig.vidHeight / 2, REF_CUBEMAP_SIZE+2, REF_CUBEMAP_SIZE+2);
 
@@ -7370,12 +7383,10 @@ const void *RB_RenderCubeprobe(const void *data)
 		tr.refdef.renderingCubemap = qtrue;
 
 		// create and bind a PBO to where the pixels are drawn
-//$		probe->pbo[i] = R_CreatePBO(va("_cubemapbo%d", i), PBO_USAGE_READ, REF_CUBEMAP_TEXTURE_SIZE);
-//		probe->pbo[i] = R_CreatePBO(PBO_USAGE_READ, REF_CUBEMAP_TEXTURE_SIZE);
 		probe->pbo[i] = R_CreatePBO(PBO_USAGE_READ, REF_CUBEMAP_SIZE, REF_CUBEMAP_SIZE);
 		R_SyncPBO(probe->pbo[i]);
 
-		RE_BeginFrame();
+//		RE_BeginFrame();
 		RE_RenderSimpleScene(&rf); // doesn't render so much as RE_RenderScene (no decals, no coronas, and more...)
 		R_BindNullVBO();
 		R_BindNullIBO();
@@ -7384,24 +7395,37 @@ const void *RB_RenderCubeprobe(const void *data)
 		RB_RenderViewFront();
 		R_InitNextFrame();
 
-		// Bugfix: drivers absolutely hate running in high res and using glReadPixels near the top or bottom edge.
-		// Soo.. lets do it in the middle.
-		// UPDATE: This is true still today (2020).
+		// Read pixels from the screen, and store the pixeldata in cpu memory:
 		// Note the extra pixel around the edges.. +1
 //		glReadPixels(glConfig.vidWidth / 2 + 1, glConfig.vidHeight / 2 + 1, REF_CUBEMAP_SIZE, REF_CUBEMAP_SIZE, GL_RGBA, GL_UNSIGNED_BYTE, cubeTemp[i]);
-		// ^^this is the old way of reading pixels
+		// ^^this is the old way of reading pixels into cpu memory
 
 		// If we use a PBO to write to, glReadPixels last argument is a byte-offset into the buffer memory.
 		// When a PBO is bound, the call to glReadPixels will return immediately.
 		// The reading of the pixels is actually done when OpenGL sees fit.
 		glReadPixels(glConfig.vidWidth / 2 + 1, glConfig.vidHeight / 2 + 1, REF_CUBEMAP_SIZE, REF_CUBEMAP_SIZE, GL_RGBA, GL_UNSIGNED_BYTE, 0); // pbo address 0
-		// read the pixels back from the PBO immediately. Means we have to wait for the PBO to be ready.
+
+		// Read back the pixels from the PBO immediately:
+		// This means we have to wait for the PBO to be ready.
 		// The last argument to R_ReadPBO must be == true, so the function will wait, before doing the copy from gpu->cpu..
-//!* (void)R_ReadPBO(probe->pbo[i], cubeTemp[i], qtrue); // wait for this result to be available
+//!*	(void)R_ReadPBO(probe->pbo[i], cubeTemp[i], qtrue); // wait for this result to be available
 		// That^^ line above waits after every (1 of 6) textures until rendering has finished.
 		// We can also collect the results later, after all sides have been rendered (better said: after the commands to render have been issued).
 
 		R_BindNullPBO(); // unbind this pbo, we're done.
+
+		//!!!DEBUG!!! somehow cmd values are now different than at the start of this function call..  wt (it's a const)
+	}
+
+	// execute only the render command?
+	if (cmd_commandOnly)
+	{
+		// add this probe to the list of PBO results to check
+		R_PBOAddDownload(probe);
+		// the cubemap is not quite ready yet..
+		probe->cubemap = tr.autoCubeImage; // provide a valid temporary texture for rendering,
+		probe->ready = qfalse;             // but indicate that this cube is not ready
+		goto renderCubeProbe_finish;       // we're done.
 	}
 
 	//!* collect the results, and copy the pixeldata from gpu to cpu.
@@ -7419,11 +7443,10 @@ const void *RB_RenderCubeprobe(const void *data)
 
 	// create the cubemap texture
 	probe->cubemap = R_CreateCubeImage(va("_cubeProbe%d", cmd->cubeprobeIndex), (const byte **)cubeTemp, REF_CUBEMAP_SIZE, REF_CUBEMAP_SIZE, IF_NOPICMIP, FT_LINEAR, WT_EDGE_CLAMP);
-
 	if (!probe->cubemap)
-	{
-		probe->cubemap = tr.autoCubeImage; // provide a valid texture
-		probe->ready = qfalse; // but indicate this cube is not ready  (maybe try to create it again later?)
+	{   // the cubemap texture could not be created
+		probe->cubemap = tr.autoCubeImage; // provide a valid temporary texture
+		probe->ready = qfalse;             // but indicate this cube is not ready
 		goto renderCubeProbe_finish;
 	}
 	// this cubemap is now ready for render use
@@ -7431,22 +7454,26 @@ const void *RB_RenderCubeprobe(const void *data)
 
 
 	// save to file..
-//	R_SaveCubeProbe(probe, cubeTemp, qfalse);  // this makes it (too) slow ?..  try to find a faster way..
+//	R_SaveCubeProbe(probe, cubeTemp, qfalse);  // this makes it (too) slow ?..  try to find a faster way..  I found a faster way..
 
 
 renderCubeProbe_finish:
-
 	// free allocated memory
 	// If we passed pointers to where the pixeldata needs to be written to, then we do not free that memory here.
 	// That memory is allocated outside this function, so only free memory allocated by this function.
-	if (!cmd->pixeldata)
+	// If cmd_commandOnly was true, we didn't even use memory for pixel transfers.
+	if (!cmd_commandOnly)
 	{
-		for (i = 0; i < 6; i++)
+		if (!cmd_pixeldata)
 		{
-			if (cubeTemp[i]) ri.Free(cubeTemp[i]);
+			for (i = 0; i < 6; i++)
+			{
+				if (cubeTemp[i]) ri.Free(cubeTemp[i]);
+			}
 		}
 	}
 
+	// select the full screen again
 	GL_Viewport(0, 0, glConfig.vidWidth, glConfig.vidHeight);
 	GL_Scissor(0, 0, glConfig.vidWidth, glConfig.vidHeight);
 
@@ -7454,7 +7481,7 @@ renderCubeProbe_finish:
 	R_BindFBO(previousFBO);
 	GL_CheckErrors();
 
-	// turn pixel targets off
+	// turn off the cubemap rendering indicator
 	tr.refdef.renderingCubemap = qfalse;
 
 	return (const void *)(cmd + 1);

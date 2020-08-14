@@ -785,7 +785,7 @@ void RE_RenderToTexture(int textureid, int x, int y, int w, int h)
  * @param[in] pixelData: if NULL, no pixeldata is read back (so cpu can use it to store to file)
  * @return
  */
-void RE_RenderCubeprobe(int cubeprobeIndex, byte **pixeldataOut)
+void RE_RenderCubeprobe(int cubeprobeIndex, qboolean commandOnly, byte **pixeldataOut)
 {
 	renderCubeprobeCommand_t *cmd;
 
@@ -801,6 +801,7 @@ void RE_RenderCubeprobe(int cubeprobeIndex, byte **pixeldataOut)
 	}
 
 	cmd->commandId = RC_RENDERCUBEPROBE;
+	cmd->commandOnly = commandOnly;
 	cmd->cubeprobeIndex = cubeprobeIndex;
 	cmd->pixeldata = pixeldataOut;
 }

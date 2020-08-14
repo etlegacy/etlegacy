@@ -37,9 +37,208 @@
 
 #include "tr_local.h"
 
+/*
+ *   PBO results are retrieved from another thread.
+ *   A linked list is maintained of all the PBOs that need their results collected.
+ */
 
-//$PBO_t* R_CreatePBO(const char* name, pboUsage_t usage, int bufferSize)
-//PBO_t* R_CreatePBO(pboUsage_t usage, int bufferSize)
+ // the array to store the entries
+#define MAX_PBO_RESULTS 24576                          // that's room for 4096 cubes
+pboDownload_Cubemap_t pboDownloads[MAX_PBO_RESULTS];
+
+// the linked lists:
+// These lists have references to both previous & next entries (for easy entry deletion).
+pboDownload_Cubemap_t *pboList_Cubemaps = NULL;        // the used entries
+pboDownload_Cubemap_t *pboList_Available = NULL;       // the unused entries
+
+// we want to know if there are objects, arrays and/or lists created that can be deleted/freed
+qboolean pboDispose = qfalse;
+
+
+/*
+ *   Initialize the linked lists to manage outstanding pixel transfers
+ */
+void R_PBOInitDownloads(void)
+{
+	int i,j;
+	pboList_Cubemaps = NULL;
+	pboList_Available = NULL;
+	for (i = 0; i < MAX_PBO_RESULTS; i++)
+	{
+		for (j = 0; j < 6; j++)
+		{
+			/*if (pboDownloads[i].cubeTemp[j])
+			{
+				ri.Free(pboDownloads[i].cubeTemp[j]);
+			}*/
+			pboDownloads[i].cubeTemp[j] = NULL;
+		}
+
+		pboDownloads[i].prev = (i==0)? NULL : &pboDownloads[i-1];
+		pboDownloads[i].next = pboList_Available;
+		pboList_Available = &pboDownloads[i];
+	}
+}
+
+
+/*
+ *   Add a probe to the list to handle the pbo results.
+ *   The function will handle all 6 pbos (for all the sides of the cube).
+ *   This function also allocates the memory needed to store the result's pixeldata (read from gpu).
+ */
+void R_PBOAddDownload(cubemapProbe_t *probe)
+{
+	pboDownload_Cubemap_t *download;
+	int i;
+
+	if (!pboList_Available)
+	{
+		return; // none available
+	}
+
+	// exit if it already exists in the list
+	for (download = pboList_Cubemaps; download; download = download->next)
+	{
+		if (download->probe == probe)
+		{
+			return;
+		}
+	}
+
+	// link an entry
+	download                          = pboList_Available;
+	if (pboList_Available->next)
+	{
+		pboList_Available->next->prev = pboList_Available->prev;
+	}
+	pboList_Available                 = pboList_Available->next;
+	download->prev                    = (pboList_Cubemaps)? pboList_Cubemaps->prev : NULL;
+	download->next                    = pboList_Cubemaps;
+	if (pboList_Cubemaps)
+	{
+		pboList_Cubemaps->prev        = download;
+	}
+	pboList_Cubemaps                  = download;
+
+	// ..
+	download->probe = probe;
+	download->results = (1<<5) | (1<<4) | (1<<3) | (1<<2) | (1<<1) | (1<<0); // a bit for every side of the cube
+
+	// reserve memory for the pixeldata
+	for (i = 0; i < 6; i++)
+	{
+		download->cubeTemp[i] = (byte *)ri.Z_Malloc(REF_CUBEMAP_TEXTURE_SIZE);
+	}
+
+	pboDispose = qtrue; // set the flag
+}
+
+
+/*
+ *   Remove an entry from the list.
+ *   This function also frees the memory that was needed to download the pixeldata from gpu.
+ */
+void R_PBORemoveDownload(pboDownload_Cubemap_t *download)
+{
+	int i;
+
+	if (!download)
+	{
+		return;
+	}
+
+	// link an entry
+	if (download->prev)
+	{
+		download->prev->next          = download->next;
+	}
+	if (download->next)
+	{
+		download->next->prev          = download->prev;
+	}
+	if (download == pboList_Cubemaps)
+	{
+		pboList_Cubemaps              = download->next;
+	}
+	download->prev                    = (pboList_Available)? pboList_Available->prev : NULL;
+	download->next                    = pboList_Available;
+	if (pboList_Available)
+	{
+		pboList_Available->prev       = download;
+	}
+	pboList_Available                 = download;
+
+	// free the allocated memory
+	for (i = 0; i < 6; i++)
+	{
+		if (download->cubeTemp[i])
+		{
+			ri.Free(download->cubeTemp[i]);
+			download->cubeTemp[i] = NULL;
+		}
+	}
+}
+
+
+/*
+ *   Check all outstanding pbo transfers.
+ *   Check if results are ready, and if so, read the pixeldata associated with the pbo.
+ *   Create the cubemap, if pixeldata of all the 6 sides of the cubemap have been downloaded.
+ *   Save the cubemap to file.
+ *   Clean up memory for objects, array and lists that isn't used anymore and can be disposed.
+ */
+void R_PBOCheckDownloads(void)
+{
+	pboDownload_Cubemap_t *download;
+	cubemapProbe_t *probe;
+	PBO_t *pbo;
+	int i;
+
+	// if there is no PBO currently syncing, then clear objects, arrays and lists,
+	// if that is not already done.
+	if (!pboList_Cubemaps && pboDispose)
+	{
+		R_ShutdownPBOs();
+		return;
+	}
+
+	// check all probes for which we need to handle pixel transfers
+	for (download = pboList_Cubemaps; download; download = download->next)
+	{
+		probe = download->probe;
+		if (!probe) continue; // better return, because when that happens, it's bad..
+		for (i = 0; i < 6; i++)
+		{
+			pbo = probe->pbo[i];
+			if (!pbo || !pbo->sync) continue;
+			if (!R_PBOResultAvailable(pbo)) continue;
+			R_ReadPBO(pbo, download->cubeTemp[i], qfalse);
+			download->results &= ~(1<<i); // clear bit i. When all 6 results are downloaded, ->results value == 0
+
+			// if results of all 6 sides are downloaded, make the cubemap..
+			if (!download->results)
+			{
+				// make the cubemap texture
+				probe->cubemap = R_CreateCubeImage(va("_cubeProbe%d", probe->index), (const byte **)download->cubeTemp, REF_CUBEMAP_SIZE, REF_CUBEMAP_SIZE, IF_NOPICMIP, FT_LINEAR, WT_EDGE_CLAMP);
+				probe->ready = qtrue; // this cube is ready for rendering
+
+				// save the cubemap to file
+				R_SaveCubeProbe(probe, download->cubeTemp, qfalse); // qfalse means: save only this one
+
+				// the entry can now be deleted
+				R_PBORemoveDownload(download);
+				// and we are done for this download. Check the next download..
+				goto R_PBOCheckDownloads_next; // a continue will only work on the for(i) loop
+			}
+		}
+R_PBOCheckDownloads_next:
+		; // this must be here..
+	}
+}
+
+//---------------------------------------------------------------------------------------------
+
+
 PBO_t* R_CreatePBO(pboUsage_t usage, int width, int height)
 {
 	PBO_t *pbo;
@@ -58,13 +257,6 @@ PBO_t* R_CreatePBO(pboUsage_t usage, int width, int height)
 		bufUsage = GL_STREAM_COPY; //GL_STREAM_READ;
 		break;
 	}
-/*$
-	if (strlen(name) >= MAX_QPATH)
-	{
-		Ren_Drop("R_CreatePBO: \"%s\" is too long\n", name);
-		return NULL;
-	}
-*/
 
 	// make sure the render thread is stopped
 //	R_IssuePendingRenderCommands();
@@ -72,7 +264,6 @@ PBO_t* R_CreatePBO(pboUsage_t usage, int width, int height)
 	pbo = (PBO_t *)ri.Hunk_Alloc(sizeof(*pbo), h_low);
 	Com_AddToGrowList(&tr.pbos, pbo);
 
-//$	Q_strncpyz(pbo->name, name, sizeof(pbo->name));
 	pbo->width = width;
 	pbo->height = height;
 	pbo->target = bufTarget;
@@ -121,7 +312,11 @@ void R_InitPBOs(void)
 {
 	Com_InitGrowList(&tr.pbos, 100);
 
+	R_PBOInitDownloads();
+
 	R_BindNullPBO();
+
+	pboDispose = qfalse; // reset the flag
 
 	GL_CheckErrors();
 }
@@ -130,10 +325,18 @@ void R_InitPBOs(void)
 void R_ShutdownPBOs(void)
 {
 	int i;
+	pboDownload_Cubemap_t *download;
 	PBO_t *pbo;
 
 	R_BindNullPBO();
 
+	// free the memory for the pbo pixeldata storage (for active pbos)
+	for (download = pboList_Cubemaps; download; download = download->next)
+	{
+		R_PBORemoveDownload(download);
+	}
+
+	// delete the pbos
 	for (i = 0; i < tr.pbos.currentElements; i++)
 	{
 		pbo = (PBO_t *) Com_GrowListElement(&tr.pbos, i);
@@ -141,9 +344,12 @@ void R_ShutdownPBOs(void)
 		glDeleteBuffers(1, &pbo->handle);
 	}
 
-	GL_CheckErrors();
-
+	// delete the growlist with all the pointers to the pbos
 	Com_DestroyGrowList(&tr.pbos);
+
+	pboDispose = qfalse; // reset the flag
+
+	GL_CheckErrors();
 }
 
 
@@ -153,6 +359,12 @@ void R_SyncPBO(PBO_t *pbo)
 	if (!pbo)
 	{
 		Ren_Drop("R_BindPBO: NULL pbo");
+		return;
+	}
+
+	// if there is no more free result entry available from the list, then don't start a new sync
+	if (!pboList_Available)
+	{
 		return;
 	}
 

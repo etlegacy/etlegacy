@@ -144,6 +144,11 @@ elseif(WIN32)
 		set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /LARGEADDRESSAWARE /NODEFAULTLIB:MSVCRT.lib /NODEFAULTLIB:MSVCRTD.lib")
 		add_definitions(-D_CRT_SECURE_NO_WARNINGS) # Do not show CRT warnings
 		add_definitions(-DWINDOWS_IGNORE_PACKING_MISMATCH) # To make it work with latest Windows SDK
+		
+		# Platform Toolset is Visual Studio 2019 (v142)
+		#set(CMAKE_VS_PLATFORM_TOOLSET "v142")
+		#add_definitions(-DCMAKE_VS_PLATFORM_TOOLSET=v142)
+		#add_definitions(-DCMAKE_GENERATOR_TOOLSET=v142)
 	endif(MSVC)
 	if(MINGW AND NOT DEBUG_BUILD)
 		set(CMAKE_C_LINK_EXECUTABLE "${CMAKE_C_LINK_EXECUTABLE} -static-libgcc")

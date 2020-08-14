@@ -4560,8 +4560,20 @@ void R_VBOList_f(void);
 PIXEL BUFFER OBJECTS, tr_pbo.c
 ============================================================
 */
-//$ PBO_t* R_CreatePBO(const char* name, pboUsage_t usage, int bufferSize);
-//PBO_t* R_CreatePBO(pboUsage_t usage, int bufferSize);
+typedef struct pboDownload_Cubemap_s {
+	struct pboDownload_Cubemap_s *prev;                ///< linked list previous item
+	struct pboDownload_Cubemap_s *next;                ///< linked list next item
+	cubemapProbe_t *probe;                             ///<
+	uint32_t results;                                  ///< a bit mask value. Any bit 0 to 5 set, means we must wait for results[bit]
+	byte *cubeTemp[6];                                 ///< buffers to read in the results
+} pboDownload_Cubemap_t;
+
+void R_PBOInitDownloads(void);
+void R_PBOAddDownload(cubemapProbe_t *probe);
+void R_PBORemoveDownload(pboDownload_Cubemap_t *download);
+void R_PBOCheckDownloads(void);
+
+
 PBO_t* R_CreatePBO(pboUsage_t usage, int width, int height);
 
 void R_BindPBO(PBO_t *pbo);
@@ -4861,8 +4873,9 @@ typedef struct
 typedef struct
 {
 	int commandId;
-	int cubeprobeIndex; // index in tr.cubeProbes[]
-	byte **pixeldata; // can be NULL. In that case, no readpixels is done (and so, no textures can be saved to file)
+	int cubeprobeIndex;   // index in tr.cubeProbes[]
+	qboolean commandOnly; // if true, only the render-command is issued, but no cubemap texture is generated. (handle PBO results later)
+	byte **pixeldata;     // can be NULL. In that case, no readpixels is done (and so, no textures can be saved to file)
 } renderCubeprobeCommand_t;
 
 /**
@@ -5011,7 +5024,7 @@ void R_FindCubeprobes(const vec3_t position, trRefEntity_t *entity, image_t** en
 void FreeVertexHashTable(vertexHash_t **hashTable);
 
 void RE_RenderToTexture(int textureid, int x, int y, int w, int h);
-void RE_RenderCubeprobe(int cubeprobeIndex, byte *pixeldataOut[6]); // Render Command function
+void RE_RenderCubeprobe(int cubeprobeIndex, qboolean commandOnly, byte *pixeldataOut[6]); // Render Command function
 void RE_Finish(void);
 
 void LoadRGBEToFloats(const char *name, float **pic, int *width, int *height, qboolean doGamma, qboolean toneMap, qboolean compensate);

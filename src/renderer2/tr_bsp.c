@@ -7914,22 +7914,33 @@ if (backEnd.currentEntity != &tr.worldEntity)
 	// Note that this could only ever happen, when not all cubemaps have been generated at mapstart. (buildcubemaps(false))
 	if (!closestProbe->ready)
 	{
-		RE_RenderCubeprobe(closestProbeIndex, NULL); // add the render command (don't readpixels, not save to file)
+//		RE_RenderCubeprobe(closestProbeIndex, qfalse, NULL); // add the render command + render the cubemap
+		RE_RenderCubeprobe(closestProbeIndex, qtrue, NULL); // add the render command only
 		R_IssuePendingRenderCommands(); // and execute it
+
+/*		//!! The next applies when was called: RE_RenderCubeprobe(.., qfalse, ..):
 		// Now the cubemap is rendered, and ->ready should be == qtrue.
-/*		// But it could happen that the cubemap texture could not be created.. (game will error out)
+		// But it could happen that the cubemap texture could not be created.. (game will error out)
 		if (!closestProbe->ready) {
 			*env1 = tr.autoCubeImage;
 			*env2 = tr.autoCubeImage;
 			*interpolation = 0.0f;
-		}*/
-//TODO: render + 'save to file' is working, but i want to do the save-to-file later (at map-end?), when there is more time..
-/*{
-byte *cubeTemp[6];
-RE_RenderCubeprobe(closestProbeIndex, cubeTemp); // add the render command (and readpixels to cubeTemp)
-R_IssuePendingRenderCommands(); // and execute it
-R_SaveCubeProbe(closestProbe, cubeTemp, qfalse); // save this single cubemap
-}*/
+			return;
+		}
+*/
+/*
+		// render + 'save to file' is working, but code is still changing.. this is no longer done here.
+		{
+			byte *cubeTemp[6];
+			RE_RenderCubeprobe(closestProbeIndex, qfalse, cubeTemp); // add the render command (and readpixels to cubeTemp)
+			R_IssuePendingRenderCommands(); // and execute it
+			R_SaveCubeProbe(closestProbe, cubeTemp, qfalse); // save this single cubemap
+		}
+*/
+		// temporarily provide a valid texture
+		*env1 = tr.autoCubeImage;
+		*env2 = tr.autoCubeImage;
+		*interpolation = 0.0f;
 		return;
 	}
 
@@ -7965,12 +7976,14 @@ R_SaveCubeProbe(closestProbe, cubeTemp, qfalse); // save this single cubemap
 // save just 1 cubemap in the appropriate file.
 // Create the file, if it does not exist yet.
 // If the file already exists, it means that the file already contains (at least 1) stored cubemaps.
-// In that case, read the file, overwrite this single cubeProbe pixeldata (leave the rest intact), and save the file.
+// In that case, read the file, add this single cubeProbe's pixeldata (leave the rest intact), and save the file.
 //
 // Like R_LoadCubeProbe(), this function can also be called for all cubeprobes sequentially (at mapstart, and buildcubemaps command).
 // But this function can also be called for any single random cubeprobe (when cubemaps are generated during game-time).
 // When processing all cubes in sequence, we can save a lot of work if we make the buffer static.
-// To know how to handle the buffer, we pass in an argument to this function.
+// To know how to handle the buffer, we pass in an argument to this function 'saveAll'.
+// If 'saveAll' == true, we are processing probes in sequence. (this works faster for bulk operations on all probes).
+// If 'saveAll' == false, we process a single random probe. (means there is more file access and buffering done, but you can save 1 probe easily).
 //
 // The cubemaps are stored in a TGA image.  170 of them in one big cm/file.
 // I've added an 'Identification Field' to the TGA.
@@ -7985,7 +7998,8 @@ void R_SaveCubeProbe(cubemapProbe_t *cubeProbe, byte **cubePixeldata, qboolean s
 	byte *pixeldata = NULL; // the pointer to the actual pixel colors
 	int width = REF_CUBEMAP_STORE_SIZE, height = REF_CUBEMAP_STORE_SIZE;
 	int  pixeldataBytes = width * height * 4;
-	int  fileBytes = 18 + REF_CUBEMAP_TGA_IDFIELD_SIZE + pixeldataBytes; // file header + Identification Field + pixeldata
+	int TGA_IDfield_size = REF_CUBEMAP_TGA_IDFIELD_SIZE;
+	int  fileBytes = 18 + TGA_IDfield_size + pixeldataBytes; // file header + Identification Field + pixeldata
 	// the file for this cubeprobe
 	int filenumber = cubeProbe->index / REF_CUBEMAPS_PER_FILE;
 	int indexInFile = cubeProbe->index % REF_CUBEMAPS_PER_FILE;
@@ -8016,8 +8030,11 @@ void R_SaveCubeProbe(cubemapProbe_t *cubeProbe, byte **cubePixeldata, qboolean s
 				// try to read the file (buffer header + id-field + pixeldata)
 				bytesRead = ri.FS_ReadFile(filename, (void **)&buffer); // this also closes he file after reading the full file into the buffer..
 				if (bytesRead <= 0 || !buffer)
-				{
+				{   // something went wrong
 					if (buffer) ri.FS_FreeFile(buffer); // ..but the buffer is not freed when a file is closed.
+					buffer = NULL;
+					lastFileNum = -1;
+					return;
 				} else {
 					fromfile = qtrue;
 				}
@@ -8026,10 +8043,15 @@ void R_SaveCubeProbe(cubemapProbe_t *cubeProbe, byte **cubePixeldata, qboolean s
 			{
 				// the pixeldata is not read from file, so allocate memory for storing a TGA
 				buffer = (byte *)Com_Allocate(fileBytes); // include spave for the file header
+				if (!buffer)
+				{
+					lastFileNum = -1;
+					return;
+				}
 
 				// fill the TGA file header
-				Com_Memset(buffer, 0, 18 + REF_CUBEMAP_TGA_IDFIELD_SIZE); // we do not need to clear the pixeldata
-				buffer[0]  = REF_CUBEMAP_TGA_IDFIELD_SIZE;           // Number of Characters in Identification Field
+				Com_Memset(buffer, 0, 18 + TGA_IDfield_size); // we do not need to clear the pixeldata
+				buffer[0]  = TGA_IDfield_size;           // Number of Characters in Identification Field
 				buffer[2]  = 2;             // Uncompressed, RGB images
 				buffer[12] = width & 255;
 				buffer[13] = width >> 8;
@@ -8044,7 +8066,7 @@ void R_SaveCubeProbe(cubemapProbe_t *cubeProbe, byte **cubePixeldata, qboolean s
 		}
 
 		// copy the cubePixeldata into the big image
-		pixeldata = buffer + 18 + REF_CUBEMAP_TGA_IDFIELD_SIZE; // point to the start of pixeldata, after the file header & id field
+		pixeldata = buffer + 18 + TGA_IDfield_size; // point to the start of pixeldata, after the file header & id field
 		pixeldata += offsetInFile; // point to the start of the cubemap in the big image
 		for (i = 0; i < 6; i++, pixeldata += REF_CUBEMAP_TEXTURE_SIZE)
 		{
@@ -8070,14 +8092,19 @@ void R_SaveCubeProbe(cubemapProbe_t *cubeProbe, byte **cubePixeldata, qboolean s
 				} else {
 					Com_Dealloc(buffer);
 				}
+				buffer = NULL;
+				lastFileNum = -1;
 			}
 		}
 		return; // we are done
 	}
 
 	// save just one cubemap to file:
+	// That's almost the same code as above, but it's easier to read with 2 seperate versions (saveAll vs. saveOne)
 
 	// read the file if it exists
+	lastFileNum = -1;
+	fromfile = qfalse;
 	if (ri.FS_FileExists(filename))
 	{
 		// try to read the file (buffer header + pixeldata)
@@ -8085,6 +8112,8 @@ void R_SaveCubeProbe(cubemapProbe_t *cubeProbe, byte **cubePixeldata, qboolean s
 		if (bytesRead <= 0 || !buffer)
 		{
 			if (buffer) ri.FS_FreeFile(buffer); // ..but the buffer is not freed when a file is closed.
+			buffer = NULL;
+			return;
 		} else {
 			fromfile = qtrue;
 		}
@@ -8093,24 +8122,28 @@ void R_SaveCubeProbe(cubemapProbe_t *cubeProbe, byte **cubePixeldata, qboolean s
 	{
 		// the pixeldata is not read from file, so allocate memory for storing a TGA
 		buffer = (byte *)Com_Allocate(fileBytes); // include spave for the file header
+		if (!buffer)
+		{
+			return; // memory could not be allocated
+		}
 
 		// fill the TGA file header
-		Com_Memset(buffer, 0, 18 + REF_CUBEMAP_TGA_IDFIELD_SIZE); // we do not need to clear the pixeldata
-		buffer[0]  = REF_CUBEMAP_TGA_IDFIELD_SIZE;           // Number of Characters in Identification Field
-		buffer[2]  = 2;             // Uncompressed, RGB images
+		Com_Memset(buffer, 0, 18 + TGA_IDfield_size); // we do not need to clear the pixeldata
+		buffer[0]  = TGA_IDfield_size;  // Number of Characters in Identification Field
+		buffer[2]  = 2;                 // Uncompressed, RGB images
 		buffer[12] = width & 255;
 		buffer[13] = width >> 8;
 		buffer[14] = height & 255;
 		buffer[15] = height >> 8;
-		buffer[16] = 32;            // Number of bits per pixel
-		//buffer[17] = 8;           // number of attribute bits associated with each pixel (alpha uses 8 bits)
+		buffer[16] = 32;                // Number of bits per pixel
+		//buffer[17] = 8;               // number of attribute bits associated with each pixel (alpha uses 8 bits)
 
 		// Identification Field   buffer[18] to buffer[18 + REF_CUBEMAP_TGA_IDFIELD_SIZE]
-		// When we create this file anew, all bits of the id-field are 0 (indicating no cubemap stored in this file)
+		// When we create this file anew, all bits of the id-field are 0 (indicating no cubemap are stored in this file)
 	}
 
 	// copy the cubePixeldata into the big image
-	pixeldata = buffer + 18 + REF_CUBEMAP_TGA_IDFIELD_SIZE; // point to the start of pixeldata, after the file header & id field
+	pixeldata = buffer + 18 + TGA_IDfield_size; // point to the start of pixeldata, after the file header & id field
 	pixeldata += offsetInFile; // point to the start of the cubemap in the big image
 	for (i = 0; i < 6; i++, pixeldata += REF_CUBEMAP_TEXTURE_SIZE)
 	{
@@ -8131,6 +8164,7 @@ void R_SaveCubeProbe(cubemapProbe_t *cubeProbe, byte **cubePixeldata, qboolean s
 		} else {
 			Com_Dealloc(buffer);
 		}
+		buffer = NULL;
 	}
 }
 
@@ -8145,12 +8179,14 @@ void R_SaveCubeProbe(cubemapProbe_t *cubeProbe, byte **cubePixeldata, qboolean s
  * R_BuildCubeMaps() processes all the cubeprobes in sequence.
  * This function only deletes the file-read-buffer when another cm/file is accessed,
  * and when all cubeprobes have been processed (after it encountered the very last cubeprobe).
+ * That makes it more efficient to sequantially process 170 cubemaps that all go in the same cm/file.
  */
 qboolean R_LoadCubeProbe(int cubeProbeNum, byte **cubeTemp)
 {
 	// static, so the content is not lost when exiting this function
 	static int lastFileNum = -1; // initialize with a value that filenumber will never have
 	static byte *buffer = NULL; // pointer to the file buffer (including the 18 byte long header + id-field)
+	//
 	byte *pixeldata     = NULL; // the pointer to the actual pixel colors
 	int filenumber = cubeProbeNum / REF_CUBEMAPS_PER_FILE;
 	int indexInFile = cubeProbeNum % REF_CUBEMAPS_PER_FILE;
@@ -8164,6 +8200,7 @@ qboolean R_LoadCubeProbe(int cubeProbeNum, byte **cubeTemp)
 	if (filenumber != lastFileNum)
 	{
 		if (buffer) ri.FS_FreeFile(buffer);
+		buffer = NULL;
 		lastFileNum = filenumber;
 		filename = va("cm/%s/cm_%04d.tga", s_worldData.baseName, filenumber);
 		OK = ri.FS_FileExists(filename);
@@ -8171,15 +8208,11 @@ qboolean R_LoadCubeProbe(int cubeProbeNum, byte **cubeTemp)
 		{
 			bytesRead = ri.FS_ReadFile(filename, (void **)&buffer); // this also closes he file after reading the full file into the buffer
 		}
-		if (!OK || bytesRead <= 0 || !buffer)
+		if (!OK || bytesRead <= 0)
 		{
 			if (buffer) ri.FS_FreeFile(buffer);
 			buffer = NULL;
 			lastFileNum = -1;
-			/*for (i = 0; i < 6; i++)
-			{
-				Com_Memset(cubeTemp[i], 0, REF_CUBEMAP_TEXTURE_SIZE);
-			}*/
 			return qfalse;
 		}
 	}
@@ -8228,12 +8261,28 @@ qboolean R_LoadCubeProbe(int cubeProbeNum, byte **cubeTemp)
 /**
  * @brief R_BuildCubeMaps
  *
- * @param[in] createAll: if true, will create all the missing cubemaps immediately (at mapstart).
+ * @param[in] createAll: if true, will start creating all the missing cubemaps immediately (at mapstart).
  *                       if false, missing cubemaps will be created at game-time.
  *
  * This function is called at mapstart. But it can also be called by executing the console command 'buildcubemaps'.
  * If we typ in that console command, we want all the cubemaps to be created (if they exist in file, or not. and regardless of any cvar value).
  */
+/*
+// My findings while building the cubemap textures:
+// There were some problems creating cubemaps that have no visible seams across the 6 sides of the cube:
+//   'edge clamp' doesn't produce aligned textures.
+//   'clamp' gives me a black border on the texture, but is better aligned.
+//   'repeat' looks best, but still has some borders (not all black borders though)
+//   If filtering is set to nearest, no borders can be seen, but the image is very pixelized.
+// OpenGL filtering, is using half pixels. That is causing the blurry borders on the cubemaps textures.
+// At the edges some false pixels were used (pixels that are outside the texture => undefined colors).
+//
+// UPDATE: GL_TEXTURE_CUBE_MAP_SEAMLESS is what we need.. (it's now called in tr_init.c function R_Init() ).
+// GL_TEXTURE_CUBE_MAP_SEAMLESS is available if the GL version is 3.2 or greater (safe to use).
+// Also, when using GL_TEXTURE_CUBE_MAP_SEAMLESS, it is fine to use WT_EDGE_CLAMP (the recommended value).
+//
+// The combination GL_TEXTURE_CUBE_MAP_SEAMLESS + rendering 33x33 gives the best results.
+*/
 void R_BuildCubeMaps(qboolean createAll)
 {
 	int i, j;
@@ -8284,8 +8333,6 @@ void R_BuildCubeMaps(qboolean createAll)
 	{
 		cubeTemp[i] = (byte *)ri.Z_Malloc(REF_CUBEMAP_TEXTURE_SIZE);
 	}
-	// allocate pixel memory for the big cm image, used for storing to file
-	pixeldata = ri.Z_Malloc(REF_CUBEMAP_STORE_SIZE * REF_CUBEMAP_STORE_SIZE * 4);
 
 	// the cubeProbes list
 	Com_InitGrowList(&tr.cubeProbes, 100);
@@ -8410,62 +8457,46 @@ void R_BuildCubeMaps(qboolean createAll)
 // quicksort all elements on position
 //	qsort(&tr.cubeProbes, tr.cubeProbes.currentElements, sizeof(void *), vertexposCompare); //crash.    tr.cubeProbes is no array[]?
 
-
 	Ren_Print("......%d cubeprobes created \n", tr.cubeProbes.currentElements);
 	ri.Cvar_Set("viewlog", "1");
 
 	//$ inside the next for-loop, we do not want to update the screen anymore.
 	//$ If we do, that will generate wierd visual effects during building of the cubemaps.
 	//$ So, all calls to Ren_UpdateScreen() have been removed.
-	//$ Now we have no way of knowing about cubemap-generation progress.. but we'll manage that later
+	//$ Now we have no way of knowing about cubemap-generation progress.. so don't make this function run for a too long time.
 	for (j = 0; j < tr.cubeProbes.currentElements; j++)
 	{
 		cubeProbe = (cubemapProbe_t *)Com_GrowListElement(&tr.cubeProbes, j);
 		cubeProbe->index = j;          // save the index, used later when writing to file
-		cubeProbe->ready = qfalse;     // ready for render use
-		cubeProbe->stored = qfalse;    // stored in file
+		cubeProbe->ready = qfalse;     // ready for render use?
+		cubeProbe->stored = qfalse;    // stored in file?
 		for (i = 0; i < 6; i++)
 		{
 			cubeProbe->pbo[i] = NULL;  // if it needs to be rendered, this pbo is the buffer for pixel transfers from gpu to cpu
 		}
 
-		// Load the cubemap from file if possible, else render a new cubemap (if creatAll is true)
+		// Load the cubemap from file if possible, else render a new cubemap (if creatAll is true).
+		// If it can be loaded, the pixeldata is stored in cubeTemp.
 		if (R_LoadCubeProbe(j, cubeTemp))
 		{
 			// read from file
 			countRead++;
 
 			// Build the cubemap texture:
-			// There were some problems creating cubemaps that have no visible seams across the 6 sides of the cube:
-			//   'edge clamp' doesn't produce aligned textures.
-			//   'clamp' gives me a black border on the texture, but is better aligned.
-			//   'repeat' looks best, but still has some borders (not all black borders though)
-			//   If filtering is set to nearest, no borders can be seen, but the image is very pixelized.
-			// OpenGL filters, using half pixels. At the edges some false pixels are used (pixels that are outside the texture => undefined colors).
-			//
-			// ..and what about this post: https://www.khronos.org/opengl/wiki/Common_Mistakes#Texture_edge_color_problem
-			// (1 item above on that^^ webpage is the reference to 'seamless cubemap texturing').
-			//
-			// UPDATE: GL_TEXTURE_CUBE_MAP_SEAMLESS is what we need.. (it's now called in tr_init.c function R_Init() ).
-			// GL_TEXTURE_CUBE_MAP_SEAMLESS is available if the GL version is 3.2 or greater (safe to use).
-			// Also, when using GL_TEXTURE_CUBE_MAP_SEAMLESS, it is fine to use WT_EDGE_CLAMP (the recommended value).
-			//
-			// The combination GL_TEXTURE_CUBE_MAP_SEAMLESS + rendering 33x33 gives the best results.
 			cubeProbe->cubemap = R_CreateCubeImage(va("_cubeProbe%d", j), (const byte **)cubeTemp, REF_CUBEMAP_SIZE, REF_CUBEMAP_SIZE, IF_NOPICMIP, FT_LINEAR, WT_EDGE_CLAMP);
 			if (!cubeProbe->cubemap)
-			{
-				cubeProbe->cubemap = tr.autoCubeImage; // provide something valid
-				goto buildcubemaps_finish; // continue?
+			{   // the cubemap texture could not be created
+				cubeProbe->cubemap = tr.autoCubeImage; // provide something valid to use for rendering
+				continue; // goto buildcubemaps_finish;
 			}
-			// this cubemap texture is now ready for use..
-			cubeProbe->ready = qtrue;
+			cubeProbe->ready = qtrue;  // this cubemap texture is now ready for render use..
 			cubeProbe->stored = qtrue; // just read from file, so it's stored
 		} else
 		{
 			if (!createAll)
 			{
 				// Do not generate all the cubemaps at mapstart.
-				// the cubeprobe has been created, but we render the cubemap textures later..
+				// The probe has been created, but we render the cubemap textures later..
 				cubeProbe->cubemap = tr.autoCubeImage; // provide something valid.. is this needed? test
 				continue;
 			}
@@ -8473,13 +8504,19 @@ void R_BuildCubeMaps(qboolean createAll)
 			// createAll: render and write to file
 			countWrite++;
 
-			RE_RenderCubeprobe(j, cubeTemp); // add the render command:  (probe j, and use cubeTemp to store pixeldata)
-			R_IssuePendingRenderCommands(); // and execute it
-			// the cube is now rendered, and the pixeldata is returned in cubeTemp.  cubeProbe->ready should be set
+/*#
+			// Render and save this cubemap. Pass pointers for the pixeldata buffers:
+			RE_RenderCubeprobe(j, qfalse, cubeTemp); // add the render command:  (probe j, render, use cubeTemp to store pixeldata)
+			R_IssuePendingRenderCommands();          // and execute it
+			// the cube is now rendered, and the pixeldata is returned in cubeTemp.  cubeProbe->ready should better be set now..
 			if (cubeProbe->ready)
 			{
 				R_SaveCubeProbe(cubeProbe, cubeTemp, qtrue); // this sets cubeProbe->stored if it succeeded to save to file
 			}
+*/
+			// Send render command only, but don't provide pixeldata pointers. Process the results later (and save later)..
+			RE_RenderCubeprobe(j, qtrue, NULL); // add the render command:  (probe j, render-command only, no pixeldata)
+			R_IssuePendingRenderCommands();     // and execute it
 		}
 	}
 
@@ -8488,7 +8525,7 @@ void R_BuildCubeMaps(qboolean createAll)
 
 
 buildcubemaps_finish:
-	// turn pixel targets off
+	// turn off rendering cubemaps indicator
 	tr.refdef.renderingCubemap = qfalse;
 
 	// free memory
@@ -8496,7 +8533,6 @@ buildcubemaps_finish:
 	{
 		if (cubeTemp[i]) ri.Free(cubeTemp[i]);
 	}
-	ri.Free(pixeldata);
 
 #ifdef LEGACY_DEBUG
 	endTime = ri.Milliseconds();
@@ -8730,7 +8766,7 @@ void RE_LoadWorldMap(const char *name)
 /// ^^that is an old comment.. i think.  all OK here..
 	//
 	// Here you can select how cubemaps are generated:
-//	R_BuildCubeMaps(qfalse); // qfalse, do not render any missing cubemaps immediately   TODO: make render offscreen..
+//	R_BuildCubeMaps(qfalse); // qfalse, do not render any missing cubemaps immediately   TODO: render offscreen is woot..
 	R_BuildCubeMaps(qtrue); // qtrue, render all cubemaps immediately at mapload (old behavior)
 
 	// clear the cubeprobe reflections data

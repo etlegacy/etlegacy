@@ -658,8 +658,11 @@ void RE_RenderScene(const refdef_t *fd)
 		Ren_Drop("R_RenderScene: NULL worldmodel");
 	}
 	
-//R_FindCubeprobes(fd->vieworg, &tr.worldEntity, &tr.reflectionData.env0, &tr.reflectionData.env1, &tr.reflectionData.interpolate);
-//^^that keeps swapping between 2 positions.  as if something else is using renderscene (the hud head?)
+	// if there are pixel transfers going on, check for results..
+	//!! This i want done in a new thread.. not here in renderscene.
+	//!! When executed here, all the pbo download is done right after the map loaded.
+	//!! When done from a thread, results can be handled sooner, and no lags.
+	R_PBOCheckDownloads();
 
 	Com_Memcpy(tr.refdef.text, fd->text, sizeof(tr.refdef.text));
 
