@@ -872,7 +872,7 @@ static void SV_DemoStopPlayback(void)
 			SV_SetConfigstring(CS_PLAYERS + i, NULL);
 		}
 	}
-
+	
 	// Close demo file after playback
 	FS_FCloseFile(sv.demoFile);
 	sv.demoState = DS_NONE;
@@ -1011,7 +1011,7 @@ static void SV_DemoStartPlayback(void)
 			    savedMaxClients < 0 || // if there's no savedMaxClients (so this means we didin't change sv_maxclients yet, and we always need to do so since we need to add sv_democlients)
 			    sv_maxclients->integer <= savedMaxClients)
 			{ // or if maxclients is below or equal to the previous value of maxclients (normally it can only be equal, but if we switch the mod with game_restart, it can get the default value of 8, which can be below, so we need to check that as well)
-				Com_Printf("DEMO: Not enough demo slots, automatically increasing sv_democlients to %d and sv_maxclients to %d.\n", clients, sv_maxclients->integer + clients);
+				Com_Printf("DEMO: Not enough demo slots, automatically increasing sv_democlients to %d and sv_maxclients to %d.\n", clients, (sv_maxclients->integer + clients > 64) ? 64 : sv_maxclients->integer + clients);
 
 				// save the old values of sv_maxclients, sv_democlients and bot_minplayers to later restore them
 				if (savedMaxClients < 0) // save only if it's the first value, the subsequent ones may be default values of the engine
@@ -1021,7 +1021,7 @@ static void SV_DemoStartPlayback(void)
 
 				// automatically adjusting sv_democlients, sv_maxclients and bot_minplayers
 				Cvar_SetValue("sv_democlients", clients);
-				Cvar_SetLatched("sv_maxclients", va("%i", sv_maxclients->integer + clients));
+				Cvar_SetLatched("sv_maxclients", va("%i", (sv_maxclients->integer + clients > 64) ? 64 : sv_maxclients->integer + clients));
 				// BUGGY makes a dedicated server crash
 				//Cvar_Get( "sv_maxclients", "8", 0 );
 				//sv_maxclients->modified = qfalse;
@@ -1163,7 +1163,7 @@ static void SV_DemoStartPlayback(void)
 	    Q_stricmp(Cvar_VariableString("fs_game"), fs) ||
 	    !Cvar_VariableIntegerValue("sv_cheats") ||
 	    (time < svs.time && !keepSaved) || // if the demo initial time is below server time AND we didn't already restart for demo playback, then we must restart to reinit the server time (because else, it might happen that the server time is still above demo time if the demo was recorded during a warmup time, in this case we won't restart the demo playback but just iterate a few demo frames in the void to catch up the server time, see below the else statement)
-	    sv_maxclients->modified || // FIXME: demo_play with sv_maxclients 64 doesn't start because of this and wants to set sv_mmaxclients 128?!
+	    sv_maxclients->modified ||
 	    (sv_gametype->integer != gametype && !(gametype == GT_SINGLE_PLAYER && sv_gametype->integer == GT_COOP))  // check for gametype change (need a restart to take effect since it's a latched var) AND check that the gametype difference is not between SinglePlayer and DM/FFA, which are in fact the same gametype (and the server will automatically change SinglePlayer to FFA, so we need to detect that and ignore this automatic change)
 	    )
 	{
