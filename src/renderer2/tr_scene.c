@@ -657,12 +657,6 @@ void RE_RenderScene(const refdef_t *fd)
 	{
 		Ren_Drop("R_RenderScene: NULL worldmodel");
 	}
-	
-	// if there are pixel transfers going on, check for results..
-	//!! This i want done in a new thread.. not here in renderscene.
-	//!! When executed here, all the pbo download is done right after the map loaded.
-	//!! When done from a thread, results can be handled sooner, and no lags.
-	R_PBOCheckDownloads();
 
 	Com_Memcpy(tr.refdef.text, fd->text, sizeof(tr.refdef.text));
 

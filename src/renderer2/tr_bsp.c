@@ -8042,7 +8042,7 @@ void R_SaveCubeProbe(cubemapProbe_t *cubeProbe, byte **cubePixeldata, qboolean s
 			if (!fromfile)
 			{
 				// the pixeldata is not read from file, so allocate memory for storing a TGA
-				buffer = (byte *)Com_Allocate(fileBytes); // include spave for the file header
+				buffer = (byte *)Com_Allocate(fileBytes); // include space for the file header + id-field
 				if (!buffer)
 				{
 					lastFileNum = -1;
@@ -8121,7 +8121,7 @@ void R_SaveCubeProbe(cubemapProbe_t *cubeProbe, byte **cubePixeldata, qboolean s
 	if (!fromfile)
 	{
 		// the pixeldata is not read from file, so allocate memory for storing a TGA
-		buffer = (byte *)Com_Allocate(fileBytes); // include spave for the file header
+		buffer = (byte *)Com_Allocate(fileBytes); // include space for the file header + id-field
 		if (!buffer)
 		{
 			return; // memory could not be allocated
@@ -8261,8 +8261,8 @@ qboolean R_LoadCubeProbe(int cubeProbeNum, byte **cubeTemp)
 /**
  * @brief R_BuildCubeMaps
  *
- * @param[in] createAll: if true, will start creating all the missing cubemaps immediately (at mapstart).
- *                       if false, missing cubemaps will be created at game-time.
+ * @param[in] createAll: if true, will start creating all the missing cubemaps immediately (at mapload).
+ *                       if false, missing cubemaps will be created during game-time.
  *
  * This function is called at mapstart. But it can also be called by executing the console command 'buildcubemaps'.
  * If we typ in that console command, we want all the cubemaps to be created (if they exist in file, or not. and regardless of any cvar value).
@@ -8287,7 +8287,6 @@ void R_BuildCubeMaps(qboolean createAll)
 {
 	int i, j;
 	cubemapProbe_t *cubeProbe;
-	byte *cubeTemp[6];
 	byte *pixeldata = NULL;
 	int countRead = 0, countWrite = 0;
 
@@ -8326,12 +8325,6 @@ void R_BuildCubeMaps(qboolean createAll)
 	if (!createAll && !r_reflectionMapping->integer)
 	{
 		return;
-	}
-
-	// this is used for storing the 6 cubesides pixeldata read from screen
-	for (i = 0; i < 6; i++)
-	{
-		cubeTemp[i] = (byte *)ri.Z_Malloc(REF_CUBEMAP_TEXTURE_SIZE);
 	}
 
 	// the cubeProbes list
@@ -8472,18 +8465,19 @@ void R_BuildCubeMaps(qboolean createAll)
 		cubeProbe->stored = qfalse;    // stored in file?
 		for (i = 0; i < 6; i++)
 		{
+			cubeProbe->cubeTemp[i] = (byte *)ri.Z_Malloc(REF_CUBEMAP_TEXTURE_SIZE); // cpu memory with pixeldata to create the final cubemap texture
 			cubeProbe->pbo[i] = NULL;  // if it needs to be rendered, this pbo is the buffer for pixel transfers from gpu to cpu
 		}
 
 		// Load the cubemap from file if possible, else render a new cubemap (if creatAll is true).
 		// If it can be loaded, the pixeldata is stored in cubeTemp.
-		if (R_LoadCubeProbe(j, cubeTemp))
+		if (R_LoadCubeProbe(j, cubeProbe->cubeTemp))
 		{
 			// read from file
 			countRead++;
 
 			// Build the cubemap texture:
-			cubeProbe->cubemap = R_CreateCubeImage(va("_cubeProbe%d", j), (const byte **)cubeTemp, REF_CUBEMAP_SIZE, REF_CUBEMAP_SIZE, IF_NOPICMIP, FT_LINEAR, WT_EDGE_CLAMP);
+			cubeProbe->cubemap = R_CreateCubeImage(va("_cubeProbe%d", j), (const byte **)cubeProbe->cubeTemp, REF_CUBEMAP_SIZE, REF_CUBEMAP_SIZE, IF_NOPICMIP, FT_LINEAR, WT_EDGE_CLAMP);
 			if (!cubeProbe->cubemap)
 			{   // the cubemap texture could not be created
 				cubeProbe->cubemap = tr.autoCubeImage; // provide something valid to use for rendering
@@ -8491,6 +8485,12 @@ void R_BuildCubeMaps(qboolean createAll)
 			}
 			cubeProbe->ready = qtrue;  // this cubemap texture is now ready for render use..
 			cubeProbe->stored = qtrue; // just read from file, so it's stored
+			// this cubemap is ready. The memory can be freed
+			for (i = 0; i < 6; i++)
+			{
+				if (cubeProbe->cubeTemp[i]) ri.Free(cubeProbe->cubeTemp[i]);
+				cubeProbe->cubeTemp[i] = NULL;
+			}
 		} else
 		{
 			if (!createAll)
@@ -8504,19 +8504,22 @@ void R_BuildCubeMaps(qboolean createAll)
 			// createAll: render and write to file
 			countWrite++;
 
-/*#
+
 			// Render and save this cubemap. Pass pointers for the pixeldata buffers:
-			RE_RenderCubeprobe(j, qfalse, cubeTemp); // add the render command:  (probe j, render, use cubeTemp to store pixeldata)
+			RE_RenderCubeprobe(j, qfalse, cubeProbe->cubeTemp); // add the render command:  (probe j, render, use cubeTemp to store pixeldata)
 			R_IssuePendingRenderCommands();          // and execute it
 			// the cube is now rendered, and the pixeldata is returned in cubeTemp.  cubeProbe->ready should better be set now..
+/*@ this is now done by RE_RenderCubeprobe(), in a seperate thread..
 			if (cubeProbe->ready)
 			{
-				R_SaveCubeProbe(cubeProbe, cubeTemp, qtrue); // this sets cubeProbe->stored if it succeeded to save to file
+				R_SaveCubeProbe(cubeProbe, cubeProbe->cubeTemp, qtrue); // this sets cubeProbe->stored if it succeeded to save to file
 			}
 */
+/*
 			// Send render command only, but don't provide pixeldata pointers. Process the results later (and save later)..
 			RE_RenderCubeprobe(j, qtrue, NULL); // add the render command:  (probe j, render-command only, no pixeldata)
 			R_IssuePendingRenderCommands();     // and execute it
+*/
 		}
 	}
 
@@ -8527,12 +8530,6 @@ void R_BuildCubeMaps(qboolean createAll)
 buildcubemaps_finish:
 	// turn off rendering cubemaps indicator
 	tr.refdef.renderingCubemap = qfalse;
-
-	// free memory
-	for (i = 0; i < 6; i++)
-	{
-		if (cubeTemp[i]) ri.Free(cubeTemp[i]);
-	}
 
 #ifdef LEGACY_DEBUG
 	endTime = ri.Milliseconds();

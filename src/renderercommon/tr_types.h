@@ -481,7 +481,7 @@ typedef struct
 
 	// synonymous with "does rendering consume the entire screen?"
 	qboolean isFullscreen;
-	qboolean smpActive;                     ///< obsolete, kept for compatibility
+	qboolean smpActive;                             ///< obsolete, kept for compatibility
 } glconfig_t;
 
 /**

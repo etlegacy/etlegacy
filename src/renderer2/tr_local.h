@@ -773,6 +773,7 @@ typedef struct
 	image_t *cubemap;                       ///< the cubmap texture (all 6 sides in one texture)
 	qboolean ready;                         ///< false, if this cubemap has not yet been created for rendering
 	qboolean stored;                        ///< true, if this cubemap has been stored to file
+	byte *cubeTemp[6];                      ///< temporary memory for storing pixeldata
 	PBO_t *pbo[6];                          ///< the 6 Pixel Buffer Objects associated with this probe (one for each side of the cube)
 } cubemapProbe_t;
 
@@ -4560,20 +4561,6 @@ void R_VBOList_f(void);
 PIXEL BUFFER OBJECTS, tr_pbo.c
 ============================================================
 */
-typedef struct pboDownload_Cubemap_s {
-	struct pboDownload_Cubemap_s *prev;                ///< linked list previous item
-	struct pboDownload_Cubemap_s *next;                ///< linked list next item
-	cubemapProbe_t *probe;                             ///<
-	uint32_t results;                                  ///< a bit mask value. Any bit 0 to 5 set, means we must wait for results[bit]
-	byte *cubeTemp[6];                                 ///< buffers to read in the results
-} pboDownload_Cubemap_t;
-
-void R_PBOInitDownloads(void);
-void R_PBOAddDownload(cubemapProbe_t *probe);
-void R_PBORemoveDownload(pboDownload_Cubemap_t *download);
-void R_PBOCheckDownloads(void);
-
-
 PBO_t* R_CreatePBO(pboUsage_t usage, int width, int height);
 
 void R_BindPBO(PBO_t *pbo);
@@ -4587,6 +4574,26 @@ qboolean R_pboTexImage2D(GLenum target, GLint level, GLint internalformat, GLsiz
 
 void R_InitPBOs(void);
 void R_ShutdownPBOs(void);
+
+/*
+============================================================
+THREADS, tr_thread.c
+============================================================
+*/
+typedef struct thr_CubemapSave_s {
+	struct thr_CubemapSave_s *prev;                    ///< linked list previous item
+	struct thr_CubemapSave_s *next;                    ///< linked list next item
+	cubemapProbe_t *probe;                             ///< the probe for which to save the cubemap to file
+} thr_CubemapSave_t;
+
+void THR_Init_CubemapSave(void);
+thr_CubemapSave_t* THR_AddProbeToSave(cubemapProbe_t *probe);
+thr_CubemapSave_t* THR_RemoveProbeToSave(thr_CubemapSave_t *entry);
+
+void R2Thread_Start(void);
+void R2Thread_Stop(void);
+
+
 
 /*
 ============================================================

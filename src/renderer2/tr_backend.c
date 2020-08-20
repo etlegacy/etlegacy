@@ -7420,8 +7420,6 @@ const void *RB_RenderCubeprobe(const void *data)
 	// execute only the render command?
 	if (cmd_commandOnly)
 	{
-		// add this probe to the list of PBO results to check
-		R_PBOAddDownload(probe);
 		// the cubemap is not quite ready yet..
 		probe->cubemap = tr.autoCubeImage; // provide a valid temporary texture for rendering,
 		probe->ready = qfalse;             // but indicate that this cube is not ready
@@ -7452,10 +7450,8 @@ const void *RB_RenderCubeprobe(const void *data)
 	// this cubemap is now ready for render use
 	probe->ready = qtrue;
 
-
-	// save to file..
-//	R_SaveCubeProbe(probe, cubeTemp, qfalse);  // this makes it (too) slow ?..  try to find a faster way..  I found a faster way..
-
+	// save to file.. by another thread
+	THR_AddProbeToSave(probe);
 
 renderCubeProbe_finish:
 	// free allocated memory

@@ -1586,6 +1586,7 @@ void R_Init(void)
 
 	R_InitVBOs();
 
+	R2Thread_Start();
 	R_InitPBOs();
 
 	R_InitShaders();
@@ -1612,7 +1613,7 @@ void R_Init(void)
 	}
 
 	// this will apply filtering across the adjacent 6 cubemap textures,
-	// so the edge from one cubemap to the next cubemap doesn't use any pixels that are off-texture (the edges).
+	// so the edge from one cubemap side to the next cubemap side doesn't use any pixels that are off-texture (the edges).
 	// This is what we need to make the cubemap images align, and no seams are seen..
 	// GL_TEXTURE_CUBE_MAP_SEAMLESS is available only if the GL version is 3.2 or greater.
 //	if (glConfig2.contextCombined >= 320)
@@ -1656,6 +1657,8 @@ void RE_Shutdown(qboolean destroyWindow)
 	if (tr.registered)
 	{
 		R_IssuePendingRenderCommands();
+
+		R2Thread_Stop(); // stop the thread
 
 		R_ShutdownImages();
 		R_ShutdownPBOs();
