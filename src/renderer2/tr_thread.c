@@ -21,8 +21,16 @@ static thr_CubemapSave_t arrayCubemapSave[MAX_CUBEMAPSAVE];
 static thr_CubemapSave_t *entry_CubemapSave = NULL;       // the 1st of the used entries
 static thr_CubemapSave_t *avail_CubemapSave = NULL;       // the 1st of the unused entries
 
+static HANDLE R2Thread_Mutex; // windows
 
-static HANDLE mutex; // windows
+// because file locking needs some work, this is a temporary workaround.
+// To not let the main thread, and this R2 thread access the same file,
+// we start processing the cubemaps afterc the function BuildCubeProbes() has finished.
+// This thread is running, but waiting for this flag to become == true, and only then starts processing.
+qboolean R2Thread_Process = qfalse;
+
+// manual simple file locking
+static char R2Thread_LockedFilename[1024] = "";
 
 // thread status
 #define THREAD_STATUS_DEAD        0       ///< Thread is dead or hasn't been started
@@ -43,11 +51,8 @@ static int R2Thread_Status = THREAD_STATUS_DEAD;
 static qboolean R2Thread_QuitRequested;
 
 
-/* Function that sets the thread status when the thread dies. Since that is
- * system-dependent, it can't be done in the thread's main code.
- */
+// forward declarations
 static void R2Thread_SetDead();
-
 static void R2Thread_Wait();
 
 
@@ -56,12 +61,15 @@ static void R2Thread_Wait();
 
 static void R2Thread_Lock(void)
 {
-	WaitForSingleObject(mutex, INFINITE);
+	DWORD dwErr;
+	do {
+		dwErr = WaitForSingleObject(R2Thread_Mutex, INFINITE);
+	} while (dwErr != WAIT_OBJECT_0 && dwErr != WAIT_ABANDONED);
 }
 
 static void R2Thread_Unlock(void)
 {
-	ReleaseMutex(mutex);
+	ReleaseMutex(R2Thread_Mutex);
 }
 
 #else // defined __linux__ || defined __APPLE__ || defined __FreeBSD__
@@ -80,10 +88,30 @@ static void R2Thread_Unlock(void)
 #endif
 
 
-void R2Thread_Stop(void)
+
+//-----------------------------------------------------------------------------
+// file locking
+void R2Thread_LockFile(char *filename)
 {
-	R2Thread_QuitRequested = qtrue;
-	R2Thread_Wait();
+	// Since we lock only 1 file at a time, we can use a simple mechanism.
+	// if the file is already locked, then wait for it to be unlocked.
+	// if no file is locked, R2Thread_LockedFilename == ""
+	while(R2Thread_LockedFilename[0] != '\0'); // while(strcmp(&R2Thread_LockedFilename, ""));
+	//Com_Memset(R2Thread_LockedFilename, 0, sizeof(R2Thread_LockedFilename)); // no need, strcpy includes the trailing 0
+//R2Thread_Lock();
+	strcpy(&R2Thread_LockedFilename[0], filename);
+//R2Thread_Unlock();
+}
+
+void R2Thread_UnlockFile(char *filename)
+{
+	// only if the filename matches the locked filename, we clear the variable.
+	if (!strcmp(&R2Thread_LockedFilename[0], filename))
+	{
+//R2Thread_Lock();
+		R2Thread_LockedFilename[0] = '\0';
+//R2Thread_Unlock();
+	}
 }
 
 
@@ -118,11 +146,13 @@ thr_CubemapSave_t* THR_AddProbeToSave(cubemapProbe_t *probe)
 		return NULL; // none available
 	}
 
+//R2Thread_Lock();
 	// exit if it already exists in the list
 	for (entry = entry_CubemapSave; entry; entry = entry->next)
 	{
 		if (entry->probe == probe)
 		{
+//R2Thread_Unlock();
 			return entry;
 		}
 	}
@@ -169,7 +199,7 @@ thr_CubemapSave_t* THR_RemoveProbeToSave(thr_CubemapSave_t *entry)
 	}
 
 	//lock
-	R2Thread_Lock();
+//	R2Thread_Lock();
 
 	result = entry->prev;
 
@@ -204,7 +234,7 @@ thr_CubemapSave_t* THR_RemoveProbeToSave(thr_CubemapSave_t *entry)
 	entry->probe = NULL;
 
 	// unlock
-	R2Thread_Unlock();
+//	R2Thread_Unlock();
 
 	return result;
 }
@@ -212,9 +242,11 @@ thr_CubemapSave_t* THR_RemoveProbeToSave(thr_CubemapSave_t *entry)
 
 void THR_ProcessProbesToSave(void)
 {
-	thr_CubemapSave_t *entry;
 	cubemapProbe_t *probe;
-
+/*
+	// process all the entries
+	thr_CubemapSave_t *entry;
+R2Thread_Lock();
 	for (entry = entry_CubemapSave; entry; entry = entry->next)
 	{
 		if (R2Thread_Status != THREAD_STATUS_RUNNING) return;
@@ -222,9 +254,22 @@ void THR_ProcessProbesToSave(void)
 		if (!probe) continue; // better return, because when that happens, it's bad..
 		R_SaveCubeProbe(probe, probe->cubeTemp, qfalse); // qfalse means: save only this one
 		// this entry is processed.
-//		entry = THR_RemoveProbeToSave(entry); // the previous entry is returned so the loop will do the right thing..
-		(void)THR_RemoveProbeToSave(entry);
+		entry = THR_RemoveProbeToSave(entry); // the previous entry is returned so the loop will do the right thing..
 	}
+R2Thread_Unlock();
+*/
+
+	// process only 1 entry at a time
+	if (R2Thread_Status != THREAD_STATUS_RUNNING) return;
+//R2Thread_Lock();
+	if (!entry_CubemapSave) goto THR_ProcessProbesToSave_finish;
+	probe = entry_CubemapSave->probe;
+	if (!probe) goto THR_ProcessProbesToSave_finish;
+	R_SaveCubeProbe(probe, probe->cubeTemp, qfalse); // qfalse means: save only this one
+	(void)THR_RemoveProbeToSave(entry_CubemapSave);
+THR_ProcessProbesToSave_finish:
+//R2Thread_Unlock();
+	return;
 }
 
 
@@ -239,9 +284,12 @@ static void R2Thread_MainLoop()
 		if (R2Thread_QuitRequested)
 		{
 			R2Thread_Status = THREAD_STATUS_QUITTING;
+		}
+		if (R2Thread_Status != THREAD_STATUS_RUNNING)
+		{
 			return; // exit the mainloop
 		}
-		if (R2Thread_Status == THREAD_STATUS_RUNNING)
+		if (R2Thread_Process)
 		{
 			THR_ProcessProbesToSave();
 		}
@@ -264,31 +312,38 @@ static HANDLE R2Thread_Handle = NULL;
 
 static DWORD WINAPI R2Thread_SystemProc(LPVOID dummy)
 {
+//	R2Thread_Mutex = CreateMutex(NULL, qfalse, NULL);
 	R2Thread();
 	return 0;
 }
 
 void R2Thread_Start()
 {
+	// init the linked list for all the entries to process
 	THR_Init_CubemapSave();
+	// create the mutex used for locking/unlocking data manipulation
+	R2Thread_Mutex = CreateMutex(NULL, qtrue, NULL);
+	// create, and start the thread
 	R2Thread_QuitRequested = qfalse;
 	if (R2Thread_Handle == NULL)
 	{
 		R2Thread_Handle = CreateThread(NULL, 0, R2Thread_SystemProc, NULL, 0, NULL);
 	}
+	Ren_Print("R2_Thread started..\n");
 }
 
 static void R2Thread_Wait()
 {
-	if (R2Thread_Handle != NULL)
+	if (!R2Thread_Handle)
 	{
-		if (R2Thread_Status != THREAD_STATUS_DEAD)
-		{
-			WaitForSingleObject(R2Thread_Handle, 10000);
-			CloseHandle(R2Thread_Handle);
-		}
-		R2Thread_Handle = NULL;
+		return;
 	}
+	if (R2Thread_Status != THREAD_STATUS_DEAD)
+	{
+		WaitForSingleObject(R2Thread_Handle, 1000);
+		CloseHandle(R2Thread_Handle);
+	}
+	R2Thread_Handle = NULL;
 }
 
 static void R2Thread_SetDead()
@@ -339,3 +394,13 @@ static void R2Thread_Wait()
 }
 
 #endif
+
+
+void R2Thread_Stop(void)
+{
+	Ren_Print("R2_Thread stopping..\n");
+	R2Thread_QuitRequested = qtrue;
+	R2Thread_Wait();
+	//CloseHandle(R2Thread_Handle);
+	CloseHandle(R2Thread_Mutex);
+}
