@@ -1162,7 +1162,7 @@ static void SV_DemoStartPlayback(void)
 	if (!com_sv_running->integer || Q_stricmp(sv_mapname->string, map) ||
 	    Q_stricmp(Cvar_VariableString("fs_game"), fs) ||
 	    !Cvar_VariableIntegerValue("sv_cheats") ||
-	    (time < svs.time && !keepSaved) || // if the demo initial time is below server time AND we didn't already restart for demo playback, then we must restart to reinit the server time (because else, it might happen that the server time is still above demo time if the demo was recorded during a warmup time, in this case we won't restart the demo playback but just iterate a few demo frames in the void to catch up the server time, see below the else statement)
+	    (time < svs.time && !keepSaved) || // We do restart to reinit the server time
 	    sv_maxclients->modified ||
 	    (sv_gametype->integer != gametype && !(gametype == GT_SINGLE_PLAYER && sv_gametype->integer == GT_COOP))  // check for gametype change (need a restart to take effect since it's a latched var) AND check that the gametype difference is not between SinglePlayer and DM/FFA, which are in fact the same gametype (and the server will automatically change SinglePlayer to FFA, so we need to detect that and ignore this automatic change)
 	    )
@@ -1203,17 +1203,6 @@ static void SV_DemoStartPlayback(void)
 		Cbuf_AddText(va("g_gametype %i\ndevmap %s\n", gametype, map)); // Change gametype and map (using devmap to enable cheats)
 
 		return;
-	}
-	else if (time < svs.time && keepSaved)
-	{
-		// else if the demo time is still below the server time but we already restarted for the demo playback, we just iterate a few demo frames in the void to catch to until we are above the server time. Note: having a server time below the demo time is CRITICAL, else we may send to the clients a server time that is below the previous, making the time going backward, which should NEVER happen!
-		int timetoreach = svs.time;
-
-		svs.time = time;
-		while (svs.time < timetoreach)
-		{
-			SV_DemoReadFrame(); // run a few frames to settle things out
-		}
 	}
 
 	// Initialize our stuff
