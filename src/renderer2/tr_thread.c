@@ -30,7 +30,7 @@ static HANDLE R2Thread_Mutex; // windows
 qboolean R2Thread_Process = qfalse;
 
 // manual simple file locking
-static char R2Thread_LockedFilename[1024] = "";
+//static char R2Thread_LockedFilename[1024] = "";
 
 // thread status
 #define THREAD_STATUS_DEAD        0       ///< Thread is dead or hasn't been started
@@ -63,7 +63,7 @@ static void R2Thread_Lock(void)
 {
 	DWORD dwErr;
 	do {
-		dwErr = WaitForSingleObject(R2Thread_Mutex, INFINITE);
+		dwErr = WaitForSingleObject(R2Thread_Mutex, INFINITE);  //! this thread never ends, so adjust the code first << todo
 	} while (dwErr != WAIT_OBJECT_0 && dwErr != WAIT_ABANDONED);
 }
 
@@ -88,7 +88,7 @@ static void R2Thread_Unlock(void)
 #endif
 
 
-
+/*
 //-----------------------------------------------------------------------------
 // file locking
 void R2Thread_LockFile(char *filename)
@@ -113,7 +113,7 @@ void R2Thread_UnlockFile(char *filename)
 //R2Thread_Unlock();
 	}
 }
-
+*/
 
 
 //-----------------------------------------------------------------------------

@@ -7451,7 +7451,7 @@ const void *RB_RenderCubeprobe(const void *data)
 	probe->ready = qtrue;
 
 	// save to file.. by another thread
-	THR_AddProbeToSave(probe);
+//	THR_AddProbeToSave(probe); // TODO: this mechanism needs proper file locking
 
 renderCubeProbe_finish:
 	// free allocated memory

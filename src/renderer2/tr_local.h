@@ -4593,10 +4593,10 @@ thr_CubemapSave_t* THR_RemoveProbeToSave(thr_CubemapSave_t *entry);
 void R2Thread_Start(void);
 void R2Thread_Stop(void);
 
-void R2Thread_LockFile(char *filename);                ///< simple file locking
-void R2Thread_UnlockFile(char *filename);              ///< It can handle only 1 file locking (which is enough for our purpose)
+//void R2Thread_LockFile(char *filename);                ///< simple file locking
+//void R2Thread_UnlockFile(char *filename);              ///< It can handle only 1 file locking (which is enough for our purpose)
 
-extern qboolean R2Thread_Process;
+extern qboolean R2Thread_Process; // this could be done using an event, and waitforsingleobject.. but it's only used for a quick workaround atm.
 
 
 /*

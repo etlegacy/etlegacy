@@ -1586,7 +1586,7 @@ void R_Init(void)
 
 	R_InitVBOs();
 
-	R2Thread_Start();
+//	R2Thread_Start(); // disabled: needs proper file locking fixed first..
 	R_InitPBOs();
 
 	R_InitShaders();
@@ -1658,7 +1658,7 @@ void RE_Shutdown(qboolean destroyWindow)
 	{
 		R_IssuePendingRenderCommands();
 
-		R2Thread_Stop(); // stop the thread
+//		R2Thread_Stop(); // stop the thread
 
 		R_ShutdownImages();
 		R_ShutdownPBOs();

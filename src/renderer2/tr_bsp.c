@@ -8028,9 +8028,9 @@ void R_SaveCubeProbe(cubemapProbe_t *cubeProbe, byte **cubePixeldata, qboolean s
 			if (ri.FS_FileExists(filename))
 			{
 				// try to read the file (buffer header + id-field + pixeldata)
-R2Thread_LockFile(filename);
+//R2Thread_LockFile(filename);
 				bytesRead = ri.FS_ReadFile(filename, (void **)&buffer); // this also closes he file after reading the full file into the buffer..
-R2Thread_UnlockFile(filename);
+//R2Thread_UnlockFile(filename);
 				if (bytesRead <= 0 || !buffer)
 				{   // something went wrong
 					if (buffer) ri.FS_FreeFile(buffer); // ..but the buffer is not freed when a file is closed.
@@ -8084,9 +8084,9 @@ R2Thread_UnlockFile(filename);
 			cubeProbe->index == tr.cubeProbes.currentElements - 1)
 		{
 			// save the file
-R2Thread_LockFile(filename);
+//R2Thread_LockFile(filename);
 			ri.FS_WriteFile(filename, buffer, fileBytes); // this will close the file as well
-R2Thread_UnlockFile(filename);
+//R2Thread_UnlockFile(filename);
 			// free the buffer
 			if (buffer)
 			{
@@ -8112,9 +8112,9 @@ R2Thread_UnlockFile(filename);
 	if (ri.FS_FileExists(filename))
 	{
 		// try to read the file (buffer header + pixeldata)
-R2Thread_LockFile(filename);
+//R2Thread_LockFile(filename);
 		bytesRead = ri.FS_ReadFile(filename, (void **)&buffer); // this also closes he file after reading the full file into the buffer..
-R2Thread_UnlockFile(filename); // don't forget to unlock the file when we exit now
+//R2Thread_UnlockFile(filename); // don't forget to unlock the file when we exit now
 		if (bytesRead <= 0 || !buffer)
 		{
 			if (buffer) ri.FS_FreeFile(buffer); // ..but the buffer is not freed when a file is closed.
@@ -8159,9 +8159,9 @@ R2Thread_UnlockFile(filename); // don't forget to unlock the file when we exit n
 	cubeProbe->stored = qtrue;
 
 	// save the file
-R2Thread_LockFile(filename);
+//R2Thread_LockFile(filename);
 	ri.FS_WriteFile(filename, buffer, fileBytes); // this will close the file as well
-R2Thread_UnlockFile(filename);
+//R2Thread_UnlockFile(filename);
 
 	// deallocate memory
 	if (buffer)
@@ -8215,9 +8215,9 @@ qboolean R_LoadCubeProbe(int cubeProbeNum, byte **cubeTemp)
 		OK = ri.FS_FileExists(filename);
 		if (OK)
 		{
-R2Thread_LockFile(filename);
+//R2Thread_LockFile(filename);
 			bytesRead = ri.FS_ReadFile(filename, (void **)&buffer); // this also closes he file after reading the full file into the buffer
-R2Thread_UnlockFile(filename);
+//R2Thread_UnlockFile(filename);
 		}
 		if (!OK || bytesRead <= 0)
 		{
@@ -8520,12 +8520,11 @@ void R_BuildCubeMaps(qboolean createAll)
 			RE_RenderCubeprobe(j, qfalse, cubeProbe->cubeTemp); // add the render command:  (probe j, render, use cubeTemp to store pixeldata)
 			R_IssuePendingRenderCommands();          // and execute it
 			// the cube is now rendered, and the pixeldata is returned in cubeTemp.  cubeProbe->ready should better be set now..
-/*@ this is now done by RE_RenderCubeprobe(), in a seperate thread..
 			if (cubeProbe->ready)
 			{
 				R_SaveCubeProbe(cubeProbe, cubeProbe->cubeTemp, qtrue); // this sets cubeProbe->stored if it succeeded to save to file
 			}
-*/
+
 /*
 			// Send render command only, but don't provide pixeldata pointers. Process the results later (and save later)..
 			RE_RenderCubeprobe(j, qtrue, NULL); // add the render command:  (probe j, render-command only, no pixeldata)
@@ -8544,7 +8543,7 @@ buildcubemaps_finish:
 
 	// start processing: save the cubemaps to file.
 	// !!! THIS IS A WORKAROUND until file locking is working
-	R2Thread_Process = qtrue;
+//	R2Thread_Process = qtrue; // disabled..
 
 #ifdef LEGACY_DEBUG
 	endTime = ri.Milliseconds();
@@ -8778,7 +8777,7 @@ void RE_LoadWorldMap(const char *name)
 /// ^^that is an old comment.. i think.  all OK here..
 	//
 	// Here you can select how cubemaps are generated:
-//	R_BuildCubeMaps(qfalse); // qfalse, do not render any missing cubemaps immediately   TODO: render offscreen is woot..
+//	R_BuildCubeMaps(qfalse); // qfalse, do not render any missing cubemaps immediately
 	R_BuildCubeMaps(qtrue); // qtrue, render all cubemaps immediately at mapload (old behavior)
 
 	// clear the cubeprobe reflections data
