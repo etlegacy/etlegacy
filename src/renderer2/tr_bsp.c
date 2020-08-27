@@ -7909,7 +7909,7 @@ if (backEnd.currentEntity != &tr.worldEntity)
 		*interpolation = 0.0f;
 		return;
 	}
-
+/*
 	// If the cubemap was not yet rendered, then issue the render command to draw it now.
 	// Note that this could only ever happen, when not all cubemaps have been generated at mapstart. (buildcubemaps(false))
 	if (!closestProbe->ready)
@@ -7918,32 +7918,31 @@ if (backEnd.currentEntity != &tr.worldEntity)
 		RE_RenderCubeprobe(closestProbeIndex, qtrue, NULL); // add the render command only
 		R_IssuePendingRenderCommands(); // and execute it
 
-/*		//!! The next applies when was called: RE_RenderCubeprobe(.., qfalse, ..):
-		// Now the cubemap is rendered, and ->ready should be == qtrue.
-		// But it could happen that the cubemap texture could not be created.. (game will error out)
-		if (!closestProbe->ready) {
-			*env1 = tr.autoCubeImage;
-			*env2 = tr.autoCubeImage;
-			*interpolation = 0.0f;
-			return;
-		}
-*/
-/*
-		// render + 'save to file' is working, but code is still changing.. this is no longer done here.
-		{
-			byte *cubeTemp[6];
-			RE_RenderCubeprobe(closestProbeIndex, qfalse, cubeTemp); // add the render command (and readpixels to cubeTemp)
-			R_IssuePendingRenderCommands(); // and execute it
-			R_SaveCubeProbe(closestProbe, cubeTemp, qfalse); // save this single cubemap
-		}
-*/
+//		//!! The next applies when was called: RE_RenderCubeprobe(.., qfalse, ..):
+//		// Now the cubemap is rendered, and ->ready should be == qtrue.
+//		// But it could happen that the cubemap texture could not be created.. (game will error out)
+//		if (!closestProbe->ready) {
+//			*env1 = tr.autoCubeImage;
+//			*env2 = tr.autoCubeImage;
+//			*interpolation = 0.0f;
+//			return;
+//		}
+
+//		// render + 'save to file' is working, but code is still changing.. this is no longer done here.
+//		{
+//			byte *cubeTemp[6];
+//			RE_RenderCubeprobe(closestProbeIndex, qfalse, cubeTemp); // add the render command (and readpixels to cubeTemp)
+//			R_IssuePendingRenderCommands(); // and execute it
+//			R_SaveCubeProbe(closestProbe, cubeTemp, qfalse); // save this single cubemap
+//		}
+
 		// temporarily provide a valid texture
 		*env1 = tr.autoCubeImage;
 		*env2 = tr.autoCubeImage;
 		*interpolation = 0.0f;
 		return;
 	}
-
+*/
 	if (!tr.reflectionData.probe1)
 	{
 		// this is the first time we searched for cubeprobes

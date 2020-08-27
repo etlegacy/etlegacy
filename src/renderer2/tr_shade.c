@@ -3607,19 +3607,20 @@ void Tess_End()
 
 	GL_CheckErrors();
 
-	// call off to shader specific tess end function
-	tess.stageIteratorFunc();
+	if (tess.stageIteratorFunc) {
+		// call off to shader specific tess end function
+		tess.stageIteratorFunc();
 
-	if ((tess.stageIteratorFunc != Tess_StageIteratorShadowFill) &&
-	    (tess.stageIteratorFunc != Tess_StageIteratorDebug))
-	{
-		// draw debugging stuff
-		if (r_showTris->integer || r_showBatches->integer || (r_showLightBatches->integer && (tess.stageIteratorFunc == Tess_StageIteratorLighting)))
+		if ((tess.stageIteratorFunc != Tess_StageIteratorShadowFill) &&
+			(tess.stageIteratorFunc != Tess_StageIteratorDebug))
 		{
-			DrawTris();
+			// draw debugging stuff
+			if (r_showTris->integer || r_showBatches->integer || (r_showLightBatches->integer && (tess.stageIteratorFunc == Tess_StageIteratorLighting)))
+			{
+				DrawTris();
+			}
 		}
 	}
-
 	tess.vboVertexSkinning = qfalse;
 
 	// clear shader so we can tell we don't have any unclosed surfaces

@@ -20,6 +20,7 @@ static thr_CubemapSave_t arrayCubemapSave[MAX_CUBEMAPSAVE];
 // These lists have references to both previous & next entries (for easy entry deletion).
 static thr_CubemapSave_t *entry_CubemapSave = NULL;       // the 1st of the used entries
 static thr_CubemapSave_t *avail_CubemapSave = NULL;       // the 1st of the unused entries
+static thr_CubemapSave_t *oldest_CubemapSave = NULL;      // the oldest of the used entries
 
 static HANDLE R2Thread_Mutex; // windows
 
@@ -128,6 +129,7 @@ void THR_Init_CubemapSave(void)
 	int i;
 	entry_CubemapSave = NULL;
 	avail_CubemapSave = NULL;
+oldest_CubemapSave = NULL;
 	for (i = 0; i < MAX_CUBEMAPSAVE; i++)
 	{
 		arrayCubemapSave[i].prev = (i==0)? NULL : &arrayCubemapSave[i-1];
@@ -163,13 +165,19 @@ thr_CubemapSave_t* THR_AddProbeToSave(cubemapProbe_t *probe)
 
 	// link an entry
 	entry                             = avail_CubemapSave;
+/*	// the ->next is always NULL
 	if (avail_CubemapSave->next)
 	{
 		avail_CubemapSave->next->prev = avail_CubemapSave->prev;
-	}
+	}*/
 	avail_CubemapSave                 = avail_CubemapSave->next;
+	avail_CubemapSave->next           = NULL;
 	entry->prev                       = (entry_CubemapSave)? entry_CubemapSave->prev : NULL;
 	entry->next                       = entry_CubemapSave;
+	if (!entry->prev && !entry->next) // this is the only entry, so it's the oldest
+	{
+		oldest_CubemapSave            = avail_CubemapSave;
+	}
 	if (entry_CubemapSave)
 	{
 		entry_CubemapSave->prev       = entry;
@@ -217,7 +225,11 @@ thr_CubemapSave_t* THR_RemoveProbeToSave(thr_CubemapSave_t *entry)
 		entry_CubemapSave             = entry->next;
 	}
 	entry->prev                       = (avail_CubemapSave)? avail_CubemapSave->prev : NULL;
-	entry->next                       = avail_CubemapSave;
+	entry->next                       = avail_CubemapSave; // could be NULL
+	if (!entry->next)
+	{
+		oldest_CubemapSave            = entry;
+	}
 	if (avail_CubemapSave)
 	{
 		avail_CubemapSave->prev       = entry;
@@ -258,7 +270,7 @@ R2Thread_Lock();
 	}
 R2Thread_Unlock();
 */
-
+/*
 	// process only 1 entry at a time
 	if (R2Thread_Status != THREAD_STATUS_RUNNING) return;
 //R2Thread_Lock();
@@ -270,6 +282,15 @@ R2Thread_Unlock();
 THR_ProcessProbesToSave_finish:
 //R2Thread_Unlock();
 	return;
+*/
+	// process the oldest entry
+	if (!oldest_CubemapSave) return;
+	probe = oldest_CubemapSave->probe;
+	if (!probe) return;
+	R_SaveCubeProbe(probe, probe->cubeTemp, qfalse); // qfalse means: save only this one
+	(void)THR_RemoveProbeToSave(oldest_CubemapSave);
+	return;
+
 }
 
 

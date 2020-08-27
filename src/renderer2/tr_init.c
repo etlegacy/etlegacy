@@ -1587,7 +1587,7 @@ void R_Init(void)
 	R_InitVBOs();
 
 //	R2Thread_Start(); // disabled: needs proper file locking fixed first..
-	R_InitPBOs();
+//	R2Thread_Process = qtrue;
 
 	R_InitShaders();
 

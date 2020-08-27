@@ -355,6 +355,7 @@ static void R_ResampleTexture(unsigned *in, int inwidth, int inheight, unsigned 
 	unsigned *inrow, *inrow2;
 	unsigned fracstep, frac;
 	unsigned p1[2048], p2[2048];
+	//static unsigned p1[2048], p2[2048]; // making it static avoids messages like: func uses 16632 bytes of stack, but keeps the memory in use..
 	byte     *pix1, *pix2, *pix3, *pix4;
 	vec3_t   n, n2, n3, n4;
 	//const vec3_t v1 = {1.0f, 1.0f, 1.0f};
@@ -1485,18 +1486,16 @@ void R_UploadImage(const byte **dataArray, int numData, image_t *image)
 		{
 		case GL_TEXTURE_CUBE_MAP_ARB:
 			glTexImage2D(target + i, 0, internalFormat, scaledWidth, scaledHeight, 0, format, GL_UNSIGNED_BYTE, scaledBuffer);
-//R_pboTexImage2D(target + i, 0, internalFormat, scaledWidth, scaledHeight, 0, format, GL_UNSIGNED_BYTE, scaledBuffer);
+//R_pboTexImage2D(target + i, 0, internalFormat, scaledWidth, scaledHeight, 0, format, GL_UNSIGNED_BYTE, scaledBuffer); // test..
 			break;
 		default:
 			if (image->bits & IF_PACKED_DEPTH24_STENCIL8)
 			{
 				glTexImage2D(target, 0, internalFormat, scaledWidth, scaledHeight, 0, format, GL_UNSIGNED_INT_24_8_EXT, NULL);
-//R_pboTexImage2D(target, 0, internalFormat, scaledWidth, scaledHeight, 0, format, GL_UNSIGNED_INT_24_8_EXT, NULL);
 			}
 			else
 			{
 				glTexImage2D(target, 0, internalFormat, scaledWidth, scaledHeight, 0, format, GL_UNSIGNED_BYTE, scaledBuffer);
-//R_pboTexImage2D(target, 0, internalFormat, scaledWidth, scaledHeight, 0, format, GL_UNSIGNED_BYTE, scaledBuffer);
 			}
 			break;
 		}
@@ -2689,6 +2688,7 @@ static void R_Rotate(byte *in, int width, int height, int degrees)
 	h_1w = h_1 * width;
 
 	tmp = (byte *)Com_Allocate(hw4);
+	if (!tmp) return;
 
 	// rotate into tmp buffer
 	for (y = 0, ywidth = 0; y < height; y++, ywidth += _w2)
