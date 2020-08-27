@@ -1946,7 +1946,7 @@ void SV_DemoStopAll(void)
 	{
 		SV_DemoStopRecord();
 	}
-	else if (sv.demoState == DS_PLAYBACK || sv.demoState == DS_WAITINGPLAYBACK)
+	else if (sv.demoState == DS_PLAYBACK)
 	{
 		SV_DemoStopPlayback();
 	}
