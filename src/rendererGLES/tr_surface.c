@@ -1746,17 +1746,6 @@ void RB_SurfaceFlare(srfFlare_t *surf)
 #endif
 
 /**
- * @brief RB_SurfaceDisplayList
- * @param[in] surf
-
-void RB_SurfaceDisplayList(srfDisplayList_t *surf)
-{
-	// all apropriate state must be set in RB_BeginSurface
-	// this isn't implemented yet...
-	qglCallList(surf->listNum);
-}
-*/
-/**
  * @brief RB_SurfacePolyBuffer
  * @param[in] surf
  */
@@ -1820,7 +1809,7 @@ void RB_SurfaceDecal(srfDecal_t *srf)
 	tess.numVertexes = numv;
 }
 
-/**
+/qq**
  * @brief RB_SurfaceSkip
  * @param surf - dummy function for SF_SKIP
  */
@@ -1844,7 +1833,7 @@ void(*rb_surfaceTable[SF_NUM_SURFACE_TYPES]) (void *) =
 	(void (*)(void *))RB_MDM_SurfaceAnim,          // SF_MDM,
 	(void (*)(void *))RB_SurfaceFlare,             // SF_FLARE,
 	(void (*)(void *))RB_SurfaceEntity,            // SF_ENTITY
-//	(void (*)(void *))RB_SurfaceDisplayList,       // SF_DISPLAY_LIST
+	NULL,       // NULL
 	(void (*)(void *))RB_SurfacePolyBuffer,        // SF_POLYBUFFER
 	(void (*)(void *))RB_SurfaceDecal,             // SF_DECAL
 };
