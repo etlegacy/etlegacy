@@ -1798,4 +1798,8 @@ qboolean CompareIPNoPort(char const *ip1, char const *ip2);
 #define LERP(a, b, w) ((a) * (1.0 - (w)) + (b) * (w))
 #define LUMA(red, green, blue) (0.2126f * (red) + 0.7152f * (green) + 0.0722f * (blue))
 
+#ifdef FEATURE_UNLAGGED //unlagged - lag simulation #2
+#define MAX_LATENT_CMDS 64
+#endif  //unlagged - lag simulation #2
+
 #endif  // #ifndef INCLUDE_Q_SHARED_H

@@ -2017,6 +2017,11 @@ void CG_DrawActiveFrame(int serverTime, qboolean demoPlayback)
 	cg.time         = serverTime;
 	cgDC.realTime   = cg.time;
 	cg.demoPlayback = demoPlayback;
+        
+#ifdef FEATURE_UNLAGGED       //unlagged - lag simulation #1
+        // adjust the clock to reflect latent snaps
+        //cg.time -= cg_latentSnaps.integer * (1000 / sv_fps.integer);
+#endif        //unlagged - lag simulation #1
 
 #ifdef FAKELAG
 	cg.time -= snapshotDelayTime;

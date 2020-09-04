@@ -144,7 +144,16 @@ void TeleportPlayer(gentity_t *player, vec3_t origin, vec3_t angles)
 	// toggle the teleport bit so the client knows to not lerp
 	player->client->ps.eFlags ^= EF_TELEPORT_BIT;
 
+#ifdef FEATURE_UNLAGGED //unlagged - backward reconciliation #3
+
+	// we don't want players being backward-reconciled back through teleporters
+	G_ResetHistory(player);
+
+#else   //unlagged - backward reconciliation #3
+
 	G_ResetMarkers(player);
+
+#endif
 
 	// set angles
 	SetClientViewAngle(player, angles);

@@ -348,6 +348,20 @@ vmCvar_t cg_drawspeed;
 vmCvar_t cg_visualEffects;
 vmCvar_t cg_bannerTime;
 
+#ifdef FEATURE_UNLAGGED //unlagged - client options
+vmCvar_t cg_delag;
+vmCvar_t cg_debugDelag;
+vmCvar_t cg_drawBBox;
+vmCvar_t cg_cmdTimeNudge;
+vmCvar_t sv_fps;
+vmCvar_t cg_projectileNudge;
+vmCvar_t cg_optimizePrediction;
+vmCvar_t cl_timeNudge;
+vmCvar_t cg_latentSnaps;
+vmCvar_t cg_latentCmds;
+vmCvar_t cg_plOut;
+#endif //unlagged - client options
+
 
 typedef struct
 {
@@ -592,6 +606,20 @@ static cvarTable_t cvarTable[] =
 
 	{ &cg_visualEffects,          "cg_visualEffects",          "1",           CVAR_ARCHIVE,                 0 },  // Draw visual effects (i.e : airstrike plane, debris ...)
 	{ &cg_bannerTime,             "cg_bannerTime",             "10000",       CVAR_ARCHIVE,                 0 },
+#ifdef FEATURE_UNLAGGED //unlagged - client options
+	{ &cg_delag,                  "cg_delag",                  "1",           CVAR_ARCHIVE | CVAR_USERINFO, 0 },
+	{ &cg_debugDelag,             "cg_debugDelag",             "0",           CVAR_USERINFO | CVAR_CHEAT,   0 },
+	{ &cg_drawBBox,               "cg_drawBBox",               "0",           CVAR_CHEAT,                   0 },
+	{ &cg_cmdTimeNudge,           "cg_cmdTimeNudge",           "0",           CVAR_ARCHIVE | CVAR_USERINFO, 0 },
+	// this will be automagically copied from the server
+	{ &sv_fps,                    "sv_fps",                    "20",          0,                            0 },
+	{ &cg_projectileNudge,        "cg_projectileNudge",        "0",           CVAR_ARCHIVE,                 0 },
+	{ &cg_optimizePrediction,     "cg_optimizePrediction",     "1",           CVAR_ARCHIVE,                 0 },
+	{ &cl_timeNudge,              "cl_timeNudge",              "0",           CVAR_ARCHIVE,                 0 },
+	{ &cg_latentSnaps,            "cg_latentSnaps",            "0",           CVAR_USERINFO | CVAR_CHEAT,   0 },
+	{ &cg_latentCmds,             "cg_latentCmds",             "0",           CVAR_USERINFO | CVAR_CHEAT,   0 },
+	{ &cg_plOut,                  "cg_plOut",                  "0",           CVAR_USERINFO | CVAR_CHEAT,   0 },
+#endif        //unlagged - client options
 };
 
 static const unsigned int cvarTableSize = sizeof(cvarTable) / sizeof(cvarTable[0]);
@@ -711,6 +739,38 @@ void CG_UpdateCvars(void)
 						trap_Cvar_Set("cg_errorDecay", "500");
 					}
 				}
+#ifdef FEATURE_UNLAGGED //unlagged - client options
+				// clamp the value between 0 and 999
+				// negative values would suck - people could conceivably shoot other
+				// players *long* after they had left the area, on purpose
+				else if (cv->vmCvar == &cg_cmdTimeNudge)
+				{
+					CG_Cvar_ClampInt(cv->cvarName, cv->vmCvar, 0, 999);
+				}
+				// cl_timenudge less than -50 or greater than 50 doesn't actually
+				// do anything more than -50 or 50 (actually the numbers are probably
+				// closer to -30 and 30, but 50 is nice and round-ish)
+				// might as well not feed the myth, eh?
+				else if (cv->vmCvar == &cl_timeNudge)
+				{
+					CG_Cvar_ClampInt(cv->cvarName, cv->vmCvar, -50, 50);
+				}
+				// don't let this go too high - no point
+				else if (cv->vmCvar == &cg_latentSnaps)
+				{
+					CG_Cvar_ClampInt(cv->cvarName, cv->vmCvar, 0, 10);
+				}
+				// don't let this get too large
+				else if (cv->vmCvar == &cg_latentCmds)
+				{
+					CG_Cvar_ClampInt(cv->cvarName, cv->vmCvar, 0, MAX_LATENT_CMDS - 1);
+				}
+				// no more than 100% packet loss
+				else if (cv->vmCvar == &cg_plOut)
+				{
+					CG_Cvar_ClampInt(cv->cvarName, cv->vmCvar, 0, 100);
+				}
+#endif  //unlagged - client options
 			}
 		}
 	}

@@ -732,6 +732,12 @@ typedef struct ipFilter_s
 
 #define MAX_COMPLAINTIPS 5
 
+#ifdef FEATURE_UNLAGGED //unlagged - true ping
+
+#define NUM_PING_SAMPLES 64
+
+#endif  //unlagged - true ping
+
 /**
  * @struct clientPersistant_t
  * @brief Client data that stays across multiple respawns, but is cleared
@@ -830,7 +836,41 @@ typedef struct
 	int savedClassWeaponTimeCvop;
 	int savedClassWeaponTime;
 
+#ifdef FEATURE_UNLAGGED        //unlagged - client options
+	// these correspond with variables in the userinfo string
+	int delag;
+	int debugDelag;
+	int cmdTimeNudge;
+	//unlagged - client options
+	//unlagged - lag simulation #2
+	int latentSnaps;
+	int latentCmds;
+	int plOut;
+	usercmd_t cmdqueue[MAX_LATENT_CMDS];
+	int cmdhead;
+	//unlagged - lag simulation #2
+	//unlagged - true ping
+	int realPing;
+	int pingsamples[NUM_PING_SAMPLES];
+	int samplehead;
+#endif        //unlagged - true ping
+
 } clientPersistant_t;
+
+#ifdef FEATURE_UNLAGGED //unlagged - backward reconciliation #1
+
+// the size of history we'll keep
+#define NUM_CLIENT_HISTORY 17
+
+// everything we need to know to backward reconcile
+typedef struct
+{
+	vec3_t mins, maxs;
+	vec3_t currentOrigin;
+	int leveltime;
+} clientHistory_t;
+
+#endif  //unlagged - backward reconciliation #1
 
 /**
  * @struct clientMarker_t
@@ -1026,6 +1066,33 @@ struct gclient_s
 	int constructSoundTime;                 ///< construction sound time
 
 	int attackTime;
+
+#ifdef FEATURE_UNLAGGED //unlagged - backward reconciliation #1
+
+	// the serverTime the button was pressed
+	// (stored before pmove_fixed changes serverTime)
+	//int attackTime;                                   // TODO: same declaration in antilag
+
+	// the head of the history queue
+	int historyHead;
+
+	// the history queue
+	clientHistory_t history[NUM_CLIENT_HISTORY];
+
+	// the client's saved position
+	clientHistory_t saved;              // used to restore after time shift
+
+	// an approximation of the actual server time we received this
+	// command (not in 50ms increments)
+	//int frameOffset;                                  // TODO: same declaration in antilag
+
+	//unlagged - smooth clients #1
+	// the last frame number we got an update from this client
+	//int lastUpdateFrame;                              // TODO: same declaration in antilag
+	//unlagged - smooth clients #1
+
+#endif  //unlagged - backward reconciliation #1
+
 };
 
 /**
@@ -1074,7 +1141,7 @@ typedef struct voteInfo_s
 	int voteNo;
 	int numVotingClients;               ///< set by CalculateRanks
 	int numVotingTeamClients[2];
-	int (*vote_fn)(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd);
+	int (*vote_fn)(gentity_t * ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd);
 	char vote_value[VOTE_MAXSTRING];    ///< Desired vote item setting.
 	int voteCaller;                     ///< id of the vote caller
 	int voteTeam;                       ///< id of the vote caller's team
@@ -1323,7 +1390,11 @@ typedef struct level_locals_s
 	database_t database;
 #endif
 
+//#ifdef FEATURE_UNLAGGED   //unlagged - backward reconciliation #4
+	// actual time this server frame started
 	int frameStartTime;
+//#endif  //unlagged - backward reconciliation #4
+
 } level_locals_t;
 
 /**
@@ -1420,6 +1491,19 @@ void Touch_Item_Auto(gentity_t *ent, gentity_t *other, trace_t *trace);
 
 void Prop_Break_Sound(gentity_t *ent);
 void Spawn_Shard(gentity_t *ent, gentity_t *inflictor, float quantity, int type);
+
+#ifdef FEATURE_UNLAGGED //unlagged - g_unlagged.c
+
+void G_ResetHistory(gentity_t *ent);
+void G_StoreHistory(gentity_t *ent);
+void G_TimeShiftAllClients(int time, gentity_t *skip);
+void G_UnTimeShiftAllClients(gentity_t *skip);
+void G_DoTimeShiftFor(gentity_t *ent);
+void G_UndoTimeShiftFor(gentity_t *ent);
+void G_UnTimeShiftClient(gentity_t *client);
+void G_PredictPlayerMove(gentity_t *ent, float frametime);
+
+#endif  //unlagged - g_unlagged.c
 
 // g_utils.c
 int G_FindConfigstringIndex(const char *name, int start, int max, qboolean create);
@@ -2096,6 +2180,14 @@ extern vmCvar_t g_prestige;
 #ifdef FEATURE_MULTIVIEW
 extern vmCvar_t g_multiview;
 #endif
+
+#ifdef FEATURE_UNLAGGED //unlagged - server options
+// some new server-side variables
+extern vmCvar_t g_smoothClients;
+extern vmCvar_t g_delagHitscan;
+extern vmCvar_t g_unlaggedVersion;
+extern vmCvar_t g_truePing;
+#endif  //unlagged - server options
 
 #define STICKYCHARGE_NONE 0 // default, reset charge on any death
 #define STICKYCHARGE_SELFKILL 1 // keep charge after selfkill, mortal self damage, teamkill, mortal world damage

@@ -1355,7 +1355,7 @@ static void CG_Missile(centity_t *cent)
 	// FIXME: check FEATURE_EDV weapon cam (see else condition below)
 	if (/*GetWeaponTableData(cent->currentState.weapon)->type & (WEAPON_TYPE_RIFLENADE | WEAPON_TYPE_PANZER | WEAPON_TYPE_GRENADE)
 	    &&*/(CHECKBITWISE(GetWeaponTableData(cent->currentState.weapon)->type, WEAPON_TYPE_MORTAR | WEAPON_TYPE_SET)
-	     || cent->currentState.weapon == WP_MAPMORTAR /*|| cent->currentState.weapon == WP_SMOKE_MARKER
+	         || cent->currentState.weapon == WP_MAPMORTAR /*|| cent->currentState.weapon == WP_SMOKE_MARKER
 	        || cent->currentState.weapon == WP_SMOKE_BOMB || cent->currentState.weapon == WP_DYNAMITE*/))
 	{
 		vec3_t delta;
@@ -2472,6 +2472,12 @@ static void CG_InterpolateEntityPosition(centity_t *cent)
  */
 void CG_CalcEntityLerpPositions(centity_t *cent)
 {
+
+#ifdef FEATURE_UNLAGGED    //unlagged - projectile nudge
+	// this will be set to how far forward projectiles will be extrapolated
+	int timeshift = 0;
+#endif    //unlagged - projectile nudge
+
 	if (cent->interpolate && cent->currentState.pos.trType == TR_INTERPOLATE)
 	{
 		CG_InterpolateEntityPosition(cent);
@@ -2487,6 +2493,53 @@ void CG_CalcEntityLerpPositions(centity_t *cent)
 		return;
 	}
 
+#ifdef FEATURE_UNLAGGED //unlagged - projectile nudge
+
+	// if it's a missile
+	if (cent->currentState.eType == ET_MISSILE)
+	{
+		// if it's one of ours
+		if (cent->currentState.otherEntityNum == cg.clientNum)
+		{
+			// extrapolate one server frame's worth - this will correct for tiny
+			// visual inconsistencies introduced by backward-reconciling all players
+			// one server frame before running projectiles
+			timeshift = 1000 / sv_fps.integer;
+		}
+		// if it's not, and it's not a grenade launcher
+		else if (cent->currentState.weapon != WP_GRENADE_LAUNCHER)
+		{
+			// extrapolate based on cg_projectileNudge
+			timeshift = cg_projectileNudge.integer + 1000 / sv_fps.integer;
+		}
+	}
+
+	// just use the current frame and evaluate as best we can
+	//	BG_EvaluateTrajectory( &cent->currentState.pos, cg.time, cent->lerpOrigin );
+	//	BG_EvaluateTrajectory( &cent->currentState.apos, cg.time, cent->lerpAngles );
+	BG_EvaluateTrajectory(&cent->currentState.pos, cg.time + timeshift, cent->lerpOrigin, qfalse, cent->currentState.effect2Time);
+	BG_EvaluateTrajectory(&cent->currentState.apos, cg.time + timeshift, cent->lerpAngles, qtrue, cent->currentState.effect2Time);
+
+	// if there's a time shift
+	if (timeshift != 0)
+	{
+		trace_t tr;
+		vec3_t  lastOrigin;
+
+		BG_EvaluateTrajectory(&cent->currentState.pos, cg.time, lastOrigin, qfalse, cent->currentState.effect2Time);
+
+		CG_Trace(&tr, lastOrigin, vec3_origin, vec3_origin, cent->lerpOrigin, cent->currentState.number, MASK_SHOT);
+
+		// don't let the projectile go through the floor
+		if (tr.fraction < 1.0f)
+		{
+			cent->lerpOrigin[0] = lastOrigin[0] + tr.fraction * (cent->lerpOrigin[0] - lastOrigin[0]);
+			cent->lerpOrigin[1] = lastOrigin[1] + tr.fraction * (cent->lerpOrigin[1] - lastOrigin[1]);
+			cent->lerpOrigin[2] = lastOrigin[2] + tr.fraction * (cent->lerpOrigin[2] - lastOrigin[2]);
+		}
+	}
+
+#else   //unlagged - projectile nudge
 	// backup
 	VectorCopy(cent->lerpAngles, cent->lastLerpAngles);
 	VectorCopy(cent->lerpOrigin, cent->lastLerpOrigin);
@@ -2494,7 +2547,7 @@ void CG_CalcEntityLerpPositions(centity_t *cent)
 	// just use the current frame and evaluate as best we can
 	BG_EvaluateTrajectory(&cent->currentState.pos, cg.time, cent->lerpOrigin, qfalse, cent->currentState.effect2Time);
 	BG_EvaluateTrajectory(&cent->currentState.apos, cg.time, cent->lerpAngles, qtrue, cent->currentState.effect2Time);
-
+#endif
 	// adjust for riding a mover if it wasn't rolled into the predicted
 	// player state
 	if (cent != &cg.predictedPlayerEntity && !cg.showGameView)
@@ -2994,10 +3047,35 @@ void CG_AddPacketEntities(void)
 
 	cg.satchelCharge = NULL;
 
+#ifdef FEATURE_UNLAGGED       //unlagged - early transitioning
+	if (cg.nextSnap)
+	{
+		// pre-add some of the entities sent over by the server
+		// we have data for them and they don't need to interpolate
+		for (num = 0 ; num < cg.nextSnap->numEntities ; num++)
+		{
+			centity_t *cent = &cg_entities[cg.nextSnap->entities[num].number];
+			if (cent->nextState.eType == ET_MISSILE || cent->nextState.eType == ET_GENERAL)
+			{
+				// transition it immediately and add it
+				CG_TransitionEntity(cent);
+				cent->interpolate = qtrue;
+				CG_AddCEntity(cent);
+			}
+		}
+	}
+#endif        //unlagged - early transitioning
+
 	// changing to a single loop, child will request that their parents are added first anyway
 	for (num = 0; num < cg.snap->numEntities ; num++)
 	{
-		CG_AddCEntity_Filter(&cg_entities[cg.snap->entities[num].number]);
+		centity_t *cent = &cg_entities[cg.snap->entities[num].number];
+#ifdef FEATURE_UNLAGGED //unlagged - early transitioning
+		if (!cg.nextSnap || (cent->nextState.eType != ET_MISSILE && cent->nextState.eType != ET_GENERAL))
+#endif      //unlagged - early transitioning
+		{
+			CG_AddCEntity_Filter(cent);
+		}
 	}
 
 	// Add tank bits as a second loop, to stop recursion problems with tank bits not on base entity

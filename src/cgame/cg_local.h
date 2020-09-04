@@ -980,6 +980,10 @@ typedef struct
 
 #define MAX_PREDICTED_EVENTS    16
 
+#ifdef FEATURE_UNLAGGED //unlagged - optimized prediction
+#define NUM_SAVED_STATES (CMD_BACKUP + 2)
+#endif  //unlagged - optimized prediction
+
 #define MAX_SPAWN_VARS          64
 #define MAX_SPAWN_VARS_CHARS    2048
 
@@ -1513,6 +1517,14 @@ typedef struct
 	// banner printing
 	int bannerPrintTime;
 	char bannerPrint[1024];
+
+#ifdef FEATURE_UNLAGGED     //unlagged - optimized prediction
+	//int			lastPredictedCommand;   // TODO: conflict with etpro antilag
+	int lastServerTime;
+	playerState_t savedPmoveStates[NUM_SAVED_STATES];
+	int stateHead, stateTail;
+#endif        //unlagged - optimized prediction
+
 } cg_t;
 
 #define MAX_LOCKER_DEBRIS 5
@@ -2522,6 +2534,11 @@ typedef struct cgs_s
 	int sv_fps;                 // FPS server wants to send
 	sampledStat_t sampledStat;  // fps client sample data
 
+#ifdef FEATURE_UNLAGGED //unlagged - client options
+	// this will be set to the server's g_delagHitscan
+	int delagHitscan;
+#endif  //unlagged - client options
+
 } cgs_t;
 
 //==============================================================================
@@ -2754,6 +2771,20 @@ extern vmCvar_t cg_drawspeed;
 
 extern vmCvar_t cg_visualEffects;  ///< turn invisible (0) / visible (1) visual effect (i.e airstrike plane, debris ...)
 extern vmCvar_t cg_bannerTime;
+
+#ifdef FEATURE_UNLAGGED //unlagged - client options
+extern	vmCvar_t		cg_delag;
+extern	vmCvar_t		cg_debugDelag;
+extern	vmCvar_t		cg_drawBBox;
+extern	vmCvar_t		cg_cmdTimeNudge;
+extern	vmCvar_t		sv_fps;
+extern	vmCvar_t		cg_projectileNudge;
+extern	vmCvar_t		cg_optimizePrediction;
+extern	vmCvar_t		cl_timeNudge;
+extern	vmCvar_t		cg_latentSnaps;
+extern	vmCvar_t		cg_latentCmds;
+extern	vmCvar_t		cg_plOut;
+#endif  //unlagged - client options
 
 // local clock flags
 #define LOCALTIME_ON                0x01
@@ -3124,6 +3155,9 @@ void CG_AddSmokeSprites(void);
 
 // cg_snapshot.c
 void CG_ProcessSnapshots(void);
+#ifdef FEATURE_UNLAGGED //unlagged - early transitioning
+void CG_TransitionEntity(centity_t *cent);
+#endif  //unlagged - early transitioning
 
 // cg_spawn.c
 qboolean    CG_SpawnString(const char *key, const char *defaultString, char **out);
@@ -3224,6 +3258,12 @@ typedef struct
 // cg_playerstate.c
 void CG_Respawn(qboolean revived);
 void CG_TransitionPlayerState(playerState_t *ps, playerState_t *ops);
+
+#ifdef FEATURE_UNLAGGED //unlagged - cg_unlagged.c
+void CG_PredictWeaponEffects(centity_t *cent);
+void CG_AddBoundingBox(centity_t *cent);
+qboolean CG_Cvar_ClampInt(const char *name, vmCvar_t *vmCvar, int min, int max);
+#endif  //unlagged - cg_unlagged.c
 
 //===============================================
 

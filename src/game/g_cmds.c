@@ -350,7 +350,11 @@ qboolean G_SendScore_Add(gentity_t *ent, int i, char *buf, int bufsize)
 	}
 	else
 	{
+#ifdef FEATURE_UNLAGGED //unlagged - true ping
+		ping = cl->pers.realPing < 999 ? cl->pers.realPing : 999;
+#else   //unlagged - true ping
 		ping = cl->ps.ping < 999 ? cl->ps.ping : 999;
+#endif
 	}
 
 	if (g_gametype.integer == GT_WOLF_LMS)

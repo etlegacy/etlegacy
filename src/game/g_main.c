@@ -364,6 +364,14 @@ vmCvar_t g_multiview; // 0 - off, other - enabled
 vmCvar_t g_stickyCharge;
 vmCvar_t g_xpSaver;
 
+#ifdef FEATURE_UNLAGGED //unlagged - server options
+vmCvar_t g_smoothClients;
+vmCvar_t g_delagHitscan;
+vmCvar_t g_unlaggedVersion;
+vmCvar_t g_truePing;
+vmCvar_t sv_fps;
+#endif //unlagged - server options
+
 cvarTable_t gameCvarTable[] =
 {
 	// don't override the cheat state set by the system
@@ -651,6 +659,15 @@ cvarTable_t gameCvarTable[] =
 #endif
 	{ &g_stickyCharge,                    "g_stickyCharge",                    "0",                          CVAR_ARCHIVE,                                    0, qfalse, qfalse },
 	{ &g_xpSaver,                         "g_xpSaver",                         "0",                          CVAR_ARCHIVE,                                    0, qfalse, qfalse },
+#ifdef FEATURE_UNLAGGED //unlagged - server options
+	{ &g_smoothClients,                   "g_smoothClients",                   "1",                          0,                                               0, qfalse, qfalse },
+	{ &g_delagHitscan,                    "g_delagHitscan",                    "1",                          CVAR_ARCHIVE | CVAR_SERVERINFO,                  0, qtrue,  qfalse },
+	{ &g_unlaggedVersion,                 "g_unlaggedVersion",                 "2.0",                        CVAR_ROM | CVAR_SERVERINFO,                      0, qfalse, qfalse },
+	{ &g_truePing,                        "g_truePing",                        "1",                          CVAR_ARCHIVE,                                    0, qtrue,  qfalse },
+	// it's CVAR_SYSTEMINFO so the client's sv_fps will be automagically set to its value
+	{ &sv_fps,                            "sv_fps",                            "20",                         CVAR_SYSTEMINFO | CVAR_ARCHIVE,                  0, qfalse, qfalse },
+#endif        //unlagged - server options
+
 };
 
 /**
@@ -5070,7 +5087,17 @@ void G_RunEntity(gentity_t *ent, int msec)
 		// pausing
 		if (level.match_pause == PAUSE_NONE)
 		{
+#ifdef FEATURE_UNLAGGED //unlagged - backward reconciliation #2
+
+			// we'll run missiles separately to save CPU in backward reconciliation
+			if (ent->s.eType == ET_MISSILE)
+			{
+				return;
+			}
+
+#endif  //unlagged - backward reconciliation #2
 			G_RunMissile(ent);
+
 		}
 		else
 		{
@@ -5240,6 +5267,37 @@ void G_RunFrame(int levelTime)
 		G_RunEntity(&g_entities[i], msec);
 	}
 
+#ifdef FEATURE_UNLAGGED //unlagged - backward reconciliation #2
+
+	// NOW run the missiles, with all players backward-reconciled
+	// to the positions they were in exactly 50ms ago, at the end
+	// of the last server frame
+	G_TimeShiftAllClients(level.previousTime, NULL);
+
+	gentity_t *ent = &g_entities[0];
+	for (i = 0 ; i < level.num_entities ; i++, ent++)
+	{
+		if (!ent->inuse)
+		{
+			continue;
+		}
+
+		// temporary entities don't think
+		if (ent->freeAfterEvent)
+		{
+			continue;
+		}
+
+		if (ent->s.eType == ET_MISSILE)
+		{
+			G_RunMissile(ent);
+		}
+	}
+
+	G_UnTimeShiftAllClients(NULL);
+
+#endif  //unlagged - backward reconciliation #2
+
 	for (i = 0; i < level.numConnectedClients; i++)
 	{
 		ClientEndFrame(&g_entities[level.sortedClients[i]]);
@@ -5270,7 +5328,12 @@ void G_RunFrame(int levelTime)
 	G_LuaHook_RunFrame(levelTime);
 #endif
 
+//#ifdef FEATURE_UNLAGGED   //unlagged - backward reconciliation #4
+	// record the time at the end of this frame - it should be about
+	// the time the next frame begins - when the server starts
+	// accepting commands from connected clients
 	level.frameStartTime = trap_Milliseconds();
+//#endif        //unlagged - backward reconciliation #4
 }
 
 // MAPVOTE

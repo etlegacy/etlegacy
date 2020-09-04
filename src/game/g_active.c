@@ -1190,6 +1190,7 @@ void ClientThink_real(gentity_t *ent)
 
 	ent->client->ps.identifyClient = ucmd->identClient;
 
+#ifndef FEATURE_UNLAGGED
 	// zinx etpro antiwarp
 	if (client->warping && g_maxWarp.integer && G_DoAntiwarp(ent))
 	{
@@ -1207,9 +1208,64 @@ void ClientThink_real(gentity_t *ent)
 		client->warped = qtrue;
 	}
 
-	client->warping         = qfalse;
-	client->lastUpdateFrame = level.framenum;
+	client->warping = qfalse;
 	// end zinx etpro antiwarp
+#endif
+//#ifdef FEATURE_UNLAGGED //unlagged - smooth clients #1    // TODO: used by etpro antiwarp
+	// keep track of this for later - we'll use this to decide whether or not
+	// to send extrapolated positions for this client
+	client->lastUpdateFrame = level.framenum;
+//#endif  //unlagged - smooth clients #1
+
+#ifdef FEATURE_UNLAGGED //unlagged - lag simulation #1
+
+	// if the client is adding latency to received snapshots (server-to-client latency)
+	if (client->pers.latentSnaps)
+	{
+		// adjust the real ping
+		client->pers.realPing += client->pers.latentSnaps * (1000 / sv_fps.integer);
+		// adjust the attack time so backward reconciliation will work
+		client->attackTime -= client->pers.latentSnaps * (1000 / sv_fps.integer);
+	}
+	//unlagged - lag simulation #1
+
+	//unlagged - true ping
+	// make sure the true ping is over 0 - with cl_timenudge it can be less
+	if (client->pers.realPing < 0)
+	{
+		client->pers.realPing = 0;
+	}
+	//unlagged - true ping
+
+	//unlagged - lag simulation #2
+	// keep a queue of past commands
+	client->pers.cmdqueue[client->pers.cmdhead] = client->pers.cmd;
+	client->pers.cmdhead++;
+	if (client->pers.cmdhead >= MAX_LATENT_CMDS)
+	{
+		client->pers.cmdhead -= MAX_LATENT_CMDS;
+	}
+
+	// if the client wants latency in commands (client-to-server latency)
+	if (client->pers.latentCmds)
+	{
+		// save the actual command time
+		int time = ucmd->serverTime;
+
+		// find out which index in the queue we want
+		int cmdindex = client->pers.cmdhead - client->pers.latentCmds - 1;
+		while (cmdindex < 0)
+		{
+			cmdindex += MAX_LATENT_CMDS;
+		}
+
+		// read in the old command
+		client->pers.cmd = client->pers.cmdqueue[cmdindex];
+
+		// adjust the real ping to reflect the new latency
+		client->pers.realPing += time - ucmd->serverTime;
+	}
+#endif   //unlagged - lag simulation #2
 
 	// sanity check the command time to prevent speedup cheating
 	if (ucmd->serverTime > level.time + 200 && !G_DoAntiwarp(ent))
@@ -1223,9 +1279,65 @@ void ClientThink_real(gentity_t *ent)
 		//G_Printf("serverTime >>>>>\n" );
 	}
 
+//#ifdef FEATURE_UNLAGGED //unlagged - backward reconciliation #4
+
+	// frameOffset should be about the number of milliseconds into a frame
+	// this command packet was received, depending on how fast the server
+	// does a G_RunFrame()
+	client->frameOffset = trap_Milliseconds() - level.frameStartTime;
+
+	// save the command time *before* pmove_fixed messes with the serverTime,
+	// and *after* lag simulation messes with it :)
+	// attackTime will be used for backward reconciliation later (time shift)
 	client->attackTime = ucmd->serverTime;
 
-	client->frameOffset = trap_Milliseconds() - level.frameStartTime;
+//#endif   //unlagged - backward reconciliation #4
+
+#ifdef FEATURE_UNLAGGED //unlagged - lag simulation #3
+	// if the client wants to simulate outgoing packet loss
+	if (client->pers.plOut)
+	{
+		// see if a random value is below the threshhold
+		float thresh = (float)client->pers.plOut / 100.0f;
+		if (random() < thresh)
+		{
+			// do nothing at all if it is - this is a lost command
+			return;
+		}
+	}
+	//unlagged - lag simulation #3
+
+	//unlagged - true ping
+	// save the estimated ping in a queue for averaging later
+
+	// we use level.previousTime to account for 50ms lag correction
+	// besides, this will turn out numbers more like what players are used to
+	client->pers.pingsamples[client->pers.samplehead] = level.previousTime + client->frameOffset - ucmd->serverTime;
+	client->pers.samplehead++;
+	if (client->pers.samplehead >= NUM_PING_SAMPLES)
+	{
+		client->pers.samplehead -= NUM_PING_SAMPLES;
+	}
+
+	// initialize the real ping
+	if (g_truePing.integer)
+	{
+		int i, sum = 0;
+
+		// get an average of the samples we saved up
+		for (i = 0; i < NUM_PING_SAMPLES; i++)
+		{
+			sum += client->pers.pingsamples[i];
+		}
+
+		client->pers.realPing = sum / NUM_PING_SAMPLES;
+	}
+	else
+	{
+		// if g_truePing is off, use the normal ping
+		client->pers.realPing = client->ps.ping;
+	}
+#endif  //unlagged - true ping
 
 	msec = ucmd->serverTime - client->ps.commandTime;
 	// following others may result in bad times, but we still want
@@ -1249,14 +1361,14 @@ void ClientThink_real(gentity_t *ent)
 		trap_Cvar_Set("pmove_msec", "33");
 	}
 
-	// zinx etpro antiwarp
+#ifndef FEATURE_UNLAGGED// zinx etpro antiwarp
 	client->pers.pmoveMsec = pmove_msec.integer;
 	if (!G_DoAntiwarp(ent) && (pmove_fixed.integer || client->pers.pmoveFixed))
 	{
 		ucmd->serverTime = ((ucmd->serverTime + client->pers.pmoveMsec - 1) /
 		                    client->pers.pmoveMsec) * client->pers.pmoveMsec;
 	}
-
+#endif
 	if (client->wantsscore)
 	{
 		G_SendScore(ent);
@@ -1663,6 +1775,7 @@ void ClientThink(int clientNum)
 	if (!g_synchronousClients.integer)
 #endif // ALLOW_GSYNC
 	{
+#ifndef FEATURE_UNLAGGED
 		if (G_DoAntiwarp(ent))
 		{
 			// zinx etpro antiwarp
@@ -1670,6 +1783,7 @@ void ClientThink(int clientNum)
 			DoClientThinks(ent);
 		}
 		else
+#endif
 		{
 			ClientThink_cmd(ent, &newcmd);
 		}
@@ -1696,13 +1810,14 @@ void G_RunClient(gentity_t *ent)
 		}
 	}
 
-	// adding zinx antiwarp - if we are using antiwarp, then follow the antiwarp way
+#ifndef FEATURE_ANTICHEAT	// adding zinx antiwarp - if we are using antiwarp, then follow the antiwarp way
 	if (G_DoAntiwarp(ent))
 	{
 		// use zinx antiwarp code
 		DoClientThinks(ent);
 	}
-
+#endif
+        
 #ifdef ALLOW_GSYNC
 	if (!g_synchronousClients.integer)
 #endif // ALLOW_GSYNC
@@ -2238,8 +2353,7 @@ void ClientEndFrame(gentity_t *ent)
 
 	G_SetClientSound(ent);
 
-	// set the latest infor
-
+	// set the latest information
 	BG_PlayerStateToEntityState(&ent->client->ps, &ent->s, level.time, qtrue);
 
 	if (ent->health > 0 && StuckInClient(ent))
@@ -2274,8 +2388,27 @@ void ClientEndFrame(gentity_t *ent)
 	// see how many frames the client has missed
 	frames = level.framenum - ent->client->lastUpdateFrame - 1;
 
+#ifdef FEATURE_UNLAGGED //unlagged - smooth clients #1
+	// don't extrapolate more than two frames
+	if (frames > 2)
+	{
+		frames = 2;
+
+		// if they missed more than two in a row, show the phone jack
+		ent->client->ps.eFlags |= EF_CONNECTION;
+		ent->s.eFlags          |= EF_CONNECTION;
+	}
+
+	// did the client miss any frames?
+	if (frames > 0 && g_smoothClients.integer)
+	{
+		// yep, missed one or more, so extrapolate the player's movement
+		G_PredictPlayerMove(ent, (float)frames / sv_fps.integer);
+		// save network bandwidth
+		SnapVector(ent->s.pos.trBase);
+	}
+#else   //unlagged - smooth clients #1
 	// etpro antiwarp
-	// frames = level.framenum - ent->client->lastUpdateFrame - 1)
 	if (g_maxWarp.integer && frames > g_maxWarp.integer && G_DoAntiwarp(ent))
 	{
 		ent->client->warping = qtrue;
@@ -2295,6 +2428,7 @@ void ClientEndFrame(gentity_t *ent)
 		G_PredictPmove(ent, (float)frames / (float)sv_fps.integer);
 	}
 	ent->client->warped = qfalse;
+#endif
 
 #ifdef FEATURE_SERVERMDX
 	mdx_PlayerAnimation(ent);
@@ -2392,6 +2526,11 @@ void ClientEndFrame(gentity_t *ent)
 		}
 	}
 
+#ifdef FEATURE_UNLAGGED //unlagged - backward reconciliation #1
+	// store the client's position for backward reconciliation later
+	G_StoreHistory(ent);
+#else
 	// store the client's current position for antilag traces
 	G_StoreClientPosition(ent);
+#endif  //unlagged - backward reconciliation #1
 }

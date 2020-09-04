@@ -274,6 +274,13 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 		return;
 	}
 
+#ifdef FEATURE_UNLAGGED //unlagged - backward reconciliation #2
+        
+        // make sure the body shows up in the client's current position
+        G_UnTimeShiftClient( self );
+        
+#endif  //unlagged - backward reconciliation #2
+
 	// don't broadcast invalid MODs (this shouldn't occure ...)
 	if (!IS_VALID_MOD(meansOfDeath))
 	{

@@ -1855,8 +1855,9 @@ void ClientUserinfoChanged(int clientNum)
 		}
 	}
 
-	// added for zinx etpro antiwarp
+#ifndef FEATURE_UNLAGGED	// added for zinx etpro antiwarp
 	client->pers.pmoveMsec = pmove_msec.integer;
+#endif
 
 	// extra client info settings
 	//		 FIXME: move other userinfo flag settings in here
@@ -1912,6 +1913,46 @@ void ClientUserinfoChanged(int clientNum)
 			client->pmext.bAutoReload   = qfalse;
 		}
 	}
+
+#ifdef FEATURE_UNLAGGED        //unlagged - client options
+	// see if the player has opted out
+	s = Info_ValueForKey(userinfo, "cg_delag");
+	if (!atoi(s))
+	{
+		client->pers.delag = 0;
+	}
+	else
+	{
+		client->pers.delag = atoi(s);
+	}
+
+	// see if the player is nudging his shots
+	s                         = Info_ValueForKey(userinfo, "cg_cmdTimeNudge");
+	client->pers.cmdTimeNudge = atoi(s);
+
+	// see if the player wants to debug the backward reconciliation
+	s = Info_ValueForKey(userinfo, "cg_debugDelag");
+	if (!atoi(s))
+	{
+		client->pers.debugDelag = qfalse;
+	}
+	else
+	{
+		client->pers.debugDelag = qtrue;
+	}
+
+	// see if the player is simulating incoming latency
+	s                        = Info_ValueForKey(userinfo, "cg_latentSnaps");
+	client->pers.latentSnaps = atoi(s);
+
+	// see if the player is simulating outgoing latency
+	s                       = Info_ValueForKey(userinfo, "cg_latentCmds");
+	client->pers.latentCmds = atoi(s);
+
+	// see if the player is simulating outgoing packet loss
+	s                  = Info_ValueForKey(userinfo, "cg_plOut");
+	client->pers.plOut = atoi(s);
+#endif        //unlagged - client options
 
 	// set name
 	Q_strncpyz(oldname, client->pers.netname, sizeof(oldname));
@@ -2357,6 +2398,18 @@ char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 
 	// count current clients and rank for scoreboard
 	CalculateRanks();
+
+#ifdef FEATURE_UNLAGGED        //unlagged - backward reconciliation #5
+	// announce it
+	if (g_delagHitscan.integer)
+	{
+		trap_SendServerCommand(clientNum, "print \"This server is Unlagged: full lag compensation is ON!\n\"");
+	}
+	else
+	{
+		trap_SendServerCommand(clientNum, "print \"This server is Unlagged: full lag compensation is OFF!\n\"");
+	}
+#endif        //unlagged - backward reconciliation #5
 
 	return NULL;
 }
@@ -2813,10 +2866,21 @@ void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean
 	flags  = ent->client->ps.eFlags & EF_TELEPORT_BIT;
 	flags ^= EF_TELEPORT_BIT;
 
+#ifdef FEATURE_UNLAGGED //unlagged - backward reconciliation #3
+
+	// we don't want players being backward-reconciled to the place they died
+	G_ResetHistory(ent);
+	// and this is as good a time as any to clear the saved state
+	ent->client->saved.leveltime = 0;
+
+#else   //unlagged - backward reconciliation #3
+
 	// unlagged reset history markers
 	G_ResetMarkers(ent);
 	ent->client->backupMarker.time = 0;
 	// unlagged
+
+#endif
 
 	flags |= (client->ps.eFlags & EF_VOTED);
 	// clear everything but the persistant data

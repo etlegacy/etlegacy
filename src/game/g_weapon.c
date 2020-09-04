@@ -3378,7 +3378,21 @@ qboolean Bullet_Fire_Extended(gentity_t *source, gentity_t *attacker, vec3_t sta
 		waslinked                               = qtrue;
 	}
 
+#if FEATURE_UNLAGGED        //unlagged - backward reconciliation #2
+
+	// backward-reconcile the other clients
+	G_DoTimeShiftFor(source);
+
+#endif        //unlagged - backward reconciliation #2
+
 	G_Trace(source, &tr, start, NULL, NULL, end, source->s.number, MASK_SHOT, !GetWeaponTableData(attacker->s.weapon)->splashDamage);
+
+#if FEATURE_UNLAGGED //unlagged - backward reconciliation #2
+
+	// put them back
+	G_UndoTimeShiftFor(source);
+
+#endif        //unlagged - backward reconciliation #2
 
 	// prevent shooting ourselves in the head when prone, firing through a breakable
 	if (waslinked == qtrue)

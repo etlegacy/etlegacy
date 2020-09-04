@@ -84,7 +84,7 @@ static void CG_ResetEntity(centity_t *cent)
  * @brief cent->nextState is moved to cent->currentState and events are fired
  * @param[in,out] cent
  */
-static void CG_TransitionEntity(centity_t *cent)
+void CG_TransitionEntity(centity_t *cent)
 {
 	// update the fireDir if it's on fire
 	if (CG_EntOnFire(cent))
@@ -463,6 +463,27 @@ static snapshot_t *CG_ReadNextSnapshot(void)
 		cgs.processedSnapshotNum++;
 		r = trap_GetSnapshot(cgs.processedSnapshotNum, dest);
 
+#ifdef FEATURE_UNLAGGED  //unlagged - lag simulation #1
+		// the client wants latent snaps and the just-read snapshot is valid
+		if (cg_latentSnaps.integer && r)
+		{
+			int i = 0, time = dest->serverTime;
+
+			// keep grabbing one snapshot earlier until we get to the right time
+			while (dest->serverTime > time - cg_latentSnaps.integer * (1000 / sv_fps.integer))
+			{
+				if (!(r = trap_GetSnapshot(cgs.processedSnapshotNum - i, dest)))
+				{
+					// the snapshot is not valid, so stop here
+					break;
+				}
+
+				// go back one more
+				i++;
+			}
+		}
+#endif  //unlagged - lag simulation #1
+
 		// why would trap_GetSnapshot return a snapshot with the same server time
 		if (cg.snap && r && dest->serverTime == cg.snap->serverTime)
 		{
@@ -534,8 +555,17 @@ void CG_ProcessSnapshots(void)
 		{
 			if (!cg.demoPlayback)
 			{
-				// this should never happen
-				CG_Error("CG_ProcessSnapshots: n < cg.latestSnapshotNum\n");
+#ifdef FEATURE_UNLAGGED //unlagged - lag simulation #1
+				// this may actually happen with lag simulation going on
+				if (cg_latentSnaps.integer)
+				{
+					CG_Printf("WARNING: CG_ProcessSnapshots: n < cg.latestSnapshotNum\n");
+				}
+				else
+#endif  //unlagged - lag simulation #1
+				{
+					CG_Error("CG_ProcessSnapshots: n < cg.latestSnapshotNum");
+				}
 			}
 			else
 			{
@@ -592,9 +622,16 @@ void CG_ProcessSnapshots(void)
 			// if time went backwards, we have a level restart
 			if (cg.nextSnap->serverTime < cg.snap->serverTime)
 			{
-				if (!cg.demoPlayback)
+#ifdef FEATURE_UNLAGGED //unlagged - lag simulation #1
+				// this may actually happen with lag simulation going on
+				if (cg_latentSnaps.integer)
 				{
-					CG_Error("CG_ProcessSnapshots: Server time went backwards\n");
+					CG_Printf("WARNING: CG_ProcessSnapshots: Server time went backwards\n");
+				}
+				else
+#endif  //unlagged - lag simulation #1
+				{
+					CG_Error("CG_ProcessSnapshots: Server time went backwards");
 				}
 			}
 		}

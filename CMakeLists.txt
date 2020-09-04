@@ -78,6 +78,7 @@ option(FEATURE_GETTEXT			"Enable localization using tinygettext"					ON)
 option(FEATURE_SERVERMDX		"Enable MDX support on server side (mod)"				ON)
 option(FEATURE_DBMS				"Enable dbms support (sqlite3)"							ON)
 option(FEATURE_PAKISOLATION		"Enable custom pak isolation"							ON)
+option(FEATURE_UNLAGGED		"Enable unlagged antilag support"							ON)
 option(FORCE_DEBUG				"Force enable legacy debug macros"						OFF)
 
 cmake_dependent_option(FEATURE_LUASQL	"Enable LuaSQL sqlite3 backend (mod)"			ON "FEATURE_LUA" OFF)

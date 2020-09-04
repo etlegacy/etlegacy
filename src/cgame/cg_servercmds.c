@@ -232,6 +232,12 @@ void CG_ParseServerinfo(void)
 
 	// make this available for ingame_callvote
 	trap_Cvar_Set("cg_ui_voteFlags", ((authLevel.integer == RL_NONE) ? Info_ValueForKey(info, "voteFlags") : "0"));
+
+#ifdef FEATURE_UNLAGGED //unlagged - server options
+	// we'll need this for deciding whether or not to predict weapon effects
+	cgs.delagHitscan = atoi(Info_ValueForKey(info, "g_delagHitscan"));
+	trap_Cvar_Set("g_delagHitscan", va("%i", cgs.delagHitscan));
+#endif //unlagged - server options
 }
 
 /**
@@ -1975,7 +1981,7 @@ const char *CG_LocalizeServerCommand(const char *buf)
 	static char token[MAX_TOKEN_CHARS];
 	char        temp[MAX_TOKEN_CHARS];
 	qboolean    togloc = qtrue;
-	const char  *s     = buf;
+	const char  *s = buf;
 	int         i, prev = 0;
 
 	Com_Memset(token, 0, sizeof(token));
