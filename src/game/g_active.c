@@ -864,7 +864,6 @@ void ClientTimerActions(gentity_t *ent, int msec)
 			// medic only
 			if (client->sess.playerType == PC_MEDIC)
 			{
-				ent->health += 3;
 				if (ent->health > client->ps.stats[STAT_MAX_HEALTH] / 1.11)
 				{
 					ent->health += 2;
