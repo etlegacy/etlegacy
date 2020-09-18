@@ -2244,10 +2244,6 @@ extern cvar_t *r_textureBits;           ///< number of desired texture bits
 										///< 16 = use 16-bit textures
 										///< 32 = use 32-bit textures
 										///< all else = error
-extern cvar_t *r_primitives;            ///< "0" = based on compiled vertex array existance
-										///< "1" = glDrawElemet tristrips
-										///< "2" = glDrawElements triangles
-										///< "-1" = no drawing
 
 extern cvar_t *r_extMaxAnisotropy;      ///< FIXME: not used in GLES ! move it ?
 										///< FIXME: "extern int      maxAnisotropy" founded

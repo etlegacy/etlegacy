@@ -181,31 +181,7 @@ static void R_DrawStripElements(int numIndexes, const glIndex_t *indexes, void(G
  */
 static void R_DrawElements(int numIndexes, const glIndex_t *indexes)
 {
-	switch (r_primitives->integer)
-	{
-	case 0:
-		// default is to use triangles if compiled vertex arrays are present
-		if (glLockArraysEXT)
-		{
-			glDrawElements(GL_TRIANGLES, numIndexes, GL_INDEX_TYPE, indexes);
-		}
-		else
-		{
-			R_DrawStripElements(numIndexes, indexes, R_ArrayElement);
-		}
-		return;
-	case 1:
-		R_DrawStripElements(numIndexes, indexes, R_ArrayElement);
-		return;
-	case 2:
-		glDrawElements(GL_TRIANGLES, numIndexes, GL_INDEX_TYPE, indexes);
-		return;
-	case 3:
-		R_DrawStripElements(numIndexes, indexes, R_ArrayElementDiscrete);
-		return;
-	default: // anything else will cause no drawing
-		return;
-	}
+	glDrawElements(GL_TRIANGLES, numIndexes, GL_INDEX_TYPE, indexes);
 }
 
 /*
