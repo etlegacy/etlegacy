@@ -399,6 +399,30 @@ typedef enum
 } textureCompression_t;
 
 /**
+ * @enum glDriverType_t
+ * @brief
+ */
+typedef enum
+{
+	GLDRV_ICD,              ///< driver is integrated with window system
+	GLDRV_STANDALONE,       ///< deprecated
+	GLDRV_VOODOO,           ///< deprecated
+} glDriverType_t;
+
+/**
+ * @enum glHardwareType_t
+ * @brief
+ */
+typedef enum
+{
+	GLHW_GENERIC,           ///< where everthing works the way it should
+	GLHW_3DFX_2D3D,         ///< deprecated
+	GLHW_RIVA128,           ///< deprecated
+	GLHW_RAGEPRO,           ///< deprecated
+	GLHW_PERMEDIA2,         ///< deprecated
+} glHardwareType_t;
+
+/**
  * @struct glconfig_t
  *
  * @brief Contains variables specific to the OpenGL configuration
@@ -411,12 +435,6 @@ typedef struct
 	char vendor_string[MAX_STRING_CHARS];
 	char version_string[MAX_STRING_CHARS];
 
-	char shadingLanguageVersion[MAX_STRING_CHARS];
-	int glslMajorVersion;
-	int glslMinorVersion;
-
-	int contextCombined;
-
 	char extensions_string[MAX_STRING_CHARS * 4];   ///< bumping, some cards have a big extension string
 	                                                ///< - no need to increase MAX_STRING_CHARS *4 - console doesn't print more
 	                                                ///< ET:L also stores this data in char* to fix extensions_string overflow issues
@@ -427,11 +445,21 @@ typedef struct
 
 	int colorBits, depthBits, stencilBits;
 
+	glDriverType_t driverType;                      ///< obsolete, kept for compatibility
+	glHardwareType_t hardwareType;                  ///< obsolete, kept for compatibility
+
 	qboolean deviceSupportsGamma;
 	textureCompression_t textureCompression;
 	qboolean textureEnvAddAvailable;
 	qboolean anisotropicAvailable;
 	float maxAnisotropy;
+
+	// vendor-specific support
+	qboolean NVFogAvailable;                        ///< obsolete, kept for compatibility
+	int NVFogMode;                                  ///< obsolete, kept for compatibility
+	int ATIMaxTruformTess;                          ///< obsolete, kept for compatibility
+	int ATINormalMode;                              ///< obsolete, kept for compatibility
+	int ATIPointMode;                               ///< obsolete, kept for compatibility
 
 	int vidWidth, vidHeight;
 	// aspect is the screen's physical width / height, which may be different
@@ -445,6 +473,13 @@ typedef struct
 	// synonymous with "does rendering consume the entire screen?"
 	qboolean isFullscreen;
 	qboolean smpActive;                     ///< obsolete, kept for compatibility
+
+	// extra general info - keep at end for backward compatibility
+	char shadingLanguageVersion[MAX_STRING_CHARS];
+	int glslMajorVersion;
+	int glslMinorVersion;
+
+	int contextCombined;
 } glconfig_t;
 
 /**

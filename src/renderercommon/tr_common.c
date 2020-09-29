@@ -590,6 +590,9 @@ void RE_InitOpenGl(void)
 	//Clear the screen with a black color thanks
 	Glimp_ClearScreen();
 
+	glConfig.driverType   = GLDRV_ICD;
+	glConfig.hardwareType = GLHW_GENERIC;
+
 	// Get extension strings
 #ifndef FEATURE_RENDERER2
 	Q_strncpyz(glConfig.extensions_string, (const char *) glGetString(GL_EXTENSIONS), sizeof(glConfig.extensions_string));
