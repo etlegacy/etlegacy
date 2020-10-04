@@ -1809,7 +1809,7 @@ void RB_SurfaceDecal(srfDecal_t *srf)
 	tess.numVertexes = numv;
 }
 
-/qq**
+/**
  * @brief RB_SurfaceSkip
  * @param surf - dummy function for SF_SKIP
  */
