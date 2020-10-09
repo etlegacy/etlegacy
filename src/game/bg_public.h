@@ -88,8 +88,8 @@
 #define DEAD_BODYHEIGHT_DELTA            20 ///< dead    body height 4
 #define PRONE_BODYHEIGHT_DELTA           0  ///< prone   body height -8
 
-#define PRONE_BODYHEIGHT_BBOX 12    ///<
-#define DEAD_BODYHEIGHT_BBOX 24     ///< was the result of DEFAULT_VIEWHEIGHT - CROUCH_VIEWHEIGHT (40 - 16) stored in crouchMaxZ
+#define PRONE_BODYHEIGHT_BBOX -8    ///<
+#define DEAD_BODYHEIGHT_BBOX -8     ///< was the result of DEFAULT_VIEWHEIGHT - CROUCH_VIEWHEIGHT (40 - 16) stored in crouchMaxZ
 
 extern vec3_t playerlegsProneMins;
 extern vec3_t playerlegsProneMaxs;
