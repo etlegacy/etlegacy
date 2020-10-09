@@ -2637,13 +2637,23 @@ static void CG_DrawLimboMessage(void)
 	{
 		int reinfTime = CG_CalculateReinfTime(qfalse);
 
-		if (reinfTime > 1)
+		// Change the number's color progressively towards red when the deployment is close.
+		// This helps bring the player's attention to the respawn counter.
+		if (reinfTime > 3)
 		{
 			str = va(CG_TranslateString("Deploying in ^3%d ^7seconds"), reinfTime);
 		}
+		else if (reinfTime > 2)
+		{
+			str = va(CG_TranslateString("Deploying in ^a%d ^7seconds"), reinfTime);
+		}
+		else if (reinfTime > 1)
+		{
+			str = va(CG_TranslateString("Deploying in ^8%d ^7seconds"), reinfTime);
+		}
 		else
 		{
-			str = va(CG_TranslateString("Deploying in ^3%d ^7second"), reinfTime);
+			str = va(CG_TranslateString("Deploying in ^1%d ^7second"), reinfTime);
 		}
 	}
 
