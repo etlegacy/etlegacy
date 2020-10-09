@@ -2716,14 +2716,24 @@ static qboolean CG_DrawFollow(void)
 					int deployTime   = ((cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_AXIS) ? cg_redlimbotime.integer : cg_bluelimbotime.integer) / 1000;
 					int reinfDepTime = CG_CalculateReinfTime(qfalse) + cg.snap->ps.persistant[PERS_RESPAWNS_PENALTY] * deployTime;
 
-					if (reinfDepTime > 1)
-					{
-						sprintf(deploytime, CG_TranslateString("Bonus Life! Deploying in ^3%d ^7seconds"), reinfDepTime);
-					}
-					else
-					{
-						sprintf(deploytime, CG_TranslateString("Bonus Life! Deploying in ^3%d ^7second"), reinfDepTime);
-					}
+                    // Change the number's color progressively towards red when the deployment is close.
+                    // This helps bring the player's attention to the respawn counter.
+                    if (reinfDepTime > 3)
+                    {
+                        sprintf(deploytime, CG_TranslateString("Bonus Life! Deploying in ^3%d ^7seconds"), reinfDepTime);
+                    }
+                    else if (reinfDepTime > 2)
+                    {
+                        sprintf(deploytime, CG_TranslateString("Bonus Life! Deploying in ^a%d ^7seconds"), reinfDepTime);
+                    }
+                    else if (reinfDepTime > 1)
+                    {
+                        sprintf(deploytime, CG_TranslateString("Bonus Life! Deploying in ^8%d ^7seconds"), reinfDepTime);
+                    }
+                    else
+                    {
+                        sprintf(deploytime, CG_TranslateString("Bonus Life! Deploying in ^1%d ^7second"), reinfDepTime);
+                    }
 				}
 				else
 				{
@@ -2733,15 +2743,25 @@ static qboolean CG_DrawFollow(void)
 			else
 			{
 				int reinfTime = CG_CalculateReinfTime(qfalse);
-
-				if (reinfTime > 1)
-				{
-					sprintf(deploytime, CG_TranslateString("Deploying in ^3%d ^7seconds"), reinfTime);
-				}
-				else
-				{
-					sprintf(deploytime, CG_TranslateString("Deploying in ^3%d ^7second"), reinfTime);
-				}
+                
+                // Change the number's color progressively towards red when the deployment is close.
+                // This helps bring the player's attention to the respawn counter.
+                if (reinfTime > 3)
+                {
+                    sprintf(deploytime, CG_TranslateString("Deploying in ^3%d ^7seconds"), reinfTime);
+                }
+                else if (reinfTime > 2)
+                {
+                    sprintf(deploytime, CG_TranslateString("Deploying in ^a%d ^7seconds"), reinfTime);
+                }
+                else if (reinfTime > 1)
+                {
+                    sprintf(deploytime, CG_TranslateString("Deploying in ^8%d ^7seconds"), reinfTime);
+                }
+                else
+                {
+                    sprintf(deploytime, CG_TranslateString("Deploying in ^1%d ^7second"), reinfTime);
+                }
 			}
 
 			CG_Text_Paint_Ext(INFOTEXT_STARTX, y, fontScale, fontScale, colorWhite, deploytime, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
