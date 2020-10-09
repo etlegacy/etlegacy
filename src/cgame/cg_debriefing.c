@@ -1029,7 +1029,6 @@ qboolean CG_MapVote_VoteButton_KeyDown(panel_button_t *button, int key)
 
 		if (cgs.dbSelectedMap != -1)
 		{
-			trap_SendClientCommand(va("mapvote %d", cgs.dbMapID[cgs.dbSelectedMap]));
 			cgs.dbMapVotedFor[0] = cgs.dbSelectedMap;
 			return qtrue;
 		}
@@ -1046,8 +1045,6 @@ vec4_t clrTxtBck = { 0.6f, 0.6f, 0.6f, 1.0f };
  */
 void CG_MapVote_MultiVoteButton_Draw(panel_button_t *button)
 {
-	const char *str;
-
 	if (!cg.snap)
 	{
 		return;
@@ -1060,15 +1057,6 @@ void CG_MapVote_MultiVoteButton_Draw(panel_button_t *button)
 
 	if (cgs.dbMapVotedFor[button->data[7] - 1] != -1)
 	{
-		str = va("^3%d: ^7RE-VOTE", 4 - button->data[7]);
-	}
-	else
-	{
-		str = va("^3%d: ^7VOTE", 4 - button->data[7]);
-	}
-
-	if (cgs.dbMapVotedFor[button->data[7] - 1] != -1)
-	{
 		CG_Text_Paint_Ext(button->rect.x + button->rect.w + 10,
 		                  button->rect.y + (3 * (button->rect.h / 4)),
 		                  .20f, .20f, clrTxtBck,
@@ -1076,7 +1064,23 @@ void CG_MapVote_MultiVoteButton_Draw(panel_button_t *button)
 		                  0, 0, 0, &cgs.media.limboFont2);
 	}
 
-	CG_PanelButtonsRender_Button_Ext(&button->rect, str);
+	if (!(cg.snap->ps.eFlags & EF_VOTED))
+	{
+		const char *str;
+
+		if (cgs.dbMapVotedFor[button->data[7] - 1] != -1)
+		{
+			str = va("^3%d: ^7RE-VOTE", 4 - button->data[7]);
+		}
+		else
+		{
+			str = va("^3%d: ^7VOTE", 4 - button->data[7]);
+		}
+
+		CG_PanelButtonsRender_Button_Ext(&button->rect, str);
+	}
+
+
 	return;
 }
 
@@ -1100,12 +1104,13 @@ void CG_MapVoteList_Draw(panel_button_t *button)
 	                  0, 0, 0, button->font->font);
 	y2 += 15;
 
-	for (i = 0; i + cgs.dbMapVoteListOffset < cgs.dbNumMaps && i < 17; i++)
+	for (i = 0; i + cgs.dbMapVoteListOffset < cgs.dbNumMaps && i < 16; i++)
 	{
 		if (strlen(cgs.dbMaps[i + cgs.dbMapVoteListOffset]) < 1)
 		{
 			break;
 		}
+
 		if (cgs.dbSelectedMap == i + cgs.dbMapVoteListOffset)
 		{
 			fileHandle_t f;
@@ -1143,18 +1148,144 @@ void CG_MapVoteList_Draw(panel_button_t *button)
 			                  va(CG_TranslateString("Total Accumulated Votes : %d"), cgs.dbMapTotalVotes[i + cgs.dbMapVoteListOffset]),
 			                  0, 0, 0, button->font->font);
 		}
+
 		CG_Text_Paint_Ext(DB_MAPNAME_X + 12 + cgs.wideXoffset, y, button->font->scalex,
 		                  button->font->scaley, button->font->colour,
 		                  cgs.dbMapDispName[i + cgs.dbMapVoteListOffset],
 		                  0, 30, 0, button->font->font);
-		CG_Text_Paint_Ext(DB_MAPVOTE_X + cgs.wideXoffset, y, button->font->scalex,
-		                  button->font->scaley, button->font->colour,
-		                  va("%3d%% (%d)", cgs.dbMapVotesSum > 0 ? 100 * cgs.dbMapVotes[i + cgs.dbMapVoteListOffset] / cgs.dbMapVotesSum : 0,
-		                     cgs.dbMapVotes[i + cgs.dbMapVoteListOffset]),
-		                  0, 0, 0, button->font->font);
+
+		if (cg.snap->ps.eFlags & EF_VOTED)
+		{
+			int j = 0;
+
+			vec4_t *colour = &button->font->colour;
+
+			// add gradient color to identify third most votes maps
+			for (j = 0; j < 3; j++)
+			{
+				if (cgs.dbSortedMapsIDByVotes[j] == i + cgs.dbMapVoteListOffset)
+				{
+					if (j == 0)
+					{
+						colour = &colorGreen;
+					}
+					else if (j == 1)
+					{
+						colour = &colorMdGreen;
+					}
+					else if (j == 2)
+					{
+						colour = &colorDkGreen;
+					}
+				}
+			}
+
+			CG_Text_Paint_Ext(DB_MAPVOTE_X + cgs.wideXoffset, y, button->font->scalex,
+			                  button->font->scaley, *colour,
+			                  va("%3d%% (%d)", cgs.dbMapVotesSum > 0 ? 100 * cgs.dbMapVotes[i + cgs.dbMapVoteListOffset] / cgs.dbMapVotesSum : 0,
+			                     cgs.dbMapVotes[i + cgs.dbMapVoteListOffset]),
+			                  0, 0, 0, button->font->font);
+		}
+
 		y += 12;
 	}
 	return;
+}
+
+/**
+ * @brief CG_MapVote_VoteSend_KeyDown
+ * @param button - unused
+ * @param[in] key
+ * @return
+ */
+qboolean CG_MapVote_VoteSend_KeyDown(panel_button_t *button, int key)
+{
+	if (key == K_MOUSE1)
+	{
+		if (!cg.snap)
+		{
+			return qfalse;
+		}
+
+		if (!cgs.dbMapMultiVote)
+		{
+			if (cgs.dbMapVotedFor[0] != -1)
+			{
+				trap_SendClientCommand(va("mapvote %d", cgs.dbMapID[cgs.dbMapVotedFor[0]]));
+				return qtrue;
+			}
+		}
+		else
+		{
+			int      i;
+			qboolean voteSent = qfalse;
+
+			for (i = 0; i < 3; i++)
+			{
+				if (cgs.dbMapVotedFor[i] != -1)
+				{
+					trap_SendClientCommand(va("mapvote %d %d",
+					                          cgs.dbMapID[cgs.dbMapVotedFor[i]],
+					                          i + 1));
+					voteSent = qtrue;
+				}
+			}
+
+			return voteSent;
+		}
+	}
+
+	return qfalse;
+}
+
+/**
+ * @brief CG_MapVote_VoteSend_Draw
+ * @param[in] button
+ */
+void CG_MapVote_VoteSend_Draw(panel_button_t *button)
+{
+	if (!cg.snap)
+	{
+		return;
+	}
+
+	if (!(cg.snap->ps.eFlags & EF_VOTED))
+	{
+		if (!cgs.dbMapMultiVote)
+		{
+			if (cgs.dbMapVotedFor[0] == -1)
+			{
+				return;
+			}
+		}
+		else
+		{
+			int i;
+
+			for (i = 0; i < 3; i++)
+			{
+				if (cgs.dbMapVotedFor[i] != -1)
+				{
+					break;
+				}
+
+				if (i == 2)
+				{
+					return;
+				}
+			}
+		}
+
+		CG_PanelButtonsRender_Button_Ext(&button->rect, button->text);
+	}
+	else
+	{
+		CG_Text_Paint_Ext(button->rect.x + ((button->rect.w / 2) - (5 * 8)),
+		                  button->rect.y + (3 * (button->rect.h / 4)),
+		                  .20f, .20f, clrTxtBck,
+		                  "^2VOTE DONE!",
+		                  0, 0, 0, &cgs.media.limboFont2);
+	}
 }
 
 /**
@@ -1163,8 +1294,6 @@ void CG_MapVoteList_Draw(panel_button_t *button)
  */
 void CG_MapVote_VoteButton_Draw(panel_button_t *button)
 {
-	const char *str;
-
 	if (!cg.snap)
 	{
 		return;
@@ -1175,16 +1304,7 @@ void CG_MapVote_VoteButton_Draw(panel_button_t *button)
 		return;
 	}
 
-	if (cg.snap->ps.eFlags & EF_VOTED)
-	{
-		str = "^7RE-VOTE";
-	}
-	else
-	{
-		str = "^7VOTE";
-	}
-
-	if (cg.snap->ps.eFlags & EF_VOTED)
+	if (cgs.dbMapVotedFor[0] != -1)
 	{
 		CG_Text_Paint_Ext(button->rect.x + button->rect.w + 10,
 		                  button->rect.y + (3 * (button->rect.h / 4)),
@@ -1192,7 +1312,12 @@ void CG_MapVote_VoteButton_Draw(panel_button_t *button)
 		                  cgs.dbMapDispName[cgs.dbMapVotedFor[0]],
 		                  0, 0, 0, &cgs.media.limboFont2);
 	}
-	CG_PanelButtonsRender_Button_Ext(&button->rect, str);
+
+	if (!(cg.snap->ps.eFlags & EF_VOTED))
+	{
+		CG_PanelButtonsRender_Button_Ext(&button->rect, (cgs.dbMapVotedFor[0] != -1) ? "^7RE-VOTE" : "^7VOTE");
+	}
+
 	return;
 }
 
@@ -1234,9 +1359,6 @@ qboolean CG_MapVote_MultiVoteButton_KeyDown(panel_button_t *button, int key)
 				}
 			}
 
-			trap_SendClientCommand(va("mapvote %d %d",
-			                          cgs.dbMapID[cgs.dbSelectedMap],
-			                          arrIdx + 1));
 			cgs.dbMapVotedFor[arrIdx] = cgs.dbSelectedMap;
 			return qtrue;
 		}
@@ -1299,7 +1421,7 @@ static panel_button_t mapVoteNamesList =
 {
 	NULL,
 	NULL,
-	{ DB_MAPNAME_X + 10,DB_MAPVOTE_Y,                 250, 17 * 12 },
+	{ DB_MAPNAME_X + 10,DB_MAPVOTE_Y,                 250, 16 * 12 },
 	{ 0,                0,                            0,   0, 0, 0, 0, 0},
 	&mapVoteFont,       // font
 	CG_MapVoteList_KeyDown,// keyDown
@@ -1313,7 +1435,7 @@ static panel_button_t mapVoteNamesListScroll =
 {
 	NULL,
 	NULL,
-	{ DB_MAPVOTE_X + 10 + 48,    DB_MAPVOTE_Y + 2,                      16, 17 * 12 },
+	{ DB_MAPVOTE_X + 10 + 48,    DB_MAPVOTE_Y + 2,                      16, 16 * 12 },
 	{ 3,                         0,                                     0,  0, 0, 0, 0, 0},
 	NULL,                        // font
 	CG_Debriefing_Scrollbar_KeyDown,// keyDown
@@ -1375,6 +1497,20 @@ static panel_button_t mapVoteButton3 =
 	CG_MapVote_MultiVoteButton_KeyDown,// keyDown
 	NULL,                           // keyUp
 	CG_MapVote_MultiVoteButton_Draw,
+	NULL,
+	0
+};
+
+static panel_button_t mapVoteSend =
+{
+	NULL,
+	"^3SEND VOTE",
+	{ DB_MAPNAME_X + 10,     296 - 30 + 2,        266, 16 },
+	{ 0,                     0,                   0,   0, 0, 0, 0, 0},
+	NULL,                    // font
+	CG_MapVote_VoteSend_KeyDown,// keyDown
+	NULL,                    // keyUp
+	CG_MapVote_VoteSend_Draw,
 	NULL,
 	0
 };
@@ -1537,7 +1673,7 @@ static panel_button_t *mapVoteButtons[] =
 	&debriefTitleWindow,     &mapVoteWindow,    &mapVoteHeadingName, &mapVoteHeadingVotes,
 	&mapVoteBorder1,         &mapVoteBorder2,   &mapVoteBorder3,
 	&mapVoteNamesListScroll, &mapVoteNamesList, &mapVoteButton,
-	&mapVoteButton1,         &mapVoteButton2,   &mapVoteButton3,
+	&mapVoteButton1,         &mapVoteButton2,   &mapVoteButton3,     &mapVoteSend,
 	NULL
 };
 
@@ -3141,7 +3277,7 @@ qboolean CG_Debriefing_ChatButton_KeyDown(panel_button_t *button, int key)
 void CG_Debriefing_ReadyButton_Draw(panel_button_t *button)
 {
 	int timeleft = MAX(60 - (cg.time - cgs.intermissionStartTime) / 1000, 0);
-	button->text = va("READY (%i:%02i)", timeleft/60, timeleft%60);
+	button->text = va("READY (%i:%02i)", timeleft / 60, timeleft % 60);
 
 	if (!cg.snap)
 	{
@@ -3152,7 +3288,7 @@ void CG_Debriefing_ReadyButton_Draw(panel_button_t *button)
 	// on game type map voting
 	if (cg.snap->ps.eFlags & EF_READY || cgs.gametype == GT_WOLF_MAPVOTE)
 	{
-		button->text = va("(%i:%02i)", timeleft/60, timeleft%60);
+		button->text = va("(%i:%02i)", timeleft / 60, timeleft % 60);
 	}
 
 	CG_PanelButtonsRender_Button(button);
@@ -4429,15 +4565,33 @@ void CG_parseMapVoteListInfo()
  */
 void CG_parseMapVoteTally()
 {
-	int i, numMaps;
+	int i, j, numMaps;
 
 	cgs.dbMapVotesSum = 0;
+	Com_Memset(cgs.dbSortedMapsIDByVotes, -1, sizeof(cgs.dbSortedMapsIDByVotes));
+	Com_Memset(cgs.dbSortedMapsTotalVotes, -1, sizeof(cgs.dbSortedMapsTotalVotes));
 
 	numMaps = (trap_Argc() - 1);
 	for (i = 0; i < numMaps; i++)
 	{
 		cgs.dbMapVotes[i]  = atoi(CG_Argv(i + 1));
 		cgs.dbMapVotesSum += cgs.dbMapVotes[i];
+
+		for (j = 0; j < MAX_VOTE_MAPS; j++)
+		{
+			if (cgs.dbSortedMapsTotalVotes[j] < cgs.dbMapVotes[i])
+			{
+				if (cgs.dbSortedMapsTotalVotes[j] != -1)
+				{
+					memmove(cgs.dbSortedMapsIDByVotes + j + 1, cgs.dbSortedMapsIDByVotes + j, sizeof(int) * (MAX_VOTE_MAPS - j - 1));
+					memmove(cgs.dbSortedMapsTotalVotes + j + 1, cgs.dbSortedMapsTotalVotes + j, sizeof(int) * (MAX_VOTE_MAPS - j - 1));
+				}
+
+				cgs.dbSortedMapsIDByVotes[j]  = i;
+				cgs.dbSortedMapsTotalVotes[j] = cgs.dbMapVotes[i];
+				break;
+			}
+		}
 	}
 
 	cgs.dbVoteTallyReceived = qtrue;

@@ -2497,6 +2497,8 @@ typedef struct cgs_s
 	qboolean dbVoteTallyReceived;
 	qboolean dbMapMultiVote;
 	int dbMapVotedFor[3];
+	int dbSortedMapsIDByVotes[MAX_VOTE_MAPS];
+	int dbSortedMapsTotalVotes[MAX_VOTE_MAPS];
 	int mapVoteMapX;
 	int mapVoteMapY;
 
@@ -3204,7 +3206,7 @@ void CG_AddToNotify(const char *str);
 const char *CG_LocalizeServerCommand(const char *buf);
 void CG_wstatsParse_cmd(void);
 
-void CG_parseWeaponStats_cmd(void (txt_dump) (const char *));
+void CG_parseWeaponStats_cmd(void(txt_dump) (const char *));
 //void CG_parseBestShotsStats_cmd(qboolean doTop, void(txt_dump) (const char *));
 //void CG_parseTopShotsStats_cmd(qboolean doTop, void(txt_dump) (const char *));
 //void CG_scores_cmd(void);
