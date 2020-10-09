@@ -761,7 +761,7 @@ static void CG_DrawCenterString(void)
 	char  *start, *end;
 	int   len;
 	char  currentColor[3] = S_COLOR_WHITE;
-	char  nextColor[3]    = { 0, 0, 0 };
+	char  nextColor[3] = { 0, 0, 0 };
 	int   x, y, w;
 	float *color;
 
@@ -909,10 +909,10 @@ static void CG_DrawScopedReticle(void)
  */
 static void CG_DrawMortarReticle(void)
 {
-	vec4_t   color             = { 1.f, 1.f, 1.f, .5f };
-	vec4_t   color_back        = { 0.f, 0.f, 0.f, .25f };
-	vec4_t   color_extends     = { .77f, .73f, .1f, 1.f };
-	vec4_t   color_lastfire    = { .77f, .1f, .1f, 1.f };
+	vec4_t   color = { 1.f, 1.f, 1.f, .5f };
+	vec4_t   color_back = { 0.f, 0.f, 0.f, .25f };
+	vec4_t   color_extends = { .77f, .73f, .1f, 1.f };
+	vec4_t   color_lastfire = { .77f, .1f, .1f, 1.f };
 	vec4_t   color_firerequest = { 1.f, 1.f, 1.f, 1.f };
 	float    offset, localOffset;
 	int      i, min, majorOffset, val, printval, fadeTime, requestFadeTime;
@@ -1286,9 +1286,9 @@ static void CG_DrawCrosshair(void)
             }
             else */if (
 #ifdef FEATURE_MULTIVIEW
-			    cg.mvTotalClients < 1 ||
+				cg.mvTotalClients < 1 ||
 #endif
-			    cg.snap->ps.stats[STAT_HEALTH] > 0)
+				cg.snap->ps.stats[STAT_HEALTH] > 0)
 			{
 				CG_DrawScopedReticle();
 			}
@@ -1703,7 +1703,7 @@ static void CG_DrawCrosshairNames(void)
 	// world-entity or no-entity
 	if (cg.crosshairClientNum < 0)
 	{
-	  return;
+		return;
 	}
 
 	// don't draw crosshair names in shoutcast mode
@@ -2454,7 +2454,7 @@ static void CG_DrawSpectatorMessage(void)
 {
 	const char *str, *str2;
 	static int lastconfigGet = 0;
-	float      fontScale     = cg_fontScaleSP.value;
+	float      fontScale = cg_fontScaleSP.value;
 	int        y, charHeight;
 
 	charHeight = CG_Text_Height_Ext("A", fontScale, 0, &cgs.media.limboFont2);
@@ -2716,24 +2716,24 @@ static qboolean CG_DrawFollow(void)
 					int deployTime   = ((cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_AXIS) ? cg_redlimbotime.integer : cg_bluelimbotime.integer) / 1000;
 					int reinfDepTime = CG_CalculateReinfTime(qfalse) + cg.snap->ps.persistant[PERS_RESPAWNS_PENALTY] * deployTime;
 
-                    // Change the number's color progressively towards red when the deployment is close.
-                    // This helps bring the player's attention to the respawn counter.
-                    if (reinfDepTime > 3)
-                    {
-                        sprintf(deploytime, CG_TranslateString("Bonus Life! Deploying in ^3%d ^7seconds"), reinfDepTime);
-                    }
-                    else if (reinfDepTime > 2)
-                    {
-                        sprintf(deploytime, CG_TranslateString("Bonus Life! Deploying in ^a%d ^7seconds"), reinfDepTime);
-                    }
-                    else if (reinfDepTime > 1)
-                    {
-                        sprintf(deploytime, CG_TranslateString("Bonus Life! Deploying in ^8%d ^7seconds"), reinfDepTime);
-                    }
-                    else
-                    {
-                        sprintf(deploytime, CG_TranslateString("Bonus Life! Deploying in ^1%d ^7second"), reinfDepTime);
-                    }
+					// Change the number's color progressively towards red when the deployment is close.
+					// This helps bring the player's attention to the respawn counter.
+					if (reinfDepTime > 3)
+					{
+						sprintf(deploytime, CG_TranslateString("Bonus Life! Deploying in ^3%d ^7seconds"), reinfDepTime);
+					}
+					else if (reinfDepTime > 2)
+					{
+						sprintf(deploytime, CG_TranslateString("Bonus Life! Deploying in ^a%d ^7seconds"), reinfDepTime);
+					}
+					else if (reinfDepTime > 1)
+					{
+						sprintf(deploytime, CG_TranslateString("Bonus Life! Deploying in ^8%d ^7seconds"), reinfDepTime);
+					}
+					else
+					{
+						sprintf(deploytime, CG_TranslateString("Bonus Life! Deploying in ^1%d ^7second"), reinfDepTime);
+					}
 				}
 				else
 				{
@@ -2743,25 +2743,25 @@ static qboolean CG_DrawFollow(void)
 			else
 			{
 				int reinfTime = CG_CalculateReinfTime(qfalse);
-                
-                // Change the number's color progressively towards red when the deployment is close.
-                // This helps bring the player's attention to the respawn counter.
-                if (reinfTime > 3)
-                {
-                    sprintf(deploytime, CG_TranslateString("Deploying in ^3%d ^7seconds"), reinfTime);
-                }
-                else if (reinfTime > 2)
-                {
-                    sprintf(deploytime, CG_TranslateString("Deploying in ^a%d ^7seconds"), reinfTime);
-                }
-                else if (reinfTime > 1)
-                {
-                    sprintf(deploytime, CG_TranslateString("Deploying in ^8%d ^7seconds"), reinfTime);
-                }
-                else
-                {
-                    sprintf(deploytime, CG_TranslateString("Deploying in ^1%d ^7second"), reinfTime);
-                }
+
+				// Change the number's color progressively towards red when the deployment is close.
+				// This helps bring the player's attention to the respawn counter.
+				if (reinfTime > 3)
+				{
+					sprintf(deploytime, CG_TranslateString("Deploying in ^3%d ^7seconds"), reinfTime);
+				}
+				else if (reinfTime > 2)
+				{
+					sprintf(deploytime, CG_TranslateString("Deploying in ^a%d ^7seconds"), reinfTime);
+				}
+				else if (reinfTime > 1)
+				{
+					sprintf(deploytime, CG_TranslateString("Deploying in ^8%d ^7seconds"), reinfTime);
+				}
+				else
+				{
+					sprintf(deploytime, CG_TranslateString("Deploying in ^1%d ^7second"), reinfTime);
+				}
 			}
 
 			CG_Text_Paint_Ext(INFOTEXT_STARTX, y, fontScale, fontScale, colorWhite, deploytime, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
@@ -3059,9 +3059,9 @@ static void CG_DrawFlashFade(void)
 	{
 		if (
 #ifdef FEATURE_MULTIVIEW
-		    cg.mvTotalClients < 1 &&
+			cg.mvTotalClients < 1 &&
 #endif
-		    cg.snap->ps.powerups[PW_BLACKOUT] > 0)
+			cg.snap->ps.powerups[PW_BLACKOUT] > 0)
 		{
 			trap_Cvar_Set("ui_blackout", va("%d", cg.snap->ps.powerups[PW_BLACKOUT]));
 		}
@@ -3299,7 +3299,7 @@ static void CG_DrawObjectiveInfo(void)
 	char   *start, *end;
 	int    len;
 	char   currentColor[3] = S_COLOR_WHITE;
-	char   nextColor[3]    = { 0, 0, 0 };
+	char   nextColor[3] = { 0, 0, 0 };
 	int    x, y, w;
 	int    x1, y1, x2, y2;
 	float  *color;
