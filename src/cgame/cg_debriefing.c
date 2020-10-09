@@ -40,7 +40,7 @@ team_t CG_Debriefing_FindWinningTeamForPos(int pos);
 
 int QDECL CG_SortPlayersByXP(const void *a, const void *b);
 
-panel_button_text_t debriefPlayerHeadingSmallerFont =
+static panel_button_text_t debriefPlayerHeadingSmallerFont =
 {
 	0.2f,                  0.2f,
 	{ 0.6f,                0.6f,0.6f,    1.f },
@@ -60,7 +60,7 @@ panel_button_text_t debriefPlayerHeadingSmallerFont =
 #define DB_XP_X        DB_TEAMGIBS_X + 24
 #define DH_HEADING_Y   60
 
-panel_button_t debriefPlayerWeaponStatsHeader =
+static panel_button_t debriefPlayerWeaponStatsHeader =
 {
 	NULL,
 	"Weapon Stats",
@@ -74,7 +74,7 @@ panel_button_t debriefPlayerWeaponStatsHeader =
 	0
 };
 
-panel_button_t debriefPlayerWeaponStatsNameHeader =
+static panel_button_t debriefPlayerWeaponStatsNameHeader =
 {
 	NULL,
 	"Name",
@@ -88,7 +88,7 @@ panel_button_t debriefPlayerWeaponStatsNameHeader =
 	0
 };
 
-panel_button_t debriefPlayerWeaponStatsShotsHeader =
+static panel_button_t debriefPlayerWeaponStatsShotsHeader =
 {
 	NULL,
 	"Shots",
@@ -102,7 +102,7 @@ panel_button_t debriefPlayerWeaponStatsShotsHeader =
 	0
 };
 
-panel_button_t debriefPlayerWeaponStatsHitsHeader =
+static panel_button_t debriefPlayerWeaponStatsHitsHeader =
 {
 	NULL,
 	"Hits",
@@ -116,7 +116,7 @@ panel_button_t debriefPlayerWeaponStatsHitsHeader =
 	0
 };
 
-panel_button_t debriefPlayerWeaponStatsKillsHeader =
+static panel_button_t debriefPlayerWeaponStatsKillsHeader =
 {
 	NULL,
 	"Kills",
@@ -130,7 +130,7 @@ panel_button_t debriefPlayerWeaponStatsKillsHeader =
 	0
 };
 
-panel_button_t debriefPlayerWeaponStatsList =
+static panel_button_t debriefPlayerWeaponStatsList =
 {
 	NULL,
 	NULL,
@@ -144,7 +144,7 @@ panel_button_t debriefPlayerWeaponStatsList =
 	0
 };
 
-panel_button_t debriefPlayerWeaponStatsListScroll =
+static panel_button_t debriefPlayerWeaponStatsListScroll =
 {
 	NULL,
 	NULL,
@@ -158,7 +158,7 @@ panel_button_t debriefPlayerWeaponStatsListScroll =
 	0
 };
 
-panel_button_t debriefTitleWindow =
+static panel_button_t debriefTitleWindow =
 {
 	NULL,
 	NULL,
@@ -172,7 +172,7 @@ panel_button_t debriefTitleWindow =
 	0
 };
 
-panel_button_t debriefMissionTitleWindow =
+static panel_button_t debriefMissionTitleWindow =
 {
 	NULL,
 	NULL,
@@ -186,7 +186,7 @@ panel_button_t debriefMissionTitleWindow =
 	0
 };
 
-panel_button_t debriefMissionImage =
+static panel_button_t debriefMissionImage =
 {
 	NULL,
 	NULL,
@@ -200,7 +200,7 @@ panel_button_t debriefMissionImage =
 	0
 };
 
-panel_button_t debriefMissionMaps =
+static panel_button_t debriefMissionMaps =
 {
 	NULL,
 	NULL,
@@ -214,7 +214,7 @@ panel_button_t debriefMissionMaps =
 	0
 };
 
-panel_button_t debriefMissionAwardsWindow =
+static panel_button_t debriefMissionAwardsWindow =
 {
 	NULL,
 	"ROLL OF HONOR",
@@ -228,7 +228,7 @@ panel_button_t debriefMissionAwardsWindow =
 	0
 };
 
-panel_button_t debriefMissionAwardsList =
+static panel_button_t debriefMissionAwardsList =
 {
 	NULL,
 	NULL,
@@ -242,7 +242,7 @@ panel_button_t debriefMissionAwardsList =
 	0
 };
 
-panel_button_t debriefMissionAwardsListScroll =
+static panel_button_t debriefMissionAwardsListScroll =
 {
 	NULL,
 	NULL,
@@ -256,7 +256,7 @@ panel_button_t debriefMissionAwardsListScroll =
 	0
 };
 
-panel_button_t debriefMissionStatsWindow =
+static panel_button_t debriefMissionStatsWindow =
 {
 	NULL,
 	"MISSION STATS",
@@ -270,7 +270,7 @@ panel_button_t debriefMissionStatsWindow =
 	0
 };
 
-panel_button_t debriefMissionStatsHeaders =
+static panel_button_t debriefMissionStatsHeaders =
 {
 	NULL,
 	NULL,
@@ -284,7 +284,7 @@ panel_button_t debriefMissionStatsHeaders =
 	0
 };
 
-panel_button_t debriefMissionStatsWinner =
+static panel_button_t debriefMissionStatsWinner =
 {
 	NULL,
 	NULL,
@@ -298,7 +298,7 @@ panel_button_t debriefMissionStatsWinner =
 	0
 };
 
-panel_button_t debriefMissionStatsLoser =
+static panel_button_t debriefMissionStatsLoser =
 {
 	NULL,
 	NULL,
@@ -312,7 +312,7 @@ panel_button_t debriefMissionStatsLoser =
 	0
 };
 
-panel_button_t debriefPlayerListWindow =
+static panel_button_t debriefPlayerListWindow =
 {
 	NULL,
 	"PLAYERS",
@@ -326,7 +326,7 @@ panel_button_t debriefPlayerListWindow =
 	0
 };
 
-panel_button_text_t debriefPlayerListFont =
+static panel_button_text_t debriefPlayerListFont =
 {
 	0.2f,                  0.2f,
 	{ 0.6f,                0.6f,0.6f,    1.f },
@@ -334,7 +334,7 @@ panel_button_text_t debriefPlayerListFont =
 	&cgs.media.limboFont2,
 };
 
-panel_button_t debriefHeadingRank =
+static panel_button_t debriefHeadingRank =
 {
 	NULL,
 	"Rank",
@@ -348,7 +348,7 @@ panel_button_t debriefHeadingRank =
 	0
 };
 
-panel_button_t debriefHeadingName =
+static panel_button_t debriefHeadingName =
 {
 	NULL,
 	"Name",
@@ -362,7 +362,7 @@ panel_button_t debriefHeadingName =
 	0
 };
 
-panel_button_t debriefHeadingTime =
+static panel_button_t debriefHeadingTime =
 {
 	NULL,
 	"Time",
@@ -376,7 +376,7 @@ panel_button_t debriefHeadingTime =
 	0
 };
 
-panel_button_t debriefHeadingKills =
+static panel_button_t debriefHeadingKills =
 {
 	NULL,
 	"Kll",
@@ -390,7 +390,7 @@ panel_button_t debriefHeadingKills =
 	0
 };
 
-panel_button_t debriefHeadingDeaths =
+static panel_button_t debriefHeadingDeaths =
 {
 	NULL,
 	"Dth",
@@ -404,7 +404,7 @@ panel_button_t debriefHeadingDeaths =
 	0
 };
 
-panel_button_t debriefHeadingGibs =
+static panel_button_t debriefHeadingGibs =
 {
 	NULL,
 	"Gib",
@@ -418,7 +418,7 @@ panel_button_t debriefHeadingGibs =
 	0
 };
 
-panel_button_t debriefHeadingSelfKills =
+static panel_button_t debriefHeadingSelfKills =
 {
 	NULL,
 	"SK",
@@ -432,7 +432,7 @@ panel_button_t debriefHeadingSelfKills =
 	0
 };
 
-panel_button_t debriefHeadingTeamKills =
+static panel_button_t debriefHeadingTeamKills =
 {
 	NULL,
 	"TK",
@@ -446,7 +446,7 @@ panel_button_t debriefHeadingTeamKills =
 	0
 };
 
-panel_button_t debriefHeadingTeamGibs =
+static panel_button_t debriefHeadingTeamGibs =
 {
 	NULL,
 	"TG",
@@ -460,7 +460,7 @@ panel_button_t debriefHeadingTeamGibs =
 	0
 };
 
-panel_button_t debriefHeadingXP =
+static panel_button_t debriefHeadingXP =
 {
 	NULL,
 	"XP",
@@ -474,7 +474,7 @@ panel_button_t debriefHeadingXP =
 	0
 };
 
-panel_button_t debriefPlayerList =
+static panel_button_t debriefPlayerList =
 {
 	NULL,
 	NULL,
@@ -488,7 +488,7 @@ panel_button_t debriefPlayerList =
 	0
 };
 
-panel_button_t debriefPlayerListScroll =
+static panel_button_t debriefPlayerListScroll =
 {
 	NULL,
 	NULL,
@@ -502,7 +502,7 @@ panel_button_t debriefPlayerListScroll =
 	0
 };
 
-panel_button_text_t debriefPlayerInfoFont =
+static panel_button_text_t debriefPlayerInfoFont =
 {
 	0.2f,                  0.2f,
 	{ 0.6f,                0.6f,0.6f,    1.f },
@@ -510,7 +510,7 @@ panel_button_text_t debriefPlayerInfoFont =
 	&cgs.media.limboFont2,
 };
 
-panel_button_t debriefPlayerInfoWindow =
+static panel_button_t debriefPlayerInfoWindow =
 {
 	NULL,
 	"PLAYER STATS",
@@ -524,7 +524,7 @@ panel_button_t debriefPlayerInfoWindow =
 	0
 };
 
-panel_button_t debriefPlayerInfoName =
+static panel_button_t debriefPlayerInfoName =
 {
 	NULL,
 	NULL,
@@ -538,7 +538,7 @@ panel_button_t debriefPlayerInfoName =
 	0
 };
 
-panel_button_t debriefPlayerInfoRank =
+static panel_button_t debriefPlayerInfoRank =
 {
 	NULL,
 	NULL,
@@ -552,7 +552,7 @@ panel_button_t debriefPlayerInfoRank =
 	0
 };
 
-panel_button_t debriefPlayerInfoMedals =
+static panel_button_t debriefPlayerInfoMedals =
 {
 	NULL,
 	NULL,
@@ -566,7 +566,7 @@ panel_button_t debriefPlayerInfoMedals =
 	0
 };
 
-panel_button_t debriefPlayerInfoTime =
+static panel_button_t debriefPlayerInfoTime =
 {
 	NULL,
 	NULL,
@@ -580,7 +580,7 @@ panel_button_t debriefPlayerInfoTime =
 	0
 };
 
-panel_button_t debriefPlayerInfoXP =
+static panel_button_t debriefPlayerInfoXP =
 {
 	NULL,
 	NULL,
@@ -595,7 +595,7 @@ panel_button_t debriefPlayerInfoXP =
 };
 
 #ifdef FEATURE_RATING
-panel_button_t debriefPlayerInfoSR =
+static panel_button_t debriefPlayerInfoSR =
 {
 	NULL,
 	NULL,
@@ -610,7 +610,7 @@ panel_button_t debriefPlayerInfoSR =
 };
 #endif
 
-panel_button_t debriefPlayerInfoACC =
+static panel_button_t debriefPlayerInfoACC =
 {
 	NULL,
 	NULL,
@@ -624,7 +624,7 @@ panel_button_t debriefPlayerInfoACC =
 	0
 };
 
-panel_button_t debriefPlayerInfoHS =
+static panel_button_t debriefPlayerInfoHS =
 {
 	NULL,
 	NULL,
@@ -639,7 +639,7 @@ panel_button_t debriefPlayerInfoHS =
 };
 
 #ifdef FEATURE_PRESTIGE
-panel_button_t debriefPlayerInfoPrestige =
+static panel_button_t debriefPlayerInfoPrestige =
 {
 	NULL,
 	NULL,
@@ -653,7 +653,7 @@ panel_button_t debriefPlayerInfoPrestige =
 	0
 };
 
-panel_button_t debriefPlayerPrestigeButton =
+static panel_button_t debriefPlayerPrestigeButton =
 {
 	NULL,
 	"^3COLLECT POINT",
@@ -667,7 +667,7 @@ panel_button_t debriefPlayerPrestigeButton =
 	0
 };
 
-panel_button_t debriefPlayerPrestigeNote =
+static panel_button_t debriefPlayerPrestigeNote =
 {
 	NULL,
 	NULL,
@@ -682,7 +682,7 @@ panel_button_t debriefPlayerPrestigeNote =
 };
 #endif
 
-panel_button_t debriefPlayerInfoHitRegions =
+static panel_button_t debriefPlayerInfoHitRegions =
 {
 	NULL,
 	NULL,
@@ -697,7 +697,7 @@ panel_button_t debriefPlayerInfoHitRegions =
 };
 
 #define PLAYERHEADER_SKILLS(number)           \
-	panel_button_t debriefPlayerInfoSkills ## number = {      \
+	static panel_button_t debriefPlayerInfoSkills ## number = {      \
 		NULL,                                       \
 		NULL,                                       \
 		{ 24,                            136 + (number * 14), 12, 12 }, \
@@ -718,7 +718,7 @@ PLAYERHEADER_SKILLS(4);
 PLAYERHEADER_SKILLS(5);
 PLAYERHEADER_SKILLS(6);
 
-panel_button_t *debriefPanelButtons[] =
+static panel_button_t *debriefPanelButtons[] =
 {
 	&debriefTitleWindow,
 	&debriefPlayerListWindow,       &debriefPlayerList,                   &debriefPlayerListScroll,
@@ -748,7 +748,7 @@ panel_button_t *debriefPanelButtons[] =
 	NULL
 };
 
-panel_button_text_t teamDebriefTitleSmall =
+static panel_button_text_t teamDebriefTitleSmall =
 {
 	0.24f,                 0.24f,
 	{ 1.f,                 1.f,              1.f,0.8f },
@@ -756,7 +756,7 @@ panel_button_text_t teamDebriefTitleSmall =
 	&cgs.media.limboFont2,
 };
 
-panel_button_text_t teamDebriefTitle =
+static panel_button_text_t teamDebriefTitle =
 {
 	0.28f,                 0.28f,
 	{ 1.f,                 1.f,  1.f,0.8f },
@@ -765,7 +765,7 @@ panel_button_text_t teamDebriefTitle =
 };
 
 #define TDB_SKILL_TITLES_XP(number, title, x)             \
-	panel_button_t teamDebriefSkillXPText_ ## number = {          \
+	static panel_button_t teamDebriefSkillXPText_ ## number = {          \
 		NULL,                                                   \
 		title,                                                  \
 		{ 100 + (number * 65),      304 - (x * 12),                 20, 200 },      \
@@ -788,7 +788,7 @@ TDB_SKILL_TITLES_XP(6, "Covert Ops", 0);
 TDB_SKILL_TITLES_XP(7, "Total", 1);
 
 #define TDB_SKILL_AXIS_XP(number)                         \
-	panel_button_t teamDebriefSkillXPText0_ ## number = {         \
+	static panel_button_t teamDebriefSkillXPText0_ ## number = {         \
 		NULL,                                                   \
 		NULL,                                                   \
 		{ 110 + (number * 65),             320,                  470, 200 },                \
@@ -802,7 +802,7 @@ TDB_SKILL_TITLES_XP(7, "Total", 1);
 	}
 
 #define TDB_SKILL_ALLIES_XP(number)                       \
-	panel_button_t teamDebriefSkillXPText1_ ## number = {         \
+	static panel_button_t teamDebriefSkillXPText1_ ## number = {         \
 		NULL,                                                   \
 		NULL,                                                   \
 		{ 110 + (number * 65),             340,                  470, 200 },                \
@@ -833,14 +833,14 @@ TDB_SKILL_ALLIES_XP(5);
 TDB_SKILL_ALLIES_XP(6);
 TDB_SKILL_ALLIES_XP(7);
 
-panel_button_t *teamDebriefPanelButtons[] =
+static panel_button_t *teamDebriefPanelButtons[] =
 {
 	&debriefTitleWindow,        &debriefMissionTitleWindow, &debriefMissionAwardsWindow, &debriefMissionImage,        &debriefMissionMaps, &debriefMissionAwardsList, &debriefMissionAwardsListScroll,
 	&debriefMissionStatsWindow, &debriefMissionStatsWinner, &debriefMissionStatsLoser,   &debriefMissionStatsHeaders,
 	NULL
 };
 
-panel_button_text_t chatPanelButtonFont =
+static panel_button_text_t chatPanelButtonFont =
 {
 	0.20f,                 0.20f,
 	{ 1.f,                 1.f,              1.f,0.8f },
@@ -848,7 +848,7 @@ panel_button_text_t chatPanelButtonFont =
 	&cgs.media.limboFont2,
 };
 
-panel_button_t chatPanelWindow =
+static panel_button_t chatPanelWindow =
 {
 	NULL,
 	"CHAT",
@@ -862,7 +862,7 @@ panel_button_t chatPanelWindow =
 	0
 };
 
-panel_button_t chatPanelText =
+static panel_button_t chatPanelText =
 {
 	NULL,
 	NULL,
@@ -876,7 +876,7 @@ panel_button_t chatPanelText =
 	0
 };
 
-panel_button_t chatPanelNextButton =
+static panel_button_t chatPanelNextButton =
 {
 	NULL,
 	"MORE",
@@ -890,7 +890,7 @@ panel_button_t chatPanelNextButton =
 	0
 };
 
-panel_button_t chatPanelVoteButton =
+static panel_button_t chatPanelVoteButton =
 {
 	NULL,
 	"MAP VOTE",
@@ -904,7 +904,7 @@ panel_button_t chatPanelVoteButton =
 	0
 };
 
-panel_button_t chatPanelQCButton =
+static panel_button_t chatPanelQCButton =
 {
 	NULL,
 	"QUICK CHAT",
@@ -918,7 +918,7 @@ panel_button_t chatPanelQCButton =
 	0
 };
 
-panel_button_t chatPanelReadyButton =
+static panel_button_t chatPanelReadyButton =
 {
 	NULL,
 	"READY",
@@ -932,7 +932,7 @@ panel_button_t chatPanelReadyButton =
 	0
 };
 
-panel_button_t chatTypeButton =
+static panel_button_t chatTypeButton =
 {
 	NULL,
 	NULL,
@@ -946,7 +946,7 @@ panel_button_t chatTypeButton =
 	0
 };
 
-panel_button_t charPanelEditSurround =
+static panel_button_t charPanelEditSurround =
 {
 	NULL,
 	NULL,
@@ -960,7 +960,7 @@ panel_button_t charPanelEditSurround =
 	0
 };
 
-panel_button_t charPanelEdit =
+static panel_button_t charPanelEdit =
 {
 	NULL,
 	"chattext",
@@ -1245,7 +1245,7 @@ qboolean CG_MapVote_MultiVoteButton_KeyDown(panel_button_t *button, int key)
 	return qfalse;
 }
 
-panel_button_t mapVoteWindow =
+static panel_button_t mapVoteWindow =
 {
 	NULL,
 	"MAP VOTE",
@@ -1259,7 +1259,7 @@ panel_button_t mapVoteWindow =
 	0
 };
 
-panel_button_text_t mapVoteFont =
+static panel_button_text_t mapVoteFont =
 {
 	0.2f,                  0.2f,
 	{ 0.6f,                0.6f,0.6f,    1.f },
@@ -1267,7 +1267,7 @@ panel_button_text_t mapVoteFont =
 	&cgs.media.limboFont2,
 };
 
-panel_button_t mapVoteHeadingName =
+static panel_button_t mapVoteHeadingName =
 {
 	NULL,
 	"Name",
@@ -1281,7 +1281,7 @@ panel_button_t mapVoteHeadingName =
 	0
 };
 
-panel_button_t mapVoteHeadingVotes =
+static panel_button_t mapVoteHeadingVotes =
 {
 	NULL,
 	"Votes",
@@ -1295,7 +1295,7 @@ panel_button_t mapVoteHeadingVotes =
 	0
 };
 
-panel_button_t mapVoteNamesList =
+static panel_button_t mapVoteNamesList =
 {
 	NULL,
 	NULL,
@@ -1309,7 +1309,7 @@ panel_button_t mapVoteNamesList =
 	0
 };
 
-panel_button_t mapVoteNamesListScroll =
+static panel_button_t mapVoteNamesListScroll =
 {
 	NULL,
 	NULL,
@@ -1323,7 +1323,7 @@ panel_button_t mapVoteNamesListScroll =
 	0
 };
 
-panel_button_t mapVoteButton =
+static panel_button_t mapVoteButton =
 {
 	NULL,
 	"^3VOTE",
@@ -1337,7 +1337,7 @@ panel_button_t mapVoteButton =
 	0
 };
 
-panel_button_t mapVoteButton1 =
+static panel_button_t mapVoteButton1 =
 {
 	NULL,
 	"^3VOTE #1",
@@ -1351,7 +1351,7 @@ panel_button_t mapVoteButton1 =
 	0
 };
 
-panel_button_t mapVoteButton2 =
+static panel_button_t mapVoteButton2 =
 {
 	NULL,
 	"^3VOTE #2",
@@ -1365,7 +1365,7 @@ panel_button_t mapVoteButton2 =
 	0
 };
 
-panel_button_t mapVoteButton3 =
+static panel_button_t mapVoteButton3 =
 {
 	NULL,
 	"^3VOTE #3",
@@ -1379,7 +1379,7 @@ panel_button_t mapVoteButton3 =
 	0
 };
 
-panel_button_t mapVoteBorder1 =
+static panel_button_t mapVoteBorder1 =
 {
 	NULL,
 	NULL,
@@ -1393,7 +1393,7 @@ panel_button_t mapVoteBorder1 =
 	0
 };
 
-panel_button_t mapVoteBorder2 =
+static panel_button_t mapVoteBorder2 =
 {
 	NULL,
 	NULL,
@@ -1407,7 +1407,7 @@ panel_button_t mapVoteBorder2 =
 	0
 };
 
-panel_button_t mapVoteBorder3 =
+static panel_button_t mapVoteBorder3 =
 {
 	NULL,
 	NULL,
@@ -1524,7 +1524,7 @@ void CG_Debriefing_ChatBox_Draw(panel_button_t *button)
 	}
 }
 
-panel_button_t *chatPanelButtons[] =
+static panel_button_t *chatPanelButtons[] =
 {
 	&chatPanelWindow,       &chatPanelText,
 	&chatPanelNextButton,   &chatPanelVoteButton,&chatPanelQCButton,  &chatTypeButton, &chatPanelReadyButton,
@@ -1532,7 +1532,7 @@ panel_button_t *chatPanelButtons[] =
 	NULL
 };
 
-panel_button_t *mapVoteButtons[] =
+static panel_button_t *mapVoteButtons[] =
 {
 	&debriefTitleWindow,     &mapVoteWindow,    &mapVoteHeadingName, &mapVoteHeadingVotes,
 	&mapVoteBorder1,         &mapVoteBorder2,   &mapVoteBorder3,
@@ -2663,11 +2663,11 @@ void CG_Debriefing_PlayerSkills_Draw(panel_button_t *button)
 	}
 }
 
-qhandle_t img;
-qhandle_t imgH;
-qhandle_t imgA;
-qhandle_t imgB;
-qhandle_t imgL;
+static qhandle_t img;
+static qhandle_t imgH;
+static qhandle_t imgA;
+static qhandle_t imgB;
+static qhandle_t imgL;
 
 /**
  * @brief
