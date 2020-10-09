@@ -130,9 +130,10 @@ Install required dependencies.
 
 * option A: **easybuild**
 
-In terminal, run:
+In terminal, run one of the following:
 
-    $ ./easybuild.sh
+    $ ./easybuild.sh        # for compiling a 32 bit version or
+    $ ./easybuild.sh -64    # for compiling a 64 bit version
 
 ET: Legacy will be installed in `~/etlegacy`.
 
