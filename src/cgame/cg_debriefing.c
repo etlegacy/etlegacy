@@ -1163,7 +1163,7 @@ void CG_MapVoteList_Draw(panel_button_t *button)
 			// add gradient color to identify third most votes maps
 			for (j = 0; j < 3; j++)
 			{
-				if (cgs.dbSortedMapsIDByVotes[j] == i + cgs.dbMapVoteListOffset)
+				if (cgs.dbSortedVotedMapsByTotal[j].mapID == i + cgs.dbMapVoteListOffset)
 				{
 					if (j == 0)
 					{
@@ -1212,13 +1212,13 @@ qboolean CG_MapVote_VoteSend_KeyDown(panel_button_t *button, int key)
 			if (cgs.dbMapVotedFor[0] != -1)
 			{
 				trap_SendClientCommand(va("mapvote %d", cgs.dbMapID[cgs.dbMapVotedFor[0]]));
+				cgs.dbVoteDone = cgs.dbMapVotedForSent[0] = qtrue;
 				return qtrue;
 			}
 		}
 		else
 		{
-			int      i;
-			qboolean voteSent = qfalse;
+			int i;
 
 			for (i = 0; i < 3; i++)
 			{
@@ -1227,11 +1227,11 @@ qboolean CG_MapVote_VoteSend_KeyDown(panel_button_t *button, int key)
 					trap_SendClientCommand(va("mapvote %d %d",
 					                          cgs.dbMapID[cgs.dbMapVotedFor[i]],
 					                          i + 1));
-					voteSent = qtrue;
+
+					cgs.dbVoteDone = cgs.dbMapVotedForSent[i] = qtrue;
+					return qtrue;   // send vote one at a time, other vote will be send later when vote parsing Tally is done
 				}
 			}
-
-			return voteSent;
 		}
 	}
 
@@ -1722,12 +1722,17 @@ void CG_Debriefing_Startup(void)
 	cgs.dbSelectedClient  = cg.clientNum;
 
 	// mapvote
-	cgs.dbSelectedMap       = -1;
-	cgs.dbMapListReceived   = qfalse;
-	cgs.dbVoteTallyReceived = qfalse;
-	cgs.dbMapVotedFor[0]    = -1;
-	cgs.dbMapVotedFor[1]    = -1;
-	cgs.dbMapVotedFor[2]    = -1;
+	cgs.dbSelectedMap        = -1;
+	cgs.dbMapListReceived    = qfalse;
+	cgs.dbVoteTallyReceived  = qfalse;
+	cgs.dbMapVotedFor[0]     = -1;
+	cgs.dbMapVotedFor[1]     = -1;
+	cgs.dbMapVotedFor[2]     = -1;
+	cgs.dbMapVotedForSent[0] = qfalse;
+	cgs.dbMapVotedForSent[1] = qfalse;
+	cgs.dbMapVotedForSent[2] = qfalse;
+	cgs.dbVoteDone           = qfalse;
+
 
 	cgs.dbAwardsParsed = qfalse;
 
@@ -4568,8 +4573,7 @@ void CG_parseMapVoteTally()
 	int i, j, numMaps;
 
 	cgs.dbMapVotesSum = 0;
-	Com_Memset(cgs.dbSortedMapsIDByVotes, -1, sizeof(cgs.dbSortedMapsIDByVotes));
-	Com_Memset(cgs.dbSortedMapsTotalVotes, -1, sizeof(cgs.dbSortedMapsTotalVotes));
+	Com_Memset(cgs.dbSortedVotedMapsByTotal, -1, sizeof(cgs.dbSortedVotedMapsByTotal));
 
 	numMaps = (trap_Argc() - 1);
 	for (i = 0; i < numMaps; i++)
@@ -4577,18 +4581,36 @@ void CG_parseMapVoteTally()
 		cgs.dbMapVotes[i]  = atoi(CG_Argv(i + 1));
 		cgs.dbMapVotesSum += cgs.dbMapVotes[i];
 
+		// sort voted maps by total votes accumulated
 		for (j = 0; j < MAX_VOTE_MAPS; j++)
 		{
-			if (cgs.dbSortedMapsTotalVotes[j] < cgs.dbMapVotes[i])
+			if (cgs.dbSortedVotedMapsByTotal[j].totalVotes < cgs.dbMapVotes[i])
 			{
-				if (cgs.dbSortedMapsTotalVotes[j] != -1)
+				if (cgs.dbSortedVotedMapsByTotal[j].totalVotes != -1)
 				{
-					memmove(cgs.dbSortedMapsIDByVotes + j + 1, cgs.dbSortedMapsIDByVotes + j, sizeof(int) * (MAX_VOTE_MAPS - j - 1));
-					memmove(cgs.dbSortedMapsTotalVotes + j + 1, cgs.dbSortedMapsTotalVotes + j, sizeof(int) * (MAX_VOTE_MAPS - j - 1));
+					memmove(cgs.dbSortedVotedMapsByTotal + j + 1, cgs.dbSortedVotedMapsByTotal + j, sizeof(sortedVotedMapByTotal_s) * (MAX_VOTE_MAPS - j - 1));
 				}
 
-				cgs.dbSortedMapsIDByVotes[j]  = i;
-				cgs.dbSortedMapsTotalVotes[j] = cgs.dbMapVotes[i];
+				cgs.dbSortedVotedMapsByTotal[j].mapID      = i;
+				cgs.dbSortedVotedMapsByTotal[j].totalVotes = cgs.dbMapVotes[i];
+				break;
+			}
+		}
+	}
+
+	// continue to send other votes which weren't sent previously on pressing send vote
+	if (cgs.dbVoteDone && cgs.dbMapMultiVote)
+	{
+		for (i = 0; i < 3; i++)
+		{
+			if (cgs.dbMapVotedFor[i] != -1 && !cgs.dbMapVotedForSent[i])
+			{
+				trap_SendClientCommand(va("mapvote %d %d",
+				                          cgs.dbMapID[cgs.dbMapVotedFor[i]],
+				                          i + 1));
+
+				cgs.dbMapVotedForSent[i] = qtrue;
+
 				break;
 			}
 		}

@@ -2223,6 +2223,11 @@ LAGOMETER
 #define MAX_LAGOMETER_PING  900
 #define MAX_LAGOMETER_RANGE 300
 
+/**
+ * @struct
+ * @typedef lagometer_t
+ * @brief
+ */
 typedef struct
 {
 	int frameSamples[LAG_SAMPLES];
@@ -2234,7 +2239,7 @@ typedef struct
 } lagometer_t;
 
 /**
- * @enum sample_s
+ * @struct sample_s
  * @typedef sample_t
  * @brief
  */
@@ -2244,6 +2249,11 @@ typedef struct sample_s
 	int time;
 } sample_t;
 
+/**
+ * @struct sampledStat_s
+ * @typedef sampledStat_t
+ * @brief
+ */
 typedef struct sampledStat_s
 {
 	unsigned int count;
@@ -2252,6 +2262,17 @@ typedef struct sampledStat_s
 	sample_t samples[LAG_SAMPLES];
 	int samplesTotalElpased;
 } sampledStat_t;
+
+/**
+ * @struct sortedVotedMapByTotal_s
+ * @typedef sortedVotedMapByTotal_s
+ * @brief
+ */
+typedef struct sortedVotedMapByTotal_s
+{
+	int mapID;
+	int totalVotes;
+} sortedVotedMapByTotal_s;
 
 /**
  * @struct cgs_s
@@ -2497,8 +2518,9 @@ typedef struct cgs_s
 	qboolean dbVoteTallyReceived;
 	qboolean dbMapMultiVote;
 	int dbMapVotedFor[3];
-	int dbSortedMapsIDByVotes[MAX_VOTE_MAPS];
-	int dbSortedMapsTotalVotes[MAX_VOTE_MAPS];
+	qboolean dbMapVotedForSent[3];
+	qboolean dbVoteDone;
+	sortedVotedMapByTotal_s dbSortedVotedMapsByTotal[MAX_VOTE_MAPS];
 	int mapVoteMapX;
 	int mapVoteMapY;
 
