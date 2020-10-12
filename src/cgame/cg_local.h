@@ -2518,8 +2518,6 @@ typedef struct cgs_s
 	qboolean dbVoteTallyReceived;
 	qboolean dbMapMultiVote;
 	int dbMapVotedFor[3];
-	qboolean dbMapVotedForSent[3];
-	qboolean dbVoteDone;
 	sortedVotedMapByTotal_s dbSortedVotedMapsByTotal[MAX_VOTE_MAPS];
 	int mapVoteMapX;
 	int mapVoteMapY;

@@ -1212,7 +1212,6 @@ qboolean CG_MapVote_VoteSend_KeyDown(panel_button_t *button, int key)
 			if (cgs.dbMapVotedFor[0] != -1)
 			{
 				trap_SendClientCommand(va("mapvote %d", cgs.dbMapID[cgs.dbMapVotedFor[0]]));
-				cgs.dbVoteDone = cgs.dbMapVotedForSent[0] = qtrue;
 				return qtrue;
 			}
 		}
@@ -1224,12 +1223,11 @@ qboolean CG_MapVote_VoteSend_KeyDown(panel_button_t *button, int key)
 			{
 				if (cgs.dbMapVotedFor[i] != -1)
 				{
-					trap_SendClientCommand(va("mapvote %d %d",
-					                          cgs.dbMapID[cgs.dbMapVotedFor[i]],
-					                          i + 1));
-
-					cgs.dbVoteDone = cgs.dbMapVotedForSent[i] = qtrue;
-					return qtrue;   // send vote one at a time, other vote will be send later when vote parsing Tally is done
+					trap_SendClientCommand(va("mapvote %d %d %d",
+					                          cgs.dbMapID[cgs.dbMapVotedFor[0]],
+					                          cgs.dbMapID[cgs.dbMapVotedFor[1]],
+					                          cgs.dbMapID[cgs.dbMapVotedFor[2]]));
+					return qtrue;
 				}
 			}
 		}
@@ -1728,11 +1726,6 @@ void CG_Debriefing_Startup(void)
 	cgs.dbMapVotedFor[0]     = -1;
 	cgs.dbMapVotedFor[1]     = -1;
 	cgs.dbMapVotedFor[2]     = -1;
-	cgs.dbMapVotedForSent[0] = qfalse;
-	cgs.dbMapVotedForSent[1] = qfalse;
-	cgs.dbMapVotedForSent[2] = qfalse;
-	cgs.dbVoteDone           = qfalse;
-
 
 	cgs.dbAwardsParsed = qfalse;
 
@@ -4593,24 +4586,6 @@ void CG_parseMapVoteTally()
 
 				cgs.dbSortedVotedMapsByTotal[j].mapID      = i;
 				cgs.dbSortedVotedMapsByTotal[j].totalVotes = cgs.dbMapVotes[i];
-				break;
-			}
-		}
-	}
-
-	// continue to send other votes which weren't sent previously on pressing send vote
-	if (cgs.dbVoteDone && cgs.dbMapMultiVote)
-	{
-		for (i = 0; i < 3; i++)
-		{
-			if (cgs.dbMapVotedFor[i] != -1 && !cgs.dbMapVotedForSent[i])
-			{
-				trap_SendClientCommand(va("mapvote %d %d",
-				                          cgs.dbMapID[cgs.dbMapVotedFor[i]],
-				                          i + 1));
-
-				cgs.dbMapVotedForSent[i] = qtrue;
-
 				break;
 			}
 		}
