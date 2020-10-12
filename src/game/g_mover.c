@@ -4325,11 +4325,9 @@ void BecomeExplosion(gentity_t *self)
  */
 void func_explosive_explode(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int damage, meansOfDeath_t mod)
 {
-	vec3_t    origin;
-	vec3_t    size;
-	vec3_t    dir   = { 0, 0, 1 };
-	gentity_t *tent = &g_entities[MAX_CLIENTS - 1];
-	int       hash;
+	vec3_t origin;
+	vec3_t size;
+	vec3_t dir = { 0, 0, 1 };
 
 	self->takedamage = qfalse;          // don't allow anything try to hurt me now that i'm exploding
 
@@ -4353,55 +4351,23 @@ void func_explosive_explode(gentity_t *self, gentity_t *inflictor, gentity_t *at
 		G_RadiusDamage(self->s.pos.trBase, NULL, self, self->damage, self->damage + 40, self, MOD_EXPLOSIVE);
 	}
 
-	// find target, aim at that
-	if (self->target)
+	// check for a specified 'angle' for the explosion direction
+	if (self->s.angles[1] != 0.f)
 	{
-		// FIXME: use self->targetnamehash one day ...
-		hash = BG_StringHashValue(self->target);
-
-		// since the explosive might need to fire the target rather than
-		// aim at it, only aim at 'info_notnull' ents
-		while (1)
+		// up
+		if (self->s.angles[1] == -1.f)
 		{
-			tent = G_FindByTargetnameFast(tent, self->target, hash);
-			if (!tent)
-			{
-				break;
-			}
-
-			if (!Q_stricmp(tent->classname, "info_notnull"))
-			{
-				break;  // found an info_notnull
-			}
+			// it's 'up' by default
 		}
-
-		if (tent)
+		// down
+		else if (self->s.angles[1] == -2.f)
 		{
-			VectorSubtract(tent->s.pos.trBase, self->s.pos.trBase, dir);
-			VectorNormalize(dir);
+			dir[2] = -1;
 		}
-	}
-
-	// if a valid target entity was not found, check for a specified 'angle' for the explosion direction
-	if (!tent)
-	{
-		if (self->s.angles[1] != 0.f)
+		// yawed
+		else
 		{
-			// up
-			if (self->s.angles[1] == -1.f)
-			{
-				// it's 'up' by default
-			}
-			// down
-			else if (self->s.angles[1] == -2.f)
-			{
-				dir[2] = -1;
-			}
-			// yawed
-			else
-			{
-				RotatePointAroundVector(dir, dir, tv(1, 0, 0), self->s.angles[1]);
-			}
+			RotatePointAroundVector(dir, dir, tv(1, 0, 0), self->s.angles[1]);
 		}
 	}
 
