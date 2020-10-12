@@ -100,8 +100,8 @@ menuDef {
 		visible		1
 		decoration
 	}
-	TRICHECKBOXACTIONMULTI( 12+12, 138, 10, 10, .2, 8, "ui_browserMapFilterCheckBox",  cvarFloatList { "" 0 "" 1 "" 2 }, uiScript RefreshFilter ; setcvar ui_filterdescription _("Filter affecting servers with map name"), _("Includes or excludes servers with desired map name from the server list") )
-	EDITFIELDSIMPLE( 12+24, 138, .33*(FILTERS_WIDTH-12)-28, 10, "", .2, 8, "ui_browserMapFilter", 25, 25, uiScript RefreshFilter, _("Includes or excludes servers with desired map name from the server list") )
+	TRICHECKBOXACTIONMULTI( 12+12, 138, 10, 10, .2, 8, "ui_browserServerNameFilterCheckBox",  cvarFloatList { "" 0 "" 1 "" 2 }, uiScript RefreshFilter ; setcvar ui_filterdescription _("Filter affecting servers with specific name"), _("Includes or excludes servers with desired server name from the server list") )
+	EDITFIELDSIMPLE( 12+24, 138, .33*(FILTERS_WIDTH-12)-28, 10, "", .2, 8, "ui_browserMapFilter", 25, 25, uiScript RefreshFilter, _("Includes or excludes servers with desired server name from the server list") )
 
 	itemDef {
 		name		"filtericonEmptyFull"

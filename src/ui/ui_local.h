@@ -79,7 +79,7 @@ extern vmCvar_t ui_browserShowHumans;
 
 extern vmCvar_t ui_browserModFilter;
 extern vmCvar_t ui_browserMapFilter;
-extern vmCvar_t ui_browserMapFilterCheckBox;
+extern vmCvar_t ui_browserServerNameFilterCheckBox;
 
 extern vmCvar_t ui_browserOssFilter;
 
