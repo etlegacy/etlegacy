@@ -101,7 +101,6 @@ cvar_t *r_extMaxAnisotropy;
 cvar_t *r_ignoreGLErrors;
 cvar_t *r_logFile;
 
-cvar_t *r_primitives;
 cvar_t *r_textureBits;
 
 cvar_t *r_drawBuffer;
@@ -930,46 +929,6 @@ void GfxInfo_f(void)
 		Ren_Print("GAMMA: software w/ %d overbright bits\n", tr.overbrightBits);
 	}
 
-	// rendering primitives
-	{
-		int primitives;
-
-		// default is to use triangles if compiled vertex arrays are present
-		Ren_Print("rendering primitives: ");
-		primitives = r_primitives->integer;
-		if (primitives == 0)
-		{
-#ifndef __ANDROID__
-			if (&qglLockArraysEXT)
-			{
-				primitives = 2;
-			}
-			else
-			{
-				primitives = 1;
-			}
-#else
-			primitives = 2;
-#endif
-		}
-		if (primitives == -1)
-		{
-			Ren_Print("none\n");
-		}
-		else if (primitives == 2)
-		{
-			Ren_Print("single glDrawElements\n");
-		}
-		else if (primitives == 1)
-		{
-			Ren_Print("multiple glArrayElement\n");
-		}
-		else if (primitives == 3)
-		{
-			Ren_Print("multiple glColor4ubv + glTexCoord2fv + glVertex3fv\n");
-		}
-	}
-
 	Ren_Print("texturemode: %s\n", r_textureMode->string);
 	Ren_Print("picmip: %d\n", r_picMip->integer);
 	Ren_Print("texture bits: %d\n", r_textureBits->integer);
@@ -1052,11 +1011,6 @@ void R_Register(void)
 
 	r_railWidth         = ri.Cvar_Get("r_railWidth", "16", CVAR_ARCHIVE);
 	r_railSegmentLength = ri.Cvar_Get("r_railSegmentLength", "32", CVAR_ARCHIVE);
-
-	r_primitives = ri.Cvar_Get("r_primitives", "0", CVAR_ARCHIVE);
-	// Added this due to invalid values actually causing no drawing
-	// r_primitives == 2 fixes some issues on ATI cards
-	ri.Cvar_CheckRange(r_primitives, 0, 3, qtrue);
 
 	r_ambientScale  = ri.Cvar_Get("r_ambientScale", "0.5", CVAR_CHEAT);
 	r_directedScale = ri.Cvar_Get("r_directedScale", "1", CVAR_CHEAT);
