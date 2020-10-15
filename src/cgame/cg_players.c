@@ -2110,7 +2110,7 @@ static void CG_PlayerSprites(centity_t *cent)
 		{
 			if (cgs.clientinfo[cent->currentState.number].disguiseClientNum > -1
 			    && CG_IsOnFireteam(cgs.clientinfo[cent->currentState.number].disguiseClientNum)
-			    && cgs.clientinfo[cent->currentState.number].disguiseClientNum != cg.clientNum) // don't display FT icon if disguised enemy use player uniform
+			    && cg.fireTeams->membersNumber > 1)                         // don't display FT icon with only 1 member in FT
 			{
 				CG_PlayerFloatSprite(cent, cgs.media.fireteamIcon, height, numIcons++,
 				                     cgs.clientinfo[cgs.clientinfo[cent->currentState.number].disguiseClientNum].selected ? colorRed : colorGreen);

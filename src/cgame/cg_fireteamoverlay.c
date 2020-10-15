@@ -170,10 +170,13 @@ void CG_ParseFireteams()
 		Q_strncpyz(hexbuffer + 2, s + 8, 9);
 		sscanf(hexbuffer, "%x", &clnts[0]);
 
+		cg.fireTeams[i].membersNumber = 0;
+
 		for (j = 0; j < cgs.maxclients; j++)
 		{
 			if (COM_BitCheck(clnts, j))
 			{
+				cg.fireTeams[i].membersNumber++;
 				cg.fireTeams[i].joinOrder[j]   = qtrue;
 				cgs.clientinfo[j].fireteamData = &cg.fireTeams[i];
 				//CG_Printf("%s\n", cgs.clientinfo[j].name);
