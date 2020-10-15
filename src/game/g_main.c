@@ -4466,13 +4466,17 @@ void CheckVote(void)
 			}
 
 		}
-		else if ((level.voteInfo.voteNo &&
-		          level.voteInfo.voteNo >= (100 - pcnt) * total / 100) ||
-		         level.time - level.voteInfo.voteTime >= VOTE_TIME)
+		else if (level.voteInfo.voteNo && (level.voteInfo.voteNo >= (100 - pcnt) * total / 100))
 		{
 			// same behavior as a no response vote
 			AP(va("cpm \"^1Vote FAILED! ^7(^2Y:%d^7-^1N:%d^7) ^7(%s)\n\"", level.voteInfo.voteYes, level.voteInfo.voteNo, level.voteInfo.voteString));
 			G_LogPrintf("Vote Failed: (Y:%d-N:%d) %s\n", level.voteInfo.voteYes, level.voteInfo.voteNo, level.voteInfo.voteString);
+		}
+		else if (level.time - level.voteInfo.voteTime >= VOTE_TIME) // timeout, no enough vote
+		{
+			// same behavior as a no response vote
+			AP(va("cpm \"^1Vote TIMEOUT! No enough voters to pass vote ^7(^1%d^7/^2%d^7) ^7(%s)\n\"", level.voteInfo.voteYes, pcnt * total / 100, level.voteInfo.voteString));
+			G_LogPrintf("Vote TIMEOUT! No enough voters to pass vote (%d/%d) %s\n", level.voteInfo.voteYes, pcnt * total / 100, level.voteInfo.voteString);
 		}
 		else
 		{
