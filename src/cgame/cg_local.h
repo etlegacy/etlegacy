@@ -3555,9 +3555,9 @@ fireteamData_t *CG_IsOnFireteam(int clientNum);
 fireteamData_t *CG_IsOnSameFireteam(int clientNum, int clientNum2);
 fireteamData_t *CG_IsFireTeamLeader(int clientNum);
 
-clientInfo_t *CG_ClientInfoForPosition(int pos, int max);
-fireteamData_t *CG_FireTeamForPosition(int pos, int max);
-clientInfo_t *CG_FireTeamPlayerForPosition(int pos, int max);
+//clientInfo_t *CG_ClientInfoForPosition(int pos, int max);
+//fireteamData_t *CG_FireTeamForPosition(int pos, int max);
+//clientInfo_t *CG_FireTeamPlayerForPosition(int pos, int max);
 
 void CG_SortClientFireteam(void);
 

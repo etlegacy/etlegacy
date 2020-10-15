@@ -37,11 +37,11 @@
 static int sortedFireTeamClients[MAX_CLIENTS];
 
 // colors and fonts for overlays
-static vec4_t FT_bg = { 0.16f, 0.2f, 0.17f, 0.8f };               // header
-static vec4_t FT_bg2 = { 0.0f, 0.0f, 0.0f, 0.3f };                // box itself
+static vec4_t FT_bg     = { 0.16f, 0.2f, 0.17f, 0.8f };           // header
+static vec4_t FT_bg2    = { 0.0f, 0.0f, 0.0f, 0.3f };             // box itself
 static vec4_t FT_border = { 0.5f, 0.5f, 0.5f, 0.5f };
 static vec4_t FT_select = { 0.5f, 0.5f, 0.2f, 0.3f };             // selected member
-static vec4_t FT_text = { 0.6f, 0.6f, 0.6f, 1.0f };
+static vec4_t FT_text   = { 0.6f, 0.6f, 0.6f, 1.0f };
 
 #define FONT_HEADER         &cgs.media.limboFont1
 #define FONT_TEXT           &cgs.media.limboFont2
@@ -240,97 +240,100 @@ fireteamData_t *CG_IsFireTeamLeader(int clientNum)
 	return f ;
 }
 
-/**
+/*
  * @brief Client, not on a fireteam, not sorted, but on your team
  * @param[in] pos
  * @param[in] max
  * @return Client information
  *
  * @note Unused
- */
+ *
 clientInfo_t *CG_ClientInfoForPosition(int pos, int max)
 {
-	int i, cnt = 0;
+    int i, cnt = 0;
 
-	for (i = 0; i < MAX_CLIENTS && cnt < max; i++)
-	{
-		if (cg.clientNum != i && cgs.clientinfo[i].infoValid && !CG_IsOnFireteam(i) && cgs.clientinfo[cg.clientNum].team == cgs.clientinfo[i].team)
-		{
-			if (cnt == pos)
-			{
-				return &cgs.clientinfo[i];
-			}
-			cnt++;
-		}
-	}
+    for (i = 0; i < MAX_CLIENTS && cnt < max; i++)
+    {
+        if (cg.clientNum != i && cgs.clientinfo[i].infoValid && !CG_IsOnFireteam(i) && cgs.clientinfo[cg.clientNum].team == cgs.clientinfo[i].team)
+        {
+            if (cnt == pos)
+            {
+                return &cgs.clientinfo[i];
+            }
+            cnt++;
+        }
+    }
 
-	return NULL;
+    return NULL;
 }
+*/
 
-/**
+/*
  * @brief Fireteam, that's on your same team
  * @param[in] pos
  * @param[in] max
  * @return
  *
  * @note Unused
- */
+ *
 fireteamData_t *CG_FireTeamForPosition(int pos, int max)
 {
-	int i, cnt = 0;
+    int i, cnt = 0;
 
-	for (i = 0; i < MAX_FIRETEAMS && cnt < max; i++)
-	{
-		if (cg.fireTeams[i].inuse && cgs.clientinfo[cg.fireTeams[i].leader].team == cgs.clientinfo[cg.clientNum].team)
-		{
-			if (cnt == pos)
-			{
-				return &cg.fireTeams[i];
-			}
-			cnt++;
-		}
-	}
+    for (i = 0; i < MAX_FIRETEAMS && cnt < max; i++)
+    {
+        if (cg.fireTeams[i].inuse && cgs.clientinfo[cg.fireTeams[i].leader].team == cgs.clientinfo[cg.clientNum].team)
+        {
+            if (cnt == pos)
+            {
+                return &cg.fireTeams[i];
+            }
+            cnt++;
+        }
+    }
 
-	return NULL;
+    return NULL;
 }
+*/
 
-/**
+/*
  * @brief Client, not sorted by rank, on CLIENT'S fireteam
  * @param[in] pos
  * @param[in] max
  * @return
  *
  * @note Unused
- */
+ *
 clientInfo_t *CG_FireTeamPlayerForPosition(int pos, int max)
 {
-	int            i, cnt = 0;
-	fireteamData_t *f = CG_IsOnFireteam(cg.clientNum);
+    int            i, cnt = 0;
+    fireteamData_t *f = CG_IsOnFireteam(cg.clientNum);
 
-	if (!f)
-	{
-		return NULL;
-	}
+    if (!f)
+    {
+        return NULL;
+    }
 
-	for (i = 0; i < MAX_CLIENTS && cnt < max; i++)
-	{
-		if (cgs.clientinfo[i].infoValid && cgs.clientinfo[cg.clientNum].team == cgs.clientinfo[i].team)
-		{
-			if (!(f == CG_IsOnFireteam(i)))
-			{
-				continue;
-			}
+    for (i = 0; i < MAX_CLIENTS && cnt < max; i++)
+    {
+        if (cgs.clientinfo[i].infoValid && cgs.clientinfo[cg.clientNum].team == cgs.clientinfo[i].team)
+        {
+            if (!(f == CG_IsOnFireteam(i)))
+            {
+                continue;
+            }
 
-			if (cnt == pos)
-			{
-				return &cgs.clientinfo[i];
-			}
-			cnt++;
-		}
-	}
+            if (cnt == pos)
+            {
+                return &cgs.clientinfo[i];
+            }
+            cnt++;
+        }
+    }
 
-	return NULL;
+    return NULL;
 }
+*/
 
 /**
  * @brief Client, sorted by rank, on CLIENT'S fireteam
