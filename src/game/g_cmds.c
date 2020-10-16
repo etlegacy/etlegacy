@@ -3102,11 +3102,6 @@ qboolean Cmd_CallVote_f(gentity_t *ent, unsigned int dwCommand, qboolean fRefCom
 			CP("cp \"You cannot call a vote during intermission.\"");
 			return qfalse;
 		}
-		else if (g_gamestate.integer == GS_WARMUP_COUNTDOWN)
-		{
-			CP("cp \"You cannot call a vote when warmup is ending.\"");
-			return qfalse;
-		}
 		else if (!ent->client->sess.referee)
 		{
 			if (voteFlags.integer == VOTING_DISABLED)
@@ -3203,8 +3198,20 @@ qboolean Cmd_CallVote_f(gentity_t *ent, unsigned int dwCommand, qboolean fRefCom
 		G_globalSoundEnum(GAMESOUND_MISC_VOTE);
 	}
 
-	level.voteInfo.voteTime = level.time;
-	level.voteInfo.voteNo   = 0;
+	// shorter the vote timeout when warmup countdown or map time are going to end
+	if (g_gamestate.integer == GS_WARMUP_COUNTDOWN && (level.warmupTime - level.time) < VOTE_TIME)
+	{
+		level.voteInfo.voteTime = level.warmupTime - VOTE_TIME;
+	}
+	else if (g_gamestate.integer == GS_PLAYING && (level.startTime + (g_timelimit.integer * 60000) - level.time < VOTE_TIME))
+	{
+		level.voteInfo.voteTime = level.startTime + (g_timelimit.integer * 60000) - VOTE_TIME;
+	}
+	else
+	{
+		level.voteInfo.voteTime = level.time;
+	}
+	level.voteInfo.voteNo = 0;
 
 	// Don't send the vote info if a ref initiates (as it will automatically pass)
 	if (!fRefCommand)
