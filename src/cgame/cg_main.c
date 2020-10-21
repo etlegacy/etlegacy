@@ -1552,7 +1552,6 @@ static void CG_RegisterGraphics(void)
 	}
 
 	cgs.media.fleshSmokePuffShader = trap_R_RegisterShader("fleshimpactsmokepuff");
-	cgs.media.smokePuffShader      = trap_R_RegisterShader("smokePuff");
 
 	// blood cloud
 	cgs.media.bloodCloudShader = trap_R_RegisterShader("bloodCloud");
@@ -2105,6 +2104,12 @@ static void CG_RegisterGraphics(void)
 	cgs.media.cm_arrow_spec = trap_R_RegisterShaderNoMip("ui/assets/mp_arrow_spec");
 
 	cgs.media.fireteamIcon = trap_R_RegisterShaderNoMip("sprites/fireteam");
+
+	// NOTE: load smoke puff as last shader to always draw on top of other shaders
+	// because renderer order the draw depth level by register index
+	// i.e: this allow smoke grenade to hide players icons over head
+	// or simple item icon on ground
+	cgs.media.smokePuffShader = trap_R_RegisterShader("smokePuff");
 
 	CG_LoadingString(" - game media -");
 }
