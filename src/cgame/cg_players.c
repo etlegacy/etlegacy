@@ -2019,6 +2019,23 @@ static void CG_PlayerSprites(centity_t *cent)
 	int          height   = 56;
 	clientInfo_t *ci      = &cgs.clientinfo[cent->currentState.clientNum];
 	qboolean     sameTeam;
+	trace_t      trace;
+
+	// don't check our own head
+	if (cent->currentState.clientNum != cg.snap->ps.clientNum)
+	{
+		vec3_t end;
+
+		VectorMA(cent->pe.headRefEnt.origin, 6.0f, cent->pe.headRefEnt.axis[2], end);
+
+		CG_Trace(&trace, cg.refdef.vieworg, NULL, NULL, end, cg.snap->ps.clientNum, CONTENTS_SOLID | CONTENTS_BODY | CONTENTS_ITEM);
+
+		// don't draw player icons if we can't see their head
+		if (trace.fraction != 1.f && trace.entityNum != cent->currentState.number)
+		{
+			return;
+		}
+	}
 
 	if ((cent->currentState.powerups & (1 << PW_REDFLAG)) || (cent->currentState.powerups & (1 << PW_BLUEFLAG)))
 	{
