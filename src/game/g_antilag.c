@@ -702,7 +702,7 @@ void G_HistoricalTrace(gentity_t *ent, trace_t *results, const vec3_t start, con
 
 	Com_Memset(&maxsBackup, 0, sizeof(maxsBackup));
 
-	G_AdjustClientPositions(ent, ent->client->attackTime, qtrue);
+	G_AdjustClientPositions(ent, ent->client->pers.cmd.serverTime, qtrue);
 
 	G_AttachBodyParts(ent);
 
@@ -754,7 +754,7 @@ void G_HistoricalTraceBegin(gentity_t *ent)
 	{
 		return;
 	}
-	G_AdjustClientPositions(ent, ent->client->attackTime, qtrue);
+	G_AdjustClientPositions(ent, ent->client->pers.cmd.serverTime, qtrue);
 }
 
 /**
