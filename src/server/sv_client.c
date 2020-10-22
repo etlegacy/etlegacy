@@ -310,6 +310,7 @@ void SV_DirectConnect(netadr_t from)
 	char     *password;
 	int      startIndex;
 	char     *denied;
+	char     *guid;
 
 	Com_DPrintf("SVC_DirectConnect ()\n");
 
@@ -339,6 +340,49 @@ void SV_DirectConnect(netadr_t from)
 	Info_RemoveKey(userinfo, "challenge");
 	Info_RemoveKey(userinfo, "qport");
 	Info_RemoveKey(userinfo, "protocol");
+
+	// check guid
+	guid = Info_ValueForKey(userinfo, "cl_guid");
+
+	// don't allow empty, unknown or 'NO_GUID' guid
+	if (strlen(guid) < MAX_GUID_LENGTH)
+	{
+		NET_OutOfBandPrint(NS_SERVER, from, "print\n[err_dialog]Bad GUID: Invalid etkey. Please use the ET: Legacy client or add an etkey.\n");
+		Com_DPrintf("Client rejected for bad sized etkey\n");
+		return;
+	}
+
+	// check guid format
+	for (i = 0; i < MAX_GUID_LENGTH; i++)
+	{
+		if (guid[i] < 48 || (guid[i] > 57 && guid[i] < 65) || guid[i] > 70)
+		{
+			NET_OutOfBandPrint(NS_SERVER, from, "print\n[err_dialog]Bad GUID: Invalid etkey.\n");
+			Com_DPrintf("Client rejected for bad etkey\n");
+			return;
+		}
+	}
+
+	// don't check duplicate guid in developer mod
+	if (!sv_cheats->integer)
+	{
+		// check duplicate guid with validated clients
+		for (i = 0; i < sv_maxclients->integer ; i++)
+		{
+			char *guid2;
+
+			cl = &svs.clients[i];
+
+			guid2 = Info_ValueForKey(cl->userinfo, "cl_guid");
+
+			if (!Q_strncmp(guid, guid2, MAX_GUID_LENGTH + 1))
+			{
+				NET_OutOfBandPrint(NS_SERVER, from, "print\n[err_dialog]Bad GUID: Duplicate etkey.\n");
+				Com_DPrintf("Client rejected for duplicate etkey\n");
+				return;
+			}
+		}
+	}
 
 	// quick reject
 	for (i = 0, cl = svs.clients ; i < sv_maxclients->integer ; i++, cl++)
@@ -603,16 +647,16 @@ gotnewcl:
  */
 qboolean SV_CheckForMsgOverflow(client_t *client, msg_t *msg)
 {
-    if (!msg->overflowed)
-    {
-        return qfalse;
-    }
+	if (!msg->overflowed)
+	{
+		return qfalse;
+	}
 
-    Com_Printf("WARNING: msg overflowed for %s\n", client->name);
-    MSG_Clear(msg);
+	Com_Printf("WARNING: msg overflowed for %s\n", client->name);
+	MSG_Clear(msg);
 
-    SV_DropClient(client, "Msg overflowed");
-    return qtrue;
+	SV_DropClient(client, "Msg overflowed");
+	return qtrue;
 }
 
 /**
@@ -726,7 +770,7 @@ void SV_SendClientGameState(client_t *client)
 	msg_t         msg;
 	byte          msgBuffer[MAX_MSGLEN];
 
-	Com_DPrintf( "SV_SendClientGameState() for %s\n", client->name );
+	Com_DPrintf("SV_SendClientGameState() for %s\n", client->name);
 
 	if (client->state != CS_PRIMED)
 	{
@@ -790,10 +834,10 @@ void SV_SendClientGameState(client_t *client)
 	// write the checksum feed
 	MSG_WriteLong(&msg, sv.checksumFeed);
 
-    if (SV_CheckForMsgOverflow(client, &msg))
-    {
-        return;
-    }
+	if (SV_CheckForMsgOverflow(client, &msg))
+	{
+		return;
+	}
 
 	// debug info
 	Com_DPrintf("Sending %i bytes in gamestate to client: %i\n", msg.cursize, (int) (client - svs.clients));
@@ -2059,11 +2103,11 @@ static void SV_UserMove(client_t *cl, msg_t *msg, qboolean delta)
 	// this gamestate, put the client into the world
 	if (cl->state == CS_PRIMED)
 	{
-		if (sv_pure->integer != 0 && !cl->gotCP) 
+		if (sv_pure->integer != 0 && !cl->gotCP)
 		{
 			// we didn't get a cp yet, don't assume anything and just send the gamestate all over again
-			Com_DPrintf( "%s: didn't get cp command, resending gamestate\n", cl->name );
-			SV_SendClientGameState( cl );
+			Com_DPrintf("%s: didn't get cp command, resending gamestate\n", cl->name);
+			SV_SendClientGameState(cl);
 			return;
 		}
 		SV_ClientEnterWorld(cl, &cmds[0]);
