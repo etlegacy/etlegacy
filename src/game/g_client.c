@@ -2089,6 +2089,21 @@ char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 				return "Bad GUID: Invalid etkey.";
 			}
 		}
+
+		// don't check duplicate guid in developer mod
+		if (!g_cheats.integer)
+		{
+			// check duplicate guid with validated clients
+			for (i = 0; i < level.numConnectedClients; i++)
+			{
+				gclient_t *cl = level.clients + level.sortedClients[i];
+
+				if (!Q_strncmp(cl->pers.cl_guid, cs_guid, MAX_GUID_LENGTH + 1))
+				{
+					return "Bad GUID: Duplicate etkey.";
+				}
+			}
+		}
 	}
 
 	// IP filtering
