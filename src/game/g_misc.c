@@ -1000,7 +1000,7 @@ void Fire_Lead_Ext(gentity_t *ent, gentity_t *activator, float spread, int damag
 	// use activator for historicaltrace, not ent which may be
 	// the weapon itself (e.g. for mg42s)
 	// G_HistoricalTrace(activator, &tr, muzzle, NULL, NULL, end, ent->s.number, MASK_SHOT);
-	G_Trace(activator, &tr, muzzle, NULL, NULL, end, ent->s.number, MASK_SHOT, qfalse);
+	G_Trace(activator, &tr, muzzle, NULL, NULL, end, ent->s.number, MASK_SHOT);
 
 	// bullet debugging using Q3A's railtrail
 	if (g_debugBullets.integer & 1)
@@ -2507,7 +2507,7 @@ void G_TempTraceIgnoreEntity(gentity_t *ent)
 /**
  * @brief G_TeamTraceIgnoreBodies
  */
-void G_TeamTraceIgnoreBodies(void)
+void G_TempTraceIgnoreBodies(void)
 {
 	int i;
 
@@ -2543,7 +2543,7 @@ void G_TempTraceIgnorePlayersAndBodies(void)
 		G_TempTraceIgnoreEntity(&g_entities[i]);
 	}
 
-	G_TeamTraceIgnoreBodies();
+	G_TempTraceIgnoreBodies();
 }
 
 

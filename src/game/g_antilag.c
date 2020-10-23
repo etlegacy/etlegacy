@@ -181,8 +181,10 @@ void G_StoreClientPosition(gentity_t *ent)
  * @brief Move a client back to where he was at the specified "time"
  * @param[in,out] ent client entity which to shift
  * @param[in] time timestamp which to use
+ * @param[in] adjustHeight adjusted player height or not
+ * @param[in] height value to use for adjustement
  */
-static void G_AdjustSingleClientPosition(gentity_t *ent, int time)
+static void G_AdjustSingleClientPosition(gentity_t *ent, int time, qboolean adjustHeight, float height)
 {
 	int i, j;
 
@@ -225,6 +227,13 @@ static void G_AdjustSingleClientPosition(gentity_t *ent, int time)
 		VectorCopy(ent->r.currentOrigin, ent->client->backupMarker.origin);
 		VectorCopy(ent->r.mins, ent->client->backupMarker.mins);
 		VectorCopy(ent->r.maxs, ent->client->backupMarker.maxs);
+
+		// adjust player height
+		if (adjustHeight)
+		{
+			ent->r.maxs[2] = height;
+		}
+
 		// Head, Legs
 		VectorCopy(ent->client->ps.viewangles, ent->client->backupMarker.viewangles);
 		ent->client->backupMarker.eFlags     = ent->client->ps.eFlags;
@@ -511,7 +520,22 @@ static void G_AdjustClientPositions(gentity_t *skip, int time, qboolean backward
 
 		if (backwards)
 		{
-			G_AdjustSingleClientPosition(list, time);
+			float height;
+
+			if (list->takedamage)
+			{
+				// use higher hitbox for syringe only
+				if (skip->s.weapon != WP_MEDIC_SYRINGE)
+				{
+					height = ClientHitboxMaxZ(list);
+				}
+				else
+				{
+					height = CROUCH_BODYHEIGHT;
+				}
+			}
+
+			G_AdjustSingleClientPosition(list, time, list->takedamage, height);
 		}
 		else
 		{
@@ -683,66 +707,15 @@ static int G_SwitchBodyPartEntity(gentity_t *ent)
  */
 void G_HistoricalTrace(gentity_t *ent, trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentmask)
 {
-	float  maxsBackup[MAX_CLIENTS];
-	vec3_t dir;
-	int    res, clientNum, i;
-
 	if (!g_antilag.integer || !ent->client)
 	{
-		G_AttachBodyParts(ent);
-
-		trap_Trace(results, start, mins, maxs, end, passEntityNum, contentmask);
-
-		res = G_SwitchBodyPartEntity(&g_entities[results->entityNum]);
-		POSITION_READJUST
-
-		G_DettachBodyParts();
+		G_Trace(ent, results, start, mins, maxs, end, passEntityNum, contentmask);
 		return;
 	}
 
-	Com_Memset(&maxsBackup, 0, sizeof(maxsBackup));
-
 	G_AdjustClientPositions(ent, ent->client->pers.cmd.serverTime, qtrue);
 
-	G_AttachBodyParts(ent);
-
-	for (i = 0; i < level.numConnectedClients; ++i)
-	{
-		clientNum = level.sortedClients[i];
-		if (&g_entities[clientNum] && g_entities[clientNum].client && g_entities[clientNum].takedamage)
-		{
-			maxsBackup[clientNum] = g_entities[clientNum].r.maxs[2];
-			// use higher hitbox for syringe only
-			if (ent->s.weapon != WP_MEDIC_SYRINGE)
-			{
-				g_entities[clientNum].r.maxs[2] = ClientHitboxMaxZ(&g_entities[clientNum]);
-			}
-			else
-			{
-				g_entities[clientNum].r.maxs[2] = CROUCH_BODYHEIGHT;
-			}
-
-			trap_LinkEntity(&g_entities[clientNum]);
-		}
-	}
-
-	trap_Trace(results, start, mins, maxs, end, passEntityNum, contentmask);
-
-	for (i = 0; i < level.numConnectedClients; ++i)
-	{
-		clientNum = level.sortedClients[i];
-		if (&g_entities[clientNum] && g_entities[clientNum].client && g_entities[clientNum].takedamage)
-		{
-			g_entities[clientNum].r.maxs[2] = maxsBackup[clientNum];
-
-			trap_LinkEntity(&g_entities[clientNum]);
-		}
-	}
-
-	res = G_SwitchBodyPartEntity(&g_entities[results->entityNum]);
-	POSITION_READJUST
-
-	G_DettachBodyParts();
+	G_Trace(ent, results, start, mins, maxs, end, passEntityNum, contentmask);
 
 	G_AdjustClientPositions(ent, 0, qfalse);
 }
@@ -785,74 +758,20 @@ void G_HistoricalTraceEnd(gentity_t *ent)
  * @param[in] end
  * @param[in] passEntityNum
  * @param[in] contentmask
- * @param[in] ignoreCorpses Skip corpses for bullet tracing (=non gibbing weapons)
  */
-void G_Trace(gentity_t *ent, trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentmask, qboolean ignoreCorpses)
+void G_Trace(gentity_t *ent, trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentmask)
 {
-	float  maxsBackup[MAX_CLIENTS];
 	vec3_t dir;
-	int    res, clientNum, i;
-
-	Com_Memset(&maxsBackup, 0, sizeof(maxsBackup));
+	int    res;
 
 	G_AttachBodyParts(ent);
 
-	// ignore bodies for bullet tracing
-	if (ignoreCorpses)
-	{
-		if (g_corpses.integer == 0)
-		{
-			for (i = 0; i < BODY_QUEUE_SIZE; i++)
-			{
-				G_TempTraceIgnoreEntity(level.bodyQue[i]);
-			}
-		}
-		else
-		{
-			for (i = MAX_CLIENTS; i < level.num_entities; i++)  // slower way, improve by time
-			{
-				if (g_entities[i].s.eType == ET_CORPSE)
-				{
-					G_TempTraceIgnoreEntity(&g_entities[i]);
-				}
-			}
-		}
-	}
-
-	for (i = 0; i < level.numConnectedClients; ++i)
-	{
-		clientNum = level.sortedClients[i];
-		if (&g_entities[clientNum] && g_entities[clientNum].client && g_entities[clientNum].takedamage)
-		{
-			maxsBackup[clientNum]           = g_entities[clientNum].r.maxs[2];
-			g_entities[clientNum].r.maxs[2] = ClientHitboxMaxZ(&g_entities[clientNum]);
-
-			trap_LinkEntity(&g_entities[clientNum]);
-		}
-	}
-
 	trap_Trace(results, start, mins, maxs, end, passEntityNum, contentmask);
-
-	for (i = 0; i < level.numConnectedClients; ++i)
-	{
-		clientNum = level.sortedClients[i];
-		if (&g_entities[clientNum] && g_entities[clientNum].client && g_entities[clientNum].takedamage)
-		{
-			g_entities[clientNum].r.maxs[2] = maxsBackup[clientNum];
-
-			trap_LinkEntity(&g_entities[clientNum]);
-		}
-	}
 
 	res = G_SwitchBodyPartEntity(&g_entities[results->entityNum]);
 	POSITION_READJUST
 
 	G_DettachBodyParts();
-	// ok let the bodies be traced again
-	if (ignoreCorpses)
-	{
-		G_ResetTempTraceIgnoreEnts();
-	}
 }
 
 /**

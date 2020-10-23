@@ -2199,7 +2199,7 @@ void G_ResetMarkers(gentity_t *ent);
 void G_HistoricalTrace(gentity_t *ent, trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentmask);
 void G_HistoricalTraceBegin(gentity_t *ent);
 void G_HistoricalTraceEnd(gentity_t *ent);
-void G_Trace(gentity_t *ent, trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentmask, qboolean ignoreCorpses);
+void G_Trace(gentity_t *ent, trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentmask);
 void G_PredictPmove(gentity_t *ent, float frametime);
 
 #define BODY_VALUE(ENT) ENT->watertype
@@ -2636,7 +2636,7 @@ void G_GlobalClientEvent(entity_event_t event, int param, int client);
 void G_InitTempTraceIgnoreEnts(void);
 void G_ResetTempTraceIgnoreEnts(void);
 void G_TempTraceIgnoreEntity(gentity_t *ent);
-void G_TeamTraceIgnoreBodies(void);
+void G_TempTraceIgnoreBodies(void);
 void G_TempTraceIgnorePlayersAndBodies(void);
 void G_TempTraceIgnorePlayersFromTeam(team_t team);
 void G_TempTraceRealHitBox(gentity_t *ent);
