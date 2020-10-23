@@ -721,6 +721,8 @@ void G_HistoricalTrace(gentity_t *ent, trace_t *results, const vec3_t start, con
 			{
 				g_entities[clientNum].r.maxs[2] = CROUCH_BODYHEIGHT;
 			}
+
+			trap_LinkEntity(&g_entities[clientNum]);
 		}
 	}
 
@@ -732,6 +734,8 @@ void G_HistoricalTrace(gentity_t *ent, trace_t *results, const vec3_t start, con
 		if (&g_entities[clientNum] && g_entities[clientNum].client && g_entities[clientNum].takedamage)
 		{
 			g_entities[clientNum].r.maxs[2] = maxsBackup[clientNum];
+
+			trap_LinkEntity(&g_entities[clientNum]);
 		}
 	}
 
@@ -822,6 +826,8 @@ void G_Trace(gentity_t *ent, trace_t *results, const vec3_t start, const vec3_t 
 		{
 			maxsBackup[clientNum]           = g_entities[clientNum].r.maxs[2];
 			g_entities[clientNum].r.maxs[2] = ClientHitboxMaxZ(&g_entities[clientNum]);
+
+			trap_LinkEntity(&g_entities[clientNum]);
 		}
 	}
 
@@ -833,6 +839,8 @@ void G_Trace(gentity_t *ent, trace_t *results, const vec3_t start, const vec3_t 
 		if (&g_entities[clientNum] && g_entities[clientNum].client && g_entities[clientNum].takedamage)
 		{
 			g_entities[clientNum].r.maxs[2] = maxsBackup[clientNum];
+
+			trap_LinkEntity(&g_entities[clientNum]);
 		}
 	}
 
