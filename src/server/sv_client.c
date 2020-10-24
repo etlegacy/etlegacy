@@ -373,6 +373,12 @@ void SV_DirectConnect(netadr_t from)
 
 			cl = &svs.clients[i];
 
+			// don't check for bots GUID (empty)
+			if (cl->netchan.remoteAddress.type == NA_BOT)
+			{
+				continue;
+			}
+
 			guid2 = Info_ValueForKey(cl->userinfo, "cl_guid");
 
 			if (!Q_strncmp(guid, guid2, MAX_GUID_LENGTH + 1))
@@ -401,7 +407,7 @@ void SV_DirectConnect(netadr_t from)
 				{
 					Com_Printf("%s:reconnect rejected : too soon\n", NET_AdrToString(from));
 				}
-				return;
+				return; 
 			}
 			break;
 		}
