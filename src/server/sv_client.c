@@ -373,8 +373,11 @@ void SV_DirectConnect(netadr_t from)
 
 			cl = &svs.clients[i];
 
-			// don't check for bots GUID (empty)
-			if (cl->netchan.remoteAddress.type == NA_BOT)
+			// don't check for bots GUID (empty) and player which are not fully connected
+			// otherwise it could check for the reserved client slot which already contain
+			// same client information trying to connect and who encounter latency / entering
+			// password at the same time
+			if (cl->state <= CS_PRIMED || cl->netchan.remoteAddress.type == NA_BOT)
 			{
 				continue;
 			}
@@ -407,7 +410,7 @@ void SV_DirectConnect(netadr_t from)
 				{
 					Com_Printf("%s:reconnect rejected : too soon\n", NET_AdrToString(from));
 				}
-				return; 
+				return;
 			}
 			break;
 		}
