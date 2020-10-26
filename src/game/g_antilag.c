@@ -181,8 +181,6 @@ void G_StoreClientPosition(gentity_t *ent)
  * @brief Move a client back to where he was at the specified "time"
  * @param[in,out] ent client entity which to shift
  * @param[in] time timestamp which to use
- * @param[in] adjustHeight adjusted player height or not
- * @param[in] height value to use for adjustement
  */
 static void G_AdjustSingleClientPosition(gentity_t *ent, int time)
 {
