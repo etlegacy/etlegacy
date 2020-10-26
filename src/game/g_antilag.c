@@ -529,6 +529,15 @@ static void G_AdjustClientPositions(gentity_t *skip, int time, qboolean backward
 		else
 		{
 			G_ReAdjustSingleClientPosition(list);
+
+            if (list->takedamage)
+            {
+                // restore hitbox height
+                if (skip->s.weapon == WP_MEDIC_SYRINGE && (list->s.eFlags & (EF_DEAD | EF_PRONE)))
+                {
+                    list->r.maxs[2] = ClientHitboxMaxZ(list);
+                }
+            }
 		}
 	}
 }
