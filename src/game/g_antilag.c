@@ -184,7 +184,7 @@ void G_StoreClientPosition(gentity_t *ent)
  * @param[in] adjustHeight adjusted player height or not
  * @param[in] height value to use for adjustement
  */
-static void G_AdjustSingleClientPosition(gentity_t *ent, int time, qboolean adjustHeight, float height)
+static void G_AdjustSingleClientPosition(gentity_t *ent, int time)
 {
 	int i, j;
 
@@ -227,12 +227,6 @@ static void G_AdjustSingleClientPosition(gentity_t *ent, int time, qboolean adju
 		VectorCopy(ent->r.currentOrigin, ent->client->backupMarker.origin);
 		VectorCopy(ent->r.mins, ent->client->backupMarker.mins);
 		VectorCopy(ent->r.maxs, ent->client->backupMarker.maxs);
-
-		// adjust player height
-		if (adjustHeight)
-		{
-			ent->r.maxs[2] = height;
-		}
 
 		// Head, Legs
 		VectorCopy(ent->client->ps.viewangles, ent->client->backupMarker.viewangles);
@@ -437,7 +431,8 @@ static void G_AdjustSingleClientPosition(gentity_t *ent, int time, qboolean adju
 		ent->timeShiftTime = ent->client->clientMarkers[j].time;
 	}
 
-	trap_LinkEntity(ent);
+    // done externaly
+    //trap_LinkEntity(ent);
 }
 
 /**
@@ -520,22 +515,18 @@ static void G_AdjustClientPositions(gentity_t *skip, int time, qboolean backward
 
 		if (backwards)
 		{
-			float height;
+            G_AdjustSingleClientPosition(list, time);
 
-			if (list->takedamage)
-			{
-				// use higher hitbox for syringe only
-				if (skip->s.weapon != WP_MEDIC_SYRINGE)
+            if (list->takedamage)
+            {
+                // use higher hitbox for syringe only on wounded or prone player
+                if (skip->s.weapon == WP_MEDIC_SYRINGE && (list->s.eFlags & (EF_DEAD | EF_PRONE)))
 				{
-					height = ClientHitboxMaxZ(list);
-				}
-				else
-				{
-					height = CROUCH_BODYHEIGHT;
+                    list->r.maxs[2] = CROUCH_BODYHEIGHT;
 				}
 			}
 
-			G_AdjustSingleClientPosition(list, time, list->takedamage, height);
+            trap_LinkEntity(list);
 		}
 		else
 		{
