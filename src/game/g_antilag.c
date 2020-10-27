@@ -76,10 +76,10 @@ static qboolean G_AntilagSafe(gentity_t *ent)
 	}
 
 	// No bots allowed
-	if (ent->r.svFlags & SVF_BOT)
-	{
-		return qfalse;
-	}
+	//if (ent->r.svFlags & SVF_BOT)
+	//{
+	//	return qfalse;
+	//}
 
 	if (ent->client->sess.sessionTeam != TEAM_AXIS && ent->client->sess.sessionTeam != TEAM_ALLIES)
 	{
