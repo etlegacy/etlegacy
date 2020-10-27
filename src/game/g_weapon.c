@@ -3340,20 +3340,8 @@ gentity_t *Bullet_Fire(gentity_t *ent)
 	Bullet_Endpos(ent, spread, &end);
 
 	G_HistoricalTraceBegin(ent);
-    
-    // skip corpses for bullet tracing (=non gibbing weapons)
-    if (!GetWeaponTableData(ent->s.weapon)->splashDamage)
-    {
-        G_TempTraceIgnoreBodies();
-    }
 
 	Bullet_Fire_Extended(ent, ent, muzzleTrace, end, GetWeaponTableData(ent->s.weapon)->damage, GetWeaponTableData(ent->s.weapon)->attributes & WEAPON_ATTRIBUT_FALL_OFF);
-    
-    // ok let the bodies be traced again
-    if (!GetWeaponTableData(ent->s.weapon)->splashDamage)
-    {
-        G_ResetTempTraceIgnoreEnts();
-    }
 
 	G_HistoricalTraceEnd(ent);
 
@@ -3390,7 +3378,7 @@ qboolean Bullet_Fire_Extended(gentity_t *source, gentity_t *attacker, vec3_t sta
 		waslinked                               = qtrue;
 	}
 
-	G_Trace(source, &tr, start, NULL, NULL, end, source->s.number, MASK_SHOT);
+	G_Trace(source, &tr, start, NULL, NULL, end, source->s.number, MASK_SHOT & ~CONTENTS_CORPSE);
 
 	// prevent shooting ourselves in the head when prone, firing through a breakable
 	if (waslinked == qtrue)
@@ -3498,8 +3486,9 @@ qboolean Bullet_Fire_Extended(gentity_t *source, gentity_t *attacker, vec3_t sta
 		}
 
 		tent = G_TempEntity(tr.endpos, EV_BULLET_HIT_WALL);
-
-		G_Trace(source, &tr2, start, NULL, NULL, end, source->s.number, MASK_WATER | MASK_SHOT);
+        
+        // skip corpses for bullet tracing (=non gibbing weapons)
+		G_Trace(source, &tr2, start, NULL, NULL, end, source->s.number, MASK_WATER | (MASK_SHOT & ~CONTENTS_CORPSE));
 
 		if ((tr.entityNum != tr2.entityNum && tr2.fraction != 1.f))
 		{
@@ -3526,6 +3515,7 @@ qboolean Bullet_Fire_Extended(gentity_t *source, gentity_t *attacker, vec3_t sta
 
 	if (traceEnt->takedamage)
 	{
+        // skip corpses for bullet tracing (=non gibbing weapons)
 		G_Damage(traceEnt, attacker, attacker, forward, tr.endpos, damage, (distance_falloff ? DAMAGE_DISTANCEFALLOFF : 0), GetWeaponTableData(attacker->s.weapon)->mod);
 
 		// allow bullets to "pass through" func_explosives if they break by taking another simultanious shot
