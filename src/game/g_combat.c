@@ -975,11 +975,11 @@ qboolean IsHeadShot(gentity_t *targ, vec3_t dir, vec3_t point, meansOfDeath_t mo
 			G_RailTrail(start, end, tv(1.f, 0.f, 0.f));
 		}
 
-		if (g_antilag.integer)
-		{
-			// Why??
-			G_ReAdjustSingleClientPosition(targ);
-		}
+		//if (g_antilag.integer)
+		//{
+		//	// Why??
+		//	G_ReAdjustSingleClientPosition(targ);
+		//}
 
 		G_FreeEntity(head);
 		return qtrue;
@@ -1054,10 +1054,10 @@ qboolean IsLegShot(gentity_t *targ, vec3_t dir, vec3_t point, meansOfDeath_t mod
 				G_RailTrail(start, end, tv(1.f, 0.f, 0.f));
 			}
 
-			if (g_antilag.integer)
-			{
-				G_ReAdjustSingleClientPosition(targ);
-			}
+			//if (g_antilag.integer)
+			//{
+			//	G_ReAdjustSingleClientPosition(targ);
+			//}
 
 			G_FreeEntity(leg);
 			return qtrue;

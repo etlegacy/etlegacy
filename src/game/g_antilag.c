@@ -181,8 +181,9 @@ void G_StoreClientPosition(gentity_t *ent)
  * @brief Move a client back to where he was at the specified "time"
  * @param[in,out] ent client entity which to shift
  * @param[in] time timestamp which to use
+ * @return true if adjusted, otherwise false
  */
-static void G_AdjustSingleClientPosition(gentity_t *ent, int time)
+static qboolean G_AdjustSingleClientPosition(gentity_t *ent, int time)
 {
 	int i, j;
 
@@ -193,7 +194,7 @@ static void G_AdjustSingleClientPosition(gentity_t *ent, int time)
 
 	if (!G_AntilagSafe(ent))
 	{
-		return;
+		return qfalse;
 	}
 
 	// find a pair of markers which bound the requested time
@@ -216,7 +217,7 @@ static void G_AdjustSingleClientPosition(gentity_t *ent, int time)
 
 	if (i == j)     // oops, no valid stored markers
 	{
-		return;
+		return qfalse;
 	}
 
 	// save current position to backup if we have not already done so ( no need to re-save )
@@ -429,19 +430,22 @@ static void G_AdjustSingleClientPosition(gentity_t *ent, int time)
 		ent->timeShiftTime = ent->client->clientMarkers[j].time;
 	}
 
-    // done externaly
-    //trap_LinkEntity(ent);
+	// done externaly
+	//trap_LinkEntity(ent);
+
+	return qtrue;
 }
 
 /**
  * @brief Move a client back to where he was before the time shift
  * @param[in,out] ent client entity which to shift
+ * @return true if re-adjusted, otherwise false
  */
-void G_ReAdjustSingleClientPosition(gentity_t *ent)
+qboolean G_ReAdjustSingleClientPosition(gentity_t *ent)
 {
 	if (!G_AntilagSafe(ent))
 	{
-		return;
+		return qfalse;
 	}
 
 	// restore from backup
@@ -486,8 +490,13 @@ void G_ReAdjustSingleClientPosition(gentity_t *ent)
 		// time stamp for BuildHead/Leg
 		ent->timeShiftTime = 0;
 
-		trap_LinkEntity(ent);
+		// done externaly
+		//trap_LinkEntity(ent);
+
+		return qtrue;
 	}
+
+	return qfalse;
 }
 
 /**
@@ -500,6 +509,7 @@ static void G_AdjustClientPositions(gentity_t *skip, int time, qboolean backward
 {
 	int       i;
 	gentity_t *list;
+	qboolean  adjusted;
 
 	for (i = 0; i < level.numConnectedClients; i++, list++)
 	{
@@ -513,31 +523,32 @@ static void G_AdjustClientPositions(gentity_t *skip, int time, qboolean backward
 
 		if (backwards)
 		{
-            G_AdjustSingleClientPosition(list, time);
+			adjusted = G_AdjustSingleClientPosition(list, time);
 
-            if (list->takedamage)
-            {
-                // use higher hitbox for syringe only on wounded or prone player
-                if (skip->s.weapon == WP_MEDIC_SYRINGE && (list->s.eFlags & (EF_DEAD | EF_PRONE)))
-				{
-                    list->r.maxs[2] = CROUCH_BODYHEIGHT;
-				}
+			// use higher hitbox for syringe only on wounded or prone player
+			if (skip->s.weapon == WP_MEDIC_SYRINGE && (list->takedamage ||              // take damage = EF_DEAD but still can take shot
+			                                           list->s.eFlags & (EF_PRONE)))    // prone for more easy shoot
+			{
+				list->r.maxs[2] = CROUCH_BODYHEIGHT;
+				adjusted        = qtrue;
 			}
-
-            trap_LinkEntity(list);
 		}
 		else
 		{
-            if (list->takedamage)
-            {
-                // restore hitbox height
-                if (skip->s.weapon == WP_MEDIC_SYRINGE && (list->s.eFlags & (EF_DEAD | EF_PRONE)))
-                {
-                    list->r.maxs[2] = ClientHitboxMaxZ(list);
-                }
-            }
+			adjusted = G_ReAdjustSingleClientPosition(list);
 
-			G_ReAdjustSingleClientPosition(list);
+			// restore hitbox height
+			if (!adjusted && skip->s.weapon == WP_MEDIC_SYRINGE && (list->takedamage ||              // take damage = EF_DEAD but still can take shot
+			                                                        list->s.eFlags & (EF_PRONE))) // prone for more easy shoot
+			{
+				list->r.maxs[2] = ClientHitboxMaxZ(list);
+				adjusted        = qtrue;
+			}
+		}
+
+		if (adjusted)
+		{
+			trap_LinkEntity(list);
 		}
 	}
 }
