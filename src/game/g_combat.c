@@ -941,11 +941,6 @@ qboolean IsHeadShot(gentity_t *targ, vec3_t dir, vec3_t point, meansOfDeath_t mo
 		return qfalse;
 	}
 
-	if (targ->health <= 0) // no hs for corpses
-	{
-		return qfalse;
-	}
-
 	if (!GetMODTableData(mod)->isHeadshot)
 	{
 		return qfalse;
