@@ -2309,20 +2309,24 @@ void ClientEndFrame(gentity_t *ent)
 		// green
 		G_RailBox(ent->r.currentOrigin, ent->r.mins, maxs, tv(0.f, 1.f, 0.f), ent->s.number);
 
-		head = G_BuildHead(ent, &refent, qtrue);
-		// green
-		G_RailBox(head->r.currentOrigin, head->r.mins, head->r.maxs, tv(0.f, 1.f, 0.f), head->s.number | HITBOXBIT_HEAD);
-		G_FreeEntity(head);
+        // wounded player don't have head and legs hitbox, (see G_BuildHead and G_BuildLeg)
+        if (!(ent->client->ps.eFlags & EF_DEAD))
+        {
+            head = G_BuildHead(ent, &refent, qtrue);
+            // green
+            G_RailBox(head->r.currentOrigin, head->r.mins, head->r.maxs, tv(0.f, 1.f, 0.f), head->s.number | HITBOXBIT_HEAD);
+            G_FreeEntity(head);
 
-		if (ent->client->ps.eFlags & (EF_PRONE | EF_DEAD))
-		{
-			gentity_t *legs;
+            if (ent->client->ps.eFlags & EF_PRONE)
+            {
+                gentity_t *legs;
 
-			legs = G_BuildLeg(ent, &refent, qtrue);
-			// green
-			G_RailBox(legs->r.currentOrigin, legs->r.mins, legs->r.maxs, tv(0.f, 1.f, 0.f), legs->s.number | HITBOXBIT_LEGS);
-			G_FreeEntity(legs);
-		}
+                legs = G_BuildLeg(ent, &refent, qtrue);
+                // green
+                G_RailBox(legs->r.currentOrigin, legs->r.mins, legs->r.maxs, tv(0.f, 1.f, 0.f), legs->s.number | HITBOXBIT_LEGS);
+                G_FreeEntity(legs);
+            }
+        }
 	}
 
 	// debug head and legs box for collision (see PM_TraceHead and PM_TraceLegs)
