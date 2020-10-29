@@ -978,11 +978,13 @@ qboolean IsHeadShot(gentity_t *targ, vec3_t dir, vec3_t point, meansOfDeath_t mo
 			G_RailTrail(start, end, tv(1.f, 0.f, 0.f));
 		}
 
-        //if (g_antilag.integer)
-        //{
-        //	// Why??
-        //	G_ReAdjustSingleClientPosition(targ);
-        //}
+        if (g_antilag.integer)
+        {
+            // Why??
+            // Because we are overwriting flag for head shot registration
+            // and we don't want to see the helmet pop back after each HS
+            G_ReAdjustSingleClientPosition(targ);
+        }
 
 		G_FreeEntity(head);
 		return qtrue;
