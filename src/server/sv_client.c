@@ -301,60 +301,62 @@ static qboolean SV_isValidClient(netadr_t from, const char *userinfo)
  */
 static qboolean SV_isValidGUID(netadr_t from, const char *userinfo)
 {
-    int  i;
-    char *guid;
+	int  i;
+	char *guid;
 
-    guid = Info_ValueForKey(userinfo, "cl_guid");
+	guid = Info_ValueForKey(userinfo, "cl_guid");
 
-    // don't allow empty, unknown or 'NO_GUID' guid
-    if (strlen(guid) < MAX_GUID_LENGTH)
-    {
-        NET_OutOfBandPrint(NS_SERVER, from, "print\n[err_dialog]Bad GUID: Invalid etkey. Please use the ET: Legacy client or add an etkey.\n");
-        Com_DPrintf("Client rejected for bad sized etkey\n");
-        return qfalse;
-    }
+	// don't allow empty, unknown or 'NO_GUID' guid
+	if (strlen(guid) < MAX_GUID_LENGTH)
+	{
+		NET_OutOfBandPrint(NS_SERVER, from, "print\n[err_dialog]Bad GUID: Invalid etkey. Please use the ET: Legacy client or add an etkey.\n");
+		Com_DPrintf("Client rejected for bad sized etkey\n");
+		return qfalse;
+	}
 
-    // check guid format
-    for (i = 0; i < MAX_GUID_LENGTH; i++)
-    {
-        if (guid[i] < 48 || (guid[i] > 57 && guid[i] < 65) || guid[i] > 70)
-        {
-            NET_OutOfBandPrint(NS_SERVER, from, "print\n[err_dialog]Bad GUID: Invalid etkey.\n");
-            Com_DPrintf("Client rejected for bad etkey\n");
-            return qfalse;
-        }
-    }
+	// check guid format
+	for (i = 0; i < MAX_GUID_LENGTH; i++)
+	{
+		if (guid[i] < 48 || (guid[i] > 57 && guid[i] < 65) || guid[i] > 70)
+		{
+			NET_OutOfBandPrint(NS_SERVER, from, "print\n[err_dialog]Bad GUID: Invalid etkey.\n");
+			Com_DPrintf("Client rejected for bad etkey\n");
+			return qfalse;
+		}
+	}
 
-    // don't check duplicate guid in developer mod
-    if (!sv_cheats->integer)
-    {
-        // check duplicate guid with validated clients
-        for (i = 0; i < sv_maxclients->integer ; i++)
-        {
-            char     *guid2;
-            client_t *cl;
+	// don't check duplicate guid in developer mod
+	if (!sv_cheats->integer)
+	{
+		// check duplicate guid with validated clients
+		for (i = 0; i < sv_maxclients->integer ; i++)
+		{
+			char     *guid2;
+			client_t *cl;
 
-            cl = &svs.clients[i];
+			cl = &svs.clients[i];
 
-            // don't check for bots GUID (empty) and player which are not fully connected
-            // otherwise it could check for the reserved client slot which already contain
-            // same client information trying to connect and who encounter latency / entering
-            // password at the same time
-            if (cl->state <= CS_PRIMED || cl->netchan.remoteAddress.type == NA_BOT)
-            {
-                continue;
-            }
+			// don't check for bots GUID (empty) and player which are not fully connected
+			// otherwise it could check for the reserved client slot which already contain
+			// same client information trying to connect and who encounter latency / entering
+			// password at the same time
+			if (cl->state <= CS_PRIMED || cl->netchan.remoteAddress.type == NA_BOT)
+			{
+				continue;
+			}
 
-            guid2 = Info_ValueForKey(cl->userinfo, "cl_guid");
+			guid2 = Info_ValueForKey(cl->userinfo, "cl_guid");
 
-            if (!Q_strncmp(guid, guid2, MAX_GUID_LENGTH + 1))
-            {
-                NET_OutOfBandPrint(NS_SERVER, from, "print\n[err_dialog]Bad GUID: Duplicate etkey.\n");
-                Com_DPrintf("Client rejected for duplicate etkey\n");
-                return qfalse;
-            }
-        }
-    }
+			if (!Q_strncmp(guid, guid2, MAX_GUID_LENGTH + 1))
+			{
+				NET_OutOfBandPrint(NS_SERVER, from, "print\n[err_dialog]Bad GUID: Duplicate etkey.\n");
+				Com_DPrintf("Client rejected for duplicate etkey\n");
+				return qfalse;
+			}
+		}
+	}
+
+	return qtrue;
 }
 
 /**
@@ -402,7 +404,7 @@ void SV_DirectConnect(netadr_t from)
 	// we don't need these keys after connection, release some space in userinfo
 	Info_RemoveKey(userinfo, "challenge");
 	Info_RemoveKey(userinfo, "qport");
-    Info_RemoveKey(userinfo, "protocol");
+	Info_RemoveKey(userinfo, "protocol");
 
 	// quick reject
 	for (i = 0, cl = svs.clients ; i < sv_maxclients->integer ; i++, cl++)
@@ -425,7 +427,7 @@ void SV_DirectConnect(netadr_t from)
 			}
 			break;
 		}
-    }
+	}
 
 	// see if the challenge is valid (local clients don't need to challenge)
 	if (!NET_IsLocalAddress(from))
@@ -511,13 +513,13 @@ void SV_DirectConnect(netadr_t from)
 
 			goto gotnewcl;
 		}
-    }
+	}
 
-    // check guid after we ensure client doesn't already use a slot
-    if (!SV_isValidGUID(from, userinfo))
-    {
-        return;
-    }
+	// check guid after we ensure client doesn't already use a slot
+	if (!SV_isValidGUID(from, userinfo))
+	{
+		return;
+	}
 
 	// find a client slot
 	// if "sv_privateClients" is set > 0, then that number
