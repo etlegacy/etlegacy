@@ -301,10 +301,13 @@ static qboolean SV_isValidClient(netadr_t from, const char *userinfo)
  */
 static qboolean SV_isValidGUID(netadr_t from, const char *userinfo)
 {
-	int  i;
-	char *guid;
+	int        i;
+	const char *pguid;
+	char       guid[MAX_GUID_LENGTH] = { 0 };
 
-	guid = Info_ValueForKey(userinfo, "cl_guid");
+	pguid = Info_ValueForKey(userinfo, "cl_guid");
+
+	Q_strcpy(guid, pguid);
 
 	// don't allow empty, unknown or 'NO_GUID' guid
 	if (strlen(guid) < MAX_GUID_LENGTH)
@@ -331,7 +334,6 @@ static qboolean SV_isValidGUID(netadr_t from, const char *userinfo)
 		// check duplicate guid with validated clients
 		for (i = 0; i < sv_maxclients->integer ; i++)
 		{
-			char     *guid2;
 			client_t *cl;
 
 			cl = &svs.clients[i];
@@ -345,9 +347,11 @@ static qboolean SV_isValidGUID(netadr_t from, const char *userinfo)
 				continue;
 			}
 
-			guid2 = Info_ValueForKey(cl->userinfo, "cl_guid");
+			pguid = Info_ValueForKey(cl->userinfo, "cl_guid");
 
-			if (!Q_strncmp(guid, guid2, MAX_GUID_LENGTH + 1))
+			//guid = Info_ValueForKey(userinfo, "cl_guid");
+
+			if (!Q_strncmp(guid, pguid, MAX_GUID_LENGTH))
 			{
 				NET_OutOfBandPrint(NS_SERVER, from, "print\n[err_dialog]Bad GUID: Duplicate etkey.\n");
 				Com_DPrintf("Client rejected for duplicate etkey\n");
