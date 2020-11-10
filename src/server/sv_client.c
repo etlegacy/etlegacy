@@ -302,9 +302,9 @@ static qboolean SV_isValidClient(netadr_t from, const char *userinfo)
 static qboolean SV_isValidGUID(netadr_t from, const char *userinfo)
 {
 	int  i;
-	char guid[MAX_GUID_LENGTH] = { 0 };
+	char guid[MAX_GUID_LENGTH + 1] = { 0 };
 
-	Q_strcpy(guid, Info_ValueForKey(userinfo, "cl_guid"));
+	Q_strncpyz(guid, Info_ValueForKey(userinfo, "cl_guid"), sizeof(guid));
 
 	// don't allow empty, unknown or 'NO_GUID' guid
 	if (strlen(guid) < MAX_GUID_LENGTH)
