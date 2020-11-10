@@ -642,7 +642,7 @@ void CopyToBodyQue(gentity_t *ent)
 	BODY_TEAM(body)      = ent->client->sess.sessionTeam;
 	BODY_CLASS(body)     = ent->client->sess.playerType;
 	BODY_CHARACTER(body) = ent->client->pers.characterIndex;
-	BODY_VALUE(body)     = 0;
+	BODY_VALUE(body) = 0;
 
 	//if ( ent->client->ps.eFlags & EF_PANTSED ){
 	//	body->s.time2 =	1;
@@ -2027,6 +2027,8 @@ char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 	qboolean allowGeoIP = qtrue;
 
 	trap_GetUserinfo(clientNum, userinfo, sizeof(userinfo));
+
+	G_Printf("ClientConnect: client %d userinfo %s\n", clientNum, userinfo);
 
 	// grab the values we need in just one pass
 	// Use our minimal perfect hash generated code to give us the
