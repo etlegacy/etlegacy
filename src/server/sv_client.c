@@ -387,6 +387,8 @@ void SV_DirectConnect(netadr_t from)
 
 	Q_strncpyz(userinfo, Cmd_Argv(1), sizeof(userinfo));
 
+	Com_DPrintf("SVC_DirectConnect userinfo received from client %s\n", userinfo);
+
 	// sort out clients we don't want to have in game/does temp ban!
 	if (!SV_isValidClient(from, userinfo))
 	{
@@ -510,11 +512,15 @@ void SV_DirectConnect(netadr_t from)
 		}
 	}
 
+	Com_DPrintf("SVC_DirectConnect userinfo before checking GUID %s\n", userinfo);
+
 	// check guid after we ensure client doesn't already use a slot
 	if (!SV_isValidGUID(from, userinfo))
 	{
 		return;
 	}
+
+	Com_DPrintf("SVC_DirectConnect userinfo after checking GUID %s\n", userinfo);
 
 	// find a client slot
 	// if "sv_privateClients" is set > 0, then that number
@@ -606,6 +612,8 @@ gotnewcl:
 
 	// save the userinfo
 	Q_strncpyz(newcl->userinfo, userinfo, sizeof(newcl->userinfo));
+
+	Com_DPrintf("SVC_DirectConnect userinfo saved in client slot%s\n", newcl->userinfo);
 
 	// get the game a chance to reject this connection or modify the userinfo
 	denied = (char *)(VM_Call(gvm, GAME_CLIENT_CONNECT, clientNum, qtrue, qfalse)); // firstTime = qtrue
