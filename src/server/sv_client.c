@@ -301,13 +301,10 @@ static qboolean SV_isValidClient(netadr_t from, const char *userinfo)
  */
 static qboolean SV_isValidGUID(netadr_t from, const char *userinfo)
 {
-	int        i;
-	const char *pguid;
-	char       guid[MAX_GUID_LENGTH] = { 0 };
+	int  i;
+	char guid[MAX_GUID_LENGTH] = { 0 };
 
-	pguid = Info_ValueForKey(userinfo, "cl_guid");
-
-	Q_strcpy(guid, pguid);
+	Q_strcpy(guid, Info_ValueForKey(userinfo, "cl_guid"));
 
 	// don't allow empty, unknown or 'NO_GUID' guid
 	if (strlen(guid) < MAX_GUID_LENGTH)
@@ -331,13 +328,11 @@ static qboolean SV_isValidGUID(netadr_t from, const char *userinfo)
 	// don't check duplicate guid in developer mod
 	if (!sv_cheats->integer)
 	{
+		client_t *cl;
+
 		// check duplicate guid with validated clients
-		for (i = 0; i < sv_maxclients->integer ; i++)
+		for (i = 0, cl = svs.clients; i < sv_maxclients->integer ; i++, cl++)
 		{
-			client_t *cl;
-
-			cl = &svs.clients[i];
-
 			// don't check for bots GUID (empty) and player which are not fully connected
 			// otherwise it could check for the reserved client slot which already contain
 			// same client information trying to connect and who encounter latency / entering
@@ -347,11 +342,7 @@ static qboolean SV_isValidGUID(netadr_t from, const char *userinfo)
 				continue;
 			}
 
-			pguid = Info_ValueForKey(cl->userinfo, "cl_guid");
-
-			//guid = Info_ValueForKey(userinfo, "cl_guid");
-
-			if (!Q_strncmp(guid, pguid, MAX_GUID_LENGTH))
+			if (!Q_strncmp(guid, Info_ValueForKey(cl->userinfo, "cl_guid"), MAX_GUID_LENGTH))
 			{
 				NET_OutOfBandPrint(NS_SERVER, from, "print\n[err_dialog]Bad GUID: Duplicate etkey.\n");
 				Com_DPrintf("Client rejected for duplicate etkey\n");
