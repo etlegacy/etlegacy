@@ -342,7 +342,7 @@ static qboolean SV_isValidGUID(netadr_t from, const char *userinfo)
 				continue;
 			}
 
-			if (!Q_strncmp(guid, Info_ValueForKey(cl->userinfo, "cl_guid"), MAX_GUID_LENGTH))
+			if (!Q_strncmp(guid, cl->guid, MAX_GUID_LENGTH))
 			{
 				NET_OutOfBandPrint(NS_SERVER, from, "print\n[err_dialog]Bad GUID: Duplicate etkey.\n");
 				Com_DPrintf("Client rejected for duplicate etkey\n");
@@ -597,6 +597,7 @@ gotnewcl:
 
 	newcl->gentity->r.svFlags = 0; // clear client flags on new connection.
 	newcl->challenge          = challenge; // save the challenge
+	Q_strncpyz(newcl->guid, Info_ValueForKey(userinfo, "cl_guid"), sizeof(newcl->guid)); // save guid
 
 	// save the address
 	Netchan_Setup(NS_SERVER, &newcl->netchan, from, qport);
