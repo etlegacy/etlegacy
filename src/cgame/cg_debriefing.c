@@ -1163,7 +1163,7 @@ void CG_MapVoteList_Draw(panel_button_t *button)
 			// add gradient color to identify third most votes maps
 			for (j = 0; j < 3; j++)
 			{
-				if (cgs.dbSortedVotedMapsByTotal[j].mapID == i + cgs.dbMapVoteListOffset)
+				if (cgs.dbSortedVotedMapsByTotal[j].mapID == (i + cgs.dbMapVoteListOffset))
 				{
 					if (j == 0)
 					{
@@ -1217,18 +1217,28 @@ qboolean CG_MapVote_VoteSend_KeyDown(panel_button_t *button, int key)
 		}
 		else
 		{
-			int i;
+			int      i;
+			int      votedMapID[3];
+			qboolean mapVoted = qfalse;
 
 			for (i = 0; i < 3; i++)
 			{
 				if (cgs.dbMapVotedFor[i] != -1)
 				{
-					trap_SendClientCommand(va("mapvote %d %d %d",
-					                          cgs.dbMapID[cgs.dbMapVotedFor[0]],
-					                          cgs.dbMapID[cgs.dbMapVotedFor[1]],
-					                          cgs.dbMapID[cgs.dbMapVotedFor[2]]));
-					return qtrue;
+					votedMapID[i] = cgs.dbMapID[cgs.dbMapVotedFor[i]];
+					mapVoted      = qtrue;
 				}
+				else
+				{
+					votedMapID[i] = -1;
+				}
+			}
+
+			if (mapVoted)
+			{
+				trap_SendClientCommand(va("mapvote %d %d %d", votedMapID[0], votedMapID[1], votedMapID[2]));
+
+				return qtrue;
 			}
 		}
 	}
@@ -1720,12 +1730,12 @@ void CG_Debriefing_Startup(void)
 	cgs.dbSelectedClient  = cg.clientNum;
 
 	// mapvote
-	cgs.dbSelectedMap        = -1;
-	cgs.dbMapListReceived    = qfalse;
-	cgs.dbVoteTallyReceived  = qfalse;
-	cgs.dbMapVotedFor[0]     = -1;
-	cgs.dbMapVotedFor[1]     = -1;
-	cgs.dbMapVotedFor[2]     = -1;
+	cgs.dbSelectedMap       = -1;
+	cgs.dbMapListReceived   = qfalse;
+	cgs.dbVoteTallyReceived = qfalse;
+	cgs.dbMapVotedFor[0]    = -1;
+	cgs.dbMapVotedFor[1]    = -1;
+	cgs.dbMapVotedFor[2]    = -1;
 
 	cgs.dbAwardsParsed = qfalse;
 

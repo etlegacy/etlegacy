@@ -1566,12 +1566,10 @@ void G_IntermissionMapVote(gentity_t *ent)
 	// normal one-map vote
 	if (trap_Argc() == 2)
 	{
-		int mapID;
-
 		trap_Argv(1, arg, sizeof(arg));
 		mapID = atoi(arg);
 
-		if (mapID < 0 || mapID > MAX_VOTE_MAPS)
+		if (mapID < 0 || mapID >= MAX_VOTE_MAPS)
 		{
 			CP(va("print \"^3Invalid vote\n\""));
 			return;
@@ -1591,7 +1589,7 @@ void G_IntermissionMapVote(gentity_t *ent)
 			trap_Argv(voteRank, arg, sizeof(arg));
 			mapID = atoi(arg);
 
-			if (mapID < 0 || mapID > MAX_VOTE_MAPS)
+			if (mapID < 0 || mapID >= MAX_VOTE_MAPS)
 			{
 				continue;
 			}
