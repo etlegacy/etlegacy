@@ -1,0 +1,1081 @@
+diff --git a/cmake/ETLPlatform.cmake b/cmake/ETLPlatform.cmake
+index 5cf25aecb..3d23231a7 100644
+--- a/cmake/ETLPlatform.cmake
++++ b/cmake/ETLPlatform.cmake
+@@ -125,8 +125,8 @@ elseif(WIN32)
+ 	endif()
+ 	set(LIB_SUFFIX "_mp_")
+ 	if(MSVC)
+-		set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /EHsc /O2")
+-		set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /EHa /W3")
++		set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /EHsc /O2 /arch:SSE2")
++		set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /EHa /W3 /arch:SSE2")
+ 
+ 		set(CompilerFlags
+ 			CMAKE_CXX_FLAGS
+diff --git a/src/qcommon/q_math.c b/src/qcommon/q_math.c
+index 879789ae2..341fc3b1e 100644
+--- a/src/qcommon/q_math.c
++++ b/src/qcommon/q_math.c
+@@ -755,10 +755,14 @@ void ProjectPointOnPlane(vec3_t dst, const vec3_t p, const vec3_t normal)
+ 	vec3_t n;
+ 	float  inv_denom;
+ 
+-	inv_denom = 1.0F / DotProduct(normal, normal);
++	inv_denom = 1.0f / DotProduct(normal, normal);
+ 
+ 	d = DotProduct(normal, p) * inv_denom;
+ 
++#ifdef SSE2
++	VectorScale(normal, d, n);
++	VectorSubtract(p, n, dst);
++#else
+ 	n[0] = normal[0] * inv_denom;
+ 	n[1] = normal[1] * inv_denom;
+ 	n[2] = normal[2] * inv_denom;
+@@ -766,6 +770,7 @@ void ProjectPointOnPlane(vec3_t dst, const vec3_t p, const vec3_t normal)
+ 	dst[0] = p[0] - d * n[0];
+ 	dst[1] = p[1] - d * n[1];
+ 	dst[2] = p[2] - d * n[2];
++#endif
+ }
+ 
+ /**
+@@ -778,7 +783,6 @@ void ProjectPointOnPlane(vec3_t dst, const vec3_t p, const vec3_t normal)
+ void MakeNormalVectors(const vec3_t forward, vec3_t right, vec3_t up)
+ {
+ 	float d;
+-
+ 	// this rotate and negate guarantees a vector
+ 	// not colinear with the original
+ 	right[1] = -forward[0];
+@@ -804,9 +808,33 @@ void vec3_rotate(const vec3_t in, vec3_t matrix[3], vec3_t out)
+ 	out[1] = DotProduct(in, matrix[1]);
+ 	out[2] = DotProduct(in, matrix[2]);
+ 	*/
++#ifdef SSE2
++	__m128 xmm0, xmm1, xmm2, xmm3, xmm4, xmm5;
++		xmm2 = _mm_load_ss(&in[2]);
++		xmm2 = _mm_shuffle_ps(xmm2, xmm2, 0);
++		xmm1 = _mm_loadh_pi(xmm2, (const __m64 *)(&in[0]));
++		xmm0 = _mm_shuffle_ps(xmm1, xmm1, 0b10101010);
++		xmm1 = _mm_shuffle_ps(xmm1, xmm1, 0b11111111);
++		xmm3 = _mm_loadu_ps(&matrix[0][0]);
++		xmm4 = _mm_loadu_ps(&matrix[1][1]);
++		xmm5 = _mm_load_ss(&matrix[2][2]);
++		xmm5 = _mm_shuffle_ps(xmm5, xmm4, 0b11100100);
++		xmm5 = _mm_shuffle_ps(xmm5, xmm5, 0b01001110);
++		xmm4 = _mm_shuffle_ps(xmm4, xmm3, 0b11110100);
++		xmm4 = _mm_shuffle_ps(xmm4, xmm4, 0b11010010);
++		xmm3 = _mm_mul_ps(xmm3, xmm0);
++		xmm4 = _mm_mul_ps(xmm4, xmm1);
++		xmm5 = _mm_mul_ps(xmm5, xmm2);
++		xmm5 = _mm_add_ps(xmm5, xmm3);
++		xmm5 = _mm_add_ps(xmm5, xmm4);
++		xmm5 = _mm_shuffle_ps(xmm5, xmm5, 0b10011100);
++		_mm_store_ss(&out[0], xmm5);
++		_mm_storeh_pi((__m64 *)(&out[1]), xmm5);
++#else
+ 	out[0] = in[0] * matrix[0][0] + in[1] * matrix[1][0] + in[2] * matrix[2][0];
+ 	out[1] = in[0] * matrix[0][1] + in[1] * matrix[1][1] + in[2] * matrix[2][1];
+ 	out[2] = in[0] * matrix[0][2] + in[1] * matrix[1][2] + in[2] * matrix[2][2];
++#endif
+ }
+ 
+ //============================================================================
+@@ -984,6 +1012,14 @@ float angle_delta(float angle1, float angle2)
+  */
+ void SetPlaneSignbits(struct cplane_s *out)
+ {
++#ifdef SSE2
++	struct cplane_s *ppp = (struct cplane_s *)out;
++		__m128 xmm1, xmm2;
++		xmm1 = _mm_loadh_pi(_mm_load_ss((const float *)&ppp->normal[0]), (const __m64 *)&ppp->normal[1]);
++		xmm1 = _mm_shuffle_ps(xmm1, xmm1, 0b01111000);
++		xmm2 = _mm_cmplt_ps(xmm1, _mm_setzero_ps());
++		out->signbits = (byte)(_mm_movemask_ps(xmm2));
++#else
+ 	byte bits = 0, j;
+ 
+ 	// for fast box on planeside test
+@@ -996,6 +1032,7 @@ void SetPlaneSignbits(struct cplane_s *out)
+ 		}
+ 	}
+ 	out->signbits = bits;
++#endif
+ }
+ 
+ /*
+@@ -1406,8 +1443,18 @@ float RadiusFromBounds(const vec3_t mins, const vec3_t maxs)
+  */
+ void ClearBounds(vec3_t mins, vec3_t maxs)
+ {
++#ifdef SSE2
++	__m128 xmm0, xmm1;
++		xmm0 = _mm_set_ps1(99999.0f);
++		xmm1 = _mm_sub_ps(_mm_setzero_ps(), xmm0);
++		_mm_store_ss(&mins[0], xmm0);
++		_mm_storeh_pi((__m64 *)(&mins[1]), xmm0);
++		_mm_store_ss(&maxs[0], xmm1);
++		_mm_storeh_pi((__m64 *)(&maxs[1]), xmm1);
++#else
+ 	mins[0] = mins[1] = mins[2] = 99999;
+ 	maxs[0] = maxs[1] = maxs[2] = -99999;
++#endif
+ }
+ 
+ /**
+@@ -1418,6 +1465,18 @@ void ClearBounds(vec3_t mins, vec3_t maxs)
+  */
+ void AddPointToBounds(const vec3_t v, vec3_t mins, vec3_t maxs)
+ {
++#ifdef SSE2
++	__m128 xmm0, xmm1, xmm2;
++		xmm0 = _mm_loadh_pi(_mm_load_ss(&v[0]), (const __m64 *)(&v[1]));
++		xmm1 = _mm_loadh_pi(_mm_load_ss(&mins[0]), (const __m64 *)(&mins[1]));
++		xmm2 = _mm_loadh_pi(_mm_load_ss(&maxs[0]), (const __m64 *)(&maxs[1]));
++		xmm1 = _mm_min_ps(xmm1, xmm0);
++		xmm2 = _mm_max_ps(xmm2, xmm0);
++		_mm_store_ss(&mins[0], xmm1);
++		_mm_storeh_pi((__m64 *)(&mins[1]), xmm1);
++		_mm_store_ss(&maxs[0], xmm2);
++		_mm_storeh_pi((__m64 *)(&maxs[1]), xmm2);
++#else
+ 	if (v[0] < mins[0])
+ 	{
+ 		mins[0] = v[0];
+@@ -1444,6 +1503,7 @@ void AddPointToBounds(const vec3_t v, vec3_t mins, vec3_t maxs)
+ 	{
+ 		maxs[2] = v[2];
+ 	}
++#endif
+ }
+ 
+ /*
+@@ -1496,6 +1556,19 @@ qboolean PointInBounds(const vec3_t v, const vec3_t mins, const vec3_t maxs)
+  */
+ void BoundsAdd(vec3_t mins, vec3_t maxs, const vec3_t mins2, const vec3_t maxs2)
+ {
++#ifdef SSE2
++	__m128 xmm1, xmm2, xmm3, xmm4;
++		xmm1 = _mm_loadh_pi(_mm_load_ss(&mins[0]), (const __m64 *)(&mins[1]));
++		xmm2 = _mm_loadh_pi(_mm_load_ss(&mins2[0]), (const __m64 *)(&mins2[1]));
++		xmm3 = _mm_loadh_pi(_mm_load_ss(&maxs[0]), (const __m64 *)(&maxs[1]));
++		xmm4 = _mm_loadh_pi(_mm_load_ss(&maxs2[0]), (const __m64 *)(&maxs2[1]));
++		xmm1 = _mm_min_ps(xmm1, xmm2);
++		xmm3 = _mm_max_ps(xmm3, xmm4);
++		_mm_store_ss(&mins[0], xmm1);
++		_mm_storeh_pi((__m64 *)(&mins[1]), xmm1);
++		_mm_store_ss(&maxs[0], xmm3);
++		_mm_storeh_pi((__m64 *)(&maxs[1]), xmm3);
++#else
+ 	if (mins2[0] < mins[0])
+ 	{
+ 		mins[0] = mins2[0];
+@@ -1525,6 +1598,7 @@ void BoundsAdd(vec3_t mins, vec3_t maxs, const vec3_t mins2, const vec3_t maxs2)
+ 	{
+ 		maxs[2] = maxs2[2];
+ 	}
++#endif
+ }
+ 
+ /**
+@@ -1573,6 +1647,21 @@ vec_t vec3_norm(vec3_t v)
+  */
+ void vec3_norm_fast(vec3_t v)
+ {
++#ifdef SSE2
++	__m128 xmm0, xmm2, xmm3, xmm4, xmm6;
++		xmm2 = _mm_loadh_pi(_mm_load_ss(&v[2]), (const __m64 *)(&v[0]));
++		xmm3 = xmm2;
++		xmm2 = _mm_mul_ps(xmm2, xmm3);
++		xmm4 = _mm_movehdup_ps(xmm2);
++		xmm6 = _mm_add_ps(xmm2, xmm4);
++		xmm4 = _mm_movehl_ps(xmm4, xmm6);
++		xmm2 = _mm_add_ss(xmm6, xmm4);
++		xmm0 = _mm_rsqrt_ss(xmm2);
++		xmm0 = _mm_shuffle_ps(xmm0, xmm0, 0);
++		xmm3 = _mm_mul_ps(xmm3, xmm0);
++		_mm_store_ss(&v[2], xmm3);
++		_mm_storeh_pi((__m64 *)(&v[0]), xmm3);
++#else
+ 	float ilength;
+ 
+ 	ilength = Q_rsqrt(DotProduct(v, v));
+@@ -1580,6 +1669,7 @@ void vec3_norm_fast(vec3_t v)
+ 	v[0] *= ilength;
+ 	v[1] *= ilength;
+ 	v[2] *= ilength;
++#endif
+ }
+ 
+ /**
+@@ -1620,9 +1710,19 @@ vec_t vec3_norm2(const vec3_t v, vec3_t out)
+  */
+ void _VectorMA(const vec3_t veca, float scale, const vec3_t vecb, vec3_t vecc)
+ {
++#ifdef SSE2
++	__m128 xmm2, xmm3;
++		xmm3 = _mm_loadh_pi(_mm_load_ss((const float *)vecb), (const __m64 *)(vecb + 1));
++		xmm3 = _mm_mul_ps(xmm3, _mm_set_ps1(scale));
++		xmm2 = _mm_loadh_pi(_mm_load_ss((const float *)veca), (const __m64 *)(veca + 1));
++		xmm2 = _mm_add_ps(xmm2, xmm3);
++		_mm_store_ss((float *)vecc, xmm2);
++		_mm_storeh_pi((__m64 *)(vecc + 1), xmm2);
++#else
+ 	vecc[0] = veca[0] + scale * vecb[0];
+ 	vecc[1] = veca[1] + scale * vecb[1];
+ 	vecc[2] = veca[2] + scale * vecb[2];
++#endif
+ }
+ 
+ /**
+@@ -1633,7 +1733,19 @@ void _VectorMA(const vec3_t veca, float scale, const vec3_t vecb, vec3_t vecc)
+  */
+ vec_t _DotProduct(const vec3_t v1, const vec3_t v2)
+ {
++#ifdef SSE2
++	__m128 xmm0, xmm1, xmm2, xmm3;
++		xmm0 = _mm_loadh_pi(_mm_load_ss(&v1[0]), (const __m64 *)(&v1[1]));
++		xmm3 = _mm_loadh_pi(_mm_load_ss(&v2[0]), (const __m64 *)(&v2[1]));
++		xmm0 = _mm_mul_ps(xmm0, xmm3);
++		xmm1 = _mm_movehdup_ps(xmm0);
++		xmm2 = _mm_add_ps(xmm0, xmm1);
++		xmm1 = _mm_movehl_ps(xmm1, xmm2);
++		xmm2 = _mm_add_ss(xmm2, xmm1);
++		_mm_store_ss(&v1, xmm2);
++#else
+ 	return v1[0] * v2[0] + v1[1] * v2[1] + v1[2] * v2[2];
++#endif
+ }
+ 
+ /**
+@@ -1644,9 +1756,18 @@ vec_t _DotProduct(const vec3_t v1, const vec3_t v2)
+  */
+ void _VectorSubtract(const vec3_t veca, const vec3_t vecb, vec3_t out)
+ {
++#ifdef SSE2
++	__m128 xmm1, xmm3;
++		xmm1 = _mm_loadh_pi(_mm_load_ss((const float *)veca), (const __m64 *)(veca + 1));
++		xmm3 = _mm_loadh_pi(_mm_load_ss((const float *)vecb), (const __m64 *)(vecb + 1));
++		xmm1 = _mm_sub_ps(xmm1, xmm3);
++		_mm_store_ss(&out[0], xmm1);
++		_mm_storeh_pi((__m64 *)(&out[1]), xmm1);
++#else
+ 	out[0] = veca[0] - vecb[0];
+ 	out[1] = veca[1] - vecb[1];
+ 	out[2] = veca[2] - vecb[2];
++#endif
+ }
+ 
+ /**
+@@ -1657,9 +1778,18 @@ void _VectorSubtract(const vec3_t veca, const vec3_t vecb, vec3_t out)
+  */
+ void _VectorAdd(const vec3_t veca, const vec3_t vecb, vec3_t out)
+ {
++#ifdef SSE2
++	__m128 xmm1, xmm3;
++		xmm1 = _mm_loadh_pi(_mm_load_ss((const float *)veca), (const __m64 *)(veca + 1));
++		xmm3 = _mm_loadh_pi(_mm_load_ss((const float *)vecb), (const __m64 *)(vecb + 1));
++		xmm1 = _mm_add_ps(xmm1, xmm3);
++		_mm_store_ss((float *)out, xmm1);
++		_mm_storeh_pi((__m64 *)(out + 1), xmm1);
++#else
+ 	out[0] = veca[0] + vecb[0];
+ 	out[1] = veca[1] + vecb[1];
+ 	out[2] = veca[2] + vecb[2];
++#endif
+ }
+ 
+ /**
+@@ -1669,9 +1799,16 @@ void _VectorAdd(const vec3_t veca, const vec3_t vecb, vec3_t out)
+  */
+ void _VectorCopy(const vec3_t in, vec3_t out)
+ {
++#ifdef SSE2
++	__m128 xmm0;
++		xmm0 = _mm_loadh_pi(_mm_load_ss((const float *)in), (const __m64 *)(in + 1));
++		_mm_store_ss((float *)out, xmm0);
++		_mm_storeh_pi((__m64 *)(out + 1), xmm0);
++#else
+ 	out[0] = in[0];
+ 	out[1] = in[1];
+ 	out[2] = in[2];
++#endif
+ }
+ 
+ /**
+@@ -1682,9 +1819,17 @@ void _VectorCopy(const vec3_t in, vec3_t out)
+  */
+ void _VectorScale(const vec3_t in, vec_t scale, vec3_t out)
+ {
++#ifdef SSE2
++	__m128 xmm3;
++		xmm3 = _mm_loadh_pi(_mm_load_ss((const float *)in), (const __m64 *)(in + 1));
++		xmm3 = _mm_mul_ps(xmm3, _mm_set_ps1(scale));
++		_mm_store_ss((float *)out, xmm3);
++		_mm_storeh_pi((__m64 *)(out + 1), xmm3);
++#else
+ 	out[0] = in[0] * scale;
+ 	out[1] = in[1] * scale;
+ 	out[2] = in[2] * scale;
++#endif
+ }
+ 
+ /**
+@@ -1695,9 +1840,23 @@ void _VectorScale(const vec3_t in, vec_t scale, vec3_t out)
+  */
+ void vec3_cross(const vec3_t v1, const vec3_t v2, vec3_t cross)
+ {
++#ifdef SSE2
++	__m128 xmm1, xmm2, xmm4;
++		xmm1 = _mm_loadh_pi(_mm_load_ss(&v1[2]), (const __m64 *)(&v1[0]));
++		xmm2 = _mm_loadh_pi(_mm_load_ss(&v2[0]), (const __m64 *)(&v2[1]));
++		xmm4 = xmm2;
++		xmm2 = _mm_mul_ps(xmm2, xmm1);
++		xmm4 = _mm_shuffle_ps(xmm4, xmm4, 0b00110110);
++		xmm4 = _mm_mul_ps(xmm4, xmm1);
++		xmm2 = _mm_shuffle_ps(xmm2, xmm2, 0b10000111);
++		xmm2 = _mm_sub_ps(xmm2, xmm4);
++		_mm_store_ss(&cross[0], xmm2);
++		_mm_storeh_pi((__m64 *)(&cross[1]), xmm2);
++#else
+ 	cross[0] = v1[1] * v2[2] - v1[2] * v2[1];
+ 	cross[1] = v1[2] * v2[0] - v1[0] * v2[2];
+ 	cross[2] = v1[0] * v2[1] - v1[1] * v2[0];
++#endif
+ }
+ 
+ /**
+@@ -1754,9 +1913,17 @@ vec_t vec3_distance_squared(const vec3_t p1, const vec3_t p2)
+  */
+ void vec3_inv(vec3_t v)
+ {
++#ifdef SSE2
++	__m128 xmm0, xmm1;
++		xmm1 = _mm_loadh_pi(_mm_load_ss(&v[0]), (const __m64 *)(&v[1]));
++		xmm0 = _mm_sub_ps(_mm_setzero_ps(), xmm1);
++		_mm_store_ss(&v[0], xmm0);
++		_mm_storeh_pi((__m64 *)(&v[1]), xmm0);
++#else
+ 	v[0] = -v[0];
+ 	v[1] = -v[1];
+ 	v[2] = -v[2];
++#endif
+ }
+ 
+ /*
+@@ -1801,6 +1968,45 @@ int PlaneTypeForNormal (vec3_t normal) {
+  */
+ void _MatrixMultiply(float in1[3][3], float in2[3][3], float out[3][3])
+ {
++#ifdef SSE2
++	__m128 xmm0, xmm1, xmm2, xmm3, xmm4, xmm5, xmm6, xmm7;
++		xmm1 = _mm_loadu_ps((&in2[0][0]));
++		xmm3 = _mm_loadu_ps((&in2[1][0]));
++		xmm5 = _mm_loadu_ps((&in2[1][2]));
++		xmm5 = _mm_shuffle_ps(xmm5, xmm5, 0b00111001);
++		xmm7 = _mm_loadu_ps((&in1[0][0]));
++		xmm0 = _mm_shuffle_ps(xmm7, xmm7, 0);
++		xmm2 = _mm_shuffle_ps(xmm7, xmm7, 0b01010101);
++		xmm4 = _mm_shuffle_ps(xmm7, xmm7, 0b10101010);
++		xmm0 = _mm_mul_ps(xmm0, xmm1);
++		xmm2 = _mm_mul_ps(xmm2, xmm3);
++		xmm4 = _mm_mul_ps(xmm4, xmm5);
++		xmm0 = _mm_add_ps(xmm0, xmm2);
++		xmm0 = _mm_add_ps(xmm0, xmm4);
++		_mm_storeu_ps((float *)(&out[0][0]), xmm0);
++		xmm7 = _mm_loadu_ps((&in1[1][0]));
++		xmm0 = _mm_shuffle_ps(xmm7, xmm7, 0);
++		xmm2 = _mm_shuffle_ps(xmm7, xmm7, 0b01010101);
++		xmm4 = _mm_shuffle_ps(xmm7, xmm7, 0b10101010);
++		xmm0 = _mm_mul_ps(xmm0, xmm1);
++		xmm2 = _mm_mul_ps(xmm2, xmm3);
++		xmm4 = _mm_mul_ps(xmm4, xmm5);
++		xmm0 = _mm_add_ps(xmm0, xmm2);
++		xmm6 = _mm_add_ps(xmm0, xmm4);
++		_mm_storeu_ps((float *)(&out[1][0]), xmm6);
++		xmm7 = _mm_loadu_ps((&in1[1][2]));
++		xmm0 = _mm_shuffle_ps(xmm7, xmm7, 0b01010101);
++		xmm2 = _mm_shuffle_ps(xmm7, xmm7, 0b10101010);
++		xmm4 = _mm_shuffle_ps(xmm7, xmm7, 0b11111111);
++		xmm0 = _mm_mul_ps(xmm0, xmm1);
++		xmm2 = _mm_mul_ps(xmm2, xmm3);
++		xmm4 = _mm_mul_ps(xmm4, xmm5);
++		xmm0 = _mm_add_ps(xmm0, xmm2);
++		xmm0 = _mm_add_ps(xmm0, xmm4);
++		xmm6 = _mm_shuffle_ps(xmm6, xmm0, 0b00001010);
++		xmm6 = _mm_shuffle_ps(xmm6, xmm0, 0b10011100);
++		_mm_storeu_ps((float *)(&out[1][2]), xmm6);
++#else
+ 	out[0][0] = in1[0][0] * in2[0][0] + in1[0][1] * in2[1][0] + in1[0][2] * in2[2][0];
+ 	out[0][1] = in1[0][0] * in2[0][1] + in1[0][1] * in2[1][1] + in1[0][2] * in2[2][1];
+ 	out[0][2] = in1[0][0] * in2[0][2] + in1[0][1] * in2[1][2] + in1[0][2] * in2[2][2];
+@@ -1810,6 +2016,7 @@ void _MatrixMultiply(float in1[3][3], float in2[3][3], float out[3][3])
+ 	out[2][0] = in1[2][0] * in2[0][0] + in1[2][1] * in2[1][0] + in1[2][2] * in2[2][0];
+ 	out[2][1] = in1[2][0] * in2[0][1] + in1[2][1] * in2[1][1] + in1[2][2] * in2[2][1];
+ 	out[2][2] = in1[2][0] * in2[0][2] + in1[2][1] * in2[1][2] + in1[2][2] * in2[2][2];
++#endif
+ }
+ 
+ /**
+@@ -1829,6 +2036,17 @@ void mat3_transpose(vec3_t matrix[3], vec3_t transpose[3])
+ 			transpose[i][j] = matrix[j][i];
+ 		}
+ 	}
++#elif defined SSE2
++	__m128 xmm0, xmm1, xmm3, xmm4, xmm5;
++		xmm0 = _mm_loadu_ps(&matrix[0][0]);
++		xmm1 = _mm_loadu_ps(&matrix[1][1]);
++		xmm3 = _mm_shuffle_ps(xmm0, xmm1, 0b10100100);
++		xmm4 = _mm_shuffle_ps(xmm0, xmm3, 0b01111100);
++		_mm_storeu_ps(&transpose[0][0], xmm4);
++		xmm3 = _mm_shuffle_ps(xmm0, xmm1, 0b01011010);
++		xmm5 = _mm_shuffle_ps(xmm1, xmm3, 0b11011100);
++		_mm_storeu_ps(&transpose[1][1], xmm5);
++		_mm_store_ss(&transpose[2][2], _mm_load_ss(&matrix[2][2]));
+ #else
+ 	transpose[0][0] = matrix[0][0];
+ 	transpose[0][1] = matrix[1][0];
+@@ -2608,6 +2826,11 @@ void mat4_copy(const mat4_t in, mat4_t out)
+ 		: "a" (out), "d" (in)
+ 		: "memory"
+ 	);
++#elif defined SSE2
++	_mm_storeu_ps(&out[0], _mm_loadu_ps(&in[0]));
++	_mm_storeu_ps(&out[4], _mm_loadu_ps(&in[4]));
++	_mm_storeu_ps(&out[8], _mm_loadu_ps(&in[8]));
++	_mm_storeu_ps(&out[12], _mm_loadu_ps(&in[12]));
+ #else
+ 	out[0] = in[0];       out[4] = in[4];       out[8] = in[8];       out[12] = in[12];
+ 	out[1] = in[1];       out[5] = in[5];       out[9] = in[9];       out[13] = in[13];
+@@ -2670,6 +2893,25 @@ void mat4_transform_vec4(const mat4_t m, const vec4_t in, vec4_t out)
+ 	_t0 = _mm_add_ps(_t0, _t1);
+ 
+ 	_mm_storeu_ps(out, _t0);
++#elif defined SSE2
++	__m128 xmm0, xmm1, xmm2, xmm3, xmm4, xmm5, xmm6, xmm7;
++		xmm7 = _mm_loadu_ps((const float *)in);
++		xmm0 = _mm_loadu_ps((const float *)m);
++		xmm1 = _mm_loadu_ps((const float *)(m + 4));
++		xmm2 = _mm_loadu_ps((const float *)(m + 8));
++		xmm3 = _mm_loadu_ps((const float *)(m + 12));
++		xmm4 = _mm_shuffle_ps(xmm7, xmm7, 0b00000000);
++		xmm5 = _mm_shuffle_ps(xmm7, xmm7, 0b01010101);
++		xmm6 = _mm_shuffle_ps(xmm7, xmm7, 0b10101010);
++		xmm7 = _mm_shuffle_ps(xmm7, xmm7, 0b11111111);
++		xmm0 = _mm_mul_ps(xmm0, xmm4);
++		xmm1 = _mm_mul_ps(xmm1, xmm5);
++		xmm2 = _mm_mul_ps(xmm2, xmm6);
++		xmm3 = _mm_mul_ps(xmm3, xmm7);
++		xmm1 = _mm_add_ps(xmm1, xmm0);
++		xmm3 = _mm_add_ps(xmm3, xmm2);
++		xmm3 = _mm_add_ps(xmm3, xmm1);
++		_mm_storeu_ps(out, xmm3);
+ #else
+ 	out[0] = m[0] * in[0] + m[4] * in[1] + m[8] * in[2] + m[12] * in[3];
+ 	out[1] = m[1] * in[0] + m[5] * in[1] + m[9] * in[2] + m[13] * in[3];
+@@ -2687,10 +2929,17 @@ void mat4_transform_vec4(const mat4_t m, const vec4_t in, vec4_t out)
+  */
+ void mat4_reset_translate(mat4_t m, vec_t x, vec_t y, vec_t z)
+ {
++#ifdef SSE2
++	_mm_storeu_ps(&m[0], _mm_set_ps(0.0f, 0.0f, 0.0f, 1.0f));
++	_mm_storeu_ps(&m[4], _mm_set_ps(0.0f, 0.0f, 1.0f, 0.0f));
++	_mm_storeu_ps(&m[8], _mm_set_ps(0.0f, 1.0f, 0.0f, 0.0f));
++	_mm_storeu_ps(&m[12], _mm_set_ps(1.0f, z, y, x));
++#else
+ 	m[0] = 1;      m[4] = 0;      m[8] = 0;      m[12] = x;
+ 	m[1] = 0;      m[5] = 1;      m[9] = 0;      m[13] = y;
+ 	m[2] = 0;      m[6] = 0;      m[10] = 1;      m[14] = z;
+ 	m[3] = 0;      m[7] = 0;      m[11] = 0;      m[15] = 1;
++#endif
+ }
+ 
+ /**
+@@ -2712,10 +2961,17 @@ void mat4_reset_translate_vec3(mat4_t m, vec3_t position)
+  */
+ void mat4_reset_scale(mat4_t m, vec_t x, vec_t y, vec_t z)
+ {
++#ifdef SSE2
++	_mm_storeu_ps(&m[0], _mm_set_ps(0.0f, 0.0f, 0.0f, x));
++	_mm_storeu_ps(&m[4], _mm_set_ps(0.0f, 0.0f, y, 0.0f));
++	_mm_storeu_ps(&m[8], _mm_set_ps(0.0f, z, 0.0f, 0.0f));
++	_mm_storeu_ps(&m[12], _mm_set_ps(1.0f, 0.0f, 0.0f, 0.0f));
++#else
+ 	m[0] = x;      m[4] = 0;      m[8] = 0;      m[12] = 0;
+ 	m[1] = 0;      m[5] = y;      m[9] = 0;      m[13] = 0;
+ 	m[2] = 0;      m[6] = 0;      m[10] = z;      m[14] = 0;
+ 	m[3] = 0;      m[7] = 0;      m[11] = 0;      m[15] = 1;
++#endif
+ }
+ 
+ /**
+@@ -2757,6 +3013,64 @@ void mat4_mult(const mat4_t a, const mat4_t b, mat4_t out)
+ 		_mm_storeu_ps(&out[i * 4], _t3);
+ 	}
+ 
++#elif defined SSE2
++	__m128 xmm0, xmm1, xmm2, xmm3, xmm4, xmm5, xmm6, xmm7;
++		xmm4 = _mm_loadu_ps(&a[0]);
++		xmm5 = _mm_loadu_ps(&a[4]);
++		xmm6 = _mm_loadu_ps(&a[8]);
++		xmm7 = _mm_loadu_ps(&a[12]);
++		xmm0 = _mm_loadu_ps(&b[0]);
++		xmm3 = _mm_shuffle_ps(xmm0, xmm0, 0b11111111);
++		xmm2 = _mm_shuffle_ps(xmm0, xmm0, 0b10101010);
++		xmm1 = _mm_shuffle_ps(xmm0, xmm0, 0b01010101);
++		xmm0 = _mm_shuffle_ps(xmm0, xmm0, 0b00000000);
++		xmm3 = _mm_mul_ps(xmm3, xmm7);
++		xmm2 = _mm_mul_ps(xmm2, xmm6);
++		xmm1 = _mm_mul_ps(xmm1, xmm5);
++		xmm0 = _mm_mul_ps(xmm0, xmm4);
++		xmm3 = _mm_add_ps(xmm3, xmm2);
++		xmm0 = _mm_add_ps(xmm0, xmm1);
++		xmm0 = _mm_add_ps(xmm0, xmm3);
++		_mm_storeu_ps(&out[0], xmm0);
++		xmm0 = _mm_loadu_ps(&b[4]);
++		xmm3 = _mm_shuffle_ps(xmm0, xmm0, 0b11111111);
++		xmm2 = _mm_shuffle_ps(xmm0, xmm0, 0b10101010);
++		xmm1 = _mm_shuffle_ps(xmm0, xmm0, 0b01010101);
++		xmm0 = _mm_shuffle_ps(xmm0, xmm0, 0b00000000);
++		xmm3 = _mm_mul_ps(xmm3, xmm7);
++		xmm2 = _mm_mul_ps(xmm2, xmm6);
++		xmm1 = _mm_mul_ps(xmm1, xmm5);
++		xmm0 = _mm_mul_ps(xmm0, xmm4);
++		xmm3 = _mm_add_ps(xmm3, xmm2);
++		xmm0 = _mm_add_ps(xmm0, xmm1);
++		xmm0 = _mm_add_ps(xmm0, xmm3);
++		_mm_storeu_ps(&out[4], xmm0);
++		xmm0 = _mm_loadu_ps(&b[8]);
++		xmm3 = _mm_shuffle_ps(xmm0, xmm0, 0b11111111);
++		xmm2 = _mm_shuffle_ps(xmm0, xmm0, 0b10101010);
++		xmm1 = _mm_shuffle_ps(xmm0, xmm0, 0b01010101);
++		xmm0 = _mm_shuffle_ps(xmm0, xmm0, 0b00000000);
++		xmm3 = _mm_mul_ps(xmm3, xmm7);
++		xmm2 = _mm_mul_ps(xmm2, xmm6);
++		xmm1 = _mm_mul_ps(xmm1, xmm5);
++		xmm0 = _mm_mul_ps(xmm0, xmm4);
++		xmm3 = _mm_add_ps(xmm3, xmm2);
++		xmm0 = _mm_add_ps(xmm0, xmm1);
++		xmm0 = _mm_add_ps(xmm0, xmm3);
++		_mm_storeu_ps(&out[8], xmm0);
++		xmm0 = _mm_loadu_ps(&b[12]);
++		xmm3 = _mm_shuffle_ps(xmm0, xmm0, 0b11111111);
++		xmm2 = _mm_shuffle_ps(xmm0, xmm0, 0b10101010);
++		xmm1 = _mm_shuffle_ps(xmm0, xmm0, 0b01010101);
++		xmm0 = _mm_shuffle_ps(xmm0, xmm0, 0b00000000);
++		xmm3 = _mm_mul_ps(xmm3, xmm7);
++		xmm2 = _mm_mul_ps(xmm2, xmm6);
++		xmm1 = _mm_mul_ps(xmm1, xmm5);
++		xmm0 = _mm_mul_ps(xmm0, xmm4);
++		xmm3 = _mm_add_ps(xmm3, xmm2);
++		xmm0 = _mm_add_ps(xmm0, xmm1);
++		xmm0 = _mm_add_ps(xmm0, xmm3);
++		_mm_storeu_ps(&out[12], xmm0);
+ #else
+ 	out[0] = b[0] * a[0] + b[1] * a[4] + b[2] * a[8] + b[3] * a[12];
+ 	out[1] = b[0] * a[1] + b[1] * a[5] + b[2] * a[9] + b[3] * a[13];
+@@ -2799,10 +3113,17 @@ void mat4_mult_self(mat4_t m, const mat4_t m2)
+  */
+ void mat4_ident(mat4_t m)
+ {
++#ifdef SSE2
++	_mm_storeu_ps(&m[0], _mm_set_ps(0.0f, 0.0f, 0.0f, 1.0f));
++	_mm_storeu_ps(&m[4], _mm_set_ps(0.0f, 0.0f, 1.0f, 0.0f));
++	_mm_storeu_ps(&m[8], _mm_set_ps(0.0f, 1.0f, 0.0f, 0.0f));
++	_mm_storeu_ps(&m[12], _mm_set_ps(1.0f, 0.0f, 0.0f, 0.0f));
++#else
+ 	m[0] = 1;      m[4] = 0;      m[8] = 0;      m[12] = 0;
+ 	m[1] = 0;      m[5] = 1;      m[9] = 0;      m[13] = 0;
+ 	m[2] = 0;      m[6] = 0;      m[10] = 1;      m[14] = 0;
+ 	m[3] = 0;      m[7] = 0;      m[11] = 0;      m[15] = 1;
++#endif
+ }
+ 
+ /**
+@@ -2813,9 +3134,30 @@ void mat4_ident(mat4_t m)
+  */
+ void mat4_transform_vec3(const mat4_t m, const vec3_t in, vec3_t out)
+ {
++#ifdef SSE2
++	__m128 xmm0, xmm1, xmm2, xmm3, xmm4, xmm5, xmm6;
++		xmm1 = _mm_loadh_pi(_mm_load_ss((const float *)in), (const __m64 *)(in + 1));
++		xmm2 = _mm_shuffle_ps(xmm1, xmm1, 0b11111111);
++		xmm0 = _mm_shuffle_ps(xmm1, xmm1, 0b00000000);
++		xmm1 = _mm_shuffle_ps(xmm1, xmm1, 0b10101010);
++		xmm3 = _mm_loadu_ps((const float *)m);
++		xmm4 = _mm_loadu_ps((const float *)(m + 4));
++		xmm5 = _mm_loadu_ps((const float *)(m + 8));
++		xmm6 = _mm_loadu_ps((const float *)(m + 12));
++		xmm0 = _mm_mul_ps(xmm0, xmm3);
++		xmm1 = _mm_mul_ps(xmm1, xmm4);
++		xmm2 = _mm_mul_ps(xmm2, xmm5);
++		xmm0 = _mm_add_ps(xmm0, xmm1);
++		xmm0 = _mm_add_ps(xmm0, xmm2);
++		xmm0 = _mm_add_ps(xmm0, xmm6);
++		xmm0 = _mm_shuffle_ps(xmm0, xmm0, 0b10010100);
++		_mm_store_ss((float *)out, xmm0);
++		_mm_storeh_pi((__m64 *)(out + 1), xmm0);
++#else
+ 	out[0] = m[0] * in[0] + m[4] * in[1] + m[8] * in[2] + m[12];
+ 	out[1] = m[1] * in[0] + m[5] * in[1] + m[9] * in[2] + m[13];
+ 	out[2] = m[2] * in[0] + m[6] * in[1] + m[10] * in[2] + m[14];
++#endif
+ }
+ 
+ /**
+@@ -2857,6 +3199,24 @@ void mat4_transpose(const mat4_t in, mat4_t out)
+ 		: "a" (out)
+ 		: "memory"
+ 	);
++#elif defined SSE2
++	__m128 xmm0, xmm1, xmm2, xmm3, xmm4, xmm5, xmm6, xmm7;
++		xmm0 = _mm_loadu_ps(&in[0]);
++		xmm1 = _mm_loadu_ps(&in[4]);
++		xmm2 = _mm_loadu_ps(&in[8]);
++		xmm3 = _mm_loadu_ps(&in[12]);
++		xmm4 = _mm_shuffle_ps(xmm1, xmm0, 0b11101110);
++		xmm5 = _mm_shuffle_ps(xmm3, xmm2, 0b11101011);
++		xmm6 = _mm_shuffle_ps(xmm5, xmm4, 0b11011100);
++		_mm_storeu_ps((float *)&out[0], xmm6);
++		xmm7 = _mm_shuffle_ps(xmm5, xmm4, 0b10001001);
++		_mm_storeu_ps((float *)&out[4], xmm7);
++		xmm4 = _mm_shuffle_ps(xmm1, xmm0, 0b01000100);
++		xmm5 = _mm_shuffle_ps(xmm3, xmm2, 0b01000001);
++		xmm6 = _mm_shuffle_ps(xmm5, xmm4, 0b11011100);
++		_mm_storeu_ps((float *)&out[8], xmm6);
++		xmm7 = _mm_shuffle_ps(xmm5, xmm4, 0b10001001);
++		_mm_storeu_ps((float *)&out[12], xmm7);
+ #else
+ 	out[0]  = in[0];       out[1] = in[4];       out[2] = in[8];       out[3] = in[12];
+ 	out[4]  = in[1];       out[5] = in[5];       out[6] = in[9];       out[7] = in[13];
+@@ -2872,6 +3232,28 @@ void mat4_transpose(const mat4_t in, mat4_t out)
+  */
+ void mat4_from_quat(mat4_t m, const quat_t q)
+ {
++#ifdef SSE2
++	vec4_t q2, qz2, qq2, qy2;
++		float xx2;
++		__m128 xmm0, xmm1, xmm2, xmm3, xmm4;
++		xmm0 = _mm_loadu_ps(&q[0]);
++		xmm1 = _mm_add_ps(xmm0, xmm0);
++		xmm2 = _mm_shuffle_ps(xmm1, xmm1, 0b01010101);
++		xmm2 = _mm_mul_ps(xmm2, xmm0);
++		xmm3 = _mm_shuffle_ps(xmm1, xmm1, 0b10101010);
++		xmm3 = _mm_mul_ps(xmm3, xmm0);
++		xmm4 = _mm_shuffle_ps(xmm1, xmm1, 0b11111111);
++		xmm4 = _mm_mul_ps(xmm4, xmm1);
++		_mm_storeu_ps((float *)&q2, xmm1);
++		_mm_storeu_ps((float *)&qy2, xmm2);
++		_mm_storeu_ps((float *)&qz2, xmm3);
++		_mm_storeu_ps((float *)&qq2, xmm4);
++		xx2 = q[0] * q2[0];
++		_mm_storeu_ps(&m[0], _mm_set_ps(0.0f, qz2[0] - qq2[1], qy2[0] + qq2[2], -qy2[1] - qz2[2] + 1.0f));
++		_mm_storeu_ps(&m[4], _mm_set_ps(0.0f, qz2[1] + qq2[0], -xx2 - qz2[2] + 1.0f, qy2[0] - qq2[2]));
++		_mm_storeu_ps(&m[8], _mm_set_ps(0.0f, -xx2 - qy2[1] + 1.0f, qz2[1] - qq2[0], qz2[0] + qq2[1]));
++		_mm_storeu_ps(&m[12], _mm_set_ps(1.0f, 0.0f, 0.0f, 0.0f));
++#else
+ #if 1
+ 	/*
+ 	From Quaternion to Matrix and Back
+@@ -2968,6 +3350,7 @@ void mat4_from_quat(mat4_t m, const quat_t q)
+ 	m[3]  = m[7] = m[11] = m[12] = m[13] = m[14] = 0;
+ 	m[15] = 1;
+ #endif
++#endif
+ }
+ 
+ /**
+@@ -2979,10 +3362,17 @@ void mat4_from_quat(mat4_t m, const quat_t q)
+  */
+ void MatrixFromVectorsFLU(mat4_t m, const vec3_t forward, const vec3_t left, const vec3_t up)
+ {
++#ifdef SSE2
++	_mm_storeu_ps(&m[0], _mm_set_ps(0.0f, forward[2], forward[1], forward[0]));
++	_mm_storeu_ps(&m[4], _mm_set_ps(0.0f, left[2], left[1], left[0]));
++	_mm_storeu_ps(&m[8], _mm_set_ps(0.0f, up[2], up[1], up[0]));
++	_mm_storeu_ps(&m[12], _mm_set_ps(1.0f, 0.0f, 0.0f, 0.0f));
++#else
+ 	m[0] = forward[0];     m[4] = left[0];        m[8] = up[0];  m[12] = 0;
+ 	m[1] = forward[1];     m[5] = left[1];        m[9] = up[1];  m[13] = 0;
+ 	m[2] = forward[2];     m[6] = left[2];        m[10] = up[2];  m[14] = 0;
+ 	m[3] = 0;              m[7] = 0;              m[11] = 0;      m[15] = 1;
++#endif
+ }
+ 
+ /**
+@@ -2995,10 +3385,17 @@ void MatrixFromVectorsFLU(mat4_t m, const vec3_t forward, const vec3_t left, con
+  */
+ void MatrixSetupTransformFromVectorsFLU(mat4_t m, const vec3_t forward, const vec3_t left, const vec3_t up, const vec3_t origin)
+ {
++#ifdef SSE2
++	_mm_storeu_ps(&m[0], _mm_set_ps(0.0f, forward[2], forward[1], forward[0]));
++	_mm_storeu_ps(&m[4], _mm_set_ps(0.0f, left[2], left[1], left[0]));
++	_mm_storeu_ps(&m[8], _mm_set_ps(0.0f, up[2], up[1], up[0]));
++	_mm_storeu_ps(&m[12], _mm_set_ps(1.0f, origin[2], origin[1], origin[0]));
++#else
+ 	m[0] = forward[0];     m[4] = left[0];        m[8] = up[0];  m[12] = origin[0];
+ 	m[1] = forward[1];     m[5] = left[1];        m[9] = up[1];  m[13] = origin[1];
+ 	m[2] = forward[2];     m[6] = left[2];        m[10] = up[2];  m[14] = origin[2];
+ 	m[3] = 0;              m[7] = 0;              m[11] = 0;      m[15] = 1;
++#endif
+ }
+ 
+ /**
+@@ -3010,6 +3407,16 @@ void MatrixSetupTransformFromVectorsFLU(mat4_t m, const vec3_t forward, const ve
+  */
+ void MatrixToVectorsFLU(const mat4_t m, vec3_t forward, vec3_t left, vec3_t up)
+ {
++#ifdef SSE2
++	if (forward)
++		VectorCopy(&m[0], forward);
++
++	if (left)
++		VectorCopy(&m[4], left);
++
++	if (up)
++		VectorCopy(&m[8], up);
++#else
+ 	if (forward)
+ 	{
+ 		forward[0] = m[0];      // cp*cy;
+@@ -3030,6 +3437,7 @@ void MatrixToVectorsFLU(const mat4_t m, vec3_t forward, vec3_t left, vec3_t up)
+ 		up[1] = m[9];   // cr*sp*sy+-sr*cy;
+ 		up[2] = m[10];  // cr*cp;
+ 	}
++#endif
+ }
+ 
+ /**
+@@ -3059,6 +3467,19 @@ void MatrixSetupTransformFromVectorsFRU(mat4_t m, const vec3_t forward, const ve
+  */
+ void MatrixToVectorsFRU(const mat4_t m, vec3_t forward, vec3_t right, vec3_t up)
+ {
++#ifdef SSE2
++	if (forward)
++		VectorCopy(&m[0], forward);
++
++	if (right)
++	{
++		VectorCopy(&m[4], right);
++		VectorInverse(right);
++	}
++
++	if (up)
++		VectorCopy(&m[8], up);
++#else
+ 	if (forward)
+ 	{
+ 		forward[0] = m[0];
+@@ -3079,6 +3500,7 @@ void MatrixToVectorsFRU(const mat4_t m, vec3_t forward, vec3_t right, vec3_t up)
+ 		up[1] = m[9];
+ 		up[2] = m[10];
+ 	}
++#endif
+ }
+ 
+ /**
+diff --git a/src/qcommon/q_math.h b/src/qcommon/q_math.h
+index 84166836d..9f1cfeaf4 100644
+--- a/src/qcommon/q_math.h
++++ b/src/qcommon/q_math.h
+@@ -293,17 +293,116 @@ void ByteToDir(int b, vec3_t dir);
+ /* Vector 2                                                             */
+ /************************************************************************/
+ #define vec2_set(v, x, y)         ((v)[0] = (x), (v)[1] = (y))
++
++#ifdef SSE2
++#define vec2_copy(a,b) \
++{ \
++	__m128 xmm0; \
++	_mm_storeh_pi((__m64 *)b, _mm_loadh_pi(xmm0, (const __m64 *)a)); \
++}
++#define vec2_sub(a, b, c) \
++{ \
++	__m128 xmm0, xmm1; \
++	xmm0 = _mm_loadl_pi(xmm0, (const __m64 *)&a[0]); \
++	xmm1 = _mm_loadl_pi(xmm1, (const __m64 *)&b[0]); \
++	xmm0 = _mm_sub_ps(xmm0, xmm1); \
++	_mm_storel_pi((__m64 *)&c[0], xmm0); \
++}
++#else
+ #define vec2_copy(a, b)            ((b)[0] = (a)[0], (b)[1] = (a)[1])
+-// Subtract
+ #define vec2_sub(a, b, c)      ((c)[0] = (a)[0] - (b)[0], (c)[1] = (a)[1] - (b)[1])
++#endif
+ #define vec2_snap(v) { v[0] = ((int)(v[0])); v[1] = ((int)(v[1])); }
+ 
+ /************************************************************************/
+ /* Vector 3                                                             */
+ /************************************************************************/
++#ifdef SSE2
++#define vec3_clear(a) \
++{ \
++	__m128 xmm0; \
++	xmm0 = _mm_setzero_ps(); \
++	_mm_store_ss(&a[0], xmm0); \
++	_mm_storeh_pi((__m64 *)(&a[1]), xmm0); \
++}
++#define vec3_set(v, x, y, z) \
++{ \
++	__m128 xmm0; \
++	xmm0 = _mm_set_ps(z, y, 0.0f, x); \
++	_mm_store_ss(&v[0], xmm0); \
++	_mm_storeh_pi((__m64 *)(&v[1]), xmm0); \
++}
++#define vec3_negate(a, b) \
++{ \
++	__m128 xmm0, xmm1; \
++	xmm1 = _mm_loadh_pi(_mm_load_ss(&a[0]), (const __m64 *)(&a[1])); \
++	xmm0 = _mm_sub_ps(_mm_setzero_ps(), xmm1); \
++	_mm_store_ss(&b[0], xmm0); \
++	_mm_storeh_pi((__m64 *)(&b[1]), xmm0); \
++}
++#define vec3_dot(x, y)         ((x)[0] * (y)[0] + (x)[1] * (y)[1] + (x)[2] * (y)[2])
++//#define vec3_dot(x, y) \ This one nees fixing
++//{ \
++//	__m128 xmm0, xmm1, xmm2, xmm3; \
++//	__m128i xmm4; \
++//	xmm0 = _mm_loadh_pi(_mm_load_ss(&x[0]), (const __m64 *)(&x[1])); \
++//	xmm3 = _mm_loadh_pi(_mm_load_ss(&y[0]), (const __m64 *)(&y[1])); \
++//	xmm0 = _mm_mul_ps(xmm0, xmm3); \
++//	xmm1 = _mm_movehdup_ps(xmm0); \
++//	xmm2 = _mm_add_ps(xmm0, xmm1); \
++//	xmm1 = _mm_movehl_ps(xmm1, xmm2); \
++//	xmm2 = _mm_add_ss(xmm2, xmm1); \
++//	/*_mm_store_ss(&x, xmm2); \*/
++//	__m128i vi = _mm_cvttps_epi32(xmm2);
++//	_mm_storeu_si128((__m128i *)x, vi);
++//}
++#define vec3_sub(a, b, c) \
++{ \
++	__m128 xmm1, xmm3; \
++	xmm1 = _mm_loadh_pi(_mm_load_ss((const float *)a), (const __m64 *)(a+1)); \
++	xmm3 = _mm_loadh_pi(_mm_load_ss((const float *)b), (const __m64 *)(b+1)); \
++	xmm1 = _mm_sub_ps(xmm1, xmm3); \
++	_mm_store_ss(&c[0], xmm1); \
++	_mm_storeh_pi((__m64 *)(&c[1]), xmm1); \
++}
++#define vec3_add(a, b, c) \
++{ \
++	__m128 xmm1, xmm3; \
++	xmm1 = _mm_loadh_pi(_mm_load_ss((const float *)a), (const __m64 *)(a+1)); \
++	xmm3 = _mm_loadh_pi(_mm_load_ss((const float *)b), (const __m64 *)(b+1)); \
++	xmm1 = _mm_add_ps(xmm1, xmm3); \
++	_mm_store_ss((float *)c, xmm1); \
++	_mm_storeh_pi((__m64 *)(c+1), xmm1); \
++}
++#define vec3_copy(a, b) \
++{ \
++	__m128 xmm0; \
++	xmm0 = _mm_loadh_pi(_mm_load_ss((const float *)a), (const __m64 *)(a+1)); \
++	_mm_store_ss((float *)b, xmm0); \
++	_mm_storeh_pi((__m64 *)(b+1), xmm0); \
++}
++#define vec3_scale(v, s, o) \
++{ \
++	__m128 xmm3; \
++	xmm3 = _mm_loadh_pi(_mm_load_ss((const float *)v), (const __m64 *)(v+1)); \
++	xmm3 = _mm_mul_ps(xmm3, _mm_set_ps1(s)); \
++	_mm_store_ss((float *)o, xmm3); \
++	_mm_storeh_pi((__m64 *)(o+1), xmm3); \
++}
++#define vec3_ma(v, s, b, o) \
++{ \
++	__m128 xmm2, xmm3; \
++	xmm3 = _mm_loadh_pi( _mm_load_ss((const float *)b), (const __m64 *)(b+1)); \
++	xmm3 = _mm_mul_ps(xmm3, _mm_set_ps1(s)); \
++	xmm2 = _mm_loadh_pi(_mm_load_ss((const float *)v), (const __m64 *)(v+1)); \
++	xmm2 = _mm_add_ps(xmm2, xmm3); \
++	_mm_store_ss((float *)o, xmm2); \
++	_mm_storeh_pi((__m64 *)(o+1), xmm2); \
++}
++#else
+ #define vec3_clear(a)              ((a)[0] = (a)[1] = (a)[2] = 0)
+-#define vec3_negate(a, b)           ((b)[0] = -(a)[0], (b)[1] = -(a)[1], (b)[2] = -(a)[2])
+ #define vec3_set(v, x, y, z)       ((v)[0] = (x), (v)[1] = (y), (v)[2] = (z))
++#define vec3_negate(a, b)           ((b)[0] = -(a)[0], (b)[1] = -(a)[1], (b)[2] = -(a)[2])
+ //dot product
+ #define vec3_dot(x, y)         ((x)[0] * (y)[0] + (x)[1] * (y)[1] + (x)[2] * (y)[2])
+ #define vec3_sub(a, b, c)   ((c)[0] = (a)[0] - (b)[0], (c)[1] = (a)[1] - (b)[1], (c)[2] = (a)[2] - (b)[2])
+@@ -312,6 +411,7 @@ void ByteToDir(int b, vec3_t dir);
+ #define vec3_scale(v, s, o)    ((o)[0] = (v)[0] * (s), (o)[1] = (v)[1] * (s), (o)[2] = (v)[2] * (s))
+ // Vector multiply & add
+ #define vec3_ma(v, s, b, o)    ((o)[0] = (v)[0] + (b)[0] * (s), (o)[1] = (v)[1] + (b)[1] * (s), (o)[2] = (v)[2] + (b)[2] * (s))
++#endif
+ #define vec3_snap(v) { v[0] = ((int)(v[0])); v[1] = ((int)(v[1])); v[2] = ((int)(v[2])); }
+ void vec3_to_angles(const vec3_t value1, vec3_t angles);
+ void vec3_cross(const vec3_t v1, const vec3_t v2, vec3_t cross);
+@@ -340,26 +440,73 @@ void vec3_per(const vec3_t src, vec3_t dst);
+ 
+ static inline void VectorMin(const vec3_t a, const vec3_t b, vec3_t out)
+ {
++#ifdef SSE2
++	__m128 xmm0, xmm1, xmm2;
++		xmm1 = _mm_loadh_pi(_mm_load_ss(&a[0]), (const __m64 *)(&a[1]));
++		xmm2 = _mm_loadh_pi(_mm_load_ss(&b[0]), (const __m64 *)(&b[1]));
++		xmm0 = _mm_min_ps(xmm1, xmm2);
++		_mm_store_ss(&out[0], xmm0);
++		_mm_storeh_pi((__m64 *)(&out[1]), xmm0);
++#else
+ 	out[0] = a[0] < b[0] ? a[0] : b[0];
+ 	out[1] = a[1] < b[1] ? a[1] : b[1];
+ 	out[2] = a[2] < b[2] ? a[2] : b[2];
++#endif
+ }
+ 
+ static inline void VectorMax(const vec3_t a, const vec3_t b, vec3_t out)
+ {
++#ifdef SSE2
++	__m128 xmm0, xmm1, xmm2;
++		xmm1 = _mm_loadh_pi(_mm_load_ss(&a[0]), (const __m64 *)(&a[1]));
++		xmm2 = _mm_loadh_pi(_mm_load_ss(&b[0]), (const __m64 *)(&b[1]));
++		xmm0 = _mm_max_ps(xmm1, xmm2);
++		_mm_store_ss(&out[0], xmm0);
++		_mm_storeh_pi((__m64 *)(&out[1]), xmm0);
++#else
+ 	out[0] = a[0] > b[0] ? a[0] : b[0];
+ 	out[1] = a[1] > b[1] ? a[1] : b[1];
+ 	out[2] = a[2] > b[2] ? a[2] : b[2];
++#endif
+ }
+ 
+ /************************************************************************/
+ /* Vector 4                                                             */
+ /************************************************************************/
++#ifdef SSE2
++#define vec4_set(o, x, y, z, w) \
++{ \
++	_mm_storeu_ps(o, _mm_set_ps(w, z, y, x)); \
++}
++#define vec4_copy(a, b) \
++{ \
++	_mm_storeu_ps((float *)b, _mm_loadu_ps((const float *)a)); \
++}
++#define vec4_scale(v, s, o) \
++{ \
++	__m128 xmm0; \
++	xmm0 = _mm_mul_ps(_mm_loadu_ps((const float *)v), _mm_set_ps1(s)); \
++	_mm_storeu_ps((float *)o, xmm0); \
++}
++#else
+ #define vec4_set(v, x, y, z, n)   ((v)[0] = (x), (v)[1] = (y), (v)[2] = (z), (v)[3] = (n))
+ #define vec4_copy(a, b)            ((b)[0] = (a)[0], (b)[1] = (a)[1], (b)[2] = (a)[2], (b)[3] = (a)[3])
+ #define vec4_scale(v, s, o)    ((o)[0] = (v)[0] * (s), (o)[1] = (v)[1] * (s), (o)[2] = (v)[2] * (s), (o)[3] = (v)[3] * (s))
++#endif
+ // Vector multiply & add
++#ifdef SSE2
++#define vec4_ma(v, s, b, o) \
++{ \
++	__m128 xmm2, xmm3; \
++	xmm3 = _mm_loadu_ps((const float *)b); \
++	xmm2 = _mm_loadu_ps((const float *)v); \
++	xmm3 = _mm_mul_ps(xmm3, _mm_set_ps1(s)); \
++	xmm2 = _mm_add_ps(xmm2, xmm3); \
++	_mm_storeu_ps((float *)o, xmm2); \
++}
++#else
+ #define vec4_ma(v, s, b, o)       ((o)[0] = (v)[0] + (b)[0] * (s), (o)[1] = (v)[1] + (b)[1] * (s), (o)[2] = (v)[2] + (b)[2] * (s), (o)[3] = (v)[3] + (b)[3] * (s))
++#endif
+ #define vec4_average(v, b, s, o)  ((o)[0] = ((v)[0] * (1 - (s))) + ((b)[0] * (s)), (o)[1] = ((v)[1] * (1 - (s))) + ((b)[1] * (s)), (o)[2] = ((v)[2] * (1 - (s))) + ((b)[2] * (s)), (o)[3] = ((v)[3] * (1 - (s))) + ((b)[3] * (s)))
+ #define vec4_snap(v) { v[0] = ((int)(v[0])); v[1] = ((int)(v[1])); v[2] = ((int)(v[2])); v[3] = ((int)(v[3])); }
+ 
+@@ -403,6 +550,48 @@ void angles_vectors(const vec3_t angles, vec3_t forward, vec3_t right, vec3_t up
+ /************************************************************************/
+ /* Matrix3x3                                                            */
+ /************************************************************************/
++#ifdef SSE2
++#define mat3_mult(in1, in2, o) \
++{ \
++	__m128 xmm0, xmm1, xmm2, xmm3, xmm4, xmm5, xmm6, xmm7; \
++	xmm1 = _mm_loadu_ps((&in2[0][0])); \
++	xmm3 = _mm_loadu_ps((&in2[1][0])); \
++	xmm5 = _mm_loadu_ps((&in2[1][2])); \
++	xmm5 = _mm_shuffle_ps(xmm5, xmm5, 0b00111001); \
++	xmm7 = _mm_loadu_ps((&in1[0][0])); \
++	xmm0 = _mm_shuffle_ps(xmm7, xmm7, 0); \
++	xmm2 = _mm_shuffle_ps(xmm7, xmm7, 0b01010101); \
++	xmm4 = _mm_shuffle_ps(xmm7, xmm7, 0b10101010); \
++	xmm0 = _mm_mul_ps(xmm0, xmm1); \
++	xmm2 = _mm_mul_ps(xmm2, xmm3); \
++	xmm4 = _mm_mul_ps(xmm4, xmm5); \
++	xmm0 = _mm_add_ps(xmm0, xmm2); \
++	xmm0 = _mm_add_ps(xmm0, xmm4); \
++	_mm_storeu_ps((float *)(&o[0][0]), xmm0); \
++	xmm7 = _mm_loadu_ps((&in1[1][0])); \
++	xmm0 = _mm_shuffle_ps(xmm7, xmm7, 0); \
++	xmm2 = _mm_shuffle_ps(xmm7, xmm7, 0b01010101); \
++	xmm4 = _mm_shuffle_ps(xmm7, xmm7, 0b10101010); \
++	xmm0 = _mm_mul_ps(xmm0, xmm1); \
++	xmm2 = _mm_mul_ps(xmm2, xmm3); \
++	xmm4 = _mm_mul_ps(xmm4, xmm5); \
++	xmm0 = _mm_add_ps(xmm0, xmm2); \
++	xmm6 = _mm_add_ps(xmm0, xmm4); \
++	_mm_storeu_ps((float *)(&o[1][0]), xmm6); \
++	xmm7 = _mm_loadu_ps((&in1[1][2])); \
++	xmm0 = _mm_shuffle_ps(xmm7, xmm7, 0b01010101); \
++	xmm2 = _mm_shuffle_ps(xmm7, xmm7, 0b10101010); \
++	xmm4 = _mm_shuffle_ps(xmm7, xmm7, 0b11111111); \
++	xmm0 = _mm_mul_ps(xmm0, xmm1); \
++	xmm2 = _mm_mul_ps(xmm2, xmm3); \
++	xmm4 = _mm_mul_ps(xmm4, xmm5); \
++	xmm0 = _mm_add_ps(xmm0, xmm2); \
++	xmm0 = _mm_add_ps(xmm0, xmm4); \
++	xmm6 = _mm_shuffle_ps(xmm6, xmm0, 0b00001010); \
++	xmm6 = _mm_shuffle_ps(xmm6, xmm0, 0b10011100); \
++	_mm_storeu_ps((float *)(&o[1][2]), xmm6); \
++}
++#else
+ #define mat3_mult(in1, in2, o)                                                                          \
+ 	o[0][0] = (in1)[0][0] * (in2)[0][0] + (in1)[0][1] * (in2)[1][0] + (in1)[0][2] * (in2)[2][0],        \
+ 	o[0][1] = (in1)[0][0] * (in2)[0][1] + (in1)[0][1] * (in2)[1][1] + (in1)[0][2] * (in2)[2][1],        \
+@@ -413,6 +602,7 @@ void angles_vectors(const vec3_t angles, vec3_t forward, vec3_t right, vec3_t up
+ 	o[2][0] = (in1)[2][0] * (in2)[0][0] + (in1)[2][1] * (in2)[1][0] + (in1)[2][2] * (in2)[2][0],        \
+ 	o[2][1] = (in1)[2][0] * (in2)[0][1] + (in1)[2][1] * (in2)[1][1] + (in1)[2][2] * (in2)[2][1],        \
+ 	o[2][2] = (in1)[2][0] * (in2)[0][2] + (in1)[2][1] * (in2)[1][2] + (in1)[2][2] * (in2)[2][2]
++#endif
+ 
+ void mat3_transpose(vec3_t matrix[3], vec3_t transpose[3]);
+ 
+@@ -442,9 +632,24 @@ qboolean mat4_inverse(const mat4_t in, mat4_t out);
+ qboolean mat4_inverse_self(mat4_t matrix);
+ void mat4_from_angles(mat4_t m, vec_t pitch, vec_t yaw, vec_t roll);
+ 
++#ifdef SSE2
++#define SinCos(rad, s, c) { \
++	double radD = rad, SD, CD; \
++	__asm { \
++		__asm fld QWORD PTR[radD] \
++		__asm fsincos \
++		__asm fstp QWORD PTR[CD] \
++		__asm fstp QWORD PTR[SD] \
++		__asm fwait \
++	} \
++	s = (float)SD; \
++	c = (float)CD; \
++}
++#else
+ #define SinCos(rad, s, c)     \
+ 	(s) = sin((rad));     \
+ 	(c) = cos((rad));
++#endif
+ 
+ #ifdef __LCC__
+ #ifdef VectorCopy
+diff --git a/src/qcommon/q_shared.h b/src/qcommon/q_shared.h
+index f01906d15..0108250a2 100644
+--- a/src/qcommon/q_shared.h
++++ b/src/qcommon/q_shared.h
+@@ -194,6 +194,11 @@ int Q_vsnprintf(char *str, size_t size, const char *format, va_list args);
+ #undef QDECL
+ #define QDECL   __cdecl
+ 
++#if (defined(_MSC_VER) && defined(_M_IX86_FP) && _M_IX86_FP == 2)
++#include "pmmintrin.h"
++#define SSE2
++#endif
++
+ /**
+  * @def CPUSTRING
+  * @brief Platform and architecture string incorporated into the version string.

@@ -340,11 +340,13 @@ static qboolean Sys_StringToSockaddr(const char *s, struct sockaddr *sadr, int s
 	retval = getaddrinfo(s, NULL, hintsp, &res);
 
 
+#ifdef _WIN32
 	// FIXME: When there is favorite server stored in db and loaded at start (in case Windows)
 	// It is complaining about WSAStartup not being initialized or issues with calling it.
 	// Error Code 10093
 	if (!winsockInitialized)
 		return;
+#endif
 
 	if (!retval)
 	{
