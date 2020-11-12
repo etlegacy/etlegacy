@@ -339,6 +339,13 @@ static qboolean Sys_StringToSockaddr(const char *s, struct sockaddr *sadr, int s
 
 	retval = getaddrinfo(s, NULL, hintsp, &res);
 
+
+	// FIXME: When there is favorite server stored in db and loaded at start (in case Windows)
+	// It is complaining about WSAStartup not being initialized or issues with calling it.
+	// Error Code 10093
+	if (!winsockInitialized)
+		return;
+
 	if (!retval)
 	{
 		if (family == AF_UNSPEC)
@@ -2025,7 +2032,7 @@ void NET_Init(void)
 	int r;
 
 	r = WSAStartup(MAKEWORD(1, 1), &winsockdata);
-	if (r)
+	if (r != 0)
 	{
 		Com_Printf(S_COLOR_YELLOW "WARNING: NET_Init: Winsock initialization failed, returned %d\n", r);
 		return;
