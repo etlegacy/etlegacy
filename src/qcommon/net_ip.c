@@ -345,7 +345,7 @@ static qboolean Sys_StringToSockaddr(const char *s, struct sockaddr *sadr, int s
 	// It is complaining about WSAStartup not being initialized or issues with calling it.
 	// Error Code 10093
 	if (!winsockInitialized)
-		return;
+		return qfalse;
 #endif
 
 	if (!retval)
