@@ -515,6 +515,12 @@ static void G_AdjustClientPositions(gentity_t *skip, int time, qboolean backward
 	{
 		list = g_entities + level.sortedClients[i];
 
+		// don't adjust spec
+		if (list->client->sess.sessionTeam != TEAM_AXIS && list->client->sess.sessionTeam != TEAM_ALLIES)
+		{
+			continue;
+		}
+
 		// dont adjust the firing client entity
 		if (list == skip)
 		{
