@@ -2018,36 +2018,37 @@ static void CG_PlayerSprites(centity_t *cent)
 	int          numIcons = 0;
 	int          height   = 56;
 	clientInfo_t *ci      = &cgs.clientinfo[cent->currentState.clientNum];
-	qboolean     sameTeam;
-	trace_t      trace;
-
-	// don't check our own head
-	if (cent->currentState.clientNum != cg.snap->ps.clientNum)
-	{
-		vec3_t end;
-
-		VectorMA(cent->pe.headRefEnt.origin, 6.0f, cent->pe.headRefEnt.axis[2], end);
-
-		CG_Trace(&trace, cg.refdef.vieworg, NULL, NULL, end, cg.snap->ps.clientNum, CONTENTS_SOLID | CONTENTS_BODY | CONTENTS_ITEM);
-
-		// don't draw player icons if we can't see their head
-		if (trace.fraction != 1.f && trace.entityNum != cent->currentState.number)
-		{
-			return;
-		}
-	}
+	qboolean     sameTeam = (cg.snap->ps.persistant[PERS_TEAM] == ci->team);
 
 	if ((cent->currentState.powerups & (1 << PW_REDFLAG)) || (cent->currentState.powerups & (1 << PW_BLUEFLAG)))
 	{
-		CG_PlayerFloatSprite(cent, cgs.media.objectiveShader, height, numIcons++, NULL);
+		// check if we see the enemy head, otherwise don't display the objectif icon
+		// when hiding behind decor
+		if (!sameTeam)
+		{
+			trace_t trace;
+			vec3_t  end;
+
+			VectorMA(cent->pe.headRefEnt.origin, 6.0f, cent->pe.headRefEnt.axis[2], end);
+
+			CG_Trace(&trace, cg.refdef.vieworg, NULL, NULL, end, cg.snap->ps.clientNum, CONTENTS_SOLID | CONTENTS_BODY | CONTENTS_ITEM);
+
+			// don't draw player icons if we can't see their head
+			if (trace.fraction == 1.f || trace.entityNum == cent->currentState.number)
+			{
+				CG_PlayerFloatSprite(cent, cgs.media.objectiveShader, height, numIcons++, NULL);
+			}
+		}
+		else
+		{
+			CG_PlayerFloatSprite(cent, cgs.media.objectiveShader, height, numIcons++, NULL);
+		}
 	}
 
 	if (cent->currentState.eFlags & EF_DEAD)
 	{
 		height = 8;
 	}
-
-	sameTeam = ((cg.snap->ps.persistant[PERS_TEAM] == ci->team) ? qtrue : qfalse);
 
 	if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR || (cg.snap->ps.pm_flags & PMF_FOLLOW && cgs.clientinfo[cg.clientNum].shoutcaster))
 	{
