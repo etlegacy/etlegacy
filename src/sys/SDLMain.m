@@ -29,6 +29,9 @@ extern OSErr CPSSetFrontProcess( CPSProcessSerNum *psn );
 
 #endif
 
+void *Com_Allocate(size_t size);
+void Com_Dealloc(void *ptr);
+
 static int  gArgc;
 static char **gArgv;
 static BOOL gFinderLaunch;
