@@ -398,7 +398,7 @@ generate_configuration() {
 	BUNDLED_PNG=${BUNDLED_PNG:-1}
 	BUNDLED_SQLITE3=${BUNDLED_SQLITE3:-1}
 
-	if [ "${PLATFORMSYS}" != "Mac OS X" ]; then
+	if [ "${PLATFORMSYS}" != "Mac OS X" ] && [ "${PLATFORMSYS}" != "macOS" ]; then
 		BUNDLED_CURL=${BUNDLED_CURL:-1}
 		BUNDLED_OPENSSL=${BUNDLED_OPENSSL:-0}
 		BUNDLED_OPENAL=${BUNDLED_OPENAL:-1}
@@ -434,7 +434,7 @@ generate_configuration() {
 	INSTALL_GEOIP=${INSTALL_GEOIP:-1}
 	INSTALL_WOLFADMIN=${INSTALL_WOLFADMIN:-1}
 
-	if [ "${PLATFORMSYS}" != "Mac OS X" ]; then
+	if [ "${PLATFORMSYS}" != "Mac OS X" ] && [ "${PLATFORMSYS}" != "macOS" ]; then
 		FEATURE_OMNIBOT=${FEATURE_OMNIBOT:-1}
 		INSTALL_OMNIBOT=${INSTALL_OMNIBOT:-1}
 	else
@@ -496,7 +496,7 @@ generate_configuration() {
 	"
 
 	if [ "${DEV}" != 1 ]; then
-	if [ "${PLATFORMSYS}" == "Mac OS X" ]; then
+	if [ "${PLATFORMSYS}" == "Mac OS X" ] || [ "${PLATFORMSYS}" == "macOS" ]; then
 		PREFIX=${INSTALL_PREFIX}
 		_CFGSTRING="${_CFGSTRING}
 		-DCMAKE_INSTALL_PREFIX=${PREFIX}
@@ -692,7 +692,7 @@ run_package() {
 	# calling cpack directly we are not checking the build output anymore
 	check_exit "cpack"
 	# TODO: detect if osx and generate a package and a dmg installer
-	if [ "${PLATFORMSYS}" == "Mac OS X" ]; then
+	if [ "${PLATFORMSYS}" == "Mac OS X" ] || [ "${PLATFORMSYS}" == "macOS" ]; then
 		create_osx_dmg
 	fi
 }
@@ -736,7 +736,7 @@ run_project() {
 	fi
 	mkdir -p ${PROJECTDIR}
 	cd ${PROJECTDIR}
-	if [ "${PLATFORMSYS}" == "Mac OS X" ]; then
+	if [ "${PLATFORMSYS}" == "Mac OS X" ] || [ "${PLATFORMSYS}" == "macOS" ]; then
 		cmake -G 'Xcode' ${_CFGSTRING} ..
 	else
 		cmake ${_CFGSTRING} ..
