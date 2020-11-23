@@ -1116,7 +1116,7 @@ void CG_MapVoteList_Draw(panel_button_t *button)
 			fileHandle_t f;
 			vec4_t       clr = { 1.f, 1.f, 1.f, 0.3f };
 
-			CG_FillRect(button->rect.x, y - 10, 250, 12, clr);
+			CG_FillRect(button->rect.x, y - 10, 245, 12, clr);
 
 			// display the photograph image only..
 			// ..and make it fade in nicely.
