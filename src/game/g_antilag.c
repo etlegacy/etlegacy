@@ -430,8 +430,7 @@ static qboolean G_AdjustSingleClientPosition(gentity_t *ent, int time)
 		ent->timeShiftTime = ent->client->clientMarkers[j].time;
 	}
 
-	// done externaly
-	//trap_LinkEntity(ent);
+	trap_LinkEntity(ent);
 
 	return qtrue;
 }
@@ -490,8 +489,7 @@ qboolean G_ReAdjustSingleClientPosition(gentity_t *ent)
 		// time stamp for BuildHead/Leg
 		ent->timeShiftTime = 0;
 
-		// done externaly
-		//trap_LinkEntity(ent);
+		trap_LinkEntity(ent);
 
 		return qtrue;
 	}
@@ -509,17 +507,10 @@ static void G_AdjustClientPositions(gentity_t *skip, int time, qboolean backward
 {
 	int       i;
 	gentity_t *list;
-	qboolean  adjusted;
 
 	for (i = 0; i < level.numConnectedClients; i++, list++)
 	{
 		list = g_entities + level.sortedClients[i];
-
-		// don't adjust spec
-		if (list->client->sess.sessionTeam != TEAM_AXIS && list->client->sess.sessionTeam != TEAM_ALLIES)
-		{
-			continue;
-		}
 
 		// dont adjust the firing client entity
 		if (list == skip)
@@ -529,32 +520,11 @@ static void G_AdjustClientPositions(gentity_t *skip, int time, qboolean backward
 
 		if (backwards)
 		{
-			adjusted = G_AdjustSingleClientPosition(list, time);
-
-			// use higher hitbox for syringe only on wounded or prone player
-			if (skip->s.weapon == WP_MEDIC_SYRINGE && (list->takedamage ||              // take damage = EF_DEAD but still can take shot
-			                                           list->s.eFlags & (EF_PRONE)))    // prone for more easy shoot
-			{
-				list->r.maxs[2] = CROUCH_BODYHEIGHT;
-				adjusted        = qtrue;
-			}
+			G_AdjustSingleClientPosition(list, time);
 		}
 		else
 		{
-			adjusted = G_ReAdjustSingleClientPosition(list);
-
-			// restore hitbox height
-			if (!adjusted && skip->s.weapon == WP_MEDIC_SYRINGE && (list->takedamage ||              // take damage = EF_DEAD but still can take shot
-			                                                        list->s.eFlags & (EF_PRONE))) // prone for more easy shoot
-			{
-				list->r.maxs[2] = ClientHitboxMaxZ(list);
-				adjusted        = qtrue;
-			}
-		}
-
-		if (adjusted)
-		{
-			trap_LinkEntity(list);
+			G_ReAdjustSingleClientPosition(list);
 		}
 	}
 }
@@ -779,9 +749,43 @@ void G_Trace(gentity_t *ent, trace_t *results, const vec3_t start, const vec3_t 
 	vec3_t dir;
 	int    res;
 
+	float maxsBackup[MAX_CLIENTS] ;
+	int   i, clientNum;
+
 	G_AttachBodyParts(ent);
 
+	// use higher hitbox for syringe only
+	if (ent->s.weapon == WP_MEDIC_SYRINGE)
+	{
+		for (i = 0; i < level.numConnectedClients; ++i)
+		{
+			clientNum = level.sortedClients[i];
+
+			if (clientNum == ent->s.clientNum)
+			{
+				continue;
+			}
+
+			if (g_entities[clientNum].r.linked && g_entities[clientNum].s.eFlags & (EF_DEAD | EF_PRONE))
+			{
+				maxsBackup[clientNum]           = g_entities[clientNum].r.maxs[2];
+				g_entities[clientNum].r.maxs[2] = CROUCH_BODYHEIGHT;
+				trap_LinkEntity(&g_entities[clientNum]);
+			}
+		}
+	}
+
 	trap_Trace(results, start, mins, maxs, end, passEntityNum, contentmask);
+
+	for (i = 0; i < level.numConnectedClients; ++i)
+	{
+		clientNum = level.sortedClients[i];
+		if (g_entities[clientNum].r.linked && g_entities[clientNum].s.eFlags & (EF_DEAD | EF_PRONE))
+		{
+			g_entities[clientNum].r.maxs[2] = maxsBackup[clientNum];
+			trap_LinkEntity(&g_entities[clientNum]);
+		}
+	}
 
 	res = G_SwitchBodyPartEntity(&g_entities[results->entityNum]);
 	POSITION_READJUST
