@@ -2573,6 +2573,8 @@ void G_InitGame(int levelTime, int randomSeed, int restart, int etLegacyServer, 
 
 			trap_SendConsoleCommand(EXEC_APPEND, mapConfig);
 		}
+
+		level.mapVotePlayersCount = CG_ParseMapVotePlayersCountConfig();
 	}
 
 	// Clear out spawn target config strings
@@ -3395,6 +3397,33 @@ void BeginIntermission(void)
 					bspptrTmp += strlen(bspptrTmp) + 1;
 					continue;
 				}
+
+				// check maps depending of players count
+				if (level.mapVotePlayersCount)
+				{
+					int k;
+					int isValid = qtrue;
+
+					for (k = 0; mapVotePlayersCount[k].map[0]; k++)
+					{
+						if (!Q_stricmp(mapVotePlayersCount[k].map, str))
+						{
+							if ((mapVotePlayersCount[k].min >= 0 && mapVotePlayersCount[k].min > level.numConnectedClients) ||
+							    (mapVotePlayersCount[k].max >= 0 && mapVotePlayersCount[k].max < level.numConnectedClients))
+							{
+								isValid = qfalse;
+							}
+							break;
+						}
+					}
+
+					if (!isValid)
+					{
+						bspptrTmp += strlen(bspptrTmp) + 1;
+						continue;
+					}
+				}
+
 				Q_strncpyz(shuffledNames[j], str, sizeof(shuffledNames[j]));
 				shuffled[j] = qfalse;
 				++j;

@@ -1298,6 +1298,7 @@ typedef struct level_locals_s
 	mapVoteInfo_t mapvoteinfo[MAX_VOTE_MAPS];
 	int mapVoteNumMaps;
 	int mapsSinceLastXPReset;
+	qboolean mapVotePlayersCount;
 
 	// sv_cvars
 	svCvar_t svCvars[MAX_SVCVARS];
@@ -1480,6 +1481,24 @@ team_t G_GetTeamFromEntity(gentity_t *ent);
 
 const char *G_StringContains(const char *str1, const char *str2, int casesensitive);
 qboolean G_MatchString(const char *filter, const char *name, int casesensitive);
+
+qboolean CG_ParseMapVotePlayersCountConfig(void);
+
+/**
+ * @struct mapVotePlayersCount_s
+ * @typedef mapVotePlayersCount_t
+ * @brief
+ */
+typedef struct mapVotePlayersCount_s
+{
+	char map[MAX_QPATH];
+	int min;
+	int max;
+
+} mapVotePlayersCount_t;
+
+#define MAX_MAPVOTEPLAYERCOUNT 256
+extern mapVotePlayersCount_t mapVotePlayersCount[MAX_MAPVOTEPLAYERCOUNT];
 
 /**
  * @struct grefEntity_t
@@ -2793,7 +2812,7 @@ void G_RailBox(vec_t *origin, vec_t *mins, vec_t *maxs, vec_t *color, int index)
 typedef struct weapFireTable_t
 {
 	weapon_t weapon;
-	gentity_t * (*fire)(gentity_t * ent); ///< -
+	gentity_t *(*fire)(gentity_t * ent);  ///< -
 	void (*think)(gentity_t *ent);        ///< -
 	void (*free)(gentity_t *ent);         ///< -
 	int eType;                            ///< -

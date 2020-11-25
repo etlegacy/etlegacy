@@ -2063,3 +2063,80 @@ qboolean G_MatchString(const char *filter, const char *name, int casesensitive)
 	}
 	return qtrue;
 }
+
+mapVotePlayersCount_t mapVotePlayersCount[MAX_MAPVOTEPLAYERCOUNT];
+
+/**
+ * @brief CG_ParsePatriclesConfig
+ */
+qboolean CG_ParseMapVotePlayersCountConfig(void)
+{
+	static const char *filename = "mapvoteplayerscount.cfg";
+	char              *text_p;
+	int               len;
+	int               i;
+	char              *token;
+	char              text[2048];
+	fileHandle_t      f;
+
+	// load the file
+	len = trap_FS_FOpenFile("mapvoteplayerscount.cfg", &f, FS_READ);
+
+	if (len <= 0)
+	{
+		G_Printf("G_ParseMapVotePlayersCountConfig: File not found: %s\n", filename);
+		return qfalse;
+	}
+
+	if (len >= sizeof(text) - 1)
+	{
+		G_Printf("G_ParseMapVotePlayersCountConfig: File %s too long\n", filename);
+		trap_FS_FCloseFile(f);
+		return qfalse;
+	}
+
+	trap_FS_Read(text, len, f);
+	text[len] = 0;
+	trap_FS_FCloseFile(f);
+
+	// parse the text
+	text_p = text;
+
+	COM_BeginParseSession("G_ParseMapVotePlayersCountConfig");
+
+	Com_Memset(mapVotePlayersCount, 0, sizeof(mapVotePlayersCount));
+
+	for (i = 0 ; i < MAX_MAPVOTEPLAYERCOUNT; i++)
+	{
+		// map name
+		token = COM_Parse(&text_p);
+		if (!token[0])
+		{
+			break;
+		}
+		Q_strncpyz(mapVotePlayersCount[i].map, token, MAX_QPATH);
+
+		// map min players
+		token = COM_Parse(&text_p);
+		if (!token[0])
+		{
+			break;
+		}
+		mapVotePlayersCount[i].min = atoi(token);
+
+		// map max players
+		token = COM_Parse(&text_p);
+		if (!token[0])
+		{
+			break;
+		}
+		mapVotePlayersCount[i].max = atoi(token);
+	}
+
+	if (i == MAX_MAPVOTEPLAYERCOUNT)
+	{
+		G_Printf("G_ParseMapVotePlayersCountConfig: Too much map registered in file %s, max is %d\n", filename, MAX_MAPVOTEPLAYERCOUNT);
+	}
+
+	return qtrue;
+}
