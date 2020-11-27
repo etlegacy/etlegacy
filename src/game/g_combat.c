@@ -941,13 +941,13 @@ qboolean IsHeadShot(gentity_t *targ, vec3_t dir, vec3_t point, meansOfDeath_t mo
 		return qfalse;
 	}
 
-    // no hs for corpses, we don't want to gib too fast in case of multi HS in row.
-    // it could broke revive mechanics as the player have less chance to be revived
-    // after getting wounded. So, there is not head hit box on wounded player.
-    if (targ->health <= 0)
-    {
-        return qfalse;
-    }
+	// no hs for corpses, we don't want to gib too fast in case of multi HS in row.
+	// it could broke revive mechanics as the player have less chance to be revived
+	// after getting wounded. So, there is not head hit box on wounded player.
+	if (targ->health <= 0)
+	{
+		return qfalse;
+	}
 
 	if (!GetMODTableData(mod)->isHeadshot)
 	{
@@ -978,13 +978,13 @@ qboolean IsHeadShot(gentity_t *targ, vec3_t dir, vec3_t point, meansOfDeath_t mo
 			G_RailTrail(start, end, tv(1.f, 0.f, 0.f));
 		}
 
-        if (g_antilag.integer)
-        {
-            // Why??
-            // Because we are overwriting flag for head shot registration
-            // and we don't want to see the helmet pop back after each HS
-            G_ReAdjustSingleClientPosition(targ);
-        }
+		if (g_antilag.integer)
+		{
+			// Why??
+			// Because we are overwriting flag for head shot registration
+			// and we don't want to see the helmet pop back after each HS
+			G_ReAdjustSingleClientPosition(targ);
+		}
 
 		G_FreeEntity(head);
 		return qtrue;
@@ -2086,9 +2086,18 @@ qboolean G_RadiusDamage(vec3_t origin, gentity_t *inflictor, gentity_t *attacker
 
 			if (inflictor->onobjective == ent->onobjective)
 			{
-				// blow up the other dynamite now too since they are peers
-				// set the nextthink just past us by a 1/4 of a second or so
-				ent->nextthink = level.time + 250;
+				if (g_dynamiteChaining.integer & DYNAMITECHAINING_FREE)
+				{
+					// free the other dynamite now too since they are peers
+					ent->nextthink = level.time;
+					ent->think     = G_ChainFree;
+				}
+				else
+				{
+					// blow up the other dynamite now too since they are peers
+					// set the nextthink just past us by a 1/4 of a second or so
+					ent->nextthink = level.time + 250;
+				}
 			}
 		}
 
@@ -2220,9 +2229,18 @@ qboolean etpro_RadiusDamage(vec3_t origin, gentity_t *inflictor, gentity_t *atta
 
 			if (inflictor->onobjective == ent->onobjective)
 			{
-				// blow up the other dynamite now too since they are peers
-				// set the nextthink just past us by a 1/4 of a second or so
-				ent->nextthink = level.time + 250;
+				if (g_dynamiteChaining.integer & DYNAMITECHAINING_FREE)
+				{
+					// free the other dynamite now too since they are peers
+					ent->nextthink = level.time;
+					ent->think     = G_ChainFree;
+				}
+				else
+				{
+					// blow up the other dynamite now too since they are peers
+					// set the nextthink just past us by a 1/4 of a second or so
+					ent->nextthink = level.time + 250;
+				}
 			}
 		}
 

@@ -2120,6 +2120,10 @@ extern vmCvar_t g_multiview;
 extern vmCvar_t g_stickyCharge;
 extern vmCvar_t g_xpSaver;
 
+#define DYNAMITECHAINING_EXPLOSION 0 // default, explode dynamites chaining
+#define DYNAMITECHAINING_FREE 1      // free dynamites chaining
+extern vmCvar_t g_dynamiteChaining;
+
 /**
  * @struct GeoIPTag
  * @typedef GeoIP
@@ -2641,6 +2645,7 @@ void weapon_smokeBombExplode(gentity_t *ent);
 
 void DynaSink(gentity_t *self);
 void DynaFree(gentity_t *self);
+void G_ChainFree(gentity_t *self);
 
 void G_MakeReady(gentity_t *ent);
 void G_MakeUnready(gentity_t *ent);

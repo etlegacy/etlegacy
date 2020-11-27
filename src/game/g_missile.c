@@ -1193,6 +1193,72 @@ void DynaFree(gentity_t *self)
 }
 
 /**
+ * @brief G_ChainFree
+ * @param[in] self
+ */
+void G_ChainFree(gentity_t *self)
+{
+    float     dist;
+	gentity_t *ent;
+	int       entityList[MAX_GENTITIES];
+	int       numListedEntities;
+	vec3_t    mins, maxs;
+	vec3_t    v;
+	int       i, e;
+	float     boxradius;
+
+	boxradius = M_SQRT2 * GetWeaponTableData(self->s.weapon)->splashRadius; // radius * sqrt(2) for bounding box enlargement --
+	// bounding box was checking against radius / sqrt(2) if collision is along box plane
+	for (i = 0 ; i < 3 ; i++)
+	{
+		mins[i] = self->s.origin[i] - boxradius;
+		maxs[i] = self->s.origin[i] + boxradius;
+	}
+
+	numListedEntities = trap_EntitiesInBox(mins, maxs, entityList, MAX_GENTITIES);
+    
+    for (e = 0 ; e < numListedEntities ; e++)
+	{
+		ent = &g_entities[entityList[e]];
+
+		if (ent == self)
+		{
+			continue;
+		}
+		if (!ent->takedamage && (!ent->dmgparent || !ent->dmgparent->takedamage)
+		    && !(self->methodOfDeath == MOD_DYNAMITE && ent->s.weapon == WP_DYNAMITE))
+		{
+			continue;
+		}
+
+		G_AdjustedDamageVec(ent, self->s.origin, v);
+
+		dist = VectorLength(v);
+		if (dist >= GetWeaponTableData(self->s.weapon)->splashRadius)
+		{
+			continue;
+		}
+
+		// dyno chaining
+		// only if within blast radius and both on the same objective or both or no objectives
+		if (self->methodOfDeath == MOD_DYNAMITE && ent->s.weapon == WP_DYNAMITE)
+		{
+			G_DPrintf("dyno chaining: inflictor: %p, ent: %p\n", self->onobjective, ent->onobjective);
+
+			if (self->onobjective == ent->onobjective)
+			{
+				// free the other dynamite now too since they are peers
+				ent->nextthink = level.time;
+                
+                ent->think = G_ChainFree;
+			}
+		}
+    }
+        
+    G_FreeEntity(self);
+}
+
+/**
  * @brief Remove any items that the player should no longer have, on disconnect/class change etc
  * changed to just set the parent to NULL
  * @param[in] ent

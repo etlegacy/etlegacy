@@ -364,6 +364,8 @@ vmCvar_t g_multiview; // 0 - off, other - enabled
 vmCvar_t g_stickyCharge;
 vmCvar_t g_xpSaver;
 
+vmCvar_t g_dynamiteChaining;
+
 cvarTable_t gameCvarTable[] =
 {
 	// don't override the cheat state set by the system
@@ -651,6 +653,7 @@ cvarTable_t gameCvarTable[] =
 #endif
 	{ &g_stickyCharge,                    "g_stickyCharge",                    "0",                          CVAR_ARCHIVE,                                    0, qfalse, qfalse },
 	{ &g_xpSaver,                         "g_xpSaver",                         "0",                          CVAR_ARCHIVE,                                    0, qfalse, qfalse },
+    { &g_dynamiteChaining,                "g_dynamiteChaining",                "0",                          CVAR_ARCHIVE,                                    0, qfalse, qfalse },
 };
 
 /**
