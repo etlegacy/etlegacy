@@ -590,33 +590,6 @@ static void CG_OffsetFirstPersonView(void)
 	origin = cg.refdef_current->vieworg;
 	angles = cg.refdefViewAngles;
 
-	if (CHECKBITWISE(GetWeaponTableData(cg.snap->ps.weapon)->type, WEAPON_TYPE_MG | WEAPON_TYPE_SET))
-	{
-		vec3_t forward, point;
-		float  oldZ = origin[2];
-
-		AngleVectors(cg.pmext.mountedWeaponAngles, forward, NULL, NULL);
-
-		VectorMA(origin, 31, forward, point);
-		AngleVectors(cg.refdefViewAngles, forward, NULL, NULL);
-		VectorMA(point, -32, forward, origin);
-
-		origin[2] = oldZ;
-	}
-	else if (CHECKBITWISE(GetWeaponTableData(cg.snap->ps.weapon)->type, WEAPON_TYPE_MORTAR | WEAPON_TYPE_SET))
-	{
-		vec3_t forward, point;
-		float  oldZ = origin[2];
-
-		AngleVectors(cg.pmext.mountedWeaponAngles, forward, NULL, NULL);
-
-		VectorMA(origin, 31, forward, point);
-		AngleVectors(cg.refdefViewAngles, forward, NULL, NULL);
-		VectorMA(point, -32, forward, origin);
-
-		origin[2] = oldZ;
-	}
-
 	// if dead, fix the angle and don't add any kick
 	if (!(cg.snap->ps.pm_flags & PMF_LIMBO) && cg.snap->ps.stats[STAT_HEALTH] <= 0)
 	{
