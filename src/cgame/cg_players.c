@@ -2128,6 +2128,7 @@ static void CG_PlayerSprites(centity_t *cent)
 		{
 			if (cgs.clientinfo[cent->currentState.number].disguiseClientNum > -1
 			    && CG_IsOnFireteam(cgs.clientinfo[cent->currentState.number].disguiseClientNum)
+			    && CG_IsOnSameFireteam(cgs.clientinfo[cent->currentState.number].disguiseClientNum, cg.clientNum)
 			    && cg.fireTeams->membersNumber > 1)                         // don't display FT icon with only 1 member in FT
 			{
 				CG_PlayerFloatSprite(cent, cgs.media.fireteamIcon, height, numIcons++,
