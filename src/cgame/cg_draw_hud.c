@@ -551,7 +551,7 @@ static qboolean CG_ParseHUD(int handle)
 		return CG_HUD_ParseError(handle, "unexpected token: %s", token.string);
 	}
 
-	hudStucture_t * hud = CG_getHudByNumber(temphud.hudnumber);
+	hudStucture_t *hud = CG_getHudByNumber(temphud.hudnumber);
 
 	if (!hud)
 	{
@@ -1259,7 +1259,7 @@ static void CG_DrawPowerUps(rectDef_t rect)
 		CG_DrawPic(rect.x + 9, rect.y + 9, 18, 18, cgs.media.skillPics[BG_ClassSkillForClass((cg_entities[ps->clientNum].currentState.powerups >> PW_OPS_CLASS_1) & 7)]);
 	}
 	else if ((cg.flagIndicator & (1 << PW_REDFLAG) || cg.flagIndicator & (1 << PW_BLUEFLAG)) && (!cgs.clientinfo[cg.clientNum].shoutcaster ||
-	         (cgs.clientinfo[cg.clientNum].shoutcaster && (cg.snap->ps.pm_flags & PMF_FOLLOW))))
+	                                                                                             (cgs.clientinfo[cg.clientNum].shoutcaster && (cg.snap->ps.pm_flags & PMF_FOLLOW))))
 	{
 		// draw objective info icon (if teammates or enemies are carrying one)
 		vec4_t color = { 1.f, 1.f, 1.f, 1.f };
@@ -1905,7 +1905,9 @@ static void CG_DrawNewCompass(rectDef_t location)
 				continue;
 			}
 
-			if (!cgs.clientinfo[ent->clientNum].infoValid || (cg.predictedPlayerState.persistant[PERS_TEAM] != cgs.clientinfo[ent->clientNum].team && !cgs.clientinfo[cg.clientNum].shoutcaster))
+			if (!cgs.clientinfo[ent->clientNum].infoValid || (cg.predictedPlayerState.persistant[PERS_TEAM] != cgs.clientinfo[ent->clientNum].team &&
+			                                                  !(cgs.clientinfo[ent->clientNum].powerups & (1 << PW_OPS_DISGUISED)) &&   // allow disguise enemy to be draw
+			                                                  !cgs.clientinfo[cg.clientNum].shoutcaster))
 			{
 				continue;
 			}
@@ -1924,8 +1926,8 @@ static void CG_DrawNewCompass(rectDef_t location)
 			// draw disguise or default buddy icon
 			if (!cgs.clientinfo[cg.clientNum].shoutcaster)
 			{
-				// draw overlapping no-shoot icon if disguised
-				if (cgs.clientinfo[ent->clientNum].powerups & (1 << PW_OPS_DISGUISED))
+				// draw overlapping no-shoot icon if disguised and in same team but draw disguise ennemy on compass as buddy
+				if (cgs.clientinfo[ent->clientNum].powerups & (1 << PW_OPS_DISGUISED) && cg.predictedPlayerState.persistant[PERS_TEAM] == cgs.clientinfo[ent->clientNum].team)
 				{
 					CG_DrawCompassIcon(basex, basey, basew, baseh, cg.predictedPlayerState.origin, ent->pos.trBase, cgs.media.friendShader);
 				}
@@ -2224,7 +2226,7 @@ static void CG_DrawTimersAlt(rectDef_t *respawn, rectDef_t *spawntimer, rectDef_
 	qtime_t time;
 	vec4_t  color = { 0.625f, 0.625f, 0.6f, 1.0f };
 	int     tens;
-	int     msec    = (cgs.timelimit * 60000.f) - (cg.time - cgs.levelStartTime); // 60.f * 1000.f
+	int     msec = (cgs.timelimit * 60000.f) - (cg.time - cgs.levelStartTime);    // 60.f * 1000.f
 	int     secondsThen;
 	int     seconds = msec / 1000;
 	int     mins    = seconds / 60;
