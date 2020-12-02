@@ -89,8 +89,8 @@
 #define PRONE_BODYHEIGHT_DELTA           0  ///< prone   body height -8
 
 #define PRONE_BODYHEIGHT_BBOX 12    ///< it appears that 12 is the magic number for the minimum maxs[2] that prevents player from getting stuck into the world.
-#define DEAD_BODYHEIGHT_BBOX 9      ///< was the result of DEFAULT_VIEWHEIGHT - CROUCH_VIEWHEIGHT (40 - 16) stored in crouchMaxZ
-                                    ///< 9 is the minimum max[2] that prevent issue while changing hitbox hight for syringue heal shoot
+#define DEAD_BODYHEIGHT_BBOX 12     ///< was the result of DEFAULT_VIEWHEIGHT - CROUCH_VIEWHEIGHT (40 - 16) stored in crouchMaxZ
+                                    ///< use the same magic number as prone height as minimum max[2]
 
 extern vec3_t playerlegsProneMins;
 extern vec3_t playerlegsProneMaxs;
