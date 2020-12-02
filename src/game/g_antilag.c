@@ -761,29 +761,26 @@ void G_Trace(gentity_t *ent, trace_t *results, const vec3_t start, const vec3_t 
 		{
 			clientNum = level.sortedClients[i];
 
-			if (clientNum == ent->s.clientNum)
-			{
-				continue;
-			}
-
-			if (g_entities[clientNum].r.linked && g_entities[clientNum].s.eFlags & (EF_DEAD | EF_PRONE))
+			if (g_entities[clientNum].s.eFlags & (EF_DEAD | EF_PRONE))
 			{
 				maxsBackup[clientNum]           = g_entities[clientNum].r.maxs[2];
 				g_entities[clientNum].r.maxs[2] = CROUCH_BODYHEIGHT;
-				trap_LinkEntity(&g_entities[clientNum]);
 			}
 		}
 	}
 
 	trap_Trace(results, start, mins, maxs, end, passEntityNum, contentmask);
 
-	for (i = 0; i < level.numConnectedClients; ++i)
+	// backup hitbox hight
+	if (ent->s.weapon == WP_MEDIC_SYRINGE)
 	{
-		clientNum = level.sortedClients[i];
-		if (g_entities[clientNum].r.linked && g_entities[clientNum].s.eFlags & (EF_DEAD | EF_PRONE))
+		for (i = 0; i < level.numConnectedClients; ++i)
 		{
-			g_entities[clientNum].r.maxs[2] = maxsBackup[clientNum];
-			trap_LinkEntity(&g_entities[clientNum]);
+			clientNum = level.sortedClients[i];
+			if (g_entities[clientNum].s.eFlags & (EF_DEAD | EF_PRONE))
+			{
+				g_entities[clientNum].r.maxs[2] = maxsBackup[clientNum];
+			}
 		}
 	}
 
