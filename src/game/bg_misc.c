@@ -3523,12 +3523,12 @@ const char *eventnames[EV_MAX_EVENTS] =
 	"unused event",              // EV_DEATH3,
 	"EV_OBITUARY",
 	"EV_STOPSTREAMINGSOUND",
-	"EV_POWERUP_QUAD",
-	"EV_POWERUP_BATTLESUIT",
-	"EV_POWERUP_REGEN",
+	"unused event",              // EV_POWERUP_QUAD
+	"unused event",              // EV_POWERUP_BATTLESUIT
+	"unused event",              // EV_POWERUP_REGEN
 	"EV_GIB_PLAYER",
 	"unused event",              // EV_DEBUG_LINE,
-	"EV_STOPLOOPINGSOUND",
+	"unused event",              // EV_STOPLOOPINGSOUND
 	"unused event",              // EV_TAUNT,
 	"EV_SMOKE",
 	"EV_SPARKS",

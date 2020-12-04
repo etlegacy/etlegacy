@@ -2459,10 +2459,6 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 		CG_GibPlayer(cent, cent->lerpOrigin, dir);
 	}
 	break;
-	case EV_STOPLOOPINGSOUND:
-		es->loopSound = 0;
-		break;
-
 	// particles
 	case EV_SMOKE:
 		if (cent->currentState.density == 3)

@@ -1341,12 +1341,12 @@ typedef enum
 	//EV_DEATH3,
 	EV_OBITUARY = 68,
 	EV_STOPSTREAMINGSOUND,///< swiped from sherman
-	EV_POWERUP_QUAD,
-	EV_POWERUP_BATTLESUIT,
-	EV_POWERUP_REGEN,
-	EV_GIB_PLAYER,         ///< gib a previously living player
+	//EV_POWERUP_QUAD,
+	//EV_POWERUP_BATTLESUIT,
+	//EV_POWERUP_REGEN,
+	EV_GIB_PLAYER = 73,         ///< gib a previously living player
 	//EV_DEBUG_LINE,
-	EV_STOPLOOPINGSOUND = 75, ///< unused
+	//EV_STOPLOOPINGSOUND,
 	//EV_TAUNT,
 	EV_SMOKE = 77,
 	EV_SPARKS,
