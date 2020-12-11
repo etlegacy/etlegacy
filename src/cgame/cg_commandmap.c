@@ -610,7 +610,7 @@ void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, float h,
 
 			mEnt->yaw = (int)cg.predictedPlayerState.viewangles[YAW];
 		}
-		else if ((cgs.clientinfo[cg.clientNum].team == TEAM_SPECTATOR && snap->ps.clientNum != cg.clientNum && cent-cg_entities == snap->ps.clientNum) || cgs.clientinfo[cg.clientNum].shoutcaster)
+		else if ((cgs.clientinfo[cg.clientNum].team == TEAM_SPECTATOR && snap->ps.clientNum != cg.clientNum && cent - cg_entities == snap->ps.clientNum))
 		{
 			// we are following someone, so use their info
 			if (!scissor)
@@ -626,7 +626,7 @@ void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, float h,
 
 			mEnt->yaw = (int)snap->ps.viewangles[YAW];
 		}
-		else if (cent->currentValid)
+		else if (cent->currentValid || cgs.clientinfo[cg.clientNum].shoutcaster)
 		{
 			// use more up-to-date info from pvs
 			if (!scissor)
