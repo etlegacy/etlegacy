@@ -2024,7 +2024,7 @@ static void CG_PlayerSprites(centity_t *cent)
 	{
 		// check if we see the enemy head, otherwise don't display the objectif icon
 		// when hiding behind decor
-		if (!sameTeam)
+		if (!sameTeam && cg.snap->ps.persistant[PERS_TEAM] != TEAM_SPECTATOR)
 		{
 			trace_t trace;
 			vec3_t  end;
