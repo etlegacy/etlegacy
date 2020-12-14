@@ -1655,7 +1655,7 @@ void CG_CheckForCursorHints(void)
  * @param[in] health
  * @param[in] maxHealth
  */
-static void CG_DrawCrosshairHealthBar(int position, int health, int maxHealth)
+static void CG_DrawCrosshairHealthBar(float position, int health, int maxHealth)
 {
 	float  *color;
 	vec4_t bgcolor, c;
@@ -1825,7 +1825,7 @@ static void CG_DrawCrosshairNames(void)
 {
 	float      *color;
 	float      w;
-	const char *s;
+	const char *s = NULL;
 	float      dist; // Distance to the entity under the crosshair
 	float      zChange;
 	qboolean   hitClient = qfalse;
@@ -1903,15 +1903,12 @@ static void CG_DrawCrosshairNames(void)
 		{
 			if (cg_entities[cg.crosshairClientNum].currentState.eType == ET_MOVER && cg_entities[cg.crosshairClientNum].currentState.effect1Time)
 			{
-				int tankHealth = cg_entities[cg.crosshairClientNum].currentState.dl_intensity;
-				int maxHealth  = 255;
-
 				if (cg_drawCrosshairNames.integer > 0)
 				{
 					s = Info_ValueForKey(CG_ConfigString(CS_SCRIPT_MOVER_NAMES), va("%i", cg.crosshairClientNum));
 				}
 
-				CG_DrawCrosshairHealthBar(middle, tankHealth, maxHealth);
+				CG_DrawCrosshairHealthBar(middle, cg_entities[cg.crosshairClientNum].currentState.dl_intensity, 255);
 			}
 			else if (cg_entities[cg.crosshairClientNum].currentState.eType == ET_CONSTRUCTIBLE_MARKER)
 			{
@@ -1921,7 +1918,7 @@ static void CG_DrawCrosshairNames(void)
 				}
 			}
 
-			if (*s)
+			if (s && *s)
 			{
 				w = CG_Text_Width_Ext(s, fontScale, 0, &cgs.media.limboFont2);
 				CG_Text_Paint_Ext(middle - w / 2, 182, fontScale, fontScale, color, s, 0, 0, 0, &cgs.media.limboFont2);
@@ -1941,6 +1938,15 @@ static void CG_DrawCrosshairNames(void)
 
 		if (cgs.clientinfo[cg.snap->ps.clientNum].skill[SK_SIGNALS] >= 4 && cgs.clientinfo[cg.snap->ps.clientNum].cls == PC_FIELDOPS)
 		{
+            // draw the name of the player being looked at
+            color = CG_FadeColor(cg.crosshairClientTime, 1000);
+            
+            if (!color)
+            {
+                trap_R_SetColor(NULL);
+                return;
+            }
+            
 			s = CG_TranslateString("Disguised Enemy!");
 			w = CG_Text_Width_Ext(s, fontScale, 0, &cgs.media.limboFont2);
 			CG_Text_Paint_Ext(middle - w / 2, 182, fontScale, fontScale, color, s, 0, 0, 0, &cgs.media.limboFont2);
