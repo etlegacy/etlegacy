@@ -2788,7 +2788,7 @@ static void CG_DrawWarmup(void)
 				s1 = va(CG_TranslateString("^3Config: ^7%s^7"), CG_ConfigString(CS_CONFIGNAME));
 				w  = CG_Text_Width_Ext(s1, cg_fontScaleCP.value, 0, &cgs.media.limboFont2);
 				x  = Ccg_WideX(320) - w / 2;
-				CG_Text_Paint_Ext(x, 290, cg_fontScaleCP.value, cg_fontScaleCP.value, colorWhite, s1, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+				CG_Text_Paint_Ext(x, 340, cg_fontScaleCP.value, cg_fontScaleCP.value, colorWhite, s1, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 			}
 
 			if (cgs.minclients > 0)
@@ -2802,19 +2802,37 @@ static void CG_DrawWarmup(void)
 
 			w = CG_Text_Width_Ext(s1, fontScale, 0, &cgs.media.limboFont2);
 			x = Ccg_WideX(320) - w / 2;
-			CG_Text_Paint_Ext(x, 208, fontScale, fontScale, colorWhite, s1, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+			CG_Text_Paint_Ext(x, 104, fontScale, fontScale, colorWhite, s1, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 
 			if (!cg.demoPlayback && cg.snap->ps.persistant[PERS_TEAM] != TEAM_SPECTATOR &&
 			    (!(cg.snap->ps.pm_flags & PMF_FOLLOW) || (cg.snap->ps.pm_flags & PMF_LIMBO)))
 			{
+				char str1[32];
+				int  y = 360;
+
 				if (cg.snap->ps.eFlags & EF_READY)
 				{
 					s2 = CG_TranslateString("^2Ready");
+
+					w = CG_Text_Width_Ext(s2, cg_fontScaleCP.value, 0, &cgs.media.limboFont2);
+					x = Ccg_WideX(320) - w / 2;
+					CG_Text_Paint_Ext(x, y, cg_fontScaleCP.value, cg_fontScaleCP.value, colorWhite, s2, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+
+					y += 20;
+
+					Q_strncpyz(str1, Binding_FromName("notready"), 32);
+					if (!Q_stricmp(str1, "(?" "?" "?)"))
+					{
+						s2 = CG_TranslateString("Type ^3\\notready^7 in the console to unready");
+					}
+					else
+					{
+						s2 = va(CG_TranslateString("^7Press ^3%s^7 to unready"), str1);
+						s2 = CG_TranslateString(s2);
+					}
 				}
 				else
 				{
-					char str1[32];
-
 					Q_strncpyz(str1, Binding_FromName("ready"), 32);
 					if (!Q_stricmp(str1, "(?" "?" "?)"))
 					{
@@ -2829,7 +2847,7 @@ static void CG_DrawWarmup(void)
 
 				w = CG_Text_Width_Ext(s2, cg_fontScaleCP.value, 0, &cgs.media.limboFont2);
 				x = Ccg_WideX(320) - w / 2;
-				CG_Text_Paint_Ext(x, 310, cg_fontScaleCP.value, cg_fontScaleCP.value, colorWhite, s2, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+				CG_Text_Paint_Ext(x, y, cg_fontScaleCP.value, cg_fontScaleCP.value, colorWhite, s2, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 			}
 			return;
 		}
