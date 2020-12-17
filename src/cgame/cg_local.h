@@ -3929,6 +3929,12 @@ typedef struct hudStructure_s
 	hudComponent_t reinforcement;
 	hudComponent_t spawntimer;
 	hudComponent_t localtime;
+
+	hudComponent_t votetext;
+	hudComponent_t spectatortext;
+	hudComponent_t limbotext;
+	hudComponent_t followtext;
+
 } hudStucture_t;
 
 hudStucture_t *CG_GetActiveHUD();

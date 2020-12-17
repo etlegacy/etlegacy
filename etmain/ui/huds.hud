@@ -24,5 +24,9 @@ hudDef {
 		cursorhints 296 260 48 48 0 1
 		weaponstability 50 208 10 64 0 1
 		livesleft 0 0 0 0 0 1
+		votetext 8 224 0.22 0.22 1 1
+		spectatortext 8 188 0.22 0.22 1 1
+		limbotext 8 164 0.22 0.22 1 1
+		followtext 8 164 0.22 0.22 1 1
 	}
 }

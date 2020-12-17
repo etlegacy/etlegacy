@@ -149,6 +149,10 @@ void CG_setDefaultHudValues(hudStucture_t *hud)
 	hud->roundtimer      = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 55, SCREEN_HEIGHT - 70, 0, 0, qtrue, STYLE_NORMAL);
 	hud->spawntimer      = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 55, SCREEN_HEIGHT - 60, 0, 0, qtrue, STYLE_NORMAL);
 	hud->localtime       = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 55, SCREEN_HEIGHT - 60, 0, 0, qtrue, STYLE_NORMAL);
+	hud->votetext        = CG_getComponent(8, 224, 0.22f, 0.22f, qtrue, STYLE_NORMAL);
+	hud->spectatortext   = CG_getComponent(8, 188, 0.22f, 0.22f, qtrue, STYLE_NORMAL);
+	hud->limbotext       = CG_getComponent(8, 164, 0.22f, 0.22f, qtrue, STYLE_NORMAL);
+	hud->followtext      = CG_getComponent(8, 164, 0.22f, 0.22f, qtrue, STYLE_NORMAL);
 }
 
 /*
@@ -544,6 +548,42 @@ static qboolean CG_ParseHUD(int handle)
 			if (!CG_ParseHudComponent(handle, &temphud.localtime))
 			{
 				return CG_HUD_ParseError(handle, "expected localtime");
+			}
+			continue;
+		}
+
+		if (!Q_stricmp(token.string, "votetext"))
+		{
+			if (!CG_ParseHudComponent(handle, &temphud.votetext))
+			{
+				return CG_HUD_ParseError(handle, "expected votetext");
+			}
+			continue;
+		}
+
+		if (!Q_stricmp(token.string, "spectatortext"))
+		{
+			if (!CG_ParseHudComponent(handle, &temphud.spectatortext))
+			{
+				return CG_HUD_ParseError(handle, "expected spectatortext");
+			}
+			continue;
+		}
+
+		if (!Q_stricmp(token.string, "limbotext"))
+		{
+			if (!CG_ParseHudComponent(handle, &temphud.limbotext))
+			{
+				return CG_HUD_ParseError(handle, "expected limbotext");
+			}
+			continue;
+		}
+
+		if (!Q_stricmp(token.string, "followtext"))
+		{
+			if (!CG_ParseHudComponent(handle, &temphud.followtext))
+			{
+				return CG_HUD_ParseError(handle, "expected followtext");
 			}
 			continue;
 		}
@@ -2989,6 +3029,10 @@ void CG_Hud_Setup(void)
 	hud1.roundtimer      = CG_getComponent(100, SCREEN_HEIGHT - 12, 0, 0, qtrue, STYLE_NORMAL);
 	hud1.spawntimer      = CG_getComponent(100, SCREEN_HEIGHT - 2, 0, 0, qtrue, STYLE_NORMAL);
 	hud1.localtime       = CG_getComponent(100, SCREEN_HEIGHT - 2, 0, 0, qtrue, STYLE_NORMAL);
+	hud1.votetext        = CG_getComponent(8, 224, 0.22f, 0.22f, qtrue, STYLE_NORMAL);
+	hud1.spectatortext   = CG_getComponent(8, 188, 0.22f, 0.22f, qtrue, STYLE_NORMAL);
+	hud1.limbotext       = CG_getComponent(8, 164, 0.22f, 0.22f, qtrue, STYLE_NORMAL);
+	hud1.followtext      = CG_getComponent(8, 164, 0.22f, 0.22f, qtrue, STYLE_NORMAL);
 	CG_addHudToList(&hud1);
 
 	// Hud2
@@ -3015,6 +3059,10 @@ void CG_Hud_Setup(void)
 	hud2.roundtimer      = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 55, SCREEN_HEIGHT - 70, 0, 0, qtrue, STYLE_NORMAL);
 	hud2.spawntimer      = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 55, SCREEN_HEIGHT - 60, 0, 0, qtrue, STYLE_NORMAL);
 	hud2.localtime       = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 55, SCREEN_HEIGHT - 60, 0, 0, qtrue, STYLE_NORMAL);
+	hud2.votetext        = CG_getComponent(8, 224, 0.22f, 0.22f, qtrue, STYLE_NORMAL);
+	hud2.spectatortext   = CG_getComponent(8, 188, 0.22f, 0.22f, qtrue, STYLE_NORMAL);
+	hud2.limbotext       = CG_getComponent(8, 164, 0.22f, 0.22f, qtrue, STYLE_NORMAL);
+	hud2.followtext      = CG_getComponent(8, 164, 0.22f, 0.22f, qtrue, STYLE_NORMAL);
 	CG_addHudToList(&hud2);
 
 	// Read the hud files
@@ -3055,7 +3103,14 @@ static void CG_PrintHud(hudStucture_t *hud)
 	CG_PrintHudComponent("hudhead", hud->hudhead);
 	CG_PrintHudComponent("cursorhint", hud->cursorhint);
 	CG_PrintHudComponent("weaponstability", hud->weaponstability);
-	CG_PrintHudComponent("livesleft", hud->livesleft);
+	CG_PrintHudComponent("reinforcement", hud->reinforcement);
+	CG_PrintHudComponent("roundtimer", hud->roundtimer);
+	CG_PrintHudComponent("spawntimer", hud->spawntimer);
+	CG_PrintHudComponent("localtime", hud->localtime);
+	CG_PrintHudComponent("votetext", hud->votetext);
+	CG_PrintHudComponent("spectatortext", hud->spectatortext);
+	CG_PrintHudComponent("limbotext", hud->limbotext);
+	CG_PrintHudComponent("followtext", hud->followtext);
 }
 #endif
 
