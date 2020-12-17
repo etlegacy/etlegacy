@@ -1938,15 +1938,15 @@ static void CG_DrawCrosshairNames(void)
 
 		if (cgs.clientinfo[cg.snap->ps.clientNum].skill[SK_SIGNALS] >= 4 && cgs.clientinfo[cg.snap->ps.clientNum].cls == PC_FIELDOPS)
 		{
-            // draw the name of the player being looked at
-            color = CG_FadeColor(cg.crosshairClientTime, 1000);
-            
-            if (!color)
-            {
-                trap_R_SetColor(NULL);
-                return;
-            }
-            
+			// draw the name of the player being looked at
+			color = CG_FadeColor(cg.crosshairClientTime, 1000);
+
+			if (!color)
+			{
+				trap_R_SetColor(NULL);
+				return;
+			}
+
 			s = CG_TranslateString("Disguised Enemy!");
 			w = CG_Text_Width_Ext(s, fontScale, 0, &cgs.media.limboFont2);
 			CG_Text_Paint_Ext(middle - w / 2, 182, fontScale, fontScale, color, s, 0, 0, 0, &cgs.media.limboFont2);
@@ -2807,18 +2807,26 @@ static void CG_DrawWarmup(void)
 			if (!cg.demoPlayback && cg.snap->ps.persistant[PERS_TEAM] != TEAM_SPECTATOR &&
 			    (!(cg.snap->ps.pm_flags & PMF_FOLLOW) || (cg.snap->ps.pm_flags & PMF_LIMBO)))
 			{
-				char str1[32];
-
-				Q_strncpyz(str1, Binding_FromName("ready"), 32);
-				if (!Q_stricmp(str1, "(?" "?" "?)"))
+				if (cg.snap->ps.eFlags & EF_READY)
 				{
-					s2 = CG_TranslateString("Type ^3\\ready^7 in the console to start");
+					s2 = CG_TranslateString("^2Ready");
 				}
 				else
 				{
-					s2 = va(CG_TranslateString("Press ^3%s^7 to start"), str1);
-					s2 = CG_TranslateString(s2);
+					char str1[32];
+
+					Q_strncpyz(str1, Binding_FromName("ready"), 32);
+					if (!Q_stricmp(str1, "(?" "?" "?)"))
+					{
+						s2 = CG_TranslateString("Type ^3\\ready^7 in the console to start");
+					}
+					else
+					{
+						s2 = va(CG_TranslateString("Press ^3%s^7 to start"), str1);
+						s2 = CG_TranslateString(s2);
+					}
 				}
+
 				w = CG_Text_Width_Ext(s2, cg_fontScaleCP.value, 0, &cgs.media.limboFont2);
 				x = Ccg_WideX(320) - w / 2;
 				CG_Text_Paint_Ext(x, 310, cg_fontScaleCP.value, cg_fontScaleCP.value, colorWhite, s2, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
