@@ -76,7 +76,7 @@ menuDef {
 	MULTIACTION( 8, GRAPHICSADVANCED_Y+76, (SUBWINDOW_WIDTH_L)-4, 10, _("Texture Quality:"), .2, 8, "ui_r_texturebits", cvarFloatList { "Default" 0 "16-bit" 16 "32-bit" 32 }, uiScript glCustom, _("Set the number of bits for textures") )
 	// "GL_NEAREST" "GL_LINEAR" "GL_NEAREST_MIPMAP_NEAREST" "GL_LINEAR_MIPMAP_NEAREST" "GL_NEAREST_MIPMAP_LINEAR" "GL_LINEAR_MIPMAP_LINEAR"
 	MULTIACTION( 8, GRAPHICSADVANCED_Y+88, (SUBWINDOW_WIDTH_L)-4, 10, _("Texture Filter:"), .2, 8, "ui_r_texturemode", cvarStrList { "Bilinear"; "GL_LINEAR_MIPMAP_NEAREST"; "Trilinear"; "GL_LINEAR_MIPMAP_LINEAR" }, uiScript glCustom, _("Set the GL texture mode") )
-	MULTIACTION( 8, GRAPHICSADVANCED_Y+100, (SUBWINDOW_WIDTH_L)-4, 10, _("Anisotropic Filter:"), .2, 8, "ui_r_ext_texture_filter_anisotropic", cvarFloatList { "Disabled" 0 "Medium" 4 "High" 8 }, uiScript glCustom, _("Set anisotropic filtering") )
+	MULTIACTION( 8, GRAPHICSADVANCED_Y+100, (SUBWINDOW_WIDTH_L)-4, 10, _("Anisotropic Filter:"), .2, 8, "ui_r_ext_texture_filter_anisotropic", cvarFloatList { "Disabled" 0 "Medium (4)" 4 "High (8)" 8 "Very High (16)" 16 }, uiScript glCustom, _("Set anisotropic filtering") )
 	MULTIACTION( 8, GRAPHICSADVANCED_Y+112, (SUBWINDOW_WIDTH_L)-4, 10, _("Anti-Aliasing:"), .2, 8, "ui_r_ext_multisample", cvarFloatList { "Off" 0 "x2" 2 "x4" 4 "x8" 8 }, uiScript glCustom, _("Set Anti-Aliasing") )
 	MULTIACTION( 8, GRAPHICSADVANCED_Y+124, (SUBWINDOW_WIDTH_L)-4, 10, _("Color Depth:"), .2, 8, "ui_r_colorbits", cvarFloatList { "Desktop Default" 0 "16-bit" 16 "32-bit" 32 }, uiScript glCustom, _("Set color depth") )
 	YESNOACTION( 8, GRAPHICSADVANCED_Y+136, (SUBWINDOW_WIDTH_L)-4, 10, _("Detail Textures:"), .2, 8, "ui_r_detailtextures", uiScript glCustom, _("Toogles usage of high detail textures") )

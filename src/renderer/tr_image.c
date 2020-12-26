@@ -838,8 +838,7 @@ done:
 	{
 		if (textureFilterAnisotropic)
 		{
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT,
-							 (GLint)Com_Clamp(1, maxAnisotropy, r_extMaxAnisotropy->integer));
+			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, Com_Clamp(1.f, maxAnisotropy, r_extTextureFilterAnisotropic->value));
 		}
 
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, gl_filter_min);

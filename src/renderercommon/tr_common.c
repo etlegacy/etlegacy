@@ -529,6 +529,14 @@ static void GLimp_InitExtensions(void)
 		Com_Printf("...GL_ARB_multitexture not found\n");
 	}
 #endif
+
+	textureFilterAnisotropic = qfalse;
+	if (GLEW_EXT_texture_filter_anisotropic)
+	{
+		glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &maxAnisotropy);
+		textureFilterAnisotropic = qtrue;
+	}
+
 }
 #endif
 
