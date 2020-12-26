@@ -37,7 +37,7 @@
 
 glconfig_t glConfig;
 qboolean   textureFilterAnisotropic = qfalse;
-int        maxAnisotropy            = 0;
+float      maxAnisotropy            = 2.f;
 
 glstate_t glState;
 
