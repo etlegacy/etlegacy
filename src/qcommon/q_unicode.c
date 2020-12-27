@@ -858,9 +858,10 @@ size_t Q_UnescapeUnicode(char *fromStr, char *toStr, const size_t maxSize)
  */
 size_t Q_EscapeUnicodeInPlace(char *string, const size_t size)
 {
-	char tmpOutput[size];
+	char *tmpOutput = Com_Allocate(sizeof(char) * size);
 	size_t len = Q_EscapeUnicode(string, tmpOutput, size);
 	Q_strncpyz(string, tmpOutput, size);
+	Com_Dealloc(tmpOutput);
 	return len;
 }
 
@@ -872,8 +873,9 @@ size_t Q_EscapeUnicodeInPlace(char *string, const size_t size)
  */
 size_t Q_UnescapeUnicodeInPlace(char *string, const size_t size)
 {
-	char tmpOutput[size];
+	char *tmpOutput = Com_Allocate(sizeof(char) * size);
 	size_t len = Q_UnescapeUnicode(string, tmpOutput, size);
 	Q_strncpyz(string, tmpOutput, size);
+	Com_Dealloc(tmpOutput);
 	return len;
 }
