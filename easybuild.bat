@@ -80,7 +80,7 @@ IF NOT "%1"=="" (
 SET tasks=%i%
 
 IF NOT "%generator%"=="" (
-	SET generator=-G "%generator%
+	SET generator=-G "%generator%"
 )
 
 REM for /L %%i in (1,1,%tasks%) do echo Task number %%i: "!commands[%%i]!"
@@ -260,7 +260,8 @@ GOTO:EOF
 
 :UNCRUSTCODE
 	echo Uncrustifying code...
-	FOR /R "!batloc!src" %%G IN (*.h *.c *.cpp *.glsl) DO call:UNCRUSTFILE %%G
+	set SrcFolder=!batloc!src
+	FOR /R "%SrcFolder%" %%G IN (*.h *.c *.cpp *.glsl) DO call:UNCRUSTFILE %%G
 GOTO:EOF
 
 :UNCRUSTFILE
