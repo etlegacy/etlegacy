@@ -376,7 +376,7 @@ void Field_Paste(field_t *edit)
  */
 void Field_KeyDownEvent(field_t *edit, int key)
 {
-	int len;
+	size_t len, stringLen;
 
 	// shift-insert is paste
 	if (((key == K_INS) || (key == K_KP_INS)) && (keys[K_RSHIFT].down || keys[K_LSHIFT].down))
@@ -387,15 +387,20 @@ void Field_KeyDownEvent(field_t *edit, int key)
 
 	key = tolower(key);
 	len = strlen(edit->buffer);
+	stringLen = Q_UTF8_Strlen(edit->buffer);
 
 	switch (key)
 	{
 	case K_DEL:
 	case K_KP_DEL:
-		if (edit->cursor < len)
+		if (edit->cursor < stringLen)
 		{
-			memmove(edit->buffer + edit->cursor,
-			        edit->buffer + edit->cursor + 1, len - edit->cursor);
+			int offset = Q_UTF8_ByteOffset(edit->buffer, edit->cursor);
+			char *current = Q_UTF8_CharAt(edit->buffer, edit->cursor);
+			int charWidth = Q_UTF8_Width(current);
+
+			memmove(edit->buffer + offset,
+			        edit->buffer + offset + charWidth, len - offset);
 		}
 		break;
 	case K_RIGHTARROW:
@@ -424,12 +429,12 @@ void Field_KeyDownEvent(field_t *edit, int key)
 		break;
 	case K_END:
 	case K_KP_END:
-		edit->cursor = len;
+		edit->cursor = stringLen;
 		break;
 	case 'e':
 		if (keys[K_LCTRL].down || keys[K_RCTRL].down)
 		{
-			edit->cursor = len;
+			edit->cursor = stringLen;
 		}
 		break;
 	case K_INS:
@@ -484,7 +489,10 @@ void Field_CharEvent(field_t *edit, int ch)
 	{
 		if (edit->cursor > 0)
 		{
-			memmove(edit->buffer + edit->cursor - 1, edit->buffer + edit->cursor, len + 1 - edit->cursor);
+			int offset = Q_UTF8_ByteOffset(edit->buffer, edit->cursor);
+			char *prev = Q_UTF8_CharAt(edit->buffer, edit->cursor - 1);
+			int charWidth = Q_UTF8_Width(prev);
+			memmove(edit->buffer + offset - charWidth, edit->buffer + offset, len + 1 - offset);
 			edit->cursor--;
 			if (edit->cursor < edit->scroll)
 			{
@@ -503,7 +511,7 @@ void Field_CharEvent(field_t *edit, int ch)
 
 	if (ch == 'e' - 'a' + 1)      // ctrl-e is end
 	{
-		edit->cursor = len;
+		edit->cursor = stringLen;
 		edit->scroll = edit->cursor - edit->widthInChars;
 		return;
 	}
@@ -590,8 +598,11 @@ void Console_Key(int key)
 			}
 			else
 			{
+				char escapedChatMessage[MAX_EDIT_LINE * 2];
+				Q_EscapeUnicode(g_consoleField.buffer, escapedChatMessage, MAX_EDIT_LINE * 2);
+
 				Cbuf_AddText("cmd say ");
-				Cbuf_AddText(g_consoleField.buffer);
+				Cbuf_AddText(escapedChatMessage);
 				Cbuf_AddText("\n");
 			}
 		}
