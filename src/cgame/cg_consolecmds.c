@@ -656,6 +656,8 @@ static void CG_MessageSend_f(void)
 		return;
 	}
 
+	Q_EscapeUnicodeInPlace(messageText, MAX_SAY_TEXT);
+
 	if (messageType == 2) // team say
 	{
 		trap_SendConsoleCommand(va("say_team \"%s\"\n", messageText));

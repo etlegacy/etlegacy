@@ -3117,6 +3117,8 @@ static void CG_ServerCommand(void)
 		}
 
 		Q_strncpyz(text, s, MAX_SAY_TEXT);
+		Q_UnescapeUnicodeInPlace(text, MAX_SAY_TEXT);
+
 		CG_RemoveChatEscapeChar(text);
 		s = CG_AddChatMention(text, clientNum);
 		CG_AddToTeamChat(s, clientNum);
@@ -3159,6 +3161,7 @@ static void CG_ServerCommand(void)
 
 		// process locations and name
 		Com_sprintf(text, sizeof(text), "(%s^7)^3(%s^3): %s", cgs.clientinfo[clientNum].name, loc, s);
+		Q_UnescapeUnicodeInPlace(text, MAX_SAY_TEXT);
 
 #ifdef FEATURE_EDV
 		if ((strstr(text, "Fire Mission: ") || strstr(text, "Pilot: ")) && (cgs.demoCamera.renderingFreeCam || cgs.demoCamera.renderingWeaponCam))
@@ -3187,6 +3190,8 @@ static void CG_ServerCommand(void)
 		s = CG_LocalizeServerCommand(CG_Argv(1));
 
 		Q_strncpyz(text, s, MAX_SAY_TEXT);
+		Q_UnescapeUnicodeInPlace(text, MAX_SAY_TEXT);
+
 		CG_RemoveChatEscapeChar(text);
 		CG_AddToTeamChat(text, cg.snap->ps.clientNum);
 		CG_Printf("%s\n", text);

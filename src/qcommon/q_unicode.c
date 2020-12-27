@@ -54,7 +54,7 @@ int Q_UTF8_Width(const char *str)
 		return 0;
 	}
 
-	if     (*s <= 0x7F)
+	if (*s <= 0x7F)
 	{
 		ewidth = 0;
 	}
@@ -112,10 +112,9 @@ int Q_UTF8_WidthCP(int ch)
  * @param[in] str
  * @return
  */
-int Q_UTF8_Strlen(const char *str)
+size_t Q_UTF8_Strlen(const char *str)
 {
-	int l = 0;
-
+	size_t l = 0;
 	while (*str)
 	{
 		l++;
@@ -124,6 +123,35 @@ int Q_UTF8_Strlen(const char *str)
 	}
 
 	return l;
+}
+
+size_t Q_UTF32_Strlen(const uint32_t *str)
+{
+	size_t l = 0;
+	while(*str)
+	{
+		l++;
+		str++;
+	}
+	return l;
+}
+
+char* Q_UTF8_CharAt(char *str, size_t offset)
+{
+	int l = 0;
+
+	while (*str)
+	{
+		if(offset == l)
+		{
+			return str;
+		}
+
+		l++;
+		str += Q_UTF8_Width(str);
+	}
+
+	return NULL;
 }
 
 /**
@@ -505,9 +533,6 @@ int Q_UTF8_Store(const char *s)
 }
 
 /**
-
- */
-/**
  * @brief Converts a single UTF8 char stored as an int into a byte array
  * @param[in] e
  * @return
@@ -621,9 +646,9 @@ void Q_UTF8_FreeFont(fontHelper_t *font)
  * @brief Q_UTF8_ToUTF32
  * @param[in,out] string
  * @param[in] charArray
- * @param[out] outlen
+ * @param[out] outLen
  */
-void Q_UTF8_ToUTF32(char *string, int *charArray, int *outlen)
+void Q_UTF8_ToUTF32(char *string, int *charArray, int *outLen)
 {
 	int  i  = 0;
 	char *c = string;
@@ -663,5 +688,192 @@ void Q_UTF8_ToUTF32(char *string, int *charArray, int *outlen)
 		charArray[i++] = utf32;
 	}
 
-	*outlen = i;
+	*outLen = i;
+}
+
+
+void Q_UTF32_ToUTF8(uint32_t *charArray, char *string, int *outLen)
+{
+	uint32_t *c = charArray;
+	int len, i, byteOffset = 0;
+
+	while(*c)
+	{
+		len = Q_UTF8_WidthCP(*c);
+		char *str = Q_UTF8_Encode(*c);
+
+		for (i = 0; i < len; i++)
+		{
+			string[byteOffset + i] = str[i];
+		}
+		byteOffset += i;
+	}
+
+	string[byteOffset] = '\0';
+
+	*outLen = byteOffset;
+}
+
+/**
+ * Escapes a string replacing all non ascii characters with '\u{code-point}' escapes.
+ * @param fromStr source string which to escape
+ * @param toStr output buffer
+ * @param maxSize output buffer size
+ * @return generated string length
+ */
+size_t Q_EscapeUnicode(char *fromStr, char *toStr, const size_t maxSize)
+{
+	// \u{num}
+	size_t width = 0;
+	char *str = fromStr;
+	int l = 0;
+
+	while (*str)
+	{
+		if(l >= maxSize)
+		{
+			return l;
+		}
+
+		width = Q_UTF8_Width(str);
+
+		if(width > 1)
+		{
+			toStr[l++] = '\\';
+			toStr[l++] = 'u';
+			toStr[l++] = '{';
+			unsigned long cd = Q_UTF8_CodePoint(str);
+
+			if(cd > 999999999)
+			{
+				return 0;
+			}
+
+			char buffer[10];
+			sprintf(buffer, "%d", cd);
+			int bufferLen = strlen(buffer);
+
+			Q_strncpyz(&toStr[l], buffer, maxSize - l);
+			l += bufferLen;
+
+			toStr[l] = '}';
+		}
+		else
+		{
+			toStr[l] = str[0];
+		}
+
+		l++;
+		str += width;
+	}
+
+	toStr[l] = '\0';
+	return l;
+}
+
+/**
+ * Unescapes a string replacing the escaped character with the real utf-8 bytes
+ * @param fromStr escaped string
+ * @param toStr output buffer
+ * @param maxSize output buffer size
+ * @return generated string length
+ */
+size_t Q_UnescapeUnicode(char *fromStr, char *toStr, const size_t maxSize)
+{
+	char *str = fromStr;
+	int l = 0;
+
+	while (*str)
+	{
+		if(l >= maxSize)
+		{
+			return l;
+		}
+
+		if(str[0] == '\\' && str[1] == 'u' && str[2] == '{')
+		{
+			char tmpNumber[20] = {0};
+			size_t numberOffset = 0;
+			str += 3;
+
+			while(str && str[0] != '}')
+			{
+				tmpNumber[numberOffset++] = str[0];
+				str++;
+			}
+
+			if(!numberOffset)
+			{
+				if(str)
+				{
+					str++;
+					continue;
+				}
+
+				return 0;
+			}
+
+			if(!str)
+			{
+				return 0;
+			}
+
+			tmpNumber[numberOffset] = '\0';
+			int number = atoi(tmpNumber);
+
+			// Ignore non printable keys
+			if(number < 32)
+			{
+				str++;
+				continue;
+			}
+
+			char *buffer = Q_UTF8_Encode(number);
+
+			while(*buffer)
+			{
+				toStr[l++] = buffer[0];
+				buffer++;
+			}
+
+			str++;
+			continue;
+		}
+
+		toStr[l] = str[0];
+
+		l++;
+		str++;
+	}
+
+	toStr[l] = '\0';
+	return l;
+}
+
+/**
+ * Escapes the input string in-place
+ * @param string value to escape
+ * @param size size of the buffer
+ * @return generated string length
+ */
+size_t Q_EscapeUnicodeInPlace(char *string, const size_t size)
+{
+	char tmpOutput[size];
+	size_t len = Q_EscapeUnicode(string, tmpOutput, size);
+	Q_strncpyz(string, tmpOutput, size);
+	return len;
+}
+
+/**
+ * Unescapes the input string in-place
+ * @param string value to unescape
+ * @param size size of the buffer
+ * @return generated string length
+ */
+size_t Q_UnescapeUnicodeInPlace(char *string, const size_t size)
+{
+	char tmpOutput[size];
+	size_t len = Q_UnescapeUnicode(string, tmpOutput, size);
+	Q_strncpyz(string, tmpOutput, size);
+	return len;
 }
