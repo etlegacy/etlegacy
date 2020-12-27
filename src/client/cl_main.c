@@ -481,6 +481,7 @@ void CL_MapLoading(void)
 		return;
 	}
 
+	Con_ScrollBottom();
 	Con_Close();
 	cls.keyCatchers = 0;
 
