@@ -3577,6 +3577,8 @@ void CG_Debriefing_ChatEditFinish(panel_button_t *button)
 	char buffer[MAX_EDITFIELD];
 	trap_Cvar_VariableStringBuffer(button->text, buffer, MAX_EDITFIELD);
 
+	Q_EscapeUnicodeInPlace(buffer, MAX_EDITFIELD);
+
 	switch (cgs.dbChatMode)
 	{
 	case 0:
