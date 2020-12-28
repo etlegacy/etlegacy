@@ -1079,9 +1079,6 @@ void CG_MapVote_MultiVoteButton_Draw(panel_button_t *button)
 
 		CG_PanelButtonsRender_Button_Ext(&button->rect, str);
 	}
-
-
-	return;
 }
 
 /**
@@ -1189,7 +1186,6 @@ void CG_MapVoteList_Draw(panel_button_t *button)
 
 		y += 12;
 	}
-	return;
 }
 
 /**
@@ -1325,8 +1321,6 @@ void CG_MapVote_VoteButton_Draw(panel_button_t *button)
 	{
 		CG_PanelButtonsRender_Button_Ext(&button->rect, (cgs.dbMapVotedFor[0] != -1) ? "^7RE-VOTE" : "^7VOTE");
 	}
-
-	return;
 }
 
 /**

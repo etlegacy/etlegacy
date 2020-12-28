@@ -1414,21 +1414,23 @@ qboolean BG_PanelButton_EditClick(panel_button_t *button, int key)
 	{
 		char     buffer[MAX_EDITFIELD];
 		char     *s = NULL;
-		size_t   len, maxlen;
+		size_t   len, stringLen, maxlen;
 		qboolean useCvar = button->data[0] ? qfalse : qtrue;
 
 		if (useCvar)
 		{
 			maxlen = sizeof(buffer);
 			DC->getCVarString(button->text, buffer, sizeof(buffer));
-			len = strlen(buffer);
+			s = buffer;
 		}
 		else
 		{
 			maxlen = (size_t)button->data[0];
 			s      = button->text;
-			len    = strlen(s);
 		}
+
+		len    = strlen(s);
+		stringLen = Q_UTF8_Strlen(s);
 
 		if (key & K_CHAR_FLAG)
 		{
@@ -1438,19 +1440,20 @@ qboolean BG_PanelButton_EditClick(panel_button_t *button, int key)
 			{
 				if (len && button->data[2])
 				{
-					if (useCvar)
-					{
-						memmove(&buffer[button->data[2] - 1], &buffer[button->data[2]], len - button->data[2]);
-						buffer[len - 1] = '\0';
-						trap_Cvar_Set(button->text, buffer);
-					}
-					else
-					{
-						memmove(&s[button->data[2] - 1], &s[button->data[2]], len - button->data[2]);
-						s[len - 1] = '\0';
-					}
+					int offset = Q_UTF8_ByteOffset(s, button->data[2]);
+					char *prev = Q_UTF8_CharAt(s, button->data[2] - 1);
+					int charWidth = Q_UTF8_Width(prev);
+					memmove(s + offset - charWidth, s + offset, len - offset);
 
 					button->data[2]--;
+
+					offset = Q_UTF8_ByteOffset(s, stringLen - 1);
+					s[offset] = '\0';
+
+					if (useCvar)
+					{
+						trap_Cvar_Set(button->text, buffer);
+					}
 				}
 
 				return qtrue;
@@ -1481,49 +1484,11 @@ qboolean BG_PanelButton_EditClick(panel_button_t *button, int key)
 				return qtrue;
 			}
 
+			Q_UTF8_Insert(s, stringLen, button->data[2], key, trap_Key_GetOverstrikeMode());
+
 			if (useCvar)
 			{
-				if (button->data[2] == len)
-				{
-					buffer[len]     = (char)key;
-					buffer[len + 1] = '\0';
-				}
-				else
-				{
-					if (trap_Key_GetOverstrikeMode())
-					{
-						buffer[button->data[2]] = (char)key;
-					}
-					else
-					{
-						memmove(&buffer[button->data[2] + 1], &buffer[button->data[2]], len - button->data[2]);
-						buffer[button->data[2]] = (char)key;
-						buffer[len + 2]         = '\0';
-					}
-				}
-
 				trap_Cvar_Set(button->text, buffer);
-			}
-			else
-			{
-				if (button->data[2] == len)
-				{
-					s[len]     = (char)key;
-					s[len + 1] = '\0';
-				}
-				else
-				{
-					if (trap_Key_GetOverstrikeMode())
-					{
-						s[button->data[2]] = (char)key;
-					}
-					else
-					{
-						memmove(&s[button->data[2] + 1], &s[button->data[2]], len - button->data[2]);
-						s[button->data[2]] = (char)key;
-						s[len + 2]         = '\0';
-					}
-				}
 			}
 
 			button->data[2]++;
@@ -1534,18 +1499,21 @@ qboolean BG_PanelButton_EditClick(panel_button_t *button, int key)
 		{
 			if (key == K_DEL || key == K_KP_DEL)
 			{
-				if (button->data[2] < len)
+				if (button->data[2] < stringLen)
 				{
+					int offset = Q_UTF8_ByteOffset(s, button->data[2]);
+					char *current = Q_UTF8_CharAt(s, button->data[2]);
+					int charWidth = Q_UTF8_Width(current);
+
+					memmove(s + offset,
+							s + offset + charWidth, len - offset);
+
+					offset = Q_UTF8_ByteOffset(s, stringLen - 1);
+					s[offset] = '\0';
+
 					if (useCvar)
 					{
-						memmove(&buffer[button->data[2]], &buffer[button->data[2] + 1], len - button->data[2]);
-						buffer[len] = '\0';
 						trap_Cvar_Set(button->text, buffer);
-					}
-					else
-					{
-						memmove(&s[button->data[2]], &s[button->data[2] + 1], len - button->data[2]);
-						s[len] = '\0';
 					}
 				}
 
@@ -1553,7 +1521,7 @@ qboolean BG_PanelButton_EditClick(panel_button_t *button, int key)
 			}
 			else if (key == K_RIGHTARROW || key == K_KP_RIGHTARROW)
 			{
-				if (button->data[2] < len)
+				if (button->data[2] < stringLen)
 				{
 					button->data[2]++;
 				}
@@ -1576,7 +1544,7 @@ qboolean BG_PanelButton_EditClick(panel_button_t *button, int key)
 			}
 			else if (key == K_END || key == K_KP_END)
 			{
-				button->data[2] = len;
+				button->data[2] = stringLen;
 				return qtrue;
 			}
 			else if (key == K_INS || key == K_KP_INS)
