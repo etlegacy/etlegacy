@@ -1612,9 +1612,11 @@ qboolean Item_TextField_HandleKey(itemDef_t *item, int key)
 	if (editPtr->maxChars && valueLen > editPtr->maxChars)
 	{
 		valueLen = editPtr->maxChars;
+		size_t cutOff = Q_UTF8_ByteOffset(buff, editPtr->maxChars);
+		Com_Memset(&buff[cutOff], 0, sizeof(buff) - cutOff);
 	}
 
-	// make sure our cursorpos doesn't go oob, windows doesn't like negative memory copy operations :)
+	// make sure our cursor pos doesn't go oob, windows doesn't like negative memory copy operations :)
 	if (item->cursorPos < 0 || item->cursorPos > valueLen)
 	{
 		item->cursorPos = 0;

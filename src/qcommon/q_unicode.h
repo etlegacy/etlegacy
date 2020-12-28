@@ -60,7 +60,7 @@ int Q_UTF8_PrintStrlen(const char *str);
 int Q_UTF8_PrintStrlenExt(const char *str, int length);
 int Q_UTF8_ByteOffset(const char *str, int offset);
 void Q_UTF8_Insert(char *dest, int size, int offset, int key, qboolean overstrike);
-void Q_UTF8_Move(char *data, size_t offset1, size_t offset2, size_t size);
+void Q_UTF8_Move(char *buffer, size_t dstOffset, size_t srcOffset, size_t size);
 qboolean Q_UTF8_ContByte(char c);
 unsigned long Q_UTF8_CodePoint(const char *str);
 void Q_UTF8_RegisterFont(const char *fontName, int pointSize, fontHelper_t *font, qboolean extended, void (*font_register)(const char *, int, void *));

@@ -272,36 +272,36 @@ void Q_UTF8_Insert(char *dest, int size, int offset, int key, qboolean overstrik
 
 /**
  * @brief Q_UTF8_Move
- * @param[in,out] data
- * @param[in] offset1
- * @param[in] offset2
+ * @param[in,out] buffer
+ * @param[in] dstOffset
+ * @param[in] srcOffset
  * @param[in] size
  */
-void Q_UTF8_Move(char *data, size_t offset1, size_t offset2, size_t size)
+void Q_UTF8_Move(char *buffer, size_t dstOffset, size_t srcOffset, size_t size)
 {
-	size_t byteOffset1 = 0, byteOffset2 = 0, byteSize = 0;
+	size_t byteOffset1, byteOffset2, byteSize;
 
 	if (!size)
 	{
 		return;
 	}
 
-	byteOffset1 = Q_UTF8_ByteOffset(data, offset1);
-	byteOffset2 = Q_UTF8_ByteOffset(data, offset2);
-	byteSize    = Q_UTF8_ByteOffset(&data[byteOffset2], size);
+	byteOffset1 = Q_UTF8_ByteOffset(buffer, dstOffset);
+	byteOffset2 = Q_UTF8_ByteOffset(buffer, srcOffset);
+	byteSize    = Q_UTF8_ByteOffset(&buffer[byteOffset2], size);
 
 	if (!byteSize)
 	{
 		byteSize = 1;
 	}
 
-	if (offset1 < offset2 && (offset2 + size) > Q_UTF8_Strlen(data))
+	if (dstOffset < srcOffset && (srcOffset + size) > Q_UTF8_Strlen(buffer))
 	{
 		byteSize++;
 	}
 
-	memmove(&data[byteOffset1], &data[byteOffset2], byteSize); // +1
-	data[strlen(data) + 1] = '\0';
+	memmove(&buffer[byteOffset1], &buffer[byteOffset2], byteSize); // +1
+	buffer[strlen(buffer) + 1] = '\0';
 }
 
 /**

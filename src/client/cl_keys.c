@@ -405,7 +405,7 @@ void Field_KeyDownEvent(field_t *edit, int key)
 		break;
 	case K_RIGHTARROW:
 	case K_KP_RIGHTARROW:
-		if (edit->cursor < len)
+		if (edit->cursor < stringLen)
 		{
 			edit->cursor++;
 		}
