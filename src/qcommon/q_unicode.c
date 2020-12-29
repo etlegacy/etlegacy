@@ -648,7 +648,7 @@ void Q_UTF8_FreeFont(fontHelper_t *font)
  * @param[in] charArray
  * @param[out] outLen
  */
-void Q_UTF8_ToUTF32(char *string, int *charArray, int *outLen)
+void Q_UTF8_ToUTF32(char *string, uint32_t *charArray, size_t *outLen)
 {
 	int  i  = 0;
 	char *c = string;
@@ -692,7 +692,7 @@ void Q_UTF8_ToUTF32(char *string, int *charArray, int *outLen)
 }
 
 
-void Q_UTF32_ToUTF8(uint32_t *charArray, char *string, int *outLen)
+void Q_UTF32_ToUTF8(uint32_t *charArray, char *string, size_t *outLen)
 {
 	uint32_t *c = charArray;
 	int len, i, byteOffset = 0;
@@ -751,7 +751,7 @@ size_t Q_EscapeUnicode(char *fromStr, char *toStr, const size_t maxSize)
 
 			char buffer[10];
 			sprintf(buffer, "%d", cd);
-			int bufferLen = strlen(buffer);
+			size_t bufferLen = strlen(buffer);
 
 			Q_strncpyz(&toStr[l], buffer, maxSize - l);
 			l += bufferLen;

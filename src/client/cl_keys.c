@@ -356,11 +356,16 @@ void Field_Paste(field_t *edit)
 	}
 
 	// send as if typed, so insert / overstrike works properly
-	pasteLen = strlen(cbd);
+	pasteLen = Q_UTF8_Strlen(cbd);
+	uint32_t *chars = Com_Allocate(sizeof(uint32_t) * pasteLen);
+	Com_Memset(chars, 0, sizeof(uint32_t) * pasteLen);
+	Q_UTF8_ToUTF32(cbd, chars, &pasteLen);
+
 	for (i = 0 ; i < pasteLen ; i++)
 	{
-		Field_CharEvent(edit, cbd[i]);
+		Field_CharEvent(edit, chars[i]);
 	}
+	Com_Dealloc(chars);
 
 	Z_Free(cbd);
 }
