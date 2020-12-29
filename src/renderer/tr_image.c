@@ -306,10 +306,10 @@ static void ResampleTexture(unsigned *in, int inwidth, int inheight, unsigned *o
 	int      i, j;
 	unsigned *inrow, *inrow2;
 	unsigned frac, fracstep;
-	unsigned p1[2048], p2[2048];
+	unsigned p1[8192], p2[8192];
 	byte     *pix1, *pix2, *pix3, *pix4;
 
-	if (outwidth > 2048)
+	if (outwidth > 8192)
 	{
 		Ren_Drop("ResampleTexture: max width");
 	}
