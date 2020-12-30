@@ -20,4 +20,10 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Build
-        run: ./easybuild build -64 --osx=10.15
+        run: ./easybuild.sh build -64 --osx=10.15
+  win:
+    runs-on: windows-2019
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build
+        run: easybuild.bat build
