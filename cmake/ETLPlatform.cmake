@@ -88,7 +88,7 @@ if(UNIX)
 		set(CMAKE_CXX_FLAGS "-isysroot ${CMAKE_OSX_SYSROOT} ${CMAKE_CXX_FLAGS}")
 
 		if(BUILD_CLIENT)
-			set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -framework Quartz -framework AudioToolbox -framework AudioUnit -framework Carbon -framework CoreAudio -framework ForceFeedback -liconv")
+			set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -framework AudioToolbox -framework AudioUnit -framework Carbon -framework CoreAudio -framework ForceFeedback -liconv")
 		endif()
 		set(LIB_SUFFIX "_mac")
 		set(CMAKE_SHARED_MODULE_SUFFIX "")

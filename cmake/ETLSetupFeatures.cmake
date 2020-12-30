@@ -18,7 +18,7 @@ endif(NOT OLD_CROSS_COMPILE32 STREQUAL CROSS_COMPILE32)
 #-----------------------------------------------------------------
 if(BUILD_CLIENT)
 
-	if(NOT WIN32) # Dependency of GLEW and SDL_syswm.h
+	if(NOT WIN32 AND NOT APPLE) # Dependency of GLEW and SDL_syswm.h
 		find_package(X11 REQUIRED)
 		include_directories(${X11_INCLUDE_DIR})
 	endif(NOT WIN32)
