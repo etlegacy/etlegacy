@@ -396,7 +396,6 @@ void CG_DrawFireTeamOverlay(rectDef_t *rect)
 	fireteamData_t *f  = NULL;
 	char           *locStr[MAX_FIRETEAM_MEMBERS];
 	int            curWeap;
-	vec4_t         hcolor;
 
 	// assign fireteam data, and early out if not on one
 	if (!(f = CG_IsOnFireteam(cg.clientNum)))
@@ -596,22 +595,21 @@ void CG_DrawFireTeamOverlay(rectDef_t *rect)
 		x += 24;
 
 		// draw the player's health
-		CG_ColorForHealth(hcolor);
 		if (ci->health >= 100)
 		{
-			CG_Text_Paint_Ext(x, y + FT_BAR_HEIGHT, .2f, .2f, colorGreen, va("%i", ci->health), 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
+			CG_Text_Paint_Ext(x, y + FT_BAR_HEIGHT, .2f, .2f, FT_text, va("%i", ci->health), 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
 			x += 12;
 		}
 		else if (ci->health >= 10)
 		{
 			x += 6;
-			CG_Text_Paint_Ext(x, y + FT_BAR_HEIGHT, .2f, .2f, hcolor, va("%i", ci->health), 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
+			CG_Text_Paint_Ext(x, y + FT_BAR_HEIGHT, .2f, .2f, ci->health > 80 ? FT_text : colorYellow, va("%i", ci->health), 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
 			x += 6;
 		}
 		else if (ci->health > 0)
 		{
 			x += 12;
-			CG_Text_Paint_Ext(x, y + FT_BAR_HEIGHT, .2f, .2f, hcolor, va("%i", ci->health), 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
+			CG_Text_Paint_Ext(x, y + FT_BAR_HEIGHT, .2f, .2f, colorYellow, va("%i", ci->health), 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
 		}
 		else if (ci->health == 0)
 		{
@@ -625,7 +623,6 @@ void CG_DrawFireTeamOverlay(rectDef_t *rect)
 			x += 12;
 			CG_Text_Paint_Ext(x, y + FT_BAR_HEIGHT, .2f, .2f, colorRed, "0", 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
 		}
-		trap_R_SetColor(hcolor);
 
 		// set hard limit on width
 		x += 12;
