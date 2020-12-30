@@ -44,7 +44,6 @@
 #include "sys_local.h"
 
 #include <dlfcn.h> // dlopen, dlclose
-#import <Carbon/Carbon.h>
 #import <Cocoa/Cocoa.h>
 
 
@@ -170,7 +169,7 @@ bool IsTranslocatedURL(CFURLRef currentURL, CFURLRef *originalURL)
 }
 
 /**
- * @brief Check for OSX Quarantine, remove the attributes und restart the app
+ * @brief Check for OSX Quarantine, remove the attributes and restart the app
  * @return int: 0 = no action required, 1 = relaunch after dequarantine, >=2 = error, show modal
  */
 int needsOSXQuarantineFix()
