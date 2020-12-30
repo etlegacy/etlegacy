@@ -2,20 +2,22 @@ name: ETLBuild
 
 on: [push]
 
-env:
-  BUILD_TYPE: Release
-
 jobs:
-  build:
-    runs-on: ubuntu-latest
+  lnx:
+    runs-on: ubuntu-16.04
     steps:
     - uses: actions/checkout@v2
-    
     - name: Install dependencies
       run: |
         sudo apt update
-        sudo apt install nasm libwayland-dev wayland-protocols libgl1-mesa-dev libglu1-mesa-dev libasound2-dev pulseaudio libpulse-dev gcc-multilib g++-multilib
+        sudo apt install nasm libwayland-dev wayland-protocols libgl1-mesa-dev libglu1-mesa-dev libasound2-dev pulseaudio libpulse-dev
 
     - name: Build
       shell: bash
-      run: ./easybuild.sh build
+      run: ./easybuild.sh build -64
+  osx:
+    runs-on: macos-10.15
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build
+        run: ./easybuild build -64 --osx=10.15
