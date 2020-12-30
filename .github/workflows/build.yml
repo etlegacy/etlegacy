@@ -1,0 +1,22 @@
+name: ETLBuild
+
+on: [push]
+
+env:
+  BUILD_TYPE: Release
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    
+    - name: Install dependencies
+      run: |
+        sudo apt update
+        sudo apt install nasm libwayland-dev wayland-protocols libgl1-mesa-dev libglu1-mesa-dev libasound2-dev pulseaudio libpulse-dev
+
+    - name: Build
+      shell: bash
+      working-directory: ${{runner.workspace}}
+      run: easybuild.sh build
