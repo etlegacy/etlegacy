@@ -22,6 +22,7 @@ color=true
 # Do 32bit build
 x86_build=true
 
+
 # Command that can be run
 # first array has the cmd names which can be given
 # second array holds the functions which match the cmd names
@@ -138,8 +139,8 @@ detectos() {
 
 		# Check if x86_build is set and an osx vesion as of Catalina or higher is used
 		IFS='.' read -r -a ver <<< "$DISTRO"
-		if [ "${ver[1]}" -gt 14 ] && [ "${x86_build}" = true ]; then
-			einfo "You can't compile 32bit binaries with Mac OS 10.${ver[1]}. Use the flag \"-64\". Aborting."
+		if ([ "${ver[0]}" -gt 10 ] || [ "${ver[1]}" -gt 14 ]) && [ "${x86_build}" = true ]; then
+			einfo "You can't compile 32bit binaries with Mac OS ${ver[0]}.${ver[1]}. Use the flag \"-64\". Aborting."
 			exit 1
 		fi
 	else
@@ -212,6 +213,14 @@ print_startup() {
 	echo "  CXX = ${CXX}"
 }
 
+setup_sensible_defaults() {
+	# Default to 64 bit builds on OSX
+	if [[ `uname -s` == "Darwin" ]]; then
+		CROSS_COMPILE32=0
+		x86_build=false
+	fi
+}
+
 parse_commandline() {
 	for var in "$@"
 	do
@@ -224,10 +233,17 @@ parse_commandline() {
 		elif [[ $var == --osx=* ]]; then
 			MACOSX_DEPLOYMENT_TARGET=$(echo $var| cut -d'=' -f 2)
 			einfo "Will use OSX target version: ${MACOSX_DEPLOYMENT_TARGET}"
+		elif [[ $var == --sysroot=* ]]; then
+			XCODE_SDK_PATH=$(echo $var| cut -d'=' -f 2)
+			einfo "Will use OSX sysroot: ${XCODE_SDK_PATH}"
 		elif [ "$var" = "-64" ]; then
 			einfo "Will disable crosscompile"
 			CROSS_COMPILE32=0
 			x86_build=false
+		elif [ "$var" = "-32" ]; then
+			einfo "Will enable crosscompile"
+			CROSS_COMPILE32=1
+			x86_build=true
 		elif [ "$var" = "-zip" ]; then
 			ZIP_ONLY=1
 		elif [ "$var" = "-clang" ]; then
@@ -375,6 +391,9 @@ parse_commandline() {
 }
 
 generate_configuration() {
+	# Generator wich to use with CMake on the generate step
+	MAKEFILE_GENERATOR=${MAKEFILE_GENERATOR:-Unix Makefiles}
+
 	#cmake variables
 	RELEASE_TYPE=${RELEASE_TYPE:-Release}
 	CROSS_COMPILE32=${CROSS_COMPILE32:-1}
@@ -499,6 +518,7 @@ generate_configuration() {
 	if [ "${PLATFORMSYS}" == "Mac OS X" ] || [ "${PLATFORMSYS}" == "macOS" ]; then
 		PREFIX=${INSTALL_PREFIX}
 		_CFGSTRING="${_CFGSTRING}
+		-DXCODE_SDK_PATH=${XCODE_SDK_PATH}
 		-DCMAKE_INSTALL_PREFIX=${PREFIX}
 		-DCMAKE_OSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET}
 		-DINSTALL_DEFAULT_MODDIR=./
@@ -583,21 +603,19 @@ run_clean() {
 	fi
 }
 
-run_build() {
-	einfo "Build..."
+run_generate() {
+	einfo "Generating makefiles: ${MAKEFILE_GENERATOR}..."
 	mkdir -p ${BUILDDIR}
 	cd ${BUILDDIR}
-	cmake ${_CFGSTRING} ..
-	check_exit
-	make ${CMD_ARGS}
+	cmake -G "${MAKEFILE_GENERATOR}" ${_CFGSTRING} ..
 	check_exit
 }
 
-run_generate() {
-	einfo "Generating makefiles..."
-	mkdir -p ${BUILDDIR}
-	cd ${BUILDDIR}
-	cmake ${_CFGSTRING} ..
+run_build() {
+	run_generate
+	einfo "Build..."
+	make ${CMD_ARGS}
+	cmake --build . --config $RELEASE_TYPE
 	check_exit
 }
 
@@ -615,9 +633,9 @@ create_osx_dmg() {
 		return
 	fi
 
-	app_exists APP_FOUND "appdmg"
+	app_exists APP_FOUND "npx"
 	if [ $APP_FOUND == 0 ]; then
-		echo "Missing appdmg skipping OSX installer creation"
+		echo "Missing npx skipping OSX installer creation"
 		return
 	fi
 
@@ -682,7 +700,7 @@ END
 	# using appdmg nodejs application to generate the actual DMG installer
 	# https://github.com/LinusU/node-appdmg
 	# npm install -g appdmg
-	appdmg etlegacy-dmg.json "ETLegacy-${ETLEGACY_VERSION}.dmg"
+	npx appdmg etlegacy-dmg.json "ETLegacy-${ETLEGACY_VERSION}.dmg"
 }
 
 run_package() {
@@ -773,12 +791,14 @@ print_help() {
 	ehead "help - print this help"
 	echo
 	einfo "Properties"
-	ehead "-64, -debug, -clang, -nodb -nor2, -nodynamic, -systemlib, -noextra, -noupdate, -mod, -server"
+	ehead "-64, -32, -debug, -clang, -nodb -nor2, -nodynamic, -systemlib, -noextra, -noupdate, -mod, -server"
 	ehead "--build=*, --prefix=*, --osx=*"
 	echo
 }
 
 start_script() {
+	setup_sensible_defaults
+
 	parse_commandline $@
 
 	#CMD_ARGS="${@:2}"

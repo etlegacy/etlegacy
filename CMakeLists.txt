@@ -51,8 +51,8 @@ LEG_BUNDLE(GLEW Glew)
 LEG_BUNDLE(FREETYPE Freetype2)
 LEG_BUNDLE(SQLITE3 SQlite3)
 
-# no support for 32 bit binaries on OpenBSD/amd64
-cmake_dependent_option(CROSS_COMPILE32 "Compile 32-bit version of ET:L (64bit is incompatible with 2.60b)" ON "NOT CMAKE_SYSTEM MATCHES OpenBSD*" OFF)
+# no support for 32 bit binaries on OpenBSD/amd64 or Apple OSX anymore
+cmake_dependent_option(CROSS_COMPILE32 "Compile 32-bit version of ET:L (64bit is incompatible with 2.60b)" ON "NOT APPLE AND NOT CMAKE_SYSTEM MATCHES OpenBSD*" OFF)
 
 # Optional features
 option(FEATURE_CURL				"Enable auto-download support using cURL (client)"		ON)

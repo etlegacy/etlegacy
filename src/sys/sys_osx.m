@@ -60,11 +60,11 @@ dialogResult_t Sys_Dialog(dialogType_t type, const char *message, const char *ti
 
 	if (type == DT_ERROR)
 	{
-		[alert setAlertStyle: NSCriticalAlertStyle];
+		[alert setAlertStyle: NSAlertStyleCritical];
 	}
 	else
 	{
-		[alert setAlertStyle: NSWarningAlertStyle];
+		[alert setAlertStyle: NSAlertStyleWarning];
 	}
 
 	switch (type)
