@@ -78,16 +78,19 @@ if(UNIX)
 			set(CMAKE_OSX_DEPLOYMENT_TARGET "10.14")
 		endif()
 
-		# After version 10.14 it's no longer possible to build 32 bit applications with this script
-		if(CMAKE_OSX_DEPLOYMENT_TARGET GREATER "10.14" AND CROSS_COMPILE32)
-			message(FATAL_ERROR "Can't build a 32bit build on this OSX version")
-		endif()
-
 		if(NOT DEFINED XCODE_SDK_PATH OR NOT XCODE_SDK_PATH)
 			execute_process(COMMAND xcrun -show-sdk-path OUTPUT_VARIABLE XCODE_SDK_PATH OUTPUT_STRIP_TRAILING_WHITESPACE)
 			message(STATUS "Using detected SDK from path: ${XCODE_SDK_PATH}")
 		else()
 			message(STATUS "Usig custom SDK path: ${XCODE_SDK_PATH}")
+		endif()
+
+		execute_process(COMMAND xcrun --show-sdk-version OUTPUT_VARIABLE XCODE_SDK_VERSION OUTPUT_STRIP_TRAILING_WHITESPACE)
+		message(STATUS "Using SDK version: ${XCODE_SDK_VERSION}")
+
+		# After version 10.14 it's no longer possible to build 32 bit applications with this script
+		if( (CMAKE_OSX_DEPLOYMENT_TARGET GREATER "10.14" OR XCODE_SDK_VERSION GREATER_EQUAL "10.15") AND CROSS_COMPILE32)
+			message(FATAL_ERROR "Can't build a 32bit build on this OSX SDK version")
 		endif()
 
 		set(CMAKE_OSX_SYSROOT "${XCODE_SDK_PATH}")

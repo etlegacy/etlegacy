@@ -92,7 +92,10 @@ endif()
 
 # Build both arhitectures on older xcode versions
 if(APPLE)
-	if(CMAKE_OSX_DEPLOYMENT_TARGET LESS_EQUAL "10.14")
+	# Mojave was the last version to support 32 bit binaries and building.
+	# Newer SDK's just fail compilation
+	# TODO: maybe remove this whole thing after the next release.
+	if(XCODE_SDK_VERSION LESS "10.15")
 		# Force universal mod on osx up to Mojave
 		set(OSX_MOD_ARCH "i386;x86_64")
 	else()
