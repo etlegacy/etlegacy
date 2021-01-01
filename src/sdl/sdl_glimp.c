@@ -1048,8 +1048,19 @@ success:
 
 	Cvar_Get("r_availableModes", "", CVAR_ROM);
 
+#if defined(__APPLE__) && !defined(BUNDLED_SDL)
+	// When running on system SDL2 on OSX the cocoa driver causes
+	// the splash screen to stay on top of the rendering (at least when running from CLion)
+	// FIXME: clear the splash? Does not seem to happen with bundled SDL2.
+	const char *driver = SDL_GetCurrentVideoDriver();
+	if(Q_stricmpn("cocoa", driver, 5))
+	{
+		GLimp_Splash(glConfig);
+	}
+#else
 	// Display splash screen
 	GLimp_Splash(glConfig);
+#endif
 
 	// This depends on SDL_INIT_VIDEO, hence having it here
 	IN_Init();
