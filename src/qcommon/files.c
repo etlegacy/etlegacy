@@ -42,6 +42,8 @@
 
 #ifdef BUNDLED_MINIZIP
 #    include "unzip.h"
+#elif defined(__APPLE__)
+#    include <minizip/unzip.h>
 #else
 #    include <unzip.h>
 #endif
