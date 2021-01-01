@@ -82,7 +82,7 @@ if(UNIX)
 			execute_process(COMMAND xcrun -show-sdk-path OUTPUT_VARIABLE XCODE_SDK_PATH OUTPUT_STRIP_TRAILING_WHITESPACE)
 			message(STATUS "Using detected SDK from path: ${XCODE_SDK_PATH}")
 		else()
-			message(STATUS "Usig custom SDK path: ${XCODE_SDK_PATH}")
+			message(STATUS "Using custom SDK path: ${XCODE_SDK_PATH}")
 		endif()
 
 		execute_process(COMMAND xcrun --show-sdk-version OUTPUT_VARIABLE XCODE_SDK_VERSION OUTPUT_STRIP_TRAILING_WHITESPACE)
