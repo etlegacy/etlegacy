@@ -754,34 +754,29 @@ void G_Trace(gentity_t *ent, trace_t *results, const vec3_t start, const vec3_t 
 
 	G_AttachBodyParts(ent);
 
-	// use higher hitbox for syringe only
-	if (ent->s.weapon == WP_MEDIC_SYRINGE)
+	for (i = 0; i < level.numConnectedClients; ++i)
 	{
-		for (i = 0; i < level.numConnectedClients; ++i)
-		{
-			clientNum = level.sortedClients[i];
+		clientNum             = level.sortedClients[i];
+		maxsBackup[clientNum] = g_entities[clientNum].r.maxs[2];
 
-			if (g_entities[clientNum].s.eFlags & (EF_DEAD | EF_PRONE))
-			{
-				maxsBackup[clientNum]           = g_entities[clientNum].r.maxs[2];
-				g_entities[clientNum].r.maxs[2] = CROUCH_BODYHEIGHT;
-			}
+		// use higher hitbox for syringe only
+        if (ent->s.weapon == WP_MEDIC_SYRINGE && (g_entities[clientNum].s.eFlags & (EF_DEAD | EF_PRONE)))
+		{
+			g_entities[clientNum].r.maxs[2] = CROUCH_BODYHEIGHT;
+		}
+		else
+		{
+			g_entities[clientNum].r.maxs[2] = ClientHitboxMaxZ(&g_entities[clientNum]);
 		}
 	}
 
 	trap_Trace(results, start, mins, maxs, end, passEntityNum, contentmask);
 
 	// backup hitbox hight
-	if (ent->s.weapon == WP_MEDIC_SYRINGE)
+	for (i = 0; i < level.numConnectedClients; ++i)
 	{
-		for (i = 0; i < level.numConnectedClients; ++i)
-		{
-			clientNum = level.sortedClients[i];
-			if (g_entities[clientNum].s.eFlags & (EF_DEAD | EF_PRONE))
-			{
-				g_entities[clientNum].r.maxs[2] = maxsBackup[clientNum];
-			}
-		}
+		clientNum                       = level.sortedClients[i];
+		g_entities[clientNum].r.maxs[2] = maxsBackup[clientNum];
 	}
 
 	res = G_SwitchBodyPartEntity(&g_entities[results->entityNum]);
