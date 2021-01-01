@@ -3,37 +3,49 @@ name: ETLBuild
 on: [ push ]
 
 jobs:
-  lnx:
+  lnx32:
     runs-on: ubuntu-16.04
     steps:
       - uses: actions/checkout@v2
+
       - name: Install dependencies
         run: |
           sudo apt update
-          sudo apt install nasm libwayland-dev wayland-protocols libgl1-mesa-dev libglu1-mesa-dev libasound2-dev pulseaudio libpulse-dev
-
+          sudo apt install nasm libwayland-dev:i386 wayland-protocols:i386 libgl1-mesa-dev:i386 libglu1-mesa-dev:i386 libasound2-dev:i386 pulseaudio:i386 libpulse-dev:i386 gcc-multilib g++-multilib
       - name: Build
         shell: bash
-        run: ./easybuild.sh build -64
+        run: ./easybuild.sh build -32
 
-  osx:
-    runs-on: macos-10.14
-    steps:
-      - uses: actions/checkout@v2
-      - name: Install dependencies
-        run: brew bundle
-
-      - name: Build
-        env:
-          DEVELOPER_DIR: /Applications/Xcode_11.2.app/Contents/Developer
-        shell: bash
-        run: ./easybuild.sh build -64 --osx=10.14
-
-  win:
-    runs-on: windows-2019
-    steps:
-      - uses: actions/checkout@v2
-      - name: Build
-        shell: cmd
-        run: call .\easybuild.bat build
-
+#  lnx64:
+#    runs-on: ubuntu-16.04
+#    steps:
+#      - uses: actions/checkout@v2
+#      - name: Install dependencies
+#        run: |
+#          sudo apt update
+#          sudo apt install nasm libwayland-dev wayland-protocols libgl1-mesa-dev libglu1-mesa-dev libasound2-dev pulseaudio libpulse-dev
+#
+#      - name: Build
+#        shell: bash
+#        run: ./easybuild.sh build -64
+#
+#  osx:
+#    runs-on: macos-10.15
+#    steps:
+#      - uses: actions/checkout@v2
+#      - name: Install dependencies
+#        run: brew bundle
+#
+#      - name: Build
+#        env:
+#          DEVELOPER_DIR: /Applications/Xcode_11.2.app/Contents/Developer
+#        shell: bash
+#        run: ./easybuild.sh build -64 --osx=10.14
+#
+#  win:
+#    runs-on: windows-2019
+#    steps:
+#      - uses: actions/checkout@v2
+#      - name: Build
+#        shell: cmd
+#        run: call .\easybuild.bat build
