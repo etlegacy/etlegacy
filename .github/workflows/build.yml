@@ -3,6 +3,69 @@ name: ETLBuild
 on: [ push ]
 
 jobs:
+  lnx64-mod:
+    runs-on: ubuntu-16.04
+    steps:
+        - uses: actions/checkout@v2
+
+        - name: Build
+          shell: bash
+          run: ./easybuild.sh build -64 -mod
+
+        - name: Package
+          run: |
+            cd build/legacy
+            cmake -E tar c lnx64-mod.zip --format=zip cgame*.so ui*.so
+
+        - uses: actions/upload-artifact@v2
+          with:
+            name: Linux64-mod
+            path: build/legazy/lnx64-mod.zip
+
+  osx-mod:
+    runs-on: macos-10.15
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install dependencies
+        run: brew bundle
+
+      - name: Build
+        env:
+          DEVELOPER_DIR: /Applications/Xcode_11.2.app/Contents/Developer
+        shell: bash
+        run: ./easybuild.sh build -64 -mod --osx=10.14
+
+      - name: Package
+        run: |
+          cd build/legacy
+          cmake -E tar c osx-mod.zip --format=zip cgame_mac ui_mac
+          cd ../../
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: Osx-mod
+          path: build/legazy/osx-mod.zip
+
+  win-mod:
+    runs-on: windows-2019
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build
+        shell: cmd
+        run: call .\easybuild.bat build -mod
+
+      - name: Package
+        shell: cmd
+        run: |
+          cd build\legacy
+          cmake -E tar c win32-mod.zip --format=zip cgame*.dll ui*.dll
+          cd ..\..\
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: Windows-mod
+          path: build/legazy/osx-mod.zip
+
   lnx32:
     runs-on: ubuntu-16.04
     steps:
