@@ -1308,7 +1308,7 @@ void G_BuildEndgameStats(void)
 			continue;
 		}
 
-		if (!best || (cl->ps.persistant[PERS_SCORE] / (float)(level.time - cl->pers.enterTime)) > (best->ps.persistant[PERS_SCORE] / (float)(level.time - best->pers.enterTime)))
+		if (!best || ((cl->ps.persistant[PERS_SCORE] - cl->sess.startxptotal) / (float)(level.time - cl->pers.enterTime)) > (best->ps.persistant[PERS_SCORE] - best->sess.startxptotal) / (float)(level.time - best->pers.enterTime))
 		{
 			best          = cl;
 			bestClientNum = level.sortedClients[i];
@@ -1317,12 +1317,12 @@ void G_BuildEndgameStats(void)
 
 	if (best)
 	{
-		if ((best->sess.startxptotal - best->ps.persistant[PERS_SCORE]) >= 100 || best->medals || best->hasaward)
+		if ((best->ps.persistant[PERS_SCORE] - best->sess.startxptotal) >= 100.f || best->medals || best->hasaward)
 		{
 			best = NULL;
 		}
 	}
-	Q_strcat(buffer, 1024, va("%i %i %i ", best ? bestClientNum : -1, best ? best->ps.persistant[PERS_SCORE] : 0, best ? best->sess.sessionTeam : TEAM_FREE));
+	Q_strcat(buffer, 1024, va("%i %i %i ", best ? bestClientNum : -1, best ? (int)(best->ps.persistant[PERS_SCORE] - best->sess.startxptotal) : 0, best ? best->sess.sessionTeam : TEAM_FREE));
 
 	trap_SetConfigstring(CS_ENDGAME_STATS, buffer);
 }
