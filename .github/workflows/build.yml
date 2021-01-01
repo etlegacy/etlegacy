@@ -13,7 +13,7 @@ jobs:
           sudo dpkg --add-architecture i386
           sudo apt update
           sudo apt install nasm gcc-multilib g++-multilib
-          sudo apt install libwayland-dev:i386 wayland-protocols libgl1-mesa-dev:i386 libglu1-mesa-dev:i386 libasound2-dev:i386 pulseaudio:i386 libpulse-dev:i386
+          sudo apt install libwayland-dev:i386 wayland-protocols libgl1-mesa-dev:i386 libglu1-mesa-dev:i386 libasound2-dev:i386 pulseaudio:i386 libpulse-dev
       - name: Build
         shell: bash
         run: ./easybuild.sh build -32
