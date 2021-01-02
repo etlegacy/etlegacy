@@ -700,7 +700,7 @@ END
 	# using appdmg nodejs application to generate the actual DMG installer
 	# https://github.com/LinusU/node-appdmg
 	# npm install -g appdmg
-	npx appdmg etlegacy-dmg.json "ETLegacy-${ETLEGACY_VERSION}.dmg"
+	npx appdmg etlegacy-dmg.json "etlegacy-${ETLEGACY_VERSION}.dmg"
 }
 
 run_package() {

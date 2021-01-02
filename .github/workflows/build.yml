@@ -204,8 +204,8 @@ jobs:
         with:
           name: osx-packages
           path: |
-            build/ETLegacy-*.tar.gz
-            build/ETLegacy-*.dmg
+            build/etlegacy-*.tar.gz
+            build/etlegacy-*.dmg
 
   win:
     runs-on: windows-2019
