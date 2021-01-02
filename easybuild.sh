@@ -659,7 +659,7 @@ create_osx_dmg() {
 	gm convert ../misc/osx-dmg-background.jpg -resize 640x360 -font ../misc/din1451alt.ttf -pointsize 20 -fill 'rgb(85,85,85)'  -draw "text 75,352 '${SHORT_VERSION}'" osx-dmg-background.jpg
 
 	# Needs to be the osx:s default python install!
-	python << END
+	/usr/bin/python << END
 import Cocoa
 import sys
 import os
