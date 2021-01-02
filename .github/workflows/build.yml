@@ -179,7 +179,7 @@ jobs:
       - name: Install dependencies
         run: |
           brew bundle
-          brew install librsvg graphicsmagic
+          brew install librsvg graphicsmagick
 
       - name: Build
         env:
@@ -227,6 +227,7 @@ jobs:
 
       - name: Generate packages
         shell: cmd
+        working-directory: build
         run: cpack
 
       - uses: actions/upload-artifact@v2
