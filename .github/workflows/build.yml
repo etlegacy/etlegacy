@@ -31,6 +31,8 @@ jobs:
     runs-on: ubuntu-16.04
     steps:
       - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
 
       - name: Build
         shell: bash
@@ -47,12 +49,16 @@ jobs:
     runs-on: macos-10.15
     steps:
       - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
       - name: Install dependencies
         run: brew bundle
 
       - name: Check git
         shell: bash
         run: |
+          git fetch --prune --unshallow --tags
           git describe 2
           git describe --abbrev=0 --tags
 
@@ -73,6 +79,9 @@ jobs:
     runs-on: windows-2019
     steps:
       - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
       - name: Build
         shell: cmd
         run: call .\easybuild.bat build -mod
@@ -99,6 +108,9 @@ jobs:
     needs: [ lnx64-mod, osx-mod, win-mod ]
     steps:
       - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
       - name: Install dependencies
         run: |
           sudo dpkg --add-architecture i386
@@ -152,6 +164,9 @@ jobs:
     needs: [ lnx32 ]
     steps:
       - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
       - name: Install dependencies
         run: |
           sudo apt update
@@ -187,6 +202,9 @@ jobs:
     needs: [ lnx32 ]
     steps:
       - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
       - name: Install dependencies
         run: |
           brew bundle
@@ -223,6 +241,9 @@ jobs:
     needs: [ lnx32 ]
     steps:
       - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
       - name: Build
         shell: cmd
         run: call .\easybuild.bat build
