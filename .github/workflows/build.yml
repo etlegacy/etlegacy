@@ -1,8 +1,27 @@
+# ______   _______   _
+#|  ____| |__   __| | |
+#| |__       | |    | |        ___    __ _    __ _    ___   _   _
+#|  __|      | |    | |       / _ \  / _` |  / _` |  / __| | | | |
+#| |____     | |    | |____  |  __/ | (_| | | (_| | | (__  | |_| |
+#|______|    |_|    |______|  \___|  \__, |  \__,_|  \___|  \__, |
+#                                     __/ |                  __/ |
+#                                    |___/                  |___/
+# 2021 Legacy team
 name: ETLBuild
 
 on: [ push ]
 
 jobs:
+
+#   __  __               _                                                  _     _
+#  |  \/  |             | |                                                | |   (_)
+#  | \  / |   ___     __| |     __ _    ___   _ __     ___   _ __    __ _  | |_   _    ___    _ __
+#  | |\/| |  / _ \   / _` |    / _` |  / _ \ | '_ \   / _ \ | '__|  / _` | | __| | |  / _ \  | '_ \
+#  | |  | | | (_) | | (_| |   | (_| | |  __/ | | | | |  __/ | |    | (_| | | |_  | | | (_) | | | | |
+#  |_|  |_|  \___/   \__,_|    \__, |  \___| |_| |_|  \___| |_|     \__,_|  \__| |_|  \___/  |_| |_|
+#                               __/ |
+#                              |___/
+
   lnx64-mod:
     runs-on: ubuntu-16.04
     steps:
@@ -54,7 +73,16 @@ jobs:
             build/legacy/cgame*.dll
             build/legacy/ui*.dll
 
-  # Since lnx32 is installing the most, use it as the step that combines all the other steps mod files.
+#   __  __                                                          _
+#  |  \/  |                                                        | |
+#  | \  / |   ___   _ __    __ _    ___     _ __ ___     ___     __| |  ___
+#  | |\/| |  / _ \ | '__|  / _` |  / _ \   | '_ ` _ \   / _ \   / _` | / __|
+#  | |  | | |  __/ | |    | (_| | |  __/   | | | | | | | (_) | | (_| | \__ \
+#  |_|  |_|  \___| |_|     \__, |  \___|   |_| |_| |_|  \___/   \__,_| |___/
+#                           __/ |
+#                          |___/
+# Since lnx32 is installing the most, use it as the step that combines all the other steps mod files.
+# This step also generates the final packages for 32 bit lnx.
   lnx32:
     runs-on: ubuntu-16.04
     needs: [ lnx64-mod, osx-mod, win-mod ]
@@ -96,23 +124,53 @@ jobs:
         with:
           name: lnx32-packages
           path: |
-            build/legacy/etlegacy-*.tar.gz
-            build/legacy/etlegacy-*.sh
+            build/etlegacy-*.tar.gz
+            build/etlegacy-*.sh
 
-#  lnx64:
-#    runs-on: ubuntu-16.04
-#    needs: [ lnx32 ]
-#    steps:
-#      - uses: actions/checkout@v2
-#      - name: Install dependencies
-#        run: |
-#          sudo apt update
-#          sudo apt install nasm libwayland-dev wayland-protocols libgl1-mesa-dev libglu1-mesa-dev libasound2-dev pulseaudio libpulse-dev
-#
-#      - name: Build
-#        shell: bash
-#        run: ./easybuild.sh build -64
-#
+#   ______   _                   _                            _
+#  |  ____| (_)                 | |                          | |
+#  | |__     _   _ __     __ _  | |    _ __     __ _    ___  | | __   __ _    __ _    ___   ___
+#  |  __|   | | | '_ \   / _` | | |   | '_ \   / _` |  / __| | |/ /  / _` |  / _` |  / _ \ / __|
+#  | |      | | | | | | | (_| | | |   | |_) | | (_| | | (__  |   <  | (_| | | (_| | |  __/ \__ \
+#  |_|      |_| |_| |_|  \__,_| |_|   | .__/   \__,_|  \___| |_|\_\  \__,_|  \__, |  \___| |___/
+#  | |                                                                               __/ |
+#  |_|                                                                              |___/
+# Generate the final packages for 64lnx, Osx and Windows
+  lnx64:
+    runs-on: ubuntu-16.04
+    needs: [ lnx32 ]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install dependencies
+        run: |
+          sudo apt update
+          sudo apt install nasm libwayland-dev wayland-protocols libgl1-mesa-dev libglu1-mesa-dev libasound2-dev pulseaudio libpulse-dev
+
+      - name: Build
+        shell: bash
+        run: ./easybuild.sh build -64
+
+      - uses: actions/download-artifact@v2
+        with:
+          name: All-mods
+          path: build/etlegacy
+
+      - name: Display structure of downloaded files
+        run: ls -R
+        working-directory: build/etlegacy
+
+      - name: Generate packages
+        shell: bash
+        working-directory: build/
+        run: cpack
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: lnx64-packages
+          path: |
+            build/etlegacy-*.tar.gz
+            build/etlegacy-*.sh
+
 #  osx:
 #    runs-on: macos-10.15
 #    needs: [ lnx32 ]
