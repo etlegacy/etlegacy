@@ -73,8 +73,8 @@ jobs:
         run: ./easybuild.sh build -32
 
       - uses: actions/download-artifact@v2
-       with:
-         path: build/legacy
+        with:
+          path: build/legacy
 
       - name: Merge mod files
         shell: bash
