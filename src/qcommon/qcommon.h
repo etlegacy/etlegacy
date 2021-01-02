@@ -396,8 +396,10 @@ You or the server may be running older versions of the game. Press the auto-upda
  */
 extern int demo_protocols[];
 
-#define MOTD_SERVER_NAME    "motd.etlegacy.com"    ///< location of the message of the day server
-#define UPDATE_SERVER_NAME  "update.etlegacy.com"  ///< location of the update server
+#define MASTER_SERVER_NAME  "master.etlegacy.com"                ///< location of the master server
+#define MOTD_SERVER_NAME    "motd.etlegacy.com"                  ///< location of the message of the day server
+#define UPDATE_SERVER_NAME  "update.etlegacy.com"                ///< location of the update server
+#define DOWNLOAD_SERVER_URL "http://mirror.etlegacy.com/etmain"  ///< location of the download server
 
 #define PORT_MASTER         27950
 #define PORT_MOTD           27951
@@ -1093,6 +1095,9 @@ extern int com_hunkusedvalue;
 
 extern qboolean com_errorEntered;
 
+extern cvar_t *com_masterServer;
+extern cvar_t *com_motdServer;
+extern cvar_t *com_updateServer;
 extern cvar_t *com_downloadURL;
 
 extern fileHandle_t com_journalFile;

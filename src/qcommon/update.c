@@ -63,22 +63,30 @@ autoupdate_t autoupdate;
 void Com_CheckAutoUpdate(void)
 {
 #ifdef FEATURE_AUTOUPDATE
-
+	int  res;
 	char info[MAX_INFO_STRING];
 
-	// Resolve update server
-	Com_Printf("Updater: resolving %s... ", UPDATE_SERVER_NAME);
-
-	if (!NET_StringToAdr(va("%s:%i", UPDATE_SERVER_NAME, PORT_UPDATE), &autoupdate.autoupdateServer, NA_UNSPEC))
+	if (autoupdate.autoupdateServer.type == NA_BAD)
 	{
-		Com_Printf("couldn't resolve address\n");
+		Com_Printf("Updater: resolving %s... ", com_updateServer->string);
+		res = NET_StringToAdr(com_motdServer->string, &autoupdate.autoupdateServer, NA_UNSPEC);
 
-		autoupdate.updateChecked = qtrue;
-		return;
-	}
-	else
-	{
-		Com_Printf("resolved to %s\n", NET_AdrToString(autoupdate.autoupdateServer));
+		if (res == 2)
+		{
+			// if no port was specified, use the default update port
+			autoupdate.autoupdateServer.port = BigShort(PORT_UPDATE);
+		}
+
+		if (res)
+		{
+			Com_Printf("resolved to %s\n", NET_AdrToString(autoupdate.autoupdateServer));
+		}
+		else
+		{
+			Com_Printf(S_COLOR_YELLOW "couldn't resolve address\n");
+			autoupdate.updateChecked = qtrue;
+			return;
+		}
 	}
 
 	info[0] = 0;
@@ -382,11 +390,11 @@ qboolean Com_InitUpdateDownloads(void)
 
 				if (!Q_stricmp(updateFile, UPDATE_PACKAGE))
 				{
-					Q_strncpyz(upd.downloadName, va("%s/updater/%s-%s-%s", UPDATE_SERVER_NAME, ETLEGACY_VERSION_SHORT, CPUSTRING, updateFile), sizeof(upd.downloadName));
+					Q_strncpyz(upd.downloadName, va("%s/updater/%s-%s-%s", com_updateServer->string, ETLEGACY_VERSION_SHORT, CPUSTRING, updateFile), sizeof(upd.downloadName));
 				}
 				else
 				{
-					Q_strncpyz(upd.downloadName, va("%s/packages/%s", UPDATE_SERVER_NAME, updateFile), sizeof(upd.downloadName));
+					Q_strncpyz(upd.downloadName, va("%s/packages/%s", com_updateServer->string, updateFile), sizeof(upd.downloadName));
 				}
 
 				Q_strncpyz(upd.downloadTempName, FS_BuildOSPath(Cvar_VariableString("fs_homepath"), AUTOUPDATE_DIR, va("%s.tmp", updateFile)), sizeof(upd.downloadTempName));
