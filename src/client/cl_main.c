@@ -735,6 +735,7 @@ void CL_ForwardCommandToServer(const char *string)
  */
 static void CL_RequestMotd(void)
 {
+	int  res;
 	char info[MAX_INFO_STRING];
 
 	if (!com_motd->integer)
@@ -742,16 +743,26 @@ static void CL_RequestMotd(void)
 		return;
 	}
 
-	Com_Printf("MOTD: resolving %s... ", MOTD_SERVER_NAME);
+	if (autoupdate.motdServer.type == NA_BAD)
+	{
+		Com_Printf("MOTD: resolving %s... ", com_motdServer->string);
+		res = NET_StringToAdr(com_motdServer->string, &autoupdate.motdServer, NA_UNSPEC);
 
-	if (!NET_StringToAdr(va("%s:%i", MOTD_SERVER_NAME, PORT_MOTD), &autoupdate.motdServer, NA_UNSPEC))
-	{
-		Com_Printf(S_COLOR_YELLOW "couldn't resolve address\n");
-		return;
-	}
-	else
-	{
-		Com_Printf("resolved to %s\n", NET_AdrToString(autoupdate.motdServer));
+		if (res == 2)
+		{
+			// if no port was specified, use the default motd port
+			autoupdate.motdServer.port = BigShort(PORT_MOTD);
+		}
+
+		if (res)
+		{
+			Com_Printf("resolved to %s\n", NET_AdrToString(autoupdate.motdServer));
+		}
+		else
+		{
+			Com_Printf(S_COLOR_YELLOW "couldn't resolve address\n");
+			return;
+		}
 	}
 
 	Com_sprintf(autoupdate.motdChallenge, sizeof(autoupdate.motdChallenge), "%i", rand());

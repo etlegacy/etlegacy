@@ -151,6 +151,9 @@ cvar_t *com_watchdog_cmd;
 
 cvar_t *com_hunkused;
 
+cvar_t *com_masterServer;
+cvar_t *com_motdServer;
+cvar_t *com_updateServer;
 cvar_t *com_downloadURL;
 
 // com_speeds times
@@ -2989,9 +2992,12 @@ void Com_Init(char *commandLine)
 	Cmd_AddCommand("changeVectors", MSG_ReportChangeVectors_f, "Prints out a table from the current statistics for copying to code.");
 	Cmd_AddCommand("writeconfig", Com_WriteConfig_f, "Write the config file to a specific name.");
 	Cmd_AddCommand("update", Com_Update_f, "Updates the game to latest version.");
-
-	com_downloadURL = Cvar_Get("com_downloadURL", "http://mirror.etlegacy.com/etmain", CVAR_INIT);
 	Cmd_AddCommand("download", Com_Download_f, "Downloads a pk3 from the URL set in cvar com_downloadURL.");
+
+	com_masterServer = Cvar_Get("com_masterServer", MASTER_SERVER_NAME, CVAR_INIT);
+	com_motdServer   = Cvar_Get("com_motdServer", MOTD_SERVER_NAME, CVAR_INIT);
+	com_updateServer = Cvar_Get("com_updateServer", UPDATE_SERVER_NAME, CVAR_INIT);
+	com_downloadURL  = Cvar_Get("com_downloadURL", DOWNLOAD_SERVER_URL, CVAR_INIT);
 
 #ifdef FEATURE_DBMS
 	Cmd_AddCommand("saveDB", DB_SaveMemDB_f, "Saves the internal memory database to disk.");

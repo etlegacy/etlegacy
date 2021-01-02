@@ -1071,7 +1071,7 @@ void SV_Init(void)
 
 	// master servers
 	Cvar_Get("sv_master1", "etmaster.idsoftware.com", CVAR_PROTECTED);
-	Cvar_Get("sv_master2", "master.etlegacy.com", CVAR_PROTECTED);
+	Cvar_Get("sv_master2", com_masterServer->string, CVAR_INIT);
 
 	sv_reconnectlimit = Cvar_Get("sv_reconnectlimit", "3", 0);
 	sv_tempbanmessage = Cvar_Get("sv_tempbanmessage", "You have been kicked and are temporarily banned from joining this server.", 0);
