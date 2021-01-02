@@ -904,6 +904,20 @@ static panel_button_t chatPanelVoteButton =
 	0
 };
 
+static panel_button_t chatPanelVoteNowButton =
+{
+	NULL,
+	"^3VOTE NOW",
+	{ SCREEN_WIDTH - 10 - 60 - 4 - 60 - 4,SCREEN_HEIGHT - 30,                             60, 16 },
+	{ 0,                          0,                                              0,  0, 0, 0, 0, 0},
+	NULL,                         // font
+	CG_Debriefing_VoteButton_KeyDown,// keyDown
+	NULL,                         // keyUp
+	CG_Debriefing_VoteNowButton_Draw,
+	NULL,
+	0
+};
+
 static panel_button_t chatPanelQCButton =
 {
 	NULL,
@@ -1665,7 +1679,7 @@ void CG_Debriefing_ChatBox_Draw(panel_button_t *button)
 static panel_button_t *chatPanelButtons[] =
 {
 	&chatPanelWindow,       &chatPanelText,
-	&chatPanelNextButton,   &chatPanelVoteButton,&chatPanelQCButton,  &chatTypeButton, &chatPanelReadyButton,
+	&chatPanelNextButton,   &chatPanelVoteButton,&chatPanelVoteNowButton,&chatPanelQCButton,  &chatTypeButton, &chatPanelReadyButton,
 	&charPanelEditSurround, &charPanelEdit,
 	NULL
 };
@@ -3492,6 +3506,30 @@ qboolean CG_Debriefing_PrestigeButton_KeyDown(panel_button_t *button, int key)
 void CG_Debriefing_VoteButton_Draw(panel_button_t *button)
 {
 	if (cgs.gametype != GT_WOLF_MAPVOTE)
+	{
+		return;
+	}
+
+	if (!(cg.snap->ps.eFlags & EF_VOTED))
+	{
+		return;
+	}
+
+	CG_PanelButtonsRender_Button(button);
+}
+
+/**
+ * @brief CG_Debriefing_VoteNowButton_Draw
+ * @param[in] button
+ */
+void CG_Debriefing_VoteNowButton_Draw(panel_button_t *button)
+{
+	if (cgs.gametype != GT_WOLF_MAPVOTE)
+	{
+		return;
+	}
+
+	if (cg.snap->ps.eFlags & EF_VOTED)
 	{
 		return;
 	}

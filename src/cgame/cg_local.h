@@ -3760,6 +3760,7 @@ void CG_ChatPanel_Setup(void);
 
 void CG_Debriefing_ChatEditFinish(panel_button_t *button);
 void CG_Debriefing_VoteButton_Draw(panel_button_t *button);
+void CG_Debriefing_VoteNowButton_Draw(panel_button_t *button);
 void CG_Debriefing_NextButton_Draw(panel_button_t *button);
 void CG_Debriefing_ChatButton_Draw(panel_button_t *button);
 void CG_Debriefing_ReadyButton_Draw(panel_button_t *button);
