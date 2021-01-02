@@ -33,7 +33,7 @@ jobs:
 
       - uses: actions/upload-artifact@v2
         with:
-          name: Linux64-mod
+          name: lnx64-mod
           path: |
             build/legacy/cgame*.so
             build/legacy/ui*.so
@@ -53,7 +53,7 @@ jobs:
 
       - uses: actions/upload-artifact@v2
         with:
-          name: OSX-mod
+          name: osx-mod
           path: |
             build/legacy/cgame_mac
             build/legacy/ui_mac
@@ -68,7 +68,7 @@ jobs:
 
       - uses: actions/upload-artifact@v2
         with:
-          name: Win-mod
+          name: win-mod
           path: |
             build/legacy/cgame*.dll
             build/legacy/ui*.dll
@@ -108,7 +108,7 @@ jobs:
         shell: bash
         working-directory: build/legacy
         run: |
-          zip -rvj legacy_*.pk3 Win-mod/*.dll Linux64-mod/*.so OSX-mod/*
+          zip -rvj legacy_*.pk3 win-mod/*.dll lnx64-mod/*.so osx-mod/*
 
       - uses: actions/upload-artifact@v2
         with:
@@ -236,3 +236,45 @@ jobs:
           path: |
             build/etlegacy-*.exe
             build/etlegacy-*.zip
+
+#   _    _           _                       _                         _      _____   _
+#  | |  | |         | |                     | |                       | |    / ____| | |
+#  | |  | |  _ __   | |   ___     __ _    __| |     __ _   _ __     __| |   | |      | |   ___    __ _   _ __    _   _   _ __
+#  | |  | | | '_ \  | |  / _ \   / _` |  / _` |    / _` | | '_ \   / _` |   | |      | |  / _ \  / _` | | '_ \  | | | | | '_ \
+#  | |__| | | |_) | | | | (_) | | (_| | | (_| |   | (_| | | | | | | (_| |   | |____  | | |  __/ | (_| | | | | | | |_| | | |_) |
+#   \____/  | .__/  |_|  \___/   \__,_|  \__,_|    \__,_| |_| |_|  \__,_|    \_____| |_|  \___|  \__,_| |_| |_|  \__,_| | .__/
+#           | |                                                                                                         | |
+#           |_|                                                                                                         |_|
+
+  upload-and-cleanup:
+    runs-on: ubuntu-16.04
+    needs: [ lnx32, lnx64, osx, win ]
+    steps:
+      - uses: geekyeggo/delete-artifact@v1
+        with:
+          name: |
+            All-mods
+            lnx64-mod
+            osx-mod
+            win-mod
+
+      - uses: actions/download-artifact@v2
+        with:
+          path: packages
+
+      - name: Upload packages
+        shell: bash
+        working-directory: packages
+        run: |
+          find lnx64-packages/ -name '*' -type f -exec curl -H "Authorization: Bearer ${{ secrets.LEGACY_AUTH }}" -X POST -H "Content-Type: multipart/form-data" -F "data=@{}" -F "platform=lnx64" -F"sha=${{ github.sha }}" ${{ secrets.LEGACY_UPLOAD_URL }} \;
+          find lnx32-packages/ -name '*' -type f -exec curl -H "Authorization: Bearer ${{ secrets.LEGACY_AUTH }}" -X POST -H "Content-Type: multipart/form-data" -F "data=@{}" -F "platform=lnx32" -F"sha=${{ github.sha }}" ${{ secrets.LEGACY_UPLOAD_URL }} \;
+          find osx-packages/ -name '*' -type f -exec curl -H "Authorization: Bearer ${{ secrets.LEGACY_AUTH }}" -X POST -H "Content-Type: multipart/form-data" -F "data=@{}" -F "platform=osx" -F"sha=${{ github.sha }}" ${{ secrets.LEGACY_UPLOAD_URL }} \;
+          find win-packages/ -name '*' -type f -exec curl -H "Authorization: Bearer ${{ secrets.LEGACY_AUTH }}" -X POST -H "Content-Type: multipart/form-data" -F "data=@{}" -F "platform=win" -F"sha=${{ github.sha }}" ${{ secrets.LEGACY_UPLOAD_URL }} \;
+
+      - uses: geekyeggo/delete-artifact@v1
+        with:
+          name: |
+            lnx64-packages
+            lnx32-packages
+            osx-packages
+            win-packages
