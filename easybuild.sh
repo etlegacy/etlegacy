@@ -13,7 +13,7 @@ SOURCEDIR="${_SRC}/src"
 PROJECTDIR="${_SRC}/project"
 MODMAIN="${HOME}/.etlegacy/etmain"
 ETLEGACY_MIRROR="https://mirror.etlegacy.com/etmain/"
-ETLEGACY_VERSION=`git describe 2>/dev/null`
+ETLEGACY_VERSION=`git describe --abbrev=7 2>/dev/null`
 INSTALL_PREFIX=${HOME}/etlegacy
 
 # Set this to false to disable colors
