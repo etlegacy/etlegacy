@@ -133,8 +133,8 @@ jobs:
 #  |  __|   | | | '_ \   / _` | | |   | '_ \   / _` |  / __| | |/ /  / _` |  / _` |  / _ \ / __|
 #  | |      | | | | | | | (_| | | |   | |_) | | (_| | | (__  |   <  | (_| | | (_| | |  __/ \__ \
 #  |_|      |_| |_| |_|  \__,_| |_|   | .__/   \__,_|  \___| |_|\_\  \__,_|  \__, |  \___| |___/
-#  | |                                                                               __/ |
-#  |_|                                                                              |___/
+#                                     | |                                     __/ |
+#                                     |_|                                    |___/
 # Generate the final packages for 64lnx, Osx and Windows
   lnx64:
     runs-on: ubuntu-16.04
@@ -198,7 +198,7 @@ jobs:
 
       - name: Generate packages
         shell: bash
-        run: cpack
+        run: ./easybuild.sh package -64 --osx=10.14
 
       - uses: actions/upload-artifact@v2
         with:
