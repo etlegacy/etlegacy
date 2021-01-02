@@ -56,10 +56,17 @@ if(GIT_DESCRIBE)
 	set(ETL_CMAKE_VERSION ${GIT_DESCRIBE})
 	set(ETL_CMAKE_VERSION_SHORT ${GIT_DESCRIBE_TAG})
 
-	string(COMPARE EQUAL "${ETL_CMAKE_VERSION}" "${ETL_CMAKE_VERSION_SHORT}" VERSION_NOT_DIRTY)
+	string(COMPARE EQUAL "${ETL_CMAKE_VERSION}" "${ETL_CMAKE_VERSION_SHORT}" VERSION_IS_CLEAN)
 
-	if(NOT VERSION_NOT_DIRTY)
-		set(ETL_CMAKE_VERSION_SHORT "${GIT_DESCRIBE_TAG}_dirty")
+	if(NOT VERSION_IS_CLEAN)
+		message(WARNING "Using a non release version build: '${ETL_CMAKE_VERSION}' != '${ETL_CMAKE_VERSION_SHORT}'")
+
+		if("$ENV{CI}" STREQUAL "true")
+			message(STATUS "Detected build running in CI, using full version string instead")
+			set(ETL_CMAKE_VERSION_SHORT "${ETL_CMAKE_VERSION}")
+		else()
+			set(ETL_CMAKE_VERSION_SHORT "${GIT_DESCRIBE_TAG}_dirty")
+		endif()
 	endif()
 
 	if("${GIT_DESCRIBE}" MATCHES "^v[0-9]+\\.[0-9]+.*")
