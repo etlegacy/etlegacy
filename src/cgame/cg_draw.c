@@ -2595,23 +2595,20 @@ static void CG_DrawLimboMessage(void)
 	{
 		int reinfTime = CG_CalculateReinfTime(qfalse);
 
-		// Change the number's color progressively towards red when the deployment is close.
-		// This helps bring the player's attention to the respawn counter.
-		if (reinfTime > 3)
+		qboolean tapout = cgs.clientinfo[cg.clientNum].health == 0;
+
+		// coloured gradient when deployment is close to help bring player's attention to respawn counter
+		if (reinfTime > 2)
 		{
 			str = va(CG_TranslateString("Deploying in ^3%d ^7seconds"), reinfTime);
 		}
-		else if (reinfTime > 2)
-		{
-			str = va(CG_TranslateString("Deploying in ^a%d ^7seconds"), reinfTime);
-		}
 		else if (reinfTime > 1)
 		{
-			str = va(CG_TranslateString("Deploying in ^8%d ^7seconds"), reinfTime);
+			str = va(CG_TranslateString("Deploying in %s%d ^7seconds"), tapout ? "^1" : "^3", reinfTime);
 		}
 		else
 		{
-			str = va(CG_TranslateString("Deploying in ^1%d ^7second"), reinfTime);
+			str = va(CG_TranslateString("Deploying in %s%d ^7second"), tapout ? "^1" : "^3", reinfTime);
 		}
 	}
 
@@ -2678,23 +2675,13 @@ static qboolean CG_DrawFollow(void)
 					int deployTime   = ((cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_AXIS) ? cg_redlimbotime.integer : cg_bluelimbotime.integer) / 1000;
 					int reinfDepTime = CG_CalculateReinfTime(qfalse) + cg.snap->ps.persistant[PERS_RESPAWNS_PENALTY] * deployTime;
 
-					// Change the number's color progressively towards red when the deployment is close.
-					// This helps bring the player's attention to the respawn counter.
-					if (reinfDepTime > 3)
+					if (reinfDepTime > 1)
 					{
 						sprintf(deploytime, CG_TranslateString("Bonus Life! Deploying in ^3%d ^7seconds"), reinfDepTime);
 					}
-					else if (reinfDepTime > 2)
-					{
-						sprintf(deploytime, CG_TranslateString("Bonus Life! Deploying in ^a%d ^7seconds"), reinfDepTime);
-					}
-					else if (reinfDepTime > 1)
-					{
-						sprintf(deploytime, CG_TranslateString("Bonus Life! Deploying in ^8%d ^7seconds"), reinfDepTime);
-					}
 					else
 					{
-						sprintf(deploytime, CG_TranslateString("Bonus Life! Deploying in ^1%d ^7second"), reinfDepTime);
+						sprintf(deploytime, CG_TranslateString("Bonus Life! Deploying in ^3%d ^7second"), reinfDepTime);
 					}
 				}
 				else
@@ -2708,21 +2695,13 @@ static qboolean CG_DrawFollow(void)
 
 				// Change the number's color progressively towards red when the deployment is close.
 				// This helps bring the player's attention to the respawn counter.
-				if (reinfTime > 3)
+				if (reinfTime > 1)
 				{
 					sprintf(deploytime, CG_TranslateString("Deploying in ^3%d ^7seconds"), reinfTime);
 				}
-				else if (reinfTime > 2)
-				{
-					sprintf(deploytime, CG_TranslateString("Deploying in ^a%d ^7seconds"), reinfTime);
-				}
-				else if (reinfTime > 1)
-				{
-					sprintf(deploytime, CG_TranslateString("Deploying in ^8%d ^7seconds"), reinfTime);
-				}
 				else
 				{
-					sprintf(deploytime, CG_TranslateString("Deploying in ^1%d ^7second"), reinfTime);
+					sprintf(deploytime, CG_TranslateString("Deploying in ^3%d ^7second"), reinfTime);
 				}
 			}
 

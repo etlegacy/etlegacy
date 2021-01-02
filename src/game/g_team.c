@@ -1255,6 +1255,12 @@ void checkpoint_spawntouch(gentity_t *self, gentity_t *other, trace_t *trace)
 	char *flagAction = "touch";
 #endif
 
+	// dead guys don't capture spawns
+	if (other->client->ps.eFlags & EF_DEAD)
+	{
+		return;
+	}
+
 	if (self->count == other->client->sess.sessionTeam)
 	{
 		return;
