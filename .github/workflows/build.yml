@@ -153,11 +153,11 @@ jobs:
       - uses: actions/download-artifact@v2
         with:
           name: All-mods
-          path: build/etlegacy
+          path: build/legacy
 
       - name: Display structure of downloaded files
         run: ls -R
-        working-directory: build/etlegacy
+        working-directory: build/legacy
 
       - name: Generate packages
         shell: bash
@@ -171,25 +171,67 @@ jobs:
             build/etlegacy-*.tar.gz
             build/etlegacy-*.sh
 
-#  osx:
-#    runs-on: macos-10.15
-#    needs: [ lnx32 ]
-#    steps:
-#      - uses: actions/checkout@v2
-#      - name: Install dependencies
-#        run: brew bundle
-#
-#      - name: Build
-#        env:
-#          DEVELOPER_DIR: /Applications/Xcode_11.2.app/Contents/Developer
-#        shell: bash
-#        run: ./easybuild.sh build -64 --osx=10.14
-#
-#  win:
-#    runs-on: windows-2019
-#    needs: [ lnx32 ]
-#    steps:
-#      - uses: actions/checkout@v2
-#      - name: Build
-#        shell: cmd
-#        run: call .\easybuild.bat build
+  osx:
+    runs-on: macos-10.15
+    needs: [ lnx32 ]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install dependencies
+        run: |
+          brew bundle
+          brew install librsvg graphicsmagic
+
+      - name: Build
+        env:
+          DEVELOPER_DIR: /Applications/Xcode_11.2.app/Contents/Developer
+        shell: bash
+        run: ./easybuild.sh build -64 --osx=10.14
+
+      - uses: actions/download-artifact@v2
+        with:
+          name: All-mods
+          path: build/legacy
+
+      - name: Display structure of downloaded files
+        run: ls -R
+        working-directory: build/legacy
+
+      - name: Generate packages
+        shell: bash
+        run: cpack
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: osx-packages
+          path: |
+            build/ETLegacy-*.tar.gz
+            build/ETLegacy-*.dmg
+
+  win:
+    runs-on: windows-2019
+    needs: [ lnx32 ]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build
+        shell: cmd
+        run: call .\easybuild.bat build
+
+      - uses: actions/download-artifact@v2
+        with:
+          name: All-mods
+          path: build/legacy
+
+      - name: Display structure of downloaded files
+        run: dir
+        working-directory: build/legacy
+
+      - name: Generate packages
+        shell: cmd
+        run: cpack
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: win-packages
+          path: |
+            build/etlegacy-*.exe
+            build/etlegacy-*.zip
