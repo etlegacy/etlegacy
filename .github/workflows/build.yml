@@ -29,8 +29,6 @@ jobs:
 
   lnx64-mod:
     runs-on: ubuntu-16.04
-    container:
-      image: etlegacy/lnx-build:centos7
     steps:
       - uses: actions/checkout@v2
         with:
@@ -38,6 +36,7 @@ jobs:
           fetch-depth: 0
 
       - name: Build
+        uses: docker://etlegacy/lnx-build:centos7
         shell: bash
         run: ./easybuild.sh build -64 -mod
 
@@ -103,8 +102,6 @@ jobs:
 # This step also generates the final packages for 32 bit lnx.
   lnx32:
     runs-on: ubuntu-16.04
-    container:
-      image: etlegacy/lnx-build:centos7
     needs: [ lnx64-mod, osx-mod, win-mod ]
     steps:
       - uses: actions/checkout@v2
@@ -123,6 +120,7 @@ jobs:
 
       - name: Build
         shell: bash
+        uses: docker://etlegacy/lnx-build:centos7
         run: ./easybuild.sh build -32
 
       - uses: actions/download-artifact@v2
@@ -141,6 +139,7 @@ jobs:
           path: build/legacy/legacy_*.pk3
 
       - name: Generate packages
+        uses: docker://etlegacy/lnx-build:centos7
         shell: bash
         working-directory: build/
         run: cpack
@@ -164,8 +163,6 @@ jobs:
   lnx64:
     runs-on: ubuntu-16.04
     needs: [ lnx32 ]
-    container:
-      image: etlegacy/lnx-build:centos7
     steps:
       - uses: actions/checkout@v2
         with:
@@ -179,6 +176,7 @@ jobs:
 #          sudo apt install nasm libwayland-dev wayland-protocols libgl1-mesa-dev libglu1-mesa-dev libasound2-dev pulseaudio libpulse-dev
 
       - name: Build
+        uses: docker://etlegacy/lnx-build:centos7
         shell: bash
         run: ./easybuild.sh build -64
 
@@ -192,6 +190,7 @@ jobs:
         working-directory: build/legacy
 
       - name: Generate packages
+        uses: docker://etlegacy/lnx-build:centos7
         shell: bash
         working-directory: build/
         run: cpack

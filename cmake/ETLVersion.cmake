@@ -59,7 +59,7 @@ if(GIT_DESCRIBE)
 	string(COMPARE EQUAL "${ETL_CMAKE_VERSION}" "${ETL_CMAKE_VERSION_SHORT}" VERSION_IS_CLEAN)
 
 	if(NOT VERSION_IS_CLEAN)
-		message(WARNING "Using a non release version build: '${ETL_CMAKE_VERSION}' != '${ETL_CMAKE_VERSION_SHORT}'")
+		message(STATUS "Using a non release version build: '${ETL_CMAKE_VERSION}' != '${ETL_CMAKE_VERSION_SHORT}'")
 
 		if("$ENV{CI}" STREQUAL "true")
 			message(STATUS "Detected build running in CI, using full version string instead")
