@@ -328,6 +328,12 @@ jobs:
         working-directory: build/package
         run: cp ../../misc/docker/dedicated.Dockerfile ./Dockerfile
 
+      - name: Package folder contents
+        working-directory: build/package
+        run: |
+          ls -R
+          ls -R ../
+
       - name: Login to DockerHub Registry
         run: echo ${{ secrets.DOCKERHUB_PASSWORD }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
       - name: Get the version
