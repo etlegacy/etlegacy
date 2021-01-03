@@ -1841,8 +1841,15 @@ static void CG_DrawCrosshairNames(void)
 	if (cg.crosshairDyna > -1)
 	{
 		color = CG_FadeColor(cg.crosshairDynaTime, 1000);
-		s     = va(CG_TranslateString("%s^7\'s dynamite"), cgs.clientinfo[cg.crosshairDyna].name);
-		w     = CG_Text_Width_Ext(s, fontScale, 0, &cgs.media.limboFont2);
+
+		if (!color)
+		{
+			trap_R_SetColor(NULL);
+			return;
+		}
+
+		s = va(CG_TranslateString("%s^7\'s dynamite"), cgs.clientinfo[cg.crosshairDyna].name);
+		w = CG_Text_Width_Ext(s, fontScale, 0, &cgs.media.limboFont2);
 		CG_Text_Paint_Ext(middle - w / 2, 182, fontScale, fontScale, color, s, 0, 0, 0, &cgs.media.limboFont2);
 
 		cg.crosshairDyna = -1;
@@ -1853,8 +1860,15 @@ static void CG_DrawCrosshairNames(void)
 	if (cg.crosshairMine > -1)
 	{
 		color = CG_FadeColor(cg.crosshairMineTime, 1000);
-		s     = va(CG_TranslateString("%s^7\'s mine"), cgs.clientinfo[cg.crosshairMine].name);
-		w     = CG_Text_Width_Ext(s, fontScale, 0, &cgs.media.limboFont2);
+
+		if (!color)
+		{
+			trap_R_SetColor(NULL);
+			return;
+		}
+
+		s = va(CG_TranslateString("%s^7\'s mine"), cgs.clientinfo[cg.crosshairMine].name);
+		w = CG_Text_Width_Ext(s, fontScale, 0, &cgs.media.limboFont2);
 		CG_Text_Paint_Ext(middle - w / 2, 182, fontScale, fontScale, color, s, 0, 0, 0, &cgs.media.limboFont2);
 
 		cg.crosshairMine = -1;
