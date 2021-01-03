@@ -908,11 +908,11 @@ static panel_button_t chatPanelVoteNowButton =
 {
 	NULL,
 	"^3VOTE NOW",
-	{ SCREEN_WIDTH - 10 - 60 - 4 - 60 - 4,SCREEN_HEIGHT - 30,                             60, 16 },
-	{ 0,                          0,                                              0,  0, 0, 0, 0, 0},
-	NULL,                         // font
+	{ SCREEN_WIDTH - 10 - 60 - 4 - 60 - 4,SCREEN_HEIGHT - 30,                           60, 16 },
+	{ 0,                             0,                                            0,  0, 0, 0, 0, 0},
+	NULL,                            // font
 	CG_Debriefing_VoteButton_KeyDown,// keyDown
-	NULL,                         // keyUp
+	NULL,                            // keyUp
 	CG_Debriefing_VoteNowButton_Draw,
 	NULL,
 	0
@@ -1679,7 +1679,7 @@ void CG_Debriefing_ChatBox_Draw(panel_button_t *button)
 static panel_button_t *chatPanelButtons[] =
 {
 	&chatPanelWindow,       &chatPanelText,
-	&chatPanelNextButton,   &chatPanelVoteButton,&chatPanelVoteNowButton,&chatPanelQCButton,  &chatTypeButton, &chatPanelReadyButton,
+	&chatPanelNextButton,   &chatPanelVoteButton,&chatPanelVoteNowButton,  &chatPanelQCButton, &chatTypeButton, &chatPanelReadyButton,
 	&charPanelEditSurround, &charPanelEdit,
 	NULL
 };
@@ -4625,7 +4625,7 @@ void CG_parseMapVoteTally()
 			{
 				if (cgs.dbSortedVotedMapsByTotal[j].totalVotes != -1)
 				{
-					memmove(cgs.dbSortedVotedMapsByTotal + j + 1, cgs.dbSortedVotedMapsByTotal + j, sizeof(sortedVotedMapByTotal_s) * (MAX_VOTE_MAPS - j - 1));
+					memmove(&cgs.dbSortedVotedMapsByTotal[j + 1], &cgs.dbSortedVotedMapsByTotal[j], sizeof(sortedVotedMapByTotal_s) * (MAX_VOTE_MAPS - j - 1));
 				}
 
 				cgs.dbSortedVotedMapsByTotal[j].mapID      = i;
