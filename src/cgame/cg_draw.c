@@ -2609,20 +2609,18 @@ static void CG_DrawLimboMessage(void)
 	{
 		int reinfTime = CG_CalculateReinfTime(qfalse);
 
-		qboolean tapout = cgs.clientinfo[cg.clientNum].health == 0;
-
-		// coloured gradient when deployment is close to help bring player's attention to respawn counter
+		// coloured respawn counter when deployment is close to bring attention to next respawn
 		if (reinfTime > 2)
 		{
 			str = va(CG_TranslateString("Deploying in ^3%d ^7seconds"), reinfTime);
 		}
 		else if (reinfTime > 1)
 		{
-			str = va(CG_TranslateString("Deploying in %s%d ^7seconds"), tapout ? "^1" : "^3", reinfTime);
+			str = va(CG_TranslateString("Deploying in %s%d ^7seconds"), cgs.clientinfo[cg.clientNum].health == 0 ? "^1" : "^3", reinfTime);
 		}
 		else
 		{
-			str = va(CG_TranslateString("Deploying in %s%d ^7second"), tapout ? "^1" : "^3", reinfTime);
+			str = va(CG_TranslateString("Deploying in %s%d ^7second"), cgs.clientinfo[cg.clientNum].health == 0 ? "^1" : "^3", reinfTime);
 		}
 	}
 
@@ -2707,8 +2705,7 @@ static qboolean CG_DrawFollow(void)
 			{
 				int reinfTime = CG_CalculateReinfTime(qfalse);
 
-				// Change the number's color progressively towards red when the deployment is close.
-				// This helps bring the player's attention to the respawn counter.
+				// coloured respawn counter when deployment is close to bring attention to next respawn
 				if (reinfTime > 1)
 				{
 					sprintf(deploytime, CG_TranslateString("Deploying in ^3%d ^7seconds"), reinfTime);
