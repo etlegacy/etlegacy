@@ -2052,9 +2052,9 @@ static void CG_PlayerSprites(centity_t *cent)
 
 	if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR || (cg.snap->ps.pm_flags & PMF_FOLLOW && cgs.clientinfo[cg.clientNum].shoutcaster))
 	{
-		if (cg_drawCrosshairNames.integer > 0 || cgs.clientinfo[cg.clientNum].shoutcaster)
+		if (cg_drawSpectatorNames.integer > 0 || cgs.clientinfo[cg.clientNum].shoutcaster)
 		{
-			CG_PlayerFloatText(cent, cg_drawCrosshairNames.integer == 1 ? ci->cleanname : ci->name, height + 8);
+			CG_PlayerFloatText(cent, cg_drawSpectatorNames.integer == 1 ? ci->cleanname : ci->name, height + 8);
 		}
 
 		// show some useful icons to spectators
