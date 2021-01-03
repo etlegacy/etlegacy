@@ -29,6 +29,8 @@ jobs:
 
   lnx64-mod:
     runs-on: ubuntu-16.04
+    container:
+      image: etlegacy/lnx-build:centos7
     steps:
       - uses: actions/checkout@v2
         with:
@@ -98,19 +100,22 @@ jobs:
 # This step also generates the final packages for 32 bit lnx.
   lnx32:
     runs-on: ubuntu-16.04
+    container:
+      image: etlegacy/lnx-build:centos7
     needs: [ lnx64-mod, osx-mod, win-mod ]
     steps:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0
 
-      - name: Install dependencies
-        run: |
-          sudo dpkg --add-architecture i386
-          sudo apt update
-          sudo apt install nasm gcc-multilib g++-multilib zip
-          sudo apt install libwayland-dev:i386 wayland-protocols libgl1-mesa-dev:i386 libglu1-mesa-dev:i386
-          sudo apt install libasound2-dev:i386 pulseaudio:i386 libpulse-dev zlib1g-dev:i386 libsnappy-dev:i386 liblz4-1:i386
+# These are for the ubuntu build, our own build image has everything preinstalled.
+#      - name: Install dependencies
+#        run: |
+#          sudo dpkg --add-architecture i386
+#          sudo apt update
+#          sudo apt install nasm gcc-multilib g++-multilib zip
+#          sudo apt install libwayland-dev:i386 wayland-protocols libgl1-mesa-dev:i386 libglu1-mesa-dev:i386
+#          sudo apt install libasound2-dev:i386 pulseaudio:i386 libpulse-dev zlib1g-dev:i386 libsnappy-dev:i386 liblz4-1:i386
 
       - name: Build
         shell: bash
@@ -155,15 +160,18 @@ jobs:
   lnx64:
     runs-on: ubuntu-16.04
     needs: [ lnx32 ]
+    container:
+      image: etlegacy/lnx-build:centos7
     steps:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0
 
-      - name: Install dependencies
-        run: |
-          sudo apt update
-          sudo apt install nasm libwayland-dev wayland-protocols libgl1-mesa-dev libglu1-mesa-dev libasound2-dev pulseaudio libpulse-dev
+# These are for the ubuntu build, our own build image has everything preinstalled.
+#      - name: Install dependencies
+#        run: |
+#          sudo apt update
+#          sudo apt install nasm libwayland-dev wayland-protocols libgl1-mesa-dev libglu1-mesa-dev libasound2-dev pulseaudio libpulse-dev
 
       - name: Build
         shell: bash
