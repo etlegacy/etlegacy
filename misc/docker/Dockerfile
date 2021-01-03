@@ -3,13 +3,19 @@ LABEL version="1.0"
 LABEL maintainer="mail@etlegacy.com"
 LABEL description="Linux build machine for the 32 and 64 bit linux releases"
 
+# We will run the installations whic will also install the very old system git
+# so after the bulk install, we remove the system git and install an up to date client.
 RUN cd /tmp && \
 	echo "multilib_policy=all" >> /etc/yum.conf && \
+	yum --assumeyes install https://repo.ius.io/ius-release-el7.rpm \
+	https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm && \
 	yum update --assumeyes --skip-broken && \
 	yum groupinstall --assumeyes "Development tools" && \
-	yum --assumeyes install git tar freeglut-devel gmake glibc glibc-devel \
-	libX11 libX11-devel mesa-libGL mesa-libGL-devel alsa-lib-devel pulseaudio-libs-devel \
+	yum --assumeyes --exclude=git* install tar freeglut-devel gmake glibc glibc-devel libX11 \
+	libX11-devel mesa-libGL mesa-libGL-devel alsa-lib-devel pulseaudio-libs-devel \
 	curl-devel zlib-devel wget nasm which libXxf86vm-devel && \
+	yum --assumeyes remove git && \
+	yum --assumeyes install git224 && \
 	yum clean all && \
 	rm -rf /var/cache/yum && \
 	rm -rf /var/tmp/yum-*
