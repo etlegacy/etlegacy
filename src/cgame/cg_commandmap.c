@@ -847,6 +847,10 @@ void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, float h,
 		else if (mEnt->type == ME_CONSTRUCT || mEnt->type == ME_DESTRUCT || mEnt->type == ME_DESTRUCT_2)
 		{
 			cent = &cg_entities[mEnt->data];
+			if (!cent->currentValid)
+			{
+				return;
+			}
 
 			oidInfo = &cgs.oidInfo[cent->currentState.modelindex2];
 
