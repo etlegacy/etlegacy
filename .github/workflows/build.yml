@@ -321,7 +321,7 @@ jobs:
           fetch-depth: 0
       - uses: actions/download-artifact@v2
         with:
-          name: lnx64-mod
+          name: lnx64-packages
           path: build/package
 
       - name: Setup folder
@@ -332,7 +332,6 @@ jobs:
         working-directory: build/package
         run: |
           ls -R
-          ls -R ../
 
       - name: Login to DockerHub Registry
         run: echo ${{ secrets.DOCKERHUB_PASSWORD }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
