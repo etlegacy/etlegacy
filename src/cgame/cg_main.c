@@ -2688,6 +2688,8 @@ void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qbo
 	}
 
 	cgs.campaignInfoLoaded = qfalse;
+	cgs.arenaInfoLoaded    = qfalse;
+
 	if (cgs.gametype == GT_WOLF_CAMPAIGN)
 	{
 		CG_LocateCampaign();
