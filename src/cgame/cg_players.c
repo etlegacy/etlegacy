@@ -2081,6 +2081,11 @@ static void CG_PlayerSprites(centity_t *cent)
 		return;
 	}
 
+	if (cg.demoPlayback && cg_drawSpectatorNames.integer > 0)
+	{
+		CG_PlayerFloatText(cent, cg_drawSpectatorNames.integer == 1 ? ci->cleanname : ci->name, height + 8);
+	}
+
 	if (cent->currentState.powerups & (1 << PW_INVULNERABLE))
 	{
 		CG_PlayerFloatSprite(cent, cgs.media.spawnInvincibleShader, height, numIcons++, NULL);
