@@ -8674,6 +8674,7 @@ vmCvar_t ui_drawCrosshair;
 vmCvar_t ui_drawCrosshairInfo;
 vmCvar_t ui_drawCrosshairNames;
 vmCvar_t ui_drawCrosshairPickups;
+vmCvar_t ui_drawSpectatorNames;
 vmCvar_t ui_marks;
 vmCvar_t ui_autoactivate;
 
@@ -8753,6 +8754,7 @@ static cvarTable_t cvarTable[] =
 	{ &ui_drawCrosshairInfo,               "cg_drawCrosshairInfo",                "3",                          CVAR_ARCHIVE,                   0 },
 	{ &ui_drawCrosshairNames,              "cg_drawCrosshairNames",               "1",                          CVAR_ARCHIVE,                   0 },
 	{ &ui_drawCrosshairPickups,            "cg_drawCrosshairPickups",             "1",                          CVAR_ARCHIVE,                   0 },
+	{ &ui_drawSpectatorNames,              "cg_drawSpectatorNames",               "2",                          CVAR_ARCHIVE,                   0 },
 	{ &ui_marks,                           "cg_markTime",                         "20000",                      CVAR_ARCHIVE,                   0 },
 	{ &ui_autoactivate,                    "cg_autoactivate",                     "1",                          CVAR_ARCHIVE,                   0 },
 

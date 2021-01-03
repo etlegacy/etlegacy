@@ -50,6 +50,7 @@ extern vmCvar_t ui_brassTime;
 extern vmCvar_t ui_drawCrosshair;
 extern vmCvar_t ui_drawCrosshairNames;
 extern vmCvar_t ui_drawCrosshairPickups;
+extern vmCvar_t ui_drawSpectatorNames;
 extern vmCvar_t ui_marks;
 
 extern vmCvar_t ui_autoactivate;
