@@ -4623,7 +4623,7 @@ void CG_parseMapVoteTally()
 		{
 			if (cgs.dbSortedVotedMapsByTotal[j].totalVotes < cgs.dbMapVotes[i])
 			{
-				if (cgs.dbSortedVotedMapsByTotal[j].totalVotes != -1)
+				if (j != MAX_VOTE_MAPS - 1 && cgs.dbSortedVotedMapsByTotal[j].totalVotes != -1)
 				{
 					memmove(&cgs.dbSortedVotedMapsByTotal[j + 1], &cgs.dbSortedVotedMapsByTotal[j], sizeof(sortedVotedMapByTotal_s) * (MAX_VOTE_MAPS - j - 1));
 				}
