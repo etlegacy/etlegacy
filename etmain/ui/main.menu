@@ -94,7 +94,7 @@ menuDef {
 
 
 // Window //
-	//WINDOW( _("MENU"), 50 ) // FIXME: script error with WINDOW_HEIGHT
+	//WINDOW( _("WELCOME"), 50 )
 	SUBWINDOW( 0, 0, MENU_WIDTH, MENU_HEIGHT, _("WELCOME") )
 	execKey "c" { close main ; open main_quickconnect }
 

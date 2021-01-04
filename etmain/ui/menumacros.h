@@ -61,7 +61,7 @@
 	itemDef {                                                                                                   \
 		name        "titlebar"                                                                                  \
 		group GROUP_NAME                                                                                  \
-		rect        2 2 GRADIENT_START_OFFSET 24                                                                \
+		rect        2 2 $evalint(GRADIENT_START_OFFSET) 24                                                      \
 		style WINDOW_STYLE_FILLED                                                                         \
 		backcolor   .16 .2 .17 .8                                                                               \
 		visible     1                                                                                           \
