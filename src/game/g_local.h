@@ -2124,6 +2124,8 @@ extern vmCvar_t g_xpSaver;
 #define DYNAMITECHAINING_FREE 1      // free dynamites chaining
 extern vmCvar_t g_dynamiteChaining;
 
+extern vmCvar_t g_playerHitBoxHeight;
+
 /**
  * @struct GeoIPTag
  * @typedef GeoIP

@@ -2539,6 +2539,8 @@ typedef struct cgs_s
 	cam_t demoCamera;
 	mlType_t currentMenuLevel;
 #endif
+    
+	int playerHitBoxHeight;
 
 	qboolean sv_cheats;         // server allows cheats
 	int sv_fps;                 // FPS server wants to send

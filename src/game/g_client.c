@@ -3403,6 +3403,6 @@ float ClientHitboxMaxZ(gentity_t *hitEnt)
 	}
 	else
 	{
-		return DEFAULT_BODYHEIGHT;
+		return g_playerHitBoxHeight.integer;
 	}
 }
