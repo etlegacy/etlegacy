@@ -49,7 +49,7 @@
 	itemDef {                                                                                                   \
 		name        "window"                                                                                    \
 		group GROUP_NAME                                                                                  \
-		rect        0 0 WINDOW_WIDTH WINDOW_HEIGHT                                                              \
+		rect        0 0 $evalint(WINDOW_WIDTH) $evalint(WINDOW_HEIGHT)                                          \
 		style WINDOW_STYLE_FILLED                                                                         \
 		backcolor   0 0 0 .2                                                                                    \
 		border WINDOW_BORDER_FULL                                                                          \
@@ -98,7 +98,7 @@
 	itemDef {                                                                                                   \
 		name        "window"                                                                                    \
 		group GROUP_NAME                                                                                  \
-		rect        0 0 WINDOW_WIDTH WINDOW_HEIGHT                                                              \
+		rect        0 0 $evalint(WINDOW_WIDTH) $evalint(WINDOW_HEIGHT)                                          \
 		style WINDOW_STYLE_FILLED                                                                         \
 		backcolor   0 0 0 .9                                                                                    \
 		border WINDOW_BORDER_FULL                                                                          \
