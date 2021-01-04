@@ -346,7 +346,7 @@ void Field_Draw(field_t *edit, int x, int y, int width, qboolean showCursor, qbo
 void Field_Paste(field_t *edit)
 {
 	char         *cbd;
-	unsigned int pasteLen, i;
+	size_t       pasteLen, i;
 
 	cbd = IN_GetClipboardData();
 

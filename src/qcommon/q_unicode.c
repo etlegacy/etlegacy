@@ -393,12 +393,12 @@ static void shiftbitsright(unsigned char *p, unsigned long num, unsigned long by
  * @param str character to convert
  * @return codepoint of a character
  */
-unsigned long Q_UTF8_CodePoint(const char *str)
+uint32_t Q_UTF8_CodePoint(const char *str)
 {
 	int           i, j;
 	int           n         = 0;
 	int           size      = Q_UTF8_Width(str);
-	unsigned long codepoint = 0;
+	uint32_t codepoint = 0;
 	unsigned char *p        = (unsigned char *) &codepoint;
 
 	if (size > sizeof(codepoint))
@@ -426,9 +426,8 @@ unsigned long Q_UTF8_CodePoint(const char *str)
 	/*
 	if( n > 8 * sizeof(codepoint) )
 	{
-	      Com_Error( ERR_DROP, "Q_UTF8_CodePoint: overflow caught" );
-
-	  return 0;
+		Com_Error( ERR_FATAL, "Q_UTF8_CodePoint: overflow caught" );
+		return 0;
 	}
 	*/
 
@@ -742,7 +741,7 @@ size_t Q_EscapeUnicode(char *fromStr, char *toStr, const size_t maxSize)
 			toStr[l++] = '\\';
 			toStr[l++] = 'u';
 			toStr[l++] = '{';
-			unsigned long cd = Q_UTF8_CodePoint(str);
+			uint32_t cd = Q_UTF8_CodePoint(str);
 
 			if(cd > 999999999)
 			{
