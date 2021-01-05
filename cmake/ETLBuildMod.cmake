@@ -98,6 +98,9 @@ if(APPLE)
 	if(XCODE_SDK_VERSION LESS "10.15")
 		# Force universal mod on osx up to Mojave
 		set(OSX_MOD_ARCH "i386;x86_64")
+    elseif(XCODE_SDK_VERSION GREATER_EQUAL "11.00")
+        message(STATUS "Enabling OSX arm build")
+        set(OSX_MOD_ARCH "x86_64;arm64")
 	else()
 		# 64bit mod only as of Catalina and higher
 		set(OSX_MOD_ARCH "x86_64")
