@@ -1168,7 +1168,20 @@ static void CG_Missile(centity_t *cent)
 	}
 	else if (weapon->missileTrailFunc)
 	{
-		weapon->missileTrailFunc(cent, weapon);
+		if ((cgs.clientinfo[cg.clientNum].shoutcaster && (GetWeaponTableData(s1->weapon)->type & (WEAPON_TYPE_RIFLENADE | WEAPON_TYPE_GRENADE)))
+		    || (cgs.sv_cheats && (GetWeaponTableData(s1->weapon)->type & (WEAPON_TYPE_RIFLENADE | WEAPON_TYPE_GRENADE))))
+		{
+			CG_GrenadeTrailShoutcaster(cent, tv(1.0f, 0.0f, 0.0f), tv(1.0f, 0.0f, 0.0f));
+		}
+		else if ((cgs.clientinfo[cg.clientNum].shoutcaster && s1->weapon == WP_SMOKE_BOMB)
+		         || (cgs.sv_cheats && s1->weapon == WP_SMOKE_BOMB))
+		{
+			CG_GrenadeTrailShoutcaster(cent, tv(0.0f, 0.0f, 1.0f), tv(0.0f, 0.0f, 1.0f));
+		}
+		else
+		{
+			weapon->missileTrailFunc(cent, weapon);
+		}
 	}
 
 	// add dynamic light
