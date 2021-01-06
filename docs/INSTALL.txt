@@ -71,9 +71,9 @@ To run a server, please refer to https://github.com/etlegacy/etlegacy/wiki/Set-u
 LUA SCRIPTS
 ===========
 
-A collection of Lua scripts to extend the Legacy mod can be found at https://github.com/etlegacy/etlegacy-lua_scripts
+A collection of Lua scripts to extend the Legacy mod can be found at https://github.com/etlegacy/etlegacy-lua-scripts
 
-The Lua API documentation can be found at https://legacy-lua-api.readthedocs.io
+The Lua API documentation can be found at https://etlegacy-lua-docs.readthedocs.io
 
 
 FREQUENTLY ASKED QUESTIONS

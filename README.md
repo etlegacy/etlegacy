@@ -9,7 +9,7 @@ ET: Legacy [![Travis Status](https://travis-ci.org/etlegacy/etlegacy.svg?branch=
 * Development: [https://github.com/etlegacy/etlegacy](https://github.com/etlegacy/etlegacy)
 * Assets Repository: [https://drive.google.com](https://drive.google.com/drive/folders/0Bw7Yu-pqzcSaLXEtVEVjZF82UEU)
 * Documentation: [https://etlegacy.readthedocs.io/](https://etlegacy.readthedocs.io/)
-* Legacy Lua API: [http://legacy-lua-api.readthedocs.io](http://legacy-lua-api.readthedocs.io)
+* Lua API: [http://etlegacy-lua-docs.readthedocs.io](http://etlegacy-lua-docs.readthedocs.io)
 * Translation: [https://www.transifex.com/projects/p/etlegacy/](https://www.transifex.com/projects/p/etlegacy/)
 * Contact: [\#etlegacy](http://webchat.freenode.net/?channels=#etlegacy) on irc.freenode.net and [etlegacy/#etlegacy](https://discordapp.com/channels/260750790203932672/346956915814957067) on Discord.
 
