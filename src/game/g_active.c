@@ -2231,6 +2231,11 @@ void ClientEndFrame(gentity_t *ent)
 		{
 			ent->health = ent->client->ps.stats[STAT_HEALTH] = ent->client->ps.stats[STAT_MAX_HEALTH];
 		}
+
+		if (ent->client->sess.playerType == PC_MEDIC)
+		{
+			ent->health = ent->client->ps.stats[STAT_HEALTH] /= 1.12;
+		}
 	}
 	else
 	{

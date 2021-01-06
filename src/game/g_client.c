@@ -642,7 +642,7 @@ void CopyToBodyQue(gentity_t *ent)
 	BODY_TEAM(body)      = ent->client->sess.sessionTeam;
 	BODY_CLASS(body)     = ent->client->sess.playerType;
 	BODY_CHARACTER(body) = ent->client->pers.characterIndex;
-	BODY_VALUE(body)     = 0;
+	BODY_VALUE(body) = 0;
 
 	//if ( ent->client->ps.eFlags & EF_PANTSED ){
 	//	body->s.time2 =	1;
@@ -3041,6 +3041,11 @@ void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean
 	else
 	{
 		ent->health = client->ps.stats[STAT_HEALTH] = client->ps.stats[STAT_MAX_HEALTH];
+	}
+
+	if (ent->client->sess.playerType == PC_MEDIC)
+	{
+		ent->health = ent->client->ps.stats[STAT_HEALTH] /= 1.12;
 	}
 
 	G_SetOrigin(ent, spawn_origin);
