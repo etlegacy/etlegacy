@@ -1607,27 +1607,28 @@ void CL_PrintPacket(msg_t *msg)
  */
 void CL_InitServerInfo(serverInfo_t *server, netadr_t *address)
 {
-	server->adr           = *address;
-	server->clients       = 0;
-	server->humans        = 0;
-	server->hostName[0]   = '\0';
-	server->mapName[0]    = '\0';
-	server->maxClients    = 0;
-	server->maxPing       = 0;
-	server->minPing       = 0;
-	server->ping          = -1;
-	server->game[0]       = '\0';
-	server->gameType      = 0;
-	server->netType       = 0;
-	server->punkbuster    = 0;
-	server->load          = -1;
-	server->balancedteams = 0;
-	server->friendlyFire  = 0;
-	server->maxlives      = 0;
-	server->needpass      = 0;
-	server->antilag       = 0;
-	server->weaprestrict  = 0;
-	server->gameName[0]   = '\0';
+	server->adr            = *address;
+	server->clients        = 0;
+	server->humans         = 0;
+	server->hostName[0]    = '\0';
+	server->mapName[0]     = '\0';
+	server->maxClients     = 0;
+	server->privateClients = 0;
+	server->maxPing        = 0;
+	server->minPing        = 0;
+	server->ping           = -1;
+	server->game[0]        = '\0';
+	server->gameType       = 0;
+	server->netType        = 0;
+	server->punkbuster     = 0;
+	server->load           = -1;
+	server->balancedteams  = 0;
+	server->friendlyFire   = 0;
+	server->maxlives       = 0;
+	server->needpass       = 0;
+	server->antilag        = 0;
+	server->weaprestrict   = 0;
+	server->gameName[0]    = '\0';
 }
 
 #define MAX_SERVERSPERPACKET    256
@@ -3112,7 +3113,8 @@ static void CL_SetServerInfo(serverInfo_t *server, const char *info, int ping)
 			Q_strncpyz(server->hostName, Info_ValueForKey(info, "hostname"), IS_DEFAULT_MOD ? MAX_SERVER_NAME_LENGTH : MAX_NAME_LENGTH);
 			server->load = atoi(Info_ValueForKey(info, "serverload"));
 			Q_strncpyz(server->mapName, Info_ValueForKey(info, "mapname"), MAX_NAME_LENGTH);
-			server->maxClients = atoi(Info_ValueForKey(info, "sv_maxclients"));
+			server->maxClients     = atoi(Info_ValueForKey(info, "sv_maxclients"));
+			server->privateClients = atoi(Info_ValueForKey(info, "sv_privateclients"));
 			Q_strncpyz(server->game, Info_ValueForKey(info, "game"), MAX_NAME_LENGTH);
 			server->gameType     = atoi(Info_ValueForKey(info, "gametype"));
 			server->netType      = atoi(Info_ValueForKey(info, "nettype"));

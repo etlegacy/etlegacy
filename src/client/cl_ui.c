@@ -497,6 +497,7 @@ static void LAN_GetServerInfo(int source, int n, char *buf, size_t buflen)
 		Info_SetValueForKey(info, "clients", va("%i", server->clients));
 		Info_SetValueForKey(info, "humans", va("%i", server->humans));
 		Info_SetValueForKey(info, "sv_maxclients", va("%i", server->maxClients));
+		Info_SetValueForKey(info, "sv_privateclients", va("%i", server->privateClients));
 		Info_SetValueForKey(info, "ping", va("%i", server->ping));
 		Info_SetValueForKey(info, "minping", va("%i", server->minPing));
 		Info_SetValueForKey(info, "maxping", va("%i", server->maxPing));

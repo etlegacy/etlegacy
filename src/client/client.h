@@ -298,6 +298,7 @@ typedef struct
 	int32_t clients;
 	int32_t humans;
 	int32_t maxClients;
+	int32_t privateClients;
 	int32_t minPing;
 	int32_t maxPing;
 	int32_t ping;

@@ -7161,7 +7161,8 @@ const char *UI_FeederItemText(int feederID, int index, int column, qhandle_t *ha
 	{
 		if (index >= 0 && index < uiInfo.serverStatus.numDisplayServers)
 		{
-			int ping, game, antilag, needpass, friendlyfire, maxlives, weaponrestrictions, balancedteams, serverload, clients, maxclients;
+			int ping, game, antilag, needpass, friendlyfire, maxlives, weaponrestrictions, balancedteams, serverload;
+			int clients, humans, maxclients, privateclients;
 
 			if (lastColumn != column || lastTime > uiInfo.uiDC.realTime + 5000)
 			{
@@ -7221,23 +7222,45 @@ const char *UI_FeederItemText(int feederID, int index, int column, qhandle_t *ha
 			case SORT_MAP:
 				return Info_ValueForKey(info, "mapname");
 			case SORT_CLIENTS:
-				clients    = atoi(Info_ValueForKey(info, "clients"));
-				maxclients = atoi(Info_ValueForKey(info, "sv_maxclients"));
-				int humans = atoi(Info_ValueForKey(info, "humans"));
+				clients        = atoi(Info_ValueForKey(info, "clients"));
+				humans         = atoi(Info_ValueForKey(info, "humans"));
+				maxclients     = atoi(Info_ValueForKey(info, "sv_maxclients"));
+				privateclients = atoi(Info_ValueForKey(info, "sv_privateclients"));
 
 				if ((ui_serverBrowserSettings.integer & UI_BROWSER_ALLOW_HUMANS_COUNT) &&
 				    strstr(Info_ValueForKey(info, "version"), PRODUCT_LABEL) != NULL)
 				{
-					Com_sprintf(clientBuff, sizeof(clientBuff), "^W%i^9(+%i)/%i", humans, clients - humans, maxclients);
+					if (privateclients > 0)
+					{
+						Com_sprintf(clientBuff, sizeof(clientBuff), "^W%i^9(+%i)/%i^3+%i", humans, clients - humans, maxclients, privateclients);
+					}
+					else
+					{
+						Com_sprintf(clientBuff, sizeof(clientBuff), "^W%i^9(+%i)/%i", humans, clients - humans, maxclients);
+					}
 				}
 				else if (Q_stristr(Info_ValueForKey(info, "game"), "legacy") != 0 &&
 				         strstr(Info_ValueForKey(info, "version"), PRODUCT_LABEL) != NULL)
 				{
-					Com_sprintf(clientBuff, sizeof(clientBuff), "^W%i^9(+%i)/%i", humans, clients - humans, maxclients);
+					if (privateclients > 0)
+					{
+						Com_sprintf(clientBuff, sizeof(clientBuff), "^W%i^9(+%i)/%i^3+%i", humans, clients - humans, maxclients, privateclients);
+					}
+					else
+					{
+						Com_sprintf(clientBuff, sizeof(clientBuff), "^W%i^9(+%i)/%i", humans, clients - humans, maxclients);
+					}
 				}
 				else
 				{
-					Com_sprintf(clientBuff, sizeof(clientBuff), "%i/%i", clients, maxclients);
+					if (privateclients > 0)
+					{
+						Com_sprintf(clientBuff, sizeof(clientBuff), "%i/%i^3+%i", clients, maxclients, privateclients);
+					}
+					else
+					{
+						Com_sprintf(clientBuff, sizeof(clientBuff), "%i/%i", clients, maxclients);
+					}
 				}
 				return clientBuff;
 			case SORT_GAME:
