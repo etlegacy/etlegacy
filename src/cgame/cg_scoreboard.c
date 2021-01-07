@@ -208,17 +208,8 @@ int WM_DrawObjectives(int x, int y, int width, float fade)
 	{
 		int msec, mins, seconds, tens, w;
 
-		CG_FillRect(x - 5, y - 2, width + 5, 21, SB_bg);
-
-		if (CG_ConfigString(CS_CONFIGNAME)[0])
-		{
-			CG_FillRect(x - 5, y + 19, width + 5, 18, SB_bg);
-			CG_DrawRect_FixedBorder(x - 5, y - 2, width + 5, 40, 1, SB_border);
-		}
-		else
-		{
-			CG_DrawRect_FixedBorder(x - 5, y - 2, width + 5, 21, 1, SB_border);
-		}
+		CG_FillRect(x - 5, y - 2, width + 5, 34, SB_bg);
+		CG_DrawRect_FixedBorder(x - 5, y - 2, width + 5, 34, 1, SB_border);
 
 		y += 13;
 
@@ -330,7 +321,43 @@ int WM_DrawObjectives(int x, int y, int width, float fade)
 			}
 		}
 
-		y -= 7;
+		switch (cgs.gametype)
+		{
+		case GT_WOLF_STOPWATCH:
+			s = va("%s %i", CG_TranslateString("STOPWATCH ROUND"), cgs.currentRound + 1);
+			w = CG_Text_Width_Ext(s, 0.25f, 0, FONT_HEADER);
+
+			CG_Text_Paint_Ext(x + 300 - w * 0.5f, y, 0.25f, 0.25f, SB_text, s, 0, 0, 0, FONT_HEADER);
+			break;
+		case GT_WOLF_LMS:
+			s = va("%s %i  %s %i-%i", CG_TranslateString("ROUND"), cgs.currentRound + 1, CG_TranslateString("SCORE"), cg.teamWonRounds[1], cg.teamWonRounds[0]);
+			w = CG_Text_Width_Ext(s, 0.25f, 0, FONT_HEADER);
+
+			CG_Text_Paint_Ext(x + 300 - w * 0.5f, y, 0.25f, 0.25f, SB_text, s, 0, 0, 0, FONT_HEADER);
+			break;
+		case GT_WOLF_CAMPAIGN:
+			s = va(CG_TranslateString("MAP %i of %i"), cgs.currentCampaignMap + 1, cgs.campaignData.mapCount);
+			w = CG_Text_Width_Ext(s, 0.25f, 0, FONT_HEADER);
+
+			CG_Text_Paint_Ext(x + 300 - w * 0.5f, y, 0.25f, 0.25f, SB_text, s, 0, 0, 0, FONT_HEADER);
+			break;
+		case GT_WOLF_MAPVOTE:
+			s = (cgs.mapVoteMapY ? va(CG_TranslateString("MAP %i of %i"), cgs.mapVoteMapX + 1, cgs.mapVoteMapY) : "");
+			w = CG_Text_Width_Ext(s, 0.25f, 0, FONT_HEADER);
+
+			CG_Text_Paint_Ext(x + 300 - w * 0.5f, y, 0.25f, 0.25f, SB_text, s, 0, 0, 0, FONT_HEADER);
+			break;
+		default:
+			break;
+		}
+
+		y += 12;
+
+		if (CG_ConfigString(CS_CONFIGNAME)[0])
+		{
+			s = va(CG_TranslateString("Config: ^7%s^7"), CG_ConfigString(CS_CONFIGNAME));
+			CG_Text_Paint_Ext(x, y, 0.20f, 0.20f, SB_text, s, 0, 0, 0, FONT_TEXT);
+		}
 
 		// map name
 		if (cgs.gametype == GT_WOLF_CAMPAIGN)
@@ -342,50 +369,10 @@ int WM_DrawObjectives(int x, int y, int width, float fade)
 			s = cgs.arenaInfoLoaded ? cgs.arenaData.longname : cgs.rawmapname;
 		}
 
-		w = CG_Text_Width_Ext(s, 0.17f, 0, FONT_TEXT);
-		CG_Text_Paint_Ext(x + 300 - w * 0.5f, y, 0.17f, 0.17f, SB_text, s, 0, 0, 0, FONT_TEXT);
+		w = CG_Text_Width_Ext(s, 0.20f, 0, FONT_TEXT);
+		CG_Text_Paint_Ext(x + 300 - w * 0.5f, y, 0.20f, 0.20f, SB_text, s, 0, 0, 0, FONT_TEXT);
 
-		y += 9;
-
-		switch (cgs.gametype)
-		{
-		case GT_WOLF_STOPWATCH:
-			s = va("%s %i", CG_TranslateString("STOPWATCH ROUND"), cgs.currentRound + 1);
-			w = CG_Text_Width_Ext(s, 0.15f, 0, FONT_HEADER);
-
-			CG_Text_Paint_Ext(x + 300 - w * 0.5f, y, 0.15f, 0.15f, SB_text, s, 0, 0, 0, FONT_HEADER);
-			break;
-		case GT_WOLF_LMS:
-			s = va("%s %i  %s %i-%i", CG_TranslateString("ROUND"), cgs.currentRound + 1, CG_TranslateString("SCORE"), cg.teamWonRounds[1], cg.teamWonRounds[0]);
-			w = CG_Text_Width_Ext(s, 0.15f, 0, FONT_HEADER);
-
-			CG_Text_Paint_Ext(x + 300 - w * 0.5f, y, 0.15f, 0.15f, SB_text, s, 0, 0, 0, FONT_HEADER);
-			break;
-		case GT_WOLF_CAMPAIGN:
-			s = va(CG_TranslateString("MAP %i of %i"), cgs.currentCampaignMap + 1, cgs.campaignData.mapCount);
-			w = CG_Text_Width_Ext(s, 0.15f, 0, FONT_HEADER);
-
-			CG_Text_Paint_Ext(x + 300 - w * 0.5f, y, 0.15f, 0.15f, SB_text, s, 0, 0, 0, FONT_HEADER);
-			break;
-		case GT_WOLF_MAPVOTE:
-			s = (cgs.mapVoteMapY ? va(CG_TranslateString("MAP %i of %i"), cgs.mapVoteMapX + 1, cgs.mapVoteMapY) : "");
-			w = CG_Text_Width_Ext(s, 0.15f, 0, FONT_HEADER);
-
-			CG_Text_Paint_Ext(x + 300 - w * 0.5f, y, 0.15f, 0.15f, SB_text, s, 0, 0, 0, FONT_HEADER);
-			break;
-		default:
-			break;
-		}
-
-		y += 18;
-
-		if (CG_ConfigString(CS_CONFIGNAME)[0])
-		{
-			s = va(CG_TranslateString("Config: ^7%s^7"), CG_ConfigString(CS_CONFIGNAME));
-			CG_Text_Paint_Ext(x, y, 0.24f, 0.28f, SB_text, s, 0, 0, 0, FONT_TEXT);
-
-			y += 18;
-		}
+		y += 12;
 	}
 	return y;
 }
@@ -1353,7 +1340,7 @@ qboolean CG_DrawScoreboard(void)
 
 		w = CG_Text_Width_Ext(s, fontScale, 0, &cgs.media.limboFont2);
 		x = Ccg_WideX(SCREEN_WIDTH / 2) - w / 2;
-		y = (CG_ConfigString(CS_CONFIGNAME)[0] ? 456 : 438); // for config display
+		y = 450;
 		CG_Text_Paint_Ext(x, y, fontScale, fontScale, colorWhite, s, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 	}
 #endif
