@@ -325,31 +325,23 @@ int WM_DrawObjectives(int x, int y, int width, float fade)
 		{
 		case GT_WOLF_STOPWATCH:
 			s = va("%s %i", CG_TranslateString("STOPWATCH ROUND"), cgs.currentRound + 1);
-			w = CG_Text_Width_Ext(s, 0.25f, 0, FONT_HEADER);
-
-			CG_Text_Paint_Ext(x + 300 - w * 0.5f, y, 0.25f, 0.25f, SB_text, s, 0, 0, 0, FONT_HEADER);
 			break;
 		case GT_WOLF_LMS:
 			s = va("%s %i  %s %i-%i", CG_TranslateString("ROUND"), cgs.currentRound + 1, CG_TranslateString("SCORE"), cg.teamWonRounds[1], cg.teamWonRounds[0]);
-			w = CG_Text_Width_Ext(s, 0.25f, 0, FONT_HEADER);
-
-			CG_Text_Paint_Ext(x + 300 - w * 0.5f, y, 0.25f, 0.25f, SB_text, s, 0, 0, 0, FONT_HEADER);
 			break;
 		case GT_WOLF_CAMPAIGN:
 			s = va(CG_TranslateString("MAP %i of %i"), cgs.currentCampaignMap + 1, cgs.campaignData.mapCount);
-			w = CG_Text_Width_Ext(s, 0.25f, 0, FONT_HEADER);
-
-			CG_Text_Paint_Ext(x + 300 - w * 0.5f, y, 0.25f, 0.25f, SB_text, s, 0, 0, 0, FONT_HEADER);
 			break;
 		case GT_WOLF_MAPVOTE:
-			s = (cgs.mapVoteMapY ? va(CG_TranslateString("MAP %i of %i"), cgs.mapVoteMapX + 1, cgs.mapVoteMapY) : "");
-			w = CG_Text_Width_Ext(s, 0.25f, 0, FONT_HEADER);
-
-			CG_Text_Paint_Ext(x + 300 - w * 0.5f, y, 0.25f, 0.25f, SB_text, s, 0, 0, 0, FONT_HEADER);
+			s = (cgs.mapVoteMapY ? va(CG_TranslateString("MAP %i of %i"), cgs.mapVoteMapX + 1, cgs.mapVoteMapY) : "MAP");
 			break;
 		default:
+			s = "MAP";
 			break;
 		}
+		w = CG_Text_Width_Ext(s, 0.25f, 0, FONT_HEADER);
+
+		CG_Text_Paint_Ext(x + 300 - w * 0.5f, y, 0.25f, 0.25f, SB_text, s, 0, 0, 0, FONT_HEADER);
 
 		y += 12;
 
