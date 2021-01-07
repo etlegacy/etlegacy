@@ -1166,6 +1166,7 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 {
 	int         take;
 	int         knockback;
+	int			hitEventType = HIT_NONE;
 	qboolean    wasAlive, onSameTeam;
 	hitRegion_t hr = HR_NUM_HITREGIONS;
 
@@ -1442,10 +1443,12 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 		if (onSameTeam || (targ->client->ps.powerups[PW_OPS_DISGUISED] && (g_friendlyFire.integer & 1)))
 		{
 			attacker->client->ps.persistant[PERS_HITS] -= damage;
+			hitEventType = HIT_TEAMSHOT;
 		}
 		else if (!targ->client->ps.powerups[PW_OPS_DISGUISED])
 		{
 			attacker->client->ps.persistant[PERS_HITS] += damage;
+			hitEventType = HIT_BODYSHOT;
 		}
 
 		BG_UpdateConditionValue(targ->client->ps.clientNum, ANIM_COND_ENEMY_WEAPON, attacker->client->ps.weapon, qtrue);
@@ -1534,6 +1537,14 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 		    )
 		{
 			G_addStatsHeadShot(attacker, mod);
+
+			// Upgrade the hit event to headshot if we have not yet classified it as a teamshot (covertops etc..)
+			if(hitEventType != HIT_TEAMSHOT)
+			{
+				hitEventType = HIT_HEADSHOT;
+			}
+
+			// FIXME: do we need this for anything?
 			attacker->client->ps.persistant[PERS_HEADSHOTS]++;
 		}
 
@@ -1595,6 +1606,11 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 #endif
 	{
 		G_Printf("client:%i health:%i damage:%i mod:%s\n", targ->s.number, targ->health, take, GetMODTableData(mod)->modName);
+	}
+
+	if(hitEventType)
+	{
+		G_AddEvent(attacker, EV_PLAYER_HIT, hitEventType);
 	}
 
 #ifdef FEATURE_LUA

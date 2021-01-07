@@ -923,6 +923,14 @@ typedef enum
 	HR_NUM_HITREGIONS,
 } hitRegion_t;
 
+typedef enum
+{
+	HIT_NONE = 0,
+	HIT_TEAMSHOT,
+	HIT_HEADSHOT,
+	HIT_BODYSHOT
+} hitEvent_t;
+
 // MAPVOTE
 
 #define MAX_VOTE_MAPS 32
@@ -1402,7 +1410,8 @@ typedef enum
 	EV_BODY_DP,        ///< 128
 	EV_FLAG_INDICATOR, ///< 129 - objective indicator
 	EV_MISSILE_FALLING,///< 130
-	EV_MAX_EVENTS      ///< 131 - just added as an 'endcap'
+	EV_PLAYER_HIT,     ///< 131
+	EV_MAX_EVENTS      ///< 132 - just added as an 'endcap'
 } entity_event_t;
 
 extern const char *eventnames[EV_MAX_EVENTS];

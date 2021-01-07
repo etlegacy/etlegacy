@@ -363,37 +363,6 @@ void CG_CheckLocalSounds(playerState_t *ps, playerState_t *ops)
 		}
 	}
 
-	// hitsounds
-	// add server control cvars?! - no, admins just have to force cg_hitSounds
-	if (ops->persistant[PERS_HITS] != ps->persistant[PERS_HITS] && (cg_hitSounds.integer & HITSOUNDS_ON))
-	{
-		if (ps->persistant[PERS_HITS] < ops->persistant[PERS_HITS])
-		{
-			if (!(cg_hitSounds.integer & HITSOUNDS_NOTEAMSHOT))
-			{
-				trap_S_StartSound(NULL, ps->clientNum, CHAN_AUTO, cgs.media.teamShot);
-			}
-		}
-		else if (ps->persistant[PERS_HEADSHOTS] > ops->persistant[PERS_HEADSHOTS])
-		{
-			if (!(cg_hitSounds.integer & HITSOUNDS_NOHEADSHOT))
-			{
-				trap_S_StartSound(NULL, ps->clientNum, CHAN_AUTO, cgs.media.headShot);
-			}
-			else if (!(cg_hitSounds.integer & HITSOUNDS_NOBODYSHOT))
-			{
-				trap_S_StartSound(NULL, ps->clientNum, CHAN_AUTO, cgs.media.bodyShot);
-			}
-		}
-		else
-		{
-			if (!(cg_hitSounds.integer & HITSOUNDS_NOBODYSHOT))
-			{
-				trap_S_StartSound(NULL, ps->clientNum, CHAN_AUTO, cgs.media.bodyShot);
-			}
-		}
-	}
-
 	// timelimit warnings
 	if (cgs.timelimit > 0 && cgs.gamestate == GS_PLAYING)
 	{

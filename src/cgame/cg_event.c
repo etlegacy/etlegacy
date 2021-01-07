@@ -2797,12 +2797,44 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
         if (cg_weapons[es->weapon].missileFallSound.count)
         {
             int i = cg_weapons[es->weapon].missileFallSound.count;
-            
+
             i = rand() % i;
-            
+
             trap_S_StartSoundExVControl(NULL, es->number, CHAN_AUTO, cg_weapons[es->weapon].missileFallSound.sounds[i], SND_OKTOCUT, 255);
         }
         break;
+	case EV_PLAYER_HIT:
+		if(cg_hitSounds.integer & HITSOUNDS_ON)
+		{
+			switch (es->eventParm)
+			{
+				case HIT_TEAMSHOT:
+					if (!(cg_hitSounds.integer & HITSOUNDS_NOTEAMSHOT))
+					{
+						trap_S_StartSound(NULL, es->clientNum, CHAN_AUTO, cgs.media.teamShot);
+					}
+					break;
+				case HIT_HEADSHOT:
+					if (!(cg_hitSounds.integer & HITSOUNDS_NOHEADSHOT))
+					{
+						trap_S_StartSound(NULL, es->clientNum, CHAN_AUTO, cgs.media.headShot);
+					}
+					else if (!(cg_hitSounds.integer & HITSOUNDS_NOBODYSHOT))
+					{
+						trap_S_StartSound(NULL, es->clientNum, CHAN_AUTO, cgs.media.bodyShot);
+					}
+					break;
+				case HIT_BODYSHOT:
+					if (!(cg_hitSounds.integer & HITSOUNDS_NOBODYSHOT))
+					{
+						trap_S_StartSound(NULL, es->clientNum, CHAN_AUTO, cgs.media.bodyShot);
+					}
+					break;
+				default:
+					break;
+			}
+		}
+		break;
 	default:
 		if (cg.demoPlayback)
 		{
