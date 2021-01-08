@@ -1108,11 +1108,20 @@ void CG_MapVoteList_Draw(panel_button_t *button)
 	static vec4_t acolor = { 1.0f, 1.0f, 1.0f, 1.0f };
 	int           diff;
 
-	CG_Text_Paint_Ext(290, y2, button->font->scalex,
-	                  button->font->scaley, button->font->colour,
-	                  (cgs.mapVoteMapY <= 0 ? "" :
-	                   va("Map %d of %d", cgs.mapVoteMapX + 1, cgs.mapVoteMapY)),
-	                  0, 0, 0, button->font->font);
+	// display map number if server is configured
+	// to reset XP after certain number of maps
+	if (cgs.mapVoteMapY > 0)
+	{
+		const char* s;
+		float w;
+
+		s = va("Map %d of %d", cgs.mapVoteMapX + 1, cgs.mapVoteMapY);
+		w = CG_Text_Width_Ext(s, button->font->scalex, 0, button->font->font);
+		CG_Text_Paint_Ext(DB_MAPNAME_X + 10 + cgs.wideXoffset + DB_MAPVOTE_X * 0.5f - w * 0.5f, y2,
+			              button->font->scalex, button->font->scaley, button->font->colour,
+		                  s, 0, 0, 0, button->font->font);
+	}
+
 	y2 += 15;
 
 	for (i = 0; i + cgs.dbMapVoteListOffset < cgs.dbNumMaps && i < 16; i++)
