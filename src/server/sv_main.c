@@ -1707,7 +1707,7 @@ void SV_Frame(int msec)
 		}
 		else if (sv.demoState == DS_PLAYBACK) // Play the next demo frame
 		{
-			Com_DPrintf("Playing back demo frame");
+			Com_DPrintf("Playing back demo frame\n");
 			SV_DemoReadFrame();
 		}
 	}
