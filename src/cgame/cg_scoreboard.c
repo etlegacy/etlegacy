@@ -127,9 +127,22 @@ int WM_DrawObjectives(int x, int y, int width, float fade)
 
 		const char *buf;
 		qhandle_t  *flagshader = NULL, *nameshader = NULL;
-		int        rows = 8;
+		int        baseRows    = 8; // base number of rows for Y coordinate calculations
+		int        currentRows = 8; // current number of rows for Y coordinate calculations
 
-		y += 16 * (rows - 1);
+		if (cg.teamPlayers[TEAM_ALLIES] > 8 || cg.teamPlayers[TEAM_AXIS] > 8)
+		{
+			// teams might not be balanced, so pick the team with more players
+			currentRows = cg.teamPlayers[TEAM_ALLIES] > cg.teamPlayers[TEAM_AXIS] ? cg.teamPlayers[TEAM_ALLIES] : cg.teamPlayers[TEAM_AXIS];
+
+			// only consider up to 16 players per team
+			if (currentRows > 16)
+			{
+				currentRows = 16;
+			}
+		}
+
+		y += 16 * (baseRows - 1);
 
 		s   = CG_ConfigString(CS_MULTI_MAPWINNER);
 		buf = Info_ValueForKey(s, "w");
@@ -183,12 +196,43 @@ int WM_DrawObjectives(int x, int y, int width, float fade)
 			nameshader = &textAxis;
 		}
 
-		y += 16 * ((rows - 2) / 2);
+		y += 16 * ((baseRows - 2) / 2);
+
+		// If a team has more than 12 players, start scaling down flag sizes.
+		// Row height at this point is 12.
+		// Without scaling, flags are drawn at 210x136 size
+		// and text at 127x64.
+		float flagSizeX = 210.0f;
+		float flagSizeY = 136.0f;
+		float textSizeX = 127.0f;
+		float textSizeY = 64.0f;
+		float scale     = 1.0f;
+
+		if (currentRows > 12)
+		{
+
+			for (int i = 13; i <= currentRows; i++)
+			{
+				scale      = (flagSizeY - 12) / flagSizeY;
+				flagSizeX *= scale;
+				flagSizeY *= scale;
+				textSizeX *= scale;
+				textSizeY *= scale;
+
+				y -= 12;
+			}
+		}
+
+		float flagX1 = SCREEN_WIDTH / 2 + cgs.wideXoffset - 5 - (flagSizeX + cgs.wideXoffset);      // left flag
+		float flagX2 = SCREEN_WIDTH / 2 + 5;                                                        // right flag
+		float textX1 = flagX1 + (flagSizeX * 0.5f) - (textSizeX * 0.5f);                            // left flag text
+		float textX2 = flagX2 + (flagSizeX * 0.5f) - (textSizeX * 0.5f);                            // right flag text
+		float textY  = 10 + (flagSizeY * 0.5f) - (textSizeY * 0.5f);
 
 		if (flagshader)
 		{
-			CG_DrawPic(100 + cgs.wideXoffset, 10, 210, 136, *flagshader);
-			CG_DrawPic(325 + cgs.wideXoffset, 10, 210, 136, *flagshader);
+			CG_DrawPic(flagX1 + cgs.wideXoffset, 10, flagSizeX, flagSizeY, *flagshader);
+			CG_DrawPic(flagX2 + cgs.wideXoffset, 10, flagSizeX, flagSizeY, *flagshader);
 		}
 
 		if (nameshader)
@@ -198,8 +242,8 @@ int WM_DrawObjectives(int x, int y, int width, float fade)
 				textWin = trap_R_RegisterShaderNoMip("ui/assets/portraits/text_win.tga");
 			}
 
-			CG_DrawPic(140 + cgs.wideXoffset, 50, 127, 64, *nameshader);
-			CG_DrawPic(365 + cgs.wideXoffset, 50, 127, 64, textWin);
+			CG_DrawPic(textX1 + cgs.wideXoffset, textY, textSizeX, textSizeY, *nameshader);
+			CG_DrawPic(textX2 + cgs.wideXoffset, textY, textSizeX, textSizeY, textWin);
 		}
 		return y;
 	}
@@ -713,8 +757,8 @@ static void WM_DrawClientScore(int x, int y, score_t *score, float fade, qboolea
 	int          maxchars = 16;
 	int          rowHeight = 16;
 	float        scaleX = 0.24f, scaleY = 0.28f;
-	int          offsetY    = 12;
-	clientInfo_t *ci        = &cgs.clientinfo[score->client];
+	int          offsetY = 12;
+	clientInfo_t *ci     = &cgs.clientinfo[score->client];
 
 	WM_DrawClientScore_Highlight(x, y, rowHeight, fade, score);
 
@@ -1278,7 +1322,7 @@ qboolean CG_DrawScoreboard(void)
 	else if (cg.snap->ps.pm_type == PM_INTERMISSION)
 	{
 		maxrows    = 9;
-		absmaxrows = 12;
+		absmaxrows = 16;
 	}
 	else
 	{
