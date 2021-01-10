@@ -127,8 +127,8 @@ int WM_DrawObjectives(int x, int y, int width, float fade)
 
 		const char *buf;
 		qhandle_t  *flagshader = NULL, *nameshader = NULL;
-		int baseRows = 8;		// base number of rows for Y coordinate calculations
-		int currentRows = 8;	// current number of rows for Y coordinate calculations
+		int        baseRows    = 8; // base number of rows for Y coordinate calculations
+		int        currentRows = 8; // current number of rows for Y coordinate calculations
 
 		if (cg.teamPlayers[TEAM_ALLIES] > 8 || cg.teamPlayers[TEAM_AXIS] > 8)
 		{
@@ -206,14 +206,14 @@ int WM_DrawObjectives(int x, int y, int width, float fade)
 		float flagSizeY = 136.0f;
 		float textSizeX = 127.0f;
 		float textSizeY = 64.0f;
-		float scale = 1.0f;
+		float scale     = 1.0f;
 
 		if (currentRows > 12)
 		{
 
 			for (int i = 13; i <= currentRows; i++)
 			{
-				scale = (flagSizeY - 12) / flagSizeY;
+				scale      = (flagSizeY - 12) / flagSizeY;
 				flagSizeX *= scale;
 				flagSizeY *= scale;
 				textSizeX *= scale;
@@ -223,11 +223,11 @@ int WM_DrawObjectives(int x, int y, int width, float fade)
 			}
 		}
 
-		float flagX1 = SCREEN_WIDTH / 2 + cgs.wideXoffset - 5 - (flagSizeX + cgs.wideXoffset);		// left flag
-		float flagX2 = SCREEN_WIDTH / 2 + 5;														// right flag
-		float textX1 = flagX1 + (flagSizeX * 0.5f) - (textSizeX * 0.5f);							// left flag text
-		float textX2 = flagX2 + (flagSizeX * 0.5f) - (textSizeX * 0.5f);							// right flag text
-		float textY = 10 + (flagSizeY * 0.5f) - (textSizeY * 0.5f);
+		float flagX1 = SCREEN_WIDTH / 2 + cgs.wideXoffset - 5 - (flagSizeX + cgs.wideXoffset);      // left flag
+		float flagX2 = SCREEN_WIDTH / 2 + 5;                                                        // right flag
+		float textX1 = flagX1 + (flagSizeX * 0.5f) - (textSizeX * 0.5f);                            // left flag text
+		float textX2 = flagX2 + (flagSizeX * 0.5f) - (textSizeX * 0.5f);                            // right flag text
+		float textY  = 10 + (flagSizeY * 0.5f) - (textSizeY * 0.5f);
 
 		if (flagshader)
 		{
@@ -757,8 +757,8 @@ static void WM_DrawClientScore(int x, int y, score_t *score, float fade, qboolea
 	int          maxchars = 16;
 	int          rowHeight = 16;
 	float        scaleX = 0.24f, scaleY = 0.28f;
-	int          offsetY    = 12;
-	clientInfo_t *ci        = &cgs.clientinfo[score->client];
+	int          offsetY = 12;
+	clientInfo_t *ci     = &cgs.clientinfo[score->client];
 
 	WM_DrawClientScore_Highlight(x, y, rowHeight, fade, score);
 
