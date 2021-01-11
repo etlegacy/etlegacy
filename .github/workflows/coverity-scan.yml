@@ -2,7 +2,7 @@ name: "Coverity Scan"
 
 on:
   push:
-    branches: [ master ]
+    branches: [ master coverityscan ]
   pull_request:
     # The branches below must be a subset of the branches above
     branches: [ master ]
@@ -24,7 +24,7 @@ jobs:
           git submodule update --init --recursive
 
       - name: Configure
-        run: cmake .. \
+        run: cmake . \
           -DCMAKE_BUILD_TYPE='Debug' \
           -DCMAKE_INSTALL_PREFIX= \
           -DCMAKE_LIBRARY_PATH=/usr/lib \
