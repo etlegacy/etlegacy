@@ -139,7 +139,7 @@ detectos() {
 
 		# Check if x86_build is set and an osx vesion as of Catalina or higher is used
 		IFS='.' read -r -a ver <<< "$DISTRO"
-		if ([ "${ver[0]}" -gt 10 ] || [ "${ver[1]}" -gt 14 ]) && [ "${x86_build}" = true ]; then
+		if ([ "${ver[0]}" -gt 10 ] || [ "${ver[1]}" -gt 13 ]) && [ "${x86_build}" = true ]; then
 			einfo "You can't compile 32bit binaries with Mac OS ${ver[0]}.${ver[1]}. Use the flag \"-64\". Aborting."
 			exit 1
 		fi

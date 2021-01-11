@@ -95,7 +95,7 @@ if(APPLE)
 	# Mojave was the last version to support 32 bit binaries and building.
 	# Newer SDK's just fail compilation
 	# TODO: maybe remove this whole thing after the next release.
-	if(XCODE_SDK_VERSION LESS "10.15")
+	if(XCODE_SDK_VERSION LESS "10.14" AND CMAKE_OSX_DEPLOYMENT_TARGET LESS "10.14")
 		# Force universal mod on osx up to Mojave
 		set(OSX_MOD_ARCH "i386;x86_64")
     elseif(XCODE_SDK_VERSION GREATER_EQUAL "11.00")
