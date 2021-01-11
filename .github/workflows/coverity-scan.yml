@@ -1,11 +1,10 @@
 name: "Coverity Scan"
 
 on:
-  push:
-    branches: [ master ]
-  pull_request:
-    # The branches below must be a subset of the branches above
-    branches: [ master ]
+  # push:
+  #   branches: [ master ]
+  # pull_request:
+  #   branches: [ master ]
   workflow_dispatch:
   schedule:
     - cron: '0 10 * * 5' # Weekly every Friday at 10:00 UTC
@@ -40,35 +39,33 @@ jobs:
           -DBUNDLED_LIBS=1 \
           -DINSTALL_EXTRA=0
 
-      - name: Version check
-        run: |
-          version=$(git describe --always | sed -r 's/^v//;s/-/./g;')
-          version=${version:${#version} - 7}
-
       - name: Download Coverity Build Tool
         run: |
           wget -q https://scan.coverity.com/download/cxx/linux64 --post-data "token=$TOKEN&project=etlegacy/etlegacy" -O cov-analysis-linux64.tar.gz
           mkdir cov-analysis-linux64
-          tar xzf cov-analysis-linux64.tar.gz --strip 1 -C cov-analysis-linux64
+          tar -xzf cov-analysis-linux64.tar.gz --strip 1 -C cov-analysis-linux64
         env:
           TOKEN: ${{ secrets.COVERITY_SCAN_TOKEN }}
 
       - name: Build with cov-build
         run: |
           export PATH=`pwd`/cov-analysis-linux64/bin:$PATH
+          cd build
           cov-build --dir cov-int make
 
       - name: Submit result to Coverity Scan
         run: |
-          tar -czvf etlegacy-${version}.tgz cov-int
+          cd build
+          tar -czvf etlegacy.tgz cov-int
           curl -k \
             --form project=etlegacy \
             --form token=$TOKEN \
             --form email=$EMAIL \
-            --form file=@etlegacy-${version}.tgz \
-            --form version="${version}" \
+            --form file=@etlegacy.tgz \
+            --form version=$RUNID \
             --form description="development" \
             https://scan.coverity.com/builds?project=etlegacy%2Fetlegacy
         env:
           TOKEN: ${{ secrets.COVERITY_SCAN_TOKEN }}
           EMAIL: ${{ secrets.COVERITY_SCAN_EMAIL }}
+          RUNID: ${{ GITHUB_RUN_ID }}
