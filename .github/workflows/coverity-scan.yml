@@ -25,7 +25,10 @@ jobs:
           git submodule update --init --recursive
 
       - name: Configure
-        run: cmake . \
+        run: |
+          mkdir -p build
+          cd build
+          cmake .. \
           -DCMAKE_BUILD_TYPE='Debug' \
           -DCMAKE_INSTALL_PREFIX= \
           -DCMAKE_LIBRARY_PATH=/usr/lib \
