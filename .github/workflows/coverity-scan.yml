@@ -2,10 +2,11 @@ name: "Coverity Scan"
 
 on:
   push:
-    branches: [ master ]
+    branches: [ master coverityscan ]
   pull_request:
     # The branches below must be a subset of the branches above
     branches: [ master ]
+  workflow_dispatch:
   schedule:
     - cron: '0 10 * * 5' # Weekly every Friday at 10:00 UTC
 
@@ -24,7 +25,10 @@ jobs:
           git submodule update --init --recursive
 
       - name: Configure
-        run: cmake .. \
+        run: |
+          mkdir -p build
+          cd build
+          cmake .. \
           -DCMAKE_BUILD_TYPE='Debug' \
           -DCMAKE_INSTALL_PREFIX= \
           -DCMAKE_LIBRARY_PATH=/usr/lib \
