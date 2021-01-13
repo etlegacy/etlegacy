@@ -40,11 +40,6 @@ jobs:
           -DBUNDLED_LIBS=1 \
           -DINSTALL_EXTRA=0
 
-      - name: Version check
-        run: |
-          version=$(git describe --always | sed -r 's/^v//;s/-/./g;')
-          version=${version:${#version} - 7}
-
       - name: Download Coverity Build Tool
         run: |
           wget -q https://scan.coverity.com/download/cxx/linux64 --post-data "token=$TOKEN&project=etlegacy/etlegacy" -O cov-analysis-linux64.tar.gz
@@ -61,6 +56,9 @@ jobs:
 
       - name: Submit result to Coverity Scan
         run: |
+          version=$(git describe --always | sed -r 's/^v//;s/-/./g;')
+          version=${version:${#version} - 7}
+          cd build
           tar -czvf etlegacy-${version}.tgz cov-int
           curl -k \
             --form project=etlegacy \
