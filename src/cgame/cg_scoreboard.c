@@ -130,6 +130,16 @@ int WM_DrawObjectives(int x, int y, int width, float fade)
 		int        baseRows    = 8; // base number of rows for Y coordinate calculations
 		int        currentRows = 8; // current number of rows for Y coordinate calculations
 
+		// Without scaling, flags are drawn at 210x136 size
+		// and text at 127x64.
+		float flagSizeX = 210.0f;
+		float flagSizeY = 136.0f;
+		float textSizeX = 127.0f;
+		float textSizeY = 64.0f;
+		float scale     = 1.0f;
+		float flagX1;
+		float flagX2;
+
 		if (cg.teamPlayers[TEAM_ALLIES] > 8 || cg.teamPlayers[TEAM_AXIS] > 8)
 		{
 			// teams might not be balanced, so pick the team with more players
@@ -200,18 +210,11 @@ int WM_DrawObjectives(int x, int y, int width, float fade)
 
 		// If a team has more than 12 players, start scaling down flag sizes.
 		// Row height at this point is 12.
-		// Without scaling, flags are drawn at 210x136 size
-		// and text at 127x64.
-		float flagSizeX = 210.0f;
-		float flagSizeY = 136.0f;
-		float textSizeX = 127.0f;
-		float textSizeY = 64.0f;
-		float scale     = 1.0f;
-
 		if (currentRows > 12)
 		{
+			int i;
 
-			for (int i = 13; i <= currentRows; i++)
+			for (i = 13; i <= currentRows; i++)
 			{
 				scale      = (flagSizeY - 12) / flagSizeY;
 				flagSizeX *= scale;
@@ -223,20 +226,21 @@ int WM_DrawObjectives(int x, int y, int width, float fade)
 			}
 		}
 
-		float flagX1 = SCREEN_WIDTH / 2 + cgs.wideXoffset - 5 - (flagSizeX + cgs.wideXoffset);      // left flag
-		float flagX2 = SCREEN_WIDTH / 2 + 5;                                                        // right flag
-		float textX1 = flagX1 + (flagSizeX * 0.5f) - (textSizeX * 0.5f);                            // left flag text
-		float textX2 = flagX2 + (flagSizeX * 0.5f) - (textSizeX * 0.5f);                            // right flag text
-		float textY  = 10 + (flagSizeY * 0.5f) - (textSizeY * 0.5f);
+		flagX1 = SCREEN_WIDTH / 2 + cgs.wideXoffset - 5 - (flagSizeX + cgs.wideXoffset);      // left flag
+		flagX2 = SCREEN_WIDTH / 2 + 5;
 
 		if (flagshader)
-		{
+		{                                              // right flag
 			CG_DrawPic(flagX1 + cgs.wideXoffset, 10, flagSizeX, flagSizeY, *flagshader);
 			CG_DrawPic(flagX2 + cgs.wideXoffset, 10, flagSizeX, flagSizeY, *flagshader);
 		}
 
 		if (nameshader)
 		{
+			float textX1 = flagX1 + (flagSizeX * 0.5f) - (textSizeX * 0.5f);                            // left flag text
+			float textX2 = flagX2 + (flagSizeX * 0.5f) - (textSizeX * 0.5f);                            // right flag text
+			float textY  = 10 + (flagSizeY * 0.5f) - (textSizeY * 0.5f);
+
 			if (!textWin)
 			{
 				textWin = trap_R_RegisterShaderNoMip("ui/assets/portraits/text_win.tga");
