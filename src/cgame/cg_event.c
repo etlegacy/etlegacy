@@ -1856,6 +1856,55 @@ void CG_PlayGlobalSound(centity_t *cent, int index)
 
 extern void CG_AddBulletParticles(vec3_t origin, vec3_t dir, int speed, int duration, int count, float randScale);
 
+void CG_PlayHitSound(const entityState_t *es)
+{
+	// Do we have hitsounds even enabled
+	if (!(cg_hitSounds.integer & HITSOUNDS_ON))
+	{
+		return;
+	}
+
+	// Are we spectating someone?
+	if (cg.snap->ps.clientNum != cg.clientNum && cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR)
+	{
+		return;
+	}
+
+	// Is the event for the current client (might be the player or a player being spectated)
+	if (es->clientNum != cg.snap->ps.clientNum)
+	{
+		return;
+	}
+
+	switch (es->eventParm)
+	{
+		case HIT_TEAMSHOT:
+			if (!(cg_hitSounds.integer & HITSOUNDS_NOTEAMSHOT))
+			{
+				trap_S_StartSound(NULL, es->clientNum, CHAN_AUTO, cgs.media.teamShot);
+			}
+			break;
+		case HIT_HEADSHOT:
+			if (!(cg_hitSounds.integer & HITSOUNDS_NOHEADSHOT))
+			{
+				trap_S_StartSound(NULL, es->clientNum, CHAN_AUTO, cgs.media.headShot);
+			}
+			else if (!(cg_hitSounds.integer & HITSOUNDS_NOBODYSHOT))
+			{
+				trap_S_StartSound(NULL, es->clientNum, CHAN_AUTO, cgs.media.bodyShot);
+			}
+			break;
+		case HIT_BODYSHOT:
+			if (!(cg_hitSounds.integer & HITSOUNDS_NOBODYSHOT))
+			{
+				trap_S_StartSound(NULL, es->clientNum, CHAN_AUTO, cgs.media.bodyShot);
+			}
+			break;
+		default:
+			break;
+	}
+}
+
 /**
  * @brief An entity has an event value also called by CG_CheckPlayerstateEvents
  * @param[in] cent
@@ -2804,36 +2853,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
         }
         break;
 	case EV_PLAYER_HIT:
-		if(cg_hitSounds.integer & HITSOUNDS_ON)
-		{
-			switch (es->eventParm)
-			{
-				case HIT_TEAMSHOT:
-					if (!(cg_hitSounds.integer & HITSOUNDS_NOTEAMSHOT))
-					{
-						trap_S_StartSound(NULL, es->clientNum, CHAN_AUTO, cgs.media.teamShot);
-					}
-					break;
-				case HIT_HEADSHOT:
-					if (!(cg_hitSounds.integer & HITSOUNDS_NOHEADSHOT))
-					{
-						trap_S_StartSound(NULL, es->clientNum, CHAN_AUTO, cgs.media.headShot);
-					}
-					else if (!(cg_hitSounds.integer & HITSOUNDS_NOBODYSHOT))
-					{
-						trap_S_StartSound(NULL, es->clientNum, CHAN_AUTO, cgs.media.bodyShot);
-					}
-					break;
-				case HIT_BODYSHOT:
-					if (!(cg_hitSounds.integer & HITSOUNDS_NOBODYSHOT))
-					{
-						trap_S_StartSound(NULL, es->clientNum, CHAN_AUTO, cgs.media.bodyShot);
-					}
-					break;
-				default:
-					break;
-			}
-		}
+		CG_PlayHitSound(es);
 		break;
 	default:
 		if (cg.demoPlayback)
