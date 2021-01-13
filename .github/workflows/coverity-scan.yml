@@ -49,12 +49,13 @@ jobs:
         run: |
           wget -q https://scan.coverity.com/download/cxx/linux64 --post-data "token=$TOKEN&project=etlegacy/etlegacy" -O cov-analysis-linux64.tar.gz
           mkdir cov-analysis-linux64
-          tar xzf cov-analysis-linux64.tar.gz --strip 1 -C cov-analysis-linux64
+          tar -xzf cov-analysis-linux64.tar.gz --strip 1 -C cov-analysis-linux64
         env:
           TOKEN: ${{ secrets.COVERITY_SCAN_TOKEN }}
 
       - name: Build with cov-build
         run: |
+          cd build
           export PATH=`pwd`/cov-analysis-linux64/bin:$PATH
           cov-build --dir cov-int make
 
