@@ -516,8 +516,8 @@ typedef struct
 
 	void (*setBinding)(int keynum, const char *binding);
 	void (*executeText)(int exec_when, const char *text);
-	void (*Error)(int level, const char *error, ...) __attribute__ ((noreturn, format(printf, 2, 3)));
-	void (*Print)(const char *msg, ...) __attribute__ ((format(printf, 1, 2)));
+	void (*Error)(int level, const char *error, ...) _attribute ((noreturn, format(printf, 2, 3)));
+	void (*Print)(const char *msg, ...) _attribute ((format(printf, 1, 2)));
 	void (*Pause)(qboolean b);
 	int (*ownerDrawWidth)(int ownerDraw, float scale);
 	sfxHandle_t (*registerSound)(const char *name, qboolean compressed);

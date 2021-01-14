@@ -7,7 +7,7 @@ on:
   #   branches: [ master ]
   workflow_dispatch:
   schedule:
-    - cron: '0 10 * * 5' # Weekly every Friday at 10:00 UTC
+    - cron: '0 0 * * FRI'
 
 jobs:
   latest:
@@ -55,6 +55,7 @@ jobs:
 
       - name: Submit result to Coverity Scan
         run: |
+          version=$(git describe --always | cut -d 'g' -f2- | cut -c -7)
           cd build
           tar -czvf etlegacy.tgz cov-int
           curl -k \
@@ -62,10 +63,9 @@ jobs:
             --form token=$TOKEN \
             --form email=$EMAIL \
             --form file=@etlegacy.tgz \
-            --form version=$RUNID \
+            --form version="${version}" \
             --form description="development" \
             https://scan.coverity.com/builds?project=etlegacy%2Fetlegacy
         env:
           TOKEN: ${{ secrets.COVERITY_SCAN_TOKEN }}
           EMAIL: ${{ secrets.COVERITY_SCAN_EMAIL }}
-          RUNID: ${{ GITHUB_RUN_ID }}

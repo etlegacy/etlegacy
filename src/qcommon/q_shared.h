@@ -92,11 +92,11 @@
 #pragma warning(disable : 4996) // deprecated POSIX function names
 #endif
 
-// Ignore __attribute__ on non-gcc platforms
-#ifndef __GNUC__
-#ifndef __attribute__
-#define __attribute__(x)
-#endif
+#ifdef __GNUC__
+#define _attribute(x) __attribute__(x)
+#else
+#define __attribute__(x)    // Ignore __attribute__ on non-gcc platforms
+#define _attribute(x)
 #endif
 
 #ifdef __GNUC__
@@ -633,8 +633,8 @@ char *COM_Parse2(char **data_p);
 char *COM_ParseExt2(char **data_p, qboolean allowLineBreaks);
 
 int COM_Compress(char *data_p);
-void COM_ParseError(const char *format, ...) __attribute__ ((format(printf, 1, 2)));
-//void COM_ParseWarning(const char *format, ...) __attribute__ ((format(printf, 1, 2))); // Unused
+void COM_ParseError(const char *format, ...) _attribute ((format(printf, 1, 2)));
+//void COM_ParseWarning(const char *format, ...) _attribute ((format(printf, 1, 2))); // Unused
 
 qboolean COM_BitCheck(const int array[], unsigned int bitNum);
 void COM_BitSet(int array[], unsigned int bitNum);
@@ -679,7 +679,7 @@ void Parse1DMatrix(char **buf_p, int x, float *m);
 void Parse2DMatrix(char **buf_p, int y, int x, float *m);
 void Parse3DMatrix(char **buf_p, int z, int y, int x, float *m);
 
-int QDECL Com_sprintf(char *dest, unsigned int size, const char *fmt, ...) __attribute__ ((format(printf, 3, 4)));
+int QDECL Com_sprintf(char *dest, unsigned int size, const char *fmt, ...) _attribute ((format(printf, 3, 4)));
 
 char *Com_SkipTokens(char *s, int numTokens, const char *sep);
 char *Com_SkipCharset(char *s, char *sep);
@@ -770,8 +770,8 @@ float *tv(float x, float y, float z);
 
 #define rc(x) va("%s^7", x) ///< shortcut for color reset after printing variable
 
-//char *QDECL va(char *format, ...) __attribute__ ((format(printf, 1, 2)));
-char *QDECL va(const char *format, ...) __attribute__ ((format(printf, 1, 2)));
+//char *QDECL va(char *format, ...) _attribute ((format(printf, 1, 2)));
+char *QDECL va(const char *format, ...) _attribute ((format(printf, 1, 2)));
 
 #define TRUNCATE_LENGTH 64
 void Com_TruncateLongString(char *buffer, const char *s);
@@ -788,8 +788,8 @@ qboolean Info_Validate(const char *s);
 qboolean Info_NextPair(const char **head, char *key, char *value);
 
 // this is only here so the functions in q_shared.c and bg_*.c can link
-void QDECL Com_Error(int code, const char *fmt, ...) __attribute__ ((noreturn, format(printf, 2, 3)));
-void QDECL Com_Printf(const char *fmt, ...) __attribute__ ((format(printf, 1, 2)));
+void QDECL Com_Error(int code, const char *fmt, ...) _attribute ((noreturn, format(printf, 2, 3)));
+void QDECL Com_Printf(const char *fmt, ...) _attribute ((format(printf, 1, 2)));
 
 /*
 ==========================================================

@@ -2479,7 +2479,7 @@ void CL_SetRecommended_f(void)
  *
  * @note DLL glue
  */
-static __attribute__ ((format(printf, 2, 3))) void QDECL CL_RefPrintf(int print_level, const char *fmt, ...)
+static _attribute((format(printf, 2, 3))) void QDECL CL_RefPrintf(int print_level, const char *fmt, ...)
 {
 	va_list argptr;
 	char    msg[MAXPRINTMSG];

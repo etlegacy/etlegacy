@@ -39,14 +39,6 @@
 
 #include "../qcommon/cm_public.h"
 
-// Ignore __attribute__ on non-gcc platforms
-#ifndef __GNUC__
-#   ifndef __attribute__
-#       define __attribute__(x)
-#   endif
-#endif
-
-
 // msg.c
 
 /**
@@ -1015,10 +1007,10 @@ void Info_Print(const char *s);
 
 void Com_BeginRedirect(char *buffer, size_t buffersize, void (*flush)(char *));
 void Com_EndRedirect(void);
-void QDECL Com_Printf(const char *fmt, ...) __attribute__ ((format(printf, 1, 2)));
-void QDECL Com_DPrintf(const char *fmt, ...) __attribute__ ((format(printf, 1, 2)));
-void QDECL Com_Error(int code, const char *fmt, ...) __attribute__ ((noreturn, format(printf, 2, 3)));
-void Com_Quit_f(void) __attribute__ ((noreturn));
+void QDECL Com_Printf(const char *fmt, ...) _attribute ((format(printf, 1, 2)));
+void QDECL Com_DPrintf(const char *fmt, ...) _attribute ((format(printf, 1, 2)));
+void QDECL Com_Error(int code, const char *fmt, ...) _attribute ((noreturn, format(printf, 2, 3)));
+void Com_Quit_f(void) _attribute ((noreturn));
 
 int Com_Milliseconds(void);     // will be journaled properly
 unsigned int Com_BlockChecksum(const void *buffer, size_t length);
@@ -1368,8 +1360,8 @@ qboolean Sys_DllExtension(const char *name);
 
 char *Sys_GetCurrentUser(void);
 
-void QDECL Sys_Error(const char *error, ...) __attribute__ ((noreturn, format(printf, 1, 2)));
-void Sys_Quit(void) __attribute__ ((noreturn));
+void QDECL Sys_Error(const char *error, ...) _attribute ((noreturn, format(printf, 1, 2)));
+void Sys_Quit(void) _attribute ((noreturn));
 char *IN_GetClipboardData(void);       // note that this isn't journaled...
 
 void Sys_Print(const char *msg);
