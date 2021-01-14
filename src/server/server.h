@@ -499,7 +499,7 @@ void SV_GentityUpdateHealthField(sharedEntity_t *gent, playerState_t *player);
 
 // sv_main.c
 void SV_FinalCommand(const char *cmd, qboolean disconnect);   ///< added disconnect flag so map changes can use this function as well
-void QDECL SV_SendServerCommand(client_t *cl, const char *fmt, ...) __attribute__ ((format(printf, 2, 3)));
+void QDECL SV_SendServerCommand(client_t *cl, const char *fmt, ...) _attribute ((format(printf, 2, 3)));
 void SV_AddOperatorCommands(void);
 void SV_RemoveOperatorCommands(void);
 void SV_MasterHeartbeat(const char *msg);

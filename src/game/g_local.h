@@ -1688,7 +1688,7 @@ void G_LogExit(const char *string);
 void SendScoreboardMessageToAllClients(void);
 void QDECL G_Printf(const char *fmt, ...) _attribute((format(printf, 1, 2)));
 void QDECL G_DPrintf(const char *fmt, ...) _attribute((format(printf, 1, 2)));
-void QDECL G_Error(const char *fmt, ...) __attribute__ ((noreturn, format(printf, 1, 2)));
+void QDECL G_Error(const char *fmt, ...) _attribute ((noreturn, format(printf, 1, 2)));
 
 // g_client.c
 char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot);
@@ -2146,7 +2146,7 @@ void GeoIP_close(void);
 extern GeoIP *gidb;
 
 void trap_Printf(const char *fmt);
-void trap_Error(const char *fmt) __attribute__((noreturn));
+void trap_Error(const char *fmt) _attribute((noreturn));
 int trap_Milliseconds(void);
 int trap_Argc(void);
 void trap_Argv(int n, char *buffer, int bufferLength);

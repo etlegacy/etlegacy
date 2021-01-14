@@ -67,7 +67,7 @@ unsigned int CON_LogRead(char *out, unsigned int outSize);
 void Sys_GLimpSafeInit(void);
 void Sys_GLimpInit(void);
 void Sys_PlatformInit(void);
-void Sys_SigHandler(int signal) __attribute__ ((noreturn));
+void Sys_SigHandler(int signal) _attribute ((noreturn));
 void Sys_ErrorDialog(const char *error);
 void Sys_AnsiColorPrint(const char *msg);
 
@@ -83,7 +83,7 @@ void Sys_DestroyConsole(void);
 #endif
 
 void Sys_SetUpConsoleAndSignals(void);
-void Sys_GameLoop(void) __attribute__((noreturn));
+void Sys_GameLoop(void) _attribute((noreturn));
 
 #ifdef __APPLE__
 const char *OSX_ApplicationSupportPath(void);
