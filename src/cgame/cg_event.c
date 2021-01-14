@@ -1856,7 +1856,7 @@ void CG_PlayGlobalSound(centity_t *cent, int index)
 
 extern void CG_AddBulletParticles(vec3_t origin, vec3_t dir, int speed, int duration, int count, float randScale);
 
-void CG_PlayHitSound(const entityState_t *es)
+void CG_PlayHitSound(const int clientNum, const int hitSound)
 {
 	// Do we have hitsounds even enabled
 	if (!(cg_hitSounds.integer & HITSOUNDS_ON))
@@ -1871,36 +1871,37 @@ void CG_PlayHitSound(const entityState_t *es)
 	}
 
 	// Is the event for the current client (might be the player or a player being spectated)
-	if (es->clientNum != cg.snap->ps.clientNum)
+	if (clientNum != cg.snap->ps.clientNum)
 	{
 		return;
 	}
 
-	switch (es->eventParm)
+	switch (hitSound)
 	{
 		case HIT_TEAMSHOT:
 			if (!(cg_hitSounds.integer & HITSOUNDS_NOTEAMSHOT))
 			{
-				trap_S_StartSound(NULL, es->clientNum, CHAN_AUTO, cgs.media.teamShot);
+				trap_S_StartLocalSound(cgs.media.teamShot, CHAN_LOCAL_SOUND);
 			}
 			break;
 		case HIT_HEADSHOT:
 			if (!(cg_hitSounds.integer & HITSOUNDS_NOHEADSHOT))
 			{
-				trap_S_StartSound(NULL, es->clientNum, CHAN_AUTO, cgs.media.headShot);
+				trap_S_StartLocalSound(cgs.media.headShot, CHAN_LOCAL_SOUND);
 			}
 			else if (!(cg_hitSounds.integer & HITSOUNDS_NOBODYSHOT))
 			{
-				trap_S_StartSound(NULL, es->clientNum, CHAN_AUTO, cgs.media.bodyShot);
+				trap_S_StartLocalSound(cgs.media.bodyShot, CHAN_LOCAL_SOUND);
 			}
 			break;
 		case HIT_BODYSHOT:
 			if (!(cg_hitSounds.integer & HITSOUNDS_NOBODYSHOT))
 			{
-				trap_S_StartSound(NULL, es->clientNum, CHAN_AUTO, cgs.media.bodyShot);
+				trap_S_StartLocalSound(cgs.media.bodyShot, CHAN_LOCAL_SOUND);
 			}
 			break;
 		default:
+			CG_DPrintf("Unkown hitsound: %i\n", hitSound);
 			break;
 	}
 }
@@ -2853,7 +2854,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
         }
         break;
 	case EV_PLAYER_HIT:
-		CG_PlayHitSound(es);
+		CG_PlayHitSound(es->clientNum, es->eventParm);
 		break;
 	default:
 		if (cg.demoPlayback)
