@@ -175,7 +175,7 @@ qboolean Sys_WritePIDFile(void)
  * @brief Single exit point (regular exit or in case of error)
  * @param[in] exitCode
  */
-static __attribute__ ((noreturn)) void Sys_Exit(int exitCode)
+static _attribute((noreturn)) void Sys_Exit(int exitCode)
 {
 	CON_Shutdown();
 

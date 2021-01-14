@@ -39,14 +39,6 @@
 
 #include "../qcommon/cm_public.h"
 
-// Ignore __attribute__ on non-gcc platforms
-#ifndef __GNUC__
-#   ifndef __attribute__
-#       define __attribute__(x)
-#   endif
-#endif
-
-
 // msg.c
 
 /**

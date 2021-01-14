@@ -1039,7 +1039,7 @@ static void IRC_HandleError(void)
  * @param[in] format
  * @return
  */
-static __attribute__((format(printf, 1, 2))) int IRC_Send(const char *format, ...)
+static _attribute((format(printf, 1, 2))) int IRC_Send(const char *format, ...)
 {
 	char    buffer[IRC_SEND_BUF_SIZE + 1];
 	va_list args;

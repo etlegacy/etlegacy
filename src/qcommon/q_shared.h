@@ -92,11 +92,11 @@
 #pragma warning(disable : 4996) // deprecated POSIX function names
 #endif
 
-// Ignore __attribute__ on non-gcc platforms
-#ifndef __GNUC__
-#ifndef __attribute__
-#define __attribute__(x)
-#endif
+#ifdef __GNUC__
+#define _attribute(x) __attribute__(x)
+#else
+#define __attribute__(x)    // Ignore __attribute__ on non-gcc platforms
+#define _attribute(x)
 #endif
 
 #ifdef __GNUC__

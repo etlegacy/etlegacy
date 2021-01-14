@@ -60,7 +60,7 @@ typedef struct
  * @brief R_JPGErrorExit
  * @param[in] cinfo
  */
-static void __attribute__((noreturn)) R_JPGErrorExit(j_common_ptr cinfo)
+static void _attribute((noreturn)) R_JPGErrorExit(j_common_ptr cinfo)
 {
 	char              buffer[JMSG_LENGTH_MAX];
 	my_jpeg_error_mgr *mgr = (my_jpeg_error_mgr *)cinfo->err;

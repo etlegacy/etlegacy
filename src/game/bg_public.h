@@ -42,12 +42,6 @@
 #define GAME_VERSION        "Enemy Territory"
 #define GAME_VERSION_DATED  (GAME_VERSION ", ET 2.60b")
 
-#ifdef __GNUC__
-#define _attribute(x) __attribute__(x)
-#else
-#define _attribute(x)
-#endif
-
 #if defined(CGAMEDLL) || defined(FEATURE_SERVERMDX)
 #define USE_MDXFILE
 #endif

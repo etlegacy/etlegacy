@@ -189,7 +189,7 @@ void DB_DeleteFavorite(const char *profile, const char *address)
  * @param[in] azColName
  * @return 
  */
-static int DB_callbackFavorites(__attribute__((unused)) void *NotUsed, int argc, char **argv, char **azColName)
+static int DB_callbackFavorites(UNUSED_VAR void *NotUsed, int argc, char **argv, char **azColName)
 {
 	netadr_t addr;
 
