@@ -117,6 +117,7 @@ jobs:
         uses: actions/checkout@v2
         with:
           repository: rafal1137/NDK_ETL
+          path: NDK_ETL
           shell: bash
           env:
             ANDROID_NDK: /NDK_ETL/ndk-build
