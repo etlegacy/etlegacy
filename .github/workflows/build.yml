@@ -335,19 +335,26 @@ jobs:
 
       - name: Login to DockerHub Registry
         run: echo ${{ secrets.DOCKERHUB_PASSWORD }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
+
       - name: Get the version
         id: vars
-        run: echo ::set-output name=tag::$(git describe --abbrev=7 2>/dev/null)
-      - name: Build the tagged Docker image
+        run: |
+          echo ::set-output name=tag::$(git describe --abbrev=7 2>/dev/null)
+          echo ::set-output name=shorttag::$(git describe --abbrev=0 2>/dev/null)
+
+      - name: Build and push the tagged Docker image
         working-directory: build/package
-        run: docker build . --file Dockerfile --tag etlegacy/server:${{steps.vars.outputs.tag}}
-      - name: Push the tagged Docker image
-        run: docker push etlegacy/server:${{steps.vars.outputs.tag}}
-      - name: Build the latest Docker image
+        run: |
+          docker build . --file Dockerfile --tag etlegacy/server:${{ steps.vars.outputs.tag }}
+          docker push etlegacy/server:${{steps.vars.outputs.tag}}
+
+      # If we are on a release tag, then also create the 'latest' tag on docker hub
+      - name: Build and push the latest Docker image
+        if: ${{ steps.vars.outputs.tag == steps.vars.outputs.tagshort }}
         working-directory: build/package
-        run: docker build . --file Dockerfile --tag etlegacy/server:latest
-      - name: Push the latest Docker image
-        run: docker push etlegacy/server:latest
+        run: |
+          docker build . --file Dockerfile --tag etlegacy/server:latest
+          docker push etlegacy/server:latest
 
   cleanup:
     runs-on: ubuntu-16.04
