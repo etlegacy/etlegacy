@@ -10,8 +10,10 @@
 name: ETLBuild
 
 on:
-#  push:
 #  pull_request:
+  push:
+    tags:
+      - 'v*'
   workflow_dispatch:
   schedule:
     - cron: '0 0 * * FRI'
