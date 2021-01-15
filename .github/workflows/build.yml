@@ -122,11 +122,11 @@ jobs:
 
       - name: Grant execute permission for gradlew
         shell: bash
-        run: chmod +x etlegacy-android/gradlew
+        run: chmod +x ./gradlew
 
       - name: Build
         shell: bash
-        run: etlegacy-android/gradlew clean build
+        run: ./gradlew clean build
 
 #      - uses: actions/upload-artifact@v2
 #        with:
