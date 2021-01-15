@@ -122,7 +122,8 @@ jobs:
 
       - name: Grant execute permission for gradlew
         shell: bash
-        run: chmod +x ./gradlew
+        run: ls -la
+#        run: chmod +x ./gradlew
 
       - name: Build
         shell: bash
