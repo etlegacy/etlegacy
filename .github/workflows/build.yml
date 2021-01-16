@@ -119,8 +119,8 @@ jobs:
           repository: etlegacy/etlegacy-android
           submodules: true
           fetch-depth: 0
-          shell: bash
-          run: ls -la
+        shell: bash
+        run: ls -la
 
       - name: Grant execute permission for gradlew
         shell: bash
