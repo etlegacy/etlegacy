@@ -115,8 +115,8 @@ jobs:
         with:
           repository: rafal1137/NDK_ETL
           path: NDK_ETL
-          env:
-            ANDROID_NDK: /NDK_ETL/ndk-bundle
+#          env:
+#            ANDROID_NDK: /NDK_ETL/ndk-bundle
 
       - name: Grant execute permission for gradlew
         shell: bash
