@@ -95,8 +95,7 @@ jobs:
 
   android-mod:
     runs-on: ubuntu-latest
-    container:
-      image: etlegacy/lnx-build:centos7
+    container: code0987/android-ci:latest
     steps:
       - name: Setup JDK
         uses: actions/setup-java@v1
