@@ -106,6 +106,13 @@ jobs:
       - name: Setup Android SDK
         uses: android-actions/setup-android@v2
 
+      - name: Cloning Android Repo
+        uses: actions/checkout@v2
+        with:
+          repository: etlegacy/etlegacy-android
+          submodules: true
+          fetch-depth: 0
+
       - name: Downloading NDK
         uses: actions/checkout@v2
         with:
@@ -113,13 +120,6 @@ jobs:
           path: NDK_ETL
 #          env:
 #            ANDROID_NDK: /NDK_ETL/ndk-bundle
-
-      - name: Cloning Android Repo
-        uses: actions/checkout@v2
-        with:
-          repository: etlegacy/etlegacy-android
-          submodules: true
-          fetch-depth: 0
 
       - name: Grant execute permission for gradlew
         shell: bash
