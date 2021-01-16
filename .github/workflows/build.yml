@@ -98,13 +98,6 @@ jobs:
     container:
       image: etlegacy/lnx-build:centos7
     steps:
-      - uses: actions/checkout@v2
-        with:
-          repository: etlegacy/etlegacy-android
-          submodules: true
-          fetch-depth: 0
-          path: etlegacy-android
-
       - name: Setup JDK
         uses: actions/setup-java@v1
         with:
@@ -120,10 +113,18 @@ jobs:
 #          env:
 #            ANDROID_NDK: /NDK_ETL/ndk-bundle
 
+      - name: Cloning Android Repo
+        uses: actions/checkout@v2
+        with:
+          repository: etlegacy/etlegacy-android
+          submodules: true
+          fetch-depth: 0
+          shell: bash
+          run: ls -la
+
       - name: Grant execute permission for gradlew
         shell: bash
-        run: ls -la
-#        run: chmod +x ./gradlew
+        run: chmod +x ./gradlew
 
       - name: Build
         shell: bash
