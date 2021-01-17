@@ -112,7 +112,7 @@ jobs:
         uses: actions/checkout@v2
         with:
           repository: rafal1137/NDK_ETL
-        path: NDK_ETL
+          path: NDK_ETL
 
       - name: Copy NDK
         shell: bash
