@@ -117,7 +117,7 @@ jobs:
       - name: Copy NDK
         shell: bash
         run: |
-          cd $(GITHUB_WORKSPACE)/NDK_ETL
+          cd /NDK_ETL
           ls -la
 #          sudo mkdir ${ANDROID_HOME}/ndk
 #          sudo chmod -R a+rwx ${ANDROID_HOME}/ndk
