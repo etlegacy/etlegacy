@@ -113,15 +113,13 @@ jobs:
         with:
           repository: rafal1137/NDK_ETL
         path: NDK_ETL
-        shell: bash
-        run: |
-          cd /NDK_ETL
-          ls -la
 
       - name: Copy NDK
-#          sudo mkdir ${ANDROID_HOME}/ndk
-#          sudo chmod -R a+rwx ${ANDROID_HOME}/ndk
-#          sudo cp -R /ndk-bundle ${ANDROID_HOME}/ndk
+        shell: bash
+        run: |
+          sudo mkdir ${ANDROID_HOME}/ndk
+          sudo chmod -R a+rwx ${ANDROID_HOME}/ndk
+          sudo cp -R /NDK_ETL/* ${ANDROID_HOME}/ndk
 
       - name: Grant execute permission for gradlew
         shell: bash
