@@ -113,12 +113,12 @@ jobs:
         with:
           repository: rafal1137/NDK_ETL
           path: NDK_ETL
+          shell: bash
+          run: |
+            cd /NDK_ETL
+            ls -la
 
       - name: Copy NDK
-        shell: bash
-        run: |
-          cd /NDK_ETL
-          ls -la
 #          sudo mkdir ${ANDROID_HOME}/ndk
 #          sudo chmod -R a+rwx ${ANDROID_HOME}/ndk
 #          sudo cp -R /ndk-bundle ${ANDROID_HOME}/ndk
