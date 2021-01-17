@@ -115,16 +115,14 @@ jobs:
           path: NDK_ETL
 
       - name: Copy NDK
-        uses: canastro/copy-file-action@master
-        with:
-          source: NDK_ETL/*
-          target: ${ANDROID_HOME}/ndk
-          flags: '-r'
-#        shell: bash
-#        run: |
-#          sudo mkdir ${ANDROID_HOME}/ndk
-#          sudo chmod -R a+rwx ${ANDROID_HOME}/ndk
-#          sudo cp -R /NDK_ETL/* ${ANDROID_HOME}/ndk
+#        uses: canastro/copy-file-action@master
+#        with:
+#          source: NDK_ETL/*
+#          target: ${ANDROID_HOME}/ndk
+#          flags: '-r'
+        shell: bash
+        run: |
+          tree NDK_ETL
 
       - name: Grant execute permission for gradlew
         shell: bash
