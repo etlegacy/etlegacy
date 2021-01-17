@@ -119,7 +119,7 @@ jobs:
         with:
           source: NDK_ETL/*
           target: ${ANDROID_HOME}/ndk
-          flags: 'r'
+          flags: '-r'
 #        shell: bash
 #        run: |
 #          sudo mkdir ${ANDROID_HOME}/ndk
