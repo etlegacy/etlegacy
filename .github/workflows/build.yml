@@ -131,9 +131,9 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: Build
-        shell: bash
+#        shell: bash
         run: |
-           echo $ANDROID_NDK_HOME
+          echo $ANDROID_NDK_HOME
           ./gradlew clean build
 
 #      - uses: actions/upload-artifact@v2
