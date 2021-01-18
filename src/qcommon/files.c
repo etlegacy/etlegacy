@@ -786,7 +786,7 @@ void FS_Remove(const char *osPath)
 {
 	int ret;
 
-	ret = remove(osPath);
+	ret = Sys_Remove(osPath);
 
 	if (ret != 0)
 	{
@@ -804,7 +804,7 @@ void FS_HomeRemove(const char *homePath)
 
 	FS_CheckFilenameIsNotExecutable(homePath, __func__); // keep in mind we want to delete pk3s in homepath
 
-	ret = remove(FS_BuildOSPath(fs_homepath->string, fs_gamedir, homePath));
+	ret = Sys_Remove(FS_BuildOSPath(fs_homepath->string, fs_gamedir, homePath));
 
 	if (ret != 0)
 	{
@@ -1953,7 +1953,7 @@ int FS_DeleteDir(const char *dirname, qboolean nonEmpty, qboolean recursive)
 		{
 			ospath = FS_BuildOSPath(fs_homepath->string, fs_gamedir, va("%s/%s", dirname, pFiles[i]));
 
-			if (remove(ospath) == -1)        // failure
+			if (Sys_Remove(ospath) == -1)        // failure
 			{
 				return 0;
 			}
@@ -1963,7 +1963,7 @@ int FS_DeleteDir(const char *dirname, qboolean nonEmpty, qboolean recursive)
 
 	ospath = FS_BuildOSPath(fs_homepath->string, fs_gamedir, dirname);
 
-	if (Q_rmdir(ospath) == 0)
+	if (Sys_RemoveDir(ospath) == 0)
 	{
 		return 1;
 	}
@@ -1983,7 +1983,7 @@ int FS_OSStatFile(const char *ospath)
 {
 	struct _stat stat;
 
-	if (_stat(ospath, &stat) == -1)
+	if (Sys_Stat(ospath, &stat) == -1)
 	{
 		return -1;
 	}
@@ -2051,7 +2051,7 @@ int FS_Delete(const char *fileName)
 	}
 	else
 	{
-		if (remove(ospath) != -1)        // success
+		if (Sys_Remove(ospath) != -1)        // success
 		{
 			return 1;
 		}

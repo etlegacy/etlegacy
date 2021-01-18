@@ -1067,11 +1067,7 @@ int main(int argc, char **argv)
 	}
 #endif
 
-	{
-		char cwd[MAX_OSPATH];
-		_getcwd(cwd, sizeof(cwd));
-		Com_Printf("Working directory: %s\n", cwd);
-	}
+	Com_Printf("Working directory: %s\n", Sys_Cwd());
 
 	// hide the early console since we've reached the point where we
 	// have a working graphics subsystems

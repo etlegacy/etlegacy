@@ -331,6 +331,27 @@ qboolean Sys_Mkdir(const char *path)
 	return qtrue;
 }
 
+int Sys_Remove(const char *path)
+{
+	wchar_t w_path[MAX_OSPATH];
+	Sys_StringToWideCharArray(path, w_path, MAX_OSPATH);
+	return _wremove(w_path);
+}
+
+int Sys_RemoveDir(const char *path)
+{
+	wchar_t w_path[MAX_OSPATH];
+	Sys_StringToWideCharArray(path, w_path, MAX_OSPATH);
+	return _wrmdir(w_path);
+}
+
+int Sys_Stat(const char *path, void *stat)
+{
+	wchar_t w_path[MAX_OSPATH];
+	Sys_StringToWideCharArray(path, w_path, MAX_OSPATH);
+	return _wstat(w_path, stat);
+}
+
 /**
  * @brief Sys_Cwd
  * @return

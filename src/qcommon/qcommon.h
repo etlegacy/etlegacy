@@ -780,14 +780,6 @@ extern modHash modHashes;
  */
 #define MAX_FOUND_FILES 0x1000
 
-#ifdef _WIN32
-#include <direct.h>
-#define Q_rmdir _rmdir
-#else
-#include <unistd.h>
-#define Q_rmdir rmdir
-#endif
-
 qboolean FS_Initialized(void);
 
 void FS_InitFilesystem(void);
@@ -1391,6 +1383,17 @@ qboolean Sys_CheckCD(void);
 
 FILE *Sys_FOpen(const char *ospath, const char *mode);
 qboolean Sys_Mkdir(const char *path);
+
+#ifdef _WIN32
+int Sys_Remove(const char *path);
+int Sys_RemoveDir(const char *path);
+int Sys_Stat(const char *path, void *stat);
+#else
+#include <unistd.h>
+#define Sys_Remove(x) remove(x)
+#define Sys_RemoveDir(x) rmdir(x)
+#endif
+
 char *Sys_Cwd(void);
 char *Sys_DefaultBasePath(void);
 char *Sys_DefaultInstallPath(void);
