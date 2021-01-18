@@ -114,11 +114,11 @@ jobs:
           repository: rafal1137/NDK_ETL
           path: NDK_ETL
 
-      - name: Setup NDK Env
-        run: |
-          echo "export ANDROID_NDK_HOME=NDK_ETL/ndk-bundle" > ~/.bashrc
-          source ~/.bashrc
-          echo $ANDROID_NDK_HOME
+#      - name: Setup NDK Env
+#        run: |
+#          echo "export ANDROID_NDK_HOME=NDK_ETL/ndk-bundle" > ~/.bashrc
+#          source ~/.bashrc
+#          echo $ANDROID_NDK_HOME
 #      - name: Copy NDK
 #        uses: canastro/copy-file-action@master
 #        with:
@@ -133,6 +133,8 @@ jobs:
       - name: Build
 #        shell: bash
         run: |
+          echo "export ANDROID_NDK_HOME=NDK_ETL/ndk-bundle" > ~/.bashrc
+          source ~/.bashrc
           echo $ANDROID_NDK_HOME
           ./gradlew clean build
 
