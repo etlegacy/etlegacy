@@ -680,7 +680,7 @@ void CL_Disconnect(qboolean showMainMenu)
 	// don't try a restart if uivm is NULL, as we might be in the middle of a restart already
 	if (uivm && cls.state > CA_DISCONNECTED)
 	{
-		// restart the UI	
+		// restart the UI
 		cls.state = CA_DISCONNECTED;
 
 		// shutdown the UI
@@ -689,8 +689,8 @@ void CL_Disconnect(qboolean showMainMenu)
 		// init the UI
 		CL_InitUI();
 	}
-	else	
-	{	
+	else
+	{
 		cls.state = CA_DISCONNECTED;
 	}
 }
@@ -1321,6 +1321,11 @@ void CL_WavStopRecord_f(void)
 void CL_SaveFavServersToFile_f(void)
 {
 	LAN_SaveServersToFile();
+}
+
+void CL_OpenHomePath_f(void)
+{
+	CL_OpenURL(Cvar_VariableString("fs_homepath"));
 }
 
 /**
@@ -2963,6 +2968,8 @@ void CL_Init(void)
 
 	Cmd_AddCommand("save_favs", CL_SaveFavServersToFile_f, "Saves the favcache.dat file into mod/profile path of fs_homepath.");
 	//Cmd_AddCommand("add_fav", CL_AddFavServer_f, "Adds the current connected server to favorites.");
+
+	Cmd_AddCommand("open_homepath", CL_OpenHomePath_f, "Open the home path in a system file explorer.");
 
 	CIN_Init();
 

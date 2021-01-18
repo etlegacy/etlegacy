@@ -876,6 +876,7 @@ void Sys_OpenURL(const char *url, qboolean doexit)
 {
 #ifndef DEDICATED
 	HWND wnd;
+	wchar_t tmpUrl[MAX_PATH * 2];
 
 	static qboolean doexit_spamguard = qfalse;
 
@@ -887,7 +888,8 @@ void Sys_OpenURL(const char *url, qboolean doexit)
 
 	Com_Printf("Open URL: %s\n", url);
 
-	if (!ShellExecute(NULL, "open", url, NULL, NULL, SW_RESTORE))
+	Sys_StringToWideCharArray(url, tmpUrl, MAX_PATH * 2);
+	if (!ShellExecuteW(NULL, L"open", tmpUrl, NULL, NULL, SW_RESTORE))
 	{
 		// couldn't start it, popup error box
 		Com_Error(ERR_DROP, "Could not open url: '%s' ", url);
@@ -896,9 +898,9 @@ void Sys_OpenURL(const char *url, qboolean doexit)
 
 	wnd = GetForegroundWindow();
 
-	if (wnd)
+	if (wnd && IsIconic(wnd))
 	{
-		ShowWindow(wnd, SW_MAXIMIZE);
+		ShowWindow(wnd, SW_SHOW);
 	}
 
 	if (doexit)
