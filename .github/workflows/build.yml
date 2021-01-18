@@ -119,7 +119,6 @@ jobs:
           echo "export ANDROID_NDK_HOME=NDK_ETL/ndk-bundle" > ~/.bashrc
           source ~/.bashrc
           echo $ANDROID_NDK_HOME
-          ndk-build
 #      - name: Copy NDK
 #        uses: canastro/copy-file-action@master
 #        with:
