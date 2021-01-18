@@ -385,9 +385,9 @@ typedef int clipHandle_t;
 
 #ifndef BIT
 #ifdef _WIN64
-#define BIT(x)              (1i64 << x)
+#define BIT(x)              (1i64 << (x))
 #else
-#define BIT(x)              (1 << x)
+#define BIT(x)              (1 << (x))
 #endif
 #endif
 
@@ -930,7 +930,7 @@ typedef struct
 	cplane_t plane;         ///< surface normal at impact, transformed to world space
 	int surfaceFlags;       ///< surface hit
 	int contents;           ///< contents on other side of surface hit
-	int entityNum;          ///< entity the contacted sirface is a part of
+	int entityNum;          ///< entity the contacted surface is a part of
 } trace_t;
 
 // trace->entityNum can also be 0 to (MAX_GENTITIES-1)

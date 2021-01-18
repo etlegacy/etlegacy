@@ -253,6 +253,7 @@ static sfxHandle_t S_AL_BufferFindFree(void)
 
 	// Shit...
 	Com_Error(ERR_FATAL, "S_AL_BufferFindFree: No free sound handles");
+	return -1;
 }
 
 /**
@@ -293,6 +294,11 @@ static sfxHandle_t S_AL_BufferFind(const char *filename)
 		alSfx_t *ptr;
 
 		sfx = S_AL_BufferFindFree();
+
+		if(sfx == -1)
+		{
+			return sfx;
+		}
 
 		// Clear and copy the filename over
 		ptr = &knownSfx[sfx];
@@ -3294,9 +3300,9 @@ qboolean S_AL_Init(soundInterface_t *si)
 		//streamNumBuffers[i]    = 0;
 		//streamBufIndex[i]      = 0;
 	}
-	
+
 	Com_Memset(ssRestart, 0, sizeof(ssRestart));
-	
+
 	// New console variables
 	s_alPrecache      = Cvar_Get("s_alPrecache", "1", CVAR_ARCHIVE);
 	s_alGain          = Cvar_Get("s_alGain", "1.0", CVAR_ARCHIVE);

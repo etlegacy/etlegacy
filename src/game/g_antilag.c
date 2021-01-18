@@ -760,7 +760,7 @@ void G_Trace(gentity_t *ent, trace_t *results, const vec3_t start, const vec3_t 
 		maxsBackup[clientNum] = g_entities[clientNum].r.maxs[2];
 
 		// use higher hitbox for syringe only
-        if (ent->s.weapon == WP_MEDIC_SYRINGE && (g_entities[clientNum].s.eFlags & (EF_DEAD | EF_PRONE)))
+		if (ent->s.weapon == WP_MEDIC_SYRINGE && (g_entities[clientNum].s.eFlags & (EF_DEAD | EF_PRONE)))
 		{
 			g_entities[clientNum].r.maxs[2] = CROUCH_BODYHEIGHT;
 		}
@@ -772,7 +772,7 @@ void G_Trace(gentity_t *ent, trace_t *results, const vec3_t start, const vec3_t 
 
 	trap_Trace(results, start, mins, maxs, end, passEntityNum, contentmask);
 
-	// backup hitbox hight
+	// backup hitbox height
 	for (i = 0; i < level.numConnectedClients; ++i)
 	{
 		clientNum                       = level.sortedClients[i];

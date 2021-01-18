@@ -1913,7 +1913,7 @@ static void CG_PrintObjectiveInfo_f(void)
 	CG_Printf("^2%i from %i objectives defined\n", i, MAX_OID_TRIGGERS);
 }
 
-static void CG_ListSpawnPoints_f()
+static void CG_ListSpawnPoints_f(void)
 {
 	int i;
 	CG_Printf("^2Spawn Points\n");
