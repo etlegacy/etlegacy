@@ -40,7 +40,7 @@
 
 #ifdef _WIN32
 #    include <windows.h>
-#    define Sys_LoadLibrary(f)   (void *)LoadLibrary(f)
+void *Sys_LoadLibrary(const char *library);
 #    define Sys_UnloadLibrary(h)     FreeLibrary((HMODULE)h)
 #    define Sys_LoadFunction(h, fn)   (void *)GetProcAddress((HMODULE)h, fn)
 #    define Sys_LibraryError()   "unknown"

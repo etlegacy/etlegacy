@@ -64,12 +64,53 @@ static char homePath[MAX_OSPATH] = { 0 };
 //static int     sys_retcode;
 //static char    sys_exitstr[MAX_STRING_CHARS];
 
+static size_t Sys_WideCharArrayToString(wchar_t *array, char *buffer, size_t len)
+{
+	size_t length = WideCharToMultiByte(CP_UTF8, 0, array, -1, NULL, 0, NULL, NULL);
+	if(length > len)
+	{
+		return -1;
+	}
+
+	WideCharToMultiByte(CP_UTF8, 0, array, -1, buffer, len, NULL, NULL);
+	return strlen(buffer);
+}
+
+/**
+ * Converts the input UTF-8 string to a windows UTF-16 wchar_t array
+ * @param [in] string UTF-8 format data
+ * @param [in,out] output wide char array for output data
+ * @param [in] size of the output buffer
+ * @return length of the string
+ */
+static size_t Sys_StringToWideCharArray(const char* string, wchar_t *output, size_t len)
+{
+	size_t length = 0;
+
+	length = MultiByteToWideChar(CP_UTF8, 0, string, -1, NULL, 0);
+	if(length > len)
+	{
+		return -1;
+	}
+
+	MultiByteToWideChar(CP_UTF8, 0, string, -1, output, length);
+	return length;
+}
+
+void *Sys_LoadLibrary(const char *library)
+{
+	wchar_t libPath[MAX_OSPATH];
+	Sys_StringToWideCharArray(library, libPath, MAX_OSPATH);
+	return LoadLibraryW(libPath);
+}
+
 /**
  * @return homepath pointing to "My Documents\\ETLegacy"
  */
 char *Sys_DefaultHomePath(void)
 {
-	TCHAR   szPath[MAX_PATH];
+	wchar_t w_szPath[MAX_PATH];
+	char    szPath[MAX_PATH];
 	HRESULT found;
 
 	if (!*homePath /*&& !com_homepath*/)
@@ -77,14 +118,16 @@ char *Sys_DefaultHomePath(void)
 		// FIXME: forcing SHGFP_TYPE_CURRENT because file creation fails
 		//        when real CSIDL_PERSONAL is on a mapped drive
 		// NOTE: SHGetFolderPath is marked as deprecated
-		found = SHGetFolderPath(NULL, CSIDL_PERSONAL,
-		                        NULL, SHGFP_TYPE_CURRENT, szPath);
+		found = SHGetFolderPathW(NULL, CSIDL_PERSONAL,
+		                        NULL, SHGFP_TYPE_CURRENT, w_szPath);
 
 		if (found != S_OK)
 		{
 			Com_Printf("Unable to detect CSIDL_PERSONAL\n");
 			return NULL;
 		}
+
+		Sys_WideCharArrayToString(w_szPath, szPath, MAX_PATH);
 
 		Q_strncpyz(homePath, szPath, sizeof(homePath));
 		Q_strcat(homePath, sizeof(homePath), "\\ETLegacy");
@@ -158,12 +201,16 @@ qboolean Sys_RandomBytes(byte *string, int len)
  */
 char *Sys_GetCurrentUser(void)
 {
+	static wchar_t   w_userName[1024];
 	static char   s_userName[1024];
-	unsigned long size = sizeof(s_userName);
+	DWORD size = 1024;
 
-	if (!GetUserName(s_userName, &size))
+	if (!GetUserNameW(w_userName, &size))
 	{
 		strcpy(s_userName, "player");
+	}
+	{
+		Sys_WideCharArrayToString(w_userName, s_userName, 1024);
 	}
 
 	if (!s_userName[0])
@@ -247,6 +294,8 @@ const char *Sys_Dirname(char *path)
 FILE *Sys_FOpen(const char *ospath, const char *mode)
 {
 	size_t length;
+	wchar_t w_ospath[MAX_OSPATH];
+	wchar_t w_mode[10];
 
 	// Windows API ignores all trailing spaces and periods which can get around Quake 3 file system restrictions.
 	length = strlen(ospath);
@@ -255,7 +304,10 @@ FILE *Sys_FOpen(const char *ospath, const char *mode)
 		return NULL;
 	}
 
-	return fopen(ospath, mode);
+	Sys_StringToWideCharArray(ospath, w_ospath, MAX_OSPATH);
+	Sys_StringToWideCharArray(mode, w_mode, 10);
+
+	return _wfopen(w_ospath, w_mode);
 }
 
 /**
@@ -265,7 +317,10 @@ FILE *Sys_FOpen(const char *ospath, const char *mode)
  */
 qboolean Sys_Mkdir(const char *path)
 {
-	if (!CreateDirectory(path, NULL))
+	wchar_t w_path[MAX_OSPATH];
+	Sys_StringToWideCharArray(path, w_path, MAX_OSPATH);
+
+	if (!CreateDirectoryW(w_path, NULL))
 	{
 		if (GetLastError() != ERROR_ALREADY_EXISTS)
 		{
@@ -282,10 +337,13 @@ qboolean Sys_Mkdir(const char *path)
  */
 char *Sys_Cwd(void)
 {
+	static wchar_t w_cwd[MAX_OSPATH];
 	static char cwd[MAX_OSPATH];
 
-	_getcwd(cwd, sizeof(cwd) - 1);
-	cwd[MAX_OSPATH - 1] = 0;
+	_wgetcwd(w_cwd, sizeof(w_cwd) - 1);
+	w_cwd[MAX_OSPATH - 1] = 0;
+
+	Sys_WideCharArrayToString(w_cwd, cwd, MAX_OSPATH);
 
 	return cwd;
 }
@@ -307,9 +365,10 @@ DIRECTORY SCANNING
 void Sys_ListFilteredFiles(const char *basedir, const char *subdirs, const char *filter, char **list, int *numfiles)
 {
 	char               search[MAX_OSPATH], newsubdirs[MAX_OSPATH];
-	char               filename[MAX_OSPATH];
+	wchar_t            w_search[MAX_OSPATH];
+	char               tmpFilename[MAX_OSPATH], filename[MAX_OSPATH];
 	intptr_t           findhandle;
-	struct _finddata_t findinfo;
+	struct _wfinddata_t findinfo;
 
 	if (*numfiles >= MAX_FOUND_FILES - 1)
 	{
@@ -325,7 +384,8 @@ void Sys_ListFilteredFiles(const char *basedir, const char *subdirs, const char 
 		Com_sprintf(search, sizeof(search), "%s\\*", basedir);
 	}
 
-	findhandle = _findfirst(search, &findinfo);
+	Sys_StringToWideCharArray(search, w_search, MAX_OSPATH);
+	findhandle = _wfindfirst(w_search, &findinfo);
 	if (findhandle == -1)
 	{
 		return;
@@ -333,17 +393,18 @@ void Sys_ListFilteredFiles(const char *basedir, const char *subdirs, const char 
 
 	do
 	{
+		Sys_WideCharArrayToString(findinfo.name, tmpFilename, MAX_OSPATH);
 		if (findinfo.attrib & _A_SUBDIR)
 		{
-			if (Q_stricmp(findinfo.name, ".") && Q_stricmp(findinfo.name, ".."))
+			if (Q_stricmp(tmpFilename, ".") && Q_stricmp(tmpFilename, ".."))
 			{
 				if (strlen(subdirs))
 				{
-					Com_sprintf(newsubdirs, sizeof(newsubdirs), "%s\\%s", subdirs, findinfo.name);
+					Com_sprintf(newsubdirs, sizeof(newsubdirs), "%s\\%s", subdirs, tmpFilename);
 				}
 				else
 				{
-					Com_sprintf(newsubdirs, sizeof(newsubdirs), "%s", findinfo.name);
+					Com_sprintf(newsubdirs, sizeof(newsubdirs), "%s", tmpFilename);
 				}
 
 				Sys_ListFilteredFiles(basedir, newsubdirs, filter, list, numfiles);
@@ -353,7 +414,7 @@ void Sys_ListFilteredFiles(const char *basedir, const char *subdirs, const char 
 		{
 			break;
 		}
-		Com_sprintf(filename, sizeof(filename), "%s\\%s", subdirs, findinfo.name);
+		Com_sprintf(filename, sizeof(filename), "%s\\%s", subdirs, tmpFilename);
 		if (!Com_FilterPath(filter, filename, qfalse))
 		{
 			continue;
@@ -362,7 +423,7 @@ void Sys_ListFilteredFiles(const char *basedir, const char *subdirs, const char 
 		list[*numfiles] = CopyString(filename);
 		(*numfiles)++;
 	}
-	while (_findnext(findhandle, &findinfo) != -1);
+	while (_wfindnext(findhandle, &findinfo) != -1);
 
 	_findclose(findhandle);
 }
@@ -412,10 +473,12 @@ static qboolean strgtr(const char *s0, const char *s1)
 char **Sys_ListFiles(const char *directory, const char *extension, const char *filter, int *numfiles, qboolean wantsubs)
 {
 	char               search[MAX_OSPATH];
+	wchar_t            w_search[MAX_OSPATH];
+	char               tmpFilename[MAX_OSPATH];
 	int                nfiles;
 	char               **listCopy;
 	char               *list[MAX_FOUND_FILES];
-	struct _finddata_t findinfo;
+	struct _wfinddata_t findinfo;
 	intptr_t           findhandle;
 	int                flag;
 	int                i;
@@ -469,7 +532,8 @@ char **Sys_ListFiles(const char *directory, const char *extension, const char *f
 	// search
 	nfiles = 0;
 
-	findhandle = _findfirst(search, &findinfo);
+	Sys_StringToWideCharArray(search, w_search, MAX_OSPATH);
+	findhandle = _wfindfirst(w_search, &findinfo);
 	if (findhandle == -1)
 	{
 		*numfiles = 0;
@@ -478,11 +542,13 @@ char **Sys_ListFiles(const char *directory, const char *extension, const char *f
 
 	do
 	{
+		Sys_WideCharArrayToString(findinfo.name, tmpFilename, MAX_OSPATH);
+
 		if ((!wantsubs && (flag ^ (findinfo.attrib & _A_SUBDIR))) || (wantsubs && (findinfo.attrib & _A_SUBDIR)))
 		{
 			if (*extension)
 			{
-				if (strlen(findinfo.name) < extLen || Q_stricmp(findinfo.name + strlen(findinfo.name) - extLen, extension))
+				if (strlen(tmpFilename) < extLen || Q_stricmp(tmpFilename + strlen(tmpFilename) - extLen, extension))
 				{
 					continue; // didn't match
 				}
@@ -492,11 +558,11 @@ char **Sys_ListFiles(const char *directory, const char *extension, const char *f
 			invalid = qfalse;
 			// note: this isn't done in Sys_ListFilteredFiles()
 
-			for (i = 0; i < strlen(findinfo.name); i++)
+			for (i = 0; i < strlen(tmpFilename); i++)
 			{
-				if (findinfo.name[i] <= 31 || findinfo.name[i] >= 127)
+				if (tmpFilename[i] <= 31 || tmpFilename[i] >= 127)
 				{
-					Com_Printf(S_COLOR_RED "ERROR: invalid char in name of file '%s'.\n", findinfo.name);
+					Com_Printf(S_COLOR_RED "ERROR: invalid char in name of file '%s'.\n", tmpFilename);
 					invalid = qtrue;
 					break;
 				}
@@ -506,17 +572,17 @@ char **Sys_ListFiles(const char *directory, const char *extension, const char *f
 			{
 				int error;
 
-				error = remove(va("%s%c%s", directory, PATH_SEP, findinfo.name));
+				error = remove(va("%s%c%s", directory, PATH_SEP, tmpFilename));
 
 				if (error != 0)
 				{
-					Com_Printf(S_COLOR_RED "ERROR: cannot delete '%s'.\n", findinfo.name);
+					Com_Printf(S_COLOR_RED "ERROR: cannot delete '%s'.\n", tmpFilename);
 				}
 #ifdef DEDICATED
-				Sys_Error("Invalid character in file name '%s'. The file has been removed. Start the server again.", findinfo.name);
+				Sys_Error("Invalid character in file name '%s'. The file has been removed. Start the server again.", tmpFilename);
 #else
 				Cvar_Set("com_missingFiles", "");
-				Com_Error(ERR_DROP, "Invalid file name detected and removed\nFile \"%s\" contains an invalid character for ET: Legacy file structure.\nSome admins take advantage of this to ensure their menu loads last.\nThe file has been removed.", findinfo.name);
+				Com_Error(ERR_DROP, "Invalid file name detected and removed\nFile \"%s\" contains an invalid character for ET: Legacy file structure.\nSome admins take advantage of this to ensure their menu loads last.\nThe file has been removed.", tmpFilename);
 #endif
 			}
 
@@ -525,11 +591,11 @@ char **Sys_ListFiles(const char *directory, const char *extension, const char *f
 				break;
 			}
 
-			list[nfiles] = CopyString(findinfo.name);
+			list[nfiles] = CopyString(tmpFilename);
 			nfiles++;
 		}
 	}
-	while (_findnext(findhandle, &findinfo) != -1);
+	while (_wfindnext(findhandle, &findinfo) != -1);
 
 	list[nfiles] = 0;
 

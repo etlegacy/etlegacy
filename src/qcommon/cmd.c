@@ -35,6 +35,7 @@
 
 #include "q_shared.h"
 #include "qcommon.h"
+#include "q_unicode.h"
 
 #ifndef DEDICATED
 #include "../client/client.h"
@@ -676,14 +677,22 @@ static void Cmd_TokenizeString2(const char *text_in, qboolean ignoreQuotes)
 		cmd_argc++;
 
 		// skip until whitespace, quote, or command
-		while (*text > ' ')
+		while (qtrue)
 		{
-			if (!ignoreQuotes && text[0] == '"')
+			uint32_t point1 = Q_UTF8_CodePoint(text);
+			int width = Q_UTF8_Width(text);
+
+			if(point1 <= ' ')
 			{
 				break;
 			}
 
-			if (text[0] == '/' && text[1] == '/')
+			if (!ignoreQuotes && point1 == '"')
+			{
+				break;
+			}
+
+			if (point1 == '/' && text[1] == '/')
 			{
 				// lets us put 'http://' in commandlines
 				if (text == text_in || (text > text_in && text[-1] != ':'))
@@ -693,12 +702,16 @@ static void Cmd_TokenizeString2(const char *text_in, qboolean ignoreQuotes)
 			}
 
 			// skip /* */ comments
-			if (text[0] == '/' && text[1] == '*')
+			if (point1 == '/' && text[1] == '*')
 			{
 				break;
 			}
 
-			*textOut++ = *text++;
+			while (width)
+			{
+				*textOut++ = *text++;
+				width--;
+			}
 		}
 
 		*textOut++ = 0;

@@ -125,13 +125,13 @@ size_t Q_UTF8_Strlen(const char *str)
 	return l;
 }
 
-size_t Q_UTF32_Strlen(const uint32_t *str)
+size_t Q_UTF32_Strlen(const uint32_t *str, size_t len)
 {
+	int i = 0;
 	size_t l = 0;
-	while(*str)
+	for(; i < len && str[i]; i++)
 	{
-		l++;
-		str++;
+		l += Q_UTF8_WidthCP(str[i]);
 	}
 	return l;
 }
@@ -401,6 +401,11 @@ uint32_t Q_UTF8_CodePoint(const char *str)
 	uint32_t codepoint = 0;
 	unsigned char *p        = (unsigned char *) &codepoint;
 
+	if(!str || !str[0])
+	{
+		return 0;
+	}
+
 	if (size > sizeof(codepoint))
 	{
 		size = sizeof(codepoint);
@@ -647,10 +652,10 @@ void Q_UTF8_FreeFont(fontHelper_t *font)
  * @param[in] charArray
  * @param[out] outLen
  */
-void Q_UTF8_ToUTF32(char *string, uint32_t *charArray, size_t *outLen)
+void Q_UTF8_ToUTF32(const char *string, uint32_t *charArray, size_t *outLen)
 {
 	int  i  = 0;
-	char *c = string;
+	const char *c = string;
 
 	// Quick and dirty UTF-8 to UTF-32 conversion
 	while (*c)
@@ -691,21 +696,20 @@ void Q_UTF8_ToUTF32(char *string, uint32_t *charArray, size_t *outLen)
 }
 
 
-void Q_UTF32_ToUTF8(uint32_t *charArray, char *string, size_t *outLen)
+void Q_UTF32_ToUTF8(const uint32_t *charArray, size_t arraySize, char *string, size_t *outLen)
 {
-	uint32_t *c = charArray;
-	int len, i, byteOffset = 0;
+	int len, i, x, byteOffset = 0;
 
-	while(*c)
+	for(i = 0; i < arraySize; i++)
 	{
-		len = Q_UTF8_WidthCP(*c);
-		char *str = Q_UTF8_Encode(*c);
+		len = Q_UTF8_WidthCP(charArray[i]);
+		char *str = Q_UTF8_Encode(charArray[i]);
 
-		for (i = 0; i < len; i++)
+		for (x = 0; x < len; x++)
 		{
-			string[byteOffset + i] = str[i];
+			string[byteOffset + x] = str[x];
 		}
-		byteOffset += i;
+		byteOffset += x;
 	}
 
 	string[byteOffset] = '\0';

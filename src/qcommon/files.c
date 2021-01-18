@@ -1324,6 +1324,50 @@ extern qboolean com_fullyInitialized;
 
 static int fs_filter_flag = 0;
 
+#ifdef _WIN32
+static voidpf ZCALLBACK FS_UnzOpenFopenFileFunc (voidpf opaque, const char* filename, int mode)
+{
+	voidpf file = NULL;
+	const char* mode_fopen = NULL;
+
+	if ((mode & ZLIB_FILEFUNC_MODE_READWRITEFILTER)==ZLIB_FILEFUNC_MODE_READ)
+	{
+		mode_fopen = "rb";
+	}
+	else if (mode & ZLIB_FILEFUNC_MODE_EXISTING)
+	{
+		mode_fopen = "r+b";
+	}
+	else if (mode & ZLIB_FILEFUNC_MODE_CREATE)
+	{
+		mode_fopen = "wb";
+	}
+
+	if ((filename!=NULL) && (mode_fopen != NULL))
+	{
+		file = Sys_FOpen(filename, mode_fopen);
+	}
+	return file;
+}
+
+static unzFile FS_UnzOpen(const char *fileName)
+{
+	static zlib_filefunc_def funcs;
+	static qboolean funcsInit = qfalse;
+
+	if(!funcsInit)
+	{
+		fill_fopen_filefunc(&funcs);
+		funcs.zopen_file = FS_UnzOpenFopenFileFunc;
+		funcsInit = qtrue;
+	}
+
+	return unzOpen2(fileName, &funcs);
+}
+#else
+#define FS_UnzOpen(x) unzOpen(x)
+#endif
+
 /**
  * @brief Finds the file in the search path.
  * Used for streaming data out of either a separate file or a ZIP file.
@@ -1537,7 +1581,7 @@ long FS_FOpenFileReadDir(const char *fileName, searchpath_t *search, fileHandle_
 					if (uniqueFILE)
 					{
 						// open a new file on the pakfile
-						fsh[*file].handleFiles.file.z = unzOpen(pak->pakFilename);
+						fsh[*file].handleFiles.file.z = FS_UnzOpen(pak->pakFilename);
 
 						if (fsh[*file].handleFiles.file.z == NULL)
 						{
@@ -2577,7 +2621,7 @@ static pack_t *FS_LoadZipFile(const char *zipfile, const char *basename)
 	int             *fs_headerLongs;
 	char            *namePtr;
 
-	uf  = unzOpen(zipfile);
+	uf  = FS_UnzOpen(zipfile);
 	err = unzGetGlobalInfo(uf, &gi);
 
 	if (err != UNZ_OK)
@@ -5043,7 +5087,7 @@ qboolean FS_UnzipTo(const char *fileName, const char *outpath, qboolean quiet)
 	qboolean        isUnZipOK = qtrue;
 
 	Com_sprintf(zipPath, sizeof(zipPath), "%s", fileName);
-	zipFile = unzOpen(zipPath);
+	zipFile = FS_UnzOpen(zipPath);
 
 	if (!zipFile)
 	{
