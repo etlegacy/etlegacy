@@ -5505,6 +5505,13 @@ void UI_RunMenuScript(char **args)
 				trap_openURL(PRODUCT_URL);
 			}
 		}
+		else if (Q_stricmp(name, "open_homepath") == 0)
+		{
+			// trap_Cmd_ExecuteText(EXEC_APPEND, "open_homepath");
+			char tmp[MAX_OSPATH];
+			trap_Cvar_VariableStringBuffer("fs_homepath", tmp, MAX_OSPATH);
+			trap_openURL(tmp);
+		}
 		else if (Q_stricmp(name, "clientCheckVote") == 0)
 		{
 			int flags = (int)(trap_Cvar_VariableValue("cg_ui_voteFlags"));
