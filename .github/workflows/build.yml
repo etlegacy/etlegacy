@@ -135,6 +135,7 @@ jobs:
         run: |
           echo "export ANDROID_NDK_HOME=NDK_ETL/ndk-bundle" > ~/.bashrc
           source ~/.bashrc
+          chmod -R 775 $ANDROID_NDK_HOME
           echo $ANDROID_NDK_HOME
           ./gradlew clean build
 
