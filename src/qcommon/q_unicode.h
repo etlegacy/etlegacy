@@ -54,7 +54,7 @@
 int Q_UTF8_Width(const char *str);
 int Q_UTF8_WidthCP(int ch);
 size_t Q_UTF8_Strlen(const char *str);
-size_t Q_UTF32_Strlen(const uint32_t *str);
+size_t Q_UTF32_Strlen(const uint32_t *str, size_t len);
 char* Q_UTF8_CharAt(char *str, size_t offset);
 int Q_UTF8_PrintStrlen(const char *str);
 int Q_UTF8_PrintStrlenExt(const char *str, int length);
@@ -68,8 +68,8 @@ void Q_UTF8_FreeFont(fontHelper_t *font);
 char *Q_UTF8_Encode(unsigned long codepoint);
 int Q_UTF8_Store(const char *s);
 char *Q_UTF8_Unstore(int e);
-void Q_UTF8_ToUTF32(char *string, uint32_t *charArray, size_t *outLen);
-void Q_UTF32_ToUTF8(uint32_t *charArray, char *string, size_t *outLen);
+void Q_UTF8_ToUTF32(const char *string, uint32_t *charArray, size_t *outLen);
+void Q_UTF32_ToUTF8(const uint32_t *charArray, size_t arraySize, char *string, size_t *outLen);
 
 size_t Q_EscapeUnicode(char *fromStr, char *toStr, size_t maxSize);
 size_t Q_UnescapeUnicode(char *fromStr, char *toStr, size_t maxSize);
