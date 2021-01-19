@@ -133,7 +133,7 @@ jobs:
       - name: Build
 #        shell: bash
         run: |
-          tree ${ANDROID_HOME}
+          tree ${ANDROID_HOME}/cmake
 #          echo "export ANDROID_NDK_HOME=NDK_ETL/ndk-bundle" > ~/.bashrc
 #          source ~/.bashrc
 #          chmod -R 775 $ANDROID_NDK_HOME
