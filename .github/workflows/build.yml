@@ -133,11 +133,12 @@ jobs:
       - name: Build
 #        shell: bash
         run: |
-          echo "export ANDROID_NDK_HOME=NDK_ETL/ndk-bundle" > ~/.bashrc
-          source ~/.bashrc
-          chmod -R 775 $ANDROID_NDK_HOME
-          echo $ANDROID_NDK_HOME
-          ./gradlew clean build
+          tree ${ANDROID_HOME}
+#          echo "export ANDROID_NDK_HOME=NDK_ETL/ndk-bundle" > ~/.bashrc
+#          source ~/.bashrc
+#          chmod -R 775 $ANDROID_NDK_HOME
+#          echo $ANDROID_NDK_HOME
+#          ./gradlew clean build
 
 #      - uses: actions/upload-artifact@v2
 #        with:
