@@ -991,6 +991,7 @@ typedef struct
 
 #define MAX_FLOATING_STRINGS 128
 
+
 /**
  * @struct soundScriptHandle_s
  * @typedef soundScriptHandle_t
@@ -2169,6 +2170,10 @@ typedef struct
 #define DWC_DYNAMITE            0x08
 #define DWC_SMOKE               0x10    ///< FIXME: add to demo control?
 
+#define DEMO_NameOff            0
+#define DEMO_CleanName          1
+#define DEMO_ColoredName        2
+
 /**
  * @struct cam_s
  * @typedef cam_t
@@ -2539,7 +2544,7 @@ typedef struct cgs_s
 	cam_t demoCamera;
 	mlType_t currentMenuLevel;
 #endif
-    
+
 	int playerHitBoxHeight;
 
 	qboolean sv_cheats;         // server allows cheats
