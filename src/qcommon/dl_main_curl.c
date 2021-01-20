@@ -214,7 +214,7 @@ int DL_BeginDownload(char *localName, const char *remoteName)
 	curl_easy_setopt(dl_request, CURLOPT_FOLLOWLOCATION, 1);
 	curl_easy_setopt(dl_request, CURLOPT_MAXREDIRS, 5);
 
-#ifdef FEATURE_OPENSSL
+#ifdef FEATURE_SSL
 #if 0
 	curl_easy_setopt(dl_request, CURLOPT_CAINFO, "./cert.crt");
 #else
@@ -275,7 +275,7 @@ char *DL_GetString(const char *url)
 	curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, DL_write_function);
 	curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)&write_result);
 
-#ifdef FEATURE_OPENSSL
+#ifdef FEATURE_SSL
 #if 0
 	curl_easy_setopt(dl_request, CURLOPT_CAINFO, "./cert.crt");
 #else
