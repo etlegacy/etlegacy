@@ -802,7 +802,7 @@ char **FS_ListFiles(const char *path, const char *extension, int *numfiles);
 void FS_FreeFileList(char **list);
 
 qboolean FS_FileExists(const char *file);
-qboolean FS_SV_FileExists(const char *file);
+qboolean FS_SV_FileExists(const char *file, qboolean checkBase);
 
 qboolean FS_IsSamePath(const char *s1, const char *s2);
 qboolean FS_CreatePath(const char *OSPath);
