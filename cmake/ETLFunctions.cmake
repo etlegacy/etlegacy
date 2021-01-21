@@ -21,7 +21,7 @@ function(LEG_BUNDLE _NAME _DESC)
 
 	list(APPEND ALLOPTIONS "BUNDLED_${_NAME}")
 	if (${LEG_BUNDLE_${_NAME}_VALID})
-		cmake_dependent_option("BUNDLED_${_NAME}" "Use bundled ${_DESC} library instead of the system one." ON "BUNDLED_LIBS" OFF)
+		cmake_dependent_option("BUNDLED_${_NAME}" "Use bundled ${_DESC} library instead of the system one." ${BUNDLED_LIBS_DEFAULT} "BUNDLED_LIBS" OFF)
 	else()
 		cmake_dependent_option("BUNDLED_${_NAME}" "Use bundled ${_DESC} library instead of the system one." OFF "BUNDLED_LIBS" OFF)
 	endif ()
