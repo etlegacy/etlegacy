@@ -2085,7 +2085,7 @@ static void CG_PlayerSprites(centity_t *cent)
 		{
 			if (cg_shoutcasterHealth.integer == 1 && cg_drawSpectatorNames.integer == 0)
 			{
-				CG_PlayerFloatText(cent, va("%s%i", ci->team == TEAM_AXIS ? "^1" : "^2", ci->health), height + spacing);
+				CG_PlayerFloatText(cent, va("%s%ihp", ci->team == TEAM_AXIS ? "^1" : "^2", ci->health), height + spacing);
 			}
 			else if (cg_shoutcasterHealth.integer == 2)
 			{
@@ -2096,7 +2096,7 @@ static void CG_PlayerSprites(centity_t *cent)
 
 				if (ci->team == TEAM_AXIS)
 				{
-					VectorSet(healthColor, 1.0f, 0.0f, 0.0f, 1.0f);
+					Vector4Set(healthColor, 1.0f, 0.0f, 0.0f, 1.0f);
 				}
 
 				CG_PlayerFloatBar(cent, fraction, healthColor, healthColor, bgcolor, height + spacing + 8);
