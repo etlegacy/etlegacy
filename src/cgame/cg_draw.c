@@ -1776,42 +1776,7 @@ static void CG_DrawCrosshairPlayerInfo(int clientNum, int class)
 		playerHealth = cgs.clientinfo[cg.crosshairClientNum].health;
 	}
 
-	maxHealth = 100;
-	for (i = 0; i < MAX_CLIENTS; i++)
-	{
-		if (!cgs.clientinfo[i].infoValid)
-		{
-			continue;
-		}
-
-		if (cgs.clientinfo[i].team != cgs.clientinfo[cg.snap->ps.clientNum].team)
-		{
-			continue;
-		}
-
-		if (cgs.clientinfo[i].cls != PC_MEDIC)
-		{
-			continue;
-		}
-
-		maxHealth += 10;
-
-		if (maxHealth >= 125)
-		{
-			maxHealth = 125;
-			break;
-		}
-	}
-
-	if (cgs.clientinfo[clientNum].skill[SK_BATTLE_SENSE] >= 3)
-	{
-		maxHealth += 15;
-	}
-
-	if (class == PC_MEDIC)
-	{
-		maxHealth *= 1.12f;
-	}
+	maxHealth = CG_GetPlayerMaxHealth(clientNum, class);
 
 	CG_DrawCrosshairHealthBar(middle, playerHealth, maxHealth);
 
@@ -3645,6 +3610,80 @@ void CG_DrawOnScreenLabels(void)
 }
 
 /**
+* @brief CG_DrawOnScreenBars
+*/
+void CG_DrawOnScreenBars(void)
+{
+	static vec3_t mins  = { -1, -1, -1 };
+	static vec3_t maxs  = { 1, 1, 1 };
+	vec4_t        white = { 1.0f, 1.0f, 1.0f, 1.0f };
+	int           i;
+	specBar_t     *specBar;
+	trace_t       tr;
+	int           FadeOut = 0;
+	int           FadeIn  = 0;
+
+	for (i = 0; i < cg.specBarCount; ++i)
+	{
+		specBar = &cg.specOnScreenBar[i];
+
+		// Visible checks if information is actually valid
+		if (!specBar || !specBar->visible)
+		{
+			continue;
+		}
+
+		CG_Trace(&tr, cg.refdef.vieworg, mins, maxs, specBar->origin, -1, CONTENTS_SOLID);
+
+		if (tr.fraction < 1.0f)
+		{
+			specBar->lastInvisibleTime = cg.time;
+		}
+		else
+		{
+			specBar->lastVisibleTime = cg.time;
+		}
+
+		FadeOut = cg.time - specBar->lastVisibleTime;
+		FadeIn  = cg.time - specBar->lastInvisibleTime;
+
+		if (FadeIn)
+		{
+			white[3] = (FadeIn > 500) ? 1.0 : FadeIn / 500.0f;
+			if (white[3] < specBar->alpha)
+			{
+				white[3] = specBar->alpha;
+			}
+		}
+		if (FadeOut)
+		{
+			white[3] = (FadeOut > 500) ? 0.0 : 1.0f - FadeOut / 500.0f;
+			if (white[3] > specBar->alpha)
+			{
+				white[3] = specBar->alpha;
+			}
+		}
+		if (white[3] > 1.0f)
+		{
+			white[3] = 1.0f;
+		}
+
+		specBar->alpha = white[3];
+		if (specBar->alpha <= 0.0f)
+		{
+			continue;                           // no alpha = nothing to draw..
+		}
+
+		CG_FilledBar(specBar->x, specBar->y, specBar->w, specBar->h, specBar->colorStart, specBar->colorEnd, specBar->colorBack, specBar->fraction, BAR_BG);
+
+		// expect update next frame again
+		specBar->visible = qfalse;
+	}
+
+	cg.specBarCount = 0;
+}
+
+/**
  * @brief CG_DrawBannerPrint
  */
 static void CG_DrawBannerPrint(void)
@@ -3701,6 +3740,7 @@ static void CG_Draw2D(void)
 	if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR || cgs.clientinfo[cg.clientNum].shoutcaster || cg.demoPlayback)
 	{
 		CG_DrawOnScreenLabels();
+		CG_DrawOnScreenBars();
 	}
 
 	// no longer cheat protected, we draw crosshair/reticle in non demoplayback
