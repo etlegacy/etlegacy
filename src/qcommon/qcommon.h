@@ -391,7 +391,12 @@ extern int demo_protocols[];
 #define MASTER_SERVER_NAME  "master.etlegacy.com"                ///< location of the master server
 #define MOTD_SERVER_NAME    "motd.etlegacy.com"                  ///< location of the message of the day server
 #define UPDATE_SERVER_NAME  "update.etlegacy.com"                ///< location of the update server
+
+#ifdef FEATURE_SSL
+#define DOWNLOAD_SERVER_URL "https://mirror.etlegacy.com/etmain" ///< location of the download server
+#else
 #define DOWNLOAD_SERVER_URL "http://mirror.etlegacy.com/etmain"  ///< location of the download server
+#endif
 
 #define PORT_MASTER         27950
 #define PORT_MOTD           27951
@@ -797,7 +802,7 @@ char **FS_ListFiles(const char *path, const char *extension, int *numfiles);
 void FS_FreeFileList(char **list);
 
 qboolean FS_FileExists(const char *file);
-qboolean FS_SV_FileExists(const char *file);
+qboolean FS_SV_FileExists(const char *file, qboolean checkBase);
 
 qboolean FS_IsSamePath(const char *s1, const char *s2);
 qboolean FS_CreatePath(const char *OSPath);

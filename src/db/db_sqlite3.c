@@ -150,7 +150,7 @@ qboolean DB_Init(void)
 	to_ospath                        = FS_BuildOSPath(Cvar_VariableString("fs_homepath"), db_uri->string, "");
 	to_ospath[strlen(to_ospath) - 1] = '\0';
 
-	if (FS_SV_FileExists(db_uri->string))
+	if (FS_SV_FileExists(db_uri->string, qfalse))
 	{
 		int result;
 
@@ -311,7 +311,7 @@ static qboolean DB_CreateOrUpdateSchema(int startSchemaVersion)
  * @param[in] argc
  * @param[in] argv
  * @param[in] azColName
- * 
+ *
  * @return 0
  */
 int DB_CallbackVersion(UNUSED_VAR void *NotUsed, int argc, char **argv, char **azColName)
@@ -365,7 +365,7 @@ qboolean DB_CheckUpdates(void)
 		Com_Printf("SQLite3 ETL: Old DB schema #%i detected - performing backup and update ...\n", version);
 
 		sqlite3_finalize(res);
-		
+
 		// backup old database file etl.dbX.old
 		// Make sure that we actually have the homepath available so we dont try to create a database file into a nonexisting path
 		to_ospath = FS_BuildOSPath(Cvar_VariableString("fs_homepath"), "", "");
@@ -392,9 +392,9 @@ qboolean DB_CheckUpdates(void)
 		{
 			return qfalse;
 		}
-		
+
 		Com_Printf("SQLite3 ETL: Old database schema has been updated to version #%i...\n", SQL_DBMS_SCHEMA_VERSION);
-		
+
 		return qtrue;
 	}
 
@@ -469,7 +469,7 @@ qboolean DB_Create(void)
 			Com_Printf("... DB_Create failed - can't create path\n");
 			return qfalse;
 		}
-		
+
 		to_ospath = FS_BuildOSPath(Cvar_VariableString("fs_homepath"), db_uri->string, "");
 		to_ospath[strlen(to_ospath) - 1] = '\0';
 

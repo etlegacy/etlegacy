@@ -42,8 +42,20 @@
 #include "qcommon.h"
 #include "dl_public.h"
 
+#ifdef FEATURE_SSL
+#define SSL_VERIFY 1
+
+#if SSL_VERIFY
+#define OPENSSL_ALL 1
+#include <wolfssl/ssl.h>
+#include <openssl/err.h>
+#include <openssl/ssl.h>
+#endif
+#endif
+
 #define APP_NAME        "ID_DOWNLOAD"
 #define APP_VERSION     "2.0"
+#define CA_CERT_FILE    "cacert.pem"
 
 #define GET_BUFFER_SIZE 1024 * 256
 
@@ -65,6 +77,66 @@ typedef struct write_result_s
 	char *data;
 	int pos;
 } write_result_t;
+
+#if defined(FEATURE_SSL) && SSL_VERIFY
+static CURLcode DL_cb_Context(CURL *curl, void *ssl_ctx, void *parm)
+{
+	fileHandle_t certHandle;
+	int i;
+
+	int len = FS_SV_FOpenFileRead(CA_CERT_FILE, &certHandle);
+	if(len <= 0)
+	{
+		FS_FCloseFile(certHandle);
+	}
+
+	char *buffer = Com_Allocate(len + 1);
+	buffer[len] = 0;
+	FS_Read(buffer, len, certHandle);
+	FS_FCloseFile(certHandle);
+
+	BIO *cbio = BIO_new_mem_buf(buffer, len);
+	X509_STORE  *cts = SSL_CTX_get_cert_store((SSL_CTX *)ssl_ctx);
+	STACK_OF(X509_INFO) *inf;
+
+	if(!cts || !cbio)
+	{
+		Com_Dealloc(buffer);
+		goto callback_failed;
+	}
+
+	inf = PEM_X509_INFO_read_bio(cbio, NULL, NULL, NULL);
+
+	if(!inf)
+	{
+		BIO_free(cbio);
+		Com_Dealloc(buffer);
+		goto callback_failed;
+	}
+
+	for(i = 0; i < sk_X509_INFO_num(inf); i++)
+	{
+		X509_INFO *itmp = sk_X509_INFO_value(inf, i);
+		if(itmp->x509)
+		{
+			X509_STORE_add_cert(cts, itmp->x509);
+		}
+		if(itmp->crl)
+		{
+			X509_STORE_add_crl(cts, itmp->crl);
+		}
+	}
+
+	sk_X509_INFO_pop_free(inf, X509_INFO_free);
+	BIO_free(cbio);
+	Com_Dealloc(buffer);
+
+	return CURLE_OK;
+
+callback_failed:
+	return CURLE_ABORTED_BY_CALLBACK;
+}
+#endif
 
 /**
  * @brief DL_cb_FWriteFile
@@ -160,6 +232,34 @@ void DL_Shutdown(void)
 }
 
 /**
+ * Setup ssl verification for the request object
+ * @param curl request object
+ */
+static void DL_InitSSL(CURL *curl)
+{
+#ifdef FEATURE_SSL
+#if SSL_VERIFY
+	curl_easy_setopt(curl, CURLOPT_CAINFO, NULL);
+	curl_easy_setopt(curl, CURLOPT_CAPATH, NULL);
+
+	if (FS_SV_FileExists(CA_CERT_FILE, qtrue))
+	{
+		// curl_easy_setopt(curl, CURLOPT_CAINFO, "./cert.crt");
+		curl_easy_setopt(curl, CURLOPT_SSL_CTX_FUNCTION, DL_cb_Context);
+	}
+	else
+	{
+		curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0);
+		curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0);
+	}
+#else
+	curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0);
+	curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0);
+#endif
+#endif
+}
+
+/**
  * @brief Inspired from http://www.w3.org/Library/Examples/LoadToFile.c
  * setup the download, return once we have a connection
  *
@@ -214,14 +314,7 @@ int DL_BeginDownload(char *localName, const char *remoteName)
 	curl_easy_setopt(dl_request, CURLOPT_FOLLOWLOCATION, 1);
 	curl_easy_setopt(dl_request, CURLOPT_MAXREDIRS, 5);
 
-#ifdef FEATURE_OPENSSL
-#if 0
-	curl_easy_setopt(dl_request, CURLOPT_CAINFO, "./cert.crt");
-#else
-	curl_easy_setopt(dl_request, CURLOPT_SSL_VERIFYHOST, 0);
-	curl_easy_setopt(dl_request, CURLOPT_SSL_VERIFYPEER, 0);
-#endif
-#endif
+	DL_InitSSL(dl_request);
 
 	if (curl_multi_add_handle(dl_multi, dl_request) != CURLM_OK)
 	{
@@ -275,14 +368,7 @@ char *DL_GetString(const char *url)
 	curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, DL_write_function);
 	curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)&write_result);
 
-#ifdef FEATURE_OPENSSL
-#if 0
-	curl_easy_setopt(dl_request, CURLOPT_CAINFO, "./cert.crt");
-#else
-	curl_easy_setopt(dl_request, CURLOPT_SSL_VERIFYHOST, 0);
-	curl_easy_setopt(dl_request, CURLOPT_SSL_VERIFYPEER, 0);
-#endif
-#endif
+	DL_InitSSL(curl);
 
 	status = curl_easy_perform(curl);
 	if (status != 0)

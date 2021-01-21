@@ -864,14 +864,24 @@ qboolean FS_FileExists(const char *file)
  * @param[in] file
  * @return
  */
-qboolean FS_SV_FileExists(const char *file)
+qboolean FS_SV_FileExists(const char *file, qboolean checkBase)
 {
 	char *testpath;
+	qboolean homeFound = qfalse;
 
 	testpath                       = FS_BuildOSPath(fs_homepath->string, file, "");
 	testpath[strlen(testpath) - 1] = '\0';
 
-	return FS_FileInPathExists(testpath);
+	homeFound = FS_FileInPathExists(testpath);
+
+	if (!homeFound && checkBase)
+	{
+		testpath                       = FS_BuildOSPath(fs_basepath->string, file, "");
+		testpath[strlen(testpath) - 1] = '\0';
+		return FS_FileInPathExists(testpath);
+	}
+
+	return homeFound;
 }
 
 /**
@@ -3240,6 +3250,7 @@ int FS_GetModList(char *listbuf, int bufsize)
 
 					file = FS_FileForHandle(descHandle);
 					Com_Memset(descPath, 0, sizeof(descPath));
+
 					nDescLen = fread(descPath, 1, 48, file);
 					if (nDescLen >= 0)
 					{
@@ -4012,7 +4023,7 @@ qboolean FS_ComparePaks(char *neededpaks, size_t len, qboolean dlstring)
 				// Local name
 				Q_strcat(neededpaks, len, "@");
 				// Do we have one with the same name?
-				if (FS_SV_FileExists(va("%s.pk3", fs_serverReferencedPakNames[i])))
+				if (FS_SV_FileExists(va("%s.pk3", fs_serverReferencedPakNames[i]), qfalse))
 				{
 					char st[MAX_ZPATH];
 					// We already have one called this, we need to download it to another name
@@ -4039,7 +4050,7 @@ qboolean FS_ComparePaks(char *neededpaks, size_t len, qboolean dlstring)
 				Q_strcat(neededpaks, len, fs_serverReferencedPakNames[i]);
 				Q_strcat(neededpaks, len, ".pk3");
 				// Do we have one with the same name?
-				if (FS_SV_FileExists(va("%s.pk3", fs_serverReferencedPakNames[i])))
+				if (FS_SV_FileExists(va("%s.pk3", fs_serverReferencedPakNames[i]), qfalse))
 				{
 					Q_strcat(neededpaks, len, " (local file exists with wrong checksum)");
 #ifndef DEDICATED
