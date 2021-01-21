@@ -35,6 +35,7 @@
  */
 
 #ifdef USE_WINDOWS_CONSOLE
+
 #include "../client/client.h"
 #include "win_resource.h"
 #include "sys_win32.h"
@@ -282,7 +283,7 @@ static LONG WINAPI ConWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 		else if (wParam == CLEAR_ID)
 		{
 			SendMessage(s_wcd.hwndBuffer, EM_SETSEL, 0, -1);
-			SendMessage(s_wcd.hwndBuffer, EM_REPLACESEL, FALSE, ( LPARAM ) "");
+			SendMessage(s_wcd.hwndBuffer, EM_REPLACESEL, FALSE, ( LPARAM ) L"");
 			UpdateWindow(s_wcd.hwndBuffer);
 		}
 		break;
@@ -786,8 +787,8 @@ void Sys_CreateConsole(void)
 	SendMessage(s_wcd.hwndButtonQuit, WM_SETTEXT, 0, ( LPARAM ) "Quit");
 
 	// create the scrollbuffer
-	s_wcd.hwndBuffer = CreateWindowEx(WS_EX_CLIENTEDGE,
-	                                  "edit", NULL, WS_CHILD | WS_VISIBLE | WS_VSCROLL /* | WS_BORDER*/ |
+	s_wcd.hwndBuffer = CreateWindowExW(WS_EX_CLIENTEDGE,
+	                                  L"edit", NULL, WS_CHILD | WS_VISIBLE | WS_VSCROLL /* | WS_BORDER*/ |
 	                                  ES_LEFT | ES_MULTILINE | ES_AUTOVSCROLL | ES_READONLY,
 	                                  0, 0, 0, 0,
 	                                  s_wcd.hWnd,
@@ -920,6 +921,7 @@ char *Sys_ConsoleInput(void)
 void Conbuf_AppendText(const char *pMsg)
 {
 	char                 buffer[CONSOLE_BUFFER_SIZE * 2], *b = buffer;
+	wchar_t              w_buffer[CONSOLE_BUFFER_SIZE * 2];
 	const char           *msg;
 	int                  bufLen, i = 0;
 	static unsigned long s_totalChars;
@@ -969,8 +971,8 @@ void Conbuf_AppendText(const char *pMsg)
 		i++;
 	}
 	*b     = 0;
-	bufLen = b - buffer;
 
+	bufLen = Sys_StringToWideCharArray(buffer, w_buffer, CONSOLE_BUFFER_SIZE * 2);
 	s_totalChars += bufLen;
 
 	// replace selection instead of appending if we're overflowing
@@ -988,7 +990,7 @@ void Conbuf_AppendText(const char *pMsg)
 	// put this text into the windows console
 	SendMessage(s_wcd.hwndBuffer, EM_LINESCROLL, 0, 0xffff);
 	SendMessage(s_wcd.hwndBuffer, EM_SCROLLCARET, 0, 0);
-	SendMessage(s_wcd.hwndBuffer, EM_REPLACESEL, 0, (LPARAM) buffer);
+	SendMessageW(s_wcd.hwndBuffer, EM_REPLACESEL, 0, (LPARAM) w_buffer);
 }
 
 /**
@@ -1026,7 +1028,7 @@ void Sys_SetErrorText(const char *buf)
  */
 void Sys_ClearViewlog_f(void)
 {
-	SendMessage(s_wcd.hwndBuffer, WM_SETTEXT, 0, (LPARAM)"");
+	SendMessageW(s_wcd.hwndBuffer, WM_SETTEXT, 0, (LPARAM) L"");
 }
 
 /**
