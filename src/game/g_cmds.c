@@ -3622,21 +3622,23 @@ void Cmd_SetViewpos_f(gentity_t *ent)
 		trap_SendServerCommand(ent - g_entities, va("print \"Cheats are not enabled on this server.\n\""));
 		return;
 	}
-	if (trap_Argc() != 5)
+	if (trap_Argc() != 7)
 	{
-		trap_SendServerCommand(ent - g_entities, va("print \"usage: setviewpos x y z yaw\n\""));
+		trap_SendServerCommand(ent - g_entities, va("print \"usage: setviewpos x y z pitch yaw roll\n\""));
 		return;
 	}
 
-	VectorClear(angles);
 	for (i = 0 ; i < 3 ; i++)
 	{
 		trap_Argv(i + 1, buffer, sizeof(buffer));
 		origin[i] = atof(buffer);
 	}
 
-	trap_Argv(4, buffer, sizeof(buffer));
-	angles[YAW] = atof(buffer);
+	for (i = 0; i < 3; i++)
+	{
+		trap_Argv(i + 4, buffer, sizeof(buffer));
+		angles[i] = atof(buffer);
+	}
 
 	TeleportPlayer(ent, origin, angles);
 }
