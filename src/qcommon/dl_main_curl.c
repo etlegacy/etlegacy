@@ -46,8 +46,13 @@
 #define SSL_VERIFY 1
 
 #if SSL_VERIFY
-#define OPENSSL_ALL 1
-#include <wolfssl/ssl.h>
+
+#ifdef USING_WOLFSSL
+#	define OPENSSL_ALL 1
+#	include <wolfssl/options.h>
+#	include <wolfssl/ssl.h>
+#endif
+
 #include <openssl/err.h>
 #include <openssl/ssl.h>
 #endif
