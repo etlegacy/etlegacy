@@ -22,6 +22,7 @@ SET mod_only=0
 SET use_autoupdate=1
 SET use_extra=1
 SET build_r2=0
+SET build_ssl=0
 SET generator=
 REM SET generator=Visual Studio 16 2019
 REM SET platform_toolset=-T v142
@@ -51,6 +52,8 @@ IF NOT "%1"=="" (
 		GOTO:EOF
 	) ELSE IF /I "%1"=="-64" (
 		SET build_64=1
+	) ELSE IF /I "%1"=="-ssl" (
+		SET build_ssl=1
 	) ELSE IF /I "%1"=="-mod" (
 		SET mod_only=1
 	) ELSE IF /I "%1"=="-noupdate" (
@@ -327,7 +330,8 @@ GOTO :EOF
 	-DINSTALL_EXTRA=!use_extra! ^
 	-DCROSS_COMPILE32=!CROSSCOMP! ^
 	-DRENDERER_DYNAMIC=!build_r2! ^
-	-DFEATURE_RENDERER2=!build_r2!
+	-DFEATURE_RENDERER2=!build_r2! ^
+	-DFEATURE_SSL=!build_ssl!
 
 	IF !mod_only!==1 (
 		SET loca_build_string=!loca_build_string! ^
