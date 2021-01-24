@@ -88,8 +88,10 @@ static CURLcode DL_cb_Context(CURL *curl, void *ssl_ctx, void *parm)
 {
 	fileHandle_t certHandle;
 	int i;
+	(void)curl;
+	(void)parm;
 
-	int len = FS_SV_FOpenFileRead(CA_CERT_FILE, &certHandle);
+	int len = (int) FS_SV_FOpenFileRead(CA_CERT_FILE, &certHandle);
 	if(len <= 0)
 	{
 		FS_FCloseFile(certHandle);
