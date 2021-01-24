@@ -37,6 +37,7 @@
 #ifdef USE_WINDOWS_CONSOLE
 
 #include "../client/client.h"
+#include "../qcommon/q_unicode.h"
 #include "win_resource.h"
 #include "sys_win32.h"
 
@@ -503,13 +504,13 @@ static void Win_CompleteCommand(qboolean showMatches)
 				Win_ConcatRemaining(temp.buffer, win_completionString);
 			}
 
-			edit->cursor = strlen(edit->buffer);
+			edit->cursor = Q_UTF8_Strlen(edit->buffer);
 		}
 		else
 		{
 			// multiple matches, complete to shortest
 			Com_sprintf(edit->buffer, sizeof(edit->buffer), "%s", win_currentMatch);
-			win_acLength = edit->cursor = strlen(edit->buffer);
+			win_acLength = edit->cursor = Q_UTF8_Strlen(edit->buffer);
 			Win_ConcatRemaining(temp.buffer, win_completionString);
 			showMatches = qtrue;
 		}
@@ -535,14 +536,14 @@ static void Win_CompleteCommand(qboolean showMatches)
 
 		// and print it
 		Com_sprintf(edit->buffer, sizeof(edit->buffer), "%s", win_currentMatch);
-		edit->cursor = strlen(edit->buffer);
+		edit->cursor = Q_UTF8_Strlen(edit->buffer);
 		Win_ConcatRemaining(temp.buffer, lastMatch);
 	}
 
 	// hijack it
 	if (win_matchCount == 1)
 	{
-		win_acLength = strlen(win_currentMatch);
+		win_acLength = Q_UTF8_Strlen(win_currentMatch);
 	}
 
 	// run through again, printing matches
@@ -566,6 +567,8 @@ static void Win_CompleteCommand(qboolean showMatches)
  */
 LONG WINAPI InputLineWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
+	wchar_t w_buffer[MAX_EDIT_LINE];
+
 	switch (uMsg)
 	{
 	case WM_KILLFOCUS:
@@ -586,7 +589,9 @@ LONG WINAPI InputLineWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				win_historyLine--;
 			}
 			win_consoleField = win_historyEditLines[win_historyLine % WIN_COMMAND_HISTORY];
-			SetWindowText(s_wcd.hwndInputLine, win_consoleField.buffer);
+			Sys_StringToWideCharArray(win_consoleField.buffer, w_buffer, sizeof(w_buffer));
+
+			SetWindowTextW(s_wcd.hwndInputLine, w_buffer);
 			SendMessage(s_wcd.hwndInputLine, EM_SETSEL, win_consoleField.cursor, win_consoleField.cursor);
 			win_acLength = 0;
 			return 0;
@@ -597,7 +602,9 @@ LONG WINAPI InputLineWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			{
 				win_historyLine++;
 				win_consoleField = win_historyEditLines[win_historyLine % WIN_COMMAND_HISTORY];
-				SetWindowText(s_wcd.hwndInputLine, win_consoleField.buffer);
+				Sys_StringToWideCharArray(win_consoleField.buffer, w_buffer, sizeof(w_buffer));
+
+				SetWindowTextW(s_wcd.hwndInputLine, w_buffer);
 				SendMessage(s_wcd.hwndInputLine, EM_SETSEL, win_consoleField.cursor, win_consoleField.cursor);
 			}
 
@@ -608,9 +615,12 @@ LONG WINAPI InputLineWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 	case WM_CHAR:
 		//GetWindowText( s_wcd.hwndInputLine, inputBuffer, sizeof( inputBuffer ) );
-		GetWindowText(s_wcd.hwndInputLine, win_consoleField.buffer, sizeof(win_consoleField.buffer));
+		GetWindowTextW(s_wcd.hwndInputLine, w_buffer, sizeof(w_buffer));
+
+		Sys_WideCharArrayToString(w_buffer, win_consoleField.buffer, sizeof(win_consoleField.buffer));
+
 		SendMessage(s_wcd.hwndInputLine, EM_GETSEL, (WPARAM) NULL, (LPARAM) &win_consoleField.cursor);
-		win_consoleField.widthInChars = strlen(win_consoleField.buffer);
+		win_consoleField.widthInChars = Q_UTF8_Strlen(win_consoleField.buffer);
 		win_consoleField.scroll       = 0;
 
 		// handle enter key
@@ -618,7 +628,7 @@ LONG WINAPI InputLineWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		{
 			strncat(s_wcd.consoleText, win_consoleField.buffer, sizeof(s_wcd.consoleText) - strlen(s_wcd.consoleText) - 5);
 			strcat(s_wcd.consoleText, "\n");
-			SetWindowText(s_wcd.hwndInputLine, "");
+			SetWindowTextW(s_wcd.hwndInputLine, L"");
 
 			Sys_Print(va("]%s\n", win_consoleField.buffer));
 
@@ -660,7 +670,7 @@ LONG WINAPI InputLineWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 #endif
 
 			SetWindowText(s_wcd.hwndInputLine, win_consoleField.buffer);
-			win_consoleField.widthInChars = strlen(win_consoleField.buffer);
+			win_consoleField.widthInChars = Q_UTF8_Strlen(win_consoleField.buffer);
 			SendMessage(s_wcd.hwndInputLine, EM_SETSEL, win_consoleField.cursor, win_consoleField.cursor);
 
 			return 0;
@@ -757,8 +767,8 @@ void Sys_CreateConsole(void)
 	s_wcd.hfButtonFont = CreateFont(nHeight, 0, 0, 0, FW_LIGHT, FALSE, FALSE, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, FIXED_PITCH | FF_MODERN, "Microsoft Sans Serif");
 
 	// create the input line
-	s_wcd.hwndInputLine = CreateWindowEx(WS_EX_CLIENTEDGE,
-	                                     "edit", NULL, WS_CHILD | WS_VISIBLE | WS_BORDER | ES_LEFT | ES_AUTOHSCROLL,
+	s_wcd.hwndInputLine = CreateWindowExW(WS_EX_CLIENTEDGE,
+	                                     L"edit", NULL, WS_CHILD | WS_VISIBLE | WS_BORDER | ES_LEFT | ES_AUTOHSCROLL,
 	                                     0, 0, 0, 0,
 	                                     s_wcd.hWnd,
 	                                     ( HMENU ) INPUT_ID,    // child window ID
