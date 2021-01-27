@@ -123,7 +123,7 @@ jobs:
           echo "export ANDROID_NDK=NDK_ETL/ndk-bundle" > ~/.bashrc
           echo "export ANDROID_NDK_HOME=$ANDROID_NDK" > ~/.bashrc
           source ~/.bashrc
-          chmod -R 775 $ANDROID_NDK_HOME
+          chmod -R 775 $ANDROID_NDK
           echo $ANDROID_NDK_HOME
           ./gradlew clean build
 
