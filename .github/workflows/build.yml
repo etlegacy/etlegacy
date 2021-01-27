@@ -120,7 +120,7 @@ jobs:
 
       - name: Build
         run: |
-          echo "export ANDROID_NDK_HOME=NDK_ETL/ndk-bundle" > ~/.bashrc
+          echo "export ANDROID_NDK_HOME=$GITHUB_WORKSPACE/NDK_ETL/ndk-bundle" > ~/.bashrc
           source ~/.bashrc
           echo $ANDROID_NDK_HOME
           ./gradlew clean build
