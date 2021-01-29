@@ -3502,3 +3502,51 @@ void CG_HudHeadAnimation(bg_character_t *ch, lerpFrame_t *lf, int *oldframe, int
 	*frame    = lf->frame;
 	*backlerp = lf->backlerp;
 }
+
+/**
+* @brief Get player max health
+* @param[in] clientNum
+* @param[in] class
+*/
+int CG_GetPlayerMaxHealth(int clientNum, int class, int team)
+{
+	int i;
+	int maxHealth = 100;
+	for (i = 0; i < MAX_CLIENTS; i++)
+	{
+		if (!cgs.clientinfo[i].infoValid)
+		{
+			continue;
+		}
+
+		if (cgs.clientinfo[i].team != team)
+		{
+			continue;
+		}
+
+		if (cgs.clientinfo[i].cls != PC_MEDIC)
+		{
+			continue;
+		}
+
+		maxHealth += 10;
+
+		if (maxHealth >= 125)
+		{
+			maxHealth = 125;
+			break;
+		}
+	}
+
+	if (cgs.clientinfo[clientNum].skill[SK_BATTLE_SENSE] >= 3)
+	{
+		maxHealth += 15;
+	}
+
+	if (class == PC_MEDIC)
+	{
+		maxHealth *= 1.12f;
+	}
+
+	return maxHealth;
+}

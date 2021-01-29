@@ -613,6 +613,12 @@ void CG_DrawPMItems(rectDef_t rect, int style)
 	float        y         = rect.y; //360;
 	float        fontScale = cg_fontScaleSP.value;
 
+	//TODOryzyk
+	if (cgs.clientinfo[cg.clientNum].shoutcaster)
+	{
+		y = SCREEN_HEIGHT - 30;
+	}
+
 	if (cg_drawSmallPopupIcons.integer)
 	{
 		size = PM_ICON_SIZE_SMALL;

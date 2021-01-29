@@ -779,7 +779,7 @@ static void CG_DrawPlayerStatusHead(hudComponent_t comp)
  * @param[out] clips - the total ammount of ammo in all clips (if using clip)
  * @param[out] akimboammo - the number of ammo left in the second pistol of akimbo (if using akimbo)
  */
-static void CG_PlayerAmmoValue(int *ammo, int *clips, int *akimboammo)
+void CG_PlayerAmmoValue(int *ammo, int *clips, int *akimboammo)
 {
 	centity_t     *cent;
 	playerState_t *ps;
@@ -1976,7 +1976,6 @@ static void CG_DrawNewCompass(rectDef_t location)
 		}
 	}
 }
-
 /**
  * @brief CG_DrawStatsDebug
  */
@@ -3180,6 +3179,8 @@ void CG_DrawActiveHud(void)
  */
 void CG_DrawGlobalHud(void)
 {
+	//TODOryzyk
+	//handle popus (kills)
 	if (cg_altHudFlags.integer & FLAGS_MOVE_POPUPS)
 	{
 		CG_DrawPMItems(activehud->popupmessages.location, (cg_altHudFlags.integer & FLAGS_POPUPS_SHADOW) ? ITEM_TEXTSTYLE_SHADOWED : 0);
@@ -3197,8 +3198,21 @@ void CG_DrawGlobalHud(void)
 		return;
 	}
 #endif
-	CG_DrawNewCompass(activehud->compas.location);
 
+
+	//TODOryzyk
+	if (cgs.clientinfo[cg.clientNum].shoutcaster)
+	{
+		CG_DrawMinimap();
+		return;
+	}
+	else
+	{
+		CG_DrawNewCompass(activehud->compas.location);
+	}
+
+	//TODOryzyk
+	//Unreachable shoutcaster code
 	if (activehud->powerups.visible)
 	{
 		CG_DrawPowerUps(activehud->powerups.location);
@@ -3211,6 +3225,13 @@ void CG_DrawGlobalHud(void)
 void CG_DrawUpperRight(void)
 {
 	float y = 152; // 20 + 100 + 32;
+
+	//TODOryzyk
+	if (cgs.clientinfo[cg.clientNum].shoutcaster)
+	{
+		CG_DrawTimerShoutcast();
+		return;
+	}
 
 	if (cg.snap->ps.persistant[PERS_TEAM] != TEAM_SPECTATOR)
 	{

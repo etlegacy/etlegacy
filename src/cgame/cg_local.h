@@ -2780,6 +2780,11 @@ extern vmCvar_t cg_drawspeed;
 extern vmCvar_t cg_visualEffects;  ///< turn invisible (0) / visible (1) visual effect (i.e airstrike plane, debris ...)
 extern vmCvar_t cg_bannerTime;
 
+extern vmCvar_t cg_shoutcastDrawPlayers;
+extern vmCvar_t cg_shoutcastDrawTeamNames;
+extern vmCvar_t cg_shoutcastTeamName1;
+extern vmCvar_t cg_shoutcastTeamName2;
+
 // local clock flags
 #define LOCALTIME_ON                0x01
 #define LOCALTIME_SECOND            0x02
@@ -2953,6 +2958,23 @@ float CG_CalculateReinfTime_Float(qboolean menu);
 int CG_CalculateShoutcasterReinfTime(team_t team);
 void CG_Fade(int r, int g, int b, int a, int time, int duration);
 
+void CG_PlayerAmmoValue(int *ammo, int *clips, int *akimboammo);
+
+//cg_shoutcastoverlay.c
+
+void CG_DrawShoutcastOverlay();
+void CG_DrawShoutcastPlayerOverlayAllies(clientInfo_t *player, float x, float y);
+void CG_DrawShoutcastPlayerOverlayAxis(clientInfo_t *player, float x, float y);
+void CG_DrawShoutcastPlayerStatus();
+void CG_DrawShoutcastPlayerChargebar(float x, float y);
+void CG_DrawTimerShoutcast();
+int CG_GetPlayerCurrentWeapon(clientInfo_t *player);
+qboolean CG_GetPlayerStats(char *kills, char *deaths, char *selfkills, char *dmgGiven, char *dmgRcvd, int clientNum);
+char *CG_ParseStats(char *data, int i);
+void CG_DrawMinimap();
+void CG_DrawNewAutoMap(float x, float y, float w, float h);
+void CG_sc_KeyHandling(int _key, qboolean down);
+
 // cg_player.c
 qboolean CG_EntOnFire(centity_t *cent);
 void CG_Player(centity_t *cent);
@@ -2961,6 +2983,8 @@ void CG_AddRefEntityWithPowerups(refEntity_t *ent, int powerups, int team, entit
 void CG_NewClientInfo(int clientNum);
 sfxHandle_t CG_CustomSound(int clientNum, const char *soundName);
 void CG_ParseTeamXPs(int n);
+
+int CG_GetPlayerMaxHealth(int clientNum, int class, int team);
 
 // cg_predict.c
 void CG_BuildSolidList(void);
@@ -3179,6 +3203,8 @@ void CG_DrawAutoMap(float x, float y, float w, float h);
 
 qboolean CG_DrawMissionBriefing(void);
 void CG_MissionBriefingClick(int key);
+
+qboolean CG_DrawFlag(float x, float y, float fade, int clientNum);
 
 // MAPVOTE
 qboolean CG_FindArenaInfo(const char *filename, const char *mapname, arenaInfo_t *info);
@@ -3729,6 +3755,10 @@ void CG_DrawMortarMarker(float px, float py, float pw, float ph, qboolean draw, 
 void CG_CommandMap_SetHighlightText(const char *text, float x, float y);
 void CG_CommandMap_DrawHighlightText(void);
 qboolean CG_CommandCentreSpawnPointClick(void);
+
+void CG_DrawMapNew(float x, float y, float w, float h, int mEntFilter, mapScissor_t *scissor, qboolean interactive, float alpha, qboolean borderblend);
+int CG_DrawSpawnPointInfoNew(float px, float py, float pw, float ph, qboolean draw, mapScissor_t *scissor, int expand);
+void CG_DrawMortarMarkerNew(float px, float py, float pw, float ph, qboolean draw, mapScissor_t *scissor, int expand);
 
 #define LIMBO_3D_X  287 //% 280
 #define LIMBO_3D_Y  382

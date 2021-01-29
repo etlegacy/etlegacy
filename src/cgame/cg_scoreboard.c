@@ -79,7 +79,7 @@ WM_DrawObjectives
  * @param[in] clientNum
  * @return
  */
-static qboolean CG_DrawFlag(float x, float y, float fade, int clientNum)
+qboolean CG_DrawFlag(float x, float y, float fade, int clientNum)
 {
 	int client_flag = atoi(Info_ValueForKey(CG_ConfigString(clientNum + CS_PLAYERS), "u"));  // uci
 

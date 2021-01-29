@@ -2032,6 +2032,11 @@ static void CG_DrawVote(void)
 	y          = activehud->votetext.location.y;
 	x          = activehud->votetext.location.x;
 
+	if (cgs.clientinfo[cg.clientNum].shoutcaster)
+	{
+		y = SCREEN_HEIGHT - 100;
+	}
+
 	if (cgs.complaintEndTime > cg.time && !cg.demoPlayback && cg_complaintPopUp.integer > 0 && cgs.complaintClient >= 0)
 	{
 		Q_strncpyz(str1, Binding_FromName("vote yes"), 32);
@@ -3703,6 +3708,12 @@ static void CG_Draw2D(void)
 		CG_DrawOnScreenLabels();
 	}
 
+	if (!CG_DrawScoreboard() && cgs.clientinfo[cg.clientNum].shoutcaster && cg_shoutcastDrawPlayers.integer)
+	{
+		CG_DrawShoutcastOverlay();
+		//CG_DrawShoutcastPlayerStatus();
+	}
+
 	// no longer cheat protected, we draw crosshair/reticle in non demoplayback
 	if (cg_draw2D.integer == 0)
 	{
@@ -3729,10 +3740,13 @@ static void CG_Draw2D(void)
 	if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR)
 #endif
 	{
-		if (!CG_DrawScoreboard())
+		//TODOryzyk:
+		//Or just delete shoutcaster string? There might be more stuff we dont want
+		if (!CG_DrawScoreboard() && !cgs.clientinfo[cg.clientNum].shoutcaster)
 		{
 			CG_DrawSpectator();
 		}
+
 		CG_DrawCrosshair();
 		CG_DrawCrosshairNames();
 
@@ -3771,7 +3785,14 @@ static void CG_Draw2D(void)
 		if (cg.snap->ps.persistant[PERS_TEAM] != TEAM_SPECTATOR)
 #endif
 		{
-			CG_DrawActiveHud();
+			if (cgs.clientinfo[cg.clientNum].shoutcaster && cg.snap->ps.pm_flags & PMF_FOLLOW)
+			{
+				CG_DrawShoutcastPlayerStatus();
+			}
+			else
+			{
+				CG_DrawActiveHud();
+			}
 		}
 
 		if (!cg_paused.integer)
@@ -3783,17 +3804,34 @@ static void CG_Draw2D(void)
 #ifdef FEATURE_EDV
 		if (!cgs.demoCamera.renderingFreeCam && !cgs.demoCamera.renderingWeaponCam)
 		{
-			CG_DrawFollow();
+			//TODOryzyk:
+			if (!cgs.clientinfo[cg.clientNum].shoutcaster)
+			{
+				CG_DrawFollow();
+			}
 		}
 #else
-		CG_DrawFollow();
+		//TODOryzyk:
+		if (!cgs.clientinfo[cg.clientNum].shoutcaster)
+		{
+			CG_DrawFollow();
+		}
 #endif
 
 		CG_DrawWarmup();
 		CG_DrawGlobalHud();
-		CG_DrawObjectiveInfo();
-		CG_DrawSpectatorMessage();
+
+		//TODOryzyk
+		if (!cgs.clientinfo[cg.clientNum].shoutcaster)
+		{
+			CG_DrawObjectiveInfo();
+			CG_DrawSpectatorMessage();
+		}
+
 		CG_DrawLimboMessage();
+
+		//TODOryzyk
+		//handle voting
 		CG_DrawVote();
 	}
 	else
