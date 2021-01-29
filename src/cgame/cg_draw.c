@@ -1776,7 +1776,7 @@ static void CG_DrawCrosshairPlayerInfo(int clientNum, int class)
 		playerHealth = cgs.clientinfo[cg.crosshairClientNum].health;
 	}
 
-	maxHealth = CG_GetPlayerMaxHealth(clientNum, class);
+	maxHealth = CG_GetPlayerMaxHealth(clientNum, class, cgs.clientinfo[clientNum].team);
 
 	CG_DrawCrosshairHealthBar(middle, playerHealth, maxHealth);
 

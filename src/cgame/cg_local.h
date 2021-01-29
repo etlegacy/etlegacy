@@ -2807,7 +2807,7 @@ extern vmCvar_t cg_drawspeed;
 extern vmCvar_t cg_visualEffects;  ///< turn invisible (0) / visible (1) visual effect (i.e airstrike plane, debris ...)
 extern vmCvar_t cg_bannerTime;
 
-extern vmCvar_t cg_shoutcasterHealth;
+extern vmCvar_t cg_shoutcastDrawHealth;
 
 // local clock flags
 #define LOCALTIME_ON                0x01
@@ -2992,7 +2992,7 @@ void CG_NewClientInfo(int clientNum);
 sfxHandle_t CG_CustomSound(int clientNum, const char *soundName);
 void CG_ParseTeamXPs(int n);
 
-int CG_GetPlayerMaxHealth(int clientNum, int class);
+int CG_GetPlayerMaxHealth(int clientNum, int class, int team);
 
 // cg_predict.c
 void CG_BuildSolidList(void);

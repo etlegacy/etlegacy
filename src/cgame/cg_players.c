@@ -2081,18 +2081,18 @@ static void CG_PlayerSprites(centity_t *cent)
 
 	if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR || (cg.snap->ps.pm_flags & PMF_FOLLOW && cgs.clientinfo[cg.clientNum].shoutcaster))
 	{
-		if (cg_shoutcasterHealth.integer > 0 && cgs.clientinfo[cg.clientNum].shoutcaster)
+		if (cg_shoutcastDrawHealth.integer > 0 && cgs.clientinfo[cg.clientNum].shoutcaster)
 		{
-			if (cg_shoutcasterHealth.integer == 1 && cg_drawSpectatorNames.integer == 0)
+			if (cg_shoutcastDrawHealth.integer == 1 && cg_drawSpectatorNames.integer == 0)
 			{
 				CG_PlayerFloatText(cent, va("%s%ihp", ci->team == TEAM_AXIS ? "^1" : "^2", ci->health), height + spacing);
 			}
-			else if (cg_shoutcasterHealth.integer == 2)
+			else if (cg_shoutcastDrawHealth.integer == 2)
 			{
 				vec4_t bgcolor     = { 0.0f, 0.0f, 0.0f, 1.0f };
 				vec4_t healthColor = { 0.0f, 1.0f, 0.0f, 1.0f };
 
-				float fraction = (float)ci->health / (float)CG_GetPlayerMaxHealth(cent->currentState.clientNum, ci->cls);
+				float fraction = (float)ci->health / (float)CG_GetPlayerMaxHealth(cent->currentState.clientNum, ci->cls, ci->team);
 
 				if (ci->team == TEAM_AXIS)
 				{
@@ -2108,7 +2108,7 @@ static void CG_PlayerSprites(centity_t *cent)
 		{
 			name = cg_drawSpectatorNames.integer == 1 ? ci->cleanname : ci->name;
 
-			if (cg_shoutcasterHealth.integer == 1 && cgs.clientinfo[cg.clientNum].shoutcaster)
+			if (cg_shoutcastDrawHealth.integer == 1 && cgs.clientinfo[cg.clientNum].shoutcaster)
 			{
 				name = va("%s %s%ihp", name, ci->team == TEAM_AXIS ? "^1" : "^2", ci->health);
 			}
@@ -3567,7 +3567,7 @@ void CG_HudHeadAnimation(bg_character_t *ch, lerpFrame_t *lf, int *oldframe, int
 * @param[in] clientNum
 * @param[in] class
 */
-int CG_GetPlayerMaxHealth(int clientNum, int class)
+int CG_GetPlayerMaxHealth(int clientNum, int class, int team)
 {
 	int i;
 	int maxHealth = 100;
@@ -3578,7 +3578,7 @@ int CG_GetPlayerMaxHealth(int clientNum, int class)
 			continue;
 		}
 
-		if ((cgs.clientinfo[i].team != cgs.clientinfo[cg.snap->ps.clientNum].team) && !cgs.clientinfo[cg.clientNum].shoutcaster)
+		if (cgs.clientinfo[i].team != team)
 		{
 			continue;
 		}
