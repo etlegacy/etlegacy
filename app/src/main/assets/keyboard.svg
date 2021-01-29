@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="1024"
+   height="1024"
+   viewBox="0 0 270.93333 270.93334"
+   version="1.1"
+   id="svg8"
+   inkscape:export-filename="C:\Users\kemon\Desktop\legacy\icons\keyboard.png"
+   inkscape:export-xdpi="96"
+   inkscape:export-ydpi="96"
+   inkscape:version="0.92.4 (5da689c313, 2019-01-14)"
+   sodipodi:docname="keyboard.svg">
+  <defs
+     id="defs2" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.12374369"
+     inkscape:cx="-118.12323"
+     inkscape:cy="-67.484185"
+     inkscape:document-units="mm"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     units="px"
+     showguides="true"
+     inkscape:guide-bbox="true"
+     inkscape:window-width="1920"
+     inkscape:window-height="1177"
+     inkscape:window-x="2552"
+     inkscape:window-y="122"
+     inkscape:window-maximized="1" />
+  <metadata
+     id="metadata5">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(0,-26.06665)">
+    <path
+       style="opacity:1;vector-effect:none;fill:#000000;fill-opacity:1;stroke:none;stroke-width:2.67659688;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       d="m 135.46666,68.929152 c -51.143856,0 -92.604156,41.460268 -92.604156,92.604168 0,51.14386 41.4603,92.60416 92.604156,92.60416 51.14385,0 92.60417,-41.4603 92.60417,-92.60416 1e-5,-51.1439 -41.46031,-92.604168 -92.60417,-92.604168 z m 0,19.84375 c 40.18445,0 72.76042,32.575938 72.76042,72.760418 0,40.18447 -32.57597,72.76041 -72.76042,72.76041 -40.184461,0 -72.760406,-32.57594 -72.760406,-72.76041 0,-40.18448 32.575945,-72.760418 72.760406,-72.760418 z"
+       id="path31-0-3"
+       inkscape:connector-curvature="0" />
+    <path
+       style="opacity:1;vector-effect:none;fill:#000000;fill-opacity:1;stroke:none;stroke-width:3.39340162;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       d="m 91.007991,115.44215 v 23.93672 H 77.049984 c -2.752778,0 -4.968817,2.21605 -4.968817,4.96883 v 46.62214 c 0,2.75278 2.216039,4.96883 4.968817,4.96883 h 83.813706 c 2.75278,0 4.96948,-2.21605 4.96948,-4.96883 V 144.3477 c 0,-2.75278 -2.2167,-4.96883 -4.96948,-4.96883 H 93.553049 v -23.93672 z m -5.551382,32.69529 h 10.180202 v 10.18021 H 85.456609 Z m 14.653931,0 h 10.1802 v 10.18021 h -10.1802 z m 14.65393,0 h 10.1802 v 10.18021 h -10.1802 z m 14.65458,0 h 10.1802 v 10.18021 h -10.1802 z m 14.65393,0 h 10.1802 v 10.18021 h -10.1802 z m -58.616371,15.08274 h 10.180202 v 10.1802 H 85.456609 Z m 14.653931,0 h 10.1802 v 10.1802 h -10.1802 z m 14.65393,0 h 10.1802 v 10.1802 h -10.1802 z m 14.65458,0 h 10.1802 v 10.1802 h -10.1802 z m 14.65393,0 h 10.1802 v 10.1802 h -10.1802 z m -58.616371,15.08275 h 10.180202 v 10.1802 H 85.456609 Z m 14.653931,0 h 39.48871 v 10.1802 h -39.48871 z m 43.96244,0 h 10.1802 v 10.1802 h -10.1802 z"
+       id="rect48"
+       inkscape:connector-curvature="0" />
+    <path
+       style="opacity:1;vector-effect:none;fill:#000000;fill-opacity:1;stroke:none;stroke-width:2.32557988;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       d="m 186.28567,145.94472 c -7.3101,0.50544 -13.04654,6.55562 -13.04654,13.99847 v 1.06577 h 13.04654 z m 1.98008,0 v 15.06424 h 13.04653 v -1.06577 c 0,-7.44285 -5.73644,-13.49303 -13.04653,-13.99847 z m -15.02662,18.43608 v 10.18024 c 0,7.77624 6.26033,14.03658 14.03658,14.03658 7.77623,0 14.03657,-6.26034 14.03657,-14.03658 V 164.3808 Z"
+       id="rect1003"
+       inkscape:connector-curvature="0" />
+  </g>
+</svg>

@@ -1,57 +1,105 @@
 package org.etlegacy.app;
 
 import android.content.Context;
-import android.content.res.AssetManager;
 import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageButton;
+import android.widget.PopupMenu;
 import android.widget.RelativeLayout;
+
 import com.erz.joysticklibrary.JoyStick;
 import com.erz.joysticklibrary.JoyStick.JoyStickListener;
-import com.google.common.io.Files;
-import com.loopj.android.http.AsyncHttpClient;
-import com.loopj.android.http.FileAsyncHttpResponseHandler;
 
-import org.libsdl.app.SDLActivity;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-
-import cz.msebera.android.httpclient.Header;
+import org.libsdl.app.*;
 
 public class ETLActivity extends SDLActivity implements JoyStickListener {
 
     static volatile boolean UiMenu = false;
     ImageButton btn;
+    PopupMenu etl_PopMenu;
 
+    /**
+     * Get an uiMenu boolean variable
+     * @return UiMenu
+     */
     public static boolean getUiMenu() {
         return UiMenu;
     }
 
+    /**
+     * Creates/Removes Functional Keys from PopUp Menu
+     * to prevent flooding at creating multiple entries
+     */
+    protected void PopUpFunctionalKeys() {
+
+        for (int i = 1; i < 3; i++) {
+            if (etl_PopMenu.getMenu().findItem(i) == null)
+                etl_PopMenu.getMenu().add(i, i, i, "F".concat(String.valueOf(i)));
+        }
+    }
+
+    /**
+     * Dirty Hack to remove Functional Keys at Disconnect
+     */
+    protected void PopUpRemoveFunctionalKeys() {
+
+        for (int i = 1; i < 3; i++) {
+            etl_PopMenu.getMenu().removeItem(i);
+        }
+    }
+
+    /**
+     * RunUI Function
+     */
     public void runUI() {
 
-        // Use runThread() instead ?
-        // FIXME When you disconnect from server UI is enabled
+        final RelativeLayout etl_linearLayout =  new RelativeLayout(this);
+        mLayout.addView(etl_linearLayout);
 
-        Handler handler = new Handler(Looper.getMainLooper());
+        // This needs some refactoring
+        final ImageButton btn2 = new ImageButton(getApplicationContext());
+        btn2.setId(2);
+        btn2.setImageResource(R.drawable.ic_shoot);
+        btn2.setBackgroundResource(0);
+
+        final ImageButton btn_reload = new ImageButton(getApplicationContext());
+        btn_reload.setImageResource(R.drawable.ic_reload);
+        btn_reload.setBackgroundResource(0);
+
+        final ImageButton btn_jump = new ImageButton(getApplicationContext());
+        btn_jump.setImageResource(R.drawable.ic_jump);
+        btn_jump.setBackgroundResource(0);
+
+        final ImageButton btn_activate = new ImageButton(getApplicationContext());
+        btn_activate.setImageResource(R.drawable.ic_use);
+        btn_activate.setBackgroundResource(0);
+
+        final ImageButton btn_alternative = new ImageButton(getApplicationContext());
+        btn_alternative.setImageResource(R.drawable.ic_alt);
+        btn_alternative.setBackgroundResource(0);
+
+        final ImageButton btn_crouch = new ImageButton(getApplicationContext());
+        btn_crouch.setImageResource(R.drawable.ic_crouch);
+        btn_crouch.setBackgroundResource(0);
+
+        final JoyStick joyStick_left = new JoyStick(getApplicationContext());
+
+        final Handler handler = new Handler(Looper.getMainLooper());
         handler.post(new Runnable() {
             public void run() {
 
                 if (getUiMenu() == true) {
-                    ImageButton btn2 = new ImageButton(getApplicationContext());
-                    btn2.setId(2);
-                    btn2.setImageBitmap(getBitmapFromAsset("btn_sht.png"));
-                    btn2.setBackgroundResource(0);
+
+                    PopUpFunctionalKeys();
+
                     btn2.setOnTouchListener(new View.OnTouchListener() {
                         @Override
                         public boolean onTouch(View v, MotionEvent event) {
@@ -100,19 +148,16 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
                     });
 
                     RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(
-                            350,
-                            300);
+                            pxToDp(450),
+                            pxToDp(350));
 
                     lp.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
                     lp.addRule(RelativeLayout.CENTER_VERTICAL);
-                    lp.rightMargin = 200;
+                    lp.rightMargin = pxToDp(300);
 
-                    mLayout.addView(btn2, lp);
+                    if (btn2.getParent() == null)
+                        etl_linearLayout.addView(btn2, lp);
 
-
-                    ImageButton btn_reload = new ImageButton(getApplicationContext());
-                    btn_reload.setImageBitmap(getBitmapFromAsset("btn_reload.png"));
-                    btn_reload.setBackgroundResource(0);
                     btn_reload.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -127,15 +172,12 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
 
                     lp_reload.addRule(RelativeLayout.BELOW, btn.getId());
                     lp_reload.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-                    lp_reload.addRule(RelativeLayout.CENTER_VERTICAL);
+                    lp_reload.topMargin = pxToDp(220);
                     lp_reload.rightMargin = pxToDp(90);
 
-                    mLayout.addView(btn_reload, lp_reload);
+                    if (btn_reload.getParent() == null)
+                        etl_linearLayout.addView(btn_reload, lp_reload);
 
-
-                    ImageButton btn_jump = new ImageButton(getApplicationContext());
-                    btn_jump.setImageBitmap(getBitmapFromAsset("btn_jump.png"));
-                    btn_jump.setBackgroundResource(0);
                     btn_jump.setOnTouchListener(new View.OnTouchListener() {
                         @Override
                         public boolean onTouch(View v, MotionEvent event) {
@@ -160,11 +202,9 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
                     lp_jump.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
                     lp_jump.bottomMargin = pxToDp(-20);
 
-                    mLayout.addView(btn_jump, lp_jump);
+                    if (btn_jump.getParent() == null)
+                    etl_linearLayout.addView(btn_jump, lp_jump);
 
-                    ImageButton btn_activate = new ImageButton(getApplicationContext());
-                    btn_activate.setImageBitmap(getBitmapFromAsset("btn_activate.png"));
-                    btn_activate.setBackgroundResource(0);
                     btn_activate.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -182,11 +222,9 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
                     lp_activate.bottomMargin = pxToDp(-20);
                     lp_activate.leftMargin = pxToDp(400);
 
-                    mLayout.addView(btn_activate, lp_activate);
+                    if (btn_activate.getParent() == null)
+                        etl_linearLayout.addView(btn_activate, lp_activate);
 
-                    ImageButton btn_alternative = new ImageButton(getApplicationContext());
-                    btn_alternative.setImageBitmap(getBitmapFromAsset("btn_altfire.png"));
-                    btn_alternative.setBackgroundResource(0);
                     btn_alternative.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -204,11 +242,9 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
                     lp_alternative.bottomMargin = pxToDp(-20);
                     lp_alternative.rightMargin = pxToDp(400);
 
-                    mLayout.addView(btn_alternative, lp_alternative);
+                    if (btn_alternative.getParent() == null)
+                        etl_linearLayout.addView(btn_alternative, lp_alternative);
 
-                    ImageButton btn_crouch = new ImageButton(getApplicationContext());
-                    btn_crouch.setImageBitmap(getBitmapFromAsset("btn_crouch.png"));
-                    btn_crouch.setBackgroundResource(0);
                     btn_crouch.setOnTouchListener(new View.OnTouchListener() {
                         @Override
                         public boolean onTouch(View v, MotionEvent event) {
@@ -233,9 +269,8 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
                     lp_crouch.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
                     lp_crouch.bottomMargin = pxToDp(-20);
 
-                    mLayout.addView(btn_crouch, lp_crouch);
-
-                    JoyStick joyStick_left = new JoyStick(getApplicationContext());
+                    if ( btn_crouch.getParent() == null)
+                        etl_linearLayout.addView(btn_crouch, lp_crouch);
 
                     joyStick_left.setListener(ETLActivity.this);
                     joyStick_left.setPadColor(Color.TRANSPARENT);
@@ -244,76 +279,85 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
 
                     RelativeLayout.LayoutParams joystick_layout = new RelativeLayout.LayoutParams(
                             400,
-                            400);
+                            350);
 
                     joystick_layout.addRule(RelativeLayout.ALIGN_LEFT);
                     joystick_layout.addRule(RelativeLayout.CENTER_VERTICAL);
                     joystick_layout.leftMargin = pxToDp(10);
 
-                    mLayout.addView(joyStick_left, joystick_layout);
+                    if (joyStick_left.getParent() == null)
+                        mLayout.addView(joyStick_left, joystick_layout);
 
-                }
+                    handler.postDelayed(this, 2000);
+                    }
                 else {
-                    runUI();
+                    mLayout.removeView(joyStick_left);
+                    etl_linearLayout.removeAllViews();
+                    PopUpRemoveFunctionalKeys();
+                    handler.postDelayed(this, 500);
                 }
             }
         });
     }
 
-
-
-
+    /**
+     * Convert pixel metrics to dp
+     * @param px value of px to be converted
+     * @return dp
+     */
     public static int pxToDp(int px) {
         return (int) (px / Resources.getSystem().getDisplayMetrics().density);
     }
 
-    private Bitmap getBitmapFromAsset(String strName) {
-        AssetManager assetManager = getAssets();
-        InputStream istr = null;
-        try {
-            istr = assetManager.open(strName);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        Bitmap bitmap = BitmapFactory.decodeStream(istr);
-        Bitmap resized = Bitmap.createScaledBitmap(bitmap, 80, 80, true);
-        return resized;
-    }
-
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        /*
-        TODO: Keep it for now. Find a way to download pak0 before ETL lib is launched.
-        AsyncHttpClient client = new AsyncHttpClient();
-        client.get("http://mirror.etlegacy.com/etmain/pak0.pk3", new FileAsyncHttpResponseHandler(this) {
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, File response) {
-                // Do something with the file `response`
-                if (response.exists()) {
-                    try {
-                        Files.move(response.getAbsoluteFile(), new File(getExternalFilesDir(null), "pak2.pk3"));
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-            @Override
-            public void onFailure(int statusCode, Header[] headers, Throwable throwable, File file) {
-
-            }
-        });
-         */
-
     }
 
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
 
+        mLayout.requestFocus();
+
+        final ImageButton buttonPopUpMenu = new ImageButton(getApplicationContext());
+        buttonPopUpMenu.setImageResource(R.drawable.ic_one_line);
+        buttonPopUpMenu.setBackgroundResource(0);
+
+        etl_PopMenu = new PopupMenu(getApplicationContext(), buttonPopUpMenu);
+        etl_PopMenu.getMenu().add(0, 0, 0, "~");
+
+        buttonPopUpMenu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                etl_PopMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        switch (item.getItemId()) {
+                            case 0:
+                                SDLActivity.onNativeKeyDown(68);
+                                SDLActivity.onNativeKeyUp(68);
+                                break;
+                            case 1:
+                                SDLActivity.onNativeKeyDown(131);
+                                SDLActivity.onNativeKeyUp(131);
+                                break;
+                            case 2:
+                                SDLActivity.onNativeKeyDown(132);
+                                SDLActivity.onNativeKeyUp(132);
+                                break;
+                        }
+                        return false;
+                    }
+                });
+                etl_PopMenu.show();
+            }
+        });
+
+        mLayout.addView(buttonPopUpMenu);
+
         btn = new ImageButton(getApplicationContext());
-        btn.setImageBitmap(getBitmapFromAsset("btn_keyboard.png"));
+        btn.setImageResource(R.drawable.ic_keyboard);
         btn.setBackgroundResource(0);
         btn.setId(1);
         btn.setOnClickListener(new View.OnClickListener() {
@@ -333,7 +377,7 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
         mLayout.addView(btn, keyboard_layout);
 
         ImageButton esc_btn = new ImageButton(getApplicationContext());
-        esc_btn.setImageBitmap(getBitmapFromAsset("btn_esc.png"));
+        esc_btn.setImageResource(R.drawable.ic_escape);
         esc_btn.setBackgroundResource(0);
         esc_btn.setOnClickListener(new View.OnClickListener() {
             @Override
