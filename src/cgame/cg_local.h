@@ -2539,7 +2539,7 @@ typedef struct cgs_s
 	cam_t demoCamera;
 	mlType_t currentMenuLevel;
 #endif
-    
+
 	int playerHitBoxHeight;
 
 	qboolean sv_cheats;         // server allows cheats
@@ -2780,7 +2780,7 @@ extern vmCvar_t cg_drawspeed;
 extern vmCvar_t cg_visualEffects;  ///< turn invisible (0) / visible (1) visual effect (i.e airstrike plane, debris ...)
 extern vmCvar_t cg_bannerTime;
 
-extern vmCvar_t cg_shoutcasterGrenadeTrail;
+extern vmCvar_t cg_shoutcastGrenadeTrail;
 
 // local clock flags
 #define LOCALTIME_ON                0x01

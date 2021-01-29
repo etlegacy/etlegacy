@@ -594,7 +594,7 @@ static void CG_GrenadeTrail(centity_t *ent, const weaponInfo_t *wi)
 
 	ent->trailTime = cg.time;
 
-	if ((cgs.clientinfo[cg.clientNum].shoutcaster || cgs.sv_cheats) && cg_shoutcasterGrenadeTrail.integer)
+	if ((cgs.clientinfo[cg.clientNum].shoutcaster || cgs.sv_cheats) && cg_shoutcastGrenadeTrail.integer)
 	{
 		vec3_t colorStart = { 1.0f, 0.0f, 0.0f };
 		vec3_t colorEnd   = { 1.0f, 0.0f, 0.0f };

@@ -349,7 +349,7 @@ vmCvar_t cg_drawspeed;
 vmCvar_t cg_visualEffects;
 vmCvar_t cg_bannerTime;
 
-vmCvar_t cg_shoutcasterGrenadeTrail;
+vmCvar_t cg_shoutcastGrenadeTrail;
 
 
 typedef struct
@@ -596,7 +596,7 @@ static cvarTable_t cvarTable[] =
 
 	{ &cg_visualEffects,          "cg_visualEffects",          "1",           CVAR_ARCHIVE,                 0 },  // Draw visual effects (i.e : airstrike plane, debris ...)
 	{ &cg_bannerTime,             "cg_bannerTime",             "10000",       CVAR_ARCHIVE,                 0 },
-	{ &cg_shoutcasterGrenadeTrail,"cg_shoutcasterGrenadeTrail","1",           CVAR_ARCHIVE,                 0 },
+	{ &cg_shoutcastGrenadeTrail,  "cg_shoutcastGrenadeTrail",  "0",           CVAR_ARCHIVE,                 0 },
 };
 
 static const unsigned int cvarTableSize = sizeof(cvarTable) / sizeof(cvarTable[0]);
