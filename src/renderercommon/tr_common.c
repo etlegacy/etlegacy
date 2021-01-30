@@ -434,6 +434,14 @@ static void GLimp_InitExtensions(void)
 	{
 		Com_Printf("...GL_EXT_texture_compression_s3tc not found\n");
 	}
+
+	// GLEW_EXT_texture_filter_anisotropic
+	textureFilterAnisotropic = qfalse;
+	if (GLEW_EXT_texture_filter_anisotropic)
+	{
+		glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &maxAnisotropy);
+		textureFilterAnisotropic = qtrue;
+	}
 #endif
 
 #ifndef FEATURE_RENDERER_GLES
@@ -531,14 +539,6 @@ static void GLimp_InitExtensions(void)
 		Com_Printf("...GL_ARB_multitexture not found\n");
 	}
 #endif
-
-	textureFilterAnisotropic = qfalse;
-	if (GLEW_EXT_texture_filter_anisotropic)
-	{
-		glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &maxAnisotropy);
-		textureFilterAnisotropic = qtrue;
-	}
-
 }
 #endif
 
