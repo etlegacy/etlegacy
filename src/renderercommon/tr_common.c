@@ -86,9 +86,11 @@ static qboolean GLimp_InitOpenGLContext()
 	// get GL version
 	Q_strncpyz(glConfig.version_string, (const char *) glGetString(GL_VERSION), sizeof(glConfig.version_string));
 
+#ifndef FEATURE_RENDERER_GLES
 	// get shading language version
 	Q_strncpyz(glConfig.shadingLanguageVersion, (char *)glGetString(GL_SHADING_LANGUAGE_VERSION), sizeof(glConfig.shadingLanguageVersion));
 	sscanf(glConfig.shadingLanguageVersion, "%d.%d", &glConfig.glslMajorVersion, &glConfig.glslMinorVersion);
+#endif
 
 	Com_Printf("GL_VENDOR: %s\n", glConfig.vendor_string);
 	Com_Printf("GL_RENDERER: %s\n", glConfig.renderer_string);
