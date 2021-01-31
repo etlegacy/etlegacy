@@ -151,7 +151,7 @@ jobs:
             libasound2-dev libjpeg8-dev libwebp-dev automake libgl1-mesa-glx libogg0 libopenal1 libvorbis0a \
             libvorbisfile3 zlib1g libx11-dev libglew-dev libegl1-mesa-dev \
             nasm autoconf git cmake zip gcc g++ libtool libxrandr-dev x11proto-randr-dev
-            ./easybuild.sh -RPI
+            ./easybuild.sh -RPI -j4
 
 #   __  __                                                          _
 #  |  \/  |                                                        | |
