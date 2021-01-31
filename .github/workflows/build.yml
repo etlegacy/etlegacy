@@ -132,7 +132,7 @@ jobs:
 #          path: |
 
   armv8_RPI_TEST:
-    runs-on: ubuntu-18.04
+    runs-on: buster
     name: Test Build
     steps:
       - uses: actions/checkout@v2.1.0
