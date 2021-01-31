@@ -146,10 +146,6 @@ jobs:
             libasound2-dev libjpeg8-dev libwebp-dev automake libgl1-mesa-glx libjpeg62-turbo libogg0 libopenal1 libvorbis0a \
             libvorbisfile3 zlib1g libraspberrypi0 libraspberrypi-bin libraspberrypi-dev libx11-dev libglew-dev libegl1-mesa-dev \
             nasm autoconf git cmake zip gcc g++ libtool libxrandr-dev x11proto-randr-dev
-          submodules: true
-          fetch-depth: 0
-          run: |
-            ./easybuild.sh -RPI -j4
 
 #   __  __                                                          _
 #  |  \/  |                                                        | |
