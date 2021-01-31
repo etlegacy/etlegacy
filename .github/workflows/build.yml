@@ -132,12 +132,7 @@ jobs:
 #          path: |
 
   armv8_RPI_TEST:
-    runs-on: ubuntu-16.04
-    container:
-      image: aarch64/ubuntu20.04
-      credentials:
-        username: ${{ secrets.DOCKERHUB_USERNAME }}
-        password: ${{ secrets.DOCKERHUB_PASSWORD }}
+    runs-on: ubuntu-20.04
     name: Test Build
     steps:
       - uses: actions/checkout@v2.1.0
