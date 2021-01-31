@@ -133,13 +133,13 @@ jobs:
 
   armv8_RPI_TEST:
     runs-on: ubuntu-16.04
-    name: Setup cmake
-      uses: jwlawson/actions-setup-cmake@v1.7
-      with:
-        cmake-version: '3.10.3'
-
     name: Test Build
     steps:
+      - uses: jwlawson/actions-setup-cmake@v1.7
+        name: Setup cmake
+          with:
+          cmake-version: '3.10.3'
+
       - uses: actions/checkout@v2.1.0
         with:
           submodules: true
