@@ -134,7 +134,10 @@ jobs:
   armv8_RPI_TEST:
     runs-on: ubuntu-16.04
     container:
-      image: aarch64/buster
+      image: aarch64/ubuntu20.04
+    name: Login to DockerHub Registry
+        run: echo ${{ secrets.DOCKERHUB_PASSWORD }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
+
     name: Test Build
     steps:
       - uses: actions/checkout@v2.1.0
