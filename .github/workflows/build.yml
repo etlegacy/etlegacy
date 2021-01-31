@@ -137,7 +137,7 @@ jobs:
     steps:
       - uses: jwlawson/actions-setup-cmake@v1.7
         name: Setup cmake
-          with:
+        with:
           cmake-version: '3.10.3'
 
       - uses: actions/checkout@v2.1.0
