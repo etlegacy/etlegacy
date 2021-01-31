@@ -136,16 +136,15 @@ jobs:
     name: Test Build
     steps:
       - uses: actions/checkout@v2.1.0
+        with:
+          submodules: true
+          fetch-depth: 0
       - uses: uraimo/run-on-arch-action@v2.0.5
         name: Test Build
         with:
           arch: aarch64
           distro: ubuntu18.04
-          run: |
-            apt-get install build-essential libfreeimage-dev libopenal-dev libpango1.0-dev libsndfile-dev libudev-dev \
-            libasound2-dev libjpeg8-dev libwebp-dev automake libgl1-mesa-glx libjpeg62-turbo libogg0 libopenal1 libvorbis0a \
-            libvorbisfile3 zlib1g libraspberrypi0 libraspberrypi-bin libraspberrypi-dev libx11-dev libglew-dev libegl1-mesa-dev \
-            nasm autoconf git cmake zip gcc g++ libtool libxrandr-dev x11proto-randr-dev
+          run: ./easybuild.sh -RPI
 
 #   __  __                                                          _
 #  |  \/  |                                                        | |
