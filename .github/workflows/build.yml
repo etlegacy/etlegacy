@@ -132,7 +132,12 @@ jobs:
 #          path: |
 
   armv8_RPI_TEST:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-16.04
+    name: Setup cmake
+      uses: jwlawson/actions-setup-cmake@v1.7
+      with:
+        cmake-version: '3.10.3'
+
     name: Test Build
     steps:
       - uses: actions/checkout@v2.1.0
@@ -144,14 +149,14 @@ jobs:
         name: Test Build
         with:
           arch: aarch64
-          distro: ubuntu18.04
+          distro: ubuntu16.04
           run: |
             apt-get update -q -y
             apt-get -y install build-essential libfreeimage-dev libopenal-dev libpango1.0-dev libsndfile-dev libudev-dev \
             libasound2-dev libjpeg8-dev libwebp-dev automake libgl1-mesa-glx libogg0 libopenal1 libvorbis0a \
             libvorbisfile3 zlib1g libx11-dev libglew-dev libegl1-mesa-dev \
             nasm autoconf git cmake zip gcc g++ libtool libxrandr-dev x11proto-randr-dev
-            ./easybuild.sh -RPI -j4
+            ./easybuild.sh -RPI -j2
 
 #   __  __                                                          _
 #  |  \/  |                                                        | |
