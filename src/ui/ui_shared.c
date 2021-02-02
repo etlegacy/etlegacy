@@ -805,6 +805,7 @@ static bind_t g_bindings[] =
 	{ "selectbuddy 6",    K_KP_HOME,       -1,  K_KP_HOME,       -1,  -1, -1, -1 },
 	{ "selectbuddy 7",    K_KP_UPARROW,    -1,  K_KP_UPARROW,    -1,  -1, -1, -1 },
 	{ "selectbuddy -2",   K_KP_MINUS,      -1,  K_KP_MINUS,      -1,  -1, -1, -1 },
+	{ "shoutcastmenu",    'n',             -1,  'n',             -1,  -1, -1, -1 },
 };
 
 static const int g_bindCount = sizeof(g_bindings) / sizeof(bind_t);
