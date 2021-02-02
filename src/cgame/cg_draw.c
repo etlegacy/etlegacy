@@ -2006,7 +2006,7 @@ static void CG_DrawSpectator(void)
 	else
 	{
 #endif
-	s = CG_TranslateString(va("%s", cgs.clientinfo[cg.clientNum].shoutcaster ? "SHOUTCASTER" : "SPECTATOR"));
+	s = CG_TranslateString(va("%s", "SPECTATOR"));
 #ifdef FEATURE_EDV
 }
 #endif
@@ -2034,7 +2034,7 @@ static void CG_DrawVote(void)
 
 	if (cgs.clientinfo[cg.clientNum].shoutcaster)
 	{
-		y = SCREEN_HEIGHT - 100;
+		y = 180;
 	}
 
 	if (cgs.complaintEndTime > cg.time && !cg.demoPlayback && cg_complaintPopUp.integer > 0 && cgs.complaintClient >= 0)
@@ -3710,8 +3710,7 @@ static void CG_Draw2D(void)
 
 	if (!CG_DrawScoreboard() && cgs.clientinfo[cg.clientNum].shoutcaster && cg_shoutcastDrawPlayers.integer)
 	{
-		CG_DrawShoutcastOverlay();
-		//CG_DrawShoutcastPlayerStatus();
+		CG_DrawShoutcastPlayerList();
 	}
 
 	// no longer cheat protected, we draw crosshair/reticle in non demoplayback
@@ -3740,8 +3739,6 @@ static void CG_Draw2D(void)
 	if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR)
 #endif
 	{
-		//TODOryzyk:
-		//Or just delete shoutcaster string? There might be more stuff we dont want
 		if (!CG_DrawScoreboard() && !cgs.clientinfo[cg.clientNum].shoutcaster)
 		{
 			CG_DrawSpectator();
@@ -3804,14 +3801,12 @@ static void CG_Draw2D(void)
 #ifdef FEATURE_EDV
 		if (!cgs.demoCamera.renderingFreeCam && !cgs.demoCamera.renderingWeaponCam)
 		{
-			//TODOryzyk:
 			if (!cgs.clientinfo[cg.clientNum].shoutcaster)
 			{
 				CG_DrawFollow();
 			}
 		}
 #else
-		//TODOryzyk:
 		if (!cgs.clientinfo[cg.clientNum].shoutcaster)
 		{
 			CG_DrawFollow();
@@ -3821,7 +3816,6 @@ static void CG_Draw2D(void)
 		CG_DrawWarmup();
 		CG_DrawGlobalHud();
 
-		//TODOryzyk
 		if (!cgs.clientinfo[cg.clientNum].shoutcaster)
 		{
 			CG_DrawObjectiveInfo();
@@ -3830,8 +3824,6 @@ static void CG_Draw2D(void)
 
 		CG_DrawLimboMessage();
 
-		//TODOryzyk
-		//handle voting
 		CG_DrawVote();
 	}
 	else

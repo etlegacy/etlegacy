@@ -175,9 +175,6 @@ void CG_TransformAutomapEntity(void)
 		h = hud->compas.location.h - (hud->compas.location.h * 0.25f);
 	}
 
-	//TODOryzyk
-	//New minimap size hardcoded here...
-	//Also change it if it is to be enabled for players.
 	if (cgs.clientinfo[cg.clientNum].shoutcaster)
 	{
 		w = 150;
@@ -2094,16 +2091,16 @@ void CG_CommandMap_DrawHighlightText(void)
 //
 //////////////////////////////////////////////////
 
-#define AUTOMAP_ZOOM_NEW                5.159f//7.4299//5.159f
+#define AUTOMAP_ZOOM_NEW                5.159f
 #define COMMANDMAP_PLAYER_ICON_SIZE_NEW 6
-#define AUTOMAP_PLAYER_ICON_SIZE_NEW    20//5
-#define CONST_ICON_NORMAL_SIZE_NEW      17//82//32.f
-#define CONST_ICON_EXPANDED_SIZE_NEW    20//98//48.f
-#define CONST_ICON_LANDMINE_SIZE_NEW    8//42//12.f
-#define FLAGSIZE_EXPANDED_NEW           98//98//48.f
-#define FLAGSIZE_NORMAL_NEW             82//82//32.f
-#define FLAG_LEFTFRAC_NEW               0.1953125f // 25/128
-#define FLAG_TOPFRAC_NEW                0.7421875f // 95/128
+#define AUTOMAP_PLAYER_ICON_SIZE_NEW    20
+#define CONST_ICON_NORMAL_SIZE_NEW      17
+#define CONST_ICON_EXPANDED_SIZE_NEW    20
+#define CONST_ICON_LANDMINE_SIZE_NEW    8
+#define FLAGSIZE_EXPANDED_NEW           98
+#define FLAGSIZE_NORMAL_NEW             82
+#define FLAG_LEFTFRAC_NEW               0.1953125f
+#define FLAG_TOPFRAC_NEW                0.7421875f
 #define SPAWN_SIZEUPTIME_NEW            1000.f
 
 /**
@@ -2113,7 +2110,7 @@ void CG_CommandMap_DrawHighlightText(void)
 * @param[in] w
 * @param[in] h
 */
-void CG_DrawNewAutoMap(float x, float y, float w, float h)
+void CG_DrawAutoMapNew(float x, float y, float w, float h)
 {
 	//float        x, y, w, h;
 	mapScissor_t mapScissor;
@@ -2126,7 +2123,6 @@ void CG_DrawNewAutoMap(float x, float y, float w, float h)
 		cgs.ccSelectedLayer = CG_CurLayerForZ((int)cg.predictedPlayerEntity.lerpOrigin[2]);
 	}
 
-	//DrawBorder
 	if (cgs.autoMapExpanded)
 	{
 		if (cg.time - cgs.autoMapExpandTime < 100.f)
@@ -2136,11 +2132,7 @@ void CG_DrawNewAutoMap(float x, float y, float w, float h)
 		else
 		{
 			CG_DrawExpandedAutoMap();
-
-			if (!cg_altHud.integer)
-			{
-				return;
-			}
+			return;
 		}
 	}
 	else
@@ -2148,11 +2140,7 @@ void CG_DrawNewAutoMap(float x, float y, float w, float h)
 		if (cg.time - cgs.autoMapExpandTime <= 150.f)
 		{
 			CG_DrawExpandedAutoMap();
-
-			if (!cg_altHud.integer)
-			{
-				return;
-			}
+			return;
 		}
 		else if ((cg.time - cgs.autoMapExpandTime > 150.f) && (cg.time - cgs.autoMapExpandTime < 250.f))
 		{
@@ -2947,7 +2935,7 @@ void CG_DrawMapNew(float x, float y, float w, float h, int mEntFilter, mapScisso
 	{
 		vec4_t color;
 
-		icon_size = AUTOMAP_PLAYER_ICON_SIZE_NEW;
+		icon_size = COMMANDMAP_PLAYER_ICON_SIZE_NEW;
 
 		Vector4Set(color, 1.f, 1.f, 1.f, alpha);
 		trap_R_SetColor(color);

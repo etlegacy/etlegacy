@@ -3179,8 +3179,6 @@ void CG_DrawActiveHud(void)
  */
 void CG_DrawGlobalHud(void)
 {
-	//TODOryzyk
-	//handle popus (kills)
 	if (cg_altHudFlags.integer & FLAGS_MOVE_POPUPS)
 	{
 		CG_DrawPMItems(activehud->popupmessages.location, (cg_altHudFlags.integer & FLAGS_POPUPS_SHADOW) ? ITEM_TEXTSTYLE_SHADOWED : 0);
@@ -3199,11 +3197,10 @@ void CG_DrawGlobalHud(void)
 	}
 #endif
 
-
-	//TODOryzyk
 	if (cgs.clientinfo[cg.clientNum].shoutcaster)
 	{
 		CG_DrawMinimap();
+		CG_DrawShoutcastPowerups();
 		return;
 	}
 	else
@@ -3211,8 +3208,6 @@ void CG_DrawGlobalHud(void)
 		CG_DrawNewCompass(activehud->compas.location);
 	}
 
-	//TODOryzyk
-	//Unreachable shoutcaster code
 	if (activehud->powerups.visible)
 	{
 		CG_DrawPowerUps(activehud->powerups.location);
@@ -3226,10 +3221,9 @@ void CG_DrawUpperRight(void)
 {
 	float y = 152; // 20 + 100 + 32;
 
-	//TODOryzyk
 	if (cgs.clientinfo[cg.clientNum].shoutcaster)
 	{
-		CG_DrawTimerShoutcast();
+		CG_DrawShoutcastTimer();
 		return;
 	}
 

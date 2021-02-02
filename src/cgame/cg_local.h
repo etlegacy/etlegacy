@@ -1357,6 +1357,8 @@ typedef struct
 	qboolean showFireteamMenu;
 	qboolean showSpawnpointsMenu;
 
+	qboolean shoutcastMenu;
+
 	char spawnPoints[MAX_SPAWNPOINTS][MAX_SPAWNDESC];
 	vec3_t spawnCoordsUntransformed[MAX_SPAWNPOINTS];
 	vec3_t spawnCoords[MAX_SPAWNPOINTS];
@@ -2539,7 +2541,7 @@ typedef struct cgs_s
 	cam_t demoCamera;
 	mlType_t currentMenuLevel;
 #endif
-    
+
 	int playerHitBoxHeight;
 
 	qboolean sv_cheats;         // server allows cheats
@@ -2962,18 +2964,14 @@ void CG_PlayerAmmoValue(int *ammo, int *clips, int *akimboammo);
 
 //cg_shoutcastoverlay.c
 
-void CG_DrawShoutcastOverlay();
-void CG_DrawShoutcastPlayerOverlayAllies(clientInfo_t *player, float x, float y);
-void CG_DrawShoutcastPlayerOverlayAxis(clientInfo_t *player, float x, float y);
+void CG_DrawShoutcastPlayerList();
 void CG_DrawShoutcastPlayerStatus();
-void CG_DrawShoutcastPlayerChargebar(float x, float y);
-void CG_DrawTimerShoutcast();
-int CG_GetPlayerCurrentWeapon(clientInfo_t *player);
-qboolean CG_GetPlayerStats(char *kills, char *deaths, char *selfkills, char *dmgGiven, char *dmgRcvd, int clientNum);
-char *CG_ParseStats(char *data, int i);
+void CG_DrawShoutcastTimer();
+void CG_DrawShoutcastPowerups();
 void CG_DrawMinimap();
-void CG_DrawNewAutoMap(float x, float y, float w, float h);
-void CG_sc_KeyHandling(int _key, qboolean down);
+
+void CG_Shoutcast_KeyHandling(int key, qboolean down);
+qboolean CG_ShoutcastCheckExecKey(int key, qboolean doaction);
 
 // cg_player.c
 qboolean CG_EntOnFire(centity_t *cent);
@@ -3756,6 +3754,7 @@ void CG_CommandMap_SetHighlightText(const char *text, float x, float y);
 void CG_CommandMap_DrawHighlightText(void);
 qboolean CG_CommandCentreSpawnPointClick(void);
 
+void CG_DrawAutoMapNew(float x, float y, float w, float h);
 void CG_DrawMapNew(float x, float y, float w, float h, int mEntFilter, mapScissor_t *scissor, qboolean interactive, float alpha, qboolean borderblend);
 int CG_DrawSpawnPointInfoNew(float px, float py, float pw, float ph, qboolean draw, mapScissor_t *scissor, int expand);
 void CG_DrawMortarMarkerNew(float px, float py, float pw, float ph, qboolean draw, mapScissor_t *scissor, int expand);
