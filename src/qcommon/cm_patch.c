@@ -1020,7 +1020,7 @@ void CM_AddFacetBevels(facet_t *facet)
 			// see if the plane is already present
 			for (i = 0; i < facet->numBorders; i++)
 			{
-				if (cm_optimizePatchPlanes->integer)
+				if (!cm_optimizePatchPlanes->integer)
 				{
 					if (CM_PlaneEqual(&planes[facet->borderPlanes[i]], plane, &flipped))
 					{
