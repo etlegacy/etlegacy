@@ -53,6 +53,7 @@ cvar_t *cm_noAreas;
 cvar_t *cm_noCurves;
 cvar_t *cm_playerCurveClip;
 cvar_t *cm_optimize;
+cvar_t *cm_optimizePatchPlanes;
 
 cmodel_t box_model;
 cplane_t *box_planes;
@@ -626,10 +627,11 @@ void CM_LoadMap(const char *name, qboolean clientload, unsigned int *checksum)
 		Com_Error(ERR_DROP, "CM_LoadMap: NULL name");
 	}
 
-	cm_noAreas         = Cvar_Get("cm_noAreas", "0", CVAR_CHEAT);
-	cm_noCurves        = Cvar_Get("cm_noCurves", "0", CVAR_CHEAT);
-	cm_playerCurveClip = Cvar_Get("cm_playerCurveClip", "1", CVAR_ARCHIVE | CVAR_CHEAT);
-	cm_optimize        = Cvar_Get("cm_optimize", "1", CVAR_CHEAT);
+	cm_noAreas             = Cvar_Get("cm_noAreas", "0", CVAR_CHEAT);
+	cm_noCurves            = Cvar_Get("cm_noCurves", "0", CVAR_CHEAT);
+	cm_playerCurveClip     = Cvar_Get("cm_playerCurveClip", "1", CVAR_ARCHIVE | CVAR_CHEAT);
+	cm_optimize            = Cvar_Get("cm_optimize", "1", CVAR_CHEAT);
+	cm_optimizePatchPlanes = Cvar_Get("cm_optimizePatchPlanes", "0", CVAR_CHEAT | CVAR_SERVERINFO);
 
 	Com_DPrintf("CM_LoadMap( %s, %i )\n", name, clientload);
 

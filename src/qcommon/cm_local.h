@@ -189,6 +189,7 @@ extern cvar_t    *cm_noAreas;
 extern cvar_t    *cm_noCurves;
 extern cvar_t    *cm_playerCurveClip;
 extern cvar_t    *cm_optimize;
+extern cvar_t    *cm_optimizePatchPlanes;
 
 // cm_test.c
 
