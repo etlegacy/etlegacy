@@ -342,9 +342,11 @@ jobs:
         id: vars
         run: |
           echo ::set-output name=tag::$(git describe --abbrev=7 2>/dev/null)
-          echo ::set-output name=shorttag::$(git describe --abbrev=0 2>/dev/null)
+          echo ::set-output name=short_tag::$(git describe --abbrev=0 2>/dev/null)
+          echo ::set-output name=tag_exists::$(curl -s -o /dev/null -w "%{http_code}" https://hub.docker.com/v1/repositories/etlegacy/server/tags/${{ steps.vars.outputs.tag }} 2>/dev/null)
 
       - name: Build and push the tagged Docker image
+        if: ${{ steps.vars.outputs.tag_exists == '404' }}
         working-directory: build/package
         run: |
           docker build . --file Dockerfile --tag etlegacy/server:${{ steps.vars.outputs.tag }}
@@ -352,7 +354,7 @@ jobs:
 
       # If we are on a release tag, then also create the 'latest' tag on docker hub
       - name: Build and push the latest Docker image
-        if: ${{ steps.vars.outputs.tag == steps.vars.outputs.tagshort }}
+        if: ${{ steps.vars.outputs.tag == steps.vars.outputs.short_tag && steps.vars.outputs.tag_exists == '404' }}
         working-directory: build/package
         run: |
           docker build . --file Dockerfile --tag etlegacy/server:latest
