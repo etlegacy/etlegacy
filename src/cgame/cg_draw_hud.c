@@ -2253,6 +2253,36 @@ static float CG_DrawFPS(float y)
 }
 
 /**
+* @brief CG_TimerWarmupString string to be drawn in reinforcement time hud element
+* If gametype is Last Man Standing it returns just WARMUP, otherwise it returns colored limbotime periods:
+* If player or following player is axis, then it returns red allies limbotime and blue axis limbotime,
+* for allies or in freecam it returns red axis limbotime and blue allies limbotime.
+* @return
+*/
+static const char *CG_TimerWarmupString()
+{
+	if (cgs.gametype == GT_WOLF_LMS)
+	{
+		return va("^7%s", CG_TranslateString("WARMUP")); // don't draw reinforcement time in warmup mode for LMS
+	}
+	else                                              // draw limbotime periods otherwise 
+	{
+		int limbotime_own, limbotime_enemy;
+		if (cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_AXIS)
+		{
+			limbotime_own   = cg_redlimbotime.integer;
+			limbotime_enemy = cg_bluelimbotime.integer;
+		}
+		else
+		{
+			limbotime_own   = cg_bluelimbotime.integer;
+			limbotime_enemy = cg_redlimbotime.integer;
+		}
+		return va("^1%2.0i ^$%2.0i", limbotime_enemy / 1000, limbotime_own / 1000);
+	}
+}
+
+/**
  * @brief CG_DrawTimersAlt
  * @param[in] respawn
  * @param[in] spawntimer
@@ -2277,7 +2307,7 @@ static void CG_DrawTimersAlt(rectDef_t *respawn, rectDef_t *spawntimer, rectDef_
 
 	if (cgs.gamestate != GS_PLAYING)
 	{
-		s        = va("^7%s", CG_TranslateString("WARMUP")); // don't draw reinforcement time in warmup mode // ^*
+		s        = CG_TimerWarmupString();
 		color[3] = fabs(sin(cg.time * 0.002));
 	}
 	else if (msec < 0 && cgs.timelimit > 0.0f)
@@ -2412,7 +2442,7 @@ static float CG_DrawTimerNormal(float y)
 
 	if (cgs.gamestate != GS_PLAYING)
 	{
-		s        = va("^7%s", CG_TranslateString("WARMUP")); // don't draw reinforcement time in warmup mode // ^*
+		s        = CG_TimerWarmupString();
 		color[3] = fabs(sin(cg.time * 0.002));
 	}
 	else if (msec < 0 && cgs.timelimit > 0.0f)
