@@ -1274,16 +1274,13 @@ static void CG_TimerSet_f(void)
  */
 static void CG_TimerReset_f(void)
 {
-	int msec;
-
 	if (cgs.gamestate != GS_PLAYING)
 	{
 		CG_Printf("You may only use this command during the match.\n");
 		return;
 	}
 
-	msec = (int)(cgs.timelimit * 60000.f) - (cg.time - cgs.levelStartTime); // 60.f * 1000.f
-	trap_Cvar_Set("cg_spawnTimer_set", va("%d", msec / 1000));
+	trap_Cvar_Set("cg_spawnTimer_set", va("%d", cg.time - cgs.levelStartTime));
 }
 
 /**
