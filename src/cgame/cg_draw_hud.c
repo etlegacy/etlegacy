@@ -2415,6 +2415,7 @@ static void CG_DrawTimersAlt(rectDef_t *respawn, rectDef_t *spawntimer, rectDef_
 				s = va("%02i:%02i", time.tm_hour, time.tm_min);
 			}
 		}
+		color[3] = 1.f; // don't blink local time during warmup
 		CG_Text_Paint_Ext(localtime->x, localtime->y, 0.19f, 0.19f, color, s, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
 	}
 }
