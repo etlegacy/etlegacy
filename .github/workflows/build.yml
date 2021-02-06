@@ -291,6 +291,7 @@ jobs:
   upload:
     runs-on: ubuntu-16.04
     needs: [ lnx32, lnx64, osx, win ]
+    if: github.ref == 'refs/heads/master'
     steps:
       - uses: geekyeggo/delete-artifact@v1
         with:
@@ -316,6 +317,7 @@ jobs:
   docker:
     runs-on: ubuntu-16.04
     needs: [ lnx64 ]
+    if: github.ref == 'refs/heads/master'
     steps:
       - uses: actions/checkout@v2
         with:
@@ -372,3 +374,13 @@ jobs:
             lnx32-packages
             osx-packages
             win-packages
+
+      - uses: geekyeggo/delete-artifact@v1
+        if: github.ref != 'refs/heads/master'
+        with:
+          failOnError: false
+          name: |
+            All-mods
+            lnx64-mod
+            osx-mod
+            win-mod
