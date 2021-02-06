@@ -1251,7 +1251,7 @@ static void CG_TimerSet_f(void)
 
 		if (spawnPeriod == 0)
 		{
-			trap_Cvar_Set("cg_spawnTimer_set", "-1");
+			trap_Cvar_Set("cg_spawnTimer_period", 0);
 		}
 		else if (spawnPeriod < 1 || spawnPeriod > 60)
 		{
