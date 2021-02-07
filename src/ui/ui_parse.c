@@ -2096,7 +2096,15 @@ qboolean ItemParse_settingEnabled(itemDef_t *item, int handle)
  */
 qboolean ItemParse_tooltip(itemDef_t *item, int handle)
 {
-	return(Item_ValidateTooltipData(item) && PC_String_ParseTranslate(handle, &item->toolTipData->text));
+	qboolean rv = (Item_ValidateTooltipData(item) && PC_String_ParseTranslate(handle, &item->toolTipData->text));
+	if (item->cvar)
+	{
+		//cvar_t *var;
+		//var = Cvar_FindVar(item->cvar);
+		char *newText = va("%s%scvar: %s", item->toolTipData->text, strlen(item->toolTipData->text) ? "\n" : "", item->cvar);
+		item->toolTipData->text = String_Alloc(newText);
+	}
+	return rv;
 }
 
 /**
