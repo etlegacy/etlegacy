@@ -2253,6 +2253,38 @@ static float CG_DrawFPS(float y)
 }
 
 /**
+* @brief CG_SpawnTimerText red colored spawn time text in reinforcement time HUD element.
+* @return red colored text or NULL when its not supposed to be rendered
+*/
+static char *CG_SpawnTimerText()
+{
+	int     msec = (cgs.timelimit * 60000.f) - (cg.time - cgs.levelStartTime);
+	int     seconds;
+	int     secondsThen;
+
+	if (cg_spawnTimer_set.integer != -1 && cgs.gamestate == GS_PLAYING && !cgs.clientinfo[cg.clientNum].shoutcaster)
+	{
+		if (cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR || (cg.snap->ps.pm_flags & PMF_FOLLOW))
+		{
+			int period = cg_spawnTimer_period.integer > 0 ? cg_spawnTimer_period.integer : (cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_AXIS ? cg_bluelimbotime.integer / 1000 : cg_redlimbotime.integer / 1000);
+			if (period > 0) // prevent division by 0 for weird cases like limbtotime < 1000
+			{
+				seconds = msec / 1000;
+				secondsThen = ((cgs.timelimit * 60000.f) - cg_spawnTimer_set.integer) / 1000;
+				return va("^1%i", period + (seconds - secondsThen) % period);
+			}
+		}
+	}
+	else if (cg_spawnTimer_set.integer != -1 && cg_spawnTimer_period.integer > 0 && cgs.gamestate != GS_PLAYING)
+	{
+		// We are not playing and the timer is set so reset/disable it
+		// this happens for example when custom period is set by timerSet and map is restarted or changed
+		trap_Cvar_Set("cg_spawnTimer_set", "-1");
+	}
+	return NULL;
+}
+
+/**
  * @brief CG_DrawTimersAlt
  * @param[in] respawn
  * @param[in] spawntimer
@@ -2267,7 +2299,6 @@ static void CG_DrawTimersAlt(rectDef_t *respawn, rectDef_t *spawntimer, rectDef_
 	vec4_t  color = { 0.625f, 0.625f, 0.6f, 1.0f };
 	int     tens;
 	int     msec = (cgs.timelimit * 60000.f) - (cg.time - cgs.levelStartTime);    // 60.f * 1000.f
-	int     secondsThen;
 	int     seconds = msec / 1000;
 	int     mins    = seconds / 60;
 
@@ -2330,25 +2361,11 @@ static void CG_DrawTimersAlt(rectDef_t *respawn, rectDef_t *spawntimer, rectDef_
 	CG_Text_Paint_Ext(respawn->x - w, respawn->y, 0.19f, 0.19f, color, s, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
 
 	// spawntimer
-	if (cg_spawnTimer_set.integer != -1 && cgs.gamestate == GS_PLAYING && !cgs.clientinfo[cg.clientNum].shoutcaster)
+	if (rt = CG_SpawnTimerText())
 	{
-		if (cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR || (cg.snap->ps.pm_flags & PMF_FOLLOW))
-		{
-			int period  = cg_spawnTimer_period.integer > 0 ? cg_spawnTimer_period.integer : (cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_AXIS ? cg_bluelimbotime.integer / 1000 : cg_redlimbotime.integer / 1000);
-			if (period > 0) // prevent division by 0
-			{
-				seconds     = msec / 1000;
-				secondsThen = ((cgs.timelimit * 60000.f) - cg_spawnTimer_set.integer) / 1000;
-				s           = va("^1%i ", period + (seconds - secondsThen) % period);
-				w           = CG_Text_Width_Ext(s, 0.19f, 0, &cgs.media.limboFont1) - ((msec < 0 && cgs.timelimit > 0.0f) ? CG_Text_Width_Ext("00:00", 0.19f, 0, &cgs.media.limboFont1) : 0);
-				CG_Text_Paint_Ext(spawntimer->x - w, spawntimer->y, 0.19f, 0.19f, color, s, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
-			}
-		}
-	}
-	else if (cg_spawnTimer_set.integer != -1 && cg_spawnTimer_period.integer > 0 && cgs.gamestate != GS_PLAYING)
-	{
-		//We are not playing and the timer is set so reset/disable it
-		trap_Cvar_Set("cg_spawnTimer_set", "-1");
+		s = va("%s ", rt);
+		w = CG_Text_Width_Ext(s, 0.19f, 0, &cgs.media.limboFont1) - ((msec < 0 && cgs.timelimit > 0.0f) ? CG_Text_Width_Ext("00:00", 0.19f, 0, &cgs.media.limboFont1) : 0);
+		CG_Text_Paint_Ext(spawntimer->x - w, spawntimer->y, 0.19f, 0.19f, color, s, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
 	}
 	// end spawntimer
 
@@ -2405,7 +2422,6 @@ static float CG_DrawTimerNormal(float y)
 	int    w, w2;
 	int    tens;
 	int    x;
-	int    secondsThen;
 	int    msec    = (cgs.timelimit * 60000.f) - (cg.time - cgs.levelStartTime); // 60.f * 1000.f
 	int    seconds = msec / 1000;
 	int    mins    = seconds / 60;
@@ -2459,19 +2475,9 @@ static float CG_DrawTimerNormal(float y)
 	}
 
 	// spawntimer
-	if (cg_spawnTimer_set.integer != -1 && cg_spawnTimer_period.integer > 0 && cgs.gamestate == GS_PLAYING && !cgs.clientinfo[cg.clientNum].shoutcaster)
+	if (rt = CG_SpawnTimerText())
 	{
-		if (cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR || (cg.snap->ps.pm_flags & PMF_FOLLOW))
-		{
-			seconds     = msec / 1000;
-			secondsThen = ((cgs.timelimit * 60000.f) - cg_spawnTimer_set.integer) / 1000;
-			s           = va("^1%i %s", cg_spawnTimer_period.integer + (seconds - secondsThen) % cg_spawnTimer_period.integer, s);
-		}
-	}
-	else if (cg_spawnTimer_set.integer != -1 && cg_spawnTimer_period.integer > 0 && cgs.gamestate != GS_PLAYING)
-	{
-		// we are not playing and the timer is set so reset/disable it
-		trap_Cvar_Set("cg_spawnTimer_set", "-1");
+		s = va("%s%s", rt, s);
 	}
 
 	w  = CG_Text_Width_Ext(s, 0.19f, 0, &cgs.media.limboFont1);
