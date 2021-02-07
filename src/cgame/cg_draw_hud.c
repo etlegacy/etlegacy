@@ -2338,8 +2338,8 @@ static void CG_DrawTimersAlt(rectDef_t *respawn, rectDef_t *spawntimer, rectDef_
 			int  reinfTime  = CG_CalculateReinfTime(qfalse);
 			char *teamColor = (cgs.clientinfo[cg.clientNum].shoutcaster ? (cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_AXIS ? "^1" : "^$") : "^F");
 
-			rt = va("%s%d%s", (reinfTime <= 2 && cgs.clientinfo[cg.clientNum].health == 0 &&
-			                   !(cg.snap->ps.pm_flags & PMF_FOLLOW)) ? "^1" : teamColor, reinfTime, ((cgs.timelimit <= 0.0f) ? "" : " "));
+			rt = va("%s%d ", (reinfTime <= 2 && cgs.clientinfo[cg.clientNum].health == 0 &&
+			                   !(cg.snap->ps.pm_flags & PMF_FOLLOW)) ? "^1" : teamColor, reinfTime);
 		}
 		else
 		{
@@ -2477,7 +2477,7 @@ static float CG_DrawTimerNormal(float y)
 	// spawntimer
 	if (rt = CG_SpawnTimerText())
 	{
-		s = va("%s%s", rt, s);
+		s = va("%s%s%s", rt, (cgs.timelimit <= 0.0f) ? " " : "", s);
 	}
 
 	w  = CG_Text_Width_Ext(s, 0.19f, 0, &cgs.media.limboFont1);
