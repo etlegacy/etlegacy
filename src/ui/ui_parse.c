@@ -2101,7 +2101,7 @@ qboolean ItemParse_tooltip(itemDef_t *item, int handle)
 	{
 		//cvar_t *var;
 		//var = Cvar_FindVar(item->cvar);
-		char *newText = va("%s%scvar: %s", item->toolTipData->text, strlen(item->toolTipData->text) ? "\n" : "", item->cvar);
+		char *newText = va("%s ^9cvar: %s", item->toolTipData->text, item->cvar);
 		item->toolTipData->text = String_Alloc(newText);
 	}
 	return rv;
