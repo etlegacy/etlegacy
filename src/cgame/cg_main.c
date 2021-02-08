@@ -349,6 +349,10 @@ vmCvar_t cg_drawspeed;
 vmCvar_t cg_visualEffects;
 vmCvar_t cg_bannerTime;
 
+vmCvar_t cg_shoutcastDrawPlayers;
+vmCvar_t cg_shoutcastDrawTeamNames;
+vmCvar_t cg_shoutcastTeamName1;
+vmCvar_t cg_shoutcastTeamName2;
 vmCvar_t cg_shoutcastDrawHealth;
 vmCvar_t cg_shoutcastGrenadeTrail;
 
@@ -599,6 +603,11 @@ static cvarTable_t cvarTable[] =
 
 	{ &cg_visualEffects,          "cg_visualEffects",          "1",           CVAR_ARCHIVE,                 0 },   // Draw visual effects (i.e : airstrike plane, debris ...)
 	{ &cg_bannerTime,             "cg_bannerTime",             "10000",       CVAR_ARCHIVE,                 0 },
+  
+  { &cg_shoutcastDrawPlayers,   "cg_shoutcastDrawPlayers",   "1",           CVAR_ARCHIVE,                 0 },
+	{ &cg_shoutcastDrawTeamNames, "cg_shoutcastDrawTeamNames", "1",           CVAR_ARCHIVE,                 0 },
+	{ &cg_shoutcastTeamName1,     "cg_shoutcastTeamName1",     "",            CVAR_ARCHIVE,                 0 },
+	{ &cg_shoutcastTeamName2,     "cg_shoutcastTeamName2",     "",            CVAR_ARCHIVE,                 0 },
 	{ &cg_shoutcastDrawHealth,    "cg_shoutcastDrawHealth",    "0",           CVAR_ARCHIVE,                 0 },
 	{ &cg_shoutcastGrenadeTrail,  "cg_shoutcastGrenadeTrail",  "0",           CVAR_ARCHIVE,                 0 },
 };
@@ -2903,6 +2912,11 @@ qboolean CG_CheckExecKey(int key)
 	if (cg.showSpawnpointsMenu)
 	{
 		return CG_SpawnpointsCheckExecKey(key, qfalse);
+	}
+
+	if (cg.shoutcastMenu)
+	{
+		return CG_ShoutcastCheckExecKey(key, qfalse);
 	}
 
 	return qfalse;

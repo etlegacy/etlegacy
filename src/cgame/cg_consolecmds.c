@@ -1936,6 +1936,23 @@ static void CG_ListSpawnPoints_f(void)
 	}
 }
 
+static void CG_ShoutcastMenu_f(void)
+{
+	if (cgs.clientinfo[cg.clientNum].shoutcaster)
+	{
+		trap_UI_Popup(UIMENU_NONE);
+
+		if (cg.shoutcastMenu)
+		{
+			CG_EventHandling(CGAME_EVENT_NONE, qfalse);
+		}
+		else
+		{
+			CG_EventHandling(CGAME_EVENT_SHOUTCAST, qfalse);
+		}
+	}
+}
+
 static consoleCommand_t commands[] =
 {
 	{ "testgun",             CG_TestGun_f              },
@@ -2056,7 +2073,9 @@ static consoleCommand_t commands[] =
 	// objective info list for mappers/scripters (and players? - we might extend it)
 	{ "oinfo",               CG_PrintObjectiveInfo_f   },
 	{ "resetmaxspeed",       CG_ResetMaxSpeed_f        },
-	{ "listspawnpt",         CG_ListSpawnPoints_f      }
+	{ "listspawnpt",         CG_ListSpawnPoints_f      },
+
+	{ "shoutcastmenu",       CG_ShoutcastMenu_f        }
 };
 
 /**

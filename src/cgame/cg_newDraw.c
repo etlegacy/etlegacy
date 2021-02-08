@@ -603,6 +603,7 @@ void CG_MouseEvent(int x, int y)
 	case CGAME_EVENT_GAMEVIEW:
 	case CGAME_EVENT_CAMPAIGNBREIFING:
 	case CGAME_EVENT_FIRETEAMMSG:
+	case CGAME_EVENT_SHOUTCAST:
 	case CGAME_EVENT_SPAWNPOINTMSG:
 
 #ifdef FEATURE_EDV
@@ -750,6 +751,7 @@ void CG_EventHandling(int type, qboolean fForced)
 	case CGAME_EVENT_NONE:
 	case CGAME_EVENT_CAMPAIGNBREIFING:
 	case CGAME_EVENT_FIRETEAMMSG:
+	case CGAME_EVENT_SHOUTCAST:
 	case CGAME_EVENT_SPAWNPOINTMSG:
 	case CGAME_EVENT_MULTIVIEW:
 	default:
@@ -805,6 +807,11 @@ void CG_EventHandling(int type, qboolean fForced)
 			cg.showFireteamMenu = qfalse;
 			trap_Cvar_Set("cl_bypassmouseinput", "0");
 		}
+		else if (cgs.eventHandling == CGAME_EVENT_SHOUTCAST)
+		{
+			cg.shoutcastMenu = qfalse;
+			trap_Cvar_Set("cl_bypassmouseinput", "0");
+		}
 		else if (cgs.eventHandling == CGAME_EVENT_SPAWNPOINTMSG)
 		{
 			cg.showSpawnpointsMenu = qfalse;
@@ -847,6 +854,12 @@ void CG_EventHandling(int type, qboolean fForced)
 		trap_Cvar_Set("cl_bypassmouseinput", "1");
 		trap_Key_SetCatcher(KEYCATCH_CGAME);
 	}
+	else if (type == CGAME_EVENT_SHOUTCAST)
+	{
+		cg.shoutcastMenu = qtrue;
+		trap_Cvar_Set("cl_bypassmouseinput", "1");
+		trap_Key_SetCatcher(KEYCATCH_CGAME);
+	}
 	else if (type == CGAME_EVENT_SPAWNPOINTMSG)
 	{
 		cg.showSpawnpointsMenu = qtrue;
@@ -884,6 +897,9 @@ void CG_KeyEvent(int key, qboolean down)
 		break;
 	case CGAME_EVENT_FIRETEAMMSG:
 		CG_Fireteams_KeyHandling(key, down);
+		break;
+	case CGAME_EVENT_SHOUTCAST:
+		CG_Shoutcast_KeyHandling(key, down);
 		break;
 	case CGAME_EVENT_SPAWNPOINTMSG:
 		CG_Spawnpoints_KeyHandling(key, down);
