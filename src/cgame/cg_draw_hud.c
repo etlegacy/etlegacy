@@ -2282,6 +2282,34 @@ static char *CG_SpawnTimerText()
 		trap_Cvar_Set("cg_spawnTimer_set", "-1");
 	}
 	return NULL;
+
+* @brief CG_TimerWarmupString string to be drawn in reinforcement time hud element
+* If gametype is Last Man Standing it returns just WARMUP, otherwise it returns colored limbotime periods:
+* If player or following player is axis, then it returns red allies limbotime and blue axis limbotime,
+* for allies or in freecam it returns red axis limbotime and blue allies limbotime.
+* @return
+*/
+static const char *CG_TimerWarmupString()
+{
+	if (cgs.gametype == GT_WOLF_LMS)
+	{
+		return va("^7%s", CG_TranslateString("WARMUP")); // don't draw reinforcement time in warmup mode for LMS
+	}
+	else                                              // draw limbotime periods otherwise 
+	{
+		int limbotimeOwn, limbotimeEnemy;
+		if (cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_AXIS)
+		{
+			limbotimeOwn   = cg_redlimbotime.integer;
+			limbotimeEnemy = cg_bluelimbotime.integer;
+		}
+		else
+		{
+			limbotimeOwn   = cg_bluelimbotime.integer;
+			limbotimeEnemy = cg_redlimbotime.integer;
+		}
+		return va("^1%2.0i ^$%2.0i", limbotimeEnemy / 1000, limbotimeOwn / 1000);
+	}
 }
 
 /**
@@ -2308,7 +2336,7 @@ static void CG_DrawTimersAlt(rectDef_t *respawn, rectDef_t *spawntimer, rectDef_
 
 	if (cgs.gamestate != GS_PLAYING)
 	{
-		s        = va("^7%s", CG_TranslateString("WARMUP")); // don't draw reinforcement time in warmup mode // ^*
+		s        = CG_TimerWarmupString();
 		color[3] = fabs(sin(cg.time * 0.002));
 	}
 	else if (msec < 0 && cgs.timelimit > 0.0f)
@@ -2406,6 +2434,7 @@ static void CG_DrawTimersAlt(rectDef_t *respawn, rectDef_t *spawntimer, rectDef_
 				s = va("%02i:%02i", time.tm_hour, time.tm_min);
 			}
 		}
+		color[3] = 1.f; // don't blink local time during warmup
 		CG_Text_Paint_Ext(localtime->x, localtime->y, 0.19f, 0.19f, color, s, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
 	}
 }
@@ -2432,7 +2461,7 @@ static float CG_DrawTimerNormal(float y)
 
 	if (cgs.gamestate != GS_PLAYING)
 	{
-		s        = va("^7%s", CG_TranslateString("WARMUP")); // don't draw reinforcement time in warmup mode // ^*
+		s        = CG_TimerWarmupString();
 		color[3] = fabs(sin(cg.time * 0.002));
 	}
 	else if (msec < 0 && cgs.timelimit > 0.0f)

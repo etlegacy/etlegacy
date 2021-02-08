@@ -489,6 +489,23 @@ void CG_DemoClick(int key, qboolean down)
 			trap_Cvar_Set("demo_pvshint", ((demo_pvshint.integer == 0) ? "1" : "0"));
 		}
 		return;
+	case K_F6:
+		if (!down)
+		{
+			if (cg_drawSpectatorNames.integer == DEMO_NAMEOFF)
+			{
+				trap_Cvar_Set("cg_drawSpectatorNames", va("%i", DEMO_CLEANNAME));
+			}
+			else if (cg_drawSpectatorNames.integer == DEMO_CLEANNAME)
+			{
+				trap_Cvar_Set("cg_drawSpectatorNames", va("%i", DEMO_COLOREDNAME));
+			}
+			else
+			{
+				trap_Cvar_Set("cg_drawSpectatorNames", va("%i", DEMO_NAMEOFF));
+			}
+		}
+		return;
 #endif // ifdef FEATURE_EDV
 
 	// Third-person controls
@@ -1701,6 +1718,21 @@ void CG_DemoHelpDraw(void)
 	const char *dynamitecam = ONOFF(demo_weaponcam.integer & DWC_DYNAMITE);
 	const char *teamonly    = ONOFF(demo_teamonlymissilecam.integer);
 	const char *pvshint     = ONOFF(demo_pvshint.integer);
+	const char *playerNames;
+
+	if (cg_drawSpectatorNames.integer == DEMO_CLEANNAME)
+	{
+		playerNames = "   Clean";
+	}
+	else if (cg_drawSpectatorNames.integer == DEMO_COLOREDNAME)
+	{
+		playerNames = "Coloured";
+	}
+	else
+	{
+		playerNames = "     OFF";
+	}
+
 #endif
 
 	if (cg.demohelpWindow == SHOW_OFF)
@@ -1747,6 +1779,7 @@ void CG_DemoHelpDraw(void)
 			va("^nINS       ^mMortarcam  ^m%s", mortarcam),
 			va("^nPGDOWN    ^mTeamonly   ^m%s", teamonly),
 			NULL,
+			va("^nF6        ^mNames ^m%s",      playerNames),
 		};
 #endif
 

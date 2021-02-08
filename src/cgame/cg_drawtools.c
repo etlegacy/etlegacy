@@ -811,7 +811,7 @@ void CG_AddOnScreenText(const char *text, vec3_t origin)
 			dist2 = 2.0f;
 		}
 
-		scale = 2.4f - dist2 - dist / 6000.0f;
+		scale = 2.37f - dist2 - dist / 6000.0f;
 		if (scale < 0.05f)
 		{
 			scale = 0.05f;
@@ -837,6 +837,102 @@ void CG_AddOnScreenText(const char *text, vec3_t origin)
 	else
 	{
 		Com_Memset(&cg.specOnScreenLabels[cg.specStringCount], 0, sizeof(cg.specOnScreenLabels[cg.specStringCount]));
+	}
+}
+
+/**
+* @brief CG_AddOnBar
+* @param[in] fraction
+* @param[in] colorStart
+* @param[in] colorEnd
+* @param[in] colorBack
+* @param[in] origin
+*/
+void CG_AddOnScreenBar(float fraction, vec4_t colorStart, vec4_t colorEnd, vec4_t colorBack, vec3_t origin)
+{
+	float x, y, alpha;
+
+	if (cg.specBarCount >= MAX_FLOATING_BARS)
+	{
+		return;
+	}
+
+	if (CG_WorldCoordToScreenCoordFloat(origin, &x, &y))
+	{
+		float scale, w = 75, h = 7;
+		float dist  = VectorDistance(origin, cg.refdef_current->vieworg);
+		float dist2 = (dist * dist) / (3600.0f);
+
+		if (dist > 2500)
+		{
+			return;
+		}
+
+		if (dist2 > 2.0f)
+		{
+			dist2 = 2.0f;
+		}
+
+		scale = 2.4f - dist2 - dist / 6000.0f;
+		if (scale < 0.05f)
+		{
+			scale = 0.05f;
+		}
+
+		w *= scale;
+		h *= scale;
+		if (h < 5)
+		{
+			h = 5;
+		}
+		if (h > 7)
+		{
+			h = 7;
+		}
+		if (w < 10)
+		{
+			w = 10;
+		}
+		if (w > 40)
+		{
+			w = 40;
+		}
+
+		x -= w / 2;
+		y -= h / 2;
+
+		alpha = colorBack[3] * scale * 2.5f;
+		if (alpha > 1.0f)
+		{
+			colorBack[3] = 1.0f;
+		}
+		else if (alpha < 0)
+		{
+			colorBack[3] = 0.0f;
+		}
+		else
+		{
+			colorBack[3] = alpha;
+		}
+
+		// save it
+		cg.specOnScreenBar[cg.specBarCount].x        = x;
+		cg.specOnScreenBar[cg.specBarCount].y        = y;
+		cg.specOnScreenBar[cg.specBarCount].w        = w;
+		cg.specOnScreenBar[cg.specBarCount].h        = h;
+		cg.specOnScreenBar[cg.specBarCount].fraction = fraction;
+		cg.specOnScreenBar[cg.specBarCount].visible  = qtrue;
+		VectorCopy(origin, cg.specOnScreenBar[cg.specBarCount].origin);
+		Vector4Copy(colorStart, cg.specOnScreenBar[cg.specBarCount].colorStart);
+		Vector4Copy(colorEnd, cg.specOnScreenBar[cg.specBarCount].colorEnd);
+		Vector4Copy(colorBack, cg.specOnScreenBar[cg.specBarCount].colorBack);
+
+		// count
+		cg.specBarCount++;
+	}
+	else
+	{
+		Com_Memset(&cg.specOnScreenBar[cg.specBarCount], 0, sizeof(cg.specOnScreenBar[cg.specBarCount]));
 	}
 }
 
