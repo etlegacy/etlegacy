@@ -2796,6 +2796,12 @@ void CG_DrawMapEntityNew(mapEntityData_t *mEnt, float x, float y, float w, float
 		trap_R_SetColor(NULL);
 		return;
 	case ME_LANDMINE:
+	{
+		float x1 = x;
+		float y1 = y;
+		float w1 = w;
+		float h1 = h;
+
 		if (mEntFilter & CC_FILTER_LANDMINES)
 		{
 			return;
@@ -2808,10 +2814,6 @@ void CG_DrawMapEntityNew(mapEntityData_t *mEnt, float x, float y, float w, float
 				return;
 			}
 		}
-		int x1 = x;
-		int y1 = y;
-		int w1 = w;
-		int h1 = h;
 
 		CG_AdjustFrom640(&x1, &y1, &w1, &h1);
 
@@ -2857,6 +2859,7 @@ void CG_DrawMapEntityNew(mapEntityData_t *mEnt, float x, float y, float w, float
 
 		j++;
 		return;
+	}
 	default:
 		return;
 	}
