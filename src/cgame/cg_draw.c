@@ -1971,7 +1971,7 @@ static void CG_DrawSpectator(void)
 	else
 	{
 #endif
-	s = CG_TranslateString(va("%s", cgs.clientinfo[cg.clientNum].shoutcaster ? "SHOUTCASTER" : "SPECTATOR"));
+	s = CG_TranslateString(va("%s", "SPECTATOR"));
 #ifdef FEATURE_EDV
 }
 #endif
@@ -1996,6 +1996,11 @@ static void CG_DrawVote(void)
 	charHeight = CG_Text_Height_Ext("A", fontScale, 0, &cgs.media.limboFont2);
 	y          = activehud->votetext.location.y;
 	x          = activehud->votetext.location.x;
+
+	if (cgs.clientinfo[cg.clientNum].shoutcaster)
+	{
+		y = 180;
+	}
 
 	if (cgs.complaintEndTime > cg.time && !cg.demoPlayback && cg_complaintPopUp.integer > 0 && cgs.complaintClient >= 0)
 	{
@@ -3743,6 +3748,11 @@ static void CG_Draw2D(void)
 		CG_DrawOnScreenBars();
 	}
 
+	if (!CG_DrawScoreboard() && cgs.clientinfo[cg.clientNum].shoutcaster && cg_shoutcastDrawPlayers.integer)
+	{
+		CG_DrawShoutcastPlayerList();
+	}
+
 	// no longer cheat protected, we draw crosshair/reticle in non demoplayback
 	if (cg_draw2D.integer == 0)
 	{
@@ -3769,10 +3779,11 @@ static void CG_Draw2D(void)
 	if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR)
 #endif
 	{
-		if (!CG_DrawScoreboard())
+		if (!CG_DrawScoreboard() && !cgs.clientinfo[cg.clientNum].shoutcaster)
 		{
 			CG_DrawSpectator();
 		}
+
 		CG_DrawCrosshair();
 		CG_DrawCrosshairNames();
 
@@ -3811,7 +3822,14 @@ static void CG_Draw2D(void)
 		if (cg.snap->ps.persistant[PERS_TEAM] != TEAM_SPECTATOR)
 #endif
 		{
-			CG_DrawActiveHud();
+			if (cgs.clientinfo[cg.clientNum].shoutcaster && cg.snap->ps.pm_flags & PMF_FOLLOW)
+			{
+				CG_DrawShoutcastPlayerStatus();
+			}
+			else
+			{
+				CG_DrawActiveHud();
+			}
 		}
 
 		if (!cg_paused.integer)
@@ -3823,17 +3841,29 @@ static void CG_Draw2D(void)
 #ifdef FEATURE_EDV
 		if (!cgs.demoCamera.renderingFreeCam && !cgs.demoCamera.renderingWeaponCam)
 		{
-			CG_DrawFollow();
+			if (!cgs.clientinfo[cg.clientNum].shoutcaster)
+			{
+				CG_DrawFollow();
+			}
 		}
 #else
-		CG_DrawFollow();
+		if (!cgs.clientinfo[cg.clientNum].shoutcaster)
+		{
+			CG_DrawFollow();
+		}
 #endif
 
 		CG_DrawWarmup();
 		CG_DrawGlobalHud();
-		CG_DrawObjectiveInfo();
-		CG_DrawSpectatorMessage();
+
+		if (!cgs.clientinfo[cg.clientNum].shoutcaster)
+		{
+			CG_DrawObjectiveInfo();
+			CG_DrawSpectatorMessage();
+		}
+
 		CG_DrawLimboMessage();
+
 		CG_DrawVote();
 	}
 	else

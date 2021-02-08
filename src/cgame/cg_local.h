@@ -1381,6 +1381,8 @@ typedef struct
 	qboolean showFireteamMenu;
 	qboolean showSpawnpointsMenu;
 
+	qboolean shoutcastMenu;
+
 	char spawnPoints[MAX_SPAWNPOINTS][MAX_SPAWNDESC];
 	vec3_t spawnCoordsUntransformed[MAX_SPAWNPOINTS];
 	vec3_t spawnCoords[MAX_SPAWNPOINTS];
@@ -2811,6 +2813,10 @@ extern vmCvar_t cg_drawspeed;
 extern vmCvar_t cg_visualEffects;  ///< turn invisible (0) / visible (1) visual effect (i.e airstrike plane, debris ...)
 extern vmCvar_t cg_bannerTime;
 
+extern vmCvar_t cg_shoutcastDrawPlayers;
+extern vmCvar_t cg_shoutcastDrawTeamNames;
+extern vmCvar_t cg_shoutcastTeamName1;
+extern vmCvar_t cg_shoutcastTeamName2;
 extern vmCvar_t cg_shoutcastDrawHealth;
 extern vmCvar_t cg_shoutcastGrenadeTrail;
 
@@ -2987,6 +2993,19 @@ int CG_CalculateReinfTime(qboolean menu);
 float CG_CalculateReinfTime_Float(qboolean menu);
 int CG_CalculateShoutcasterReinfTime(team_t team);
 void CG_Fade(int r, int g, int b, int a, int time, int duration);
+
+void CG_PlayerAmmoValue(int *ammo, int *clips, int *akimboammo);
+
+//cg_shoutcastoverlay.c
+
+void CG_DrawShoutcastPlayerList();
+void CG_DrawShoutcastPlayerStatus();
+void CG_DrawShoutcastTimer();
+void CG_DrawShoutcastPowerups();
+void CG_DrawMinimap();
+
+void CG_Shoutcast_KeyHandling(int key, qboolean down);
+qboolean CG_ShoutcastCheckExecKey(int key, qboolean doaction);
 
 // cg_player.c
 qboolean CG_EntOnFire(centity_t *cent);
@@ -3216,6 +3235,8 @@ void CG_DrawAutoMap(float x, float y, float w, float h);
 
 qboolean CG_DrawMissionBriefing(void);
 void CG_MissionBriefingClick(int key);
+
+qboolean CG_DrawFlag(float x, float y, float fade, int clientNum);
 
 // MAPVOTE
 qboolean CG_FindArenaInfo(const char *filename, const char *mapname, arenaInfo_t *info);
@@ -3766,6 +3787,11 @@ void CG_DrawMortarMarker(float px, float py, float pw, float ph, qboolean draw, 
 void CG_CommandMap_SetHighlightText(const char *text, float x, float y);
 void CG_CommandMap_DrawHighlightText(void);
 qboolean CG_CommandCentreSpawnPointClick(void);
+
+void CG_DrawAutoMapNew(float x, float y, float w, float h);
+void CG_DrawMapNew(float x, float y, float w, float h, int mEntFilter, mapScissor_t *scissor, qboolean interactive, float alpha, qboolean borderblend);
+int CG_DrawSpawnPointInfoNew(float px, float py, float pw, float ph, qboolean draw, mapScissor_t *scissor, int expand);
+void CG_DrawMortarMarkerNew(float px, float py, float pw, float ph, qboolean draw, mapScissor_t *scissor, int expand);
 
 #define LIMBO_3D_X  287 //% 280
 #define LIMBO_3D_Y  382
