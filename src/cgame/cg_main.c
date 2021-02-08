@@ -349,8 +349,8 @@ vmCvar_t cg_drawspeed;
 vmCvar_t cg_visualEffects;
 vmCvar_t cg_bannerTime;
 
+vmCvar_t cg_shoutcastDrawHealth;
 vmCvar_t cg_shoutcastGrenadeTrail;
-
 
 typedef struct
 {
@@ -367,7 +367,7 @@ static cvarTable_t cvarTable[] =
 	{ &cg_drawGun,                "cg_drawGun",                "1",           CVAR_ARCHIVE,                 0 },
 	{ &cg_gun_frame,              "cg_gun_frame",              "0",           CVAR_TEMP,                    0 },
 	{ &cg_cursorHints,            "cg_cursorHints",            "1",           CVAR_ARCHIVE,                 0 },
-	{ &cg_zoomDefaultSniper,      "cg_zoomDefaultSniper",      "20",          CVAR_ARCHIVE,                 0 }, // changed per atvi req
+	{ &cg_zoomDefaultSniper,      "cg_zoomDefaultSniper",      "20",          CVAR_ARCHIVE,                 0 },   // changed per atvi req
 	{ &cg_zoomStepSniper,         "cg_zoomStepSniper",         "2",           CVAR_ARCHIVE,                 0 },
 	{ &cg_fov,                    "cg_fov",                    "90",          CVAR_ARCHIVE,                 0 },
 	{ &cg_muzzleFlash,            "cg_muzzleFlash",            "1",           CVAR_ARCHIVE,                 0 },
@@ -401,13 +401,13 @@ static cvarTable_t cvarTable[] =
 	{ &cg_gun_x,                  "cg_gunX",                   "0",           CVAR_TEMP,                    0 },
 	{ &cg_gun_y,                  "cg_gunY",                   "0",           CVAR_TEMP,                    0 },
 	{ &cg_gun_z,                  "cg_gunZ",                   "0",           CVAR_TEMP,                    0 },
-	{ &cg_centertime,             "cg_centertime",             "5",           CVAR_ARCHIVE,                 0 }, // changed from 3 to 5
+	{ &cg_centertime,             "cg_centertime",             "5",           CVAR_ARCHIVE,                 0 },   // changed from 3 to 5
 	{ &cg_bobbing,                "cg_bobbing",                "1",           CVAR_ARCHIVE,                 0 },
 
 	{ &cg_autoactivate,           "cg_autoactivate",           "1",           CVAR_ARCHIVE,                 0 },
 
 	// more fluid rotations
-	{ &cg_swingSpeed,             "cg_swingSpeed",             "0.1",         CVAR_CHEAT,                   0 }, // was 0.3 for Q3
+	{ &cg_swingSpeed,             "cg_swingSpeed",             "0.1",         CVAR_CHEAT,                   0 },   // was 0.3 for Q3
 	{ &cg_bloodTime,              "cg_bloodTime",              "120",         CVAR_ARCHIVE,                 0 },
 
 	{ &cg_skybox,                 "cg_skybox",                 "1",           CVAR_CHEAT,                   0 },
@@ -428,9 +428,9 @@ static cvarTable_t cvarTable[] =
 	{ &cg_tracerWidth,            "cg_tracerwidth",            "0.8",         CVAR_CHEAT,                   0 },
 	{ &cg_tracerSpeed,            "cg_tracerSpeed",            "4500",        CVAR_CHEAT,                   0 },
 	{ &cg_tracerLength,           "cg_tracerlength",           "160",         CVAR_CHEAT,                   0 },
-	{ &cg_thirdPersonRange,       "cg_thirdPersonRange",       "80",          CVAR_CHEAT,                   0 }, // per atvi req
+	{ &cg_thirdPersonRange,       "cg_thirdPersonRange",       "80",          CVAR_CHEAT,                   0 },   // per atvi req
 	{ &cg_thirdPersonAngle,       "cg_thirdPersonAngle",       "0",           CVAR_CHEAT,                   0 },
-	{ &cg_thirdPerson,            "cg_thirdPerson",            "0",           CVAR_CHEAT,                   0 }, // per atvi req
+	{ &cg_thirdPerson,            "cg_thirdPerson",            "0",           CVAR_CHEAT,                   0 },   // per atvi req
 	{ &cg_teamChatTime,           "cg_teamChatTime",           "8000",        CVAR_ARCHIVE,                 0 },
 	{ &cg_teamChatHeight,         "cg_teamChatHeight",         "8",           CVAR_ARCHIVE,                 0 },
 	{ &cg_teamChatMention,        "cg_teamChatMention",        "1",           CVAR_ARCHIVE,                 0 },
@@ -453,17 +453,17 @@ static cvarTable_t cvarTable[] =
 	// the following variables are created in other parts of the system,
 	// but we also reference them here
 
-	{ &cg_buildScript,            "com_buildScript",           "0",           0,                            0 }, // force loading of all possible data and error on failures
+	{ &cg_buildScript,            "com_buildScript",           "0",           0,                            0 },   // force loading of all possible data and error on failures
 	{ &cg_paused,                 "cl_paused",                 "0",           CVAR_ROM,                     0 },
 
 	{ &cg_blood,                  "cg_showblood",              "1",           CVAR_ARCHIVE,                 0 },
 #ifdef ALLOW_GSYNC
-	{ &cg_synchronousClients,     "g_synchronousClients",      "0",           CVAR_SYSTEMINFO | CVAR_CHEAT, 0 }, // communicated by systeminfo
+	{ &cg_synchronousClients,     "g_synchronousClients",      "0",           CVAR_SYSTEMINFO | CVAR_CHEAT, 0 },   // communicated by systeminfo
 #endif // ALLOW_GSYNC
 
-	{ &cg_gameType,               "g_gametype",                "0",           0,                            0 }, // communicated by systeminfo
-	{ &cg_bluelimbotime,          "",                          "30000",       0,                            0 }, // communicated by systeminfo
-	{ &cg_redlimbotime,           "",                          "30000",       0,                            0 }, // communicated by systeminfo
+	{ &cg_gameType,               "g_gametype",                "0",           0,                            0 },   // communicated by systeminfo
+	{ &cg_bluelimbotime,          "",                          "30000",       0,                            0 },   // communicated by systeminfo
+	{ &cg_redlimbotime,           "",                          "30000",       0,                            0 },   // communicated by systeminfo
 	{ &cg_drawCompass,            "cg_drawCompass",            "1",           CVAR_ARCHIVE,                 0 },
 	{ &cg_drawNotifyText,         "cg_drawNotifyText",         "1",           CVAR_ARCHIVE,                 0 },
 	{ &cg_quickMessageAlt,        "cg_quickMessageAlt",        "0",           CVAR_ARCHIVE,                 0 },
@@ -563,14 +563,14 @@ static cvarTable_t cvarTable[] =
 
 	{ &cg_spawnTimer_period,      "cg_spawnTimer_period",      "0",           CVAR_TEMP,                    0 },
 
-	{ &cg_logFile,                "cg_logFile",                "",            CVAR_ARCHIVE,                 0 }, // we don't log the chats per default
+	{ &cg_logFile,                "cg_logFile",                "",            CVAR_ARCHIVE,                 0 },   // we don't log the chats per default
 
-	{ &cg_countryflags,           "cg_countryflags",           "1",           CVAR_ARCHIVE,                 0 }, // GeoIP
-	{ &cg_altHud,                 "cg_altHud",                 "0",           CVAR_ARCHIVE,                 0 }, // Hudstyles
-	{ &cg_altHudFlags,            "cg_altHudFlags",            "0",           CVAR_ARCHIVE,                 0 }, // Hudstyles
-	{ &cg_tracers,                "cg_tracers",                "1",           CVAR_ARCHIVE,                 0 }, // Draw tracers
-	{ &cg_fireteamLatchedClass,   "cg_fireteamLatchedClass",   "1",           CVAR_ARCHIVE,                 0 }, // Draw fireteam members latched class
-	{ &cg_simpleItems,            "cg_simpleItems",            "0",           CVAR_ARCHIVE,                 0 }, // Bugged atm
+	{ &cg_countryflags,           "cg_countryflags",           "1",           CVAR_ARCHIVE,                 0 },   // GeoIP
+	{ &cg_altHud,                 "cg_altHud",                 "0",           CVAR_ARCHIVE,                 0 },   // Hudstyles
+	{ &cg_altHudFlags,            "cg_altHudFlags",            "0",           CVAR_ARCHIVE,                 0 },   // Hudstyles
+	{ &cg_tracers,                "cg_tracers",                "1",           CVAR_ARCHIVE,                 0 },   // Draw tracers
+	{ &cg_fireteamLatchedClass,   "cg_fireteamLatchedClass",   "1",           CVAR_ARCHIVE,                 0 },   // Draw fireteam members latched class
+	{ &cg_simpleItems,            "cg_simpleItems",            "0",           CVAR_ARCHIVE,                 0 },   // Bugged atm
 	{ &cg_automapZoom,            "cg_automapZoom",            "5.159",       CVAR_ARCHIVE,                 0 },
 	{ &cg_drawTime,               "cg_drawTime",               "0",           CVAR_ARCHIVE,                 0 },
 	{ &cg_popupFadeTime,          "cg_popupFadeTime",          "2500",        CVAR_ARCHIVE,                 0 },
@@ -581,12 +581,12 @@ static cvarTable_t cvarTable[] =
 	{ &cg_weapaltReloads,         "cg_weapaltReloads",         "0",           CVAR_ARCHIVE,                 0 },
 
 	// Fonts
-	{ &cg_fontScaleTP,            "cg_fontScaleTP",            "0.35",        CVAR_ARCHIVE,                 0 }, // TopPrint
-	{ &cg_fontScaleSP,            "cg_fontScaleSP",            "0.22",        CVAR_ARCHIVE,                 0 }, // SidePrint
-	{ &cg_fontScaleCP,            "cg_fontScaleCP",            "0.22",        CVAR_ARCHIVE,                 0 }, // CenterPrint
-	{ &cg_fontScaleCN,            "cg_fontScaleCN",            "0.25",        CVAR_ARCHIVE,                 0 }, // CrossName
+	{ &cg_fontScaleTP,            "cg_fontScaleTP",            "0.35",        CVAR_ARCHIVE,                 0 },   // TopPrint
+	{ &cg_fontScaleSP,            "cg_fontScaleSP",            "0.22",        CVAR_ARCHIVE,                 0 },   // SidePrint
+	{ &cg_fontScaleCP,            "cg_fontScaleCP",            "0.22",        CVAR_ARCHIVE,                 0 },   // CenterPrint
+	{ &cg_fontScaleCN,            "cg_fontScaleCN",            "0.25",        CVAR_ARCHIVE,                 0 },   // CrossName
 
-	{ &cg_optimizePrediction,     "cg_optimizePrediction",     "1",           CVAR_ARCHIVE,                 0 }, // unlagged optimized prediction
+	{ &cg_optimizePrediction,     "cg_optimizePrediction",     "1",           CVAR_ARCHIVE,                 0 },   // unlagged optimized prediction
 
 	{ &cg_scoreboard,             "cg_scoreboard",             "0",           CVAR_ARCHIVE,                 0 },
 
@@ -594,8 +594,12 @@ static cvarTable_t cvarTable[] =
 
 	{ &cg_drawspeed,              "cg_drawspeed",              "0",           CVAR_ARCHIVE,                 0 },
 
-	{ &cg_visualEffects,          "cg_visualEffects",          "1",           CVAR_ARCHIVE,                 0 },  // Draw visual effects (i.e : airstrike plane, debris ...)
+	{ &cg_visualEffects,          "cg_visualEffects",          "1",           CVAR_ARCHIVE,                 0 },    // Draw visual effects (i.e : airstrike plane, debris ...)
 	{ &cg_bannerTime,             "cg_bannerTime",             "10000",       CVAR_ARCHIVE,                 0 },
+
+	{ &cg_visualEffects,          "cg_visualEffects",          "1",           CVAR_ARCHIVE,                 0 },   // Draw visual effects (i.e : airstrike plane, debris ...)
+	{ &cg_bannerTime,             "cg_bannerTime",             "10000",       CVAR_ARCHIVE,                 0 },
+	{ &cg_shoutcastDrawHealth,    "cg_shoutcastDrawHealth",    "0",           CVAR_ARCHIVE,                 0 },
 	{ &cg_shoutcastGrenadeTrail,  "cg_shoutcastGrenadeTrail",  "0",           CVAR_ARCHIVE,                 0 },
 };
 
