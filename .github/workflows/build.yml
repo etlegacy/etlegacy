@@ -93,44 +93,6 @@ jobs:
             build/legacy/cgame*.dll
             build/legacy/ui*.dll
 
-  android-mod:
-    runs-on: ubuntu-18.04
-    steps:
-      - name: Setup JDK
-        uses: actions/setup-java@v1
-        with:
-          java-version: 1.8
-
-      - name: Cloning Android Repo
-        uses: actions/checkout@v2
-        with:
-          repository: etlegacy/etlegacy-android
-          submodules: true
-          fetch-depth: 0
-
-      - name: Downloading NDK
-        uses: actions/checkout@v2
-        with:
-          repository: rafal1137/NDK_ETL
-          path: NDK_ETL
-
-      - name: Grant execute permission for gradlew
-        shell: bash
-        run: chmod +x ./gradlew
-
-      - name: Build
-        run: |
-          echo "export ANDROID_NDK_HOME=$GITHUB_WORKSPACE/NDK_ETL/ndk-bundle" > ~/.bashrc
-          source ~/.bashrc
-          chmod -R 775 $ANDROID_NDK_HOME
-          echo $ANDROID_NDK_HOME
-          ./gradlew clean build
-
-#      - uses: actions/upload-artifact@v2
-#        with:
-#          name: android-mod
-#          path: |
-
 #   __  __                                                          _
 #  |  \/  |                                                        | |
 #  | \  / |   ___   _ __    __ _    ___     _ __ ___     ___     __| |  ___
@@ -329,6 +291,7 @@ jobs:
   upload:
     runs-on: ubuntu-16.04
     needs: [ lnx32, lnx64, osx, win ]
+    if: github.ref == 'refs/heads/master'
     steps:
       - uses: geekyeggo/delete-artifact@v1
         with:
@@ -348,12 +311,13 @@ jobs:
         run: |
           find lnx64-packages/ -name '*' -type f -exec curl -H "Authorization: Bearer ${{ secrets.LEGACY_AUTH }}" -X POST -H "Content-Type: multipart/form-data" -F "data=@{}" -F "platform=lnx64" -F"sha=${{ github.sha }}" ${{ secrets.LEGACY_UPLOAD_URL }} \;
           find lnx32-packages/ -name '*' -type f -exec curl -H "Authorization: Bearer ${{ secrets.LEGACY_AUTH }}" -X POST -H "Content-Type: multipart/form-data" -F "data=@{}" -F "platform=lnx32" -F"sha=${{ github.sha }}" ${{ secrets.LEGACY_UPLOAD_URL }} \;
-          find osx-packages/ -name '*' -type f -exec curl -H "Authorization: Bearer ${{ secrets.LEGACY_AUTH }}" -X POST -H "Content-Type: multipart/form-data" -F "data=@{}" -F "platform=osx" -F"sha=${{ github.sha }}" ${{ secrets.LEGACY_UPLOAD_URL }} \;
-          find win-packages/ -name '*' -type f -exec curl -H "Authorization: Bearer ${{ secrets.LEGACY_AUTH }}" -X POST -H "Content-Type: multipart/form-data" -F "data=@{}" -F "platform=win" -F"sha=${{ github.sha }}" ${{ secrets.LEGACY_UPLOAD_URL }} \;
+          find osx-packages/ -name '*' -type f -exec curl -H "Authorization: Bearer ${{ secrets.LEGACY_AUTH }}" -X POST -H "Content-Type: multipart/form-data" -F "data=@{}" -F "platform=osx64" -F"sha=${{ github.sha }}" ${{ secrets.LEGACY_UPLOAD_URL }} \;
+          find win-packages/ -name '*' -type f -exec curl -H "Authorization: Bearer ${{ secrets.LEGACY_AUTH }}" -X POST -H "Content-Type: multipart/form-data" -F "data=@{}" -F "platform=win32" -F"sha=${{ github.sha }}" ${{ secrets.LEGACY_UPLOAD_URL }} \;
 
   docker:
     runs-on: ubuntu-16.04
     needs: [ lnx64 ]
+    if: github.ref == 'refs/heads/master'
     steps:
       - uses: actions/checkout@v2
         with:
@@ -380,9 +344,11 @@ jobs:
         id: vars
         run: |
           echo ::set-output name=tag::$(git describe --abbrev=7 2>/dev/null)
-          echo ::set-output name=shorttag::$(git describe --abbrev=0 2>/dev/null)
+          echo ::set-output name=short_tag::$(git describe --abbrev=0 2>/dev/null)
+          echo ::set-output name=tag_exists::$(curl -s -o /dev/null -w "%{http_code}" https://hub.docker.com/v1/repositories/etlegacy/server/tags/${{ steps.vars.outputs.tag }} 2>/dev/null)
 
       - name: Build and push the tagged Docker image
+        if: ${{ steps.vars.outputs.tag_exists == '404' }}
         working-directory: build/package
         run: |
           docker build . --file Dockerfile --tag etlegacy/server:${{ steps.vars.outputs.tag }}
@@ -390,7 +356,7 @@ jobs:
 
       # If we are on a release tag, then also create the 'latest' tag on docker hub
       - name: Build and push the latest Docker image
-        if: ${{ steps.vars.outputs.tag == steps.vars.outputs.tagshort }}
+        if: ${{ steps.vars.outputs.tag == steps.vars.outputs.short_tag && steps.vars.outputs.tag_exists == '404' }}
         working-directory: build/package
         run: |
           docker build . --file Dockerfile --tag etlegacy/server:latest
@@ -408,3 +374,13 @@ jobs:
             lnx32-packages
             osx-packages
             win-packages
+
+      - uses: geekyeggo/delete-artifact@v1
+        if: github.ref != 'refs/heads/master'
+        with:
+          failOnError: false
+          name: |
+            All-mods
+            lnx64-mod
+            osx-mod
+            win-mod

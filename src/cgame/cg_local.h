@@ -168,6 +168,28 @@ typedef struct specLabel_s
 } specLabel_t;
 
 /**
+* @struct specBar_s
+* @typedef specBar_t
+* @brief
+*/
+typedef struct specBar_s
+{
+	float x;
+	float y;
+	float w;
+	float h;
+	float fraction;
+	vec4_t colorStart;
+	vec4_t colorEnd;
+	vec4_t colorBack;
+	vec3_t origin;
+	int lastVisibleTime;
+	int lastInvisibleTime;
+	qboolean visible;
+	float alpha;
+} specBar_t;
+
+/**
  * @struct cg_window_s
  * @brief
  */
@@ -991,6 +1013,8 @@ typedef struct
 
 #define MAX_FLOATING_STRINGS 128
 
+#define MAX_FLOATING_BARS 64
+
 /**
  * @struct soundScriptHandle_s
  * @typedef soundScriptHandle_t
@@ -1487,6 +1511,9 @@ typedef struct
 
 	specLabel_t specOnScreenLabels[MAX_FLOATING_STRINGS];
 	int specStringCount;
+
+	specBar_t specOnScreenBar[MAX_FLOATING_BARS];
+	int specBarCount;
 
 	vec3_t airstrikePlaneScale[2];
 
@@ -2171,6 +2198,10 @@ typedef struct
 #define DWC_DYNAMITE            0x08
 #define DWC_SMOKE               0x10    ///< FIXME: add to demo control?
 
+#define DEMO_NAMEOFF           0
+#define DEMO_CLEANNAME         1
+#define DEMO_COLOREDNAME       2
+
 /**
  * @struct cam_s
  * @typedef cam_t
@@ -2786,6 +2817,8 @@ extern vmCvar_t cg_shoutcastDrawPlayers;
 extern vmCvar_t cg_shoutcastDrawTeamNames;
 extern vmCvar_t cg_shoutcastTeamName1;
 extern vmCvar_t cg_shoutcastTeamName2;
+extern vmCvar_t cg_shoutcastDrawHealth;
+extern vmCvar_t cg_shoutcastGrenadeTrail;
 
 // local clock flags
 #define LOCALTIME_ON                0x01
@@ -2896,6 +2929,7 @@ void CG_GetColorForHealth(int health, vec4_t hcolor);
 
 qboolean CG_WorldCoordToScreenCoordFloat(vec3_t point, float *x, float *y);
 void CG_AddOnScreenText(const char *text, vec3_t origin);
+void CG_AddOnScreenBar(float fraction, vec4_t colorStart, vec4_t colorEnd, vec4_t colorBack, vec3_t origin);
 
 // string word wrapper
 char *CG_WordWrapString(const char *input, int maxLineChars, char *output, int maxOutputSize);

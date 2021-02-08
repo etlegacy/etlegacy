@@ -2010,6 +2010,33 @@ static void CG_PlayerFloatText(centity_t *cent, const char *text, int height)
 }
 
 /**
+* @brief CG_PlayerBar
+* @param[in] cent
+* @param[in] fraction
+* @param[in] colorStart
+* @param[in] colorEnd
+* @param[in] colorBack
+* @param[in] height
+*/
+static void CG_PlayerFloatBar(centity_t *cent, float fraction, vec4_t colorStart, vec4_t colorEnd, vec4_t colorBack, int height)
+{
+	vec3_t origin;
+
+	VectorCopy(cent->lerpOrigin, origin);
+
+	origin[2] += height;
+
+	// adjust bar height
+	if (cent->currentState.eFlags & EF_CROUCHING ||
+	    cent->currentState.eFlags & EF_PRONE || cent->currentState.eFlags & EF_PRONE_MOVING)
+	{
+		origin[2] -= 18;
+	}
+
+	CG_AddOnScreenBar(fraction, colorStart, colorEnd, colorBack, origin);
+}
+
+/**
  * @brief Float sprites over the player's head
  * @param[in] cent
  */
@@ -2019,6 +2046,8 @@ static void CG_PlayerSprites(centity_t *cent)
 	int          height   = 56;
 	clientInfo_t *ci      = &cgs.clientinfo[cent->currentState.clientNum];
 	qboolean     sameTeam = (cg.snap->ps.persistant[PERS_TEAM] == ci->team);
+	int          spacing  = 8;
+	char         *name;
 
 	if ((cent->currentState.powerups & (1 << PW_REDFLAG)) || (cent->currentState.powerups & (1 << PW_BLUEFLAG)))
 	{
@@ -2052,9 +2081,39 @@ static void CG_PlayerSprites(centity_t *cent)
 
 	if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR || (cg.snap->ps.pm_flags & PMF_FOLLOW && cgs.clientinfo[cg.clientNum].shoutcaster))
 	{
-		if (cg_drawSpectatorNames.integer > 0 || cgs.clientinfo[cg.clientNum].shoutcaster)
+		if (cg_shoutcastDrawHealth.integer > 0 && cgs.clientinfo[cg.clientNum].shoutcaster)
 		{
-			CG_PlayerFloatText(cent, cg_drawSpectatorNames.integer == 1 ? ci->cleanname : ci->name, height + 8);
+			if (cg_shoutcastDrawHealth.integer == 1 && cg_drawSpectatorNames.integer == 0)
+			{
+				CG_PlayerFloatText(cent, va("%s%ihp", ci->team == TEAM_AXIS ? "^1" : "^2", ci->health), height + spacing);
+			}
+			else if (cg_shoutcastDrawHealth.integer == 2)
+			{
+				vec4_t bgcolor     = { 0.0f, 0.0f, 0.0f, 1.0f };
+				vec4_t healthColor = { 0.0f, 1.0f, 0.0f, 1.0f };
+
+				float fraction = (float)ci->health / (float)CG_GetPlayerMaxHealth(cent->currentState.clientNum, ci->cls, ci->team);
+
+				if (ci->team == TEAM_AXIS)
+				{
+					Vector4Set(healthColor, 1.0f, 0.0f, 0.0f, 1.0f);
+				}
+
+				CG_PlayerFloatBar(cent, fraction, healthColor, healthColor, bgcolor, height + spacing + 8);
+				spacing += 14;
+			}
+		}
+
+		if (cg_drawSpectatorNames.integer > 0)
+		{
+			name = cg_drawSpectatorNames.integer == 1 ? ci->cleanname : ci->name;
+
+			if (cg_shoutcastDrawHealth.integer == 1 && cgs.clientinfo[cg.clientNum].shoutcaster)
+			{
+				name = va("%s %s%ihp", name, ci->team == TEAM_AXIS ? "^1" : "^2", ci->health);
+			}
+
+			CG_PlayerFloatText(cent, name, height + spacing);
 		}
 
 		// show some useful icons to spectators
