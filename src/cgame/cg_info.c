@@ -492,17 +492,17 @@ void CG_DemoClick(int key, qboolean down)
 	case K_F6:
 		if (!down)
 		{
-			if (cg_drawSpectatorNames.integer == DEMO_NameOff)
+			if (cg_drawSpectatorNames.integer == DEMO_NAMEOFF)
 			{
-				trap_Cvar_Set("cg_drawSpectatorNames", va("%i", DEMO_CleanName));
+				trap_Cvar_Set("cg_drawSpectatorNames", va("%i", DEMO_CLEANNAME));
 			}
-			else if (cg_drawSpectatorNames.integer == DEMO_CleanName)
+			else if (cg_drawSpectatorNames.integer == DEMO_CLEANNAME)
 			{
-				trap_Cvar_Set("cg_drawSpectatorNames", va("%i", DEMO_ColoredName));
+				trap_Cvar_Set("cg_drawSpectatorNames", va("%i", DEMO_COLOREDNAME));
 			}
 			else
 			{
-				trap_Cvar_Set("cg_drawSpectatorNames", va("%i", DEMO_NameOff));
+				trap_Cvar_Set("cg_drawSpectatorNames", va("%i", DEMO_NAMEOFF));
 			}
 		}
 		return;
@@ -1718,9 +1718,21 @@ void CG_DemoHelpDraw(void)
 	const char *dynamitecam = ONOFF(demo_weaponcam.integer & DWC_DYNAMITE);
 	const char *teamonly    = ONOFF(demo_teamonlymissilecam.integer);
 	const char *pvshint     = ONOFF(demo_pvshint.integer);
+	const char *playerNames;
 
-#define Names(x) ((x) ? x == DEMO_CleanName ? ("   Clean") : ("Coloured") : "     OFF")
-	const char *playerNames = Names(cg_drawSpectatorNames.integer);
+	if (cg_drawSpectatorNames.integer == DEMO_CLEANNAME)
+	{
+		playerNames = "   Clean";
+	}
+	else if (cg_drawSpectatorNames.integer == DEMO_COLOREDNAME)
+	{
+		playerNames = "Coloured";
+	}
+	else
+	{
+		playerNames = "     OFF";
+	}
+
 #endif
 
 	if (cg.demohelpWindow == SHOW_OFF)
