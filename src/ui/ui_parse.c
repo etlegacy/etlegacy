@@ -2096,15 +2096,30 @@ qboolean ItemParse_settingEnabled(itemDef_t *item, int handle)
  */
 qboolean ItemParse_tooltip(itemDef_t *item, int handle)
 {
-	qboolean rv = (Item_ValidateTooltipData(item) && PC_String_ParseTranslate(handle, &item->toolTipData->text));
-	if (item->cvar)
+	if (!Item_ValidateTooltipData(item))
+	{
+		return qfalse;
+	}
+
+	pc_token_t token;
+	if (!trap_PC_ReadToken(handle, &token))
+	{
+		return qfalse;
+	}
+
+	const char *translatedParsedText = __(token.string);
+	if (item->cvar && translatedParsedText)
 	{
 		//cvar_t *var;
 		//var = Cvar_FindVar(item->cvar);
-		char *newText = va("%s ^9%s: %s", item->toolTipData->text, item->type == ITEM_TYPE_BIND ? "cmd" : "cvar", item->cvar);
+		char *newText = va("%s ^9%s: %s", translatedParsedText, item->type == ITEM_TYPE_BIND ? "cmd": "cvar", item->cvar);
 		item->toolTipData->text = String_Alloc(newText);
 	}
-	return rv;
+	else
+	{
+		item->toolTipData->text = String_Alloc(translatedParsedText);
+	}
+	return qtrue;
 }
 
 /**
