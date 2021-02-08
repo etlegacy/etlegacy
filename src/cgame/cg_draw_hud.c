@@ -2252,14 +2252,14 @@ static float CG_DrawFPS(float y)
 }
 
 /**
-* @brief CG_SpawnTimerText red colored spawn time text in reinforcement time HUD element.
-* @return red colored text or NULL when its not supposed to be rendered
+ * @brief CG_SpawnTimerText red colored spawn time text in reinforcement time HUD element.
+ * @return red colored text or NULL when its not supposed to be rendered
 */
 static char *CG_SpawnTimerText()
 {
-	int     msec = (cgs.timelimit * 60000.f) - (cg.time - cgs.levelStartTime);
-	int     seconds;
-	int     secondsThen;
+	int msec = (cgs.timelimit * 60000.f) - (cg.time - cgs.levelStartTime);
+	int seconds;
+	int secondsThen;
 
 	if (cg_spawnTimer_set.integer != -1 && cgs.gamestate == GS_PLAYING && !cgs.clientinfo[cg.clientNum].shoutcaster)
 	{
@@ -2268,7 +2268,7 @@ static char *CG_SpawnTimerText()
 			int period = cg_spawnTimer_period.integer > 0 ? cg_spawnTimer_period.integer : (cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_AXIS ? cg_bluelimbotime.integer / 1000 : cg_redlimbotime.integer / 1000);
 			if (period > 0) // prevent division by 0 for weird cases like limbtotime < 1000
 			{
-				seconds = msec / 1000;
+				seconds     = msec / 1000;
 				secondsThen = ((cgs.timelimit * 60000.f) - cg_spawnTimer_set.integer) / 1000;
 				return va("^1%i", period + (seconds - secondsThen) % period);
 			}
@@ -2281,20 +2281,22 @@ static char *CG_SpawnTimerText()
 		trap_Cvar_Set("cg_spawnTimer_set", "-1");
 	}
 	return NULL;
+}
 
-* @brief CG_TimerWarmupString string to be drawn in reinforcement time hud element
-* If gametype is Last Man Standing it returns just WARMUP, otherwise it returns colored limbotime periods:
-* If player or following player is axis, then it returns red allies limbotime and blue axis limbotime,
-* for allies or in freecam it returns red axis limbotime and blue allies limbotime.
-* @return
+/**
+ * @brief CG_TimerWarmupString string to be drawn in reinforcement time hud element
+ * If gametype is Last Man Standing it returns just WARMUP, otherwise it returns colored limbotime periods:
+ * If player or following player is axis, then it returns red allies limbotime and blue axis limbotime,
+ * for allies or in freecam it returns red axis limbotime and blue allies limbotime.
+ * @return
 */
-static const char *CG_TimerWarmupString()
+static char *CG_TimerWarmupString()
 {
 	if (cgs.gametype == GT_WOLF_LMS)
 	{
 		return va("^7%s", CG_TranslateString("WARMUP")); // don't draw reinforcement time in warmup mode for LMS
 	}
-	else                                              // draw limbotime periods otherwise 
+	else                                              // draw limbotime periods otherwise
 	{
 		int limbotimeOwn, limbotimeEnemy;
 		if (cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_AXIS)
@@ -2325,7 +2327,7 @@ static void CG_DrawTimersAlt(rectDef_t *respawn, rectDef_t *spawntimer, rectDef_
 	qtime_t time;
 	vec4_t  color = { 0.625f, 0.625f, 0.6f, 1.0f };
 	int     tens;
-	int     msec = (cgs.timelimit * 60000.f) - (cg.time - cgs.levelStartTime);    // 60.f * 1000.f
+	int     msec    = (cgs.timelimit * 60000.f) - (cg.time - cgs.levelStartTime); // 60.f * 1000.f
 	int     seconds = msec / 1000;
 	int     mins    = seconds / 60;
 
@@ -2366,7 +2368,7 @@ static void CG_DrawTimersAlt(rectDef_t *respawn, rectDef_t *spawntimer, rectDef_
 			char *teamColor = (cgs.clientinfo[cg.clientNum].shoutcaster ? (cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_AXIS ? "^1" : "^$") : "^F");
 
 			rt = va("%s%d ", (reinfTime <= 2 && cgs.clientinfo[cg.clientNum].health == 0 &&
-			                   !(cg.snap->ps.pm_flags & PMF_FOLLOW)) ? "^1" : teamColor, reinfTime);
+			                  !(cg.snap->ps.pm_flags & PMF_FOLLOW)) ? "^1" : teamColor, reinfTime);
 		}
 		else
 		{
@@ -2388,7 +2390,8 @@ static void CG_DrawTimersAlt(rectDef_t *respawn, rectDef_t *spawntimer, rectDef_
 	CG_Text_Paint_Ext(respawn->x - w, respawn->y, 0.19f, 0.19f, color, s, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
 
 	// spawntimer
-	if (rt = CG_SpawnTimerText())
+	rt = CG_SpawnTimerText();
+	if (rt)
 	{
 		s = va("%s ", rt);
 		w = CG_Text_Width_Ext(s, 0.19f, 0, &cgs.media.limboFont1) - ((msec < 0 && cgs.timelimit > 0.0f) ? CG_Text_Width_Ext("00:00", 0.19f, 0, &cgs.media.limboFont1) : 0);
@@ -2503,7 +2506,8 @@ static float CG_DrawTimerNormal(float y)
 	}
 
 	// spawntimer
-	if (rt = CG_SpawnTimerText())
+	rt = CG_SpawnTimerText();
+	if (rt)
 	{
 		s = va("%s%s%s", rt, (cgs.timelimit <= 0.0f) ? " " : "", s);
 	}
