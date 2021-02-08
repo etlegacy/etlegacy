@@ -5744,7 +5744,9 @@ public:
 		}
 		else
 		{
-			Com_Memset(&_aabb, 0, sizeof(AABB));
+			Com_Memset(_aabb.m_Mins, 0, 3 * sizeof(float));
+			Com_Memset(_aabb.m_Maxs, 0, 3 * sizeof(float));
+			// Com_Memset(&_aabb, 0, sizeof(AABB));
 		}
 	}
 

@@ -86,9 +86,11 @@ static qboolean GLimp_InitOpenGLContext()
 	// get GL version
 	Q_strncpyz(glConfig.version_string, (const char *) glGetString(GL_VERSION), sizeof(glConfig.version_string));
 
+#ifndef FEATURE_RENDERER_GLES
 	// get shading language version
 	Q_strncpyz(glConfig.shadingLanguageVersion, (char *)glGetString(GL_SHADING_LANGUAGE_VERSION), sizeof(glConfig.shadingLanguageVersion));
 	sscanf(glConfig.shadingLanguageVersion, "%d.%d", &glConfig.glslMajorVersion, &glConfig.glslMinorVersion);
+#endif
 
 	Com_Printf("GL_VENDOR: %s\n", glConfig.vendor_string);
 	Com_Printf("GL_RENDERER: %s\n", glConfig.renderer_string);
@@ -432,6 +434,14 @@ static void GLimp_InitExtensions(void)
 	{
 		Com_Printf("...GL_EXT_texture_compression_s3tc not found\n");
 	}
+
+	// GLEW_EXT_texture_filter_anisotropic
+	textureFilterAnisotropic = qfalse;
+	if (GLEW_EXT_texture_filter_anisotropic)
+	{
+		glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &maxAnisotropy);
+		textureFilterAnisotropic = qtrue;
+	}
 #endif
 
 #ifndef FEATURE_RENDERER_GLES
@@ -529,14 +539,6 @@ static void GLimp_InitExtensions(void)
 		Com_Printf("...GL_ARB_multitexture not found\n");
 	}
 #endif
-
-	textureFilterAnisotropic = qfalse;
-	if (GLEW_EXT_texture_filter_anisotropic)
-	{
-		glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &maxAnisotropy);
-		textureFilterAnisotropic = qtrue;
-	}
-
 }
 #endif
 

@@ -41,9 +41,9 @@
  */
 static void CG_Viewpos_f(void)
 {
-	CG_Printf("(%i %i %i) : %i\n", (int)cg.refdef.vieworg[0],
+	CG_Printf("(%i %i %i) : %i %i %i\n", (int)cg.refdef.vieworg[0],
 	          (int)cg.refdef.vieworg[1], (int)cg.refdef.vieworg[2],
-	          (int)cg.refdefViewAngles[YAW]);
+	          (int)cg.refdefViewAngles[PITCH], (int)cg.refdefViewAngles[YAW], (int)cg.refdefViewAngles[ROLL]);
 }
 
 /**

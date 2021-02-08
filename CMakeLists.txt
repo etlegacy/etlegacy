@@ -27,13 +27,14 @@ set(MODURL "www.etlegacy.com" CACHE STRING "Default mod URL")
 # Options
 #-----------------------------------------------------------------
 
-option(BUILD_SERVER		"Build the dedicated server executable"							ON)
-option(BUILD_CLIENT		"Build the client executable"									ON)
-option(BUILD_MOD		"Build the mod libraries"										ON)
+option(BUILD_SERVER				"Build the dedicated server executable"							ON)
+option(BUILD_CLIENT				"Build the client executable"									ON)
+option(BUILD_MOD				"Build the mod libraries"										ON)
 
-option(BUILD_MOD_PK3	"Pack the mod libraries and game scripts into mod pk3"			ON)
+option(BUILD_MOD_PK3			"Pack the mod libraries and game scripts into mod pk3"			ON)
 
-option(BUNDLED_LIBS		"Use all available bundled libraries instead of system libs"	ON)
+option(BUNDLED_LIBS				"Use all available bundled libraries instead of system libs"	ON)
+option(BUNDLED_LIBS_DEFAULT		"Default value for bundled libs"								ON)
 
 LEG_BUNDLE(SDL SDL)
 LEG_BUNDLE(ZLIB Zlib)

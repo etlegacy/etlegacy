@@ -3969,6 +3969,12 @@ qboolean G_ScriptAction_SetDamagable(gentity_t *ent, char *params)
 	while ((target = G_FindByTargetname(target, name)))
 	{
 		target->takedamage = canDamage;
+
+		// don't show health of target that can't be damaged
+		if (!canDamage)
+		{
+			target->s.effect1Time = 0;
+		}
 	}
 
 	return qtrue;

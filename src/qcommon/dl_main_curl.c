@@ -46,8 +46,13 @@
 #define SSL_VERIFY 1
 
 #if SSL_VERIFY
-#define OPENSSL_ALL 1
-#include <wolfssl/ssl.h>
+
+#ifdef USING_WOLFSSL
+#	define OPENSSL_ALL 1
+#	include <wolfssl/options.h>
+#	include <wolfssl/ssl.h>
+#endif
+
 #include <openssl/err.h>
 #include <openssl/ssl.h>
 #endif
@@ -83,8 +88,10 @@ static CURLcode DL_cb_Context(CURL *curl, void *ssl_ctx, void *parm)
 {
 	fileHandle_t certHandle;
 	int i;
+	(void)curl;
+	(void)parm;
 
-	int len = FS_SV_FOpenFileRead(CA_CERT_FILE, &certHandle);
+	int len = (int) FS_SV_FOpenFileRead(CA_CERT_FILE, &certHandle);
 	if(len <= 0)
 	{
 		FS_FCloseFile(certHandle);

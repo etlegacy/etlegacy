@@ -64,7 +64,7 @@ static char homePath[MAX_OSPATH] = { 0 };
 //static int     sys_retcode;
 //static char    sys_exitstr[MAX_STRING_CHARS];
 
-static size_t Sys_WideCharArrayToString(wchar_t *array, char *buffer, size_t len)
+size_t Sys_WideCharArrayToString(wchar_t *array, char *buffer, size_t len)
 {
 	size_t length = WideCharToMultiByte(CP_UTF8, 0, array, -1, NULL, 0, NULL, NULL);
 	if(length > len)
@@ -83,7 +83,7 @@ static size_t Sys_WideCharArrayToString(wchar_t *array, char *buffer, size_t len
  * @param [in] size of the output buffer
  * @return length of the string
  */
-static size_t Sys_StringToWideCharArray(const char* string, wchar_t *output, size_t len)
+size_t Sys_StringToWideCharArray(const char* string, wchar_t *output, size_t len)
 {
 	size_t length = 0;
 

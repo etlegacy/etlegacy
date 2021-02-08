@@ -4,7 +4,7 @@
 # Translators:
 # Artur Tamborski <tamborskiartur@gmail.com>, 2020
 # Jakub Strelcow <jakubstrelcow@gmail.com>, 2015
-# Jakub Strelcow <jakubstrelcow@gmail.com>, 2018-2020
+# Jakub Strelcow <jakubstrelcow@gmail.com>, 2018-2021
 # Mateusz Olejnik <matti@gamesboard.pl>, 2018
 # rafal1137 <rafal1137@yahoo.pl>, 2016,2018-2019
 # rafal1137 <rafal1137@yahoo.pl>, 2015-2016
@@ -13,8 +13,8 @@ msgstr ""
 "Project-Id-Version: ET:Legacy\n"
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
-"PO-Revision-Date: 2020-10-06 15:24+0000\n"
-"Last-Translator: rafal1137 <rafal1137@yahoo.pl>\n"
+"PO-Revision-Date: 2021-01-23 13:13+0000\n"
+"Last-Translator: Jakub Strelcow <jakubstrelcow@gmail.com>\n"
 "Language-Team: Polish (http://www.transifex.com/etlegacy/etlegacy/language/pl/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -3596,7 +3596,7 @@ msgstr "FILTRY"
 
 #: etmain/ui/playonline.menu:82
 msgid "Source:"
-msgstr "Zródło:"
+msgstr "Źródło:"
 
 #: etmain/ui/playonline.menu:82
 msgid "Local"
@@ -4135,7 +4135,7 @@ msgstr "5. Przepraszam"
 #: etmain/ui/wm_ftquickmessageAlt.menu:142
 #: etmain/ui/wm_quickmessageAlt.menu:142
 msgid "6. Oops"
-msgstr "6. Oops"
+msgstr "6. Ups"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:150
 #: etmain/ui/wm_quickmessageAlt.menu:150
@@ -4180,7 +4180,7 @@ msgstr "2. Nie ma za co"
 #: etmain/ui/wm_ftquickmessageAlt.menu:163
 #: etmain/ui/wm_quickmessageAlt.menu:163
 msgid "3. Oops"
-msgstr "3. Oops"
+msgstr "3. Ups"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:164
 #: etmain/ui/wm_quickmessageAlt.menu:164
@@ -4407,7 +4407,7 @@ msgstr "S. Przepraszam"
 #: etmain/ui/wm_ftquickmessage.menu:142 etmain/ui/wm_ftquickmessage.menu:163
 #: etmain/ui/wm_quickmessage.menu:142 etmain/ui/wm_quickmessage.menu:163
 msgid "O. Oops"
-msgstr "O. Oops"
+msgstr "O. Ups"
 
 #: etmain/ui/wm_ftquickmessage.menu:150 etmain/ui/wm_quickmessage.menu:150
 msgid "W. Enemy Weak"
@@ -4650,7 +4650,7 @@ msgstr "Naciśnij '%s' jeśli TAK, lub '%s' jeśli NIE"
 #: src/cgame/cg_draw.c:1758
 #, c-format
 msgid "Accept %s^3's application to join your fireteam?"
-msgstr "Zaakceptuj podanie %s^3 aby mogł dołaczyć do oddziału?"
+msgstr "Zaakceptować podanie %s^3 aby mógł dołączyć do oddziału?"
 
 #: src/cgame/cg_draw.c:1772
 #, c-format
@@ -4709,7 +4709,7 @@ msgstr "Skarga odrzucona"
 
 #: src/cgame/cg_draw.c:1940
 msgid "Server Host cannot be complained against"
-msgstr "Gospodarz Serwera nie może być oskarzony"
+msgstr "Gospodarz Serwera nie może być oskarżony"
 
 #: src/cgame/cg_draw.c:1946
 msgid "You were team-killed by the Server Host"
@@ -4725,7 +4725,7 @@ msgstr "Twoja aplikacja została wysłana"
 
 #: src/cgame/cg_draw.c:1969
 msgid "Your application failed"
-msgstr "Twoja aplikacja nie powiodła się"
+msgstr "Twoja aplikacja została odrzucona"
 
 #: src/cgame/cg_draw.c:1976
 msgid "Your application has been approved"
@@ -4801,7 +4801,7 @@ msgstr "włączyć"
 
 #: src/cgame/cg_draw.c:2231
 msgid "You are wounded and waiting for a medic."
-msgstr "Zostałeś zraniony i czekasz na medyka."
+msgstr "Jesteś ranny i czekasz na medyka."
 
 #: src/cgame/cg_draw.c:2240
 #, c-format
@@ -4860,12 +4860,12 @@ msgstr "graczy"
 
 #: src/cgame/cg_draw.c:2448
 msgid "Type ^3\\ready^7 in the console to start"
-msgstr "Napisz ^3\\ready^* w konsoli aby zacząć"
+msgstr "Napisz ^3\\ready^* w konsoli, aby rozpocząć"
 
 #: src/cgame/cg_draw.c:2452
 #, c-format
 msgid "Press ^3%s^7 to start"
-msgstr "Wciśnij ^3%s^7 aby zacząć"
+msgstr "Wciśnij ^3%s^7 aby rozpocząć"
 
 #: src/cgame/cg_draw.c:2470
 msgid "^3WARMUP:^7 Match begins in"
@@ -4882,7 +4882,7 @@ msgstr "RUNDA NA CZAS"
 #: src/cgame/cg_draw.c:2678
 #, c-format
 msgid "The %s team is speclocked!"
-msgstr "Zespół %s jest nie do obserwowania!"
+msgstr "Obserwacja drużyny %s jest zablokowana!"
 
 #: src/cgame/cg_draw_hud.c:1754 src/cgame/cg_draw_hud.c:1852
 #: src/cgame/cg_scoreboard.c:178
@@ -4988,11 +4988,11 @@ msgstr "Zabójstw"
 
 #: src/cgame/cg_info.c:737
 msgid "Deaths"
-msgstr "     Śmierci"
+msgstr "Śmierci"
 
 #: src/cgame/cg_info.c:739
 msgid "Headshots"
-msgstr "    W Głowę"
+msgstr "W Głowę"
 
 #: src/cgame/cg_info.c:748
 msgid "No weapon info available."
@@ -5008,7 +5008,7 @@ msgstr "Poziom"
 
 #: src/cgame/cg_info.c:803
 msgid "XP / Next Level"
-msgstr "XP / Nast Poziom"
+msgstr "XP / Nast. Poziom"
 
 #: src/cgame/cg_info.c:807
 msgid "Medals"
@@ -5024,7 +5024,7 @@ msgstr "\"NAJLEPSZE STRZAŁY\" CELNOŚĆ"
 
 #: src/cgame/cg_info.c:939
 msgid "Player"
-msgstr "   Gracz"
+msgstr "Gracz"
 
 #: src/cgame/cg_info.c:947
 msgid "No qualifying weapon info available."
@@ -5329,7 +5329,7 @@ msgstr "Naciśnij ENTER lub KLIKNIJ, aby zmienić, Naciśnij BACKSPACE aby wyczy
 #: src/ui/ui_main.c:2543
 #, c-format
 msgid "Getting info for %d servers (ESC to cancel)"
-msgstr "Uzyskanie informacji  o %d serwerach (ESC aby anulować)"
+msgstr "Pobieranie informacji o %d serwerach (ESC aby anulować)"
 
 #: src/ui/ui_main.c:2547
 msgid "Waiting for response from Master Server"
@@ -5446,7 +5446,7 @@ msgid "was killed"
 msgstr "został zabity"
 
 msgid "got buried under a pile of rubble"
-msgstr "został pochowany pod stertą gruzu"
+msgstr "został pogrzebany pod stertą gruzu"
 
 msgid "was incinerated"
 msgstr "został spalony"
@@ -5458,7 +5458,7 @@ msgid "took a map mortar shell shower"
 msgstr "wziął prysznic naboi moździerza"
 
 msgid "was pulverized by an explosion"
-msgstr "został starty na proch przez wybuch"
+msgstr "został zmiażdżony przez eksplozję"
 
 msgid "dynamited himself to pieces"
 msgstr "rozwalił samego siebie na kawałki"
@@ -5470,7 +5470,7 @@ msgid "vaporized himself"
 msgstr "zniszczył samego siebie"
 
 msgid "played with fire"
-msgstr "za bardzo bawił się ogniem"
+msgstr "igrał z ogniem"
 
 msgid "obliterated himself"
 msgstr "ostrzelał samego siebie"
@@ -5497,7 +5497,7 @@ msgid "buried himself alive"
 msgstr "pochował się żywcem"
 
 msgid "never saw his own mortar round coming"
-msgstr "nigdy nie widział jak leci na niego pocisk jego moździerza"
+msgstr "nie zauważył, że nadlatuje jego własny pocisk z moździerza"
 
 msgid "danced on his airstrike marker"
 msgstr "tańczył na swoim znaczniku od nalotu"
@@ -5548,7 +5548,7 @@ msgid "Heavy Weapon Proficiency"
 msgstr "Biegłością Obsługi Ciężkiej Broni"
 
 msgid "Improved use of Sabotage and Misdirection"
-msgstr "Lepszym użyciem Sabotażu i Odwrócenia Uwagi"
+msgstr "Lepszym użyciem Sabotażu i Odwróceniem Uwagi"
 
 msgid "Improved Health"
 msgstr "Ulepszonym Życiem"

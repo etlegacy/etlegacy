@@ -346,7 +346,7 @@ static void CM_SubdivideGridColumns(cGrid_t *grid)
 {
 	int i, j, k;
 
-	for (i = 0 ; i < grid->width - 2 ; )
+	for (i = 0 ; i < grid->width - 2 ;)
 	{
 		// grid->points[i][x] is an interpolating control point
 		// grid->points[i+1][x] is an aproximating control point
@@ -503,10 +503,10 @@ int CM_PlaneEqual(patchPlane_t *p, float plane[4], int *flipped)
 	float invplane[4];
 
 	if (
-	    Q_fabs(p->plane[0] - plane[0]) < NORMAL_EPSILON
-	    && Q_fabs(p->plane[1] - plane[1]) < NORMAL_EPSILON
-	    && Q_fabs(p->plane[2] - plane[2]) < NORMAL_EPSILON
-	    && Q_fabs(p->plane[3] - plane[3]) < DIST_EPSILON)
+		Q_fabs(p->plane[0] - plane[0]) < NORMAL_EPSILON
+		&& Q_fabs(p->plane[1] - plane[1]) < NORMAL_EPSILON
+		&& Q_fabs(p->plane[2] - plane[2]) < NORMAL_EPSILON
+		&& Q_fabs(p->plane[3] - plane[3]) < DIST_EPSILON)
 	{
 		*flipped = qfalse;
 		return qtrue;
@@ -516,10 +516,10 @@ int CM_PlaneEqual(patchPlane_t *p, float plane[4], int *flipped)
 	invplane[3] = -plane[3];
 
 	if (
-	    Q_fabs(p->plane[0] - invplane[0]) < NORMAL_EPSILON
-	    && Q_fabs(p->plane[1] - invplane[1]) < NORMAL_EPSILON
-	    && Q_fabs(p->plane[2] - invplane[2]) < NORMAL_EPSILON
-	    && Q_fabs(p->plane[3] - invplane[3]) < DIST_EPSILON)
+		Q_fabs(p->plane[0] - invplane[0]) < NORMAL_EPSILON
+		&& Q_fabs(p->plane[1] - invplane[1]) < NORMAL_EPSILON
+		&& Q_fabs(p->plane[2] - invplane[2]) < NORMAL_EPSILON
+		&& Q_fabs(p->plane[3] - invplane[3]) < DIST_EPSILON)
 	{
 		*flipped = qtrue;
 		return qtrue;
@@ -795,8 +795,8 @@ static int CM_EdgePlaneNum(cGrid_t *grid, int gridPlanes[MAX_GRID_SIZE][MAX_GRID
 	}
 
 	Com_Error(ERR_DROP, "CM_EdgePlaneNum: bad k");
-	
-	return -1;	
+
+	return -1;
 }
 
 /**
@@ -1020,9 +1020,29 @@ void CM_AddFacetBevels(facet_t *facet)
 			// see if the plane is already present
 			for (i = 0; i < facet->numBorders; i++)
 			{
-				if (CM_PlaneEqual(&planes[facet->borderPlanes[i]], plane, &flipped))
+				if (!cm_optimizePatchPlanes->integer)
 				{
-					break;
+					if (CM_PlaneEqual(&planes[facet->borderPlanes[i]], plane, &flipped))
+					{
+						break;
+					}
+				}
+				else // Vanilla ET behavior, able to walk inside patch bevels on certain angles
+				{
+					if (dir > 0)
+					{
+						if (planes[facet->borderPlanes[i]].plane[axis] >= 0.9999f)
+						{
+							break;
+						}
+					}
+					else
+					{
+						if (planes[facet->borderPlanes[i]].plane[axis] <= -0.9999f)
+						{
+							break;
+						}
+					}
 				}
 			}
 

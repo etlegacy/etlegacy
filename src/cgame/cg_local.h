@@ -2196,6 +2196,10 @@ typedef struct
 #define DWC_DYNAMITE            0x08
 #define DWC_SMOKE               0x10    ///< FIXME: add to demo control?
 
+#define DEMO_NAMEOFF           0
+#define DEMO_CLEANNAME         1
+#define DEMO_COLOREDNAME       2
+
 /**
  * @struct cam_s
  * @typedef cam_t
@@ -2808,6 +2812,7 @@ extern vmCvar_t cg_visualEffects;  ///< turn invisible (0) / visible (1) visual 
 extern vmCvar_t cg_bannerTime;
 
 extern vmCvar_t cg_shoutcastDrawHealth;
+extern vmCvar_t cg_shoutcastGrenadeTrail;
 
 // local clock flags
 #define LOCALTIME_ON                0x01
