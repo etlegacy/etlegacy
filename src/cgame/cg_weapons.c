@@ -594,25 +594,60 @@ static void CG_GrenadeTrail(centity_t *ent, const weaponInfo_t *wi)
 
 	ent->trailTime = cg.time;
 
-	if (contents & (CONTENTS_WATER | CONTENTS_SLIME | CONTENTS_LAVA))
+	if ((cgs.clientinfo[cg.clientNum].shoutcaster || cgs.sv_cheats) && cg_shoutcastGrenadeTrail.integer)
 	{
-		if (contents & lastContents & CONTENTS_WATER)
-		{
-			CG_BubbleTrail(lastPos, origin, 2, 8);
-		}
-		return;
-	}
+		vec3_t colorStart = { 1.0f, 0.0f, 0.0f };
+		vec3_t colorEnd   = { 1.0f, 0.0f, 0.0f };
 
-	// spawn smoke junctions
-	for ( ; t <= ent->trailTime ; t += step)
+		if (ent->currentState.weapon == WP_SMOKE_BOMB)
+		{
+			VectorSet(colorStart, 0.0f, 0.0f, 1.0f);
+			VectorSet(colorEnd, 0.0f, 0.0f, 1.0f);
+		}
+
+		for (; t <= ent->trailTime; t += step)
+		{
+			BG_EvaluateTrajectory(&es->pos, t, origin, qfalse, es->effect2Time);
+			ent->headJuncIndex = CG_AddTrailJunc(ent->headJuncIndex,
+			                                     ent,
+			                                     cgs.media.railCoreShader,
+			                                     startTime,
+			                                     0,
+			                                     origin,
+			                                     750,
+			                                     0.3f,
+			                                     0.0f,
+			                                     2,
+			                                     20,
+			                                     0,
+			                                     colorStart,
+			                                     colorEnd,
+			                                     0,
+			                                     0);
+			ent->lastTrailTime = cg.time;
+		}
+	}
+	else
 	{
-		BG_EvaluateTrajectory(&es->pos, t, origin, qfalse, es->effect2Time);
-		ent->headJuncIndex = CG_AddSmokeJunc(ent->headJuncIndex,
-		                                     ent,    // trail fix
-		                                     cgs.media.smokeTrailShader,
-		                                     origin,
-		                                     1000, 0.3f, 2, 20);
-		ent->lastTrailTime = cg.time;
+		if (contents & (CONTENTS_WATER | CONTENTS_SLIME | CONTENTS_LAVA))
+		{
+			if (contents & lastContents & CONTENTS_WATER)
+			{
+				CG_BubbleTrail(lastPos, origin, 2, 8);
+			}
+			return;
+		}
+		// spawn smoke junctions
+		for (; t <= ent->trailTime; t += step)
+		{
+			BG_EvaluateTrajectory(&es->pos, t, origin, qfalse, es->effect2Time);
+			ent->headJuncIndex = CG_AddSmokeJunc(ent->headJuncIndex,
+			                                     ent, // trail fix
+			                                     cgs.media.smokeTrailShader,
+			                                     origin,
+			                                     1000, 0.3f, 2, 20);
+			ent->lastTrailTime = cg.time;
+		}
 	}
 }
 
