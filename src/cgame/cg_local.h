@@ -991,6 +991,7 @@ typedef struct
 
 #define MAX_FLOATING_STRINGS 128
 
+
 /**
  * @struct soundScriptHandle_s
  * @typedef soundScriptHandle_t
@@ -2168,6 +2169,10 @@ typedef struct
 #define DWC_GRENADE             0x04
 #define DWC_DYNAMITE            0x08
 #define DWC_SMOKE               0x10    ///< FIXME: add to demo control?
+
+#define DEMO_NAMEOFF           0
+#define DEMO_CLEANNAME         1
+#define DEMO_COLOREDNAME       2
 
 /**
  * @struct cam_s
