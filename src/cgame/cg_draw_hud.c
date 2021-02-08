@@ -2267,18 +2267,18 @@ static const char *CG_TimerWarmupString()
 	}
 	else                                              // draw limbotime periods otherwise 
 	{
-		int limbotime_own, limbotime_enemy;
+		int limbotimeOwn, limbotimeEnemy;
 		if (cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_AXIS)
 		{
-			limbotime_own   = cg_redlimbotime.integer;
-			limbotime_enemy = cg_bluelimbotime.integer;
+			limbotimeOwn   = cg_redlimbotime.integer;
+			limbotimeEnemy = cg_bluelimbotime.integer;
 		}
 		else
 		{
-			limbotime_own   = cg_bluelimbotime.integer;
-			limbotime_enemy = cg_redlimbotime.integer;
+			limbotimeOwn   = cg_bluelimbotime.integer;
+			limbotimeEnemy = cg_redlimbotime.integer;
 		}
-		return va("^1%2.0i ^$%2.0i", limbotime_enemy / 1000, limbotime_own / 1000);
+		return va("^1%2.0i ^$%2.0i", limbotimeEnemy / 1000, limbotimeOwn / 1000);
 	}
 }
 
