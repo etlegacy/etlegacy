@@ -1447,17 +1447,7 @@ void CL_CheckForResend(void)
 			// make sure nothing restricted can slip through
 			if (!Com_IsCompatible(&clc.agent, 0x1))
 			{
-				for (i = 0; i < MAX_INFO_STRING; ++i)
-				{
-					if (!info[i])
-					{
-						break;
-					}
-					if ((byte)info[i] > 127 || info[i] == '%')
-					{
-						info[i] = '.';
-					}
-				}
+				Q_SafeNetString(info, MAX_INFO_STRING, qtrue);
 			}
 
 			Info_SetValueForKey(info, "protocol", va("%i", PROTOCOL_VERSION));

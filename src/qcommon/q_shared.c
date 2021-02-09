@@ -1412,6 +1412,26 @@ int Q_isforfilename(int c)
 	return (0);
 }
 
+/**
+ * get rid of 0x80+ and '%' chars, because old clients don't like them
+ * @param string buffer to check
+ * @param len length of the buffer
+ */
+void Q_SafeNetString(char *string, size_t len, qboolean strip)
+{
+	for (int i = 0; i < len; ++i)
+	{
+		if (!string[i])
+		{
+			break;
+		}
+		if ((strip && (byte)string[i] > 127) || string[i] == '%')
+		{
+			string[i] = '.';
+		}
+	}
+}
+
 #ifdef _MSC_VER
 
 /**

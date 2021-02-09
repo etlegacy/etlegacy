@@ -526,14 +526,7 @@ void MSG_WriteString(msg_t *msg, const char *s)
 		}
 		Q_strncpyz(string, s, sizeof(string));
 
-		// get rid of 0x80+ and '%' chars, because old clients don't like them
-		for (i = 0 ; i < l ; i++)
-		{
-			if ((msg->strip && (byte)string[i] > 127) || string[i] == '%')
-			{
-				string[i] = '.';
-			}
-		}
+		Q_SafeNetString(string, l, msg->strip);
 
 		MSG_WriteData(msg, string, l + 1);
 	}
@@ -564,14 +557,7 @@ void MSG_WriteBigString(msg_t *msg, const char *s)
 		}
 		Q_strncpyz(string, s, sizeof(string));
 
-		// get rid of 0x80+ and '%' chars, because old clients don't like them
-		for (i = 0 ; i < l ; i++)
-		{
-			if ((msg->strip && (byte)string[i] > 127) || string[i] == '%')
-			{
-				string[i] = '.';
-			}
-		}
+		Q_SafeNetString(string, l, msg->strip);
 
 		MSG_WriteData(msg, string, l + 1);
 	}

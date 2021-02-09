@@ -720,6 +720,7 @@ int Q_isalphanumeric(int c);
 qboolean Q_isanumber(const char *s);
 qboolean Q_isintegral(float f);
 int Q_isforfilename(int c);
+void Q_SafeNetString(char *string, size_t len, qboolean strip);
 
 // portable case insensitive compare
 int Q_stricmp(const char *s1, const char *s2);
