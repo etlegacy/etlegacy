@@ -1865,7 +1865,7 @@ void CG_PlayHitSound(const int clientNum, const int hitSound)
 	}
 
 	// Are we spectating someone?
-	if (cg.snap->ps.clientNum != cg.clientNum && cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR)
+	if (cg.snap->ps.clientNum != cg.clientNum && cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR && !(cg.snap->ps.pm_flags & PMF_LIMBO))
 	{
 		return;
 	}
