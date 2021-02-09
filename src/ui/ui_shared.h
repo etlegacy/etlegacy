@@ -569,6 +569,8 @@ void Window_Init(Window *w);
 void Window_CloseCinematic(windowDef_t *window);
 void Window_Paint(Window *w, float fadeAmount, float fadeClamp, float fadeCycle);
 
+void GradientBar_Paint(rectDef_t *rect, vec4_t color);
+
 // Display
 void Init_Display(displayContextDef_t *dc);
 int Display_VisibleMenuCount(void);
