@@ -2860,7 +2860,7 @@ void CL_Init(void)
 
 	cl_bypassMouseInput = Cvar_Get("cl_bypassMouseInput", "0", 0);    //CVAR_ROM );
 
-	cl_doubletapdelay = Cvar_Get("cl_doubletapdelay", "350", CVAR_ARCHIVE);    // double tap
+	cl_doubletapdelay = Cvar_Get("cl_doubletapdelay", "0", CVAR_ARCHIVE);    // double tap
 
 	m_pitch   = Cvar_Get("m_pitch", "0.022", CVAR_ARCHIVE);
 	m_yaw     = Cvar_Get("m_yaw", "0.022", CVAR_ARCHIVE);
