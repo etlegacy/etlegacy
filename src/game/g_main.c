@@ -5116,7 +5116,7 @@ void G_RunEntity(gentity_t *ent, int msec)
 			// During a pause, gotta keep track of stuff in the air
 			ent->s.pos.trTime += level.time - level.previousTime;
 			// Keep pulsing right for dynmamite
-			if (ent->methodOfDeath == MOD_DYNAMITE)
+			if (ent->methodOfDeath == MOD_DYNAMITE && ent->s.effect1Time)
 			{
 				ent->s.effect1Time += level.time - level.previousTime;
 			}
