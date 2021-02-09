@@ -87,8 +87,6 @@ int players[12];
 void CG_DrawMinimap()
 {
 	snapshot_t *snap;
-	float      angle;
-	int        i;
 
 	if (cg.nextSnap && !cg.nextFrameTeleport && !cg.thisFrameTeleport)
 	{
@@ -850,7 +848,6 @@ void CG_DrawShoutcastTimer()
 	vec4_t color = { .6f, .6f, .6f, 1.f };
 	char   *text, *rt, *rtAllies = "", *rtAxis = "", *round;
 	int    tens;
-	int    secondsThen;
 	int    msec    = (cgs.timelimit * 60000.f) - (cg.time - cgs.levelStartTime); // 60.f * 1000.f
 	int    seconds = msec / 1000;
 	int    mins    = seconds / 60;
@@ -859,7 +856,6 @@ void CG_DrawShoutcastTimer()
 	int    x       = GAMETIME_X;
 	int    y       = GAMETIME_Y;
 	int    textWidth;
-	int    textHeight;
 
 	seconds -= mins * 60;
 	tens     = seconds / 10;

@@ -1696,7 +1696,6 @@ static void CG_DrawCrosshairHealthBar(float position, int health, int maxHealth)
  */
 static void CG_DrawCrosshairPlayerInfo(int clientNum, int class)
 {
-	int        i;
 	float      *color;
 	float      w;
 	const char *s;

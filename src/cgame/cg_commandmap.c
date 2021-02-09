@@ -2223,7 +2223,6 @@ void CG_DrawMapEntityNew(mapEntityData_t *mEnt, float x, float y, float w, float
 	int              customimage = 0;
 	oidInfo_t        *oidInfo    = NULL;
 	int              entNum;
-	int              ic;
 
 	switch (mEnt->type)
 	{
