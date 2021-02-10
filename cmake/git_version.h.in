@@ -30,7 +30,7 @@
 
 /**
  * @def ETLEGACY_VERSION_INT
- * @brief Version in integral format. Contains only the most recent tag.
+ * @brief Version in integral format.
  */
 #define ETLEGACY_VERSION_INT @ETL_CMAKE_VERSION_INT@
 

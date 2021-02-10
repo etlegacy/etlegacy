@@ -10,6 +10,41 @@ set(ETLEGACY_VERSION_COMMIT "0")
 set(ETLEGACY_VERSION "${ETLEGACY_VERSION_MAJOR}.${ETLEGACY_VERSION_MINOR}-dirty")
 set(ETLEGACY_VERSIONPLAIN "${ETLEGACY_VERSION_MAJOR},${ETLEGACY_VERSION_MINOR},${ETLEGACY_VERSION_PATCH},${ETLEGACY_VERSION_COMMIT}")
 
+
+function(PAD_STRING output str padchar length right_padded)
+	string(LENGTH "${str}" _strlen)
+	math(EXPR _strlen "${length} - ${_strlen}")
+
+	if(_strlen GREATER 0)
+		if(${CMAKE_VERSION} VERSION_LESS "3.14")
+			unset(_pad)
+			foreach(_i RANGE 1 ${_strlen}) # inclusive
+				string(APPEND _pad ${padchar})
+			endforeach()
+		else()
+			string(REPEAT ${padchar} ${_strlen} _pad)
+		endif()
+
+		if(${right_padded})
+			string(APPEND str ${_pad})
+		else()
+			string(PREPEND str ${_pad})
+		endif()
+	endif()
+
+	set(${output} "${str}" PARENT_SCOPE)
+endfunction()
+
+# Generates a version integer value in the format of major, minor(2 numbers), patch(2 numbers), commit(4 numbers)
+# all numbers are left padded if needed.
+function(VERSION_INT output major minor patch commit)
+	PAD_STRING(out_minor ${minor} "0" "2" OFF)
+	PAD_STRING(out_patch ${patch} "0" "2" OFF)
+	PAD_STRING(out_commit ${commit} "0" "4" OFF)
+
+	set(${output} "${major}${out_minor}${out_patch}${out_commit}" PARENT_SCOPE)
+endfunction()
+
 macro(HEXCHAR2DEC VAR VAL)
 	if(${VAL} MATCHES "[0-9]")
 		SET(${VAR} ${VAL})
@@ -84,16 +119,16 @@ if(GIT_DESCRIBE)
 
 
 		if("${GIT_DESCRIBE}" MATCHES "^v[0-9]+\\.[0-9]+.*\\-[0-9]+\\-[0-9a-zA-Z]+")
-			string(REGEX REPLACE "^v[0-9]+\\.[0-9]+.*\\-([0-9]+)\\-[0-9a-zA-Z]+" "\\1" VERSION_COMMIT_OFFSET "${GIT_DESCRIBE}")
+			string(REGEX REPLACE "^v[0-9]+\\.[0-9]+.*\\-([0-9]+)\\-[0-9a-zA-Z]+" "\\1" ETLEGACY_VERSION_COMMIT "${GIT_DESCRIBE}")
 		else()
-			set(VERSION_COMMIT_OFFSET 0)
+			set(ETLEGACY_VERSION_COMMIT 0)
 		endif()
 
-		set(ETL_CMAKE_PROD_VERSION "${VERSION_MAJOR},${VERSION_MINOR},${VERSION_PATCH},${VERSION_COMMIT_OFFSET}")
-		if ("${VERSION_COMMIT_OFFSET}" EQUAL "0")
+		set(ETL_CMAKE_PROD_VERSION "${VERSION_MAJOR},${VERSION_MINOR},${VERSION_PATCH},${ETLEGACY_VERSION_COMMIT}")
+		if ("${ETLEGACY_VERSION_COMMIT}" EQUAL "0")
 			set(ETL_CMAKE_PROD_VERSIONSTR "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}")
 		else()
-			set(ETL_CMAKE_PROD_VERSIONSTR "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}.${VERSION_COMMIT_OFFSET}")
+			set(ETL_CMAKE_PROD_VERSIONSTR "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}.${ETLEGACY_VERSION_COMMIT}")
 		endif()
 
 		set(ETLEGACY_VERSION_MAJOR "${VERSION_MAJOR}")
@@ -110,11 +145,7 @@ else() # Not using source from git repo
 	set(ETL_CMAKE_PROD_VERSIONSTR ${ETLEGACY_VERSION})
 endif()
 
-if(${ETLEGACY_VERSION_MINOR} LESS 10)
-	set(ETL_CMAKE_VERSION_INT "${ETLEGACY_VERSION_MAJOR}0${ETLEGACY_VERSION_MINOR}")
-else()
-	set(ETL_CMAKE_VERSION_INT "${ETLEGACY_VERSION_MAJOR}${ETLEGACY_VERSION_MINOR}")
-endif()
+VERSION_INT(ETL_CMAKE_VERSION_INT ${ETLEGACY_VERSION_MAJOR} ${ETLEGACY_VERSION_MINOR} ${ETLEGACY_VERSION_PATCH} ${ETLEGACY_VERSION_COMMIT})
 
 if(NOT CMAKE_VERSION VERSION_LESS 3.0.2)
 	string(TIMESTAMP ETL_CMAKE_BUILD_TIME "%Y-%m-%dT%H:%M:%S" UTC)
