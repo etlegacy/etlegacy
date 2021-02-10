@@ -2898,7 +2898,6 @@ void CG_DrawMapNew(float x, float y, float w, float h, int mEntFilter, mapScisso
 
 	if (scissor)
 	{
-		//AUTOMAP_PLAYER_ICON_SIZE
 		icon_size = AUTOMAP_PLAYER_ICON_SIZE_NEW;
 
 		if (scissor->br[0] >= scissor->tl[0])
