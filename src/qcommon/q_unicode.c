@@ -107,6 +107,52 @@ int Q_UTF8_WidthCP(int ch)
 	return 0;
 }
 
+qboolean Q_UTF8_Validate(const char *str)
+{
+	int    i, utfBytes = 0;
+	byte   current;
+	size_t len = strlen(str);
+	for (i = 0; i < len; i++)
+	{
+		current = str[i];
+
+		if (0x00 <= current && current <= 0x7F)
+		{
+			utfBytes = 0; // 0XXXXXXX
+		}
+		else if ((current & 0xE0) == 0xC0)
+		{
+			utfBytes = 1; // 110XXXXX
+		}
+		else if (current == 0xED && i < (len - 1) && ((byte) str[i + 1] & 0xA0) == 0xA0)
+		{
+			return qfalse; //U+D800 to U+DFFF
+		}
+		else if ((current & 0xF0) == 0xE0)
+		{
+			utfBytes = 2; // 1110XXXX
+		}
+		else if ((current & 0xF8) == 0xF0)
+		{
+			utfBytes = 3; // 11110XXX
+		}
+		else
+		{
+			return qfalse;
+		}
+
+		for (; 0 < utfBytes && i < len; utfBytes--)
+		{
+			if ((++i == len) || (((byte)str[i] & 0xC0) != 0x80))
+			{
+				return qfalse;
+			}
+		}
+	}
+
+	return qtrue;
+}
+
 /**
  * @brief Q_UTF8_Strlen
  * @param[in] str
