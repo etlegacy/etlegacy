@@ -88,15 +88,15 @@ int Q_UTF8_Width(const char *str)
  */
 int Q_UTF8_WidthCP(int ch)
 {
-	if (ch <=   0x007F)
+	if (ch <= 0x007F)
 	{
 		return 1;
 	}
-	if (ch <=   0x07FF)
+	if (ch <= 0x07FF)
 	{
 		return 2;
 	}
-	if (ch <=   0xFFFF)
+	if (ch <= 0xFFFF)
 	{
 		return 3;
 	}
@@ -173,22 +173,22 @@ size_t Q_UTF8_Strlen(const char *str)
 
 size_t Q_UTF32_Strlen(const uint32_t *str, size_t len)
 {
-	int i = 0;
+	int    i = 0;
 	size_t l = 0;
-	for(; i < len && str[i]; i++)
+	for (; i < len && str[i]; i++)
 	{
 		l += Q_UTF8_WidthCP(str[i]);
 	}
 	return l;
 }
 
-char* Q_UTF8_CharAt(char *str, size_t offset)
+char *Q_UTF8_CharAt(char *str, size_t offset)
 {
 	int l = 0;
 
 	while (*str)
 	{
-		if(offset == l)
+		if (offset == l)
 		{
 			return str;
 		}
@@ -444,10 +444,10 @@ uint32_t Q_UTF8_CodePoint(const char *str)
 	int           i, j;
 	int           n         = 0;
 	int           size      = Q_UTF8_Width(str);
-	uint32_t codepoint = 0;
+	uint32_t      codepoint = 0;
 	unsigned char *p        = (unsigned char *) &codepoint;
 
-	if(!str || !str[0])
+	if (!str || !str[0])
 	{
 		return 0;
 	}
@@ -700,7 +700,7 @@ void Q_UTF8_FreeFont(fontHelper_t *font)
  */
 void Q_UTF8_ToUTF32(const char *string, uint32_t *charArray, size_t *outLen)
 {
-	int  i  = 0;
+	int        i  = 0;
 	const char *c = string;
 
 	// Quick and dirty UTF-8 to UTF-32 conversion
@@ -746,7 +746,7 @@ void Q_UTF32_ToUTF8(const uint32_t *charArray, size_t arraySize, char *string, s
 {
 	int len, i, x, byteOffset = 0;
 
-	for(i = 0; i < arraySize; i++)
+	for (i = 0; i < arraySize; i++)
 	{
 		len = Q_UTF8_WidthCP(charArray[i]);
 		char *str = Q_UTF8_Encode(charArray[i]);
@@ -774,26 +774,26 @@ size_t Q_EscapeUnicode(char *fromStr, char *toStr, const size_t maxSize)
 {
 	// \u{num}
 	size_t width = 0;
-	char *str = fromStr;
-	int l = 0;
+	char   *str  = fromStr;
+	int    l     = 0;
 
 	while (*str)
 	{
-		if(l >= maxSize)
+		if (l >= maxSize)
 		{
 			return l;
 		}
 
 		width = Q_UTF8_Width(str);
 
-		if(width > 1)
+		if (width > 1)
 		{
 			toStr[l++] = '\\';
 			toStr[l++] = 'u';
 			toStr[l++] = '{';
 			uint32_t cd = Q_UTF8_CodePoint(str);
 
-			if(cd > 999999999)
+			if (cd > 999999999)
 			{
 				return 0;
 			}
@@ -830,30 +830,30 @@ size_t Q_EscapeUnicode(char *fromStr, char *toStr, const size_t maxSize)
 size_t Q_UnescapeUnicode(char *fromStr, char *toStr, const size_t maxSize)
 {
 	char *str = fromStr;
-	int l = 0;
+	int  l    = 0;
 
 	while (*str)
 	{
-		if(l >= maxSize)
+		if (l >= maxSize)
 		{
 			return l;
 		}
 
-		if(str[0] == '\\' && str[1] == 'u' && str[2] == '{')
+		if (str[0] == '\\' && str[1] == 'u' && str[2] == '{')
 		{
-			char tmpNumber[20] = {0};
-			size_t numberOffset = 0;
+			char   tmpNumber[20] = { 0 };
+			size_t numberOffset  = 0;
 			str += 3;
 
-			while(str && str[0] != '}')
+			while (str && str[0] != '}')
 			{
 				tmpNumber[numberOffset++] = str[0];
 				str++;
 			}
 
-			if(!numberOffset)
+			if (!numberOffset)
 			{
-				if(str)
+				if (str)
 				{
 					str++;
 					continue;
@@ -862,7 +862,7 @@ size_t Q_UnescapeUnicode(char *fromStr, char *toStr, const size_t maxSize)
 				return 0;
 			}
 
-			if(!str)
+			if (!str)
 			{
 				return 0;
 			}
@@ -871,7 +871,7 @@ size_t Q_UnescapeUnicode(char *fromStr, char *toStr, const size_t maxSize)
 			int number = atoi(tmpNumber);
 
 			// Ignore non printable keys
-			if(number < 32)
+			if (number < 32)
 			{
 				str++;
 				continue;
@@ -879,7 +879,7 @@ size_t Q_UnescapeUnicode(char *fromStr, char *toStr, const size_t maxSize)
 
 			char *buffer = Q_UTF8_Encode(number);
 
-			while(*buffer)
+			while (*buffer)
 			{
 				toStr[l++] = buffer[0];
 				buffer++;
@@ -907,8 +907,8 @@ size_t Q_UnescapeUnicode(char *fromStr, char *toStr, const size_t maxSize)
  */
 size_t Q_EscapeUnicodeInPlace(char *string, const size_t size)
 {
-	char *tmpOutput = Com_Allocate(sizeof(char) * size);
-	size_t len = Q_EscapeUnicode(string, tmpOutput, size);
+	char   *tmpOutput = Com_Allocate(sizeof(char) * size);
+	size_t len        = Q_EscapeUnicode(string, tmpOutput, size);
 	Q_strncpyz(string, tmpOutput, size);
 	Com_Dealloc(tmpOutput);
 	return len;
@@ -922,8 +922,8 @@ size_t Q_EscapeUnicodeInPlace(char *string, const size_t size)
  */
 size_t Q_UnescapeUnicodeInPlace(char *string, const size_t size)
 {
-	char *tmpOutput = Com_Allocate(sizeof(char) * size);
-	size_t len = Q_UnescapeUnicode(string, tmpOutput, size);
+	char   *tmpOutput = Com_Allocate(sizeof(char) * size);
+	size_t len        = Q_UnescapeUnicode(string, tmpOutput, size);
 	Q_strncpyz(string, tmpOutput, size);
 	Com_Dealloc(tmpOutput);
 	return len;
