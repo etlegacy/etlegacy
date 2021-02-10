@@ -1419,7 +1419,8 @@ int Q_isforfilename(int c)
  */
 void Q_SafeNetString(char *string, size_t len, qboolean strip)
 {
-	for (int i = 0; i < len; ++i)
+	int i = 0;
+	for (; i < len; ++i)
 	{
 		if (!string[i])
 		{
