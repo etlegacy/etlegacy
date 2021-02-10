@@ -97,12 +97,14 @@ if(APPLE)
 	# TODO: maybe remove this whole thing after the next release.
 	if(XCODE_SDK_VERSION LESS "10.14" AND CMAKE_OSX_DEPLOYMENT_TARGET LESS "10.14")
 		# Force universal mod on osx up to Mojave
+		message(STATUS "Enabling MacOS x86 and x86_64 builds on mods")
 		set(OSX_MOD_ARCH "i386;x86_64")
-    elseif(XCODE_SDK_VERSION GREATER_EQUAL "11.00")
-        message(STATUS "Enabling OSX arm build")
-        set(OSX_MOD_ARCH "x86_64;arm64")
+	elseif(XCODE_SDK_VERSION GREATER_EQUAL "11.00")
+		message(STATUS "Enabling MacOS x86_64 and Arm builds on mods")
+		set(OSX_MOD_ARCH "x86_64;arm64")
 	else()
 		# 64bit mod only as of Catalina and higher
+		message(STATUS "Only doing MacOS x86_64 bit build")
 		set(OSX_MOD_ARCH "x86_64")
 	endif()
 

@@ -65,7 +65,7 @@ jobs:
         env:
           DEVELOPER_DIR: /Applications/Xcode_11.2.app/Contents/Developer
         shell: bash
-        run: ./easybuild.sh build -64 -mod --osx=10.14
+        run: ./easybuild.sh build -64 -mod --osx=10.10
 
       - uses: actions/upload-artifact@v2
         with:
@@ -223,7 +223,7 @@ jobs:
         env:
           DEVELOPER_DIR: /Applications/Xcode_11.2.app/Contents/Developer
         shell: bash
-        run: ./easybuild.sh build -64 --osx=10.14
+        run: ./easybuild.sh build -64 --osx=10.10
 
       - uses: actions/download-artifact@v2
         with:
@@ -236,7 +236,7 @@ jobs:
 
       - name: Generate packages
         shell: bash
-        run: ./easybuild.sh package -64 --osx=10.14
+        run: ./easybuild.sh package -64 --osx=10.10
 
       - uses: actions/upload-artifact@v2
         with:
