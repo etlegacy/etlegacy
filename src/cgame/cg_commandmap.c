@@ -2148,6 +2148,11 @@ void CG_DrawAutoMapNew(float x, float y, float w, float h)
 		}
 	}
 
+	if (!cg_shoutcastDrawMinimap.integer)
+	{
+		return;
+	}
+
 #ifdef FEATURE_EDV
 	if (cgs.demoCamera.renderingFreeCam == qtrue || cgs.demoCamera.renderingWeaponCam == qtrue || !cg_drawCompass.integer)
 	{

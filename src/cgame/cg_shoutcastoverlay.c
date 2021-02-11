@@ -366,12 +366,14 @@ void CG_DrawShoutcastPlayerList(void)
 			players[axis] = ci->clientNum;
 			axis++;
 		}
+
 		if (ci->team == TEAM_ALLIES && allies < MAX_ALLIES)
 		{
 			CG_DrawShoutcastPlayerOverlayAllies(ci, Ccg_WideX(SCREEN_WIDTH) - PLAYER_LIST_OVERLAY_BOX_WIDTH - PLAYER_LIST_OVERLAY_BORDER_DISTANCE_X, PLAYER_LIST_OVERLAY_BORDER_DISTANCE_Y + (PLAYER_LIST_OVERLAY_BOX_HEIGHT * allies) + (1 * allies), allies);
 			players[allies + 6] = ci->clientNum;
 			allies++;
 		}
+
 		if (axis > MAX_AXIS && allies > TEAM_ALLIES)
 		{
 			break;

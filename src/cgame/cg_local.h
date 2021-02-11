@@ -2819,6 +2819,7 @@ extern vmCvar_t cg_shoutcastTeamName1;
 extern vmCvar_t cg_shoutcastTeamName2;
 extern vmCvar_t cg_shoutcastDrawHealth;
 extern vmCvar_t cg_shoutcastGrenadeTrail;
+extern vmCvar_t cg_shoutcastDrawMinimap;
 
 // local clock flags
 #define LOCALTIME_ON                0x01
