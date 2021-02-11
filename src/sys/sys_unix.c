@@ -1039,7 +1039,6 @@ void Sys_StartProcess(char *cmdline, qboolean doexit)
 void Sys_OpenURL(const char *url, qboolean doexit)
 {
 #ifndef DEDICATED
-	char fn[MAX_OSPATH];
 	char cmdline[MAX_CMD];
 
 	static qboolean doexit_spamguard = qfalse;
@@ -1051,8 +1050,6 @@ void Sys_OpenURL(const char *url, qboolean doexit)
 	}
 
 	Com_Printf("Open URL: %s\n", url);
-
-	Com_DPrintf("URL script: %s\n", fn);
 
 #ifdef __APPLE__
 	Com_sprintf(cmdline, MAX_CMD, "open '%s' &", url);
