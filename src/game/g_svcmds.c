@@ -787,8 +787,8 @@ void Svcmd_ForceTeam_f(void)
 {
 	gclient_t *cl;
 	char      str[MAX_TOKEN_CHARS];
-	int w = 0; 
-	int w2 = 0;
+	int       w  = 0;
+	int       w2 = 0;
 
 	// find the player
 	trap_Argv(1, str, sizeof(str));
@@ -1727,7 +1727,7 @@ static void Svcmd_Pip(void)
 static void Svcmd_Fling(void) // 0 = fling, 1 = throw, 2 = launch
 {
 	int       pids[MAX_CLIENTS];
-	char      name[MAX_NAME_LENGTH], err[MAX_STRING_CHARS];
+	char      name[MAX_NAME_LENGTH];
 	char      fling[9], pastTense[9];
 	gentity_t *vic;
 	qboolean  doAll     = qfalse;
@@ -1736,7 +1736,7 @@ static void Svcmd_Fling(void) // 0 = fling, 1 = throw, 2 = launch
 	// ignore in intermission
 	if (level.intermissiontime)
 	{
-		G_Printf("%s command not allowed during intermission.\n", fling);
+		G_Printf("Throw command not allowed during intermission.\n");
 		return;
 	}
 
@@ -1814,6 +1814,8 @@ static void Svcmd_Fling(void) // 0 = fling, 1 = throw, 2 = launch
 
 	if (ClientNumbersFromString(name, pids) != 1)
 	{
+		char err[MAX_STRING_CHARS];
+
 		G_MatchOnePlayer(pids, err, sizeof(err));
 		G_Printf("Error - can't %s - %s.\n", fling, err);
 		return;
