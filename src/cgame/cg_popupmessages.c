@@ -615,7 +615,7 @@ void CG_DrawPMItems(rectDef_t rect, int style)
 
 	if (cgs.clientinfo[cg.clientNum].shoutcaster)
 	{
-		y = 130;
+		y = 110;
 	}
 
 	if (cg_drawSmallPopupIcons.integer)
