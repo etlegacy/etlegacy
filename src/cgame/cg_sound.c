@@ -1325,7 +1325,7 @@ qboolean CG_SpeakerEditor_NoiseEdit_KeyDown(panel_button_t *button, int key)
 		{
 			char dirname[MAX_QPATH];
 			char filename[MAX_QPATH];
-			char match[MAX_QPATH];
+			char match[MAX_QPATH] = { 0 };
 			int  i, numfiles, filelen;
 			char *fileptr;
 
@@ -2002,7 +2002,7 @@ panel_button_t speakerEditorRandomEdit =
 	NULL,                             // keyUp
 	CG_SpeakerEditor_RenderEdit,
 	CG_SpeakerEditor_RandomEditFinish,
-    0,
+	0,
 };
 
 panel_button_t speakerEditorVolumeLabel =
@@ -2090,7 +2090,7 @@ panel_button_t speakerEditorCancelButton =
 	CG_SpeakerEditor_Cancel_KeyUp,// keyUp
 	CG_SpeakerEditor_RenderButton,
 	NULL,
-    0,
+	0,
 };
 
 panel_button_t speakerEditorDeleteButton =
