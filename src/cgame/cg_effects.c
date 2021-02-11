@@ -586,8 +586,8 @@ void CG_GibPlayer(centity_t *cent, vec3_t playerOrigin, vec3_t gdir)
 		bg_character_t *character;
 		vec4_t         projection;
 		// BloodCloud
-		qboolean newjunction[MAXJUNCTIONS] = { 0 };
-		vec3_t   junctionOrigin[MAXJUNCTIONS];
+		qboolean newjunction[MAXJUNCTIONS]    = { 0 };
+		vec3_t   junctionOrigin[MAXJUNCTIONS] = { 0 };
 		vec3_t   axis[3];
 
 		vec4_t      color;
