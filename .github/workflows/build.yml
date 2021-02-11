@@ -66,7 +66,7 @@ jobs:
 
       - name: Build
         env:
-          DEVELOPER_DIR: /Applications/Xcode_12.3.app/Contents/Developer
+          DEVELOPER_DIR: /Applications/Xcode_12.4.app/Contents/Developer
         shell: bash
         run: ./easybuild.sh build -64 -mod --osx=10.10
 
@@ -224,7 +224,7 @@ jobs:
 
       - name: Build
         env:
-          DEVELOPER_DIR: /Applications/Xcode_12.3.app/Contents/Developer
+          DEVELOPER_DIR: /Applications/Xcode_12.4.app/Contents/Developer
         shell: bash
         run: ./easybuild.sh build -64 --osx=10.10
 
