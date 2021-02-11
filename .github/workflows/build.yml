@@ -65,6 +65,8 @@ jobs:
         run: |
           ls -la /Applications/ | grep Xcode
           ls -la /Library/Developer/CommandLineTools/SDKs/
+          xcode-select --print-path
+          xcrun -sdk macosx --show-sdk-path
 
       - name: Build
         env:
