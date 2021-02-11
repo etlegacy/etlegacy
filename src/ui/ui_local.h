@@ -106,6 +106,14 @@ extern vmCvar_t cl_bypassMouseInput;
 
 extern vmCvar_t ui_serverBrowserSettings;
 
+extern vmCvar_t ui_cg_shoutcastDrawPlayers;
+extern vmCvar_t ui_cg_shoutcastDrawTeamNames;
+extern vmCvar_t ui_cg_shoutcastTeamName1;
+extern vmCvar_t ui_cg_shoutcastTeamName2;
+extern vmCvar_t ui_cg_shoutcastDrawHealth;
+extern vmCvar_t ui_cg_shoutcastGrenadeTrail;
+extern vmCvar_t ui_cg_shoutcastDrawMinimap;
+
 // ui_serverBrowserSettings flags
 #define UI_BROWSER_ALLOW_REDIRECT     BIT(0)
 #define UI_BROWSER_ALLOW_HUMANS_COUNT BIT(1)

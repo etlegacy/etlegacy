@@ -8769,6 +8769,14 @@ vmCvar_t cl_bypassMouseInput;
 
 vmCvar_t ui_serverBrowserSettings;
 
+vmCvar_t ui_cg_shoutcastDrawPlayers;
+vmCvar_t ui_cg_shoutcastDrawTeamNames;
+vmCvar_t ui_cg_shoutcastTeamName1;
+vmCvar_t ui_cg_shoutcastTeamName2;
+vmCvar_t ui_cg_shoutcastDrawHealth;
+vmCvar_t ui_cg_shoutcastGrenadeTrail;
+vmCvar_t ui_cg_shoutcastDrawMinimap;
+
 static cvarTable_t cvarTable[] =
 {
 	{ NULL,                                "ui_textfield_temp",                   "",                           CVAR_TEMP,                      0 },
@@ -8866,6 +8874,14 @@ static cvarTable_t cvarTable[] =
 	{ &ui_cg_crosshairColor,               "cg_crosshairColor",                   "White",                      CVAR_ARCHIVE,                   0 },
 	{ &ui_cg_crosshairColorAlt,            "cg_crosshairColorAlt",                "White",                      CVAR_ARCHIVE,                   0 },
 	{ &ui_cg_crosshairSize,                "cg_crosshairSize",                    "48",                         CVAR_ARCHIVE,                   0 },
+
+	{ &ui_cg_shoutcastDrawPlayers,         "cg_shoutcastDrawPlayers",             "1",                          CVAR_ARCHIVE,                   0 },
+	{ &ui_cg_shoutcastDrawTeamNames,       "cg_shoutcastDrawTeamNames",           "1",                          CVAR_ARCHIVE,                   0 },
+	{ &ui_cg_shoutcastTeamName1,           "cg_shoutcastTeamName1",               "",                           CVAR_ARCHIVE,                   0 },
+	{ &ui_cg_shoutcastTeamName2,           "cg_shoutcastTeamName2",               "",                           CVAR_ARCHIVE,                   0 },
+	{ &ui_cg_shoutcastDrawHealth,          "cg_shoutcastDrawHealth",              "0",                          CVAR_ARCHIVE,                   0 },
+	{ &ui_cg_shoutcastGrenadeTrail,        "cg_shoutcastGrenadeTrail",            "0",                          CVAR_ARCHIVE,                   0 },
+	{ &ui_cg_shoutcastDrawMinimap,         "cg_shoutcastDrawMinimap",             "1",                          CVAR_ARCHIVE,                   0 },
 
 	// game mappings (for create server option)
 	{ NULL,                                "g_altStopwatchMode",                  "0",                          CVAR_ARCHIVE,                   0 },
