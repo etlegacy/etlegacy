@@ -135,6 +135,7 @@ void CG_setDefaultHudValues(hudStucture_t *hud)
 	hud->weaponchargebar = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 16, SCREEN_HEIGHT - 92, 12, 72, qtrue, STYLE_NORMAL);
 	hud->healthtext      = CG_getComponent(SKILLS_X - 28, SCREEN_HEIGHT - 4, 0, 0, qtrue, STYLE_NORMAL);
 	hud->xptext          = CG_getComponent(SKILLS_X + 28, SCREEN_HEIGHT - 4, 0, 0, qtrue, STYLE_NORMAL);
+	hud->ranktext        = CG_getComponent(0, SCREEN_HEIGHT, 0, 0, qfalse, STYLE_NORMAL);   // disable
 	hud->statsdisplay    = CG_getComponent(SKILL_ICON_X, 0, 0, 0, qtrue, STYLE_NORMAL);
 	hud->weaponicon      = CG_getComponent((Ccg_WideX(SCREEN_WIDTH) - 82), (SCREEN_HEIGHT - 56), 60, 32, qtrue, STYLE_NORMAL);
 	hud->weaponammo      = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 22, SCREEN_HEIGHT - 1 * (16 + 2) + 12 - 4, 0, 0, qtrue, STYLE_NORMAL);
@@ -600,7 +601,7 @@ static qboolean CG_ParseHUD(int handle)
 	}
 	else
 	{
-		memcpy(hud, &temphud, sizeof(temphud));
+		Com_Memcpy(hud, &temphud, sizeof(temphud));
 		Com_Printf("...properties for hud %i have been updated.\n", temphud.hudnumber);
 	}
 
@@ -3136,6 +3137,7 @@ static void CG_PrintHud(hudStucture_t *hud)
 	CG_PrintHudComponent("weaponchargebar", hud->weaponchargebar);
 	CG_PrintHudComponent("healthtext", hud->healthtext);
 	CG_PrintHudComponent("xptext", hud->xptext);
+	CG_PrintHudComponent("ranktext", hud->ranktext);
 	CG_PrintHudComponent("statsdisplay", hud->statsdisplay);
 	CG_PrintHudComponent("weaponicon", hud->weaponicon);
 	CG_PrintHudComponent("weaponammo", hud->weaponammo);
@@ -3145,6 +3147,7 @@ static void CG_PrintHud(hudStucture_t *hud)
 	CG_PrintHudComponent("hudhead", hud->hudhead);
 	CG_PrintHudComponent("cursorhint", hud->cursorhint);
 	CG_PrintHudComponent("weaponstability", hud->weaponstability);
+	CG_PrintHudComponent("livesleft", hud->livesleft);
 	CG_PrintHudComponent("reinforcement", hud->reinforcement);
 	CG_PrintHudComponent("roundtimer", hud->roundtimer);
 	CG_PrintHudComponent("spawntimer", hud->spawntimer);
