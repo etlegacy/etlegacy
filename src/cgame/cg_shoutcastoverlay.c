@@ -209,14 +209,23 @@ static void CG_DrawShoutcastPlayerOverlayAxis(clientInfo_t *player, float x, flo
 	curWeap   = CG_GetPlayerCurrentWeapon(player);
 	weapScale = cg_weapons[curWeap].weaponIconScale * 10;
 
+	if (IS_VALID_WEAPON(curWeap) && cg_weapons[curWeap].weaponIconScale == 1)
+	{
+		bottomRowX = x + PLAYER_LIST_OVERLAY_BOX_WIDTH + weapScale - 63;
+	}
+	else
+	{
+		bottomRowX = x + PLAYER_LIST_OVERLAY_BOX_WIDTH - 63;
+	}
+
 	// note: WP_NONE is excluded
 	if (IS_VALID_WEAPON(curWeap) && cg_weapons[curWeap].weaponIcon[0])     // do not try to draw nothing
 	{
-		CG_DrawPic(x + PLAYER_LIST_OVERLAY_BOX_WIDTH - weapScale - (weapScale / 2) - 38, y + (PLAYER_LIST_OVERLAY_BOX_HEIGHT * 0.75f) - 5, -weapScale, 10, cg_weapons[curWeap].weaponIcon[0]);
+		CG_DrawPic(bottomRowX, y + (PLAYER_LIST_OVERLAY_BOX_HEIGHT * 0.75f) - 5, -weapScale, 10, cg_weapons[curWeap].weaponIcon[0]);
 	}
 	else if (IS_VALID_WEAPON(curWeap) && cg_weapons[curWeap].weaponIcon[1])
 	{
-		CG_DrawPic(x + PLAYER_LIST_OVERLAY_BOX_WIDTH - weapScale - (weapScale / 2) - 38, y + (PLAYER_LIST_OVERLAY_BOX_HEIGHT * 0.75f) - 5, -weapScale, 10, cg_weapons[curWeap].weaponIcon[1]);
+		CG_DrawPic(bottomRowX, y + (PLAYER_LIST_OVERLAY_BOX_HEIGHT * 0.75f) - 5, -weapScale, 10, cg_weapons[curWeap].weaponIcon[1]);
 	}
 }
 
@@ -632,14 +641,23 @@ void CG_DrawShoutcastPlayerStatus(void)
 	curWeap   = CG_GetPlayerCurrentWeapon(player);
 	weapScale = cg_weapons[curWeap].weaponIconScale * 10;
 
+	if (IS_VALID_WEAPON(curWeap) && cg_weapons[curWeap].weaponIconScale == 1)
+	{
+		tmpX = statsBoxX + statsBoxWidth + weapScale - 50;
+	}
+	else
+	{
+		tmpX = statsBoxX + statsBoxWidth - 50;
+	}
+
 	// note: WP_NONE is excluded
 	if (IS_VALID_WEAPON(curWeap) && cg_weapons[curWeap].weaponIcon[0])     // do not try to draw nothing
 	{
-		CG_DrawPic(statsBoxX + statsBoxWidth - weapScale - (weapScale / 2) - 22, statsBoxY + (statsBoxHeight / 2) - 5, -weapScale, 10, cg_weapons[curWeap].weaponIcon[0]);
+		CG_DrawPic(tmpX, statsBoxY + (statsBoxHeight / 2) - 5, -weapScale, 10, cg_weapons[curWeap].weaponIcon[0]);
 	}
 	else if (IS_VALID_WEAPON(curWeap) && cg_weapons[curWeap].weaponIcon[1])
 	{
-		CG_DrawPic(statsBoxX + statsBoxWidth - weapScale - (weapScale / 2) - 22, statsBoxY + (statsBoxHeight / 2) - 5, -weapScale, 10, cg_weapons[curWeap].weaponIcon[1]);
+		CG_DrawPic(tmpX, statsBoxY + (statsBoxHeight / 2) - 5, -weapScale, 10, cg_weapons[curWeap].weaponIcon[1]);
 	}
 
 	//Draw hp
