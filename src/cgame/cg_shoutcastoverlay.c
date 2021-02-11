@@ -84,7 +84,7 @@ int players[12];
 /**
 * @brief CG_DrawMinimap
 */
-void CG_DrawMinimap()
+void CG_DrawMinimap(void)
 {
 	snapshot_t *snap;
 
@@ -346,7 +346,7 @@ static void CG_DrawShoutcastPlayerOverlayAllies(clientInfo_t *player, float x, f
 /**
 * @brief CG_DrawShoutcastOverlay
 */
-void CG_DrawShoutcastPlayerList()
+void CG_DrawShoutcastPlayerList(void)
 {
 	clientInfo_t *ci;
 	int          axis   = 0;
@@ -563,7 +563,7 @@ static char *CG_ParseStats(char *data, int i)
 /**
 * @brief CG_DrawShoutcastPlayerStatus
 */
-void CG_DrawShoutcastPlayerStatus()
+void CG_DrawShoutcastPlayerStatus(void)
 {
 	gameStats_t   *gs = &cgs.gamestats;
 	clientInfo_t  *player = &cgs.clientinfo[cg.snap->ps.clientNum];
@@ -838,7 +838,7 @@ static void CG_DrawShoutcastTeamNames()
 /**
 * @brief CG_DrawTimerShoutcast
 */
-void CG_DrawShoutcastTimer()
+void CG_DrawShoutcastTimer(void)
 {
 	if (cgs.gamestats.show == SHOW_ON)
 	{
@@ -942,7 +942,7 @@ void CG_DrawShoutcastTimer()
 /**
 * @brief CG_DrawShoutcastPowerups
 */
-void CG_DrawShoutcastPowerups()
+void CG_DrawShoutcastPowerups(void)
 {
 	if (cg.flagIndicator & (1 << PW_REDFLAG))
 	{

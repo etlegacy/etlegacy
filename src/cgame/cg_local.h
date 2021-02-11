@@ -2998,11 +2998,11 @@ void CG_PlayerAmmoValue(int *ammo, int *clips, int *akimboammo);
 
 //cg_shoutcastoverlay.c
 
-void CG_DrawShoutcastPlayerList();
-void CG_DrawShoutcastPlayerStatus();
-void CG_DrawShoutcastTimer();
-void CG_DrawShoutcastPowerups();
-void CG_DrawMinimap();
+void CG_DrawShoutcastPlayerList(void);
+void CG_DrawShoutcastPlayerStatus(void);
+void CG_DrawShoutcastTimer(void);
+void CG_DrawShoutcastPowerups(void);
+void CG_DrawMinimap(void);
 
 void CG_Shoutcast_KeyHandling(int key, qboolean down);
 qboolean CG_ShoutcastCheckExecKey(int key, qboolean doaction);
