@@ -304,7 +304,7 @@ jobs:
       - name: Get version status
         id: vars
         run: |
-          echo ::set-output name=hash_exists::$(curl -s -o /dev/null -w "%{http_code}" ${{ secrects.LEGACY_UPLOAD_CHECK_URL }}${{ github.sha }} 2>/dev/null)
+          echo ::set-output name=hash_exists::$(curl -s -o /dev/null -w "%{http_code}" ${{ secrets.LEGACY_UPLOAD_CHECK_URL }}${{ github.sha }} 2>/dev/null)
 
       - uses: actions/download-artifact@v2
         if: ${{ steps.vars.outputs.hash_exists == '404' }}
