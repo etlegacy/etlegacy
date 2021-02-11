@@ -961,7 +961,6 @@ static void CG_ConfigStringModified(void)
 		break;
 	case CS_LEVEL_START_TIME:
 		cgs.levelStartTime = atoi(CG_ConfigString(num));
-		trap_Cvar_Set("cg_spawnTimer_set", "-1");
 		break;
 	case CS_INTERMISSION_START_TIME:
 		cgs.intermissionStartTime = atoi(CG_ConfigString(num));
