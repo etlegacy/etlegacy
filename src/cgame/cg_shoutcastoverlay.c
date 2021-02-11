@@ -578,11 +578,11 @@ void CG_DrawShoutcastPlayerStatus(void)
 	//Draw team flag
 	if (player->team == TEAM_ALLIES)
 	{
-		CG_DrawPic(nameBoxX + 4, nameBoxY + (nameBoxHeight / 2) - 5, 14, 10, cgs.media.alliedFlag);
+		CG_DrawPic(nameBoxX + 4, nameBoxY + (nameBoxHeight / 2) - 4.5f, 14, 9, cgs.media.alliedFlag);
 	}
 	else
 	{
-		CG_DrawPic(nameBoxX + 4, nameBoxY + (nameBoxHeight / 2) - 5, 14, 10, cgs.media.axisFlag);
+		CG_DrawPic(nameBoxX + 4, nameBoxY + (nameBoxHeight / 2) - 4.5f, 14, 9, cgs.media.axisFlag);
 	}
 
 	//Draw name limit 20 chars, width 110
