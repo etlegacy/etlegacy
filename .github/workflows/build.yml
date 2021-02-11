@@ -71,7 +71,7 @@ jobs:
       - name: Build
         env:
           SDKROOT: /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk
-          DEVELOPER_DIR: /Applications/Xcode_12.4.app/Contents/Developer
+          DEVELOPER_DIR: /Library/Developer/CommandLineTools
         shell: bash
         run: ./easybuild.sh build -64 -mod --osx=10.10
 
@@ -230,7 +230,7 @@ jobs:
       - name: Build
         env:
           SDKROOT: /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk
-          DEVELOPER_DIR: /Applications/Xcode_12.4.app/Contents/Developer
+          DEVELOPER_DIR: /Library/Developer/CommandLineTools
         shell: bash
         run: ./easybuild.sh build -64 --osx=10.10
 
