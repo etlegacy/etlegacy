@@ -61,6 +61,9 @@ jobs:
       - name: Install dependencies
         run: brew bundle
 
+      - name: List dev tools
+        run: ls -la /Applications/ | grep Xcode
+
       - name: Build
         env:
           DEVELOPER_DIR: /Applications/Xcode_12.3.app/Contents/Developer
