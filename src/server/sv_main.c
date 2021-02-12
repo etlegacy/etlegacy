@@ -117,6 +117,8 @@ cvar_t *sv_demoTolerant;
 
 cvar_t *sv_ipMaxClients;
 
+cvar_t *sv_guidCheck;
+
 static void SVC_Status(netadr_t from, qboolean force);
 
 /*

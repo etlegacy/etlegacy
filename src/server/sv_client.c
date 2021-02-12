@@ -511,7 +511,7 @@ void SV_DirectConnect(netadr_t from)
 	}
 
 	// check guid after we ensure client doesn't already use a slot
-	if (!SV_isValidGUID(from, userinfo))
+	if (sv_guidCheck->integer && !SV_isValidGUID(from, userinfo))
 	{
 		return;
 	}
