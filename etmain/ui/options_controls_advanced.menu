@@ -57,6 +57,18 @@ menuDef {
 	MULTI( 8, JOYSTICK_Y+40, (SUBWINDOW_WIDTH)-4, 10, _("Analog Joystick:"), .2, 8, "in_joystickUseAnalog", cvarFloatList { "No" 0 "Yes" 1 }, _("Use analog joystick?") )
 	EDITFIELD( 8, JOYSTICK_Y+52, (SUBWINDOW_WIDTH)-4, 10, _("Joystick Threshold:"), .2, 8, "in_joystickThreshold", 64, 18, _("Sets joystick threshold sensitivity") )
 
+// Shoutcast //
+#define SHOUTCAST_Y 32
+	SUBWINDOW( 6+(SUBWINDOW_WIDTH)+6, SHOUTCAST_Y, (SUBWINDOW_WIDTH), 112, _("SHOUTCAST") )
+	BIND( 6+(SUBWINDOW_WIDTH)+6+2, SHOUTCAST_Y+16, (SUBWINDOW_WIDTH)-4, 10, _("Shoutcast menu:"), .2, 8, "shoutcastmenu", "Used to follow players, use the same way like voice chat." )
+	MULTI( 6+(SUBWINDOW_WIDTH)+6+2, SHOUTCAST_Y+28, (SUBWINDOW_WIDTH)-4, 10, _("Show minimap:"), .2, 8, "cg_shoutcastDrawMinimap", cvarFloatList { "Off" 0 "On" 1 }, _("Displays minimap.") )
+	MULTI( 6+(SUBWINDOW_WIDTH)+6+2, SHOUTCAST_Y+40, (SUBWINDOW_WIDTH)-4, 10, _("Show player lists:"), .2, 8, "cg_shoutcastDrawPlayers", cvarFloatList { "Off" 0 "On" 1 }, _("Displays player lists.") )
+	MULTI( 6+(SUBWINDOW_WIDTH)+6+2, SHOUTCAST_Y+52, (SUBWINDOW_WIDTH)-4, 10, _("Show grenade trail:"), .2, 8, "cg_shoutcastGrenadeTrail", cvarFloatList { "Off" 0 "On" 1 }, _("Use special red trail for grenades.") )
+	MULTI( 6+(SUBWINDOW_WIDTH)+6+2, SHOUTCAST_Y+64, (SUBWINDOW_WIDTH)-4, 10, _("Show player health:"), .2, 8, "cg_shoutcastDrawHealth", cvarFloatList { "Off" 0 "As text" 1 "As health bar" 2 }, _("Displays player health above them.") )
+	MULTI( 6+(SUBWINDOW_WIDTH)+6+2, SHOUTCAST_Y+76, (SUBWINDOW_WIDTH)-4, 10, _("Show team names:"), .2, 8, "cg_shoutcastDrawTeamNames", cvarFloatList { "Off" 0 "On" 1 }, _("Displays team names.") )
+	EDITFIELD( 6+(SUBWINDOW_WIDTH)+6+2, SHOUTCAST_Y+88, (SUBWINDOW_WIDTH)-4, 10, _("Axis team name:"), .2, 8, "cg_shoutcastTeamName1", 64, 18, _("Sets axis team name (axis if empty).") )
+	EDITFIELD( 6+(SUBWINDOW_WIDTH)+6+2, SHOUTCAST_Y+100, (SUBWINDOW_WIDTH)-4, 10, _("Allies team name:"), .2, 8, "cg_shoutcastTeamName2", 64, 18, _("Sets allies team name (allies if empty).") )
+	
 // Buttons //
 	BUTTON( 6, WINDOW_HEIGHT-24, WINDOW_WIDTH-12, 18, _("BACK"), .3, 14, close options_controls_advanced ; open options_controls )
 }

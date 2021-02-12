@@ -86,27 +86,6 @@ int players[12];
 */
 void CG_DrawMinimap(void)
 {
-	snapshot_t *snap;
-
-	if (cg.nextSnap && !cg.nextFrameTeleport && !cg.thisFrameTeleport)
-	{
-		snap = cg.nextSnap;
-	}
-	else
-	{
-		snap = cg.snap;
-	}
-
-	if (snap->ps.pm_flags & PMF_LIMBO /*|| snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR*/
-#ifdef FEATURE_MULTIVIEW
-	    || cg.mvTotalClients > 0
-#endif
-	    )
-	{
-		CG_DrawExpandedAutoMap();
-		return;
-	}
-
 	CG_DrawAutoMapNew(MINIMAP_X, MINIMAP_Y, MINIMAP_WIDTH, MINIMAP_HEIGHT);
 }
 
@@ -230,14 +209,23 @@ static void CG_DrawShoutcastPlayerOverlayAxis(clientInfo_t *player, float x, flo
 	curWeap   = CG_GetPlayerCurrentWeapon(player);
 	weapScale = cg_weapons[curWeap].weaponIconScale * 10;
 
+	if (IS_VALID_WEAPON(curWeap) && cg_weapons[curWeap].weaponIconScale == 1)
+	{
+		bottomRowX = x + PLAYER_LIST_OVERLAY_BOX_WIDTH + weapScale - 63;
+	}
+	else
+	{
+		bottomRowX = x + PLAYER_LIST_OVERLAY_BOX_WIDTH - 63;
+	}
+
 	// note: WP_NONE is excluded
 	if (IS_VALID_WEAPON(curWeap) && cg_weapons[curWeap].weaponIcon[0])     // do not try to draw nothing
 	{
-		CG_DrawPic(x + PLAYER_LIST_OVERLAY_BOX_WIDTH - weapScale - (weapScale / 2) - 38, y + (PLAYER_LIST_OVERLAY_BOX_HEIGHT * 0.75f) - 5, -weapScale, 10, cg_weapons[curWeap].weaponIcon[0]);
+		CG_DrawPic(bottomRowX, y + (PLAYER_LIST_OVERLAY_BOX_HEIGHT * 0.75f) - 5, -weapScale, 10, cg_weapons[curWeap].weaponIcon[0]);
 	}
 	else if (IS_VALID_WEAPON(curWeap) && cg_weapons[curWeap].weaponIcon[1])
 	{
-		CG_DrawPic(x + PLAYER_LIST_OVERLAY_BOX_WIDTH - weapScale - (weapScale / 2) - 38, y + (PLAYER_LIST_OVERLAY_BOX_HEIGHT * 0.75f) - 5, -weapScale, 10, cg_weapons[curWeap].weaponIcon[1]);
+		CG_DrawPic(bottomRowX, y + (PLAYER_LIST_OVERLAY_BOX_HEIGHT * 0.75f) - 5, -weapScale, 10, cg_weapons[curWeap].weaponIcon[1]);
 	}
 }
 
@@ -378,12 +366,14 @@ void CG_DrawShoutcastPlayerList(void)
 			players[axis] = ci->clientNum;
 			axis++;
 		}
+
 		if (ci->team == TEAM_ALLIES && allies < MAX_ALLIES)
 		{
 			CG_DrawShoutcastPlayerOverlayAllies(ci, Ccg_WideX(SCREEN_WIDTH) - PLAYER_LIST_OVERLAY_BOX_WIDTH - PLAYER_LIST_OVERLAY_BORDER_DISTANCE_X, PLAYER_LIST_OVERLAY_BORDER_DISTANCE_Y + (PLAYER_LIST_OVERLAY_BOX_HEIGHT * allies) + (1 * allies), allies);
 			players[allies + 6] = ci->clientNum;
 			allies++;
 		}
+
 		if (axis > MAX_AXIS && allies > TEAM_ALLIES)
 		{
 			break;
@@ -565,9 +555,10 @@ static char *CG_ParseStats(char *data, int i)
 */
 void CG_DrawShoutcastPlayerStatus(void)
 {
-	gameStats_t   *gs = &cgs.gamestats;
+	gameStats_t   *gs     = &cgs.gamestats;
 	clientInfo_t  *player = &cgs.clientinfo[cg.snap->ps.clientNum];
-	playerState_t *ps = &cg.snap->ps;
+	playerState_t *ps     = &cg.snap->ps;
+	rectDef_t     rect;
 	float         nameBoxWidth = PLAYER_STATUS_OVERLAY_NAMEBOX_WIDTH;
 	float         nameBoxHeight = PLAYER_STATUS_OVERLAY_NAMEBOX_HEIGHT;
 	float         nameBoxX = PLAYER_STATUS_OVERLAY_NAMEBOX_X;
@@ -587,21 +578,21 @@ void CG_DrawShoutcastPlayerStatus(void)
 	//Draw team flag
 	if (player->team == TEAM_ALLIES)
 	{
-		CG_DrawPic(nameBoxX + 4, nameBoxY + (nameBoxHeight / 2) - 5, 14, 10, cgs.media.alliedFlag);
+		CG_DrawPic(nameBoxX + 4, nameBoxY + (nameBoxHeight / 2) - 4.5f, 14, 9, cgs.media.alliedFlag);
 	}
 	else
 	{
-		CG_DrawPic(nameBoxX + 4, nameBoxY + (nameBoxHeight / 2) - 5, 14, 10, cgs.media.axisFlag);
+		CG_DrawPic(nameBoxX + 4, nameBoxY + (nameBoxHeight / 2) - 4.5f, 14, 9, cgs.media.axisFlag);
 	}
 
 	//Draw name limit 20 chars, width 110
-	textWidth  = CG_Text_Width_Ext(player->name, 0.19f, 0, FONT_TEXT);
-	textHeight = CG_Text_Height_Ext(player->name, 0.19f, 0, FONT_TEXT);
+	textWidth  = CG_Text_Width_Ext(player->cleanname, 0.19f, 0, FONT_TEXT);
+	textHeight = CG_Text_Height_Ext(player->cleanname, 0.19f, 0, FONT_TEXT);
 	if (textWidth > 110)
 	{
 		textWidth = 110;
 	}
-	CG_Text_Paint_Ext(nameBoxX + (nameBoxWidth / 2) - (textWidth / 2), nameBoxY + (nameBoxHeight / 2) + (textHeight / 2), 0.19f, 0.19f, colorWhite, player->name, 0, 20, ITEM_TEXTSTYLE_NORMAL, FONT_TEXT);
+	CG_Text_Paint_Ext(nameBoxX + (nameBoxWidth / 2) - (textWidth / 2), nameBoxY + (nameBoxHeight / 2) + (textHeight / 2), 0.19f, 0.19f, colorWhite, player->cleanname, 0, 20, ITEM_TEXTSTYLE_NORMAL, FONT_TEXT);
 
 	//Draw country flag
 	CG_DrawFlag(nameBoxX + nameBoxWidth - 17, nameBoxY + (nameBoxHeight / 2) - 7, 1, player->clientNum);
@@ -652,14 +643,23 @@ void CG_DrawShoutcastPlayerStatus(void)
 	curWeap   = CG_GetPlayerCurrentWeapon(player);
 	weapScale = cg_weapons[curWeap].weaponIconScale * 10;
 
+	if (IS_VALID_WEAPON(curWeap) && cg_weapons[curWeap].weaponIconScale == 1)
+	{
+		tmpX = statsBoxX + statsBoxWidth + weapScale - 50;
+	}
+	else
+	{
+		tmpX = statsBoxX + statsBoxWidth - 50;
+	}
+
 	// note: WP_NONE is excluded
 	if (IS_VALID_WEAPON(curWeap) && cg_weapons[curWeap].weaponIcon[0])     // do not try to draw nothing
 	{
-		CG_DrawPic(statsBoxX + statsBoxWidth - weapScale - (weapScale / 2) - 22, statsBoxY + (statsBoxHeight / 2) - 5, -weapScale, 10, cg_weapons[curWeap].weaponIcon[0]);
+		CG_DrawPic(tmpX, statsBoxY + (statsBoxHeight / 2) - 5, -weapScale, 10, cg_weapons[curWeap].weaponIcon[0]);
 	}
 	else if (IS_VALID_WEAPON(curWeap) && cg_weapons[curWeap].weaponIcon[1])
 	{
-		CG_DrawPic(statsBoxX + statsBoxWidth - weapScale - (weapScale / 2) - 22, statsBoxY + (statsBoxHeight / 2) - 5, -weapScale, 10, cg_weapons[curWeap].weaponIcon[1]);
+		CG_DrawPic(tmpX, statsBoxY + (statsBoxHeight / 2) - 5, -weapScale, 10, cg_weapons[curWeap].weaponIcon[1]);
 	}
 
 	//Draw hp
@@ -694,11 +694,6 @@ void CG_DrawShoutcastPlayerStatus(void)
 		statsBoxX += 1 + textWidth;
 		//Latched class
 		CG_DrawPic(statsBoxX + 1, statsBoxY + (statsBoxHeight / 2) - 6, 12, 12, cgs.media.skillPics[SkillNumForClass(player->latchedcls)]);
-		statsBoxX += 8;
-	}
-	else
-	{
-		statsBoxX += 20;
 	}
 
 	CG_RequestPlayerStats(ps->clientNum);
@@ -763,6 +758,22 @@ void CG_DrawShoutcastPlayerStatus(void)
 		CG_Text_Paint_Ext(statsBoxX + 7 + (textWidth / 2) - (textWidth2 / 2), statsBoxY + (statsBoxHeight / 2) + (textHeight / 2) + 4, 0.19f, 0.19f, colorRed, dmgRcvd, 0, 0, ITEM_TEXTSTYLE_NORMAL, FONT_TEXT);
 		statsBoxX += 5 + textWidth2;
 	}
+
+	//Draw cursor hint
+	rect.x = (SCREEN_WIDTH / 2) - 24;
+	rect.y = 260;
+	rect.w = 48;
+	rect.h = 48;
+
+	CG_DrawCursorhint(&rect);
+
+	//Draw stability bar
+	rect.x = 50;
+	rect.y = 208;
+	rect.w = 10;
+	rect.h = 64;
+
+	CG_DrawWeapStability(&rect);
 }
 
 /**
@@ -922,10 +933,6 @@ void CG_DrawShoutcastTimer(void)
 
 	//Allies reinf time
 	textWidth = CG_Text_Width_Ext(rtAllies, 0.20f, 0, FONT_HEADER);
-	if (textWidth == 10)
-	{
-		textWidth = 0;
-	}
 	CG_Text_Paint_Ext(x + w - textWidth - 3, y + h - 5, 0.20f, 0.20f, color, rtAllies, 0, 0, 0, FONT_HEADER);
 
 	//Round number
