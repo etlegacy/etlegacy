@@ -352,6 +352,14 @@ int Sys_Stat(const char *path, void *stat)
 	return _wstat(w_path, stat);
 }
 
+int Sys_Rename(const char *from, const char *to)
+{
+	wchar_t w_from[MAX_OSPATH], w_to[MAX_OSPATH];
+	Sys_StringToWideCharArray(from, w_from, MAX_OSPATH);
+	Sys_StringToWideCharArray(to, w_to, MAX_OSPATH);
+	return _wrename(w_from, w_to);
+}
+
 /**
  * @brief Sys_Cwd
  * @return

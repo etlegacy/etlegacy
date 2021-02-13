@@ -344,16 +344,16 @@ void Com_WWWDownload(void)
 
 		dld.download = 0;
 #if defined(FEATURE_PAKISOLATION) && !defined(DEDICATED)
-		to_ospath = FS_BuildOSPath(Cvar_VariableString("fs_homepath"), 
+		to_ospath = FS_BuildOSPath(Cvar_VariableString("fs_homepath"),
 		                           DL_ContainerizePath(dld.downloadTempName, dld.originalDownloadName), NULL);
 #else
 		to_ospath = FS_BuildOSPath(Cvar_VariableString("fs_homepath"), dld.originalDownloadName, NULL);
 #endif
-		if (rename(dld.downloadTempName, to_ospath))
+		if (Sys_Rename(dld.downloadTempName, to_ospath))
 		{
 			FS_CopyFile(dld.downloadTempName, to_ospath);
 
-			if (remove(dld.downloadTempName) != 0)
+			if (Sys_Remove(dld.downloadTempName) != 0)
 			{
 				Com_Printf("WARNING: Com_WWWDownload - cannot remove file '%s'\n", dld.downloadTempName);
 			}

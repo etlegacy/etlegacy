@@ -1025,7 +1025,7 @@ void FS_SV_Rename(const char *from, const char *to)
 	}
 	FS_CheckFilenameIsNotExecutable(to_ospath, __func__);
 
-	if (rename(from_ospath, to_ospath))
+	if (Sys_Rename(from_ospath, to_ospath))
 	{
 		// Failed, try copying it and deleting the original
 		FS_CopyFile(from_ospath, to_ospath);
@@ -1057,7 +1057,7 @@ void FS_Rename(const char *from, const char *to)
 	}
 	FS_CheckFilenameIsMutable(to_ospath, __func__);
 
-	if (rename(from_ospath, to_ospath))
+	if (Sys_Rename(from_ospath, to_ospath))
 	{
 		// Failed, try copying it and deleting the original
 		FS_CopyFile(from_ospath, to_ospath);

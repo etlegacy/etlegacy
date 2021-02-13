@@ -196,7 +196,7 @@ static _attribute((noreturn)) void Sys_Exit(int exitCode)
 			if (FS_FileExists(Cvar_VariableString("com_pidfile")))
 			{
 				// FIXME: delete even when outside of homepath
-				if (remove(va("%s%c%s%c%s", Cvar_VariableString("fs_homepath"),
+				if (Sys_Remove(va("%s%c%s%c%s", Cvar_VariableString("fs_homepath"),
 				              PATH_SEP, Cvar_VariableString("fs_game"),
 				              PATH_SEP, Cvar_VariableString("com_pidfile"))) != 0)
 				{

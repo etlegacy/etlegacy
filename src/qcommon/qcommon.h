@@ -1393,10 +1393,12 @@ qboolean Sys_Mkdir(const char *path);
 int Sys_Remove(const char *path);
 int Sys_RemoveDir(const char *path);
 int Sys_Stat(const char *path, void *stat);
+int Sys_Rename(const char *from, const char *to);
 #else
 #include <unistd.h>
 #define Sys_Remove(x) remove(x)
 #define Sys_RemoveDir(x) rmdir(x)
+#define Sys_Rename(from, to) rename(from, to)
 #endif
 
 char *Sys_Cwd(void);
