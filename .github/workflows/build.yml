@@ -319,49 +319,6 @@ jobs:
             build/etlegacy-*.exe
             build/etlegacy-*.zip
 
-  raspberry_pi:
-    runs-on: ubuntu-16.04
-    needs: [ lnx32 ]
-    strategy:
-      matrix:
-        include:
-          - arch: armv7
-            distro: ubuntu20.04
-    steps:
-      - uses: actions/checkout@v2.1.0
-        with:
-          submodules: true
-          fetch-depth: 0
-
-      - uses: uraimo/run-on-arch-action@v2.0.5
-        name: Build on ${{ matrix.arch }}
-        with:
-          arch: ${{ matrix.arch }}
-          distro: ${{ matrix.distro }}
-          run: |
-            apt-get update -q -y
-            apt-get -y install build-essential libfreeimage-dev libopenal-dev libpango1.0-dev libsndfile-dev libudev-dev \
-            libasound2-dev libjpeg8-dev libwebp-dev automake libgl1-mesa-glx libogg0 libopenal1 libvorbis0a \
-            libvorbisfile3 zlib1g libx11-dev libglew-dev libegl1-mesa-dev \
-            nasm autoconf git cmake zip gcc g++ libtool libxrandr-dev x11proto-randr-dev
-            ./easybuild.sh build -RPI -GLES -j2
-            cd build && cpack
-          setup: |
-            mkdir -p "${PWD}/build/legacy"
-          # Mount the artifacts directory in the container
-          dockerRunArgs: |
-            --volume "${PWD}/build/legacy:/build/legacy"
-      - name: Display structure of downloaded files
-        run: ls -R
-        working-directory: build/legacy
-
-      - uses: actions/upload-artifact@v2
-        with:
-          name: raspberry_pi-packages
-          path: |
-            build/etlegacy-*.tar.gz
-            build/etlegacy-*.sh
-
 #   _    _           _                       _                         _      _____   _
 #  | |  | |         | |                     | |                       | |    / ____| | |
 #  | |  | |  _ __   | |   ___     __ _    __| |     __ _   _ __     __| |   | |      | |   ___    __ _   _ __    _   _   _ __
