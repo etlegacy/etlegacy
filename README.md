@@ -9,9 +9,9 @@ ET: Legacy [![Travis Status](https://travis-ci.org/etlegacy/etlegacy.svg?branch=
 * Development: [https://github.com/etlegacy/etlegacy](https://github.com/etlegacy/etlegacy)
 * Assets Repository: [https://drive.google.com](https://drive.google.com/drive/folders/0Bw7Yu-pqzcSaLXEtVEVjZF82UEU)
 * Documentation: [https://etlegacy.readthedocs.io/](https://etlegacy.readthedocs.io/)
-* Lua API: [http://etlegacy-lua-docs.readthedocs.io](http://etlegacy-lua-docs.readthedocs.io)
+* Lua API: [https://etlegacy-lua-docs.readthedocs.io](https://etlegacy-lua-docs.readthedocs.io)
 * Translation: [https://www.transifex.com/etlegacy/etlegacy](https://www.transifex.com/etlegacy/etlegacy)
-* Contact: [\#etlegacy](http://webchat.freenode.net/?channels=#etlegacy) on irc.freenode.net and [etlegacy/#etlegacy](https://discordapp.com/channels/260750790203932672/346956915814957067) on Discord.
+* Contact: [\#etlegacy](https://webchat.freenode.net/?channels=#etlegacy) on irc.freenode.net and [etlegacy/#etlegacy](https://discordapp.com/channels/260750790203932672/346956915814957067) on Discord.
 
 ## INTRODUCTION
 
@@ -89,7 +89,7 @@ section for more details.
 
 Grab info about current lib versions from our [Libs Changelog](https://github.com/etlegacy/etlegacy/wiki/Libs-Changelog) wiki page.
 
-To get the latest source code install [git](http://git-scm.com/) and
+To get the latest source code install [git](https://git-scm.com/) and
 clone our repository hosted at [Github.com](https://github.com/etlegacy/etlegacy):
 
     $ git clone git://github.com/etlegacy/etlegacy.git
@@ -179,8 +179,8 @@ By default, MinGW name is set to **`i686-w64-mingw32`**. You may have to change 
 
 Install:
 
-  1. [Visual Studio Community](http://www.visualstudio.com/) with the _Desktop Development with C++_ workload
-  2. [CMake](http://www.cmake.org/) and make sure it is added to your system PATH
+  1. [Visual Studio Community](https://visualstudio.microsoft.com/) with the _Desktop Development with C++_ workload
+  2. [CMake](https://cmake.org/) and make sure it is added to your system PATH
 
 * option A: **easybuild**
 
@@ -224,7 +224,7 @@ Install:
 1. Xcode:
  * At least a recent Version of Xcode Command Line Tools (Terminal -> `xcode-select --install`)
  * or a complete Xcode IDE (through App Store or https://developer.apple.com/xcode/downloads/)
-2. Homebrew (http://brew.sh/)
+2. Homebrew (https://brew.sh/)
 
 Then brew the following packages in the terminal app:
 
@@ -356,7 +356,7 @@ Copyright (C) 2012-2020 ET:Legacy Team <mail@etlegacy.com>
   A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 
   You should have received a copy of the GNU General Public License along with
-  ET: Legacy (see COPYING.txt). If not, see <http://www.gnu.org/licenses/>.
+  ET: Legacy (see COPYING.txt). If not, see <https://www.gnu.org/licenses/>.
 
   ADDITIONAL TERMS:  The Wolfenstein: Enemy Territory GPL Source Code is also
   subject to certain additional terms. You should have received a copy of these
