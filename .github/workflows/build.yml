@@ -338,7 +338,6 @@ jobs:
             nasm autoconf git cmake zip gcc g++ libtool libxrandr-dev x11proto-randr-dev
           run: |
             ./easybuild.sh build -RPI -GLES -j2
-# When building package script is looking for _dirty pk3 instead of hash one.
             cd build && cpack
 
           setup: |
