@@ -101,6 +101,34 @@ jobs:
             build/legacy/cgame*.dll
             build/legacy/ui*.dll
 
+  raspberry_pi-mod:
+    runs-on: ubuntu-16.04
+    strategy:
+    steps:
+      - uses: actions/checkout@v2.1.0
+        with:
+          submodules: true
+          fetch-depth: 0
+
+      - uses: uraimo/run-on-arch-action@v2.0.5
+        name: Build
+        with:
+          arch: armv7
+          distro: buster
+          install: |
+             apt-get update -q -y
+             apt-get -y install build-essential libudev-dev automake zlib1g \
+             nasm autoconf git cmake zip gcc g++ libtool
+          run: |
+            ./easybuild.sh build -RPI -mod
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: raspberry_pi-mod
+          path: |
+            build/legacy/cgame*.so
+            build/legacy/ui*.so
+
 #   __  __                                                          _
 #  |  \/  |                                                        | |
 #  | \  / |   ___   _ __    __ _    ___     _ __ ___     ___     __| |  ___
@@ -115,7 +143,7 @@ jobs:
     runs-on: ubuntu-16.04
     container:
       image: etlegacy/lnx-build:centos7
-    needs: [ lnx64-mod, osx-mod, win-mod ]
+    needs: [ lnx64-mod, osx-mod, win-mod, raspberry_pi-mod ]
     steps:
       - uses: actions/checkout@v2
         with:
@@ -143,7 +171,7 @@ jobs:
         shell: bash
         working-directory: build/legacy
         run: |
-          zip -rvj legacy_*.pk3 win-mod/*.dll lnx64-mod/*.so osx-mod/*
+          zip -rvj legacy_*.pk3 win-mod/*.dll lnx64-mod/*.so osx-mod/* raspberry_pi-mod/*.so
 
       - uses: actions/upload-artifact@v2
         with:
@@ -170,7 +198,7 @@ jobs:
 #  |_|      |_| |_| |_|  \__,_| |_|   | .__/   \__,_|  \___| |_|\_\  \__,_|  \__, |  \___| |___/
 #                                     | |                                     __/ |
 #                                     |_|                                    |___/
-# Generate the final packages for 64lnx, Osx and Windows
+# Generate the final packages for 64lnx, Osx, Windows and RPI (armv7 only)
   lnx64:
     runs-on: ubuntu-16.04
     needs: [ lnx32 ]
@@ -288,6 +316,50 @@ jobs:
             build/etlegacy-*.exe
             build/etlegacy-*.zip
 
+  raspberry_pi:
+    runs-on: ubuntu-16.04
+    needs: [ lnx32 ]
+    steps:
+      - uses: actions/checkout@v2.1.0
+        with:
+          submodules: true
+          fetch-depth: 0
+
+      - uses: uraimo/run-on-arch-action@v2.0.5
+        name: Build
+        with:
+          arch: armv7
+          distro: ubuntu20.04
+          install: |
+            apt-get update -q -y
+            apt-get -y install build-essential libfreeimage-dev libopenal-dev libpango1.0-dev libsndfile-dev libudev-dev \
+            libasound2-dev libjpeg8-dev libwebp-dev automake libgl1-mesa-glx libogg0 libopenal1 libvorbis0a \
+            libvorbisfile3 zlib1g libx11-dev libglew-dev libegl1-mesa-dev \
+            nasm autoconf git cmake zip gcc g++ libtool libxrandr-dev x11proto-randr-dev
+          run: |
+            ./easybuild.sh build -RPI -GLES -j2
+			# When building package script is looking for _dirty pk3 instead of hash one.
+            cd build && cpack
+
+          setup: |
+            mkdir -p "${PWD}/build/legacy"
+
+          # Mount the artifacts directory in the container
+          dockerRunArgs: |
+            --volume "${PWD}/build/legacy:/build/legacy"
+
+
+      - name: Display structure of downloaded files
+        run: ls -R
+        working-directory: build/legacy
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: raspberry_pi-packages
+          path: |
+            build/etlegacy-*.tar.gz
+            build/etlegacy-*.sh
+
 #   _    _           _                       _                         _      _____   _
 #  | |  | |         | |                     | |                       | |    / ____| | |
 #  | |  | |  _ __   | |   ___     __ _    __| |     __ _   _ __     __| |   | |      | |   ___    __ _   _ __    _   _   _ __
@@ -309,6 +381,7 @@ jobs:
             lnx64-mod
             osx-mod
             win-mod
+            raspberry_pi-mod
 
       - name: Get version status
         id: vars
@@ -408,3 +481,4 @@ jobs:
             lnx64-mod
             osx-mod
             win-mod
+            raspberry_pi-mod
