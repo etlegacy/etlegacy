@@ -107,7 +107,7 @@ jobs:
       matrix:
         include:
           - arch: armv7
-            distro: ubuntu20.04
+            distro: buster
     steps:
       - uses: actions/checkout@v2.1.0
         with:
@@ -123,7 +123,7 @@ jobs:
             apt-get update -q -y
             apt-get -y install build-essential libudev-dev libwebp-dev automake zlib1g \
             nasm autoconf cmake git zip gcc g++ libtool
-            ./easybuild.sh build -64 -mod
+            ./easybuild.sh build -RPI -mod
       - uses: actions/upload-artifact@v2
         with:
           name: raspberry_pi-mod
