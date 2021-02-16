@@ -2288,6 +2288,7 @@ void CG_DrawMapEntityNew(mapEntityData_t *mEnt, float x, float y, float w, float
 		}
 		else if ((cgs.clientinfo[cg.clientNum].team == TEAM_SPECTATOR && snap->ps.clientNum != cg.clientNum && cent - cg_entities == snap->ps.clientNum))
 		{
+
 			// we are following someone, so use their info
 			if (!scissor)
 			{
@@ -2302,7 +2303,7 @@ void CG_DrawMapEntityNew(mapEntityData_t *mEnt, float x, float y, float w, float
 
 			mEnt->yaw = (int)snap->ps.viewangles[YAW];
 		}
-		else if (cent->currentValid || cgs.clientinfo[cg.clientNum].shoutcaster)
+		else if (cent->currentValid)
 		{
 			// use more up-to-date info from pvs
 			if (!scissor)
@@ -2320,8 +2321,8 @@ void CG_DrawMapEntityNew(mapEntityData_t *mEnt, float x, float y, float w, float
 		}
 		else
 		{
-			// only see revivables for own team
-			if (mEnt->type == ME_PLAYER_REVIVE)
+			// only see revivables for own team, unless shoutcaster
+			if (mEnt->type == ME_PLAYER_REVIVE && !cgs.clientinfo[cg.clientNum].shoutcaster)
 			{
 				return;
 			}
@@ -2459,9 +2460,16 @@ void CG_DrawMapEntityNew(mapEntityData_t *mEnt, float x, float y, float w, float
 				}
 			}
 
-			// hide ghost icon for following shoutcaster
+			// hide ghost icon for following shoutcaster, highlight followed player.
 			if (cgs.clientinfo[cg.clientNum].shoutcaster && (cg.snap->ps.pm_flags & PMF_FOLLOW) && cg.snap->ps.clientNum == mEnt->data)
 			{
+				//Otherwise highlighting takes some time to disappear
+				if (cg.snap->ps.stats[STAT_HEALTH] > 0)
+				{
+					trap_R_SetColor(colorYellow);
+					CG_DrawPic(icon_pos[0], icon_pos[1], icon_extends[0], icon_extends[1], cgs.media.ccPlayerHighlight);
+					trap_R_SetColor(NULL);
+				}
 				return;
 			}
 
@@ -3275,7 +3283,12 @@ int CG_DrawSpawnPointInfoNew(float px, float py, float pw, float ph, qboolean dr
 
 				CG_DrawPic(point[0] - FLAG_LEFTFRAC_NEW * size, point[1] - FLAG_TOPFRAC_NEW * size, size, size, cgs.media.commandCentreSpawnShader[cg.spawnTeams[i] == TEAM_AXIS ? 0 : 1]);
 
-				if (!scissor)
+				if (scissor)
+				{
+					Com_sprintf(buffer, sizeof(buffer), "(%i)", cg.spawnPlayerCounts[i]);
+					CG_Text_Paint_Ext(point[0] + 2.5f + scissor->zoomFactor, point[1], 0.15f, 0.15f, colorWhite, buffer, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+				}
+				else
 				{
 					Com_sprintf(buffer, sizeof(buffer), "(%i)", cg.spawnPlayerCounts[i]);
 					CG_Text_Paint_Ext(point[0] + FLAGSIZE_NORMAL_NEW * 0.25f, point[1], 0.2f, 0.2f, colorWhite, buffer, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);

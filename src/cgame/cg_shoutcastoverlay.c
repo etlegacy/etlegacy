@@ -721,12 +721,12 @@ void CG_DrawShoutcastPlayerStatus(void)
 		//Deaths
 		textWidth  = CG_Text_Width_Ext("D", 0.16f, 0, FONT_TEXT);
 		textHeight = CG_Text_Height_Ext("D", 0.16f, 0, FONT_TEXT);
-		CG_Text_Paint_Ext(statsBoxX + 4, statsBoxY + (statsBoxHeight / 2) - (textHeight / 2), 0.16f, 0.16f, colorMdGrey, "D", 0, 0, ITEM_TEXTSTYLE_NORMAL, FONT_TEXT);
+		CG_Text_Paint_Ext(statsBoxX + 6, statsBoxY + (statsBoxHeight / 2) - (textHeight / 2), 0.16f, 0.16f, colorMdGrey, "D", 0, 0, ITEM_TEXTSTYLE_NORMAL, FONT_TEXT);
 
 		textHeight = CG_Text_Height_Ext(deaths, 0.19f, 0, FONT_TEXT);
 		textWidth2 = CG_Text_Width_Ext(deaths, 0.19f, 0, FONT_TEXT);
-		CG_Text_Paint_Ext(statsBoxX + 4 + (textWidth / 2) - (textWidth2 / 2), statsBoxY + (statsBoxHeight / 2) + (textHeight / 2) + 4, 0.19f, 0.19f, colorWhite, deaths, 0, 0, ITEM_TEXTSTYLE_NORMAL, FONT_TEXT);
-		statsBoxX += 4 + textWidth2;
+		CG_Text_Paint_Ext(statsBoxX + 6 + (textWidth / 2) - (textWidth2 / 2), statsBoxY + (statsBoxHeight / 2) + (textHeight / 2) + 4, 0.19f, 0.19f, colorWhite, deaths, 0, 0, ITEM_TEXTSTYLE_NORMAL, FONT_TEXT);
+		statsBoxX += 6 + textWidth2;
 
 		//Selfkills
 		textWidth  = CG_Text_Width_Ext("SK", 0.16f, 0, FONT_TEXT);
