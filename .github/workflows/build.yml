@@ -336,7 +336,7 @@ jobs:
           DISCORD_WEBHOOK: ${{ secrets.PUBLISH_DISCORD_WEBHOOK }}
         uses: Ilshidur/action-discord@0.3.0
         with:
-          args: "<@&673533235887865879> Build from ETLegacy: ${{ github.sha }} has been published."
+          args: "<@&673533235887865879> Build from ETLegacy: ${{ github.sha }} has been published.\nDownload at: https://www.etlegacy.com/workflow-files"
 
   docker:
     runs-on: ubuntu-16.04
