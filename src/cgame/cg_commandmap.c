@@ -2288,6 +2288,7 @@ void CG_DrawMapEntityNew(mapEntityData_t *mEnt, float x, float y, float w, float
 		}
 		else if ((cgs.clientinfo[cg.clientNum].team == TEAM_SPECTATOR && snap->ps.clientNum != cg.clientNum && cent - cg_entities == snap->ps.clientNum))
 		{
+
 			// we are following someone, so use their info
 			if (!scissor)
 			{
@@ -2459,9 +2460,16 @@ void CG_DrawMapEntityNew(mapEntityData_t *mEnt, float x, float y, float w, float
 				}
 			}
 
-			// hide ghost icon for following shoutcaster
+			// hide ghost icon for following shoutcaster, highlight followed player.
 			if (cgs.clientinfo[cg.clientNum].shoutcaster && (cg.snap->ps.pm_flags & PMF_FOLLOW) && cg.snap->ps.clientNum == mEnt->data)
 			{
+				//Otherwise highlighting takes some time to disappear
+				if (cg.snap->ps.stats[STAT_HEALTH] > 0)
+				{
+					trap_R_SetColor(colorYellow);
+					CG_DrawPic(icon_pos[0], icon_pos[1], icon_extends[0], icon_extends[1], cgs.media.ccPlayerHighlight);
+					trap_R_SetColor(NULL);
+				}
 				return;
 			}
 
