@@ -3275,7 +3275,12 @@ int CG_DrawSpawnPointInfoNew(float px, float py, float pw, float ph, qboolean dr
 
 				CG_DrawPic(point[0] - FLAG_LEFTFRAC_NEW * size, point[1] - FLAG_TOPFRAC_NEW * size, size, size, cgs.media.commandCentreSpawnShader[cg.spawnTeams[i] == TEAM_AXIS ? 0 : 1]);
 
-				if (!scissor)
+				if (scissor)
+				{
+					Com_sprintf(buffer, sizeof(buffer), "(%i)", cg.spawnPlayerCounts[i]);
+					CG_Text_Paint_Ext(point[0] + 2.5f + scissor->zoomFactor, point[1], 0.15f, 0.15f, colorWhite, buffer, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+				}
+				else
 				{
 					Com_sprintf(buffer, sizeof(buffer), "(%i)", cg.spawnPlayerCounts[i]);
 					CG_Text_Paint_Ext(point[0] + FLAGSIZE_NORMAL_NEW * 0.25f, point[1], 0.2f, 0.2f, colorWhite, buffer, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
