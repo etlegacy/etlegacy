@@ -2302,7 +2302,7 @@ void CG_DrawMapEntityNew(mapEntityData_t *mEnt, float x, float y, float w, float
 
 			mEnt->yaw = (int)snap->ps.viewangles[YAW];
 		}
-		else if (cent->currentValid || cgs.clientinfo[cg.clientNum].shoutcaster)
+		else if (cent->currentValid)
 		{
 			// use more up-to-date info from pvs
 			if (!scissor)
@@ -2320,8 +2320,8 @@ void CG_DrawMapEntityNew(mapEntityData_t *mEnt, float x, float y, float w, float
 		}
 		else
 		{
-			// only see revivables for own team
-			if (mEnt->type == ME_PLAYER_REVIVE)
+			// only see revivables for own team, unless shoutcaster
+			if (mEnt->type == ME_PLAYER_REVIVE && !cgs.clientinfo[cg.clientNum].shoutcaster)
 			{
 				return;
 			}
