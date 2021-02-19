@@ -1784,7 +1784,7 @@ void G_FindTeams(void)
  */
 void G_ServerCheck(void)
 {
-	if (level.etLegacyServer = qfalse)
+	if (!level.etLegacyServer)
 	{
 		G_Error("Error: %s does not support server version %s\n", MODNAME, FAKE_VERSION);
 	}
