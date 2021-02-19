@@ -1784,13 +1784,9 @@ void G_FindTeams(void)
  */
 void G_ServerCheck(void)
 {
-	static char versionString[64];
-
-	trap_Cvar_VariableStringBuffer("version", versionString, sizeof(versionString));
-
-	if (!strstr(versionString, PRODUCT_LABEL))
+	if (level.etLegacyServer = qfalse)
 	{
-		G_Error("Error: %s does not support server version %s\n", MODNAME, versionString);
+		G_Error("Error: %s does not support server version %s\n", MODNAME, FAKE_VERSION);
 	}
 }
 
@@ -2318,11 +2314,11 @@ void G_InitGame(int levelTime, int randomSeed, int restart, int etLegacyServer, 
 	time_t aclock;
 	char   timeFt[32];
 
-	// server version check
-	G_ServerCheck();
-
 	// mod version check
 	MOD_CHECK_ETLEGACY(etLegacyServer, serverVersion, level.etLegacyServer);
+
+	// server version check
+	G_ServerCheck();
 
 	G_Printf("------- Game Initialization -------\n");
 	G_Printf("gamename: %s\n", MODNAME);
