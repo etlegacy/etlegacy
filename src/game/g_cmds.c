@@ -3635,7 +3635,7 @@ void Cmd_SetViewpos_f(gentity_t *ent)
 		trap_Argv(4, buffer, sizeof(buffer));
 		angles[YAW] = atof(buffer);
 	}
-	else if (trap_Argc() == 7)
+	else if (trap_Argc() == 8)
 	{
 		for (i = 0; i < 3; i++)
 		{
@@ -3648,10 +3648,14 @@ void Cmd_SetViewpos_f(gentity_t *ent)
 			trap_Argv(i + 4, buffer, sizeof(buffer));
 			angles[i] = atof(buffer);
 		}
+
+		trap_Argv(7, buffer, sizeof(buffer));
+		qboolean useViewHeight = atof(buffer);
+		origin[2] = useViewHeight ? origin[2] -= (ent->client->ps.viewheight + 1) : origin[2];  // + 1 to account for teleport event origin shift
 	}
 	else
 	{
-		trap_SendServerCommand(ent - g_entities, va("print \"usage: setviewpos x y z yaw\n       setviewpos x y z pitch yaw roll\n\""));
+		trap_SendServerCommand(ent - g_entities, va("print \"usage: setviewpos x y z yaw\n       setviewpos x y z pitch yaw roll useViewHeight(1/0)\n\""));
 		return;
 	}
 
