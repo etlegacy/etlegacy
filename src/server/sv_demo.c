@@ -849,7 +849,7 @@ void SV_DemoAutoDemoRecord(void)
 
 	// print a message
 	Com_Printf("DEMO: automatic recording server-side demo to: %s/svdemos/%s.%s%d\n", strlen(Cvar_VariableString("fs_game")) ? Cvar_VariableString("fs_game") : BASEGAME, demoname, SVDEMOEXT, PROTOCOL_VERSION);
-	SV_SendServerCommand( NULL, "chat \"^3DEMO: automatic recording server-side demo to: %s.%s%d.\"", demoname, SVDEMOEXT, PROTOCOL_VERSION );
+	SV_SendServerCommand(NULL, "chat \"^3DEMO: automatic recording server-side demo to: %s.%s%d.\"", demoname, SVDEMOEXT, PROTOCOL_VERSION);
 	// launch the demo recording
 	Cbuf_AddText(va("demo_record %s\n", demoname));
 }
@@ -872,7 +872,7 @@ static void SV_DemoStopPlayback(void)
 			SV_SetConfigstring(CS_PLAYERS + i, NULL);
 		}
 	}
-	
+
 	// Close demo file after playback
 	FS_FCloseFile(sv.demoFile);
 	sv.demoState = DS_NONE;
@@ -915,7 +915,7 @@ static void SV_DemoStopPlayback(void)
  * @brief Call this to abort the demo play by error.
  * @param [in]
  */
-static void SV_DemoPlaybackError(const char *message)
+static void _attribute((noreturn)) SV_DemoPlaybackError(const char *message)
 {
 	// FIXME: reset static vars?!
 
@@ -1211,7 +1211,7 @@ static void SV_DemoStartPlayback(void)
 	Cvar_SetValue("sv_democlients", clients); // Note: we need SV_Startup() to NOT use SV_ChangeMaxClients for this to work without crashing when changing fs_game
 
 	// FIXME: omnibot - this bot stuff isn't tested well (but better than before)
-	// disable bots and ensure they don't connect again	
+	// disable bots and ensure they don't connect again
 	if (Cvar_Get("omnibot_enable", "0", 0)->integer > 0) // FIXME: and/or check for bot player count, omnibot_enable is latched !!!
 	{
 
@@ -1828,6 +1828,8 @@ read_next_demo_frame: // used to read another whole demo frame
 	while (1)
 	{
 read_next_demo_event: // used to read next demo event
+
+		MSG_BeginReading(&msg);
 
 		// Get a message
 		r = FS_Read(&msg.cursize, 4, sv.demoFile);
