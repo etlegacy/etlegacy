@@ -3115,6 +3115,9 @@ void Com_WriteConfiguration(void)
 	}
 	cvar_modifiedFlags &= ~CVAR_ARCHIVE;
 
+#ifdef DEDICATED
+	Com_WriteConfigToFile(CONFIG_NAME);
+#else
 	{
 		char *cl_profileStr = Cvar_VariableString("cl_profile");
 
@@ -3123,6 +3126,7 @@ void Com_WriteConfiguration(void)
 			Com_WriteConfigToFile(va("profiles/%s/%s", cl_profileStr, CONFIG_NAME));
 		}
 	}
+#endif
 }
 
 /**
