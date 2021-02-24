@@ -95,6 +95,7 @@ static CURLcode DL_cb_Context(CURL *curl, void *ssl_ctx, void *parm)
 	if(len <= 0)
 	{
 		FS_FCloseFile(certHandle);
+		goto callback_failed;
 	}
 
 	char *buffer = Com_Allocate(len + 1);
@@ -251,9 +252,22 @@ static void DL_InitSSL(CURL *curl)
 
 	if (FS_SV_FileExists(CA_CERT_FILE, qtrue))
 	{
-		// curl_easy_setopt(curl, CURLOPT_CAINFO, "./cert.crt");
 		curl_easy_setopt(curl, CURLOPT_SSL_CTX_FUNCTION, DL_cb_Context);
 	}
+	else if(FS_FileInPathExists(Cvar_VariableString("dl_capath")))
+	{
+		curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 1);
+		curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 1);
+		curl_easy_setopt(curl, CURLOPT_CAINFO, Cvar_VariableString("dl_capath"));
+	}
+#ifdef __linux__
+	else if(FS_FileInPathExists("/etc/ssl/certs/ca-certificates.crt"))
+	{
+		curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 1);
+		curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 1);
+		curl_easy_setopt(curl, CURLOPT_CAINFO, "/etc/ssl/certs/ca-certificates.crt");
+	}
+#endif
 	else
 	{
 		curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0);
@@ -296,7 +310,7 @@ int DL_BeginDownload(char *localName, const char *remoteName)
 		return 0;
 	}
 
-	dl_file = fopen(localName, "wb+");
+	dl_file = Sys_FOpen(localName, "wb+");
 	if (!dl_file)
 	{
 		Com_Printf(S_COLOR_RED  "DL_BeginDownload: Error - unable to open '%s' for writing\n", localName);
