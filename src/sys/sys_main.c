@@ -1052,11 +1052,9 @@ int main(int argc, char **argv)
 
 	// Concatenate the command line for passing to Com_Init
 	Sys_BuildCommandLine(argc, argv, commandLine, sizeof(commandLine));
+	Sys_SetUpConsoleAndSignals();
 
 	Com_Init(commandLine);
-	NET_Init();
-
-	Sys_SetUpConsoleAndSignals();
 
 #ifdef _WIN32
 

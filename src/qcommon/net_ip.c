@@ -339,14 +339,13 @@ static qboolean Sys_StringToSockaddr(const char *s, struct sockaddr *sadr, int s
 
 	retval = getaddrinfo(s, NULL, hintsp, &res);
 
-
-#ifdef _WIN32
-	// FIXME: When there is favorite server stored in db and loaded at start (in case Windows)
-	// It is complaining about WSAStartup not being initialized or issues with calling it.
-	// Error Code 10093
-	if (!winsockInitialized)
+	// Network needs to be init before this, and it should have been.
+	if (!networkingEnabled)
+	{
+		Com_Printf(S_COLOR_YELLOW "WARNING: Sys_StringToSockaddr: Networking is not initialized\n");
+		etl_assert(qfalse);
 		return qfalse;
-#endif
+	}
 
 	if (!retval)
 	{
@@ -2031,12 +2030,12 @@ static void NET_Config(qboolean enableNetworking)
 void NET_Init(void)
 {
 #ifdef _WIN32
-	int r;
+	int sock_ret;
 
-	r = WSAStartup(MAKEWORD(1, 1), &winsockdata);
-	if (r != 0)
+	sock_ret = WSAStartup(MAKEWORD(1, 1), &winsockdata);
+	if (sock_ret != 0)
 	{
-		Com_Printf(S_COLOR_YELLOW "WARNING: NET_Init: Winsock initialization failed, returned %d\n", r);
+		Com_Printf(S_COLOR_YELLOW "WARNING: NET_Init: Winsock initialization failed, returned %d\n", sock_ret);
 		return;
 	}
 

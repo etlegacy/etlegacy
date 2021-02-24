@@ -3040,6 +3040,8 @@ void Com_Init(char *commandLine)
 		// if the user didn't give any commands, run default action
 	}
 
+	NET_Init();
+
 	CL_StartHunkUsers();
 
 	// start in full screen ui mode
