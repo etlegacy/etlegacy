@@ -615,9 +615,9 @@ LONG WINAPI InputLineWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 	case WM_CHAR:
 		//GetWindowText( s_wcd.hwndInputLine, inputBuffer, sizeof( inputBuffer ) );
-		GetWindowTextW(s_wcd.hwndInputLine, w_buffer, sizeof(w_buffer));
+		GetWindowTextW(s_wcd.hwndInputLine, w_buffer, ARRAY_LEN(w_buffer));
 
-		Sys_WideCharArrayToString(w_buffer, win_consoleField.buffer, sizeof(win_consoleField.buffer));
+		Sys_WideCharArrayToString(w_buffer, win_consoleField.buffer, ARRAY_LEN(win_consoleField.buffer));
 
 		SendMessage(s_wcd.hwndInputLine, EM_GETSEL, (WPARAM) NULL, (LPARAM) &win_consoleField.cursor);
 		win_consoleField.widthInChars = Q_UTF8_Strlen(win_consoleField.buffer);
@@ -796,7 +796,7 @@ void Sys_CreateConsole(void)
 	                                    g_wv.hInstance, NULL);
 	SendMessage(s_wcd.hwndButtonQuit, WM_SETTEXT, 0, ( LPARAM ) "Quit");
 
-	// create the scrollbuffer
+	// create the scroll buffer
 	s_wcd.hwndBuffer = CreateWindowExW(WS_EX_CLIENTEDGE,
 	                                  L"edit", NULL, WS_CHILD | WS_VISIBLE | WS_VSCROLL /* | WS_BORDER*/ |
 	                                  ES_LEFT | ES_MULTILINE | ES_AUTOVSCROLL | ES_READONLY,

@@ -201,16 +201,17 @@ qboolean Sys_RandomBytes(byte *string, int len)
  */
 char *Sys_GetCurrentUser(void)
 {
-	static wchar_t   w_userName[1024];
-	static char   s_userName[1024];
-	DWORD size = 1024;
+	static wchar_t   w_userName[MAX_PATH];
+	static char   s_userName[MAX_PATH];
+	DWORD size = MAX_PATH;
 
-	if (!GetUserNameW(w_userName, &size))
+	if (GetUserNameW(w_userName, &size))
+	{
+		Sys_WideCharArrayToString(w_userName, s_userName, MAX_PATH);
+	}
+	else
 	{
 		strcpy(s_userName, "player");
-	}
-	{
-		Sys_WideCharArrayToString(w_userName, s_userName, 1024);
 	}
 
 	if (!s_userName[0])
@@ -369,7 +370,11 @@ char *Sys_Cwd(void)
 	static wchar_t w_cwd[MAX_OSPATH];
 	static char cwd[MAX_OSPATH];
 
-	_wgetcwd(w_cwd, sizeof(w_cwd) - 1);
+	if (_wgetcwd(w_cwd, MAX_OSPATH - 1) == NULL)
+	{
+		Com_Error(ERR_FATAL, "Could not get the working directory");
+		return NULL;
+	}
 	w_cwd[MAX_OSPATH - 1] = 0;
 
 	Sys_WideCharArrayToString(w_cwd, cwd, MAX_OSPATH);
