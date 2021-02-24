@@ -903,7 +903,7 @@ void VM_LogSyscalls(int *args)
 
 	if (!f)
 	{
-		f = fopen("syscalls.log", "w");
+		f = Sys_FOpen(FS_BuildOSPath(Cvar_VariableString("fs_homepath"), Cvar_VariableString("fs_game"), "syscalls.log"), "w");
 
 		if (!f)
 		{

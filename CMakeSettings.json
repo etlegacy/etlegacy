@@ -1,4 +1,4 @@
-{
+﻿{
   "configurations": [
     {
       "buildCommandArgs": "-v",
@@ -7,11 +7,10 @@
       "configurationType": "Debug",
       "ctestCommandArgs": "",
       "generator": "Ninja",
-      "inheritEnvironments": [
-        "msvc_x86"
-      ],
+      "inheritEnvironments": [ "msvc_x86" ],
       "installRoot": "${workspaceRoot}\\build\\${name}\\install",
-      "name": "x86-Debug"
+      "name": "x86-Debug",
+      "variables": []
     },
     {
       "buildCommandArgs": "-v",
@@ -20,11 +19,10 @@
       "configurationType": "Release",
       "ctestCommandArgs": "",
       "generator": "Ninja",
-      "inheritEnvironments": [
-        "msvc_x86"
-      ],
+      "inheritEnvironments": [ "msvc_x86" ],
       "installRoot": "${workspaceRoot}\\build\\${name}\\install",
-      "name": "x86-Release"
+      "name": "x86-Release",
+      "variables": []
     }
   ]
 }

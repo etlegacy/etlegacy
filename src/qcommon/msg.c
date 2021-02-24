@@ -514,7 +514,7 @@ void MSG_WriteString(msg_t *msg, const char *s)
 	}
 	else
 	{
-		int  l, i;
+		int  l;
 		char string[MAX_STRING_CHARS];
 
 		l = strlen(s);
@@ -545,7 +545,7 @@ void MSG_WriteBigString(msg_t *msg, const char *s)
 	}
 	else
 	{
-		int  l, i;
+		int  l;
 		char string[BIG_INFO_STRING];
 
 		l = strlen(s);

@@ -1394,7 +1394,6 @@ void CL_DownloadsComplete(void)
  */
 void CL_CheckForResend(void)
 {
-	int  i;
 	char buffer[64];
 	// don't send anything if playing back a demo
 	if (clc.demoplaying)
