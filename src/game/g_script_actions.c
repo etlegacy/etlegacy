@@ -3975,6 +3975,10 @@ qboolean G_ScriptAction_SetDamagable(gentity_t *ent, char *params)
 		{
 			target->s.effect1Time = 0;
 		}
+		else
+		{
+			target->s.effect1Time = 1;
+		}
 	}
 
 	return qtrue;
