@@ -814,18 +814,23 @@ void FS_HomeRemove(const char *homePath)
 
 /**
  * @brief Tests if path and file exists
- * @param[in] testpath
- * @return
+ * @param[in] ospath full OS -path to file
+ * @return qtrue if the file exists
  */
-qboolean FS_FileInPathExists(const char *testpath)
+qboolean FS_FileInPathExists(const char *ospath)
 {
-	FILE *filep;
+	FILE *fileHandle;
 
-	filep = Sys_FOpen(testpath, "rb");
-
-	if (filep)
+	if (!ospath || !ospath[0])
 	{
-		fclose(filep);
+		return qfalse;
+	}
+
+	fileHandle = Sys_FOpen(ospath, "rb");
+
+	if (fileHandle)
+	{
+		fclose(fileHandle);
 		return qtrue;
 	}
 
