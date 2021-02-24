@@ -101,6 +101,8 @@ void SV_SetConfigstring(int index, const char *val)
 	}
 }
 
+#define NEXT_WARNING_TIME 5000
+
 /**
  * @brief Updates the configstring
  * @note It's nice to know this function sends several server commands when a configstring is greater than 1000 usually BIG_INFO_STRINGs
@@ -112,6 +114,8 @@ void SV_UpdateConfigStrings(void)
 	int        maxChunkSize = MAX_STRING_CHARS - 24;
 	const char *cmd;
 	char       buf[MAX_STRING_CHARS];
+	static int nextWarningSysInfoTime   = 0;
+	static int nextWarningGameStateTime = 0;
 
 	for (index = 0; index < MAX_CONFIGSTRINGS; index++)
 	{
@@ -122,12 +126,17 @@ void SV_UpdateConfigStrings(void)
 
 			if (index == CS_SYSTEMINFO)
 			{
-				// about 10% of BIG_INFO_VALUE - this grants the server will start properly
-				// but total CS limit might be reached soon when CS_SYSTEMINFO uses nearly half of total CS
-				// warn admins
-				if (strlen(sv.configstrings[index]) > BIG_INFO_VALUE - 800)
+				if (nextWarningSysInfoTime <= svs.time)
 				{
-					Com_Printf(S_COLOR_YELLOW "WARNING: Your server nearly reached a configstring limit [%i chars left] - reduce the ammount of maps/pk3s in path\n", (int) (BIG_INFO_VALUE - strlen(sv.configstrings[index])));
+					nextWarningSysInfoTime = svs.time + NEXT_WARNING_TIME;
+
+					// about 10% of BIG_INFO_VALUE - this grants the server will start properly
+					// but total CS limit might be reached soon when CS_SYSTEMINFO uses nearly half of total CS
+					// warn admins
+					if (strlen(sv.configstrings[index]) > BIG_INFO_VALUE - 800)
+					{
+						Com_Printf(S_COLOR_YELLOW "WARNING: Your server nearly reached a configstring limit [%i chars left] - reduce the ammount of maps/pk3s in path\n", (int) (BIG_INFO_VALUE - strlen(sv.configstrings[index])));
+					}
 				}
 			}
 		}
@@ -192,10 +201,15 @@ void SV_UpdateConfigStrings(void)
 			}
 		}
 
-		// warn admins
-		if (cstotal > MAX_GAMESTATE_CHARS - 800) // 5% of MAX_GAMESTATE_CHARS
+		if (nextWarningGameStateTime <= svs.time)
 		{
-			Com_Printf(S_COLOR_YELLOW "WARNING: Your clients might be disconnected by configstring limit [%i chars left] - reduce the ammount of maps/pk3s in path\n", MAX_GAMESTATE_CHARS - cstotal);
+			nextWarningGameStateTime = svs.time + NEXT_WARNING_TIME;
+
+			// warn admins
+			if (cstotal > MAX_GAMESTATE_CHARS - 800) // 5% of MAX_GAMESTATE_CHARS
+			{
+				Com_Printf(S_COLOR_YELLOW "WARNING: Your clients might be disconnected by configstring limit [%i chars left] - reduce the ammount of maps/pk3s in path\n", MAX_GAMESTATE_CHARS - cstotal);
+			}
 		}
 	}
 }
