@@ -2886,6 +2886,10 @@ void Com_Init(char *commandLine)
 			// exec the config
 			Cbuf_AddText(va("exec profiles/%s/%s\n", cl_profileStr, CONFIG_NAME));
 		}
+		else
+		{
+			Cbuf_AddText(va("exec %s\n", CONFIG_NAME));
+		}
 	}
 
 #ifdef FEATURE_DBMS
