@@ -305,7 +305,7 @@ FILE *Sys_FOpen(const char *ospath, const char *mode)
 	}
 
 	// Try to open the file and get the file descriptor
-	if ((fd = open(ospath, oflag, S_IRWXU)) == -1)
+	if ((fd = open(ospath, oflag, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH)) == -1)
 	{
 		Com_Printf("Sys_FOpen: open('%s', %d) failed: errno %d\n", ospath, oflag, errno);
 		return NULL;
