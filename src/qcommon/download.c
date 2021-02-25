@@ -349,15 +349,25 @@ void Com_WWWDownload(void)
 #else
 		to_ospath = FS_BuildOSPath(Cvar_VariableString("fs_homepath"), dld.originalDownloadName, NULL);
 #endif
-		if (Sys_Rename(dld.downloadTempName, to_ospath))
-		{
-			FS_CopyFile(dld.downloadTempName, to_ospath);
 
-			if (Sys_Remove(dld.downloadTempName) != 0)
+		//FIXME: This can get hit more than once for a file..
+		if (FS_FileInPathExists(dld.downloadTempName))
+		{
+			if (Sys_Rename(dld.downloadTempName, to_ospath))
 			{
-				Com_Printf("WARNING: Com_WWWDownload - cannot remove file '%s'\n", dld.downloadTempName);
+				FS_CopyFile(dld.downloadTempName, to_ospath);
+
+				if (Sys_Remove(dld.downloadTempName) != 0)
+				{
+					Com_Printf("WARNING: Com_WWWDownload - cannot remove file '%s'\n", dld.downloadTempName);
+				}
 			}
 		}
+		else
+		{
+			Com_DPrintf("Downloaded file does not exist (anymore?) '%s'\n", dld.downloadTempName);
+		}
+
 		*dld.downloadTempName = *dld.downloadName = 0;
 		Cvar_Set("cl_downloadName", "");
 		if (dld.bWWWDlDisconnected)
