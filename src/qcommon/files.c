@@ -2018,7 +2018,6 @@ int FS_DeleteDir(const char *dirname, qboolean nonEmpty, qboolean recursive)
 	return 0;
 }
 
-#ifdef WIN32
 /**
  * @brief Test an file given OS path
  * @param ospath
@@ -2028,21 +2027,18 @@ int FS_DeleteDir(const char *dirname, qboolean nonEmpty, qboolean recursive)
  */
 int FS_OSStatFile(const char *ospath)
 {
-	struct _stat stat;
+#ifdef WIN32
+	struct _stat stat_buf;
 
-	if (Sys_Stat(ospath, &stat) == -1)
+	if (Sys_Stat(ospath, &stat_buf) == -1)
 	{
 		return -1;
 	}
-	if (stat.st_mode & _S_IFDIR)
+	if (stat_buf.st_mode & _S_IFDIR)
 	{
 		return 1;
 	}
-	return 0;
-}
 #else
-int FS_OSStatFile(const char *ospath)
-{
 	struct stat stat_buf;
 
 	if (stat(ospath, &stat_buf) == -1)
@@ -2053,9 +2049,45 @@ int FS_OSStatFile(const char *ospath)
 	{
 		return 1;
 	}
+#endif
+
 	return 0;
 }
+
+/**
+ * @brief Return the age of the file in seconds
+ * @param ospath full OS path to the file to check
+ * @return time in seconds and -1 if not possible
+ */
+long FS_FileAge(const char *ospath)
+{
+#ifdef _WIN32
+	struct _stat stat_buf;
+	time_t now, creation;
+
+	if (Sys_Stat(ospath, &stat_buf) == -1)
+	{
+		return -1;
+	}
+#else
+	struct stat stat_buf;
+	time_t now, creation;
+
+	if (stat(ospath, &stat_buf) == -1)
+	{
+		return -1;
+	}
 #endif
+
+	time(&now);
+	creation = stat_buf.st_ctime;
+	if (creation <= 0)
+	{
+		return -1;
+	}
+
+	return (now - creation);
+}
 
 /**
  * @brief Removes file in the current fs_gamedir in homepath

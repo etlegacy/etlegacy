@@ -1057,6 +1057,12 @@ int main(int argc, char **argv)
 
 	Com_Init(commandLine);
 
+	//FIXME: Lets not enable this yet for normal use
+#if !defined(DEDICATED) && defined(FEATURE_SSL) && defined(ETLEGACY_DEBUG)
+	// Check for certificates
+	Com_CheckCaCertStatus();
+#endif
+
 #ifdef _WIN32
 
 #ifndef DEDICATED

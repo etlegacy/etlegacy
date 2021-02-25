@@ -327,6 +327,7 @@ typedef struct
 	char downloadTempName[MAX_OSPATH];          ///< in wwwdl mode, this is OS path (it's a qpath otherwise)
 	char originalDownloadName[MAX_QPATH];       ///< if we get a redirect, keep a copy of the original file path
 	qboolean downloadRestart;                   ///< if true, we need to do another FS_Restart because we downloaded a pak
+	qboolean systemDownload;                    ///< if true, we are running an system inited download and we do not force fs_game or isolation paths
 } download_t;
 
 // update and motd server info
@@ -393,10 +394,12 @@ extern int demo_protocols[];
 #define UPDATE_SERVER_NAME  "update.etlegacy.com"                ///< location of the update server
 
 #ifdef FEATURE_SSL
-#define DOWNLOAD_SERVER_URL "https://mirror.etlegacy.com/etmain" ///< location of the download server
+#define MIRROR_SERVER_URL "https://mirror.etlegacy.com" ///< location of the download server
 #else
-#define DOWNLOAD_SERVER_URL "http://mirror.etlegacy.com/etmain"  ///< location of the download server
+#define MIRROR_SERVER_URL "http://mirror.etlegacy.com"  ///< location of the download server
 #endif
+
+#define DOWNLOAD_SERVER_URL MIRROR_SERVER_URL "/etmain"
 
 #define PORT_MASTER         27950
 #define PORT_MOTD           27951
@@ -852,6 +855,8 @@ int FS_Write(const void *buffer, int len, fileHandle_t h);
 
 int FS_OSStatFile(const char *ospath);
 
+long FS_FileAge(const char *ospath);
+
 int FS_Read(void *buffer, int len, fileHandle_t f);
 // properly handles partial reads and reads from other dlls
 
@@ -1246,6 +1251,8 @@ void Com_UpdateVarsClean(int flags);
 void Com_Update_f(void);
 
 // download.c
+#define CA_CERT_FILE "cacert.pem"
+#define TMP_FILE_EXTENSION ".tmp"
 void Com_ClearDownload(void);
 void Com_ClearStaticDownload(void);
 
@@ -1254,6 +1261,10 @@ void Com_InitDownloads(void);
 void Com_WWWDownload(void);
 qboolean Com_WWWBadChecksum(const char *pakname);
 void Com_Download_f(void);
+
+#if defined(FEATURE_SSL)
+void Com_CheckCaCertStatus(void);
+#endif
 
 void Key_KeynameCompletion(void (*callback)(const char *s));
 // for keyname autocompletion
