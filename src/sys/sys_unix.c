@@ -285,6 +285,13 @@ FILE *Sys_FOpen(const char *ospath, const char *mode)
 		return NULL;
 	}
 
+	// Handle + flag mode
+	if (strlen(mode) > 1 && strchr(&mode[1], '+'))
+	{
+		oflag &= ~(O_WRONLY | O_RDONLY);
+		oflag |= O_RDWR;
+	}
+
 	// Check the state (if path exists)
 	if (stat(ospath, &stat_infoBefore) == -1)
 	{
