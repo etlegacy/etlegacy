@@ -23,6 +23,7 @@ etmain/ui/git_version.h
 
 # Mac
 .DS_STORE
+Brewfile.lock.json
 
 # Windows
 Thumbs.db
