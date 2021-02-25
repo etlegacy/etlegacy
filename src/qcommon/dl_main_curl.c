@@ -310,7 +310,7 @@ int DL_BeginDownload(char *localName, const char *remoteName)
 		return 0;
 	}
 
-	dl_file = Sys_FOpen(localName, "wb+");
+	dl_file = Sys_FOpen(localName, "wb");
 	if (!dl_file)
 	{
 		Com_Printf(S_COLOR_RED  "DL_BeginDownload: Error - unable to open '%s' for writing\n", localName);
