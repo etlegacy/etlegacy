@@ -24,36 +24,44 @@ elseif(APPLE)
 	add_executable(etl MACOSX_BUNDLE ${COMMON_SRC} ${CLIENT_SRC} ${PLATFORM_SRC} ${PLATFORM_CLIENT_SRC} ${MACOSX_RESOURCES})
 else()
 	add_executable(etl ${COMMON_SRC} ${CLIENT_SRC} ${PLATFORM_SRC} ${PLATFORM_CLIENT_SRC})
-endif(WIN32)
+endif()
 
 if(BUNDLED_SDL)
 	add_dependencies(etl bundled_sdl)
-endif(BUNDLED_SDL)
+endif()
 
 if(BUNDLED_ZLIB)
 	add_dependencies(etl bundled_zlib)
-endif(BUNDLED_ZLIB)
+endif()
 
 if(BUNDLED_MINIZIP)
 	add_dependencies(etl bundled_minizip)
-endif(BUNDLED_MINIZIP)
+endif()
+
+if(BUNDLED_OPENSSL)
+	add_dependencies(etl bundled_openssl)
+endif()
+
+if(BUNDLED_WOLFSSL)
+	add_dependencies(etl bundled_wolfssl)
+endif()
 
 if(BUNDLED_CURL)
 	add_dependencies(etl bundled_curl)
-endif(BUNDLED_CURL)
+endif()
 
 if(BUNDLED_OGG_VORBIS)
 	add_dependencies(etl bundled_ogg bundled_ogg_vorbis bundled_ogg_vorbis_file)
-endif(BUNDLED_OGG_VORBIS)
+endif()
 
 if(BUNDLED_THEORA)
 	add_dependencies(bundled_theora bundled_ogg bundled_ogg_vorbis bundled_ogg_vorbis_file)
 	add_dependencies(etl bundled_theora)
-endif(BUNDLED_THEORA)
+endif()
 
 if(BUNDLED_OPENAL)
 	add_dependencies(etl bundled_openal)
-endif(BUNDLED_OPENAL)
+endif()
 
 target_link_libraries(etl
 	${CLIENT_LIBRARIES}
@@ -63,9 +71,9 @@ target_link_libraries(etl
 
 if(FEATURE_WINDOWS_CONSOLE AND WIN32)
 	set(ETL_COMPILE_DEF "USE_ICON;USE_WINDOWS_CONSOLE")
-else(FEATURE_WINDOWS_CONSOLE AND WIN32)
+else()
 	set(ETL_COMPILE_DEF "USE_ICON")
-endif(FEATURE_WINDOWS_CONSOLE AND WIN32)
+endif()
 
 set_target_properties(etl PROPERTIES
 	COMPILE_DEFINITIONS "${ETL_COMPILE_DEF}"
