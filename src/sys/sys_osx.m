@@ -172,7 +172,7 @@ bool IsTranslocatedURL(CFURLRef currentURL, CFURLRef *originalURL)
  * @brief Check for OSX Quarantine, remove the attributes and restart the app
  * @return int: 0 = no action required, 1 = relaunch after dequarantine, >=2 = error, show modal
  */
-int needsOSXQuarantineFix()
+int OSX_NeedsQuarantineFix()
 {
 	bool  isQuarantined;
 	bool  dialogReturn;

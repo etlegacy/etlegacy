@@ -207,7 +207,7 @@ static ID_INLINE void END_CHUNK(void)
 /**
  * @brief CL_WriteAVIHeader
  */
-void CL_WriteAVIHeader(void)
+static void CL_WriteAVIHeader(void)
 {
 	bufIndex          = 0;
 	afd.chunkStackTop = 0;

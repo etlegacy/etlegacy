@@ -1009,7 +1009,7 @@ int main(int argc, char **argv)
 		CFURLRef url               = CFBundleCopyBundleURL(CFBundleGetMainBundle());
 		int      quarantine_status = 0;
 
-		quarantine_status = needsOSXQuarantineFix();
+		quarantine_status = OSX_NeedsQuarantineFix();
 		if (quarantine_status == 1)
 		{
 			//app restarts itself under the right path
