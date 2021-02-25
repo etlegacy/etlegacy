@@ -2686,7 +2686,7 @@ qboolean Com_CheckProfile(void)
 		return qfalse;
 	}
 
-	f_pid = atoi(f_data);
+	f_pid = Q_atoi(f_data);
 	if (f_pid != com_pid->integer)
 	{
 		// pid doesn't match

@@ -582,7 +582,7 @@ void G_parseStats(const char *pszStatsInfo)
 {
 	gclient_t  *cl;
 	const char *tmp = pszStatsInfo;
-	int        i, dwWeaponMask, dwClientID = atoi(pszStatsInfo);
+	int        i, dwWeaponMask, dwClientID = Q_atoi(pszStatsInfo);
 
 	if (dwClientID > MAX_CLIENTS)
 	{
@@ -591,7 +591,7 @@ void G_parseStats(const char *pszStatsInfo)
 
 	cl = &level.clients[dwClientID];
 
-#define GETVAL(x) if ((tmp = strchr(tmp, ' ')) == NULL) { return; } x = atoi(++tmp);
+#define GETVAL(x) if ((tmp = strchr(tmp, ' ')) == NULL) { return; } x = Q_atoi(++tmp);
 
 	GETVAL(cl->sess.rounds);
 	GETVAL(dwWeaponMask);

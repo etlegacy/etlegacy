@@ -1481,14 +1481,14 @@ void SP_target_rumble(gentity_t *self)
 	}
 
 	G_SpawnString("rampup", "0", &rampup);
-	self->start_size = atoi(rampup) * 1000;
+	self->start_size = Q_atoi(rampup) * 1000;
 	if (!self->start_size)
 	{
 		self->start_size = 1000;
 	}
 
 	G_SpawnString("rampdown", "0", &rampdown);
-	self->end_size = atoi(rampdown) * 1000;
+	self->end_size = Q_atoi(rampdown) * 1000;
 	if (!self->end_size)
 	{
 		self->end_size = 1000;

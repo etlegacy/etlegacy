@@ -868,7 +868,7 @@ size_t Q_UnescapeUnicode(char *fromStr, char *toStr, const size_t maxSize)
 			}
 
 			tmpNumber[numberOffset] = '\0';
-			int number = atoi(tmpNumber);
+			int number = Q_atoi(tmpNumber);
 
 			// Ignore non printable keys
 			if (number < 32)

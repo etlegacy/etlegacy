@@ -364,16 +364,16 @@ void CG_DrawConnectScreen(qboolean interactive, qboolean forcerefresh)
 		y = 417;
 
 		str = Info_ValueForKey(buffer, "g_friendlyfire");
-		if (str && *str && atoi(str))
+		if (str && *str && Q_atoi(str))
 		{
 			x = 461 + cgs.wideXoffset;
 			CG_DrawPic(x, y, 16, 16, bg_filter_ff);
 		}
 
-		if (atoi(Info_ValueForKey(buffer, "g_gametype")) != GT_WOLF_LMS)
+		if (Q_atoi(Info_ValueForKey(buffer, "g_gametype")) != GT_WOLF_LMS)
 		{
 			str = Info_ValueForKey(buffer, "g_maxlives");
-			if (str && *str && atoi(str))
+			if (str && *str && Q_atoi(str))
 			{
 				enabled = qtrue;
 			}
@@ -381,7 +381,7 @@ void CG_DrawConnectScreen(qboolean interactive, qboolean forcerefresh)
 			if (!enabled)
 			{
 				str = Info_ValueForKey(buffer, "g_alliedmaxlives");
-				if (str && *str && atoi(str))
+				if (str && *str && Q_atoi(str))
 				{
 					enabled = qtrue;
 				}
@@ -390,7 +390,7 @@ void CG_DrawConnectScreen(qboolean interactive, qboolean forcerefresh)
 			if (!enabled)
 			{
 				str = Info_ValueForKey(buffer, "g_axismaxlives");
-				if (str && *str && atoi(str))
+				if (str && *str && Q_atoi(str))
 				{
 					enabled = qtrue;
 				}
@@ -404,28 +404,28 @@ void CG_DrawConnectScreen(qboolean interactive, qboolean forcerefresh)
 		}
 
 		str = Info_ValueForKey(buffer, "omnibot_playing");
-		if (str && *str && atoi(str))
+		if (str && *str && Q_atoi(str))
 		{
 			x = 518 + cgs.wideXoffset;
 			CG_DrawPic(x, y, 16, 16, bg_filter_bo);
 		}
 
 		str = Info_ValueForKey(buffer, "g_heavyWeaponRestriction");
-		if (str && *str && atoi(str) != 100)
+		if (str && *str && Q_atoi(str) != 100)
 		{
 			x = 546 + cgs.wideXoffset;
 			CG_DrawPic(x, y, 16, 16, bg_filter_hw);
 		}
 
 		str = Info_ValueForKey(buffer, "g_antilag");
-		if (str && *str && atoi(str))
+		if (str && *str && Q_atoi(str))
 		{
 			x = 575 + cgs.wideXoffset;
 			CG_DrawPic(x, y, 16, 16, bg_filter_al);
 		}
 
 		str = Info_ValueForKey(buffer, "g_balancedteams");
-		if (str && *str && atoi(str))
+		if (str && *str && Q_atoi(str))
 		{
 			x = 604 + cgs.wideXoffset;
 			CG_DrawPic(x, y, 16, 16, bg_filter_bt);
@@ -741,8 +741,8 @@ void CG_LoadPanel_RenderCampaignPins(panel_button_t *button)
 
 		for (i = 0; i < cgs.campaignData.mapCount; i++)
 		{
-			cg.teamWonRounds[1] = atoi(CG_ConfigString(CS_ROUNDSCORES1));
-			cg.teamWonRounds[0] = atoi(CG_ConfigString(CS_ROUNDSCORES2));
+			cg.teamWonRounds[1] = Q_atoi(CG_ConfigString(CS_ROUNDSCORES1));
+			cg.teamWonRounds[0] = Q_atoi(CG_ConfigString(CS_ROUNDSCORES2));
 
 			if (cg.teamWonRounds[1] & (1 << i))
 			{

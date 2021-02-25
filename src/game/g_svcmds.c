@@ -140,7 +140,7 @@ qboolean StringToFilter(const char *s, ipFilter_t *f)
 			num[j++] = *s++;
 		}
 		num[j] = 0;
-		b[i]   = atoi(num);
+		b[i]   = Q_atoi(num);
 		m[i]   = 255;
 
 		if (!*s)
@@ -662,7 +662,7 @@ gclient_t *ClientForString(const char *s)
 	// numeric values are just slot numbers
 	if (s[0] >= '0' && s[0] <= '9')
 	{
-		int idnum = atoi(s);
+		int idnum = Q_atoi(s);
 
 		if (idnum < 0 || idnum >= level.maxclients)
 		{
@@ -1758,7 +1758,7 @@ static void Svcmd_Fling(void) // 0 = fling, 1 = throw, 2 = launch
 
 		if (*name)
 		{
-			flingType = atoi(name);
+			flingType = Q_atoi(name);
 		}
 
 		switch (flingType)
@@ -1865,7 +1865,7 @@ static void Svcmd_Kick_f(void)
 	if (trap_Argc() == 3)
 	{
 		trap_Argv(2, sTimeout, sizeof(sTimeout));
-		timeout = atoi(sTimeout);
+		timeout = Q_atoi(sTimeout);
 	}
 	else
 	{
@@ -2001,7 +2001,7 @@ static void Svcmd_KickNum_f(void)
 	if (trap_Argc() == 3)
 	{
 		trap_Argv(2, sTimeout, sizeof(sTimeout));
-		timeout = atoi(sTimeout);
+		timeout = Q_atoi(sTimeout);
 	}
 	else
 	{
@@ -2009,7 +2009,7 @@ static void Svcmd_KickNum_f(void)
 	}
 
 	trap_Argv(1, name, sizeof(name));
-	clientNum = atoi(name);
+	clientNum = Q_atoi(name);
 
 	cl = G_GetPlayerByNum(clientNum);
 	if (!cl)
@@ -2268,7 +2268,7 @@ void Svcmd_CSInfo_f(void)
 		}
 		if (arg1numeric)
 		{
-			value = atoi(valuestr);
+			value = Q_atoi(valuestr);
 			if (value >= MAX_CONFIGSTRINGS)
 			{
 				value = -1;

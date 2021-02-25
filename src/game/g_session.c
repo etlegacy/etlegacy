@@ -529,7 +529,7 @@ void G_InitWorldSession(void)
 	int  i, j;
 
 	trap_Cvar_VariableStringBuffer("session", s, sizeof(s));
-	gt = atoi(s);
+	gt = Q_atoi(s);
 
 	// if the gametype changed since the last session, don't use any
 	// client sessions
@@ -543,7 +543,7 @@ void G_InitWorldSession(void)
 		char     *tmp = s;
 		qboolean test = (g_altStopwatchMode.integer != 0 || g_currentRound.integer == 1);
 
-#define GETVAL(x) if ((tmp = strchr(tmp, ' ')) == NULL) { return; } x = atoi(++tmp);
+#define GETVAL(x) if ((tmp = strchr(tmp, ' ')) == NULL) { return; } x = Q_atoi(++tmp);
 
 		// Get team lock stuff
 		GETVAL(gt);
@@ -585,7 +585,7 @@ void G_InitWorldSession(void)
 		trap_Cvar_VariableStringBuffer(va("fireteam%i", i), s, sizeof(s));
 
 		p = Info_ValueForKey(s, "id");
-		j = atoi(p);
+		j = Q_atoi(p);
 		if (!*p || j == -1)
 		{
 			level.fireTeams[i].inuse = qfalse;
@@ -597,7 +597,7 @@ void G_InitWorldSession(void)
 		level.fireTeams[i].ident = j + 1;
 
 		p = Info_ValueForKey(s, "p");
-		level.fireTeams[i].priv = !atoi(p) ? qfalse : qtrue;
+		level.fireTeams[i].priv = !Q_atoi(p) ? qfalse : qtrue;
 
 		p = Info_ValueForKey(s, "i");
 
@@ -616,7 +616,7 @@ void G_InitWorldSession(void)
 				}
 				Q_strncpyz(str, c, l - c + 1);
 				str[l - c] = '\0';
-				level.fireTeams[i].joinOrder[j++] = atoi(str);
+				level.fireTeams[i].joinOrder[j++] = Q_atoi(str);
 				c = l + 1;
 			}
 		}

@@ -1408,7 +1408,7 @@ void CL_PlayDemo_f(void)
 
 	if (ext_test && !Q_stricmpn(ext_test + 1, DEMOEXT, ARRAY_LEN(DEMOEXT) - 1))
 	{
-		protocol = atoi(ext_test + ARRAY_LEN(DEMOEXT));
+		protocol = Q_atoi(ext_test + ARRAY_LEN(DEMOEXT));
 
 		for (i = 0; demo_protocols[i]; i++)
 		{

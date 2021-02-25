@@ -618,7 +618,7 @@ void CL_SystemInfoChanged(void)
 
 	// NOTE: when the serverId changes, any further messages we send to the server will use this new serverId
 	// in some cases, outdated cp commands might get sent with this news serverId
-	cl.serverId = atoi(Info_ValueForKey(systemInfo, "sv_serverid"));
+	cl.serverId = Q_atoi(Info_ValueForKey(systemInfo, "sv_serverid"));
 
 	Com_Memset(&entLastVisible, 0, sizeof(entLastVisible));
 
@@ -626,7 +626,7 @@ void CL_SystemInfoChanged(void)
 	if (clc.demoplaying)
 	{
 		// allow running demo in pure mode to simulate server environment
-		if (Cvar_VariableValue("sv_pure") != 0.f) 
+		if (Cvar_VariableValue("sv_pure") != 0.f)
 		{
 			CL_SetPurePaks();
 		}
@@ -634,7 +634,7 @@ void CL_SystemInfoChanged(void)
 	}
 
 	s                         = Info_ValueForKey(systemInfo, "sv_cheats");
-	cl_connectedToCheatServer = atoi(s);      //bani
+	cl_connectedToCheatServer = Q_atoi(s);      //bani
 	if (!cl_connectedToCheatServer)
 	{
 		Cvar_SetCheatState();

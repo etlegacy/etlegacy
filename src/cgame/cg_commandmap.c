@@ -236,7 +236,7 @@ void CG_ParseMapEntity(int *mapEntityCount, int *offset, team_t team)
 	char            buffer[16];
 
 	trap_Argv((*offset)++, buffer, 16);
-	mEnt->type = atoi(buffer);
+	mEnt->type = Q_atoi(buffer);
 
 	switch (mEnt->type)
 	{
@@ -248,37 +248,37 @@ void CG_ParseMapEntity(int *mapEntityCount, int *offset, team_t team)
 	case ME_TANK_DEAD:
 	case ME_COMMANDMAP_MARKER:
 		trap_Argv((*offset)++, buffer, 16);
-		mEnt->x = atoi(buffer) * 128;
+		mEnt->x = Q_atoi(buffer) * 128;
 
 		trap_Argv((*offset)++, buffer, 16);
-		mEnt->y = atoi(buffer) * 128;
+		mEnt->y = Q_atoi(buffer) * 128;
 
 		if (cgs.ccLayers)
 		{
 			trap_Argv((*offset)++, buffer, 16);
-			mEnt->z = atoi(buffer) * 128;
+			mEnt->z = Q_atoi(buffer) * 128;
 		}
 		break;
 	default:
 		trap_Argv((*offset)++, buffer, 16);
-		mEnt->x = atoi(buffer) * 128;
+		mEnt->x = Q_atoi(buffer) * 128;
 
 		trap_Argv((*offset)++, buffer, 16);
-		mEnt->y = atoi(buffer) * 128;
+		mEnt->y = Q_atoi(buffer) * 128;
 
 		if (cgs.ccLayers)
 		{
 			trap_Argv((*offset)++, buffer, 16);
-			mEnt->z = atoi(buffer) * 128;
+			mEnt->z = Q_atoi(buffer) * 128;
 		}
 
 		trap_Argv((*offset)++, buffer, 16);
-		mEnt->yaw = atoi(buffer);
+		mEnt->yaw = Q_atoi(buffer);
 		break;
 	}
 
 	trap_Argv((*offset)++, buffer, 16);
-	mEnt->data = atoi(buffer);
+	mEnt->data = Q_atoi(buffer);
 
 	mEnt->transformed[0] = (mEnt->x - cg.mapcoordsMins[0]) * cg.mapcoordsScale[0] * CC_2D_W;
 	mEnt->transformed[1] = (mEnt->y - cg.mapcoordsMins[1]) * cg.mapcoordsScale[1] * CC_2D_H;
@@ -903,7 +903,7 @@ void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, float h,
 			// note: to make this work map scripts have to be adjusted
 			if (snap->ps.persistant[PERS_TEAM] != TEAM_SPECTATOR)
 			{
-				entNum = atoi(CG_ConfigString(mEnt->team == TEAM_AXIS ? CS_MAIN_AXIS_OBJECTIVE : CS_MAIN_ALLIES_OBJECTIVE));
+				entNum = Q_atoi(CG_ConfigString(mEnt->team == TEAM_AXIS ? CS_MAIN_AXIS_OBJECTIVE : CS_MAIN_ALLIES_OBJECTIVE));
 
 				if (entNum == oidInfo->entityNum)
 				{
@@ -2581,7 +2581,7 @@ void CG_DrawMapEntityNew(mapEntityData_t *mEnt, float x, float y, float w, float
 			// note: to make this work map scripts have to be adjusted
 			if (snap->ps.persistant[PERS_TEAM] != TEAM_SPECTATOR)
 			{
-				entNum = atoi(CG_ConfigString(mEnt->team == TEAM_AXIS ? CS_MAIN_AXIS_OBJECTIVE : CS_MAIN_ALLIES_OBJECTIVE));
+				entNum = Q_atoi(CG_ConfigString(mEnt->team == TEAM_AXIS ? CS_MAIN_AXIS_OBJECTIVE : CS_MAIN_ALLIES_OBJECTIVE));
 
 				if (entNum == oidInfo->entityNum)
 				{

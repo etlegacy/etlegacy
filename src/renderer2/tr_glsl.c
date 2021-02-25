@@ -318,7 +318,7 @@ programInfo_t *GLSL_ParseDefinition(char **text, const char *defname)
 					GLSL_CopyNextToken(text, &def->uniformValues[def->numUniformValues].type.name);
 					token                                           = COM_ParseExt(text, qtrue);
 					valptr                                          = Com_Allocate(sizeof(int));
-					*((int *)valptr)                                = atoi(token);
+					*((int *)valptr)                                = Q_atoi(token);
 					def->uniformValues[def->numUniformValues].value = valptr;
 					//Ren_Print("%d\n",*((int*)valptr));
 					def->numUniformValues++;
@@ -337,7 +337,7 @@ programInfo_t *GLSL_ParseDefinition(char **text, const char *defname)
 					GLSL_CopyNextToken(text, &def->uniformValues[def->numUniformValues].type.name);
 					token                                           = COM_ParseExt(text, qtrue);
 					valptr                                          = Com_Allocate(sizeof(qboolean));
-					*((qboolean *)valptr)                           = atoi(token);
+					*((qboolean *)valptr)                           = Q_atoi(token);
 					def->uniformValues[def->numUniformValues].value = valptr;
 					//Ren_Print("%d\n",*((qboolean*)valptr));
 					def->numUniformValues++;

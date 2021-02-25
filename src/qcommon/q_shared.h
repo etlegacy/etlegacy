@@ -1799,4 +1799,12 @@ qboolean CompareIPNoPort(char const *ip1, char const *ip2);
 #define LERP(a, b, w) ((a) * (1.0 - (w)) + (b) * (w))
 #define LUMA(red, green, blue) (0.2126f * (red) + 0.7152f * (green) + 0.0722f * (blue))
 
+//#define Q_atof(str) (float) atof(str)
+#define Q_atof(str) strtof(str, NULL)
+
+//#define Q_atoi(str) atoi(str)
+#define Q_atoi(str) (int) strtol(str, NULL, 10)
+
+#define Q_sscanf(str, ...) sscanf(str, __VA_ARGS__)
+
 #endif  // #ifndef INCLUDE_Q_SHARED_H

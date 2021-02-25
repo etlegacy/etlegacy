@@ -155,11 +155,11 @@ void CG_ParseTeamXPs(int n)
 
 			if (n == 0)
 			{
-				cgs.tdbAxisMapsXP[j][i] = atoi(token);
+				cgs.tdbAxisMapsXP[j][i] = Q_atoi(token);
 			}
 			else
 			{
-				cgs.tdbAlliedMapsXP[j][i] = atoi(token);
+				cgs.tdbAlliedMapsXP[j][i] = Q_atoi(token);
 			}
 		}
 	}
@@ -205,33 +205,33 @@ void CG_NewClientInfo(int clientNum)
 
 	// bot skill
 	v                = Info_ValueForKey(configstring, "skill");
-	newInfo.botSkill = atoi(v);
+	newInfo.botSkill = Q_atoi(v);
 
 	// team
 	v            = Info_ValueForKey(configstring, "t");
-	newInfo.team = (team_t)(atoi(v));
+	newInfo.team = (team_t)(Q_atoi(v));
 
 	// class
 	v           = Info_ValueForKey(configstring, "c");
-	newInfo.cls = atoi(v);
+	newInfo.cls = Q_atoi(v);
 
 	// latched class
 	v                  = Info_ValueForKey(configstring, "lc");
-	newInfo.latchedcls = atoi(v);
+	newInfo.latchedcls = Q_atoi(v);
 
 	// rank
 	v            = Info_ValueForKey(configstring, "r");
-	newInfo.rank = atoi(v);
+	newInfo.rank = Q_atoi(v);
 
 #ifdef FEATURE_PRESTIGE
 	// prestige
 	v                = Info_ValueForKey(configstring, "p");
-	newInfo.prestige = atoi(v);
+	newInfo.prestige = Q_atoi(v);
 #endif
 
 	// fireteam
 	v                = Info_ValueForKey(configstring, "f");
-	newInfo.fireteam = atoi(v);
+	newInfo.fireteam = Q_atoi(v);
 
 	v = Info_ValueForKey(configstring, "m");
 	if (*v)
@@ -243,7 +243,7 @@ void CG_NewClientInfo(int clientNum)
 		for (i = 0; i < SK_NUM_SKILLS; i++)
 		{
 			buf[0]            = *v;
-			newInfo.medals[i] = atoi(buf);
+			newInfo.medals[i] = Q_atoi(buf);
 			v++;
 		}
 	}
@@ -266,32 +266,32 @@ void CG_NewClientInfo(int clientNum)
 			skill[0] = v[i];
 			skill[1] = '\0';
 
-			newInfo.skill[i] = atoi(skill);
+			newInfo.skill[i] = Q_atoi(skill);
 		}
 	}
 
 	// disguise clientNum
 	v                         = Info_ValueForKey(configstring, "dn");
-	newInfo.disguiseClientNum = atoi(v);
+	newInfo.disguiseClientNum = Q_atoi(v);
 
 	// weapon and latchedweapon ( FIXME: make these more secure )
 	v              = Info_ValueForKey(configstring, "w");
-	newInfo.weapon = atoi(v);
+	newInfo.weapon = Q_atoi(v);
 
 	v                     = Info_ValueForKey(configstring, "lw");
-	newInfo.latchedweapon = atoi(v);
+	newInfo.latchedweapon = Q_atoi(v);
 
 	v                       = Info_ValueForKey(configstring, "sw");
-	newInfo.secondaryweapon = atoi(v);
+	newInfo.secondaryweapon = Q_atoi(v);
 
 	v                              = Info_ValueForKey(configstring, "lsw");
-	newInfo.latchedsecondaryweapon = atoi(v);
+	newInfo.latchedsecondaryweapon = Q_atoi(v);
 
 	v                 = Info_ValueForKey(configstring, "ref");
-	newInfo.refStatus = atoi(v);
+	newInfo.refStatus = Q_atoi(v);
 
 	v                   = Info_ValueForKey(configstring, "sc");
-	newInfo.shoutcaster = atoi(v);
+	newInfo.shoutcaster = Q_atoi(v);
 
 	// Detect rank/skill changes client side.
 	// Make sure we have some valid clientinfo, otherwise people are thrown

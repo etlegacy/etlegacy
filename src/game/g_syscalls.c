@@ -606,7 +606,7 @@ void trap_GetUsercmd(int clientNum, usercmd_t *cmd)
 		int  fakeLag;
 
 		trap_Cvar_VariableStringBuffer("g_fakelag", s, sizeof(s));
-		fakeLag = atoi(s);
+		fakeLag = Q_atoi(s);
 		if (fakeLag < 0)
 		{
 			fakeLag = 0;

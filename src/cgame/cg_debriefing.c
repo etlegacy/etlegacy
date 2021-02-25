@@ -1764,10 +1764,10 @@ void CG_Debriefing_Startup(void)
 
 	trap_Cvar_Set("chattext", "");
 
-	if (atoi(buf) == -1)
+	if (Q_atoi(buf) == -1)
 	{
 	}
-	else if (atoi(buf))
+	else if (Q_atoi(buf))
 	{
 		trap_S_StartLocalSound(trap_S_RegisterSound("sound/music/allies_win.wav", qfalse), CHAN_LOCAL_SOUND);
 	}
@@ -2044,10 +2044,10 @@ void CG_DebriefingTitle_Draw(panel_button_t *button)
 		int defender, winner;
 
 		s        = CG_ConfigString(CS_MULTI_INFO);
-		defender = atoi(Info_ValueForKey(s, "d")); // defender
+		defender = Q_atoi(Info_ValueForKey(s, "d")); // defender
 
 		s      = CG_ConfigString(CS_MULTI_MAPWINNER);
-		winner = atoi(Info_ValueForKey(s, "w"));
+		winner = Q_atoi(Info_ValueForKey(s, "w"));
 
 		if (cgs.currentRound)
 		{
@@ -2288,9 +2288,9 @@ void CG_Debriefing_ParsePlayerTime(void)
 
 	for (i = 0; i < cgs.maxclients; i++)
 	{
-		cgs.clientinfo[i].timeAxis   = atoi(CG_Argv(i * 3 + 1));
-		cgs.clientinfo[i].timeAllies = atoi(CG_Argv(i * 3 + 2));
-		cgs.clientinfo[i].timePlayed = atoi(CG_Argv(i * 3 + 3));
+		cgs.clientinfo[i].timeAxis   = Q_atoi(CG_Argv(i * 3 + 1));
+		cgs.clientinfo[i].timeAllies = Q_atoi(CG_Argv(i * 3 + 2));
+		cgs.clientinfo[i].timePlayed = Q_atoi(CG_Argv(i * 3 + 3));
 	}
 	cgs.dbPlayerTimeReceived = qtrue;
 }
@@ -2322,7 +2322,7 @@ void CG_Debriefing_ParsePrestige(void)
 
 	for (i = 0; i < cgs.maxclients; i++)
 	{
-		cgs.clientinfo[i].prestige = atoi(CG_Argv(i + 1));
+		cgs.clientinfo[i].prestige = Q_atoi(CG_Argv(i + 1));
 	}
 	cgs.dbPrestigeReceived = qtrue;
 }
@@ -2337,12 +2337,12 @@ void CG_Debriefing_ParsePlayerKillsDeaths(void)
 
 	for (i = 0; i < cgs.maxclients; i++)
 	{
-		cgs.clientinfo[i].kills     = atoi(CG_Argv((i * 6) + 1));
-		cgs.clientinfo[i].deaths    = atoi(CG_Argv((i * 6) + 2));
-		cgs.clientinfo[i].gibs      = atoi(CG_Argv((i * 6) + 3));
-		cgs.clientinfo[i].selfKills = atoi(CG_Argv((i * 6) + 4));
-		cgs.clientinfo[i].teamKills = atoi(CG_Argv((i * 6) + 5));
-		cgs.clientinfo[i].teamGibs  = atoi(CG_Argv((i * 6) + 6));
+		cgs.clientinfo[i].kills     = Q_atoi(CG_Argv((i * 6) + 1));
+		cgs.clientinfo[i].deaths    = Q_atoi(CG_Argv((i * 6) + 2));
+		cgs.clientinfo[i].gibs      = Q_atoi(CG_Argv((i * 6) + 3));
+		cgs.clientinfo[i].selfKills = Q_atoi(CG_Argv((i * 6) + 4));
+		cgs.clientinfo[i].teamKills = Q_atoi(CG_Argv((i * 6) + 5));
+		cgs.clientinfo[i].teamGibs  = Q_atoi(CG_Argv((i * 6) + 6));
 	}
 	cgs.dbPlayerKillsDeathsReceived = qtrue;
 }
@@ -2354,16 +2354,16 @@ void CG_Debriefing_ParseWeaponStats(void)
 {
 	int i;
 
-	cgs.dbHitRegions[HR_HEAD] = atoi(CG_Argv(1));
-	cgs.dbHitRegions[HR_ARMS] = atoi(CG_Argv(2));
-	cgs.dbHitRegions[HR_BODY] = atoi(CG_Argv(3));
-	cgs.dbHitRegions[HR_LEGS] = atoi(CG_Argv(4));
+	cgs.dbHitRegions[HR_HEAD] = Q_atoi(CG_Argv(1));
+	cgs.dbHitRegions[HR_ARMS] = Q_atoi(CG_Argv(2));
+	cgs.dbHitRegions[HR_BODY] = Q_atoi(CG_Argv(3));
+	cgs.dbHitRegions[HR_LEGS] = Q_atoi(CG_Argv(4));
 
 	for (i = 0; i < WS_MAX; i++)
 	{
-		cgs.dbWeaponStats[i].numShots = atoi(CG_Argv((i * 3) + 5));
-		cgs.dbWeaponStats[i].numHits  = atoi(CG_Argv((i * 3) + 6));
-		cgs.dbWeaponStats[i].numKills = atoi(CG_Argv((i * 3) + 7));
+		cgs.dbWeaponStats[i].numShots = Q_atoi(CG_Argv((i * 3) + 5));
+		cgs.dbWeaponStats[i].numHits  = Q_atoi(CG_Argv((i * 3) + 6));
+		cgs.dbWeaponStats[i].numKills = Q_atoi(CG_Argv((i * 3) + 7));
 	}
 
 	cgs.dbWeaponStatsReceived = qtrue;
@@ -2393,7 +2393,7 @@ void CG_Debriefing_ParseAwards(void)
 	{
 		// clientNum
 		token     = COM_Parse(&cs);
-		clientNum = atoi(token);
+		clientNum = Q_atoi(token);
 
 		if (clientNum >= 0 && clientNum < MAX_CLIENTS)
 		{
@@ -3856,10 +3856,10 @@ void CG_Debriefing_MissionTitle_Draw(panel_button_t *button)
 		int defender, winner;
 
 		s        = CG_ConfigString(CS_MULTI_INFO);
-		defender = atoi(Info_ValueForKey(s, "d")); // defender
+		defender = Q_atoi(Info_ValueForKey(s, "d")); // defender
 
 		s      = CG_ConfigString(CS_MULTI_MAPWINNER);
-		winner = atoi(Info_ValueForKey(s, "w"));
+		winner = Q_atoi(Info_ValueForKey(s, "w"));
 
 		if (cgs.currentRound)
 		{
@@ -4328,8 +4328,8 @@ team_t CG_Debriefing_FindWinningTeamForPos(int pos)
 			                const char* s = CG_ConfigString( CS_MULTI_MAPWINNER );
 			                const char* buf = Info_ValueForKey( s, "w" );
 
-			                if( atoi( buf ) == -1 ) {
-			                } else if( atoi( buf ) ) {
+			                if( Q_atoi( buf ) == -1 ) {
+			                } else if( Q_atoi( buf ) ) {
 			                    return TEAM_ALLIES;
 			                } else {
 			                    return TEAM_AXIS;
@@ -4371,10 +4371,10 @@ team_t CG_Debriefing_FindWinningTeamForPos(int pos)
 		const char *s;
 
 		s        = CG_ConfigString(CS_MULTI_INFO);
-		defender = atoi(Info_ValueForKey(s, "d")); // defender
+		defender = Q_atoi(Info_ValueForKey(s, "d")); // defender
 
 		s      = CG_ConfigString(CS_MULTI_MAPWINNER);
-		winner = atoi(Info_ValueForKey(s, "w"));
+		winner = Q_atoi(Info_ValueForKey(s, "w"));
 
 		if (!cgs.currentRound)
 		{
@@ -4586,9 +4586,9 @@ void CG_parseMapVoteListInfo()
 		Q_strncpyz(cgs.dbMaps[i], CG_Argv((i * 4) + 2),
 		           sizeof(cgs.dbMaps[0]));
 		cgs.dbMapVotes[i]      = 0;
-		cgs.dbMapID[i]         = atoi(CG_Argv((i * 4) + 3));
-		cgs.dbMapLastPlayed[i] = atoi(CG_Argv((i * 4) + 4));
-		cgs.dbMapTotalVotes[i] = atoi(CG_Argv((i * 4) + 5));
+		cgs.dbMapID[i]         = Q_atoi(CG_Argv((i * 4) + 3));
+		cgs.dbMapLastPlayed[i] = Q_atoi(CG_Argv((i * 4) + 4));
+		cgs.dbMapTotalVotes[i] = Q_atoi(CG_Argv((i * 4) + 5));
 		if (CG_FindArenaInfo(va("scripts/%s.arena", cgs.dbMaps[i]),
 		                     cgs.dbMaps[i], &cgs.arenaData))
 		{
@@ -4624,7 +4624,7 @@ void CG_parseMapVoteTally()
 	numMaps = (trap_Argc() - 1);
 	for (i = 0; i < numMaps; i++)
 	{
-		cgs.dbMapVotes[i]  = atoi(CG_Argv(i + 1));
+		cgs.dbMapVotes[i]  = Q_atoi(CG_Argv(i + 1));
 		cgs.dbMapVotesSum += cgs.dbMapVotes[i];
 
 		// sort voted maps by total votes accumulated

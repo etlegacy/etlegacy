@@ -1479,7 +1479,7 @@ void CG_ParseSkyBox(void)
 	cg.skyboxViewOrg[2] = (float)atof(token);
 
 	token            = CG_MustParse(&cstr, "CG_ParseSkyBox: error parsing skybox configstring. No skyboxViewFov\n");
-	cg.skyboxViewFov = atoi(token);
+	cg.skyboxViewFov = Q_atoi(token);
 
 	if (cg.skyboxViewFov == 0.f)
 	{
@@ -1503,10 +1503,10 @@ void CG_ParseSkyBox(void)
 		fogColor[2] = (float)atof(token);
 
 		token    = COM_ParseExt(&cstr, qfalse);
-		fogStart = atoi(token);
+		fogStart = Q_atoi(token);
 
 		token  = COM_ParseExt(&cstr, qfalse);
-		fogEnd = atoi(token);
+		fogEnd = Q_atoi(token);
 
 		trap_R_SetFog(FOG_PORTALVIEW, fogStart, fogEnd, fogColor[0], fogColor[1], fogColor[2], 1.1f);
 	}
@@ -1547,7 +1547,7 @@ void CG_ParseTagConnect(int tagNum)
 
 	token = CG_MustParse(&pString, "Invalid TAGCONNECT configstring\n");
 
-	entNum = atoi(token);
+	entNum = Q_atoi(token);
 	if (entNum < 0 || entNum >= MAX_GENTITIES)
 	{
 		CG_Error("Invalid TAGCONNECT entitynum\n");
@@ -1555,7 +1555,7 @@ void CG_ParseTagConnect(int tagNum)
 
 	token = CG_MustParse(&pString, "Invalid TAGCONNECT configstring\n");
 
-	cg_entities[entNum].tagParent = atoi(token);
+	cg_entities[entNum].tagParent = Q_atoi(token);
 	if (cg_entities[entNum].tagParent < 0 || cg_entities[entNum].tagParent >= MAX_GENTITIES)
 	{
 		CG_Error("Invalid TAGCONNECT tagparent\n");
@@ -1819,9 +1819,9 @@ void CG_ProcessCvars()
 		cvalF = (float)atof(currentVal);
 		val1F = (float)atof(cg.svCvars[i].Val1);
 		val2F = (float)atof(cg.svCvars[i].Val2);
-		cvalI   = atoi(currentVal);
-		val1I   = atoi(cg.svCvars[i].Val1);
-		val2I   = atoi(cg.svCvars[i].Val2);
+		cvalI   = Q_atoi(currentVal);
+		val1I   = Q_atoi(cg.svCvars[i].Val1);
+		val2I   = Q_atoi(cg.svCvars[i].Val2);
 		cvalIsF = (strstr(currentVal, ".")) ? qtrue : qfalse;
 		val1IsF = (strstr(cg.svCvars[i].Val1, ".")) ? qtrue : qfalse;
 		val2IsF = (strstr(cg.svCvars[i].Val2, ".")) ? qtrue : qfalse;

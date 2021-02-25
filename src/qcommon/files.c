@@ -1316,7 +1316,7 @@ qboolean FS_IsDemoExt(const char *fileName, int namelen)
 	if (ext_test && (!Q_stricmpn(ext_test + 1, DEMOEXT, ARRAY_LEN(DEMOEXT) - 1) || !Q_stricmpn(ext_test + 1, SVDEMOEXT, ARRAY_LEN(SVDEMOEXT) - 1)))
 	{
 		int index;
-		int protocol = atoi(ext_test + ARRAY_LEN(DEMOEXT));
+		int protocol = Q_atoi(ext_test + ARRAY_LEN(DEMOEXT));
 
 		if (protocol == PROTOCOL_VERSION /*com_protocol->integer*/)
 		{
@@ -4634,7 +4634,7 @@ void FS_PureServerSetLoadedPaks(const char *pakSums, const char *pakNames)
 
 	for (i = 0 ; i < c ; i++)
 	{
-		fs_serverPaks[i] = atoi(Cmd_Argv(i));
+		fs_serverPaks[i] = Q_atoi(Cmd_Argv(i));
 	}
 
 	if (fs_numServerPaks)
@@ -4706,7 +4706,7 @@ void FS_PureServerSetReferencedPaks(const char *pakSums, const char *pakNames)
 
 	for (i = 0 ; i < c ; i++)
 	{
-		fs_serverReferencedPaks[i] = atoi(Cmd_Argv(i));
+		fs_serverReferencedPaks[i] = Q_atoi(Cmd_Argv(i));
 	}
 
 	for (i = 0 ; i < ARRAY_LEN(fs_serverReferencedPakNames); i++)

@@ -961,7 +961,7 @@ int G_FireteamNumberForString(const char *name, team_t team)
 
 	if (fireteam <= 0)
 	{
-		fireteam = atoi(name);
+		fireteam = Q_atoi(name);
 	}
 
 	return fireteam;
@@ -1157,7 +1157,7 @@ void Cmd_FireTeam_MP_f(gentity_t *ent)
 
 		if (clientnum <= 0)
 		{
-			clientnum = atoi(namebuffer);
+			clientnum = Q_atoi(namebuffer);
 
 			if ((clientnum <= 0 || clientnum > MAX_CLIENTS) || !g_entities[clientnum - 1].inuse || !g_entities[clientnum - 1].client)
 			{
@@ -1201,7 +1201,7 @@ void Cmd_FireTeam_MP_f(gentity_t *ent)
 
 		if (clientnum <= 0)
 		{
-			clientnum = atoi(namebuffer);
+			clientnum = Q_atoi(namebuffer);
 
 			if ((clientnum <= 0 || clientnum > MAX_CLIENTS) || !g_entities[clientnum - 1].inuse || !g_entities[clientnum - 1].client)
 			{
@@ -1245,7 +1245,7 @@ void Cmd_FireTeam_MP_f(gentity_t *ent)
 
 		if (clientnum <= 0)
 		{
-			clientnum = atoi(namebuffer);
+			clientnum = Q_atoi(namebuffer);
 
 			if ((clientnum <= 0 || clientnum > MAX_CLIENTS) || !g_entities[clientnum - 1].inuse || !g_entities[clientnum - 1].client)
 			{
@@ -1289,7 +1289,7 @@ void Cmd_FireTeam_MP_f(gentity_t *ent)
 
 		if (clientnum <= 0)
 		{
-			clientnum = atoi(namebuffer);
+			clientnum = Q_atoi(namebuffer);
 
 			if ((clientnum <= 0 || clientnum > MAX_CLIENTS) || !g_entities[clientnum - 1].inuse || !g_entities[clientnum - 1].client)
 			{
@@ -1360,7 +1360,7 @@ void Cmd_FireTeam_MP_f(gentity_t *ent)
 
 		if (clientnum <= 0)
 		{
-			clientnum = atoi(namebuffer);
+			clientnum = Q_atoi(namebuffer);
 
 			if ((clientnum <= 0 || clientnum > MAX_CLIENTS) || !g_entities[clientnum - 1].inuse || !g_entities[clientnum - 1].client)
 			{

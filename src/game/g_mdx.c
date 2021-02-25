@@ -1117,7 +1117,7 @@ static qboolean hit_parse_hit(hit_t *hitModel, mdx_t *mdx, char **ptr)
 			}
 			else
 			{
-				hit->impactpoint = atoi(token);
+				hit->impactpoint = Q_atoi(token);
 				if (hit->impactpoint < 0 || hit->impactpoint > NUM_ANIM_COND_IMPACTPOINT)
 				{
 					hit->impactpoint = NUM_ANIM_COND_IMPACTPOINT;

@@ -1743,13 +1743,13 @@ void ClientUserinfoChanged(int clientNum)
 		/*
 		            case TOK_pmove_fixed:
 		                if ( cs_value[0] )
-		                    client->pers.pmoveFixed = atoi(cs_value);
+		                    client->pers.pmoveFixed = Q_atoi(cs_value);
 		                else
 		                    client->pers.pmoveFixed = 0;
 		                break;
 		            case TOK_pmove_msec:
 		                if ( cs_value[0] )
-		                    client->pers.pmoveMsec = atoi(cs_value);
+		                    client->pers.pmoveMsec = Q_atoi(cs_value);
 		                else
 		                    client->pers.pmoveMsec = 8;
 		                // paranoia

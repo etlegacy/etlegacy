@@ -1601,7 +1601,7 @@ void G_SetSkillLevels(int skill, const char *string)
 		nextLevel = COM_ParseExt(temp, qfalse);
 		if (nextLevel[0])
 		{
-			levels[count] = atoi(nextLevel);
+			levels[count] = Q_atoi(nextLevel);
 			if (levels[count] < 0)
 			{
 				levels[count] = -1;
@@ -1934,7 +1934,7 @@ void G_UpdateCvars(void)
 					char buffer[32];
 
 					trap_Cvar_LatchedVariableStringBuffer("g_gametype", buffer, sizeof(buffer));
-					gametype = atoi(buffer);
+					gametype = Q_atoi(buffer);
 
 					if (gametype == GT_WOLF_CAMPAIGN && gametype != g_gametype.integer)
 					{
@@ -3255,7 +3255,7 @@ void FindIntermissionPoint(void)
 
 	trap_GetConfigstring(CS_MULTI_MAPWINNER, cs, sizeof(cs));
 	buf    = Info_ValueForKey(cs, "w");
-	winner = atoi(buf);
+	winner = Q_atoi(buf);
 
 	// Change from scripting value for winner (0==AXIS, 1==ALLIES) to spawnflag value
 	if (winner == 0)
@@ -3861,10 +3861,10 @@ void G_LogExit(const char *string)
 		int winner, defender;
 
 		trap_GetConfigstring(CS_MULTI_INFO, cs, sizeof(cs));
-		defender = atoi(Info_ValueForKey(cs, "d")); // defender
+		defender = Q_atoi(Info_ValueForKey(cs, "d")); // defender
 
 		trap_GetConfigstring(CS_MULTI_MAPWINNER, cs, sizeof(cs));
-		winner = atoi(Info_ValueForKey(cs, "w"));
+		winner = Q_atoi(Info_ValueForKey(cs, "w"));
 
 		if (!g_currentRound.integer)
 		{
@@ -3894,7 +3894,7 @@ void G_LogExit(const char *string)
 		int winner;
 
 		trap_GetConfigstring(CS_MULTI_MAPWINNER, cs, sizeof(cs));
-		winner = atoi(Info_ValueForKey(cs, "w"));
+		winner = Q_atoi(Info_ValueForKey(cs, "w"));
 
 		if (winner == 0)
 		{
@@ -3923,7 +3923,7 @@ void G_LogExit(const char *string)
 		roundLimit -= 1;    // -1 as it starts at 0
 
 		trap_GetConfigstring(CS_MULTI_MAPWINNER, cs, sizeof(cs));
-		winner = atoi(Info_ValueForKey(cs, "w"));
+		winner = Q_atoi(Info_ValueForKey(cs, "w"));
 
 		if (winner == -1)
 		{
@@ -4164,7 +4164,7 @@ qboolean ScoreIsTied(void)
 	trap_GetConfigstring(CS_MULTI_MAPWINNER, cs, sizeof(cs));
 
 	buf = Info_ValueForKey(cs, "w");
-	a   = atoi(buf);
+	a   = Q_atoi(buf);
 
 	return a == -1;
 }
@@ -5429,7 +5429,7 @@ void G_ReadConfigFileInt(char **cnf, int *v)
 		         t,
 		         COM_GetCurrentParseLine());
 	}
-	*v = atoi(t);
+	*v = Q_atoi(t);
 }
 
 /**

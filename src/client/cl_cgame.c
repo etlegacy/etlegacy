@@ -251,7 +251,7 @@ void CL_ConfigstringModified(void)
 	gameState_t oldGs;
 	int         len;
 
-	index = atoi(Cmd_Argv(1));
+	index = Q_atoi(Cmd_Argv(1));
 	if (index < 0 || index >= MAX_CONFIGSTRINGS)
 	{
 		Com_Error(ERR_DROP, "configstring < 0 or configstring >= MAX_CONFIGSTRINGS");
@@ -485,7 +485,7 @@ void CL_SetExpectedHunkUsage(const char *mapname)
 				if (token && token[0])
 				{
 					// this is the usage
-					com_expectedhunkusage = atoi(token);
+					com_expectedhunkusage = Q_atoi(token);
 					Z_Free(buf);
 					return;
 				}

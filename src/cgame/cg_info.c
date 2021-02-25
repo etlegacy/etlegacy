@@ -1552,7 +1552,7 @@ void CG_ObjectivesDraw()
 				CG_FitTextToWidth_Ext(temp, tScale, OBJ_W - 26, sizeof(temp), FONT_TEXT);
 
 				color[0] = '\0';
-				status   = atoi(Info_ValueForKey(cs, va("a%i", i + 1)));
+				status   = Q_atoi(Info_ValueForKey(cs, va("a%i", i + 1)));
 				if (status == 1)
 				{
 					CG_DrawPic(x + 4, y + 3, 18, 12, cgs.media.alliedFlag);
@@ -1602,7 +1602,7 @@ void CG_ObjectivesDraw()
 				CG_FitTextToWidth_Ext(temp, tScale, OBJ_W - 26, sizeof(temp), FONT_TEXT);
 
 				color[0] = '\0';
-				status   = atoi(Info_ValueForKey(cs, va("x%i", i + 1)));
+				status   = Q_atoi(Info_ValueForKey(cs, va("x%i", i + 1)));
 				if (status == 1)
 				{
 					CG_DrawPic(x + 4, y + 3, 18, 12, cgs.media.axisFlag);

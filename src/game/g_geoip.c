@@ -87,7 +87,7 @@ unsigned long GeoIP_addr_to_num(const char *addr)
 			if (c == '.' || c == ':' || c == '\0')
 			{
 				tok[j] = '\0';
-				octet  = atoi(tok);
+				octet  = Q_atoi(tok);
 				if (octet > 255)
 				{
 					return 0;

@@ -2167,7 +2167,7 @@ void R_TagInfo_f(void)
 	    if (ri.Cmd_Argc() < 3) {
 	        frame = 0;
 	    } else {
-	        frame = atoi(ri.Cmd_Argv(3));
+	        frame = Q_atoi(ri.Cmd_Argv(3));
 	    }
 
 	    Ren_Print("using frame %i..\n", frame);

@@ -656,7 +656,7 @@ void CG_MouseEvent(int x, int y)
 		my += y;
 
 		trap_Cvar_VariableStringBuffer("m_filter", buffer, sizeof(buffer));
-		m_filter = atoi(buffer);
+		m_filter = Q_atoi(buffer);
 
 		trap_Cvar_VariableStringBuffer("sensitivity", buffer, sizeof(buffer));
 		sensitivity = atof(buffer);

@@ -1428,7 +1428,7 @@ static void SV_DemoReadConfigString(msg_t *msg)
 	int  num;
 
 	//num = MSG_ReadLong(msg, MAX_CONFIGSTRINGS); FIXME: doesn't work, dunno why, but it would be better than a string to store a long int!
-	num          = atoi(MSG_ReadString(msg));
+	num          = Q_atoi(MSG_ReadString(msg));
 	configstring = MSG_ReadString(msg);
 
 	if (num < CS_PLAYERS + sv_democlients->integer || num >= CS_PLAYERS + sv_maxclients->integer)
@@ -1466,8 +1466,8 @@ static void SV_DemoReadClientConfigString(msg_t *msg)
 
 		client = &svs.clients[num];
 
-		svdoldteam = strlen(Info_ValueForKey(sv.configstrings[CS_PLAYERS + num], "t")) ? atoi(Info_ValueForKey(sv.configstrings[CS_PLAYERS + num], "t")) : -1; // affect the new team if detected, else if an empty string is returned, just set -1 (will allow us to detect that there's really no team change instead of having 0 which is TEAM_FREE)
-		svdnewteam = strlen(Info_ValueForKey(configstring, "t")) ? atoi(Info_ValueForKey(configstring, "t")) : -1;
+		svdoldteam = strlen(Info_ValueForKey(sv.configstrings[CS_PLAYERS + num], "t")) ? Q_atoi(Info_ValueForKey(sv.configstrings[CS_PLAYERS + num], "t")) : -1; // affect the new team if detected, else if an empty string is returned, just set -1 (will allow us to detect that there's really no team change instead of having 0 which is TEAM_FREE)
+		svdnewteam = strlen(Info_ValueForKey(configstring, "t")) ? Q_atoi(Info_ValueForKey(configstring, "t")) : -1;
 
 		// Set the client configstring (using a standard Q3 function)
 		SV_SetConfigstring(CS_PLAYERS + num, configstring);

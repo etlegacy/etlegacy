@@ -3614,7 +3614,7 @@ void SP_props_decoration(gentity_t *ent)
 
 	if (G_SpawnString("startonframe", "0", &startonframe))
 	{
-		ent->s.frame = atoi(startonframe);
+		ent->s.frame = Q_atoi(startonframe);
 	}
 
 	if (ent->model2)
@@ -3629,7 +3629,7 @@ void SP_props_decoration(gentity_t *ent)
 
 	if ((ent->spawnflags & 32) && G_SpawnString("loop", "100", &loop))
 	{
-		ent->props_frame_state = atoi(loop);
+		ent->props_frame_state = Q_atoi(loop);
 	}
 
 	// if the "color" or "light" keys are set, setup constantLight

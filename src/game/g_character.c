@@ -306,7 +306,7 @@ void G_UpdateCharacter(gclient_t *client)
 	s = Info_ValueForKey(infostring, "ch");
 	if (*s)
 	{
-		characterIndex = atoi(s);
+		characterIndex = Q_atoi(s);
 		if (characterIndex < 0 || characterIndex >= MAX_CHARACTERS)
 		{
 			goto set_default_character;
