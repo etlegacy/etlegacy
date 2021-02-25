@@ -826,6 +826,7 @@ fileHandle_t FS_SV_FOpenFileWrite(const char *fileName);
 long FS_SV_FOpenFileRead(const char *fileName, fileHandle_t *fp);
 void FS_SV_Rename(const char *from, const char *to);
 long FS_FOpenFileRead(const char *fileName, fileHandle_t *file, qboolean uniqueFILE);
+long FS_FOpenFileReadFullDir(const char *fullFileName, fileHandle_t *file);
 
 /*
 if uniqueFILE is true, then a new FILE will be fopened even if the file
@@ -892,6 +893,7 @@ int FS_Seek(fileHandle_t f, long offset, int origin);
 // seek on a file
 
 qboolean FS_FilenameCompare(const char *s1, const char *s2);
+qboolean FS_IsDemoExt(const char *fileName, int namelen);
 
 const char *FS_LoadedPakNames(void);
 const char *FS_LoadedPakChecksums(void);
@@ -1394,11 +1396,13 @@ int Sys_Remove(const char *path);
 int Sys_RemoveDir(const char *path);
 int Sys_Stat(const char *path, void *stat);
 int Sys_Rename(const char *from, const char *to);
+#define Sys_PathAbsolute(name) (name && strlen(name) > 3 && name[1] == ':' && (name[2] == '\\' || name[2] == '/'))
 #else
 #include <unistd.h>
 #define Sys_Remove(x) remove(x)
 #define Sys_RemoveDir(x) rmdir(x)
 #define Sys_Rename(from, to) rename(from, to)
+#define Sys_PathAbsolute(name) (name && name[0] == '/')
 #endif
 
 char *Sys_Cwd(void);

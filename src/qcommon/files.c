@@ -1384,6 +1384,38 @@ static unzFile FS_UnzOpen(const char *fileName)
 #endif
 
 /**
+ * @brief Opens a file to read from an absolute system directory, should not be used instead of the normal FS methods
+ * @param fullFileName Full file OS path
+ * @param file filehandle
+ * @return filesize or -1 if the open fails
+ */
+long FS_FOpenFileReadFullDir(const char *fullFileName, fileHandle_t *file)
+{
+	FILE         *filep;
+
+	*file                         = FS_HandleForFile();
+	fsh[*file].handleFiles.unique = qtrue;
+
+	filep   = Sys_FOpen(fullFileName, "rb");
+	if (filep == NULL)
+	{
+		*file = 0;
+		return -1;
+	}
+
+	Q_strncpyz(fsh[*file].name, fullFileName, sizeof(fsh[*file].name));
+	fsh[*file].zipFile = qfalse;
+
+	if (fs_debug->integer)
+	{
+		Com_Printf("FS_FOpenFileRead: %s\n", fullFileName);
+	}
+
+	fsh[*file].handleFiles.file.o = filep;
+	return FS_fplength(filep);
+}
+
+/**
  * @brief Finds the file in the search path.
  * Used for streaming data out of either a separate file or a ZIP file.
  *

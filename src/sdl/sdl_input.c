@@ -795,7 +795,7 @@ static void IN_InitJoystick(void)
 	total = SDL_NumJoysticks();
 
 	// create list and build cvar to allow ui to select joystick
-	// FIXME: cvar availableJoysticks isn't used in our menus - add it? 
+	// FIXME: cvar availableJoysticks isn't used in our menus - add it?
 	//for (i = 0; i < total; i++)
 	//{
 	//	Q_strcat(buf, sizeof(buf), SDL_JoystickNameForIndex(i));
@@ -1268,6 +1268,17 @@ static void IN_ProcessEvents(void)
 				Com_QueueEvent(lasttime, SE_KEY, K_MWHEELDOWN, qfalse, 0, NULL);
 			}
 
+			break;
+		case SDL_DROPFILE:
+			if (!Q_strncmp(e.drop.file, "et://", 5))
+			{
+				Cbuf_AddText(va("connect \"%s\"", e.drop.file));
+			}
+			else if (FS_IsDemoExt(e.drop.file, -1))
+			{
+				Cbuf_AddText(va("demo \"%s\"", e.drop.file));
+			}
+			SDL_free(e.drop.file);
 			break;
 		case SDL_QUIT:
 			Cbuf_ExecuteText(EXEC_NOW, "quit Closed window\n");
