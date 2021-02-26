@@ -108,7 +108,7 @@ qboolean G_SpawnIntExt(const char *key, const char *defaultString, int *out, con
 	qboolean present;
 
 	present = G_SpawnStringExt(key, defaultString, &s, file, line);
-	*out    = atoi(s);
+	*out    = Q_atoi(s);
 	return present;
 }
 
@@ -760,13 +760,13 @@ void G_ParseField(const char *key, const char *value, gentity_t *ent)
 				(( float * )(b + f->ofs))[2] = vec[2];
 				break;
 			case F_INT:
-				*( int * )(b + f->ofs) = atoi(value);
+				*( int * )(b + f->ofs) = Q_atoi(value);
 				break;
 			case F_FLOAT:
-				*( float * )(b + f->ofs) = (float)atof(value);
+				*( float * )(b + f->ofs) = Q_atof(value);
 				break;
 			case F_ANGLEHACK:
-				v                            = (float)atof(value);
+				v                            = Q_atof(value);
 				(( float * )(b + f->ofs))[0] = 0;
 				(( float * )(b + f->ofs))[1] = v;
 				(( float * )(b + f->ofs))[2] = 0;
@@ -987,7 +987,7 @@ void SP_worldspawn(void)
 	trap_Cvar_Set("g_gravity", s);
 
 	G_SpawnString("spawnflags", "0", &s);
-	g_entities[ENTITYNUM_WORLD].spawnflags   = atoi(s);
+	g_entities[ENTITYNUM_WORLD].spawnflags   = Q_atoi(s);
 	g_entities[ENTITYNUM_WORLD].r.worldflags = g_entities[ENTITYNUM_WORLD].spawnflags;
 
 	g_entities[ENTITYNUM_WORLD].s.number   = ENTITYNUM_WORLD;

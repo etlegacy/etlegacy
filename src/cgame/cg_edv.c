@@ -335,7 +335,7 @@ void CG_EDV_WeaponCam(centity_t *cent, refEntity_t *ent)
 		disValue = strtok(distance, " ");
 		for (count = 0; count < 3 && disValue; ++count)
 		{
-			dis[count] = atoi(disValue);
+			dis[count] = Q_atoi(disValue);
 			disValue   = strtok(NULL, " ,");
 		}
 

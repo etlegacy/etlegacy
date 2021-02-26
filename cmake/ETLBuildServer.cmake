@@ -17,15 +17,23 @@ set_target_properties(etlded
 
 if(BUNDLED_ZLIB)
 	add_dependencies(etlded bundled_zlib)
-endif(BUNDLED_ZLIB)
+endif()
 
 if(BUNDLED_MINIZIP)
 	add_dependencies(etlded bundled_minizip)
-endif(BUNDLED_MINIZIP)
+endif()
+
+if(BUNDLED_OPENSSL)
+	add_dependencies(etlded bundled_openssl)
+endif()
+
+if(BUNDLED_WOLFSSL)
+	add_dependencies(etlded bundled_wolfssl)
+endif()
 
 if(BUNDLED_CURL)
 	add_dependencies(etlded bundled_curl)
-endif(BUNDLED_CURL)
+endif()
 
 if(FEATURE_DBMS)
 	if(BUNDLED_SQLITE3)

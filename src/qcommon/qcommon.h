@@ -327,6 +327,7 @@ typedef struct
 	char downloadTempName[MAX_OSPATH];          ///< in wwwdl mode, this is OS path (it's a qpath otherwise)
 	char originalDownloadName[MAX_QPATH];       ///< if we get a redirect, keep a copy of the original file path
 	qboolean downloadRestart;                   ///< if true, we need to do another FS_Restart because we downloaded a pak
+	qboolean systemDownload;                    ///< if true, we are running an system inited download and we do not force fs_game or isolation paths
 } download_t;
 
 // update and motd server info
@@ -393,10 +394,12 @@ extern int demo_protocols[];
 #define UPDATE_SERVER_NAME  "update.etlegacy.com"                ///< location of the update server
 
 #ifdef FEATURE_SSL
-#define DOWNLOAD_SERVER_URL "https://mirror.etlegacy.com/etmain" ///< location of the download server
+#define MIRROR_SERVER_URL "https://mirror.etlegacy.com" ///< location of the download server
 #else
-#define DOWNLOAD_SERVER_URL "http://mirror.etlegacy.com/etmain"  ///< location of the download server
+#define MIRROR_SERVER_URL "http://mirror.etlegacy.com"  ///< location of the download server
 #endif
+
+#define DOWNLOAD_SERVER_URL MIRROR_SERVER_URL "/etmain"
 
 #define PORT_MASTER         27950
 #define PORT_MOTD           27951
@@ -826,6 +829,7 @@ fileHandle_t FS_SV_FOpenFileWrite(const char *fileName);
 long FS_SV_FOpenFileRead(const char *fileName, fileHandle_t *fp);
 void FS_SV_Rename(const char *from, const char *to);
 long FS_FOpenFileRead(const char *fileName, fileHandle_t *file, qboolean uniqueFILE);
+long FS_FOpenFileReadFullDir(const char *fullFileName, fileHandle_t *file);
 
 /*
 if uniqueFILE is true, then a new FILE will be fopened even if the file
@@ -850,6 +854,8 @@ int FS_Delete(const char *fileName);
 int FS_Write(const void *buffer, int len, fileHandle_t h);
 
 int FS_OSStatFile(const char *ospath);
+
+long FS_FileAge(const char *ospath);
 
 int FS_Read(void *buffer, int len, fileHandle_t f);
 // properly handles partial reads and reads from other dlls
@@ -892,6 +898,7 @@ int FS_Seek(fileHandle_t f, long offset, int origin);
 // seek on a file
 
 qboolean FS_FilenameCompare(const char *s1, const char *s2);
+qboolean FS_IsDemoExt(const char *fileName, int namelen);
 
 const char *FS_LoadedPakNames(void);
 const char *FS_LoadedPakChecksums(void);
@@ -1131,13 +1138,13 @@ temp file loading
 #define Z_TagMalloc(size, tag)          Z_TagMallocDebug(size, tag, # size, __FILE__, __LINE__)
 #define Z_Malloc(size)                  Z_MallocDebug(size, # size, __FILE__, __LINE__)
 #define S_Malloc(size)                  S_MallocDebug(size, # size, __FILE__, __LINE__)
-void *Z_TagMallocDebug(int size, int tag, char *label, char *file, int line);   // NOT 0 filled memory
-void *Z_MallocDebug(int size, char *label, char *file, int line);               // returns 0 filled memory
-void *S_MallocDebug(int size, char *label, char *file, int line);               // returns 0 filled memory
+void *Z_TagMallocDebug(size_t size, int tag, char *label, char *file, int line);   // NOT 0 filled memory
+void *Z_MallocDebug(size_t size, char *label, char *file, int line);               // returns 0 filled memory
+void *S_MallocDebug(size_t size, char *label, char *file, int line);               // returns 0 filled memory
 #else
-void *Z_TagMalloc(int size, int tag);   // NOT 0 filled memory
-void *Z_Malloc(int size);               // returns 0 filled memory
-void *S_Malloc(int size);               // NOT 0 filled memory only for small allocations
+void *Z_TagMalloc(size_t size, int tag);   // NOT 0 filled memory
+void *Z_Malloc(size_t size);               // returns 0 filled memory
+void *S_Malloc(size_t size);               // NOT 0 filled memory only for small allocations
 #endif
 void Z_Free(void *ptr);
 void Z_FreeTags(int tag);
@@ -1150,7 +1157,7 @@ qboolean Hunk_CheckMark(void);
 //void *Hunk_Alloc( int size );
 // void *Hunk_Alloc( int size, ha_pref preference );
 void Hunk_ClearTempMemory(void);
-void *Hunk_AllocateTempMemory(unsigned int size);
+void *Hunk_AllocateTempMemory(size_t size);
 void Hunk_FreeTempMemory(void *buf);
 int Hunk_MemoryRemaining(void);
 void Hunk_SmallLog(void);
@@ -1244,6 +1251,8 @@ void Com_UpdateVarsClean(int flags);
 void Com_Update_f(void);
 
 // download.c
+#define CA_CERT_FILE "cacert.pem"
+#define TMP_FILE_EXTENSION ".tmp"
 void Com_ClearDownload(void);
 void Com_ClearStaticDownload(void);
 
@@ -1252,6 +1261,10 @@ void Com_InitDownloads(void);
 void Com_WWWDownload(void);
 qboolean Com_WWWBadChecksum(const char *pakname);
 void Com_Download_f(void);
+
+#if defined(FEATURE_SSL)
+void Com_CheckCaCertStatus(void);
+#endif
 
 void Key_KeynameCompletion(void (*callback)(const char *s));
 // for keyname autocompletion
@@ -1394,11 +1407,13 @@ int Sys_Remove(const char *path);
 int Sys_RemoveDir(const char *path);
 int Sys_Stat(const char *path, void *stat);
 int Sys_Rename(const char *from, const char *to);
+#define Sys_PathAbsolute(name) (name && strlen(name) > 3 && name[1] == ':' && (name[2] == '\\' || name[2] == '/'))
 #else
 #include <unistd.h>
 #define Sys_Remove(x) remove(x)
 #define Sys_RemoveDir(x) rmdir(x)
 #define Sys_Rename(from, to) rename(from, to)
+#define Sys_PathAbsolute(name) (name && name[0] == '/')
 #endif
 
 char *Sys_Cwd(void);

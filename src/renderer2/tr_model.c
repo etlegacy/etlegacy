@@ -770,7 +770,7 @@ int RE_LerpTagET(orientation_t *tag, const refEntity_t *refent, const char *tagN
     if (ch = strrchr(tagName, ' ')) {
         *ch = 0;
         ch++;
-        startIndex = atoi(ch);
+        startIndex = Q_atoi(ch);
     }
 */
 	model = R_GetModelByHandle(handle);

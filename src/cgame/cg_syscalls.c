@@ -1046,7 +1046,7 @@ void trap_GetCurrentSnapshotNumber(int *snapshotNumber, int *serverTime)
 		int  fakeLag;
 
 		trap_Cvar_VariableStringBuffer("g_fakelag", s, sizeof(s));
-		fakeLag = atoi(s);
+		fakeLag = Q_atoi(s);
 		if (fakeLag < 0)
 		{
 			fakeLag = 0;
@@ -1090,7 +1090,7 @@ qboolean trap_GetSnapshot(int snapshotNumber, snapshot_t *snapshot)
 		}
 
 		trap_Cvar_VariableStringBuffer("g_fakelag", s, sizeof(s));
-		fakeLag = atoi(s);
+		fakeLag = Q_atoi(s);
 		if (fakeLag < 0)
 		{
 			fakeLag = 0;

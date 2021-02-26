@@ -100,7 +100,7 @@ void G_smvAdd_cmd(gentity_t *ent)
 
 	// Clients will always send pIDs
 	trap_Argv(1, str, sizeof(str));
-	pID = atoi(str);
+	pID = Q_atoi(str);
 	if (pID < 0 || pID > level.maxclients || g_entities[pID].client->pers.connected != CON_CONNECTED)
 	{
 		CP(va("print \"[lof]** [lon]Client[lof] %d [lon]is not connected[lof]!\n\"", pID));
@@ -165,7 +165,7 @@ void G_smvDel_cmd(gentity_t *ent)
 
 	// Clients will always send pIDs
 	trap_Argv(1, str, sizeof(str));
-	pID = atoi(str);
+	pID = Q_atoi(str);
 	if (!G_smvLocateEntityInMVList(ent, pID, qtrue))
 	{
 		CP(va("print \"[lof]** [lon]Client[lof] %s^7 [lon]is not currently viewed[lof]!\n\"", level.clients[pID].pers.netname));

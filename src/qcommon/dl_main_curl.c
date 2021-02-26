@@ -60,7 +60,6 @@
 
 #define APP_NAME        "ID_DOWNLOAD"
 #define APP_VERSION     "2.0"
-#define CA_CERT_FILE    "cacert.pem"
 
 #define GET_BUFFER_SIZE 1024 * 256
 
@@ -288,7 +287,7 @@ static void DL_InitSSL(CURL *curl)
  * @param remoteName
  * @return
  */
-int DL_BeginDownload(char *localName, const char *remoteName)
+int DL_BeginDownload(const char *localName, const char *remoteName)
 {
 	char referer[MAX_STRING_CHARS + 5 /*"ET://"*/];
 
@@ -310,7 +309,7 @@ int DL_BeginDownload(char *localName, const char *remoteName)
 		return 0;
 	}
 
-	dl_file = Sys_FOpen(localName, "wb+");
+	dl_file = Sys_FOpen(localName, "wb");
 	if (!dl_file)
 	{
 		Com_Printf(S_COLOR_RED  "DL_BeginDownload: Error - unable to open '%s' for writing\n", localName);

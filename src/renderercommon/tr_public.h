@@ -189,9 +189,9 @@ typedef struct
 	/// won't be freed
 	void (*Hunk_Clear)(void);
 #ifdef HUNK_DEBUG
-	void * (*Hunk_AllocDebug)(unsigned int size, ha_pref pref, char *label, char *file, int line);
+	void * (*Hunk_AllocDebug)(size_t size, ha_pref pref, char *label, char *file, int line);
 #else
-	void * (*Hunk_Alloc)(unsigned int size, ha_pref pref);
+	void * (*Hunk_Alloc)(size_t size, ha_pref pref);
 #endif
 	void * (*Hunk_AllocateTempMemory)(size_t size);
 	void (*Hunk_FreeTempMemory)(void *block);

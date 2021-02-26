@@ -693,7 +693,7 @@ void Script_ConditionalScript(itemDef_t *item, qboolean *bAbort, char **args)
 				}
 				/*} else if( !Q_stricmpn( cvar, "voteflags", 9 ) ) {
 				char info[MAX_INFO_STRING];
-				int voteflags = atoi(cvar + 9);
+				int voteflags = Q_atoi(cvar + 9);
 
 				trap_Cvar_VariableStringBuffer( "cg_ui_voteFlags", info, sizeof(info) );
 
@@ -706,7 +706,7 @@ void Script_ConditionalScript(itemDef_t *item, qboolean *bAbort, char **args)
 			}
 			else if (!Q_stricmpn(cvar, "serversort_", 11))
 			{
-				int sorttype = atoi(cvar + 11);
+				int sorttype = Q_atoi(cvar + 11);
 
 				if (sorttype != uiInfo.serverStatus.sortKey)
 				{
@@ -736,7 +736,7 @@ void Script_ConditionalScript(itemDef_t *item, qboolean *bAbort, char **args)
 				int  r_mode = (int)(DC->getCVarValue("r_mode"));
 
 				DC->getCVarString("r_oldMode", r_oldModeStr, sizeof(r_oldModeStr));
-				r_oldMode = atoi(r_oldModeStr);
+				r_oldMode = Q_atoi(r_oldModeStr);
 
 				if (*r_oldModeStr && r_oldMode != r_mode)
 				{
@@ -1062,7 +1062,7 @@ void Script_AddListItem(itemDef_t *item, qboolean *bAbort, char **args)
 
 		if (t && t->special)
 		{
-			DC->feederAddItem(t->special, name, atoi(val));
+			DC->feederAddItem(t->special, name, Q_atoi(val));
 		}
 	}
 }
@@ -1133,9 +1133,9 @@ qboolean Script_CheckProfile(const char *profile_path)
 	trap_FS_Read(&f_data, sizeof(f_data) - 1, f);
 
 	DC->getCVarString("com_pid", com_pid, sizeof(com_pid));
-	pid = atoi(com_pid);
+	pid = Q_atoi(com_pid);
 
-	f_pid = atoi(f_data);
+	f_pid = Q_atoi(f_data);
 	if (f_pid != pid)
 	{
 		// pid doesn't match
@@ -1354,8 +1354,8 @@ void Script_ToggleCvarBit(itemDef_t *item, qboolean *bAbort, char **args)
 		char buff[256];
 
 		DC->getCVarString(cvar, buff, 256);
-		value    = atoi(buff);
-		bitvalue = atoi(val);
+		value    = Q_atoi(buff);
+		bitvalue = Q_atoi(val);
 		value   ^= bitvalue;
 		DC->setCVar(cvar, va("%i", value));
 	}

@@ -206,11 +206,11 @@ qboolean G_Script_EventMatch_IntInRange(g_script_event_t *event, const char *eve
 	// get the cast name
 	pString = (char *)eventParm;
 	token   = COM_ParseExt(&pString, qfalse);
-	int1    = atoi(token);
+	int1    = Q_atoi(token);
 	token   = COM_ParseExt(&pString, qfalse);
-	int2    = atoi(token);
+	int2    = Q_atoi(token);
 
-	eInt = atoi(event->params);
+	eInt = Q_atoi(event->params);
 
 	return eventParm && eInt > int1 && eInt <= int2;
 }

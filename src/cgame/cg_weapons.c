@@ -844,7 +844,7 @@ static qboolean CG_ParseWeaponConfig(const char *filename, weaponInfo_t *wi)
 			break;
 		}
 
-		wi->weapAnimations[i].firstFrame = atoi(token);
+		wi->weapAnimations[i].firstFrame = Q_atoi(token);
 
 		token = COM_Parse(&text_p);     // length
 
@@ -853,7 +853,7 @@ static qboolean CG_ParseWeaponConfig(const char *filename, weaponInfo_t *wi)
 			break;
 		}
 
-		wi->weapAnimations[i].numFrames = atoi(token);
+		wi->weapAnimations[i].numFrames = Q_atoi(token);
 
 		token = COM_Parse(&text_p);     // fps
 
@@ -879,7 +879,7 @@ static qboolean CG_ParseWeaponConfig(const char *filename, weaponInfo_t *wi)
 			break;
 		}
 
-		wi->weapAnimations[i].loopFrames = atoi(token);
+		wi->weapAnimations[i].loopFrames = Q_atoi(token);
 
 		if (wi->weapAnimations[i].loopFrames > wi->weapAnimations[i].numFrames)
 		{
@@ -903,7 +903,7 @@ static qboolean CG_ParseWeaponConfig(const char *filename, weaponInfo_t *wi)
 				break;
 			}
 
-			wi->weapAnimations[i].moveSpeed = atoi(token);
+			wi->weapAnimations[i].moveSpeed = Q_atoi(token);
 
 			token = COM_Parse(&text_p);     // animated weapon
 
@@ -5105,7 +5105,7 @@ void CG_WeaponBank_f(void)
 		return;
 	}
 
-	bank = atoi(CG_Argv(1));
+	bank = Q_atoi(CG_Argv(1));
 
 	if (bank <= 0 || bank >= MAX_WEAP_BANKS_MP)
 	{
@@ -5164,7 +5164,7 @@ void CG_Weapon_f(void)
 {
 	int num;
 
-	num = atoi(CG_Argv(1));
+	num = Q_atoi(CG_Argv(1));
 
 	// weapon bind should execute weaponbank instead -- for splitting out class weapons, per Id request
 	if (num < MAX_WEAP_BANKS_MP)

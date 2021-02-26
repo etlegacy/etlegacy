@@ -1872,7 +1872,7 @@ int CG_LimboPanel_GetMaxObjectives(void)
 		return 0;
 	}
 
-	return atoi(Info_ValueForKey(CG_ConfigString(CS_MULTI_INFO), "o")); // numobjectives
+	return Q_atoi(Info_ValueForKey(CG_ConfigString(CS_MULTI_INFO), "o")); // numobjectives
 }
 
 /**
@@ -1946,13 +1946,13 @@ void CG_LimboPanel_RenderObjectiveText(panel_button_t *button)
 				{
 					//info = Info_ValueForKey( cs, "axis_desc" );
 					info   = cg.objDescription_Axis[cgs.ccSelectedObjective];
-					status = atoi(Info_ValueForKey(cs, va("x%i", cgs.ccSelectedObjective + 1)));
+					status = Q_atoi(Info_ValueForKey(cs, va("x%i", cgs.ccSelectedObjective + 1)));
 				}
 				else
 				{
 					//info = Info_ValueForKey( cs, "allied_desc" );
 					info   = cg.objDescription_Allied[cgs.ccSelectedObjective];
-					status = atoi(Info_ValueForKey(cs, va("a%i", cgs.ccSelectedObjective + 1)));
+					status = Q_atoi(Info_ValueForKey(cs, va("a%i", cgs.ccSelectedObjective + 1)));
 				}
 
 				if (!(info && *info))
@@ -4004,7 +4004,7 @@ int ExtractInt(const char *src)
 	{
 		int sign = 1;
 
-		result = sign * atoi(tmp);
+		result = sign * Q_atoi(tmp);
 	}
 
 	Com_Dealloc(tmp);

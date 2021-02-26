@@ -251,7 +251,7 @@ static void G_SendSkillRating(gentity_t *ent)
 
 	trap_Argv(1, buffer, sizeof(buffer));
 
-	clientNum = atoi(buffer);
+	clientNum = Q_atoi(buffer);
 	if (clientNum < 0 || clientNum > g_maxclients.integer)
 	{
 		return;
@@ -291,7 +291,7 @@ static void G_SendPrestige(gentity_t *ent)
 
 	trap_Argv(1, buffer, sizeof(buffer));
 
-	clientNum = atoi(buffer);
+	clientNum = Q_atoi(buffer);
 	if (clientNum < 0 || clientNum > g_maxclients.integer)
 	{
 		return;
@@ -634,7 +634,7 @@ int ClientNumberFromString(gentity_t *to, char *s)
 	// numeric values are just slot numbers
 	if (fIsNumber)
 	{
-		idnum = atoi(s);
+		idnum = Q_atoi(s);
 		if (idnum < 0 || idnum >= level.maxclients)
 		{
 			CPx(to - g_entities, va("print \"Bad client slot: [lof]%i\n\"", idnum));
@@ -709,7 +709,7 @@ void Cmd_Give_f(gentity_t *ent)
 	{
 		hasAmount = qtrue;
 	}
-	amount = atoi(amt);
+	amount = Q_atoi(amt);
 
 	name = ConcatArgs(1);
 
@@ -991,7 +991,7 @@ void Cmd_God_f(gentity_t *ent)
 	}
 	else
 	{
-		if (!Q_stricmp(name, "on") || atoi(name))
+		if (!Q_stricmp(name, "on") || Q_atoi(name))
 		{
 			ent->flags |= FL_GODMODE;
 		}
@@ -1032,7 +1032,7 @@ void Cmd_Nofatigue_f(gentity_t *ent)
 		return;
 	}
 
-	if (!Q_stricmp(name, "on") || atoi(name))
+	if (!Q_stricmp(name, "on") || Q_atoi(name))
 	{
 		ent->flags |= FL_NOFATIGUE;
 	}
@@ -1103,7 +1103,7 @@ void Cmd_Noclip_f(gentity_t *ent)
 		return;
 	}
 
-	if (!Q_stricmp(name, "on") || atoi(name))
+	if (!Q_stricmp(name, "on") || Q_atoi(name))
 	{
 		ent->client->noclip = qtrue;
 	}
@@ -1144,7 +1144,7 @@ void Cmd_Nostamina_f(gentity_t *ent)
 		return;
 	}
 
-	if (!Q_stricmp(name, "on") || atoi(name))
+	if (!Q_stricmp(name, "on") || Q_atoi(name))
 	{
 		ent->flags |= FL_NOSTAMINA;
 	}
@@ -2154,8 +2154,8 @@ void Cmd_Team_f(gentity_t *ent, unsigned int dwCommand, qboolean fValue)
 	trap_Argv(3, weap, sizeof(weap));
 	trap_Argv(4, weap2, sizeof(weap2));
 
-	w  = atoi(weap);
-	w2 = atoi(weap2);
+	w  = Q_atoi(weap);
+	w2 = Q_atoi(weap2);
 
 	G_TeamDataForString(s, ent->s.clientNum, &team, &specState);
 
@@ -2169,7 +2169,7 @@ void Cmd_Team_f(gentity_t *ent, unsigned int dwCommand, qboolean fValue)
 
 	if (*ptype)
 	{
-		playerType = atoi(ptype);
+		playerType = Q_atoi(ptype);
 	}
 	else
 	{
@@ -2931,10 +2931,10 @@ void G_Voice(gentity_t *ent, gentity_t *target, int mode, const char *id, const 
 
 		trap_Argv(1, buffer, 32);
 
-		cls = atoi(buffer);
+		cls = Q_atoi(buffer);
 
 		trap_Argv(2, buffer, 32);
-		cnt = atoi(buffer);
+		cnt = Q_atoi(buffer);
 		if (cnt > MAX_CLIENTS)
 		{
 			cnt = MAX_CLIENTS;
@@ -2944,7 +2944,7 @@ void G_Voice(gentity_t *ent, gentity_t *target, int mode, const char *id, const 
 		{
 			trap_Argv(3 + i, buffer, 32);
 
-			num = atoi(buffer);
+			num = Q_atoi(buffer);
 			if (num < 0)
 			{
 				continue;
@@ -3042,7 +3042,7 @@ static void Cmd_Voice_f(gentity_t *ent, int mode, qboolean arg0, qboolean voiceo
 		int  index;
 
 		trap_Argv(2, bufferIndex, sizeof(bufferIndex));
-		index = atoi(bufferIndex);
+		index = Q_atoi(bufferIndex);
 		if (index < 0)
 		{
 			index = 0;
@@ -3565,7 +3565,7 @@ void Cmd_Vote_f(gentity_t *ent)
 
 	if (level.voteInfo.vote_fn == G_Kick_v)
 	{
-		int pid = atoi(level.voteInfo.vote_value);
+		int pid = Q_atoi(level.voteInfo.vote_value);
 
 		if (!g_entities[pid].client)
 		{
@@ -4351,7 +4351,7 @@ void Cmd_SetSpawnPoint_f(gentity_t *ent)
 	}
 
 	trap_Argv(1, arg, sizeof(arg));
-	val = atoi(arg);
+	val = Q_atoi(arg);
 
 	if (ent->client)
 	{
@@ -4426,7 +4426,7 @@ void Cmd_IntermissionWeaponStats_f(gentity_t *ent)
 
 	trap_Argv(1, buffer, sizeof(buffer));
 
-	clientNum = atoi(buffer);
+	clientNum = Q_atoi(buffer);
 	if (clientNum < 0 || clientNum > g_maxclients.integer)
 	{
 		return;
@@ -4755,7 +4755,7 @@ void Cmd_SelectedObjective_f(gentity_t *ent)
 		return;
 	}
 	trap_Argv(1, buffer, 16);
-	val = atoi(buffer) + 1;
+	val = Q_atoi(buffer) + 1;
 
 	for (i = 0; i < level.numLimboCams; i++)
 	{

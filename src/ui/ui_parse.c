@@ -189,7 +189,7 @@ qboolean Int_Parse(char **p, int *i)
 
 	if (token && token[0] != 0)
 	{
-		*i = atoi(token);
+		*i = Q_atoi(token);
 		return qtrue;
 	}
 	else
@@ -925,7 +925,7 @@ qboolean ItemParse_elementheight(itemDef_t *item, int handle)
 qboolean ItemParse_feeder(itemDef_t *item, int handle)
 {
 	if (!PC_Int_Parse(handle, &item->special))
-	{   
+	{
 		return qfalse;
 	}
 

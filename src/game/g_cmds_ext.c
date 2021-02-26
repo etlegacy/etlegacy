@@ -450,9 +450,9 @@ void G_players_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fDump)
 		{
 			trap_GetUserinfo(idnum, userinfo, sizeof(userinfo));
 			s          = Info_ValueForKey(userinfo, "rate");
-			user_rate  = (max_rate > 0 && atoi(s) > max_rate) ? max_rate : atoi(s);
+			user_rate  = (max_rate > 0 && Q_atoi(s) > max_rate) ? max_rate : Q_atoi(s);
 			s          = Info_ValueForKey(userinfo, "snaps");
-			user_snaps = atoi(s);
+			user_snaps = Q_atoi(s);
 
 			Q_strncpyz(rate, va("%5d%6d%9d%7d", cl->pers.clientTimeNudge, user_rate, cl->pers.clientMaxPackets, user_snaps), sizeof(rate));
 		}
@@ -1370,7 +1370,7 @@ void G_weaponRankings_cmd(gentity_t *ent, unsigned int dwCommand, qboolean state
 
 	// Find the weapon
 	trap_Argv(1, z, sizeof(z));
-	if ((iWeap = atoi(z)) == 0 || iWeap < WS_KNIFE || iWeap >= WS_MAX)
+	if ((iWeap = Q_atoi(z)) == 0 || iWeap < WS_KNIFE || iWeap >= WS_MAX)
 	{
 		for (iWeap = WS_MAX - 1; iWeap >= WS_KNIFE; iWeap--)
 		{

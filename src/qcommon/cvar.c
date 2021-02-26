@@ -568,8 +568,8 @@ cvar_t *Cvar_Get(const char *varName, const char *value, int flags)
 	var->string            = CopyString(value);
 	var->modified          = qtrue;
 	var->modificationCount = 1;
-	var->value             = (float)(atof(var->string));
-	var->integer           = atoi(var->string);
+	var->value             = Q_atof(var->string);
+	var->integer           = Q_atoi(var->string);
 	var->resetString       = CopyString(value);
 	var->validate          = qfalse;
 	var->description       = NULL;
@@ -782,8 +782,8 @@ cvar_t *Cvar_Set2(const char *var_name, const char *value, qboolean force)
 	Z_Free(var->string);     // free the old value string
 
 	var->string  = CopyString(value);
-	var->value   = (float)(atof(var->string));
-	var->integer = atoi(var->string);
+	var->value   = Q_atof(var->string);
+	var->integer = Q_atoi(var->string);
 
 	return var;
 }
@@ -1068,12 +1068,12 @@ void Cvar_Cycle_f(void)
 	}
 
 	oldvalue = value = (int)(Cvar_VariableValue(Cmd_Argv(1)));
-	start    = atoi(Cmd_Argv(2));
-	end      = atoi(Cmd_Argv(3));
+	start    = Q_atoi(Cmd_Argv(2));
+	end      = Q_atoi(Cmd_Argv(3));
 
 	if (Cmd_Argc() == 5)
 	{
-		step = abs(atoi(Cmd_Argv(4)));
+		step = abs(Q_atoi(Cmd_Argv(4)));
 	}
 	else
 	{

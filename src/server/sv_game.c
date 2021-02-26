@@ -178,7 +178,7 @@ void SV_SetBrushModel(sharedEntity_t *ent, const char *name)
 		Com_Error(ERR_DROP, "SV_SetBrushModel: %s of #%i isn't a brush model", name, ent->s.number);
 	}
 
-	ent->s.modelindex = atoi(name + 1);
+	ent->s.modelindex = Q_atoi(name + 1);
 
 	h = CM_InlineModel(ent->s.modelindex);
 	CM_ModelBounds(h, mins, maxs);

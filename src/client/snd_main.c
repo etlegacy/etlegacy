@@ -735,7 +735,7 @@ void S_Music_f(void)
 	}
 	else if (c == 4)
 	{
-		si.StartBackgroundTrack(Cmd_Argv(1), Cmd_Argv(2), atoi(Cmd_Argv(3)));
+		si.StartBackgroundTrack(Cmd_Argv(1), Cmd_Argv(2), Q_atoi(Cmd_Argv(3)));
 	}
 	else
 	{
@@ -769,20 +769,20 @@ void S_Stream_f(void)
 	else if (c == 4)
 	{
 		si.StartStreamingSound(Cmd_Argv(1), Cmd_Argv(2),
-		                       atoi(Cmd_Argv(3)), 0, 0);
+		                       Q_atoi(Cmd_Argv(3)), 0, 0);
 	}
 	else if (c == 5)
 	{
 		si.StartStreamingSound(Cmd_Argv(1), Cmd_Argv(2),
-		                       atoi(Cmd_Argv(3)),
-		                       atoi(Cmd_Argv(4)), 0);
+		                       Q_atoi(Cmd_Argv(3)),
+		                       Q_atoi(Cmd_Argv(4)), 0);
 	}
 	else if (c == 6)
 	{
 		si.StartStreamingSound(Cmd_Argv(1), Cmd_Argv(2),
-		                       atoi(Cmd_Argv(3)),
-		                       atoi(Cmd_Argv(4)),
-		                       atoi(Cmd_Argv(5)));
+		                       Q_atoi(Cmd_Argv(3)),
+		                       Q_atoi(Cmd_Argv(4)),
+		                       Q_atoi(Cmd_Argv(5)));
 	}
 	else
 	{

@@ -180,7 +180,7 @@ static qboolean CG_ParsePatriclesConfig(void)
 			break;
 		}
 
-		shaderAnims[i].counts = atoi(token);
+		shaderAnims[i].counts = Q_atoi(token);
 
 		token = COM_Parse(&text_p);     // ST Ratio
 
@@ -1666,7 +1666,7 @@ int CG_NewParticleArea(int num)
 
     // returns type 128 64 or 32
     token = COM_Parse(&str);
-    type  = atoi(token);
+    type  = Q_atoi(token);
 
     switch (type)
     {
@@ -1708,13 +1708,13 @@ int CG_NewParticleArea(int num)
     }
 
     token        = COM_Parse(&str);
-    numparticles = atoi(token);
+    numparticles = Q_atoi(token);
 
     token = COM_Parse(&str);
-    turb  = atoi(token);
+    turb  = Q_atoi(token);
 
     token = COM_Parse(&str);
-    snum  = atoi(token);
+    snum  = Q_atoi(token);
 
     for (i = 0; i < numparticles; i++)
     {

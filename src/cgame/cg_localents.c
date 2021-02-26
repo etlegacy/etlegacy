@@ -256,7 +256,7 @@ void CG_LoadLocations(void)
 				temp[t++] = fBuffer[p++];
 			}
 			temp[t] = '\0';
-			x       = atoi(temp);
+			x       = Q_atoi(temp);
 			t       = 0;
 			Com_Memset(&temp, 0, sizeof(temp));
 
@@ -273,7 +273,7 @@ void CG_LoadLocations(void)
 				temp[t++] = fBuffer[p++];
 			}
 			temp[t] = '\0';
-			y       = atoi(temp);
+			y       = Q_atoi(temp);
 			t       = 0;
 			Com_Memset(&temp, 0, sizeof(temp));
 
@@ -290,7 +290,7 @@ void CG_LoadLocations(void)
 				temp[t++] = fBuffer[p++];
 			}
 			temp[t] = '\0';
-			z       = atoi(temp);
+			z       = Q_atoi(temp);
 			t       = 0;
 
 			Com_Memset(&temp, 0, sizeof(temp));

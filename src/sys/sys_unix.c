@@ -338,7 +338,7 @@ FILE *Sys_FOpen(const char *ospath, const char *mode)
 	// Try to open the file with the file descriptor
 	if (!(fp = fdopen(fd, mode)))
 	{
-		Com_Printf("Sys_FOpen: fdopen('%s', %s) failed: errno %d\n", ospath, mode, errno);
+		Com_Printf("Sys_FOpen: fdopen('%s', %s) failed: errno %d - %s\n", ospath, mode, errno, strerror(errno));
 		close(fd);
 		unlink(ospath);
 		return NULL;

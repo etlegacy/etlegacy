@@ -785,7 +785,7 @@ qboolean ParseShaderR1(char *_text)
 				continue;
 			}
 			shader.spectrum      = qtrue;
-			shader.spectrumValue = atoi(token);
+			shader.spectrumValue = Q_atoi(token);
 			continue;
 		}
 		// diffuseMap <image>

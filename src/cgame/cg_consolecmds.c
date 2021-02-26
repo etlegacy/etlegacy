@@ -643,7 +643,7 @@ static void CG_MessageSend_f(void)
 
 	// get values
 	trap_Cvar_VariableStringBuffer("cg_messageType", messageText, MAX_SAY_TEXT);
-	messageType = atoi(messageText);
+	messageType = Q_atoi(messageText);
 	trap_Cvar_VariableStringBuffer("cg_messageText", messageText, MAX_SAY_TEXT);
 
 	// reset values
@@ -680,7 +680,7 @@ static void CG_SetWeaponCrosshair_f(void)
 	char crosshair[64];
 
 	trap_Argv(1, crosshair, 64);
-	cg.newCrosshairIndex = atoi(crosshair) + 1;
+	cg.newCrosshairIndex = Q_atoi(crosshair) + 1;
 }
 
 /**
@@ -688,7 +688,7 @@ static void CG_SetWeaponCrosshair_f(void)
  */
 static void CG_SelectBuddy_f(void)
 {
-	int          pos = atoi(CG_Argv(1));
+	int          pos = Q_atoi(CG_Argv(1));
 	int          i;
 	clientInfo_t *ci;
 
@@ -1084,9 +1084,9 @@ static void CG_DumpSpeaker_f(void)
 	        Q_strncpyz( soundfile, soundfile, buffptr - soundfile + 1 );
 
 	        if( !Q_stricmp( soundfile, "wait" ) )
-	            wait = atoi( valueptr );
+	            wait = Q_atoi( valueptr );
 	        else if( !Q_stricmp( soundfile, "random" ) )
-	            random = atoi( valueptr );
+	            random = Q_atoi( valueptr );
 	    }
 
 	    // parse soundfile
@@ -1206,7 +1206,7 @@ static void CG_CPM_f(void)
 	}
 	else
 	{
-		iconnumber = atoi(iconstring);
+		iconnumber = Q_atoi(iconstring);
 	}
 
 	// only valid icon types
@@ -1247,7 +1247,7 @@ static void CG_TimerSet_f(void)
 		int  spawnPeriod;
 
 		trap_Argv(1, buff, sizeof(buff));
-		spawnPeriod = atoi(buff);
+		spawnPeriod = Q_atoi(buff);
 
 		if (spawnPeriod == 0)
 		{
@@ -1535,7 +1535,7 @@ static void CG_Class_f(void)
 	if (trap_Argc() > 2)
 	{
 		trap_Argv(2, cls, 64);
-		weapon1 = atoi(cls);
+		weapon1 = Q_atoi(cls);
 		if (weapon1 <= 0 || weapon1 > MAX_WEAPS_PER_CLASS)
 		{
 			weapon1 = classinfo->classPrimaryWeapons[0].weapon;
@@ -1564,7 +1564,7 @@ static void CG_Class_f(void)
 	if (trap_Argc() > 3)
 	{
 		trap_Argv(3, cls, 64);
-		weapon2 = atoi(cls);
+		weapon2 = Q_atoi(cls);
 		if (weapon2 <= 0 || weapon2 > MAX_WEAPS_PER_CLASS)
 		{
 			weapon2 = classinfo->classSecondaryWeapons[0].weapon;

@@ -203,7 +203,7 @@ static qboolean SV_IsValidUserinfo(netadr_t from, const char *userinfo)
 	int version;
 
 	// NOTE: but we might need to store the protocol around for potential non http/ftp clients
-	version = atoi(Info_ValueForKey(userinfo, "protocol"));
+	version = Q_atoi(Info_ValueForKey(userinfo, "protocol"));
 	if (version != PROTOCOL_VERSION)
 	{
 		NET_OutOfBandPrint(NS_SERVER, from, "print\n[err_update]" PROTOCOL_MISMATCH_ERROR_LONG);
@@ -393,8 +393,8 @@ void SV_DirectConnect(netadr_t from)
 		return;
 	}
 
-	challenge = atoi(Info_ValueForKey(userinfo, "challenge"));
-	qport     = atoi(Info_ValueForKey(userinfo, "qport"));
+	challenge = Q_atoi(Info_ValueForKey(userinfo, "challenge"));
+	qport     = Q_atoi(Info_ValueForKey(userinfo, "qport"));
 
 	// we don't need these keys after connection, release some space in userinfo
 	Info_RemoveKey(userinfo, "challenge");
@@ -656,7 +656,7 @@ gotnewcl:
 	}
 
 	// newcl->protocol = PROTOCOL_VERSION;
-	newcl->protocol = atoi(Info_ValueForKey(userinfo, "protocol"));
+	newcl->protocol = Q_atoi(Info_ValueForKey(userinfo, "protocol"));
 
 	// check client's engine version
 	Com_ParseUA(&newcl->agent, Info_ValueForKey(userinfo, "etVersion"));
@@ -999,7 +999,7 @@ static void SV_DoneDownload_f(client_t *cl)
  */
 void SV_NextDownload_f(client_t *cl)
 {
-	int block = atoi(Cmd_Argv(1));
+	int block = Q_atoi(Cmd_Argv(1));
 
 	if (block == cl->downloadClientBlock)
 	{
@@ -1584,17 +1584,17 @@ static void SV_VerifyPaks_f(client_t *cl)
 			}
 			// verify first to be the cgame checksum
 			pArg = Cmd_Argv(nCurArg++);
-			if (!pArg || *pArg == '@' || atoi(pArg) != nChkSum1)
+			if (!pArg || *pArg == '@' || Q_atoi(pArg) != nChkSum1)
 			{
-				Com_Printf("nChkSum1 %d == %d\n", atoi(pArg), nChkSum1);
+				Com_Printf("nChkSum1 %d == %d\n", Q_atoi(pArg), nChkSum1);
 				bGood = qfalse;
 				break;
 			}
 			// verify the second to be the ui checksum
 			pArg = Cmd_Argv(nCurArg++);
-			if (!pArg || *pArg == '@' || atoi(pArg) != nChkSum2)
+			if (!pArg || *pArg == '@' || Q_atoi(pArg) != nChkSum2)
 			{
-				Com_Printf("nChkSum2 %d == %d\n", atoi(pArg), nChkSum2);
+				Com_Printf("nChkSum2 %d == %d\n", Q_atoi(pArg), nChkSum2);
 				bGood = qfalse;
 				break;
 			}
@@ -1608,7 +1608,7 @@ static void SV_VerifyPaks_f(client_t *cl)
 			// store checksums since tokenization is not re-entrant
 			for (i = 0; nCurArg < nClientPaks; i++)
 			{
-				nClientChkSum[i] = atoi(Cmd_Argv(nCurArg++));
+				nClientChkSum[i] = Q_atoi(Cmd_Argv(nCurArg++));
 			}
 
 			// store number to compare against (minus one cause the last is the number of checksums)
@@ -1651,7 +1651,7 @@ static void SV_VerifyPaks_f(client_t *cl)
 
 			for (i = 0; i < nServerPaks; i++)
 			{
-				nServerChkSum[i] = atoi(Cmd_Argv(i));
+				nServerChkSum[i] = Q_atoi(Cmd_Argv(i));
 			}
 
 			// check if the client has provided any pure checksums of pk3 files not loaded by the server
@@ -1744,7 +1744,7 @@ void SV_UserinfoChanged(client_t *cl)
 		val = Info_ValueForKey(cl->userinfo, "rate");
 		if (strlen(val))
 		{
-			i        = atoi(val);
+			i        = Q_atoi(val);
 			cl->rate = i;
 			if (cl->rate < 1000)
 			{
@@ -1765,7 +1765,7 @@ void SV_UserinfoChanged(client_t *cl)
 	val = Info_ValueForKey(cl->userinfo, "handicap");
 	if (strlen(val))
 	{
-	    i = atoi(val);
+	    i = Q_atoi(val);
 	    if (i <= -100 || i > 100 || strlen(val) > 4)
 	    {
 	        Info_SetValueForKey(cl->userinfo, "handicap", "0");
@@ -1777,7 +1777,7 @@ void SV_UserinfoChanged(client_t *cl)
 	val = Info_ValueForKey(cl->userinfo, "snaps");
 	if (strlen(val))
 	{
-		i = atoi(val);
+		i = Q_atoi(val);
 		if (i < 1)
 		{
 			i = 1;
@@ -1822,7 +1822,7 @@ void SV_UserinfoChanged(client_t *cl)
 	cl->bDlOK = qfalse;
 	if (strlen(val))
 	{
-		i = atoi(val);
+		i = Q_atoi(val);
 		if (i != 0)
 		{
 			cl->bDlOK = qtrue;

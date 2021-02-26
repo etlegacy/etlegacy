@@ -1807,10 +1807,10 @@ void CL_ConnectionlessPacket(netadr_t from, msg_t *msg)
 		else
 		{
 			// start sending challenge response instead of challenge request packets
-			clc.challenge = atoi(Cmd_Argv(1));
+			clc.challenge = Q_atoi(Cmd_Argv(1));
 			if (Cmd_Argc() > 2)
 			{
-				clc.onlyVisibleClients = atoi(Cmd_Argv(2));
+				clc.onlyVisibleClients = Q_atoi(Cmd_Argv(2));
 			}
 			else
 			{
@@ -2410,7 +2410,7 @@ static void CL_Cache_SetIndex_f(void)
 		Com_Error(ERR_DROP, "setindex needs an index");
 	}
 
-	cacheIndex = atoi(Cmd_Argv(1));
+	cacheIndex = Q_atoi(Cmd_Argv(1));
 }
 
 /**
@@ -3104,26 +3104,26 @@ static void CL_SetServerInfo(serverInfo_t *server, const char *info, int ping)
 		if (info)
 		{
 			Q_strncpyz(server->version, Info_ValueForKey(info, "version"), MAX_NAME_LENGTH);
-			server->clients = atoi(Info_ValueForKey(info, "clients"));
-			server->humans  = atoi(Info_ValueForKey(info, "humans"));
+			server->clients = Q_atoi(Info_ValueForKey(info, "clients"));
+			server->humans  = Q_atoi(Info_ValueForKey(info, "humans"));
 			Q_strncpyz(server->hostName, Info_ValueForKey(info, "hostname"), IS_DEFAULT_MOD ? MAX_SERVER_NAME_LENGTH : MAX_NAME_LENGTH);
-			server->load = atoi(Info_ValueForKey(info, "serverload"));
+			server->load = Q_atoi(Info_ValueForKey(info, "serverload"));
 			Q_strncpyz(server->mapName, Info_ValueForKey(info, "mapname"), MAX_NAME_LENGTH);
-			server->maxClients     = atoi(Info_ValueForKey(info, "sv_maxclients"));
-			server->privateClients = atoi(Info_ValueForKey(info, "sv_privateclients"));
+			server->maxClients     = Q_atoi(Info_ValueForKey(info, "sv_maxclients"));
+			server->privateClients = Q_atoi(Info_ValueForKey(info, "sv_privateclients"));
 			Q_strncpyz(server->game, Info_ValueForKey(info, "game"), MAX_NAME_LENGTH);
-			server->gameType     = atoi(Info_ValueForKey(info, "gametype"));
-			server->netType      = atoi(Info_ValueForKey(info, "nettype"));
-			server->minPing      = atoi(Info_ValueForKey(info, "minping"));
-			server->maxPing      = atoi(Info_ValueForKey(info, "maxping"));
-			server->friendlyFire = atoi(Info_ValueForKey(info, "friendlyFire"));
-			server->maxlives     = atoi(Info_ValueForKey(info, "maxlives"));
-			server->needpass     = atoi(Info_ValueForKey(info, "needpass"));
-			server->punkbuster   = atoi(Info_ValueForKey(info, "punkbuster"));
+			server->gameType     = Q_atoi(Info_ValueForKey(info, "gametype"));
+			server->netType      = Q_atoi(Info_ValueForKey(info, "nettype"));
+			server->minPing      = Q_atoi(Info_ValueForKey(info, "minping"));
+			server->maxPing      = Q_atoi(Info_ValueForKey(info, "maxping"));
+			server->friendlyFire = Q_atoi(Info_ValueForKey(info, "friendlyFire"));
+			server->maxlives     = Q_atoi(Info_ValueForKey(info, "maxlives"));
+			server->needpass     = Q_atoi(Info_ValueForKey(info, "needpass"));
+			server->punkbuster   = Q_atoi(Info_ValueForKey(info, "punkbuster"));
 			Q_strncpyz(server->gameName, Info_ValueForKey(info, "gamename"), MAX_NAME_LENGTH);
-			server->antilag       = atoi(Info_ValueForKey(info, "g_antilag"));
-			server->weaprestrict  = atoi(Info_ValueForKey(info, "weaprestrict"));
-			server->balancedteams = atoi(Info_ValueForKey(info, "balancedteams"));
+			server->antilag       = Q_atoi(Info_ValueForKey(info, "g_antilag"));
+			server->weaprestrict  = Q_atoi(Info_ValueForKey(info, "weaprestrict"));
+			server->balancedteams = Q_atoi(Info_ValueForKey(info, "balancedteams"));
 		}
 		server->ping = ping;
 	}
@@ -3180,7 +3180,7 @@ void CL_ServerInfoPacket(netadr_t from, msg_t *msg)
 	infoString = MSG_ReadString(msg);
 
 	// if this isn't the correct protocol version, ignore it
-	prot = atoi(Info_ValueForKey(infoString, "protocol"));
+	prot = Q_atoi(Info_ValueForKey(infoString, "protocol"));
 	if (prot != PROTOCOL_VERSION)
 	{
 		Com_DPrintf("Different protocol info packet: %s\n", infoString);
@@ -3289,7 +3289,7 @@ void CL_ServerInfoPacketCheck(netadr_t from, msg_t *msg)
 	infoString = MSG_ReadString(msg);
 
 	// if this isn't the correct protocol version, ignore it
-	prot = atoi(Info_ValueForKey(infoString, "protocol"));
+	prot = Q_atoi(Info_ValueForKey(infoString, "protocol"));
 	if (prot != PROTOCOL_VERSION)
 	{
 		Com_DPrintf("Different protocol info packet: %s\n", infoString);
@@ -3609,7 +3609,7 @@ void CL_GlobalServers_f(void)
 	int      count, i, masterNum;
 	char     command[1024], *masteraddress;
 
-	if ((count = Cmd_Argc()) < 3 || (masterNum = atoi(Cmd_Argv(1))) < 0 || masterNum > MAX_MASTER_SERVERS)
+	if ((count = Cmd_Argc()) < 3 || (masterNum = Q_atoi(Cmd_Argv(1))) < 0 || masterNum > MAX_MASTER_SERVERS)
 	{
 		Com_Printf("usage: globalservers <master# 0-%d> <protocol> [keywords]\n", MAX_MASTER_SERVERS);
 		return;

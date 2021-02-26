@@ -2122,7 +2122,7 @@ qboolean CG_ParseMapVotePlayersCountConfig(void)
 		{
 			break;
 		}
-		mapVotePlayersCount[i].min = atoi(token);
+		mapVotePlayersCount[i].min = Q_atoi(token);
 
 		// map max players
 		token = COM_Parse(&text_p);
@@ -2130,7 +2130,7 @@ qboolean CG_ParseMapVotePlayersCountConfig(void)
 		{
 			break;
 		}
-		mapVotePlayersCount[i].max = atoi(token);
+		mapVotePlayersCount[i].max = Q_atoi(token);
 	}
 
 	if (i == MAX_MAPVOTEPLAYERCOUNT)

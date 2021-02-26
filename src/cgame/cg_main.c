@@ -650,7 +650,7 @@ void CG_RegisterCvars(void)
 
 	// see if we are also running the server on this machine
 	trap_Cvar_VariableStringBuffer("sv_running", var, sizeof(var));
-	cgs.localServer = (qboolean)(atoi(var));
+	cgs.localServer = (qboolean)(!!Q_atoi(var));
 
 	// um, here, why?
 	CG_setClientFlags();
@@ -1058,7 +1058,7 @@ int CG_findClientNum(const char *s)
 	// numeric values are just slot numbers
 	if (fIsNumber)
 	{
-		id = atoi(s);
+		id = Q_atoi(s);
 		if (id >= 0 && id < cgs.maxclients && cgs.clientinfo[id].infoValid)
 		{
 			return(id);
@@ -1231,14 +1231,14 @@ void CG_SetupDlightstyles(void)
 		}
 
 		token  = COM_Parse(&str);    // ent num
-		entnum = atoi(token);
+		entnum = Q_atoi(token);
 		cent   = &cg_entities[entnum];
 
 		token = COM_Parse(&str);     // stylestring
 		Q_strncpyz(cent->dl_stylestring, token, strlen(token));
 
 		token             = COM_Parse(&str); // offset
-		cent->dl_frame    = atoi(token);
+		cent->dl_frame    = Q_atoi(token);
 		cent->dl_oldframe = cent->dl_frame - 1;
 		if (cent->dl_oldframe < 0)
 		{
@@ -1246,10 +1246,10 @@ void CG_SetupDlightstyles(void)
 		}
 
 		token          = COM_Parse(&str); // sound id
-		cent->dl_sound = atoi(token);
+		cent->dl_sound = Q_atoi(token);
 
 		token          = COM_Parse(&str); // attenuation
-		cent->dl_atten = atoi(token);
+		cent->dl_atten = Q_atoi(token);
 
 		for (j = 0; j < (int)strlen(cent->dl_stylestring); j++)
 		{
@@ -2745,10 +2745,10 @@ void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qbo
 #endif
 
 	s                  = CG_ConfigString(CS_LEVEL_START_TIME);
-	cgs.levelStartTime = atoi(s);
+	cgs.levelStartTime = Q_atoi(s);
 
 	s                         = CG_ConfigString(CS_INTERMISSION_START_TIME);
-	cgs.intermissionStartTime = atoi(s);
+	cgs.intermissionStartTime = Q_atoi(s);
 
 	CG_ParseServerVersionInfo(CG_ConfigString(CS_VERSIONINFO));
 	CG_ParseReinforcementTimes(CG_ConfigString(CS_REINFSEEDS));
@@ -2822,10 +2822,10 @@ void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qbo
 	trap_S_ClearLoopingSounds();
 	trap_S_ClearSounds(qfalse);
 
-	cg.teamWonRounds[1] = atoi(CG_ConfigString(CS_ROUNDSCORES1));
-	cg.teamWonRounds[0] = atoi(CG_ConfigString(CS_ROUNDSCORES2));
+	cg.teamWonRounds[1] = Q_atoi(CG_ConfigString(CS_ROUNDSCORES1));
+	cg.teamWonRounds[0] = Q_atoi(CG_ConfigString(CS_ROUNDSCORES2));
 
-	cg.filtercams = atoi(CG_ConfigString(CS_FILTERCAMS)) ? qtrue : qfalse;
+	cg.filtercams = Q_atoi(CG_ConfigString(CS_FILTERCAMS)) ? qtrue : qfalse;
 
 	CG_ParseFireteams();
 

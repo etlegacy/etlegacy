@@ -1316,7 +1316,7 @@ qboolean FS_IsDemoExt(const char *fileName, int namelen)
 	if (ext_test && (!Q_stricmpn(ext_test + 1, DEMOEXT, ARRAY_LEN(DEMOEXT) - 1) || !Q_stricmpn(ext_test + 1, SVDEMOEXT, ARRAY_LEN(SVDEMOEXT) - 1)))
 	{
 		int index;
-		int protocol = atoi(ext_test + ARRAY_LEN(DEMOEXT));
+		int protocol = Q_atoi(ext_test + ARRAY_LEN(DEMOEXT));
 
 		if (protocol == PROTOCOL_VERSION /*com_protocol->integer*/)
 		{
@@ -1382,6 +1382,38 @@ static unzFile FS_UnzOpen(const char *fileName)
 #else
 #define FS_UnzOpen(x) unzOpen(x)
 #endif
+
+/**
+ * @brief Opens a file to read from an absolute system directory, should not be used instead of the normal FS methods
+ * @param fullFileName Full file OS path
+ * @param file filehandle
+ * @return filesize or -1 if the open fails
+ */
+long FS_FOpenFileReadFullDir(const char *fullFileName, fileHandle_t *file)
+{
+	FILE         *filep;
+
+	*file                         = FS_HandleForFile();
+	fsh[*file].handleFiles.unique = qtrue;
+
+	filep   = Sys_FOpen(fullFileName, "rb");
+	if (filep == NULL)
+	{
+		*file = 0;
+		return -1;
+	}
+
+	Q_strncpyz(fsh[*file].name, fullFileName, sizeof(fsh[*file].name));
+	fsh[*file].zipFile = qfalse;
+
+	if (fs_debug->integer)
+	{
+		Com_Printf("FS_FOpenFileRead: %s\n", fullFileName);
+	}
+
+	fsh[*file].handleFiles.file.o = filep;
+	return FS_fplength(filep);
+}
 
 /**
  * @brief Finds the file in the search path.
@@ -1986,7 +2018,6 @@ int FS_DeleteDir(const char *dirname, qboolean nonEmpty, qboolean recursive)
 	return 0;
 }
 
-#ifdef WIN32
 /**
  * @brief Test an file given OS path
  * @param ospath
@@ -1996,21 +2027,18 @@ int FS_DeleteDir(const char *dirname, qboolean nonEmpty, qboolean recursive)
  */
 int FS_OSStatFile(const char *ospath)
 {
-	struct _stat stat;
+#ifdef WIN32
+	struct _stat stat_buf;
 
-	if (Sys_Stat(ospath, &stat) == -1)
+	if (Sys_Stat(ospath, &stat_buf) == -1)
 	{
 		return -1;
 	}
-	if (stat.st_mode & _S_IFDIR)
+	if (stat_buf.st_mode & _S_IFDIR)
 	{
 		return 1;
 	}
-	return 0;
-}
 #else
-int FS_OSStatFile(const char *ospath)
-{
 	struct stat stat_buf;
 
 	if (stat(ospath, &stat_buf) == -1)
@@ -2021,9 +2049,45 @@ int FS_OSStatFile(const char *ospath)
 	{
 		return 1;
 	}
+#endif
+
 	return 0;
 }
+
+/**
+ * @brief Return the age of the file in seconds
+ * @param ospath full OS path to the file to check
+ * @return time in seconds and -1 if not possible
+ */
+long FS_FileAge(const char *ospath)
+{
+#ifdef _WIN32
+	struct _stat stat_buf;
+	time_t now, creation;
+
+	if (Sys_Stat(ospath, &stat_buf) == -1)
+	{
+		return -1;
+	}
+#else
+	struct stat stat_buf;
+	time_t now, creation;
+
+	if (stat(ospath, &stat_buf) == -1)
+	{
+		return -1;
+	}
 #endif
+
+	time(&now);
+	creation = stat_buf.st_ctime;
+	if (creation <= 0)
+	{
+		return -1;
+	}
+
+	return (now - creation);
+}
 
 /**
  * @brief Removes file in the current fs_gamedir in homepath
@@ -4634,7 +4698,7 @@ void FS_PureServerSetLoadedPaks(const char *pakSums, const char *pakNames)
 
 	for (i = 0 ; i < c ; i++)
 	{
-		fs_serverPaks[i] = atoi(Cmd_Argv(i));
+		fs_serverPaks[i] = Q_atoi(Cmd_Argv(i));
 	}
 
 	if (fs_numServerPaks)
@@ -4706,7 +4770,7 @@ void FS_PureServerSetReferencedPaks(const char *pakSums, const char *pakNames)
 
 	for (i = 0 ; i < c ; i++)
 	{
-		fs_serverReferencedPaks[i] = atoi(Cmd_Argv(i));
+		fs_serverReferencedPaks[i] = Q_atoi(Cmd_Argv(i));
 	}
 
 	for (i = 0 ; i < ARRAY_LEN(fs_serverReferencedPakNames); i++)

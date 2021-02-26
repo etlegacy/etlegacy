@@ -87,7 +87,7 @@ void Sys_GameLoop(void) _attribute((noreturn));
 
 #ifdef __APPLE__
 const char *OSX_ApplicationSupportPath(void);
-int needsOSXQuarantineFix();
+int OSX_NeedsQuarantineFix();
 #endif
 
 #endif // #ifndef INCLUDE_SYS_LOCAL_H

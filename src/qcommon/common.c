@@ -960,7 +960,7 @@ typedef struct zonedebug_s
  */
 typedef struct memblock_s
 {
-	int size;               ///< including the header and possibly tiny fragments
+	size_t size;            ///< including the header and possibly tiny fragments
 	int tag;                ///< a tag of 0 is a free block
 	struct memblock_s *next, *prev;
 	int id;                 ///< should be ZONEID
@@ -1140,14 +1140,14 @@ memblock_t *debugblock;
  * @param[in] line
  * @return
  */
-void *Z_TagMallocDebug(int size, int tag, char *label, char *file, int line)
+void *Z_TagMallocDebug(size_t size, int tag, char *label, char *file, int line)
 {
-	int allocSize;
+	size_t allocSize;
 #else
-void *Z_TagMalloc(int size, int tag)
+void *Z_TagMalloc(size_t size, int tag)
 {
 #endif
-	int        extra;
+	size_t     extra;
 	memblock_t *start, *rover, *new, *base;
 	memzone_t  *zone;
 
@@ -1186,10 +1186,10 @@ void *Z_TagMalloc(int size, int tag)
 #ifdef ZONE_DEBUG
 			Z_LogHeap();
 
-			Com_Error(ERR_FATAL, "Z_Malloc: failed on allocation of %i bytes from the %s zone: %s, line: %d (%s)",
+			Com_Error(ERR_FATAL, "Z_Malloc: failed on allocation of %zu bytes from the %s zone: %s, line: %d (%s)",
 			          size, zone == smallzone ? "small" : "main", file, line, label);
 #else
-			Com_Error(ERR_FATAL, "Z_Malloc: failed on allocation of %i bytes from the %s zone",
+			Com_Error(ERR_FATAL, "Z_Malloc: failed on allocation of %zu bytes from the %s zone",
 			          size, zone == smallzone ? "small" : "main");
 #endif
 			return NULL;
@@ -1250,10 +1250,10 @@ void *Z_TagMalloc(int size, int tag)
  * @param[in] line
  * @return
  */
-void *Z_MallocDebug(int size, char *label, char *file, int line)
+void *Z_MallocDebug(size_t size, char *label, char *file, int line)
 {
 #else
-void *Z_Malloc(int size)
+void *Z_Malloc(size_t size)
 {
 #endif
 	void *buf;
@@ -1279,12 +1279,12 @@ void *Z_Malloc(int size)
  * @param[in] line
  * @return
  */
-void *S_MallocDebug(int size, char *label, char *file, int line)
+void *S_MallocDebug(size_t size, char *label, char *file, int line)
 {
 	return Z_TagMallocDebug(size, TAG_SMALL, label, file, line);
 }
 #else
-void *S_Malloc(int size)
+void *S_Malloc(size_t size)
 {
 	return Z_TagMalloc(size, TAG_SMALL);
 }
@@ -1536,7 +1536,7 @@ void Com_Meminfo_f(void)
 	{
 		if (Cmd_Argc() != 1)
 		{
-			Com_Printf("block:%p    size:%7i    tag:%3i\n",
+			Com_Printf("block:%p    size:%7zu    tag:%3i\n",
 			           block, block->size, block->tag);
 		}
 		if (block->tag)
@@ -1999,10 +1999,10 @@ static void Hunk_SwapBanks(void)
  * @param[in] line
  * @return
  */
-void *Hunk_AllocDebug(unsigned int size, ha_pref preference, char *label, char *file, int line)
+void *Hunk_AllocDebug(size_t size, ha_pref preference, char *label, char *file, int line)
 {
 #else
-void *Hunk_Alloc(unsigned int size, ha_pref preference)
+void *Hunk_Alloc(size_t size, ha_pref preference)
 {
 #endif
 	void *buf;
@@ -2027,7 +2027,7 @@ void *Hunk_Alloc(unsigned int size, ha_pref preference)
 		Hunk_Log();
 		Hunk_SmallLog();
 #endif
-		Com_Error(ERR_DROP, "Hunk_Alloc failed on %u", size);
+		Com_Error(ERR_DROP, "Hunk_Alloc failed on %zu", size);
 	}
 
 	if (hunk_permanent == &hunk_low)
@@ -2076,7 +2076,7 @@ void *Hunk_Alloc(unsigned int size, ha_pref preference)
  * @param size
  * @return
  */
-void *Hunk_AllocateTempMemory(unsigned int size)
+void *Hunk_AllocateTempMemory(size_t size)
 {
 	void         *buf;
 	hunkHeader_t *hdr;
@@ -2096,7 +2096,7 @@ void *Hunk_AllocateTempMemory(unsigned int size)
 
 	if (hunk_temp->temp + hunk_permanent->permanent + size > s_hunkTotal)
 	{
-		Com_Error(ERR_DROP, "Hunk_AllocateTempMemory: failed on %u", size);
+		Com_Error(ERR_DROP, "Hunk_AllocateTempMemory: failed on %zu", size);
 	}
 
 	if (hunk_temp == &hunk_low)
@@ -2686,7 +2686,7 @@ qboolean Com_CheckProfile(void)
 		return qfalse;
 	}
 
-	f_pid = atoi(f_data);
+	f_pid = Q_atoi(f_data);
 	if (f_pid != com_pid->integer)
 	{
 		// pid doesn't match

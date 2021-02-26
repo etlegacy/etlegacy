@@ -73,7 +73,7 @@ qboolean R_LoadMD5(model_t *mod, void *buffer, int bufferSize, const char *modNa
 
 	// check version
 	token   = COM_ParseExt2(&buf_p, qfalse);
-	version = atoi(token);
+	version = Q_atoi(token);
 
 	if (version != MD5_VERSION)
 	{
@@ -100,7 +100,7 @@ qboolean R_LoadMD5(model_t *mod, void *buffer, int bufferSize, const char *modNa
 	}
 
 	token         = COM_ParseExt2(&buf_p, qfalse);
-	md5->numBones = atoi(token);
+	md5->numBones = Q_atoi(token);
 
 	// parse numMeshes <number>
 	token = COM_ParseExt2(&buf_p, qtrue);
@@ -112,7 +112,7 @@ qboolean R_LoadMD5(model_t *mod, void *buffer, int bufferSize, const char *modNa
 	}
 
 	token            = COM_ParseExt2(&buf_p, qfalse);
-	md5->numSurfaces = atoi(token);
+	md5->numSurfaces = Q_atoi(token);
 	//Ren_Print("R_LoadMD5: '%s' has %i surfaces\n", modName, md5->numSurfaces);
 
 	if (md5->numBones < 1)
@@ -157,7 +157,7 @@ qboolean R_LoadMD5(model_t *mod, void *buffer, int bufferSize, const char *modNa
 		//Ren_Print("R_LoadMD5: '%s' has bone '%s'\n", modName, bone->name);
 
 		token             = COM_ParseExt2(&buf_p, qfalse);
-		bone->parentIndex = atoi(token);
+		bone->parentIndex = Q_atoi(token);
 
 		//Ren_Print("R_LoadMD5: '%s' has bone '%s' with parent index %i\n", modName, bone->name, bone->parentIndex);
 
@@ -311,7 +311,7 @@ qboolean R_LoadMD5(model_t *mod, void *buffer, int bufferSize, const char *modNa
 		}
 
 		token          = COM_ParseExt2(&buf_p, qfalse);
-		surf->numVerts = atoi(token);
+		surf->numVerts = Q_atoi(token);
 
 		if (surf->numVerts > SHADER_MAX_VERTEXES)
 		{
@@ -359,10 +359,10 @@ qboolean R_LoadMD5(model_t *mod, void *buffer, int bufferSize, const char *modNa
 			}
 
 			token          = COM_ParseExt2(&buf_p, qfalse);
-			v->firstWeight = atoi(token);
+			v->firstWeight = Q_atoi(token);
 
 			token         = COM_ParseExt2(&buf_p, qfalse);
-			v->numWeights = atoi(token);
+			v->numWeights = Q_atoi(token);
 
 			if (v->numWeights > MAX_WEIGHTS)
 			{
@@ -381,7 +381,7 @@ qboolean R_LoadMD5(model_t *mod, void *buffer, int bufferSize, const char *modNa
 		}
 
 		token              = COM_ParseExt2(&buf_p, qfalse);
-		surf->numTriangles = atoi(token);
+		surf->numTriangles = Q_atoi(token);
 
 		if (surf->numTriangles > SHADER_MAX_TRIANGLES)
 		{
@@ -407,7 +407,7 @@ qboolean R_LoadMD5(model_t *mod, void *buffer, int bufferSize, const char *modNa
 			for (k = 0; k < 3; k++)
 			{
 				token           = COM_ParseExt2(&buf_p, qfalse);
-				tri->indexes[k] = atoi(token);
+				tri->indexes[k] = Q_atoi(token);
 			}
 		}
 
@@ -421,7 +421,7 @@ qboolean R_LoadMD5(model_t *mod, void *buffer, int bufferSize, const char *modNa
 		}
 
 		token            = COM_ParseExt2(&buf_p, qfalse);
-		surf->numWeights = atoi(token);
+		surf->numWeights = Q_atoi(token);
 
 		surf->weights = ri.Hunk_Alloc(sizeof(*weight) * surf->numWeights, h_low);
 
@@ -439,7 +439,7 @@ qboolean R_LoadMD5(model_t *mod, void *buffer, int bufferSize, const char *modNa
 			(void) COM_ParseExt2(&buf_p, qfalse);
 
 			token             = COM_ParseExt2(&buf_p, qfalse);
-			weight->boneIndex = atoi(token);
+			weight->boneIndex = Q_atoi(token);
 
 			token              = COM_ParseExt2(&buf_p, qfalse);
 			weight->boneWeight = atof(token);

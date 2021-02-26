@@ -1001,6 +1001,7 @@ int main(int argc, char **argv)
 	Sys_ParseArgs(argc, argv);
 
 #if defined(__APPLE__) && !defined(DEDICATED)
+	SDL_EventState(SDL_DROPFILE, SDL_ENABLE);
 	// argv[0] would be /Users/seth/etlegacy/etl.app/Contents/MacOS
 	// But on OS X we want to pretend the binary path is the .app's parent
 	// So that way the base folder is right next to the .app allowing
@@ -1009,7 +1010,7 @@ int main(int argc, char **argv)
 		CFURLRef url               = CFBundleCopyBundleURL(CFBundleGetMainBundle());
 		int      quarantine_status = 0;
 
-		quarantine_status = needsOSXQuarantineFix();
+		quarantine_status = OSX_NeedsQuarantineFix();
 		if (quarantine_status == 1)
 		{
 			//app restarts itself under the right path
@@ -1055,6 +1056,12 @@ int main(int argc, char **argv)
 	Sys_SetUpConsoleAndSignals();
 
 	Com_Init(commandLine);
+
+	//FIXME: Lets not enable this yet for normal use
+#if !defined(DEDICATED) && defined(FEATURE_SSL) && defined(ETLEGACY_DEBUG)
+	// Check for certificates
+	Com_CheckCaCertStatus();
+#endif
 
 #ifdef _WIN32
 

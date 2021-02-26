@@ -479,14 +479,14 @@ void G_refWarmup_cmd(gentity_t *ent)
 
 	trap_Argv(2, cmd, sizeof(cmd));
 
-	if (!*cmd || atoi(cmd) < 0)
+	if (!*cmd || Q_atoi(cmd) < 0)
 	{
 		trap_Cvar_VariableStringBuffer("g_warmup", cmd, sizeof(cmd));
-		G_refPrintf(ent, "Warmup Time: %d", atoi(cmd));
+		G_refPrintf(ent, "Warmup Time: %d", Q_atoi(cmd));
 		return;
 	}
 
-	trap_Cvar_Set("g_warmup", va("%d", atoi(cmd)));
+	trap_Cvar_Set("g_warmup", va("%d", Q_atoi(cmd)));
 }
 
 /**

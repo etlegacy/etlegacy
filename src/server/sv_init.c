@@ -484,7 +484,7 @@ void SV_SetExpectedHunkUsage(const char *mapname)
 				if (token && token[0])
 				{
 					// this is the usage
-					com_expectedhunkusage = atoi(token);
+					com_expectedhunkusage = Q_atoi(token);
 					Z_Free(buf);
 					return;
 				}

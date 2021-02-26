@@ -81,7 +81,7 @@ WM_DrawObjectives
  */
 qboolean CG_DrawFlag(float x, float y, float fade, int clientNum)
 {
-	int client_flag = atoi(Info_ValueForKey(CG_ConfigString(clientNum + CS_PLAYERS), "u"));  // uci
+	int client_flag = Q_atoi(Info_ValueForKey(CG_ConfigString(clientNum + CS_PLAYERS), "u"));  // uci
 
 	if (client_flag < MAX_COUNTRY_NUM)
 	{
@@ -167,11 +167,11 @@ int WM_DrawObjectives(int x, int y, int width, float fade)
 		}
 #endif
 
-		if (atoi(buf) == -1)
+		if (Q_atoi(buf) == -1)
 		{
 			// "ITS A TIE!";
 		}
-		else if (atoi(buf))
+		else if (Q_atoi(buf))
 		{
 			// "ALLIES";
 
@@ -852,10 +852,10 @@ static int WM_DrawInfoLine(int x, int y, float fade)
 	w = 360;
 
 	s        = CG_ConfigString(CS_MULTI_INFO);
-	defender = atoi(Info_ValueForKey(s, "d")); // defender
+	defender = Q_atoi(Info_ValueForKey(s, "d")); // defender
 
 	s      = CG_ConfigString(CS_MULTI_MAPWINNER);
-	winner = atoi(Info_ValueForKey(s, "w"));
+	winner = Q_atoi(Info_ValueForKey(s, "w"));
 
 	if (cgs.currentRound)
 	{
@@ -922,7 +922,7 @@ static int WM_TeamScoreboard(int x, int y, team_t team, float fade, int maxrows,
 	const char *buffer   = CG_ConfigString(CS_SERVERINFO);
 	const char *str      = Info_ValueForKey(buffer, "g_maxlives");
 
-	if (str && *str && atoi(str))
+	if (str && *str && Q_atoi(str))
 	{
 		livesleft = qtrue;
 	}
@@ -930,7 +930,7 @@ static int WM_TeamScoreboard(int x, int y, team_t team, float fade, int maxrows,
 	if (!livesleft)
 	{
 		str = Info_ValueForKey(buffer, "g_alliedmaxlives");
-		if (str && *str && atoi(str))
+		if (str && *str && Q_atoi(str))
 		{
 			livesleft = qtrue;
 		}
@@ -939,7 +939,7 @@ static int WM_TeamScoreboard(int x, int y, team_t team, float fade, int maxrows,
 	if (!livesleft)
 	{
 		str = Info_ValueForKey(buffer, "g_axismaxlives");
-		if (str && *str && atoi(str))
+		if (str && *str && Q_atoi(str))
 		{
 			livesleft = qtrue;
 		}

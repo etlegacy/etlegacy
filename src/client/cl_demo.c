@@ -106,7 +106,7 @@ demoPlayInfo_t dpi = { 0, 0 };
  * @param[in,out] demofile
  * @return
  */
-static int CL_WalkDemoExt(const char *arg, char *name, int *demofile)
+static int CL_WalkDemoExt(const char *arg, char *name, fileHandle_t *demofile)
 {
 	int i = 0;
 	*demofile = 0;
@@ -1408,7 +1408,7 @@ void CL_PlayDemo_f(void)
 
 	if (ext_test && !Q_stricmpn(ext_test + 1, DEMOEXT, ARRAY_LEN(DEMOEXT) - 1))
 	{
-		protocol = atoi(ext_test + ARRAY_LEN(DEMOEXT));
+		protocol = Q_atoi(ext_test + ARRAY_LEN(DEMOEXT));
 
 		for (i = 0; demo_protocols[i]; i++)
 		{
@@ -1420,8 +1420,15 @@ void CL_PlayDemo_f(void)
 
 		if (demo_protocols[i] || protocol == PROTOCOL_VERSION)
 		{
-			Com_sprintf(name, sizeof(name), "demos/%s", arg);
-			FS_FOpenFileRead(name, &clc.demofile, qtrue);
+			if (Sys_PathAbsolute(name))
+			{
+				FS_FOpenFileReadFullDir(name, &clc.demofile);
+			}
+			else
+			{
+				Com_sprintf(name, sizeof(name), "demos/%s", arg);
+				FS_FOpenFileRead(name, &clc.demofile, qtrue);
+			}
 		}
 		else
 		{
