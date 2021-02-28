@@ -1828,7 +1828,8 @@ void SpectatorClientEndFrame(gentity_t *ent)
 		if (ent->client->sess.spectatorClient >= 0)
 		{
 			cl = &level.clients[ent->client->sess.spectatorClient];
-			if (cl->pers.connected == CON_CONNECTED && cl->sess.sessionTeam != TEAM_SPECTATOR)
+			if ((cl->pers.connected == CON_CONNECTED && cl->sess.sessionTeam != TEAM_SPECTATOR) ||
+			    (cl->pers.connected == CON_CONNECTED && cl->sess.shoutcaster && ent->client->sess.shoutcaster))
 			{
 				int flags = (cl->ps.eFlags & ~(EF_VOTED)) | (ent->client->ps.eFlags & (EF_VOTED));
 				int ping  = ent->client->ps.ping;

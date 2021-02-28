@@ -2079,7 +2079,7 @@ static void CG_PlayerSprites(centity_t *cent)
 		height = 8;
 	}
 
-	if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR || (cg.snap->ps.pm_flags & PMF_FOLLOW && cgs.clientinfo[cg.clientNum].shoutcaster))
+	if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR || ((cg.snap->ps.pm_flags & PMF_FOLLOW) && cgs.clientinfo[cg.clientNum].shoutcaster))
 	{
 		if (cg_shoutcastDrawHealth.integer > 0 && cgs.clientinfo[cg.clientNum].shoutcaster)
 		{
@@ -2124,7 +2124,8 @@ static void CG_PlayerSprites(centity_t *cent)
 		}
 		if (cent->currentState.eFlags & EF_DEAD &&
 		    ((cg.snap->ps.stats[STAT_PLAYER_CLASS] == PC_MEDIC && cg.snap->ps.stats[STAT_HEALTH] > 0 && sameTeam) ||
-		     (!(cg.snap->ps.pm_flags & PMF_FOLLOW) && cgs.clientinfo[cg.clientNum].shoutcaster)))
+		     (!(cg.snap->ps.pm_flags & PMF_FOLLOW) && cgs.clientinfo[cg.clientNum].shoutcaster) ||
+		     ((cg.snap->ps.pm_flags & PMF_FOLLOW) && cgs.clientinfo[cg.snap->ps.clientNum].shoutcaster)))
 		{
 			CG_PlayerFloatSprite(cent, cgs.media.medicReviveShader, height, numIcons++, NULL);
 			return;

@@ -1442,12 +1442,10 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 	{
 		if (onSameTeam || (targ->client->ps.powerups[PW_OPS_DISGUISED] && (g_friendlyFire.integer & 1)))
 		{
-			attacker->client->ps.persistant[PERS_HITS] -= damage;
 			hitEventType = HIT_TEAMSHOT;
 		}
 		else if (!targ->client->ps.powerups[PW_OPS_DISGUISED])
 		{
-			attacker->client->ps.persistant[PERS_HITS] += damage;
 			hitEventType = HIT_BODYSHOT;
 		}
 
@@ -1543,9 +1541,6 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 			{
 				hitEventType = HIT_HEADSHOT;
 			}
-
-			// FIXME: do we need this for anything?
-			attacker->client->ps.persistant[PERS_HEADSHOTS]++;
 		}
 
 		if (g_debugBullets.integer)
