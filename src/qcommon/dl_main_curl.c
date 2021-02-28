@@ -269,8 +269,14 @@ static void DL_InitSSL(CURL *curl)
 #endif
 	else
 	{
+#if defined(_WIN32) && defined(USING_OPENSSL)
+		curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 1);
+		curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 1);
+		curl_easy_setopt(curl, CURLOPT_SSL_OPTIONS, CURLSSLOPT_NATIVE_CA);
+#else
 		curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0);
 		curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0);
+#endif
 	}
 #else
 	curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0);
