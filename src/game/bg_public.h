@@ -683,7 +683,7 @@ typedef enum
 typedef enum
 {
 	PERS_SCORE = 0,                ///< !!! MUST NOT CHANGE, SERVER AND GAME BOTH REFERENCE !!!
-	PERS_HITS,                     ///< total points damage inflicted so damage beeps can sound on change
+	PERS_HITS,                     ///< Deprecated. Remove?
 	PERS_RANK,
 	PERS_TEAM,
 	PERS_SPAWN_COUNT,              ///< incremented every respawn
@@ -694,7 +694,7 @@ typedef enum
 	PERS_RESPAWNS_PENALTY,         ///< how many respawns you have to sit through before respawning again
 
 	PERS_REVIVE_COUNT,
-	PERS_HEADSHOTS,
+	PERS_HEADSHOTS,                ///< Deprecated. Remove?
 	PERS_BLEH_3,
 
 	// mg42                        ///< TODO: I don't understand these here. Can someone explain?
