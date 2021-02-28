@@ -43,7 +43,10 @@
 #include "dl_public.h"
 
 #ifdef FEATURE_SSL
-#define SSL_VERIFY 1
+
+#if defined(USING_WOLFSSL) || defined(USING_OPENSSL)
+	#define SSL_VERIFY 1
+#endif
 
 #if SSL_VERIFY
 
@@ -53,8 +56,11 @@
 #	include <wolfssl/ssl.h>
 #endif
 
+#ifdef USING_OPENSSL
 #include <openssl/err.h>
 #include <openssl/ssl.h>
+#endif
+
 #endif
 #endif
 
@@ -244,8 +250,12 @@ void DL_Shutdown(void)
  */
 static void DL_InitSSL(CURL *curl)
 {
-#ifdef FEATURE_SSL
-#if SSL_VERIFY
+#if defined(FEATURE_SSL)
+
+#if defined(USING_SCHANNEL)
+	curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 1);
+	curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 1);
+#elif SSL_VERIFY
 	curl_easy_setopt(curl, CURLOPT_CAINFO, NULL);
 	curl_easy_setopt(curl, CURLOPT_CAPATH, NULL);
 

@@ -43,7 +43,7 @@ LEG_BUNDLE(JPEG JPEG)
 LEG_BUNDLE(PNG libpng)
 LEG_BUNDLE(CURL Curl)
 LEG_BUNDLE(OPENSSL OpenSSL "OFF")
-LEG_BUNDLE(WOLFSSL WolfSSL)
+LEG_BUNDLE(WOLFSSL WolfSSL "NOT BUNDLED_OPENSSL AND NOT WIN32 AND NOT APPLE")
 LEG_BUNDLE(LUA Lua)
 LEG_BUNDLE(OGG_VORBIS OGG)
 LEG_BUNDLE(THEORA Theora)
@@ -58,7 +58,7 @@ cmake_dependent_option(CROSS_COMPILE32 "Compile 32-bit version of ET:L (64bit is
 
 # Optional features
 option(FEATURE_CURL				"Enable auto-download support using cURL (client)"		ON)
-option(FEATURE_SSL			    "Build SSL (WolfSSL) for curl and authentication"		OFF)
+option(FEATURE_SSL			    "Build SSL for curl and authentication"		            OFF)
 option(FEATURE_OGG_VORBIS		"Enable OGG Vorbis support (client)"					ON)
 option(FEATURE_THEORA			"Enable Theora video support (client)"					ON)
 option(FEATURE_OPENAL			"Enable OpenAL sound backend (client)"					ON)

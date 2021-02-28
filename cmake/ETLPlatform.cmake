@@ -122,9 +122,10 @@ elseif(WIN32)
 
 	set(OS_LIBRARIES wsock32 ws2_32 psapi winmm)
 
-	if(BUNDLED_OPENSSL)
+	if(FEATURE_SSL)
 		list(APPEND OS_LIBRARIES Crypt32)
 	endif()
+
 	if(BUNDLED_SDL)
 		# Libraries for Win32 native and MinGW required by static SDL2 build
 		list(APPEND OS_LIBRARIES user32 gdi32 winmm imm32 ole32 oleaut32 version uuid hid setupapi)
