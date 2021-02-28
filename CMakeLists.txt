@@ -58,7 +58,7 @@ cmake_dependent_option(CROSS_COMPILE32 "Compile 32-bit version of ET:L (64bit is
 
 # Optional features
 option(FEATURE_CURL				"Enable auto-download support using cURL (client)"		ON)
-option(FEATURE_SSL			    "Build SSL for curl and authentication"		            OFF)
+option(FEATURE_SSL			    "Build SSL for curl and authentication"		            ON)
 option(FEATURE_OGG_VORBIS		"Enable OGG Vorbis support (client)"					ON)
 option(FEATURE_THEORA			"Enable Theora video support (client)"					ON)
 option(FEATURE_OPENAL			"Enable OpenAL sound backend (client)"					ON)

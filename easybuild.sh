@@ -244,9 +244,9 @@ parse_commandline() {
 			einfo "Will enable crosscompile"
 			CROSS_COMPILE32=1
 			x86_build=true
-		elif [ "$var" = "-ssl" ]; then
-			einfo "Will enable SSL"
-			FEATURE_SSL=1
+		elif [ "$var" = "-no-ssl" ]; then
+			einfo "Will disable SSL"
+			FEATURE_SSL=0
 		elif [ "$var" = "-zip" ]; then
 			ZIP_ONLY=1
 		elif [ "$var" = "-clang" ]; then
@@ -436,7 +436,7 @@ generate_configuration() {
 	RENDERER_DYNAMIC=${RENDERER_DYNAMIC:-1}
 
 	FEATURE_CURL=${FEATURE_CURL:-1}
-	FEATURE_SSL=${FEATURE_SSL:-0}
+	FEATURE_SSL=${FEATURE_SSL:-1}
 	FEATURE_OGG_VORBIS=${FEATURE_OGG_VORBIS:-1}
 	FEATURE_THEORA=${FEATURE_THEORA:-1}
 	FEATURE_OPENAL=${FEATURE_OPENAL:-1}

@@ -22,7 +22,7 @@ SET mod_only=0
 SET use_autoupdate=1
 SET use_extra=1
 SET build_r2=0
-SET build_ssl=0
+SET build_ssl=1
 SET wolf_ssl=0
 SET open_ssl=0
 
