@@ -70,6 +70,11 @@ if(UNIX)
 	elseif(APPLE)
 		set(OS_LIBRARIES dl m)
 		set(CMAKE_EXE_LINKER_FLAGS "-lobjc -framework Cocoa -framework IOKit -framework CoreFoundation")
+
+		if(BUNDLED_CURL AND FEATURE_SSL AND (NOT BUNDLED_OPENSSL AND NOT BUNDLED_WOLFSSL))
+			set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -framework Security")
+		endif()
+
 		set(CMAKE_INCLUDE_SYSTEM_FLAG_CXX "-isystem") # These flags will cause error with older Xcode
 		set(CMAKE_INCLUDE_SYSTEM_FLAG_C "-isystem")
 
