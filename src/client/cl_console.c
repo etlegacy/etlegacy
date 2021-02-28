@@ -404,6 +404,11 @@ void CL_ConsolePrint(char *txt)
 	qboolean skipnotify = qfalse;
 	int      prev;
 
+	if (cls.clipboard.buffer)
+	{
+		Q_strcat(cls.clipboard.buffer, cls.clipboard.bufferSize, txt);
+	}
+
 	// for some demos we don't want to ever show anything on the console
 	if (cl_noprint && cl_noprint->integer)
 	{

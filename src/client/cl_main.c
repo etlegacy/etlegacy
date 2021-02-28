@@ -1328,6 +1328,60 @@ void CL_OpenHomePath_f(void)
 	CL_OpenURL(Cvar_VariableString("fs_homepath"));
 }
 
+void CL_Clip_f(void)
+{
+	if (Cmd_Argc() < 2)
+	{
+		Com_Printf("Nothing to be put to the clipboard.");
+		return;
+	}
+
+	// Disable console output while we are copying text to the clipboard buffer.
+	Cvar_Set("cl_noprint", "1");
+
+	// Allocate a buffer for the clipboard data
+	cls.clipboard.bufferSize = MAXPRINTMSG * 10;
+	cls.clipboard.buffer = Com_Allocate(cls.clipboard.bufferSize);
+	Com_Memset(cls.clipboard.buffer, 0, cls.clipboard.bufferSize);
+
+	// Copy all the arguments into a new array since when we start excuting them one by one, the Cmd buffer gets reset.
+	size_t argCount = Cmd_Argc() - 1;
+	char **cmdBuffer = Com_Allocate(argCount * sizeof(char*));
+	for (int i = 0; i < argCount; i++)
+	{
+		cmdBuffer[i] = Com_Allocate(MAX_QPATH * sizeof(char));
+		Com_Memset(cmdBuffer[i], 0, MAX_QPATH * sizeof(char));
+		Q_strcpy(cmdBuffer[i], Cmd_Argv(i + 1));
+	}
+
+	// Execute the command parts
+	for (int i = 0; i < argCount; i++)
+	{
+		if (cmdBuffer[i][0])
+		{
+			Cbuf_ExecuteText(EXEC_NOW, cmdBuffer[i]);
+		}
+		Com_Dealloc(cmdBuffer[i]);
+	}
+	// Free our temp array
+	Com_Dealloc(cmdBuffer);
+
+	// Remove the last newline character if there is one
+	size_t len = strlen(cls.clipboard.buffer);
+	if (len > 1 && cls.clipboard.buffer[len - 1] == '\n')
+	{
+		cls.clipboard.buffer[len - 1] = '\0';
+	}
+	IN_SetClipboardData(cls.clipboard.buffer);
+
+	// Cleanup
+	Com_Dealloc(cls.clipboard.buffer);
+	cls.clipboard.buffer = NULL;
+
+	// Return to console printing
+	Cvar_Set("cl_noprint", "0");
+}
+
 /**
  * @brief CL_AddFavServer_f
  * DO NOT ACTIVATE UNTIL WE HAVE CLARIFIED SECURITY! (command execution vie ascripts)
@@ -2959,6 +3013,8 @@ void CL_Init(void)
 	//Cmd_AddCommand("add_fav", CL_AddFavServer_f, "Adds the current connected server to favorites.");
 
 	Cmd_AddCommand("open_homepath", CL_OpenHomePath_f, "Open the home path in a system file explorer.");
+
+	Cmd_AddCommand("clip", CL_Clip_f, "Put command output to clipboard.");
 
 	CIN_Init();
 

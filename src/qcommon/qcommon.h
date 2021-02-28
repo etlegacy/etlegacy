@@ -948,7 +948,7 @@ qboolean FS_Unzip(const char *fileName, qboolean quiet);
 
 void FS_HomeRemove(const char *homePath);
 
-qboolean FS_FileInPathExists(const char *testpath);
+qboolean FS_FileInPathExists(const char *ospath);
 int FS_CalculateFileSHA1(const char *path, char *hash);
 const char *FS_Dirpath(const char *path);
 const char *FS_Basename(const char *path);
@@ -1373,6 +1373,7 @@ char *Sys_GetCurrentUser(void);
 void QDECL Sys_Error(const char *error, ...) _attribute ((noreturn, format(printf, 1, 2)));
 void Sys_Quit(void) _attribute ((noreturn));
 char *IN_GetClipboardData(void);       // note that this isn't journaled...
+void IN_SetClipboardData(const char *text);
 
 void Sys_Print(const char *msg);
 

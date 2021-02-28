@@ -313,6 +313,12 @@ typedef struct
 	char gameName[MAX_NAME_LENGTH];
 } serverInfo_t;
 
+typedef struct
+{
+	char *buffer;
+	size_t bufferSize;
+} clipboardCapture_t;
+
 /**
  * @struct clientStatic_t
  * @brief the clientStatic_t structure is never wiped, and is used even when
@@ -369,6 +375,8 @@ typedef struct
 	//qhandle_t consoleShader2;
 
 	download_t download;
+
+	clipboardCapture_t clipboard;
 
 	int cinematicHandle;
 } clientStatic_t;

@@ -105,6 +105,11 @@ char *IN_GetClipboardData(void)
 	}
 }
 
+void IN_SetClipboardData(const char *text)
+{
+	SDL_SetClipboardText(text);
+}
+
 /**
  * @brief Check if Num key is lock down
  * @return qtrue if Num key is lock down, qfalse if not
