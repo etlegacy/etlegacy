@@ -247,6 +247,7 @@ parse_commandline() {
 		elif [ "$var" = "-no-ssl" ]; then
 			einfo "Will disable SSL"
 			FEATURE_SSL=0
+			BUNDLED_OPENSSL=0
 		elif [ "$var" = "-zip" ]; then
 			ZIP_ONLY=1
 		elif [ "$var" = "-clang" ]; then
@@ -422,7 +423,7 @@ generate_configuration() {
 
 	if [ "${PLATFORMSYS}" != "Mac OS X" ] && [ "${PLATFORMSYS}" != "macOS" ]; then
 		BUNDLED_CURL=${BUNDLED_CURL:-1}
-		BUNDLED_OPENSSL=${BUNDLED_OPENSSL:-0}
+		BUNDLED_OPENSSL=${BUNDLED_OPENSSL:-1}
 		BUNDLED_OPENAL=${BUNDLED_OPENAL:-1}
 	else
 		BUNDLED_CURL=${BUNDLED_CURL:-0}

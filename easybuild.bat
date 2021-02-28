@@ -67,8 +67,8 @@ IF NOT "%1"=="" (
 		GOTO:EOF
 	) ELSE IF /I "%1"=="-64" (
 		SET build_64=1
-	) ELSE IF /I "%1"=="-ssl" (
-		SET build_ssl=1
+	) ELSE IF /I "%1"=="-no-ssl" (
+		SET build_ssl=0
 	) ELSE IF /I "%1"=="-mod" (
 		SET mod_only=1
 	) ELSE IF /I "%1"=="-noupdate" (
