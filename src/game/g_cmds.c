@@ -2387,8 +2387,8 @@ void Cmd_Follow_f(gentity_t *ent, unsigned int dwCommand, qboolean fValue)
 		return;
 	}
 
-	// can't follow another spectator
-	if (level.clients[i].sess.sessionTeam == TEAM_SPECTATOR)
+	// can't follow another spectator, but shoutcasters can follow other shoutcasters
+	if (level.clients[i].sess.sessionTeam == TEAM_SPECTATOR && (!level.clients[i].sess.shoutcaster || !ent->client->sess.shoutcaster))
 	{
 		return;
 	}
