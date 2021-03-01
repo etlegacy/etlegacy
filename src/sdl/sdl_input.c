@@ -1113,15 +1113,21 @@ static void IN_WindowMoved(SDL_Event *e)
 
 /*
  * @brief IN_WindowFocusLost
- * @note Unused
+ * @note checks if the renderer is actually running and if we are fullscreen
+ */
 static void IN_WindowFocusLost()
 {
     if (cls.rendererStarted && cls.glconfig.isFullscreen)
     {
-        Cbuf_ExecuteText(EXEC_NOW, "minimize");
+    	// If according to the game flags we should minimize,
+    	// then lets actually make sure and ask the windowing system for its opinion.
+		Uint32 flags = SDL_GetWindowFlags(GLimp_MainWindow());
+		if (flags & SDL_WINDOW_FULLSCREEN)
+		{
+			Cbuf_ExecuteText(EXEC_NOW, "minimize");
+		}
     }
 }
-*/
 
 /**
  * @brief IN_ProcessEvents
@@ -1298,8 +1304,7 @@ static void IN_ProcessEvents(void)
 				Cvar_SetValue("com_minimized", 0);
 				break;
 			case SDL_WINDOWEVENT_FOCUS_LOST:
-			// disabled for now (causes issues with vid_restart
-			//IN_WindowFocusLost();
+				IN_WindowFocusLost();
 			case SDL_WINDOWEVENT_LEAVE:
 				Key_ClearStates();
 				Cvar_SetValue("com_unfocused", 1);
