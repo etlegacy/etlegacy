@@ -3957,7 +3957,7 @@ qboolean FS_VerifyOfficialPaks(void)
 		}
 
 		// assumed we have a valid client installation and the server has installed
-		// genunine packs twice (f.e. in fs_homepath AND fs_basepath)
+		// genuine packs twice (f.e. in fs_homepath AND fs_basepath)
 		// in this case numOfficialPaksLocal is greater than numOfficialPaksOnServer ...
 		if (numOfficialPaksOnServer < numOfficialPaksLocal)
 		{
@@ -3966,10 +3966,8 @@ qboolean FS_VerifyOfficialPaks(void)
 
 		return qfalse;
 	}
-	else
-	{
-		return qtrue;
-	}
+
+	return qtrue;
 }
 
 /**

@@ -1466,6 +1466,8 @@ void R_DeleteTextures(void)
 	{
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
+
+	R_CacheImageFreeAll();
 }
 
 /*
@@ -1957,13 +1959,22 @@ void R_CacheImageFreeAll()
 {
 	if (r_cache->integer && r_cacheShaders->integer)
 	{
-		int i = 0;
-
+		int i;
 		for (i = 0; i < FILE_HASH_SIZE; i++)
 		{
 			if (backupHashTable[i])
 			{
 				R_CacheImageFree(backupHashTable[i]);
+				backupHashTable[i] = NULL;
+			}
+		}
+
+		for (i = 0; i < FILE_HASH_SIZE; i++)
+		{
+			if (hashTable[i])
+			{
+				R_CacheImageFree(hashTable[i]);
+				hashTable[i] = NULL;
 			}
 		}
 	}
