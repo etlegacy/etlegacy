@@ -80,4 +80,8 @@
 
     <update_contact>mail@etlegacy.com</update_contact>
 
+    <releases>
+        <release version="2.77" date="2021-03-01" />
+    </releases>
+
 </component>
