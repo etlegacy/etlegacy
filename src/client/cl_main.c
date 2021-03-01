@@ -1336,6 +1336,8 @@ void CL_Clip_f(void)
 		return;
 	}
 
+	int noPrint = Cvar_VariableIntegerValue("cl_noprint");
+
 	// Disable console output while we are copying text to the clipboard buffer.
 	Cvar_Set("cl_noprint", "1");
 
@@ -1379,7 +1381,7 @@ void CL_Clip_f(void)
 	cls.clipboard.buffer = NULL;
 
 	// Return to console printing
-	Cvar_Set("cl_noprint", "0");
+	Cvar_Set("cl_noprint", va("%i", noPrint));
 }
 
 /**
