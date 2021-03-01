@@ -2,10 +2,10 @@
 ; ET:L NSIS installer
 ; ------------------------
 ; Before running NSIS, ensure to add in the misc\wininstaller folder:
-; - the NSIS zip plug-in             (http://nsis.sourceforge.net/ZipDLL_plug-in)
-; - the NSIS UnTGZ plug-in           (http://nsis.sourceforge.net/UnTGZ_plug-in)
-; - the NSIS md5 plug-in (ANSI)      (http://nsis.sourceforge.net/MD5_plugin)
-; - the NSIS simple firewall plug-in (http://nsis.sourceforge.net/NSIS_Simple_Firewall_Plugin)
+; - the NSIS zip plug-in             (https://nsis.sourceforge.io/ZipDLL_plug-in)
+; - the NSIS UnTGZ plug-in           (https://nsis.sourceforge.net/UnTGZ_plug-in)
+; - the NSIS md5 plug-in (ANSI)      (https://nsis.sourceforge.net/MD5_plugin)
+; - the NSIS simple firewall plug-in (https://nsis.sourceforge.net/NSIS_Simple_Firewall_Plugin)
 
 !define VERSION "@CPACK_PACKAGE_VERSION@"
 !define RESOURCE_PATH "@SOURCE_DIR@\misc\"
@@ -21,7 +21,7 @@ RequestExecutionLevel admin
 ; Variables
 Name "ET: Legacy ${VERSION}"
 OutFile "@CPACK_PACKAGE_FILE_NAME@.exe"
-BrandingText "ET: Legacy ${VERSION} | http://www.etlegacy.com"
+BrandingText "ET: Legacy ${VERSION} | https://www.etlegacy.com"
 !define PRODUCT_DIR_REGKEY "SOFTWARE\ETLegacy"
 !define PRODUCT_UNINST_KEY "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\ETLegacy"
 InstallDirRegKey HKLM "${PRODUCT_DIR_REGKEY}" "InstallPath"
@@ -270,9 +270,9 @@ Section "Wolfenstein: Enemy Territory assets" ASSETS
         IfFileExists "$EXEDIR\WolfET.exe" 0 +3
         CopyFiles "$EXEDIR\WolfET.exe" "$TEMP\"
         GOTO CHECK_INSTALL
-        NSISdl::download "http://wolffiles.de/filebase/ET/Full%20Version/WolfET.exe" WolfET.exe
+        NSISdl::download "https://wolffiles.de/filebase/ET/Full%20Version/WolfET.exe" WolfET.exe
         IfFileExists "$TEMP\WolfET.exe" CHECK_INSTALL
-        NSISdl::download "http://mirror.etlegacy.com/WolfET.exe" WolfET.exe
+        NSISdl::download "https://mirror.etlegacy.com/WolfET.exe" WolfET.exe
         IfFileExists "$TEMP\WolfET.exe" CHECK_INSTALL
         MessageBox MB_RETRYCANCEL|MB_ICONEXCLAMATION $(DESC_Section2) \
         IDCANCEL USERCANCEL IDRETRY GET_INSTALL
@@ -303,9 +303,9 @@ Section "Wolfenstein: Enemy Territory assets" ASSETS
         IfFileExists "$EXEDIR\ET_Patch_2_60.exe" 0 +3
         CopyFiles "$EXEDIR\ET_Patch_2_60.exe" "$TEMP\"
         GOTO CHECK_PATCH
-        NSISdl::download "http://wolffiles.de/filebase/ET/Patches/ET_Patch_2_60.exe" ET_Patch_2_60.exe
+        NSISdl::download "https://wolffiles.de/filebase/ET/Patches/ET_Patch_2_60.exe" ET_Patch_2_60.exe
         IfFileExists "$TEMP\ET_Patch_2_60.exe" CHECK_PATCH
-        NSISdl::download "http://mirror.etlegacy.com/ET_Patch_2_60.exe" ET_Patch_2_60.exe
+        NSISdl::download "https://mirror.etlegacy.com/ET_Patch_2_60.exe" ET_Patch_2_60.exe
         IfFileExists "$TEMP\ET_Patch_2_60.exe" CHECK_PATCH
         MessageBox MB_RETRYCANCEL|MB_ICONEXCLAMATION $(DESC_Section7) \
         IDCANCEL USERCANCEL IDRETRY GET_PATCH
@@ -443,7 +443,7 @@ SectionEnd
 Section -Shortcuts
     SetOutPath $INSTDIR
     CreateDirectory "$SMPROGRAMS\ETLegacy"
-    CreateShortCut "$SMPROGRAMS\ETLegacy\Visit ETLegacy Homepage.lnk" "http://www.etlegacy.com" "" "$INSTDIR\etl.ico"
+    CreateShortCut "$SMPROGRAMS\ETLegacy\Visit ETLegacy Homepage.lnk" "https://www.etlegacy.com" "" "$INSTDIR\etl.ico"
     CreateShortCut "$SMPROGRAMS\ETLegacy\Launch ETLegacy.lnk" "$INSTDIR\etl.exe" "+set cl_renderer opengl1 +set com_hunkmegs 128"
     CreateShortCut "$SMPROGRAMS\ETLegacy\Launch ETLegacy - Renderer2.lnk" "$INSTDIR\etl.exe" "+set cl_renderer opengl2 +set com_hunkmegs 512"
     CreateShortCut "$SMPROGRAMS\ETLegacy\Play on Official Server.lnk" "et://etlegacy.com:27960" "" "$INSTDIR\etl.ico"
@@ -458,7 +458,7 @@ Section -Post
     WriteRegStr HKLM "${PRODUCT_UNINST_KEY}" "DisplayName" "ET: Legacy"
     WriteRegStr HKLM "${PRODUCT_UNINST_KEY}" "DisplayVersion" "${VERSION}"
     WriteRegStr HKLM "${PRODUCT_UNINST_KEY}" "Publisher" "ET: Legacy Team"
-    WriteRegStr HKLM "${PRODUCT_UNINST_KEY}" "URLInfoAbout" "http://www.etlegacy.com"
+    WriteRegStr HKLM "${PRODUCT_UNINST_KEY}" "URLInfoAbout" "https://www.etlegacy.com"
     WriteRegStr HKLM "${PRODUCT_UNINST_KEY}" "DisplayIcon" "$INSTDIR\etl.exe"
     WriteRegDWORD HKLM "${PRODUCT_UNINST_KEY}" "NoModify" 1
     WriteRegDWORD HKLM "${PRODUCT_UNINST_KEY}" "NoRepair" 1
