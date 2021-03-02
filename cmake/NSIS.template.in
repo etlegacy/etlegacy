@@ -1,11 +1,11 @@
 ; ------------------------
 ; ET:L NSIS installer
 ; ------------------------
-; Before running NSIS, ensure to add in the misc\wininstaller folder:
+; Before running NSIS, ensure to add in the misc\wininstaller folder (Unicode versions):
 ; - the NSIS zip plug-in             (https://nsis.sourceforge.io/ZipDLL_plug-in)
-; - the NSIS UnTGZ plug-in           (https://nsis.sourceforge.net/UnTGZ_plug-in)
-; - the NSIS md5 plug-in (ANSI)      (https://nsis.sourceforge.net/MD5_plugin)
-; - the NSIS simple firewall plug-in (https://nsis.sourceforge.net/NSIS_Simple_Firewall_Plugin)
+; - the NSIS UnTGZ plug-in           (https://nsis.sourceforge.io/UnTGZ_plug-in)
+; - the NSIS md5 plug-in             (https://nsis.sourceforge.io/MD5_plugin)
+; - the NSIS simple firewall plug-in (https://nsis.sourceforge.io/NSIS_Simple_Firewall_Plugin)
 
 !define VERSION "@CPACK_PACKAGE_VERSION@"
 !define RESOURCE_PATH "@SOURCE_DIR@\misc\"
@@ -13,6 +13,7 @@
 ; ------------------------
 ; GENERAL
 ; ------------------------
+Unicode True
 
 !addplugindir "@SOURCE_DIR@\misc\wininstaller\plugins"
 CRCCheck on
@@ -21,8 +22,6 @@ RequestExecutionLevel admin
 ; Variables
 Name "ET: Legacy ${VERSION}"
 OutFile "@CPACK_PACKAGE_FILE_NAME@.exe"
-; Non unicode nsis is deprecated, we need to fix this at some point
-;Unicode True
 BrandingText "ET: Legacy ${VERSION} | https://www.etlegacy.com"
 !define PRODUCT_DIR_REGKEY "SOFTWARE\ETLegacy"
 !define PRODUCT_UNINST_KEY "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\ETLegacy"
