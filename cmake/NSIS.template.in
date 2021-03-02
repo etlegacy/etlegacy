@@ -216,8 +216,8 @@ SectionEnd
 	${If} $0 == "${hash}"
 		${If} "$tmp_path" != "$INSTDIR\etmain\${pak}"
 			CopyFiles "$tmp_path" "$INSTDIR\etmain\"
-			GOTO ${next}
 		${EndIf}
+		GOTO ${next}
 	${Else}
 		DetailPrint "Hash '${hash}' does not match ${pak}"
 		;Delete "$EXEDIR\${pak}"
