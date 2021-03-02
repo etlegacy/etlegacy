@@ -21,6 +21,8 @@ RequestExecutionLevel admin
 ; Variables
 Name "ET: Legacy ${VERSION}"
 OutFile "@CPACK_PACKAGE_FILE_NAME@.exe"
+; Non unicode nsis is deprecated, we need to fix this at some point
+;Unicode True
 BrandingText "ET: Legacy ${VERSION} | https://www.etlegacy.com"
 !define PRODUCT_DIR_REGKEY "SOFTWARE\ETLegacy"
 !define PRODUCT_UNINST_KEY "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\ETLegacy"
@@ -177,297 +179,279 @@ VIAddVersionKey /LANG=${LANG_POLISH} "FileVersion" "@FILE_VERSION@"
 
 ; Sections
 Section "ET: Legacy" FILES
-    SectionIn RO
-    SetOverwrite ifnewer
-    SetOutPath $INSTDIR
-    File /r /x omni-bot /x GeoIP.dat /x lualibs /x luascripts /x *.toml "@CPACK_PACKAGE_FILE_NAME@\*"
+	SectionIn RO
+	SetOverwrite ifnewer
+	SetOutPath $INSTDIR
+	File /r /x omni-bot /x GeoIP.dat /x lualibs /x luascripts /x *.toml "@CPACK_PACKAGE_FILE_NAME@\*"
 
-    SimpleFC::AddApplication "ET: Legacy" "$INSTDIR\etl.exe" 0 2 "" 1
-    SimpleFC::AddApplication "ET: Legacy server" "$INSTDIR\etlded.exe" 0 2 "" 1
+	SimpleFC::AddApplication "ET: Legacy" "$INSTDIR\etl.exe" 0 2 "" 1
+	SimpleFC::AddApplication "ET: Legacy server" "$INSTDIR\etlded.exe" 0 2 "" 1
 SectionEnd
 
+!macro Packager pak hash next download
+	DetailPrint "Checking $INSTDIR for ${pak}"
+	IfFileExists "$INSTDIR\etmain\${pak}" 0 +3
+	StrCpy $tmp_path "$INSTDIR\etmain\${pak}"
+	GOTO ${pak}_hash
+
+	DetailPrint "Checking $EXEDIR for ${pak}"
+	IfFileExists "$EXEDIR\etmain\${pak}" 0 +3
+	StrCpy $tmp_path "$EXEDIR\etmain\${pak}"
+	GOTO ${pak}_hash
+
+	DetailPrint "Checking vanilla for ${pak}"
+	IfFileExists "$vanilla\etmain\${pak}" 0 +3
+	StrCpy $tmp_path "$vanilla\etmain\${pak}"
+	GOTO ${pak}_hash
+
+	DetailPrint "Checking Temp for ${pak}"
+	IfFileExists "$TEMP\etl_install\${pak}" 0 +3
+	StrCpy $tmp_path "$TEMP\etl_install\${pak}"
+	GOTO ${pak}_hash
+
+	GOTO ${download}
+
+	${pak}_hash:
+	md5dll::GetMD5File "$tmp_path"
+	Pop $0
+	${If} $0 == "${hash}"
+		${If} "$tmp_path" != "$INSTDIR\etmain\${pak}"
+			CopyFiles "$tmp_path" "$INSTDIR\etmain\"
+			GOTO ${next}
+		${EndIf}
+	${Else}
+		DetailPrint "Hash '${hash}' does not match ${pak}"
+		;Delete "$EXEDIR\${pak}"
+		MessageBox MB_RETRYCANCEL|MB_ICONEXCLAMATION $(DESC_Section1) \
+		IDCANCEL USERCANCEL IDRETRY ${download}
+	${EndIf}
+!macroend
+
 Section "Wolfenstein: Enemy Territory assets" ASSETS
-    SetOverwrite ifdiff
-    AddSize 224530
-    SetOutPath $TEMP
+	SetOverwrite ifdiff
+	AddSize 224530
+	SetOutPath $TEMP
 
-    SetRegView 32
-    ReadRegStr $1 HKLM "Software\Activision\Wolfenstein - Enemy Territory" "InstallPath"
+	var /GLOBAL tmp_path
+	var /GLOBAL vanilla
 
-    GOTO COPY_PAK0
+	SetRegView 32
+	ReadRegStr $vanilla HKLM "Software\Activision\Wolfenstein - Enemy Territory" "InstallPath"
 
-    COPY_PAK0:
-        IfFileExists "$EXEDIR\pak0.pk3" 0 +3
-        md5dll::GetMD5File "$EXEDIR\pak0.pk3"
-        Pop $0
-        ${If} $0 == "9558347f477bfbdc65b06768ce2e31d1"
-        CopyFiles "$EXEDIR\pak0.pk3" "$INSTDIR\etmain\"
-        GOTO COPY_PAK1
-        ${Else}
-        ;Delete "$EXEDIR\pak0.pk3"
-        MessageBox MB_RETRYCANCEL|MB_ICONEXCLAMATION $(DESC_Section1) \
-        IDCANCEL USERCANCEL IDRETRY GET_INSTALL
-        ${EndIf}
-        CopyFiles "$EXEDIR\pak0.pk3" "$INSTDIR\etmain\"
-        GOTO COPY_PAK1
-        IfFileExists "$INSTDIR\etmain\pak0.pk3" 0 +2
-        GOTO COPY_PAK1
-        IfFileExists "$1\etmain\pak0.pk3" 0 +3
-        CopyFiles "$1\etmain\pak0.pk3" "$INSTDIR\etmain\"
-        GOTO COPY_PAK1
-        IfFileExists "$TEMP\etl_install\pak0.pk3" 0 GET_INSTALL
-        CopyFiles "$TEMP\etl_install\pak0.pk3" "$INSTDIR\etmain\"
-        GOTO COPY_PAK1
+	GOTO COPY_PAK0
 
-    COPY_PAK1:
-        IfFileExists "$EXEDIR\pak1.pk3" 0 +3
-        md5dll::GetMD5File "$EXEDIR\pak1.pk3"
-        Pop $0
-        ${If} $0 == "2502d531f5505d920ee1129baf392925"
-        CopyFiles "$EXEDIR\pak1.pk3" "$INSTDIR\etmain\"
-        GOTO COPY_PAK2
-        ${Else}
-        ;Delete "$EXEDIR\pak1.pk3"
-        MessageBox MB_RETRYCANCEL|MB_ICONEXCLAMATION $(DESC_Section1) \
-        IDCANCEL USERCANCEL IDRETRY GET_INSTALL
-        ${EndIf}
-        CopyFiles "$EXEDIR\pak1.pk3" "$INSTDIR\etmain\"
-        GOTO COPY_PAK2
-        IfFileExists "$INSTDIR\etmain\pak1.pk3" 0 +2
-        GOTO COPY_PAK2
-        IfFileExists "$1\etmain\pak1.pk3" 0 +3
-        CopyFiles "$1\etmain\pak1.pk3" "$INSTDIR\etmain\"
-        GOTO COPY_PAK2
-        IfFileExists "$TEMP\etl_install\pak1.pk3" 0 GET_PATCH
-        CopyFiles "$TEMP\etl_install\pak1.pk3" "$INSTDIR\etmain\"
-        GOTO COPY_PAK2
+	COPY_PAK0:
+		!insertmacro Packager "pak0.pk3" "9558347f477bfbdc65b06768ce2e31d1" COPY_PAK1 GET_INSTALL
 
-    COPY_PAK2:
-        IfFileExists "$EXEDIR\pak2.pk3" 0 +3
-        md5dll::GetMD5File "$EXEDIR\pak2.pk3"
-        Pop $0
-        ${If} $0 == "256da2aa10c43728f36515ddad1aa582"
-        CopyFiles "$EXEDIR\pak2.pk3" "$INSTDIR\etmain\"
-        GOTO END
-        ${Else}
-        ;Delete "$EXEDIR\pak2.pk3"
-        MessageBox MB_RETRYCANCEL|MB_ICONEXCLAMATION $(DESC_Section1) \
-        IDCANCEL USERCANCEL IDRETRY GET_INSTALL
-        ${EndIf}
-        CopyFiles "$EXEDIR\pak2.pk3" "$INSTDIR\etmain\"
-        GOTO END
-        IfFileExists "$INSTDIR\etmain\pak2.pk3" 0 +2
-        GOTO END
-        IfFileExists "$1\etmain\pak2.pk3" 0 +3
-        CopyFiles "$1\etmain\pak2.pk3" "$INSTDIR\etmain\"
-        GOTO END
-        IfFileExists "$TEMP\etl_install\pak2.pk3" 0 GET_PATCH
-        CopyFiles "$TEMP\etl_install\pak2.pk3" "$INSTDIR\etmain\"
-        GOTO END
+	COPY_PAK1:
+		!insertmacro Packager "pak1.pk3" "2502d531f5505d920ee1129baf392925" COPY_PAK2 GET_PATCH
 
-    GET_INSTALL:
-        IfFileExists "$TEMP\WolfET.exe" CHECK_INSTALL
-        IfFileExists "$EXEDIR\WolfET.exe" 0 +3
-        CopyFiles "$EXEDIR\WolfET.exe" "$TEMP\"
-        GOTO CHECK_INSTALL
-        NSISdl::download "https://wolffiles.de/filebase/ET/Full%20Version/WolfET.exe" WolfET.exe
-        IfFileExists "$TEMP\WolfET.exe" CHECK_INSTALL
-        NSISdl::download "https://mirror.etlegacy.com/WolfET.exe" WolfET.exe
-        IfFileExists "$TEMP\WolfET.exe" CHECK_INSTALL
-        MessageBox MB_RETRYCANCEL|MB_ICONEXCLAMATION $(DESC_Section2) \
-        IDCANCEL USERCANCEL IDRETRY GET_INSTALL
+	COPY_PAK2:
+		!insertmacro Packager "pak2.pk3" "256da2aa10c43728f36515ddad1aa582" END GET_PATCH
 
-    CHECK_INSTALL:
-        md5dll::GetMD5File "$TEMP\WolfET.exe"
-        Pop $0
-        ${If} $0 == "5cc104767ecdf0feb3a36210adf46a8e"
-        GOTO UNPACK_INSTALL
-        ${Else}
-        Delete "$TEMP\WolfET.exe"
-        MessageBox MB_RETRYCANCEL|MB_ICONEXCLAMATION $(DESC_Section3) \
-        IDCANCEL USERCANCEL IDRETRY GET_INSTALL
-        ${EndIf}
+	GET_INSTALL:
+		IfFileExists "$TEMP\WolfET.exe" CHECK_INSTALL
+		IfFileExists "$EXEDIR\WolfET.exe" 0 +3
+		CopyFiles "$EXEDIR\WolfET.exe" "$TEMP\"
+		GOTO CHECK_INSTALL
+		NSISdl::download "https://wolffiles.de/filebase/ET/Full%20Version/WolfET.exe" WolfET.exe
+		IfFileExists "$TEMP\WolfET.exe" CHECK_INSTALL
+		NSISdl::download "https://mirror.etlegacy.com/WolfET.exe" WolfET.exe
+		IfFileExists "$TEMP\WolfET.exe" CHECK_INSTALL
+		MessageBox MB_RETRYCANCEL|MB_ICONEXCLAMATION $(DESC_Section2) \
+		IDCANCEL USERCANCEL IDRETRY GET_INSTALL
 
-    UNPACK_INSTALL:
-        MessageBox MB_ICONINFORMATION|MB_OK $(DESC_Section4)
-        ExecWait "$TEMP\WolfET.exe /x $TEMP\etl_install"
-        IfFileExists "$TEMP\etl_install\pak0.pk3" +2
-        MessageBox MB_ICONEXCLAMATION|MB_OK $(DESC_Section5)
-        CopyFiles "$TEMP\etl_install\pak0.pk3" "$INSTDIR\etmain"
-        IfFileExists "$INSTDIR\etmain\pak0.pk3" +1
-        GOTO END
-        MessageBox MB_ICONEXCLAMATION|MB_OK $(DESC_Section6)
+	CHECK_INSTALL:
+		md5dll::GetMD5File "$TEMP\WolfET.exe"
+		Pop $0
+		${If} $0 == "5cc104767ecdf0feb3a36210adf46a8e"
+		GOTO UNPACK_INSTALL
+		${Else}
+		Delete "$TEMP\WolfET.exe"
+		MessageBox MB_RETRYCANCEL|MB_ICONEXCLAMATION $(DESC_Section3) \
+		IDCANCEL USERCANCEL IDRETRY GET_INSTALL
+		${EndIf}
 
-    GET_PATCH:
-        IfFileExists "$TEMP\ET_Patch_2_60.exe" CHECK_PATCH
-        IfFileExists "$EXEDIR\ET_Patch_2_60.exe" 0 +3
-        CopyFiles "$EXEDIR\ET_Patch_2_60.exe" "$TEMP\"
-        GOTO CHECK_PATCH
-        NSISdl::download "https://wolffiles.de/filebase/ET/Patches/ET_Patch_2_60.exe" ET_Patch_2_60.exe
-        IfFileExists "$TEMP\ET_Patch_2_60.exe" CHECK_PATCH
-        NSISdl::download "https://mirror.etlegacy.com/ET_Patch_2_60.exe" ET_Patch_2_60.exe
-        IfFileExists "$TEMP\ET_Patch_2_60.exe" CHECK_PATCH
-        MessageBox MB_RETRYCANCEL|MB_ICONEXCLAMATION $(DESC_Section7) \
-        IDCANCEL USERCANCEL IDRETRY GET_PATCH
+	UNPACK_INSTALL:
+		MessageBox MB_ICONINFORMATION|MB_OK $(DESC_Section4)
+		ExecWait "$TEMP\WolfET.exe /x $TEMP\etl_install"
+		IfFileExists "$TEMP\etl_install\pak0.pk3" +2
+		MessageBox MB_ICONEXCLAMATION|MB_OK $(DESC_Section5)
+		CopyFiles "$TEMP\etl_install\pak0.pk3" "$INSTDIR\etmain"
+		IfFileExists "$INSTDIR\etmain\pak0.pk3" +1
+		GOTO COPY_PAK0
+		MessageBox MB_ICONEXCLAMATION|MB_OK $(DESC_Section6)
 
-    CHECK_PATCH:
-        md5dll::GetMD5File "$TEMP\ET_Patch_2_60.exe"
-        Pop $0
-        ${If} $0 == "a7ba6fdee3de6150b887068d58e91729"
-        GOTO UNPACK_PATCH
-        ${Else}
-        Delete "$TEMP\ET_Patch_2_60.exe"
-        MessageBox MB_RETRYCANCEL|MB_ICONEXCLAMATION $(DESC_Section8) \
-        IDCANCEL USERCANCEL IDRETRY GET_PATCH
-        ${EndIf}
+	GET_PATCH:
+		IfFileExists "$TEMP\ET_Patch_2_60.exe" CHECK_PATCH
+		IfFileExists "$EXEDIR\ET_Patch_2_60.exe" 0 +3
+		CopyFiles "$EXEDIR\ET_Patch_2_60.exe" "$TEMP\"
+		GOTO CHECK_PATCH
+		NSISdl::download "https://wolffiles.de/filebase/ET/Patches/ET_Patch_2_60.exe" ET_Patch_2_60.exe
+		IfFileExists "$TEMP\ET_Patch_2_60.exe" CHECK_PATCH
+		NSISdl::download "https://mirror.etlegacy.com/ET_Patch_2_60.exe" ET_Patch_2_60.exe
+		IfFileExists "$TEMP\ET_Patch_2_60.exe" CHECK_PATCH
+		MessageBox MB_RETRYCANCEL|MB_ICONEXCLAMATION $(DESC_Section7) \
+		IDCANCEL USERCANCEL IDRETRY GET_PATCH
 
-    UNPACK_PATCH:
-        ExecWait "$TEMP\ET_Patch_2_60.exe /x $TEMP\etl_install"
-        GOTO END
+	CHECK_PATCH:
+		md5dll::GetMD5File "$TEMP\ET_Patch_2_60.exe"
+		Pop $0
+		${If} $0 == "a7ba6fdee3de6150b887068d58e91729"
+		GOTO UNPACK_PATCH
+		${Else}
+		Delete "$TEMP\ET_Patch_2_60.exe"
+		MessageBox MB_RETRYCANCEL|MB_ICONEXCLAMATION $(DESC_Section8) \
+		IDCANCEL USERCANCEL IDRETRY GET_PATCH
+		${EndIf}
 
-    USERCANCEL:
-        Messagebox MB_OK|MB_ICONEXCLAMATION $(DESC_Section10)
+	UNPACK_PATCH:
+		ExecWait "$TEMP\ET_Patch_2_60.exe /x $TEMP\etl_install"
+		GOTO COPY_PAK1
 
-    END:
+	USERCANCEL:
+		Messagebox MB_OK|MB_ICONEXCLAMATION $(DESC_Section10)
+
+	END:
 SectionEnd
 
 Section "Omni-bot" OMNIBOT
-    AddSize 65000 ; approx
-    SetOutPath $TEMP
-    GOTO GET_BOT
+	AddSize 65000 ; approx
+	SetOutPath $TEMP
+	GOTO GET_BOT
 
-    GET_BOT:
-        IfFileExists "$EXEDIR\@OMNIBOT_ARCHIVE@" 0 +3
-        CopyFiles "$EXEDIR\@OMNIBOT_ARCHIVE@" "$TEMP\"
-        GOTO UNPACK_BOT
-        IfFileExists "$TEMP\@OMNIBOT_ARCHIVE@" UNPACK_BOT
-        NSISdl::download "@OMNIBOT_ARCHIVE_URL@" @OMNIBOT_ARCHIVE@
-        IfFileExists "$TEMP\@OMNIBOT_ARCHIVE@" UNPACK_BOT
-        MessageBox MB_RETRYCANCEL|MB_ICONEXCLAMATION $(DESC_Section11) \
-        IDCANCEL END IDRETRY GET_BOT
+	GET_BOT:
+		IfFileExists "$EXEDIR\@OMNIBOT_ARCHIVE@" 0 +3
+		CopyFiles "$EXEDIR\@OMNIBOT_ARCHIVE@" "$TEMP\"
+		GOTO UNPACK_BOT
+		IfFileExists "$TEMP\@OMNIBOT_ARCHIVE@" UNPACK_BOT
+		NSISdl::download "@OMNIBOT_ARCHIVE_URL@" @OMNIBOT_ARCHIVE@
+		IfFileExists "$TEMP\@OMNIBOT_ARCHIVE@" UNPACK_BOT
+		MessageBox MB_RETRYCANCEL|MB_ICONEXCLAMATION $(DESC_Section11) \
+		IDCANCEL END IDRETRY GET_BOT
 
-    UNPACK_BOT:
-        ZipDLL::extractall "$TEMP\@OMNIBOT_ARCHIVE@" "$INSTDIR\legacy"
-        IfFileExists "$INSTDIR\legacy\omni-bot\*.*" END
-        MessageBox MB_ICONEXCLAMATION|MB_OK $(DESC_Section12)
+	UNPACK_BOT:
+		ZipDLL::extractall "$TEMP\@OMNIBOT_ARCHIVE@" "$INSTDIR\legacy"
+		IfFileExists "$INSTDIR\legacy\omni-bot\*.*" END
+		MessageBox MB_ICONEXCLAMATION|MB_OK $(DESC_Section12)
 
-    END:
-        SetOutPath $INSTDIR
-        CreateDirectory "$SMPROGRAMS\ETLegacy"
-        CreateShortCut "$SMPROGRAMS\ETLegacy\Launch ETLegacy with Omni-bot.lnk" "$INSTDIR\etl.exe"  "+set omnibot_enable 1 +set omnibot_path legacy\omni-bot\"
+	END:
+		SetOutPath $INSTDIR
+		CreateDirectory "$SMPROGRAMS\ETLegacy"
+		CreateShortCut "$SMPROGRAMS\ETLegacy\Launch ETLegacy with Omni-bot.lnk" "$INSTDIR\etl.exe"  "+set omnibot_enable 1 +set omnibot_path legacy\omni-bot\"
 SectionEnd
 
 Section "GeoIP" GEOIP
-    AddSize 600 ; approx
-    SetOutPath $TEMP
-    GOTO GET_GEOIP
+	AddSize 600 ; approx
+	SetOutPath $TEMP
+	GOTO GET_GEOIP
 
-    GET_GEOIP:
-        IfFileExists "$EXEDIR\@GEOIP_ARCHIVE@" 0 +3
-        CopyFiles "$EXEDIR\@GEOIP_ARCHIVE@" "$TEMP\"
-        GOTO UNPACK_GEOIP
-        IfFileExists "$TEMP\@GEOIP_ARCHIVE@" UNPACK_GEOIP
-        NSISdl::download "@GEOIP_ARCHIVE_URL@" @GEOIP_ARCHIVE@
-        IfFileExists "$TEMP\@GEOIP_ARCHIVE@" UNPACK_GEOIP
-        MessageBox MB_RETRYCANCEL|MB_ICONEXCLAMATION $(DESC_Section21) \
-        IDCANCEL END IDRETRY GET_GEOIP
+	GET_GEOIP:
+		IfFileExists "$EXEDIR\@GEOIP_ARCHIVE@" 0 +3
+		CopyFiles "$EXEDIR\@GEOIP_ARCHIVE@" "$TEMP\"
+		GOTO UNPACK_GEOIP
+		IfFileExists "$TEMP\@GEOIP_ARCHIVE@" UNPACK_GEOIP
+		NSISdl::download "@GEOIP_ARCHIVE_URL@" @GEOIP_ARCHIVE@
+		IfFileExists "$TEMP\@GEOIP_ARCHIVE@" UNPACK_GEOIP
+		MessageBox MB_RETRYCANCEL|MB_ICONEXCLAMATION $(DESC_Section21) \
+		IDCANCEL END IDRETRY GET_GEOIP
 
-    UNPACK_GEOIP:
-        untgz::extract "$TEMP\@GEOIP_ARCHIVE@"
-        CopyFiles GeoIP.dat "$INSTDIR\legacy"
-        IfFileExists "$INSTDIR\legacy\GeoIP.dat" END
-        MessageBox MB_ICONEXCLAMATION|MB_OK $(DESC_Section22)
+	UNPACK_GEOIP:
+		untgz::extract "$TEMP\@GEOIP_ARCHIVE@"
+		CopyFiles GeoIP.dat "$INSTDIR\legacy"
+		IfFileExists "$INSTDIR\legacy\GeoIP.dat" END
+		MessageBox MB_ICONEXCLAMATION|MB_OK $(DESC_Section22)
 
-    END:
+	END:
 SectionEnd
 
 Section "WolfAdmin" WOLFADMIN
-    AddSize 1800 ; approx
-    SetOutPath $TEMP
-    GOTO GET_WOLFADMIN
+	AddSize 1800 ; approx
+	SetOutPath $TEMP
+	GOTO GET_WOLFADMIN
 
-    GET_WOLFADMIN:
-        IfFileExists "$EXEDIR\@WOLFADMIN_ARCHIVE@" 0 +3
-        CopyFiles "$EXEDIR\@WOLFADMIN_ARCHIVE@" "$TEMP\"
-        GOTO UNPACK_WOLFADMIN
-        IfFileExists "$TEMP\@WOLFADMIN_ARCHIVE@" UNPACK_WOLFADMIN
-        NSISdl::download "@WOLFADMIN_ARCHIVE_URL@" @WOLFADMIN_ARCHIVE@
-        IfFileExists "$TEMP\@WOLFADMIN_ARCHIVE@" UNPACK_WOLFADMIN
-        MessageBox MB_RETRYCANCEL|MB_ICONEXCLAMATION $(DESC_Section24) \
-        IDCANCEL END IDRETRY GET_WOLFADMIN
+	GET_WOLFADMIN:
+		IfFileExists "$EXEDIR\@WOLFADMIN_ARCHIVE@" 0 +3
+		CopyFiles "$EXEDIR\@WOLFADMIN_ARCHIVE@" "$TEMP\"
+		GOTO UNPACK_WOLFADMIN
+		IfFileExists "$TEMP\@WOLFADMIN_ARCHIVE@" UNPACK_WOLFADMIN
+		NSISdl::download "@WOLFADMIN_ARCHIVE_URL@" @WOLFADMIN_ARCHIVE@
+		IfFileExists "$TEMP\@WOLFADMIN_ARCHIVE@" UNPACK_WOLFADMIN
+		MessageBox MB_RETRYCANCEL|MB_ICONEXCLAMATION $(DESC_Section24) \
+		IDCANCEL END IDRETRY GET_WOLFADMIN
 
-    UNPACK_WOLFADMIN:
-        untgz::extract "$TEMP\@WOLFADMIN_ARCHIVE@"
-        CopyFiles "wolfadmin\luascripts" "$INSTDIR\legacy"
-        CopyFiles "wolfadmin\lualibs" "$INSTDIR\legacy"
-        CopyFiles "wolfadmin\config\*.toml" "$INSTDIR\legacy"
-        IfFileExists "$INSTDIR\legacy\GeoIP.dat" END
-        MessageBox MB_ICONEXCLAMATION|MB_OK $(DESC_Section25)
+	UNPACK_WOLFADMIN:
+		untgz::extract "$TEMP\@WOLFADMIN_ARCHIVE@"
+		CopyFiles "wolfadmin\luascripts" "$INSTDIR\legacy"
+		CopyFiles "wolfadmin\lualibs" "$INSTDIR\legacy"
+		CopyFiles "wolfadmin\config\*.toml" "$INSTDIR\legacy"
+		IfFileExists "$INSTDIR\legacy\GeoIP.dat" END
+		MessageBox MB_ICONEXCLAMATION|MB_OK $(DESC_Section25)
 
-    END:
+	END:
 SectionEnd
 
 Section -URI
-    WriteRegStr HKCR "et" "URL Protocol" ""
-    WriteRegStr HKCR "et" "" "URL: Enemy Territory Protocol"
-    WriteRegStr HKCR "et\DefaultIcon" "" "$INSTDIR\etl.exe"
-    WriteRegStr HKCR "et\shell\open\command" "" "$INSTDIR\etl.exe +set fs_basepath $\"$INSTDIR$\" +connect $\"%1$\""
+	WriteRegStr HKCR "et" "URL Protocol" ""
+	WriteRegStr HKCR "et" "" "URL: Enemy Territory Protocol"
+	WriteRegStr HKCR "et\DefaultIcon" "" "$INSTDIR\etl.exe"
+	WriteRegStr HKCR "et\shell\open\command" "" "$INSTDIR\etl.exe +set fs_basepath $\"$INSTDIR$\" +connect $\"%1$\""
 SectionEnd
 
 Section -ETKEY
-    IfFileExists "$DOCUMENTS\ETLegacy\etmain\etkey" END
-    IfFileExists "$LOCALAPPDATA\Punkbuster\ET\etmain\etkey" COPYAPPDATA
-    ReadRegStr $1 HKLM "Software\Activision\Wolfenstein - Enemy Territory" "InstallPath"
-    IfFileExists "$1\etmain\etkey" COPYETMAIN
-    GOTO NOKEY
+	IfFileExists "$DOCUMENTS\ETLegacy\etmain\etkey" END
+	IfFileExists "$LOCALAPPDATA\Punkbuster\ET\etmain\etkey" COPYAPPDATA
+	ReadRegStr $1 HKLM "Software\Activision\Wolfenstein - Enemy Territory" "InstallPath"
+	IfFileExists "$1\etmain\etkey" COPYETMAIN
+	GOTO NOKEY
 
-    COPYAPPDATA:
-        MessageBox MB_YESNO "ETKEY found. Do you want to use it with ET: Legacy?" IDNO END
-        CreateDirectory `$DOCUMENTS\ETLegacy\etmain`
-        CopyFiles `$LOCALAPPDATA\Punkbuster\ET\etmain\etkey` `$DOCUMENTS\ETLegacy\etmain`
-        GOTO END
+	COPYAPPDATA:
+		MessageBox MB_YESNO "ETKEY found. Do you want to use it with ET: Legacy?" IDNO END
+		CreateDirectory `$DOCUMENTS\ETLegacy\etmain`
+		CopyFiles `$LOCALAPPDATA\Punkbuster\ET\etmain\etkey` `$DOCUMENTS\ETLegacy\etmain`
+		GOTO END
 
-    COPYETMAIN:
-        MessageBox MB_YESNO "ETKEY found. Do you want to use it with ET: Legacy?" IDNO END
-        CreateDirectory `$DOCUMENTS\ETLegacy\etmain`
-        CopyFiles `$1\etmain\etkey` `$DOCUMENTS\ETLegacy\etmain`
-        GOTO END
+	COPYETMAIN:
+		MessageBox MB_YESNO "ETKEY found. Do you want to use it with ET: Legacy?" IDNO END
+		CreateDirectory `$DOCUMENTS\ETLegacy\etmain`
+		CopyFiles `$1\etmain\etkey` `$DOCUMENTS\ETLegacy\etmain`
+		GOTO END
 
-    NOKEY:
-        Messagebox MB_OK|MB_ICONINFORMATION $(DESC_Section13)
-        GOTO END
+	NOKEY:
+		Messagebox MB_OK|MB_ICONINFORMATION $(DESC_Section13)
+		GOTO END
 
-    END:
+	END:
 SectionEnd
 
 Section -Shortcuts
-    SetOutPath $INSTDIR
-    CreateDirectory "$SMPROGRAMS\ETLegacy"
-    CreateShortCut "$SMPROGRAMS\ETLegacy\Visit ETLegacy Homepage.lnk" "https://www.etlegacy.com" "" "$INSTDIR\etl.ico"
-    CreateShortCut "$SMPROGRAMS\ETLegacy\Launch ETLegacy.lnk" "$INSTDIR\etl.exe" "+set cl_renderer opengl1 +set com_hunkmegs 128"
+	SetOutPath $INSTDIR
+	CreateDirectory "$SMPROGRAMS\ETLegacy"
+	CreateShortCut "$SMPROGRAMS\ETLegacy\Visit ETLegacy Homepage.lnk" "https://www.etlegacy.com" "" "$INSTDIR\etl.exe" 0
+	CreateShortCut "$SMPROGRAMS\ETLegacy\Launch ETLegacy.lnk" "$INSTDIR\etl.exe" "+set cl_renderer opengl1 +set com_hunkmegs 128"
 
-    ; Do not add the Renderer 2 shortcut if we have not actually built it
-    ${If} "@CPACK_RENDERER2_ACTIVE@" == "1"
-    CreateShortCut "$SMPROGRAMS\ETLegacy\Launch ETLegacy - Renderer2.lnk" "$INSTDIR\etl.exe" "+set cl_renderer opengl2 +set com_hunkmegs 512"
-    ${EndIf}
+	; Do not add the Renderer 2 shortcut if we have not actually built it
+	${If} "@CPACK_RENDERER2_ACTIVE@" == "1"
+	CreateShortCut "$SMPROGRAMS\ETLegacy\Launch ETLegacy - Renderer2.lnk" "$INSTDIR\etl.exe" "+set cl_renderer opengl2 +set com_hunkmegs 512"
+	${EndIf}
 
-    CreateShortCut "$SMPROGRAMS\ETLegacy\Play on Official Server.lnk" "et://etlegacy.com:27960" "" "$INSTDIR\etl.ico"
-    CreateShortCut "$SMPROGRAMS\ETLegacy\Uninstall.lnk" "$INSTDIR\uninstall.exe"
-    CreateShortCut "$DESKTOP\ETLegacy.lnk" "$INSTDIR\etl.exe"
+	CreateShortCut "$SMPROGRAMS\ETLegacy\Play on Official Server.lnk" "et://etlegacy.com:27960" "" "$INSTDIR\etl.exe" 0
+	CreateShortCut "$SMPROGRAMS\ETLegacy\Uninstall.lnk" "$INSTDIR\uninstall.exe"
+	CreateShortCut "$DESKTOP\ETLegacy.lnk" "$INSTDIR\etl.exe"
 SectionEnd
 
 Section -Post
-    WriteUninstaller "$INSTDIR\uninstall.exe"
-    WriteRegStr HKLM "${PRODUCT_DIR_REGKEY}" "InstallPath" "$INSTDIR"
-    WriteRegStr HKLM "${PRODUCT_DIR_REGKEY}" "Version" "${VERSION}"
-    WriteRegStr HKLM "${PRODUCT_UNINST_KEY}" "DisplayName" "ET: Legacy"
-    WriteRegStr HKLM "${PRODUCT_UNINST_KEY}" "DisplayVersion" "${VERSION}"
-    WriteRegStr HKLM "${PRODUCT_UNINST_KEY}" "Publisher" "ET: Legacy Team"
-    WriteRegStr HKLM "${PRODUCT_UNINST_KEY}" "URLInfoAbout" "https://www.etlegacy.com"
-    WriteRegStr HKLM "${PRODUCT_UNINST_KEY}" "DisplayIcon" "$INSTDIR\etl.exe"
-    WriteRegDWORD HKLM "${PRODUCT_UNINST_KEY}" "NoModify" 1
-    WriteRegDWORD HKLM "${PRODUCT_UNINST_KEY}" "NoRepair" 1
-    WriteRegStr HKLM "${PRODUCT_UNINST_KEY}" "UninstallString" "$INSTDIR\uninstall.exe"
+	WriteUninstaller "$INSTDIR\uninstall.exe"
+	WriteRegStr HKLM "${PRODUCT_DIR_REGKEY}" "InstallPath" "$INSTDIR"
+	WriteRegStr HKLM "${PRODUCT_DIR_REGKEY}" "Version" "${VERSION}"
+	WriteRegStr HKLM "${PRODUCT_UNINST_KEY}" "DisplayName" "ET: Legacy"
+	WriteRegStr HKLM "${PRODUCT_UNINST_KEY}" "DisplayVersion" "${VERSION}"
+	WriteRegStr HKLM "${PRODUCT_UNINST_KEY}" "Publisher" "ET: Legacy Team"
+	WriteRegStr HKLM "${PRODUCT_UNINST_KEY}" "URLInfoAbout" "https://www.etlegacy.com"
+	WriteRegStr HKLM "${PRODUCT_UNINST_KEY}" "DisplayIcon" "$INSTDIR\etl.exe"
+	WriteRegDWORD HKLM "${PRODUCT_UNINST_KEY}" "NoModify" 1
+	WriteRegDWORD HKLM "${PRODUCT_UNINST_KEY}" "NoRepair" 1
+	WriteRegStr HKLM "${PRODUCT_UNINST_KEY}" "UninstallString" "$INSTDIR\uninstall.exe"
 SectionEnd
 
 ; Section descriptions
@@ -484,32 +468,32 @@ SectionEnd
 ; ------------------------
 
 Section "un.ET: Legacy" UNFILES
-    SectionIN RO
-    Delete "$INSTDIR\*.*"
-    Delete "$INSTDIR\etmain\*.cfg"
-    RMDir /r "$INSTDIR\legacy"
-    DeleteRegKey HKLM "${PRODUCT_DIR_REGKEY}"
-    DeleteRegKey HKLM "${PRODUCT_UNINST_KEY}"
-    DeleteRegKey HKCR "et"
-    RMDir /r "$SMPROGRAMS\ETLegacy"
-    Delete "$DESKTOP\ETLegacy.lnk"
-    SimpleFC::RemoveApplication "$INSTDIR\etl.exe"
-    SimpleFC::RemoveApplication "$INSTDIR\etlded.exe"
+	SectionIN RO
+	Delete "$INSTDIR\*.*"
+	Delete "$INSTDIR\etmain\*.cfg"
+	RMDir /r "$INSTDIR\legacy"
+	DeleteRegKey HKLM "${PRODUCT_DIR_REGKEY}"
+	DeleteRegKey HKLM "${PRODUCT_UNINST_KEY}"
+	DeleteRegKey HKCR "et"
+	RMDir /r "$SMPROGRAMS\ETLegacy"
+	Delete "$DESKTOP\ETLegacy.lnk"
+	SimpleFC::RemoveApplication "$INSTDIR\etl.exe"
+	SimpleFC::RemoveApplication "$INSTDIR\etlded.exe"
 SectionEnd
 
 Section /o "un.Wolf: ET assets" UNASSETS
-    Delete "$INSTDIR\etmain\*.pk3"
-    RMDir "$INSTDIR\etmain"
-    RMDir "$INSTDIR"
+	Delete "$INSTDIR\etmain\*.pk3"
+	RMDir "$INSTDIR\etmain"
+	RMDir "$INSTDIR"
 SectionEND
 
 Section /o "un.ET: Legacy User files" WOLFETL
-    RMDir /r "$DOCUMENTS\ETLegacy"
+	RMDir /r "$DOCUMENTS\ETLegacy"
 SectionEND
 
 ; Section descriptions
 !insertmacro MUI_UNFUNCTION_DESCRIPTION_BEGIN
-    !insertmacro MUI_DESCRIPTION_TEXT ${UNFILES} $(DESC_Section17)
-    !insertmacro MUI_DESCRIPTION_TEXT ${UNASSETS} $(DESC_Section18)
-    !insertmacro MUI_DESCRIPTION_TEXT ${WOLFETL} $(DESC_Section19)
+	!insertmacro MUI_DESCRIPTION_TEXT ${UNFILES} $(DESC_Section17)
+	!insertmacro MUI_DESCRIPTION_TEXT ${UNASSETS} $(DESC_Section18)
+	!insertmacro MUI_DESCRIPTION_TEXT ${WOLFETL} $(DESC_Section19)
 !insertmacro MUI_UNFUNCTION_DESCRIPTION_END
