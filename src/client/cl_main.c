@@ -4301,6 +4301,10 @@ void CL_OpenURL(const char *url)
 		return;
 	}
 	Sys_OpenURL(url, qfalse);
+
+	// Minimize should happen automatically since SDL detects the lost window focus
+	// Also this should only happen if we are actually fullscreen
+	// Cbuf_ExecuteText(EXEC_NOW, "minimize");
 }
 
 /**
