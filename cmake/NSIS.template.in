@@ -445,7 +445,12 @@ Section -Shortcuts
     CreateDirectory "$SMPROGRAMS\ETLegacy"
     CreateShortCut "$SMPROGRAMS\ETLegacy\Visit ETLegacy Homepage.lnk" "https://www.etlegacy.com" "" "$INSTDIR\etl.ico"
     CreateShortCut "$SMPROGRAMS\ETLegacy\Launch ETLegacy.lnk" "$INSTDIR\etl.exe" "+set cl_renderer opengl1 +set com_hunkmegs 128"
+
+    ; Do not add the Renderer 2 shortcut if we have not actually built it
+    ${If} "@CPACK_RENDERER2_ACTIVE@" == "1"
     CreateShortCut "$SMPROGRAMS\ETLegacy\Launch ETLegacy - Renderer2.lnk" "$INSTDIR\etl.exe" "+set cl_renderer opengl2 +set com_hunkmegs 512"
+    ${EndIf}
+
     CreateShortCut "$SMPROGRAMS\ETLegacy\Play on Official Server.lnk" "et://etlegacy.com:27960" "" "$INSTDIR\etl.ico"
     CreateShortCut "$SMPROGRAMS\ETLegacy\Uninstall.lnk" "$INSTDIR\uninstall.exe"
     CreateShortCut "$DESKTOP\ETLegacy.lnk" "$INSTDIR\etl.exe"
