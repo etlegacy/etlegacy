@@ -21,4 +21,4 @@ trim_trailing_whitespace = false
 end_of_line = crlf
 
 [*NSIS.template.in]
-charset = utf-8
+charset = utf-8-bom
