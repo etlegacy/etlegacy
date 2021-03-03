@@ -283,7 +283,7 @@ void CL_ParsePacketEntities(msg_t *msg, clSnapshot_t *oldframe, clSnapshot_t *ne
 		else
 		{
 			oldstate = &cl.parseEntities[
-			    (oldframe->parseEntitiesNum + oldindex) & (MAX_PARSE_ENTITIES - 1)];
+				(oldframe->parseEntitiesNum + oldindex) & (MAX_PARSE_ENTITIES - 1)];
 			oldnum = oldstate->number;
 		}
 	}
@@ -321,7 +321,7 @@ void CL_ParsePacketEntities(msg_t *msg, clSnapshot_t *oldframe, clSnapshot_t *ne
 			else
 			{
 				oldstate = &cl.parseEntities[
-				    (oldframe->parseEntitiesNum + oldindex) & (MAX_PARSE_ENTITIES - 1)];
+					(oldframe->parseEntitiesNum + oldindex) & (MAX_PARSE_ENTITIES - 1)];
 				oldnum = oldstate->number;
 			}
 		}
@@ -344,7 +344,7 @@ void CL_ParsePacketEntities(msg_t *msg, clSnapshot_t *oldframe, clSnapshot_t *ne
 			else
 			{
 				oldstate = &cl.parseEntities[
-				    (oldframe->parseEntitiesNum + oldindex) & (MAX_PARSE_ENTITIES - 1)];
+					(oldframe->parseEntitiesNum + oldindex) & (MAX_PARSE_ENTITIES - 1)];
 				oldnum = oldstate->number;
 			}
 		}
@@ -593,7 +593,7 @@ void CL_PurgeCache(void);
 static void CL_SetPurePaks(void)
 {
 	const char *s, *t;
-	char *systemInfo = cl.gameState.stringData + cl.gameState.stringOffsets[CS_SYSTEMINFO];
+	char       *systemInfo = cl.gameState.stringData + cl.gameState.stringOffsets[CS_SYSTEMINFO];
 	// check pure server string
 	s = Info_ValueForKey(systemInfo, "sv_paks");
 	t = Info_ValueForKey(systemInfo, "sv_pakNames");
@@ -674,10 +674,12 @@ void CL_SystemInfoChanged(void)
 		else
 		{
 			// If this cvar may not be modified by a server discard the value.
+			// "shared" is for ETJump compatibility, information shared between server & client
+			// TODO: see why CVAR_SERVER_CREATED flag gets dropped here
 			if (!(cvar_flags & (CVAR_SYSTEMINFO | CVAR_SERVER_CREATED | CVAR_USER_CREATED)))
 			{
 				if (Q_stricmp(key, "g_synchronousClients") && Q_stricmp(key, "pmove_fixed") &&
-				    Q_stricmp(key, "pmove_msec"))
+				    Q_stricmp(key, "pmove_msec") && Q_stricmp(key, "shared"))
 				{
 					Com_DPrintf(S_COLOR_YELLOW "WARNING: server is not allowed to set %s=%s\n", key, value);
 					continue;
