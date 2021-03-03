@@ -1065,8 +1065,6 @@ void Sys_OpenURL(const char *url, qboolean doexit)
 #endif
 
 	Sys_StartProcess(cmdline, doexit);
-
-	Cbuf_ExecuteText(EXEC_NOW, "minimize");
 #endif // not DEDICATED
 }
 

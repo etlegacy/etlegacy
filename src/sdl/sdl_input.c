@@ -1127,7 +1127,7 @@ static void IN_WindowFocusLost()
     	// If according to the game flags we should minimize,
     	// then lets actually make sure and ask the windowing system for its opinion.
 		Uint32 flags = SDL_GetWindowFlags(GLimp_MainWindow());
-		if (flags & SDL_WINDOW_FULLSCREEN)
+		if (flags & SDL_WINDOW_FULLSCREEN && flags & SDL_WINDOW_SHOWN && !(flags & SDL_WINDOW_MINIMIZED))
 		{
 			Cbuf_ExecuteText(EXEC_NOW, "minimize");
 		}

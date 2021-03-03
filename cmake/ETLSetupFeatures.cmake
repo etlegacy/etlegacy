@@ -62,9 +62,20 @@ if(BUILD_CLIENT)
 			add_definitions(-DGLEW_STATIC)
 		endif()
 
-		cmake_policy(SET CMP0072 NEW) # use GLVND by default
-		find_package(OpenGL REQUIRED)
-		list(APPEND RENDERER_LIBRARIES ${OPENGL_LIBRARIES})
+		# On 2.77 release the default usage of GLVND just caused issues as
+		# libOpenGL was not installed on systems by default
+		# cmake_policy(SET CMP0072 NEW) # use GLVND by default
+		# Revert to using legacy libraries if available for now
+		# FIXME: recheck before a new release
+		if(CLIENT_GLVND)
+			message(STATUS "Using GLVND instead of legacy GL library")
+			set(OpenGL_GL_PREFERENCE GLVND)
+		else()
+			message(STATUS "Using legacy OpenGL instead of GLVND")
+			set(OpenGL_GL_PREFERENCE LEGACY)
+		endif ()
+		find_package(OpenGL REQUIRED COMPONENTS OpenGL)
+		list(APPEND RENDERER_LIBRARIES OpenGL::GL)
 		include_directories(SYSTEM ${OPENGL_INCLUDE_DIR})
 	else() # FEATURE_RENDERER_GLES
 		find_package(GLES REQUIRED)

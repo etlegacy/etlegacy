@@ -842,7 +842,7 @@ void Cvar_SetValue(const char *var_name, float value)
 {
 	char val[32];
 
-	if (value == (int)value)
+	if (Q_isintegral(value))
 	{
 		Com_sprintf(val, sizeof(val), "%i", (int)value);
 	}
@@ -910,7 +910,7 @@ void Cvar_SetCheatState(void)
 				Z_Free(var->latchedString);
 				var->latchedString = NULL;
 			}
-			if (strcmp(var->resetString, var->string))
+			if (strcmp(var->resetString, var->string) != 0)
 			{
 				Cvar_Set(var->name, var->resetString);
 			}

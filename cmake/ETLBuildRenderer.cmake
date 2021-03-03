@@ -15,9 +15,10 @@ if(RENDERER_DYNAMIC)
 	add_definitions( "-DUSE_RENDERER_DLOPEN" )
 	set(REND_LIBTYPE MODULE)
 	list(APPEND RENDERER_COMMON ${RENDERER_COMMON_DYNAMIC})
-else(RENDERER_DYNAMIC)
+else()
 	set(REND_LIBTYPE STATIC)
-endif(RENDERER_DYNAMIC)
+endif()
+
 if(RENDERER_DYNAMIC OR NOT FEATURE_RENDERER2)
 
 	if(FEATURE_RENDERER_GLES)
@@ -30,15 +31,15 @@ if(RENDERER_DYNAMIC OR NOT FEATURE_RENDERER2)
 		if(BUNDLED_GLEW)
 			add_dependencies(${R1_NAME} bundled_glew)
 		endif(BUNDLED_GLEW)
-	endif(NOT FEATURE_RENDERER_GLES)
+	endif()
 
 	if(BUNDLED_JPEG)
 		add_dependencies(${R1_NAME} bundled_jpeg)
-	endif(BUNDLED_JPEG)
+	endif()
 
 	if(BUNDLED_FREETYPE)
 		add_dependencies(${R1_NAME} bundled_freetype)
-	endif(BUNDLED_FREETYPE)
+	endif()
 
 	if(MSVC)
 		target_link_libraries(${R1_NAME} ${RENDERER_LIBRARIES})
@@ -64,17 +65,19 @@ if(RENDERER_DYNAMIC OR NOT FEATURE_RENDERER2)
 				LIBRARY DESTINATION "${INSTALL_DEFAULT_BINDIR}"
 				ARCHIVE DESTINATION "${INSTALL_DEFAULT_BINDIR}"
 			)
-		else(WIN32)
+		else()
 			install(TARGETS ${R1_NAME}
 				LIBRARY DESTINATION "${INSTALL_DEFAULT_MODDIR}"
 				ARCHIVE DESTINATION "${INSTALL_DEFAULT_MODDIR}"
 			)
-		endif(WIN32)
-	endif(RENDERER_DYNAMIC)
+		endif()
+	endif()
+
 	if(NOT RENDERER_DYNAMIC)
 		list(APPEND CLIENT_LIBRARIES ${R1_NAME})
-	endif(NOT RENDERER_DYNAMIC)
-endif(RENDERER_DYNAMIC OR NOT FEATURE_RENDERER2)
+	endif()
+endif()
+
 if(FEATURE_RENDERER2)
 	if(MSVC)
 		list(APPEND RENDERER2_FILES ${RENDERER2_SHADERS})
@@ -116,15 +119,18 @@ if(FEATURE_RENDERER2)
 
 	add_library(${R2_NAME} ${REND_LIBTYPE} ${RENDERER2_FILES} ${RENDERER_COMMON} ${RENDERER2_SHADERS})
 	add_dependencies(${R2_NAME} r2_shader_compile)
+
 	if(BUNDLED_GLEW)
 		add_dependencies(${R2_NAME} bundled_glew)
-	endif(BUNDLED_GLEW)
+	endif()
+
 	if(BUNDLED_JPEG)
 		add_dependencies(${R2_NAME} bundled_jpeg)
-	endif(BUNDLED_JPEG)
+	endif()
+
 	if(BUNDLED_FREETYPE)
 		add_dependencies(${R2_NAME} bundled_freetype)
-	endif(BUNDLED_FREETYPE)
+	endif()
 
 	if(MSVC)
 		target_link_libraries(${R2_NAME} ${RENDERER_LIBRARIES})
@@ -148,12 +154,13 @@ if(FEATURE_RENDERER2)
 			LIBRARY DESTINATION "${INSTALL_DEFAULT_BINDIR}"
 			ARCHIVE DESTINATION "${INSTALL_DEFAULT_BINDIR}"
 		)
-	else(WIN32)
+	else()
 		install(TARGETS ${R2_NAME}
 			LIBRARY DESTINATION "${INSTALL_DEFAULT_MODDIR}"
 			ARCHIVE DESTINATION "${INSTALL_DEFAULT_MODDIR}"
 		)
-	endif(WIN32)
+	endif()
+
 	if(NOT RENDERER_DYNAMIC)
 		list(APPEND CLIENT_LIBRARIES ${R2_NAME})
 	endif()

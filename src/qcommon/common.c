@@ -2083,7 +2083,7 @@ void *Hunk_AllocateTempMemory(size_t size)
 
 	// return a Z_Malloc'd block if the hunk has not been initialized
 	// this allows the config and product id files ( journal files too ) to be loaded
-	// by the file system without redunant routines in the file system utilizing different
+	// by the file system without redundant routines in the file system utilizing different
 	// memory systems
 	if (s_hunkData == NULL)
 	{

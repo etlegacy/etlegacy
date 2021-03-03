@@ -1323,20 +1323,30 @@ void CL_SaveFavServersToFile_f(void)
 	LAN_SaveServersToFile();
 }
 
+/**
+ * @brief CL_OpenHomePath_f open the game homepath with the system file explorer
+ */
 void CL_OpenHomePath_f(void)
 {
 	CL_OpenURL(Cvar_VariableString("fs_homepath"));
 }
 
+/**
+ * @brief CL_Clip_f copy the output of the commands to the system clipboard
+ */
 void CL_Clip_f(void)
 {
+	int noPrint, i;
+	size_t argCount, len;
+	char **cmdBuffer;
+
 	if (Cmd_Argc() < 2)
 	{
 		Com_Printf("Nothing to be put to the clipboard.");
 		return;
 	}
 
-	int noPrint = Cvar_VariableIntegerValue("cl_noprint");
+	noPrint = Cvar_VariableIntegerValue("cl_noprint");
 
 	// Disable console output while we are copying text to the clipboard buffer.
 	Cvar_Set("cl_noprint", "1");
@@ -1344,20 +1354,38 @@ void CL_Clip_f(void)
 	// Allocate a buffer for the clipboard data
 	cls.clipboard.bufferSize = MAXPRINTMSG * 10;
 	cls.clipboard.buffer = Com_Allocate(cls.clipboard.bufferSize);
+	if (!cls.clipboard.buffer)
+	{
+		Com_Error(ERR_FATAL, "Clipboard allocation failed\n");
+		return;
+	}
+
 	Com_Memset(cls.clipboard.buffer, 0, cls.clipboard.bufferSize);
 
-	// Copy all the arguments into a new array since when we start excuting them one by one, the Cmd buffer gets reset.
-	size_t argCount = Cmd_Argc() - 1;
-	char **cmdBuffer = Com_Allocate(argCount * sizeof(char*));
-	for (int i = 0; i < argCount; i++)
+	// Copy all the arguments into a new array since when we start executing them one by one, the Cmd buffer gets reset.
+	argCount = Cmd_Argc() - 1;
+	cmdBuffer = Com_Allocate(argCount * sizeof(char*));
+	if (!cmdBuffer)
+	{
+		Com_Error(ERR_FATAL, "Clipboard allocation failed\n");
+		return;
+	}
+
+	for (i = 0; i < argCount; i++)
 	{
 		cmdBuffer[i] = Com_Allocate(MAX_QPATH * sizeof(char));
+		if (!cmdBuffer[i])
+		{
+			Com_Error(ERR_FATAL, "Clipboard allocation failed\n");
+			return;
+		}
+
 		Com_Memset(cmdBuffer[i], 0, MAX_QPATH * sizeof(char));
 		Q_strcpy(cmdBuffer[i], Cmd_Argv(i + 1));
 	}
 
 	// Execute the command parts
-	for (int i = 0; i < argCount; i++)
+	for (i = 0; i < argCount; i++)
 	{
 		if (cmdBuffer[i][0])
 		{
@@ -1369,7 +1397,7 @@ void CL_Clip_f(void)
 	Com_Dealloc(cmdBuffer);
 
 	// Remove the last newline character if there is one
-	size_t len = strlen(cls.clipboard.buffer);
+	len = strlen(cls.clipboard.buffer);
 	if (len > 1 && cls.clipboard.buffer[len - 1] == '\n')
 	{
 		cls.clipboard.buffer[len - 1] = '\0';
@@ -2836,6 +2864,8 @@ void CL_Init(void)
 
 	cls.state = CA_DISCONNECTED;    // no longer CA_UNINITIALIZED
 
+	Com_Memset(&cls.download, 0, sizeof(download_t));
+
 	cls.realtime = 0;
 
 	CL_InitInput();
@@ -4301,6 +4331,10 @@ void CL_OpenURL(const char *url)
 		return;
 	}
 	Sys_OpenURL(url, qfalse);
+
+	// Minimize should happen automatically since SDL detects the lost window focus
+	// Also this should only happen if we are actually fullscreen
+	// Cbuf_ExecuteText(EXEC_NOW, "minimize");
 }
 
 /**

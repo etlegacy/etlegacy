@@ -95,6 +95,8 @@ cmake_dependent_option(INSTALL_WOLFADMIN	"Install WolfAdmin enhancement suite"		
 
 option(ARM						"Build ARM version"										OFF)
 
+option(CLIENT_GLVND				"Link against GLVND OpenGL libraries"					OFF)
+
 set(ET_FS_BASEPATH "" CACHE STRING "Copy required genuine ET files from ET_FS_BASEPATH")
 cmake_dependent_option(ET_KEY	"Copy existing etkey file from ET_FS_BASEPATH)"			ON "ET_FS_BASEPATH" OFF)
 
