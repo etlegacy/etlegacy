@@ -2864,6 +2864,8 @@ void CL_Init(void)
 
 	cls.state = CA_DISCONNECTED;    // no longer CA_UNINITIALIZED
 
+	Com_Memset(&cls.download, 0, sizeof(download_t));
+
 	cls.realtime = 0;
 
 	CL_InitInput();

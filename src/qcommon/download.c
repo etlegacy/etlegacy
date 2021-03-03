@@ -265,7 +265,7 @@ void Com_NextDownload(void)
 */
 void Com_InitDownloads(void)
 {
-	char missingfiles[1024];
+	char missingFiles[1024] = { '\0' };
 
 	// init some of the www dl data
 	dld.bWWWDl             = qfalse;
@@ -276,9 +276,9 @@ void Com_InitDownloads(void)
 	if (!Com_InitUpdateDownloads())
 	{
 		// whatever auto download configuration, store missing files in a cvar, use later in the ui maybe
-		if (FS_ComparePaks(missingfiles, sizeof(missingfiles), qfalse))
+		if (FS_ComparePaks(missingFiles, sizeof(missingFiles), qfalse))
 		{
-			Cvar_Set("com_missingFiles", missingfiles);
+			Cvar_Set("com_missingFiles", missingFiles);
 		}
 		else
 		{
