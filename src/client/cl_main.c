@@ -1354,14 +1354,32 @@ void CL_Clip_f(void)
 	// Allocate a buffer for the clipboard data
 	cls.clipboard.bufferSize = MAXPRINTMSG * 10;
 	cls.clipboard.buffer = Com_Allocate(cls.clipboard.bufferSize);
+	if (!cls.clipboard.buffer)
+	{
+		Com_Error(ERR_FATAL, "Clipboard allocation failed\n");
+		return;
+	}
+
 	Com_Memset(cls.clipboard.buffer, 0, cls.clipboard.bufferSize);
 
 	// Copy all the arguments into a new array since when we start executing them one by one, the Cmd buffer gets reset.
 	argCount = Cmd_Argc() - 1;
 	cmdBuffer = Com_Allocate(argCount * sizeof(char*));
+	if (!cmdBuffer)
+	{
+		Com_Error(ERR_FATAL, "Clipboard allocation failed\n");
+		return;
+	}
+
 	for (i = 0; i < argCount; i++)
 	{
 		cmdBuffer[i] = Com_Allocate(MAX_QPATH * sizeof(char));
+		if (!cmdBuffer[i])
+		{
+			Com_Error(ERR_FATAL, "Clipboard allocation failed\n");
+			return;
+		}
+
 		Com_Memset(cmdBuffer[i], 0, MAX_QPATH * sizeof(char));
 		Q_strcpy(cmdBuffer[i], Cmd_Argv(i + 1));
 	}
