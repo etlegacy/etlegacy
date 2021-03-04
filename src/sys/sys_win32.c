@@ -287,6 +287,36 @@ const char *Sys_Dirname(char *path)
 }
 
 /**
+ * @brief Creates an absolute path name for the specified relative path name
+ * @param path relative path
+ * @return absolute path (allocated string) or NULL if path does not exist
+ */
+char *Sys_RealPath(const char *path)
+{
+	wchar_t w_fullOsPath[_MAX_PATH], w_partialPath[_MAX_PATH];
+	Sys_StringToWideCharArray(path, w_partialPath, _MAX_PATH);
+
+	if (_wfullpath(w_fullOsPath, w_partialPath, _MAX_PATH) != NULL)
+	{
+		char *output = Com_Allocate(sizeof(char) * _MAX_PATH);
+		if (!output)
+		{
+			Com_DPrintf("Failed to allocate buffer for realpath\n");
+			return NULL;
+		}
+		output[0] = '\0';
+
+		Sys_WideCharArrayToString(w_fullOsPath, output, _MAX_PATH);
+		return output;
+	}
+	else
+	{
+		Com_DPrintf("Failed to fullpath a relative path: %s\n", path);
+		return NULL;
+	}
+}
+
+/**
  * @brief Sys_FOpen
  * @param[in] ospath
  * @param[in] mode

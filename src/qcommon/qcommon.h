@@ -1406,8 +1406,13 @@ qboolean Sys_Mkdir(const char *path);
 #ifdef _WIN32
 int Sys_Remove(const char *path);
 int Sys_RemoveDir(const char *path);
+
+#define sys_stat_t struct _stat
 int Sys_Stat(const char *path, void *stat);
+#define Sys_S_IsDir(m) (m & _S_IFDIR)
+
 int Sys_Rename(const char *from, const char *to);
+char *Sys_RealPath(const char *path);
 #define Sys_PathAbsolute(name) (name && strlen(name) > 3 && name[1] == ':' && (name[2] == '\\' || name[2] == '/'))
 #else
 #include <unistd.h>
@@ -1415,6 +1420,12 @@ int Sys_Rename(const char *from, const char *to);
 #define Sys_RemoveDir(x) rmdir(x)
 #define Sys_Rename(from, to) rename(from, to)
 #define Sys_PathAbsolute(name) (name && name[0] == '/')
+// realpath() returns NULL if there are issues with the file
+#define Sys_RealPath(path) realpath(path, NULL)
+
+#define sys_stat_t struct stat
+#define Sys_Stat(osPath, statBuf) stat(osPath, statBuf)
+#define Sys_S_IsDir(m) S_ISDIR(m)
 #endif
 
 char *Sys_Cwd(void);

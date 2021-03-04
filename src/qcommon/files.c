@@ -48,10 +48,6 @@
 #    include <unzip.h>
 #endif
 
-#ifdef _WIN32
-#define realpath(N, R) _fullpath((R), (N), _MAX_PATH)
-#endif // _WIN32
-
 /*
 =============================================================================
 ET: Legacy (QUAKE3) FILESYSTEM
@@ -2027,29 +2023,16 @@ int FS_DeleteDir(const char *dirname, qboolean nonEmpty, qboolean recursive)
  */
 int FS_OSStatFile(const char *ospath)
 {
-#ifdef WIN32
-	struct _stat stat_buf;
+	sys_stat_t stat_buf;
 
 	if (Sys_Stat(ospath, &stat_buf) == -1)
 	{
 		return -1;
 	}
-	if (stat_buf.st_mode & _S_IFDIR)
+	if (Sys_S_IsDir(stat_buf.st_mode))
 	{
 		return 1;
 	}
-#else
-	struct stat stat_buf;
-
-	if (stat(ospath, &stat_buf) == -1)
-	{
-		return -1;
-	}
-	if (S_ISDIR(stat_buf.st_mode))
-	{
-		return 1;
-	}
-#endif
 
 	return 0;
 }
@@ -2061,23 +2044,13 @@ int FS_OSStatFile(const char *ospath)
  */
 long FS_FileAge(const char *ospath)
 {
-#ifdef _WIN32
-	struct _stat stat_buf;
+	sys_stat_t stat_buf;
 	time_t now, creation;
 
 	if (Sys_Stat(ospath, &stat_buf) == -1)
 	{
 		return -1;
 	}
-#else
-	struct stat stat_buf;
-	time_t now, creation;
-
-	if (stat(ospath, &stat_buf) == -1)
-	{
-		return -1;
-	}
-#endif
 
 	time(&now);
 	creation = stat_buf.st_ctime;
@@ -3483,10 +3456,10 @@ qboolean FS_IsSamePath(const char *s1, const char *s2)
 {
 	char *res1, *res2;
 
-	res1 = realpath(s1, NULL);
-	res2 = realpath(s2, NULL);
+	res1 = Sys_RealPath(s1);
+	res2 = Sys_RealPath(s2);
 
-	// realpath() returns NULL if there are issues with the file
+	// Sys_RealPath() returns NULL if there are issues with the file
 	// so the function returns true (only) if there are no errors and paths are equal
 	if (res1 && res2 && !Q_stricmp(res1, res2))
 	{
@@ -4256,7 +4229,7 @@ static void FS_AddBothGameDirectories(const char *subpath)
 		// NOTE: same filtering below for mods and basegame
 		FS_AddGameDirectory(fs_basepath->string, subpath);
 
-		if (fs_homepath->string[0] && Q_stricmp(fs_homepath->string, fs_basepath->string))
+		if (fs_homepath->string[0] && !FS_IsSamePath(fs_homepath->string, fs_basepath->string))
 		{
 			FS_AddGameDirectory(fs_homepath->string, subpath);
 #if defined(FEATURE_PAKISOLATION) && !defined(DEDICATED)
@@ -4361,7 +4334,6 @@ static void FS_Startup(const char *gameName)
 
 #ifndef DEDICATED
 	// clients: don't start if base == home, so downloads won't overwrite original files! DO NOT CHANGE!
-	//if (FS_PathCmp(fs_homepath->string, fs_basepath->string) == 0)
 	if (FS_IsSamePath(fs_homepath->string, fs_basepath->string))
 	{
 		Com_Error(ERR_FATAL, "FS_Startup: fs_homepath and fs_basepath are equal - set different paths!");
