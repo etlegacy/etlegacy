@@ -43,30 +43,30 @@ check_exit() {
 }
 
 if $color; then
-    # For color codes, see e.g. http://www.cplusplus.com/forum/unices/36461/
-    boldgreen='\033[1;32m'
-    boldlightblue='\033[1;36m'
-    boldwhite='\033[1;37m'
-    boldyellow='\033[1;33m'
-    boldred='\033[1;31m'
-    darkgreen='\033[0;32m'
-    reset='\033[0m'
+	# For color codes, see e.g. http://www.cplusplus.com/forum/unices/36461/
+	boldgreen='\033[1;32m'
+	boldlightblue='\033[1;36m'
+	boldwhite='\033[1;37m'
+	boldyellow='\033[1;33m'
+	boldred='\033[1;31m'
+	darkgreen='\033[0;32m'
+	reset='\033[0m'
 else
-    boldgreen=
-    boldlightblue=
-    boldwhite=
-    boldyellow=
-    boldred=
-    darkgreen=
-    reset=
+	boldgreen=
+	boldlightblue=
+	boldwhite=
+	boldyellow=
+	boldred=
+	darkgreen=
+	reset=
 fi
 
 einfo() {
-    echo -e "\n$boldgreen~~>$reset $boldwhite${1}$reset"
+	echo -e "\n$boldgreen~~>$reset $boldwhite${1}$reset"
 }
 
 ehead() {
-    echo -e "$boldlightblue * $boldwhite${1}$reset"
+	echo -e "$boldlightblue * $boldwhite${1}$reset"
 }
 
 app_exists() {
