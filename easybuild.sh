@@ -624,6 +624,72 @@ run_build() {
 	check_exit
 }
 
+set_osx_folder_icon_python() {
+	# Needs to be the osx:s default python install!
+	/usr/bin/python << END
+import Cocoa
+import sys
+import os
+import glob
+import shutil
+iconfile = "icon.png"
+foldername = "ETLegacy"
+if os.path.isdir(foldername):
+	shutil.rmtree(foldername)
+files = [f for f in glob.glob('./_CPack_Packages/Darwin/TGZ/etlegacy*') if os.path.isdir(f)]
+if len(files) == 1 :
+	packfolder = files[0]
+	shutil.copytree(packfolder, foldername)
+	print 'Copied the mod install folder'
+	Cocoa.NSWorkspace.sharedWorkspace().setIcon_forFile_options_(Cocoa.NSImage.alloc().initWithContentsOfFile_(iconfile), foldername, 0) or sys.exit("Unable to set file icon")
+	print 'The icon succesfully set'
+END
+}
+
+set_osx_folder_icon_tooled() {
+	# Use MacOS developer tools
+	# Set the image as its own icon
+	sips -i icon.png
+	# Export the icon data
+	DeRez -only icns icon.png > tmpicons.rscs
+	# make sure we are staring with a clean slate
+	rm -Rf ./ETLegacy
+	# Copy the CPack generate folder here
+	cp -R ./_CPack_Packages/Darwin/TGZ/etlegacy*/ ./ETLegacy
+	# Append the image data into a special icon file inside the folder
+	Rez -append tmpicons.rscs -o $'ETLegacy/Icon\r'
+	# Set the icon for the folder
+	SetFile -a C ETLegacy
+	# Hide the icon file
+	SetFile -a V $'ETLegacy/Icon\r'
+}
+
+create_ready_osx_dmg() {
+	# Create the DMG json
+	cat << END > etlegacy-dmg.json
+{
+	"title": "ET Legacy $SHORT_VERSION",
+	"icon": "../misc/etl.icns",
+	"background": "osx-dmg-background.jpg",
+	"window": {
+	  "size": {
+		  "width": 640,
+		  "height": 390
+	  }
+	},
+	"contents": [
+		{ "x": 456, "y": 250, "type": "link", "path": "/Applications" },
+		{ "x": 192, "y": 250, "type": "file", "path": "ETLegacy" }
+	]
+}
+END
+
+	# using appdmg nodejs application to generate the actual DMG installer
+	# https://github.com/LinusU/node-appdmg
+	# npm install -g appdmg
+	npx --yes appdmg@0.6.0 etlegacy-dmg.json "etlegacy-${ETLEGACY_VERSION}.dmg"
+}
+
 create_osx_dmg() {
 	# Generate DMG
 	app_exists APP_FOUND "gm"
@@ -663,49 +729,8 @@ create_osx_dmg() {
 	# brew install graphicsmagick
 	gm convert ../misc/osx-dmg-background.jpg -resize 640x360 -font ../misc/din1451alt.ttf -pointsize 20 -fill 'rgb(85,85,85)'  -draw "text 75,352 '${SHORT_VERSION}'" osx-dmg-background.jpg
 
-	# Needs to be the osx:s default python install!
-	/usr/bin/python << END
-import Cocoa
-import sys
-import os
-import glob
-import shutil
-iconfile = "icon.png"
-foldername = "ETLegacy"
-if os.path.isdir(foldername):
-	shutil.rmtree(foldername)
-files = [f for f in glob.glob('./_CPack_Packages/Darwin/TGZ/etlegacy*') if os.path.isdir(f)]
-if len(files) == 1 :
-	packfolder = files[0]
-	shutil.copytree(packfolder, foldername)
-	print 'Copied the mod install folder'
-	Cocoa.NSWorkspace.sharedWorkspace().setIcon_forFile_options_(Cocoa.NSImage.alloc().initWithContentsOfFile_(iconfile), foldername, 0) or sys.exit("Unable to set file icon")
-	print 'The icon succesfully set'
-END
-
-	# Create the DMG json
-	cat << END > etlegacy-dmg.json
-{
-	"title": "ET Legacy $SHORT_VERSION",
-	"icon": "../misc/etl.icns",
-  "background": "osx-dmg-background.jpg",
-  "window": {
-  	"size": {
-  		"width": 640,
-  		"height": 390
-  	}
-  },
-  "contents": [
-    { "x": 456, "y": 250, "type": "link", "path": "/Applications" },
-    { "x": 192, "y": 250, "type": "file", "path": "ETLegacy" }
-  ]
-}
-END
-
-	# using appdmg nodejs application to generate the actual DMG installer
-	# https://github.com/LinusU/node-appdmg
-	# npm install -g appdmg
-	npx appdmg etlegacy-dmg.json "etlegacy-${ETLEGACY_VERSION}.dmg"
+	set_osx_folder_icon_tooled
+	create_ready_osx_dmg
 }
 
 run_package() {

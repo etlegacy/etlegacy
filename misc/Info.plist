@@ -7,7 +7,7 @@
 	<key>CFBundleDisplayName</key>
 	<string>ET: Legacy</string>
 	<key>CFBundleExecutable</key>
-	<string>etl</string>
+	<string>${MACOSX_BUNDLE_EXECUTABLE_NAME}</string>
 	<key>CFBundleGetInfoString</key>
 	<string>${MACOSX_BUNDLE_INFO_STRING}</string>
 	<key>CFBundleIconFile</key>
