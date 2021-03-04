@@ -83,19 +83,6 @@ char *Sys_DefaultHomePath(void)
 			Q_strcat(homePath, sizeof(homePath), "/.etlegacy");
 #endif
 		}
-
-#ifdef __ANDROID__
-		if(SDL_AndroidGetExternalStorageState())
-		{
-			Q_strncpyz(homePath, SDL_AndroidGetExternalStoragePath(), sizeof(homePath));
-			Q_strcat(homePath, sizeof(homePath), "/etlegacy");
-		}
-		else
-		{
-			Q_strncpyz(homePath, SDL_AndroidGetInternalStoragePath(), sizeof(homePath));
-			Q_strcat(homePath, sizeof(homePath), "/etlegacy");
-		}
-#endif
 	}
 
 	return homePath;

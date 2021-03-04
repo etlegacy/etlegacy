@@ -769,10 +769,7 @@ static int GLimp_SetMode(glconfig_t *glConfig, int mode, qboolean fullscreen, qb
 		SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, samples);
 
 		// SDL2 uses opengl by default, if we want opengl es we need to set this attribute
-#ifdef FEATURE_RENDERER_GLES
-		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 1);
-		SDL_GL_SetAttribute(SDL_GL_CONTEXT_EGL, 1);
-#endif
+		//SDL_GL_SetAttribute(SDL_GL_CONTEXT_EGL, 1);
 
 		SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
@@ -1062,7 +1059,6 @@ success:
 	}
 #else
 	// Display splash screen
-#ifndef __ANDROID__
 	GLimp_Splash(glConfig);
 #endif
 
