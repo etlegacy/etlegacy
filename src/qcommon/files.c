@@ -4256,7 +4256,7 @@ static void FS_AddBothGameDirectories(const char *subpath)
 		// NOTE: same filtering below for mods and basegame
 		FS_AddGameDirectory(fs_basepath->string, subpath);
 
-		if (fs_homepath->string[0] && Q_stricmp(fs_homepath->string, fs_basepath->string))
+		if (fs_homepath->string[0] && !FS_IsSamePath(fs_homepath->string, fs_basepath->string))
 		{
 			FS_AddGameDirectory(fs_homepath->string, subpath);
 #if defined(FEATURE_PAKISOLATION) && !defined(DEDICATED)
@@ -4361,7 +4361,6 @@ static void FS_Startup(const char *gameName)
 
 #ifndef DEDICATED
 	// clients: don't start if base == home, so downloads won't overwrite original files! DO NOT CHANGE!
-	//if (FS_PathCmp(fs_homepath->string, fs_basepath->string) == 0)
 	if (FS_IsSamePath(fs_homepath->string, fs_basepath->string))
 	{
 		Com_Error(ERR_FATAL, "FS_Startup: fs_homepath and fs_basepath are equal - set different paths!");
