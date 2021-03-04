@@ -48,10 +48,6 @@
 #    include <unzip.h>
 #endif
 
-#ifdef _WIN32
-#define realpath(N, R) _fullpath((R), (N), _MAX_PATH)
-#endif // _WIN32
-
 /*
 =============================================================================
 ET: Legacy (QUAKE3) FILESYSTEM
@@ -3483,10 +3479,10 @@ qboolean FS_IsSamePath(const char *s1, const char *s2)
 {
 	char *res1, *res2;
 
-	res1 = realpath(s1, NULL);
-	res2 = realpath(s2, NULL);
+	res1 = Sys_RealPath(s1);
+	res2 = Sys_RealPath(s2);
 
-	// realpath() returns NULL if there are issues with the file
+	// Sys_RealPath() returns NULL if there are issues with the file
 	// so the function returns true (only) if there are no errors and paths are equal
 	if (res1 && res2 && !Q_stricmp(res1, res2))
 	{

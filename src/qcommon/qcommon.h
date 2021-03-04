@@ -1408,6 +1408,7 @@ int Sys_Remove(const char *path);
 int Sys_RemoveDir(const char *path);
 int Sys_Stat(const char *path, void *stat);
 int Sys_Rename(const char *from, const char *to);
+char *Sys_RealPath(const char *path);
 #define Sys_PathAbsolute(name) (name && strlen(name) > 3 && name[1] == ':' && (name[2] == '\\' || name[2] == '/'))
 #else
 #include <unistd.h>
@@ -1415,6 +1416,8 @@ int Sys_Rename(const char *from, const char *to);
 #define Sys_RemoveDir(x) rmdir(x)
 #define Sys_Rename(from, to) rename(from, to)
 #define Sys_PathAbsolute(name) (name && name[0] == '/')
+// realpath() returns NULL if there are issues with the file
+#define Sys_RealPath(path) realpath(path, NULL)
 #endif
 
 char *Sys_Cwd(void);
