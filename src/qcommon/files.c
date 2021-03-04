@@ -2023,29 +2023,16 @@ int FS_DeleteDir(const char *dirname, qboolean nonEmpty, qboolean recursive)
  */
 int FS_OSStatFile(const char *ospath)
 {
-#ifdef WIN32
-	struct _stat stat_buf;
+	sys_stat_t stat_buf;
 
 	if (Sys_Stat(ospath, &stat_buf) == -1)
 	{
 		return -1;
 	}
-	if (stat_buf.st_mode & _S_IFDIR)
+	if (Sys_S_IsDir(stat_buf.st_mode))
 	{
 		return 1;
 	}
-#else
-	struct stat stat_buf;
-
-	if (stat(ospath, &stat_buf) == -1)
-	{
-		return -1;
-	}
-	if (S_ISDIR(stat_buf.st_mode))
-	{
-		return 1;
-	}
-#endif
 
 	return 0;
 }
@@ -2057,23 +2044,13 @@ int FS_OSStatFile(const char *ospath)
  */
 long FS_FileAge(const char *ospath)
 {
-#ifdef _WIN32
-	struct _stat stat_buf;
+	sys_stat_t stat_buf;
 	time_t now, creation;
 
 	if (Sys_Stat(ospath, &stat_buf) == -1)
 	{
 		return -1;
 	}
-#else
-	struct stat stat_buf;
-	time_t now, creation;
-
-	if (stat(ospath, &stat_buf) == -1)
-	{
-		return -1;
-	}
-#endif
 
 	time(&now);
 	creation = stat_buf.st_ctime;

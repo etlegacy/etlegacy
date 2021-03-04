@@ -301,7 +301,7 @@ char *Sys_RealPath(const char *path)
 		char *output = Com_Allocate(sizeof(char) * _MAX_PATH);
 		if (!output)
 		{
-			Com_DPrintf("Failed to allocate buffer for realpath")
+			Com_DPrintf("Failed to allocate buffer for realpath\n");
 			return NULL;
 		}
 		output[0] = '\0';
