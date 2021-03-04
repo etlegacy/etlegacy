@@ -687,7 +687,7 @@ END
 	# using appdmg nodejs application to generate the actual DMG installer
 	# https://github.com/LinusU/node-appdmg
 	# npm install -g appdmg
-	npx --yes appdmg@0.6.0 etlegacy-dmg.json "etlegacy-${ETLEGACY_VERSION}.dmg"
+	npx --yes -p "appdmg@0.6.0" -c "appdmg etlegacy-dmg.json 'etlegacy-${ETLEGACY_VERSION}.dmg'"
 }
 
 create_osx_dmg() {
