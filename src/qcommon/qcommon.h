@@ -1409,7 +1409,7 @@ int Sys_RemoveDir(const char *path);
 
 #define sys_stat_t struct _stat
 int Sys_Stat(const char *path, void *stat);
-#define Sys_S_IsDir(m) (m.st_mode & _S_IFDIR)
+#define Sys_S_IsDir(m) (m & _S_IFDIR)
 
 int Sys_Rename(const char *from, const char *to);
 char *Sys_RealPath(const char *path);
