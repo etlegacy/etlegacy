@@ -623,7 +623,7 @@ void RB_SurfaceBeam(void)
 
 	qglColor3f(1, 0, 0);
 
-	// OpenGLES implementation 
+	// OpenGLES implementation
 	GLboolean text  = qglIsEnabled(GL_TEXTURE_COORD_ARRAY);
 	GLboolean glcol = qglIsEnabled(GL_COLOR_ARRAY);
 	if (glcol)
@@ -1335,7 +1335,7 @@ void RB_SurfaceFace(srfSurfaceFace_t *surf)
 	indices = ( unsigned * )((( char * ) surf) + surf->ofsIndices);
 
 	Bob         = tess.numVertexes;
-	tessIndexes = tess.indexes + tess.numIndexes;
+	tessIndexes = ( unsigned int * )( tess.indexes + tess.numIndexes);
 	for (i = surf->numIndices - 1 ; i >= 0  ; i--)
 	{
 		tessIndexes[i] = indices[i] + Bob;
@@ -1581,7 +1581,7 @@ NULL MODEL
  */
 void RB_SurfaceAxis(void)
 {
-	// OpenGLES implementation 
+	// OpenGLES implementation
 	GL_Bind(tr.whiteImage);
 	GL_State(GLS_DEFAULT);
 	qglLineWidth(3);
@@ -1843,7 +1843,11 @@ void(*rb_surfaceTable[SF_NUM_SURFACE_TYPES]) (void *) =
 	(void (*)(void *))RB_MDM_SurfaceAnim,          // SF_MDM,
 	(void (*)(void *))RB_SurfaceFlare,             // SF_FLARE,
 	(void (*)(void *))RB_SurfaceEntity,            // SF_ENTITY
+#ifndef __ANDROID__
 	(void (*)(void *))RB_SurfaceDisplayList,       // SF_DISPLAY_LIST
+#else
+    NULL,                                          // NULL
+#endif
 	(void (*)(void *))RB_SurfacePolyBuffer,        // SF_POLYBUFFER
 	(void (*)(void *))RB_SurfaceDecal,             // SF_DECAL
 };

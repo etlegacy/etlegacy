@@ -181,7 +181,12 @@ static void DrawTris(shaderCommands_t *input)
 
 	qglVertexPointer(3, GL_FLOAT, 16, input->xyz);   // padded for SIMD
 
+#ifndef __ANDROID__
 	R_DrawElements(input->numIndexes, input->indexes);
+#else
+	qglDrawArrays(GL_TRIANGLES, 0, input->numVertexes);
+	qglDrawElements(GL_LINE_STRIP, input->numIndexes, GL_INDEX_TYPE, input->indexes );
+#endif
 
 	qglDepthRange(0, 1);
 }
@@ -309,15 +314,15 @@ static void DrawMultitextured(shaderCommands_t *input, int stage)
  */
 static void DynamicLightSinglePass(void)
 {
-	int      i, l, a, b, c, color, *intColors;
-	vec3_t   origin;
-	byte     *colors;
-	unsigned hitIndexes[SHADER_MAX_INDEXES];
-	int      numIndexes;
-	float    radius, radiusInverseCubed;
-	float    intensity, remainder, modulate;
-	vec3_t   floatColor, dir;
-	dlight_t *dl;
+	int       i, l, a, b, c, color, *intColors;
+	vec3_t    origin;
+	byte      *colors;
+	glIndex_t hitIndexes[SHADER_MAX_INDEXES];
+	int       numIndexes;
+	float     radius, radiusInverseCubed;
+	float     intensity, remainder, modulate;
+	vec3_t    floatColor, dir;
+	dlight_t  *dl;
 
 	// early out
 	if (backEnd.refdef.num_dlights == 0)
@@ -1459,6 +1464,10 @@ void RB_StageIteratorLightmappedMultitexture(void)
 
 	qglEnableClientState(GL_TEXTURE_COORD_ARRAY);
 	qglTexCoordPointer(2, GL_FLOAT, 16, tess.texCoords[0][1]);
+
+#ifdef __ANDROID__
+	qglDrawArrays(GL_POINTS, 0, input->numVertexes);
+#endif
 
 	R_DrawElements(input->numIndexes, input->indexes);
 

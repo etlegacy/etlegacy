@@ -176,9 +176,11 @@ if(BUILD_MOD AND INSTALL_EXTRA)
 endif(BUILD_MOD AND INSTALL_EXTRA)
 
 # Generate install and uninstall packs
-include(cmake/ETLInstall.cmake)
+if(NOT ANDROID)
+	include(cmake/ETLInstall.cmake)
 
-# Packaging support
-include(cmake/ETLCPack.cmake)
+	# Packaging support
+	include(cmake/ETLCPack.cmake)
 
-set_target_properties(uninstall PROPERTIES FOLDER ${CMAKE_TARGETS_FOLDER})
+	set_target_properties(uninstall PROPERTIES FOLDER ${CMAKE_TARGETS_FOLDER})
+endif()

@@ -282,7 +282,7 @@ static void R_LoadVisibility(lump_t *l)
 	byte *buf;
 
 	len = PAD(s_worldData.numClusters, 64);
-	
+
 	s_worldData.novis = ri.Hunk_Alloc(len, h_low);
 	Com_Memset(s_worldData.novis, 0xff, len);
 
@@ -628,7 +628,7 @@ static void ParseFoliage(dsurface_t *ds, drawVert_t *verts, msurface_t *surf, in
 	foliage->normal       = ( vec4_t * )(foliage->xyz + foliage->numVerts);
 	foliage->texCoords    = ( vec2_t * )(foliage->normal + foliage->numVerts);
 	foliage->lmTexCoords  = ( vec2_t * )(foliage->texCoords + foliage->numVerts);
-	foliage->indexes      = ( unsigned int * )(foliage->lmTexCoords + foliage->numVerts);
+	foliage->indexes      = ( glIndex_t * )(foliage->lmTexCoords + foliage->numVerts);
 	foliage->instances    = ( foliageInstance_t * )(foliage->indexes + foliage->numIndexes);
 
 	surf->data = (surfaceType_t *) foliage;

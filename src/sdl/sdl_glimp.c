@@ -757,6 +757,7 @@ static int GLimp_SetMode(glconfig_t *glConfig, int mode, qboolean fullscreen, qb
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 1);
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
+		SDL_GL_SetAttribute(SDL_GL_CONTEXT_EGL, 1);
 #endif
 
 		SDL_GL_SetAttribute(SDL_GL_RED_SIZE, perChannelColorBits);
@@ -767,9 +768,6 @@ static int GLimp_SetMode(glconfig_t *glConfig, int mode, qboolean fullscreen, qb
 
 		SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, samples ? 1 : 0);
 		SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, samples);
-
-		// SDL2 uses opengl by default, if we want opengl es we need to set this attribute
-		//SDL_GL_SetAttribute(SDL_GL_CONTEXT_EGL, 1);
 
 		SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
@@ -1048,7 +1046,7 @@ success:
 
 	Cvar_Get("r_availableModes", "", CVAR_ROM);
 
-#if defined(__APPLE__) && !defined(BUNDLED_SDL)
+#if defined(__APPLE__) && !defined(BUNDLED_SDL) && !defined(__ANDROID__)
 	// When running on system SDL2 on OSX the cocoa driver causes
 	// the splash screen to stay on top of the rendering (at least when running from CLion)
 	// FIXME: clear the splash? Does not seem to happen with bundled SDL2.
