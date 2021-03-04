@@ -330,7 +330,9 @@ Section "Omni-bot" OMNIBOT
 		IDCANCEL END IDRETRY GET_BOT
 
 	UNPACK_BOT:
-		ZipDLL::extractall "$TEMP\@OMNIBOT_ARCHIVE@" "$INSTDIR\legacy"
+		; Lets not log the output, since it will actually slow down the unpacking
+		; nsisunz::UnzipToLog "$TEMP\@OMNIBOT_ARCHIVE@" "$INSTDIR\legacy"
+		nsisunz::Unzip "$TEMP\@OMNIBOT_ARCHIVE@" "$INSTDIR\legacy"
 		IfFileExists "$INSTDIR\legacy\omni-bot\*.*" END
 		MessageBox MB_ICONEXCLAMATION|MB_OK $(DESC_Section12)
 
