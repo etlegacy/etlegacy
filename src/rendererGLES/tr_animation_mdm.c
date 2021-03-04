@@ -41,6 +41,10 @@
 
 #include "tr_local.h"
 
+#ifdef __ARM_NEON__
+	#include <arm_neon.h>
+#endif
+
 // undef to use floating-point lerping with explicit trig funcs
 #define YD_INGLES
 
@@ -1862,16 +1866,36 @@ void RB_MDM_SurfaceAnim(mdmSurface_t *surface)
 	{
 		mdmWeight_t *w;
 
+#ifdef __ARM_NEON__
+		float32x4_t _tempVert = vdupq_n_f32(0.0f);
+#else
 		VectorClear(tempVert);
+#endif
 
 		w = v->weights;
 		for (k = 0 ; k < v->numWeights ; k++, w++)
 		{
 			bone = &bones[w->boneIndex];
+#ifdef __ARM_NEON__
+			const float32x4x3_t _mat = vld3q_f32((float*)bone->matrix);
+			_tempVert += 	  (   w->offset[0] * _mat.val[0] 
+								+ w->offset[1] * _mat.val[1]
+								+ w->offset[2] * _mat.val[2]
+								+ vld1q_f32(bone->translation) ) *  w->boneWeight;
+#else
 			LocalAddScaledMatrixTransformVectorTranslate(w->offset, w->boneWeight, bone->matrix, bone->translation, tempVert);
+#endif
 		}
 
+#ifdef __ARM_NEON__
+		vst1q_f32(tempVert, _tempVert);
+		const float32x4x3_t _mat = vld3q_f32((float*)bones[v->weights[0].boneIndex].matrix);
+		vst1q_f32(tempNormal,	  vdupq_n_f32(v->normal[0])*_mat.val[0]
+								+ vdupq_n_f32(v->normal[1])*_mat.val[1]
+								+ vdupq_n_f32(v->normal[2])*_mat.val[2] );
+#else
 		LocalMatrixTransformVector(v->normal, bones[v->weights[0].boneIndex].matrix, tempNormal);
+#endif
 
 		tess.texCoords[baseVertex + j][0][0] = v->texCoords[0];
 		tess.texCoords[baseVertex + j][0][1] = v->texCoords[1];

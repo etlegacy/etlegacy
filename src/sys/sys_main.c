@@ -660,7 +660,11 @@ static void *Sys_TryLibraryLoad(const char *base, const char *gamedir, const cha
 	fn = FS_BuildOSPath(base, gamedir, fname);
 	Com_Printf("Sys_LoadDll(%s)... ", fn);
 
+#ifndef __ANDROID__
 	libHandle = Sys_LoadLibrary(fn);
+#else
+	libHandle = Sys_LoadLibrary(fname);
+#endif
 
 	if (!libHandle)
 	{

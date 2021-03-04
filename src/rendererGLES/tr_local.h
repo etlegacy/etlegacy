@@ -1874,7 +1874,7 @@ RENDERER BACK END COMMAND QUEUE
 =============================================================
 */
 
-#define MAX_RENDER_COMMANDS 0x40000
+#define MAX_RENDER_COMMANDS (0x40000 * 2)
 
 /**
  * @struct renderCommandList_t
@@ -2242,14 +2242,10 @@ qboolean R_inPVS(const vec3_t p1, const vec3_t p2);
 extern cvar_t *r_ignoreFastPath;        ///< allows us to ignore our Tess fast paths
 
 extern cvar_t *r_textureBits;           ///< number of desired texture bits
-										///< 0 = use framebuffer depth
-										///< 16 = use 16-bit textures
-										///< 32 = use 32-bit textures
-										///< all else = error
-extern cvar_t *r_primitives;            ///< "0" = based on compiled vertex array existance
-										///< "1" = glDrawElemet tristrips
-										///< "2" = glDrawElements triangles
-										///< "-1" = no drawing
+                                        ///< 0 = use framebuffer depth
+                                        ///< 16 = use 16-bit textures
+                                        ///< 32 = use 32-bit textures
+                                        ///< all else = error
 
 extern cvar_t *r_extMaxAnisotropy;      ///< FIXME: not used in GLES ! move it ?
 										///< FIXME: "extern int      maxAnisotropy" founded

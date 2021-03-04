@@ -235,6 +235,10 @@ void R_ImageList_f(void)
 		case 4:
 			Ren_Print("RGBA ");
 			break;
+		case GL_RGB8_OES:
+		case GL_COMPRESSED_RGBA_S3TC_DXT1_EXT:
+			Ren_Print("S3TC ");
+			break;
 		case GL_RGBA4:
 			Ren_Print("RGBA4");
 			break;

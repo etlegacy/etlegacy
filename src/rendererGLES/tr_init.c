@@ -101,7 +101,6 @@ cvar_t *r_extMaxAnisotropy;
 cvar_t *r_ignoreGLErrors;
 cvar_t *r_logFile;
 
-cvar_t *r_primitives;
 cvar_t *r_textureBits;
 
 cvar_t *r_drawBuffer;
@@ -345,7 +344,7 @@ byte *RB_ReadZBuffer(int x, int y, int width, int height, int *padlen)
 
 	bufstart = PADP(( intptr_t ) buffer, packAlign);
 	qglDepthRange(0.0f, 1.0f);
-	qglReadPixels(x, y, width, height, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, bufstart);
+	qglReadPixels(x, y, width, height, GL_DEPTH_COMPONENT32_OES, GL_UNSIGNED_BYTE, bufstart);
 
 	*padlen = padwidth - linelen;
 
@@ -1041,11 +1040,6 @@ void R_Register(void)
 
 	r_railWidth         = ri.Cvar_Get("r_railWidth", "16", CVAR_ARCHIVE);
 	r_railSegmentLength = ri.Cvar_Get("r_railSegmentLength", "32", CVAR_ARCHIVE);
-
-	r_primitives = ri.Cvar_Get("r_primitives", "0", CVAR_ARCHIVE);
-	// Added this due to invalid values actually causing no drawing
-	// r_primitives == 2 fixes some issues on ATI cards
-	ri.Cvar_CheckRange(r_primitives, 0, 3, qtrue);
 
 	r_ambientScale  = ri.Cvar_Get("r_ambientScale", "0.5", CVAR_CHEAT);
 	r_directedScale = ri.Cvar_Get("r_directedScale", "1", CVAR_CHEAT);

@@ -33,6 +33,10 @@
  * @brief Stateless support routines that are included in each code module
  */
 
+#ifdef __ARM_NEON__
+	#include <arm_neon.h>
+#endif
+
 #include "q_shared.h"
 
 vec3_t vec3_origin = { 0, 0, 0 };
@@ -780,6 +784,18 @@ void vec3_rotate(const vec3_t in, vec3_t matrix[3], vec3_t out)
  */
 float Q_rsqrt(float f)
 {
+#ifdef __ARM_NEON__
+	float32x2_t a,b;
+	float res[2];
+	a=vdup_n_f32(number);
+	b=a;
+	a=vrsqrte_f32(a);
+	a=vmul_f32(a,vrsqrts_f32(b, vmul_f32(a,a)));
+//	b=vmul_f32(a,vrsqrts_f32(b, vmul_f32(a,a)));
+
+	vst1_f32(res, a);
+	return res[0];
+#else
 	floatint_t  t;
 	float       x2, y;
 	const float threehalfs = 1.5F;
@@ -792,6 +808,7 @@ float Q_rsqrt(float f)
 	//y  = y * ( threehalfs - ( x2 * y * y ) );   // 2nd iteration, this can be removed
 
 	return y;
+#endif
 }
 
 /**
@@ -1532,6 +1549,34 @@ vec_t vec3_norm(vec3_t v)
  * @param[in,out] v
  */
 void vec3_norm_fast(vec3_t v)
+#ifdef __ARM_NEON__
+{
+        asm volatile (
+        "vld1.32                {d4}, [%0]                      \n\t"   //d4={x0,y0}
+        "flds                   s10, [%0, #8]                   \n\t"   //d5[0]={z0}
+
+        "vmul.f32               d0, d4, d4                      \n\t"   //d0= d4*d4
+        "vpadd.f32              d0, d0                          \n\t"   //d0 = d[0] + d[1]
+        "vmla.f32               d0, d5, d5                      \n\t"   //d0 = d0 + d5*d5
+
+        "vmov.f32               d1, d0                          \n\t"   //d1 = d0
+        "vrsqrte.f32    		d0, d0                          \n\t"   //d0 = ~ 1.0 / sqrt(d0)
+        "vmul.f32               d2, d0, d1                      \n\t"   //d2 = d0 * d1
+        "vrsqrts.f32    		d3, d2, d0                      \n\t"   //d3 = (3 - d0 * d2) / 2
+        "vmul.f32               d0, d0, d3                      \n\t"   //d0 = d0 * d3
+        "vmul.f32               d2, d0, d1                      \n\t"   //d2 = d0 * d1
+        "vrsqrts.f32    		d3, d2, d0                      \n\t"   //d4 = (3 - d0 * d3) / 2
+        "vmul.f32               d0, d0, d3                      \n\t"   //d0 = d0 * d4
+
+        "vmul.f32               q2, q2, d0[0]                   \n\t"   //d0= d2*d4
+        "vst1.32                d4, [%0]                      	\n\t"   //
+        "fsts                   s10, [%0, #8]                   \n\t"   //
+
+        :"+&r"(v):
+    : "d0", "d1", "d2", "d3", "d4", "d5", "memory"
+        );
+}
+#else
 {
 	float ilength;
 
@@ -1541,6 +1586,7 @@ void vec3_norm_fast(vec3_t v)
 	v[1] *= ilength;
 	v[2] *= ilength;
 }
+#endif
 
 /**
  * @brief vec3_norm2
@@ -1580,9 +1626,27 @@ vec_t vec3_norm2(const vec3_t v, vec3_t out)
  */
 void _VectorMA(const vec3_t veca, float scale, const vec3_t vecb, vec3_t vecc)
 {
+#ifdef __ARM_NEON__
+	asm volatile (
+        "vld1.32                {d0}, [%0]                  \n\t"   //d0={x0,y0}
+        "flds                   s2, [%0, #8]	            		\n\t"   //d1[0]={z0}
+        "vld1.32                {d2}, [%2]                      \n\t"   //d2={x1,y1}
+        "flds                   s6, [%2, #8] 	  				\n\t"   //d3[0]={z1}
+		"vmov.32				s8, %1							\n\t"
+        "vdup.f32				d4, d4[0]						\n\t"	//d4=scale
+
+        "vmla.f32				d0, d2, d4						\n\t"
+        "vmla.f32				d1, d3, d4						\n\t"
+        "vst1.32				d0, [%3]						\n\t"
+        "fsts                   s2, [%3, #8]                       \n\t"   //
+		: "+&r"(veca), "+&r"(scale), "+&r"(vecb), "+&r" (vecc):
+		: "d0", "d1", "d2", "d3", "d4", "memory"
+		);
+#else
 	vecc[0] = veca[0] + scale * vecb[0];
 	vecc[1] = veca[1] + scale * vecb[1];
 	vecc[2] = veca[2] + scale * vecb[2];
+#endif
 }
 
 /**
@@ -1655,9 +1719,35 @@ void _VectorScale(const vec3_t in, vec_t scale, vec3_t out)
  */
 void vec3_cross(const vec3_t v1, const vec3_t v2, vec3_t cross)
 {
+#ifdef __ARM_NEON__
+	asm volatile (
+        "flds                   s3, [%0]                        \n\t"   //d1[1]={x0}
+        "add                    %0, %0, #4                      \n\t"   //
+        "vld1.32                {d0}, [%0]                      \n\t"   //d0={y0,z0}
+        "vmov.f32               s2, s1                          \n\t"   //d1[0]={z0}
+
+        "flds                   s5, [%1]                        \n\t"   //d2[1]={x1}
+        "add                    %1, %1, #4                      \n\t"   //
+        "vld1.32                {d3}, [%1]                      \n\t"   //d3={y1,z1}
+        "vmov.f32               s4, s7                          \n\t"   //d2[0]=d3[1]
+
+        "vmul.f32               d4, d0, d2                      \n\t"   //d4=d0*d2
+        "vmls.f32               d4, d1, d3                      \n\t"   //d4-=d1*d3
+
+        "vmul.f32               d5, d3, d1[1]           		\n\t"   //d5=d3*d1[1]
+        "vmls.f32               d5, d0, d2[1]          		 	\n\t"   //d5-=d0*d2[1]
+
+        "vst1.32                d4, [%2]                        \n\t"   //
+        "fsts                   s10, [%2, #8]                       \n\t"   //
+
+        : "+&r"(v1), "+&r"(v2), "+&r"(cross):
+		: "d0", "d1", "d2", "d3", "d4", "d5", "memory"
+        );
+#else
 	cross[0] = v1[1] * v2[2] - v1[2] * v2[1];
 	cross[1] = v1[2] * v2[0] - v1[0] * v2[2];
 	cross[2] = v1[0] * v2[1] - v1[1] * v2[0];
+#endif
 }
 
 /**

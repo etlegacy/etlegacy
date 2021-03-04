@@ -34,6 +34,10 @@
 
 #include "tr_local.h"
 
+#ifdef __ARM_NEON__
+	#include <arm_neon.h>
+#endif
+
 /*
 All bones should be an identity orientation to display the mesh exactly
 as it is specified.
@@ -1622,7 +1626,11 @@ void RB_SurfaceAnim(mdsSurface_t *surface)
 	{
 		mdsWeight_t *w;
 
+#ifdef __ARM_NEON__
+		float32x4_t _tempVert = vdupq_n_f32(0.0f);
+#else
 		VectorClear(tempVert);
+#endif
 
 		w = v->weights;
 		for (k = 0 ; k < v->numWeights ; k++, w++)
