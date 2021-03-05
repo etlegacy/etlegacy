@@ -81,7 +81,7 @@
     <update_contact>mail@etlegacy.com</update_contact>
 
     <releases>
-        <release version="2.77" date="2021-03-01" />
+        <release version="@ETL_CMAKE_PROD_VERSION_STR@" date="@ETL_CMAKE_BUILD_DATE@" />
     </releases>
 
 </component>
