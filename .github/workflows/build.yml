@@ -32,7 +32,7 @@ jobs:
   lnx64-mod:
     runs-on: ubuntu-16.04
     container:
-      image: etlegacy/lnx-build:centos7
+      image: etlegacy/lnx-build:centos7-wayland
     steps:
       - uses: actions/checkout@v2
         with:
@@ -145,7 +145,7 @@ jobs:
   lnx32:
     runs-on: ubuntu-16.04
     container:
-      image: etlegacy/lnx-build:centos7
+      image: etlegacy/lnx-build:centos7-wayland
     needs: [ lnx64-mod, osx-mod, win-mod, raspberry_pi-mod ]
     steps:
       - uses: actions/checkout@v2
@@ -206,7 +206,7 @@ jobs:
     runs-on: ubuntu-16.04
     needs: [ lnx32 ]
     container:
-      image: etlegacy/lnx-build:centos7
+      image: etlegacy/lnx-build:centos7-wayland
     steps:
       - uses: actions/checkout@v2
         with:
