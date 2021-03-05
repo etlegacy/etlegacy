@@ -354,9 +354,9 @@
 //        #define ARCH_STRING "armeabi_neon-v7a"
 //      #endif
 //    #else
-//    #ifndef ARCH_STRING
+    #ifndef ARCH_STRING
       #define ARCH_STRING "armeabi-v7a"
-//    #endif
+    #endif
   #endif
 #elif defined __aarch64__
       #define ARCH_STRING "arm64-v8a"
