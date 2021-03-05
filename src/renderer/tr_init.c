@@ -1234,10 +1234,8 @@ void RE_Shutdown(qboolean destroyWindow)
 	ri.Cmd_RemoveSystemCommand("shaderlist");
 	ri.Cmd_RemoveSystemCommand("skinlist");
 	ri.Cmd_RemoveSystemCommand("modellist");
-	ri.Cmd_RemoveSystemCommand("modelist");
 	ri.Cmd_RemoveSystemCommand("screenshot");
 	ri.Cmd_RemoveSystemCommand("gfxinfo");
-	ri.Cmd_RemoveSystemCommand("minimize");
 	ri.Cmd_RemoveSystemCommand("taginfo");
 
 	// keep a backup of the current images if possible

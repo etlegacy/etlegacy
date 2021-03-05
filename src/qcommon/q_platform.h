@@ -151,11 +151,11 @@
 #endif
 
 
-//============================================================== MAC OS X ===
+//================================================================= MAC OS ===
 
 #if defined(__APPLE__) || defined(__APPLE_CC__)
 
-#define OS_STRING "macosx"
+#define OS_STRING "macos"
 #define ID_INLINE __inline
 #define PATH_SEP '/'
 

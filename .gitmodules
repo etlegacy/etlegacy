@@ -1,5 +1,6 @@
 [submodule "libs"]
 	path = libs
-	url = git://github.com/etlegacy/etlegacy-libs.git
+	url = ../../etlegacy/etlegacy-libs.git
 	branch = master
 	ignore = dirty
+	shallow = true

@@ -1132,11 +1132,11 @@ void G_BounceItem(gentity_t *ent, trace_t *trace)
 	dot = DotProduct(velocity, trace->plane.normal);
 	VectorMA(velocity, -2 * dot, trace->plane.normal, ent->s.pos.trDelta);
 
+	// cut the velocity to keep from bouncing forever
+	VectorScale(ent->s.pos.trDelta, ent->physicsBounce, ent->s.pos.trDelta);
+
 	if (trace->plane.normal[2] >= 0.7f || VectorLength(ent->s.pos.trDelta) < 16)
 	{
-		// cut the velocity to keep from bouncing forever
-		VectorScale(ent->s.pos.trDelta, ent->physicsBounce, ent->s.pos.trDelta);
-
 		if (VectorLength(ent->s.pos.trDelta) < 40 && trace->plane.normal[2] > 0)
 		{
 			if (trace->plane.normal[2] > 0.7f &&

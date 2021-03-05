@@ -36,7 +36,9 @@ if(UNIX)
 	install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/misc/etlegacy.xml"
 		DESTINATION "${CMAKE_INSTALL_PREFIX}/share/mime/packages"
 	)
-	install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/misc/com.etlegacy.ETLegacy.metainfo.xml"
+	configure_file("${CMAKE_CURRENT_SOURCE_DIR}/misc/com.etlegacy.ETLegacy.metainfo.xml.in"
+			"${CMAKE_CURRENT_BINARY_DIR}/misc/com.etlegacy.ETLegacy.metainfo.xml" @ONLY)
+	install(FILES "${CMAKE_CURRENT_BINARY_DIR}/misc/com.etlegacy.ETLegacy.metainfo.xml"
 		DESTINATION "${CMAKE_INSTALL_PREFIX}/share/metainfo"
 	)
 	install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/docs/linux/man/man6/"

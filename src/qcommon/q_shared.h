@@ -215,11 +215,11 @@ int Q_vsnprintf(char *str, size_t size, const char *format, va_list args);
 
 #endif // _WIN32
 
-//======================= MAC OS X DEFINES =====================
+//======================= MAC OS DEFINES =================================
 
 #if defined(__APPLE__)
 
-#define CPUSTRING   "MacOS_X" // TODO: check if some mods depend on the old Mac CPUSTRING
+#define CPUSTRING   "MacOS" // TODO: check if some mods depend on the old Mac CPUSTRING
 // #define CPUSTRING   "OSX-universal" // old
 
 #define PATH_SEP    '/'

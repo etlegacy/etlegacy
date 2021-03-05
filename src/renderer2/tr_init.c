@@ -1346,7 +1346,7 @@ void R_Register(void)
 	r_recompileShaders        = ri.Cvar_Get("r_recompileShaders", "0", CVAR_ARCHIVE);
 
 	r_wolfFog = ri.Cvar_Get("r_wolfFog", "1", CVAR_ARCHIVE);
-	
+
 
 	r_screenSpaceAmbientOcclusion = ri.Cvar_Get("r_screenSpaceAmbientOcclusion", "0", CVAR_ARCHIVE);
 	ri.Cvar_CheckRange(r_screenSpaceAmbientOcclusion, 0, 2, qtrue);
@@ -1355,7 +1355,7 @@ void R_Register(void)
 	r_reflectionMapping        = ri.Cvar_Get("r_reflectionMapping", "0", CVAR_ARCHIVE | CVAR_LATCH);
 	r_highQualityNormalMapping = ri.Cvar_Get("r_highQualityNormalMapping", "0", CVAR_ARCHIVE | CVAR_LATCH);
 
-	
+
 
 	// temporary latched variables that can only change over a restart
 	r_overBrightBits    = ri.Cvar_Get("r_overBrightBits", "0", CVAR_ARCHIVE | CVAR_LATCH);
@@ -1502,7 +1502,7 @@ void R_Register(void)
 	r_clear           = ri.Cvar_Get("r_clear", "0", CVAR_CHEAT);
 	r_offsetFactor    = ri.Cvar_Get("r_offsetFactor", "-1", CVAR_CHEAT);
 	r_offsetUnits     = ri.Cvar_Get("r_offsetUnits", "-2", CVAR_CHEAT);
-	
+
 	//These makes the spec spot bigger or smaller, the higher the number the smaller the dot
 	r_specularExponent  = ri.Cvar_Get("r_specularExponent", "512.0", CVAR_ARCHIVE | CVAR_LATCH); // cheat?
 	r_specularExponent2 = ri.Cvar_Get("r_specularExponent2", "2", CVAR_ARCHIVE | CVAR_LATCH);    // cheat? - a factor used only for entities.. for now
@@ -1517,7 +1517,7 @@ void R_Register(void)
 	//rim light gives your shading a nice volumentric effect which can greatly enhance the contrast with the background
 	r_rimLighting = ri.Cvar_Get("r_rimLighting", "0", CVAR_CHEAT | CVAR_LATCH); // was CVAR_ARCHIVE | CVAR_LATCH
 	                                                                            // FIXME: make rim lighting work with diffuse maps/textures
-	                                                                            // see 
+	                                                                            // see
 	                                                                            // and set old flags again
 	r_rimExponent = ri.Cvar_Get("r_rimExponent", "3", CVAR_CHEAT | CVAR_LATCH);
 	ri.Cvar_CheckRange(r_rimExponent, 0.5, 8.0, qfalse);
@@ -1772,7 +1772,6 @@ void RE_Shutdown(qboolean destroyWindow)
 	ri.Cmd_RemoveSystemCommand("shaderexp");
 	ri.Cmd_RemoveSystemCommand("skinlist");
 	ri.Cmd_RemoveSystemCommand("gfxinfo");
-	ri.Cmd_RemoveSystemCommand("modelist");
 	ri.Cmd_RemoveSystemCommand("animationlist");
 	ri.Cmd_RemoveSystemCommand("fbolist");
 	ri.Cmd_RemoveSystemCommand("vbolist");
