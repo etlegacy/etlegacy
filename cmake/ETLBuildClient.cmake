@@ -22,6 +22,7 @@ elseif(APPLE)
 
 	# Create the .app bundle
 	add_executable(etl MACOSX_BUNDLE ${COMMON_SRC} ${CLIENT_SRC} ${PLATFORM_SRC} ${PLATFORM_CLIENT_SRC} ${MACOSX_RESOURCES})
+	set_target_properties(etl PROPERTIES OUTPUT_NAME "ET Legacy")
 else()
 	add_executable(etl ${COMMON_SRC} ${CLIENT_SRC} ${PLATFORM_SRC} ${PLATFORM_CLIENT_SRC})
 endif()
