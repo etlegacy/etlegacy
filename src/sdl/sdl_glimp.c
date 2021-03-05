@@ -265,6 +265,9 @@ void GLimp_Shutdown(void)
 		main_window = NULL;
 	}
 
+	Cmd_RemoveCommand("modelist");
+	Cmd_RemoveCommand("minimize");
+
 	SDL_QuitSubSystem(SDL_INIT_VIDEO);
 }
 
