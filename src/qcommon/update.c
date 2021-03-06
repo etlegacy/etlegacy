@@ -240,9 +240,8 @@ static void Com_RunUpdateBinary(const char *updateBinary, const char *updateConf
 	Com_sprintf(cmdBuffer, MAX_OSPATH, " --wait " CMDP "%s" CMDP, Cvar_VariableString("com_pid"));
 	Com_sprintf(cmdBuffer, MAX_OSPATH, " --auto-close");
 
-	//The etl client is in the app bundle so we need to browse a bit further
 #if defined(__APPLE__) && !defined(DEDICATED)
-	Com_sprintf(cmdBuffer, MAX_OSPATH, " --execute " CMDP "etl.app/Contents/MacOS/" GAME_BINARY CMDP);
+	Com_sprintf(cmdBuffer, MAX_OSPATH, " --execute " CMDP "ET Legacy.app" CMDP);
 #else
 	Com_sprintf(cmdBuffer, MAX_OSPATH, " --execute " CMDP GAME_BINARY CMDP);
 #endif

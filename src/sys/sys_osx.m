@@ -178,22 +178,22 @@ int OSX_NeedsQuarantineFix()
 	bool  dialogReturn;
 	int   taskRetVal;
 
-	// appPath contains complete path including etl.app
+	// appPath contains complete path including "ET Legacy.app"
 	NSURL *appPath = [NSURL fileURLWithPath:[[NSBundle mainBundle] bundlePath]];
 	NSURL *newPath = nil;
 
 	//does the app run in a translocated path?
-	isQuarantined = IsTranslocatedURL((CFURLRef) appPath, &newPath);
+	isQuarantined = IsTranslocatedURL((CFURLRef) appPath, (CFURLRef *) &newPath);
 
 	if (isQuarantined)
 	{
-		// strip etl.app from string to get the directory
-		NSMutableString *tempPath = [NSMutableString stringWithString: [newPath.path stringByReplacingOccurrencesOfString:@"/etl.app" withString:@""]];
-		NSString *tempPathBin = @"/etl.app";
+		// NSString *etlApp = [[appPath lastPathComponent] stringByDeletingPathExtension];
+		// NSString *etlApp = [appPath lastPathComponent];
+		NSString *installPath = [[appPath path] stringByDeletingLastPathComponent];
 
 		// assemble dialog text
 		NSMutableString *permissiontext = [NSMutableString stringWithString: @"The game runs in a hidden folder, to prevent possible dangerous apps. As this prevents loading the game files, a command needs to be executed to run the game from its original path.\r\n\r\nShould the following command be executed now?\r\n\r\n/usr/bin/xattr -cr "];
-		[permissiontext appendString:tempPath];
+		[permissiontext appendString:installPath];
 
 		// ask user if we should fix it programmatically
 		dialogReturn = Sys_Dialog(DT_YES_NO, [permissiontext UTF8String], "App Translocation detected");
@@ -202,7 +202,7 @@ int OSX_NeedsQuarantineFix()
 			// remove quarantine flag
 			@try
 			{
-				NSTask *xattrTask = [NSTask launchedTaskWithLaunchPath:@"/usr/bin/xattr" arguments:@[@"-cr", (NSURL *)tempPath]];
+				NSTask *xattrTask = [NSTask launchedTaskWithLaunchPath:@"/usr/bin/xattr" arguments:@[@"-cr", installPath]];
 				[xattrTask waitUntilExit];
 				taskRetVal = xattrTask.terminationStatus;
 				if (taskRetVal != 0)
@@ -222,10 +222,7 @@ int OSX_NeedsQuarantineFix()
 			// relaunch, using 'open'
 			@try
 			{
-				// readd "/etl.app" to path
-				[tempPath appendString:tempPathBin];
-
-				[NSTask launchedTaskWithLaunchPath:@"/usr/bin/open" arguments:@[@"-n", @"-a", tempPath]];
+				[NSTask launchedTaskWithLaunchPath:@"/usr/bin/open" arguments:@[@"-n", @"-a", appPath.path]];
 			}
 			@catch (NSException *exception)
 			{
@@ -238,7 +235,7 @@ int OSX_NeedsQuarantineFix()
 		else
 		{
 			NSMutableString *errortext = [NSMutableString stringWithString: @"Running ET: Legacy with enabled App Translocation isn't possible. Please remove the quarantine flag by using the following command in the terminal and restart the game:\r\n\r\nxattr -cr "];
-			[errortext appendString:tempPath];
+			[errortext appendString:installPath];
 			[errortext appendString:@"\r\n\r\nFor more information please go to:\r\n\r\nhttps://github.com/etlegacy/etlegacy/wiki/Mac-OS-X"];
 			Sys_Dialog(DT_ERROR, [errortext UTF8String], "App Translocation detected");
 			return 4;

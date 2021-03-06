@@ -1002,7 +1002,7 @@ int main(int argc, char **argv)
 
 #if defined(__APPLE__) && !defined(DEDICATED)
 	SDL_EventState(SDL_DROPFILE, SDL_ENABLE);
-	// argv[0] would be /Users/seth/etlegacy/etl.app/Contents/MacOS
+	// argv[0] would be /Users/seth/etlegacy/ET Legacy.app/Contents/MacOS
 	// But on OS X we want to pretend the binary path is the .app's parent
 	// So that way the base folder is right next to the .app allowing
 	{
