@@ -11,7 +11,7 @@ elseif(APPLE)
 	set(MACOSX_BUNDLE_ICON_FILE              "etl.icns")
 	set(MACOSX_BUNDLE_GUI_IDENTIFIER         "com.etlegacy.etl")
 	set(MACOSX_BUNDLE_LONG_VERSION_STRING    "${ETL_CMAKE_VERSION}")
-	set(MACOSX_BUNDLE_BUNDLE_NAME            "ETLegacy")
+	set(MACOSX_BUNDLE_BUNDLE_NAME            "ET Legacy")
 	set(MACOSX_BUNDLE_SHORT_VERSION_STRING   "${ETL_CMAKE_VERSION_SHORT}")
 	set(MACOSX_BUNDLE_COPYRIGHT              "etlegacy.com")
 
@@ -22,7 +22,12 @@ elseif(APPLE)
 
 	# Create the .app bundle
 	add_executable(etl MACOSX_BUNDLE ${COMMON_SRC} ${CLIENT_SRC} ${PLATFORM_SRC} ${PLATFORM_CLIENT_SRC} ${MACOSX_RESOURCES})
-	set_target_properties(etl PROPERTIES OUTPUT_NAME "ET Legacy")
+	set_target_properties(etl PROPERTIES
+			OUTPUT_NAME "ET Legacy"
+			XCODE_ATTRIBUTE_ENABLE_HARDENED_RUNTIME TRUE
+			XCODE_ATTRIBUTE_EXECUTABLE_NAME "etl"
+			MACOSX_BUNDLE_EXECUTABLE_NAME "etl"
+	)
 elseif(ANDROID)
 	add_library(libetl SHARED ${COMMON_SRC} ${CLIENT_SRC} ${PLATFORM_SRC} ${PLATFORM_CLIENT_SRC})
 else()
