@@ -1124,12 +1124,18 @@ static void IN_WindowFocusLost()
 {
     if (cls.rendererStarted && cls.glconfig.isFullscreen)
     {
+    	Com_DPrintf("Trying to minimize. Checking SDL flags.\n");
     	// If according to the game flags we should minimize,
     	// then lets actually make sure and ask the windowing system for its opinion.
 		Uint32 flags = SDL_GetWindowFlags(GLimp_MainWindow());
 		if (flags & SDL_WINDOW_FULLSCREEN && flags & SDL_WINDOW_SHOWN && !(flags & SDL_WINDOW_MINIMIZED))
 		{
+			Com_DPrintf("SDL says we are good to go and call minimize.\n");
 			Cbuf_ExecuteText(EXEC_NOW, "minimize");
+		}
+		else
+		{
+			Com_DPrintf("SDL did not think we should minimize, trashing event.\n");
 		}
     }
 }

@@ -14,7 +14,8 @@ RUN cd /tmp && \
 	yum --assumeyes --exclude=git* install tar freeglut-devel gmake glibc glibc-devel libX11 \
 	libX11-devel mesa-libGL mesa-libGL-devel alsa-lib-devel pulseaudio-libs-devel \
 	curl-devel zlib-devel wget nasm which libXxf86vm-devel \
-	wayland-devel mesa-libEGL-devel mesa-libGLES-devel libxkbcommon-devel && \
+	wayland-devel mesa-libEGL-devel mesa-libGLES-devel libxkbcommon-devel \
+	libXScrnSaver-devel libXcursor-devel libXinerama-devel libXrandr-devel libXvmc-devel && \
 	yum --assumeyes remove git && \
 	yum --assumeyes install git224 && \
 	yum clean all && \
