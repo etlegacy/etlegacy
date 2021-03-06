@@ -18,21 +18,17 @@ fi
 # Require the current working directory to be clean
 if [ ! -z "$(git status --porcelain)" ]; then
 	echo "Git repository is not clean exiting"
-	#exit 1
+	exit 1
 fi
 
 # Parse the version file
 major=$(grep "VERSION_MAJOR" VERSION.txt | cut -d" " -f2)
 minor=$(grep "VERSION_MINOR" VERSION.txt | cut -d" " -f2)
 patch=$(grep "VERSION_PATCH" VERSION.txt | cut -d" " -f2)
-version_changed=0
+version_changed=
 version_message=
 
 parse_params() {
-	# default values of variables set from params
-	flag=0
-	param=''
-
 	while :; do
 		case "${1-}" in
 		-v | --verbose) set -x ;;
@@ -40,16 +36,16 @@ parse_params() {
 			major=$((major+1))
 			minor=0
 			patch=0
-			version_changed=1
+			version_changed=true
 			;;
 		--minor)
 			minor=$((minor+1))
 			patch=0
-			version_changed=1
+			version_changed=true
 			;;
 		--patch)
 			patch=$((patch+1))
-			version_changed=1
+			version_changed=true
 			;;
 		-m | --message)
 			version_message="${2-}"
@@ -68,7 +64,7 @@ parse_params() {
 parse_params "$@"
 
 # If nothing has changed then just exit
-if [ $version_changed == 0 ]; then
+if [ -z $version_changed ]; then
 	echo "Nothing to do"
 	exit 0
 fi
