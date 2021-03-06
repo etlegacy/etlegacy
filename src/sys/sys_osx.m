@@ -180,16 +180,20 @@ int OSX_NeedsQuarantineFix()
 
 	// appPath contains complete path including "ET Legacy.app"
 	NSURL *appPath = [NSURL fileURLWithPath:[[NSBundle mainBundle] bundlePath]];
-	NSURL *newPath = nil;
+	NSURL *realPath = nil;
 
 	//does the app run in a translocated path?
-	isQuarantined = IsTranslocatedURL((CFURLRef) appPath, (CFURLRef *) &newPath);
+	isQuarantined = IsTranslocatedURL((CFURLRef) appPath, (CFURLRef *) &realPath);
 
 	if (isQuarantined)
 	{
-		// NSString *etlApp = [[appPath lastPathComponent] stringByDeletingPathExtension];
-		// NSString *etlApp = [appPath lastPathComponent];
-		NSString *installPath = [[appPath path] stringByDeletingLastPathComponent];
+		if(!realPath)
+		{
+			Sys_Dialog(DT_ERROR, "Could not detect real application path", "Can't remove app quarantine");
+			return 2;
+		}
+
+		NSString *installPath = [[realPath path] stringByDeletingLastPathComponent];
 
 		// assemble dialog text
 		NSMutableString *permissiontext = [NSMutableString stringWithString: @"The game runs in a hidden folder, to prevent possible dangerous apps. As this prevents loading the game files, a command needs to be executed to run the game from its original path.\r\n\r\nShould the following command be executed now?\r\n\r\n/usr/bin/xattr -cr "];
@@ -222,10 +226,11 @@ int OSX_NeedsQuarantineFix()
 			// relaunch, using 'open'
 			@try
 			{
-				[NSTask launchedTaskWithLaunchPath:@"/usr/bin/open" arguments:@[@"-n", @"-a", appPath.path]];
+				[NSTask launchedTaskWithLaunchPath:@"/usr/bin/open" arguments:@[@"-n", @"-a", realPath.path]];
 			}
 			@catch (NSException *exception)
 			{
+				Sys_Dialog(DT_ERROR, [exception.reason UTF8String], "Failed to relaunch the game");
 				return 3;
 			}
 
