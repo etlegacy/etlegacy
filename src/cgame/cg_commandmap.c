@@ -2942,7 +2942,7 @@ void CG_DrawMapNew(float x, float y, float w, float h, int mEntFilter, mapScisso
 
 			trap_R_SetColor(NULL);
 
-			CG_DrawRect_FixedBorder(x, y, w, h, 1, colorWhite);
+			CG_DrawRect_FixedBorder(x - 0.5f, y - 0.5f, w + 1.0f, h + 1.0f, 1, colorWhite);
 		}
 	}
 	else
@@ -2965,7 +2965,7 @@ void CG_DrawMapNew(float x, float y, float w, float h, int mEntFilter, mapScisso
 		}
 		trap_R_SetColor(NULL);
 
-		CG_DrawRect_FixedBorder(x, y, w, h, 1, colorWhite);
+		CG_DrawRect_FixedBorder(x - 0.5f, y - 0.5f, w + 1.0f, h + 1.0f, 1, colorWhite);
 	}
 
 	exspawn = CG_DrawSpawnPointInfoNew(x, y, w, h, qfalse, scissor, -1);
