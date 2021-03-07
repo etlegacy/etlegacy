@@ -568,6 +568,11 @@ void CG_DrawShoutcastPlayerStatus(void)
 	char          *kills, *deaths, *selfkills, *dmgGiven, *dmgRcvd, *text;
 	int           ammo, clip, akimbo, curWeap, weapScale, tmpX;
 
+	if (cgs.topshots.show == SHOW_ON)
+	{
+		return;
+	}
+
 	//Draw name box
 	CG_FillRect(nameBoxX, nameBoxY, nameBoxWidth, nameBoxHeight, bg);
 	CG_DrawRect_FixedBorder(nameBoxX, nameBoxY, nameBoxWidth, nameBoxHeight, 1, colorWhite);
