@@ -206,16 +206,13 @@ static void CG_DrawShoutcastPlayerOverlayAxis(clientInfo_t *player, float x, flo
 	}
 
 	//Draw weapon icon
-	curWeap   = CG_GetPlayerCurrentWeapon(player);
-	weapScale = cg_weapons[curWeap].weaponIconScale * 10;
+	curWeap    = CG_GetPlayerCurrentWeapon(player);
+	weapScale  = cg_weapons[curWeap].weaponIconScale * 10;
+	bottomRowX = x + PLAYER_LIST_OVERLAY_BOX_WIDTH - 63;
 
 	if (IS_VALID_WEAPON(curWeap) && cg_weapons[curWeap].weaponIconScale == 1)
 	{
-		bottomRowX = x + PLAYER_LIST_OVERLAY_BOX_WIDTH + weapScale - 63;
-	}
-	else
-	{
-		bottomRowX = x + PLAYER_LIST_OVERLAY_BOX_WIDTH - 63;
+		bottomRowX += weapScale;
 	}
 
 	// note: WP_NONE is excluded
@@ -642,14 +639,11 @@ void CG_DrawShoutcastPlayerStatus(void)
 	//Draw weapon icon
 	curWeap   = CG_GetPlayerCurrentWeapon(player);
 	weapScale = cg_weapons[curWeap].weaponIconScale * 10;
+	tmpX      = statsBoxX + statsBoxWidth - 50;
 
 	if (IS_VALID_WEAPON(curWeap) && cg_weapons[curWeap].weaponIconScale == 1)
 	{
-		tmpX = statsBoxX + statsBoxWidth + weapScale - 50;
-	}
-	else
-	{
-		tmpX = statsBoxX + statsBoxWidth - 50;
+		tmpX += weapScale;
 	}
 
 	// note: WP_NONE is excluded
