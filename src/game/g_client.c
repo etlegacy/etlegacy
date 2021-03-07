@@ -2799,6 +2799,11 @@ void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean
 	// unlagged
 
 	flags |= (client->ps.eFlags & EF_VOTED);
+
+	if (!teamChange)
+	{
+		flags |= (client->ps.eFlags & EF_READY);
+	}
 	// clear everything but the persistant data
 
 	ent->s.eFlags &= ~EF_MOUNTEDTANK;
