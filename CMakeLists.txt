@@ -81,6 +81,7 @@ option(FEATURE_SERVERMDX		"Enable MDX support on server side (mod)"				ON)
 option(FEATURE_DBMS				"Enable dbms support (sqlite3)"							ON)
 option(FEATURE_PAKISOLATION		"Enable custom pak isolation"							ON)
 option(FORCE_DEBUG				"Force enable legacy debug macros"						OFF)
+option(ENABLE_ASAN				"Enable AddressSanitizer on clang"						OFF)
 
 cmake_dependent_option(FEATURE_LUASQL	"Enable LuaSQL sqlite3 backend (mod)"			ON "FEATURE_LUA" OFF)
 cmake_dependent_option(FEATURE_RATING	"Enable skill rating support (mod)"				ON "FEATURE_DBMS" OFF)

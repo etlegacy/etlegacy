@@ -63,7 +63,7 @@ int PASSFLOAT(float x)
  */
 void trap_Print(const char *fmt)
 {
-	syscall(UI_PRINT, fmt);
+	SystemCall(UI_PRINT, fmt);
 }
 
 /**
@@ -72,7 +72,7 @@ void trap_Print(const char *fmt)
  */
 void trap_Error(const char *fmt)
 {
-	syscall(UI_ERROR, fmt);
+	SystemCall(UI_ERROR, fmt);
 	// shut up GCC warning about returning functions, because we know better
 	exit(1);
 }
@@ -83,7 +83,7 @@ void trap_Error(const char *fmt)
  */
 int trap_Milliseconds(void)
 {
-	return syscall(UI_MILLISECONDS);
+	return SystemCall(UI_MILLISECONDS);
 }
 
 /**
@@ -95,7 +95,7 @@ int trap_Milliseconds(void)
  */
 void trap_Cvar_Register(vmCvar_t *vmCvar, const char *varName, const char *defaultValue, int flags)
 {
-	syscall(UI_CVAR_REGISTER, vmCvar, varName, defaultValue, flags);
+	SystemCall(UI_CVAR_REGISTER, vmCvar, varName, defaultValue, flags);
 }
 
 /**
@@ -104,7 +104,7 @@ void trap_Cvar_Register(vmCvar_t *vmCvar, const char *varName, const char *defau
  */
 void trap_Cvar_Update(vmCvar_t *vmCvar)
 {
-	syscall(UI_CVAR_UPDATE, vmCvar);
+	SystemCall(UI_CVAR_UPDATE, vmCvar);
 }
 
 /**
@@ -114,7 +114,7 @@ void trap_Cvar_Update(vmCvar_t *vmCvar)
  */
 void trap_Cvar_Set(const char *varName, const char *value)
 {
-	syscall(UI_CVAR_SET, varName, value);
+	SystemCall(UI_CVAR_SET, varName, value);
 }
 
 /**
@@ -126,7 +126,7 @@ float trap_Cvar_VariableValue(const char *varName)
 {
 	floatint_t fi;
 
-	fi.i = syscall(UI_CVAR_VARIABLEVALUE, varName);
+	fi.i = SystemCall(UI_CVAR_VARIABLEVALUE, varName);
 	return fi.f;
 }
 
@@ -138,7 +138,7 @@ float trap_Cvar_VariableValue(const char *varName)
  */
 void trap_Cvar_VariableStringBuffer(const char *varName, char *buffer, int bufsize)
 {
-	syscall(UI_CVAR_VARIABLESTRINGBUFFER, varName, buffer, bufsize);
+	SystemCall(UI_CVAR_VARIABLESTRINGBUFFER, varName, buffer, bufsize);
 }
 
 /**
@@ -149,7 +149,7 @@ void trap_Cvar_VariableStringBuffer(const char *varName, char *buffer, int bufsi
  */
 void trap_Cvar_LatchedVariableStringBuffer(const char *varName, char *buffer, int bufsize)
 {
-	syscall(UI_CVAR_LATCHEDVARIABLESTRINGBUFFER, varName, buffer, bufsize);
+	SystemCall(UI_CVAR_LATCHEDVARIABLESTRINGBUFFER, varName, buffer, bufsize);
 }
 
 /**
@@ -159,7 +159,7 @@ void trap_Cvar_LatchedVariableStringBuffer(const char *varName, char *buffer, in
  */
 void trap_Cvar_SetValue(const char *varName, float value)
 {
-	syscall(UI_CVAR_SETVALUE, varName, PASSFLOAT(value));
+	SystemCall(UI_CVAR_SETVALUE, varName, PASSFLOAT(value));
 }
 
 /**
@@ -168,7 +168,7 @@ void trap_Cvar_SetValue(const char *varName, float value)
  */
 void trap_Cvar_Reset(const char *name)
 {
-	syscall(UI_CVAR_RESET, name);
+	SystemCall(UI_CVAR_RESET, name);
 }
 
 /**
@@ -179,7 +179,7 @@ void trap_Cvar_Reset(const char *name)
  */
 void trap_Cvar_Create(const char *varName, const char *var_value, int flags)
 {
-	syscall(UI_CVAR_CREATE, varName, var_value, flags);
+	SystemCall(UI_CVAR_CREATE, varName, var_value, flags);
 }
 
 /**
@@ -190,7 +190,7 @@ void trap_Cvar_Create(const char *varName, const char *var_value, int flags)
  */
 void trap_Cvar_InfoStringBuffer(int bit, char *buffer, int bufsize)
 {
-	syscall(UI_CVAR_INFOSTRINGBUFFER, bit, buffer, bufsize);
+	SystemCall(UI_CVAR_INFOSTRINGBUFFER, bit, buffer, bufsize);
 }
 
 /**
@@ -199,7 +199,7 @@ void trap_Cvar_InfoStringBuffer(int bit, char *buffer, int bufsize)
  */
 int trap_Argc(void)
 {
-	return syscall(UI_ARGC);
+	return SystemCall(UI_ARGC);
 }
 
 /**
@@ -210,7 +210,7 @@ int trap_Argc(void)
  */
 void trap_Argv(int n, char *buffer, int bufferLength)
 {
-	syscall(UI_ARGV, n, buffer, bufferLength);
+	SystemCall(UI_ARGV, n, buffer, bufferLength);
 }
 
 /**
@@ -220,7 +220,7 @@ void trap_Argv(int n, char *buffer, int bufferLength)
  */
 void trap_Cmd_ExecuteText(int exec_when, const char *text)
 {
-	syscall(UI_CMD_EXECUTETEXT, exec_when, text);
+	SystemCall(UI_CMD_EXECUTETEXT, exec_when, text);
 }
 
 /**
@@ -229,7 +229,7 @@ void trap_Cmd_ExecuteText(int exec_when, const char *text)
  */
 void trap_AddCommand(const char *cmdName)
 {
-	syscall(UI_ADDCOMMAND, cmdName);
+	SystemCall(UI_ADDCOMMAND, cmdName);
 }
 
 /**
@@ -241,7 +241,7 @@ void trap_AddCommand(const char *cmdName)
  */
 int trap_FS_FOpenFile(const char *qpath, fileHandle_t *f, fsMode_t mode)
 {
-	return syscall(UI_FS_FOPENFILE, qpath, f, mode);
+	return SystemCall(UI_FS_FOPENFILE, qpath, f, mode);
 }
 
 /**
@@ -252,7 +252,7 @@ int trap_FS_FOpenFile(const char *qpath, fileHandle_t *f, fsMode_t mode)
  */
 void trap_FS_Read(void *buffer, int len, fileHandle_t f)
 {
-	syscall(UI_FS_READ, buffer, len, f);
+	SystemCall(UI_FS_READ, buffer, len, f);
 }
 
 /**
@@ -263,7 +263,7 @@ void trap_FS_Read(void *buffer, int len, fileHandle_t f)
  */
 void trap_FS_Write(const void *buffer, int len, fileHandle_t f)
 {
-	syscall(UI_FS_WRITE, buffer, len, f);
+	SystemCall(UI_FS_WRITE, buffer, len, f);
 }
 
 /**
@@ -272,7 +272,7 @@ void trap_FS_Write(const void *buffer, int len, fileHandle_t f)
  */
 void trap_FS_FCloseFile(fileHandle_t f)
 {
-	syscall(UI_FS_FCLOSEFILE, f);
+	SystemCall(UI_FS_FCLOSEFILE, f);
 }
 
 /**
@@ -285,7 +285,7 @@ void trap_FS_FCloseFile(fileHandle_t f)
  */
 int trap_FS_GetFileList(const char *path, const char *extension, char *listbuf, int bufsize)
 {
-	return syscall(UI_FS_GETFILELIST, path, extension, listbuf, bufsize);
+	return SystemCall(UI_FS_GETFILELIST, path, extension, listbuf, bufsize);
 }
 
 /**
@@ -295,7 +295,7 @@ int trap_FS_GetFileList(const char *path, const char *extension, char *listbuf, 
  */
 int trap_FS_Delete(const char *filename)
 {
-	return syscall(UI_FS_DELETEFILE, filename);
+	return SystemCall(UI_FS_DELETEFILE, filename);
 }
 
 /**
@@ -305,7 +305,7 @@ int trap_FS_Delete(const char *filename)
  */
 qhandle_t trap_R_RegisterModel(const char *name)
 {
-	return syscall(UI_R_REGISTERMODEL, name);
+	return SystemCall(UI_R_REGISTERMODEL, name);
 }
 
 /**
@@ -315,7 +315,7 @@ qhandle_t trap_R_RegisterModel(const char *name)
  */
 qhandle_t trap_R_RegisterSkin(const char *name)
 {
-	return syscall(UI_R_REGISTERSKIN, name);
+	return SystemCall(UI_R_REGISTERSKIN, name);
 }
 
 /**
@@ -326,7 +326,7 @@ qhandle_t trap_R_RegisterSkin(const char *name)
  */
 void trap_R_RegisterFont(const char *fontName, int pointSize, void *font)
 {
-	syscall(UI_R_REGISTERFONT, fontName, pointSize, font, IS_FUNC_SUPPORTED(UNICODE_SUPPORT_VERSION));
+	SystemCall(UI_R_REGISTERFONT, fontName, pointSize, font, IS_FUNC_SUPPORTED(UNICODE_SUPPORT_VERSION));
 }
 
 /**
@@ -336,7 +336,7 @@ void trap_R_RegisterFont(const char *fontName, int pointSize, void *font)
  */
 qhandle_t trap_R_RegisterShaderNoMip(const char *name)
 {
-	return syscall(UI_R_REGISTERSHADERNOMIP, name);
+	return SystemCall(UI_R_REGISTERSHADERNOMIP, name);
 }
 
 /**
@@ -344,7 +344,7 @@ qhandle_t trap_R_RegisterShaderNoMip(const char *name)
  */
 void trap_R_ClearScene(void)
 {
-	syscall(UI_R_CLEARSCENE);
+	SystemCall(UI_R_CLEARSCENE);
 }
 
 /**
@@ -353,7 +353,7 @@ void trap_R_ClearScene(void)
  */
 void trap_R_AddRefEntityToScene(const refEntity_t *re)
 {
-	syscall(UI_R_ADDREFENTITYTOSCENE, re);
+	SystemCall(UI_R_ADDREFENTITYTOSCENE, re);
 }
 
 /**
@@ -364,12 +364,12 @@ void trap_R_AddRefEntityToScene(const refEntity_t *re)
  */
 void trap_R_AddPolyToScene(qhandle_t hShader, int numVerts, const polyVert_t *verts)
 {
-	syscall(UI_R_ADDPOLYTOSCENE, hShader, numVerts, verts);
+	SystemCall(UI_R_ADDPOLYTOSCENE, hShader, numVerts, verts);
 }
 
 // new dlight system
 //% void    trap_R_AddLightToScene( const vec3_t org, float intensity, float r, float g, float b, int overdraw ) {
-//%     syscall( UI_R_ADDLIGHTTOSCENE, org, PASSFLOAT(intensity), PASSFLOAT(r), PASSFLOAT(g), PASSFLOAT(b), overdraw );
+//%     SystemCall( UI_R_ADDLIGHTTOSCENE, org, PASSFLOAT(intensity), PASSFLOAT(r), PASSFLOAT(g), PASSFLOAT(b), overdraw );
 //% }
 /**
  * @brief New dlight system
@@ -384,7 +384,7 @@ void trap_R_AddPolyToScene(qhandle_t hShader, int numVerts, const polyVert_t *ve
  */
 void trap_R_AddLightToScene(const vec3_t org, float radius, float intensity, float r, float g, float b, qhandle_t hShader, int flags)
 {
-	syscall(UI_R_ADDLIGHTTOSCENE, org, PASSFLOAT(radius), PASSFLOAT(intensity),
+	SystemCall(UI_R_ADDLIGHTTOSCENE, org, PASSFLOAT(radius), PASSFLOAT(intensity),
 	        PASSFLOAT(r), PASSFLOAT(g), PASSFLOAT(b), hShader, flags);
 }
 
@@ -400,7 +400,7 @@ void trap_R_AddLightToScene(const vec3_t org, float radius, float intensity, flo
  */
 void trap_R_AddCoronaToScene(const vec3_t org, float r, float g, float b, float scale, int id, qboolean visible)
 {
-	syscall(UI_R_ADDCORONATOSCENE, org, PASSFLOAT(r), PASSFLOAT(g), PASSFLOAT(b), PASSFLOAT(scale), id, visible);
+	SystemCall(UI_R_ADDCORONATOSCENE, org, PASSFLOAT(r), PASSFLOAT(g), PASSFLOAT(b), PASSFLOAT(scale), id, visible);
 }
 
 /**
@@ -409,7 +409,7 @@ void trap_R_AddCoronaToScene(const vec3_t org, float r, float g, float b, float 
  */
 void trap_R_RenderScene(const refdef_t *fd)
 {
-	syscall(UI_R_RENDERSCENE, fd);
+	SystemCall(UI_R_RENDERSCENE, fd);
 }
 
 /**
@@ -418,7 +418,7 @@ void trap_R_RenderScene(const refdef_t *fd)
  */
 void trap_R_SetColor(const float *rgba)
 {
-	syscall(UI_R_SETCOLOR, rgba);
+	SystemCall(UI_R_SETCOLOR, rgba);
 }
 
 /**
@@ -429,7 +429,7 @@ void trap_R_SetColor(const float *rgba)
  */
 void trap_R_Add2dPolys(polyVert_t *verts, int numverts, qhandle_t hShader)
 {
-	syscall(UI_R_DRAW2DPOLYS, verts, numverts, hShader);
+	SystemCall(UI_R_DRAW2DPOLYS, verts, numverts, hShader);
 }
 
 /**
@@ -446,7 +446,7 @@ void trap_R_Add2dPolys(polyVert_t *verts, int numverts, qhandle_t hShader)
  */
 void trap_R_DrawStretchPic(float x, float y, float w, float h, float s1, float t1, float s2, float t2, qhandle_t hShader)
 {
-	syscall(UI_R_DRAWSTRETCHPIC, PASSFLOAT(x), PASSFLOAT(y), PASSFLOAT(w), PASSFLOAT(h), PASSFLOAT(s1), PASSFLOAT(t1), PASSFLOAT(s2), PASSFLOAT(t2), hShader);
+	SystemCall(UI_R_DRAWSTRETCHPIC, PASSFLOAT(x), PASSFLOAT(y), PASSFLOAT(w), PASSFLOAT(h), PASSFLOAT(s1), PASSFLOAT(t1), PASSFLOAT(s2), PASSFLOAT(t2), hShader);
 }
 
 /**
@@ -464,7 +464,7 @@ void trap_R_DrawStretchPic(float x, float y, float w, float h, float s1, float t
  */
 void trap_R_DrawRotatedPic(float x, float y, float w, float h, float s1, float t1, float s2, float t2, qhandle_t hShader, float angle)
 {
-	syscall(UI_R_DRAWROTATEDPIC, PASSFLOAT(x), PASSFLOAT(y), PASSFLOAT(w), PASSFLOAT(h), PASSFLOAT(s1), PASSFLOAT(t1), PASSFLOAT(s2), PASSFLOAT(t2), hShader, PASSFLOAT(angle));
+	SystemCall(UI_R_DRAWROTATEDPIC, PASSFLOAT(x), PASSFLOAT(y), PASSFLOAT(w), PASSFLOAT(h), PASSFLOAT(s1), PASSFLOAT(t1), PASSFLOAT(s2), PASSFLOAT(t2), hShader, PASSFLOAT(angle));
 }
 
 /**
@@ -475,7 +475,7 @@ void trap_R_DrawRotatedPic(float x, float y, float w, float h, float s1, float t
  */
 void trap_R_ModelBounds(clipHandle_t model, vec3_t mins, vec3_t maxs)
 {
-	syscall(UI_R_MODELBOUNDS, model, mins, maxs);
+	SystemCall(UI_R_MODELBOUNDS, model, mins, maxs);
 }
 
 /**
@@ -483,7 +483,7 @@ void trap_R_ModelBounds(clipHandle_t model, vec3_t mins, vec3_t maxs)
  */
 void trap_UpdateScreen(void)
 {
-	syscall(UI_UPDATESCREEN);
+	SystemCall(UI_UPDATESCREEN);
 }
 
 /**
@@ -496,7 +496,7 @@ void trap_UpdateScreen(void)
  */
 int trap_CM_LerpTag(orientation_t *tag, const refEntity_t *refent, const char *tagName, int startIndex)
 {
-	return syscall(UI_CM_LERPTAG, tag, refent, tagName, 0);
+	return SystemCall(UI_CM_LERPTAG, tag, refent, tagName, 0);
 }
 
 /**
@@ -506,7 +506,7 @@ int trap_CM_LerpTag(orientation_t *tag, const refEntity_t *refent, const char *t
  */
 void trap_S_StartLocalSound(sfxHandle_t sfx, int channelNum)
 {
-	syscall(UI_S_STARTLOCALSOUND, sfx, channelNum, 127 /*default volume always for the moment*/);
+	SystemCall(UI_S_STARTLOCALSOUND, sfx, channelNum, 127 /*default volume always for the moment*/);
 }
 
 /**
@@ -517,7 +517,7 @@ void trap_S_StartLocalSound(sfxHandle_t sfx, int channelNum)
  */
 sfxHandle_t trap_S_RegisterSound(const char *sample, qboolean compressed)
 {
-	int i = syscall(UI_S_REGISTERSOUND, sample, compressed);
+	int i = SystemCall(UI_S_REGISTERSOUND, sample, compressed);
 
 #ifdef ETLEGACY_DEBUG
 	if (i == 0)
@@ -536,7 +536,7 @@ sfxHandle_t trap_S_RegisterSound(const char *sample, qboolean compressed)
  */
 void trap_S_FadeBackgroundTrack(float targetvol, int time, int num)       // yes, i know.  fadebackground coming in, fadestreaming going out.  will have to see where functionality leads...
 {
-	syscall(UI_S_FADESTREAMINGSOUND, PASSFLOAT(targetvol), time, num);     // 'num' is '0' if it's music, '1' if it's "all streaming sounds"
+	SystemCall(UI_S_FADESTREAMINGSOUND, PASSFLOAT(targetvol), time, num);     // 'num' is '0' if it's music, '1' if it's "all streaming sounds"
 }
 
 /**
@@ -547,7 +547,7 @@ void trap_S_FadeBackgroundTrack(float targetvol, int time, int num)       // yes
  */
 void trap_S_FadeAllSound(float targetvol, int time, qboolean stopsounds)
 {
-	syscall(UI_S_FADEALLSOUNDS, PASSFLOAT(targetvol), time, stopsounds);
+	SystemCall(UI_S_FADEALLSOUNDS, PASSFLOAT(targetvol), time, stopsounds);
 }
 
 /**
@@ -558,7 +558,7 @@ void trap_S_FadeAllSound(float targetvol, int time, qboolean stopsounds)
  */
 void trap_Key_KeynumToStringBuf(int keynum, char *buf, int buflen)
 {
-	syscall(UI_KEY_KEYNUMTOSTRINGBUF, keynum, buf, buflen);
+	SystemCall(UI_KEY_KEYNUMTOSTRINGBUF, keynum, buf, buflen);
 }
 
 /**
@@ -569,7 +569,7 @@ void trap_Key_KeynumToStringBuf(int keynum, char *buf, int buflen)
  */
 void trap_Key_GetBindingBuf(int keynum, char *buf, int buflen)
 {
-	syscall(UI_KEY_GETBINDINGBUF, keynum, buf, buflen);
+	SystemCall(UI_KEY_GETBINDINGBUF, keynum, buf, buflen);
 }
 
 /**
@@ -582,7 +582,7 @@ void trap_Key_GetBindingBuf(int keynum, char *buf, int buflen)
  */
 void trap_Key_KeysForBinding(const char *binding, int *key1, int *key2)
 {
-	syscall(UI_KEY_BINDINGTOKEYS, binding, key1, key2);
+	SystemCall(UI_KEY_BINDINGTOKEYS, binding, key1, key2);
 }
 
 /**
@@ -592,7 +592,7 @@ void trap_Key_KeysForBinding(const char *binding, int *key1, int *key2)
  */
 void trap_Key_SetBinding(int keynum, const char *binding)
 {
-	syscall(UI_KEY_SETBINDING, keynum, binding);
+	SystemCall(UI_KEY_SETBINDING, keynum, binding);
 }
 
 /**
@@ -602,7 +602,7 @@ void trap_Key_SetBinding(int keynum, const char *binding)
  */
 qboolean trap_Key_IsDown(int keynum)
 {
-	return (qboolean)(syscall(UI_KEY_ISDOWN, keynum));
+	return (qboolean)(SystemCall(UI_KEY_ISDOWN, keynum));
 }
 
 /**
@@ -611,7 +611,7 @@ qboolean trap_Key_IsDown(int keynum)
  */
 qboolean trap_Key_GetOverstrikeMode(void)
 {
-	return (qboolean)(syscall(UI_KEY_GETOVERSTRIKEMODE));
+	return (qboolean)(SystemCall(UI_KEY_GETOVERSTRIKEMODE));
 }
 
 /**
@@ -620,7 +620,7 @@ qboolean trap_Key_GetOverstrikeMode(void)
  */
 void trap_Key_SetOverstrikeMode(qboolean state)
 {
-	syscall(UI_KEY_SETOVERSTRIKEMODE, state);
+	SystemCall(UI_KEY_SETOVERSTRIKEMODE, state);
 }
 
 /**
@@ -628,7 +628,7 @@ void trap_Key_SetOverstrikeMode(qboolean state)
  */
 void trap_Key_ClearStates(void)
 {
-	syscall(UI_KEY_CLEARSTATES);
+	SystemCall(UI_KEY_CLEARSTATES);
 }
 
 /**
@@ -637,7 +637,7 @@ void trap_Key_ClearStates(void)
  */
 int trap_Key_GetCatcher(void)
 {
-	return syscall(UI_KEY_GETCATCHER);
+	return SystemCall(UI_KEY_GETCATCHER);
 }
 
 /**
@@ -646,7 +646,7 @@ int trap_Key_GetCatcher(void)
  */
 void trap_Key_SetCatcher(int catcher)
 {
-	syscall(UI_KEY_SETCATCHER, catcher);
+	SystemCall(UI_KEY_SETCATCHER, catcher);
 }
 
 /**
@@ -656,7 +656,7 @@ void trap_Key_SetCatcher(int catcher)
  */
 void trap_GetClipboardData(char *buf, size_t bufsize)
 {
-	syscall(UI_GETCLIPBOARDDATA, buf, bufsize);
+	SystemCall(UI_GETCLIPBOARDDATA, buf, bufsize);
 }
 
 /**
@@ -665,7 +665,7 @@ void trap_GetClipboardData(char *buf, size_t bufsize)
  */
 void trap_GetClientState(uiClientState_t *state)
 {
-	syscall(UI_GETCLIENTSTATE, state);
+	SystemCall(UI_GETCLIENTSTATE, state);
 }
 
 /**
@@ -674,7 +674,7 @@ void trap_GetClientState(uiClientState_t *state)
  */
 void trap_GetGlconfig(glconfig_t *glconfig)
 {
-	syscall(UI_GETGLCONFIG, glconfig);
+	SystemCall(UI_GETGLCONFIG, glconfig);
 }
 
 /**
@@ -686,7 +686,7 @@ void trap_GetGlconfig(glconfig_t *glconfig)
  */
 int trap_GetConfigString(int index, char *buff, size_t buffsize)
 {
-	return syscall(UI_GETCONFIGSTRING, index, buff, buffsize);
+	return SystemCall(UI_GETCONFIGSTRING, index, buff, buffsize);
 }
 
 /**
@@ -695,7 +695,7 @@ int trap_GetConfigString(int index, char *buff, size_t buffsize)
  */
 int trap_LAN_GetLocalServerCount(void)
 {
-	return syscall(UI_LAN_GETLOCALSERVERCOUNT);
+	return SystemCall(UI_LAN_GETLOCALSERVERCOUNT);
 }
 
 /**
@@ -706,7 +706,7 @@ int trap_LAN_GetLocalServerCount(void)
  */
 void trap_LAN_GetLocalServerAddressString(int n, char *buf, int buflen)
 {
-	syscall(UI_LAN_GETLOCALSERVERADDRESSSTRING, n, buf, buflen);
+	SystemCall(UI_LAN_GETLOCALSERVERADDRESSSTRING, n, buf, buflen);
 }
 
 /**
@@ -715,7 +715,7 @@ void trap_LAN_GetLocalServerAddressString(int n, char *buf, int buflen)
  */
 int trap_LAN_GetGlobalServerCount(void)
 {
-	return syscall(UI_LAN_GETGLOBALSERVERCOUNT);
+	return SystemCall(UI_LAN_GETGLOBALSERVERCOUNT);
 }
 
 /**
@@ -726,7 +726,7 @@ int trap_LAN_GetGlobalServerCount(void)
  */
 void trap_LAN_GetGlobalServerAddressString(int n, char *buf, int buflen)
 {
-	syscall(UI_LAN_GETGLOBALSERVERADDRESSSTRING, n, buf, buflen);
+	SystemCall(UI_LAN_GETGLOBALSERVERADDRESSSTRING, n, buf, buflen);
 }
 
 /**
@@ -735,7 +735,7 @@ void trap_LAN_GetGlobalServerAddressString(int n, char *buf, int buflen)
  */
 int trap_LAN_GetPingQueueCount(void)
 {
-	return syscall(UI_LAN_GETPINGQUEUECOUNT);
+	return SystemCall(UI_LAN_GETPINGQUEUECOUNT);
 }
 
 /**
@@ -744,7 +744,7 @@ int trap_LAN_GetPingQueueCount(void)
  */
 void trap_LAN_ClearPing(int n)
 {
-	syscall(UI_LAN_CLEARPING, n);
+	SystemCall(UI_LAN_CLEARPING, n);
 }
 
 /**
@@ -756,7 +756,7 @@ void trap_LAN_ClearPing(int n)
  */
 void trap_LAN_GetPing(int n, char *buf, int buflen, int *pingtime)
 {
-	syscall(UI_LAN_GETPING, n, buf, buflen, pingtime);
+	SystemCall(UI_LAN_GETPING, n, buf, buflen, pingtime);
 }
 
 /**
@@ -767,7 +767,7 @@ void trap_LAN_GetPing(int n, char *buf, int buflen, int *pingtime)
  */
 void trap_LAN_GetPingInfo(int n, char *buf, int buflen)
 {
-	syscall(UI_LAN_GETPINGINFO, n, buf, buflen);
+	SystemCall(UI_LAN_GETPINGINFO, n, buf, buflen);
 }
 
 /**
@@ -777,7 +777,7 @@ void trap_LAN_GetPingInfo(int n, char *buf, int buflen)
  */
 qboolean trap_LAN_UpdateVisiblePings(int source)
 {
-	return (qboolean)(syscall(UI_LAN_UPDATEVISIBLEPINGS, source));
+	return (qboolean)(SystemCall(UI_LAN_UPDATEVISIBLEPINGS, source));
 }
 
 /**
@@ -787,7 +787,7 @@ qboolean trap_LAN_UpdateVisiblePings(int source)
  */
 int trap_LAN_GetServerCount(int source)
 {
-	return syscall(UI_LAN_GETSERVERCOUNT, source);
+	return SystemCall(UI_LAN_GETSERVERCOUNT, source);
 }
 
 /**
@@ -801,7 +801,7 @@ int trap_LAN_GetServerCount(int source)
  */
 int trap_LAN_CompareServers(int source, int sortKey, int sortDir, int s1, int s2)
 {
-	return syscall(UI_LAN_COMPARESERVERS, source, sortKey, sortDir, s1, s2);
+	return SystemCall(UI_LAN_COMPARESERVERS, source, sortKey, sortDir, s1, s2);
 }
 
 /**
@@ -813,7 +813,7 @@ int trap_LAN_CompareServers(int source, int sortKey, int sortDir, int s1, int s2
  */
 void trap_LAN_GetServerAddressString(int source, int n, char *buf, int buflen)
 {
-	syscall(UI_LAN_GETSERVERADDRESSSTRING, source, n, buf, buflen);
+	SystemCall(UI_LAN_GETSERVERADDRESSSTRING, source, n, buf, buflen);
 }
 
 /**
@@ -825,7 +825,7 @@ void trap_LAN_GetServerAddressString(int source, int n, char *buf, int buflen)
  */
 void trap_LAN_GetServerInfo(int source, int n, char *buf, int buflen)
 {
-	syscall(UI_LAN_GETSERVERINFO, source, n, buf, buflen);
+	SystemCall(UI_LAN_GETSERVERINFO, source, n, buf, buflen);
 }
 
 /**
@@ -837,7 +837,7 @@ void trap_LAN_GetServerInfo(int source, int n, char *buf, int buflen)
  */
 int trap_LAN_AddServer(int source, const char *name, const char *addr)
 {
-	return syscall(UI_LAN_ADDSERVER, source, name, addr);
+	return SystemCall(UI_LAN_ADDSERVER, source, name, addr);
 }
 
 /**
@@ -847,7 +847,7 @@ int trap_LAN_AddServer(int source, const char *name, const char *addr)
  */
 void trap_LAN_RemoveServer(int source, const char *addr)
 {
-	syscall(UI_LAN_REMOVESERVER, source, addr);
+	SystemCall(UI_LAN_REMOVESERVER, source, addr);
 }
 
 /**
@@ -858,7 +858,7 @@ void trap_LAN_RemoveServer(int source, const char *addr)
  */
 int trap_LAN_GetServerPing(int source, int n)
 {
-	return syscall(UI_LAN_GETSERVERPING, source, n);
+	return SystemCall(UI_LAN_GETSERVERPING, source, n);
 }
 
 /**
@@ -869,7 +869,7 @@ int trap_LAN_GetServerPing(int source, int n)
  */
 int trap_LAN_ServerIsVisible(int source, int n)
 {
-	return syscall(UI_LAN_SERVERISVISIBLE, source, n);
+	return SystemCall(UI_LAN_SERVERISVISIBLE, source, n);
 }
 
 /**
@@ -881,7 +881,7 @@ int trap_LAN_ServerIsVisible(int source, int n)
  */
 int trap_LAN_ServerStatus(const char *serverAddress, char *serverStatus, int maxLen)
 {
-	return syscall(UI_LAN_SERVERSTATUS, serverAddress, serverStatus, maxLen);
+	return SystemCall(UI_LAN_SERVERSTATUS, serverAddress, serverStatus, maxLen);
 }
 
 /**
@@ -892,7 +892,7 @@ int trap_LAN_ServerStatus(const char *serverAddress, char *serverStatus, int max
  */
 qboolean trap_LAN_ServerIsInFavoriteList(int source, int n)
 {
-	return (qboolean)(syscall(UI_LAN_SERVERISINFAVORITELIST, source, n));
+	return (qboolean)(SystemCall(UI_LAN_SERVERISINFAVORITELIST, source, n));
 }
 
 /*
@@ -902,7 +902,7 @@ qboolean trap_LAN_ServerIsInFavoriteList(int source, int n)
  *
 void trap_LAN_SaveCachedServers(void)
 {
-    syscall(UI_LAN_SAVECACHEDSERVERS);
+    SystemCall(UI_LAN_SAVECACHEDSERVERS);
 }
 */
 
@@ -911,7 +911,7 @@ void trap_LAN_SaveCachedServers(void)
  */
 void trap_LAN_LoadCachedServers(void)
 {
-	syscall(UI_LAN_LOADCACHEDSERVERS);
+	SystemCall(UI_LAN_LOADCACHEDSERVERS);
 }
 
 /**
@@ -922,7 +922,7 @@ void trap_LAN_LoadCachedServers(void)
  */
 void trap_LAN_MarkServerVisible(int source, int n, qboolean visible)
 {
-	syscall(UI_LAN_MARKSERVERVISIBLE, source, n, visible);
+	SystemCall(UI_LAN_MARKSERVERVISIBLE, source, n, visible);
 }
 
 /**
@@ -931,7 +931,7 @@ void trap_LAN_MarkServerVisible(int source, int n, qboolean visible)
  */
 void trap_LAN_ResetPings(int n)
 {
-	syscall(UI_LAN_RESETPINGS, n);
+	SystemCall(UI_LAN_RESETPINGS, n);
 }
 
 /**
@@ -940,7 +940,7 @@ void trap_LAN_ResetPings(int n)
  */
 int trap_MemoryRemaining(void)
 {
-	return syscall(UI_MEMORY_REMAINING);
+	return SystemCall(UI_MEMORY_REMAINING);
 }
 
 /**
@@ -950,7 +950,7 @@ int trap_MemoryRemaining(void)
  */
 int trap_PC_AddGlobalDefine(char *define)
 {
-	return syscall(UI_PC_ADD_GLOBAL_DEFINE, define);
+	return SystemCall(UI_PC_ADD_GLOBAL_DEFINE, define);
 }
 
 /**
@@ -959,7 +959,7 @@ int trap_PC_AddGlobalDefine(char *define)
  */
 int trap_PC_RemoveAllGlobalDefines(void)
 {
-	return syscall(UI_PC_REMOVE_ALL_GLOBAL_DEFINES);
+	return SystemCall(UI_PC_REMOVE_ALL_GLOBAL_DEFINES);
 }
 
 /**
@@ -969,7 +969,7 @@ int trap_PC_RemoveAllGlobalDefines(void)
  */
 int trap_PC_LoadSource(const char *filename)
 {
-	return syscall(UI_PC_LOAD_SOURCE, filename);
+	return SystemCall(UI_PC_LOAD_SOURCE, filename);
 }
 
 /**
@@ -979,7 +979,7 @@ int trap_PC_LoadSource(const char *filename)
  */
 int trap_PC_FreeSource(int handle)
 {
-	return syscall(UI_PC_FREE_SOURCE, handle);
+	return SystemCall(UI_PC_FREE_SOURCE, handle);
 }
 
 /**
@@ -990,7 +990,7 @@ int trap_PC_FreeSource(int handle)
  */
 int trap_PC_ReadToken(int handle, pc_token_t *pc_token)
 {
-	return syscall(UI_PC_READ_TOKEN, handle, pc_token);
+	return SystemCall(UI_PC_READ_TOKEN, handle, pc_token);
 }
 
 /**
@@ -1002,7 +1002,7 @@ int trap_PC_ReadToken(int handle, pc_token_t *pc_token)
  */
 int trap_PC_SourceFileAndLine(int handle, char *filename, int *line)
 {
-	return syscall(UI_PC_SOURCE_FILE_AND_LINE, handle, filename, line);
+	return SystemCall(UI_PC_SOURCE_FILE_AND_LINE, handle, filename, line);
 }
 
 /**
@@ -1012,7 +1012,7 @@ int trap_PC_SourceFileAndLine(int handle, char *filename, int *line)
  */
 int trap_PC_UnReadToken(int handle)
 {
-	return syscall(UI_PC_UNREAD_TOKEN, handle);
+	return SystemCall(UI_PC_UNREAD_TOKEN, handle);
 }
 
 /**
@@ -1020,7 +1020,7 @@ int trap_PC_UnReadToken(int handle)
  */
 void trap_S_StopBackgroundTrack(void)
 {
-	syscall(UI_S_STOPBACKGROUNDTRACK);
+	SystemCall(UI_S_STOPBACKGROUNDTRACK);
 }
 
 /**
@@ -1031,7 +1031,7 @@ void trap_S_StopBackgroundTrack(void)
  */
 void trap_S_StartBackgroundTrack(const char *intro, const char *loop, int fadeupTime)
 {
-	syscall(UI_S_STARTBACKGROUNDTRACK, intro, loop, fadeupTime);
+	SystemCall(UI_S_STARTBACKGROUNDTRACK, intro, loop, fadeupTime);
 }
 
 /**
@@ -1041,7 +1041,7 @@ void trap_S_StartBackgroundTrack(const char *intro, const char *loop, int fadeup
  */
 int trap_RealTime(qtime_t *qtime)
 {
-	return syscall(UI_REAL_TIME, qtime);
+	return SystemCall(UI_REAL_TIME, qtime);
 }
 
 /**
@@ -1056,7 +1056,7 @@ int trap_RealTime(qtime_t *qtime)
  */
 int trap_CIN_PlayCinematic(const char *arg0, int xpos, int ypos, int width, int height, int bits)
 {
-	return syscall(UI_CIN_PLAYCINEMATIC, arg0, xpos, ypos, width, height, bits);
+	return SystemCall(UI_CIN_PLAYCINEMATIC, arg0, xpos, ypos, width, height, bits);
 }
 
 
@@ -1068,7 +1068,7 @@ int trap_CIN_PlayCinematic(const char *arg0, int xpos, int ypos, int width, int 
  */
 e_status trap_CIN_StopCinematic(int handle)
 {
-	return (e_status)(syscall(UI_CIN_STOPCINEMATIC, handle));
+	return (e_status)(SystemCall(UI_CIN_STOPCINEMATIC, handle));
 }
 
 /**
@@ -1079,7 +1079,7 @@ e_status trap_CIN_StopCinematic(int handle)
  */
 e_status trap_CIN_RunCinematic(int handle)
 {
-	return (e_status)(syscall(UI_CIN_RUNCINEMATIC, handle));
+	return (e_status)(SystemCall(UI_CIN_RUNCINEMATIC, handle));
 }
 
 /**
@@ -1088,7 +1088,7 @@ e_status trap_CIN_RunCinematic(int handle)
  */
 void trap_CIN_DrawCinematic(int handle)
 {
-	syscall(UI_CIN_DRAWCINEMATIC, handle);
+	SystemCall(UI_CIN_DRAWCINEMATIC, handle);
 }
 
 /**
@@ -1101,7 +1101,7 @@ void trap_CIN_DrawCinematic(int handle)
  */
 void trap_CIN_SetExtents(int handle, int x, int y, int w, int h)
 {
-	syscall(UI_CIN_SETEXTENTS, handle, x, y, w, h);
+	SystemCall(UI_CIN_SETEXTENTS, handle, x, y, w, h);
 }
 
 /**
@@ -1112,7 +1112,7 @@ void trap_CIN_SetExtents(int handle, int x, int y, int w, int h)
  */
 void trap_R_RemapShader(const char *oldShader, const char *newShader, const char *timeOffset)
 {
-	syscall(UI_R_REMAP_SHADER, oldShader, newShader, timeOffset);
+	SystemCall(UI_R_REMAP_SHADER, oldShader, newShader, timeOffset);
 }
 
 /**
@@ -1123,7 +1123,7 @@ void trap_R_RemapShader(const char *oldShader, const char *newShader, const char
  */
 qboolean trap_GetLimboString(int index, char *buf)
 {
-	return (qboolean)(syscall(UI_CL_GETLIMBOSTRING, index, buf));
+	return (qboolean)(SystemCall(UI_CL_GETLIMBOSTRING, index, buf));
 }
 
 /**
@@ -1140,7 +1140,7 @@ const char *trap_TranslateString(const char *fmt)
 
 	buf = staticbuf[bufcount++ % 2];
 
-	syscall(UI_CL_TRANSLATE_STRING, fmt, buf);
+	SystemCall(UI_CL_TRANSLATE_STRING, fmt, buf);
 
 	return buf;
 }
@@ -1150,7 +1150,7 @@ const char *trap_TranslateString(const char *fmt)
  */
 void trap_CheckAutoUpdate(void)
 {
-	syscall(UI_CHECKAUTOUPDATE);
+	SystemCall(UI_CHECKAUTOUPDATE);
 }
 
 /**
@@ -1158,7 +1158,7 @@ void trap_CheckAutoUpdate(void)
  */
 void trap_GetAutoUpdate(void)
 {
-	syscall(UI_GET_AUTOUPDATE);
+	SystemCall(UI_GET_AUTOUPDATE);
 }
 
 /**
@@ -1167,7 +1167,7 @@ void trap_GetAutoUpdate(void)
  */
 void trap_openURL(const char *url)
 {
-	syscall(UI_OPENURL, url);
+	SystemCall(UI_OPENURL, url);
 }
 
 /**
@@ -1177,5 +1177,5 @@ void trap_openURL(const char *url)
  */
 void trap_GetHunkData(int *hunkused, int *hunkexpected)
 {
-	syscall(UI_GETHUNKDATA, hunkused, hunkexpected);
+	SystemCall(UI_GETHUNKDATA, hunkused, hunkexpected);
 }
