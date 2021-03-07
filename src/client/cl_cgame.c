@@ -577,6 +577,8 @@ void CL_CM_LoadMap(const char *mapname)
 		Cvar_Set("com_errorDiagnoseIP", "");
 	}
 
+	Con_ScrollBottom();
+
 	CM_LoadMap(mapname, qtrue, &checksum);
 }
 

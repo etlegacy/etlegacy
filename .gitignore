@@ -18,6 +18,7 @@ etmain/ui/git_version.h
 *~
 *.sh
 !/misc/*.sh
+!/release.sh
 /.directory
 *.kdev4
 

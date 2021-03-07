@@ -2942,7 +2942,7 @@ void CG_DrawMapNew(float x, float y, float w, float h, int mEntFilter, mapScisso
 
 			trap_R_SetColor(NULL);
 
-			CG_DrawRect_FixedBorder(x, y, w, h, 1, colorWhite);
+			CG_DrawRect_FixedBorder(x - 0.5f, y - 0.5f, w + 1.0f, h + 1.0f, 1, colorWhite);
 		}
 	}
 	else
@@ -2965,7 +2965,7 @@ void CG_DrawMapNew(float x, float y, float w, float h, int mEntFilter, mapScisso
 		}
 		trap_R_SetColor(NULL);
 
-		CG_DrawRect_FixedBorder(x, y, w, h, 1, colorWhite);
+		CG_DrawRect_FixedBorder(x - 0.5f, y - 0.5f, w + 1.0f, h + 1.0f, 1, colorWhite);
 	}
 
 	exspawn = CG_DrawSpawnPointInfoNew(x, y, w, h, qfalse, scissor, -1);
@@ -3134,7 +3134,7 @@ int CG_DrawSpawnPointInfoNew(float px, float py, float pw, float ph, qboolean dr
 	vec2_t icon_extends;
 	vec2_t point;
 	float  changetime;
-	int    i, e = -1;
+	int    i, width, e = -1;
 
 	if (cgs.ccFilter & CC_FILTER_SPAWNS)
 	{
@@ -3283,14 +3283,31 @@ int CG_DrawSpawnPointInfoNew(float px, float py, float pw, float ph, qboolean dr
 
 				CG_DrawPic(point[0] - FLAG_LEFTFRAC_NEW * size, point[1] - FLAG_TOPFRAC_NEW * size, size, size, cgs.media.commandCentreSpawnShader[cg.spawnTeams[i] == TEAM_AXIS ? 0 : 1]);
 
+				Com_sprintf(buffer, sizeof(buffer), "(%i)", cg.spawnPlayerCounts[i]);
+
 				if (scissor)
 				{
-					Com_sprintf(buffer, sizeof(buffer), "(%i)", cg.spawnPlayerCounts[i]);
-					CG_Text_Paint_Ext(point[0] + 2.5f + scissor->zoomFactor, point[1], 0.15f, 0.15f, colorWhite, buffer, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+					// Recalculate for player spawn count clipping
+					point[0] = ((cg.spawnCoordsUntransformed[i][0] - cg.mapcoordsMins[0]) * cg.mapcoordsScale[0]) * pw * scissor->zoomFactor;
+					point[1] = ((cg.spawnCoordsUntransformed[i][1] - cg.mapcoordsMins[1]) * cg.mapcoordsScale[1]) * ph * scissor->zoomFactor;
+
+					width = CG_Text_Width_Ext(buffer, 0.15f, 0, &cgs.media.limboFont2);
+
+					point[0] += 1.5f + scissor->zoomFactor + width;
+					point[1] -= 5;
+
+					if (CG_ScissorPointIsCulled(point, scissor, icon_extends))
+					{
+						continue;
+					}
+
+					point[0] += px - scissor->tl[0] - width;
+					point[1] += py - scissor->tl[1] + 4;
+
+					CG_Text_Paint_Ext(point[0], point[1], 0.15f, 0.15f, colorWhite, buffer, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 				}
 				else
 				{
-					Com_sprintf(buffer, sizeof(buffer), "(%i)", cg.spawnPlayerCounts[i]);
 					CG_Text_Paint_Ext(point[0] + FLAGSIZE_NORMAL_NEW * 0.25f, point[1], 0.2f, 0.2f, colorWhite, buffer, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 				}
 			}

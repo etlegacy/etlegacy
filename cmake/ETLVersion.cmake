@@ -3,12 +3,24 @@
 #-----------------------------------------------------------------
 
 # default values if they cannot be generated from git
-set(ETLEGACY_VERSION_MAJOR "2")
-set(ETLEGACY_VERSION_MINOR "77")
+set(ETLEGACY_VERSION_MAJOR "0")
+set(ETLEGACY_VERSION_MINOR "0")
 set(ETLEGACY_VERSION_PATCH "0")
 set(ETLEGACY_VERSION_COMMIT "0")
+
+file(READ "${CMAKE_CURRENT_SOURCE_DIR}/VERSION.txt" version_file_data)
+
+string(REGEX MATCH "VERSION_MAJOR ([0-9]*)" _ ${version_file_data})
+set(ETLEGACY_VERSION_MAJOR ${CMAKE_MATCH_1})
+string(REGEX MATCH "VERSION_MINOR ([0-9]*)" _ ${version_file_data})
+set(ETLEGACY_VERSION_MINOR ${CMAKE_MATCH_1})
+string(REGEX MATCH "VERSION_PATCH ([0-9]*)" _ ${version_file_data})
+set(ETLEGACY_VERSION_PATCH ${CMAKE_MATCH_1})
+
 set(ETLEGACY_VERSION "${ETLEGACY_VERSION_MAJOR}.${ETLEGACY_VERSION_MINOR}-dirty")
 set(ETLEGACY_VERSIONPLAIN "${ETLEGACY_VERSION_MAJOR},${ETLEGACY_VERSION_MINOR},${ETLEGACY_VERSION_PATCH},${ETLEGACY_VERSION_COMMIT}")
+
+message(STATUS "File version: ${ETLEGACY_VERSION_MAJOR}.${ETLEGACY_VERSION_MINOR}.${ETLEGACY_VERSION_PATCH}.${ETLEGACY_VERSION_COMMIT}")
 
 function(PAD_STRING output str padchar length right_padded)
 	string(LENGTH "${str}" _strlen)
@@ -154,6 +166,8 @@ else()
 	set(ETL_CMAKE_BUILD_TIME "1999-01-01T00:00:00") # Yes this is a joke, for the systems running ancient cmake versions
 	set(ETL_CMAKE_BUILD_DATE "1999-01-01")
 endif()
+
+message(STATUS "Version: ${ETLEGACY_VERSION_MAJOR}.${ETLEGACY_VERSION_MINOR}.${ETLEGACY_VERSION_PATCH}.${ETLEGACY_VERSION_COMMIT} and int version: ${ETL_CMAKE_VERSION_INT}")
 
 # Mod version
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/cmake/git_version.h.in" "${CMAKE_CURRENT_SOURCE_DIR}/etmain/ui/git_version.h" @ONLY)
