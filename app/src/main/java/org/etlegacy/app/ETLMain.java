@@ -101,8 +101,8 @@ public class ETLMain extends Activity {
 
         LinearLayout etl_Layout = new LinearLayout(this);
 
-        RelativeLayout.LayoutParams etl_Params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                1024);
+        RelativeLayout.LayoutParams etl_Params = new RelativeLayout.LayoutParams(Resources.getSystem().getDisplayMetrics().widthPixels,
+                Resources.getSystem().getDisplayMetrics().heightPixels);
 
         etl_Layout.addView(imageView, etl_Params);
         setContentView(etl_Layout);
