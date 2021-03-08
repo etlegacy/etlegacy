@@ -141,7 +141,6 @@ typedef enum
 /// having bone names for each refEntity_t takes several MiBs
 /// in backEndData_t so only use it for debugging and development
 /// enabling this will show the bone names with r_showSkeleton 1
-#define USE_REFENTITY_ANIMATIONSYSTEM 1 // renderer2
 //#define REFBONE_NAMES 1
 
 #if defined(USE_REFENTITY_ANIMATIONSYSTEM)
