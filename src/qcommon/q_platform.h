@@ -348,16 +348,8 @@
 #define PATH_SEP '/'
 
 #if defined __arm__
-  #if defined __ARM_ARCH_7A__
-//    #if defined __ARM_NEON__
-//      #ifndef ARCH_STRING
-//        #define ARCH_STRING "armeabi_neon-v7a"
-//      #endif
-//    #else
-    #ifndef ARCH_STRING
+      #undef ARCH_STRING
       #define ARCH_STRING "armeabi-v7a"
-    #endif
-  #endif
 #elif defined __aarch64__
       #define ARCH_STRING "arm64-v8a"
 #endif
