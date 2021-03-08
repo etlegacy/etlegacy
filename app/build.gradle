@@ -7,6 +7,19 @@ else {
     apply plugin: 'com.android.library'
 }
 
+versionberg {
+    // Increase when you make incompatible API changes (default value is 0)
+    major 2
+    // Increase when you add functionality in a backwards-compatible manner (default value is 0)
+    minor 77
+    // Increase when you make backwards-compatible bug fixes (default value is 0)
+    patch 0
+    // default is ${commitCount}, uncomment to use a custom build number
+    // build 2
+    // Default version name template is '${major}.${minor}.${patch}.${build}'
+    nameTemplate '${major}.${minor}-${commitCount}-${commitSha}'
+}
+
 android {
     compileSdkVersion 26
     defaultConfig {
@@ -16,8 +29,8 @@ android {
         minSdkVersion 21
         targetSdkVersion 26
         versionCode 1
-        versionName "1.0"
-        setProperty("archivesBaseName", "ETLegacy v-$versionName")
+        versionName versionberg.name
+        setProperty("archivesBaseName", "ETLegacy v$versionName")
         externalNativeBuild {
             cmake {
                 arguments "-DCROSS_COMPILE32=OFF", "-DFEATURE_RENDERER2=OFF", "-DFEATURE_RENDERER_GLES=ON", "-DBUILD_SERVER=OFF", "-DINSTALL_EXTRA=OFF", "-DCMAKE_BUILD_TYPE=Release", "-DBUNDLED_LIBS=OFF", "-DFEATURE_LUA=OFF", "-DFEATURE_OPENAL=OFF", "-DFEATURE_FREETYPE=OFF", "-DRENDERER_DYNAMIC=OFF", "-DBUNDLED_THEORA=OFF", "-DFEATURE_THEORA=OFF", "-DFEATURE_PNG=OFF", "-DFEATURE_SSL=OFF"
