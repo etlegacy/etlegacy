@@ -121,16 +121,74 @@ public class ETLMain extends Activity {
             copyInputStreamToFile(is, etl_etlegacy);
         }
 
+        // FIXME:This is ugly
         final File etl_pak0 = new File(getExternalFilesDir(null), "/etlegacy/etmain/pak0.pk3");
+        final File etl_pak1 = new File(getExternalFilesDir(null), "/etlegacy/etmain/pak1.pk3");
+        final File etl_pak2 = new File(getExternalFilesDir(null), "/etlegacy/etmain/pak2.pk3");
+
         final Intent intent = new Intent(ETLMain.this, ETLActivity.class);
 
-        if (etl_pak0.exists()) {
+        if (etl_pak0.exists() && etl_pak1.exists() && etl_pak2.exists()) {
             startActivity(intent);
             finish();
         } else {
             final ProgressDialog etl_Dialog = DownloadBar();
             final AsyncHttpClient client = new AsyncHttpClient();
-            client.get("http://mirror.etlegacy.com/etmain/pak0.pk3", new FileAsyncHttpResponseHandler(this) {
+
+            // pak2
+            client.get("https://mirror.etlegacy.com/etmain/pak2.pk3", new FileAsyncHttpResponseHandler(this) {
+                @Override
+                public void onFailure(int statusCode, Header[] headers, Throwable throwable, File file) {
+
+                }
+
+                @Override
+                public void onSuccess(int statusCode, Header[] headers, File file) {
+
+                }
+
+                @Override
+                public void onFinish() {
+                    super.onFinish();
+                    if (file.getAbsoluteFile().exists()) {
+                        try {
+                            Files.move(file.getAbsoluteFile(), new File(getExternalFilesDir("etlegacy/etmain"), etl_pak2.getName()));
+                            client.cancelAllRequests(true);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            });
+
+            // pak1
+            client.get("https://mirror.etlegacy.com/etmain/pak1.pk3", new FileAsyncHttpResponseHandler(this) {
+                @Override
+                public void onFailure(int statusCode, Header[] headers, Throwable throwable, File file) {
+
+                }
+
+                @Override
+                public void onSuccess(int statusCode, Header[] headers, File file) {
+
+                }
+
+                @Override
+                public void onFinish() {
+                    super.onFinish();
+                    if (file.getAbsoluteFile().exists()) {
+                        try {
+                            Files.move(file.getAbsoluteFile(), new File(getExternalFilesDir("etlegacy/etmain"), etl_pak1.getName()));
+                            client.cancelAllRequests(true);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            });
+
+            // pak0
+            client.get("https://mirror.etlegacy.com/etmain/pak0.pk3", new FileAsyncHttpResponseHandler(this) {
 
                 @Override
                 public void onSuccess(int statusCode, Header[] headers, File file) {
