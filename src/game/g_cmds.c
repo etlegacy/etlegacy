@@ -4258,7 +4258,7 @@ void Cmd_Activate2_f(gentity_t *ent)
 	if ((g_OmniBotFlags.integer & OBF_SHOVING) || !(ent->r.svFlags & SVF_BOT))
 	{
 #endif
-	trap_Trace(&tr, offset, NULL, NULL, end, ent->s.number, CONTENTS_BODY);
+	trap_Trace(&tr, offset, NULL, NULL, end, ent->s.number, (CONTENTS_SOLID | CONTENTS_BODY | CONTENTS_CORPSE));
 	if (tr.entityNum >= 0)
 	{
 		gentity_t *traceEnt = &g_entities[tr.entityNum];
