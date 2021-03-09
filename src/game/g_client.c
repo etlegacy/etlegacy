@@ -3090,7 +3090,7 @@ void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean
 
 	if (level.intermissiontime)
 	{
-		MoveClientToIntermission(ent);
+		MoveClientToIntermission(ent, (EF_VOTED & client->ps.eFlags));
 
 		// send current mapvote tally
 		if (g_gametype.integer == GT_WOLF_MAPVOTE)
