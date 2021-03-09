@@ -1777,6 +1777,14 @@ void Com_ParseUA(userAgent_t *ua, const char *string);
 #define NUMARGS(...)  (sizeof((int[]) { 0, ## __VA_ARGS__ }) / sizeof(int) - 1)
 #endif
 
+/**
+ * @def VM_CALL_END
+ *
+ * @brief This should be something like INT_MAX but that would need limits.h everywhere so meh and negative values should be somewhat safe
+ */
+#define VM_CALL_END -1337
+#define SystemCall(...) syscall(__VA_ARGS__, VM_CALL_END)
+
 #ifdef ETLEGACY_DEBUG
 #if defined(_MSC_VER)
 #define etl_assert(x) if (!(x)) __debugbreak()

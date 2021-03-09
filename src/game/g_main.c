@@ -655,8 +655,8 @@ cvarTable_t gameCvarTable[] =
 #endif
 	{ &g_stickyCharge,                    "g_stickyCharge",                    "0",                          CVAR_ARCHIVE,                                    0, qfalse, qfalse },
 	{ &g_xpSaver,                         "g_xpSaver",                         "0",                          CVAR_ARCHIVE,                                    0, qfalse, qfalse },
-    { &g_dynamiteChaining,                "g_dynamiteChaining",                "0",                          CVAR_ARCHIVE,                                    0, qfalse, qfalse },
-    { &g_playerHitBoxHeight,              "g_playerHitBoxHeight",              "36",                         CVAR_ARCHIVE | CVAR_SERVERINFO,                  0, qfalse, qfalse },
+	{ &g_dynamiteChaining,                "g_dynamiteChaining",                "0",                          CVAR_ARCHIVE,                                    0, qfalse, qfalse },
+	{ &g_playerHitBoxHeight,              "g_playerHitBoxHeight",              "36",                         CVAR_ARCHIVE | CVAR_SERVERINFO,                  0, qfalse, qfalse },
 };
 
 /**
@@ -1088,6 +1088,7 @@ void G_CheckForCursorHints(gentity_t *ent)
 		dist += VectorDistanceSquared(offset, tr->endpos);
 		if (tr->fraction == 1.f)
 		{
+			G_ResetTempTraceRealHitBox();
 			return;
 		}
 		traceEnt = &g_entities[tr->entityNum];
@@ -3184,8 +3185,9 @@ void SendScoreboardMessageToAllClients(void)
  * @brief When the intermission starts, this will be called for all players.
  * If a new client connects, this will be called after the spawn function.
  * @param[in,out] ent Client
+ * @param[in] hasVoted keep tracking clients vote if they change team during intermission
  */
-void MoveClientToIntermission(gentity_t *ent)
+void MoveClientToIntermission(gentity_t *ent, qboolean hasVoted)
 {
 	// take out of follow mode if needed
 	if (ent->client->sess.spectatorState == SPECTATOR_FOLLOW)
@@ -3210,21 +3212,21 @@ void MoveClientToIntermission(gentity_t *ent)
 	}
 
 	// initialize vars
-	if (g_gametype.integer == GT_WOLF_MAPVOTE)
+	if (!hasVoted && g_gametype.integer == GT_WOLF_MAPVOTE)
 	{
 		ent->client->sess.mapVotedFor[0] = -1;
 		ent->client->sess.mapVotedFor[1] = -1;
 		ent->client->sess.mapVotedFor[2] = -1;
 	}
 
-	ent->client->ps.eFlags = 0;
-	ent->s.eFlags          = 0;
-	ent->s.eType           = ET_GENERAL;
-	ent->s.modelindex      = 0;
-	ent->s.loopSound       = 0;
-	ent->s.event           = 0;
-	ent->s.events[0]       = ent->s.events[1] = ent->s.events[2] = ent->s.events[3] = 0;
-	ent->r.contents        = 0;
+	ent->client->ps.eFlags |= hasVoted ? EF_VOTED : 0;
+	ent->s.eFlags           = 0;
+	ent->s.eType            = ET_GENERAL;
+	ent->s.modelindex       = 0;
+	ent->s.loopSound        = 0;
+	ent->s.event            = 0;
+	ent->s.events[0]        = ent->s.events[1] = ent->s.events[2] = ent->s.events[3] = 0;
+	ent->r.contents         = 0;
 }
 
 /**
@@ -3553,7 +3555,7 @@ void BeginIntermission(void)
 		{
 			continue;
 		}
-		MoveClientToIntermission(client);
+		MoveClientToIntermission(client, qfalse);
 	}
 
 	// send the current scoring to all clients

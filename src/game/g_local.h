@@ -1664,7 +1664,7 @@ void Svcmd_ShuffleTeamsSR_f(qboolean restart);
 void FireWeapon(gentity_t *ent);
 void G_BurnMeGood(gentity_t *self, gentity_t *body, gentity_t *chunk);
 
-void MoveClientToIntermission(gentity_t *ent);
+void MoveClientToIntermission(gentity_t *ent, qboolean hasVoted);
 void G_SendScore(gentity_t *ent);
 
 // g_cmds.c

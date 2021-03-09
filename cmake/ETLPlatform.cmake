@@ -58,6 +58,35 @@ if(UNIX)
 	set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -ffast-math")
 	set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall")
 
+	if(ENABLE_ASAN)
+		include (CheckCCompilerFlag)
+		include (CheckCXXCompilerFlag)
+		set(CMAKE_REQUIRED_FLAGS "-fsanitize=address")
+		CHECK_C_COMPILER_FLAG("-fsanitize=address" HAVE_FLAG_SANITIZE_ADDRESS_C)
+		CHECK_CXX_COMPILER_FLAG("-fsanitize=address" HAVE_FLAG_SANITIZE_ADDRESS_CXX)
+
+		if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+			# Clang requires an external symbolizer program.
+			FIND_PROGRAM(LLVM_SYMBOLIZER
+					NAMES llvm-symbolizer
+					llvm-symbolizer-3.8
+					llvm-symbolizer-3.7
+					llvm-symbolizer-3.6)
+
+			if(NOT LLVM_SYMBOLIZER)
+				message(WARNING "AddressSanitizer failed to locate an llvm-symbolizer program. Stack traces may lack symbols.")
+			endif()
+		endif()
+
+		if(HAVE_FLAG_SANITIZE_ADDRESS_C AND HAVE_FLAG_SANITIZE_ADDRESS_CXX)
+			message(STATUS "Enabling AddressSanitizer for this configuration")
+			set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fsanitize=address -fno-omit-frame-pointer -g")
+			set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address -fno-omit-frame-pointer -g")
+		else()
+			message(FATAL_ERROR "AddressSanitizer enabled but compiler doesn't support it - cannot continue.")
+		endif()
+	endif()
+
 	if(CMAKE_SYSTEM MATCHES "OpenBSD*")
 		set(OS_LIBRARIES m pthread)
 		set(LIB_SUFFIX ".mp.obsd.")

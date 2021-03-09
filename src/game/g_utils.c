@@ -1329,7 +1329,20 @@ void G_SetEntState(gentity_t *ent, entState_t state)
 			int       entityList[MAX_GENTITIES];
 			gentity_t *check, *block;
 
+			// ignore OID trigger before getting entities in box
+			// otherwise their hitbox will completely hidden other small entities inside it
+			for (e = 0 ; e < level.num_entities ; e++)
+			{
+				if (g_entities[e].s.eFlags == ET_OID_TRIGGER)
+				{
+					G_TempTraceIgnoreEntity(&g_entities[e]);
+				}
+			}
+
 			listedEntities = trap_EntitiesInBox(ent->r.absmin, ent->r.absmax, entityList, MAX_GENTITIES);
+
+			// add back OID trigger in world
+			G_ResetTempTraceIgnoreEnts();
 
 			for (e = 0; e < listedEntities; e++)
 			{
