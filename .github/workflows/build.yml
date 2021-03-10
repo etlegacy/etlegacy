@@ -124,6 +124,7 @@ jobs:
             apt-get -y install build-essential libudev-dev libwebp-dev automake zlib1g \
             nasm autoconf cmake git zip gcc g++ libtool
             ./easybuild.sh build -RPI -mod
+
       - uses: actions/upload-artifact@v2
         with:
           name: raspberry_pi-mod
@@ -131,6 +132,44 @@ jobs:
             build/legacy/cgame*.so
             build/legacy/ui*.so
 
+  android-mod:
+    runs-on: ubuntu-18.04
+    steps:
+      - name: Setup JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: 1.8
+
+      - name: Android Repo
+        uses: actions/checkout@v2
+        with:
+          repository: etlegacy/etlegacy-android
+          submodules: true
+          fetch-depth: 0
+
+      - name: Downloading NDK
+        uses: actions/checkout@v2
+        with:
+          repository: rafal1137/NDK_ETL
+          path: NDK_ETL
+
+      - name: Grant execute permission for gradlew
+        shell: bash
+        run: chmod +x ./gradlew
+
+      - name: Build
+        run: |
+          echo "export ANDROID_NDK_HOME=$GITHUB_WORKSPACE/NDK_ETL/ndk-bundle" > ~/.bashrc
+          source ~/.bashrc
+          chmod -R 775 $ANDROID_NDK_HOME
+          echo $ANDROID_NDK_HOME
+          ./gradlew clean build
+          ls -R
+
+#     - uses: actions/upload-artifact@v2
+#        with:
+#          name: android-mod
+#          path: |
 
 #   __  __                                                          _
 #  |  \/  |                                                        | |
