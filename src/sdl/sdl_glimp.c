@@ -51,6 +51,8 @@ static int gammaResetTime = 0;
 #endif
 #endif // __APPLE__
 
+static int GLimp_CompareModes(const void *a, const void *b);
+
 SDL_Window           *main_window   = NULL;
 static SDL_Renderer  *main_renderer = NULL;
 static SDL_GLContext SDL_glContext  = NULL;
@@ -182,13 +184,65 @@ qboolean GLimp_GetModeInfo(int *width, int *height, float *windowAspect, int mod
 	return qtrue;
 }
 
+#define GLimp_ResolutionToFraction(resolution) GLimp_RatioToFraction((double) resolution.w / (double) resolution.h, 150)
+
+/**
+ * @brief Figures out the best possible fraction string for the given resolution ratio
+ * @param ratio resolution ratio (resolution width / resolution height)
+ * @param iterations how many iterations should it be allowed to run
+ * @return fraction value formatted into a string (static stack)
+ */
+static char *GLimp_RatioToFraction(const double ratio, const int iterations)
+{
+	static char buff[64];
+	double bestDelta = DBL_MAX;
+	unsigned int numerator = 1;
+	unsigned int denominator = 1;
+	unsigned int bestNumerator = 0;
+	unsigned int bestDenominator = 0;
+
+	for (int i = 0; i < iterations; i++)
+	{
+		double delta = (double) numerator / (double) denominator - ratio;
+
+		// Close enough for most resolutions
+		if(fabs(delta) < 0.002)
+		{
+			break;
+		}
+
+		if (delta < 0)
+		{
+			numerator++;
+		}
+		else
+		{
+			denominator++;
+		}
+
+		double newDelta = fabs((double) numerator / (double) denominator - ratio);
+		if (newDelta < bestDelta)
+		{
+			bestDelta = newDelta;
+			bestNumerator = numerator;
+			bestDenominator = denominator;
+		}
+	}
+
+	sprintf(buff, "%u/%u", bestNumerator, bestDenominator);
+	Com_DPrintf("%f -> %s\n", ratio, buff);
+	return buff;
+}
+
 /**
 * @brief Prints hardcoded screen resolutions
 * @see r_availableModes for supported resolutions
 */
 void GLimp_ModeList_f(void)
 {
-	int i;
+	int i, j, display, numModes = 0;
+	SDL_Rect        modes[128];
+	SDL_DisplayMode windowMode;
 
 	Com_Printf("\n");
 	Com_Printf((r_mode->integer == -2) ? "%s ^2(current)\n" : "%s\n",
@@ -200,6 +254,69 @@ void GLimp_ModeList_f(void)
 		Com_Printf((i == r_mode->integer) ? "%s ^2(current)\n" : "%s\n",
 		           glimp_vidModes[i].description);
 	}
+
+	Com_Printf("\n" S_COLOR_GREEN "SDL detected modes:\n");
+
+	display = SDL_GetWindowDisplayIndex(main_window);
+
+	if (SDL_GetDesktopDisplayMode(display, &windowMode) < 0)
+	{
+		Com_Printf(S_COLOR_YELLOW "Couldn't get desktop display mode, no resolutions detected - %s\n", SDL_GetError());
+		return;
+	}
+
+	for (i = 0; i < SDL_GetNumDisplayModes(display); i++)
+	{
+		SDL_DisplayMode mode;
+
+		if (SDL_GetDisplayMode(display, i, &mode) < 0)
+		{
+			continue;
+		}
+
+		if (!mode.w || !mode.h)
+		{
+			Com_Printf("Display supports any resolution\n");
+			return;
+		}
+
+		if (windowMode.format != mode.format)
+		{
+			continue;
+		}
+
+		// SDL can give the same resolution with different refresh rates.
+		// Only list resolution once.
+		for (j = 0; j < numModes; j++)
+		{
+			if (mode.w == modes[j].w && mode.h == modes[j].h)
+			{
+				break;
+			}
+		}
+
+		if (j != numModes)
+		{
+			continue;
+		}
+
+		modes[numModes].w = mode.w;
+		modes[numModes].h = mode.h;
+		numModes++;
+	}
+
+	if (numModes > 1)
+	{
+		qsort(modes, numModes, sizeof(SDL_Rect), GLimp_CompareModes);
+	}
+
+	for (i = 0; i < numModes; i++)
+	{
+		const char *newModeString = va("%ux%u ", modes[i].w, modes[i].h);
+		Com_Printf("Mode XX: %s (%s)\n", newModeString, GLimp_ResolutionToFraction(modes[i]));
+	}
+
+
 	Com_Printf("\n");
 }
 
@@ -979,8 +1096,15 @@ void GLimp_Splash(glconfig_t *glConfig)
 	dstRect.w = splashImage->w;
 	dstRect.h = splashImage->h;
 
-	// apply image on surface
-	if (SDL_BlitSurface(splashImage, NULL, SDL_GetWindowSurface(main_window), &dstRect) == 0)
+	SDL_Surface *surface = SDL_GetWindowSurface(main_window);
+	if(!surface)
+	{
+		// This happens on some platforms, most likely just the SDL build lacking renderers. Does not really matter tho.
+		// the user just wont see our awesome splash screen, but the renderer should boot up just fine.
+		// FIXME: maybe checkup on this later on if there's something we should change on the bundled sdl compile settings
+		Com_DPrintf(S_COLOR_YELLOW "Could not get fetch SDL surface: %s\n", SDL_GetError() );
+	}
+	else if (SDL_BlitSurface(splashImage, NULL, surface, &dstRect) == 0) // apply image on surface
 	{
 		SDL_UpdateWindowSurface(main_window);
 	}
