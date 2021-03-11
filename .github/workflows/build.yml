@@ -159,11 +159,10 @@ jobs:
 
       - name: Build
         run: |
-          sudo apt -y install cmake
           echo "export ANDROID_NDK_HOME=$GITHUB_WORKSPACE/NDK_ETL/ndk-bundle" > ~/.bashrc
           source ~/.bashrc
           chmod -R 775 $ANDROID_NDK_HOME
-          echo "cmake.dir=/usr/" | tee -a local.properties
+          echo "cmake.dir=/usr/local/" | tee -a local.properties
           ./gradlew clean build
           ls -R
 
