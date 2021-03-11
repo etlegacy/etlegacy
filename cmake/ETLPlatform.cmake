@@ -181,7 +181,6 @@ elseif(WIN32)
 		endif()
 
 		if(FORCE_STATIC_VCRT)
-			message(FATAL_ERROR "Doing static linking :thinking-face:.")
 			set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /EHsc /O2")
 			set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /EHa /W3")
 
