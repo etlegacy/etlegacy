@@ -195,13 +195,14 @@ qboolean GLimp_GetModeInfo(int *width, int *height, float *windowAspect, int mod
 static char *GLimp_RatioToFraction(const double ratio, const int iterations)
 {
 	static char buff[64];
+    int i;
 	double bestDelta = DBL_MAX;
 	unsigned int numerator = 1;
 	unsigned int denominator = 1;
 	unsigned int bestNumerator = 0;
 	unsigned int bestDenominator = 0;
 
-	for (int i = 0; i < iterations; i++)
+	for (i = 0; i < iterations; i++)
 	{
 		double delta = (double) numerator / (double) denominator - ratio;
 
