@@ -1395,7 +1395,7 @@ qboolean Q_isanumber(const char *s)
  */
 qboolean Q_isintegral(float f)
 {
-	return (int)f == f;
+	return (int)f == f; // NOLINT(cppcoreguidelines-narrowing-conversions)
 }
 
 /**
