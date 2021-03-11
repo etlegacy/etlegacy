@@ -67,6 +67,13 @@ unsigned int CON_LogRead(char *out, unsigned int outSize);
 void Sys_GLimpSafeInit(void);
 void Sys_GLimpInit(void);
 void Sys_PlatformInit(void);
+
+#ifdef _WIN32
+void Sys_PlatformExit(int code);
+#else
+#define Sys_PlatformExit(x) exit(x);
+#endif
+
 void Sys_SigHandler(int signal) _attribute ((noreturn));
 void Sys_ErrorDialog(const char *error);
 void Sys_AnsiColorPrint(const char *msg);

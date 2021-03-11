@@ -58,6 +58,10 @@
 #include <psapi.h>
 #include <setjmp.h>
 
+#if defined(LEGACY_DUMP_MEMLEAKS)
+#include <crtdbg.h>
+#endif
+
 // Used to determine where to store user-specific files
 static char homePath[MAX_OSPATH] = { 0 };
 //static jmp_buf sys_exitframe;
@@ -1107,6 +1111,18 @@ void Sys_PlatformInit(void)
 	WinSetExceptionVersion(Q3_VERSION);
 #endif
 
+#if defined(LEGACY_DUMP_MEMLEAKS)
+	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+	_CrtSetReportMode(_CRT_WARN, _CRTDBG_MODE_DEBUG);
+
+	_CrtSetReportMode(_CRT_WARN, _CRTDBG_MODE_FILE);
+	_CrtSetReportFile(_CRT_WARN, _CRTDBG_FILE_STDOUT);
+	_CrtSetReportMode(_CRT_ERROR, _CRTDBG_MODE_FILE);
+	_CrtSetReportFile(_CRT_ERROR, _CRTDBG_FILE_STDOUT);
+	_CrtSetReportMode(_CRT_ASSERT, _CRTDBG_MODE_FILE);
+	_CrtSetReportFile(_CRT_ASSERT, _CRTDBG_FILE_STDOUT);
+#endif
+
 #ifndef DEDICATED
 	Sys_SetProcessProperties();
 #endif
@@ -1122,6 +1138,14 @@ void Sys_PlatformInit(void)
 
 	// no abort/retry/fail errors
 	SetErrorMode(SEM_FAILCRITICALERRORS);
+}
+
+void Sys_PlatformExit(int code)
+{
+#if defined(LEGACY_DUMP_MEMLEAKS)
+	_CrtDumpMemoryLeaks();
+#endif
+	exit(code);
 }
 
 /**

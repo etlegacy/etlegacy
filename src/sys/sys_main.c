@@ -32,8 +32,15 @@
  * @file sys_main.c
  */
 
+#ifdef LEGACY_DUMP_MEMLEAKS
+#define _CRTDBG_MAP_ALLOC
+#endif
+
 #include <signal.h>
 #include <stdlib.h>
+#if defined(LEGACY_DUMP_MEMLEAKS)
+#include <crtdbg.h>
+#endif
 #include <limits.h>
 #include <sys/types.h>
 #include <stdarg.h>
@@ -227,7 +234,7 @@ static _attribute((noreturn)) void Sys_Exit(int exitCode)
 
 	NET_Shutdown();
 
-	exit(exitCode);
+	Sys_PlatformExit(exitCode);
 }
 
 
