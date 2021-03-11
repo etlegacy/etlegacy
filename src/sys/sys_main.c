@@ -785,7 +785,7 @@ void *Sys_LoadGameDll(const char *name, qboolean extract,
 		}
 
 		// use League ui for download process (mod binary pk3 isn't extracted)
-		if (!strcmp(name, "ui") && !libHandle && strcmp(gamedir, DEFAULT_MODGAME))
+		if (!strcmp(name, "ui") && !libHandle && strcmp(gamedir, DEFAULT_MODGAME) != 0)
 		{
 			Com_Printf("Sys_LoadDll: mod initialisation - ui fallback\n");
 
