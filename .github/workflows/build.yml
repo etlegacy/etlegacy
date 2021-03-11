@@ -153,9 +153,9 @@ jobs:
           repository: rafal1137/NDK_ETL
           path: NDK_ETL
 
-      - name: Grant execute permission for gradlew
+      - name: Install Ninja Builder
         shell: bash
-        run: chmod +x ./gradlew
+        run: sudo apt install -y ninja-build
 
       - name: Build
         run: |
