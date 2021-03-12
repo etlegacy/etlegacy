@@ -1159,6 +1159,7 @@ static void IN_ProcessEvents(void)
 	SDL_Event       e;
 	keyNum_t        key         = 0;
 	static keyNum_t lastKeyDown = 0;
+	qboolean 		skipLost	= qfalse;
 
 	if (!SDL_WasInit(SDL_INIT_VIDEO))
 	{
@@ -1324,9 +1325,17 @@ static void IN_ProcessEvents(void)
 			case SDL_WINDOWEVENT_RESTORED:
 			case SDL_WINDOWEVENT_MAXIMIZED:
 				Cvar_SetValue("com_minimized", 0);
-				SDL_RaiseWindow(mainScreen);
+				skipLost = qtrue;
 				break;
 			case SDL_WINDOWEVENT_FOCUS_LOST:
+				// When we are restoring a fullscreen window that is not the desktop resolution
+				// the desktop will resize and SDL will get restores & focus gained & focus lost in order.
+				// So.. to fix minimizing just after user re-selects the game, we will skip focus lost events
+				// for just a SINGLE frame!
+				if (skipLost)
+				{
+					break;
+				}
 				IN_WindowFocusLost();
 			case SDL_WINDOWEVENT_LEAVE:
 				Key_ClearStates();
@@ -1336,12 +1345,11 @@ static void IN_ProcessEvents(void)
 			case SDL_WINDOWEVENT_FOCUS_GAINED:
 			{
 				Cvar_SetValue("com_unfocused", 0);
-				SDL_RaiseWindow(mainScreen);
-
 				if (com_minimized->integer)
 				{
 					SDL_RestoreWindow(mainScreen);
 				}
+				SDL_RaiseWindow(mainScreen);
 			}
 			break;
 			case SDL_WINDOWEVENT_MOVED:
