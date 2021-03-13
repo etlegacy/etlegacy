@@ -1169,7 +1169,7 @@ void CL_Vid_Restart_f(void)
 	CL_StartHunkUsers();
 
 #ifdef _WIN32
-	Sys_In_Restart_f();
+	IN_Restart();
 #endif
 	// start the cgame if connected
 	if (cls.state > CA_CONNECTED && cls.state != CA_CINEMATIC)
@@ -1410,6 +1410,13 @@ void CL_Clip_f(void)
 	// Return to console printing
 	Cvar_Set("cl_noprint", va("%i", noPrint));
 }
+
+#ifdef ETLEGACY_DEBUG
+void CL_ExtendedCharsTest_f(void)
+{
+	Com_Printf("Output should be the same: t\xe4m\xe4? == t\xc3\xa4m\xc3\xa4?");
+}
+#endif
 
 /**
  * @brief CL_AddFavServer_f
@@ -3046,6 +3053,10 @@ void CL_Init(void)
 	Cmd_AddCommand("open_homepath", CL_OpenHomePath_f, "Open the home path in a system file explorer.");
 
 	Cmd_AddCommand("clip", CL_Clip_f, "Put command output to clipboard.");
+
+#ifdef ETLEGACY_DEBUG
+	Cmd_AddCommand("extendedCharsTest", CL_ExtendedCharsTest_f);
+#endif
 
 	CIN_Init();
 
