@@ -166,36 +166,76 @@ elseif(WIN32)
 	endif()
 	set(LIB_SUFFIX "_mp_")
 	if(MSVC)
-		set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /EHsc /O2")
-		set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /EHa /W3")
 
-		set(CompilerFlags
-			CMAKE_CXX_FLAGS
-			CMAKE_CXX_FLAGS_DEBUG
-			CMAKE_CXX_FLAGS_RELEASE
-			CMAKE_C_FLAGS
-			CMAKE_C_FLAGS_DEBUG
-			CMAKE_C_FLAGS_RELEASE
-		)
+		message(STATUS "MSVC version: ${MSVC_VERSION}")
 
-		foreach(CompilerFlag ${CompilerFlags})
-			string(REPLACE "/MD" "/MT" ${CompilerFlag} "${${CompilerFlag}}")
-		endforeach()
+		if(ENABLE_ASAN)
+			# Dont know the exact version but its somewhere there
+			if(MSVC_VERSION LESS 1925)
+				message(FATAL_ERROR "AddressSanitizer enabled but compiler doesn't support it - cannot continue.")
+			endif()
 
-		set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /NODEFAULTLIB:MSVCRT.lib /NODEFAULTLIB:MSVCRTD.lib")
-		set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /NODEFAULTLIB:MSVCRT.lib /NODEFAULTLIB:MSVCRTD.lib")
+			message(STATUS "Enabling AddressSanitizer for this configuration")
+			set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /fsanitize=address")
+			set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /fsanitize=address")
+		endif()
+
+		if(FORCE_STATIC_VCRT)
+			set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /EHsc /O2")
+			set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /EHa /W3")
+
+			set(CompilerFlags
+				CMAKE_CXX_FLAGS
+				CMAKE_CXX_FLAGS_DEBUG
+				CMAKE_CXX_FLAGS_RELEASE
+				CMAKE_C_FLAGS
+				CMAKE_C_FLAGS_DEBUG
+				CMAKE_C_FLAGS_RELEASE
+			)
+
+			foreach(CompilerFlag ${CompilerFlags})
+				string(REPLACE "/MD" "/MT" ${CompilerFlag} "${${CompilerFlag}}")
+			endforeach()
+
+			set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /NODEFAULTLIB:MSVCRT.lib /NODEFAULTLIB:MSVCRTD.lib")
+			set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /NODEFAULTLIB:MSVCRT.lib /NODEFAULTLIB:MSVCRTD.lib")
+		endif()
+
+		# Should we always use this?
+		# add_definitions(-DC_ONLY)
 		add_definitions(-D_CRT_SECURE_NO_WARNINGS) # Do not show CRT warnings
 	endif(MSVC)
-	if(MINGW AND NOT DEBUG_BUILD)
-		set(CMAKE_C_LINK_EXECUTABLE "${CMAKE_C_LINK_EXECUTABLE} -static-libgcc")
-		set(CMAKE_CXX_LINK_EXECUTABLE "${CMAKE_CXX_LINK_EXECUTABLE} -static-libgcc -static-libstdc++")
-		set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -static-libgcc")
-		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -static-libgcc -static-libstdc++")
-		set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -static-libgcc -static-libstdc++ -s")
-		set(CMAKE_SHARED_LIBRARY_LINK_C_FLAGS "${CMAKE_SHARED_LIBRARY_LINK_C_FLAGS} -static-libgcc -liconv -s")
-		set(CMAKE_SHARED_LIBRARY_LINK_CXX_FLAGS "${CMAKE_SHARED_LIBRARY_LINK_CXX_FLAGS} -static-libgcc -static-libstdc++ -liconv -s")
-		add_definitions(-D_WIN32_IE=0x0501)
-	endif(MINGW AND NOT DEBUG_BUILD)
+
+	if(MINGW)
+
+		# This is not yet supported, but most likely will happen in the future.
+		if(ENABLE_ASAN)
+			include (CheckCCompilerFlag)
+			include (CheckCXXCompilerFlag)
+			set(CMAKE_REQUIRED_FLAGS "-fsanitize=address")
+			CHECK_C_COMPILER_FLAG("-fsanitize=address" HAVE_FLAG_SANITIZE_ADDRESS_C)
+			CHECK_CXX_COMPILER_FLAG("-fsanitize=address" HAVE_FLAG_SANITIZE_ADDRESS_CXX)
+
+			if(HAVE_FLAG_SANITIZE_ADDRESS_C AND HAVE_FLAG_SANITIZE_ADDRESS_CXX)
+				message(STATUS "Enabling AddressSanitizer for this configuration")
+				add_compile_options(-fsanitize=address -fno-omit-frame-pointer -g)
+			else()
+				message(FATAL_ERROR "AddressSanitizer enabled but compiler doesn't support it - cannot continue.")
+			endif()
+		endif()
+
+		if(NOT DEBUG_BUILD)
+			set(CMAKE_C_LINK_EXECUTABLE "${CMAKE_C_LINK_EXECUTABLE} -static-libgcc")
+			set(CMAKE_CXX_LINK_EXECUTABLE "${CMAKE_CXX_LINK_EXECUTABLE} -static-libgcc -static-libstdc++")
+			set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -static-libgcc")
+			set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -static-libgcc -static-libstdc++")
+			set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -static-libgcc -static-libstdc++ -s")
+			set(CMAKE_SHARED_LIBRARY_LINK_C_FLAGS "${CMAKE_SHARED_LIBRARY_LINK_C_FLAGS} -static-libgcc -liconv -s")
+			set(CMAKE_SHARED_LIBRARY_LINK_CXX_FLAGS "${CMAKE_SHARED_LIBRARY_LINK_CXX_FLAGS} -static-libgcc -static-libstdc++ -liconv -s")
+			add_definitions(-D_WIN32_IE=0x0501)
+		endif()
+
+	endif()
 endif()
 
 # Get the system architecture

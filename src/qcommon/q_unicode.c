@@ -107,6 +107,48 @@ int Q_UTF8_WidthCP(int ch)
 	return 0;
 }
 
+static qboolean Q_UTF8_ValidateSingle(const char *str)
+{
+	int    i = 0, utfBytes = 0;
+	size_t len = strlen(str);
+	byte   current = str[0];
+
+	if (0x00 <= current && current <= 0x7F)
+	{
+		utfBytes = 0; // 0XXXXXXX
+	}
+	else if ((current & 0xE0) == 0xC0)
+	{
+		utfBytes = 1; // 110XXXXX
+	}
+	else if (current == 0xED && (len - 1) > 0 && ((byte) str[1] & 0xA0) == 0xA0)
+	{
+		return qfalse; //U+D800 to U+DFFF
+	}
+	else if ((current & 0xF0) == 0xE0)
+	{
+		utfBytes = 2; // 1110XXXX
+	}
+	else if ((current & 0xF8) == 0xF0)
+	{
+		utfBytes = 3; // 11110XXX
+	}
+	else
+	{
+		return qfalse;
+	}
+
+	for (; 0 < utfBytes && i < len; utfBytes--)
+	{
+		if ((++i == len) || (((byte)str[i] & 0xC0) != 0x80))
+		{
+			return qfalse;
+		}
+	}
+
+	return qtrue;
+}
+
 qboolean Q_UTF8_Validate(const char *str)
 {
 	int    i, utfBytes = 0;
@@ -151,6 +193,52 @@ qboolean Q_UTF8_Validate(const char *str)
 	}
 
 	return qtrue;
+}
+
+char *Q_Extended_To_UTF8(char *txt)
+{
+	static char tmpPrintBuffer[MAX_VA_STRING];
+
+	if (!Q_UTF8_Validate(txt))
+	{
+		size_t i;
+		char *tmpPointer = tmpPrintBuffer;
+		size_t len = strlen(txt);
+		for (i = 0; i < len;)
+		{
+			if (127 < (unsigned char) txt[i] && !Q_UTF8_ValidateSingle(&txt[i]))
+			{
+				char *buffer = Q_UTF8_Encode((unsigned char)txt[i]);
+				while (*buffer)
+				{
+					tmpPointer[0] = buffer[0];
+					buffer++;
+					tmpPointer++;
+				}
+				i++;
+			}
+			else
+			{
+				int width = Q_UTF8_Width(&txt[i]);
+
+				// Well width returned something that should not be possible, guard our ass against infinite loop.
+				if(width <= 0)
+				{
+					i++;
+					continue;
+				}
+
+				while (width--)
+				{
+					tmpPointer[0] = txt[i++];
+					tmpPointer++;
+				}
+			}
+		}
+		tmpPointer[0] = '\0';
+		return tmpPrintBuffer;
+	}
+	return txt;
 }
 
 /**

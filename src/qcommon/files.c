@@ -2779,14 +2779,15 @@ static void FS_FreePak(pack_t *thepak)
 /**
  * @brief Compares whether the given pak file matches a referenced checksum
  * @param[in] zipfile
+ * @param[in] checksum
  * @return
  *
  * @note Unused
  */
-qboolean FS_CompareZipChecksum(const char *zipfile)
+qboolean FS_CompareZipChecksum(const char *zipfile, const int checksum)
 {
 	pack_t *thepak;
-	int    index, checksum;
+	int    index, zipChecksum;
 
 	thepak = FS_LoadZipFile(zipfile, "");
 
@@ -2795,18 +2796,52 @@ qboolean FS_CompareZipChecksum(const char *zipfile)
 		return qfalse;
 	}
 
-	checksum = thepak->checksum;
+	zipChecksum = thepak->checksum;
 	FS_FreePak(thepak);
+
+	if(checksum)
+	{
+		return checksum == zipChecksum;
+	}
 
 	for (index = 0; index < fs_numServerReferencedPaks; index++)
 	{
-		if (checksum == fs_serverReferencedPaks[index])
+		if (zipChecksum == fs_serverReferencedPaks[index])
 		{
 			return qtrue;
 		}
 	}
 
 	return qfalse;
+}
+
+/**
+ * @brief find a pack matching the checksum
+ * @param checksum to find
+ * @return the found pack or NULL
+ */
+static pack_t *FS_FindPack(const int checksum)
+{
+	searchpath_t *sp;
+	for (sp = fs_searchpaths ; sp ; sp = sp->next)
+	{
+		if (sp->pack && sp->pack->checksum == checksum)
+		{
+			return sp->pack;
+		}
+	}
+
+	return NULL;
+}
+
+/**
+ * @brief does the search path contain a pack with checksum
+ * @param checksum to find
+ * @return qtrue if pack is found
+ */
+static inline qboolean FS_HasPack(const int checksum)
+{
+	return FS_FindPack(checksum) != NULL;
 }
 
 /**
@@ -3667,6 +3702,32 @@ void FS_Which_f(void)
 //===========================================================================
 
 /**
+ * @brief FS_AddPackToPath add a single package to the search path
+ * @param osPath full os path to the pk3 file
+ * @param gameName game name this package will be registered for
+ */
+static void FS_AddPackToPath(const char *osPath, const char *gameName)
+{
+	pack_t       *pak;
+	searchpath_t *search;
+
+	if ((pak = FS_LoadZipFile(osPath, "")) == NULL)
+	{
+		return;
+	}
+
+	Q_strncpyz(pak->pakPathname, FS_Dirpath(osPath), sizeof(pak->pakPathname));
+	Q_strncpyz(pak->pakGamename, FS_NormalizePath(gameName), sizeof(pak->pakGamename));
+
+	fs_packFiles += pak->numfiles;
+
+	search         = Z_Malloc(sizeof(searchpath_t));
+	search->pack   = pak;
+	search->next   = fs_searchpaths;
+	fs_searchpaths = search;
+}
+
+/**
  * @brief paksort
  * @param[in] a
  * @param[in] b
@@ -4004,7 +4065,6 @@ qboolean FS_InvalidGameDir(const char *gamedir)
  */
 qboolean FS_ComparePaks(char *neededpaks, size_t len, qboolean dlstring)
 {
-	searchpath_t *sp;
 	qboolean     havepak;
 	char         *origpos = neededpaks;
 	int          i;
@@ -4021,7 +4081,7 @@ qboolean FS_ComparePaks(char *neededpaks, size_t len, qboolean dlstring)
 		// Ok, see if we have this pak file
 		havepak = qfalse;
 
-		// never autodownload any of the id paks
+		// never auto download any of the id paks
 		if (FS_idPak(fs_serverReferencedPakNames[i], BASEGAME))
 		{
 			continue;
@@ -4034,19 +4094,11 @@ qboolean FS_ComparePaks(char *neededpaks, size_t len, qboolean dlstring)
 			continue;
 		}
 
-		for (sp = fs_searchpaths ; sp ; sp = sp->next)
-		{
-			if (sp->pack && sp->pack->checksum == fs_serverReferencedPaks[i])
-			{
-				havepak = qtrue; // This is it!
-				break;
-			}
-		}
+		havepak = FS_HasPack(fs_serverReferencedPaks[i]);
 
 		if (!havepak && fs_serverReferencedPakNames[i] && *fs_serverReferencedPakNames[i])
 		{
 			// Don't got it
-
 			if (dlstring)
 			{
 				// We need this to make sure we won't hit the end of the buffer or the server could
@@ -4240,6 +4292,39 @@ static void FS_AddBothGameDirectories(const char *subpath)
 				Com_sprintf(contPath, sizeof(contPath), "%s%c%s", subpath, PATH_SEP, FS_CONTAINER);
 				FS_AddGameDirectory(fs_homepath->string, contPath);
 				Q_strncpyz(fs_gamedir, subpath, sizeof(fs_gamedir));
+			}
+			// We are in a non pure server, so just try to mount the minimal required packs
+			else if(fs_numServerReferencedPaks && (!Q_stricmp(subpath, BASEGAME) || (!Q_stricmp(subpath, DEFAULT_MODGAME) && fs_containerMount->integer)))
+			{
+				int i = 0;
+				for (i = 0 ; i < fs_numServerReferencedPaks ; i++)
+				{
+					// Do we have the pack already
+					if (FS_HasPack(fs_serverReferencedPaks[i]))
+					{
+						continue;
+					}
+
+					if (!fs_serverReferencedPakNames[i] || !*fs_serverReferencedPakNames[i])
+					{
+						Com_DPrintf("Missing package name for checksum: %i\n", fs_serverReferencedPaks[i]);
+						continue;
+					}
+
+					char *packName = strchr(fs_serverReferencedPakNames[i], '/');
+					if (packName && (packName += 1))
+					{
+						char tmpPath[MAX_OSPATH] = { '\0' };
+						char *path = FS_BuildOSPath(fs_homepath->string, subpath, va("%s%c%s.pk3", FS_CONTAINER, PATH_SEP, packName));
+						Q_strcpy(tmpPath, path);
+
+						if (FS_FileInPathExists(tmpPath) && FS_CompareZipChecksum(tmpPath, fs_serverReferencedPaks[i]))
+						{
+							Com_DPrintf("Found referenced pack in container: %s\n", fs_serverReferencedPakNames[i]);
+							FS_AddPackToPath(tmpPath, BASEGAME);
+						}
+					}
+				}
 			}
 #endif
 		}

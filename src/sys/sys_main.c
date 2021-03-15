@@ -32,8 +32,15 @@
  * @file sys_main.c
  */
 
+#ifdef LEGACY_DUMP_MEMLEAKS
+#define _CRTDBG_MAP_ALLOC
+#endif
+
 #include <signal.h>
 #include <stdlib.h>
+#if defined(LEGACY_DUMP_MEMLEAKS)
+#include <crtdbg.h>
+#endif
 #include <limits.h>
 #include <sys/types.h>
 #include <stdarg.h>
@@ -227,7 +234,7 @@ static _attribute((noreturn)) void Sys_Exit(int exitCode)
 
 	NET_Shutdown();
 
-	exit(exitCode);
+	Sys_PlatformExit(exitCode);
 }
 
 
@@ -778,7 +785,7 @@ void *Sys_LoadGameDll(const char *name, qboolean extract,
 		}
 
 		// use League ui for download process (mod binary pk3 isn't extracted)
-		if (!strcmp(name, "ui") && !libHandle && strcmp(gamedir, DEFAULT_MODGAME))
+		if (!strcmp(name, "ui") && !libHandle && strcmp(gamedir, DEFAULT_MODGAME) != 0)
 		{
 			Com_Printf("Sys_LoadDll: mod initialisation - ui fallback\n");
 

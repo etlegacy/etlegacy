@@ -1128,7 +1128,7 @@ static void IN_WindowFocusLost()
     	// If according to the game flags we should minimize,
     	// then lets actually make sure and ask the windowing system for its opinion.
 		Uint32 flags = SDL_GetWindowFlags(GLimp_MainWindow());
-		if (flags & SDL_WINDOW_FULLSCREEN && flags & SDL_WINDOW_SHOWN && !(flags & SDL_WINDOW_MINIMIZED))
+		if (flags & SDL_WINDOW_FULLSCREEN && flags & SDL_WINDOW_SHOWN && !(flags & SDL_WINDOW_MINIMIZED) && flags & SDL_WINDOW_INPUT_GRABBED)
 		{
 			Com_DPrintf("SDL says we are good to go and call minimize.\n");
 			Cbuf_ExecuteText(EXEC_NOW, "minimize");
@@ -1136,6 +1136,8 @@ static void IN_WindowFocusLost()
 		else
 		{
 			Com_DPrintf("SDL did not think we should minimize, trashing event.\n");
+			SDL_RaiseWindow(mainScreen);
+			IN_ActivateMouse();
 		}
     }
 }
@@ -1148,6 +1150,7 @@ static void IN_ProcessEvents(void)
 	SDL_Event       e;
 	keyNum_t        key         = 0;
 	static keyNum_t lastKeyDown = 0;
+	qboolean 		skipLost	= qfalse;
 
 	if (!SDL_WasInit(SDL_INIT_VIDEO))
 	{
@@ -1313,8 +1316,17 @@ static void IN_ProcessEvents(void)
 			case SDL_WINDOWEVENT_RESTORED:
 			case SDL_WINDOWEVENT_MAXIMIZED:
 				Cvar_SetValue("com_minimized", 0);
+				skipLost = qtrue;
 				break;
 			case SDL_WINDOWEVENT_FOCUS_LOST:
+				// When we are restoring a fullscreen window that is not the desktop resolution
+				// the desktop will resize and SDL will get restores & focus gained & focus lost in order.
+				// So.. to fix minimizing just after user re-selects the game, we will skip focus lost events
+				// for just a SINGLE frame!
+				if (skipLost)
+				{
+					break;
+				}
 				IN_WindowFocusLost();
 			case SDL_WINDOWEVENT_LEAVE:
 				Key_ClearStates();
@@ -1324,11 +1336,11 @@ static void IN_ProcessEvents(void)
 			case SDL_WINDOWEVENT_FOCUS_GAINED:
 			{
 				Cvar_SetValue("com_unfocused", 0);
-
 				if (com_minimized->integer)
 				{
 					SDL_RestoreWindow(mainScreen);
 				}
+				SDL_RaiseWindow(mainScreen);
 			}
 			break;
 			case SDL_WINDOWEVENT_MOVED:
