@@ -1335,9 +1335,9 @@ void CL_OpenHomePath_f(void)
  */
 void CL_Clip_f(void)
 {
-	int noPrint, i;
+	int    noPrint, i;
 	size_t argCount, len;
-	char **cmdBuffer;
+	char   **cmdBuffer;
 
 	if (Cmd_Argc() < 2)
 	{
@@ -1352,7 +1352,7 @@ void CL_Clip_f(void)
 
 	// Allocate a buffer for the clipboard data
 	cls.clipboard.bufferSize = MAXPRINTMSG * 10;
-	cls.clipboard.buffer = Com_Allocate(cls.clipboard.bufferSize);
+	cls.clipboard.buffer     = Com_Allocate(cls.clipboard.bufferSize);
 	if (!cls.clipboard.buffer)
 	{
 		Com_Error(ERR_FATAL, "Clipboard allocation failed\n");
@@ -1362,8 +1362,8 @@ void CL_Clip_f(void)
 	Com_Memset(cls.clipboard.buffer, 0, cls.clipboard.bufferSize);
 
 	// Copy all the arguments into a new array since when we start executing them one by one, the Cmd buffer gets reset.
-	argCount = Cmd_Argc() - 1;
-	cmdBuffer = Com_Allocate(argCount * sizeof(char*));
+	argCount  = Cmd_Argc() - 1;
+	cmdBuffer = Com_Allocate(argCount * sizeof(char *));
 	if (!cmdBuffer)
 	{
 		Com_Error(ERR_FATAL, "Clipboard allocation failed\n");
@@ -1948,6 +1948,7 @@ void CL_ConnectionlessPacket(netadr_t from, msg_t *msg)
 		{
 			CL_ServerInfoPacketCheck(from, msg);
 			cls.challengeState = CA_CHALLENGING_REQUEST;
+			clc.connectTime    = -99999;    // CL_CheckForResend() will fire immediately
 			return;
 		}
 		CL_ServerInfoPacket(from, msg);
