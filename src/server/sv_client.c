@@ -309,7 +309,7 @@ static qboolean SV_isValidGUID(netadr_t from, const char *userinfo)
 	// don't allow empty, unknown or 'NO_GUID' guid
 	if (strlen(guid) < MAX_GUID_LENGTH)
 	{
-		NET_OutOfBandPrint(NS_SERVER, from, "print\n[err_dialog]Bad GUID: Invalid etkey. Please use the ET: Legacy client or add an etkey.\n");
+		NET_OutOfBandPrint(NS_SERVER, from, "print\n[err_dialog]Bad GUID: Invalid etkey. Please use the ET: Legacy client or add an etkey and set pb_cl_enable 1.\n");
 		Com_DPrintf("Client rejected for bad sized etkey\n");
 		return qfalse;
 	}
