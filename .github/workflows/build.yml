@@ -41,7 +41,9 @@ jobs:
 
       - name: Build
         shell: bash
-        run: ./easybuild.sh build -64 -mod
+        run: |
+          git fetch --tags
+          ./easybuild.sh build -64 -mod
 
       - uses: actions/upload-artifact@v2
         with:
@@ -73,7 +75,9 @@ jobs:
           SDKROOT: /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk
           DEVELOPER_DIR: /Library/Developer/CommandLineTools
         shell: bash
-        run: ./easybuild.sh build -64 -mod --osx=10.10
+        run: |
+          git fetch --tags
+          ./easybuild.sh build -64 -mod --osx=10.10
 
       - uses: actions/upload-artifact@v2
         with:
@@ -92,7 +96,9 @@ jobs:
 
       - name: Build
         shell: cmd
-        run: call .\easybuild.bat build -mod
+        run: |
+          git fetch --tags
+          call .\easybuild.bat build -mod
 
       - uses: actions/upload-artifact@v2
         with:
@@ -123,6 +129,7 @@ jobs:
             apt-get update -q -y
             apt-get -y install build-essential libudev-dev libwebp-dev automake zlib1g \
             nasm autoconf cmake git zip gcc g++ libtool
+            git fetch --tags
             ./easybuild.sh build -RPI -mod
       - uses: actions/upload-artifact@v2
         with:
@@ -164,7 +171,9 @@ jobs:
 
       - name: Build
         shell: bash
-        run: ./easybuild.sh build -32
+        run: |
+          git fetch --tags
+          ./easybuild.sh build -32
 
       - uses: actions/download-artifact@v2
         with:
@@ -221,7 +230,9 @@ jobs:
 
       - name: Build
         shell: bash
-        run: ./easybuild.sh build -64
+        run: |
+          git fetch --tags
+          ./easybuild.sh build -64
 
       - uses: actions/download-artifact@v2
         with:
@@ -263,7 +274,9 @@ jobs:
           SDKROOT: /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk
           DEVELOPER_DIR: /Library/Developer/CommandLineTools
         shell: bash
-        run: ./easybuild.sh build -64 --osx=10.10
+        run: |
+          git fetch --tags
+          ./easybuild.sh build -64 --osx=10.10
 
       - uses: actions/download-artifact@v2
         with:
@@ -296,7 +309,9 @@ jobs:
 
       - name: Build
         shell: cmd
-        run: call .\easybuild.bat build
+        run: |
+          git fetch --tags
+          call .\easybuild.bat build
 
       - uses: actions/download-artifact@v2
         with:
@@ -383,6 +398,9 @@ jobs:
         with:
           name: lnx64-packages
           path: build/package
+
+      - name: Fetch tags
+        run: git fetch --tags
 
       - name: Setup folder
         working-directory: build/package
