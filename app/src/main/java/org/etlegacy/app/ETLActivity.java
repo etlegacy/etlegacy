@@ -319,6 +319,7 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
         super.onPostCreate(savedInstanceState);
 
         mLayout.requestFocus();
+        SDLActivity.setWindowStyle(true);
 
         final ImageButton buttonPopUpMenu = new ImageButton(getApplicationContext());
         buttonPopUpMenu.setImageResource(R.drawable.ic_one_line);
