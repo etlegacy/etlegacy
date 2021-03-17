@@ -1,0 +1,5588 @@
+//******************************************************//
+//                        MAIN                          
+//
+// last mod: Mean Mr. Mustard - 05/10/2004
+//
+// 30apr2004/SiliconSlick - adapt for stopwatch... no early Allied victory... Axis lose if not enough time remains
+//
+//******************************************************//
+
+game_manager
+{
+	spawn
+	{	
+		remapshaderflush
+		
+		// Game rules
+		wm_axis_respawntime	30		// Initial Spawn Times: reset after V-2 is built
+		wm_allied_respawntime	20
+
+		wm_set_round_timelimit	30
+		wm_number_of_objectives	8
+
+		// Objectives
+		// 1: Build Pontoon Bridge
+		// 2: Truck to Ammo Depot
+		// 3: Allied Cp and Forward Spawn
+		// 4: Construct V-2
+		// 5: Train Bridge
+		// 6: Train to Launch Area
+		// 7: V-2 Launch Door
+		// 8: Tunnel Support
+
+		// Current main objectives for each team (0=Axis, 1=Allies)
+		wm_objective_status 1 0 0
+		wm_objective_status 1 1 0
+		wm_objective_status 2 0 0
+		wm_objective_status 2 1 0
+		wm_objective_status 3 0 0
+		wm_objective_status 3 1 0
+		wm_objective_status 4 0 0
+		wm_objective_status 4 1 0
+		wm_objective_status 5 0 0
+		wm_objective_status 5 1 0
+		wm_objective_status 6 0 0
+		wm_objective_status 6 1 0
+		wm_objective_status 7 0 0
+		wm_objective_status 7 1 0
+		wm_objective_status 8 0 0
+		wm_objective_status 8 1 0
+
+		// Stopwatch mode defending team (0=Axis, 1=Allies)
+		wm_set_defending_team	1
+
+		// Winner on expiration of round timer (0=Axis, 1=Allies)
+		wm_setwinner	1
+
+		trigger game_manager settimebits 	// SS - copy cvar timelimit to globalaccum 6 
+							// (some loss of floating point precision)
+
+		wait 2000
+
+		// Set initial spawn locations		
+		setautospawn "Bunker" 0
+		setautospawn "Farm House" 1
+							
+		//turn on/off various speakers
+		disablespeaker allied_cp_speaker
+		disablespeaker axis_cp_speaker
+		enablespeaker  o2_stor_speaker1
+		disablespeaker o2_stor_speaker2
+		disablespeaker winch_speaker
+		disablespeaker craneup_speaker
+		disablespeaker cranetranslate_speaker
+		disablespeaker wires1_speaker
+		disablespeaker wires2_speaker
+		enablespeaker  asm_speaker
+		disablespeaker crane_rotate_speaker
+
+		globalaccum 0 set 0			// o2 production status
+		globalaccum 1 set 0			// o2 storage status
+		globalaccum 2 set 0			// v2 production status
+		globalaccum 3 set 0			// v2 completed counter
+
+		setstate v2_prod_sign2	invisible
+		setstate o2_prod_sign2	invisible
+		setstate o2_stor_sign2	invisible
+
+		trigger game_manager mytimer		// SS - start our own timelimit timer (the timelimit cvar 								// is fixed to total round time)trigger 	
+	}
+
+	trigger allies_early_win
+	{
+		cvar g_gametype abort_if_equal 3	// MMM - prevent early win for stopwatch mode
+
+		globalaccum 0 abort_if_equal 0		// o2 production working
+		globalaccum 1 abort_if_equal 0		// o2 storage working
+		globalaccum 2 abort_if_equal 0		// v2 production working
+
+		globalaccum 3 abort_if_equal 3		// v2 completed so exit
+
+		wm_announce "Allies have destroyed all three machines - porduction halted!"
+		wm_setwinner 1
+		wait 6000
+		wm_endround
+	}
+
+	trigger allies_win
+	{
+		wm_announce "Axis could not deliver the V-2 to safety!"
+		wm_setwinner 1
+		wait 6000
+		wm_endround
+	}
+
+	trigger axis_win
+	{
+		wm_announce "Axis have delivered the V-2 to safety!"
+		wm_setwinner 0
+		wait 6000
+		wm_endround
+	}
+
+
+ //======================= roundtimer =======================
+//
+// 30 apr 04 - SiliconSlick
+// used to exit the map if it's hopeless for the axis to deliver the v2
+//
+//=============================================================
+
+	trigger mytimer 
+	{
+		globalaccum 3 abort_if_equal 3		// we don't need once V2 is completed
+		globalaccum 6 abort_if_less_than 1	// avoid going negative
+		wait 60000
+		globalaccum 6 inc -1
+		trigger self mytimer
+	}
+
+	trigger settimebits
+	{
+		globalaccum 6 set 0
+		trigger self settimebit0
+		trigger self settimebit1
+		trigger self settimebit2
+		trigger self settimebit3
+		trigger self settimebit4
+		trigger self settimebit5
+	}
+
+	trigger settimebit0 
+	{
+		cvar timelimit abort_if_not_bitset 0
+		globalaccum 6 bitset 0
+	}
+
+	trigger settimebit1 
+	{
+		cvar timelimit abort_if_not_bitset 1
+		globalaccum 6 bitset 1
+	}
+	
+	trigger settimebit2 
+	{
+		cvar timelimit abort_if_not_bitset 2
+		globalaccum 6 bitset 2
+	}
+	
+	trigger settimebit3 
+	{
+		cvar timelimit abort_if_not_bitset 3
+		globalaccum 6 bitset 3
+	}
+	
+	trigger settimebit4 
+	{
+		cvar timelimit abort_if_not_bitset 4
+		globalaccum 6 bitset 4
+	}
+	
+	trigger settimebit5 
+	{
+		cvar timelimit abort_if_not_bitset 5
+		globalaccum 6 bitset 5
+	}
+}
+
+//******************************************************//
+// Pontoon Bridge
+//
+// last mod: Mean Mr. Mustard - 04/14/2004
+//******************************************************//
+//
+// accum 0  (0 = truck not on bridge, 1 = truck on bridge)
+pontoon_bridge 
+{
+	spawn
+	{
+		wait 400
+		constructible_class 3
+		accum 0 set 0
+
+		trigger self startup
+		setstate pontoon_debris 		invisible
+		
+		setstate pontoon_trigger		invisible
+		setstate pontoon_crates			invisible
+		setstate pontoon_crate_clip		invisible
+		setstate pontoon_sandbags		invisible
+		setstate pontoon_sandbag_clip		invisible
+	}	
+
+	trigger startup
+	{
+		//Activate/deactivate pontoon brushes
+		setstate dinghy1			invisible
+		setstate dinghy2			invisible
+		setstate dinghy3			invisible
+		setstate dinghy4			invisible
+		setstate dinghy5			invisible
+		setstate pontoon_bridge_complete	invisible
+		setstate pontoon_bridge_indestructible	invisible
+		
+	}
+
+	trigger activate_construction
+	{
+		setstate pontoon_crates			underconstruction
+		setstate pontoon_sandbags		underconstruction
+		wait 1000
+		setstate pontoon_trigger		default
+		wait 50
+		setstate pontoon_crates			default
+		setstate pontoon_crate_clip		default
+		setstate pontoon_sandbags		default
+		setstate pontoon_sandbag_clip		default		
+	}
+
+	//--------------------------------------------------------------
+	// stage 1 routines
+	//--------------------------------------------------------------
+
+	buildstart stage1	// stage1 construction begun
+	{		
+		wm_announce "Allies are building the bridge!"
+
+		setstate dinghy1			underconstruction
+		setstate dinghy2			underconstruction
+		setstate dinghy3			underconstruction
+
+		setstate allied_pb_cargo		underconstruction
+	}
+
+	built stage1 // stage 1 built
+	{
+		setstate pontoon_sandbag_clip		invisible
+		setstate pontoon_sandbags		invisible
+		setstate allied_pb_cargo		invisible
+		trigger allied_pb_cargo remove
+		setstate dinghy1			default
+		setstate dinghy2			default
+		setstate dinghy3			default
+
+		wm_announce "Allies have built the first part of the bridge"
+	}
+
+	decayed stage1 // stage1 build inactive for 30 sec
+	{
+		setstate allied_pb_cargo		default
+		setstate dinghy1			invisible
+		setstate dinghy2			invisible
+		setstate dinghy3			invisible		
+	}
+
+	death
+	{
+		setstate pontoon_sandbag_clip		default
+		setstate pontoon_sandbags		default
+		setstate pontoon_debris			default
+		setstate dinghy1			invisible
+		setstate dinghy2			invisible
+		setstate dinghy3			invisible
+		wm_announce "Stage 1 of the bridge destroyed"
+	}
+
+	//--------------------------------------------------------------
+	// stage 2 routines (final routines since it's the last stage)
+	//--------------------------------------------------------------
+
+	buildstart final	// final construction begun
+	{
+		wm_announce "Allies are building Stage 2 of the bridge!"
+		setstate pontoon_bridge			underconstruction	
+		setstate dinghy4			underconstruction
+		setstate dinghy5			underconstruction
+	}
+
+	built final	// bridge completed
+	{
+		// activate/deactivate brushes
+		setstate pontoon_crate_clip		invisible
+		setstate pontoon_crates			invisible
+		setstate pontoon_debris			invisible
+		setstate pontoon_bridge 		default
+		setstate pontoon_bridge_complete	default
+		setstate dinghy4			default
+		setstate dinghy5			default
+		
+		//Announce to screen
+		wm_announce 	"Allies have built the bridge"
+
+		// tell truck it bridge is built
+		trigger truck setBridge
+	}
+
+	decayed final 
+	{
+		setstate dinghy4			invisible
+		setstate dinghy5			invisible
+	}
+
+	destroyed final // bridge destroyed
+	{
+		accum 0 abort_if_equal 1 	// truck on bridge so don't blow up....
+		// Activate/deactivate brushes	
+		setstate pontoon_crate_clip		default
+		setstate pontoon_crates			default
+		setstate pontoon_debris			default
+		setstate pontoon_bridge_complete	invisible
+		setstate dinghy4			invisible
+		setstate dinghy5			invisible
+
+		// stop truck from going over bridge
+		trigger truck clearBridge
+		
+		// Announcement
+		wm_announce 	"Axis have destroyed part of the bridge"
+
+	}
+
+	trigger on_bridge
+	{
+		accum 0 set 1
+		setstate pontoon_bridge_indestructible	default
+		setstate pontoon_bridge			invisible
+	}
+
+	trigger off_bridge
+	{
+		accum 0 set 0
+		setstate pontoon_bridge_indestructible	invisible
+		setstate pontoon_bridge			default
+
+	}
+}
+
+//********************************************************//
+//                         TRUCK                          
+//
+// last mod: Mean Mr. Mustard - 01/11/2004
+//*******************************************************//
+//
+//=====================================================================================
+//	accum 0
+//	 - bit 0: player check		( 0 = players,		1 = no players	)
+//	 - bit 1: bridge status		( 0 = destroyed, 	1 = built		)
+//	 - bit 2: spline status		( 0 = not moving,	1 = moving		)
+//	 - bit 3: temp register
+//	 - bit 4: stuck check flag	( 0 = not stuck,	1 = stuck		)
+//	 - bit 5: script lockout	( 0 = not locked,	1 = locked 		)
+//	 - bit 6: death flag		( 0 = alive,		1 = dead		)
+//	 - bit 7: visible status	( 0 = alive,		1 = dead		)
+//	accum 1:, current movement loop position
+//	accum 2:, counter for sound stopping
+//	accum 3:, dynamite at bridge flag
+//	accum 4:, stop counter
+//	accum 5:, initial truck state ( 0 = alive,		1 = dead		)
+//	accum 6:, direction of truck  ( 0 = forward,		1 = reverse		)
+//=====================================================================================
+// wheels events
+//	- wheels_forward
+// 	- wheels_backward
+//	- wheels_stop
+truck
+{
+	spawn
+	{	
+		wait 50
+		faceangles 0 -90 0 50
+		accum 1 set 1			
+		accum 3 set 0
+		accum 0 bitreset 1	
+		accum 5 set 1
+		accum 6 set 0
+	}
+
+	rebirth
+	{
+		accum 0 bitreset 6
+		accum 0 bitreset 7
+		accum 5 set 0
+
+		trigger self script_lockout
+		changemodel models/mapobjects/blitz_sd/blitzbody.md3
+		trigger truck_engine sound_idle
+		setstate truck_smoke invisible
+
+		trigger self script_lockout_stop
+		trigger self move
+	}
+
+	death
+	{
+		accum 5 abort_if_equal 1
+		accum 0 bitset 6
+	}
+
+	//------------------------------------------------------------------------------------
+	// wheel movement
+	//------------------------------------------------------------------------------------
+	trigger wheels_forward
+	{
+		trigger truck_bwheel2 forward
+		trigger truck_fwheel forward
+	}
+	trigger wheels_backward
+	{
+		trigger truck_bwheel2 backward
+		trigger truck_fwheel backward
+	}
+
+	trigger wheels_stop
+	{
+		trigger truck_bwheel2 stop
+		trigger truck_fwheel stop
+	}
+
+	//------------------------------------------------------------------------------------
+	// enable and disable triggers
+	//------------------------------------------------------------------------------------
+
+	trigger truck_enable
+	{
+		trigger self stuck_check
+		accum 4 set 0						// reset stop counter	
+		accum 0 abort_if_not_bitset 0				// player near truck
+					
+		accum 0 abort_if_bitset 2 				// already following the path so abort
+		accum 0 abort_if_bitset 4				// truck stuck
+		accum 0 abort_if_bitset 5				// script lockout
+		accum 0 abort_if_bitset 6				// truck is dead
+
+		accum 0 bitreset 0  					// set player near truck
+
+		trigger truck_engine start				// start engine sound only if truck was stopped
+		accum 6 trigger_if_equal 0 truck wheels_forward		// start wheels forward 
+		accum 6 trigger_if_equal 1 truck wheels_backward	// start wheels backward
+		trigger self move
+	}
+
+	trigger truck_disable
+	{
+		accum 4 inc 1				// increment the stop counter
+		accum 4 abort_if_less_than 3
+		accum 0 bitset 0			// no players near truck
+		trigger self deathcheck
+	}
+
+	trigger move
+	{
+		trigger self move_check
+		wait 500
+		trigger self move
+	}
+
+	trigger move_check
+	{
+		trigger self stuck_check		// truck stuck?
+		accum 0 abort_if_bitset 4
+		trigger self stopcheck			// truck stopped?
+		trigger self deathcheck			// truck dead?
+		accum 0 abort_if_bitset 6
+		
+		accum 0 abort_if_bitset 0
+		
+		accum 2 set 0
+		trigger self dispatch			// run to next spline point
+	}
+
+	trigger dispatch
+	{
+		accum 1 trigger_if_equal 1	truck run_1
+		accum 1 trigger_if_equal 2	truck run_2
+		accum 1 trigger_if_equal 3	truck run_3
+		accum 1 trigger_if_equal 4	truck run_4
+		accum 1 trigger_if_equal 5	truck run_5
+		accum 1 trigger_if_equal 6	truck run_6
+		accum 1 trigger_if_equal 7	truck run_7
+		accum 1 trigger_if_equal 8	truck run_8
+		accum 1 trigger_if_equal 9	truck run_9
+		accum 1 trigger_if_equal 10	truck run_10	// cross the bridge
+		accum 1 trigger_if_equal 11	truck run_11
+		accum 1 trigger_if_equal 12	truck run_12
+		accum 1 trigger_if_equal 13	truck run_13
+		accum 1 trigger_if_equal 14	truck run_14
+		accum 1 trigger_if_equal 15	truck run_15
+		accum 1 trigger_if_equal 16	truck run_16
+
+		// now back the truck up into the ammo depot.....
+
+		accum 1 trigger_if_equal 17	truck run_b1
+		accum 1 trigger_if_equal 18	truck run_b2
+		accum 1 trigger_if_equal 19	truck run_b3
+		accum 1 trigger_if_equal 20	truck run_b4
+		accum 1 trigger_if_equal 21	truck run_b5
+	}
+
+	trigger run_continue
+	{
+		trigger self deathcheck
+		trigger self stopcheck
+		trigger self move
+	}
+	
+	//-------------------------------------------------------------------------------
+	// stop checks
+	//-------------------------------------------------------------------------------
+	trigger stopcheck
+	{
+		trigger self stopcheck_setup
+		accum 0 abort_if_not_bitset 3
+		trigger self script_lockout
+		trigger self wheels_stop			// stop wheel animation
+		trigger truck_engine stop			// idle engine
+
+		trigger self script_lockout_stop
+		resetscript
+	}
+
+	trigger stopcheck_setup
+	{
+		accum 0 bitset 3				// assume stop motion
+		accum 0 abort_if_bitset 0			// no player in the trigger then abort
+		accum 1 abort_if_equal 22			// end of truck path
+		accum 0 bitreset 3				// resume motion
+	}
+
+	//-------------------------------------------------------------------------------
+	// stuck checks
+	//-------------------------------------------------------------------------------
+
+	trigger stuck_check
+	{
+		accum 0 bitreset 4				// assume not stuck
+		trigger self stuck_check_bridge_built		// check the status of the bridge
+		trigger self stuck_check_bridge_dyna		// dynamite at bridge?
+		trigger self stuck_check_script_lockout		// script lockout?
+		accum 0 abort_if_not_bitset 4
+
+		trigger self wheels_stop
+		accum 2 inc 1
+		accum 2 abort_if_greater_than 1
+		trigger truck_engine stop
+	}
+
+	trigger stuck_check_bridge_built
+	{
+		accum 1 abort_if_less_than 9
+		accum 1 abort_if_greater_than 10
+		accum 0 abort_if_bitset 1
+		accum 0 bitset 4
+	}
+
+	trigger stuck_check_bridge_dyna
+	{
+		accum 1 abort_if_not_equal 10
+		accum 3 set_to_dynamitecount pontoon_bridge
+		accum 3 abort_if_equal 0
+		accum 0 bitset 4
+	}
+
+	trigger stuck_check_script_lockout
+	{
+		accum 0 abort_if_not_bitset 5
+		accum 0 bitset 4
+	}
+
+	trigger deathcheck
+	{
+		accum 0 abort_if_not_bitset 6		// are we dead?
+		accum 0 abort_if_bitset 7		// are we already visibly dead?
+		accum 0 abort_if_bitset 2		// following a spline
+
+		accum 0 bitset 7
+		
+		changemodel models/mapobjects/blitz_sd/blitzbody_damaged.md3
+		kill truck_construct
+
+		accum 5 abort_if_equal 1
+
+		trigger truck_engine sound_death
+		trigger self wheels_stop
+
+		setstate truck_smoke default
+		wm_announce "The Truck has been damaged!"
+		resetscript
+	}
+
+	trigger script_lockout
+	{
+		accum 0 bitset 5
+	}
+
+	trigger script_lockout_stop
+	{
+		accum 0 bitreset 5
+	}
+
+	//------------------------------------------------
+	// spline points for truck
+	//------------------------------------------------
+
+
+	trigger run_1
+	{
+		accum 0 bitset 2					// set spline flag to moving
+		followspline 0 truck_sp1 70 wait length 304
+		accum 0 bitreset 2					// set spline flag to not moving
+		accum 1 set 2						// increment run flag
+		trigger self run_continue
+	}
+
+	trigger run_2
+	{
+		accum 0 bitset 2					// set spline flag to moving
+		followspline 0 truck_sp2 70 wait length 304
+		accum 0 bitreset 2					// set spline flag to not moving
+		accum 1 set 3						// increment run flag
+		trigger self run_continue
+	}
+
+	trigger run_3
+	{
+		accum 0 bitset 2					// set spline flag to moving
+		followspline 0 truck_sp3 70 wait length 304
+		accum 0 bitreset 2					// set spline flag to not moving
+		accum 1 set 4						// increment run flag
+		trigger self run_continue
+	}
+
+	trigger run_4
+	{
+		accum 0 bitset 2					// set spline flag to moving
+		followspline 0 truck_sp4 70 wait length 304
+		accum 0 bitreset 2					// set spline flag to not moving
+		accum 1 set 5						// increment run flag
+		trigger self run_continue
+	}
+
+	trigger run_5
+	{
+		accum 0 bitset 2					// set spline flag to moving
+		followspline 0 truck_sp5 70 wait length 304
+		accum 0 bitreset 2					// set spline flag to not moving
+		accum 1 set 6						// increment run flag
+		trigger self run_continue
+	}
+
+	trigger run_6
+	{
+		accum 0 bitset 2					// set spline flag to moving
+		followspline 0 truck_sp6 70 wait length 304
+		accum 0 bitreset 2					// set spline flag to not moving
+		accum 1 set 7						// increment run flag
+		trigger self run_continue
+	}
+
+	trigger run_7
+	{
+		accum 0 bitset 2					// set spline flag to moving
+		followspline 0 truck_sp7 70 wait length 304
+		accum 0 bitreset 2					// set spline flag to not moving
+		accum 1 set 8						// increment run flag
+		trigger self run_continue
+	}
+
+	trigger run_8
+	{
+		accum 0 bitset 2					// set spline flag to moving
+		followspline 0 truck_sp8 70 wait length 304 roll 0 +2 dampin
+		accum 0 bitreset 2					// set spline flag to not moving
+		accum 1 set 9						// increment run flag
+		trigger pontoon_bridge activate_construction				
+		trigger self run_continue
+	}
+
+	trigger run_9
+	{
+		trigger truck_engine start				// start engine sound only if truck was stopped
+		trigger truck wheels_forward				// start wheels forward 
+		accum 0 bitset 2					// set spline flag to moving
+		followspline 0 truck_sp9 100 wait length 304 roll +2 -2 dampout
+		accum 0 bitreset 2					// set spline flag to not moving
+		accum 1 set 10						// increment run flag
+		trigger self run_continue
+	}
+
+	trigger run_10  // get over the pontoon bridge
+	{
+		trigger truck wheels_forward				// start wheels forward 
+		accum 0 bitset 2					// set spline flag to moving
+		trigger pontoon_bridge on_bridge
+		followspline 0 truck_sp10 100 wait length 304 
+		accum 0 bitreset 2
+		accum 0 bitset 2					// set spline flag to moving	
+		followspline 0 truck_sp10a 100 wait length 304 
+		accum 0 bitreset 2					// set spline flag to not moving
+		accum 1 set 11						// increment run flag
+
+		// set state of first objective
+		wm_objective_status 1 0 2
+		wm_objective_status 1 1 1
+	
+		trigger self run_continue
+	}
+
+	trigger run_11
+	{
+		trigger pontoon_bridge off_bridge
+		accum 0 bitset 2					// set spline flag to moving
+		followspline 0 truck_sp11 100 wait length 304 
+		accum 0 bitreset 2
+		accum 1 set 12						// increment run flag
+		trigger self run_continue
+	}
+
+	trigger run_12
+	{
+		accum 0 bitset 2					// set spline flag to moving
+		followspline 0 truck_sp12 100 wait length 304 
+		accum 0 bitreset 2
+		accum 1 set 13						// increment run flag
+		trigger self run_continue
+	}
+
+	trigger run_13
+	{
+		accum 0 bitset 2					// set spline flag to moving
+		followspline 0 truck_sp13 100 wait length 304 
+		accum 0 bitreset 2
+		accum 1 set 14						// increment run flag
+		trigger self run_continue
+	}
+
+	trigger run_14
+	{
+		accum 0 bitset 2					// set spline flag to moving
+		followspline 0 truck_sp14 100 wait length 304 
+		accum 0 bitreset 2
+		accum 1 set 15						// increment run flag
+		trigger self run_continue
+	}
+
+	trigger run_15
+	{
+		accum 0 bitset 2					// set spline flag to moving
+		followspline 0 truck_sp15 100 wait length 304 //roll 0 -4 dampout
+		accum 0 bitreset 2
+		accum 1 set 16						// increment run flag
+		trigger self run_continue
+	}
+
+	trigger run_16
+	{
+		accum 0 bitset 2					// set spline flag to moving
+		followspline 0 truck_sp16 100 wait length 304 //roll -4 0 
+		accum 0 bitreset 2
+		accum 1 set 17						// increment run flag
+		accum 6 set 1						// set reverse flag
+		trigger self run_continue
+	}
+
+	// reverse path .....
+
+	trigger run_b1
+	{
+		trigger truck wheels_backward				// start wheels backward
+		accum 0 bitset 2					// set spline flag to moving		
+		followspline 1 truck_spb0 50 wait length 304 //roll -4 +2 dampout
+		accum 0 bitreset 2
+		accum 1 set 18						// increment run flag
+		
+		trigger self run_continue
+	}	
+
+	trigger run_b2
+	{
+		accum 0 bitset 2					// set spline flag to moving
+		followspline 1 truck_spb1 50 wait length 304 //roll -2 +2 dampin
+
+		accum 0 bitreset 2
+		accum 1 set 19						// increment run flag
+		
+		trigger self run_continue
+	}	
+
+	trigger run_b3
+	{
+		accum 0 bitset 2					// set spline flag to moving
+		followspline 1 truck_spb2 50 wait length 304 
+		accum 0 bitreset 2
+		accum 1 set 20						// increment run flag
+		
+		trigger self run_continue
+	}
+
+	trigger run_b4
+	{
+		accum 0 bitset 2					// set spline flag to moving
+		followspline 1 truck_spb3 50 wait length 304 
+		accum 0 bitreset 2
+		accum 1 set 21						// increment run flag
+		
+		trigger self run_continue
+	}
+
+	trigger run_b5
+	{
+		accum 0 bitset 2					// set spline flag to moving
+		followspline 1 truck_spb4 50 wait length 304 
+		accum 0 bitreset 2
+		accum 1 set 22						// increment run flag
+		
+		trigger truck_engine sound_death
+		trigger self wheels_stop
+
+		// remove a bunch of entities not required any more
+
+		//trigger truck_engine remove
+		trigger truck_build remove
+		trigger truck_enabler remove
+		trigger truck_disabler remove
+		trigger truck_trigger remove
+		trigger truck_construct remove
+
+		// set state of first objective
+		wm_objective_status 2 0 2
+		wm_objective_status 2 1 1
+
+		// show command post
+		trigger allied_cp_closed activate_construction
+	}
+	
+	//-------------------------------------------------------------------
+	// set bridge flag for truck routines from within bridge routines
+	//-------------------------------------------------------------------
+
+	trigger clearBridge
+	{
+		accum 0 bitreset 1 					// bridge destroyed
+	}
+	
+	trigger setBridge
+	{
+		accum 1 abort_if_greater_than 10
+		wm_announce "Get the Truck across the bridge!!!"
+		accum 0 bitset 1					// bridge built
+		accum 0 bitreset 4
+	}
+	
+}
+
+//********************************************************//
+//               Additional TRUCK entities                         
+//
+// last mod: Mean Mr. Mustard - 01/11/2004
+//*******************************************************//
+
+truck_enabler
+{
+	spawn
+	{	
+		wait 200
+		attachtotag truck tag_wback
+	}
+
+	trigger run
+	{
+		trigger truck truck_enable
+	}
+
+	trigger remove
+	{
+		remove
+	}
+}
+
+truck_disabler
+{
+	spawn
+	{	
+		wait 200
+		attachtotag truck tag_wback
+	}
+
+	trigger run
+	{
+		trigger truck truck_disable
+	}
+
+	trigger remove
+	{
+		remove
+	}
+}
+
+truck_trigger	// attach movement trigger to the truck
+{
+	spawn
+	{
+		wait 200
+		attachtotag truck tag_wback
+	}
+
+	trigger remove
+	{
+		remove
+	}
+}
+
+//--------------------------------------------------------------------------------
+//                         Wheels
+//--------------------------------------------------------------------------------
+
+truck_bwheel2
+{
+	spawn
+	{
+		wait 200
+		attachtotag truck tag_wback
+	}
+
+	trigger forward
+	{
+		setrotation	110 0 0
+		accum 1 abort_if_less_than 10
+		stoprotation
+		setrotation	220 0 0
+	}
+
+	trigger backward
+	{
+		setrotation 	-110 0 0
+	}
+
+	trigger stop
+	{
+		stoprotation
+	}
+}
+
+truck_fwheel
+{
+	spawn
+	{
+		wait 200
+		attachtotag truck tag_wfront
+	}
+
+	trigger forward
+	{
+		setrotation	110 0 0
+		accum 1 abort_if_less_than 10
+		stoprotation
+		setrotation	220 0 0
+	}
+
+	trigger backward
+	{
+		setrotation 	-110 0 0
+	}
+
+	trigger stop
+	{
+		stoprotation
+	}	
+}
+
+//--------------------------------------------------------------------------------
+//                         Truck engine sounds
+//--------------------------------------------------------------------------------
+
+truck_engine
+{
+	spawn
+	{
+		wait 200
+		attachtotag truck tag_wfront
+	}
+
+	trigger start
+	{
+		trigger self sound_start
+		wait 950
+		trigger self sound_move
+	}
+
+	trigger stop
+	{
+		trigger self sound_stop
+		wait 950
+		trigger self sound_idle
+	}
+
+	trigger sound_idle
+	{
+		playsound sound/vehicles/truck/truck_idle.wav looping
+	}
+
+	trigger sound_start
+	{
+		stopsound
+		playsound sound/vehicles/truck/truck_revup.wav volume 96
+	}
+
+	trigger sound_move
+	{
+		playsound sound/vehicles/truck/truck_move.wav looping
+	}
+
+	trigger sound_stop
+	{
+		stopsound
+		playsound sound/vehicles/truck/truck_revdown.wav volume 96
+	}
+
+	trigger sound_death
+	{
+		stopsound
+		playsound sound/vehicles/truck/truck_stop.wav volume 96
+	}
+
+	trigger remove
+	{
+		remove
+	}
+}
+
+//----------------------------------------------------------------------
+//                           Truck build routines
+//----------------------------------------------------------------------
+
+truck_build //TOI for construction
+{
+	spawn
+	{
+		wait 200
+		attachtotag truck tag_wback
+
+	}
+
+	trigger remove
+	{
+		remove
+	}
+}
+
+truck_construct
+{
+	spawn
+	{
+		wait 20
+		constructible_class 2
+		constructible_health 1050
+		constructible_constructxpbonus 10
+		constructible_destructxpbonus 10
+		kill truck	
+	}
+	
+	built final
+	{
+		alertentity truck
+		wm_announce "The Truck has been repaired"
+	}
+
+	trigger remove
+	{
+		remove
+	}
+}
+
+truck_smoke 
+{
+	spawn
+	{
+		wait 20
+		attachtotag truck tag_wfront
+		setstate truck_smoke default
+	}
+
+	trigger remove
+	{
+		remove
+	}
+}
+
+//----------------------------------------------------------------------
+//                           Truck Cargo
+//----------------------------------------------------------------------
+
+allied_cp_cargo
+{
+	spawn
+	{
+		wait 500
+		attachtotag truck tag_wback
+	}
+}
+
+allied_pb_cargo
+{
+	spawn
+	{
+		wait 500
+		attachtotag truck tag_wback
+	}
+	
+	trigger remove
+	{
+		remove
+	}
+}
+
+//********************************************************//
+//                         Spawn Blobs                          
+//
+// last mod: Mean Mr. Mustard - 01/11/2004
+//*******************************************************//
+
+depot_allied_spawnTWO
+{
+	spawn
+	{
+		wait 50
+                setstate depot_allied_spawnTWO invisible
+	}
+}
+
+//******************************************************//
+// Allied Command Post
+//
+// last mod: Mean Mr. Mustard - 01/19/2004
+//******************************************************//
+
+allied_cp_build
+{
+	spawn
+	{
+		wait 400
+		constructible_class 2
+		accum 0 set 0
+		accum 1 set 0				// v2 completed?
+		trigger allied_cp_build setup
+	}
+
+	trigger setup
+	{
+		setstate allied_cp_build 	invisible
+		setstate allied_cp_toi		invisible
+		setstate allied_cp_clipmain 	invisible
+		setstate allied_cp_damagedclip 	invisible
+
+		setchargetimefactor 1 soldier 1
+		setchargetimefactor 1 lieutenant 1
+		setchargetimefactor 1 medic 1
+		setchargetimefactor 1 engineer 1
+		setchargetimefactor 1 covertops 1
+		sethqstatus 1 0
+	}
+
+	buildstart final
+	{
+		trigger allied_cp_builtmodel trans
+		trigger allied_cp_damaged hide
+		trigger allied_cp_closed hide
+		setstate allied_cp_clipmain 	default
+	}
+
+	decayed final
+	{
+		trigger allied_cp_builtmodel hide
+		trigger allied_cp_closed show
+	}
+
+	built final
+	{
+		wm_announce "The Allied command post has been constructed"
+		trigger allied_cp_builtmodel show
+		trigger allied_cp_closed hide
+		trigger allied_cp_damaged hide
+		setstate allied_cp_clipmain default
+
+		trigger allied_cp_builtmodel enable_features
+		enablespeaker allied_cp_speaker
+
+		// open factory gates
+		wait 2000
+		trigger factory_maingate_right open
+		trigger factory_maingate_left open
+		trigger factory_railgate_right open
+		trigger factory_railgate_left open
+
+		setstate wires_down	default
+		setstate wire_hurt	default
+		setstate wires		invisible
+		enablespeaker wires1_speaker
+		enablespeaker wires2_speaker
+
+		// switch spawn the first time cp is built
+		accum 0 abort_if_equal 1
+		alertentity 	depot_allied_spawnblob
+		
+		setstate depot_allied_spawnTWO 	default
+		setstate bunker_TWO 		invisible
+		setautospawn 	"Factory"	0
+		setautospawn 	"Ammo Depot"	1
+
+		// set state of first objective
+		wm_objective_status 3 0 2
+		wm_objective_status 3 1 1
+
+		accum 0 set 1
+		
+		trigger v2_launchdoor_toi show
+	}
+
+	death
+	{
+		wm_announce "The Allied command post has been destroyed"
+		trigger allied_cp_builtmodel hide
+		trigger allied_cp_damaged show
+
+		trigger allied_cp_builtmodel disable_features
+		disablespeaker allied_cp_speaker
+
+		setstate wires_down	invisible
+		setstate wire_hurt	invisible
+		setstate wires		default
+		disablespeaker wires1_speaker
+		disablespeaker wires2_speaker
+
+		// close factory gates
+		accum 1 abort_if_equal 1
+		wait 2000
+		trigger factory_maingate_right close
+		trigger factory_maingate_left close
+		trigger factory_railgate_right close
+		trigger factory_railgate_left close
+	}
+
+	trigger v2_complete
+	{
+		accum 1 set 1
+	}
+}
+
+allied_cp_builtmodel
+{
+	spawn
+	{
+		wait 200
+		setstate allied_cp_builtmodel 	invisible
+	}
+
+	trigger hide
+	{
+		setstate allied_cp_builtmodel	invisible
+	}
+
+	trigger show
+	{
+		setstate allied_cp_builtmodel	default
+	}
+
+	trigger trans
+	{
+		setstate allied_cp_builtmodel	underconstruction
+	}
+
+	trigger enable_features
+	{
+		setchargetimefactor 1 soldier 0.75
+		setchargetimefactor 1 lieutenant 0.75
+		setchargetimefactor 1 medic 0.75
+		setchargetimefactor 1 engineer 0.75
+		setchargetimefactor 1 covertops 0.75
+		sethqstatus 1 1
+	}
+
+	trigger disable_features
+	{
+		setchargetimefactor 1 soldier 1
+		setchargetimefactor 1 lieutenant 1
+		setchargetimefactor 1 medic 1
+		setchargetimefactor 1 engineer 1
+		setchargetimefactor 1 covertops 1
+		sethqstatus 1 1
+	}
+}
+
+allied_cp_closed
+{
+	spawn
+	{
+		wait 200
+		setstate allied_cp_closed 	invisible
+	}
+
+	trigger activate_construction
+	{
+		setstate allied_cp_closed	underconstruction
+		setstate allied_cp_cargo	underconstruction
+		wait 1000
+		setstate allied_cp_toi		default
+		wait 50
+		setstate allied_cp_closed	default
+		setstate allied_cp_clipmain	default
+		setstate allied_cp_cargo	invisible
+	}
+
+	trigger hide
+	{
+		setstate allied_cp_closed	invisible
+		setstate allied_cp_clipmain	invisible
+	}
+
+	trigger show
+	{
+		setstate allied_cp_closed	default
+		setstate allied_cp_clipmain	default
+	}
+}
+
+allied_cp_damaged
+{
+	spawn
+	{
+		wait 200
+		setstate allied_cp_damaged 	invisible
+	}
+
+	trigger hide
+	{
+		setstate allied_cp_damaged	invisible
+		setstate allied_cp_damagedclip	invisible
+		setstate allied_cp_clipmain	invisible
+	}
+
+	trigger show
+	{
+		setstate allied_cp_damaged	default
+		setstate allied_cp_damagedclip	default
+		setstate allied_cp_clipmain	default
+	}
+}
+
+//**************************************************************//
+// Electrical wires from Ammo Depot to Factory
+//**************************************************************//
+wires
+{
+	spawn		
+	{
+		wait 100
+	}
+}
+
+wires_down
+{
+	spawn
+	{
+		wait 500
+		setstate wires_down invisible
+	}
+}
+
+wire_hurt
+{
+	spawn
+	{
+		wait 500
+		setstate wire_hurt invisible
+	}
+}
+
+//******************************************************//
+// Axis Command Post
+//
+// last mod: Mean Mr. Mustard - 04/11/2004
+//******************************************************//
+
+axis_cp_build
+{
+	spawn
+	{
+		wait 400
+		constructible_class 2
+		trigger axis_cp_build setup
+		accum 0 set 0
+	}
+
+	trigger setup
+	{
+		setstate axis_cp_build 		invisible
+		setstate axis_cp_damagedclip 	invisible
+		trigger axis_cp_builtmodel hide
+
+		setchargetimefactor 1 soldier 1
+		setchargetimefactor 1 lieutenant 1
+		setchargetimefactor 1 medic 1
+		setchargetimefactor 1 engineer 1
+		setchargetimefactor 1 covertops 1
+		sethqstatus 1 0
+	}
+
+	buildstart final
+	{
+		trigger axis_cp_builtmodel trans
+		trigger axis_cp_damaged hide
+		trigger axis_cp_closed hide
+		setstate axis_cp_clipmain default
+	}
+
+	decayed final
+	{
+		trigger axis_cp_builtmodel hide
+		accum 0 trigger_if_equal 0 axis_cp_closed show
+		accum 0 trigger_if_equal 1 axis_cp_damaged show
+	}
+
+	built final
+	{
+		wm_announce "The Axis command post has been constructed"
+		trigger axis_cp_builtmodel show
+		trigger axis_cp_closed hide
+		trigger axis_cp_damaged hide
+
+		trigger axis_cp_builtmodel enable_features
+		enablespeaker axis_cp_speaker
+		accum 0 set 1
+	}
+
+	death
+	{
+		wm_announce "The Axis command post has been damaged"
+		trigger axis_cp_builtmodel hide
+		trigger axis_cp_damaged show
+
+		trigger axis_cp_builtmodel disable_features
+		disablespeaker axis_cp_speaker
+	}
+}
+
+axis_cp_builtmodel
+{
+	spawn
+	{
+		wait 200
+	}
+
+	trigger hide
+	{
+		setstate axis_cp_builtmodel	invisible
+	}
+
+	trigger show
+	{
+		setstate axis_cp_builtmodel	default
+	}
+
+	trigger trans
+	{
+		setstate axis_cp_builtmodel	underconstruction
+	}
+
+	trigger enable_features
+	{
+		setchargetimefactor 1 soldier 0.75
+		setchargetimefactor 1 lieutenant 0.75
+		setchargetimefactor 1 medic 0.75
+		setchargetimefactor 1 engineer 0.75
+		setchargetimefactor 1 covertops 0.75
+		sethqstatus 1 1
+	}
+
+	trigger disable_features
+	{
+		setchargetimefactor 1 soldier 1
+		setchargetimefactor 1 lieutenant 1
+		setchargetimefactor 1 medic 1
+		setchargetimefactor 1 engineer 1
+		setchargetimefactor 1 covertops 1
+		sethqstatus 1 1
+	}
+}
+
+axis_cp_closed
+{
+	spawn
+	{
+		wait 200
+	}
+
+	trigger hide
+	{
+		setstate axis_cp_closed		invisible
+		setstate axis_cp_clipmain	invisible
+	}
+
+	trigger show
+	{
+		setstate axis_cp_closed		default
+		setstate axis_cp_clipmain	default
+	}
+}
+
+axis_cp_damaged
+{
+	spawn
+	{
+		wait 200
+		setstate axis_cp_damaged 	invisible
+	}
+
+	trigger hide
+	{
+		setstate axis_cp_damaged	invisible
+		setstate axis_cp_damagedclip	invisible
+		setstate axis_cp_clipmain	invisible
+	}
+
+	trigger show
+	{
+		setstate axis_cp_damaged	default
+		setstate axis_cp_damagedclip	default
+		setstate axis_cp_clipmain	default
+	}
+}
+
+//******************************************************//
+//                         FACTORY
+//
+// last mod: Mean Mr. Mustard - 01/27/2004
+//******************************************************//
+
+
+//============================= V2 Launch Door ============================================
+
+v2_launchdoor
+{
+	spawn
+	{
+		wait 50
+		constructible_class 3
+		setstate v2_launchdoor invisible
+	}
+
+	death
+	{
+		wm_announce "The V-2 launch door has been destroyed!"
+		setstate v2_launchdoor_debris default
+		
+		// set state of first objective
+		wm_objective_status 7 0 2
+		wm_objective_status 7 1 1
+	}
+}
+
+v2_launchdoor_fake
+{
+	spawn
+	{
+		wait 50
+	}
+}
+
+v2_launchdoor_toi
+{
+	spawn
+	{
+		wait 50
+		setstate v2_launchdoor_toi invisible
+	}
+
+
+	trigger show
+	{
+		setstate v2_launchdoor_toi 	default
+		wait 20
+		setstate v2_launchdoor		default
+		setstate v2_launchdoor_fake	invisible
+	}
+}
+
+v2_launchdoor_debris
+{
+	spawn
+	{
+		wait 50
+		setstate v2_launchdoor_debris invisible
+	}
+}
+
+//============================= O2 Production ============================================
+//
+// last mod: Mean Mr. Mustard - 01/25/2004
+//=========================================================================================
+// accum 0 - counter for production time (interval = 10 sec)
+// accum 1 - down time
+
+o2_production
+{
+	spawn
+	{
+		wait 50
+		constructible_class 3
+		accum 0 set 0
+		accum 1 set 0
+		globalaccum 0 set 0
+		trigger self startup
+		remapshader textures/v2_factory/o2_prod/time0 textures/v2_factory/o2_prod/time0	
+		remapshader textures/v2_factory/o2_production_on textures/v2_factory/o2_production_on							remapshaderflush
+	}
+
+	trigger startup
+	{
+		setstate o2_production		default
+		setstate o2_prod_crates		invisible
+		setstate o2_prod_crate_clip	invisible
+		setstate o2_prod_debris		invisible
+		trigger o2_prod_speaker start
+	}
+
+	buildstart final
+	{
+		setstate o2_production	underconstruction
+	}
+
+	built final
+	{
+		globalaccum 0 set 0		// o2 production running
+
+		setstate o2_production		default
+		setstate o2_prod_crates		invisible
+		setstate o2_prod_crate_clip	invisible
+		setstate o2_prod_debris		invisible
+
+		trigger o2_prod_timer continue
+		trigger o2_prod_speaker start
+
+		trigger o2_storage prod_alive
+		wait 100
+
+		globalaccum 3 abort_if_equal 3
+		wm_announce "The O2 Production machines have been repaired"
+		remapshader textures/v2_factory/o2_production_on textures/v2_factory/o2_production_on
+		remapshaderflush
+		wait 100
+	}
+	
+	decayed final
+	{
+		setstate o2_production	invisible
+	}
+
+	death
+	{
+		wm_announce "The O2 Production machines have been destroyed"
+		setstate o2_prod_crates		default
+		setstate o2_prod_crate_clip	default
+		setstate o2_prod_debris		default
+
+		remapshader textures/v2_factory/o2_production_on textures/v2_factory/o2_production_off
+		wait 100				
+		remapshaderflush
+		wait 100
+
+		// check if allies have won
+		globalaccum 0 set 1
+		trigger game_manager allies_early_win 
+		
+		trigger o2_prod_timer halt
+		trigger o2_prod_speaker sound_stop
+
+		trigger o2_storage prod_dead
+	}
+
+	trigger clock
+	{
+		accum 0 inc 1	// increment time - intervals of 10 seconds
+	
+		accum 0 trigger_if_equal 6  o2_production time1
+		accum 0 trigger_if_equal 12 o2_production time2
+		accum 0 trigger_if_equal 18 o2_production time3
+		accum 0 trigger_if_equal 24 o2_production time4
+		accum 0 trigger_if_equal 30 o2_production time5
+		accum 0 trigger_if_equal 36 o2_production time6
+		accum 0 trigger_if_equal 42 o2_production time7
+		accum 0 trigger_if_equal 48 o2_production time8
+		accum 0 trigger_if_equal 54 o2_production time9
+		accum 0 trigger_if_equal 60 o2_production time10
+		accum 0 trigger_if_equal 66 o2_production time11
+		accum 0 trigger_if_equal 72 o2_production time12
+		accum 0 trigger_if_equal 78 o2_production time13
+		accum 0 trigger_if_equal 84 o2_production time14
+		accum 0 trigger_if_equal 90 o2_production time15
+	}
+
+	trigger time1
+	{
+		wm_announce "O2 Production: 1 minute elapsed"
+
+		globalaccum 6 abort_if_greater_than 16
+		wm_announce "Axis won't have a chance to finish O2 production and deliver rocket... Allies win"
+                trigger game_manager allies_win
+	}
+
+	trigger time2
+	{
+		wm_announce "O2 Production: 2 minutes elapsed"
+
+		globalaccum 6 abort_if_greater_than 15
+		wm_announce "Axis won't have a chance to finish O2 production and deliver rocket... Allies win"
+                trigger game_manager allies_win
+	}
+
+	trigger time3
+	{
+		wm_announce "O2 Production: 3 minutes elapsed"
+		remapshader textures/v2_factory/o2_prod/time0 textures/v2_factory/o2_prod/time20	
+		wait 100				
+		remapshaderflush
+		wait 100
+
+		globalaccum 6 abort_if_greater_than 14
+		wm_announce "Axis won't have a chance to finish O2 production and deliver rocket... Allies win"
+                trigger game_manager allies_win
+	}
+
+	trigger time4
+	{
+		wm_announce "O2 Production: 4 minutes elapsed"
+
+		globalaccum 6 abort_if_greater_than 13
+		wm_announce "Axis won't have a chance to finish O2 production and deliver rocket... Allies win"
+                trigger game_manager allies_win
+	}
+
+	trigger time5
+	{
+		wm_announce "O2 Production: 5 minutes elapsed"
+
+		globalaccum 6 abort_if_greater_than 12
+		wm_announce "Axis won't have a chance to finish O2 production and deliver rocket... Allies win"
+                trigger game_manager allies_win
+	}
+
+	trigger time6
+	{
+		wm_announce "O2 Production: 6 minutes elapsed"
+		remapshader textures/v2_factory/o2_prod/time0 textures/v2_factory/o2_prod/time40							wait 100				
+		remapshaderflush
+		wait 100
+
+		globalaccum 6 abort_if_greater_than 11
+		wm_announce "Axis won't have a chance to finish O2 production and deliver rocket... Allies win"
+                trigger game_manager allies_win
+	}
+
+	trigger time7
+	{
+		wm_announce "O2 Production: 7 minutes elapsed"
+
+		globalaccum 6 abort_if_greater_than 10 
+		wm_announce "Axis won't have a chance to finish O2 production and deliver rocket... Allies win"
+                trigger game_manager allies_win
+	}
+
+	trigger time8
+	{
+		wm_announce "O2 Production: 8 minutes elapsed"
+
+		globalaccum 6 abort_if_greater_than 9
+		wm_announce "Axis won't have a chance to finish O2 production and deliver rocket... Allies win"
+                trigger game_manager allies_win
+	}
+
+	trigger time9
+	{
+		wm_announce "O2 production: 9 minutes elapsed"
+		remapshader textures/v2_factory/o2_prod/time0 textures/v2_factory/o2_prod/time60							wait 100				
+		remapshaderflush
+		wait 100
+
+		globalaccum 6 abort_if_greater_than 8
+		wm_announce "Axis won't have a chance to finish O2 production and deliver rocket... Allies win"
+                trigger game_manager allies_win
+	}
+
+	trigger time10
+	{
+		wm_announce "O2 Production: 10 minutes elapsed"
+
+		globalaccum 6 abort_if_greater_than 7 
+		wm_announce "Axis won't have a chance to finish O2 production and deliver rocket... Allies win"
+                trigger game_manager allies_win
+	}
+
+	trigger time11
+	{
+		wm_announce "O2 Production: 11 minutes elapsed"
+
+		globalaccum 6 abort_if_greater_than 6
+		wm_announce "Axis won't have a chance to finish O2 production and deliver rocket... Allies win"
+                trigger game_manager allies_win
+	}
+
+	trigger time12
+	{
+		wm_announce "O2 Production: 12 minutes elapsed"
+		remapshader textures/v2_factory/o2_prod/time0 textures/v2_factory/o2_prod/time80							wait 100				
+		remapshaderflush
+		wait 100
+
+		globalaccum 6 abort_if_greater_than 5
+		wm_announce "Axis won't have a chance to finish O2 production and deliver rocket... Allies win"
+                trigger game_manager allies_win
+	}
+
+	trigger time13
+	{
+		wm_announce "O2 Production: 13 minutes elapsed"
+
+		globalaccum 6 abort_if_greater_than 4
+		wm_announce "Axis won't have a chance to finish O2 production and deliver rocket... Allies win"
+                trigger game_manager allies_win
+	}
+
+	trigger time14
+	{
+		wm_announce "O2 Production: 14 minutes elapsed"
+
+		globalaccum 6 abort_if_greater_than 3
+		wm_announce "Axis won't have a chance to finish O2 production and deliver rocket... Allies win"
+                trigger game_manager allies_win
+	}
+
+
+	trigger time15
+	{
+		wm_announce "O2 Production: 15 minutes elapsed"
+		wm_announce "O2 Production: completed"
+		remapshader textures/v2_factory/o2_prod/time0 textures/v2_factory/o2_prod/time100
+		wait 100
+		remapshaderflush
+		setstate o2_prod_sign1	invisible
+		setstate o2_prod_sign2	default
+
+		globalaccum 3 inc 1
+		globalaccum 3 trigger_if_equal 3 load_v2 load_the_train
+
+		cvar g_gametype abort_if_not_equal 3	
+		wait 500
+		setstate o2_production	invisible	
+		setstate o2prod_done	default
+	}
+}
+
+o2prod_done	// dummy script mover to stop xp whoring
+{
+	spawn
+	{
+		wait 200
+		setstate o2prod_done invisible
+	}
+}
+
+// accum 0: counter flag (0 = count, 1 = halt)
+//
+o2_prod_timer
+{
+	spawn
+	{
+		wait 50
+		accum 0 set 0
+		trigger self continue
+	}
+
+	trigger counter
+	{
+		accum 0 abort_if_equal 1
+		trigger o2_production clock
+	}
+
+	trigger halt
+	{
+		accum 0 set 1
+	}
+
+	trigger continue
+	{
+		accum 0 set 0
+	}
+}
+
+o2_prod_speaker
+{
+	spawn
+	{
+		wait 50
+	}
+
+	trigger start
+	{
+		trigger self sound_start
+		wait 950
+		trigger self sound_move
+	}
+
+	trigger sound_start
+	{
+		stopsound
+		playsound sound/movers/motors/motor_start_01.wav
+	}
+
+	trigger sound_move
+	{
+		playsound sound/movers/motors/motor_loop_03.wav looping
+	}
+
+	trigger sound_stop
+	{
+		stopsound
+		playsound sound/movers/motors/motor_end_01.wav
+	}
+}
+
+//============================= O2 Storage ============================================
+//
+// last mod: Mean Mr. Mustard - 03/25/2004
+//=========================================================================================
+
+// accum 0 - counter for production time (interval = 10 sec)
+// accum 1 - O2 Production status (0 = alive, 1 = dead)
+// accum 2 - O2 Storage status (0 = alive, 1 = dead)
+
+o2_storage
+{
+	spawn
+	{
+		wait 50
+		constructible_class 2
+		accum 0 set 0
+		accum 1 set 0
+		accum 2 set 0
+		globalaccum 1 set 0
+		trigger self startup
+		remapshader textures/v2_factory/o2_stor/time0 textures/v2_factory/o2_stor/time0
+		remapshader textures/v2_factory/o2_ablage_on textures/v2_factory/o2_ablage_on 
+		remapshaderflush
+	}
+
+	trigger startup
+	{
+		setstate o2_storage		default
+		setstate o2_storage_smoke_in 	invisible
+		setstate o2_storage_smoke_out 	invisible
+		setstate o2_stor_crates		invisible
+		setstate o2_stor_crate_clip	invisible
+		setstate o2_stor_debris		invisible
+	}
+
+	buildstart final
+	{
+		setstate o2_storage	underconstruction
+	}
+
+	built final
+	{
+		globalaccum 1 set 0		// o2 storage working
+
+		setstate o2_storage		default
+		setstate o2_storage_smoke_in 	invisible
+		setstate o2_storage_smoke_out 	invisible
+		setstate o2_stor_crates		invisible
+		setstate o2_stor_crate_clip	invisible
+		setstate o2_stor_debris		invisible
+
+		accum 2 set 0
+
+		trigger o2_stor_timer continue
+
+		globalaccum 3 abort_if_equal 3
+		enablespeaker  o2_stor_speaker1
+		disablespeaker o2_stor_speaker2		
+		wm_announce "The O2 Storage Tanks have been rebuilt"
+
+		remapshader textures/v2_factory/o2_ablage_on textures/v2_factory/o2_ablage_on
+		wait 100				
+		remapshaderflush
+		wait 100
+
+	}
+	
+	decayed final
+	{
+		setstate o2_storage	invisible
+	}
+
+	death
+	{
+		wm_announce "The O2 Storage Tanks have been damaged"
+		setstate o2_storage_smoke_in	default
+		setstate o2_storage_smoke_out	default
+		setstate o2_stor_crates		default
+		setstate o2_stor_crate_clip	default
+		setstate o2_stor_debris		default
+
+		remapshader textures/v2_factory/o2_ablage_on textures/v2_factory/o2_ablage_off
+		wait 100				
+		remapshaderflush
+		wait 100
+
+		// check if allies have won
+		globalaccum 1 set 1
+		trigger game_manager allies_early_win 
+		
+		trigger o2_stor_timer halt
+		enablespeaker  o2_stor_speaker2
+		disablespeaker o2_stor_speaker1
+
+		accum 2 set 1
+		accum 1 trigger_if_equal 1 o2_storage prod_dead	
+	}
+
+	trigger clock
+	{
+		accum 0 inc 1	// increment time - intervals of 10 seconds
+		accum 0 trigger_if_equal  6 o2_storage time1
+		accum 0 trigger_if_equal 12 o2_storage time2
+		accum 0 trigger_if_equal 18 o2_storage time3
+		accum 0 trigger_if_equal 24 o2_storage time4
+		accum 0 trigger_if_equal 30 o2_storage time5
+		accum 0 trigger_if_equal 36 o2_storage time6
+		accum 0 trigger_if_equal 42 o2_storage time7
+		accum 0 trigger_if_equal 48 o2_storage time8
+		accum 0 trigger_if_equal 54 o2_storage time9
+		accum 0 trigger_if_equal 60 o2_storage time10
+		accum 0 trigger_if_equal 66 o2_storage time11
+		accum 0 trigger_if_equal 72 o2_storage time12
+		accum 0 trigger_if_equal 78 o2_storage time13
+		accum 0 trigger_if_equal 84 o2_storage time14
+		accum 0 trigger_if_equal 90 o2_storage time15
+	}
+
+	trigger time1
+	{
+		wm_announce "O2 Storage: 1 minute elapsed"
+
+		globalaccum 6 abort_if_greater_than 16
+		wm_announce "Axis won't have a chance to finish O2 storage and deliver rocket... Allies win"
+                trigger game_manager allies_win
+	}
+
+	trigger time2
+	{
+		wm_announce "O2 Storage: 2 minutes elapsed"
+
+		globalaccum 6 abort_if_greater_than 15
+		wm_announce "Axis won't have a chance to finish O2 storage and deliver rocket... Allies win"
+                trigger game_manager allies_win
+	}
+
+	trigger time3
+	{
+		wm_announce "O2 Storage: 3 minutes elapsed"
+		remapshader textures/v2_factory/o2_stor/time0 textures/v2_factory/o2_stor/time20
+		wait 100				
+		remapshaderflush
+		wait 100
+
+		globalaccum 6 abort_if_greater_than 14
+		wm_announce "Axis won't have a chance to finish O2 storage and deliver rocket... Allies win"
+                trigger game_manager allies_win
+	}
+
+	trigger time4
+	{
+		wm_announce "O2 Storage: 4 minutes elapsed"
+
+		globalaccum 6 abort_if_greater_than 13
+		wm_announce "Axis won't have a chance to finish O2 storage and deliver rocket... Allies win"
+                trigger game_manager allies_win
+	}
+
+	trigger time5
+	{
+		wm_announce "O2 Storage: 5 minutes elapsed"
+
+		globalaccum 6 abort_if_greater_than 12
+		wm_announce "Axis won't have a chance to finish O2 storage and deliver rocket... Allies win"
+                trigger game_manager allies_win
+	}
+
+	trigger time6
+	{
+		wm_announce "O2 Storage: 6 minutes elapsed"
+		remapshader textures/v2_factory/o2_stor/time0 textures/v2_factory/o2_stor/time40
+		wait 100				
+		remapshaderflush
+		wait 100
+
+		globalaccum 6 abort_if_greater_than 11
+		wm_announce "Axis won't have a chance to finish O2 storage and deliver rocket... Allies win"
+                trigger game_manager allies_win
+	}
+
+	trigger time7
+	{
+		wm_announce "O2 Storage: 7 minutes elapsed"
+
+		globalaccum 6 abort_if_greater_than 10
+		wm_announce "Axis won't have a chance to finish O2 storage and deliver rocket... Allies win"
+                trigger game_manager allies_win
+	}
+
+	trigger time8
+	{
+		wm_announce "O2 Storage: 8 minutes elapsed"
+
+		globalaccum 6 abort_if_greater_than 9
+		wm_announce "Axis won't have a chance to finish O2 storage and deliver rocket... Allies win"
+                trigger game_manager allies_win
+	}
+
+	trigger time9
+	{
+		wm_announce "O2 Storage: 9 minutes elapsed"
+		remapshader textures/v2_factory/o2_stor/time0 textures/v2_factory/o2_stor/time60
+		wait 100				
+		remapshaderflush
+		wait 100
+
+		globalaccum 6 abort_if_greater_than 8
+		wm_announce "Axis won't have a chance to finish O2 storage and deliver rocket... Allies win"
+                trigger game_manager allies_win
+	}
+
+	trigger time10
+	{
+		wm_announce "O2 Storage: 10 minutes elapsed"
+
+		globalaccum 6 abort_if_greater_than 7 
+		wm_announce "Axis won't have a chance to finish O2 storage and deliver rocket... Allies win"
+                trigger game_manager allies_win
+	}
+
+	trigger time11
+	{
+		wm_announce "O2 Storage: 11 minutes elapsed"
+
+		globalaccum 6 abort_if_greater_than 6
+		wm_announce "Axis won't have a chance to finish O2 storage and deliver rocket... Allies win"
+                trigger game_manager allies_win
+	}
+
+	trigger time12
+	{
+		wm_announce "O2 Storage: 12 minutes elapsed"
+		remapshader textures/v2_factory/o2_stor/time0 textures/v2_factory/o2_stor/time80
+		wait 100				
+		remapshaderflush
+		wait 100
+
+		globalaccum 6 abort_if_greater_than 5
+		wm_announce "Axis won't have a chance to finish O2 storage and deliver rocket... Allies win"
+                trigger game_manager allies_win
+	}
+
+	trigger time13
+	{
+		wm_announce "O2 Storage: 13 minutes elapsed"
+
+		globalaccum 6 abort_if_greater_than 4
+		wm_announce "Axis won't have a chance to finish O2 storage and deliver rocket... Allies win"
+                trigger game_manager allies_win
+	}
+
+	trigger time14
+	{
+		wm_announce "O2 Storage: 14 minutes elapsed"
+
+		globalaccum 6 abort_if_greater_than 3 
+		wm_announce "Axis won't have a chance to finish O2 storage and deliver rocket... Allies win"
+                trigger game_manager allies_win
+	}
+
+	trigger time15
+	{
+		wm_announce "O2 Storage: 15 minutes elapsed"
+		wm_announce "O2 Storage: completed"
+		remapshader textures/v2_factory/o2_stor/time0 textures/v2_factory/o2_stor/time100
+		wait 100				
+		remapshaderflush
+		wait 100
+		setstate o2_stor_sign1	invisible
+		setstate o2_stor_sign2	default
+
+		globalaccum 3 inc 1
+		globalaccum 3 trigger_if_equal 3 load_v2 load_the_train
+
+		cvar g_gametype abort_if_not_equal 3	
+		wait 500
+		setstate o2_storage	invisible	
+		setstate o2stor_done	default
+	}
+
+	trigger prod_alive
+	{
+		accum 1 set 0
+		accum 2 abort_if_equal 0
+		wait 500
+		setstate o2_storage_smoke_in default
+	}
+
+	trigger prod_dead
+	{
+		accum 1 set 1
+		wait 500
+		setstate o2_storage_smoke_in invisible
+	}
+
+}
+
+o2stor_done	// dummy script mover to stop xp whoring
+{
+	spawn
+	{
+		wait 200
+		setstate o2stor_done invisible
+	}
+}
+
+// accum 0: counter flag (0 = count, 1 = halt)
+//
+o2_stor_timer
+{
+	spawn
+	{
+		wait 50
+		accum 0 set 0
+		trigger self continue
+	}
+
+	trigger counter
+	{
+		accum 0 abort_if_equal 1
+		trigger o2_storage clock
+	}
+
+	trigger halt
+	{
+		accum 0 set 1
+	}
+
+	trigger continue
+	{
+		accum 0 set 0
+	}
+}
+
+//====================== V2 Assembly ====================================================
+//
+// last mod: Mean Mr. Mustard - 01/27/2004
+//=========================================================================================
+v2_assembly
+{
+	spawn
+	{
+		wait 50
+		constructible_class 3
+		constructible_chargebarreq 2.5
+		trigger self startup
+		remapshader textures/v2_factory/v2_asm/time0 textures/v2_factory/v2_asm/time0
+		remapshader textures/v2_factory/v2_production_on textures/v2_factory/v2_production_on
+		wait 50
+		remapshaderflush
+		globalaccum 2 set 0
+	}
+
+	trigger startup
+	{
+		setstate v2_assembly		default
+		setstate v2_asm_crates		invisible
+		setstate v2_asm_crate_clip	invisible
+		setstate v2_asm_debris		invisible
+	}
+
+	buildstart final
+	{
+		setstate v2_assembly	underconstruction
+	}
+
+	built final
+	{
+		globalaccum 2 set 0		// v2 production working
+
+		setstate v2_assembly		default
+		setstate v2_asm_crates		invisible
+		setstate v2_asm_crate_clip	invisible
+		setstate v2_asm_debris		invisible
+
+		trigger v2_assembly_timer continue
+
+		globalaccum 3 abort_if_equal 3
+		wm_announce "The V-2 Assembly controls have been repaired"
+
+		remapshader textures/v2_factory/v2_production_on textures/v2_factory/v2_production_on
+		wait 100				
+		remapshaderflush
+		wait 100
+
+		setstate asm_flame default
+		enablespeaker asm_speaker
+	}
+	
+	decayed final
+	{
+		setstate v2_assembly	invisible
+	}
+
+	death
+	{
+		setstate v2_asm_crates		default
+		setstate v2_asm_crate_clip	default
+		setstate v2_asm_debris		default
+		
+		wm_announce "The V-2 Assembly controls have been destroyed"
+
+		remapshader textures/v2_factory/V2_production_on textures/v2_factory/V2_production_off
+		wait 100				
+		remapshaderflush
+		wait 100
+
+		// check if allies have won
+		globalaccum 2 set 1
+		trigger game_manager allies_early_win
+
+		trigger v2_assembly_timer halt
+
+		setstate asm_flame invisible
+		disablespeaker asm_speaker
+
+		trigger winch halt
+	}
+
+	trigger clock
+	{
+		accum 0 inc 1	// increment time - intervals of 10 seconds
+		accum 0 trigger_if_equal 6  v2_assembly time1
+		accum 0 trigger_if_equal 12 v2_assembly time2
+		accum 0 trigger_if_equal 18 v2_assembly time3
+		accum 0 trigger_if_equal 24 v2_assembly time4
+		accum 0 trigger_if_equal 30 v2_assembly time5
+		accum 0 trigger_if_equal 36 v2_assembly time6
+		accum 0 trigger_if_equal 42 v2_assembly time7
+		accum 0 trigger_if_equal 48 v2_assembly time8
+		accum 0 trigger_if_equal 54 v2_assembly time9
+		accum 0 trigger_if_equal 60 v2_assembly time10
+		accum 0 trigger_if_equal 66 v2_assembly time11
+		accum 0 trigger_if_equal 72 v2_assembly time12
+		accum 0 trigger_if_equal 78 v2_assembly time13
+		accum 0 trigger_if_equal 84 v2_assembly time14
+		accum 0 trigger_if_equal 90 v2_assembly time15
+	}
+	
+	trigger time1
+	{
+		wm_announce "V-2 Assembly: 1 minute elapsed"
+		setstate v2_nose underconstruction
+
+		globalaccum 6 abort_if_greater_than 16 
+		wm_announce "Axis won't have a chance to finish V2 assembly and deliver rocket... Allies win"
+                trigger game_manager allies_win
+	}
+
+	trigger time2
+	{
+		wm_announce "V-2 Assembly: 2 minutes elapsed"
+
+		globalaccum 6 abort_if_greater_than 15
+		wm_announce "Axis won't have a chance to finish V2 assembly and deliver rocket... Allies win"
+                trigger game_manager allies_win
+	}
+
+	trigger time3
+	{
+		wm_announce "V-2 Assembly: 3 minutes elapsed"
+		remapshader textures/v2_factory/v2_asm/time0 textures/v2_factory/v2_asm/time20
+		wait 100				
+		remapshaderflush
+		wait 100
+
+		globalaccum 6 abort_if_greater_than 14
+		wm_announce "Axis won't have a chance to finish V2 assembly and deliver rocket... Allies win"
+                trigger game_manager allies_win
+	}
+
+	trigger time4
+	{
+		wm_announce "V-2 Assembly: 4 minute elapsed"
+
+		globalaccum 6 abort_if_greater_than 13
+		wm_announce "Axis won't have a chance to finish V2 assembly and deliver rocket... Allies win"
+                trigger game_manager allies_win
+	}
+
+	trigger time5
+	{
+		wm_announce "V-2 Assembly: 5 minutes elapsed"
+		setstate v2_nose default
+		trigger winch spin
+		trigger conveyor_belt1 run2
+		trigger v2_nose run2
+		trigger harness run2
+		wait 18000
+		trigger winch halt
+		setstate conveyor_belt2 default
+		setstate v2_middle underconstruction		
+
+		globalaccum 6 abort_if_greater_than 11 		// SS - this needs to be a bit longer given the long wait
+		wm_announce "Axis won't have a chance to finish V2 assembly and deliver rocket... Allies win"
+                trigger game_manager allies_win
+	}
+
+	trigger time6
+	{
+		wm_announce "V-2 Assembly: 6 minutes elapsed"
+		remapshader textures/v2_factory/v2_asm/time0 textures/v2_factory/v2_asm/time40
+		wait 100				
+		remapshaderflush
+		wait 100
+
+		globalaccum 6 abort_if_greater_than 11
+		wm_announce "Axis won't have a chance to finish V2 assembly and deliver rocket... Allies win"
+                trigger game_manager allies_win
+	}
+
+	trigger time7
+	{
+		wm_announce "V-2 Assembly: 7 minutes elapsed"
+
+		globalaccum 6 abort_if_greater_than 10
+		wm_announce "Axis won't have a chance to finish V2 assembly and deliver rocket... Allies win"
+                trigger game_manager allies_win
+	}
+
+	trigger time8
+	{
+		wm_announce "V-2 Assembly: 8 minutes elapsed"
+
+		globalaccum 6 abort_if_greater_than 9
+		wm_announce "Axis won't have a chance to finish V2 assembly and deliver rocket... Allies win"
+                trigger game_manager allies_win
+	}
+
+	trigger time9
+	{
+		wm_announce "V-2 Assembly: 9 minutes elapsed"
+		remapshader textures/v2_factory/v2_asm/time0 textures/v2_factory/v2_asm/time60
+		wait 100				
+		remapshaderflush
+		wait 100
+
+		globalaccum 6 abort_if_greater_than 8
+		wm_announce "Axis won't have a chance to finish V2 assembly and deliver rocket... Allies win"
+                trigger game_manager allies_win
+	}
+
+	trigger time10
+	{
+		wm_announce "V-2 Assembly: 10 minutes elapsed"
+		setstate v2_middle default
+		trigger winch spin
+		trigger conveyor_belt1 run3
+		trigger v2_nose run3
+		trigger harness run3
+		trigger conveyor_belt2 run2
+		trigger v2_middle run3
+		wait 18000
+		trigger winch halt
+		setstate v2_tail underconstruction
+
+		globalaccum 6 abort_if_greater_than 6		// SS - this needs to be a bit longer given the long wait
+		wm_announce "Axis won't have a chance to finish V2 assembly and deliver rocket... Allies win"
+                trigger game_manager allies_win
+	}
+
+	trigger time11
+	{
+		wm_announce "V-2 Assembly: 11 minutes elapsed"
+
+		globalaccum 6 abort_if_greater_than 5
+		wm_announce "Axis won't have a chance to finish V2 assembly and deliver rocket... Allies win"
+                trigger game_manager allies_win
+	}
+
+	trigger time12
+	{
+		wm_announce "V-2 Assembly: 12 minute elapsed"
+		remapshader textures/v2_factory/v2_asm/time0 textures/v2_factory/v2_asm/time80
+		wait 100				
+		remapshaderflush
+		wait 100
+
+		globalaccum 6 abort_if_greater_than 4
+		wm_announce "Axis won't have a chance to finish V2 assembly and deliver rocket... Allies win"
+                trigger game_manager allies_win
+	}
+
+	trigger time13
+	{
+		wm_announce "V-2 Assembly: 13 minutes elapsed"
+
+		globalaccum 6 abort_if_greater_than 3
+		wm_announce "Axis won't have a chance to finish V2 assembly and deliver rocket... Allies win"
+                trigger game_manager allies_win
+	}
+
+	trigger time14
+	{
+		wm_announce "V-2 Assembly: 14 minutes elapsed"
+		setstate v2_tail	default
+
+		trigger load_v2 conveyor_run14
+
+		globalaccum 6 abort_if_greater_than 1		// SS - this needs to be a bit longer given the long wait
+		wm_announce "Axis won't have a chance to finish V2 assembly and deliver rocket... Allies win"
+                trigger game_manager allies_win
+	}
+
+	trigger time15
+	{
+		wm_announce "V-2 Assembly: 15 minutes elapsed"
+		remapshader textures/v2_factory/v2_asm/time0 textures/v2_factory/v2_asm/time100
+		wait 100
+		remapshaderflush
+		wait 100
+		setstate v2_prod_sign1	invisible
+		setstate v2_prod_sign2	default
+		setstate asm_flame invisible
+		disablespeaker asm_speaker
+		
+		// set state of fourth objective
+		wm_objective_status 4 0 1
+		wm_objective_status 4 1 2
+
+		trigger load_v2 conveyor_run15
+
+		cvar g_gametype abort_if_not_equal 3	
+		wait 500
+		setstate v2_assembly	invisible	
+		setstate v2asm_done	default
+	}
+}
+
+v2asm_done	// dummy script mover to stop xp whoring
+{
+	spawn
+	{
+		wait 200
+		setstate v2asm_done invisible
+	}
+}
+
+v2_assembly_timer
+{
+	spawn
+	{
+		wait 50
+		trigger self continue
+	}
+
+	trigger counter
+	{
+		accum 0 abort_if_equal 1
+		trigger v2_assembly clock
+	}
+
+	trigger halt
+	{
+		accum 0 set 1
+	}
+
+	trigger continue
+	{
+		accum 0 set 0
+	}
+}
+
+
+//====================== V2 Rocket =====================================================
+//
+// last mod: Mean Mr. Mustard - 01/27/2004
+//======================================================================================
+
+v2_nose
+{
+	spawn
+	{
+		wait 500
+		setstate v2_nose default
+		faceangles 0 180 0 50
+		gotomarker v2cb1 5000
+		setstate v2_nose default
+		wait 800
+		setstate v2_nose underconstruction
+	}
+	
+	trigger run2
+	{
+		gotomarker v2cb2 15
+	}
+
+	trigger run3
+	{
+		gotomarker v2cb3 15
+	}
+
+	trigger run4
+	{
+		gotomarker v2cb4 15
+	}
+
+	trigger run5
+	{
+		gotomarker v2cb5 30
+	}
+
+	trigger up
+	{
+		gotomarker v2cb6 15
+	}
+
+	trigger run6
+	{
+		gotomarker v2cb7 30
+	}
+
+	trigger spin
+	{
+		faceangles 0 90 0 10000
+	}
+
+	trigger run7
+	{
+		gotomarker v2cb8 30
+	}
+
+	trigger attach
+	{
+		attachtotag railcar tag_car_05
+	}
+}
+
+
+v2_middle
+{
+	spawn
+	{
+		wait 500
+		setstate v2_middle default
+		faceangles 0 180 0 10
+		gotomarker v2cb2 1000
+		setstate v2_middle default
+		wait 500
+		setstate v2_middle invisible
+	}
+	
+	trigger run3
+	{
+		gotomarker v2cb3 15
+	}
+
+	trigger run4
+	{
+		gotomarker v2cb4 15
+	}
+
+	trigger run5
+	{
+		gotomarker v2cb5 30
+	}
+
+	trigger up
+	{
+		gotomarker v2cb6 15
+	}
+
+	trigger run6
+	{
+		gotomarker v2cb7 30
+	}
+
+	trigger spin
+	{
+		faceangles 0 90 0 10000
+	}
+
+	trigger run7
+	{
+		gotomarker v2cb8 30
+	}
+
+	trigger attach
+	{
+		attachtotag railcar tag_car_05
+	}
+}
+
+v2_tail
+{
+	spawn
+	{
+		wait 500
+		setstate v2_tail default
+		faceangles 0 180 0 10
+		gotomarker v2cb3 1000
+		setstate v2_tail default
+		wait 500
+		setstate v2_tail invisible
+	}
+
+	trigger run4
+	{
+		gotomarker v2cb4 15
+	}
+
+	trigger run5
+	{
+		gotomarker v2cb5 30
+	}
+
+	trigger up
+	{
+		gotomarker v2cb6 15
+	}
+
+	trigger run6
+	{
+		gotomarker v2cb7 30
+	}
+
+	trigger spin
+	{
+		faceangles 0 90 0 10000
+	}
+	trigger run7
+	{
+		gotomarker v2cb8 30
+	}
+
+	trigger attach
+	{
+		attachtotag railcar tag_car_05
+		wait 100
+	}
+}
+
+//===================== Conveyor Belt ==========================================
+//
+// last mod: Mean Mr. Mustard - 01/27/2004
+//==============================================================================
+
+conveyor_belt1
+{
+	spawn
+	{
+		wait 50
+		faceangles 0 180 0 50
+		trigger self run1
+	}
+
+	trigger run1
+	{
+		gotomarker cb_pt1 500
+	}
+
+	trigger run2
+	{
+		gotomarker cb_pt2 15
+	}
+
+	trigger run3
+	{
+		gotomarker cb_pt3 15
+	}
+
+	trigger run4
+	{
+		gotomarker cb_pt4 15
+	}
+
+	trigger run5
+	{
+		gotomarker cb_pt5 30
+	}
+}
+
+conveyor_belt2
+{
+	spawn
+	{
+		wait 50
+		setstate conveyor_belt2 default
+		faceangles 0 180 0 50
+		trigger self run1
+		wait 500
+		setstate conveyor_belt2 invisible		
+	}
+
+	trigger run1
+	{
+		gotomarker cb_pt1 500
+	}
+
+	trigger run2
+	{
+		gotomarker cb_pt2 15
+	}
+
+	trigger run3
+	{
+		gotomarker cb_pt3 15
+	}
+
+	trigger run4
+	{
+		gotomarker cb_pt4b 30
+		wait 32000
+		trigger cb_beam remove
+	}
+}
+
+winch
+{
+	spawn
+	{
+		wait 50
+	}
+
+	trigger spin
+	{
+		setrotation 50 0 0
+		enablespeaker winch_speaker
+	}
+
+	trigger halt
+	{
+		setrotation 0 0 0	
+		disablespeaker winch_speaker
+	}
+}
+
+cb_beam 
+{
+	spawn
+	{
+		wait 50
+	}
+
+	trigger remove
+	{
+		remove
+	}
+}
+
+
+//====================== Main gate =======================================
+//
+// last mod: Mean Mr. Mustard - 01/25/2004
+//========================================================================
+
+factory_maingate_right
+{
+	spawn
+	{
+		wait 50
+		accum 0 set 0
+	}
+
+	trigger open
+	{
+		wait 50
+		enablespeaker maingate_speaker
+		gotomarker main_open 35
+		wait 2200
+		disablespeaker maingate_speaker
+	}
+
+	trigger close
+	{
+		wait 50
+		enablespeaker maingate_speaker
+		gotomarker main_close 35
+		wait 2200
+		disablespeaker maingate_speaker
+	}
+}
+
+factory_maingate_left
+{
+	spawn
+	{
+		wait 50
+		setstate factory_maingate_left default
+		wait 50
+		setstate factory_maingate_left invisible
+		accum 0 set 0
+	}
+
+	trigger open
+	{
+		trigger self switch
+		wait 50
+		gotomarker main_open_left 35
+	}
+
+	trigger close
+	{
+		wait 50
+		gotomarker main_close_left 35
+	}
+
+	trigger switch
+	{
+		accum 0 abort_if_equal 1
+		setstate maingate_teamdoor invisible
+		setstate factory_maingate_left default
+		accum 0 set 1
+	}
+}
+
+//====================== Rail gate ======================================
+//
+// last mod: Mean Mr. Mustard - 01/25/2004
+//========================================================================
+factory_railgate_right
+{
+	spawn
+	{
+		wait 50
+		accum 0 set 0  // 0 = closed, 1 = opened
+	}
+
+	trigger open
+	{
+		accum 0 abort_if_equal 1
+		accum 0 set 1
+		wait 50
+		enablespeaker railgate_speaker
+		faceangles 0 -90 0 2500
+		disablespeaker railgate_speaker
+	}
+
+	trigger close
+	{
+		accum 0 abort_if_equal 0
+		accum 0 set 0
+		wait 50
+		enablespeaker railgate_speaker
+		faceangles 0 0 0 2500
+		disablespeaker railgate_speaker
+	}
+}
+
+factory_railgate_left
+{
+	spawn
+	{
+		wait 50
+		accum 0 set 0  // 0 = closed, 1 = opened
+	}
+
+	trigger open
+	{
+		accum 0 abort_if_equal 1
+		accum 0 set 1
+		wait 50
+		faceangles 0 90 0 2500
+	}
+
+	trigger close
+	{
+		accum 0 abort_if_equal 0
+		accum 0 set 0
+		wait 50
+		faceangles 0 0 0 2500
+	}
+}
+
+//====================== Factory Crane ===================================
+//
+// last mod: Mean Mr. Mustard - 03/30/2004
+//========================================================================
+
+crane_hook
+{
+	spawn
+	{
+		wait 50
+	}
+
+	trigger cb_down
+	{
+		gotomarker crane_front_cbdown 50 wait
+	}
+
+	trigger cb_up
+	{
+		gotomarker crane_front_cbup 15 wait
+	}
+
+	trigger translate
+	{
+		gotomarker crane_front_forward 30 wait
+	}
+
+	trigger spin
+	{
+		faceangles 0 -90 0 10000
+	}
+
+	trigger v2_down
+	{
+		gotomarker crane_front_trailer 30
+	}
+
+	trigger v2_up
+	{
+		gotomarker crane_front_forward 50
+	}
+}
+
+crane_front
+{
+	spawn
+	{
+		wait 50
+	}
+
+	trigger translate
+	{
+		gotomarker crane_front_forward 30 wait
+	}
+
+	trigger spin
+	{
+		faceangles 0 -90 0 10000
+	}
+}
+
+crane_spin
+{
+	spawn
+	{
+		wait 50
+	}
+
+	trigger translate
+	{
+		gotomarker crane_front_forward 30 wait
+	}
+
+	trigger spin
+	{
+		faceangles 0 -90 0 10000
+	}
+}
+
+crane_bar
+{
+	spawn
+	{
+		wait 50
+	}
+
+	trigger translate
+	{
+		gotomarker crane_front_forward 30 wait
+	}
+
+}
+
+crane_cable
+{
+	spawn
+	{
+		wait 50
+		
+	}
+
+	trigger remove
+	{
+		remove
+	}
+}
+
+harness
+{
+	spawn
+	{
+		wait 50
+		faceangles 0 180 0 50
+		gotomarker v2cb1 500
+	}
+
+	trigger run2
+	{
+		gotomarker v2cb2 15
+	}
+
+	trigger run3
+	{
+		gotomarker v2cb3 15
+	}
+
+	trigger run4
+	{
+		gotomarker v2cb4 15
+	}
+
+	trigger run5
+	{
+		gotomarker v2cb5 30
+	}
+
+	trigger up
+	{
+		gotomarker v2cb6 15
+	}
+
+	trigger run6
+	{
+		gotomarker v2cb7 30
+	}
+
+	trigger spin
+	{
+		faceangles 0 90 0 10000
+	}
+
+	trigger run7
+	{
+		gotomarker v2cb8 30
+	}
+
+	trigger attach
+	{
+		attachtotag railcar tag_car_05
+	}
+}
+
+//***************************************************************************
+//                              MG Nests
+// 
+// last mod: 2/03/04: Mean Mr. Mustard
+//***************************************************************************
+
+mgnest_axis1_build
+{
+	spawn
+	{
+		wait 200
+		constructible_class 2
+		trigger self startup
+	}
+
+	trigger startup
+	{
+		setstate mg42_axis1 			invisible
+		setstate mgnest_axis1_build		invisible
+		setstate mgnest_axis1_bags		invisible
+		setstate mgnest_axis1_bag_clip		invisible
+		setstate mgnest_axis1_crates		default
+		setstate mgnest_axis1_crate_clip	default
+	}
+
+	buildstart final
+	{
+		setstate mg42_axis1 			underconstruction
+		setstate mgnest_axis1_bags		underconstruction
+		setstate mgnest_axis1_crates		default
+		setstate mgnest_axis1_crate_clip	default
+	}
+
+	built final
+	{
+		setstate mg42_axis1 			default
+		setstate mgnest_axis1_build		default
+		setstate mgnest_axis1_bags		default
+		setstate mgnest_axis1_bag_clip		default
+		setstate mgnest_axis1_crates		invisible
+		setstate mgnest_axis1_crate_clip	invisible
+		wm_announce "The Ammo Depot MG nest has been constructed"
+	}
+
+	decayed final
+	{
+		setstate mg42_axis1 			invisible
+		setstate mgnest_axis1_bags		invisible
+		setstate mgnest_axis1_crates		default
+		setstate mgnest_axis1_crate_clip	default
+	}
+
+	death
+	{
+		setstate mg42_axis1 			invisible
+		repairmg42 mg42_axis1
+		setstate mgnest_axis1_build		invisible
+		setstate mgnest_axis1_bags		invisible
+		setstate mgnest_axis1_bag_clip		invisible
+		setstate mgnest_axis1_crates		default
+		setstate mgnest_axis1_crate_clip	default
+		wm_announce "The Ammo Depot MG nest has been destroyed"
+	}
+}
+
+mgnest_axis2_build
+{
+	spawn
+	{
+		wait 200
+		constructible_class 2
+		trigger self startup
+	}
+
+	trigger startup
+	{
+		setstate mg42_axis2			invisible
+		setstate mgnest_axis2_build		invisible
+		setstate mgnest_axis2_bags		invisible
+		setstate mgnest_axis2_bag_clip		invisible
+		setstate mgnest_axis2_crates		default
+		setstate mgnest_axis2_crate_clip	default
+	}
+
+	buildstart final
+	{
+		setstate mg42_axis2 			underconstruction
+		setstate mgnest_axis2_bags		underconstruction
+		setstate mgnest_axis2_crates		default
+		setstate mgnest_axis2_crate_clip	default
+	}
+
+	built final
+	{
+		setstate mg42_axis2 			default
+		setstate mgnest_axis2_build		default
+		setstate mgnest_axis2_bags		default
+		setstate mgnest_axis2_bag_clip		default
+		setstate mgnest_axis2_crates		invisible
+		setstate mgnest_axis2_crate_clip	invisible
+		wm_announce "The Train Bridge MG nest has been constructed"
+	}
+
+	decayed final
+	{
+		setstate mg42_axis2			invisible
+		setstate mgnest_axis2_bags		invisible
+		setstate mgnest_axis2_crates		default
+		setstate mgnest_axis2_crate_clip	default
+	}
+
+	death
+	{
+		setstate mg42_axis2 			invisible
+		repairmg42 mg42_axis2
+		setstate mgnest_axis2_build		invisible
+		setstate mgnest_axis2_bags		invisible
+		setstate mgnest_axis2_bag_clip		invisible
+		setstate mgnest_axis2_crates		default
+		setstate mgnest_axis2_crate_clip	default
+		wm_announce "The Train Bridge MG nest has been destroyed"
+	}
+}
+
+mgnest_allies1_build
+{
+	spawn
+	{
+		wait 200
+		constructible_class 2
+		trigger self startup
+	}
+
+	trigger startup
+	{
+		setstate mg42_allies1 			invisible
+		setstate mgnest_allies1_build		invisible
+		setstate mgnest_allies1_bags		invisible
+		setstate mgnest_allies1_bag_clip	invisible
+		setstate mgnest_allies1_crates		default
+		setstate mgnest_allies1_crate_clip	default
+	}
+
+	buildstart final
+	{
+		setstate mg42_allies1 			underconstruction
+		setstate mgnest_allies1_bags		underconstruction
+		setstate mgnest_allies1_crates		default
+		setstate mgnest_allies1_crate_clip	default
+	}
+
+	built final
+	{
+		setstate mg42_allies1 			default
+		setstate mgnest_allies1_build		default
+		setstate mgnest_allies1_bags		default
+		setstate mgnest_allies1_bag_clip	default
+		setstate mgnest_allies1_crates		invisible
+		setstate mgnest_allies1_crate_clip	invisible
+		wm_announce "The Barn MG nest has been constructed"
+	}
+
+	decayed final
+	{
+		setstate mg42_allies1 			invisible
+		setstate mgnest_allies1_bags		invisible
+		setstate mgnest_allies1_crates		default
+		setstate mgnest_allies1_crate_clip	default
+	}
+
+	death
+	{
+		setstate mg42_allies1 			invisible
+		repairmg42 mg42_allies1
+		setstate mgnest_allies1_build		invisible
+		setstate mgnest_allies1_bags		invisible
+		setstate mgnest_allies1_bag_clip	invisible
+		setstate mgnest_allies1_crates		default
+		setstate mgnest_allies1_crate_clip	default
+		wm_announce "The Barn MG nest has been destroyed"
+	}
+}
+
+//====================== Train =====================================================
+//
+// last mod: Mean Mr. Mustard - 03/30/2004
+//==================================================================================
+//
+
+train_enabler
+{
+	spawn
+	{	
+		wait 200
+	}
+
+	trigger run
+	{
+		trigger engine train_enable
+	}
+
+}
+
+train_disabler
+{
+	spawn
+	{	
+		wait 200
+	}
+
+	trigger run
+	{
+		trigger engine train_disable
+	}
+}
+
+train_trigger	// attach movement trigger to the train
+{
+	spawn
+	{
+		wait 200
+		attachtotag engine tag_engine_4
+		setstate train_trigger invisible
+	}
+}
+
+train_smoke
+{
+	spawn
+	{
+		wait 200
+		attachtotag engine tag_engine_s
+		setstate train_smoke invisible
+	}
+}
+
+//=====================================================================================
+//	accum 0
+//	 - bit 0: player check		( 0 = players,		1 = no players	)
+//	 - bit 1: bridge status		( 0 = destroyed, 	1 = built		)
+//	 - bit 2: spline status		( 0 = not moving,	1 = moving		)
+//	 - bit 3: temp register
+//	 - bit 4: stuck check flag	( 0 = not stuck,	1 = stuck		)
+//	 - bit 5: script lockout	( 0 = not locked,	1 = locked 		)
+//	 - bit 6: death flag		( 0 = alive,		1 = dead		)
+//	 - bit 7: visible status	( 0 = alive,		1 = dead		)
+//	accum 1:, current movement loop position
+//	accum 2:, tunnel status
+//	accum 3:, dynamite at bridge flag
+//	accum 4:, stop counter
+//=====================================================================================
+// wheels events
+//	- wheels_forward
+//	- wheels_stop
+//
+engine
+{
+	spawn
+	{
+		wait 200
+		faceangles 0 90 0 50
+		accum 1 set 2	
+		accum 2 set 0		// tunnel support up		
+		accum 3 set 0
+		accum 0 bitreset 1	
+		trigger engine dispatch_start
+	}
+
+	trigger start_up
+	{
+	}
+
+	rebirth
+	{
+		accum 0 bitreset 6
+		accum 0 bitreset 7
+
+		trigger self script_lockout
+		changemodel models/v2_factory/train/engine2.md3
+		trigger train_speaker sound_idle
+		setstate train_smoke default
+
+		trigger self script_lockout_stop
+		trigger self move
+	}
+
+	death
+	{
+		accum 0 bitset 6
+	}
+
+	trigger wheels_forward	// animate wheels forward
+	{
+		trigger engine_bwheels1 forward
+		trigger engine_bwheels2 forward
+		trigger engine_bwheels3 forward
+		trigger engine_swheels1 forward
+		trigger engine_swheels2 forward
+
+		trigger coal_wheels1 forward
+		trigger coal_wheels2 forward
+		trigger coal_wheels3 forward
+		trigger coal_wheels4 forward
+
+		trigger car_wheels1 forward
+		trigger car_wheels2 forward
+		trigger car_wheels3 forward
+		trigger car_wheels4 forward
+	}
+
+	trigger wheels_stop	// stop wheel animation
+	{
+		trigger engine_bwheels1 stop
+		trigger engine_bwheels2 stop
+		trigger engine_bwheels3 stop
+		trigger engine_swheels1 stop
+		trigger engine_swheels2 stop
+
+
+		trigger coal_wheels1 stop
+		trigger coal_wheels2 stop
+		trigger coal_wheels3 stop
+		trigger coal_wheels4 stop
+
+		trigger car_wheels1 stop
+		trigger car_wheels2 stop
+		trigger car_wheels3 stop
+		trigger car_wheels4 stop
+	}
+
+	//------------------------------------------------------------------------------------
+	// enable and disable triggers
+	//------------------------------------------------------------------------------------
+
+	trigger train_enable
+	{
+		trigger self stuck_check
+		accum 4 set 0				// reset stop counter	
+		accum 0 abort_if_not_bitset 0		// player near truck
+					
+		accum 0 abort_if_bitset 2 		// already following the path so abort
+		accum 0 abort_if_bitset 4		// train stuck
+		accum 0 abort_if_bitset 5		// script lockout
+		accum 0 abort_if_bitset 6		// train is dead
+
+		accum 0 bitreset 0  			// set player near train
+
+		trigger train_speaker start		// start engine sound only if train was stopped
+		trigger engine wheels_forward		// start wheels forward 
+		trigger self move
+	}
+
+	trigger train_disable
+	{
+		accum 4 inc 1				// increment the stop counter
+		accum 4 abort_if_less_than 4
+		accum 0 bitset 0			// no players near train
+		trigger self deathcheck
+	}
+
+	trigger move
+	{
+		trigger self move_check
+		wait 500
+		trigger self move
+	}
+
+	trigger move_check
+	{
+		trigger self stuck_check		// traink stuck?
+		accum 0 abort_if_bitset 4
+		trigger self stopcheck			// train stopped?
+		trigger self deathcheck			// train dead?
+		accum 0 abort_if_bitset 6
+		
+		accum 0 abort_if_bitset 0
+		
+		trigger self dispatch			// run to next spline point
+	}
+
+	//-------------------------------------------------------------------------------
+	// stuck checks
+	//-------------------------------------------------------------------------------
+
+	trigger stuck_check
+	{		
+		accum 0 bitreset 4				// assume not stuck
+		trigger self stuck_check_bridge_built		// check the status of the bridge
+		trigger self stuck_check_bridge_dyna		// dynamite at bridge?
+		trigger self stuck_check_tunnel_collapsed	// tunnel collapsed?
+		trigger self stuck_check_tunnel_dyna		// dynamite at tunnel supports?
+		trigger self stuck_check_script_lockout		// script lockout?
+		accum 0 abort_if_not_bitset 4
+		accum 0 abort_if_bitset 2 			// already following the path so abort
+		trigger self wheels_stop
+		trigger train_speaker stop
+	}
+
+
+	trigger stuck_check_bridge_built
+	{
+		accum 1 abort_if_not_equal 17
+		accum 0 abort_if_bitset 1
+		accum 0 bitset 4
+	}
+
+	trigger stuck_check_bridge_dyna
+	{
+		accum 1 abort_if_not_equal 17
+		accum 3 set_to_dynamitecount train_bridge
+		accum 3 abort_if_equal 0
+		accum 0 bitset 4
+	}
+
+	trigger stuck_check_tunnel_collapsed
+	{
+		accum 1 abort_if_not_equal 33
+		accum 2 abort_if_equal 0
+		accum 0 bitset 4
+	}
+
+	trigger stuck_check_tunnel_dyna
+	{
+		accum 1 abort_if_not_equal 33
+		accum 3 set_to_dynamitecount tunnel_support
+		accum 3 abort_if_equal 0
+		accum 0 bitset 4
+	}
+
+	trigger stuck_check_script_lockout
+	{
+		accum 0 abort_if_not_bitset 5
+		accum 0 bitset 4
+	}
+
+	trigger v2_loaded
+	{
+		accum 6 set 1
+	}
+
+	//-------------------------------------------------------------------------------
+	// stop checks
+	//-------------------------------------------------------------------------------
+	trigger stopcheck
+	{
+		trigger self stopcheck_setup
+		accum 0 abort_if_not_bitset 3
+		trigger self script_lockout
+		trigger self wheels_stop			// stop wheel animation
+		trigger train_speaker sound_idle		// idle engine
+		trigger self script_lockout_stop
+		resetscript
+	}
+
+	trigger stopcheck_setup
+	{
+		accum 0 bitset 3				// assume stop motion
+		accum 0 abort_if_bitset 0			// no player in the trigger then abort
+		accum 0 bitreset 3				// resume motion
+	}
+
+	trigger deathcheck
+	{
+		accum 0 abort_if_not_bitset 6		// are we dead?
+		accum 0 abort_if_bitset 7		// are we already visibly dead?
+		accum 0 abort_if_bitset 2		// following a spline
+
+		accum 0 bitset 7
+		
+		changemodel models/v2_factory/train/engine_damaged.md3
+		kill train_construct
+
+		trigger train_speaker sound_stop
+		trigger self wheels_stop
+
+		setstate train_smoke invisible
+		wm_announce "The Train has been damaged!"
+		resetscript
+	}
+
+	trigger stuck_check_script_lockout
+	{
+		accum 0 abort_if_not_bitset 5
+		accum 0 bitset 4
+	}
+
+	trigger script_lockout
+	{
+		accum 0 bitset 5
+	}
+
+	trigger script_lockout_stop
+	{
+		accum 0 bitreset 5
+	}
+
+	trigger dispatch
+	{
+		accum 1 trigger_if_equal 1 engine dispatch1
+		accum 1 trigger_if_equal 2 engine dispatch2
+		accum 1 trigger_if_equal 3 engine dispatch3
+		accum 1 trigger_if_equal 4 engine dispatch4
+		accum 1 trigger_if_equal 5 engine dispatch5
+		accum 1 trigger_if_equal 6 engine dispatch6
+		accum 1 trigger_if_equal 7 engine dispatch7
+		accum 1 trigger_if_equal 8 engine dispatch8
+		accum 1 trigger_if_equal 9 engine dispatch9
+		accum 1 trigger_if_equal 10 engine dispatch10
+
+		accum 1 trigger_if_equal 11 engine dispatch11
+		accum 1 trigger_if_equal 12 engine dispatch12
+		accum 1 trigger_if_equal 13 engine dispatch13
+		accum 1 trigger_if_equal 14 engine dispatch14
+		accum 1 trigger_if_equal 15 engine dispatch15
+		accum 1 trigger_if_equal 16 engine dispatch16
+		accum 1 trigger_if_equal 17 engine dispatch17
+		accum 1 trigger_if_equal 18 engine dispatch18
+		accum 1 trigger_if_equal 19 engine dispatch19
+		accum 1 trigger_if_equal 20 engine dispatch20
+
+		accum 1 trigger_if_equal 21 engine dispatch21
+		accum 1 trigger_if_equal 22 engine dispatch22
+		accum 1 trigger_if_equal 23 engine dispatch23
+		accum 1 trigger_if_equal 24 engine dispatch24
+		accum 1 trigger_if_equal 25 engine dispatch25
+		accum 1 trigger_if_equal 26 engine dispatch26
+		accum 1 trigger_if_equal 27 engine dispatch27
+		accum 1 trigger_if_equal 28 engine dispatch28
+		accum 1 trigger_if_equal 29 engine dispatch29
+		accum 1 trigger_if_equal 30 engine dispatch30
+
+		accum 1 trigger_if_equal 31 engine dispatch31
+		accum 1 trigger_if_equal 32 engine dispatch32
+		accum 1 trigger_if_equal 33 engine dispatch33
+		accum 1 trigger_if_equal 34 engine dispatch34
+		accum 1 trigger_if_equal 35 engine dispatch35
+		accum 1 trigger_if_equal 36 engine dispatch36
+		accum 1 trigger_if_equal 37 engine dispatch37
+		accum 1 trigger_if_equal 38 engine dispatch38
+		accum 1 trigger_if_equal 39 engine dispatch39
+		accum 1 trigger_if_equal 40 engine dispatch40
+
+		accum 1 trigger_if_equal 41 engine dispatch41
+		accum 1 trigger_if_equal 42 engine dispatch42
+		accum 1 trigger_if_equal 43 engine dispatch43
+		accum 1 trigger_if_equal 44 engine dispatch44
+		accum 1 trigger_if_equal 45 engine dispatch45
+		accum 1 trigger_if_equal 46 engine dispatch46
+		accum 1 trigger_if_equal 47 engine dispatch47
+		accum 1 trigger_if_equal 48 engine dispatch48
+
+	}
+
+	trigger run_continue
+	{
+		trigger self deathcheck
+		trigger self stopcheck
+		trigger self move
+	}
+
+	trigger dispatch_start
+	{	
+		setstate train_smoke invisible
+		trigger coal_car run2
+		trigger railcar  run1
+		trigger engine   run2	
+	}
+
+	trigger dispatch4
+	{
+		accum 0 bitreset 0
+		accum 1 set 8	
+		trigger train_speaker start
+		trigger self wheels_forward
+		setstate train_smoke default
+		trigger coal_car run4
+		trigger railcar run3
+		trigger engine run4
+	}
+
+	trigger dispatch8
+	{
+		trigger v2_nose attach
+		trigger harness attach
+		trigger v2_middle attach
+		trigger v2_tail attach
+		accum 1 set 9	
+		trigger coal_car run8
+		trigger railcar run7
+		trigger engine run8
+	}
+
+	trigger dispatch9
+	{
+		accum 1 set 10	
+		trigger coal_car run9
+		trigger railcar run8
+		trigger engine run9
+	}
+
+	trigger dispatch10
+	{
+		accum 1 set 11	
+		trigger coal_car run10
+		trigger railcar run9
+		trigger engine run10	
+	}
+
+	trigger dispatch11
+	{
+		accum 1 set 12	
+		trigger coal_car run11
+		trigger railcar run10
+		trigger engine run11	
+	}
+
+	trigger dispatch12
+	{
+		accum 1 set 13	
+		trigger coal_car run12
+		trigger railcar run11
+		trigger engine run12	
+	}
+
+	trigger dispatch13
+	{
+		accum 1 set 14	
+		trigger coal_car run13
+		trigger railcar run12
+		trigger engine run13	
+	}
+
+	trigger dispatch14
+	{
+		accum 1 set 15	
+		trigger coal_car run14
+		trigger railcar run13
+		trigger engine run14	
+	}
+
+	trigger dispatch15
+	{
+		accum 1 set 16	
+		trigger coal_car run15
+		trigger railcar run14
+		trigger engine run15	
+	}
+
+	trigger dispatch16
+	{
+		accum 1 set 17	
+		trigger coal_car run16
+		trigger railcar run15
+		trigger engine run16	
+	}
+
+	trigger dispatch17
+	{
+		accum 1 set 18	
+		trigger coal_car run17
+		trigger railcar run16
+		trigger engine run17	
+	}
+
+	trigger dispatch18
+	{
+		accum 1 set 19	
+		trigger train_bridge on_bridge
+		trigger coal_car run18
+		trigger railcar run17
+		trigger engine run18	
+	}
+
+	trigger dispatch19
+	{
+		accum 1 inc 1	
+		trigger coal_car run19
+		trigger railcar run18
+		trigger engine run19	
+	}
+
+	trigger dispatch20
+	{
+		accum 1 inc 1	
+		trigger coal_car run20
+		trigger railcar run19
+		trigger engine run20	
+	}
+
+	trigger dispatch21
+	{
+		accum 1 inc 1	
+		trigger coal_car run21
+		trigger railcar run20
+		trigger engine run21	
+	}
+
+	trigger dispatch22
+	{
+		accum 1 inc 1	
+		trigger coal_car run22
+		trigger railcar  run21
+		trigger engine   run22	
+	}
+
+	trigger dispatch23
+	{
+		accum 1 inc 1	
+		trigger coal_car run23
+		trigger railcar  run22
+		trigger engine   run23	
+	}
+
+	trigger dispatch24
+	{
+		accum 1 inc 1	
+		trigger coal_car run24
+		trigger railcar  run23
+		trigger engine   run24	
+	}
+
+	trigger dispatch25
+	{
+		accum 1 inc 1	
+		trigger coal_car run25
+		trigger railcar  run24
+		trigger engine   run25	
+	}
+
+	trigger dispatch26
+	{
+		accum 1 inc 1	
+		trigger coal_car run26
+		trigger railcar  run25
+		trigger engine   run26	
+	}
+
+	trigger dispatch27
+	{
+		accum 1 inc 1	
+		trigger train_bridge off_bridge
+		trigger coal_car run27
+		trigger railcar  run26
+		trigger engine   run27	
+	}
+
+	trigger dispatch28
+	{
+		accum 1 inc 1	
+		trigger coal_car run28
+		trigger railcar  run27
+		trigger engine   run28	
+	}
+
+	trigger dispatch29
+	{
+		accum 1 inc 1	
+		trigger coal_car run29
+		trigger railcar  run28
+		trigger engine   run29	
+	}
+
+	trigger dispatch30
+	{
+		accum 1 inc 1	
+		trigger coal_car run30
+		trigger railcar  run29
+		trigger engine   run30	
+	}
+	trigger dispatch31
+	{
+		accum 1 inc 1	
+		trigger coal_car run31
+		trigger railcar  run30
+		trigger engine   run31	
+	}
+
+	trigger dispatch32
+	{
+		accum 1 inc 1	
+		trigger coal_car run32
+		trigger railcar  run31
+		trigger engine   run32	
+	}
+
+	trigger dispatch33
+	{
+		accum 1 inc 1	
+		trigger tunnel_support by_support
+		trigger coal_car run33
+		trigger railcar  run32
+		trigger engine   run33	
+	}
+
+	trigger dispatch34
+	{
+		accum 1 inc 1	
+		trigger coal_car run34
+		trigger railcar  run33
+		trigger engine   run34	
+	}
+
+	trigger dispatch35
+	{
+		accum 1 inc 1	
+		trigger coal_car run35
+		trigger railcar  run34
+		trigger engine   run35	
+	}
+
+	trigger dispatch36
+	{
+		accum 1 inc 1	
+		trigger coal_car run36
+		trigger railcar  run35
+		trigger engine   run36	
+	}
+
+	trigger dispatch37
+	{
+		accum 1 inc 1	
+		trigger tunnel_support thur_support
+		trigger coal_car run37
+		trigger railcar  run36
+		trigger engine   run37	
+	}
+
+	trigger dispatch38
+	{
+		accum 1 inc 1	
+		trigger coal_car run38
+		trigger railcar  run37
+		trigger engine   run38	
+	}
+
+	trigger dispatch39
+	{
+		accum 1 inc 1	
+		trigger coal_car run39
+		trigger railcar  run38
+		trigger engine   run39	
+	}
+
+	trigger dispatch40
+	{
+		accum 1 inc 1	
+		trigger coal_car run40
+		trigger railcar  run39
+		trigger engine   run40	
+	}
+
+	trigger dispatch41
+	{
+		accum 1 inc 1	
+		trigger coal_car run41
+		trigger railcar  run40
+		trigger engine   run41	
+	}
+
+	trigger dispatch42
+	{
+		accum 1 inc 1	
+		trigger coal_car run42
+		trigger railcar  run41
+		trigger engine   run42	
+	}
+
+	trigger dispatch43
+	{
+		accum 1 inc 1	
+		trigger coal_car run43
+		trigger railcar  run42
+		trigger engine   run43	
+	}
+
+
+	trigger dispatch44
+	{
+		accum 1 inc 1	
+		trigger coal_car run44
+		trigger railcar  run43
+		trigger engine   run44	
+	}
+
+	trigger dispatch45
+	{
+		accum 1 inc 1	
+		trigger coal_car run45
+		trigger railcar  run44
+		trigger engine   run45	
+	}
+
+	trigger dispatch46
+	{
+		accum 1 inc 1	
+		trigger coal_car run46
+		trigger railcar  run45
+		trigger engine   run46	
+	}
+
+	trigger dispatch47
+	{
+		accum 1 inc 1	
+		trigger coal_car run47
+		trigger railcar  run46
+		trigger engine   run47	
+	}
+
+	trigger dispatch48
+	{
+		accum 1 inc 1	
+		trigger coal_car run48
+		trigger railcar  run47
+		trigger engine   run48	
+	}
+//====================
+	trigger run2
+	{
+		accum 0 bitset 2
+		followspline 0 train_sp2 60 wait length 304
+		accum 0 bitreset 2		
+		trigger self run_continue
+	}
+	trigger run4
+	{
+		accum 0 bitset 2
+		followspline 0 train_sp4 60 wait length 304
+		//accum 6 set 0
+		accum 0 bitreset 2	
+		trigger self run_continue
+	}
+
+	trigger run8
+	{
+		accum 0 bitset 2
+		followspline 0 train_sp8 60 wait length 304
+		accum 0 bitreset 2		
+		trigger self run_continue
+	}
+
+	trigger run9
+	{
+		accum 0 bitset 2
+		followspline 0 train_sp9 60 wait length 304
+		accum 0 bitreset 2		
+		trigger self run_continue
+	}
+
+	trigger run10
+	{
+		accum 0 bitset 2
+		followspline 0 train_sp10 60 wait length 304
+		accum 0 bitreset 2		
+		trigger self run_continue
+	}
+
+	trigger run11
+	{
+		accum 0 bitset 2
+		followspline 0 train_sp11 60 wait length 304
+		accum 0 bitreset 2		
+		trigger self run_continue
+	}
+	trigger run12
+	{
+		accum 0 bitset 2
+		followspline 0 train_sp12 60 wait length 304
+		accum 0 bitreset 2		
+		trigger self run_continue
+	}
+	trigger run13
+	{
+		accum 0 bitset 2
+		followspline 0 train_sp13 60 wait length 304
+		accum 0 bitreset 2		
+		trigger self run_continue
+	}
+	trigger run14
+	{
+		accum 0 bitset 2
+		followspline 0 train_sp14 60 wait 
+		accum 0 bitreset 2		
+		trigger self run_continue
+	}
+	trigger run15
+	{
+		accum 0 bitset 2
+		followspline 0 train_sp15 60 wait
+		accum 0 bitreset 2		
+		trigger self run_continue
+	}
+	trigger run16
+	{
+		accum 0 bitset 2
+		followspline 0 train_sp16 60 wait
+		accum 0 bitreset 2		
+		trigger self run_continue
+	}
+	trigger run17
+	{
+		accum 0 bitset 2
+		followspline 0 train_sp17 60 wait
+		accum 0 bitreset 2		
+		trigger self run_continue
+	}
+	trigger run18
+	{
+		accum 0 bitset 2
+		followspline 0 train_sp18 60 wait
+		accum 0 bitreset 2		
+		trigger self run_continue
+	}
+	trigger run19
+	{
+		accum 0 bitset 2
+		followspline 0 train_sp19 60 wait
+		accum 0 bitreset 2		
+		trigger self run_continue
+	}
+
+	trigger run20
+	{
+		accum 0 bitset 2
+		followspline 0 train_sp20 60 wait
+		accum 0 bitreset 2		
+		trigger self run_continue
+	}
+
+	trigger run21
+	{
+		accum 0 bitset 2
+		followspline 0 train_sp21 60 wait
+		accum 0 bitreset 2		
+		trigger self run_continue
+	}
+	trigger run22
+	{
+		accum 0 bitset 2
+		followspline 0 train_sp22 60 wait
+		accum 0 bitreset 2		
+		trigger self run_continue
+	}
+	trigger run23
+	{
+		accum 0 bitset 2
+		followspline 0 train_sp23 60 wait
+		accum 0 bitreset 2		
+		trigger self run_continue
+	}
+	trigger run24
+	{
+		accum 0 bitset 2
+		followspline 0 train_sp24 60 wait 
+		accum 0 bitreset 2		
+		trigger self run_continue
+	}
+	trigger run25
+	{
+		accum 0 bitset 2
+		followspline 0 train_sp25 60 wait length 458
+		accum 0 bitreset 2		
+		trigger self run_continue
+	}
+	trigger run26
+	{
+		accum 0 bitset 2
+		followspline 0 train_sp26 60 wait length 358
+		accum 0 bitreset 2		
+		trigger self run_continue
+	}
+	trigger run27
+	{
+		accum 0 bitset 2
+		followspline 0 train_sp27 60 wait length 358
+		accum 0 bitreset 2		
+		trigger self run_continue
+	}
+	trigger run28
+	{
+		accum 0 bitset 2
+		followspline 0 train_sp28 60 wait length 358
+		accum 0 bitreset 2		
+		trigger self run_continue
+	}
+	trigger run29
+	{
+		accum 0 bitset 2
+		followspline 0 train_sp29 60 wait length 358
+		accum 0 bitreset 2		
+		trigger self run_continue
+	}
+
+	trigger run30
+	{
+		accum 0 bitset 2
+		followspline 0 train_sp30 60 wait length 358
+		accum 0 bitreset 2		
+		trigger self run_continue
+	}
+	trigger run31
+	{
+		accum 0 bitset 2
+		followspline 0 train_sp31 60 wait length 358
+		accum 0 bitreset 2		
+		trigger self run_continue
+	}
+	trigger run32
+	{
+		accum 0 bitset 2
+		followspline 0 train_sp32 60 wait length 358
+		accum 0 bitreset 2		
+		trigger self run_continue
+	}
+	trigger run33
+	{
+		accum 0 bitset 2
+		followspline 0 train_sp33 60 wait length 358
+		accum 0 bitreset 2		
+		trigger self run_continue
+	}
+	trigger run34
+	{
+		accum 0 bitset 2
+		followspline 0 train_sp34 60 wait length 358
+		accum 0 bitreset 2		
+		trigger self run_continue
+	}
+	trigger run35
+	{
+		accum 0 bitset 2
+		followspline 0 train_sp35 60 wait length 358
+		accum 0 bitreset 2		
+		trigger self run_continue
+	}
+	trigger run36
+	{
+		accum 0 bitset 2
+		followspline 0 train_sp36 60 wait length 358
+		accum 0 bitreset 2		
+		trigger self run_continue
+	}
+	trigger run37
+	{
+		accum 0 bitset 2
+		followspline 0 train_sp37 60 wait 
+		accum 0 bitreset 2		
+		trigger self run_continue
+	}
+	trigger run38
+	{
+		accum 0 bitset 2
+		followspline 0 train_sp38 60 wait length 424
+		accum 0 bitreset 2		
+		trigger self run_continue
+	}
+	trigger run39
+	{
+		accum 0 bitset 2
+		followspline 0 train_sp39 60 wait length 424
+		accum 0 bitreset 2		
+		trigger self run_continue
+	}
+
+	trigger run40
+	{
+		accum 0 bitset 2
+		followspline 0 train_sp40 60 wait length 424
+		accum 0 bitreset 2		
+		trigger self run_continue
+	}
+
+	trigger run41
+	{
+		accum 0 bitset 2
+		followspline 0 train_sp41 60 wait length 424
+		accum 0 bitreset 2		
+		trigger self run_continue
+	}
+
+	trigger run42
+	{
+		accum 0 bitset 2
+		followspline 0 train_sp42 60 wait length 424
+		accum 0 bitreset 2		
+		trigger self run_continue
+	}
+
+	trigger run43
+	{
+		accum 0 bitset 2
+		followspline 0 train_sp43 60 wait length 424
+		accum 0 bitreset 2	
+		trigger self run_continue
+	}
+
+	trigger run44
+	{
+		accum 0 bitset 2
+		followspline 0 train_sp44 60 wait length 424
+		accum 0 bitreset 2		
+		trigger self run_continue
+	}
+	trigger run45
+	{
+		accum 0 bitset 2
+		followspline 0 train_sp45 60 wait length 424
+		accum 0 bitreset 2		
+		trigger self run_continue
+	}
+	trigger run46
+	{
+		accum 0 bitset 2
+		followspline 0 train_sp46 60 wait length 424
+		accum 0 bitreset 2		
+		trigger self run_continue
+	}
+	trigger run47
+	{
+		accum 0 bitset 2
+
+		// set state of sixth objective
+		wm_objective_status 6 0 1
+		wm_objective_status 6 1 2
+
+		trigger game_manager axis_win
+
+		followspline 0 train_sp47 60 wait length 304
+		accum 0 bitreset 2	
+		trigger self run_continue
+	}
+
+	trigger run48
+	{
+		accum 0 bitset 2		
+		followspline 0 train_sp48 60 wait length 304
+		accum 0 bitreset 2	
+		wait 2000	
+		trigger self run_continue
+	}
+		
+
+	//-------------------------------------------------------------------
+	// set bridge flag for train routines from within bridge routines
+	//-------------------------------------------------------------------
+
+	trigger clearBridge
+	{
+		accum 0 bitreset 1 					// bridge destroyed
+	}
+	
+	trigger setBridge
+	{
+		accum 1 abort_if_greater_than 18
+		wm_announce "Get the Train across the bridge!!!"
+		accum 0 bitset 1					// bridge built
+		accum 0 bitreset 4
+	}
+
+	//-------------------------------------------------------------------
+	// set tunnel flag for train routines from within tunnel routines routines
+	//-------------------------------------------------------------------
+
+	trigger clearTunnel
+	{
+		accum 2 set 1 						// tunnel support destroyed
+	}
+	
+	trigger setTunnel
+	{
+		accum 1 abort_if_greater_than 33
+		wm_announce "Get the Train through the Tunnel!!!"
+		accum 2 set 0						// tunnel support built
+		accum 0 bitreset 4
+	}
+}
+
+engine_bwheels1
+{
+	spawn
+	{
+		wait 500
+		attachtotag engine tag_engine_2
+		faceangles 0 90 0 1000
+	}
+
+	trigger forward
+	{
+		setrotation 0 0 80
+	}
+
+	trigger stop
+	{
+		setrotation 0 0 0
+	}
+}
+
+engine_bwheels2
+{
+	spawn
+	{
+		wait 500
+		attachtotag engine tag_engine_3
+		faceangles 0 90 0 1000
+	}
+	
+	trigger forward
+	{
+		setrotation 0 0 80
+	}
+
+	trigger stop
+	{
+		setrotation 0 0 0
+	}
+}
+
+engine_bwheels3
+{
+	spawn
+	{
+		wait 500
+		attachtotag engine tag_engine_4
+		faceangles 0 90 0 1000
+	}
+	
+	trigger forward
+	{
+		setrotation 0 0 80
+	}
+
+	trigger stop
+	{
+		setrotation 0 0 0
+	}
+}
+
+engine_swheels1
+{
+	spawn
+	{
+		wait 500
+		attachtotag engine tag_engine_1
+		faceangles 0 90 0 1000
+	}
+	
+	trigger forward
+	{
+		setrotation 0 0 140
+	}
+
+	trigger stop
+	{
+		setrotation 0 0 0
+	}
+}
+
+engine_swheels2
+{
+	spawn
+	{
+		wait 500
+		attachtotag engine tag_engine_5
+		faceangles 0 90 0 1000
+	}
+	
+	trigger forward
+	{
+		setrotation 0 0 140
+	}
+
+	trigger stop
+	{
+		setrotation 0 0 0
+	}
+}
+
+train_cab
+{
+	spawn
+	{
+		wait 200
+		faceangles 0 90 0 50
+		attachtotag engine tag_engine_4
+	}
+}
+
+//----------------------------------------------------------------------
+//                           Train build routines
+//----------------------------------------------------------------------
+
+train_build //TOI for construction
+{
+	spawn
+	{
+		wait 200
+		attachtotag engine tag_engine_4
+	}
+
+}
+
+train_construct
+{
+	spawn
+	{
+		wait 20
+		constructible_class 2
+		constructible_health 1050
+		constructible_constructxpbonus 10
+		constructible_destructxpbonus 10
+		attachtotag engine tag_engine_4
+	}
+
+	buildstart final
+	{
+		setstate train_construct underconstruction
+	}
+
+	decayed final
+	{
+		setstate train_construct default
+	}
+
+	built final
+	{
+		alertentity engine
+		wm_announce "The Train has been repaired"
+	}
+}
+
+
+//***************************************************************//
+// Coal Car Entities 
+//***************************************************************//
+coal_car
+{
+	spawn
+	{
+		wait 100
+		faceangles 0 90 0 50
+	}
+
+	trigger run2
+	{
+		followspline 0 train_sp2 60 wait length -232
+	}
+
+	trigger run4
+	{
+		followspline 0 train_sp4 60 wait length -232
+	}
+
+	trigger run8
+	{
+		followspline 0 train_sp8 60 wait length -232
+	}
+	trigger run9
+	{
+		followspline 0 train_sp9 60 wait length -232
+	}
+	trigger run10
+	{
+		followspline 0 train_sp10 60 wait length -232
+	}
+	trigger run11
+	{
+		followspline 0 train_sp11 60 wait length -232
+	}
+	trigger run12
+	{
+		followspline 0 train_sp12 60 wait length -232
+	}
+	trigger run13
+	{
+		followspline 0 train_sp13 60 wait length -232
+	}
+	trigger run14
+	{
+		followspline 0 train_sp14 60 wait length -232
+	}
+	trigger run15
+	{
+		followspline 0 train_sp15 60 wait length -232
+	}
+	trigger run16
+	{
+		followspline 0 train_sp16 60 wait length -232
+	}
+	trigger run17
+	{
+		followspline 0 train_sp17 60 wait length -232
+	}
+	trigger run18
+	{
+		followspline 0 train_sp18 60 wait length -232
+	}
+	trigger run19
+	{
+		followspline 0 train_sp19 60 wait length -232
+	}
+	trigger run20
+	{
+		followspline 0 train_sp20 60 wait length -232
+	}
+	trigger run21
+	{
+		followspline 0 train_sp21 60 wait length -232
+	}
+	trigger run22
+	{
+		followspline 0 train_sp22 60 wait length -232
+	}
+	trigger run23
+	{
+		followspline 0 train_sp23 60 wait length -232
+	}
+	trigger run24
+	{
+		followspline 0 train_sp24 60 wait length -232
+	}
+	trigger run25
+	{
+		followspline 0 train_sp25 60 wait length -232
+	}
+	trigger run26
+	{
+		followspline 0 train_sp26 60 wait length -232
+	}
+	trigger run27
+	{
+		followspline 0 train_sp27 60 wait length -232
+	}
+	trigger run28
+	{
+		followspline 0 train_sp28 60 wait length -232
+	}
+	trigger run29
+	{
+		followspline 0 train_sp29 60 wait length -232
+	}
+	trigger run30
+	{
+		followspline 0 train_sp30 60 wait length -232
+	}
+	trigger run31
+	{
+		followspline 0 train_sp31 60 wait length -232
+	}
+	trigger run32
+	{
+		followspline 0 train_sp32 60 wait length -232
+	}
+	trigger run33
+	{
+		followspline 0 train_sp33 60 wait length -232
+	}
+	trigger run34
+	{
+		followspline 0 train_sp34 60 wait length -232
+	}
+	trigger run35
+	{
+		followspline 0 train_sp35 60 wait length -232
+	}
+	trigger run36
+	{
+		followspline 0 train_sp36 60 wait length -232
+	}
+	trigger run37
+	{
+		followspline 0 train_sp37 60 wait length -232
+	}
+	trigger run38
+	{
+		followspline 0 train_sp38 60 wait length -232
+	}
+	trigger run39
+	{
+		followspline 0 train_sp39 60 wait length -232
+	}
+	trigger run40
+	{
+		followspline 0 train_sp40 60 wait length -232
+	}
+	trigger run41
+	{
+		followspline 0 train_sp41 60 wait length -232
+	}
+	trigger run42
+	{
+		followspline 0 train_sp42 60 wait length -232
+	}
+	trigger run43
+	{
+		followspline 0 train_sp43 60 wait length -232
+	}
+	trigger run44
+	{
+		followspline 0 train_sp44 60 wait length -232
+	}
+	trigger run45
+	{
+		followspline 0 train_sp45 60 wait length -232
+	}
+	trigger run46
+	{
+		followspline 0 train_sp46 60 wait length -232
+	}
+	trigger run47
+	{
+		followspline 0 train_sp47 60 wait length -232
+	}
+	trigger run48
+	{
+		followspline 0 train_sp48 60 wait length -232
+	}
+	trigger run49
+	{
+		followspline 0 train_sp49 60 wait length -232
+	}
+
+}
+
+coal_wheels1
+{
+	spawn
+	{
+		wait 200
+		attachtotag coal_car tag_coal_1
+		faceangles 0 90 0 1000
+	}
+
+	trigger forward
+	{
+		setrotation 0 0 140
+	}
+
+	trigger stop
+	{
+		setrotation 0 0 0
+	}
+}
+
+coal_wheels2
+{
+	spawn
+	{
+		wait 200
+		attachtotag coal_car tag_coal_2
+		faceangles 0 90 0 1000
+	}
+
+	trigger forward
+	{
+		setrotation 0 0 140
+	}
+
+	trigger stop
+	{
+		setrotation 0 0 0
+	}
+}
+
+coal_wheels3
+{
+	spawn
+	{
+		wait 200
+		attachtotag coal_car tag_coal_3
+		faceangles 0 90 0 1000
+	}
+
+	trigger forward
+	{
+		setrotation 0 0 140
+	}
+
+	trigger stop
+	{
+		setrotation 0 0 0
+	}
+}
+
+coal_wheels4
+{
+	spawn
+	{
+		wait 200
+		attachtotag coal_car tag_coal_4
+		faceangles 0 90 0 1000
+	}
+
+	trigger forward
+	{
+		setrotation 0 0 140
+	}
+
+	trigger stop
+	{
+		setrotation 0 0 0
+	}
+}
+
+//***************************************************************//
+// Rail Car Entities - carries the V-2
+//***************************************************************//
+railcar
+{
+	spawn
+	{
+		wait 200
+		faceangles 0 90 0 50
+	}
+
+	trigger run1
+	{
+		followspline 0 train_sp1 60 wait length -300
+	}
+
+	trigger run3
+	{
+		followspline 0 train_sp3 60 wait length -300
+	}
+
+	trigger run7
+	{
+		followspline 0 train_sp7 60 wait length -300
+	}
+
+	trigger run8
+	{
+		followspline 0 train_sp8 60 wait length -300
+	}
+
+	trigger run9
+	{
+		followspline 0 train_sp9 60 wait length -300
+	}
+
+	trigger run10
+	{
+		followspline 0 train_sp10 60 wait length -300
+	}
+	trigger run11
+	{
+		followspline 0 train_sp11 60 wait length -300
+	}
+	trigger run12
+	{
+		followspline 0 train_sp12 60 wait length -300
+	}
+	trigger run13
+	{
+		followspline 0 train_sp13 60 wait length -300
+	}
+	trigger run14
+	{
+		followspline 0 train_sp14 60 wait length -300
+	}
+	trigger run15
+	{
+		followspline 0 train_sp15 60 wait length -300
+	}
+	trigger run16
+	{
+		followspline 0 train_sp16 60 wait length -300
+	}
+	trigger run17
+	{
+		followspline 0 train_sp17 60 wait length -300
+	}
+	trigger run18
+	{
+		followspline 0 train_sp18 60 wait length -456
+	}
+	trigger run19
+	{
+		followspline 0 train_sp19 60 wait length -456
+	}
+	trigger run20
+	{
+		followspline 0 train_sp20 60 wait length -456
+	}
+	trigger run21
+	{
+		followspline 0 train_sp21 60 wait length -456
+	}
+	trigger run22
+	{
+		followspline 0 train_sp22 60 wait length -456
+	}
+	trigger run23
+	{
+		followspline 0 train_sp23 60 wait length -456
+	}
+	trigger run24
+	{
+		followspline 0 train_sp24 60 wait length -456
+	}
+	trigger run25
+	{
+		followspline 0 train_sp25 60 wait length -456
+	}
+	trigger run26
+	{
+		followspline 0 train_sp26 60 wait length -456
+	}
+	trigger run27
+	{
+		followspline 0 train_sp27 60 wait length -456
+	}
+	trigger run28
+	{
+		followspline 0 train_sp28 60 wait length -456
+	}
+	trigger run29
+	{
+		followspline 0 train_sp29 60 wait length -456
+	}
+	trigger run30
+	{
+		followspline 0 train_sp30 60 wait length -356
+	}
+	trigger run31
+	{
+		followspline 0 train_sp31 60 wait length -356
+	}
+	trigger run32
+	{
+		followspline 0 train_sp32 60 wait length -356
+	}
+	trigger run33
+	{
+		followspline 0 train_sp33 60 wait length -456
+	}
+	trigger run34
+	{
+		followspline 0 train_sp34 60 wait length -456
+	}
+	trigger run35
+	{
+		followspline 0 train_sp35 60 wait length -456
+	}
+	trigger run36
+	{
+		followspline 0 train_sp36 60 wait length -456
+	}
+	trigger run37
+	{
+		followspline 0 train_sp37 60 wait length -456
+	}
+	trigger run38
+	{
+		followspline 0 train_sp38 60 wait length -456
+	}
+	trigger run39
+	{
+		followspline 0 train_sp39 60 wait length -356
+	}
+	trigger run40
+	{
+		followspline 0 train_sp40 60 wait length -356
+	}
+	trigger run41
+	{
+		followspline 0 train_sp41 60 wait length -356
+	}
+	trigger run42
+	{
+		followspline 0 train_sp42 60 wait length -456
+	}
+	trigger run43
+	{
+		followspline 0 train_sp43 60 wait length -456
+	}
+	trigger run44
+	{
+		followspline 0 train_sp44 60 wait length -456
+	}
+	trigger run45
+	{
+		followspline 0 train_sp45 60 wait length -456
+	}
+	trigger run46
+	{
+		followspline 0 train_sp46 60 wait length -456
+	}
+	trigger run47
+	{
+		followspline 0 train_sp47 60 wait length -456
+	}
+	trigger run48
+	{
+		followspline 0 train_sp48 60 wait length -456
+	}
+}
+
+car_wheels1
+{
+	spawn
+	{
+		wait 200
+		attachtotag railcar tag_car_1
+		faceangles 0 90 0 1000
+	}
+
+	trigger forward
+	{
+		setrotation 0 0 140
+	}
+
+	trigger stop
+	{
+		setrotation 0 0 0
+	}
+}
+
+car_wheels2
+{
+	spawn
+	{
+		wait 200
+		attachtotag railcar tag_car_2
+		faceangles 0 90 0 1000
+	}
+
+	trigger forward
+	{
+		setrotation 0 0 140
+	}
+
+	trigger stop
+	{
+		setrotation 0 0 0
+	}
+}
+
+car_wheels3
+{
+	spawn
+	{
+		wait 200
+		attachtotag railcar tag_car_3
+		faceangles 0 90 0 1000
+	}
+
+	trigger forward
+	{
+		setrotation 0 0 140
+	}
+
+	trigger stop
+	{
+		setrotation 0 0 0
+	}
+}
+
+car_wheels4
+{
+	spawn
+	{
+		wait 200
+		attachtotag railcar tag_car_4
+		faceangles 0 90 0 1000
+	}
+
+	trigger forward
+	{
+		setrotation 0 0 140
+	}
+
+	trigger stop
+	{
+		setrotation 0 0 0
+	}
+}
+
+v2_support
+{
+	spawn
+	{
+		wait 200
+		attachtotag railcar tag_car_05
+	}
+}
+
+train_speaker
+{
+	spawn
+	{
+		wait 200
+		attachtotag engine tag_engine_1
+		trigger self sound_stop
+		accum 0 set 0
+	}
+
+	trigger start
+	{
+		trigger self sound_start
+		wait 1800
+		trigger self sound_move
+	}
+
+	trigger stop
+	{
+		trigger self sound_stop
+		wait 2000
+		trigger self sound_idle
+	}
+
+	trigger sound_start
+	{
+		accum 0 abort_if_equal 1
+		accum 0 set 1
+		stopsound
+		playsound sound/v2_factory/train_start.wav volume 200
+	}
+
+	trigger sound_idle
+	{
+		accum 0 abort_if_equal 2
+		accum 0 set 2
+		stopsound
+		playsound sound/v2_factory/train_idle.wav volume 200 looping
+	}
+
+	trigger sound_move
+	{
+		playsound sound/v2_factory/train_engine.wav volume 200 looping 
+	}
+
+	trigger sound_stop
+	{
+		accum 0 abort_if_equal 3
+		accum 0 set 3
+		stopsound
+		playsound sound/v2_factory/train_stop.wav volume 200
+	}
+
+	trigger sound_death
+	{
+		stopsound
+		playsound sound/v2_factory/train_stop.wav volume 96
+	}
+}
+
+//******************************************************//
+// Train Bridge
+//
+// last mod: Mean Mr. Mustard - 04/03/2004
+//******************************************************//
+//
+// accum 0  (0 = truck not on bridge, 1 = truck on bridge)
+train_bridge 
+{
+	spawn
+	{
+		wait 200
+		constructible_class 3
+		accum 0 set 0
+
+	}	
+
+	//--------------------------------------------------------------
+	// stage 1 routines
+	//--------------------------------------------------------------
+
+	buildstart stage1	// stage1 construction begun
+	{		
+		wm_announce "Axis are building the Train Bridge!"
+		setstate train_bridge_debris		underconstruction
+	}
+
+	built stage1 // stage 1 built
+	{
+		setstate train_sandbag_clip		invisible
+		setstate train_sandbags			invisible
+		setstate train_bridge_debris		invisible
+
+		wm_announce "Axis have built the Train Bridge"
+	}
+
+	decayed stage1 // stage1 build inactive for 30 sec
+	{
+		setstate train_bridge_debris			default
+	}
+
+	death
+	{
+		setstate train_sandbag_clip		default
+		setstate train_sandbags			default
+		setstate train_bridge_debris			default
+
+		wm_announce "Allies have blown up the train tracks!"
+
+		// set state of fifth objective
+		wm_objective_status 5 0 2
+		wm_objective_status 5 1 1
+	}
+
+	//--------------------------------------------------------------
+	// stage 2 routines (final routines since it's the last stage)
+	//--------------------------------------------------------------
+
+	buildstart final	// final construction begun
+	{
+		wm_announce "Axis are laying the tracks across the bridge!"
+		setstate train_bridge			underconstruction	
+	}
+
+	built final	// bridge completed
+	{
+		// activate/deactivate brushes
+		setstate train_bridge_crate_clip	invisible
+		setstate train_bridge_crates		invisible
+		setstate train_bridge 			default
+		
+		//Announce to screen
+		wm_announce 	"Axis have laid the train tracks"
+
+		// tell train it bridge is built
+		trigger engine setBridge
+
+		// set state of fifth objective
+		wm_objective_status 5 0 1
+		wm_objective_status 5 1 2
+
+	}
+
+	decayed final 
+	{
+	}
+
+	destroyed final // bridge destroyed
+	{
+		accum 0 abort_if_equal 1 	// truck on bridge so don't blow up....
+
+		// Activate/deactivate brushes	
+		setstate train_bridge_crate_clip	default
+		setstate train_bridge_crates		default
+
+		// stop traink from going over bridge
+		trigger engine clearBridge
+		
+		// Announcement
+		wm_announce 	"Allies have destroyed the Train Bridge"
+
+	}
+
+	trigger on_bridge
+	{
+		accum 0 set 1
+		setstate train_bridge		invisible
+		setstate train_bridge_complete	default
+	}
+
+	trigger off_bridge
+	{
+		accum 0 set 0
+		setstate train_bridge		default
+		setstate train_bridge_complete	invisible
+	}
+
+
+}
+
+train_bridge_complete
+{
+	spawn
+	{
+		wait 100
+		setstate train_bridge_complete invisible
+	}
+}
+
+train_bridge_debris
+{
+	spawn
+	{
+		wait 100
+	}
+}
+
+//==================================================================
+// Tunnel Support
+// Mean Mr. Mustard - 04/05/2004
+//==================================================================
+
+tunnel_support
+{
+	spawn
+	{
+		wait 50
+		constructible_class 3
+		trigger self startup
+		accum 0 set 0
+	}
+
+	trigger startup
+	{
+		setstate tunnel_support_crates 		invisible
+		setstate tunnel_support_crates2 	invisible
+		setstate tunnel_support_crate_clip	invisible
+		setstate tunnel_support_debris		invisible
+	}
+
+	buildstart final
+	{
+	}
+
+	built final
+	{
+		setstate tunnel_support			default
+		trigger self startup
+		wm_announce "The Tunnel Support has been repaired"
+		trigger engine setTunnel
+
+		// set state of eighth objective
+		wm_objective_status 8 0 1
+		wm_objective_status 8 1 2
+	}
+
+	decayed final
+	{
+		setstate tunnel_support			invisible
+		setstate tunnel_support_crates		default
+		setstate tunnel_support_crates2		default
+		setstate tunnel_support_crate_clip	default
+	}
+
+	death
+	{
+		accum 0 abort_if_equal 1 		// train under support so don't blow up....
+		setstate tunnel_support_crates		default
+		setstate tunnel_support_crate_clip	default
+		setstate tunnel_support_crates2		default
+		setstate tunnel_support_debris		default
+		wm_announce "The Tunnel Support has been damaged"
+		trigger engine clearTunnel
+
+		// set state of eighth objective
+		wm_objective_status 8 0 2
+		wm_objective_status 8 1 1
+	}
+
+	trigger by_support
+	{
+		accum 0 set 1
+		setstate tunnel_support		invisible
+		setstate tunnel_support2	default
+	}
+
+	trigger thru_supprot
+	{
+		accum 0 set 0
+		setstate tunnel_support		default
+		setstate tunnel_support2	invisible
+	}
+
+}
+
+tunnel_support2 
+{
+	spawn
+	{
+		wait 200
+		setstate tunnel_support2 invisible
+	}
+}
+
+del_pb
+{
+	spawn
+	{
+		wait 200
+		gotomarker del_pb_cp 30 wait
+	}
+}
+
+//==============================================================
+//
+// dummy script mover to fix problems with conveyor belt/train
+// 
+//==============================================================
+load_v2
+{
+	spawn
+	{
+		wait 50
+	}
+
+	trigger load_the_train
+	{
+		construct o2_production
+		construct o2_storage
+		construct v2_assembly
+		wait 500
+		setstate o2_production	invisible	// SS - remove once no longer needed (damn XP whores)
+		setstate o2prod_done	default
+		setstate o2_storage	invisible	
+		setstate o2stor_done	default
+		setstate v2_assembly	invisible	
+		setstate v2asm_done	default
+
+		wm_announce "V-2 Assembly: Completed"
+
+		// Set  spawn locations		
+		setautospawn "Factory" 0
+		setautospawn "Farm House" 1
+
+		// set state of fourth objective
+		wm_objective_status 4 0 1
+		wm_objective_status 4 1 2
+
+		wm_axis_respawntime	25
+		wm_allied_respawntime	30
+
+		// crane stuff
+		enablespeaker craneup_speaker
+		trigger crane_hook cb_down
+
+		wait 4000
+		disablespeaker craneup_speaker
+		wait 2000
+
+		enablespeaker craneup_speaker
+		trigger crane_hook cb_up
+		trigger harness up
+		trigger v2_nose up
+		trigger v2_middle up
+		trigger v2_tail up
+		wait 12500
+		disablespeaker craneup_speaker
+		wait 2500
+
+		enablespeaker cranetranslate_speaker
+		trigger crane_hook translate
+		trigger crane_spin translate
+		trigger crane_bar translate
+		trigger crane_front translate
+		trigger harness run6
+		trigger v2_nose run6
+		trigger v2_middle run6
+		trigger v2_tail run6
+		wait 29000
+		disablespeaker cranetranslate_Speaker
+		wait 1000
+
+		enablespeaker crane_rotate_speaker
+		trigger crane_hook spin
+		trigger crane_spin spin
+		trigger crane_front spin
+		trigger harness spin
+		trigger v2_nose spin
+		trigger v2_middle spin
+		trigger v2_tail spin
+		wait 10000
+		disablespeaker crane_rotate_speaker
+
+		wait 1000
+		trigger crane_hook v2_down
+		enablespeaker craneup_speaker
+		trigger harness run7
+		trigger v2_nose run7
+		trigger v2_middle run7
+		trigger v2_tail run7
+		wait 6500
+		disablespeaker craneup_Speaker
+
+		wait 4500
+		trigger crane_hook v2_up
+
+		enablespeaker craneup_speaker
+		wait 3500
+		disablespeaker craneup_speaker	
+		trigger crane_cable remove
+
+ 		// open gates	
+		trigger allied_cp_build	v2_complete
+		setstate train_trigger default
+		trigger factory_railgate_right open
+		trigger factory_railgate_left  open	
+	}
+
+	trigger conveyor_run14
+	{
+		trigger engine dispatch4
+		trigger winch spin
+		trigger conveyor_belt1 run4
+		trigger v2_nose run4
+		trigger harness run4
+		trigger v2_middle run4
+		trigger v2_tail run4
+		trigger conveyor_belt2 run3
+		wait 18000
+		trigger winch halt
+	}
+
+	trigger conveyor_run15
+	{
+		trigger conveyor_belt1 run5
+		trigger winch spin
+		trigger v2_nose run5
+		trigger harness run5
+		trigger v2_middle run5
+		trigger v2_tail run5
+		trigger conveyor_belt2 run4
+		wait 35000
+		trigger winch halt
+		wait 1000
+
+		globalaccum 3 inc 1
+		globalaccum 3 trigger_if_equal 3 load_v2 load_the_train
+
+	}
+}

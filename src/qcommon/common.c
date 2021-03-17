@@ -56,6 +56,8 @@
 
 #ifdef FEATURE_DBMS
 #include "../db/db_sql.h"
+#include "q_unicode.h"
+
 #endif
 
 // NOTE: if protocol gets bumped please add 84 to the list before 0
@@ -224,7 +226,7 @@ void QDECL Com_Printf(const char *fmt, ...)
 {
 	va_list         argptr;
 	char            buffer[MAXPRINTMSG];
-	char            *msg, *bufferEnd;
+	char            *msg, *bufferEnd, *tmpMsg;
 	static qboolean opening_qconsole = qfalse;
 	static qboolean lineWasEnded = qtrue;
 	int             timestamp;
@@ -254,6 +256,13 @@ void QDECL Com_Printf(const char *fmt, ...)
 		//rd_flush(rd_buffer);
 		//*rd_buffer = 0;
 		return;
+	}
+
+	// Simple trick to make sure that no extended ascii gets to the output.
+	tmpMsg = Q_Extended_To_UTF8(msg);
+	if (tmpMsg != msg)
+	{
+		strcpy(msg, tmpMsg);
 	}
 
 	// echo to console if we're not a dedicated server

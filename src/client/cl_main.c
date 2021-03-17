@@ -1169,7 +1169,7 @@ void CL_Vid_Restart_f(void)
 	CL_StartHunkUsers();
 
 #ifdef _WIN32
-	Sys_In_Restart_f();
+	IN_Restart();
 #endif
 	// start the cgame if connected
 	if (cls.state > CA_CONNECTED && cls.state != CA_CINEMATIC)
@@ -1335,9 +1335,9 @@ void CL_OpenHomePath_f(void)
  */
 void CL_Clip_f(void)
 {
-	int noPrint, i;
+	int    noPrint, i;
 	size_t argCount, len;
-	char **cmdBuffer;
+	char   **cmdBuffer;
 
 	if (Cmd_Argc() < 2)
 	{
@@ -1352,7 +1352,7 @@ void CL_Clip_f(void)
 
 	// Allocate a buffer for the clipboard data
 	cls.clipboard.bufferSize = MAXPRINTMSG * 10;
-	cls.clipboard.buffer = Com_Allocate(cls.clipboard.bufferSize);
+	cls.clipboard.buffer     = Com_Allocate(cls.clipboard.bufferSize);
 	if (!cls.clipboard.buffer)
 	{
 		Com_Error(ERR_FATAL, "Clipboard allocation failed\n");
@@ -1362,8 +1362,8 @@ void CL_Clip_f(void)
 	Com_Memset(cls.clipboard.buffer, 0, cls.clipboard.bufferSize);
 
 	// Copy all the arguments into a new array since when we start executing them one by one, the Cmd buffer gets reset.
-	argCount = Cmd_Argc() - 1;
-	cmdBuffer = Com_Allocate(argCount * sizeof(char*));
+	argCount  = Cmd_Argc() - 1;
+	cmdBuffer = Com_Allocate(argCount * sizeof(char *));
 	if (!cmdBuffer)
 	{
 		Com_Error(ERR_FATAL, "Clipboard allocation failed\n");
@@ -1410,6 +1410,13 @@ void CL_Clip_f(void)
 	// Return to console printing
 	Cvar_Set("cl_noprint", va("%i", noPrint));
 }
+
+#ifdef ETLEGACY_DEBUG
+void CL_ExtendedCharsTest_f(void)
+{
+	Com_Printf("Output should be the same: t\xe4m\xe4? == t\xc3\xa4m\xc3\xa4?");
+}
+#endif
 
 /**
  * @brief CL_AddFavServer_f
@@ -1948,6 +1955,7 @@ void CL_ConnectionlessPacket(netadr_t from, msg_t *msg)
 		{
 			CL_ServerInfoPacketCheck(from, msg);
 			cls.challengeState = CA_CHALLENGING_REQUEST;
+			clc.connectTime    = -99999;    // CL_CheckForResend() will fire immediately
 			return;
 		}
 		CL_ServerInfoPacket(from, msg);
@@ -3046,6 +3054,10 @@ void CL_Init(void)
 	Cmd_AddCommand("open_homepath", CL_OpenHomePath_f, "Open the home path in a system file explorer.");
 
 	Cmd_AddCommand("clip", CL_Clip_f, "Put command output to clipboard.");
+
+#ifdef ETLEGACY_DEBUG
+	Cmd_AddCommand("extendedCharsTest", CL_ExtendedCharsTest_f);
+#endif
 
 	CIN_Init();
 

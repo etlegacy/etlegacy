@@ -4146,7 +4146,8 @@ qboolean G_PushPlayer(gentity_t *ent, gentity_t *victim)
 		return qfalse;
 	}
 
-	if (ent->health <= 0)
+	// Both players need to be up and running like little bunnies they are.
+	if (ent->health <= 0 || victim->health <= 0)
 	{
 		return qfalse;
 	}
@@ -4258,19 +4259,19 @@ void Cmd_Activate2_f(gentity_t *ent)
 	if ((g_OmniBotFlags.integer & OBF_SHOVING) || !(ent->r.svFlags & SVF_BOT))
 	{
 #endif
-	trap_Trace(&tr, offset, NULL, NULL, end, ent->s.number, (CONTENTS_SOLID | CONTENTS_BODY | CONTENTS_CORPSE));
-	if (tr.entityNum >= 0)
-	{
-		gentity_t *traceEnt = &g_entities[tr.entityNum];
-
-		if (traceEnt->client)
+		trap_Trace(&tr, offset, NULL, NULL, end, ent->s.number, (CONTENTS_SOLID | CONTENTS_BODY | CONTENTS_CORPSE));
+		if (tr.entityNum >= 0)
 		{
-			G_PushPlayer(ent, traceEnt);
-			return;
+			gentity_t *traceEnt = &g_entities[tr.entityNum];
+
+			if (traceEnt->client)
+			{
+				G_PushPlayer(ent, traceEnt);
+				return;
+			}
 		}
-	}
 #ifdef FEATURE_OMNIBOT
-}
+	}
 #endif
 
 	while (!(tr.surfaceFlags & SURF_NOIMPACT) && !(tr.entityNum == ENTITYNUM_WORLD))
