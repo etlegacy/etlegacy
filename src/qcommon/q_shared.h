@@ -800,8 +800,28 @@ char *Q_TrimStr(char *string);
 /// Encodes a plain un-colored string so that it'll be drawn with the given color code.
 void Q_ColorizeString(char colorCode, const char *inStr, char *outStr, size_t outBufferLen);
 
+// #define Q_IsColorString(p) (*p == Q_COLOR_ESCAPE && *(p + 1) && *(p + 1) != Q_COLOR_ESCAPE && isgraph((*(p + 1))))
 // Checks if the string contains color coded text
-qboolean Q_IsColorString(const char *p);
+static ID_INLINE qboolean Q_IsColorString(const char *p)
+{
+	if (!p || p[0] != Q_COLOR_ESCAPE)
+	{
+		return qfalse;
+	}
+
+	if (!p[1] || p[1] == Q_COLOR_ESCAPE)
+	{
+		return qfalse;
+	}
+
+	// The char might an extended char or part of utf-8 so only check it if its in the 0 - 127 range
+	if (p[1] >= 0 && p[1] <= 127)
+	{
+		return isgraph(p[1]) != 0 ? qtrue : qfalse;
+	}
+
+	return qtrue;
+}
 
 /// removes color sequences from string
 char *Q_CleanStr(char *string);
