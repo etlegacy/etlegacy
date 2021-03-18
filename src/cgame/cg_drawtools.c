@@ -731,13 +731,13 @@ void CG_ColorForHealth(vec4_t hcolor)
  */
 const char *CG_TranslateString(const char *string)
 {
-	static char staticbuf[2][MAX_VA_STRING];
-	static int  bufcount = 0;
+	static char buffer[TRANSLATION_BUFFERS][MAX_PRINT_MSG];
+	static int  buffOffset = 0;
 	char        *buf;
 
 	// some code expects this to return a copy always, even
 	// if none is needed for translation, so always supply another buffer
-	buf = staticbuf[bufcount++ % 2];
+	buf = buffer[buffOffset++ % TRANSLATION_BUFFERS];
 
 	trap_TranslateString(string, buf);
 

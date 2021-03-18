@@ -170,7 +170,7 @@ int com_hunkusedvalue;
 qboolean com_errorEntered;
 qboolean com_fullyInitialized;
 
-char com_errorMessage[MAXPRINTMSG];
+char com_errorMessage[MAX_PRINT_MSG];
 
 void Com_WriteConfig_f(void);
 void CIN_CloseAllVideos(void);
@@ -225,7 +225,7 @@ void Com_EndRedirect(void)
 void QDECL Com_Printf(const char *fmt, ...)
 {
 	va_list         argptr;
-	char            buffer[MAXPRINTMSG];
+	char            buffer[MAX_PRINT_MSG];
 	char            *msg, *bufferEnd, *tmpMsg;
 	static qboolean opening_qconsole = qfalse;
 	static qboolean lineWasEnded = qtrue;
@@ -332,7 +332,7 @@ void QDECL Com_Printf(const char *fmt, ...)
 void QDECL Com_DPrintf(const char *fmt, ...)
 {
 	va_list argptr;
-	char    msg[MAXPRINTMSG];
+	char    msg[MAX_PRINT_MSG];
 
 	if (!com_developer || !com_developer->integer)
 	{

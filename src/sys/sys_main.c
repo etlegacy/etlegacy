@@ -273,7 +273,7 @@ void Sys_Init(void)
  */
 void Sys_AnsiColorPrint(const char *msg)
 {
-	static char buffer[MAXPRINTMSG];
+	static char buffer[MAX_PRINT_MSG];
 	int         i, j, _found, length = 0;
 
 	// colors hash from http://wolfwiki.anime.net/index.php/Color_Codes
@@ -390,7 +390,7 @@ void Sys_AnsiColorPrint(const char *msg)
 		}
 		else
 		{
-			if (length >= MAXPRINTMSG - 1)
+			if (length >= MAX_PRINT_MSG - 1)
 			{
 				break;
 			}

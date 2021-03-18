@@ -1351,7 +1351,7 @@ void CL_Clip_f(void)
 	Cvar_Set("cl_noprint", "1");
 
 	// Allocate a buffer for the clipboard data
-	cls.clipboard.bufferSize = MAXPRINTMSG * 10;
+	cls.clipboard.bufferSize = MAX_PRINT_MSG * 10;
 	cls.clipboard.buffer     = Com_Allocate(cls.clipboard.bufferSize);
 	if (!cls.clipboard.buffer)
 	{
@@ -2567,7 +2567,7 @@ void CL_SetRecommended_f(void)
 static _attribute((format(printf, 2, 3))) void QDECL CL_RefPrintf(int print_level, const char *fmt, ...)
 {
 	va_list argptr;
-	char    msg[MAXPRINTMSG];
+	char    msg[MAX_PRINT_MSG];
 
 	va_start(argptr, fmt);
 	Q_vsnprintf(msg, sizeof(msg), fmt, argptr);

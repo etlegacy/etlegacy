@@ -44,8 +44,6 @@
 #include "../game/bg_public.h"
 #include "ui_shared.h"
 
-#define __(x) trap_TranslateString(x)
-
 extern vmCvar_t ui_brassTime;
 extern vmCvar_t ui_drawCrosshair;
 extern vmCvar_t ui_drawCrosshairNames;
@@ -774,7 +772,9 @@ void trap_GetAutoUpdate(void);
 void trap_openURL(const char *url);
 void trap_GetHunkData(int *hunkused, int *hunkexpected);
 
-const char *trap_TranslateString(const char *fmt); // localization
+// localization functions
+const char *UI_TranslateString(const char *string);
+void trap_TranslateString(const char *fmt, char *buffer);
 
 const char *UI_DescriptionForCampaign(void);
 const char *UI_NameForCampaign(void);

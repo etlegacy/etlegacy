@@ -2247,7 +2247,7 @@ int FS_Write(const void *buffer, int len, fileHandle_t h)
 void QDECL FS_Printf(fileHandle_t h, const char *fmt, ...)
 {
 	va_list argptr;
-	char    msg[MAXPRINTMSG];
+	char    msg[MAX_PRINT_MSG];
 
 	va_start(argptr, fmt);
 	Q_vsnprintf(msg, sizeof(msg), fmt, argptr);
