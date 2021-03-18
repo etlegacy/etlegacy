@@ -410,15 +410,6 @@ jobs:
         shell: bash
         run: sudo apt install -y ninja-build
 
-      - name: Build
-        run: |
-          echo "export ANDROID_NDK_HOME=$GITHUB_WORKSPACE/NDK_ETL/ndk-bundle" > ~/.bashrc
-          source ~/.bashrc
-          chmod -R 775 $ANDROID_NDK_HOME
-          echo "cmake.dir=/usr/local/" | tee -a local.properties
-          ./gradlew clean build
-          ls -R
-
       - uses: actions/download-artifact@v2
         with:
           name: All-mods
@@ -428,16 +419,19 @@ jobs:
         run: ls -R
         working-directory: app/src/main/assets
 
-      - name: Generate package
-        shell: bash
+      - name: Build and Generate Package
         run: |
-          ./gradlew assembleDebug
+          echo "export ANDROID_NDK_HOME=$GITHUB_WORKSPACE/NDK_ETL/ndk-bundle" > ~/.bashrc
+          source ~/.bashrc
+          chmod -R 775 $ANDROID_NDK_HOME
+          echo "cmake.dir=/usr/local/" | tee -a local.properties
+          ./gradlew clean assembleDebug
           ls -R
 
-      - uses: actions/upload-artifact@v2
-        with:
-          name: android-packages
-          path: |
+#      - uses: actions/upload-artifact@v2
+#        with:
+#          name: android-packages
+#          path: |
 
 #   _    _           _                       _                         _      _____   _
 #  | |  | |         | |                     | |                       | |    / ____| | |
