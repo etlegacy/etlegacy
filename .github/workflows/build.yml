@@ -173,10 +173,14 @@ jobs:
           ./gradlew clean build
           ls -R
 
-#     - uses: actions/upload-artifact@v2
-#        with:
-#          name: android-mod
-#          path: |
+     - uses: actions/upload-artifact@v2
+        with:
+          name: android-mod
+          path: |
+            ./app/build/intermediates/transforms/mergeJniLibs/release/0/lib/arm64-v8a/libcgame*.so
+            ./app/build/intermediates/transforms/mergeJniLibs/release/0/lib/arm64-v8a/libui*.so
+            ./app/build/intermediates/transforms/mergeJniLibs/release/0/lib/armeabi-v7a/libcgame*.so
+            ./app/build/intermediates/transforms/mergeJniLibs/release/0/lib/armeabi-v7a/libui*.so
 
 #   __  __                                                          _
 #  |  \/  |                                                        | |
@@ -192,7 +196,7 @@ jobs:
     runs-on: ubuntu-16.04
     container:
       image: etlegacy/lnx-build:centos7-wayland-x11
-    needs: [ lnx64-mod, osx-mod, win-mod, raspberry_pi-mod ]
+    needs: [ lnx64-mod, osx-mod, win-mod, raspberry_pi-mod, android-mod ]
     steps:
       - uses: actions/checkout@v2
         with:
@@ -222,7 +226,7 @@ jobs:
         shell: bash
         working-directory: build/legacy
         run: |
-          zip -rvj legacy_*.pk3 win-mod/*.dll lnx64-mod/*.so osx-mod/* raspberry_pi-mod/*.so
+          zip -rvj legacy_*.pk3 win-mod/*.dll lnx64-mod/*.so osx-mod/* raspberry_pi-mod/*.so android-mod/*.so
 
       - uses: actions/upload-artifact@v2
         with:
