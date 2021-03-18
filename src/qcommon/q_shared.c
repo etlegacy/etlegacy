@@ -1762,28 +1762,6 @@ char *Q_TrimStr(char *string)
 	return (s == start) ? s : memmove(start, s, len + 1);
 }
 
-//#define Q_IsColorString(p) (*p == Q_COLOR_ESCAPE && *(p + 1) && *(p + 1) != Q_COLOR_ESCAPE && isgraph((*(p + 1))))
-inline qboolean Q_IsColorString(const char *p)
-{
-	if (!p || p[0] != Q_COLOR_ESCAPE)
-	{
-		return qfalse;
-	}
-
-	if (!p[1] || p[1] == Q_COLOR_ESCAPE)
-	{
-		return qfalse;
-	}
-
-	// The char might an extended char or part of utf-8 so only check it if its in the 0 - 127 range
-	if (p[1] >= 0 && p[1] <= 127)
-	{
-		return isgraph(p[1]) != 0;
-	}
-
-	return qtrue;
-}
-
 /**
  * @brief Remove special characters and color sequences from string.
  * @param[in,out] string
