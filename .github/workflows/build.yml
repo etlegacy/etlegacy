@@ -173,12 +173,19 @@ jobs:
           ./gradlew clean build
           ls -R
 
-      - uses: actions/upload-artifact@v2
+      - name: Upload arm64-v8a
+        uses: actions/upload-artifact@v2
         with:
           name: android-mod
           path: |
             ./app/build/intermediates/transforms/mergeJniLibs/release/0/lib/arm64-v8a/libcgame*.so
             ./app/build/intermediates/transforms/mergeJniLibs/release/0/lib/arm64-v8a/libui*.so
+
+      - name: Upload armeabi-v7a
+        uses: actions/upload-artifact@v2
+        with:
+          name: android-mod
+          path: |
             ./app/build/intermediates/transforms/mergeJniLibs/release/0/lib/armeabi-v7a/libcgame*.so
             ./app/build/intermediates/transforms/mergeJniLibs/release/0/lib/armeabi-v7a/libui*.so
 
@@ -399,6 +406,7 @@ jobs:
             osx-mod
             win-mod
             raspberry_pi-mod
+            android-mod
 
       - name: Get version status
         id: vars
