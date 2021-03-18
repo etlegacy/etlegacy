@@ -254,7 +254,7 @@ int LAN_AddServer(int source, const char *name, const char *address)
 			(*count)++;
 
 #ifdef FEATURE_DBMS
-			if (source == AS_FAVORITES && db_mode->integer == 0)			
+			if (source == AS_FAVORITES && db_mode->integer == 0)
 #else
 			if (source == AS_FAVORITES)
 #endif
@@ -1055,6 +1055,18 @@ static int FloatAsInt(float f)
 }
 
 /**
+ * @brief Get engine value
+ * @param[out] value buffer
+ * @param[in] valueSize buffer size
+ * @param[in] key to query
+ * @return true if value for key is found
+ */
+static qboolean UI_GetValue(char *value, int valueSize, const char *key)
+{
+	return qfalse;
+}
+
+/**
  * @brief The ui module is making a system call
  * @param[in] args
  * @return
@@ -1363,6 +1375,8 @@ intptr_t CL_UISystemCalls(intptr_t *args)
 	case UI_SET_PBCLSTATUS:
 	case UI_SET_PBSVSTATUS:
 		return 0;
+	case UI_TRAP_GETVALUE:
+		return UI_GetValue(VMA(1), args[2], VMA(3));
 	default:
 		Com_Error(ERR_DROP, "Bad UI system trap: %ld", (long int) args[0]);
 	}

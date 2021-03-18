@@ -391,7 +391,7 @@ typedef int clipHandle_t;
 #ifdef _WIN64
 #define BIT(x)              (1i64 << (x))
 #else
-#define BIT(x)              (1 << (x))
+#define BIT(x)              (1U << (x))
 #endif
 #endif
 
@@ -1818,5 +1818,8 @@ qboolean CompareIPNoPort(char const *ip1, char const *ip2);
 #define Q_atoi(str) (int) strtol(str, NULL, 10)
 
 #define Q_sscanf(str, ...) sscanf(str, __VA_ARGS__)
+
+// functional gate syscall number
+#define COM_TRAP_GETVALUE 700
 
 #endif  // #ifndef INCLUDE_Q_SHARED_H

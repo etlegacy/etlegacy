@@ -607,6 +607,18 @@ static int FloatAsInt(float f)
 }
 
 /**
+ * @brief Get engine value
+ * @param[out] value buffer
+ * @param[in] valueSize buffer size
+ * @param[in] key to query
+ * @return true if value for key is found
+ */
+static qboolean CL_GetValue(char *value, int valueSize, const char *key)
+{
+	return qfalse;
+}
+
+/**
  * @brief The cgame module is making a system call
  * @param[in] args
  * @return
@@ -1026,6 +1038,9 @@ intptr_t CL_CgameSystemCalls(intptr_t *args)
 	case CG_INGAME_CLOSEPOPUP:
 	case CG_R_LIGHTFORPOINT: // re-added to avoid a crash when called - still in enum of cgameImport_t
 		return 0;
+
+	case CG_TRAP_GETVALUE:
+		return CL_GetValue(VMA(1), args[2], VMA(3));
 
 	default:
 		Com_Error(ERR_DROP, "Bad cgame system trap: %ld", (long int) args[0]);
