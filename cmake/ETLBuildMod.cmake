@@ -12,13 +12,13 @@ check_library_exists(m pow "" LIBM)
 if(NOT ANDROID)
 	add_library(cgame${LIB_SUFFIX}${ARCH} MODULE ${CGAME_SRC})
 	set_target_properties(cgame${LIB_SUFFIX}${ARCH}
-	PROPERTIES
-		PREFIX ""
-		LIBRARY_OUTPUT_DIRECTORY "${MODNAME}"
-		LIBRARY_OUTPUT_DIRECTORY_DEBUG "${MODNAME}"
-		LIBRARY_OUTPUT_DIRECTORY_RELEASE "${MODNAME}"
-	)
-target_compile_definitions(cgame${LIB_SUFFIX}${ARCH} PRIVATE CGAMEDLL=1 MODLIB=1)
+			PROPERTIES
+			PREFIX ""
+			LIBRARY_OUTPUT_DIRECTORY "${MODNAME}"
+			LIBRARY_OUTPUT_DIRECTORY_DEBUG "${MODNAME}"
+			LIBRARY_OUTPUT_DIRECTORY_RELEASE "${MODNAME}"
+			)
+	target_compile_definitions(cgame${LIB_SUFFIX}${ARCH} PRIVATE CGAMEDLL=1 MODLIB=1)
 
 	if(LIBM)
 		target_link_libraries(cgame${LIB_SUFFIX}${ARCH} PRIVATE m)
@@ -27,12 +27,13 @@ target_compile_definitions(cgame${LIB_SUFFIX}${ARCH} PRIVATE CGAMEDLL=1 MODLIB=1
 else()
 	add_library(libcgame${LIB_SUFFIX}${ARCH} MODULE ${CGAME_SRC})
 	set_target_properties(libcgame${LIB_SUFFIX}${ARCH}
-			PROPERTIES COMPILE_DEFINITIONS "CGAMEDLL"
+			PROPERTIES
 			PREFIX ""
 			LIBRARY_OUTPUT_DIRECTORY "${MODNAME}"
 			LIBRARY_OUTPUT_DIRECTORY_DEBUG "${MODNAME}"
 			LIBRARY_OUTPUT_DIRECTORY_RELEASE "${MODNAME}"
 			)
+	target_compile_definitions(libcgame${LIB_SUFFIX}${ARCH} PRIVATE CGAMEDLL=1 MODLIB=1)
 
 	if(LIBM)
 		target_link_libraries(libcgame${LIB_SUFFIX}${ARCH} PRIVATE m)
@@ -79,7 +80,6 @@ if(NOT ANDROID)
 		target_compile_definitions(qagame${LIB_SUFFIX}${ARCH} PRIVATE FEATURE_SERVERMDX)
 	endif()
 
-	target_compile_definitions(qagame${LIB_SUFFIX}${ARCH} PRIVATE GAMEDLL)
 
 	set_target_properties(qagame${LIB_SUFFIX}${ARCH}
 		PROPERTIES
@@ -92,6 +92,8 @@ if(NOT ANDROID)
 		RUNTIME_OUTPUT_DIRECTORY_DEBUG "${MODNAME}"
 		RUNTIME_OUTPUT_DIRECTORY_RELEASE "${MODNAME}"
 	)
+	target_compile_definitions(qagame${LIB_SUFFIX}${ARCH} PRIVATE GAMEDLL=1 MODLIB=1)
+
 endif()
 
 #
@@ -100,13 +102,13 @@ endif()
 if(NOT ANDROID)
 	add_library(ui${LIB_SUFFIX}${ARCH} MODULE ${UI_SRC})
 	set_target_properties(ui${LIB_SUFFIX}${ARCH}
-		PROPERTIES
-		PREFIX ""
-		LIBRARY_OUTPUT_DIRECTORY "${MODNAME}"
-		LIBRARY_OUTPUT_DIRECTORY_DEBUG "${MODNAME}"
-		LIBRARY_OUTPUT_DIRECTORY_RELEASE "${MODNAME}"
-	)
-target_compile_definitions(ui${LIB_SUFFIX}${ARCH} PRIVATE UIDLL=1 MODLIB=1)
+			PROPERTIES
+			PREFIX ""
+			LIBRARY_OUTPUT_DIRECTORY "${MODNAME}"
+			LIBRARY_OUTPUT_DIRECTORY_DEBUG "${MODNAME}"
+			LIBRARY_OUTPUT_DIRECTORY_RELEASE "${MODNAME}"
+			)
+	target_compile_definitions(ui${LIB_SUFFIX}${ARCH} PRIVATE UIDLL=1 MODLIB=1)
 
 	if(LIBM)
 		target_link_libraries(ui${LIB_SUFFIX}${ARCH} PRIVATE m)
@@ -121,6 +123,7 @@ else()
 			LIBRARY_OUTPUT_DIRECTORY_DEBUG "${MODNAME}"
 			LIBRARY_OUTPUT_DIRECTORY_RELEASE "${MODNAME}"
 			)
+	target_compile_definitions(libui${LIB_SUFFIX}${ARCH} PRIVATE UIDLL=1 MODLIB=1)
 
 	if(LIBM)
 		target_link_libraries(libui${LIB_SUFFIX}${ARCH} PRIVATE m)
