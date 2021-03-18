@@ -232,7 +232,7 @@ void Cvar_CommandCompletion(void (*callback)(const char *s))
 
 	for (cvar = cvar_vars ; cvar ; cvar = cvar->next)
 	{
-		if (cvar->name)
+		if (cvar->name && (cvar->flags & CVAR_NOTABCOMPLETE) == 0)
 		{
 			callback(cvar->name);
 		}

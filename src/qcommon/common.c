@@ -2958,14 +2958,17 @@ void Com_Init(char *commandLine)
 
 	cl_paused       = Cvar_Get("cl_paused", "0", CVAR_ROM);
 	sv_paused       = Cvar_Get("sv_paused", "0", CVAR_ROM);
-	com_sv_running  = Cvar_Get("sv_running", "0", CVAR_ROM);
-	com_cl_running  = Cvar_Get("cl_running", "0", CVAR_ROM);
+	com_sv_running  = Cvar_Get("sv_running", "0", CVAR_ROM | CVAR_NOTABCOMPLETE);
+	com_cl_running  = Cvar_Get("cl_running", "0", CVAR_ROM | CVAR_NOTABCOMPLETE);
 	com_buildScript = Cvar_Get("com_buildScript", "0", 0);
 
 	con_drawnotify  = Cvar_Get("con_drawnotify", "0", CVAR_CHEAT);
 	con_numNotifies = Cvar_Get("con_numNotifies", "4", CVAR_CHEAT);
 
 	com_introPlayed = Cvar_Get("com_introplayed", "0", CVAR_ARCHIVE);
+
+	// this cvar is the single entry point of the entire extension system
+	Cvar_Get( "//trap_GetValue", va( "%i", COM_TRAP_GETVALUE ), CVAR_PROTECTED | CVAR_ROM | CVAR_NOTABCOMPLETE );
 
 #if idppc
 	com_altivec = Cvar_Get("com_altivec", "1", CVAR_ARCHIVE);
