@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
@@ -321,84 +322,89 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
         mLayout.requestFocus();
         SDLActivity.setWindowStyle(true);
 
-        final ImageButton buttonPopUpMenu = new ImageButton(getApplicationContext());
-        buttonPopUpMenu.setImageResource(R.drawable.ic_one_line);
-        buttonPopUpMenu.setBackgroundResource(0);
+        if (isAndroidTV() || isChromebook()) {
+            Log.v("ETL", "AndroidTV / ChromeBook Detected, Display UI Disabled!");
+        } else {
+            final ImageButton buttonPopUpMenu = new ImageButton(getApplicationContext());
+            buttonPopUpMenu.setImageResource(R.drawable.ic_one_line);
+            buttonPopUpMenu.setBackgroundResource(0);
 
-        etl_PopMenu = new PopupMenu(getApplicationContext(), buttonPopUpMenu);
-        etl_PopMenu.getMenu().add(0, 0, 0, "~");
+            etl_PopMenu = new PopupMenu(getApplicationContext(), buttonPopUpMenu);
+            etl_PopMenu.getMenu().add(0, 0, 0, "~");
 
-        buttonPopUpMenu.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                etl_PopMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                    @Override
-                    public boolean onMenuItemClick(MenuItem item) {
-                        switch (item.getItemId()) {
-                            case 0:
-                                SDLActivity.onNativeKeyDown(68);
-                                SDLActivity.onNativeKeyUp(68);
-                                break;
-                            case 1:
-                                SDLActivity.onNativeKeyDown(131);
-                                SDLActivity.onNativeKeyUp(131);
-                                break;
-                            case 2:
-                                SDLActivity.onNativeKeyDown(132);
-                                SDLActivity.onNativeKeyUp(132);
-                                break;
+            buttonPopUpMenu.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    etl_PopMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                        @Override
+                        public boolean onMenuItemClick(MenuItem item) {
+                            switch (item.getItemId()) {
+                                case 0:
+                                    SDLActivity.onNativeKeyDown(68);
+                                    SDLActivity.onNativeKeyUp(68);
+                                    break;
+                                case 1:
+                                    SDLActivity.onNativeKeyDown(131);
+                                    SDLActivity.onNativeKeyUp(131);
+                                    break;
+                                case 2:
+                                    SDLActivity.onNativeKeyDown(132);
+                                    SDLActivity.onNativeKeyUp(132);
+                                    break;
+                            }
+                            return false;
                         }
-                        return false;
-                    }
-                });
-                etl_PopMenu.show();
-            }
-        });
+                    });
+                    etl_PopMenu.show();
+                }
+            });
 
-        mLayout.addView(buttonPopUpMenu);
+            mLayout.addView(buttonPopUpMenu);
 
-        btn = new ImageButton(getApplicationContext());
-        btn.setImageResource(R.drawable.ic_keyboard);
-        btn.setBackgroundResource(0);
-        btn.setId(1);
-        btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.toggleSoftInput(InputMethodManager.SHOW_FORCED,0);
-            }
-        });
+            btn = new ImageButton(getApplicationContext());
+            btn.setImageResource(R.drawable.ic_keyboard);
+            btn.setBackgroundResource(0);
+            btn.setId(1);
+            btn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+                }
+            });
 
-        RelativeLayout.LayoutParams keyboard_layout = new RelativeLayout.LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT);
+            RelativeLayout.LayoutParams keyboard_layout = new RelativeLayout.LayoutParams(
+                    ViewGroup.LayoutParams.WRAP_CONTENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT);
 
-        keyboard_layout.leftMargin = pxToDp(390);
-        keyboard_layout.topMargin = pxToDp(-20);
-        mLayout.addView(btn, keyboard_layout);
+            keyboard_layout.leftMargin = pxToDp(390);
+            keyboard_layout.topMargin = pxToDp(-20);
+            mLayout.addView(btn, keyboard_layout);
 
-        ImageButton esc_btn = new ImageButton(getApplicationContext());
-        esc_btn.setImageResource(R.drawable.ic_escape);
-        esc_btn.setBackgroundResource(0);
-        esc_btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                SDLActivity.onNativeKeyDown(111);
-                SDLActivity.onNativeKeyUp(111);
-            }
-        });
+            ImageButton esc_btn = new ImageButton(getApplicationContext());
+            esc_btn.setImageResource(R.drawable.ic_escape);
+            esc_btn.setBackgroundResource(0);
+            esc_btn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    SDLActivity.onNativeKeyDown(111);
+                    SDLActivity.onNativeKeyUp(111);
+                }
+            });
 
-        RelativeLayout.LayoutParams lp2 = new RelativeLayout.LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT);
+            RelativeLayout.LayoutParams lp2 = new RelativeLayout.LayoutParams(
+                    ViewGroup.LayoutParams.WRAP_CONTENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT);
 
-        lp2.addRule(RelativeLayout.RIGHT_OF, btn.getId());
-        lp2.leftMargin = pxToDp(-15);
-        lp2.topMargin = -pxToDp(20);
+            lp2.addRule(RelativeLayout.RIGHT_OF, btn.getId());
+            lp2.leftMargin = pxToDp(-15);
+            lp2.topMargin = -pxToDp(20);
 
-        mLayout.addView(esc_btn, lp2);
+            mLayout.addView(esc_btn, lp2);
 
-        runUI();
+            runUI();
+
+        }
 
     }
 
