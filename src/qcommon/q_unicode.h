@@ -53,6 +53,7 @@
 
 int Q_UTF8_Width(const char *str);
 int Q_UTF8_WidthCP(int ch);
+qboolean Q_UTF8_ValidateSingle(const char *str);
 qboolean Q_UTF8_Validate(const char *str);
 char *Q_Extended_To_UTF8(char *txt);
 size_t Q_UTF8_Strlen(const char *str);

@@ -107,7 +107,7 @@ int Q_UTF8_WidthCP(int ch)
 	return 0;
 }
 
-static qboolean Q_UTF8_ValidateSingle(const char *str)
+qboolean Q_UTF8_ValidateSingle(const char *str)
 {
 	int    i = 0, utfBytes = 0;
 	size_t len = strlen(str);
@@ -134,6 +134,11 @@ static qboolean Q_UTF8_ValidateSingle(const char *str)
 		utfBytes = 3; // 11110XXX
 	}
 	else
+	{
+		return qfalse;
+	}
+
+	if(utfBytes > len)
 	{
 		return qfalse;
 	}
@@ -179,6 +184,11 @@ qboolean Q_UTF8_Validate(const char *str)
 			utfBytes = 3; // 11110XXX
 		}
 		else
+		{
+			return qfalse;
+		}
+
+		if(utfBytes > (len - i))
 		{
 			return qfalse;
 		}
@@ -538,6 +548,12 @@ uint32_t Q_UTF8_CodePoint(const char *str)
 	if (!str || !str[0])
 	{
 		return 0;
+	}
+
+	// Its an extended char
+	if(!Q_UTF8_ValidateSingle(str))
+	{
+		return (unsigned char)str[0];
 	}
 
 	if (size > sizeof(codepoint))
