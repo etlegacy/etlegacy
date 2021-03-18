@@ -49,7 +49,7 @@
 #define PM_FIXEDPHYSICSFPS      cgs.fixedphysicsfps
 #define PM_PRONEDELAY           cgs.pronedelay
 
-#elif GAMEDLL
+#else
 extern vmCvar_t g_fixedphysics;
 extern vmCvar_t g_fixedphysicsfps;
 extern vmCvar_t g_pronedelay;
@@ -69,7 +69,7 @@ pml_t   pml;
 // movement parameters
 float pm_stopspeed = 100;
 
-float pm_waterSwimScale = 0.5;
+float pm_waterSwimScale = 0.5f;
 //float pm_waterWadeScale = 0.70f;
 float pm_slagSwimScale = 0.30f;
 //float pm_slagWadeScale  = 0.70f;
