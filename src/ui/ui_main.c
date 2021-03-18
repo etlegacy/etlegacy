@@ -2823,11 +2823,11 @@ static int UI_OwnerDrawWidth(int ownerDraw, float scale)
 	case UI_KEYBINDSTATUS:
 		if (Display_KeyBindPending())
 		{
-			s = trap_TranslateString("Waiting for new key... Press ESCAPE to cancel");
+			s = __("Waiting for new key... Press ESCAPE to cancel");
 		}
 		else
 		{
-			s = trap_TranslateString("Press ENTER or CLICK to change, Press BACKSPACE to clear");
+			s = __("Press ENTER or CLICK to change, Press BACKSPACE to clear");
 		}
 		break;
 	case UI_SERVERREFRESHDATE:
@@ -2992,11 +2992,11 @@ static void UI_DrawServerRefreshDate(rectDef_t *rect, float scale, vec4_t color,
 		serverCount = trap_LAN_GetServerCount(ui_netSource.integer);
 		if (serverCount >= 0)
 		{
-			Text_Paint(rect->x, rect->y, scale, newColor, va(trap_TranslateString("Getting info for %d servers (ESC to cancel)"), serverCount), 0, 0, textStyle);
+			Text_Paint(rect->x, rect->y, scale, newColor, va(__("Getting info for %d servers (ESC to cancel)"), serverCount), 0, 0, textStyle);
 		}
 		else
 		{
-			Text_Paint(rect->x, rect->y, scale, newColor, trap_TranslateString("Waiting for response from Master Server"), 0, 0, textStyle);
+			Text_Paint(rect->x, rect->y, scale, newColor, __("Waiting for response from Master Server"), 0, 0, textStyle);
 		}
 	}
 	else
@@ -3004,7 +3004,7 @@ static void UI_DrawServerRefreshDate(rectDef_t *rect, float scale, vec4_t color,
 		char buff[64];
 
 		Q_strncpyz(buff, UI_Cvar_VariableString(va("ui_lastServerRefresh_%i", ui_netSource.integer)), 64);
-		Text_Paint(rect->x, rect->y, scale, color, va(trap_TranslateString("Refresh Time: %s"), buff), 0, 0, textStyle);
+		Text_Paint(rect->x, rect->y, scale, color, va(__("Refresh Time: %s"), buff), 0, 0, textStyle);
 	}
 }
 
@@ -3106,11 +3106,11 @@ static void UI_DrawKeyBindStatus(rectDef_t *rect, float scale, vec4_t color, int
 {
 	if (Display_KeyBindPending())
 	{
-		Text_Paint(rect->x + text_x, rect->y + text_y, scale, color, trap_TranslateString("Waiting for new key... Press ESCAPE to cancel"), 0, 0, textStyle);
+		Text_Paint(rect->x + text_x, rect->y + text_y, scale, color, __("Waiting for new key... Press ESCAPE to cancel"), 0, 0, textStyle);
 	}
 	else
 	{
-		Text_Paint(rect->x + text_x, rect->y + text_y, scale, color, trap_TranslateString("Press ENTER or CLICK to change, Press BACKSPACE to clear"), 0, 0, textStyle);
+		Text_Paint(rect->x + text_x, rect->y + text_y, scale, color, __("Press ENTER or CLICK to change, Press BACKSPACE to clear"), 0, 0, textStyle);
 	}
 }
 
@@ -4619,7 +4619,7 @@ void UI_RunMenuScript(char **args)
 				else
 				{
 					// we can't close the menu from here, it's not open yet .. (that's the onOpen script)
-					Com_Printf("%s", trap_TranslateString("Can't show Server Info (not found, or local server)\n"));
+					Com_Printf("%s", __("Can't show Server Info (not found, or local server)\n"));
 				}
 			}
 		}
@@ -4858,17 +4858,17 @@ void UI_RunMenuScript(char **args)
 					if (res == 0)
 					{
 						// server already in the list
-						Com_Printf("%s", trap_TranslateString("Favorite already in list\n"));
+						Com_Printf("%s", __("Favorite already in list\n"));
 					}
 					else if (res == -1)
 					{
 						// list full
-						Com_Printf("%s", trap_TranslateString("Favorite list full\n"));
+						Com_Printf("%s", __("Favorite list full\n"));
 					}
 					else
 					{
 						// successfully added
-						Com_Printf(trap_TranslateString("Added favorite server %s\n"), addr);
+						Com_Printf(__("Added favorite server %s\n"), addr);
 					}
 				}
 			}
@@ -4912,17 +4912,17 @@ void UI_RunMenuScript(char **args)
 					if (res == 0)
 					{
 						// server already in the list
-						Com_Printf("%s", trap_TranslateString("Favorite already in list\n"));
+						Com_Printf("%s", __("Favorite already in list\n"));
 					}
 					else if (res == -1)
 					{
 						// list full
-						Com_Printf("%s", trap_TranslateString("Favorite list full\n"));
+						Com_Printf("%s", __("Favorite list full\n"));
 					}
 					else
 					{
 						// successfully added
-						Com_Printf(trap_TranslateString("Added favorite server %s\n"), addr);
+						Com_Printf(__("Added favorite server %s\n"), addr);
 					}
 				}
 			}
@@ -4947,23 +4947,23 @@ void UI_RunMenuScript(char **args)
 				if (res == 0)
 				{
 					// server already in the list
-					Com_Printf("%s", trap_TranslateString("Favorite already in list\n"));
+					Com_Printf("%s", __("Favorite already in list\n"));
 				}
 				else if (res == -1)
 				{
 					// list full
-					Com_Printf("%s", trap_TranslateString("Favorite list full\n"));
+					Com_Printf("%s", __("Favorite list full\n"));
 				}
 				else
 				{
 					trap_Cvar_SetValue("cg_ui_favorite", 1);
 					// successfully added
-					Com_Printf(trap_TranslateString("Added favorite server %s\n"), addr);
+					Com_Printf(__("Added favorite server %s\n"), addr);
 				}
 			}
 			else
 			{
-				Com_Printf("%s", trap_TranslateString("Can't add localhost to favorites\n"));
+				Com_Printf("%s", __("Can't add localhost to favorites\n"));
 			}
 		}
 		else if (Q_stricmp(name, "removeFavoriteIngame") == 0)
@@ -4980,11 +4980,11 @@ void UI_RunMenuScript(char **args)
 				trap_LAN_RemoveServer(AS_FAVORITES, addr);
 				trap_Cvar_SetValue("cg_ui_favorite", 0);
 				// successfully removed
-				Com_Printf(trap_TranslateString("Removed favorite server %s\n"), addr);
+				Com_Printf(__("Removed favorite server %s\n"), addr);
 			}
 			else
 			{
-				Com_Printf("%s", trap_TranslateString("Can't remove localhost from favorites\n"));
+				Com_Printf("%s", __("Can't remove localhost from favorites\n"));
 			}
 		}
 		else if (Q_stricmp(name, "orders") == 0)
@@ -6622,16 +6622,16 @@ static void UI_BuildServerDisplayList(qboolean force)
 	{
 		if (numinvisible > 0)
 		{
-			DC->setCVar("ui_tmp_ServersFiltered", va(trap_TranslateString("Filtered/Total: %03i/%03i"), numinvisible, total));
+			DC->setCVar("ui_tmp_ServersFiltered", va(__("Filtered/Total: %03i/%03i"), numinvisible, total));
 		}
 		else
 		{
-			DC->setCVar("ui_tmp_ServersFiltered", va(trap_TranslateString("^3Check your filters - no servers found!              ^9Filtered/Total: ^3%03i^9/%03i"), numinvisible, total));
+			DC->setCVar("ui_tmp_ServersFiltered", va(__("^3Check your filters - no servers found!              ^9Filtered/Total: ^3%03i^9/%03i"), numinvisible, total));
 		}
 	}
 	else
 	{
-		DC->setCVar("ui_tmp_ServersFiltered", trap_TranslateString("^1No Connection or master down - no servers found!    ^9Filtered/Total: ^1000^9/000"));
+		DC->setCVar("ui_tmp_ServersFiltered", __("^1No Connection or master down - no servers found!    ^9Filtered/Total: ^1000^9/000"));
 	}
 }
 
@@ -8220,7 +8220,7 @@ void UI_Init(int etLegacyClient, int clientVersion)
 	uiInfo.uiDC.stopCinematic         = &UI_StopCinematic;
 	uiInfo.uiDC.drawCinematic         = &UI_DrawCinematic;
 	uiInfo.uiDC.runCinematicFrame     = &UI_RunCinematicFrame;
-	uiInfo.uiDC.translateString       = &trap_TranslateString;
+	uiInfo.uiDC.translateString       = &UI_TranslateString;
 	uiInfo.uiDC.checkAutoUpdate       = &trap_CheckAutoUpdate;
 	uiInfo.uiDC.getAutoUpdate         = &trap_GetAutoUpdate;
 
@@ -8391,8 +8391,6 @@ uiMenuCommand_t UI_GetActiveMenu(void)
 	return menutype;
 }
 
-#define MISSING_FILES_MSG "The following packs are missing:"
-
 /**
  * @brief _UI_SetActiveMenu
  * @param[in] menu
@@ -8432,7 +8430,7 @@ void UI_SetActiveMenu(uiMenuCommand_t menu)
 				trap_Cvar_Set("ui_connecting", "0");
 				if (!Q_stricmpn(buf, "Invalid password", 16))
 				{
-					trap_Cvar_Set("com_errorMessage", trap_TranslateString(buf));
+					trap_Cvar_Set("com_errorMessage", __(buf));
 					Menus_ActivateByName("popupPassword", qtrue);
 				}
 				else if (strlen(buf) > 5 && !Q_stricmpn(buf, "ET://", 5) && strlen(buf) < 200)
@@ -8440,7 +8438,7 @@ void UI_SetActiveMenu(uiMenuCommand_t menu)
 					if (ui_serverBrowserSettings.integer & UI_BROWSER_ALLOW_REDIRECT)
 					{
 						Q_strncpyz(buf, buf + 5, sizeof(buf));
-						Com_Printf(trap_TranslateString("Server is full, redirect to: %s\n"), buf);
+						Com_Printf(__("Server is full, redirect to: %s\n"), buf);
 						// always prompt
 						trap_Cvar_Set("com_errorMessage", buf);
 						Menus_ActivateByName("popupServerRedirect", qtrue);
@@ -8460,7 +8458,7 @@ void UI_SetActiveMenu(uiMenuCommand_t menu)
 						pb_enable = qtrue;
 					}
 
-					trap_Cvar_Set("com_errorMessage", trap_TranslateString(buf));
+					trap_Cvar_Set("com_errorMessage", __(buf));
 					// hacky, wanted to have the printout of missing files
 					// text printing limitations force us to keep it all in a single message
 					// NOTE: this works thanks to flip flop in UI_Cvar_VariableString
@@ -8472,7 +8470,7 @@ void UI_SetActiveMenu(uiMenuCommand_t menu)
 							trap_Cvar_Set("com_errorMessage",
 							              va("%s\n\n%s\n%s",
 							                 UI_Cvar_VariableString("com_errorMessage"),
-							                 trap_TranslateString(MISSING_FILES_MSG),
+							                 __("The following packs are missing:"),
 							                 missing_files));
 						}
 					}
@@ -9033,13 +9031,13 @@ static void UI_StopServerRefresh(void)
 	// invalid data
 	//if (uiInfo.serverStatus.numInvalidServers > 0)
 	//{
-	//	Com_Printf(trap_TranslateString("^9%d^7 servers not listed (invalid data)\n"),
+	//	Com_Printf(__("^9%d^7 servers not listed (invalid data)\n"),
 	//	           uiInfo.serverStatus.numInvalidServers);
 	//}
 
 	if (uiInfo.serverStatus.numIncompatibleServers > 0)
 	{
-		Com_Printf(trap_TranslateString("^1%d^7 servers not listed (incompatible or fake)\n"),
+		Com_Printf(__("^1%d^7 servers not listed (incompatible or fake)\n"),
 		           uiInfo.serverStatus.numIncompatibleServers);
 	}
 
@@ -9050,20 +9048,20 @@ static void UI_StopServerRefresh(void)
 
 	if (total > 0)
 	{
-		Com_Printf(trap_TranslateString("^3%d^7 servers not listed (filtered out by browser settings)\n"), total);
+		Com_Printf(__("^3%d^7 servers not listed (filtered out by browser settings)\n"), total);
 	}
 
 	// FIXME: number of humans is wrong for favorites, why?
 	if (uiInfo.serverStatus.numHumansOnServers > 0 && ui_netSource.integer != AS_FAVORITES)
 	{
-		Com_Printf(trap_TranslateString("^2%d^7 servers listed with ^3%d^7 players (including ^3%d^7 humans at least)\n"),
+		Com_Printf(__("^2%d^7 servers listed with ^3%d^7 players (including ^3%d^7 humans at least)\n"),
 		           uiInfo.serverStatus.numDisplayServers,
 		           uiInfo.serverStatus.numPlayersOnServers,
 		           uiInfo.serverStatus.numHumansOnServers);
 	}
 	else
 	{
-		Com_Printf(trap_TranslateString("^2%d^7 servers listed with ^3%d^7 players\n"),
+		Com_Printf(__("^2%d^7 servers listed with ^3%d^7 players\n"),
 		           uiInfo.serverStatus.numDisplayServers,
 		           uiInfo.serverStatus.numPlayersOnServers);
 	}
@@ -9204,13 +9202,13 @@ void UI_Campaign_f(void)
 
 	if (i == uiInfo.campaignCount || !campaign || !(campaign->typeBits & (1 << GT_WOLF)))
 	{
-		Com_Printf(trap_TranslateString("Can't find campaign '%s'\n"), str);
+		Com_Printf(__("Can't find campaign '%s'\n"), str);
 		return;
 	}
 
 	if (!campaign->mapInfos[0])
 	{
-		Com_Printf(trap_TranslateString("Corrupted campaign '%s'\n"), str);
+		Com_Printf(__("Corrupted campaign '%s'\n"), str);
 		return;
 	}
 
@@ -9244,11 +9242,11 @@ void UI_ListCampaigns_f(void)
 
 	if (mpCampaigns)
 	{
-		Com_Printf(trap_TranslateString("%i campaigns found:\n"), mpCampaigns);
+		Com_Printf(__("%i campaigns found:\n"), mpCampaigns);
 	}
 	else
 	{
-		Com_Printf("%s", trap_TranslateString("No campaigns found.\n"));
+		Com_Printf("%s", __("No campaigns found.\n"));
 		return;
 	}
 
@@ -9296,7 +9294,7 @@ void UI_ListFavourites_f(void)
 	}
 	else
 	{
-		Com_Printf("%s\n", trap_TranslateString("No favourite servers found."));
+		Com_Printf("%s\n", __("No favourite servers found."));
 	}
 }
 
@@ -9307,5 +9305,19 @@ void UI_RemoveAllFavourites_f(void)
 {
 	trap_LAN_RemoveServer(AS_FAVORITES_ALL, "");
 
-	Com_Printf("%s\n", trap_TranslateString("All favourite servers removed."));
+	Com_Printf("%s\n", __("All favourite servers removed."));
+}
+
+const char *UI_TranslateString(const char *string)
+{
+	// Allows the fnc to be used twice in same context
+	static char buffer[TRANSLATION_BUFFERS][MAX_PRINT_MSG];
+	static int  buffOffset = 0;
+	char        *buf;
+
+	buf = buffer[buffOffset++ % TRANSLATION_BUFFERS];
+
+	trap_TranslateString(string, buf);
+
+	return buf;
 }

@@ -391,7 +391,7 @@ typedef int clipHandle_t;
 #ifdef _WIN64
 #define BIT(x)              (1i64 << (x))
 #else
-#define BIT(x)              (1 << (x))
+#define BIT(x)              (1U << (x))
 #endif
 #endif
 
@@ -446,7 +446,9 @@ typedef int clipHandle_t;
 #define MAX_STRING_TOKENS   256     ///< max tokens resulting from Cmd_TokenizeString
 #define MAX_TOKEN_CHARS     1024    ///< max length of an individual token
 
-#define MAXPRINTMSG 4096 ///< max string you can send to a Com_Printf / Com_DPrintf (above gets truncated)
+#define MAX_PRINT_MSG       4096    ///< max string you can send to a Com_Printf / Com_DPrintf (above gets truncated)
+
+#define TRANSLATION_BUFFERS 8
 
 #define MAX_INFO_STRING     1024
 #define MAX_INFO_KEY        1024
@@ -829,6 +831,7 @@ default values.
 #define CVAR_VM_CREATED             32768        ///< cvar was created exclusively in one of the VMs.
 #define CVAR_PROTECTED              65536        ///< prevent modifying this var from VMs or the server
 #define CVAR_SHADER                 131072       ///< we need to recompile the glsl shaders
+#define CVAR_NOTABCOMPLETE          262144       ///< Don't autocomplete this on the console
 #define CVAR_MODIFIED               1073741824   ///< Cvar was modified
 #define CVAR_NONEXISTENT            2147483648U  ///< Cvar doesn't exist.
 
@@ -1818,5 +1821,21 @@ qboolean CompareIPNoPort(char const *ip1, char const *ip2);
 #define Q_atoi(str) (int) strtol(str, NULL, 10)
 
 #define Q_sscanf(str, ...) sscanf(str, __VA_ARGS__)
+
+// functional gate syscall number
+#define COM_TRAP_GETVALUE 700
+
+#ifdef MODLIB
+// This is just a wrapper for getting the string noticed by xgettext
+#define _(x) x
+
+#if defined(CGAMEDLL)
+	#define __(x) CG_TranslateString(x)
+#elif defined(UIDLL)
+	#define __(x) UI_TranslateString(x)
+#else
+	#define __(x) x
+#endif
+#endif
 
 #endif  // #ifndef INCLUDE_Q_SHARED_H

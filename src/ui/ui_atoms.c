@@ -42,7 +42,7 @@
 void QDECL Com_DPrintf(const char *fmt, ...)
 {
 	va_list argptr;
-	char    msg[MAXPRINTMSG];
+	char    msg[MAX_PRINT_MSG];
 	float   developer;
 
 	developer = trap_Cvar_VariableValue("developer");

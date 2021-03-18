@@ -170,7 +170,7 @@ int com_hunkusedvalue;
 qboolean com_errorEntered;
 qboolean com_fullyInitialized;
 
-char com_errorMessage[MAXPRINTMSG];
+char com_errorMessage[MAX_PRINT_MSG];
 
 void Com_WriteConfig_f(void);
 void CIN_CloseAllVideos(void);
@@ -225,7 +225,7 @@ void Com_EndRedirect(void)
 void QDECL Com_Printf(const char *fmt, ...)
 {
 	va_list         argptr;
-	char            buffer[MAXPRINTMSG];
+	char            buffer[MAX_PRINT_MSG];
 	char            *msg, *bufferEnd, *tmpMsg;
 	static qboolean opening_qconsole = qfalse;
 	static qboolean lineWasEnded = qtrue;
@@ -332,7 +332,7 @@ void QDECL Com_Printf(const char *fmt, ...)
 void QDECL Com_DPrintf(const char *fmt, ...)
 {
 	va_list argptr;
-	char    msg[MAXPRINTMSG];
+	char    msg[MAX_PRINT_MSG];
 
 	if (!com_developer || !com_developer->integer)
 	{
@@ -2958,14 +2958,17 @@ void Com_Init(char *commandLine)
 
 	cl_paused       = Cvar_Get("cl_paused", "0", CVAR_ROM);
 	sv_paused       = Cvar_Get("sv_paused", "0", CVAR_ROM);
-	com_sv_running  = Cvar_Get("sv_running", "0", CVAR_ROM);
-	com_cl_running  = Cvar_Get("cl_running", "0", CVAR_ROM);
+	com_sv_running  = Cvar_Get("sv_running", "0", CVAR_ROM | CVAR_NOTABCOMPLETE);
+	com_cl_running  = Cvar_Get("cl_running", "0", CVAR_ROM | CVAR_NOTABCOMPLETE);
 	com_buildScript = Cvar_Get("com_buildScript", "0", 0);
 
 	con_drawnotify  = Cvar_Get("con_drawnotify", "0", CVAR_CHEAT);
 	con_numNotifies = Cvar_Get("con_numNotifies", "4", CVAR_CHEAT);
 
 	com_introPlayed = Cvar_Get("com_introplayed", "0", CVAR_ARCHIVE);
+
+	// this cvar is the single entry point of the entire extension system
+	Cvar_Get( "//trap_GetValue", va( "%i", COM_TRAP_GETVALUE ), CVAR_PROTECTED | CVAR_ROM | CVAR_NOTABCOMPLETE );
 
 #if idppc
 	com_altivec = Cvar_Get("com_altivec", "1", CVAR_ARCHIVE);

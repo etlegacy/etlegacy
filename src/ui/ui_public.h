@@ -181,7 +181,11 @@ typedef enum
 	UI_SQRT,
 	UI_FLOOR,
 	UI_CEIL,
-	UI_GETHUNKDATA
+	UI_GETHUNKDATA,
+
+#if !defined(UIDLL) && !defined(CGAMEDLL)
+	UI_TRAP_GETVALUE = COM_TRAP_GETVALUE,
+#endif
 
 } uiImport_t;
 

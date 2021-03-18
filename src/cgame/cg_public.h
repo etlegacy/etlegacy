@@ -273,6 +273,10 @@ typedef enum
 
 	CG_R_FINISH,                ///< 179
 
+#ifndef CGAMEDLL
+	CG_TRAP_GETVALUE = COM_TRAP_GETVALUE,
+#endif
+
 } cgameImport_t;
 
 /**

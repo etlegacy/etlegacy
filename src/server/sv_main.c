@@ -246,7 +246,7 @@ void QDECL SV_SendServerCommand(client_t *cl, const char *fmt, ...)
 	}
 
 	// save broadcasts to demo
-	// note: in the case a command is only issued to a specific client, it is NOT recorded (see above when cl != NULL). 
+	// note: in the case a command is only issued to a specific client, it is NOT recorded (see above when cl != NULL).
 	// If you want to record them, just place this code above, but be warned that it may be dangerous (such as "disconnect" command)
 	// because server commands will be replayed to every connected clients!
 	//
@@ -1092,7 +1092,7 @@ static void SVC_RemoteCommand(netadr_t from, msg_t *msg)
 	// if we send an OOB print message this size, 1.31 clients die in a Com_Printf buffer overflow
 	// the buffer overflow will be fixed in > 1.31 clients
 	// but we want a server side fix
-	// we must NEVER send an OOB message that will be > 1.31 MAXPRINTMSG (4096)
+	// we must NEVER send an OOB message that will be > 1.31 MAX_PRINT_MSG (4096)
 #define SV_OUTPUTBUF_LENGTH (256 - 16)
 	char sv_outputbuf[SV_OUTPUTBUF_LENGTH];
 	char *cmd_aux;

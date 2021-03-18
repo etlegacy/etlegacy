@@ -12,12 +12,13 @@ check_library_exists(m pow "" LIBM)
 if(NOT ANDROID)
 	add_library(cgame${LIB_SUFFIX}${ARCH} MODULE ${CGAME_SRC})
 	set_target_properties(cgame${LIB_SUFFIX}${ARCH}
-		PROPERTIES COMPILE_DEFINITIONS "CGAMEDLL"
+	PROPERTIES
 		PREFIX ""
 		LIBRARY_OUTPUT_DIRECTORY "${MODNAME}"
 		LIBRARY_OUTPUT_DIRECTORY_DEBUG "${MODNAME}"
 		LIBRARY_OUTPUT_DIRECTORY_RELEASE "${MODNAME}"
 	)
+target_compile_definitions(cgame${LIB_SUFFIX}${ARCH} PRIVATE CGAMEDLL=1 MODLIB=1)
 
 	if(LIBM)
 		target_link_libraries(cgame${LIB_SUFFIX}${ARCH} PRIVATE m)
@@ -105,6 +106,7 @@ if(NOT ANDROID)
 		LIBRARY_OUTPUT_DIRECTORY_DEBUG "${MODNAME}"
 		LIBRARY_OUTPUT_DIRECTORY_RELEASE "${MODNAME}"
 	)
+target_compile_definitions(ui${LIB_SUFFIX}${ARCH} PRIVATE UIDLL=1 MODLIB=1)
 
 	if(LIBM)
 		target_link_libraries(ui${LIB_SUFFIX}${ARCH} PRIVATE m)
