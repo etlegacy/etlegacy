@@ -42,7 +42,7 @@ jobs:
       - name: Build
         shell: bash
         run: |
-          git fetch --tags
+          git fetch --tags --force
           ./easybuild.sh build -64 -mod
 
       - uses: actions/upload-artifact@v2
@@ -76,7 +76,7 @@ jobs:
           DEVELOPER_DIR: /Library/Developer/CommandLineTools
         shell: bash
         run: |
-          git fetch --tags
+          git fetch --tags --force
           ./easybuild.sh build -64 -mod --osx=10.10
 
       - uses: actions/upload-artifact@v2
@@ -97,7 +97,7 @@ jobs:
       - name: Build
         shell: cmd
         run: |
-          git fetch --tags
+          git fetch --tags --force
           call .\easybuild.bat build -mod
 
       - uses: actions/upload-artifact@v2
@@ -129,7 +129,7 @@ jobs:
             apt-get update -q -y
             apt-get -y install build-essential libudev-dev libwebp-dev automake zlib1g \
             nasm autoconf cmake git zip gcc g++ libtool
-            git fetch --tags
+            git fetch --tags --force
             ./easybuild.sh build -RPI -mod
       - uses: actions/upload-artifact@v2
         with:
@@ -172,7 +172,7 @@ jobs:
       - name: Build
         shell: bash
         run: |
-          git fetch --tags
+          git fetch --tags --force
           ./easybuild.sh build -32
 
       - uses: actions/download-artifact@v2
@@ -231,7 +231,7 @@ jobs:
       - name: Build
         shell: bash
         run: |
-          git fetch --tags
+          git fetch --tags --force
           ./easybuild.sh build -64
 
       - uses: actions/download-artifact@v2
@@ -275,7 +275,7 @@ jobs:
           DEVELOPER_DIR: /Library/Developer/CommandLineTools
         shell: bash
         run: |
-          git fetch --tags
+          git fetch --tags --force
           ./easybuild.sh build -64 --osx=10.10
 
       - uses: actions/download-artifact@v2
@@ -310,7 +310,7 @@ jobs:
       - name: Build
         shell: cmd
         run: |
-          git fetch --tags
+          git fetch --tags --force
           call .\easybuild.bat build
 
       - uses: actions/download-artifact@v2
@@ -400,7 +400,7 @@ jobs:
           path: build/package
 
       - name: Fetch tags
-        run: git fetch --tags
+        run: git fetch --tags --force
 
       - name: Setup folder
         working-directory: build/package
