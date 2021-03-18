@@ -384,6 +384,61 @@ jobs:
             build/etlegacy-*.exe
             build/etlegacy-*.zip
 
+  android:
+    runs-on: ubuntu-18.04
+    needs: [ lnx32 ]
+    steps:
+      - name: Setup JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: 1.8
+
+      - name: Android Repo
+        uses: actions/checkout@v2
+        with:
+          repository: etlegacy/etlegacy-android
+          submodules: true
+          fetch-depth: 0
+
+      - name: Downloading NDK
+        uses: actions/checkout@v2
+        with:
+          repository: rafal1137/NDK_ETL
+          path: NDK_ETL
+
+      - name: Install Ninja Builder
+        shell: bash
+        run: sudo apt install -y ninja-build
+
+      - name: Build
+        run: |
+          echo "export ANDROID_NDK_HOME=$GITHUB_WORKSPACE/NDK_ETL/ndk-bundle" > ~/.bashrc
+          source ~/.bashrc
+          chmod -R 775 $ANDROID_NDK_HOME
+          echo "cmake.dir=/usr/local/" | tee -a local.properties
+          ./gradlew clean build
+          ls -R
+
+      - uses: actions/download-artifact@v2
+        with:
+          name: All-mods
+          path: app/src/main/assets
+
+      - name: Display structure of downloaded files
+        run: ls -R
+        working-directory: app/src/main/assets
+
+      - name: Generate package
+        shell: bash
+        run: |
+          ./gradlew assembleDebug
+          ls -R
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: android-packages
+          path: |
+
 #   _    _           _                       _                         _      _____   _
 #  | |  | |         | |                     | |                       | |    / ____| | |
 #  | |  | |  _ __   | |   ___     __ _    __| |     __ _   _ __     __| |   | |      | |   ___    __ _   _ __    _   _   _ __
@@ -395,7 +450,7 @@ jobs:
 
   upload:
     runs-on: ubuntu-16.04
-    needs: [ lnx32, lnx64, osx, win ]
+    needs: [ lnx32, lnx64, osx, win, android ]
     if: github.ref == 'refs/heads/master'
     steps:
       - uses: geekyeggo/delete-artifact@v1
@@ -427,6 +482,7 @@ jobs:
           find lnx32-packages/ -name '*' -type f -exec curl --fail -H "Authorization: Bearer ${{ secrets.LEGACY_AUTH }}" -X POST -H "Content-Type: multipart/form-data" -F "data=@{}" -F "platform=lnx32" -F"sha=${{ github.sha }}" ${{ secrets.LEGACY_UPLOAD_URL }} \;
           find osx-packages/ -name '*' -type f -exec curl --fail -H "Authorization: Bearer ${{ secrets.LEGACY_AUTH }}" -X POST -H "Content-Type: multipart/form-data" -F "data=@{}" -F "platform=osx64" -F"sha=${{ github.sha }}" ${{ secrets.LEGACY_UPLOAD_URL }} \;
           find win-packages/ -name '*' -type f -exec curl --fail -H "Authorization: Bearer ${{ secrets.LEGACY_AUTH }}" -X POST -H "Content-Type: multipart/form-data" -F "data=@{}" -F "platform=win32" -F"sha=${{ github.sha }}" ${{ secrets.LEGACY_UPLOAD_URL }} \;
+          find android-packages/ -name '*' -type f -exec curl --fail -H "Authorization: Bearer ${{ secrets.LEGACY_AUTH }}" -X POST -H "Content-Type: multipart/form-data" -F "data=@{}" -F "platform=andro" -F"sha=${{ github.sha }}" ${{ secrets.LEGACY_UPLOAD_URL }} \;
 
       - name: Discord notification
         if: ${{ steps.vars.outputs.hash_exists == '404' }}
@@ -499,6 +555,7 @@ jobs:
             lnx32-packages
             osx-packages
             win-packages
+            android-packages
 
       - uses: geekyeggo/delete-artifact@v1
         if: github.ref != 'refs/heads/master'
@@ -510,3 +567,4 @@ jobs:
             osx-mod
             win-mod
             raspberry_pi-mod
+            android-mod
