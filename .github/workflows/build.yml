@@ -178,16 +178,16 @@ jobs:
         with:
           name: android-mod
           path: |
-            ./app/build/intermediates/transforms/mergeJniLibs/release/0/lib/arm64-v8a/libcgame*.so
-            ./app/build/intermediates/transforms/mergeJniLibs/release/0/lib/arm64-v8a/libui*.so
+            app/build/intermediates/transforms/mergeJniLibs/release/0/lib/arm64-v8a/libcgame*.so
+            app/build/intermediates/transforms/mergeJniLibs/release/0/lib/arm64-v8a/libui*.so
 
       - name: Upload armeabi-v7a
         uses: actions/upload-artifact@v2
         with:
           name: android-mod
           path: |
-            ./app/build/intermediates/transforms/mergeJniLibs/release/0/lib/armeabi-v7a/libcgame*.so
-            ./app/build/intermediates/transforms/mergeJniLibs/release/0/lib/armeabi-v7a/libui*.so
+            app/build/intermediates/transforms/mergeJniLibs/release/0/lib/armeabi-v7a/libcgame*.so
+            app/build/intermediates/transforms/mergeJniLibs/release/0/lib/armeabi-v7a/libui*.so
 
 #   __  __                                                          _
 #  |  \/  |                                                        | |
@@ -425,13 +425,23 @@ jobs:
           source ~/.bashrc
           chmod -R 775 $ANDROID_NDK_HOME
           echo "cmake.dir=/usr/local/" | tee -a local.properties
-          ./gradlew clean assembleDebug
+          ./gradlew clean assembleRelease
           ls -R
 
-#      - uses: actions/upload-artifact@v2
-#        with:
-#          name: android-packages
-#          path: |
+      - name: Sign app APK
+        uses: r0adkll/sign-android-release@v1
+        id: sign_app
+        with:
+          releaseDirectory: app/build/outputs/apk/release
+          signingKeyBase64: ${{ secrets.SIGNING_KEY }}
+          alias: ${{ secrets.ALIAS }}
+          keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
+          keyPassword: ${{ secrets.KEY_PASSWORD }}
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: android-packages
+          path: ${{steps.sign_app.outputs.signedReleaseFile}}
 
 #   _    _           _                       _                         _      _____   _
 #  | |  | |         | |                     | |                       | |    / ____| | |
