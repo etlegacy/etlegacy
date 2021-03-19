@@ -2295,7 +2295,7 @@ char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 #endif
 
 #ifdef FEATURE_PRESTIGE
-	if (g_prestige.integer)
+	if (g_prestige.integer && g_gametype.integer != GT_WOLF_CAMPAIGN && g_gametype.integer != GT_WOLF_STOPWATCH && g_gametype.integer != GT_WOLF_LMS)
 	{
 		int i;
 
@@ -2306,8 +2306,8 @@ char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 			G_SetPlayerSkill(client, i);
 		}
 	}
-	else
 #endif
+
 	if (firstTime && g_xpSaver.integer && g_gametype.integer == GT_WOLF_CAMPAIGN)
 	{
 		int i;
@@ -3187,8 +3187,8 @@ void ClientDisconnect(int clientNum)
 	{
 		G_SetClientPrestige(ent->client, qfalse);
 	}
-	else
 #endif
+
 	if (g_xpSaver.integer && g_gametype.integer == GT_WOLF_CAMPAIGN && !level.intermissiontime)
 	{
 		G_XPSaver_Store(ent->client);
