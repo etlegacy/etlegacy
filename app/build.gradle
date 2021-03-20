@@ -47,7 +47,7 @@ android {
 
     signingConfigs {
         debug {
-            storeFile file('.,/etlkey.jks')
+            storeFile file('../etlkey.jks')
             keyAlias 'key0'
             storePassword 'etlegacy'
             keyPassword 'etlegacy'
