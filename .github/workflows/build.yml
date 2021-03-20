@@ -425,7 +425,7 @@ jobs:
           source ~/.bashrc
           chmod -R 775 $ANDROID_NDK_HOME
           echo "cmake.dir=/usr/local/" | tee -a local.properties
-          ./gradlew clean assembleRelease
+          ./gradlew clean assembleDebug
           ls -R
 
       - name: Sign app APK
