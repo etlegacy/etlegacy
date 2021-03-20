@@ -468,7 +468,7 @@ void RB_TakeScreenshotTGA(int x, int y, int width, int height, const char *fileN
 	memcount = linelen * height;
 
 	// gamma correct
-	if (glConfig.deviceSupportsGamma)
+	if (glConfig.deviceSupportsGamma && !tr.gammaProgramUsed)
 	{
 		R_GammaCorrect(allbuf + offset, memcount);
 	}
@@ -496,7 +496,7 @@ void RB_TakeScreenshotJPEG(int x, int y, int width, int height, char *fileName)
 	memcount = (width * 3 + padlen) * height;
 
 	// gamma correct
-	if (glConfig.deviceSupportsGamma)
+	if (glConfig.deviceSupportsGamma && !tr.gammaProgramUsed)
 	{
 		R_GammaCorrect(buffer + offset, memcount);
 	}
@@ -524,7 +524,7 @@ void RB_TakeScreenshotPNG(int x, int y, int width, int height, char *fileName)
 	memcount = (width * 3 + padlen) * height;
 
 	// gamma correct
-	if (glConfig.deviceSupportsGamma)
+	if (glConfig.deviceSupportsGamma && !tr.gammaProgramUsed)
 	{
 		R_GammaCorrect(buffer + offset, memcount);
 	}
@@ -658,7 +658,7 @@ const void *RB_TakeVideoFrameCmd(const void *data)
 	memcount = padwidth * cmd->height;
 
 	// gamma correct
-	if (glConfig.deviceSupportsGamma)
+	if (glConfig.deviceSupportsGamma && !tr.gammaProgramUsed)
 	{
 		R_GammaCorrect(cBuf, memcount);
 	}
@@ -759,7 +759,7 @@ void R_LevelShot(void)
 	}
 
 	// gamma correct
-	if (glConfig.deviceSupportsGamma)
+	if (glConfig.deviceSupportsGamma && !tr.gammaProgramUsed)
 	{
 		R_GammaCorrect(buffer + 18, 128 * 128 * 3);
 	}
@@ -1194,6 +1194,8 @@ void R_Init(void)
 
 	InitOpenGL();
 
+	R_InitGamma();
+
 	R_InitImages();
 
 	R_InitShaders();
@@ -1203,8 +1205,6 @@ void R_Init(void)
 	R_ModelInit();
 
 	R_InitFreeType();
-
-	R_InitGamma();
 
 	err = glGetError();
 	if (err != GL_NO_ERROR)
