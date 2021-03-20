@@ -45,6 +45,15 @@ android {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
 
+    signingConfigs {
+        debug {
+            storeFile file('.,/etlkey.jks')
+            keyAlias 'key0'
+            storePassword 'etlegacy'
+            keyPassword 'etlegacy'
+        }
+    }
+
     buildTypes {
         debug {
             signingConfig signingConfigs.debug
