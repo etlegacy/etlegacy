@@ -236,7 +236,7 @@ const char *UI_DownloadInfo(const char *downloadName)
 	static int  tleIndex = 0;
 	char        dlSizeBuf[64], totalSizeBuf[64], xferRateBuf[64], dlTimeBuf[64];
 	int         downloadSize, downloadCount, downloadTime;
-	char *dlText, *etaText, *xferText;
+	const char *dlText, *etaText, *xferText;
 	const char  *s, *ds;
 
 	dlText = __("Downloading:");

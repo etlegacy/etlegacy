@@ -532,6 +532,20 @@ typedef struct
 	const char *modDescr;
 } modInfo_t;
 
+typedef struct
+{
+	const char *path;
+	qboolean file;
+} demoItem_t;
+
+typedef struct
+{
+	char path[MAX_OSPATH];
+	demoItem_t items[MAX_DEMOS];
+	unsigned int count;
+	unsigned int index;
+} demoList_t;
+
 /**
  * @struct uiInfo_s
  * @brief
@@ -590,9 +604,13 @@ typedef struct
 	int modCount;
 	int modIndex;
 
+	/*
+	const char demoPath[MAX_QPATH]
 	const char *demoList[MAX_DEMOS];
 	int demoCount;
 	int demoIndex;
+	*/
+	demoList_t demos;
 
 	const char *movieList[MAX_MOVIES];
 	int movieCount;

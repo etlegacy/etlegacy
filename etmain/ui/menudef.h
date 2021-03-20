@@ -102,7 +102,7 @@
 #define FEEDER_PLAYER_LIST          0x07    // players
 #define FEEDER_TEAM_LIST            0x08    // team members for team voting
 #define FEEDER_MODS                 0x09    // team members for team voting
-#define FEEDER_DEMOS                0x0a    // team members for team voting
+#define FEEDER_DEMOS                0x0a    // list of demos in the current directory
 #define FEEDER_SCOREBOARD           0x0b    // team members for team voting
 #define FEEDER_Q3HEADS              0x0c    // model heads
 #define FEEDER_SERVERSTATUS         0x0d    // server status
