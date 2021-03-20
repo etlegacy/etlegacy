@@ -984,11 +984,13 @@ const char *CG_Argv(int arg)
  */
 char *CG_generateFilename(void)
 {
-	char       prefix[MAX_QPATH];
-	qtime_t    ct;
-	const char *pszServerInfo = CG_ConfigString(CS_SERVERINFO);
+	static char fullFilename[MAX_OSPATH];
+	char        prefix[MAX_QPATH];
+	qtime_t     ct;
+	const char  *pszServerInfo = CG_ConfigString(CS_SERVERINFO);
 
 	trap_RealTime(&ct);
+	fullFilename[0] = '\0';
 	prefix[0] = '\0';
 
 	if (cg_autoFolders.integer)
@@ -996,7 +998,7 @@ char *CG_generateFilename(void)
 		Com_sprintf(prefix, sizeof(prefix), "%d-%02d/", 1900 + ct.tm_year, ct.tm_mon + 1);
 	}
 
-	return(va("%s%d-%02d-%02d-%02d%02d%02d-%s%s", prefix,
+	Com_sprintf(fullFilename, sizeof(fullFilename), "%s%d-%02d-%02d-%02d%02d%02d-%s%s", prefix,
 	          1900 + ct.tm_year, ct.tm_mon + 1, ct.tm_mday,
 	          ct.tm_hour, ct.tm_min, ct.tm_sec,
 	          Info_ValueForKey(pszServerInfo, "mapname"),
@@ -1007,7 +1009,9 @@ char *CG_generateFilename(void)
 #ifdef FEATURE_MULTIVIEW
 	          : "-MVD"
 #endif
-	          ));
+	          );
+
+	return fullFilename;
 }
 
 /**

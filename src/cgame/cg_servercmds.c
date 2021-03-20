@@ -2849,13 +2849,10 @@ void CG_dumpStats(void)
 	s    = va("^3>>> %s: ^2%s\n\n", CG_TranslateString("Map"), Info_ValueForKey(info, "mapname"));
 
 	trap_RealTime(&ct);
-	// /me holds breath (using circular va() buffer)
 	if (cgs.dumpStatsFile == 0)
 	{
 		fDoScores             = qtrue;
-		cgs.dumpStatsFileName = va("stats/%d.%02d.%02d/%02d%02d%02d.txt",
-		                           1900 + ct.tm_year, ct.tm_mon + 1, ct.tm_mday,
-		                           ct.tm_hour, ct.tm_min, ct.tm_sec);
+		cgs.dumpStatsFileName = va("stats/%s.txt", CG_generateFilename());
 	}
 
 	if (cgs.dumpStatsFile != 0)
