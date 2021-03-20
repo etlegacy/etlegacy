@@ -1468,6 +1468,9 @@ typedef struct
 	float inverseSawToothTable[FUNCTABLE_SIZE];
 
 	int allowCompress;                          ///< temp var used while parsing shader only
+
+	qboolean gammaProgramUsed;
+
 } trGlobals_t;
 
 extern backEndState_t backEnd;

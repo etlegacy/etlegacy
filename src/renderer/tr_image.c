@@ -1417,7 +1417,7 @@ void R_SetColorMappings(void)
 		s_intensitytable[i] = j;
 	}
 
-	if (glConfig.deviceSupportsGamma && !GLEW_ARB_fragment_program)
+	if (glConfig.deviceSupportsGamma && !tr.gammaProgramUsed)
 	{
 		ri.GLimp_SetGamma(s_gammatable, s_gammatable, s_gammatable);
 	}

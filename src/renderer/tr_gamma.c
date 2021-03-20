@@ -211,6 +211,7 @@ void R_InitGamma(void)
 
 	Com_Memset(&gammaProgram, 0, sizeof(shaderProgram_t));
 	R_BuildGammaProgram();
+	tr.gammaProgramUsed = qtrue;
 }
 
 /**
