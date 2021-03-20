@@ -4183,36 +4183,85 @@ static void UI_LoadMovies(void)
  */
 static void UI_LoadDemos(void)
 {
-	char demolist[30000];
+	char fileList[30000];
 	char demoExt[32];
-	char *demoname;
+	char path[MAX_OSPATH];
+	char *fileName;
+	int count = 0;
 
-	Com_sprintf(demoExt, sizeof(demoExt), "dm_%d", (int)(trap_Cvar_VariableValue("protocol")));
+	uiInfo.demos.count = 0;
+	// uiInfo.demos.index = 0;
 
-	uiInfo.demoCount = trap_FS_GetFileList("demos", demoExt, demolist, sizeof(demolist));
+	Com_sprintf(path, sizeof(path), "demos");
+	if (uiInfo.demos.path[0])
+	{
+		Q_strcat(path, sizeof(path), va("/%s", uiInfo.demos.path));
 
-	Com_sprintf(demoExt, sizeof(demoExt), ".dm_%d", (int)(trap_Cvar_VariableValue("protocol")));
+		// If we are already checking a subdirectory then show a parent path selector
+		uiInfo.demos.items[0].path = String_Alloc("^2..");
+		uiInfo.demos.items[0].file = qfalse;
+		uiInfo.demos.count++;
+	}
 
-	if (uiInfo.demoCount)
+	Com_DPrintf("Loading demos from path: %s\n", path);
+
+	// Load folder list
+	count = trap_FS_GetFileList(path, "/", fileList, sizeof(fileList));
+	if (count)
 	{
 		int    i;
 		size_t len;
 
-		if (uiInfo.demoCount > MAX_DEMOS)
+		if ((uiInfo.demos.count + count) > MAX_DEMOS)
 		{
-			uiInfo.demoCount = MAX_DEMOS;
+			count = MAX_DEMOS - uiInfo.demos.count;
 		}
-		demoname = demolist;
-		for (i = 0; i < uiInfo.demoCount; i++)
+
+		fileName = fileList;
+		for (i = 0; i < count; i++)
 		{
-			len = strlen(demoname);
-			if (!Q_stricmp(demoname +  len - strlen(demoExt), demoExt))
+			len = strlen(fileName);
+
+			// Skip . and .. and hidden folders in unix
+			if (len && fileName[0] != '.')
 			{
-				demoname[len - strlen(demoExt)] = '\0';
+				uiInfo.demos.items[uiInfo.demos.count].path = String_Alloc(va("^2%s", fileName));
+				uiInfo.demos.items[uiInfo.demos.count].file = qfalse;
+				uiInfo.demos.count++;
 			}
-			uiInfo.demoList[i] = String_Alloc(demoname);
-			demoname          += len + 1;
+
+			fileName += len + 1;
 		}
+	}
+
+	// Load file list
+	Com_sprintf(demoExt, sizeof(demoExt), "dm_%d", (int)(trap_Cvar_VariableValue("protocol")));
+	count = trap_FS_GetFileList(path, demoExt, fileList, sizeof(fileList));
+	Com_sprintf(demoExt, sizeof(demoExt), ".dm_%d", (int)(trap_Cvar_VariableValue("protocol")));
+
+	if (count)
+	{
+		int    i;
+		size_t len;
+
+		if ((uiInfo.demos.count + count) > MAX_DEMOS)
+		{
+			count = MAX_DEMOS - uiInfo.demos.count;
+		}
+		fileName = fileList;
+		for (i = 0; i < count; i++)
+		{
+			len = strlen(fileName);
+			if (!Q_stricmp(fileName + len - strlen(demoExt), demoExt))
+			{
+				fileName[len - strlen(demoExt)] = '\0';
+			}
+			uiInfo.demos.items[uiInfo.demos.count + i].path = String_Alloc(fileName);
+			uiInfo.demos.items[uiInfo.demos.count + i].file = qtrue;
+			fileName += len + 1;
+		}
+
+		uiInfo.demos.count += count;
 	}
 }
 
@@ -4362,6 +4411,25 @@ void UI_GLCustom()
 	trap_Cvar_Set("ui_glCustom", "1");
 }
 
+static const char *UI_GetDemoPath(qboolean prefix)
+{
+	static char path[MAX_OSPATH];
+	path[0] = '\0';
+
+	if (prefix)
+	{
+		Com_sprintf(path, sizeof(path), "demos/");
+	}
+
+	if (uiInfo.demos.path[0])
+	{
+		Q_strcat(path, sizeof(path), va("%s/", uiInfo.demos.path));
+	}
+
+	Q_strcat(path, sizeof(path), uiInfo.demos.items[uiInfo.demos.index].path);
+
+	return path;
+}
 
 /**
  * @brief UI_RunMenuScript
@@ -4509,6 +4577,8 @@ void UI_RunMenuScript(char **args)
 		}
 		else if (Q_stricmp(name, "LoadDemos") == 0)
 		{
+			// Reset the path
+			uiInfo.demos.path[0] = '\0';
 			UI_LoadDemos();
 		}
 		else if (Q_stricmp(name, "LoadMovies") == 0)
@@ -4534,16 +4604,47 @@ void UI_RunMenuScript(char **args)
 		}
 		else if (Q_stricmp(name, "RunDemo") == 0)
 		{
-			if (uiInfo.demoIndex >= 0 && uiInfo.demoIndex < uiInfo.demoCount)
+			if (uiInfo.demos.index >= 0 && uiInfo.demos.index < uiInfo.demos.count)
 			{
-				trap_Cmd_ExecuteText(EXEC_APPEND, va("demo \"%s\"\n", uiInfo.demoList[uiInfo.demoIndex]));
+				// Is a folder selector
+				if (!uiInfo.demos.items[uiInfo.demos.index].file)
+				{
+					// is a parent path?
+					if (!strcmp(&uiInfo.demos.items[uiInfo.demos.index].path[2], ".."))
+					{
+						char *last = strrchr(uiInfo.demos.path, '/');
+						if (last)
+						{
+							last[0] = '\0';
+						}
+						else
+						{
+							uiInfo.demos.path[0] = '\0';
+						}
+					}
+					else if (uiInfo.demos.path[0])
+					{
+						Q_strcat(uiInfo.demos.path, sizeof(uiInfo.demos.path),
+							va("/%s", &uiInfo.demos.items[uiInfo.demos.index].path[2]));
+					}
+					else
+					{
+						Com_sprintf(uiInfo.demos.path, sizeof(uiInfo.demos.path),
+							"%s", &uiInfo.demos.items[uiInfo.demos.index].path[2]);
+					}
+					UI_LoadDemos();
+				}
+				else
+				{
+					trap_Cmd_ExecuteText(EXEC_APPEND, va("demo \"%s\"\n", UI_GetDemoPath(qfalse)));
+				}
 			}
 		}
 		else if (Q_stricmp(name, "deleteDemo") == 0)
 		{
-			if (uiInfo.demoIndex >= 0 && uiInfo.demoIndex < uiInfo.demoCount)
+			if (uiInfo.demos.index >= 0 && uiInfo.demos.index < uiInfo.demos.count && uiInfo.demos.items[uiInfo.demos.index].file)
 			{
-				trap_FS_Delete(va("demos/%s.dm_%d", uiInfo.demoList[uiInfo.demoIndex], (int)(trap_Cvar_VariableValue("protocol"))));
+				trap_FS_Delete(va("%s.dm_%d", UI_GetDemoPath(qtrue), (int)(trap_Cvar_VariableValue("protocol"))));
 			}
 		}
 		else if (Q_stricmp(name, "closeJoin") == 0)
@@ -6970,7 +7071,7 @@ static int UI_FeederCount(int feederID)
 	case FEEDER_MODS:
 		return uiInfo.modCount;
 	case FEEDER_DEMOS:
-		return uiInfo.demoCount;
+		return uiInfo.demos.count;
 	default:
 		return 0;
 	}
@@ -7507,9 +7608,9 @@ const char *UI_FeederItemText(int feederID, int index, int column, qhandle_t *ha
 		}
 		break;
 	case FEEDER_DEMOS:
-		if (index >= 0 && index < uiInfo.demoCount)
+		if (index >= 0 && index < uiInfo.demos.count)
 		{
-			return uiInfo.demoList[index];
+			return uiInfo.demos.items[index].path;
 		}
 		break;
 	case FEEDER_PROFILES:
@@ -7787,7 +7888,7 @@ static void UI_FeederSelection(int feederID, int index)
 		uiInfo.previewMovie = -1;
 		break;
 	case FEEDER_DEMOS:
-		uiInfo.demoIndex = index;
+		uiInfo.demos.index = index;
 		break;
 	case FEEDER_PROFILES:
 		uiInfo.profileIndex = index;
@@ -8156,6 +8257,8 @@ void UI_Init(int etLegacyClient, int clientVersion)
 	{
 		uiInfo.uiDC.glconfig.windowAspect = (float)uiInfo.uiDC.glconfig.vidWidth / (float)uiInfo.uiDC.glconfig.vidHeight;
 	}
+
+	Com_Memset(&uiInfo.demos, 0, sizeof(uiInfo.demos));
 
 	//UI_Load();
 	uiInfo.uiDC.registerShaderNoMip   = &trap_R_RegisterShaderNoMip;
