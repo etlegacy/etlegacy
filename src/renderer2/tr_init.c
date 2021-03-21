@@ -753,6 +753,12 @@ void R_ScreenShot_f(void)
 
 	ssFormat_t format = r_screenshotFormat->integer;
 
+	// Backwards compatibility
+	if (!Q_stricmp(ri.Cmd_Argv(0), "screenshotJPEG"))
+	{
+		format = SSF_JPEG;
+	}
+
 	switch (format)
 	{
 		case SSF_TGA:
@@ -1644,6 +1650,7 @@ void R_Register(void)
 	ri.Cmd_AddSystemCommand("fbolist", R_FBOList_f, "Prints the lists of frame buffer objects.", NULL);
 	ri.Cmd_AddSystemCommand("vbolist", R_VBOList_f, "Prints the lists of current vertex buffer objects", NULL);
 	ri.Cmd_AddSystemCommand("screenshot", R_ScreenShot_f, "Takes a screenshot of current frame.", NULL);
+	ri.Cmd_AddSystemCommand("screenshotJPEG", R_ScreenShot_f, "Take a JPEG screenshot of current frame", NULL);
 	ri.Cmd_AddSystemCommand("gfxinfo", GfxInfo_f, "Prints GFX info of current system.", NULL);
 	//ri.Cmd_AddSystemCommand("generatemtr", R_GenerateMaterialFile_f, "Generate material file", NULL);
 	ri.Cmd_AddSystemCommand("buildcubemaps", R_BuildCubeMaps_f, "Builds cubemaps for the current loaded map.", NULL);
@@ -1767,6 +1774,7 @@ void RE_Shutdown(qboolean destroyWindow)
 
 	ri.Cmd_RemoveSystemCommand("modellist");
 	ri.Cmd_RemoveSystemCommand("screenshot");
+	ri.Cmd_RemoveSystemCommand("screenshotJPEG");
 	ri.Cmd_RemoveSystemCommand("imagelist");
 	ri.Cmd_RemoveSystemCommand("shaderlist");
 	ri.Cmd_RemoveSystemCommand("shaderexp");

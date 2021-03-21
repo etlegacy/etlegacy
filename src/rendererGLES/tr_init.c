@@ -789,6 +789,12 @@ void R_ScreenShot_f(void)
 
 	ssFormat_t format = r_screenshotFormat->integer;
 
+	// Backwards compatibility
+	if (!Q_stricmp(ri.Cmd_Argv(0), "screenshotJPEG"))
+	{
+		format = SSF_JPEG;
+	}
+
 	switch (format)
 	{
 		case SSF_TGA:
@@ -1122,6 +1128,7 @@ void R_Register(void)
 	ri.Cmd_AddSystemCommand("skinlist", R_SkinList_f, "Print out the list of skins", NULL);
 	ri.Cmd_AddSystemCommand("modellist", R_Modellist_f, "Print out the list of loaded models", NULL);
 	ri.Cmd_AddSystemCommand("screenshot", R_ScreenShot_f, "Take a screenshot of current frame", NULL);
+	ri.Cmd_AddSystemCommand("screenshotJPEG", R_ScreenShot_f, "Take a JPEG screenshot of current frame", NULL);
 	ri.Cmd_AddSystemCommand("gfxinfo", GfxInfo_f, "Print GFX info of current system", NULL);
 	ri.Cmd_AddSystemCommand("taginfo", R_TagInfo_f, "Print the list of loaded tags", NULL);
 }
@@ -1229,6 +1236,7 @@ void RE_Shutdown(qboolean destroyWindow)
 	ri.Cmd_RemoveSystemCommand("skinlist");
 	ri.Cmd_RemoveSystemCommand("modellist");
 	ri.Cmd_RemoveSystemCommand("screenshot");
+	ri.Cmd_RemoveSystemCommand("screenshotJPEG");
 	ri.Cmd_RemoveSystemCommand("gfxinfo");
 	ri.Cmd_RemoveSystemCommand("taginfo");
 
