@@ -943,9 +943,9 @@ int G_Nextmap_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2,
 				// !nextmap nor nextcampaignvotes. Besides we don't want to store
 				// mapstats of an unfinished map or spend resources at generating
 				// playerstats
-				// LogExit( "Nextmap vote passed" );
+				// G_LogExit( "Nextmap vote passed" );
 				// - There is a flag for so let the users decide
-				//   Some log parsers require LogExit
+				//   Some log parsers require G_LogExit
 				AP("chat \"^3*** Nextmap vote passed - vote a new map! ***\"");
 				G_LogExit("Nextmap vote passed");
 			}
