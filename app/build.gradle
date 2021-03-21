@@ -13,11 +13,11 @@ versionberg {
     // Increase when you add functionality in a backwards-compatible manner (default value is 0)
     minor 77
     // Increase when you make backwards-compatible bug fixes (default value is 0)
-    patch 0
+    patch 1
     // default is ${commitCount}, uncomment to use a custom build number
     // build 2
     // Default version name template is '${major}.${minor}.${patch}.${build}'
-    nameTemplate '${major}.${minor}-${commitCount}-${commitSha}'
+    nameTemplate '${major}.${minor}.${patch}-${commitCount}-${commitSha}'
 }
 
 android {
@@ -30,7 +30,7 @@ android {
         targetSdkVersion 26
         versionCode 1
         versionName versionberg.name
-        setProperty("archivesBaseName", "ETLegacy v$versionName")
+        setProperty("archivesBaseName", "etlegacy-v$versionName")
         externalNativeBuild {
             cmake {
                 arguments "-DCROSS_COMPILE32=OFF", "-DFEATURE_RENDERER_GLES=ON", "-DBUILD_SERVER=OFF", "-DINSTALL_EXTRA=OFF","-DARM=ON" , "-DCMAKE_BUILD_TYPE=Release", "-DBUNDLED_LIBS=OFF", "-DFEATURE_LUA=OFF", "-DFEATURE_OPENAL=OFF", "-DRENDERER_DYNAMIC=OFF", "-DFEATURE_FREETYPE=OFF", "-DFEATURE_THEORA=OFF", "-DFEATURE_SSL=OFF"
