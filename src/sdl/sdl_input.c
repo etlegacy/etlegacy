@@ -37,6 +37,9 @@
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
+#ifdef __ANDROID__
+#include <jni.h>
+#endif
 
 #include "../client/client.h"
 #include "../sys/sys_local.h"
@@ -588,11 +591,16 @@ static void IN_GobbleMotionEvents(void)
 static void IN_GrabMouse(qboolean grab, qboolean relative)
 {
 	static qboolean mouse_grabbed   = qfalse, mouse_relative = qfalse;
+#if __ANDROID_API__ >= 23
 	int             relative_result = 0;
+#endif
 
 	if (relative == !mouse_relative)
 	{
 		SDL_ShowCursor(!relative);
+#if __ANDROID_API__ >= 23
+		// On Android Phones with API <= 23 this is causing App to close since it could not
+		// set relative mouse location (Mouse location is always at top left side of screen)
 		if ((relative_result = SDL_SetRelativeMouseMode((SDL_bool)relative)) != 0)
 		{
 			// FIXME: this happens on some systems (IR4)
@@ -605,6 +613,7 @@ static void IN_GrabMouse(qboolean grab, qboolean relative)
 				Com_Error(ERR_FATAL, "Setting relative mouse location fails: %s\n", SDL_GetError());
 			}
 		}
+#endif
 		mouse_relative = relative;
 	}
 
@@ -1366,6 +1375,42 @@ void IN_Frame(void)
 	// Get the timestamp to give the next frame's input events (not the ones we're gathering right now, though)
 	int start = Sys_Milliseconds();
 
+#ifdef __ANDROID__
+
+	JNIEnv *env = (JNIEnv*) SDL_AndroidGetJNIEnv();
+
+	if (env == NULL)
+		return;
+
+	jobject activity = (jobject)SDL_AndroidGetActivity();
+
+	if (activity == NULL)
+		return;
+
+	jclass clazz = (*env)->GetObjectClass(env, activity);
+
+	if (clazz == NULL)
+		return;
+
+	jfieldID f_id = (*env)->GetStaticFieldID(env, clazz, "UiMenu", "Z");
+	qboolean f_boolean = (*env)->GetStaticBooleanField(env, clazz, f_id);
+
+	if (cls.state == CA_ACTIVE)
+	{
+		if (f_boolean != qtrue)
+			(*env)->SetStaticBooleanField(env, clazz, f_id, qtrue);
+	}
+	else
+	{
+		if (f_boolean != qfalse)
+			(*env)->SetStaticBooleanField(env, clazz, f_id, qfalse);
+	}
+
+	(*env)->DeleteLocalRef(env, clazz);
+	(*env)->DeleteLocalRef(env, activity);
+
+#endif // __ANDROID__
+
 	if (!cls.glconfig.isFullscreen && (Key_GetCatcher() & KEYCATCH_CONSOLE))
 	{
 		// Console is down in windowed mode
@@ -1433,6 +1478,15 @@ void IN_Init(void)
 	mainScreen = (SDL_Window *)GLimp_MainWindow();
 
 	//Com_Printf("\n------- Input Initialization -------\n");
+
+
+#ifdef __ANDROID__
+	// This set mouse input and touch to be handled separately
+	// SDL_SetHint(SDL_HINT_ANDROID_SEPARATE_MOUSE_AND_TOUCH, "1");
+	// This has been removed and replaced with those bellow in SDL 2.0.10
+	SDL_SetHint(SDL_HINT_MOUSE_TOUCH_EVENTS, "0");
+	SDL_SetHint(SDL_HINT_TOUCH_MOUSE_EVENTS, "1");
+#endif
 
 	in_keyboardDebug = Cvar_Get("in_keyboardDebug", "0", CVAR_TEMP);
 

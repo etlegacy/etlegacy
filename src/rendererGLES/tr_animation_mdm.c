@@ -1871,6 +1871,7 @@ void RB_MDM_SurfaceAnim(mdmSurface_t *surface)
 			LocalAddScaledMatrixTransformVectorTranslate(w->offset, w->boneWeight, bone->matrix, bone->translation, tempVert);
 		}
 
+
 		LocalMatrixTransformVector(v->normal, bones[v->weights[0].boneIndex].matrix, tempNormal);
 
 		tess.texCoords[baseVertex + j][0][0] = v->texCoords[0];

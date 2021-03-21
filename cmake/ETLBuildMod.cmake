@@ -9,86 +9,126 @@ check_library_exists(m pow "" LIBM)
 #
 # cgame
 #
-add_library(cgame${LIB_SUFFIX}${ARCH} MODULE ${CGAME_SRC})
-set_target_properties(cgame${LIB_SUFFIX}${ARCH}
-	PROPERTIES
-	PREFIX ""
-	LIBRARY_OUTPUT_DIRECTORY "${MODNAME}"
-	LIBRARY_OUTPUT_DIRECTORY_DEBUG "${MODNAME}"
-	LIBRARY_OUTPUT_DIRECTORY_RELEASE "${MODNAME}"
-)
-target_compile_definitions(cgame${LIB_SUFFIX}${ARCH} PRIVATE CGAMEDLL=1 MODLIB=1)
+if(NOT ANDROID)
+	add_library(cgame${LIB_SUFFIX}${ARCH} MODULE ${CGAME_SRC})
+	set_target_properties(cgame${LIB_SUFFIX}${ARCH}
+			PROPERTIES
+			PREFIX ""
+			LIBRARY_OUTPUT_DIRECTORY "${MODNAME}"
+			LIBRARY_OUTPUT_DIRECTORY_DEBUG "${MODNAME}"
+			LIBRARY_OUTPUT_DIRECTORY_RELEASE "${MODNAME}"
+			)
+	target_compile_definitions(cgame${LIB_SUFFIX}${ARCH} PRIVATE CGAMEDLL=1 MODLIB=1)
 
-if(LIBM)
-	target_link_libraries(cgame${LIB_SUFFIX}${ARCH} PRIVATE m)
+	if(LIBM)
+		target_link_libraries(cgame${LIB_SUFFIX}${ARCH} PRIVATE m)
+	endif()
+
+else()
+	add_library(libcgame${LIB_SUFFIX}${ARCH} MODULE ${CGAME_SRC})
+	set_target_properties(libcgame${LIB_SUFFIX}${ARCH}
+			PROPERTIES
+			PREFIX ""
+			LIBRARY_OUTPUT_DIRECTORY "${MODNAME}"
+			LIBRARY_OUTPUT_DIRECTORY_DEBUG "${MODNAME}"
+			LIBRARY_OUTPUT_DIRECTORY_RELEASE "${MODNAME}"
+			)
+	target_compile_definitions(libcgame${LIB_SUFFIX}${ARCH} PRIVATE CGAMEDLL=1 MODLIB=1)
+
+	if(LIBM)
+		target_link_libraries(libcgame${LIB_SUFFIX}${ARCH} PRIVATE m)
+	endif()
+
 endif()
 
 #
 # qagame
 #
-add_library(qagame${LIB_SUFFIX}${ARCH} MODULE ${QAGAME_SRC})
-if(FEATURE_LUASQL AND FEATURE_DBMS)
-	target_compile_definitions(qagame${LIB_SUFFIX}${ARCH} PRIVATE FEATURE_DBMS FEATURE_LUASQL)
+if(NOT ANDROID)
+	add_library(qagame${LIB_SUFFIX}${ARCH} MODULE ${QAGAME_SRC})
+	if(FEATURE_LUASQL AND FEATURE_DBMS)
+		target_compile_definitions(qagame${LIB_SUFFIX}${ARCH} PRIVATE FEATURE_DBMS FEATURE_LUASQL)
 
-	if(BUNDLED_SQLITE3)
-		add_dependencies(qagame${LIB_SUFFIX}${ARCH} bundled_sqlite3)
-		list(APPEND MOD_LIBRARIES ${SQLITE3_BUNDLED_LIBRARIES})
-		include_directories(SYSTEM ${SQLITE3_BUNDLED_INCLUDE_DIR})
-	else() # BUNDLED_SQLITE3
-		find_package(SQLite3 REQUIRED)
-		list(APPEND MOD_LIBRARIES ${SQLITE3_LIBRARY})
-		include_directories(SYSTEM ${SQLITE3_INCLUDE_DIR})
+		if(BUNDLED_SQLITE3)
+			add_dependencies(qagame${LIB_SUFFIX}${ARCH} bundled_sqlite3)
+			list(APPEND MOD_LIBRARIES ${SQLITE3_BUNDLED_LIBRARIES})
+			include_directories(SYSTEM ${SQLITE3_BUNDLED_INCLUDE_DIR})
+		else() # BUNDLED_SQLITE3
+			find_package(SQLite3 REQUIRED)
+			list(APPEND MOD_LIBRARIES ${SQLITE3_LIBRARY})
+			include_directories(SYSTEM ${SQLITE3_INCLUDE_DIR})
+		endif()
+
+		FILE(GLOB LUASQL_SRC
+			"src/luasql/luasql.c"
+			"src/luasql/luasql.h"
+			"src/luasql/ls_sqlite3.c"
+		)
+		set(QAGAME_SRC ${QAGAME_SRC} ${LUASQL_SRC})
 	endif()
 
-	FILE(GLOB LUASQL_SRC
-		"src/luasql/luasql.c"
-		"src/luasql/luasql.h"
-		"src/luasql/ls_sqlite3.c"
+	if(FEATURE_LUA)
+		if(BUNDLED_LUA)
+			add_dependencies(qagame${LIB_SUFFIX}${ARCH} bundled_lua)
+		endif(BUNDLED_LUA)
+		target_link_libraries(qagame${LIB_SUFFIX}${ARCH} ${MOD_LIBRARIES})
+	endif(FEATURE_LUA)
+
+
+
+	if(FEATURE_SERVERMDX)
+		target_compile_definitions(qagame${LIB_SUFFIX}${ARCH} PRIVATE FEATURE_SERVERMDX)
+	endif()
+
+
+	set_target_properties(qagame${LIB_SUFFIX}${ARCH}
+		PROPERTIES
+		# COMPILE_DEFINITIONS "${QAGAME_DEFINES}"
+		PREFIX ""
+		LIBRARY_OUTPUT_DIRECTORY "${MODNAME}"
+		LIBRARY_OUTPUT_DIRECTORY_DEBUG "${MODNAME}"
+		LIBRARY_OUTPUT_DIRECTORY_RELEASE "${MODNAME}"
+		RUNTIME_OUTPUT_DIRECTORY "${MODNAME}"
+		RUNTIME_OUTPUT_DIRECTORY_DEBUG "${MODNAME}"
+		RUNTIME_OUTPUT_DIRECTORY_RELEASE "${MODNAME}"
 	)
-	set(QAGAME_SRC ${QAGAME_SRC} ${LUASQL_SRC})
+	target_compile_definitions(qagame${LIB_SUFFIX}${ARCH} PRIVATE GAMEDLL=1 MODLIB=1)
+
 endif()
-
-if(FEATURE_LUA)
-	if(BUNDLED_LUA)
-		add_dependencies(qagame${LIB_SUFFIX}${ARCH} bundled_lua)
-	endif(BUNDLED_LUA)
-	target_link_libraries(qagame${LIB_SUFFIX}${ARCH} ${MOD_LIBRARIES})
-endif(FEATURE_LUA)
-
-
-
-if(FEATURE_SERVERMDX)
-	target_compile_definitions(qagame${LIB_SUFFIX}${ARCH} PRIVATE FEATURE_SERVERMDX)
-endif()
-
-set_target_properties(qagame${LIB_SUFFIX}${ARCH}
-	PROPERTIES
-	# COMPILE_DEFINITIONS "${QAGAME_DEFINES}"
-	PREFIX ""
-	LIBRARY_OUTPUT_DIRECTORY "${MODNAME}"
-	LIBRARY_OUTPUT_DIRECTORY_DEBUG "${MODNAME}"
-	LIBRARY_OUTPUT_DIRECTORY_RELEASE "${MODNAME}"
-	RUNTIME_OUTPUT_DIRECTORY "${MODNAME}"
-	RUNTIME_OUTPUT_DIRECTORY_DEBUG "${MODNAME}"
-	RUNTIME_OUTPUT_DIRECTORY_RELEASE "${MODNAME}"
-)
-target_compile_definitions(qagame${LIB_SUFFIX}${ARCH} PRIVATE GAMEDLL=1 MODLIB=1)
 
 #
 # ui
 #
-add_library(ui${LIB_SUFFIX}${ARCH} MODULE ${UI_SRC})
-set_target_properties(ui${LIB_SUFFIX}${ARCH}
-	PROPERTIES
-	PREFIX ""
-	LIBRARY_OUTPUT_DIRECTORY "${MODNAME}"
-	LIBRARY_OUTPUT_DIRECTORY_DEBUG "${MODNAME}"
-	LIBRARY_OUTPUT_DIRECTORY_RELEASE "${MODNAME}"
-)
-target_compile_definitions(ui${LIB_SUFFIX}${ARCH} PRIVATE UIDLL=1 MODLIB=1)
+if(NOT ANDROID)
+	add_library(ui${LIB_SUFFIX}${ARCH} MODULE ${UI_SRC})
+	set_target_properties(ui${LIB_SUFFIX}${ARCH}
+			PROPERTIES
+			PREFIX ""
+			LIBRARY_OUTPUT_DIRECTORY "${MODNAME}"
+			LIBRARY_OUTPUT_DIRECTORY_DEBUG "${MODNAME}"
+			LIBRARY_OUTPUT_DIRECTORY_RELEASE "${MODNAME}"
+			)
+	target_compile_definitions(ui${LIB_SUFFIX}${ARCH} PRIVATE UIDLL=1 MODLIB=1)
 
-if(LIBM)
-	target_link_libraries(ui${LIB_SUFFIX}${ARCH} PRIVATE m)
+	if(LIBM)
+		target_link_libraries(ui${LIB_SUFFIX}${ARCH} PRIVATE m)
+	endif()
+
+else()
+	add_library(libui${LIB_SUFFIX}${ARCH} MODULE ${UI_SRC})
+	set_target_properties(libui${LIB_SUFFIX}${ARCH}
+			PROPERTIES
+			PREFIX ""
+			LIBRARY_OUTPUT_DIRECTORY "${MODNAME}"
+			LIBRARY_OUTPUT_DIRECTORY_DEBUG "${MODNAME}"
+			LIBRARY_OUTPUT_DIRECTORY_RELEASE "${MODNAME}"
+			)
+	target_compile_definitions(libui${LIB_SUFFIX}${ARCH} PRIVATE UIDLL=1 MODLIB=1)
+
+	if(LIBM)
+		target_link_libraries(libui${LIB_SUFFIX}${ARCH} PRIVATE m)
+	endif()
+
 endif()
 
 # Build both arhitectures on older xcode versions
@@ -114,18 +154,20 @@ if(APPLE)
 endif()
 
 # install bins of cgame, ui and qgame
-if(BUILD_MOD_PK3)
-	install(TARGETS qagame${LIB_SUFFIX}${ARCH}
-		RUNTIME DESTINATION "${INSTALL_DEFAULT_MODDIR}/${MODNAME}"
-		LIBRARY DESTINATION "${INSTALL_DEFAULT_MODDIR}/${MODNAME}"
-		ARCHIVE DESTINATION "${INSTALL_DEFAULT_MODDIR}/${MODNAME}"
-	)
-else()
-	install(TARGETS cgame${LIB_SUFFIX}${ARCH} qagame${LIB_SUFFIX}${ARCH} ui${LIB_SUFFIX}${ARCH}
-		RUNTIME DESTINATION "${INSTALL_DEFAULT_MODDIR}/${MODNAME}"
-		LIBRARY DESTINATION "${INSTALL_DEFAULT_MODDIR}/${MODNAME}"
-		ARCHIVE DESTINATION "${INSTALL_DEFAULT_MODDIR}/${MODNAME}"
-	)
+if(NOT ANDROID)
+	if(BUILD_MOD_PK3)
+		install(TARGETS qagame${LIB_SUFFIX}${ARCH}
+			RUNTIME DESTINATION "${INSTALL_DEFAULT_MODDIR}/${MODNAME}"
+			LIBRARY DESTINATION "${INSTALL_DEFAULT_MODDIR}/${MODNAME}"
+			ARCHIVE DESTINATION "${INSTALL_DEFAULT_MODDIR}/${MODNAME}"
+		)
+	else()
+		install(TARGETS cgame${LIB_SUFFIX}${ARCH} qagame${LIB_SUFFIX}${ARCH} ui${LIB_SUFFIX}${ARCH}
+			RUNTIME DESTINATION "${INSTALL_DEFAULT_MODDIR}/${MODNAME}"
+			LIBRARY DESTINATION "${INSTALL_DEFAULT_MODDIR}/${MODNAME}"
+			ARCHIVE DESTINATION "${INSTALL_DEFAULT_MODDIR}/${MODNAME}"
+		)
+	endif()
 endif()
 
 #

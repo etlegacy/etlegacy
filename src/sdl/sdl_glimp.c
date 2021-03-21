@@ -889,8 +889,11 @@ static int GLimp_SetMode(glconfig_t *glConfig, int mode, qboolean fullscreen, qb
 		SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, samples ? 1 : 0);
 		SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, samples);
 
-		// SDL2 uses opengl by default, if we want opengl es we need to set this attribute
-		//SDL_GL_SetAttribute(SDL_GL_CONTEXT_EGL, 1);
+#ifdef __ANDROID__
+		// Android complained about E/libEGL: called unimplemented OpenGL ES API
+        SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 1);
+        SDL_GL_SetAttribute(SDL_GL_CONTEXT_EGL, 1);
+#endif
 
 		SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
@@ -1186,8 +1189,10 @@ success:
 		GLimp_Splash(glConfig);
 	}
 #else
+#ifndef __ANDROID__
 	// Display splash screen
 	GLimp_Splash(glConfig);
+#endif
 #endif
 
 	// This depends on SDL_INIT_VIDEO, hence having it here

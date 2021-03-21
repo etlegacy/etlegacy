@@ -337,6 +337,33 @@
 
 #endif
 
+//=============================================================== ANDROID ===
+
+#ifdef __ANDROID__
+
+#ifndef OS_STRING
+  #define OS_STRING "android"
+#endif
+#define ID_INLINE inline
+#define PATH_SEP '/'
+
+#if defined __arm__
+      #undef ARCH_STRING
+      #define ARCH_STRING "armeabi-v7a"
+#elif defined __aarch64__
+      #define ARCH_STRING "arm64-v8a"
+#endif
+
+#if __FLOAT_WORD_ORDER == __BIG_ENDIAN
+#define Q3_BIG_ENDIAN
+#else
+#define Q3_LITTLE_ENDIAN
+#endif
+
+#define DLL_EXT ".so"
+
+#endif
+
 //===========================================================================
 
 //catch missing defines in above blocks
