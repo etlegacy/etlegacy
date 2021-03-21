@@ -590,14 +590,22 @@ int cl_connectedToCheatServer;
 
 void CL_PurgeCache(void);
 
-static void CL_SetPurePaks(void)
+static void CL_SetPurePaks(qboolean referencedOnly)
 {
 	const char *s, *t;
 	char       *systemInfo = cl.gameState.stringData + cl.gameState.stringOffsets[CS_SYSTEMINFO];
-	// check pure server string
-	s = Info_ValueForKey(systemInfo, "sv_paks");
-	t = Info_ValueForKey(systemInfo, "sv_pakNames");
-	FS_PureServerSetLoadedPaks(s, t);
+
+	if (!referencedOnly)
+	{
+		// check pure server string
+		s = Info_ValueForKey(systemInfo, "sv_paks");
+		t = Info_ValueForKey(systemInfo, "sv_pakNames");
+		FS_PureServerSetLoadedPaks(s, t);
+	}
+	else
+	{
+		FS_PureServerSetLoadedPaks("", "");
+	}
 
 	s = Info_ValueForKey(systemInfo, "sv_referencedPaks");
 	t = Info_ValueForKey(systemInfo, "sv_referencedPakNames");
@@ -625,11 +633,9 @@ void CL_SystemInfoChanged(void)
 	// don't set any vars when playing a demo
 	if (clc.demoplaying)
 	{
-		// allow running demo in pure mode to simulate server environment
-		if (Cvar_VariableValue("sv_pure") != 0.f)
-		{
-			CL_SetPurePaks();
-		}
+		// allow running demo in pure mode to simulate server environment,
+		// but still setup the referenced packages for the container system to work
+		CL_SetPurePaks(Cvar_VariableIntegerValue("sv_pure") == 0);
 		return;
 	}
 
@@ -640,7 +646,7 @@ void CL_SystemInfoChanged(void)
 		Cvar_SetCheatState();
 	}
 
-	CL_SetPurePaks();
+	CL_SetPurePaks(qfalse);
 
 	gameSet = qfalse;
 	// scan through all the variables in the systeminfo and locally set cvars to match
@@ -812,7 +818,22 @@ void CL_ParseGamestate(msg_t *msg)
 
 	// This used to call CL_StartHunkUsers, but now we enter the download state before loading the
 	// cgame
-	Com_InitDownloads();
+	if (!clc.demoplaying)
+	{
+		Com_InitDownloads();
+	}
+	else
+	{
+		char missingFiles[MAX_TOKEN_CHARS] = { '\0' };
+		if (Cvar_VariableIntegerValue("sv_pure") != 0 && FS_ComparePaks(missingFiles, sizeof(missingFiles), qfalse))
+		{
+			Com_Error(ERR_DROP, "Missing required packages: %s", missingFiles);
+		}
+		else
+		{
+			CL_DownloadsComplete();
+		}
+	}
 
 	// make sure the game starts
 	Cvar_Set("cl_paused", "0");
