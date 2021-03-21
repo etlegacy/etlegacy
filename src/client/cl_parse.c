@@ -824,7 +824,15 @@ void CL_ParseGamestate(msg_t *msg)
 	}
 	else
 	{
-		CL_DownloadsComplete();
+		char missingFiles[MAX_TOKEN_CHARS] = { '\0' };
+		if (Cvar_VariableIntegerValue("sv_pure") != 0 && FS_ComparePaks(missingFiles, sizeof(missingFiles), qfalse))
+		{
+			Com_Error(ERR_DROP, "Missing required packages: %s", missingFiles);
+		}
+		else
+		{
+			CL_DownloadsComplete();
+		}
 	}
 
 	// make sure the game starts
