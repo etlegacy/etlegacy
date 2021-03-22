@@ -426,6 +426,8 @@ jobs:
           chmod -R 775 $ANDROID_NDK_HOME
           echo "cmake.dir=/usr/local/" | tee -a local.properties
           ./gradlew clean assembleDebug
+          echo "GIT_TAG=`echo $(git describe --tags --first-parent --abbrev=7)`" >> $GITHUB_ENV
+          cp app/build/outputs/apk/debug/etlegacy*.apk build/etlegacy-${GIT_TAG}
           ls -R
 
 #      - name: Sign app APK
