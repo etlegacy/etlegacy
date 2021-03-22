@@ -92,7 +92,7 @@ public class ETLMain extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        String etl_pak = "legacy_v2.77.pk3";
+        String etl_pak = "legacy_v2.77.1-257-g94837c3.pk3";
 
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
