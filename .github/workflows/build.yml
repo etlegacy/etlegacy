@@ -433,9 +433,8 @@ jobs:
           ls -R
 
       - name: Copy file over
-        working-directory: build/legacy
         run: |
-          cp app/build/outputs/apk/debug/etlegacy*.apk etlegacy-$GIT_TAG
+          cp app/build/outputs/apk/debug/etlegacy*.apk app/build/outputs/apk/debug/etlegacy-$GIT_TAG
 
 #      - name: Sign app APK
 #        uses: r0adkll/sign-android-release@v1
@@ -451,7 +450,7 @@ jobs:
         with:
           name: android-packages
 #          path: ${{steps.sign_app.outputs.signedReleaseFile}}
-          path: build/legacy/etlegacy*.apk
+          path: app/build/outputs/apk/debug/etlegacy-$GIT_TAG
 
 #   _    _           _                       _                         _      _____   _
 #  | |  | |         | |                     | |                       | |    / ____| | |
