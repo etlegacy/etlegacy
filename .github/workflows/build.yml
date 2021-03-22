@@ -402,7 +402,7 @@ jobs:
 
       - name: Setup GIT_TAG Env
         run: |
-          cd etlegacy && echo "GIT_TAG=`echo $(git describe --tags --always --first-parent --abbrev=7)`" >> $GITHUB_ENV
+          cd etlegacy && echo "GIT_TAG=`echo $(git describe --tags --always --abbrev=7)`" >> $GITHUB_ENV
 
       - name: Downloading NDK
         uses: actions/checkout@v2
