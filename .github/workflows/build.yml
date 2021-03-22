@@ -434,7 +434,7 @@ jobs:
 
       - name: Copy file over
         run: |
-          cp app/build/outputs/apk/debug/etlegacy*.apk app/build/outputs/apk/debug/etlegacy-$GIT_TAG.apk
+          mv app/build/outputs/apk/debug/etlegacy*.apk app/build/outputs/apk/debug/etlegacy-$GIT_TAG.apk
           ls app/build/outputs/apk/debug
 
 #      - name: Sign app APK
@@ -451,7 +451,7 @@ jobs:
         with:
           name: android-packages
 #          path: ${{steps.sign_app.outputs.signedReleaseFile}}
-          path: app/build/outputs/apk/debug/etlegacy-$GIT_TAG.apk
+          path: app/build/outputs/apk/debug/etlegacy*.apk
 
 #   _    _           _                       _                         _      _____   _
 #  | |  | |         | |                     | |                       | |    / ____| | |
