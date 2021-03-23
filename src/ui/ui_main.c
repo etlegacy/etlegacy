@@ -1302,6 +1302,11 @@ void UI_LoadMenus(const char *menuFile, qboolean reset)
 		trap_PC_AddGlobalDefine("ETLEGACY");
 	}
 
+#ifdef __ANDROID__
+	// Show the UI a bit differently on mobile devices
+	trap_PC_AddGlobalDefine("ANDROID");
+#endif
+
 	trap_PC_AddGlobalDefine(va("__WINDOW_WIDTH %f", (uiInfo.uiDC.glconfig.windowAspect / RATIO43) * 640));
 	trap_PC_AddGlobalDefine("__WINDOW_HEIGHT 480");
 
