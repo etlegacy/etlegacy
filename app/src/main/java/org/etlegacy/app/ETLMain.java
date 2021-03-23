@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.res.AssetManager;
 import android.content.res.Resources;
 import android.os.Bundle;
-import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -92,7 +91,18 @@ public class ETLMain extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        String etl_pak = "legacy_v2.77.1-257-g94837c3.pk3";
+        String etl_pak = new String();
+        AssetManager assManager = getApplicationContext().getAssets();
+
+        try {
+            for(String file: assManager.list("")) {
+                if(file.endsWith(".pk3")) {
+                    etl_pak += file;
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
@@ -110,7 +120,6 @@ public class ETLMain extends Activity {
         final File etl_etlegacy = new File(getExternalFilesDir(null), "etlegacy/legacy/".concat(etl_pak));
 
         if (!etl_etlegacy.exists()) {
-            AssetManager assManager = getApplicationContext().getAssets();
             InputStream is = null;
             try {
                 is = assManager.open(etl_pak);
