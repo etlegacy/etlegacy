@@ -319,7 +319,6 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
 
-        mLayout.requestFocus();
         SDLActivity.setWindowStyle(true);
 
         if (isAndroidTV() || isChromebook()) {
@@ -477,6 +476,12 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
     @Override
     public void onDoubleTap() {
 
+    }
+
+    @Override
+    public void superOnBackPressed() {
+        super.superOnBackPressed();
+        mLayout.requestFocus();
     }
 
     @Override
