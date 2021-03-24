@@ -2,6 +2,8 @@
 # Build Client
 #-----------------------------------------------------------------
 
+set(ETL_OUTPUT_DIR "")
+
 if(WIN32)
 	add_executable(etl WIN32 ${COMMON_SRC} ${CLIENT_SRC} ${PLATFORM_SRC} ${PLATFORM_CLIENT_SRC})
 elseif(APPLE)
@@ -29,7 +31,9 @@ elseif(APPLE)
 			MACOSX_BUNDLE_EXECUTABLE_NAME "etl"
 	)
 elseif(ANDROID)
-	add_library(libetl SHARED ${COMMON_SRC} ${CLIENT_SRC} ${PLATFORM_SRC} ${PLATFORM_CLIENT_SRC})
+	add_library(etl SHARED ${COMMON_SRC} ${CLIENT_SRC} ${PLATFORM_SRC} ${PLATFORM_CLIENT_SRC})
+	set_target_properties(etl PROPERTIES PREFIX "lib")
+	set(ETL_OUTPUT_DIR "legacy")
 else()
 	add_executable(etl ${COMMON_SRC} ${CLIENT_SRC} ${PLATFORM_SRC} ${PLATFORM_CLIENT_SRC})
 endif()
@@ -71,22 +75,11 @@ if(BUNDLED_OPENAL)
 	add_dependencies(etl bundled_openal)
 endif()
 
-if(NOT ANDROID)
-	target_link_libraries(etl
-		${CLIENT_LIBRARIES}
-		${SDL_LIBRARIES}
-		${OS_LIBRARIES} # Has to go after cURL and SDL
-	)
-else()
-	target_link_libraries(libetl
-			${CLIENT_LIBRARIES}
-			${SDL_LIBRARIES}
-			ifaddrs
-			ogg
-			vorbis
-			android
-			)
-endif()
+target_link_libraries(etl
+	${CLIENT_LIBRARIES}
+	${SDL_LIBRARIES}
+	${OS_LIBRARIES} # Has to go after cURL and SDL
+)
 
 if(FEATURE_WINDOWS_CONSOLE AND WIN32)
 	set(ETL_COMPILE_DEF "USE_ICON;USE_WINDOWS_CONSOLE")
@@ -94,30 +87,21 @@ else()
 	set(ETL_COMPILE_DEF "USE_ICON")
 endif()
 
-if(NOT ANDROID)
-	set_target_properties(etl PROPERTIES
-		COMPILE_DEFINITIONS "${ETL_COMPILE_DEF}"
-		RUNTIME_OUTPUT_DIRECTORY ""
-		RUNTIME_OUTPUT_DIRECTORY_DEBUG ""
-		RUNTIME_OUTPUT_DIRECTORY_RELEASE ""
-		MACOSX_BUNDLE_INFO_PLIST ${CMAKE_SOURCE_DIR}/misc/Info.plist
-	)
-else()
-	set_target_properties(libetl PROPERTIES
-			COMPILE_DEFINITIONS "${ETL_COMPILE_DEF}"
-			LIBRARY_OUTPUT_DIRECTORY "legacy"
-			LIBRARY_OUTPUT_DIRECTORY_DEBUG "legacy"
-			LIBRARY_OUTPUT_DIRECTORY_RELEASE "legacy"
-			)
-endif()
+set_target_properties(etl PROPERTIES
+	COMPILE_DEFINITIONS "${ETL_COMPILE_DEF}"
+	RUNTIME_OUTPUT_DIRECTORY "${ETL_OUTPUT_DIR}"
+	RUNTIME_OUTPUT_DIRECTORY_DEBUG "${ETL_OUTPUT_DIR}"
+	RUNTIME_OUTPUT_DIRECTORY_RELEASE "${ETL_OUTPUT_DIR}"
+	MACOSX_BUNDLE_INFO_PLIST ${CMAKE_SOURCE_DIR}/misc/Info.plist
+)
 
 if(MSVC AND NOT EXISTS ${CMAKE_CURRENT_BINARY_DIR}/etl.vcxproj.user)
 	configure_file(${PROJECT_SOURCE_DIR}/cmake/vs2013.vcxproj.user.in ${CMAKE_CURRENT_BINARY_DIR}/etl.vcxproj.user @ONLY)
 endif()
 
 if(NOT ANDROID)
-install(TARGETS etl
-	BUNDLE  DESTINATION "${INSTALL_DEFAULT_BINDIR}"
-	RUNTIME DESTINATION "${INSTALL_DEFAULT_BINDIR}"
-)
+	install(TARGETS etl
+		BUNDLE  DESTINATION "${INSTALL_DEFAULT_BINDIR}"
+		RUNTIME DESTINATION "${INSTALL_DEFAULT_BINDIR}"
+	)
 endif()
