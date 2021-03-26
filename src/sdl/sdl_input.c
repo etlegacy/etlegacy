@@ -548,6 +548,10 @@ static keyNum_t IN_TranslateSDLToQ3Key(SDL_Keysym *keysym, qboolean down)
 				break;
 			case SDL_SCANCODE_NONUSBACKSLASH: key = K_NONUSBACKSLASH;
 				break;
+#ifdef __ANDROID__
+			case SDL_SCANCODE_AC_BACK: key = K_ESCAPE;
+				break;
+#endif
 
 			default:
 				break;
@@ -1486,6 +1490,7 @@ void IN_Init(void)
 	// This has been removed and replaced with those bellow in SDL 2.0.10
 	SDL_SetHint(SDL_HINT_MOUSE_TOUCH_EVENTS, "0");
 	SDL_SetHint(SDL_HINT_TOUCH_MOUSE_EVENTS, "1");
+	SDL_SetHint(SDL_HINT_ANDROID_TRAP_BACK_BUTTON, "1");
 #endif
 
 	in_keyboardDebug = Cvar_Get("in_keyboardDebug", "0", CVAR_TEMP);
