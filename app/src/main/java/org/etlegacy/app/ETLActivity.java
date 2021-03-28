@@ -229,8 +229,8 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
                     btn_alternative.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            SDLActivity.onNativeKeyDown(36);
-                            SDLActivity.onNativeKeyUp(36);
+                            SDLActivity.onNativeKeyDown(43);
+                            SDLActivity.onNativeKeyUp(43);
                         }
                     });
 
@@ -319,7 +319,7 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
 
-        SDLActivity.setWindowStyle(true);
+        setWindowStyle(true);
 
         if (isAndroidTV() || isChromebook()) {
             Log.v("ETL", "AndroidTV / ChromeBook Detected, Display UI Disabled!");
