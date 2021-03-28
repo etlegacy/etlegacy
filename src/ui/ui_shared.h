@@ -107,6 +107,7 @@
 #define ART_FX_YELLOW       "menu/art/fx_yel"
 
 #define ASSET_GRADIENTBAR           "ui/assets/gradientbar2.tga"
+#define ASSET_GRADIENTROUND         "ui/assets/gradientround.tga"
 #define ASSET_SCROLLBAR             "ui/assets/scrollbar.tga"
 #define ASSET_SCROLLBAR_ARROWDOWN   "ui/assets/scrollbar_arrow_dwn_a.tga"
 #define ASSET_SCROLLBAR_ARROWUP     "ui/assets/scrollbar_arrow_up_a.tga"
@@ -407,6 +408,7 @@ typedef struct
 	fontHelper_t bg_loadscreenfont2;
 	qhandle_t cursor;
 	qhandle_t gradientBar;
+	qhandle_t gradientRound;
 	qhandle_t scrollBarArrowUp;
 	qhandle_t scrollBarArrowDown;
 	qhandle_t scrollBarArrowLeft;
@@ -496,13 +498,13 @@ typedef struct
 	void (*startLocalSound)(sfxHandle_t sfx, int channelNum);
 	qboolean (*ownerDrawHandleKey)(int ownerDraw, int flags, int *special, int key);
 	int (*feederCount)(int feederID);
-	const char *(*feederItemText)(int feederID, int index, int column, qhandle_t * handles, int *numhandles);
+	const char *(*feederItemText)(int feederID, int index, int column, qhandle_t *handles, int *numhandles);
 	const char *(*fileText)(const char *fileName);
 	qhandle_t (*feederItemImage)(int feederID, int index);
 	void (*feederSelection)(int feederID, int index);
 	qboolean (*feederSelectionClick)(itemDef_t *item);
 	void (*feederAddItem)(int feederID, const char *name, int index);
-	const char * (*translateString)(const char *string);
+	const char *(*translateString)(const char *string);
 	void (*checkAutoUpdate)(void);
 	void (*getAutoUpdate)(void);
 
@@ -516,8 +518,8 @@ typedef struct
 
 	void (*setBinding)(int keynum, const char *binding);
 	void (*executeText)(int exec_when, const char *text);
-	void (*Error)(int level, const char *error, ...) _attribute ((noreturn, format(printf, 2, 3)));
-	void (*Print)(const char *msg, ...) _attribute ((format(printf, 1, 2)));
+	void (*Error)(int level, const char *error, ...) _attribute((noreturn, format(printf, 2, 3)));
+	void (*Print)(const char *msg, ...) _attribute((format(printf, 1, 2)));
 	void (*Pause)(qboolean b);
 	int (*ownerDrawWidth)(int ownerDraw, float scale);
 	sfxHandle_t (*registerSound)(const char *name, qboolean compressed);
@@ -529,8 +531,8 @@ typedef struct
 	void (*runCinematicFrame)(int handle);
 
 	// campaign stuffs
-	const char * (*descriptionForCampaign)(void);
-	const char * (*nameForCampaign)(void);
+	const char *(*descriptionForCampaign)(void);
+	const char *(*nameForCampaign)(void);
 	void (*add2dPolys)(polyVert_t *verts, int numverts, qhandle_t hShader);
 	void (*updateScreen)(void);
 	void (*getHunkData)(int *hunkused, int *hunkexpected);
@@ -570,6 +572,7 @@ void Window_CloseCinematic(windowDef_t *window);
 void Window_Paint(Window *w, float fadeAmount, float fadeClamp, float fadeCycle);
 
 void GradientBar_Paint(rectDef_t *rect, vec4_t color);
+void GradientRound_Paint(float x, float y, float w, float h, vec4_t color);
 
 // Display
 void Init_Display(displayContextDef_t *dc);

@@ -3112,22 +3112,64 @@ static void CG_DrawFlashDamage(void)
 		return;
 	}
 
+	if (cg_bloodFlash.value <= 0.f)
+	{
+		return;
+	}
+
 	if (cg.v_dmg_time > cg.time)
 	{
-		vec4_t col      = { 0.2f, 0.f, 0.f, 0.f };
-		float  redFlash = Q_fabs(cg.v_dmg_pitch * ((cg.v_dmg_time - cg.time) / DAMAGE_TIME));
+		vec4_t col = { 0.2f, 0.f, 0.f, 0.f };
+		float  width;
 
-		// blend the entire screen red
-		if (redFlash > 5)
+		width = Ccg_WideX(SCREEN_WIDTH);
+
+		col[3] = (1 - (cg.time - cg.v_dmg_time) / DAMAGE_TIME) * Com_Clamp(0.f, 1.f, cg_bloodFlash.value);
+
+		if (cg.v_dmg_angle == -1.f) // all borders
 		{
-			redFlash = 5;
+			// horrible duplicate from differentes borders below
+			GradientRound_Paint(width * 0.125f, -SCREEN_HEIGHT * 0.125f, width * 0.75f, SCREEN_HEIGHT * 0.25f, col);
+			GradientRound_Paint(width - width * 0.33f, -SCREEN_HEIGHT * 0.33f, width * 0.66f, SCREEN_HEIGHT * 0.66f, col);
+			GradientRound_Paint(width - width * 0.125f, 0, width * 0.25f, SCREEN_HEIGHT, col);
+			GradientRound_Paint(width - width * 0.33f, SCREEN_HEIGHT - SCREEN_HEIGHT * 0.33f, width * 0.66f, SCREEN_HEIGHT * 0.66f, col);
+			GradientRound_Paint(width * 0.125f, SCREEN_HEIGHT - SCREEN_HEIGHT * 0.125f, width * 0.75f, SCREEN_HEIGHT * 0.25f, col);
+			GradientRound_Paint(-width * 0.33f, SCREEN_HEIGHT - SCREEN_HEIGHT * 0.33f, width * 0.66f, SCREEN_HEIGHT * 0.66f, col);
+			GradientRound_Paint(-width * 0.125f, 0, width * 0.25f, SCREEN_HEIGHT, col);
+			GradientRound_Paint(-width * 0.33f, -SCREEN_HEIGHT * 0.33f, width * 0.66f, SCREEN_HEIGHT * 0.66f, col);
 		}
-
-		col[3] = 0.7f * (redFlash / 5.0f) * ((cg_bloodFlash.value > 1.0f) ? 1.0f :
-		                                     (cg_bloodFlash.value < 0.0f) ? 0.0f :
-		                                     cg_bloodFlash.value);
-
-		CG_FillRect(0, 0, Ccg_WideX(SCREEN_WIDTH), SCREEN_HEIGHT, col);
+		else if (cg.v_dmg_angle < 30 || cg.v_dmg_angle >= 330)  // top
+		{
+			GradientRound_Paint(width * 0.125f, -SCREEN_HEIGHT * 0.125f, width * 0.75f, SCREEN_HEIGHT * 0.25f, col);
+		}
+		else if (/*cg.v_dmg_angle >= 30 &&*/ cg.v_dmg_angle < 60)   // top right corner
+		{
+			GradientRound_Paint(width - width * 0.33f, -SCREEN_HEIGHT * 0.33f, width * 0.66f, SCREEN_HEIGHT * 0.66f, col);
+		}
+		else if (cg.v_dmg_angle >= 60 && cg.v_dmg_angle < 120)  // right
+		{
+			GradientRound_Paint(width - width * 0.125f, 0, width * 0.25f, SCREEN_HEIGHT, col);
+		}
+		else if (cg.v_dmg_angle >= 120 && cg.v_dmg_angle < 150) // bottom right corner
+		{
+			GradientRound_Paint(width - width * 0.33f, SCREEN_HEIGHT - SCREEN_HEIGHT * 0.33f, width * 0.66f, SCREEN_HEIGHT * 0.66f, col);
+		}
+		else if (cg.v_dmg_angle >= 150 && cg.v_dmg_angle < 210) // bottom
+		{
+			GradientRound_Paint(width * 0.125f, SCREEN_HEIGHT - SCREEN_HEIGHT * 0.125f, width * 0.75f, SCREEN_HEIGHT * 0.25f, col);
+		}
+		else if (cg.v_dmg_angle >= 210 && cg.v_dmg_angle < 240) // bottom left corner
+		{
+			GradientRound_Paint(-width * 0.33f, SCREEN_HEIGHT - SCREEN_HEIGHT * 0.33f, width * 0.66f, SCREEN_HEIGHT * 0.66f, col);
+		}
+		else if (cg.v_dmg_angle >= 240 && cg.v_dmg_angle < 300) // left
+		{
+			GradientRound_Paint(-width * 0.125f, 0, width * 0.25f, SCREEN_HEIGHT, col);
+		}
+		else //if (cg.v_dmg_angle >= 300 && cg.v_dmg_angle < 330)   // top left corner
+		{
+			GradientRound_Paint(-width * 0.33f, -SCREEN_HEIGHT * 0.33f, width * 0.66f, SCREEN_HEIGHT * 0.66f, col);
+		}
 	}
 }
 
@@ -3760,12 +3802,13 @@ static void CG_Draw2D(void)
 	}
 #ifdef FEATURE_EDV
 	if (!cgs.demoCamera.renderingFreeCam && !cgs.demoCamera.renderingWeaponCam)
+#endif
 	{
 		CG_DrawFlashBlendBehindHUD();
+
+		// draw flash blends now
+		CG_DrawFlashBlend();
 	}
-#else
-	CG_DrawFlashBlendBehindHUD();
-#endif
 
 #ifdef FEATURE_EDV
 	if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR || cgs.demoCamera.renderingFreeCam || cgs.demoCamera.renderingWeaponCam)
@@ -3890,20 +3933,11 @@ static void CG_Draw2D(void)
 
 #ifdef FEATURE_EDV
 	if (!cgs.demoCamera.renderingFreeCam && !cgs.demoCamera.renderingWeaponCam)
+#endif
 	{
 		// window updates
 		CG_windowDraw();
-
-		// draw flash blends now
-		CG_DrawFlashBlend();
 	}
-#else
-	// window updates
-	CG_windowDraw();
-
-	// draw flash blends now
-	CG_DrawFlashBlend();
-#endif
 
 	CG_DrawDemoRecording();
 }

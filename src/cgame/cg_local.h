@@ -1303,6 +1303,7 @@ typedef struct
 	float v_dmg_time;
 	float v_dmg_pitch;
 	float v_dmg_roll;
+	float v_dmg_angle;
 
 	vec3_t kick_angles;                         ///< weapon kicks
 	vec3_t kick_origin;

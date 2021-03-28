@@ -535,8 +535,10 @@ static ID_INLINE int VectorCompareEpsilon(const vec3_t v1, const vec3_t v2, floa
 	d[1] = fabs(d[1]);
 	d[2] = fabs(d[2]);
 
-	if(d[0] > epsilon || d[1] > epsilon || d[2] > epsilon)
+	if (d[0] > epsilon || d[1] > epsilon || d[2] > epsilon)
+	{
 		return 0;
+	}
 
 	return 1;
 }

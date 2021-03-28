@@ -50,8 +50,6 @@ void CG_DamageFeedback(int yawByte, int pitchByte, int damage)
 	float        kick;
 	int          health = cg.snap->ps.stats[STAT_HEALTH];
 	float        scale;
-	vec3_t       dir;
-	vec3_t       angles;
 	int          slot;
 	viewDamage_t *vd;
 
@@ -69,14 +67,7 @@ void CG_DamageFeedback(int yawByte, int pitchByte, int damage)
 	}
 	kick = damage * scale;
 
-	if (kick < 5)
-	{
-		kick = 5;
-	}
-	if (kick > 10)
-	{
-		kick = 10;
-	}
+	Com_Clamp(5, 10, kick);
 
 	// find a free slot
 	for (slot = 0; slot < MAX_VIEWDAMAGE; slot++)
@@ -90,8 +81,8 @@ void CG_DamageFeedback(int yawByte, int pitchByte, int damage)
 	if (slot == MAX_VIEWDAMAGE)
 	{
 		return;     // no free slots, never override or splats will suddenly disappear
-
 	}
+
 	vd = &cg.viewDamage[slot];
 
 	// if yaw and pitch are both 255, make the damage always centered (falling, etc)
@@ -101,16 +92,17 @@ void CG_DamageFeedback(int yawByte, int pitchByte, int damage)
 		vd->damageY    = 0;
 		cg.v_dmg_roll  = 0;
 		cg.v_dmg_pitch = -kick;
+		cg.v_dmg_angle = -1;
 	}
 	else
 	{
-		float left, front, up, dist;
-		// positional
-		float pitch = pitchByte / 255.0f * 360;
-		float yaw   = yawByte / 255.0f * 360;
+		vec3_t dir;
+		vec3_t angles;
+		float  left, front, up;
 
-		angles[PITCH] = pitch;
-		angles[YAW]   = yaw;
+		// positional
+		angles[PITCH] = pitchByte / 255.0f * 360;
+		angles[YAW]   = yawByte / 255.0f * 360;
 		angles[ROLL]  = 0;
 
 		AngleVectors(angles, dir, NULL, NULL);
@@ -121,44 +113,22 @@ void CG_DamageFeedback(int yawByte, int pitchByte, int damage)
 		up    = DotProduct(dir, cg.refdef.viewaxis[2]);
 
 		dir[0] = front;
-		dir[1] = left;
-		dir[2] = 0;
-		dist   = VectorLength(dir);
-		if (dist < 0.1f)
-		{
-			dist = 0.1f;
-		}
+		dir[1] = -left;
+		dir[2] = up;
 
-		cg.v_dmg_roll = kick * left;
+		vectoangles(dir, angles);
 
+		cg.v_dmg_roll  = kick * left;
 		cg.v_dmg_pitch = -kick * front;
+		cg.v_dmg_angle = angles[YAW];
 
-		if (front <= 0.1f)
-		{
-			front = 0.1f;
-		}
-		vd->damageX = crandom() * 0.3f + -left / front;
-		vd->damageY = crandom() * 0.3f + up / dist;
+		vd->damageX = -left;
+		vd->damageY = front;
 	}
 
 	// clamp the position
-	if (vd->damageX > 1.0f)
-	{
-		vd->damageX = 1.0f;
-	}
-	if (vd->damageX < -1.0f)
-	{
-		vd->damageX = -1.0f;
-	}
-
-	if (vd->damageY > 1.0f)
-	{
-		vd->damageY = 1.0f;
-	}
-	if (vd->damageY < -1.0f)
-	{
-		vd->damageY = -1.0f;
-	}
+	Com_Clamp(-1.0f, 1.0f, vd->damageX);
+	Com_Clamp(-1.0f, 1.0f, vd->damageY);
 
 	// don't let the screen flashes vary as much
 	if (kick > 10)

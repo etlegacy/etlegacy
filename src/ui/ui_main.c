@@ -166,6 +166,7 @@ void AssetCache(void)
 
 	//Com_Printf("Menu Size: %i bytes\n", sizeof(Menus));
 	uiInfo.uiDC.Assets.gradientBar         = trap_R_RegisterShaderNoMip(ASSET_GRADIENTBAR);
+	uiInfo.uiDC.Assets.gradientRound       = trap_R_RegisterShaderNoMip(ASSET_GRADIENTROUND);
 	uiInfo.uiDC.Assets.fxBasePic           = trap_R_RegisterShaderNoMip(ART_FX_BASE);
 	uiInfo.uiDC.Assets.fxPic[0]            = trap_R_RegisterShaderNoMip(ART_FX_RED);
 	uiInfo.uiDC.Assets.fxPic[1]            = trap_R_RegisterShaderNoMip(ART_FX_YELLOW);
@@ -4192,7 +4193,7 @@ static void UI_LoadDemos(void)
 	char demoExt[32];
 	char path[MAX_OSPATH];
 	char *fileName;
-	int count = 0;
+	int  count = 0;
 
 	uiInfo.demos.count = 0;
 	// uiInfo.demos.index = 0;
@@ -4263,7 +4264,7 @@ static void UI_LoadDemos(void)
 			}
 			uiInfo.demos.items[uiInfo.demos.count + i].path = String_Alloc(fileName);
 			uiInfo.demos.items[uiInfo.demos.count + i].file = qtrue;
-			fileName += len + 1;
+			fileName                                       += len + 1;
 		}
 
 		uiInfo.demos.count += count;
@@ -4630,12 +4631,12 @@ void UI_RunMenuScript(char **args)
 					else if (uiInfo.demos.path[0])
 					{
 						Q_strcat(uiInfo.demos.path, sizeof(uiInfo.demos.path),
-							va("/%s", &uiInfo.demos.items[uiInfo.demos.index].path[2]));
+						         va("/%s", &uiInfo.demos.items[uiInfo.demos.index].path[2]));
 					}
 					else
 					{
 						Com_sprintf(uiInfo.demos.path, sizeof(uiInfo.demos.path),
-							"%s", &uiInfo.demos.items[uiInfo.demos.index].path[2]);
+						            "%s", &uiInfo.demos.items[uiInfo.demos.index].path[2]);
 					}
 					UI_LoadDemos();
 				}

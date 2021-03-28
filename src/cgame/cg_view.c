@@ -573,14 +573,14 @@ static void CG_ZoomSway(void)
  */
 static void CG_OffsetFirstPersonView(void)
 {
-	vec3_t   forward;
-	float    *origin;
-	float    *angles;
-	float    bob;
-	float    delta;
-	float    speed;
-	float    f;
-	int      timeDelta;
+	vec3_t forward;
+	float  *origin;
+	float  *angles;
+	float  bob;
+	float  delta;
+	float  speed;
+	float  f;
+	int    timeDelta;
 
 	if (cg.snap->ps.pm_type == PM_INTERMISSION)
 	{
@@ -1148,11 +1148,12 @@ static void CG_UnderwaterSounds(void)
  */
 static void CG_DamageBlendBlob(void)
 {
-	int          t, i;
-	int          maxTime;
-	refEntity_t  ent;
-	qboolean     pointDamage;
-	viewDamage_t *vd;
+	int i;
+
+	if (cg_bloodDamageBlend.value <= 0.f)
+	{
+		return;
+	}
 
 	// no damage blend blobs if in limbo or spectator, and in the limbo menu
 	if (((cg.snap->ps.pm_flags & PMF_LIMBO) || cgs.clientinfo[cg.clientNum].team == TEAM_SPECTATOR) && cg.showGameView)
@@ -1162,7 +1163,10 @@ static void CG_DamageBlendBlob(void)
 
 	for (i = 0; i < MAX_VIEWDAMAGE; i++)
 	{
-		vd = &cg.viewDamage[i];
+		int          maxTime;
+		int          t;
+		refEntity_t  ent;
+		viewDamage_t *vd = &cg.viewDamage[i];
 
 		if (vd->damageValue == 0.f)
 		{
@@ -1177,10 +1181,8 @@ static void CG_DamageBlendBlob(void)
 			continue;
 		}
 
-		pointDamage = !(vd->damageX == 0.f && vd->damageY == 0.f);
-
 		// if not point Damage, only do flash blend
-		if (!pointDamage)
+		if (vd->damageX == 0.f && vd->damageY == 0.f)
 		{
 			continue;
 		}
@@ -1190,8 +1192,8 @@ static void CG_DamageBlendBlob(void)
 		ent.renderfx = RF_FIRST_PERSON;
 
 		VectorMA(cg.refdef_current->vieworg, 8, cg.refdef_current->viewaxis[0], ent.origin);
-		VectorMA(ent.origin, vd->damageX * -8, cg.refdef_current->viewaxis[1], ent.origin);
-		VectorMA(ent.origin, vd->damageY * 8, cg.refdef_current->viewaxis[2], ent.origin);
+		VectorMA(ent.origin, vd->damageX * -10, cg.refdef_current->viewaxis[1], ent.origin);
+		VectorMA(ent.origin, vd->damageY * 6, cg.refdef_current->viewaxis[2], ent.origin);
 
 		ent.radius = vd->damageValue * 0.4f * (0.5f + 0.5f * (float)t / maxTime) * (0.75f + 0.5f * Q_fabs((float)sin(vd->damageTime)));
 
@@ -1199,8 +1201,7 @@ static void CG_DamageBlendBlob(void)
 		ent.shaderRGBA[0] = 255;
 		ent.shaderRGBA[1] = 255;
 		ent.shaderRGBA[2] = 255;
-		ent.shaderRGBA[3] = (byte)(255 * ((cg_bloodDamageBlend.value > 1.0f) ? 1.0f :
-		                                  (cg_bloodDamageBlend.value < 0.0f) ? 0.0f : cg_bloodDamageBlend.value));
+		ent.shaderRGBA[3] = (byte)(255 * Com_Clamp(0.f, 1.f, cg_bloodDamageBlend.value));
 
 		trap_R_AddRefEntityToScene(&ent);
 	}
@@ -1816,9 +1817,9 @@ void CG_ProcessCvars()
 	{
 		trap_Cvar_VariableStringBuffer(cg.svCvars[i].cvarName, currentVal, sizeof(currentVal));
 
-		cvalF = (float)atof(currentVal);
-		val1F = (float)atof(cg.svCvars[i].Val1);
-		val2F = (float)atof(cg.svCvars[i].Val2);
+		cvalF   = (float)atof(currentVal);
+		val1F   = (float)atof(cg.svCvars[i].Val1);
+		val2F   = (float)atof(cg.svCvars[i].Val2);
 		cvalI   = Q_atoi(currentVal);
 		val1I   = Q_atoi(cg.svCvars[i].Val1);
 		val2I   = Q_atoi(cg.svCvars[i].Val2);

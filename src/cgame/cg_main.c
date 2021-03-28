@@ -991,7 +991,7 @@ char *CG_generateFilename(void)
 
 	trap_RealTime(&ct);
 	fullFilename[0] = '\0';
-	prefix[0] = '\0';
+	prefix[0]       = '\0';
 
 	if (cg_autoFolders.integer)
 	{
@@ -999,17 +999,17 @@ char *CG_generateFilename(void)
 	}
 
 	Com_sprintf(fullFilename, sizeof(fullFilename), "%s%d-%02d-%02d-%02d%02d%02d-%s%s", prefix,
-	          1900 + ct.tm_year, ct.tm_mon + 1, ct.tm_mday,
-	          ct.tm_hour, ct.tm_min, ct.tm_sec,
-	          Info_ValueForKey(pszServerInfo, "mapname"),
+	            1900 + ct.tm_year, ct.tm_mon + 1, ct.tm_mday,
+	            ct.tm_hour, ct.tm_min, ct.tm_sec,
+	            Info_ValueForKey(pszServerInfo, "mapname"),
 #ifdef FEATURE_MULTIVIEW
-	          (cg.mvTotalClients < 1) ?
+	            (cg.mvTotalClients < 1) ?
 #endif
-	          ""
+	            ""
 #ifdef FEATURE_MULTIVIEW
 	          : "-MVD"
 #endif
-	          );
+	            );
 
 	return fullFilename;
 }
@@ -2561,6 +2561,7 @@ void CG_LoadHudMenu(void)
 void CG_AssetCache(void)
 {
 	cgDC.Assets.gradientBar         = trap_R_RegisterShaderNoMip(ASSET_GRADIENTBAR);
+	cgDC.Assets.gradientRound       = trap_R_RegisterShaderNoMip(ASSET_GRADIENTROUND);
 	cgDC.Assets.fxBasePic           = trap_R_RegisterShaderNoMip(ART_FX_BASE);
 	cgDC.Assets.fxPic[0]            = trap_R_RegisterShaderNoMip(ART_FX_RED);
 	cgDC.Assets.fxPic[1]            = trap_R_RegisterShaderNoMip(ART_FX_YELLOW);

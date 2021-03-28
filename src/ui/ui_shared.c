@@ -97,7 +97,7 @@ void Cui_WideRect(rectDef_t *rect)
  */
 float Cui_WideX(float x)
 {
-	return (DC->glconfig.windowAspect <= RATIO43) ? x : x * (DC->glconfig.windowAspect * RPRATIO43); // aspectratio / (4/3)
+	return (DC->glconfig.windowAspect <= RATIO43) ? x : x *(DC->glconfig.windowAspect * RPRATIO43);  // aspectratio / (4/3)
 }
 
 /**
@@ -349,6 +349,22 @@ void GradientBar_Paint(rectDef_t *rect, vec4_t color)
 	// gradient bar takes two paints
 	DC->setColor(color);
 	DC->drawHandlePic(rect->x, rect->y, rect->w, rect->h, DC->Assets.gradientBar);
+	DC->setColor(NULL);
+}
+
+/**
+ * @brief GradientRound_Paint
+ * @param[in] x
+ * @param[in] y
+ * @param[in] w
+ * @param[in] h
+ * @param[in] color
+ */
+void GradientRound_Paint(float x, float y, float w, float h, vec4_t color)
+{
+	// gradient takes two paints
+	DC->setColor(color);
+	DC->drawHandlePic(x, y, w, h, DC->Assets.gradientRound);
 	DC->setColor(NULL);
 }
 
@@ -1372,7 +1388,7 @@ void BG_PanelButton_RenderEdit(panel_button_t *button)
 
 		if (BG_PanelButtons_GetFocusButton())
 		{
-                        DC->drawTextWithCursorExt(button->rect.x, button->rect.y + button->rect.h, button->font->scalex, button->font->colour, s + (button->data[2] <= offset ? button->data[2] : offset), button->data[2] <= offset ? 0 : button->data[2] - offset, trap_Key_GetOverstrikeMode() ? "_" : "|", offset ? Q_UTF8_Strlen(s + offset) : 0, button->font->style, button->font->font);
+			DC->drawTextWithCursorExt(button->rect.x, button->rect.y + button->rect.h, button->font->scalex, button->font->colour, s + (button->data[2] <= offset ? button->data[2] : offset), button->data[2] <= offset ? 0 : button->data[2] - offset, trap_Key_GetOverstrikeMode() ? "_" : "|", offset ? Q_UTF8_Strlen(s + offset) : 0, button->font->style, button->font->font);
 		}
 		else
 		{
@@ -1430,7 +1446,7 @@ qboolean BG_PanelButton_EditClick(panel_button_t *button, int key)
 			s      = button->text;
 		}
 
-		len    = strlen(s);
+		len       = strlen(s);
 		stringLen = Q_UTF8_Strlen(s);
 
 		if (key & K_CHAR_FLAG)
@@ -1441,14 +1457,14 @@ qboolean BG_PanelButton_EditClick(panel_button_t *button, int key)
 			{
 				if (len && button->data[2])
 				{
-					int offset = Q_UTF8_ByteOffset(s, button->data[2]);
-					char *prev = Q_UTF8_CharAt(s, button->data[2] - 1);
-					int charWidth = Q_UTF8_Width(prev);
+					int  offset    = Q_UTF8_ByteOffset(s, button->data[2]);
+					char *prev     = Q_UTF8_CharAt(s, button->data[2] - 1);
+					int  charWidth = Q_UTF8_Width(prev);
 					memmove(s + offset - charWidth, s + offset, len - offset);
 
 					button->data[2]--;
 
-					offset = Q_UTF8_ByteOffset(s, stringLen - 1);
+					offset    = Q_UTF8_ByteOffset(s, stringLen - 1);
 					s[offset] = '\0';
 
 					if (useCvar)
@@ -1502,14 +1518,14 @@ qboolean BG_PanelButton_EditClick(panel_button_t *button, int key)
 			{
 				if (button->data[2] < stringLen)
 				{
-					int offset = Q_UTF8_ByteOffset(s, button->data[2]);
-					char *current = Q_UTF8_CharAt(s, button->data[2]);
-					int charWidth = Q_UTF8_Width(current);
+					int  offset    = Q_UTF8_ByteOffset(s, button->data[2]);
+					char *current  = Q_UTF8_CharAt(s, button->data[2]);
+					int  charWidth = Q_UTF8_Width(current);
 
 					memmove(s + offset,
-							s + offset + charWidth, len - offset);
+					        s + offset + charWidth, len - offset);
 
-					offset = Q_UTF8_ByteOffset(s, stringLen - 1);
+					offset    = Q_UTF8_ByteOffset(s, stringLen - 1);
 					s[offset] = '\0';
 
 					if (useCvar)
