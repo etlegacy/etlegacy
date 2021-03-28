@@ -3242,13 +3242,7 @@ static void CG_DrawFlashBlendBehindHUD(void)
 {
 	CG_DrawFlashZoomTransition();
 	CG_DrawFlashFade();
-}
 
-/**
- * @brief Screen flash stuff drawn last (on top of everything)
- */
-static void CG_DrawFlashBlend(void)
-{
 	// no flash blends if in limbo or spectator, and in the limbo menu
 	if (((cg.snap->ps.pm_flags & PMF_LIMBO) || cgs.clientinfo[cg.clientNum].team == TEAM_SPECTATOR) && cg.showGameView)
 	{
@@ -3805,9 +3799,6 @@ static void CG_Draw2D(void)
 #endif
 	{
 		CG_DrawFlashBlendBehindHUD();
-
-		// draw flash blends now
-		CG_DrawFlashBlend();
 	}
 
 #ifdef FEATURE_EDV
