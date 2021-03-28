@@ -311,6 +311,12 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
     }
 
     @Override
+    protected String[] getArguments() {
+        String[] etl_parameters = {"unbind", "MOUSE1"};
+        return etl_parameters;
+    }
+
+    @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
