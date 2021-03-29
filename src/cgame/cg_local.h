@@ -52,7 +52,6 @@
 #define FADE_TIME           200
 #define DAMAGE_DEFLECT_TIME 100
 #define DAMAGE_RETURN_TIME  400
-#define DAMAGE_TIME         500
 #define LAND_DEFLECT_TIME   150
 #define LAND_RETURN_TIME    300
 #define STEP_TIME           200
@@ -2698,6 +2697,7 @@ extern vmCvar_t cg_autoAction;
 extern vmCvar_t cg_autoReload;
 extern vmCvar_t cg_bloodDamageBlend;
 extern vmCvar_t cg_bloodFlash;
+extern vmCvar_t cg_bloodFlashTime;
 extern vmCvar_t cg_complaintPopUp;
 extern vmCvar_t cg_crosshairAlpha;
 extern vmCvar_t cg_crosshairAlphaAlt;

@@ -136,7 +136,7 @@ void CG_DamageFeedback(int yawByte, int pitchByte, int damage)
 		kick = 10;
 	}
 	vd->damageValue    = kick;
-	cg.v_dmg_time      = cg.time + DAMAGE_TIME;
+	cg.v_dmg_time      = cg.time + cg_bloodFlashTime.value;
 	vd->damageTime     = cg.snap->serverTime;
 	vd->damageDuration = (int)(kick * 50 * (1 + 2 * (!vd->damageX && !vd->damageY)));
 	cg.damageTime      = cg.snap->serverTime;
