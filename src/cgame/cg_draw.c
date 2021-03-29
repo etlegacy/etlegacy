@@ -3111,8 +3111,8 @@ static void CG_DrawFlashDamage(void)
 	{
 		return;
 	}
-
-	if (cg_bloodFlash.value <= 0.f)
+    
+    if (cg_bloodFlash.value <= 0.f || cg_bloodFlashTime.value <= 0.f)
 	{
 		return;
 	}
@@ -3124,7 +3124,7 @@ static void CG_DrawFlashDamage(void)
 
 		width = Ccg_WideX(SCREEN_WIDTH);
 
-		col[3] = (1 - (cg.time - cg.v_dmg_time) / DAMAGE_TIME) * Com_Clamp(0.f, 1.f, cg_bloodFlash.value);
+		col[3] = (1 - (cg.time - cg.v_dmg_time) / cg_bloodFlashTime.value) * Com_Clamp(0.f, 1.f, cg_bloodFlash.value);
 
 		if (cg.v_dmg_angle == -1.f) // all borders
 		{

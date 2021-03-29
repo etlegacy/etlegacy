@@ -230,6 +230,7 @@ vmCvar_t cg_autoAction;
 vmCvar_t cg_autoReload;
 vmCvar_t cg_bloodDamageBlend;
 vmCvar_t cg_bloodFlash;
+vmCvar_t cg_bloodFlashTime;
 vmCvar_t cg_complaintPopUp;
 vmCvar_t cg_crosshairAlpha;
 vmCvar_t cg_crosshairAlphaAlt;
@@ -484,6 +485,7 @@ static cvarTable_t cvarTable[] =
 	{ &cg_autoReload,             "cg_autoReload",             "1",           CVAR_ARCHIVE,                 0 },
 	{ &cg_bloodDamageBlend,       "cg_bloodDamageBlend",       "1.0",         CVAR_ARCHIVE,                 0 },
 	{ &cg_bloodFlash,             "cg_bloodFlash",             "1.0",         CVAR_ARCHIVE,                 0 },
+	{ &cg_bloodFlashTime,         "cg_bloodFlashTime",         "1500",        CVAR_ARCHIVE,                 0 },
 	{ &cg_complaintPopUp,         "cg_complaintPopUp",         "1",           CVAR_ARCHIVE,                 0 },
 	{ &cg_crosshairAlpha,         "cg_crosshairAlpha",         "1.0",         CVAR_ARCHIVE,                 0 },
 	{ &cg_crosshairAlphaAlt,      "cg_crosshairAlphaAlt",      "1.0",         CVAR_ARCHIVE,                 0 },
