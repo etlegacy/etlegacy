@@ -229,8 +229,8 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
                     btn_alternative.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            SDLActivity.onNativeKeyDown(43);
-                            SDLActivity.onNativeKeyUp(43);
+                            SDLActivity.onNativeKeyDown(30);
+                            SDLActivity.onNativeKeyUp(30);
                         }
                     });
 
@@ -308,12 +308,6 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
      */
     public static int pxToDp(int px) {
         return (int) (px / Resources.getSystem().getDisplayMetrics().density);
-    }
-
-    @Override
-    protected String[] getArguments() {
-        String[] etl_parameters = {"unbind", "MOUSE1"};
-        return etl_parameters;
     }
 
     @Override
