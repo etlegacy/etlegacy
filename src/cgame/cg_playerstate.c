@@ -65,9 +65,8 @@ void CG_DamageFeedback(int yawByte, int pitchByte, int damage)
 	{
 		scale = 40.0f / health;
 	}
-	kick = damage * scale;
 
-	Com_Clamp(5, 10, kick);
+	kick = Com_Clamp(5, 10, damage * scale);
 
 	// find a free slot
 	for (slot = 0; slot < MAX_VIEWDAMAGE; slot++)
@@ -126,15 +125,12 @@ void CG_DamageFeedback(int yawByte, int pitchByte, int damage)
 		vd->damageY = front;
 	}
 
-	// clamp the position
-	Com_Clamp(-1.0f, 1.0f, vd->damageX);
-	Com_Clamp(-1.0f, 1.0f, vd->damageY);
-
 	// don't let the screen flashes vary as much
 	if (kick > 10)
 	{
 		kick = 10;
 	}
+
 	vd->damageValue    = kick;
 	cg.v_dmg_time      = cg.time + cg_bloodFlashTime.value;
 	vd->damageTime     = cg.snap->serverTime;
