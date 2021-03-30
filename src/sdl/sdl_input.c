@@ -1346,12 +1346,14 @@ static void IN_ProcessEvents(void)
 				Cvar_SetValue("com_unfocused", 1);
 				break;
 			case SDL_WINDOWEVENT_ENTER:
+			{
 				Uint32 flags = SDL_GetWindowFlags(mainScreen);
 				// We might not have focus, just the user moving his mouse over things
 				if (!(flags & SDL_WINDOW_INPUT_FOCUS))
 				{
 					break;
 				}
+			}
 			case SDL_WINDOWEVENT_FOCUS_GAINED:
 			{
 				Cvar_SetValue("com_unfocused", 0);
