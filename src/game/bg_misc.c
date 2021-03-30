@@ -84,8 +84,8 @@ sysMessage_t HQMessages[SM_NUM_SYS_MSGS] =
 vec3_t playerlegsProneMins = { -13.5f, -13.5f, -24.f };
 vec3_t playerlegsProneMaxs = { 13.5f, 13.5f, -14.4f };
 
-vec3_t playerHeadProneMins = { -18.f, -18.f, -24.f };
-vec3_t playerHeadProneMaxs = { 18.f, 18.f, 0.f };
+vec3_t playerHeadProneMins = { -6.f, -6.f, -24.f };
+vec3_t playerHeadProneMaxs = { 6.f, 6.f, 0.f };
 
 int          numSplinePaths;
 splinePath_t splinePaths[MAX_SPLINE_PATHS];
@@ -4923,11 +4923,11 @@ void BG_HeadCollisionBoxOffset(vec3_t viewangles, int eFlags, vec3_t headOffset)
 
 	if (eFlags & EF_DEAD)
 	{
-		VectorScale(flatforward, -36, headOffset);
+		VectorScale(flatforward, -24, headOffset);
 	}
 	else            // EF_PRONE
 	{
-		VectorScale(flatforward, 36, headOffset);
+		VectorScale(flatforward, 24, headOffset);
 	}
 }
 
