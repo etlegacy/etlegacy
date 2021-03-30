@@ -1,3 +1,4 @@
 [submodule "etlegacy"]
 	path = etlegacy
 	url = https://github.com/etlegacy/etlegacy
+    branch = origin/master
