@@ -3,6 +3,7 @@ package org.etlegacy.app;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -320,6 +321,11 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
         super.onPostCreate(savedInstanceState);
 
         setWindowStyle(true);
+
+        if(Build.VERSION.SDK_INT > Build.VERSION_CODES.M)
+            setRelativeMouseEnabled(true);
+        else
+            setRelativeMouseEnabled(false);
 
         if (isAndroidTV() || isChromebook()) {
             Log.v("ETL", "AndroidTV / ChromeBook Detected, Display UI Disabled!");
