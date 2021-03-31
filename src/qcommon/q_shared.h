@@ -354,6 +354,22 @@ static ID_INLINE float idSqrt(float x)
 
 #endif //  __NetBSD__
 
+//======================= ANDROID DEFINES =================================
+
+// the mac compiler can't handle >32k of locals, so we
+// just waste space and make big arrays static...
+#ifdef __ANDROID__
+
+#ifdef __arm__
+#define CPUSTRING   "android-armeabi-v7a"
+#elif defined __aarch64__
+#define CPUSTRING   "android-arm64-v8a"
+#endif
+
+#define PATH_SEP '/'
+
+#endif // __ANDROID__
+
 //=============================================================
 
 typedef unsigned char byte;
