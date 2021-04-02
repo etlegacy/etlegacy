@@ -191,6 +191,7 @@ vmCvar_t cg_coronas;
 vmCvar_t cg_paused;
 vmCvar_t cg_blood;
 vmCvar_t cg_predictItems;
+vmCvar_t cg_drawEnvAwareness;
 
 vmCvar_t cg_autoactivate;
 
@@ -410,6 +411,7 @@ static cvarTable_t cvarTable[] =
 	{ &cg_gun_z,                  "cg_gunZ",                   "0",           CVAR_TEMP,                    0 },
 	{ &cg_centertime,             "cg_centertime",             "5",           CVAR_ARCHIVE,                 0 },   // changed from 3 to 5
 	{ &cg_bobbing,                "cg_bobbing",                "1",           CVAR_ARCHIVE,                 0 },
+	{ &cg_drawEnvAwareness,       "cg_drawEnvAwareness",       "1",           CVAR_ARCHIVE,                 0 },
 
 	{ &cg_autoactivate,           "cg_autoactivate",           "1",           CVAR_ARCHIVE,                 0 },
 

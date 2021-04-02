@@ -2639,6 +2639,7 @@ extern vmCvar_t cg_tracerSpeed;
 extern vmCvar_t cg_autoswitch;
 extern vmCvar_t cg_fov;
 extern vmCvar_t cg_muzzleFlash;
+extern vmCvar_t cg_drawEnvAwareness;
 
 extern vmCvar_t cg_zoomDefaultSniper;
 
@@ -2952,6 +2953,8 @@ const char *CG_TranslateString(const char *string);
 
 void CG_InitStatsDebug(void);
 void CG_StatsDebugAddText(const char *text);
+qhandle_t CG_GetCompassIcon(centity_t *cent, qboolean drawVoicesChat, qboolean drawFireTeam);
+void CG_DrawCompassIcon(float x, float y, float w, float h, vec3_t origin, vec3_t dest, qhandle_t shader, float dstScale, float baseSize);
 
 void CG_AddLagometerFrameInfo(void);
 void CG_AddLagometerSnapshotInfo(snapshot_t *snap);

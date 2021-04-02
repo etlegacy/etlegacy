@@ -1621,6 +1621,88 @@ void CG_StatsDebugAddText(const char *text)
 }
 
 /**
+ * @brief CG_GetCompassIcon
+ * @param[in] cent
+ * @param[in] allVoicesChat get all icons voices chat, otherwhise only request icons voices chat (need medic/ammo ...)
+ * @return A valid compass icon handle otherwise 0
+ */
+qhandle_t CG_GetCompassIcon(centity_t *cent, qboolean drawVoicesChat, qboolean drawFireTeam)
+{
+	qboolean sameTeam = cg.predictedPlayerState.persistant[PERS_TEAM] == cgs.clientinfo[cent->currentState.clientNum].team;
+
+	// player only
+	if (cent->currentState.eType != ET_PLAYER)
+	{
+		return 0;
+	}
+
+	// valid client
+	if (!cgs.clientinfo[cent->currentState.clientNum].infoValid)
+	{
+		return 0;
+	}
+
+	if (sameTeam && cgs.clientinfo[cent->currentState.clientNum].powerups & ((1 << PW_REDFLAG) | (1 << PW_BLUEFLAG)))
+	{
+		return cgs.media.objectiveShader;
+	}
+	else if (((cent->currentState.eFlags & EF_DEAD) &&
+	          (cg.predictedPlayerState.stats[STAT_PLAYER_CLASS] == PC_MEDIC && cg.predictedPlayerState.stats[STAT_HEALTH] > 0
+	           && cent->currentState.number == cent->currentState.clientNum && sameTeam)) ||
+	         (!(cg.snap->ps.pm_flags & PMF_FOLLOW) && cgs.clientinfo[cg.clientNum].shoutcaster))
+	{
+		return cgs.media.medicReviveShader;
+	}
+	else if (sameTeam && cent->voiceChatSpriteTime > cg.time &&
+	         (drawVoicesChat || (cent->voiceChatSprite != cgs.media.voiceChatShader)))
+	{
+		// FIXME: not the best place to reset it
+		if (cgs.clientinfo[cent->currentState.clientNum].health <= 0)
+		{
+			// reset
+			cent->voiceChatSpriteTime = cg.time;
+			return 0;
+		}
+
+		return cent->voiceChatSprite;
+	}
+	else if (drawFireTeam && (CG_IsOnSameFireteam(cg.clientNum, cent->currentState.clientNum) || cgs.clientinfo[cg.clientNum].shoutcaster))  // draw disguise or default buddy icon
+	{
+		// draw overlapping no-shoot icon if disguised and in same team but draw disguise ennemy on compass as buddy
+		if (cent->currentState.powerups & (1 << PW_OPS_DISGUISED) && cg.predictedPlayerState.persistant[PERS_TEAM] == cgs.clientinfo[cent->currentState.clientNum].team)
+		{
+			return cgs.media.friendShader;
+		}
+		else
+		{
+			return cgs.media.buddyShader;
+		}
+	}
+
+	/*
+	// draw explosives if an engineer
+	if ( cg.predictedPlayerState.stats[ STAT_PLAYER_CLASS ] == PC_ENGINEER ) {
+	    for ( i = 0; i < snap->numEntities; i++ ) {
+	        centity_t *cent = &cg_entities[ snap->entities[ i ].number ];
+
+	        if ( cent->currentState.eType != ET_EXPLOSIVE_INDICATOR ) {
+	            continue;
+	        }
+
+	        if ( cent->currentState.teamNum == 1 && cg.predictedPlayerState.persistant[PERS_TEAM] == TEAM_AXIS )
+	            continue;
+	        else if ( cent->currentState.teamNum == 2 && cg.predictedPlayerState.persistant[PERS_TEAM] == TEAM_ALLIES )
+	            continue;
+
+	        CG_DrawCompassIcon( basex, basey, basew, baseh, cg.predictedPlayerState.origin, cent->lerpOrigin, cgs.media.compassDestroyShader );
+	    }
+	}
+	*/
+
+	return 0;
+}
+
+/**
  * @brief CG_DrawCompassIcon
  * @param[in] x
  * @param[in] y
@@ -1630,7 +1712,7 @@ void CG_StatsDebugAddText(const char *text)
  * @param[in] dest
  * @param[in] shader
  */
-void CG_DrawCompassIcon(float x, float y, float w, float h, vec3_t origin, vec3_t dest, qhandle_t shader)
+void CG_DrawCompassIcon(float x, float y, float w, float h, vec3_t origin, vec3_t dest, qhandle_t shader, float dstScale, float baseSize)
 {
 	float  angle;
 	vec3_t v1, angles;
@@ -1664,9 +1746,9 @@ void CG_DrawCompassIcon(float x, float y, float w, float h, vec3_t origin, vec3_
 	x = x + ((float)cos(angle) * w);
 	y = y + ((float)sin(angle) * w);
 
-	len = 1 - MIN(1.f, len / 2000.f);
+	len = 1 - MIN(1.f, len / 2000.f * dstScale);
 
-	CG_DrawPic(x - (14 * len + 4) / 2, y - (14 * len + 4) / 2, 14 * len + 8, 14 * len + 8, shader);
+	CG_DrawPic(x - (baseSize * len + 4) / 2, y - (baseSize * len + 4) / 2, baseSize * len + 8, baseSize * len + 8, shader);
 }
 
 /**
@@ -1857,123 +1939,15 @@ static void CG_DrawNewCompass(rectDef_t location)
 	lastangle += anglespeed;
 	CG_DrawRotatedPic(basex + 4, basey + 4, basew - 8, baseh - 8, cgs.media.compass2Shader, lastangle);
 
-	//if( !(cgs.ccFilter & CC_FILTER_REQUESTS) ) {
-	// draw voice chats
+	for (i = 0; i < MAX_CLIENTS; i++)
 	{
-		centity_t *cent;
+		qhandle_t icon;
 
-		for (i = 0; i < MAX_CLIENTS; i++)
+		icon = CG_GetCompassIcon(&cg_entities[i], qtrue, qtrue);
+
+		if (icon)
 		{
-			cent = &cg_entities[i];
-
-			if (cg.predictedPlayerState.clientNum == i || !cgs.clientinfo[i].infoValid ||
-			    (cg.predictedPlayerState.persistant[PERS_TEAM] != cgs.clientinfo[i].team && !cgs.clientinfo[cg.clientNum].shoutcaster))
-			{
-				continue;
-			}
-
-			// also draw revive icons if cent is dead and player is a medic
-			if (cent->voiceChatSpriteTime < cg.time)
-			{
-				continue;
-			}
-
-			// also draw disguise icon or objective icon (if they are carrying one)
-			if (cgs.clientinfo[i].powerups & ((1 << PW_REDFLAG) | (1 << PW_BLUEFLAG) | (1 << PW_OPS_DISGUISED)))
-			{
-				continue;
-			}
-
-			if (cgs.clientinfo[i].health <= 0)
-			{
-				// reset
-				cent->voiceChatSpriteTime = cg.time;
-				continue;
-			}
-
-			CG_DrawCompassIcon(basex, basey, basew, baseh, cg.predictedPlayerState.origin, cent->lerpOrigin, cent->voiceChatSprite);
-		}
-	}
-	//}
-
-	/*if( !(cgs.ccFilter & CC_FILTER_DESTRUCTIONS) ) {
-	    // draw explosives if an engineer
-	    if ( cg.predictedPlayerState.stats[ STAT_PLAYER_CLASS ] == PC_ENGINEER ) {
-	        for ( i = 0; i < snap->numEntities; i++ ) {
-	            centity_t *cent = &cg_entities[ snap->entities[ i ].number ];
-
-	            if ( cent->currentState.eType != ET_EXPLOSIVE_INDICATOR ) {
-	                continue;
-	            }
-
-	            if ( cent->currentState.teamNum == 1 && cg.predictedPlayerState.persistant[PERS_TEAM] == TEAM_AXIS )
-	                continue;
-	            else if ( cent->currentState.teamNum == 2 && cg.predictedPlayerState.persistant[PERS_TEAM] == TEAM_ALLIES )
-	                continue;
-
-	            CG_DrawCompassIcon( basex, basey, basew, baseh, cg.predictedPlayerState.origin, cent->lerpOrigin, cgs.media.compassDestroyShader );
-	        }
-	    }
-	}*/
-
-	{
-		entityState_t *ent;
-
-		for (i = 0; i < snap->numEntities; i++)
-		{
-			ent = &snap->entities[i];
-
-			if (ent->eType != ET_PLAYER)
-			{
-				continue;
-			}
-
-			if (ent->eFlags & EF_DEAD)
-			{
-				qboolean sameTeam = ((cg.predictedPlayerState.persistant[PERS_TEAM] == cgs.clientinfo[ent->clientNum].team) ? qtrue : qfalse);
-
-				if ((cg.predictedPlayerState.stats[STAT_PLAYER_CLASS] == PC_MEDIC && cg.predictedPlayerState.stats[STAT_HEALTH] > 0 && ent->number == ent->clientNum && sameTeam) ||
-				    (!(cg.snap->ps.pm_flags & PMF_FOLLOW) && cgs.clientinfo[cg.clientNum].shoutcaster)) // && !(cgs.ccFilter & CC_FILTER_REQUESTS)
-				{
-					if (!cgs.clientinfo[ent->clientNum].infoValid)
-					{
-						continue;
-					}
-
-					CG_DrawCompassIcon(basex, basey, basew, baseh, cg.predictedPlayerState.origin, ent->pos.trBase, cgs.media.medicReviveShader);
-				}
-
-				continue;
-			}
-
-			if (!cgs.clientinfo[ent->clientNum].infoValid || (cg.predictedPlayerState.persistant[PERS_TEAM] != cgs.clientinfo[ent->clientNum].team &&
-			                                                  !(cgs.clientinfo[ent->clientNum].powerups & (1 << PW_OPS_DISGUISED)) &&   // allow disguise enemy to be draw
-			                                                  !cgs.clientinfo[cg.clientNum].shoutcaster))
-			{
-				continue;
-			}
-
-			// draw objective icon (if they are carrying one)
-			if (cgs.clientinfo[ent->clientNum].powerups & ((1 << PW_REDFLAG) | (1 << PW_BLUEFLAG)))
-			{
-				CG_DrawCompassIcon(basex, basey, basew, baseh, cg.predictedPlayerState.origin, ent->pos.trBase, cgs.media.objectiveShader);
-			}
-
-			if (!CG_IsOnSameFireteam(cg.clientNum, ent->clientNum) && !cgs.clientinfo[cg.clientNum].shoutcaster)
-			{
-				continue;
-			}
-
-			// draw disguise or default buddy icon
-			if (!cgs.clientinfo[cg.clientNum].shoutcaster)
-			{
-				// draw overlapping no-shoot icon if disguised and in same team but draw disguise ennemy on compass as buddy
-				if (cgs.clientinfo[ent->clientNum].powerups & (1 << PW_OPS_DISGUISED) && cg.predictedPlayerState.persistant[PERS_TEAM] == cgs.clientinfo[ent->clientNum].team)
-				{
-					CG_DrawCompassIcon(basex, basey, basew, baseh, cg.predictedPlayerState.origin, ent->pos.trBase, cgs.media.friendShader);
-				}
-				CG_DrawCompassIcon(basex, basey, basew, baseh, cg.predictedPlayerState.origin, ent->pos.trBase, cgs.media.buddyShader); //if( !(cgs.ccFilter & CC_FILTER_BUDDIES) ) {
-			}
+			CG_DrawCompassIcon(basex, basey, basew, baseh, cg.predictedPlayerState.origin, cg_entities[i].lerpOrigin, icon, 1.f, 14);
 		}
 	}
 }
