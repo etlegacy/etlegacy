@@ -1180,9 +1180,14 @@ void CG_MapVoteList_Draw(panel_button_t *button)
 
 			vec4_t *colour = &button->font->colour;
 
-			// add gradient color to identify third most votes maps
+			// add gradient color to identify three most voted maps
 			for (j = 0; j < 3; j++)
 			{
+				if (cgs.dbSortedVotedMapsByTotal[j].totalVotes <= 0)
+				{
+					continue;
+				}
+
 				if (cgs.dbSortedVotedMapsByTotal[j].mapID == (i + cgs.dbMapVoteListOffset))
 				{
 					if (j == 0)
