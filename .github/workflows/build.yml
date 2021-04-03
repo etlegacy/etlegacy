@@ -384,6 +384,8 @@ jobs:
   android:
     runs-on: ubuntu-18.04
     needs: [ lnx32 ]
+    container:
+      image: rafal1137/etl_android
     steps:
       - name: Setup JDK
         uses: actions/setup-java@v1
@@ -407,10 +409,6 @@ jobs:
           repository: rafal1137/NDK_ETL
           path: NDK_ETL
 
-      - name: Install Ninja Builder
-        shell: bash
-        run: sudo apt install -y ninja-build
-
       - uses: actions/download-artifact@v2
         with:
           name: All-mods
@@ -422,10 +420,9 @@ jobs:
 
       - name: Build and Generate Package
         run: |
-          echo "export ANDROID_NDK_HOME=$GITHUB_WORKSPACE/NDK_ETL/ndk-bundle" > ~/.bashrc
-          source ~/.bashrc
-          chmod -R 775 $ANDROID_NDK_HOME
-          echo "cmake.dir=/usr/local/" | tee -a local.properties
+          chmod -R 775 $GITHUB_WORKSPACE/NDK_ETL/ndk-bundle
+          echo "cmake.dir=/usr/" | tee -a local.properties
+          echo "ndk.dir=$GITHUB_WORKSPACE/NDK_ETL/ndk-bundle" | tee -a local.properties
           ./gradlew clean assembleDebug
           ls -R
 
