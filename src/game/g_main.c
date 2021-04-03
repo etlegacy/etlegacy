@@ -3767,7 +3767,7 @@ void G_LogExit(const char *string)
 
 #ifdef FEATURE_RATING
 	// record match ratings
-	if (g_skillRating.integer)
+	if (g_skillRating.integer && g_gametype.integer != GT_WOLF_STOPWATCH && g_gametype.integer != GT_WOLF_LMS)
 	{
 		for (i = 0; i < level.numConnectedClients; i++)
 		{
