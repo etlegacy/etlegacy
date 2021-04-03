@@ -140,7 +140,9 @@ jobs:
             build/legacy/ui*.so
 
   android-mod:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-16.04
+    container:
+      image: rafal1137/etl_android
     steps:
       - name: Setup JDK
         uses: actions/setup-java@v1
@@ -160,16 +162,11 @@ jobs:
           repository: rafal1137/NDK_ETL
           path: NDK_ETL
 
-      - name: Install Ninja Builder
-        shell: bash
-        run: sudo apt install -y ninja-build
-
       - name: Build
         run: |
-          echo "export ANDROID_NDK_HOME=$GITHUB_WORKSPACE/NDK_ETL/ndk-bundle" > ~/.bashrc
-          source ~/.bashrc
-          chmod -R 775 $ANDROID_NDK_HOME
-          echo "cmake.dir=/usr/local/" | tee -a local.properties
+          chmod -R 775 $GITHUB_WORKSPACE/NDK_ETL/ndk-bundle
+          echo "cmake.dir=/usr/" | tee -a local.properties
+          echo "ndk.dir=$GITHUB_WORKSPACE/NDK_ETL/ndk-bundle" | tee -a local.properties
           ./gradlew clean build
           ls -R
 
