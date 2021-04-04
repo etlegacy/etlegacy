@@ -1943,6 +1943,12 @@ static void CG_DrawNewCompass(rectDef_t location)
 	{
 		qhandle_t icon;
 
+		// skip self
+		if (cg.clientNum == cg_entities[i].currentState.clientNum)
+		{
+			continue;
+		}
+
 		icon = CG_GetCompassIcon(&cg_entities[i], qtrue, qtrue);
 
 		if (icon)
