@@ -5178,7 +5178,7 @@ void PmoveSingle(pmove_t *pmove)
 		{
 			float fixedFrameTime, scale, decimalTest;
 			float result = 0;
-			int fps = PM_FIXEDPHYSICSFPS;
+			int   fps    = PM_FIXEDPHYSICSFPS;
 
 			if (fps > 333)
 			{
@@ -5190,12 +5190,11 @@ void PmoveSingle(pmove_t *pmove)
 			}
 
 			fixedFrameTime = (int)(1000.0f / fps) * 0.001f;
-
-			scale = fixedFrameTime / pml.frametime;
-			decimalTest = pm->ps->gravity * fixedFrameTime;
+			decimalTest    = pm->ps->gravity * fixedFrameTime;
 
 			if (rint(decimalTest) - decimalTest < 0)
 			{
+				scale  = fixedFrameTime / pml.frametime;
 				result = (rint(decimalTest) - decimalTest) * -1;
 				result = result / scale;
 			}
