@@ -361,8 +361,10 @@ static ID_INLINE float idSqrt(float x)
 #ifdef __ANDROID__
 
 #ifdef __arm__
+#undef CPUSTRING
 #define CPUSTRING   "android-armeabi-v7a"
 #elif defined __aarch64__
+#undef CPUSTRING
 #define CPUSTRING   "android-arm64-v8a"
 #endif
 
