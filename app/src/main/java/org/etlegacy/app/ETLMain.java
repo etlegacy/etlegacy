@@ -138,8 +138,8 @@ public class ETLMain extends Activity {
         final Intent intent = new Intent(ETLMain.this, ETLActivity.class);
 
         if (etl_pak0.exists() && etl_pak1.exists() && etl_pak2.exists()) {
-            startActivity(intent);
-            finish();
+            ETLMain.this.startActivity(intent);
+            ETLMain.this.finish();
         } else {
             final ProgressDialog etl_Dialog = DownloadBar();
             final AsyncHttpClient client = new AsyncHttpClient();
@@ -225,8 +225,8 @@ public class ETLMain extends Activity {
                             Files.move(file.getAbsoluteFile(), new File(getExternalFilesDir("etlegacy/etmain"), etl_pak0.getName()));
                             client.cancelAllRequests(true);
                             etl_Dialog.dismiss();
-                            startActivity(intent);
-                            finish();
+                            ETLMain.this.startActivity(intent);
+                            ETLMain.this.finish();
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
