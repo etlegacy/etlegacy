@@ -321,6 +321,7 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
         super.onPostCreate(savedInstanceState);
 
         SDLActivity.setWindowStyle(true);
+        SDLActivity.clipboardGetText();
 
         if(Build.VERSION.SDK_INT > Build.VERSION_CODES.M)
             setRelativeMouseEnabled(true);
