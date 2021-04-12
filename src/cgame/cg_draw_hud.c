@@ -1646,10 +1646,10 @@ qhandle_t CG_GetCompassIcon(centity_t *cent, qboolean drawVoicesChat, qboolean d
 	{
 		return cgs.media.objectiveShader;
 	}
-	else if (((cent->currentState.eFlags & EF_DEAD) &&
-	          (cg.predictedPlayerState.stats[STAT_PLAYER_CLASS] == PC_MEDIC && cg.predictedPlayerState.stats[STAT_HEALTH] > 0
-	           && cent->currentState.number == cent->currentState.clientNum && sameTeam)) ||
-	         (!(cg.snap->ps.pm_flags & PMF_FOLLOW) && cgs.clientinfo[cg.clientNum].shoutcaster))
+	else if ((cent->currentState.eFlags & EF_DEAD) &&
+	         ((cg.predictedPlayerState.stats[STAT_PLAYER_CLASS] == PC_MEDIC && cg.predictedPlayerState.stats[STAT_HEALTH] > 0
+	           && cent->currentState.number == cent->currentState.clientNum && sameTeam) ||
+	          (!(cg.snap->ps.pm_flags & PMF_FOLLOW) && cgs.clientinfo[cg.clientNum].shoutcaster)))
 	{
 		return cgs.media.medicReviveShader;
 	}
