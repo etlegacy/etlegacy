@@ -5169,10 +5169,6 @@ void PmoveSingle(pmove_t *pmove)
 
 	if (PM_FIXEDPHYSICS)
 	{
-		// Pmove accurate code
-		// the new way: don't care so much about 6 bytes/frame
-		// or so of network bandwidth, and add some mostly framerate-
-		// independent error to make up for the lack of rounding error
 		// halt if not going fast enough (0.5 units/sec)
 		if (VectorLengthSquared(pm->ps->velocity) < 0.25f)
 		{
@@ -5180,43 +5176,30 @@ void PmoveSingle(pmove_t *pmove)
 		}
 		else
 		{
-			int   i;
-			float fac;
-			float fps = PM_FIXEDPHYSICSFPS;
+			float fixedFrameTime, scale, decimalTest;
+			float result = 0;
+			int   fps    = PM_FIXEDPHYSICSFPS;
 
 			if (fps > 333)
 			{
 				fps = 333;
 			}
-			else if (fps < 60)
+			else if (fps < 30)
 			{
-				fps = 60;
+				fps = 30;
 			}
 
-			fac = pml.msec / (1000.0f / fps);
+			fixedFrameTime = (int)(1000.0f / fps) * 0.001f;
+			decimalTest    = pm->ps->gravity * fixedFrameTime;
 
-			// add some error...
-			for (i = 0; i < 3; ++i)
+			if (rint(decimalTest) - decimalTest < 0)
 			{
-				// ...if the velocity in this direction changed enough
-				if (Q_fabs(pm->ps->velocity[i] - pml.previous_velocity[i]) > 0.5f / fac)
-				{
-					if (pm->ps->velocity[i] < 0)
-					{
-						pm->ps->velocity[i] -= 0.5f * fac;
-					}
-					else
-					{
-						pm->ps->velocity[i] += 0.5f * fac;
-					}
-				}
+				scale  = fixedFrameTime / pml.frametime;
+				result = (rint(decimalTest) - decimalTest) * -1;
+				result = result / scale;
 			}
-			// we can stand a little bit of rounding error for the sake
-			// of lower bandwidth
-			VectorScale(pm->ps->velocity, 64.0f, pm->ps->velocity);
-			// snap some parts of playerstate to save network bandwidth
-			trap_SnapVector(pm->ps->velocity);
-			VectorScale(pm->ps->velocity, 1.0f / 64.0f, pm->ps->velocity);
+
+			pm->ps->velocity[2] += result;
 		}
 	}
 	else
