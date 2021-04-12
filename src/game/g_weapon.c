@@ -3398,6 +3398,12 @@ qboolean Bullet_Fire_Extended(gentity_t *source, gentity_t *attacker, vec3_t sta
 		tent = G_TempEntity(start, EV_RAILTRAIL);
 		VectorCopy(tr.endpos, tent->s.origin2);
 		tent->s.otherEntityNum2 = attacker->s.number;
+
+		if (g_debugForSingleClient.integer > -1)
+		{
+			tent->r.svFlags      = SVF_SINGLECLIENT;
+			tent->r.singleClient = g_debugForSingleClient.integer;
+		}
 	}
 
 	traceEnt = &g_entities[tr.entityNum];
@@ -3465,6 +3471,12 @@ qboolean Bullet_Fire_Extended(gentity_t *source, gentity_t *attacker, vec3_t sta
 			bboxEnt = G_TempEntity(b1, EV_RAILTRAIL);
 			VectorCopy(b2, bboxEnt->s.origin2);
 			bboxEnt->s.dmgFlags = 1;    // ("type")
+
+			if (g_debugForSingleClient.integer > -1)
+			{
+				bboxEnt->r.svFlags      = SVF_SINGLECLIENT;
+				bboxEnt->r.singleClient = g_debugForSingleClient.integer;
+			}
 		}
 	}
 	else
@@ -3489,6 +3501,12 @@ qboolean Bullet_Fire_Extended(gentity_t *source, gentity_t *attacker, vec3_t sta
 			bboxEnt = G_TempEntity(b1, EV_RAILTRAIL);
 			VectorCopy(b2, bboxEnt->s.origin2);
 			bboxEnt->s.dmgFlags = 1;    // ("type")
+
+			if (g_debugForSingleClient.integer > -1)
+			{
+				bboxEnt->r.svFlags      = SVF_SINGLECLIENT;
+				bboxEnt->r.singleClient = g_debugForSingleClient.integer;
+			}
 		}
 
 		tent = G_TempEntity(tr.endpos, EV_BULLET_HIT_WALL);

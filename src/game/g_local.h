@@ -2126,6 +2126,8 @@ extern vmCvar_t g_dynamiteChaining;
 
 extern vmCvar_t g_playerHitBoxHeight;
 
+extern vmCvar_t g_debugForSingleClient;
+
 /**
  * @struct GeoIPTag
  * @typedef GeoIP
