@@ -1166,7 +1166,7 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 {
 	int         take;
 	int         knockback;
-	int			hitEventType = HIT_NONE;
+	int         hitEventType = HIT_NONE;
 	qboolean    wasAlive, onSameTeam;
 	hitRegion_t hr = HR_NUM_HITREGIONS;
 
@@ -1537,7 +1537,7 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 			G_addStatsHeadShot(attacker, mod);
 
 			// Upgrade the hit event to headshot if we have not yet classified it as a teamshot (covertops etc..)
-			if(hitEventType != HIT_TEAMSHOT)
+			if (hitEventType != HIT_TEAMSHOT)
 			{
 				hitEventType = HIT_HEADSHOT;
 			}
@@ -1603,7 +1603,7 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 		G_Printf("client:%i health:%i damage:%i mod:%s\n", targ->s.number, targ->health, take, GetMODTableData(mod)->modName);
 	}
 
-	if(hitEventType)
+	if (hitEventType)
 	{
 		G_AddEvent(attacker, EV_PLAYER_HIT, hitEventType);
 	}
@@ -1811,6 +1811,12 @@ void G_RailTrail(vec_t *start, vec_t *end, vec_t *color)
 	temp->s.angles[1] = (int)(color[1] * 255);
 	temp->s.angles[2] = (int)(color[2] * 255);
 	temp->s.density   = -1;
+
+	if (g_debugForSingleClient.integer > -1)
+	{
+		temp->r.svFlags      = SVF_SINGLECLIENT;
+		temp->r.singleClient = g_debugForSingleClient.integer;
+	}
 }
 
 /**
@@ -1843,6 +1849,12 @@ void G_RailBox(vec_t *origin, vec_t *mins, vec_t *maxs, vec_t *color, int index)
 	temp->s.angles[2] = (int)(color[2] * 255);
 
 	temp->s.effect1Time = index + 1;
+
+	if (g_debugForSingleClient.integer > -1)
+	{
+		temp->r.svFlags      = SVF_SINGLECLIENT;
+		temp->r.singleClient = g_debugForSingleClient.integer;
+	}
 }
 
 #define MASK_CAN_DAMAGE     (CONTENTS_SOLID | CONTENTS_BODY)
