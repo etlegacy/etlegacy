@@ -491,12 +491,6 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
     }
 
     @Override
-    public void superOnBackPressed() {
-        super.superOnBackPressed();
-        mLayout.requestFocus();
-    }
-
-    @Override
     protected String[] getLibraries() {
         return new String[] {
                 "hidapi",
