@@ -422,61 +422,64 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
     @Override
     public void onMove(JoyStick joyStick, double angle, double power, int direction) {
 
-        switch (direction) {
-            case JoyStick.DIRECTION_CENTER:
-                SDLActivity.onNativeKeyUp(51);
-                SDLActivity.onNativeKeyUp(32);
-                SDLActivity.onNativeKeyUp(47);
-                SDLActivity.onNativeKeyUp(29);
-                break;
-            case JoyStick.DIRECTION_UP:
-                SDLActivity.onNativeKeyUp(32);
-                SDLActivity.onNativeKeyUp(47);
-                SDLActivity.onNativeKeyUp(29);
-                SDLActivity.onNativeKeyDown(51);
-                break;
-            case JoyStick.DIRECTION_UP_RIGHT:
-                SDLActivity.onNativeKeyUp(47);
-                SDLActivity.onNativeKeyUp(29);
-                SDLActivity.onNativeKeyDown(51);
-                SDLActivity.onNativeKeyDown(32);
-                break;
-            case JoyStick.DIRECTION_RIGHT:
-                SDLActivity.onNativeKeyUp(51);
-                SDLActivity.onNativeKeyUp(47);
-                SDLActivity.onNativeKeyUp(29);
-                SDLActivity.onNativeKeyDown(32);
-                break;
-            case JoyStick.DIRECTION_RIGHT_DOWN:
-                SDLActivity.onNativeKeyUp(51);
-                SDLActivity.onNativeKeyUp(29);
-                SDLActivity.onNativeKeyDown(32);
-                SDLActivity.onNativeKeyDown(47);
-                break;
-            case JoyStick.DIRECTION_DOWN:
-                SDLActivity.onNativeKeyUp(51);
-                SDLActivity.onNativeKeyUp(32);
-                SDLActivity.onNativeKeyUp(29);
-                SDLActivity.onNativeKeyDown(47);
-                break;
-            case JoyStick.DIRECTION_DOWN_LEFT:
-                SDLActivity.onNativeKeyUp(51);
-                SDLActivity.onNativeKeyUp(32);
-                SDLActivity.onNativeKeyDown(47);
-                SDLActivity.onNativeKeyDown(29);
-                break;
-            case JoyStick.DIRECTION_LEFT:
-                SDLActivity.onNativeKeyUp(51);
-                SDLActivity.onNativeKeyUp(32);
-                SDLActivity.onNativeKeyUp(47);
-                SDLActivity.onNativeKeyDown(29);
-                break;
-            case JoyStick.DIRECTION_LEFT_UP:
-                SDLActivity.onNativeKeyUp(32);
-                SDLActivity.onNativeKeyUp(47);
-                SDLActivity.onNativeKeyDown(29);
-                SDLActivity.onNativeKeyDown(51);
-                break;
+        if (isAndroidTV() || isChromebook()) {
+        } else {
+            switch (direction) {
+                case JoyStick.DIRECTION_CENTER:
+                    SDLActivity.onNativeKeyUp(51);
+                    SDLActivity.onNativeKeyUp(32);
+                    SDLActivity.onNativeKeyUp(47);
+                    SDLActivity.onNativeKeyUp(29);
+                    break;
+                case JoyStick.DIRECTION_UP:
+                    SDLActivity.onNativeKeyUp(32);
+                    SDLActivity.onNativeKeyUp(47);
+                    SDLActivity.onNativeKeyUp(29);
+                    SDLActivity.onNativeKeyDown(51);
+                    break;
+                case JoyStick.DIRECTION_UP_RIGHT:
+                    SDLActivity.onNativeKeyUp(47);
+                    SDLActivity.onNativeKeyUp(29);
+                    SDLActivity.onNativeKeyDown(51);
+                    SDLActivity.onNativeKeyDown(32);
+                    break;
+                case JoyStick.DIRECTION_RIGHT:
+                    SDLActivity.onNativeKeyUp(51);
+                    SDLActivity.onNativeKeyUp(47);
+                    SDLActivity.onNativeKeyUp(29);
+                    SDLActivity.onNativeKeyDown(32);
+                    break;
+                case JoyStick.DIRECTION_RIGHT_DOWN:
+                    SDLActivity.onNativeKeyUp(51);
+                    SDLActivity.onNativeKeyUp(29);
+                    SDLActivity.onNativeKeyDown(32);
+                    SDLActivity.onNativeKeyDown(47);
+                    break;
+                case JoyStick.DIRECTION_DOWN:
+                    SDLActivity.onNativeKeyUp(51);
+                    SDLActivity.onNativeKeyUp(32);
+                    SDLActivity.onNativeKeyUp(29);
+                    SDLActivity.onNativeKeyDown(47);
+                    break;
+                case JoyStick.DIRECTION_DOWN_LEFT:
+                    SDLActivity.onNativeKeyUp(51);
+                    SDLActivity.onNativeKeyUp(32);
+                    SDLActivity.onNativeKeyDown(47);
+                    SDLActivity.onNativeKeyDown(29);
+                    break;
+                case JoyStick.DIRECTION_LEFT:
+                    SDLActivity.onNativeKeyUp(51);
+                    SDLActivity.onNativeKeyUp(32);
+                    SDLActivity.onNativeKeyUp(47);
+                    SDLActivity.onNativeKeyDown(29);
+                    break;
+                case JoyStick.DIRECTION_LEFT_UP:
+                    SDLActivity.onNativeKeyUp(32);
+                    SDLActivity.onNativeKeyUp(47);
+                    SDLActivity.onNativeKeyDown(29);
+                    SDLActivity.onNativeKeyDown(51);
+                    break;
+            }
         }
     }
 
