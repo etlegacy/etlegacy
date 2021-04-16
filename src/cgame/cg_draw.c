@@ -3788,7 +3788,7 @@ static void CG_DrawEnvironmentalAwareness()
 		qhandle_t icon;
 
 		// skip self
-		if (cg.clientNum == cent->currentState.clientNum)
+		if (cent->currentState.clientNum == cg.clientNum)
 		{
 			continue;
 		}
@@ -3802,7 +3802,7 @@ static void CG_DrawEnvironmentalAwareness()
 		//	continue;
 		//}
 
-		icon = CG_GetCompassIcon(cent, qfalse, qfalse);
+		icon = CG_GetCompassIcon(&snap->entities[i], qfalse, qfalse);
 
 		if (icon)
 		{

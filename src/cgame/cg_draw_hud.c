@@ -1626,38 +1626,41 @@ void CG_StatsDebugAddText(const char *text)
  * @param[in] allVoicesChat get all icons voices chat, otherwhise only request icons voices chat (need medic/ammo ...)
  * @return A valid compass icon handle otherwise 0
  */
-qhandle_t CG_GetCompassIcon(centity_t *cent, qboolean drawVoicesChat, qboolean drawFireTeam)
+qhandle_t CG_GetCompassIcon(entityState_t *ent, qboolean drawVoicesChat, qboolean drawFireTeam)
 {
-	qboolean sameTeam = cg.predictedPlayerState.persistant[PERS_TEAM] == cgs.clientinfo[cent->currentState.clientNum].team;
+	centity_t *cent    = &cg_entities[ent->number];
+	qboolean  sameTeam = cg.predictedPlayerState.persistant[PERS_TEAM] == cgs.clientinfo[ent->clientNum].team;
 
-	// player only
-	if (cent->currentState.eType != ET_PLAYER)
+	if (ent->eType != ET_PLAYER)
 	{
 		return 0;
 	}
 
-	// valid client
-	if (!cgs.clientinfo[cent->currentState.clientNum].infoValid)
+	if (!cgs.clientinfo[ent->clientNum].infoValid)
 	{
 		return 0;
 	}
 
-	if (sameTeam && cgs.clientinfo[cent->currentState.clientNum].powerups & ((1 << PW_REDFLAG) | (1 << PW_BLUEFLAG)))
+	if (sameTeam && cgs.clientinfo[ent->clientNum].powerups & ((1 << PW_REDFLAG) | (1 << PW_BLUEFLAG)))
 	{
 		return cgs.media.objectiveShader;
 	}
-	else if ((cent->currentState.eFlags & EF_DEAD) &&
-	         ((cg.predictedPlayerState.stats[STAT_PLAYER_CLASS] == PC_MEDIC && cg.predictedPlayerState.stats[STAT_HEALTH] > 0
-	           && cent->currentState.number == cent->currentState.clientNum && sameTeam) ||
-	          (!(cg.snap->ps.pm_flags & PMF_FOLLOW) && cgs.clientinfo[cg.clientNum].shoutcaster)))
+	else if (ent->eFlags & EF_DEAD)
 	{
-		return cgs.media.medicReviveShader;
+		if ((cg.predictedPlayerState.stats[STAT_PLAYER_CLASS] == PC_MEDIC && cg.predictedPlayerState.stats[STAT_HEALTH] > 0
+		     && ent->number == ent->clientNum && sameTeam) ||
+		    (!(cg.snap->ps.pm_flags & PMF_FOLLOW) && cgs.clientinfo[cg.clientNum].shoutcaster))
+		{
+			return cgs.media.medicReviveShader;
+		}
+
+		return 0;
 	}
 	else if (sameTeam && cent->voiceChatSpriteTime > cg.time &&
 	         (drawVoicesChat || (cent->voiceChatSprite != cgs.media.voiceChatShader)))
 	{
 		// FIXME: not the best place to reset it
-		if (cgs.clientinfo[cent->currentState.clientNum].health <= 0)
+		if (cgs.clientinfo[ent->clientNum].health <= 0)
 		{
 			// reset
 			cent->voiceChatSpriteTime = cg.time;
@@ -1666,10 +1669,10 @@ qhandle_t CG_GetCompassIcon(centity_t *cent, qboolean drawVoicesChat, qboolean d
 
 		return cent->voiceChatSprite;
 	}
-	else if (drawFireTeam && (CG_IsOnSameFireteam(cg.clientNum, cent->currentState.clientNum) || cgs.clientinfo[cg.clientNum].shoutcaster))  // draw disguise or default buddy icon
+	else if (drawFireTeam && (CG_IsOnSameFireteam(cg.clientNum, ent->clientNum) || cgs.clientinfo[cg.clientNum].shoutcaster))      // draw disguise or default buddy icon
 	{
 		// draw overlapping no-shoot icon if disguised and in same team but draw disguise ennemy on compass as buddy
-		if (cent->currentState.powerups & (1 << PW_OPS_DISGUISED) && cg.predictedPlayerState.persistant[PERS_TEAM] == cgs.clientinfo[cent->currentState.clientNum].team)
+		if (ent->powerups & (1 << PW_OPS_DISGUISED) && cg.predictedPlayerState.persistant[PERS_TEAM] == cgs.clientinfo[ent->clientNum].team)
 		{
 			return cgs.media.friendShader;
 		}
@@ -1941,19 +1944,20 @@ static void CG_DrawNewCompass(rectDef_t location)
 
 	for (i = 0; i < MAX_CLIENTS; i++)
 	{
+		centity_t *cent = &cg_entities[snap->entities[i].number];
 		qhandle_t icon;
 
 		// skip self
-		if (cg.clientNum == cg_entities[i].currentState.clientNum)
+		if (cent->currentState.clientNum == cg.clientNum)
 		{
 			continue;
 		}
 
-		icon = CG_GetCompassIcon(&cg_entities[i], qtrue, qtrue);
+		icon = CG_GetCompassIcon(&snap->entities[i], qtrue, qtrue);
 
 		if (icon)
 		{
-			CG_DrawCompassIcon(basex, basey, basew, baseh, cg.predictedPlayerState.origin, cg_entities[i].lerpOrigin, icon, 1.f, 14);
+			CG_DrawCompassIcon(basex, basey, basew, baseh, cg.predictedPlayerState.origin, cent->lerpOrigin, icon, 1.f, 14);
 		}
 	}
 }
