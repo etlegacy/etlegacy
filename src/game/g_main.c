@@ -3223,14 +3223,22 @@ void MoveClientToIntermission(gentity_t *ent, qboolean hasVoted)
 		ent->client->sess.mapVotedFor[2] = -1;
 	}
 
-	ent->client->ps.eFlags |= hasVoted ? EF_VOTED : 0;
-	ent->s.eFlags           = 0;
-	ent->s.eType            = ET_GENERAL;
-	ent->s.modelindex       = 0;
-	ent->s.loopSound        = 0;
-	ent->s.event            = 0;
-	ent->s.events[0]        = ent->s.events[1] = ent->s.events[2] = ent->s.events[3] = 0;
-	ent->r.contents         = 0;
+	if (hasVoted)
+	{
+		ent->client->ps.eFlags |= EF_VOTED;
+	}
+	else
+	{
+		ent->client->ps.eFlags &= ~EF_VOTED;
+	}
+
+	ent->s.eFlags     = 0;
+	ent->s.eType      = ET_GENERAL;
+	ent->s.modelindex = 0;
+	ent->s.loopSound  = 0;
+	ent->s.event      = 0;
+	ent->s.events[0]  = ent->s.events[1] = ent->s.events[2] = ent->s.events[3] = 0;
+	ent->r.contents   = 0;
 }
 
 /**
