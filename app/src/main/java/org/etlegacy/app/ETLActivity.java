@@ -26,7 +26,6 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
 
     static volatile boolean UiMenu = false;
     ImageButton btn;
-    PopupMenu etl_PopMenu;
 
     /**
      * Get an uiMenu boolean variable
@@ -34,28 +33,6 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
      */
     public static boolean getUiMenu() {
         return UiMenu;
-    }
-
-    /**
-     * Creates/Removes Functional Keys from PopUp Menu
-     * to prevent flooding at creating multiple entries
-     */
-    protected void PopUpFunctionalKeys() {
-
-        for (int i = 1; i < 3; i++) {
-            if (etl_PopMenu.getMenu().findItem(i) == null)
-                etl_PopMenu.getMenu().add(i, i, i, "F".concat(String.valueOf(i)));
-        }
-    }
-
-    /**
-     * Dirty Hack to remove Functional Keys at Disconnect
-     */
-    protected void PopUpRemoveFunctionalKeys() {
-
-        for (int i = 1; i < 3; i++) {
-            etl_PopMenu.getMenu().removeItem(i);
-        }
     }
 
     /**
@@ -100,8 +77,6 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
 
                 if (getUiMenu() == true) {
 
-                    PopUpFunctionalKeys();
-
                     btn2.setOnTouchListener(new View.OnTouchListener() {
                         @Override
                         public boolean onTouch(View v, MotionEvent event) {
@@ -121,8 +96,8 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
                                     y = event.getY(i) / mHeight;
                                     p = event.getPressure(i);
 
-                                    SDLActivity.onNativeTouch(touchDevId, pointerFingerId, action, x, y, p);
-                                    SDLActivity.onNativeKeyDown(42);
+                                    onNativeTouch(touchDevId, pointerFingerId, action, x, y, p);
+                                    onNativeKeyDown(42);
                                     break;
                                 case MotionEvent.ACTION_MOVE:
                                     for (i = 0; i < pointerCount; i++) {
@@ -130,7 +105,7 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
                                         x = event.getX(i) / mWidth;
                                         y = event.getY(i) / mHeight;
                                         p = event.getPressure(i);
-                                        SDLActivity.onNativeTouch(touchDevId, pointerFingerId, action, x, y, p);
+                                        onNativeTouch(touchDevId, pointerFingerId, action, x, y, p);
                                     }
                                     break;
                                 case MotionEvent.ACTION_UP:
@@ -140,9 +115,9 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
                                         x = event.getX(i) / mWidth;
                                         y = event.getY(i) / mHeight;
                                         p = event.getPressure(i);
-                                        SDLActivity.onNativeTouch(touchDevId, pointerFingerId, MotionEvent.ACTION_UP, x, y, p);
+                                        onNativeTouch(touchDevId, pointerFingerId, MotionEvent.ACTION_UP, x, y, p);
                                     }
-                                    SDLActivity.onNativeKeyUp(42);
+                                    onNativeKeyUp(42);
                                     break;
                             }
                             return false;
@@ -163,8 +138,8 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
                     btn_reload.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            SDLActivity.onNativeKeyDown(46);
-                            SDLActivity.onNativeKeyUp(46);
+                            onNativeKeyDown(46);
+                            onNativeKeyUp(46);
                         }
                     });
 
@@ -185,11 +160,11 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
                         public boolean onTouch(View v, MotionEvent event) {
                             switch (event.getAction()) {
                                 case MotionEvent.ACTION_DOWN:
-                                    SDLActivity.onNativeKeyDown(62);
+                                    onNativeKeyDown(62);
                                     break;
                                 case MotionEvent.ACTION_UP:
                                 case MotionEvent.ACTION_CANCEL:
-                                    SDLActivity.onNativeKeyUp(62);
+                                    onNativeKeyUp(62);
                                     break;
                             }
                             return false;
@@ -210,8 +185,8 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
                     btn_activate.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            SDLActivity.onNativeKeyDown(34);
-                            SDLActivity.onNativeKeyUp(34);
+                            onNativeKeyDown(34);
+                            onNativeKeyUp(34);
                         }
                     });
 
@@ -230,8 +205,8 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
                     btn_alternative.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            SDLActivity.onNativeKeyDown(30);
-                            SDLActivity.onNativeKeyUp(30);
+                            onNativeKeyDown(30);
+                            onNativeKeyUp(30);
                         }
                     });
 
@@ -252,11 +227,11 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
                         public boolean onTouch(View v, MotionEvent event) {
                             switch (event.getAction()) {
                                 case MotionEvent.ACTION_DOWN:
-                                    SDLActivity.onNativeKeyDown(31);
+                                    onNativeKeyDown(31);
                                     break;
                                 case MotionEvent.ACTION_UP:
                                 case MotionEvent.ACTION_CANCEL:
-                                    SDLActivity.onNativeKeyUp(31);
+                                    onNativeKeyUp(31);
                                     break;
                             }
                             return false;
@@ -295,7 +270,6 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
                 else {
                     mLayout.removeView(joyStick_left);
                     etl_linearLayout.removeAllViews();
-                    PopUpRemoveFunctionalKeys();
                     handler.postDelayed(this, 500);
                 }
             }
@@ -320,8 +294,8 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
 
-        SDLActivity.setWindowStyle(true);
-        SDLActivity.clipboardGetText();
+        setWindowStyle(true);
+        clipboardGetText();
 
         if(Build.VERSION.SDK_INT > Build.VERSION_CODES.M)
             setRelativeMouseEnabled(true);
@@ -334,41 +308,18 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    final ImageButton buttonPopUpMenu = new ImageButton(getApplicationContext());
-                    buttonPopUpMenu.setImageResource(R.drawable.ic_one_line);
-                    buttonPopUpMenu.setBackgroundResource(0);
-
-                    etl_PopMenu = new PopupMenu(getApplicationContext(), buttonPopUpMenu);
-                    etl_PopMenu.getMenu().add(0, 0, 0, "~");
-
-                    buttonPopUpMenu.setOnClickListener(new View.OnClickListener() {
+                    final ImageButton etl_console = new ImageButton(getApplicationContext());
+                    etl_console.setImageResource(R.drawable.ic_one_line);
+                    etl_console.setBackgroundResource(0);
+                    etl_console.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            etl_PopMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                                @Override
-                                public boolean onMenuItemClick(MenuItem item) {
-                                    switch (item.getItemId()) {
-                                        case 0:
-                                            SDLActivity.onNativeKeyDown(68);
-                                            SDLActivity.onNativeKeyUp(68);
-                                            break;
-                                        case 1:
-                                            SDLActivity.onNativeKeyDown(131);
-                                            SDLActivity.onNativeKeyUp(131);
-                                            break;
-                                        case 2:
-                                            SDLActivity.onNativeKeyDown(132);
-                                            SDLActivity.onNativeKeyUp(132);
-                                            break;
-                                    }
-                                    return false;
-                                }
-                            });
-                            etl_PopMenu.show();
+                            onNativeKeyDown(68);
+                            onNativeKeyUp(68);
                         }
                     });
 
-                    mLayout.addView(buttonPopUpMenu);
+                    mLayout.addView(etl_console);
 
                     btn = new ImageButton(getApplicationContext());
                     btn.setImageResource(R.drawable.ic_keyboard);
@@ -396,8 +347,8 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
                     esc_btn.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            SDLActivity.onNativeKeyDown(111);
-                            SDLActivity.onNativeKeyUp(111);
+                            onNativeKeyDown(111);
+                            onNativeKeyUp(111);
                         }
                     });
 
@@ -426,58 +377,58 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
         } else {
             switch (direction) {
                 case JoyStick.DIRECTION_CENTER:
-                    SDLActivity.onNativeKeyUp(51);
-                    SDLActivity.onNativeKeyUp(32);
-                    SDLActivity.onNativeKeyUp(47);
-                    SDLActivity.onNativeKeyUp(29);
+                    onNativeKeyUp(51);
+                    onNativeKeyUp(32);
+                    onNativeKeyUp(47);
+                    onNativeKeyUp(29);
                     break;
                 case JoyStick.DIRECTION_UP:
-                    SDLActivity.onNativeKeyUp(32);
-                    SDLActivity.onNativeKeyUp(47);
-                    SDLActivity.onNativeKeyUp(29);
-                    SDLActivity.onNativeKeyDown(51);
+                    onNativeKeyUp(32);
+                    onNativeKeyUp(47);
+                    onNativeKeyUp(29);
+                    onNativeKeyDown(51);
                     break;
                 case JoyStick.DIRECTION_UP_RIGHT:
-                    SDLActivity.onNativeKeyUp(47);
-                    SDLActivity.onNativeKeyUp(29);
-                    SDLActivity.onNativeKeyDown(51);
-                    SDLActivity.onNativeKeyDown(32);
+                    onNativeKeyUp(47);
+                    onNativeKeyUp(29);
+                    onNativeKeyDown(51);
+                    onNativeKeyDown(32);
                     break;
                 case JoyStick.DIRECTION_RIGHT:
-                    SDLActivity.onNativeKeyUp(51);
-                    SDLActivity.onNativeKeyUp(47);
-                    SDLActivity.onNativeKeyUp(29);
-                    SDLActivity.onNativeKeyDown(32);
+                    onNativeKeyUp(51);
+                    onNativeKeyUp(47);
+                    onNativeKeyUp(29);
+                    onNativeKeyDown(32);
                     break;
                 case JoyStick.DIRECTION_RIGHT_DOWN:
-                    SDLActivity.onNativeKeyUp(51);
-                    SDLActivity.onNativeKeyUp(29);
-                    SDLActivity.onNativeKeyDown(32);
-                    SDLActivity.onNativeKeyDown(47);
+                    onNativeKeyUp(51);
+                    onNativeKeyUp(29);
+                    onNativeKeyDown(32);
+                    onNativeKeyDown(47);
                     break;
                 case JoyStick.DIRECTION_DOWN:
-                    SDLActivity.onNativeKeyUp(51);
-                    SDLActivity.onNativeKeyUp(32);
-                    SDLActivity.onNativeKeyUp(29);
-                    SDLActivity.onNativeKeyDown(47);
+                    onNativeKeyUp(51);
+                    onNativeKeyUp(32);
+                    onNativeKeyUp(29);
+                    onNativeKeyDown(47);
                     break;
                 case JoyStick.DIRECTION_DOWN_LEFT:
-                    SDLActivity.onNativeKeyUp(51);
-                    SDLActivity.onNativeKeyUp(32);
-                    SDLActivity.onNativeKeyDown(47);
-                    SDLActivity.onNativeKeyDown(29);
+                    onNativeKeyUp(51);
+                    onNativeKeyUp(32);
+                    onNativeKeyDown(47);
+                    onNativeKeyDown(29);
                     break;
                 case JoyStick.DIRECTION_LEFT:
-                    SDLActivity.onNativeKeyUp(51);
-                    SDLActivity.onNativeKeyUp(32);
-                    SDLActivity.onNativeKeyUp(47);
-                    SDLActivity.onNativeKeyDown(29);
+                    onNativeKeyUp(51);
+                    onNativeKeyUp(32);
+                    onNativeKeyUp(47);
+                    onNativeKeyDown(29);
                     break;
                 case JoyStick.DIRECTION_LEFT_UP:
-                    SDLActivity.onNativeKeyUp(32);
-                    SDLActivity.onNativeKeyUp(47);
-                    SDLActivity.onNativeKeyDown(29);
-                    SDLActivity.onNativeKeyDown(51);
+                    onNativeKeyUp(32);
+                    onNativeKeyUp(47);
+                    onNativeKeyDown(29);
+                    onNativeKeyDown(51);
                     break;
             }
         }
