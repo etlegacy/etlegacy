@@ -228,7 +228,7 @@ Install:
 
 Then brew the following packages in the terminal app:
 
-    $ brew cask install xquartz
+    $ brew install --cask xquartz
     $ brew install gnu-sed cmake glew sdl2 minizip jpeg-turbo curl lua libogg libvorbis theora freetype libpng sqlite openal-soft autoconf nasm automake libtool
 
 Depending on what brew version you're using (mostly older ones), you have to specify `brew install --universal` to get both 32bit and 64bit libs. If it throws an error, just use the command listed above. Although your system curl library supports both architectures, you also need to install its headers.
