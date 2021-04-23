@@ -54,13 +54,13 @@ void Bot_Event_EntityCreated(gentity_t *pEnt);
 
 bool IsBot(gentity_t *e)
 {
-	return (e->r.svFlags & SVF_BOT) ? true : false;
+	return (e->r.svFlags & SVF_BOT) != 0;
 }
 
 //////////////////////////////////////////////////////////////////////////
 
 const int MAX_SMOKEGREN_CACHE                       = 32;
-gentity_t *g_SmokeGrenadeCache[MAX_SMOKEGREN_CACHE] = { 0 };
+gentity_t *g_SmokeGrenadeCache[MAX_SMOKEGREN_CACHE] = { nullptr };
 
 struct BotEntity
 {
@@ -95,7 +95,7 @@ gentity_t *INDEXENT(const int _gameId)
 			return g_entities[_gameId].inuse ? &g_entities[_gameId] : 0;
 		}
 	}
-	return 0;
+	return nullptr;
 }
 
 int ENTINDEX(gentity_t *_ent)
@@ -121,7 +121,7 @@ gentity_t *EntityFromHandle(GameEntity _ent)
 			return &g_entities[ENTITYNUM_WORLD];
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 GameEntity HandleFromEntity(gentity_t *_ent)
@@ -132,7 +132,7 @@ GameEntity HandleFromEntity(gentity_t *_ent)
 	}
 	else
 	{
-		return GameEntity();
+		return {};
 	}
 }
 
@@ -222,10 +222,10 @@ int     numofmg42s;
 void GetMG42s()
 {
 	numofmg42s = 0;
-	gentity_t *trav = NULL;
+	gentity_t *trav = nullptr;
 	char      *name;
 
-	while ((trav = G_Find(trav, FOFS(classname), "misc_mg42")) != NULL && numofmg42s < 64)
+	while ((trav = G_Find(trav, FOFS(classname), "misc_mg42")) != nullptr && numofmg42s < 64)
 	{
 		mg42s_t& mg42 = mg42s[numofmg42s++];
 		mg42.ent = trav;
@@ -289,8 +289,6 @@ void CheckForMG42(gentity_t *ent, const char *newname)
 			Q_strncpyz(mg42s[i].newname, newname, sizeof(mg42s[0].newname));
 		}
 	}
-
-	return;
 }
 
 void GetEntityCenter(gentity_t *ent, vec3_t pos)
@@ -312,7 +310,7 @@ void GetEntityCenter(gentity_t *ent, vec3_t pos)
 // we do an exact match instead of lowered value
 // Note:
 // There is a seperate goal for soldiers with panzer/bazooka to go defend at
-static qboolean weaponCharged(playerState_t *ps, team_t team, int weapon, int *skill)
+static qboolean weaponCharged(playerState_t *ps, team_t team, int weapon, const int *skill)
 {
 	switch (weapon)
 	{
@@ -780,7 +778,6 @@ static int Bot_HintGameToBot(gentity_t *_ent)
 		case HINT_DOOR_ROTATING:
 			return CURSOR_HINT_DOOR_ROTATING;
 		case HINT_DOOR_LOCKED:
-			return CURSOR_HINT_DOOR_LOCKED;
 		case HINT_DOOR_ROTATING_LOCKED:
 			return CURSOR_HINT_DOOR_LOCKED;
 		case HINT_MG42:
@@ -1881,7 +1878,7 @@ qboolean InFieldOfVision(vec3_t viewangles, float fov, vec3_t angles)
 class ETInterface : public IEngineInterface
 {
 public:
-	int AddBot(const MessageHelper &_data)
+	int AddBot(const MessageHelper &_data) override
 	{
 		OB_GETMSG(Msg_Addbot);
 
@@ -1923,7 +1920,7 @@ public:
 		return bot && bot->inuse ? num : -1;
 	}
 
-	void RemoveBot(const MessageHelper &_data)
+	void RemoveBot(const MessageHelper &_data) override
 	{
 		OB_GETMSG(Msg_Kickbot);
 		if (pMsg->m_GameId != Msg_Kickbot::InvalidGameId)
@@ -1968,7 +1965,7 @@ public:
 		}
 	}
 
-	obResult ChangeTeam(int _client, int _newteam, const MessageHelper *_data)
+	obResult ChangeTeam(int _client, int _newteam, const MessageHelper *_data) override
 	{
 #ifdef NOQUARTER
 		const char *teamName;
@@ -2088,7 +2085,7 @@ public:
 		return Success;
 	}
 
-	obResult ChangeClass(int _client, int _newclass, const MessageHelper *_data)
+	obResult ChangeClass(int _client, int _newclass, const MessageHelper *_data) override
 	{
 		gentity_t *bot = &g_entities[_client];
 
@@ -2269,7 +2266,7 @@ public:
 		return Success;
 	}
 
-	bool DebugLine(const float _start[3], const float _end[3], const obColor &_color, float _time)
+	bool DebugLine(const float _start[3], const float _end[3], const obColor &_color, float _time) override
 	{
 		// for dedicated servers we tell the bot we can handle this function, so it doesn't open
 		// an IPC channel.
@@ -2281,7 +2278,7 @@ public:
 		return false;
 	}
 
-	bool DebugRadius(const float _pos[3], const float _radius, const obColor &_color, float _time)
+	bool DebugRadius(const float _pos[3], const float _radius, const obColor &_color, float _time) override
 	{
 		// for dedicated servers we tell the bot we can handle this function, so it doesn't open
 		// an IPC channel.
@@ -2293,7 +2290,7 @@ public:
 		return false;
 	}
 
-	void UpdateBotInput(int _client, const ClientInput &_input)
+	void UpdateBotInput(int _client, const ClientInput &_input) override
 	{
 		static usercmd_t cmd;
 		gentity_t *bot = &g_entities[_client];
@@ -2552,18 +2549,18 @@ public:
 		trap_BotUserCommand(_client, &cmd);
 	}
 
-	void BotCommand(int _client, const char *_cmd)
+	void BotCommand(int _client, const char *_cmd) override
 	{
 		trap_EA_Command(_client, (char *)_cmd);
 	}
 
-	obBool IsInPVS(const float _pos[3], const float _target[3])
+	obBool IsInPVS(const float _pos[3], const float _target[3]) override
 	{
 		return trap_InPVS(_pos, _target) ? True : False;
 	}
 
 	obResult TraceLine(obTraceResult &_result, const float _start[3], const float _end[3],
-	                   const AABB *_pBBox, int _mask, int _user, obBool _bUsePVS)
+	                   const AABB *_pBBox, int _mask, int _user, obBool _bUsePVS) override
 	{
 		qboolean bInPVS = _bUsePVS ? trap_InPVS(_start, _end) : qtrue;
 		if (bInPVS)
@@ -2667,19 +2664,19 @@ public:
 		return bInPVS ? Success : OutOfPVS;
 	}
 
-	int GetPointContents(const float _pos[3])
+	int GetPointContents(const float _pos[3]) override
 	{
 		vec3_t vpos = { _pos[0], _pos[1], _pos[2] };
 		int iContents = trap_PointContents(vpos, -1);
 		return obUtilBotContentsFromGameContents(iContents);
 	}
 
-	GameEntity GetLocalGameEntity()
+	GameEntity GetLocalGameEntity() override
 	{
 		return EntityFromID(0);
 	}
 
-	GameEntity FindEntityInSphere(const float _pos[3], float _radius, GameEntity _pStart, int classId)
+	GameEntity FindEntityInSphere(const float _pos[3], float _radius, GameEntity _pStart, int classId) override
 	{
 		// square it to avoid the square root in the distance check.
 		gentity_t *pStartEnt = _pStart.IsValid() ? EntityFromHandle(_pStart) : 0;
@@ -2924,16 +2921,16 @@ public:
 			return HandleFromEntity(pStartEnt);
 		}
 #endif
-		return GameEntity();
+		return {};
 	}
 
-	int GetEntityClass(const GameEntity _ent)
+	int GetEntityClass(const GameEntity _ent) override
 	{
 		gentity_t *pEnt = EntityFromHandle(_ent);
 		return pEnt && pEnt->inuse ? _GetEntityClass(pEnt) : ET_TEAM_NONE;
 	}
 
-	obResult GetEntityCategory(const GameEntity _ent, BitFlag32 &_category)
+	obResult GetEntityCategory(const GameEntity _ent, BitFlag32 &_category) override
 	{
 		obResult res = Success;
 		gentity_t *pEnt = EntityFromHandle(_ent);
@@ -3246,7 +3243,7 @@ public:
 		return res;
 	}
 
-	obResult GetEntityFlags(const GameEntity _ent, BitFlag64 &_flags)
+	obResult GetEntityFlags(const GameEntity _ent, BitFlag64 &_flags) override
 	{
 		gentity_t *pEnt = EntityFromHandle(_ent);
 
@@ -3500,12 +3497,12 @@ public:
 		return Success;
 	}
 
-	obResult GetEntityPowerups(const GameEntity _ent, BitFlag64 &_flags)
+	obResult GetEntityPowerups(const GameEntity _ent, BitFlag64 &_flags) override
 	{
 		return Success;
 	}
 
-	obResult GetEntityEyePosition(const GameEntity _ent, float _pos[3])
+	obResult GetEntityEyePosition(const GameEntity _ent, float _pos[3]) override
 	{
 		if (GetEntityPosition(_ent, _pos) == Success)
 		{
@@ -3519,13 +3516,13 @@ public:
 		return InvalidEntity;
 	}
 
-	obResult GetEntityBonePosition(const GameEntity _ent, int _boneid, float _pos[3])
+	obResult GetEntityBonePosition(const GameEntity _ent, int _boneid, float _pos[3]) override
 	{
 		// ET doesnt really support bones
 		return GetEntityPosition(_ent, _pos);
 	}
 
-	obResult GetEntityOrientation(const GameEntity _ent, float _fwd[3], float _right[3], float _up[3])
+	obResult GetEntityOrientation(const GameEntity _ent, float _fwd[3], float _right[3], float _up[3]) override
 	{
 		gentity_t *pEnt = EntityFromHandle(_ent);
 		if (pEnt && pEnt->inuse)
@@ -3543,7 +3540,7 @@ public:
 		return InvalidEntity;
 	}
 
-	obResult GetEntityVelocity(const GameEntity _ent, float _velocity[3])
+	obResult GetEntityVelocity(const GameEntity _ent, float _velocity[3]) override
 	{
 		gentity_t *pEnt = EntityFromHandle(_ent);
 		if (pEnt && pEnt->inuse)
@@ -3575,7 +3572,7 @@ public:
 		return InvalidEntity;
 	}
 
-	obResult GetEntityPosition(const GameEntity _ent, float _pos[3])
+	obResult GetEntityPosition(const GameEntity _ent, float _pos[3]) override
 	{
 		gentity_t *pEnt = EntityFromHandle(_ent);
 		if (pEnt && pEnt->inuse)
@@ -3623,7 +3620,7 @@ public:
 		return InvalidEntity;
 	}
 
-	obResult GetEntityLocalAABB(const GameEntity _ent, AABB &_aabb)
+	obResult GetEntityLocalAABB(const GameEntity _ent, AABB &_aabb) override
 	{
 		gentity_t *pEnt = EntityFromHandle(_ent);
 		if (pEnt && pEnt->inuse)
@@ -3717,7 +3714,7 @@ public:
 		}
 		return InvalidEntity;
 	}
-	obResult GetEntityWorldAABB(const GameEntity _ent, AABB &_aabb)
+	obResult GetEntityWorldAABB(const GameEntity _ent, AABB &_aabb) override
 	{
 		gentity_t *pEnt = EntityFromHandle(_ent);
 		if (pEnt && pEnt->inuse)
@@ -3784,7 +3781,7 @@ public:
 		return InvalidEntity;
 	}
 
-	obResult GetEntityWorldOBB(const GameEntity _ent, float *_center, float *_axis0, float *_axis1, float *_axis2, float *_extents)
+	obResult GetEntityWorldOBB(const GameEntity _ent, float *_center, float *_axis0, float *_axis1, float *_axis2, float *_extents) override
 	{
 		gentity_t *pEnt = EntityFromHandle(_ent);
 		if (pEnt)
@@ -3818,7 +3815,7 @@ public:
 		return InvalidEntity;
 	}
 
-	obResult GetEntityGroundEntity(const GameEntity _ent, GameEntity &moveent)
+	obResult GetEntityGroundEntity(const GameEntity _ent, GameEntity &moveent) override
 	{
 		gentity_t *pEnt = EntityFromHandle(_ent);
 		if (pEnt)
@@ -3832,7 +3829,7 @@ public:
 		return InvalidEntity;
 	}
 
-	GameEntity GetEntityOwner(const GameEntity _ent)
+	GameEntity GetEntityOwner(const GameEntity _ent) override
 	{
 		GameEntity owner;
 
@@ -3891,23 +3888,23 @@ public:
 		return owner;
 	}
 
-	int GetEntityTeam(const GameEntity _ent)
+	int GetEntityTeam(const GameEntity _ent) override
 	{
 		gentity_t *pEnt = EntityFromHandle(_ent);
 		return pEnt && pEnt->inuse ? _GetEntityTeam(pEnt) : ET_TEAM_NONE;
 	}
 
-	const char *GetEntityName(const GameEntity _ent)
+	const char *GetEntityName(const GameEntity _ent) override
 	{
 		gentity_t *pEnt = EntityFromHandle(_ent);
 		if (pEnt)
 		{
 			return _GetEntityName(pEnt);
 		}
-		return NULL;
+		return nullptr;
 	}
 
-	obResult GetCurrentWeaponClip(const GameEntity _ent, FireMode _mode, int &_curclip, int &_maxclip)
+	obResult GetCurrentWeaponClip(const GameEntity _ent, FireMode _mode, int &_curclip, int &_maxclip) override
 	{
 		gentity_t *bot = EntityFromHandle(_ent);
 		if (bot && bot->inuse && bot->client)
@@ -3954,7 +3951,7 @@ public:
 		return InvalidEntity;
 	}
 
-	obResult GetCurrentAmmo(const GameEntity _ent, int _weaponId, FireMode _mode, int &_cur, int &_max)
+	obResult GetCurrentAmmo(const GameEntity _ent, int _weaponId, FireMode _mode, int &_cur, int &_max) override
 	{
 		gentity_t *bot = EntityFromHandle(_ent);
 		if (bot && bot->inuse && bot->client)
@@ -4038,12 +4035,12 @@ public:
 		return InvalidEntity;
 	}
 
-	int GetGameTime()
+	int GetGameTime() override
 	{
 		return level.time;
 	}
 
-	void GetGoals()
+	void GetGoals() override
 	{
 		g_GoalSubmitReady = true;
 		gentity_t *e;
@@ -4185,12 +4182,12 @@ public:
 				//////////////////////////////////////////////////////////////////////////
 				// Is this a movable?, skip it if so.
 				if (e->target_ent->targetname &&
-				    (pTmp = strstr(e->target_ent->targetname, "_construct")) != NULL)
+				    (pTmp = strstr(e->target_ent->targetname, "_construct")) != nullptr)
 				{
 					char strName[256];
 					Q_strncpyz(strName, e->target_ent->targetname, 256);
 					strName[pTmp - e->target_ent->targetname] = 0;
-					gentity_t *pMover = G_FindByTargetname(NULL, strName);
+					gentity_t *pMover = G_FindByTargetname(nullptr, strName);
 					if (pMover &&
 					    pMover->s.eType == ET_MOVER &&
 					    !Q_stricmp(pMover->classname, "script_mover"))
@@ -4462,7 +4459,7 @@ public:
 		}
 	}
 
-	void GetPlayerInfo(obPlayerInfo &info)
+	void GetPlayerInfo(obPlayerInfo &info) override
 	{
 		info.m_AvailableTeams |= (1 << ET_TEAM_ALLIES);
 		info.m_AvailableTeams |= (1 << ET_TEAM_AXIS);
@@ -4496,7 +4493,7 @@ public:
 		}
 	}
 
-	obResult InterfaceSendMessage(const MessageHelper &_data, const GameEntity _ent)
+	obResult InterfaceSendMessage(const MessageHelper &_data, const GameEntity _ent) override
 	{
 		gentity_t *pEnt = EntityFromHandle(_ent);
 
@@ -4581,7 +4578,7 @@ public:
 					    BG_PlayerMounted(pEnt->client->ps.eFlags))
 					{
 						pMsg->m_Limited = True;
-						AngleVectors(pEnt->client->pmext.centerangles, pMsg->m_CenterFacing, NULL, NULL);
+						AngleVectors(pEnt->client->pmext.centerangles, pMsg->m_CenterFacing, nullptr, nullptr);
 						if (pEnt->client->ps.eFlags & EF_MOUNTEDTANK)
 						{
 							// seems tanks have complete horizonal movement, and fixed vertical
@@ -4600,7 +4597,7 @@ public:
 					}
 					if (pMsg->m_WeaponId == ET_WP_MOBILE_MG42 || pMsg->m_WeaponId == ET_WP_MOBILE_MG42_SET)
 					{
-						AngleVectors(pEnt->client->pmext.mountedWeaponAngles, pMsg->m_CenterFacing, NULL, NULL);
+						AngleVectors(pEnt->client->pmext.mountedWeaponAngles, pMsg->m_CenterFacing, nullptr, nullptr);
 						pMsg->m_Limited = True;
 						pMsg->m_MinYaw = -20.f;
 						pMsg->m_MaxYaw = 20.f;
@@ -4710,7 +4707,7 @@ public:
 			{
 				trace_t tr;
 				vec3_t end = { pMsg->m_Position[0], pMsg->m_Position[1], (pMsg->m_Position[2] + 4096) };
-				trap_Trace(&tr, pMsg->m_Position, NULL, NULL, end, -1, MASK_SOLID);
+				trap_Trace(&tr, pMsg->m_Position, nullptr, nullptr, end, -1, MASK_SOLID);
 
 				if ((tr.fraction < 1.0) && !(tr.surfaceFlags & SURF_NOIMPACT))
 				{
@@ -4744,7 +4741,7 @@ public:
 				gentity_t *pWho = EntityFromHandle(pMsg->m_WhoToKill);
 				if (pWho)
 				{
-					G_Damage(pWho, NULL, NULL, NULL, NULL, pWho->client ? GIB_DAMAGE(pWho->health) : GIB_ENT, DAMAGE_NO_PROTECTION, MOD_TELEFRAG);
+					G_Damage(pWho, nullptr, nullptr, nullptr, nullptr, pWho->client ? GIB_DAMAGE(pWho->health) : GIB_ENT, DAMAGE_NO_PROTECTION, MOD_TELEFRAG);
 				}
 			}
 			break;
@@ -4779,7 +4776,7 @@ public:
 		}
 		case GEN_MSG_GETCONTROLLINGTEAM:
 		{
-			ControllingTeam *pMsg = _data.Get<ControllingTeam>();
+			auto *pMsg = _data.Get<ControllingTeam>();
 			if (pMsg)
 			{
 				if (pEnt && pEnt->s.eType == ET_TRAP)
@@ -5102,7 +5099,7 @@ public:
 			{
 				if (pEnt && pEnt->inuse && pEnt->client && BG_PlayerMounted(pEnt->client->ps.eFlags))
 				{
-					AngleVectors(pEnt->client->pmext.centerangles, pMsg->m_CenterFacing, NULL, NULL);
+					AngleVectors(pEnt->client->pmext.centerangles, pMsg->m_CenterFacing, nullptr, nullptr);
 					//AngleVectors(pEnt->client->pmext.mountedWeaponAngles, pMsg->, NULL, NULL);
 					if (pEnt->client->ps.eFlags & EF_MOUNTEDTANK)
 					{
@@ -5650,7 +5647,7 @@ public:
 		return Success;
 	}
 
-	void PrintError(const char *_error)
+	void PrintError(const char *_error) override
 	{
 		if (_error)
 		{
@@ -5658,7 +5655,7 @@ public:
 		}
 	}
 
-	void PrintMessage(const char *_msg)
+	void PrintMessage(const char *_msg) override
 	{
 		if (_msg)
 		{
@@ -5716,12 +5713,12 @@ public:
 	//	//}
 	//}
 
-	const char *GetMapName()
+	const char *GetMapName() override
 	{
 		return level.rawmapname;
 	}
 
-	void GetMapExtents(AABB &_aabb)
+	void GetMapExtents(AABB &_aabb) override
 	{
 		if (level.mapcoordsValid)
 		{
@@ -5750,19 +5747,19 @@ public:
 		}
 	}
 
-	GameEntity EntityByName(const char *_name)
+	GameEntity EntityByName(const char *_name) override
 	{
-		gentity_t *pEnt = G_FindByTargetname(NULL, _name);
+		gentity_t *pEnt = G_FindByTargetname(nullptr, _name);
 		return HandleFromEntity(pEnt);
 	}
 
-	GameEntity EntityFromID(const int _gameId)
+	GameEntity EntityFromID(const int _gameId) override
 	{
 		gentity_t *pEnt = INDEXENT(_gameId);
 		return pEnt ? HandleFromEntity(pEnt) : GameEntity();
 	}
 
-	int IDFromEntity(const GameEntity _ent)
+	int IDFromEntity(const GameEntity _ent) override
 	{
 		gentity_t *pEnt = EntityFromHandle(_ent);
 		if (pEnt)
@@ -5775,12 +5772,12 @@ public:
 		return -1;
 	}
 
-	bool DoesEntityStillExist(const GameEntity &_hndl)
+	bool DoesEntityStillExist(const GameEntity &_hndl) override
 	{
-		return _hndl.IsValid() ? EntityFromHandle(_hndl) != NULL : false;
+		return _hndl.IsValid() && EntityFromHandle(_hndl) != nullptr;
 	}
 
-	int GetAutoNavFeatures(AutoNavFeature *_feature, int _max)
+	int GetAutoNavFeatures(AutoNavFeature *_feature, int _max) override
 	{
 		int iNumFeatures = 0;
 		for (int i = MAX_CLIENTS; i < level.num_entities; ++i)
@@ -5796,13 +5793,13 @@ public:
 			_feature[iNumFeatures].m_Type = 0;
 			_feature[iNumFeatures].m_TravelTime = 0;
 			_feature[iNumFeatures].m_ObstacleEntity = false;
-			for (int i = 0; i < 3; ++i)
+			for (int x = 0; x < 3; ++x)
 			{
-				_feature[iNumFeatures].m_Position[i] = e->r.currentOrigin[i];
-				_feature[iNumFeatures].m_TargetPosition[i] = e->r.currentOrigin[i];
+				_feature[iNumFeatures].m_Position[x] = e->r.currentOrigin[x];
+				_feature[iNumFeatures].m_TargetPosition[x] = e->r.currentOrigin[x];
 				_feature[iNumFeatures].m_Bounds.m_Mins[0] = 0.f;
 				_feature[iNumFeatures].m_Bounds.m_Maxs[0] = 0.f;
-				AngleVectors(e->s.angles, _feature[iNumFeatures].m_Facing, NULL, NULL);
+				AngleVectors(e->s.angles, _feature[iNumFeatures].m_Facing, nullptr, nullptr);
 			}
 
 			_feature[iNumFeatures].m_Bounds.m_Mins[0] = e->r.absmin[0];
@@ -5871,27 +5868,27 @@ public:
 		return iNumFeatures;
 	}
 
-	const char *GetGameName()
+	const char *GetGameName() override
 	{
 		return GAME_VERSION;
 	}
 
-	const char *GetModName()
+	const char *GetModName() override
 	{
 		return OMNIBOT_MODNAME;
 	}
 
-	const char *GetModVers()
+	const char *GetModVers() override
 	{
 		return OMNIBOT_MODVERSION;
 	}
 
-	const char *GetBotPath()
+	const char *GetBotPath() override
 	{
 		return Omnibot_GetLibraryPath();
 	}
 
-	const char *GetLogPath()
+	const char *GetLogPath() override
 	{
 		static char logpath[512];
 		trap_Cvar_VariableStringBuffer("fs_homepath", logpath, sizeof(logpath));
@@ -5901,11 +5898,11 @@ public:
 
 void Bot_Interface_InitHandles()
 {
-	for (int i = 0; i < MAX_GENTITIES; ++i)
+	for (auto & m_EntityHandle : m_EntityHandles)
 	{
-		m_EntityHandles[i].m_HandleSerial = 1;
-		m_EntityHandles[i].m_NewEntity = false;
-		m_EntityHandles[i].m_Used = false;
+		m_EntityHandle.m_HandleSerial = 1;
+		m_EntityHandle.m_NewEntity = false;
+		m_EntityHandle.m_Used = false;
 	}
 }
 
@@ -6013,13 +6010,13 @@ void Bot_Interface_Update()
 				if (!level.twoMinute && (g_timelimit.value * 60000 - (level.time - level.startTime)) < 120000)
 				{
 					level.twoMinute = qtrue;
-					Bot_Util_SendTrigger(NULL, NULL, "two minute warning.", "twominute");
+					Bot_Util_SendTrigger(nullptr, nullptr, "two minute warning.", "twominute");
 				}
 
 				if (!level.thirtySecond && (g_timelimit.value * 60000 - (level.time - level.startTime)) < 30000)
 				{
 					level.thirtySecond = qtrue;
-					Bot_Util_SendTrigger(NULL, NULL, "thirty second warning.", "thirtysecond");
+					Bot_Util_SendTrigger(nullptr, nullptr, "thirty second warning.", "thirtysecond");
 				}
 			}
 		}
@@ -6191,7 +6188,7 @@ const char *_GetEntityName(gentity_t *_ent)
 			char skipchar[] = { '[', ']', '#', '!', '*', '`',
 				                '^', '&', '<', '>', '+', '=','|',  '\'', '%',
 				                '.', ':', '/', '(', ')', (char)NULL };
-			char *curchar = NULL;
+			char *curchar = nullptr;
 			char *tmp;
 			char *tmpdst;
 			tmp = name;
@@ -6234,7 +6231,7 @@ const char *_GetEntityName(gentity_t *_ent)
 			return name;
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 //////////////////////////////////////////////////////////////////////////
 qboolean Bot_Util_CheckForSuicide(gentity_t *ent)
@@ -6711,11 +6708,11 @@ void Bot_Event_EntityCreated(gentity_t *pEnt)
 	// Cache smoke bombs
 	if (pEnt && pEnt->s.eType == ET_MISSILE && pEnt->s.weapon == WP_SMOKE_BOMB)
 	{
-		for (int i = 0; i < MAX_SMOKEGREN_CACHE; ++i)
+		for (auto & i : g_SmokeGrenadeCache)
 		{
-			if (!g_SmokeGrenadeCache[i])
+			if (!i)
 			{
-				g_SmokeGrenadeCache[i] = pEnt;
+				i = pEnt;
 				break;
 			}
 		}
@@ -6747,11 +6744,12 @@ void Bot_Event_EntityDeleted(gentity_t *pEnt)
 		{
 		}
 	}
-	for (int i = 0; i < MAX_SMOKEGREN_CACHE; ++i)
+
+	for (auto & i : g_SmokeGrenadeCache)
 	{
-		if (g_SmokeGrenadeCache[i] == pEnt)
+		if (i == pEnt)
 		{
-			g_SmokeGrenadeCache[i] = NULL;
+			i = nullptr;
 		}
 	}
 }
