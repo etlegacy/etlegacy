@@ -1633,13 +1633,13 @@ qboolean SetTeam(gentity_t *ent, const char *s, qboolean force, weapon_t w1, wea
 
 	if (client->sess.sessionTeam == TEAM_AXIS || client->sess.sessionTeam == TEAM_ALLIES)
 	{
-		ent->client->inactivityTime        = level.time + (g_inactivity.integer ? g_inactivity.integer : 60) * 1000;
-		ent->client->inactivitySecondsLeft = (g_inactivity.integer) ? g_inactivity.integer : 60;
+		ent->client->inactivityTime        = level.time + G_InactivityValue * 1000;
+		ent->client->inactivitySecondsLeft = G_InactivityValue;
 	}
 	else
 	{
-		ent->client->inactivityTime        = level.time + (g_spectatorInactivity.integer ? g_spectatorInactivity.integer : 60) * 1000;
-		ent->client->inactivitySecondsLeft = (g_spectatorInactivity.integer) ? g_spectatorInactivity.integer : 60;
+		ent->client->inactivityTime        = level.time + G_SpectatorInactivityValue * 1000;
+		ent->client->inactivitySecondsLeft = G_SpectatorInactivityValue;
 	}
 
 #ifdef FEATURE_RATING

@@ -2480,13 +2480,13 @@ void ClientBegin(int clientNum)
 
 	if (client->sess.sessionTeam == TEAM_AXIS || client->sess.sessionTeam == TEAM_ALLIES)
 	{
-		client->inactivityTime        = level.time + (g_inactivity.integer ? g_inactivity.integer : 60) * 1000;
-		client->inactivitySecondsLeft = (g_inactivity.integer) ? g_inactivity.integer : 60;
+		client->inactivityTime        = level.time + G_InactivityValue * 1000;
+		client->inactivitySecondsLeft = G_InactivityValue;
 	}
 	else
 	{
-		client->inactivityTime        = level.time + (g_spectatorInactivity.integer ? g_spectatorInactivity.integer : 60) * 1000;
-		client->inactivitySecondsLeft = (g_spectatorInactivity.integer) ? g_spectatorInactivity.integer : 60;
+		client->inactivityTime        = level.time + G_SpectatorInactivityValue * 1000;
+		client->inactivitySecondsLeft = G_SpectatorInactivityValue;
 	}
 
 	// Changed below for team independant maxlives
@@ -3081,9 +3081,9 @@ void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean
 	}
 
 	client->respawnTime           = level.timeCurrent;
-	client->inactivityTime        = level.time + g_inactivity.integer * 1000;
+	client->inactivityTime        = level.time + G_InactivityValue * 1000;
 	client->inactivityWarning     = qfalse;
-	client->inactivitySecondsLeft = (g_inactivity.integer) ? g_inactivity.integer : 60;
+	client->inactivitySecondsLeft = G_InactivityValue;
 	client->latched_buttons       = 0;
 	client->latched_wbuttons      = 0;
 	client->deathTime             = 0;

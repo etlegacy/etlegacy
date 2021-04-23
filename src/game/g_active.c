@@ -714,8 +714,8 @@ void SpectatorThink(gentity_t *ent, usercmd_t *ucmd)
  */
 qboolean ClientInactivityTimer(gclient_t *client)
 {
-	int      inactivity     = (g_inactivity.integer) ? g_inactivity.integer : 60;
-	int      inactivityspec = (g_spectatorInactivity.integer) ? g_spectatorInactivity.integer : 60;
+	int      inactivity     = G_InactivityValue;
+	int      inactivityspec = G_SpectatorInactivityValue;
 	qboolean inTeam         = (client->sess.sessionTeam == TEAM_ALLIES || client->sess.sessionTeam == TEAM_AXIS) ? qtrue : qfalse;
 
 #ifdef FEATURE_OMNIBOT

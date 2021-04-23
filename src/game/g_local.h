@@ -2128,6 +2128,9 @@ extern vmCvar_t g_playerHitBoxHeight;
 
 extern vmCvar_t g_debugForSingleClient;
 
+#define G_InactivityValue (g_inactivity.integer ? g_inactivity.integer : 60)
+#define G_SpectatorInactivityValue (g_spectatorInactivity.integer ? g_spectatorInactivity.integer : 60)
+
 /**
  * @struct GeoIPTag
  * @typedef GeoIP
