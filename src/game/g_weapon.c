@@ -2634,55 +2634,41 @@ void G_AirStrikeThink(gentity_t *ent)
 	// plane see the target ?
 	if (ent->active)
 	{
-		gentity_t *bomb;
-		vec3_t    bomboffset, angle;
+		vec3_t  bomboffset;
+		trace_t tr;
+		vec3_t  tmp;
 
 		bomboffset[0] = crandom() * .5f * BOMBSPREAD;
 		bomboffset[1] = crandom() * .5f * BOMBSPREAD;
 		bomboffset[2] = 0.f;
 		VectorAdd(ent->r.currentOrigin, bomboffset, bomboffset);
 
-		VectorCopy(ent->r.currentAngles, angle);
+		VectorCopy(bomboffset, tmp);
+		tmp[2] = -MAX_MAP_SIZE;
 
-		angle[0] += 10 + crandom() * 10;
-		while (angle[0] > 180)
-			angle[0] -= 360;
-		while (angle[0] < -180)
-			angle[0] += 360;
+		trap_Trace(&tr, bomboffset, NULL, NULL, tmp, ent->s.number, MASK_MISSILESHOT);
 
-		bomb = fire_missile((ent->parent && ent->parent->client) ? ent->parent : ent, bomboffset, tv(0, 0, -750), ent->s.weapon);
-
-		bomb->s.pos.trTime = (int)(level.time + crandom() * 50);
-
-		if (level.tracemapLoaded)
+		// ensure the bomb drop in the world, otherwise, skip it
+		if (tr.fraction < 1.f /*&& !tr.startsolid*/)
 		{
-			int skyHeight;
+			gentity_t *bomb;
+			vec3_t    angle;
+			float     ground = tr.endpos[2];
 
-			skyHeight = (int)(BG_GetSkyHeightAtPoint(bomboffset));
+			tmp[2] = MAX_MAP_SIZE;
+			trap_Trace(&tr, tr.endpos, NULL, NULL, tmp, ent->s.number, MASK_MISSILESHOT);
 
-			if (bomboffset[2] >= skyHeight || skyHeight == MAX_MAP_SIZE)
-			{
-				bomb->count = 1;                 // may start through the sky
-			}
+			bomb = fire_missile((ent->parent && ent->parent->client) ? ent->parent : ent, tr.endpos, tv(0, 0, (ground - tr.endpos[2]) * (1.f / 0.75f)), ent->s.weapon);
+
+			// overwrite
+			bomb->s.pos.trTime = (int)(level.time + crandom() * 50);
+
+			VectorCopy(ent->r.currentAngles, angle);
+
+			angle[0] = AngleSubtract(angle[0], -(10 + crandom() * 10));
+			VectorCopy(angle, bomb->r.currentAngles);
+			VectorCopy(angle, bomb->s.apos.trBase);
 		}
-		else                // old behaviour
-		{
-			trace_t tr;
-			vec3_t  tmp;
-
-			VectorCopy(bomb->r.currentOrigin, tmp);
-			tmp[2] -= MAX_TRACE;
-
-			trap_Trace(&tr, bomb->r.currentOrigin, bomb->r.mins, bomb->r.maxs, tmp, bomb->r.ownerNum, bomb->clipmask);
-			bomb->r.currentOrigin[2] = tr.endpos[2];
-			bomb->s.pos.trBase[2]    = tr.endpos[2];
-		}
-
-		bomb->s.apos.trType = TR_LINEAR;
-		bomb->s.apos.trTime = level.time;
-
-		VectorCopy(angle, bomb->r.currentAngles);
-		VectorCopy(angle, bomb->s.apos.trBase);
 	}
 
 	ent->nextthink = level.time + FRAMETIME;
@@ -2696,8 +2682,8 @@ void G_AirStrikeThink(gentity_t *ent)
 		ent->think     = G_FreeEntity;
 		ent->nextthink = level.time + 5000;
 
-		// don't fade plane if the skybox is totaly wrong (-2)
-		if (ent->s.time != -2)
+		// don't fade plane
+		//if (ent->s.time != -2)
 		{
 			ent->s.time  = level.time;                  // fade effect
 			ent->s.time2 = ent->nextthink;              // fade effect
@@ -2716,8 +2702,8 @@ void weapon_callPlane(gentity_t *ent)
 	G_AirStrikeThink(ent);
 	ent->think = G_AirStrikeThink;
 
-	// don't draw plane if the skybox is totaly wrong (-2)
-	if (ent->s.time != -2)
+	// don't draw plane
+	//if (ent->s.time != -2)
 	{
 		ent->s.time  = 0;       // stop fade effect
 		ent->s.time2 = 0;       // stop fade effect
@@ -2754,7 +2740,7 @@ void weapon_callAirStrike(gentity_t *ent)
 	ent->nextthink = (int)(level.time + 950 + ((ent->count - 1) * 2000) + NUMBOMBS * 100 + crandom() * 50);     // 950 offset is for aircraft flyby + plane count
 
 	VectorCopy(ent->s.pos.trBase, end);
-	end[2] += BG_GetSkyHeightAtPoint(ent->s.pos.trBase);
+	end[2] += MAX_TRACE;
 
 	trap_Trace(&tr, ent->s.pos.trBase, NULL, NULL, end, ent->s.number, MASK_SHOT);
 	if ((tr.fraction < 1.0f) && (!(tr.surfaceFlags & SURF_NOIMPACT)))           //SURF_SKY)) ) { // changed for trenchtoast foggie prollem
@@ -2797,20 +2783,34 @@ void weapon_callAirStrike(gentity_t *ent)
 		VectorScale(bombaxis, (-.5f * BOMBSPREAD * NUMBOMBS), pos);
 		VectorAdd(ent->s.pos.trBase, pos, pos);   // first bomb position
 		VectorScale(bombaxis, BOMBSPREAD * NUMBOMBS, bombaxis);   // bomb drop direction offset
-		pos[2] = skyHeight;
+
+		// target can't be see, move the aircraft higher
+		if (!ent->active)
+		{
+			VectorCopy(pos, end);
+			pos[2] = MAX_MAP_SIZE;
+
+			trap_TraceCapsule(&tr, pos, planeBBoxMin, planeBBoxMax, end, ent->s.number, MASK_SOLID);
+
+			pos[2] = tr.endpos[2];
+		}
+		else
+		{
+			pos[2] = skyHeight;
+		}
 
 		// destination point of aircraft
-		VectorMA(pos, 4, bombaxis, end);
-		end[2] = skyHeight;
-
-		trap_TraceCapsule(&tr, pos, planeBBoxMin, planeBBoxMax, end, ent->s.number, MASK_SOLID);
-		while (tr.fraction < 1.0f && (tr.surfaceFlags & SURF_NOIMPACT) && !VectorCompare(tr.endpos, end)) //SURF_SKY)) ) { // changed for trenchtoast foggie prollem
-		{
-			// move a little bit to avoid hitting thin surface (coronas, light, ....)
-			VectorMA(tr.endpos, FRAMETIME * 0.001f, bombaxis, tr.endpos);
-
-			trap_TraceCapsule(&tr, tr.endpos, planeBBoxMin, planeBBoxMax, end, ent->s.number, MASK_SOLID);
-		}
+		//VectorMA(pos, 4, bombaxis, end);
+		//end[2] = skyHeight;
+		//
+		//trap_TraceCapsule(&tr, pos, planeBBoxMin, planeBBoxMax, end, ent->s.number, MASK_SOLID);
+		//while (tr.fraction < 1.0f && (tr.surfaceFlags & SURF_NOIMPACT) && !VectorCompare(tr.endpos, end)) //SURF_SKY)) ) { // changed for trenchtoast foggie prollem
+		//{
+		//	// move a little bit to avoid hitting thin surface (coronas, light, ....)
+		//	VectorMA(tr.endpos, FRAMETIME * 0.001f, bombaxis, tr.endpos);
+		//
+		//	trap_TraceCapsule(&tr, tr.endpos, planeBBoxMin, planeBBoxMax, end, ent->s.number, MASK_SOLID);
+		//}
 
 		vectoangles(bombaxis, angle);
 
@@ -2832,25 +2832,25 @@ void weapon_callAirStrike(gentity_t *ent)
 		plane->s.time       = -1;         // draw nothing   plane->nextthink; // fade effect
 		plane->s.time2      = -1;         // draw nothing   level.time;       // fade effect
 
-		if (tr.fraction < 1.0f && !(tr.surfaceFlags & SURF_NOIMPACT))         //SURF_SKY)) ) { // changed for trenchtoast foggie prollem
-		{
-			int skyFloor, skyCeil;
-			skyFloor = BG_GetTracemapSkyGroundFloor();
-			skyCeil  = BG_GetTracemapSkyGroundCeil();
-
-			// some maps block missile throws sky by defining a thin sky surface and adding
-			// a surface as SURF_NODRAW and SURF_NOMARK, this to ensure no map exploit.
-			// in case we encounter this kind of sky, simply check if the sky have an height
-			if (level.tracemapLoaded && skyFloor != skyCeil)
-			{
-				pos[2] = skyCeil;
-			}
-			else            // don't draw plane at all, sky box is totaly wrong
-			{
-				plane->s.time  = -2;
-				plane->s.time2 = -2;
-			}
-		}
+		//if (tr.fraction < 1.0f && !(tr.surfaceFlags & SURF_NOIMPACT))        //SURF_SKY)) ) { // changed for trenchtoast foggie prollem
+		//{
+		//	int skyFloor, skyCeil;
+		//	skyFloor = BG_GetTracemapSkyGroundFloor();
+		//	skyCeil  = BG_GetTracemapSkyGroundCeil();
+		//
+		//	// some maps block missile throws sky by defining a thin sky surface and adding
+		//	// a surface as SURF_NODRAW and SURF_NOMARK, this to ensure no map exploit.
+		//	// in case we encounter this kind of sky, simply check if the sky have an height
+		//	if (level.tracemapLoaded && skyFloor != skyCeil)
+		//	{
+		//		pos[2] = skyCeil;
+		//	}
+		//	else        // don't draw plane at all, sky box is totaly wrong
+		//	{
+		//		plane->s.time  = -2;
+		//		plane->s.time2 = -2;
+		//	}
+		//}
 
 		VectorCopy(planeBBoxMin, plane->r.mins);
 		VectorCopy(planeBBoxMax, plane->r.maxs);
@@ -2918,6 +2918,9 @@ void artillerySpotterThink(gentity_t *ent)
 {
 	gentity_t *bomb;
 	vec3_t    bomboffset;
+	trace_t   tr;
+	vec3_t    tmp;
+	float     ground;
 
 	// spotter, bomb dropped
 	ent->count -= 1;
@@ -2931,7 +2934,23 @@ void artillerySpotterThink(gentity_t *ent)
 		bomboffset[2] = 0;
 		VectorAdd(bomboffset, ent->s.pos.trBase, bomboffset);
 
-		bomb = fire_missile((ent->parent && ent->parent->client) ? ent->parent : ent, bomboffset, tv(0.f, 0.f, -1350.f), ent->s.weapon);
+		VectorCopy(bomboffset, tmp);
+		tmp[2] = -MAX_MAP_SIZE;
+
+		trap_Trace(&tr, bomboffset, NULL, NULL, tmp, ent->s.number, MASK_MISSILESHOT);
+
+		if (tr.fraction == 1.f || tr.startsolid)
+		{
+			tr.endpos[0] = ent->s.pos.trBase[0];
+			tr.endpos[1] = ent->s.pos.trBase[1];
+		}
+
+		ground = tr.endpos[2];
+
+		tmp[2] = MAX_MAP_SIZE;
+		trap_Trace(&tr, tr.endpos, NULL, NULL, tmp, ent->s.number, MASK_MISSILESHOT);
+
+		bomb = fire_missile((ent->parent && ent->parent->client) ? ent->parent : ent, tr.endpos, tv(0, 0, (ground - tr.endpos[2]) * (1.f / 0.75f)), ent->s.weapon);
 
 		bomb->nextthink        += 3950; // overwrite, add delay between 1st bomb and 2nd one
 		bomb->splashDamage      = 90;   // overwrite
@@ -2949,38 +2968,32 @@ void artillerySpotterThink(gentity_t *ent)
 		bomboffset[2] = 0;
 		VectorAdd(bomboffset, ent->s.pos.trBase, bomboffset);
 
-		bomb = fire_missile((ent->parent && ent->parent->client) ? ent->parent : ent, bomboffset, tv(0.f, 0.f, -1350.f), ent->s.weapon);
+		VectorCopy(bomboffset, tmp);
+		tmp[2] = -MAX_MAP_SIZE;
+
+		trap_Trace(&tr, bomboffset, NULL, NULL, tmp, ent->s.number, MASK_MISSILESHOT);
+
+		if (tr.fraction == 1.f /*|| tr.startsolid*/)
+		{
+			tr.endpos[0] = ent->s.pos.trBase[0];
+			tr.endpos[1] = ent->s.pos.trBase[1];
+		}
+
+		ground = tr.endpos[2];
+
+		tmp[2] = MAX_MAP_SIZE;
+		trap_Trace(&tr, tr.endpos, NULL, NULL, tmp, ent->s.number, MASK_MISSILESHOT);
+
+		bomb = fire_missile((ent->parent && ent->parent->client) ? ent->parent : ent, tr.endpos, tv(0, 0, (ground - tr.endpos[2]) * (1.f / 0.75f)), ent->s.weapon);
 	}
+
+	G_AddEvent(bomb, EV_MISSILE_FALLING, 0);
 
 	// next bomb drop, add randomness
 	ent->nextthink = bomb->nextthink + crandom() * 800;
 
 	// overwrite
 	bomb->nextthink = 0;
-
-	if (level.tracemapLoaded)
-	{
-		int skyHeight;
-
-		skyHeight = (int)(BG_GetSkyHeightAtPoint(bomboffset));
-
-		if (bomboffset[2] >= skyHeight || skyHeight == MAX_MAP_SIZE)
-		{
-			bomb->count = 1;         // may start through the sky
-		}
-	}
-	else        // old behaviour
-	{
-		trace_t tr;
-		vec3_t  tmp;
-
-		VectorCopy(bomb->r.currentOrigin, tmp);
-		tmp[2] -= MAX_TRACE;
-
-		trap_Trace(&tr, bomb->r.currentOrigin, bomb->r.mins, bomb->r.maxs, tmp, bomb->r.ownerNum, bomb->clipmask);
-		bomb->r.currentOrigin[2] = tr.endpos[2];
-		bomb->s.pos.trBase[2]    = tr.endpos[2];
-	}
 
 	// no more bomb to drop
 	if (ent->count <= 0)
@@ -4121,13 +4134,13 @@ qboolean G_PlayerCanBeSeenByOthers(gentity_t *ent)
 // *INDENT-OFF*
 weapFireTable_t weapFireTable[] =
 {
-        // weapon                  fire                         think                       free                eType                  eFlags                      svFlags                       content          trType          trTime                 boundingBox                                      hitBox                                           clipMask          nextThink  accuracy health timeStamp impactDamage
+    // weapon                  fire                         think                       free                eType                  eFlags                      svFlags                       content          trType          trTime                 boundingBox                                      hitBox                                           clipMask          nextThink  accuracy health timeStamp impactDamage
 	{ WP_NONE,                 NULL,                        NULL,                       NULL,               ET_GENERAL,            EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_STATIONARY,  0,                     { { 0, 0, 0 }, { 0, 0, 0 } },                    { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_ALL,         0,         0,       0,     0,        0,           },
 	{ WP_KNIFE,                Weapon_Knife,                NULL,                       NULL,               ET_GENERAL,            EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_LINEAR,      0,                     { { 0, 0, 0 }, { 0, 0, 0 } },                    { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_SHOT,        0,         0,       0,     0,        0,           },
 	{ WP_LUGER,                Bullet_Fire,                 NULL,                       NULL,               ET_GENERAL,            EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_LINEAR,      0,                     { { 0, 0, 0 }, { 0, 0, 0 } },                    { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_SHOT,        0,         0,       0,     0,        0,           },
 	{ WP_MP40,                 Bullet_Fire,                 NULL,                       NULL,               ET_GENERAL,            EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_LINEAR,      0,                     { { 0, 0, 0 }, { 0, 0, 0 } },                    { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_SHOT,        0,         0,       0,     0,        0,           },
 	{ WP_GRENADE_LAUNCHER,     weapon_grenadelauncher_fire, G_ExplodeMissile,           NULL,               ET_MISSILE,            EF_BOUNCE_HALF | EF_BOUNCE, SVF_BROADCAST,                CONTENTS_NONE,   TR_GRAVITY,     -MISSILE_PRESTEP_TIME, { { -4.f, -4.f, 0.f }, { 4.f, 4.f, 6.f } },      { { -4.f, -4.f, 0.f }, { 4.f, 4.f, 6.f } },      MASK_MISSILESHOT, 2500,      0,       0,     0,        20,          },
-	{ WP_PANZERFAUST,          weapon_antitank_fire,        G_ExplodeMissile,           NULL,               ET_MISSILE,            EF_NONE,                    SVF_BROADCAST,                CONTENTS_NONE,   TR_LINEAR,      -MISSILE_PRESTEP_TIME, { { 0, 0, 0 }, { 0, 0, 0 } },                    { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_MISSILESHOT, 20000,     4,       0,     0,        999,         },
+	{ WP_PANZERFAUST,          weapon_antitank_fire,        G_ExplodeMissile,           NULL,               ET_MISSILE,            EF_NONE,                    SVF_BROADCAST,                CONTENTS_NONE,   TR_LINEAR,      0/*-MISSILE_PRESTEP_TIME*/, { { 0, 0, 0 }, { 0, 0, 0 } },                    { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_MISSILESHOT, 20000,     4,       0,     0,        999,         },
 	{ WP_FLAMETHROWER,         Weapon_FlamethrowerFire,     NULL,                       NULL,               ET_FLAMETHROWER_CHUNK, EF_NONE,                    SVF_NOCLIENT | SVF_BROADCAST, CONTENTS_CORPSE, TR_DECCELERATE, -MISSILE_PRESTEP_TIME, { { -4, -4, -4 }, { 4, 4, 4 } },                 { { -4, -4, -4 }, { 4, 4, 4 } },                 MASK_MISSILESHOT, 0,         0,       0,     1,        20,          },  // this is done client-side only now // - um, no it isnt? FIXME
 	{ WP_COLT,                 Bullet_Fire,                 NULL,                       NULL,               ET_GENERAL,            EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_LINEAR,      0,                     { { 0, 0, 0 }, { 0, 0, 0 } },                    { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_SHOT,        0,         0,       0,     0,        0,           },
 	{ WP_THOMPSON,             Bullet_Fire,                 NULL,                       NULL,               ET_GENERAL,            EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_LINEAR,      0,                     { { 0, 0, 0 }, { 0, 0, 0 } },                    { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_SHOT,        0,         0,       0,     0,        0,           },
@@ -4136,7 +4149,7 @@ weapFireTable_t weapFireTable[] =
 	{ WP_STEN,                 Bullet_Fire,                 NULL,                       NULL,               ET_GENERAL,            EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_LINEAR,      0,                     { { 0, 0, 0 }, { 0, 0, 0 } },                    { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_SHOT,        0,         0,       0,     0,        0,           },
 	{ WP_MEDIC_SYRINGE,        Weapon_Syringe,              NULL,                       NULL,               ET_GENERAL,            EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_LINEAR,      0,                     { { 0, 0, 0 }, { 0, 0, 0 } },                    { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_SHOT,        0,         0,       0,     0,        0,           },
 	{ WP_AMMO,                 Weapon_MagicAmmo,            G_MagicSink,                NULL,               ET_ITEM,               EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_GRAVITY,     0,                     { { 0, 0, 0 }, { 0, 0, 0 } },                    { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_SHOT,        30000,     0,       0,     0,        0,           },
-	{ WP_ARTY,                 NULL,                        NULL,                       G_ArtilleryExplode, ET_MISSILE,            EF_NONE,                    SVF_BROADCAST,                CONTENTS_NONE,   TR_GRAVITY,     -MISSILE_PRESTEP_TIME, { { 0, 0, 0 }, { 0, 0, 0 } },                    { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_MISSILESHOT, 2000,      2,       0,     0,        20,          },
+	{ WP_ARTY,                 NULL,                        NULL,                       G_ArtilleryExplode, ET_MISSILE,            EF_NONE,                    SVF_BROADCAST,                CONTENTS_NONE,   TR_LINEAR,      -MISSILE_PRESTEP_TIME, { { 0, 0, 0 }, { 0, 0, 0 } },                    { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_MISSILESHOT, 2000,      2,       0,     0,        20,          },
 	{ WP_SILENCER,             Bullet_Fire,                 NULL,                       NULL,               ET_GENERAL,            EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_LINEAR,      0,                     { { 0, 0, 0 }, { 0, 0, 0 } },                    { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_SHOT,        0,         0,       0,     0,        0,           },
 	{ WP_DYNAMITE,             weapon_grenadelauncher_fire, DynaSink,                   DynaFree,           ET_MISSILE,            EF_BOUNCE_HALF | EF_BOUNCE, SVF_BROADCAST,                CONTENTS_CORPSE, TR_GRAVITY,     -MISSILE_PRESTEP_TIME, { { -10.f, -10.f, 0.f }, { 10.f, 10.f, 11.f } }, { { -12.f, -12.f, 0.f }, { 12.f, 12.f, 20.f } }, MASK_MISSILESHOT, 15000,     0,       5,     16500,    20,          },
 	{ WP_SMOKETRAIL,           NULL,                        artilleryGoAway,            NULL,               ET_MISSILE,            EF_BOUNCE,                  SVF_NONE,                     CONTENTS_NONE,   TR_GRAVITY,     -MISSILE_PRESTEP_TIME, { { 0, 0, 0 }, { 0, 0, 0 } },                    { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_MISSILESHOT, 1000,      0,       0,     0,        20,          },
@@ -4183,7 +4196,7 @@ weapFireTable_t weapFireTable[] =
 	{ WP_MORTAR2_SET,          weapon_mortar_fire,          NULL,                       NULL,               ET_MISSILE,            EF_NONE,                    SVF_BROADCAST,                CONTENTS_NONE,   TR_GRAVITY,     -MISSILE_PRESTEP_TIME, { { -4.f, -4.f, 0.f }, { 4.f, 4.f, 6.f } },      { { -4.f, -4.f, 0.f }, { 4.f, 4.f, 6.f } },      MASK_MISSILESHOT, 0,         0,       0,     0,        999,         },
 	{ WP_BAZOOKA,              weapon_antitank_fire,        G_ExplodeMissile,           NULL,               ET_MISSILE,            EF_NONE,                    SVF_BROADCAST,                CONTENTS_NONE,   TR_LINEAR,      -MISSILE_PRESTEP_TIME, { { 0, 0, 0 }, { 0, 0, 0 } },                    { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_MISSILESHOT, 20000,     4,       0,     0,        999,         },
 	{ WP_MP34,                 Bullet_Fire,                 NULL,                       NULL,               ET_GENERAL,            EF_NONE,                    SVF_NONE,                     CONTENTS_NONE,   TR_LINEAR,      0,                     { { 0, 0, 0 }, { 0, 0, 0 } },                    { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_SHOT,        0,         0,       0,     0,        0,           },
-        { WP_AIRSTRIKE,            NULL,                        NULL,                       NULL,               ET_MISSILE,            EF_NONE,                    SVF_BROADCAST,                CONTENTS_NONE,   TR_GRAVITY,     -MISSILE_PRESTEP_TIME, { { 0, 0, 0 }, { 0, 0, 0 } },                    { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_MISSILESHOT, 0,         2,       0,     0,        20,          },
+	{ WP_AIRSTRIKE,            NULL,                        NULL,                       NULL,               ET_MISSILE,            EF_NONE,                    SVF_BROADCAST,                CONTENTS_NONE,   TR_LINEAR,      0/*-MISSILE_PRESTEP_TIME*/, { { 0, 0, 0 }, { 0, 0, 0 } },                    { { 0, 0, 0 }, { 0, 0, 0 } },                    MASK_MISSILESHOT, 0,         2,       0,     0,        20,          },
 };
 // *INDENT-ON*
 

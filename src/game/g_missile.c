@@ -509,7 +509,16 @@ void G_RunMissile(gentity_t *ent)
 		}
 	}
 
-	if (level.tracemapLoaded && ent->s.pos.trType == TR_GRAVITY && ent->r.contents != CONTENTS_CORPSE)
+	if (ent->s.pos.trType == TR_LINEAR && level.time > ent->spawnTime + FRAMETIME)
+	{
+		if (!ent->count2 && ent->r.currentOrigin[2] > origin[2])
+		{
+			// missile go down, play the falling sound
+			G_AddEvent(ent, EV_MISSILE_FALLING, 0);
+			ent->count2 = 2;
+		}
+	}
+	else if (level.tracemapLoaded && ent->s.pos.trType == TR_GRAVITY && ent->r.contents != CONTENTS_CORPSE)
 	{
 		if (ent->count)
 		{
@@ -1198,7 +1207,7 @@ void DynaFree(gentity_t *self)
  */
 void G_ChainFree(gentity_t *self)
 {
-    float     dist;
+	float     dist;
 	gentity_t *ent;
 	int       entityList[MAX_GENTITIES];
 	int       numListedEntities;
@@ -1216,8 +1225,8 @@ void G_ChainFree(gentity_t *self)
 	}
 
 	numListedEntities = trap_EntitiesInBox(mins, maxs, entityList, MAX_GENTITIES);
-    
-    for (e = 0 ; e < numListedEntities ; e++)
+
+	for (e = 0 ; e < numListedEntities ; e++)
 	{
 		ent = &g_entities[entityList[e]];
 
@@ -1249,13 +1258,13 @@ void G_ChainFree(gentity_t *self)
 			{
 				// free the other dynamite now too since they are peers
 				ent->nextthink = level.time;
-                
-                ent->think = G_ChainFree;
+
+				ent->think = G_ChainFree;
 			}
 		}
-    }
-        
-    G_FreeEntity(self);
+	}
+
+	G_FreeEntity(self);
 }
 
 /**
