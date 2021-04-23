@@ -509,7 +509,7 @@ void G_RunMissile(gentity_t *ent)
 		}
 	}
 
-	if (level.tracemapLoaded && ent->r.contents != CONTENTS_CORPSE)
+	if (ent->r.contents != CONTENTS_CORPSE)
 	{
 		if (ent->count)
 		{
@@ -528,18 +528,31 @@ void G_RunMissile(gentity_t *ent)
 
 				//G_ExplodeMissile(ent);  // play explode sound
 				G_FreeEntity(ent);      // and delete it
-				return;
 			}
 			else
 			{
-				float skyFloor, skyHeight, groundFloor;
+				vec3_t tmp;
 
-				skyFloor    = BG_GetTracemapSkyGroundFloor();   // lowest sky height point
-				skyHeight   = BG_GetSkyHeightAtPoint(origin);
-				groundFloor = BG_GetTracemapGroundFloor();
+				VectorCopy(origin, tmp);
+				tmp[2] = MAX_MAP_SIZE;
+				trap_Trace(&tr, origin, NULL, NULL, tmp, ent->s.number, ent->clipmask);
 
-				// is ent under the ground limit, and ground valid
-				if (origin[2] < groundFloor && groundFloor != MAX_MAP_SIZE)
+				// are we in worldspace again
+				if (tr.fraction == 1.f)
+				{
+					G_RunThink(ent);
+
+					VectorCopy(origin, ent->r.currentOrigin);   // keep the previous origin to don't go too far
+					VectorCopy(angle, ent->r.currentAngles);
+
+					return;     // keep flying
+				}
+
+				tmp[2] = -MAX_MAP_SIZE;
+				trap_Trace(&tr, origin, NULL, NULL, tmp, ent->s.number, ent->clipmask);
+
+				// is ent go under the ground limit
+				if (tr.fraction == 1.f)
 				{
 					gentity_t *tent;
 
@@ -553,19 +566,8 @@ void G_RunMissile(gentity_t *ent)
 					return;
 				}
 
-				// are we in worldspace again - or did we hit a ceiling from the outside of the world
-				if (skyHeight == MAX_MAP_SIZE && origin[2] >= skyFloor)
-				{
-					G_RunThink(ent);
-
-					VectorCopy(origin, ent->r.currentOrigin);   // keep the previous origin to don't go too far
-					VectorCopy(angle, ent->r.currentAngles);
-
-					return;     // keep flying
-				}
-
 				// is ent above the sky limit
-				if (skyHeight <= origin[2])
+				if (tr.surfaceFlags & SURF_SKY)
 				{
 					G_RunThink(ent);
 					return; // keep flying
@@ -577,6 +579,7 @@ void G_RunMissile(gentity_t *ent)
 				ent->count  = 0;
 				ent->count2 = 1;
 			}
+			return;
 		}
 		else if (!ent->count2 && BG_GetSkyHeightAtPoint(origin) - BG_GetGroundHeightAtPoint(origin) > 1024)
 		{
@@ -642,10 +645,7 @@ void G_RunMissile(gentity_t *ent)
 
 	if (tr.fraction != 1.f)
 	{
-		/*qboolean exploded = qfalse;*/
-
-		if (level.tracemapLoaded && ent->r.contents != CONTENTS_CORPSE
-		    && (tr.surfaceFlags & SURF_SKY))
+		if (ent->r.contents != CONTENTS_CORPSE && (tr.surfaceFlags & SURF_SKY))
 		{
 			// goes through sky
 			ent->count = 1;
@@ -664,12 +664,12 @@ void G_RunMissile(gentity_t *ent)
 		{
 			if (ent->s.pos.trType != TR_STATIONARY)
 			{
-				/*exploded = */ G_MissileImpact(ent, &tr, GetWeaponFireTableData(ent->s.weapon)->impactDamage);
+				G_MissileImpact(ent, &tr, GetWeaponFireTableData(ent->s.weapon)->impactDamage);
 			}
 		}
 		else
 		{
-			/*exploded =*/ G_MissileImpact(ent, &tr, GetWeaponFireTableData(ent->s.weapon)->impactDamage);
+			G_MissileImpact(ent, &tr, GetWeaponFireTableData(ent->s.weapon)->impactDamage);
 		}
 
 		if (ent->s.eType != ET_MISSILE)
