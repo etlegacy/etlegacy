@@ -1999,7 +1999,7 @@ int QDECL Com_sprintf(char *dest, unsigned int size, const char *fmt, ...)
 
 	if (len >= size)
 	{
-		Com_Printf("Com_sprintf: Output length %u too short, require %d bytes.\n", size, len + 1);
+		Com_Printf(S_COLOR_RED "ERROR: " S_COLOR_GREEN "Com_sprintf output length %u too short, require %d bytes.\n", size, len + 1);
 	}
 
 	return len;
