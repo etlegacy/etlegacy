@@ -1420,9 +1420,9 @@ void CL_PlayDemo_f(void)
 
 		if (demo_protocols[i] || protocol == PROTOCOL_VERSION)
 		{
-			if (Sys_PathAbsolute(name))
+			if (Sys_PathAbsolute(arg))
 			{
-				FS_FOpenFileReadFullDir(name, &clc.demofile);
+				FS_FOpenFileReadFullDir(arg, &clc.demofile);
 			}
 			else
 			{
