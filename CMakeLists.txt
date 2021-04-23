@@ -113,6 +113,10 @@ set(BUNDLED_TARGETS_FOLDER Bundled)
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 set_property(GLOBAL PROPERTY PREDEFINED_TARGETS_FOLDER ${CMAKE_TARGETS_FOLDER})
 
+# Set language levels
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_C_STANDARD 99)
+
 # Find and setup programs the build needs
 include(cmake/ETLPrograms.cmake)
 
