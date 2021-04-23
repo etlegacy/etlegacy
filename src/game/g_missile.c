@@ -509,16 +509,7 @@ void G_RunMissile(gentity_t *ent)
 		}
 	}
 
-	if (ent->s.pos.trType == TR_LINEAR && level.time > ent->spawnTime + FRAMETIME)
-	{
-		if (!ent->count2 && ent->r.currentOrigin[2] > origin[2])
-		{
-			// missile go down, play the falling sound
-			G_AddEvent(ent, EV_MISSILE_FALLING, 0);
-			ent->count2 = 2;
-		}
-	}
-	else if (level.tracemapLoaded && ent->s.pos.trType == TR_GRAVITY && ent->r.contents != CONTENTS_CORPSE)
+	if (level.tracemapLoaded && ent->r.contents != CONTENTS_CORPSE)
 	{
 		if (ent->count)
 		{
@@ -598,16 +589,25 @@ void G_RunMissile(gentity_t *ent)
 
 			if (ent->count2 == 1)
 			{
-				VectorSubtract(origin, ent->r.currentOrigin, impactpos);
-				VectorMA(origin, 16, impactpos, impactpos);
-
-				trap_Trace(&mortar_tr, origin, ent->r.mins, ent->r.maxs, impactpos, ent->r.ownerNum, ent->clipmask);
-
-				if (mortar_tr.fraction != 1.f && !(mortar_tr.surfaceFlags & SURF_NOIMPACT))
+				if (ent->s.pos.trType == TR_LINEAR)
 				{
 					// missile go down, play the falling sound
 					G_AddEvent(ent, EV_MISSILE_FALLING, 0);
 					ent->count2 = 2;
+				}
+				else
+				{
+					VectorSubtract(origin, ent->r.currentOrigin, impactpos);
+					VectorMA(origin, 16, impactpos, impactpos);
+
+					trap_Trace(&mortar_tr, origin, ent->r.mins, ent->r.maxs, impactpos, ent->r.ownerNum, ent->clipmask);
+
+					if (mortar_tr.fraction != 1.f && !(mortar_tr.surfaceFlags & SURF_NOIMPACT))
+					{
+						// missile go down, play the falling sound
+						G_AddEvent(ent, EV_MISSILE_FALLING, 0);
+						ent->count2 = 2;
+					}
 				}
 			}
 
@@ -644,7 +644,7 @@ void G_RunMissile(gentity_t *ent)
 	{
 		/*qboolean exploded = qfalse;*/
 
-		if (level.tracemapLoaded && ent->s.pos.trType == TR_GRAVITY && ent->r.contents != CONTENTS_CORPSE
+		if (level.tracemapLoaded && ent->r.contents != CONTENTS_CORPSE
 		    && (tr.surfaceFlags & SURF_SKY))
 		{
 			// goes through sky
