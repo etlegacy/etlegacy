@@ -599,7 +599,9 @@ static cvarTable_t cvarTable[] =
 
 	{ &cg_optimizePrediction,     "cg_optimizePrediction",     "1",           CVAR_ARCHIVE,                 0 },   // unlagged optimized prediction
 
+#if defined(FEATURE_RATING) || defined(FEATURE_PRESTIGE)
 	{ &cg_scoreboard,             "cg_scoreboard",             "0",           CVAR_ARCHIVE,                 0 },
+#endif
 
 	{ &cg_quickchat,              "cg_quickchat",              "0",           CVAR_ARCHIVE,                 0 },
 
