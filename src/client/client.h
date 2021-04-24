@@ -190,6 +190,21 @@ extern clientActive_t cl;
 
 //==================================================================
 
+typedef struct
+{
+	char demoName[MAX_QPATH];
+	qboolean demorecording;
+	qboolean demoplaying;
+	qboolean pureDemo;
+	qboolean demowaiting;                       ///< don't record until a non-delta message is received
+	qboolean firstDemoFrameSkipped;
+	fileHandle_t demofile;
+
+	int timeDemoFrames;                         ///< counter of rendered frames
+	int timeDemoStart;                          ///< cls.realtime before first frame
+	int timeDemoBaseTime;                       ///< each frame will be at this time + frameNum * 50
+} demo_t;
+
 /**
  * @struct clientConnection_t
  * @brief The clientConnection_t structure is wiped when disconnecting from a server,
@@ -241,20 +256,11 @@ typedef struct
 	char serverCommands[MAX_RELIABLE_COMMANDS][MAX_TOKEN_CHARS];
 
 	// demo information
-	char demoName[MAX_QPATH];
-	qboolean demorecording;
-	qboolean demoplaying;
-	qboolean demowaiting;                       ///< don't record until a non-delta message is received
-	qboolean firstDemoFrameSkipped;
-	fileHandle_t demofile;
+	demo_t demo;
 
 	qboolean waverecording;
 	fileHandle_t wavefile;
 	int wavetime;
-
-	int timeDemoFrames;                         ///< counter of rendered frames
-	int timeDemoStart;                          ///< cls.realtime before first frame
-	int timeDemoBaseTime;                       ///< each frame will be at this time + frameNum * 50
 
 	//float aviVideoFrameRemainder;
 	//float aviSoundFrameRemainder;
