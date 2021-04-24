@@ -635,7 +635,7 @@ void CL_SystemInfoChanged(void)
 	{
 		// allow running demo in pure mode to simulate server environment,
 		// but still setup the referenced packages for the container system to work
-		CL_SetPurePaks(Cvar_VariableIntegerValue("sv_pure") == 0);
+		CL_SetPurePaks(!clc.demo.pure);
 		return;
 	}
 
@@ -825,7 +825,7 @@ void CL_ParseGamestate(msg_t *msg)
 	else
 	{
 		char missingFiles[MAX_TOKEN_CHARS] = { '\0' };
-		if (Cvar_VariableIntegerValue("sv_pure") != 0 && FS_ComparePaks(missingFiles, sizeof(missingFiles), qfalse))
+		if (clc.demo.pure && FS_ComparePaks(missingFiles, sizeof(missingFiles), qfalse))
 		{
 			Com_Error(ERR_DROP, "Missing required packages: %s", missingFiles);
 		}

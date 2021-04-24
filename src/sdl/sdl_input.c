@@ -1313,7 +1313,8 @@ static void IN_ProcessEvents(void)
 				Com_Memset(buffer, 0, sizeof(buffer));
 				Q_strcpy(buffer, e.drop.file);
 				COM_FixPath(buffer);
-				Cbuf_AddText(va("demo \"%s\"", buffer));
+				// Set the FS to "dirty" mode for the demo playback
+				Cbuf_AddText(va("demo dirty \"%s\"", buffer));
 			}
 			SDL_free(e.drop.file);
 			break;

@@ -1388,7 +1388,7 @@ void CL_PlayDemo_f(void)
 	char *demoFile, *ext_test;
 	int  protocol, i;
 
-	if (Cmd_Argc() != 2)
+	if (Cmd_Argc() < 2)
 	{
 		Com_FuncPrinf("playdemo <demoname>\n");
 		return;
@@ -1401,8 +1401,8 @@ void CL_PlayDemo_f(void)
 
 	Cvar_Set("cl_autorecord", "0");
 
-	// open the demo file
-	demoFile = Cmd_Argv(1);
+	// open the demo file (should be the last arg)
+	demoFile = Cmd_Argv(Cmd_Argc() - 1);
 	// check for an extension .DEMOEXT_?? (?? is protocol)
 	ext_test = strrchr(demoFile, '.');
 
@@ -1471,7 +1471,25 @@ void CL_PlayDemo_f(void)
 	CL_ParseDemo();
 #endif
 
-	cls.state            = CA_CONNECTED;
+	if (Cmd_Argc() == 3)
+	{
+		char *param = Cmd_Argv(1);
+
+		if (!Q_stricmp(param, "pure"))
+		{
+			clc.demo.pure = qtrue;
+		}
+		else if (!Q_stricmp(param, "dirty"))
+		{
+			clc.demo.pure = qfalse;
+		}
+	}
+	else
+	{
+		clc.demo.pure = Cvar_VariableIntegerValue("sv_pure") != 0;
+	}
+
+	cls.state        = CA_CONNECTED;
 	clc.demo.playing = qtrue;
 
 	if (Cvar_VariableValue("cl_wavefilerecord") != 0.f)
