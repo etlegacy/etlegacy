@@ -871,6 +871,12 @@ void Sys_BuildCommandLine(int argc, char **argv, char *buffer, size_t bufferSize
 			Q_strcat(buffer, bufferSize, "+connect ");
 		}
 
+		// Allow demo files to be passed without +demo for playback
+		if (FS_IsDemoExt(argv[i], -1) && Q_strncmp(argv[i - 1], "+demo", 5) && Q_strncmp(argv[i - 1], "+record", 7))
+		{
+			Q_strcat(buffer, bufferSize, "+demo dirty ");
+		}
+
 		if (containsSpaces)
 		{
 			Q_strcat(buffer, bufferSize, "\"");

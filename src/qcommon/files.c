@@ -1308,6 +1308,11 @@ qboolean FS_IsDemoExt(const char *fileName, int namelen)
 {
 	char *ext_test;
 
+	if (!fileName || !fileName[0])
+	{
+		return qfalse;
+	}
+
 	ext_test = strrchr(fileName, '.');
 	if (ext_test && (!Q_stricmpn(ext_test + 1, DEMOEXT, ARRAY_LEN(DEMOEXT) - 1) || !Q_stricmpn(ext_test + 1, SVDEMOEXT, ARRAY_LEN(SVDEMOEXT) - 1)))
 	{
