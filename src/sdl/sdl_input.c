@@ -1303,6 +1303,8 @@ static void IN_ProcessEvents(void)
 
 			break;
 		case SDL_DROPFILE:
+			Com_Printf(S_COLOR_YELLOW "Drop file: %s received\n", e.drop.file);
+
 			if (!Q_strncmp(e.drop.file, "et://", 5))
 			{
 				Cbuf_AddText(va("connect \"%s\"", e.drop.file));
