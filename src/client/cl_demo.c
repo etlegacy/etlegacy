@@ -1385,7 +1385,7 @@ static void CL_CompleteDemoName(char *args, int argNum)
 void CL_PlayDemo_f(void)
 {
 	char name[MAX_OSPATH], retry[MAX_OSPATH];
-	char *arg, *ext_test;
+	char *demoFile, *ext_test;
 	int  protocol, i;
 
 	if (Cmd_Argc() != 2)
@@ -1402,9 +1402,9 @@ void CL_PlayDemo_f(void)
 	Cvar_Set("cl_autorecord", "0");
 
 	// open the demo file
-	arg = Cmd_Argv(1);
+	demoFile = Cmd_Argv(1);
 	// check for an extension .DEMOEXT_?? (?? is protocol)
-	ext_test = strrchr(arg, '.');
+	ext_test = strrchr(demoFile, '.');
 
 	if (ext_test && !Q_stricmpn(ext_test + 1, DEMOEXT, ARRAY_LEN(DEMOEXT) - 1))
 	{
@@ -1420,13 +1420,19 @@ void CL_PlayDemo_f(void)
 
 		if (demo_protocols[i] || protocol == PROTOCOL_VERSION)
 		{
-			if (Sys_PathAbsolute(arg))
+			if (Sys_PathAbsolute(demoFile))
 			{
-				FS_FOpenFileReadFullDir(arg, &clc.demofile);
+				char *nameOnly = strrchr(demoFile, '/');
+				FS_FOpenFileReadFullDir(demoFile, &clc.demofile);
+
+				if (nameOnly)
+				{
+					demoFile = nameOnly + 1;
+				}
 			}
 			else
 			{
-				Com_sprintf(name, sizeof(name), "demos/%s", arg);
+				Com_sprintf(name, sizeof(name), "demos/%s", demoFile);
 				FS_FOpenFileRead(name, &clc.demofile, qtrue);
 			}
 		}
@@ -1435,28 +1441,28 @@ void CL_PlayDemo_f(void)
 			size_t len;
 
 			Com_FuncPrinf("Protocol %d not supported for demos\n", protocol);
-			len = ext_test - arg;
+			len = ext_test - demoFile;
 
 			if (len >= ARRAY_LEN(retry))
 			{
 				len = ARRAY_LEN(retry) - 1;
 			}
 
-			Q_strncpyz(retry, arg, len + 1);
+			Q_strncpyz(retry, demoFile, len + 1);
 			retry[len] = '\0';
 			protocol   = CL_WalkDemoExt(retry, name, &clc.demofile);
 		}
 	}
 	else
 	{
-		protocol = CL_WalkDemoExt(arg, name, &clc.demofile);
+		protocol = CL_WalkDemoExt(demoFile, name, &clc.demofile);
 	}
 
 	if (!clc.demofile)
 	{
 		Com_FuncDrop("couldn't open %s", name);
 	}
-	Q_strncpyz(clc.demoName, arg, sizeof(clc.demoName));
+	Q_strncpyz(clc.demoName, demoFile, sizeof(clc.demoName));
 
 	Con_Close();
 
@@ -1473,7 +1479,7 @@ void CL_PlayDemo_f(void)
 		CL_WriteWaveOpen();
 	}
 
-	Q_strncpyz(cls.servername, arg, sizeof(cls.servername));
+	Q_strncpyz(cls.servername, demoFile, sizeof(cls.servername));
 
 	// read demo messages until connected
 	while (cls.state >= CA_CONNECTED && cls.state < CA_PRIMED)
