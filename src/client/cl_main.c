@@ -420,7 +420,7 @@ void CL_ShutdownAll(void)
 	cls.soundRegistered = qfalse;
 
 	// stop recording on map change etc, demos aren't valid over map changes anyway
-	if (clc.demo.demorecording)
+	if (clc.demo.recording)
 	{
 		CL_StopRecord_f();
 	}
@@ -618,7 +618,7 @@ void CL_Disconnect(qboolean showMainMenu)
 
 	Cvar_Set("cl_freezeDemo", "0");
 
-	if (clc.demo.demorecording)
+	if (clc.demo.recording)
 	{
 		CL_StopRecord_f();
 	}
@@ -712,7 +712,7 @@ void CL_ForwardCommandToServer(const char *string)
 		return;
 	}
 
-	if (clc.demo.demoplaying || cls.state < CA_CONNECTED || cmd[0] == '+')
+	if (clc.demo.playing || cls.state < CA_CONNECTED || cmd[0] == '+')
 	{
 		Com_Printf("Unknown command \"%s\"\n", rc(cmd));
 		return;
@@ -817,7 +817,7 @@ CONSOLE COMMANDS
  */
 static void CL_ForwardToServer_f(void)
 {
-	if (cls.state != CA_ACTIVE || clc.demo.demoplaying)
+	if (cls.state != CA_ACTIVE || clc.demo.playing)
 	{
 		Com_Printf("Not connected to a server\n");
 		return;
@@ -1428,7 +1428,7 @@ void CL_AddFavServer_f(void)
         return;
     }
 
-    if (clc.demoplaying)
+    if (clc.playing)
     {
         return;
     }
@@ -1485,7 +1485,7 @@ void CL_CheckForResend(void)
 {
 	char buffer[64];
 	// don't send anything if playing back a demo
-	if (clc.demo.demoplaying)
+	if (clc.demo.playing)
 	{
 		return;
 	}
@@ -2099,7 +2099,7 @@ void CL_PacketEvent(netadr_t from, msg_t *msg)
 
 	// we don't know if it is ok to save a demo message until
 	// after we have parsed the frame
-	if (clc.demo.demorecording && !clc.demo.demowaiting)
+	if (clc.demo.recording && !clc.demo.waiting)
 	{
 		CL_WriteDemoMessage(msg, headerBytes);
 	}
@@ -2114,7 +2114,7 @@ void CL_CheckTimeout(void)
 	if ((!cl_paused->integer || !sv_paused->integer)
 	    && cls.state >= CA_CONNECTED && cls.state != CA_CINEMATIC
 	    && cls.realtime - clc.lastPacketTime > cl_timeout->value * 1000
-	    && !(clc.demo.demoplaying && cl_freezeDemo->integer))
+	    && !(clc.demo.playing && cl_freezeDemo->integer))
 	{
 		if (++cl.timeoutcount > 5)        // timeoutcount saves debugger
 		{
@@ -2207,7 +2207,7 @@ void CL_Video_f(void)
 {
 	char filename[MAX_OSPATH];
 
-	if (!clc.demo.demoplaying)
+	if (!clc.demo.playing)
 	{
 		Com_Printf("The video command can only be used when playing back demos\n");
 		return;
@@ -2302,7 +2302,7 @@ void CL_Frame(int msec)
 	}
 
 	// if recording an avi, lock to a fixed fps
-	if (cl_avidemo->integer && msec && ((cls.state == CA_ACTIVE && clc.demo.demoplaying) || cl_forceavidemo->integer))
+	if (cl_avidemo->integer && msec && ((cls.state == CA_ACTIVE && clc.demo.playing) || cl_forceavidemo->integer))
 	{
 		float fps;
 		float frameDuration;
@@ -4159,7 +4159,7 @@ void CL_ServerStatus_f(void)
 
 	if (argc != 2 && argc != 3)
 	{
-		if (cls.state != CA_ACTIVE || clc.demo.demoplaying)
+		if (cls.state != CA_ACTIVE || clc.demo.playing)
 		{
 			Com_Printf("Not connected to a server.\nusage: serverstatus [-4|-6] server\n");
 			return;

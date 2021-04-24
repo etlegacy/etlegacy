@@ -193,16 +193,16 @@ extern clientActive_t cl;
 typedef struct
 {
 	char demoName[MAX_QPATH];
-	qboolean demorecording;
-	qboolean demoplaying;
-	qboolean pureDemo;
-	qboolean demowaiting;                       ///< don't record until a non-delta message is received
-	qboolean firstDemoFrameSkipped;
-	fileHandle_t demofile;
+	qboolean recording;
+	qboolean playing;
+	qboolean pure;							///< are we starting the demo with sv_pure 1 emulation?
+	qboolean waiting;                       ///< don't record until a non-delta message is received
+	qboolean firstFrameSkipped;
+	fileHandle_t file;
 
-	int timeDemoFrames;                         ///< counter of rendered frames
-	int timeDemoStart;                          ///< cls.realtime before first frame
-	int timeDemoBaseTime;                       ///< each frame will be at this time + frameNum * 50
+	int timeFrames;                         ///< counter of rendered frames
+	int timeStart;                          ///< cls.realtime before first frame
+	int timeBaseTime;                       ///< each frame will be at this time + frameNum * 50
 } demo_t;
 
 /**

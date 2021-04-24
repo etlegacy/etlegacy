@@ -325,7 +325,7 @@ qboolean CL_GetServerCommand(int serverCommandNumber)
 	{
 		// when a demo record was started after the client got a whole bunch of
 		// reliable commands then the client never got those first reliable commands
-		if (clc.demo.demoplaying)
+		if (clc.demo.playing)
 		{
 			return qfalse;
 		}
@@ -973,7 +973,7 @@ intptr_t CL_CgameSystemCalls(intptr_t *args)
 		return re.GetEntityToken(VMA(1), args[2]);
 
 	case CG_INGAME_POPUP:
-		if (cls.state == CA_ACTIVE && !clc.demo.demoplaying)
+		if (cls.state == CA_ACTIVE && !clc.demo.playing)
 		{
 			if (uivm)     // can be called as the system is shutting down
 			{
@@ -1189,11 +1189,11 @@ void CL_InitCGame(void)
 	// init for this gamestate
 	// use the lastExecutedServerCommand instead of the serverCommandSequence
 	// otherwise server commands sent just before a gamestate are dropped
-	// bani - added clc.demoplaying, since some mods need this at init time, and drawactiveframe is too late for them
-	VM_Call(cgvm, CG_INIT, clc.serverMessageSequence, clc.lastExecutedServerCommand, clc.clientNum, clc.demo.demoplaying, qtrue, (clc.demo.demoplaying ? &dpi : 0), ETLEGACY_VERSION_INT);
+	// bani - added clc.playing, since some mods need this at init time, and drawactiveframe is too late for them
+	VM_Call(cgvm, CG_INIT, clc.serverMessageSequence, clc.lastExecutedServerCommand, clc.clientNum, clc.demo.playing, qtrue, (clc.demo.playing ? &dpi : 0), ETLEGACY_VERSION_INT);
 
 	// reset any CVAR_CHEAT cvars registered by cgame
-	if (!clc.demo.demoplaying && !cl_connectedToCheatServer)
+	if (!clc.demo.playing && !cl_connectedToCheatServer)
 	{
 		Cvar_SetCheatState();
 	}
@@ -1242,7 +1242,7 @@ qboolean CL_GameCommand(void)
  */
 void CL_CGameRendering()
 {
-	VM_Call(cgvm, CG_DRAW_ACTIVE_FRAME, cl.serverTime, 0, clc.demo.demoplaying);
+	VM_Call(cgvm, CG_DRAW_ACTIVE_FRAME, cl.serverTime, 0, clc.demo.playing);
 	VM_Debug(0);
 }
 
@@ -1272,7 +1272,7 @@ void CL_AdjustTimeDelta(void)
 	cl.newSnapshots = qfalse;
 
 	// the delta never drifts when replaying a demo
-	if (clc.demo.demoplaying)
+	if (clc.demo.playing)
 	{
 		return;
 	}
@@ -1343,7 +1343,7 @@ void CL_FirstSnapshot(void)
 	cl.serverTimeDelta = cl.snap.serverTime - cls.realtime;
 	cl.oldServerTime   = cl.snap.serverTime;
 
-	clc.demo.timeDemoBaseTime = cl.snap.serverTime;
+	clc.demo.timeBaseTime = cl.snap.serverTime;
 
 	// if this is the first frame of active play,
 	// execute the contents of activeAction now
@@ -1357,7 +1357,7 @@ void CL_FirstSnapshot(void)
 	}
 
 #ifdef FEATURE_DBMS
-	if (!clc.demo.demoplaying)
+	if (!clc.demo.playing)
 	{
 		DB_UpdateFavorite(cl_profile->string, cls.servername);
 	}
@@ -1376,13 +1376,13 @@ void CL_SetCGameTime(void)
 		{
 			return;
 		}
-		if (clc.demo.demoplaying)
+		if (clc.demo.playing)
 		{
 			// we shouldn't get the first snapshot on the same frame
 			// as the gamestate, because it causes a bad time skip
-			if (!clc.demo.firstDemoFrameSkipped)
+			if (!clc.demo.firstFrameSkipped)
 			{
-				clc.demo.firstDemoFrameSkipped = qtrue;
+				clc.demo.firstFrameSkipped = qtrue;
 				return;
 			}
 			CL_ReadDemoMessage();
@@ -1429,7 +1429,7 @@ void CL_SetCGameTime(void)
 
 	// get our current view of time
 
-	if (clc.demo.demoplaying && cl_freezeDemo->integer)
+	if (clc.demo.playing && cl_freezeDemo->integer)
 	{
 		// cl_freezeDemo is used to lock a demo in place for single frame advances
 	}
@@ -1475,7 +1475,7 @@ void CL_SetCGameTime(void)
 		CL_AdjustTimeDelta();
 	}
 
-	if (clc.demo.demoplaying)
+	if (clc.demo.playing)
 	{
 		CL_DemoRun();
 	}

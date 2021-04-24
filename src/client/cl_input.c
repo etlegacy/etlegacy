@@ -674,7 +674,7 @@ void IN_ButtonUp(void)
  */
 void IN_Help(void)
 {
-	if (cls.state == CA_ACTIVE && !clc.demo.demoplaying)
+	if (cls.state == CA_ACTIVE && !clc.demo.playing)
 	{
 		VM_Call(uivm, UI_SET_ACTIVE_MENU, UIMENU_HELP);          // startup help system
 	}
@@ -1175,7 +1175,7 @@ qboolean CL_ReadyToSendPacket(void)
 	int delta;
 
 	// don't send anything if playing back a demo
-	if (clc.demo.demoplaying || cls.state == CA_CINEMATIC)
+	if (clc.demo.playing || cls.state == CA_CINEMATIC)
 	{
 		return qfalse;
 	}
@@ -1257,7 +1257,7 @@ void CL_WritePacket(void)
 	int       count, key;
 
 	// don't send anything if playing back a demo
-	if (clc.demo.demoplaying || cls.state == CA_CINEMATIC)
+	if (clc.demo.playing || cls.state == CA_CINEMATIC)
 	{
 		return;
 	}
@@ -1321,7 +1321,7 @@ void CL_WritePacket(void)
 		}
 
 		// begin a client move command
-		if (cl_nodelta->integer || !cl.snap.valid || clc.demo.demowaiting
+		if (cl_nodelta->integer || !cl.snap.valid || clc.demo.waiting
 		    || clc.serverMessageSequence != cl.snap.messageNum)
 		{
 			MSG_WriteByte(&buf, clc_moveNoDelta);

@@ -439,9 +439,9 @@ void CL_ParseSnapshot(msg_t *msg)
 	{
 		newSnap.valid = qtrue;      // uncompressed frame
 		old           = NULL;
-		if (clc.demo.demorecording)
+		if (clc.demo.recording)
 		{
-			clc.demo.demowaiting = qfalse;   // we can start recording now
+			clc.demo.waiting = qfalse;   // we can start recording now
 			//if(cl_autorecord->integer) {
 			//  Cvar_Set( "g_synchronousClients", "0" );
 			//}
@@ -631,7 +631,7 @@ void CL_SystemInfoChanged(void)
 	Com_Memset(&entLastVisible, 0, sizeof(entLastVisible));
 
 	// don't set any vars when playing a demo
-	if (clc.demo.demoplaying)
+	if (clc.demo.playing)
 	{
 		// allow running demo in pure mode to simulate server environment,
 		// but still setup the referenced packages for the container system to work
@@ -818,7 +818,7 @@ void CL_ParseGamestate(msg_t *msg)
 
 	// This used to call CL_StartHunkUsers, but now we enter the download state before loading the
 	// cgame
-	if (!clc.demo.demoplaying)
+	if (!clc.demo.playing)
 	{
 		Com_InitDownloads();
 	}

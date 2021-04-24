@@ -1355,7 +1355,7 @@ void CL_KeyEvent(int key, qboolean down, unsigned time)
 	// most keys during demo playback will bring up the menu, but non-ascii
 	// keys can still be used for bound actions
 	if (down && (key < 128 || key == K_MOUSE1)
-	    && (clc.demo.demoplaying || cls.state == CA_CINEMATIC) && !cls.keyCatchers)
+		&& (clc.demo.playing || cls.state == CA_CINEMATIC) && !cls.keyCatchers)
 	{
 
 		Cvar_Set("nextdemo", "");
@@ -1394,7 +1394,7 @@ void CL_KeyEvent(int key, qboolean down, unsigned time)
 			cls.keyCatchers &= ~KEYCATCH_CGAME;
 			VM_Call(cgvm, CG_EVENT_HANDLING, CGAME_EVENT_NONE);
 
-			if (clc.demo.demoplaying)
+			if (clc.demo.playing)
 			{
 				CL_Disconnect_f();
 				S_StopAllSounds();
@@ -1406,7 +1406,7 @@ void CL_KeyEvent(int key, qboolean down, unsigned time)
 
 		if (!(cls.keyCatchers & KEYCATCH_UI))
 		{
-			if (cls.state == CA_ACTIVE && !clc.demo.demoplaying)
+			if (cls.state == CA_ACTIVE && !clc.demo.playing)
 			{
 				VM_Call(uivm, UI_SET_ACTIVE_MENU, UIMENU_INGAME);
 			}
