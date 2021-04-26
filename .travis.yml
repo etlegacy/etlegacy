@@ -5,9 +5,8 @@ android:
   components:
   - tools
   - platform-tools
-  - tools
-  - android-25
-  - sys-img-arm64-v8a-google_apis-25
+  - android-26
+  - sys-img-arm64-v8a-google_apis-26
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
   - rm -rf $HOME/.gradle/caches/*/plugin-resolution/
@@ -29,9 +28,7 @@ before_script:
   - export ANDROID_NDK_HOME=$HOME/NDK_ETL/ndk-bundle
   - chmod -R 775 $HOME/NDK_ETL/ndk-bundle
 before_install:
-  - sdkmanager --list
-  - echo "8933bad161af4178b1185d1a37fbf41ea5269c55" > $ANDROID_HOME/licenses/android-sdk-license
-  - echo "d56f5187479451eabf01fb78af6dfcb131a6481e" >> $ANDROID_HOME/licenses/android-sdk-license
+  - echo yes | sdkmanager --install 'platform-tools' 'platforms;android-26' 'build-tools;25.0.2' 'tools'
   # Emulator Management: Create, Start and Wait
   - echo no | android create avd --force -n test -t android-25 --abi google_apis/arm64-v8a
   - emulator -avd test -no-window &
