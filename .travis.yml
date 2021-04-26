@@ -21,7 +21,6 @@ licenses:
     - 'android-sdk-license-.+'
     - 'google-gdk-license-.+'
 before_script:
-  - echo "24333f8a63b6825ea9c5514f83c2829b004d1fee" > "$ANDROID_HOME/licenses/android-sdk-license"
   - curl -s "https://cmake.org/files/v3.15/cmake-3.15.4-Linux-x86_64.tar.gz" | sudo tar --strip-components=1 -xz -C /usr/local
   - echo "cmake.dir=/usr/local" | tee -a local.properties
   - sudo chmod +x gradlew
@@ -30,6 +29,8 @@ before_script:
   - export ANDROID_NDK_HOME=$HOME/NDK_ETL/ndk-bundle
   - chmod -R 775 $HOME/NDK_ETL/ndk-bundle
 before_install:
+  - mkdir "$ANDROID_HOME/licenses" || true
+  - echo -e "\n8933bad161af4178b1185d1a37fbf41ea5269c55" > "$ANDROID_HOME/licenses/android-sdk-license"
   # Emulator Management: Create, Start and Wait
   - echo no | android create avd --force -n test -t android-25 --abi google_apis/arm64-v8a
   - emulator -avd test -no-window &
