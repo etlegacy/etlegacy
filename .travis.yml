@@ -27,6 +27,6 @@ before_script:
   - export ANDROID_NDK_HOME=$HOME/NDK_ETL/ndk-bundle
   - chmod -R 775 $HOME/NDK_ETL/ndk-bundle
 before_install:
-  - echo yes | sdkmanager "platform-tools" "platforms;android-26" "build-tools;25.0.2" "tools" "system-images;android-S;google_apis_playstore;arm64-v8a"
+  - echo yes | sdkmanager "platform-tools" "platforms;android-26" "build-tools;28.0.3" "tools" "system-images;android-S;google_apis_playstore;arm64-v8a"
 script:
   - ./gradlew assembleDebug
