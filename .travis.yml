@@ -6,7 +6,6 @@ android:
   - tools
   - platform-tools
   - android-26
-  - system-images;android-S;google_apis_playstore;arm64-v8a
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
   - rm -rf $HOME/.gradle/caches/*/plugin-resolution/
