@@ -19,6 +19,7 @@ licenses:
     - 'android-sdk-license-.+'
     - 'google-gdk-license-.+'
 before_script:
+  - apt install -y ninja-build
   - curl -s "https://cmake.org/files/v3.15/cmake-3.15.4-Linux-x86_64.tar.gz" | sudo tar --strip-components=1 -xz -C /usr/local
   - echo "cmake.dir=/usr/local" | tee -a local.properties
   - sudo chmod +x gradlew
