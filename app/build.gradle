@@ -20,8 +20,6 @@ versionberg {
     nameTemplate '${major}.${minor}.${patch}-${commitCount}-${commitSha}'
 }
 
-println System.getenv('CI')
-
 android {
     compileSdkVersion 26
     defaultConfig {
