@@ -1609,7 +1609,9 @@ typedef struct
 	qhandle_t objectiveSimpleIcon;
 	qhandle_t readyShader;
 
+	qhandle_t constructShader;
 	qhandle_t destroyShader;
+	qhandle_t escortShader;
 
 	qhandle_t viewBloodShader;
 	qhandle_t tracerShader;

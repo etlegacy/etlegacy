@@ -1631,76 +1631,165 @@ qhandle_t CG_GetCompassIcon(entityState_t *ent, qboolean drawVoicesChat, qboolea
 	centity_t *cent    = &cg_entities[ent->number];
 	qboolean  sameTeam = cg.predictedPlayerState.persistant[PERS_TEAM] == cgs.clientinfo[ent->clientNum].team;
 
-	if (ent->eType != ET_PLAYER)
+	if (ent->eType == ET_PLAYER)
 	{
-		return 0;
-	}
-
-	if (!cgs.clientinfo[ent->clientNum].infoValid)
-	{
-		return 0;
-	}
-
-	if (sameTeam && cgs.clientinfo[ent->clientNum].powerups & ((1 << PW_REDFLAG) | (1 << PW_BLUEFLAG)))
-	{
-		return cgs.media.objectiveShader;
-	}
-	else if (ent->eFlags & EF_DEAD)
-	{
-		if ((cg.predictedPlayerState.stats[STAT_PLAYER_CLASS] == PC_MEDIC && cg.predictedPlayerState.stats[STAT_HEALTH] > 0
-		     && ent->number == ent->clientNum && sameTeam) ||
-		    (!(cg.snap->ps.pm_flags & PMF_FOLLOW) && cgs.clientinfo[cg.clientNum].shoutcaster))
+		if (!cgs.clientinfo[ent->clientNum].infoValid)
 		{
-			return cgs.media.medicReviveShader;
-		}
-
-		return 0;
-	}
-	else if (sameTeam && cent->voiceChatSpriteTime > cg.time &&
-	         (drawVoicesChat || (cent->voiceChatSprite != cgs.media.voiceChatShader)))
-	{
-		// FIXME: not the best place to reset it
-		if (cgs.clientinfo[ent->clientNum].health <= 0)
-		{
-			// reset
-			cent->voiceChatSpriteTime = cg.time;
 			return 0;
 		}
 
-		return cent->voiceChatSprite;
-	}
-	else if (drawFireTeam && (CG_IsOnSameFireteam(cg.clientNum, ent->clientNum) || cgs.clientinfo[cg.clientNum].shoutcaster))      // draw disguise or default buddy icon
-	{
-		// draw overlapping no-shoot icon if disguised and in same team but draw disguise ennemy on compass as buddy
-		if (ent->powerups & (1 << PW_OPS_DISGUISED) && cg.predictedPlayerState.persistant[PERS_TEAM] == cgs.clientinfo[ent->clientNum].team)
+		if (sameTeam && cgs.clientinfo[ent->clientNum].powerups & ((1 << PW_REDFLAG) | (1 << PW_BLUEFLAG)))
 		{
-			return cgs.media.friendShader;
+			return cgs.media.objectiveShader;
+		}
+		else if (ent->eFlags & EF_DEAD)
+		{
+			if ((cg.predictedPlayerState.stats[STAT_PLAYER_CLASS] == PC_MEDIC && cg.predictedPlayerState.stats[STAT_HEALTH] > 0
+			     && ent->number == ent->clientNum && sameTeam) ||
+			    (!(cg.snap->ps.pm_flags & PMF_FOLLOW) && cgs.clientinfo[cg.clientNum].shoutcaster))
+			{
+				return cgs.media.medicReviveShader;
+			}
+
+			return 0;
+		}
+		else if (sameTeam && cent->voiceChatSpriteTime > cg.time &&
+		         (drawVoicesChat || (cent->voiceChatSprite != cgs.media.voiceChatShader)))
+		{
+			// FIXME: not the best place to reset it
+			if (cgs.clientinfo[ent->clientNum].health <= 0)
+			{
+				// reset
+				cent->voiceChatSpriteTime = cg.time;
+				return 0;
+			}
+
+			return cent->voiceChatSprite;
+		}
+		else if (drawFireTeam && (CG_IsOnSameFireteam(cg.clientNum, ent->clientNum) || cgs.clientinfo[cg.clientNum].shoutcaster))      // draw disguise or default buddy icon
+		{
+			// draw overlapping no-shoot icon if disguised and in same team but draw disguise ennemy on compass as buddy
+			if (ent->powerups & (1 << PW_OPS_DISGUISED) && cg.predictedPlayerState.persistant[PERS_TEAM] == cgs.clientinfo[ent->clientNum].team)
+			{
+				return cgs.media.friendShader;
+			}
+			else
+			{
+				return cgs.media.buddyShader;
+			}
+		}
+	}
+	else if (ent->eType == ET_ITEM)
+	{
+		gitem_t *item;
+
+		item = BG_GetItem(ent->modelindex);
+
+		if (item)
+		{
+			if ((item->giPowerUp == PW_REDFLAG && cg.predictedPlayerState.persistant[PERS_TEAM] == TEAM_AXIS)
+			    || (item->giPowerUp == PW_BLUEFLAG && cg.predictedPlayerState.persistant[PERS_TEAM] == TEAM_ALLIES))
+			{
+				return cgs.media.objectiveTeamShader;
+			}
+			else
+			{
+				return cgs.media.objectiveEnemyShader;
+			}
+		}
+	}
+	else if (ent->eType == ET_EXPLOSIVE_INDICATOR)
+	{
+		// draw explosives if an engineer
+		if (cg.predictedPlayerState.stats[STAT_PLAYER_CLASS] == PC_ENGINEER ||
+		    (cg.predictedPlayerState.stats[STAT_PLAYER_CLASS] == PC_COVERTOPS && ent->effect1Time == 1))
+		{
+			if (ent->teamNum == 1 && cg.predictedPlayerState.persistant[PERS_TEAM] == TEAM_AXIS)
+			{
+				return 0;
+			}
+			else if (ent->teamNum == 2 && cg.predictedPlayerState.persistant[PERS_TEAM] == TEAM_ALLIES)
+			{
+				return 0;
+			}
+
+			if (cg.predictedPlayerState.stats[STAT_PLAYER_CLASS] == PC_ENGINEER)
+			{
+				return cgs.media.dynamiteHintShader;
+			}
+			else
+			{
+				return cgs.media.satchelchargeHintShader;
+			}
+		}
+	}
+	else if (ent->eType == ET_CONSTRUCTIBLE_INDICATOR)
+	{
+		// draw construction if an engineer
+		if (cg.predictedPlayerState.stats[STAT_PLAYER_CLASS] == PC_ENGINEER)
+		{
+			if (ent->teamNum == 1 && cg.predictedPlayerState.persistant[PERS_TEAM] != TEAM_AXIS)
+			{
+				return 0;
+			}
+			else if (ent->teamNum == 2 && cg.predictedPlayerState.persistant[PERS_TEAM] != TEAM_ALLIES)
+			{
+				return 0;
+			}
+
+			return cg.predictedPlayerState.persistant[PERS_TEAM] == TEAM_AXIS ? cgs.media.pmImageAxisConstruct : cgs.media.pmImageAlliesConstruct;
+		}
+	}
+	else if (ent->eType == ET_TANK_INDICATOR)
+	{
+		if ((ent->teamNum == 1 && cg.predictedPlayerState.persistant[PERS_TEAM] == TEAM_AXIS)
+		    || (ent->teamNum == 2 && cg.predictedPlayerState.persistant[PERS_TEAM] == TEAM_ALLIES))
+		{
+			return cgs.media.escortShader;
 		}
 		else
 		{
-			return cgs.media.buddyShader;
+			return cgs.media.destroyShader;
 		}
 	}
-
-	/*
-	// draw explosives if an engineer
-	if ( cg.predictedPlayerState.stats[ STAT_PLAYER_CLASS ] == PC_ENGINEER ) {
-	    for ( i = 0; i < snap->numEntities; i++ ) {
-	        centity_t *cent = &cg_entities[ snap->entities[ i ].number ];
-
-	        if ( cent->currentState.eType != ET_EXPLOSIVE_INDICATOR ) {
-	            continue;
-	        }
-
-	        if ( cent->currentState.teamNum == 1 && cg.predictedPlayerState.persistant[PERS_TEAM] == TEAM_AXIS )
-	            continue;
-	        else if ( cent->currentState.teamNum == 2 && cg.predictedPlayerState.persistant[PERS_TEAM] == TEAM_ALLIES )
-	            continue;
-
-	        CG_DrawCompassIcon( basex, basey, basew, baseh, cg.predictedPlayerState.origin, cent->lerpOrigin, cgs.media.compassDestroyShader );
-	    }
+	else if (ent->eType == ET_TANK_INDICATOR_DEAD)
+	{
+		// draw repair if an engineer
+		if (cg.predictedPlayerState.stats[STAT_PLAYER_CLASS] == PC_ENGINEER && (
+				(ent->teamNum == 1 && cg.predictedPlayerState.persistant[PERS_TEAM] == TEAM_AXIS)
+				|| (ent->teamNum == 2 && cg.predictedPlayerState.persistant[PERS_TEAM] == TEAM_ALLIES)))
+		{
+			return cgs.media.buildHintShader;
+		}
 	}
-	*/
+	else if (ent->eType == ET_TRAP)
+	{
+		if (ent->frame == 0)
+		{
+			return cgs.media.pmImageSpecFlag;
+		}
+		if (ent->frame == 4 && cg.predictedPlayerState.persistant[PERS_TEAM] == TEAM_AXIS)
+		{
+			return cgs.media.pmImageAlliesFlag;
+		}
+		else if (ent->frame == 3 && cg.predictedPlayerState.persistant[PERS_TEAM] == TEAM_ALLIES)
+		{
+			return cgs.media.pmImageAxisFlag;
+		}
+	}
+	//else if (ent->eType == ET_MG42_BARREL)
+	//{
+	//    return cgs.media.mg42HintShader;
+	//}
+	//else if (ent->eType == ET_CABINET_H)
+	//{
+	//	return cgs.media.healthHintShader;
+	//}
+	//else if (ent->eType == ET_CABINET_A)
+	//{
+	//	return cgs.media.ammoHintShader;
+	//}
+	//
 
 	return 0;
 }
@@ -1942,18 +2031,18 @@ static void CG_DrawNewCompass(rectDef_t location)
 	lastangle += anglespeed;
 	CG_DrawRotatedPic(basex + 4, basey + 4, basew - 8, baseh - 8, cgs.media.compass2Shader, lastangle);
 
-	for (i = 0; i < MAX_CLIENTS; i++)
+	for (i = 0; i < snap->numEntities; ++i)
 	{
 		centity_t *cent = &cg_entities[snap->entities[i].number];
 		qhandle_t icon;
 
 		// skip self
-		if (cent->currentState.clientNum == cg.clientNum)
+		if (cent->currentState.eType == ET_PLAYER && cent->currentState.clientNum == cg.clientNum)
 		{
 			continue;
 		}
 
-		icon = CG_GetCompassIcon(&snap->entities[i], qtrue, qtrue);
+		icon = CG_GetCompassIcon(&snap->entities[i], qfalse, qfalse);
 
 		if (icon)
 		{

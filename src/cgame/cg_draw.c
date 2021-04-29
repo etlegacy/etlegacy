@@ -3752,6 +3752,8 @@ static void CG_DrawBannerPrint(void)
 }
 
 #define MAX_DISTANCE 2000.f
+#define COEFF_DISTANCE 0.5f
+#define ICONS_SIZE 8
 
 /**
  * @brief CG_DrawEnvironmentalAwareness
@@ -3780,15 +3782,15 @@ static void CG_DrawEnvironmentalAwareness()
 		return;
 	}
 
-	for (i = 0; i < MAX_CLIENTS /*snap->numEntities*/; ++i)
+	for (i = 0; i < snap->numEntities; ++i)
 	{
-		vec3_t    dir;
-		float     len;
 		centity_t *cent = &cg_entities[snap->entities[i].number];
 		qhandle_t icon;
+		vec3_t    dir;
+		float     len;
 
 		// skip self
-		if (cent->currentState.clientNum == cg.clientNum)
+		if (cent->currentState.eType == ET_PLAYER && cent->currentState.clientNum == cg.clientNum)
 		{
 			continue;
 		}
@@ -3797,53 +3799,70 @@ static void CG_DrawEnvironmentalAwareness()
 		len = VectorLength(dir);
 
 		// too far to draw
-		//if (len > MAX_DISTANCE)
-		//{
-		//	continue;
-		//}
+		if (len > MAX_DISTANCE * COEFF_DISTANCE)
+		{
+			continue;
+		}
 
 		icon = CG_GetCompassIcon(&snap->entities[i], qfalse, qfalse);
 
 		if (icon)
 		{
-			vec4_t  col = { 1.f, 1.f, 1.f, 1 - (len / MAX_DISTANCE) /*0.5f*/ };
-			trace_t trace;
-			vec3_t  angles;
+			vec4_t col = { 1.f, 1.f, 1.f, 1.f };
+			vec3_t angles;
+
+			col[3] -= len / (MAX_DISTANCE * COEFF_DISTANCE);
 
 			VectorNormalize(dir);
 			vectoangles(dir, angles);
 
-			if (dir[0] == 0.f && dir[1] == 0.f && dir[2] == 0.f)
+			if (VectorCompare(dir, vec3_origin))
 			{
 				continue;
 			}
 
 			AnglesSubtract(cg.predictedPlayerState.viewangles, angles, angles);
 
-			// can we see the player
+			// can we see the target
 			if (angles[PITCH] >= -cg.refdef_current->fov_y / 2
 			    && angles[PITCH] <= cg.refdef_current->fov_y / 2)
 			{
 				if (angles[YAW] >= -cg.refdef_current->fov_x / 2
 				    && angles[YAW] <= cg.refdef_current->fov_x / 2)
 				{
-					float  front, left, up;
-					float  x, y;
-					int    skipNumber = cg.snap->ps.clientNum;
-					vec3_t start;
+					trace_t trace;
+					float   front, left, up;
+					float   x, y;
+					int     skipNumber = cg.snap->ps.clientNum;
+					vec3_t  start, end;
 					VectorCopy(cg.refdef.vieworg, start);
+
+					if (cent->currentState.eType == ET_PLAYER)
+					{
+						VectorCopy(cent->pe.headRefEnt.origin, end);
+					}
+					else
+					{
+						VectorCopy(cent->lerpOrigin, end);
+					}
 
 					// trace to the target player and ignore other players
 					do
 					{
-						CG_Trace(&trace, start, NULL, NULL, cent->pe.headRefEnt.origin, skipNumber, CONTENTS_SOLID | CONTENTS_BODY | CONTENTS_ITEM);
+						CG_Trace(&trace, start, NULL, NULL, end, skipNumber, CONTENTS_SOLID | CONTENTS_BODY | CONTENTS_ITEM);
 						skipNumber = trace.entityNum;
 						VectorCopy(trace.endpos, start);
 					}
-					while (trace.fraction != 1.f && trace.entityNum < MAX_CLIENTS && trace.entityNum != cent->currentState.number);
+					while (trace.fraction != 1.f && trace.entityNum != ENTITYNUM_WORLD && trace.entityNum != cent->currentState.number);
 
-					// we can see the player head, no need to draw the icon
+					// we can see the target, no need to draw the icon
 					if (trace.fraction == 1.f || trace.entityNum == cent->currentState.number)
+					{
+						continue;
+					}
+
+					// too close to draw
+					if (len < 64.f)
 					{
 						continue;
 					}
@@ -3867,7 +3886,9 @@ static void CG_DrawEnvironmentalAwareness()
 					y = up / len;
 
 					trap_R_SetColor(col);
-					CG_DrawPic(Ccg_WideX(SCREEN_WIDTH) / 2 + (Ccg_WideX(SCREEN_WIDTH) / 2) * x, SCREEN_HEIGHT / 2 + (SCREEN_HEIGHT / 2) * y, 8, 8, icon);
+					CG_DrawPic(Ccg_WideX(SCREEN_WIDTH) / 2.f + (Ccg_WideX(SCREEN_WIDTH) / 2.f) * x,
+					           SCREEN_HEIGHT / 2.f + (SCREEN_HEIGHT / 2.f) * y,
+					           ICONS_SIZE, ICONS_SIZE, icon);
 					trap_R_SetColor(NULL);
 
 					continue;
@@ -3877,7 +3898,7 @@ static void CG_DrawEnvironmentalAwareness()
 			trap_R_SetColor(col);
 			CG_DrawCompassIcon(Ccg_WideX(SCREEN_WIDTH) * 0.125f, SCREEN_HEIGHT * 0.125f,
 			                   Ccg_WideX(SCREEN_WIDTH) * 0.75f, SCREEN_HEIGHT * 0.75f,
-			                   cg.predictedPlayerState.origin, cent->lerpOrigin, icon, 0.5f, 8);
+			                   cg.predictedPlayerState.origin, cent->lerpOrigin, icon, COEFF_DISTANCE, ICONS_SIZE);
 			trap_R_SetColor(NULL);
 		}
 	}
