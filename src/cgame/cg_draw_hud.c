@@ -1685,10 +1685,10 @@ qhandle_t CG_GetCompassIcon(entityState_t *ent, qboolean drawVoicesChat, qboolea
 
 		item = BG_GetItem(ent->modelindex);
 
-		if (item)
+		if (item && item->giType == IT_TEAM)
 		{
-			if ((item->giPowerUp == PW_REDFLAG && cg.predictedPlayerState.persistant[PERS_TEAM] == TEAM_AXIS)
-			    || (item->giPowerUp == PW_BLUEFLAG && cg.predictedPlayerState.persistant[PERS_TEAM] == TEAM_ALLIES))
+			if ((item->giPowerUp == PW_BLUEFLAG && cg.predictedPlayerState.persistant[PERS_TEAM] == TEAM_AXIS)
+			    || (item->giPowerUp == PW_REDFLAG && cg.predictedPlayerState.persistant[PERS_TEAM] == TEAM_ALLIES))
 			{
 				return cgs.media.objectiveTeamShader;
 			}
