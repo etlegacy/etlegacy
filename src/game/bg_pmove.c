@@ -4474,17 +4474,22 @@ void PM_UpdateViewAngles(playerState_t *ps, pmoveExt_t *pmext, usercmd_t *cmd, v
 				{
 					if (pm->debugLevel)
 					{
-						Com_Printf("%i:can't rotate\n", c_pmove);
+						Com_Printf("%i:rotate in solid\n", c_pmove);
 					}
 
+
+					PM_SlideMove(qfalse);
+
 					// starting in a solid, no space
-					ps->viewangles[YAW]   = oldYaw;
-					ps->delta_angles[YAW] = ANGLE2SHORT(ps->viewangles[YAW]) - cmd->angles[YAW];
+					//ps->viewangles[YAW]   = oldYaw;
+					//ps->delta_angles[YAW] = ANGLE2SHORT(ps->viewangles[YAW]) - cmd->angles[YAW];
 
-					return;
+					//return;
 				}
-
-				VectorCopy(end, ps->origin);
+				else
+				{
+					VectorCopy(end, ps->origin);
+				}
 			}
 			else
 			{
@@ -4513,17 +4518,21 @@ void PM_UpdateViewAngles(playerState_t *ps, pmoveExt_t *pmext, usercmd_t *cmd, v
 					{
 						if (pm->debugLevel)
 						{
-							Com_Printf("%i:can't rotate\n", c_pmove);
+							Com_Printf("%i:rotate in solid\n", c_pmove);
 						}
 
+						PM_SlideMove(qfalse);
+
 						// starting in a solid, no space
-						ps->viewangles[YAW]   = oldYaw;
-						ps->delta_angles[YAW] = ANGLE2SHORT(ps->viewangles[YAW]) - cmd->angles[YAW];
+						//ps->viewangles[YAW]   = oldYaw;
+						//ps->delta_angles[YAW] = ANGLE2SHORT(ps->viewangles[YAW]) - cmd->angles[YAW];
 
-						return;
+						//return;
 					}
-
-					VectorCopy(end, ps->origin);
+					else
+					{
+						VectorCopy(end, ps->origin);
+					}
 				}
 			}
 
