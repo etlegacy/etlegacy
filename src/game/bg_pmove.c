@@ -277,8 +277,8 @@ void PM_TraceLegs(trace_t *trace, float *legsOffset, vec3_t start, vec3_t end, t
 
 	// legs position
 	BG_LegsCollisionBoxOffset(viewangles, pm->ps->eFlags, ofs);
-	//VectorAdd(start, ofs, org);
-	VectorCopy(start, org);
+	VectorAdd(start, ofs, org);
+	//VectorCopy(start, org);
 	VectorAdd(end, ofs, point);
 
 	tracefunc(trace, org, playerlegsProneMins, playerlegsProneMaxs, point, ignoreent, tracemask);
@@ -319,6 +319,8 @@ void PM_TraceLegs(trace_t *trace, float *legsOffset, vec3_t start, vec3_t end, t
 				}
 			}
 		}
+        
+        
 	}
 }
 
@@ -350,8 +352,8 @@ void PM_TraceHead(trace_t *trace, vec3_t start, vec3_t end, trace_t *bodytrace, 
 
 	// head position
 	BG_HeadCollisionBoxOffset(viewangles, pm->ps->eFlags, ofs);
-	//VectorAdd(start, ofs, org);
-	VectorCopy(start, org);
+	VectorAdd(start, ofs, org);
+	//VectorCopy(start, org);
 	VectorAdd(end, ofs, point);
 
 	tracefunc(trace, org, playerHeadProneMins, playerHeadProneMaxs, point, ignoreent, tracemask);
