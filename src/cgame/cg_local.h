@@ -1158,6 +1158,7 @@ typedef struct
 	float duckChange;                       ///< for duck viewheight smoothing
 	int duckTime;
 	qboolean wasProne;
+	vec3_t proneOrigin;
 
 	int weaponSetTime;                      ///< mg/mortar set time
 

@@ -552,5 +552,6 @@ void CG_TransitionPlayerState(playerState_t *ps, playerState_t *ops)
 		cg.duckChange = ps->viewheight - ops->viewheight;
 		cg.duckTime   = cg.time;
 		cg.wasProne   = ops->eFlags & EF_PRONE;
+		VectorCopy(ops->origin, cg.proneOrigin);
 	}
 }

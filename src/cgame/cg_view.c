@@ -718,8 +718,8 @@ static void CG_OffsetFirstPersonView(void)
 		}
 		if (timeDelta < PRONE_TIME)
 		{
-			//cg.refdef_current->vieworg[0] -= (forward[0] * 18) * (PRONE_TIME - timeDelta) / PRONE_TIME;
-			//cg.refdef_current->vieworg[1] -= (forward[1] * 18) * (PRONE_TIME - timeDelta) / PRONE_TIME;
+			cg.refdef_current->vieworg[0] += (cg.proneOrigin[0] - origin[0]) * (PRONE_TIME - timeDelta) / PRONE_TIME;
+			cg.refdef_current->vieworg[1] += (cg.proneOrigin[1] - origin[1]) * (PRONE_TIME - timeDelta) / PRONE_TIME;
 			cg.refdef_current->vieworg[2] -= cg.duckChange * (PRONE_TIME - timeDelta) / PRONE_TIME;
 		}
 	}
@@ -731,11 +731,11 @@ static void CG_OffsetFirstPersonView(void)
 		}
 		if (timeDelta < DUCK_TIME)
 		{
-			//if (cg.wasProne)
-			//{
-			//	cg.refdef_current->vieworg[0] += (forward[0] * 18) * (DUCK_TIME - timeDelta) / DUCK_TIME;
-			//	cg.refdef_current->vieworg[1] += (forward[1] * 18) * (DUCK_TIME - timeDelta) / DUCK_TIME;
-			//}
+			if (cg.wasProne)
+			{
+				cg.refdef_current->vieworg[0] -= (cg.proneOrigin[0] - origin[0]) * (DUCK_TIME - timeDelta) / DUCK_TIME;
+				cg.refdef_current->vieworg[1] -= (cg.proneOrigin[1] - origin[1]) * (DUCK_TIME - timeDelta) / DUCK_TIME;
+			}
 			cg.refdef_current->vieworg[2] -= cg.duckChange * (DUCK_TIME - timeDelta) / DUCK_TIME;
 		}
 	}
