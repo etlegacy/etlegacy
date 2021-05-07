@@ -319,8 +319,8 @@ void PM_TraceLegs(trace_t *trace, float *legsOffset, vec3_t start, vec3_t end, t
 				}
 			}
 		}
-        
-        
+
+
 	}
 }
 
@@ -4452,8 +4452,8 @@ void PM_UpdateViewAngles(playerState_t *ps, pmoveExt_t *pmext, usercmd_t *cmd, v
 			// we know our main body isn't in a solid, check for our legs then head
 			vec3_t start, end;
 
-			BG_LegsCollisionBoxOffset(pm->ps->viewangles, pm->ps->eFlags, start);
-			BG_LegsCollisionBoxOffset(oldViewAngles, pm->ps->eFlags, end);
+			BG_LegsCollisionBoxOffset(pm->ps->viewangles, pm->ps->eFlags, end);
+			BG_LegsCollisionBoxOffset(oldViewAngles, pm->ps->eFlags, start);
 
 			VectorAdd(pm->ps->origin, start, start);
 			VectorAdd(pm->ps->origin, end, end);
@@ -4461,16 +4461,37 @@ void PM_UpdateViewAngles(playerState_t *ps, pmoveExt_t *pmext, usercmd_t *cmd, v
 			// check the new angles position for legs
 			pm->trace(&traceres, start, playerlegsProneMins, playerlegsProneMaxs, end, pm->ps->clientNum, tracemask);
 
-			if (traceres.startsolid)
+			if (traceres.fraction != 1.f)
 			{
-				VectorSubtract(traceres.endpos, start, traceres.endpos);
-				VectorMA(ps->origin, traceres.fraction, traceres.endpos,
-				         end);
+				// is plane valid, try to find one?
+				if (VectorCompare(traceres.plane.normal, vec3_origin))
+				{
+					pm->trace(&traceres, ps->origin, playerHeadProneMins, playerHeadProneMaxs, end, pm->ps->clientNum, tracemask);
 
-				// check the new position for head
-				PM_TraceHead(&traceres, end, end, NULL,
-				             pm->ps->viewangles, pm->trace, pm->ps->clientNum,
-				             pm->tracemask);
+					// still invalid, can't rotate
+					if (VectorCompare(traceres.plane.normal, vec3_origin))
+					{
+						if (pm->debugLevel)
+						{
+							Com_Printf("%i:rotate in solid\n", c_pmove);
+						}
+
+						// starting in a solid, no space
+						ps->viewangles[YAW]   = oldYaw;
+						ps->delta_angles[YAW] = ANGLE2SHORT(ps->viewangles[YAW]) - cmd->angles[YAW];
+					}
+				}
+
+				// adjust position by bumping
+				VectorSubtract(end, start, end);
+
+				end[0] *= traceres.plane.normal[0];
+				end[1] *= traceres.plane.normal[1];
+				end[2] *= traceres.plane.normal[2];
+				VectorAdd(ps->origin, end, end);
+
+				// check the new position
+				PM_TraceAll(&traceres, end, end);
 
 				if (traceres.fraction != 1.f /* && trace.entityNum >= MAX_CLIENTS */)
 				{
@@ -4479,14 +4500,11 @@ void PM_UpdateViewAngles(playerState_t *ps, pmoveExt_t *pmext, usercmd_t *cmd, v
 						Com_Printf("%i:rotate in solid\n", c_pmove);
 					}
 
-
-					PM_SlideMove(qfalse);
-
 					// starting in a solid, no space
-					//ps->viewangles[YAW]   = oldYaw;
-					//ps->delta_angles[YAW] = ANGLE2SHORT(ps->viewangles[YAW]) - cmd->angles[YAW];
+					ps->viewangles[YAW]   = oldYaw;
+					ps->delta_angles[YAW] = ANGLE2SHORT(ps->viewangles[YAW]) - cmd->angles[YAW];
 
-					//return;
+					return;
 				}
 				else
 				{
@@ -4495,8 +4513,8 @@ void PM_UpdateViewAngles(playerState_t *ps, pmoveExt_t *pmext, usercmd_t *cmd, v
 			}
 			else
 			{
-				BG_HeadCollisionBoxOffset(pm->ps->viewangles, pm->ps->eFlags, start);
-				BG_HeadCollisionBoxOffset(oldViewAngles, pm->ps->eFlags, end);
+				BG_HeadCollisionBoxOffset(pm->ps->viewangles, pm->ps->eFlags, end);
+				BG_HeadCollisionBoxOffset(oldViewAngles, pm->ps->eFlags, start);
 
 				VectorAdd(pm->ps->origin, start, start);
 				VectorAdd(pm->ps->origin, end, end);
@@ -4504,17 +4522,37 @@ void PM_UpdateViewAngles(playerState_t *ps, pmoveExt_t *pmext, usercmd_t *cmd, v
 				// check the new angles position for head
 				pm->trace(&traceres, start, playerHeadProneMins, playerHeadProneMaxs, end, pm->ps->clientNum, tracemask);
 
-				if (traceres.startsolid)
+				if (traceres.fraction != 1.f)
 				{
-					// adjust position by bumping
-					VectorSubtract(traceres.endpos, start, traceres.endpos);
-					VectorMA(ps->origin, traceres.fraction, traceres.endpos,
-					         end);
+					// is plane valid, try to find one?
+					if (VectorCompare(traceres.plane.normal, vec3_origin))
+					{
+						pm->trace(&traceres, ps->origin, playerHeadProneMins, playerHeadProneMaxs, end, pm->ps->clientNum, tracemask);
 
-					// check the new position for legs
-					PM_TraceLegs(&traceres, &pmext->proneLegsOffset, end, end, NULL,
-					             pm->ps->viewangles, pm->trace, pm->ps->clientNum,
-					             pm->tracemask);
+						// still invalid, can't rotate
+						if (VectorCompare(traceres.plane.normal, vec3_origin))
+						{
+							if (pm->debugLevel)
+							{
+								Com_Printf("%i:rotate in solid\n", c_pmove);
+							}
+
+							// starting in a solid, no space
+							ps->viewangles[YAW]   = oldYaw;
+							ps->delta_angles[YAW] = ANGLE2SHORT(ps->viewangles[YAW]) - cmd->angles[YAW];
+						}
+					}
+
+					// adjust position by bumping
+					VectorSubtract(end, start, end);
+
+					end[0] *= traceres.plane.normal[0];
+					end[1] *= traceres.plane.normal[1];
+					end[2] *= traceres.plane.normal[2];
+					VectorAdd(ps->origin, end, end);
+
+					// check the new position
+					PM_TraceAll(&traceres, end, end);
 
 					if (traceres.fraction != 1.f /* && trace.entityNum >= MAX_CLIENTS */)
 					{
@@ -4523,13 +4561,11 @@ void PM_UpdateViewAngles(playerState_t *ps, pmoveExt_t *pmext, usercmd_t *cmd, v
 							Com_Printf("%i:rotate in solid\n", c_pmove);
 						}
 
-						PM_SlideMove(qfalse);
-
 						// starting in a solid, no space
-						//ps->viewangles[YAW]   = oldYaw;
-						//ps->delta_angles[YAW] = ANGLE2SHORT(ps->viewangles[YAW]) - cmd->angles[YAW];
+						ps->viewangles[YAW]   = oldYaw;
+						ps->delta_angles[YAW] = ANGLE2SHORT(ps->viewangles[YAW]) - cmd->angles[YAW];
 
-						//return;
+						return;
 					}
 					else
 					{
