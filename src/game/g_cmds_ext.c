@@ -1182,7 +1182,7 @@ void G_teamready_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fDump)
 		{
 			cl->pers.ready = qtrue;
 
-			G_MakeReady(ent);
+			G_MakeReady(&g_entities[level.sortedClients[i]]);
 		}
 	}
 
