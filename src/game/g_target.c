@@ -99,8 +99,16 @@ void Use_target_remove_powerups(gentity_t *ent, gentity_t *other, gentity_t *act
 		return;
 	}
 
-	if (activator->client->ps.powerups[PW_REDFLAG] || activator->client->ps.powerups[PW_BLUEFLAG])
+	if (activator->client->ps.powerups[PW_REDFLAG])
 	{
+		// update objective indicator
+		level.redFlagCounter -= 1;
+		Team_ReturnFlag(&g_entities[activator->client->flagParent]);
+	}
+	if (activator->client->ps.powerups[PW_BLUEFLAG])
+	{
+		// update objective indicator
+		level.blueFlagCounter -= 1;
 		Team_ReturnFlag(&g_entities[activator->client->flagParent]);
 	}
 
