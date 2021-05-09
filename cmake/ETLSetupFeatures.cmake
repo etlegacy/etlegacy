@@ -23,7 +23,7 @@ if(BUILD_CLIENT)
 		include_directories(${X11_INCLUDE_DIR})
 	endif()
 
-	if(ARM)
+	if(ARM AND NOT ANDROID)
 		#check if we're running on Raspberry Pi
 		MESSAGE("Looking for bcm_host.h")
 		if(EXISTS "/opt/vc/include/bcm_host.h")
@@ -48,7 +48,7 @@ if(BUILD_CLIENT)
 					pthread
 					)
 		endif()
-	endif(ARM)
+	endif(ARM AND NOT ANDROID)
 
 	if(NOT FEATURE_RENDERER_GLES)
 		if(NOT BUNDLED_GLEW)
