@@ -3251,7 +3251,7 @@ void EmitterCheck(gentity_t *ent, gentity_t *attacker, trace_t *tr)
 	vec3_t origin;
 
 	VectorCopy(tr->endpos, origin);
-	SnapVectorTowards(tr->endpos, attacker->s.origin);
+	SnapVectorTowards(origin, attacker->s.origin);
 
 	if (Q_stricmp(ent->classname, "func_leaky") == 0)
 	{
@@ -3389,6 +3389,7 @@ qboolean Bullet_Fire_Extended(gentity_t *source, gentity_t *attacker, vec3_t sta
 	gentity_t *traceEnt;
 	qboolean  hitClient = qfalse;
 	qboolean  waslinked = qfalse;
+	vec3_t    impactPos;
 
 	// prevent shooting ourselves in the head when prone, firing through a breakable
 	if (g_entities[attacker->s.number].client && g_entities[attacker->s.number].r.linked == qtrue)
@@ -3424,7 +3425,8 @@ qboolean Bullet_Fire_Extended(gentity_t *source, gentity_t *attacker, vec3_t sta
 	EmitterCheck(traceEnt, attacker, &tr);
 
 	// snap the endpos to integers, but nudged towards the line
-	SnapVectorTowards(tr.endpos, start);
+	VectorCopy(tr.endpos, impactPos);
+	SnapVectorTowards(impactPos, start);
 
 	if (distance_falloff)
 	{
@@ -3463,7 +3465,7 @@ qboolean Bullet_Fire_Extended(gentity_t *source, gentity_t *attacker, vec3_t sta
 	// send bullet impact
 	if (traceEnt->takedamage && traceEnt->client)
 	{
-		tent              = G_TempEntity(tr.endpos, EV_BULLET_HIT_FLESH);
+		tent              = G_TempEntity(impactPos, EV_BULLET_HIT_FLESH);
 		tent->s.eventParm = traceEnt->s.number;
 		tent->s.weapon    = source->s.weapon;
 
@@ -3522,7 +3524,7 @@ qboolean Bullet_Fire_Extended(gentity_t *source, gentity_t *attacker, vec3_t sta
 			}
 		}
 
-		tent = G_TempEntity(tr.endpos, EV_BULLET_HIT_WALL);
+		tent = G_TempEntity(impactPos, EV_BULLET_HIT_WALL);
 
 		G_Trace(source, &tr2, start, NULL, NULL, end, source->s.number, MASK_WATER | MASK_SHOT);
 
