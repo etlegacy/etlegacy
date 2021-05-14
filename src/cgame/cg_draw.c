@@ -3853,7 +3853,8 @@ static void CG_DrawEnvironmentalAwareness()
 						skipNumber = trace.entityNum;
 						VectorCopy(trace.endpos, start);
 					}
-					while (trace.fraction != 1.f && trace.entityNum != ENTITYNUM_WORLD && trace.entityNum != cent->currentState.number);
+					while (!trace.allsolid && !trace.startsolid && trace.fraction != 1.f
+					       && trace.entityNum != ENTITYNUM_WORLD && trace.entityNum != cent->currentState.number);
 
 					// we can see the target, no need to draw the icon
 					if (trace.fraction == 1.f || trace.entityNum == cent->currentState.number)
