@@ -3017,6 +3017,11 @@ void PM_AdjustAimSpreadScale(void)
 			for (i = 0; i < 2; i++)
 			{
 				viewchange += Q_fabs(SHORT2ANGLE(pm->cmd.angles[i]) - SHORT2ANGLE(pm->oldcmd.angles[i]));
+
+				if (viewchange > 180)
+				{
+					viewchange = 360 - viewchange;
+				}
 			}
 		}
 
