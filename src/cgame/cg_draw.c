@@ -3849,12 +3849,12 @@ static void CG_DrawEnvironmentalAwareness()
 					// trace to the target player and ignore other players
 					do
 					{
-						CG_Trace(&trace, start, NULL, NULL, end, skipNumber, CONTENTS_SOLID | CONTENTS_BODY | CONTENTS_ITEM);
+						CG_Trace(&trace, start, NULL, NULL, end, skipNumber, CONTENTS_SOLID);
 						skipNumber = trace.entityNum;
 						VectorCopy(trace.endpos, start);
 					}
-					while (!trace.allsolid && !trace.startsolid && trace.fraction != 1.f
-					       && trace.entityNum != ENTITYNUM_WORLD && trace.entityNum != cent->currentState.number);
+					while (trace.fraction != 0.f && trace.fraction != 1.f
+					       && trace.entityNum < ENTITYNUM_WORLD && trace.entityNum != cent->currentState.number);
 
 					// we can see the target, no need to draw the icon
 					if (trace.fraction == 1.f || trace.entityNum == cent->currentState.number)
