@@ -286,6 +286,13 @@ public class ETLActivity extends SDLActivity implements JoyStickListener {
     }
 
     @Override
+    protected String[] getArguments() {
+        String[] etl_param = new String[15];
+        etl_param[0] = "vid_restart";
+        return etl_param;
+    }
+
+    @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
