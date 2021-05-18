@@ -28,7 +28,7 @@ sprites/construct
 	{
 		map sprites/construct.tga
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
-		#alphagen wave sin .6 .5 .5 .25
+		//alphagen wave sin .6 .5 .5 .25
 		rgbgen vertex
 	}
 }
@@ -40,7 +40,7 @@ sprites/destroy
 	{
 		map sprites/destroy.tga
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
-		#alphagen wave sin .6 .5 0 .25
+		//alphagen wave sin .6 .5 0 .25
 		rgbgen vertex
 	}
 }
@@ -52,7 +52,7 @@ sprites/escort
 	{
 		map sprites/escort.tga
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
-		#alphagen wave sin .6 .5 0 .25
+		//alphagen wave sin .6 .5 0 .25
 		rgbgen vertex
 	}
 }
