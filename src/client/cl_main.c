@@ -4340,8 +4340,12 @@ void CL_OpenURL(const char *url)
 		Com_Printf("%s", CL_TranslateStringBuf("invalid/empty URL\n"));
 		return;
 	}
-	Sys_OpenURL(url, qfalse);
 
+#ifndef __ANDROID__
+	Sys_OpenURL(url, qfalse);
+#else
+	SDL_OpenURL(url);
+#endif
 	// Minimize should happen automatically since SDL detects the lost window focus
 	// Also this should only happen if we are actually fullscreen
 	// Cbuf_ExecuteText(EXEC_NOW, "minimize");
