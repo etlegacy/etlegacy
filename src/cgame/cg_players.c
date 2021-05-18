@@ -2060,7 +2060,7 @@ static void CG_PlayerSprites(centity_t *cent)
 
 			VectorMA(cent->pe.headRefEnt.origin, 6.0f, cent->pe.headRefEnt.axis[2], end);
 
-			CG_Trace(&trace, cg.refdef.vieworg, NULL, NULL, end, cg.snap->ps.clientNum, CONTENTS_SOLID | CONTENTS_BODY | CONTENTS_ITEM);
+			CG_Trace(&trace, cg.refdef.vieworg, NULL, NULL, end, cg.snap->ps.clientNum, CONTENTS_SOLID);
 
 			// don't draw player icons if we can't see their head
 			if (trace.fraction == 1.f || trace.entityNum == cent->currentState.number)
