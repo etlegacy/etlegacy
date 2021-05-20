@@ -1683,7 +1683,14 @@ static void SV_DemoReadAllEntityState(msg_t *msg)
 			if (entity->s.pos.trType == TR_LINEAR_STOP)  // mover reached end of movement? change it...
 			{
 				entity->s.pos.trType = TR_LINEAR;  // ... to always set movers in a moving linear state.
-				//entity->s.apos.trType = TR_LINEAR; // should apos be also set?
+			}
+
+			// 'Do_Activate_f' from 'g_cmds.c' is not executed when replaying demo thus causing crashes with doors because 'Use_BinaryMover' is not used, but 'Reached_BinaryMover' is.
+			// 'MOVER_POS1ROTATE' -> 'Use_BinaryMover' -> 'MOVER_1TO2ROTATE' -> 'Reached_BinaryMover' -> 'MOVER_POS2ROTATE' -> 'ReturnToPos1Rotate' -> 'MOVER_2TO1ROTATE' -> 'Reached_BinaryMover' -> 'MOVER_POS1ROTATE'
+			// moverState is not changed properly in game code, at least for movers `func_door_rotating`
+			if (entity->s.apos.trType == TR_LINEAR_STOP)
+			{
+				entity->s.apos.trType = TR_LINEAR; 						  
 			}
 		}
 
