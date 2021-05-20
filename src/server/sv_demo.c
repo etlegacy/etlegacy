@@ -1407,14 +1407,15 @@ static void SV_DemoReadServerCommand(msg_t *msg)
 static void SV_DemoReadGameCommand(msg_t *msg)
 {
 	char *cmd;
+	int clientNum;
 
-	MSG_ReadByte(msg); // clientNum, useless here so we don't save it, but we need to read it in order to move the msg cursor
+	clientNum = MSG_ReadByte(msg); // clientNum, useless here so we don't save it, but we need to read it in order to move the msg cursor
 	cmd = MSG_ReadString(msg);
 
 	if (SV_CheckLastCmd(cmd, qfalse))
 	{
 		// check for duplicates: check that the engine did not already send this very same message resulting from an event (this means that engine gamecommands are never filtered, only demo gamecommands)
-		SV_GameSendServerCommand(-1, cmd);   // send this game command to all clients (-1)
+		SV_GameSendServerCommand(clientNum, cmd);   // send this game command to all clients (-1)
 	}
 }
 
