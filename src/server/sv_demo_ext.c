@@ -141,3 +141,19 @@ void SV_GentityUpdateItemField(sharedEntity_t *gent)
 
 	return;
 }
+
+/**
+* @brief Flamethrower causing crashes because the parent field is null.
+* @param[in] gent
+*/
+void SV_GentityUpdateParentField(sharedEntity_t *gent)
+{
+	gentity_t *ent = (gentity_t *)gent;
+
+	if (!ent->parent)
+	{
+		ent->parent = SV_GentityNum(ent->r.ownerNum);
+	}
+
+	return;
+}

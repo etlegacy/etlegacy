@@ -1767,6 +1767,11 @@ static void SV_DemoReadRefreshEntities(void)
 		{
 			SV_GentityUpdateItemField(entity);
 		}
+
+		if (entity->s.eType == ET_FLAMETHROWER_CHUNK)
+		{
+			SV_GentityUpdateParentField(entity);
+		}
 	}
 
 	for (i = 0; i < sv_democlients->integer; i++)
