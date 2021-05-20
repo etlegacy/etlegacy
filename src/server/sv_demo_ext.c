@@ -106,3 +106,38 @@ void SV_GentityUpdateHealthField(sharedEntity_t *gent, playerState_t *player)
 
 	return;
 }
+
+/**
+* @brief Movers running over items causing crashes because the item field is null.
+* @param[in] gent
+*
+* @note It would be better to set the item to correct item 'ent->item = ent->s.modelindex' and not a dummy, but can't access 'bg_itemlist' at the time.
+*/
+void SV_GentityUpdateItemField(sharedEntity_t *gent)
+{
+	gentity_t *ent = (gentity_t *)gent;
+	//ent->item = BG_GetItem(ent->s.modelindex);
+	//gitem_t *item = &bg_itemlist[ent->s.modelindex];
+
+	gitem_t item = {
+		ITEM_NONE,
+		NULL,                   // classname
+		NULL,                   // pickup_sound
+		{
+			0,                  // world_model[0]
+			0,                  // world_model[1]
+			0                   // world_model[2]
+		},
+		NULL,                   // icon
+		NULL,                   // ammoicon
+		NULL,                   // pickup_name
+		0,                      // quantity
+		IT_BAD,                 // giType
+		WP_NONE,                // giWeapon
+		PW_NONE,                // giPowerUp
+	};
+
+	ent->item = &item;
+
+	return;
+}

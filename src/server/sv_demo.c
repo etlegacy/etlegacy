@@ -1749,6 +1749,7 @@ static void SV_DemoReadAllEntityShared(msg_t *msg)
 static void SV_DemoReadRefreshEntities(void)
 {
 	int i;
+	sharedEntity_t *entity;
 
 	// Overwrite anything the game may have changed
 	for (i = 0; i < sv.num_entities; i++)
@@ -1759,6 +1760,13 @@ static void SV_DemoReadRefreshEntities(void)
 		}
 
 		*SV_GentityNum(i) = sv.demoEntities[i]; // Overwrite entities
+
+		entity = SV_GentityNum(i);
+
+		if (entity->s.eType == ET_ITEM && entity->s.groundEntityNum == ENTITYNUM_WORLD)
+		{
+			SV_GentityUpdateItemField(entity);
+		}
 	}
 
 	for (i = 0; i < sv_democlients->integer; i++)
