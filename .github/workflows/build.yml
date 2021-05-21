@@ -543,6 +543,14 @@ jobs:
           docker build . --file Dockerfile --tag etlegacy/server:${{ steps.vars.outputs.tag }}
           docker push etlegacy/server:${{steps.vars.outputs.tag}}
 
+      # Create weekly tag when scheduled and update when triggered on docker hub
+      - name: Build and push the weekly Docker image
+        if: ${{ github.event_name == 'schedule' }}
+        working-directory: build/package
+        run: |
+          docker build . --file Dockerfile --tag etlegacy/server:weekly
+          docker push etlegacy/server:weekly
+
       # If we are on a release tag, then also create the 'latest' tag on docker hub
       - name: Build and push the latest Docker image
         if: ${{ steps.vars.outputs.tag == steps.vars.outputs.short_tag && steps.vars.outputs.tag_exists == '404' }}
