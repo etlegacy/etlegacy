@@ -9,8 +9,8 @@
 # IR4T4 <gutzu@gmx.ch>, 2018
 # redtide <redtid3@gmail.com>, 2015
 # redtide <transifex.redtide@gmail.com>, 2015
-# Seb47TV <seb47tv@gmail.com>, 2016
-# Seb47TV <seb47tv@gmail.com>, 2016
+# Seb47 <seb47tv@gmail.com>, 2016
+# Seb47 <seb47tv@gmail.com>, 2016
 # Faded <rkseby@gmail.com>, 2019
 # redtide <redtid3@gmail.com>, 2015
 msgid ""
