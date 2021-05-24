@@ -57,7 +57,7 @@ void DL_Shutdown(void)
  * @param remoteName - unused
  * @return
  */
-int DL_BeginDownload(char *localName, const char *remoteName)
+int DL_BeginDownload(const char *localName, const char *remoteName)
 {
 	return 1;
 }
