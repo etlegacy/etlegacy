@@ -1417,6 +1417,12 @@ static void SV_CheckTimeouts(void)
 
 	for (i = 0, cl = svs.clients ; i < sv_maxclients->integer ; i++, cl++)
 	{
+		// don't timeout democlients
+		if (cl->demoClient)
+		{
+			continue;
+		}
+
 		// message times may be wrong across a changelevel
 		if (cl->lastPacketTime > svs.time)
 		{
