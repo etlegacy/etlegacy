@@ -859,6 +859,7 @@ void SV_DemoAutoDemoRecord(void)
  */
 static void SV_DemoStopPlayback(void)
 {
+	client_t *client;
 	int olddemostate = sv.demoState;
 
 	// Clear client configstrings
@@ -869,7 +870,12 @@ static void SV_DemoStopPlayback(void)
 		// unload democlients only if we were replaying a demo (if not it will produce an error!)
 		for (i = 0; i < sv_democlients->integer; i++)
 		{
-			SV_SetConfigstring(CS_PLAYERS + i, NULL);
+			client = &svs.clients[i];
+			if (client->demoClient)
+			{
+				SV_DropClient(client, "disconnected");   // same as SV_Disconnect_f(client);
+				client->demoClient = qfalse;
+			}
 		}
 	}
 
