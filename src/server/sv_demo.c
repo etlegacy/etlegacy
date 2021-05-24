@@ -1797,7 +1797,7 @@ void SV_DemoReadRefreshPlayersHealth(void)
 void SV_DemoReadFrame(void)
 {
 	msg_t msg;
-	int   cmd, r;
+	int   cmd, r, time;
 
 	static int memsvtime;
 	static int currentframe = -1;
@@ -1916,8 +1916,26 @@ read_next_demo_event: // used to read next demo event
 				// Update all players' health in HUD
 				SV_DemoReadRefreshPlayersHealth();
 				// Set the server time
-				svs.time  = MSG_ReadLong(&msg);    // refresh server in-game time (overwriting any change the game may have done)
-				memsvtime = svs.time;     // keep memory of the last server time, in case we want to freeze the demo
+				time = MSG_ReadLong(&msg);
+
+				// Iterate a few demo frames to catch to until we are above the server time after map_restart (SV_MapRestart_f).
+				if (time < svs.time)
+				{
+					// Note: having a server time below the demo time is CRITICAL, else we may send to the clients a server time that is below the previous,
+					// or in the case of legacy mod the time would be set to levelTime = levelTime + level.previousTime (G_RunFrame).
+					int timetoreach = svs.time;
+
+					svs.time = time;
+					while (svs.time < timetoreach)
+					{
+						SV_DemoReadFrame(); // run a few frames to settle things out
+					}
+				}
+				else
+				{
+					svs.time = time;    // refresh server in-game time (overwriting any change the game may have done)
+					memsvtime = svs.time;     // keep memory of the last server time, in case we want to freeze the demo
+				}
 
 				// Check for timescale: if timescale is faster (above 1.0), we read more frames at once (eg: timescale=2, we read 2 frames for one call of this function)
 				if (com_timescale->value > 1.0f)

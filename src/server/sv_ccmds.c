@@ -341,7 +341,7 @@ static void SV_MapRestart_f(void)
 			continue;
 		}
 
-		if (client->netchan.remoteAddress.type == NA_BOT)
+		if (client->netchan.remoteAddress.type == NA_BOT || client->demoClient)
 		{
 			isBot = qtrue;
 		}
