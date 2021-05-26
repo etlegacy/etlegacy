@@ -1765,7 +1765,7 @@ void ClientUserinfoChanged(int clientNum)
 			{
 				// They're trying long names
 				G_Printf("ClientUserinfoChanged: client %d kicked for long name in config string old=%s, new=%s\n", clientNum, client->pers.cl_guid, cs_value);
-				trap_DropClient(clientNum, "Name too long. Plase change your name.", 0);
+				trap_DropClient(clientNum, va("Name too long (>%d). Plase change your name.", MAX_NETNAME - 1), 0);
 				return;
 			}
 			if (!g_extendedNames.integer)
@@ -2082,7 +2082,7 @@ char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 	// don't permit long names ... - see also MAX_NETNAME
 	if (strlen(cs_name) >= MAX_NAME_LENGTH)
 	{
-		return "Bad name: Name too long. Please change your name.";
+		return va("Bad name: Name too long (>%d). Please change your name.", MAX_NAME_LENGTH - 1);
 	}
 
 	if (!g_extendedNames.integer)
