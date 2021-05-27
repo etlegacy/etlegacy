@@ -119,7 +119,8 @@ void SV_GentityUpdateItemField(sharedEntity_t *gent)
 	//ent->item = BG_GetItem(ent->s.modelindex);
 	//gitem_t *item = &bg_itemlist[ent->s.modelindex];
 
-	gitem_t item = {
+	gitem_t item =
+	{
 		ITEM_NONE,
 		NULL,                   // classname
 		NULL,                   // pickup_sound
