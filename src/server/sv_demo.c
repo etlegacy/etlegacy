@@ -1737,6 +1737,11 @@ static void SV_DemoReadAllEntityState(msg_t *msg)
 			}
 		}
 
+		if (entity->s.eType == ET_ITEM && entity->s.groundEntityNum == ENTITYNUM_WORLD)
+		{
+			SV_GentityUpdateItemField(entity);
+		}
+
 		// Save new entity state (in sv.demoEntities, which in other words display the new state)
 		sv.demoEntities[num].s = entity->s;
 	}
@@ -1809,6 +1814,7 @@ static void SV_DemoReadRefreshEntities(void)
 
 		entity = SV_GentityNum(i);
 
+		// FIXME: Redundant?
 		if (entity->s.eType == ET_ITEM && entity->s.groundEntityNum == ENTITYNUM_WORLD)
 		{
 			SV_GentityUpdateItemField(entity);
