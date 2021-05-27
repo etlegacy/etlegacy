@@ -235,6 +235,10 @@ void QDECL SV_SendServerCommand(client_t *cl, const char *fmt, ...)
 		//{
 		//	SV_DemoWriteServerCommand((char *)message);
 		//}
+		if (cl->demoClient)
+		{
+			return;
+		}
 		SV_AddServerCommand(cl, (char *)message);
 		return;
 	}
@@ -263,8 +267,8 @@ void QDECL SV_SendServerCommand(client_t *cl, const char *fmt, ...)
 		{
 			continue;
 		}
-		// don't need to send messages to AI
-		if (client->gentity && (client->gentity->r.svFlags & SVF_BOT))
+		// don't need to send messages to AI and democlients
+		if (client->gentity && ((client->gentity->r.svFlags & SVF_BOT) || client->demoClient))
 		{
 			continue;
 		}
