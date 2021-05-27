@@ -1460,27 +1460,74 @@ static void SV_DemoReadServerCommand(msg_t *msg)
 }
 
 /**
- * @brief Replay a game command (only game commands sent to all clients)
+* @brief Filtering game commands that should go to every connected client (not bots and democlients)
+*
+* @details Would be best to filter game commands that should be sent to everyone watching the playback
+*		   sc (/scores) - is send too many times to 1 player, 5 demo clients = 5x /scores cluttering the console, also qagame sends it's own /scores but empty
+*		   ws (weaponstats) - is send correctly
+*		   scoreboard lacks stats (XP) - probably stats were never generated and send thus missing
+*		   no stats on shoutcater overlay - (sgstats)
+*
+* @param[in] cmd
+*/
+static qboolean SV_GameCommandFilter(const char *cmd)
+{
+	int i;
+	char *filter[] = { "sc", "ws" };
+
+	for (i = 0; i < 2; i++)
+	{
+		if (!strncmp(filter[i], cmd, strlen(filter[i])))
+		{
+			return qtrue;
+		}
+	}
+
+	return qfalse;
+}
+
+/**
+ * @brief Replay a game command
  *
  * @details Game command management, such as prints/centerprint (cp) scores command, except chat/tchat (handled by clientCommand)
  *
  * Basically the same as demo_serverCommand (because sv_GameSendServerCommand uses SV_SendServerCommand,
- * but game commands are safe to be replayed to everyone, while server commands may be unsafe such as disconnect)
+ * but game commands are safe to be replayed to everyone (but shouldn't), while server commands may be unsafe such as disconnect)
  *
  * @param[in] msg
  */
 static void SV_DemoReadGameCommand(msg_t *msg)
 {
+	playerState_t *player;
+	client_t *client;
 	char *cmd;
-	int clientNum;
+	int clientNum, i;
 
-	clientNum = MSG_ReadByte(msg); // clientNum, useless here so we don't save it, but we need to read it in order to move the msg cursor
+	clientNum = MSG_ReadByte(msg);
 	cmd = MSG_ReadString(msg);
 
-	if (SV_CheckLastCmd(cmd, qfalse))
+	if (SV_CheckLastCmd(cmd, qfalse) && clientNum < sv_maxclients->integer)
 	{
-		// check for duplicates: check that the engine did not already send this very same message resulting from an event (this means that engine gamecommands are never filtered, only demo gamecommands)
-		SV_GameSendServerCommand(clientNum, cmd);   // send this game command to all clients (-1)
+		// Don't send game commands to democlients, they are not real clients so they are not handling them which in turn drops them because of `server command overflow`
+		// FIXME: Make better game command filter: "sc" command gets spammed instead of sending 1 table with stats on round end, only sending weapons stats of players is send correctly
+		for (i = 0, client = svs.clients; i < sv_maxclients->integer; i++, client++)
+		{
+			player = SV_GameClientNum(i);
+
+			// FIXME: this is just stupid
+			// commands that get sent to every connected client
+			if (!client->demoClient && client->state == CS_ACTIVE && SV_GameCommandFilter(cmd))
+			{
+
+			}
+			else if (client->demoClient || client->state <= CS_PRIMED || player->clientNum != clientNum) // Send game commands to real clients only if they are following a democlient that receives the command (we only really want prints/centerprint messages?)
+			{
+				continue;
+			}
+
+			// check for duplicates: check that the engine did not already send this very same message resulting from an event (this means that engine gamecommands are never filtered, only demo gamecommands)
+			SV_GameSendServerCommand(i, cmd);
+		}
 	}
 }
 
