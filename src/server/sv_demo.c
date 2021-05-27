@@ -860,7 +860,7 @@ void SV_DemoAutoDemoRecord(void)
 static void SV_DemoStopPlayback(void)
 {
 	client_t *client;
-	int olddemostate = sv.demoState;
+	int      olddemostate = sv.demoState;
 
 	// Clear client configstrings
 	if (olddemostate == DS_PLAYBACK)
@@ -1472,7 +1472,7 @@ static void SV_DemoReadServerCommand(msg_t *msg)
 */
 static qboolean SV_GameCommandFilter(const char *cmd)
 {
-	int i;
+	int  i;
 	char *filter[] = { "sc", "ws" };
 
 	for (i = 0; i < 2; i++)
@@ -1499,12 +1499,12 @@ static qboolean SV_GameCommandFilter(const char *cmd)
 static void SV_DemoReadGameCommand(msg_t *msg)
 {
 	playerState_t *player;
-	client_t *client;
-	char *cmd;
-	int clientNum, i;
+	client_t      *client;
+	char          *cmd;
+	int           clientNum, i;
 
 	clientNum = MSG_ReadByte(msg);
-	cmd = MSG_ReadString(msg);
+	cmd       = MSG_ReadString(msg);
 
 	if (SV_CheckLastCmd(cmd, qfalse) && clientNum < sv_maxclients->integer)
 	{
@@ -1601,8 +1601,8 @@ static void SV_DemoReadClientConfigString(msg_t *msg)
 		// DEMOCLIENT INITIAL TEAM MANAGEMENT
 		// Note: needed only to set the initial team of the democlients, subsequent team changes are directly handled by their clientCommands
 		if (configstring && strlen(configstring) &&
-			(svdoldteam == -1 || (svdoldteam != svdnewteam && svdnewteam != -1))   // if there was no team for this player before or if the new team is different
-			)
+		    (svdoldteam == -1 || (svdoldteam != svdnewteam && svdnewteam != -1))   // if there was no team for this player before or if the new team is different
+		    )
 		{
 			// If the client changed team, we manually issue a team change (workaround by using a clientCommand team)
 
@@ -1654,9 +1654,9 @@ static void SV_DemoReadClientConfigString(msg_t *msg)
 static void SV_DemoReadClientUserinfo(msg_t *msg)
 {
 	sharedEntity_t *entity;
-	client_t *client;
-	char     *userinfo;
-	int      num;
+	client_t       *client;
+	char           *userinfo;
+	int            num;
 
 	// Get client
 	num    = MSG_ReadByte(msg);
@@ -1780,7 +1780,7 @@ static void SV_DemoReadAllEntityState(msg_t *msg)
 			// moverState is not changed properly in game code, at least for movers `func_door_rotating`
 			if (entity->s.apos.trType == TR_LINEAR_STOP)
 			{
-				entity->s.apos.trType = TR_LINEAR; 						  
+				entity->s.apos.trType = TR_LINEAR;
 			}
 		}
 
@@ -1846,7 +1846,7 @@ static void SV_DemoReadAllEntityShared(msg_t *msg)
  */
 static void SV_DemoReadRefreshEntities(void)
 {
-	int i;
+	int            i;
 	sharedEntity_t *entity;
 
 	// Overwrite anything the game may have changed
@@ -2045,7 +2045,7 @@ read_next_demo_event: // used to read next demo event
 				}
 				else
 				{
-					svs.time = time;    // refresh server in-game time (overwriting any change the game may have done)
+					svs.time  = time;   // refresh server in-game time (overwriting any change the game may have done)
 					memsvtime = svs.time;     // keep memory of the last server time, in case we want to freeze the demo
 				}
 

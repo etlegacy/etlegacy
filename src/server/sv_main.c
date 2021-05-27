@@ -314,9 +314,9 @@ void SV_MasterHeartbeat(const char *msg)
 	// "dedicated 1" is for lan play, "dedicated 2" is for inet public play
 	if (!com_dedicated || com_dedicated->integer != 2 || !(netenabled & (
 #ifdef FEATURE_IPV6
-	                                                           NET_ENABLEV6 |
+															   NET_ENABLEV6 |
 #endif
-	                                                           NET_ENABLEV4)))
+															   NET_ENABLEV4)))
 	{
 		return;     // only dedicated servers send heartbeats
 
@@ -439,9 +439,9 @@ void SV_MasterGameCompleteStatus()
 	// "dedicated 1" is for lan play, "dedicated 2" is for inet public play
 	if (!com_dedicated || com_dedicated->integer != 2 || !(netenabled & (
 #ifdef FEATURE_IPV6
-	                                                           NET_ENABLEV6 |
+															   NET_ENABLEV6 |
 #endif
-	                                                           NET_ENABLEV4)))
+															   NET_ENABLEV4)))
 	{
 		return;     // only dedicated servers send heartbeats
 
@@ -1206,10 +1206,10 @@ static void SV_ConnectionlessPacket(netadr_t from, msg_t *msg)
 
 	if (!Q_stricmp(c, "getstatus"))
 	{
-	    if(sv_hidden->integer)
-        {
-	        return;
-        }
+		if (sv_hidden->integer)
+		{
+			return;
+		}
 
 		if ((sv_protect->integer & SVP_OWOLF) && SV_CheckDRDoS(from))
 		{
@@ -1220,10 +1220,10 @@ static void SV_ConnectionlessPacket(netadr_t from, msg_t *msg)
 	}
 	else if (!Q_stricmp(c, "getinfo"))
 	{
-        if(sv_hidden->integer)
-        {
-            return;
-        }
+		if (sv_hidden->integer)
+		{
+			return;
+		}
 
 		if ((sv_protect->integer & SVP_OWOLF) && SV_CheckDRDoS(from))
 		{
