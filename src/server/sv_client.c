@@ -608,6 +608,13 @@ gotnewcl:
 	// save the userinfo
 	Q_strncpyz(newcl->userinfo, userinfo, sizeof(newcl->userinfo));
 
+	// Save userinfo changes to demo
+	// Note: client configstring is derived from userinfo so we need to save it before it gets generated and saved in GAME_CLIENT_CONNECT
+	if (sv.demoState == DS_RECORDING)
+	{
+		SV_DemoWriteClientUserinfo(newcl, (const char *)newcl->userinfo);
+	}
+
 	// get the game a chance to reject this connection or modify the userinfo
 	denied = (char *)(VM_Call(gvm, GAME_CLIENT_CONNECT, clientNum, qtrue, qfalse)); // firstTime = qtrue
 	if (denied)
@@ -897,6 +904,13 @@ void SV_ClientEnterWorld(client_t *client, usercmd_t *cmd)
 	// set up the entity for the client
 	ent             = SV_GentityNum(clientNum);
 	ent->s.number   = clientNum;
+
+	// Differentiate between players and bots to properly replay gamestates
+	if (client->demoClient && strlen(client->userinfo) && strlen(Info_ValueForKey(client->userinfo, "cg_etVersion")))
+	{
+		ent->r.svFlags &= ~SVF_BOT;
+	}
+
 	client->gentity = ent;
 
 	client->deltaMessage     = -1;

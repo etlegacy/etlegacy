@@ -960,12 +960,13 @@ void SV_DemoRestartPlayback(void)
 static void SV_DemoStartPlayback(void)
 {
 	msg_t msg;
-	int   r, time = 400, i, clients = 0, fps = 0, gametype = 0, timelimit = 0, fraglimit = 0, capturelimit = 0;
+	int   r, time = 400, i, clients = 0, fps = 0, gametype = 0, timelimit = 0, fraglimit = 0, capturelimit = 0, warmuptime = 0, gamestate = GS_INITIALIZE;
 	char  map[MAX_QPATH];
 	char  fs[MAX_QPATH]; // FIXME:  MAX_QPATH - only 64 chars ?!!!
 	char  hostname[MAX_NAME_LENGTH];
 	char  datetime[1024]; // there's no limit in the whole engine specifically designed for dates and time...
 	char  *metadata; // used to store the current metadata index
+	char  g_customConfig[MAX_CVAR_VALUE_STRING];
 
 	Com_Memset(map, 0, MAX_QPATH);
 	Com_Memset(fs, 0, MAX_QPATH);
@@ -1132,6 +1133,45 @@ static void SV_DemoStartPlayback(void)
 			// reading datetime
 			Q_strncpyz(datetime, MSG_ReadString(&msg), 1024);
 		}
+		else if (!Q_stricmp(metadata, "warmuptime"))
+		{
+			// reading warmuptime (CS_WARMUP)
+			warmuptime = MSG_ReadLong(&msg);
+		}
+		else if (!Q_stricmp(metadata, "gamestate"))
+		{
+			// reading initial gamestate
+			gamestate = MSG_ReadLong(&msg);
+
+			// FIXME: this is a workaround, when recording starts during GS_WARMUP_COUNTDOWN we can't properly set level.warmupTime and the game instantly changes gamestate to GS_PLAYING
+			// thus causing the timelimits of the map to be incorrect, as a workaround, if we start recording during GS_WARMUP_COUNTDOWN we will skip it and start replaying demo from when the game started
+			// so level.time = warmuptime instead
+			if (warmuptime && gamestate == GS_WARMUP_COUNTDOWN)
+			{
+				// set the demo setting
+				Cvar_SetValue("gamestate", GS_PLAYING);
+				time = warmuptime;
+			}
+			else
+			{
+				// set the demo setting
+				Cvar_SetValue("gamestate", gamestate);
+			}
+		}
+		else if (!Q_stricmp(metadata, "g_customConfig"))
+		{
+			// reading g_customConfig (config name)
+			// Note: configs are a big issue, they are loaded on devmap and can overwrite settings that are needed for the demo to replay correctly, like g_doWarmup or timelimit
+			// where incase of g_doWarmup it's not possible to correct it after map loads because the gamestate could be already changed
+			Q_strncpyz(g_customConfig, MSG_ReadString(&msg), MAX_CVAR_VALUE_STRING);
+			if (strlen(g_customConfig))
+			{
+				Com_Printf("DEMO: Warning: this demo was recorded for the following config: %s\n", g_customConfig);
+			}
+
+			// set the demo setting
+			Cvar_Set("g_customConfig", g_customConfig);
+		}
 	}
 
 	//Com_Error(ERR_FATAL,"DEBUG ERROR");
@@ -1145,6 +1185,7 @@ static void SV_DemoStartPlayback(void)
 	// Remove g_doWarmup (bugfix: else it will produce a weird bug with all gametypes except CTF and Double Domination because of CheckTournament() in g_main.c which will make the demo stop after the warmup time)
 
 	// FIXME: THIS IS HACKED TO 1 for now (should be 0 or we need to make our own etgame mod bin)
+	// Note: Doesn't work because devmap loads config that will overwrite this value and possibly cause unwanted gamestate change
 	Cvar_SetValue("g_doWarmup", 1);
 
 	// g_allowVote
@@ -1168,7 +1209,7 @@ static void SV_DemoStartPlayback(void)
 	if (!com_sv_running->integer || Q_stricmp(sv_mapname->string, map) ||
 	    Q_stricmp(Cvar_VariableString("fs_game"), fs) ||
 	    !Cvar_VariableIntegerValue("sv_cheats") ||
-	    (time < svs.time && !keepSaved) || // We do restart to reinit the server time
+	    //(time < svs.time && !keepSaved) || // We do restart to reinit the server time
 	    sv_maxclients->modified ||
 	    (sv_gametype->integer != gametype && !(gametype == GT_SINGLE_PLAYER && sv_gametype->integer == GT_COOP))  // check for gametype change (need a restart to take effect since it's a latched var) AND check that the gametype difference is not between SinglePlayer and DM/FFA, which are in fact the same gametype (and the server will automatically change SinglePlayer to FFA, so we need to detect that and ignore this automatic change)
 	    )
@@ -1204,6 +1245,15 @@ static void SV_DemoStartPlayback(void)
 			Com_Printf("DEMO: Trying to switch automatically to the mod %s to replay the demo\n", strlen(fs) ? fs : BASEGAME);
 			Cvar_SetValue("sv_democlients", 0); // set sv_democlients to 0 (because game_restart will reset sv_maxclients, so we have a risk to have a greater sv_democlients than sv_maxclients, and we don't want that)
 			Cbuf_AddText(va("game_restart %s\n", fs)); // switch mod!
+		}
+
+		// Set the game time (level.time, level.startTime) to our demo time to correctly replay the timelimits of the map/rounds
+		// This is estimate - 7 GAME_INIT_FRAMES from starting the server and loading the map and one additional frame in which we hope to get back here and start reading the demo frames
+		// But it's almost never the case, svs.time can be higher by 50-300ms, which can have a negative effect on the playback,
+		// The time will be adjusted in SV_DemoReadFrame to fix issues caused by mismatched time
+		if (time > svs.time)
+		{
+			svs.time = time - ((GAME_INIT_FRAMES + 1) * FRAMETIME) + (1000 / sv_fps->integer);
 		}
 
 		Cbuf_AddText(va("g_gametype %i\ndevmap %s\n", gametype, map)); // Change gametype and map (using devmap to enable cheats)
@@ -1291,6 +1341,15 @@ static void SV_DemoStartRecord(void)
 	// Write current datetime (only for info)
 	MSG_WriteString(&msg, "datetime");
 	MSG_WriteString(&msg, SV_GenerateDateTime());
+	// Write warmuptime (CS_WARMUP)
+	MSG_WriteString(&msg, "warmuptime");
+	MSG_WriteLong(&msg, Q_atoi(sv.configstrings[CS_WARMUP]));
+	// Write current gamestate
+	MSG_WriteString(&msg, "gamestate");
+	MSG_WriteLong(&msg, Cvar_VariableIntegerValue("gamestate"));
+	// Write current config
+	MSG_WriteString(&msg, "g_customConfig");
+	MSG_WriteString(&msg, Cvar_VariableString("g_customConfig"));
 
 	// Write end of meta datas (since we will read a string each loop, we need to set a special string to specify the reader that we end the loop, we cannot use a marker because it's a byte)
 	MSG_WriteString(&msg, "endMeta");
@@ -1455,7 +1514,6 @@ static void SV_DemoReadConfigString(msg_t *msg)
  */
 static void SV_DemoReadClientConfigString(msg_t *msg)
 {
-	sharedEntity_t *entity;
 	client_t *client;
 	char     *configstring;
 	int      num;
@@ -1482,8 +1540,8 @@ static void SV_DemoReadClientConfigString(msg_t *msg)
 		SV_SetConfigstring(CS_PLAYERS + num, configstring);
 
 		// Set some infos about this user:
-		svs.clients[num].demoClient = qtrue; // to check if a client is a democlient, you can either rely on this variable, either you can check if it's a real client num (index of client) is >= CS_PLAYERS + sv_democlients->integer && < CS_PLAYERS + sv_maxclients->integer (if it's not a configstring, remove CS_PLAYERS from your if)
-		Q_strncpyz(svs.clients[num].name, Info_ValueForKey(configstring, "n"), MAX_NAME_LENGTH);     // set the name (useful for internal functions such as status_f). Anyway userinfo will automatically set both name (server-side) and netname (gamecode-side).
+		client->demoClient = qtrue;// Redundant here? // to check if a client is a democlient, you can either rely on this variable, either you can check if it's a real client num (index of client) is >= CS_PLAYERS + sv_democlients->integer && < CS_PLAYERS + sv_maxclients->integer (if it's not a configstring, remove CS_PLAYERS from your if)
+		Q_strncpyz(client->name, Info_ValueForKey(configstring, "n"), MAX_NAME_LENGTH);     // set the name (useful for internal functions such as status_f). Anyway userinfo will automatically set both name (server-side) and netname (gamecode-side).
 
 		// Set the remoteAddress of this client to localhost (this will set "ip\localhost" in the userinfo, which will in turn force the gamecode to set this client as a localClient, which avoids inactivity timers and some other stuffs to be triggered)
 		if (strlen(configstring)) // we check that the client isn't being dropped
@@ -1491,11 +1549,6 @@ static void SV_DemoReadClientConfigString(msg_t *msg)
 			NET_StringToAdr("localhost", &client->netchan.remoteAddress, NA_LOOPBACK);
 		}
 
-		entity = SV_GentityNum(num);
-		entity->r.svFlags |= SVF_BOT; //Set player as a "bot" so the empty IP and GUID will not cause a kick
-
-		// Make sure the gamecode consider the democlients (this will allow to show them on the scoreboard and make them spectatable with a standard follow) - does not use argv (directly fetch client infos from userinfo) so no need to tokenize with Cmd_TokenizeString()
-		// Note: this also triggers the gamecode refreshing of the client's userinfo
 		SV_ClientEnterWorld(client, NULL);
 
 		// DEMOCLIENT INITIAL TEAM MANAGEMENT
@@ -1508,8 +1561,9 @@ static void SV_DemoReadClientConfigString(msg_t *msg)
 
 			char *svdnewteamstr = Com_Allocate(10 * sizeof *svdnewteamstr);
 
-			// random string, we just want the server to considerate the democlient in a team, whatever the team is. It will be automatically adjusted later with a clientCommand or userinfo string.
-			// FIXME: selecting medic because of possible class restrictions. (need to save and load a config that was used on the server? (g_customConfig.string?))
+			// FIXME: selecting medic because of possible class and weapon restrictions.
+			// Use client->sess.playerType from configstring (key = c) for class, client->sess.playerWeapon (key = w) for weapon, and client->sess.playerWeapon2 (key = sw) for secondary weapon
+			// But it's not really needed as players are correct class and weapons anyway and medic is the safest bet if there will be weapon/class restrictions because of config issues
 			switch (svdnewteam)
 			{
 			case TEAM_ALLIES:
@@ -1547,8 +1601,8 @@ static void SV_DemoReadClientConfigString(msg_t *msg)
  * @brief Read a demo client userinfo string from a message, load it into memory, fills client_t fields by parsing the userinfo and broacast the change to the gamecode and clients
  * @param msg
  *
- * @note FIXME?: This function should be always called before SV_DemoReadClientConfigString because userinfo is set right on connect to the server and configstring derives from it,
- *       but because the connection can be rejected by game it is not saved to the demo at that time and thus configstring is saved first (and then read first), which causes the name to be empty at first.
+ * @note This function should be called before SV_DemoReadClientConfigString on demo playback start and every first client connection to the server
+		 because userinfo is set right on connect to the server and configstring derives from it, client slots are reused so no need to worry about going over MAX_CLIENTS.
  */
 static void SV_DemoReadClientUserinfo(msg_t *msg)
 {
@@ -1563,18 +1617,26 @@ static void SV_DemoReadClientUserinfo(msg_t *msg)
 	// Get userinfo
 	userinfo = MSG_ReadString(msg);
 
+	client->demoClient = qtrue;
+
+	entity = SV_GentityNum(num);
+
 	// Set the remoteAddress of this client to localhost (this will set "ip\localhost" in the userinfo, which will in turn force the gamecode to set this client as a localClient, which avoids inactivity timers and some other stuffs to be triggered)
 	if (strlen(userinfo)) // we check that the client isn't being dropped (in which case we shouldn't set an address)
 	{
 		NET_StringToAdr("localhost", &client->netchan.remoteAddress, NA_LOOPBACK);
+		entity->r.svFlags |= SVF_BOT; //Set player as a "bot" so the empty IP and GUID will not cause a kick
 	}
-
-	entity = SV_GentityNum(num);
-	entity->r.svFlags |= SVF_BOT; //Set player as a "bot" so the empty IP and GUID will not cause a kick
 
 	// Update the userinfo for both the server and gamecode
 	Cmd_TokenizeString(va("userinfo \"%s\"", userinfo));   // we need to prepend the userinfo command (or in fact any word) to tokenize the userinfo string to the second index because SV_UpdateUserinfo_f expects to fetch it with Argv(1)
 	SV_UpdateUserinfo_f(client); // will update the server userinfo, automatically fill client_t fields and then transmit to the gamecode and call ClientUserinfoChanged() which will also update the gamecode's client_t from the new userinfo (eg: name [server-side] and netname [gamecode-side] will be both updated)
+
+	// Differentiate between players and bots to properly replay gamestates
+	if (strlen(userinfo) && strlen(Info_ValueForKey(userinfo, "cg_etVersion")))
+	{
+		entity->r.svFlags &= ~SVF_BOT;
+	}
 }
 
 /**
@@ -1706,10 +1768,6 @@ static void SV_DemoReadAllEntityShared(msg_t *msg)
 		entity = SV_GentityNum(num);
 		// Interpolate the new entity state from previous state in sv.demoEntities
 		MSG_ReadDeltaSharedEntity(msg, &sv.demoEntities[num].r, &entity->r, num);
-
-		entity->r.svFlags &= ~SVF_BOT; // fix bots camera freezing issues - because since now the engine will consider these democlients just as normal players, it won't be using anymore special bots fields and instead just use the standard viewangles field to replay the camera movements
-
-		//entity->r.svFlags |= SVF_BOT; //Set player as a "bot" so the empty IP and GUID will not cause a kick
 
 		// Link/unlink the entity
 		if (entity->r.linked && (!sv.demoEntities[num].r.linked ||
@@ -1918,7 +1976,8 @@ read_next_demo_event: // used to read next demo event
 				// Set the server time
 				time = MSG_ReadLong(&msg);
 
-				// Iterate a few demo frames to catch to until we are above the server time after map_restart (SV_MapRestart_f).
+				// Iterate a few demo frames to catch to until we are above the server time,
+				// Note: this is needed after map_restart (SV_MapRestart_f) and to correctly replay gamestates (when the recording started at GS_WARMUP_COUNTDOWN and GS_PLAYING)
 				if (time < svs.time)
 				{
 					// Note: having a server time below the demo time is CRITICAL, else we may send to the clients a server time that is below the previous,
