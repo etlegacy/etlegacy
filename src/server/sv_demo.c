@@ -1869,7 +1869,7 @@ static void SV_DemoReadRefreshEntities(void)
 
 		if (entity->s.eType == ET_FLAMETHROWER_CHUNK)
 		{
-			SV_GentityUpdateParentField(entity);
+			SV_GentityUpdateParentField(entity, SV_GentityNum(entity->r.ownerNum));
 		}
 	}
 

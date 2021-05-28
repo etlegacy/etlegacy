@@ -499,7 +499,7 @@ void SV_DemoShutdown(void);
 //void SV_GentitySetHealthField(sharedEntity_t *gent, int value);   // Test purpose
 void SV_GentityUpdateHealthField(sharedEntity_t *gent, playerState_t *player);
 void SV_GentityUpdateItemField(sharedEntity_t *gent);
-void SV_GentityUpdateParentField(sharedEntity_t *gent);
+void SV_GentityUpdateParentField(sharedEntity_t *gent, sharedEntity_t *parent);
 
 // sv_main.c
 void SV_FinalCommand(const char *cmd, qboolean disconnect);   ///< added disconnect flag so map changes can use this function as well
