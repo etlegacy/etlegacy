@@ -11,7 +11,7 @@ If you only have a question and don't want to read this whole document:
 Do **NOT** file an issue to ask a question. You will get faster results by using the resources below:
 
 * [etlegacy/#general](https://discordapp.com/channels/260750790203932672/260750790203932672) on Discord
-* [#etlegacy](http://webchat.freenode.net/?channels=#etlegacy) on irc.freenode.net
+* [#etlegacy](https://web.libera.chat/?channels=#etlegacy) on irc.libera.chat
 
 See also our [FAQ](https://github.com/etlegacy/etlegacy/wiki/FAQ).
 
@@ -45,4 +45,4 @@ If you are interested to participate, ensure to read first our contribution guid
 Communication happens online at:
 
 * [etlegacy/#etlegacy](https://discordapp.com/channels/260750790203932672/346956915814957067) on Discord
-* [#etlegacy](http://webchat.freenode.net/?channels=#etlegacy) on irc.freenode.net
+* [#etlegacy](https://web.libera.chat/?channels=#etlegacy) on irc.libera.chat

@@ -11,7 +11,7 @@ Users are encouraged to upgrade their server or client version to the latest rel
 If you have discovered an issue that you believe is a vulnerability, please reach us by using one of the resources below:
 
 * [etlegacy/#etlegacy](https://discordapp.com/channels/260750790203932672/346956915814957067) on Discord
-* [#etlegacy](http://webchat.freenode.net/?channels=#etlegacy) on irc.freenode.net
+* [#etlegacy](https://web.libera.chat/?channels=#etlegacy) on irc.libera.chat
 * email at mail@etlegacy.com
 
 Please include a detailed description of the vulnerability. Lack of detailed vulnerability explanation may result in delays and subsequent potential actions on the finding.
