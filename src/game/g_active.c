@@ -1457,13 +1457,13 @@ void ClientThink_real(gentity_t *ent)
 		ent->r.eventTime = level.time;
 	}
 
-	BG_PlayerStateToEntityState(&ent->client->ps, &ent->s, level.time, qtrue);
+	BG_PlayerStateToEntityState(&ent->client->ps, &ent->s, level.time, qfalse);
 
 	// use the precise origin for linking
-	//VectorCopy( ent->client->ps.origin, ent->r.currentOrigin );
+	VectorCopy( ent->client->ps.origin, ent->r.currentOrigin );
 
 	// use the snapped origin for linking so it matches client predicted versions
-	VectorCopy(ent->s.pos.trBase, ent->r.currentOrigin);
+	//VectorCopy(ent->s.pos.trBase, ent->r.currentOrigin);
 
 	VectorCopy(pm.mins, ent->r.mins);
 	VectorCopy(pm.maxs, ent->r.maxs);
@@ -1492,7 +1492,7 @@ void ClientThink_real(gentity_t *ent)
 	}
 
 	// NOTE: now copy the exact origin over otherwise clients can be snapped into solid
-	VectorCopy(ent->client->ps.origin, ent->r.currentOrigin);
+	//VectorCopy(ent->client->ps.origin, ent->r.currentOrigin);
 
 	// touch other objects
 	ClientImpacts(ent, &pm);
@@ -2247,7 +2247,7 @@ void ClientEndFrame(gentity_t *ent)
 
 	// set the latest infor
 
-	BG_PlayerStateToEntityState(&ent->client->ps, &ent->s, level.time, qtrue);
+	BG_PlayerStateToEntityState(&ent->client->ps, &ent->s, level.time, qfalse);
 
 	if (ent->health > 0 && StuckInClient(ent))
 	{
