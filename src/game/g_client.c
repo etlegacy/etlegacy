@@ -3122,7 +3122,7 @@ void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean
 	// positively link the client, even if the command times are weird
 	if (ent->client->sess.sessionTeam != TEAM_SPECTATOR)
 	{
-		BG_PlayerStateToEntityState(&client->ps, &ent->s, level.time, qtrue);
+		BG_PlayerStateToEntityState(&client->ps, &ent->s, level.time, qfalse);
 		VectorCopy(ent->client->ps.origin, ent->r.currentOrigin);
 		trap_LinkEntity(ent);
 	}
@@ -3134,7 +3134,7 @@ void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean
 	ent->client->ps.weapAnim = ((ent->client->ps.weapAnim & ANIM_TOGGLEBIT) ^ ANIM_TOGGLEBIT) | WEAP_IDLE1;
 
 	// clear entity state values
-	BG_PlayerStateToEntityState(&client->ps, &ent->s, level.time, qtrue);
+	BG_PlayerStateToEntityState(&client->ps, &ent->s, level.time, qfalse);
 
 	// G_ResetMarkers(ent);
 

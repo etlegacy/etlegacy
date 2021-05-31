@@ -773,7 +773,7 @@ static int _et_G_XP_Set(lua_State *L)
 	ent->client->ps.stats[STAT_XP] = (int)ent->client->sess.startxptotal;
 
 	G_CalcRank(ent->client);
-	BG_PlayerStateToEntityState(&ent->client->ps, &ent->s, level.time, qtrue);
+	BG_PlayerStateToEntityState(&ent->client->ps, &ent->s, level.time, qfalse);
 
 	return 1;
 }
