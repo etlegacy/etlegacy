@@ -2934,12 +2934,12 @@ void G_PreFilledMissileEntity(gentity_t *ent, int weaponNum, int realWeapon, int
 	ent->clipmask  = GetWeaponFireTableData(weaponNum)->clipMask;
 	ent->accuracy  = GetWeaponFireTableData(weaponNum)->accuracy;
 	ent->health    = GetWeaponFireTableData(weaponNum)->health;
-	ent->timestamp = GetWeaponFireTableData(weaponNum)->timeStamp ? level.time + GetWeaponFireTableData(weaponNum)->timeStamp : 0;
+	ent->timestamp = level.time + GetWeaponFireTableData(weaponNum)->timeStamp;
 
 	// state
 	ent->s.eFlags     = GetWeaponFireTableData(weaponNum)->eFlags;
 	ent->s.pos.trType = GetWeaponFireTableData(weaponNum)->trType;
-	ent->s.pos.trTime = GetWeaponFireTableData(weaponNum)->trTime ? level.time + GetWeaponFireTableData(weaponNum)->trTime : 0;           // move a bit on the very first frame
+	ent->s.pos.trTime = level.time + GetWeaponFireTableData(weaponNum)->trTime;
 	ent->s.eType      = GetWeaponFireTableData(weaponNum)->eType;
 
 	// shared

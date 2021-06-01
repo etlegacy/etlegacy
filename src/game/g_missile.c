@@ -984,10 +984,11 @@ void G_FlameDamage(gentity_t *self, gentity_t *ignoreent)
  */
 void G_RunFlamechunk(gentity_t *ent)
 {
-	vec3_t    vel, add;
+	vec3_t    vel;
 	vec3_t    neworg;
 	trace_t   tr;
 	float     speed;
+	float     deltaTime  = (level.time - ent->s.pos.trTime) / 1000.f;
 	gentity_t *ignoreent = NULL;
 
 	// vel was only being set if (level.time - ent->timestamp > 50
@@ -996,9 +997,13 @@ void G_RunFlamechunk(gentity_t *ent)
 	speed = VectorNormalize(vel);
 
 	// Adust the current speed of the chunk
-	if (level.time - ent->timestamp > 50)
+	if (level.time - ent->timestamp <= 50)
 	{
-		speed -= (50.f / 1000.f) * FLAME_FRICTION_PER_SEC;
+		speed = FLAME_START_SPEED;
+	}
+	else if (level.time - ent->timestamp <= ent->s.pos.trDuration)
+	{
+		speed -= deltaTime * FLAME_FRICTION_PER_SEC;
 
 		if (speed < FLAME_MIN_SPEED)
 		{
@@ -1007,14 +1012,11 @@ void G_RunFlamechunk(gentity_t *ent)
 
 		VectorScale(vel, speed, ent->s.pos.trDelta);
 	}
-	else
-	{
-		speed = FLAME_START_SPEED;
-	}
+
+	ent->s.pos.trTime = level.time;
 
 	// Move the chunk
-	VectorScale(ent->s.pos.trDelta, 50.f / 1000.f, add);
-	VectorAdd(ent->r.currentOrigin, add, neworg);
+	VectorMA(ent->r.currentOrigin, deltaTime, ent->s.pos.trDelta, neworg);
 
 	trap_Trace(&tr, ent->r.currentOrigin, ent->r.mins, ent->r.maxs, neworg, ent->r.ownerNum, MASK_SHOT | MASK_WATER);
 
@@ -1033,6 +1035,12 @@ void G_RunFlamechunk(gentity_t *ent)
 		VectorMA(vel, -2.f * dot, tr.plane.normal, vel);
 		VectorNormalize(vel);
 		speed *= 0.5f * (0.25f + 0.75f * ((dot + 1.0f) * 0.5f));
+
+		if (speed < FLAME_MIN_SPEED)
+		{
+			speed = FLAME_MIN_SPEED;
+		}
+
 		VectorScale(vel, speed, ent->s.pos.trDelta);
 
 		if (tr.entityNum != ENTITYNUM_WORLD && tr.entityNum != ENTITYNUM_NONE)
@@ -1121,7 +1129,7 @@ gentity_t *fire_flamechunk(gentity_t *self, vec3_t start, vec3_t dir)
 	bolt->flameQuotaTime   = level.time + 50;
 	bolt->count2           = 0; // how often it bounced off of something
 	bolt->count            = 1; // this chunk can add hit
-	bolt->s.pos.trDuration = 800;
+	bolt->s.pos.trDuration = 550;
 	bolt->speed            = FLAME_START_SIZE; // 'speed' will be the current size radius of the chunk
 
 	return bolt;
@@ -1862,7 +1870,7 @@ gentity_t *fire_flamebarrel(gentity_t *self, vec3_t start, vec3_t dir)
 	bolt->clipmask = MASK_MISSILESHOT;
 
 	bolt->s.pos.trType = TR_GRAVITY;
-	bolt->s.pos.trTime = level.time - MISSILE_PRESTEP_TIME;     // move a bit on the very first frame
+	bolt->s.pos.trTime = level.time + MISSILE_PRESTEP_TIME;     // move a bit on the very first frame
 	VectorCopy(start, bolt->s.pos.trBase);
 	VectorScale(dir, 900 + (crandom() * 100), bolt->s.pos.trDelta);
 	SnapVector(bolt->s.pos.trDelta);            // save net bandwidth

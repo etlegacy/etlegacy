@@ -48,7 +48,7 @@
 
 #define MG42_MULTIPLAYER_HEALTH 350
 
-#define MISSILE_PRESTEP_TIME    50
+#define MISSILE_PRESTEP_TIME    -50
 
 /**
  * @def BODY_TIME
