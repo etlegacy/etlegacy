@@ -643,6 +643,7 @@ void CopyToBodyQue(gentity_t *ent)
 	BODY_CLASS(body)     = ent->client->sess.playerType;
 	BODY_CHARACTER(body) = ent->client->pers.characterIndex;
 	BODY_VALUE(body) = 0;
+	BODY_LAST_ACTIVATE(body) = level.time;
 
 	//if ( ent->client->ps.eFlags & EF_PANTSED ){
 	//	body->s.time2 =	1;

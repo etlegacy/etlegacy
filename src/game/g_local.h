@@ -2236,6 +2236,7 @@ void G_PredictPmove(gentity_t *ent, float frametime);
 #define BODY_TEAM(ENT) ENT->s.modelindex
 #define BODY_CLASS(ENT) ENT->s.modelindex2
 #define BODY_CHARACTER(ENT) ENT->s.onFireStart
+#define BODY_LAST_ACTIVATE(ENT) ENT->s.time
 
 void Cmd_FireTeam_MP_f(gentity_t *ent);
 

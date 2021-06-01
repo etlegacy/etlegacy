@@ -3734,7 +3734,7 @@ qboolean Do_Activate2_f(gentity_t *ent, gentity_t *traceEnt)
 		{
 			if (traceEnt->s.eType == ET_CORPSE)
 			{
-				if (BODY_TEAM(traceEnt) < 4 && BODY_TEAM(traceEnt) != ent->client->sess.sessionTeam)
+				if (level.time - BODY_LAST_ACTIVATE(traceEnt) >= 50 && BODY_TEAM(traceEnt) < 4 && BODY_TEAM(traceEnt) != ent->client->sess.sessionTeam)
 				{
 					if (BODY_VALUE(traceEnt) >= 250)
 					{
@@ -3769,7 +3769,8 @@ qboolean Do_Activate2_f(gentity_t *ent, gentity_t *traceEnt)
 					}
 					else
 					{
-						BODY_VALUE(traceEnt) += 5;
+						BODY_VALUE(traceEnt)        += 5;
+						BODY_LAST_ACTIVATE(traceEnt) = level.time;
 					}
 					return qtrue;
 				}
@@ -4259,19 +4260,19 @@ void Cmd_Activate2_f(gentity_t *ent)
 	if ((g_OmniBotFlags.integer & OBF_SHOVING) || !(ent->r.svFlags & SVF_BOT))
 	{
 #endif
-		trap_Trace(&tr, offset, NULL, NULL, end, ent->s.number, (CONTENTS_SOLID | CONTENTS_BODY | CONTENTS_CORPSE));
-		if (tr.entityNum >= 0)
-		{
-			gentity_t *traceEnt = &g_entities[tr.entityNum];
+	trap_Trace(&tr, offset, NULL, NULL, end, ent->s.number, (CONTENTS_SOLID | CONTENTS_BODY | CONTENTS_CORPSE));
+	if (tr.entityNum >= 0)
+	{
+		gentity_t *traceEnt = &g_entities[tr.entityNum];
 
-			if (traceEnt->client)
-			{
-				G_PushPlayer(ent, traceEnt);
-				return;
-			}
+		if (traceEnt->client)
+		{
+			G_PushPlayer(ent, traceEnt);
+			return;
 		}
-#ifdef FEATURE_OMNIBOT
 	}
+#ifdef FEATURE_OMNIBOT
+}
 #endif
 
 	while (!(tr.surfaceFlags & SURF_NOIMPACT) && !(tr.entityNum == ENTITYNUM_WORLD))
