@@ -60,7 +60,7 @@ mods providing a 64 bit version. You will be able to play 32 bit-only mods only 
 you compile ET: Legacy on a 32 bit system or cross-compile it for 32 bit architecture
 on a 64 bit system.
 
-At the moment, only the Legacy mod is available in 64 bit version, while all other
+At the moment, only the ETrun, ETJump and Legacy mods are available in 64 bit version, while all other
 existing mods are available in 32 bit only version.
 
 In case you are a running a 64 bit system, you probably might want to use the
