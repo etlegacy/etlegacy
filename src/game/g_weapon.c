@@ -4028,7 +4028,8 @@ void CalcMuzzlePointForActivate(gentity_t *ent, vec3_t forward, vec3_t right, ve
 	AddLean(ent, muzzlePoint);
 
 	// snap to integer coordinates for more efficient network bandwidth usage
-	SnapVector(muzzlePoint);
+	// muzzleTrace is not sent over network
+	//SnapVector(muzzlePoint);
 }
 
 /**
