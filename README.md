@@ -61,7 +61,7 @@ you compile ET: Legacy on a 32 bit system or cross-compile it for 32 bit archite
 on a 64 bit system.
 
 At the moment, only the ETrun, ETJump and Legacy mods are available in 64 bit version, while all other
-existing mods are available in 32 bit only version.
+existing mods are available in 32 bit only version. Read more [here](https://github.com/etlegacy/etlegacy/wiki/Compatible-Mods).
 
 In case you are a running a 64 bit system, you probably might want to use the
 **bundled libraries** which are located in a separate *etlegacy-libs* repository and
