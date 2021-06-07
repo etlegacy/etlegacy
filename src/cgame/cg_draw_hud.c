@@ -2685,8 +2685,8 @@ void CG_AddLagometerSnapshotInfo(snapshot_t *snap)
 	if (cg.demoPlayback)
 	{
 		static int lasttime = 0;
-
-		snap->ping = (snap->serverTime - snap->ps.commandTime) - 50;
+        
+        snap->ping = (snap->serverTime - snap->ps.commandTime) - (1000 / cgs.sv_fps);
 
 		// display snapshot time delta instead of ping
 		lagometer.snapshotSamples[index] = snap->serverTime - lasttime;

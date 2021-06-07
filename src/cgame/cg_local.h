@@ -2255,7 +2255,7 @@ LAGOMETER
 */
 
 #define PERIOD_SAMPLES 5000
-#define LAG_SAMPLES     128
+#define LAG_SAMPLES 1024  //< could store samples for maximum of sv_fps 200 (5 ms)
 #define MAX_LAGOMETER_PING  900
 #define MAX_LAGOMETER_RANGE 300
 
