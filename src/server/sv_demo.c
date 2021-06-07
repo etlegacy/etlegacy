@@ -1606,7 +1606,7 @@ static void SV_DemoReadClientConfigString(msg_t *msg)
 		{
 			// If the client changed team, we manually issue a team change (workaround by using a clientCommand team)
 
-			char *svdnewteamstr = Com_Allocate(10 * sizeof *svdnewteamstr);
+			char *svdnewteamstr = Com_Allocate(13 * sizeof *svdnewteamstr);
 
 			// FIXME: selecting medic because of possible class and weapon restrictions.
 			// Use client->sess.playerType from configstring (key = c) for class, client->sess.playerWeapon (key = w) for weapon, and client->sess.playerWeapon2 (key = sw) for secondary weapon
