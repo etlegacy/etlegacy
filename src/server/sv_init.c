@@ -1241,7 +1241,6 @@ void SV_Shutdown(const char *finalmsg)
 	SV_ShutdownGameProgs();
 
 	// SV_ShutdownGameProgs calls SV_DemoStopAll();
-	SV_DemoShutdown();
 
 	// free current level
 	SV_ClearServer();
