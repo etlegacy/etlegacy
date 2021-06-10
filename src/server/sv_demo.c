@@ -1048,7 +1048,7 @@ static void SV_DemoStartPlayback(void)
 		{
 			// reading sv_fps (from the demo)
 			fps = MSG_ReadLong(&msg);
-			if (sv_fps->integer != fps)
+			if (sv_fps->integer != fps && fps > 0)
 			{
 				savedFPS = sv_fps->integer;
 				Cvar_SetValue("sv_fps", fps);
