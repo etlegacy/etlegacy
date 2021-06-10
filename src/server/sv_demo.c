@@ -1551,6 +1551,8 @@ static void SV_DemoReadConfigString(msg_t *msg)
 	}
 }
 
+#define TEAM_COMMAND_LENGTH 13
+
 /**
  * @brief Read a demo client configstring from a message, load it into memory and broadcast changes to gamecode and clients
  * @details This function also manages demo clientbegin at connections and teamchange
@@ -1606,7 +1608,7 @@ static void SV_DemoReadClientConfigString(msg_t *msg)
 		{
 			// If the client changed team, we manually issue a team change (workaround by using a clientCommand team)
 
-			char *svdnewteamstr = Com_Allocate(10 * sizeof *svdnewteamstr);
+			char svdnewteamstr[TEAM_COMMAND_LENGTH] = { 0 };
 
 			// FIXME: selecting medic because of possible class and weapon restrictions.
 			// Use client->sess.playerType from configstring (key = c) for class, client->sess.playerWeapon (key = w) for weapon, and client->sess.playerWeapon2 (key = sw) for secondary weapon
