@@ -3835,6 +3835,8 @@ static void CG_DrawEnvironmentalAwareness()
 					float   x, y;
 					int     skipNumber = cg.snap->ps.clientNum;
 					vec3_t  start, end;
+					int     passLeft = 3;   // do a maximum of 3 traces in a row to avoid infine trace if it fail for some reason
+
 					VectorCopy(cg.refdef.vieworg, start);
 
 					if (cent->currentState.eType == ET_PLAYER)
@@ -3852,8 +3854,9 @@ static void CG_DrawEnvironmentalAwareness()
 						CG_Trace(&trace, start, NULL, NULL, end, skipNumber, CONTENTS_SOLID);
 						skipNumber = trace.entityNum;
 						VectorCopy(trace.endpos, start);
+						--passLeft;
 					}
-					while (trace.fraction != 0.f && trace.fraction != 1.f
+					while (passLeft && trace.fraction != 0.f && trace.fraction != 1.f
 					       && trace.entityNum < ENTITYNUM_WORLD && trace.entityNum != cent->currentState.number);
 
 					// we can see the target, no need to draw the icon

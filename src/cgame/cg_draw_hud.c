@@ -1628,11 +1628,13 @@ void CG_StatsDebugAddText(const char *text)
  */
 qhandle_t CG_GetCompassIcon(entityState_t *ent, qboolean drawVoicesChat, qboolean drawFireTeam)
 {
-	centity_t *cent    = &cg_entities[ent->number];
-	qboolean  sameTeam = cg.predictedPlayerState.persistant[PERS_TEAM] == cgs.clientinfo[ent->clientNum].team;
-
-	if (ent->eType == ET_PLAYER)
+	switch (ent->eType)
 	{
+	case ET_PLAYER:
+	{
+		centity_t *cent    = &cg_entities[ent->number];
+		qboolean  sameTeam = cg.predictedPlayerState.persistant[PERS_TEAM] == cgs.clientinfo[ent->clientNum].team;
+
 		if (!cgs.clientinfo[ent->clientNum].infoValid)
 		{
 			return 0;
@@ -1642,7 +1644,8 @@ qhandle_t CG_GetCompassIcon(entityState_t *ent, qboolean drawVoicesChat, qboolea
 		{
 			return cgs.media.objectiveShader;
 		}
-		else if (ent->eFlags & EF_DEAD)
+
+		if (ent->eFlags & EF_DEAD)
 		{
 			if ((cg.predictedPlayerState.stats[STAT_PLAYER_CLASS] == PC_MEDIC && cg.predictedPlayerState.stats[STAT_HEALTH] > 0
 			     && ent->number == ent->clientNum && sameTeam) ||
@@ -1653,8 +1656,9 @@ qhandle_t CG_GetCompassIcon(entityState_t *ent, qboolean drawVoicesChat, qboolea
 
 			return 0;
 		}
-		else if (sameTeam && cent->voiceChatSpriteTime > cg.time &&
-		         (drawVoicesChat || (cent->voiceChatSprite != cgs.media.voiceChatShader)))
+
+		if (sameTeam && cent->voiceChatSpriteTime > cg.time &&
+		    (drawVoicesChat || (cent->voiceChatSprite != cgs.media.voiceChatShader)))
 		{
 			// FIXME: not the best place to reset it
 			if (cgs.clientinfo[ent->clientNum].health <= 0)
@@ -1666,20 +1670,20 @@ qhandle_t CG_GetCompassIcon(entityState_t *ent, qboolean drawVoicesChat, qboolea
 
 			return cent->voiceChatSprite;
 		}
-		else if (drawFireTeam && (CG_IsOnSameFireteam(cg.clientNum, ent->clientNum) || cgs.clientinfo[cg.clientNum].shoutcaster))      // draw disguise or default buddy icon
+
+		if (drawFireTeam && (CG_IsOnSameFireteam(cg.clientNum, ent->clientNum) || cgs.clientinfo[cg.clientNum].shoutcaster))              // draw disguise or default buddy icon
 		{
 			// draw overlapping no-shoot icon if disguised and in same team but draw disguise ennemy on compass as buddy
 			if (ent->powerups & (1 << PW_OPS_DISGUISED) && cg.predictedPlayerState.persistant[PERS_TEAM] == cgs.clientinfo[ent->clientNum].team)
 			{
 				return cgs.media.friendShader;
 			}
-			else
-			{
-				return cgs.media.buddyShader;
-			}
+
+			return cgs.media.buddyShader;
 		}
+		break;
 	}
-	else if (ent->eType == ET_ITEM)
+	case ET_ITEM:
 	{
 		gitem_t *item;
 
@@ -1692,13 +1696,12 @@ qhandle_t CG_GetCompassIcon(entityState_t *ent, qboolean drawVoicesChat, qboolea
 			{
 				return cgs.media.objectiveTeamShader;
 			}
-			else
-			{
-				return cgs.media.objectiveEnemyShader;
-			}
+
+			return cgs.media.objectiveEnemyShader;
 		}
+		break;
 	}
-	else if (ent->eType == ET_EXPLOSIVE_INDICATOR)
+	case ET_EXPLOSIVE_INDICATOR:
 	{
 		// draw explosives if an engineer
 		if (cg.predictedPlayerState.stats[STAT_PLAYER_CLASS] == PC_ENGINEER ||
@@ -1708,7 +1711,8 @@ qhandle_t CG_GetCompassIcon(entityState_t *ent, qboolean drawVoicesChat, qboolea
 			{
 				return 0;
 			}
-			else if (ent->teamNum == 2 && cg.predictedPlayerState.persistant[PERS_TEAM] == TEAM_ALLIES)
+
+			if (ent->teamNum == 2 && cg.predictedPlayerState.persistant[PERS_TEAM] == TEAM_ALLIES)
 			{
 				return 0;
 			}
@@ -1717,13 +1721,12 @@ qhandle_t CG_GetCompassIcon(entityState_t *ent, qboolean drawVoicesChat, qboolea
 			{
 				return cgs.media.dynamiteHintShader;
 			}
-			else
-			{
-				return cgs.media.satchelchargeHintShader;
-			}
+
+			return cgs.media.satchelchargeHintShader;
 		}
+		break;
 	}
-	else if (ent->eType == ET_CONSTRUCTIBLE_INDICATOR)
+	case ET_CONSTRUCTIBLE_INDICATOR:
 	{
 		// draw construction if an engineer
 		if (cg.predictedPlayerState.stats[STAT_PLAYER_CLASS] == PC_ENGINEER)
@@ -1732,27 +1735,27 @@ qhandle_t CG_GetCompassIcon(entityState_t *ent, qboolean drawVoicesChat, qboolea
 			{
 				return 0;
 			}
-			else if (ent->teamNum == 2 && cg.predictedPlayerState.persistant[PERS_TEAM] != TEAM_ALLIES)
+
+			if (ent->teamNum == 2 && cg.predictedPlayerState.persistant[PERS_TEAM] != TEAM_ALLIES)
 			{
 				return 0;
 			}
 
 			return cg.predictedPlayerState.persistant[PERS_TEAM] == TEAM_AXIS ? cgs.media.pmImageAxisConstruct : cgs.media.pmImageAlliesConstruct;
 		}
+		break;
 	}
-	else if (ent->eType == ET_TANK_INDICATOR)
+	case ET_TANK_INDICATOR:
 	{
 		if ((ent->teamNum == 1 && cg.predictedPlayerState.persistant[PERS_TEAM] == TEAM_AXIS)
 		    || (ent->teamNum == 2 && cg.predictedPlayerState.persistant[PERS_TEAM] == TEAM_ALLIES))
 		{
 			return cgs.media.escortShader;
 		}
-		else
-		{
-			return cgs.media.destroyShader;
-		}
+
+		return cgs.media.destroyShader;
 	}
-	else if (ent->eType == ET_TANK_INDICATOR_DEAD)
+	case ET_TANK_INDICATOR_DEAD:
 	{
 		// draw repair if an engineer
 		if (cg.predictedPlayerState.stats[STAT_PLAYER_CLASS] == PC_ENGINEER && (
@@ -1761,35 +1764,41 @@ qhandle_t CG_GetCompassIcon(entityState_t *ent, qboolean drawVoicesChat, qboolea
 		{
 			return cgs.media.buildHintShader;
 		}
+		break;
 	}
-	else if (ent->eType == ET_TRAP)
+	case ET_TRAP:
 	{
 		if (ent->frame == 0)
 		{
 			return cgs.media.pmImageSpecFlag;
 		}
+
 		if (ent->frame == 4 && cg.predictedPlayerState.persistant[PERS_TEAM] == TEAM_AXIS)
 		{
 			return cgs.media.pmImageAlliesFlag;
 		}
-		else if (ent->frame == 3 && cg.predictedPlayerState.persistant[PERS_TEAM] == TEAM_ALLIES)
+
+		if (ent->frame == 3 && cg.predictedPlayerState.persistant[PERS_TEAM] == TEAM_ALLIES)
 		{
 			return cgs.media.pmImageAxisFlag;
 		}
+		break;
 	}
-	//else if (ent->eType == ET_MG42_BARREL)
+	//case ET_MG42_BARREL:
 	//{
 	//    return cgs.media.mg42HintShader;
 	//}
-	//else if (ent->eType == ET_CABINET_H)
+	//case ET_CABINET_H:
 	//{
 	//	return cgs.media.healthHintShader;
 	//}
-	//else if (ent->eType == ET_CABINET_A)
+	//caseET_CABINET_A:
 	//{
 	//	return cgs.media.ammoHintShader;
 	//}
-	//
+	default:
+		break;
+	}
 
 	return 0;
 }
@@ -2685,8 +2694,8 @@ void CG_AddLagometerSnapshotInfo(snapshot_t *snap)
 	if (cg.demoPlayback)
 	{
 		static int lasttime = 0;
-        
-        snap->ping = (snap->serverTime - snap->ps.commandTime) - (1000 / cgs.sv_fps);
+
+		snap->ping = (snap->serverTime - snap->ps.commandTime) - (1000 / cgs.sv_fps);
 
 		// display snapshot time delta instead of ping
 		lagometer.snapshotSamples[index] = snap->serverTime - lasttime;
