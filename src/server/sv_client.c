@@ -495,7 +495,8 @@ void SV_DirectConnect(netadr_t from)
 		}
 		if (NET_CompareBaseAdr(from, cl->netchan.remoteAddress)
 		    && (cl->netchan.qport == qport
-		        || from.port == cl->netchan.remoteAddress.port))
+		        || from.port == cl->netchan.remoteAddress.port)
+			&& !cl->demoClient)
 		{
 			Com_Printf("%s:reconnect\n", NET_AdrToString(from));
 			newcl = cl;
