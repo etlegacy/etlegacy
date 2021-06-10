@@ -1389,12 +1389,12 @@ static void SV_DemoStartRecord(void)
 	Com_Memset(sv.demoPlayerStates, 0, sizeof(sv.demoPlayerStates));
 	// End of frame
 	SV_DemoWriteFrame();
-	// Change recording state
-	sv.demoState = DS_RECORDING;
-	Cvar_SetValue("sv_demoState", DS_RECORDING);
 	// Announce we are writing the demo
 	Com_Printf("DEMO: Recording server-side demo %s.\n", sv.demoName);
 	SV_SendServerCommand(NULL, "chat \"^3DEMO: Recording server-side demo %s.\"", sv.demoName);
+	// Change recording state
+	sv.demoState = DS_RECORDING;
+	Cvar_SetValue("sv_demoState", DS_RECORDING);
 }
 
 /**
