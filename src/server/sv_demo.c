@@ -345,6 +345,7 @@ static qboolean SV_CheckConfigString(int cs_index, const char *cs_string)
 void SV_DemoFilterClientUserinfo(char *userinfo)
 {
 	Info_RemoveKey(userinfo, "cl_guid");
+	Info_RemoveKey(userinfo, "n_guid"); // nitmod guid
 	Info_RemoveKey(userinfo, "ip");
 	//Info_SetValueForKey(userinfo, "cl_voip", "0");
 }
