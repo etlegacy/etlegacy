@@ -492,7 +492,6 @@ void SV_DemoWriteClientUserinfo(client_t *client, const char *userinfo);
 qboolean SV_CheckLastCmd(const char *cmd, qboolean onlyStore);
 void SV_DemoStopAll(void);
 void SV_DemoInit(void);
-void SV_DemoShutdown(void);
 
 // sv_demo_ext.c
 //int SV_GentityGetHealthField(sharedEntity_t *gent);   // Test purpose

@@ -2226,13 +2226,3 @@ void SV_DemoInit(void)
 	Cmd_AddCommand("demo_play", SV_Demo_Play_f, "Plays a demo record.", SV_CompleteDemoName);
 	Cmd_AddCommand("demo_stop", SV_Demo_Stop_f, "Stops a demo record.");
 }
-
-/**
- * @brief SV_DemoShutdown
- */
-void SV_DemoShutdown(void) // FIXME: don't remove these on server shutdown/demo end so listen servers can start another demo and server owners too
-{
-	Cmd_RemoveCommand("demo_record");
-	Cmd_RemoveCommand("demo_play");
-	Cmd_RemoveCommand("demo_stop");
-}
