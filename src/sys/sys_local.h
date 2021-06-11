@@ -69,7 +69,7 @@ void Sys_GLimpInit(void);
 void Sys_PlatformInit(void);
 
 #ifdef _WIN32
-void Sys_PlatformExit(int code);
+void Sys_PlatformExit(int code) _attribute ((noreturn));
 #else
 #define Sys_PlatformExit(x) exit(x);
 #endif

@@ -1140,7 +1140,7 @@ void Sys_PlatformInit(void)
 	SetErrorMode(SEM_FAILCRITICALERRORS);
 }
 
-void Sys_PlatformExit(int code)
+void _attribute((noreturn)) Sys_PlatformExit(int code)
 {
 #if defined(LEGACY_DUMP_MEMLEAKS)
 	_CrtDumpMemoryLeaks();
