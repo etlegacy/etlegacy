@@ -872,9 +872,9 @@ static void HandleEntsThatBlockConstructible(gentity_t *constructor, gentity_t *
  *
  * @note !! If the conditions here of a buildable constructible change, then BotIsConstructible() must reflect those changes !!
  */
-static qboolean TryConstructing(gentity_t *ent)
+static qboolean TryConstructing(gentity_t *ent, gentity_t *trigger)
 {
-	gentity_t *constructible = ent->client->touchingTOI->target_ent;
+	gentity_t *constructible = trigger->target_ent;
 
 	// no construction during prematch
 	if (level.warmupTime)
@@ -883,14 +883,14 @@ static qboolean TryConstructing(gentity_t *ent)
 	}
 
 	// see if we are in a trigger_objective_info targetting multiple func_constructibles
-	if (constructible->s.eType == ET_CONSTRUCTIBLE && ent->client->touchingTOI->chain)
+	if (constructible->s.eType == ET_CONSTRUCTIBLE && trigger->chain)
 	{
 		gentity_t *otherconstructible = NULL;
 
 		// use the target that has the same team as the player
 		if (constructible->s.teamNum != ent->client->sess.sessionTeam)
 		{
-			constructible = ent->client->touchingTOI->chain;
+			constructible = trigger->chain;
 		}
 
 		otherconstructible = constructible->chain;
@@ -982,12 +982,12 @@ static qboolean TryConstructing(gentity_t *ent)
 				}
 			}
 
-			if (ent->client->touchingTOI->chain && ent->client->touchingTOI->count2)
+			if (trigger->chain && trigger->count2)
 			{
 				// find the constructible indicator and change team
 				mapEntityData_t      *mEnt;
 				mapEntityData_Team_t *teamList;
-				gentity_t            *indicator = &g_entities[ent->client->touchingTOI->count2];
+				gentity_t            *indicator = &g_entities[trigger->count2];
 
 				indicator->s.teamNum = constructible->s.teamNum;
 
@@ -1002,7 +1002,7 @@ static qboolean TryConstructing(gentity_t *ent)
 			if (!constructible->count2 || constructible->grenadeFired == 1)
 			{
 				// link in if we just started building
-				G_UseEntity(constructible, ent->client->touchingTOI, ent);
+				G_UseEntity(constructible, trigger, ent);
 			}
 
 			// setup our think function for decaying
@@ -1181,7 +1181,7 @@ static qboolean TryConstructing(gentity_t *ent)
 					e->s.teamNum = TEAM_ALLIES;
 				}
 
-				e->s.modelindex2 = ent->client->touchingTOI->s.teamNum;
+				e->s.modelindex2 = trigger->s.teamNum;
 				e->r.ownerNum    = constructible->s.number;
 				e->think         = explosive_indicator_think;
 				e->nextthink     = level.time + FRAMETIME;
@@ -1539,7 +1539,8 @@ gentity_t *Weapon_Engineer(gentity_t *ent)
 	VectorMA(muzzleTrace, CH_MAX_DIST, forward, end);
 	trap_EngineerTrace(ent, &tr, muzzleTrace, NULL, NULL, end, ent->s.number, MASK_SHOT | CONTENTS_TRIGGER);
 
-	if ((tr.surfaceFlags & SURF_NOIMPACT) || tr.fraction == 1.0f || tr.entityNum == ENTITYNUM_NONE || tr.entityNum == ENTITYNUM_WORLD)
+	if ((tr.surfaceFlags & SURF_NOIMPACT) || tr.fraction == 1.0f || tr.entityNum == ENTITYNUM_NONE || tr.entityNum == ENTITYNUM_WORLD
+	    || tr.contents & CONTENTS_TRIGGER)
 	{
 		// might be constructible
 		if (!ent->client->touchingTOI)
@@ -1548,7 +1549,7 @@ gentity_t *Weapon_Engineer(gentity_t *ent)
 		}
 		else
 		{
-			if (TryConstructing(ent))
+			if (TryConstructing(ent, ent->client->touchingTOI))
 			{
 				return NULL;
 			}
@@ -1632,6 +1633,10 @@ weapengineergoto1:
 			G_DebugAddSkillPoints(ent, SK_EXPLOSIVES_AND_CONSTRUCTION, xpperround, "repairing a MG 42");
 		}
 	}
+	else if (traceEnt == ent->client->touchingTOI && TryConstructing(ent, traceEnt))
+	{
+		return NULL;
+	}
 	else
 	{
 		trap_EngineerTrace(ent, &tr, muzzleTrace, NULL, NULL, end, ent->client->ps.clientNum, MASK_SHOT);
@@ -1645,7 +1650,7 @@ weapengineergoto1:
 			}
 			else
 			{
-				if (TryConstructing(ent))
+				if (TryConstructing(ent, ent->client->touchingTOI))
 				{
 					return NULL;
 				}
@@ -2393,7 +2398,7 @@ weapengineergoto3:
 		}
 		else if (ent->client->touchingTOI)
 		{
-			if (TryConstructing(ent))
+			if (TryConstructing(ent, ent->client->touchingTOI))
 			{
 				return NULL;
 			}
