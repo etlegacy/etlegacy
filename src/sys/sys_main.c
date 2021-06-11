@@ -243,10 +243,10 @@ static _attribute((noreturn)) void Sys_Exit(int exitCode)
  */
 void Sys_Quit(void)
 {
-	Sys_Exit(0);
 #ifdef USE_WINDOWS_CONSOLE
-	Sys_DestroyConsole();
+    Sys_DestroyConsole();
 #endif
+	Sys_Exit(0);
 }
 
 #ifdef USE_WINDOWS_CONSOLE
@@ -463,8 +463,6 @@ void Sys_Error(const char *error, ...)
 		TranslateMessage(&msg);
 		DispatchMessage(&msg);
 	}
-
-	Sys_DestroyConsole();
 #endif
 
 	Sys_ErrorDialog(string);
