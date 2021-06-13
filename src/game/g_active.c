@@ -2314,11 +2314,6 @@ void ClientEndFrame(gentity_t *ent)
 		vec3_t       maxs;
 		grefEntity_t refent;
 
-		VectorCopy(ent->r.maxs, maxs);
-		maxs[2] = ClientHitboxMaxZ(ent);
-		// green
-		G_RailBox(ent->r.currentOrigin, ent->r.mins, maxs, tv(0.f, 1.f, 0.f), ent->s.number);
-
 		// wounded player don't have head and legs hitbox, (see G_BuildHead and G_BuildLeg)
 		if (!(ent->client->ps.eFlags & EF_DEAD))
 		{
@@ -2337,6 +2332,11 @@ void ClientEndFrame(gentity_t *ent)
 				G_FreeEntity(legs);
 			}
 		}
+
+		VectorCopy(ent->r.maxs, maxs);
+		maxs[2] = ClientHitboxMaxZ(ent);
+		// green
+		G_RailBox(ent->r.currentOrigin, ent->r.mins, maxs, tv(0.f, 1.f, 0.f), ent->s.number);
 	}
 
 	// debug head and legs box for collision (see PM_TraceHead and PM_TraceLegs)

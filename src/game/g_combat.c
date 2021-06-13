@@ -842,6 +842,9 @@ gentity_t *G_BuildHead(gentity_t *ent, grefEntity_t *refent, qboolean newRefent)
 	head->parent     = ent;
 	head->s.eType    = ET_TEMPHEAD;
 
+	// Set the height for body hitbox to be right under head
+	ent->r.maxs[2] = head->r.currentOrigin[2] - ent->r.currentOrigin[2] + head->r.mins[2];
+
 	trap_LinkEntity(head);
 
 	return head;
