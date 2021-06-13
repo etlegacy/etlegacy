@@ -3400,12 +3400,12 @@ float ClientHitboxMaxZ(gentity_t *hitEnt)
 	else if (hitEnt->client->ps.eFlags & EF_PRONE)
 	{
 		// Prone hitbox height is calculated in G_BuildHead to stay right under head (just for hitbox transition into prone so it's not instantaneous)
-		return hitEnt->r.maxs[2] < PRONE_BODYHEIGHT ? PRONE_BODYHEIGHT : hitEnt->r.maxs[2];
+		return hitEnt->r.maxs[2];
 	}
 	else if (hitEnt->client->ps.eFlags & EF_CROUCHING)
 	{
 		// Crouched hitbox height is calculated in G_BuildHead to stay right under head
-		return hitEnt->r.maxs[2] < CROUCH_IDLE_BODYHEIGHT ? CROUCH_IDLE_BODYHEIGHT : hitEnt->r.maxs[2];
+		return hitEnt->r.maxs[2];
 	}
 	else
 	{
