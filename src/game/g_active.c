@@ -1460,7 +1460,7 @@ void ClientThink_real(gentity_t *ent)
 	BG_PlayerStateToEntityState(&ent->client->ps, &ent->s, level.time, qfalse);
 
 	// use the precise origin for linking
-	VectorCopy( ent->client->ps.origin, ent->r.currentOrigin );
+	VectorCopy(ent->client->ps.origin, ent->r.currentOrigin);
 
 	// use the snapped origin for linking so it matches client predicted versions
 	//VectorCopy(ent->s.pos.trBase, ent->r.currentOrigin);
@@ -1600,28 +1600,30 @@ void ClientThink_real(gentity_t *ent)
 	// debug hitboxes
 	if (g_debugPlayerHitboxes.integer & 2)
 	{
-		gentity_t    *head;
 		vec3_t       maxs;
 		grefEntity_t refent;
 
+		// head hitbox in blue
+		ent->client->tempHead = G_BuildHead(ent, &refent, qtrue);
+		G_RailBox(ent->client->tempHead->r.currentOrigin, ent->client->tempHead->r.mins, ent->client->tempHead->r.maxs,
+		          tv(0.f, 0.f, 1.f), ent->client->tempHead->s.number | HITBOXBIT_HEAD);
+
+		// body hitbox in blue
 		VectorCopy(ent->r.maxs, maxs);
 		maxs[2] = ClientHitboxMaxZ(ent);
-		// blue
 		G_RailBox(ent->r.currentOrigin, ent->r.mins, maxs, tv(0.f, 0.f, 1.f), ent->s.number);
 
-		head = G_BuildHead(ent, &refent, qtrue);
-		// blue
-		G_RailBox(head->r.currentOrigin, head->r.mins, head->r.maxs, tv(0.f, 0.f, 1.f), head->s.number | HITBOXBIT_HEAD);
-		G_FreeEntity(head);
+		// free temp head after body box to ensure we are using the head mins height
+		G_FreeEntity(ent->client->tempHead);
 
 		if (client->ps.eFlags & EF_PRONE)
 		{
-			gentity_t *legs;
 
-			legs = G_BuildLeg(ent, &refent, qtrue);
-			// blue
-			G_RailBox(legs->r.currentOrigin, legs->r.mins, legs->r.maxs, tv(0.f, 0.f, 1.f), legs->s.number | HITBOXBIT_LEGS);
-			G_FreeEntity(legs);
+			// legs hitbox in blue
+			ent->client->tempLeg = G_BuildLeg(ent, &refent, qtrue);
+			G_RailBox(ent->client->tempLeg->r.currentOrigin, ent->client->tempLeg->r.mins, ent->client->tempLeg->r.maxs,
+			          tv(0.f, 0.f, 1.f), ent->client->tempLeg->s.number | HITBOXBIT_LEGS);
+			G_FreeEntity(ent->client->tempLeg);
 		}
 	}
 
@@ -2310,33 +2312,37 @@ void ClientEndFrame(gentity_t *ent)
 	// debug hitboxes
 	if (g_debugPlayerHitboxes.integer & 1)
 	{
-		gentity_t    *head;
 		vec3_t       maxs;
 		grefEntity_t refent;
 
 		// wounded player don't have head and legs hitbox, (see G_BuildHead and G_BuildLeg)
 		if (!(ent->client->ps.eFlags & EF_DEAD))
 		{
-			head = G_BuildHead(ent, &refent, qtrue);
-			// green
-			G_RailBox(head->r.currentOrigin, head->r.mins, head->r.maxs, tv(0.f, 1.f, 0.f), head->s.number | HITBOXBIT_HEAD);
-			G_FreeEntity(head);
+			// head hitbox in green
+			ent->client->tempHead = G_BuildHead(ent, &refent, qtrue);
+			G_RailBox(ent->client->tempHead->r.currentOrigin, ent->client->tempHead->r.mins, ent->client->tempHead->r.maxs,
+			          tv(0.f, 1.f, 0.f), ent->client->tempHead->s.number | HITBOXBIT_HEAD);
 
 			if (ent->client->ps.eFlags & EF_PRONE)
 			{
-				gentity_t *legs;
-
-				legs = G_BuildLeg(ent, &refent, qtrue);
-				// green
-				G_RailBox(legs->r.currentOrigin, legs->r.mins, legs->r.maxs, tv(0.f, 1.f, 0.f), legs->s.number | HITBOXBIT_LEGS);
-				G_FreeEntity(legs);
+				// legs hitbox in green
+				ent->client->tempLeg = G_BuildLeg(ent, &refent, qtrue);
+				G_RailBox(ent->client->tempLeg->r.currentOrigin, ent->client->tempLeg->r.mins, ent->client->tempLeg->r.maxs,
+				          tv(0.f, 1.f, 0.f), ent->client->tempLeg->s.number | HITBOXBIT_LEGS);
+				G_FreeEntity(ent->client->tempLeg);
 			}
 		}
 
+		// body hitbox in green
 		VectorCopy(ent->r.maxs, maxs);
 		maxs[2] = ClientHitboxMaxZ(ent);
-		// green
 		G_RailBox(ent->r.currentOrigin, ent->r.mins, maxs, tv(0.f, 1.f, 0.f), ent->s.number);
+
+		// free temp head after body box to ensure we are using the head mins height
+		if (ent->client->tempHead)
+		{
+			G_FreeEntity(ent->client->tempHead);
+		}
 	}
 
 	// debug head and legs box for collision (see PM_TraceHead and PM_TraceLegs)
@@ -2373,8 +2379,6 @@ void ClientEndFrame(gentity_t *ent)
 
 			if (trace.fraction != 1.f)
 			{
-				Com_Printf("Legs Hurt something %f\n", trace.fraction);
-
 				BG_LegsCollisionBoxOffset(ent->client->ps.viewangles, EF_DEAD, end);
 				VectorAdd(trace.endpos, end, end);
 
@@ -2390,14 +2394,11 @@ void ClientEndFrame(gentity_t *ent)
 
 				if (trace.fraction != 1.f)
 				{
-					Com_Printf("Head Hurt something %f\n", trace.fraction);
-
 					BG_HeadCollisionBoxOffset(ent->client->ps.viewangles, EF_DEAD, end);
 					VectorAdd(trace.endpos, end, end);
 
 					// cyan
 					G_RailBox(end, playerHeadProneMins, playerHeadProneMaxs, tv(0.f, 1.f, 1.f), ent->s.number | HITBOXBIT_HEAD);
-
 				}
 			}
 		}

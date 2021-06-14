@@ -843,18 +843,6 @@ gentity_t *G_BuildHead(gentity_t *ent, grefEntity_t *refent, qboolean newRefent)
 	head->parent     = ent;
 	head->s.eType    = ET_TEMPHEAD;
 
-	// Set the height for body hitbox to be right under head
-	if (ent->client->ps.eFlags & EF_PRONE)
-	{
-		maxs           = head->r.currentOrigin[2] - ent->r.currentOrigin[2] + head->r.mins[2];
-		ent->r.maxs[2] = maxs < PRONE_BODYHEIGHT ? PRONE_BODYHEIGHT : maxs;
-	}
-	else if (ent->client->ps.eFlags & EF_CROUCHING)
-	{
-		maxs           = head->r.currentOrigin[2] - ent->r.currentOrigin[2] + head->r.mins[2];
-		ent->r.maxs[2] = maxs < CROUCH_IDLE_BODYHEIGHT ? CROUCH_IDLE_BODYHEIGHT : maxs;
-	}
-
 	trap_LinkEntity(head);
 
 	return head;
