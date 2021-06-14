@@ -737,7 +737,6 @@ gentity_t *G_BuildHead(gentity_t *ent, grefEntity_t *refent, qboolean newRefent)
 {
 	gentity_t     *head;
 	orientation_t orientation;
-	float         maxs;
 
 	head            = G_Spawn();
 	head->classname = "head"; // see also ET_TEMPHEAD
