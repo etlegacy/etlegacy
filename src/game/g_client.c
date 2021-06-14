@@ -3399,16 +3399,30 @@ float ClientHitboxMaxZ(gentity_t *hitEnt)
 	}
 	else if (hitEnt->client->ps.eFlags & EF_PRONE)
 	{
+		// Prone hitbox height is calculated with head computed from G_BuildHead to stay right under head
+		// (just for hitbox transition into prone so it's not instantaneous)
+		if (hitEnt->client->tempHead)
+		{
+			float maxs = hitEnt->client->tempHead->r.currentOrigin[2] - hitEnt->r.currentOrigin[2] + hitEnt->client->tempHead->r.mins[2];
+			return (maxs < PRONE_BODYHEIGHT) ? PRONE_BODYHEIGHT : maxs;
+		}
+
 		return PRONE_BODYHEIGHT;
-	}
-	else if (hitEnt->client->ps.eFlags & EF_CROUCHING &&
-	         hitEnt->client->ps.velocity[0] == 0.f && hitEnt->client->ps.velocity[1] == 0.f)
-	{
-		// crouched idle animation is lower than the moving one
-		return CROUCH_IDLE_BODYHEIGHT;
 	}
 	else if (hitEnt->client->ps.eFlags & EF_CROUCHING)
 	{
+		// Crouched hitbox height is calculated with head computed from G_BuildHead to stay right under head
+		if (hitEnt->client->tempHead)
+		{
+			float maxs = hitEnt->client->tempHead->r.currentOrigin[2] - hitEnt->r.currentOrigin[2] + hitEnt->client->tempHead->r.mins[2];
+			return (maxs < CROUCH_IDLE_BODYHEIGHT) ? CROUCH_IDLE_BODYHEIGHT : maxs;
+		}
+		else if (hitEnt->client->ps.velocity[0] == 0.f && hitEnt->client->ps.velocity[1] == 0.f)
+		{
+			// crouched idle animation is lower than the moving one
+			return CROUCH_IDLE_BODYHEIGHT;
+		}
+
 		// crouched moving animation is higher than the idle one
 		return CROUCH_BODYHEIGHT;
 	}
