@@ -2578,7 +2578,7 @@ static _attribute((format(printf, 2, 3))) void QDECL CL_RefPrintf(int print_leve
 	}
 	else if (print_level == PRINT_WARNING)
 	{
-		Com_Printf(S_COLOR_YELLOW "%s", msg); // yellow
+		Com_DPrintf(S_COLOR_YELLOW "%s", msg); // yellow
 	}
 	else if (print_level == PRINT_DEVELOPER)
 	{
