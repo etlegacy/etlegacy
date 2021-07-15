@@ -961,7 +961,8 @@ void SV_DemoRestartPlayback(void)
 static void SV_DemoStartPlayback(void)
 {
 	msg_t msg;
-	int   r, time = 400, i, clients = 0, fps = 0, gametype = 0, timelimit = 0, fraglimit = 0, capturelimit = 0, warmuptime = 0, gamestate = GS_INITIALIZE;
+	int   r, time = 400, i, clients = 0, fps = 0, gametype = 0, timelimit = 0, fraglimit = 0, capturelimit = 0, warmuptime = 0, gamestate = GS_INITIALIZE, g_currentRound = 0, g_doWarmup = 0, g_warmup = 60, match_minplayers = MATCH_MINPLAYERS, match_readypercent = 100, g_intermissiontime = 60, g_userTimeLimit = 0, g_useralliedrespawntime = 0, g_useraxisrespawntime = 0;
+	float g_moverScale = 1.0f;
 	char  map[MAX_QPATH];
 	char  fs[MAX_QPATH]; // FIXME:  MAX_QPATH - only 64 chars ?!!!
 	char  hostname[MAX_NAME_LENGTH];
@@ -1093,7 +1094,8 @@ static void SV_DemoStartPlayback(void)
 			}
 
 			// set the demo setting
-			Cvar_SetValue("timelimit", timelimit); // Note: setting the timelimit is NOT necessary for the demo to be replayed (in fact even if the timelimit is reached, the demo will still continue to feed new frames and thus force the game to continue, without any bug - also to the opposite, if the timelimit is too high, the game will be finished when the demo will replay the events, even if the timelimit is not reached but was in the demo, it will be when replaying the demo), but setting it allows for timelimit warning and suddenDeath voice announcement to happen. FIXME: if the timelimit is changed during the game, it won't be reflected in the demo (but the demo will still continue to play, or stop if the game is won).
+			// Note: setting correct timelimit is essential for the demo gamestate to be replayed correctly
+			Cvar_SetValue("timelimit", timelimit);
 		}
 		else if (!Q_stricmp(metadata, "fraglimit"))
 		{
@@ -1159,11 +1161,103 @@ static void SV_DemoStartPlayback(void)
 				Cvar_SetValue("gamestate", gamestate);
 			}
 		}
+		else if (!Q_stricmp(metadata, "g_doWarmup"))
+		{
+			// reading g_doWarmup
+			g_doWarmup = MSG_ReadLong(&msg);
+
+			if (!keepSaved)
+			{
+				savedDoWarmup = Cvar_VariableIntegerValue("g_doWarmup");
+			}
+
+			// set the demo setting
+			Cvar_SetValue("g_doWarmup", g_doWarmup);
+		}
+		else if (!Q_stricmp(metadata, "g_warmup"))
+		{
+			// reading g_warmup
+			g_warmup = MSG_ReadLong(&msg);
+
+			// set the demo setting
+			Cvar_SetValue("g_warmup", g_warmup);
+		}
+		else if (!Q_stricmp(metadata, "g_currentRound"))
+		{
+			// reading g_currentRound
+			g_currentRound = MSG_ReadLong(&msg);
+
+			// set the demo setting
+			Cvar_SetValue("g_currentRound", g_currentRound);
+		}
+		else if (!Q_stricmp(metadata, "match_minplayers"))
+		{
+			// reading match_minplayers
+			match_minplayers = MSG_ReadLong(&msg);
+
+			// set the demo setting
+			Cvar_SetValue("match_minplayers", match_minplayers);
+		}
+		else if (!Q_stricmp(metadata, "match_readypercent"))
+		{
+			// reading match_readypercent
+			match_readypercent = MSG_ReadLong(&msg);
+
+			// set the demo setting
+			Cvar_SetValue("match_readypercent", match_readypercent);
+		}
+		else if (!Q_stricmp(metadata, "g_intermissiontime"))
+		{
+			// reading g_intermissiontime
+			g_intermissiontime = MSG_ReadLong(&msg);
+
+			// set the demo setting
+			Cvar_SetValue("g_intermissiontime", g_intermissiontime);
+		}
+		else if (!Q_stricmp(metadata, "g_userTimeLimit"))
+		{
+			// reading g_userTimeLimit
+			g_userTimeLimit = MSG_ReadLong(&msg);
+
+			// set the demo setting
+			Cvar_SetValue("g_userTimeLimit", g_userTimeLimit);
+
+			if (g_userTimeLimit)
+			{
+				Cvar_SetValue("timelimit", g_userTimeLimit);
+			}
+		}
+		else if (!Q_stricmp(metadata, "g_useralliedrespawntime"))
+		{
+			// reading g_useralliedrespawntime
+			g_useralliedrespawntime = MSG_ReadLong(&msg);
+
+			// set the demo setting
+			Cvar_SetValue("g_useralliedrespawntime", g_useralliedrespawntime);
+		}
+		else if (!Q_stricmp(metadata, "g_useraxisrespawntime"))
+		{
+			// reading g_useraxisrespawntime
+			g_useraxisrespawntime = MSG_ReadLong(&msg);
+
+			// set the demo setting
+			Cvar_SetValue("g_useraxisrespawntime", g_useraxisrespawntime);
+		}
+		else if (!Q_stricmp(metadata, "g_moverScale"))
+		{
+			// reading g_moverScale
+			g_moverScale = MSG_ReadFloat(&msg);
+
+			// set the demo setting
+			Cvar_SetValue("g_moverScale", g_moverScale);
+		}
 		else if (!Q_stricmp(metadata, "g_customConfig"))
 		{
 			// reading g_customConfig (config name)
 			// Note: configs are a big issue, they are loaded on devmap and can overwrite settings that are needed for the demo to replay correctly, like g_doWarmup or timelimit
 			// where incase of g_doWarmup it's not possible to correct it after map loads because the gamestate could be already changed
+			// the config is reloaded at times like end of GS_WARMUP_COUNTDOWN thus overwriting demo settings (fe. timelimit), we will need to save all crucial cvars instead of loading the configs
+			// leaving this for debugging in case of future issues that could be caused by custom configs
 			Q_strncpyz(g_customConfig, MSG_ReadString(&msg), MAX_CVAR_VALUE_STRING);
 			if (strlen(g_customConfig))
 			{
@@ -1171,29 +1265,13 @@ static void SV_DemoStartPlayback(void)
 			}
 
 			// set the demo setting
-			Cvar_Set("g_customConfig", g_customConfig);
+			Cvar_Set("g_customConfig", "");
 		}
 	}
 
-	//Com_Error(ERR_FATAL,"DEBUG ERROR");
-
-	// g_doWarmup
-	if (!keepSaved)
-	{ // we memorize values only if it's the first time we launch the playback of this demo, else the values may have already been modified by the demo playback
-		// Memorize g_doWarmup
-		savedDoWarmup = Cvar_VariableIntegerValue("g_doWarmup");
-	}
-	// Remove g_doWarmup (bugfix: else it will produce a weird bug with all gametypes except CTF and Double Domination because of CheckTournament() in g_main.c which will make the demo stop after the warmup time)
-
-	// FIXME: THIS IS HACKED TO 1 for now (should be 0 or we need to make our own etgame mod bin)
-	// Note: Doesn't work because devmap loads config that will overwrite this value and possibly cause unwanted gamestate change
-	Cvar_SetValue("g_doWarmup", 1);
-
-	// g_allowVote
+	// Memorize g_allowVote
 	if (!keepSaved)
 	{
-		// same for g_allowVote
-		// Memorize g_allowVote
 		savedAllowVote = Cvar_VariableIntegerValue("g_allowVote");
 	}
 	// Remove g_allowVote (prevent players to call a vote while a map is replaying)
@@ -1245,7 +1323,7 @@ static void SV_DemoStartPlayback(void)
 			// Switch the mod
 			Com_Printf("DEMO: Trying to switch automatically to the mod %s to replay the demo\n", strlen(fs) ? fs : BASEGAME);
 			Cvar_SetValue("sv_democlients", 0); // set sv_democlients to 0 (because game_restart will reset sv_maxclients, so we have a risk to have a greater sv_democlients than sv_maxclients, and we don't want that)
-			Cbuf_AddText(va("game_restart %s\n", fs)); // switch mod!
+			Cbuf_AddText(va("game_restart %s\n", fs)); // switch mod! FIXME: command doesn't exist!
 		}
 
 		// Set the game time (level.time, level.startTime) to our demo time to correctly replay the timelimits of the map/rounds
@@ -1348,6 +1426,36 @@ static void SV_DemoStartRecord(void)
 	// Write current gamestate
 	MSG_WriteString(&msg, "gamestate");
 	MSG_WriteLong(&msg, Cvar_VariableIntegerValue("gamestate"));
+	// Write g_doWarmup
+	MSG_WriteString(&msg, "g_doWarmup");
+	MSG_WriteLong(&msg, Cvar_VariableIntegerValue("g_doWarmup"));
+	// Write g_warmup
+	MSG_WriteString(&msg, "g_warmup");
+	MSG_WriteLong(&msg, Cvar_VariableIntegerValue("g_warmup"));
+	// Write g_currentRound
+	MSG_WriteString(&msg, "g_currentRound");
+	MSG_WriteLong(&msg, Cvar_VariableIntegerValue("g_currentRound"));
+	// Write match_minplayers
+	MSG_WriteString(&msg, "match_minplayers");
+	MSG_WriteLong(&msg, Cvar_VariableIntegerValue("match_minplayers"));
+	// Write match_readypercent
+	MSG_WriteString(&msg, "match_readypercent");
+	MSG_WriteLong(&msg, Cvar_VariableIntegerValue("match_readypercent"));
+	// Write g_intermissiontime
+	MSG_WriteString(&msg, "g_intermissiontime");
+	MSG_WriteLong(&msg, Cvar_VariableIntegerValue("g_intermissiontime"));
+	// Write g_userTimeLimit
+	MSG_WriteString(&msg, "g_userTimeLimit");
+	MSG_WriteLong(&msg, Cvar_VariableIntegerValue("g_userTimeLimit"));
+	// Write g_useralliedrespawntime
+	MSG_WriteString(&msg, "g_useralliedrespawntime");
+	MSG_WriteLong(&msg, Cvar_VariableIntegerValue("g_useralliedrespawntime"));
+	// Write g_useraxisrespawntime
+	MSG_WriteString(&msg, "g_useraxisrespawntime");
+	MSG_WriteLong(&msg, Cvar_VariableIntegerValue("g_useraxisrespawntime"));
+	// Write g_moverScale
+	MSG_WriteString(&msg, "g_moverScale");
+	MSG_WriteLong(&msg, Cvar_VariableValue("g_moverScale"));
 	// Write current config
 	MSG_WriteString(&msg, "g_customConfig");
 	MSG_WriteString(&msg, Cvar_VariableString("g_customConfig"));
@@ -1549,6 +1657,17 @@ static void SV_DemoReadConfigString(msg_t *msg)
 	{
 		// we make sure to not overwrite real client configstrings (else when the demo starts, normal players will have no name, no model and no status!) - this cannot be done at recording time because we can't know how many sv_maxclients will be set at replaying time
 		SV_SetConfigstring(num, configstring);
+
+		// Set cvars based on configstrings
+		if (num == CS_WOLFINFO && strlen(configstring))
+		{
+			float timelimit = Q_atof(Info_ValueForKey(configstring, "g_nextTimeLimit"));
+
+			if (timelimit)
+			{
+				Cvar_SetValue("g_nextTimeLimit", timelimit);
+			}
+		}
 	}
 }
 
@@ -1589,9 +1708,8 @@ static void SV_DemoReadClientConfigString(msg_t *msg)
 		// Set the client configstring (using a standard Q3 function)
 		SV_SetConfigstring(CS_PLAYERS + num, configstring);
 
-		// Set some infos about this user:
-		client->demoClient = qtrue;// Redundant here? // to check if a client is a democlient, you can either rely on this variable, either you can check if it's a real client num (index of client) is >= CS_PLAYERS + sv_democlients->integer && < CS_PLAYERS + sv_maxclients->integer (if it's not a configstring, remove CS_PLAYERS from your if)
-		Q_strncpyz(client->name, Info_ValueForKey(configstring, "n"), MAX_NAME_LENGTH);     // set the name (useful for internal functions such as status_f). Anyway userinfo will automatically set both name (server-side) and netname (gamecode-side).
+		// set the name (useful for internal functions such as status_f). Anyway userinfo will automatically set both name (server-side) and netname (gamecode-side).
+		Q_strncpyz(client->name, Info_ValueForKey(configstring, "n"), MAX_NAME_LENGTH);
 
 		// Set the remoteAddress of this client to localhost (this will set "ip\localhost" in the userinfo, which will in turn force the gamecode to set this client as a localClient, which avoids inactivity timers and some other stuffs to be triggered)
 		if (strlen(configstring)) // we check that the client isn't being dropped
@@ -1604,7 +1722,7 @@ static void SV_DemoReadClientConfigString(msg_t *msg)
 		// DEMOCLIENT INITIAL TEAM MANAGEMENT
 		// Note: needed only to set the initial team of the democlients, subsequent team changes are directly handled by their clientCommands
 		if (configstring && strlen(configstring) &&
-		    (svdoldteam == -1 || (svdoldteam != svdnewteam && svdnewteam != -1))   // if there was no team for this player before or if the new team is different
+		    (svdoldteam == -1 || (svdoldteam != svdnewteam && svdnewteam != -1 && client->gentity->s.teamNum == TEAM_FREE))   // if there was no team for this player before or if the new team is different
 		    )
 		{
 			// If the client changed team, we manually issue a team change (workaround by using a clientCommand team)
@@ -1787,7 +1905,7 @@ static void SV_DemoReadAllEntityState(msg_t *msg)
 			}
 		}
 
-		if (entity->s.eType == ET_ITEM && entity->s.groundEntityNum == ENTITYNUM_WORLD)
+		if (entity->s.eType == ET_ITEM)
 		{
 			SV_GentityUpdateItemField(entity);
 		}
@@ -1852,6 +1970,21 @@ static void SV_DemoReadRefreshEntities(void)
 	int            i;
 	sharedEntity_t *entity;
 
+	for (i = 0; i < sv_democlients->integer; i++)
+	{
+		// This is a workaround to not use user commands to save storage space, ClientThink is needed for map script triggers to be run
+		// fe. EndRound script which starts G_LogExit
+		if (Q_atoi((Info_ValueForKey(sv.configstrings[CS_WOLFINFO], "gamestate"))) != GS_INTERMISSION && !(SV_GameClientNum(i)->eFlags & EF_DEAD))
+		{
+			usercmd_t cmd;
+			cmd.serverTime = svs.time;
+
+			SV_ClientThink(&svs.clients[i], &cmd);
+		}
+
+		*SV_GameClientNum(i) = sv.demoPlayerStates[i]; // Overwrite player states
+	}
+
 	// Overwrite anything the game may have changed
 	for (i = 0; i < sv.num_entities; i++)
 	{
@@ -1864,21 +1997,10 @@ static void SV_DemoReadRefreshEntities(void)
 
 		entity = SV_GentityNum(i);
 
-		// FIXME: Redundant?
-		if (entity->s.eType == ET_ITEM && entity->s.groundEntityNum == ENTITYNUM_WORLD)
-		{
-			SV_GentityUpdateItemField(entity);
-		}
-
 		if (entity->s.eType == ET_FLAMETHROWER_CHUNK)
 		{
 			SV_GentityUpdateParentField(entity, SV_GentityNum(entity->r.ownerNum));
 		}
-	}
-
-	for (i = 0; i < sv_democlients->integer; i++)
-	{
-		*SV_GameClientNum(i) = sv.demoPlayerStates[i]; // Overwrite player states
 	}
 }
 
