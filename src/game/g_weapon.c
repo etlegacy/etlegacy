@@ -4027,7 +4027,7 @@ void CalcMuzzlePoint(gentity_t *ent, int weapon, vec3_t forward, vec3_t right, v
  */
 void CalcMuzzlePointForActivate(gentity_t *ent, vec3_t forward, vec3_t right, vec3_t up, vec3_t muzzlePoint)
 {
-	VectorCopy(ent->s.pos.trBase, muzzlePoint);
+	VectorCopy(ent->client->ps.origin, muzzlePoint);
 	muzzlePoint[2] += ent->client->ps.viewheight;
 
 	AddLean(ent, muzzlePoint);
