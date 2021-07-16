@@ -1061,7 +1061,7 @@ int CG_cleanName(const char *pszIn, char *pszOut, int dwMaxLength, qboolean fCRL
 int CG_findClientNum(const char *s)
 {
 	int      id;
-	char     s2[64], n2[64];
+	char     s2[MAX_NAME_LENGTH], n2[MAX_NAME_LENGTH];
 	qboolean fIsNumber = qtrue;
 
 	// See if its a number or string

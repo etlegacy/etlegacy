@@ -1676,7 +1676,7 @@ void ClientUserinfoChanged(int clientNum)
 	char       *reason;
 	char       *s;
 	char       cs_name[MAX_NETNAME] = "";
-	char       oldname[MAX_STRING_CHARS];
+	char       oldname[MAX_NAME_LENGTH];
 	char       userinfo[MAX_INFO_STRING];
 	char       skillStr[16] = "";
 	char       medalStr[16] = "";
@@ -1691,7 +1691,7 @@ void ClientUserinfoChanged(int clientNum)
 		if (reason)
 		{
 			G_Printf("ClientUserinfoChanged: CheckUserinfo: client %d: %s\n", clientNum, reason);
-			trap_DropClient(clientNum, va("^1%s", "Bad userinfo."), 99999);
+			trap_DropClient(clientNum, va("^1%s", "Bad userinfo."), 0);
 			return;
 		}
 	}
@@ -2019,7 +2019,7 @@ char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 	char       cs_value[MAX_STRING_CHARS]    = "";
 	char       cs_ip[MAX_STRING_CHARS]       = "";
 	char       cs_password[MAX_STRING_CHARS] = "";
-	char       cs_name[MAX_NETNAME]          = "";
+	char       cs_name[MAX_NETNAME + 1]      = "";
 	char       cs_guid[MAX_GUID_LENGTH + 1]  = "";
 	//char       cs_rate[MAX_STRING_CHARS]     = "";
 #ifdef FEATURE_LUA
@@ -2056,7 +2056,7 @@ char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 			Q_strncpyz(cs_ip, cs_value, MAX_STRING_CHARS);
 			break;
 		case TOK_name:
-			Q_strncpyz(cs_name, cs_value, MAX_NETNAME);
+			Q_strncpyz(cs_name, cs_value, MAX_NETNAME + 1);
 			break;
 		case TOK_cl_guid:
 			Q_strncpyz(cs_guid, cs_value, MAX_GUID_LENGTH + 1);
@@ -2078,6 +2078,12 @@ char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 	if (G_FilterIPBanPacket(cs_ip))
 	{
 		return "You are banned from this server.";
+	}
+
+	// don't permit empty name
+	if (!strlen(cs_name))
+	{
+		return va("Bad name: Name is empty. Please change your name.");
 	}
 
 	// don't permit long names ... - see also MAX_NETNAME

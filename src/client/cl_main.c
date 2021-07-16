@@ -563,8 +563,8 @@ static void CL_GenerateETKey(void)
 		char      buff[ETKEY_SIZE];
 
 		buff[0] = '\0';
-		tt = time(NULL);
-		t  = localtime(&tt);
+		tt      = time(NULL);
+		t       = localtime(&tt);
 		srand(Sys_Milliseconds());
 		last = rand() % 9999;
 
@@ -2980,7 +2980,7 @@ void CL_Init(void)
 	Cvar_Get("cg_zoomStepSniper", "2", CVAR_ARCHIVE);
 
 	// userinfo
-	Cvar_Get("name", "ETLegacyPlayer", CVAR_USERINFO | CVAR_ARCHIVE);
+	Cvar_Get("name", DEFAULT_NAME, CVAR_USERINFO | CVAR_ARCHIVE);
 	Cvar_Get("rate", "25000", CVAR_USERINFO | CVAR_ARCHIVE);
 	Cvar_Get("snaps", "20", CVAR_USERINFO | CVAR_ARCHIVE);
 	Cvar_Get("etVersion", ET_VERSION, CVAR_USERINFO | CVAR_ROM);
@@ -3533,7 +3533,7 @@ int CL_ServerStatus(const char *serverAddress, char *serverStatusString, size_t 
 void CL_ServerStatusResponse(netadr_t from, msg_t *msg)
 {
 	char           *s;
-	char           info[MAX_INFO_STRING], name[32];
+	char           info[MAX_INFO_STRING], name[MAX_NAME_LENGTH];
 	int            i, l, score, ping;
 	unsigned int   len;
 	serverStatus_t *serverStatus;

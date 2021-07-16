@@ -1977,7 +1977,7 @@ const char *CG_LocalizeServerCommand(const char *buf)
 	static char token[MAX_TOKEN_CHARS];
 	char        temp[MAX_TOKEN_CHARS];
 	qboolean    togloc = qtrue;
-	const char  *s     = buf;
+	const char  *s = buf;
 	int         i, prev = 0;
 
 	Com_Memset(token, 0, sizeof(token));
@@ -2073,7 +2073,7 @@ void CG_topshotsParse_cmd(qboolean doBest)
 	int            iWeap;
 	int            cnum, hits, atts, kills, deaths, headshots;
 	topshotStats_t *ts = &cgs.topshots;
-	char           name[32];
+	char           name[MAX_NAME_LENGTH];
 	float          acc;
 
 	iWeap = Q_atoi(CG_Argv(iArg++));
@@ -2380,12 +2380,12 @@ void CG_parseWeaponStatsGS_cmd(void)
 /**
  * @brief Client-side stat presentation
  */
-void CG_parseWeaponStats_cmd(void (txt_dump) (const char *))
+void CG_parseWeaponStats_cmd(void(txt_dump) (const char *))
 {
 	clientInfo_t *ci;
 	qboolean     fFull;
 	qboolean     fHasStats = qfalse;
-	char         strName[MAX_STRING_CHARS];
+	char         strName[MAX_NAME_LENGTH];
 	int          atts, deaths, hits, kills, headshots;
 	unsigned int i, iArg = 1;
 	unsigned int nClient;
@@ -2649,7 +2649,7 @@ void CG_parseWeaponStats_cmd(void (txt_dump) (const char *))
  * @brief CG_parseBestShotsStats_cmd
  * @param[in] doTop
  */
-static void CG_parseBestShotsStats_cmd(qboolean doTop, void (txt_dump) (const char *))
+static void CG_parseBestShotsStats_cmd(qboolean doTop, void(txt_dump) (const char *))
 {
 	int      iArg = 1;
 	qboolean fFull;
@@ -2685,7 +2685,7 @@ static void CG_parseBestShotsStats_cmd(qboolean doTop, void (txt_dump) (const ch
 		int   deaths;
 		int   headshots;
 		float acc;
-		char  name[32];
+		char  name[MAX_NAME_LENGTH];
 
 		while (iWeap)
 		{
@@ -2727,7 +2727,7 @@ static void CG_parseBestShotsStats_cmd(qboolean doTop, void (txt_dump) (const ch
  * @brief CG_parseTopShotsStats_cmd
  * @param[in] doTop
  */
-static void CG_parseTopShotsStats_cmd(qboolean doTop, void (txt_dump) (const char *))
+static void CG_parseTopShotsStats_cmd(qboolean doTop, void(txt_dump) (const char *))
 {
 	int i, iArg = 1;
 	int cClients;
@@ -2759,7 +2759,7 @@ static void CG_parseTopShotsStats_cmd(qboolean doTop, void (txt_dump) (const cha
 		int        headshots;
 		float      acc;
 		const char *color;
-		char       name[32];
+		char       name[MAX_NAME_LENGTH];
 
 		for (i = 0; i < cClients; i++)
 		{

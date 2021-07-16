@@ -498,6 +498,8 @@ typedef int clipHandle_t;
 
 #define MAX_VA_STRING       32000
 
+#define DEFAULT_NAME "ETLegacyPlayer"
+
 /**
  * @enum messageStatus_t
  * @brief

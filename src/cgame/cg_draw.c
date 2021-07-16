@@ -1717,8 +1717,7 @@ static void CG_DrawCrosshairPlayerInfo(int clientNum, int class)
 	// draw the name and class
 	if (cg_drawCrosshairNames.integer > 0)
 	{
-		char   colorized[32]         = { 0 };
-		size_t colorizedBufferLength = 32;
+		char colorized[MAX_NAME_LENGTH] = { 0 };
 
 		if (cg_drawCrosshairNames.integer == 2)
 		{
@@ -1728,7 +1727,7 @@ static void CG_DrawCrosshairPlayerInfo(int clientNum, int class)
 		else
 		{
 			// Draw them with a single color (white)
-			Q_ColorizeString('7', cgs.clientinfo[clientNum].cleanname, colorized, colorizedBufferLength);
+			Q_ColorizeString('7', cgs.clientinfo[clientNum].cleanname, colorized, MAX_NAME_LENGTH);
 			s = colorized;
 		}
 		w = CG_Text_Width_Ext(s, fontScale, 0, &cgs.media.limboFont2);

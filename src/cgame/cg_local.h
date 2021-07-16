@@ -617,8 +617,8 @@ typedef struct clientInfo_s
 
 	int clientNum;
 
-	char name[MAX_QPATH];
-	char cleanname[MAX_QPATH];
+	char name[MAX_NAME_LENGTH];
+	char cleanname[MAX_NAME_LENGTH];
 	team_t team;
 
 	int botSkill;                   ///< OBSOLETE remove!
