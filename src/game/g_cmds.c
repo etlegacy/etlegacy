@@ -4032,10 +4032,10 @@ void G_LeaveTank(gentity_t *ent, qboolean position)
  */
 void Cmd_Activate_f(gentity_t *ent)
 {
-	trace_t  tr;
-	vec3_t   end;
-	vec3_t   forward, right, up, offset;
-	qboolean pass2 = qfalse;
+	trace_t tr;
+	vec3_t  end;
+	vec3_t  forward, right, up, offset;
+	int     numOfIgnoredEnts = 0;
 
 	if (ent->health <= 0)
 	{
@@ -4105,31 +4105,30 @@ void Cmd_Activate_f(gentity_t *ent)
 
 	VectorMA(offset, CH_MAX_DIST, forward, end);
 
-	trap_Trace(&tr, offset, NULL, NULL, end, ent->s.number, (CONTENTS_SOLID | CONTENTS_MISSILECLIP));
-
-	if ((tr.surfaceFlags & SURF_NOIMPACT) || tr.entityNum == ENTITYNUM_WORLD)
+	do
 	{
+		qboolean  found = qfalse;
+
 		trap_Trace(&tr, offset, NULL, NULL, end, ent->s.number, (CONTENTS_SOLID | CONTENTS_MISSILECLIP | CONTENTS_TRIGGER));
-		pass2 = qtrue;
-	}
-
-	while (!(tr.surfaceFlags & SURF_NOIMPACT) && !(tr.entityNum == ENTITYNUM_WORLD))
-	{
-		qboolean found = qfalse;
 
 		if (VectorDistance(offset, tr.endpos) <= CH_ACTIVATE_DIST)
 		{
 			found = Do_Activate_f(ent, &g_entities[tr.entityNum]);
 		}
-
-		if (found || pass2)
+        
+        if (found || numOfIgnoredEnts >= 10)
 		{
 			break;
 		}
 
-		pass2 = qtrue;
-		trap_Trace(&tr, offset, NULL, NULL, end, ent->s.number, (CONTENTS_SOLID | CONTENTS_MISSILECLIP | CONTENTS_TRIGGER));
+		// we may hit multiple invalid ents at the same point
+		// count them to prevent too many loops
+		numOfIgnoredEnts++;
+
+		// advance offset (start point) past the entity to ignore
+		VectorMA(tr.endpos, 0.1f, forward, offset);
 	}
+	while (!(tr.surfaceFlags & SURF_NOIMPACT) && !(tr.entityNum == ENTITYNUM_WORLD));
 }
 
 /**
