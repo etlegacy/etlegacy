@@ -879,6 +879,12 @@ void CG_Zoom(void)
 {
 	int weapon;
 
+	// no zoom in third person view
+	if (!cg.renderingThirdPerson)
+	{
+		return;
+	}
+
 	// fix for demo playback
 	if ((cg.snap->ps.pm_flags & PMF_FOLLOW) || cg.demoPlayback)
 	{
@@ -1036,25 +1042,25 @@ static int CG_CalcFov(void)
 
 	cg.refdef_current->rdflags &= ~RDF_SNOOPERVIEW;
 
+	if (!cg.renderingThirdPerson
 #ifdef FEATURE_EDV
-	if (cgs.demoCamera.renderingFreeCam || cgs.demoCamera.renderingWeaponCam)
-	{
-		//do nothing
-	}
-	else
+	    && !cgs.demoCamera.renderingFreeCam && !cgs.demoCamera.renderingWeaponCam
 #endif
-	// mg42 zoom
-	if (cg.snap->ps.persistant[PERS_HWEAPON_USE])
+	    )
 	{
-		fov_x = 55;
-	}
-	else if (CHECKBITWISE(GetWeaponTableData(cg.snap->ps.weapon)->type, WEAPON_TYPE_MG | WEAPON_TYPE_SET))
-	{
-		fov_x = 55;
-	}
-	else if (cg.snap->ps.eFlags & EF_MOUNTEDTANK)
-	{
-		fov_x = 75;
+		// mg42 zoom
+		if (cg.snap->ps.persistant[PERS_HWEAPON_USE])
+		{
+			fov_x = 55;
+		}
+		else if (CHECKBITWISE(GetWeaponTableData(cg.snap->ps.weapon)->type, WEAPON_TYPE_MG | WEAPON_TYPE_SET))
+		{
+			fov_x = 55;
+		}
+		else if (cg.snap->ps.eFlags & EF_MOUNTEDTANK)
+		{
+			fov_x = 75;
+		}
 	}
 
 	if (cg.predictedPlayerState.pm_type == PM_INTERMISSION)
