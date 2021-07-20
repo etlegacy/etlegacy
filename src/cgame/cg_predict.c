@@ -140,7 +140,7 @@ float CG_ClientHitboxMaxZ(entityState_t *hitEnt, float def)
 		return PRONE_BODYHEIGHT;
 	}
 	else if (hitEnt->eFlags & EF_CROUCHING &&
-			cg.predictedPlayerState.velocity[0] == 0.f && cg.predictedPlayerState.velocity[1] == 0.f)
+	         cg.predictedPlayerState.velocity[0] == 0.f && cg.predictedPlayerState.velocity[1] == 0.f)
 	{
 		return CROUCH_IDLE_BODYHEIGHT;
 	}
@@ -243,9 +243,7 @@ static void CG_ClipMoveToEntities(const vec3_t start, const vec3_t mins, const v
 		else if (trace.startsolid)
 		{
 			tr->startsolid = qtrue;
-
-			// FIXME: entity damage, see SV_ClipMoveToEntities
-			//tr->entityNum  = ent->number;
+			tr->entityNum  = ent->number;
 		}
 		if (tr->allsolid)
 		{

@@ -1001,6 +1001,12 @@ void Fire_Lead_Ext(gentity_t *ent, gentity_t *activator, float spread, int damag
 	// the weapon itself (e.g. for mg42s)
 	// G_HistoricalTrace(activator, &tr, muzzle, NULL, NULL, end, ent->s.number, MASK_SHOT);
 
+	// ignore the tripod hitbox box if there is one, otherwise MG take damage while being used
+	// due to the muzzle starting point on top of it
+	if (ent->mg42BaseEnt)
+	{
+		G_TempTraceIgnoreEntity(&g_entities[ent->mg42BaseEnt]);
+	}
 	// skip corpses for bullet tracing (=non gibbing weapons)
 	G_TempTraceIgnoreBodies();
 	G_Trace(activator, &tr, muzzle, NULL, NULL, end, ent->s.number, MASK_SHOT);
