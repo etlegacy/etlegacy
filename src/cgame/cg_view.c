@@ -880,7 +880,7 @@ void CG_Zoom(void)
 	int weapon;
 
 	// no zoom in third person view
-	if (!cg.renderingThirdPerson)
+	if (cg.renderingThirdPerson)
 	{
 		return;
 	}
