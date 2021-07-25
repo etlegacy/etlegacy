@@ -1653,6 +1653,12 @@ qboolean G_ScriptAction_Wait(gentity_t *ent, char *params)
 	char *pString = params, *token;
 	int  duration;
 
+	if (level.suddenDeath)
+	{
+		// prevent waiting, as this could cause the round to end
+		return qtrue;
+	}
+
 	// get the duration
 	token = COM_ParseExt(&pString, qfalse);
 	if (!token[0])
