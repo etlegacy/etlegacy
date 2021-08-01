@@ -4105,18 +4105,27 @@ void Cmd_Activate_f(gentity_t *ent)
 
 	VectorMA(offset, CH_MAX_DIST, forward, end);
 
+	// unlink from world the trigger in contact with player to ignore it
+	if (ent->client->touchingTOI)
+	{
+		ent->client->touchingTOI->r.linked = qfalse;
+	}
+
 	do
 	{
-		qboolean  found = qfalse;
+		qboolean found;
 
 		trap_Trace(&tr, offset, NULL, NULL, end, ent->s.number, (CONTENTS_SOLID | CONTENTS_MISSILECLIP | CONTENTS_TRIGGER));
 
-		if (VectorDistance(offset, tr.endpos) <= CH_ACTIVATE_DIST)
+		// too far to activate
+		if (VectorDistance(offset, tr.endpos) > CH_ACTIVATE_DIST)
 		{
-			found = Do_Activate_f(ent, &g_entities[tr.entityNum]);
+			break;
 		}
-        
-        if (found || numOfIgnoredEnts >= 10)
+
+		found = Do_Activate_f(ent, &g_entities[tr.entityNum]);
+
+		if (found || numOfIgnoredEnts >= 10)
 		{
 			break;
 		}
@@ -4128,7 +4137,13 @@ void Cmd_Activate_f(gentity_t *ent)
 		// advance offset (start point) past the entity to ignore
 		VectorMA(tr.endpos, 0.1f, forward, offset);
 	}
-	while (!(tr.surfaceFlags & SURF_NOIMPACT) && !(tr.entityNum == ENTITYNUM_WORLD));
+	while (!(tr.contents & CONTENTS_SOLID) && !(tr.surfaceFlags & SURF_NOIMPACT) && !(tr.entityNum == ENTITYNUM_WORLD));
+
+	// link back from world the trigger in contact with player
+	if (ent->client->touchingTOI)
+	{
+		ent->client->touchingTOI->r.linked = qtrue;
+	}
 }
 
 /**
