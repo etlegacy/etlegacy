@@ -370,6 +370,8 @@ vmCvar_t g_playerHitBoxHeight;
 
 vmCvar_t g_debugForSingleClient;
 
+vmCvar_t g_suddenDeath;
+
 cvarTable_t gameCvarTable[] =
 {
 	// don't override the cheat state set by the system
@@ -660,6 +662,7 @@ cvarTable_t gameCvarTable[] =
 	{ &g_xpSaver,                         "g_xpSaver",                         "0",                          CVAR_ARCHIVE,                                    0, qfalse, qfalse },
 	{ &g_dynamiteChaining,                "g_dynamiteChaining",                "0",                          CVAR_ARCHIVE,                                    0, qfalse, qfalse },
 	{ &g_playerHitBoxHeight,              "g_playerHitBoxHeight",              "36",                         CVAR_ARCHIVE | CVAR_SERVERINFO,                  0, qfalse, qfalse },
+	{ &g_suddenDeath,                     "g_suddenDeath",                     "0",                          CVAR_ARCHIVE,                                    0, qtrue,  qfalse },
 };
 
 /**
@@ -4190,6 +4193,27 @@ qboolean ScoreIsTied(void)
 }
 
 /**
+ * @brief DynamiteOnObjective
+ * @return
+ */
+qboolean DynamiteOnObjective(void)
+{
+	int       e;
+	gentity_t *ent;
+
+	for (e = 0; e < MAX_GENTITIES; e++)
+	{
+		ent = &g_entities[e];
+		if (ent->s.weapon == WP_DYNAMITE && ent->onobjective)
+		{
+			return qtrue;
+		}
+	}
+
+	return qfalse;
+}
+
+/**
  * @brief There will be a delay between the time the exit is qualified for
  * and the time everyone is moved to the intermission spot, so you
  * can see the last frag.
@@ -4297,6 +4321,23 @@ void CheckExitRules(void)
 				{
 					// score is tied, so don't end the game
 					return;
+				}
+
+				if (level.suddenDeath)
+				{
+					if (DynamiteOnObjective())
+					{
+						return;
+					}
+					level.suddenDeath = 0;
+				}
+				else
+				{
+					if (g_suddenDeath.integer && DynamiteOnObjective())
+					{
+						level.suddenDeath = 1;
+						return;
+					}
 				}
 			}
 

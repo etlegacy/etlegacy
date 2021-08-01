@@ -1904,6 +1904,12 @@ weapengineergoto3:
 					return NULL;
 				}
 
+				if (level.suddenDeath)
+				{
+					G_PrintClientSpammyCenterPrint(ent - g_entities, "Too late to arm a dynamite.");
+					return NULL;
+				}
+
 				// dyno chaining
 				traceEnt->onobjective = NULL;
 
