@@ -1682,7 +1682,8 @@ void ClientThink(int clientNum)
 void G_RunClient(gentity_t *ent)
 {
 	// special case for uniform grabbing
-	if (ent->client->pers.cmd.buttons & BUTTON_ACTIVATE)
+	// don't let spectator activate
+	if (ent->client->sess.sessionTeam != TEAM_SPECTATOR && ent->client->pers.cmd.buttons & BUTTON_ACTIVATE)
 	{
 		Cmd_Activate2_f(ent);
 	}

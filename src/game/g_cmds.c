@@ -4259,7 +4259,7 @@ void Cmd_Activate2_f(gentity_t *ent)
 
 	AngleVectors(ent->client->ps.viewangles, forward, right, up);
 	CalcMuzzlePointForActivate(ent, forward, right, up, offset);
-	VectorMA(offset, 96, forward, end);
+	VectorMA(offset, CH_ACTIVATE_DIST, forward, end);
 
 	trap_Trace(&tr, offset, NULL, NULL, end, ent->s.number, (CONTENTS_SOLID | CONTENTS_BODY | CONTENTS_CORPSE));
 
