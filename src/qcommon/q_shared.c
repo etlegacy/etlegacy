@@ -1857,6 +1857,32 @@ void Q_ColorizeString(char colorCode, const char *inStr, char *outStr, size_t ou
 }
 
 /**
+ * @brief Parses normalized RGBA color string
+ * @param[in] inStr input string to parse
+ * @param[out] outColor output vector to set
+ * @return Number of matched color components in the input string
+ */
+int Q_ParseColorRGBA(const char *inStr, vec4_t outColor)
+{
+	float r = 0.0f;
+	float g = 0.0f;
+	float b = 0.0f;
+	float a = 1.0f;
+	int components;
+
+	if (!inStr || !inStr[0] || !outColor) 
+	{
+		return 0;
+	}
+
+	components = sscanf(inStr, "%f %f %f %f", &r, &g, &b, &a);
+	Vector4Set(outColor, r, g, b, a);
+	ClampColor(outColor);
+
+	return components;
+}
+
+/**
  * @brief Strips whitespaces and bad characters
  * @param[in] c
  * @return
