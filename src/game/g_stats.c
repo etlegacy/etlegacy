@@ -160,7 +160,7 @@ void G_SetPlayerScore(gclient_t *client)
  */
 void G_SetPlayerSkill(gclient_t *client, skillType_t skill)
 {
-	int i;
+	int i, lvlSkipped;
 
 #ifdef FEATURE_LUA
 	// *LUA* API callbacks
@@ -170,13 +170,21 @@ void G_SetPlayerSkill(gclient_t *client, skillType_t skill)
 	}
 #endif
 
-	for (i = NUM_SKILL_LEVELS - 1; i >= 0; i--)
+	for (i = NUM_SKILL_LEVELS - 1, lvlSkipped = 0; i >= 0; i--)
 	{
-		if (GetSkillTableData(skill)->skillLevels[i] != -1 && client->sess.skillpoints[skill] >= GetSkillTableData(skill)->skillLevels[i])
+		if (GetSkillTableData(skill)->skillLevels[i] == -1)
 		{
-			client->sess.skill[skill] = i;
+			lvlSkipped++;
+			continue;
+		}
+
+		if (client->sess.skillpoints[skill] >= GetSkillTableData(skill)->skillLevels[i])
+		{
+			client->sess.skill[skill] = i + lvlSkipped;
 			break;
 		}
+
+		lvlSkipped = 0;
 	}
 
 	G_SetPlayerScore(client);
