@@ -4204,7 +4204,7 @@ qboolean DynamiteOnObjective(void)
 	for (e = 0; e < MAX_GENTITIES; e++)
 	{
 		ent = &g_entities[e];
-		if (ent->s.weapon == WP_DYNAMITE && ent->onobjective != NULL)
+		if (ent->s.weapon == WP_DYNAMITE && ent->onobjective)
 		{
 			return qtrue;
 		}
