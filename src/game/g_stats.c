@@ -821,7 +821,7 @@ void G_BuildEndgameStats(void)
 	if (best)
 	{
 		best->hasaward = qtrue;
-		Q_strcat(buffer, 1024, va("%i %.2f %i ", bestClientNum, MIN(best->sess.mu - 3 * best->sess.sigma, 50.f), best->sess.sessionTeam));
+		Q_strcat(buffer, 1024, va("%i %.2f %i ", bestClientNum, MIN(Com_RoundFloatWithNDecimal(best->sess.mu - 3 * best->sess.sigma, 2), 50.f), best->sess.sessionTeam));
 	}
 	else
 	{
