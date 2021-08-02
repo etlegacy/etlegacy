@@ -569,19 +569,7 @@ static void WM_DrawClientScore_Score(int x, int y, float scaleX, float scaleY, c
 #ifdef FEATURE_RATING
 	if (cgs.skillRating && cg_scoreboard.integer == SCOREBOARD_SR)
 	{
-		float rating;
-
-		// rouding on 2 digits
-		rating = roundf(score->rating * 100.f) / 100.f;
-
-		// in case the rating is between -0.005 and 0, the rounding will compute -0
-		// we don't want to display -0, so let replace it by a pure 0
-		if (rating == -0.f)
-		{
-			rating = 0;
-		}
-
-		CG_Text_Paint_RightAligned_Ext(x, y, scaleX, scaleY, colorWhite, va("^7%5.2f", (double) rating), 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
+		CG_Text_Paint_RightAligned_Ext(x, y, scaleX, scaleY, colorWhite, va("^7%5.2f", (double) Com_RoundFloatWithNDecimal(score->rating, 2)), 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
 	}
 	else
 #endif

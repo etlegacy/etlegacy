@@ -2302,11 +2302,11 @@ void CG_parseWeaponStatsGS_cmd(void)
 	{
 		if (cgs.prestige && cgs.gametype != GT_WOLF_CAMPAIGN)
 		{
-			Q_strncpyz(gs->strRank, va("%-21s %-8d %-14.2f %-3i", GetRankTableData(ci->team, ci->rank)->names, xp, (double)ci->rating, ci->prestige), sizeof(gs->strRank));
+			Q_strncpyz(gs->strRank, va("%-21s %-8d %-14.2f %-3i", GetRankTableData(ci->team, ci->rank)->names, xp, (double)Com_RoundFloatWithNDecimal(ci->rating, 2), ci->prestige), sizeof(gs->strRank));
 		}
 		else
 		{
-			Q_strncpyz(gs->strRank, va("%-21s %-8d %-14.2f", GetRankTableData(ci->team, ci->rank)->names, xp, (double)ci->rating), sizeof(gs->strRank));
+			Q_strncpyz(gs->strRank, va("%-21s %-8d %-14.2f", GetRankTableData(ci->team, ci->rank)->names, xp, (double)Com_RoundFloatWithNDecimal(ci->rating, 2)), sizeof(gs->strRank));
 		}
 	}
 	else
@@ -2314,7 +2314,7 @@ void CG_parseWeaponStatsGS_cmd(void)
 #ifdef FEATURE_RATING
 	if (cgs.skillRating && cgs.gametype != GT_WOLF_STOPWATCH && cgs.gametype != GT_WOLF_LMS)
 	{
-		Q_strncpyz(gs->strRank, va("%-21s %-8d %-14.2f", GetRankTableData(ci->team, ci->rank)->names, xp, (double)ci->rating), sizeof(gs->strRank));
+		Q_strncpyz(gs->strRank, va("%-21s %-8d %-14.2f", GetRankTableData(ci->team, ci->rank)->names, xp, (double)Com_RoundFloatWithNDecimal(ci->rating, 2)), sizeof(gs->strRank));
 	}
 	else
 #endif

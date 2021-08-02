@@ -1112,13 +1112,13 @@ void CG_MapVoteList_Draw(panel_button_t *button)
 	// to reset XP after certain number of maps
 	if (cgs.mapVoteMapY > 0)
 	{
-		const char* s;
-		float w;
+		const char *s;
+		float      w;
 
 		s = va("Map %d of %d", cgs.mapVoteMapX + 1, cgs.mapVoteMapY);
 		w = CG_Text_Width_Ext(s, button->font->scalex, 0, button->font->font);
 		CG_Text_Paint_Ext(DB_MAPNAME_X + 10 + cgs.wideXoffset + DB_MAPVOTE_X * 0.5f - w * 0.5f, y2,
-			              button->font->scalex, button->font->scaley, button->font->colour,
+		                  button->font->scalex, button->font->scaley, button->font->colour,
 		                  s, 0, 0, 0, button->font->font);
 	}
 
@@ -3104,7 +3104,7 @@ void CG_Debriefing_PlayerSR_Draw(panel_button_t *button)
 
 		CG_Text_Paint_Ext(button->rect.x - w, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, CG_TranslateString("SR:"), 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
 
-		CG_Text_Paint_Ext(button->rect.x, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, va("%.2f ^5%+.2f^9", ci->rating, ci->deltaRating), 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
+		CG_Text_Paint_Ext(button->rect.x, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, va("%.2f ^5%+.2f^9", Com_RoundFloatWithNDecimal(ci->rating, 2), ci->deltaRating), 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
 	}
 }
 #endif

@@ -1868,9 +1868,9 @@ int Q_ParseColorRGBA(const char *inStr, vec4_t outColor)
 	float g = 0.0f;
 	float b = 0.0f;
 	float a = 1.0f;
-	int components;
+	int   components;
 
-	if (!inStr || !inStr[0] || !outColor) 
+	if (!inStr || !inStr[0] || !outColor)
 	{
 		return 0;
 	}
@@ -2772,4 +2772,26 @@ void *Com_AnyOf(void **ptr, int n)
 		}
 	}
 	return NULL;
+}
+
+/**
+ * @brief Round a float value with n decimal
+ * @param[in] value The value to round
+ * @param[in] decimalCount The number of decimal to keep
+ * @return The rounded values
+ */
+float Com_RoundFloatWithNDecimal(float value, unsigned int decimalCount)
+{
+	float        v;
+	unsigned int n;
+
+	// compute the number of decimal to keep
+	n = pow(10.f, decimalCount);
+
+	// rouding on n digits
+	v = roundf(value * n) / n;
+
+	// in case the value is between (-0.5) / n and 0, the rounding will compute -0
+	// we don't want to display -0, so let replace it by a pure 0
+	return v == -0.f ? 0.f : v;
 }

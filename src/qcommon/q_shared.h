@@ -1935,4 +1935,6 @@ qboolean CompareIPNoPort(char const *ip1, char const *ip2);
 #endif
 #endif
 
+float Com_RoundFloatWithNDecimal(float value, unsigned int decimalCount);
+
 #endif  // #ifndef INCLUDE_Q_SHARED_H
