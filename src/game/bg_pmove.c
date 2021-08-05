@@ -2915,20 +2915,20 @@ void PM_CoolWeapons(void)
 		if (GetWeaponTableData(wp)->maxHeat && (COM_BitCheck(pm->ps->weapons, wp) || wp == WP_DUMMY_MG42))
 		{
 			// and it's hot
-			if (pm->ps->weapHeat[wp])
+			if (pm->pmext->weapHeat[wp])
 			{
 				if (pm->skill[SK_HEAVY_WEAPONS] >= 2 && pm->ps->stats[STAT_PLAYER_CLASS] == PC_SOLDIER)
 				{
-					pm->ps->weapHeat[wp] -= ((float)GetWeaponTableData(wp)->coolRate * 2.f * pml.frametime);
+					pm->pmext->weapHeat[wp] -= ((float)GetWeaponTableData(wp)->coolRate * 2.f * pml.frametime);
 				}
 				else
 				{
-					pm->ps->weapHeat[wp] -= ((float)GetWeaponTableData(wp)->coolRate * pml.frametime);
+					pm->pmext->weapHeat[wp] -= ((float)GetWeaponTableData(wp)->coolRate * pml.frametime);
 				}
 
-				if (pm->ps->weapHeat[wp] < 0)
+				if (pm->pmext->weapHeat[wp] < 0)
 				{
-					pm->ps->weapHeat[wp] = 0;
+					pm->pmext->weapHeat[wp] = 0;
 				}
 			}
 		}
@@ -2937,11 +2937,11 @@ void PM_CoolWeapons(void)
 	// current weapon can heat, convert current heat value to 0-255 range for client transmission
 	if (BG_PlayerMounted(pm->ps->eFlags))
 	{
-		pm->ps->curWeapHeat = (int)(floor((pm->ps->weapHeat[WP_DUMMY_MG42] / (double)GetWeaponTableData(WP_DUMMY_MG42)->maxHeat) * 255));
+		pm->ps->curWeapHeat = (int)(floor((pm->pmext->weapHeat[WP_DUMMY_MG42] / (double)GetWeaponTableData(WP_DUMMY_MG42)->maxHeat) * 255));
 	}
 	else if (GetWeaponTableData(pm->ps->weapon)->maxHeat)
 	{
-		pm->ps->curWeapHeat = (int)(floor((pm->ps->weapHeat[pm->ps->weapon] / (double)GetWeaponTableData(pm->ps->weapon)->maxHeat) * 255));
+		pm->ps->curWeapHeat = (int)(floor((pm->pmext->weapHeat[pm->ps->weapon] / (double)GetWeaponTableData(pm->ps->weapon)->maxHeat) * 255));
 	}
 	else
 	{
@@ -3124,12 +3124,12 @@ static qboolean PM_MountedFire(void)
 				//pm->ps->viewlocked = VIEWLOCK_JITTER;             // this enable screen jitter when firing
 			}
 
-			pm->ps->weapHeat[WP_DUMMY_MG42] += GetWeaponTableData(WP_DUMMY_MG42)->nextShotTime;
+			pm->pmext->weapHeat[WP_DUMMY_MG42] += GetWeaponTableData(WP_DUMMY_MG42)->nextShotTime;
 
 			// check for overheat
-			if (pm->ps->weapHeat[WP_DUMMY_MG42] >= GetWeaponTableData(WP_DUMMY_MG42)->maxHeat)
+			if (pm->pmext->weapHeat[WP_DUMMY_MG42] >= GetWeaponTableData(WP_DUMMY_MG42)->maxHeat)
 			{
-				pm->ps->weapHeat[WP_DUMMY_MG42] = GetWeaponTableData(WP_DUMMY_MG42)->maxHeat;        // cap heat to max
+				pm->pmext->weapHeat[WP_DUMMY_MG42] = GetWeaponTableData(WP_DUMMY_MG42)->maxHeat;        // cap heat to max
 				PM_AddEvent(EV_WEAP_OVERHEAT);
 				pm->ps->weaponTime = GetWeaponTableData(WP_DUMMY_MG42)->heatRecoveryTime;         // force "heat recovery minimum" right now
 			}
@@ -3873,12 +3873,12 @@ static void PM_Weapon(void)
 	// check for overheat
 	if (GetWeaponTableData(pm->ps->weapon)->maxHeat)
 	{
-		pm->ps->weapHeat[pm->ps->weapon] += GetWeaponTableData(pm->ps->weapon)->nextShotTime;
+		pm->pmext->weapHeat[pm->ps->weapon] += GetWeaponTableData(pm->ps->weapon)->nextShotTime;
 
 		// it is overheating
-		if (pm->ps->weapHeat[pm->ps->weapon] >= GetWeaponTableData(pm->ps->weapon)->maxHeat)
+		if (pm->pmext->weapHeat[pm->ps->weapon] >= GetWeaponTableData(pm->ps->weapon)->maxHeat)
 		{
-			pm->ps->weapHeat[pm->ps->weapon] = GetWeaponTableData(pm->ps->weapon)->maxHeat;         // cap heat to max
+			pm->pmext->weapHeat[pm->ps->weapon] = GetWeaponTableData(pm->ps->weapon)->maxHeat;         // cap heat to max
 			PM_AddEvent(EV_WEAP_OVERHEAT);
 			//PM_StartWeaponAnim(PM_IdleAnimForWeapon(pm->ps->weapon)); // removed.  client handles anim in overheat event
 			addTime = GetWeaponTableData(pm->ps->weapon)->heatRecoveryTime;     // force "heat recovery minimum" right now
@@ -3887,7 +3887,7 @@ static void PM_Weapon(void)
 		// sync heat for overheat check
 		if (GetWeaponTableData(pm->ps->weapon)->weapAlts)
 		{
-			pm->ps->weapHeat[GetWeaponTableData(pm->ps->weapon)->weapAlts] = pm->ps->weapHeat[pm->ps->weapon];
+			pm->pmext->weapHeat[GetWeaponTableData(pm->ps->weapon)->weapAlts] = pm->pmext->weapHeat[pm->ps->weapon];
 		}
 	}
 

@@ -3867,9 +3867,9 @@ qboolean Do_Activate_f(gentity_t *ent, gentity_t *traceEnt)
 		G_Script_ScriptEvent(traceEnt, "mg42", "mount");
 		ent->tagParent = traceEnt->nextTrain;
 		Q_strncpyz(ent->tagName, "tag_player", MAX_QPATH);
-		ent->backupWeaponTime                   = ent->client->ps.weaponTime;
-		ent->client->ps.weaponTime              = traceEnt->backupWeaponTime;
-		ent->client->ps.weapHeat[WP_DUMMY_MG42] = traceEnt->mg42weapHeat;
+		ent->backupWeaponTime                      = ent->client->ps.weaponTime;
+		ent->client->ps.weaponTime                 = traceEnt->backupWeaponTime;
+		ent->client->pmext.weapHeat[WP_DUMMY_MG42] = traceEnt->mg42weapHeat;
 
 		ent->tankLink      = traceEnt;
 		traceEnt->tankLink = ent;
@@ -3906,9 +3906,9 @@ qboolean Do_Activate_f(gentity_t *ent, gentity_t *traceEnt)
 		cl->pmext.centerangles[YAW]   = AngleNormalize180(cl->pmext.centerangles[YAW]);
 		cl->pmext.centerangles[ROLL]  = AngleNormalize180(cl->pmext.centerangles[ROLL]);
 
-		ent->backupWeaponTime                   = ent->client->ps.weaponTime;
-		ent->client->ps.weaponTime              = traceEnt->backupWeaponTime;
-		ent->client->ps.weapHeat[WP_DUMMY_MG42] = traceEnt->mg42weapHeat;
+		ent->backupWeaponTime                      = ent->client->ps.weaponTime;
+		ent->client->ps.weaponTime                 = traceEnt->backupWeaponTime;
+		ent->client->pmext.weapHeat[WP_DUMMY_MG42] = traceEnt->mg42weapHeat;
 
 		G_UseTargets(traceEnt, ent);     // added for Mike so mounting an MG42 can be a trigger event (let me know if there's any issues with this)
 	}
@@ -4008,7 +4008,7 @@ void G_LeaveTank(gentity_t *ent, qboolean position)
 		TeleportPlayer(ent, pos, ent->client->ps.viewangles);
 	}
 
-	tank->mg42weapHeat         = ent->client->ps.weapHeat[WP_DUMMY_MG42];
+	tank->mg42weapHeat         = ent->client->pmext.weapHeat[WP_DUMMY_MG42];
 	tank->backupWeaponTime     = ent->client->ps.weaponTime;
 	ent->client->ps.weaponTime = ent->backupWeaponTime;
 
@@ -4072,7 +4072,7 @@ void Cmd_Activate_f(gentity_t *ent)
 			{
 				if (g_entities[i].s.eType == ET_MG42_BARREL && g_entities[i].r.ownerNum == ent->s.number)
 				{
-					g_entities[i].mg42weapHeat     = ent->client->ps.weapHeat[WP_DUMMY_MG42];
+					g_entities[i].mg42weapHeat     = ent->client->pmext.weapHeat[WP_DUMMY_MG42];
 					g_entities[i].backupWeaponTime = ent->client->ps.weaponTime;
 					break;
 				}
