@@ -550,7 +550,7 @@ typedef struct pmoveExt_s
 	int jumpTime;                  ///< used in MP to prevent jump accel
 
 	int silencedSideArm;           ///< Keep track of whether the luger/colt is silenced "in holster", prolly want to do this for the kar98 etc too
-	int sprintTime;
+	float sprintTime;
 
 	int airleft;
 
