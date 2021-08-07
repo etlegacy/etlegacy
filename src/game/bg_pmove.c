@@ -3199,25 +3199,27 @@ static void PM_HandleRecoil(void)
 		int    cmdAngle;
 		int    deltaTime = pm->cmd.serverTime - pm->pmext->weapRecoilTime;
 
-		VectorCopy(pm->ps->viewangles, muzzlebounce);
-
 		if (deltaTime > pm->pmext->weapRecoilDuration)
 		{
-			deltaTime = pm->pmext->weapRecoilDuration;
+			pm->pmext->weapRecoilTime      = 0;
+			pm->pmext->lastRecoilDeltaTime = 0;
+			return;
 		}
 
-		for (i = pm->pmext->lastRecoilDeltaTime; i < deltaTime; i += 15)
+		VectorCopy(pm->ps->viewangles, muzzlebounce);
+
+		for (i = pm->pmext->lastRecoilDeltaTime; i < deltaTime; i += pml.msec)
 		{
 			if (pm->pmext->weapRecoilPitch > 0.f)
 			{
-				muzzlebounce[PITCH] -= 2 * pm->pmext->weapRecoilPitch * cos(2.5 * (i) / pm->pmext->weapRecoilDuration);
-				muzzlebounce[PITCH] -= 0.25f * random() * (1.0f - (i) / pm->pmext->weapRecoilDuration);
+				muzzlebounce[PITCH] -= pml.frametime * 100 * 2 * pm->pmext->weapRecoilPitch * cos(2.5 * (i) / pm->pmext->weapRecoilDuration);
+				muzzlebounce[PITCH] -= pml.frametime * 100 * 0.25f * random() * (1.0f - (i) / pm->pmext->weapRecoilDuration);
 			}
 
 			if (pm->pmext->weapRecoilYaw > 0.f)
 			{
-				muzzlebounce[YAW] += 0.5 * pm->pmext->weapRecoilYaw * cos(1.0 - (i) * 3 / pm->pmext->weapRecoilDuration);
-				muzzlebounce[YAW] += 0.5f * crandom() * (1.0f - (i) / pm->pmext->weapRecoilDuration);
+				muzzlebounce[YAW] += pml.frametime * 100 * 0.5f * pm->pmext->weapRecoilYaw * cos(1.0 - (i) * 3 / pm->pmext->weapRecoilDuration);
+				muzzlebounce[YAW] += pml.frametime * 100 * 0.5f * crandom() * (1.0f - (i) / pm->pmext->weapRecoilDuration);
 			}
 		}
 
@@ -3229,15 +3231,7 @@ static void PM_HandleRecoil(void)
 		}
 		VectorCopy(muzzlebounce, pm->ps->viewangles);
 
-		if (deltaTime == pm->pmext->weapRecoilDuration)
-		{
-			pm->pmext->weapRecoilTime      = 0;
-			pm->pmext->lastRecoilDeltaTime = 0;
-		}
-		else
-		{
-			pm->pmext->lastRecoilDeltaTime = deltaTime;
-		}
+		pm->pmext->lastRecoilDeltaTime = deltaTime;
 	}
 }
 
