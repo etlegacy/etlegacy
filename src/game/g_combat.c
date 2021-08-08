@@ -161,7 +161,7 @@ void TossWeapons(gentity_t *self)
 		return;
 	}
 
-	if (self->client->sess.playerType == PC_SOLDIER && self->client->sess.skill[SK_HEAVY_WEAPONS] >= 4)
+	if (self->client->sess.playerType == PC_SOLDIER && BG_IsSkillAvailable(self->client->sess.skill, SK_HEAVY_WEAPONS, 4))
 	{
 		primaryWeapon = G_GetPrimaryWeaponForClientSoldier(self->client);
 	}
@@ -1396,7 +1396,7 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 	}
 
 	// save some from flak jacket
-	if (targ->client && targ->client->sess.skill[SK_EXPLOSIVES_AND_CONSTRUCTION] >= 4 && targ->client->sess.playerType == PC_ENGINEER)
+	if (targ->client && BG_IsSkillAvailable(targ->client->sess.skill, SK_EXPLOSIVES_AND_CONSTRUCTION, 4) && targ->client->sess.playerType == PC_ENGINEER)
 	{
 		if (GetMODTableData(mod)->isExplosive)
 		{

@@ -127,7 +127,7 @@ gentity_t *Weapon_Knife(gentity_t *ent)
 			damage = 100;
 			mod    = MOD_BACKSTAB;
 
-			if (ent->client->sess.skill[SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS] >= 4)
+			if (BG_IsSkillAvailable(ent->client->sess.skill, SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS, 4))
 			{
 				if (traceEnt->health > 0)
 				{
@@ -291,13 +291,13 @@ void Weapon_MagicAmmo_Ext(gentity_t *ent, vec3_t viewpos, vec3_t tosspos, vec3_t
 		SnapVectorTowards(tosspos, viewpos);
 	}
 
-	ent2            = LaunchItem(BG_GetItem(ent->client->sess.skill[SK_SIGNALS] >= 1 ? ITEM_WEAPON_MAGICAMMO2 : ITEM_WEAPON_MAGICAMMO), tosspos, velocity, ent->s.number);
+	ent2            = LaunchItem(BG_GetItem(BG_IsSkillAvailable(ent->client->sess.skill, SK_SIGNALS, 1) ? ITEM_WEAPON_MAGICAMMO2 : ITEM_WEAPON_MAGICAMMO), tosspos, velocity, ent->s.number);
 	ent2->think     = G_MagicSink;
 	ent2->nextthink = level.time + 30000;
 
 	ent2->parent = ent;
 
-	if (ent->client->sess.skill[SK_SIGNALS] >= 1)
+	if (BG_IsSkillAvailable(ent->client->sess.skill, SK_SIGNALS, 1))
 	{
 		ent2->count     = 2;
 		ent2->s.density = 2;
@@ -335,7 +335,7 @@ void ReviveEntity(gentity_t *ent, gentity_t *traceEnt)
 
 	headshot = traceEnt->client->ps.eFlags & EF_HEADSHOT;
 
-	if (ent->client->sess.skill[SK_FIRST_AID] >= 3)
+	if (BG_IsSkillAvailable(ent->client->sess.skill, SK_FIRST_AID, 3))
 	{
 		healamt = traceEnt->client->ps.stats[STAT_MAX_HEALTH];
 	}
@@ -1582,7 +1582,7 @@ weapengineergoto1:
 			ent->client->ps.classWeaponTime = level.time - level.engineerChargeTime[ent->client->sess.sessionTeam - 1];
 		}
 
-		if (ent->client->sess.skill[SK_EXPLOSIVES_AND_CONSTRUCTION] >= 3)
+		if (BG_IsSkillAvailable(ent->client->sess.skill, SK_EXPLOSIVES_AND_CONSTRUCTION, 3))
 		{
 			ent->client->ps.classWeaponTime += .66f * 150;
 		}
@@ -1694,7 +1694,7 @@ weapengineergoto2:
 				Add_Ammo(ent, WP_LANDMINE, 1, qfalse);
 
 				// give back the correct charge amount
-				if (ent->client->sess.skill[SK_EXPLOSIVES_AND_CONSTRUCTION] >= 3)
+				if (BG_IsSkillAvailable(ent->client->sess.skill, SK_EXPLOSIVES_AND_CONSTRUCTION, 3))
 				{
 					ent->client->ps.classWeaponTime -= .33f * level.engineerChargeTime[ent->client->sess.sessionTeam - 1];
 				}
@@ -1725,7 +1725,7 @@ weapengineergoto2:
 
 					Add_Ammo(ent, WP_LANDMINE, 1, qfalse);
 					// give back the correct charge amount
-					if (ent->client->sess.skill[SK_EXPLOSIVES_AND_CONSTRUCTION] >= 3)
+					if (BG_IsSkillAvailable(ent->client->sess.skill, SK_EXPLOSIVES_AND_CONSTRUCTION, 3))
 					{
 						ent->client->ps.classWeaponTime -= .33f * level.engineerChargeTime[ent->client->sess.sessionTeam - 1];
 					}
@@ -1753,7 +1753,7 @@ weapengineergoto2:
 					G_PrintClientSpammyCenterPrint(ent - g_entities, "Arming landmine...");
 
 					// give health until it is full, don't continue
-					if (ent->client->sess.skill[SK_EXPLOSIVES_AND_CONSTRUCTION] >= 2)
+					if (BG_IsSkillAvailable(ent->client->sess.skill, SK_EXPLOSIVES_AND_CONSTRUCTION, 2))
 					{
 						traceEnt->health += 24;
 					}
@@ -1808,7 +1808,7 @@ weapengineergoto3:
 						return NULL;
 					}
 
-					if (ent->client->sess.skill[SK_EXPLOSIVES_AND_CONSTRUCTION] >= 2)
+					if (BG_IsSkillAvailable(ent->client->sess.skill, SK_EXPLOSIVES_AND_CONSTRUCTION, 2))
 					{
 						traceEnt->health += 6;
 					}
@@ -1916,7 +1916,7 @@ weapengineergoto3:
 				G_PrintClientSpammyCenterPrint(ent - g_entities, "Arming dynamite...");
 
 				// Give health until it is full, don't continue
-				if (ent->client->sess.skill[SK_EXPLOSIVES_AND_CONSTRUCTION] >= 2)
+				if (BG_IsSkillAvailable(ent->client->sess.skill, SK_EXPLOSIVES_AND_CONSTRUCTION, 2))
 				{
 					traceEnt->health += 14;
 				}
@@ -2249,7 +2249,7 @@ weapengineergoto3:
 
 				dynamiteDropTeam = traceEnt->s.teamNum;     // set this here since we wack traceent later but want teamnum for scoring
 
-				if (ent->client->sess.skill[SK_EXPLOSIVES_AND_CONSTRUCTION] >= 2)
+				if (BG_IsSkillAvailable(ent->client->sess.skill, SK_EXPLOSIVES_AND_CONSTRUCTION, 2))
 				{
 					traceEnt->health += 6;
 				}
@@ -2600,7 +2600,7 @@ void weapon_checkAirStrikeThink(gentity_t *ent)
 
 	ent->think = weapon_callAirStrike;
 
-	if (ent->parent->client && ent->parent->client->sess.skill[SK_SIGNALS] >= 3)
+	if (ent->parent->client && BG_IsSkillAvailable(ent->parent->client->sess.skill, SK_SIGNALS, 3))
 	{
 		ent->nextthink = level.time + 2500;
 	}
@@ -2745,7 +2745,7 @@ void weapon_callAirStrike(gentity_t *ent)
 	// FIXME: HARD-CODED!
 	static vec3_t planeBBoxMin = { -330, -504, -35 }, planeBBoxMax = { 330, 504, 128 };
 
-	if (ent->parent->client && ent->parent->client->sess.skill[SK_SIGNALS] >= 3)
+	if (ent->parent->client && BG_IsSkillAvailable(ent->parent->client->sess.skill, SK_SIGNALS, 3))
 	{
 		ent->count = 2;
 	}
@@ -3135,7 +3135,7 @@ void Weapon_Artillery(gentity_t *ent)
 
 	// "spotter" round (i == 0)
 	// i == 1->4 is regular explosives
-	if (ent->client->sess.skill[SK_SIGNALS] >= 3)
+	if (BG_IsSkillAvailable(ent->client->sess.skill, SK_SIGNALS, 3))
 	{
 		spotter->count = 9;
 	}
@@ -3144,7 +3144,7 @@ void Weapon_Artillery(gentity_t *ent)
 		spotter->count = 5;
 	}
 
-	if (ent->client->sess.skill[SK_SIGNALS] >= 2)
+	if (BG_IsSkillAvailable(ent->client->sess.skill, SK_SIGNALS, 2))
 	{
 		if (level.time - ent->client->ps.classWeaponTime > level.fieldopsChargeTime[ent->client->sess.sessionTeam - 1])
 		{
@@ -3352,7 +3352,7 @@ gentity_t *Bullet_Fire(gentity_t *ent)
 	    && !(GetWeaponTableData(ent->s.weapon)->attributes & WEAPON_ATTRIBUT_AKIMBO))
 	{
 		// increase in accuracy (spread reduction) at level 3
-		if (ent->client->sess.skill[SK_LIGHT_WEAPONS] >= 3)
+        if (BG_IsSkillAvailable(ent->client->sess.skill, SK_LIGHT_WEAPONS, 3))
 		{
 			spread *= .65f;
 		}

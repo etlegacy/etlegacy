@@ -1360,7 +1360,7 @@ void G_UpdateTeamMapData(void)
 			continue;
 		}
 
-		if (ent->client->sess.playerType == PC_FIELDOPS && (ent->client->ps.eFlags & EF_ZOOMING) && ent->client->sess.skill[SK_SIGNALS] >= 4)
+		if (ent->client->sess.playerType == PC_FIELDOPS && (ent->client->ps.eFlags & EF_ZOOMING) && BG_IsSkillAvailable(ent->client->sess.skill, SK_SIGNALS, 4))
 		{
 			vec3_t pos[3];
 

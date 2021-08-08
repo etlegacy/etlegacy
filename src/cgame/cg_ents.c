@@ -698,7 +698,7 @@ static void CG_Item(centity_t *cent)
 			else
 			{
 				if (COM_BitCheck(cg.snap->ps.weapons, item->giWeapon) ||
-				    (cgs.clientinfo[cg.snap->ps.clientNum].cls == PC_SOLDIER && cgs.clientinfo[cg.snap->ps.clientNum].skill[SK_HEAVY_WEAPONS] >= 4 &&
+				    (cgs.clientinfo[cg.snap->ps.clientNum].cls == PC_SOLDIER && BG_IsSkillAvailable(cgs.clientinfo[cg.snap->ps.clientNum].skill, SK_HEAVY_WEAPONS, 4) &&
 				     (cgs.clientinfo[cg.snap->ps.clientNum].secondaryweapon == item->giWeapon)))
 				{
 					Vector4Set(accentColor, 1.f, 1.f, 0.09f, 1.f);
@@ -1305,7 +1305,7 @@ static void CG_Missile(centity_t *cent)
 				else if (!cent->currentState.modelindex2)
 				{
 					// see if we have the skill to see them and are close enough
-					if (cgs.clientinfo[cg.snap->ps.clientNum].skill[SK_BATTLE_SENSE] >= 4)
+					if (BG_IsSkillAvailable(cgs.clientinfo[cg.snap->ps.clientNum].skill, SK_BATTLE_SENSE, 4))
 					{
 						vec_t distSquared = DistanceSquared(cent->lerpOrigin, cg.predictedPlayerEntity.lerpOrigin);
 

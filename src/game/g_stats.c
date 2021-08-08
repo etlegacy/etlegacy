@@ -172,7 +172,7 @@ void G_SetPlayerSkill(gclient_t *client, skillType_t skill)
 
 	for (i = NUM_SKILL_LEVELS - 1, lvlSkipped = 0; i >= 0; i--)
 	{
-		if (GetSkillTableData(skill)->skillLevels[i] == -1)
+        if (GetSkillTableData(skill)->skillLevels[i] <= -1)
 		{
 			lvlSkipped++;
 			continue;
@@ -277,7 +277,8 @@ void G_UpgradeSkill(gentity_t *ent, skillType_t skill)
 	{
 		bg_weaponclass_t *weaponClassInfo = &classInfo->classMiscWeapons[i];
 
-		if (skill == classInfo->classMiscWeapons[i].skill && ent->client->sess.skill[skill] == classInfo->classMiscWeapons[i].minSkillLevel)
+		if (BG_IsSkillAvailable(ent->client->sess.skill, classInfo->classMiscWeapons[i].skill, classInfo->classMiscWeapons[i].minSkillLevel)
+                    && skill == classInfo->classMiscWeapons[i].skill && ent->client->sess.skill[skill] == classInfo->classMiscWeapons[i].minSkillLevel)
 		{
 			AddWeaponToPlayer(ent->client, weaponClassInfo->weapon, classInfo->classMiscWeapons[i].startingAmmo, classInfo->classMiscWeapons[i].startingClip, qfalse);
 		}

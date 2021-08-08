@@ -4069,21 +4069,21 @@ int BG_MaxAmmoForWeapon(weapon_t weaponNum, const int *skill, int cls)
 
 	if (GetWeaponTableData(weaponNum)->type & WEAPON_TYPE_PISTOL)
 	{
-		if (skill[SK_LIGHT_WEAPONS] >= 1)
+		if (BG_IsSkillAvailable(skill, SK_LIGHT_WEAPONS, 1))
 		{
 			maxAmmo += GetWeaponTableData(weaponNum)->maxClip;
 		}
 	}
 	else if (GetWeaponTableData(weaponNum)->type & WEAPON_TYPE_SMG)
 	{
-		if (skill[SK_LIGHT_WEAPONS] >= 1 || (cls == PC_MEDIC && skill[SK_FIRST_AID] >= 1))
+		if (BG_IsSkillAvailable(skill, SK_LIGHT_WEAPONS, 1) || (cls == PC_MEDIC && BG_IsSkillAvailable(skill, SK_FIRST_AID, 1)))
 		{
 			maxAmmo += GetWeaponTableData(weaponNum)->maxClip;
 		}
 	}
 	else if (GetWeaponTableData(weaponNum)->type & WEAPON_TYPE_RIFLENADE)
 	{
-		if (skill[SK_EXPLOSIVES_AND_CONSTRUCTION] >= 1)
+		if (BG_IsSkillAvailable(skill, SK_EXPLOSIVES_AND_CONSTRUCTION, 1))
 		{
 			maxAmmo += 4;
 		}
@@ -4093,15 +4093,15 @@ int BG_MaxAmmoForWeapon(weapon_t weaponNum, const int *skill, int cls)
 		// FIXME: this is class dependant, not ammo table
 		maxAmmo = BG_GetPlayerClassInfo(GetWeaponTableData(weaponNum)->team, cls)->classGrenadeWeapon.startingAmmo;
 
-		if (cls == PC_ENGINEER && skill[SK_EXPLOSIVES_AND_CONSTRUCTION] >= 1)
+		if (cls == PC_ENGINEER && BG_IsSkillAvailable(skill, SK_EXPLOSIVES_AND_CONSTRUCTION, 1))
 		{
 			maxAmmo += 4;
 		}
-		else if (cls == PC_MEDIC && skill[SK_FIRST_AID] >= 1)
+		else if (cls == PC_MEDIC && BG_IsSkillAvailable(skill, SK_FIRST_AID, 1))
 		{
 			maxAmmo += 1;
 		}
-		else if (cls == PC_FIELDOPS && skill[SK_SIGNALS] >= 1)
+		else if (cls == PC_FIELDOPS && BG_IsSkillAvailable(skill, SK_SIGNALS, 1))
 		{
 			maxAmmo += 1;
 		}
@@ -4122,14 +4122,14 @@ int BG_MaxAmmoForWeapon(weapon_t weaponNum, const int *skill, int cls)
 	// }
 	else if (weaponNum == WP_MEDIC_SYRINGE /*|| weaponNum == WP_MEDIC_ADRENALINE*/) // adrenaline share the same ammo count as syringe
 	{
-		if (skill[SK_FIRST_AID] >= 2)
+		if (BG_IsSkillAvailable(skill, SK_FIRST_AID, 2))
 		{
 			maxAmmo += 2;
 		}
 	}
 	else if (GetWeaponTableData(weaponNum)->type & WEAPON_TYPE_RIFLE)  // also received ammo when weapon is scoped
 	{
-		if (skill[SK_LIGHT_WEAPONS] >= 1 || (skill[SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS] >= 1 && (GetWeaponTableData(weaponNum)->type & (WEAPON_TYPE_SCOPED | WEAPON_TYPE_SCOPABLE))))
+		if (BG_IsSkillAvailable(skill, SK_LIGHT_WEAPONS, 1) || (BG_IsSkillAvailable(skill, SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS, 1) && (GetWeaponTableData(weaponNum)->type & (WEAPON_TYPE_SCOPED | WEAPON_TYPE_SCOPABLE))))
 		{
 			maxAmmo += GetWeaponTableData(weaponNum)->maxClip;
 		}

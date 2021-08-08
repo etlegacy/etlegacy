@@ -1742,7 +1742,7 @@ qboolean G_LandmineSnapshotCallback(int entityNum, int clientNum)
 		return qfalse;
 	}
 
-	if (clEnt->client->sess.skill[SK_BATTLE_SENSE] >= 4)
+	if (BG_IsSkillAvailable(clEnt->client->sess.skill, SK_BATTLE_SENSE, 4))
 	{
 		return qtrue;
 	}

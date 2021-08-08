@@ -142,7 +142,7 @@ int PM_IdleAnimForWeapon(int weapon)
  */
 int PM_ReloadAnimForWeapon(int weapon)
 {
-	if ((pm->skill[SK_LIGHT_WEAPONS] >= 2 && GetWeaponTableData(weapon)->attributes & WEAPON_ATTRIBUT_FAST_RELOAD)      // faster reload
+	if ((BG_IsSkillAvailable(pm->skill, SK_LIGHT_WEAPONS, 2) && GetWeaponTableData(weapon)->attributes & WEAPON_ATTRIBUT_FAST_RELOAD)      // faster reload
 	    || GetWeaponTableData(weapon)->type & (WEAPON_TYPE_SET | WEAPON_TYPE_RIFLENADE))
 	{
 		return WEAP_RELOAD2;
@@ -629,14 +629,14 @@ static float PM_CmdScale(usercmd_t *cmd)
 	{
 		if (pm->ps->weapon == WP_FLAMETHROWER) // trying some different balance for the FT
 		{
-			if (!(pm->skill[SK_HEAVY_WEAPONS] >= 3) || (pm->cmd.buttons & BUTTON_ATTACK))
+            if (!(BG_IsSkillAvailable(pm->skill, SK_HEAVY_WEAPONS, 3)) || (pm->cmd.buttons & BUTTON_ATTACK))
 			{
 				scale *= 0.7f;
 			}
 		}
 		else
 		{
-			if (pm->skill[SK_HEAVY_WEAPONS] >= 3)
+            if (BG_IsSkillAvailable(pm->skill, SK_HEAVY_WEAPONS, 3))
 			{
 				scale *= 0.75f;
 			}
@@ -2411,7 +2411,7 @@ static void PM_BeginWeaponReload(weapon_t weapon)
 	// okay to reload while overheating without tacking the reload time onto the end of the
 	// current weaponTime (the reload time is partially absorbed into the overheat time)
 	reloadTime = GetWeaponTableData(weapon)->reloadTime;
-	if (pm->skill[SK_LIGHT_WEAPONS] >= 2 && (GetWeaponTableData(weapon)->attributes & WEAPON_ATTRIBUT_FAST_RELOAD))
+	if (BG_IsSkillAvailable(pm->skill, SK_LIGHT_WEAPONS, 2) && (GetWeaponTableData(weapon)->attributes & WEAPON_ATTRIBUT_FAST_RELOAD))
 	{
 		reloadTime *= .65f;
 	}
@@ -2917,7 +2917,7 @@ void PM_CoolWeapons(void)
 			// and it's hot
 			if (pm->ps->weapHeat[wp])
 			{
-				if (pm->skill[SK_HEAVY_WEAPONS] >= 2 && pm->ps->stats[STAT_PLAYER_CLASS] == PC_SOLDIER)
+				if (BG_IsSkillAvailable(pm->skill, SK_HEAVY_WEAPONS, 2) && pm->ps->stats[STAT_PLAYER_CLASS] == PC_SOLDIER)
 				{
 					pm->ps->weapHeat[wp] -= ((float)GetWeaponTableData(wp)->coolRate * 2.f * pml.frametime);
 				}
@@ -2989,7 +2989,7 @@ void PM_AdjustAimSpreadScale(void)
 	{
 		float viewchange = 0;
 
-		if ((GetWeaponTableData(pm->ps->weapon)->type & WEAPON_TYPE_SCOPED) && pm->skill[SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS] >= 3)
+		if ((GetWeaponTableData(pm->ps->weapon)->type & WEAPON_TYPE_SCOPED) && BG_IsSkillAvailable(pm->skill, SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS, 3))
 		{
 			wpnScale *= 0.5;
 		}
@@ -3782,14 +3782,14 @@ static void PM_Weapon(void)
 	{
 		if (pm->ps->weapon == WP_FG42_SCOPE)
 		{
-			if (pm->skill[SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS] >= 3)
+			if (BG_IsSkillAvailable(pm->skill, SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS, 3))
 			{
 				pm->pmext->weapRecoilPitch *= .5f;
 			}
 		}
 		else
 		{
-			if (pm->skill[SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS] >= 3)
+			if (BG_IsSkillAvailable(pm->skill, SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS, 3))
 			{
 				pm->pmext->weapRecoilPitch = .25f;
 			}
@@ -3809,7 +3809,7 @@ static void PM_Weapon(void)
 	}
 	else if (GetWeaponTableData(pm->ps->weapon)->type & WEAPON_TYPE_PISTOL)
 	{
-		if (pm->skill[SK_LIGHT_WEAPONS] >= 3)
+		if (BG_IsSkillAvailable(pm->skill, SK_LIGHT_WEAPONS, 3))
 		{
 			pm->pmext->weapRecoilDuration = 70;
 			pm->pmext->weapRecoilPitch    = .25f * random() * .15f;
@@ -3832,7 +3832,7 @@ static void PM_Weapon(void)
 	}
 
 	// covert ops received a reduction of 50% reduction in both recoil jump and weapon sway with Scoped Weapons ONLY
-	if ((GetWeaponTableData(pm->ps->weapon)->type & WEAPON_TYPE_SCOPED) && pm->skill[SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS] >= 3
+	if ((GetWeaponTableData(pm->ps->weapon)->type & WEAPON_TYPE_SCOPED) && BG_IsSkillAvailable(pm->skill, SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS, 3)
 	    && pm->ps->stats[STAT_PLAYER_CLASS] == PC_COVERTOPS)
 	{
 		pm->ps->aimSpreadScaleFloat *= .5f;
@@ -4873,7 +4873,7 @@ void PM_Sprint(void)
 			{
 				int rechargebase = 500;
 
-				if (pm->skill[SK_BATTLE_SENSE] >= 2)
+				if (BG_IsSkillAvailable(pm->skill, SK_BATTLE_SENSE, 2))
 				{
 					rechargebase *= 1.6f;
 				}
