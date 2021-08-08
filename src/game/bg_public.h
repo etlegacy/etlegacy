@@ -581,6 +581,8 @@ typedef struct pmoveExt_s
 
 	float weapHeat[MAX_WEAPONS];   ///< tracks how hot each weapon currently is.
 
+	float bobCycle;                ///< used to fix framerate dependency
+
 } pmoveExt_t;  ///< data used both in client and server - store it here
 ///< instead of playerstate to prevent different engine versions of playerstate between XP and MP
 

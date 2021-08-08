@@ -1679,7 +1679,7 @@ static void PM_CrashLand(void)
 	}
 
 	// start footstep cycle over
-	pm->ps->bobCycle = 0;
+	pm->ps->bobCycle = pm->pmext->bobCycle = 0;
 }
 
 /**
@@ -2011,7 +2011,7 @@ static void PM_CheckDuck(void)
 static void PM_Footsteps(void)
 {
 	float    bobmove;
-	int      old;
+	float    old;
 	qboolean footstep;
 	int      animResult = -1;   // FIXME: never used
 
@@ -2094,7 +2094,7 @@ static void PM_Footsteps(void)
 	{
 		if (pm->xyspeed < 5)
 		{
-			pm->ps->bobCycle = 0;   // start at beginning of cycle again
+			pm->ps->bobCycle = pm->pmext->bobCycle = 0;   // start at beginning of cycle again
 		}
 		if (pm->xyspeed > 120)
 		{
@@ -2262,10 +2262,16 @@ static void PM_Footsteps(void)
 	}
 
 	// check for footstep / splash sounds
-	old              = pm->ps->bobCycle;
-	pm->ps->bobCycle = (int)(old + bobmove * pml.msec) & 255;
+	old                 = pm->pmext->bobCycle;
+	pm->pmext->bobCycle = old + bobmove * pml.msec;
+	pm->ps->bobCycle    = pm->pmext->bobCycle;
 
-	if (((old + 64) ^ (pm->ps->bobCycle + 64)) & 128)
+	if (pm->ps->bobCycle > 255)
+	{
+		pm->ps->bobCycle = pm->pmext->bobCycle = pm->ps->bobCycle & 255;
+	}
+
+	if ((((int)old + 64) ^ (pm->ps->bobCycle + 64)) & 128)
 	{
 		switch (pm->waterlevel)
 		{
