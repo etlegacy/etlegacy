@@ -1171,9 +1171,9 @@ void aagun_use(gentity_t *ent, gentity_t *other, gentity_t *activator)
 		owner->client->ps.viewlocked                   = VIEWLOCK_NONE;
 		owner->active                                  = qfalse;
 
-		other->client->ps.weapHeat[WP_DUMMY_MG42] = ent->mg42weapHeat;
-		ent->backupWeaponTime                     = owner->client->ps.weaponTime;
-		owner->backupWeaponTime                   = owner->client->ps.weaponTime;
+		other->client->pmext.weapHeat[WP_DUMMY_MG42] = ent->mg42weapHeat;
+		ent->backupWeaponTime                        = owner->client->ps.weaponTime;
+		owner->backupWeaponTime                      = owner->client->ps.weaponTime;
 	}
 
 	trap_LinkEntity(ent);
@@ -1570,7 +1570,7 @@ void mg42_think(gentity_t *self)
 	// heat handling
 	if (owner->client)
 	{
-		self->mg42weapHeat = owner->client->ps.weapHeat[WP_DUMMY_MG42];
+		self->mg42weapHeat = owner->client->pmext.weapHeat[WP_DUMMY_MG42];
 	}
 
 	// overheated mg42 smokes
@@ -1691,7 +1691,7 @@ void mg42_stopusing(gentity_t *self)
 		owner->active                                  = qfalse;
 
 		//owner->client->ps.weapHeat[WP_DUMMY_MG42] = 0;
-		self->mg42weapHeat           = owner->client->ps.weapHeat[WP_DUMMY_MG42];
+		self->mg42weapHeat           = owner->client->pmext.weapHeat[WP_DUMMY_MG42];
 		self->backupWeaponTime       = owner->client->ps.weaponTime;
 		owner->client->ps.weaponTime = owner->backupWeaponTime;
 
@@ -1793,9 +1793,9 @@ void mg42_use(gentity_t *ent, gentity_t *other, gentity_t *activator)
 		owner->client->ps.viewlocked                   = VIEWLOCK_NONE; // let them look around
 		owner->active                                  = qfalse;
 
-		other->client->ps.weapHeat[WP_DUMMY_MG42] = ent->mg42weapHeat;
-		ent->backupWeaponTime                     = owner->client->ps.weaponTime;
-		owner->backupWeaponTime                   = owner->client->ps.weaponTime;
+		other->client->pmext.weapHeat[WP_DUMMY_MG42] = ent->mg42weapHeat;
+		ent->backupWeaponTime                        = owner->client->ps.weaponTime;
+		owner->backupWeaponTime                      = owner->client->ps.weaponTime;
 	}
 
 	// G_Printf ("mg42 called use function\n");

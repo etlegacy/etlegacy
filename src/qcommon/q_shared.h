@@ -1334,7 +1334,7 @@ typedef struct playerState_s
 
 	// seems like heat and aimspread could be tied together somehow, however, they (appear to) change at different rates and
 	// I can't currently see how to optimize this to one server->client transmission "weapstatus" value.
-	int weapHeat[MAX_WEAPONS];          ///< some weapons can overheat.  this tracks (server-side) how hot each weapon currently is.
+	int weapHeat[MAX_WEAPONS];          ///< some weapons can overheat.  this tracks (server-side) how hot each weapon currently is. Unused, check pmoveExt_t in bg_public.h
 	int curWeapHeat;                    ///< value for the currently selected weapon (for transmission to client). DOES get send over the network
 	int identifyClient;
 	int identifyClientHealth;

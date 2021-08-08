@@ -550,7 +550,7 @@ typedef struct pmoveExt_s
 	int jumpTime;                  ///< used in MP to prevent jump accel
 
 	int silencedSideArm;           ///< Keep track of whether the luger/colt is silenced "in holster", prolly want to do this for the kar98 etc too
-	int sprintTime;
+	float sprintTime;
 
 	int airleft;
 
@@ -578,6 +578,10 @@ typedef struct pmoveExt_s
 #endif
 
 	qboolean releasedFire;
+
+	float weapHeat[MAX_WEAPONS];   ///< tracks how hot each weapon currently is.
+
+	float bobCycle;                ///< used to fix framerate dependency
 
 } pmoveExt_t;  ///< data used both in client and server - store it here
 ///< instead of playerstate to prevent different engine versions of playerstate between XP and MP

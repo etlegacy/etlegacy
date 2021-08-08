@@ -4884,7 +4884,7 @@ public:
 			OB_GETMSG(WeaponHeatLevel);
 			if (pMsg && pEnt && pEnt->inuse && pEnt->client)
 			{
-				pMsg->m_CurrentHeat = pEnt->client->ps.weapHeat[WP_DUMMY_MG42];
+				pMsg->m_CurrentHeat = pEnt->client->pmext.weapHeat[WP_DUMMY_MG42];
 				pMsg->m_MaxHeat = GetWeaponTableData(WP_DUMMY_MG42)->maxHeat;
 			}
 			break;
@@ -5047,7 +5047,7 @@ public:
 				gentity_t *pGunEntity = EntityFromHandle(pMsg->m_Entity);
 				if (pEnt && pEnt->client && pGunEntity)
 				{
-					pMsg->m_Current = pEnt->client->ps.weapHeat[WP_DUMMY_MG42];
+					pMsg->m_Current = pEnt->client->pmext.weapHeat[WP_DUMMY_MG42];
 					pMsg->m_Max = GetWeaponTableData(WP_DUMMY_MG42)->maxHeat;
 				}
 				else
@@ -5129,7 +5129,7 @@ public:
 				{
 					if (pMsg->m_Weapon != ET_WP_MOUNTABLE_MG42)
 					{
-						int iCurHeat = pEnt->client->ps.weapHeat[_weaponBotToGame(pMsg->m_Weapon)];
+						int iCurHeat = pEnt->client->pmext.weapHeat[_weaponBotToGame(pMsg->m_Weapon)];
 #ifdef NOQUARTER
 						int iMaxHeat = GetWeaponTableData(_weaponBotToGame(pMsg->m_Weapon))->maxHeat;
 #else
