@@ -629,14 +629,14 @@ static float PM_CmdScale(usercmd_t *cmd)
 	{
 		if (pm->ps->weapon == WP_FLAMETHROWER) // trying some different balance for the FT
 		{
-            if (!(BG_IsSkillAvailable(pm->skill, SK_HEAVY_WEAPONS, 3)) || (pm->cmd.buttons & BUTTON_ATTACK))
+			if (!(BG_IsSkillAvailable(pm->skill, SK_HEAVY_WEAPONS, 3)) || (pm->cmd.buttons & BUTTON_ATTACK))
 			{
 				scale *= 0.7f;
 			}
 		}
 		else
 		{
-            if (BG_IsSkillAvailable(pm->skill, SK_HEAVY_WEAPONS, 3))
+			if (BG_IsSkillAvailable(pm->skill, SK_HEAVY_WEAPONS, 3))
 			{
 				scale *= 0.75f;
 			}
@@ -3514,9 +3514,23 @@ static void PM_Weapon(void)
 	// don't allow some weapons to fire if charge bar isn't full
 	if (GetWeaponTableData(pm->ps->weapon)->attributes & WEAPON_ATTRIBUT_CHARGE_TIME)
 	{
-		skillType_t skill = GetWeaponTableData(pm->ps->weapon)->skillBased;
-		float       coeff = GetWeaponTableData(pm->ps->weapon)->chargeTimeCoeff[pm->skill[skill]];
+		skillType_t skill    = GetWeaponTableData(pm->ps->weapon)->skillBased;
+		int         skillLvl = pm->skill[skill];
+		float       coeff    = GetWeaponTableData(pm->ps->weapon)->chargeTimeCoeff[pm->skill[skill]];
 		int         chargeTime;
+
+		for (; skillLvl >= 0; skillLvl--)
+		{
+			if (coeff != GetWeaponTableData(pm->ps->weapon)->chargeTimeCoeff[skillLvl])
+			{
+				if (!BG_IsSkillAvailable(pm->skill, skill, skillLvl))
+				{
+					coeff = GetWeaponTableData(pm->ps->weapon)->chargeTimeCoeff[skillLvl];
+				}
+
+				break;
+			}
+		}
 
 		switch (skill)
 		{
