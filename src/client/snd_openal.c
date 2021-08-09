@@ -295,7 +295,7 @@ static sfxHandle_t S_AL_BufferFind(const char *filename)
 
 		sfx = S_AL_BufferFindFree();
 
-		if(sfx == -1)
+		if (sfx == -1)
 		{
 			return sfx;
 		}
@@ -704,6 +704,7 @@ typedef struct src_s
 	vec3_t loopSpeakerPos;      // Origin of the loop speaker
 
 	qboolean local;             // Is this local (relative to the cam)
+	float range;                // Maximum range the source is audible
 } src_t;
 
 #ifdef __APPLE__
@@ -724,6 +725,7 @@ typedef struct sentity_s
 	qboolean srcAllocated;                        // If a src_t has been allocated to this entity
 	int srcIndex;
 	int volume;
+	int range;
 
 	qboolean loopAddedThisFrame;
 	alSrcPriority_t loopPriority;
@@ -775,29 +777,43 @@ static void S_AL_Gain(ALuint source, float gainval)
  * @brief Adapt the gain if necessary to get a quicker fadeout when the source is too far away.
  * @param[in,out] chksrc
  * @param[in] origin
- */
+ * @note unused - OpenaL internal linear gain computation is used instead
+ *
 static void S_AL_ScaleGain(src_t *chksrc, vec3_t origin)
 {
 	float distance = 0.0f;
 
 	if (!chksrc->local)
 	{
-		distance = vec3_distance(origin, lastListenerOrigin);
+		vec3_t source_vec;
+
+		//distance = vec3_distance(origin, lastListenerOrigin);
+		VectorSubtract(origin, lastListenerOrigin, source_vec);
+
+		distance = vec3_norm(source_vec);
 	}
+
+	// minimum range
+	distance -= chksrc->range * 0.064f;
 
 	// If we exceed a certain distance, scale the gain linearly until the sound
 	// vanishes into nothingness.
-	if (!chksrc->local && (distance -= s_alMaxDistance->value) > 0)
+	if (!chksrc->local)
 	{
 		float scaleFactor;
 
-		if (distance >= s_alGraceDistance->value)
+		if (distance <= 0)
 		{
-			scaleFactor = 0.0f;
+			scaleFactor = 1.0f;
 		}
 		else
 		{
-			scaleFactor = 1.0f - distance / s_alGraceDistance->value;
+			scaleFactor = 1.0f - distance / chksrc->range;
+
+			if (scaleFactor < 0)
+			{
+				scaleFactor = 0.0f;
+			}
 		}
 
 		scaleFactor *= chksrc->curGain;
@@ -814,6 +830,7 @@ static void S_AL_ScaleGain(src_t *chksrc, vec3_t origin)
 		S_AL_Gain(chksrc->alSource, chksrc->scaleGain);
 	}
 }
+*/
 
 /**
  * @brief S_AL_HearingThroughEntity
@@ -941,10 +958,22 @@ static void S_AL_SrcShutdown(void)
  * @param[in] volume
  */
 static void S_AL_SrcSetup(srcHandle_t src, sfxHandle_t sfx, alSrcPriority_t priority,
-                          int entity, int channel, qboolean local, int volume)
+                          int entity, int channel, qboolean local, int volume, float range)
 {
 	ALuint buffer;
 	src_t  *curSource;
+	float  realVolume;
+
+	// from SDL spatialization volume values
+	switch (priority)
+	{
+	case SRCPRI_AMBIENT: realVolume = 90.0f; break;
+	case SRCPRI_ENTITY:  realVolume = 127.0f; break;
+	case SRCPRI_STREAM:  realVolume = 255.0f; break;
+	case SRCPRI_ONESHOT:
+	case SRCPRI_LOCAL:
+	default:             realVolume = volume; break;
+	}
 
 	// Mark the SFX as used, and grab the raw AL buffer
 	S_AL_BufferUse(sfx);
@@ -962,9 +991,10 @@ static void S_AL_SrcSetup(srcHandle_t src, sfxHandle_t sfx, alSrcPriority_t prio
 	curSource->isLocked     = qfalse;
 	curSource->isLooping    = qfalse;
 	curSource->isTracking   = qfalse;
-	curSource->curGain      = s_alGain->value * s_volume->value * ((float)volume / 255.0f);
+	curSource->curGain      = (s_alGain->value * s_volume->value * realVolume / 255.0f);
 	curSource->scaleGain    = curSource->curGain;
 	curSource->local        = local;
+	curSource->range        = range;
 
 	// Set up OpenAL source
 	qalSourcei(curSource->alSource, AL_BUFFER, buffer);
@@ -973,7 +1003,8 @@ static void S_AL_SrcSetup(srcHandle_t src, sfxHandle_t sfx, alSrcPriority_t prio
 	qalSourcefv(curSource->alSource, AL_POSITION, vec3_origin);
 	qalSourcefv(curSource->alSource, AL_VELOCITY, vec3_origin);
 	qalSourcei(curSource->alSource, AL_LOOPING, AL_FALSE);
-	qalSourcef(curSource->alSource, AL_REFERENCE_DISTANCE, s_alMinDistance->value);
+	qalSourcef(curSource->alSource, AL_REFERENCE_DISTANCE, /*s_alMinDistance->value*/ range * 0.064f);
+	qalSourcef(curSource->alSource, AL_MAX_DISTANCE, range);
 
 	if (local)
 	{
@@ -1387,7 +1418,7 @@ static void S_AL_StartLocalSound(sfxHandle_t sfx, int channel, int volume)
 	}
 
 	// Set up the effect
-	S_AL_SrcSetup(src, sfx, SRCPRI_LOCAL, -1, channel, qtrue, volume);
+	S_AL_SrcSetup(src, sfx, SRCPRI_LOCAL, -1, channel, qtrue, volume, s_alMaxDistance->value);
 
 	// Start it playing
 	srcList[src].isPlaying = qtrue;
@@ -1436,9 +1467,9 @@ static void S_AL_StartSoundEx(vec3_t origin, int entnum, int entchannel, sfxHand
 
 	S_AL_SanitiseVector(sorigin);
 
-	if ((srcActiveCnt > 5 * srcCount / 3) &&
+	if ((srcActiveCnt > 5 * srcCount / 3) /*&&
 	    (vec3_distance_squared(sorigin, lastListenerOrigin) >=
-	     (s_alMaxDistance->value + s_alGraceDistance->value) * (s_alMaxDistance->value + s_alGraceDistance->value)))
+	     (s_alMaxDistance->value + s_alGraceDistance->value) * (s_alMaxDistance->value + s_alGraceDistance->value))*/)
 	{
 		// We're getting tight on sources and source is not within hearing distance so don't add it
 		return;
@@ -1451,7 +1482,7 @@ static void S_AL_StartSoundEx(vec3_t origin, int entnum, int entchannel, sfxHand
 		return;
 	}
 
-	S_AL_SrcSetup(src, sfx, SRCPRI_ONESHOT, entnum, entchannel, qfalse, volume);
+	S_AL_SrcSetup(src, sfx, SRCPRI_ONESHOT, entnum, entchannel, qfalse, volume, s_alMaxDistance->value);
 
 	curSource = &srcList[src];
 
@@ -1461,7 +1492,7 @@ static void S_AL_StartSoundEx(vec3_t origin, int entnum, int entchannel, sfxHand
 	}
 
 	qalSourcefv(curSource->alSource, AL_POSITION, sorigin);
-	S_AL_ScaleGain(curSource, sorigin);
+	//S_AL_ScaleGain(curSource, sorigin);
 
 	// Start it playing
 	curSource->isPlaying = qtrue;
@@ -1501,7 +1532,7 @@ static void S_AL_ClearLoopingSounds(void)
  * @param[in] sfx
  * @param[in] origin
  * @param[in] velocity
- * @param range - unused
+ * @param[in] range
  * @param[in] volume
  * @param soundTime - unused
  */
@@ -1556,6 +1587,7 @@ static void S_AL_SrcLoop(alSrcPriority_t priority, sfxHandle_t sfx,
 	sent->loopPriority = priority;
 	sent->loopSfx      = sfx;
 	sent->volume       = volume;
+	sent->range        = range ? range : s_alGraceDistance->value;
 
 	// If this is not set then the looping sound is stopped.
 	sent->loopAddedThisFrame = qtrue;
@@ -1644,10 +1676,10 @@ static void S_AL_SrcUpdate(void)
 		}
 
 		// Update source parameters
-		if ((s_alGain->modified) || (s_volume->modified))
-		{
-			curSource->curGain = s_alGain->value * s_volume->value;
-		}
+		//if ((s_alGain->modified) || (s_volume->modified))
+		//{
+		//	curSource->curGain = s_alGain->value * s_volume->value;
+		//}
 		if ((s_alRolloff->modified) && (!curSource->local))
 		{
 			qalSourcef(curSource->alSource, AL_ROLLOFF_FACTOR, s_alRolloff->value);
@@ -1682,7 +1714,7 @@ static void S_AL_SrcUpdate(void)
 				if (sent->startLoopingSound)
 				{
 					S_AL_SrcSetup(i, sent->loopSfx, sent->loopPriority,
-					              entityNum, -1, curSource->local, sent->volume);
+					              entityNum, -1, curSource->local, sent->volume, sent->range);
 					curSource->isLooping = qtrue;
 
 					knownSfx[curSource->sfx].loopCnt++;
@@ -1691,6 +1723,7 @@ static void S_AL_SrcUpdate(void)
 
 				curSfx = &knownSfx[curSource->sfx];
 
+				/*
 				S_AL_ScaleGain(curSource, curSource->loopSpeakerPos);
 				if (curSource->scaleGain == 0.f)
 				{
@@ -1708,6 +1741,7 @@ static void S_AL_SrcUpdate(void)
 
 					continue;
 				}
+				*/
 
 				if (!curSource->isPlaying)
 				{
@@ -1824,7 +1858,7 @@ static void S_AL_SrcUpdate(void)
 		if (curSource->isTracking && !state)
 		{
 			qalSourcefv(curSource->alSource, AL_POSITION, entityPositions[entityNum]);
-			S_AL_ScaleGain(curSource, entityPositions[entityNum]);
+			//S_AL_ScaleGain(curSource, entityPositions[entityNum]);
 		}
 	}
 }
@@ -2128,7 +2162,7 @@ static void S_AL_CloseSSFiles(int ss)
  */
 static void S_AL_StopStreamingSound(int ss)
 {
-    ssRestart[ss] = 0;
+	ssRestart[ss] = 0;
 	if (!ssPlaying[ss])
 	{
 		return;
@@ -2640,12 +2674,12 @@ static float S_AL_StartStreamingSoundEx(const char *intro, const char *loop, int
 		ssData[ss].stream = S_CodecOpenStream(loop);
 	}
 
-    if (!ssData[ss].stream)
-    {
-        Com_Printf(S_COLOR_YELLOW "WARNING S_AL_StartStreamingSoundEx: couldn't open stream file %s\n", intro);
-        S_AL_SSSourceFree(ss);
-        return 0.0f;
-    }
+	if (!ssData[ss].stream)
+	{
+		Com_Printf(S_COLOR_YELLOW "WARNING S_AL_StartStreamingSoundEx: couldn't open stream file %s\n", intro);
+		S_AL_SSSourceFree(ss);
+		return 0.0f;
+	}
 
 	// Generate the musicBuffers
 	qalGenBuffers(NUM_STREAM_BUFFERS, ssBuffers[ss]);
@@ -2876,12 +2910,12 @@ static void S_AL_SSUpdate(int ss)
 	if (state == AL_STOPPED && numBuffers)
 	{
 		Com_DPrintf(S_COLOR_YELLOW "Restarted OpenAL stream %d\n", ss);
-        ssRestart[ss]++;
-        if(ssRestart[ss] > 5)
-        {
-            S_AL_StopStreamingSound(ss);
-            return;
-        }
+		ssRestart[ss]++;
+		if (ssRestart[ss] > 5)
+		{
+			S_AL_StopStreamingSound(ss);
+			return;
+		}
 		qalSourcePlay(ssSource[ss]);
 	}
 
@@ -3284,7 +3318,7 @@ qboolean S_AL_Init(soundInterface_t *si)
 #ifdef FEATURE_OPENAL
 	const char *device = NULL;
 	//const char *inputdevice = NULL;
-	int        i;
+	int i;
 
 	if (!si)
 	{
@@ -3309,15 +3343,15 @@ qboolean S_AL_Init(soundInterface_t *si)
 	s_alSources       = Cvar_Get("s_alSources", "96", CVAR_ARCHIVE);
 	s_alDopplerFactor = Cvar_Get("s_alDopplerFactor", "1.0", CVAR_ARCHIVE);
 	s_alDopplerSpeed  = Cvar_Get("s_alDopplerSpeed", "2200", CVAR_ARCHIVE);
-	s_alMinDistance   = Cvar_Get("s_alMinDistance", "420", CVAR_CHEAT);
+	s_alMinDistance   = Cvar_Get("s_alMinDistance", "0", CVAR_CHEAT);
 	s_alMaxDistance   = Cvar_Get("s_alMaxDistance", "1250", CVAR_CHEAT);
-	s_alRolloff       = Cvar_Get("s_alRolloff", "2", CVAR_CHEAT);
+	s_alRolloff       = Cvar_Get("s_alRolloff", "0.95", CVAR_CHEAT);
 	s_alGraceDistance = Cvar_Get("s_alGraceDistance", "1250", CVAR_CHEAT);
 
-	s_alDriver      = Cvar_Get("s_alDriver", ALDRIVER_DEFAULT, CVAR_ARCHIVE | CVAR_LATCH | CVAR_PROTECTED);
+	s_alDriver = Cvar_Get("s_alDriver", ALDRIVER_DEFAULT, CVAR_ARCHIVE | CVAR_LATCH | CVAR_PROTECTED);
 	//s_alInputDevice = Cvar_Get("s_alInputDevice", "", CVAR_ARCHIVE | CVAR_LATCH);
-	s_alDevice      = Cvar_Get("s_alDevice", "", CVAR_ARCHIVE | CVAR_LATCH);
-	s_debugStreams  = Cvar_Get("s_debugStreams", "0", CVAR_TEMP);
+	s_alDevice     = Cvar_Get("s_alDevice", "", CVAR_ARCHIVE | CVAR_LATCH);
+	s_debugStreams = Cvar_Get("s_debugStreams", "0", CVAR_TEMP);
 
 	if (COM_CompareExtension(s_alDriver->string, ".pk3"))
 	{
@@ -3435,7 +3469,7 @@ qboolean S_AL_Init(soundInterface_t *si)
 	S_AL_SrcInit();
 
 	// Set up OpenAL parameters (doppler, etc)
-	qalDistanceModel(AL_INVERSE_DISTANCE_CLAMPED);
+	qalDistanceModel(AL_LINEAR_DISTANCE_CLAMPED);
 	qalDopplerFactor(s_alDopplerFactor->value);
 	qalDopplerVelocity(s_alDopplerSpeed->value);
 
@@ -3498,7 +3532,7 @@ qboolean S_AL_Init(soundInterface_t *si)
 			capture_ext = qtrue;
 
 			// get all available input devices + the default input device name.
-			inputdevicelist = qalcGetString(NULL, ALC_CAPTURE_DEVICE_SPECIFIER);
+			inputdevicelist    = qalcGetString(NULL, ALC_CAPTURE_DEVICE_SPECIFIER);
 			defaultinputdevice = qalcGetString(NULL, ALC_CAPTURE_DEFAULT_DEVICE_SPECIFIER);
 
 			// dump a list of available devices to a cvar for the user to see.
@@ -3515,11 +3549,11 @@ qboolean S_AL_Init(soundInterface_t *si)
 			s_alAvailableInputDevices = Cvar_Get("s_alAvailableInputDevices", inputdevicenames, CVAR_ROM | CVAR_NORESTART);
 
 			Com_Printf("OpenAL default capture device is '%s'\n", defaultinputdevice ? defaultinputdevice : "none");
-			alCaptureDevice = qalcCaptureOpenDevice(inputdevice, 48000, AL_FORMAT_MONO16, VOIP_MAX_PACKET_SAMPLES*4);
-			if( !alCaptureDevice && inputdevice )
+			alCaptureDevice = qalcCaptureOpenDevice(inputdevice, 48000, AL_FORMAT_MONO16, VOIP_MAX_PACKET_SAMPLES * 4);
+			if (!alCaptureDevice && inputdevice)
 			{
 				Com_Printf("Failed to open OpenAL Input device '%s', trying default.\n", inputdevice);
-				alCaptureDevice = qalcCaptureOpenDevice(NULL, 48000, AL_FORMAT_MONO16, VOIP_MAX_PACKET_SAMPLES*4);
+				alCaptureDevice = qalcCaptureOpenDevice(NULL, 48000, AL_FORMAT_MONO16, VOIP_MAX_PACKET_SAMPLES * 4);
 			}
 #endif
 			Com_Printf("OpenAL capture device %s.\n",
