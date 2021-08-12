@@ -24,23 +24,23 @@
 #define LUASQL_CONNECTION "Each driver must have a connection metatable"
 #define LUASQL_CURSOR "Each driver must have a cursor metatable"
 
-LUASQL_API int luasql_faildirect (lua_State *L, const char *err);
-LUASQL_API int luasql_failmsg (lua_State *L, const char *err, const char *m);
-LUASQL_API int luasql_createmeta (lua_State *L, const char *name, const luaL_Reg *methods);
-LUASQL_API void luasql_setmeta (lua_State *L, const char *name);
-LUASQL_API void luasql_set_info (lua_State *L);
+LUASQL_API int luasql_faildirect(lua_State *L, const char *err);
+LUASQL_API int luasql_failmsg(lua_State *L, const char *err, const char *m);
+LUASQL_API int luasql_createmeta(lua_State *L, const char *name, const luaL_Reg *methods);
+LUASQL_API void luasql_setmeta(lua_State *L, const char *name);
+LUASQL_API void luasql_set_info(lua_State *L);
 
-#if !defined LUA_VERSION_NUM || LUA_VERSION_NUM==501
-void luaL_setfuncs (lua_State *L, const luaL_Reg *l, int nup);
+#if !defined LUA_VERSION_NUM || LUA_VERSION_NUM == 501
+void luaL_setfuncs(lua_State *L, const luaL_Reg *l, int nup);
 #endif
 
 /* Driver initialization functions prototypes */
-LUASQL_API int luaopen_luasql_firebird (lua_State *L);
-LUASQL_API int luaopen_luasql_mysql (lua_State *L);
-LUASQL_API int luaopen_luasql_oci8 (lua_State *L);
-LUASQL_API int luaopen_luasql_odbc (lua_State *L);
-LUASQL_API int luaopen_luasql_postgres (lua_State *L);
-LUASQL_API int luaopen_luasql_sqlite (lua_State *L);
-LUASQL_API int luaopen_luasql_sqlite3 (lua_State *L);
+LUASQL_API int luaopen_luasql_firebird(lua_State *L);
+LUASQL_API int luaopen_luasql_mysql(lua_State *L);
+LUASQL_API int luaopen_luasql_oci8(lua_State *L);
+LUASQL_API int luaopen_luasql_odbc(lua_State *L);
+LUASQL_API int luaopen_luasql_postgres(lua_State *L);
+LUASQL_API int luaopen_luasql_sqlite(lua_State *L);
+LUASQL_API int luaopen_luasql_sqlite3(lua_State *L);
 
 #endif
