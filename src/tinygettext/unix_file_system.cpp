@@ -19,11 +19,17 @@
 
 #include "tinygettext/unix_file_system.hpp"
 
+#if __cplusplus >= 201703L // C++17
+#include <filesystem>
+#include <fstream>
+#include <stdlib.h>
+#else
 #include <sys/types.h>
 #include <fstream>
 #include <dirent.h>
 #include <stdlib.h>
 #include <string.h>
+#endif
 
 namespace tinygettext {
 
@@ -34,6 +40,14 @@ UnixFileSystem::UnixFileSystem()
 std::vector<std::string>
 UnixFileSystem::open_directory(const std::string& pathname)
 {
+#if __cplusplus >= 201703L // C++17
+	std::vector<std::string> files;
+	for(auto const& p : std::filesystem::directory_iterator(pathname))
+	{
+		files.push_back(p.path().filename().string());
+	}
+	return files;
+#else
 	DIR *dir = opendir(pathname.c_str());
 	if (!dir)
 	{
@@ -45,7 +59,7 @@ UnixFileSystem::open_directory(const std::string& pathname)
 		std::vector<std::string> files;
 
 		struct dirent *dp;
-		while ((dp = readdir(dir)) != 0)
+		while ((dp = readdir(dir)) != nullptr)
 		{
 			files.push_back(dp->d_name);
 		}
@@ -53,9 +67,16 @@ UnixFileSystem::open_directory(const std::string& pathname)
 
 		return files;
 	}
+#endif
 }
 
-#if __cplusplus >= 201103L // C++11
+#if __cplusplus >= 201703L // C++17
+	std::unique_ptr<std::istream>
+	UnixFileSystem::open_file(const std::string& filename)
+	{
+		return std::unique_ptr<std::istream>(new std::ifstream(filename));
+	}
+#elif __cplusplus >= 201103L // C++11
 	std::unique_ptr<std::istream>
 	UnixFileSystem::open_file(const std::string& filename)
 	{

@@ -54,7 +54,7 @@ DictionaryManager::DictionaryManager(const std::string& charset_) :
 	charset(charset_),
 	use_fuzzy(true),
 	current_language(),
-	current_dict(0),
+	current_dict(nullptr),
 	empty_dict(),
 #ifdef _MSC_VER
 	filesystem(new WindowsFileSystem)
@@ -81,7 +81,7 @@ DictionaryManager::clear_cache()
 	}
 	dictionaries.clear();
 
-	current_dict = 0;
+	current_dict = nullptr;
 }
 
 Dictionary&
@@ -218,7 +218,7 @@ DictionaryManager::set_language(const Language& language)
 	if (current_language != language)
 	{
 		current_language = language;
-		current_dict     = 0;
+		current_dict     = nullptr;
 	}
 }
 

@@ -336,14 +336,7 @@ POParser::is_empty_line()
 	}
 	else if (current_line[0] == '#')
 	{ // handle comments as empty lines
-		if (current_line.size() == 1 || (current_line.size() >= 2 && isspace(current_line[1])))
-		{
-			return true;
-		}
-		else
-		{
-			return false;
-		}
+		return (current_line.size() == 1 || (current_line.size() >= 2 && isspace(current_line[1])));
 	}
 	else
 	{

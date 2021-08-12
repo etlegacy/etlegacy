@@ -36,8 +36,8 @@ public:
 	static PluralForms from_string(const std::string& str);
 
 	PluralForms()
-		: nplural(0),
-		plural(0)
+		: nplural(),
+		plural()
 	{
 	}
 
@@ -63,18 +63,18 @@ public:
 		}
 	}
 
-	bool operator==(const PluralForms& other)
+	bool operator==(const PluralForms& other) const
 	{
 		return nplural == other.nplural && plural == other.plural;
 	}
-	bool operator!=(const PluralForms& other)
+	bool operator!=(const PluralForms& other) const
 	{
 		return !(*this == other);
 	}
 
 	operator bool() const
 	{
-		return plural != NULL;
+		return plural != nullptr;
 	}
 };
 

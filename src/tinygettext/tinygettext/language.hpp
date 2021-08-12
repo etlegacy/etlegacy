@@ -64,7 +64,7 @@ public:
 
 	operator bool() const
 	{
-		return language_spec != NULL;
+		return language_spec != nullptr;
 	}
 
 	/** Returns the language code (i.e. de, en, fr) */
