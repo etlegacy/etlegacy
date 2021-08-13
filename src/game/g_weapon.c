@@ -1537,18 +1537,20 @@ gentity_t *Weapon_Engineer(gentity_t *ent)
 	muzzleTrace[2] += ent->client->ps.viewheight;
 
 	VectorMA(muzzleTrace, CH_MAX_DIST, forward, end);
-    if (ent->client->touchingTOI)
-    {
-        ent->client->touchingTOI->r.linked = qfalse;
-    }
+	if (ent->client->touchingTOI)
+	{
+		ent->client->touchingTOI->r.linked = qfalse;
+	}
 	trap_EngineerTrace(ent, &tr, muzzleTrace, NULL, NULL, end, ent->s.number, MASK_SHOT | CONTENTS_TRIGGER);
-    if (ent->client->touchingTOI)
-    {
-        ent->client->touchingTOI->r.linked = qtrue;
-    }
+	if (ent->client->touchingTOI)
+	{
+		ent->client->touchingTOI->r.linked = qtrue;
+	}
+
+	traceEnt = &g_entities[tr.entityNum];
 
 	if ((tr.surfaceFlags & SURF_NOIMPACT) || tr.fraction == 1.0f || tr.entityNum == ENTITYNUM_NONE || tr.entityNum == ENTITYNUM_WORLD
-	    || tr.contents & CONTENTS_TRIGGER)
+	    || tr.contents & CONTENTS_TRIGGER || traceEnt->r.contents & CONTENTS_TRIGGER)
 	{
 		// might be constructible
 		if (!ent->client->touchingTOI)
@@ -1571,8 +1573,6 @@ weapengineergoto1:
 	{
 		return NULL;
 	}
-
-	traceEnt = &g_entities[tr.entityNum];
 
 	if (G_EmplacedGunIsRepairable(traceEnt, ent))
 	{
@@ -3352,7 +3352,7 @@ gentity_t *Bullet_Fire(gentity_t *ent)
 	    && !(GetWeaponTableData(ent->s.weapon)->attributes & WEAPON_ATTRIBUT_AKIMBO))
 	{
 		// increase in accuracy (spread reduction) at level 3
-        if (BG_IsSkillAvailable(ent->client->sess.skill, SK_LIGHT_WEAPONS, 3))
+		if (BG_IsSkillAvailable(ent->client->sess.skill, SK_LIGHT_WEAPONS, 3))
 		{
 			spread *= .65f;
 		}
