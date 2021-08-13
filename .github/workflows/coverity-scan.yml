@@ -35,6 +35,7 @@ jobs:
           -DCROSS_COMPILE32=0 \
           -DINSTALL_DEFAULT_BASEDIR=. \
           -DINSTALL_DEFAULT_BINDIR=. \
+          -DINSTALL_DEFAULT_SHAREDIR=. \
           -DINSTALL_DEFAULT_MODDIR=. \
           -DBUNDLED_LIBS=1 \
           -DINSTALL_EXTRA=0

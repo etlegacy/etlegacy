@@ -120,8 +120,11 @@ The following variables can be adjusted in CMake:
   * (optional) **`INSTALL_DEFAULT_BINDIR`**: Location for executables. Appended to `CMAKE_INSTALL_PREFIX`.
     Defaults to `bin`.
 
-  * (optional) **`INSTALL_DEFAULT_MODDIR`**: Location for libraries and paks. Appended to
-    `CMAKE_INSTALL_PREFIX`. Defaults to `share/etlegacy` and then `legacy` is appended to it.
+  * (optional) **`INSTALL_DEFAULT_SHAREDIR`**: Location for shared data. Appended to `CMAKE_INSTALL_PREFIX`.
+    Defaults to `share`.
+
+  * (optional) **`INSTALL_DEFAULT_MODDIR`**: Location for libraries and paks. Appended to `CMAKE_INSTALL_PREFIX`.
+    Defaults to `lib/etlegacy` and then `legacy` is appended to it.
 
 
 ### Linux
