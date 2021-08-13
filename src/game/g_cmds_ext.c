@@ -347,7 +347,7 @@ void G_pause_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fPause)
 				level.match_pause = tteam + 128;
 				G_globalSoundEnum(GAMESOUND_MISC_REFEREE);
 				G_spawnPrintf(DP_PAUSEINFO, level.time + 15000, NULL);
-				AP(va("print \"^3Match is ^1PAUSED^3!\n^7[%s^7: - %d Timeouts Remaining]\n\"", aTeams[tteam], teamInfo[tteam].timeouts));
+				AP(va("print \"^3Match is ^1PAUSED^3!\n^7[by %s ^7for %s^7: - %d Timeouts Remaining]\n\"", ent->client->pers.netname, aTeams[tteam], teamInfo[tteam].timeouts));
 				AP(va("cp \"^3Match is ^1PAUSED^3! (%s^3)\n\"", aTeams[tteam]));
 				level.server_settings |= CV_SVS_PAUSE;
 				trap_SetConfigstring(CS_SERVERTOGGLES, va("%d", level.server_settings));
