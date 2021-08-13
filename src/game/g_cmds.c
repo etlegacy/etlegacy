@@ -4032,10 +4032,11 @@ void G_LeaveTank(gentity_t *ent, qboolean position)
  */
 void Cmd_Activate_f(gentity_t *ent)
 {
-	trace_t tr;
-	vec3_t  end;
-	vec3_t  forward, right, up, offset;
-	int     numOfIgnoredEnts = 0;
+	gentity_t *traceEnt, *skipEnt;
+	trace_t   tr;
+	vec3_t    end;
+	vec3_t    forward, right, up, offset;
+	int       numOfIgnoredEnts = 0;
 
 	if (ent->health <= 0)
 	{
@@ -4111,11 +4112,13 @@ void Cmd_Activate_f(gentity_t *ent)
 		ent->client->touchingTOI->r.linked = qfalse;
 	}
 
+	skipEnt = ent;
+
 	do
 	{
 		qboolean found;
 
-		trap_Trace(&tr, offset, NULL, NULL, end, ent->s.number, (CONTENTS_SOLID | CONTENTS_MISSILECLIP | CONTENTS_TRIGGER));
+		trap_Trace(&tr, offset, NULL, NULL, end, skipEnt->s.number, (CONTENTS_SOLID | CONTENTS_MISSILECLIP | CONTENTS_TRIGGER));
 
 		// too far to activate
 		if (VectorDistance(offset, tr.endpos) > CH_ACTIVATE_DIST)
@@ -4123,7 +4126,8 @@ void Cmd_Activate_f(gentity_t *ent)
 			break;
 		}
 
-		found = Do_Activate_f(ent, &g_entities[tr.entityNum]);
+		traceEnt = &g_entities[tr.entityNum];
+		found    = Do_Activate_f(ent, traceEnt);
 
 		if (found || numOfIgnoredEnts >= 10)
 		{
@@ -4134,10 +4138,16 @@ void Cmd_Activate_f(gentity_t *ent)
 		// count them to prevent too many loops
 		numOfIgnoredEnts++;
 
+		if (traceEnt->s.eType == ET_OID_TRIGGER || traceEnt->s.eType == ET_TRIGGER_MULTIPLE
+		    || traceEnt->s.eType == ET_TRIGGER_FLAGONLY || traceEnt->s.eType == ET_TRIGGER_FLAGONLY_MULTIPLE)
+		{
+			skipEnt = traceEnt;
+		}
+
 		// advance offset (start point) past the entity to ignore
 		VectorMA(tr.endpos, 0.1f, forward, offset);
 	}
-	while (!(tr.contents & CONTENTS_SOLID) && !(tr.surfaceFlags & SURF_NOIMPACT) && !(tr.entityNum == ENTITYNUM_WORLD));
+	while ((!tr.startsolid || skipEnt == traceEnt) && !(tr.surfaceFlags & SURF_NOIMPACT) && !(tr.entityNum == ENTITYNUM_WORLD));
 
 	// link back from world the trigger in contact with player
 	if (ent->client->touchingTOI)

@@ -871,12 +871,23 @@ void QDECL G_Error(const char *fmt, ...) _attribute((format(printf, 1, 2)));
  * but nevertheless should not display any cursor hint)
  *
  * @param[in] traceEnt
- * @param clientEnt - unused
+ * @param clientEnt
  * @return
  */
 static qboolean G_CursorHintIgnoreEnt(gentity_t *traceEnt, gentity_t *clientEnt)
 {
-	return (traceEnt->s.eType == ET_OID_TRIGGER || traceEnt->s.eType == ET_TRIGGER_MULTIPLE) ? qtrue : qfalse;
+	if (traceEnt->s.eType == ET_OID_TRIGGER || traceEnt->s.eType == ET_TRIGGER_MULTIPLE
+	    || traceEnt->s.eType == ET_TRIGGER_FLAGONLY || traceEnt->s.eType == ET_TRIGGER_FLAGONLY_MULTIPLE)
+	{
+		return qtrue;
+	}
+
+	if (traceEnt->s.eType == ET_CORPSE && !(clientEnt->client->ps.stats[STAT_PLAYER_CLASS] == PC_COVERTOPS))
+	{
+		return qtrue;
+	}
+
+	return qfalse;
 }
 
 /**
@@ -1101,7 +1112,7 @@ void G_CheckForCursorHints(gentity_t *ent)
 	}
 	G_ResetTempTraceRealHitBox();
 
-	if (tr->entityNum == ENTITYNUM_WORLD)
+	if (tr->entityNum == ENTITYNUM_WORLD || tr->entityNum < MAX_CLIENTS)
 	{
 		// NOTE: these hint are managed client side !
 		// if ((tr->contents & CONTENTS_WATER))
@@ -1127,9 +1138,7 @@ void G_CheckForCursorHints(gentity_t *ent)
 				return;
 			}
 		}
-	}
-	else if (tr->entityNum < MAX_CLIENTS)
-	{
+
 		// show medics a syringe if they can revive someone
 		if (traceEnt->client && traceEnt->client->sess.sessionTeam == ent->client->sess.sessionTeam)
 		{
