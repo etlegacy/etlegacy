@@ -3598,7 +3598,7 @@ int CG_GetPlayerMaxHealth(int clientNum, int class, int team)
 		}
 	}
 
-	if (cgs.clientinfo[clientNum].skill[SK_BATTLE_SENSE] >= 3)
+	if (BG_IsSkillAvailable(cgs.clientinfo[cg.clientNum].skill, SK_BATTLE_SENSE, 3))
 	{
 		maxHealth += 15;
 	}

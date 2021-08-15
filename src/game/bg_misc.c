@@ -4955,3 +4955,38 @@ void BG_LegsCollisionBoxOffset(vec3_t viewangles, int eFlags, vec3_t legsOffset)
 		VectorScale(flatforward, -32, legsOffset);
 	}
 }
+
+/**
+ * @brief G_SetSkillLevels
+ * @param[in] skill
+ * @param[in] string
+ */
+void BG_SetSkillLevels(int skill, const char *string)
+{
+    char **temp = (char **) &string;
+    char *nextLevel;
+    int  levels[NUM_SKILL_LEVELS - 1];
+    int  count;
+    
+    for (count = 0; count < NUM_SKILL_LEVELS - 1; count++)
+    {
+        nextLevel = COM_ParseExt(temp, qfalse);
+        if (nextLevel[0])
+        {
+            levels[count] = Q_atoi(nextLevel);
+            if (levels[count] < 0)
+            {
+                levels[count] = -1;
+            }
+        }
+        else
+        {
+            levels[count] = -1;
+        }
+    }
+    
+    for (count = 1; count < NUM_SKILL_LEVELS; count++)
+    {
+        GetSkillTableData(skill)->skillLevels[count] = levels[count - 1];
+    }
+}
