@@ -1913,7 +1913,7 @@ static void CG_DrawCrosshairNames(void)
 			return;
 		}
 
-		if (cgs.clientinfo[cg.snap->ps.clientNum].skill[SK_SIGNALS] >= 4 && cgs.clientinfo[cg.snap->ps.clientNum].cls == PC_FIELDOPS)
+		if (BG_IsSkillAvailable(cgs.clientinfo[cg.snap->ps.clientNum].skill, SK_SIGNALS, 4) && cgs.clientinfo[cg.snap->ps.clientNum].cls == PC_FIELDOPS)
 		{
 			// draw the name of the player being looked at
 			color = CG_FadeColor(cg.crosshairClientTime, 1000);
