@@ -3776,6 +3776,20 @@ static void CG_DrawEnvironmentalAwareness()
 		snap = cg.snap;
 	}
 
+	if (snap->ps.pm_flags & PMF_LIMBO
+	#ifdef FEATURE_MULTIVIEW
+	    || cg.mvTotalClients > 0
+	#endif
+	    )
+	{
+		return;
+	}
+
+	if (snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR && !cgs.clientinfo[cg.clientNum].shoutcaster)
+	{
+		return;
+	}
+
 	if (cg.snap->ps.stats[STAT_HEALTH] <= 0)
 	{
 		return;
