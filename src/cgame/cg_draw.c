@@ -1913,7 +1913,7 @@ static void CG_DrawCrosshairNames(void)
 			return;
 		}
 
-		if (cgs.clientinfo[cg.snap->ps.clientNum].skill[SK_SIGNALS] >= 4 && cgs.clientinfo[cg.snap->ps.clientNum].cls == PC_FIELDOPS)
+		if (BG_IsSkillAvailable(cgs.clientinfo[cg.snap->ps.clientNum].skill, SK_SIGNALS, 4) && cgs.clientinfo[cg.snap->ps.clientNum].cls == PC_FIELDOPS)
 		{
 			// draw the name of the player being looked at
 			color = CG_FadeColor(cg.crosshairClientTime, 1000);
@@ -3774,6 +3774,20 @@ static void CG_DrawEnvironmentalAwareness()
 	else
 	{
 		snap = cg.snap;
+	}
+
+	if (snap->ps.pm_flags & PMF_LIMBO
+	#ifdef FEATURE_MULTIVIEW
+	    || cg.mvTotalClients > 0
+	#endif
+	    )
+	{
+		return;
+	}
+
+	if (snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR && !cgs.clientinfo[cg.clientNum].shoutcaster)
+	{
+		return;
 	}
 
 	if (cg.snap->ps.stats[STAT_HEALTH] <= 0)

@@ -3523,7 +3523,7 @@ static void PM_Weapon(void)
 		{
 			if (coeff != GetWeaponTableData(pm->ps->weapon)->chargeTimeCoeff[skillLvl])
 			{
-				if (!BG_IsSkillAvailable(pm->skill, skill, skillLvl))
+				if (skillLvl == 0 || !BG_IsSkillAvailable(pm->skill, skill, skillLvl))
 				{
 					coeff = GetWeaponTableData(pm->ps->weapon)->chargeTimeCoeff[skillLvl];
 				}
