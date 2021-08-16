@@ -419,7 +419,8 @@ qboolean G_CanPickupWeapon(weapon_t weapon, gentity_t *ent)
 	}
 
 	// prevent picking up when overheating
-	if (ent->client->ps.weaponTime > 0)
+	// FIXME: heat of dropped weapon isn't reduced overtime
+	if (ent->client->ps.curWeapHeat > 0 && ent->client->ps.weaponTime > 0)
 	{
 		return qfalse;
 	}
