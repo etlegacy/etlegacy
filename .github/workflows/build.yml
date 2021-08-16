@@ -162,6 +162,10 @@ jobs:
           repository: rafal1137/NDK_ETL
           path: NDK_ETL
 
+      - name: Git Sumbodule Update
+        run: |
+          git submodule update --remote --recursive
+
       - name: Build
         run: |
           chmod -R 775 $GITHUB_WORKSPACE/NDK_ETL/ndk-bundle
@@ -417,6 +421,10 @@ jobs:
       - name: Display structure of downloaded files
         run: ls -R
         working-directory: app/src/main/assets
+
+      - name: Git Sumbodule Update
+        run: |
+          git submodule update --remote --recursive
 
       - name: Build and Generate Package
         run: |
