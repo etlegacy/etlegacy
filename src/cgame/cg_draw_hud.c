@@ -1716,15 +1716,14 @@ qhandle_t CG_GetCompassIcon(entityState_t *ent, qboolean drawVoicesChat, qboolea
 			return cent->voiceChatSprite;
 		}
 
-		if (drawFireTeam && (CG_IsOnSameFireteam(cg.clientNum, ent->clientNum) || cgs.clientinfo[cg.clientNum].shoutcaster))              // draw disguise or default buddy icon
+		if (drawFireTeam && (CG_IsOnSameFireteam(cg.clientNum, ent->clientNum) || cgs.clientinfo[cg.clientNum].shoutcaster))
 		{
-			// draw overlapping no-shoot icon if disguised and in same team but draw disguise ennemy on compass as buddy
+			// draw overlapping no-shoot icon if disguised and in same team
 			if (ent->powerups & (1 << PW_OPS_DISGUISED) && cg.predictedPlayerState.persistant[PERS_TEAM] == cgs.clientinfo[ent->clientNum].team)
 			{
-				return cgs.media.friendShader;
+				return cgs.clientinfo[ent->clientNum].selected ? cgs.media.friendShader : 0;
 			}
-
-			return cgs.media.buddyShader;
+			return cgs.clientinfo[ent->clientNum].selected ? cgs.media.buddyShader : 0;
 		}
 		break;
 	}
@@ -2096,11 +2095,17 @@ static void CG_DrawNewCompass(rectDef_t location)
 			continue;
 		}
 
-		icon = CG_GetCompassIcon(&snap->entities[i], qfalse, qfalse);
+		icon = CG_GetCompassIcon(&snap->entities[i], qfalse, qtrue);
 
 		if (icon)
 		{
 			CG_DrawCompassIcon(basex, basey, basew, baseh, cg.predictedPlayerState.origin, cent->lerpOrigin, icon, 1.f, 14);
+
+			// draw overlapping shader for disguised covops
+			if (icon == cgs.media.friendShader)
+			{
+				CG_DrawCompassIcon(basex, basey, basew, baseh, cg.predictedPlayerState.origin, cent->lerpOrigin, cgs.media.buddyShader, 1.f, 14);
+			}
 		}
 	}
 }
