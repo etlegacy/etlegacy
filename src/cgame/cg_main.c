@@ -2050,8 +2050,9 @@ static void CG_RegisterGraphics(void)
 	cgs.media.hMountedFPMG42     = trap_R_RegisterModel("models/multiplayer/mg42/v_mg42.md3");
 	cgs.media.hMountedFPBrowning = trap_R_RegisterModel("models/multiplayer/browning/tankmounted.md3");
 
-	// medic icon for commandmap
+	// icons for commandmap
 	cgs.media.medicIcon = trap_R_RegisterShaderNoMip("sprites/voiceMedic");
+	cgs.media.ammoIcon  = trap_R_RegisterShaderNoMip("sprites/voiceAmmo");
 
 	RegisterFont("ariblk", 27, &cgs.media.limboFont1);
 	RegisterFont("ariblk", 16, &cgs.media.limboFont1_lo);

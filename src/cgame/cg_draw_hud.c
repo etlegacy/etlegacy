@@ -1667,11 +1667,12 @@ void CG_StatsDebugAddText(const char *text)
 
 /**
  * @brief CG_GetCompassIcon
- * @param[in] cent
- * @param[in] allVoicesChat get all icons voices chat, otherwhise only request icons voices chat (need medic/ammo ...)
+ * @param[in] ent
+ * @param[in] drawAllVoicesChat get all icons voices chat, otherwise only request relevant icons voices chat (need medic/ammo ...)
+ * @param[in] drawFireTeam draw fireteam members position
  * @return A valid compass icon handle otherwise 0
  */
-qhandle_t CG_GetCompassIcon(entityState_t *ent, qboolean drawVoicesChat, qboolean drawFireTeam)
+qhandle_t CG_GetCompassIcon(entityState_t *ent, qboolean drawAllVoicesChat, qboolean drawFireTeam)
 {
 	switch (ent->eType)
 	{
@@ -1703,7 +1704,9 @@ qhandle_t CG_GetCompassIcon(entityState_t *ent, qboolean drawVoicesChat, qboolea
 		}
 
 		if (sameTeam && cent->voiceChatSpriteTime > cg.time &&
-		    (drawVoicesChat || (cent->voiceChatSprite != cgs.media.voiceChatShader)))
+		    (drawAllVoicesChat ||
+		     (cg.predictedPlayerState.stats[STAT_PLAYER_CLASS] == PC_MEDIC && cent->voiceChatSprite == cgs.media.medicIcon) ||
+		     (cg.predictedPlayerState.stats[STAT_PLAYER_CLASS] == PC_FIELDOPS && cent->voiceChatSprite == cgs.media.ammoIcon)))
 		{
 			// FIXME: not the best place to reset it
 			if (cgs.clientinfo[ent->clientNum].health <= 0)
