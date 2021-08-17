@@ -234,15 +234,6 @@ void CG_ParseServerinfo(void)
 
 	// make this available for ingame_callvote
 	trap_Cvar_Set("cg_ui_voteFlags", ((authLevel.integer == RL_NONE) ? Info_ValueForKey(info, "voteFlags") : "0"));
-
-	// set skills levels according to server settings
-	BG_SetSkillLevels(SK_BATTLE_SENSE, Info_ValueForKey(info, "skill_battlesense"));
-	BG_SetSkillLevels(SK_EXPLOSIVES_AND_CONSTRUCTION, Info_ValueForKey(info, "skill_engineer"));
-	BG_SetSkillLevels(SK_FIRST_AID, Info_ValueForKey(info, "skill_medic"));
-	BG_SetSkillLevels(SK_SIGNALS, Info_ValueForKey(info, "skill_fieldops"));
-	BG_SetSkillLevels(SK_LIGHT_WEAPONS, Info_ValueForKey(info, "skill_lightweapons"));
-	BG_SetSkillLevels(SK_HEAVY_WEAPONS, Info_ValueForKey(info, "skill_soldier"));
-	BG_SetSkillLevels(SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS, Info_ValueForKey(info, "skill_covertops"));
 }
 
 /**
