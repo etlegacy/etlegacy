@@ -1782,14 +1782,14 @@ void CG_LimboPanel_RenderClassButton(panel_button_t *button)
 		}
 	}
 
-	for (i = 0; i < 4; i++)
+	for (i = 1; i < NUM_SKILL_LEVELS; i++)
 	{
-		if (cgs.clientinfo[cg.clientNum].skill[BG_ClassSkillForClass(button->data[1])] <= i)
+		if (!BG_IsSkillAvailable(cgs.clientinfo[cg.clientNum].skill, BG_ClassSkillForClass(button->data[1]), i))
 		{
-			break;
+			continue;
 		}
 
-		if (i == 0 || i == 1)
+		if (i == 1 || i == 2)
 		{
 			s0 = 0.5f;
 			s1 = 1.0f;
@@ -1799,7 +1799,7 @@ void CG_LimboPanel_RenderClassButton(panel_button_t *button)
 			s0 = 0.0f;
 			s1 = 0.5f;
 		}
-		if (i == 1 || i == 2)
+		if (i == 2 || i == 3)
 		{
 			t0 = 0.5f;
 			t1 = 1.0f;
@@ -2840,6 +2840,25 @@ void CG_LimboPanel_RenderCounterNumber(float x, float y, float w, float h, float
 }
 
 /**
+ * @brief CG_LimboPanel_ClassSkillForPosition
+ * @param[in] position
+ * @return
+ */
+skillType_t CG_LimboPanel_ClassSkillForPosition(int position)
+{
+	switch (position)
+	{
+	case 0:
+		return SK_BATTLE_SENSE;
+	case 1:
+		return SK_LIGHT_WEAPONS;
+	case 2:
+	default:
+		return BG_ClassSkillForClass(CG_LimboPanel_GetClass());;
+	}
+}
+
+/**
  * @brief CG_LimboPanel_RenderCounter_ValueForButton
  * @param[in] button
  * @return
@@ -2903,21 +2922,7 @@ int CG_LimboPanel_RenderCounter_ValueForButton(panel_button_t *button)
 		}
 		return (int)CG_CalculateReinfTime_Float(qtrue);
 	case 4:     // skills
-		switch (button->data[1])
-		{
-		case 0:
-			count = cgs.clientinfo[cg.clientNum].skill[SK_BATTLE_SENSE];
-			break;
-		case 1:
-			count = cgs.clientinfo[cg.clientNum].skill[SK_LIGHT_WEAPONS];
-			break;
-		case 2:
-			count = cgs.clientinfo[cg.clientNum].skill[BG_ClassSkillForClass(CG_LimboPanel_GetClass())];
-			break;
-		default:
-			break;
-		}
-		return (1 << count) - 1;
+		return (1 << cgs.clientinfo[cg.clientNum].skill[CG_LimboPanel_ClassSkillForPosition(button->data[1])]) - 1;
 	case 5:     // clock
 		if (cgs.gamestate != GS_PLAYING)
 		{
@@ -3296,6 +3301,7 @@ void CG_LimboPanelRenderText_SkillsText(panel_button_t *button)
 
 #define MAX_ROLLERS 8
 #define COUNTER_ROLLTOTAL (cg.time - button->data[4])
+static const vec4_t clrSkillCounterDisable = { 1.f, 0.f, 0.f, 1.f };
 /**
  * @brief CG_LimboPanel_RenderCounter
  * @param[in] button
@@ -3418,8 +3424,23 @@ void CG_LimboPanel_RenderCounter(panel_button_t *button)
 
 	if (CG_LimboPanel_RenderCounter_IsReversed(button))
 	{
+		// only skill counter enter here ... until CG_LimboPanel_RenderCounter_IsReversed is modify
+		skillType_t skill;
+
+		skill = CG_LimboPanel_ClassSkillForPosition(button->data[1]);
+
 		for (i = 0; i < num; i++)
 		{
+			if (GetSkillTableData(skill)->skillLevels[i + 1] < 0)
+			{
+				trap_R_SetColor(clrSkillCounterDisable);
+				count[i] = 0; // force to hide the star and don't play the roll
+			}
+			else
+			{
+				trap_R_SetColor(NULL);
+			}
+
 			CG_LimboPanel_RenderCounterNumber(x, button->rect.y, w, button->rect.h, count[i], shaderBack, shaderRoll, numimages);
 
 			x += w + button->data[6];
@@ -3434,6 +3455,8 @@ void CG_LimboPanel_RenderCounter(panel_button_t *button)
 			x += w + button->data[6];
 		}
 	}
+
+	trap_R_SetColor(NULL);
 
 	if (button->data[0] == 0 || button->data[0] == 1)
 	{

@@ -2808,25 +2808,31 @@ void CG_Debriefing_PlayerSkills_Draw(panel_button_t *button)
 	CG_DrawPic(x, button->rect.y, button->rect.w, button->rect.h, cgs.media.skillPics[button->data[0]]);
 
 	x += button->rect.w + 8;
-	for (i = ci->skill[button->data[0]]; i > 0; i--)
+
+	for (i = 1; i < NUM_SKILL_LEVELS; ++i)
 	{
+		vec4_t clr;
+
+		if (GetSkillTableData(button->data[0])->skillLevels[i] < 0)
+		{
+			Vector4Set(clr, 1.f, 0.f, 0.f, 0.2f);
+		}
+		else if (ci->skill[button->data[0]] >= i)
+		{
+			Vector4Set(clr, 1.f, 1.f, 1.f, 1.0f);
+		}
+		else
+		{
+			Vector4Set(clr, 1.f, 1.f, 1.f, 0.2f);
+		}
+
+		trap_R_SetColor(clr);
 		CG_DrawPicST(x, button->rect.y, button->rect.w, button->rect.h, 0, 0, 1.f, 0.5f, cgs.media.limboStar_roll);
 
 		x += button->rect.w + 2;
 	}
 
-	{
-		vec4_t clr = { 1.f, 1.f, 1.f, 0.2f };
-
-		trap_R_SetColor(clr);
-		for (i = ci->skill[button->data[0]]; i < 4; i++)
-		{
-			CG_DrawPicST(x, button->rect.y, button->rect.w, button->rect.h, 0, 0, 1.f, 0.5f, cgs.media.limboStar_roll);
-
-			x += button->rect.w + 2;
-		}
-		trap_R_SetColor(NULL);
-	}
+	trap_R_SetColor(NULL);
 }
 
 static qhandle_t img;
