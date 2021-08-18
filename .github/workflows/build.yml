@@ -403,6 +403,10 @@ jobs:
           submodules: true
           fetch-depth: 0
 
+      - name: Git Sumbodule Update
+        run: |
+          git submodule update --remote --recursive
+
       - name: Setup GIT_TAG Env
         run: |
           cd etlegacy && echo "GIT_TAG=`echo $(git describe --tags --always --abbrev=7)`" >> $GITHUB_ENV
@@ -421,10 +425,6 @@ jobs:
       - name: Display structure of downloaded files
         run: ls -R
         working-directory: app/src/main/assets
-
-      - name: Git Sumbodule Update
-        run: |
-          git submodule update --remote --recursive
 
       - name: Build and Generate Package
         run: |
