@@ -3752,7 +3752,7 @@ static void CG_DrawBannerPrint(void)
 
 #define MAX_DISTANCE 2000.f
 #define COEFF_DISTANCE 0.5f
-#define ICONS_SIZE 8
+#define ICONS_SIZE 16
 
 /**
  * @brief CG_DrawEnvironmentalAwareness
@@ -3800,7 +3800,7 @@ static void CG_DrawEnvironmentalAwareness()
 		centity_t *cent = &cg_entities[snap->entities[i].number];
 		qhandle_t icon;
 		vec3_t    dir;
-		float     len;
+		float     len, len2;
 
 		// skip self
 		if (cent->currentState.eType == ET_PLAYER && cent->currentState.clientNum == cg.clientNum)
@@ -3823,6 +3823,8 @@ static void CG_DrawEnvironmentalAwareness()
 		{
 			vec4_t col = { 1.f, 1.f, 1.f, 1.f };
 			vec3_t angles;
+			float  x, y;
+			float  front, left, up;
 
 			col[3] -= len / (MAX_DISTANCE * COEFF_DISTANCE);
 
@@ -3836,6 +3838,21 @@ static void CG_DrawEnvironmentalAwareness()
 
 			AnglesSubtract(cg.predictedPlayerState.viewangles, angles, angles);
 
+			VectorSubtract(vec3_origin, dir, dir);
+
+			front = DotProduct(dir, cg.refdef.viewaxis[0]);
+			left  = DotProduct(dir, cg.refdef.viewaxis[1]);
+			up    = DotProduct(dir, cg.refdef.viewaxis[2]);
+
+			dir[0] = front;
+			dir[1] = left;
+			dir[2] = 0;
+			len2   = VectorLength(dir);
+			if (len2 < 0.1f)
+			{
+				len2 = 0.1f;
+			}
+
 			// can we see the target
 			if (angles[PITCH] >= -cg.refdef_current->fov_y / 2
 			    && angles[PITCH] <= cg.refdef_current->fov_y / 2)
@@ -3844,11 +3861,15 @@ static void CG_DrawEnvironmentalAwareness()
 				    && angles[YAW] <= cg.refdef_current->fov_x / 2)
 				{
 					trace_t trace;
-					float   front, left, up;
-					float   x, y;
 					int     skipNumber = cg.snap->ps.clientNum;
 					vec3_t  start, end;
 					int     passLeft = 3;   // do a maximum of 3 traces in a row to avoid infine trace if it fail for some reason
+
+					// too close to draw
+					if (len < CH_DIST)
+					{
+						continue;
+					}
 
 					VectorCopy(cg.refdef.vieworg, start);
 
@@ -3878,29 +3899,8 @@ static void CG_DrawEnvironmentalAwareness()
 						continue;
 					}
 
-					// too close to draw
-					if (len < 64.f)
-					{
-						continue;
-					}
-
-					VectorSubtract(vec3_origin, dir, dir);
-
-					front = DotProduct(dir, cg.refdef.viewaxis[0]);
-					left  = DotProduct(dir, cg.refdef.viewaxis[1]);
-					up    = DotProduct(dir, cg.refdef.viewaxis[2]);
-
-					dir[0] = front;
-					dir[1] = left;
-					dir[2] = 0;
-					len    = VectorLength(dir);
-					if (len < 0.1f)
-					{
-						len = 0.1f;
-					}
-
 					x = -left / front;
-					y = up / len;
+					y = up / len2;
 
 					trap_R_SetColor(col);
 					CG_DrawPic(Ccg_WideX(SCREEN_WIDTH) / 2.f + (Ccg_WideX(SCREEN_WIDTH) / 2.f) * x,
@@ -3912,10 +3912,53 @@ static void CG_DrawEnvironmentalAwareness()
 				}
 			}
 
+			x = left;
+			y = up / len2;
+
+			// hack when player is looking on top or bottom of himself
+			if ((x > -0.5 && x <= 0.5) && (y > -0.5 && y <= 0.5))
+			{
+				y = (y >= 0 ? 0.5 : -0.5);
+			}
+
+			if (x >= 0.5)
+			{
+				x = Ccg_WideX(SCREEN_WIDTH) - ICONS_SIZE;
+			}
+			else if (x <= -0.5)
+			{
+				x = 0;
+			}
+			else
+			{
+				x = Ccg_WideX(SCREEN_WIDTH) * (x + 0.5);
+
+				if (x > Ccg_WideX(SCREEN_WIDTH) - ICONS_SIZE)
+				{
+					x = Ccg_WideX(SCREEN_WIDTH) - ICONS_SIZE;
+				}
+			}
+
+			if (y >= 0.5)
+			{
+				y = SCREEN_HEIGHT - ICONS_SIZE;
+			}
+			else if (y <= -0.5)
+			{
+				y = 0;
+			}
+			else
+			{
+				y = Ccg_WideX(SCREEN_WIDTH) * (y + 0.5);
+
+				if (y > SCREEN_HEIGHT - ICONS_SIZE)
+				{
+					y = SCREEN_HEIGHT - ICONS_SIZE;
+				}
+			}
+
 			trap_R_SetColor(col);
-			CG_DrawCompassIcon(Ccg_WideX(SCREEN_WIDTH) * 0.125f, SCREEN_HEIGHT * 0.125f,
-			                   Ccg_WideX(SCREEN_WIDTH) * 0.75f, SCREEN_HEIGHT * 0.75f,
-			                   cg.predictedPlayerState.origin, cent->lerpOrigin, icon, COEFF_DISTANCE, ICONS_SIZE);
+			CG_DrawPic(x, y, ICONS_SIZE, ICONS_SIZE, icon);
 			trap_R_SetColor(NULL);
 		}
 	}
@@ -3996,7 +4039,6 @@ static void CG_Draw2D(void)
 			CG_DrawCrosshair();
 			CG_DrawCrosshairNames();
 			CG_DrawNoShootIcon();
-			CG_DrawEnvironmentalAwareness();
 		}
 
 		CG_DrawTeamInfo();
@@ -4102,6 +4144,12 @@ static void CG_Draw2D(void)
 	}
 
 	CG_DrawDemoRecording();
+
+	// draw objectif icons on top of all HUD elements
+	if (cg.snap->ps.stats[STAT_HEALTH] > 0 || (cg.snap->ps.pm_flags & PMF_FOLLOW))
+	{
+		CG_DrawEnvironmentalAwareness();
+	}
 }
 
 /**
