@@ -622,13 +622,13 @@ cvarTable_t gameCvarTable[] =
 	//misc
 	{ &team_riflegrenades,                "team_riflegrenades",                "1",                          0,                                               0, qfalse, qfalse },
 	//skills
-	{ &skill_soldier,                     "skill_soldier",                     "20 50 90 140",               CVAR_ARCHIVE | CVAR_SERVERINFO,                  0, qfalse, qfalse },
-	{ &skill_medic,                       "skill_medic",                       "20 50 90 140",               CVAR_ARCHIVE | CVAR_SERVERINFO,                  0, qfalse, qfalse },
-	{ &skill_fieldops,                    "skill_fieldops",                    "20 50 90 140",               CVAR_ARCHIVE | CVAR_SERVERINFO,                  0, qfalse, qfalse },
-	{ &skill_engineer,                    "skill_engineer",                    "20 50 90 140",               CVAR_ARCHIVE | CVAR_SERVERINFO,                  0, qfalse, qfalse },
-	{ &skill_covertops,                   "skill_covertops",                   "20 50 90 140",               CVAR_ARCHIVE | CVAR_SERVERINFO,                  0, qfalse, qfalse },
-	{ &skill_battlesense,                 "skill_battlesense",                 "20 50 90 140",               CVAR_ARCHIVE | CVAR_SERVERINFO,                  0, qfalse, qfalse },
-	{ &skill_lightweapons,                "skill_lightweapons",                "20 50 90 140",               CVAR_ARCHIVE | CVAR_SERVERINFO,                  0, qfalse, qfalse },
+	{ &skill_soldier,                     "skill_soldier",                     "20 50 90 140",               CVAR_ARCHIVE,                                    0, qfalse, qfalse },
+	{ &skill_medic,                       "skill_medic",                       "20 50 90 140",               CVAR_ARCHIVE,                                    0, qfalse, qfalse },
+	{ &skill_fieldops,                    "skill_fieldops",                    "20 50 90 140",               CVAR_ARCHIVE,                                    0, qfalse, qfalse },
+	{ &skill_engineer,                    "skill_engineer",                    "20 50 90 140",               CVAR_ARCHIVE,                                    0, qfalse, qfalse },
+	{ &skill_covertops,                   "skill_covertops",                   "20 50 90 140",               CVAR_ARCHIVE,                                    0, qfalse, qfalse },
+	{ &skill_battlesense,                 "skill_battlesense",                 "20 50 90 140",               CVAR_ARCHIVE,                                    0, qfalse, qfalse },
+	{ &skill_lightweapons,                "skill_lightweapons",                "20 50 90 140",               CVAR_ARCHIVE,                                    0, qfalse, qfalse },
 	{ &g_misc,                            "g_misc",                            "0",                          0,                                               0, qfalse, qfalse },
 	{ &g_intermissionTime,                "g_intermissionTime",                "60",                         0,                                               0, qfalse, qfalse },
 	{ &g_intermissionReadyPercent,        "g_intermissionReadyPercent",        "100",                        0,                                               0, qfalse, qfalse },
@@ -1601,6 +1601,41 @@ void G_SetTargetName(gentity_t *ent, char *targetname)
 }
 
 /**
+ * @brief G_SetSkillLevels
+ * @param[in] skill
+ * @param[in] string
+ */
+void G_SetSkillLevels(int skill, const char *string)
+{
+	char **temp = (char **) &string;
+	char *nextLevel;
+	int  levels[NUM_SKILL_LEVELS - 1];
+	int  count;
+
+	for (count = 0; count < NUM_SKILL_LEVELS - 1; count++)
+	{
+		nextLevel = COM_ParseExt(temp, qfalse);
+		if (nextLevel[0])
+		{
+			levels[count] = Q_atoi(nextLevel);
+			if (levels[count] < 0)
+			{
+				levels[count] = -1;
+			}
+		}
+		else
+		{
+			levels[count] = -1;
+		}
+	}
+
+	for (count = 1; count < NUM_SKILL_LEVELS; count++)
+	{
+		GetSkillTableData(skill)->skillLevels[count] = levels[count - 1];
+	}
+}
+
+/**
  * @brief G_SetSkillLevelsByCvar
  * @param[in] cvar
  */
@@ -1647,7 +1682,7 @@ void G_SetSkillLevelsByCvar(vmCvar_t *cvar)
 
 	if (skill >= 0)
 	{
-		BG_SetSkillLevels(skill, skillstring);
+		G_SetSkillLevels(skill, skillstring);
 	}
 }
 

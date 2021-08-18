@@ -337,29 +337,33 @@ void CG_NewClientInfo(int clientNum)
 				// NOTE: slick hack so that funcs we call use the new value now
 				cgs.clientinfo[cg.clientNum].skill[i] = newInfo.skill[i];
 
-				if (newInfo.skill[i] == (NUM_SKILL_LEVELS - 1) && (i == SK_HEAVY_WEAPONS || i == SK_LIGHT_WEAPONS))
+				// reward the skill only if available
+				if (GetSkillTableData(i)->skillLevels[newInfo.skill[i]] >= 0)
 				{
-					bg_playerclass_t *classinfo;
-					classinfo = BG_GetPlayerClassInfo(cgs.clientinfo[cg.clientNum].team, cgs.clientinfo[cg.clientNum].cls);
-
-					// Only select new weapon if using the first weapon (pistol 0)
-					if (cgs.ccSelectedSecondaryWeapon == classinfo->classSecondaryWeapons[0].weapon)
+					if (newInfo.skill[i] == (NUM_SKILL_LEVELS - 1) && (i == SK_HEAVY_WEAPONS || i == SK_LIGHT_WEAPONS))
 					{
-						CG_LimboPanel_SetDefaultWeapon(SECONDARY_SLOT);
-						CG_LimboPanel_SendSetupMsg(qfalse);
+						bg_playerclass_t *classinfo;
+						classinfo = BG_GetPlayerClassInfo(cgs.clientinfo[cg.clientNum].team, cgs.clientinfo[cg.clientNum].cls);
+
+						// Only select new weapon if using the first weapon (pistol 0)
+						if (cgs.ccSelectedSecondaryWeapon == classinfo->classSecondaryWeapons[0].weapon)
+						{
+							CG_LimboPanel_SetDefaultWeapon(SECONDARY_SLOT);
+							CG_LimboPanel_SendSetupMsg(qfalse);
+						}
 					}
-				}
 
 #ifdef FEATURE_EDV
-				if (!cgs.demoCamera.renderingFreeCam && !cgs.demoCamera.renderingWeaponCam)
+					if (!cgs.demoCamera.renderingFreeCam && !cgs.demoCamera.renderingWeaponCam)
 #endif
-				{
-					if (!(cg_popupBigFilter.integer & POPUP_BIG_FILTER_SKILL))
 					{
-						CG_AddPMItemBig(PM_SKILL, va(CG_TranslateString("Increased %s skill to level %i!"), CG_TranslateString(GetSkillTableData(i)->skillNames), newInfo.skill[i]), cgs.media.skillPics[i]);
-					}
+						if (!(cg_popupBigFilter.integer & POPUP_BIG_FILTER_SKILL))
+						{
+							CG_AddPMItemBig(PM_SKILL, va(CG_TranslateString("Increased %s skill to level %i!"), CG_TranslateString(GetSkillTableData(i)->skillNames), newInfo.skill[i]), cgs.media.skillPics[i]);
+						}
 
-					CG_PriorityCenterPrint(va(CG_TranslateString("You have been rewarded with %s"), CG_TranslateString(cg_skillRewards[i][newInfo.skill[i] - 1])), 400, cg_fontScaleCP.value, 99999);
+						CG_PriorityCenterPrint(va(CG_TranslateString("You have been rewarded with %s"), CG_TranslateString(cg_skillRewards[i][newInfo.skill[i] - 1])), 400, cg_fontScaleCP.value, 99999);
+					}
 				}
 
 #ifdef FEATURE_PRESTIGE

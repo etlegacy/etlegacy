@@ -1149,9 +1149,9 @@ static void CG_DrawAmmoCount(float x, float y)
  * @param[in] y
  * @param[in] w
  * @param[in] h
- * @param[in] skill
+ * @param[in] skillLvl
  */
-static void CG_DrawSkillBar(float x, float y, float w, float h, int skill)
+static void CG_DrawSkillBar(float x, float y, float w, float h, int skillLvl, skillType_t skill)
 {
 	int    i;
 	float  blockheight = (h - 4) / (float)(NUM_SKILL_LEVELS - 1);
@@ -1159,20 +1159,26 @@ static void CG_DrawSkillBar(float x, float y, float w, float h, int skill)
 	vec4_t colour;
 	float  x1, y1, w1, h1;
 
-	for (i = 0; i < NUM_SKILL_LEVELS - 1; i++)
+	for (i = 1; i < NUM_SKILL_LEVELS; i++)
 	{
-		if (i >= skill)
+
+		if (GetSkillTableData(skill)->skillLevels[i] < 0)
 		{
-			Vector4Set(colour, 1.f, 1.f, 1.f, .15f);
+			Vector4Set(colour, 1.f, 0.f, 0.f, .15f);
+		}
+		else if (skillLvl >= i)
+		{
+			Vector4Set(colour, 0.f, 0.f, 0.f, .4f);
 		}
 		else
 		{
-			Vector4Set(colour, 0.f, 0.f, 0.f, .4f);
+			Vector4Set(colour, 1.f, 1.f, 1.f, .15f);
 		}
 
 		CG_FillRect(x, draw_y, w, blockheight, colour);
 
-		if (i < skill)
+		// draw the star only if the skill is reach and available
+		if (skillLvl >= i && GetSkillTableData(skill)->skillLevels[i] >= 0)
 		{
 			x1 = x;
 			y1 = draw_y;
@@ -1247,15 +1253,26 @@ static void CG_DrawSkills(hudComponent_t comp)
 		skill = CG_ClassSkillForPosition(ci, i);
 		if (comp.style == STYLE_NORMAL)
 		{
-			CG_DrawSkillBar(i * SKILL_BAR_X_SCALE + SKILL_BAR_X, SCREEN_HEIGHT - (5 * SKILL_BAR_Y_SCALE) + SKILL_BAR_Y, SKILL_BAR_WIDTH, 4 * SKILL_ICON_SIZE, ci->skill[skill]);
+			CG_DrawSkillBar(i * SKILL_BAR_X_SCALE + SKILL_BAR_X, SCREEN_HEIGHT - (5 * SKILL_BAR_Y_SCALE) + SKILL_BAR_Y, SKILL_BAR_WIDTH, 4 * SKILL_ICON_SIZE, ci->skill[skill], skill);
 			CG_DrawPic(i * SKILL_ICON_X_SCALE + SKILL_ICON_X, SCREEN_HEIGHT + SKILL_ICON_Y, SKILL_ICON_SIZE, SKILL_ICON_SIZE, cgs.media.skillPics[skill]);
 		}
 		else
 		{
+			int j        = 1;
+			int skillLvl = 0;
+
+			for (; j < NUM_SKILL_LEVELS; ++j)
+			{
+				if (BG_IsSkillAvailable(ci->skill, skill, j))
+				{
+					skillLvl++;
+				}
+			}
+
 			temp = comp.location.y + (i * SKILL_ICON_SIZE * 1.7f);
 			//CG_DrawPic
 			CG_DrawPicShadowed(comp.location.x, temp, SKILL_ICON_SIZE, SKILL_ICON_SIZE, cgs.media.skillPics[skill]);
-			CG_Text_Paint_Ext(comp.location.x + 3, temp + 24, 0.25f, 0.25f, colorWhite, va("%i", ci->skill[skill]), 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
+			CG_Text_Paint_Ext(comp.location.x + 3, temp + 24, 0.25f, 0.25f, colorWhite, va("%i", skillLvl), 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
 		}
 	}
 }
