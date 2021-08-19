@@ -1648,9 +1648,10 @@ void CG_StatsDebugAddText(const char *text)
  * @param[in] ent
  * @param[in] drawAllVoicesChat get all icons voices chat, otherwise only request relevant icons voices chat (need medic/ammo ...)
  * @param[in] drawFireTeam draw fireteam members position
+ * @param[in] drawPrimaryObj draw primary objective position
  * @return A valid compass icon handle otherwise 0
  */
-qhandle_t CG_GetCompassIcon(entityState_t *ent, qboolean drawAllVoicesChat, qboolean drawFireTeam)
+qhandle_t CG_GetCompassIcon(entityState_t *ent, qboolean drawAllVoicesChat, qboolean drawFireTeam, qboolean drawPrimaryObj)
 {
 	switch (ent->eType)
 	{
@@ -1728,6 +1729,26 @@ qhandle_t CG_GetCompassIcon(entityState_t *ent, qboolean drawAllVoicesChat, qboo
 	}
 	case ET_EXPLOSIVE_INDICATOR:
 	{
+		if (drawPrimaryObj)
+		{
+			centity_t *cent = &cg_entities[ent->number];
+			oidInfo_t *oidInfo = &cgs.oidInfo[cent->currentState.modelindex2];
+			int entNum = Q_atoi(
+					CG_ConfigString(ent->teamNum == TEAM_AXIS ? CS_MAIN_AXIS_OBJECTIVE : CS_MAIN_ALLIES_OBJECTIVE));
+
+			if (entNum == oidInfo->entityNum)
+			{
+				if (cg.predictedPlayerState.persistant[PERS_TEAM] == TEAM_AXIS)
+				{
+					return ent->teamNum == TEAM_AXIS ? cgs.media.defendShader : cgs.media.attackShader;
+				}
+				else
+				{
+					return ent->teamNum == TEAM_AXIS ? cgs.media.attackShader : cgs.media.defendShader;
+				}
+			}
+		}
+
 		// draw explosives if an engineer
 		if (cg.predictedPlayerState.stats[STAT_PLAYER_CLASS] == PC_ENGINEER ||
 		    (cg.predictedPlayerState.stats[STAT_PLAYER_CLASS] == PC_COVERTOPS && ent->effect1Time == 1))
@@ -1742,17 +1763,31 @@ qhandle_t CG_GetCompassIcon(entityState_t *ent, qboolean drawAllVoicesChat, qboo
 				return 0;
 			}
 
-			if (cg.predictedPlayerState.stats[STAT_PLAYER_CLASS] == PC_ENGINEER)
-			{
-				return cgs.media.dynamiteHintShader;
-			}
-
-			return cgs.media.satchelchargeHintShader;
+			return cgs.media.destroyShader;
 		}
 		break;
 	}
 	case ET_CONSTRUCTIBLE_INDICATOR:
 	{
+		if (drawPrimaryObj)
+		{
+			centity_t *cent    = &cg_entities[ent->number];
+			oidInfo_t *oidInfo = &cgs.oidInfo[cent->currentState.modelindex2];
+			int entNum         = Q_atoi(CG_ConfigString(ent->teamNum == TEAM_AXIS ? CS_MAIN_AXIS_OBJECTIVE : CS_MAIN_ALLIES_OBJECTIVE));
+
+			if (entNum == oidInfo->entityNum)
+			{
+				if (cg.predictedPlayerState.persistant[PERS_TEAM] == TEAM_AXIS)
+				{
+					return ent->teamNum == TEAM_AXIS ? cgs.media.defendShader : cgs.media.attackShader;
+				}
+				else
+				{
+					return ent->teamNum == TEAM_AXIS ? cgs.media.attackShader : cgs.media.defendShader;
+				}
+			}
+		}
+
 		// draw construction if an engineer
 		if (cg.predictedPlayerState.stats[STAT_PLAYER_CLASS] == PC_ENGINEER)
 		{
@@ -1766,12 +1801,32 @@ qhandle_t CG_GetCompassIcon(entityState_t *ent, qboolean drawAllVoicesChat, qboo
 				return 0;
 			}
 
-			return cg.predictedPlayerState.persistant[PERS_TEAM] == TEAM_AXIS ? cgs.media.pmImageAxisConstruct : cgs.media.pmImageAlliesConstruct;
+			return cgs.media.constructShader;
 		}
 		break;
 	}
 	case ET_TANK_INDICATOR:
 	{
+		if (drawPrimaryObj)
+		{
+			centity_t *cent    = &cg_entities[ent->number];
+			oidInfo_t *oidInfo = &cgs.oidInfo[cent->currentState.modelindex2];
+			int entNum         = Q_atoi(CG_ConfigString(ent->teamNum == TEAM_AXIS ? CS_MAIN_AXIS_OBJECTIVE : CS_MAIN_ALLIES_OBJECTIVE));
+
+			if (entNum == oidInfo->entityNum)
+			{
+				if (cg.predictedPlayerState.persistant[PERS_TEAM] == TEAM_AXIS)
+				{
+					return ent->teamNum == TEAM_AXIS ? cgs.media.defendShader : cgs.media.attackShader;
+				}
+				else
+				{
+					return ent->teamNum == TEAM_AXIS ? cgs.media.attackShader : cgs.media.defendShader;
+				}
+			}
+		}
+
+		// FIXME: show only when relevant
 		if ((ent->teamNum == 1 && cg.predictedPlayerState.persistant[PERS_TEAM] == TEAM_AXIS)
 		    || (ent->teamNum == 2 && cg.predictedPlayerState.persistant[PERS_TEAM] == TEAM_ALLIES))
 		{
@@ -1782,6 +1837,26 @@ qhandle_t CG_GetCompassIcon(entityState_t *ent, qboolean drawAllVoicesChat, qboo
 	}
 	case ET_TANK_INDICATOR_DEAD:
 	{
+		if (drawPrimaryObj)
+		{
+			centity_t *cent    = &cg_entities[ent->number];
+			oidInfo_t *oidInfo = &cgs.oidInfo[cent->currentState.modelindex2];
+			int entNum         = Q_atoi(CG_ConfigString(ent->teamNum == TEAM_AXIS ? CS_MAIN_AXIS_OBJECTIVE : CS_MAIN_ALLIES_OBJECTIVE));
+
+			if (entNum == oidInfo->entityNum)
+			{
+				if (cg.predictedPlayerState.persistant[PERS_TEAM] == TEAM_AXIS)
+				{
+					return ent->teamNum == TEAM_AXIS ? cgs.media.defendShader : cgs.media.attackShader;
+				}
+				else
+				{
+					return ent->teamNum == TEAM_AXIS ? cgs.media.attackShader : cgs.media.defendShader;
+				}
+			}
+		}
+
+		// FIXME: show only when relevant
 		// draw repair if an engineer
 		if (cg.predictedPlayerState.stats[STAT_PLAYER_CLASS] == PC_ENGINEER && (
 				(ent->teamNum == 1 && cg.predictedPlayerState.persistant[PERS_TEAM] == TEAM_AXIS)
@@ -1795,20 +1870,21 @@ qhandle_t CG_GetCompassIcon(entityState_t *ent, qboolean drawAllVoicesChat, qboo
 	{
 		if (ent->frame == 0)
 		{
-			return cgs.media.pmImageSpecFlag;
+			return cgs.media.regroupShader;
 		}
 
-		if (ent->frame == 4 && cg.predictedPlayerState.persistant[PERS_TEAM] == TEAM_AXIS)
+		if (ent->frame == 4)
 		{
-			return cgs.media.pmImageAlliesFlag;
+			return cg.predictedPlayerState.persistant[PERS_TEAM] == TEAM_AXIS ? cgs.media.regroupShader : cgs.media.defendShader;
 		}
 
-		if (ent->frame == 3 && cg.predictedPlayerState.persistant[PERS_TEAM] == TEAM_ALLIES)
+		if (ent->frame == 3)
 		{
-			return cgs.media.pmImageAxisFlag;
+			return cg.predictedPlayerState.persistant[PERS_TEAM] == TEAM_ALLIES ? cgs.media.regroupShader : cgs.media.defendShader;
 		}
 		break;
 	}
+	// FIXME: ET_COMMANDMAP_MARKER, ET_HEALER, ET_SUPPLIER
 	//case ET_MG42_BARREL:
 	//{
 	//    return cgs.media.mg42HintShader;
@@ -2076,7 +2152,7 @@ static void CG_DrawNewCompass(rectDef_t location)
 			continue;
 		}
 
-		icon = CG_GetCompassIcon(&snap->entities[i], qfalse, qtrue);
+		icon = CG_GetCompassIcon(&snap->entities[i], qfalse, qtrue, qfalse);
 
 		if (icon)
 		{

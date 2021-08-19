@@ -3817,7 +3817,7 @@ static void CG_DrawEnvironmentalAwareness()
 			continue;
 		}
 
-		icon = CG_GetCompassIcon(&snap->entities[i], qfalse, qfalse);
+		icon = CG_GetCompassIcon(&snap->entities[i], qfalse, qfalse, qfalse);
 
 		if (icon)
 		{
@@ -3951,8 +3951,8 @@ static void CG_DrawEnvironmentalAwareness()
 					y = SCREEN_HEIGHT - ICONS_SIZE;
 				}
 			}
-            
-            //CG_Text_Paint_Centred_Ext(x, y, 0.22f, 0.22f, colorWhite, cent, 0, 0, )
+
+			//CG_Text_Paint_Centred_Ext(x, y, 0.22f, 0.22f, colorWhite, cent, 0, 0, )
 			CG_DrawPic(x, y, ICONS_SIZE, ICONS_SIZE, icon);
 		}
 	}

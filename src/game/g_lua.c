@@ -2405,7 +2405,7 @@ static void registerConfigstringConstants(lua_vm_t *vm)
 	lua_regconstinteger(vm->L, CS_FIRSTBLOOD);            // Team that has first blood
 	lua_regconstinteger(vm->L, CS_ROUNDSCORES1);          // Axis round wins
 	lua_regconstinteger(vm->L, CS_ROUNDSCORES2);          // Allied round wins
-	lua_regconstinteger(vm->L, CS_MAIN_AXIS_OBJECTIVE);
+	lua_regconstinteger(vm->L, CS_MAIN_AXIS_OBJECTIVE);   // Most important current objective
 	lua_regconstinteger(vm->L, CS_MAIN_ALLIES_OBJECTIVE); // Most important current objective
 	lua_regconstinteger(vm->L, CS_MUSIC_QUEUE);
 	lua_regconstinteger(vm->L, CS_SCRIPT_MOVER_NAMES);

@@ -1687,8 +1687,6 @@ static void CG_RegisterGraphics(void)
 
 	cgs.media.countryFlags = trap_R_RegisterShaderNoMip("gfx/flags/world_flags");
 
-	//cgs.media.compassDestroyShader = trap_R_RegisterShaderNoMip("sprites/destroy.tga");
-
 	cgs.media.slashShader    = trap_R_RegisterShaderNoMip("gfx/2d/numbers/slash");
 	cgs.media.compass2Shader = trap_R_RegisterShaderNoMip("gfx/2d/compass2.tga");
 	cgs.media.compassShader  = trap_R_RegisterShaderNoMip("gfx/2d/compass.tga");
@@ -1754,6 +1752,9 @@ static void CG_RegisterGraphics(void)
 	cgs.media.constructShader = trap_R_RegisterShader("sprites/construct");
 	cgs.media.destroyShader   = trap_R_RegisterShader("sprites/destroy");
 	cgs.media.escortShader    = trap_R_RegisterShader("sprites/escort");
+	cgs.media.attackShader    = trap_R_RegisterShader("sprites/attack");
+	cgs.media.defendShader    = trap_R_RegisterShader("sprites/defend");
+	cgs.media.regroupShader   = trap_R_RegisterShader("sprites/regroup");
 
 	cgs.media.voiceChatShader = trap_R_RegisterShader("sprites/voiceChat");
 	cgs.media.balloonShader   = trap_R_RegisterShader("sprites/balloon3");
