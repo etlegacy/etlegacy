@@ -30,7 +30,7 @@ jobs:
 #                              |___/
 
   lnx64-mod:
-    runs-on: ubuntu-16.04
+    runs-on: ubuntu-18.04
     container:
       image: etlegacy/lnx-build:centos7-wayland-x11
     steps:
@@ -108,7 +108,7 @@ jobs:
             build/legacy/ui*.dll
 
   raspberry_pi-mod:
-    runs-on: ubuntu-16.04
+    runs-on: ubuntu-18.04
     strategy:
       matrix:
         include:
@@ -140,7 +140,7 @@ jobs:
             build/legacy/ui*.so
 
   android-mod:
-    runs-on: ubuntu-16.04
+    runs-on: ubuntu-18.04
     container:
       image: rafal1137/etl_android
     steps:
@@ -201,7 +201,7 @@ jobs:
 # Since lnx32 is installing the most, use it as the step that combines all the other steps mod files.
 # This step also generates the final packages for 32 bit lnx.
   lnx32:
-    runs-on: ubuntu-16.04
+    runs-on: ubuntu-18.04
     container:
       image: etlegacy/lnx-build:centos7-wayland-x11
     needs: [ lnx64-mod, osx-mod, win-mod, raspberry_pi-mod, android-mod ]
@@ -263,7 +263,7 @@ jobs:
 #                                     |_|                                    |___/
 # Generate the final packages for 64lnx, Osx, Windows and RPI (armv7 only)
   lnx64:
-    runs-on: ubuntu-16.04
+    runs-on: ubuntu-18.04
     needs: [ lnx32 ]
     container:
       image: etlegacy/lnx-build:centos7-wayland-x11
@@ -465,7 +465,7 @@ jobs:
 #           |_|                                                                                                         |_|
 
   upload:
-    runs-on: ubuntu-16.04
+    runs-on: ubuntu-18.04
     needs: [ lnx32, lnx64, osx, win, android ]
     if: github.ref == 'refs/heads/master'
     steps:
@@ -509,7 +509,7 @@ jobs:
           args: "<@&673533235887865879> Build from ETLegacy: ${{ github.sha }} has been published.\nDownload at: https://www.etlegacy.com/workflow-files"
 
   docker:
-    runs-on: ubuntu-16.04
+    runs-on: ubuntu-18.04
     needs: [ lnx64 ]
     if: github.ref == 'refs/heads/master'
     steps:
@@ -568,7 +568,7 @@ jobs:
           docker push etlegacy/server:latest
 
   cleanup:
-    runs-on: ubuntu-16.04
+    runs-on: ubuntu-18.04
     if: always()
     needs: [ upload, docker ]
     steps:
