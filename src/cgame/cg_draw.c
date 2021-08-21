@@ -1913,7 +1913,7 @@ static void CG_DrawCrosshairNames(void)
 			return;
 		}
 
-		if (BG_IsSkillAvailable(cgs.clientinfo[cg.snap->ps.clientNum].skill, SK_SIGNALS, 4) && cgs.clientinfo[cg.snap->ps.clientNum].cls == PC_FIELDOPS)
+		if (BG_IsSkillAvailable(cgs.clientinfo[cg.snap->ps.clientNum].skill, SK_SIGNALS, SK_FIELDOPS_ENEMY_RECOGNITION) && cgs.clientinfo[cg.snap->ps.clientNum].cls == PC_FIELDOPS)
 		{
 			// draw the name of the player being looked at
 			color = CG_FadeColor(cg.crosshairClientTime, 1000);
@@ -3821,12 +3821,9 @@ static void CG_DrawEnvironmentalAwareness()
 
 		if (icon)
 		{
-			vec4_t col = { 1.f, 1.f, 1.f, 1.f };
 			vec3_t angles;
 			float  x, y;
 			float  front, left, up;
-
-			col[3] -= len / (MAX_DISTANCE * COEFF_DISTANCE);
 
 			VectorNormalize(dir);
 			vectoangles(dir, angles);
@@ -3902,11 +3899,9 @@ static void CG_DrawEnvironmentalAwareness()
 					x = -left / front;
 					y = up / len2;
 
-					trap_R_SetColor(col);
 					CG_DrawPic(Ccg_WideX(SCREEN_WIDTH) / 2.f + (Ccg_WideX(SCREEN_WIDTH) / 2.f) * x,
 					           SCREEN_HEIGHT / 2.f + (SCREEN_HEIGHT / 2.f) * y,
 					           ICONS_SIZE, ICONS_SIZE, icon);
-					trap_R_SetColor(NULL);
 
 					continue;
 				}
@@ -3956,10 +3951,9 @@ static void CG_DrawEnvironmentalAwareness()
 					y = SCREEN_HEIGHT - ICONS_SIZE;
 				}
 			}
-
-			trap_R_SetColor(col);
+            
+            //CG_Text_Paint_Centred_Ext(x, y, 0.22f, 0.22f, colorWhite, cent, 0, 0, )
 			CG_DrawPic(x, y, ICONS_SIZE, ICONS_SIZE, icon);
-			trap_R_SetColor(NULL);
 		}
 	}
 }

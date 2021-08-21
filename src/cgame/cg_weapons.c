@@ -3166,7 +3166,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 	{
 		if (weaponNum == WP_AMMO)
 		{
-			if (BG_IsSkillAvailable(cgs.clientinfo[clientNum].skill, SK_SIGNALS, 1))
+			if (BG_IsSkillAvailable(cgs.clientinfo[clientNum].skill, SK_SIGNALS, SK_FIELDOPS_RESOURCES))
 			{
 				gun.customShader = weapon->modModels[0];
 			}
@@ -3176,7 +3176,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 		{
 			if (weaponNum == WP_MEDIC_SYRINGE)
 			{
-				if (BG_IsSkillAvailable(cgs.clientinfo[clientNum].skill, SK_FIRST_AID, 3))
+				if (BG_IsSkillAvailable(cgs.clientinfo[clientNum].skill, SK_FIRST_AID, SK_MEDIC_FULL_REVIVE))
 				{
 					gun.customShader = weapon->modModels[0];
 				}
@@ -3289,7 +3289,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 
 					if (weaponNum == WP_MEDIC_SYRINGE && i == W_PART_1)
 					{
-						if (BG_IsSkillAvailable(cgs.clientinfo[clientNum].skill, SK_FIRST_AID, 3))
+						if (BG_IsSkillAvailable(cgs.clientinfo[clientNum].skill, SK_FIRST_AID, SK_MEDIC_FULL_REVIVE))
 						{
 							barrel.customShader = weapon->modModels[0];
 						}

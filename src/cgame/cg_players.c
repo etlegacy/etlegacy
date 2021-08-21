@@ -340,7 +340,8 @@ void CG_NewClientInfo(int clientNum)
 				// reward the skill only if available
 				if (GetSkillTableData(i)->skillLevels[newInfo.skill[i]] >= 0)
 				{
-					if (newInfo.skill[i] == (NUM_SKILL_LEVELS - 1) && (i == SK_HEAVY_WEAPONS || i == SK_LIGHT_WEAPONS))
+					if ((newInfo.skill[i] == SK_LIGHT_WEAPONS_HANDLING && i == SK_HEAVY_WEAPONS)
+					    || (newInfo.skill[i] == SK_LIGHT_WEAPONS_AKIMBO &&  i == SK_LIGHT_WEAPONS))
 					{
 						bg_playerclass_t *classinfo;
 						classinfo = BG_GetPlayerClassInfo(cgs.clientinfo[cg.clientNum].team, cgs.clientinfo[cg.clientNum].cls);
@@ -3602,7 +3603,7 @@ int CG_GetPlayerMaxHealth(int clientNum, int class, int team)
 		}
 	}
 
-	if (BG_IsSkillAvailable(cgs.clientinfo[cg.clientNum].skill, SK_BATTLE_SENSE, 3))
+	if (BG_IsSkillAvailable(cgs.clientinfo[cg.clientNum].skill, SK_BATTLE_SENSE, SK_BATTLE_SENSE_HEALTH))
 	{
 		maxHealth += 15;
 	}

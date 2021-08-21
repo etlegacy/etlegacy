@@ -142,7 +142,7 @@ int PM_IdleAnimForWeapon(int weapon)
  */
 int PM_ReloadAnimForWeapon(int weapon)
 {
-	if ((BG_IsSkillAvailable(pm->skill, SK_LIGHT_WEAPONS, 2) && GetWeaponTableData(weapon)->attributes & WEAPON_ATTRIBUT_FAST_RELOAD)      // faster reload
+	if ((BG_IsSkillAvailable(pm->skill, SK_LIGHT_WEAPONS, SK_LIGHT_WEAPONS_FASTER_RELOAD) && GetWeaponTableData(weapon)->attributes & WEAPON_ATTRIBUT_FAST_RELOAD)      // faster reload
 	    || GetWeaponTableData(weapon)->type & (WEAPON_TYPE_SET | WEAPON_TYPE_RIFLENADE))
 	{
 		return WEAP_RELOAD2;
@@ -629,14 +629,14 @@ static float PM_CmdScale(usercmd_t *cmd)
 	{
 		if (pm->ps->weapon == WP_FLAMETHROWER) // trying some different balance for the FT
 		{
-			if (!(BG_IsSkillAvailable(pm->skill, SK_HEAVY_WEAPONS, 3)) || (pm->cmd.buttons & BUTTON_ATTACK))
+			if (!(BG_IsSkillAvailable(pm->skill, SK_HEAVY_WEAPONS, SK_SOLDIER_DEXTERITY)) || (pm->cmd.buttons & BUTTON_ATTACK))
 			{
 				scale *= 0.7f;
 			}
 		}
 		else
 		{
-			if (BG_IsSkillAvailable(pm->skill, SK_HEAVY_WEAPONS, 3))
+			if (BG_IsSkillAvailable(pm->skill, SK_HEAVY_WEAPONS, SK_SOLDIER_DEXTERITY))
 			{
 				scale *= 0.75f;
 			}
@@ -2417,7 +2417,7 @@ static void PM_BeginWeaponReload(weapon_t weapon)
 	// okay to reload while overheating without tacking the reload time onto the end of the
 	// current weaponTime (the reload time is partially absorbed into the overheat time)
 	reloadTime = GetWeaponTableData(weapon)->reloadTime;
-	if (BG_IsSkillAvailable(pm->skill, SK_LIGHT_WEAPONS, 2) && (GetWeaponTableData(weapon)->attributes & WEAPON_ATTRIBUT_FAST_RELOAD))
+	if (BG_IsSkillAvailable(pm->skill, SK_LIGHT_WEAPONS, SK_LIGHT_WEAPONS_FASTER_RELOAD) && (GetWeaponTableData(weapon)->attributes & WEAPON_ATTRIBUT_FAST_RELOAD))
 	{
 		reloadTime *= .65f;
 	}
@@ -2923,7 +2923,7 @@ void PM_CoolWeapons(void)
 			// and it's hot
 			if (pm->pmext->weapHeat[wp])
 			{
-				if (BG_IsSkillAvailable(pm->skill, SK_HEAVY_WEAPONS, 2) && pm->ps->stats[STAT_PLAYER_CLASS] == PC_SOLDIER)
+				if (BG_IsSkillAvailable(pm->skill, SK_HEAVY_WEAPONS, SK_SOLDIER_OVERHEATING_COOLDOWN) && pm->ps->stats[STAT_PLAYER_CLASS] == PC_SOLDIER)
 				{
 					pm->pmext->weapHeat[wp] -= ((float)GetWeaponTableData(wp)->coolRate * 2.f * pml.frametime);
 				}
@@ -2995,7 +2995,7 @@ void PM_AdjustAimSpreadScale(void)
 	{
 		float viewchange = 0;
 
-		if ((GetWeaponTableData(pm->ps->weapon)->type & WEAPON_TYPE_SCOPED) && BG_IsSkillAvailable(pm->skill, SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS, 3))
+		if ((GetWeaponTableData(pm->ps->weapon)->type & WEAPON_TYPE_SCOPED) && BG_IsSkillAvailable(pm->skill, SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS, SK_COVERTOPS_BREATH_CONTROL))
 		{
 			wpnScale *= 0.5;
 		}
@@ -3514,25 +3514,14 @@ static void PM_Weapon(void)
 	// don't allow some weapons to fire if charge bar isn't full
 	if (GetWeaponTableData(pm->ps->weapon)->attributes & WEAPON_ATTRIBUT_CHARGE_TIME)
 	{
-		skillType_t skill    = GetWeaponTableData(pm->ps->weapon)->skillBased;
-		int         skillLvl = pm->skill[skill];
-		float       coeff    = GetWeaponTableData(pm->ps->weapon)->chargeTimeCoeff[pm->skill[skill]];
-		int         chargeTime;
+		int index = BG_IsSkillAvailable(pm->skill,
+		                                GetWeaponTableData(pm->ps->weapon)->skillBased,
+		                                GetWeaponTableData(pm->ps->weapon)->chargeTimeSkill);
 
-		for (; skillLvl >= 0; skillLvl--)
-		{
-			if (coeff != GetWeaponTableData(pm->ps->weapon)->chargeTimeCoeff[skillLvl])
-			{
-				if (skillLvl == 0 || !BG_IsSkillAvailable(pm->skill, skill, skillLvl))
-				{
-					coeff = GetWeaponTableData(pm->ps->weapon)->chargeTimeCoeff[skillLvl];
-				}
+		float coeff = GetWeaponTableData(pm->ps->weapon)->chargeTimeCoeff[index];
+		int   chargeTime;
 
-				break;
-			}
-		}
-
-		switch (skill)
+		switch (GetWeaponTableData(pm->ps->weapon)->skillBased)
 		{
 		case SK_EXPLOSIVES_AND_CONSTRUCTION:              chargeTime = pm->engineerChargeTime;  break;
 		case SK_FIRST_AID:                                chargeTime = pm->medicChargeTime;     break;
@@ -3796,14 +3785,14 @@ static void PM_Weapon(void)
 	{
 		if (pm->ps->weapon == WP_FG42_SCOPE)
 		{
-			if (BG_IsSkillAvailable(pm->skill, SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS, 3))
+			if (BG_IsSkillAvailable(pm->skill, SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS, SK_COVERTOPS_BREATH_CONTROL))
 			{
 				pm->pmext->weapRecoilPitch *= .5f;
 			}
 		}
 		else
 		{
-			if (BG_IsSkillAvailable(pm->skill, SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS, 3))
+			if (BG_IsSkillAvailable(pm->skill, SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS, SK_COVERTOPS_BREATH_CONTROL))
 			{
 				pm->pmext->weapRecoilPitch = .25f;
 			}
@@ -3823,7 +3812,7 @@ static void PM_Weapon(void)
 	}
 	else if (GetWeaponTableData(pm->ps->weapon)->type & WEAPON_TYPE_PISTOL)
 	{
-		if (BG_IsSkillAvailable(pm->skill, SK_LIGHT_WEAPONS, 3))
+		if (BG_IsSkillAvailable(pm->skill, SK_LIGHT_WEAPONS, SK_LIGHT_WEAPONS_HANDLING))
 		{
 			pm->pmext->weapRecoilDuration = 70;
 			pm->pmext->weapRecoilPitch    = .25f * random() * .15f;
@@ -3846,7 +3835,7 @@ static void PM_Weapon(void)
 	}
 
 	// covert ops received a reduction of 50% reduction in both recoil jump and weapon sway with Scoped Weapons ONLY
-	if ((GetWeaponTableData(pm->ps->weapon)->type & WEAPON_TYPE_SCOPED) && BG_IsSkillAvailable(pm->skill, SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS, 3)
+	if ((GetWeaponTableData(pm->ps->weapon)->type & WEAPON_TYPE_SCOPED) && BG_IsSkillAvailable(pm->skill, SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS, SK_COVERTOPS_BREATH_CONTROL)
 	    && pm->ps->stats[STAT_PLAYER_CLASS] == PC_COVERTOPS)
 	{
 		pm->ps->aimSpreadScaleFloat *= .5f;
@@ -4887,7 +4876,7 @@ void PM_Sprint(void)
 			{
 				int rechargebase = 500;
 
-				if (BG_IsSkillAvailable(pm->skill, SK_BATTLE_SENSE, 2))
+				if (BG_IsSkillAvailable(pm->skill, SK_BATTLE_SENSE, SK_BATTLE_SENSE_STAMINA_RECHARGE))
 				{
 					rechargebase *= 1.6f;
 				}

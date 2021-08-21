@@ -1021,21 +1021,21 @@ static void AddExtraSpawnAmmo(gclient_t *client, weapon_t weaponNum)
 
 	if (GetWeaponTableData(weaponNum)->type & WEAPON_TYPE_PISTOL)
 	{
-		if (BG_IsSkillAvailable(client->sess.skill, SK_LIGHT_WEAPONS, 1))
+		if (BG_IsSkillAvailable(client->sess.skill, SK_LIGHT_WEAPONS, SK_LIGHT_WEAPONS_EXTRA_AMMO))
 		{
 			client->ps.ammo[GetWeaponTableData(weaponNum)->ammoIndex] += GetWeaponTableData(weaponNum)->maxClip;
 		}
 	}
 	else if (GetWeaponTableData(weaponNum)->type & WEAPON_TYPE_SMG)
 	{
-		if (BG_IsSkillAvailable(client->sess.skill, SK_LIGHT_WEAPONS, 1))
+		if (BG_IsSkillAvailable(client->sess.skill, SK_LIGHT_WEAPONS, SK_LIGHT_WEAPONS_EXTRA_AMMO))
 		{
 			client->ps.ammo[GetWeaponTableData(weaponNum)->ammoIndex] += GetWeaponTableData(weaponNum)->maxClip;
 		}
 	}
 	else if (GetWeaponTableData(weaponNum)->type & WEAPON_TYPE_RIFLENADE)
 	{
-		if (BG_IsSkillAvailable(client->sess.skill, SK_EXPLOSIVES_AND_CONSTRUCTION, 1))
+		if (BG_IsSkillAvailable(client->sess.skill, SK_EXPLOSIVES_AND_CONSTRUCTION, SK_ENGINEER_EXTRA_GRENADE))
 		{
 			client->ps.ammo[GetWeaponTableData(weaponNum)->ammoIndex] += 4;
 		}
@@ -1044,14 +1044,14 @@ static void AddExtraSpawnAmmo(gclient_t *client, weapon_t weaponNum)
 	{
 		if (client->sess.playerType == PC_ENGINEER)
 		{
-			if (BG_IsSkillAvailable(client->sess.skill, SK_EXPLOSIVES_AND_CONSTRUCTION, 1))
+			if (BG_IsSkillAvailable(client->sess.skill, SK_EXPLOSIVES_AND_CONSTRUCTION, SK_ENGINEER_EXTRA_GRENADE))
 			{
 				client->ps.ammo[GetWeaponTableData(weaponNum)->ammoIndex] += 4;
 			}
 		}
 		if (client->sess.playerType == PC_MEDIC)
 		{
-			if (BG_IsSkillAvailable(client->sess.skill, SK_FIRST_AID, 1))
+			if (BG_IsSkillAvailable(client->sess.skill, SK_FIRST_AID, SK_MEDIC_EXTRA_AMMO))
 			{
 				client->ps.ammo[GetWeaponTableData(weaponNum)->ammoIndex] += 1;
 			}
@@ -1059,14 +1059,14 @@ static void AddExtraSpawnAmmo(gclient_t *client, weapon_t weaponNum)
 	}
 	else if (GetWeaponTableData(weaponNum)->type & WEAPON_TYPE_SYRINGUE)
 	{
-		if (BG_IsSkillAvailable(client->sess.skill, SK_FIRST_AID, 2))
+		if (BG_IsSkillAvailable(client->sess.skill, SK_FIRST_AID, SK_MEDIC_RESOURCES))
 		{
 			client->ps.ammo[GetWeaponTableData(weaponNum)->ammoIndex] += 2;
 		}
 	}
 	else if (GetWeaponTableData(weaponNum)->type & WEAPON_TYPE_RIFLE)
 	{
-		if (BG_IsSkillAvailable(client->sess.skill, SK_LIGHT_WEAPONS, 1) || (client->sess.playerType == PC_COVERTOPS && BG_IsSkillAvailable(client->sess.skill, SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS, 1)))
+		if (BG_IsSkillAvailable(client->sess.skill, SK_LIGHT_WEAPONS, SK_LIGHT_WEAPONS_EXTRA_AMMO))
 		{
 			client->ps.ammo[GetWeaponTableData(weaponNum)->ammoIndex] += GetWeaponTableData(weaponNum)->maxClip;
 		}
@@ -1331,7 +1331,7 @@ void AddMedicTeamBonus(gclient_t *client)
 		client->pers.maxHealth = 125;
 	}
 
-	if (BG_IsSkillAvailable(client->sess.skill, SK_BATTLE_SENSE, 3))
+	if (BG_IsSkillAvailable(client->sess.skill, SK_BATTLE_SENSE, SK_BATTLE_SENSE_HEALTH))
 	{
 		client->pers.maxHealth += 15;
 	}
@@ -3048,7 +3048,7 @@ void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean
 	// ***NOTE*** the following line is order-dependent and must *FOLLOW* SetWolfSpawnWeapons() in multiplayer
 	// AddMedicTeamBonus() now adds medic team bonus and stores in ps.stats[STAT_MAX_HEALTH].
 
-	if (BG_IsSkillAvailable(client->sess.skill, SK_BATTLE_SENSE, 3))
+	if (BG_IsSkillAvailable(client->sess.skill, SK_BATTLE_SENSE, SK_BATTLE_SENSE_HEALTH))
 	{
 		// We get some extra max health, but don't spawn with that much
 		ent->health = client->ps.stats[STAT_HEALTH] = client->ps.stats[STAT_MAX_HEALTH] - 15;

@@ -414,22 +414,11 @@ static void CG_DrawShoutcastPlayerChargebar(float x, float y, int width, int hei
 	// display colored charge bar if charge bar isn't full enough
 	if (GetWeaponTableData(cg.predictedPlayerState.weapon)->attributes & WEAPON_ATTRIBUT_CHARGE_TIME)
 	{
-		skillType_t skill    = GetWeaponTableData(cg.predictedPlayerState.weapon)->skillBased;
-		int         skillLvl = cgs.clientinfo[cg.clientNum].skill[skill];
-		float       coeff    = GetWeaponTableData(cg.predictedPlayerState.weapon)->chargeTimeCoeff[cgs.clientinfo[cg.clientNum].skill[skill]];
+		int index = BG_IsSkillAvailable(cgs.clientinfo[cg.clientNum].skill,
+		                                GetWeaponTableData(cg.predictedPlayerState.weapon)->skillBased,
+		                                GetWeaponTableData(cg.predictedPlayerState.weapon)->chargeTimeSkill);
 
-		for (; skillLvl >= 0; skillLvl--)
-		{
-			if (coeff != GetWeaponTableData(cg.predictedPlayerState.weapon)->chargeTimeCoeff[skillLvl])
-			{
-				if (skillLvl == 0 || !BG_IsSkillAvailable(cgs.clientinfo[cg.clientNum].skill, skill, skillLvl))
-				{
-					coeff = GetWeaponTableData(cg.predictedPlayerState.weapon)->chargeTimeCoeff[skillLvl];
-				}
-
-				break;
-			}
-		}
+		float coeff = GetWeaponTableData(cg.predictedPlayerState.weapon)->chargeTimeCoeff[index];
 
 		if (cg.time - cg.snap->ps.classWeaponTime < chargeTime * coeff)
 		{
@@ -439,22 +428,11 @@ static void CG_DrawShoutcastPlayerChargebar(float x, float y, int width, int hei
 	else if ((cg.predictedPlayerState.eFlags & EF_ZOOMING || cg.predictedPlayerState.weapon == WP_BINOCULARS)
 	         && cgs.clientinfo[cg.snap->ps.clientNum].cls == PC_FIELDOPS)
 	{
-		skillType_t skill    = GetWeaponTableData(WP_ARTY)->skillBased;
-		int         skillLvl = cgs.clientinfo[cg.clientNum].skill[skill];
-		float       coeff    = GetWeaponTableData(WP_ARTY)->chargeTimeCoeff[cgs.clientinfo[cg.clientNum].skill[skill]];
+		int index = BG_IsSkillAvailable(cgs.clientinfo[cg.clientNum].skill,
+		                                GetWeaponTableData(WP_ARTY)->skillBased,
+		                                GetWeaponTableData(WP_ARTY)->chargeTimeSkill);
 
-		for (; skillLvl >= 0; skillLvl--)
-		{
-			if (coeff != GetWeaponTableData(cg.predictedPlayerState.weapon)->chargeTimeCoeff[skillLvl])
-			{
-				if (skillLvl == 0 || !BG_IsSkillAvailable(cgs.clientinfo[cg.clientNum].skill, skill, skillLvl))
-				{
-					coeff = GetWeaponTableData(cg.predictedPlayerState.weapon)->chargeTimeCoeff[skillLvl];
-				}
-
-				break;
-			}
-		}
+		float coeff = GetWeaponTableData(WP_ARTY)->chargeTimeCoeff[index];
 
 		if (cg.time - cg.snap->ps.classWeaponTime < chargeTime * coeff)
 		{

@@ -520,7 +520,7 @@ int Pickup_Weapon(gentity_t *ent, gentity_t *other)
 			return 0;
 		}
 
-		if (other->client->sess.playerType == PC_SOLDIER && BG_IsSkillAvailable(other->client->sess.skill, SK_HEAVY_WEAPONS, 4))
+		if (other->client->sess.playerType == PC_SOLDIER && BG_IsSkillAvailable(other->client->sess.skill, SK_HEAVY_WEAPONS, SK_SOLDIER_SMG))
 		{
 			primaryWeapon = G_GetPrimaryWeaponForClientSoldier(other->client);
 		}

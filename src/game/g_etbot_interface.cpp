@@ -320,7 +320,7 @@ static qboolean weaponCharged(playerState_t *ps, team_t team, int weapon, const 
 		{
 			return qfalse;
 		}
-		if (BG_IsSkillAvailable(skill, SK_HEAVY_WEAPONS, 1))
+		if (BG_IsSkillAvailable(skill, SK_HEAVY_WEAPONS, SK_SOLDIER_PROJECTILE_STAMINA))
 		{
 			if (WC_WEAPON_TIME_LEFT < WC_SOLDIER_TIME * 0.66f)
 			{
@@ -336,7 +336,7 @@ static qboolean weaponCharged(playerState_t *ps, team_t team, int weapon, const 
 	case WP_MORTAR_SET:
 	case WP_MORTAR2:
 	case WP_MORTAR2_SET:
-		if (BG_IsSkillAvailable(skill, SK_HEAVY_WEAPONS, 1))
+		if (BG_IsSkillAvailable(skill, SK_HEAVY_WEAPONS, SK_SOLDIER_PROJECTILE_STAMINA))
 		{
 			if (WC_WEAPON_TIME_LEFT < WC_SOLDIER_TIME * 0.33f)
 			{
@@ -350,7 +350,7 @@ static qboolean weaponCharged(playerState_t *ps, team_t team, int weapon, const 
 		break;
 	case WP_SMOKE_BOMB:
 	case WP_SATCHEL:
-		if (BG_IsSkillAvailable(skill, SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS, 2))
+		if (BG_IsSkillAvailable(skill, SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS, SK_COVERTOPS_STAMINA))
 		{
 			if (WC_WEAPON_TIME_LEFT < WC_COVERTOPS_TIME * 0.66f)
 			{
@@ -363,7 +363,7 @@ static qboolean weaponCharged(playerState_t *ps, team_t team, int weapon, const 
 		}
 		break;
 	case WP_LANDMINE:
-		if (BG_IsSkillAvailable(skill, SK_EXPLOSIVES_AND_CONSTRUCTION, 2))
+		if (BG_IsSkillAvailable(skill, SK_EXPLOSIVES_AND_CONSTRUCTION, SK_ENGINEER_PLIERS_DEXTERITY))
 		{
 			if (WC_WEAPON_TIME_LEFT < (WC_ENGINEER_TIME * 0.33f))
 			{
@@ -376,7 +376,7 @@ static qboolean weaponCharged(playerState_t *ps, team_t team, int weapon, const 
 		}
 		break;
 	case WP_DYNAMITE:
-		if (BG_IsSkillAvailable(skill, SK_EXPLOSIVES_AND_CONSTRUCTION, 3))
+		if (BG_IsSkillAvailable(skill, SK_EXPLOSIVES_AND_CONSTRUCTION, SK_ENGINEER_STAMINA))
 		{
 			if (WC_WEAPON_TIME_LEFT < (WC_ENGINEER_TIME * 0.66f))
 			{
@@ -389,7 +389,7 @@ static qboolean weaponCharged(playerState_t *ps, team_t team, int weapon, const 
 		}
 		break;
 	case WP_MEDKIT:
-		if (BG_IsSkillAvailable(skill, SK_FIRST_AID, 2))
+		if (BG_IsSkillAvailable(skill, SK_FIRST_AID, SK_MEDIC_RESOURCES))
 		{
 			if (WC_WEAPON_TIME_LEFT < WC_MEDIC_TIME * 0.15f)
 			{
@@ -402,7 +402,7 @@ static qboolean weaponCharged(playerState_t *ps, team_t team, int weapon, const 
 		}
 		break;
 	case WP_AMMO:
-		if (BG_IsSkillAvailable(skill, SK_SIGNALS, 1))
+		if (BG_IsSkillAvailable(skill, SK_SIGNALS, SK_FIELDOPS_RESOURCES))
 		{
 			if (WC_WEAPON_TIME_LEFT < WC_FIELDOPS_TIME * 0.15f)
 			{
@@ -415,7 +415,7 @@ static qboolean weaponCharged(playerState_t *ps, team_t team, int weapon, const 
 		}
 		break;
 	case WP_SMOKE_MARKER:
-		if (BG_IsSkillAvailable(skill, SK_SIGNALS, 2))
+		if (BG_IsSkillAvailable(skill, SK_SIGNALS, SK_FIELDOPS_FIRE_SUPPORT_STAMINA))
 		{
 			if (WC_WEAPON_TIME_LEFT < WC_FIELDOPS_TIME * 0.66f)
 			{
@@ -437,7 +437,7 @@ static qboolean weaponCharged(playerState_t *ps, team_t team, int weapon, const 
 		switch (ps->stats[STAT_PLAYER_CLASS])
 		{
 		case PC_FIELDOPS:
-			if (BG_IsSkillAvailable(skill, SK_SIGNALS, 2))
+			if (BG_IsSkillAvailable(skill, SK_SIGNALS, SK_FIELDOPS_FIRE_SUPPORT_STAMINA))
 			{
 				if (WC_WEAPON_TIME_LEFT <= WC_FIELDOPS_TIME * 0.66f)
 				{

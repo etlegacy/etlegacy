@@ -280,7 +280,7 @@ void PushBot(gentity_t *ent, gentity_t *other)
  */
 qboolean ReadyToCallArtillery(gentity_t *ent)
 {
-	if (BG_IsSkillAvailable(ent->client->sess.skill, SK_BATTLE_SENSE, 2))
+	if (BG_IsSkillAvailable(ent->client->sess.skill, SK_BATTLE_SENSE, SK_BATTLE_SENSE_STAMINA_RECHARGE))
 	{
 		if (level.time - ent->client->ps.classWeaponTime <= (level.fieldopsChargeTime[ent->client->sess.sessionTeam - 1] * 0.66f))
 		{
@@ -319,7 +319,7 @@ qboolean ReadyToConstruct(gentity_t *ent, gentity_t *constructible, qboolean upd
 	}
 	else
 	{
-		if (BG_IsSkillAvailable(ent->client->sess.skill, SK_EXPLOSIVES_AND_CONSTRUCTION, 3))
+		if (BG_IsSkillAvailable(ent->client->sess.skill, SK_EXPLOSIVES_AND_CONSTRUCTION, SK_ENGINEER_STAMINA))
 		{
 			weaponTime += 0.66f * constructible->constructibleStats.chargebarreq * ((float)level.engineerChargeTime[ent->client->sess.sessionTeam - 1] / (constructible->constructibleStats.duration / (float)FRAMETIME));
 		}
@@ -2226,7 +2226,7 @@ void ClientEndFrame(gentity_t *ent)
 	// all players are init in game, we can set properly starting health
 	if (level.startTime == level.time - (GAME_INIT_FRAMES * FRAMETIME))
 	{
-		if (BG_IsSkillAvailable(ent->client->sess.skill, SK_BATTLE_SENSE, 3))
+		if (BG_IsSkillAvailable(ent->client->sess.skill, SK_BATTLE_SENSE, SK_BATTLE_SENSE_HEALTH))
 		{
 			// We get some extra max health, but don't spawn with that much
 			ent->health = ent->client->ps.stats[STAT_HEALTH] = ent->client->ps.stats[STAT_MAX_HEALTH] - 15;
