@@ -341,6 +341,7 @@ vmCvar_t g_oss; //   0 - vanilla/unknown/ET:L auto setup
                 //   4 - Linux 64
                 //   8 - Mac OS X
                 //  16 - Android
+                //  32 - Raspberry Pi
 
 vmCvar_t g_realHead; // b_realHead functionality from ETPro
 
@@ -396,7 +397,7 @@ cvarTable_t gameCvarTable[] =
 	{ &g_covertopsChargeTime,             "g_covertopsChargeTime",             "30000",                      CVAR_SERVERINFO | CVAR_LATCH,                    0, qfalse, qtrue  },
 	{ &g_landminetimeout,                 "g_landminetimeout",                 "1",                          CVAR_ARCHIVE,                                    0, qfalse, qtrue  },
 
-	{ &g_oss,                             "g_oss",                             "15",                         CVAR_SERVERINFO | CVAR_LATCH,                    0, qfalse, qfalse },
+	{ &g_oss,                             "g_oss",                             "31",                         CVAR_SERVERINFO | CVAR_LATCH,                    0, qfalse, qfalse },
 
 	{ &g_maxclients,                      "sv_maxclients",                     "20",                         CVAR_SERVERINFO | CVAR_LATCH | CVAR_ARCHIVE,     0, qfalse, qfalse },
 	{ &g_maxGameClients,                  "g_maxGameClients",                  "0",                          CVAR_SERVERINFO | CVAR_LATCH | CVAR_ARCHIVE,     0, qfalse, qfalse },
