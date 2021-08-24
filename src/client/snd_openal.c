@@ -717,6 +717,7 @@ static int      srcCount             = 0;
 static int      srcActiveCnt         = 0;
 static qboolean alSourcesInitialised = qfalse;
 static vec3_t   lastListenerOrigin   = { 0.0f, 0.0f, 0.0f };
+static int      listenerNumber;
 
 typedef struct sentity_s
 {
@@ -778,30 +779,22 @@ static void S_AL_Gain(ALuint source, float gainval)
  * @param[in,out] chksrc
  * @param[in] origin
  * @note unused - OpenaL internal linear gain computation is used instead
- *
+ */
 static void S_AL_ScaleGain(src_t *chksrc, vec3_t origin)
 {
-	float distance = 0.0f;
-
-	if (!chksrc->local)
+	if (!chksrc->local /*&& chksrc->entity != listenerNumber*/)
 	{
+		float  scaleFactor;
+		float  distance = 0.0f;
 		vec3_t source_vec;
 
-		//distance = vec3_distance(origin, lastListenerOrigin);
-		VectorSubtract(origin, lastListenerOrigin, source_vec);
+		distance = vec3_distance(origin, lastListenerOrigin);
 
-		distance = vec3_norm(source_vec);
-	}
+		// minimum range
+		distance -= chksrc->range * 0.064f;
 
-	// minimum range
-	distance -= chksrc->range * 0.064f;
-
-	// If we exceed a certain distance, scale the gain linearly until the sound
-	// vanishes into nothingness.
-	if (!chksrc->local)
-	{
-		float scaleFactor;
-
+		// If we exceed a certain distance, scale the gain linearly until the sound
+		// vanishes into nothingness.
 		if (distance <= 0)
 		{
 			scaleFactor = 1.0f;
@@ -830,7 +823,6 @@ static void S_AL_ScaleGain(src_t *chksrc, vec3_t origin)
 		S_AL_Gain(chksrc->alSource, chksrc->scaleGain);
 	}
 }
-*/
 
 /**
  * @brief S_AL_HearingThroughEntity
@@ -1492,7 +1484,7 @@ static void S_AL_StartSoundEx(vec3_t origin, int entnum, int entchannel, sfxHand
 	}
 
 	qalSourcefv(curSource->alSource, AL_POSITION, sorigin);
-	//S_AL_ScaleGain(curSource, sorigin);
+	S_AL_ScaleGain(curSource, sorigin);
 
 	// Start it playing
 	curSource->isPlaying = qtrue;
@@ -1723,8 +1715,8 @@ static void S_AL_SrcUpdate(void)
 
 				curSfx = &knownSfx[curSource->sfx];
 
-				/*
 				S_AL_ScaleGain(curSource, curSource->loopSpeakerPos);
+
 				if (curSource->scaleGain == 0.f)
 				{
 					if (curSource->isPlaying)
@@ -1741,7 +1733,6 @@ static void S_AL_SrcUpdate(void)
 
 					continue;
 				}
-				*/
 
 				if (!curSource->isPlaying)
 				{
@@ -1858,7 +1849,7 @@ static void S_AL_SrcUpdate(void)
 		if (curSource->isTracking && !state)
 		{
 			qalSourcefv(curSource->alSource, AL_POSITION, entityPositions[entityNum]);
-			//S_AL_ScaleGain(curSource, entityPositions[entityNum]);
+			S_AL_ScaleGain(curSource, entityPositions[entityNum]);
 		}
 	}
 }
@@ -3029,6 +3020,7 @@ static void S_AL_Respatialize(int entityNum, const vec3_t origin, vec3_t axis[3]
 	orientation[5] = axis[2][2];
 
 	VectorCopy(sorigin, lastListenerOrigin);
+	listenerNumber = entityNum;
 
 	// Set OpenAL listener paramaters
 	qalListenerfv(AL_POSITION, (ALfloat *)sorigin);
@@ -3469,7 +3461,7 @@ qboolean S_AL_Init(soundInterface_t *si)
 	S_AL_SrcInit();
 
 	// Set up OpenAL parameters (doppler, etc)
-	qalDistanceModel(AL_LINEAR_DISTANCE_CLAMPED);
+	qalDistanceModel(AL_NONE);
 	qalDopplerFactor(s_alDopplerFactor->value);
 	qalDopplerVelocity(s_alDopplerSpeed->value);
 
