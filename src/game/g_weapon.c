@@ -1550,7 +1550,7 @@ gentity_t *Weapon_Engineer(gentity_t *ent)
 	traceEnt = &g_entities[tr.entityNum];
 
 	if ((tr.surfaceFlags & SURF_NOIMPACT) || tr.fraction == 1.0f || tr.entityNum == ENTITYNUM_NONE || tr.entityNum == ENTITYNUM_WORLD
-	    || tr.contents & CONTENTS_TRIGGER || traceEnt->r.contents & CONTENTS_TRIGGER)
+	    || tr.contents & CONTENTS_TRIGGER || traceEnt->r.contents & CONTENTS_TRIGGER || traceEnt->s.eType == ET_MOVER)
 	{
 		// might be constructible
 		if (!ent->client->touchingTOI)
