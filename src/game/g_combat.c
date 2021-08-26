@@ -1659,6 +1659,7 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 	// do the damage
 	if (take)
 	{
+		damage        = targ->health;
 		targ->health -= take;
 
 		// can't gib with bullet weapons
@@ -1732,7 +1733,7 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 				{
 					// Kill the entity.  Note that this funtion can set ->die to another
 					// function pointer, so that next time die is applied to the dead body.
-					targ->die(targ, inflictor, attacker, take, mod);
+					targ->die(targ, inflictor, attacker, damage, mod);
 					// kill stats in player_die function
 				}
 
