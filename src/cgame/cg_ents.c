@@ -756,8 +756,8 @@ static void CG_Item(centity_t *cent)
 
 		if (simpleItemShader)
 		{
-			simpleItemScaleX *= Com_Clamp(0.1f, 2.f, cg_simpleItemsScale.value);
-			simpleItemScaleY *= Com_Clamp(0.1f, 2.f, cg_simpleItemsScale.value);
+			simpleItemScaleX *= Com_Clamp(0.25f, 1.5f, cg_simpleItemsScale.value);
+			simpleItemScaleY *= Com_Clamp(0.25f, 1.5f, cg_simpleItemsScale.value);
 			origin[2]        += SIMPLEITEM_ICON_SIZE * simpleItemScaleY / 2.f;
 			// build quad out of verts (inversed)
 			VectorSet(temp[0].xyz, 0, 1 * simpleItemScaleX, 1 * simpleItemScaleY);

@@ -52,11 +52,13 @@ menuDef {
 
 // Items //
 #define ITEMS_Y 194
-	SUBWINDOW( 6, ITEMS_Y, (SUBWINDOW_WIDTH_L), 28, _("ITEMS") )
+	SUBWINDOW( 6, ITEMS_Y, (SUBWINDOW_WIDTH_L), 42, _("ITEMS") )
 	MULTI( 8, ITEMS_Y+16, (SUBWINDOW_WIDTH_R)-4, 10, _("Simple Items:"), .2, 8, "cg_simpleItems", cvarFloatList { "No" 0 "Yes" 1 "Yes except objectives" 2 }, _("Draw simple items") )
+	CVARFLOATLABEL( 8, ITEMS_Y+28, (SUBWINDOW_WIDTH_L)-4, 10, "cg_simpleItemsScale", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-6), 8 )
+	SLIDER( 8, ITEMS_Y+28, (SUBWINDOW_WIDTH_L)-4, 10, _("Simple Items Scale:"), .2, 8, "cg_simpleItemsScale" 1.0 0.25 1.5, _("Set scale of simple items") )
 
 // Scope //
-#define SCOPE_Y 228
+#define SCOPE_Y 240
 	SUBWINDOW( 6, SCOPE_Y, (SUBWINDOW_WIDTH_R), 52,_( "SCOPE") )
 	MULTI( 8, SCOPE_Y+16, (SUBWINDOW_WIDTH_R)-4, 10, _("Weapon Cycle for Zoom:"), .2, 8, "cg_useWeapsForZoom", cvarFloatList { "Off" 0 "On (normal)" 1 "On (reverse)" 2 }, _("Weapon switch will zoom in and out while scoped, rather than switch weapons") )
 	MULTI( 8, SCOPE_Y+28, (SUBWINDOW_WIDTH_R)-4, 10, _("Default Zoom Level:"), .2, 8, "cg_zoomdefaultsniper", cvarFloatList { "All the way Out" 20 "Near" 16 "Far" 8 "All the Way In" 4 }, _("Set the default zoom level for scopes") )
