@@ -320,6 +320,7 @@ vmCvar_t cg_fireteamLatchedClass;
 vmCvar_t cg_weapaltReloads;
 
 vmCvar_t cg_simpleItems;
+vmCvar_t cg_simpleItemsScale;
 
 vmCvar_t cg_automapZoom;
 
@@ -582,6 +583,7 @@ static cvarTable_t cvarTable[] =
 	{ &cg_tracers,                "cg_tracers",                "1",           CVAR_ARCHIVE,                 0 },   // Draw tracers
 	{ &cg_fireteamLatchedClass,   "cg_fireteamLatchedClass",   "1",           CVAR_ARCHIVE,                 0 },   // Draw fireteam members latched class
 	{ &cg_simpleItems,            "cg_simpleItems",            "0",           CVAR_ARCHIVE,                 0 },   // Bugged atm
+	{ &cg_simpleItemsScale,       "cg_simpleItemsScale",       "1.0",         CVAR_ARCHIVE,                 0 },
 	{ &cg_automapZoom,            "cg_automapZoom",            "5.159",       CVAR_ARCHIVE,                 0 },
 	{ &cg_drawTime,               "cg_drawTime",               "0",           CVAR_ARCHIVE,                 0 },
 	{ &cg_popupFadeTime,          "cg_popupFadeTime",          "2500",        CVAR_ARCHIVE,                 0 },
