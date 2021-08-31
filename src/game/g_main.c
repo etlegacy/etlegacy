@@ -868,30 +868,6 @@ void QDECL G_Error(const char *fmt, ...)
 void QDECL G_Error(const char *fmt, ...) _attribute((format(printf, 1, 2)));
 
 /**
- * @brief Returns whether the ent should be ignored for cursor hint purpose (because the ent may have the designed content type
- * but nevertheless should not display any cursor hint)
- *
- * @param[in] traceEnt
- * @param clientEnt
- * @return
- */
-static qboolean G_CursorHintIgnoreEnt(gentity_t *traceEnt, gentity_t *clientEnt)
-{
-	if (traceEnt->s.eType == ET_OID_TRIGGER || traceEnt->s.eType == ET_TRIGGER_MULTIPLE
-	    || traceEnt->s.eType == ET_TRIGGER_FLAGONLY || traceEnt->s.eType == ET_TRIGGER_FLAGONLY_MULTIPLE)
-	{
-		return qtrue;
-	}
-
-	if (traceEnt->s.eType == ET_CORPSE && !(clientEnt->client->ps.stats[STAT_PLAYER_CLASS] == PC_COVERTOPS))
-	{
-		return qtrue;
-	}
-
-	return qfalse;
-}
-
-/**
  * @brief G_EmplacedGunIsMountable
  * @param[in] ent
  * @param[in] other
@@ -1020,7 +996,6 @@ void G_CheckForCursorHints(gentity_t *ent)
 	int           hintType, hintDist, hintVal;
 	qboolean      zooming;
 	int           trace_contents;
-	int           numOfIgnoredEnts = 0;
 
 	if (!ent->client)
 	{
@@ -1054,9 +1029,11 @@ void G_CheckForCursorHints(gentity_t *ent)
 	tr = &ps->serverCursorHintTrace;
 
 	G_TempTraceRealHitBox(ent);
+	G_TempTraceIgnoreEntities(ent);
 	trace_contents = (CONTENTS_TRIGGER | CONTENTS_SOLID | CONTENTS_MISSILECLIP | CONTENTS_BODY | CONTENTS_CORPSE);
 	trap_Trace(tr, offset, NULL, NULL, end, ps->clientNum, trace_contents);
 	G_ResetTempTraceRealHitBox();
+	G_ResetTempTraceIgnoreEnts();
 
 	// reset all
 	hintType = ps->serverCursorHint = HINT_NONE;
@@ -1089,29 +1066,6 @@ void G_CheckForCursorHints(gentity_t *ent)
 	}
 
 	traceEnt = &g_entities[tr->entityNum];
-	G_TempTraceRealHitBox(ent);
-	while (G_CursorHintIgnoreEnt(traceEnt, ent) && numOfIgnoredEnts < 10)
-	{
-		// we may hit multiple invalid ents at the same point
-		// count them to prevent too many loops
-		numOfIgnoredEnts++;
-
-		// advance offset (start point) past the entity to ignore
-		VectorMA(tr->endpos, 0.1f, forward, offset);
-
-		trap_Trace(tr, offset, NULL, NULL, end, traceEnt->s.number, trace_contents);
-
-		// (hintDist - dist) is the actual distance in the above
-		// trap_Trace call. update dist accordingly.
-		dist += VectorDistanceSquared(offset, tr->endpos);
-		if (tr->fraction == 1.f)
-		{
-			G_ResetTempTraceRealHitBox();
-			return;
-		}
-		traceEnt = &g_entities[tr->entityNum];
-	}
-	G_ResetTempTraceRealHitBox();
 
 	if (tr->entityNum == ENTITYNUM_WORLD || tr->entityNum < MAX_CLIENTS)
 	{

@@ -2637,6 +2637,46 @@ void G_ResetTempTraceRealHitBox()
 	}
 }
 
+/**
+* @brief G_TempTraceIgnoreEntities
+* @param[in] ent
+*/
+void G_TempTraceIgnoreEntities(gentity_t *ent)
+{
+	int           i;
+	int           listLength;
+	int           list[MAX_GENTITIES];
+	gentity_t     *hit;
+	vec3_t        BBmins, BBmaxs;
+	static vec3_t range = { CH_BREAKABLE_DIST, CH_BREAKABLE_DIST, CH_BREAKABLE_DIST };
+
+	if (!ent->client)
+	{
+		return;
+	}
+
+	VectorSubtract(ent->client->ps.origin, range, BBmins);
+	VectorAdd(ent->client->ps.origin, range, BBmaxs);
+
+	listLength = trap_EntitiesInBox(BBmins, BBmaxs, list, MAX_GENTITIES);
+
+	for (i = 0; i < listLength; i++)
+	{
+		hit = &g_entities[list[i]];
+
+		if (hit->s.eType == ET_OID_TRIGGER || hit->s.eType == ET_TRIGGER_MULTIPLE
+		    || hit->s.eType == ET_TRIGGER_FLAGONLY || hit->s.eType == ET_TRIGGER_FLAGONLY_MULTIPLE)
+		{
+			G_TempTraceIgnoreEntity(hit);
+		}
+
+		if (hit->s.eType == ET_CORPSE && !(ent->client->ps.stats[STAT_PLAYER_CLASS] == PC_COVERTOPS))
+		{
+			G_TempTraceIgnoreEntity(hit);
+		}
+	}
+}
+
 
 /**
  * @brief G_ConstructionBegun
