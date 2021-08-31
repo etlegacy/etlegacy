@@ -2456,7 +2456,7 @@ void Cmd_FollowCycle_f(gentity_t *ent, int dir, qboolean skipBots)
 		}
 
 		// couple extra checks for limbo mode
-		if (ent->client->ps.pm_flags & PMF_LIMBO)
+		if (ent->client->ps.pm_flags & PMF_LIMBO && ent->client->sess.sessionTeam != TEAM_SPECTATOR)
 		{
 			if (level.clients[clientnum].ps.pm_flags & PMF_LIMBO)
 			{
