@@ -3168,7 +3168,7 @@ static qboolean PM_CheckGrenade()
 	else if (pm->ps->weapon == WP_DYNAMITE)
 	{
 		// keep dynamite in hand until fire button is released
-		if ((pm->cmd.buttons & BUTTON_ATTACK) && !(pm->ps->eFlags & EF_PRONE_MOVING) && weaponstateFiring && !pm->ps->weaponTime)
+		if ((pm->cmd.buttons & BUTTON_ATTACK) && !(pm->ps->eFlags & EF_PRONE_MOVING) && weaponstateFiring && pm->ps->weaponDelay)
 		{
 			BG_ClearConditionBitFlag(pm->ps->clientNum, ANIM_COND_GEN_BITFLAG, ANIM_BITFLAG_HOLDING);
 			return qtrue;
