@@ -3102,7 +3102,9 @@ void CG_Player(centity_t *cent)
 	if (!(cent->currentState.eFlags & EF_DEAD) /*&& !usingBinocs*/)
 	{
 		if ((cent->currentState.eFlags & EF_TALK)
+#ifdef FEATURE_MULTIVIEW
 		    && (cgs.clientinfo[cent->currentState.clientNum].weaponState == WSTATE_IDLE)
+#endif
 		    && !(cent->currentState.eFlags & (EF_FIRING | EF_MOUNTEDTANK | EF_ZOOMING))
 		    && !(cent->pe.torso.animation->flags & (ANIMFL_LADDERANIM | ANIMFL_FIRINGANIM | ANIMFL_RELOADINGANIM))
 		    && !(GetWeaponTableData(cent->currentState.weapon)->type & (WEAPON_TYPE_SET | WEAPON_TYPE_SCOPED)))
