@@ -3800,7 +3800,7 @@ static void CG_DrawEnvironmentalAwareness()
 		centity_t *cent = &cg_entities[snap->entities[i].number];
 		qhandle_t icon;
 		vec3_t    dir;
-		float     len, len2;
+		float     len;
 
 		// skip self
 		if (cent->currentState.eType == ET_PLAYER && cent->currentState.clientNum == cg.clientNum)
@@ -3811,8 +3811,8 @@ static void CG_DrawEnvironmentalAwareness()
 		VectorSubtract(cent->lerpOrigin, cg.predictedPlayerState.origin, dir);
 		len = VectorLength(dir);
 
-		// too far to draw
-		if (len > MAX_DISTANCE * COEFF_DISTANCE)
+		// check range before drawing anything
+		if (len < CH_DIST || len > MAX_DISTANCE * COEFF_DISTANCE)
 		{
 			continue;
 		}
@@ -3824,6 +3824,7 @@ static void CG_DrawEnvironmentalAwareness()
 			vec3_t angles;
 			float  x, y;
 			float  front, left, up;
+			float  len2;
 
 			VectorNormalize(dir);
 			vectoangles(dir, angles);
@@ -3851,108 +3852,61 @@ static void CG_DrawEnvironmentalAwareness()
 			}
 
 			// can we see the target
-			if (angles[PITCH] >= -cg.refdef_current->fov_y / 2
-			    && angles[PITCH] <= cg.refdef_current->fov_y / 2)
+			if (angles[PITCH] >= -cg.refdef_current->fov_y / 2 && angles[PITCH] <= cg.refdef_current->fov_y / 2
+			    && angles[YAW] >= -cg.refdef_current->fov_x / 2 && angles[YAW] <= cg.refdef_current->fov_x / 2)
 			{
-				if (angles[YAW] >= -cg.refdef_current->fov_x / 2
-				    && angles[YAW] <= cg.refdef_current->fov_x / 2)
-				{
-					trace_t trace;
-					int     skipNumber = cg.snap->ps.clientNum;
-					vec3_t  start, end;
-					int     passLeft = 3;   // do a maximum of 3 traces in a row to avoid infine trace if it fail for some reason
-
-					// too close to draw
-					if (len < CH_DIST)
-					{
-						continue;
-					}
-
-					VectorCopy(cg.refdef.vieworg, start);
-
-					if (cent->currentState.eType == ET_PLAYER)
-					{
-						VectorCopy(cent->pe.headRefEnt.origin, end);
-					}
-					else
-					{
-						VectorCopy(cent->lerpOrigin, end);
-					}
-
-					// trace to the target player and ignore other players
-					do
-					{
-						CG_Trace(&trace, start, NULL, NULL, end, skipNumber, CONTENTS_SOLID);
-						skipNumber = trace.entityNum;
-						VectorCopy(trace.endpos, start);
-						--passLeft;
-					}
-					while (passLeft && trace.fraction != 0.f && trace.fraction != 1.f
-					       && trace.entityNum < ENTITYNUM_WORLD && trace.entityNum != cent->currentState.number);
-
-					// we can see the target, no need to draw the icon
-					if (trace.fraction == 1.f || trace.entityNum == cent->currentState.number)
-					{
-						continue;
-					}
-
-					x = -left / front;
-					y = up / len2;
-
-					CG_DrawPic(Ccg_WideX(SCREEN_WIDTH) / 2.f + (Ccg_WideX(SCREEN_WIDTH) / 2.f) * x,
-					           SCREEN_HEIGHT / 2.f + (SCREEN_HEIGHT / 2.f) * y,
-					           ICONS_SIZE, ICONS_SIZE, icon);
-
-					continue;
-				}
-			}
-
-			x = left;
-			y = up / len2;
-
-			// hack when player is looking on top or bottom of himself
-			if ((x > -0.5 && x <= 0.5) && (y > -0.5 && y <= 0.5))
-			{
-				y = (y >= 0 ? 0.5 : -0.5);
-			}
-
-			if (x >= 0.5)
-			{
-				x = Ccg_WideX(SCREEN_WIDTH) - ICONS_SIZE;
-			}
-			else if (x <= -0.5)
-			{
-				x = 0;
+				x = Ccg_WideX(SCREEN_WIDTH) / 2.f + (Ccg_WideX(SCREEN_WIDTH) / 2.f) * (-left / front);
+				y = SCREEN_HEIGHT / 2.f + (SCREEN_HEIGHT / 2.f) * (up / len2);
 			}
 			else
 			{
-				x = Ccg_WideX(SCREEN_WIDTH) * (x + 0.5);
+				x = left;
+				y = up / len2;
 
-				if (x > Ccg_WideX(SCREEN_WIDTH) - ICONS_SIZE)
+				// hack when player is looking on top or bottom of himself
+				if ((x > -0.5 && x <= 0.5) && (y > -0.5 && y <= 0.5))
+				{
+					y = (y >= 0 ? 0.5 : -0.5);
+				}
+
+				if (x >= 0.5)
 				{
 					x = Ccg_WideX(SCREEN_WIDTH) - ICONS_SIZE;
 				}
-			}
-
-			if (y >= 0.5)
-			{
-				y = SCREEN_HEIGHT - ICONS_SIZE;
-			}
-			else if (y <= -0.5)
-			{
-				y = 0;
-			}
-			else
-			{
-				y = Ccg_WideX(SCREEN_WIDTH) * (y + 0.5);
-
-				if (y > SCREEN_HEIGHT - ICONS_SIZE)
+				else if (x <= -0.5)
 				{
-					y = SCREEN_HEIGHT - ICONS_SIZE;
+					x = 0;
+				}
+				else
+				{
+					x = Ccg_WideX(SCREEN_WIDTH) * (x + 0.5);
+
+					if (x > Ccg_WideX(SCREEN_WIDTH) - ICONS_SIZE)
+					{
+						x = Ccg_WideX(SCREEN_WIDTH) - ICONS_SIZE;
+					}
+				}
+
+				if (y >= 0.5)
+				{
+					y = SCREEN_HEIGHT - (ICONS_SIZE + 12);
+				}
+				else if (y <= -0.5)
+				{
+					y = 0;
+				}
+				else
+				{
+					y = Ccg_WideX(SCREEN_WIDTH) * (y + 0.5);
+
+					if (y > SCREEN_HEIGHT - (ICONS_SIZE + 12))
+					{
+						y = SCREEN_HEIGHT - (ICONS_SIZE + 12);
+					}
 				}
 			}
 
-			//CG_Text_Paint_Centred_Ext(x, y, 0.22f, 0.22f, colorWhite, cent, 0, 0, )
+			CG_Text_Paint_Centred_Ext(x + ICONS_SIZE / 2, y + ICONS_SIZE + 8, 0.16f, 0.16f, colorWhite, va("%.0f", len), 0, 0, 0, &cgs.media.limboFont2);
 			CG_DrawPic(x, y, ICONS_SIZE, ICONS_SIZE, icon);
 		}
 	}
