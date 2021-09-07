@@ -95,6 +95,21 @@ typedef struct
 } doubleTap_t;
 
 /**
+ * @struct clClientInfo_t
+ * @brief Clientinfo like in cgame
+ */
+typedef struct {
+	qboolean infoValid;
+	int clientNum;
+	char name[MAX_QPATH];
+	char cleanname[MAX_QPATH];
+	team_t team;
+	int health;
+	qboolean isBot;
+	qboolean vignored;
+} clClientInfo_t;
+
+/**
  * @struct outPacket_t
  * @brief
  */
@@ -183,6 +198,8 @@ typedef struct
 
 	qboolean corruptedTranslationFile;
 	char translationVersion[MAX_STRING_TOKENS];
+
+	clClientInfo_t clientInfo[MAX_CLIENTS];
 
 } clientActive_t;
 
@@ -454,6 +471,8 @@ extern cvar_t *cl_defaultProfile;
 
 extern cvar_t *cl_consoleKeys;
 
+extern cvar_t *cl_vignorePlayers;
+
 //=================================================
 
 // cl_main
@@ -496,6 +515,8 @@ void CL_TranslateStringMod(const char *string, char *dest_buffer);
 void CL_OpenURL(const char *url);
 
 void CL_Record(const char *name);
+
+int CL_SearchForClientByArgs(team_t team, int argc);
 
 // cl_avi
 
@@ -593,6 +614,7 @@ void CL_ParseSnapshot(msg_t *msg);
 void CL_ParsePacketEntities(msg_t *msg, clSnapshot_t *oldframe, clSnapshot_t *newframe);
 void CL_SystemInfoChanged(void);
 void CL_ParseServerMessage(msg_t *msg);
+void CL_ClientInfoChanged(int clientNum);
 
 //====================================================================
 

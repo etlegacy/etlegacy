@@ -306,6 +306,12 @@ void CL_ConfigstringModified(void)
 		// parse serverId and other cvars
 		CL_SystemInfoChanged();
 	}
+
+	if (index >= CS_PLAYERS && index < MAX_CLIENTS + CS_PLAYERS)
+	{
+		CL_ClientInfoChanged(index - CS_PLAYERS);
+		return;
+	}
 }
 
 /**
@@ -442,6 +448,20 @@ rescan:
 	}
 
 	// we may want to put a "connect to other server" command here
+
+	if (!strcmp(cmd, "vchat") || !strcmp(cmd, "vtchat"))
+	{
+		int clientNum = atoi(Cmd_Argv(2));
+
+		if (clientNum >= 0 && clientNum < MAX_CLIENTS)
+		{
+			if (cl.clientInfo[clientNum].vignored)
+			{
+				Com_Printf("Ignored voice chat from %s\n", cl.clientInfo[clientNum].name);
+				return qfalse;
+			}
+		}
+	}
 
 	// cgame can now act on the command
 	return qtrue;

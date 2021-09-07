@@ -117,6 +117,8 @@ cvar_t *cl_packetdelay;
 
 cvar_t *cl_consoleKeys;
 
+cvar_t *cl_vignorePlayers;
+
 clientActive_t     cl;
 clientConnection_t clc;
 clientStatic_t     cls;
@@ -1409,6 +1411,86 @@ void CL_Clip_f(void)
 	// Return to console printing
 	Cvar_Set("cl_noprint", va("%i", noPrint));
 }
+
+/**
+ * @brief CL_VoiceIgnore_f ignore voice chats from the specified player
+ */
+void CL_VoiceIgnore_f(void)
+{
+	int clientNum;
+
+	if (Cmd_Argc() < 2)
+	{
+		Com_Printf("usage: vignore [clientNum or name]\n");
+		return;
+	}
+
+	clientNum = CL_SearchForClientByArgs(TEAM_NUM_TEAMS, Cmd_Argc());
+	if (clientNum == -2)
+	{
+		Com_Printf("More than one client match.\n");
+		return;
+	}
+	else if (clientNum == -1) {
+		Com_Printf("No client matches.\n");
+		return;
+	}
+	else if (clientNum == clc.clientNum)
+	{
+		Com_Printf("You can't ignore your own voice chats.\n");
+		return;
+	}
+
+	cl.clientInfo[clientNum].vignored = qtrue;
+	Cvar_Set("cl_vignorePlayers", va("%s;%s", cl_vignorePlayers->string, cl.clientInfo[clientNum].cleanname));
+	Com_Printf("Ignoring voice chats from %s\n", cl.clientInfo[clientNum].name);
+}
+
+/**
+ * @brief CL_VoiceUnIgnore_f stop ignoring voice chats from the specified player
+ */
+void CL_VoiceUnignore_f(void)
+{
+	int clientNum;
+	char buf[MAX_CVAR_VALUE_STRING], newBuf[MAX_CVAR_VALUE_STRING];
+
+	if (Cmd_Argc() < 2)
+	{
+		Com_Printf("usage: vignore [clientNum or name]\n");
+		return;
+	}
+
+	clientNum = CL_SearchForClientByArgs(TEAM_NUM_TEAMS, Cmd_Argc());
+	if (clientNum == -2)
+	{
+		Com_Printf("More than one client match.\n");
+		return;
+	}
+	else if (clientNum == -1)
+	{
+		Com_Printf("No client matches.\n");
+		return;
+	}
+
+	Q_strncpyz(buf, cl_vignorePlayers->string, sizeof(buf));
+	newBuf[0] = '\0';
+	for(char* name = strtok(buf, ";"); name; name = strtok(NULL, ";"))
+	{
+		if (strcmp(name, cl.clientInfo[clientNum].cleanname) != 0)
+		{
+			if (newBuf[0])
+			{
+				Q_strcat(newBuf, sizeof(newBuf), ";");
+			}
+			Q_strcat(newBuf, sizeof(newBuf), name);
+		}
+	}
+	Cvar_Set("cl_vignorePlayers", newBuf);
+
+	cl.clientInfo[clientNum].vignored = qfalse;
+	Com_Printf("No longer ignoring voice chats from %s\n", cl.clientInfo[clientNum].name);
+}
+
 
 #ifdef ETLEGACY_DEBUG
 void CL_ExtendedCharsTest_f(void)
@@ -2965,6 +3047,8 @@ void CL_Init(void)
 	// ~ and `, as keys and characters
 	cl_consoleKeys = Cvar_Get("cl_consoleKeys", "~ ` 0x7e 0x60", CVAR_ARCHIVE);
 
+	cl_vignorePlayers = Cvar_Get("cl_vignorePlayers", "", 0);
+
 	Cvar_Get("cg_drawCompass", "1", CVAR_ARCHIVE);
 	Cvar_Get("cg_drawNotifyText", "1", CVAR_ARCHIVE);
 	Cvar_Get("cg_quickMessageAlt", "1", CVAR_ARCHIVE);
@@ -3053,6 +3137,9 @@ void CL_Init(void)
 	Cmd_AddCommand("open_homepath", CL_OpenHomePath_f, "Open the home path in a system file explorer.");
 
 	Cmd_AddCommand("clip", CL_Clip_f, "Put command output to clipboard.");
+
+	Cmd_AddCommand("vignore", CL_VoiceIgnore_f);
+	Cmd_AddCommand("vunignore", CL_VoiceUnignore_f);
 
 #ifdef ETLEGACY_DEBUG
 	Cmd_AddCommand("extendedCharsTest", CL_ExtendedCharsTest_f);
@@ -4360,4 +4447,109 @@ void CL_OpenURL(const char *url)
 void BotImport_DrawPolygon(int color, int numpoints, float *points)
 {
 	re.DrawDebugPolygon(color, numpoints, points);
+}
+
+/**
+ * @brief CL_SearchForClientByArgs
+ * @param[in] team
+ * @param[in] argc
+ */
+int CL_SearchForClientByArgs(team_t team, int argc)
+{
+	char keyword[8][MAX_NAME_LENGTH];
+	char namelwr[MAX_NAME_LENGTH];
+	int num, i, j;
+	int kwcount = 0, limboClient = -1;
+	qboolean mismatch;
+
+	if (argc < 2)
+	{
+		return -1;
+	}
+	else if (argc == 2)
+	{
+		char	*endPtr;
+		Cmd_ArgvBuffer(1, keyword[0], MAX_NAME_LENGTH);
+		num = strtol(keyword[0], &endPtr, 10);
+		if (!*endPtr)
+		{
+			if (num >= 0 && num < ARRAY_LEN(cl.clientInfo) && cl.clientInfo[num].infoValid)
+			{
+				return num;
+			}
+		}
+		Q_strlwr(keyword[0]);
+		kwcount = 1;
+	}
+	else
+	{
+		for (i = 1; i < argc; i++, kwcount++) {
+			if (i > 8)
+			{
+				break;
+			}
+			Cmd_ArgvBuffer(i, keyword[i - 1], MAX_NAME_LENGTH);
+			Q_strlwr(keyword[i - 1]);
+		}
+	}
+	for (i = 1; i <= ARRAY_LEN(cl.clientInfo); i++)
+	{
+		if (team == TEAM_NUM_TEAMS)
+		{
+			num = i + clc.clientNum;
+			if (num >= ARRAY_LEN(cl.clientInfo))
+			{
+				num -= ARRAY_LEN(cl.clientInfo);
+			}
+		}
+		else
+		{
+			num = i + cl.snap.ps.clientNum;
+			if (num >= ARRAY_LEN(cl.clientInfo))
+			{
+				num -= ARRAY_LEN(cl.clientInfo);
+			}
+			if (cl.clientInfo[num].team != TEAM_AXIS && cl.clientInfo[num].team != TEAM_ALLIES || num == clc.clientNum)
+			{
+				continue;
+			}
+			if (team > TEAM_FREE && cl.clientInfo[num].team != team)
+			{
+				continue;
+			}
+		}
+
+		Q_strncpyz(namelwr, cl.clientInfo[num].name, sizeof(namelwr));
+		Q_CleanStr(namelwr);
+		Q_strlwr(namelwr);
+		mismatch = qfalse;
+		for (j = 0; j < kwcount && j < 8; j++)
+		{
+			if (!strstr(namelwr, keyword[j]))
+			{
+				mismatch = qtrue;
+				break;
+			}
+		}
+		if (!mismatch)
+		{
+			if (team == TEAM_NUM_TEAMS)
+			{
+				if (limboClient >= 0)
+				{
+					return -2;
+				}
+				limboClient = num;
+				continue;
+			}
+
+			if (cl.clientInfo[num].health < 0)
+			{
+				limboClient = num;
+				continue;
+			}
+			return num;
+		}
+	}
+	return limboClient;
 }

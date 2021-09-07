@@ -722,6 +722,54 @@ void CL_SystemInfoChanged(void)
 	}
 }
 
+/*
+ * @brief CL_ClientInfoChanged
+ * @param[in] clientNum
+ */
+void CL_ClientInfoChanged(int clientNum) {
+	clClientInfo_t *ci = &cl.clientInfo[ clientNum ];
+	const char *configstring = cl.gameState.stringData + cl.gameState.stringOffsets[clientNum + CS_PLAYERS];
+	team_t team;
+	char *name;
+	char buf[MAX_CVAR_VALUE_STRING];
+
+	if (!*configstring)
+	{
+		memset(ci, 0, sizeof(*ci));
+		return;
+	}
+
+	ci->infoValid = qtrue;
+	ci->clientNum = clientNum;
+	Q_strncpyz(ci->name, Info_ValueForKey(configstring, "n"), sizeof(ci->name));
+
+	team = (team_t)atoi(Info_ValueForKey(configstring,"t"));
+
+	ci->team = team;
+
+	Q_strncpyz(cl.clientInfo[clientNum].cleanname, ci->name, sizeof(cl.clientInfo[clientNum].cleanname));
+	Q_CleanStr(cl.clientInfo[clientNum].cleanname);
+	Q_strncpyz(buf, cl_vignorePlayers->string, sizeof(buf));
+	name = strtok(buf, ";");
+	Q_strlwr(cl.clientInfo[clientNum].cleanname);
+	while (name)
+	{
+		Q_strlwr(name);
+		if (strlen(name) < 4)
+		{
+			if (strcmp(name, cl.clientInfo[clientNum].cleanname) == 0)
+			{
+				ci->vignored = qtrue;
+			}
+		}
+		else if (strstr(cl.clientInfo[clientNum].cleanname, name))
+		{
+			ci->vignored = qtrue;
+		}
+		name = strtok(NULL, ";");
+	}
+}
+
 /**
  * @brief CL_ParseGamestate
  * @param[in] msg
