@@ -162,7 +162,7 @@ void CG_ParseFireteams()
 		cg.fireTeams[i].leader = Q_atoi(s);
 
 		s                    = Info_ValueForKey(p, "p");
-		cg.fireTeams[i].priv = (qboolean)!!Q_atoi(s);
+		cg.fireTeams[i].priv = (qboolean) !!Q_atoi(s);
 
 		s = Info_ValueForKey(p, "c");
 		Q_strncpyz(hexbuffer + 2, s, 9);
@@ -562,7 +562,7 @@ void CG_DrawFireTeamOverlay(rectDef_t *rect)
 		x += 14 + bestNameWidth - puwidth;
 
 		// draw the player's weapon icon
-		if (cg.predictedPlayerEntity.currentState.eFlags & EF_MOUNTEDTANK)
+		if (cg_entities[ci->clientNum].currentState.eFlags & EF_MOUNTEDTANK)
 		{
 			if (IS_MOUNTED_TANK_BROWNING(cg.snap->ps.clientNum))
 			{
@@ -573,7 +573,7 @@ void CG_DrawFireTeamOverlay(rectDef_t *rect)
 				curWeap = WP_MOBILE_MG42;
 			}
 		}
-		else if ((cg.predictedPlayerEntity.currentState.eFlags & EF_MG42_ACTIVE) || (cg.predictedPlayerEntity.currentState.eFlags & EF_AAGUN_ACTIVE))
+		else if ((cg_entities[ci->clientNum].currentState.eFlags & EF_MG42_ACTIVE) || (cg_entities[ci->clientNum].currentState.eFlags & EF_AAGUN_ACTIVE))
 		{
 			curWeap = WP_MOBILE_MG42;
 		}
