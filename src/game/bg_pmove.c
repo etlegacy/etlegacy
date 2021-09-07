@@ -818,6 +818,85 @@ static qboolean PM_CheckWaterJump(void)
 }
 
 /**
+ * @brief PM_CheckProneOrDeadColision
+ * @param[in] checkProne
+ * @return
+ */
+qboolean PM_CheckProneOrDeadColision(qboolean checkProne)
+{
+	trace_t trace;
+	vec3_t  end;
+	vec3_t  oldOrigin;
+	int     eFlag = checkProne ? EF_PRONE : EF_DEAD;
+
+	BG_LegsCollisionBoxOffset(pm->ps->viewangles, eFlag, end);
+	VectorAdd(pm->ps->origin, end, end);
+
+	pm->trace(&trace, pm->ps->origin, playerlegsProneMins, playerlegsProneMaxs, end, pm->ps->clientNum, pm->tracemask);
+
+	if (trace.fraction != 1.f)
+	{
+		VectorSubtract(trace.endpos, end, end);
+		VectorCopy(pm->ps->origin, oldOrigin);
+
+		pm->ps->eFlags |= eFlag;
+		PM_StepSlideMove(qfalse);
+		PM_TraceAll(&trace, pm->ps->origin, pm->ps->origin);
+
+		if (trace.startsolid || trace.allsolid || trace.fraction != 1.f)
+		{
+			// push back the origin and retry
+			VectorAdd(oldOrigin, end, pm->ps->origin);
+			PM_StepSlideMove(qfalse);
+			PM_TraceAll(&trace, pm->ps->origin, pm->ps->origin);
+
+			if (trace.startsolid || trace.allsolid || trace.fraction != 1.f)
+			{
+				pm->ps->eFlags &= ~eFlag;
+				VectorCopy(oldOrigin, pm->ps->origin);
+				return qfalse;
+			}
+		}
+		pm->ps->eFlags &= ~eFlag;
+	}
+	else
+	{
+		BG_HeadCollisionBoxOffset(pm->ps->viewangles, eFlag, end);
+		VectorAdd(pm->ps->origin, end, end);
+
+		pm->trace(&trace, pm->ps->origin, playerHeadProneMins, playerHeadProneMaxs, end, pm->ps->clientNum, pm->tracemask);
+
+		if (trace.fraction != 1.f)
+		{
+			VectorSubtract(trace.endpos, end, end);
+			VectorCopy(pm->ps->origin, oldOrigin);
+
+			pm->ps->eFlags |= eFlag;
+			PM_StepSlideMove(qfalse);
+			PM_TraceAll(&trace, pm->ps->origin, pm->ps->origin);
+
+			if (trace.startsolid || trace.allsolid || trace.fraction != 1.f)
+			{
+				// push back the origin and retry
+				VectorAdd(oldOrigin, end, pm->ps->origin);
+				PM_StepSlideMove(qfalse);
+				PM_TraceAll(&trace, pm->ps->origin, pm->ps->origin);
+
+				if (trace.startsolid || trace.allsolid || trace.fraction != 1.f)
+				{
+					pm->ps->eFlags &= ~eFlag;
+					VectorCopy(oldOrigin, pm->ps->origin);
+					return qfalse;
+				}
+			}
+			pm->ps->eFlags &= ~eFlag;
+		}
+	}
+
+	return qtrue;
+}
+
+/**
  * @brief Sets mins, maxs, and pm->ps->viewheight
  * @return
  */
@@ -864,10 +943,6 @@ static qboolean PM_CheckProne(void)
 		if ((((pm->ps->pm_flags & PMF_DUCKED) && pm->cmd.doubleTap == DT_FORWARD) ||
 		     (pm->cmd.wbuttons & WBUTTON_PRONE)) && pm->cmd.serverTime - -pm->pmext->proneTime > pronedelay)
 		{
-			trace_t trace;
-			vec3_t  end;
-			vec3_t  oldOrigin;
-
 			pm->mins[0] = pm->ps->mins[0];
 			pm->mins[1] = pm->ps->mins[1];
 
@@ -877,70 +952,6 @@ static qboolean PM_CheckProne(void)
 			pm->mins[2] = pm->ps->mins[2];
 			pm->maxs[2] = pm->ps->crouchMaxZ;
 
-			BG_LegsCollisionBoxOffset(pm->ps->viewangles, EF_PRONE, end);
-			VectorAdd(pm->ps->origin, end, end);
-
-			pm->trace(&trace, pm->ps->origin, playerlegsProneMins, playerlegsProneMaxs, end, pm->ps->clientNum, pm->tracemask);
-
-			if (trace.fraction != 1.f)
-			{
-				VectorSubtract(trace.endpos, end, end);
-				VectorCopy(pm->ps->origin, oldOrigin);
-
-				pm->ps->eFlags |= EF_PRONE;
-				PM_StepSlideMove(qfalse);
-				PM_TraceAll(&trace, pm->ps->origin, pm->ps->origin);
-
-				if (trace.startsolid || trace.allsolid || trace.fraction != 1.f)
-				{
-					// push back the origin and retry
-					VectorAdd(oldOrigin, end, pm->ps->origin);
-					PM_StepSlideMove(qfalse);
-					PM_TraceAll(&trace, pm->ps->origin, pm->ps->origin);
-
-					if (trace.startsolid || trace.allsolid || trace.fraction != 1.f)
-					{
-						pm->ps->eFlags &= ~EF_PRONE;
-						VectorCopy(oldOrigin, pm->ps->origin);
-						return qfalse;
-					}
-				}
-				pm->ps->eFlags &= ~EF_PRONE;
-			}
-			else
-			{
-				BG_HeadCollisionBoxOffset(pm->ps->viewangles, EF_PRONE, end);
-				VectorAdd(pm->ps->origin, end, end);
-
-				pm->trace(&trace, pm->ps->origin, playerHeadProneMins, playerHeadProneMaxs, end, pm->ps->clientNum, pm->tracemask);
-
-				if (trace.fraction != 1.f)
-				{
-					VectorSubtract(trace.endpos, end, end);
-					VectorCopy(pm->ps->origin, oldOrigin);
-
-					pm->ps->eFlags |= EF_PRONE;
-					PM_StepSlideMove(qfalse);
-					PM_TraceAll(&trace, pm->ps->origin, pm->ps->origin);
-
-					if (trace.startsolid || trace.allsolid || trace.fraction != 1.f)
-					{
-						// push back the origin and retry
-						VectorAdd(oldOrigin, end, pm->ps->origin);
-						PM_StepSlideMove(qfalse);
-						PM_TraceAll(&trace, pm->ps->origin, pm->ps->origin);
-
-						if (trace.startsolid || trace.allsolid || trace.fraction != 1.f)
-						{
-							pm->ps->eFlags &= ~EF_PRONE;
-							VectorCopy(oldOrigin, pm->ps->origin);
-							return qfalse;
-						}
-					}
-					pm->ps->eFlags &= ~EF_PRONE;
-				}
-			}
-
 			if (PM_PRONEDELAY)
 			{
 				pm->ps->aimSpreadScale      = AIMSPREAD_MAXSPREAD;
@@ -948,7 +959,7 @@ static qboolean PM_CheckProne(void)
 			}
 
 			// go prone
-			if (trace.fraction == 1.0f)
+			if (PM_CheckProneOrDeadColision(qtrue))
 			{
 				pm->ps->pm_flags    |= PMF_DUCKED;                           // crouched as well
 				pm->ps->eFlags      |= EF_PRONE;
@@ -1445,6 +1456,7 @@ static void PM_DeadMove(void)
 
 	if (!pml.walking)
 	{
+		PM_CheckProneOrDeadColision(qfalse);
 		return;
 	}
 
