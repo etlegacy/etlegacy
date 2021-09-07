@@ -2961,7 +2961,7 @@ const char *CG_TranslateString(const char *string);
 
 void CG_InitStatsDebug(void);
 void CG_StatsDebugAddText(const char *text);
-qhandle_t CG_GetCompassIcon(entityState_t *ent, qboolean drawAllVoicesChat, qboolean drawFireTeam, qboolean drawPrimaryObj);
+qhandle_t CG_GetCompassIcon(entityState_t *ent, qboolean drawAllVoicesChat, qboolean drawFireTeam, qboolean drawPrimaryObj, char *name);
 void CG_DrawCompassIcon(float x, float y, float w, float h, vec3_t origin, vec3_t dest, qhandle_t shader, float dstScale, float baseSize);
 
 void CG_AddLagometerFrameInfo(void);

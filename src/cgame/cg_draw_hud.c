@@ -1651,7 +1651,7 @@ void CG_StatsDebugAddText(const char *text)
  * @param[in] drawPrimaryObj draw primary objective position
  * @return A valid compass icon handle otherwise 0
  */
-qhandle_t CG_GetCompassIcon(entityState_t *ent, qboolean drawAllVoicesChat, qboolean drawFireTeam, qboolean drawPrimaryObj)
+qhandle_t CG_GetCompassIcon(entityState_t *ent, qboolean drawAllVoicesChat, qboolean drawFireTeam, qboolean drawPrimaryObj, char *name)
 {
 	switch (ent->eType)
 	{
@@ -1731,13 +1731,18 @@ qhandle_t CG_GetCompassIcon(entityState_t *ent, qboolean drawAllVoicesChat, qboo
 	{
 		if (drawPrimaryObj)
 		{
-			centity_t *cent = &cg_entities[ent->number];
+			centity_t *cent    = &cg_entities[ent->number];
 			oidInfo_t *oidInfo = &cgs.oidInfo[cent->currentState.modelindex2];
-			int entNum = Q_atoi(
-					CG_ConfigString(ent->teamNum == TEAM_AXIS ? CS_MAIN_AXIS_OBJECTIVE : CS_MAIN_ALLIES_OBJECTIVE));
+			int       entNum   = Q_atoi(
+				CG_ConfigString(ent->teamNum == TEAM_AXIS ? CS_MAIN_AXIS_OBJECTIVE : CS_MAIN_ALLIES_OBJECTIVE));
 
 			if (entNum == oidInfo->entityNum)
 			{
+				if (name)
+				{
+					Q_strncpyz(name, oidInfo->name, MAX_QPATH);
+				}
+
 				if (cg.predictedPlayerState.persistant[PERS_TEAM] == TEAM_AXIS)
 				{
 					return ent->teamNum == TEAM_AXIS ? cgs.media.defendShader : cgs.media.attackShader;
@@ -1773,10 +1778,15 @@ qhandle_t CG_GetCompassIcon(entityState_t *ent, qboolean drawAllVoicesChat, qboo
 		{
 			centity_t *cent    = &cg_entities[ent->number];
 			oidInfo_t *oidInfo = &cgs.oidInfo[cent->currentState.modelindex2];
-			int entNum         = Q_atoi(CG_ConfigString(ent->teamNum == TEAM_AXIS ? CS_MAIN_AXIS_OBJECTIVE : CS_MAIN_ALLIES_OBJECTIVE));
+			int       entNum   = Q_atoi(CG_ConfigString(ent->teamNum == TEAM_AXIS ? CS_MAIN_AXIS_OBJECTIVE : CS_MAIN_ALLIES_OBJECTIVE));
 
 			if (entNum == oidInfo->entityNum)
 			{
+				if (name)
+				{
+					Q_strncpyz(name, oidInfo->name, MAX_QPATH);
+				}
+
 				if (cg.predictedPlayerState.persistant[PERS_TEAM] == TEAM_AXIS)
 				{
 					return ent->teamNum == TEAM_AXIS ? cgs.media.defendShader : cgs.media.attackShader;
@@ -1811,10 +1821,15 @@ qhandle_t CG_GetCompassIcon(entityState_t *ent, qboolean drawAllVoicesChat, qboo
 		{
 			centity_t *cent    = &cg_entities[ent->number];
 			oidInfo_t *oidInfo = &cgs.oidInfo[cent->currentState.modelindex2];
-			int entNum         = Q_atoi(CG_ConfigString(ent->teamNum == TEAM_AXIS ? CS_MAIN_AXIS_OBJECTIVE : CS_MAIN_ALLIES_OBJECTIVE));
+			int       entNum   = Q_atoi(CG_ConfigString(ent->teamNum == TEAM_AXIS ? CS_MAIN_AXIS_OBJECTIVE : CS_MAIN_ALLIES_OBJECTIVE));
 
 			if (entNum == oidInfo->entityNum)
 			{
+				if (name)
+				{
+					Q_strncpyz(name, oidInfo->name, MAX_QPATH);
+				}
+
 				if (cg.predictedPlayerState.persistant[PERS_TEAM] == TEAM_AXIS)
 				{
 					return ent->teamNum == TEAM_AXIS ? cgs.media.defendShader : cgs.media.attackShader;
@@ -1841,10 +1856,15 @@ qhandle_t CG_GetCompassIcon(entityState_t *ent, qboolean drawAllVoicesChat, qboo
 		{
 			centity_t *cent    = &cg_entities[ent->number];
 			oidInfo_t *oidInfo = &cgs.oidInfo[cent->currentState.modelindex2];
-			int entNum         = Q_atoi(CG_ConfigString(ent->teamNum == TEAM_AXIS ? CS_MAIN_AXIS_OBJECTIVE : CS_MAIN_ALLIES_OBJECTIVE));
+			int       entNum   = Q_atoi(CG_ConfigString(ent->teamNum == TEAM_AXIS ? CS_MAIN_AXIS_OBJECTIVE : CS_MAIN_ALLIES_OBJECTIVE));
 
 			if (entNum == oidInfo->entityNum)
 			{
+				if (name)
+				{
+					Q_strncpyz(name, oidInfo->name, MAX_QPATH);
+				}
+
 				if (cg.predictedPlayerState.persistant[PERS_TEAM] == TEAM_AXIS)
 				{
 					return ent->teamNum == TEAM_AXIS ? cgs.media.defendShader : cgs.media.attackShader;
@@ -2152,7 +2172,7 @@ static void CG_DrawNewCompass(rectDef_t location)
 			continue;
 		}
 
-		icon = CG_GetCompassIcon(&snap->entities[i], qfalse, qtrue, qfalse);
+		icon = CG_GetCompassIcon(&snap->entities[i], qfalse, qtrue, qfalse, NULL);
 
 		if (icon)
 		{

@@ -3797,7 +3797,8 @@ static void CG_DrawEnvironmentalAwareness()
 
 	for (i = 0; i < snap->numEntities; ++i)
 	{
-		centity_t *cent = &cg_entities[snap->entities[i].number];
+		centity_t *cent                  = &cg_entities[snap->entities[i].number];
+		char      description[MAX_QPATH] = { 0 };
 		qhandle_t icon;
 		vec3_t    dir;
 		float     len;
@@ -3817,7 +3818,7 @@ static void CG_DrawEnvironmentalAwareness()
 			continue;
 		}
 
-		icon = CG_GetCompassIcon(&snap->entities[i], qfalse, qfalse, qfalse);
+		icon = CG_GetCompassIcon(&snap->entities[i], qfalse, qfalse, qfalse, description);
 
 		if (icon)
 		{
@@ -3906,6 +3907,7 @@ static void CG_DrawEnvironmentalAwareness()
 				}
 			}
 
+			CG_Text_Paint_Centred_Ext(x + ICONS_SIZE / 2, y - ICONS_SIZE + 8, 0.16f, 0.16f, colorWhite, description, 0, 0, 0, &cgs.media.limboFont2);
 			CG_Text_Paint_Centred_Ext(x + ICONS_SIZE / 2, y + ICONS_SIZE + 8, 0.16f, 0.16f, colorWhite, va("%.0f", len), 0, 0, 0, &cgs.media.limboFont2);
 			CG_DrawPic(x, y, ICONS_SIZE, ICONS_SIZE, icon);
 		}
