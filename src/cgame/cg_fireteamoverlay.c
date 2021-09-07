@@ -564,7 +564,7 @@ void CG_DrawFireTeamOverlay(rectDef_t *rect)
 		// draw the player's weapon icon
 		if (cg_entities[ci->clientNum].currentState.eFlags & EF_MOUNTEDTANK)
 		{
-			if (IS_MOUNTED_TANK_BROWNING(cg.snap->ps.clientNum))
+			if (IS_MOUNTED_TANK_BROWNING(ci->clientNum))
 			{
 				curWeap = WP_MOBILE_BROWNING;
 			}
