@@ -2776,6 +2776,7 @@ extern vmCvar_t cg_recording_statusline;
 extern vmCvar_t cg_announcer;
 extern vmCvar_t cg_hitSounds;
 extern vmCvar_t cg_locations;
+extern vmCvar_t cg_locationMaxChars;
 
 extern vmCvar_t cg_spawnTimer_period;
 extern vmCvar_t cg_spawnTimer_set;
@@ -2786,6 +2787,9 @@ extern vmCvar_t cg_altHud;
 extern vmCvar_t cg_altHudFlags;
 extern vmCvar_t cg_tracers;
 extern vmCvar_t cg_fireteamLatchedClass;
+extern vmCvar_t cg_fireteamLocationAlign;
+extern vmCvar_t cg_fireteamNameMaxChars;
+extern vmCvar_t cg_fireteamNameAlign;
 extern vmCvar_t cg_simpleItems;
 extern vmCvar_t cg_simpleItemsScale;
 
@@ -2980,6 +2984,7 @@ void CG_Text_PaintWithCursor_Ext(float x, float y, float scale, vec4_t color, co
 void CG_Text_PaintWithCursor(float x, float y, float scale, vec4_t color, const char *text, int cursorPos, const char *cursor, int limit, int style);
 void CG_Text_SetActiveFont(int font);
 int CG_Text_Width_Ext(const char *text, float scale, int limit, fontHelper_t *font);
+float CG_Text_Width_Ext_Float(const char *text, float scale, int limit, fontHelper_t *font);
 int CG_Text_Width(const char *text, float scale, int limit);
 int CG_Text_Height_Ext(const char *text, float scale, int limit, fontHelper_t *font);
 int CG_Text_Height(const char *text, float scale, int limit);
