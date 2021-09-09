@@ -397,7 +397,7 @@ void CG_DrawFireTeamOverlay(rectDef_t *rect)
 	fireteamData_t *f  = NULL;
 	char           *locStr[MAX_FIRETEAM_MEMBERS];
 	int            curWeap;
-	char           name[MAX_NAME_LENGTH];
+	char           name[MAX_FIRETEAM_MEMBERS][MAX_NAME_LENGTH];
 	int            nameMaxLen;
 
 	// assign fireteam data, and early out if not on one
@@ -407,7 +407,7 @@ void CG_DrawFireTeamOverlay(rectDef_t *rect)
 	}
 
 	Com_Memset(locStr, 0, sizeof(char *) * MAX_FIRETEAM_MEMBERS);
-	Com_Memset(name, 0, sizeof(char) * MAX_NAME_LENGTH);
+	Com_Memset(name, 0, sizeof(char) * (MAX_FIRETEAM_MEMBERS + MAX_NAME_LENGTH));
 
 	// First get name and location width, also store location names
 	for (i = 0; i < MAX_FIRETEAM_MEMBERS; i++)
@@ -453,12 +453,12 @@ void CG_DrawFireTeamOverlay(rectDef_t *rect)
 			locwidth = 0;
 		}
 
-		Q_strncpyz(name, ci->name, sizeof(name));
+		Q_strncpyz(name[i], ci->name, sizeof(name[i]));
 		// truncate name if max chars is set
 		if (cg_fireteamNameMaxChars.integer)
 		{
 			nameMaxLen = Com_Clamp(0, MAX_NAME_LENGTH - 1, cg_fireteamNameMaxChars.integer);
-			Q_strncpyz(name, Q_TruncateStr(name, nameMaxLen), sizeof(name));
+			Q_strncpyz(name[i], Q_TruncateStr(name[i], nameMaxLen), sizeof(name[i]));
 
 			// if alignment is requested, keep a static width
 			if (cg_fireteamNameAlign.integer)
@@ -468,12 +468,12 @@ void CG_DrawFireTeamOverlay(rectDef_t *rect)
 			}
 			else
 			{
-				namewidth = CG_Text_Width_Ext(name, 0.2f, 0, FONT_TEXT);
+				namewidth = CG_Text_Width_Ext(name[i], 0.2f, 0, FONT_TEXT);
 			}
 		}
 		else
 		{
-			namewidth = CG_Text_Width_Ext(name, 0.2f, 0, FONT_TEXT);
+			namewidth = CG_Text_Width_Ext(name[i], 0.2f, 0, FONT_TEXT);
 		}
 
 		if (ci->powerups & ((1 << PW_REDFLAG) | (1 << PW_BLUEFLAG) | (1 << PW_OPS_DISGUISED)))
@@ -601,11 +601,11 @@ void CG_DrawFireTeamOverlay(rectDef_t *rect)
 		// right align?
 		if (cg_fireteamNameAlign.integer > 0)
 		{
-			CG_Text_Paint_RightAligned_Ext(x + bestNameWidth - puwidth, y + FT_BAR_HEIGHT, .2f, .2f, colorWhite, name, 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
+			CG_Text_Paint_RightAligned_Ext(x + bestNameWidth - puwidth, y + FT_BAR_HEIGHT, .2f, .2f, colorWhite, name[i], 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
 		}
 		else
 		{
-			CG_Text_Paint_Ext(x, y + FT_BAR_HEIGHT, .2f, .2f, colorWhite, name, 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
+			CG_Text_Paint_Ext(x, y + FT_BAR_HEIGHT, .2f, .2f, colorWhite, name[i], 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
 		}
 
 		// add space
