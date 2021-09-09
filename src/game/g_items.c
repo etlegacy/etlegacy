@@ -477,8 +477,8 @@ int Pickup_Weapon(gentity_t *ent, gentity_t *other)
 				// extracted code originally here into AddMagicAmmo
 				// add 1 clip of magic ammo for any two-handed weapon
 			}
-			return RESPAWN_NEVER;
 		}
+		return RESPAWN_NEVER;
 	}
 
 	quantity = ent->count;
