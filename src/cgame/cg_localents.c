@@ -135,6 +135,7 @@ char *CG_GetLocationMsg(int clientNum, vec3_t origin)
 char *CG_BuildLocationString(int clientNum, vec3_t origin, int flag)
 {
 	char *locStr = NULL;
+	int  locMaxLen;
 
 	if (cg_locations.integer & flag)
 	{
@@ -163,6 +164,12 @@ char *CG_BuildLocationString(int clientNum, vec3_t origin, int flag)
 					locStr   = va("^3(%s)", BG_GetLocationString(origin[0], origin[1]));
 					locValid = qfalse; // don't draw it twice..
 				}
+			}
+			// truncate location string if max chars is set
+			if (cg_locationMaxChars.integer)
+			{
+				locMaxLen = Com_Clamp(0, 128, cg_locationMaxChars.integer); // 128 is max location length
+				locStr    = Q_TruncateStr(locStr, locMaxLen);
 			}
 		}
 

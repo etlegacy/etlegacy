@@ -304,6 +304,7 @@ vmCvar_t cg_recording_statusline;
 vmCvar_t cg_announcer;
 vmCvar_t cg_hitSounds;
 vmCvar_t cg_locations;
+vmCvar_t cg_locationMaxChars;
 
 vmCvar_t cg_spawnTimer_set;         // spawntimer
 vmCvar_t cg_spawnTimer_period;      // spawntimer
@@ -316,6 +317,9 @@ vmCvar_t cg_altHud;
 vmCvar_t cg_altHudFlags;
 vmCvar_t cg_tracers;
 vmCvar_t cg_fireteamLatchedClass;
+vmCvar_t cg_fireteamLocationAlign;
+vmCvar_t cg_fireteamNameMaxChars;
+vmCvar_t cg_fireteamNameAlign;
 
 vmCvar_t cg_weapaltReloads;
 
@@ -570,6 +574,7 @@ static cvarTable_t cvarTable[] =
 	{ &cg_announcer,              "cg_announcer",              "1",           CVAR_ARCHIVE,                 0 },
 	{ &cg_hitSounds,              "cg_hitSounds",              "1",           CVAR_ARCHIVE,                 0 },
 	{ &cg_locations,              "cg_locations",              "3",           CVAR_ARCHIVE,                 0 },
+	{ &cg_locationMaxChars,       "cg_locationMaxChars",       "0",           CVAR_ARCHIVE,                 0 },
 
 	{ &cg_spawnTimer_set,         "cg_spawnTimer_set",         "-1",          CVAR_TEMP,                    0 },
 
@@ -582,6 +587,9 @@ static cvarTable_t cvarTable[] =
 	{ &cg_altHudFlags,            "cg_altHudFlags",            "0",           CVAR_ARCHIVE,                 0 },   // Hudstyles
 	{ &cg_tracers,                "cg_tracers",                "1",           CVAR_ARCHIVE,                 0 },   // Draw tracers
 	{ &cg_fireteamLatchedClass,   "cg_fireteamLatchedClass",   "1",           CVAR_ARCHIVE,                 0 },   // Draw fireteam members latched class
+	{ &cg_fireteamLocationAlign,  "cg_fireteamLocationAlign",  "0",           CVAR_ARCHIVE,                 0 },
+	{ &cg_fireteamNameMaxChars,   "cg_fireteamNameMaxChars",   "0",           CVAR_ARCHIVE,                 0 },
+	{ &cg_fireteamNameAlign,      "cg_fireteamNameAlign",      "0",           CVAR_ARCHIVE,                 0 },
 	{ &cg_simpleItems,            "cg_simpleItems",            "0",           CVAR_ARCHIVE,                 0 },   // Bugged atm
 	{ &cg_simpleItemsScale,       "cg_simpleItemsScale",       "1.0",         CVAR_ARCHIVE,                 0 },
 	{ &cg_automapZoom,            "cg_automapZoom",            "5.159",       CVAR_ARCHIVE,                 0 },

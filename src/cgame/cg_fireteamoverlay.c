@@ -386,7 +386,8 @@ void CG_DrawFireTeamOverlay(rectDef_t *rect)
 {
 	float          x = rect->x;
 	float          y = rect->y + 1;             // +1, jitter it into place
-	int            i, locwidth, namewidth, puwidth, lineX;
+	float          locwidth, namewidth;
+	int            i, puwidth, lineX;
 	int            boxWidth      = 90;
 	int            bestNameWidth = -1;
 	int            bestLocWidth  = -1;
@@ -396,6 +397,8 @@ void CG_DrawFireTeamOverlay(rectDef_t *rect)
 	fireteamData_t *f  = NULL;
 	char           *locStr[MAX_FIRETEAM_MEMBERS];
 	int            curWeap;
+	char           name[MAX_NAME_LENGTH];
+	int            nameMaxLen;
 
 	// assign fireteam data, and early out if not on one
 	if (!(f = CG_IsOnFireteam(cg.clientNum)))
@@ -404,6 +407,7 @@ void CG_DrawFireTeamOverlay(rectDef_t *rect)
 	}
 
 	Com_Memset(locStr, 0, sizeof(char *) * MAX_FIRETEAM_MEMBERS);
+	Com_Memset(name, 0, sizeof(char) * MAX_NAME_LENGTH);
 
 	// First get name and location width, also store location names
 	for (i = 0; i < MAX_FIRETEAM_MEMBERS; i++)
@@ -425,14 +429,52 @@ void CG_DrawFireTeamOverlay(rectDef_t *rect)
 				locStr[i] = 0;
 			}
 
-			locwidth = CG_Text_Width_Ext(locStr[i], 0.2f, 0, FONT_TEXT);
+			// cap max location length?
+			if (cg_locationMaxChars.integer)
+			{
+				// if alignment is requested, keep a static width
+				if (cg_fireteamLocationAlign.integer)
+				{
+					locwidth  = CG_Text_Width_Ext_Float("_", 0.2f, 0, FONT_TEXT);
+					locwidth *= Com_Clamp(0, 128, cg_locationMaxChars.integer); // 128 is max location length
+				}
+				else
+				{
+					locwidth = CG_Text_Width_Ext(locStr[i], 0.2f, 0, FONT_TEXT);
+				}
+			}
+			else
+			{
+				locwidth = CG_Text_Width_Ext(locStr[i], 0.2f, 0, FONT_TEXT);
+			}
 		}
 		else
 		{
 			locwidth = 0;
 		}
 
-		namewidth = CG_Text_Width_Ext(ci->name, 0.2f, 0, FONT_TEXT);
+		Q_strncpyz(name, ci->name, sizeof(name));
+		// truncate name if max chars is set
+		if (cg_fireteamNameMaxChars.integer)
+		{
+			nameMaxLen = Com_Clamp(0, MAX_NAME_LENGTH - 1, cg_fireteamNameMaxChars.integer);
+			Q_strncpyz(name, Q_TruncateStr(name, nameMaxLen), sizeof(name));
+
+			// if alignment is requested, keep a static width
+			if (cg_fireteamNameAlign.integer)
+			{
+				namewidth  = CG_Text_Width_Ext_Float("_", 0.2f, 0, FONT_TEXT);
+				namewidth *= Com_Clamp(0, MAX_NAME_LENGTH, cg_fireteamNameMaxChars.integer);
+			}
+			else
+			{
+				namewidth = CG_Text_Width_Ext(name, 0.2f, 0, FONT_TEXT);
+			}
+		}
+		else
+		{
+			namewidth = CG_Text_Width_Ext(name, 0.2f, 0, FONT_TEXT);
+		}
 
 		if (ci->powerups & ((1 << PW_REDFLAG) | (1 << PW_BLUEFLAG) | (1 << PW_OPS_DISGUISED)))
 		{
@@ -556,7 +598,15 @@ void CG_DrawFireTeamOverlay(rectDef_t *rect)
 		}
 
 		// draw the player's name
-		CG_Text_Paint_Ext(x, y + FT_BAR_HEIGHT, .2f, .2f, colorWhite, ci->name, 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
+		// right align?
+		if (cg_fireteamNameAlign.integer > 0)
+		{
+			CG_Text_Paint_RightAligned_Ext(x + bestNameWidth - puwidth, y + FT_BAR_HEIGHT, .2f, .2f, colorWhite, name, 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
+		}
+		else
+		{
+			CG_Text_Paint_Ext(x, y + FT_BAR_HEIGHT, .2f, .2f, colorWhite, name, 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
+		}
 
 		// add space
 		x += 14 + bestNameWidth - puwidth;
@@ -628,7 +678,14 @@ void CG_DrawFireTeamOverlay(rectDef_t *rect)
 		x += 12;
 		if (cg_locations.integer & LOC_FTEAM)
 		{
-			CG_Text_Paint_Ext(x, y + FT_BAR_HEIGHT, .2f, .2f, FT_text, locStr[i], 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
+			if (cg_fireteamLocationAlign.integer > 0) // right align
+			{
+				CG_Text_Paint_RightAligned_Ext(x + bestLocWidth, y + FT_BAR_HEIGHT, .2f, .2f, FT_text, locStr[i], 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
+			}
+			else
+			{
+				CG_Text_Paint_Ext(x, y + FT_BAR_HEIGHT, .2f, .2f, FT_text, locStr[i], 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
+			}
 		}
 	}
 }

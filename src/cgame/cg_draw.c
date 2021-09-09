@@ -101,6 +101,50 @@ int CG_Text_Width_Ext(const char *text, float scale, int limit, fontHelper_t *fo
 }
 
 /**
+ * @brief CG_Text_Width_Ext_Float
+ * @param[in] text
+ * @param[in] scale
+ * @param[in] limit
+ * @param[in] font
+ * @return
+ */
+float CG_Text_Width_Ext_Float(const char *text, float scale, int limit, fontHelper_t *font)
+{
+	float out = 0;
+
+	if (text)
+	{
+		const char  *s = text;
+		glyphInfo_t *glyph;
+		int         count = 0;
+		int         len   = Q_UTF8_Strlen(text);
+
+		if (limit > 0 && len > limit)
+		{
+			len = limit;
+		}
+
+		while (s && *s && count < len)
+		{
+			if (Q_IsColorString(s))
+			{
+				s += 2;
+				continue;
+			}
+			else
+			{
+				glyph = Q_UTF8_GetGlyph(font, s);
+				out  += glyph->xSkip;
+				s    += Q_UTF8_Width(s);
+				count++;
+			}
+		}
+	}
+
+	return out * scale * Q_UTF8_GlyphScale(font);
+}
+
+/**
  * @brief CG_Text_Width
  * @param[in] text
  * @param[in] scale

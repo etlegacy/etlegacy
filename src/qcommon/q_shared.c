@@ -1725,6 +1725,50 @@ int Q_PrintStrlen(const char *string)
 }
 
 /**
+ * @brief Q_TruncateStr
+ * @param[in] string
+ * @param[in] limit
+ * @return
+ */
+char *Q_TruncateStr(char *string, int limit)
+{
+	char *p;
+	char *s;
+	int  i, len;
+
+	if (!string)
+	{
+		return 0;
+	}
+
+	len = Q_PrintStrlen(string);
+	if (len <= limit)
+	{
+		return string;
+	}
+
+	p = string;
+	s = string;
+	for (i = 0; i < limit; i++)
+	{
+		if (Q_IsColorString(p))
+		{
+			limit += 2;
+			p     += 2;
+			i++;
+			continue;
+		}
+		p++;
+	}
+
+	limit++; // for null byte
+
+	Q_strncpyz(s, string, limit);
+
+	return s;
+}
+
+/**
  * @brief Remove all leading and trailing whitespace and special characters from string.
  * @param[in,out] string
  * @return

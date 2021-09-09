@@ -663,7 +663,7 @@ char *COM_Parse2(char **data_p);
 char *COM_ParseExt2(char **data_p, qboolean allowLineBreaks);
 
 int COM_Compress(char *data_p);
-void COM_ParseError(const char *format, ...) _attribute ((format(printf, 1, 2)));
+void COM_ParseError(const char *format, ...) _attribute((format(printf, 1, 2)));
 //void COM_ParseWarning(const char *format, ...) _attribute ((format(printf, 1, 2))); // Unused
 
 qboolean COM_BitCheck(const int array[], unsigned int bitNum);
@@ -709,7 +709,7 @@ void Parse1DMatrix(char **buf_p, int x, float *m);
 void Parse2DMatrix(char **buf_p, int y, int x, float *m);
 void Parse3DMatrix(char **buf_p, int z, int y, int x, float *m);
 
-int QDECL Com_sprintf(char *dest, unsigned int size, const char *fmt, ...) _attribute ((format(printf, 3, 4)));
+int QDECL Com_sprintf(char *dest, unsigned int size, const char *fmt, ...) _attribute((format(printf, 3, 4)));
 
 char *Com_SkipTokens(char *s, int numTokens, const char *sep);
 char *Com_SkipCharset(char *s, char *sep);
@@ -818,6 +818,9 @@ void Q_strcat(char *dest, size_t size, const char *src);
 /// strlen that discounts Quake color sequences
 int Q_PrintStrlen(const char *string);
 
+/// truncates a string, taking color codes into account
+char *Q_TruncateStr(char *string, int limit);
+
 /// removes leading and trailing whitespaces from string
 char *Q_TrimStr(char *string);
 
@@ -875,7 +878,7 @@ float *tv(float x, float y, float z);
 #define rc(x) va("%s^7", x) ///< shortcut for color reset after printing variable
 
 //char *QDECL va(char *format, ...) _attribute ((format(printf, 1, 2)));
-char *QDECL va(const char *format, ...) _attribute ((format(printf, 1, 2)));
+char *QDECL va(const char *format, ...) _attribute((format(printf, 1, 2)));
 
 #define TRUNCATE_LENGTH 64
 void Com_TruncateLongString(char *buffer, const char *s);
@@ -892,8 +895,8 @@ qboolean Info_Validate(const char *s);
 qboolean Info_NextPair(const char **head, char *key, char *value);
 
 // this is only here so the functions in q_shared.c and bg_*.c can link
-void QDECL Com_Error(int code, const char *fmt, ...) _attribute ((noreturn, format(printf, 2, 3)));
-void QDECL Com_Printf(const char *fmt, ...) _attribute ((format(printf, 1, 2)));
+void QDECL Com_Error(int code, const char *fmt, ...) _attribute((noreturn, format(printf, 2, 3)));
+void QDECL Com_Printf(const char *fmt, ...) _attribute((format(printf, 1, 2)));
 
 /*
 ==========================================================
@@ -1861,13 +1864,13 @@ void Com_ParseUA(userAgent_t *ua, const char *string);
 #define PP_NARG_(...)  EXPAND(PP_ARG_N(__VA_ARGS__))
 
 #define PP_ARG_N( \
-	    _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, \
-	    _11, _12, _13, _14, _15, _16, _17, _18, _19, _20, \
-	    _21, _22, _23, _24, _25, _26, _27, _28, _29, _30, \
-	    _31, _32, _33, _34, _35, _36, _37, _38, _39, _40, \
-	    _41, _42, _43, _44, _45, _46, _47, _48, _49, _50, \
-	    _51, _52, _53, _54, _55, _56, _57, _58, _59, _60, \
-	    _61, _62, _63, N, ...) N
+		_1, _2, _3, _4, _5, _6, _7, _8, _9, _10, \
+		_11, _12, _13, _14, _15, _16, _17, _18, _19, _20, \
+		_21, _22, _23, _24, _25, _26, _27, _28, _29, _30, \
+		_31, _32, _33, _34, _35, _36, _37, _38, _39, _40, \
+		_41, _42, _43, _44, _45, _46, _47, _48, _49, _50, \
+		_51, _52, _53, _54, _55, _56, _57, _58, _59, _60, \
+		_61, _62, _63, N, ...) N
 
 #define PP_RSEQ_N() \
 	63, 62, 61, 60,          \
