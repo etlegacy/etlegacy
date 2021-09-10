@@ -1058,9 +1058,48 @@ void CG_GameStatsDraw(void)
 		{
 			for (i = 0; i < gs->cSkills; i++)
 			{
+				int  j, index;
+				char skill;
+
+				// get skill levels from game stats string
+				// this have to be the first number occurrence in the string to work
+				index = strcspn(gs->strSkillz[i], "0123456789");
+				skill = gs->strSkillz[i][index];
+
+				x += 90;
+
+				for (j = 1; j < NUM_SKILL_LEVELS; ++j)
+				{
+					vec4_t clr;
+
+					if (GetSkillTableData(i)->skillLevels[j] < 0)
+					{
+						Vector4Set(clr, 1.f, 0.f, 0.f, 0.2f);
+					}
+					else if (skill - '0' >= j)
+					{
+						Vector4Set(clr, 1.f, 1.f, 1.f, 1.0f);
+					}
+					else
+					{
+						Vector4Set(clr, 1.f, 1.f, 1.f, 0.2f);
+					}
+
+					trap_R_SetColor(clr);
+					CG_DrawPicST(x, y, 12, 12, 0, 0, 1.f, 0.5f, cgs.media.limboStar_roll);
+
+					x += 12;
+				}
+
+				x  = (Ccg_WideX(SCREEN_WIDTH) / 2) - (GS_W / 2);
 				y += tSpacing;
+
+				gs->strSkillz[i][index] = ' ';  // trick to not display the skill level char
 				CG_Text_Paint_Ext(x + 4, y, tScale, tScale, tColor, gs->strSkillz[i], 0.0f, 0, tStyle, tFont);
+				gs->strSkillz[i][index] = skill;    // add the char back to ensure we could parse it next time
 			}
+
+			trap_R_SetColor(NULL);
 		}
 	}
 }
