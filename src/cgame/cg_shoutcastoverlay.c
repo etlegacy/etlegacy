@@ -133,6 +133,7 @@ static void CG_DrawShoutcastPlayerOverlayAxis(clientInfo_t *player, float x, flo
 	float topRowX    = x;
 	float bottomRowX = x;
 	char  *text;
+	char  name[MAX_NAME_LENGTH] = { 0 };
 
 	//Draw box
 	CG_FillRect(x, y, PLAYER_LIST_OVERLAY_BOX_WIDTH, PLAYER_LIST_OVERLAY_BOX_HEIGHT, bg);
@@ -160,13 +161,14 @@ static void CG_DrawShoutcastPlayerOverlayAxis(clientInfo_t *player, float x, flo
 	}
 
 	//Draw name limit 20 chars, width 116
-	textWidth  = CG_Text_Width_Ext(player->cleanname, 0.2f, 0, FONT_TEXT);
-	textHeight = CG_Text_Height_Ext(player->cleanname, 0.2f, 0, FONT_TEXT);
+	Q_ColorizeString('7', player->cleanname, name, MAX_NAME_LENGTH);
+	textWidth  = CG_Text_Width_Ext(name, 0.2f, 0, FONT_TEXT);
+	textHeight = CG_Text_Height_Ext(name, 0.2f, 0, FONT_TEXT);
 	if (textWidth > 116)
 	{
 		textWidth = 116;
 	}
-	CG_Text_Paint_Ext(x + 26, y + (PLAYER_LIST_OVERLAY_BOX_HEIGHT / 4) + (textHeight / 2), 0.2f, 0.2f, colorWhite, player->cleanname, 0, 20, ITEM_TEXTSTYLE_NORMAL, FONT_TEXT);
+	CG_Text_Paint_Ext(x + 26, y + (PLAYER_LIST_OVERLAY_BOX_HEIGHT / 4) + (textHeight / 2), 0.2f, 0.2f, colorWhite, name, 0, 20, ITEM_TEXTSTYLE_NORMAL, FONT_TEXT);
 
 	//Draw follow bind
 	text      = va("(F%i)", index + 1);
@@ -240,6 +242,7 @@ static void CG_DrawShoutcastPlayerOverlayAllies(clientInfo_t *player, float x, f
 	float topRowX    = x;
 	float bottomRowX = x + PLAYER_LIST_OVERLAY_BOX_WIDTH;
 	char  *text;
+	char  name[MAX_NAME_LENGTH] = { 0 };
 
 	//Draw box
 	CG_FillRect(x, y, PLAYER_LIST_OVERLAY_BOX_WIDTH, PLAYER_LIST_OVERLAY_BOX_HEIGHT, bg);
@@ -269,13 +272,14 @@ static void CG_DrawShoutcastPlayerOverlayAllies(clientInfo_t *player, float x, f
 	}
 
 	//Draw name limit 20 chars, width 116
-	textWidth  = CG_Text_Width_Ext(player->cleanname, 0.2f, 0, FONT_TEXT);
-	textHeight = CG_Text_Height_Ext(player->cleanname, 0.2f, 0, FONT_TEXT);
+	Q_ColorizeString('7', player->cleanname, name, MAX_NAME_LENGTH);
+	textWidth  = CG_Text_Width_Ext(name, 0.2f, 0, FONT_TEXT);
+	textHeight = CG_Text_Height_Ext(name, 0.2f, 0, FONT_TEXT);
 	if (textWidth > 116)
 	{
 		textWidth = 116;
 	}
-	CG_Text_Paint_Ext(x + PLAYER_LIST_OVERLAY_BOX_WIDTH - textWidth - 26, y + (PLAYER_LIST_OVERLAY_BOX_HEIGHT / 4) + (textHeight / 2), 0.2f, 0.2f, colorWhite, player->cleanname, 0, 20, ITEM_TEXTSTYLE_NORMAL, FONT_TEXT);
+	CG_Text_Paint_Ext(x + PLAYER_LIST_OVERLAY_BOX_WIDTH - textWidth - 26, y + (PLAYER_LIST_OVERLAY_BOX_HEIGHT / 4) + (textHeight / 2), 0.2f, 0.2f, colorWhite, name, 0, 20, ITEM_TEXTSTYLE_NORMAL, FONT_TEXT);
 
 	//Draw follow bind
 	text = va("(F%i)", index + 7);
@@ -573,6 +577,7 @@ void CG_DrawShoutcastPlayerStatus(void)
 	float         textWidth, textWidth2, textHeight;
 	char          *kills, *deaths, *selfkills, *dmgGiven, *dmgRcvd, *text;
 	int           ammo, clip, akimbo, curWeap, weapScale, tmpX;
+	char          name[MAX_NAME_LENGTH] = { 0 };
 
 	if (cgs.topshots.show == SHOW_ON)
 	{
@@ -594,13 +599,14 @@ void CG_DrawShoutcastPlayerStatus(void)
 	}
 
 	//Draw name limit 20 chars, width 110
-	textWidth  = CG_Text_Width_Ext(player->cleanname, 0.19f, 0, FONT_TEXT);
-	textHeight = CG_Text_Height_Ext(player->cleanname, 0.19f, 0, FONT_TEXT);
+	Q_ColorizeString('7', player->cleanname, name, MAX_NAME_LENGTH);
+	textWidth  = CG_Text_Width_Ext(name, 0.19f, 0, FONT_TEXT);
+	textHeight = CG_Text_Height_Ext(name, 0.19f, 0, FONT_TEXT);
 	if (textWidth > 110)
 	{
 		textWidth = 110;
 	}
-	CG_Text_Paint_Ext(nameBoxX + (nameBoxWidth / 2) - (textWidth / 2), nameBoxY + (nameBoxHeight / 2) + (textHeight / 2), 0.19f, 0.19f, colorWhite, player->cleanname, 0, 20, ITEM_TEXTSTYLE_NORMAL, FONT_TEXT);
+	CG_Text_Paint_Ext(nameBoxX + (nameBoxWidth / 2) - (textWidth / 2), nameBoxY + (nameBoxHeight / 2) + (textHeight / 2), 0.19f, 0.19f, colorWhite, name, 0, 20, ITEM_TEXTSTYLE_NORMAL, FONT_TEXT);
 
 	//Draw country flag
 	CG_DrawFlag(nameBoxX + nameBoxWidth - 17, nameBoxY + (nameBoxHeight / 2) - 7, 1, player->clientNum);
