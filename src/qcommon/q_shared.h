@@ -85,7 +85,7 @@
 
 #define MAX_MASTER_SERVERS 5   ///< number of supported master servers
 
-#define SLASH_COMMAND 1        ///< Will the client require a '/' sign in front of commands
+#define SLASH_COMMAND (cl_slashCommand->integer)        ///< Will the client require a '/' sign in front of commands
 
 // ET: Legacy specific - used by mod code
 #define MOD_CHECK_ETLEGACY(isETLegacy, versionNum, outputValue) outputValue = (isETLegacy == qtrue ? qtrue : qfalse); \

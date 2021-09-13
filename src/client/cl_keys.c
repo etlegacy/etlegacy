@@ -345,8 +345,8 @@ void Field_Draw(field_t *edit, int x, int y, int width, qboolean showCursor, qbo
  */
 void Field_Paste(field_t *edit)
 {
-	char         *cbd;
-	size_t       pasteLen, i;
+	char   *cbd;
+	size_t pasteLen, i;
 
 	cbd = IN_GetClipboardData();
 
@@ -390,8 +390,8 @@ void Field_KeyDownEvent(field_t *edit, int key)
 		return;
 	}
 
-	key = tolower(key);
-	len = strlen(edit->buffer);
+	key       = tolower(key);
+	len       = strlen(edit->buffer);
 	stringLen = Q_UTF8_Strlen(edit->buffer);
 
 	switch (key)
@@ -400,9 +400,9 @@ void Field_KeyDownEvent(field_t *edit, int key)
 	case K_KP_DEL:
 		if (edit->cursor < stringLen)
 		{
-			int offset = Q_UTF8_ByteOffset(edit->buffer, edit->cursor);
-			char *current = Q_UTF8_CharAt(edit->buffer, edit->cursor);
-			int charWidth = Q_UTF8_Width(current);
+			int  offset    = Q_UTF8_ByteOffset(edit->buffer, edit->cursor);
+			char *current  = Q_UTF8_CharAt(edit->buffer, edit->cursor);
+			int  charWidth = Q_UTF8_Width(current);
 
 			memmove(edit->buffer + offset,
 			        edit->buffer + offset + charWidth, len - offset);
@@ -494,9 +494,9 @@ void Field_CharEvent(field_t *edit, int ch)
 	{
 		if (edit->cursor > 0)
 		{
-			int offset = Q_UTF8_ByteOffset(edit->buffer, edit->cursor);
-			char *prev = Q_UTF8_CharAt(edit->buffer, edit->cursor - 1);
-			int charWidth = Q_UTF8_Width(prev);
+			int  offset    = Q_UTF8_ByteOffset(edit->buffer, edit->cursor);
+			char *prev     = Q_UTF8_CharAt(edit->buffer, edit->cursor - 1);
+			int  charWidth = Q_UTF8_Width(prev);
 			memmove(edit->buffer + offset - charWidth, edit->buffer + offset, len + 1 - offset);
 			edit->cursor--;
 			if (edit->cursor < edit->scroll)
@@ -572,54 +572,72 @@ void Console_Key(int key)
 	{
 		con.highlightOffset = 0;
 
-#if SLASH_COMMAND
-		// if not in the game explicitly prepend a slash if needed
-		if (cls.state != CA_ACTIVE && g_consoleField.buffer[0] != '\\'
-		    && g_consoleField.buffer[0] != '/')
+		if (SLASH_COMMAND)
 		{
-			char temp[MAX_STRING_CHARS];
+			// if not in the game explicitly prepend a slash if needed
+			if (cls.state != CA_ACTIVE && g_consoleField.buffer[0] != '\\'
+			    && g_consoleField.buffer[0] != '/')
+			{
+				char temp[MAX_STRING_CHARS];
 
-			Q_strncpyz(temp, g_consoleField.buffer, sizeof(temp));
-			Com_sprintf(g_consoleField.buffer, sizeof(g_consoleField.buffer), "\\%s", temp);
-			g_consoleField.cursor++;
-		}
-#endif
+				Q_strncpyz(temp, g_consoleField.buffer, sizeof(temp));
+				Com_sprintf(g_consoleField.buffer, sizeof(g_consoleField.buffer), "\\%s", temp);
+				g_consoleField.cursor++;
+			}
+			Com_Printf("]%s\n", g_consoleField.buffer);
 
-		Com_Printf("]%s\n", g_consoleField.buffer);
-
-#if SLASH_COMMAND
-		// leading slash is an explicit command
-		if (g_consoleField.buffer[0] == '\\' || g_consoleField.buffer[0] == '/')
-		{
-			Cbuf_AddText(g_consoleField.buffer + 1);      // valid command
-			Cbuf_AddText("\n");
+			// leading slash is an explicit command
+			if (g_consoleField.buffer[0] == '\\' || g_consoleField.buffer[0] == '/')
+			{
+				Cbuf_AddText(g_consoleField.buffer + 1);      // valid command
+				Cbuf_AddText("\n");
+			}
+			else
+			{
+				// other text will be chat messages
+				if (!g_consoleField.buffer[0])
+				{
+					return; // empty lines just scroll the console without adding to history
+				}
+				else
+				{
+					Cbuf_AddText("cmd say ");
+					Cbuf_AddText(g_consoleField.buffer);
+					Cbuf_AddText("\n");
+				}
+			}
 		}
 		else
 		{
-			// other text will be chat messages
+			Com_Printf("\\%s\n", g_consoleField.buffer);
+
 			if (!g_consoleField.buffer[0])
 			{
 				return; // empty lines just scroll the console without adding to history
 			}
+			else if (g_consoleField.buffer[0] == '\\' || g_consoleField.buffer[0] == '/')
+			{
+				Cbuf_AddText(g_consoleField.buffer + 1);      // valid command
+				Cbuf_AddText("\n");
+			}
+			else if (g_consoleField.buffer[0] == '"')
+			{
+				Cbuf_AddText("cmd say ");
+				Cbuf_AddText(g_consoleField.buffer);
+				Cbuf_AddText("\n");
+			}
+			else if (g_consoleField.buffer[0] == '\'')
+			{
+				Cbuf_AddText("cmd vsay ");
+				Cbuf_AddText(g_consoleField.buffer + 1);
+				Cbuf_AddText("\n");
+			}
 			else
 			{
-				char escapedChatMessage[MAX_EDIT_LINE * 2];
-				Q_EscapeUnicode(g_consoleField.buffer, escapedChatMessage, MAX_EDIT_LINE * 2);
-
-				Cbuf_AddText("cmd say ");
-				Cbuf_AddText(escapedChatMessage);
+				Cbuf_AddText(g_consoleField.buffer);      // valid command
 				Cbuf_AddText("\n");
 			}
 		}
-#else
-		Cbuf_AddText(g_consoleField.buffer);      // valid command
-		Cbuf_AddText("\n");
-
-		if (!g_consoleField.buffer[0])
-		{
-			return; // empty lines just scroll the console without adding to history
-		}
-#endif
 
 		// copy line to history buffer
 		historyEditLines[nextHistoryLine % COMMAND_HISTORY] = g_consoleField;
@@ -1355,7 +1373,7 @@ void CL_KeyEvent(int key, qboolean down, unsigned time)
 	// most keys during demo playback will bring up the menu, but non-ascii
 	// keys can still be used for bound actions
 	if (down && (key < 128 || key == K_MOUSE1)
-		&& (clc.demo.playing || cls.state == CA_CINEMATIC) && !cls.keyCatchers)
+	    && (clc.demo.playing || cls.state == CA_CINEMATIC) && !cls.keyCatchers)
 	{
 
 		Cvar_Set("nextdemo", "");

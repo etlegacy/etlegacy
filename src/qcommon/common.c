@@ -228,7 +228,7 @@ void QDECL Com_Printf(const char *fmt, ...)
 	char            buffer[MAX_PRINT_MSG];
 	char            *msg, *bufferEnd, *tmpMsg;
 	static qboolean opening_qconsole = qfalse;
-	static qboolean lineWasEnded = qtrue;
+	static qboolean lineWasEnded     = qtrue;
 	int             timestamp;
 
 #ifdef DEDICATED
@@ -1009,7 +1009,7 @@ static void Z_ClearZone(memzone_t *zone, int size)
 	// set the entire zone to one free block
 
 	zone->blocklist.next = zone->blocklist.prev = block =
-													  ( memblock_t * )((byte *)zone + sizeof(memzone_t));
+		( memblock_t * )((byte *)zone + sizeof(memzone_t));
 	zone->blocklist.tag  = 1;   // in use block
 	zone->blocklist.id   = 0;
 	zone->blocklist.size = 0;
@@ -2968,7 +2968,7 @@ void Com_Init(char *commandLine)
 	com_introPlayed = Cvar_Get("com_introplayed", "0", CVAR_ARCHIVE);
 
 	// this cvar is the single entry point of the entire extension system
-	Cvar_Get( "//trap_GetValue", va( "%i", COM_TRAP_GETVALUE ), CVAR_PROTECTED | CVAR_ROM | CVAR_NOTABCOMPLETE );
+	Cvar_Get("//trap_GetValue", va("%i", COM_TRAP_GETVALUE), CVAR_PROTECTED | CVAR_ROM | CVAR_NOTABCOMPLETE);
 
 #if idppc
 	com_altivec = Cvar_Get("com_altivec", "1", CVAR_ARCHIVE);
@@ -3836,42 +3836,48 @@ void Field_CompleteCommand(char *cmd, qboolean doCommands, qboolean doCvars)
 		//completionString = Cmd_Argv(completionArgument - 1);
 	}
 
-#if defined(SLASH_COMMAND) && !defined(DEDICATED)
-	// Unconditionally add a '\' to the start of the buffer
-	if (completionField->buffer[0] &&
-	    completionField->buffer[0] != '\\')
+#if !defined(DEDICATED)
+	if (SLASH_COMMAND)
 	{
-		if (completionField->buffer[0] != '/')
+		// Unconditionally add a '\' to the start of the buffer
+		if (completionField->buffer[0] &&
+		    completionField->buffer[0] != '\\')
 		{
-			// Buffer is full, refuse to complete
-			if (strlen(completionField->buffer) + 1 >=
-			    sizeof(completionField->buffer))
+			if (completionField->buffer[0] != '/')
 			{
-				return;
+				// Buffer is full, refuse to complete
+				if (strlen(completionField->buffer) + 1 >=
+				    sizeof(completionField->buffer))
+				{
+					return;
+				}
+
+				memmove(&completionField->buffer[1],
+				        &completionField->buffer[0],
+				        strlen(completionField->buffer) + 1);
+				completionField->cursor++;
 			}
 
-			memmove(&completionField->buffer[1],
-			        &completionField->buffer[0],
-			        strlen(completionField->buffer) + 1);
-			completionField->cursor++;
+			completionField->buffer[0] = '\\';
 		}
-
-		completionField->buffer[0] = '\\';
 	}
-#endif // SLASH_COMMAND
+#endif // !defined(DEDICATED)
 
 	if (completionArgument > 1)
 	{
 		const char *baseCmd = Cmd_Argv(0);
 		char       *p;
 
-#if defined(SLASH_COMMAND) && !defined(DEDICATED)
-		// This should always be true
-		if (baseCmd[0] == '\\' || baseCmd[0] == '/')
+#if !defined(DEDICATED)
+		//if (SLASH_COMMAND)
 		{
-			baseCmd++;
+			// This should always be true
+			if (baseCmd[0] == '\\' || baseCmd[0] == '/')
+			{
+				baseCmd++;
+			}
 		}
-#endif // SLASH_COMMAND
+#endif // !defined(DEDICATED)
 
 		if ((p = Field_FindFirstSeparator(cmd)))
 		{
@@ -3884,13 +3890,13 @@ void Field_CompleteCommand(char *cmd, qboolean doCommands, qboolean doCvars)
 	}
 	else
 	{
-#if SLASH_COMMAND
+//#if SLASH_COMMAND
 		if (completionString[0] == '\\' || completionString[0] == '/')
 		{
 			memmove(completionString, completionString + 1, sizeof(completionString) - 1);
 			//completionString++;
 		}
-#endif
+//#endif
 
 		matchCount       = 0;
 		shortestMatch[0] = 0;
@@ -4040,6 +4046,16 @@ void Console_AutoComplete(field_t *field, int *completionOffset)
 			return;
 		}
 
+#if !defined(DEDICATED)
+		if (!SLASH_COMMAND)
+		{
+			if (field->buffer[lastSpace] != ' ')
+			{
+				lastSpace = -1;
+			}
+		}
+#endif // !defined(DEDICATED)
+
 		Com_sprintf(field->buffer + lastSpace + 1, sizeof(field->buffer) - lastSpace - 1, "%s", shortestMatch);
 		*completionOffset = field->cursor = strlen(field->buffer);
 	}
@@ -4053,12 +4069,13 @@ void Console_AutoComplete(field_t *field, int *completionOffset)
 		}
 		findMatchIndex = 0;
 
-#if SLASH_COMMAND
-		if (completionString[0] == '\\' || completionString[0] == '/')
+		//if (SLASH_COMMAND)
 		{
-			memmove(completionString, completionString + 1, sizeof(completionString) - 1);
+			if (completionString[0] == '\\' || completionString[0] == '/')
+			{
+				memmove(completionString, completionString + 1, sizeof(completionString) - 1);
+			}
 		}
-#endif // SLASH_COMMAND
 
 		Cmd_CommandCompletion(FindIndexMatch);
 		Cvar_CommandCompletion(FindIndexMatch);
@@ -4069,6 +4086,16 @@ void Console_AutoComplete(field_t *field, int *completionOffset)
 			*completionOffset = 0;
 			return;
 		}
+
+#if !defined(DEDICATED)
+		if (!SLASH_COMMAND)
+		{
+			if (field->buffer[lastSpace] != ' ')
+			{
+				lastSpace = -1;
+			}
+		}
+#endif // !defined(DEDICATED)
 
 		Com_sprintf(field->buffer + lastSpace + 1, sizeof(field->buffer) - lastSpace - 1, "%s", shortestMatch);
 		field->cursor = strlen(field->buffer);

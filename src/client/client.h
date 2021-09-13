@@ -195,7 +195,7 @@ typedef struct
 	char demoName[MAX_QPATH];
 	qboolean recording;
 	qboolean playing;
-	qboolean pure;							///< are we starting the demo with sv_pure 1 emulation?
+	qboolean pure;                          ///< are we starting the demo with sv_pure 1 emulation?
 	qboolean waiting;                       ///< don't record until a non-delta message is received
 	qboolean firstFrameSkipped;
 	fileHandle_t file;
@@ -453,6 +453,8 @@ extern cvar_t *cl_profile;
 extern cvar_t *cl_defaultProfile;
 
 extern cvar_t *cl_consoleKeys;
+
+extern cvar_t *cl_slashCommand;
 
 //=================================================
 

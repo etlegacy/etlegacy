@@ -601,7 +601,14 @@ void Con_DrawInput(void)
 
 	re.SetColor(con.color);
 
-	SCR_DrawSmallChar(SMALLCHAR_WIDTH, y, ']');
+	if (SLASH_COMMAND)
+	{
+		SCR_DrawSmallChar(SMALLCHAR_WIDTH, y, ']');
+	}
+	else
+	{
+		SCR_DrawSmallChar(SMALLCHAR_WIDTH, y, '\\');
+	}
 
 	Field_Draw(&g_consoleField, 2 * SMALLCHAR_WIDTH, y,
 	           SCREEN_WIDTH - 3 * SMALLCHAR_WIDTH, qtrue, qtrue);
@@ -694,7 +701,7 @@ void Con_DrawScrollbar(int length, float x, float y)
 {
 	vec4_t      color          = { 0.2f, 0.2f, 0.2f, 0.75f };
 	const float width          = 1.0f;
-	const float handleLength   = con.totalLines ? length *MIN(1.0f, (float) con.visibleLines / con.totalLines) : 0;
+	const float handleLength   = con.totalLines ? length * MIN(1.0f, (float) con.visibleLines / con.totalLines) : 0;
 	const float lengthPerLine  = (length - handleLength) / (con.totalLines - con.visibleLines);
 	const float relativeScroll = con.current - con.totalLines + MIN(con.visibleLines, con.totalLines);
 	const float handlePosition = lengthPerLine * (con.bottomDisplayedLine - relativeScroll);
@@ -752,11 +759,11 @@ void Con_DrawSolidConsole(float frac)
 	}
 	else
 	{
-		if (Q_ParseColorRGBA(con_background->string, color)) 
+		if (Q_ParseColorRGBA(con_background->string, color))
 		{
 			SCR_FillRect(0, 0, SCREEN_WIDTH, y, color);
-		} 
-		else 
+		}
+		else
 		{
 			SCR_DrawPic(0, 0, SCREEN_WIDTH, y, cls.consoleShader);
 		}

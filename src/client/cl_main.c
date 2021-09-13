@@ -117,6 +117,8 @@ cvar_t *cl_packetdelay;
 
 cvar_t *cl_consoleKeys;
 
+cvar_t *cl_slashCommand;
+
 clientActive_t     cl;
 clientConnection_t clc;
 clientStatic_t     cls;
@@ -2976,6 +2978,8 @@ void CL_Init(void)
 
 	// ~ and `, as keys and characters
 	cl_consoleKeys = Cvar_Get("cl_consoleKeys", "~ ` 0x7e 0x60", CVAR_ARCHIVE);
+
+	cl_slashCommand = Cvar_Get("cl_slashCommand", "1", CVAR_ARCHIVE);
 
 	Cvar_Get("cg_drawCompass", "1", CVAR_ARCHIVE);
 	Cvar_Get("cg_drawNotifyText", "1", CVAR_ARCHIVE);
