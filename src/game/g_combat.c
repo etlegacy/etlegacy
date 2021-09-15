@@ -2251,7 +2251,7 @@ qboolean etpro_RadiusDamage(vec3_t origin, gentity_t *inflictor, gentity_t *atta
 		{
 			G_DPrintf("dyno chaining: inflictor: %p, ent: %p\n", inflictor->onobjective, ent->onobjective);
 
-			if (inflictor->onobjective == ent->onobjective)
+			if (inflictor->onobjective == ent->onobjective && ent->s.effect1Time)
 			{
 				if (g_dynamiteChaining.integer & DYNAMITECHAINING_FREE)
 				{
