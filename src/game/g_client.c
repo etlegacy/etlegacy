@@ -612,6 +612,10 @@ void CopyToBodyQue(gentity_t *ent)
 		offset[1] = origin[1] - body->r.currentOrigin[1];
 		offset[2] = origin[2] = body->r.currentOrigin[2];
 
+		// players are floating 0.125u above the ground, account for this
+		// since we're using snapped values, so trace doesn't start in solid
+		origin[2] += 0.125f;
+
 		G_StepSlideCorpse(body, origin);
 		// this is the max vector we can reach
 		VectorCopy(body->s.pos.trBase, origin);
