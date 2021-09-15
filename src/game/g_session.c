@@ -242,7 +242,7 @@ void G_ClientSwap(gclient_t *client)
  */
 void G_CalcRank(gclient_t *client)
 {
-	int i, highestskill = 0;
+	int i, j, highestskill = 0;
 
 #ifdef FEATURE_RATING
 	// rating values for rank levels
@@ -284,10 +284,18 @@ void G_CalcRank(gclient_t *client)
 	for (i = 0; i < SK_NUM_SKILLS; i++)
 	{
 		G_SetPlayerSkill(client, i);
-		if (client->sess.skill[i] > highestskill)
-		{
-			highestskill = client->sess.skill[i];
-		}
+        
+        for (j = NUM_SKILL_LEVELS - 1; j >= 0; j--)
+        {
+            if (GetSkillTableData(i)->skillLevels[j] >= 0 && client->sess.skillpoints[i] >= GetSkillTableData(i)->skillLevels[j])
+            {
+                if (j > highestskill)
+                {
+                    highestskill = j;
+                }
+                break;
+            }
+        }
 	}
 
 	// set rank
@@ -300,7 +308,7 @@ void G_CalcRank(gclient_t *client)
 		// count the number of maxed out skills
 		for (i = 0; i < SK_NUM_SKILLS; i++)
 		{
-			if (client->sess.skill[i] >= 4)
+			if (GetSkillTableData(i)->skillLevels[4] >= 0 && client->sess.skillpoints[i] >= GetSkillTableData(i)->skillLevels[4])
 			{
 				cnt++;
 			}
