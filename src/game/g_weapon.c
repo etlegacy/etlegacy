@@ -1510,7 +1510,15 @@ void trap_EngineerTrace(gentity_t *ent, trace_t *results, const vec3_t start, co
 {
 	G_TempTraceRealHitBox(ent);
 	G_TempTraceIgnorePlayersAndBodies();
+
 	trap_Trace(results, start, mins, maxs, end, passEntityNum, contentmask);
+	if (results->startsolid && results->entityNum == ENTITYNUM_WORLD)
+	{
+		vec3_t boxmins = { -10, -10, -10 };
+		vec3_t boxmaxs = { 10, 10, 10 };
+		trap_Trace(results, start, boxmins, boxmaxs, start, passEntityNum, contentmask);
+	}
+
 	G_ResetTempTraceIgnoreEnts();
 	G_ResetTempTraceRealHitBox();
 }
@@ -1537,15 +1545,7 @@ gentity_t *Weapon_Engineer(gentity_t *ent)
 	muzzleTrace[2] += ent->client->ps.viewheight;
 
 	VectorMA(muzzleTrace, CH_MAX_DIST, forward, end);
-	if (ent->client->touchingTOI)
-	{
-		ent->client->touchingTOI->r.linked = qfalse;
-	}
 	trap_EngineerTrace(ent, &tr, muzzleTrace, NULL, NULL, end, ent->s.number, MASK_SHOT | CONTENTS_TRIGGER);
-	if (ent->client->touchingTOI)
-	{
-		ent->client->touchingTOI->r.linked = qtrue;
-	}
 
 	traceEnt = &g_entities[tr.entityNum];
 

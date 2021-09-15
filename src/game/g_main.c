@@ -1030,8 +1030,17 @@ void G_CheckForCursorHints(gentity_t *ent)
 
 	G_TempTraceRealHitBox(ent);
 	G_TempTraceIgnoreEntities(ent);
+
 	trace_contents = (CONTENTS_TRIGGER | CONTENTS_SOLID | CONTENTS_MISSILECLIP | CONTENTS_BODY | CONTENTS_CORPSE);
+
 	trap_Trace(tr, offset, NULL, NULL, end, ps->clientNum, trace_contents);
+	if (tr->startsolid && tr->entityNum == ENTITYNUM_WORLD)
+	{
+		vec3_t boxmins = { -10, -10, -10 };
+		vec3_t boxmaxs = { 10, 10, 10 };
+		trap_Trace(tr, offset, boxmins, boxmaxs, offset, ps->clientNum, trace_contents);
+	}
+
 	G_ResetTempTraceRealHitBox();
 	G_ResetTempTraceIgnoreEnts();
 

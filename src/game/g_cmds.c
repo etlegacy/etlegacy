@@ -3720,12 +3720,12 @@ qboolean G_TankIsMountable(gentity_t *ent, gentity_t *other)
 }
 
 /**
- * @brief Do_Activate2_f
+ * @brief Do_UniformStealing
  * @param[in,out] ent
  * @param[in,out] traceEnt
  * @return
  */
-qboolean Do_Activate2_f(gentity_t *ent, gentity_t *traceEnt)
+qboolean Do_UniformStealing(gentity_t *ent, gentity_t *traceEnt)
 {
 	// Check the class and health state of the player trying to steal the uniform.
 	if (ent->client->sess.playerType == PC_COVERTOPS && ent->health > 0)
@@ -4032,11 +4032,9 @@ void G_LeaveTank(gentity_t *ent, qboolean position)
  */
 void Cmd_Activate_f(gentity_t *ent)
 {
-	gentity_t *traceEnt, *skipEnt;
-	trace_t   tr;
-	vec3_t    end;
-	vec3_t    forward, right, up, offset;
-	int       numOfIgnoredEnts = 0;
+	trace_t tr;
+	vec3_t  end;
+	vec3_t  forward, right, up, offset;
 
 	if (ent->health <= 0)
 	{
@@ -4106,53 +4104,13 @@ void Cmd_Activate_f(gentity_t *ent)
 
 	VectorMA(offset, CH_MAX_DIST, forward, end);
 
-	// unlink from world the trigger in contact with player to ignore it
-	if (ent->client->touchingTOI)
+	G_TempTraceIgnoreEntities(ent);
+	trap_Trace(&tr, offset, NULL, NULL, end, ent->s.number, (CONTENTS_SOLID | CONTENTS_MISSILECLIP | CONTENTS_TRIGGER));
+	G_ResetTempTraceIgnoreEnts();
+
+	if (VectorDistance(offset, tr.endpos) <= CH_ACTIVATE_DIST)
 	{
-		ent->client->touchingTOI->r.linked = qfalse;
-	}
-
-	skipEnt = ent;
-
-	do
-	{
-		qboolean found;
-
-		trap_Trace(&tr, offset, NULL, NULL, end, skipEnt->s.number, (CONTENTS_SOLID | CONTENTS_MISSILECLIP | CONTENTS_TRIGGER));
-
-		// too far to activate
-		if (VectorDistance(offset, tr.endpos) > CH_ACTIVATE_DIST)
-		{
-			break;
-		}
-
-		traceEnt = &g_entities[tr.entityNum];
-		found    = Do_Activate_f(ent, traceEnt);
-
-		if (found || numOfIgnoredEnts >= 10)
-		{
-			break;
-		}
-
-		// we may hit multiple invalid ents at the same point
-		// count them to prevent too many loops
-		numOfIgnoredEnts++;
-
-		if (traceEnt->s.eType == ET_OID_TRIGGER || traceEnt->s.eType == ET_TRIGGER_MULTIPLE
-		    || traceEnt->s.eType == ET_TRIGGER_FLAGONLY || traceEnt->s.eType == ET_TRIGGER_FLAGONLY_MULTIPLE)
-		{
-			skipEnt = traceEnt;
-		}
-
-		// advance offset (start point) past the entity to ignore
-		VectorMA(tr.endpos, 0.1f, forward, offset);
-	}
-	while ((!tr.startsolid || skipEnt == traceEnt) && !(tr.surfaceFlags & SURF_NOIMPACT) && !(tr.entityNum == ENTITYNUM_WORLD));
-
-	// link back from world the trigger in contact with player
-	if (ent->client->touchingTOI)
-	{
-		ent->client->touchingTOI->r.linked = qtrue;
+		Do_Activate_f(ent, &g_entities[tr.entityNum]);
 	}
 }
 
@@ -4299,19 +4257,26 @@ void Cmd_Activate2_f(gentity_t *ent)
 }
 #endif
 
-	while (!(tr.surfaceFlags & SURF_NOIMPACT) && !(tr.entityNum == ENTITYNUM_WORLD))
+	// trace the world for corpse
+	G_TempTraceIgnorePlayers();
+
+	if (!(tr.contents & CONTENTS_CORPSE))
 	{
-		qboolean found;
+		trap_Trace(&tr, offset, NULL, NULL, end, ent->s.number, CONTENTS_CORPSE | CONTENTS_SOLID);
+	}
 
-		found = Do_Activate2_f(ent, &g_entities[tr.entityNum]);
+	if (tr.startsolid && tr.entityNum == ENTITYNUM_WORLD)
+	{
+		vec3_t boxmins = { -10, -10, -10 };
+		vec3_t boxmaxs = { 10, 10, 10 };
+		trap_Trace(&tr, offset, boxmins, boxmaxs, offset, ent->s.number, CONTENTS_CORPSE);
+	}
 
-		if (found || pass2)
-		{
-			break;
-		}
+	G_ResetTempTraceIgnoreEnts();
 
-		pass2 = qtrue;
-		trap_Trace(&tr, offset, NULL, NULL, end, ent->s.number, (CONTENTS_SOLID | CONTENTS_BODY | CONTENTS_CORPSE | CONTENTS_TRIGGER));
+	if (Do_UniformStealing(ent, &g_entities[tr.entityNum]))
+	{
+		return;
 	}
 }
 

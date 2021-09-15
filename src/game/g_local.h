@@ -1690,7 +1690,7 @@ void G_LogExit(const char *string);
 void SendScoreboardMessageToAllClients(void);
 void QDECL G_Printf(const char *fmt, ...) _attribute((format(printf, 1, 2)));
 void QDECL G_DPrintf(const char *fmt, ...) _attribute((format(printf, 1, 2)));
-void QDECL G_Error(const char *fmt, ...) _attribute ((noreturn, format(printf, 1, 2)));
+void QDECL G_Error(const char *fmt, ...) _attribute((noreturn, format(printf, 1, 2)));
 
 // g_client.c
 char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot);
@@ -2674,6 +2674,7 @@ void G_ResetTempTraceIgnoreEnts(void);
 void G_TempTraceIgnoreEntity(gentity_t *ent);
 void G_TempTraceIgnoreBodies(void);
 void G_TempTraceIgnorePlayersAndBodies(void);
+void G_TempTraceIgnorePlayers(void);
 void G_TempTraceIgnorePlayersFromTeam(team_t team);
 void G_TempTraceRealHitBox(gentity_t *ent);
 void G_ResetTempTraceRealHitBox(void);
