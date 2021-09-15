@@ -69,7 +69,10 @@ gentity_t *Weapon_Knife(gentity_t *ent)
 	AngleVectors(ent->client->ps.viewangles, forward, right, up);
 	CalcMuzzlePoint(ent, ent->s.weapon, forward, right, up, muzzleTrace);
 	VectorMA(muzzleTrace, CH_KNIFE_DIST, forward, end);
+
+	G_TempTraceIgnoreBodies();
 	G_HistoricalTrace(ent, &tr, muzzleTrace, NULL, NULL, end, ent->s.number, MASK_SHOT);
+	G_ResetTempTraceIgnoreEnts();
 
 	// ignore hits on NOIMPACT surfaces or no contact
 	if ((tr.surfaceFlags & SURF_NOIMPACT) || tr.fraction == 1.0f)
