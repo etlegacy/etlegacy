@@ -2556,6 +2556,18 @@ void G_TempTraceIgnorePlayersAndBodies(void)
 	G_TempTraceIgnoreBodies();
 }
 
+/**
+ * @brief G_TempTraceIgnorePlayers
+ */
+void G_TempTraceIgnorePlayers(void)
+{
+	int i;
+
+	for (i = 0; i < MAX_CLIENTS; i++)
+	{
+		G_TempTraceIgnoreEntity(&g_entities[i]);
+	}
+}
 
 /**
  * @brief G_TempTraceIgnorePlayersAndBodiesFromTeam
@@ -2671,6 +2683,12 @@ void G_TempTraceIgnoreEntities(gentity_t *ent)
 		}
 
 		if (hit->s.eType == ET_CORPSE && !(ent->client->ps.stats[STAT_PLAYER_CLASS] == PC_COVERTOPS))
+		{
+			G_TempTraceIgnoreEntity(hit);
+		}
+
+		if (hit->client && (!(ent->client->ps.stats[STAT_PLAYER_CLASS] == PC_MEDIC) || (ent->client->ps.stats[STAT_PLAYER_CLASS] == PC_MEDIC && ent->client->sess.sessionTeam != hit->client->sess.sessionTeam))
+		    && hit->client->ps.pm_type == PM_DEAD && !(hit->client->ps.pm_flags & PMF_LIMBO))
 		{
 			G_TempTraceIgnoreEntity(hit);
 		}
