@@ -63,8 +63,8 @@ extern vmCvar_t g_pronedelay;
 #define AIMSPREAD_MAXSPREAD 255
 #define MAX_AIMSPREAD_TIME 1000
 
-pmove_t *pm;
-pml_t   pml;
+pmove_t * pm;
+pml_t pml;
 
 // movement parameters
 float pm_stopspeed = 100;
@@ -282,6 +282,18 @@ void PM_TraceLegs(trace_t *trace, float *legsOffset, vec3_t start, vec3_t end, t
 	VectorAdd(end, ofs, point);
 
 	tracefunc(trace, org, playerlegsProneMins, playerlegsProneMaxs, point, ignoreent, tracemask);
+
+	// if our legs start in solid while dead, just ignore them to avoid getting stuck
+	if ((pm->ps->eFlags & EF_DEAD) && (trace->allsolid || trace->startsolid))
+	{
+		pm->pmext->deadInSolid = qtrue;
+		if (pm->debugLevel)
+		{
+			Com_Printf("%i:legs in solid, trace skipped\n", c_pmove);
+		}
+		return;
+	}
+
 	if (!bodytrace || trace->fraction < bodytrace->fraction || trace->allsolid)
 	{
 		trace_t steptrace;
@@ -357,6 +369,18 @@ void PM_TraceHead(trace_t *trace, vec3_t start, vec3_t end, trace_t *bodytrace, 
 	VectorAdd(end, ofs, point);
 
 	tracefunc(trace, org, playerHeadProneMins, playerHeadProneMaxs, point, ignoreent, tracemask);
+
+	// if our head starts in solid while dead, just ignore it to avoid getting stuck
+	if ((pm->ps->eFlags & EF_DEAD) && (trace->allsolid || trace->startsolid))
+	{
+		pm->pmext->deadInSolid = qtrue;
+		if (pm->debugLevel)
+		{
+			Com_Printf("%i:head in solid, trace skipped\n", c_pmove);
+		}
+		return;
+	}
+
 	if (!bodytrace || trace->fraction < bodytrace->fraction || trace->allsolid)
 	{
 		trace_t steptrace;
@@ -389,12 +413,27 @@ void PM_TraceHead(trace_t *trace, vec3_t start, vec3_t end, trace_t *bodytrace, 
  */
 void PM_TraceAllParts(trace_t *trace, float *legsOffset, vec3_t start, vec3_t end)
 {
+	// body
 	pm->trace(trace, start, pm->mins, pm->maxs, end, pm->ps->clientNum, pm->tracemask);
 
-	// legs and head
-	if ((pm->ps->eFlags & EF_PRONE) ||
-	    (pm->ps->eFlags & EF_DEAD))
+	// if dead, redo body trace with a square bbox so wounded players don't clip into solids
+	// only do this while we're NOT on a flat ground (we are in air for a brief moment when
+	// getting killed even while standing on flat ground), otherwise we get stuck in slopes
+	// and slide downhill because of PM_CorrectAllSolid
+	if ((pm->ps->eFlags & EF_DEAD) && trace->plane.normal[2] == 0)
 	{
+		const vec3_t squareMaxs = { 18.f, 18.f, 12.f }; // mins is -18 -18 -24
+		pm->trace(trace, start, pm->mins, squareMaxs, end, pm->ps->clientNum, pm->tracemask);
+	}
+
+	// legs and head
+	if ((pm->ps->eFlags & EF_PRONE) || (pm->ps->eFlags & EF_DEAD))
+	{
+		// ignore head and legs completely if we're dead and either is stuck in solid
+		if (pm->pmext->deadInSolid)
+		{
+			return;
+		}
 
 		trace_t  legtrace;
 		trace_t  headtrace;

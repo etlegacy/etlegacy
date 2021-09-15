@@ -1206,8 +1206,8 @@ void SetWolfSpawnWeapons(gclient_t *client)
 	// parse available primary weapons and check is valid for current class
 	for (i = 0; i < MAX_WEAPS_PER_CLASS && classInfo->classPrimaryWeapons[i].weapon; i++)
 	{
-        if (BG_IsSkillAvailable(client->sess.skill, classInfo->classPrimaryWeapons[i].skill, classInfo->classPrimaryWeapons[i].minSkillLevel)
-                && client->sess.skill[classInfo->classPrimaryWeapons[i].skill] >= classInfo->classPrimaryWeapons[i].minSkillLevel)
+		if (BG_IsSkillAvailable(client->sess.skill, classInfo->classPrimaryWeapons[i].skill, classInfo->classPrimaryWeapons[i].minSkillLevel)
+		    && client->sess.skill[classInfo->classPrimaryWeapons[i].skill] >= classInfo->classPrimaryWeapons[i].minSkillLevel)
 		{
 			if (classInfo->classPrimaryWeapons[i].weapon == client->sess.playerWeapon)
 			{
@@ -1235,7 +1235,7 @@ void SetWolfSpawnWeapons(gclient_t *client)
 	for (i = 0; i < MAX_WEAPS_PER_CLASS && classInfo->classSecondaryWeapons[i].weapon; i++)
 	{
 		if (BG_IsSkillAvailable(client->sess.skill, classInfo->classSecondaryWeapons[i].skill, classInfo->classSecondaryWeapons[i].minSkillLevel)
-                && client->sess.skill[classInfo->classSecondaryWeapons[i].skill] >= classInfo->classSecondaryWeapons[i].minSkillLevel)
+		    && client->sess.skill[classInfo->classSecondaryWeapons[i].skill] >= classInfo->classSecondaryWeapons[i].minSkillLevel)
 		{
 			if (classInfo->classSecondaryWeapons[i].weapon == client->sess.playerWeapon2)
 			{
@@ -1256,7 +1256,7 @@ void SetWolfSpawnWeapons(gclient_t *client)
 		weaponClassInfo = &classInfo->classMiscWeapons[i];
 
 		if (BG_IsSkillAvailable(client->sess.skill, classInfo->classMiscWeapons[i].skill, classInfo->classMiscWeapons[i].minSkillLevel)
-                && client->sess.skill[classInfo->classMiscWeapons[i].skill] >= classInfo->classMiscWeapons[i].minSkillLevel)
+		    && client->sess.skill[classInfo->classMiscWeapons[i].skill] >= classInfo->classMiscWeapons[i].minSkillLevel)
 		{
 			// special check for riflenade, we need the launcher to use it
 			if (GetWeaponTableData(weaponClassInfo->weapon)->type & WEAPON_TYPE_RIFLENADE)
@@ -2962,6 +2962,9 @@ void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean
 	client->pmext.bAutoReload = client->pers.bAutoReloadAux;
 
 	client->ps.clientNum = index;
+
+	// start tracing legs and head again if they were in solid
+	client->pmext.deadInSolid = qfalse;
 
 	trap_GetUsercmd(client - level.clients, &ent->client->pers.cmd);
 

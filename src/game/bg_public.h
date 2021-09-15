@@ -583,6 +583,8 @@ typedef struct pmoveExt_s
 
 	float bobCycle;                ///< used to fix framerate dependency
 
+	qboolean deadInSolid;          ///< true if legs or head start in solid when we die
+
 } pmoveExt_t;  ///< data used both in client and server - store it here
 ///< instead of playerstate to prevent different engine versions of playerstate between XP and MP
 
@@ -642,7 +644,7 @@ typedef struct
 } pmove_t;
 
 // if a full pmove isn't done on the client, you can just update the angles
-void PM_UpdateViewAngles(playerState_t * ps, pmoveExt_t * pmext, usercmd_t * cmd, void(trace) (trace_t * results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask), int tracemask);
+void PM_UpdateViewAngles(playerState_t *ps, pmoveExt_t *pmext, usercmd_t *cmd, void(trace) (trace_t * results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask), int tracemask);
 int Pmove(pmove_t *pmove);
 void PmovePredict(pmove_t *pmove, float frametime);
 
@@ -956,10 +958,10 @@ typedef enum
  */
 typedef enum
 {
-    SK_BATTLE_SENSE_BINOCULAR = 1,
-    SK_BATTLE_SENSE_STAMINA_RECHARGE,
-    SK_BATTLE_SENSE_HEALTH,
-    SK_BATTLE_SENSE_TRAP_AWARENESS
+	SK_BATTLE_SENSE_BINOCULAR = 1,
+	SK_BATTLE_SENSE_STAMINA_RECHARGE,
+	SK_BATTLE_SENSE_HEALTH,
+	SK_BATTLE_SENSE_TRAP_AWARENESS
 } skill_battlesense_t;
 
 /**
@@ -969,9 +971,9 @@ typedef enum
 typedef enum
 {
 	SK_SOLDIER_PROJECTILE_STAMINA = 1,
-    SK_SOLDIER_OVERHEATING_COOLDOWN,
-    SK_SOLDIER_DEXTERITY,
-    SK_SOLDIER_SMG
+	SK_SOLDIER_OVERHEATING_COOLDOWN,
+	SK_SOLDIER_DEXTERITY,
+	SK_SOLDIER_SMG
 } skill_soldier_t;
 
 /**
@@ -981,9 +983,9 @@ typedef enum
 typedef enum
 {
 	SK_MEDIC_EXTRA_AMMO = 1,
-    SK_MEDIC_RESOURCES,
-    SK_MEDIC_FULL_REVIVE,
-    SK_MEDIC_ADRENALINE
+	SK_MEDIC_RESOURCES,
+	SK_MEDIC_FULL_REVIVE,
+	SK_MEDIC_ADRENALINE
 } skill_medic_t;
 
 /**
@@ -993,9 +995,9 @@ typedef enum
 typedef enum
 {
 	SK_ENGINEER_EXTRA_GRENADE = 1,
-    SK_ENGINEER_PLIERS_DEXTERITY,
-    SK_ENGINEER_STAMINA,
-    SK_ENGINEER_FLAK_JACKET
+	SK_ENGINEER_PLIERS_DEXTERITY,
+	SK_ENGINEER_STAMINA,
+	SK_ENGINEER_FLAK_JACKET
 } skill_engineer_t;
 
 /**
@@ -1005,9 +1007,9 @@ typedef enum
 typedef enum
 {
 	SK_FIELDOPS_RESOURCES = 1,
-    SK_FIELDOPS_FIRE_SUPPORT_STAMINA,
-    SK_FIELDOPS_EXTRA_FIRE_SUPPORT,
-    SK_FIELDOPS_ENEMY_RECOGNITION
+	SK_FIELDOPS_FIRE_SUPPORT_STAMINA,
+	SK_FIELDOPS_EXTRA_FIRE_SUPPORT,
+	SK_FIELDOPS_ENEMY_RECOGNITION
 } skill_fieldops_t;
 
 /**
@@ -1016,10 +1018,10 @@ typedef enum
  */
 typedef enum
 {
-    SK_COVERTOPS_EXTRA_MAX_AMMO = 1,
-    SK_COVERTOPS_STAMINA,
-    SK_COVERTOPS_BREATH_CONTROL,
-    SK_COVERTOPS_ASSASSIN
+	SK_COVERTOPS_EXTRA_MAX_AMMO = 1,
+	SK_COVERTOPS_STAMINA,
+	SK_COVERTOPS_BREATH_CONTROL,
+	SK_COVERTOPS_ASSASSIN
 } skill_covertops_t;
 
 /**
@@ -1029,9 +1031,9 @@ typedef enum
 typedef enum
 {
 	SK_LIGHT_WEAPONS_EXTRA_AMMO = 1,
-    SK_LIGHT_WEAPONS_FASTER_RELOAD,
-    SK_LIGHT_WEAPONS_HANDLING,
-    SK_LIGHT_WEAPONS_AKIMBO
+	SK_LIGHT_WEAPONS_FASTER_RELOAD,
+	SK_LIGHT_WEAPONS_HANDLING,
+	SK_LIGHT_WEAPONS_AKIMBO
 } skill_lightweapons_t;
 
 /**
@@ -1291,8 +1293,8 @@ typedef struct weapontable_s
 
 	const char *className;          ///< g -
 	const char *weapFile;           ///< cg -
-    
-    int chargeTimeSkill;            ///< bg cg -
+
+	int chargeTimeSkill;            ///< bg cg -
 	float chargeTimeCoeff[2];       ///< bg cg -
 
 	meansOfDeath_t mod;                           ///< g - means of death
@@ -3031,8 +3033,8 @@ typedef enum popupMessageBigType_e
 #define HITBOXBIT_LEGS   2048
 #define HITBOXBIT_CLIENT 4096
 
-void PM_TraceLegs(trace_t * trace, float *legsOffset, vec3_t start, vec3_t end, trace_t * bodytrace, vec3_t viewangles, void(tracefunc)(trace_t * results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask), int ignoreent, int tracemask);
-void PM_TraceHead(trace_t * trace, vec3_t start, vec3_t end, trace_t * bodytrace, vec3_t viewangles, void(tracefunc)(trace_t * results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask), int ignoreent, int tracemask);
+void PM_TraceLegs(trace_t *trace, float *legsOffset, vec3_t start, vec3_t end, trace_t *bodytrace, vec3_t viewangles, void(tracefunc)(trace_t * results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask), int ignoreent, int tracemask);
+void PM_TraceHead(trace_t *trace, vec3_t start, vec3_t end, trace_t *bodytrace, vec3_t viewangles, void(tracefunc)(trace_t * results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask), int ignoreent, int tracemask);
 void PM_TraceAllParts(trace_t *trace, float *legsOffset, vec3_t start, vec3_t end);
 void PM_TraceAll(trace_t *trace, vec3_t start, vec3_t end);
 
