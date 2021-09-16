@@ -1262,7 +1262,7 @@ void G_ChainFree(gentity_t *self)
 		{
 			G_DPrintf("dyno chaining: inflictor: %p, ent: %p\n", self->onobjective, ent->onobjective);
 
-			if (self->onobjective == ent->onobjective)
+			if (self->onobjective == ent->onobjective && ent->s.effect1Time)
 			{
 				// free the other dynamite now too since they are peers
 				ent->nextthink = level.time;
