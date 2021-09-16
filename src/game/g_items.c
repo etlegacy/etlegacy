@@ -1127,6 +1127,7 @@ void G_BounceItem(gentity_t *ent, trace_t *trace)
 	vec3_t velocity;
 	float  dot;
 	int    hitTime = (int)(level.previousTime + (level.time - level.previousTime) * trace->fraction);
+	int    mask    = ent->clipmask ? ent->clipmask : MASK_SOLID;
 
 	// reflect the velocity on the trace plane
 	BG_EvaluateTrajectoryDelta(&ent->s.pos, hitTime, velocity, qfalse, ent->s.effect2Time);
@@ -1169,11 +1170,11 @@ void G_BounceItem(gentity_t *ent, trace_t *trace)
 
 				if (ent->s.eType == ET_CORPSE)
 				{
-					trap_TraceCapsule(&tr, start, NULL, NULL, end, ent->s.number, MASK_SOLID);
+					trap_TraceCapsule(&tr, start, NULL, NULL, end, ent->s.number, mask);
 				}
 				else
 				{
-					trap_Trace(&tr, start, NULL, NULL, end, ent->s.number, MASK_SOLID);
+					trap_Trace(&tr, start, NULL, NULL, end, ent->s.number, mask);
 				}
 
 				if (!tr.startsolid)
