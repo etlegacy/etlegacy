@@ -1170,7 +1170,7 @@ void G_BounceItem(gentity_t *ent, trace_t *trace)
 
 				if (ent->s.eType == ET_CORPSE)
 				{
-					trap_TraceCapsule(&tr, start, NULL, NULL, end, ent->s.number, mask);
+					trap_TraceCapsule(&tr, start, ent->r.mins, ent->r.maxs, end, ent->s.number, mask);
 				}
 				else
 				{
