@@ -2537,9 +2537,13 @@ void G_AddAirstrikeToCounters(gentity_t *ent)
 		{
 			level.axisAirstrikeCounter += 60000 / team_maxAirstrikes.value;
 		}
-		else
+		else if (g_heavyWeaponRestriction.integer)
 		{
 			level.axisAirstrikeCounter += 60000 / G_MaxAvailableAirstrikes(ent);
+		}
+		else
+		{
+			level.axisAirstrikeCounter = 0;
 		}
 	}
 	else
@@ -2548,9 +2552,13 @@ void G_AddAirstrikeToCounters(gentity_t *ent)
 		{
 			level.alliedAirstrikeCounter += 60000 / team_maxAirstrikes.value;
 		}
-		else
+		else if (g_heavyWeaponRestriction.integer)
 		{
 			level.alliedAirstrikeCounter += 60000 / G_MaxAvailableAirstrikes(ent);
+		}
+		else
+		{
+			level.alliedAirstrikeCounter = 0;
 		}
 	}
 }
@@ -2567,9 +2575,13 @@ void G_AddArtilleryToCounters(gentity_t *ent)
 		{
 			level.axisArtilleryCounter += 60000 / team_maxArtillery.value;
 		}
-		else
+		else if (g_heavyWeaponRestriction.integer)
 		{
 			level.axisArtilleryCounter += 60000 / G_MaxAvailableArtillery(ent);
+		}
+		else
+		{
+			level.axisArtilleryCounter = 0;
 		}
 	}
 	else
@@ -2578,9 +2590,13 @@ void G_AddArtilleryToCounters(gentity_t *ent)
 		{
 			level.alliedArtilleryCounter += 60000 / team_maxArtillery.value;
 		}
-		else
+		else if (g_heavyWeaponRestriction.integer)
 		{
 			level.alliedArtilleryCounter += 60000 / G_MaxAvailableArtillery(ent);
+		}
+		else
+		{
+			level.alliedArtilleryCounter = 0;
 		}
 	}
 }
