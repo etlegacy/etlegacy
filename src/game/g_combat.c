@@ -2053,7 +2053,8 @@ qboolean G_RadiusDamage(vec3_t origin, gentity_t *inflictor, gentity_t *attacker
 	vec3_t    dest;
 	trace_t   tr;
 	vec3_t    midpoint;
-	int       flags = DAMAGE_RADIUS;
+	int       flags          = DAMAGE_RADIUS;
+	qboolean  chainDynamites = qtrue;
 
 	if (mod == MOD_SATCHEL || mod == MOD_LANDMINE)
 	{
@@ -2080,31 +2081,27 @@ qboolean G_RadiusDamage(vec3_t origin, gentity_t *inflictor, gentity_t *attacker
 		g_entities[e].dmginloop = qfalse;
 	}
 
+	// we need to check for all the entities in the box first before applying damage
+	// to make sure we don't do dynamite chaining on multi-stage objectives if they
+	// are not ready to completely destroyed
+	for (e = 0; e < numListedEntities; e++)
+	{
+		ent = &g_entities[entityList[e]];
+
+		// grenadeFired is used to store the stage, 0 means completely destroyed
+		if ((ent->desstages || ent->constages) && ent->grenadeFired > 1)
+		{
+			chainDynamites = qfalse;
+		}
+	}
+
 	for (e = 0 ; e < numListedEntities ; e++)
 	{
 		ent = &g_entities[entityList[e]];
 
-		if (ent == ignore)
-		{
-			continue;
-		}
-		if (!ent->takedamage && (!ent->dmgparent || !ent->dmgparent->takedamage)
-		    && !(mod == MOD_DYNAMITE && ent->s.weapon == WP_DYNAMITE))
-		{
-			continue;
-		}
-
-		G_AdjustedDamageVec(ent, origin, v);
-
-		dist = VectorLength(v);
-		if (dist >= radius)
-		{
-			continue;
-		}
-
 		// dyno chaining
 		// only if within blast radius and both on the same objective or both or no objectives
-		if (mod == MOD_DYNAMITE && ent->s.weapon == WP_DYNAMITE)
+		if (mod == MOD_DYNAMITE && ent->s.weapon == WP_DYNAMITE && chainDynamites)
 		{
 			G_DPrintf("dyno chaining: inflictor: %p, ent: %p\n", inflictor->onobjective, ent->onobjective);
 
@@ -2123,6 +2120,23 @@ qboolean G_RadiusDamage(vec3_t origin, gentity_t *inflictor, gentity_t *attacker
 					ent->nextthink = level.time + 250;
 				}
 			}
+		}
+
+		if (ent == ignore)
+		{
+			continue;
+		}
+		if (!ent->takedamage && (!ent->dmgparent || !ent->dmgparent->takedamage))
+		{
+			continue;
+		}
+
+		G_AdjustedDamageVec(ent, origin, v);
+
+		dist = VectorLength(v);
+		if (dist >= radius)
+		{
+			continue;
 		}
 
 		points = damage * (1.0f - dist / radius);
@@ -2214,7 +2228,8 @@ qboolean etpro_RadiusDamage(vec3_t origin, gentity_t *inflictor, gentity_t *atta
 	vec3_t    dest;
 	trace_t   tr;
 	vec3_t    midpoint;
-	int       flags = DAMAGE_RADIUS;
+	int       flags          = DAMAGE_RADIUS;
+	qboolean  chainDynamites = qtrue;
 
 	if (mod == MOD_SATCHEL || mod == MOD_LANDMINE)
 	{
@@ -2241,13 +2256,27 @@ qboolean etpro_RadiusDamage(vec3_t origin, gentity_t *inflictor, gentity_t *atta
 		g_entities[e].dmginloop = qfalse;
 	}
 
+	// we need to check for all the entities in the box first before applying damage
+	// to make sure we don't do dynamite chaining on multi-stage objectives if they
+	// are not ready to completely destroyed
+	for (e = 0; e < numListedEntities; e++)
+	{
+		ent = &g_entities[entityList[e]];
+
+		// grenadeFired is used to store the stage, 0 means completely destroyed
+		if ((ent->desstages || ent->constages) && ent->grenadeFired > 1)
+		{
+			chainDynamites = qfalse;
+		}
+	}
+
 	for (e = 0 ; e < numListedEntities ; e++)
 	{
 		ent = &g_entities[entityList[e]];
 
 		// dyno chaining
 		// only if within blast radius and both on the same objective or both or no objectives
-		if (mod == MOD_DYNAMITE && ent->s.weapon == WP_DYNAMITE)
+		if (mod == MOD_DYNAMITE && ent->s.weapon == WP_DYNAMITE && chainDynamites)
 		{
 			G_DPrintf("dyno chaining: inflictor: %p, ent: %p\n", inflictor->onobjective, ent->onobjective);
 
