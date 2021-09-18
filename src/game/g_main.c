@@ -1069,27 +1069,10 @@ void G_CheckForCursorHints(gentity_t *ent)
 		}
 	}
 
-	if (tr->fraction == 1.f)
-	{
-		return;
-	}
-
 	traceEnt = &g_entities[tr->entityNum];
 
-	if (tr->entityNum == ENTITYNUM_WORLD || tr->entityNum < MAX_CLIENTS)
+	if (tr->fraction == 1.f || tr->entityNum == ENTITYNUM_WORLD || tr->entityNum < MAX_CLIENTS)
 	{
-		// NOTE: these hint are managed client side !
-		// if ((tr->contents & CONTENTS_WATER))
-		// {
-		//  hintDist = CH_WATER_DIST;
-		//  hintType = HINT_WATER;
-		// }
-		// else if ((tr->surfaceFlags & SURF_LADDER) && !(ps->pm_flags & PMF_LADDER))           // ladder
-		// {
-		//  hintDist = CH_LADDER_DIST;
-		//  hintType = HINT_LADDER;
-		// }
-
 		// building something - add this here because we don't have anything solid to trace to - quite ugly-ish
 		if (ent->client->touchingTOI && ps->stats[STAT_PLAYER_CLASS] == PC_ENGINEER)
 		{
