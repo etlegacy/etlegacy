@@ -627,11 +627,20 @@ void CM_LoadMap(const char *name, qboolean clientload, unsigned int *checksum)
 		Com_Error(ERR_DROP, "CM_LoadMap: NULL name");
 	}
 
-	cm_noAreas             = Cvar_Get("cm_noAreas", "0", CVAR_CHEAT);
-	cm_noCurves            = Cvar_Get("cm_noCurves", "0", CVAR_CHEAT);
-	cm_playerCurveClip     = Cvar_Get("cm_playerCurveClip", "1", CVAR_ARCHIVE | CVAR_CHEAT);
-	cm_optimize            = Cvar_Get("cm_optimize", "1", CVAR_CHEAT);
-	cm_optimizePatchPlanes = Cvar_Get("cm_optimizePatchPlanes", "0", CVAR_CHEAT | CVAR_SYSTEMINFO);
+	cm_noAreas         = Cvar_Get("cm_noAreas", "0", CVAR_CHEAT);
+	cm_noCurves        = Cvar_Get("cm_noCurves", "0", CVAR_CHEAT);
+	cm_playerCurveClip = Cvar_Get("cm_playerCurveClip", "1", CVAR_ARCHIVE | CVAR_CHEAT);
+	cm_optimize        = Cvar_Get("cm_optimize", "1", CVAR_CHEAT);
+
+	// pure client and not self hosted (to avoid mixing flags on local play)
+	if (clientload && !com_sv_running->integer)
+	{
+		cm_optimizePatchPlanes = Cvar_Get("cm_optimizePatchPlanes", "0", CVAR_ROM | CVAR_SYSTEMINFO);
+	}
+	else
+	{
+		cm_optimizePatchPlanes = Cvar_Get("cm_optimizePatchPlanes", "0", CVAR_LATCH | CVAR_SYSTEMINFO);
+	}
 
 	Com_DPrintf("CM_LoadMap( %s, %i )\n", name, clientload);
 
