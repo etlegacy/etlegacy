@@ -2694,7 +2694,7 @@ void G_AirStrikeThink(gentity_t *ent)
 			float     ground = tr.endpos[2];
 
 			tmp[2] = MAX_MAP_SIZE;
-			trap_Trace(&tr, tr.endpos, NULL, NULL, tmp, ent->s.number, MASK_MISSILESHOT);
+			trap_Trace(&tr, tr.endpos, NULL, NULL, tmp, ent->s.number, CONTENTS_SOLID);
 
 			bomb = fire_missile((ent->parent && ent->parent->client) ? ent->parent : ent, tr.endpos, tv(0, 0, (ground - tr.endpos[2]) * (1.f / 0.75f)), ent->s.weapon);
 
@@ -2986,7 +2986,7 @@ void artillerySpotterThink(gentity_t *ent)
 		ground = tr.endpos[2];
 
 		tmp[2] = MAX_MAP_SIZE;
-		trap_Trace(&tr, tr.endpos, NULL, NULL, tmp, ent->s.number, MASK_MISSILESHOT);
+		trap_Trace(&tr, tr.endpos, NULL, NULL, tmp, ent->s.number, CONTENTS_SOLID);
 
 		bomb = fire_missile((ent->parent && ent->parent->client) ? ent->parent : ent, tr.endpos, tv(0, 0, (ground - tr.endpos[2]) * (1.f / 0.75f)), ent->s.weapon);
 
@@ -3020,7 +3020,7 @@ void artillerySpotterThink(gentity_t *ent)
 		ground = tr.endpos[2];
 
 		tmp[2] = MAX_MAP_SIZE;
-		trap_Trace(&tr, tr.endpos, NULL, NULL, tmp, ent->s.number, MASK_MISSILESHOT);
+		trap_Trace(&tr, tr.endpos, NULL, NULL, tmp, ent->s.number, CONTENTS_SOLID);
 
 		bomb = fire_missile((ent->parent && ent->parent->client) ? ent->parent : ent, tr.endpos, tv(0, 0, (ground - tr.endpos[2]) * (1.f / 0.75f)), ent->s.weapon);
 	}
