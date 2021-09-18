@@ -691,6 +691,12 @@ void CL_Disconnect(qboolean showMainMenu)
 	{
 		cls.state = CA_DISCONNECTED;
 	}
+
+	// reset patch collision to default incase it was modified by server
+	if (cls.state < CA_CONNECTING)
+	{
+		Cvar_Set("cm_optimizePatchPlanes", "0");
+	}
 }
 
 /**
@@ -994,6 +1000,12 @@ static void CL_Connect_f(void)
 	// server connection string
 	Cvar_Set("cl_currentServerAddress", server);
 	Cvar_Set("cl_currentServerIP", ip_port);
+
+	// if we are not compatible, likely 2.60b server - use vanilla patch collision
+	if (!Com_IsCompatible(&clc.agent, 0x1))
+	{
+		Cvar_Set("cm_optimizePatchPlanes", "1");
+	}
 
 #ifdef FEATURE_IRC_CLIENT
 	if (irc_mode->integer & IRCM_AUTO_CONNECT)
