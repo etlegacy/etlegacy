@@ -2107,18 +2107,9 @@ qboolean G_RadiusDamage(vec3_t origin, gentity_t *inflictor, gentity_t *attacker
 
 			if (inflictor->onobjective == ent->onobjective && ent->s.effect1Time)
 			{
-				if (g_dynamiteChaining.integer & DYNAMITECHAINING_FREE)
-				{
-					// free the other dynamite now too since they are peers
-					ent->nextthink = level.time;
-					ent->think     = G_ChainFree;
-				}
-				else
-				{
-					// blow up the other dynamite now too since they are peers
-					// set the nextthink just past us by a 1/4 of a second or so
-					ent->nextthink = level.time + 250;
-				}
+				// free the other dynamite now too since they are peers
+				ent->nextthink = level.time;
+				ent->think     = G_ChainFree;
 			}
 		}
 
@@ -2282,18 +2273,9 @@ qboolean etpro_RadiusDamage(vec3_t origin, gentity_t *inflictor, gentity_t *atta
 
 			if (inflictor->onobjective == ent->onobjective && ent->s.effect1Time)
 			{
-				if (g_dynamiteChaining.integer & DYNAMITECHAINING_FREE)
-				{
-					// free the other dynamite now too since they are peers
-					ent->nextthink = level.time;
-					ent->think     = G_ChainFree;
-				}
-				else
-				{
-					// blow up the other dynamite now too since they are peers
-					// set the nextthink just past us by a 1/4 of a second or so
-					ent->nextthink = level.time + 250;
-				}
+				// free the other dynamite now too since they are peers
+				ent->nextthink = level.time;
+				ent->think     = G_ChainFree;
 			}
 		}
 

@@ -2122,10 +2122,6 @@ extern vmCvar_t g_multiview;
 extern vmCvar_t g_stickyCharge;
 extern vmCvar_t g_xpSaver;
 
-#define DYNAMITECHAINING_EXPLOSION 0 // default, explode dynamites chaining
-#define DYNAMITECHAINING_FREE 1      // free dynamites chaining
-extern vmCvar_t g_dynamiteChaining;
-
 extern vmCvar_t g_playerHitBoxHeight;
 
 extern vmCvar_t g_debugForSingleClient;
