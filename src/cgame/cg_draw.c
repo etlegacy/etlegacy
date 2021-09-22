@@ -3764,7 +3764,6 @@ static void CG_DrawBannerPrint(void)
 }
 
 #define MAX_DISTANCE 2000.f
-#define COEFF_DISTANCE 0.5f
 #define ICONS_SIZE 16
 
 /**
@@ -3822,11 +3821,12 @@ static void CG_DrawEnvironmentalAwareness()
 			continue;
 		}
 
-		VectorSubtract(cent->lerpOrigin, cg.predictedPlayerState.origin, dir);
+		VectorSubtract(cent->lerpOrigin, cg.refdef.vieworg, dir);
+
 		len = VectorLength(dir);
 
 		// check range before drawing anything
-		if (len < CH_DIST || len > MAX_DISTANCE * COEFF_DISTANCE)
+		if (len < CH_DIST || len > MAX_DISTANCE)
 		{
 			continue;
 		}
@@ -3835,94 +3835,36 @@ static void CG_DrawEnvironmentalAwareness()
 
 		if (icon)
 		{
-			vec3_t angles;
-			float  x, y;
-			float  front, left, up;
-			float  len2;
+			float x, y;
+			float xc, yc;
+			float px, py;
+			float z;
 
-			VectorNormalize(dir);
-			vectoangles(dir, angles);
+			px = (float)tan(DEG2RAD((double)cg.refdef.fov_x) / 2);
+			py = (float)tan(DEG2RAD((double)cg.refdef.fov_y) / 2);
 
-			if (VectorCompare(dir, vec3_origin))
+			xc = SCREEN_WIDTH / 2.0f;
+			yc = SCREEN_HEIGHT / 2.0f;
+
+			z = DotProduct(dir, cg.refdef.viewaxis[0]);
+			if (z < 0.1f)
 			{
-				continue;
+				z = 0.1f;
 			}
+			px *= z;
+			py *= z;
 
-			AnglesSubtract(cg.predictedPlayerState.viewangles, angles, angles);
+			x = xc - (DotProduct(dir, cg.refdef.viewaxis[1]) * xc) / px;
+			y = yc - (DotProduct(dir, cg.refdef.viewaxis[2]) * yc) / py;
+			x = Ccg_WideX(x);
 
-			VectorSubtract(vec3_origin, dir, dir);
-
-			front = DotProduct(dir, cg.refdef.viewaxis[0]);
-			left  = DotProduct(dir, cg.refdef.viewaxis[1]);
-			up    = DotProduct(dir, cg.refdef.viewaxis[2]);
-
-			dir[0] = front;
-			dir[1] = left;
-			dir[2] = 0;
-			len2   = VectorLength(dir);
-			if (len2 < 0.1f)
-			{
-				len2 = 0.1f;
-			}
-
-			// can we see the target
-			if (angles[PITCH] >= -cg.refdef_current->fov_y / 2 && angles[PITCH] <= cg.refdef_current->fov_y / 2
-			    && angles[YAW] >= -cg.refdef_current->fov_x / 2 && angles[YAW] <= cg.refdef_current->fov_x / 2)
-			{
-				x = Ccg_WideX(SCREEN_WIDTH) / 2.f + (Ccg_WideX(SCREEN_WIDTH) / 2.f) * (-left / front);
-				y = SCREEN_HEIGHT / 2.f + (SCREEN_HEIGHT / 2.f) * (up / len2);
-			}
-			else
-			{
-				x = left;
-				y = up / len2;
-
-				// hack when player is looking on top or bottom of himself
-				if ((x > -0.5 && x <= 0.5) && (y > -0.5 && y <= 0.5))
-				{
-					y = (y >= 0 ? 0.5 : -0.5);
-				}
-
-				if (x >= 0.5)
-				{
-					x = Ccg_WideX(SCREEN_WIDTH) - ICONS_SIZE;
-				}
-				else if (x <= -0.5)
-				{
-					x = 0;
-				}
-				else
-				{
-					x = Ccg_WideX(SCREEN_WIDTH) * (x + 0.5);
-
-					if (x > Ccg_WideX(SCREEN_WIDTH) - ICONS_SIZE)
-					{
-						x = Ccg_WideX(SCREEN_WIDTH) - ICONS_SIZE;
-					}
-				}
-
-				if (y >= 0.5)
-				{
-					y = SCREEN_HEIGHT - (ICONS_SIZE + 12);
-				}
-				else if (y <= -0.5)
-				{
-					y = 0;
-				}
-				else
-				{
-					y = Ccg_WideX(SCREEN_WIDTH) * (y + 0.5);
-
-					if (y > SCREEN_HEIGHT - (ICONS_SIZE + 12))
-					{
-						y = SCREEN_HEIGHT - (ICONS_SIZE + 12);
-					}
-				}
-			}
+			// do let the icons going outside the screen
+			x = Com_Clamp(0, Ccg_WideX(SCREEN_WIDTH) - ICONS_SIZE, x);
+			y = Com_Clamp(0, SCREEN_HEIGHT - (ICONS_SIZE + 12), y);
 
 			CG_Text_Paint_Centred_Ext(x + ICONS_SIZE / 2, y - ICONS_SIZE + 8, 0.16f, 0.16f, colorWhite, description, 0, 0, 0, &cgs.media.limboFont2);
-			CG_Text_Paint_Centred_Ext(x + ICONS_SIZE / 2, y + ICONS_SIZE + 8, 0.16f, 0.16f, colorWhite, va("%.0f", len), 0, 0, 0, &cgs.media.limboFont2);
 			CG_DrawPic(x, y, ICONS_SIZE, ICONS_SIZE, icon);
+			CG_Text_Paint_Centred_Ext(x + ICONS_SIZE / 2, y + ICONS_SIZE + 8, 0.16f, 0.16f, colorWhite, va("%.0f", len), 0, 0, 0, &cgs.media.limboFont2);
 		}
 	}
 }
