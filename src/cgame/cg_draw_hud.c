@@ -1736,13 +1736,13 @@ qhandle_t CG_GetCompassIcon(entityState_t *ent, qboolean drawAllVoicesChat, qboo
 			int       entNum   = Q_atoi(
 				CG_ConfigString(ent->teamNum == TEAM_AXIS ? CS_MAIN_AXIS_OBJECTIVE : CS_MAIN_ALLIES_OBJECTIVE));
 
-			if (entNum == oidInfo->entityNum)
+			if (name)
 			{
-				if (name)
-				{
-					Q_strncpyz(name, oidInfo->name, MAX_QPATH);
-				}
+				Q_strncpyz(name, oidInfo->name, MAX_QPATH);
+			}
 
+			if (entNum == oidInfo->entityNum || oidInfo->spawnflags & (1 << 4))
+			{
 				if (cg.predictedPlayerState.persistant[PERS_TEAM] == TEAM_AXIS)
 				{
 					return ent->teamNum == TEAM_AXIS ? cgs.media.defendShader : cgs.media.attackShader;
@@ -1780,13 +1780,13 @@ qhandle_t CG_GetCompassIcon(entityState_t *ent, qboolean drawAllVoicesChat, qboo
 			oidInfo_t *oidInfo = &cgs.oidInfo[cent->currentState.modelindex2];
 			int       entNum   = Q_atoi(CG_ConfigString(ent->teamNum == TEAM_AXIS ? CS_MAIN_AXIS_OBJECTIVE : CS_MAIN_ALLIES_OBJECTIVE));
 
-			if (entNum == oidInfo->entityNum)
+			if (name)
 			{
-				if (name)
-				{
-					Q_strncpyz(name, oidInfo->name, MAX_QPATH);
-				}
+				Q_strncpyz(name, oidInfo->name, MAX_QPATH);
+			}
 
+			if (entNum == oidInfo->entityNum || oidInfo->spawnflags & (1 << 4))
+			{
 				if (cg.predictedPlayerState.persistant[PERS_TEAM] == TEAM_AXIS)
 				{
 					return ent->teamNum == TEAM_AXIS ? cgs.media.defendShader : cgs.media.attackShader;
@@ -1823,13 +1823,13 @@ qhandle_t CG_GetCompassIcon(entityState_t *ent, qboolean drawAllVoicesChat, qboo
 			oidInfo_t *oidInfo = &cgs.oidInfo[cent->currentState.modelindex2];
 			int       entNum   = Q_atoi(CG_ConfigString(ent->teamNum == TEAM_AXIS ? CS_MAIN_AXIS_OBJECTIVE : CS_MAIN_ALLIES_OBJECTIVE));
 
-			if (entNum == oidInfo->entityNum)
+			if (name)
 			{
-				if (name)
-				{
-					Q_strncpyz(name, oidInfo->name, MAX_QPATH);
-				}
+				Q_strncpyz(name, oidInfo->name, MAX_QPATH);
+			}
 
+			if (entNum == oidInfo->entityNum || oidInfo->spawnflags & (1 << 4))
+			{
 				if (cg.predictedPlayerState.persistant[PERS_TEAM] == TEAM_AXIS)
 				{
 					return ent->teamNum == TEAM_AXIS ? cgs.media.defendShader : cgs.media.attackShader;
@@ -1858,13 +1858,13 @@ qhandle_t CG_GetCompassIcon(entityState_t *ent, qboolean drawAllVoicesChat, qboo
 			oidInfo_t *oidInfo = &cgs.oidInfo[cent->currentState.modelindex2];
 			int       entNum   = Q_atoi(CG_ConfigString(ent->teamNum == TEAM_AXIS ? CS_MAIN_AXIS_OBJECTIVE : CS_MAIN_ALLIES_OBJECTIVE));
 
-			if (entNum == oidInfo->entityNum)
+			if (name)
 			{
-				if (name)
-				{
-					Q_strncpyz(name, oidInfo->name, MAX_QPATH);
-				}
+				Q_strncpyz(name, oidInfo->name, MAX_QPATH);
+			}
 
+			if (entNum == oidInfo->entityNum || oidInfo->spawnflags & (1 << 4))
+			{
 				if (cg.predictedPlayerState.persistant[PERS_TEAM] == TEAM_AXIS)
 				{
 					return ent->teamNum == TEAM_AXIS ? cgs.media.defendShader : cgs.media.attackShader;
@@ -2172,7 +2172,7 @@ static void CG_DrawNewCompass(rectDef_t location)
 			continue;
 		}
 
-		icon = CG_GetCompassIcon(&snap->entities[i], qfalse, qtrue, qfalse, NULL);
+		icon = CG_GetCompassIcon(&snap->entities[i], qfalse, qtrue, qtrue, NULL);
 
 		if (icon)
 		{

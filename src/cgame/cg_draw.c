@@ -3789,9 +3789,9 @@ static void CG_DrawEnvironmentalAwareness()
 	}
 
 	if (snap->ps.pm_flags & PMF_LIMBO
-	#ifdef FEATURE_MULTIVIEW
+#ifdef FEATURE_MULTIVIEW
 	    || cg.mvTotalClients > 0
-	#endif
+#endif
 	    )
 	{
 		return;
@@ -3831,7 +3831,7 @@ static void CG_DrawEnvironmentalAwareness()
 			continue;
 		}
 
-		icon = CG_GetCompassIcon(&snap->entities[i], qfalse, qfalse, qfalse, description);
+		icon = CG_GetCompassIcon(&snap->entities[i], qfalse, qfalse, qtrue, NULL);
 
 		if (icon)
 		{
