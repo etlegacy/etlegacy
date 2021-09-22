@@ -224,7 +224,7 @@ and open the resulting project in Visual Studio.
   automatically if you select that option during Git installation.
 
 
-### Mac OS X
+### macOS
 
 Install:
 
@@ -242,16 +242,16 @@ Depending on what brew version you're using (mostly older ones), you have to spe
 
 * option A: **easybuild**
 
-There are many flags and options provided by easybuild.sh. The ET: Legacy version you can compile depends on the used Mac OS version.
+There are many flags and options provided by easybuild.sh. The ET: Legacy version you can compile depends on the used macOS version.
 
-If you're running **up to Mojave (10.14)**, use one the following flags in Terminal.app:
+If you're running **up to macOS 10.14 (Mojave)**, use one the following flags in Terminal.app:
 
     $ ./easybuild.sh        # for compiling a 32 bit version or
     $ ./easybuild.sh -64    # for compiling a 64 bit version
 
 This will put an 'etlegacy' folder with the selected arch into your user folder.
 
-With Mac OS **Catalina (10.15) and above**, your only option is to compile and run a 64 bit client. Therefore you need to use the following flags:
+With **macOS 10.15 (Catalina) and above**, your only option is to compile and run a 64 bit client. Therefore you need to use the following flags:
 
     $ ./easybuild.sh -64 --osx=10.15    #watch out for the double dash at --osx !
 
