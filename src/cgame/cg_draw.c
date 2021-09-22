@@ -3839,6 +3839,7 @@ static void CG_DrawEnvironmentalAwareness()
 			float xc, yc;
 			float px, py;
 			float z;
+			char  *distance;
 
 			px = (float)tan(DEG2RAD((double)cg.refdef.fov_x) / 2);
 			py = (float)tan(DEG2RAD((double)cg.refdef.fov_y) / 2);
@@ -3864,14 +3865,14 @@ static void CG_DrawEnvironmentalAwareness()
 
 			switch (cg_drawspeed.integer)
 			{
-			case 2: case 5: len *= UNIT_TO_METER; break;
-			case 3: case 6: len *= UNIT_TO_FEET; break;
-			default: break;
+			case 2: case 5: distance = va("%.1f", len * UNIT_TO_METER); break;
+			case 3: case 6: distance = va("%.1f", len * UNIT_TO_FEET); break;
+			default:        distance = va("%.0f", len); break;
 			}
 
 			CG_Text_Paint_Centred_Ext(x + ICONS_SIZE / 2, y - ICONS_SIZE + 8, 0.16f, 0.16f, colorWhite, description, 0, 0, 0, &cgs.media.limboFont2);
 			CG_DrawPic(x, y, ICONS_SIZE, ICONS_SIZE, icon);
-			CG_Text_Paint_Centred_Ext(x + ICONS_SIZE / 2, y + ICONS_SIZE + 8, 0.16f, 0.16f, colorWhite, va("%.0f", len), 0, 0, 0, &cgs.media.limboFont2);
+			CG_Text_Paint_Centred_Ext(x + ICONS_SIZE / 2, y + ICONS_SIZE + 8, 0.16f, 0.16f, colorWhite, distance, 0, 0, 0, &cgs.media.limboFont2);
 		}
 	}
 }
