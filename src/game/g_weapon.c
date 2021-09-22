@@ -199,14 +199,14 @@ void Weapon_Medic_Ext(gentity_t *ent, vec3_t viewpos, vec3_t tosspos, vec3_t vel
 	VectorSet(mins, -(ITEM_RADIUS + 8), -(ITEM_RADIUS + 8), 0);
 	VectorSet(maxs, (ITEM_RADIUS + 8), (ITEM_RADIUS + 8), 2 * (ITEM_RADIUS + 8));
 
-	trap_EngineerTrace(ent, &tr, viewpos, mins, maxs, tosspos, ent->s.number, MASK_MISSILESHOT);
+	trap_ItemTrace(ent, &tr, viewpos, mins, maxs, tosspos, ent->s.number, MASK_MISSILESHOT);
 	if (tr.startsolid)
 	{
 		VectorCopy(forward, viewpos);
 		VectorNormalizeFast(viewpos);
 		VectorMA(ent->r.currentOrigin, -24.f, viewpos, viewpos);
 
-		trap_EngineerTrace(ent, &tr, viewpos, mins, maxs, tosspos, ent->s.number, MASK_MISSILESHOT);
+		trap_ItemTrace(ent, &tr, viewpos, mins, maxs, tosspos, ent->s.number, MASK_MISSILESHOT);
 
 		VectorCopy(tr.endpos, tosspos);
 	}
@@ -277,14 +277,14 @@ void Weapon_MagicAmmo_Ext(gentity_t *ent, vec3_t viewpos, vec3_t tosspos, vec3_t
 	VectorSet(mins, -(ITEM_RADIUS + 8), -(ITEM_RADIUS + 8), 0);
 	VectorSet(maxs, (ITEM_RADIUS + 8), (ITEM_RADIUS + 8), 2 * (ITEM_RADIUS + 8));
 
-	trap_EngineerTrace(ent, &tr, viewpos, mins, maxs, tosspos, ent->s.number, MASK_MISSILESHOT);
+	trap_ItemTrace(ent, &tr, viewpos, mins, maxs, tosspos, ent->s.number, MASK_MISSILESHOT);
 	if (tr.startsolid)
 	{
 		VectorCopy(forward, viewpos);
 		VectorNormalizeFast(viewpos);
 		VectorMA(ent->r.currentOrigin, -24.f, viewpos, viewpos);
 
-		trap_EngineerTrace(ent, &tr, viewpos, mins, maxs, tosspos, ent->s.number, MASK_MISSILESHOT);
+		trap_ItemTrace(ent, &tr, viewpos, mins, maxs, tosspos, ent->s.number, MASK_MISSILESHOT);
 
 		VectorCopy(tr.endpos, tosspos);
 	}
@@ -1521,6 +1521,27 @@ void trap_EngineerTrace(gentity_t *ent, trace_t *results, const vec3_t start, co
 		vec3_t boxmaxs = { 10, 10, 10 };
 		trap_Trace(results, start, boxmins, boxmaxs, start, passEntityNum, contentmask);
 	}
+
+	G_ResetTempTraceIgnoreEnts();
+	G_ResetTempTraceRealHitBox();
+}
+
+/**
+ * @brief trap_ItemTrace
+ * @param[out] results
+ * @param[in] start
+ * @param[in] mins
+ * @param[in] maxs
+ * @param[in] end
+ * @param[in] passEntityNum
+ * @param[in] contentmask
+ */
+void trap_ItemTrace(gentity_t *ent, trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentmask)
+{
+	G_TempTraceRealHitBox(ent);
+	G_TempTraceIgnorePlayersAndBodies();
+
+	trap_Trace(results, start, mins, maxs, end, passEntityNum, contentmask);
 
 	G_ResetTempTraceIgnoreEnts();
 	G_ResetTempTraceRealHitBox();
