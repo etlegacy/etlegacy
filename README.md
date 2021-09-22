@@ -61,7 +61,7 @@ you compile ET: Legacy on a 32 bit system or cross-compile it for 32 bit archite
 on a 64 bit system.
 
 At the moment, only the ETrun, ETJump, N!tmod and Legacy mods are available in 64 bit version, while all other
-existing mods are available in 32 bit only version. Read more [here](https://github.com/etlegacy/etlegacy/wiki/Compatible-Mods).
+existing mods are available in 32 bit only version. Read more on the [Compatible mods](https://github.com/etlegacy/etlegacy/wiki/Compatible-Mods) wiki page.
 
 In case you are a running a 64 bit system, you probably might want to use the
 **bundled libraries** which are located in a separate *etlegacy-libs* repository and
@@ -71,6 +71,7 @@ section for more details.
 
 ## DEPENDENCIES
 
+Required:
 * **CMake** (compile-time only)
 * **OpenGL**
 * **GLEW**
@@ -78,14 +79,17 @@ section for more details.
 * **ZLib**
 * **MiniZip**
 * **libjpeg-turbo** or **libjpeg**
-* **libcurl** (optional, enabled by default)
-* **Lua** (optional, enabled by default)
-* **Ogg Vorbis** (optional, enabled by default)
-* **Theora** (optional, enabled by default)
-* **Freetype** (optional, enabled by default)
-* **libpng** (optional, enabled by default)
-* **SQLite** (optional, enabled by default)
-* **OpenAL** (optional, enabled by default)
+
+Optional, enabled by default:
+* **libcurl**
+* **WolfSSL** or **OpenSSL**
+* **Lua**
+* **Ogg Vorbis**
+* **Theora**
+* **Freetype**
+* **libpng**
+* **SQLite**
+* **OpenAL**
 
 Grab info about current lib versions from our [Libs Changelog](https://github.com/etlegacy/etlegacy/wiki/Libs-Changelog) wiki page.
 
