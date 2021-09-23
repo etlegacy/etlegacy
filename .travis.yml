@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # default in trusty is GCC 4.8, Clang 3.5, cmake 3.2
 # default in xenial is GCC 5.4, Clang 7.0, cmake 3.12
 # https://github.com/travis-ci/apt-source-whitelist
@@ -179,3 +180,44 @@ after_failure:
   - wget https://raw.githubusercontent.com/DiscordHooks/travis-ci-discord-webhook/master/send.sh
   - chmod +x send.sh
   - ./send.sh failure $WEBHOOK_URL
+=======
+
+# Android
+language: android
+jdk: oraclejdk8
+sudo: required
+android:
+  components:
+  - tools
+  - platform-tools
+  - android-26
+before_cache:
+  - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+  - rm -rf $HOME/.gradle/caches/*/plugin-resolution/
+cache:
+  directories:
+  - "$HOME/.gradle/caches/"
+  - "$HOME/.gradle/wrapper/"
+  - "$HOME/.android/build-cache"
+licenses:
+    - 'android-sdk-preview-license-52d11cd2'
+    - 'android-sdk-license-.+'
+    - 'google-gdk-license-.+'
+before_script:
+  - sudo apt install -y ninja-build
+  - curl -s "https://cmake.org/files/v3.15/cmake-3.15.4-Linux-x86_64.tar.gz" | sudo tar --strip-components=1 -xz -C /usr/local
+  - echo "cmake.dir=/usr/local" | tee -a local.properties
+  - sudo chmod +x gradlew
+  - git clone https://github.com/rafal1137/NDK_ETL.git
+  - mv NDK_ETL $HOME
+  - export ANDROID_NDK_HOME=$HOME/NDK_ETL/ndk-bundle
+  - chmod -R 775 $HOME/NDK_ETL/ndk-bundle
+before_install:
+  - mkdir "$ANDROID_HOME/licenses" || true
+  - echo -e "\n8933bad161af4178b1185d1a37fbf41ea5269c55" > "$ANDROID_HOME/licenses/android-sdk-license"
+  - echo -e "\n84831b9409646a918e30573bab4c9c91346d8abd" > "$ANDROID_HOME/licenses/android-sdk-preview-license"
+  - echo yes | sdkmanager --update
+  - echo yes | sdkmanager "platform-tools" "platforms;android-26" "build-tools;28.0.3" "tools" "system-images;android-S;google_apis_playstore;arm64-v8a"
+script:
+  - ./gradlew assembleDebug
+>>>>>>> etlegacy-android/master
