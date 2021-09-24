@@ -397,10 +397,6 @@ jobs:
           submodules: true
           fetch-depth: 0
 
-#      - name: Setup GIT_TAG Env
-#        run: |
-#          cd etlegacy && echo "GIT_TAG=`echo $(git describe --tags --always --abbrev=7)`" >> $GITHUB_ENV
-
       - name: Downloading NDK
         uses: actions/checkout@v2
         with:
@@ -423,11 +419,6 @@ jobs:
           echo "ndk.dir=$GITHUB_WORKSPACE/NDK_ETL/ndk-bundle" | tee -a local.properties
           ./gradlew clean assembleDebug
           ls -R
-
-#      - name: Rename APK
-#        run: |
-#          mv app/build/outputs/apk/debug/etlegacy*.apk app/build/outputs/apk/debug/etlegacy-$GIT_TAG.apk
-#          ls app/build/outputs/apk/debug
 
 #      - name: Sign app APK
 #        uses: r0adkll/sign-android-release@v1
