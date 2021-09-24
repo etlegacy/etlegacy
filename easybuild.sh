@@ -250,10 +250,11 @@ parse_commandline() {
 			einfo "Will enable crosscompile"
 			CROSS_COMPILE32=1
 			x86_build=true
-		elif [ "$var" = "-no-ssl" ]; then
+		elif [ "$var" = "-nossl" ] || [  "$var" = "-no-ssl" ]; then
 			einfo "Will disable SSL"
 			FEATURE_SSL=0
 			BUNDLED_OPENSSL=0
+			BUNDLED_WOLFSSL=0
 		elif [ "$var" = "-zip" ]; then
 			ZIP_ONLY=1
 		elif [ "$var" = "-clang" ]; then
@@ -265,20 +266,20 @@ parse_commandline() {
 		elif [ "$var" = "-debug" ]; then
 			einfo "Will enable debug build"
 			RELEASE_TYPE="Debug"
-		elif [ "$var" = "-nodb" ]; then
+		elif [ "$var" = "-nodb" ] || [  "$var" = "-no-db" ]; then
 			einfo "Will disable database"
 			FEATURE_DBMS=0
 			BUNDLED_SQLITE3=0
-		elif [ "$var" = "-nor2" ]; then
+		elif [ "$var" = "-nor2" ] || [  "$var" = "-no-r2" ]; then
 			einfo "Will disable renderer2"
 			FEATURE_RENDERER2=0
-		elif [ "$var" = "-nodynamic" ]; then
+		elif [ "$var" = "-nodynamic" ] || [  "$var" = "-no-dynamic" ]; then
 			einfo "Will disable dynamic renderer build"
 			RENDERER_DYNAMIC=0
 		elif [ "$var" = "-jpeg-turbo" ]; then
 			einfo "Will enable system jpeg turbo"
 			BUNDLED_JPEG=0
-		elif [ "$var" = "-systemlib" ]; then
+		elif [ "$var" = "-systemlib" ] || [  "$var" = "-systemlibs" ]; then
 			einfo "Will disable bundled libraries"
 			BUNDLED_LIBS=0
 			BUNDLED_SDL=0
@@ -294,13 +295,15 @@ parse_commandline() {
 			BUNDLED_FREETYPE=0
 			BUNDLED_PNG=0
 			BUNDLED_SQLITE3=0
-		elif [ "$var" = "-noextra" ]; then
+			BUNDLED_OPENSSL=0
+			BUNDLED_WOLFSSL=0
+		elif [ "$var" = "-noextra" ] || [  "$var" = "-no-extra" ]; then
 			einfo "Will disable installation of Omni-bot, GeoIP and WolfAdmin"
 			INSTALL_EXTRA=0
 			INSTALL_OMNIBOT=0
 			INSTALL_GEOIP=0
 			INSTALL_WOLFADMIN=0
-		elif [ "$var" = "-noupdate" ]; then
+		elif [ "$var" = "-noupdate" ] || [  "$var" = "-no-update" ]; then
 			einfo "Will disable autoupdate"
 			FEATURE_AUTOUPDATE=0
 		elif [ "$var" = "-RPI" ]; then
@@ -324,6 +327,8 @@ parse_commandline() {
 			BUNDLED_FREETYPE=0
 			#FEATURE_DBMS=0
 			#BUNDLED_SQLITE3=0
+			#BUNDLED_OPENSSL=0
+			#BUNDLED_WOLFSSL=0
 			FEATURE_LUASQL=1
 			FEATURE_PNG=0
 			FEATURE_OMNIBOT=1
@@ -430,10 +435,12 @@ generate_configuration() {
 	if [ "${PLATFORMSYS}" != "Mac OS X" ] && [ "${PLATFORMSYS}" != "macOS" ]; then
 		BUNDLED_CURL=${BUNDLED_CURL:-1}
 		BUNDLED_OPENSSL=${BUNDLED_OPENSSL:-1}
+		BUNDLED_WOLFSSL=${BUNDLED_WOLFSSL:-1}
 		BUNDLED_OPENAL=${BUNDLED_OPENAL:-1}
 	else
 		BUNDLED_CURL=${BUNDLED_CURL:-0}
 		BUNDLED_OPENSSL=${BUNDLED_OPENSSL:-0}
+		BUNDLED_WOLFSSL=${BUNDLED_WOLFSSL:-0}
 		BUNDLED_OPENAL=${BUNDLED_OPENAL:-0}
 		CMAKE_OSX_DEPLOYMENT_TARGET=${MACOSX_DEPLOYMENT_TARGET:-10.12}
 	fi
@@ -498,6 +505,8 @@ generate_configuration() {
 		-DBUNDLED_FREETYPE=${BUNDLED_FREETYPE}
 		-DBUNDLED_PNG=${BUNDLED_PNG}
 		-DBUNDLED_SQLITE3=${BUNDLED_SQLITE3}
+		-DBUNDLED_OPENSSL=${BUNDLED_OPENSSL}
+		-DBUNDLED_WOLFSSL=${BUNDLED_WOLFSSL}
 		-DFEATURE_CURL=${FEATURE_CURL}
 		-DFEATURE_SSL=${FEATURE_SSL}
 		-DFEATURE_OGG_VORBIS=${FEATURE_OGG_VORBIS}
@@ -828,7 +837,7 @@ print_help() {
 	ehead "help - print this help"
 	echo
 	einfo "Properties"
-	ehead "-64, -32, -debug, -clang, -nodb -nor2, -nodynamic, -systemlib, -noextra, -noupdate, -mod, -server"
+	ehead "-64, -32, -debug, -clang, -nodb -nor2, -nodynamic, -nossl, -systemlibs, -noextra, -noupdate, -mod, -server"
 	ehead "--build=*, --prefix=*, --osx=*"
 	echo
 }
