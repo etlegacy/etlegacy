@@ -7,6 +7,9 @@ else {
     apply plugin: 'com.android.library'
 }
 
+def getGitCommits = Integer.parseInt(['sh','-c','git rev-list $(git describe --abbrev=0)..HEAD --count'].execute().text.trim())
+def getGitSha = 'git rev-parse --short=8 HEAD'.execute([], project.rootDir).text.trim()
+
 versionberg {
     // Increase when you make incompatible API changes (default value is 0)
     major 2
@@ -17,7 +20,8 @@ versionberg {
     // default is ${commitCount}, uncomment to use a custom build number
     // build 2
     // Default version name template is '${major}.${minor}.${patch}.${build}'
-    nameTemplate '${major}.${minor}.${patch}-${commitCount}-${commitSha}'
+    //nameTemplate '${major}.${minor}.${patch}-${commitCount}-${commitSha}'
+    nameTemplate '${major}.${minor}.${patch}'
 }
 
 android {
@@ -30,7 +34,7 @@ android {
         targetSdkVersion 26
         versionCode 1
         versionName versionberg.name
-        setProperty("archivesBaseName", "etlegacy-v$versionName")
+        setProperty("archivesBaseName", "etlegacy-v$versionName-${getGitCommits}-${getGitSha}")
         externalNativeBuild {
             cmake {
                 arguments "-DCROSS_COMPILE32=OFF", "-DFEATURE_RENDERER_GLES=ON", "-DBUILD_SERVER=OFF", "-DINSTALL_EXTRA=OFF","-DARM=ON" , "-DCMAKE_BUILD_TYPE=Release", "-DBUNDLED_LIBS=OFF", "-DFEATURE_LUA=OFF", "-DFEATURE_OPENAL=OFF", "-DRENDERER_DYNAMIC=OFF", "-DFEATURE_FREETYPE=OFF", "-DFEATURE_THEORA=OFF", "-DFEATURE_SSL=OFF"
