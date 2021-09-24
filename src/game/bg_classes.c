@@ -48,7 +48,7 @@ bg_playerclass_t bg_playerClasses[2][NUM_PLAYER_CLASSES] =
 			{
 				{ WP_MP40,                 SK_LIGHT_WEAPONS,                            0, 60,  30  }, // soldier start with x2 ammo
 				{ WP_MOBILE_MG42,          SK_HEAVY_WEAPONS,                            0, 0,   150 },
-				{ WP_FLAMETHROWER,         SK_HEAVY_WEAPONS,                            0, 200, 1   },
+				{ WP_FLAMETHROWER,         SK_HEAVY_WEAPONS,                            0, 200, 0   },
 				{ WP_PANZERFAUST,          SK_HEAVY_WEAPONS,                            0, 4,   0   },
 				{ WP_MORTAR2,              SK_HEAVY_WEAPONS,                            0, 15,  0   },
 			},
