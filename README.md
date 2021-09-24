@@ -207,7 +207,7 @@ In the command prompt, run:
 
 or
 
-    cmake -G "Visual Studio 16" -DBUNDLED_LIBS=YES ..
+    cmake -G "Visual Studio 16" -A Win32 -DBUNDLED_LIBS=YES ..
 
 and open the resulting project in Visual Studio.
 
