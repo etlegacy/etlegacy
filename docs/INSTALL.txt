@@ -41,23 +41,16 @@ folder.
 Compatibility with Enemy Territory 2.60b
 ----------------------------------------------------------------------------
 
-ET: Legacy remains compatible with the ET 2.60b version as much as possible.
+ET: Legacy remains compatible with the ET 2.60b version and third party mods as much as possible.
 
-Please note that ET: Legacy is *not* compatible with PunkBuster enabled servers. ET: Legacy clients
-also cannot connect to servers running the ETPro mod.
+However, please note that:
+
+* ET: Legacy is not compatible with PunkBuster enabled servers.
+* ET: Legacy client cannot connect to servers running the ETPro mod.
+* Linux 64 bit ET: Legacy client can only connect to servers running mods providing a 64 bit version.
+* macOS support varies greatly depending on OS version and architecture.
 
 See https://github.com/etlegacy/etlegacy/wiki/Compatible-Mods for more information.
-
-
-Linux 64 bit
-------------
-
-Please remember that Linux 64 bit ET: Legacy clients can only connect to servers running mods
-providing a 64 bit version. You will be able to play 32 bit-only mods only if you install the
-Linux 32 bit version.
-
-At the moment, only the Legacy mod is available in 64 bit version, while all other existing mods
-are available in 32 bit only version.
 
 
 INSTALLATION
