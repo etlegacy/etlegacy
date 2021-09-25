@@ -420,6 +420,10 @@ jobs:
           ./gradlew clean assembleDebug
           ls -R
 
+      - name: Rename APK
+        run: |
+          mv app/build/outputs/apk/debug/etlegacy*-debug.apk app/build/outputs/apk/debug/etlegacy*.apk
+
 #      - name: Sign app APK
 #        uses: r0adkll/sign-android-release@v1
 #        id: sign_app
