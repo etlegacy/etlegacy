@@ -152,7 +152,6 @@ jobs:
       - name: Android Repo
         uses: actions/checkout@v2
         with:
-          repository: etlegacy/etlegacy-android
           submodules: true
           fetch-depth: 0
 
@@ -161,10 +160,6 @@ jobs:
         with:
           repository: rafal1137/NDK_ETL
           path: NDK_ETL
-
-      - name: Git Sumbodule Update
-        run: |
-          git submodule update --remote --recursive
 
       - name: Build
         run: |
@@ -399,17 +394,8 @@ jobs:
       - name: Android Repo
         uses: actions/checkout@v2
         with:
-          repository: etlegacy/etlegacy-android
           submodules: true
           fetch-depth: 0
-
-      - name: Git Sumbodule Update
-        run: |
-          git submodule update --remote --recursive
-
-      - name: Setup GIT_TAG Env
-        run: |
-          cd etlegacy && echo "GIT_TAG=`echo $(git describe --tags --always --abbrev=7)`" >> $GITHUB_ENV
 
       - name: Downloading NDK
         uses: actions/checkout@v2
@@ -436,8 +422,8 @@ jobs:
 
       - name: Rename APK
         run: |
-          mv app/build/outputs/apk/debug/etlegacy*.apk app/build/outputs/apk/debug/etlegacy-$GIT_TAG.apk
-          ls app/build/outputs/apk/debug
+          for FILE in ./app/build/outputs/apk/debug/*; do mv $FILE ${FILE%-*}.apk; done
+          ls -R
 
 #      - name: Sign app APK
 #        uses: r0adkll/sign-android-release@v1
