@@ -312,6 +312,12 @@ GOTO:EOF
 	IF NOT EXIST "!game_homepath!\etmain\pak0.pk3" (
 		bitsadmin /transfer "pak0" %~1pak0.pk3 "!game_homepath!\etmain\pak0.pk3"
 	)
+	IF NOT EXIST "!game_homepath!\etmain\pak1.pk3" (
+		bitsadmin /transfer "pak1" %~1pak1.pk3 "!game_homepath!\etmain\pak1.pk3"
+	)
+	IF NOT EXIST "!game_homepath!\etmain\pak2.pk3" (
+		bitsadmin /transfer "pak2" %~1pak2.pk3 "!game_homepath!\etmain\pak2.pk3"
+	)
 GOTO:EOF
 
 :Substring

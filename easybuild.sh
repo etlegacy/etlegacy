@@ -782,6 +782,8 @@ run_download() {
 	mkdir -p ${MODMAIN}
 	cd ${MODMAIN}
 	handle_download "pak0.pk3"
+	handle_download "pak1.pk3"
+	handle_download "pak2.pk3"
 }
 
 run_uncrustify() {
