@@ -62,22 +62,30 @@ IF NOT "%1"=="" (
 		ECHO help - print this help
 		ECHO.
 		ECHO Properties
-		ECHO -64, -debug, -mod, -noupdate, -noextra, -nor2, -generator [generator], -toolset [version] -build_dir [dir]
+		ECHO -64, -debug, -mod, -noextra, -noupdate, -nor2, -nossl, -generator [generator], -toolset [version] -build_dir [dir]
 		ECHO.
 		GOTO:EOF
 	) ELSE IF /I "%1"=="-64" (
 		SET build_64=1
+	) ELSE IF /I "%1"=="-nossl" (
+		SET build_ssl=0
 	) ELSE IF /I "%1"=="-no-ssl" (
 		SET build_ssl=0
 	) ELSE IF /I "%1"=="-mod" (
 		SET mod_only=1
 	) ELSE IF /I "%1"=="-noupdate" (
 		SET use_autoupdate=0
+	) ELSE IF /I "%1"=="-no-update" (
+		SET use_autoupdate=0
 	) ELSE IF /I "%1"=="-noextra" (
+		SET use_extra=0
+	) ELSE IF /I "%1"=="-no-extra" (
 		SET use_extra=0
 	) ELSE IF /I "%1"=="-debug" (
 		SET build_type=Debug
 	) ELSE IF /I "%1"=="-nor2" (
+		SET build_r2=0
+	) ELSE IF /I "%1"=="-no-r2" (
 		SET build_r2=0
 	) ELSE IF /I "%1"=="-generator" (
 		SET generator=%~2
