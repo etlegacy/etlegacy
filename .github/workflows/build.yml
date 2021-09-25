@@ -422,7 +422,7 @@ jobs:
 
       - name: Rename APK
         run: |
-          mv app/build/outputs/apk/debug/etlegacy*-debug.apk app/build/outputs/apk/debug/etlegacy*.apk
+          for FILE in *; do mv $FILE ${FILE%-*}.apk; done
 
 #      - name: Sign app APK
 #        uses: r0adkll/sign-android-release@v1
