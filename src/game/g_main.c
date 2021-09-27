@@ -371,6 +371,8 @@ vmCvar_t g_debugForSingleClient;
 
 vmCvar_t g_suddenDeath;
 
+vmCvar_t g_objPickupDelay;
+
 cvarTable_t gameCvarTable[] =
 {
 	// don't override the cheat state set by the system
@@ -661,6 +663,7 @@ cvarTable_t gameCvarTable[] =
 	{ &g_xpSaver,                         "g_xpSaver",                         "0",                          CVAR_ARCHIVE,                                    0, qfalse, qfalse },
 	{ &g_playerHitBoxHeight,              "g_playerHitBoxHeight",              "36",                         CVAR_ARCHIVE | CVAR_SERVERINFO,                  0, qfalse, qfalse },
 	{ &g_suddenDeath,                     "g_suddenDeath",                     "0",                          CVAR_ARCHIVE,                                    0, qtrue,  qfalse },
+	{ &g_objPickupDelay,                  "g_suddenDeath",                     "10000",                      CVAR_ARCHIVE,                                    0, qtrue,  qfalse },
 };
 
 /**

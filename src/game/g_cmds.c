@@ -1230,7 +1230,7 @@ void Cmd_DropObjective_f(gentity_t *ent)
 		return;
 	}
 
-	if (level.time - ent->client->pickObjectiveTime < 10000)
+	if (level.time - ent->client->pickObjectiveTime < g_objPickupDelay.integer)
 	{
 		CP("cp \"You can't drop objective right after picking it up.\"");
 		return;
