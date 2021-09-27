@@ -5244,6 +5244,11 @@ void CG_OutOfAmmoChange(qboolean allowForceSwitch)
 	{
 		for (j = 0; j < MAX_WEAPS_IN_BANK_MP && weapBanksMultiPlayer[weapBankSwitchOrder[i]][j]; j++)
 		{
+			// do not switch to riflegrenade when a rifle runs out of ammo, swap to pistol instead
+			if (GetWeaponTableData(weapBanksMultiPlayer[weapBankSwitchOrder[i]][j])->type & WEAPON_TYPE_RIFLENADE)
+			{
+				continue;
+			}
 			if (CG_WeaponSelectable(weapBanksMultiPlayer[weapBankSwitchOrder[i]][j]))
 			{
 				CG_FinishWeaponChange(cg.predictedPlayerState.weapon, weapBanksMultiPlayer[weapBankSwitchOrder[i]][j]);
