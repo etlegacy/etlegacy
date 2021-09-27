@@ -3,7 +3,9 @@
 		// deaths -- do not change the order!
 		death_machinegun_1	0	32	0	20	0	0	0
 		dead_machinegun_1	31	1	1	20	0	0	0
-		death_rifle_head_2	33	52	0	20	0	0	0
+		//death_rifle_head_2	33	52	0	20	0	0	0
+		death_rifle_head_2  43  42  0   25  0   0   0
+		death_crouch		51	31	0	20	0	0	0
 		dead_rifle_head_2	84	1	1	20	0	0	0
 		death_machinegun_2	85	38	0	20	0	0	0
 		//dead_machinegun_2	122	1	1	20	0	0	0	// same as dead_machinegun_1
@@ -281,7 +283,7 @@
 		prone_knife_idle	4672	1	0	20	0	0	0
 
 		//Prone Death
-		//prone_die1		4573    10	0	20	0	0	0
+		prone_die1		4573    10	0	20	0	0	0
 
 		//Prone Legs
 		prone_legs			4594	1	0	20	0	0	0
