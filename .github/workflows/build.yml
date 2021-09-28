@@ -420,11 +420,6 @@ jobs:
           ./gradlew clean assembleRelease
           ls -R
 
-      - name: Rename APK
-        run: |
-          for FILE in ./app/build/outputs/apk/release/*; do mv $FILE ${FILE%-*}.apk; done
-          ls app/build/outputs/apk/release
-
       - name: Install sudo
         run: |
           apt-get -y install sudo
@@ -432,10 +427,15 @@ jobs:
       - name: Sign an APK
         uses: victorbnl/build-signed-apk@main
         with:
-          keystore: ${{ secrets.keystore }}
-          keystore_password: ${{ secrets.keystore_password }}
-          key_alias: ${{ secrets.key_alias }}
-          key_password: ${{ secrets.key_password }}
+          keystore: ${{ secrets.ANDROID_SIGN_APK }}
+          keystore_password: ${{ secrets.ANDROID_SIGN_APK_PASS }}
+          key_alias: ${{ secrets.ANDROID_SIGN_APK_ALLIAS }}
+          key_password: ${{ secrets.ANDROID_SIGN_APK_PASS }}
+
+      - name: Rename APK
+        run: |
+          for FILE in ./app/build/outputs/apk/release/*; do mv $FILE ${FILE%-*}.apk; done
+          ls app/build/outputs/apk/release
 
       - uses: actions/upload-artifact@v2
         with:
