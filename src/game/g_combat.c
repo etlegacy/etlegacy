@@ -659,8 +659,11 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 		// set enemy location
 		BG_UpdateConditionValue(self->s.number, ANIM_COND_ENEMY_POSITION, 0, qfalse);
 
-		// play specific anim on suicide
-		BG_UpdateConditionValue(self->s.number, ANIM_COND_SUICIDE, meansOfDeath == MOD_SUICIDE, qtrue);
+		if (g_selfkillAnim.integer)
+		{
+			// play specific anim on suicide
+			BG_UpdateConditionValue(self->s.number, ANIM_COND_SUICIDE, meansOfDeath == MOD_SUICIDE, qtrue);
+		}
 
 		// FIXME: add POSITION_RIGHT, POSITION_LEFT
 		if (infront(self, inflictor))
@@ -677,7 +680,10 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 		// record the death animation to be used later on by the corpse
 		self->client->torsoDeathAnim = self->client->ps.torsoAnim;
 		self->client->legsDeathAnim  = self->client->ps.legsAnim;
-		self->client->deathAnimTime  = level.time + self->client->ps.pm_time;
+		if (g_selfkillAnim.integer)
+		{
+			self->client->deathAnimTime = level.time + self->client->ps.pm_time;
+		}
 
 		// the body can still be gibbed
 		self->die = body_die;
@@ -702,7 +708,7 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 	else if (meansOfDeath == MOD_SUICIDE)
 	{
 #ifdef FEATURE_SERVERMDX
-		self->client->deathAnim = qtrue;    // add animation time
+		self->client->deathAnim = g_selfkillAnim.integer ? qtrue : qfalse;    // add animation time
 #endif
 		limbo(self, qtrue);
 	}
