@@ -2130,7 +2130,7 @@ extern vmCvar_t g_debugForSingleClient;
 #define G_SpectatorInactivityValue (g_spectatorInactivity.integer ? g_spectatorInactivity.integer : 60)
 
 extern vmCvar_t g_suddenDeath;
-extern vmCvar_t g_objPickupDelay;
+extern vmCvar_t g_dropObjDelay;
 
 /**
  * @struct GeoIPTag
