@@ -425,6 +425,10 @@ jobs:
           for FILE in ./app/build/outputs/apk/release/*; do mv $FILE ${FILE%-*}.apk; done
           ls app/build/outputs/apk/release
 
+      - name: Install sudo
+        run: |
+          apt-get -y install sudo
+
       - name: Sign an APK
         uses: victorbnl/build-signed-apk@main
         with:
