@@ -2798,6 +2798,7 @@ extern vmCvar_t cg_simpleItems;
 extern vmCvar_t cg_simpleItemsScale;
 
 extern vmCvar_t cg_weapaltReloads;
+extern vmCvar_t cg_altWeapalts;
 
 extern vmCvar_t cg_automapZoom;
 

@@ -322,6 +322,7 @@ vmCvar_t cg_fireteamNameMaxChars;
 vmCvar_t cg_fireteamNameAlign;
 
 vmCvar_t cg_weapaltReloads;
+vmCvar_t cg_altWeapalts;
 
 vmCvar_t cg_simpleItems;
 vmCvar_t cg_simpleItemsScale;
@@ -600,6 +601,7 @@ static cvarTable_t cvarTable[] =
 	{ &cg_popupBigFilter,         "cg_popupBigFilter",         "0",           CVAR_ARCHIVE,                 0 },
 	{ &cg_graphicObituaries,      "cg_graphicObituaries",      "0",           CVAR_ARCHIVE,                 0 },
 	{ &cg_weapaltReloads,         "cg_weapaltReloads",         "0",           CVAR_ARCHIVE,                 0 },
+	{ &cg_altWeapalts,            "cg_altWeapalts",            "1",           CVAR_ARCHIVE,                 0 },
 
 	// Fonts
 	{ &cg_fontScaleTP,            "cg_fontScaleTP",            "0.35",        CVAR_ARCHIVE,                 0 },   // TopPrint

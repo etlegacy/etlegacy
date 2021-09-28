@@ -5114,6 +5114,10 @@ void CG_WeaponBank_f(void)
 
 	CG_WeaponIndex(cg.weaponSelect, &curbank, &curcycle);         // get bank/cycle of current weapon
 
+	if (!cg_altWeapalts.integer && bank == curbank) {
+        return;
+	}
+
 	if (!cg.lastWeapSelInBank[bank])
 	{
 		newWeapon = weapBanksMultiPlayer[bank][0];
