@@ -5,7 +5,7 @@
 		dead_machinegun_1	31	1	1	20	0	0	0
 		//death_rifle_head_2	33	52	0	20	0	0	0
 		death_rifle_head_2  43  42  0   25  0   0   0
-		death_crouch		51	31	0	20	0	0	0
+		death_crouch		56	26	0	25	0	0	0
 		dead_rifle_head_2	84	1	1	20	0	0	0
 		death_machinegun_2	85	38	0	20	0	0	0
 		//dead_machinegun_2	122	1	1	20	0	0	0	// same as dead_machinegun_1
