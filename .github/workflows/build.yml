@@ -438,8 +438,8 @@ jobs:
       - uses: actions/upload-artifact@v2
         with:
           name: android-packages
-          path: ${{steps.sign_app.outputs.signedReleaseFile}}
-#          path: app/build/outputs/apk/debug/etlegacy*.apk
+#          path: ${{steps.sign_app.outputs.signedReleaseFile}}
+          path: app/build/outputs/apk/release/etlegacy*.apk
 
 #   _    _           _                       _                         _      _____   _
 #  | |  | |         | |                     | |                       | |    / ____| | |
