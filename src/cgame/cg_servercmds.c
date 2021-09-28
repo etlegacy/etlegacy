@@ -230,8 +230,6 @@ void CG_ParseServerinfo(void)
 	cgs.fixedphysicsfps = Q_atoi(Info_ValueForKey(info, "g_fixedphysicsfps"));
 	cgs.pronedelay      = Q_atoi(Info_ValueForKey(info, "g_pronedelay"));
 
-	cgs.playerHitBoxHeight = Q_atoi(Info_ValueForKey(info, "g_playerHitBoxHeight"));
-
 	// make this available for ingame_callvote
 	trap_Cvar_Set("cg_ui_voteFlags", ((authLevel.integer == RL_NONE) ? Info_ValueForKey(info, "voteFlags") : "0"));
 }

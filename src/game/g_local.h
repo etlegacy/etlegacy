@@ -2122,8 +2122,6 @@ extern vmCvar_t g_multiview;
 extern vmCvar_t g_stickyCharge;
 extern vmCvar_t g_xpSaver;
 
-extern vmCvar_t g_playerHitBoxHeight;
-
 extern vmCvar_t g_debugForSingleClient;
 
 #define G_InactivityValue (g_inactivity.integer ? g_inactivity.integer : 60)
