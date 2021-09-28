@@ -420,11 +420,6 @@ jobs:
           ./gradlew clean assembleRelease
           ls -R
 
-      - name: Rename APK
-        run: |
-          for FILE in ./app/build/outputs/apk/release/*; do mv $FILE ${FILE%-*}.apk; done
-          ls -R
-
       - name: Sign an APK
         uses: r0adkll/sign-android-release@v1
         id: sign_app
@@ -434,6 +429,11 @@ jobs:
           alias: ${{ secrets.ALIAS }}
           keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
           keyPassword: ${{ secrets.KEY_PASSWORD }}
+
+      - name: Rename APK
+        run: |
+          for FILE in ./app/build/outputs/apk/release/*; do mv $FILE ${FILE%-*}.apk; done
+          ls app/build/outputs/apk/release -R
 
       - uses: actions/upload-artifact@v2
         with:
