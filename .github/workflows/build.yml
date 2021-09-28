@@ -426,21 +426,18 @@ jobs:
           ls app/build/outputs/apk/release
 
       - name: Sign an APK
-        uses: Tlaster/android-sign@v1
+        uses: victorbnl/build-signed-apk@main
         with:
-          releaseDirectory: |
-           app/build/outputs/apk/release
-          signingKeyBase64: ${{ secrets.SIGNING_KEY }}
-          output: build/release/signed
-          alias: ${{ secrets.ALIAS }}
-          keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
-          keyPassword: ${{ secrets.KEY_PASSWORD }}
+          keystore: ${{ secrets.keystore }}
+          keystore_password: ${{ secrets.keystore_password }}
+          key_alias: ${{ secrets.key_alias }}
+          key_password: ${{ secrets.key_password }}
 
       - uses: actions/upload-artifact@v2
         with:
           name: android-packages
 #          path: ${{steps.sign_app.outputs.signedReleaseFile}}
-          path: build/release/signed/etlegacy*.apk
+          path: app/build/outputs/apk/release/etlegacy*.apk
 
 #   _    _           _                       _                         _      _____   _
 #  | |  | |         | |                     | |                       | |    / ____| | |
