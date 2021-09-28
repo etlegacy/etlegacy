@@ -417,29 +417,29 @@ jobs:
           chmod -R 775 $GITHUB_WORKSPACE/NDK_ETL/ndk-bundle
           echo "cmake.dir=/usr/" | tee -a local.properties
           echo "ndk.dir=$GITHUB_WORKSPACE/NDK_ETL/ndk-bundle" | tee -a local.properties
-          ./gradlew clean assembleRelease
+          ./gradlew clean assembleDebug
           ls -R
-
-      - name: Sign an APK
-        uses: r0adkll/sign-android-release@v1
-        id: sign_app
-        with:
-          releaseDirectory: app/build/outputs/apk/release
-          signingKeyBase64: ${{ secrets.SIGNING_KEY }}
-          alias: ${{ secrets.ALIAS }}
-          keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
-          keyPassword: ${{ secrets.KEY_PASSWORD }}
 
       - name: Rename APK
         run: |
-          for FILE in ./app/build/outputs/apk/release/*; do mv $FILE ${FILE%-*}.apk; done
-          ls app/build/outputs/apk/release -R
+          for FILE in ./app/build/outputs/apk/debug/*; do mv $FILE ${FILE%-*}.apk; done
+          ls app/build/outputs/apk/debug
+
+#      - name: Sign an APK
+#        uses: r0adkll/sign-android-release@v1
+#        id: sign_app
+#        with:
+#          releaseDirectory: app/build/outputs/apk/release
+#          signingKeyBase64: ${{ secrets.SIGNING_KEY }}
+#          alias: ${{ secrets.ALIAS }}
+#          keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
+#          keyPassword: ${{ secrets.KEY_PASSWORD }}
 
       - uses: actions/upload-artifact@v2
         with:
           name: android-packages
 #          path: ${{steps.sign_app.outputs.signedReleaseFile}}
-          path: app/build/outputs/apk/release/etlegacy*.apk
+          path: app/build/outputs/apk/debug/etlegacy*.apk
 
 #   _    _           _                       _                         _      _____   _
 #  | |  | |         | |                     | |                       | |    / ____| | |
