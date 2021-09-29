@@ -427,7 +427,7 @@ jobs:
           path: ${GITHUB_WORKSPACE}/etl.keystore
 
       - name: Sign an APK
-        uses: r0adkll/sign-android-release@v1
+        uses: r0adkll/sign-android-release@v1.0.4
         # ID used to access action output
         id: sign_app
         with:
