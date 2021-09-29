@@ -1651,7 +1651,7 @@ void CG_StatsDebugAddText(const char *text)
  * @param[in] drawPrimaryObj draw primary objective position
  * @return A valid compass icon handle otherwise 0
  */
-qhandle_t CG_GetCompassIcon(entityState_t *ent, qboolean drawAllVoicesChat, qboolean drawFireTeam, qboolean drawPrimaryObj, char *name)
+qhandle_t CG_GetCompassIcon(entityState_t *ent, qboolean drawAllVoicesChat, qboolean drawFireTeam, qboolean drawPrimaryObj, qboolean drawSecondaryObj, char *name)
 {
 	switch (ent->eType)
 	{
@@ -1754,21 +1754,24 @@ qhandle_t CG_GetCompassIcon(entityState_t *ent, qboolean drawAllVoicesChat, qboo
 			}
 		}
 
-		// draw explosives if an engineer
-		if (cg.predictedPlayerState.stats[STAT_PLAYER_CLASS] == PC_ENGINEER ||
-		    (cg.predictedPlayerState.stats[STAT_PLAYER_CLASS] == PC_COVERTOPS && ent->effect1Time == 1))
+		if (drawSecondaryObj)
 		{
-			if (ent->teamNum == 1 && cg.predictedPlayerState.persistant[PERS_TEAM] == TEAM_AXIS)
+			// draw explosives if an engineer
+			if (cg.predictedPlayerState.stats[STAT_PLAYER_CLASS] == PC_ENGINEER ||
+			    (cg.predictedPlayerState.stats[STAT_PLAYER_CLASS] == PC_COVERTOPS && ent->effect1Time == 1))
 			{
-				return 0;
-			}
+				if (ent->teamNum == 1 && cg.predictedPlayerState.persistant[PERS_TEAM] == TEAM_AXIS)
+				{
+					return 0;
+				}
 
-			if (ent->teamNum == 2 && cg.predictedPlayerState.persistant[PERS_TEAM] == TEAM_ALLIES)
-			{
-				return 0;
-			}
+				if (ent->teamNum == 2 && cg.predictedPlayerState.persistant[PERS_TEAM] == TEAM_ALLIES)
+				{
+					return 0;
+				}
 
-			return cgs.media.destroyShader;
+				return cgs.media.destroyShader;
+			}
 		}
 		break;
 	}
@@ -1798,20 +1801,23 @@ qhandle_t CG_GetCompassIcon(entityState_t *ent, qboolean drawAllVoicesChat, qboo
 			}
 		}
 
-		// draw construction if an engineer
-		if (cg.predictedPlayerState.stats[STAT_PLAYER_CLASS] == PC_ENGINEER)
+		if (drawSecondaryObj)
 		{
-			if (ent->teamNum == 1 && cg.predictedPlayerState.persistant[PERS_TEAM] != TEAM_AXIS)
+			// draw construction if an engineer
+			if (cg.predictedPlayerState.stats[STAT_PLAYER_CLASS] == PC_ENGINEER)
 			{
-				return 0;
-			}
+				if (ent->teamNum == 1 && cg.predictedPlayerState.persistant[PERS_TEAM] != TEAM_AXIS)
+				{
+					return 0;
+				}
 
-			if (ent->teamNum == 2 && cg.predictedPlayerState.persistant[PERS_TEAM] != TEAM_ALLIES)
-			{
-				return 0;
-			}
+				if (ent->teamNum == 2 && cg.predictedPlayerState.persistant[PERS_TEAM] != TEAM_ALLIES)
+				{
+					return 0;
+				}
 
-			return cgs.media.constructShader;
+				return cgs.media.constructShader;
+			}
 		}
 		break;
 	}
@@ -1841,14 +1847,18 @@ qhandle_t CG_GetCompassIcon(entityState_t *ent, qboolean drawAllVoicesChat, qboo
 			}
 		}
 
-		// FIXME: show only when relevant
-		if ((ent->teamNum == 1 && cg.predictedPlayerState.persistant[PERS_TEAM] == TEAM_AXIS)
-		    || (ent->teamNum == 2 && cg.predictedPlayerState.persistant[PERS_TEAM] == TEAM_ALLIES))
+		if (drawSecondaryObj)
 		{
-			return cgs.media.escortShader;
-		}
+			// FIXME: show only when relevant
+			if ((ent->teamNum == 1 && cg.predictedPlayerState.persistant[PERS_TEAM] == TEAM_AXIS)
+			    || (ent->teamNum == 2 && cg.predictedPlayerState.persistant[PERS_TEAM] == TEAM_ALLIES))
+			{
+				return cgs.media.escortShader;
+			}
 
-		return cgs.media.destroyShader;
+			return cgs.media.destroyShader;
+		}
+		break;
 	}
 	case ET_TANK_INDICATOR_DEAD:
 	{
@@ -1876,31 +1886,37 @@ qhandle_t CG_GetCompassIcon(entityState_t *ent, qboolean drawAllVoicesChat, qboo
 			}
 		}
 
-		// FIXME: show only when relevant
-		// draw repair if an engineer
-		if (cg.predictedPlayerState.stats[STAT_PLAYER_CLASS] == PC_ENGINEER && (
-				(ent->teamNum == 1 && cg.predictedPlayerState.persistant[PERS_TEAM] == TEAM_AXIS)
-				|| (ent->teamNum == 2 && cg.predictedPlayerState.persistant[PERS_TEAM] == TEAM_ALLIES)))
+		if (drawSecondaryObj)
 		{
-			return cgs.media.constructShader;
+			// FIXME: show only when relevant
+			// draw repair if an engineer
+			if (cg.predictedPlayerState.stats[STAT_PLAYER_CLASS] == PC_ENGINEER && (
+					(ent->teamNum == 1 && cg.predictedPlayerState.persistant[PERS_TEAM] == TEAM_AXIS)
+					|| (ent->teamNum == 2 && cg.predictedPlayerState.persistant[PERS_TEAM] == TEAM_ALLIES)))
+			{
+				return cgs.media.constructShader;
+			}
 		}
 		break;
 	}
 	case ET_TRAP:
 	{
-		if (ent->frame == 0)
+		if (drawSecondaryObj)
 		{
-			return cgs.media.regroupShader;
-		}
+			if (ent->frame == 0)
+			{
+				return cgs.media.regroupShader;
+			}
 
-		if (ent->frame == 4)
-		{
-			return cg.predictedPlayerState.persistant[PERS_TEAM] == TEAM_AXIS ? cgs.media.regroupShader : cgs.media.defendShader;
-		}
+			if (ent->frame == 4)
+			{
+				return cg.predictedPlayerState.persistant[PERS_TEAM] == TEAM_AXIS ? cgs.media.regroupShader : cgs.media.defendShader;
+			}
 
-		if (ent->frame == 3)
-		{
-			return cg.predictedPlayerState.persistant[PERS_TEAM] == TEAM_ALLIES ? cgs.media.regroupShader : cgs.media.defendShader;
+			if (ent->frame == 3)
+			{
+				return cg.predictedPlayerState.persistant[PERS_TEAM] == TEAM_ALLIES ? cgs.media.regroupShader : cgs.media.defendShader;
+			}
 		}
 		break;
 	}
@@ -2171,8 +2187,8 @@ static void CG_DrawNewCompass(rectDef_t location)
 		{
 			continue;
 		}
-
-		icon = CG_GetCompassIcon(&snap->entities[i], qfalse, qtrue, qtrue, NULL);
+        
+        icon = CG_GetCompassIcon(&snap->entities[i], qfalse, qtrue, !(cg_drawCompassIcons.integer & 4), !(cg_drawCompassIcons.integer & 2), NULL);
 
 		if (icon)
 		{

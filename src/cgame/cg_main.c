@@ -192,6 +192,7 @@ vmCvar_t cg_paused;
 vmCvar_t cg_blood;
 vmCvar_t cg_predictItems;
 vmCvar_t cg_drawEnvAwareness;
+vmCvar_t cg_drawCompassIcons;
 
 vmCvar_t cg_autoactivate;
 
@@ -417,6 +418,7 @@ static cvarTable_t cvarTable[] =
 	{ &cg_centertime,             "cg_centertime",             "5",           CVAR_ARCHIVE,                 0 },   // changed from 3 to 5
 	{ &cg_bobbing,                "cg_bobbing",                "1",           CVAR_ARCHIVE,                 0 },
 	{ &cg_drawEnvAwareness,       "cg_drawEnvAwareness",       "1",           CVAR_ARCHIVE,                 0 },
+	{ &cg_drawCompassIcons,       "cg_drawCompassIcons",       "1",           CVAR_ARCHIVE,                 0 },
 
 	{ &cg_autoactivate,           "cg_autoactivate",           "1",           CVAR_ARCHIVE,                 0 },
 
@@ -618,9 +620,6 @@ static cvarTable_t cvarTable[] =
 	{ &cg_drawspeed,              "cg_drawspeed",              "0",           CVAR_ARCHIVE,                 0 },
 
 	{ &cg_visualEffects,          "cg_visualEffects",          "1",           CVAR_ARCHIVE,                 0 },    // Draw visual effects (i.e : airstrike plane, debris ...)
-	{ &cg_bannerTime,             "cg_bannerTime",             "10000",       CVAR_ARCHIVE,                 0 },
-
-	{ &cg_visualEffects,          "cg_visualEffects",          "1",           CVAR_ARCHIVE,                 0 },   // Draw visual effects (i.e : airstrike plane, debris ...)
 	{ &cg_bannerTime,             "cg_bannerTime",             "10000",       CVAR_ARCHIVE,                 0 },
 
 	{ &cg_shoutcastDrawPlayers,   "cg_shoutcastDrawPlayers",   "1",           CVAR_ARCHIVE,                 0 },
