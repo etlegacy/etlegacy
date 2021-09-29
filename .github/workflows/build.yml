@@ -382,6 +382,10 @@ jobs:
 
   android:
     runs-on: ubuntu-18.04
+    env:
+          SIGNING_KEY_ALIAS: ${{ secrets.ANDROID_SIGN_APK_ALLIAS }}
+          SIGNING_KEY_PASSWORD: ${{ secrets.ANDROID_SIGN_APK_PASS }}
+          SIGNING_STORE_PASSWORD: ${{ secrets.ANDROID_SIGN_APK_PASS }}
 #    needs: [ lnx32 ]
     container:
       image: rafal1137/etl_android
@@ -419,23 +423,6 @@ jobs:
           echo "ndk.dir=$GITHUB_WORKSPACE/NDK_ETL/ndk-bundle" | tee -a local.properties
           ./gradlew clean assembleRelease
           ls -R
-
-      - name: Cat a keystone
-        uses: pCYSl5EDgo/cat@1.0.0
-        id: get_key
-        with:
-          path: ${GITHUB_WORKSPACE}/etl.keystore
-
-      - name: Sign an APK
-        uses: r0adkll/sign-android-release@v1.0.4
-        # ID used to access action output
-        id: sign_app
-        with:
-          releaseDirectory: app/build/outputs/apk/release
-          signingKeyBase64: ${{ steps.get_key.outputs.text }}
-          alias: ${{ secrets.ANDROID_SIGN_APK_ALLIAS }}
-          keyStorePassword: ${{ secrets.ANDROID_SIGN_APK_PASS }}
-          keyPassword: ${{ secrets.ANDROID_SIGN_APK_PASS }}
 
       - name: Rename APK
         run: |
