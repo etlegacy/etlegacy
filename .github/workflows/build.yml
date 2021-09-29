@@ -403,10 +403,10 @@ jobs:
           repository: rafal1137/NDK_ETL
           path: NDK_ETL
 
-      - uses: actions/download-artifact@v2
-        with:
-          name: All-mods
-          path: app/src/main/assets
+#      - uses: actions/download-artifact@v2
+#        with:
+#          name: All-mods
+#          path: app/src/main/assets
 
       - name: Display structure of downloaded files
         run: ls -R
