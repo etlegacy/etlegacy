@@ -383,17 +383,18 @@ void G_RegisterFireteam(int entityNum)
 	ft->joinOrder[0] = leader - g_entities;
 	ft->ident        = ident;
 
-	switch (g_autoFireteams.integer) {
-	    case 1:
-	        ft->priv = qfalse;
+	switch (g_autoFireteams.integer)
+	{
+	case 1:
+		ft->priv = qfalse;
 
-	        trap_SendServerCommand(entityNum, "aft -1");
-	        leader->client->pers.autofireteamEndTime = level.time + 20500;
-	        break;
-	    case 2:
-	    default:
-	        ft->priv = qfalse;
-	        break;
+		trap_SendServerCommand(entityNum, "aft -1");
+		leader->client->pers.autofireteamEndTime = level.time + 20500;
+		break;
+	case 2:
+	default:
+		ft->priv = qfalse;
+		break;
 	}
 
 #ifdef FEATURE_OMNIBOT

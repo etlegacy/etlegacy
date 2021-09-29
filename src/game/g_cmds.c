@@ -1614,42 +1614,43 @@ qboolean SetTeam(gentity_t *ent, const char *s, qboolean force, weapon_t w1, wea
 
 	if (client->sess.sessionTeam == TEAM_AXIS || client->sess.sessionTeam == TEAM_ALLIES)
 	{
-	    switch(g_autoFireteams.integer) {
-	        case 1:
-	        {
-	            fireteamData_t *ft = G_FindFreePublicFireteam(client->sess.sessionTeam);
+		switch (g_autoFireteams.integer)
+		{
+		case 1:
+		{
+			fireteamData_t *ft = G_FindFreePublicFireteam(client->sess.sessionTeam);
 
-	            if (ft)
-	            {
-	                trap_SendServerCommand(ent - g_entities, "aftj -1");
-	                ent->client->pers.autofireteamJoinEndTime = level.time + 20500;
-	            }
-	            else
-	            {
-	                trap_SendServerCommand(ent - g_entities, "aftc -1");
-	                ent->client->pers.autofireteamCreateEndTime = level.time + 20500;
-	            }
-	            break;
-	        }
-	        case 2:
-	        {
-	            fireteamData_t *ft = G_FindFreePublicFireteam(client->sess.sessionTeam);
+			if (ft)
+			{
+				trap_SendServerCommand(ent - g_entities, "aftj -1");
+				ent->client->pers.autofireteamJoinEndTime = level.time + 20500;
+			}
+			else
+			{
+				trap_SendServerCommand(ent - g_entities, "aftc -1");
+				ent->client->pers.autofireteamCreateEndTime = level.time + 20500;
+			}
+			break;
+		}
+		case 2:
+		{
+			fireteamData_t *ft = G_FindFreePublicFireteam(client->sess.sessionTeam);
 
-	            if (ft)
-	            {
-	                trap_SendServerCommand(ent - g_entities, "aftj -1");
-	                G_AddClientToFireteam(ent - g_entities, ft->joinOrder[0]);
-	            }
-	            else
-	            {
-                    trap_SendServerCommand(ent - g_entities, "aftc -2");
-                    G_RegisterFireteam(ent - g_entities);
-                }
-	            break;
-	        }
-	        default:
-	            break;
-	    }
+			if (ft)
+			{
+				trap_SendServerCommand(ent - g_entities, "aftj -1");
+				G_AddClientToFireteam(ent - g_entities, ft->joinOrder[0]);
+			}
+			else
+			{
+				trap_SendServerCommand(ent - g_entities, "aftc -2");
+				G_RegisterFireteam(ent - g_entities);
+			}
+			break;
+		}
+		default:
+			break;
+		}
 	}
 
 	if (client->sess.sessionTeam == TEAM_AXIS || client->sess.sessionTeam == TEAM_ALLIES)
