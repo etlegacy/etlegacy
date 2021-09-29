@@ -1,0 +1,64 @@
+#include "ui/menudef.h"
+#include "ui/menumacros.h"
+
+// Defines //
+#define WINDOW_X		16
+#define WINDOW_Y		16
+#define WINDOW_WIDTH	608
+#define WINDOW_HEIGHT	448
+#define GROUP_NAME		"grpOptionsCustomiseHud"
+
+// Subwindows //
+#define SUBWINDOW_WIDTH_L		.50*(WINDOW_WIDTH-18)
+#define SUBWINDOW_WIDTH_R		.50*(WINDOW_WIDTH-18)
+
+// Customise View Menu //
+menuDef {
+	name		"options_customise_hud2"
+	visible		0
+	fullscreen	0
+	rect		WINDOW_X WINDOW_Y WINDOW_WIDTH WINDOW_HEIGHT
+	style		WINDOW_STYLE_FILLED
+
+	onESC {
+		close options_customise_hud2 ;
+		open options
+	}
+
+// Window //
+	WINDOW( _("VIEW 2"), 94 )
+
+// Popup //
+#define POPUP_Y 32
+    SUBWINDOW( 8, POPUP_Y, (SUBWINDOW_WIDTH_R), 78, _("POPUPS AND BANNER") )
+    MULTI( 8, POPUP_Y+16, (SUBWINDOW_WIDTH_R)-4, 10, _("Filter Messages:"), .2, 8, "cg_popupFilter", cvarFloatList { "None" 0 "Connection" 1 "Pickup" 8 "Death" 16 "Connection, Pickup" 9 "Connection, Death" 17 "Connect, Pickup, Death" 25}, _("Set filter on popup messages") )
+    MULTI( 8, POPUP_Y+28, (SUBWINDOW_WIDTH_R)-4, 10, _("Filter Promotions:"), .2, 8, "cg_popupBigFilter", cvarFloatList { "None" 0 "Skill upgrades" 1 "Rank upgrades" 2 "Prestige upgrades" 4 "Skill + Rank" 3 "Skill + Prestige" 5 "Rank + Prestige" 6 "Skill + Rank + Prestige" 7 }, _("Set filter on popup promotion messages") )
+    CVARFLOATLABEL( 8, POPUP_Y+40, (SUBWINDOW_WIDTH_L)-6, 10, "cg_popupStayTime", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-4), 8 )
+    SLIDER( 8, POPUP_Y+40, (SUBWINDOW_WIDTH_L)-4, 10, _("Popup Stay Time:"), .2, 8, "cg_popupStayTime" 2500 0 6000, _("Set the time a pop-up stays visible") )
+    CVARFLOATLABEL( 8, POPUP_Y+52, (SUBWINDOW_WIDTH_L)-6, 10, "cg_popupFadeTime", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-4), 8 )
+    SLIDER( 8, POPUP_Y+52, (SUBWINDOW_WIDTH_L)-4, 10, _("Popup Fade Time:"), .2, 8, "cg_popupFadeTime" 2500 0 6000, _("Set the time a pop-up fades away") )
+    CVARFLOATLABEL( 8, POPUP_Y+64, (SUBWINDOW_WIDTH_L)-6, 10, "cg_bannerTime", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-4), 8 )
+    SLIDER( 8, POPUP_Y+64, (SUBWINDOW_WIDTH_L)-4, 10, _("Banner Time:"), .2, 8, "cg_bannerTime" 2500 0 10000, _("Set the time a banner stays visible") )
+
+// Fonts //
+#define FONTS_Y 116
+    SUBWINDOW( 8, FONTS_Y, (SUBWINDOW_WIDTH_R), 78, _("FONTS") )
+    MULTIACTION( 8, FONTS_Y+16, (SUBWINDOW_WIDTH_R)-4, 10, _("Fonts Size:"), .2, 8, "cg_fontScale", cvarFloatList { "Tiny" 2 "Small" 1 "Normal" 0 }, uiScript SetFontScale, _("Sets the size of the in-game fonts") )
+    CVARFLOATLABEL( 8, FONTS_Y+28, (SUBWINDOW_WIDTH_L)-6, 10, "cg_fontScaleTP", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-4), 8 )
+    SLIDER( 8, FONTS_Y+28, (SUBWINDOW_WIDTH_L)-4, 10, _("Top Print:"), .2, 8, "cg_fontScaleTP" 0.15 0 0.5, _("Set font size for Warmup message and Spectator label") )
+    CVARFLOATLABEL( 8, FONTS_Y+40, (SUBWINDOW_WIDTH_L)-6, 10, "cg_fontScaleSP", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-4), 8 )
+    SLIDER( 8, FONTS_Y+40, (SUBWINDOW_WIDTH_L)-4, 10, _("Side Print:"), .2, 8, "cg_fontScaleSP" 0.15 0 0.5, _("Set font size for Limbo/Fireteam/Vote/Obituaries/Skill upgrade messages") )
+    CVARFLOATLABEL( 8, FONTS_Y+52, (SUBWINDOW_WIDTH_L)-6, 10, "cg_fontScaleCP", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-4), 8 )
+    SLIDER( 8, FONTS_Y+52, (SUBWINDOW_WIDTH_L)-4, 10, _("Center Print:"), .2, 8, "cg_fontScaleCP" 0.15 0 0.5, _("Set font size for CenterPrint/Objective Info/Skill reward messages") )
+    CVARFLOATLABEL( 8, FONTS_Y+64, (SUBWINDOW_WIDTH_L)-6, 10, "cg_fontScaleCN", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-4), 8 )
+    SLIDER( 8, FONTS_Y+64, (SUBWINDOW_WIDTH_L)-4, 10, _("Crosshair Name:"), .2, 8, "cg_fontScaleCN" 0.15 0 0.5, _("Set font size for Crosshair Name label") )
+
+// Geolocation //
+#define GEOLOCATION_Y 196
+    SUBWINDOW( 8, GEOLOCATION_Y, (SUBWINDOW_WIDTH_R), 42, _("GEOLOCATION") )
+    YESNO( 8, GEOLOCATION_Y+16, (SUBWINDOW_WIDTH_R)-4, 10, _("Country Flags:"), .2, 8, "cg_countryflags", _("Displays players country flags in score board") )
+    YESNO( 8, GEOLOCATION_Y+28, (SUBWINDOW_WIDTH_R)-4, 10, _("Share Location:"), .2, 8, "cg_allowGeoIP", _("Displays your own location in score board") )
+	
+// Buttons //
+	BUTTON( 6, WINDOW_HEIGHT-24, WINDOW_WIDTH-12, 18, _("BACK"), .3, 14, close options_customise_hud2 ; open options_customise_hud )
+}
