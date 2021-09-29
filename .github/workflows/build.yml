@@ -386,7 +386,7 @@ jobs:
           SIGNING_KEY_ALIAS: ${{ secrets.ANDROID_SIGN_APK_ALLIAS }}
           SIGNING_KEY_PASSWORD: ${{ secrets.ANDROID_SIGN_APK_PASS }}
           SIGNING_STORE_PASSWORD: ${{ secrets.ANDROID_SIGN_APK_PASS }}
-#    needs: [ lnx32 ]
+    needs: [ lnx32 ]
     container:
       image: rafal1137/etl_android
     steps:
@@ -407,10 +407,10 @@ jobs:
           repository: rafal1137/NDK_ETL
           path: NDK_ETL
 
-#      - uses: actions/download-artifact@v2
-#        with:
-#          name: All-mods
-#          path: app/src/main/assets
+      - uses: actions/download-artifact@v2
+        with:
+          name: All-mods
+          path: app/src/main/assets
 
       - name: Display structure of downloaded files
         run: ls -R
