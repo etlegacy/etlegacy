@@ -56,6 +56,12 @@ android {
             storePassword 'etlegacy'
             keyPassword 'etlegacy'
         }
+        release {
+            storeFile = file("../etl.keystore")
+            storePassword System.getenv("SIGNING_STORE_PASSWORD")
+            keyAlias System.getenv("SIGNING_KEY_ALIAS")
+            keyPassword System.getenv("SIGNING_KEY_PASSWORD")
+        }
     }
 
     buildTypes {
@@ -63,6 +69,9 @@ android {
             signingConfig signingConfigs.debug
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        release {
+           signingConfig signingConfigs.release
         }
     }
     if (!project.hasProperty('EXCLUDE_NATIVE_LIBS')) {
