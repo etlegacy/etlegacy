@@ -1757,12 +1757,12 @@ static void CG_RegisterGraphics(void)
 	cgs.media.medicReviveShader     = trap_R_RegisterShader("sprites/medic_revive");
 	cgs.media.disguisedShader       = trap_R_RegisterShader("sprites/undercover");
 
-	cgs.media.constructShader = trap_R_RegisterShader("sprites/construct");
-	cgs.media.destroyShader   = trap_R_RegisterShader("sprites/destroy");
-	cgs.media.escortShader    = trap_R_RegisterShader("sprites/escort");
-	cgs.media.attackShader    = trap_R_RegisterShader("sprites/attack");
-	cgs.media.defendShader    = trap_R_RegisterShader("sprites/defend");
-	cgs.media.regroupShader   = trap_R_RegisterShader("sprites/regroup");
+	cgs.media.constructShader = trap_R_RegisterShaderNoMip("sprites/construct");
+	cgs.media.destroyShader   = trap_R_RegisterShaderNoMip("sprites/destroy");
+	cgs.media.escortShader    = trap_R_RegisterShaderNoMip("sprites/escort");
+	cgs.media.attackShader    = trap_R_RegisterShaderNoMip("sprites/attack");
+	cgs.media.defendShader    = trap_R_RegisterShaderNoMip("sprites/defend");
+	cgs.media.regroupShader   = trap_R_RegisterShaderNoMip("sprites/regroup");
 
 	cgs.media.voiceChatShader = trap_R_RegisterShader("sprites/voiceChat");
 	cgs.media.balloonShader   = trap_R_RegisterShader("sprites/balloon3");
