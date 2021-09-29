@@ -71,7 +71,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
         release {
-           signingConfig signingConfig.release
+           signingConfig signingConfigs.release
         }
     }
     if (!project.hasProperty('EXCLUDE_NATIVE_LIBS')) {
