@@ -421,7 +421,7 @@ jobs:
           ls -R
 
       - name: Cat a keystone
-      - uses: pCYSl5EDgo/cat@1.0.0
+        uses: pCYSl5EDgo/cat@1.0.0
         id: get_key
         with:
           path: ${GITHUB_WORKSPACE}/etl.keystore
