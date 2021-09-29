@@ -141,6 +141,10 @@ jobs:
 
   android-mod:
     runs-on: ubuntu-18.04
+    env:
+          SIGNING_KEY_ALIAS: ${{ secrets.ANDROID_SIGN_APK_ALLIAS }}
+          SIGNING_KEY_PASSWORD: ${{ secrets.ANDROID_SIGN_APK_PASS }}
+          SIGNING_STORE_PASSWORD: ${{ secrets.ANDROID_SIGN_APK_PASS }}
     container:
       image: rafal1137/etl_android
     steps:
