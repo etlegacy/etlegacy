@@ -372,6 +372,7 @@ vmCvar_t g_debugForSingleClient;
 vmCvar_t g_suddenDeath;
 
 vmCvar_t g_selfkillAnim;
+vmCvar_t g_dropObjDelay;
 
 cvarTable_t gameCvarTable[] =
 {
@@ -664,6 +665,7 @@ cvarTable_t gameCvarTable[] =
 	{ &g_playerHitBoxHeight,              "g_playerHitBoxHeight",              "36",                         CVAR_ARCHIVE | CVAR_SERVERINFO,                  0, qfalse, qfalse },
 	{ &g_suddenDeath,                     "g_suddenDeath",                     "0",                          CVAR_ARCHIVE,                                    0, qtrue,  qfalse },
 	{ &g_selfkillAnim,                    "g_selfkillAnim",                    "1",                          CVAR_ARCHIVE,                                    0, qtrue,  qfalse },
+	{ &g_dropObjDelay,                    "g_dropObjDelay",                    "3000",                       CVAR_ARCHIVE,                                    0, qtrue,  qfalse },
 };
 
 /**
@@ -4289,7 +4291,7 @@ void CheckExitRules(void)
 				}
 				else
 				{
-					if (g_suddenDeath.integer && DynamiteOnObjective())
+					if (g_suddenDeath.integer && DynamiteOnObjective() && g_gametype.integer != GT_WOLF_STOPWATCH)
 					{
 						level.suddenDeath = 1;
 						return;
