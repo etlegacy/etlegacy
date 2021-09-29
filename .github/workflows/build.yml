@@ -382,7 +382,7 @@ jobs:
 
   android:
     runs-on: ubuntu-18.04
-    needs: [ lnx32 ]
+#    needs: [ lnx32 ]
     container:
       image: rafal1137/etl_android
     steps:
@@ -420,17 +420,22 @@ jobs:
           ./gradlew clean assembleRelease
           ls -R
 
-      - name: Install sudo
-        run: |
-          apt-get -y install sudo
+      - name: Cat a keystone
+      - uses: pCYSl5EDgo/cat@1.0.0
+        id: get_key
+        with:
+          path: ${GITHUB_WORKSPACE}/etl.keystore
 
       - name: Sign an APK
-        uses: victorbnl/build-signed-apk@main
+        uses: r0adkll/sign-android-release@v1
+        # ID used to access action output
+        id: sign_app
         with:
-          keystore: ${{ secrets.ANDROID_SIGN_APK }}
-          keystore_password: ${{ secrets.ANDROID_SIGN_APK_PASS }}
-          key_alias: ${{ secrets.ANDROID_SIGN_APK_ALLIAS }}
-          key_password: ${{ secrets.ANDROID_SIGN_APK_PASS }}
+          releaseDirectory: app/build/outputs/apk/release
+          signingKeyBase64: ${{ steps.get_key.outputs.text }}
+          alias: ${{ secrets.ANDROID_SIGN_APK_ALLIAS }}
+          keyStorePassword: ${{ secrets.ANDROID_SIGN_APK_PASS }}
+          keyPassword: ${{ secrets.ANDROID_SIGN_APK_PASS }}
 
       - name: Rename APK
         run: |
