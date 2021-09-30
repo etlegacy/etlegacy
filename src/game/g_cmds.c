@@ -3549,14 +3549,17 @@ void Cmd_Vote_f(gentity_t *ent)
 
 	trap_Argv(1, msg, sizeof(msg));
 
-	if (ent->client->ps.eFlags & EF_VOTED && tolower(msg[0]) == 'y' || msg[0] == '1')
+	if (ent->client->ps.eFlags & EF_VOTED)
 	{
-		trap_SendServerCommand(ent - g_entities, "print \"Vote already cast.\n\"");
-		return;
-	}
-	else if (level.voteInfo.voteCaller == ent - g_entities)
-	{
-		level.voteInfo.voteCanceled = 1;
+		if (level.voteInfo.voteCaller == (ent - g_entities) && (tolower(msg[0]) == 'n' || msg[0] == '0'))
+		{
+			level.voteInfo.voteCanceled = 1;
+		}
+		else
+		{
+			trap_SendServerCommand(ent - g_entities, "print \"Vote already cast.\n\"");
+		}
+
 		return;
 	}
 
