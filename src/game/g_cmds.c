@@ -1614,7 +1614,9 @@ qboolean SetTeam(gentity_t *ent, const char *s, qboolean force, weapon_t w1, wea
 
 	if (client->sess.sessionTeam == TEAM_AXIS || client->sess.sessionTeam == TEAM_ALLIES)
 	{
-		if (g_autoFireteams.integer)
+		switch (g_autoFireteams.integer)
+		{
+		case 1:
 		{
 			fireteamData_t *ft = G_FindFreePublicFireteam(client->sess.sessionTeam);
 
@@ -1628,6 +1630,24 @@ qboolean SetTeam(gentity_t *ent, const char *s, qboolean force, weapon_t w1, wea
 				trap_SendServerCommand(ent - g_entities, "aftc -1");
 				ent->client->pers.autofireteamCreateEndTime = level.time + 20500;
 			}
+			break;
+		}
+		case 2:
+		{
+			fireteamData_t *ft = G_FindFreePublicFireteam(client->sess.sessionTeam);
+
+			if (ft)
+			{
+				G_AddClientToFireteam(ent - g_entities, ft->joinOrder[0]);
+			}
+			else
+			{
+				G_RegisterFireteam(ent - g_entities);
+			}
+			break;
+		}
+		default:
+			break;
 		}
 	}
 
