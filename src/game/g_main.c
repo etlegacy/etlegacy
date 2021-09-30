@@ -4437,6 +4437,19 @@ void CheckVote(void)
 		return;
 	}
 
+	if (level.voteInfo.voteCanceled)
+	{
+		level.voteInfo.voteTime     = 0;
+		level.voteInfo.voteCanceled = 0;
+
+		trap_SetConfigstring(CS_VOTE_TIME, "");
+
+		AP(va("cpm \"^1Vote CANCELED!\n\""));
+		G_LogPrintf("Vote CANCELED!\n");
+
+		return;
+	}
+
 	{
 		int pcnt = vote_percent.integer;
 		int total;

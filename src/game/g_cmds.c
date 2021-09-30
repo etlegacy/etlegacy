@@ -3566,11 +3566,23 @@ void Cmd_Vote_f(gentity_t *ent)
 		trap_SendServerCommand(ent - g_entities, "print \"No vote in progress.\n\"");
 		return;
 	}
+
+	trap_Argv(1, msg, sizeof(msg));
+
 	if (ent->client->ps.eFlags & EF_VOTED)
 	{
-		trap_SendServerCommand(ent - g_entities, "print \"Vote already cast.\n\"");
+		if (level.voteInfo.voteCaller == (ent - g_entities) && (tolower(msg[0]) == 'n' || msg[0] == '0'))
+		{
+			level.voteInfo.voteCanceled = 1;
+		}
+		else
+		{
+			trap_SendServerCommand(ent - g_entities, "print \"Vote already cast.\n\"");
+		}
+
 		return;
 	}
+
 	if (ent->client->sess.sessionTeam == TEAM_SPECTATOR)
 	{
 		trap_SendServerCommand(ent - g_entities, "print \"Not allowed to vote as spectator.\n\"");
@@ -3610,8 +3622,6 @@ void Cmd_Vote_f(gentity_t *ent)
 	trap_SendServerCommand(ent - g_entities, "print \"Vote cast.\n\"");
 
 	ent->client->ps.eFlags |= EF_VOTED;
-
-	trap_Argv(1, msg, sizeof(msg));
 
 	if (tolower(msg[0]) == 'y' || msg[0] == '1')
 	{

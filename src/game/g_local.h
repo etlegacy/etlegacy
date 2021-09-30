@@ -1076,6 +1076,7 @@ typedef struct voteInfo_s
 	char vote_value[VOTE_MAXSTRING];    ///< Desired vote item setting.
 	int voteCaller;                     ///< id of the vote caller
 	int voteTeam;                       ///< id of the vote caller's team
+	int voteCanceled;
 } voteInfo_t;
 
 /**
