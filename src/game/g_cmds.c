@@ -1638,12 +1638,10 @@ qboolean SetTeam(gentity_t *ent, const char *s, qboolean force, weapon_t w1, wea
 
 			if (ft)
 			{
-				trap_SendServerCommand(ent - g_entities, "aftj -1");
 				G_AddClientToFireteam(ent - g_entities, ft->joinOrder[0]);
 			}
 			else
 			{
-				trap_SendServerCommand(ent - g_entities, "aftc -2");
 				G_RegisterFireteam(ent - g_entities);
 			}
 			break;
