@@ -8940,6 +8940,7 @@ static cvarTable_t cvarTable[] =
 	{ NULL,                                "cg_showblood",                        "1",                          CVAR_ARCHIVE,                   0 },
 	{ NULL,                                "cg_bloodFlash",                       "1.0",                        CVAR_ARCHIVE,                   0 },
 	{ NULL,                                "cg_autoReload",                       "1",                          CVAR_ARCHIVE,                   0 },
+	{ NULL,                                "cg_weapaltSwitches",                  "1",                          CVAR_ARCHIVE,                   0 },
 	{ NULL,                                "cg_noAmmoAutoSwitch",                 "1",                          CVAR_ARCHIVE,                   0 },
 	{ NULL,                                "cg_useWeapsForZoom",                  "1",                          CVAR_ARCHIVE,                   0 },
 	{ NULL,                                "cg_zoomDefaultSniper",                "20",                         CVAR_ARCHIVE,                   0 },
