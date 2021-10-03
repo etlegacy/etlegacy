@@ -876,6 +876,8 @@ void Svcmd_ResetMatch_f(qboolean fDoReset, qboolean fDoRestart)
 
 	if (fDoRestart)
 	{
+	    level.fResetStats = qtrue;
+	    trap_SendConsoleCommand(EXEC_APPEND,"stoprecord\n");
 		trap_SendConsoleCommand(EXEC_APPEND, va("map_restart 0 %i\n", ((g_gamestate.integer != GS_PLAYING) ? GS_RESET : GS_WARMUP)));
 	}
 }
