@@ -664,7 +664,7 @@ static void CG_Item(centity_t *cent)
 
 	item = BG_GetItem(es->modelindex);
 
-	if (cg_simpleItems.integer == 1 || (cg_simpleItems.integer > 1 && item->giType != IT_TEAM))
+	if (cg_simpleItems.integer > 1 || (cg_simpleItems.integer == 1 && item->giType != IT_TEAM))
 	{
 		polyVert_t   temp[4];
 		polyVert_t   quad[4];

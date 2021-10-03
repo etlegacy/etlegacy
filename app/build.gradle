@@ -10,19 +10,16 @@ else {
 def getGitCommits = Integer.parseInt(['sh','-c','git rev-list $(git describe --abbrev=0)..HEAD --count'].execute().text.trim())
 def getGitSha = 'git rev-parse --short=8 HEAD'.execute([], project.rootDir).text.trim()
 
-versionberg {
-    // Increase when you make incompatible API changes (default value is 0)
-    major 2
-    // Increase when you add functionality in a backwards-compatible manner (default value is 0)
-    minor 77
-    // Increase when you make backwards-compatible bug fixes (default value is 0)
-    patch 1
-    // default is ${commitCount}, uncomment to use a custom build number
-    // build 2
-    // Default version name template is '${major}.${minor}.${patch}.${build}'
-    //nameTemplate '${major}.${minor}.${patch}-${commitCount}-${commitSha}'
-    nameTemplate '${major}.${minor}.${patch}'
+def extractInt( String input ) {
+  return input.replaceAll("[^0-9]", "")
 }
+
+def VERSION = []
+new File( 'VERSION.txt' ).eachLine { line ->
+	VERSION << extractInt(line)
+}
+
+println VERSION
 
 android {
     compileSdkVersion 26
@@ -33,13 +30,8 @@ android {
         minSdkVersion 21
         targetSdkVersion 26
         versionCode 1
-        versionName versionberg.name
-        if(versionberg.minor == 78) {
-        setProperty("archivesBaseName", "etlegacy-v$versionName")
-        }
-        else {
-        setProperty("archivesBaseName", "etlegacy-v$versionName-${getGitCommits}-${getGitSha}")
-        }
+        versionName "${VERSION[1]}.${VERSION[2]}.${VERSION[3]}"
+        setProperty("archivesBaseName", "etlegacy-v${VERSION[1]}.${VERSION[2]}.${VERSION[3]}-${getGitCommits}-${getGitSha}")
         externalNativeBuild {
             cmake {
                 arguments "-DCROSS_COMPILE32=OFF", "-DFEATURE_RENDERER_GLES=ON", "-DBUILD_SERVER=OFF", "-DINSTALL_EXTRA=OFF","-DARM=ON" , "-DCMAKE_BUILD_TYPE=Release", "-DBUNDLED_LIBS=OFF", "-DFEATURE_LUA=OFF", "-DFEATURE_OPENAL=OFF", "-DRENDERER_DYNAMIC=OFF", "-DFEATURE_FREETYPE=OFF", "-DFEATURE_THEORA=OFF", "-DFEATURE_SSL=OFF"

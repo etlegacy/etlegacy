@@ -13,10 +13,6 @@ buildscript {
     }
 }
 
-plugins {
-    id "io.github.rockerhieu.versionberg" version "1.0.2"
-}
-
 allprojects {
     repositories {
         jcenter()

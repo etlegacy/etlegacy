@@ -53,7 +53,7 @@ menuDef {
 // Items //
 #define ITEMS_Y 194
 	SUBWINDOW( 6, ITEMS_Y, (SUBWINDOW_WIDTH_L), 42, _("ITEMS") )
-	MULTI( 8, ITEMS_Y+16, (SUBWINDOW_WIDTH_R)-4, 10, _("Simple Items:"), .2, 8, "cg_simpleItems", cvarFloatList { "No" 0 "Yes" 1 "Yes except objectives" 2 }, _("Draw simple items") )
+	MULTI( 8, ITEMS_Y+16, (SUBWINDOW_WIDTH_R)-4, 10, _("Simple Items:"), .2, 8, "cg_simpleItems", cvarFloatList { "No" 0 "Yes except objectives" 1 "Yes" 2 }, _("Draw simple items") )
 	CVARFLOATLABEL( 8, ITEMS_Y+28, (SUBWINDOW_WIDTH_L)-4, 10, "cg_simpleItemsScale", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-6), 8 )
 	SLIDER( 8, ITEMS_Y+28, (SUBWINDOW_WIDTH_L)-4, 10, _("Simple Items Scale:"), .2, 8, "cg_simpleItemsScale" 1.0 0.25 1.5, _("Set scale of simple items") )
 
