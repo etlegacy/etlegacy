@@ -10,3 +10,4 @@ MimeType=x-scheme-handler/et;
 Categories=Game;ActionGame;
 StartupNotify=false
 Keywords=team-based;multiplayer;tactical;WWII;enemy;territory;
+PrefersNonDefaultGPU=true
