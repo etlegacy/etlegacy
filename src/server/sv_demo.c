@@ -1326,6 +1326,10 @@ static void SV_DemoStartPlayback(void)
 		}
 	}
 
+	// force g_antiwarp to 0 as it can break player viewangles sometimes with empty ClientThinks
+	Cvar_SetValue("g_antiwarp", 0);
+	Cvar_SetValue("g_skipCorrection", 0);
+
 	// Memorize g_allowVote
 	if (!keepSaved)
 	{
