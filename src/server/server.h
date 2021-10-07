@@ -601,7 +601,7 @@ void SV_RestartGameProgs(void);
 qboolean SV_inPVS(const vec3_t p1, const vec3_t p2);
 qboolean SV_GetTag(int clientNum, int tagFileNumber, char *tagname, orientation_t *orientation);
 int SV_LoadTag(const char *mod_name);
-void SV_GameSendServerCommand(int clientNum, const char *text);
+void SV_GameSendServerCommand(int clientNum, const char *text, qboolean demoPlayback);
 
 void SV_GameBinaryMessageReceived(int cno, const char *buf, int buflen, int commandTime);
 
