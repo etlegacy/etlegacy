@@ -251,6 +251,7 @@ static qboolean SV_CheckServerCommand(const char *cmd)
 /**
  * @brief Check and store the last command and compare it with the current one, to avoid duplicates.
  * If onlyStore is true, it will only store the new cmd, without checking.
+ *
  * @param[in] cmd
  * @param[in] onlyStore
  * @return
@@ -274,9 +275,14 @@ qboolean SV_CheckLastCmd(const char *cmd, qboolean onlyStore)
 		// check that the previous cmd was different from the current cmd.
 		return qfalse; // drop this command, it's a repetition of the previous one
 	}
+	else if (onlyStore && SV_DemoGameCommandFilter(cmd)) // block qagame game commands during playback
+	{
+		return qfalse;
+	}
 	else
 	{
-		Q_strncpyz(prevcmd, cmd, MAX_STRING_CHARS); // memorize the current cmd for the next check (clean the cmd before, because sometimes the same string is issued by the engine with some empty colors?)
+		// memorize the current cmd for the next check (clean the cmd before, because sometimes the same string is issued by the engine with some empty colors?)
+		Q_strncpyz(prevcmd, cmd, MAX_STRING_CHARS);
 		return qtrue;
 	}
 }
@@ -288,6 +294,8 @@ qboolean SV_CheckLastCmd(const char *cmd, qboolean onlyStore)
  */
 static qboolean SV_CheckGameCommand(const char *cmd)
 {
+	static int scores = 0;
+
 	if (!SV_CheckLastCmd(cmd, qfalse))
 	{
 		// check that the previous cmd was different from the current cmd. The engine may send the same command to every client by their cid (one command per client) instead of just sending one command to all using NULL or -1.
@@ -306,6 +314,27 @@ static qboolean SV_CheckGameCommand(const char *cmd)
 			Cmd_TokenizeString(cmd);
 			SV_DemoWriteConfigString(atoi(Cmd_Argv(1)), Cmd_Argv(2)); // relay to the specialized write configstring function
 			return qfalse; // drop it with the processing of the game command
+		}
+		// do not save more than 1 /scores game command at the end of a round (VERY important) - FIXME: VERY ugly
+		// scores = 1 - receiving first scores game command (Axis)
+		// scores = 2 - receiving first scores game command (Allies)
+		// scores = 3 - start ignoring
+		else if (!Q_stricmp(cmd, "sc \"\n\"") && Q_atoi((Info_ValueForKey(sv.configstrings[CS_WOLFINFO], "gamestate"))) == GS_INTERMISSION)
+		{
+			scores++;
+
+			if (scores > 2)
+			{
+				return qfalse;
+			}
+		}
+		else if (scores && Q_atoi((Info_ValueForKey(sv.configstrings[CS_WOLFINFO], "gamestate"))) != GS_INTERMISSION)
+		{
+			scores = 0;
+		}
+		else if (scores > 2 && !Q_strncmp(cmd, "sc ", 3))
+		{
+			return qfalse;
 		}
 
 		return qtrue; // else, the check is OK and we continue to process with the original function
@@ -1569,22 +1598,21 @@ static void SV_DemoReadServerCommand(msg_t *msg)
 }
 
 /**
-* @brief Filtering game commands that should go to every connected client (not bots and democlients)
+* @brief Filter game commands
 *
-* @details Would be best to filter game commands that should be sent to everyone watching the playback
-*		   sc (/scores) - is send too many times to 1 player, 5 demo clients = 5x /scores cluttering the console, also qagame sends it's own /scores but empty
-*		   ws (weaponstats) - is send correctly
-*		   scoreboard lacks stats (XP) - probably stats were never generated and send thus missing
-*		   no stats on shoutcater overlay - (sgstats)
+* @details Filter demo game commands that should go to every connected client (not bots and democlients)
+*		 also filter qagame game commands that are blocked during playback (because of missing clientSession_t it is sending garbage data)
+*
+* FIXME: look into storing and replaying ws, wstats, sgstats, stshots.
 *
 * @param[in] cmd
 */
-static qboolean SV_GameCommandFilter(const char *cmd)
+static qboolean SV_DemoGameCommandFilter(const char *cmd)
 {
 	int  i;
-	char *filter[] = { "sc", "ws" };
+	char *filter[] = { "sc ", "score", "sc0", "sc1", "impkd", "impt", "imsr", "impr", "imwa", "imws" };
 
-	for (i = 0; i < 2; i++)
+	for (i = 0; i < 10; i++)
 	{
 		if (!strncmp(filter[i], cmd, strlen(filter[i])))
 		{
@@ -1618,24 +1646,23 @@ static void SV_DemoReadGameCommand(msg_t *msg)
 	if (SV_CheckLastCmd(cmd, qfalse) && clientNum < sv_maxclients->integer)
 	{
 		// Don't send game commands to democlients, they are not real clients so they are not handling them which in turn drops them because of `server command overflow`
-		// FIXME: Make better game command filter: "sc" command gets spammed instead of sending 1 table with stats on round end, only sending weapons stats of players is send correctly
 		for (i = 0, client = svs.clients; i < sv_maxclients->integer; i++, client++)
 		{
 			player = SV_GameClientNum(i);
 
 			// FIXME: this is just stupid
 			// commands that get sent to every connected client
-			if (!client->demoClient && client->state == CS_ACTIVE && SV_GameCommandFilter(cmd))
+			if (!client->demoClient && client->state == CS_ACTIVE && SV_DemoGameCommandFilter(cmd))
 			{
 
 			}
-			else if (client->demoClient || client->state <= CS_PRIMED || player->clientNum != clientNum) // Send game commands to real clients only if they are following a democlient that receives the command (we only really want prints/centerprint messages?)
+			// send game commands to real clients only if they are following a democlient that receives the command
+			else if (client->demoClient || client->state <= CS_PRIMED || player->clientNum != clientNum)
 			{
 				continue;
 			}
 
-			// check for duplicates: check that the engine did not already send this very same message resulting from an event (this means that engine gamecommands are never filtered, only demo gamecommands)
-			SV_GameSendServerCommand(i, cmd);
+			SV_GameSendServerCommand(i, cmd, qtrue);
 		}
 	}
 }
@@ -2163,7 +2190,7 @@ read_next_demo_event: // used to read next demo event
 					int timetoreach = svs.time;
 
 					svs.time = time;
-					while (svs.time < timetoreach)
+					while (svs.time <= timetoreach)
 					{
 						SV_DemoReadFrame(); // run a few frames to settle things out
 					}
