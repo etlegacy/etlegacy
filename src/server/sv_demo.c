@@ -249,6 +249,32 @@ static qboolean SV_CheckServerCommand(const char *cmd)
 }
 
 /**
+* @brief Filter game commands
+*
+* @details Filter demo game commands that should go to every connected client (not bots and democlients)
+*		 also filter qagame game commands that are blocked during playback (because of missing clientSession_t it is sending garbage data)
+*
+* FIXME: look into storing and replaying ws, wstats, sgstats, stshots.
+*
+* @param[in] cmd
+*/
+static qboolean SV_DemoGameCommandFilter(const char *cmd)
+{
+	int  i;
+	char *filter[] = { "sc ", "score", "sc0", "sc1", "impkd", "impt", "imsr", "impr", "imwa", "imws" };
+
+	for (i = 0; i < 10; i++)
+	{
+		if (!strncmp(filter[i], cmd, strlen(filter[i])))
+		{
+			return qtrue;
+		}
+	}
+
+	return qfalse;
+}
+
+/**
  * @brief Check and store the last command and compare it with the current one, to avoid duplicates.
  * If onlyStore is true, it will only store the new cmd, without checking.
  *
@@ -990,7 +1016,9 @@ void SV_DemoRestartPlayback(void)
 static void SV_DemoStartPlayback(void)
 {
 	msg_t msg;
-	int   r, time = 400, i, clients = 0, fps = 0, gametype = 0, timelimit = 0, fraglimit = 0, capturelimit = 0, warmuptime = 0, gamestate = GS_INITIALIZE, g_currentRound = 0, g_doWarmup = 0, g_warmup = 60, match_minplayers = MATCH_MINPLAYERS, match_readypercent = 100, g_intermissiontime = 60, g_userTimeLimit = 0, g_useralliedrespawntime = 0, g_useraxisrespawntime = 0;
+	int   r, time = 400, i, clients = 0, fps = 0, gametype = 0, timelimit = 0, fraglimit = 0, capturelimit = 0, warmuptime = 0, gamestate = GS_INITIALIZE;
+	int   g_currentRound = 0, g_doWarmup = 0, g_warmup = 60, match_minplayers = Q_atoi(MATCH_MINPLAYERS), match_readypercent = 100, g_intermissiontime = 60;
+	int   g_userTimeLimit = 0, g_useralliedrespawntime = 0, g_useraxisrespawntime = 0;
 	float g_moverScale = 1.0f;
 	char  map[MAX_QPATH];
 	char  fs[MAX_QPATH]; // FIXME:  MAX_QPATH - only 64 chars ?!!!
@@ -1595,32 +1623,6 @@ static void SV_DemoReadServerCommand(msg_t *msg)
 
 	cmd = MSG_ReadString(msg);
 	SV_SendServerCommand(NULL, "%s", cmd);
-}
-
-/**
-* @brief Filter game commands
-*
-* @details Filter demo game commands that should go to every connected client (not bots and democlients)
-*		 also filter qagame game commands that are blocked during playback (because of missing clientSession_t it is sending garbage data)
-*
-* FIXME: look into storing and replaying ws, wstats, sgstats, stshots.
-*
-* @param[in] cmd
-*/
-static qboolean SV_DemoGameCommandFilter(const char *cmd)
-{
-	int  i;
-	char *filter[] = { "sc ", "score", "sc0", "sc1", "impkd", "impt", "imsr", "impr", "imwa", "imws" };
-
-	for (i = 0; i < 10; i++)
-	{
-		if (!strncmp(filter[i], cmd, strlen(filter[i])))
-		{
-			return qtrue;
-		}
-	}
-
-	return qfalse;
 }
 
 /**
