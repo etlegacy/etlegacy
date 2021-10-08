@@ -956,7 +956,7 @@ static void SV_DemoConnectDummy()
 	client_t       *client;
 	sharedEntity_t *entity;
 	const char     userinfo[]     = "\\cg_etVersion\\ETLTV\\etVersion\\ETLTV\\name\\^7ETLTV\\rate\\45000\\snaps\\40";
-	const char     configstring[] = "n\\^7ETLTV\\3\\1\\c\\1\\lc\\1\\r\\0\\p\\6\\m\\0000000\\s\\0000000\\dn\\ - 1\\w\\3\\lw\\3\\sw\\2\\lsw\\2\\mu\\0\\ref\\0\sc\\1\\u\\246";
+	const char     configstring[] = "n\\^7ETLTV\\3\\1\\c\\1\\lc\\1\\r\\0\\p\\6\\m\\0000000\\s\\0000000\\dn\\ - 1\\w\\3\\lw\\3\\sw\\2\\lsw\\2\\mu\\0\\ref\\0\\sc\\1\\u\\246";
 	int            num            = sv_maxclients->integer - 1;
 
 	client = &svs.clients[num];
@@ -1071,7 +1071,7 @@ static qboolean SV_DemoAutoDemoRecordCheck(void)
 
 		for (i = 0, cl = svs.clients; i < sv_maxclients->integer; i++, cl++)
 		{
-			if (cl->state == CS_ACTIVE && !(cl->gentity->r.svFlags & SVF_BOT))
+			if (cl->state == CS_ACTIVE && cl->gentity && !(cl->gentity->r.svFlags & SVF_BOT))
 			{
 				activePlayers = qtrue;
 				break;
