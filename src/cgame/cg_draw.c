@@ -534,8 +534,6 @@ void CG_DrawTeamBackground(int x, int y, int w, int h, float alpha, int team)
 ===========================================================================================
 */
 
-#define CHATLOC_Y 478
-
 /**
  * @brief CG_DrawTeamInfo
  */
@@ -556,15 +554,23 @@ static void CG_DrawTeamInfo(void)
 
 	if (cgs.teamLastChatPos != cgs.teamChatPos)
 	{
-		vec4_t hcolor;
-		int    i;
-		float  lineHeight = 9.f;
-		float  alphapercent;
-		float  scale       = 0.2f;
-		float  icon_width  = 12.f;
-		float  icon_height = 8.f;
-		int    chatWidth   = 320;
-		int    chatPosX    = ((int)Ccg_WideX(SCREEN_WIDTH) - chatWidth) / 2;
+		vec4_t    hcolor;
+		int       i, j;
+		float     alphapercent;
+		float     chatBgAlpha    = Com_Clamp(0.0f, 1.0f, cg_chatBackgroundAlpha.value);
+		float     textAlpha      = Com_Clamp(0.0f, 1.0f, cg_chatAlpha.value);
+		float     chatScale      = Com_Clamp(0.5, 2, cg_chatScale.value);
+		float     fontSize       = 0.2f;
+		float     fontSizeScaled = chatScale * fontSize;
+		float     lineHeight     = 9.f * chatScale;
+		float     icon_width     = 12.f * chatScale;
+		float     icon_height    = 8.f * chatScale;
+		float     flagOffsetX    = 0;
+		qhandle_t flag           = 0;
+		int       maxLineLength  = Com_Clamp(10, TEAMCHAT_WIDTH, cg_chatLineWidth.integer);
+		int       chatPosX       = (int)Ccg_WideX(cg_chatX.integer);
+		int       chatPosY       = cg_chatY.integer;
+		int       textStyle      = cg_chatShadow.integer ? ITEM_TEXTSTYLE_SHADOWED : ITEM_TEXTSTYLE_NORMAL;
 
 		if (cg.time - cgs.teamChatMsgTimes[cgs.teamLastChatPos % chatHeight] > cg_teamChatTime.integer)
 		{
@@ -574,14 +580,7 @@ static void CG_DrawTeamInfo(void)
 		for (i = cgs.teamChatPos - 1; i >= cgs.teamLastChatPos; i--)
 		{
 			alphapercent = 1.0f - (cg.time - cgs.teamChatMsgTimes[i % chatHeight]) / (float)(cg_teamChatTime.integer);
-			if (alphapercent > 1.0f)
-			{
-				alphapercent = 1.0f;
-			}
-			else if (alphapercent < 0)
-			{
-				alphapercent = 0.f;
-			}
+			Com_Clamp(0.0f, 1.0f, alphapercent);
 
 			// chatter team instead
 			if (cgs.teamChatMsgTeams[i % chatHeight] == TEAM_AXIS)
@@ -603,25 +602,49 @@ static void CG_DrawTeamInfo(void)
 				hcolor[2] = 0;
 			}
 
-			hcolor[3] = 0.66f * alphapercent;
+			hcolor[3] = chatBgAlpha * alphapercent;
 
 			trap_R_SetColor(hcolor);
-			CG_DrawPic(chatPosX, CHATLOC_Y - (cgs.teamChatPos - i) * lineHeight, chatWidth, lineHeight, cgs.media.teamStatusBar);
+
+			if (cg_chatFlags.integer)
+			{
+				flagOffsetX = 16.f * chatScale;
+				if (cgs.teamChatMsgTeams[i % chatHeight] == TEAM_AXIS)
+				{
+					flag = cgs.media.axisFlag;
+				}
+				else if (cgs.teamChatMsgTeams[i % chatHeight] == TEAM_ALLIES)
+				{
+					flag = cgs.media.alliedFlag;
+				}
+			}
+
+			int chatWidthCur = 0;
+			int chatWidthMax = 0;
+
+			// get the longest chat message on screen, use that for the width of chat background
+			for (j = 0; j < TEAMCHAT_HEIGHT; j++)
+			{
+				chatWidthCur = CG_Text_Width_Ext(cgs.teamChatMsgs[j % chatHeight], fontSizeScaled, maxLineLength, &cgs.media.limboFont2);
+
+				if (chatWidthCur > chatWidthMax)
+				{
+					chatWidthMax = chatWidthCur;
+				}
+			}
+
+			CG_DrawPic(chatPosX, chatPosY - (cgs.teamChatPos - i) * lineHeight, chatWidthMax + flagOffsetX + 2, lineHeight, cgs.media.teamStatusBar); // +2 width for some padding at the end
 
 			hcolor[0] = hcolor[1] = hcolor[2] = 1.0;
-			hcolor[3] = alphapercent;
+			hcolor[3] = alphapercent * textAlpha;
 			trap_R_SetColor(hcolor);
 
 			// chat icons
-			if (cgs.teamChatMsgTeams[i % chatHeight] == TEAM_AXIS)
+			if (flag)
 			{
-				CG_DrawPic(chatPosX, CHATLOC_Y - (cgs.teamChatPos - i - 0.9f) * lineHeight - 8, icon_width, icon_height, cgs.media.axisFlag);
+				CG_DrawPic(chatPosX, chatPosY - (cgs.teamChatPos - i - 0.9f) * lineHeight - icon_height, icon_width, icon_height, flag);
 			}
-			else if (cgs.teamChatMsgTeams[i % chatHeight] == TEAM_ALLIES)
-			{
-				CG_DrawPic(chatPosX, CHATLOC_Y - (cgs.teamChatPos - i - 0.9f) * lineHeight - 8, icon_width, icon_height, cgs.media.alliedFlag);
-			}
-			CG_Text_Paint_Ext(chatPosX + 16, CHATLOC_Y - (cgs.teamChatPos - i - 1) * lineHeight - 1, scale, scale, hcolor, cgs.teamChatMsgs[i % chatHeight], 0, 0, 0, &cgs.media.limboFont2);
+			CG_Text_Paint_Ext(chatPosX + flagOffsetX, chatPosY - (cgs.teamChatPos - i - 1) * lineHeight - 1, fontSizeScaled, fontSizeScaled, hcolor, cgs.teamChatMsgs[i % chatHeight], 0, 0, textStyle, &cgs.media.limboFont2);
 		}
 		trap_R_SetColor(NULL);
 	}

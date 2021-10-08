@@ -366,6 +366,15 @@ vmCvar_t cg_shoutcastDrawHealth;
 vmCvar_t cg_shoutcastGrenadeTrail;
 vmCvar_t cg_shoutcastDrawMinimap;
 
+vmCvar_t cg_chatX;
+vmCvar_t cg_chatY;
+vmCvar_t cg_chatScale;
+vmCvar_t cg_chatAlpha;
+vmCvar_t cg_chatBackgroundAlpha;
+vmCvar_t cg_chatShadow;
+vmCvar_t cg_chatFlags;
+vmCvar_t cg_chatLineWidth;
+
 typedef struct
 {
 	vmCvar_t *vmCvar;
@@ -629,6 +638,15 @@ static cvarTable_t cvarTable[] =
 	{ &cg_shoutcastDrawHealth,    "cg_shoutcastDrawHealth",    "0",           CVAR_ARCHIVE,                 0 },
 	{ &cg_shoutcastGrenadeTrail,  "cg_shoutcastGrenadeTrail",  "0",           CVAR_ARCHIVE,                 0 },
 	{ &cg_shoutcastDrawMinimap,   "cg_shoutcastDrawMinimap",   "1",           CVAR_ARCHIVE,                 0 },
+
+	{ &cg_chatX,                  "cg_chatX",                  "160",         CVAR_ARCHIVE,                 0 },
+	{ &cg_chatY,                  "cg_chatY",                  "478",         CVAR_ARCHIVE,                 0 },
+	{ &cg_chatScale,              "cg_chatScale",              "1.0",         CVAR_ARCHIVE,                 0 },
+	{ &cg_chatAlpha,              "cg_chatAlpha",              "1.0",         CVAR_ARCHIVE,                 0 },
+	{ &cg_chatBackgroundAlpha,    "cg_chatBackgroundAlpha",    "0.66",        CVAR_ARCHIVE,                 0 },
+	{ &cg_chatShadow,             "cg_chatShadow",             "0",           CVAR_ARCHIVE,                 0 },
+	{ &cg_chatFlags,              "cg_chatFlags",              "1",           CVAR_ARCHIVE,                 0 },
+	{ &cg_chatLineWidth,          "cg_chatLineWidth",          "70",          CVAR_ARCHIVE,                 0 },
 };
 
 static const unsigned int cvarTableSize = sizeof(cvarTable) / sizeof(cvarTable[0]);

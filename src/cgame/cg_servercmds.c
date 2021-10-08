@@ -1138,7 +1138,7 @@ static void CG_AddToTeamChat(const char *str, int clientnum) // FIXME: add disgu
 	}
 
 	len       = 0;
-	chatWidth = (cgs.gamestate == GS_INTERMISSION) ? TEAMCHAT_WIDTH + 30 : TEAMCHAT_WIDTH;
+	chatWidth = (cgs.gamestate == GS_INTERMISSION) ? TEAMCHAT_WIDTH + 30 : Com_Clamp(10, TEAMCHAT_WIDTH, cg_chatLineWidth.integer);
 
 	p  = cgs.teamChatMsgs[cgs.teamChatPos % chatHeight];
 	*p = 0;

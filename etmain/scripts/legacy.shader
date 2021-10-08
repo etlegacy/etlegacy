@@ -1425,6 +1425,18 @@ gfx/hud/ranks/xrank11
 	}
 }
 
+// fixed chat background bar using clampMap instead of map for drawing
+gfx/2d/colorbar
+{
+	nomipmaps
+	nopicmip
+	{
+		clampMap gfx/2d/colorbar.tga
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbGen vertex
+	}
+}
+
 // disguised shader
 gfx/2d/friendlycross
 {
