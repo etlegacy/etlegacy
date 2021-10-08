@@ -866,6 +866,65 @@ void SV_DemoWriteFrame(void)
 ***********************************************/
 
 /**
+* @brief SV_DemoAutoDemoRecordCheck
+*
+* @details sv_autoDemo 2 - Start recording only when there are active players
+*          stop recording when there are no active players
+*
+*/
+static qboolean SV_DemoAutoDemoRecordCheck(void)
+{
+	client_t   *cl;
+	int        i;
+	static int lastCheckTime = 0;
+	qboolean   activePlayers = qfalse;
+
+	if (lastCheckTime + 10000 > svs.time)
+	{
+		return qfalse;
+	}
+
+	lastCheckTime = svs.time;
+
+	switch (sv_autoDemo->integer)
+	{
+	case 1:
+
+		if (sv.demoState == DS_NONE)
+		{
+			return qtrue;
+		}
+		else
+		{
+			return qfalse;
+		}
+
+	case 2:
+
+		for (i = 0, cl = svs.clients; i < sv_maxclients->integer; i++, cl++)
+		{
+			if (cl->state == CS_ACTIVE && !(cl->gentity->r.svFlags & SVF_BOT))
+			{
+				activePlayers = qtrue;
+				break;
+			}
+		}
+
+		if (activePlayers && sv.demoState == DS_NONE)
+		{
+			return qtrue;
+		}
+		else if (!activePlayers && sv.demoState == DS_RECORDING)
+		{
+			SV_DemoStopAll();
+		}
+
+	default:
+		return qfalse;
+	}
+}
+
+/**
  * @brief Generates a meaningful demo filename and automatically starts the demo recording.
  *
  * @details This function is used in conjunction with the variable sv_autoDemo 1
@@ -883,11 +942,8 @@ void SV_DemoAutoDemoRecord(void)
 
 	Com_Memset(demoname, 0, MAX_QPATH);
 
-	// break if a demo is already being recorded
-	// this should not happen, this is a failsafe but if it's used it means there are redundant calls that we can maybe remove
-	if (sv.demoState == DS_RECORDING)
+	if (!SV_DemoAutoDemoRecordCheck())
 	{
-		Com_Printf("SV_DemoAutoDemoRecord: already recording a demo!\n");
 		return;
 	}
 
