@@ -91,6 +91,11 @@ static char *savedPlaybackDemoname              = savedPlaybackDemonameVal;
 
 static qboolean keepSaved = qfalse; // var that memorizes if we keep the new maxclients and democlients values (in the case that we restart the map/server for these cvars to be affected since they are latched, we need to stop the playback meanwhile we restart, and using this var we can know if the stop is a restart procedure or a real demo end) or if we can restore them (at the end of the demo)
 
+// Game stats
+static char sc0[MAX_STRING_CHARS];
+static char sc1[MAX_STRING_CHARS];
+static char gstats[MAX_CLIENTS][MAX_STRING_CHARS];
+
 /**
  * @brief Restores all CVARs
  */
@@ -254,16 +259,17 @@ static qboolean SV_CheckServerCommand(const char *cmd)
 * @details Filter demo game commands that should go to every connected client (not bots and democlients)
 *		 also filter qagame game commands that are blocked during playback (because of missing clientSession_t it is sending garbage data)
 *
-* FIXME: look into storing and replaying ws, wstats, sgstats, stshots.
+* FIXME: look into entinfo and tinfo.
 *
 * @param[in] cmd
+* @return
 */
 static qboolean SV_DemoGameCommandFilter(const char *cmd)
 {
 	int  i;
-	char *filter[] = { "sc ", "score", "sc0", "sc1", "impkd", "impt", "imsr", "impr", "imwa", "imws" };
+	char *filter[] = { "sc ", "score", "sc0", "sc1", "gstats", "impkd", "impt", "imsr", "impr", "imwa", "imws" };
 
-	for (i = 0; i < 10; i++)
+	for (i = 0; i < 11; i++)
 	{
 		if (!strncmp(filter[i], cmd, strlen(filter[i])))
 		{
@@ -510,6 +516,76 @@ static void SV_DemoWriteClientCommand(client_t *client, const char *cmd)
 }
 
 /**
+* @brief Store newest game commands during playback for reuse
+*
+* @param[in] clientnum
+* @param[in] cmd
+* @return
+*/
+static qboolean SV_DemoStoreGameCommand(int clientNum, char *cmd)
+{
+	if (!Q_strncmp(cmd, "gstats", 6))
+	{
+		int index = Q_atoi(Cmd_ArgsFrom(1));
+		Com_Memset(gstats[index], 0, MAX_STRING_CHARS);
+		Q_strncpyz(gstats[index], va("%s", cmd), MAX_STRING_CHARS);
+		return qtrue;
+	}
+	else if (!Q_strncmp(cmd, "sc0", 3))
+	{
+		Com_Memset(sc0, 0, MAX_STRING_CHARS);
+		Q_strncpyz(sc0, va("%s", cmd), MAX_STRING_CHARS);
+		return qtrue;
+	}
+	else if (!Q_strncmp(cmd, "sc1", 3))
+	{
+		Com_Memset(sc1, 0, MAX_STRING_CHARS);
+		Q_strncpyz(sc1, va("%s", cmd), MAX_STRING_CHARS);
+		return qtrue;
+	}
+
+	return qfalse;
+}
+
+/**
+* @brief Send newest game commands during playback
+*
+* @param[in] client
+* @param[in] arg0
+* @param[in] arg1
+*/
+static qboolean SV_DemoSendStoredCommands(client_t *client, const char *arg0, const char *arg1)
+{
+	if (!Q_strncmp(arg0, "score", 5))
+	{
+		if (sc0 && strlen(sc0))
+		{
+			SV_GameSendServerCommand(client - svs.clients, sc0, qtrue);
+		}
+
+		if (sc1 && strlen(sc1))
+		{
+			SV_GameSendServerCommand(client - svs.clients, sc1, qtrue);
+		}
+
+		return qtrue;
+	}
+
+	if (!Q_strncmp(arg0, "sgstats", 7))
+	{
+		int index = Q_atoi(arg1);
+		if (gstats[index] && strlen(gstats[index]))
+		{
+			SV_GameSendServerCommand(client - svs.clients, gstats[index], qtrue);
+		}
+
+		return qtrue;
+	}
+
+	return qfalse;
+}
+
+/**
  * @brief SV_DemoClientCommandCapture
  * @param[in] client
  * @param[in] msg
@@ -522,14 +598,22 @@ qboolean SV_DemoClientCommandCapture(client_t *client, const char *msg)
 		SV_DemoWriteClientCommand(client, msg);
 	}
 	else if (sv.demoState == DS_PLAYBACK &&
-	         ((client - svs.clients) >= sv_democlients->integer) && ((client - svs.clients) < sv_maxclients->integer) && // preventing only real clients commands (not democlients commands replayed)
-	         (!Q_stricmp(Cmd_Argv(0), "team") && Q_stricmp(Cmd_Argv(1), "s") && Q_stricmp(Cmd_Argv(1), "spectator"))) // if there is a demo playback, we prevent any real client from doing a team change, if so, we issue a chat messsage (except if the player join team spectator again)
+	         ((client - svs.clients) >= sv_democlients->integer) && ((client - svs.clients) < sv_maxclients->integer)) // preventing only real clients commands (not democlients commands replayed)
 	{
-		// issue a chat message only to the player trying to join a team
-		SV_SendServerCommand(client, "chat \"^3Can't join a team when a demo is replaying!\"");
-		// issue a chat message only to the player trying to join a team
-		SV_SendServerCommand(client, "cp \"^3Can't join a team when a demo is replaying!\"");
-		return qfalse;
+		// if there is a demo playback, we prevent any real client from doing a team change, if so, we issue a chat messsage (except if the player join team spectator again)
+		if ((!Q_stricmp(Cmd_Argv(0), "team") && Q_stricmp(Cmd_Argv(1), "s") && Q_stricmp(Cmd_Argv(1), "spectator")))
+		{
+			// issue a chat message only to the player trying to join a team
+			SV_SendServerCommand(client, "chat \"^3Can't join a team when a demo is replaying!\"");
+			// issue a chat message only to the player trying to join a team
+			SV_SendServerCommand(client, "cp \"^3Can't join a team when a demo is replaying!\"");
+			return qfalse;
+		}
+
+		if (SV_DemoSendStoredCommands(client, Cmd_Argv(0), Cmd_Argv(1)))
+		{
+			return qfalse;
+		}
 	}
 
 	return qtrue;
@@ -822,6 +906,87 @@ static void SV_DemoWriteAllEntityShared(void)
 }
 
 /**
+* @brief SV_DemoRequestStats
+*
+* FIXME: look into storing and replaying ws, wstats, stshots.
+*/
+static void SV_DemoRequestStats(void)
+{
+	client_t   *client, *cl;
+	static int lastRequestTime = 0;
+	int        i, num = sv_maxclients->integer - 1;
+
+	if (lastRequestTime + 5000 > svs.time)
+	{
+		return;
+	}
+
+	lastRequestTime = svs.time;
+
+	client = &svs.clients[num];
+
+	if (client->state != CS_FREE && client->demoClient)
+	{
+		for (i = 0, cl = svs.clients; i < num; i++, cl++)
+		{
+			if (cl->state == CS_ACTIVE)
+			{
+				SV_ExecuteClientCommand(client, va("sgstats %d", i), qtrue, qfalse);
+			}
+		}
+
+		SV_ExecuteClientCommand(client, "score", qtrue, qfalse);
+
+		usercmd_t cmd;
+		cmd.serverTime = svs.time;
+
+		// needed to actually request scoreboard stats (score)
+		SV_ClientThink(client, &cmd);
+	}
+}
+
+/**
+* @brief SV_DemoConnectDummy
+*
+* @details Connect dummy client on last available server slot that will be used as requester of stats.
+*
+*/
+static void SV_DemoConnectDummy()
+{
+	client_t       *client;
+	sharedEntity_t *entity;
+	const char     userinfo[]     = "\\cg_etVersion\\ETLTV\\etVersion\\ETLTV\\name\\^7ETLTV\\rate\\45000\\snaps\\40";
+	const char     configstring[] = "n\\^7ETLTV\\3\\1\\c\\1\\lc\\1\\r\\0\\p\\6\\m\\0000000\\s\\0000000\\dn\\ - 1\\w\\3\\lw\\3\\sw\\2\\lsw\\2\\mu\\0\\ref\\0\sc\\1\\u\\246";
+	int            num            = sv_maxclients->integer - 1;
+
+	client = &svs.clients[num];
+
+	if (client->state != CS_FREE)
+	{
+		return;
+	}
+
+	client->demoClient = qtrue;
+	entity             = SV_GentityNum(num);
+
+	NET_StringToAdr("localhost", &client->netchan.remoteAddress, NA_LOOPBACK);
+	entity->r.svFlags |= SVF_BOT; // set player as a "bot" so the empty IP and GUID will not cause a kick
+
+	Cmd_TokenizeString(va("userinfo \"%s\"", userinfo));
+	SV_UpdateUserinfo_f(client);
+
+	// set the flag back or the dummy will actually play
+	entity->r.svFlags &= ~SVF_BOT;
+
+	SV_SetConfigstring(CS_PLAYERS + num, configstring);
+	Q_strncpyz(client->name, Info_ValueForKey(configstring, "n"), MAX_NAME_LENGTH);
+
+	SV_ClientEnterWorld(client, NULL);
+
+	SV_ExecuteClientCommand(client, "team spectator", qtrue, qfalse);
+}
+
+/**
  * @brief Record all the entities (gentities fields) and players (player_t fields) at the end of every frame (this is the only write function to be called in every frame for sure)
  *
  * @details Will be called once per server's frame
@@ -843,6 +1008,9 @@ void SV_DemoWriteFrame(void)
 
 	// Write clients playerState (playerState_t)
 	SV_DemoWriteAllPlayerState();
+
+	// Request stats
+	SV_DemoRequestStats();
 
 	//-----------------------------------------------------
 
@@ -1620,6 +1788,9 @@ static void SV_DemoStartRecord(void)
 	// Change recording state
 	sv.demoState = DS_RECORDING;
 	Cvar_SetValue("sv_demoState", DS_RECORDING);
+
+	// connect dummy client that will be used to collect stats
+	SV_DemoConnectDummy();
 }
 
 /**
@@ -1628,7 +1799,8 @@ static void SV_DemoStartRecord(void)
  */
 static void SV_DemoStopRecord(void)
 {
-	msg_t msg;
+	client_t *client = &svs.clients[sv_maxclients->integer - 1];
+	msg_t    msg;
 
 	// End the demo
 	MSG_Init(&msg, buf, sizeof(buf));
@@ -1643,6 +1815,13 @@ static void SV_DemoStopRecord(void)
 	// Announce
 	Com_Printf("DEMO: Stopped recording server-side demo %s.\n", sv.demoName);
 	SV_SendServerCommand(NULL, "chat \"^3DEMO: Stopped recording server-side demo %s.\"", sv.demoName);
+
+	// disconnect dummy client if there is one
+	if (client->state != CS_FREE && client->demoClient)
+	{
+		SV_DropClient(client, "disconnected");
+		client->demoClient = qfalse;
+	}
 }
 
 /***********************************************
@@ -1707,7 +1886,13 @@ static void SV_DemoReadGameCommand(msg_t *msg)
 
 	if (SV_CheckLastCmd(cmd, qfalse) && clientNum < sv_maxclients->integer)
 	{
-		// Don't send game commands to democlients, they are not real clients so they are not handling them which in turn drops them because of `server command overflow`
+		// store commands that should be sent per request
+		if (SV_DemoStoreGameCommand(clientNum, cmd))
+		{
+			return;
+		}
+
+		// do not send game commands to democlients
 		for (i = 0, client = svs.clients; i < sv_maxclients->integer; i++, client++)
 		{
 			player = SV_GameClientNum(i);
