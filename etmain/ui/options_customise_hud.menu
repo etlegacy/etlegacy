@@ -59,7 +59,7 @@ menuDef {
 	YESNO( 6+(SUBWINDOW_WIDTH_L)+6+2, DISPLAY_Y+16, (SUBWINDOW_WIDTH_L)-4, 10, _("Muzzle Flash:"), .2, 8, "cg_muzzleflash", _("Toggles display of weapon fire (muzzle flash)") )
 	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, DISPLAY_Y+28, (SUBWINDOW_WIDTH_L)-4, 10, _("Ejecting Brass:"), .2, 8, "cg_brassTime", cvarFloatList { "High" 15000 "Med" 2500 "Off" 0 }, _("Sets the duration ejected bullet shells last for") )
 	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, DISPLAY_Y+40, (SUBWINDOW_WIDTH_L)-4, 10, _("Bullet Tracers:"), .2, 8, "cg_tracers", cvarFloatList { "Off" 0 "On" 1 "Only own tracers" 2 "Only others tracers" 3 }, _("Toggles display of bullet tracers") )
-	CVARFLOATLABEL( 8, DISPLAY_Y+52, (SUBWINDOW_WIDTH_L)-6, 10, "cg_fov", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-6), 8 )
+	CVARFLOATLABEL( 6+(SUBWINDOW_WIDTH_L)+6+2, DISPLAY_Y+52, (SUBWINDOW_WIDTH_L)-6, 10, "cg_fov", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-6), 8 )
 	SLIDER( 6+(SUBWINDOW_WIDTH_L)+6+2, DISPLAY_Y+52, (SUBWINDOW_WIDTH_L)-4, 10, _("Field Of View:"), .2, 8, "cg_fov" 90 75 160, _("Sets field of view") )
 	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, DISPLAY_Y+64, (SUBWINDOW_WIDTH_L)-4, 10, _("Corona Distance:"), .2, 8, "cg_coronafardist", cvarFloatList { "Off" 0 "Near" 800 "Normal" 1536 "Far" 4096 "Extreme" 16000 }, _("Sets the maximum distance light corona is displayed") )
 	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, DISPLAY_Y+76, (SUBWINDOW_WIDTH_L)-4, 10, _("Wall Mark Lifetime:"), .2, 8, "cg_markTime", cvarFloatList { "Off" 0 "Short" 10000 "Normal" 20000 "Long" 30000 }, _("Duration of bullet marks on walls") )
