@@ -473,6 +473,17 @@ intptr_t SV_GameSystemCalls(intptr_t *args)
 		Cmd_ArgvBuffer(args[1], VMA(2), args[3]);
 		return 0;
 	case G_SEND_CONSOLE_COMMAND:
+
+		if (sv.demoState == DS_PLAYBACK)
+		{
+			const char *s1 = VMA(2);
+
+			if (s1 && strlen(s1) && !Q_strncmp(s1, "map", 3))
+			{
+				return 0;
+			}
+		}
+
 		Cbuf_ExecuteText(args[1], VMA(2));
 		return 0;
 
