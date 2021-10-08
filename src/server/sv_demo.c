@@ -1561,6 +1561,7 @@ static void SV_DemoStartPlayback(void)
 	}
 	// Remove g_allowVote (prevent players to call a vote while a map is replaying)
 	Cvar_SetValue("g_allowVote", 0);
+	Cvar_SetValue("vote_allow_map", 0);
 
 	// Printing infos about the demo
 	if (!sv_demoTolerant->integer)   // print the meta datas only if we're not in faults tolerance mode (because if there are missing meta datas, the printing will throw an exception! So we'd better avoid it)
