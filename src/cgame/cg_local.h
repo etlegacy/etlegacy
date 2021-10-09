@@ -152,6 +152,12 @@
 #define UNIT_TO_FEET 0.0833333f
 #define UNIT_TO_METER 0.0254f
 
+// gun animations
+#define WEAPANIM_IDLE    0x01
+#define WEAPANIM_FIRING  0x02
+#define WEAPANIM_RELOAD  0x04
+#define WEAPANIM_SWITCH  0x08
+
 /**
  * @struct specLabel_s
  * @typedef specLabel_t
@@ -2641,6 +2647,7 @@ extern vmCvar_t cg_gun_x;
 extern vmCvar_t cg_gun_y;
 extern vmCvar_t cg_gun_z;
 extern vmCvar_t cg_drawGun;
+extern vmCvar_t cg_WeapAnims;
 extern vmCvar_t cg_cursorHints;
 extern vmCvar_t cg_letterbox;
 extern vmCvar_t cg_tracerChance;

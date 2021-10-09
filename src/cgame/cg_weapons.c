@@ -2786,6 +2786,59 @@ static void CG_RunWeapLerpFrame(clientInfo_t *ci, weaponInfo_t *wi, lerpFrame_t 
 }
 
 /**
+ * @brief Returns the frame to freeze animations to for a specific weapon, when animations are disabled
+ * @param[in] weapon
+ * @return frame
+ */
+static int CG_DefaultAnimFrameForWeapon(int weapon)
+{
+	int frame;
+
+	switch (weapon)
+	{
+	case WP_AKIMBO_COLT:
+	case WP_AKIMBO_LUGER:
+	case WP_AKIMBO_SILENCEDCOLT:
+	case WP_AKIMBO_SILENCEDLUGER:
+		frame = 6;
+		break;
+	case WP_PANZERFAUST:
+		frame = 61;
+		break;
+	case WP_MOBILE_BROWNING_SET:
+	case WP_MOBILE_MG42_SET:
+		frame = 134;
+		break;
+	case WP_MORTAR:
+	case WP_MORTAR2:
+		frame = 13;
+		break;
+	case WP_MORTAR_SET:
+	case WP_MORTAR2_SET:
+		frame = 45;
+		break;
+	case WP_SATCHEL:
+	case WP_LANDMINE:
+		frame = 8;
+		break;
+	case WP_SATCHEL_DET:
+		frame = 24;
+		break;
+	case WP_MEDIC_ADRENALINE:
+		frame = 36;
+		break;
+	case WP_BINOCULARS:
+		frame = 5;
+		break;
+	default:
+		frame = 0;
+		break;
+	}
+
+	return frame;
+}
+
+/**
  * @brief Modified.  this is now client-side only (server does not dictate weapon animation info)
  * @param[in] ps
  * @param[in] weapon
@@ -2804,11 +2857,37 @@ static void CG_WeaponAnimation(playerState_t *ps, weaponInfo_t *weapon, int *wea
 		return;
 	}
 
+	int ws = BG_simpleWeaponState(ps->weaponstate);
+
+	// okay to early out here since we can never reload, fire and switch at the same time
+	if (ws == WSTATE_FIRE && !(cg_WeapAnims.integer & WEAPANIM_FIRING))
+	{
+		*weapOld = *weap = CG_DefaultAnimFrameForWeapon(ps->weapon);
+		return;
+	}
+	if (ws == WSTATE_RELOAD && !(cg_WeapAnims.integer & WEAPANIM_RELOAD))
+	{
+		*weapOld = *weap = CG_DefaultAnimFrameForWeapon(ps->weapon);
+		return;
+	}
+	if (ws == WSTATE_SWITCH && !(cg_WeapAnims.integer & WEAPANIM_SWITCH))
+	{
+		*weapOld = *weap = CG_DefaultAnimFrameForWeapon(ps->weapon);
+		return;
+	}
+
 	CG_RunWeapLerpFrame(ci, weapon, &cent->pe.weap, ps->weapAnim, 1);
 
 	*weapOld      = cent->pe.weap.oldFrame;
 	*weap         = cent->pe.weap.frame;
 	*weapBackLerp = cent->pe.weap.backlerp;
+
+	// this forces a refresh to animation frame when force switching from a weapon to another
+	// eg. firing panzer -> autoswitching to pistol, otherwise we carry the anim frame from the old weapon
+	if (ws == WSTATE_IDLE && !(cg_WeapAnims.integer & WEAPANIM_SWITCH))
+	{
+		*weapOld = *weap = CG_DefaultAnimFrameForWeapon(ps->weapon);
+	}
 
 	if (cg_debugAnim.integer == 3)
 	{
@@ -2897,35 +2976,37 @@ static void CG_CalculateWeaponPosition(vec3_t origin, vec3_t angles)
 	}
 
 	// gun angles from bobbing
-
-	angles[ROLL]  += scale        * cg.bobfracsin * 0.005f;
-	angles[YAW]   += scale        * cg.bobfracsin * 0.01f;
-	angles[PITCH] += cg.xyspeed   * cg.bobfracsin * 0.005f;
-
-	// drop the weapon when landing
-	delta = cg.time - cg.landTime;
-	if (delta < LAND_DEFLECT_TIME)
+	if (cg_WeapAnims.integer & WEAPANIM_IDLE)
 	{
-		origin[2] += cg.landChange * 0.25f * delta / LAND_DEFLECT_TIME;
-	}
-	else if (delta < LAND_DEFLECT_TIME + LAND_RETURN_TIME)
-	{
-		origin[2] += cg.landChange * 0.25f *
-		             (LAND_DEFLECT_TIME + LAND_RETURN_TIME - delta) / LAND_RETURN_TIME;
-	}
+		angles[ROLL]  += scale * cg.bobfracsin * 0.005f;
+		angles[YAW]   += scale * cg.bobfracsin * 0.01f;
+		angles[PITCH] += cg.xyspeed * cg.bobfracsin * 0.005f;
 
-	// idle drift
-	if ((!(cg.predictedPlayerState.eFlags & EF_MOUNTEDTANK) && !(GetWeaponTableData(cg.predictedPlayerState.weapon)->type & WEAPON_TYPE_SET)))
-	{
-		float fracsin = (float)sin(cg.time * 0.001);
+		// drop the weapon when landing
+		delta = cg.time - cg.landTime;
+		if (delta < LAND_DEFLECT_TIME)
+		{
+			origin[2] += cg.landChange * 0.25f * delta / LAND_DEFLECT_TIME;
+		}
+		else if (delta < LAND_DEFLECT_TIME + LAND_RETURN_TIME)
+		{
+			origin[2] += cg.landChange * 0.25f *
+			             (LAND_DEFLECT_TIME + LAND_RETURN_TIME - delta) / LAND_RETURN_TIME;
+		}
 
-		// adjustment for MAX KAUFMAN
-		//scale = cg.xyspeed + 40;
-		scale = 80;
+		// idle drift
+		if ((!(cg.predictedPlayerState.eFlags & EF_MOUNTEDTANK) && !(GetWeaponTableData(cg.predictedPlayerState.weapon)->type & WEAPON_TYPE_SET)))
+		{
+			float fracsin = (float)sin(cg.time * 0.001);
 
-		angles[ROLL]  += scale * fracsin * 0.01f;
-		angles[YAW]   += scale * fracsin * 0.01f;
-		angles[PITCH] += scale * fracsin * 0.01f;
+			// adjustment for MAX KAUFMAN
+			//scale = cg.xyspeed + 40;
+			scale = 80;
+
+			angles[ROLL]  += scale * fracsin * 0.01f;
+			angles[YAW]   += scale * fracsin * 0.01f;
+			angles[PITCH] += scale * fracsin * 0.01f;
+		}
 	}
 
 	// subtract the kickAngles
