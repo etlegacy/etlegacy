@@ -2860,17 +2860,17 @@ static void CG_WeaponAnimation(playerState_t *ps, weaponInfo_t *weapon, int *wea
 	int ws = BG_simpleWeaponState(ps->weaponstate);
 
 	// okay to early out here since we can never reload, fire and switch at the same time
-	if (ws == WSTATE_FIRE && !(cg_WeapAnims.integer & WEAPANIM_FIRING))
+	if (ws == WSTATE_FIRE && !(cg_weapAnims.integer & WEAPANIM_FIRING))
 	{
 		*weapOld = *weap = CG_DefaultAnimFrameForWeapon(ps->weapon);
 		return;
 	}
-	if (ws == WSTATE_RELOAD && !(cg_WeapAnims.integer & WEAPANIM_RELOAD))
+	if (ws == WSTATE_RELOAD && !(cg_weapAnims.integer & WEAPANIM_RELOAD))
 	{
 		*weapOld = *weap = CG_DefaultAnimFrameForWeapon(ps->weapon);
 		return;
 	}
-	if (ws == WSTATE_SWITCH && !(cg_WeapAnims.integer & WEAPANIM_SWITCH))
+	if (ws == WSTATE_SWITCH && !(cg_weapAnims.integer & WEAPANIM_SWITCH))
 	{
 		*weapOld = *weap = CG_DefaultAnimFrameForWeapon(ps->weapon);
 		return;
@@ -2884,7 +2884,7 @@ static void CG_WeaponAnimation(playerState_t *ps, weaponInfo_t *weapon, int *wea
 
 	// this forces a refresh to animation frame when force switching from a weapon to another
 	// eg. firing panzer -> autoswitching to pistol, otherwise we carry the anim frame from the old weapon
-	if (ws == WSTATE_IDLE && !(cg_WeapAnims.integer & WEAPANIM_SWITCH))
+	if (ws == WSTATE_IDLE && !(cg_weapAnims.integer & WEAPANIM_SWITCH))
 	{
 		*weapOld = *weap = CG_DefaultAnimFrameForWeapon(ps->weapon);
 	}
@@ -2976,7 +2976,7 @@ static void CG_CalculateWeaponPosition(vec3_t origin, vec3_t angles)
 	}
 
 	// gun angles from bobbing
-	if (cg_WeapAnims.integer & WEAPANIM_IDLE)
+	if (cg_weapAnims.integer & WEAPANIM_IDLE)
 	{
 		angles[ROLL]  += scale * cg.bobfracsin * 0.005f;
 		angles[YAW]   += scale * cg.bobfracsin * 0.01f;
