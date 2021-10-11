@@ -190,7 +190,7 @@ void CG_setDefaultHudValues(hudStucture_t *hud)
 	hud->spectatortext   = CG_getComponent(8, 188, 0.22f, 0.22f, qtrue, STYLE_NORMAL);
 	hud->limbotext       = CG_getComponent(8, 164, 0.22f, 0.22f, qtrue, STYLE_NORMAL);
 	hud->followtext      = CG_getComponent(8, 164, 0.22f, 0.22f, qtrue, STYLE_NORMAL);
-	hud->demotext        = CG_getComponent(10, 9, 0.22f, 0.22f, qtrue, STYLE_NORMAL);
+	hud->demotext        = CG_getComponent(10, 9, 0.22f, 0.22f, qtrue, STYLE_SIMPLE);
 }
 
 /*
