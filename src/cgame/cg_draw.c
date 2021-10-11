@@ -3559,58 +3559,6 @@ static void CG_ScreenFade(void)
 	}
 }
 
-static int lastDemoScoreTime = 0;
-
-/**
- * @brief CG_DrawDemoRecording
- */
-void CG_DrawDemoRecording(void)
-{
-	char status[1024];
-	char demostatus[128];
-	char wavestatus[128];
-
-	if (!cl_demorecording.integer && !cl_waverecording.integer)
-	{
-		return;
-	}
-
-	// poll for score
-	if (!lastDemoScoreTime || cg.time > lastDemoScoreTime)
-	{
-		trap_SendClientCommand("score");
-		lastDemoScoreTime = cg.time + 5000; // 5 secs
-	}
-
-	if (!cg_recording_statusline.integer)
-	{
-		return;
-	}
-
-	if (cl_demorecording.integer)
-	{
-		Com_sprintf(demostatus, sizeof(demostatus), " demo %s: %ik ", cl_demofilename.string, cl_demooffset.integer / 1024);
-	}
-	else
-	{
-		Q_strncpyz(demostatus, "", sizeof(demostatus));
-
-	}
-
-	if (cl_waverecording.integer)
-	{
-		Com_sprintf(wavestatus, sizeof(demostatus), " audio %s: %ik ", cl_wavefilename.string, cl_waveoffset.integer / 1024);
-	}
-	else
-	{
-		Q_strncpyz(wavestatus, "", sizeof(wavestatus));
-	}
-
-	Com_sprintf(status, sizeof(status), "RECORDING%s%s", demostatus, wavestatus);
-
-	CG_Text_Paint_Ext(10, cg_recording_statusline.integer, 0.2f, 0.2f, colorRed, status, 0, 0, 0, &cgs.media.limboFont2);
-}
-
 /**
  * @brief CG_DrawOnScreenLabels
  */
@@ -4082,7 +4030,7 @@ static void CG_Draw2D(void)
 		CG_windowDraw();
 	}
 
-	CG_DrawDemoRecording();
+	CG_DrawDemoMessage();
 
 	// draw objectif icons on top of all HUD elements
 	if (cg.snap->ps.stats[STAT_HEALTH] > 0 || (cg.snap->ps.pm_flags & PMF_FOLLOW))

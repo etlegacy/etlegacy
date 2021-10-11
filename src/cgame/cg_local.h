@@ -2776,7 +2776,6 @@ extern vmCvar_t cl_demooffset;
 extern vmCvar_t cl_waverecording;
 extern vmCvar_t cl_wavefilename;
 extern vmCvar_t cl_waveoffset;
-extern vmCvar_t cg_recording_statusline;
 
 extern vmCvar_t cg_announcer;
 extern vmCvar_t cg_hitSounds;
@@ -3014,6 +3013,7 @@ void CG_DrawUpperRight(void);
 void CG_SetHud(void);
 void CG_DrawActiveHud(void);
 void CG_DrawGlobalHud(void);
+void CG_DrawDemoMessage(void);
 
 void CG_Text_PaintChar_Ext(float x, float y, float w, float h, float scalex, float scaley, float s, float t, float s2, float t2, qhandle_t hShader);
 void CG_Text_PaintChar(float x, float y, float width, float height, float scale, float s, float t, float s2, float t2, qhandle_t hShader);
@@ -4034,6 +4034,7 @@ typedef struct hudStructure_s
 	hudComponent_t spectatortext;
 	hudComponent_t limbotext;
 	hudComponent_t followtext;
+	hudComponent_t demotext;
 
 } hudStucture_t;
 

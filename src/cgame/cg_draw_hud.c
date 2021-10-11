@@ -81,37 +81,38 @@ lagometer_t lagometer;
 /**
 * @var hudComponentName
 * @brief Orderer following hudStucture_t fields declaration
-*/ 
+*/
 static const char *hudComponentName[] =
 {
-    "compas",           // FIXME: typo
-    "staminabar",
-    "breathbar",
-    "healthbar",
-    "weaponchangebar",  // FIXME: typo
-    "healthtext",
-    "xptext",
-    "ranktext",
-    "statsdisplay",
-    "weaponicon",
-    "weaponammo",
-    "fireteam",
-    "popupmessages",
-    "powerups",
-    "hudhead",
-    "cursorhints",
-    "weaponstability",
-    "livesleft",
-    "roundtimer",
-    "reinforcement",
-    "spawntimer",
-    "localtime",
-    "votetext",
-    "spectatortext",
-    "limbotext",
-    "followtext",
-    NULL,
-    };
+	"compas",           // FIXME: typo
+	"staminabar",
+	"breathbar",
+	"healthbar",
+	"weaponchangebar",  // FIXME: typo
+	"healthtext",
+	"xptext",
+	"ranktext",
+	"statsdisplay",
+	"weaponicon",
+	"weaponammo",
+	"fireteam",
+	"popupmessages",
+	"powerups",
+	"hudhead",
+	"cursorhints",
+	"weaponstability",
+	"livesleft",
+	"roundtimer",
+	"reinforcement",
+	"spawntimer",
+	"localtime",
+	"votetext",
+	"spectatortext",
+	"limbotext",
+	"followtext",
+	"demotext",
+	NULL,
+};
 
 /*
  * @brief CG_getRect
@@ -189,6 +190,7 @@ void CG_setDefaultHudValues(hudStucture_t *hud)
 	hud->spectatortext   = CG_getComponent(8, 188, 0.22f, 0.22f, qtrue, STYLE_NORMAL);
 	hud->limbotext       = CG_getComponent(8, 164, 0.22f, 0.22f, qtrue, STYLE_NORMAL);
 	hud->followtext      = CG_getComponent(8, 164, 0.22f, 0.22f, qtrue, STYLE_NORMAL);
+	hud->demotext        = CG_getComponent(10, 9, 0.22f, 0.22f, qtrue, STYLE_NORMAL);
 }
 
 /*
@@ -1312,6 +1314,74 @@ static void CG_DrawPowerUps(rectDef_t rect)
 
 		trap_R_SetColor(NULL);
 	}
+}
+
+static int lastDemoScoreTime = 0;
+
+/**
+ * @brief CG_DrawDemoMessage
+ */
+void CG_DrawDemoMessage(void)
+{
+	char status[1024];
+	char demostatus[128];
+	char wavestatus[128];
+
+	float         x, y, charHeight, fontScale;
+	hudStucture_t *activehud;
+
+	activehud = CG_GetActiveHUD();
+
+	fontScale = activehud->demotext.location.h;
+	y         = activehud->demotext.location.y;
+	x         = activehud->demotext.location.x;
+
+	if (!activehud->demotext.visible)
+	{
+		return;
+	}
+
+	if (!cl_demorecording.integer && !cl_waverecording.integer && !cg.demoPlayback)
+	{
+		return;
+	}
+
+	// poll for score
+	if ((!lastDemoScoreTime || cg.time > lastDemoScoreTime) && !cg.demoPlayback)
+	{
+		trap_SendClientCommand("score");
+		lastDemoScoreTime = cg.time + 5000; // 5 secs
+	}
+
+	if (activehud->demotext.style == STYLE_NORMAL)
+	{
+		if (cl_demorecording.integer)
+		{
+			Com_sprintf(demostatus, sizeof(demostatus), " demo %s: %ik ", cl_demofilename.string, cl_demooffset.integer / 1024);
+		}
+		else
+		{
+			Q_strncpyz(demostatus, "", sizeof(demostatus));
+		}
+
+		if (cl_waverecording.integer)
+		{
+			Com_sprintf(wavestatus, sizeof(demostatus), " audio %s: %ik ", cl_wavefilename.string, cl_waveoffset.integer / 1024);
+		}
+		else
+		{
+			Q_strncpyz(wavestatus, "", sizeof(wavestatus));
+		}
+	}
+	else
+	{
+		Q_strncpyz(demostatus, "", sizeof(demostatus));
+		Q_strncpyz(wavestatus, "", sizeof(wavestatus));
+	}
+
+	Com_sprintf(status, sizeof(status), "%s%s%s", cg.demoPlayback ? "REPLAY" : "RECORD", demostatus, wavestatus);
+
+	CG_Text_Paint_Ext(x, y, fontScale, fontScale, cg.demoPlayback ? colorYellow : colorRed, status, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 }
 
 /**
@@ -3119,6 +3189,7 @@ void CG_Hud_Setup(void)
 	hud1.spectatortext   = CG_getComponent(8, 188, 0.22f, 0.22f, qtrue, STYLE_NORMAL);
 	hud1.limbotext       = CG_getComponent(8, 164, 0.22f, 0.22f, qtrue, STYLE_NORMAL);
 	hud1.followtext      = CG_getComponent(8, 164, 0.22f, 0.22f, qtrue, STYLE_NORMAL);
+	hud1.demotext        = CG_getComponent(10, 9, 0.22f, 0.22f, qtrue, STYLE_SIMPLE);
 	CG_addHudToList(&hud1);
 
 	// Hud2
@@ -3149,6 +3220,7 @@ void CG_Hud_Setup(void)
 	hud2.spectatortext   = CG_getComponent(8, 188, 0.22f, 0.22f, qtrue, STYLE_NORMAL);
 	hud2.limbotext       = CG_getComponent(8, 164, 0.22f, 0.22f, qtrue, STYLE_NORMAL);
 	hud2.followtext      = CG_getComponent(8, 164, 0.22f, 0.22f, qtrue, STYLE_NORMAL);
+	hud2.demotext        = CG_getComponent(10, 9, 0.22f, 0.22f, qtrue, STYLE_SIMPLE);
 	CG_addHudToList(&hud2);
 
 	// Read the hud files
@@ -3173,12 +3245,12 @@ static void CG_PrintHudComponent(const char *name, hudComponent_t *comp)
  */
 static void CG_PrintHud(hudStucture_t *hud)
 {
-    int i;
-    
-    for (i = 0; hudComponentName[i]; i++)
-    {
-        CG_PrintHudComponent(hudComponentName[i], (hudComponent_t *)((int)hud + sizeof(int) + (i * sizeof(hudComponent_t))));
-    }
+	int i;
+
+	for (i = 0; hudComponentName[i]; i++)
+	{
+		CG_PrintHudComponent(hudComponentName[i], (hudComponent_t *)((int)hud + sizeof(int) + (i * sizeof(hudComponent_t))));
+	}
 }
 #endif
 

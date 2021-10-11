@@ -29,5 +29,6 @@ hudDef {
 		spectatortext 8 188 0.22 0.22 1 1
 		limbotext 8 164 0.22 0.22 1 1
 		followtext 8 164 0.22 0.22 1 1
+		demotext 10 9 0.22 0.22 1 1
 	}
 }

@@ -300,7 +300,6 @@ vmCvar_t cl_demooffset;
 vmCvar_t cl_waverecording;
 vmCvar_t cl_wavefilename;
 vmCvar_t cl_waveoffset;
-vmCvar_t cg_recording_statusline;
 
 vmCvar_t cg_announcer;
 vmCvar_t cg_hitSounds;
@@ -580,7 +579,6 @@ static cvarTable_t cvarTable[] =
 	{ &cl_waverecording,          "cl_waverecording",          "0",           CVAR_ROM,                     0 },
 	{ &cl_wavefilename,           "cl_wavefilename",           "",            CVAR_ROM,                     0 },
 	{ &cl_waveoffset,             "cl_waveoffset",             "0",           CVAR_ROM,                     0 },
-	{ &cg_recording_statusline,   "cg_recording_statusline",   "9",           CVAR_ARCHIVE,                 0 },
 
 	{ &cg_announcer,              "cg_announcer",              "1",           CVAR_ARCHIVE,                 0 },
 	{ &cg_hitSounds,              "cg_hitSounds",              "1",           CVAR_ARCHIVE,                 0 },
