@@ -66,22 +66,35 @@ menuDef {
 
 // Chat //
 #define CHAT_Y 32
-	SUBWINDOW( 6+(SUBWINDOW_WIDTH_L)+6, CHAT_Y, (SUBWINDOW_WIDTH_R), 76, _("CHAT") )
+	SUBWINDOW( 6+(SUBWINDOW_WIDTH_L)+6, CHAT_Y, (SUBWINDOW_WIDTH_R), 172, _("CHAT") )
 	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, CHAT_Y+16, (SUBWINDOW_WIDTH_L)-4, 10, _("Quick Chat:"), .2, 8, "cg_quickChat", cvarFloatList { "Disabled" 0 "Team" 1 "Fireteam" 2 }, _("Specify receiver of quick radio messages") )
 	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, CHAT_Y+28, (SUBWINDOW_WIDTH_L)-4, 10, _("Quick Chat Mode:"), .2, 8, "cg_quickMessageAlt", cvarFloatList { "Alpha" 0 "Numeric" 1 }, _("Use alpha or numeric keys to send radio messages") )
 	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, CHAT_Y+40, (SUBWINDOW_WIDTH_L)-4, 10, _("Chat Icon Time:"), .2, 8, "cg_voiceSpriteTime", cvarFloatList { "Short" 3000 "Normal" 6000 "Long" 12000 "Really Long" 24000 }, _("Specify how long the chat icon appears above other players' heads") )
 	YESNO( 6+(SUBWINDOW_WIDTH_L)+6+2, CHAT_Y+52, (SUBWINDOW_WIDTH_L)-4, 10, _("Team chat only:"), .2, 8, "cg_teamChatsOnly", _("Play only team chat in-game") )
 	YESNO( 6+(SUBWINDOW_WIDTH_L)+6+2, CHAT_Y+64, (SUBWINDOW_WIDTH_L)-4, 10, _("Voice text:"), .2, 8, "cg_voiceText", _("Show voice text in-game") )
+	CVARFLOATLABEL( 6+(SUBWINDOW_WIDTH_L)+6+2, CHAT_Y+76, (SUBWINDOW_WIDTH_L)-4, 10, "cg_chatX", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-6), 8 )
+	SLIDER( 6+(SUBWINDOW_WIDTH_L)+6+2, CHAT_Y+76, (SUBWINDOW_WIDTH_L)-4, 10, _("Chat X:"), .2, 8, "cg_chatX" 160 0 640, _("Set X position of chat") )
+	CVARFLOATLABEL( 6+(SUBWINDOW_WIDTH_L)+6+2, CHAT_Y+88, (SUBWINDOW_WIDTH_L)-4, 10, "cg_chatY", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-6), 8 )
+	SLIDER( 6+(SUBWINDOW_WIDTH_L)+6+2, CHAT_Y+88, (SUBWINDOW_WIDTH_L)-4, 10, _("Chat Y:"), .2, 8, "cg_chatY" 478 0 480, _("Set Y position of chat") )
+	CVARFLOATLABEL( 6+(SUBWINDOW_WIDTH_L)+6+2, CHAT_Y+100, (SUBWINDOW_WIDTH_L)-4, 10, "cg_chatScale", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-6), 8 )
+	SLIDER( 6+(SUBWINDOW_WIDTH_L)+6+2, CHAT_Y+100, (SUBWINDOW_WIDTH_L)-4, 10, _("Chat Scale:"), .2, 8, "cg_chatScale" 1.0 0.5 2.0, _("Set scale of chat") )
+	CVARFLOATLABEL( 6+(SUBWINDOW_WIDTH_L)+6+2, CHAT_Y+112, (SUBWINDOW_WIDTH_L)-4, 10, "cg_chatAlpha", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-6), 8 )
+	SLIDER( 6+(SUBWINDOW_WIDTH_L)+6+2, CHAT_Y+112, (SUBWINDOW_WIDTH_L)-4, 10, _("Chat Alpha:"), .2, 8, "cg_chatAlpha" 1.0 0.0 1.0, _("Set opacity of chat") )
+	CVARFLOATLABEL( 6+(SUBWINDOW_WIDTH_L)+6+2, CHAT_Y+124, (SUBWINDOW_WIDTH_L)-4, 10, "cg_chatBackgroundAlpha", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-6), 8 )
+	SLIDER( 6+(SUBWINDOW_WIDTH_L)+6+2, CHAT_Y+124, (SUBWINDOW_WIDTH_L)-4, 10, _("Chat Background Alpha:"), .2, 8, "cg_chatBackgroundAlpha" 0.66 0.0 1.0, _("Set opacity of chat background") )
+	YESNO( 6+(SUBWINDOW_WIDTH_L)+6+2, CHAT_Y+136, (SUBWINDOW_WIDTH_L)-4, 10, _("Chat Shadow:"), .2, 8, "cg_chatShadow", _("Draw shadow on chat") )
+	YESNO( 6+(SUBWINDOW_WIDTH_L)+6+2, CHAT_Y+148, (SUBWINDOW_WIDTH_L)-4, 10, _("Chat Flags:"), .2, 8, "cg_chatFlags", _("Draw team flags on chat") )
+	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, CHAT_Y+160, (SUBWINDOW_WIDTH_L)-4, 10, _("Chat Line Width:"), .2, 8, "cg_chatLineWidth", cvarFloatList { "10 characters" 10 "25 characters" 25 "40 characters" 40 "55 characters" 55 "70 characters" 70 }, _("Width of chat before a line break (includes player name)") )
 
 // Sounds //
-#define SOUND_Y 114
+#define SOUND_Y 210
 	SUBWINDOW( 6+(SUBWINDOW_WIDTH_L)+6, SOUND_Y, (SUBWINDOW_WIDTH_R), 52, _("SOUND") )
 	YESNO( 6+(SUBWINDOW_WIDTH_L)+6+2, SOUND_Y+16, (SUBWINDOW_WIDTH_R)-4, 10, _("Announcer:"), .2, 8, "cg_announcer", _("Play startup announcer voice") )
 	YESNO( 6+(SUBWINDOW_WIDTH_L)+6+2, SOUND_Y+28, (SUBWINDOW_WIDTH_R)-4, 10, _("Voice chat:"), .2, 8, "cg_voiceChats", _("Play voice chat in-game") )
 	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, SOUND_Y+40, (SUBWINDOW_WIDTH_R)-4, 10, _("Hitsounds:"), .2, 8, "cg_hitsounds", cvarFloatList { "None" 0 "All" 1 "No Body Hit Sound" 3 "No Head Hit Sound" 5 "No Team Hit Sound" 9 }, _("Set hit sounds") )
 
 // Miscellaneous //
-#define MISC_Y 172
+#define MISC_Y 268
 	SUBWINDOW( 6+(SUBWINDOW_WIDTH_L)+6, MISC_Y, (SUBWINDOW_WIDTH_R), 76, _("MISCELLANEOUS") )
 	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, MISC_Y+16, (SUBWINDOW_WIDTH_R)-4, 10, _("Complaint PopUp:"), .2, 8, "cg_complaintPopUp", cvarFloatList { "Off" 0 "On" 1 }, _("Display the option to file complaints about teammates who kill you") )
 	YESNO( 6+(SUBWINDOW_WIDTH_L)+6+2, MISC_Y+28, (SUBWINDOW_WIDTH_R)-4, 10, _("Log Important Messages:"), .2, 8, "cg_printObjectiveInfo",_("Prints important game messages to the console") )

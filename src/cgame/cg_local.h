@@ -2841,6 +2841,15 @@ extern vmCvar_t cg_shoutcastDrawHealth;
 extern vmCvar_t cg_shoutcastGrenadeTrail;
 extern vmCvar_t cg_shoutcastDrawMinimap;
 
+extern vmCvar_t cg_chatX;
+extern vmCvar_t cg_chatY;
+extern vmCvar_t cg_chatScale;
+extern vmCvar_t cg_chatAlpha;
+extern vmCvar_t cg_chatBackgroundAlpha;
+extern vmCvar_t cg_chatShadow;
+extern vmCvar_t cg_chatFlags;
+extern vmCvar_t cg_chatLineWidth;
+
 // local clock flags
 #define LOCALTIME_ON                0x01
 #define LOCALTIME_SECOND            0x02
