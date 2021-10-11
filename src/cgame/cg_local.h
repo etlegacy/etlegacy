@@ -3996,7 +3996,7 @@ typedef struct hudComponent_s
 typedef struct hudStructure_s
 {
 	int hudnumber;
-	hudComponent_t compas;
+	hudComponent_t compas;          // FIXME: what a typo ....
 	hudComponent_t staminabar;
 	hudComponent_t breathbar;
 	hudComponent_t healthbar;
@@ -4012,7 +4012,7 @@ typedef struct hudStructure_s
 	hudComponent_t powerups;
 	hudComponent_t hudhead;
 
-	hudComponent_t cursorhint;
+	hudComponent_t cursorhints;
 	hudComponent_t weaponstability;
 	hudComponent_t livesleft;
 

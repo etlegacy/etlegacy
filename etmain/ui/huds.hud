@@ -1,7 +1,8 @@
 hudDef {
 	hud {
-		//inside the hud element following keywords apply
+		// inside the hud element following keywords apply
 		// except for the hud number which tells the cg_althud variable value
+		// hudnumber MUST be the first element of the list 
 		// all the others work like the following 1st number: x 2: y 3: width 4: height 5: component style 6: visibility (boolean type)
 		// as expected a single file can contain multiple hud configurations
 		// hudnumber value must be unique, if not then the hud will be discarded

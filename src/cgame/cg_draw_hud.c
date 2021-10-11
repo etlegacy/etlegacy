@@ -78,6 +78,41 @@ hudStucture_t hud0;
 
 lagometer_t lagometer;
 
+/**
+* @var hudComponentName
+* @brief Orderer following hudStucture_t fields declaration
+*/ 
+static const char *hudComponentName[] =
+{
+    "compas",           // FIXME: typo
+    "staminabar",
+    "breathbar",
+    "healthbar",
+    "weaponchangebar",  // FIXME: typo
+    "healthtext",
+    "xptext",
+    "ranktext",
+    "statsdisplay",
+    "weaponicon",
+    "weaponammo",
+    "fireteam",
+    "popupmessages",
+    "powerups",
+    "hudhead",
+    "cursorhints",
+    "weaponstability",
+    "livesleft",
+    "roundtimer",
+    "reinforcement",
+    "spawntimer",
+    "localtime",
+    "votetext",
+    "spectatortext",
+    "limbotext",
+    "followtext",
+    NULL,
+    };
+
 /*
  * @brief CG_getRect
  * @param x
@@ -143,7 +178,7 @@ void CG_setDefaultHudValues(hudStucture_t *hud)
 	hud->popupmessages   = CG_getComponent(4, 360, 72, 72, qtrue, STYLE_NORMAL);
 	hud->powerups        = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 40, SCREEN_HEIGHT - 140, 36, 36, qtrue, STYLE_NORMAL);
 	hud->hudhead         = CG_getComponent(44, SCREEN_HEIGHT - 92, 62, 80, qtrue, STYLE_NORMAL);
-	hud->cursorhint      = CG_getComponent(.5f * SCREEN_WIDTH - .5f * 48, 260, 48, 48, qtrue, STYLE_NORMAL); // FIXME: widescreen ?
+	hud->cursorhints     = CG_getComponent(.5f * SCREEN_WIDTH - .5f * 48, 260, 48, 48, qtrue, STYLE_NORMAL);  // FIXME: widescreen ?
 	hud->weaponstability = CG_getComponent(50, 208, 10, 64, qtrue, STYLE_NORMAL);
 	hud->livesleft       = CG_getComponent(0, 0, 0, 0, qtrue, STYLE_NORMAL);
 	hud->reinforcement   = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 55, SCREEN_HEIGHT - 70, 0, 0, qtrue, STYLE_NORMAL);
@@ -326,6 +361,7 @@ static qboolean CG_ParseHUD(int handle)
 {
 	pc_token_t    token;
 	hudStucture_t temphud;
+	hudStucture_t *hud;
 
 	CG_setDefaultHudValues(&temphud);
 
@@ -334,8 +370,18 @@ static qboolean CG_ParseHUD(int handle)
 		return CG_HUD_ParseError(handle, "expected '{'");
 	}
 
+	if (!trap_PC_ReadToken(handle, &token) || !Q_stricmp(token.string, "hudnumber"))
+	{
+		if (!PC_Int_Parse(handle, &temphud.hudnumber))
+		{
+			return CG_HUD_ParseError(handle, "expected hudnumber as first field");
+		}
+	}
+
 	while (1)
 	{
+		int i;
+
 		if (!trap_PC_ReadToken(handle, &token))
 		{
 			break;
@@ -346,253 +392,25 @@ static qboolean CG_ParseHUD(int handle)
 			break;
 		}
 
-		if (!Q_stricmp(token.string, "hudnumber"))
+		for (i = 0; hudComponentName[i]; i++)
 		{
-			if (!PC_Int_Parse(handle, &temphud.hudnumber))
+			if (!Q_stricmp(token.string, hudComponentName[i]))
 			{
-				return CG_HUD_ParseError(handle, "expected hudnumber");
+				if (!CG_ParseHudComponent(handle, (hudComponent_t *)((int)&temphud + sizeof(int) + (i * sizeof(hudComponent_t)))))
+				{
+					return CG_HUD_ParseError(handle, "expected %s", hudComponentName[i]);
+				}
+				break;
 			}
-			continue;
 		}
 
-		if (!Q_stricmp(token.string, "compas"))
+		if (!hudComponentName[i])
 		{
-			if (!CG_ParseHudComponent(handle, &temphud.compas))
-			{
-				return CG_HUD_ParseError(handle, "expected compas");
-			}
-			continue;
+			return CG_HUD_ParseError(handle, "unexpected token: %s", token.string);
 		}
-
-		if (!Q_stricmp(token.string, "staminabar"))
-		{
-			if (!CG_ParseHudComponent(handle, &temphud.staminabar))
-			{
-				return CG_HUD_ParseError(handle, "expected staminabar");
-			}
-			continue;
-		}
-
-		if (!Q_stricmp(token.string, "breathbar"))
-		{
-			if (!CG_ParseHudComponent(handle, &temphud.breathbar))
-			{
-				return CG_HUD_ParseError(handle, "expected breathbar");
-			}
-			continue;
-		}
-
-		if (!Q_stricmp(token.string, "healthbar"))
-		{
-			if (!CG_ParseHudComponent(handle, &temphud.healthbar))
-			{
-				return CG_HUD_ParseError(handle, "expected healthbar");
-			}
-			continue;
-		}
-
-		if (!Q_stricmp(token.string, "weaponchangebar"))
-		{
-			if (!CG_ParseHudComponent(handle, &temphud.weaponchargebar))
-			{
-				return CG_HUD_ParseError(handle, "expected weaponchangebar");
-			}
-			continue;
-		}
-
-		if (!Q_stricmp(token.string, "healthtext"))
-		{
-			if (!CG_ParseHudComponent(handle, &temphud.healthtext))
-			{
-				return CG_HUD_ParseError(handle, "expected healthtext");
-			}
-			continue;
-		}
-
-		if (!Q_stricmp(token.string, "xptext"))
-		{
-			if (!CG_ParseHudComponent(handle, &temphud.xptext))
-			{
-				return CG_HUD_ParseError(handle, "expected xptext");
-			}
-			continue;
-		}
-
-		if (!Q_stricmp(token.string, "ranktext"))
-		{
-			if (!CG_ParseHudComponent(handle, &temphud.ranktext))
-			{
-				return CG_HUD_ParseError(handle, "expected ranktext");
-			}
-			continue;
-		}
-
-		if (!Q_stricmp(token.string, "statsdisplay"))
-		{
-			if (!CG_ParseHudComponent(handle, &temphud.statsdisplay))
-			{
-				return CG_HUD_ParseError(handle, "expected statsdisplay");
-			}
-			continue;
-		}
-
-		if (!Q_stricmp(token.string, "weaponicon"))
-		{
-			if (!CG_ParseHudComponent(handle, &temphud.weaponicon))
-			{
-				return CG_HUD_ParseError(handle, "expected weaponicon");
-			}
-			continue;
-		}
-
-		if (!Q_stricmp(token.string, "weaponammo"))
-		{
-			if (!CG_ParseHudComponent(handle, &temphud.weaponammo))
-			{
-				return CG_HUD_ParseError(handle, "expected weaponammo");
-			}
-			continue;
-		}
-
-		if (!Q_stricmp(token.string, "fireteam"))
-		{
-			if (!CG_ParseHudComponent(handle, &temphud.fireteam))
-			{
-				return CG_HUD_ParseError(handle, "expected fireteam");
-			}
-			continue;
-		}
-
-		if (!Q_stricmp(token.string, "popupmessages"))
-		{
-			if (!CG_ParseHudComponent(handle, &temphud.popupmessages))
-			{
-				return CG_HUD_ParseError(handle, "expected popupmessages");
-			}
-			continue;
-		}
-
-		if (!Q_stricmp(token.string, "powerups"))
-		{
-			if (!CG_ParseHudComponent(handle, &temphud.powerups))
-			{
-				return CG_HUD_ParseError(handle, "expected powerups");
-			}
-			continue;
-		}
-
-		if (!Q_stricmp(token.string, "hudhead"))
-		{
-			if (!CG_ParseHudComponent(handle, &temphud.hudhead))
-			{
-				return CG_HUD_ParseError(handle, "expected hudhead");
-			}
-			continue;
-		}
-
-		if (!Q_stricmp(token.string, "cursorhints"))
-		{
-			if (!CG_ParseHudComponent(handle, &temphud.cursorhint))
-			{
-				return CG_HUD_ParseError(handle, "expected cursorhints");
-			}
-			continue;
-		}
-
-		if (!Q_stricmp(token.string, "weaponstability"))
-		{
-			if (!CG_ParseHudComponent(handle, &temphud.weaponstability))
-			{
-				return CG_HUD_ParseError(handle, "expected weaponstability");
-			}
-			continue;
-		}
-
-		if (!Q_stricmp(token.string, "livesleft"))
-		{
-			if (!CG_ParseHudComponent(handle, &temphud.livesleft))
-			{
-				return CG_HUD_ParseError(handle, "expected livesleft");
-			}
-			continue;
-		}
-
-		if (!Q_stricmp(token.string, "roundtimer"))
-		{
-			if (!CG_ParseHudComponent(handle, &temphud.roundtimer))
-			{
-				return CG_HUD_ParseError(handle, "expected roundtimer");
-			}
-			continue;
-		}
-
-		if (!Q_stricmp(token.string, "reinforcement"))
-		{
-			if (!CG_ParseHudComponent(handle, &temphud.reinforcement))
-			{
-				return CG_HUD_ParseError(handle, "expected reinforcement");
-			}
-			continue;
-		}
-
-		if (!Q_stricmp(token.string, "spawntimer"))
-		{
-			if (!CG_ParseHudComponent(handle, &temphud.spawntimer))
-			{
-				return CG_HUD_ParseError(handle, "expected spawntimer");
-			}
-			continue;
-		}
-
-		if (!Q_stricmp(token.string, "localtime"))
-		{
-			if (!CG_ParseHudComponent(handle, &temphud.localtime))
-			{
-				return CG_HUD_ParseError(handle, "expected localtime");
-			}
-			continue;
-		}
-
-		if (!Q_stricmp(token.string, "votetext"))
-		{
-			if (!CG_ParseHudComponent(handle, &temphud.votetext))
-			{
-				return CG_HUD_ParseError(handle, "expected votetext");
-			}
-			continue;
-		}
-
-		if (!Q_stricmp(token.string, "spectatortext"))
-		{
-			if (!CG_ParseHudComponent(handle, &temphud.spectatortext))
-			{
-				return CG_HUD_ParseError(handle, "expected spectatortext");
-			}
-			continue;
-		}
-
-		if (!Q_stricmp(token.string, "limbotext"))
-		{
-			if (!CG_ParseHudComponent(handle, &temphud.limbotext))
-			{
-				return CG_HUD_ParseError(handle, "expected limbotext");
-			}
-			continue;
-		}
-
-		if (!Q_stricmp(token.string, "followtext"))
-		{
-			if (!CG_ParseHudComponent(handle, &temphud.followtext))
-			{
-				return CG_HUD_ParseError(handle, "expected followtext");
-			}
-			continue;
-		}
-
-		return CG_HUD_ParseError(handle, "unexpected token: %s", token.string);
 	}
 
-	hudStucture_t *hud = CG_getHudByNumber(temphud.hudnumber);
+	hud = CG_getHudByNumber(temphud.hudnumber);
 
 	if (!hud)
 	{
@@ -2187,8 +2005,8 @@ static void CG_DrawNewCompass(rectDef_t location)
 		{
 			continue;
 		}
-        
-        icon = CG_GetCompassIcon(&snap->entities[i], qfalse, qtrue, !(cg_drawCompassIcons.integer & 4), !(cg_drawCompassIcons.integer & 2), NULL);
+
+		icon = CG_GetCompassIcon(&snap->entities[i], qfalse, qtrue, !(cg_drawCompassIcons.integer & 4), !(cg_drawCompassIcons.integer & 2), NULL);
 
 		if (icon)
 		{
@@ -3290,7 +3108,7 @@ void CG_Hud_Setup(void)
 	hud1.popupmessages   = CG_getComponent(4, 100, 72, 72, qtrue, STYLE_NORMAL);
 	hud1.powerups        = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 40, SCREEN_HEIGHT - 140, 36, 36, qtrue, STYLE_NORMAL);
 	hud1.hudhead         = CG_getComponent(44, SCREEN_HEIGHT - 92, 62, 80, qfalse, STYLE_NORMAL);
-	hud1.cursorhint      = CG_getComponent(.5f * SCREEN_WIDTH - .5f * 48, 260, 48, 48, qtrue, STYLE_NORMAL);
+	hud1.cursorhints     = CG_getComponent(.5f * SCREEN_WIDTH - .5f * 48, 260, 48, 48, qtrue, STYLE_NORMAL);
 	hud1.weaponstability = CG_getComponent(50, 208, 10, 64, qtrue, STYLE_NORMAL);
 	hud1.livesleft       = CG_getComponent(0, 0, 0, 0, qtrue, STYLE_NORMAL);
 	hud1.reinforcement   = CG_getComponent(100, SCREEN_HEIGHT - 12, 0, 0, qtrue, STYLE_NORMAL);
@@ -3320,7 +3138,7 @@ void CG_Hud_Setup(void)
 	hud2.popupmessages   = CG_getComponent(4, 100, 72, 72, qtrue, STYLE_NORMAL);
 	hud2.powerups        = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 40, SCREEN_HEIGHT - 140, 36, 36, qtrue, STYLE_NORMAL);
 	hud2.hudhead         = CG_getComponent(44, SCREEN_HEIGHT - 92, 62, 80, qfalse, STYLE_NORMAL);
-	hud2.cursorhint      = CG_getComponent(.5f * SCREEN_WIDTH - .5f * 48, 260, 48, 48, qtrue, STYLE_NORMAL);
+	hud2.cursorhints     = CG_getComponent(.5f * SCREEN_WIDTH - .5f * 48, 260, 48, 48, qtrue, STYLE_NORMAL);
 	hud2.weaponstability = CG_getComponent(50, 208, 10, 64, qtrue, STYLE_NORMAL);
 	hud2.livesleft       = CG_getComponent(0, 0, 0, 0, qtrue, STYLE_NORMAL);
 	hud2.reinforcement   = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 55, SCREEN_HEIGHT - 70, 0, 0, qtrue, STYLE_NORMAL);
@@ -3344,9 +3162,9 @@ void CG_Hud_Setup(void)
  * @param[in] name
  * @param[in] comp
  */
-static void CG_PrintHudComponent(const char *name, hudComponent_t comp)
+static void CG_PrintHudComponent(const char *name, hudComponent_t *comp)
 {
-	Com_Printf("%s location: X %.f Y %.f W %.f H %.f visible: %i\n", name, comp.location.x, comp.location.y, comp.location.w, comp.location.h, comp.visible);
+	Com_Printf("%s location: X %.f Y %.f W %.f H %.f visible: %i\n", name, comp->location.x, comp->location.y, comp->location.w, comp->location.h, comp->visible);
 }
 
 /**
@@ -3355,32 +3173,12 @@ static void CG_PrintHudComponent(const char *name, hudComponent_t comp)
  */
 static void CG_PrintHud(hudStucture_t *hud)
 {
-	CG_PrintHudComponent("compas", hud->compas);
-	CG_PrintHudComponent("staminabar", hud->staminabar);
-	CG_PrintHudComponent("breathbar", hud->breathbar);
-	CG_PrintHudComponent("healthbar", hud->healthbar);
-	CG_PrintHudComponent("weaponchargebar", hud->weaponchargebar);
-	CG_PrintHudComponent("healthtext", hud->healthtext);
-	CG_PrintHudComponent("xptext", hud->xptext);
-	CG_PrintHudComponent("ranktext", hud->ranktext);
-	CG_PrintHudComponent("statsdisplay", hud->statsdisplay);
-	CG_PrintHudComponent("weaponicon", hud->weaponicon);
-	CG_PrintHudComponent("weaponammo", hud->weaponammo);
-	CG_PrintHudComponent("fireteam", hud->fireteam);
-	CG_PrintHudComponent("popupmessages", hud->popupmessages);
-	CG_PrintHudComponent("powerups", hud->powerups);
-	CG_PrintHudComponent("hudhead", hud->hudhead);
-	CG_PrintHudComponent("cursorhint", hud->cursorhint);
-	CG_PrintHudComponent("weaponstability", hud->weaponstability);
-	CG_PrintHudComponent("livesleft", hud->livesleft);
-	CG_PrintHudComponent("reinforcement", hud->reinforcement);
-	CG_PrintHudComponent("roundtimer", hud->roundtimer);
-	CG_PrintHudComponent("spawntimer", hud->spawntimer);
-	CG_PrintHudComponent("localtime", hud->localtime);
-	CG_PrintHudComponent("votetext", hud->votetext);
-	CG_PrintHudComponent("spectatortext", hud->spectatortext);
-	CG_PrintHudComponent("limbotext", hud->limbotext);
-	CG_PrintHudComponent("followtext", hud->followtext);
+    int i;
+    
+    for (i = 0; hudComponentName[i]; i++)
+    {
+        CG_PrintHudComponent(hudComponentName[i], (hudComponent_t *)((int)hud + sizeof(int) + (i * sizeof(hudComponent_t))));
+    }
 }
 #endif
 
@@ -3430,9 +3228,9 @@ void CG_DrawActiveHud(void)
 	CG_DrawLivesLeft(activehud->livesleft);
 
 	// Cursor hint
-	if (activehud->cursorhint.visible)
+	if (activehud->cursorhints.visible)
 	{
-		CG_DrawCursorhint(&activehud->cursorhint.location);
+		CG_DrawCursorhint(&activehud->cursorhints.location);
 	}
 
 	// Stability bar
