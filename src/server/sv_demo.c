@@ -259,8 +259,6 @@ static qboolean SV_CheckServerCommand(const char *cmd)
 * @details Filter demo game commands that should go to every connected client (not bots and democlients)
 *		 also filter qagame game commands that are blocked during playback (because of missing clientSession_t it is sending garbage data)
 *
-* FIXME: look into entinfo and tinfo.
-*
 * @param[in] cmd
 * @return
 */
@@ -336,7 +334,8 @@ static qboolean SV_CheckGameCommand(const char *cmd)
 	else
 	{
 		// we filter out the chat and tchat commands which are recorded and handled directly by clientCommand (which is easier to manage because it makes a difference between say, say_team and tell, which we don't have here in gamecommands: we either have chat(for say and tell) or tchat (for say_team) and the other difference is that chat/tchat messages directly contain the name of the player, while clientCommand only contains the clientid, so that it itself fetch the name from client->name
-		if (!Q_strncmp(cmd, "chat", 4) || !Q_strncmp(cmd, "tchat", 5))
+		// do not save tinfo and entnfo, qagame during playback will handle it
+		if (!Q_strncmp(cmd, "chat", 4) || !Q_strncmp(cmd, "tchat", 5) || !Q_strncmp(cmd, "tinfo", 5) || !Q_strncmp(cmd, "entnfo", 6))
 		{
 			return qfalse; // we return false if the check wasn't right
 		}
