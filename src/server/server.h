@@ -482,7 +482,7 @@ extern cvar_t *sv_guidCheck;    ///< enable check for client guid validity
 // sv_demo.c
 void SV_DemoAutoDemoRecord(void);
 void SV_DemoRestartPlayback(void);
-void SV_DemoReadFrame(void);
+qboolean SV_DemoReadFrame(void);
 void SV_DemoWriteFrame(void);
 qboolean SV_DemoClientCommandCapture(client_t *client, const char *msg);
 void SV_DemoWriteServerCommand(const char *cmd);

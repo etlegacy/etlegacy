@@ -2305,7 +2305,7 @@ void SV_DemoReadRefreshPlayersHealth(void)
  * Called in the main server's loop SV_Frame() in sv_main.c (it's called after any other event processing,
  * so that it overwrites anything the game may have loaded into memory, but before the entities are broadcasted to the clients)
  */
-void SV_DemoReadFrame(void)
+qboolean SV_DemoReadFrame(void)
 {
 	msg_t msg;
 	int   cmd, r, time;
@@ -2319,7 +2319,7 @@ read_next_demo_frame: // used to read another whole demo frame
 	if (Cvar_VariableIntegerValue("sv_freezeDemo"))
 	{
 		svs.time = memsvtime; // reset server time to the same time as the previous frame, to avoid the time going backward when resuming the demo (which will disconnect every players)
-		return;
+		return qfalse;
 	}
 
 	// Update timescale
@@ -2330,7 +2330,7 @@ read_next_demo_frame: // used to read another whole demo frame
 		// Check timescale: if slowed timescale (below 1.0), then we check that we pass one frame on 1.0/com_timescale (eg: timescale = 0.5, 1.0/0.5=2, so we pass one frame on two)
 		if (currentframe % (int)(1.0f / com_timescale->value) != 0)
 		{ // if it's not yet the right time to read the frame, we just pass and wait for the next server frame to read this demo frame
-			return;
+			return qfalse;
 		}
 	}
 
@@ -2418,7 +2418,7 @@ read_next_demo_event: // used to read next demo event
 			*/
 			case -1: // no more chars in msg FIXME: inspect!
 				Com_DPrintf("SV_DemoReadFrame: no chars [%i %i:%i]\n", cmd, msg.readcount, msg.cursize);
-				return;
+				return qfalse;
 			case demo_endFrame:     // end of the frame - players and entities game status update: we commit every demo entity to the server, update the server time, then release the demo frame reading here to the next server (and demo) frame
 				Com_DPrintf(" END OF FRAME \n");
 
@@ -2459,14 +2459,15 @@ read_next_demo_event: // used to read next demo event
 					}
 				}
 
-				return;     // else we end the current demo frame
+				return qfalse;     // else we end the current demo frame
 			case demo_endDemo:     // end of the demo file - just stop playback and restore saved cvars
 				Com_Printf("End of demo reached.\n");
 				SV_DemoStopPlayback();
-				return;
+				return qtrue;
 			}
 		}
 	}
+	return qfalse;
 }
 
 /**
@@ -2615,6 +2616,48 @@ static void SV_CompleteDemoName(char *args, int argNum)
 }
 
 /**
+* @brief SV_Demo_Fastforward_f
+*
+* @details Fast-forward demo recording but stop when gamestate changes so it's easy to skip some parts like warmup.
+*
+*/
+static void SV_Demo_Fastforward_f(void)
+{
+	int timetoreach, gamestate;
+
+	if (Cmd_Argc() != 2)
+	{
+		Com_Printf("Usage: demo_ff <seconds>\n");
+		return;
+	}
+
+	if (sv.demoState != DS_PLAYBACK)
+	{
+		Com_Printf("No demo is currently being played.\n");
+		return;
+	}
+
+	timetoreach = Q_atoi(Cmd_Argv(1));
+
+	if (timetoreach <= 0)
+	{
+		Com_Printf("Bad argument.\n");
+		return;
+	}
+
+	timetoreach = svs.time + (timetoreach * 1000);
+	gamestate   = Q_atoi(Info_ValueForKey(sv.configstrings[CS_WOLFINFO], "gamestate"));
+
+	while (svs.time < timetoreach)
+	{
+		if (SV_DemoReadFrame() || gamestate != Q_atoi(Info_ValueForKey(sv.configstrings[CS_WOLFINFO], "gamestate")))
+		{
+			break;
+		}
+	}
+}
+
+/**
  * @brief SV_DemoInit
  */
 void SV_DemoInit(void)
@@ -2622,4 +2665,5 @@ void SV_DemoInit(void)
 	Cmd_AddCommand("demo_record", SV_Demo_Record_f, "Starts demo recording.");
 	Cmd_AddCommand("demo_play", SV_Demo_Play_f, "Plays a demo record.", SV_CompleteDemoName);
 	Cmd_AddCommand("demo_stop", SV_Demo_Stop_f, "Stops a demo record.");
+	Cmd_AddCommand("demo_ff", SV_Demo_Fastforward_f, "Fast-forwards a demo record.");
 }
