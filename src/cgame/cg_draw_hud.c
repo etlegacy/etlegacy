@@ -2451,7 +2451,14 @@ static void CG_DrawTimersAlt(rectDef_t *respawn, rectDef_t *spawntimer, rectDef_
 
 	if (cgs.gamestate != GS_PLAYING)
 	{
-		s        = CG_TimerWarmupString();
+		msec     = (cgs.timelimit * 60000.f); // 60.f * 1000.f
+		seconds  = msec / 1000;
+		mins     = seconds / 60;
+		seconds -= mins * 60;
+		tens     = seconds / 10;
+		seconds -= tens * 10;
+
+		s        = va("%s ^7%2i:%i%i", CG_TimerWarmupString(), mins, tens, seconds);
 		color[3] = fabs(sin(cg.time * 0.002));
 	}
 	else if (msec < 0 && cgs.timelimit > 0.0f)
@@ -2577,7 +2584,14 @@ static float CG_DrawTimerNormal(float y)
 
 	if (cgs.gamestate != GS_PLAYING)
 	{
-		s        = CG_TimerWarmupString();
+		msec     = (cgs.timelimit * 60000.f); // 60.f * 1000.f
+		seconds  = msec / 1000;
+		mins     = seconds / 60;
+		seconds -= mins * 60;
+		tens     = seconds / 10;
+		seconds -= tens * 10;
+
+		s        = va("%s ^7%2i:%i%i", CG_TimerWarmupString(), mins, tens, seconds);
 		color[3] = fabs(sin(cg.time * 0.002));
 	}
 	else if (msec < 0 && cgs.timelimit > 0.0f)
