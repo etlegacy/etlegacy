@@ -167,6 +167,8 @@ cvar_t *r_maxPolyVerts;
 
 cvar_t *r_gfxInfo;
 
+cvar_t *r_scale;
+
 /**
  * @brief This function is responsible for initializing a valid OpenGL subsystem
  *
@@ -204,6 +206,13 @@ static void InitOpenGL(void)
 		if (glConfig.maxTextureSize <= 0)
 		{
 			glConfig.maxTextureSize = 0;
+		}
+
+		if (r_scale->value)
+		{
+			float scale = Com_Clamp(0.2f, 4.f, r_scale->value);
+			glConfig.vidWidth *= scale;
+			glConfig.vidHeight *= scale;
 		}
 	}
 
@@ -1125,6 +1134,9 @@ void R_Register(void)
 
 	r_gfxInfo = ri.Cvar_Get("r_gfxinfo", "0", 0); // less spammy gfx output at start - enable to print full GL_EXTENSION string
 
+	r_scale = ri.Cvar_Get("r_scale", "1", CVAR_ARCHIVE | CVAR_LATCH);
+
+
 	// make sure all the commands added here are also
 	// removed in R_Shutdown
 	ri.Cmd_AddSystemCommand("imagelist", R_ImageList_f, "Print out the list of images loaded", NULL);
@@ -1203,6 +1215,8 @@ void R_Init(void)
 
 	R_InitGamma();
 
+	R_InitFBO();
+
 	R_InitImages();
 
 	R_InitShaders();
@@ -1275,6 +1289,8 @@ void RE_Shutdown(qboolean destroyWindow)
 	}
 
 	R_DoneFreeType();
+
+	R_ShutdownFBO();
 
 	R_ShutdownGamma();
 

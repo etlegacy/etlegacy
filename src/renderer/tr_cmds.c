@@ -448,6 +448,8 @@ void RE_BeginFrame(void)
 	tr.frameCount++;
 	tr.frameSceneNum = 0;
 
+	R_MainFBO(qtrue);
+
 	// do overdraw measurement
 	if (r_measureOverdraw->integer)
 	{

@@ -707,7 +707,7 @@ static void IN_DeactivateMouse(void)
 		// Don't warp the mouse unless the cursor is within the window
 		if (SDL_GetWindowFlags(mainScreen) & SDL_WINDOW_MOUSE_FOCUS)
 		{
-			SDL_WarpMouseInWindow(mainScreen, cls.glconfig.vidWidth / 2, cls.glconfig.vidHeight / 2);
+			SDL_WarpMouseInWindow(mainScreen, cls.glconfig.realVidWidth / 2, cls.glconfig.realVidHeight / 2);
 		}
 
 		mouseActive = qfalse;
@@ -1103,7 +1103,7 @@ static void IN_WindowResize(SDL_Event *e)
 	// Only do a vid_restart if the size of the window actually changed. On OS X at least, it's possible
 	// to receive a resize event when the window simply moves, or even when Dock shows/hides. No need to
 	// do a vid_restart then.
-	if (!cls.glconfig.isFullscreen && (cls.glconfig.vidWidth != e->window.data1 || cls.glconfig.vidHeight != e->window.data2))
+	if (!cls.glconfig.isFullscreen && (cls.glconfig.realVidWidth != e->window.data1 || cls.glconfig.realVidHeight != e->window.data2))
 	{
 		char width[32], height[32];
 
