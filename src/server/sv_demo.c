@@ -96,6 +96,8 @@ static char sc0[MAX_STRING_CHARS];
 static char sc1[MAX_STRING_CHARS];
 static char gstats[MAX_CLIENTS][MAX_STRING_CHARS];
 
+static int playerStatsNum;
+
 /**
  * @brief Restores all CVARs
  */
@@ -318,6 +320,93 @@ qboolean SV_CheckLastCmd(const char *cmd, qboolean onlyStore)
 }
 
 /**
+* @brief Store newest game commands during playback for reuse
+*        also store gstats during recording (based on guid)
+*
+* @param[in] cmd
+* @return
+*/
+static qboolean SV_DemoStoreGameCommand(const char *cmd)
+{
+	if (!Q_strncmp(cmd, "gstats", 6))
+	{
+		int i, index = Q_atoi(Cmd_ArgsFrom(1));
+
+		if (sv.demoState == DS_PLAYBACK)
+		{
+			Com_Memset(gstats[index], 0, MAX_STRING_CHARS);
+			Q_strncpyz(gstats[index], va("%s", cmd), MAX_STRING_CHARS);
+		}
+		else
+		{
+			client_t            *client = &svs.clients[index];
+			svdemoPlayerStats_t *svdps  = &sv.demoPlayerStats[index];
+
+			if (client->gentity && client->gentity->r.svFlags & SVF_BOT)
+			{
+				return qtrue;
+			}
+
+			if (!strlen(svdps->guid))
+			{
+				Q_strcat(svdps->guid, 9, client->guid);
+				playerStatsNum++;
+			}
+
+			if (strlen(svdps->guid) && !strncmp(svdps->guid, client->guid, 8))
+			{
+				Q_strncpyz(svdps->name, va("%s", client->name), MAX_NAME_LENGTH);
+				Q_strncpyz(svdps->stats, va("%s", cmd), MAX_STRING_CHARS);
+			}
+			else
+			{
+				// if after reconnecting we have different clientNum
+				for (i = 0; i < 100; i++)
+				{
+					*svdps = sv.demoPlayerStats[i];
+
+					if (!strlen(svdps->guid))
+					{
+						Q_strcat(svdps->guid, 9, client->guid);
+						playerStatsNum++;
+					}
+
+					if (strlen(svdps->guid) && !strncmp(svdps->guid, client->guid, 8))
+					{
+						Q_strncpyz(svdps->name, va("%s", client->name), MAX_NAME_LENGTH);
+						Q_strncpyz(svdps->stats, va("%s", cmd), MAX_STRING_CHARS);
+						break;
+					}
+				}
+			}
+		}
+
+		return qtrue;
+	}
+	else if (!Q_strncmp(cmd, "sc0", 3))
+	{
+		if (sv.demoState == DS_PLAYBACK)
+		{
+			Com_Memset(sc0, 0, MAX_STRING_CHARS);
+			Q_strncpyz(sc0, va("%s", cmd), MAX_STRING_CHARS);
+		}
+
+		return qtrue;
+	}
+	else if (!Q_strncmp(cmd, "sc1", 3))
+	{
+		if (sv.demoState == DS_PLAYBACK)
+		{
+			Com_Memset(sc1, 0, MAX_STRING_CHARS);
+			Q_strncpyz(sc1, va("%s", cmd), MAX_STRING_CHARS);
+		}
+		return qtrue;
+	}
+
+	return qfalse;
+}
+
+/**
  * @brief Check that the gameCommand is OK and that we can save it (or if we drop it for privacy concerns and/or because it's handled somewhere else already)
  * @param[in] cmd
  * @return
@@ -333,9 +422,14 @@ static qboolean SV_CheckGameCommand(const char *cmd)
 	}
 	else
 	{
+		// store game commands during recording to save it to file
+		if (SV_DemoStoreGameCommand(cmd))
+		{
+			return qtrue;
+		}
 		// we filter out the chat and tchat commands which are recorded and handled directly by clientCommand (which is easier to manage because it makes a difference between say, say_team and tell, which we don't have here in gamecommands: we either have chat(for say and tell) or tchat (for say_team) and the other difference is that chat/tchat messages directly contain the name of the player, while clientCommand only contains the clientid, so that it itself fetch the name from client->name
 		// do not save tinfo and entnfo, qagame during playback will handle it
-		if (!Q_strncmp(cmd, "chat", 4) || !Q_strncmp(cmd, "tchat", 5) || !Q_strncmp(cmd, "tinfo", 5) || !Q_strncmp(cmd, "entnfo", 6))
+		else if (!Q_strncmp(cmd, "chat", 4) || !Q_strncmp(cmd, "tchat", 5) || !Q_strncmp(cmd, "tinfo", 5) || !Q_strncmp(cmd, "entnfo", 6))
 		{
 			return qfalse; // we return false if the check wasn't right
 		}
@@ -512,38 +606,6 @@ static void SV_DemoWriteClientCommand(client_t *client, const char *cmd)
 	MSG_WriteByte(&msg, client - svs.clients);
 	MSG_WriteString(&msg, cmd);
 	SV_DemoWriteMessage(&msg);
-}
-
-/**
-* @brief Store newest game commands during playback for reuse
-*
-* @param[in] clientnum
-* @param[in] cmd
-* @return
-*/
-static qboolean SV_DemoStoreGameCommand(int clientNum, char *cmd)
-{
-	if (!Q_strncmp(cmd, "gstats", 6))
-	{
-		int index = Q_atoi(Cmd_ArgsFrom(1));
-		Com_Memset(gstats[index], 0, MAX_STRING_CHARS);
-		Q_strncpyz(gstats[index], va("%s", cmd), MAX_STRING_CHARS);
-		return qtrue;
-	}
-	else if (!Q_strncmp(cmd, "sc0", 3))
-	{
-		Com_Memset(sc0, 0, MAX_STRING_CHARS);
-		Q_strncpyz(sc0, va("%s", cmd), MAX_STRING_CHARS);
-		return qtrue;
-	}
-	else if (!Q_strncmp(cmd, "sc1", 3))
-	{
-		Com_Memset(sc1, 0, MAX_STRING_CHARS);
-		Q_strncpyz(sc1, va("%s", cmd), MAX_STRING_CHARS);
-		return qtrue;
-	}
-
-	return qfalse;
 }
 
 /**
@@ -1780,6 +1842,8 @@ static void SV_DemoStartRecord(void)
 	// Write entities and players
 	Com_Memset(sv.demoEntities, 0, sizeof(sv.demoEntities));
 	Com_Memset(sv.demoPlayerStates, 0, sizeof(sv.demoPlayerStates));
+	Com_Memset(sv.demoPlayerStats, 0, sizeof(sv.demoPlayerStats));
+	playerStatsNum = 0;
 	// End of frame
 	SV_DemoWriteFrame();
 	// Announce we are writing the demo
@@ -1799,8 +1863,11 @@ static void SV_DemoStartRecord(void)
  */
 static void SV_DemoStopRecord(void)
 {
-	client_t *client = &svs.clients[sv_maxclients->integer - 1];
-	msg_t    msg;
+	client_t     *client = &svs.clients[sv_maxclients->integer - 1];
+	msg_t        msg;
+	fileHandle_t demoStatsFile;
+	char         statsFileName[MAX_QPATH], buffer[2048];
+	int          i;
 
 	// End the demo
 	MSG_Init(&msg, buf, sizeof(buf));
@@ -1822,6 +1889,24 @@ static void SV_DemoStopRecord(void)
 		SV_DropClient(client, "disconnected");
 		client->demoClient = qfalse;
 	}
+
+	// save player stats to file
+	COM_StripExtension(sv.demoName, statsFileName, MAX_QPATH);
+	demoStatsFile = FS_FOpenFileWrite(va("%s.txt", statsFileName));
+
+	if (!demoStatsFile)
+	{
+		Com_Printf("DEMO: ERROR: Couldn't open %s for writing.\n", demoStatsFile);
+		return;
+	}
+
+	for (i = 0; i < playerStatsNum; i++)
+	{
+		Q_strncpyz(buffer, va("%s", va("%s\\%s\\%s", sv.demoPlayerStats[i].guid, sv.demoPlayerStats[i].name, sv.demoPlayerStats[i].stats)), 2048);
+		FS_Write(buffer, strlen(buffer), demoStatsFile);
+	}
+
+	FS_FCloseFile(demoStatsFile);
 }
 
 /***********************************************
@@ -1887,7 +1972,7 @@ static void SV_DemoReadGameCommand(msg_t *msg)
 	if (SV_CheckLastCmd(cmd, qfalse) && clientNum < sv_maxclients->integer)
 	{
 		// store commands that should be sent per request
-		if (SV_DemoStoreGameCommand(clientNum, cmd))
+		if (SV_DemoStoreGameCommand(cmd))
 		{
 			return;
 		}
