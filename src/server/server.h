@@ -90,6 +90,17 @@ typedef enum
 } serverState_t;
 
 /**
+* @struct svdemoPlayerStats_t
+* @brief Stores player stats during recording
+*/
+typedef struct svdemoPlayerStats_s
+{
+	char guid[9];
+	char name[MAX_NAME_LENGTH];
+	char stats[MAX_STRING_CHARS];
+} svdemoPlayerStats_t;
+
+/**
  * @struct server_t
  * @brief
  */
@@ -148,6 +159,7 @@ typedef struct
 	// serverside demo recording - previous frame for delta compression
 	sharedEntity_t demoEntities[MAX_GENTITIES];
 	playerState_t demoPlayerStates[MAX_CLIENTS];
+	svdemoPlayerStats_t demoPlayerStats[100];
 
 } server_t;
 
