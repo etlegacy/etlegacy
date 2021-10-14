@@ -873,9 +873,6 @@ static int WM_DrawInfoLine(int x, int y, float fade)
 	else
 	{
 		// second round
-		// time limit: cgs.timelimit * 60000.f
-		// actual time: cg.time - cgs.levelStartTime - (cg.time - cgs.intermissionStartTime)
-		// delta time: time limit - actual time
 		if (!defender)
 		{
 			if (winner != defender)
