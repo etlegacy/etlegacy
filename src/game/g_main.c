@@ -3545,6 +3545,16 @@ void ExitLevel(void)
 
 	switch (g_gametype.integer)
 	{
+	case GT_WOLF_STOPWATCH:
+	{
+		if (!g_currentRound.integer)
+		{
+			// reset timer
+			trap_Cvar_Set("g_nextTimeLimit", "0");
+		}
+		trap_SendConsoleCommand(EXEC_APPEND, "vstr nextmap\n");
+		break;
+	}
 	case GT_WOLF_CAMPAIGN:
 	{
 		g_campaignInfo_t *campaign = &g_campaigns[level.currentCampaign];
@@ -3845,23 +3855,15 @@ void G_LogExit(const char *string)
 		trap_GetConfigstring(CS_MULTI_MAPWINNER, cs, sizeof(cs));
 		winner = Q_atoi(Info_ValueForKey(cs, "w"));
 
-		if (!g_currentRound.integer)
+		if (winner == defender)
 		{
-			if (winner == defender)
-			{
-				// if the defenders won, use default timelimit
-				trap_Cvar_Set("g_nextTimeLimit", va("%f", g_timelimit.value));
-			}
-			else
-			{
-				// use remaining time as next timer
-				trap_Cvar_Set("g_nextTimeLimit", va("%f", (level.timeCurrent - level.startTime) / 60000.f));
-			}
+			// if the defenders won, use default timelimit
+			trap_Cvar_Set("g_nextTimeLimit", va("%f", g_timelimit.value));
 		}
 		else
 		{
-			// reset timer
-			trap_Cvar_Set("g_nextTimeLimit", "0");
+			// use remaining time as next timer
+			trap_Cvar_Set("g_nextTimeLimit", va("%f", (level.timeCurrent - level.startTime) / 60000.f));
 		}
 
 		trap_Cvar_Set("g_currentRound", va("%i", !g_currentRound.integer));
