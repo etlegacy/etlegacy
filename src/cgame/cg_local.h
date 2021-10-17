@@ -40,6 +40,7 @@
 #ifndef INCLUDE_CG_LOCAL_H
 #define INCLUDE_CG_LOCAL_H
 
+#include <stddef.h>
 #include "../qcommon/q_shared.h"
 #include "../qcommon/q_unicode.h"
 #include "../renderercommon/tr_types.h"

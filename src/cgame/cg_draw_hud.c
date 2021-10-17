@@ -81,7 +81,7 @@ lagometer_t lagometer;
 /**
  * @brief Using the stringizing operator to save typing...
  */
-#define HUDF(x) # x, (size_t)&((hudStucture_t *)0)->x, qfalse
+#define HUDF(x) # x, offsetof(hudStucture_t, x), qfalse
 
 typedef struct
 {
