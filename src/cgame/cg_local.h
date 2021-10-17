@@ -40,6 +40,7 @@
 #ifndef INCLUDE_CG_LOCAL_H
 #define INCLUDE_CG_LOCAL_H
 
+#include <stddef.h>
 #include "../qcommon/q_shared.h"
 #include "../qcommon/q_unicode.h"
 #include "../renderercommon/tr_types.h"
@@ -4012,7 +4013,7 @@ typedef struct hudComponent_s
 typedef struct hudStructure_s
 {
 	int hudnumber;
-	hudComponent_t compas;          // FIXME: what a typo ....
+	hudComponent_t compass;
 	hudComponent_t staminabar;
 	hudComponent_t breathbar;
 	hudComponent_t healthbar;
