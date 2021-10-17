@@ -83,9 +83,10 @@ lagometer_t lagometer;
  */
 #define HUDF(x) # x, (size_t)&((hudStucture_t *)0)->x
 
-typedef struct {
-    const char* name;
-    size_t offset;
+typedef struct
+{
+	const char *name;
+	size_t offset;
 } hudComponentFields_t;
 
 /**
@@ -94,34 +95,34 @@ typedef struct {
 */
 static const hudComponentFields_t hudComponentFields[] =
 {
-    {HUDF(compas)},           // FIXME: typo
-    {HUDF(staminabar)},
-    {HUDF(breathbar)},
-    {HUDF(healthbar)},
-    {"weaponchangebar", (size_t)&((hudStucture_t *)0)->weaponchargebar}, // FIXME: typo
-    {HUDF(healthtext)},
-    {HUDF(xptext)},
-    {HUDF(ranktext)},
-    {HUDF(statsdisplay)},
-    {HUDF(weaponicon)},
-    {HUDF(weaponammo)},
-    {HUDF(fireteam)},
-    {HUDF(popupmessages)},
-    {HUDF(powerups)},
-    {HUDF(hudhead)},
-    {HUDF(cursorhints)},
-    {HUDF(weaponstability)},
-    {HUDF(livesleft)},
-    {HUDF(roundtimer)},
-    {HUDF(reinforcement)},
-    {HUDF(spawntimer)},
-    {HUDF(localtime)},
-    {HUDF(votetext)},
-    {HUDF(spectatortext)},
-    {HUDF(limbotext)},
-    {HUDF(followtext)},
-    {HUDF(demotext)},
-    {NULL, 0},
+	{ HUDF(compas)                                   }, // FIXME: typo
+	{ HUDF(staminabar)                               },
+	{ HUDF(breathbar)                                },
+	{ HUDF(healthbar)                                },
+	{ "weaponchangebar", (size_t)&((hudStucture_t *)0)->weaponchargebar}, // FIXME: typo
+	{ HUDF(healthtext)                               },
+	{ HUDF(xptext)                                   },
+	{ HUDF(ranktext)                                 },
+	{ HUDF(statsdisplay)                             },
+	{ HUDF(weaponicon)                               },
+	{ HUDF(weaponammo)                               },
+	{ HUDF(fireteam)                                 },
+	{ HUDF(popupmessages)                            },
+	{ HUDF(powerups)                                 },
+	{ HUDF(hudhead)                                  },
+	{ HUDF(cursorhints)                              },
+	{ HUDF(weaponstability)                          },
+	{ HUDF(livesleft)                                },
+	{ HUDF(roundtimer)                               },
+	{ HUDF(reinforcement)                            },
+	{ HUDF(spawntimer)                               },
+	{ HUDF(localtime)                                },
+	{ HUDF(votetext)                                 },
+	{ HUDF(spectatortext)                            },
+	{ HUDF(limbotext)                                },
+	{ HUDF(followtext)                               },
+	{ HUDF(demotext)                                 },
+	{ NULL, 0                                        },
 };
 
 /*
@@ -408,7 +409,7 @@ static qboolean CG_ParseHUD(int handle)
 		{
 			if (!Q_stricmp(token.string, hudComponentFields[i].name))
 			{
-                if (!CG_ParseHudComponent(handle, (hudComponent_t *)((char* )&temphud + hudComponentFields[i].offset)))
+				if (!CG_ParseHudComponent(handle, (hudComponent_t *)((char * )&temphud + hudComponentFields[i].offset)))
 				{
 					return CG_HUD_ParseError(handle, "expected %s", hudComponentFields[i].name);
 				}
@@ -3273,7 +3274,7 @@ static void CG_PrintHud(hudStucture_t *hud)
 
 	for (i = 0; hudComponentFields[i].name; i++)
 	{
-		CG_PrintHudComponent(hudComponentFields[i].name, (hudComponent_t *)((char* )hud + hudComponentFields[i].offset));
+		CG_PrintHudComponent(hudComponentFields[i].name, (hudComponent_t *)((char * )hud + hudComponentFields[i].offset));
 	}
 }
 #endif
