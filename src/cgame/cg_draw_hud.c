@@ -97,12 +97,12 @@ typedef struct
 static const hudComponentFields_t hudComponentFields[] =
 {
 	{ HUDF(compass)         },
-	{ "compas", (size_t)&((hudStucture_t *)0)->compass, qtrue}, // v2.78 backward compatibility
+	{ "compas", offsetof(hudStucture_t, compass), qtrue}, // v2.78 backward compatibility
 	{ HUDF(staminabar)      },
 	{ HUDF(breathbar)       },
 	{ HUDF(healthbar)       },
 	{ HUDF(weaponchargebar) },
-	{ "weaponchangebar", (size_t)&((hudStucture_t *)0)->weaponchargebar, qtrue}, // v2.78 backward compatibility
+	{ "weaponchangebar", offsetof(hudStucture_t, weaponchargebar), qtrue}, // v2.78 backward compatibility
 	{ HUDF(healthtext)      },
 	{ HUDF(xptext)          },
 	{ HUDF(ranktext)        },
