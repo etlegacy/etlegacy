@@ -4012,7 +4012,7 @@ typedef struct hudComponent_s
 typedef struct hudStructure_s
 {
 	int hudnumber;
-	hudComponent_t compas;          // FIXME: what a typo ....
+	hudComponent_t compass;
 	hudComponent_t staminabar;
 	hudComponent_t breathbar;
 	hudComponent_t healthbar;

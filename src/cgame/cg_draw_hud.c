@@ -81,12 +81,13 @@ lagometer_t lagometer;
 /**
  * @brief Using the stringizing operator to save typing...
  */
-#define HUDF(x) # x, (size_t)&((hudStucture_t *)0)->x
+#define HUDF(x) # x, (size_t)&((hudStucture_t *)0)->x, qfalse
 
 typedef struct
 {
 	const char *name;
 	size_t offset;
+	qboolean isAlias;
 } hudComponentFields_t;
 
 /**
@@ -95,34 +96,36 @@ typedef struct
 */
 static const hudComponentFields_t hudComponentFields[] =
 {
-	{ HUDF(compas)                                   }, // FIXME: typo
-	{ HUDF(staminabar)                               },
-	{ HUDF(breathbar)                                },
-	{ HUDF(healthbar)                                },
-	{ "weaponchangebar", (size_t)&((hudStucture_t *)0)->weaponchargebar}, // FIXME: typo
-	{ HUDF(healthtext)                               },
-	{ HUDF(xptext)                                   },
-	{ HUDF(ranktext)                                 },
-	{ HUDF(statsdisplay)                             },
-	{ HUDF(weaponicon)                               },
-	{ HUDF(weaponammo)                               },
-	{ HUDF(fireteam)                                 },
-	{ HUDF(popupmessages)                            },
-	{ HUDF(powerups)                                 },
-	{ HUDF(hudhead)                                  },
-	{ HUDF(cursorhints)                              },
-	{ HUDF(weaponstability)                          },
-	{ HUDF(livesleft)                                },
-	{ HUDF(roundtimer)                               },
-	{ HUDF(reinforcement)                            },
-	{ HUDF(spawntimer)                               },
-	{ HUDF(localtime)                                },
-	{ HUDF(votetext)                                 },
-	{ HUDF(spectatortext)                            },
-	{ HUDF(limbotext)                                },
-	{ HUDF(followtext)                               },
-	{ HUDF(demotext)                                 },
-	{ NULL, 0                                        },
+	{ HUDF(compass)         },
+	{ "compas", (size_t)&((hudStucture_t *)0)->compass, qtrue}, // v2.78 backward compatibility
+	{ HUDF(staminabar)      },
+	{ HUDF(breathbar)       },
+	{ HUDF(healthbar)       },
+	{ HUDF(weaponchargebar) },
+	{ "weaponchangebar", (size_t)&((hudStucture_t *)0)->weaponchargebar, qtrue}, // v2.78 backward compatibility
+	{ HUDF(healthtext)      },
+	{ HUDF(xptext)          },
+	{ HUDF(ranktext)        },
+	{ HUDF(statsdisplay)    },
+	{ HUDF(weaponicon)      },
+	{ HUDF(weaponammo)      },
+	{ HUDF(fireteam)        },
+	{ HUDF(popupmessages)   },
+	{ HUDF(powerups)        },
+	{ HUDF(hudhead)         },
+	{ HUDF(cursorhints)     },
+	{ HUDF(weaponstability) },
+	{ HUDF(livesleft)       },
+	{ HUDF(roundtimer)      },
+	{ HUDF(reinforcement)   },
+	{ HUDF(spawntimer)      },
+	{ HUDF(localtime)       },
+	{ HUDF(votetext)        },
+	{ HUDF(spectatortext)   },
+	{ HUDF(limbotext)       },
+	{ HUDF(followtext)      },
+	{ HUDF(demotext)        },
+	{ NULL, 0               },
 };
 
 /*
@@ -175,7 +178,7 @@ void CG_setDefaultHudValues(hudStucture_t *hud)
 {
 	// the Default hud
 	hud->hudnumber       = 0;
-	hud->compas          = CG_getComponent((Ccg_WideX(SCREEN_WIDTH) - 100 - 20 - 16), 16, 100 + 32, 100 + 32, qtrue, STYLE_NORMAL);
+	hud->compass         = CG_getComponent((Ccg_WideX(SCREEN_WIDTH) - 100 - 20 - 16), 16, 100 + 32, 100 + 32, qtrue, STYLE_NORMAL);
 	hud->staminabar      = CG_getComponent(4, SCREEN_HEIGHT - 92, 12, 72, qtrue, STYLE_NORMAL);
 	hud->breathbar       = CG_getComponent(4, SCREEN_HEIGHT - 92, 12, 72, qtrue, STYLE_NORMAL);
 	hud->healthbar       = CG_getComponent(24, SCREEN_HEIGHT - 92, 12, 72, qtrue, STYLE_NORMAL);
@@ -1930,7 +1933,7 @@ static void CG_CompasMoveLocation(float *basex, float *basey, qboolean animation
 {
 	float x    = *basex;
 	float y    = *basey;
-	float cent = activehud->compas.location.w / 2;
+	float cent = activehud->compass.location.w / 2;
 	x += cent;
 	y += cent;
 
@@ -3188,7 +3191,7 @@ void CG_Hud_Setup(void)
 
 	// Hud1
 	hud1.hudnumber       = 1;
-	hud1.compas          = CG_getComponent(44, SCREEN_HEIGHT - 87, 84, 84, qtrue, STYLE_NORMAL);
+	hud1.compass         = CG_getComponent(44, SCREEN_HEIGHT - 87, 84, 84, qtrue, STYLE_NORMAL);
 	hud1.staminabar      = CG_getComponent(4, 388, 12, 72, qtrue, STYLE_NORMAL);
 	hud1.breathbar       = CG_getComponent(4, 388, 12, 72, qtrue, STYLE_NORMAL);
 	hud1.healthbar       = CG_getComponent((Ccg_WideX(SCREEN_WIDTH) - 36), 388, 12, 72, qtrue, STYLE_NORMAL);
@@ -3219,7 +3222,7 @@ void CG_Hud_Setup(void)
 
 	// Hud2
 	hud2.hudnumber       = 2;
-	hud2.compas          = CG_getComponent(64, SCREEN_HEIGHT - 87, 84, 84, qtrue, STYLE_NORMAL);
+	hud2.compass         = CG_getComponent(64, SCREEN_HEIGHT - 87, 84, 84, qtrue, STYLE_NORMAL);
 	hud2.staminabar      = CG_getComponent(4, 388, 12, 72, qtrue, STYLE_NORMAL);
 	hud2.breathbar       = CG_getComponent(4, 388, 12, 72, qtrue, STYLE_NORMAL);
 	hud2.healthbar       = CG_getComponent(24, 388, 12, 72, qtrue, STYLE_NORMAL);
@@ -3274,7 +3277,10 @@ static void CG_PrintHud(hudStucture_t *hud)
 
 	for (i = 0; hudComponentFields[i].name; i++)
 	{
-		CG_PrintHudComponent(hudComponentFields[i].name, (hudComponent_t *)((char * )hud + hudComponentFields[i].offset));
+		if (!hudComponentFields[i].isAlias)
+		{
+			CG_PrintHudComponent(hudComponentFields[i].name, (hudComponent_t *)((char * )hud + hudComponentFields[i].offset));
+		}
 	}
 }
 #endif
@@ -3371,7 +3377,7 @@ void CG_DrawGlobalHud(void)
 	}
 	else
 	{
-		CG_DrawNewCompass(activehud->compas.location);
+		CG_DrawNewCompass(activehud->compass.location);
 	}
 
 	if (activehud->powerups.visible)
