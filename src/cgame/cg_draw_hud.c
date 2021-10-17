@@ -79,39 +79,50 @@ hudStucture_t hud0;
 lagometer_t lagometer;
 
 /**
-* @var hudComponentName
-* @brief Orderer following hudStucture_t fields declaration
-*/
-static const char *hudComponentName[] =
+ * @brief Using the stringizing operator to save typing...
+ */
+#define HUDF(x) # x, (size_t)&((hudStucture_t *)0)->x
+
+typedef struct
 {
-	"compas",           // FIXME: typo
-	"staminabar",
-	"breathbar",
-	"healthbar",
-	"weaponchangebar",  // FIXME: typo
-	"healthtext",
-	"xptext",
-	"ranktext",
-	"statsdisplay",
-	"weaponicon",
-	"weaponammo",
-	"fireteam",
-	"popupmessages",
-	"powerups",
-	"hudhead",
-	"cursorhints",
-	"weaponstability",
-	"livesleft",
-	"roundtimer",
-	"reinforcement",
-	"spawntimer",
-	"localtime",
-	"votetext",
-	"spectatortext",
-	"limbotext",
-	"followtext",
-	"demotext",
-	NULL,
+	const char *name;
+	size_t offset;
+} hudComponentFields_t;
+
+/**
+* @var hudComponentFields
+* @brief for accessing hudStucture_t's fields in a loop
+*/
+static const hudComponentFields_t hudComponentFields[] =
+{
+	{ HUDF(compas)                                   }, // FIXME: typo
+	{ HUDF(staminabar)                               },
+	{ HUDF(breathbar)                                },
+	{ HUDF(healthbar)                                },
+	{ "weaponchangebar", (size_t)&((hudStucture_t *)0)->weaponchargebar}, // FIXME: typo
+	{ HUDF(healthtext)                               },
+	{ HUDF(xptext)                                   },
+	{ HUDF(ranktext)                                 },
+	{ HUDF(statsdisplay)                             },
+	{ HUDF(weaponicon)                               },
+	{ HUDF(weaponammo)                               },
+	{ HUDF(fireteam)                                 },
+	{ HUDF(popupmessages)                            },
+	{ HUDF(powerups)                                 },
+	{ HUDF(hudhead)                                  },
+	{ HUDF(cursorhints)                              },
+	{ HUDF(weaponstability)                          },
+	{ HUDF(livesleft)                                },
+	{ HUDF(roundtimer)                               },
+	{ HUDF(reinforcement)                            },
+	{ HUDF(spawntimer)                               },
+	{ HUDF(localtime)                                },
+	{ HUDF(votetext)                                 },
+	{ HUDF(spectatortext)                            },
+	{ HUDF(limbotext)                                },
+	{ HUDF(followtext)                               },
+	{ HUDF(demotext)                                 },
+	{ NULL, 0                                        },
 };
 
 /*
@@ -394,19 +405,19 @@ static qboolean CG_ParseHUD(int handle)
 			break;
 		}
 
-		for (i = 0; hudComponentName[i]; i++)
+		for (i = 0; hudComponentFields[i].name; i++)
 		{
-			if (!Q_stricmp(token.string, hudComponentName[i]))
+			if (!Q_stricmp(token.string, hudComponentFields[i].name))
 			{
-				if (!CG_ParseHudComponent(handle, (hudComponent_t *)((int)&temphud + sizeof(int) + (i * sizeof(hudComponent_t)))))
+				if (!CG_ParseHudComponent(handle, (hudComponent_t *)((char * )&temphud + hudComponentFields[i].offset)))
 				{
-					return CG_HUD_ParseError(handle, "expected %s", hudComponentName[i]);
+					return CG_HUD_ParseError(handle, "expected %s", hudComponentFields[i].name);
 				}
 				break;
 			}
 		}
 
-		if (!hudComponentName[i])
+		if (!hudComponentFields[i].name)
 		{
 			return CG_HUD_ParseError(handle, "unexpected token: %s", token.string);
 		}
@@ -3261,9 +3272,9 @@ static void CG_PrintHud(hudStucture_t *hud)
 {
 	int i;
 
-	for (i = 0; hudComponentName[i]; i++)
+	for (i = 0; hudComponentFields[i].name; i++)
 	{
-		CG_PrintHudComponent(hudComponentName[i], (hudComponent_t *)((int)hud + sizeof(int) + (i * sizeof(hudComponent_t))));
+		CG_PrintHudComponent(hudComponentFields[i].name, (hudComponent_t *)((char * )hud + hudComponentFields[i].offset));
 	}
 }
 #endif
