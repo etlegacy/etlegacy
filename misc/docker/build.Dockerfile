@@ -1,9 +1,9 @@
 FROM centos:7
-LABEL version="1.1"
+LABEL version="1.2"
 LABEL maintainer="mail@etlegacy.com"
 LABEL description="Linux build machine for the 32 and 64 bit linux releases"
 
-# We will run the installations whic will also install the very old system git
+# We will run the installations which will also install the very old system git
 # so after the bulk install, we remove the system git and install an up to date client.
 RUN cd /tmp && \
 	echo "multilib_policy=all" >> /etc/yum.conf && \
