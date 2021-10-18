@@ -3838,10 +3838,10 @@ static void CG_DrawEnvironmentalAwareness()
 			switch (cg_drawUnit.integer)
 			{
 			case 1:
-				distance = va("%.1f", len * UNIT_TO_METER);
+				distance = va("%.0fm", len * UNIT_TO_METER);
 				break;
 			case 2:
-				distance = va("%.1f", len * UNIT_TO_FEET);
+				distance = va("%.0fft", len * UNIT_TO_FEET);
 				break;
 			case 0:
 			default:
