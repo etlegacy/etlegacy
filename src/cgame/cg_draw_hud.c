@@ -2208,10 +2208,6 @@ static float CG_DrawSnapshot(float y)
 	return y + 36 + 4;
 }
 
-// speed constants
-#define SPEED_US_TO_KPH   15.58f
-#define SPEED_US_TO_MPH   23.44f
-
 static vec_t highestSpeed, speed;
 static int   lasttime;
 vec4_t       tclr = { 0.625f, 0.625f, 0.6f, 1.0f };
@@ -2248,32 +2244,20 @@ static float CG_DrawSpeed(float y)
 		lasttime = thistime;
 	}
 
-	switch (cg_drawspeed.integer)
+	switch (cg_drawUnit.integer)
 	{
-	case 1:
+	case 0:
 		// Units per second
-		s = va("%.1f UPS", speed);
-		break;
-	case 2:
-		// Kilometers per hour
-		s = va("%.1f KPH", (speed / SPEED_US_TO_KPH));
-		break;
-	case 3:
-		// Miles per hour
-		s = va("%.1f MPH", (speed / SPEED_US_TO_MPH));
-		break;
-	case 4:
-		// Units per second + highestSpeed
 		s  = va("%.1f UPS", speed);
 		s2 = va("%.1f MAX", highestSpeed);
 		break;
-	case 5:
-		// Kilometers per hour  + highestSpeed
+	case 1:
+		// Kilometers per hour
 		s  = va("%.1f KPH", (speed / SPEED_US_TO_KPH));
 		s2 = va("%.1f MAX", (highestSpeed / SPEED_US_TO_KPH));
 		break;
-	case 6:
-		// Miles per hour  + highestSpeed
+	case 2:
+		// Miles per hour
 		s  = va("%.1f MPH", (speed / SPEED_US_TO_MPH));
 		s2 = va("%.1f MAX", (highestSpeed / SPEED_US_TO_MPH));
 		break;
@@ -2283,7 +2267,7 @@ static float CG_DrawSpeed(float y)
 		break;
 	}
 
-	h = (cg_drawspeed.integer > 3) ? 24 : 12;
+	h = (cg_drawspeed.integer == 2) ? 24 : 12;
 
 	w  = CG_Text_Width_Ext(s, 0.19f, 0, &cgs.media.limboFont1);
 	w2 = (UPPERRIGHT_W > w) ? UPPERRIGHT_W : w;
@@ -2294,7 +2278,7 @@ static float CG_DrawSpeed(float y)
 	CG_Text_Paint_Ext(x + ((w2 - w) / 2) + 2, y + 11, 0.19f, 0.19f, tclr, s, 0, 0, 0, &cgs.media.limboFont1);
 
 	// draw max speed on second line
-	if (cg_drawspeed.integer > 3)
+	if (cg_drawspeed.integer == 2)
 	{
 		y  = y + 12;
 		w3 = CG_Text_Width_Ext(s2, 0.19f, 0, &cgs.media.limboFont1);

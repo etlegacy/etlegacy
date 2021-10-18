@@ -153,6 +153,10 @@
 #define UNIT_TO_FEET 0.0833333f
 #define UNIT_TO_METER 0.0254f
 
+// speed constants
+#define SPEED_US_TO_KPH   15.58f
+#define SPEED_US_TO_MPH   23.44f
+
 // gun animations
 #define WEAPANIM_IDLE    0x01
 #define WEAPANIM_FIRING  0x02
@@ -2836,6 +2840,7 @@ extern vmCvar_t cg_scoreboard;
 extern vmCvar_t cg_quickchat;
 
 extern vmCvar_t cg_drawspeed;
+extern vmCvar_t cg_drawUnit;
 
 extern vmCvar_t cg_visualEffects;  ///< turn invisible (0) / visible (1) visual effect (i.e airstrike plane, debris ...)
 extern vmCvar_t cg_bannerTime;

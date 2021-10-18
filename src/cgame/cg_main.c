@@ -354,6 +354,7 @@ vmCvar_t cg_scoreboard;
 vmCvar_t cg_quickchat;
 
 vmCvar_t cg_drawspeed;
+vmCvar_t cg_drawUnit;
 
 vmCvar_t cg_visualEffects;
 vmCvar_t cg_bannerTime;
@@ -627,6 +628,7 @@ static cvarTable_t cvarTable[] =
 	{ &cg_quickchat,              "cg_quickchat",              "0",           CVAR_ARCHIVE,                 0 },
 
 	{ &cg_drawspeed,              "cg_drawspeed",              "0",           CVAR_ARCHIVE,                 0 },
+	{ &cg_drawUnit,               "cg_drawUnit",               "0",           CVAR_ARCHIVE,                 0 },
 
 	{ &cg_visualEffects,          "cg_visualEffects",          "1",           CVAR_ARCHIVE,                 0 },    // Draw visual effects (i.e : airstrike plane, debris ...)
 	{ &cg_bannerTime,             "cg_bannerTime",             "10000",       CVAR_ARCHIVE,                 0 },
