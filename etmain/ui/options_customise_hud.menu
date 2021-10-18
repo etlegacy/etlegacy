@@ -30,7 +30,7 @@ menuDef {
 
 // Hud Display //
 #define HUD_Y 32
-	SUBWINDOW( 6, HUD_Y, (SUBWINDOW_WIDTH_L), 256, _("HUD DISPLAY") )
+	SUBWINDOW( 6, HUD_Y, (SUBWINDOW_WIDTH_L), 268, _("HUD DISPLAY") )
 	MULTI( 8, HUD_Y+16, (SUBWINDOW_WIDTH_L)-4, 10, _("Draw Gun:"), .2, 8, "cg_drawGun",  cvarFloatList { "Off" 0 "On" 1 "Hide Weapons Only" 2 }, _("Shows gun model on-screen") )
 	YESNO( 8, HUD_Y+28, (SUBWINDOW_WIDTH_L)-4, 10, _("Show Compass:"), .2, 8, "cg_drawCompass", _("Displays compass (with icons when near select events)") )
     MULTI( 8, HUD_Y+40, (SUBWINDOW_WIDTH_L)-4, 10, _("Compass Icons:"), .2, 8, "cg_drawCompassIcons",  cvarFloatList { "All" 1 "No secondary objectives" 2 "No primary objectives" 4 "No objectives" 6}, _("Select icons on compass") )
@@ -47,11 +47,12 @@ menuDef {
 	MULTI( 8, HUD_Y+160, (SUBWINDOW_WIDTH_L)-4, 10, _("Show Clock:"), .2, 8, "cg_drawTime", cvarFloatList { "Off" 0 "24 hours" 1 "24 hours + seconds" 3 "12 hours" 5 "12 hours + seconds" 7 }, _("Displays local time") )
 	YESNO( 8, HUD_Y+172, (SUBWINDOW_WIDTH_L)-4, 10, _("Show FPS:"), .2, 8, "cg_drawFPS", _("Displays Frames Per Second") )
 	YESNO( 8, HUD_Y+184, (SUBWINDOW_WIDTH_L)-4, 10, _("Show Ping:"), .2, 8, "cg_drawPing", _("Displays ping") )
-	MULTI( 8, HUD_Y+196, (SUBWINDOW_WIDTH_L)-4, 10, _("Show Speed:"), .2, 8, "cg_drawspeed", cvarFloatList { "Off" 0 "UPS" 1 "KPH" 2 "MPH" 3 "UPS + MAX speed" 4 "KPH + MAX speed" 5 "MPH + MAX speed" 6}, _("Displays speed of player") )
-	YESNO( 8, HUD_Y+208, (SUBWINDOW_WIDTH_L)-4, 10, _("Show Lagometer:"), .2, 8, "cg_lagometer", _("Displays lagometer") )
-	MULTI( 8, HUD_Y+220, (SUBWINDOW_WIDTH_L)-4, 10, _("Switch HUD:"), .2, 8, "cg_altHud", cvarFloatList { "Standard Hud" 0 "Alternate Hud 1" 1 "Alternate Hud 2" 2 }, _("Switches between different HUD") )
-	MULTI( 8, HUD_Y+232, (SUBWINDOW_WIDTH_L)-4, 10, _("Modify Selected HUD:"), .2, 8, "cg_altHudFlags", cvarFloatList { "Normal" 0 "Move Round Timer" 1 "Remove Ranks" 2 "Move Popups" 4 "Ranks + Timer" 3 "Timer + Popups" 5 "Ranks + Popups" 6 "Timer + Ranks + Popups" 7 }, _("Customises Selected HUD") )
-    MULTI( 8, HUD_Y+244, (SUBWINDOW_WIDTH_L)-4, 10, _("Environment Awareness:"), .2, 8, "cg_drawEnvAwareness",  cvarFloatList { "Off" 0 "All" 1 "No secondary objectives" 2 "No primary objectives" 4 "No objectives" 6}, _("Displays compass icons on HUD") )
+	MULTI( 8, HUD_Y+196, (SUBWINDOW_WIDTH_L)-4, 10, _("Show Speed:"), .2, 8, "cg_drawspeed", cvarFloatList { "No" 0 "Current Speed" 1 "Current + Max Speed" 2}, _("Displays speed of player") )
+	MULTI( 8, HUD_Y+208, (SUBWINDOW_WIDTH_L)-4, 10, _("Unit System:"), .2, 8, "cg_drawUnit", cvarFloatList { "Unit" 0 "Metric" 1 "Imperial" 2}, _("Sets unit system") )
+	YESNO( 8, HUD_Y+220, (SUBWINDOW_WIDTH_L)-4, 10, _("Show Lagometer:"), .2, 8, "cg_lagometer", _("Displays lagometer") )
+	MULTI( 8, HUD_Y+232, (SUBWINDOW_WIDTH_L)-4, 10, _("Switch HUD:"), .2, 8, "cg_altHud", cvarFloatList { "Standard Hud" 0 "Alternate Hud 1" 1 "Alternate Hud 2" 2 }, _("Switches between different HUD") )
+	MULTI( 8, HUD_Y+244, (SUBWINDOW_WIDTH_L)-4, 10, _("Modify Selected HUD:"), .2, 8, "cg_altHudFlags", cvarFloatList { "Normal" 0 "Move Round Timer" 1 "Remove Ranks" 2 "Move Popups" 4 "Ranks + Timer" 3 "Timer + Popups" 5 "Ranks + Popups" 6 "Timer + Ranks + Popups" 7 }, _("Customises Selected HUD") )
+    MULTI( 8, HUD_Y+256, (SUBWINDOW_WIDTH_L)-4, 10, _("Environment Awareness:"), .2, 8, "cg_drawEnvAwareness",  cvarFloatList { "Off" 0 "All" 1 "No secondary objectives" 2 "No primary objectives" 4 "No objectives" 6}, _("Displays compass icons on HUD") )
 
 // In-Game Display //
 #define DISPLAY_Y 32 // 204
