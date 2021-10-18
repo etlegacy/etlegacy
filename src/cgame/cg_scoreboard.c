@@ -873,14 +873,11 @@ static int WM_DrawInfoLine(int x, int y, float fade)
 	else
 	{
 		// second round
-		// time limit: cgs.timelimit * 60000.f
-		// actual time: cg.time - cgs.levelStartTime - (cg.time - cgs.intermissionStartTime)
-		// delta time: time limit - actual time
 		if (!defender)
 		{
 			if (winner != defender)
 			{
-				s = va("ALLIES SUCCESSFULLY BEAT THE CLOCK BY ^3%s^9!", WM_TimeToString(cgs.timelimit * 60000.f + cgs.levelStartTime - cgs.intermissionStartTime));
+				s = va("ALLIES SUCCESSFULLY BEAT THE CLOCK BY ^3%s^9!", WM_TimeToString(cgs.timelimit * 60000.f - cgs.nextTimeLimit * 60000.f));
 			}
 			else
 			{
@@ -891,7 +888,7 @@ static int WM_DrawInfoLine(int x, int y, float fade)
 		{
 			if (winner != defender)
 			{
-				s = va("AXIS SUCCESSFULLY BEAT THE CLOCK BY ^3%s^9!", WM_TimeToString(cgs.timelimit * 60000.f + cgs.levelStartTime - cgs.intermissionStartTime));
+				s = va("AXIS SUCCESSFULLY BEAT THE CLOCK BY ^3%s^9!", WM_TimeToString(cgs.timelimit * 60000.f - cgs.nextTimeLimit * 60000.f));
 			}
 			else
 			{

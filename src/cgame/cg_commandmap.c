@@ -171,8 +171,8 @@ void CG_TransformAutomapEntity(void)
 	if (hud)
 	{
 		// subtract surrounding decoration of the compass
-		w = hud->compas.location.w - (hud->compas.location.w * 0.25f);
-		h = hud->compas.location.h - (hud->compas.location.h * 0.25f);
+		w = hud->compass.location.w - (hud->compass.location.w * 0.25f);
+		h = hud->compass.location.h - (hud->compass.location.h * 0.25f);
 	}
 
 	if (cgs.clientinfo[cg.clientNum].shoutcaster)

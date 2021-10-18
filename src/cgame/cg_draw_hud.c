@@ -79,39 +79,53 @@ hudStucture_t hud0;
 lagometer_t lagometer;
 
 /**
-* @var hudComponentName
-* @brief Orderer following hudStucture_t fields declaration
-*/
-static const char *hudComponentName[] =
+ * @brief Using the stringizing operator to save typing...
+ */
+#define HUDF(x) # x, offsetof(hudStucture_t, x), qfalse
+
+typedef struct
 {
-	"compas",           // FIXME: typo
-	"staminabar",
-	"breathbar",
-	"healthbar",
-	"weaponchangebar",  // FIXME: typo
-	"healthtext",
-	"xptext",
-	"ranktext",
-	"statsdisplay",
-	"weaponicon",
-	"weaponammo",
-	"fireteam",
-	"popupmessages",
-	"powerups",
-	"hudhead",
-	"cursorhints",
-	"weaponstability",
-	"livesleft",
-	"roundtimer",
-	"reinforcement",
-	"spawntimer",
-	"localtime",
-	"votetext",
-	"spectatortext",
-	"limbotext",
-	"followtext",
-	"demotext",
-	NULL,
+	const char *name;
+	size_t offset;
+	qboolean isAlias;
+} hudComponentFields_t;
+
+/**
+* @var hudComponentFields
+* @brief for accessing hudStucture_t's fields in a loop
+*/
+static const hudComponentFields_t hudComponentFields[] =
+{
+	{ HUDF(compass)         },
+	{ "compas", offsetof(hudStucture_t, compass), qtrue}, // v2.78 backward compatibility
+	{ HUDF(staminabar)      },
+	{ HUDF(breathbar)       },
+	{ HUDF(healthbar)       },
+	{ HUDF(weaponchargebar) },
+	{ "weaponchangebar", offsetof(hudStucture_t, weaponchargebar), qtrue}, // v2.78 backward compatibility
+	{ HUDF(healthtext)      },
+	{ HUDF(xptext)          },
+	{ HUDF(ranktext)        },
+	{ HUDF(statsdisplay)    },
+	{ HUDF(weaponicon)      },
+	{ HUDF(weaponammo)      },
+	{ HUDF(fireteam)        },
+	{ HUDF(popupmessages)   },
+	{ HUDF(powerups)        },
+	{ HUDF(hudhead)         },
+	{ HUDF(cursorhints)     },
+	{ HUDF(weaponstability) },
+	{ HUDF(livesleft)       },
+	{ HUDF(roundtimer)      },
+	{ HUDF(reinforcement)   },
+	{ HUDF(spawntimer)      },
+	{ HUDF(localtime)       },
+	{ HUDF(votetext)        },
+	{ HUDF(spectatortext)   },
+	{ HUDF(limbotext)       },
+	{ HUDF(followtext)      },
+	{ HUDF(demotext)        },
+	{ NULL, 0               },
 };
 
 /*
@@ -164,7 +178,7 @@ void CG_setDefaultHudValues(hudStucture_t *hud)
 {
 	// the Default hud
 	hud->hudnumber       = 0;
-	hud->compas          = CG_getComponent((Ccg_WideX(SCREEN_WIDTH) - 100 - 20 - 16), 16, 100 + 32, 100 + 32, qtrue, STYLE_NORMAL);
+	hud->compass         = CG_getComponent((Ccg_WideX(SCREEN_WIDTH) - 100 - 20 - 16), 16, 100 + 32, 100 + 32, qtrue, STYLE_NORMAL);
 	hud->staminabar      = CG_getComponent(4, SCREEN_HEIGHT - 92, 12, 72, qtrue, STYLE_NORMAL);
 	hud->breathbar       = CG_getComponent(4, SCREEN_HEIGHT - 92, 12, 72, qtrue, STYLE_NORMAL);
 	hud->healthbar       = CG_getComponent(24, SCREEN_HEIGHT - 92, 12, 72, qtrue, STYLE_NORMAL);
@@ -394,19 +408,19 @@ static qboolean CG_ParseHUD(int handle)
 			break;
 		}
 
-		for (i = 0; hudComponentName[i]; i++)
+		for (i = 0; hudComponentFields[i].name; i++)
 		{
-			if (!Q_stricmp(token.string, hudComponentName[i]))
+			if (!Q_stricmp(token.string, hudComponentFields[i].name))
 			{
-				if (!CG_ParseHudComponent(handle, (hudComponent_t *)((int)&temphud + sizeof(int) + (i * sizeof(hudComponent_t)))))
+				if (!CG_ParseHudComponent(handle, (hudComponent_t *)((char * )&temphud + hudComponentFields[i].offset)))
 				{
-					return CG_HUD_ParseError(handle, "expected %s", hudComponentName[i]);
+					return CG_HUD_ParseError(handle, "expected %s", hudComponentFields[i].name);
 				}
 				break;
 			}
 		}
 
-		if (!hudComponentName[i])
+		if (!hudComponentFields[i].name)
 		{
 			return CG_HUD_ParseError(handle, "unexpected token: %s", token.string);
 		}
@@ -1919,7 +1933,7 @@ static void CG_CompasMoveLocation(float *basex, float *basey, qboolean animation
 {
 	float x    = *basex;
 	float y    = *basey;
-	float cent = activehud->compas.location.w / 2;
+	float cent = activehud->compass.location.w / 2;
 	x += cent;
 	y += cent;
 
@@ -2194,10 +2208,6 @@ static float CG_DrawSnapshot(float y)
 	return y + 36 + 4;
 }
 
-// speed constants
-#define SPEED_US_TO_KPH   15.58f
-#define SPEED_US_TO_MPH   23.44f
-
 static vec_t highestSpeed, speed;
 static int   lasttime;
 vec4_t       tclr = { 0.625f, 0.625f, 0.6f, 1.0f };
@@ -2234,32 +2244,20 @@ static float CG_DrawSpeed(float y)
 		lasttime = thistime;
 	}
 
-	switch (cg_drawspeed.integer)
+	switch (cg_drawUnit.integer)
 	{
-	case 1:
+	case 0:
 		// Units per second
-		s = va("%.1f UPS", speed);
-		break;
-	case 2:
-		// Kilometers per hour
-		s = va("%.1f KPH", (speed / SPEED_US_TO_KPH));
-		break;
-	case 3:
-		// Miles per hour
-		s = va("%.1f MPH", (speed / SPEED_US_TO_MPH));
-		break;
-	case 4:
-		// Units per second + highestSpeed
 		s  = va("%.1f UPS", speed);
 		s2 = va("%.1f MAX", highestSpeed);
 		break;
-	case 5:
-		// Kilometers per hour  + highestSpeed
+	case 1:
+		// Kilometers per hour
 		s  = va("%.1f KPH", (speed / SPEED_US_TO_KPH));
 		s2 = va("%.1f MAX", (highestSpeed / SPEED_US_TO_KPH));
 		break;
-	case 6:
-		// Miles per hour  + highestSpeed
+	case 2:
+		// Miles per hour
 		s  = va("%.1f MPH", (speed / SPEED_US_TO_MPH));
 		s2 = va("%.1f MAX", (highestSpeed / SPEED_US_TO_MPH));
 		break;
@@ -2269,7 +2267,7 @@ static float CG_DrawSpeed(float y)
 		break;
 	}
 
-	h = (cg_drawspeed.integer > 3) ? 24 : 12;
+	h = (cg_drawspeed.integer == 2) ? 24 : 12;
 
 	w  = CG_Text_Width_Ext(s, 0.19f, 0, &cgs.media.limboFont1);
 	w2 = (UPPERRIGHT_W > w) ? UPPERRIGHT_W : w;
@@ -2280,7 +2278,7 @@ static float CG_DrawSpeed(float y)
 	CG_Text_Paint_Ext(x + ((w2 - w) / 2) + 2, y + 11, 0.19f, 0.19f, tclr, s, 0, 0, 0, &cgs.media.limboFont1);
 
 	// draw max speed on second line
-	if (cg_drawspeed.integer > 3)
+	if (cg_drawspeed.integer == 2)
 	{
 		y  = y + 12;
 		w3 = CG_Text_Width_Ext(s2, 0.19f, 0, &cgs.media.limboFont1);
@@ -3177,7 +3175,7 @@ void CG_Hud_Setup(void)
 
 	// Hud1
 	hud1.hudnumber       = 1;
-	hud1.compas          = CG_getComponent(44, SCREEN_HEIGHT - 87, 84, 84, qtrue, STYLE_NORMAL);
+	hud1.compass         = CG_getComponent(44, SCREEN_HEIGHT - 87, 84, 84, qtrue, STYLE_NORMAL);
 	hud1.staminabar      = CG_getComponent(4, 388, 12, 72, qtrue, STYLE_NORMAL);
 	hud1.breathbar       = CG_getComponent(4, 388, 12, 72, qtrue, STYLE_NORMAL);
 	hud1.healthbar       = CG_getComponent((Ccg_WideX(SCREEN_WIDTH) - 36), 388, 12, 72, qtrue, STYLE_NORMAL);
@@ -3208,7 +3206,7 @@ void CG_Hud_Setup(void)
 
 	// Hud2
 	hud2.hudnumber       = 2;
-	hud2.compas          = CG_getComponent(64, SCREEN_HEIGHT - 87, 84, 84, qtrue, STYLE_NORMAL);
+	hud2.compass         = CG_getComponent(64, SCREEN_HEIGHT - 87, 84, 84, qtrue, STYLE_NORMAL);
 	hud2.staminabar      = CG_getComponent(4, 388, 12, 72, qtrue, STYLE_NORMAL);
 	hud2.breathbar       = CG_getComponent(4, 388, 12, 72, qtrue, STYLE_NORMAL);
 	hud2.healthbar       = CG_getComponent(24, 388, 12, 72, qtrue, STYLE_NORMAL);
@@ -3261,9 +3259,12 @@ static void CG_PrintHud(hudStucture_t *hud)
 {
 	int i;
 
-	for (i = 0; hudComponentName[i]; i++)
+	for (i = 0; hudComponentFields[i].name; i++)
 	{
-		CG_PrintHudComponent(hudComponentName[i], (hudComponent_t *)((int)hud + sizeof(int) + (i * sizeof(hudComponent_t))));
+		if (!hudComponentFields[i].isAlias)
+		{
+			CG_PrintHudComponent(hudComponentFields[i].name, (hudComponent_t *)((char * )hud + hudComponentFields[i].offset));
+		}
 	}
 }
 #endif
@@ -3360,7 +3361,7 @@ void CG_DrawGlobalHud(void)
 	}
 	else
 	{
-		CG_DrawNewCompass(activehud->compas.location);
+		CG_DrawNewCompass(activehud->compass.location);
 	}
 
 	if (activehud->powerups.visible)

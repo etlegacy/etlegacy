@@ -3835,14 +3835,21 @@ static void CG_DrawEnvironmentalAwareness()
 			x = Com_Clamp(0, Ccg_WideX(SCREEN_WIDTH) - ICONS_SIZE, x);
 			y = Com_Clamp(0, SCREEN_HEIGHT - (ICONS_SIZE + 12), y);
 
-			switch (cg_drawspeed.integer)
+			switch (cg_drawUnit.integer)
 			{
-			case 2: case 5: distance = va("%.1f", len * UNIT_TO_METER); break;
-			case 3: case 6: distance = va("%.1f", len * UNIT_TO_FEET); break;
-			default:        distance = va("%.0f", len); break;
+			case 1:
+				distance = va("%.0fm", len * UNIT_TO_METER);
+				break;
+			case 2:
+				distance = va("%.0fft", len * UNIT_TO_FEET);
+				break;
+			case 0:
+			default:
+				distance = va("%.0f", len);
+				break;
 			}
 
-			baseSize = ICONS_SIZE * (1 - MIN(1.f, len / (MAX_DISTANCE / 2)));
+			baseSize = ICONS_SIZE * (1 - Com_Clamp(0, .75f, len / MAX_DISTANCE));
 
 			CG_Text_Paint_Centred_Ext(x + baseSize / 2, y - baseSize + 8, 0.12f, 0.12f, colorWhite, description, 0, 0, 0, &cgs.media.limboFont2);
 			CG_DrawPic(x, y, baseSize, baseSize, icon);
