@@ -3849,7 +3849,7 @@ static void CG_DrawEnvironmentalAwareness()
 				break;
 			}
 
-			baseSize = ICONS_SIZE * (1 - MIN(1.f, len / (MAX_DISTANCE / 2)));
+			baseSize = ICONS_SIZE * (1 - Com_Clamp(0, .75f, len / MAX_DISTANCE));
 
 			CG_Text_Paint_Centred_Ext(x + baseSize / 2, y - baseSize + 8, 0.12f, 0.12f, colorWhite, description, 0, 0, 0, &cgs.media.limboFont2);
 			CG_DrawPic(x, y, baseSize, baseSize, icon);
