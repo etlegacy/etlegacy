@@ -479,6 +479,9 @@ typedef struct
 	int glslMinorVersion;
 
 	int contextCombined;
+
+	// The real window width and height (without render scaling)
+	int realVidWidth, realVidHeight;
 } glconfig_t;
 
 /**

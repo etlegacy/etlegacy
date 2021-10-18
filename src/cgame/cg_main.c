@@ -161,6 +161,7 @@ vmCvar_t cg_markTime;
 vmCvar_t cg_brassTime;
 vmCvar_t cg_letterbox;
 vmCvar_t cg_drawGun;
+vmCvar_t cg_weapAnims;
 vmCvar_t cg_cursorHints;
 vmCvar_t cg_gun_frame;
 vmCvar_t cg_gun_x;
@@ -192,6 +193,7 @@ vmCvar_t cg_paused;
 vmCvar_t cg_blood;
 vmCvar_t cg_predictItems;
 vmCvar_t cg_drawEnvAwareness;
+vmCvar_t cg_drawCompassIcons;
 
 vmCvar_t cg_autoactivate;
 
@@ -299,7 +301,6 @@ vmCvar_t cl_demooffset;
 vmCvar_t cl_waverecording;
 vmCvar_t cl_wavefilename;
 vmCvar_t cl_waveoffset;
-vmCvar_t cg_recording_statusline;
 
 vmCvar_t cg_announcer;
 vmCvar_t cg_hitSounds;
@@ -354,6 +355,7 @@ vmCvar_t cg_scoreboard;
 vmCvar_t cg_quickchat;
 
 vmCvar_t cg_drawspeed;
+vmCvar_t cg_drawUnit;
 
 vmCvar_t cg_visualEffects;
 vmCvar_t cg_bannerTime;
@@ -365,6 +367,15 @@ vmCvar_t cg_shoutcastTeamName2;
 vmCvar_t cg_shoutcastDrawHealth;
 vmCvar_t cg_shoutcastGrenadeTrail;
 vmCvar_t cg_shoutcastDrawMinimap;
+
+vmCvar_t cg_chatX;
+vmCvar_t cg_chatY;
+vmCvar_t cg_chatScale;
+vmCvar_t cg_chatAlpha;
+vmCvar_t cg_chatBackgroundAlpha;
+vmCvar_t cg_chatShadow;
+vmCvar_t cg_chatFlags;
+vmCvar_t cg_chatLineWidth;
 
 typedef struct
 {
@@ -379,6 +390,7 @@ static cvarTable_t cvarTable[] =
 {
 	{ &cg_autoswitch,             "cg_autoswitch",             "2",           CVAR_ARCHIVE,                 0 },
 	{ &cg_drawGun,                "cg_drawGun",                "1",           CVAR_ARCHIVE,                 0 },
+	{ &cg_weapAnims,              "cg_weapAnims",              "15",          CVAR_ARCHIVE,                 0 },
 	{ &cg_gun_frame,              "cg_gun_frame",              "0",           CVAR_TEMP,                    0 },
 	{ &cg_cursorHints,            "cg_cursorHints",            "1",           CVAR_ARCHIVE,                 0 },
 	{ &cg_zoomDefaultSniper,      "cg_zoomDefaultSniper",      "20",          CVAR_ARCHIVE,                 0 },   // changed per atvi req
@@ -418,6 +430,7 @@ static cvarTable_t cvarTable[] =
 	{ &cg_centertime,             "cg_centertime",             "5",           CVAR_ARCHIVE,                 0 },   // changed from 3 to 5
 	{ &cg_bobbing,                "cg_bobbing",                "1",           CVAR_ARCHIVE,                 0 },
 	{ &cg_drawEnvAwareness,       "cg_drawEnvAwareness",       "1",           CVAR_ARCHIVE,                 0 },
+	{ &cg_drawCompassIcons,       "cg_drawCompassIcons",       "1",           CVAR_ARCHIVE,                 0 },
 
 	{ &cg_autoactivate,           "cg_autoactivate",           "1",           CVAR_ARCHIVE,                 0 },
 
@@ -570,7 +583,6 @@ static cvarTable_t cvarTable[] =
 	{ &cl_waverecording,          "cl_waverecording",          "0",           CVAR_ROM,                     0 },
 	{ &cl_wavefilename,           "cl_wavefilename",           "",            CVAR_ROM,                     0 },
 	{ &cl_waveoffset,             "cl_waveoffset",             "0",           CVAR_ROM,                     0 },
-	{ &cg_recording_statusline,   "cg_recording_statusline",   "9",           CVAR_ARCHIVE,                 0 },
 
 	{ &cg_announcer,              "cg_announcer",              "1",           CVAR_ARCHIVE,                 0 },
 	{ &cg_hitSounds,              "cg_hitSounds",              "1",           CVAR_ARCHIVE,                 0 },
@@ -618,11 +630,9 @@ static cvarTable_t cvarTable[] =
 	{ &cg_quickchat,              "cg_quickchat",              "0",           CVAR_ARCHIVE,                 0 },
 
 	{ &cg_drawspeed,              "cg_drawspeed",              "0",           CVAR_ARCHIVE,                 0 },
+	{ &cg_drawUnit,               "cg_drawUnit",               "0",           CVAR_ARCHIVE,                 0 },
 
 	{ &cg_visualEffects,          "cg_visualEffects",          "1",           CVAR_ARCHIVE,                 0 },    // Draw visual effects (i.e : airstrike plane, debris ...)
-	{ &cg_bannerTime,             "cg_bannerTime",             "10000",       CVAR_ARCHIVE,                 0 },
-
-	{ &cg_visualEffects,          "cg_visualEffects",          "1",           CVAR_ARCHIVE,                 0 },   // Draw visual effects (i.e : airstrike plane, debris ...)
 	{ &cg_bannerTime,             "cg_bannerTime",             "10000",       CVAR_ARCHIVE,                 0 },
 
 	{ &cg_shoutcastDrawPlayers,   "cg_shoutcastDrawPlayers",   "1",           CVAR_ARCHIVE,                 0 },
@@ -632,6 +642,15 @@ static cvarTable_t cvarTable[] =
 	{ &cg_shoutcastDrawHealth,    "cg_shoutcastDrawHealth",    "0",           CVAR_ARCHIVE,                 0 },
 	{ &cg_shoutcastGrenadeTrail,  "cg_shoutcastGrenadeTrail",  "0",           CVAR_ARCHIVE,                 0 },
 	{ &cg_shoutcastDrawMinimap,   "cg_shoutcastDrawMinimap",   "1",           CVAR_ARCHIVE,                 0 },
+
+	{ &cg_chatX,                  "cg_chatX",                  "160",         CVAR_ARCHIVE,                 0 },
+	{ &cg_chatY,                  "cg_chatY",                  "478",         CVAR_ARCHIVE,                 0 },
+	{ &cg_chatScale,              "cg_chatScale",              "1.0",         CVAR_ARCHIVE,                 0 },
+	{ &cg_chatAlpha,              "cg_chatAlpha",              "1.0",         CVAR_ARCHIVE,                 0 },
+	{ &cg_chatBackgroundAlpha,    "cg_chatBackgroundAlpha",    "0.66",        CVAR_ARCHIVE,                 0 },
+	{ &cg_chatShadow,             "cg_chatShadow",             "0",           CVAR_ARCHIVE,                 0 },
+	{ &cg_chatFlags,              "cg_chatFlags",              "1",           CVAR_ARCHIVE,                 0 },
+	{ &cg_chatLineWidth,          "cg_chatLineWidth",          "70",          CVAR_ARCHIVE,                 0 },
 };
 
 static const unsigned int cvarTableSize = sizeof(cvarTable) / sizeof(cvarTable[0]);
@@ -1759,12 +1778,12 @@ static void CG_RegisterGraphics(void)
 	cgs.media.medicReviveShader     = trap_R_RegisterShader("sprites/medic_revive");
 	cgs.media.disguisedShader       = trap_R_RegisterShader("sprites/undercover");
 
-	cgs.media.constructShader = trap_R_RegisterShader("sprites/construct");
-	cgs.media.destroyShader   = trap_R_RegisterShader("sprites/destroy");
-	cgs.media.escortShader    = trap_R_RegisterShader("sprites/escort");
-	cgs.media.attackShader    = trap_R_RegisterShader("sprites/attack");
-	cgs.media.defendShader    = trap_R_RegisterShader("sprites/defend");
-	cgs.media.regroupShader   = trap_R_RegisterShader("sprites/regroup");
+	cgs.media.constructShader = trap_R_RegisterShaderNoMip("sprites/construct");
+	cgs.media.destroyShader   = trap_R_RegisterShaderNoMip("sprites/destroy");
+	cgs.media.escortShader    = trap_R_RegisterShaderNoMip("sprites/escort");
+	cgs.media.attackShader    = trap_R_RegisterShaderNoMip("sprites/attack");
+	cgs.media.defendShader    = trap_R_RegisterShaderNoMip("sprites/defend");
+	cgs.media.regroupShader   = trap_R_RegisterShaderNoMip("sprites/regroup");
 
 	cgs.media.voiceChatShader = trap_R_RegisterShader("sprites/voiceChat");
 	cgs.media.balloonShader   = trap_R_RegisterShader("sprites/balloon3");

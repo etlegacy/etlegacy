@@ -40,6 +40,7 @@
 #ifndef INCLUDE_CG_LOCAL_H
 #define INCLUDE_CG_LOCAL_H
 
+#include <stddef.h>
 #include "../qcommon/q_shared.h"
 #include "../qcommon/q_unicode.h"
 #include "../renderercommon/tr_types.h"
@@ -151,6 +152,16 @@
 // 1 game unit == 1 inch system from RTCW and ET
 #define UNIT_TO_FEET 0.0833333f
 #define UNIT_TO_METER 0.0254f
+
+// speed constants
+#define SPEED_US_TO_KPH   15.58f
+#define SPEED_US_TO_MPH   23.44f
+
+// gun animations
+#define WEAPANIM_IDLE    0x01
+#define WEAPANIM_FIRING  0x02
+#define WEAPANIM_RELOAD  0x04
+#define WEAPANIM_SWITCH  0x08
 
 /**
  * @struct specLabel_s
@@ -2641,6 +2652,7 @@ extern vmCvar_t cg_gun_x;
 extern vmCvar_t cg_gun_y;
 extern vmCvar_t cg_gun_z;
 extern vmCvar_t cg_drawGun;
+extern vmCvar_t cg_weapAnims;
 extern vmCvar_t cg_cursorHints;
 extern vmCvar_t cg_letterbox;
 extern vmCvar_t cg_tracerChance;
@@ -2651,6 +2663,7 @@ extern vmCvar_t cg_autoswitch;
 extern vmCvar_t cg_fov;
 extern vmCvar_t cg_muzzleFlash;
 extern vmCvar_t cg_drawEnvAwareness;
+extern vmCvar_t cg_drawCompassIcons;
 
 extern vmCvar_t cg_zoomDefaultSniper;
 
@@ -2775,7 +2788,6 @@ extern vmCvar_t cl_demooffset;
 extern vmCvar_t cl_waverecording;
 extern vmCvar_t cl_wavefilename;
 extern vmCvar_t cl_waveoffset;
-extern vmCvar_t cg_recording_statusline;
 
 extern vmCvar_t cg_announcer;
 extern vmCvar_t cg_hitSounds;
@@ -2829,6 +2841,7 @@ extern vmCvar_t cg_scoreboard;
 extern vmCvar_t cg_quickchat;
 
 extern vmCvar_t cg_drawspeed;
+extern vmCvar_t cg_drawUnit;
 
 extern vmCvar_t cg_visualEffects;  ///< turn invisible (0) / visible (1) visual effect (i.e airstrike plane, debris ...)
 extern vmCvar_t cg_bannerTime;
@@ -2840,6 +2853,15 @@ extern vmCvar_t cg_shoutcastTeamName2;
 extern vmCvar_t cg_shoutcastDrawHealth;
 extern vmCvar_t cg_shoutcastGrenadeTrail;
 extern vmCvar_t cg_shoutcastDrawMinimap;
+
+extern vmCvar_t cg_chatX;
+extern vmCvar_t cg_chatY;
+extern vmCvar_t cg_chatScale;
+extern vmCvar_t cg_chatAlpha;
+extern vmCvar_t cg_chatBackgroundAlpha;
+extern vmCvar_t cg_chatShadow;
+extern vmCvar_t cg_chatFlags;
+extern vmCvar_t cg_chatLineWidth;
 
 // local clock flags
 #define LOCALTIME_ON                0x01
@@ -2970,7 +2992,7 @@ const char *CG_TranslateString(const char *string);
 
 void CG_InitStatsDebug(void);
 void CG_StatsDebugAddText(const char *text);
-qhandle_t CG_GetCompassIcon(entityState_t *ent, qboolean drawAllVoicesChat, qboolean drawFireTeam, qboolean drawPrimaryObj, char *name);
+qhandle_t CG_GetCompassIcon(entityState_t *ent, qboolean drawAllVoicesChat, qboolean drawFireTeam, qboolean drawPrimaryObj, qboolean drawSecondaryObj, char *name);
 void CG_DrawCompassIcon(float x, float y, float w, float h, vec3_t origin, vec3_t dest, qhandle_t shader, float dstScale, float baseSize);
 
 void CG_AddLagometerFrameInfo(void);
@@ -3005,6 +3027,7 @@ void CG_DrawUpperRight(void);
 void CG_SetHud(void);
 void CG_DrawActiveHud(void);
 void CG_DrawGlobalHud(void);
+void CG_DrawDemoMessage(void);
 
 void CG_Text_PaintChar_Ext(float x, float y, float w, float h, float scalex, float scaley, float s, float t, float s2, float t2, qhandle_t hShader);
 void CG_Text_PaintChar(float x, float y, float width, float height, float scale, float s, float t, float s2, float t2, qhandle_t hShader);
@@ -3996,7 +4019,7 @@ typedef struct hudComponent_s
 typedef struct hudStructure_s
 {
 	int hudnumber;
-	hudComponent_t compas;
+	hudComponent_t compass;
 	hudComponent_t staminabar;
 	hudComponent_t breathbar;
 	hudComponent_t healthbar;
@@ -4012,7 +4035,7 @@ typedef struct hudStructure_s
 	hudComponent_t powerups;
 	hudComponent_t hudhead;
 
-	hudComponent_t cursorhint;
+	hudComponent_t cursorhints;
 	hudComponent_t weaponstability;
 	hudComponent_t livesleft;
 
@@ -4025,6 +4048,7 @@ typedef struct hudStructure_s
 	hudComponent_t spectatortext;
 	hudComponent_t limbotext;
 	hudComponent_t followtext;
+	hudComponent_t demotext;
 
 } hudStucture_t;
 

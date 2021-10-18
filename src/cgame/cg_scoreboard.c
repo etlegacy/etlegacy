@@ -278,7 +278,15 @@ int WM_DrawObjectives(int x, int y, int width, float fade)
 
 		if (cgs.gamestate != GS_PLAYING)
 		{
-			s = va("%s ^7%s", CG_TranslateString("MISSION TIME:"), CG_TranslateString("WARMUP"));
+			msec = (int)(cgs.timelimit * 60000.f); // 60.f * 1000.f
+
+			seconds  = msec / 1000;
+			mins     = seconds / 60;
+			seconds -= mins * 60;
+			tens     = seconds / 10;
+			seconds -= tens * 10;
+
+			s = va("%s   ^7%2.f:%i%i", CG_TranslateString("MISSION TIME:"), (float)mins, tens, seconds);
 		}
 		else if (msec < 0 && cgs.timelimit > 0.0f)
 		{
@@ -860,7 +868,7 @@ static int WM_DrawInfoLine(int x, int y, float fade)
 	if (cgs.currentRound)
 	{
 		// first round
-		s = va(CG_TranslateString("CLOCK IS NOW SET TO %s!"), WM_TimeToString(cgs.nextTimeLimit * 60000.f)); // 60.f * 1000.f
+		s = va(CG_TranslateString("CLOCK IS NOW SET TO ^7%s^9!"), WM_TimeToString(cgs.nextTimeLimit * 60000.f)); // 60.f * 1000.f
 	}
 	else
 	{
@@ -869,7 +877,7 @@ static int WM_DrawInfoLine(int x, int y, float fade)
 		{
 			if (winner != defender)
 			{
-				s = "ALLIES SUCCESSFULLY BEAT THE CLOCK!";
+				s = va("ALLIES SUCCESSFULLY BEAT THE CLOCK BY ^3%s^9!", WM_TimeToString(cgs.timelimit * 60000.f - cgs.nextTimeLimit * 60000.f));
 			}
 			else
 			{
@@ -880,7 +888,7 @@ static int WM_DrawInfoLine(int x, int y, float fade)
 		{
 			if (winner != defender)
 			{
-				s = "AXIS SUCCESSFULLY BEAT THE CLOCK!";
+				s = va("AXIS SUCCESSFULLY BEAT THE CLOCK BY ^3%s^9!", WM_TimeToString(cgs.timelimit * 60000.f - cgs.nextTimeLimit * 60000.f));
 			}
 			else
 			{

@@ -371,6 +371,8 @@ vmCvar_t g_debugForSingleClient;
 
 vmCvar_t g_suddenDeath;
 
+vmCvar_t g_dropObjDelay;
+
 cvarTable_t gameCvarTable[] =
 {
 	// don't override the cheat state set by the system
@@ -661,6 +663,7 @@ cvarTable_t gameCvarTable[] =
 	{ &g_xpSaver,                         "g_xpSaver",                         "0",                          CVAR_ARCHIVE,                                    0, qfalse, qfalse },
 	{ &g_playerHitBoxHeight,              "g_playerHitBoxHeight",              "36",                         CVAR_ARCHIVE | CVAR_SERVERINFO,                  0, qfalse, qfalse },
 	{ &g_suddenDeath,                     "g_suddenDeath",                     "0",                          CVAR_ARCHIVE,                                    0, qtrue,  qfalse },
+	{ &g_dropObjDelay,                    "g_dropObjDelay",                    "3000",                       CVAR_ARCHIVE,                                    0, qtrue,  qfalse },
 };
 
 /**
@@ -3542,6 +3545,16 @@ void ExitLevel(void)
 
 	switch (g_gametype.integer)
 	{
+	case GT_WOLF_STOPWATCH:
+	{
+		if (!g_currentRound.integer)
+		{
+			// reset timer
+			trap_Cvar_Set("g_nextTimeLimit", "0");
+		}
+		trap_SendConsoleCommand(EXEC_APPEND, "vstr nextmap\n");
+		break;
+	}
 	case GT_WOLF_CAMPAIGN:
 	{
 		g_campaignInfo_t *campaign = &g_campaigns[level.currentCampaign];
@@ -3842,23 +3855,15 @@ void G_LogExit(const char *string)
 		trap_GetConfigstring(CS_MULTI_MAPWINNER, cs, sizeof(cs));
 		winner = Q_atoi(Info_ValueForKey(cs, "w"));
 
-		if (!g_currentRound.integer)
+		if (winner == defender)
 		{
-			if (winner == defender)
-			{
-				// if the defenders won, use default timelimit
-				trap_Cvar_Set("g_nextTimeLimit", va("%f", g_timelimit.value));
-			}
-			else
-			{
-				// use remaining time as next timer
-				trap_Cvar_Set("g_nextTimeLimit", va("%f", (level.timeCurrent - level.startTime) / 60000.f));
-			}
+			// if the defenders won, use default timelimit
+			trap_Cvar_Set("g_nextTimeLimit", va("%f", g_timelimit.value));
 		}
 		else
 		{
-			// reset timer
-			trap_Cvar_Set("g_nextTimeLimit", "0");
+			// use remaining time as next timer
+			trap_Cvar_Set("g_nextTimeLimit", va("%f", (level.timeCurrent - level.startTime) / 60000.f));
 		}
 
 		trap_Cvar_Set("g_currentRound", va("%i", !g_currentRound.integer));
@@ -4286,7 +4291,7 @@ void CheckExitRules(void)
 				}
 				else
 				{
-					if (g_suddenDeath.integer && DynamiteOnObjective())
+					if (g_suddenDeath.integer && DynamiteOnObjective() && g_gametype.integer != GT_WOLF_STOPWATCH)
 					{
 						level.suddenDeath = 1;
 						return;
@@ -4431,6 +4436,19 @@ void CheckVote(void)
 	    level.voteInfo.vote_fn == NULL ||
 	    level.time - level.voteInfo.voteTime < 1000)
 	{
+		return;
+	}
+
+	if (level.voteInfo.voteCanceled)
+	{
+		level.voteInfo.voteTime     = 0;
+		level.voteInfo.voteCanceled = 0;
+
+		trap_SetConfigstring(CS_VOTE_TIME, "");
+
+		AP(va("cpm \"^1Vote CANCELED!\n\""));
+		G_LogPrintf("Vote CANCELED!\n");
+
 		return;
 	}
 

@@ -1444,6 +1444,8 @@ const void *RB_SwapBuffers(const void *data)
 		RB_ShowImages();
 	}
 
+	R_MainFBO(qfalse);
+
 	RB_GammaScreen();
 
 	cmd = ( const swapBuffersCommand_t * ) data;

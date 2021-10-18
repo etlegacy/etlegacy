@@ -143,15 +143,32 @@ void R_ScreenGamma(void)
 		glActiveTextureARB(GL_TEXTURE0_ARB);
 		glClientActiveTextureARB(GL_TEXTURE0_ARB);
 
-		GL_Bind(screenImage);
-		// We will copy the current buffer into the screenImage
-		glCopyTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, 0, 0, glConfig.vidWidth, glConfig.vidHeight, 0);
+		// a hack to fix the eye burning gamma bug during map loads
+		GLuint fboTex = R_MainFBOTexture();
 
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		if (!fboTex)
+		{
+			GL_Bind(screenImage);
+			// We will copy the current buffer into the screenImage
+			glCopyTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, 0, 0, glConfig.vidWidth, glConfig.vidHeight, 0);
 
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		}
+		else
+		{
+			if (glConfig.realVidHeight != glConfig.vidHeight && glConfig.realVidWidth != glConfig.vidHeight)
+			{
+				glViewport(0, 0, glConfig.realVidWidth, glConfig.realVidHeight);
+
+				glScissor(0, 0, glConfig.realVidWidth, glConfig.realVidHeight);
+				glOrtho(0, glConfig.realVidWidth, glConfig.realVidHeight, 0, 0, 1);
+			}
+			glBindTexture(GL_TEXTURE_2D, fboTex);
+		}
 
 		glUniform1f(gammaProgram.gammaUniform, r_gamma->value);
 
@@ -159,18 +176,30 @@ void R_ScreenGamma(void)
 		// and we want to be sure that R1 runs even with a toaster.
 		glBegin(GL_QUADS);
 		{
-			glTexCoord2f(0.0, 0.0);
+			glTexCoord2f(0.0f, 0.0f);
 			glVertex3f(-1.0f, -1.0f, 0.0f);
-			glTexCoord2f(1.0, 0.0);
+			glTexCoord2f(1.0f, 0.0f);
 			glVertex3f(1.0f, -1.0f, 0.0f);
-			glTexCoord2f(1.0, 1.0);
+			glTexCoord2f(1.0f, 1.0f);
 			glVertex3f(1.0f, 1.0f, 0.0f);
-			glTexCoord2f(0.0, 1.0);
+			glTexCoord2f(0.0f, 1.0f);
 			glVertex3f(-1.0f, 1.0f, 0.0f);
 		}
 		glEnd();
 
 		glUseProgramObjectARB(0);
+
+		if (glConfig.realVidHeight != glConfig.vidHeight && glConfig.realVidWidth != glConfig.vidHeight)
+		{
+			glViewport(0, 0, glConfig.vidWidth, glConfig.vidHeight);
+
+			glScissor(0, 0, glConfig.vidWidth, glConfig.vidHeight);
+			glOrtho(0, glConfig.vidWidth, glConfig.vidHeight, 0, 0, 1);
+		}
+	}
+	else
+	{
+		R_MainFBOBlit();
 	}
 }
 

@@ -614,8 +614,8 @@ static void GLimp_WindowLocation(glconfig_t *glConfig, int *x, int *y, const qbo
 	}
 
 	// Make sure we have at least half of the game screen visible on the display its supposed to be in
-	if ((tmpX + (glConfig->vidWidth / 2)) > rect.x && (tmpX + (glConfig->vidWidth / 2)) < (rect.x + rect.w)
-	    && (tmpY + (glConfig->vidHeight / 2)) > rect.y && (tmpY + (glConfig->vidHeight / 2)) < (rect.y + rect.h))
+	if ((tmpX + (glConfig->realVidWidth / 2)) > rect.x && (tmpX + (glConfig->realVidWidth / 2)) < (rect.x + rect.w)
+	    && (tmpY + (glConfig->realVidHeight / 2)) > rect.y && (tmpY + (glConfig->realVidHeight / 2)) < (rect.y + rect.h))
 	{
 		*x = tmpX;
 		*y = tmpY;
@@ -712,6 +712,10 @@ static int GLimp_SetMode(glconfig_t *glConfig, int mode, qboolean fullscreen, qb
 		Com_Printf("invalid mode\n");
 		return RSERR_INVALID_MODE;
 	}
+
+	glConfig->realVidWidth = glConfig->vidWidth;
+	glConfig->realVidHeight = glConfig->vidHeight;
+
 	Com_Printf("%dx%d\n", glConfig->vidWidth, glConfig->vidHeight);
 
 	GLimp_WindowLocation(glConfig, &x, &y, fullscreen);
@@ -1092,8 +1096,8 @@ void GLimp_Splash(glconfig_t *glConfig)
 		);
 
 	SDL_Rect dstRect;
-	dstRect.x = glConfig->vidWidth / 2 - splashImage->w / 2;
-	dstRect.y = glConfig->vidHeight / 2 - splashImage->h / 2;
+	dstRect.x = glConfig->realVidWidth / 2 - splashImage->w / 2;
+	dstRect.y = glConfig->realVidHeight / 2 - splashImage->h / 2;
 	dstRect.w = splashImage->w;
 	dstRect.h = splashImage->h;
 

@@ -3087,6 +3087,16 @@ climbdismount
 
 DEATH
 {
+	movetype proning, suicide
+	{
+		both prone_die1
+	}
+
+	movetype crouching, suicide
+	{
+		both death_crouch
+	}
+
 	suicide
 	{
 		both death_rifle_head_2

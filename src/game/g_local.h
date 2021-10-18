@@ -1076,6 +1076,7 @@ typedef struct voteInfo_s
 	char vote_value[VOTE_MAXSTRING];    ///< Desired vote item setting.
 	int voteCaller;                     ///< id of the vote caller
 	int voteTeam;                       ///< id of the vote caller's team
+	int voteCanceled;
 } voteInfo_t;
 
 /**
@@ -2130,6 +2131,7 @@ extern vmCvar_t g_debugForSingleClient;
 #define G_SpectatorInactivityValue (g_spectatorInactivity.integer ? g_spectatorInactivity.integer : 60)
 
 extern vmCvar_t g_suddenDeath;
+extern vmCvar_t g_dropObjDelay;
 
 /**
  * @struct GeoIPTag

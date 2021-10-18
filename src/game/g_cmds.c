@@ -1230,7 +1230,7 @@ void Cmd_DropObjective_f(gentity_t *ent)
 		return;
 	}
 
-	if (level.time - ent->client->pickObjectiveTime < 10000)
+	if (level.time - ent->client->pickObjectiveTime < g_dropObjDelay.integer)
 	{
 		CP("cp \"You can't drop objective right after picking it up.\"");
 		return;
@@ -1614,7 +1614,9 @@ qboolean SetTeam(gentity_t *ent, const char *s, qboolean force, weapon_t w1, wea
 
 	if (client->sess.sessionTeam == TEAM_AXIS || client->sess.sessionTeam == TEAM_ALLIES)
 	{
-		if (g_autoFireteams.integer)
+		switch (g_autoFireteams.integer)
+		{
+		case 1:
 		{
 			fireteamData_t *ft = G_FindFreePublicFireteam(client->sess.sessionTeam);
 
@@ -1628,6 +1630,24 @@ qboolean SetTeam(gentity_t *ent, const char *s, qboolean force, weapon_t w1, wea
 				trap_SendServerCommand(ent - g_entities, "aftc -1");
 				ent->client->pers.autofireteamCreateEndTime = level.time + 20500;
 			}
+			break;
+		}
+		case 2:
+		{
+			fireteamData_t *ft = G_FindFreePublicFireteam(client->sess.sessionTeam);
+
+			if (ft)
+			{
+				G_AddClientToFireteam(ent - g_entities, ft->joinOrder[0]);
+			}
+			else
+			{
+				G_RegisterFireteam(ent - g_entities);
+			}
+			break;
+		}
+		default:
+			break;
 		}
 	}
 
@@ -3546,11 +3566,23 @@ void Cmd_Vote_f(gentity_t *ent)
 		trap_SendServerCommand(ent - g_entities, "print \"No vote in progress.\n\"");
 		return;
 	}
+
+	trap_Argv(1, msg, sizeof(msg));
+
 	if (ent->client->ps.eFlags & EF_VOTED)
 	{
-		trap_SendServerCommand(ent - g_entities, "print \"Vote already cast.\n\"");
+		if (level.voteInfo.voteCaller == (ent - g_entities) && (tolower(msg[0]) == 'n' || msg[0] == '0'))
+		{
+			level.voteInfo.voteCanceled = 1;
+		}
+		else
+		{
+			trap_SendServerCommand(ent - g_entities, "print \"Vote already cast.\n\"");
+		}
+
 		return;
 	}
+
 	if (ent->client->sess.sessionTeam == TEAM_SPECTATOR)
 	{
 		trap_SendServerCommand(ent - g_entities, "print \"Not allowed to vote as spectator.\n\"");
@@ -3590,8 +3622,6 @@ void Cmd_Vote_f(gentity_t *ent)
 	trap_SendServerCommand(ent - g_entities, "print \"Vote cast.\n\"");
 
 	ent->client->ps.eFlags |= EF_VOTED;
-
-	trap_Argv(1, msg, sizeof(msg));
 
 	if (tolower(msg[0]) == 'y' || msg[0] == '1')
 	{

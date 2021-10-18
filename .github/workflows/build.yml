@@ -141,6 +141,10 @@ jobs:
 
   android-mod:
     runs-on: ubuntu-18.04
+    env:
+          SIGNING_KEY_ALIAS: ${{ secrets.ANDROID_SIGN_APK_ALLIAS }}
+          SIGNING_KEY_PASSWORD: ${{ secrets.ANDROID_SIGN_APK_PASS }}
+          SIGNING_STORE_PASSWORD: ${{ secrets.ANDROID_SIGN_APK_PASS }}
     container:
       image: rafal1137/etl_android
     steps:
@@ -382,6 +386,10 @@ jobs:
 
   android:
     runs-on: ubuntu-18.04
+    env:
+          SIGNING_KEY_ALIAS: ${{ secrets.ANDROID_SIGN_APK_ALLIAS }}
+          SIGNING_KEY_PASSWORD: ${{ secrets.ANDROID_SIGN_APK_PASS }}
+          SIGNING_STORE_PASSWORD: ${{ secrets.ANDROID_SIGN_APK_PASS }}
     needs: [ lnx32 ]
     container:
       image: rafal1137/etl_android
@@ -417,29 +425,19 @@ jobs:
           chmod -R 775 $GITHUB_WORKSPACE/NDK_ETL/ndk-bundle
           echo "cmake.dir=/usr/" | tee -a local.properties
           echo "ndk.dir=$GITHUB_WORKSPACE/NDK_ETL/ndk-bundle" | tee -a local.properties
-          ./gradlew clean assembleDebug
+          ./gradlew clean assembleRelease
           ls -R
 
       - name: Rename APK
         run: |
-          for FILE in ./app/build/outputs/apk/debug/*; do mv $FILE ${FILE%-*}.apk; done
-          ls -R
-
-#      - name: Sign app APK
-#        uses: r0adkll/sign-android-release@v1
-#        id: sign_app
-#        with:
-#          releaseDirectory: app/build/outputs/apk/release
-#          signingKeyBase64: ${{ secrets.SIGNING_KEY }}
-#          alias: ${{ secrets.ALIAS }}
-#          keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
-#          keyPassword: ${{ secrets.KEY_PASSWORD }}
+          for FILE in ./app/build/outputs/apk/release/*; do mv $FILE ${FILE%-*}.apk; done
+          ls app/build/outputs/apk/release
 
       - uses: actions/upload-artifact@v2
         with:
           name: android-packages
 #          path: ${{steps.sign_app.outputs.signedReleaseFile}}
-          path: app/build/outputs/apk/debug/etlegacy*.apk
+          path: app/build/outputs/apk/release/etlegacy*.apk
 
 #   _    _           _                       _                         _      _____   _
 #  | |  | |         | |                     | |                       | |    / ____| | |
@@ -453,7 +451,7 @@ jobs:
   upload:
     runs-on: ubuntu-18.04
     needs: [ lnx32, lnx64, osx, win, android ]
-    if: github.ref == 'refs/heads/master'
+    if: github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/v')
     steps:
       - uses: geekyeggo/delete-artifact@v1
         with:
@@ -497,7 +495,8 @@ jobs:
   docker:
     runs-on: ubuntu-18.04
     needs: [ lnx64 ]
-    if: github.ref == 'refs/heads/master'
+    # only run on master when there is a release tag
+    if: github.event.base_ref == 'refs/heads/master' && startsWith(github.ref, 'refs/tags/v')
     steps:
       - uses: actions/checkout@v2
         with:
@@ -531,7 +530,7 @@ jobs:
           echo ::set-output name=tag_exists::$(curl -s -o /dev/null -w "%{http_code}" https://hub.docker.com/v1/repositories/etlegacy/server/tags/${{ steps.vars.outputs.tag }} 2>/dev/null)
 
       - name: Build and push the tagged Docker image
-        if: ${{ steps.vars.outputs.tag_exists == '404' }}
+        if: ${{ steps.vars.outputs.tag_exists == '404' }} && ${{ github.event_name != 'schedule' }}
         working-directory: build/package
         run: |
           docker build . --file Dockerfile --tag etlegacy/server:${{ steps.vars.outputs.tag }}

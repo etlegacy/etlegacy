@@ -78,6 +78,56 @@ hudStucture_t hud0;
 
 lagometer_t lagometer;
 
+/**
+ * @brief Using the stringizing operator to save typing...
+ */
+#define HUDF(x) # x, offsetof(hudStucture_t, x), qfalse
+
+typedef struct
+{
+	const char *name;
+	size_t offset;
+	qboolean isAlias;
+} hudComponentFields_t;
+
+/**
+* @var hudComponentFields
+* @brief for accessing hudStucture_t's fields in a loop
+*/
+static const hudComponentFields_t hudComponentFields[] =
+{
+	{ HUDF(compass)         },
+	{ "compas", offsetof(hudStucture_t, compass), qtrue}, // v2.78 backward compatibility
+	{ HUDF(staminabar)      },
+	{ HUDF(breathbar)       },
+	{ HUDF(healthbar)       },
+	{ HUDF(weaponchargebar) },
+	{ "weaponchangebar", offsetof(hudStucture_t, weaponchargebar), qtrue}, // v2.78 backward compatibility
+	{ HUDF(healthtext)      },
+	{ HUDF(xptext)          },
+	{ HUDF(ranktext)        },
+	{ HUDF(statsdisplay)    },
+	{ HUDF(weaponicon)      },
+	{ HUDF(weaponammo)      },
+	{ HUDF(fireteam)        },
+	{ HUDF(popupmessages)   },
+	{ HUDF(powerups)        },
+	{ HUDF(hudhead)         },
+	{ HUDF(cursorhints)     },
+	{ HUDF(weaponstability) },
+	{ HUDF(livesleft)       },
+	{ HUDF(roundtimer)      },
+	{ HUDF(reinforcement)   },
+	{ HUDF(spawntimer)      },
+	{ HUDF(localtime)       },
+	{ HUDF(votetext)        },
+	{ HUDF(spectatortext)   },
+	{ HUDF(limbotext)       },
+	{ HUDF(followtext)      },
+	{ HUDF(demotext)        },
+	{ NULL, 0               },
+};
+
 /*
  * @brief CG_getRect
  * @param x
@@ -128,7 +178,7 @@ void CG_setDefaultHudValues(hudStucture_t *hud)
 {
 	// the Default hud
 	hud->hudnumber       = 0;
-	hud->compas          = CG_getComponent((Ccg_WideX(SCREEN_WIDTH) - 100 - 20 - 16), 16, 100 + 32, 100 + 32, qtrue, STYLE_NORMAL);
+	hud->compass         = CG_getComponent((Ccg_WideX(SCREEN_WIDTH) - 100 - 20 - 16), 16, 100 + 32, 100 + 32, qtrue, STYLE_NORMAL);
 	hud->staminabar      = CG_getComponent(4, SCREEN_HEIGHT - 92, 12, 72, qtrue, STYLE_NORMAL);
 	hud->breathbar       = CG_getComponent(4, SCREEN_HEIGHT - 92, 12, 72, qtrue, STYLE_NORMAL);
 	hud->healthbar       = CG_getComponent(24, SCREEN_HEIGHT - 92, 12, 72, qtrue, STYLE_NORMAL);
@@ -143,7 +193,7 @@ void CG_setDefaultHudValues(hudStucture_t *hud)
 	hud->popupmessages   = CG_getComponent(4, 360, 72, 72, qtrue, STYLE_NORMAL);
 	hud->powerups        = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 40, SCREEN_HEIGHT - 140, 36, 36, qtrue, STYLE_NORMAL);
 	hud->hudhead         = CG_getComponent(44, SCREEN_HEIGHT - 92, 62, 80, qtrue, STYLE_NORMAL);
-	hud->cursorhint      = CG_getComponent(.5f * SCREEN_WIDTH - .5f * 48, 260, 48, 48, qtrue, STYLE_NORMAL); // FIXME: widescreen ?
+	hud->cursorhints     = CG_getComponent(.5f * SCREEN_WIDTH - .5f * 48, 260, 48, 48, qtrue, STYLE_NORMAL);  // FIXME: widescreen ?
 	hud->weaponstability = CG_getComponent(50, 208, 10, 64, qtrue, STYLE_NORMAL);
 	hud->livesleft       = CG_getComponent(0, 0, 0, 0, qtrue, STYLE_NORMAL);
 	hud->reinforcement   = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 55, SCREEN_HEIGHT - 70, 0, 0, qtrue, STYLE_NORMAL);
@@ -154,6 +204,7 @@ void CG_setDefaultHudValues(hudStucture_t *hud)
 	hud->spectatortext   = CG_getComponent(8, 188, 0.22f, 0.22f, qtrue, STYLE_NORMAL);
 	hud->limbotext       = CG_getComponent(8, 164, 0.22f, 0.22f, qtrue, STYLE_NORMAL);
 	hud->followtext      = CG_getComponent(8, 164, 0.22f, 0.22f, qtrue, STYLE_NORMAL);
+	hud->demotext        = CG_getComponent(10, 9, 0.22f, 0.22f, qtrue, STYLE_SIMPLE);
 }
 
 /*
@@ -326,6 +377,7 @@ static qboolean CG_ParseHUD(int handle)
 {
 	pc_token_t    token;
 	hudStucture_t temphud;
+	hudStucture_t *hud;
 
 	CG_setDefaultHudValues(&temphud);
 
@@ -334,8 +386,18 @@ static qboolean CG_ParseHUD(int handle)
 		return CG_HUD_ParseError(handle, "expected '{'");
 	}
 
+	if (!trap_PC_ReadToken(handle, &token) || !Q_stricmp(token.string, "hudnumber"))
+	{
+		if (!PC_Int_Parse(handle, &temphud.hudnumber))
+		{
+			return CG_HUD_ParseError(handle, "expected hudnumber as first field");
+		}
+	}
+
 	while (1)
 	{
+		int i;
+
 		if (!trap_PC_ReadToken(handle, &token))
 		{
 			break;
@@ -346,253 +408,25 @@ static qboolean CG_ParseHUD(int handle)
 			break;
 		}
 
-		if (!Q_stricmp(token.string, "hudnumber"))
+		for (i = 0; hudComponentFields[i].name; i++)
 		{
-			if (!PC_Int_Parse(handle, &temphud.hudnumber))
+			if (!Q_stricmp(token.string, hudComponentFields[i].name))
 			{
-				return CG_HUD_ParseError(handle, "expected hudnumber");
+				if (!CG_ParseHudComponent(handle, (hudComponent_t *)((char * )&temphud + hudComponentFields[i].offset)))
+				{
+					return CG_HUD_ParseError(handle, "expected %s", hudComponentFields[i].name);
+				}
+				break;
 			}
-			continue;
 		}
 
-		if (!Q_stricmp(token.string, "compas"))
+		if (!hudComponentFields[i].name)
 		{
-			if (!CG_ParseHudComponent(handle, &temphud.compas))
-			{
-				return CG_HUD_ParseError(handle, "expected compas");
-			}
-			continue;
+			return CG_HUD_ParseError(handle, "unexpected token: %s", token.string);
 		}
-
-		if (!Q_stricmp(token.string, "staminabar"))
-		{
-			if (!CG_ParseHudComponent(handle, &temphud.staminabar))
-			{
-				return CG_HUD_ParseError(handle, "expected staminabar");
-			}
-			continue;
-		}
-
-		if (!Q_stricmp(token.string, "breathbar"))
-		{
-			if (!CG_ParseHudComponent(handle, &temphud.breathbar))
-			{
-				return CG_HUD_ParseError(handle, "expected breathbar");
-			}
-			continue;
-		}
-
-		if (!Q_stricmp(token.string, "healthbar"))
-		{
-			if (!CG_ParseHudComponent(handle, &temphud.healthbar))
-			{
-				return CG_HUD_ParseError(handle, "expected healthbar");
-			}
-			continue;
-		}
-
-		if (!Q_stricmp(token.string, "weaponchangebar"))
-		{
-			if (!CG_ParseHudComponent(handle, &temphud.weaponchargebar))
-			{
-				return CG_HUD_ParseError(handle, "expected weaponchangebar");
-			}
-			continue;
-		}
-
-		if (!Q_stricmp(token.string, "healthtext"))
-		{
-			if (!CG_ParseHudComponent(handle, &temphud.healthtext))
-			{
-				return CG_HUD_ParseError(handle, "expected healthtext");
-			}
-			continue;
-		}
-
-		if (!Q_stricmp(token.string, "xptext"))
-		{
-			if (!CG_ParseHudComponent(handle, &temphud.xptext))
-			{
-				return CG_HUD_ParseError(handle, "expected xptext");
-			}
-			continue;
-		}
-
-		if (!Q_stricmp(token.string, "ranktext"))
-		{
-			if (!CG_ParseHudComponent(handle, &temphud.ranktext))
-			{
-				return CG_HUD_ParseError(handle, "expected ranktext");
-			}
-			continue;
-		}
-
-		if (!Q_stricmp(token.string, "statsdisplay"))
-		{
-			if (!CG_ParseHudComponent(handle, &temphud.statsdisplay))
-			{
-				return CG_HUD_ParseError(handle, "expected statsdisplay");
-			}
-			continue;
-		}
-
-		if (!Q_stricmp(token.string, "weaponicon"))
-		{
-			if (!CG_ParseHudComponent(handle, &temphud.weaponicon))
-			{
-				return CG_HUD_ParseError(handle, "expected weaponicon");
-			}
-			continue;
-		}
-
-		if (!Q_stricmp(token.string, "weaponammo"))
-		{
-			if (!CG_ParseHudComponent(handle, &temphud.weaponammo))
-			{
-				return CG_HUD_ParseError(handle, "expected weaponammo");
-			}
-			continue;
-		}
-
-		if (!Q_stricmp(token.string, "fireteam"))
-		{
-			if (!CG_ParseHudComponent(handle, &temphud.fireteam))
-			{
-				return CG_HUD_ParseError(handle, "expected fireteam");
-			}
-			continue;
-		}
-
-		if (!Q_stricmp(token.string, "popupmessages"))
-		{
-			if (!CG_ParseHudComponent(handle, &temphud.popupmessages))
-			{
-				return CG_HUD_ParseError(handle, "expected popupmessages");
-			}
-			continue;
-		}
-
-		if (!Q_stricmp(token.string, "powerups"))
-		{
-			if (!CG_ParseHudComponent(handle, &temphud.powerups))
-			{
-				return CG_HUD_ParseError(handle, "expected powerups");
-			}
-			continue;
-		}
-
-		if (!Q_stricmp(token.string, "hudhead"))
-		{
-			if (!CG_ParseHudComponent(handle, &temphud.hudhead))
-			{
-				return CG_HUD_ParseError(handle, "expected hudhead");
-			}
-			continue;
-		}
-
-		if (!Q_stricmp(token.string, "cursorhints"))
-		{
-			if (!CG_ParseHudComponent(handle, &temphud.cursorhint))
-			{
-				return CG_HUD_ParseError(handle, "expected cursorhints");
-			}
-			continue;
-		}
-
-		if (!Q_stricmp(token.string, "weaponstability"))
-		{
-			if (!CG_ParseHudComponent(handle, &temphud.weaponstability))
-			{
-				return CG_HUD_ParseError(handle, "expected weaponstability");
-			}
-			continue;
-		}
-
-		if (!Q_stricmp(token.string, "livesleft"))
-		{
-			if (!CG_ParseHudComponent(handle, &temphud.livesleft))
-			{
-				return CG_HUD_ParseError(handle, "expected livesleft");
-			}
-			continue;
-		}
-
-		if (!Q_stricmp(token.string, "roundtimer"))
-		{
-			if (!CG_ParseHudComponent(handle, &temphud.roundtimer))
-			{
-				return CG_HUD_ParseError(handle, "expected roundtimer");
-			}
-			continue;
-		}
-
-		if (!Q_stricmp(token.string, "reinforcement"))
-		{
-			if (!CG_ParseHudComponent(handle, &temphud.reinforcement))
-			{
-				return CG_HUD_ParseError(handle, "expected reinforcement");
-			}
-			continue;
-		}
-
-		if (!Q_stricmp(token.string, "spawntimer"))
-		{
-			if (!CG_ParseHudComponent(handle, &temphud.spawntimer))
-			{
-				return CG_HUD_ParseError(handle, "expected spawntimer");
-			}
-			continue;
-		}
-
-		if (!Q_stricmp(token.string, "localtime"))
-		{
-			if (!CG_ParseHudComponent(handle, &temphud.localtime))
-			{
-				return CG_HUD_ParseError(handle, "expected localtime");
-			}
-			continue;
-		}
-
-		if (!Q_stricmp(token.string, "votetext"))
-		{
-			if (!CG_ParseHudComponent(handle, &temphud.votetext))
-			{
-				return CG_HUD_ParseError(handle, "expected votetext");
-			}
-			continue;
-		}
-
-		if (!Q_stricmp(token.string, "spectatortext"))
-		{
-			if (!CG_ParseHudComponent(handle, &temphud.spectatortext))
-			{
-				return CG_HUD_ParseError(handle, "expected spectatortext");
-			}
-			continue;
-		}
-
-		if (!Q_stricmp(token.string, "limbotext"))
-		{
-			if (!CG_ParseHudComponent(handle, &temphud.limbotext))
-			{
-				return CG_HUD_ParseError(handle, "expected limbotext");
-			}
-			continue;
-		}
-
-		if (!Q_stricmp(token.string, "followtext"))
-		{
-			if (!CG_ParseHudComponent(handle, &temphud.followtext))
-			{
-				return CG_HUD_ParseError(handle, "expected followtext");
-			}
-			continue;
-		}
-
-		return CG_HUD_ParseError(handle, "unexpected token: %s", token.string);
 	}
 
-	hudStucture_t *hud = CG_getHudByNumber(temphud.hudnumber);
+	hud = CG_getHudByNumber(temphud.hudnumber);
 
 	if (!hud)
 	{
@@ -1496,6 +1330,74 @@ static void CG_DrawPowerUps(rectDef_t rect)
 	}
 }
 
+static int lastDemoScoreTime = 0;
+
+/**
+ * @brief CG_DrawDemoMessage
+ */
+void CG_DrawDemoMessage(void)
+{
+	char status[1024];
+	char demostatus[128];
+	char wavestatus[128];
+
+	float         x, y, charHeight, fontScale;
+	hudStucture_t *activehud;
+
+	activehud = CG_GetActiveHUD();
+
+	fontScale = activehud->demotext.location.h;
+	y         = activehud->demotext.location.y;
+	x         = activehud->demotext.location.x;
+
+	if (!activehud->demotext.visible)
+	{
+		return;
+	}
+
+	if (!cl_demorecording.integer && !cl_waverecording.integer && !cg.demoPlayback)
+	{
+		return;
+	}
+
+	// poll for score
+	if ((!lastDemoScoreTime || cg.time > lastDemoScoreTime) && !cg.demoPlayback)
+	{
+		trap_SendClientCommand("score");
+		lastDemoScoreTime = cg.time + 5000; // 5 secs
+	}
+
+	if (activehud->demotext.style == STYLE_NORMAL)
+	{
+		if (cl_demorecording.integer)
+		{
+			Com_sprintf(demostatus, sizeof(demostatus), " demo %s: %ik ", cl_demofilename.string, cl_demooffset.integer / 1024);
+		}
+		else
+		{
+			Q_strncpyz(demostatus, "", sizeof(demostatus));
+		}
+
+		if (cl_waverecording.integer)
+		{
+			Com_sprintf(wavestatus, sizeof(demostatus), " audio %s: %ik ", cl_wavefilename.string, cl_waveoffset.integer / 1024);
+		}
+		else
+		{
+			Q_strncpyz(wavestatus, "", sizeof(wavestatus));
+		}
+	}
+	else
+	{
+		Q_strncpyz(demostatus, "", sizeof(demostatus));
+		Q_strncpyz(wavestatus, "", sizeof(wavestatus));
+	}
+
+	Com_sprintf(status, sizeof(status), "%s%s%s", cg.demoPlayback ? "REPLAY" : "RECORD", demostatus, wavestatus);
+
+	CG_Text_Paint_Ext(x, y, fontScale, fontScale, cg.demoPlayback ? colorYellow : colorRed, status, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+}
+
 /**
  * @brief CG_DrawField
  * @param[in] x
@@ -1651,7 +1553,7 @@ void CG_StatsDebugAddText(const char *text)
  * @param[in] drawPrimaryObj draw primary objective position
  * @return A valid compass icon handle otherwise 0
  */
-qhandle_t CG_GetCompassIcon(entityState_t *ent, qboolean drawAllVoicesChat, qboolean drawFireTeam, qboolean drawPrimaryObj, char *name)
+qhandle_t CG_GetCompassIcon(entityState_t *ent, qboolean drawAllVoicesChat, qboolean drawFireTeam, qboolean drawPrimaryObj, qboolean drawSecondaryObj, char *name)
 {
 	switch (ent->eType)
 	{
@@ -1754,21 +1656,24 @@ qhandle_t CG_GetCompassIcon(entityState_t *ent, qboolean drawAllVoicesChat, qboo
 			}
 		}
 
-		// draw explosives if an engineer
-		if (cg.predictedPlayerState.stats[STAT_PLAYER_CLASS] == PC_ENGINEER ||
-		    (cg.predictedPlayerState.stats[STAT_PLAYER_CLASS] == PC_COVERTOPS && ent->effect1Time == 1))
+		if (drawSecondaryObj)
 		{
-			if (ent->teamNum == 1 && cg.predictedPlayerState.persistant[PERS_TEAM] == TEAM_AXIS)
+			// draw explosives if an engineer
+			if (cg.predictedPlayerState.stats[STAT_PLAYER_CLASS] == PC_ENGINEER ||
+			    (cg.predictedPlayerState.stats[STAT_PLAYER_CLASS] == PC_COVERTOPS && ent->effect1Time == 1))
 			{
-				return 0;
-			}
+				if (ent->teamNum == 1 && cg.predictedPlayerState.persistant[PERS_TEAM] == TEAM_AXIS)
+				{
+					return 0;
+				}
 
-			if (ent->teamNum == 2 && cg.predictedPlayerState.persistant[PERS_TEAM] == TEAM_ALLIES)
-			{
-				return 0;
-			}
+				if (ent->teamNum == 2 && cg.predictedPlayerState.persistant[PERS_TEAM] == TEAM_ALLIES)
+				{
+					return 0;
+				}
 
-			return cgs.media.destroyShader;
+				return cgs.media.destroyShader;
+			}
 		}
 		break;
 	}
@@ -1798,20 +1703,23 @@ qhandle_t CG_GetCompassIcon(entityState_t *ent, qboolean drawAllVoicesChat, qboo
 			}
 		}
 
-		// draw construction if an engineer
-		if (cg.predictedPlayerState.stats[STAT_PLAYER_CLASS] == PC_ENGINEER)
+		if (drawSecondaryObj)
 		{
-			if (ent->teamNum == 1 && cg.predictedPlayerState.persistant[PERS_TEAM] != TEAM_AXIS)
+			// draw construction if an engineer
+			if (cg.predictedPlayerState.stats[STAT_PLAYER_CLASS] == PC_ENGINEER)
 			{
-				return 0;
-			}
+				if (ent->teamNum == 1 && cg.predictedPlayerState.persistant[PERS_TEAM] != TEAM_AXIS)
+				{
+					return 0;
+				}
 
-			if (ent->teamNum == 2 && cg.predictedPlayerState.persistant[PERS_TEAM] != TEAM_ALLIES)
-			{
-				return 0;
-			}
+				if (ent->teamNum == 2 && cg.predictedPlayerState.persistant[PERS_TEAM] != TEAM_ALLIES)
+				{
+					return 0;
+				}
 
-			return cgs.media.constructShader;
+				return cgs.media.constructShader;
+			}
 		}
 		break;
 	}
@@ -1841,14 +1749,18 @@ qhandle_t CG_GetCompassIcon(entityState_t *ent, qboolean drawAllVoicesChat, qboo
 			}
 		}
 
-		// FIXME: show only when relevant
-		if ((ent->teamNum == 1 && cg.predictedPlayerState.persistant[PERS_TEAM] == TEAM_AXIS)
-		    || (ent->teamNum == 2 && cg.predictedPlayerState.persistant[PERS_TEAM] == TEAM_ALLIES))
+		if (drawSecondaryObj)
 		{
-			return cgs.media.escortShader;
-		}
+			// FIXME: show only when relevant
+			if ((ent->teamNum == 1 && cg.predictedPlayerState.persistant[PERS_TEAM] == TEAM_AXIS)
+			    || (ent->teamNum == 2 && cg.predictedPlayerState.persistant[PERS_TEAM] == TEAM_ALLIES))
+			{
+				return cgs.media.escortShader;
+			}
 
-		return cgs.media.destroyShader;
+			return cgs.media.destroyShader;
+		}
+		break;
 	}
 	case ET_TANK_INDICATOR_DEAD:
 	{
@@ -1876,31 +1788,37 @@ qhandle_t CG_GetCompassIcon(entityState_t *ent, qboolean drawAllVoicesChat, qboo
 			}
 		}
 
-		// FIXME: show only when relevant
-		// draw repair if an engineer
-		if (cg.predictedPlayerState.stats[STAT_PLAYER_CLASS] == PC_ENGINEER && (
-				(ent->teamNum == 1 && cg.predictedPlayerState.persistant[PERS_TEAM] == TEAM_AXIS)
-				|| (ent->teamNum == 2 && cg.predictedPlayerState.persistant[PERS_TEAM] == TEAM_ALLIES)))
+		if (drawSecondaryObj)
 		{
-			return cgs.media.constructShader;
+			// FIXME: show only when relevant
+			// draw repair if an engineer
+			if (cg.predictedPlayerState.stats[STAT_PLAYER_CLASS] == PC_ENGINEER && (
+					(ent->teamNum == 1 && cg.predictedPlayerState.persistant[PERS_TEAM] == TEAM_AXIS)
+					|| (ent->teamNum == 2 && cg.predictedPlayerState.persistant[PERS_TEAM] == TEAM_ALLIES)))
+			{
+				return cgs.media.constructShader;
+			}
 		}
 		break;
 	}
 	case ET_TRAP:
 	{
-		if (ent->frame == 0)
+		if (drawSecondaryObj)
 		{
-			return cgs.media.regroupShader;
-		}
+			if (ent->frame == 0)
+			{
+				return cgs.media.regroupShader;
+			}
 
-		if (ent->frame == 4)
-		{
-			return cg.predictedPlayerState.persistant[PERS_TEAM] == TEAM_AXIS ? cgs.media.regroupShader : cgs.media.defendShader;
-		}
+			if (ent->frame == 4)
+			{
+				return cg.predictedPlayerState.persistant[PERS_TEAM] == TEAM_AXIS ? cgs.media.regroupShader : cgs.media.defendShader;
+			}
 
-		if (ent->frame == 3)
-		{
-			return cg.predictedPlayerState.persistant[PERS_TEAM] == TEAM_ALLIES ? cgs.media.regroupShader : cgs.media.defendShader;
+			if (ent->frame == 3)
+			{
+				return cg.predictedPlayerState.persistant[PERS_TEAM] == TEAM_ALLIES ? cgs.media.regroupShader : cgs.media.defendShader;
+			}
 		}
 		break;
 	}
@@ -2015,7 +1933,7 @@ static void CG_CompasMoveLocation(float *basex, float *basey, qboolean animation
 {
 	float x    = *basex;
 	float y    = *basey;
-	float cent = activehud->compas.location.w / 2;
+	float cent = activehud->compass.location.w / 2;
 	x += cent;
 	y += cent;
 
@@ -2172,7 +2090,7 @@ static void CG_DrawNewCompass(rectDef_t location)
 			continue;
 		}
 
-		icon = CG_GetCompassIcon(&snap->entities[i], qfalse, qtrue, qtrue, NULL);
+		icon = CG_GetCompassIcon(&snap->entities[i], qfalse, qtrue, !(cg_drawCompassIcons.integer & 4), !(cg_drawCompassIcons.integer & 2), NULL);
 
 		if (icon)
 		{
@@ -2290,10 +2208,6 @@ static float CG_DrawSnapshot(float y)
 	return y + 36 + 4;
 }
 
-// speed constants
-#define SPEED_US_TO_KPH   15.58f
-#define SPEED_US_TO_MPH   23.44f
-
 static vec_t highestSpeed, speed;
 static int   lasttime;
 vec4_t       tclr = { 0.625f, 0.625f, 0.6f, 1.0f };
@@ -2330,32 +2244,20 @@ static float CG_DrawSpeed(float y)
 		lasttime = thistime;
 	}
 
-	switch (cg_drawspeed.integer)
+	switch (cg_drawUnit.integer)
 	{
-	case 1:
+	case 0:
 		// Units per second
-		s = va("%.1f UPS", speed);
-		break;
-	case 2:
-		// Kilometers per hour
-		s = va("%.1f KPH", (speed / SPEED_US_TO_KPH));
-		break;
-	case 3:
-		// Miles per hour
-		s = va("%.1f MPH", (speed / SPEED_US_TO_MPH));
-		break;
-	case 4:
-		// Units per second + highestSpeed
 		s  = va("%.1f UPS", speed);
 		s2 = va("%.1f MAX", highestSpeed);
 		break;
-	case 5:
-		// Kilometers per hour  + highestSpeed
+	case 1:
+		// Kilometers per hour
 		s  = va("%.1f KPH", (speed / SPEED_US_TO_KPH));
 		s2 = va("%.1f MAX", (highestSpeed / SPEED_US_TO_KPH));
 		break;
-	case 6:
-		// Miles per hour  + highestSpeed
+	case 2:
+		// Miles per hour
 		s  = va("%.1f MPH", (speed / SPEED_US_TO_MPH));
 		s2 = va("%.1f MAX", (highestSpeed / SPEED_US_TO_MPH));
 		break;
@@ -2365,7 +2267,7 @@ static float CG_DrawSpeed(float y)
 		break;
 	}
 
-	h = (cg_drawspeed.integer > 3) ? 24 : 12;
+	h = (cg_drawspeed.integer == 2) ? 24 : 12;
 
 	w  = CG_Text_Width_Ext(s, 0.19f, 0, &cgs.media.limboFont1);
 	w2 = (UPPERRIGHT_W > w) ? UPPERRIGHT_W : w;
@@ -2376,7 +2278,7 @@ static float CG_DrawSpeed(float y)
 	CG_Text_Paint_Ext(x + ((w2 - w) / 2) + 2, y + 11, 0.19f, 0.19f, tclr, s, 0, 0, 0, &cgs.media.limboFont1);
 
 	// draw max speed on second line
-	if (cg_drawspeed.integer > 3)
+	if (cg_drawspeed.integer == 2)
 	{
 		y  = y + 12;
 		w3 = CG_Text_Width_Ext(s2, 0.19f, 0, &cgs.media.limboFont1);
@@ -2547,7 +2449,14 @@ static void CG_DrawTimersAlt(rectDef_t *respawn, rectDef_t *spawntimer, rectDef_
 
 	if (cgs.gamestate != GS_PLAYING)
 	{
-		s        = CG_TimerWarmupString();
+		msec     = (cgs.timelimit * 60000.f); // 60.f * 1000.f
+		seconds  = msec / 1000;
+		mins     = seconds / 60;
+		seconds -= mins * 60;
+		tens     = seconds / 10;
+		seconds -= tens * 10;
+
+		s        = va("%s ^7%2i:%i%i", CG_TimerWarmupString(), mins, tens, seconds);
 		color[3] = fabs(sin(cg.time * 0.002));
 	}
 	else if (msec < 0 && cgs.timelimit > 0.0f)
@@ -2673,7 +2582,14 @@ static float CG_DrawTimerNormal(float y)
 
 	if (cgs.gamestate != GS_PLAYING)
 	{
-		s        = CG_TimerWarmupString();
+		msec     = (cgs.timelimit * 60000.f); // 60.f * 1000.f
+		seconds  = msec / 1000;
+		mins     = seconds / 60;
+		seconds -= mins * 60;
+		tens     = seconds / 10;
+		seconds -= tens * 10;
+
+		s        = va("%s ^7%2i:%i%i", CG_TimerWarmupString(), mins, tens, seconds);
 		color[3] = fabs(sin(cg.time * 0.002));
 	}
 	else if (msec < 0 && cgs.timelimit > 0.0f)
@@ -3259,7 +3175,7 @@ void CG_Hud_Setup(void)
 
 	// Hud1
 	hud1.hudnumber       = 1;
-	hud1.compas          = CG_getComponent(44, SCREEN_HEIGHT - 87, 84, 84, qtrue, STYLE_NORMAL);
+	hud1.compass         = CG_getComponent(44, SCREEN_HEIGHT - 87, 84, 84, qtrue, STYLE_NORMAL);
 	hud1.staminabar      = CG_getComponent(4, 388, 12, 72, qtrue, STYLE_NORMAL);
 	hud1.breathbar       = CG_getComponent(4, 388, 12, 72, qtrue, STYLE_NORMAL);
 	hud1.healthbar       = CG_getComponent((Ccg_WideX(SCREEN_WIDTH) - 36), 388, 12, 72, qtrue, STYLE_NORMAL);
@@ -3274,7 +3190,7 @@ void CG_Hud_Setup(void)
 	hud1.popupmessages   = CG_getComponent(4, 100, 72, 72, qtrue, STYLE_NORMAL);
 	hud1.powerups        = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 40, SCREEN_HEIGHT - 140, 36, 36, qtrue, STYLE_NORMAL);
 	hud1.hudhead         = CG_getComponent(44, SCREEN_HEIGHT - 92, 62, 80, qfalse, STYLE_NORMAL);
-	hud1.cursorhint      = CG_getComponent(.5f * SCREEN_WIDTH - .5f * 48, 260, 48, 48, qtrue, STYLE_NORMAL);
+	hud1.cursorhints     = CG_getComponent(.5f * SCREEN_WIDTH - .5f * 48, 260, 48, 48, qtrue, STYLE_NORMAL);
 	hud1.weaponstability = CG_getComponent(50, 208, 10, 64, qtrue, STYLE_NORMAL);
 	hud1.livesleft       = CG_getComponent(0, 0, 0, 0, qtrue, STYLE_NORMAL);
 	hud1.reinforcement   = CG_getComponent(100, SCREEN_HEIGHT - 12, 0, 0, qtrue, STYLE_NORMAL);
@@ -3285,11 +3201,12 @@ void CG_Hud_Setup(void)
 	hud1.spectatortext   = CG_getComponent(8, 188, 0.22f, 0.22f, qtrue, STYLE_NORMAL);
 	hud1.limbotext       = CG_getComponent(8, 164, 0.22f, 0.22f, qtrue, STYLE_NORMAL);
 	hud1.followtext      = CG_getComponent(8, 164, 0.22f, 0.22f, qtrue, STYLE_NORMAL);
+	hud1.demotext        = CG_getComponent(10, 9, 0.22f, 0.22f, qtrue, STYLE_SIMPLE);
 	CG_addHudToList(&hud1);
 
 	// Hud2
 	hud2.hudnumber       = 2;
-	hud2.compas          = CG_getComponent(64, SCREEN_HEIGHT - 87, 84, 84, qtrue, STYLE_NORMAL);
+	hud2.compass         = CG_getComponent(64, SCREEN_HEIGHT - 87, 84, 84, qtrue, STYLE_NORMAL);
 	hud2.staminabar      = CG_getComponent(4, 388, 12, 72, qtrue, STYLE_NORMAL);
 	hud2.breathbar       = CG_getComponent(4, 388, 12, 72, qtrue, STYLE_NORMAL);
 	hud2.healthbar       = CG_getComponent(24, 388, 12, 72, qtrue, STYLE_NORMAL);
@@ -3304,7 +3221,7 @@ void CG_Hud_Setup(void)
 	hud2.popupmessages   = CG_getComponent(4, 100, 72, 72, qtrue, STYLE_NORMAL);
 	hud2.powerups        = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 40, SCREEN_HEIGHT - 140, 36, 36, qtrue, STYLE_NORMAL);
 	hud2.hudhead         = CG_getComponent(44, SCREEN_HEIGHT - 92, 62, 80, qfalse, STYLE_NORMAL);
-	hud2.cursorhint      = CG_getComponent(.5f * SCREEN_WIDTH - .5f * 48, 260, 48, 48, qtrue, STYLE_NORMAL);
+	hud2.cursorhints     = CG_getComponent(.5f * SCREEN_WIDTH - .5f * 48, 260, 48, 48, qtrue, STYLE_NORMAL);
 	hud2.weaponstability = CG_getComponent(50, 208, 10, 64, qtrue, STYLE_NORMAL);
 	hud2.livesleft       = CG_getComponent(0, 0, 0, 0, qtrue, STYLE_NORMAL);
 	hud2.reinforcement   = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 55, SCREEN_HEIGHT - 70, 0, 0, qtrue, STYLE_NORMAL);
@@ -3315,6 +3232,7 @@ void CG_Hud_Setup(void)
 	hud2.spectatortext   = CG_getComponent(8, 188, 0.22f, 0.22f, qtrue, STYLE_NORMAL);
 	hud2.limbotext       = CG_getComponent(8, 164, 0.22f, 0.22f, qtrue, STYLE_NORMAL);
 	hud2.followtext      = CG_getComponent(8, 164, 0.22f, 0.22f, qtrue, STYLE_NORMAL);
+	hud2.demotext        = CG_getComponent(10, 9, 0.22f, 0.22f, qtrue, STYLE_SIMPLE);
 	CG_addHudToList(&hud2);
 
 	// Read the hud files
@@ -3328,9 +3246,9 @@ void CG_Hud_Setup(void)
  * @param[in] name
  * @param[in] comp
  */
-static void CG_PrintHudComponent(const char *name, hudComponent_t comp)
+static void CG_PrintHudComponent(const char *name, hudComponent_t *comp)
 {
-	Com_Printf("%s location: X %.f Y %.f W %.f H %.f visible: %i\n", name, comp.location.x, comp.location.y, comp.location.w, comp.location.h, comp.visible);
+	Com_Printf("%s location: X %.f Y %.f W %.f H %.f visible: %i\n", name, comp->location.x, comp->location.y, comp->location.w, comp->location.h, comp->visible);
 }
 
 /**
@@ -3339,32 +3257,15 @@ static void CG_PrintHudComponent(const char *name, hudComponent_t comp)
  */
 static void CG_PrintHud(hudStucture_t *hud)
 {
-	CG_PrintHudComponent("compas", hud->compas);
-	CG_PrintHudComponent("staminabar", hud->staminabar);
-	CG_PrintHudComponent("breathbar", hud->breathbar);
-	CG_PrintHudComponent("healthbar", hud->healthbar);
-	CG_PrintHudComponent("weaponchargebar", hud->weaponchargebar);
-	CG_PrintHudComponent("healthtext", hud->healthtext);
-	CG_PrintHudComponent("xptext", hud->xptext);
-	CG_PrintHudComponent("ranktext", hud->ranktext);
-	CG_PrintHudComponent("statsdisplay", hud->statsdisplay);
-	CG_PrintHudComponent("weaponicon", hud->weaponicon);
-	CG_PrintHudComponent("weaponammo", hud->weaponammo);
-	CG_PrintHudComponent("fireteam", hud->fireteam);
-	CG_PrintHudComponent("popupmessages", hud->popupmessages);
-	CG_PrintHudComponent("powerups", hud->powerups);
-	CG_PrintHudComponent("hudhead", hud->hudhead);
-	CG_PrintHudComponent("cursorhint", hud->cursorhint);
-	CG_PrintHudComponent("weaponstability", hud->weaponstability);
-	CG_PrintHudComponent("livesleft", hud->livesleft);
-	CG_PrintHudComponent("reinforcement", hud->reinforcement);
-	CG_PrintHudComponent("roundtimer", hud->roundtimer);
-	CG_PrintHudComponent("spawntimer", hud->spawntimer);
-	CG_PrintHudComponent("localtime", hud->localtime);
-	CG_PrintHudComponent("votetext", hud->votetext);
-	CG_PrintHudComponent("spectatortext", hud->spectatortext);
-	CG_PrintHudComponent("limbotext", hud->limbotext);
-	CG_PrintHudComponent("followtext", hud->followtext);
+	int i;
+
+	for (i = 0; hudComponentFields[i].name; i++)
+	{
+		if (!hudComponentFields[i].isAlias)
+		{
+			CG_PrintHudComponent(hudComponentFields[i].name, (hudComponent_t *)((char * )hud + hudComponentFields[i].offset));
+		}
+	}
 }
 #endif
 
@@ -3414,9 +3315,9 @@ void CG_DrawActiveHud(void)
 	CG_DrawLivesLeft(activehud->livesleft);
 
 	// Cursor hint
-	if (activehud->cursorhint.visible)
+	if (activehud->cursorhints.visible)
 	{
-		CG_DrawCursorhint(&activehud->cursorhint.location);
+		CG_DrawCursorhint(&activehud->cursorhints.location);
 	}
 
 	// Stability bar
@@ -3460,7 +3361,7 @@ void CG_DrawGlobalHud(void)
 	}
 	else
 	{
-		CG_DrawNewCompass(activehud->compas.location);
+		CG_DrawNewCompass(activehud->compass.location);
 	}
 
 	if (activehud->powerups.visible)

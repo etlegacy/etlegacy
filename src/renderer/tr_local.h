@@ -2165,6 +2165,13 @@ void R_ScreenGamma(void);
 void R_InitGamma(void);
 void R_ShutdownGamma(void);
 
+// tr_fbo.c
+void R_ShutdownFBO(void);
+void R_MainFBO(qboolean bind);
+GLuint R_MainFBOTexture(void);
+void R_MainFBOBlit(void);
+void R_InitFBO(void);
+
 //------------------------------------------------------------------------------
 
 /**
@@ -2276,5 +2283,7 @@ extern cvar_t *r_bonesDebug;
 extern cvar_t *r_wolfFog;
 
 extern cvar_t *r_gfxInfo;
+
+extern cvar_t *r_scale;
 
 #endif //TR_LOCAL_H

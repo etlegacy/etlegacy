@@ -1,17 +1,18 @@
 hudDef {
 	hud {
-		//inside the hud element following keywords apply
+		// inside the hud element following keywords apply
 		// except for the hud number which tells the cg_althud variable value
+		// hudnumber MUST be the first element of the list 
 		// all the others work like the following 1st number: x 2: y 3: width 4: height 5: component style 6: visibility (boolean type)
 		// as expected a single file can contain multiple hud configurations
 		// hudnumber value must be unique, if not then the hud will be discarded
 		// PS. 'x' should be between 0 and 640 and 'y' between 0 and 480
 		hudnumber 3
-		compas 44 405 72 72 0 1
+		compass 44 405 72 72 0 1
 		staminabar 4 388 12 72 0 1
 		breathbar 4 388 12 72 0 1
 		healthbar 604 388 12 75 0 1
-		weaponchangebar 624 388 12 75 0 1
+		weaponchargebar 624 388 12 75 0 1
 		healthtext 580 415 0 0 0 1
 		xptext 28 476 0 0 0 1
 		statsdisplay 24 385 0 0 1 1
@@ -28,5 +29,6 @@ hudDef {
 		spectatortext 8 188 0.22 0.22 1 1
 		limbotext 8 164 0.22 0.22 1 1
 		followtext 8 164 0.22 0.22 1 1
+		demotext 10 9 0.22 0.22 1 1
 	}
 }

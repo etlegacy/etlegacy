@@ -887,7 +887,7 @@ void G_matchInfoDump(unsigned int dwDumpType)
 			{
 				if (g_currentRound.integer == 1)       // We've already missed the switch
 				{
-					CP(va("print \">>> ^3Clock set to: %d:%02d\n\n\n\"",
+					CP(va("print \"^3>>> Clock set to: ^7%d:%02d\n\n\n\"",
 						  g_nextTimeLimit.integer,
 						  (int)(60.0f * (g_nextTimeLimit.value - g_nextTimeLimit.integer))));
 				}
@@ -897,7 +897,7 @@ void G_matchInfoDump(unsigned int dwDumpType)
 
 					if (val < g_timelimit.value)
 					{
-						CP(va("print \">>> ^3Objective reached at %d:%02d (original: %d:%02d)\n\n\n\"",
+						CP(va("print \"^3>>> Objective reached at ^7%d:%02d^3 (original: ^7%d:%02d^3)\n\n\n\"",
 							  (int)val,
 							  (int)(60.0f * (val - (int)val)),
 							  g_timelimit.integer,
@@ -905,7 +905,7 @@ void G_matchInfoDump(unsigned int dwDumpType)
 					}
 					else
 					{
-						CP(va("print \">>> ^3Objective NOT reached in time (%d:%02d)\n\n\n\"",
+						CP(va("print \"^3>>> Objective NOT reached in time (^7%d:%02d^3)\n\n\n\"",
 							  g_timelimit.integer,
 							  (int)(60.0f * (g_timelimit.value - g_timelimit.integer))));
 					}

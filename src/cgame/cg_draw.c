@@ -534,8 +534,6 @@ void CG_DrawTeamBackground(int x, int y, int w, int h, float alpha, int team)
 ===========================================================================================
 */
 
-#define CHATLOC_Y 478
-
 /**
  * @brief CG_DrawTeamInfo
  */
@@ -556,15 +554,23 @@ static void CG_DrawTeamInfo(void)
 
 	if (cgs.teamLastChatPos != cgs.teamChatPos)
 	{
-		vec4_t hcolor;
-		int    i;
-		float  lineHeight = 9.f;
-		float  alphapercent;
-		float  scale       = 0.2f;
-		float  icon_width  = 12.f;
-		float  icon_height = 8.f;
-		int    chatWidth   = 320;
-		int    chatPosX    = ((int)Ccg_WideX(SCREEN_WIDTH) - chatWidth) / 2;
+		vec4_t    hcolor;
+		int       i, j;
+		float     alphapercent;
+		float     chatBgAlpha    = Com_Clamp(0.0f, 1.0f, cg_chatBackgroundAlpha.value);
+		float     textAlpha      = Com_Clamp(0.0f, 1.0f, cg_chatAlpha.value);
+		float     chatScale      = Com_Clamp(0.5, 2, cg_chatScale.value);
+		float     fontSize       = 0.2f;
+		float     fontSizeScaled = chatScale * fontSize;
+		float     lineHeight     = 9.f * chatScale;
+		float     icon_width     = 12.f * chatScale;
+		float     icon_height    = 8.f * chatScale;
+		float     flagOffsetX    = 0;
+		qhandle_t flag           = 0;
+		int       maxLineLength  = Com_Clamp(10, TEAMCHAT_WIDTH, cg_chatLineWidth.integer);
+		int       chatPosX       = (int)Ccg_WideX(cg_chatX.integer);
+		int       chatPosY       = cg_chatY.integer;
+		int       textStyle      = cg_chatShadow.integer ? ITEM_TEXTSTYLE_SHADOWED : ITEM_TEXTSTYLE_NORMAL;
 
 		if (cg.time - cgs.teamChatMsgTimes[cgs.teamLastChatPos % chatHeight] > cg_teamChatTime.integer)
 		{
@@ -574,14 +580,7 @@ static void CG_DrawTeamInfo(void)
 		for (i = cgs.teamChatPos - 1; i >= cgs.teamLastChatPos; i--)
 		{
 			alphapercent = 1.0f - (cg.time - cgs.teamChatMsgTimes[i % chatHeight]) / (float)(cg_teamChatTime.integer);
-			if (alphapercent > 1.0f)
-			{
-				alphapercent = 1.0f;
-			}
-			else if (alphapercent < 0)
-			{
-				alphapercent = 0.f;
-			}
+			Com_Clamp(0.0f, 1.0f, alphapercent);
 
 			// chatter team instead
 			if (cgs.teamChatMsgTeams[i % chatHeight] == TEAM_AXIS)
@@ -603,25 +602,49 @@ static void CG_DrawTeamInfo(void)
 				hcolor[2] = 0;
 			}
 
-			hcolor[3] = 0.66f * alphapercent;
+			hcolor[3] = chatBgAlpha * alphapercent;
 
 			trap_R_SetColor(hcolor);
-			CG_DrawPic(chatPosX, CHATLOC_Y - (cgs.teamChatPos - i) * lineHeight, chatWidth, lineHeight, cgs.media.teamStatusBar);
+
+			if (cg_chatFlags.integer)
+			{
+				flagOffsetX = 16.f * chatScale;
+				if (cgs.teamChatMsgTeams[i % chatHeight] == TEAM_AXIS)
+				{
+					flag = cgs.media.axisFlag;
+				}
+				else if (cgs.teamChatMsgTeams[i % chatHeight] == TEAM_ALLIES)
+				{
+					flag = cgs.media.alliedFlag;
+				}
+			}
+
+			int chatWidthCur = 0;
+			int chatWidthMax = 0;
+
+			// get the longest chat message on screen, use that for the width of chat background
+			for (j = 0; j < TEAMCHAT_HEIGHT; j++)
+			{
+				chatWidthCur = CG_Text_Width_Ext(cgs.teamChatMsgs[j % chatHeight], fontSizeScaled, maxLineLength, &cgs.media.limboFont2);
+
+				if (chatWidthCur > chatWidthMax)
+				{
+					chatWidthMax = chatWidthCur;
+				}
+			}
+
+			CG_DrawPic(chatPosX, chatPosY - (cgs.teamChatPos - i) * lineHeight, chatWidthMax + flagOffsetX + 2, lineHeight, cgs.media.teamStatusBar); // +2 width for some padding at the end
 
 			hcolor[0] = hcolor[1] = hcolor[2] = 1.0;
-			hcolor[3] = alphapercent;
+			hcolor[3] = alphapercent * textAlpha;
 			trap_R_SetColor(hcolor);
 
 			// chat icons
-			if (cgs.teamChatMsgTeams[i % chatHeight] == TEAM_AXIS)
+			if (flag)
 			{
-				CG_DrawPic(chatPosX, CHATLOC_Y - (cgs.teamChatPos - i - 0.9f) * lineHeight - 8, icon_width, icon_height, cgs.media.axisFlag);
+				CG_DrawPic(chatPosX, chatPosY - (cgs.teamChatPos - i - 0.9f) * lineHeight - icon_height, icon_width, icon_height, flag);
 			}
-			else if (cgs.teamChatMsgTeams[i % chatHeight] == TEAM_ALLIES)
-			{
-				CG_DrawPic(chatPosX, CHATLOC_Y - (cgs.teamChatPos - i - 0.9f) * lineHeight - 8, icon_width, icon_height, cgs.media.alliedFlag);
-			}
-			CG_Text_Paint_Ext(chatPosX + 16, CHATLOC_Y - (cgs.teamChatPos - i - 1) * lineHeight - 1, scale, scale, hcolor, cgs.teamChatMsgs[i % chatHeight], 0, 0, 0, &cgs.media.limboFont2);
+			CG_Text_Paint_Ext(chatPosX + flagOffsetX, chatPosY - (cgs.teamChatPos - i - 1) * lineHeight - 1, fontSizeScaled, fontSizeScaled, hcolor, cgs.teamChatMsgs[i % chatHeight], 0, 0, textStyle, &cgs.media.limboFont2);
 		}
 		trap_R_SetColor(NULL);
 	}
@@ -3536,58 +3559,6 @@ static void CG_ScreenFade(void)
 	}
 }
 
-static int lastDemoScoreTime = 0;
-
-/**
- * @brief CG_DrawDemoRecording
- */
-void CG_DrawDemoRecording(void)
-{
-	char status[1024];
-	char demostatus[128];
-	char wavestatus[128];
-
-	if (!cl_demorecording.integer && !cl_waverecording.integer)
-	{
-		return;
-	}
-
-	// poll for score
-	if (!lastDemoScoreTime || cg.time > lastDemoScoreTime)
-	{
-		trap_SendClientCommand("score");
-		lastDemoScoreTime = cg.time + 5000; // 5 secs
-	}
-
-	if (!cg_recording_statusline.integer)
-	{
-		return;
-	}
-
-	if (cl_demorecording.integer)
-	{
-		Com_sprintf(demostatus, sizeof(demostatus), " demo %s: %ik ", cl_demofilename.string, cl_demooffset.integer / 1024);
-	}
-	else
-	{
-		Q_strncpyz(demostatus, "", sizeof(demostatus));
-
-	}
-
-	if (cl_waverecording.integer)
-	{
-		Com_sprintf(wavestatus, sizeof(demostatus), " audio %s: %ik ", cl_wavefilename.string, cl_waveoffset.integer / 1024);
-	}
-	else
-	{
-		Q_strncpyz(wavestatus, "", sizeof(wavestatus));
-	}
-
-	Com_sprintf(status, sizeof(status), "RECORDING%s%s", demostatus, wavestatus);
-
-	CG_Text_Paint_Ext(10, cg_recording_statusline.integer, 0.2f, 0.2f, colorRed, status, 0, 0, 0, &cgs.media.limboFont2);
-}
-
 /**
  * @brief CG_DrawOnScreenLabels
  */
@@ -3764,7 +3735,7 @@ static void CG_DrawBannerPrint(void)
 }
 
 #define MAX_DISTANCE 2000.f
-#define ICONS_SIZE 16
+#define ICONS_SIZE 14
 
 /**
  * @brief CG_DrawEnvironmentalAwareness
@@ -3831,7 +3802,7 @@ static void CG_DrawEnvironmentalAwareness()
 			continue;
 		}
 
-		icon = CG_GetCompassIcon(&snap->entities[i], qfalse, qfalse, qtrue, NULL);
+		icon = CG_GetCompassIcon(&snap->entities[i], qfalse, qfalse, !(cg_drawEnvAwareness.integer & 4), !(cg_drawEnvAwareness.integer & 2), NULL);
 
 		if (icon)
 		{
@@ -3840,6 +3811,7 @@ static void CG_DrawEnvironmentalAwareness()
 			float px, py;
 			float z;
 			char  *distance;
+			float baseSize;
 
 			px = (float)tan(DEG2RAD((double)cg.refdef.fov_x) / 2);
 			py = (float)tan(DEG2RAD((double)cg.refdef.fov_y) / 2);
@@ -3863,16 +3835,25 @@ static void CG_DrawEnvironmentalAwareness()
 			x = Com_Clamp(0, Ccg_WideX(SCREEN_WIDTH) - ICONS_SIZE, x);
 			y = Com_Clamp(0, SCREEN_HEIGHT - (ICONS_SIZE + 12), y);
 
-			switch (cg_drawspeed.integer)
+			switch (cg_drawUnit.integer)
 			{
-			case 2: case 5: distance = va("%.1f", len * UNIT_TO_METER); break;
-			case 3: case 6: distance = va("%.1f", len * UNIT_TO_FEET); break;
-			default:        distance = va("%.0f", len); break;
+			case 1:
+				distance = va("%.0fm", len * UNIT_TO_METER);
+				break;
+			case 2:
+				distance = va("%.0fft", len * UNIT_TO_FEET);
+				break;
+			case 0:
+			default:
+				distance = va("%.0f", len);
+				break;
 			}
 
-			CG_Text_Paint_Centred_Ext(x + ICONS_SIZE / 2, y - ICONS_SIZE + 8, 0.16f, 0.16f, colorWhite, description, 0, 0, 0, &cgs.media.limboFont2);
-			CG_DrawPic(x, y, ICONS_SIZE, ICONS_SIZE, icon);
-			CG_Text_Paint_Centred_Ext(x + ICONS_SIZE / 2, y + ICONS_SIZE + 8, 0.16f, 0.16f, colorWhite, distance, 0, 0, 0, &cgs.media.limboFont2);
+			baseSize = ICONS_SIZE * (1 - MIN(1.f, len / (MAX_DISTANCE / 2)));
+
+			CG_Text_Paint_Centred_Ext(x + baseSize / 2, y - baseSize + 8, 0.12f, 0.12f, colorWhite, description, 0, 0, 0, &cgs.media.limboFont2);
+			CG_DrawPic(x, y, baseSize, baseSize, icon);
+			CG_Text_Paint_Centred_Ext(x + baseSize / 2, y + baseSize + 8, 0.12f, 0.12f, colorWhite, distance, 0, 0, 0, &cgs.media.limboFont2);
 		}
 	}
 }
@@ -4056,7 +4037,7 @@ static void CG_Draw2D(void)
 		CG_windowDraw();
 	}
 
-	CG_DrawDemoRecording();
+	CG_DrawDemoMessage();
 
 	// draw objectif icons on top of all HUD elements
 	if (cg.snap->ps.stats[STAT_HEALTH] > 0 || (cg.snap->ps.pm_flags & PMF_FOLLOW))
