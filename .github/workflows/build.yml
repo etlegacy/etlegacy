@@ -32,7 +32,7 @@ jobs:
   lnx64-mod:
     runs-on: ubuntu-18.04
     container:
-      image: etlegacy/lnx-build:centos7-wayland-x11
+      image: etlegacy/lnx-build:latest
     steps:
       - uses: actions/checkout@v2
         with:
@@ -202,7 +202,7 @@ jobs:
   lnx32:
     runs-on: ubuntu-18.04
     container:
-      image: etlegacy/lnx-build:centos7-wayland-x11
+      image: etlegacy/lnx-build:latest
     needs: [ lnx64-mod, osx-mod, win-mod, raspberry_pi-mod, android-mod ]
     steps:
       - uses: actions/checkout@v2
@@ -265,7 +265,7 @@ jobs:
     runs-on: ubuntu-18.04
     needs: [ lnx32 ]
     container:
-      image: etlegacy/lnx-build:centos7-wayland-x11
+      image: etlegacy/lnx-build:latest
     steps:
       - uses: actions/checkout@v2
         with:
