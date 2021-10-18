@@ -4158,8 +4158,8 @@ void CG_Debriefing_Mission_Draw(panel_button_t *button)
 
 			if (cgs.tdbSelectedMap)
 			{
-				float x = button->rect.x + ((cgs.campaignData.arenas[cgs.tdbSelectedMap - 1].mappos[0] - cgs.campaignData.mapTC[0][0]) / 650.f * button->rect.w);
-				float y = button->rect.y + ((cgs.campaignData.arenas[cgs.tdbSelectedMap - 1].mappos[1] - cgs.campaignData.mapTC[0][1]) / 650.f * button->rect.h);
+				x = button->rect.x + ((cgs.campaignData.arenas[cgs.tdbSelectedMap - 1].mappos[0] - cgs.campaignData.mapTC[0][0]) / 650.f * button->rect.w);
+				y = button->rect.y + ((cgs.campaignData.arenas[cgs.tdbSelectedMap - 1].mappos[1] - cgs.campaignData.mapTC[0][1]) / 650.f * button->rect.h);
 
 				switch (CG_Debriefing_FindWinningTeamForPos(cgs.tdbSelectedMap))
 				{
@@ -4174,7 +4174,6 @@ void CG_Debriefing_Mission_Draw(panel_button_t *button)
 					break;
 				}
 			}
-
 		}
 		else
 		{
