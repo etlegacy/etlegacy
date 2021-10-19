@@ -207,7 +207,7 @@ static void InitOpenGL(void)
 		context.context = GL_CONTEXT_ES;
 #endif
 
-		ri.GLimp_Init(&glConfig, context);
+		ri.GLimp_Init(&glConfig, &context);
 
 		strcpy(renderer_buffer, glConfig.renderer_string);
 		Q_strlwr(renderer_buffer);
