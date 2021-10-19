@@ -1656,6 +1656,8 @@ void R_Register(void)
 	ri.Cmd_AddSystemCommand("buildcubemaps", R_BuildCubeMaps_f, "Builds cubemaps for the current loaded map.", NULL);
 	//NOTE: this only freeze on my system, Thunder
 	ri.Cmd_AddSystemCommand("glsl_restart", GLSL_restart_f, "Restarts the GLSL subsystem.", NULL);
+
+	R_RegisterCommon();
 }
 
 /**

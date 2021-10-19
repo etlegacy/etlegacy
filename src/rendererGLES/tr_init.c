@@ -191,7 +191,17 @@ static void InitOpenGL(void)
 		GLint temp;
 
 		Com_Memset(&glConfig, 0, sizeof(glConfig));
-		ri.GLimp_Init(&glConfig, NULL);
+
+		windowContext_t context;
+		Com_Memset(&context, 0, sizeof(windowContext_t));
+
+		// These should be the same as the old ifdeffin on sdl_glimp..
+		context.samples = r_ext_multisample->integer;
+		context.versionMajor = 1;
+		context.versionMinor = 1;
+		context.context = GL_CONTEXT_EGL;
+
+		ri.GLimp_Init(&glConfig, context);
 
 		strcpy(renderer_buffer, glConfig.renderer_string);
 		Q_strlwr(renderer_buffer);
@@ -1131,6 +1141,8 @@ void R_Register(void)
 	ri.Cmd_AddSystemCommand("screenshotJPEG", R_ScreenShot_f, "Take a JPEG screenshot of current frame", NULL);
 	ri.Cmd_AddSystemCommand("gfxinfo", GfxInfo_f, "Print GFX info of current system", NULL);
 	ri.Cmd_AddSystemCommand("taginfo", R_TagInfo_f, "Print the list of loaded tags", NULL);
+
+	R_RegisterCommon();
 }
 
 /**

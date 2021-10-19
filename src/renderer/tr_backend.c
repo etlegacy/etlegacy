@@ -1444,7 +1444,16 @@ const void *RB_SwapBuffers(const void *data)
 		RB_ShowImages();
 	}
 
-	R_MainFBO(qfalse);
+	GL_CheckErrors();
+
+	// If we are using a multisample fbo then blit it to a normal fbo first.
+	if (msMainFbo)
+	{
+		R_FboBlit(msMainFbo, mainFbo);
+	}
+	R_BindFBO(NULL);
+
+	GL_CheckErrors();
 
 	RB_GammaScreen();
 

@@ -956,14 +956,30 @@ image_t *R_CreateImage(const char *name, const byte *pic, int width, int height,
 
 	GL_Bind(image);
 
-	Upload32((unsigned *)pic, image->width, image->height,
-			 image->mipmap,
-			 allowPicmip,
-			 isLightmap,
-			 &image->internalFormat,
-			 &image->uploadWidth,
-			 &image->uploadHeight,
-			 noCompress);
+	if (pic)
+	{
+		Upload32((unsigned *)pic, image->width, image->height,
+				 image->mipmap,
+				 allowPicmip,
+				 isLightmap,
+				 &image->internalFormat,
+				 &image->uploadWidth,
+				 &image->uploadHeight,
+				 noCompress);
+	}
+	else
+	{
+		if (mipmap)
+		{
+			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, gl_filter_min);
+			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, gl_filter_max);
+		}
+		else
+		{
+			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		}
+	}
 
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrapClampMode);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrapClampMode);

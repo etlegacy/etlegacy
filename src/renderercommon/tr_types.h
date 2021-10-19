@@ -473,15 +473,18 @@ typedef struct
 	qboolean isFullscreen;
 	qboolean smpActive;                     ///< obsolete, kept for compatibility
 
-	// extra general info - keep at end for backward compatibility
+	// ------------------ Cutoff line for Vanilla glConfig, do not add anything above for compatibility. ------------
+
+	// OpenGL shading lang version
 	char shadingLanguageVersion[MAX_STRING_CHARS];
 	int glslMajorVersion;
 	int glslMinorVersion;
 
+	// OpenGL context version
 	int contextCombined;
 
 	// The real window width and height (without render scaling)
-	int realVidWidth, realVidHeight;
+	int windowWidth, windowHeight;
 } glconfig_t;
 
 /**
@@ -506,6 +509,11 @@ typedef struct windowContext_s
 	int versionMajor;
 	int versionMinor;
 	int context;
+
+	// Should the main screen buffer use sampling
+	int samples;
+	// ;)
+	qboolean vulkan;
 } windowContext_t;
 
 // =========================================

@@ -78,7 +78,6 @@ cvar_t *r_stencilbits;  // number of desired stencil bits
 cvar_t *r_depthbits;  // number of desired depth bits
 cvar_t *r_colorbits;  // number of desired color bits, only relevant for fullscreen
 cvar_t *r_ignorehwgamma;
-cvar_t *r_ext_multisample;
 
 typedef enum
 {
@@ -348,8 +347,6 @@ static void GLimp_InitCvars(void)
 	r_depthbits       = Cvar_Get("r_depthbits", "0", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE);
 	r_colorbits       = Cvar_Get("r_colorbits", "0", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE);
 	r_ignorehwgamma   = Cvar_Get("r_ignorehwgamma", "0", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE);
-	r_ext_multisample = Cvar_Get("r_ext_multisample", "0", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE);
-	Cvar_CheckRange(r_ext_multisample, 0, 8, qtrue);
 
 	// Old modes (these are used by the UI code)
 	Cvar_Get("r_oldFullscreen", "", CVAR_ARCHIVE);
@@ -614,8 +611,8 @@ static void GLimp_WindowLocation(glconfig_t *glConfig, int *x, int *y, const qbo
 	}
 
 	// Make sure we have at least half of the game screen visible on the display its supposed to be in
-	if ((tmpX + (glConfig->realVidWidth / 2)) > rect.x && (tmpX + (glConfig->realVidWidth / 2)) < (rect.x + rect.w)
-	    && (tmpY + (glConfig->realVidHeight / 2)) > rect.y && (tmpY + (glConfig->realVidHeight / 2)) < (rect.y + rect.h))
+	if ((tmpX + (glConfig->windowWidth / 2)) > rect.x && (tmpX + (glConfig->windowWidth / 2)) < (rect.x + rect.w)
+		&& (tmpY + (glConfig->windowHeight / 2)) > rect.y && (tmpY + (glConfig->windowHeight / 2)) < (rect.y + rect.h))
 	{
 		*x = tmpX;
 		*y = tmpY;
@@ -713,8 +710,8 @@ static int GLimp_SetMode(glconfig_t *glConfig, int mode, qboolean fullscreen, qb
 		return RSERR_INVALID_MODE;
 	}
 
-	glConfig->realVidWidth = glConfig->vidWidth;
-	glConfig->realVidHeight = glConfig->vidHeight;
+	glConfig->windowWidth = glConfig->vidWidth;
+	glConfig->windowHeight = glConfig->vidHeight;
 
 	Com_Printf("%dx%d\n", glConfig->vidWidth, glConfig->vidHeight);
 
@@ -773,7 +770,7 @@ static int GLimp_SetMode(glconfig_t *glConfig, int mode, qboolean fullscreen, qb
 		depthBits = r_depthbits->integer;
 	}
 	stencilBits = r_stencilbits->integer;
-	samples     = r_ext_multisample->integer;
+	samples     = (context && context->samples ? context->samples : 0);
 
 	for (i = 0; i < 16; i++)
 	{
@@ -957,6 +954,7 @@ static int GLimp_SetMode(glconfig_t *glConfig, int mode, qboolean fullscreen, qb
 				break;
 			case GL_CONTEXT_EGL:
 				SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
+				SDL_GL_SetAttribute(SDL_GL_CONTEXT_EGL, 1);
 				break;
 			case GL_CONTEXT_DEFAULT:
 			default:
@@ -1096,8 +1094,8 @@ void GLimp_Splash(glconfig_t *glConfig)
 		);
 
 	SDL_Rect dstRect;
-	dstRect.x = glConfig->realVidWidth / 2 - splashImage->w / 2;
-	dstRect.y = glConfig->realVidHeight / 2 - splashImage->h / 2;
+	dstRect.x = glConfig->windowWidth / 2 - splashImage->w / 2;
+	dstRect.y = glConfig->windowHeight / 2 - splashImage->h / 2;
 	dstRect.w = splashImage->w;
 	dstRect.h = splashImage->h;
 

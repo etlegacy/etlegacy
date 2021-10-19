@@ -35,100 +35,41 @@
 
 #include "tr_local.h"
 
-typedef struct shaderProgram_s
-{
-	GLhandleARB program;
-	GLhandleARB vertexShader;
-	GLhandleARB fragmentShader;
+typedef struct gammaProgram_s {
+	shaderProgram_t *program;
 
 	GLint gammaUniform;
+	float gammaValue;
 	GLint currentMapUniform;
-} shaderProgram_t;
+} gammaProgram_t;
 
-image_t         *screenImage = NULL;
-shaderProgram_t gammaProgram;
+image_t *screenImage = NULL;
+gammaProgram_t gammaProgram;
 
 const char *simpleGammaVert = "#version 110\n"
-                              "void main(void) {\n"
-                              "gl_Position = gl_Vertex;\n"
-                              "gl_TexCoord[0] = gl_MultiTexCoord0;\n"
-                              "}\n";
+							  "void main(void) {\n"
+							  "gl_Position = gl_Vertex;\n"
+							  "gl_TexCoord[0] = gl_MultiTexCoord0;\n"
+							  "}\n";
 
 const char *simpleGammaFrag = "#version 110\n"
-                              "uniform sampler2D u_CurrentMap;\n"
-                              "uniform float u_gamma;\n"
-                              "void main(void) {\n"
-                              "gl_FragColor = vec4(pow(texture2D(u_CurrentMap, vec2(gl_TexCoord[0])).rgb, vec3(1.0 / u_gamma)), 1);\n"
-                              "}\n";
+							  "uniform sampler2D u_CurrentMap;\n"
+							  "uniform float u_gamma;\n"
+							  "void main(void) {\n"
+							  "gl_FragColor = vec4(pow(texture2D(u_CurrentMap, vec2(gl_TexCoord[0])).rgb, vec3(1.0 / u_gamma)), 1);\n"
+							  "}\n";
 
 /**
  * @brief R_BuildGammaProgram
  */
 static void R_BuildGammaProgram(void)
 {
-	GLint compiled;
+	gammaProgram.program = R_CreateShaderProgram(simpleGammaVert, simpleGammaFrag);
 
-	gammaProgram.vertexShader   = glCreateShaderObjectARB(GL_VERTEX_SHADER_ARB);
-	gammaProgram.fragmentShader = glCreateShaderObjectARB(GL_FRAGMENT_SHADER_ARB);
-
-	glShaderSourceARB(gammaProgram.vertexShader, 1, (const GLcharARB **)&simpleGammaVert, NULL);
-	glShaderSourceARB(gammaProgram.fragmentShader, 1, (const GLcharARB **)&simpleGammaFrag, NULL);
-
-	glCompileShaderARB(gammaProgram.vertexShader);
-	glCompileShaderARB(gammaProgram.fragmentShader);
-
-	glGetObjectParameterivARB(gammaProgram.vertexShader, GL_COMPILE_STATUS, &compiled);
-	if (!compiled)
-	{
-		GLint   blen = 0;
-		GLsizei slen = 0;
-
-		glGetShaderiv(gammaProgram.vertexShader, GL_INFO_LOG_LENGTH, &blen);
-		if (blen > 1)
-		{
-			GLchar *compiler_log;
-
-			compiler_log = (GLchar *) Com_Allocate(blen);
-
-			glGetInfoLogARB(gammaProgram.vertexShader, blen, &slen, compiler_log);
-			Ren_Fatal("Failed to compile the gamma vertex shader reason: %s\n", compiler_log);
-		}
-		else
-		{
-			Ren_Fatal("Failed to compile the gamma vertex shader\n");
-		}
-	}
-
-	glGetObjectParameterivARB(gammaProgram.fragmentShader, GL_COMPILE_STATUS, &compiled);
-	if (!compiled)
-	{
-		Ren_Fatal("Failed to compile the gamma fragment shader\n");
-	}
-
-	gammaProgram.program = glCreateProgramObjectARB();
-	if (!gammaProgram.program)
-	{
-		Ren_Fatal("Failed to create program\n");
-	}
-
-	glAttachObjectARB(gammaProgram.program, gammaProgram.vertexShader);
-	glAttachObjectARB(gammaProgram.program, gammaProgram.fragmentShader);
-
-	glLinkProgramARB(gammaProgram.program);
-
-	glGetObjectParameterivARB(gammaProgram.program, GL_OBJECT_LINK_STATUS_ARB, &compiled);
-
-	if (!compiled)
-	{
-		Ren_Fatal("Failed to link gamma shaders\n");
-	}
-
-	glUseProgramObjectARB(gammaProgram.program);
-
-	gammaProgram.currentMapUniform = glGetUniformLocation(gammaProgram.program, "u_CurrentMap");
-	gammaProgram.gammaUniform      = glGetUniformLocation(gammaProgram.program, "u_gamma");
-
-	glUseProgramObjectARB(0);
+	R_UseShaderProgram(gammaProgram.program);
+	gammaProgram.currentMapUniform = R_GetShaderProgramUniform(gammaProgram.program, "u_CurrentMap");
+	gammaProgram.gammaUniform = R_GetShaderProgramUniform(gammaProgram.program, "u_gamma");
+	R_UseShaderProgram(NULL);
 }
 
 /**
@@ -138,15 +79,13 @@ void R_ScreenGamma(void)
 {
 	if (gammaProgram.program)
 	{
-		glUseProgramObjectARB(gammaProgram.program);
+		R_UseShaderProgram(gammaProgram.program);
 
 		glActiveTextureARB(GL_TEXTURE0_ARB);
 		glClientActiveTextureARB(GL_TEXTURE0_ARB);
 
 		// a hack to fix the eye burning gamma bug during map loads
-		GLuint fboTex = R_MainFBOTexture();
-
-		if (!fboTex)
+		if (!mainFbo || !mainFbo->fbo)
 		{
 			GL_Bind(screenImage);
 			// We will copy the current buffer into the screenImage
@@ -160,19 +99,17 @@ void R_ScreenGamma(void)
 		}
 		else
 		{
-			if (glConfig.realVidHeight != glConfig.vidHeight && glConfig.realVidWidth != glConfig.vidHeight)
-			{
-				glViewport(0, 0, glConfig.realVidWidth, glConfig.realVidHeight);
-
-				glScissor(0, 0, glConfig.realVidWidth, glConfig.realVidHeight);
-				glOrtho(0, glConfig.realVidWidth, glConfig.realVidHeight, 0, 0, 1);
-			}
-			glBindTexture(GL_TEXTURE_2D, fboTex);
+			R_FBOSetViewport(mainFbo, NULL);
+			glBindTexture(GL_TEXTURE_2D, mainFbo->color);
 		}
 
-		glUniform1f(gammaProgram.gammaUniform, r_gamma->value);
+		if (!gammaProgram.gammaValue || gammaProgram.gammaValue != r_gamma->value)
+		{
+			glUniform1f(gammaProgram.gammaUniform, r_gamma->value);
+			gammaProgram.gammaValue = r_gamma->value;
+		}
 
-		// Draw a simple quad, We could have done this in the GLSL code directly but that is version 130 upwards
+		// Draw a simple quad, We could have done this in the GLSL code directly but that is version 130 upwards,
 		// and we want to be sure that R1 runs even with a toaster.
 		glBegin(GL_QUADS);
 		{
@@ -187,19 +124,12 @@ void R_ScreenGamma(void)
 		}
 		glEnd();
 
-		glUseProgramObjectARB(0);
-
-		if (glConfig.realVidHeight != glConfig.vidHeight && glConfig.realVidWidth != glConfig.vidHeight)
-		{
-			glViewport(0, 0, glConfig.vidWidth, glConfig.vidHeight);
-
-			glScissor(0, 0, glConfig.vidWidth, glConfig.vidHeight);
-			glOrtho(0, glConfig.vidWidth, glConfig.vidHeight, 0, 0, 1);
-		}
+		R_UseShaderProgram(NULL);
+		R_FBOSetViewport(NULL, mainFbo);
 	}
 	else
 	{
-		R_MainFBOBlit();
+		R_FboBlit(mainFbo, NULL);
 	}
 }
 
@@ -208,11 +138,9 @@ void R_ScreenGamma(void)
  */
 void R_InitGamma(void)
 {
-	byte *data;
-
-	if (!GLEW_ARB_fragment_program)
+	if (!R_ShaderProgramsAvailable())
 	{
-		Ren_Print("WARNING: R_InitGamma() skipped - no ARB_fragment_program\n");
+		Ren_Print("WARNING: R_InitGamma() skipped - no shader programs available\n");
 		return;
 	}
 
@@ -222,24 +150,20 @@ void R_InitGamma(void)
 		return;
 	}
 
-	data = (byte *)ri.Hunk_AllocateTempMemory(glConfig.vidWidth * glConfig.vidHeight * 4);
-	if (!data)
-	{
-		Ren_Print("WARNING: R_InitGamma() can't allocate temp memory\n"); // TODO: fatal?
-		return;
-	}
-
-	screenImage = R_CreateImage("screenBufferImage_skies", data, glConfig.vidWidth, glConfig.vidHeight, qfalse, qfalse, GL_CLAMP_TO_EDGE);
+	screenImage = R_CreateImage("screenBufferImage_skies", NULL, glConfig.vidWidth, glConfig.vidHeight, qfalse, qfalse,
+								GL_CLAMP_TO_EDGE);
 
 	if (!screenImage)
 	{
 		Ren_Print("WARNING: R_InitGamma() screen image is NULL\n");
 	}
 
-	ri.Hunk_FreeTempMemory(data);
-
 	Com_Memset(&gammaProgram, 0, sizeof(shaderProgram_t));
+
 	R_BuildGammaProgram();
+
+	GL_CheckErrors();
+
 	tr.gammaProgramUsed = qtrue;
 }
 
@@ -250,20 +174,8 @@ void R_ShutdownGamma(void)
 {
 	if (gammaProgram.program)
 	{
-		if (gammaProgram.vertexShader)
-		{
-			glDetachObjectARB(gammaProgram.program, gammaProgram.vertexShader);
-			glDeleteObjectARB(gammaProgram.vertexShader);
-		}
-
-		if (gammaProgram.fragmentShader)
-		{
-			glDetachObjectARB(gammaProgram.program, gammaProgram.fragmentShader);
-			glDeleteObjectARB(gammaProgram.fragmentShader);
-		}
-
-		glDeleteObjectARB(gammaProgram.program);
-		Com_Memset(&gammaProgram, 0, sizeof(shaderProgram_t));
+		R_DestroyShaderProgram(gammaProgram.program);
+		Com_Memset(&gammaProgram, 0, sizeof(gammaProgram_t));
 	}
 
 	if (screenImage)

@@ -1470,6 +1470,7 @@ typedef struct
 	int allowCompress;                          ///< temp var used while parsing shader only
 
 	qboolean gammaProgramUsed;
+	qboolean useFBO;
 
 } trGlobals_t;
 
@@ -1584,6 +1585,8 @@ void R_GammaCorrect(byte *buffer, int bufSize);
 
 void R_ImageList_f(void);
 void R_SkinList_f(void);
+
+byte *RB_ReadPixels(int x, int y, int width, int height, size_t *offset, int *padlen);
 
 const void *RB_TakeScreenshotCmd(const void *data);
 void R_ScreenShot_f(void);
@@ -2165,11 +2168,56 @@ void R_ScreenGamma(void);
 void R_InitGamma(void);
 void R_ShutdownGamma(void);
 
+// tr_shader_program.c
+typedef struct shaderProgram_s
+{
+	GLhandleARB program;
+	GLhandleARB vertexShader;
+	GLhandleARB fragmentShader;
+} shaderProgram_t;
+
+void R_UseShaderProgram(shaderProgram_t *program);
+GLint R_GetShaderProgramUniform(shaderProgram_t *program, const char *name);
+shaderProgram_t *R_CreateShaderProgram(const char *vert, const char *frag);
+void R_DestroyShaderProgram(shaderProgram_t *program);
+qboolean R_ShaderProgramsAvailable(void);
+void R_InitShaderPrograms(void);
+void R_ShutdownShaderPrograms(void);
+
 // tr_fbo.c
+typedef struct {
+	char name[MAX_QPATH];
+	GLuint fbo;
+
+	GLuint color;
+	GLuint colorBuffer;
+
+	GLuint depth;
+	GLuint depthBuffer;
+
+	qboolean stencil;
+	int samples;
+
+	int width;
+	int height;
+} frameBuffer_t;
+
+typedef enum {
+	READ,
+	WRITE,
+	BOTH
+} fboBinding;
+
+extern frameBuffer_t *mainFbo;
+extern frameBuffer_t *msMainFbo;
+
+void R_FBOSetViewport(frameBuffer_t *from, frameBuffer_t *to);
+void R_BindFBO(frameBuffer_t *fb);
+byte *R_FBOReadPixels(frameBuffer_t *fb, size_t *offset, int *padlen);
 void R_ShutdownFBO(void);
 void R_MainFBO(qboolean bind);
-GLuint R_MainFBOTexture(void);
-void R_MainFBOBlit(void);
+void R_FboBlit(frameBuffer_t *from, frameBuffer_t *to);
+// void R_MainFBOBlit(void);
 void R_InitFBO(void);
 
 //------------------------------------------------------------------------------
@@ -2275,6 +2323,8 @@ extern cvar_t *r_directedScale;
 extern cvar_t *r_cache;
 extern cvar_t *r_cacheShaders;
 extern cvar_t *r_cacheModels;
+
+extern cvar_t *r_fbo;
 
 extern cvar_t *r_cacheGathering;
 
