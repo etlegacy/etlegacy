@@ -154,6 +154,11 @@ void R_BindFBO(frameBuffer_t *fb)
 	}
 }
 
+frameBuffer_t *R_CurrentFBO()
+{
+	return current;
+}
+
 static void R_BindFBOAs(frameBuffer_t *fb, fboBinding binding)
 {
 	GLint val = 0;
@@ -459,28 +464,6 @@ static frameBuffer_t *R_CreateFBO(frameBuffer_t *fb, const char *name, int width
 	R_BindFBO(NULL);
 
 	return fb;
-}
-
-void R_MainFBO(qboolean bind)
-{
-	if (!tr.useFBO)
-	{
-		return;
-	}
-
-	if (!mainFbo->fbo)
-	{
-		return;
-	}
-
-	if (bind)
-	{
-		R_BindFBO(mainFbo);
-	}
-	else
-	{
-		R_BindFBO(NULL);
-	}
 }
 
 void R_FboBlit(frameBuffer_t *from, frameBuffer_t *to)

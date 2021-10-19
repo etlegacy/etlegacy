@@ -338,16 +338,7 @@ byte *RB_ReadPixels(int x, int y, int width, int height, size_t *offset, int *pa
 
 	bufstart = PADP(( intptr_t ) buffer + *offset, packAlign);
 
-	R_BindFBO(NULL);
 	glReadPixels(x, y, width, height, GL_RGB, GL_UNSIGNED_BYTE, bufstart);
-	if (msMainFbo)
-	{
-		R_BindFBO(msMainFbo);
-	}
-	else
-	{
-		R_BindFBO(mainFbo);
-	}
 
 	*offset = bufstart - buffer;
 	*padlen = padwidth - linelen;
@@ -665,6 +656,7 @@ const void *RB_TakeVideoFrameCmd(const void *data)
 	size_t                    memcount, linelen;
 	int                       padwidth, avipadwidth, padlen, avipadlen;
 	GLint                     packAlign;
+	frameBuffer_t             *tmpFbo;
 
 	// finish any 2D drawing if needed
 	if (tess.numIndexes)
@@ -687,8 +679,10 @@ const void *RB_TakeVideoFrameCmd(const void *data)
 
 	cBuf = PADP(cmd->captureBuffer, packAlign);
 
-	glReadPixels(0, 0, cmd->width, cmd->height, GL_RGB,
-	              GL_UNSIGNED_BYTE, cBuf);
+	tmpFbo = R_CurrentFBO();
+	R_BindFBO(NULL);
+	glReadPixels(0, 0, cmd->width, cmd->height, GL_RGB, GL_UNSIGNED_BYTE, cBuf);
+	R_BindFBO(tmpFbo);
 
 	memcount = padwidth * cmd->height;
 

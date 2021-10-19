@@ -2213,11 +2213,10 @@ extern frameBuffer_t *msMainFbo;
 
 void R_FBOSetViewport(frameBuffer_t *from, frameBuffer_t *to);
 void R_BindFBO(frameBuffer_t *fb);
+frameBuffer_t *R_CurrentFBO();
 byte *R_FBOReadPixels(frameBuffer_t *fb, size_t *offset, int *padlen);
 void R_ShutdownFBO(void);
-void R_MainFBO(qboolean bind);
 void R_FboBlit(frameBuffer_t *from, frameBuffer_t *to);
-// void R_MainFBOBlit(void);
 void R_InitFBO(void);
 
 //------------------------------------------------------------------------------
