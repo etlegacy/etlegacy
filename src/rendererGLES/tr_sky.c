@@ -1172,7 +1172,7 @@ void RB_StageIteratorSky(void)
 	// draw the outer skybox
 	if (tess.shader->sky.outerbox[0] && tess.shader->sky.outerbox[0] != tr.defaultImage)
 	{
-		glColor3f(tr.identityLight, tr.identityLight, tr.identityLight);
+		glColor4f(tr.identityLight, tr.identityLight, tr.identityLight, 1.0f);
 
 		glPushMatrix();
 		GL_State(0);
@@ -1192,7 +1192,7 @@ void RB_StageIteratorSky(void)
 	// draw the inner skybox
 	if (tess.shader->sky.innerbox[0] && tess.shader->sky.innerbox[0] != tr.defaultImage)
 	{
-		glColor3f(tr.identityLight, tr.identityLight, tr.identityLight);
+		glColor4f(tr.identityLight, tr.identityLight, tr.identityLight, 1.0f);
 
 		glPushMatrix();
 		GL_State(0);

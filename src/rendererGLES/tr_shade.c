@@ -167,7 +167,7 @@ static void DrawTris(shaderCommands_t *input)
 		stateBits |= (GLS_SRCBLEND_SRC_ALPHA | GLS_DSTBLEND_ONE_MINUS_SRC_ALPHA);
 	}
 
-	glColor4f(trisColor[0], trisColor[1], trisColor[2], trisColor[3])
+	glColor4f(trisColor[0], trisColor[1], trisColor[2], trisColor[3]);
 
 	if (r_showTris->integer == 2)
 	{
