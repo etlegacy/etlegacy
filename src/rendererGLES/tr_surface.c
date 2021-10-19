@@ -621,7 +621,7 @@ void RB_SurfaceBeam(void)
 
 	GL_State(GLS_SRCBLEND_ONE | GLS_DSTBLEND_ONE);
 
-	glColor3f(1, 0, 0);
+	glColor4f(1.0f, 0.f, 0.f, 1.0f);
 
 	// OpenGLES implementation
 	GLboolean text  = glIsEnabled(GL_TEXTURE_COORD_ARRAY);
