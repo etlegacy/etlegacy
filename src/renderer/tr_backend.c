@@ -1291,12 +1291,18 @@ const void *RB_DrawBuffer(const void *data)
 {
 	const drawBufferCommand_t *cmd = ( const drawBufferCommand_t * ) data;
 
+	// Just skip this for now, not really an issue imho.
+	if (tr.useFBO)
+	{
+		return ( const void * ) (cmd + 1);
+	}
+
 	glDrawBuffer(cmd->buffer);
 
 	// clear screen for debugging
 	if (r_clear->integer)
 	{
-		glClearColor(1, 0, 0.5, 1);
+		glClearColor(1, 0, 0.5f, 1);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	}
 
