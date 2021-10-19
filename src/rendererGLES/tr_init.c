@@ -199,7 +199,13 @@ static void InitOpenGL(void)
 		context.samples = r_ext_multisample->integer;
 		context.versionMajor = 1;
 		context.versionMinor = 1;
+
+		// FIXME: check if both Rpi and Android can use the "EGL" one.
+#ifdef __ANDROID__
 		context.context = GL_CONTEXT_EGL;
+#else
+		context.context = GL_CONTEXT_ES;
+#endif
 
 		ri.GLimp_Init(&glConfig, context);
 

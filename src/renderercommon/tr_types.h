@@ -496,6 +496,7 @@ typedef enum
 	GL_CONTEXT_DEFAULT,
 	GL_CONTEXT_COMP,
 	GL_CONTEXT_CORE,
+	GL_CONTEXT_ES, // Only sets the ES context not the EGL flag
 	GL_CONTEXT_EGL,
 } windowContextType_t;
 
