@@ -3004,6 +3004,7 @@ void CL_Init(void)
 
 	// cgame might not be initialized before menu is used
 	Cvar_Get("cg_autoReload", "1", CVAR_ARCHIVE);
+	Cvar_Get("cg_weapaltSwitches", "1", CVAR_ARCHIVE);
 
 	cl_missionStats = Cvar_Get("g_missionStats", "0", CVAR_ROM);
 
