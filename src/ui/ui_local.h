@@ -106,8 +106,8 @@ extern vmCvar_t ui_serverBrowserSettings;
 
 extern vmCvar_t ui_cg_shoutcastDrawPlayers;
 extern vmCvar_t ui_cg_shoutcastDrawTeamNames;
-extern vmCvar_t ui_cg_shoutcastTeamName1;
-extern vmCvar_t ui_cg_shoutcastTeamName2;
+extern vmCvar_t ui_cg_shoutcastTeamNameRed;
+extern vmCvar_t ui_cg_shoutcastTeamNameBlue;
 extern vmCvar_t ui_cg_shoutcastDrawHealth;
 extern vmCvar_t ui_cg_shoutcastGrenadeTrail;
 extern vmCvar_t ui_cg_shoutcastDrawMinimap;

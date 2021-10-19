@@ -8878,8 +8878,8 @@ vmCvar_t ui_serverBrowserSettings;
 
 vmCvar_t ui_cg_shoutcastDrawPlayers;
 vmCvar_t ui_cg_shoutcastDrawTeamNames;
-vmCvar_t ui_cg_shoutcastTeamName1;
-vmCvar_t ui_cg_shoutcastTeamName2;
+vmCvar_t ui_cg_shoutcastTeamNameRed;
+vmCvar_t ui_cg_shoutcastTeamNameBlue;
 vmCvar_t ui_cg_shoutcastDrawHealth;
 vmCvar_t ui_cg_shoutcastGrenadeTrail;
 vmCvar_t ui_cg_shoutcastDrawMinimap;
@@ -8985,8 +8985,8 @@ static cvarTable_t cvarTable[] =
 
 	{ &ui_cg_shoutcastDrawPlayers,         "cg_shoutcastDrawPlayers",             "1",                          CVAR_ARCHIVE,                   0 },
 	{ &ui_cg_shoutcastDrawTeamNames,       "cg_shoutcastDrawTeamNames",           "1",                          CVAR_ARCHIVE,                   0 },
-	{ &ui_cg_shoutcastTeamName1,           "cg_shoutcastTeamName1",               "",                           CVAR_ARCHIVE,                   0 },
-	{ &ui_cg_shoutcastTeamName2,           "cg_shoutcastTeamName2",               "",                           CVAR_ARCHIVE,                   0 },
+	{ &ui_cg_shoutcastTeamNameRed,           "cg_shoutcastTeamNameRed",               "",                           CVAR_ARCHIVE,                   0 },
+	{ &ui_cg_shoutcastTeamNameBlue,           "cg_shoutcastTeamNameBlue",               "",                           CVAR_ARCHIVE,                   0 },
 	{ &ui_cg_shoutcastDrawHealth,          "cg_shoutcastDrawHealth",              "0",                          CVAR_ARCHIVE,                   0 },
 	{ &ui_cg_shoutcastGrenadeTrail,        "cg_shoutcastGrenadeTrail",            "0",                          CVAR_ARCHIVE,                   0 },
 	{ &ui_cg_shoutcastDrawMinimap,         "cg_shoutcastDrawMinimap",             "1",                          CVAR_ARCHIVE,                   0 },

@@ -800,9 +800,9 @@ static void CG_DrawShoutcastTeamNames()
 	if (cg_shoutcastDrawTeamNames.integer)
 	{
 		//Draw axis label
-		if (Q_PrintStrlen(cg_shoutcastTeamName1.string) > 0)
+		if (Q_PrintStrlen(cg_shoutcastTeamNameRed.string) > 0)
 		{
-			text = va("%s", cg_shoutcastTeamName1.string);
+			text = va("%s", cg_shoutcastTeamNameRed.string);
 		}
 		else
 		{
@@ -828,9 +828,9 @@ static void CG_DrawShoutcastTeamNames()
 		CG_Text_Paint_Ext(rect.x + (rect.w / 2) - (textWidth / 2), rect.y + (rect.h / 2) + (textHeight / 2), 0.3f, 0.3f, colorWhite, text, 0, 20, ITEM_TEXTSTYLE_NORMAL, FONT_TEXT);
 
 		//Draw allies label
-		if (Q_PrintStrlen(cg_shoutcastTeamName2.string) > 0)
+		if (Q_PrintStrlen(cg_shoutcastTeamNameBlue.string) > 0)
 		{
-			text = va("%s", cg_shoutcastTeamName2.string);
+			text = va("%s", cg_shoutcastTeamNameBlue.string);
 		}
 		else
 		{
