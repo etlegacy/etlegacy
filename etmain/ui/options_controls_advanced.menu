@@ -29,13 +29,14 @@ menuDef {
 
 // Selection //
 #define SELECTION_Y 32
-	SUBWINDOW( 6, SELECTION_Y, (SUBWINDOW_WIDTH), 52, _("SELECTION MENUS" ))
-	BIND( 8, SELECTION_Y+16, (SUBWINDOW_WIDTH)-4, 10, _("Team selection:"), .2, 8, "teammenu", "" )
-	BIND( 8, SELECTION_Y+28, (SUBWINDOW_WIDTH)-4, 10, _("Class selection:"), .2, 8, "classmenu", "" )
-	BIND( 8, SELECTION_Y+40, (SUBWINDOW_WIDTH)-4, 10, _("Spawn selection:"), .2, 8, "spawnmenu", "" )
+	SUBWINDOW( 6, SELECTION_Y, (SUBWINDOW_WIDTH), 64, _("SELECTION MENUS" ))
+	BIND( 8, SELECTION_Y+16, (SUBWINDOW_WIDTH)-4, 10, _("Team selection:"), .2, 8, "teammenu", "Opens team selection menu" )
+	BIND( 8, SELECTION_Y+28, (SUBWINDOW_WIDTH)-4, 10, _("Class selection:"), .2, 8, "classmenu", "Opens class selection menu" )
+	BIND( 8, SELECTION_Y+40, (SUBWINDOW_WIDTH)-4, 10, _("Spawn selection:"), .2, 8, "spawnmenu", "Opens spawn selection menu" )
+	BIND( 8, SELECTION_Y+52, (SUBWINDOW_WIDTH)-4, 10, _("Shoutcast menu:"), .2, 8, "shoutcastmenu", "Opens shoutcast menu" )
 
 // Fire-Teams //
-#define FIRETEAM_Y 90
+#define FIRETEAM_Y 102
 	SUBWINDOW( 6, FIRETEAM_Y, (SUBWINDOW_WIDTH), 148, _("FIRE-TEAMS" ))
 	BIND( 8, FIRETEAM_Y+16, (SUBWINDOW_WIDTH)-4, 10, _("Fire-Team Admin:"), .2, 8, "mp_fireteamadmin", "" )
 	BIND( 8, FIRETEAM_Y+28, (SUBWINDOW_WIDTH)-4, 10, _("Select All Members:"), .2, 8, "selectbuddy -2", "" )
@@ -50,25 +51,13 @@ menuDef {
 	BIND( 8, FIRETEAM_Y+136, (SUBWINDOW_WIDTH)-4, 10, _("Select Member #8:"), .2, 8, "selectbuddy 7", "" )
 
 // Joystick //
-#define JOYSTICK_Y 244
+#define JOYSTICK_Y 256
 	SUBWINDOW( 6, JOYSTICK_Y, (SUBWINDOW_WIDTH), 64, _("JOYSTICK") )
 	MULTI( 8, JOYSTICK_Y+16, (SUBWINDOW_WIDTH)-4, 10, _("Enable Joysticks:"), .2, 8, "in_joystick", cvarFloatList { "No" 0 "Yes" 1 }, _("General joystick initialization. Requires vid_restart.") )
 	EDITFIELD( 8, JOYSTICK_Y+28, (SUBWINDOW_WIDTH)-4, 10, _("Use Joystick#:"), .2, 8, "in_joystickNo", 64, 18, _("Specifies active joystick") )
 	MULTI( 8, JOYSTICK_Y+40, (SUBWINDOW_WIDTH)-4, 10, _("Analog Joystick:"), .2, 8, "in_joystickUseAnalog", cvarFloatList { "No" 0 "Yes" 1 }, _("Use analog joystick?") )
 	EDITFIELD( 8, JOYSTICK_Y+52, (SUBWINDOW_WIDTH)-4, 10, _("Joystick Threshold:"), .2, 8, "in_joystickThreshold", 64, 18, _("Sets joystick threshold sensitivity") )
 
-// Shoutcast //
-#define SHOUTCAST_Y 32
-	SUBWINDOW( 6+(SUBWINDOW_WIDTH)+6, SHOUTCAST_Y, (SUBWINDOW_WIDTH), 112, _("SHOUTCAST") )
-	BIND( 6+(SUBWINDOW_WIDTH)+6+2, SHOUTCAST_Y+16, (SUBWINDOW_WIDTH)-4, 10, _("Shoutcast menu:"), .2, 8, "shoutcastmenu", "Used to follow players, use the same way like voice chat." )
-	MULTI( 6+(SUBWINDOW_WIDTH)+6+2, SHOUTCAST_Y+28, (SUBWINDOW_WIDTH)-4, 10, _("Show minimap:"), .2, 8, "cg_shoutcastDrawMinimap", cvarFloatList { "Off" 0 "On" 1 }, _("Displays minimap.") )
-	MULTI( 6+(SUBWINDOW_WIDTH)+6+2, SHOUTCAST_Y+40, (SUBWINDOW_WIDTH)-4, 10, _("Show player lists:"), .2, 8, "cg_shoutcastDrawPlayers", cvarFloatList { "Off" 0 "On" 1 }, _("Displays player lists.") )
-	MULTI( 6+(SUBWINDOW_WIDTH)+6+2, SHOUTCAST_Y+52, (SUBWINDOW_WIDTH)-4, 10, _("Show grenade trail:"), .2, 8, "cg_shoutcastGrenadeTrail", cvarFloatList { "Off" 0 "On" 1 }, _("Use special red trail for grenades.") )
-	MULTI( 6+(SUBWINDOW_WIDTH)+6+2, SHOUTCAST_Y+64, (SUBWINDOW_WIDTH)-4, 10, _("Show player health:"), .2, 8, "cg_shoutcastDrawHealth", cvarFloatList { "Off" 0 "As text" 1 "As health bar" 2 }, _("Displays player health above them.") )
-	MULTI( 6+(SUBWINDOW_WIDTH)+6+2, SHOUTCAST_Y+76, (SUBWINDOW_WIDTH)-4, 10, _("Show team names:"), .2, 8, "cg_shoutcastDrawTeamNames", cvarFloatList { "Off" 0 "On" 1 }, _("Displays team names.") )
-	EDITFIELD( 6+(SUBWINDOW_WIDTH)+6+2, SHOUTCAST_Y+88, (SUBWINDOW_WIDTH)-4, 10, _("Axis team name:"), .2, 8, "cg_shoutcastTeamName1", 64, 18, _("Sets axis team name (axis if empty).") )
-	EDITFIELD( 6+(SUBWINDOW_WIDTH)+6+2, SHOUTCAST_Y+100, (SUBWINDOW_WIDTH)-4, 10, _("Allies team name:"), .2, 8, "cg_shoutcastTeamName2", 64, 18, _("Sets allies team name (allies if empty).") )
-	
 // Buttons //
 	BUTTON( 6, WINDOW_HEIGHT-24, WINDOW_WIDTH-12, 18, _("BACK"), .3, 14, close options_controls_advanced ; open options_controls )
 }
