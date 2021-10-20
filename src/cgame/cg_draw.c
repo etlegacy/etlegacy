@@ -3901,6 +3901,7 @@ static void CG_Draw2D(void)
 		CG_DrawFlashFade();
 		return;
 	}
+
 #ifdef FEATURE_EDV
 	if (!cgs.demoCamera.renderingFreeCam && !cgs.demoCamera.renderingWeaponCam)
 #endif
@@ -3930,6 +3931,7 @@ static void CG_Draw2D(void)
 		// don't draw any status if dead
 		if (cg.snap->ps.stats[STAT_HEALTH] > 0 || (cg.snap->ps.pm_flags & PMF_FOLLOW))
 		{
+			CG_DrawEnvironmentalAwareness();
 			CG_DrawCrosshair();
 			CG_DrawCrosshairNames();
 			CG_DrawNoShootIcon();
@@ -4038,12 +4040,6 @@ static void CG_Draw2D(void)
 	}
 
 	CG_DrawDemoMessage();
-
-	// draw objectif icons on top of all HUD elements
-	if (cg.snap->ps.stats[STAT_HEALTH] > 0 || (cg.snap->ps.pm_flags & PMF_FOLLOW))
-	{
-		CG_DrawEnvironmentalAwareness();
-	}
 }
 
 /**
