@@ -146,11 +146,11 @@ void R_BindFBO(frameBuffer_t *fb)
 
 	if (fb)
 	{
-		glBindFramebufferEXT(GL_FRAMEBUFFER, fb->fbo);
+		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, fb->fbo);
 	}
 	else
 	{
-		glBindFramebufferEXT(GL_FRAMEBUFFER, 0);
+		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
 	}
 }
 
@@ -500,7 +500,7 @@ void R_FboBlit(frameBuffer_t *from, frameBuffer_t *to)
 						  GL_COLOR_BUFFER_BIT, GL_LINEAR);
 	}
 
-	glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, to->fbo);
+	R_BindFBO(to);
 
 	GL_CheckErrors();
 }
