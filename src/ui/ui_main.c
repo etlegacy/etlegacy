@@ -8940,6 +8940,7 @@ static cvarTable_t cvarTable[] =
 	{ NULL,                                "cg_showblood",                        "1",                          CVAR_ARCHIVE,                   0 },
 	{ NULL,                                "cg_bloodFlash",                       "1.0",                        CVAR_ARCHIVE,                   0 },
 	{ NULL,                                "cg_autoReload",                       "1",                          CVAR_ARCHIVE,                   0 },
+	{ NULL,                                "cg_weapaltReloads",                   "0",                          CVAR_ARCHIVE,                   0 },
 	{ NULL,                                "cg_weapaltSwitches",                  "1",                          CVAR_ARCHIVE,                   0 },
 	{ NULL,                                "cg_noAmmoAutoSwitch",                 "1",                          CVAR_ARCHIVE,                   0 },
 	{ NULL,                                "cg_useWeapsForZoom",                  "1",                          CVAR_ARCHIVE,                   0 },
@@ -8985,8 +8986,8 @@ static cvarTable_t cvarTable[] =
 
 	{ &ui_cg_shoutcastDrawPlayers,         "cg_shoutcastDrawPlayers",             "1",                          CVAR_ARCHIVE,                   0 },
 	{ &ui_cg_shoutcastDrawTeamNames,       "cg_shoutcastDrawTeamNames",           "1",                          CVAR_ARCHIVE,                   0 },
-	{ &ui_cg_shoutcastTeamNameRed,           "cg_shoutcastTeamNameRed",               "",                           CVAR_ARCHIVE,                   0 },
-	{ &ui_cg_shoutcastTeamNameBlue,           "cg_shoutcastTeamNameBlue",               "",                           CVAR_ARCHIVE,                   0 },
+	{ &ui_cg_shoutcastTeamNameRed,         "cg_shoutcastTeamNameRed",             "",                           CVAR_ARCHIVE,                   0 },
+	{ &ui_cg_shoutcastTeamNameBlue,        "cg_shoutcastTeamNameBlue",            "",                           CVAR_ARCHIVE,                   0 },
 	{ &ui_cg_shoutcastDrawHealth,          "cg_shoutcastDrawHealth",              "0",                          CVAR_ARCHIVE,                   0 },
 	{ &ui_cg_shoutcastGrenadeTrail,        "cg_shoutcastGrenadeTrail",            "0",                          CVAR_ARCHIVE,                   0 },
 	{ &ui_cg_shoutcastDrawMinimap,         "cg_shoutcastDrawMinimap",             "1",                          CVAR_ARCHIVE,                   0 },
