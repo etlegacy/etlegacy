@@ -512,7 +512,7 @@ void CG_ReadHudScripts(void)
 
 // HUD DRAWING FUNCTIONS BELLOW
 
-vec4_t HUD_Background = { 0.16f, 0.2f, 0.17f, 0.8f };
+vec4_t HUD_Background = { 0.16f, 0.2f, 0.17f, 0.5f };
 vec4_t HUD_Border     = { 0.5f, 0.5f, 0.5f, 0.5f };
 vec4_t HUD_Text       = { 0.6f, 0.6f, 0.6f, 1.0f };
 
