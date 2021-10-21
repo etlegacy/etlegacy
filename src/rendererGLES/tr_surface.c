@@ -621,18 +621,18 @@ void RB_SurfaceBeam(void)
 
 	GL_State(GLS_SRCBLEND_ONE | GLS_DSTBLEND_ONE);
 
-	qglColor3f(1, 0, 0);
+	glColor4f(1.0f, 0.f, 0.f, 1.0f);
 
 	// OpenGLES implementation
-	GLboolean text  = qglIsEnabled(GL_TEXTURE_COORD_ARRAY);
-	GLboolean glcol = qglIsEnabled(GL_COLOR_ARRAY);
+	GLboolean text  = glIsEnabled(GL_TEXTURE_COORD_ARRAY);
+	GLboolean glcol = glIsEnabled(GL_COLOR_ARRAY);
 	if (glcol)
 	{
-		qglDisableClientState(GL_COLOR_ARRAY);
+		glDisableClientState(GL_COLOR_ARRAY);
 	}
 	if (text)
 	{
-		qglDisableClientState(GL_TEXTURE_COORD_ARRAY);
+		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 	}
 	GLfloat vtx[NUM_BEAM_SEGS * 6 + 6];
 	for (i = 0; i <= NUM_BEAM_SEGS; i++)
@@ -640,15 +640,15 @@ void RB_SurfaceBeam(void)
 		Com_Memcpy(vtx + i * 6, start_points[i % NUM_BEAM_SEGS], sizeof(GLfloat) * 3);
 		Com_Memcpy(vtx + i * 6 + 3, end_points[i % NUM_BEAM_SEGS], sizeof(GLfloat) * 3);
 	}
-	qglVertexPointer(3, GL_FLOAT, 0, vtx);
-	qglDrawArrays(GL_TRIANGLE_STRIP, 0, NUM_BEAM_SEGS * 2 + 2);
+	glVertexPointer(3, GL_FLOAT, 0, vtx);
+	glDrawArrays(GL_TRIANGLE_STRIP, 0, NUM_BEAM_SEGS * 2 + 2);
 	if (glcol)
 	{
-		qglEnableClientState(GL_COLOR_ARRAY);
+		glEnableClientState(GL_COLOR_ARRAY);
 	}
 	if (text)
 	{
-		qglEnableClientState(GL_TEXTURE_COORD_ARRAY);
+		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 	}
 }
 
@@ -1584,7 +1584,7 @@ void RB_SurfaceAxis(void)
 	// OpenGLES implementation
 	GL_Bind(tr.whiteImage);
 	GL_State(GLS_DEFAULT);
-	qglLineWidth(3);
+	glLineWidth(3);
 	GLfloat col[] =
 	{
 		1, 0, 0, 1,
@@ -1603,28 +1603,28 @@ void RB_SurfaceAxis(void)
 		0,  0,  0,
 		0,  0,  16
 	};
-	GLboolean text  = qglIsEnabled(GL_TEXTURE_COORD_ARRAY);
-	GLboolean glcol = qglIsEnabled(GL_COLOR_ARRAY);
+	GLboolean text  = glIsEnabled(GL_TEXTURE_COORD_ARRAY);
+	GLboolean glcol = glIsEnabled(GL_COLOR_ARRAY);
 	if (text)
 	{
-		qglDisableClientState(GL_TEXTURE_COORD_ARRAY);
+		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 	}
 	if (!glcol)
 	{
-		qglEnableClientState(GL_COLOR_ARRAY);
+		glEnableClientState(GL_COLOR_ARRAY);
 	}
-	qglColorPointer(4, GL_UNSIGNED_BYTE, 0, col);
-	qglVertexPointer(3, GL_FLOAT, 0, vtx);
-	qglDrawArrays(GL_LINES, 0, 6);
+	glColorPointer(4, GL_UNSIGNED_BYTE, 0, col);
+	glVertexPointer(3, GL_FLOAT, 0, vtx);
+	glDrawArrays(GL_LINES, 0, 6);
 	if (text)
 	{
-		qglEnableClientState(GL_TEXTURE_COORD_ARRAY);
+		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 	}
 	if (!glcol)
 	{
-		qglDisableClientState(GL_COLOR_ARRAY);
+		glDisableClientState(GL_COLOR_ARRAY);
 	}
-	qglLineWidth(1);
+	glLineWidth(1);
 }
 
 //===========================================================================

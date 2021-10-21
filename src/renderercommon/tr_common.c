@@ -549,13 +549,8 @@ static void GLimp_InitExtensions(void)
  */
 void Glimp_ClearScreen(void)
 {
-#ifdef FEATURE_RENDERER_GLES
-	qglClearColor(0, 0, 0, 1);
-	qglClear(GL_COLOR_BUFFER_BIT);
-#else
 	glClearColor(0, 0, 0, 1);
 	glClear(GL_COLOR_BUFFER_BIT);
-#endif
 	ri.GLimp_SwapFrame();
 }
 

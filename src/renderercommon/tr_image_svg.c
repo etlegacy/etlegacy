@@ -35,6 +35,8 @@
 
 #ifdef FEATURE_RENDERER2
 #include "../renderer2/tr_local.h"
+#elif defined FEATURE_RENDERER_GLES
+#include "../rendererGLES/tr_local.h"
 #else
 #include "../renderer/tr_local.h"
 #endif

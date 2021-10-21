@@ -48,7 +48,7 @@
  */
 static void R_DrawElements(int numIndexes, const glIndex_t *indexes)
 {
-	qglDrawElements(GL_TRIANGLES, numIndexes, GL_INDEX_TYPE, indexes);
+	glDrawElements(GL_TRIANGLES, numIndexes, GL_INDEX_TYPE, indexes);
 	return;
 }
 
@@ -167,28 +167,28 @@ static void DrawTris(shaderCommands_t *input)
 		stateBits |= (GLS_SRCBLEND_SRC_ALPHA | GLS_DSTBLEND_ONE_MINUS_SRC_ALPHA);
 	}
 
-	qglColor4fv(trisColor);
+	glColor4f(trisColor[0], trisColor[1], trisColor[2], trisColor[3]);
 
 	if (r_showTris->integer == 2)
 	{
 		stateBits |= (GLS_POLYMODE_LINE | GLS_DEPTHMASK_TRUE);
 		GL_State(stateBits);
-		qglDepthRange(0, 0);
+		glDepthRangef(0, 0);
 	}
 
-	qglDisableClientState(GL_COLOR_ARRAY);
-	qglDisableClientState(GL_TEXTURE_COORD_ARRAY);
+	glDisableClientState(GL_COLOR_ARRAY);
+	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
-	qglVertexPointer(3, GL_FLOAT, 16, input->xyz);   // padded for SIMD
+	glVertexPointer(3, GL_FLOAT, 16, input->xyz);   // padded for SIMD
 
 #ifndef __ANDROID__
 	R_DrawElements(input->numIndexes, input->indexes);
 #else
-	qglDrawArrays(GL_TRIANGLES, 0, input->numVertexes);
-	qglDrawElements(GL_LINE_STRIP, input->numIndexes, GL_INDEX_TYPE, input->indexes );
+	glDrawArrays(GL_TRIANGLES, 0, input->numVertexes);
+	glDrawElements(GL_LINE_STRIP, input->numIndexes, GL_INDEX_TYPE, input->indexes );
 #endif
 
-	qglDepthRange(0, 1);
+	glDepthRangef(0, 1);
 }
 
 /**
@@ -200,8 +200,8 @@ static void DrawNormals(shaderCommands_t *input)
 	vec3_t temp;
 
 	GL_Bind(tr.whiteImage);
-	qglColor3f(1, 1, 1);
-	qglDepthRange(0, 0);    // never occluded
+	glColor4f(1, 1, 1, 1.0f);
+	glDepthRangef(0, 0);    // never occluded
 	GL_State(GLS_POLYMODE_LINE | GLS_DEPTHMASK_TRUE);
 
     int i;
@@ -213,11 +213,11 @@ static void DrawNormals(shaderCommands_t *input)
 
         memcpy(vtx, input->xyz[i], sizeof(GLfloat)*3);
         memcpy(vtx+1, temp, sizeof(GLfloat)*3);
-        qglVertexPointer (3, GL_FLOAT, 16, vtx);
-        qglDrawArrays(GL_LINES, 0, 2);
+        glVertexPointer (3, GL_FLOAT, 16, vtx);
+        glDrawArrays(GL_LINES, 0, 2);
     }
 
-	qglDepthRange(0, 1);
+	glDepthRangef(0, 1);
 }
 
 /**
@@ -279,13 +279,13 @@ static void DrawMultitextured(shaderCommands_t *input, int stage)
 
 	// base
 	GL_SelectTexture(0);
-	qglTexCoordPointer(2, GL_FLOAT, 0, input->svars.texcoords[0]);
+	glTexCoordPointer(2, GL_FLOAT, 0, input->svars.texcoords[0]);
 	R_BindAnimatedImage(&pStage->bundle[0]);
 
 	// lightmap/secondary pass
 	GL_SelectTexture(1);
-	qglEnable(GL_TEXTURE_2D);
-	qglEnableClientState(GL_TEXTURE_COORD_ARRAY);
+	glEnable(GL_TEXTURE_2D);
+	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
 	if (r_lightMap->integer)
 	{
@@ -296,15 +296,15 @@ static void DrawMultitextured(shaderCommands_t *input, int stage)
 		GL_TexEnv(tess.shader->multitextureEnv);
 	}
 
-	qglTexCoordPointer(2, GL_FLOAT, 0, input->svars.texcoords[1]);
+	glTexCoordPointer(2, GL_FLOAT, 0, input->svars.texcoords[1]);
 
 	R_BindAnimatedImage(&pStage->bundle[1]);
 
 	R_DrawElements(input->numIndexes, input->indexes);
 
 	// disable texturing on TEXTURE1, then select TEXTURE0
-	//qglDisableClientState( GL_TEXTURE_COORD_ARRAY );
-	qglDisable(GL_TEXTURE_2D);
+	//glDisableClientState( GL_TEXTURE_COORD_ARRAY );
+	glDisable(GL_TEXTURE_2D);
 
 	GL_SelectTexture(0);
 }
@@ -447,8 +447,8 @@ static void DynamicLightSinglePass(void)
 	//for( i = 0; i < numIndexes; i++ )
 	//    intColors[ hitIndexes[ i ] ] = 0x000000FF;
 
-	qglEnableClientState(GL_COLOR_ARRAY);
-	qglColorPointer(4, GL_UNSIGNED_BYTE, 0, tess.svars.colors);
+	glEnableClientState(GL_COLOR_ARRAY);
+	glColorPointer(4, GL_UNSIGNED_BYTE, 0, tess.svars.colors);
 
 	// render the dynamic light pass
 	R_FogOff();
@@ -604,8 +604,8 @@ static void DynamicLightPass(void)
 		//for( i = 0; i < numIndexes; i++ )
 		//  intColors[ hitIndexes[ i ] ] = 0x000000FF;
 
-		qglEnableClientState(GL_COLOR_ARRAY);
-		qglColorPointer(4, GL_UNSIGNED_BYTE, 0, tess.svars.colors);
+		glEnableClientState(GL_COLOR_ARRAY);
+		glColorPointer(4, GL_UNSIGNED_BYTE, 0, tess.svars.colors);
 
 		R_FogOff();
 		GL_Bind(tr.whiteImage);
@@ -639,11 +639,11 @@ static void RB_FogPass(void)
 		return;
 	}
 
-	qglEnableClientState(GL_COLOR_ARRAY);
-	qglColorPointer(4, GL_UNSIGNED_BYTE, 0, tess.svars.colors);
+	glEnableClientState(GL_COLOR_ARRAY);
+	glColorPointer(4, GL_UNSIGNED_BYTE, 0, tess.svars.colors);
 
-	qglEnableClientState(GL_TEXTURE_COORD_ARRAY);
-	qglTexCoordPointer(2, GL_FLOAT, 0, tess.svars.texcoords[0]);
+	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+	glTexCoordPointer(2, GL_FLOAT, 0, tess.svars.texcoords[0]);
 
 	fog = tr.world->fogs + tess.fogNum;
 
@@ -1160,8 +1160,8 @@ static void RB_IterateStagesGeneric(shaderCommands_t *input)
 
 		if (!setArraysOnce)
 		{
-			qglEnableClientState(GL_COLOR_ARRAY);
-			qglColorPointer(4, GL_UNSIGNED_BYTE, 0, input->svars.colors);
+			glEnableClientState(GL_COLOR_ARRAY);
+			glColorPointer(4, GL_UNSIGNED_BYTE, 0, input->svars.colors);
 		}
 
 		// do multitexture
@@ -1175,7 +1175,7 @@ static void RB_IterateStagesGeneric(shaderCommands_t *input)
 
 			if (!setArraysOnce)
 			{
-				qglTexCoordPointer(2, GL_FLOAT, 0, input->svars.texcoords[0]);
+				glTexCoordPointer(2, GL_FLOAT, 0, input->svars.texcoords[0]);
 			}
 
 			// set state
@@ -1282,8 +1282,8 @@ void RB_StageIteratorGeneric(void)
 	// set polygon offset if necessary
 	if (shader->polygonOffset)
 	{
-		qglEnable(GL_POLYGON_OFFSET_FILL);
-		qglPolygonOffset(r_offsetFactor->value, r_offsetUnits->value);
+		glEnable(GL_POLYGON_OFFSET_FILL);
+		glPolygonOffset(r_offsetFactor->value, r_offsetUnits->value);
 	}
 
 	// if there is only a single pass then we can enable color
@@ -1293,27 +1293,27 @@ void RB_StageIteratorGeneric(void)
 	if (tess.numPasses > 1 || shader->multitextureEnv)
 	{
 		setArraysOnce = qfalse;
-		qglDisableClientState(GL_COLOR_ARRAY);
-		qglDisableClientState(GL_TEXTURE_COORD_ARRAY);
+		glDisableClientState(GL_COLOR_ARRAY);
+		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 	}
 	else
 	{
 		setArraysOnce = qtrue;
 
-		qglEnableClientState(GL_COLOR_ARRAY);
-		qglColorPointer(4, GL_UNSIGNED_BYTE, 0, tess.svars.colors);
+		glEnableClientState(GL_COLOR_ARRAY);
+		glColorPointer(4, GL_UNSIGNED_BYTE, 0, tess.svars.colors);
 
-		qglEnableClientState(GL_TEXTURE_COORD_ARRAY);
-		qglTexCoordPointer(2, GL_FLOAT, 0, tess.svars.texcoords[0]);
+		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+		glTexCoordPointer(2, GL_FLOAT, 0, tess.svars.texcoords[0]);
 	}
 
-	qglVertexPointer(3, GL_FLOAT, 16, input->xyz);   // padded for SIMD
+	glVertexPointer(3, GL_FLOAT, 16, input->xyz);   // padded for SIMD
 
 	// enable color and texcoord arrays after the lock if necessary
 	if (!setArraysOnce)
 	{
-		qglEnableClientState(GL_TEXTURE_COORD_ARRAY);
-		qglEnableClientState(GL_COLOR_ARRAY);
+		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+		glEnableClientState(GL_COLOR_ARRAY);
 	}
 
 	// call shader function
@@ -1344,7 +1344,7 @@ void RB_StageIteratorGeneric(void)
 	// reset polygon offset
 	if (shader->polygonOffset)
 	{
-		qglDisable(GL_POLYGON_OFFSET_FILL);
+		glDisable(GL_POLYGON_OFFSET_FILL);
 	}
 }
 
@@ -1368,12 +1368,12 @@ void RB_StageIteratorVertexLitTexture(void)
 	GL_Cull(shader->cullType);
 
 	// set arrays and lock
-	qglEnableClientState(GL_COLOR_ARRAY);
-	qglEnableClientState(GL_TEXTURE_COORD_ARRAY);
+	glEnableClientState(GL_COLOR_ARRAY);
+	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
-	qglColorPointer(4, GL_UNSIGNED_BYTE, 0, tess.svars.colors);
-	qglTexCoordPointer(2, GL_FLOAT, 16, tess.texCoords[0][0]);
-	qglVertexPointer(3, GL_FLOAT, 16, input->xyz);
+	glColorPointer(4, GL_UNSIGNED_BYTE, 0, tess.svars.colors);
+	glTexCoordPointer(2, GL_FLOAT, 16, tess.texCoords[0][0]);
+	glVertexPointer(3, GL_FLOAT, 16, input->xyz);
 
 	// call special shade routine
 	R_BindAnimatedImage(&tess.xstages[0]->bundle[0]);
@@ -1422,27 +1422,27 @@ void RB_StageIteratorLightmappedMultitexture(void)
 
 	// set color, pointers, and lock
 	GL_State(GLS_DEFAULT);
-	qglVertexPointer(3, GL_FLOAT, 16, input->xyz);
+	glVertexPointer(3, GL_FLOAT, 16, input->xyz);
 
 #ifdef REPLACE_MODE
-	qglDisableClientState(GL_COLOR_ARRAY);
-	qglColor3f(1, 1, 1);
-	qglShadeModel(GL_FLAT);
+	glDisableClientState(GL_COLOR_ARRAY);
+	glColor4f(1, 1, 1, 1.0f);
+	glShadeModel(GL_FLAT);
 #else
-	qglEnableClientState(GL_COLOR_ARRAY);
-	qglColorPointer(4, GL_UNSIGNED_BYTE, 0, tess.constantColor255);
+	glEnableClientState(GL_COLOR_ARRAY);
+	glColorPointer(4, GL_UNSIGNED_BYTE, 0, tess.constantColor255);
 #endif
 
 	// select base stage
 	GL_SelectTexture(0);
 
-	qglEnableClientState(GL_TEXTURE_COORD_ARRAY);
+	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 	R_BindAnimatedImage(&tess.xstages[0]->bundle[0]);
-	qglTexCoordPointer(2, GL_FLOAT, 16, tess.texCoords[0][0]);
+	glTexCoordPointer(2, GL_FLOAT, 16, tess.texCoords[0][0]);
 
 	// configure second stage
 	GL_SelectTexture(1);
-	qglEnable(GL_TEXTURE_2D);
+	glEnable(GL_TEXTURE_2D);
 	if (r_lightMap->integer)
 	{
 		GL_TexEnv(GL_REPLACE);
@@ -1462,23 +1462,23 @@ void RB_StageIteratorLightmappedMultitexture(void)
 		R_BindAnimatedImage(&tess.xstages[0]->bundle[1]);
 	}
 
-	qglEnableClientState(GL_TEXTURE_COORD_ARRAY);
-	qglTexCoordPointer(2, GL_FLOAT, 16, tess.texCoords[0][1]);
+	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+	glTexCoordPointer(2, GL_FLOAT, 16, tess.texCoords[0][1]);
 
 #ifdef __ANDROID__
-	qglDrawArrays(GL_POINTS, 0, input->numVertexes);
+	glDrawArrays(GL_POINTS, 0, input->numVertexes);
 #endif
 
 	R_DrawElements(input->numIndexes, input->indexes);
 
 	// disable texturing on TEXTURE1, then select TEXTURE0
-	qglDisable(GL_TEXTURE_2D);
-	qglDisableClientState(GL_TEXTURE_COORD_ARRAY);
+	glDisable(GL_TEXTURE_2D);
+	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
 	GL_SelectTexture(0);
 #ifdef REPLACE_MODE
 	GL_TexEnv(GL_MODULATE);
-	qglShadeModel(GL_SMOOTH);
+	glShadeModel(GL_SMOOTH);
 #endif
 
 	// now do any dynamic lighting needed

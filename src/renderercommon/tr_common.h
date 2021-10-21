@@ -39,7 +39,7 @@
 #include "tr_public.h"
 #include "iqm.h"
 #ifdef FEATURE_RENDERER_GLES
-#   include "../rendererGLES/qgl.h"
+#include <GLES/gl.h>
 #else
 #   ifdef BUNDLED_GLEW
 #      include "GL/glew.h"
