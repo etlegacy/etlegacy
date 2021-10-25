@@ -1341,16 +1341,16 @@ void CG_DrawDemoMessage(void)
 	char demostatus[128];
 	char wavestatus[128];
 
-	float         x, y, charHeight, fontScale;
-	hudStucture_t *activehud;
+	float         x, y, fontScale;
+	hudStucture_t *hud;
 
-	activehud = CG_GetActiveHUD();
+	hud = CG_GetActiveHUD();
 
-	fontScale = activehud->demotext.location.h;
-	y         = activehud->demotext.location.y;
-	x         = activehud->demotext.location.x;
+	fontScale = hud->demotext.location.h;
+	y         = hud->demotext.location.y;
+	x         = hud->demotext.location.x;
 
-	if (!activehud->demotext.visible)
+	if (!hud->demotext.visible)
 	{
 		return;
 	}
@@ -1367,7 +1367,7 @@ void CG_DrawDemoMessage(void)
 		lastDemoScoreTime = cg.time + 5000; // 5 secs
 	}
 
-	if (activehud->demotext.style == STYLE_NORMAL)
+	if (hud->demotext.style == STYLE_NORMAL)
 	{
 		if (cl_demorecording.integer)
 		{
@@ -2208,10 +2208,6 @@ static float CG_DrawSnapshot(float y)
 	return y + 36 + 4;
 }
 
-static vec_t highestSpeed, speed;
-static int   lasttime;
-vec4_t       tclr = { 0.625f, 0.625f, 0.6f, 1.0f };
-
 /**
  * @brief CG_DrawSpeed
  * @param y
@@ -2219,10 +2215,13 @@ vec4_t       tclr = { 0.625f, 0.625f, 0.6f, 1.0f };
  */
 static float CG_DrawSpeed(float y)
 {
-	char *s, *s2 = NULL;
-	int  w, w2, w3, w4;
-	int  thistime;
-	int  x, h;
+	static vec_t  highestSpeed, speed;
+	static int    lasttime;
+	static vec4_t tclr = { 0.625f, 0.625f, 0.6f, 1.0f };
+	char          *s, *s2 = NULL;
+	int           w, w2, w3, w4;
+	int           thistime;
+	int           x, h;
 
 	if (resetmaxspeed)
 	{
@@ -2965,7 +2964,7 @@ static float CG_DrawLagometer(float y)
 			// antiwarp indicator
 			if (lagometer.snapshotAntiwarp[i] > 0)
 			{
-				float w = lagometer.snapshotAntiwarp[i] * vscale;
+				w = lagometer.snapshotAntiwarp[i] * vscale;
 
 				if (color != 6)
 				{
@@ -3034,19 +3033,19 @@ static float CG_DrawLagometer(float y)
 	// add snapshots/s in top-right corner of meter
 	{
 		char   *result;
-		vec4_t *color;
+		vec4_t *clr;
 
 		if (cgs.sampledStat.avg < cgs.sv_fps * 0.5f)
 		{
-			color = &colorRed;
+			clr = &colorRed;
 		}
 		else if (cgs.sampledStat.avg < cgs.sv_fps * 0.75f)
 		{
-			color = &colorYellow;
+			clr = &colorYellow;
 		}
 		else
 		{
-			color = &HUD_Text;
+			clr = &HUD_Text;
 		}
 
 		// FIXME: see warmup blinky blinky
@@ -3063,7 +3062,7 @@ static float CG_DrawLagometer(float y)
 		w2 = (UPPERRIGHT_W > w) ? UPPERRIGHT_W : w;
 		x  = Ccg_WideX(UPPERRIGHT_X) - w2 - 2;
 
-		CG_Text_Paint_Ext(x + ((w2 - w) / 2) + 2, y + 11, 0.19f, 0.19f, *color, result, 0, 0, 0, &cgs.media.limboFont1);
+		CG_Text_Paint_Ext(x + ((w2 - w) / 2) + 2, y + 11, 0.19f, 0.19f, *clr, result, 0, 0, 0, &cgs.media.limboFont1);
 	}
 
 	return y + w + 13;
