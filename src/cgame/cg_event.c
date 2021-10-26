@@ -1901,7 +1901,7 @@ void CG_PlayHitSound(const int clientNum, const int hitSound)
 			}
 			break;
 		default:
-			CG_DPrintf("Unkown hitsound: %i\n", hitSound);
+			CG_DPrintf("Unknown hitsound: %i\n", hitSound);
 			break;
 	}
 }
