@@ -8,13 +8,14 @@ hudDef {
 		// hudnumber value must be unique, if not then the hud will be discarded
 		// PS. 'x' should be between 0 and 640 and 'y' between 0 and 480
 		hudnumber 3
-		compass 44 405 72 72 0 1
+		compass 44 393 84 84 0 1
 		staminabar 4 388 12 72 0 1
 		breathbar 4 388 12 72 0 1
-		healthbar 604 388 12 75 0 1
-		weaponchargebar 624 388 12 75 0 1
+		healthbar 604 388 12 72 0 1
+		weaponchargebar 624 388 12 72 0 1
 		healthtext 580 415 0 0 0 1
-		xptext 28 476 0 0 0 1
+		xptext 48 476 0 0 0 1
+		ranktext 62 464 0 0 0 1
 		statsdisplay 24 385 0 0 1 1
 		weaponicon 538 424 60 32 0 1
 		weaponammo 598 470 0 0 0 1
@@ -26,6 +27,10 @@ hudDef {
 		cursorhints 296 260 48 48 0 1
 		weaponstability 50 208 10 64 0 1
 		livesleft 0 0 0 0 0 1
+		reinforcement 570 390 0 0 0 1
+		roundtimer 570 390 0 0 0 1
+		spawntimer 570 390 0 0 0 1
+		localtime 570 400 0 0 0 1
 		votetext 8 224 0.22 0.22 1 1
 		spectatortext 8 188 0.22 0.22 1 1
 		limbotext 8 164 0.22 0.22 1 1
