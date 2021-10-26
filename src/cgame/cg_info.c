@@ -1989,7 +1989,7 @@ void CG_DemoHelpDraw(void)
 		for (i = 0; i < ARRAY_LEN(edvhelp); i++)
 		{
 			y += tSpacing;
-			if (help[i] != NULL)
+			if (edvhelp[i] != NULL)
 			{
 				CG_Text_Paint_Ext(x, y, tScale, tScale, tColor, edvhelp[i], 0.0f, 0, tStyle, tFont);
 			}
