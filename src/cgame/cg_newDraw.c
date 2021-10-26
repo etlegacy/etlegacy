@@ -336,7 +336,6 @@ void CG_DrawCursorhint(rectDef_t *rect)
 	float     *color;
 	qhandle_t icon;
 	float     scale, halfscale;
-	float     middle = rect->x + cgs.wideXoffset;
 
 	if (!cg_cursorHints.integer)
 	{
@@ -473,7 +472,7 @@ void CG_DrawCursorhint(rectDef_t *rect)
 
 	// set color and draw the hint
 	trap_R_SetColor(color);
-	CG_DrawPic(middle - halfscale, rect->y - halfscale, rect->w + scale, rect->h + scale, icon);
+	CG_DrawPic(rect->x - halfscale, rect->y - halfscale, rect->w + scale, rect->h + scale, icon);
 
 	trap_R_SetColor(NULL);
 
@@ -485,7 +484,7 @@ void CG_DrawCursorhint(rectDef_t *rect)
 
 		if (curValue > 0.01f)
 		{
-			CG_FilledBar(middle, rect->y + rect->h + 4, rect->w, 8, colorRed, colorGreen, backG, curValue, BAR_BORDER_SMALL | BAR_LERP_COLOR);
+			CG_FilledBar(rect->x, rect->y + rect->h + 4, rect->w, 8, colorRed, colorGreen, backG, curValue, BAR_BORDER_SMALL | BAR_LERP_COLOR);
 		}
 	}
 }
