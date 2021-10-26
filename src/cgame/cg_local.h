@@ -1616,6 +1616,8 @@ typedef struct
 	qhandle_t voiceChatShader;
 	qhandle_t balloonShader;
 	qhandle_t objectiveShader;
+	qhandle_t objectiveBlueShader;
+	qhandle_t objectiveRedShader;
 	qhandle_t objectiveTeamShader;
 	qhandle_t objectiveDroppedShader;
 	qhandle_t objectiveEnemyShader;
@@ -4033,6 +4035,7 @@ typedef struct hudStructure_s
 	hudComponent_t fireteam;
 	hudComponent_t popupmessages;
 	hudComponent_t powerups;
+	hudComponent_t objectives;
 	hudComponent_t hudhead;
 
 	hudComponent_t cursorhints;

@@ -20,7 +20,8 @@ hudDef {
 		weaponammo 598 470 0 0 0 1
 		fireteam 400 10 100 100 0 1
 		popupmessages 4 100 72 72 0 1
-		powerups 600 340 36 36 0 1
+		powerups 600 344 36 36 0 1
+		objectives 8 344 36 36 0 1
 		hudhead 44 388 62 80 0 0
 		cursorhints 296 260 48 48 0 1
 		weaponstability 50 208 10 64 0 1
