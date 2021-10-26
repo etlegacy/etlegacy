@@ -1277,6 +1277,9 @@ qboolean Load_Menu(int handle)
 	}
 }
 
+// clamp the version information to the nearest patch level
+#define  LEGACY_PATCH_CLAMP(x) ((int)(x) / 1000)
+
 /**
  * @brief UI_LoadMenus
  * @param[in] menuFile
@@ -1301,6 +1304,16 @@ void UI_LoadMenus(const char *menuFile, qboolean reset)
 	if (uiInfo.etLegacyClient)
 	{
 		trap_PC_AddGlobalDefine("ETLEGACY");
+
+		// if the client is older than the mod, then it makes sense that there has been a new release which the user has not installed
+		if (LEGACY_PATCH_CLAMP(uiInfo.etLegacyClient) < LEGACY_PATCH_CLAMP(ETLEGACY_VERSION_INT))
+		{
+			trap_PC_AddGlobalDefine("OLD_CLIENT");
+		}
+	}
+	else
+	{
+		trap_PC_AddGlobalDefine("OLD_CLIENT");
 	}
 
 #ifdef __ANDROID__

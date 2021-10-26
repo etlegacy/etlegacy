@@ -113,12 +113,17 @@ menuDef {
 	BUTTON( 6, 176, MENU_WIDTH-12, 18, _("CREDITS"), .3, 14, close main ; open credits_etlegacy )
 	BUTTON( 6, 200, MENU_WIDTH-12, 18, _("EXIT"), .3, 14, clearFocus ; open quit )
 
-// Vanilla client warning //
-#ifndef ETLEGACY
+// Vanilla or old Legacy client warning //
+#ifdef OLD_CLIENT
 #define SECURITY_WIDTH	200
 	LABEL( __WINDOW_WIDTH/2-100-16, 368, SECURITY_WIDTH, 18, _("^1SECURITY INFORMATION"), .3, ITEM_ALIGN_CENTER, .5*SECURITY_WIDTH, 8 )
 	LABELWHITE( __WINDOW_WIDTH/2-100-16, 384, SECURITY_WIDTH, 9, _("You are running old software"), .2, ITEM_ALIGN_CENTER, .5*SECURITY_WIDTH, 8 )
-	LABEL( __WINDOW_WIDTH/2-100-16, 398, SECURITY_WIDTH, 9, _("We do recommend to\nupgrade your ET client"), .2, ITEM_ALIGN_CENTER, .5*SECURITY_WIDTH, 8 )
+	// Yeah we have a Legacy client, but its old.
+	#ifdef ETLEGACY
+		LABEL( __WINDOW_WIDTH/2-100-16, 398, SECURITY_WIDTH, 9, _("We do recommend to\nupgrade your Legacy client"), .2, ITEM_ALIGN_CENTER, .5*SECURITY_WIDTH, 8 )
+	#else
+		LABEL( __WINDOW_WIDTH/2-100-16, 398, SECURITY_WIDTH, 9, _("We do recommend to\nupgrade your ET client"), .2, ITEM_ALIGN_CENTER, .5*SECURITY_WIDTH, 8 )
+	#endif
 	BUTTON( __WINDOW_WIDTH/2-100-16+6, 428, SECURITY_WIDTH-12, 18, _("UPGRADE NOW"), .3, 14, clearFocus ; uiScript validate_openURL )
 #endif
 
