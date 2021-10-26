@@ -327,6 +327,20 @@ static qboolean CG_HUD_ParseError(int handle, const char *format, ...)
 static qboolean CG_RectParse(int handle, rectDef_t *r)
 {
 	float x = 0;
+	pc_token_t peakedToken;
+
+	if (!PC_PeakToken(handle, &peakedToken))
+	{
+		return qfalse;
+	}
+
+	if (peakedToken.string[0] == '(')
+	{
+		if (!trap_PC_ReadToken(handle, &peakedToken))
+		{
+			return qfalse;
+		}
+	}
 
 	if (PC_Float_Parse(handle, &x))
 	{
@@ -342,6 +356,20 @@ static qboolean CG_RectParse(int handle, rectDef_t *r)
 			}
 		}
 	}
+
+	if (!PC_PeakToken(handle, &peakedToken))
+	{
+		return qfalse;
+	}
+
+	if (peakedToken.string[0] == ')')
+	{
+		if (!trap_PC_ReadToken(handle, &peakedToken))
+		{
+			return qfalse;
+		}
+	}
+
 	return qfalse;
 }
 
@@ -353,7 +381,11 @@ static qboolean CG_RectParse(int handle, rectDef_t *r)
  */
 static qboolean CG_ParseHudComponent(int handle, hudComponent_t *comp)
 {
-	CG_RectParse(handle, &comp->location); //PC_Rect_Parse
+	//PC_Rect_Parse
+	if (!CG_RectParse(handle, &comp->location))
+	{
+		return qfalse;
+	}
 
 	if (!PC_Int_Parse(handle, &comp->style))
 	{
@@ -386,14 +418,6 @@ static qboolean CG_ParseHUD(int handle)
 		return CG_HUD_ParseError(handle, "expected '{'");
 	}
 
-	if (!trap_PC_ReadToken(handle, &token) || !Q_stricmp(token.string, "hudnumber"))
-	{
-		if (!PC_Int_Parse(handle, &temphud.hudnumber))
-		{
-			return CG_HUD_ParseError(handle, "expected hudnumber as first field");
-		}
-	}
-
 	while (1)
 	{
 		int i;
@@ -406,6 +430,16 @@ static qboolean CG_ParseHUD(int handle)
 		if (token.string[0] == '}')
 		{
 			break;
+		}
+
+		if (!Q_stricmp(token.string, "hudnumber"))
+		{
+			if (!PC_Int_Parse(handle, &temphud.hudnumber))
+			{
+				return CG_HUD_ParseError(handle, "expected integer value for hudnumber");
+			}
+
+			continue;
 		}
 
 		for (i = 0; hudComponentFields[i].name; i++)
@@ -424,6 +458,12 @@ static qboolean CG_ParseHUD(int handle)
 		{
 			return CG_HUD_ParseError(handle, "unexpected token: %s", token.string);
 		}
+	}
+
+	// check that the hudnumber value was set
+	if (temphud.hudnumber <= 2)
+	{
+		return CG_HUD_ParseError(handle, "Invalid hudnumber value: %i", temphud.hudnumber);
 	}
 
 	hud = CG_getHudByNumber(temphud.hudnumber);
