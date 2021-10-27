@@ -3802,7 +3802,7 @@ static void CG_DrawEnvironmentalAwareness()
 			continue;
 		}
 
-		icon = CG_GetCompassIcon(&snap->entities[i], qfalse, qfalse, !(cg_drawEnvAwareness.integer & 4), !(cg_drawEnvAwareness.integer & 2), NULL);
+		icon = CG_GetCompassIcon(&snap->entities[i], qfalse, qfalse, !(cg_drawEnvAwareness.integer & 4), !(cg_drawEnvAwareness.integer & 2), qfalse, NULL);
 
 		if (icon)
 		{

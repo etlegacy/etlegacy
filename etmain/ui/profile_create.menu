@@ -104,10 +104,10 @@ menuDef {
 #endif
 
 	CVARFLOATLABEL( SUBWINDOW_X+4, SUBWINDOW_Y+188, (SUBWINDOW_WIDTH)-8, 10, "ui_sensitivity", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH)-8), 8 )
-	SLIDER( SUBWINDOW_X+4, SUBWINDOW_Y+188, (SUBWINDOW_WIDTH)-8, 10, _("Mouse Sensitivity:"), .2, 8, "ui_sensitivity" 5 1 30, _("Use this slider to set your mouse sensitivity") )
+	SLIDER( SUBWINDOW_X+4, SUBWINDOW_Y+188, (SUBWINDOW_WIDTH)-8, 10, _("Mouse Sensitivity:"), .2, 8, "ui_sensitivity" 5 1 30, _("Set your mouse sensitivity") )
 	YESNO( SUBWINDOW_X+4, SUBWINDOW_Y+200, (SUBWINDOW_WIDTH)-8, 10, _("Invert Mouse:"), .2, 8, "ui_profile_mousePitch", _("Choose invert mouse if you prefer flight-simulator mouse pitch") )
 
-	MULTI( SUBWINDOW_X+4, SUBWINDOW_Y+224, (SUBWINDOW_WIDTH)-8, 10, _("Handedness:"), .2, 8, "ui_handedness", cvarFloatList { "Right" 0 "Left" 1 }, _("Left or Right Handed? This sets your default controls\nwhich you can modify later via the options menu") )
+	MULTI( SUBWINDOW_X+4, SUBWINDOW_Y+224, (SUBWINDOW_WIDTH)-8, 10, _("Handedness:"), .2, 8, "ui_handedness", cvarFloatList { "Right" 0 "Left" 1 }, _("Left or Right Handed? Set your default controls\nwhich you can modify later via the options menu") )
 
 	BUTTON( (SUBWINDOW_X+4)+.5*((SUBWINDOW_WIDTH)-164), SUBWINDOW_Y+238, 164, 14, _("DEFAULT SETTINGS"), .24, 11, DEFAULT_SETTINGS ;
 			conditionalscript com_recommendedSet 0

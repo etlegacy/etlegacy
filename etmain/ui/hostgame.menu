@@ -35,12 +35,12 @@ menuDef {
 
 // Settings //
 	SUBWINDOW( 6, 32, (SUBWINDOW_WIDTH), 88, _("SETTINGS") )
-	EDITFIELD( 8, 48, (SUBWINDOW_WIDTH)-4, 10, _("Server Name:"), .2, 8, "sv_hostname", 32, 18, _("Specifies the name of your game server") )
-	MULTIACTION( 8, 60, (SUBWINDOW_WIDTH)-4, 10, _("Game Type:"), .2, 8, "ui_netGameType", cvarFloatList { "Campaign" 4 "Last Man Standing" 5 "Map Voting" 6 "Single-Map Objective" 2 "Stopwatch" 3 }, show labelDetailsGametype ; hide labelDetailsCampaign ; uiScript updateGameType, _("Click to specify the type of game to load") )
-	NUMERICFIELD( 8, 72, (SUBWINDOW_WIDTH)-4, 10, _("Maximum Players:"), .2, 8, "sv_maxclients", 3, _("Maximum # of players that can connect to the server") )
+	EDITFIELD( 8, 48, (SUBWINDOW_WIDTH)-4, 10, _("Server Name:"), .2, 8, "sv_hostname", 32, 18, _("Specify the name of your game server") )
+	MULTIACTION( 8, 60, (SUBWINDOW_WIDTH)-4, 10, _("Game Type:"), .2, 8, "ui_netGameType", cvarFloatList { "Campaign" 4 "Last Man Standing" 5 "Map Voting" 6 "Single-Map Objective" 2 "Stopwatch" 3 }, show labelDetailsGametype ; hide labelDetailsCampaign ; uiScript updateGameType, _("Specify the type of game to load") )
+	NUMERICFIELD( 8, 72, (SUBWINDOW_WIDTH)-4, 10, _("Maximum Players:"), .2, 8, "sv_maxclients", 3, _("Set maximum number of players that can connect to the server") )
 	// TODO: use FEEDER to automatically show available configs
-	MULTI( 8, 84, (SUBWINDOW_WIDTH)-4, 10, _("Auto-Configure Server:"), .2, 8, "g_customConfig", cvarStrList { "No" 0 "Competition Settings" defaultcomp "Public Settings" defaultpublic "1on1" legacy1 "3on3" legacy3 "5on5" legacy5 "6on6" legacy6 }, _("Server automatically configures it self to specified default settings") )
-	MULTI( 8, 96, (SUBWINDOW_WIDTH)-4, 10, _("Dedicated Server:"), .2, 8, "ui_dedicated", cvarFloatList { "No" 0 "Yes - LAN" 1 "Yes - Internet" 2 }, _("Specifies if the server should be \"dedicated\" for LAN or Internet play (no client)") )
+	MULTI( 8, 84, (SUBWINDOW_WIDTH)-4, 10, _("Auto-Configure Server:"), .2, 8, "g_customConfig", cvarStrList { "No" 0 "Competition Settings" defaultcomp "Public Settings" defaultpublic "1on1" legacy1 "3on3" legacy3 "5on5" legacy5 "6on6" legacy6 }, _("Automatically configure server to specified default settings") )
+	MULTI( 8, 96, (SUBWINDOW_WIDTH)-4, 10, _("Dedicated Server:"), .2, 8, "ui_dedicated", cvarFloatList { "No" 0 "Yes - LAN" 1 "Yes - Internet" 2 }, _("Specify if the server should be \"dedicated\" for LAN or Internet play (no client)") )
 	EDITFIELD( 8, 108, (SUBWINDOW_WIDTH)-4, 10, _("Password:"), .2, 8, "g_password", 25, 18, _("Password clients must set to join the server") )
 
 // Settings //
@@ -56,7 +56,7 @@ menuDef {
 		decoration
 	}
 	LABEL( 8+24+2, 142, .5*((SUBWINDOW_WIDTH)-6)-24-2-4, 10, _("Friendly Fire"), .2, ITEM_ALIGN_LEFT, 0, 8 )
-	CHECKBOXNOTEXT( "labelFriendly Fire", 8+12+2, 142, .5*((SUBWINDOW_WIDTH)-6)-14-4, 10, "g_friendlyFire", _("Specifies if teammates can hurt each other") )
+	CHECKBOXNOTEXT( "labelFriendly Fire", 8+12+2, 142, .5*((SUBWINDOW_WIDTH)-6)-14-4, 10, "g_friendlyFire", _("Specify if teammates can hurt each other") )
 
 	itemDef {
 		name		"filtericonAntilag"
@@ -68,7 +68,7 @@ menuDef {
 		decoration
 	}
 	LABEL( 8+24+2, 154, .5*((SUBWINDOW_WIDTH)-6)-24-2-4, 10, _("Anti-Lag"), .2, ITEM_ALIGN_LEFT, 0, 8 )
-	CHECKBOXNOTEXT( "labelAnti-Lag", 8+12+2, 154, .5*((SUBWINDOW_WIDTH)-6)-14-4, 10, "g_antilag", _("Enables modem-friendly server support") )
+	CHECKBOXNOTEXT( "labelAnti-Lag", 8+12+2, 154, .5*((SUBWINDOW_WIDTH)-6)-14-4, 10, "g_antilag", _("Enable modem-friendly server support") )
 
 	// lots of macro abuse in this one :)
 	itemDef {
@@ -83,7 +83,7 @@ menuDef {
 		hideCVar	{ 5 }
 	}
 	LABEL( 8+.5*((SUBWINDOW_WIDTH)-6)+2+2+24-4, 142, .5*((SUBWINDOW_WIDTH)-6)-26+4, 10, _("Max Lives"), .2, ITEM_ALIGN_LEFT cvarTest "ui_netGameType" hideCVar { 5 }, 0, 8 )
-	CHECKBOXNOTEXTACTION( "labelMax Lives", 8+.5*((SUBWINDOW_WIDTH)-6)+2+2+12-4, 142, .5*((SUBWINDOW_WIDTH)-6)-14+4, 10, "ui_maxlives" cvarTest "ui_netGameType" hideCVar { 5 }, uiScript toggleMaxLives, _("Limits the number of player lives per round") )
+	CHECKBOXNOTEXTACTION( "labelMax Lives", 8+.5*((SUBWINDOW_WIDTH)-6)+2+2+12-4, 142, .5*((SUBWINDOW_WIDTH)-6)-14+4, 10, "ui_maxlives" cvarTest "ui_netGameType" hideCVar { 5 }, uiScript toggleMaxLives, _("Limit the number of player lives per round") )
 
 	itemDef {
 		name		"filtericonWeapRestrict"
@@ -95,7 +95,7 @@ menuDef {
 		decoration
 	}
 	LABEL( 8+.5*((SUBWINDOW_WIDTH)-6)+2+2+24-4, 154, .5*((SUBWINDOW_WIDTH)-6)-26+4, 10, _("Weapon Restrictions"), .2, ITEM_ALIGN_LEFT, 0, 8 )
-	CHECKBOXNOTEXTACTION( "labelWeapon Restrictions", 8+.5*((SUBWINDOW_WIDTH)-6)+2+2+12-4, 154, .5*((SUBWINDOW_WIDTH)-6)-14+4, 10, "ui_heavyWeaponRestriction", uiScript toggleWeaponRestriction, _("Restricts the number of weapons available to players to a percentage of the team size to reduce spam") )
+	CHECKBOXNOTEXTACTION( "labelWeapon Restrictions", 8+.5*((SUBWINDOW_WIDTH)-6)+2+2+12-4, 154, .5*((SUBWINDOW_WIDTH)-6)-14+4, 10, "ui_heavyWeaponRestriction", uiScript toggleWeaponRestriction, _("Restrict the number of weapons available to players to a percentage of the team size to reduce spam") )
 
 	itemDef {
 		name		"filtericonTeamBalance"
@@ -107,7 +107,7 @@ menuDef {
 		decoration
 	}
 	LABEL( 8+.5*((SUBWINDOW_WIDTH)-6)+2+2+24-4, 166, .5*((SUBWINDOW_WIDTH)-6)-26+4, 10, _("Balanced Teams"), .2, ITEM_ALIGN_LEFT, 0, 8 )
-	CHECKBOXNOTEXTACTION( "labelBalanced Teams", 8+.5*((SUBWINDOW_WIDTH)-6)+2+2+12-4, 166, .5*((SUBWINDOW_WIDTH)-6)-14+4, 10, "g_teamforcebalance", copycvar g_teamforcebalance g_lms_teamforcebalance, _("Enforces balanced teams by forcing players to join the team with the lowest player count")  )
+	CHECKBOXNOTEXTACTION( "labelBalanced Teams", 8+.5*((SUBWINDOW_WIDTH)-6)+2+2+12-4, 166, .5*((SUBWINDOW_WIDTH)-6)-14+4, 10, "g_teamforcebalance", copycvar g_teamforcebalance g_lms_teamforcebalance, _("Enforce balanced teams by forcing players to join the team with the lowest player count")  )
 
 // Map Selection //
 	SUBWINDOW( 6, 184, (SUBWINDOW_WIDTH), 132, _("NAME") )

@@ -1609,16 +1609,24 @@ void CG_StatsDebugAddText(const char *text)
  * @param[in] drawAllVoicesChat get all icons voices chat, otherwise only request relevant icons voices chat (need medic/ammo ...)
  * @param[in] drawFireTeam draw fireteam members position
  * @param[in] drawPrimaryObj draw primary objective position
+ * @param[in] drawSecondaryObj draw secondary objective position
+ * @param[in] drawDynamic draw dynamic elements position (player revive, command map marker)
  * @return A valid compass icon handle otherwise 0
  */
-qhandle_t CG_GetCompassIcon(entityState_t *ent, qboolean drawAllVoicesChat, qboolean drawFireTeam, qboolean drawPrimaryObj, qboolean drawSecondaryObj, char *name)
+qhandle_t CG_GetCompassIcon(entityState_t *ent, qboolean drawAllVoicesChat, qboolean drawFireTeam, qboolean drawPrimaryObj, qboolean drawSecondaryObj, qboolean drawDynamic, char *name)
 {
+	centity_t *cent = &cg_entities[ent->number];
+
+	if (!cent->currentValid)
+	{
+		return 0;
+	}
+
 	switch (ent->eType)
 	{
 	case ET_PLAYER:
 	{
-		centity_t *cent    = &cg_entities[ent->number];
-		qboolean  sameTeam = cg.predictedPlayerState.persistant[PERS_TEAM] == cgs.clientinfo[ent->clientNum].team;
+		qboolean sameTeam = cg.predictedPlayerState.persistant[PERS_TEAM] == cgs.clientinfo[ent->clientNum].team;
 
 		if (!cgs.clientinfo[ent->clientNum].infoValid)
 		{
@@ -1632,9 +1640,10 @@ qhandle_t CG_GetCompassIcon(entityState_t *ent, qboolean drawAllVoicesChat, qboo
 
 		if (ent->eFlags & EF_DEAD)
 		{
-			if ((cg.predictedPlayerState.stats[STAT_PLAYER_CLASS] == PC_MEDIC && cg.predictedPlayerState.stats[STAT_HEALTH] > 0
-			     && ent->number == ent->clientNum && sameTeam) ||
-			    (!(cg.snap->ps.pm_flags & PMF_FOLLOW) && cgs.clientinfo[cg.clientNum].shoutcaster))
+			if (drawDynamic &&
+			    ((cg.predictedPlayerState.stats[STAT_PLAYER_CLASS] == PC_MEDIC &&
+			      cg.predictedPlayerState.stats[STAT_HEALTH] > 0 && ent->number == ent->clientNum && sameTeam) ||
+			     (!(cg.snap->ps.pm_flags & PMF_FOLLOW) && cgs.clientinfo[cg.clientNum].shoutcaster)))
 			{
 				return cgs.media.medicReviveShader;
 			}
@@ -1691,7 +1700,6 @@ qhandle_t CG_GetCompassIcon(entityState_t *ent, qboolean drawAllVoicesChat, qboo
 	{
 		if (drawPrimaryObj)
 		{
-			centity_t *cent    = &cg_entities[ent->number];
 			oidInfo_t *oidInfo = &cgs.oidInfo[cent->currentState.modelindex2];
 			int       entNum   = Q_atoi(
 				CG_ConfigString(ent->teamNum == TEAM_AXIS ? CS_MAIN_AXIS_OBJECTIVE : CS_MAIN_ALLIES_OBJECTIVE));
@@ -1739,7 +1747,6 @@ qhandle_t CG_GetCompassIcon(entityState_t *ent, qboolean drawAllVoicesChat, qboo
 	{
 		if (drawPrimaryObj)
 		{
-			centity_t *cent    = &cg_entities[ent->number];
 			oidInfo_t *oidInfo = &cgs.oidInfo[cent->currentState.modelindex2];
 			int       entNum   = Q_atoi(CG_ConfigString(ent->teamNum == TEAM_AXIS ? CS_MAIN_AXIS_OBJECTIVE : CS_MAIN_ALLIES_OBJECTIVE));
 
@@ -1785,7 +1792,6 @@ qhandle_t CG_GetCompassIcon(entityState_t *ent, qboolean drawAllVoicesChat, qboo
 	{
 		if (drawPrimaryObj)
 		{
-			centity_t *cent    = &cg_entities[ent->number];
 			oidInfo_t *oidInfo = &cgs.oidInfo[cent->currentState.modelindex2];
 			int       entNum   = Q_atoi(CG_ConfigString(ent->teamNum == TEAM_AXIS ? CS_MAIN_AXIS_OBJECTIVE : CS_MAIN_ALLIES_OBJECTIVE));
 
@@ -1824,7 +1830,6 @@ qhandle_t CG_GetCompassIcon(entityState_t *ent, qboolean drawAllVoicesChat, qboo
 	{
 		if (drawPrimaryObj)
 		{
-			centity_t *cent    = &cg_entities[ent->number];
 			oidInfo_t *oidInfo = &cgs.oidInfo[cent->currentState.modelindex2];
 			int       entNum   = Q_atoi(CG_ConfigString(ent->teamNum == TEAM_AXIS ? CS_MAIN_AXIS_OBJECTIVE : CS_MAIN_ALLIES_OBJECTIVE));
 
@@ -2148,7 +2153,7 @@ static void CG_DrawNewCompass(rectDef_t location)
 			continue;
 		}
 
-		icon = CG_GetCompassIcon(&snap->entities[i], qfalse, qtrue, !(cg_drawCompassIcons.integer & 4), !(cg_drawCompassIcons.integer & 2), NULL);
+		icon = CG_GetCompassIcon(&snap->entities[i], qfalse, qtrue, !(cg_drawCompassIcons.integer & 4), !(cg_drawCompassIcons.integer & 2), qtrue, NULL);
 
 		if (icon)
 		{
