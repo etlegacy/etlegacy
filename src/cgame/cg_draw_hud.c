@@ -1613,12 +1613,18 @@ void CG_StatsDebugAddText(const char *text)
  */
 qhandle_t CG_GetCompassIcon(entityState_t *ent, qboolean drawAllVoicesChat, qboolean drawFireTeam, qboolean drawPrimaryObj, qboolean drawSecondaryObj, char *name)
 {
+	centity_t *cent = &cg_entities[ent->number];
+
+	if (!cent->currentValid)
+	{
+		return 0;
+	}
+
 	switch (ent->eType)
 	{
 	case ET_PLAYER:
 	{
-		centity_t *cent    = &cg_entities[ent->number];
-		qboolean  sameTeam = cg.predictedPlayerState.persistant[PERS_TEAM] == cgs.clientinfo[ent->clientNum].team;
+		qboolean sameTeam = cg.predictedPlayerState.persistant[PERS_TEAM] == cgs.clientinfo[ent->clientNum].team;
 
 		if (!cgs.clientinfo[ent->clientNum].infoValid)
 		{
@@ -1691,7 +1697,6 @@ qhandle_t CG_GetCompassIcon(entityState_t *ent, qboolean drawAllVoicesChat, qboo
 	{
 		if (drawPrimaryObj)
 		{
-			centity_t *cent    = &cg_entities[ent->number];
 			oidInfo_t *oidInfo = &cgs.oidInfo[cent->currentState.modelindex2];
 			int       entNum   = Q_atoi(
 				CG_ConfigString(ent->teamNum == TEAM_AXIS ? CS_MAIN_AXIS_OBJECTIVE : CS_MAIN_ALLIES_OBJECTIVE));
@@ -1739,7 +1744,6 @@ qhandle_t CG_GetCompassIcon(entityState_t *ent, qboolean drawAllVoicesChat, qboo
 	{
 		if (drawPrimaryObj)
 		{
-			centity_t *cent    = &cg_entities[ent->number];
 			oidInfo_t *oidInfo = &cgs.oidInfo[cent->currentState.modelindex2];
 			int       entNum   = Q_atoi(CG_ConfigString(ent->teamNum == TEAM_AXIS ? CS_MAIN_AXIS_OBJECTIVE : CS_MAIN_ALLIES_OBJECTIVE));
 
@@ -1785,7 +1789,6 @@ qhandle_t CG_GetCompassIcon(entityState_t *ent, qboolean drawAllVoicesChat, qboo
 	{
 		if (drawPrimaryObj)
 		{
-			centity_t *cent    = &cg_entities[ent->number];
 			oidInfo_t *oidInfo = &cgs.oidInfo[cent->currentState.modelindex2];
 			int       entNum   = Q_atoi(CG_ConfigString(ent->teamNum == TEAM_AXIS ? CS_MAIN_AXIS_OBJECTIVE : CS_MAIN_ALLIES_OBJECTIVE));
 
@@ -1824,7 +1827,6 @@ qhandle_t CG_GetCompassIcon(entityState_t *ent, qboolean drawAllVoicesChat, qboo
 	{
 		if (drawPrimaryObj)
 		{
-			centity_t *cent    = &cg_entities[ent->number];
 			oidInfo_t *oidInfo = &cgs.oidInfo[cent->currentState.modelindex2];
 			int       entNum   = Q_atoi(CG_ConfigString(ent->teamNum == TEAM_AXIS ? CS_MAIN_AXIS_OBJECTIVE : CS_MAIN_ALLIES_OBJECTIVE));
 
