@@ -4136,6 +4136,14 @@ void Cmd_Activate_f(gentity_t *ent)
 
 	G_TempTraceIgnoreEntities(ent);
 	trap_Trace(&tr, offset, NULL, NULL, end, ent->s.number, (CONTENTS_SOLID | CONTENTS_MISSILECLIP | CONTENTS_TRIGGER));
+
+	if (tr.startsolid && tr.entityNum == ENTITYNUM_WORLD)
+	{
+		vec3_t boxmins = { -10, -10, -10 };
+		vec3_t boxmaxs = { 10, 10, 10 };
+		trap_Trace(&tr, offset, boxmins, boxmaxs, offset, ent->s.number, (CONTENTS_SOLID | CONTENTS_MISSILECLIP | CONTENTS_TRIGGER));
+	}
+
 	G_ResetTempTraceIgnoreEnts();
 
 	if (VectorDistance(offset, tr.endpos) <= CH_ACTIVATE_DIST)
