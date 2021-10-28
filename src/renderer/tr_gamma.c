@@ -57,13 +57,9 @@ const char *simpleGammaVert = "#version 110\n"
 const char *simpleGammaFrag = "#version 110\n"
 							  "uniform sampler2D u_CurrentMap;\n"
 							  "uniform float u_gamma;\n"
-							  "uniform int u_overBrightBits;\n"
+							  "uniform float u_overBrightBits;\n"
 							  "void main(void) {\n"
-							  "vec4 color = vec4(pow(texture2D(u_CurrentMap, vec2(gl_TexCoord[0])).rgb, vec3(1.0 / u_gamma)), 1.0);\n"
-							  "if (u_overBrightBits != 0) {\n"
-							  "color = vec4(color.rgb * 2.0 * float(u_overBrightBits), 1.0);"
-							  "}"
-							  "gl_FragColor = color;"
+							  "gl_FragColor = vec4(pow(texture2D(u_CurrentMap, vec2(gl_TexCoord[0])).rgb, vec3(1.0 / u_gamma)) * u_overBrightBits, 1.0);\n"
 							  "}\n";
 
 /**
@@ -119,7 +115,7 @@ void R_ScreenGamma(void)
 
 		if (tr.overbrightBits != gammaProgram.overBrightBits)
 		{
-			glUniform1i(gammaProgram.overBrightBitsUniform, tr.overbrightBits);
+			glUniform1f(gammaProgram.overBrightBitsUniform, 1 << tr.overbrightBits);
 			gammaProgram.overBrightBits = tr.overbrightBits;
 		}
 
@@ -173,6 +169,7 @@ void R_InitGamma(void)
 	}
 
 	Com_Memset(&gammaProgram, 0, sizeof(shaderProgram_t));
+	gammaProgram.overBrightBits = -1;
 
 	R_BuildGammaProgram();
 
