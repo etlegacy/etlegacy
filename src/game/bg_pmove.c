@@ -5172,11 +5172,7 @@ void PmoveSingle(pmove_t *pmove)
 	{
 		PM_DeadMove();
 
-		if (CHECKBITWISE(GetWeaponTableData(pm->ps->weapon)->type, WEAPON_TYPE_MORTAR | WEAPON_TYPE_SET))
-		{
-			pm->ps->weapon = GetWeaponTableData(pm->ps->weapon)->weapAlts;
-		}
-		else if (CHECKBITWISE(GetWeaponTableData(pm->ps->weapon)->type, WEAPON_TYPE_MG | WEAPON_TYPE_SET))
+		if (GetWeaponTableData(pm->ps->weapon)->type & WEAPON_TYPE_SET)
 		{
 			pm->ps->weapon = GetWeaponTableData(pm->ps->weapon)->weapAlts;
 		}
