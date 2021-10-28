@@ -2090,7 +2090,7 @@ void CG_topshotsParse_cmd(qboolean doBest)
 		headshots = Q_atoi(CG_Argv(iArg++));
 		acc       = (atts > 0) ? (float)(hits * 100) / (float)atts : 0.0f;
 
-		if (ts->cWeapons < WS_MAX * 2 && aWeaponInfo[iWeap - 1].fHasHeadShots)
+		if (ts->cWeapons < WS_MAX * 2)
 		{
 			CG_cleanName(cgs.clientinfo[cnum].name, name, 17, qfalse);
 			Q_strncpyz(ts->strWS[ts->cWeapons++],
@@ -2186,20 +2186,16 @@ void CG_parseWeaponStatsGS_cmd(void)
 				nHeadshots = Q_atoi(CG_Argv(iArg++));
 				acc        = (nShots > 0) ? (float)(nHits * 100) / (float)nShots : 0.0f;
 
-				totKills  += nKills;
-				totDeaths += nDeaths;
-
-				if (aWeaponInfo[i].fHasHeadShots)
-				{
-					totHits      += nHits;
-					totShots     += nShots;
-					totHeadshots += nHeadshots;
-				}
+				totKills     += nKills;
+				totDeaths    += nDeaths;
+                totHits      += nHits;
+                totShots     += nShots;
+                totHeadshots += nHeadshots;
 
 				Q_strncpyz(strName, va("%-12s  ", aWeaponInfo[i].pszName), sizeof(strName));
 				if (nShots > 0 || nHits > 0)
 				{
-					Q_strcat(strName, sizeof(strName), va("%s %4d/%-4d ", aWeaponInfo[i].fHasHeadShots ? va("%5.1f", (double)acc) : "     ", nHits, nShots));
+					Q_strcat(strName, sizeof(strName), va("%s %4d/%-4d ", va("%5.1f", (double)acc), nHits, nShots));
 				}
 				else
 				{
@@ -2454,15 +2450,11 @@ void CG_parseWeaponStats_cmd(void(txt_dump) (const char *))
 				deaths    = Q_atoi(CG_Argv(iArg++));
 				headshots = Q_atoi(CG_Argv(iArg++));
 
-				totKills  += kills;
-				totDeaths += deaths;
-
-				if (aWeaponInfo[i].fHasHeadShots)
-				{
-					totHits      += hits;
-					totShots     += atts;
-					totHeadshots += headshots;
-				}
+				totKills     += kills;
+				totDeaths    += deaths;
+                totHits      += hits;
+                totShots     += atts;
+                totHeadshots += headshots;
 
 				Q_strncpyz(strName, va("^3%-10s: ", aWeaponInfo[i].pszName), sizeof(strName));
 				if (atts > 0 || hits > 0)
@@ -2470,7 +2462,7 @@ void CG_parseWeaponStats_cmd(void(txt_dump) (const char *))
 					float acc = (atts == 0) ? 0.0f : (float)(hits * 100.0f / (float)atts);
 					fHasStats = qtrue;
 
-					Q_strcat(strName, sizeof(strName), va("^7%s ^5%4d/%-4d ", aWeaponInfo[i].fHasHeadShots ? va("%5.1f", (double)acc) : "     ", hits, atts));
+					Q_strcat(strName, sizeof(strName), va("^7%s ^5%4d/%-4d ", va("%5.1f", (double)acc), hits, atts));
 				}
 				else
 				{
@@ -2702,7 +2694,7 @@ static void CG_parseBestShotsStats_cmd(qboolean doTop, void(txt_dump) (const cha
 				CG_cleanName(cgs.clientinfo[cnum].name, name, 30, qfalse);
 				txt_dump(va("^3%s ^7%s ^5%4d/%-4d ^2%5d ^1%6d ^3%s ^7%s\n",
 				            aWeaponInfo[iWeap - 1].pszCode,
-				            aWeaponInfo[iWeap - 1].fHasHeadShots ? va("%5.1f", (double)acc) : "     ",
+				            va("%5.1f", (double)acc) ,
 				            hits, atts, kills, deaths,
 				            aWeaponInfo[iWeap - 1].fHasHeadShots ? va("%6d", headshots) : "      ",
 				            name));
@@ -2712,7 +2704,7 @@ static void CG_parseBestShotsStats_cmd(qboolean doTop, void(txt_dump) (const cha
 				CG_cleanName(cgs.clientinfo[cnum].name, name, 12, qfalse);
 				txt_dump(va("^3%s ^7%s ^5%4d/%-4d ^2%3d ^1%3d ^3%s ^7%s\n",
 				            aWeaponInfo[iWeap - 1].pszCode,
-				            aWeaponInfo[iWeap - 1].fHasHeadShots ? va("%5.1f", (double)acc) : "     ",
+				            va("%5.1f", (double)acc),
 				            hits, atts, kills, deaths,
 				            aWeaponInfo[iWeap - 1].fHasHeadShots ? va("%2d", headshots) : "  ",
 				            name));
@@ -2774,7 +2766,7 @@ static void CG_parseTopShotsStats_cmd(qboolean doTop, void(txt_dump) (const char
 
 			CG_cleanName(cgs.clientinfo[cnum].name, name, 30, qfalse);
 			txt_dump(va("%s%s ^5%4d/%-4d ^2%5d ^1%6d ^3%s %s%s\n", color,
-			            aWeaponInfo[i].fHasHeadShots ? va("%5.1f", (double)acc) : "     ", hits, atts, kills, deaths,
+			            va("%5.1f", (double)acc), hits, atts, kills, deaths,
 			            aWeaponInfo[i].fHasHeadShots ? va("^3%9d", headshots) : "", color, name));
 		}
 	}
