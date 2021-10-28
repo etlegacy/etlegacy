@@ -2188,9 +2188,9 @@ void CG_parseWeaponStatsGS_cmd(void)
 
 				totKills     += nKills;
 				totDeaths    += nDeaths;
-                totHits      += nHits;
-                totShots     += nShots;
-                totHeadshots += nHeadshots;
+				totHits      += nHits;
+				totShots     += nShots;
+				totHeadshots += nHeadshots;
 
 				Q_strncpyz(strName, va("%-12s  ", aWeaponInfo[i].pszName), sizeof(strName));
 				if (nShots > 0 || nHits > 0)
@@ -2452,9 +2452,9 @@ void CG_parseWeaponStats_cmd(void(txt_dump) (const char *))
 
 				totKills     += kills;
 				totDeaths    += deaths;
-                totHits      += hits;
-                totShots     += atts;
-                totHeadshots += headshots;
+				totHits      += hits;
+				totShots     += atts;
+				totHeadshots += headshots;
 
 				Q_strncpyz(strName, va("^3%-10s: ", aWeaponInfo[i].pszName), sizeof(strName));
 				if (atts > 0 || hits > 0)
@@ -2694,7 +2694,7 @@ static void CG_parseBestShotsStats_cmd(qboolean doTop, void(txt_dump) (const cha
 				CG_cleanName(cgs.clientinfo[cnum].name, name, 30, qfalse);
 				txt_dump(va("^3%s ^7%s ^5%4d/%-4d ^2%5d ^1%6d ^3%s ^7%s\n",
 				            aWeaponInfo[iWeap - 1].pszCode,
-				            va("%5.1f", (double)acc) ,
+				            va("%5.1f", (double)acc),
 				            hits, atts, kills, deaths,
 				            aWeaponInfo[iWeap - 1].fHasHeadShots ? va("%6d", headshots) : "      ",
 				            name));
