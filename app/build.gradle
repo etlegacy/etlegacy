@@ -7,9 +7,7 @@ else {
     apply plugin: 'com.android.library'
 }
 
-def getGitCommits = Integer.parseInt(['sh','-c','git rev-list $(git describe --abbrev=0)..HEAD --count'].execute().text.trim())
-def getGitSha = 'git rev-parse --short=7 HEAD'.execute([], project.rootDir).text.trim()
-def getLatestTag = 'git describe --abbrev=0 --tags `git rev-list --tags --skip=1  --max-count=1`'.execute([], project.rootDir).text.trim()
+def getVersion = 'git describe --tags --abbrev=7'.execute([], project.rootDir).text.trim()
 
 def extractInt( String input ) {
   return input.replaceAll("[^0-9]", "")
@@ -32,12 +30,7 @@ android {
         targetSdkVersion 26
         versionCode 1
         versionName "${VERSION[1]}.${VERSION[2]}.${VERSION[3]}"
-        if ("${versionName}" == "2.78.1") { //getLatestTag()
-			setProperty("archivesBaseName", "etlegacy-v${VERSION[1]}.${VERSION[2]}.${VERSION[3]}")
-        }
-        else {
-			setProperty("archivesBaseName", "etlegacy-v${VERSION[1]}.${VERSION[2]}.${VERSION[3]}-${getGitCommits}-g${getGitSha}")
-        }
+        setProperty("archivesBaseName", "etlegacy-${getVersion()}")
         externalNativeBuild {
             cmake {
                 arguments "-DCROSS_COMPILE32=OFF", "-DFEATURE_RENDERER_GLES=ON", "-DBUILD_SERVER=OFF", "-DINSTALL_EXTRA=OFF","-DARM=ON" , "-DCMAKE_BUILD_TYPE=Release", "-DBUNDLED_LIBS=OFF", "-DFEATURE_LUA=OFF", "-DFEATURE_OPENAL=OFF", "-DRENDERER_DYNAMIC=OFF", "-DFEATURE_FREETYPE=OFF", "-DFEATURE_THEORA=OFF", "-DFEATURE_SSL=OFF"
