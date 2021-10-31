@@ -2191,12 +2191,12 @@ void CG_parseWeaponStatsGS_cmd(void)
 
 				totKills     += nKills;
 				totDeaths    += nDeaths;
-				totHits      += nHits;
-				totShots     += nShots;
 				totHeadshots += nHeadshots;
 
 				if (aWeaponInfo[i].fHasHeadShots)
 				{
+					totHits             += nHits;
+					totShots            += nShots;
 					totHeadshotableHits += nHits;
 				}
 
@@ -2461,12 +2461,12 @@ void CG_parseWeaponStats_cmd(void(txt_dump) (const char *))
 
 				totKills     += kills;
 				totDeaths    += deaths;
-				totHits      += hits;
-				totShots     += atts;
 				totHeadshots += headshots;
 
 				if (aWeaponInfo[i].fHasHeadShots)
 				{
+					totHits             += hits;
+					totShots            += atts;
 					totHeadshotableHits += hits;
 				}
 
