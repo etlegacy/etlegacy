@@ -749,7 +749,7 @@ static int GLimp_SetMode(glconfig_t *glConfig, int mode, qboolean fullscreen, qb
 	{
 		if (noborder)
 		{
-			flags |= SDL_WINDOW_BORDERLESS;
+			flags |= SDL_WINDOW_BORDERLESS | SDL_WINDOW_ALWAYS_ON_TOP;
 		}
 
 		glConfig->isFullscreen = qfalse;
