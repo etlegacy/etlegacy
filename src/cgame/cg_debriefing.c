@@ -1788,6 +1788,7 @@ void CG_Debriefing_Startup(void)
 void CG_Debriefing_Shutdown(void)
 {
 	cgs.dbShowing = qfalse;
+	trap_Key_SetCatcher(trap_Key_GetCatcher() & ~KEYCATCH_CGAME);
 }
 
 /**
