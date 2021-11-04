@@ -1489,7 +1489,7 @@ static void PM_DeadMove(void)
 
 	// extra friction
 	forward  = VectorLength(pm->ps->velocity);
-	forward -= 20;
+	forward -= 2500 * pml.frametime;
 	if (forward <= 0)
 	{
 		VectorClear(pm->ps->velocity);
