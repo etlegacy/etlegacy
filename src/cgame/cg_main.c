@@ -438,7 +438,7 @@ static cvarTable_t cvarTable[] =
 	{ &cg_swingSpeed,             "cg_swingSpeed",             "0.1",         CVAR_CHEAT,                   0 },   // was 0.3 for Q3
 	{ &cg_bloodTime,              "cg_bloodTime",              "120",         CVAR_ARCHIVE,                 0 },
 
-	{ &cg_skybox,                 "cg_skybox",                 "1",           CVAR_CHEAT,                   0 },
+	{ &cg_skybox,                 "cg_skybox",                 "1",           CVAR_ARCHIVE,                 0 },
 
 	// say, team say, etc.
 	{ &cg_messageType,            "cg_messageType",            "1",           CVAR_TEMP,                    0 },
