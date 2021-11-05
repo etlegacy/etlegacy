@@ -2626,6 +2626,7 @@ void G_TempTraceRealHitBox(gentity_t *ent)
 
 			entRealHitBoxList[counter] = hit;
 			counter++;
+			trap_LinkEntity(hit);
 		}
 	}
 }
@@ -2642,6 +2643,7 @@ void G_ResetTempTraceRealHitBox()
 	{
 		VectorCopy(BBoxMinsBackup[i], (*hit)->r.mins);
 		VectorCopy(BBoxMaxsBackup[i], (*hit)->r.maxs);
+		trap_LinkEntity(*hit);
 
 		*hit = NULL;
 		VectorClear(BBoxMinsBackup[i]);
