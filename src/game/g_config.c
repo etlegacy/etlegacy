@@ -497,33 +497,14 @@ qboolean G_configSet(const char *configname)
 
 	trap_Cvar_Set("g_customConfig", filename);
 
-	// ensure timelimit and spawntimer are instantly displayed when config is loaded in warmup
-	if (g_gamestate.integer == GS_WARMUP || g_gamestate.integer == GS_WARMUP_COUNTDOWN)
-	{
-		if (g_userTimeLimit.integer)
-		{
-			trap_Cvar_Set("timelimit", va("%i", g_userTimeLimit.integer));
-		}
-
-		if (g_userAlliedRespawnTime.integer)
-		{
-			trap_Cvar_Set("g_userAlliedRespawnTime", va("%i", g_userAlliedRespawnTime.integer));
-		}
-
-		if (g_userAxisRespawnTime.integer)
-		{
-			trap_Cvar_Set("g_userAxisRespawnTime", va("%i", g_userAxisRespawnTime.integer));
-		}
-	}
-
 	if (!level.config.publicConfig && g_gamestate.integer == GS_WARMUP_COUNTDOWN)
 	{
 		level.lastRestartTime = level.time;
-		trap_SendConsoleCommand(EXEC_APPEND, va("map_restart 0 %i\n", GS_WARMUP));
+		trap_SendConsoleCommand(EXEC_APPEND, va("map_restart 0 %i\n", GS_RESET));
 	}
 	else
 	{
-		trap_SendConsoleCommand(EXEC_APPEND, va("map_restart 0 %i\n", GS_WARMUP));
+		trap_SendConsoleCommand(EXEC_APPEND, va("map_restart 0 %i\n", GS_RESET));
 	}
 
 	return qtrue;
