@@ -58,7 +58,7 @@ typedef struct
 {
 	unsigned int dwGameTypes;
 	const char *pszVoteName;
-	int (*pVoteCommand)(gentity_t * ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd);
+	int (*pVoteCommand)(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd);
 	const char *pszVoteMessage;
 	const char *pszVoteHelp;
 } vote_reference_t;
@@ -1315,10 +1315,10 @@ int G_Config_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, 
 	}
 	else // Vote action (vote has passed)
 	{
-		// Load in comp settings for current gametype
+		// Load in config settings for current gametype
 		if (G_configSet(level.voteInfo.vote_value))
 		{
-			AP("cpm \"Competition Settings Loaded!\n\"");
+			AP(va("cpm \"%s Settings Loaded!\n\"", strcmp(level.voteInfo.vote_value, "defaultpublic") ? "Competition" : "Public"));
 		}
 	}
 
@@ -1402,8 +1402,8 @@ int G_Warmupfire_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *ar
 	if (arg)
 	{
 		int i = Q_atoi(arg2), val = (match_warmupDamage.integer < 0) ? 0 :
-		                          (match_warmupDamage.integer > 2) ? 2 :
-		                          match_warmupDamage.integer;
+		                            (match_warmupDamage.integer > 2) ? 2 :
+		                            match_warmupDamage.integer;
 
 		if (!vote_allow_warmupdamage.integer && ent && !ent->client->sess.referee)
 		{

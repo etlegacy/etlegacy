@@ -1353,8 +1353,8 @@ void R_SetColorMappings(void)
 		tr.overbrightBits = 0;      // need hardware gamma for overbright
 	}
 
-	// never overbright in windowed mode
-	if (!glConfig.isFullscreen)
+	// never overbright in windowed mode if we are not using glsl..
+	if (!glConfig.isFullscreen && !tr.gammaProgramUsed)
 	{
 		tr.overbrightBits = 0;
 	}

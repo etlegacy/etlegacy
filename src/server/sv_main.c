@@ -1665,6 +1665,12 @@ void SV_Frame(int msec)
 		return;
 	}
 
+	// start recording a demo
+	if (sv_autoDemo->integer)
+	{
+		SV_DemoAutoDemoRecord();
+	}
+
 	// update infostrings if anything has been changed
 	if (cvar_modifiedFlags & CVAR_SERVERINFO)
 	{

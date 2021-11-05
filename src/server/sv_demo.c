@@ -91,6 +91,13 @@ static char *savedPlaybackDemoname              = savedPlaybackDemonameVal;
 
 static qboolean keepSaved = qfalse; // var that memorizes if we keep the new maxclients and democlients values (in the case that we restart the map/server for these cvars to be affected since they are latched, we need to stop the playback meanwhile we restart, and using this var we can know if the stop is a restart procedure or a real demo end) or if we can restore them (at the end of the demo)
 
+// Game stats
+static char sc0[MAX_STRING_CHARS];
+static char sc1[MAX_STRING_CHARS];
+static char gstats[MAX_CLIENTS][MAX_STRING_CHARS];
+
+static int playerStatsNum;
+
 /**
  * @brief Restores all CVARs
  */
@@ -249,8 +256,34 @@ static qboolean SV_CheckServerCommand(const char *cmd)
 }
 
 /**
+* @brief Filter game commands
+*
+* @details Filter demo game commands that should go to every connected client (not bots and democlients)
+*		 also filter qagame game commands that are blocked during playback (because of missing clientSession_t it is sending garbage data)
+*
+* @param[in] cmd
+* @return
+*/
+static qboolean SV_DemoGameCommandFilter(const char *cmd)
+{
+	int  i;
+	char *filter[] = { "sc ", "score", "sc0", "sc1", "gstats", "impkd", "impt", "imsr", "impr", "imwa", "imws" };
+
+	for (i = 0; i < 11; i++)
+	{
+		if (!strncmp(filter[i], cmd, strlen(filter[i])))
+		{
+			return qtrue;
+		}
+	}
+
+	return qfalse;
+}
+
+/**
  * @brief Check and store the last command and compare it with the current one, to avoid duplicates.
  * If onlyStore is true, it will only store the new cmd, without checking.
+ *
  * @param[in] cmd
  * @param[in] onlyStore
  * @return
@@ -274,11 +307,103 @@ qboolean SV_CheckLastCmd(const char *cmd, qboolean onlyStore)
 		// check that the previous cmd was different from the current cmd.
 		return qfalse; // drop this command, it's a repetition of the previous one
 	}
+	else if (onlyStore && SV_DemoGameCommandFilter(cmd)) // block qagame game commands during playback
+	{
+		return qfalse;
+	}
 	else
 	{
-		Q_strncpyz(prevcmd, cmd, MAX_STRING_CHARS); // memorize the current cmd for the next check (clean the cmd before, because sometimes the same string is issued by the engine with some empty colors?)
+		// memorize the current cmd for the next check (clean the cmd before, because sometimes the same string is issued by the engine with some empty colors?)
+		Q_strncpyz(prevcmd, cmd, MAX_STRING_CHARS);
 		return qtrue;
 	}
+}
+
+/**
+* @brief Store newest game commands during playback for reuse
+*        also store gstats during recording (based on guid)
+*
+* @param[in] cmd
+* @return
+*/
+static qboolean SV_DemoStoreGameCommand(const char *cmd)
+{
+	if (!Q_strncmp(cmd, "gstats", 6))
+	{
+		int i, index = Q_atoi(Cmd_ArgsFrom(1));
+
+		if (sv.demoState == DS_PLAYBACK)
+		{
+			Com_Memset(gstats[index], 0, MAX_STRING_CHARS);
+			Q_strncpyz(gstats[index], va("%s", cmd), MAX_STRING_CHARS);
+		}
+		else
+		{
+			client_t            *client = &svs.clients[index];
+			svdemoPlayerStats_t *svdps  = &sv.demoPlayerStats[index];
+
+			if (client->gentity && client->gentity->r.svFlags & SVF_BOT)
+			{
+				return qtrue;
+			}
+
+			if (!strlen(svdps->guid))
+			{
+				Q_strcat(svdps->guid, 9, client->guid);
+				playerStatsNum++;
+			}
+
+			if (strlen(svdps->guid) && !strncmp(svdps->guid, client->guid, 8))
+			{
+				Q_strncpyz(svdps->name, va("%s", client->name), MAX_NAME_LENGTH);
+				Q_strncpyz(svdps->stats, va("%s", cmd), MAX_STRING_CHARS);
+			}
+			else
+			{
+				// if after reconnecting we have different clientNum
+				for (i = 0; i < 100; i++)
+				{
+					*svdps = sv.demoPlayerStats[i];
+
+					if (!strlen(svdps->guid))
+					{
+						Q_strcat(svdps->guid, 9, client->guid);
+						playerStatsNum++;
+					}
+
+					if (strlen(svdps->guid) && !strncmp(svdps->guid, client->guid, 8))
+					{
+						Q_strncpyz(svdps->name, va("%s", client->name), MAX_NAME_LENGTH);
+						Q_strncpyz(svdps->stats, va("%s", cmd), MAX_STRING_CHARS);
+						break;
+					}
+				}
+			}
+		}
+
+		return qtrue;
+	}
+	else if (!Q_strncmp(cmd, "sc0", 3))
+	{
+		if (sv.demoState == DS_PLAYBACK)
+		{
+			Com_Memset(sc0, 0, MAX_STRING_CHARS);
+			Q_strncpyz(sc0, va("%s", cmd), MAX_STRING_CHARS);
+		}
+
+		return qtrue;
+	}
+	else if (!Q_strncmp(cmd, "sc1", 3))
+	{
+		if (sv.demoState == DS_PLAYBACK)
+		{
+			Com_Memset(sc1, 0, MAX_STRING_CHARS);
+			Q_strncpyz(sc1, va("%s", cmd), MAX_STRING_CHARS);
+		}
+		return qtrue;
+	}
+
+	return qfalse;
 }
 
 /**
@@ -288,6 +413,8 @@ qboolean SV_CheckLastCmd(const char *cmd, qboolean onlyStore)
  */
 static qboolean SV_CheckGameCommand(const char *cmd)
 {
+	static int scores = 0;
+
 	if (!SV_CheckLastCmd(cmd, qfalse))
 	{
 		// check that the previous cmd was different from the current cmd. The engine may send the same command to every client by their cid (one command per client) instead of just sending one command to all using NULL or -1.
@@ -295,8 +422,14 @@ static qboolean SV_CheckGameCommand(const char *cmd)
 	}
 	else
 	{
+		// store game commands during recording to save it to file
+		if (SV_DemoStoreGameCommand(cmd))
+		{
+			return qtrue;
+		}
 		// we filter out the chat and tchat commands which are recorded and handled directly by clientCommand (which is easier to manage because it makes a difference between say, say_team and tell, which we don't have here in gamecommands: we either have chat(for say and tell) or tchat (for say_team) and the other difference is that chat/tchat messages directly contain the name of the player, while clientCommand only contains the clientid, so that it itself fetch the name from client->name
-		if (!Q_strncmp(cmd, "chat", 4) || !Q_strncmp(cmd, "tchat", 5))
+		// do not save tinfo and entnfo, qagame during playback will handle it
+		else if (!Q_strncmp(cmd, "chat", 4) || !Q_strncmp(cmd, "tchat", 5) || !Q_strncmp(cmd, "tinfo", 5) || !Q_strncmp(cmd, "entnfo", 6))
 		{
 			return qfalse; // we return false if the check wasn't right
 		}
@@ -306,6 +439,27 @@ static qboolean SV_CheckGameCommand(const char *cmd)
 			Cmd_TokenizeString(cmd);
 			SV_DemoWriteConfigString(atoi(Cmd_Argv(1)), Cmd_Argv(2)); // relay to the specialized write configstring function
 			return qfalse; // drop it with the processing of the game command
+		}
+		// do not save more than 1 /scores game command at the end of a round (VERY important) - FIXME: VERY ugly
+		// scores = 1 - receiving first scores game command (Axis)
+		// scores = 2 - receiving first scores game command (Allies)
+		// scores = 3 - start ignoring
+		else if (!Q_stricmp(cmd, "sc \"\n\"") && Q_atoi((Info_ValueForKey(sv.configstrings[CS_WOLFINFO], "gamestate"))) == GS_INTERMISSION)
+		{
+			scores++;
+
+			if (scores > 2)
+			{
+				return qfalse;
+			}
+		}
+		else if (scores && Q_atoi((Info_ValueForKey(sv.configstrings[CS_WOLFINFO], "gamestate"))) != GS_INTERMISSION)
+		{
+			scores = 0;
+		}
+		else if (scores > 2 && !Q_strncmp(cmd, "sc ", 3))
+		{
+			return qfalse;
 		}
 
 		return qtrue; // else, the check is OK and we continue to process with the original function
@@ -345,6 +499,7 @@ static qboolean SV_CheckConfigString(int cs_index, const char *cs_string)
 void SV_DemoFilterClientUserinfo(char *userinfo)
 {
 	Info_RemoveKey(userinfo, "cl_guid");
+	Info_RemoveKey(userinfo, "n_guid"); // nitmod guid
 	Info_RemoveKey(userinfo, "ip");
 	//Info_SetValueForKey(userinfo, "cl_voip", "0");
 }
@@ -454,6 +609,44 @@ static void SV_DemoWriteClientCommand(client_t *client, const char *cmd)
 }
 
 /**
+* @brief Send newest game commands during playback
+*
+* @param[in] client
+* @param[in] arg0
+* @param[in] arg1
+*/
+static qboolean SV_DemoSendStoredCommands(client_t *client, const char *arg0, const char *arg1)
+{
+	if (!Q_strncmp(arg0, "score", 5))
+	{
+		if (sc0 && strlen(sc0))
+		{
+			SV_GameSendServerCommand(client - svs.clients, sc0, qtrue);
+		}
+
+		if (sc1 && strlen(sc1))
+		{
+			SV_GameSendServerCommand(client - svs.clients, sc1, qtrue);
+		}
+
+		return qtrue;
+	}
+
+	if (!Q_strncmp(arg0, "sgstats", 7))
+	{
+		int index = Q_atoi(arg1);
+		if (gstats[index] && strlen(gstats[index]))
+		{
+			SV_GameSendServerCommand(client - svs.clients, gstats[index], qtrue);
+		}
+
+		return qtrue;
+	}
+
+	return qfalse;
+}
+
+/**
  * @brief SV_DemoClientCommandCapture
  * @param[in] client
  * @param[in] msg
@@ -466,14 +659,22 @@ qboolean SV_DemoClientCommandCapture(client_t *client, const char *msg)
 		SV_DemoWriteClientCommand(client, msg);
 	}
 	else if (sv.demoState == DS_PLAYBACK &&
-	         ((client - svs.clients) >= sv_democlients->integer) && ((client - svs.clients) < sv_maxclients->integer) && // preventing only real clients commands (not democlients commands replayed)
-	         (!Q_stricmp(Cmd_Argv(0), "team") && Q_stricmp(Cmd_Argv(1), "s") && Q_stricmp(Cmd_Argv(1), "spectator"))) // if there is a demo playback, we prevent any real client from doing a team change, if so, we issue a chat messsage (except if the player join team spectator again)
+	         ((client - svs.clients) >= sv_democlients->integer) && ((client - svs.clients) < sv_maxclients->integer)) // preventing only real clients commands (not democlients commands replayed)
 	{
-		// issue a chat message only to the player trying to join a team
-		SV_SendServerCommand(client, "chat \"^3Can't join a team when a demo is replaying!\"");
-		// issue a chat message only to the player trying to join a team
-		SV_SendServerCommand(client, "cp \"^3Can't join a team when a demo is replaying!\"");
-		return qfalse;
+		// if there is a demo playback, we prevent any real client from doing a team change, if so, we issue a chat messsage (except if the player join team spectator again)
+		if ((!Q_stricmp(Cmd_Argv(0), "team") && Q_stricmp(Cmd_Argv(1), "s") && Q_stricmp(Cmd_Argv(1), "spectator")))
+		{
+			// issue a chat message only to the player trying to join a team
+			SV_SendServerCommand(client, "chat \"^3Can't join a team when a demo is replaying!\"");
+			// issue a chat message only to the player trying to join a team
+			SV_SendServerCommand(client, "cp \"^3Can't join a team when a demo is replaying!\"");
+			return qfalse;
+		}
+
+		if (SV_DemoSendStoredCommands(client, Cmd_Argv(0), Cmd_Argv(1)))
+		{
+			return qfalse;
+		}
 	}
 
 	return qtrue;
@@ -766,6 +967,87 @@ static void SV_DemoWriteAllEntityShared(void)
 }
 
 /**
+* @brief SV_DemoRequestStats
+*
+* FIXME: look into storing and replaying ws, wstats, stshots.
+*/
+static void SV_DemoRequestStats(void)
+{
+	client_t   *client, *cl;
+	static int lastRequestTime = 0;
+	int        i, num = sv_maxclients->integer - 1;
+
+	if (lastRequestTime + 5000 > svs.time)
+	{
+		return;
+	}
+
+	lastRequestTime = svs.time;
+
+	client = &svs.clients[num];
+
+	if (client->state != CS_FREE && client->demoClient)
+	{
+		for (i = 0, cl = svs.clients; i < num; i++, cl++)
+		{
+			if (cl->state == CS_ACTIVE)
+			{
+				SV_ExecuteClientCommand(client, va("sgstats %d", i), qtrue, qfalse);
+			}
+		}
+
+		SV_ExecuteClientCommand(client, "score", qtrue, qfalse);
+
+		usercmd_t cmd;
+		cmd.serverTime = svs.time;
+
+		// needed to actually request scoreboard stats (score)
+		SV_ClientThink(client, &cmd);
+	}
+}
+
+/**
+* @brief SV_DemoConnectDummy
+*
+* @details Connect dummy client on last available server slot that will be used as requester of stats.
+*
+*/
+static void SV_DemoConnectDummy()
+{
+	client_t       *client;
+	sharedEntity_t *entity;
+	const char     userinfo[]     = "\\cg_etVersion\\ETLTV\\etVersion\\ETLTV\\name\\^7ETLTV\\rate\\45000\\snaps\\40";
+	const char     configstring[] = "n\\^7ETLTV\\3\\1\\c\\1\\lc\\1\\r\\0\\p\\6\\m\\0000000\\s\\0000000\\dn\\ - 1\\w\\3\\lw\\3\\sw\\2\\lsw\\2\\mu\\0\\ref\\0\\sc\\1\\u\\246";
+	int            num            = sv_maxclients->integer - 1;
+
+	client = &svs.clients[num];
+
+	if (client->state != CS_FREE)
+	{
+		return;
+	}
+
+	client->demoClient = qtrue;
+	entity             = SV_GentityNum(num);
+
+	NET_StringToAdr("localhost", &client->netchan.remoteAddress, NA_LOOPBACK);
+	entity->r.svFlags |= SVF_BOT; // set player as a "bot" so the empty IP and GUID will not cause a kick
+
+	Cmd_TokenizeString(va("userinfo \"%s\"", userinfo));
+	SV_UpdateUserinfo_f(client);
+
+	// set the flag back or the dummy will actually play
+	entity->r.svFlags &= ~SVF_BOT;
+
+	SV_SetConfigstring(CS_PLAYERS + num, configstring);
+	Q_strncpyz(client->name, Info_ValueForKey(configstring, "n"), MAX_NAME_LENGTH);
+
+	SV_ClientEnterWorld(client, NULL);
+
+	SV_ExecuteClientCommand(client, "team spectator", qtrue, qfalse);
+}
+
+/**
  * @brief Record all the entities (gentities fields) and players (player_t fields) at the end of every frame (this is the only write function to be called in every frame for sure)
  *
  * @details Will be called once per server's frame
@@ -787,6 +1069,9 @@ void SV_DemoWriteFrame(void)
 
 	// Write clients playerState (playerState_t)
 	SV_DemoWriteAllPlayerState();
+
+	// Request stats
+	SV_DemoRequestStats();
 
 	//-----------------------------------------------------
 
@@ -810,6 +1095,65 @@ void SV_DemoWriteFrame(void)
 ***********************************************/
 
 /**
+* @brief SV_DemoAutoDemoRecordCheck
+*
+* @details sv_autoDemo 2 - Start recording only when there are active players
+*          stop recording when there are no active players
+*
+*/
+static qboolean SV_DemoAutoDemoRecordCheck(void)
+{
+	client_t   *cl;
+	int        i;
+	static int lastCheckTime = 0;
+	qboolean   activePlayers = qfalse;
+
+	if (lastCheckTime + 10000 > svs.time)
+	{
+		return qfalse;
+	}
+
+	lastCheckTime = svs.time;
+
+	switch (sv_autoDemo->integer)
+	{
+	case 1:
+
+		if (sv.demoState == DS_NONE)
+		{
+			return qtrue;
+		}
+		else
+		{
+			return qfalse;
+		}
+
+	case 2:
+
+		for (i = 0, cl = svs.clients; i < sv_maxclients->integer; i++, cl++)
+		{
+			if (cl->state == CS_ACTIVE && cl->gentity && !(cl->gentity->r.svFlags & SVF_BOT))
+			{
+				activePlayers = qtrue;
+				break;
+			}
+		}
+
+		if (activePlayers && sv.demoState == DS_NONE)
+		{
+			return qtrue;
+		}
+		else if (!activePlayers && sv.demoState == DS_RECORDING)
+		{
+			SV_DemoStopAll();
+		}
+
+	default:
+		return qfalse;
+	}
+}
+
+/**
  * @brief Generates a meaningful demo filename and automatically starts the demo recording.
  *
  * @details This function is used in conjunction with the variable sv_autoDemo 1
@@ -827,11 +1171,8 @@ void SV_DemoAutoDemoRecord(void)
 
 	Com_Memset(demoname, 0, MAX_QPATH);
 
-	// break if a demo is already being recorded
-	// this should not happen, this is a failsafe but if it's used it means there are redundant calls that we can maybe remove
-	if (sv.demoState == DS_RECORDING)
+	if (!SV_DemoAutoDemoRecordCheck())
 	{
-		Com_Printf("SV_DemoAutoDemoRecord: already recording a demo!\n");
 		return;
 	}
 
@@ -961,6 +1302,9 @@ static void SV_DemoStartPlayback(void)
 {
 	msg_t msg;
 	int   r, time = 400, i, clients = 0, fps = 0, gametype = 0, timelimit = 0, fraglimit = 0, capturelimit = 0, warmuptime = 0, gamestate = GS_INITIALIZE;
+	int   g_currentRound = 0, g_doWarmup = 0, g_warmup = 60, match_minplayers = Q_atoi(MATCH_MINPLAYERS), match_readypercent = 100, g_intermissiontime = 60;
+	int   g_userTimeLimit = 0, g_useralliedrespawntime = 0, g_useraxisrespawntime = 0;
+	float g_moverScale = 1.0f;
 	char  map[MAX_QPATH];
 	char  fs[MAX_QPATH]; // FIXME:  MAX_QPATH - only 64 chars ?!!!
 	char  hostname[MAX_NAME_LENGTH];
@@ -1047,7 +1391,7 @@ static void SV_DemoStartPlayback(void)
 		{
 			// reading sv_fps (from the demo)
 			fps = MSG_ReadLong(&msg);
-			if (sv_fps->integer != fps)
+			if (sv_fps->integer != fps && fps > 0)
 			{
 				savedFPS = sv_fps->integer;
 				Cvar_SetValue("sv_fps", fps);
@@ -1092,7 +1436,8 @@ static void SV_DemoStartPlayback(void)
 			}
 
 			// set the demo setting
-			Cvar_SetValue("timelimit", timelimit); // Note: setting the timelimit is NOT necessary for the demo to be replayed (in fact even if the timelimit is reached, the demo will still continue to feed new frames and thus force the game to continue, without any bug - also to the opposite, if the timelimit is too high, the game will be finished when the demo will replay the events, even if the timelimit is not reached but was in the demo, it will be when replaying the demo), but setting it allows for timelimit warning and suddenDeath voice announcement to happen. FIXME: if the timelimit is changed during the game, it won't be reflected in the demo (but the demo will still continue to play, or stop if the game is won).
+			// Note: setting correct timelimit is essential for the demo gamestate to be replayed correctly
+			Cvar_SetValue("timelimit", timelimit);
 		}
 		else if (!Q_stricmp(metadata, "fraglimit"))
 		{
@@ -1158,11 +1503,103 @@ static void SV_DemoStartPlayback(void)
 				Cvar_SetValue("gamestate", gamestate);
 			}
 		}
+		else if (!Q_stricmp(metadata, "g_doWarmup"))
+		{
+			// reading g_doWarmup
+			g_doWarmup = MSG_ReadLong(&msg);
+
+			if (!keepSaved)
+			{
+				savedDoWarmup = Cvar_VariableIntegerValue("g_doWarmup");
+			}
+
+			// set the demo setting
+			Cvar_SetValue("g_doWarmup", g_doWarmup);
+		}
+		else if (!Q_stricmp(metadata, "g_warmup"))
+		{
+			// reading g_warmup
+			g_warmup = MSG_ReadLong(&msg);
+
+			// set the demo setting
+			Cvar_SetValue("g_warmup", g_warmup);
+		}
+		else if (!Q_stricmp(metadata, "g_currentRound"))
+		{
+			// reading g_currentRound
+			g_currentRound = MSG_ReadLong(&msg);
+
+			// set the demo setting
+			Cvar_SetValue("g_currentRound", g_currentRound);
+		}
+		else if (!Q_stricmp(metadata, "match_minplayers"))
+		{
+			// reading match_minplayers
+			match_minplayers = MSG_ReadLong(&msg);
+
+			// set the demo setting
+			Cvar_SetValue("match_minplayers", match_minplayers);
+		}
+		else if (!Q_stricmp(metadata, "match_readypercent"))
+		{
+			// reading match_readypercent
+			match_readypercent = MSG_ReadLong(&msg);
+
+			// set the demo setting
+			Cvar_SetValue("match_readypercent", match_readypercent);
+		}
+		else if (!Q_stricmp(metadata, "g_intermissiontime"))
+		{
+			// reading g_intermissiontime
+			g_intermissiontime = MSG_ReadLong(&msg);
+
+			// set the demo setting
+			Cvar_SetValue("g_intermissiontime", g_intermissiontime);
+		}
+		else if (!Q_stricmp(metadata, "g_userTimeLimit"))
+		{
+			// reading g_userTimeLimit
+			g_userTimeLimit = MSG_ReadLong(&msg);
+
+			// set the demo setting
+			Cvar_SetValue("g_userTimeLimit", g_userTimeLimit);
+
+			if (g_userTimeLimit)
+			{
+				Cvar_SetValue("timelimit", g_userTimeLimit);
+			}
+		}
+		else if (!Q_stricmp(metadata, "g_useralliedrespawntime"))
+		{
+			// reading g_useralliedrespawntime
+			g_useralliedrespawntime = MSG_ReadLong(&msg);
+
+			// set the demo setting
+			Cvar_SetValue("g_useralliedrespawntime", g_useralliedrespawntime);
+		}
+		else if (!Q_stricmp(metadata, "g_useraxisrespawntime"))
+		{
+			// reading g_useraxisrespawntime
+			g_useraxisrespawntime = MSG_ReadLong(&msg);
+
+			// set the demo setting
+			Cvar_SetValue("g_useraxisrespawntime", g_useraxisrespawntime);
+		}
+		else if (!Q_stricmp(metadata, "g_moverScale"))
+		{
+			// reading g_moverScale
+			g_moverScale = MSG_ReadFloat(&msg);
+
+			// set the demo setting
+			Cvar_SetValue("g_moverScale", g_moverScale);
+		}
 		else if (!Q_stricmp(metadata, "g_customConfig"))
 		{
 			// reading g_customConfig (config name)
 			// Note: configs are a big issue, they are loaded on devmap and can overwrite settings that are needed for the demo to replay correctly, like g_doWarmup or timelimit
 			// where incase of g_doWarmup it's not possible to correct it after map loads because the gamestate could be already changed
+			// the config is reloaded at times like end of GS_WARMUP_COUNTDOWN thus overwriting demo settings (fe. timelimit), we will need to save all crucial cvars instead of loading the configs
+			// leaving this for debugging in case of future issues that could be caused by custom configs
 			Q_strncpyz(g_customConfig, MSG_ReadString(&msg), MAX_CVAR_VALUE_STRING);
 			if (strlen(g_customConfig))
 			{
@@ -1170,33 +1607,22 @@ static void SV_DemoStartPlayback(void)
 			}
 
 			// set the demo setting
-			Cvar_Set("g_customConfig", g_customConfig);
+			Cvar_Set("g_customConfig", "");
 		}
 	}
 
-	//Com_Error(ERR_FATAL,"DEBUG ERROR");
+	// force g_antiwarp to 0 as it can break player viewangles sometimes with empty ClientThinks
+	Cvar_SetValue("g_antiwarp", 0);
+	Cvar_SetValue("g_skipCorrection", 0);
 
-	// g_doWarmup
-	if (!keepSaved)
-	{ // we memorize values only if it's the first time we launch the playback of this demo, else the values may have already been modified by the demo playback
-		// Memorize g_doWarmup
-		savedDoWarmup = Cvar_VariableIntegerValue("g_doWarmup");
-	}
-	// Remove g_doWarmup (bugfix: else it will produce a weird bug with all gametypes except CTF and Double Domination because of CheckTournament() in g_main.c which will make the demo stop after the warmup time)
-
-	// FIXME: THIS IS HACKED TO 1 for now (should be 0 or we need to make our own etgame mod bin)
-	// Note: Doesn't work because devmap loads config that will overwrite this value and possibly cause unwanted gamestate change
-	Cvar_SetValue("g_doWarmup", 1);
-
-	// g_allowVote
+	// Memorize g_allowVote
 	if (!keepSaved)
 	{
-		// same for g_allowVote
-		// Memorize g_allowVote
 		savedAllowVote = Cvar_VariableIntegerValue("g_allowVote");
 	}
 	// Remove g_allowVote (prevent players to call a vote while a map is replaying)
 	Cvar_SetValue("g_allowVote", 0);
+	Cvar_SetValue("vote_allow_map", 0);
 
 	// Printing infos about the demo
 	if (!sv_demoTolerant->integer)   // print the meta datas only if we're not in faults tolerance mode (because if there are missing meta datas, the printing will throw an exception! So we'd better avoid it)
@@ -1244,7 +1670,7 @@ static void SV_DemoStartPlayback(void)
 			// Switch the mod
 			Com_Printf("DEMO: Trying to switch automatically to the mod %s to replay the demo\n", strlen(fs) ? fs : BASEGAME);
 			Cvar_SetValue("sv_democlients", 0); // set sv_democlients to 0 (because game_restart will reset sv_maxclients, so we have a risk to have a greater sv_democlients than sv_maxclients, and we don't want that)
-			Cbuf_AddText(va("game_restart %s\n", fs)); // switch mod!
+			Cbuf_AddText(va("game_restart %s\n", fs)); // switch mod! FIXME: command doesn't exist!
 		}
 
 		// Set the game time (level.time, level.startTime) to our demo time to correctly replay the timelimits of the map/rounds
@@ -1347,6 +1773,36 @@ static void SV_DemoStartRecord(void)
 	// Write current gamestate
 	MSG_WriteString(&msg, "gamestate");
 	MSG_WriteLong(&msg, Cvar_VariableIntegerValue("gamestate"));
+	// Write g_doWarmup
+	MSG_WriteString(&msg, "g_doWarmup");
+	MSG_WriteLong(&msg, Cvar_VariableIntegerValue("g_doWarmup"));
+	// Write g_warmup
+	MSG_WriteString(&msg, "g_warmup");
+	MSG_WriteLong(&msg, Cvar_VariableIntegerValue("g_warmup"));
+	// Write g_currentRound
+	MSG_WriteString(&msg, "g_currentRound");
+	MSG_WriteLong(&msg, Cvar_VariableIntegerValue("g_currentRound"));
+	// Write match_minplayers
+	MSG_WriteString(&msg, "match_minplayers");
+	MSG_WriteLong(&msg, Cvar_VariableIntegerValue("match_minplayers"));
+	// Write match_readypercent
+	MSG_WriteString(&msg, "match_readypercent");
+	MSG_WriteLong(&msg, Cvar_VariableIntegerValue("match_readypercent"));
+	// Write g_intermissiontime
+	MSG_WriteString(&msg, "g_intermissiontime");
+	MSG_WriteLong(&msg, Cvar_VariableIntegerValue("g_intermissiontime"));
+	// Write g_userTimeLimit
+	MSG_WriteString(&msg, "g_userTimeLimit");
+	MSG_WriteLong(&msg, Cvar_VariableIntegerValue("g_userTimeLimit"));
+	// Write g_useralliedrespawntime
+	MSG_WriteString(&msg, "g_useralliedrespawntime");
+	MSG_WriteLong(&msg, Cvar_VariableIntegerValue("g_useralliedrespawntime"));
+	// Write g_useraxisrespawntime
+	MSG_WriteString(&msg, "g_useraxisrespawntime");
+	MSG_WriteLong(&msg, Cvar_VariableIntegerValue("g_useraxisrespawntime"));
+	// Write g_moverScale
+	MSG_WriteString(&msg, "g_moverScale");
+	MSG_WriteLong(&msg, Cvar_VariableValue("g_moverScale"));
 	// Write current config
 	MSG_WriteString(&msg, "g_customConfig");
 	MSG_WriteString(&msg, Cvar_VariableString("g_customConfig"));
@@ -1386,14 +1842,19 @@ static void SV_DemoStartRecord(void)
 	// Write entities and players
 	Com_Memset(sv.demoEntities, 0, sizeof(sv.demoEntities));
 	Com_Memset(sv.demoPlayerStates, 0, sizeof(sv.demoPlayerStates));
+	Com_Memset(sv.demoPlayerStats, 0, sizeof(sv.demoPlayerStats));
+	playerStatsNum = 0;
 	// End of frame
 	SV_DemoWriteFrame();
-	// Change recording state
-	sv.demoState = DS_RECORDING;
-	Cvar_SetValue("sv_demoState", DS_RECORDING);
 	// Announce we are writing the demo
 	Com_Printf("DEMO: Recording server-side demo %s.\n", sv.demoName);
 	SV_SendServerCommand(NULL, "chat \"^3DEMO: Recording server-side demo %s.\"", sv.demoName);
+	// Change recording state
+	sv.demoState = DS_RECORDING;
+	Cvar_SetValue("sv_demoState", DS_RECORDING);
+
+	// connect dummy client that will be used to collect stats
+	SV_DemoConnectDummy();
 }
 
 /**
@@ -1402,7 +1863,11 @@ static void SV_DemoStartRecord(void)
  */
 static void SV_DemoStopRecord(void)
 {
-	msg_t msg;
+	client_t     *client = &svs.clients[sv_maxclients->integer - 1];
+	msg_t        msg;
+	fileHandle_t demoStatsFile;
+	char         statsFileName[MAX_QPATH], buffer[2048];
+	int          i;
 
 	// End the demo
 	MSG_Init(&msg, buf, sizeof(buf));
@@ -1417,6 +1882,31 @@ static void SV_DemoStopRecord(void)
 	// Announce
 	Com_Printf("DEMO: Stopped recording server-side demo %s.\n", sv.demoName);
 	SV_SendServerCommand(NULL, "chat \"^3DEMO: Stopped recording server-side demo %s.\"", sv.demoName);
+
+	// disconnect dummy client if there is one
+	if (client->state != CS_FREE && client->demoClient)
+	{
+		SV_DropClient(client, "disconnected");
+		client->demoClient = qfalse;
+	}
+
+	// save player stats to file
+	COM_StripExtension(sv.demoName, statsFileName, MAX_QPATH);
+	demoStatsFile = FS_FOpenFileWrite(va("%s.txt", statsFileName));
+
+	if (!demoStatsFile)
+	{
+		Com_Printf("DEMO: ERROR: Couldn't open %s for writing.\n", demoStatsFile);
+		return;
+	}
+
+	for (i = 0; i < playerStatsNum; i++)
+	{
+		Q_strncpyz(buffer, va("%s", va("%s\\%s\\%s", sv.demoPlayerStats[i].guid, sv.demoPlayerStats[i].name, sv.demoPlayerStats[i].stats)), 2048);
+		FS_Write(buffer, strlen(buffer), demoStatsFile);
+	}
+
+	FS_FCloseFile(demoStatsFile);
 }
 
 /***********************************************
@@ -1460,33 +1950,6 @@ static void SV_DemoReadServerCommand(msg_t *msg)
 }
 
 /**
-* @brief Filtering game commands that should go to every connected client (not bots and democlients)
-*
-* @details Would be best to filter game commands that should be sent to everyone watching the playback
-*		   sc (/scores) - is send too many times to 1 player, 5 demo clients = 5x /scores cluttering the console, also qagame sends it's own /scores but empty
-*		   ws (weaponstats) - is send correctly
-*		   scoreboard lacks stats (XP) - probably stats were never generated and send thus missing
-*		   no stats on shoutcater overlay - (sgstats)
-*
-* @param[in] cmd
-*/
-static qboolean SV_GameCommandFilter(const char *cmd)
-{
-	int  i;
-	char *filter[] = { "sc", "ws" };
-
-	for (i = 0; i < 2; i++)
-	{
-		if (!strncmp(filter[i], cmd, strlen(filter[i])))
-		{
-			return qtrue;
-		}
-	}
-
-	return qfalse;
-}
-
-/**
  * @brief Replay a game command
  *
  * @details Game command management, such as prints/centerprint (cp) scores command, except chat/tchat (handled by clientCommand)
@@ -1508,25 +1971,30 @@ static void SV_DemoReadGameCommand(msg_t *msg)
 
 	if (SV_CheckLastCmd(cmd, qfalse) && clientNum < sv_maxclients->integer)
 	{
-		// Don't send game commands to democlients, they are not real clients so they are not handling them which in turn drops them because of `server command overflow`
-		// FIXME: Make better game command filter: "sc" command gets spammed instead of sending 1 table with stats on round end, only sending weapons stats of players is send correctly
+		// store commands that should be sent per request
+		if (SV_DemoStoreGameCommand(cmd))
+		{
+			return;
+		}
+
+		// do not send game commands to democlients
 		for (i = 0, client = svs.clients; i < sv_maxclients->integer; i++, client++)
 		{
 			player = SV_GameClientNum(i);
 
 			// FIXME: this is just stupid
 			// commands that get sent to every connected client
-			if (!client->demoClient && client->state == CS_ACTIVE && SV_GameCommandFilter(cmd))
+			if (!client->demoClient && client->state == CS_ACTIVE && SV_DemoGameCommandFilter(cmd))
 			{
 
 			}
-			else if (client->demoClient || client->state <= CS_PRIMED || player->clientNum != clientNum) // Send game commands to real clients only if they are following a democlient that receives the command (we only really want prints/centerprint messages?)
+			// send game commands to real clients only if they are following a democlient that receives the command
+			else if (client->demoClient || client->state <= CS_PRIMED || player->clientNum != clientNum)
 			{
 				continue;
 			}
 
-			// check for duplicates: check that the engine did not already send this very same message resulting from an event (this means that engine gamecommands are never filtered, only demo gamecommands)
-			SV_GameSendServerCommand(i, cmd);
+			SV_GameSendServerCommand(i, cmd, qtrue);
 		}
 	}
 }
@@ -1548,6 +2016,17 @@ static void SV_DemoReadConfigString(msg_t *msg)
 	{
 		// we make sure to not overwrite real client configstrings (else when the demo starts, normal players will have no name, no model and no status!) - this cannot be done at recording time because we can't know how many sv_maxclients will be set at replaying time
 		SV_SetConfigstring(num, configstring);
+
+		// Set cvars based on configstrings
+		if (num == CS_WOLFINFO && strlen(configstring))
+		{
+			float timelimit = Q_atof(Info_ValueForKey(configstring, "g_nextTimeLimit"));
+
+			if (timelimit)
+			{
+				Cvar_SetValue("g_nextTimeLimit", timelimit);
+			}
+		}
 	}
 }
 
@@ -1588,9 +2067,8 @@ static void SV_DemoReadClientConfigString(msg_t *msg)
 		// Set the client configstring (using a standard Q3 function)
 		SV_SetConfigstring(CS_PLAYERS + num, configstring);
 
-		// Set some infos about this user:
-		client->demoClient = qtrue;// Redundant here? // to check if a client is a democlient, you can either rely on this variable, either you can check if it's a real client num (index of client) is >= CS_PLAYERS + sv_democlients->integer && < CS_PLAYERS + sv_maxclients->integer (if it's not a configstring, remove CS_PLAYERS from your if)
-		Q_strncpyz(client->name, Info_ValueForKey(configstring, "n"), MAX_NAME_LENGTH);     // set the name (useful for internal functions such as status_f). Anyway userinfo will automatically set both name (server-side) and netname (gamecode-side).
+		// set the name (useful for internal functions such as status_f). Anyway userinfo will automatically set both name (server-side) and netname (gamecode-side).
+		Q_strncpyz(client->name, Info_ValueForKey(configstring, "n"), MAX_NAME_LENGTH);
 
 		// Set the remoteAddress of this client to localhost (this will set "ip\localhost" in the userinfo, which will in turn force the gamecode to set this client as a localClient, which avoids inactivity timers and some other stuffs to be triggered)
 		if (strlen(configstring)) // we check that the client isn't being dropped
@@ -1603,7 +2081,7 @@ static void SV_DemoReadClientConfigString(msg_t *msg)
 		// DEMOCLIENT INITIAL TEAM MANAGEMENT
 		// Note: needed only to set the initial team of the democlients, subsequent team changes are directly handled by their clientCommands
 		if (configstring && strlen(configstring) &&
-		    (svdoldteam == -1 || (svdoldteam != svdnewteam && svdnewteam != -1))   // if there was no team for this player before or if the new team is different
+		    (svdoldteam == -1 || (svdoldteam != svdnewteam && svdnewteam != -1 && client->gentity->s.teamNum == TEAM_FREE))   // if there was no team for this player before or if the new team is different
 		    )
 		{
 			// If the client changed team, we manually issue a team change (workaround by using a clientCommand team)
@@ -1786,7 +2264,7 @@ static void SV_DemoReadAllEntityState(msg_t *msg)
 			}
 		}
 
-		if (entity->s.eType == ET_ITEM && entity->s.groundEntityNum == ENTITYNUM_WORLD)
+		if (entity->s.eType == ET_ITEM)
 		{
 			SV_GentityUpdateItemField(entity);
 		}
@@ -1851,6 +2329,21 @@ static void SV_DemoReadRefreshEntities(void)
 	int            i;
 	sharedEntity_t *entity;
 
+	for (i = 0; i < sv_democlients->integer; i++)
+	{
+		// This is a workaround to not use user commands to save storage space, ClientThink is needed for map script triggers to be run
+		// fe. EndRound script which starts G_LogExit
+		if (Q_atoi((Info_ValueForKey(sv.configstrings[CS_WOLFINFO], "gamestate"))) != GS_INTERMISSION && !(SV_GameClientNum(i)->eFlags & EF_DEAD))
+		{
+			usercmd_t cmd;
+			cmd.serverTime = svs.time;
+
+			SV_ClientThink(&svs.clients[i], &cmd);
+		}
+
+		*SV_GameClientNum(i) = sv.demoPlayerStates[i]; // Overwrite player states
+	}
+
 	// Overwrite anything the game may have changed
 	for (i = 0; i < sv.num_entities; i++)
 	{
@@ -1863,21 +2356,10 @@ static void SV_DemoReadRefreshEntities(void)
 
 		entity = SV_GentityNum(i);
 
-		// FIXME: Redundant?
-		if (entity->s.eType == ET_ITEM && entity->s.groundEntityNum == ENTITYNUM_WORLD)
-		{
-			SV_GentityUpdateItemField(entity);
-		}
-
 		if (entity->s.eType == ET_FLAMETHROWER_CHUNK)
 		{
 			SV_GentityUpdateParentField(entity, SV_GentityNum(entity->r.ownerNum));
 		}
-	}
-
-	for (i = 0; i < sv_democlients->integer; i++)
-	{
-		*SV_GameClientNum(i) = sv.demoPlayerStates[i]; // Overwrite player states
 	}
 }
 
@@ -1907,7 +2389,7 @@ void SV_DemoReadRefreshPlayersHealth(void)
  * Called in the main server's loop SV_Frame() in sv_main.c (it's called after any other event processing,
  * so that it overwrites anything the game may have loaded into memory, but before the entities are broadcasted to the clients)
  */
-void SV_DemoReadFrame(void)
+qboolean SV_DemoReadFrame(void)
 {
 	msg_t msg;
 	int   cmd, r, time;
@@ -1921,7 +2403,7 @@ read_next_demo_frame: // used to read another whole demo frame
 	if (Cvar_VariableIntegerValue("sv_freezeDemo"))
 	{
 		svs.time = memsvtime; // reset server time to the same time as the previous frame, to avoid the time going backward when resuming the demo (which will disconnect every players)
-		return;
+		return qfalse;
 	}
 
 	// Update timescale
@@ -1932,7 +2414,7 @@ read_next_demo_frame: // used to read another whole demo frame
 		// Check timescale: if slowed timescale (below 1.0), then we check that we pass one frame on 1.0/com_timescale (eg: timescale = 0.5, 1.0/0.5=2, so we pass one frame on two)
 		if (currentframe % (int)(1.0f / com_timescale->value) != 0)
 		{ // if it's not yet the right time to read the frame, we just pass and wait for the next server frame to read this demo frame
-			return;
+			return qfalse;
 		}
 	}
 
@@ -2020,7 +2502,7 @@ read_next_demo_event: // used to read next demo event
 			*/
 			case -1: // no more chars in msg FIXME: inspect!
 				Com_DPrintf("SV_DemoReadFrame: no chars [%i %i:%i]\n", cmd, msg.readcount, msg.cursize);
-				return;
+				return qfalse;
 			case demo_endFrame:     // end of the frame - players and entities game status update: we commit every demo entity to the server, update the server time, then release the demo frame reading here to the next server (and demo) frame
 				Com_DPrintf(" END OF FRAME \n");
 
@@ -2040,7 +2522,7 @@ read_next_demo_event: // used to read next demo event
 					int timetoreach = svs.time;
 
 					svs.time = time;
-					while (svs.time < timetoreach)
+					while (svs.time <= timetoreach)
 					{
 						SV_DemoReadFrame(); // run a few frames to settle things out
 					}
@@ -2061,14 +2543,15 @@ read_next_demo_event: // used to read next demo event
 					}
 				}
 
-				return;     // else we end the current demo frame
+				return qfalse;     // else we end the current demo frame
 			case demo_endDemo:     // end of the demo file - just stop playback and restore saved cvars
 				Com_Printf("End of demo reached.\n");
 				SV_DemoStopPlayback();
-				return;
+				return qtrue;
 			}
 		}
 	}
+	return qfalse;
 }
 
 /**
@@ -2217,6 +2700,48 @@ static void SV_CompleteDemoName(char *args, int argNum)
 }
 
 /**
+* @brief SV_Demo_Fastforward_f
+*
+* @details Fast-forward demo recording but stop when gamestate changes so it's easy to skip some parts like warmup.
+*
+*/
+static void SV_Demo_Fastforward_f(void)
+{
+	int timetoreach, gamestate;
+
+	if (Cmd_Argc() != 2)
+	{
+		Com_Printf("Usage: demo_ff <seconds>\n");
+		return;
+	}
+
+	if (sv.demoState != DS_PLAYBACK)
+	{
+		Com_Printf("No demo is currently being played.\n");
+		return;
+	}
+
+	timetoreach = Q_atoi(Cmd_Argv(1));
+
+	if (timetoreach <= 0)
+	{
+		Com_Printf("Bad argument.\n");
+		return;
+	}
+
+	timetoreach = svs.time + (timetoreach * 1000);
+	gamestate   = Q_atoi(Info_ValueForKey(sv.configstrings[CS_WOLFINFO], "gamestate"));
+
+	while (svs.time < timetoreach)
+	{
+		if (SV_DemoReadFrame() || gamestate != Q_atoi(Info_ValueForKey(sv.configstrings[CS_WOLFINFO], "gamestate")))
+		{
+			break;
+		}
+	}
+}
+
+/**
  * @brief SV_DemoInit
  */
 void SV_DemoInit(void)
@@ -2224,14 +2749,5 @@ void SV_DemoInit(void)
 	Cmd_AddCommand("demo_record", SV_Demo_Record_f, "Starts demo recording.");
 	Cmd_AddCommand("demo_play", SV_Demo_Play_f, "Plays a demo record.", SV_CompleteDemoName);
 	Cmd_AddCommand("demo_stop", SV_Demo_Stop_f, "Stops a demo record.");
-}
-
-/**
- * @brief SV_DemoShutdown
- */
-void SV_DemoShutdown(void) // FIXME: don't remove these on server shutdown/demo end so listen servers can start another demo and server owners too
-{
-	Cmd_RemoveCommand("demo_record");
-	Cmd_RemoveCommand("demo_play");
-	Cmd_RemoveCommand("demo_stop");
+	Cmd_AddCommand("demo_ff", SV_Demo_Fastforward_f, "Fast-forwards a demo record.");
 }

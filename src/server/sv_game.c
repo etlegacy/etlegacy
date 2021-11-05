@@ -112,16 +112,16 @@ sharedEntity_t *SV_GEntityForSvEntity(svEntity_t *svEnt)
  * @param[in] clientNum
  * @param[in] text
  */
-void SV_GameSendServerCommand(int clientNum, const char *text)
+void SV_GameSendServerCommand(int clientNum, const char *text, qboolean demoPlayback)
 {
 	// record the game server commands in demos
 	if (sv.demoState == DS_RECORDING)
 	{
 		SV_DemoWriteGameCommand(clientNum, text);
 	}
-	else if (sv.demoState == DS_PLAYBACK)
+	else if (sv.demoState == DS_PLAYBACK && !demoPlayback && !SV_CheckLastCmd(text, qtrue))
 	{
-		SV_CheckLastCmd(text, qtrue);   // store the new game command, so when replaying a demo message, we can check for duplicates: maybe this message was already submitted (because of the events simulation, an event may trigger a message), and so we want to avoid those duplicates: if an event already triggered a message, no need to issue the one stored in the demo
+		return; // block qagame game commands during playback
 	}
 
 	if (clientNum == -1)
@@ -475,7 +475,6 @@ intptr_t SV_GameSystemCalls(intptr_t *args)
 	case G_SEND_CONSOLE_COMMAND:
 		Cbuf_ExecuteText(args[1], VMA(2));
 		return 0;
-
 	case G_FS_FOPEN_FILE:
 		return FS_FOpenFileByMode(VMA(1), VMA(2), args[3]);
 	case G_FS_READ:
@@ -499,7 +498,7 @@ intptr_t SV_GameSystemCalls(intptr_t *args)
 		SV_GameDropClient(args[1], VMA(2), args[3]);
 		return 0;
 	case G_SEND_SERVER_COMMAND:
-		SV_GameSendServerCommand(args[1], VMA(2));
+		SV_GameSendServerCommand(args[1], VMA(2), qfalse);
 		return 0;
 	case G_LINKENTITY:
 		SV_LinkEntity(VMA(1));

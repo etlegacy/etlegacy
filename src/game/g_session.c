@@ -522,8 +522,6 @@ void G_InitSessionData(gclient_t *client, const char *userinfo)
 
 	sess->uci = 0; // GeoIP
 
-	G_deleteStats(client - level.clients);
-
 	G_WriteClientSessionData(client, qfalse);
 }
 

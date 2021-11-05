@@ -1013,8 +1013,17 @@ qboolean CG_MapVoteList_KeyDown(panel_button_t *button, int key)
 		}
 		if (pos != cgs.dbSelectedMap)
 		{
+			fileHandle_t f;
+
 			cgs.dbSelectedMap     = pos;
 			cgs.dbSelectedMapTime = cg.time;
+
+			// First check if the corresponding map is downloaded to prevent warning about missing levelshot
+			if (trap_FS_FOpenFile(va("maps/%s.bsp", cgs.dbMaps[pos]), &f, FS_READ) > 0)
+			{
+				cgs.dbSelectedMapLevelShots = trap_R_RegisterShaderNoMip(va("levelshots/%s.tga", cgs.dbMaps[pos]));
+				trap_FS_FCloseFile(f);
+			}
 		}
 		return qtrue;
 	}
@@ -1101,12 +1110,9 @@ void CG_MapVote_MultiVoteButton_Draw(panel_button_t *button)
  */
 void CG_MapVoteList_Draw(panel_button_t *button)
 {
-	int           i;
-	float         y      = button->rect.y + 12;
-	float         y2     = DB_MAPVOTE_Y;
-	qhandle_t     pic    = 0;
-	static vec4_t acolor = { 1.0f, 1.0f, 1.0f, 1.0f };
-	int           diff;
+	int   i;
+	float y  = button->rect.y + 12;
+	float y2 = DB_MAPVOTE_Y;
 
 	// display map number if server is configured
 	// to reset XP after certain number of maps
@@ -1133,27 +1139,25 @@ void CG_MapVoteList_Draw(panel_button_t *button)
 
 		if (cgs.dbSelectedMap == i + cgs.dbMapVoteListOffset)
 		{
-			fileHandle_t f;
-			vec4_t       clr = { 1.f, 1.f, 1.f, 0.3f };
+			static const vec4_t clr = { 1.f, 1.f, 1.f, 0.3f };
 
 			CG_FillRect(button->rect.x, y - 10, 245, 12, clr);
 
-			// display the photograph image only..
-			// ..and make it fade in nicely.
-			diff      = cg.time - cgs.dbSelectedMapTime;
-			acolor[3] = (diff > 1000) ? 1.0f : (float)diff / 1000.f;
-			trap_R_SetColor(acolor);
-			// First check if the corresponding map is downloaded to prevent warning about missing levelshot
-			if (trap_FS_FOpenFile(va("maps/%s.bsp", cgs.dbMaps[i + cgs.dbMapVoteListOffset]), &f, FS_READ) > 0)
+			if (cgs.dbSelectedMapLevelShots)
 			{
-				pic = trap_R_RegisterShaderNoMip(va("levelshots/%s.tga", cgs.dbMaps[i + cgs.dbMapVoteListOffset]));
-				trap_FS_FCloseFile(f);
+				static vec4_t acolor = { 1.0f, 1.0f, 1.0f, 1.0f };
+				int           diff;
+
+				// display the photograph image only..
+				// ..and make it fade in nicely.
+				diff      = cg.time - cgs.dbSelectedMapTime;
+				acolor[3] = (diff > 1000) ? 1.0f : (float)diff / 1000.f;
+
+				trap_R_SetColor(acolor);
+				CG_DrawPic(DB_MAPVOTE_X2 + 24 + cgs.wideXoffset, DB_MAPVOTE_Y2 + 2, 250, 177.0f / 233.0f * 250, cgs.dbSelectedMapLevelShots);
+				trap_R_SetColor(NULL);
 			}
-			if (pic)
-			{
-				CG_DrawPic(DB_MAPVOTE_X2 + 24 + cgs.wideXoffset, DB_MAPVOTE_Y2 + 2, 250, 177.0f / 233.0f * 250, pic);
-			}
-			trap_R_SetColor(NULL);
+
 			// display the photograph image + the layout image..
 
 			CG_Text_Paint_Ext(DB_MAPVOTE_X2 + cgs.wideXoffset, y2, button->font->scalex,
@@ -1752,12 +1756,13 @@ void CG_Debriefing_Startup(void)
 	cgs.dbSelectedClient  = cg.clientNum;
 
 	// mapvote
-	cgs.dbSelectedMap       = -1;
-	cgs.dbMapListReceived   = qfalse;
-	cgs.dbVoteTallyReceived = qfalse;
-	cgs.dbMapVotedFor[0]    = -1;
-	cgs.dbMapVotedFor[1]    = -1;
-	cgs.dbMapVotedFor[2]    = -1;
+	cgs.dbSelectedMap           = -1;
+	cgs.dbSelectedMapLevelShots = 0;
+	cgs.dbMapListReceived       = qfalse;
+	cgs.dbVoteTallyReceived     = qfalse;
+	cgs.dbMapVotedFor[0]        = -1;
+	cgs.dbMapVotedFor[1]        = -1;
+	cgs.dbMapVotedFor[2]        = -1;
 
 	cgs.dbAwardsParsed = qfalse;
 

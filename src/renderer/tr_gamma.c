@@ -40,6 +40,8 @@ typedef struct gammaProgram_s {
 
 	GLint gammaUniform;
 	float gammaValue;
+	GLint overBrightBitsUniform;
+	int overBrightBits;
 	GLint currentMapUniform;
 } gammaProgram_t;
 
@@ -55,8 +57,9 @@ const char *simpleGammaVert = "#version 110\n"
 const char *simpleGammaFrag = "#version 110\n"
 							  "uniform sampler2D u_CurrentMap;\n"
 							  "uniform float u_gamma;\n"
+							  "uniform float u_overBrightBits;\n"
 							  "void main(void) {\n"
-							  "gl_FragColor = vec4(pow(texture2D(u_CurrentMap, vec2(gl_TexCoord[0])).rgb, vec3(1.0 / u_gamma)), 1);\n"
+							  "gl_FragColor = vec4(pow(texture2D(u_CurrentMap, vec2(gl_TexCoord[0])).rgb, vec3(1.0 / u_gamma)) * u_overBrightBits, 1.0);\n"
 							  "}\n";
 
 /**
@@ -69,6 +72,7 @@ static void R_BuildGammaProgram(void)
 	R_UseShaderProgram(gammaProgram.program);
 	gammaProgram.currentMapUniform = R_GetShaderProgramUniform(gammaProgram.program, "u_CurrentMap");
 	gammaProgram.gammaUniform = R_GetShaderProgramUniform(gammaProgram.program, "u_gamma");
+	gammaProgram.overBrightBitsUniform = R_GetShaderProgramUniform(gammaProgram.program, "u_overBrightBits");
 	R_UseShaderProgram(NULL);
 }
 
@@ -107,6 +111,12 @@ void R_ScreenGamma(void)
 		{
 			glUniform1f(gammaProgram.gammaUniform, r_gamma->value);
 			gammaProgram.gammaValue = r_gamma->value;
+		}
+
+		if (tr.overbrightBits != gammaProgram.overBrightBits)
+		{
+			glUniform1f(gammaProgram.overBrightBitsUniform, 1 << tr.overbrightBits);
+			gammaProgram.overBrightBits = tr.overbrightBits;
 		}
 
 		// Draw a simple quad, We could have done this in the GLSL code directly but that is version 130 upwards,
@@ -159,6 +169,7 @@ void R_InitGamma(void)
 	}
 
 	Com_Memset(&gammaProgram, 0, sizeof(shaderProgram_t));
+	gammaProgram.overBrightBits = -1;
 
 	R_BuildGammaProgram();
 

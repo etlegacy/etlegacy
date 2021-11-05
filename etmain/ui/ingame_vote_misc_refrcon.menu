@@ -62,8 +62,12 @@ menuDef {
 	BUTTONEXT( 6+.5*(WINDOW_WIDTH-18)+6, 122, .5*(WINDOW_WIDTH-18), 14, _("BALANCED TEAMS OFF"), .24, 11, exec "cmd ref balancedteams 0" ; uiScript closeingame, settingEnabled CV_SVS_BALANCEDTEAMS voteFlag CV_SVF_BALANCEDTEAMS )
 	BUTTONEXT( 6+.5*(WINDOW_WIDTH-18)+6, 140, .5*(WINDOW_WIDTH-18), 14, _("COINTOSS"), .24, 11, exec "cmd ref cointoss"; uiScript closeingame, voteFlag CV_SVF_COINTOSS )
 
-	BUTTONEXT( 6, 158, .5*(WINDOW_WIDTH-18), 14, _("PUBLIC CONFIG"), .24, 11, exec "cmd ref config defaultpublic"; uiScript closeingame, voteFlag CV_SVF_CONFIG )
-	BUTTONEXT( 6+.5*(WINDOW_WIDTH-18)+6, 158, .5*(WINDOW_WIDTH-18), 14, _("COMPETITION CONFIG"), .24, 11, exec "cmd ref config defaultcomp"; uiScript closeingame, voteFlag CV_SVF_CONFIG )
+	LABEL( 6, 158, .25*(WINDOW_WIDTH-18), 10, _("Config:"), .24, ITEM_ALIGN_LEFT, 0, 10 )
+	BUTTONEXT( 6+.25*(WINDOW_WIDTH-18), 158, .25*(WINDOW_WIDTH-18), 14, _("PUBLIC"), .24, 11, exec "cmd ref config defaultpublic"; uiScript closeingame, voteFlag CV_SVF_CONFIG)
+	BUTTONEXT( 6+.5*(WINDOW_WIDTH-18)+6, 158, .125*(WINDOW_WIDTH-18), 14, _("1ON1"), .24, 11, exec "cmd ref config legacy1"; uiScript closeingame, voteFlag CV_SVF_CONFIG)
+	BUTTONEXT( 6+.625*(WINDOW_WIDTH-18)+6, 158, .125*(WINDOW_WIDTH-18), 14, _("3ON3"), .24, 11, exec "cmd ref config legacy3"; uiScript closeingame, voteFlag CV_SVF_CONFIG)
+	BUTTONEXT( 6+.75*(WINDOW_WIDTH-18)+6, 158, .125*(WINDOW_WIDTH-18), 14, _("5ON5"), .24, 11, exec "cmd ref config legacy5"; uiScript closeingame, voteFlag CV_SVF_CONFIG)
+	BUTTONEXT( 6+.875*(WINDOW_WIDTH-18)+6, 158, .125*(WINDOW_WIDTH-18), 14, _("6ON6"), .24, 11, exec "cmd ref config legacy6"; uiScript closeingame, voteFlag CV_SVF_CONFIG)
 
 	MULTILEFT( 8, 176+2, .66*(WINDOW_WIDTH-18), 10, _("Warmup Damage:"), .2, 8, "ui_voteWarmupDamage", cvarFloatList { "None" 0 "Enemies" 1 "Everyone" 2 } voteFlag CV_SVF_WARMUPDAMAGE, _("Enable or disable warmup damage") )
 	NAMEDBUTTONEXT( "bttnextWarmupDamage", 6+.80*(WINDOW_WIDTH-18)+6, 176, .20*(WINDOW_WIDTH-18), 14, _("OK"), .24, 11, uiScript refWarmupDamage ; uiScript closeingame, voteFlag CV_SVF_WARMUPDAMAGE )

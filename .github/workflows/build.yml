@@ -485,7 +485,7 @@ jobs:
           find android-packages/ -name '*' -type f -exec curl --fail -H "Authorization: Bearer ${{ secrets.LEGACY_AUTH }}" -X POST -H "Content-Type: multipart/form-data" -F "data=@{}" -F "platform=andro64" -F"sha=${{ github.sha }}" ${{ secrets.LEGACY_UPLOAD_URL }} \;
 
       - name: Discord notification
-        if: ${{ steps.vars.outputs.hash_exists == '404' }}
+        if: ${{ steps.vars.outputs.hash_exists == '404' }} && !contains(github.ref, 'refs/tags/v')
         env:
           DISCORD_WEBHOOK: ${{ secrets.PUBLISH_DISCORD_WEBHOOK }}
         uses: Ilshidur/action-discord@0.3.0
@@ -495,8 +495,8 @@ jobs:
   docker:
     runs-on: ubuntu-18.04
     needs: [ lnx64 ]
-    # only run on master when there is a release tag
-    if: github.event.base_ref == 'refs/heads/master' && startsWith(github.ref, 'refs/tags/v')
+    # only run on master
+    if: github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/v')
     steps:
       - uses: actions/checkout@v2
         with:
@@ -529,13 +529,6 @@ jobs:
           echo ::set-output name=short_tag::$(git describe --abbrev=0 2>/dev/null)
           echo ::set-output name=tag_exists::$(curl -s -o /dev/null -w "%{http_code}" https://hub.docker.com/v1/repositories/etlegacy/server/tags/${{ steps.vars.outputs.tag }} 2>/dev/null)
 
-      - name: Build and push the tagged Docker image
-        if: ${{ steps.vars.outputs.tag_exists == '404' }} && ${{ github.event_name != 'schedule' }}
-        working-directory: build/package
-        run: |
-          docker build . --file Dockerfile --tag etlegacy/server:${{ steps.vars.outputs.tag }}
-          docker push etlegacy/server:${{steps.vars.outputs.tag}}
-
       # Create weekly tag when scheduled and update when triggered on docker hub
       - name: Build and push the weekly Docker image
         if: ${{ github.event_name == 'schedule' }}
@@ -546,10 +539,11 @@ jobs:
 
       # If we are on a release tag, then also create the 'latest' tag on docker hub
       - name: Build and push the latest Docker image
-        if: ${{ steps.vars.outputs.tag == steps.vars.outputs.short_tag && steps.vars.outputs.tag_exists == '404' }}
+        if: ${{ steps.vars.outputs.tag == steps.vars.outputs.short_tag && steps.vars.outputs.tag_exists == '404' }} && ${{ github.event_name != 'schedule' }}
         working-directory: build/package
         run: |
-          docker build . --file Dockerfile --tag etlegacy/server:latest
+          docker build . --file Dockerfile --tag etlegacy/server:latest --tag etlegacy/server:${{ steps.vars.outputs.tag }}
+          docker push etlegacy/server:${{steps.vars.outputs.tag}}
           docker push etlegacy/server:latest
 
   cleanup:
