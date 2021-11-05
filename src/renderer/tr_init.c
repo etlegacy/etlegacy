@@ -861,7 +861,33 @@ void R_ScreenShot_f(void)
 	if (ri.Cmd_Argc() == 2 && !silent)
 	{
 		// explicit filename
-		Com_sprintf(checkname, MAX_OSPATH, "screenshots/%s.%s", ri.Cmd_Argv(1), ext);
+		const char* fileExt = COM_GetExtension(ri.Cmd_Argv(1));
+		if (fileExt[0])
+		{
+			char filename[MAX_QPATH];
+			COM_StripExtension(ri.Cmd_Argv(1), filename, MAX_QPATH);
+
+			if (COM_CompareExtension(fileExt, "tga"))
+			{
+				ext = "tga";
+			}
+			else if (COM_CompareExtension(fileExt, "jpg") || COM_CompareExtension(fileExt, "jpeg"))
+			{
+				ext = "jpg";
+			}
+#ifdef FEATURE_PNG
+			else if (COM_CompareExtension(fileExt, "png"))
+			{
+				ext = "png";
+			}
+#endif
+
+			Com_sprintf(checkname, MAX_OSPATH, "screenshots/%s.%s", filename, ext);
+		}
+		else
+		{
+			Com_sprintf(checkname, MAX_OSPATH, "screenshots/%s.%s", ri.Cmd_Argv(1), ext);
+		}
 	}
 	else
 	{
