@@ -2571,6 +2571,7 @@ typedef struct cgs_s
 	int dbMapTotalVotes[MAX_VOTE_MAPS];
 	int dbSelectedMap;
 	int dbSelectedMapTime;
+	qhandle_t dbSelectedMapLevelShots;
 	qboolean dbMapListReceived;
 	qboolean dbVoteTallyReceived;
 	qboolean dbMapMultiVote;
