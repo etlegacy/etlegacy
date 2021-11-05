@@ -2033,6 +2033,7 @@ extern vmCvar_t lua_modules;
 extern vmCvar_t lua_allowedModules;
 #endif
 
+extern vmCvar_t g_guidCheck;
 extern vmCvar_t g_protect;
 
 extern vmCvar_t g_dropHealth;

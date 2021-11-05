@@ -487,8 +487,6 @@ extern cvar_t *sv_demoTolerant;
 
 extern cvar_t *sv_ipMaxClients; ///< limit client connection
 
-extern cvar_t *sv_guidCheck;    ///< enable check for client guid validity
-
 //===========================================================
 
 // sv_demo.c

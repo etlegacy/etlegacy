@@ -262,6 +262,7 @@ vmCvar_t lua_modules;
 vmCvar_t lua_allowedModules;
 #endif
 
+vmCvar_t g_guidCheck;
 vmCvar_t g_protect; // similar to sv_protect game cvar
                     // 0 - no protection - default to have ref for localhost clients on listen servers
                     // 1 - disabled auto ref for localhost clients
@@ -588,6 +589,7 @@ cvarTable_t gameCvarTable[] =
 	{ &lua_allowedModules,                "lua_allowedModules",                "",                           0,                                               0, qfalse, qfalse },
 #endif
 
+	{ &g_guidCheck,                       "g_guidCheck",                       "1",                          CVAR_ARCHIVE,                                    0, qfalse, qfalse },
 	{ &g_protect,                         "g_protect",                         "0",                          CVAR_ARCHIVE,                                    0, qfalse, qfalse },
 	{ &g_dropHealth,                      "g_dropHealth",                      "0",                          0,                                               0, qfalse, qfalse },
 	{ &g_dropAmmo,                        "g_dropAmmo",                        "0",                          0,                                               0, qfalse, qfalse },

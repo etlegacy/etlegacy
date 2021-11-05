@@ -1155,8 +1155,6 @@ void SV_Init(void)
 
 	sv_ipMaxClients = Cvar_Get("sv_ipMaxClients", "0", CVAR_ARCHIVE);
 
-	sv_guidCheck = Cvar_Get("sv_guidCheck", "1", CVAR_ARCHIVE);
-
 #if defined(FEATURE_IRC_SERVER) && defined(DEDICATED)
 	IRC_Init();
 #endif

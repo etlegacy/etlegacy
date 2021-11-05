@@ -294,67 +294,6 @@ static qboolean SV_isValidClient(netadr_t from, const char *userinfo)
 }
 
 /**
- * @brief SV_isValidGUID
- * @param[in] from
- * @param[in] userinfo
- * @return
- */
-static qboolean SV_isValidGUID(netadr_t from, const char *userinfo)
-{
-	int  i;
-	char guid[MAX_GUID_LENGTH + 1] = { 0 };
-
-	Q_strncpyz(guid, Info_ValueForKey(userinfo, "cl_guid"), sizeof(guid));
-
-	// don't allow empty, unknown or 'NO_GUID' guid
-	if (strlen(guid) < MAX_GUID_LENGTH)
-	{
-		NET_OutOfBandPrint(NS_SERVER, from, "print\n[err_dialog]Bad GUID: Invalid etkey. Please use the ET: Legacy client or add an etkey and set pb_cl_enable 1.\n");
-		Com_DPrintf("Client rejected for bad sized etkey\n");
-		return qfalse;
-	}
-
-	// check guid format
-	for (i = 0; i < MAX_GUID_LENGTH; i++)
-	{
-		if (guid[i] < 48 || (guid[i] > 57 && guid[i] < 65) || guid[i] > 70)
-		{
-			NET_OutOfBandPrint(NS_SERVER, from, "print\n[err_dialog]Bad GUID: Invalid etkey.\n");
-			Com_DPrintf("Client rejected for bad etkey\n");
-			return qfalse;
-		}
-	}
-
-	// don't check duplicate guid in developer mod
-	if (!sv_cheats->integer)
-	{
-		client_t *cl;
-
-		// check duplicate guid with validated clients
-		for (i = 0, cl = svs.clients; i < sv_maxclients->integer ; i++, cl++)
-		{
-			// don't check for bots GUID (empty) and player which are not fully connected
-			// otherwise it could check for the reserved client slot which already contain
-			// same client information trying to connect and who encounter latency / entering
-			// password at the same time
-			if (cl->state <= CS_PRIMED || cl->netchan.remoteAddress.type == NA_BOT)
-			{
-				continue;
-			}
-
-			if (!Q_strncmp(guid, cl->guid, MAX_GUID_LENGTH))
-			{
-				NET_OutOfBandPrint(NS_SERVER, from, "print\n[err_dialog]Bad GUID: Duplicate etkey.\n");
-				Com_DPrintf("Client rejected for duplicate etkey\n");
-				return qfalse;
-			}
-		}
-	}
-
-	return qtrue;
-}
-
-/**
  * @brief A "connect" OOB command has been received
  *
  * @param[in] from
@@ -496,7 +435,7 @@ void SV_DirectConnect(netadr_t from)
 		if (NET_CompareBaseAdr(from, cl->netchan.remoteAddress)
 		    && (cl->netchan.qport == qport
 		        || from.port == cl->netchan.remoteAddress.port)
-			&& !cl->demoClient)
+		    && !cl->demoClient)
 		{
 			Com_Printf("%s:reconnect\n", NET_AdrToString(from));
 			newcl = cl;
@@ -509,12 +448,6 @@ void SV_DirectConnect(netadr_t from)
 
 			goto gotnewcl;
 		}
-	}
-
-	// check guid after we ensure client doesn't already use a slot
-	if (sv_guidCheck->integer && !SV_isValidGUID(from, userinfo))
-	{
-		return;
 	}
 
 	// find a client slot
