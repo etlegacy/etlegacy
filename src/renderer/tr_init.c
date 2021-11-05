@@ -870,15 +870,18 @@ void R_ScreenShot_f(void)
 			if (COM_CompareExtension(fileExt, "tga"))
 			{
 				ext = "tga";
+				format = SSF_TGA;
 			}
 			else if (COM_CompareExtension(fileExt, "jpg") || COM_CompareExtension(fileExt, "jpeg"))
 			{
 				ext = "jpg";
+				format = SSF_JPEG;
 			}
 #ifdef FEATURE_PNG
 			else if (COM_CompareExtension(fileExt, "png"))
 			{
 				ext = "png";
+				format = SSF_PNG;
 			}
 #endif
 
