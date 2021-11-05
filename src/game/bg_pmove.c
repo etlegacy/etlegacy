@@ -872,6 +872,11 @@ static qboolean PM_CheckProne(void)
 
 	if (!(pm->ps->eFlags & EF_PRONE))
 	{
+		if (PM_PRONEDELAY && pm->cmd.serverTime - pm->pmext->jumpTime < 850)
+		{
+			return qfalse;
+		}
+
 		// can't go prone on ladders
 		if (pm->ps->pm_flags & PMF_LADDER)
 		{
