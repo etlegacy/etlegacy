@@ -73,7 +73,7 @@
  * @var dl_initialized
  * @brief Initialize once
  */
-static int dl_initialized = 0;
+static qboolean dl_initialized = qfalse;
 
 static CURLM *dl_multi   = NULL;
 static CURL  *dl_request = NULL;
@@ -223,7 +223,7 @@ void DL_InitDownload(void)
 	dl_multi = curl_multi_init();
 
 	Com_Printf("Client download subsystem initialized\n");
-	dl_initialized = 1;
+	dl_initialized = qtrue;
 }
 
 /**
@@ -241,7 +241,7 @@ void DL_Shutdown(void)
 
 	curl_global_cleanup();
 
-	dl_initialized = 0;
+	dl_initialized = qfalse;
 }
 
 /**
@@ -463,6 +463,18 @@ dlStatus_t DL_DownloadLoop(void)
 	if ((status = curl_multi_perform(dl_multi, &dls)) == CURLM_CALL_MULTI_PERFORM && dls)
 	{
 		return DL_CONTINUE;
+	}
+
+	if (Cvar_VariableIntegerValue("cl_downloadSize") <= 0)
+	{
+		curl_off_t cl;
+		if (curl_easy_getinfo(dl_request, CURLINFO_CONTENT_LENGTH_DOWNLOAD_T, &cl) == CURLE_OK)
+		{
+			if (cl != -1)
+			{
+				Cvar_SetValue("cl_downloadSize", (float) cl);
+			}
+		}
 	}
 
 	while ((msg = curl_multi_info_read(dl_multi, &dls)) && msg->easy_handle != dl_request)
