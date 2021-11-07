@@ -413,17 +413,15 @@ void PM_TraceHead(trace_t *trace, vec3_t start, vec3_t end, trace_t *bodytrace, 
  */
 void PM_TraceAllParts(trace_t *trace, float *legsOffset, vec3_t start, vec3_t end)
 {
-	// body
-	pm->trace(trace, start, pm->mins, pm->maxs, end, pm->ps->clientNum, pm->tracemask);
-
-	// if dead, redo body trace with a square bbox so wounded players don't clip into solids
-	// only do this while we're NOT on a flat ground (we are in air for a brief moment when
-	// getting killed even while standing on flat ground), otherwise we get stuck in slopes
-	// and slide downhill because of PM_CorrectAllSolid
-	if ((pm->ps->eFlags & EF_DEAD) && trace->plane.normal[2] == 0)
+	// if dead, body trace with a square bbox so wounded players don't clip into solids
+	if (pm->ps->eFlags & EF_DEAD)
 	{
-		const vec3_t squareMaxs = { 18.f, 18.f, 12.f }; // mins is -18 -18 -24
+		const vec3_t squareMaxs = { 18.f, 18.f, 16.f }; // mins is -18 -18 -24
 		pm->trace(trace, start, pm->mins, squareMaxs, end, pm->ps->clientNum, pm->tracemask);
+	}
+	else
+	{
+		pm->trace(trace, start, pm->mins, pm->maxs, end, pm->ps->clientNum, pm->tracemask);
 	}
 
 	// legs and head
