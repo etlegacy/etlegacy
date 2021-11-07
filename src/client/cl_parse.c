@@ -885,7 +885,7 @@ void CL_ParseDownload(msg_t *msg)
 			Q_strncpyz(cls.download.downloadName, MSG_ReadString(msg), sizeof(cls.download.downloadName));
 			cls.download.downloadSize  = MSG_ReadLong(msg);
 			cls.download.downloadFlags = MSG_ReadLong(msg);
-			if (cls.download.downloadFlags & (1 << DL_FLAG_URL))
+			if (cls.download.downloadFlags & BIT(DL_FLAG_URL))
 			{
 				Sys_OpenURL(cls.download.downloadName, qtrue);
 				Cbuf_ExecuteText(EXEC_APPEND, "quit\n");
@@ -921,7 +921,7 @@ void CL_ParseDownload(msg_t *msg)
 			}
 			// Check for a disconnected download
 			// we'll let the server disconnect us when it gets the bbl8r message
-			if (cls.download.downloadFlags & (1 << DL_FLAG_DISCON))
+			if (cls.download.downloadFlags & BIT(DL_FLAG_DISCON))
 			{
 				CL_AddReliableCommand("wwwdl bbl8r");
 				cls.download.bWWWDlDisconnected = qtrue;

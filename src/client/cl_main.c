@@ -3030,7 +3030,7 @@ void CL_Init(void)
 	Cmd_AddCommand("serverstatus", CL_ServerStatus_f, "Prints the server status.");
 	Cmd_AddCommand("showip", CL_ShowIP_f, "Prints local network IP addresses.");
 	Cmd_AddCommand("fs_openedList", CL_OpenedPK3List_f, "Prints a list of opened PK3 names.");
-	Cmd_AddCommand("fs_referencedList", CL_ReferencedPK3List_f, "Prints a list of referrenced PK3 names.");
+	Cmd_AddCommand("fs_referencedList", CL_ReferencedPK3List_f, "Prints a list of referenced PK3 names.");
 
 #ifdef FEATURE_IRC_CLIENT
 	Cmd_AddCommand("irc_connect", IRC_Connect, "Connects to IRC server.");
@@ -3047,7 +3047,7 @@ void CL_Init(void)
 	Cmd_AddCommand("cache_endgather", CL_Cache_EndGather_f, "Obsolete - will be removed.");
 
 	Cmd_AddCommand("updatehunkusage", CL_UpdateLevelHunkUsage, "Updates the hunk usage file.");
-	Cmd_AddCommand("updatescreen", SCR_UpdateScreen, "Updades the screen.");
+	Cmd_AddCommand("updatescreen", SCR_UpdateScreen, "Updates the screen.");
 
 	Cmd_AddCommand("setRecommended", CL_SetRecommended_f, "Sets recommended cvar values.");
 

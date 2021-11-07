@@ -1218,7 +1218,7 @@ static qboolean SV_SetupDownloadFile(client_t *cl, msg_t *msg)
 				download_flag = 0;
 				if (sv_wwwDlDisconnected->integer)
 				{
-					download_flag |= (1 << DL_FLAG_DISCON);
+					download_flag |= BIT(DL_FLAG_DISCON);
 				}
 
 				MSG_WriteLong(msg, download_flag);   // flags
