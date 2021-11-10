@@ -337,6 +337,7 @@ vmCvar_t cg_popupStayTime;
 vmCvar_t cg_popupFilter;
 vmCvar_t cg_popupBigFilter;
 vmCvar_t cg_graphicObituaries;
+vmCvar_t cg_popupShadow;
 
 vmCvar_t cg_fontScaleTP; // top print
 vmCvar_t cg_fontScaleSP; // side print
@@ -612,6 +613,7 @@ static cvarTable_t cvarTable[] =
 	{ &cg_popupFilter,            "cg_popupFilter",            "0",           CVAR_ARCHIVE,                 0 },
 	{ &cg_popupBigFilter,         "cg_popupBigFilter",         "0",           CVAR_ARCHIVE,                 0 },
 	{ &cg_graphicObituaries,      "cg_graphicObituaries",      "0",           CVAR_ARCHIVE,                 0 },
+	{ &cg_popupShadow,            "cg_popupShadow",            "0",           CVAR_ARCHIVE,                 0 },
 	{ &cg_weapaltReloads,         "cg_weapaltReloads",         "0",           CVAR_ARCHIVE,                 0 },
 	{ &cg_weapaltSwitches,        "cg_weapaltSwitches",        "1",           CVAR_ARCHIVE,                 0 },
 
