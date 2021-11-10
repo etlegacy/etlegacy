@@ -3647,7 +3647,7 @@ void Cmd_SetViewpos_f(gentity_t *ent)
 	char   buffer[MAX_TOKEN_CHARS];
 	int    i;
 
-	if (!g_cheats.integer)
+	if (!g_cheats.integer && !ent->client->sess.shoutcaster)
 	{
 		trap_SendServerCommand(ent - g_entities, va("print \"Cheats are not enabled on this server.\n\""));
 		return;
