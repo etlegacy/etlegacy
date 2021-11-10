@@ -374,6 +374,8 @@ vmCvar_t g_suddenDeath;
 
 vmCvar_t g_dropObjDelay;
 
+vmCvar_t g_altSuicideAnim;
+
 cvarTable_t gameCvarTable[] =
 {
 	// don't override the cheat state set by the system
@@ -666,6 +668,7 @@ cvarTable_t gameCvarTable[] =
 	{ &g_playerHitBoxHeight,              "g_playerHitBoxHeight",              "36",                         CVAR_ARCHIVE | CVAR_SERVERINFO,                  0, qfalse, qfalse },
 	{ &g_suddenDeath,                     "g_suddenDeath",                     "0",                          CVAR_ARCHIVE,                                    0, qtrue,  qfalse },
 	{ &g_dropObjDelay,                    "g_dropObjDelay",                    "3000",                       CVAR_ARCHIVE,                                    0, qtrue,  qfalse },
+	{ &g_altSuicideAnim,                  "g_altSuicideAnim",                  "0",                          CVAR_ARCHIVE,                                    0, qtrue,  qfalse },
 };
 
 /**

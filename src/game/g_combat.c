@@ -660,7 +660,14 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 		BG_UpdateConditionValue(self->s.number, ANIM_COND_ENEMY_POSITION, 0, qfalse);
 
 		// play specific anim on suicide
-		BG_UpdateConditionValue(self->s.number, ANIM_COND_SUICIDE, meansOfDeath == MOD_SUICIDE, qtrue);
+		if (g_altSuicideAnim.integer)
+		{
+			BG_UpdateConditionValue(self->s.number, ANIM_COND_ENEMY_WEAPON, meansOfDeath == MOD_SUICIDE, qtrue);
+		}
+		else
+		{
+			BG_UpdateConditionValue(self->s.number, ANIM_COND_SUICIDE, meansOfDeath == MOD_SUICIDE, qtrue);
+		}
 
 		// FIXME: add POSITION_RIGHT, POSITION_LEFT
 		if (infront(self, inflictor))

@@ -2133,6 +2133,7 @@ extern vmCvar_t g_debugForSingleClient;
 
 extern vmCvar_t g_suddenDeath;
 extern vmCvar_t g_dropObjDelay;
+extern vmCvar_t g_altSuicideAnim;
 
 /**
  * @struct GeoIPTag
