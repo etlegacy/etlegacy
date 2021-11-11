@@ -786,7 +786,6 @@ static void S_AL_ScaleGain(src_t *chksrc, vec3_t origin)
 	{
 		float  scaleFactor;
 		float  distance = 0.0f;
-		vec3_t source_vec;
 
 		distance = vec3_distance(origin, lastListenerOrigin);
 

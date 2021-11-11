@@ -465,6 +465,12 @@ dlStatus_t DL_DownloadLoop(void)
 		return DL_CONTINUE;
 	}
 
+	if(status > CURLM_OK)
+	{
+		err = curl_multi_strerror(status);
+		goto curl_done;
+	}
+
 	if (Cvar_VariableIntegerValue("cl_downloadSize") <= 0)
 	{
 		curl_off_t cl;
@@ -494,6 +500,7 @@ dlStatus_t DL_DownloadLoop(void)
 		err = NULL;
 	}
 
+curl_done:
 	curl_multi_remove_handle(dl_multi, dl_request);
 	curl_easy_cleanup(dl_request);
 

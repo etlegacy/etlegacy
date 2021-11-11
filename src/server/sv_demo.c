@@ -619,12 +619,12 @@ static qboolean SV_DemoSendStoredCommands(client_t *client, const char *arg0, co
 {
 	if (!Q_strncmp(arg0, "score", 5))
 	{
-		if (sc0 && strlen(sc0))
+		if (sc0[0] && strlen(sc0))
 		{
 			SV_GameSendServerCommand(client - svs.clients, sc0, qtrue);
 		}
 
-		if (sc1 && strlen(sc1))
+		if (sc1[0] && strlen(sc1))
 		{
 			SV_GameSendServerCommand(client - svs.clients, sc1, qtrue);
 		}
@@ -1896,7 +1896,7 @@ static void SV_DemoStopRecord(void)
 
 	if (!demoStatsFile)
 	{
-		Com_Printf("DEMO: ERROR: Couldn't open %s for writing.\n", demoStatsFile);
+		Com_Printf("DEMO: ERROR: Couldn't open %s.txt for writing.\n", statsFileName);
 		return;
 	}
 
