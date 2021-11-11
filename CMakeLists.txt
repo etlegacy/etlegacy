@@ -107,6 +107,10 @@ cmake_dependent_option(ET_KEY	"Copy existing etkey file from ET_FS_BASEPATH)"			
 # Setup
 #-----------------------------------------------------------------
 
+if (BUNDLED_OPENSSL AND BUNDLED_WOLFSSL)
+    message(FATAL_ERROR "Cannot enable both OpenSSL and WolfSSL at the same time.")
+endif()
+
 # Group the VisualStudio projects
 set(CMAKE_TARGETS_FOLDER CMake)
 set(BUNDLED_TARGETS_FOLDER Bundled)
