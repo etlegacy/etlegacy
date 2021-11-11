@@ -97,12 +97,15 @@ if(LIBM)
 	target_link_libraries(ui PRIVATE m)
 endif()
 
-# Build both arhitectures on older xcode versions
+# Build both architectures on older xcode versions
 if(APPLE)
+    if (DEFINED CMAKE_OSX_ARCHITECTURES)
+        message(STATUS "Using the user provided osx architectures: ${CMAKE_OSX_ARCHITECTURES}")
+        set(OSX_MOD_ARCH "${CMAKE_OSX_ARCHITECTURES}")
 	# Mojave was the last version to support 32 bit binaries and building.
 	# Newer SDK's just fail compilation
 	# TODO: maybe remove this whole thing after the next release.
-	if(XCODE_SDK_VERSION LESS "10.14" AND CMAKE_OSX_DEPLOYMENT_TARGET LESS "10.14")
+	elseif(XCODE_SDK_VERSION LESS "10.14" AND CMAKE_OSX_DEPLOYMENT_TARGET LESS "10.14")
 		# Force universal mod on osx up to Mojave
 		message(STATUS "Enabling MacOS x86 and x86_64 builds on mods")
 		set(OSX_MOD_ARCH "i386;x86_64")
