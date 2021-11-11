@@ -69,6 +69,10 @@
 
 #define GET_BUFFER_SIZE 1024 * 256
 
+#ifdef __linux__
+#define CA_CERT_DEFAULT "/etc/ssl/certs/ca-certificates.crt"
+#endif
+
 /**
  * @var dl_initialized
  * @brief Initialize once
@@ -270,11 +274,11 @@ static void DL_InitSSL(CURL *curl)
 		curl_easy_setopt(curl, CURLOPT_CAINFO, Cvar_VariableString("dl_capath"));
 	}
 #ifdef __linux__
-	else if(FS_FileInPathExists("/etc/ssl/certs/ca-certificates.crt"))
+	else if(FS_FileInPathExists(CA_CERT_DEFAULT))
 	{
 		curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 1);
 		curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 1);
-		curl_easy_setopt(curl, CURLOPT_CAINFO, "/etc/ssl/certs/ca-certificates.crt");
+		curl_easy_setopt(curl, CURLOPT_CAINFO, CA_CERT_DEFAULT);
 	}
 #endif
 	else
