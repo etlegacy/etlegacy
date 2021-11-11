@@ -295,7 +295,7 @@ void Com_InitDownloads(void)
 		{
 			if (*dld.downloadList)
 			{
-				// if autodownloading is not enabled on the server
+				// if auto downloading is not enabled on the server
 				cls.state = CA_CONNECTED;
 				Com_NextDownload();
 				return;
