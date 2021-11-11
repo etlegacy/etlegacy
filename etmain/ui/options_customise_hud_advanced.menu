@@ -30,16 +30,17 @@ menuDef {
 
 // Popup //
 #define POPUP_Y 32
-	SUBWINDOW( 6, POPUP_Y, (SUBWINDOW_WIDTH_L), 54, _("POPUPS AND BANNER") )
+	SUBWINDOW( 6, POPUP_Y, (SUBWINDOW_WIDTH_L), 66, _("POPUPS AND BANNER") )
 	CVARFLOATLABEL( 8, POPUP_Y+16, (SUBWINDOW_WIDTH_L)-6, 10, "cg_popupStayTime", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-4), 8 )
 	SLIDER( 8, POPUP_Y+16, (SUBWINDOW_WIDTH_L)-4, 10, _("Popup Stay Time:"), .2, 8, "cg_popupStayTime" 2500 0 6000, _("Set the time a pop-up stays visible") )
 	CVARFLOATLABEL( 8, POPUP_Y+28, (SUBWINDOW_WIDTH_L)-6, 10, "cg_popupFadeTime", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-4), 8 )
 	SLIDER( 8, POPUP_Y+28, (SUBWINDOW_WIDTH_L)-4, 10, _("Popup Fade Time:"), .2, 8, "cg_popupFadeTime" 2500 0 6000, _("Set the time a pop-up fades away") )
-	CVARFLOATLABEL( 8, POPUP_Y+40, (SUBWINDOW_WIDTH_L)-6, 10, "cg_bannerTime", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-4), 8 )
-	SLIDER( 8, POPUP_Y+40, (SUBWINDOW_WIDTH_L)-4, 10, _("Banner Time:"), .2, 8, "cg_bannerTime" 2500 0 10000, _("Set the time a banner stays visible") )
+	YESNO( 8, POPUP_Y+40, (SUBWINDOW_WIDTH_L)-4, 10, _("Popup Shadow:"), .2, 8, "cg_popupShadow", _("Draw shadow on popups") )
+	CVARFLOATLABEL( 8, POPUP_Y+52, (SUBWINDOW_WIDTH_L)-6, 10, "cg_bannerTime", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-4), 8 )
+	SLIDER( 8, POPUP_Y+52, (SUBWINDOW_WIDTH_L)-4, 10, _("Banner Time:"), .2, 8, "cg_bannerTime" 2500 0 10000, _("Set the time a banner stays visible") )
 
 // Shoutcast //
-#define SHOUTCAST_Y 92
+#define SHOUTCAST_Y 104
 	SUBWINDOW( 6, SHOUTCAST_Y, (SUBWINDOW_WIDTH_L), 100, _("SHOUTCAST") )
 	MULTI( 8, SHOUTCAST_Y+16, (SUBWINDOW_WIDTH_L)-4, 10, _("Show minimap:"), .2, 8, "cg_shoutcastDrawMinimap", cvarFloatList { "Off" 0 "On" 1 }, _("Display minimap") )
 	MULTI( 8, SHOUTCAST_Y+28, (SUBWINDOW_WIDTH_L)-4, 10, _("Show player lists:"), .2, 8, "cg_shoutcastDrawPlayers", cvarFloatList { "Off" 0 "On" 1 }, _("Display player lists") )
@@ -50,7 +51,7 @@ menuDef {
 	EDITFIELD( 8, SHOUTCAST_Y+88, (SUBWINDOW_WIDTH_L)-4, 10, _("Allies team name:"), .2, 8, "cg_shoutcastTeamNameBlue", 64, 18, _("Set allies team name (Allies if empty)") )
 
 // Fonts //
-#define FONTS_Y 198
+#define FONTS_Y 210
 	SUBWINDOW( 6, FONTS_Y, (SUBWINDOW_WIDTH_L), 78, _("FONTS") )
 	MULTIACTION( 8, FONTS_Y+16, (SUBWINDOW_WIDTH_L)-4, 10, _("Fonts Size:"), .2, 8, "cg_fontScale", cvarFloatList { "Tiny" 2 "Small" 1 "Normal" 0 }, uiScript SetFontScale, _("Set the size of the in-game fonts") )
 	CVARFLOATLABEL( 8, FONTS_Y+28, (SUBWINDOW_WIDTH_L)-6, 10, "cg_fontScaleTP", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-4), 8 )
@@ -63,7 +64,7 @@ menuDef {
 	SLIDER( 8, FONTS_Y+64, (SUBWINDOW_WIDTH_L)-4, 10, _("Crosshair Name:"), .2, 8, "cg_fontScaleCN" 0.15 0 0.5, _("Set font size for Crosshair Name label") )
 
 // Chat //
-#define CHAT_Y 282
+#define CHAT_Y 294
 	SUBWINDOW( 6, CHAT_Y, (SUBWINDOW_WIDTH_L), 112, _("CHAT") )
 	CVARFLOATLABEL( 8, CHAT_Y+16, (SUBWINDOW_WIDTH_L)-4, 10, "cg_chatX", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-6), 8 )
 	SLIDER( 8, CHAT_Y+16, (SUBWINDOW_WIDTH_L)-4, 10, _("Chat X:"), .2, 8, "cg_chatX" 160 0 640, _("Set chat X position") )

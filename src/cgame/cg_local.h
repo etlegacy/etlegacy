@@ -2824,6 +2824,7 @@ extern vmCvar_t cg_popupStayTime;
 extern vmCvar_t cg_popupFilter;
 extern vmCvar_t cg_popupBigFilter;
 extern vmCvar_t cg_graphicObituaries;
+extern vmCvar_t cg_popupShadow;
 
 extern vmCvar_t cg_fontScaleTP;
 extern vmCvar_t cg_fontScaleSP;

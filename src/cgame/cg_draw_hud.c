@@ -38,10 +38,9 @@
 
 typedef enum
 {
-	FLAGS_MOVE_TIMERS   = BIT(0),
-	FLAGS_REMOVE_RANKS  = BIT(1),
-	FLAGS_MOVE_POPUPS   = BIT(2),
-	FLAGS_POPUPS_SHADOW = BIT(3)
+	FLAGS_MOVE_TIMERS  = BIT(0),
+	FLAGS_REMOVE_RANKS = BIT(1),
+	FLAGS_MOVE_POPUPS  = BIT(2)
 } althud_flags;
 
 typedef enum
@@ -3399,16 +3398,18 @@ void CG_DrawActiveHud(void)
  */
 void CG_DrawGlobalHud(void)
 {
+	int style = cg_popupShadow.integer ? ITEM_TEXTSTYLE_SHADOWED : ITEM_TEXTSTYLE_NORMAL;
+
 	if (cg_altHudFlags.integer & FLAGS_MOVE_POPUPS)
 	{
-		CG_DrawPMItems(activehud->popupmessages.location, (cg_altHudFlags.integer & FLAGS_POPUPS_SHADOW) ? ITEM_TEXTSTYLE_SHADOWED : 0);
+		CG_DrawPMItems(activehud->popupmessages.location, style);
 	}
 	else
 	{
-		CG_DrawPMItems(hud0.popupmessages.location, (cg_altHudFlags.integer & FLAGS_POPUPS_SHADOW) ? ITEM_TEXTSTYLE_SHADOWED : 0);
+		CG_DrawPMItems(hud0.popupmessages.location, style);
 	}
 
-	CG_DrawPMItemsBig((cg_altHudFlags.integer & FLAGS_POPUPS_SHADOW) ? ITEM_TEXTSTYLE_SHADOWED : 0);
+	CG_DrawPMItemsBig(style);
 
 #ifdef FEATURE_EDV
 	if (cgs.demoCamera.renderingFreeCam || cgs.demoCamera.renderingWeaponCam)
