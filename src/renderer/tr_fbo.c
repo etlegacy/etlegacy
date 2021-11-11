@@ -35,8 +35,11 @@
 
 #include "tr_local.h"
 
-frameBuffer_t *mainFbo;
-frameBuffer_t *msMainFbo;
+frameBuffer_t *mainFbo = NULL;
+frameBuffer_t *msMainFbo = NULL;
+#ifdef HUD_FBO
+frameBuffer_t *hudFbo = NULL;
+#endif
 
 static frameBuffer_t *current;
 
@@ -79,6 +82,12 @@ static void R_SetWindowViewport(void)
 
 static void R_SetFBOViewport(frameBuffer_t *fb)
 {
+	if (!fb)
+	{
+		R_SetWindowViewport();
+		return;
+	}
+
 	glViewport(0, 0, fb->width, fb->height);
 	glScissor(0, 0, fb->width, fb->height);
 	glOrtho(0, fb->width, fb->height, 0, 0, 1);
@@ -135,30 +144,6 @@ void R_FBOSetViewport(frameBuffer_t *from, frameBuffer_t *to)
 	}
 }
 
-void R_BindFBO(frameBuffer_t *fb)
-{
-	if (!tr.useFBO)
-	{
-		return;
-	}
-
-	current = fb;
-
-	if (fb)
-	{
-		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, fb->fbo);
-	}
-	else
-	{
-		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
-	}
-}
-
-frameBuffer_t *R_CurrentFBO()
-{
-	return current;
-}
-
 static void R_BindFBOAs(frameBuffer_t *fb, fboBinding binding)
 {
 	GLint val = 0;
@@ -188,6 +173,31 @@ static void R_BindFBOAs(frameBuffer_t *fb, fboBinding binding)
 	}
 }
 
+void R_BindFBO(frameBuffer_t *fb)
+{
+	if (!tr.useFBO)
+	{
+		return;
+	}
+
+	current = fb;
+
+	if (fb)
+	{
+		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, fb->fbo);
+	}
+	else
+	{
+		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
+		glDrawBuffer(GL_BACK);
+	}
+}
+
+frameBuffer_t *R_CurrentFBO()
+{
+	return current;
+}
+
 static void R_GetCurrentFBOId(fboBinding binding, GLint *fboId)
 {
 	switch (binding)
@@ -204,6 +214,28 @@ static void R_GetCurrentFBOId(fboBinding binding, GLint *fboId)
 		default:
 			Ren_Fatal("Invalid binding type\n");
 	}
+}
+
+static frameBuffer_t *R_GetCurrentFBO(fboBinding binding)
+{
+	GLint id;
+
+	R_GetCurrentFBOId(binding, &id);
+
+	if (!id)
+	{
+		return NULL;
+	}
+
+	for (int i = 0; i < MAX_FBOS; i++)
+	{
+		if (systemFbos[i].fbo == id)
+		{
+			return &systemFbos[i];
+		}
+	}
+
+	Ren_Fatal("Invalid FBO id: %i\n", id);
 }
 
 byte *R_FBOReadPixels(frameBuffer_t *fb, size_t *offset, int *padlen)
@@ -304,13 +336,22 @@ static void R_CreateFBODepthAttachment(frameBuffer_t *fb, int samples, int stenc
 	}
 }
 
-static void R_CreateFBOColorAttachment(frameBuffer_t *fb, int samples)
+static void R_CreateFBOColorAttachment(frameBuffer_t *fb, int samples, uint8_t flags)
 {
+	int internalFormat = GL_RGB8;
+	int format = GL_RGB;
+
+	if (flags & FBO_ALPHA)
+	{
+		internalFormat = GL_RGBA8;
+		format = GL_RGBA;
+	}
+
 	if (samples)
 	{
 		glGenRenderbuffersEXT(1, &fb->colorBuffer);
 		glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, fb->colorBuffer);
-		glRenderbufferStorageMultisampleEXT(GL_RENDERBUFFER_EXT, samples, GL_RGBA8, fb->width, fb->height);
+		glRenderbufferStorageMultisampleEXT(GL_RENDERBUFFER_EXT, samples, internalFormat, fb->width, fb->height);
 		glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_RENDERBUFFER_EXT,
 									 fb->colorBuffer);
 	}
@@ -323,7 +364,7 @@ static void R_CreateFBOColorAttachment(frameBuffer_t *fb, int samples)
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, fb->width, fb->height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+		glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, fb->width, fb->height, 0, format, GL_UNSIGNED_BYTE, NULL);
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, fb->color, 0);
 	}
 }
@@ -378,7 +419,7 @@ static void R_DestroyFBO(frameBuffer_t *fb)
 	Com_Memset(fb, 0, sizeof(frameBuffer_t));
 }
 
-static frameBuffer_t *R_CreateFBO(frameBuffer_t *fb, const char *name, int width, int height, int samples, int stencil)
+static frameBuffer_t *R_CreateFBO(frameBuffer_t *fb, const char *name, int width, int height, int samples, int stencil, uint8_t flags)
 {
 	if (!fb)
 	{
@@ -404,6 +445,7 @@ static frameBuffer_t *R_CreateFBO(frameBuffer_t *fb, const char *name, int width
 
 	fb->width = width;
 	fb->height = height;
+	fb->flags = flags;
 
 	if (stencil)
 	{
@@ -447,8 +489,12 @@ static frameBuffer_t *R_CreateFBO(frameBuffer_t *fb, const char *name, int width
 	// 	}
 	// }
 
-	R_CreateFBOColorAttachment(fb, samples);
-	R_CreateFBODepthAttachment(fb, samples, stencil, qfalse);
+	R_CreateFBOColorAttachment(fb, samples, flags);
+
+	if (flags & FBO_DEPTH)
+	{
+		R_CreateFBODepthAttachment(fb, samples, stencil, qfalse);
+	}
 
 	if (!samples)
 	{
@@ -464,6 +510,35 @@ static frameBuffer_t *R_CreateFBO(frameBuffer_t *fb, const char *name, int width
 	R_BindFBO(NULL);
 
 	return fb;
+}
+
+void R_FboCopyToTex(frameBuffer_t *from, image_t *to)
+{
+	frameBuffer_t *tmp = NULL;
+
+	if (tr.useFBO)
+	{
+		tmp = R_GetCurrentFBO(READ);
+		R_BindFBOAs(from, READ);
+	}
+
+	GL_Bind(to);
+
+	// We will copy the current buffer into the texture
+	glCopyTexImage2D(GL_TEXTURE_2D, 0, to->internalFormat, 0, 0, to->width, to->height, 0);
+
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+	GL_CheckErrors();
+
+	if (tr.useFBO && tmp != from)
+	{
+		R_BindFBOAs(tmp, READ);
+	}
 }
 
 void R_FboBlit(frameBuffer_t *from, frameBuffer_t *to)
@@ -491,8 +566,16 @@ void R_FboBlit(frameBuffer_t *from, frameBuffer_t *to)
 
 	if (to)
 	{
-		glBlitFramebuffer(0, 0, from->width, from->height, 0, 0, to->width, to->height,
-						  GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT, GL_NEAREST);
+		if (to->flags & FBO_DEPTH)
+		{
+			glBlitFramebuffer(0, 0, from->width, from->height, 0, 0, to->width, to->height,
+							  GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT, GL_NEAREST);
+		}
+		else
+		{
+			glBlitFramebuffer(0, 0, from->width, from->height, 0, 0, to->width, to->height,
+							  GL_COLOR_BUFFER_BIT, GL_NEAREST);
+		}
 	}
 	else
 	{
@@ -505,56 +588,44 @@ void R_FboBlit(frameBuffer_t *from, frameBuffer_t *to)
 	GL_CheckErrors();
 }
 
-/*void R_MainFBOBlit(void)
+void R_FboRenderTo(frameBuffer_t *from, frameBuffer_t *to)
 {
-	if (!mainFbo.fbo)
+	if (!tr.useFBO)
 	{
 		return;
 	}
 
-	// GLint target;
-	// glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &target);
+	frameBuffer_t *tmp = current;
 
-	glBindFramebuffer(GL_FRAMEBUFFER, mainFbo.fbo);
-	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-	// glReadBuffer(GL_COLOR_ATTACHMENT0);
-	// glDrawBuffer(GL_FRONT);
-	glDrawBuffer(GL_BACK);
+	if (!blitProgram)
+	{
+		R_FboBlit(from, to);
+		return;
+	}
 
-	R_SetWindowViewport();
+	R_BindFBO(to);
+
+	R_SetFBOViewport(to);
 
 	GL_CheckErrors();
 
-	if (blitProgram)
-	{
-		glActiveTextureARB(GL_TEXTURE0_ARB);
-		glClientActiveTextureARB(GL_TEXTURE0_ARB);
-		glBindTexture(GL_TEXTURE_2D, mainFbo.color);
+	R_UseShaderProgram(blitProgram);
 
-		glBegin(GL_QUADS);
-		{
-			glTexCoord2f(0.0f, 0.0f);
-			glVertex3f(-1.0f, -1.0f, 0.0f);
-			glTexCoord2f(1.0f, 0.0f);
-			glVertex3f(1.0f, -1.0f, 0.0f);
-			glTexCoord2f(1.0f, 1.0f);
-			glVertex3f(1.0f, 1.0f, 0.0f);
-			glTexCoord2f(0.0f, 1.0f);
-			glVertex3f(-1.0f, 1.0f, 0.0f);
-		}
-		glEnd();
-	}
-	else
+	glActiveTextureARB(GL_TEXTURE0_ARB);
+	glClientActiveTextureARB(GL_TEXTURE0_ARB);
+	glBindTexture(GL_TEXTURE_2D, from->color);
+
+	GL_FullscreenQuad();
+
+	if (tmp != current)
 	{
-		glBlitFramebuffer(0, 0, mainFbo.width, mainFbo.height, 0, 0, glConfig.windowWidth, glConfig.windowHeight,
-						  GL_COLOR_BUFFER_BIT, GL_LINEAR);
+		R_BindFBO(tmp);
 	}
+
+	R_UseShaderProgram(NULL);
 
 	GL_CheckErrors();
-
-	// glBindFramebuffer(GL_FRAMEBUFFER, target);
-	R_BindFBO(current);
-}*/
+}
 
 void R_InitFBO(void)
 {
@@ -588,21 +659,25 @@ void R_InitFBO(void)
 
 	if (samples)
 	{
-		msMainFbo = R_CreateFBO(NULL, "multisampled-main", glConfig.vidWidth, glConfig.vidHeight, samples, stencil);
-		mainFbo = R_CreateFBO(NULL, "main", glConfig.vidWidth, glConfig.vidHeight, 0, stencil);
+		msMainFbo = R_CreateFBO(NULL, "multisampled-main", glConfig.vidWidth, glConfig.vidHeight, samples, stencil, FBO_ALPHA | FBO_DEPTH);
+		mainFbo = R_CreateFBO(NULL, "main", glConfig.vidWidth, glConfig.vidHeight, 0, stencil, FBO_ALPHA | FBO_DEPTH);
 	}
 	else
 	{
-		mainFbo = R_CreateFBO(NULL, "main", glConfig.vidWidth, glConfig.vidHeight, samples, stencil);
+		mainFbo = R_CreateFBO(NULL, "main", glConfig.vidWidth, glConfig.vidHeight, samples, stencil, FBO_ALPHA | FBO_DEPTH);
 	}
 
+#ifdef HUD_FBO
+	hudFbo = R_CreateFBO(NULL, "hud", glConfig.vidWidth, glConfig.vidHeight, 0, 0, FBO_ALPHA);
+#endif
+
 	// Setup the blitting program
-	// blitProgram = R_CreateShaderProgram(fboBlitVert, fboBlitFrag);
-	// R_UseShaderProgram(blitProgram);
-	// GLint blitProgramMap = R_GetShaderProgramUniform(blitProgram, "u_CurrentMap");
-	// glUniform1i(blitProgramMap, 0);
-	//
-	// R_UseShaderProgram(NULL);
+	blitProgram = R_CreateShaderProgram(fboBlitVert, fboBlitFrag);
+	R_UseShaderProgram(blitProgram);
+	GLint blitProgramMap = R_GetShaderProgramUniform(blitProgram, "u_CurrentMap");
+	glUniform1i(blitProgramMap, 0);
+
+	R_UseShaderProgram(NULL);
 
 	GL_CheckErrors();
 }

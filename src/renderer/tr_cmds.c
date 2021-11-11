@@ -448,14 +448,8 @@ void RE_BeginFrame(void)
 	tr.frameCount++;
 	tr.frameSceneNum = 0;
 
-	if (msMainFbo)
-	{
-		R_BindFBO(msMainFbo);
-	}
-	else
-	{
-		R_BindFBO(mainFbo);
-	}
+	R_ClearHudFBO();
+	R_BindMainFBO();
 
 	// do overdraw measurement
 	if (r_measureOverdraw->integer)

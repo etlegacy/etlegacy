@@ -83,6 +83,8 @@ void R_ScreenGamma(void)
 {
 	if (gammaProgram.program)
 	{
+		R_BindFBO(NULL);
+
 		R_UseShaderProgram(gammaProgram.program);
 
 		glActiveTextureARB(GL_TEXTURE0_ARB);
@@ -107,6 +109,10 @@ void R_ScreenGamma(void)
 			glBindTexture(GL_TEXTURE_2D, mainFbo->color);
 		}
 
+		// Maybe should use this instead?
+		// R_FBOSetViewport(mainFbo, NULL);
+		// R_FboCopyToTex(mainFbo, screenImage);
+
 		if (!gammaProgram.gammaValue || gammaProgram.gammaValue != r_gamma->value)
 		{
 			glUniform1f(gammaProgram.gammaUniform, r_gamma->value);
@@ -119,20 +125,7 @@ void R_ScreenGamma(void)
 			gammaProgram.overBrightBits = tr.overbrightBits;
 		}
 
-		// Draw a simple quad, We could have done this in the GLSL code directly but that is version 130 upwards,
-		// and we want to be sure that R1 runs even with a toaster.
-		glBegin(GL_QUADS);
-		{
-			glTexCoord2f(0.0f, 0.0f);
-			glVertex3f(-1.0f, -1.0f, 0.0f);
-			glTexCoord2f(1.0f, 0.0f);
-			glVertex3f(1.0f, -1.0f, 0.0f);
-			glTexCoord2f(1.0f, 1.0f);
-			glVertex3f(1.0f, 1.0f, 0.0f);
-			glTexCoord2f(0.0f, 1.0f);
-			glVertex3f(-1.0f, 1.0f, 0.0f);
-		}
-		glEnd();
+		GL_FullscreenQuad();
 
 		R_UseShaderProgram(NULL);
 		R_FBOSetViewport(NULL, mainFbo);
@@ -141,6 +134,8 @@ void R_ScreenGamma(void)
 	{
 		R_FboBlit(mainFbo, NULL);
 	}
+
+	GL_CheckErrors();
 }
 
 /**

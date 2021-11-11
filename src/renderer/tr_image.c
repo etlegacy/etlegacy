@@ -969,6 +969,9 @@ image_t *R_CreateImage(const char *name, const byte *pic, int width, int height,
 	}
 	else
 	{
+		image->internalFormat = GL_RGBA;
+		glTexImage2D(GL_TEXTURE_2D, 0, image->internalFormat, image->width, image->height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+
 		if (mipmap)
 		{
 			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, gl_filter_min);

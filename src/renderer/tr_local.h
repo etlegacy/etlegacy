@@ -1517,6 +1517,7 @@ void GL_SelectTexture(int unit);
 void GL_TextureMode(const char *string);
 void GL_CheckErrors(void);
 void GL_State(unsigned long stateBits);
+void GL_FullscreenQuad(void);
 void GL_TexEnv(int env);
 void GL_Cull(int cullType);
 
@@ -2200,6 +2201,8 @@ typedef struct {
 
 	int width;
 	int height;
+
+	uint8_t flags;
 } frameBuffer_t;
 
 typedef enum {
@@ -2208,16 +2211,41 @@ typedef enum {
 	BOTH
 } fboBinding;
 
+typedef enum {
+	FBO_DEPTH = BIT(0),
+	FBO_ALPHA = BIT(1)
+}fboFlags;
+
 extern frameBuffer_t *mainFbo;
 extern frameBuffer_t *msMainFbo;
+#ifdef HUD_FBO
+extern frameBuffer_t *hudFbo;
+#endif
 
 void R_FBOSetViewport(frameBuffer_t *from, frameBuffer_t *to);
 void R_BindFBO(frameBuffer_t *fb);
 frameBuffer_t *R_CurrentFBO();
 byte *R_FBOReadPixels(frameBuffer_t *fb, size_t *offset, int *padlen);
-void R_ShutdownFBO(void);
+void R_FboCopyToTex(frameBuffer_t *from, image_t *to);
 void R_FboBlit(frameBuffer_t *from, frameBuffer_t *to);
+void R_FboRenderTo(frameBuffer_t *from, frameBuffer_t *to);
+void R_ShutdownFBO(void);
 void R_InitFBO(void);
+
+#define R_BindMainFBO() { if (msMainFbo) R_BindFBO(msMainFbo); else R_BindFBO(mainFbo); }
+
+#ifdef HUD_FBO
+#define R_BindHudFBO() { R_BindFBO(hudFbo); }
+#define R_ClearHudFBO() { R_BindHudFBO(); glClearColor(1.f, 1.f, 1.f, 0.f); glClear(GL_COLOR_BUFFER_BIT); }
+#define R_DrawHudOnTop() { \
+GL_State(GLS_DEPTHTEST_DISABLE | GLS_SRCBLEND_SRC_ALPHA | GLS_DSTBLEND_ONE_MINUS_SRC_ALPHA); \
+R_FboRenderTo(hudFbo, NULL); \
+}
+#else
+#define R_BindHudFBO()
+#define R_ClearHudFBO()
+#define R_DrawHudOnTop()
+#endif
 
 //------------------------------------------------------------------------------
 

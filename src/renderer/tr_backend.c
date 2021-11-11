@@ -393,6 +393,24 @@ void GL_State(unsigned long stateBits)
 	glState.glStateBits = stateBits;
 }
 
+void GL_FullscreenQuad(void)
+{
+	// Draw a simple quad, We could have done this in the GLSL code directly but that is version 130 upwards,
+	// and we want to be sure that R1 runs even with a toaster.
+	glBegin(GL_QUADS);
+	{
+		glTexCoord2f(0.0f, 0.0f);
+		glVertex3f(-1.0f, -1.0f, 0.0f);
+		glTexCoord2f(1.0f, 0.0f);
+		glVertex3f(1.0f, -1.0f, 0.0f);
+		glTexCoord2f(1.0f, 1.0f);
+		glVertex3f(1.0f, 1.0f, 0.0f);
+		glTexCoord2f(0.0f, 1.0f);
+		glVertex3f(-1.0f, 1.0f, 0.0f);
+	}
+	glEnd();
+}
+
 /**
  * @brief A player has predicted a teleport, but hasn't arrived yet
  */
@@ -444,6 +462,7 @@ void RB_BeginDrawingView(void)
 	// we will need to change the projection matrix before drawing
 	// 2D images again
 	backEnd.projection2D = qfalse;
+	R_BindMainFBO();
 
 	// set the modelview matrix for the viewer
 	SetViewportAndScissor();
@@ -791,6 +810,7 @@ RENDER BACK END FUNCTIONS
 void RB_SetGL2D(void)
 {
 	backEnd.projection2D = qtrue;
+	R_BindHudFBO();
 
 	// set 2D virtual screen size
 	glViewport(0, 0, glConfig.vidWidth, glConfig.vidHeight);
@@ -1462,6 +1482,8 @@ const void *RB_SwapBuffers(const void *data)
 	GL_CheckErrors();
 
 	RB_GammaScreen();
+
+	R_DrawHudOnTop();
 
 	cmd = ( const swapBuffersCommand_t * ) data;
 
