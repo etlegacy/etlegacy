@@ -2294,6 +2294,36 @@ void CL_CaptureFrameVideo(void)
 	}
 }
 
+static void CL_FrameHandleVideo(int *msec)
+{
+	// if recording an avi, lock to a fixed fps
+	if (cl_avidemo->integer && *msec && ((cls.state == CA_ACTIVE && clc.demo.playing) || cl_forceavidemo->integer))
+	{
+		float fps;
+		float frameDuration;
+
+		if (com_timescale->value > 0.0f)
+		{
+			fps = MIN(cl_avidemo->integer * com_timescale->value, 1000.0f);
+		}
+		else
+		{
+			fps = MIN(cl_avidemo->integer, 1000.0f);
+		}
+		frameDuration = MAX(1000.0f / fps, 1.0f); // + clc.aviVideoFrameRemainder;
+
+		CL_CaptureFrameVideo();
+
+		*msec = (int)frameDuration;
+		//clc.aviVideoFrameRemainder = frameDuration + msec;
+	}
+	else if ((!cl_avidemo->integer && CL_VideoRecording())
+			 || (cl_avidemo->integer && (cls.state != CA_ACTIVE || !cl_forceavidemo->integer)))
+	{
+		CL_StopVideo_f();
+	}
+}
+
 /**
  * @brief CL_Frame
  * @param[in] msec
@@ -2313,32 +2343,7 @@ void CL_Frame(int msec)
 		VM_Call(uivm, UI_SET_ACTIVE_MENU, UIMENU_MAIN);
 	}
 
-	// if recording an avi, lock to a fixed fps
-	if (cl_avidemo->integer && msec && ((cls.state == CA_ACTIVE && clc.demo.playing) || cl_forceavidemo->integer))
-	{
-		float fps;
-		float frameDuration;
-
-		if (com_timescale->value > 0.0f)
-		{
-			fps = MIN(cl_avidemo->integer * com_timescale->value, 1000.0f);
-		}
-		else
-		{
-			fps = MIN(cl_avidemo->integer, 1000.0f);
-		}
-		frameDuration = MAX(1000.0f / fps, 1.0f); // + clc.aviVideoFrameRemainder;
-
-		CL_CaptureFrameVideo();
-
-		msec = (int)frameDuration;
-		//clc.aviVideoFrameRemainder = frameDuration + msec;
-	}
-	else if ((!cl_avidemo->integer && CL_VideoRecording())
-	         || (cl_avidemo->integer && (cls.state != CA_ACTIVE || !cl_forceavidemo->integer)))
-	{
-		CL_StopVideo_f();
-	}
+	CL_FrameHandleVideo(&msec);
 
 	// save the msec before checking pause
 	cls.realFrametime = msec;
