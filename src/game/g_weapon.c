@@ -3334,7 +3334,8 @@ void EmitterCheck(gentity_t *ent, gentity_t *attacker, trace_t *tr)
  */
 void Bullet_Endpos(gentity_t *ent, float spread, vec3_t *end)
 {
-	if (GetWeaponTableData(ent->s.weapon)->type & WEAPON_TYPE_SCOPED)
+	if (GetWeaponTableData(ent->s.weapon)->type & WEAPON_TYPE_SCOPED
+        && ent->s.groundEntityNum != ENTITYNUM_NONE)
 	{
 		// aim dir already accounted for sway of scoped weapons in CalcMuzzlePoints()
 		VectorMA(muzzleTrace, 2 * MAX_TRACE, forward, *end);

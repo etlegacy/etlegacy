@@ -63,8 +63,8 @@ extern vmCvar_t g_pronedelay;
 #define AIMSPREAD_MAXSPREAD 255
 #define MAX_AIMSPREAD_TIME 1000
 
-pmove_t * pm;
-pml_t pml;
+pmove_t *pm;
+pml_t   pml;
 
 // movement parameters
 float pm_stopspeed = 100;
@@ -643,7 +643,8 @@ static float PM_CmdScale(usercmd_t *cmd)
 	             + cmd->rightmove * cmd->rightmove + cmd->upmove * cmd->upmove);
 	scale = (float)pm->ps->speed * max / (127.0f * total);
 
-	if ((pm->cmd.buttons & BUTTON_SPRINT) && pm->pmext->sprintTime > 50)
+	if ((pm->cmd.buttons & BUTTON_SPRINT) && pm->pmext->sprintTime > 50
+	    && !(GetWeaponTableData(pm->ps->weapon)->type & (WEAPON_TYPE_SCOPED)))
 	{
 		scale *= pm->ps->sprintSpeedScale;
 	}
@@ -682,6 +683,11 @@ static float PM_CmdScale(usercmd_t *cmd)
 				scale *= 0.5f;
 			}
 		}
+	}
+	else if (GetWeaponTableData(pm->ps->weapon)->type & WEAPON_TYPE_SCOPED)
+	{
+		// half move speed if weapon is scoped
+		scale *= 0.5f;
 	}
 
 	return scale;
@@ -1026,14 +1032,6 @@ static qboolean PM_CheckProne(void)
 				pm->ps->eFlags      &= ~EF_PRONE;
 				pm->ps->eFlags      &= ~EF_PRONE_MOVING;
 				pm->pmext->proneTime = -pm->cmd.serverTime; // timestamp 'stop prone'
-
-				// don't let them keep scope out when
-				// standing from prone or they will
-				// look right through a wall
-				if (GetWeaponTableData(pm->ps->weapon)->type & (WEAPON_TYPE_SCOPED | WEAPON_TYPE_SET))
-				{
-					PM_BeginWeaponChange((weapon_t)pm->ps->weapon, GetWeaponTableData(pm->ps->weapon)->weapAlts, qfalse);
-				}
 
 				// don't jump for a bit
 				pm->pmext->jumpTime = pm->cmd.serverTime - 650;
@@ -4855,7 +4853,9 @@ void PM_Sprint(void)
 {
 	if (pm->waterlevel <= 1) // no sprint & no stamina recharge under water
 	{
-		if ((pm->cmd.buttons & BUTTON_SPRINT) && (pm->cmd.forwardmove || pm->cmd.rightmove) && !(pm->ps->pm_flags & PMF_DUCKED) && !(pm->ps->eFlags & EF_PRONE))
+		if ((pm->cmd.buttons & BUTTON_SPRINT) && (pm->cmd.forwardmove || pm->cmd.rightmove)
+		    && !(pm->ps->pm_flags & PMF_DUCKED) && !(pm->ps->eFlags & EF_PRONE)
+		    && !(GetWeaponTableData(pm->ps->weapon)->type & (WEAPON_TYPE_SCOPED)))
 		{
 			if (pm->ps->powerups[PW_ADRENALINE])
 			{
