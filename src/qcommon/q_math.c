@@ -35,38 +35,38 @@
 
 #include "q_shared.h"
 
-vec3_t vec3_origin = { 0, 0, 0 };
+vec3_t vec3_origin    = { 0, 0, 0 };
 vec3_t axisDefault[3] = { { 1, 0, 0 }, { 0, 1, 0 }, { 0, 0, 1 } };
 
-vec4_t colorBlack = { 0, 0, 0, 1 };
-vec4_t colorRed = { 1, 0, 0, 1 };
-vec4_t colorGreen = { 0, 1, 0, 1 };
-vec4_t colorBlue = { 0, 0, 1, 1 };
-vec4_t colorYellow = { 1, 1, 0, 1 };
-vec4_t colorOrange = { 1, 0.5, 0, 1 };
-vec4_t colorMagenta = { 1, 0, 1, 1 };
-vec4_t colorCyan = { 0, 1, 1, 1 };
-vec4_t colorWhite = { 1, 1, 1, 1 };
-vec4_t colorLtGrey = { 0.75, 0.75, 0.75, 1 };
-vec4_t colorMdGrey = { 0.5, 0.5, 0.5, 1 };
-vec4_t colorDkGrey = { 0.25, 0.25, 0.25, 1 };
-vec4_t colorMdRed = { 0.5, 0, 0, 1 };
-vec4_t colorMdGreen = { 0, 0.5, 0, 1 };
-vec4_t colorDkGreen = { 0, 0.20f, 0, 1 };
-vec4_t colorMdCyan = { 0, 0.5, 0.5, 1 };
+vec4_t colorBlack    = { 0, 0, 0, 1 };
+vec4_t colorRed      = { 1, 0, 0, 1 };
+vec4_t colorGreen    = { 0, 1, 0, 1 };
+vec4_t colorBlue     = { 0, 0, 1, 1 };
+vec4_t colorYellow   = { 1, 1, 0, 1 };
+vec4_t colorOrange   = { 1, 0.5, 0, 1 };
+vec4_t colorMagenta  = { 1, 0, 1, 1 };
+vec4_t colorCyan     = { 0, 1, 1, 1 };
+vec4_t colorWhite    = { 1, 1, 1, 1 };
+vec4_t colorLtGrey   = { 0.75, 0.75, 0.75, 1 };
+vec4_t colorMdGrey   = { 0.5, 0.5, 0.5, 1 };
+vec4_t colorDkGrey   = { 0.25, 0.25, 0.25, 1 };
+vec4_t colorMdRed    = { 0.5, 0, 0, 1 };
+vec4_t colorMdGreen  = { 0, 0.5, 0, 1 };
+vec4_t colorDkGreen  = { 0, 0.20f, 0, 1 };
+vec4_t colorMdCyan   = { 0, 0.5, 0.5, 1 };
 vec4_t colorMdYellow = { 0.5, 0.5, 0, 1 };
 vec4_t colorMdOrange = { 0.5, 0.25, 0, 1 };
-vec4_t colorMdBlue = { 0, 0, 0.5, 1 };
+vec4_t colorMdBlue   = { 0, 0, 0.5, 1 };
 
-vec4_t clrBrown = { 0.68f, 0.68f, 0.56f, 1.f };
-vec4_t clrBrownDk = { 0.58f * 0.75f, 0.58f * 0.75f, 0.46f * 0.75f, 1.f };
-vec4_t clrBrownLine = { 0.0525f, 0.05f, 0.025f, 0.2f };
+vec4_t clrBrown         = { 0.68f, 0.68f, 0.56f, 1.f };
+vec4_t clrBrownDk       = { 0.58f * 0.75f, 0.58f * 0.75f, 0.46f * 0.75f, 1.f };
+vec4_t clrBrownLine     = { 0.0525f, 0.05f, 0.025f, 0.2f };
 vec4_t clrBrownLineFull = { 0.0525f, 0.05f, 0.025f, 1.f };
 
 vec4_t clrBrownTextLt2 = { 108 * 1.8f / 255.f, 88 * 1.8f / 255.f, 62 * 1.8f / 255.f, 1.f };
-vec4_t clrBrownTextLt = { 108 * 1.3f / 255.f, 88 * 1.3f / 255.f, 62 * 1.3f / 255.f, 1.f };
-vec4_t clrBrownText = { 108 / 255.f, 88 / 255.f, 62 / 255.f, 1.f };
-vec4_t clrBrownTextDk = { 20 / 255.f, 2 / 255.f, 0 / 255.f, 1.f };
+vec4_t clrBrownTextLt  = { 108 * 1.3f / 255.f, 88 * 1.3f / 255.f, 62 * 1.3f / 255.f, 1.f };
+vec4_t clrBrownText    = { 108 / 255.f, 88 / 255.f, 62 / 255.f, 1.f };
+vec4_t clrBrownTextDk  = { 20 / 255.f, 2 / 255.f, 0 / 255.f, 1.f };
 vec4_t clrBrownTextDk2 = { 108 * 0.75f / 255.f, 88 * 0.75f / 255.f, 62 * 0.75f / 255.f, 1.f };
 
 vec4_t g_color_table[32] =
@@ -759,14 +759,22 @@ void MakeNormalVectors(const vec3_t forward, vec3_t right, vec3_t up)
  */
 void vec3_rotate(const vec3_t in, vec3_t matrix[3], vec3_t out)
 {
-	/*
-	out[0] = DotProduct(in, matrix[0]);
-	out[1] = DotProduct(in, matrix[1]);
-	out[2] = DotProduct(in, matrix[2]);
-	*/
 	out[0] = in[0] * matrix[0][0] + in[1] * matrix[1][0] + in[2] * matrix[2][0];
 	out[1] = in[0] * matrix[0][1] + in[1] * matrix[1][1] + in[2] * matrix[2][1];
 	out[2] = in[0] * matrix[0][2] + in[1] * matrix[1][2] + in[2] * matrix[2][2];
+}
+
+/**
+* @brief vec3_rotate2
+* @param[in] in
+* @param[in] matrix
+* @param[out] out
+*/
+void vec3_rotate2(const vec3_t in, vec3_t matrix[3], vec3_t out)
+{
+	out[0] = DotProduct(in, matrix[0]);
+	out[1] = DotProduct(in, matrix[1]);
+	out[2] = DotProduct(in, matrix[2]);
 }
 
 //============================================================================
@@ -1292,7 +1300,7 @@ Lcase7:
 		faddp st(3), st(0)
 		fxch st(3)
 		faddp st(2), st(0)
-LSetSides:
+		LSetSides :
 		faddp st(2), st(0)
 		fcomp dword ptr[12 + edx]
 		xor ecx, ecx
@@ -2529,15 +2537,15 @@ void mat4_copy(const mat4_t in, mat4_t out)
 #if id386_sse && defined __GNUC__ && 0
 	asm volatile
 	(
-	    "movups         (%%edx),        %%xmm0\n"
-	    "movups         0x10(%%edx),    %%xmm1\n"
-	    "movups         0x20(%%edx),    %%xmm2\n"
-	    "movups         0x30(%%edx),    %%xmm3\n"
+		"movups         (%%edx),        %%xmm0\n"
+		"movups         0x10(%%edx),    %%xmm1\n"
+		"movups         0x20(%%edx),    %%xmm2\n"
+		"movups         0x30(%%edx),    %%xmm3\n"
 
-	    "movups         %%xmm0,         (%%eax)\n"
-	    "movups         %%xmm1,         0x10(%%eax)\n"
-	    "movups         %%xmm2,         0x20(%%eax)\n"
-	    "movups         %%xmm3,         0x30(%%eax)\n"
+		"movups         %%xmm0,         (%%eax)\n"
+		"movups         %%xmm1,         0x10(%%eax)\n"
+		"movups         %%xmm2,         0x20(%%eax)\n"
+		"movups         %%xmm3,         0x30(%%eax)\n"
 		:
 		: "a" (out), "d" (in)
 		: "memory"
@@ -2545,25 +2553,25 @@ void mat4_copy(const mat4_t in, mat4_t out)
 #elif id386_3dnow && defined __GNUC__
 	asm volatile
 	(
-	    "femms\n"
-	    "movq           (%%edx),        %%mm0\n"
-	    "movq           8(%%edx),       %%mm1\n"
-	    "movq           16(%%edx),      %%mm2\n"
-	    "movq           24(%%edx),      %%mm3\n"
-	    "movq           32(%%edx),      %%mm4\n"
-	    "movq           40(%%edx),      %%mm5\n"
-	    "movq           48(%%edx),      %%mm6\n"
-	    "movq           56(%%edx),      %%mm7\n"
+		"femms\n"
+		"movq           (%%edx),        %%mm0\n"
+		"movq           8(%%edx),       %%mm1\n"
+		"movq           16(%%edx),      %%mm2\n"
+		"movq           24(%%edx),      %%mm3\n"
+		"movq           32(%%edx),      %%mm4\n"
+		"movq           40(%%edx),      %%mm5\n"
+		"movq           48(%%edx),      %%mm6\n"
+		"movq           56(%%edx),      %%mm7\n"
 
-	    "movq           %%mm0,          (%%eax)\n"
-	    "movq           %%mm1,          8(%%eax)\n"
-	    "movq           %%mm2,          16(%%eax)\n"
-	    "movq           %%mm3,          24(%%eax)\n"
-	    "movq           %%mm4,          32(%%eax)\n"
-	    "movq           %%mm5,          40(%%eax)\n"
-	    "movq           %%mm6,          48(%%eax)\n"
-	    "movq           %%mm7,          56(%%eax)\n"
-	    "femms\n"
+		"movq           %%mm0,          (%%eax)\n"
+		"movq           %%mm1,          8(%%eax)\n"
+		"movq           %%mm2,          16(%%eax)\n"
+		"movq           %%mm3,          24(%%eax)\n"
+		"movq           %%mm4,          32(%%eax)\n"
+		"movq           %%mm5,          40(%%eax)\n"
+		"movq           %%mm6,          48(%%eax)\n"
+		"movq           %%mm7,          56(%%eax)\n"
+		"femms\n"
 		:
 		: "a" (out), "d" (in)
 		: "memory"
@@ -2809,10 +2817,10 @@ void mat4_transpose(const mat4_t in, mat4_t out)
 
 	asm volatile
 	(
-	    "movups         %%xmm4,         (%%eax)\n"
-	    "movups         %%xmm5,         0x10(%%eax)\n"
-	    "movups         %%xmm6,         0x20(%%eax)\n"
-	    "movups         %%xmm7,         0x30(%%eax)\n"
+		"movups         %%xmm4,         (%%eax)\n"
+		"movups         %%xmm5,         0x10(%%eax)\n"
+		"movups         %%xmm6,         0x20(%%eax)\n"
+		"movups         %%xmm7,         0x30(%%eax)\n"
 		:
 		: "a" (out)
 		: "memory"

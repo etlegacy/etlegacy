@@ -568,7 +568,7 @@ void S_SpatializeOrigin(vec3_t origin, int master_vol, int *left_vol, int *right
 			dist /= range;
 		}
 
-		vec3_rotate(source_vec, listener_axis, vec);
+		vec3_rotate2(source_vec, listener_axis, vec);
 
 		rscale = (float)(sqrt((double)(1.0f - vec[1])));
 		lscale = (float)(sqrt((double)(1.0f + vec[1])));

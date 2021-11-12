@@ -278,6 +278,7 @@ vec_t vec3_norm2(const vec3_t v, vec3_t out);
 // Inverse
 void vec3_inv(vec3_t v);
 void vec3_rotate(const vec3_t in, vec3_t matrix[3], vec3_t out);
+void vec3_rotate2(const vec3_t in, vec3_t matrix[3], vec3_t out);
 qboolean vec3_compare(const vec3_t v1, const vec3_t v2);
 
 //FIXME: duplicate functions :D::D:D:D:D:
