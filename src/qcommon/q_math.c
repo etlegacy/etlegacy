@@ -765,7 +765,7 @@ void vec3_rotate(const vec3_t in, vec3_t matrix[3], vec3_t out)
 }
 
 /**
-* @brief vec3_rotate2
+* @brief vec3_rotate2 uses DotProduct for the calculation, the resulting rotation is inverted
 * @param[in] in
 * @param[in] matrix
 * @param[out] out

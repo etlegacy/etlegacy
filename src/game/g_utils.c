@@ -916,17 +916,22 @@ void G_FreeEntity(gentity_t *ent)
 	// - optimization: if events are freed EVENT_VALID_MSEC has already passed (keep in mind these are broadcasted)
 	// - when enabled g_debugHitboxes, g_debugPlayerHitboxes or g_debugbullets 3 we want visible trace effects - don't free immediately
 	// FIXME: remove tmp var l_free if we are sure there are no issues caused by this change (especially on network games)
-	if ((ent->s.eType == ET_TEMPHEAD || ent->s.eType == ET_TEMPLEGS || ent->s.eType == ET_CORPSE || ent->s.eType >= ET_EVENTS) && trap_Cvar_VariableIntegerValue("l_free") == 0 && trap_Cvar_VariableIntegerValue("g_debugHitboxes") == 0 && trap_Cvar_VariableIntegerValue("g_debugPlayerHitboxes") == 0 && trap_Cvar_VariableIntegerValue("g_debugbullets") < 3)
+	if ((ent->s.eType == ET_TEMPHEAD || ent->s.eType == ET_TEMPLEGS || ent->s.eType == ET_CORPSE || ent->s.eType >= ET_EVENTS)
+	    && trap_Cvar_VariableIntegerValue("g_debugHitboxes") == 0 && trap_Cvar_VariableIntegerValue("g_debugPlayerHitboxes") == 0
+	    && trap_Cvar_VariableIntegerValue("g_debugbullets") < 3)
 	{
 		// debug
-		//if (ed->s.eType >= ET_EVENTS)
-		//{
-		//  G_Printf("^3%4i event entity freed - num_entities: %4i - %s [%s]\n", ed-g_entities, level.num_entities, ed->classname, eventnames[ed->s.eType - ET_EVENTS]);
-		//}
-		//else
-		//{
-		//  G_Printf("^2%4i entity freed - num_entities: %4i - %s\n", ed-g_entities, level.num_entities, ed->classname);
-		//}
+		if (g_developer.integer)
+		{
+			if (ent->s.eType >= ET_EVENTS)
+			{
+				G_DPrintf("^3%4i event entity freed - num_entities: %4i - %s [%s]\n", ent - g_entities, level.num_entities, ent->classname, eventnames[ent->s.eType - ET_EVENTS]);
+			}
+			else
+			{
+				G_DPrintf("^2%4i entity freed - num_entities: %4i - %s\n", ent - g_entities, level.num_entities, ent->classname);
+			}
+		}
 
 		// game entity is immediately available and a 'slot' will be reused
 		Com_Memset(ent, 0, sizeof(*ent));
