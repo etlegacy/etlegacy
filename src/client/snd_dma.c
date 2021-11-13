@@ -568,7 +568,7 @@ void S_SpatializeOrigin(vec3_t origin, int master_vol, int *left_vol, int *right
 			dist /= range;
 		}
 
-		vec3_rotate(source_vec, listener_axis, vec);
+		vec3_rotate2(source_vec, listener_axis, vec);
 
 		rscale = (float)(sqrt((double)(1.0f - vec[1])));
 		lscale = (float)(sqrt((double)(1.0f + vec[1])));
@@ -1421,7 +1421,6 @@ void S_Base_Respatialize(int entnum, const vec3_t head, vec3_t axis[3], int inwa
 	VectorCopy(axis[0], listener_axis[0]);
 	VectorCopy(axis[1], listener_axis[1]);
 	VectorCopy(axis[2], listener_axis[2]);
-	mat3_transpose(listener_axis, listener_axis);
 
 	// update spatialization for dynamic sounds
 	ch = s_channels;
