@@ -909,10 +909,38 @@ void G_FreeEntity(gentity_t *ent)
 		return;
 	}
 
-	Com_Memset(ent, 0, sizeof(*ent));
-	ent->classname = "freed";
-	ent->freetime  = level.time;
-	ent->inuse     = qfalse;
+	// this tiny hack fixes level.num_entities rapidly reaching MAX_GENTITIES-1
+	// some very often spawned entities don't have to relax (=spawned, immediately freed and not transmitted)
+	// before all game entities did relax - now  ET_TEMPHEAD, ET_TEMPLEGS and ET_EVENTS no longer relax
+	// - fix: ET_TEMP* entities are linked for a short amount of time but have no ent->r.svFlags set
+	// - optimization: if events are freed EVENT_VALID_MSEC has already passed (keep in mind these are broadcasted)
+	// - when enabled g_debugHitboxes, g_debugPlayerHitboxes or g_debugbullets 3 we want visible trace effects - don't free immediately
+	// FIXME: remove tmp var l_free if we are sure there are no issues caused by this change (especially on network games)
+	if ((ent->s.eType == ET_TEMPHEAD || ent->s.eType == ET_TEMPLEGS || ent->s.eType == ET_CORPSE || ent->s.eType >= ET_EVENTS) && trap_Cvar_VariableIntegerValue("l_free") == 0 && trap_Cvar_VariableIntegerValue("g_debugHitboxes") == 0 && trap_Cvar_VariableIntegerValue("g_debugPlayerHitboxes") == 0 && trap_Cvar_VariableIntegerValue("g_debugbullets") < 3)
+	{
+		// debug
+		//if (ed->s.eType >= ET_EVENTS)
+		//{
+		//  G_Printf("^3%4i event entity freed - num_entities: %4i - %s [%s]\n", ed-g_entities, level.num_entities, ed->classname, eventnames[ed->s.eType - ET_EVENTS]);
+		//}
+		//else
+		//{
+		//  G_Printf("^2%4i entity freed - num_entities: %4i - %s\n", ed-g_entities, level.num_entities, ed->classname);
+		//}
+
+		// game entity is immediately available and a 'slot' will be reused
+		Com_Memset(ent, 0, sizeof(*ent));
+		ent->classname = "freed";
+		ent->freetime  = -9999;  // e->freetime is never greater than level.startTime + 2000 see G_Spawn()
+		ent->inuse     = qfalse;
+	}
+	else // all other game entities relax
+	{
+		Com_Memset(ent, 0, sizeof(*ent));
+		ent->classname = "freed";
+		ent->freetime  = level.time;
+		ent->inuse     = qfalse;
+	}
 }
 
 /**
