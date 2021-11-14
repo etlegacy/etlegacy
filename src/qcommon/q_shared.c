@@ -1853,51 +1853,54 @@ char *Q_CleanStr(char *string)
  */
 void Q_ColorizeString(char colorCode, const char *inStr, char *outStr, size_t outBufferLen)
 {
+	size_t inLen     = strlen(inStr);
+	size_t outOffset = 0;
+	size_t inOffset = 0;
+
 	if (outBufferLen < 3 || inStr == outStr)
 	{
-		// Failure... How do we assert in WET?
 		etl_assert(qfalse);
+		Com_Error(ERR_DROP, "Q_ColorizeString: invalid input data");
 	}
-	else
+
+	outStr[outOffset++] = Q_COLOR_ESCAPE;
+	outStr[outOffset++] = colorCode;
+
+	// Ok the buffer is way too small
+	if (outOffset + 1 >= outBufferLen)
 	{
-		size_t inLen     = strlen(inStr);
-		size_t outOffset = 0;
+		outStr[outOffset] = 0;
+		return;
+	}
 
-		outStr[outOffset++] = Q_COLOR_ESCAPE;
-		outStr[outOffset++] = colorCode;
+	// There needs to be one extra char available in the output buffer for the terminating zero
+	while (inOffset < inLen && outOffset + 1 < outBufferLen)
+	{
+		char c = inStr[inOffset];
 
-		if (outOffset + 1 < outBufferLen)
+		if (c == Q_COLOR_ESCAPE)
 		{
-			size_t inOffset = 0;
-
-			while (inOffset < inLen && outOffset < outBufferLen)
+			// chars plus possible terminator char
+			if (outOffset + 4 < outBufferLen)
 			{
-				char c = inStr[inOffset];
-
-				if (c == Q_COLOR_ESCAPE)
-				{
-					if (outOffset + 3 < outBufferLen)
-					{
-						outStr[outOffset++] = c;
-						outStr[outOffset++] = Q_COLOR_ESCAPE;
-						outStr[outOffset++] = colorCode;
-					}
-					else
-					{
-						break;
-					}
-				}
-				else
-				{
-					outStr[outOffset++] = c;
-				}
-
-				inOffset++;
+				outStr[outOffset++] = c;
+				outStr[outOffset++] = Q_COLOR_ESCAPE;
+				outStr[outOffset++] = colorCode;
+			}
+			else
+			{
+				break;
 			}
 		}
+		else
+		{
+			outStr[outOffset++] = c;
+		}
 
-		outStr[outOffset++] = 0;
+		inOffset++;
 	}
+
+	outStr[outOffset] = 0;
 }
 
 /**
