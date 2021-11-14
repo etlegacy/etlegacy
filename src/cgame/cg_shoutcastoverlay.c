@@ -133,7 +133,7 @@ static void CG_DrawShoutcastPlayerOverlayAxis(clientInfo_t *player, float x, flo
 	float topRowX    = x;
 	float bottomRowX = x;
 	char  *text;
-	char  name[MAX_NAME_LENGTH] = { 0 };
+	char  name[MAX_NAME_LENGTH + 2] = { 0 };
 
 	//Draw box
 	CG_FillRect(x, y, PLAYER_LIST_OVERLAY_BOX_WIDTH, PLAYER_LIST_OVERLAY_BOX_HEIGHT, bg);
@@ -161,7 +161,7 @@ static void CG_DrawShoutcastPlayerOverlayAxis(clientInfo_t *player, float x, flo
 	}
 
 	//Draw name limit 20 chars, width 116
-	Q_ColorizeString('7', player->cleanname, name, MAX_NAME_LENGTH);
+	Q_ColorizeString('7', player->cleanname, name, MAX_NAME_LENGTH + 2);
 	textWidth  = CG_Text_Width_Ext(name, 0.2f, 0, FONT_TEXT);
 	textHeight = CG_Text_Height_Ext(name, 0.2f, 0, FONT_TEXT);
 	if (textWidth > 116)
@@ -242,7 +242,7 @@ static void CG_DrawShoutcastPlayerOverlayAllies(clientInfo_t *player, float x, f
 	float topRowX    = x;
 	float bottomRowX = x + PLAYER_LIST_OVERLAY_BOX_WIDTH;
 	char  *text;
-	char  name[MAX_NAME_LENGTH] = { 0 };
+	char  name[MAX_NAME_LENGTH + 2] = { 0 };
 
 	//Draw box
 	CG_FillRect(x, y, PLAYER_LIST_OVERLAY_BOX_WIDTH, PLAYER_LIST_OVERLAY_BOX_HEIGHT, bg);
@@ -272,7 +272,7 @@ static void CG_DrawShoutcastPlayerOverlayAllies(clientInfo_t *player, float x, f
 	}
 
 	//Draw name limit 20 chars, width 116
-	Q_ColorizeString('7', player->cleanname, name, MAX_NAME_LENGTH);
+	Q_ColorizeString('7', player->cleanname, name, MAX_NAME_LENGTH + 2);
 	textWidth  = CG_Text_Width_Ext(name, 0.2f, 0, FONT_TEXT);
 	textHeight = CG_Text_Height_Ext(name, 0.2f, 0, FONT_TEXT);
 	if (textWidth > 116)
@@ -577,7 +577,7 @@ void CG_DrawShoutcastPlayerStatus(void)
 	float         textWidth, textWidth2, textHeight;
 	char          *kills, *deaths, *selfkills, *dmgGiven, *dmgRcvd, *text;
 	int           ammo, clip, akimbo, curWeap, weapScale, tmpX;
-	char          name[MAX_NAME_LENGTH] = { 0 };
+	char          name[MAX_NAME_LENGTH + 2] = { 0 };
 
 	if (cgs.topshots.show == SHOW_ON)
 	{
@@ -599,7 +599,7 @@ void CG_DrawShoutcastPlayerStatus(void)
 	}
 
 	//Draw name limit 20 chars, width 110
-	Q_ColorizeString('7', player->cleanname, name, MAX_NAME_LENGTH);
+	Q_ColorizeString('7', player->cleanname, name, MAX_NAME_LENGTH + 2);
 	textWidth  = CG_Text_Width_Ext(name, 0.19f, 0, FONT_TEXT);
 	textHeight = CG_Text_Height_Ext(name, 0.19f, 0, FONT_TEXT);
 	if (textWidth > 110)
