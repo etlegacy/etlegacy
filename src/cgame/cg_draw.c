@@ -1315,7 +1315,7 @@ static void CG_DrawCrosshair(void)
 	{
 		if (!BG_PlayerMounted(cg.snap->ps.eFlags))
 		{
-            if (
+			if (
 #ifdef FEATURE_MULTIVIEW
 				cg.mvTotalClients < 1 ||
 #endif
@@ -1748,7 +1748,7 @@ static void CG_DrawCrosshairPlayerInfo(int clientNum, int class)
 	// draw the name and class
 	if (cg_drawCrosshairNames.integer > 0)
 	{
-		char colorized[MAX_NAME_LENGTH] = { 0 };
+		char colorized[MAX_NAME_LENGTH + 2] = { 0 };
 
 		if (cg_drawCrosshairNames.integer == 2)
 		{
@@ -1758,7 +1758,7 @@ static void CG_DrawCrosshairPlayerInfo(int clientNum, int class)
 		else
 		{
 			// Draw them with a single color (white)
-			Q_ColorizeString('7', cgs.clientinfo[clientNum].cleanname, colorized, MAX_NAME_LENGTH);
+			Q_ColorizeString('7', cgs.clientinfo[clientNum].cleanname, colorized, MAX_NAME_LENGTH + 2);
 			s = colorized;
 		}
 		w = CG_Text_Width_Ext(s, fontScale, 0, &cgs.media.limboFont2);
