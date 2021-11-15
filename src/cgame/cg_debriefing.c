@@ -993,7 +993,9 @@ static panel_button_t charPanelEdit =
 #define DB_MAPVOTE_X    (DB_MAPNAME_X + 200)
 #define DB_MAPVOTE_Y    (56 + 10)
 #define DB_MAPVOTE_X2   (620 - 192 - 96 - 20)
-#define DB_MAPVOTE_Y2   (326 + 30 - 192 - 16)
+#define DB_MAPVOTE_Y2   (286 + 30 - 192 - 16)
+
+static scrollText_t descriptionScroll;
 
 /**
  * @brief CG_MapVoteList_KeyDown
@@ -1024,6 +1026,10 @@ qboolean CG_MapVoteList_KeyDown(panel_button_t *button, int key)
 				cgs.dbSelectedMapLevelShots = trap_R_RegisterShaderNoMip(va("levelshots/%s.tga", cgs.dbMaps[pos]));
 				trap_FS_FCloseFile(f);
 			}
+
+			descriptionScroll.init = 0;
+			strncpy(descriptionScroll.text, cgs.dbMapDescription[pos], sizeof(descriptionScroll.text));
+			descriptionScroll.length = strlen(descriptionScroll.text);
 		}
 		return qtrue;
 	}
@@ -1128,7 +1134,7 @@ void CG_MapVoteList_Draw(panel_button_t *button)
 		                  s, 0, 0, 0, button->font->font);
 	}
 
-	y2 += 15;
+	y2 += 4;
 
 	for (i = 0; i + cgs.dbMapVoteListOffset < cgs.dbNumMaps && i < 16; i++)
 	{
@@ -1139,10 +1145,12 @@ void CG_MapVoteList_Draw(panel_button_t *button)
 
 		if (cgs.dbSelectedMap == i + cgs.dbMapVoteListOffset)
 		{
-			static const vec4_t clr = { 1.f, 1.f, 1.f, 0.3f };
+			rectDef_t           rect = { DB_MAPVOTE_X2 + cgs.wideXoffset, DB_MAPVOTE_Y2 + 12 + (177.0f / 233.0f * 230), 230, 55 };
+			static const vec4_t clr  = { 1.f, 1.f, 1.f, 0.3f };
 
 			CG_FillRect(button->rect.x, y - 10, 245, 12, clr);
 
+			// display the photograph image + the layout image..
 			if (cgs.dbSelectedMapLevelShots)
 			{
 				static vec4_t acolor = { 1.0f, 1.0f, 1.0f, 1.0f };
@@ -1154,11 +1162,12 @@ void CG_MapVoteList_Draw(panel_button_t *button)
 				acolor[3] = (diff > 1000) ? 1.0f : (float)diff / 1000.f;
 
 				trap_R_SetColor(acolor);
-				CG_DrawPic(DB_MAPVOTE_X2 + 24 + cgs.wideXoffset, DB_MAPVOTE_Y2 + 2, 250, 177.0f / 233.0f * 250, cgs.dbSelectedMapLevelShots);
+				CG_DrawPic(DB_MAPVOTE_X2 + 34 + cgs.wideXoffset, DB_MAPVOTE_Y2, 230, 177.0f / 233.0f * 230, cgs.dbSelectedMapLevelShots);
 				trap_R_SetColor(NULL);
 			}
 
-			// display the photograph image + the layout image..
+			// display map description
+			CG_DrawVerticalScrollingString(&rect, button->font->colour, button->font->scalex, 100, 1, &descriptionScroll, button->font->font);
 
 			CG_Text_Paint_Ext(DB_MAPVOTE_X2 + cgs.wideXoffset, y2, button->font->scalex,
 			                  button->font->scaley, button->font->colour,
@@ -1166,7 +1175,7 @@ void CG_MapVoteList_Draw(panel_button_t *button)
 			                     (cgs.dbMapLastPlayed[i + cgs.dbMapVoteListOffset] == -1 ? CG_TranslateString("Never") : va(CG_TranslateString("%d maps ago"),
 			                                                                                                                cgs.dbMapLastPlayed[i + cgs.dbMapVoteListOffset]))),
 			                  0, 0, 0, button->font->font);
-			y2 += 15;
+			y2 += 12;
 			CG_Text_Paint_Ext(DB_MAPVOTE_X2 + cgs.wideXoffset, y2, button->font->scalex,
 			                  button->font->scaley, button->font->colour,
 			                  va(CG_TranslateString("Total Accumulated Votes : %d"), cgs.dbMapTotalVotes[i + cgs.dbMapVoteListOffset]),
@@ -4610,13 +4619,23 @@ void CG_parseMapVoteListInfo()
 		{
 			Q_strncpyz(cgs.dbMapDispName[i],
 			           cgs.arenaData.longname,
-			           sizeof(cgs.dbMaps[0]));
+			           sizeof(cgs.dbMapDispName[i]));
+
+			Q_strncpyz(cgs.dbMapDescription[i],
+			           cgs.arenaData.description,
+			           sizeof(cgs.dbMapDescription));
+
+			CG_FormatMultineLinePrint(cgs.dbMapDescription[i + cgs.dbMapVoteListOffset], 43);
 		}
 		else
 		{
 			Q_strncpyz(cgs.dbMapDispName[i],
 			           cgs.dbMaps[i],
-			           sizeof(cgs.dbMaps[0]));
+			           sizeof(cgs.dbMapDispName[i]));
+
+			Q_strncpyz(cgs.dbMapDescription[i],
+			           "No description available",
+			           sizeof(cgs.dbMapDescription));
 		}
 	}
 

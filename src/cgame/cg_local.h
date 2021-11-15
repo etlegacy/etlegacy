@@ -2564,6 +2564,7 @@ typedef struct cgs_s
 	int dbNumMaps;
 	char dbMaps[MAX_VOTE_MAPS][MAX_QPATH];
 	char dbMapDispName[MAX_VOTE_MAPS][128];
+	char dbMapDescription[MAX_VOTE_MAPS][1024];
 	int dbMapVotes[MAX_VOTE_MAPS];
 	int dbMapVotesSum;
 	int dbMapID[MAX_VOTE_MAPS];
@@ -2980,6 +2981,8 @@ void CG_AddOnScreenBar(float fraction, vec4_t colorStart, vec4_t colorEnd, vec4_
 
 // string word wrapper
 char *CG_WordWrapString(const char *input, int maxLineChars, char *output, int maxOutputSize);
+// format string to be draw on multiline
+int CG_FormatMultineLinePrint(char *s, int lineWidth);
 // draws multiline strings
 void CG_DrawMultilineText(float x, float y, float scalex, float scaley, vec4_t color, const char *text, int lineHeight, float adjust, int limit, int style, int align, fontHelper_t *font);
 
@@ -3023,6 +3026,28 @@ float CG_GetValue(int ownerDraw, int type);   // 'type' is relative or absolute 
 qboolean CG_OwnerDrawVisible(int flags);
 void CG_RunMenuScript(char **args);
 void CG_GetTeamColor(vec4_t *color);
+
+/**
+ * @struct scrollText_s
+ * @typedef scrollText_t
+ * @brief
+ */
+typedef struct scrollText_s
+{
+    int length;                     ///< string length
+    qboolean init;                  ///< force scrolling initilation
+    int paintPos;
+    int paintPos2;
+    int offset;
+    int time;                       ///< last scrolling time
+    char text[MAX_STRING_CHARS];    ///< string to display
+    
+} scrollText_t;
+
+// draws horizontal scrolling string
+void CG_DrawHorizontalScrollingString(rectDef_t *rect, vec4_t color, float scale, int scrollingRefresh, int step, scrollText_t *scroll, fontHelper_t *font);
+// draws vertical scrolling string
+void CG_DrawVerticalScrollingString(rectDef_t *rect, vec4_t color, float scale, int scrollingRefresh, int step, scrollText_t *scroll, fontHelper_t *font);
 
 // cg_draw_hud.c
 void CG_ReadHudScripts(void);
