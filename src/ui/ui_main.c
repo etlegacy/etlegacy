@@ -73,6 +73,9 @@ static int QDECL UI_ServersQsortCompare(const void *arg1, const void *arg2);
 static int UI_MapCountByGameType(qboolean singlePlayer);
 static const char *UI_SelectedMap(qboolean singlePlayer, int index, int *actual);
 
+static void UI_DrawHorizontalScrollingString(rectDef_t *rect, vec4_t color, float scale, int scrollingRefresh, int step, scrollText_t *scroll, fontHelper_t *font);
+static void UI_DrawVerticalScrollingString(rectDef_t *rect, vec4_t color, float scale, int scrollingRefresh, int step, scrollText_t *scroll, fontHelper_t *font);
+
 static const char *UI_SelectedCampaign(int index, int *actual);
 static int UI_CampaignCount(qboolean singlePlayer);
 
@@ -794,8 +797,8 @@ void Text_PaintWithCursor(float x, float y, float scale, vec4_t color, const cha
 }
 
 /**
- * @brief Text_Paint_Limit
- * @param[in] maxX
+ * @brief Text_Paint_LimitX
+ * @param[in,out] maxX
  * @param[in] x
  * @param[in] y
  * @param[in] scale
@@ -804,15 +807,13 @@ void Text_PaintWithCursor(float x, float y, float scale, vec4_t color, const cha
  * @param[in] adjust
  * @param[in] limit
  */
-static void Text_Paint_Limit(float *maxX, float x, float y, float scale, vec4_t color, const char *text, float adjust, int limit)
+static void Text_Paint_LimitX(float *maxX, float x, float y, float scale, vec4_t color, const char *text, float adjust, int limit, fontHelper_t *font)
 {
-	vec4_t      newColor = { 0, 0, 0, 0 };
-	glyphInfo_t *glyph;
 	if (text)
 	{
+		vec4_t       newColor = { 0, 0, 0, 0 };
 		const char   *s       = text;
 		float        max      = *maxX;
-		fontHelper_t *font    = &uiInfo.uiDC.Assets.fonts[uiInfo.activeFont];
 		float        useScale = scale * Q_UTF8_GlyphScale(font);
 		int          len      = Q_UTF8_Strlen(text);
 		int          count    = 0;
@@ -826,7 +827,7 @@ static void Text_Paint_Limit(float *maxX, float x, float y, float scale, vec4_t 
 
 		while (s && *s && count < len)
 		{
-			glyph = Q_UTF8_GetGlyph(font, s);
+			glyphInfo_t *glyph = Q_UTF8_GetGlyph(font, s);
 			if (Q_IsColorString(s))
 			{
 				if (*(s + 1) == COLOR_NULL)
@@ -846,7 +847,7 @@ static void Text_Paint_Limit(float *maxX, float x, float y, float scale, vec4_t 
 			{
 				float yadj = useScale * glyph->top;
 
-				if (Text_Width(s, useScale, 1) + x > max)
+				if (Text_Width_Ext(s, useScale, 1, font) + x > max)
 				{
 					*maxX = 0;
 					break;
@@ -864,6 +865,92 @@ static void Text_Paint_Limit(float *maxX, float x, float y, float scale, vec4_t 
 				*maxX = x;
 				count++;
 				s += Q_UTF8_Width(s);
+			}
+		}
+		trap_R_SetColor(NULL);
+	}
+}
+
+/**
+ * @brief Text_Paint_LimitY
+ * @param[in,out] maxX
+ * @param[in] x
+ * @param[in] y
+ * @param[in] scale
+ * @param[in] color
+ * @param[in] text
+ * @param[in] adjust
+ * @param[in] limit
+ */
+static void Text_Paint_LimitY(float *maxY, float x, float y, float scale, vec4_t color, const char *text, float adjust, int limit, fontHelper_t *font)
+{
+	if (text)
+	{
+		vec4_t       newColor = { 0, 0, 0, 0 };
+		const char   *s       = text;
+		float        max      = *maxY;
+		float        useScale = scale * Q_UTF8_GlyphScale(font);
+		int          len      = Q_UTF8_Strlen(text);
+		int          count    = 0;
+		float        newX     = x;
+		int          height   = Text_Height_Ext(text, useScale, 0, font);
+
+		trap_R_SetColor(color);
+
+		if (limit > 0 && len > limit)
+		{
+			len = limit;
+		}
+
+		while (s && *s && count < len)
+		{
+			glyphInfo_t *glyph = Q_UTF8_GetGlyph(font, s);
+			if (Q_IsColorString(s))
+			{
+				if (*(s + 1) == COLOR_NULL)
+				{
+					Com_Memcpy(&newColor[0], &color[0], sizeof(vec4_t));
+				}
+				else
+				{
+					Com_Memcpy(newColor, g_color_table[ColorIndex(*(s + 1))], sizeof(newColor));
+					newColor[3] = color[3];
+				}
+				trap_R_SetColor(newColor);
+				s += 2;
+				continue;
+			}
+			else
+			{
+				float yadj = useScale * glyph->top;
+
+				if (Text_Height_Ext(s, useScale, 1, font) + y > max)
+				{
+					*maxY = 0;
+					break;
+				}
+
+				Text_PaintChar(newX + (glyph->pitch * useScale), y - yadj,
+				               glyph->imageWidth,
+				               glyph->imageHeight,
+				               useScale,
+				               glyph->s,
+				               glyph->t,
+				               glyph->s2,
+				               glyph->t2,
+				               glyph->glyph);
+
+				newX += (glyph->xSkip * useScale) + adjust;
+
+				count++;
+				s += Q_UTF8_Width(s);
+
+				if (*s == '\n')
+				{
+					y    += height + 2;
+					*maxY = y;
+					newX  = x;
+				}
 			}
 		}
 		trap_R_SetColor(NULL);
@@ -1984,6 +2071,68 @@ static void UI_DrawCampaignName(rectDef_t *rect, float scale, vec4_t color, int 
 }
 
 /**
+ * @brief Format the message by turning spaces into newlines, if we've run over the linewidth
+ * @param[in,out] s The message to format
+ * @return The number of line needed to display the messages
+ */
+static int UI_FormatMultineLinePrint(char *s, int lineWidth)
+{
+	char     *lastSpace = NULL;
+	int      i, len, lastLR = 0;
+	int      lineNumber  = 1;
+	qboolean neednewline = qfalse;
+
+	len = Q_UTF8_PrintStrlen(s);
+
+	for (i = 0; i < len; i++)
+	{
+		if (Q_IsColorString(s))
+		{
+			s += 2;
+		}
+
+		if ((i - lastLR) >= lineWidth)
+		{
+			neednewline = qtrue;
+		}
+
+		if (*s == ' ')
+		{
+			lastSpace = s;
+		}
+
+		if (neednewline && lastSpace)
+		{
+			*lastSpace = '\n';
+			lastSpace  = NULL;
+			lastLR     = i;
+			lineNumber++;
+			neednewline = qfalse;
+		}
+
+		// count the number of lines for centering
+		if (*s == '\n')
+		{
+			lastLR      = i;
+			lastSpace   = NULL;
+			neednewline = qfalse;
+			lineNumber++;
+		}
+
+		s += Q_UTF8_Width(s);
+	}
+
+	// we reach the end of the string and it doesn't fit in on line
+	if (neednewline && lastSpace)
+	{
+		*lastSpace = '\n';
+		lineNumber++;
+	}
+
+	return lineNumber;
+}
+
+/**
  * @brief UI_DrawCampaignDescription
  * @param[in] rect
  * @param[in] scale
@@ -1996,29 +2145,20 @@ static void UI_DrawCampaignName(rectDef_t *rect, float scale, vec4_t color, int 
  */
 void UI_DrawCampaignDescription(rectDef_t *rect, float scale, vec4_t color, float text_x, float text_y, int textStyle, int align, qboolean net)
 {
-	const char *p, *textPtr, *newLinePtr = NULL;
-	char       buff[1024];
-	int        height, len, textWidth, newLine, newLineWidth;
-	float      y;
-	rectDef_t  textRect;
-	int        game = ui_netGameType.integer;
+	const char          *textPtr;
+	int                 map = (net) ? ui_currentNetMap.integer : ui_currentMap.integer;
+	static scrollText_t scroll;
 
-	if (game == GT_WOLF_CAMPAIGN)
+	if (ui_netGameType.integer == GT_WOLF_CAMPAIGN)
 	{
-		int campaign = (net) ? ui_currentNetMap.integer : ui_currentMap.integer;
-
-		textPtr = uiInfo.campaignList[campaign].campaignDescription;
+		textPtr = uiInfo.campaignList[map].campaignDescription;
 	}
-	else if (game == GT_WOLF_LMS)
+	else if (ui_netGameType.integer == GT_WOLF_LMS)
 	{
-		int map = (net) ? ui_currentNetMap.integer : ui_currentMap.integer;
-
 		textPtr = uiInfo.mapList[map].lmsbriefing;
 	}
 	else
 	{
-		int map = (net) ? ui_currentNetMap.integer : ui_currentMap.integer;
-
 		textPtr = uiInfo.mapList[map].briefing;
 	}
 
@@ -2027,76 +2167,16 @@ void UI_DrawCampaignDescription(rectDef_t *rect, float scale, vec4_t color, floa
 		textPtr = "^1No text supplied";
 	}
 
-	height = Text_Height(textPtr, scale, 0);
-
-	textRect.x = 0;
-	textRect.y = 0;
-	textRect.w = rect->w;
-	textRect.h = rect->h;
-
-	//y = text_y;
-	y            = 0;
-	len          = 0;
-	buff[0]      = '\0';
-	newLine      = 0;
-	newLineWidth = 0;
-	p            = textPtr;
-
-	while (p)
+	if (scroll.length != strlen(textPtr))
 	{
-		textWidth = DC->textWidth(buff, scale, 0);
-		if (*p == ' ' || *p == '\t' || *p == '\n' || *p == '\0' || *p == '*')
-		{
-			newLine      = len;
-			newLinePtr   = p + 1;
-			newLineWidth = textWidth;
-		}
+		scroll.init   = 0;
+        strncpy(scroll.text, textPtr, sizeof(scroll.text));
+		scroll.length = strlen(scroll.text);
 
-		if ((newLine && textWidth > rect->w) || *p == '\n' || *p == '\0' || *p == '*' /*( *p == '*' && *(p+1) == '*' )*/)
-		{
-			if (len)
-			{
-				if (align == ITEM_ALIGN_LEFT)
-				{
-					textRect.x = text_x;
-				}
-				else if (align == ITEM_ALIGN_RIGHT)
-				{
-					textRect.x = text_x - newLineWidth;
-				}
-				else if (align == ITEM_ALIGN_CENTER)
-				{
-					textRect.x = text_x - newLineWidth / 2;
-				}
-				textRect.y = y;
-
-				textRect.x += rect->x;
-				textRect.y += rect->y;
-				//
-				buff[newLine] = '\0';
-				DC->drawText(textRect.x, textRect.y, scale, color, buff, 0, 0, textStyle);
-			}
-			if (*p == '\0')
-			{
-				break;
-			}
-
-			y           += height + 5;
-			p            = newLinePtr;
-			len          = 0;
-			newLine      = 0;
-			newLineWidth = 0;
-			continue;
-		}
-		buff[len++] = *p++;
-
-		if (buff[len - 1] == 13)
-		{
-			buff[len - 1] = ' ';
-		}
-
-		buff[len] = '\0';
+		UI_FormatMultineLinePrint(scroll.text, 95);
 	}
+
+	UI_DrawVerticalScrollingString(rect, color, scale, 75, 1, &scroll, &uiInfo.uiDC.Assets.fonts[uiInfo.activeFont]);
 }
 
 /**
@@ -3028,6 +3108,189 @@ static void UI_DrawServerRefreshDate(rectDef_t *rect, float scale, vec4_t color,
 }
 
 /**
+ * @brief UI_DrawHorizontalScrollingString
+ * @param[in] rect
+ * @param[in] color
+ * @param[in] scale
+ * @param[in] scrollingSpeed
+ * @param[in,out] scroll
+ */
+static void UI_DrawHorizontalScrollingString(rectDef_t *rect, vec4_t color, float scale, int scrollingRefresh, int step, scrollText_t *scroll, fontHelper_t *font)
+{
+	if (scroll->length)
+	{
+		float pos       = rect->x;
+		float thickness = rect->w;
+		float maxPos    = 1;
+
+		if (!scroll->init || scroll->offset > scroll->length)
+		{
+			scroll->init      = qtrue;
+			scroll->offset    = 0;
+			scroll->paintPos  = pos + 1;
+			scroll->paintPos2 = -1;
+			scroll->time      = 0;
+		}
+
+		if (DC->realTime > scroll->time)
+		{
+			scroll->time = DC->realTime + scrollingRefresh;
+			if (scroll->paintPos <= pos + step)
+			{
+				if (scroll->offset < scroll->length)
+				{
+					scroll->paintPos += Text_Width(&scroll->text[scroll->offset], scale, 1) - 1;
+
+					scroll->offset = scroll->offset + 1;
+				}
+				else
+				{
+					scroll->offset = 0;
+					if (scroll->paintPos2 >= 0)
+					{
+						scroll->paintPos = scroll->paintPos2;
+					}
+					else
+					{
+						scroll->paintPos = pos + thickness - step;
+					}
+					scroll->paintPos2 = -1;
+				}
+			}
+			else
+			{
+				//serverStatus.motdPaintX--;
+				scroll->paintPos -= step;
+				if (scroll->paintPos2 >= 0)
+				{
+					//serverStatus.motdPaintX2--;
+					scroll->paintPos2 -= step;
+				}
+			}
+		}
+
+		maxPos = pos + thickness - step;
+
+		Text_Paint_LimitX(&maxPos, scroll->paintPos, rect->y, scale, color, &scroll->text[scroll->offset], 0, 0, font);
+
+		if (scroll->paintPos2 >= 0)
+		{
+			float max2 = pos + thickness - step;
+
+			Text_Paint_LimitX(&max2, scroll->paintPos2, rect->y, scale, color, scroll->text, 0, scroll->offset, font);
+		}
+
+		if (scroll->offset && maxPos > 0)
+		{
+			// if we have an offset ( we are skipping the first part of the string ) and we fit the string
+			if (scroll->paintPos2 == -1)
+			{
+				scroll->paintPos2 = pos + thickness - step;
+			}
+		}
+		else
+		{
+			scroll->paintPos2 = -1;
+		}
+	}
+}
+
+/**
+ * @brief UI_DrawHorizontalScrollingString
+ * @param[in] rect
+ * @param[in] color
+ * @param[in] scale
+ * @param[in] scrollingSpeed
+ * @param[in,out] scroll
+ */
+static void UI_DrawVerticalScrollingString(rectDef_t *rect, vec4_t color, float scale, int scrollingRefresh, int step, scrollText_t *scroll, fontHelper_t *font)
+{
+	if (scroll->length)
+	{
+		float pos       = rect->y;
+		float thickness = rect->h;
+		float maxPos    = 1;
+
+		if (!scroll->init || scroll->offset > scroll->length)
+		{
+			scroll->init      = qtrue;
+			scroll->offset    = 0;
+			scroll->paintPos  = pos + rect->h;
+			scroll->paintPos2 = -1;
+			scroll->time      = 0;
+		}
+
+		if (DC->realTime > scroll->time)
+		{
+			scroll->time = DC->realTime + scrollingRefresh;
+			if (scroll->paintPos <= pos + step)
+			{
+				if (scroll->offset + 1 < scroll->length)
+				{
+					char *tmp;
+
+					tmp = strchr(&scroll->text[scroll->offset + 1], '\n');
+
+					if (!tmp)
+					{
+						tmp = strchr(&scroll->text[scroll->offset + 1], '\0');
+					}
+
+					scroll->offset = tmp - scroll->text;
+
+					scroll->paintPos += Text_Height_Ext(scroll->text, scale, 1, font) + step;
+				}
+				else
+				{
+					scroll->offset = 0;
+					if (scroll->paintPos2 >= 0)
+					{
+						scroll->paintPos = scroll->paintPos2;
+					}
+					else
+					{
+						scroll->paintPos = pos + rect->h;
+					}
+					scroll->paintPos2 = -1;
+				}
+			}
+			else
+			{
+				scroll->paintPos -= step;
+				if (scroll->paintPos2 >= 0)
+				{
+					scroll->paintPos2 -= step;
+				}
+			}
+		}
+
+		maxPos = pos + thickness - step;
+
+		Text_Paint_LimitY(&maxPos, rect->x, scroll->paintPos, scale, color, &scroll->text[scroll->offset], 0, 0, font);
+
+		if (scroll->paintPos2 >= 0)
+		{
+			float max2 = pos + thickness - step;
+
+			Text_Paint_LimitY(&max2, rect->x, scroll->paintPos2, scale, color, scroll->text, 0, scroll->offset, font);
+		}
+
+		if (scroll->offset && maxPos > 0)
+		{
+			// if we have an offset ( we are skipping the first part of the string ) and we fit the string
+			if (scroll->paintPos2 == -1)
+			{
+				scroll->paintPos2 = pos + rect->h;
+			}
+		}
+		else
+		{
+			scroll->paintPos2 = -1;
+		}
+	}
+}
+
+/**
  * @brief UI_DrawServerMOTD
  * @param[in] rect
  * @param[in] scale
@@ -3035,81 +3298,7 @@ static void UI_DrawServerRefreshDate(rectDef_t *rect, float scale, vec4_t color,
  */
 static void UI_DrawServerMOTD(rectDef_t *rect, float scale, vec4_t color)
 {
-	if (uiInfo.serverStatus.motdLen)
-	{
-		float maxX;
-
-		if (uiInfo.serverStatus.motdWidth == -1)
-		{
-			uiInfo.serverStatus.motdWidth   = 0;
-			uiInfo.serverStatus.motdPaintX  = rect->x + 1;
-			uiInfo.serverStatus.motdPaintX2 = -1;
-		}
-
-		if (uiInfo.serverStatus.motdOffset > uiInfo.serverStatus.motdLen)
-		{
-			uiInfo.serverStatus.motdOffset  = 0;
-			uiInfo.serverStatus.motdPaintX  = rect->x + 1;
-			uiInfo.serverStatus.motdPaintX2 = -1;
-		}
-
-		if (uiInfo.uiDC.realTime > uiInfo.serverStatus.motdTime)
-		{
-			uiInfo.serverStatus.motdTime = uiInfo.uiDC.realTime + 10;
-			if (uiInfo.serverStatus.motdPaintX <= rect->x + 2)
-			{
-				if (uiInfo.serverStatus.motdOffset < uiInfo.serverStatus.motdLen)
-				{
-					uiInfo.serverStatus.motdPaintX += Text_Width(&uiInfo.serverStatus.motd[uiInfo.serverStatus.motdOffset], scale, 1) - 1;
-					uiInfo.serverStatus.motdOffset++;
-				}
-				else
-				{
-					uiInfo.serverStatus.motdOffset = 0;
-					if (uiInfo.serverStatus.motdPaintX2 >= 0)
-					{
-						uiInfo.serverStatus.motdPaintX = uiInfo.serverStatus.motdPaintX2;
-					}
-					else
-					{
-						uiInfo.serverStatus.motdPaintX = rect->x + rect->w - 2;
-					}
-					uiInfo.serverStatus.motdPaintX2 = -1;
-				}
-			}
-			else
-			{
-				//serverStatus.motdPaintX--;
-				uiInfo.serverStatus.motdPaintX -= 2;
-				if (uiInfo.serverStatus.motdPaintX2 >= 0)
-				{
-					//serverStatus.motdPaintX2--;
-					uiInfo.serverStatus.motdPaintX2 -= 2;
-				}
-			}
-		}
-
-		maxX = rect->x + rect->w - 2;
-		Text_Paint_Limit(&maxX, uiInfo.serverStatus.motdPaintX, rect->y, scale, color, &uiInfo.serverStatus.motd[uiInfo.serverStatus.motdOffset], 0, 0);
-		if (uiInfo.serverStatus.motdPaintX2 >= 0)
-		{
-			float maxX2 = rect->x + rect->w - 2;
-
-			Text_Paint_Limit(&maxX2, uiInfo.serverStatus.motdPaintX2, rect->y, scale, color, uiInfo.serverStatus.motd, 0, uiInfo.serverStatus.motdOffset);
-		}
-		if (uiInfo.serverStatus.motdOffset && maxX > 0)
-		{
-			// if we have an offset ( we are skipping the first part of the string ) and we fit the string
-			if (uiInfo.serverStatus.motdPaintX2 == -1)
-			{
-				uiInfo.serverStatus.motdPaintX2 = rect->x + rect->w - 2;
-			}
-		}
-		else
-		{
-			uiInfo.serverStatus.motdPaintX2 = -1;
-		}
-	}
+	UI_DrawHorizontalScrollingString(rect, color, scale, 20, 2, &uiInfo.serverStatus.motd, &uiInfo.uiDC.Assets.fonts[uiInfo.activeFont]);
 }
 
 /**
@@ -6300,17 +6489,17 @@ static void UI_BuildServerDisplayList(qboolean force)
 	}
 
 	// do motd updates here too
-	trap_Cvar_VariableStringBuffer("com_motdString", uiInfo.serverStatus.motd, sizeof(uiInfo.serverStatus.motd));
-	len = Q_UTF8_Strlen(uiInfo.serverStatus.motd);
+	trap_Cvar_VariableStringBuffer("com_motdString", uiInfo.serverStatus.motd.text, sizeof(uiInfo.serverStatus.motd));
+	len = Q_UTF8_Strlen(uiInfo.serverStatus.motd.text);
 	if (len == 0)
 	{
-		Q_strncpyz(uiInfo.serverStatus.motd, va("ET: Legacy - Version: %s", ETLEGACY_VERSION), sizeof(uiInfo.serverStatus.motd));
-		len = Q_UTF8_Strlen(uiInfo.serverStatus.motd);
+		Q_strncpyz(uiInfo.serverStatus.motd.text, va("ET: Legacy - Version: %s", ETLEGACY_VERSION), sizeof(uiInfo.serverStatus.motd));
+		len = Q_UTF8_Strlen(uiInfo.serverStatus.motd.text);
 	}
-	if (len != uiInfo.serverStatus.motdLen)
+	if (len != uiInfo.serverStatus.motd.length)
 	{
-		uiInfo.serverStatus.motdLen   = len;
-		uiInfo.serverStatus.motdWidth = -1;
+		uiInfo.serverStatus.motd.length = len;
+		uiInfo.serverStatus.motd.init   = qfalse;
 	}
 
 	uiInfo.serverStatus.numInvalidServers = 0;

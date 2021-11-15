@@ -480,6 +480,23 @@ typedef struct serverFilter_s
 } serverFilter_t;
 
 /**
+ * @struct scrollText_s
+ * @typedef scrollText_t
+ * @brief
+ */
+typedef struct scrollText_s
+{
+	int length;                     ///< string length
+	qboolean init;                  ///< force scrolling initilation
+	int paintPos;
+	int paintPos2;
+	int offset;
+	int time;                       ///< last scrolling time
+	char text[MAX_STRING_CHARS];    ///< string to display
+
+} scrollText_t;
+
+/**
  * @struct serverStatus_s
  * @typedef serverStatus_t
  * @brief
@@ -500,13 +517,7 @@ typedef struct serverStatus_s
 	int nextDisplayRefresh;
 	qhandle_t currentServerPreview;
 	int currentServerCinematic;
-	int motdLen;
-	int motdWidth;
-	int motdPaintX;
-	int motdPaintX2;
-	int motdOffset;
-	int motdTime;
-	char motd[MAX_STRING_CHARS];
+	scrollText_t motd;
 } serverStatus_t;
 
 /**
