@@ -532,7 +532,9 @@ void CG_DrawWeapStability(rectDef_t *rect)
 		return;
 	}
 
-	if (cg.predictedPlayerState.weaponstate != WEAPON_READY)
+	// don't draw while switching
+	if ((cg.snap->ps.weapAnim & ~ANIM_TOGGLEBIT) == WEAP_ALTSWITCHFROM ||
+	    (cg.snap->ps.weapAnim & ~ANIM_TOGGLEBIT) == WEAP_ALTSWITCHTO)
 	{
 		return;
 	}
