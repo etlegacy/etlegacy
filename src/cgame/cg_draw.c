@@ -549,14 +549,14 @@ static void Text_Paint_LimitX(float *maxX, float x, float y, float scale, vec4_t
         float        useScale = scale * Q_UTF8_GlyphScale(font);
         int          len      = Q_UTF8_Strlen(text);
         int          count    = 0;
-        
+
         trap_R_SetColor(color);
-        
+
         if (limit > 0 && len > limit)
         {
             len = limit;
         }
-        
+
         while (s && *s && count < len)
         {
             glyphInfo_t  *glyph = Q_UTF8_GetGlyph(font, s);
@@ -578,7 +578,7 @@ static void Text_Paint_LimitX(float *maxX, float x, float y, float scale, vec4_t
             else
             {
                 float yadj = useScale * glyph->top;
-                
+
                 if (CG_Text_Width_Ext(s, useScale, 1, font) + x > max)
                 {
                     *maxX = 0;
@@ -626,14 +626,14 @@ static void Text_Paint_LimitY(float *maxY, float x, float y, float scale, vec4_t
         int          count    = 0;
         float        newX     = x;
         int          height   = CG_Text_Height_Ext(text, useScale, 0, font);
-        
+
         trap_R_SetColor(color);
-        
+
         if (limit > 0 && len > limit)
         {
             len = limit;
         }
-        
+
         while (s && *s && count < len)
         {
             glyphInfo_t *glyph = Q_UTF8_GetGlyph(font, s);
@@ -655,13 +655,13 @@ static void Text_Paint_LimitY(float *maxY, float x, float y, float scale, vec4_t
             else
             {
                 float yadj = useScale * glyph->top;
-                
+
                 if (CG_Text_Height_Ext(s, useScale, 1, font) + y > max)
                 {
                     *maxY = 0;
                     break;
                 }
-                
+
                 CG_Text_PaintChar(newX + (glyph->pitch * useScale), y - yadj,
                                glyph->imageWidth,
                                glyph->imageHeight,
@@ -671,12 +671,12 @@ static void Text_Paint_LimitY(float *maxY, float x, float y, float scale, vec4_t
                                glyph->s2,
                                glyph->t2,
                                glyph->glyph);
-                
+
                 newX += (glyph->xSkip * useScale) + adjust;
-                
+
                 count++;
                 s += Q_UTF8_Width(s);
-                
+
                 if (*s == '\n')
                 {
                     y    += height + 5;
@@ -704,7 +704,7 @@ void CG_DrawHorizontalScrollingString(rectDef_t *rect, vec4_t color, float scale
         float pos       = rect->x;
         float thickness = rect->w;
         float maxPos    = 1;
-        
+
         if (!scroll->init || scroll->offset > scroll->length)
         {
             scroll->init      = qtrue;
@@ -713,7 +713,7 @@ void CG_DrawHorizontalScrollingString(rectDef_t *rect, vec4_t color, float scale
             scroll->paintPos2 = -1;
             scroll->time      = 0;
         }
-        
+
         if (cgDC.realTime > scroll->time)
         {
             scroll->time = cgDC.realTime + scrollingRefresh;
@@ -722,7 +722,7 @@ void CG_DrawHorizontalScrollingString(rectDef_t *rect, vec4_t color, float scale
                 if (scroll->offset < scroll->length)
                 {
                     scroll->paintPos += CG_Text_Width(&scroll->text[scroll->offset], scale, 1) - 1;
-                    
+
                     scroll->offset = scroll->offset + 1;
                 }
                 else
@@ -750,18 +750,18 @@ void CG_DrawHorizontalScrollingString(rectDef_t *rect, vec4_t color, float scale
                 }
             }
         }
-        
+
         maxPos = pos + thickness - step;
-        
+
         Text_Paint_LimitX(&maxPos, scroll->paintPos, rect->y, scale, color, &scroll->text[scroll->offset], 0, 0, font);
-        
+
         if (scroll->paintPos2 >= 0)
         {
             float max2 = pos + thickness - step;
-            
+
             Text_Paint_LimitX(&max2, scroll->paintPos2, rect->y, scale, color, scroll->text, 0, scroll->offset, font);
         }
-        
+
         if (scroll->offset && maxPos > 0)
         {
             // if we have an offset ( we are skipping the first part of the string ) and we fit the string
@@ -792,7 +792,7 @@ void CG_DrawVerticalScrollingString(rectDef_t *rect, vec4_t color, float scale, 
         float pos       = rect->y;
         float thickness = rect->h;
         float maxPos    = 1;
-        
+
         if (!scroll->init || scroll->offset > scroll->length)
         {
             scroll->init      = qtrue;
@@ -801,7 +801,7 @@ void CG_DrawVerticalScrollingString(rectDef_t *rect, vec4_t color, float scale, 
             scroll->paintPos2 = -1;
             scroll->time      = 0;
         }
-        
+
         if (cgDC.realTime > scroll->time)
         {
             scroll->time = cgDC.realTime + scrollingRefresh;
@@ -810,16 +810,16 @@ void CG_DrawVerticalScrollingString(rectDef_t *rect, vec4_t color, float scale, 
                 if (scroll->offset + 1 < scroll->length)
                 {
                     char *tmp;
-                    
+
                     tmp = strchr(&scroll->text[scroll->offset + 1], '\n');
-                    
+
                     if (!tmp)
                     {
                         tmp = strchr(&scroll->text[scroll->offset + 1], '\0');
                     }
-                    
+
                     scroll->offset = tmp - scroll->text;
-                    
+
                     scroll->paintPos += CG_Text_Height_Ext(scroll->text, scale, 1, font) + step;
                 }
                 else
@@ -845,18 +845,18 @@ void CG_DrawVerticalScrollingString(rectDef_t *rect, vec4_t color, float scale, 
                 }
             }
         }
-        
+
         maxPos = pos + thickness - step;
-        
+
         Text_Paint_LimitY(&maxPos, rect->x, scroll->paintPos, scale, color, &scroll->text[scroll->offset], 0, 0, font);
-        
+
         if (scroll->paintPos2 >= 0)
         {
             float max2 = pos + thickness - step;
-            
+
             Text_Paint_LimitY(&max2, rect->x, scroll->paintPos2, scale, color, scroll->text, 0, scroll->offset, font);
         }
-        
+
         if (scroll->offset && maxPos > 0)
         {
             // if we have an offset ( we are skipping the first part of the string ) and we fit the string
@@ -3877,7 +3877,7 @@ void CG_DrawOnScreenLabels(void)
 
 		if (FadeIn)
 		{
-			white[3] = (FadeIn > 500) ? 1.0 : FadeIn / 500.0f;
+			white[3] = (FadeIn > 500) ? 1.0f : FadeIn / 500.0f;
 			if (white[3] < specLabel->alpha)
 			{
 				white[3] = specLabel->alpha;
@@ -3885,7 +3885,7 @@ void CG_DrawOnScreenLabels(void)
 		}
 		if (FadeOut)
 		{
-			white[3] = (FadeOut > 500) ? 0.0 : 1.0f - FadeOut / 500.0f;
+			white[3] = (FadeOut > 500) ? 0.0f : 1.0f - FadeOut / 500.0f;
 			if (white[3] > specLabel->alpha)
 			{
 				white[3] = specLabel->alpha;
@@ -3900,6 +3900,12 @@ void CG_DrawOnScreenLabels(void)
 		if (specLabel->alpha <= 0.0f)
 		{
 			continue;                           // no alpha = nothing to draw..
+		}
+
+		// Force full alpha anyway since we do not want to fade in/out
+		if (specLabel->noFade)
+		{
+			specLabel->alpha = white[3] = 1.0f;
 		}
 
 		CG_Text_Paint_Ext(specLabel->x, specLabel->y, specLabel->scale, specLabel->scale, white, specLabel->text, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
@@ -3950,7 +3956,7 @@ void CG_DrawOnScreenBars(void)
 
 		if (FadeIn)
 		{
-			white[3] = (FadeIn > 500) ? 1.0 : FadeIn / 500.0f;
+			white[3] = (FadeIn > 500) ? 1.0f : FadeIn / 500.0f;
 			if (white[3] < specBar->alpha)
 			{
 				white[3] = specBar->alpha;
@@ -3958,7 +3964,7 @@ void CG_DrawOnScreenBars(void)
 		}
 		if (FadeOut)
 		{
-			white[3] = (FadeOut > 500) ? 0.0 : 1.0f - FadeOut / 500.0f;
+			white[3] = (FadeOut > 500) ? 0.0f : 1.0f - FadeOut / 500.0f;
 			if (white[3] > specBar->alpha)
 			{
 				white[3] = specBar->alpha;
@@ -4162,7 +4168,7 @@ static void CG_Draw2D(void)
 		return;
 	}
 
-	if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR || cgs.clientinfo[cg.clientNum].shoutcaster || cg.demoPlayback)
+	if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR || cgs.clientinfo[cg.clientNum].shoutcaster || cg.demoPlayback || cgs.sv_cheats)
 	{
 		CG_DrawOnScreenLabels();
 		CG_DrawOnScreenBars();

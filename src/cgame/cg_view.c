@@ -1774,42 +1774,6 @@ qboolean CG_CullPointAndRadius(const vec3_t pt, vec_t radius)
 //=========================================================================
 
 /**
- * @brief CG_RenderLocations
- */
-static void CG_RenderLocations(void)
-{
-	refEntity_t re;
-	location_t *location;
-	int i;
-
-	if (cgs.numLocations < 1)
-	{
-		return;
-	}
-
-	for (i = 0; i < cgs.numLocations; ++i)
-	{
-		location = &cgs.location[i];
-
-		if (VectorDistance(cg.refdef.vieworg, location->origin) > 3000)
-		{
-			continue;
-		}
-
-		if (!trap_R_inPVS(cg.refdef.vieworg, location->origin))
-		{
-			continue;
-		}
-
-		Com_Memset(&re, 0, sizeof(re));
-		re.reType = RT_SPRITE;
-		VectorCopy(location->origin, re.origin);
-		VectorCopy(location->origin, re.oldorigin);
-		re.radius = 8;
-	}
-}
-
-/**
  * @brief CG_ProcessCvars
  */
 void CG_ProcessCvars()
@@ -1823,9 +1787,9 @@ void CG_ProcessCvars()
 	{
 		trap_Cvar_VariableStringBuffer(cg.svCvars[i].cvarName, currentVal, sizeof(currentVal));
 
-		cvalF   = (float)atof(currentVal);
-		val1F   = (float)atof(cg.svCvars[i].Val1);
-		val2F   = (float)atof(cg.svCvars[i].Val2);
+		cvalF   = Q_atof(currentVal);
+		val1F   = Q_atof(cg.svCvars[i].Val1);
+		val2F   = Q_atof(cg.svCvars[i].Val2);
 		cvalI   = Q_atoi(currentVal);
 		val1I   = Q_atoi(cg.svCvars[i].Val1);
 		val2I   = Q_atoi(cg.svCvars[i].Val2);
@@ -2182,7 +2146,7 @@ void CG_DrawActiveFrame(int serverTime, qboolean demoPlayback)
 
 			DEBUGTIME
 
-			if (cg_locations.integer & LOC_DEBUG)
+			if (cg.editingLocations)
 			{
 				CG_RenderLocations();
 			}

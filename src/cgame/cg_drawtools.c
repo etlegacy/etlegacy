@@ -791,7 +791,7 @@ qboolean CG_WorldCoordToScreenCoordFloat(vec3_t point, float *x, float *y)
  * @param[in] text
  * @param[in] origin
  */
-void CG_AddOnScreenText(const char *text, vec3_t origin)
+void CG_AddOnScreenText(const char *text, vec3_t origin, qboolean fade)
 {
 	float x, y;
 
@@ -828,6 +828,7 @@ void CG_AddOnScreenText(const char *text, vec3_t origin)
 		cg.specOnScreenLabels[cg.specStringCount].y     = y;
 		cg.specOnScreenLabels[cg.specStringCount].scale = scale;
 		cg.specOnScreenLabels[cg.specStringCount].text  = text;
+		cg.specOnScreenLabels[cg.specStringCount].noFade  = !fade;
 		VectorCopy(origin, cg.specOnScreenLabels[cg.specStringCount].origin);
 		cg.specOnScreenLabels[cg.specStringCount].visible = qtrue;
 

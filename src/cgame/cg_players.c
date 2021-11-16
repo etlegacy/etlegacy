@@ -2011,7 +2011,7 @@ static void CG_PlayerFloatText(centity_t *cent, const char *text, int height)
 		origin[2] -= 18;
 	}
 
-	CG_AddOnScreenText(text, origin);
+	CG_AddOnScreenText(text, origin, qtrue);
 }
 
 /**

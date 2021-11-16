@@ -178,6 +178,7 @@ typedef struct specLabel_s
 	int lastVisibleTime;
 	int lastInvisibleTime;
 	qboolean visible;
+	qboolean noFade;
 	float alpha;
 } specLabel_t;
 
@@ -1488,6 +1489,7 @@ typedef struct
 	vec3_t tankflashorg;
 
 	qboolean editingSpeakers;
+	qboolean editingLocations;
 
 	qboolean serverRespawning;
 
@@ -2142,8 +2144,7 @@ enum
 	LOC_LANDMINES    = BIT(2),
 	LOC_KEEPUNKNOWN  = BIT(3),
 	LOC_SHOWCOORDS   = BIT(4),
-	LOC_SHOWDISTANCE = BIT(5),
-	LOC_DEBUG        = BIT(9),
+	LOC_SHOWDISTANCE = BIT(5)
 };
 
 enum
@@ -2976,7 +2977,7 @@ void CG_ColorForHealth(vec4_t hcolor);
 void CG_GetColorForHealth(int health, vec4_t hcolor);
 
 qboolean CG_WorldCoordToScreenCoordFloat(vec3_t point, float *x, float *y);
-void CG_AddOnScreenText(const char *text, vec3_t origin);
+void CG_AddOnScreenText(const char *text, vec3_t origin, qboolean fade);
 void CG_AddOnScreenBar(float fraction, vec4_t colorStart, vec4_t colorEnd, vec4_t colorBack, vec3_t origin);
 
 // string word wrapper
@@ -3041,7 +3042,7 @@ typedef struct scrollText_s
     int offset;
     int time;                       ///< last scrolling time
     char text[MAX_STRING_CHARS];    ///< string to display
-    
+
 } scrollText_t;
 
 // draws horizontal scrolling string
@@ -3244,6 +3245,17 @@ localEntity_t *CG_AllocLocalEntity(void);
 localEntity_t *CG_FindLocalEntity(int index, int sideNum);
 void CG_AddLocalEntities(void);
 
+// cg_locations.c
+// these are called from the console command
+void CG_LocationsEditor(qboolean show);
+void CG_LocationsSave(const char *path);
+void CG_LocationsAdd(const char *message);
+void CG_LocationsRenameCurrent(const char *message);
+void CG_LocationsRemoveCurrent(void);
+void CG_LocationsDump(void);
+
+void CG_RenderLocations(void);
+location_t *CG_GetLocation(int client, vec3_t origin);
 char *CG_GetLocationMsg(int clientNum, vec3_t origin);
 char *CG_BuildLocationString(int clientNum, vec3_t origin, int flag);
 void CG_LoadLocations(void);

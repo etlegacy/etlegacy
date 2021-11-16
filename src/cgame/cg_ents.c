@@ -1128,7 +1128,7 @@ static void CG_EntityFloatText(centity_t *cent, const char *text, int height)
 
 	origin[2] += height;
 
-	CG_AddOnScreenText(text, origin);
+	CG_AddOnScreenText(text, origin, qtrue);
 }
 
 /**

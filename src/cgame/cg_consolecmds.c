@@ -1798,7 +1798,7 @@ static float etpro_float_Argv(int argnum)
 	char buffer[MAX_TOKEN_CHARS];
 
 	trap_Argv(argnum, buffer, sizeof(buffer));
-	return (float)atof(buffer);
+	return Q_atof(buffer);
 }
 
 /**
@@ -1953,6 +1953,69 @@ static void CG_ShoutcastMenu_f(void)
 	}
 }
 
+static void CG_Location_f(void)
+{
+	char token[MAX_TOKEN_CHARS];
+	int args = trap_Argc();
+
+	if (args < 2)
+	{
+		CG_Printf("^1loc needs at least 2 arguments\n");
+		return;
+	}
+
+	if (!cgs.sv_cheats)
+	{
+		CG_Printf("^1loc is cheat protected\n");
+		return;
+	}
+
+	trap_Argv(1, token, sizeof(token));
+
+	if (!Q_stricmp(token, "open"))
+	{
+		CG_LocationsEditor(qtrue);
+	}
+	else if (!Q_stricmp(token, "close"))
+	{
+		CG_LocationsEditor(qfalse);
+	}
+	else if (!Q_stricmp(token, "save"))
+	{
+		if (args >= 3)
+		{
+			trap_Argv(2, token, sizeof(token));
+			CG_LocationsSave(token);
+		}
+		else
+		{
+			CG_LocationsSave(NULL);
+		}
+	}
+	else if (!Q_stricmp(token, "rename") && args == 3)
+	{
+		trap_Argv(2, token, sizeof(token));
+		CG_LocationsRenameCurrent(token);
+	}
+	else if (!Q_stricmp(token, "add") && args == 3)
+	{
+		trap_Argv(2, token, sizeof(token));
+		CG_LocationsAdd(token);
+	}
+	else if (!Q_stricmp(token, "remove"))
+	{
+		CG_LocationsRemoveCurrent();
+	}
+	else if (!Q_stricmp(token, "dump"))
+	{
+		CG_LocationsDump();
+	}
+	else
+	{
+		CG_Printf("^1loc: unknown argument: %s\n", token);
+	}
+}
+
 static consoleCommand_t commands[] =
 {
 	{ "testgun",             CG_TestGun_f              },
@@ -2075,7 +2138,8 @@ static consoleCommand_t commands[] =
 	{ "resetmaxspeed",       CG_ResetMaxSpeed_f        },
 	{ "listspawnpt",         CG_ListSpawnPoints_f      },
 
-	{ "shoutcastmenu",       CG_ShoutcastMenu_f        }
+	{ "shoutcastmenu",       CG_ShoutcastMenu_f        },
+	{ "loc",                 CG_Location_f             }
 };
 
 /**
