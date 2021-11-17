@@ -2016,6 +2016,10 @@ static void CG_Location_f(void)
 	{
 		CG_LocationsRemoveCurrent();
 	}
+	else if (!Q_stricmp(token, "move"))
+	{
+		CG_LocationsMoveCurrent();
+	}
 	else if (!Q_stricmp(token, "dump"))
 	{
 		CG_LocationsDump();
@@ -2026,7 +2030,7 @@ static void CG_Location_f(void)
 	}
 	else
 	{
-		CG_Printf("^1loc: unknown argument: %s\nSupported arguments: open/close/save/rename/add/remove/dump\n", token);
+		CG_Printf("^1loc: unknown argument: %s\nSupported arguments: open/close/save/rename/add/remove/move/dump/reload\n", token);
 	}
 }
 

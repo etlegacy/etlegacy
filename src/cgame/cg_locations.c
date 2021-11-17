@@ -217,6 +217,32 @@ void CG_LocationsRemoveCurrent(void)
 	CG_ResetCurrentClientLocation();
 }
 
+void CG_LocationsMoveCurrent(void)
+{
+	location_t *loc = NULL;
+
+	if (!cg.editingLocations)
+	{
+		CG_Printf(S_COLOR_RED "Location editing is not enabled.\n");
+		return;
+	}
+
+	loc = CG_CurrentClientLocation();
+
+	if (!loc)
+	{
+		CG_Printf("^9No valid location currently found.\n");
+		return;
+	}
+
+	VectorCopy(cgs.clientinfo[cg.clientNum].location, loc->origin);
+
+	// nudge the location just a bit up from the players location
+	loc->origin[2] += 40;
+
+	CG_ResetCurrentClientLocation();
+}
+
 void CG_LocationsDump(void)
 {
 	int        i;
