@@ -27,6 +27,7 @@ minor=$(grep "VERSION_MINOR" VERSION.txt | cut -d" " -f2)
 patch=$(grep "VERSION_PATCH" VERSION.txt | cut -d" " -f2)
 version_changed=
 version_message=
+gpg_sign=
 
 parse_params() {
 	while :; do
@@ -46,6 +47,9 @@ parse_params() {
 		--patch)
 			patch=$((patch+1))
 			version_changed=true
+			;;
+		--sign)
+			gpg_sign=true
 			;;
 		-m | --message)
 			version_message="${2-}"
@@ -95,10 +99,20 @@ then
 	perl -pi -e "s/(VERSION_MINOR)\s+[0-9]+/\1 $minor/g" VERSION.txt
 	perl -pi -e "s/(VERSION_PATCH)\s+[0-9]+/\1 $patch/g" VERSION.txt
 
-	# Create the release commit
-	git commit -am "Incrementing version number to $major.$minor.$patch"
-	# Tag it like a champ!
-	git tag -a "v$major.$minor.$patch" -m "$version_message"
+	if [ -z $gpg_sign ]; then
+		# no signing
+		# Create the release commit
+		git commit -am "Incrementing version number to $major.$minor.$patch"
+
+		# Tag it like a champ!
+		git tag -a "v$major.$minor.$patch" -m "$version_message"
+	else
+		# Create the release commit
+		git commit -a -S -m "Incrementing version number to $major.$minor.$patch"
+
+		# sign the tag
+		git tag -s "v$major.$minor.$patch" -m "$version_message"
+	fi
 
 	echo "Committed and tagged a new release"
 	read -p "Push commit and tag to remote? [Y/N]: " -n 1 -r
