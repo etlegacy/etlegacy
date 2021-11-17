@@ -1992,13 +1992,23 @@ static void CG_Location_f(void)
 			CG_LocationsSave(NULL);
 		}
 	}
-	else if (!Q_stricmp(token, "rename") && args == 3)
+	else if (!Q_stricmp(token, "rename"))
 	{
+		if (args < 3)
+		{
+			CG_Printf(S_COLOR_RED "Message text required\n");
+			return;
+		}
 		trap_Argv(2, token, sizeof(token));
 		CG_LocationsRenameCurrent(token);
 	}
-	else if (!Q_stricmp(token, "add") && args == 3)
+	else if (!Q_stricmp(token, "add"))
 	{
+		if (args < 3)
+		{
+			CG_Printf(S_COLOR_RED "Message text required\n");
+			return;
+		}
 		trap_Argv(2, token, sizeof(token));
 		CG_LocationsAdd(token);
 	}
@@ -2012,7 +2022,7 @@ static void CG_Location_f(void)
 	}
 	else
 	{
-		CG_Printf("^1loc: unknown argument: %s\n", token);
+		CG_Printf("^1loc: unknown argument: %s\nSupported arguments: open/close/save/rename/add/remove/dump\n", token);
 	}
 }
 
