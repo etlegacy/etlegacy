@@ -2020,6 +2020,10 @@ static void CG_Location_f(void)
 	{
 		CG_LocationsDump();
 	}
+	else if (!Q_stricmp(token, "reload"))
+	{
+		CG_LocationsReload();
+	}
 	else
 	{
 		CG_Printf("^1loc: unknown argument: %s\nSupported arguments: open/close/save/rename/add/remove/dump\n", token);

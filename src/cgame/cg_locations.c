@@ -53,6 +53,12 @@ void CG_LocationsSave(const char *path)
 	fileHandle_t file;
 	qtime_t      time;
 
+	if (!cg.editingLocations)
+	{
+		CG_Printf(S_COLOR_RED "Location editing is not enabled.\n");
+		return;
+	}
+
 	if (path)
 	{
 		if (strlen(path) >= MAX_QPATH)
@@ -115,6 +121,12 @@ void CG_LocationsSave(const char *path)
 
 void CG_LocationsAdd(const char *message)
 {
+	if (!cg.editingLocations)
+	{
+		CG_Printf(S_COLOR_RED "Location editing is not enabled.\n");
+		return;
+	}
+
 	if (cgs.numLocations == MAX_C_LOCATIONS)
 	{
 		CG_Printf("^9Too many locations specified.\n");
@@ -143,7 +155,15 @@ void CG_LocationsAdd(const char *message)
 
 void CG_LocationsRenameCurrent(const char *message)
 {
-	location_t *loc = CG_CurrentClientLocation();
+	location_t *loc = NULL;
+
+	if (!cg.editingLocations)
+	{
+		CG_Printf(S_COLOR_RED "Location editing is not enabled.\n");
+		return;
+	}
+
+	loc = CG_CurrentClientLocation();
 
 	if (!loc)
 	{
@@ -157,7 +177,15 @@ void CG_LocationsRenameCurrent(const char *message)
 void CG_LocationsRemoveCurrent(void)
 {
 	int        move;
-	location_t *loc = CG_CurrentClientLocation();
+	location_t *loc = NULL;
+
+	if (!cg.editingLocations)
+	{
+		CG_Printf(S_COLOR_RED "Location editing is not enabled.\n");
+		return;
+	}
+
+	loc = CG_CurrentClientLocation();
 
 	if (!loc)
 	{
@@ -194,6 +222,12 @@ void CG_LocationsDump(void)
 	int        i;
 	location_t *loc;
 
+	if (!cg.editingLocations)
+	{
+		CG_Printf(S_COLOR_RED "Location editing is not enabled.\n");
+		return;
+	}
+
 	if (!cgs.numLocations)
 	{
 		return;
@@ -207,6 +241,23 @@ void CG_LocationsDump(void)
 		CG_Printf("^7Location msg: \"%s^7\" in x:%.1f y:%.1f z:%.1f\n", loc->message, loc->origin[0], loc->origin[1],
 		          loc->origin[2]);
 	}
+}
+
+void CG_LocationsReload(void)
+{
+	if (!cg.editingLocations)
+	{
+		CG_Printf(S_COLOR_RED "Location editing is not enabled.\n");
+		return;
+	}
+
+	CG_ResetCurrentClientLocation();
+
+	cgs.locationsLoaded = qfalse;
+	cgs.numLocations    = 0;
+	memset(cgs.location, 0, sizeof(location_t) * MAX_C_LOCATIONS);
+
+	CG_LoadLocations();
 }
 
 /**
