@@ -4457,6 +4457,17 @@ void CheckVote(void)
 		return;
 	}
 
+	if (g_gamestate.integer == GS_WARMUP_COUNTDOWN && level.voteInfo.vote_fn == G_StartMatch_v)
+	{
+		level.voteInfo.voteTime = 0;
+		trap_SetConfigstring(CS_VOTE_TIME, "");
+
+		AP(va("cpm \"Countdown started, vote canceled!\n\""));
+		G_LogPrintf("Countdown started, vote canceled!\n");
+
+		return;
+	}
+
 	{
 		int pcnt = vote_percent.integer;
 		int total;
