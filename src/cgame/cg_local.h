@@ -3252,6 +3252,7 @@ void CG_LocationsSave(const char *path);
 void CG_LocationsAdd(const char *message);
 void CG_LocationsRenameCurrent(const char *message);
 void CG_LocationsRemoveCurrent(void);
+void CG_LocationsMoveCurrent(void);
 void CG_LocationsDump(void);
 void CG_LocationsReload(void);
 
