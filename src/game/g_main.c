@@ -4296,7 +4296,7 @@ void CheckExitRules(void)
 				}
 				else
 				{
-					if (g_suddenDeath.integer && DynamiteOnObjective() && g_gametype.integer != GT_WOLF_STOPWATCH)
+					if (g_suddenDeath.integer && DynamiteOnObjective())
 					{
 						level.suddenDeath = 1;
 						return;
