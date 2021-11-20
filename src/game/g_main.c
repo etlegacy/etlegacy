@@ -3860,9 +3860,10 @@ void G_LogExit(const char *string)
 		trap_GetConfigstring(CS_MULTI_MAPWINNER, cs, sizeof(cs));
 		winner = Q_atoi(Info_ValueForKey(cs, "w"));
 
-		if (winner == defender)
+		if (winner == defender || (level.suddenDeath && winner != defender))
 		{
 			// if the defenders won, use default timelimit
+			// do the same if attackers won during sudden death
 			trap_Cvar_Set("g_nextTimeLimit", va("%f", g_timelimit.value));
 		}
 		else
