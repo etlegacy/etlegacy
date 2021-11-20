@@ -229,6 +229,7 @@ void CG_ParseServerinfo(void)
 	cgs.fixedphysics    = Q_atoi(Info_ValueForKey(info, "g_fixedphysics"));
 	cgs.fixedphysicsfps = Q_atoi(Info_ValueForKey(info, "g_fixedphysicsfps"));
 	cgs.pronedelay      = Q_atoi(Info_ValueForKey(info, "g_pronedelay"));
+	cgs.extendedprone   = Q_atoi(Info_ValueForKey(info, "g_extendedprone"));
 
 	cgs.playerHitBoxHeight = Q_atoi(Info_ValueForKey(info, "g_playerHitBoxHeight"));
 

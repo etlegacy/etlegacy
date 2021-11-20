@@ -2585,6 +2585,7 @@ typedef struct cgs_s
 	int fixedphysics;
 	int fixedphysicsfps;
 	int pronedelay;
+	int extendedprone;
 #ifdef FEATURE_RATING
 	int skillRating;
 	float mapProb;
