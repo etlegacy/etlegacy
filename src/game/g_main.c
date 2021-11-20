@@ -327,7 +327,6 @@ vmCvar_t g_fixedphysics;
 vmCvar_t g_fixedphysicsfps;
 
 vmCvar_t g_pronedelay;
-vmCvar_t g_extendedprone;
 
 vmCvar_t g_debugHitboxes;
 vmCvar_t g_debugPlayerHitboxes;
@@ -645,7 +644,6 @@ cvarTable_t gameCvarTable[] =
 	{ &g_fixedphysics,                    "g_fixedphysics",                    "1",                          CVAR_ARCHIVE | CVAR_SERVERINFO,                  0, qfalse, qfalse },
 	{ &g_fixedphysicsfps,                 "g_fixedphysicsfps",                 "125",                        CVAR_ARCHIVE | CVAR_SERVERINFO,                  0, qfalse, qfalse },
 	{ &g_pronedelay,                      "g_pronedelay",                      "0",                          CVAR_ARCHIVE | CVAR_SERVERINFO,                  0, qfalse, qfalse },
-	{ &g_extendedprone,                   "g_extendedprone",                   "1",                          CVAR_ARCHIVE | CVAR_SERVERINFO,                  0, qfalse, qfalse },
 	// Debug
 	{ &g_debugHitboxes,                   "g_debugHitboxes",                   "0",                          CVAR_CHEAT,                                      0, qfalse, qfalse },
 	{ &g_debugPlayerHitboxes,             "g_debugPlayerHitboxes",             "0",                          0,                                               0, qfalse, qfalse },     // no need to make this CVAR_CHEAT

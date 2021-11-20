@@ -48,18 +48,15 @@
 #define PM_FIXEDPHYSICS         cgs.fixedphysics
 #define PM_FIXEDPHYSICSFPS      cgs.fixedphysicsfps
 #define PM_PRONEDELAY           cgs.pronedelay
-#define PM_EXTENDEDPRONE        cgs.extendedprone
 
 #else
 extern vmCvar_t g_fixedphysics;
 extern vmCvar_t g_fixedphysicsfps;
 extern vmCvar_t g_pronedelay;
-extern vmCvar_t g_extendedprone;
 
 #define PM_FIXEDPHYSICS         g_fixedphysics.integer
 #define PM_FIXEDPHYSICSFPS      g_fixedphysicsfps.integer
 #define PM_PRONEDELAY           g_pronedelay.integer
-#define PM_EXTENDEDPRONE        g_extendedprone.integer
 
 #endif
 
@@ -2149,8 +2146,7 @@ static void PM_Footsteps(void)
 			return; // continue what they were doing last frame, until we stop
 		}
 
-		if (((pm->ps->eFlags & EF_PRONE) && !PM_EXTENDEDPRONE) ||
-		    ((pm->ps->eFlags & EF_PRONE) && PM_EXTENDEDPRONE && pm->cmd.serverTime - pm->pmext->proneTime > pm->pmext->extendProneTime))
+		if ((pm->ps->eFlags & EF_PRONE) && pm->cmd.serverTime - pm->pmext->proneTime > pm->pmext->extendProneTime)
 		{
 			if (pm->ps->eFlags & EF_TALK && !(GetWeaponTableData(pm->ps->weapon)->type & (WEAPON_TYPE_SET | WEAPON_TYPE_SCOPED)))
 			{
@@ -2190,8 +2186,7 @@ static void PM_Footsteps(void)
 
 	footstep = qfalse;
 
-	if (((pm->ps->eFlags & EF_PRONE) && !PM_EXTENDEDPRONE) ||
-	    ((pm->ps->eFlags & EF_PRONE) && PM_EXTENDEDPRONE && pm->cmd.serverTime - pm->pmext->proneTime > pm->pmext->extendProneTime))
+	if ((pm->ps->eFlags & EF_PRONE) && pm->cmd.serverTime - pm->pmext->proneTime > pm->pmext->extendProneTime)
 	{
 		bobmove = 0.2f;  // prone characters bob slower
 		if (pm->ps->pm_flags & PMF_BACKWARDS_RUN)
