@@ -62,6 +62,7 @@ extern vmCvar_t g_pronedelay;
 
 #define AIMSPREAD_MAXSPREAD 255
 #define MAX_AIMSPREAD_TIME 1000
+#define EXTENDEDPRONE_TIME 400
 
 pmove_t *pm;
 pml_t   pml;
@@ -1029,9 +1030,10 @@ static qboolean PM_CheckProne(void)
 				pm->ps->pm_flags |= PMF_DUCKED;
 
 				// stop prone
-				pm->ps->eFlags      &= ~EF_PRONE;
-				pm->ps->eFlags      &= ~EF_PRONE_MOVING;
-				pm->pmext->proneTime = -pm->cmd.serverTime; // timestamp 'stop prone'
+				pm->ps->eFlags            &= ~EF_PRONE;
+				pm->ps->eFlags            &= ~EF_PRONE_MOVING;
+				pm->pmext->proneTime       = -pm->cmd.serverTime; // timestamp 'stop prone'
+				pm->pmext->extendProneTime = EXTENDEDPRONE_TIME;
 
 				// don't jump for a bit
 				pm->pmext->jumpTime = pm->cmd.serverTime - 650;
@@ -2030,11 +2032,19 @@ static void PM_CheckDuck(void)
 	{
 		pm->maxs[2]        = pm->ps->crouchMaxZ;
 		pm->ps->viewheight = pm->ps->crouchViewHeight;
+
+		// reduce extend time for already crouched player
+		// since animation transition from standing to crouching is already happening or happend
+		if (pm->pmext->extendProneTime > 0)
+		{
+			pm->pmext->extendProneTime -= pml.msec;
+		}
 	}
 	else
 	{
-		pm->maxs[2]        = pm->ps->maxs[2];
-		pm->ps->viewheight = pm->ps->standViewHeight;
+		pm->maxs[2]                = pm->ps->maxs[2];
+		pm->ps->viewheight         = pm->ps->standViewHeight;
+		pm->pmext->extendProneTime = EXTENDEDPRONE_TIME;
 	}
 }
 
@@ -2136,7 +2146,7 @@ static void PM_Footsteps(void)
 			return; // continue what they were doing last frame, until we stop
 		}
 
-		if (pm->ps->eFlags & EF_PRONE)
+		if ((pm->ps->eFlags & EF_PRONE) && pm->cmd.serverTime - pm->pmext->proneTime > pm->pmext->extendProneTime)
 		{
 			if (pm->ps->eFlags & EF_TALK && !(GetWeaponTableData(pm->ps->weapon)->type & (WEAPON_TYPE_SET | WEAPON_TYPE_SCOPED)))
 			{
@@ -2176,7 +2186,7 @@ static void PM_Footsteps(void)
 
 	footstep = qfalse;
 
-	if (pm->ps->eFlags & EF_PRONE)
+	if ((pm->ps->eFlags & EF_PRONE) && pm->cmd.serverTime - pm->pmext->proneTime > pm->pmext->extendProneTime)
 	{
 		bobmove = 0.2f;  // prone characters bob slower
 		if (pm->ps->pm_flags & PMF_BACKWARDS_RUN)
@@ -5042,6 +5052,8 @@ void PmoveSingle(pmove_t *pmove)
 		{
 			pm->ps->pm_flags &= ~PMF_RESPAWNED;
 		}
+
+		pm->pmext->extendProneTime = EXTENDEDPRONE_TIME;
 	}
 
 	// if talk button is down, dissallow all other input

@@ -559,6 +559,7 @@ typedef struct pmoveExt_s
 	vec3_t centerangles;
 
 	int proneTime;                 ///< time a go-prone or stop-prone move starts, to sync the animation to
+	int extendProneTime;           ///< extend prone time to make the prone animation transition through crouching
 
 	float proneLegsOffset;         ///< offset legs bounding box
 
