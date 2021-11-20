@@ -3323,17 +3323,12 @@ void CG_TransformToCommandMapCoord(float *coord_x, float *coord_y);
 void CG_DrawExpandedAutoMap(void);
 void CG_DrawAutoMap(float x, float y, float w, float h);
 
-qboolean CG_DrawMissionBriefing(void);
-void CG_MissionBriefingClick(int key);
-
 qboolean CG_DrawFlag(float x, float y, float fade, int clientNum);
 
 // MAPVOTE
 qboolean CG_FindArenaInfo(const char *filename, const char *mapname, arenaInfo_t *info);
 
 void CG_LoadRankIcons(void);
-qboolean CG_DrawStatsRanksMedals(void);
-void CG_StatsRanksMedalsClick(int key);
 
 void CG_ParseFireteams(void);
 void CG_ParseOIDInfos(void);
