@@ -4386,6 +4386,19 @@ static void UI_LoadMovies(void)
 	}
 }
 
+static int UI_DemoSort(const void *a, const void *b)
+{
+	const demoItem_t *fileA = a;
+	const demoItem_t *fileB = b;
+
+	if (fileA->file != fileB->file)
+	{
+		return (int)fileA->file - (int)fileB->file;
+	}
+
+	return Q_stricmp(fileA->path, fileB->path);
+}
+
 /**
  * @brief UI_LoadDemos
  */
@@ -4470,6 +4483,19 @@ static void UI_LoadDemos(void)
 		}
 
 		uiInfo.demos.count += count;
+	}
+
+	if (uiInfo.demos.count)
+	{
+		// don't include the parent folder marker in the sort..
+		if (uiInfo.demos.path[0])
+		{
+			qsort(&uiInfo.demos.items[1], uiInfo.demos.count - 1, sizeof(demoItem_t), UI_DemoSort);
+		}
+		else
+		{
+			qsort(uiInfo.demos.items, uiInfo.demos.count, sizeof(demoItem_t), UI_DemoSort);
+		}
 	}
 }
 
