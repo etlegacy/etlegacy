@@ -811,12 +811,12 @@ static void Text_Paint_LimitX(float *maxX, float x, float y, float scale, vec4_t
 {
 	if (text)
 	{
-		vec4_t       newColor = { 0, 0, 0, 0 };
-		const char   *s       = text;
-		float        max      = *maxX;
-		float        useScale = scale * Q_UTF8_GlyphScale(font);
-		int          len      = Q_UTF8_Strlen(text);
-		int          count    = 0;
+		vec4_t     newColor = { 0, 0, 0, 0 };
+		const char *s       = text;
+		float      max      = *maxX;
+		float      useScale = scale * Q_UTF8_GlyphScale(font);
+		int        len      = Q_UTF8_Strlen(text);
+		int        count    = 0;
 
 		trap_R_SetColor(color);
 
@@ -886,14 +886,14 @@ static void Text_Paint_LimitY(float *maxY, float x, float y, float scale, vec4_t
 {
 	if (text)
 	{
-		vec4_t       newColor = { 0, 0, 0, 0 };
-		const char   *s       = text;
-		float        max      = *maxY;
-		float        useScale = scale * Q_UTF8_GlyphScale(font);
-		int          len      = Q_UTF8_Strlen(text);
-		int          count    = 0;
-		float        newX     = x;
-		int          height   = Text_Height_Ext(text, useScale, 0, font);
+		vec4_t     newColor = { 0, 0, 0, 0 };
+		const char *s       = text;
+		float      max      = *maxY;
+		float      useScale = scale * Q_UTF8_GlyphScale(font);
+		int        len      = Q_UTF8_Strlen(text);
+		int        count    = 0;
+		float      newX     = x;
+		int        height   = Text_Height_Ext(text, useScale, 0, font);
 
 		trap_R_SetColor(color);
 
@@ -2169,8 +2169,8 @@ void UI_DrawCampaignDescription(rectDef_t *rect, float scale, vec4_t color, floa
 
 	if (scroll.length != strlen(textPtr))
 	{
-		scroll.init   = 0;
-        strncpy(scroll.text, textPtr, sizeof(scroll.text));
+		scroll.init = 0;
+		strncpy(scroll.text, textPtr, sizeof(scroll.text));
 		scroll.length = strlen(scroll.text);
 
 		UI_FormatMultineLinePrint(scroll.text, 95);
