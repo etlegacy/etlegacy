@@ -270,47 +270,12 @@ void CG_RunCamera(void)
 
 	angles_lerp(currentPlayCamera->angles, next->angles, cameraPoint, cgs.demoCamera.camAngle);
 	cgs.demoCamera.setCamAngles = qtrue;
-
-
-	if (qfalse)
-	{
-		float diff = ((float) (cg.time - cg.oldTime)) / 1000;
-
-		cameraPoint += diff;
-
-		while (currentPlayCamera && cameraPoint >= 1.f)
-		{
-			currentPlayCamera = currentPlayCamera->next;
-			cameraPoint      -= 1.f;
-		}
-	}
-	else
+	
 	{
 		float diff = ((float) (cg.time - cg.oldTime)) / 1000;
 
 		// how much we should move
 		float requiredMoveAmount = cameraUnitsInSecond * diff;
-
-		/*
-		double currentCameraOffset = cameraPoint * currentPlayCamera->len;
-
-		if (currentCameraOffset + requiredMoveAmount > currentPlayCamera->len)
-		{
-			requiredMoveAmount = (currentCameraOffset + requiredMoveAmount) - currentPlayCamera->len;
-
-			currentPlayCamera  = currentPlayCamera->next;
-
-			if (currentPlayCamera)
-			{
-				cameraPoint = requiredMoveAmount / currentPlayCamera->len;
-			}
-		}
-		else
-		{
-			cameraPoint += (requiredMoveAmount / currentPlayCamera->len);
-		}
-		*/
-
 
 		while (currentPlayCamera)
 		{
@@ -333,33 +298,6 @@ void CG_RunCamera(void)
 				break;
 			}
 		}
-
-		/*
-		cameraPoint += (movAmmount / currentPlayCamera->len);
-
-		// FIXME: actually calc. this
-		if (cameraPoint >= 1.f)
-		{
-			cameraPoint = cameraPoint - 1.f;
-			float nextCamMove = movAmmount * cameraPoint;
-			currentPlayCamera = currentPlayCamera->next;
-
-			if (!currentPlayCamera)
-			{
-				cameraPoint = 0.f;
-			}
-			else if (currentPlayCamera->len < nextCamMove)
-			{
-				// nextCamMove -= currentPlayCamera->len;
-				// FIXME: actually calc this..
-				cameraPoint = 0.f;
-			}
-			else if (currentPlayCamera->len)
-			{
-				cameraPoint = nextCamMove / currentPlayCamera->len;
-			}
-		}
-		*/
 	}
 
 	if (!currentPlayCamera || !currentPlayCamera->next)
