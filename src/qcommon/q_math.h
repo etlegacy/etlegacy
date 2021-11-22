@@ -256,6 +256,7 @@ void ByteToDir(int b, vec3_t dir);
 #define vec3_clear(a)              ((a)[0] = (a)[1] = (a)[2] = 0)
 #define vec3_negate(a, b)           ((b)[0] = -(a)[0], (b)[1] = -(a)[1], (b)[2] = -(a)[2])
 #define vec3_set(v, x, y, z)       ((v)[0] = (x), (v)[1] = (y), (v)[2] = (z))
+#define vec3_equals(v, x, y, z)       ((v)[0] == (x) && (v)[1] == (y) && (v)[2] == (z))
 //dot product
 #define vec3_dot(x, y)         ((x)[0] * (y)[0] + (x)[1] * (y)[1] + (x)[2] * (y)[2])
 #define vec3_sub(a, b, c)   ((c)[0] = (a)[0] - (b)[0], (c)[1] = (a)[1] - (b)[1], (c)[2] = (a)[2] - (b)[2])
@@ -346,6 +347,12 @@ float angle_mod(float a);
 float angle_lerp(float from, float to, float frac);
 float angle_sub(float a1, float a2);
 void angles_sub(vec3_t v1, vec3_t v2, vec3_t v3);
+inline static void angles_lerp(const vec3_t from, const vec3_t to, float frac, vec3_t out)
+{
+	out[0] = angle_lerp(from[0], to[0], frac);
+	out[1] = angle_lerp(from[1], to[1], frac);
+	out[2] = angle_lerp(from[2], to[2], frac);
+}
 
 //float angle_norm_pi(float angle); // Unused.
 float angle_norm_360(float angle);

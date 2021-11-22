@@ -1956,7 +1956,7 @@ static void CG_ShoutcastMenu_f(void)
 static void CG_Location_f(void)
 {
 	char token[MAX_TOKEN_CHARS];
-	int args = trap_Argc();
+	int  args = trap_Argc();
 
 	if (args < 2)
 	{
@@ -2031,6 +2031,56 @@ static void CG_Location_f(void)
 	else
 	{
 		CG_Printf("^1loc: unknown argument: %s\nSupported arguments: open/close/save/rename/add/remove/move/dump/reload\n", token);
+	}
+}
+
+static void CG_Camera_f(void)
+{
+	char token[MAX_TOKEN_CHARS];
+	int  args = trap_Argc();
+
+	if (args < 2)
+	{
+		CG_Printf("^1camera needs at least 2 arguments\n");
+		return;
+	}
+
+	// FIXME: maybe allow playback for shoutcasters? -- Enabled when actually ready..
+	if (!cgs.sv_cheats)
+	{
+		CG_Printf("^1camera is cheat protected\n");
+		return;
+	}
+
+	trap_Argv(1, token, sizeof(token));
+
+	if (!Q_stricmp(token, "add"))
+	{
+		CG_CameraAddCurrentPoint();
+	}
+	else if (!Q_stricmp(token, "ct"))
+	{
+		CG_AddControlPoint();
+	}
+	else if (!Q_stricmp(token, "play"))
+	{
+		if (trap_Argc() > 2)
+		{
+			trap_Argv(2, token, sizeof(token));
+			CG_PlayCurrentCamera(Q_atoi(token));
+		}
+		else
+		{
+			CG_PlayCurrentCamera(1);
+		}
+	}
+	else if (!Q_stricmp(token, "clear"))
+	{
+		CG_ClearCamera();
+	}
+	else
+	{
+		CG_Printf("^1camera: unknown argument: %s\nSupported arguments: #FIXME\n", token);
 	}
 }
 
@@ -2157,7 +2207,8 @@ static consoleCommand_t commands[] =
 	{ "listspawnpt",         CG_ListSpawnPoints_f      },
 
 	{ "shoutcastmenu",       CG_ShoutcastMenu_f        },
-	{ "loc",                 CG_Location_f             }
+	{ "loc",                 CG_Location_f             },
+	{ "camera",              CG_Camera_f               }
 };
 
 /**

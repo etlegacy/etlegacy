@@ -176,7 +176,7 @@ void CG_ShowHelp_Off(int *status)
  * @brief CG_DemoControlButtonRender
  * @param[in] button
  */
-void CG_DemoControlButtonRender(panel_button_t *button)
+static void CG_DemoControlButtonRender(panel_button_t *button)
 {
 	if (button->data[0])
 	{
@@ -205,7 +205,7 @@ void CG_DemoControlButtonRender(panel_button_t *button)
  * @param[in] key
  * @return
  */
-qboolean CG_DemoControlButtonDown(panel_button_t *button, int key)
+static qboolean CG_DemoControlButtonDown(panel_button_t *button, int key)
 {
 	if (key != K_MOUSE1 && key != K_MOUSE2)
 	{
@@ -246,7 +246,7 @@ qboolean CG_DemoControlButtonDown(panel_button_t *button, int key)
  * @note This function is empty and return always qfalse
  * @return Always qfalse
  */
-qboolean CG_DemoControlButtonUp(panel_button_t *button, int key)
+static qboolean CG_DemoControlButtonUp(panel_button_t *button, int key)
 {
 	return qfalse;
 }
@@ -345,7 +345,13 @@ void CG_DemoClick(int key, qboolean down)
 	if (cg.demohelpWindow == SHOW_ON)
 	{
 		// pull up extended helpmenu
-		if (cgs.currentMenuLevel == ML_MAIN && (key == K_LALT || key == K_RALT))
+#ifdef __APPLE__
+#define EXTENDED_HELP_KEY (key == K_COMMAND)
+#else
+#define EXTENDED_HELP_KEY (key == K_LALT || key == K_RALT)
+#endif
+
+		if (cgs.currentMenuLevel == ML_MAIN && EXTENDED_HELP_KEY)
 		{
 			cgs.currentMenuLevel = ML_EDV;
 			return;
@@ -1799,7 +1805,11 @@ void CG_DemoHelpDraw(void)
 			"^nUP/DOWN   ^mMove in/out",
 			NULL,
 			//"^nKP_ENTER  ^mToggle freecam"
+#ifdef __APPLE__
+			"^nCMD       ^mmore options"
+#else
 			"^nALT       ^mmore options"
+#endif
 #else
 			"^nUP/DOWN   ^mMove in/out"
 #endif

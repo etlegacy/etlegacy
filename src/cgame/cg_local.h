@@ -1490,6 +1490,7 @@ typedef struct
 
 	qboolean editingSpeakers;
 	qboolean editingLocations;
+	qboolean editingCameras;
 
 	qboolean serverRespawning;
 
@@ -2954,6 +2955,8 @@ void CG_DrawSkyBoxPortal(qboolean fLocalView);
 
 void CG_Letterbox(float xsize, float ysize, qboolean center);
 
+void CG_DrawLine(const vec3_t start, const vec3_t end, float width, const vec4_t color, qhandle_t shader);
+
 // cg_drawtools.c
 
 qboolean Ccg_Is43Screen(void);      // does this game-window have a 4:3 aspectratio. note: this is also true for a 800x600 windowed game on a widescreen monitor
@@ -4023,6 +4026,15 @@ void CG_Spawnpoints_Setup(void);
 
 void CG_Spawnpoints_MenuText_Draw(panel_button_t *button);
 void CG_Spawnpoints_MenuTitleText_Draw(panel_button_t *button);
+
+// cg_camera.c
+void CG_ClearCamera(void);
+void CG_CameraAddCurrentPoint(void);
+void CG_AddControlPoint(void);
+void CG_PlayCurrentCamera(int seconds);
+
+void CG_RunCamera(void);
+void CG_RenderCameraPoints(void);
 
 // hitsounds flags
 /**

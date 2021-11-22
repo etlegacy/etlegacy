@@ -2052,6 +2052,8 @@ void CG_DrawActiveFrame(int serverTime, qboolean demoPlayback)
 	}
 #endif
 
+	CG_RunCamera();
+
 	// this counter will be bumped for every valid scene we generate
 	cg.clientFrame++;
 
@@ -2151,6 +2153,13 @@ void CG_DrawActiveFrame(int serverTime, qboolean demoPlayback)
 			if (cg.editingLocations)
 			{
 				CG_RenderLocations();
+			}
+
+			DEBUGTIME
+
+			if (cg.editingCameras)
+			{
+				CG_RenderCameraPoints();
 			}
 
 			DEBUGTIME

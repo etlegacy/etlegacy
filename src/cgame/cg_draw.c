@@ -872,6 +872,77 @@ void CG_DrawVerticalScrollingString(rectDef_t *rect, vec4_t color, float scale, 
     }
 }
 
+/**
+ * @brief CG_DrawLine
+ * @param[in] start
+ * @param[in] end
+ * @param[in] float
+ * @param[in] color
+ * @param[in] shader
+ */
+void CG_DrawLine(const vec3_t start, const vec3_t end, float width, const vec4_t color, qhandle_t shader)
+{
+	polyBuffer_t *pb;
+	int          vert;
+	byte         bcolor[4];
+
+	vec3_t dir, diff, up;
+
+	pb = CG_PB_FindFreePolyBuffer(shader, 4, 6);
+	if (!pb)
+	{
+		return;
+	}
+
+	bcolor[0] = (byte)(color[0] * 255.f);
+	bcolor[1] = (byte)(color[1] * 255.f);
+	bcolor[2] = (byte)(color[2] * 255.f);
+	bcolor[3] = (byte)(color[3] * 255.f);
+
+	vert = pb->numVerts;
+
+	VectorSubtract(start, end, dir);
+	VectorNormalizeFast(dir);
+
+	// start points
+	VectorSubtract(start, cg.refdef_current->vieworg, diff);
+	CrossProduct(dir, diff, up);
+	VectorNormalizeFast(up);
+	VectorScale(up, width * .5f, up);
+
+	VectorAdd(start, up, pb->xyz[vert + 0]);
+	Vector2Set(pb->st[vert + 0], 0.0, 0.0);
+	Com_Memcpy(pb->color[vert + 0], bcolor, sizeof(*pb->color));
+
+	VectorSubtract(start, up, pb->xyz[vert + 1]);
+	Vector2Set(pb->st[vert + 1], 0.0, 1.0);
+	Com_Memcpy(pb->color[vert + 1], bcolor, sizeof(*pb->color));
+
+	// end points
+	VectorSubtract(end, cg.refdef_current->vieworg, diff);
+	CrossProduct(dir, diff, up);
+	VectorNormalizeFast(up);
+	VectorScale(up, width * .5f, up);
+
+	VectorAdd(end, up, pb->xyz[vert + 2]);
+	Vector2Set(pb->st[vert + 2], 1.0, 0.0);
+	Com_Memcpy(pb->color[vert + 2], bcolor, sizeof(*pb->color));
+
+	VectorSubtract(end, up, pb->xyz[vert + 3]);
+	Vector2Set(pb->st[vert + 3], 1.0, 1.0);
+	Com_Memcpy(pb->color[vert + 3], bcolor, sizeof(*pb->color));
+
+	pb->numVerts = vert + 4;
+
+	pb->indicies[pb->numIndicies++] = (unsigned int)(vert + 2);
+	pb->indicies[pb->numIndicies++] = (unsigned int)(vert + 0);
+	pb->indicies[pb->numIndicies++] = (unsigned int)(vert + 1);
+
+	pb->indicies[pb->numIndicies++] = (unsigned int)(vert + 1);
+	pb->indicies[pb->numIndicies++] = (unsigned int)(vert + 3);
+	pb->indicies[pb->numIndicies++] = (unsigned int)(vert + 2);
+}
+
 /*
 ===========================================================================================
   LOWER RIGHT CORNER
