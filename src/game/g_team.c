@@ -543,11 +543,11 @@ void G_clientFlagIndicator(gentity_t *ent)
  * @param[in] spawnObjective
  * @return
  */
-gentity_t *SelectRandomTeamSpawnPoint(int teamstate, team_t team, int spawnObjective)
+gentity_t *SelectRandomTeamSpawnPoint(int teamstate, team_t team, int majorSpawn, int minorSpawn)
 {
 	gentity_t *spot;
 	gentity_t *spots[MAX_TEAM_SPAWN_POINTS];
-	int       count, closest;
+	int       count, closest, spawnpoint = -1;
 	int       i = 0;
 	char      *classname;
 	float     shortest, tmp;
@@ -573,7 +573,8 @@ gentity_t *SelectRandomTeamSpawnPoint(int teamstate, team_t team, int spawnObjec
 
 	while ((spot = G_Find(spot, FOFS(classname), classname)) != NULL)
 	{
-		if (SpotWouldTelefrag(spot))
+		// if this minor spawn is selected add that spot even if unavailable
+		if (spot->spawnId != minorSpawn && SpotWouldTelefrag(spot))
 		{
 			continue;
 		}
@@ -588,6 +589,11 @@ gentity_t *SelectRandomTeamSpawnPoint(int teamstate, team_t team, int spawnObjec
 		if (spot->entstate == STATE_INVISIBLE || spot->entstate == STATE_UNDERCONSTRUCTION)
 		{
 			continue;
+		}
+
+		if (spot->spawnId == minorSpawn)
+		{
+			spawnpoint = count;
 		}
 
 		spots[count] = spot;
@@ -628,31 +634,47 @@ gentity_t *SelectRandomTeamSpawnPoint(int teamstate, team_t team, int spawnObjec
 	else
 	{
 		// adding ability to set autospawn
-		if (!spawnObjective)
+		if (!majorSpawn)
 		{
 			switch (team)
 			{
 			case TEAM_AXIS:
-				spawnObjective = level.axisAutoSpawn + 1;
+				majorSpawn = level.axisAutoSpawn + 1;
 				break;
 			case TEAM_ALLIES:
-				spawnObjective = level.alliesAutoSpawn + 1;
+				majorSpawn = level.alliesAutoSpawn + 1;
 				break;
 			default:
 				break;
 			}
 		}
 
-		i = spawnObjective - 1;
+		i = majorSpawn - 1;
 
 		VectorCopy(level.spawnPointStates[i].origin, farthest);
 
 		// now that we've got farthest vector, figure closest spawnpoint to it
-		VectorSubtract(farthest, spots[0]->s.origin, target);
+		if (spawnpoint != -1)
+		{
+			VectorSubtract(farthest, spots[spawnpoint]->s.origin, target);
+			closest = spawnpoint;
+		}
+		else
+		{
+			VectorSubtract(farthest, spots[0]->s.origin, target);
+			closest = 0;
+		}
+
 		shortest = VectorLength(target);
-		closest  = 0;
+
 		for (i = 0; i < count; i++)
 		{
+			// if minor spawnpoint is selected only search for minor spawn that is closest to major spawn
+			if (spawnpoint != -1 && spots[i]->spawnId != minorSpawn)
+			{
+				continue;
+			}
+
 			VectorSubtract(farthest, spots[i]->s.origin, target);
 			tmp = VectorLength(target);
 
@@ -662,6 +684,34 @@ gentity_t *SelectRandomTeamSpawnPoint(int teamstate, team_t team, int spawnObjec
 				closest  = i;
 			}
 		}
+
+		// if minor spawnpoint is selected but is unavailable search for closest one to it
+		if (spawnpoint != -1 && SpotWouldTelefrag(spots[closest]))
+		{
+			spawnpoint = closest;
+			VectorCopy(spots[closest]->s.origin, farthest);
+			VectorSubtract(farthest, spots[0]->s.origin, target);
+			shortest = VectorLength(target);
+			closest  = 0;
+
+			for (i = 0; i < count; i++)
+			{
+				if (spawnpoint == i)
+				{
+					continue;
+				}
+
+				VectorSubtract(farthest, spots[i]->s.origin, target);
+				tmp = VectorLength(target);
+
+				if (tmp < shortest)
+				{
+					shortest = tmp;
+					closest  = i;
+				}
+			}
+		}
+
 		return spots[closest];
 	}
 }
@@ -675,11 +725,11 @@ gentity_t *SelectRandomTeamSpawnPoint(int teamstate, team_t team, int spawnObjec
  * @param[in] spawnObjective
  * @return
  */
-gentity_t *SelectCTFSpawnPoint(team_t team, int teamstate, vec3_t origin, vec3_t angles, int spawnObjective)
+gentity_t *SelectCTFSpawnPoint(team_t team, int teamstate, vec3_t origin, vec3_t angles, int majorSpawn, int minorSpawn)
 {
 	gentity_t *spot;
 
-	spot = SelectRandomTeamSpawnPoint(teamstate, team, spawnObjective);
+	spot = SelectRandomTeamSpawnPoint(teamstate, team, majorSpawn, minorSpawn);
 
 	if (!spot)
 	{

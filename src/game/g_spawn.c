@@ -236,13 +236,16 @@ field_t fields[] =
 	{ "baseAngle",    FOFS(s.apos.trBase),  F_VECTOR,    0 },
 	{ "baseOrigin",   FOFS(s.pos.trBase),   F_VECTOR,    0 },
 
+	// team_CTF_redspawn/team_CTF_bluespawn minor spawnpoint id
+	{ "id",           FOFS(spawnId),        F_INT,       0 },
+
 	{ NULL,           0,                    F_IGNORE,    0 }
 };
 
 typedef struct
 {
 	char *name;
-	void (*spawn)(gentity_t * ent);
+	void (*spawn)(gentity_t *ent);
 } spawn_t;
 
 void SP_info_player_start(gentity_t *ent);
