@@ -3053,6 +3053,17 @@ void PM_AdjustAimSpreadScale(void)
 
 		decrease = (cmdTime * AIMSPREAD_DECREASE_RATE) / wpnScale;
 
+		// take player view rotation into account
+		for (i = 0; i < 2; i++)
+		{
+			viewchange += Q_fabs(SHORT2ANGLE(pm->cmd.angles[i]) - SHORT2ANGLE(pm->oldcmd.angles[i]));
+
+			if (viewchange > 180)
+			{
+				viewchange = 360 - viewchange;
+			}
+		}
+
 		// take player movement into account (even if only for the scoped weapons)
 		// TODO: also check for jump/crouch and adjust accordingly
 		if (GetWeaponTableData(pm->ps->weapon)->type & WEAPON_TYPE_SCOPED)
@@ -3060,19 +3071,6 @@ void PM_AdjustAimSpreadScale(void)
 			for (i = 0; i < 2; i++)
 			{
 				viewchange += Q_fabs(pm->ps->velocity[i]);
-			}
-		}
-		else
-		{
-			// take player view rotation into account
-			for (i = 0; i < 2; i++)
-			{
-				viewchange += Q_fabs(SHORT2ANGLE(pm->cmd.angles[i]) - SHORT2ANGLE(pm->oldcmd.angles[i]));
-
-				if (viewchange > 180)
-				{
-					viewchange = 360 - viewchange;
-				}
 			}
 		}
 

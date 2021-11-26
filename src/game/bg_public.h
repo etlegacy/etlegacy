@@ -212,12 +212,12 @@ typedef enum
 #define MAX_TAGCONNECTS     64
 
 // zoom sway values
-#define ZOOM_PITCH_AMPLITUDE        0.13f
-#define ZOOM_PITCH_FREQUENCY        0.24f
+#define ZOOM_PITCH_AMPLITUDE        0.39    //0.13f * 3.f
+#define ZOOM_PITCH_FREQUENCY        0.72    //0.24f * 3.f
 #define ZOOM_PITCH_MIN_AMPLITUDE    0.1f       ///< minimum amount of sway even if completely settled on target
 
-#define ZOOM_YAW_AMPLITUDE          0.7f
-#define ZOOM_YAW_FREQUENCY          0.12f
+#define ZOOM_YAW_AMPLITUDE          2.1f    //0.7f * 3.f
+#define ZOOM_YAW_FREQUENCY          0.36f   //0.12f * 3.f
 #define ZOOM_YAW_MIN_AMPLITUDE      0.2f
 
 #define MAX_OBJECTIVES      8
@@ -645,7 +645,7 @@ typedef struct
 } pmove_t;
 
 // if a full pmove isn't done on the client, you can just update the angles
-void PM_UpdateViewAngles(playerState_t *ps, pmoveExt_t *pmext, usercmd_t *cmd, void(trace) (trace_t * results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask), int tracemask);
+void PM_UpdateViewAngles(playerState_t * ps, pmoveExt_t * pmext, usercmd_t * cmd, void(trace) (trace_t * results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask), int tracemask);
 int Pmove(pmove_t *pmove);
 void PmovePredict(pmove_t *pmove, float frametime);
 
@@ -3035,8 +3035,8 @@ typedef enum popupMessageBigType_e
 #define HITBOXBIT_LEGS   2048
 #define HITBOXBIT_CLIENT 4096
 
-void PM_TraceLegs(trace_t *trace, float *legsOffset, vec3_t start, vec3_t end, trace_t *bodytrace, vec3_t viewangles, void(tracefunc)(trace_t * results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask), int ignoreent, int tracemask);
-void PM_TraceHead(trace_t *trace, vec3_t start, vec3_t end, trace_t *bodytrace, vec3_t viewangles, void(tracefunc)(trace_t * results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask), int ignoreent, int tracemask);
+void PM_TraceLegs(trace_t * trace, float *legsOffset, vec3_t start, vec3_t end, trace_t * bodytrace, vec3_t viewangles, void(tracefunc)(trace_t * results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask), int ignoreent, int tracemask);
+void PM_TraceHead(trace_t * trace, vec3_t start, vec3_t end, trace_t * bodytrace, vec3_t viewangles, void(tracefunc)(trace_t * results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask), int ignoreent, int tracemask);
 void PM_TraceAllParts(trace_t *trace, float *legsOffset, vec3_t start, vec3_t end);
 void PM_TraceAll(trace_t *trace, vec3_t start, vec3_t end);
 

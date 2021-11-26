@@ -562,10 +562,10 @@ static void CG_ZoomSway(void)
 	spreadfrac = cg.snap->ps.aimSpreadScale / 255.0f;
 
 	phase                       = cg.time / 1000.0 * ZOOM_PITCH_FREQUENCY * M_TAU_F;
-	cg.refdefViewAngles[PITCH] += ZOOM_PITCH_AMPLITUDE * sin(phase) * (spreadfrac + ZOOM_PITCH_MIN_AMPLITUDE);
+	cg.refdefViewAngles[PITCH] += MAX(ZOOM_PITCH_AMPLITUDE * spreadfrac, ZOOM_PITCH_MIN_AMPLITUDE) * sin(phase) ;
 
 	phase                     = cg.time / 1000.0 * ZOOM_YAW_FREQUENCY * M_TAU_F;
-	cg.refdefViewAngles[YAW] += ZOOM_YAW_AMPLITUDE * sin(phase) * (spreadfrac + ZOOM_YAW_MIN_AMPLITUDE);
+	cg.refdefViewAngles[YAW] += MAX(ZOOM_YAW_AMPLITUDE * spreadfrac, ZOOM_YAW_MIN_AMPLITUDE) * sin(phase) ;
 }
 
 /**

@@ -3334,8 +3334,7 @@ void EmitterCheck(gentity_t *ent, gentity_t *attacker, trace_t *tr)
  */
 void Bullet_Endpos(gentity_t *ent, float spread, vec3_t *end)
 {
-	if (GetWeaponTableData(ent->s.weapon)->type & WEAPON_TYPE_SCOPED
-        && ent->s.groundEntityNum != ENTITYNUM_NONE)
+	if (GetWeaponTableData(ent->s.weapon)->type & WEAPON_TYPE_SCOPED)
 	{
 		// aim dir already accounted for sway of scoped weapons in CalcMuzzlePoints()
 		VectorMA(muzzleTrace, 2 * MAX_TRACE, forward, *end);
@@ -4104,28 +4103,15 @@ void CalcMuzzlePoints(gentity_t *ent, int weapon)
 	VectorCopy(ent->client->ps.viewangles, viewang);
 
 	// non ai's take into account scoped weapon 'sway' (just another way aimspread is visualized/utilized)
-
 	if (GetWeaponTableData(weapon)->type & WEAPON_TYPE_SCOPED)
 	{
-		float pitchMinAmp, yawMinAmp, phase;
+		float phase;
 
-		if (weapon == WP_FG42_SCOPE)
-		{
-			pitchMinAmp = 4 * ZOOM_PITCH_MIN_AMPLITUDE;
-			yawMinAmp   = 4 * ZOOM_YAW_MIN_AMPLITUDE;
-		}
-		else
-		{
-			pitchMinAmp = ZOOM_PITCH_MIN_AMPLITUDE;
-			yawMinAmp   = ZOOM_YAW_MIN_AMPLITUDE;
-		}
+		phase           = level.time / 1000.0 * ZOOM_PITCH_FREQUENCY * M_TAU_F;
+		viewang[PITCH] += MAX(ZOOM_PITCH_AMPLITUDE * ent->client->currentAimSpreadScale, ZOOM_PITCH_MIN_AMPLITUDE) * sin(phase) ;
 
-		// rotate 'forward' vector by the sway
-		phase           = level.time / 1000.0f * ZOOM_PITCH_FREQUENCY * M_TAU_F;
-		viewang[PITCH] += ZOOM_PITCH_AMPLITUDE * (float)sin((double)phase) * (ent->client->currentAimSpreadScale + pitchMinAmp);
-
-		phase         = level.time / 1000.0f * ZOOM_YAW_FREQUENCY * M_TAU_F;
-		viewang[YAW] += ZOOM_YAW_AMPLITUDE * (float)sin((double)phase) * (ent->client->currentAimSpreadScale + yawMinAmp);
+		phase         = level.time / 1000.0 * ZOOM_YAW_FREQUENCY * M_TAU_F;
+		viewang[YAW] += MAX(ZOOM_YAW_AMPLITUDE * ent->client->currentAimSpreadScale, ZOOM_YAW_MIN_AMPLITUDE) * sin(phase) ;
 	}
 
 	// set aiming directions
