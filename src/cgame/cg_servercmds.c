@@ -2088,13 +2088,15 @@ void CG_topshotsParse_cmd(qboolean doBest)
 		headshots = Q_atoi(CG_Argv(iArg++));
 		acc       = (atts > 0) ? (float)(hits * 100) / (float)atts : 0.0f;
 
-		if (ts->cWeapons < WS_MAX * 2 && aWeaponInfo[iWeap - 1].fHasHeadShots)
+		if (ts->cWeapons < WS_MAX * 2)
 		{
 			CG_cleanName(cgs.clientinfo[cnum].name, name, 17, qfalse);
 			Q_strncpyz(ts->strWS[ts->cWeapons++],
+			           aWeaponInfo[iWeap - 1].fHasHeadShots ?
 			           va("%-12s %5.1f %4d/%-4d %5d %6d %8d  %s",
-			              aWeaponInfo[iWeap - 1].pszName,
-			              (double)acc, hits, atts, kills, deaths, headshots, name),
+			              aWeaponInfo[iWeap - 1].pszName, (double)acc, hits, atts, kills, deaths, headshots, name) :
+			           va("%-12s %5.1f %4d/%-4d %5d %6d           %s",
+			              aWeaponInfo[iWeap - 1].pszName, (double)acc, hits, atts, kills, deaths, name),
 			           sizeof(ts->strWS[0]));
 		}
 
@@ -2144,11 +2146,12 @@ void CG_parseWeaponStatsGS_cmd(void)
 	int          nRounds;
 	int          weaponMask;
 	int          skillMask, xp = 0;
-	int          totHits      = 0;
-	int          totShots     = 0;
-	int          totKills     = 0;
-	int          totDeaths    = 0;
-	int          totHeadshots = 0;
+	int          totHits             = 0;
+	int          totShots            = 0;
+	int          totKills            = 0;
+	int          totDeaths           = 0;
+	int          totHeadshots        = 0;
+	int          totHeadshotableHits = 0;
 
 	nClientID  = Q_atoi(CG_Argv(iArg++));
 	nRounds    = Q_atoi(CG_Argv(iArg++));
@@ -2184,20 +2187,21 @@ void CG_parseWeaponStatsGS_cmd(void)
 				nHeadshots = Q_atoi(CG_Argv(iArg++));
 				acc        = (nShots > 0) ? (float)(nHits * 100) / (float)nShots : 0.0f;
 
-				totKills  += nKills;
-				totDeaths += nDeaths;
+				totKills     += nKills;
+				totDeaths    += nDeaths;
+				totHeadshots += nHeadshots;
 
 				if (aWeaponInfo[i].fHasHeadShots)
 				{
-					totHits      += nHits;
-					totShots     += nShots;
-					totHeadshots += nHeadshots;
+					totHits             += nHits;
+					totShots            += nShots;
+					totHeadshotableHits += nHits;
 				}
 
 				Q_strncpyz(strName, va("%-12s  ", aWeaponInfo[i].pszName), sizeof(strName));
 				if (nShots > 0 || nHits > 0)
 				{
-					Q_strcat(strName, sizeof(strName), va("%s %4d/%-4d ", aWeaponInfo[i].fHasHeadShots ? va("%5.1f", (double)acc) : "     ", nHits, nShots));
+					Q_strcat(strName, sizeof(strName), va("%s %4d/%-4d ", va("%5.1f", (double)acc), nHits, nShots));
 				}
 				else
 				{
@@ -2248,7 +2252,7 @@ void CG_parseWeaponStatsGS_cmd(void)
 			ptRatio        = (float)atof(CG_Argv(iArg++));
 
 			htRatio = (totShots == 0) ? 0.0f : (float)(totHits * 100.0f / (float)totShots);
-			hsRatio = (totHits == 0) ? 0.0f : (float)(totHeadshots * 100.0f / (float)totHits);
+			hsRatio = (totHits == 0) ? 0.0f : (float)(totHeadshots * 100.0f / (float)totHeadshotableHits);
 
 			Q_strncpyz(gs->strExtra[0], va(CG_TranslateString("Damage Given: %6d      Team Damage Given: %6d"), dmg_given, team_dmg_given), sizeof(gs->strExtra[0]));
 			Q_strncpyz(gs->strExtra[1], va(CG_TranslateString("Damage Recvd: %6d      Team Damage Recvd: %6d"), dmg_rcvd, team_dmg_rcvd), sizeof(gs->strExtra[0]));
@@ -2390,12 +2394,13 @@ void CG_parseWeaponStats_cmd(void(txt_dump) (const char *))
 	unsigned int nRounds;
 	unsigned int dwWeaponMask;
 	unsigned int dwSkillPointMask;
-	int          xp           = 0; // XP can be negative
-	int          totHits      = 0;
-	int          totShots     = 0;
-	int          totKills     = 0;
-	int          totDeaths    = 0;
-	int          totHeadshots = 0;
+	int          xp                  = 0; // XP can be negative
+	int          totHits             = 0;
+	int          totShots            = 0;
+	int          totKills            = 0;
+	int          totDeaths           = 0;
+	int          totHeadshots        = 0;
+	int          totHeadshotableHits = 0;
 
 	fFull = (qboolean)(txt_dump != CG_printWindow);
 
@@ -2452,14 +2457,15 @@ void CG_parseWeaponStats_cmd(void(txt_dump) (const char *))
 				deaths    = Q_atoi(CG_Argv(iArg++));
 				headshots = Q_atoi(CG_Argv(iArg++));
 
-				totKills  += kills;
-				totDeaths += deaths;
+				totKills     += kills;
+				totDeaths    += deaths;
+				totHeadshots += headshots;
 
 				if (aWeaponInfo[i].fHasHeadShots)
 				{
-					totHits      += hits;
-					totShots     += atts;
-					totHeadshots += headshots;
+					totHits             += hits;
+					totShots            += atts;
+					totHeadshotableHits += hits;
 				}
 
 				Q_strncpyz(strName, va("^3%-10s: ", aWeaponInfo[i].pszName), sizeof(strName));
@@ -2468,7 +2474,7 @@ void CG_parseWeaponStats_cmd(void(txt_dump) (const char *))
 					float acc = (atts == 0) ? 0.0f : (float)(hits * 100.0f / (float)atts);
 					fHasStats = qtrue;
 
-					Q_strcat(strName, sizeof(strName), va("^7%s ^5%4d/%-4d ", aWeaponInfo[i].fHasHeadShots ? va("%5.1f", (double)acc) : "     ", hits, atts));
+					Q_strcat(strName, sizeof(strName), va("^7%s ^5%4d/%-4d ", va("%5.1f", (double)acc), hits, atts));
 				}
 				else
 				{
@@ -2508,7 +2514,7 @@ void CG_parseWeaponStats_cmd(void(txt_dump) (const char *))
 			ptRatio        = atof(CG_Argv(iArg++));
 
 			htRatio = (totShots == 0) ? 0.0 : (float)(totHits * 100.0 / (float)totShots);
-			hsRatio = (totHits == 0) ? 0.0 : (float)(totHeadshots * 100.0 / (float)totHits);
+			hsRatio = (totHits == 0) ? 0.0 : (float)(totHeadshots * 100.0 / (float)totHeadshotableHits);
 
 			if (!fFull)
 			{
@@ -2700,7 +2706,7 @@ static void CG_parseBestShotsStats_cmd(qboolean doTop, void(txt_dump) (const cha
 				CG_cleanName(cgs.clientinfo[cnum].name, name, 30, qfalse);
 				txt_dump(va("^3%s ^7%s ^5%4d/%-4d ^2%5d ^1%6d ^3%s ^7%s\n",
 				            aWeaponInfo[iWeap - 1].pszCode,
-				            aWeaponInfo[iWeap - 1].fHasHeadShots ? va("%5.1f", (double)acc) : "     ",
+				            va("%5.1f", (double)acc),
 				            hits, atts, kills, deaths,
 				            aWeaponInfo[iWeap - 1].fHasHeadShots ? va("%6d", headshots) : "      ",
 				            name));
@@ -2710,7 +2716,7 @@ static void CG_parseBestShotsStats_cmd(qboolean doTop, void(txt_dump) (const cha
 				CG_cleanName(cgs.clientinfo[cnum].name, name, 12, qfalse);
 				txt_dump(va("^3%s ^7%s ^5%4d/%-4d ^2%3d ^1%3d ^3%s ^7%s\n",
 				            aWeaponInfo[iWeap - 1].pszCode,
-				            aWeaponInfo[iWeap - 1].fHasHeadShots ? va("%5.1f", (double)acc) : "     ",
+				            va("%5.1f", (double)acc),
 				            hits, atts, kills, deaths,
 				            aWeaponInfo[iWeap - 1].fHasHeadShots ? va("%2d", headshots) : "  ",
 				            name));
@@ -2772,7 +2778,7 @@ static void CG_parseTopShotsStats_cmd(qboolean doTop, void(txt_dump) (const char
 
 			CG_cleanName(cgs.clientinfo[cnum].name, name, 30, qfalse);
 			txt_dump(va("%s%s ^5%4d/%-4d ^2%5d ^1%6d ^3%s %s%s\n", color,
-			            aWeaponInfo[i].fHasHeadShots ? va("%5.1f", (double)acc) : "     ", hits, atts, kills, deaths,
+			            va("%5.1f", (double)acc), hits, atts, kills, deaths,
 			            aWeaponInfo[i].fHasHeadShots ? va("^3%9d", headshots) : "", color, name));
 		}
 	}
