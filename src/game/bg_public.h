@@ -212,12 +212,12 @@ typedef enum
 #define MAX_TAGCONNECTS     64
 
 // zoom sway values
-#define ZOOM_PITCH_AMPLITUDE        0.39    //0.13f * 3.f
-#define ZOOM_PITCH_FREQUENCY        0.72    //0.24f * 3.f
+#define ZOOM_PITCH_AMPLITUDE        0.13f
+#define ZOOM_PITCH_FREQUENCY        0.24f
 #define ZOOM_PITCH_MIN_AMPLITUDE    0.1f       ///< minimum amount of sway even if completely settled on target
 
-#define ZOOM_YAW_AMPLITUDE          2.1f    //0.7f * 3.f
-#define ZOOM_YAW_FREQUENCY          0.36f   //0.12f * 3.f
+#define ZOOM_YAW_AMPLITUDE          0.7f
+#define ZOOM_YAW_FREQUENCY          0.12f
 #define ZOOM_YAW_MIN_AMPLITUDE      0.2f
 
 #define MAX_OBJECTIVES      8
