@@ -366,8 +366,6 @@ vmCvar_t g_multiview; // 0 - off, other - enabled
 vmCvar_t g_stickyCharge;
 vmCvar_t g_xpSaver;
 
-vmCvar_t g_playerHitBoxHeight;
-
 vmCvar_t g_debugForSingleClient;
 
 vmCvar_t g_suddenDeath;
@@ -665,7 +663,6 @@ cvarTable_t gameCvarTable[] =
 #endif
 	{ &g_stickyCharge,                    "g_stickyCharge",                    "0",                          CVAR_ARCHIVE,                                    0, qfalse, qfalse },
 	{ &g_xpSaver,                         "g_xpSaver",                         "0",                          CVAR_ARCHIVE,                                    0, qfalse, qfalse },
-	{ &g_playerHitBoxHeight,              "g_playerHitBoxHeight",              "36",                         CVAR_ARCHIVE | CVAR_SERVERINFO,                  0, qfalse, qfalse },
 	{ &g_suddenDeath,                     "g_suddenDeath",                     "0",                          CVAR_ARCHIVE,                                    0, qtrue,  qfalse },
 	{ &g_dropObjDelay,                    "g_dropObjDelay",                    "3000",                       CVAR_ARCHIVE,                                    0, qtrue,  qfalse },
 	{ &g_altSuicideAnim,                  "g_altSuicideAnim",                  "0",                          CVAR_ARCHIVE,                                    0, qtrue,  qfalse },

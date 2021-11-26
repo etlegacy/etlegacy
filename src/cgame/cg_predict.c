@@ -150,7 +150,7 @@ float CG_ClientHitboxMaxZ(entityState_t *hitEnt, float def)
 	}
 	else
 	{
-		return cgs.playerHitBoxHeight;
+		return DEFAULT_BODYHEIGHT;
 	}
 }
 
