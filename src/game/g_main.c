@@ -5228,6 +5228,12 @@ void G_RunEntity(gentity_t *ent, int msec)
 		ent->target_ent->s.onFireEnd   = ent->count;
 	}
 
+	// keep track of constructions so they don't decay after pause
+	if (ent->s.eType == ET_CONSTRUCTIBLE && level.match_pause != PAUSE_NONE && ent->s.angles2[0])
+	{
+		ent->lastHintCheckTime += level.time - level.previousTime;
+	}
+
 	G_RunThink(ent);
 
 	// hack for instantaneous velocity
