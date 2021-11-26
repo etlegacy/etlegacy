@@ -543,6 +543,8 @@ struct gentity_s
 	// dyno chaining
 	gentity_t *onobjective;
 
+	int spawnId;                        ///< team_CTF_redspawn/team_CTF_bluespawn minor spawnpoint id
+
 #ifdef FEATURE_OMNIBOT
 	int numPlanted;                     ///< Omni-bot increment dyno count
 #endif
@@ -633,6 +635,7 @@ typedef struct
 	weapon_t playerWeapon;                              ///< primary weapon
 	weapon_t playerWeapon2;                             ///< secondary weapon
 	int userSpawnPointValue;                            ///< index of objective to spawn nearest to (returned from UI)
+	int userMinorSpawnPointValue;                       ///< index of minor spawnpoint to spawn nearest to
 	int resolvedSpawnPointIndex;                        ///< most possible objective to spawn nearest to
 	int latchPlayerType;                                ///< latched class
 	weapon_t latchPlayerWeapon;                         ///< latched primary weapon
@@ -2566,7 +2569,7 @@ const char *TeamName(int team);
 const char *TeamColorString(int team);
 void Team_DroppedFlagThink(gentity_t *ent);
 void Team_ReturnFlag(gentity_t *ent);
-gentity_t *SelectCTFSpawnPoint(team_t team, int teamstate, vec3_t origin, vec3_t angles, int spawnObjective);
+gentity_t *SelectCTFSpawnPoint(team_t team, int teamstate, vec3_t origin, vec3_t angles, int majorSpawn, int minorSpawn);
 void TeamplayInfoMessage(team_t team);
 void CheckTeamStatus(void);
 int Pickup_Team(gentity_t *ent, gentity_t *other);
@@ -2661,7 +2664,7 @@ void G_ChainFree(gentity_t *self);
 void G_MakeReady(gentity_t *ent);
 void G_MakeUnready(gentity_t *ent);
 
-void SetPlayerSpawn(gentity_t *ent, int spawn, qboolean update);
+void SetPlayerSpawn(gentity_t *ent, int majorSpawn, int minorSpawn, qboolean update);
 void G_UpdateSpawnPointState(gentity_t *ent);
 void G_UpdateSpawnPointStatePlayerCounts(void);
 

@@ -5227,7 +5227,7 @@ public:
 			{
 				if (pEnt && pEnt->client)
 				{
-					SetPlayerSpawn(pEnt, pMsg->m_SpawnPoint, qtrue);
+					SetPlayerSpawn(pEnt, pMsg->m_SpawnPoint, -1, qtrue);
 				}
 			}
 			break;

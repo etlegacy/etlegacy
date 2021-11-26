@@ -1546,6 +1546,8 @@ qboolean SetTeam(gentity_t *ent, const char *s, qboolean force, weapon_t w1, wea
 	// During team switching you can sometime spawn immediately
 	client->pers.lastReinforceTime = 0;
 
+	client->sess.userMinorSpawnPointValue = -1;
+
 	// (l)users will spam spec messages... honest!
 	if (team != oldTeam)
 	{
@@ -4324,23 +4326,27 @@ void Cmd_Activate2_f(gentity_t *ent)
  * @param[in] spawn
  * @param[in] update
  */
-void SetPlayerSpawn(gentity_t *ent, int spawn, qboolean update)
+void SetPlayerSpawn(gentity_t *ent, int majorSpawn, int minorSpawn, qboolean update)
 {
 	int               resolvedSpawnPoint;
 	int               targetSpawnPoint;
 	spawnPointState_t *spawnPointState;
 	spawnPointState_t *targetSpawnPointState;
-	ent->client->sess.userSpawnPointValue = spawn;
+
+	ent->client->sess.userSpawnPointValue      = majorSpawn;
+	ent->client->sess.userMinorSpawnPointValue = minorSpawn;
+
 	if (ent->client->sess.sessionTeam != TEAM_ALLIES && ent->client->sess.sessionTeam != TEAM_AXIS)
 	{
 		trap_SendServerCommand((int)(ent - g_entities), "print \"^3Warning! To select spawn points you should be in game.\n\"");
 		return;
 	}
-	if (spawn < 0 || spawn > level.numSpawnPoints)
+	if (majorSpawn < 0 || majorSpawn > level.numSpawnPoints)
 	{
 		trap_SendServerCommand((int)(ent - g_entities), "print \"^3Warning! Spawn point is out of bounds. Selecting 'Auto Pick'.\n\"");
 		trap_SendServerCommand((int)(ent - g_entities), "print \"         ^3Use '/listspawnpt' command to list available spawn points.\n\"");
-		ent->client->sess.userSpawnPointValue = 0;
+		ent->client->sess.userSpawnPointValue      = 0;
+		ent->client->sess.userMinorSpawnPointValue = -1;
 	}
 
 	if (update)
@@ -4351,7 +4357,7 @@ void SetPlayerSpawn(gentity_t *ent, int spawn, qboolean update)
 	resolvedSpawnPoint = Com_Clamp(0, (level.numSpawnPoints - 1), ent->client->sess.resolvedSpawnPointIndex);
 	targetSpawnPoint   = Com_Clamp(0, (level.numSpawnPoints - 1), (ent->client->sess.userSpawnPointValue - 1));
 	spawnPointState    = &level.spawnPointStates[resolvedSpawnPoint];
-	if (spawn > 0 && targetSpawnPoint != resolvedSpawnPoint)
+	if (majorSpawn > 0 && targetSpawnPoint != resolvedSpawnPoint)
 	{
 		targetSpawnPointState = &level.spawnPointStates[targetSpawnPoint];
 		trap_SendServerCommand((int)(ent - g_entities), va("print \"^9Spawning at '^2%s^9', near the selected '^2%s^9'.\n\"", spawnPointState->description, targetSpawnPointState->description));
@@ -4369,10 +4375,10 @@ void SetPlayerSpawn(gentity_t *ent, int spawn, qboolean update)
 void Cmd_SetSpawnPoint_f(gentity_t *ent)
 {
 	char              arg[MAX_TOKEN_CHARS];
-	int               val, i;
+	int               i, majorSpawn, minorSpawn = -1;
 	spawnPointState_t *spawnPointState;
 
-	if (trap_Argc() != 2)
+	if (trap_Argc() != 2 && trap_Argc() != 3)
 	{
 		trap_SendServerCommand((int)(ent - g_entities), "print \"^3Warning! Spawn point number expected.\n\"");
 		trap_SendServerCommand((int)(ent - g_entities), "print \"         ^3Use '/listspawnpt' command to list available spawn points.\n\"");
@@ -4380,17 +4386,23 @@ void Cmd_SetSpawnPoint_f(gentity_t *ent)
 	}
 
 	trap_Argv(1, arg, sizeof(arg));
-	val = Q_atoi(arg);
+	majorSpawn = Q_atoi(arg);
+
+	if (trap_Argc() == 3)
+	{
+		trap_Argv(2, arg, sizeof(arg));
+		minorSpawn = Q_atoi(arg);
+	}
 
 	if (ent->client)
 	{
-		SetPlayerSpawn(ent, val, qtrue);
+		SetPlayerSpawn(ent, majorSpawn, minorSpawn, qtrue);
 	}
 
 	for (i = 0; i < level.numLimboCams; i++)
 	{
 		int targetSpawnPoint = g_entities[level.limboCams[i].targetEnt].count - CS_MULTI_SPAWNTARGETS;
-		if (level.limboCams[i].spawn && (targetSpawnPoint + 1) == val)
+		if (level.limboCams[i].spawn && (targetSpawnPoint + 1) == majorSpawn)
 		{
 			spawnPointState = &level.spawnPointStates[targetSpawnPoint];
 			// don't allow checking opposite team's spawn camp
@@ -4402,7 +4414,7 @@ void Cmd_SetSpawnPoint_f(gentity_t *ent)
 			}
 			VectorCopy(level.limboCams[i].origin, ent->s.origin2);
 			ent->r.svFlags |= SVF_SELF_PORTAL_EXCLUSIVE;
-			trap_SendServerCommand((int)(ent - g_entities), va("portalcampos %i %i %i %i %i %i %i %i", val - 1, (int)level.limboCams[i].origin[0], (int)level.limboCams[i].origin[1], (int)level.limboCams[i].origin[2], (int)level.limboCams[i].angles[0], (int)level.limboCams[i].angles[1], (int)level.limboCams[i].angles[2], level.limboCams[i].hasEnt ? level.limboCams[i].targetEnt : -1));
+			trap_SendServerCommand((int)(ent - g_entities), va("portalcampos %i %i %i %i %i %i %i %i", majorSpawn - 1, (int)level.limboCams[i].origin[0], (int)level.limboCams[i].origin[1], (int)level.limboCams[i].origin[2], (int)level.limboCams[i].angles[0], (int)level.limboCams[i].angles[1], (int)level.limboCams[i].angles[2], level.limboCams[i].hasEnt ? level.limboCams[i].targetEnt : -1));
 			break;
 		}
 	}

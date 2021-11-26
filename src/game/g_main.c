@@ -2341,8 +2341,9 @@ void G_InitGame(int levelTime, int randomSeed, int restart, int etLegacyServer, 
 
 	for (i = 0; i < level.numConnectedClients; i++)
 	{
-		level.clients[level.sortedClients[i]].sess.userSpawnPointValue     = 0;
-		level.clients[level.sortedClients[i]].sess.resolvedSpawnPointIndex = 0;
+		level.clients[level.sortedClients[i]].sess.userSpawnPointValue      = 0;
+		level.clients[level.sortedClients[i]].sess.userMinorSpawnPointValue = -1;
+		level.clients[level.sortedClients[i]].sess.resolvedSpawnPointIndex  = 0;
 	}
 
 	// init the anim scripting
