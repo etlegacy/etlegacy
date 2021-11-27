@@ -4341,7 +4341,7 @@ void SetPlayerSpawn(gentity_t *ent, int majorSpawn, int minorSpawn, qboolean upd
 		trap_SendServerCommand((int)(ent - g_entities), "print \"^3Warning! To select spawn points you should be in game.\n\"");
 		return;
 	}
-	if (majorSpawn < 0 || majorSpawn > level.numSpawnPoints)
+	if (majorSpawn < 0 || majorSpawn > level.numSpawnPoints || minorSpawn == 0)
 	{
 		trap_SendServerCommand((int)(ent - g_entities), "print \"^3Warning! Spawn point is out of bounds. Selecting 'Auto Pick'.\n\"");
 		trap_SendServerCommand((int)(ent - g_entities), "print \"         ^3Use '/listspawnpt' command to list available spawn points.\n\"");
