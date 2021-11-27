@@ -2339,13 +2339,6 @@ void G_InitGame(int levelTime, int randomSeed, int restart, int etLegacyServer, 
 	level.startTime       = levelTime;
 	level.server_settings = i;
 
-	for (i = 0; i < level.numConnectedClients; i++)
-	{
-		level.clients[level.sortedClients[i]].sess.userSpawnPointValue      = 0;
-		level.clients[level.sortedClients[i]].sess.userMinorSpawnPointValue = -1;
-		level.clients[level.sortedClients[i]].sess.resolvedSpawnPointIndex  = 0;
-	}
-
 	// init the anim scripting
 	level.animScriptData.soundIndex = G_SoundIndex;
 	level.animScriptData.playSound  = G_AnimScriptSound;
@@ -2569,7 +2562,10 @@ void G_InitGame(int levelTime, int randomSeed, int restart, int etLegacyServer, 
 	// set client fields on player ents
 	for (i = 0 ; i < level.maxclients ; i++)
 	{
-		g_entities[i].client = level.clients + i;
+		g_entities[i].client                           = level.clients + i;
+		level.clients[i].sess.userSpawnPointValue      = 0;
+		level.clients[i].sess.userMinorSpawnPointValue = -1;
+		level.clients[i].sess.resolvedSpawnPointIndex  = 0;
 	}
 
 	// always leave room for the max number of clients,
