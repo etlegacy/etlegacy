@@ -70,7 +70,7 @@ void CG_LocationsSave(const char *path)
 	}
 	else
 	{
-		strcpy(output, va("maps/%s_loc_override.dat", cgs.rawmapname));
+		strcpy(output, va("maps/%s_loc_local.dat", cgs.rawmapname));
 	}
 
 	CG_Printf("Number of locations to save: %i\n", cgs.numLocations);
@@ -510,19 +510,25 @@ void CG_LoadLocations(void)
 	int          p            = 0; // current location in the file buffer
 	int          t            = 0; // current location in the temp buffer
 
-	fLen = trap_FS_FOpenFile(va("maps/%s_loc_override.dat", cgs.rawmapname), &f, FS_READ);
+	// _loc_local.dat files are for user "private" files that are not supposed to be in pk3 files
+	fLen = trap_FS_FOpenFile(va("maps/%s_loc_local.dat", cgs.rawmapname), &f, FS_READ);
 
 	if (fLen <= 0)
 	{
-		// open the location .dat file that matches the map's name
-		fLen = trap_FS_FOpenFile(va("maps/%s_loc.dat", cgs.rawmapname), &f, FS_READ);
+		// _loc_override.dat files are for overriding the locations and these files can be inside a pk3 file
+		fLen = trap_FS_FOpenFile(va("maps/%s_loc_override.dat", cgs.rawmapname), &f, FS_READ);
+	}
 
-		if (fLen <= 0)
-		{
-			CG_Printf(S_COLOR_BLUE "LoadLocations: ^3Warning: ^9No location data found for map ^2%s^9.\n",
-			          cgs.rawmapname);
-			return;
-		}
+	if (fLen <= 0)
+	{
+		// open the location .dat file that matches the map's name this filename is the default with which the map should ship
+		fLen = trap_FS_FOpenFile(va("maps/%s_loc.dat", cgs.rawmapname), &f, FS_READ);
+	}
+
+	if (fLen <= 0)
+	{
+		CG_Printf(S_COLOR_BLUE "LoadLocations: ^3Warning: ^9No location data found for map ^2%s^9.\n", cgs.rawmapname);
+		return;
 	}
 
 	if (fLen >= MAX_BUFFER)
