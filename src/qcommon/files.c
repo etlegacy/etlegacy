@@ -3753,8 +3753,9 @@ static int QDECL paksort(const void *a, const void *b)
  * then loads the zip headers
  * @param[in] path
  * @param[in] dir
+ * @param[in] addBase should we add the game directory itself also
  */
-void FS_AddGameDirectory(const char *path, const char *dir)
+void FS_AddGameDirectory(const char *path, const char *dir, qboolean addBase)
 {
 	searchpath_t *sp;
 	searchpath_t *search;
@@ -3888,15 +3889,18 @@ void FS_AddGameDirectory(const char *path, const char *dir)
 	//
 	// add the directory to the search path
 	//
-	search      = Z_Malloc(sizeof(searchpath_t));
-	search->dir = Z_Malloc(sizeof(*search->dir));
+	if (addBase)
+	{
+		search      = Z_Malloc(sizeof(searchpath_t));
+		search->dir = Z_Malloc(sizeof(*search->dir));
 
 	Q_strncpyz(search->dir->path, path, sizeof(search->dir->path));
 	Q_strncpyz(search->dir->fullpath, curpath, sizeof(search->dir->fullpath));
 	Q_strncpyz(search->dir->gamedir, dir, sizeof(search->dir->gamedir));
 
-	search->next   = fs_searchpaths;
-	fs_searchpaths = search;
+		search->next   = fs_searchpaths;
+		fs_searchpaths = search;
+	}
 }
 
 /**
@@ -4284,21 +4288,22 @@ static void FS_AddBothGameDirectories(const char *subpath)
 	{
 		// fs_homepath is used for all systems
 		// NOTE: same filtering below for mods and basegame
-		FS_AddGameDirectory(fs_basepath->string, subpath);
+		FS_AddGameDirectory(fs_basepath->string, subpath, qtrue);
 
 		if (fs_homepath->string[0] && !FS_IsSamePath(fs_homepath->string, fs_basepath->string))
 		{
-			FS_AddGameDirectory(fs_homepath->string, subpath);
+			FS_AddGameDirectory(fs_homepath->string, subpath, qtrue);
+
 #if defined(FEATURE_PAKISOLATION) && !defined(DEDICATED)
 			/* only mount containers for certain directories and if in pure mode */
 			if (fs_numServerPaks && (!Q_stricmp(subpath, BASEGAME) || (!Q_stricmp(subpath, DEFAULT_MODGAME) && fs_containerMount->integer)))
 			{
 				char contPath[MAX_OSPATH];
 				Com_sprintf(contPath, sizeof(contPath), "%s%c%s", subpath, PATH_SEP, FS_CONTAINER);
-				FS_AddGameDirectory(fs_homepath->string, contPath);
+				FS_AddGameDirectory(fs_homepath->string, contPath, qfalse);
 				Q_strncpyz(fs_gamedir, subpath, sizeof(fs_gamedir));
 			}
-			// We are in a non pure server, so just try to mount the minimal required packs
+			// We are in a non-pure server, so just try to mount the minimal required packs
 			else if(fs_numServerReferencedPaks && (!Q_stricmp(subpath, BASEGAME) || (!Q_stricmp(subpath, DEFAULT_MODGAME) && fs_containerMount->integer)))
 			{
 				int i = 0;
