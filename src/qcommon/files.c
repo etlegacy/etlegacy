@@ -4235,6 +4235,45 @@ void FS_Shutdown(qboolean closemfp)
 }
 
 /**
+ * @brief force the local paths (basepath/game and homepath/game) to the top of the search path
+ *
+ * @note Local files that can be loaded should by default override any files that are in the pacs. These files include
+ * cgfs, bins and dats.
+ */
+static void FS_ReorderLocalFoldersToTop(void)
+{
+	searchpath_t *s;
+	searchpath_t **p_insert_index, // for linked list reordering
+	             **p_previous; // when doing the scan
+	qboolean changed = qfalse;
+
+	p_insert_index = &fs_searchpaths; // we insert in order at the beginning of the list
+	do
+	{
+		changed    = qfalse;
+		p_previous = p_insert_index; // track the pointer-to-current-item
+		for (s = *p_insert_index; s; s = s->next)     // the part of the list before p_insert_index has been sorted already
+		{
+			// it's a directory so push to the top of the list
+			if (s->dir && !FS_IsExt(s->dir->gamedir, ".pk3dir", strlen(s->dir->gamedir)))
+			{
+				fs_reordered = qtrue;
+				changed      = qtrue;
+				// move this element to the insert list
+				*p_previous     = s->next;
+				s->next         = *p_insert_index;
+				*p_insert_index = s;
+				// increment insert list
+				p_insert_index = &s->next;
+				break;
+			}
+			p_previous = &s->next;
+		}
+	}
+	while (changed);
+}
+
+/**
  * @brief FS_ReorderPurePaks
  *
  * @note The reordering that happens here is not reflected in the cvars (\\cvarlist *pak*)
@@ -4413,6 +4452,9 @@ static void FS_Startup(const char *gameName)
 
 	// reorder the pure pk3 files according to server order
 	FS_ReorderPurePaks();
+
+	// force local paths to the top of the list
+	FS_ReorderLocalFoldersToTop();
 
 	// print the current search paths
 	FS_Path_f();
