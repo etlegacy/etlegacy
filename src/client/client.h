@@ -515,6 +515,13 @@ void CL_WriteDemoMessage(msg_t *msg, int headerBytes);
 void CL_StopRecord_f(void);
 void CL_DemoRun(void);
 void CL_DemoInit(void);
+void CL_DemoShutdown(void);
+
+// cl_auth
+#ifdef LEGACY_AUTH
+void CL_AuthInit(void);
+void CL_AuthShutdown(void);
+#endif
 
 // cl_input
 

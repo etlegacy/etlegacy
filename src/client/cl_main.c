@@ -3070,7 +3070,6 @@ void CL_Init(void)
 	//Cmd_AddCommand("add_fav", CL_AddFavServer_f, "Adds the current connected server to favorites.");
 
 	Cmd_AddCommand("open_homepath", CL_OpenHomePath_f, "Open the home path in a system file explorer.");
-
 	Cmd_AddCommand("clip", CL_Clip_f, "Put command output to clipboard.");
 
 #ifdef ETLEGACY_DEBUG
@@ -3081,6 +3080,10 @@ void CL_Init(void)
 
 	CL_DemoInit();
 
+#ifdef LEGACY_AUTH
+	CL_AuthInit();
+#endif
+
 	CL_InitRef();
 
 	SCR_Init();
@@ -3090,7 +3093,7 @@ void CL_Init(void)
 	Cvar_Set("cl_running", "1");
 
 	CL_GenerateETKey();
-	Cvar_Get("cl_guid", "", CVAR_USERINFO | CVAR_ROM);
+	Cvar_Get("cl_guid", "", CVAR_USERINFO | CVAR_ROM | CVAR_NOTABCOMPLETE);
 	CL_UpdateGUID();
 
 #ifdef FEATURE_GETTEXT
@@ -3144,10 +3147,7 @@ void CL_Shutdown(void)
 	Cmd_RemoveCommand("snd_restart");
 	Cmd_RemoveCommand("vid_restart");
 	Cmd_RemoveCommand("disconnect");
-	Cmd_RemoveCommand("record");
-	Cmd_RemoveCommand("demo");
 	Cmd_RemoveCommand("cinematic");
-	Cmd_RemoveCommand("stoprecord");
 	Cmd_RemoveCommand("connect");
 	Cmd_RemoveCommand("reconnect");
 	Cmd_RemoveCommand("localservers");
@@ -3165,16 +3165,17 @@ void CL_Shutdown(void)
 	Cmd_RemoveCommand("save_favs");
 	//Cmd_RemoveCommand("add_fav");
 
-	Cmd_RemoveCommand("pausedemo");
+	Cmd_RemoveCommand("open_homepath");
+	Cmd_RemoveCommand("clip");
 
-#if NEW_DEMOFUNC
-	Cmd_RemoveCommand("rewind");
-	Cmd_RemoveCommand("fastforward");
-	Cmd_RemoveCommand("seekservertime");
-	Cmd_RemoveCommand("seek");
-	Cmd_RemoveCommand("seekend");
-	Cmd_RemoveCommand("seeknext");
-	Cmd_RemoveCommand("seekprev");
+#ifdef ETLEGACY_DEBUG
+	Cmd_RemoveCommand("extendedCharsTest");
+#endif
+
+	CL_DemoShutdown();
+
+#ifdef LEGACY_AUTH
+	CL_AuthShutdown();
 #endif
 
 	Con_Shutdown();

@@ -1827,3 +1827,24 @@ void CL_DemoInit(void)
 	cl_maxRewindBackups = Cvar_Get("cl_maxRewindBackups", va("%i", MAX_REWIND_BACKUPS), CVAR_ARCHIVE | CVAR_LATCH);
 #endif
 }
+
+/**
+ * @brief CL_DemoShutdown
+ */
+void CL_DemoShutdown(void)
+{
+	Cmd_RemoveCommand("record");
+	Cmd_RemoveCommand("stoprecord");
+	Cmd_RemoveCommand("demo");
+	Cmd_RemoveCommand("pausedemo");
+
+#if NEW_DEMOFUNC
+	Cmd_RemoveCommand("rewind");
+	Cmd_RemoveCommand("fastforward");
+	Cmd_RemoveCommand("seekservertime");
+	Cmd_RemoveCommand("seek");
+	Cmd_RemoveCommand("seekend");
+	Cmd_RemoveCommand("seeknext");
+	Cmd_RemoveCommand("seekprev");
+#endif
+}
