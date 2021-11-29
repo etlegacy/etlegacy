@@ -4876,9 +4876,16 @@ void UI_RunMenuScript(char **args)
 		}
 		else if (Q_stricmp(name, "deleteDemo") == 0)
 		{
-			if (uiInfo.demos.index >= 0 && uiInfo.demos.index < uiInfo.demos.count && uiInfo.demos.items[uiInfo.demos.index].file)
+			if (uiInfo.demos.index >= 0 && uiInfo.demos.index < uiInfo.demos.count)
 			{
-				trap_FS_Delete(va("%s.dm_%d", UI_GetDemoPath(qtrue), (int)(trap_Cvar_VariableValue("protocol"))));
+				if (uiInfo.demos.items[uiInfo.demos.index].file)
+				{
+					trap_FS_Delete(va("%s.dm_%d", UI_GetDemoPath(qtrue), (int)(trap_Cvar_VariableValue("protocol"))));
+				}
+				else
+				{
+					trap_FS_Delete(Q_CleanStr(va("%s", UI_GetDemoPath(qtrue))));
+				}
 			}
 		}
 		else if (Q_stricmp(name, "closeJoin") == 0)
