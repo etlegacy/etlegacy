@@ -1453,7 +1453,7 @@ qboolean BG_PanelButton_EditClick(panel_button_t *button, int key)
 		{
 			key &= ~K_CHAR_FLAG;
 
-			if (key == 'h' - 'a' + 1)          // ctrl-h is backspace
+			if (key == CTRL('h'))          // ctrl-h is backspace
 			{
 				if (len && button->data[2])
 				{

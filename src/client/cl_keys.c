@@ -475,13 +475,13 @@ void Field_CharEvent(field_t *edit, int ch)
 	//charWidth = Q_UTF8_WidthCP(ch);
 	//value     = Q_UTF8_Encode(ch);
 
-	if (ch == 'v' - 'a' + 1)      // ctrl-v is paste
+	if (ch == CTRL('v'))      // ctrl-v is paste
 	{
 		Field_Paste(edit);
 		return;
 	}
 
-	if (ch == 'c' - 'a' + 1)      // ctrl-c clears the field
+	if (ch == CTRL('c'))      // ctrl-c clears the field
 	{
 		Field_Clear(edit);
 		return;
@@ -490,7 +490,7 @@ void Field_CharEvent(field_t *edit, int ch)
 	len       = strlen(edit->buffer);
 	stringLen = Q_UTF8_Strlen(edit->buffer);
 
-	if (ch == 'h' - 'a' + 1)          // ctrl-h is backspace
+	if (ch == CTRL('h'))          // ctrl-h is backspace
 	{
 		if (edit->cursor > 0)
 		{
@@ -507,14 +507,14 @@ void Field_CharEvent(field_t *edit, int ch)
 		return;
 	}
 
-	if (ch == 'a' - 'a' + 1)      // ctrl-a is home
+	if (ch == CTRL('a'))      // ctrl-a is home
 	{
 		edit->cursor = 0;
 		edit->scroll = 0;
 		return;
 	}
 
-	if (ch == 'e' - 'a' + 1)      // ctrl-e is end
+	if (ch == CTRL('e'))      // ctrl-e is end
 	{
 		edit->cursor = stringLen;
 		edit->scroll = edit->cursor - edit->widthInChars;

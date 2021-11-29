@@ -612,6 +612,8 @@ void *Hunk_Alloc(size_t size, ha_pref preference);
 #define Com_Allocate malloc
 #define Com_Dealloc free
 
+#define CTRL(a) ((a) - 'a' + 1)
+
 /**
  * @enum CIN_Flags
  * @brief

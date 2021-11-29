@@ -69,8 +69,6 @@ SDL_Window *mainScreen    = NULL;
 // Try it. com_maxfps 1, press "forward", have fun.
 static int lasttime = 0; // if 0, Com_QueueEvent will use the current time. This is for the first frame.
 
-#define CTRL(a) ((a) - 'a' + 1)
-
 /**
  * @brief IN_GetClipboardData
  * @return
@@ -1193,6 +1191,13 @@ static void IN_ProcessEvents(void)
 				{
 					Com_QueueEvent(lasttime, SE_CHAR, CTRL(key), 0, 0, NULL);
 				}
+#ifdef __APPLE__
+				// with MacOs we also support the command + c/v
+				else if ((keys[K_COMMAND].down) && (key == 'c' || key == 'v'))
+				{
+					Com_QueueEvent(lasttime, SE_CHAR, CTRL(key), 0, 0, NULL);
+				}
+#endif
 			}
 			lastKeyDown = key;
 			break;

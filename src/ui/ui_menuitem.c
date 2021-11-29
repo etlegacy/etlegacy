@@ -1626,7 +1626,7 @@ qboolean Item_TextField_HandleKey(itemDef_t *item, int key)
 	{
 		key &= ~K_CHAR_FLAG;
 
-		if (key == 'h' - 'a' + 1)          // ctrl-h is backspace
+		if (key == CTRL('h'))          // ctrl-h is backspace
 		{
 			if (item->cursorPos > 0)
 			{
