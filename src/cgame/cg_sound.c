@@ -1422,7 +1422,7 @@ qboolean CG_SpeakerEditor_NoiseEdit_KeyDown(panel_button_t *button, int key)
 				int localkey = key;
 
 				localkey &= ~K_CHAR_FLAG;
-				if (localkey == 'h' - 'a' + 1 || localkey >= 32)
+				if (localkey == CTRL('h') || localkey >= 32)
 				{
 					noiseMatchString[0] = '\0';
 				}
