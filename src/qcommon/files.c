@@ -867,7 +867,7 @@ qboolean FS_FileExists(const char *file)
  */
 qboolean FS_SV_FileExists(const char *file, qboolean checkBase)
 {
-	char *testpath;
+	char     *testpath;
 	qboolean homeFound = qfalse;
 
 	testpath                       = FS_BuildOSPath(fs_homepath->string, file, "");
@@ -1341,12 +1341,12 @@ extern qboolean com_fullyInitialized;
 static int fs_filter_flag = 0;
 
 #ifdef _WIN32
-static voidpf ZCALLBACK FS_UnzOpenFopenFileFunc (voidpf opaque, const char* filename, int mode)
+static voidpf ZCALLBACK FS_UnzOpenFopenFileFunc(voidpf opaque, const char *filename, int mode)
 {
-	voidpf file = NULL;
-	const char* mode_fopen = NULL;
+	voidpf     file        = NULL;
+	const char *mode_fopen = NULL;
 
-	if ((mode & ZLIB_FILEFUNC_MODE_READWRITEFILTER)==ZLIB_FILEFUNC_MODE_READ)
+	if ((mode & ZLIB_FILEFUNC_MODE_READWRITEFILTER) == ZLIB_FILEFUNC_MODE_READ)
 	{
 		mode_fopen = "rb";
 	}
@@ -1359,7 +1359,7 @@ static voidpf ZCALLBACK FS_UnzOpenFopenFileFunc (voidpf opaque, const char* file
 		mode_fopen = "wb";
 	}
 
-	if ((filename!=NULL) && (mode_fopen != NULL))
+	if ((filename != NULL) && (mode_fopen != NULL))
 	{
 		file = Sys_FOpen(filename, mode_fopen);
 	}
@@ -1369,13 +1369,13 @@ static voidpf ZCALLBACK FS_UnzOpenFopenFileFunc (voidpf opaque, const char* file
 static unzFile FS_UnzOpen(const char *fileName)
 {
 	static zlib_filefunc_def funcs;
-	static qboolean funcsInit = qfalse;
+	static qboolean          funcsInit = qfalse;
 
-	if(!funcsInit)
+	if (!funcsInit)
 	{
 		fill_fopen_filefunc(&funcs);
 		funcs.zopen_file = FS_UnzOpenFopenFileFunc;
-		funcsInit = qtrue;
+		funcsInit        = qtrue;
 	}
 
 	return unzOpen2(fileName, &funcs);
@@ -1392,12 +1392,12 @@ static unzFile FS_UnzOpen(const char *fileName)
  */
 long FS_FOpenFileReadFullDir(const char *fullFileName, fileHandle_t *file)
 {
-	FILE         *filep;
+	FILE *filep;
 
 	*file                         = FS_HandleForFile();
 	fsh[*file].handleFiles.unique = qtrue;
 
-	filep   = Sys_FOpen(fullFileName, "rb");
+	filep = Sys_FOpen(fullFileName, "rb");
 	if (filep == NULL)
 	{
 		*file = 0;
@@ -2050,7 +2050,7 @@ int FS_OSStatFile(const char *ospath)
 long FS_FileAge(const char *ospath)
 {
 	sys_stat_t stat_buf;
-	time_t now, creation;
+	time_t     now, creation;
 
 	if (Sys_Stat(ospath, &stat_buf) == -1)
 	{
@@ -2804,7 +2804,7 @@ qboolean FS_CompareZipChecksum(const char *zipfile, const int checksum)
 	zipChecksum = thepak->checksum;
 	FS_FreePak(thepak);
 
-	if(checksum)
+	if (checksum)
 	{
 		return checksum == zipChecksum;
 	}
@@ -3596,7 +3596,7 @@ void FS_Path_f(void)
 		if (s->pack)
 		{
 			//Com_Printf( "%s %X (%i files)\n", s->pack->pakFilename, s->pack->checksum, s->pack->numfiles );
-			Com_Printf("    %s (%i files)\n", s->pack->pakFilename, s->pack->numfiles);
+			Com_Printf("    ^1P ^*%s (%i files)\n", s->pack->pakFilename, s->pack->numfiles);
 			if (fs_numServerPaks)
 			{
 				if (!FS_PakIsPure(s->pack))
@@ -3611,7 +3611,7 @@ void FS_Path_f(void)
 		}
 		else
 		{
-			Com_Printf("    %s%c%s\n", s->dir->path, PATH_SEP, s->dir->gamedir);
+			Com_Printf("    ^2D ^*%s%c%s\n", s->dir->path, PATH_SEP, s->dir->gamedir);
 		}
 	}
 
@@ -3655,7 +3655,7 @@ qboolean FS_Which(const char *fileName, void *searchPath)
 {
 	searchpath_t *search = (searchpath_t *)searchPath;
 
-	if (FS_FOpenFileReadDir(fileName, search, NULL, qfalse, qfalse) > 0)
+	if (FS_FOpenFileReadDir(fileName, search, NULL, qfalse, ALLOW_RAW_FILE_ACCESS) > 0)
 	{
 		if (search->pack)
 		{
@@ -3894,9 +3894,9 @@ void FS_AddGameDirectory(const char *path, const char *dir, qboolean addBase)
 		search      = Z_Malloc(sizeof(searchpath_t));
 		search->dir = Z_Malloc(sizeof(*search->dir));
 
-	Q_strncpyz(search->dir->path, path, sizeof(search->dir->path));
-	Q_strncpyz(search->dir->fullpath, curpath, sizeof(search->dir->fullpath));
-	Q_strncpyz(search->dir->gamedir, dir, sizeof(search->dir->gamedir));
+		Q_strncpyz(search->dir->path, path, sizeof(search->dir->path));
+		Q_strncpyz(search->dir->fullpath, curpath, sizeof(search->dir->fullpath));
+		Q_strncpyz(search->dir->gamedir, dir, sizeof(search->dir->gamedir));
 
 		search->next   = fs_searchpaths;
 		fs_searchpaths = search;
@@ -4074,9 +4074,9 @@ qboolean FS_InvalidGameDir(const char *gamedir)
  */
 qboolean FS_ComparePaks(char *neededpaks, size_t len, qboolean dlstring)
 {
-	qboolean     havepak;
-	char         *origpos = neededpaks;
-	int          i;
+	qboolean havepak;
+	char     *origpos = neededpaks;
+	int      i;
 
 	if (!fs_numServerReferencedPaks)
 	{
@@ -4217,7 +4217,7 @@ void FS_Shutdown(qboolean closemfp)
 	}
 
 	// any FS_ calls will now be an error until reinitialized
-	fs_searchpaths = NULL;
+	fs_searchpaths  = NULL;
 	fs_checksumFeed = 0;
 
 	Cmd_RemoveCommand("path");
@@ -4343,7 +4343,7 @@ static void FS_AddBothGameDirectories(const char *subpath)
 				Q_strncpyz(fs_gamedir, subpath, sizeof(fs_gamedir));
 			}
 			// We are in a non-pure server, so just try to mount the minimal required packs
-			else if(fs_numServerReferencedPaks && (!Q_stricmp(subpath, BASEGAME) || (!Q_stricmp(subpath, DEFAULT_MODGAME) && fs_containerMount->integer)))
+			else if (fs_numServerReferencedPaks && (!Q_stricmp(subpath, BASEGAME) || (!Q_stricmp(subpath, DEFAULT_MODGAME) && fs_containerMount->integer)))
 			{
 				int i = 0;
 				for (i = 0 ; i < fs_numServerReferencedPaks ; i++)
@@ -4364,7 +4364,7 @@ static void FS_AddBothGameDirectories(const char *subpath)
 					if (packName && (packName += 1))
 					{
 						char tmpPath[MAX_OSPATH] = { '\0' };
-						char *path = FS_BuildOSPath(fs_homepath->string, subpath, va("%s%c%s.pk3", FS_CONTAINER, PATH_SEP, packName));
+						char *path               = FS_BuildOSPath(fs_homepath->string, subpath, va("%s%c%s.pk3", FS_CONTAINER, PATH_SEP, packName));
 						Q_strcpy(tmpPath, path);
 
 						if (FS_FileInPathExists(tmpPath) && FS_CompareZipChecksum(tmpPath, fs_serverReferencedPaks[i]))
