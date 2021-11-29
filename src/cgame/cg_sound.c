@@ -2266,13 +2266,18 @@ void CG_SpeakerEditor_KeyHandling(int key, qboolean down)
 			}
 			else if (editSpeakerHandle.activeAxis == -1)
 			{
-				int    i, closest = -1;
+				int    i, closest = -1, halfWidth = 320;
 				float  dist, minDist, r, u;
 				vec3_t vec, axisOrg, dir;
 
 				minDist = Square(16.f);
 
-				r = -(cg.refdef_current->fov_x / 90.f) * (float)(cgs.cursorX - 320) / 320;
+				if (!Ccg_Is43Screen())
+				{
+					halfWidth *= cgs.adr43;
+				}
+
+				r = -(cg.refdef_current->fov_x / 90.f) * (float)(cgs.cursorX - halfWidth) / halfWidth;
 				u = -(cg.refdef_current->fov_y / 90.f) * (float)(cgs.cursorY - 240) / 240;
 
 				for (i = 0; i < 3; i++)
