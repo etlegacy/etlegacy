@@ -545,6 +545,14 @@ jobs:
           docker build . --file Dockerfile --tag etlegacy/server:latest --tag etlegacy/server:${{ steps.vars.outputs.tag }}
           docker push etlegacy/server:${{steps.vars.outputs.tag}}
           docker push etlegacy/server:latest
+      
+      # If we are on any build, then also create the 'latest-patch' tag on docker hub
+      - name: Build and push the latest patch Docker image
+        if: github.event_name != 'schedule'
+        working-directory: build/package
+        run: |
+          docker build . --file Dockerfile --tag etlegacy/server:latest-patch
+          docker push etlegacy/server:latest-patch
 
   cleanup:
     runs-on: ubuntu-18.04
