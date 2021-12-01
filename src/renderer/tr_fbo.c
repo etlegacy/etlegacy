@@ -35,7 +35,7 @@
 
 #include "tr_local.h"
 
-frameBuffer_t *mainFbo = NULL;
+frameBuffer_t *mainFbo   = NULL;
 frameBuffer_t *msMainFbo = NULL;
 #ifdef HUD_FBO
 frameBuffer_t *hudFbo = NULL;
@@ -47,16 +47,16 @@ static frameBuffer_t *current;
 frameBuffer_t systemFbos[MAX_FBOS];
 
 const char *fboBlitVert = "#version 110\n"
-						  "void main(void) {\n"
-						  "gl_Position = gl_Vertex;\n"
-						  "gl_TexCoord[0] = gl_MultiTexCoord0;\n"
-						  "}\n";
+                          "void main(void) {\n"
+                          "gl_Position = gl_Vertex;\n"
+                          "gl_TexCoord[0] = gl_MultiTexCoord0;\n"
+                          "}\n";
 
 const char *fboBlitFrag = "#version 110\n"
-						  "uniform sampler2D u_CurrentMap;\n"
-						  "void main(void) {\n"
-						  "gl_FragColor = texture2D(u_CurrentMap, gl_TexCoord[0].st);\n"
-						  "}\n";
+                          "uniform sampler2D u_CurrentMap;\n"
+                          "void main(void) {\n"
+                          "gl_FragColor = texture2D(u_CurrentMap, gl_TexCoord[0].st);\n"
+                          "}\n";
 
 static shaderProgram_t *blitProgram;
 
@@ -150,17 +150,17 @@ static void R_BindFBOAs(frameBuffer_t *fb, fboBinding binding)
 
 	switch (binding)
 	{
-		case READ:
-			val = GL_READ_FRAMEBUFFER_EXT;
-			break;
-		case WRITE:
-			val = GL_DRAW_FRAMEBUFFER_EXT;
-			break;
-		case BOTH:
-			val = GL_FRAMEBUFFER_EXT;
-			break;
-		default:
-			Ren_Fatal("Invalid binding type\n");
+	case READ:
+		val = GL_READ_FRAMEBUFFER_EXT;
+		break;
+	case WRITE:
+		val = GL_DRAW_FRAMEBUFFER_EXT;
+		break;
+	case BOTH:
+		val = GL_FRAMEBUFFER_EXT;
+		break;
+	default:
+		Ren_Fatal("Invalid binding type\n");
 	}
 
 	if (fb)
@@ -202,17 +202,17 @@ static void R_GetCurrentFBOId(fboBinding binding, GLint *fboId)
 {
 	switch (binding)
 	{
-		case READ:
-			glGetIntegerv(GL_READ_FRAMEBUFFER_BINDING_EXT, fboId);
-			break;
-		case WRITE:
-			glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING_EXT, fboId);
-			break;
-		case BOTH:
-			glGetIntegerv(GL_FRAMEBUFFER_BINDING_EXT, fboId);
-			break;
-		default:
-			Ren_Fatal("Invalid binding type\n");
+	case READ:
+		glGetIntegerv(GL_READ_FRAMEBUFFER_BINDING_EXT, fboId);
+		break;
+	case WRITE:
+		glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING_EXT, fboId);
+		break;
+	case BOTH:
+		glGetIntegerv(GL_FRAMEBUFFER_BINDING_EXT, fboId);
+		break;
+	default:
+		Ren_Fatal("Invalid binding type\n");
 	}
 }
 
@@ -241,7 +241,7 @@ static frameBuffer_t *R_GetCurrentFBO(fboBinding binding)
 byte *R_FBOReadPixels(frameBuffer_t *fb, size_t *offset, int *padlen)
 {
 	GLint currentRead;
-	byte* data = NULL;
+	byte  *data = NULL;
 
 	if (!tr.useFBO)
 	{
@@ -277,16 +277,16 @@ static void R_CreateFBODepthAttachment(frameBuffer_t *fb, int samples, int stenc
 		if (stencilBits == 0)
 		{
 			glRenderbufferStorageMultisampleEXT(GL_RENDERBUFFER_EXT, samples, GL_DEPTH_COMPONENT32, fb->width,
-												fb->height);
+			                                    fb->height);
 			glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL_RENDERBUFFER_EXT,
-										 fb->depthBuffer);
+			                             fb->depthBuffer);
 		}
 		else
 		{
 			glRenderbufferStorageMultisampleEXT(GL_RENDERBUFFER_EXT, samples, GL_DEPTH24_STENCIL8, fb->width,
-												fb->height);
+			                                    fb->height);
 			glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER_EXT,
-										 fb->depthBuffer);
+			                             fb->depthBuffer);
 		}
 
 		return;
@@ -303,15 +303,15 @@ static void R_CreateFBODepthAttachment(frameBuffer_t *fb, int samples, int stenc
 		if (stencilBits == 0)
 		{
 			glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32, fb->width, fb->height, 0, GL_DEPTH_COMPONENT,
-						 GL_FLOAT,
-						 NULL);
+			             GL_FLOAT,
+			             NULL);
 			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, fb->depth, 0);
 		}
 		else
 		{
 			fb->stencil = qtrue;
 			glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, fb->width, fb->height, 0, GL_DEPTH_STENCIL,
-						 GL_UNSIGNED_INT_24_8, NULL);
+			             GL_UNSIGNED_INT_24_8, NULL);
 			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, fb->depth, 0);
 		}
 
@@ -326,25 +326,25 @@ static void R_CreateFBODepthAttachment(frameBuffer_t *fb, int samples, int stenc
 	{
 		glRenderbufferStorageEXT(GL_RENDERBUFFER_EXT, GL_DEPTH_COMPONENT32, fb->width, fb->height);
 		glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL_RENDERBUFFER_EXT,
-									 fb->depthBuffer);
+		                             fb->depthBuffer);
 	}
 	else
 	{
 		glRenderbufferStorageEXT(GL_RENDERBUFFER_EXT, GL_DEPTH24_STENCIL8, fb->width, fb->height);
 		glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER_EXT,
-									 fb->depthBuffer);
+		                             fb->depthBuffer);
 	}
 }
 
 static void R_CreateFBOColorAttachment(frameBuffer_t *fb, int samples, uint8_t flags)
 {
 	int internalFormat = GL_RGB8;
-	int format = GL_RGB;
+	int format         = GL_RGB;
 
 	if (flags & FBO_ALPHA)
 	{
 		internalFormat = GL_RGBA8;
-		format = GL_RGBA;
+		format         = GL_RGBA;
 	}
 
 	if (samples)
@@ -353,7 +353,7 @@ static void R_CreateFBOColorAttachment(frameBuffer_t *fb, int samples, uint8_t f
 		glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, fb->colorBuffer);
 		glRenderbufferStorageMultisampleEXT(GL_RENDERBUFFER_EXT, samples, internalFormat, fb->width, fb->height);
 		glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_RENDERBUFFER_EXT,
-									 fb->colorBuffer);
+		                             fb->colorBuffer);
 	}
 	else
 	{
@@ -443,9 +443,9 @@ static frameBuffer_t *R_CreateFBO(frameBuffer_t *fb, const char *name, int width
 		Q_strncpyz(fb->name, name, MAX_QPATH);
 	}
 
-	fb->width = width;
+	fb->width  = width;
 	fb->height = height;
-	fb->flags = flags;
+	fb->flags  = flags;
 
 	if (stencil)
 	{
@@ -569,18 +569,18 @@ void R_FboBlit(frameBuffer_t *from, frameBuffer_t *to)
 		if (to->flags & FBO_DEPTH)
 		{
 			glBlitFramebuffer(0, 0, from->width, from->height, 0, 0, to->width, to->height,
-							  GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT, GL_NEAREST);
+			                  GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT, GL_NEAREST);
 		}
 		else
 		{
 			glBlitFramebuffer(0, 0, from->width, from->height, 0, 0, to->width, to->height,
-							  GL_COLOR_BUFFER_BIT, GL_NEAREST);
+			                  GL_COLOR_BUFFER_BIT, GL_NEAREST);
 		}
 	}
 	else
 	{
 		glBlitFramebuffer(0, 0, from->width, from->height, 0, 0, glConfig.windowWidth, glConfig.windowHeight,
-						  GL_COLOR_BUFFER_BIT, GL_LINEAR);
+		                  GL_COLOR_BUFFER_BIT, GL_LINEAR);
 	}
 
 	R_BindFBO(to);
@@ -631,7 +631,7 @@ void R_InitFBO(void)
 {
 	Com_Memset(&systemFbos, 0, sizeof(frameBuffer_t) * MAX_FBOS);
 
-	current = NULL;
+	current     = NULL;
 	blitProgram = NULL;
 
 	if (!r_fbo->integer)
@@ -649,7 +649,7 @@ void R_InitFBO(void)
 
 	Ren_Print("Setting up FBO\n");
 
-	mainFbo = NULL;
+	mainFbo   = NULL;
 	msMainFbo = NULL;
 
 	int samples = ri.Cvar_VariableIntegerValue("r_ext_multisample");
@@ -660,7 +660,7 @@ void R_InitFBO(void)
 	if (samples)
 	{
 		msMainFbo = R_CreateFBO(NULL, "multisampled-main", glConfig.vidWidth, glConfig.vidHeight, samples, stencil, FBO_ALPHA | FBO_DEPTH);
-		mainFbo = R_CreateFBO(NULL, "main", glConfig.vidWidth, glConfig.vidHeight, 0, stencil, FBO_ALPHA | FBO_DEPTH);
+		mainFbo   = R_CreateFBO(NULL, "main", glConfig.vidWidth, glConfig.vidHeight, 0, stencil, FBO_ALPHA | FBO_DEPTH);
 	}
 	else
 	{
