@@ -66,11 +66,11 @@ void CG_LocationsSave(const char *path)
 			CG_Printf(S_COLOR_RED "ERROR CG_LocationsSave: given path too long '%s'\n", path);
 			return;
 		}
-		strcpy(output, path);
+		Q_strncpyz(output, path, sizeof(output));
 	}
 	else
 	{
-		strcpy(output, va("maps/%s_loc_local.dat", cgs.rawmapname));
+		Q_strncpyz(output, va("maps/%s_loc_local.dat", cgs.rawmapname), sizeof(output));
 	}
 
 	CG_Printf("Number of locations to save: %i\n", cgs.numLocations);
@@ -136,7 +136,7 @@ void CG_LocationsAdd(const char *message)
 	location_t *loc = &cgs.location[cgs.numLocations];
 
 	loc->index = cgs.numLocations;
-	strcpy(loc->message, message);
+	Q_strncpyz(loc->message, message, sizeof(loc->message));
 
 	VectorCopy(cgs.clientinfo[cg.clientNum].location, loc->origin);
 
@@ -171,7 +171,7 @@ void CG_LocationsRenameCurrent(const char *message)
 		return;
 	}
 
-	strcpy(loc->message, message);
+	Q_strncpyz(loc->message, message, sizeof(loc->message));
 }
 
 void CG_LocationsRemoveCurrent(void)
@@ -641,7 +641,7 @@ void CG_LoadLocations(void)
 			// if @, then keep the previous location name, otherwise, update message
 			if (Q_stricmp(temp, "@"))
 			{
-				strcpy(message, temp);
+				Q_strncpyz(message, temp, sizeof(message));
 			}
 
 			if (p > fLen)
@@ -654,7 +654,7 @@ void CG_LoadLocations(void)
 				location_t *loc = &cgs.location[cgs.numLocations];
 
 				loc->index = cgs.numLocations;
-				strcpy(loc->message, message);
+				Q_strncpyz(loc->message, message, sizeof(message));
 				loc->origin[0] = x;
 				loc->origin[1] = y;
 				loc->origin[2] = z;
