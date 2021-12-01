@@ -635,7 +635,7 @@ static qboolean SV_DemoSendStoredCommands(client_t *client, const char *arg0, co
 	if (!Q_strncmp(arg0, "sgstats", 7))
 	{
 		int index = Q_atoi(arg1);
-		if (gstats[index] && strlen(gstats[index]))
+		if (index >= 0 && index < MAX_CLIENTS && strlen(gstats[index]))
 		{
 			SV_GameSendServerCommand(client - svs.clients, gstats[index], qtrue);
 		}
@@ -973,9 +973,9 @@ static void SV_DemoWriteAllEntityShared(void)
 */
 static void SV_DemoRequestStats(void)
 {
-	client_t   *client, *cl;
+	client_t   *client;
 	static int lastRequestTime = 0;
-	int        i, num = sv_maxclients->integer - 1;
+	int        num             = sv_maxclients->integer - 1;
 
 	if (lastRequestTime + 5000 > svs.time)
 	{
@@ -988,6 +988,13 @@ static void SV_DemoRequestStats(void)
 
 	if (client->state != CS_FREE && client->demoClient)
 	{
+		client_t  *cl;
+		usercmd_t cmd;
+		int       i;
+
+		Com_Memset(&cmd, 0, sizeof(usercmd_t));
+		cmd.serverTime = svs.time;
+
 		for (i = 0, cl = svs.clients; i < num; i++, cl++)
 		{
 			if (cl->state == CS_ACTIVE)
@@ -997,9 +1004,6 @@ static void SV_DemoRequestStats(void)
 		}
 
 		SV_ExecuteClientCommand(client, "score", qtrue, qfalse);
-
-		usercmd_t cmd;
-		cmd.serverTime = svs.time;
 
 		// needed to actually request scoreboard stats (score)
 		SV_ClientThink(client, &cmd);
@@ -2336,6 +2340,8 @@ static void SV_DemoReadRefreshEntities(void)
 		if (Q_atoi((Info_ValueForKey(sv.configstrings[CS_WOLFINFO], "gamestate"))) != GS_INTERMISSION && !(SV_GameClientNum(i)->eFlags & EF_DEAD))
 		{
 			usercmd_t cmd;
+
+			Com_Memset(&cmd, 0, sizeof(cmd));
 			cmd.serverTime = svs.time;
 
 			SV_ClientThink(&svs.clients[i], &cmd);
