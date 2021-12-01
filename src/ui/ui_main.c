@@ -2164,7 +2164,7 @@ void UI_DrawCampaignDescription(rectDef_t *rect, float scale, vec4_t color, floa
 	if (scroll.length != strlen(textPtr))
 	{
 		scroll.init = 0;
-		strncpy(scroll.text, textPtr, sizeof(scroll.text));
+		Q_strncpyz(scroll.text, textPtr, sizeof(scroll.text));
 		scroll.length = strlen(scroll.text);
 
 		UI_FormatMultineLinePrint(scroll.text, 95);
@@ -6516,11 +6516,11 @@ static void UI_BuildServerDisplayList(qboolean force)
 	}
 
 	// do motd updates here too
-	trap_Cvar_VariableStringBuffer("com_motdString", uiInfo.serverStatus.motd.text, sizeof(uiInfo.serverStatus.motd));
+	trap_Cvar_VariableStringBuffer("com_motdString", uiInfo.serverStatus.motd.text, sizeof(uiInfo.serverStatus.motd.text));
 	len = Q_UTF8_Strlen(uiInfo.serverStatus.motd.text);
 	if (len == 0)
 	{
-		Q_strncpyz(uiInfo.serverStatus.motd.text, va("ET: Legacy - Version: %s", ETLEGACY_VERSION), sizeof(uiInfo.serverStatus.motd));
+		Q_strncpyz(uiInfo.serverStatus.motd.text, va("ET: Legacy - Version: %s", ETLEGACY_VERSION), sizeof(uiInfo.serverStatus.motd.text));
 		len = Q_UTF8_Strlen(uiInfo.serverStatus.motd.text);
 	}
 	if (len != uiInfo.serverStatus.motd.length)
