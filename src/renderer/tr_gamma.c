@@ -163,7 +163,7 @@ void R_InitGamma(void)
 		Ren_Print("WARNING: R_InitGamma() screen image is NULL\n");
 	}
 
-	Com_Memset(&gammaProgram, 0, sizeof(shaderProgram_t));
+	Com_Memset(&gammaProgram, 0, sizeof(gammaProgram_t));
 	gammaProgram.overBrightBits = -1;
 
 	R_BuildGammaProgram();
