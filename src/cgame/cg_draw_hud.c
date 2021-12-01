@@ -1905,55 +1905,6 @@ qhandle_t CG_GetCompassIcon(entityState_t *ent, qboolean drawAllVoicesChat, qboo
 }
 
 /**
- * @brief CG_DrawCompassIcon
- * @param[in] x
- * @param[in] y
- * @param[in] w
- * @param[in] h
- * @param[in] origin
- * @param[in] dest
- * @param[in] shader
- */
-void CG_DrawCompassIcon(float x, float y, float w, float h, vec3_t origin, vec3_t dest, qhandle_t shader, float dstScale, float baseSize)
-{
-	float  angle;
-	vec3_t v1, angles;
-	float  len;
-
-	VectorCopy(dest, v1);
-	VectorSubtract(origin, v1, v1);
-	len = VectorLength(v1);
-	VectorNormalize(v1);
-	vectoangles(v1, angles);
-
-	if (v1[0] == 0.f && v1[1] == 0.f && v1[2] == 0.f)
-	{
-		return;
-	}
-
-	angles[YAW] = AngleSubtract(cg.predictedPlayerState.viewangles[YAW], angles[YAW]);
-
-	angle = ((angles[YAW] + 180.f) / 360.f - (0.50f / 2.f)) * M_TAU_F;
-
-	w /= 2;
-	h /= 2;
-
-	x += w;
-	y += h;
-
-	{
-		w = (float)sqrt((w * w) + (h * h)) / 3.f * 2.f * 0.9f;
-	}
-
-	x = x + ((float)cos(angle) * w);
-	y = y + ((float)sin(angle) * w);
-
-	len = 1 - MIN(1.f, len / 2000.f * dstScale);
-
-	CG_DrawPic(x - (baseSize * len + 4) / 2, y - (baseSize * len + 4) / 2, baseSize * len + 8, baseSize * len + 8, shader);
-}
-
-/**
  * @brief CG_CompasMoveLocationCalc
  * @param[out] locationvalue
  * @param[in] directionplus
@@ -2063,15 +2014,10 @@ static void CG_CompasMoveLocation(float *basex, float *basey, qboolean animation
  * @brief CG_DrawNewCompass
  * @param location
  */
-static void CG_DrawNewCompass(rectDef_t location)
+void CG_DrawNewCompass(rectDef_t location)
 {
-	float        basex = location.x, basey = location.y - 16, basew = location.w, baseh = location.h;
-	snapshot_t   *snap;
-	float        angle;
-	int          i;
-	static float lastangle  = 0;
-	static float anglespeed = 0;
-	float        diff;
+	float      basex = location.x, basey = location.y - 16, basew = location.w, baseh = location.h;
+	snapshot_t *snap;
 
 	if (cg.nextSnap && !cg.nextFrameTeleport && !cg.thisFrameTeleport)
 	{
@@ -2082,7 +2028,7 @@ static void CG_DrawNewCompass(rectDef_t location)
 		snap = cg.snap;
 	}
 
-	if (snap->ps.pm_flags & PMF_LIMBO /*|| snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR*/
+	if (snap->ps.pm_flags & PMF_LIMBO && !cgs.clientinfo[cg.clientNum].shoutcaster
 #ifdef FEATURE_MULTIVIEW
 	    || cg.mvTotalClients > 0
 #endif
@@ -2091,8 +2037,6 @@ static void CG_DrawNewCompass(rectDef_t location)
 		CG_DrawExpandedAutoMap();
 		return;
 	}
-
-	diff = basew * 0.25f;
 
 	if (!cg_altHud.integer)
 	{
@@ -2127,44 +2071,7 @@ static void CG_DrawNewCompass(rectDef_t location)
 		return;
 	}
 
-	CG_DrawAutoMap(basex + (diff / 2), basey + (diff / 2), basew - diff, baseh - diff);
-	CG_DrawPic(basex + 4, basey + 4, basew - 8, baseh - 8, cgs.media.compassShader);
-
-	angle       = (cg.predictedPlayerState.viewangles[YAW] + 180.f) / 360.f - (0.125f);
-	diff        = AngleSubtract(angle * 360, lastangle * 360) / 360.f;
-	anglespeed /= 1.08f;
-	anglespeed += diff * 0.01f;
-	if (Q_fabs(anglespeed) < 0.00001f)
-	{
-		anglespeed = 0;
-	}
-	lastangle += anglespeed;
-	CG_DrawRotatedPic(basex + 4, basey + 4, basew - 8, baseh - 8, cgs.media.compass2Shader, lastangle);
-
-	for (i = 0; i < snap->numEntities; ++i)
-	{
-		centity_t *cent = &cg_entities[snap->entities[i].number];
-		qhandle_t icon;
-
-		// skip self
-		if (cent->currentState.eType == ET_PLAYER && cent->currentState.clientNum == cg.clientNum)
-		{
-			continue;
-		}
-
-		icon = CG_GetCompassIcon(&snap->entities[i], qfalse, qtrue, !(cg_drawCompassIcons.integer & 4), !(cg_drawCompassIcons.integer & 2), qtrue, NULL);
-
-		if (icon)
-		{
-			CG_DrawCompassIcon(basex, basey, basew, baseh, cg.predictedPlayerState.origin, cent->lerpOrigin, icon, 1.f, 14);
-
-			// draw overlapping shader for disguised covops
-			if (icon == cgs.media.friendShader)
-			{
-				CG_DrawCompassIcon(basex, basey, basew, baseh, cg.predictedPlayerState.origin, cent->lerpOrigin, cgs.media.buddyShader, 1.f, 14);
-			}
-		}
-	}
+	CG_DrawAutoMap(basex, basey, basew, baseh);
 }
 /**
  * @brief CG_DrawStatsDebug

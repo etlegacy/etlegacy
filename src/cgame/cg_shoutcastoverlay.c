@@ -58,7 +58,7 @@
 #define MINIMAP_WIDTH 150
 #define MINIMAP_HEIGHT 150
 #define MINIMAP_X (Ccg_WideX(SCREEN_WIDTH) - MINIMAP_WIDTH - PLAYER_LIST_OVERLAY_BORDER_DISTANCE_X)
-#define MINIMAP_Y 15
+#define MINIMAP_Y 31
 
 #define GAMETIME_WIDTH 60
 #define GAMETIME_HEIGHT 30
@@ -86,7 +86,18 @@ int players[12];
 */
 void CG_DrawMinimap(void)
 {
-	CG_DrawAutoMapNew(MINIMAP_X, MINIMAP_Y, MINIMAP_WIDTH, MINIMAP_HEIGHT);
+	// FIXME: this cvar seems redundant as of now, can use cg_drawCompass instead
+	if (!cg_shoutcastDrawMinimap.integer)
+	{
+		return;
+	}
+
+	rectDef_t location;
+	location.x = MINIMAP_X;
+	location.y = MINIMAP_Y;
+	location.w = MINIMAP_WIDTH;
+	location.h = MINIMAP_HEIGHT;
+	CG_DrawNewCompass(location);
 }
 
 /**
