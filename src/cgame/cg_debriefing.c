@@ -4627,7 +4627,7 @@ void CG_parseMapVoteListInfo()
 
 			Q_strncpyz(cgs.dbMapDescription[i],
 			           cgs.arenaData.description,
-			           sizeof(cgs.dbMapDescription));
+			           sizeof(cgs.dbMapDescription[i]));
 
 			CG_FormatMultineLinePrint(cgs.dbMapDescription[i + cgs.dbMapVoteListOffset], 43);
 		}
@@ -4639,7 +4639,7 @@ void CG_parseMapVoteListInfo()
 
 			Q_strncpyz(cgs.dbMapDescription[i],
 			           "No description available",
-			           sizeof(cgs.dbMapDescription));
+			           sizeof(cgs.dbMapDescription[i]));
 		}
 	}
 
