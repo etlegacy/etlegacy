@@ -440,7 +440,7 @@ static frameBuffer_t *R_CreateFBO(frameBuffer_t *fb, const char *name, int width
 
 	if (name)
 	{
-		strncpy(fb->name, name, MAX_QPATH);
+		Q_strncpyz(fb->name, name, MAX_QPATH);
 	}
 
 	fb->width = width;
