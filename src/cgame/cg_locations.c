@@ -70,7 +70,7 @@ void CG_LocationsSave(const char *path)
 	}
 	else
 	{
-		Q_strncpyz(output, va("maps/%s_loc_local.dat", cgs.rawmapname), sizeof(output));
+		Com_sprintf(output, sizeof(output), "maps/%s_loc_local.dat", cgs.rawmapname);
 	}
 
 	CG_Printf("Number of locations to save: %i\n", cgs.numLocations);
