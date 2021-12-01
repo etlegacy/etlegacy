@@ -1197,7 +1197,8 @@ int CG_FormatMultineLinePrint(char *s, int lineWidth)
 		{
 			lastSpace = s;
 		}
-
+        
+        // we reach the end of the string and it doesn't fit in on line
 		if (neednewline && lastSpace)
 		{
 			*lastSpace = '\n';
@@ -1217,13 +1218,6 @@ int CG_FormatMultineLinePrint(char *s, int lineWidth)
 		}
 
 		s += Q_UTF8_Width(s);
-	}
-
-	// we reach the end of the string and it doesn't fit in on line
-	if (neednewline && lastSpace)
-	{
-		*lastSpace = '\n';
-		lineNumber++;
 	}
 
 	return lineNumber;
