@@ -1028,7 +1028,7 @@ qboolean CG_MapVoteList_KeyDown(panel_button_t *button, int key)
 			}
 
 			descriptionScroll.init = 0;
-			strncpy(descriptionScroll.text, cgs.dbMapDescription[pos], sizeof(descriptionScroll.text));
+			Q_strncpyz(descriptionScroll.text, cgs.dbMapDescription[pos], sizeof(descriptionScroll.text));
 			descriptionScroll.length = strlen(descriptionScroll.text);
 		}
 		return qtrue;
