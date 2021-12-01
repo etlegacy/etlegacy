@@ -805,6 +805,20 @@ sprites/ready
 	}
 }
 
+sprites/cm_medic_icon
+{
+	nopicmip
+	nocompress
+	nomipmaps
+	{
+		map sprites/voicemedic.tga
+		depthFunc equal
+		blendfunc blend
+		rgbGen vertex
+		alphaGen vertex
+	}
+}
+
 ui/assets/mp_ammo_blue
 {
 	nopicmip

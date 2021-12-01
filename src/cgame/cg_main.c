@@ -1878,6 +1878,8 @@ static void CG_RegisterGraphics(void)
 	cgs.media.skillPics[SK_HEAVY_WEAPONS]                            = trap_R_RegisterShaderNoMip("gfx/limbo/ic_soldier");
 	cgs.media.skillPics[SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS] = trap_R_RegisterShaderNoMip("gfx/limbo/ic_covertops");
 
+	cgs.media.ccMedicIcon = trap_R_RegisterShaderNoMip("sprites/cm_medic_icon");
+
 #ifdef FEATURE_PRESTIGE
 	cgs.media.prestigePics[0] = trap_R_RegisterShaderNoMip("gfx/hud/prestige/prestige");
 	cgs.media.prestigePics[1] = trap_R_RegisterShaderNoMip("gfx/hud/prestige/prestige_stamp");
@@ -2086,7 +2088,6 @@ static void CG_RegisterGraphics(void)
 	cgs.media.hMountedFPMG42     = trap_R_RegisterModel("models/multiplayer/mg42/v_mg42.md3");
 	cgs.media.hMountedFPBrowning = trap_R_RegisterModel("models/multiplayer/browning/tankmounted.md3");
 
-	// icons for commandmap
 	cgs.media.medicIcon = trap_R_RegisterShaderNoMip("sprites/voiceMedic");
 	cgs.media.ammoIcon  = trap_R_RegisterShaderNoMip("sprites/voiceAmmo");
 
