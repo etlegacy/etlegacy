@@ -3683,7 +3683,11 @@ void Cmd_SetViewpos_f(gentity_t *ent)
 
 		trap_Argv(7, buffer, sizeof(buffer));
 		qboolean useViewHeight = atof(buffer);
-		origin[2] = useViewHeight ? origin[2] -= (ent->client->ps.viewheight + 1) : origin[2];  // + 1 to account for teleport event origin shift
+
+		if (useViewHeight)
+		{
+			origin[2] -= (ent->client->ps.viewheight + 1);  // + 1 to account for teleport event origin shift
+		}
 	}
 	else
 	{
