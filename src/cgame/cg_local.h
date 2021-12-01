@@ -3001,8 +3001,6 @@ const char *CG_TranslateString(const char *string);
 
 void CG_InitStatsDebug(void);
 void CG_StatsDebugAddText(const char *text);
-qhandle_t CG_GetCompassIcon(entityState_t *ent, qboolean drawAllVoicesChat, qboolean drawFireTeam, qboolean drawPrimaryObj, qboolean drawSecondaryObj, qboolean drawDynamic, char *name);
-void CG_DrawCompassIcon(float x, float y, float w, float h, vec3_t origin, vec3_t dest, qhandle_t shader, float dstScale, float baseSize);
 
 void CG_AddLagometerFrameInfo(void);
 void CG_AddLagometerSnapshotInfo(snapshot_t *snap);
@@ -3318,11 +3316,6 @@ qboolean CG_ViewingDraw(void);
 // cg_scoreboard.c
 qboolean CG_DrawScoreboard(void);
 int SkillNumForClass(int classNum);
-
-void CG_TransformToCommandMapCoord(float *coord_x, float *coord_y);
-
-void CG_DrawExpandedAutoMap(void);
-void CG_DrawAutoMap(float x, float y, float w, float h);
 
 qboolean CG_DrawFlag(float x, float y, float fade, int clientNum);
 
@@ -3874,10 +3867,14 @@ void CG_CommandMap_SetHighlightText(const char *text, float x, float y);
 void CG_CommandMap_DrawHighlightText(void);
 qboolean CG_CommandCentreSpawnPointClick(void);
 
-void CG_DrawAutoMapNew(float x, float y, float w, float h);
-void CG_DrawMapNew(float x, float y, float w, float h, int mEntFilter, mapScissor_t *scissor, qboolean interactive, float alpha, qboolean borderblend);
-int CG_DrawSpawnPointInfoNew(float px, float py, float pw, float ph, qboolean draw, mapScissor_t *scissor, int expand);
-void CG_DrawMortarMarkerNew(float px, float py, float pw, float ph, qboolean draw, mapScissor_t *scissor, int expand);
+void CG_DrawNewCompass(rectDef_t location);
+qhandle_t CG_GetCompassIcon(entityState_t *ent, qboolean drawAllVoicesChat, qboolean drawFireTeam, qboolean drawPrimaryObj, qboolean drawSecondaryObj, qboolean drawDynamic, char *name);
+void CG_DrawCompassIcon(float x, float y, float w, float h, vec3_t origin, vec3_t dest, qhandle_t shader, float dstScale, float baseSize, mapScissor_t *scissor);
+
+void CG_TransformToCommandMapCoord(float *coord_x, float *coord_y);
+
+void CG_DrawExpandedAutoMap(void);
+void CG_DrawAutoMap(float basex, float basey, float basew, float baseh);
 
 #define LIMBO_3D_X  287 //% 280
 #define LIMBO_3D_Y  382
