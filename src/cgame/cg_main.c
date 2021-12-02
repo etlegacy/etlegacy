@@ -1791,8 +1791,8 @@ static void CG_RegisterGraphics(void)
 	cgs.media.balloonShader   = trap_R_RegisterShader("sprites/balloon3");
 
 	cgs.media.objectiveShader        = trap_R_RegisterShader("sprites/objective");
-	cgs.media.objectiveBlueShader    = trap_R_RegisterShader("sprites/objective_blue");
-	cgs.media.objectiveRedShader     = trap_R_RegisterShader("sprites/objective_red");
+	cgs.media.objectiveBlueShader    = trap_R_RegisterShaderNoMip("sprites/objective_blue");
+	cgs.media.objectiveRedShader     = trap_R_RegisterShaderNoMip("sprites/objective_red");
 	cgs.media.objectiveTeamShader    = trap_R_RegisterShaderNoMip("sprites/objective_team");
 	cgs.media.objectiveDroppedShader = trap_R_RegisterShaderNoMip("sprites/objective_dropped");
 	cgs.media.objectiveEnemyShader   = trap_R_RegisterShaderNoMip("sprites/objective_enemy");
