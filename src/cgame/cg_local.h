@@ -1855,6 +1855,8 @@ typedef struct
 	qhandle_t ccTankIcon;
 	qhandle_t skillPics[SK_NUM_SKILLS];
 	qhandle_t ccMedicIcon;
+	qhandle_t ccAmmoIcon;
+	qhandle_t ccVoiceChatShader;
 #ifdef FEATURE_PRESTIGE
 	qhandle_t prestigePics[3];
 #endif

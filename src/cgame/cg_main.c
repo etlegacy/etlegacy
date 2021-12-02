@@ -1878,7 +1878,9 @@ static void CG_RegisterGraphics(void)
 	cgs.media.skillPics[SK_HEAVY_WEAPONS]                            = trap_R_RegisterShaderNoMip("gfx/limbo/ic_soldier");
 	cgs.media.skillPics[SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS] = trap_R_RegisterShaderNoMip("gfx/limbo/ic_covertops");
 
-	cgs.media.ccMedicIcon = trap_R_RegisterShaderNoMip("sprites/cm_medic_icon");
+	cgs.media.ccMedicIcon       = trap_R_RegisterShaderNoMip("sprites/cm_medic_icon");
+	cgs.media.ccAmmoIcon        = trap_R_RegisterShaderNoMip("sprites/cm_ammo_icon");
+	cgs.media.ccVoiceChatShader = trap_R_RegisterShaderNoMip("sprites/cm_voicechat_icon");
 
 #ifdef FEATURE_PRESTIGE
 	cgs.media.prestigePics[0] = trap_R_RegisterShaderNoMip("gfx/hud/prestige/prestige");
