@@ -2,14 +2,14 @@
 # Copyright (C) 2012-2018 ET: Legacy Team
 # This file is distributed under the same license as the ET:Legacy package.
 # Translators:
-# Kyu-Seok Yang <lklk9110@gmail.com>, 2016-2017,2020
+# Kyu-Seok Yang <lklk9110@gmail.com>, 2016-2017,2020-2021
 msgid ""
 msgstr ""
 "Project-Id-Version: ET:Legacy\n"
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
-"PO-Revision-Date: 2021-01-07 18:05+0000\n"
-"Last-Translator: rafal1137 <rafal1137@yahoo.pl>\n"
+"PO-Revision-Date: 2021-12-02 07:00+0000\n"
+"Last-Translator: Kyu-Seok Yang <lklk9110@gmail.com>\n"
 "Language-Team: Korean (http://www.transifex.com/etlegacy/etlegacy/language/ko/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1889,7 +1889,7 @@ msgstr "0.015 (최저)"
 
 #: etmain/ui/options_controls.menu:52
 msgid "0.022 (default)"
-msgstr "0.022 (기본)"
+msgstr "0.022 (기본값)"
 
 #: etmain/ui/options_controls.menu:52
 msgid "Up-Down Motion Of The Crosshair While Moving."
@@ -5243,7 +5243,7 @@ msgstr "사살: %3d         아군 사살: %3d     정확도:  %5.1f%%"
 #: src/cgame/cg_servercmds.c:1941
 #, c-format
 msgid "Gibs:   %3d    Team Gibs:  %3d    Playtime:  %5.1f%%"
-msgstr "확인사살: %3d 팀 확인사살: %3d  진행 시간:  %5.1f%%"
+msgstr "토막살인: %3d 팀 토막살인: %3d  진행 시간:  %5.1f%%"
 
 #: src/cgame/cg_servercmds.c:1879
 #, c-format
@@ -6880,7 +6880,7 @@ msgid "Best Survivor"
 msgstr "최고 생존"
 
 msgid "Most Gibs"
-msgstr "최다 확인사살"
+msgstr "최다 토막살인"
 
 msgid "Most Selfkills"
 msgstr "최다 자살"
@@ -6897,10 +6897,10 @@ msgid ""
 msgstr "\n이 기기에서는 한 개 이상의 필수 OpenGL 확장이 결여되어 ET: Legacy를 OpenGL 3.x 렌더러로 실행할 수 없습니다. 비디오 카드 드라이버를 업데이트하고 재시도하십시오.\n"
 
 msgid "Gib command not allowed during intermission.\n"
-msgstr "확인사살 명령어는 휴식 시간 중에 사용할 수 없습니다.\n"
+msgstr "토막내기 명령어는 휴식 시간 중에 사용할 수 없습니다.\n"
 
 msgid "^3%d^7 players gibbed."
-msgstr "^3%d^7 플레이어들이 확인사살 됐습니다."
+msgstr "^3%d^7 플레이어들이 토막내어졌습니다."
 
 msgid "There is no player to gib."
 msgstr ""
@@ -6975,16 +6975,16 @@ msgid "No players in team or they are already burned.\n"
 msgstr "팀에 플레이어가 없거나 모두 불에 탔습니다.\n"
 
 msgid "Error - can't burn - %s.\n"
-msgstr "오류 - %s(을)를 태울 수 없음.\n"
+msgstr "오류 - 태울 수 없습니다 - %s.\n"
 
 msgid "Player must be on a team to be burned.\n"
 msgstr "불에 타려면 플레이어가 팀에 속해있어야 합니다.\n"
 
 msgid "^7%s^7 is burned."
-msgstr "^7%s^7이 불에 탔습니다."
+msgstr "^7%s^7이(가) 불에 탔습니다."
 
 msgid "Pip command not allowed during intermission.\n"
-msgstr "Pip 명령어는 휴식 시간 중에 사용할 수 없습니다.\n"
+msgstr "스파크 명령어는 휴식 시간 중에 사용할 수 없습니다.\n"
 
 msgid "^3%d^7 players pipped."
 msgstr "^3%d^7 플레이어들에게 스파크가 튀었습니다."
@@ -7014,7 +7014,7 @@ msgid "Player must be on a team to be %s.\n"
 msgstr "%s 명령어가 적용되려면 플레이어가 팀에 속해있어야 합니다.\n"
 
 msgid "^7%s^7 was %s."
-msgstr "^7%s^7이 %s 당했습니다."
+msgstr "^7%s^7이(가) %s 당했습니다."
 
 #: etmain/ui/options_system.menu:48
 msgid "System Sound Control:"
