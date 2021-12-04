@@ -167,6 +167,33 @@ static qboolean CG_ScissorPointIsCulled(vec2_t vec, mapScissor_t *scissor, vec2_
 }
 
 /**
+* @brief CG_GetVoiceChatForCommandMap
+* @details Maps default voice chat shader to command map shader.
+*          Command map requires different shaders to not draw icons outside of the map.
+*
+* @param[in,out] voiceChat
+*/
+static int CG_GetVoiceChatForCommandMap(int voiceChat)
+{
+	if (voiceChat == cgs.media.voiceChatShader)
+	{
+		return cgs.media.ccVoiceChatShader;
+	}
+
+	if (voiceChat == cgs.media.medicIcon)
+	{
+		return cgs.media.ccMedicIcon;
+	}
+
+	if (voiceChat == cgs.media.ammoIcon)
+	{
+		return cgs.media.ccAmmoIcon;
+	}
+
+	return voiceChat;
+}
+
+/**
  * @brief Calculate the scaled (zoomed) yet unshifted coordinate for
  * each map entity within the automap
  */
@@ -756,7 +783,7 @@ void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, float h,
 
 				if (cg.predictedPlayerEntity.voiceChatSpriteTime > cg.time)
 				{
-					CG_DrawPic(icon_pos[0] + 12, icon_pos[1], icon_extends[0] * 0.5f, icon_extends[1] * 0.5f, cg.predictedPlayerEntity.voiceChatSprite);
+					CG_DrawPic(icon_pos[0] + icon_extends[0], icon_pos[1], icon_extends[0] * 0.5f, icon_extends[1] * 0.5f, CG_GetVoiceChatForCommandMap(cg.predictedPlayerEntity.voiceChatSprite));
 				}
 			}
 			else if (/*!(cgs.ccFilter & CC_FILTER_BUDDIES) &&*/ CG_IsOnSameFireteam(cg.clientNum, mEnt->data))
@@ -780,7 +807,7 @@ void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, float h,
 
 				if (cent->voiceChatSpriteTime > cg.time)
 				{
-					CG_DrawPic(icon_pos[0] + 12, icon_pos[1], icon_extends[0] * 0.5f, icon_extends[1] * 0.5f, cent->voiceChatSprite);
+					CG_DrawPic(icon_pos[0] + icon_extends[0], icon_pos[1], icon_extends[0] * 0.5f, icon_extends[1] * 0.5f, CG_GetVoiceChatForCommandMap(cent->voiceChatSprite));
 				}
 			}
 			else if (ci->team == snap->ps.persistant[PERS_TEAM])
@@ -794,7 +821,7 @@ void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, float h,
 
 				if (cent->voiceChatSpriteTime > cg.time)
 				{
-					CG_DrawPic(icon_pos[0] + 12, icon_pos[1], icon_extends[0] * 0.5f, icon_extends[1] * 0.5f, cent->voiceChatSprite);
+					CG_DrawPic(icon_pos[0] + icon_extends[0], icon_pos[1], icon_extends[0] * 0.5f, icon_extends[1] * 0.5f, CG_GetVoiceChatForCommandMap(cent->voiceChatSprite));
 				}
 			}
 
