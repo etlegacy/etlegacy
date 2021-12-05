@@ -131,6 +131,7 @@ The following variables can be adjusted in CMake:
   * (optional) **`INSTALL_DEFAULT_MODDIR`**: Location for libraries and paks. Appended to `CMAKE_INSTALL_PREFIX`.
     Defaults to `lib/etlegacy` and then `legacy` is appended to it.
 
+  * (optional) **`DOCDIR`**: Location for documentation. Defaults to `INSTALL_DEFAULT_SHAREDIR/doc/etlegacy`.
 
 ### Linux
 

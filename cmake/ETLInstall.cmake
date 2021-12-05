@@ -2,6 +2,10 @@
 # Install
 #-----------------------------------------------------------------
 
+if(NOT DOCDIR)
+	set(DOCDIR "${INSTALL_DEFAULT_SHAREDIR}/doc/etlegacy")
+endif()
+
 # description file - see FS_GetModList
 install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/misc/description.txt"
 	DESTINATION "${INSTALL_DEFAULT_MODDIR}/${MODNAME}"
@@ -45,7 +49,7 @@ if(UNIX AND NOT APPLE)
 		DESTINATION "${INSTALL_DEFAULT_SHAREDIR}/man/man6"
 	)
 	install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/docs/INSTALL.txt"
-		DESTINATION "${INSTALL_DEFAULT_SHAREDIR}/doc/etlegacy"
+		DESTINATION "${DOCDIR}"
 	)
 	install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/COPYING.txt"
 		DESTINATION "${INSTALL_DEFAULT_SHAREDIR}/licenses/etlegacy"
