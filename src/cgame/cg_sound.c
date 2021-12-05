@@ -687,29 +687,6 @@ qboolean CG_SaveSpeakersToScript(void)
 }
 
 /**
- * @brief CG_AddLineToScene
- * @param[in] start
- * @param[in] end
- * @param[in] colour
- */
-void CG_AddLineToScene(vec3_t start, vec3_t end, vec4_t colour)
-{
-	refEntity_t re;
-
-	Com_Memset(&re, 0, sizeof(re));
-	re.reType       = RT_RAIL_CORE;
-	re.customShader = cgs.media.railCoreShader;
-	VectorCopy(start, re.origin);
-	VectorCopy(end, re.oldorigin);
-	re.shaderRGBA[0] = (byte)(colour[0] * 0xff);
-	re.shaderRGBA[1] = (byte)(colour[1] * 0xff);
-	re.shaderRGBA[2] = (byte)(colour[2] * 0xff);
-	re.shaderRGBA[3] = (byte)(colour[3] * 0xff);
-
-	trap_R_AddRefEntityToScene(&re);
-}
-
-/**
  * @brief CG_SetViewanglesForSpeakerEditor
  */
 void CG_SetViewanglesForSpeakerEditor(void)
@@ -772,44 +749,7 @@ static void CG_RenderScriptSpeakers(void)
 
 		if (editSpeakerActive && editSpeaker == speaker)
 		{
-			vec4_t colour;
-
-			for (j = 0; j < 3; j++)
-			{
-				VectorClear(colour);
-				colour[3] = 1.f;
-				if (editSpeakerHandle.activeAxis >= 0)
-				{
-					if (editSpeakerHandle.activeAxis == j)
-					{
-						colour[j] = 1.f;
-					}
-					else
-					{
-						colour[j] = .3f;
-					}
-				}
-				else
-				{
-					colour[j] = 1.f;
-				}
-				VectorClear(vec);
-				vec[j] = 1.f;
-				VectorMA(editSpeakerHandle.origin, 32, vec, vec);
-				CG_AddLineToScene(editSpeakerHandle.origin, vec, colour);
-
-				Com_Memset(&re, 0, sizeof(re));
-				re.reType = RT_SPRITE;
-				VectorCopy(vec, re.origin);
-				VectorCopy(vec, re.oldorigin);
-				re.radius        = 3;
-				re.customShader  = cgs.media.waterBubbleShader;
-				re.shaderRGBA[0] = (byte)(colour[0] * 0xff);
-				re.shaderRGBA[1] = (byte)(colour[1] * 0xff);
-				re.shaderRGBA[2] = (byte)(colour[2] * 0xff);
-				re.shaderRGBA[3] = (byte)(colour[3] * 0xff);
-				trap_R_AddRefEntityToScene(&re);
-			}
+			CG_DrawMoveGizmo(editSpeakerHandle.origin, GIZMO_DEFAULT_RADIUS, editSpeakerHandle.activeAxis);
 
 			if (trap_R_inPVS(cg.refdef_current->vieworg, speaker->origin))
 			{

@@ -2104,7 +2104,7 @@ float vec3_dist(vec3_t v1, vec3_t v2)
 {
 	vec3_t dir;
 
-	VectorSubtract(v2, v1, dir);
+	vec3_sub(v2, v1, dir);
 	return vec3_length(dir);
 }
 
@@ -2118,7 +2118,7 @@ float vec3_dist_squared(vec3_t v1, vec3_t v2)
 {
 	vec3_t dir;
 
-	VectorSubtract(v2, v1, dir);
+	vec3_sub(v2, v1, dir);
 	return vec3_length_squared(dir);
 }
 

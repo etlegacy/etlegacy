@@ -601,6 +601,7 @@ void CG_MouseEvent(int x, int y)
 			cgs.cursorUpdate = cg.time + 5000;
 		} // fall through
 	case CGAME_EVENT_SPEAKEREDITOR:
+	case CGAME_EVENT_CAMERAEDITOR:
 	case CGAME_EVENT_GAMEVIEW:
 	case CGAME_EVENT_CAMPAIGNBREIFING:
 	case CGAME_EVENT_FIRETEAMMSG:
@@ -635,6 +636,11 @@ void CG_MouseEvent(int x, int y)
 		if (cgs.eventHandling == CGAME_EVENT_SPEAKEREDITOR)
 		{
 			CG_SpeakerEditorMouseMove_Handling(x, y);
+		}
+
+		if (cgs.eventHandling == CGAME_EVENT_CAMERAEDITOR)
+		{
+			CG_CameraEditorMouseMove_Handling(x, y);
 		}
 #ifdef FEATURE_EDV
 	}
@@ -799,6 +805,18 @@ void CG_EventHandling(int type, qboolean fForced)
 				return;
 			}
 		}
+		else if (cgs.eventHandling == CGAME_EVENT_CAMERAEDITOR)
+		{
+			if (type == -CGAME_EVENT_CAMERAEDITOR)
+			{
+				type = CGAME_EVENT_NONE;
+			}
+			else
+			{
+				trap_Key_SetCatcher(KEYCATCH_CGAME);
+				return;
+			}
+		}
 		else if (cgs.eventHandling == CGAME_EVENT_CAMPAIGNBREIFING)
 		{
 			type = CGAME_EVENT_GAMEVIEW;
@@ -910,6 +928,9 @@ void CG_KeyEvent(int key, qboolean down)
 		break;
 	case CGAME_EVENT_SPEAKEREDITOR:
 		CG_SpeakerEditor_KeyHandling(key, down);
+		break;
+	case CGAME_EVENT_CAMERAEDITOR:
+		CG_CameraEditor_KeyHandling(key, down);
 		break;
 #ifdef FEATURE_MULTIVIEW
 	case  CGAME_EVENT_MULTIVIEW:

@@ -53,17 +53,48 @@ typedef struct cameraPoint_s
 
 //FIXME: allocate the points since locking this to 50 might be problematic?
 #define MAX_CAMERA_POINTS 50
-static cameraPoint_t cameraPoints[MAX_CAMERA_POINTS];
-static int           cameraPointOffset = 0;
+typedef struct cameraEditorInfo
+{
+	// TODO: move to cgs when ready
+	cameraPoint_t *currentCamera;
+	cameraPoint_t *pointingCamera;
+	cameraPoint_t *currentPlayCamera;
+	cameraPoint_t *editingPoint;
 
-// TODO: move to cgs when ready
-static cameraPoint_t *currentCamera  = NULL;
-static cameraPoint_t *pointingCamera = NULL;
+	float cameraPoint;
+	float cameraTotalLength;
+	float cameraUnitsInSecond;
 
-static cameraPoint_t *currentPlayCamera  = NULL;
-static float         cameraPoint         = 0.f;
-static float         cameraTotalLength   = 0.f;
-static float         cameraUnitsInSecond = 0.f;
+	int cameraPointOffset;
+	cameraPoint_t cameraPoints[MAX_CAMERA_POINTS];
+} cameraEditorInfo;
+
+static cameraEditorInfo cameraInfo;
+
+static void CG_AddCameraModel(const vec3_t inOrigin, const vec3_t angles)
+{
+	vec3_t      mins, maxs, origin;
+	refEntity_t re;
+
+	if (!cgs.media.videoCameraModel)
+	{
+		cgs.media.videoCameraModel = trap_R_RegisterModel("models/editorcamera/camera.md3");
+	}
+
+	Com_Memset(&re, 0, sizeof(re));
+	re.hModel       = cgs.media.videoCameraModel;
+	re.customShader = cgs.media.genericConstructionShader;
+
+	trap_R_ModelBounds(re.hModel, mins, maxs);
+
+	vec3_copy(inOrigin, origin);
+	origin[2] += -0.5f * (mins[2] + maxs[2]);
+	origin[1] += 0.5f * (mins[1] + maxs[1]);
+
+	vec3_copy(origin, re.origin);
+	angles_to_axis(angles, re.axis);
+	trap_R_AddRefEntityToScene(&re);
+}
 
 /*
  * @brief CG_CalcBezierPoint
@@ -113,35 +144,102 @@ float CG_CalcBezierArcLengths(const vec3_t start, const vec3_t ctrl1, const vec3
 	return len;
 }
 
+void CG_CameraEditor_KeyHandling(int key, qboolean down)
+{
+	if (!cg.editingCameras)
+	{
+		return;
+	}
+}
+
+void CG_CameraEditorMouseMove_Handling(int x, int y)
+{
+	if (!cg.editingCameras)
+	{
+		return;
+	}
+}
+
+void CG_CameraEditorDraw(void)
+{
+	if (!cg.editingCameras)
+	{
+		return;
+	}
+
+	if (qtrue)
+	{
+		float x, y, w, h;
+
+		// render crosshair
+		x = cg_crosshairX.value;
+		y = cg_crosshairY.value;
+		w = h = cg_crosshairSize.value;
+
+		CG_AdjustFrom640(&x, &y, &w, &h);
+
+		trap_R_DrawStretchPic(x + 0.5f * (cg.refdef_current->width - w),
+		                      y + 0.5f * (cg.refdef_current->height - h),
+		                      w, h, 0, 0, 1, 1, cgs.media.crosshairShader[cg_drawCrosshair.integer % NUM_CROSSHAIRS]);
+
+		if (cg.crosshairShaderAlt[cg_drawCrosshair.integer % NUM_CROSSHAIRS])
+		{
+			trap_R_DrawStretchPic(x + 0.5f * (cg.refdef_current->width - w),
+			                      y + 0.5f * (cg.refdef_current->height - h),
+			                      w, h, 0, 0, 1, 1, cg.crosshairShaderAlt[cg_drawCrosshair.integer % NUM_CROSSHAIRS]);
+		}
+	}
+	else
+	{
+		// render interface
+		// BG_PanelButtonsRender(cameraEditorButtons);
+
+		// render cursor
+		trap_R_SetColor(NULL);
+		CG_DrawPic(cgDC.cursorx, cgDC.cursory, 32, 32, cgs.media.cursorIcon);
+	}
+}
+
+void CG_ActivateCameraEditor(void)
+{
+	cg.editingCameras = qtrue;
+	// CG_EventHandling(CGAME_EVENT_CAMERAEDITOR, qfalse);
+}
+
+void CG_DeActivateCameraEditor(void)
+{
+	if (cgs.eventHandling == CGAME_EVENT_CAMERAEDITOR)
+	{
+		CG_EventHandling(-CGAME_EVENT_CAMERAEDITOR, qtrue);
+	}
+	cg.editingCameras = qfalse;
+}
+
 void CG_ClearCamera(void)
 {
-	Com_Memset(cameraPoints, 0, 50 * sizeof(cameraPoint_t));
-	cameraPointOffset = 0;
-	currentCamera     = NULL;
+	Com_Memset(&cameraInfo, 0, sizeof(cameraEditorInfo));
 }
 
 static cameraPoint_t *CG_GetNewCameraPoint(void)
 {
-	if (cameraPointOffset + 1 >= MAX_CAMERA_POINTS)
+	if (cameraInfo.cameraPointOffset + 1 >= MAX_CAMERA_POINTS)
 	{
 		return NULL;
 	}
 
-	if (!cameraPointOffset)
+	if (!cameraInfo.cameraPointOffset)
 	{
-		Com_Memset(cameraPoints, 0, 50 * sizeof(cameraPoint_t));
-		currentCamera = &cameraPoints[0];
+		Com_Memset(cameraInfo.cameraPoints, 0, 50 * sizeof(cameraPoint_t));
+		cameraInfo.currentCamera = &cameraInfo.cameraPoints[0];
 	}
 
-	return &cameraPoints[cameraPointOffset++];
+	return &cameraInfo.cameraPoints[cameraInfo.cameraPointOffset++];
 }
 
 void CG_CameraAddCurrentPoint(void)
 {
-	cg.editingCameras = qtrue;
-
 	cameraPoint_t *point = CG_GetNewCameraPoint();
-	cameraPoint_t *last  = currentCamera;
+	cameraPoint_t *last  = cameraInfo.currentCamera;
 
 	while (last && last->next)
 	{
@@ -162,14 +260,14 @@ void CG_CameraAddCurrentPoint(void)
 
 void CG_AddControlPoint(void)
 {
-	cameraPoint_t *last = currentCamera;
+	cameraPoint_t *last = cameraInfo.currentCamera;
 
 	while (last && last->next)
 	{
 		last = last->next;
 	}
 
-	if (vec3_equals(last->ctIn, 0, 0, 0))
+	if (vec3_isClear(last->ctIn))
 	{
 		vec3_sub(cg.refdef.vieworg, last->origin, last->ctIn);
 	}
@@ -183,12 +281,12 @@ void CG_AddControlPoint(void)
 void CG_PlayCurrentCamera(int seconds)
 {
 	vec3_t        bezCt1, bezCt2;
-	cameraPoint_t *last = currentCamera;
+	cameraPoint_t *last = cameraInfo.currentCamera;
 
-	cameraTotalLength = 0.f;
+	cameraInfo.cameraTotalLength = 0.f;
 	while (last && last->next)
 	{
-		if (!vec3_equals(last->ctOut, 0, 0, 0) || !vec3_equals(last->next->ctIn, 0, 0, 0))
+		if (!vec3_isClear(last->ctOut) || !vec3_isClear(last->next->ctIn))
 		{
 			vec3_add(last->origin, last->ctOut, bezCt1);
 			vec3_add(last->next->origin, last->next->ctIn, bezCt2);
@@ -199,12 +297,12 @@ void CG_PlayCurrentCamera(int seconds)
 			last->len = vec3_distance(last->origin, last->next->origin);
 		}
 
-		cameraTotalLength += last->len;
-		last               = last->next;
+		cameraInfo.cameraTotalLength += last->len;
+		last                          = last->next;
 	}
 
-	cameraUnitsInSecond             = cameraTotalLength / (float) seconds;
-	currentPlayCamera               = currentCamera;
+	cameraInfo.cameraUnitsInSecond  = cameraInfo.cameraTotalLength / (float) seconds;
+	cameraInfo.currentPlayCamera    = cameraInfo.currentCamera;
 	cgs.demoCamera.renderingFreeCam = qtrue;
 }
 
@@ -213,22 +311,15 @@ void CG_RunCamera(void)
 	cameraPoint_t *next;
 	vec3_t        bezCt1, bezCt2;
 
-	if (!currentPlayCamera)
+	if (!cameraInfo.currentPlayCamera || !cameraInfo.currentPlayCamera->next)
 	{
-		cgs.demoCamera.renderingFreeCam = qfalse;
+		cameraInfo.currentPlayCamera = NULL;
 		return;
 	}
 
-	if (!currentPlayCamera->next)
-	{
-		cgs.demoCamera.renderingFreeCam = qfalse;
-		currentPlayCamera               = NULL;
-		return;
-	}
+	next = cameraInfo.currentPlayCamera->next;
 
-	next = currentPlayCamera->next;
-
-	if (!vec3_equals(currentPlayCamera->ctOut, 0, 0, 0) || !vec3_equals(next->ctIn, 0, 0, 0))
+	if (!vec3_isClear(cameraInfo.currentPlayCamera->ctOut) || !vec3_isClear(next->ctIn))
 	{
 #if 0
 		vec3_add(currentPlayCamera->origin, currentPlayCamera->ctOut, bezCt1);
@@ -239,13 +330,13 @@ void CG_RunCamera(void)
 		vec_t bezierLengths[20] = { 0.f };
 		int   len               = ARRAY_LEN(bezierLengths);
 		float ff                = 1.f / (float)len;
-		float actualPoint       = cameraPoint;
-		vec_t expected          = currentPlayCamera->len * cameraPoint;
-		vec3_add(currentPlayCamera->origin, currentPlayCamera->ctOut, bezCt1);
+		float actualPoint       = cameraInfo.cameraPoint;
+		vec_t expected          = cameraInfo.currentPlayCamera->len * cameraInfo.cameraPoint;
+		vec3_add(cameraInfo.currentPlayCamera->origin, cameraInfo.currentPlayCamera->ctOut, bezCt1);
 		vec3_add(next->origin, next->ctIn, bezCt2);
 
 		// We need to calculate the lengths since the curve points are not in same distances
-		CG_CalcBezierArcLengths(currentPlayCamera->origin, bezCt1, bezCt2, next->origin, bezierLengths, len);
+		CG_CalcBezierArcLengths(cameraInfo.currentPlayCamera->origin, bezCt1, bezCt2, next->origin, bezierLengths, len);
 		for (i = 0; i < len; i++)
 		{
 			if (bezierLengths[i] > expected)
@@ -260,49 +351,49 @@ void CG_RunCamera(void)
 			}
 		}
 
-		CG_CalcBezierPoint(currentPlayCamera->origin, bezCt1, bezCt2, next->origin, actualPoint, cgs.demoCamera.camOrigin);
+		CG_CalcBezierPoint(cameraInfo.currentPlayCamera->origin, bezCt1, bezCt2, next->origin, actualPoint, cgs.demoCamera.camOrigin);
 #endif
 	}
 	else
 	{
-		vec3_lerp(currentPlayCamera->origin, next->origin, cameraPoint, cgs.demoCamera.camOrigin);
+		vec3_lerp(cameraInfo.currentPlayCamera->origin, next->origin, cameraInfo.cameraPoint, cgs.demoCamera.camOrigin);
 	}
 
-	angles_lerp(currentPlayCamera->angles, next->angles, cameraPoint, cgs.demoCamera.camAngle);
+	angles_lerp(cameraInfo.currentPlayCamera->angles, next->angles, cameraInfo.cameraPoint, cgs.demoCamera.camAngle);
 	cgs.demoCamera.setCamAngles = qtrue;
-	
+
 	{
 		float diff = ((float) (cg.time - cg.oldTime)) / 1000;
 
 		// how much we should move
-		float requiredMoveAmount = cameraUnitsInSecond * diff;
+		float requiredMoveAmount = cameraInfo.cameraUnitsInSecond * diff;
 
-		while (currentPlayCamera)
+		while (cameraInfo.currentPlayCamera)
 		{
-			float currentCameraOffset = cameraPoint * currentPlayCamera->len;
+			float currentCameraOffset = cameraInfo.cameraPoint * cameraInfo.currentPlayCamera->len;
 
-			if (currentCameraOffset + requiredMoveAmount > currentPlayCamera->len)
+			if (currentCameraOffset + requiredMoveAmount > cameraInfo.currentPlayCamera->len)
 			{
-				requiredMoveAmount = (currentCameraOffset + requiredMoveAmount) - currentPlayCamera->len;
+				requiredMoveAmount = (currentCameraOffset + requiredMoveAmount) - cameraInfo.currentPlayCamera->len;
 
-				currentPlayCamera = currentPlayCamera->next;
+				cameraInfo.currentPlayCamera = cameraInfo.currentPlayCamera->next;
 
-				if (currentPlayCamera)
+				if (cameraInfo.currentPlayCamera)
 				{
-					cameraPoint = requiredMoveAmount / currentPlayCamera->len;
+					cameraInfo.cameraPoint = requiredMoveAmount / cameraInfo.currentPlayCamera->len;
 				}
 			}
 			else
 			{
-				cameraPoint += (requiredMoveAmount / currentPlayCamera->len);
+				cameraInfo.cameraPoint += (requiredMoveAmount / cameraInfo.currentPlayCamera->len);
 				break;
 			}
 		}
 	}
 
-	if (!currentPlayCamera || !currentPlayCamera->next)
+	if (!cameraInfo.currentPlayCamera || !cameraInfo.currentPlayCamera->next)
 	{
-		cameraPoint                     = 0.f;
+		cameraInfo.cameraPoint          = 0.f;
 		cgs.demoCamera.setCamAngles     = qfalse;
 		cgs.demoCamera.renderingFreeCam = qfalse;
 	}
@@ -317,20 +408,25 @@ void CG_RenderCameraPoints(void)
 	vec3_t        vec;
 	vec3_t        bezTarget, bezSource, bezCt1, bezCt2;
 	cameraPoint_t *closest   = NULL;
-	cameraPoint_t *point     = currentCamera;
+	cameraPoint_t *point     = cameraInfo.currentCamera;
 	const float   bezierStep = 1.f / CAMERA_BEZIER_POINTS;
 
 	minDist = Square(8.f);
 
 	// don't render the route while playback
-	if (currentPlayCamera)
+	if (cameraInfo.currentPlayCamera)
 	{
 		return;
 	}
 
+	if (point)
+	{
+		CG_AddCameraModel(point->origin, point->angles);
+	}
+
 	while (point)
 	{
-		if (pointingCamera == point)
+		if (cameraInfo.pointingCamera == point)
 		{
 			CG_AddOnScreenText(va(S_COLOR_RED "%i", ++offset), point->origin, qfalse);
 		}
@@ -341,7 +437,7 @@ void CG_RenderCameraPoints(void)
 
 		if (point->prev)
 		{
-			if (!vec3_equals(point->prev->ctOut, 0, 0, 0) || !vec3_equals(point->ctIn, 0, 0, 0))
+			if (!vec3_isClear(point->prev->ctOut) || !vec3_isClear(point->ctIn))
 			{
 				vec3_add(point->prev->origin, point->prev->ctOut, bezCt1);
 				vec3_add(point->origin, point->ctIn, bezCt2);
@@ -383,6 +479,44 @@ void CG_RenderCameraPoints(void)
 			}
 		}
 
+		if (cameraInfo.pointingCamera == point)
+		{
+			// CG_DrawMoveGizmo(point->origin, -1);
+			CG_DrawRotateGizmo(point->origin, GIZMO_DEFAULT_RADIUS, 40, -1);
+
+			if (point->prev)
+			{
+				if (!vec3_isClear(point->ctIn))
+				{
+					vec3_add(point->origin, point->ctIn, vec);
+					CG_DrawMoveGizmo(vec, GIZMO_DEFAULT_RADIUS, -1);
+				}
+				else
+				{
+					vec3_sub(point->prev->origin, point->origin, vec);
+					vec3_norm(vec);
+					vec3_ma(point->origin, GIZMO_DEFAULT_RADIUS * 2, vec, vec);
+					CG_DrawMoveGizmo(vec, GIZMO_DEFAULT_RADIUS, -1);
+				}
+			}
+
+			if (point->next)
+			{
+				if (!vec3_isClear(point->ctOut))
+				{
+					vec3_add(point->origin, point->ctOut, vec);
+					CG_DrawMoveGizmo(vec, GIZMO_DEFAULT_RADIUS, -1);
+				}
+				else
+				{
+					vec3_sub(point->next->origin, point->origin, vec);
+					vec3_norm(vec);
+					vec3_ma(point->origin, GIZMO_DEFAULT_RADIUS * 2, vec, vec);
+					CG_DrawMoveGizmo(vec, GIZMO_DEFAULT_RADIUS, -1);
+				}
+			}
+		}
+
 		// TODO: check if we are currently editing a camera and ignore this then..
 		if (qtrue)
 		{
@@ -400,5 +534,5 @@ void CG_RenderCameraPoints(void)
 		point = point->next;
 	}
 
-	pointingCamera = closest;
+	cameraInfo.pointingCamera = closest;
 }

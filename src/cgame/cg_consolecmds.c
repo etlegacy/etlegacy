@@ -2054,7 +2054,15 @@ static void CG_Camera_f(void)
 
 	trap_Argv(1, token, sizeof(token));
 
-	if (!Q_stricmp(token, "add"))
+	if (!Q_stricmp(token, "open"))
+	{
+		CG_ActivateCameraEditor();
+	}
+	else if (!Q_stricmp(token, "close"))
+	{
+		CG_DeActivateCameraEditor();
+	}
+	else if (!Q_stricmp(token, "add"))
 	{
 		CG_CameraAddCurrentPoint();
 	}

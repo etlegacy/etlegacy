@@ -4239,6 +4239,12 @@ static void CG_Draw2D(void)
 		return;
 	}
 
+	if (cg.editingCameras)
+	{
+		CG_CameraEditorDraw();
+		return;
+	}
+
 	if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR || cgs.clientinfo[cg.clientNum].shoutcaster || cg.demoPlayback || cgs.sv_cheats)
 	{
 		CG_DrawOnScreenLabels();
@@ -4484,6 +4490,134 @@ void CG_DrawMiscGamemodels(void)
 		ent.hModel = cgs.miscGameModels[i].model;
 
 		trap_R_AddRefEntityToScene(&ent);
+	}
+}
+
+/**
+ * @brief CG_AddLineToScene
+ * @param[in] start
+ * @param[in] end
+ * @param[in] colour
+ */
+void CG_AddLineToScene(const vec3_t start, const vec3_t end, const vec4_t colour)
+{
+	refEntity_t re;
+
+	Com_Memset(&re, 0, sizeof(re));
+	re.reType       = RT_RAIL_CORE;
+	re.customShader = cgs.media.railCoreShader;
+	VectorCopy(start, re.origin);
+	VectorCopy(end, re.oldorigin);
+	re.shaderRGBA[0] = (byte)(colour[0] * 0xff);
+	re.shaderRGBA[1] = (byte)(colour[1] * 0xff);
+	re.shaderRGBA[2] = (byte)(colour[2] * 0xff);
+	re.shaderRGBA[3] = (byte)(colour[3] * 0xff);
+
+	trap_R_AddRefEntityToScene(&re);
+}
+
+void CG_DrawRotateGizmo(const vec3_t origin, float radius, int numSegments, int activeAxis)
+{
+	int i, j;
+	vec3_t vec;
+	vec3_t prevOrigin;
+	vec4_t colour;
+
+	for (j = 0; j < 3; j++)
+	{
+		vec3_clear(prevOrigin);
+		VectorClear(colour);
+		colour[3] = 1.f;
+		if (activeAxis >= 0)
+		{
+			if (activeAxis == j)
+			{
+				colour[j] = 1.f;
+			}
+			else
+			{
+				colour[j] = .3f;
+			}
+		}
+		else
+		{
+			colour[j] = 1.f;
+		}
+
+		for (i = 0; i <= numSegments; i++)
+		{
+			float theta = 2.0f * M_PI * i / numSegments;
+			float x = radius * cosf(theta);
+			float y = radius * sinf(theta);
+
+			switch (j)
+			{
+				default:
+				case 0:
+					vec3_set(vec, 0, x, y);
+					break;
+				case 1:
+					vec3_set(vec, y, 0, x);
+					break;
+				case 2:
+					vec3_set(vec, x, y, 0);
+					break;
+			}
+
+			vec3_add(origin, vec, vec);
+
+			if (i > 0)
+			{
+				CG_AddLineToScene(prevOrigin, vec, colour);
+			}
+
+			vec3_copy(vec, prevOrigin);
+		}
+	}
+}
+
+void CG_DrawMoveGizmo(const vec3_t origin, float radius, int activeAxis)
+{
+	int j;
+	vec3_t vec;
+	vec4_t colour;
+	refEntity_t  re;
+
+	for (j = 0; j < 3; j++)
+	{
+		VectorClear(colour);
+		colour[3] = 1.f;
+		if (activeAxis >= 0)
+		{
+			if (activeAxis == j)
+			{
+				colour[j] = 1.f;
+			}
+			else
+			{
+				colour[j] = .3f;
+			}
+		}
+		else
+		{
+			colour[j] = 1.f;
+		}
+		VectorClear(vec);
+		vec[j] = 1.f;
+		VectorMA(origin, radius, vec, vec);
+		CG_AddLineToScene(origin, vec, colour);
+
+		Com_Memset(&re, 0, sizeof(re));
+		re.reType = RT_SPRITE;
+		VectorCopy(vec, re.origin);
+		VectorCopy(vec, re.oldorigin);
+		re.radius        = 3;
+		re.customShader  = cgs.media.waterBubbleShader;
+		re.shaderRGBA[0] = (byte)(colour[0] * 0xff);
+		re.shaderRGBA[1] = (byte)(colour[1] * 0xff);
+		re.shaderRGBA[2] = (byte)(colour[2] * 0xff);
+		re.shaderRGBA[3] = (byte)(colour[3] * 0xff);
+		trap_R_AddRefEntityToScene(&re);
 	}
 }
 

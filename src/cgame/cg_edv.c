@@ -155,7 +155,6 @@ void CG_RunBindingBuf(int key, qboolean down, char *buf)
 	else if (down == qfalse)
 	{
 		return;         // we don't care about key ups otherwise
-
 	}
 	trap_SendConsoleCommand(va("%s\n", buf));
 }

@@ -256,7 +256,9 @@ void ByteToDir(int b, vec3_t dir);
 #define vec3_clear(a)              ((a)[0] = (a)[1] = (a)[2] = 0)
 #define vec3_negate(a, b)           ((b)[0] = -(a)[0], (b)[1] = -(a)[1], (b)[2] = -(a)[2])
 #define vec3_set(v, x, y, z)       ((v)[0] = (x), (v)[1] = (y), (v)[2] = (z))
-#define vec3_equals(v, x, y, z)       ((v)[0] == (x) && (v)[1] == (y) && (v)[2] == (z))
+#define vec3_equals(v, v2)       ((v)[0] == (v2)[0] && (v)[1] == (v2)[1] && (v)[2] == (v2)[2])
+#define vec3_valsEqual(v, x, y, z)       ((v)[0] == (x) && (v)[1] == (y) && (v)[2] == (z))
+#define vec3_isClear(x)             vec3_valsEqual(x, 0, 0, 0)
 //dot product
 #define vec3_dot(x, y)         ((x)[0] * (y)[0] + (x)[1] * (y)[1] + (x)[2] * (y)[2])
 #define vec3_sub(a, b, c)   ((c)[0] = (a)[0] - (b)[0], (c)[1] = (a)[1] - (b)[1], (c)[2] = (a)[2] - (b)[2])

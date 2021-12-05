@@ -1520,10 +1520,6 @@ static void CG_RegisterSounds(void)
 
 	cgs.media.shoveSound = trap_S_RegisterSound("sound/weapons/impact/flesh1.wav", qfalse);
 
-	cgs.media.gibLeg       = trap_R_RegisterModel("models/gibs/leg.md3");
-	cgs.media.gibIntestine = trap_R_RegisterModel("models/gibs/intestine.md3");
-	cgs.media.gibChest     = trap_R_RegisterModel("models/gibs/skull.md3");
-
 	CG_RegisterGameSounds();
 
 	CG_PrecacheFXSounds();
@@ -1774,6 +1770,10 @@ static void CG_RegisterGraphics(void)
 	cgs.media.debFabric[0] = trap_R_RegisterModel("models/shards/fabric1.md3");
 	cgs.media.debFabric[1] = trap_R_RegisterModel("models/shards/fabric2.md3");
 	cgs.media.debFabric[2] = trap_R_RegisterModel("models/shards/fabric3.md3");
+
+	cgs.media.gibLeg       = trap_R_RegisterModel("models/gibs/leg.md3");
+	cgs.media.gibIntestine = trap_R_RegisterModel("models/gibs/intestine.md3");
+	cgs.media.gibChest     = trap_R_RegisterModel("models/gibs/skull.md3");
 
 	cgs.media.spawnInvincibleShader = trap_R_RegisterShader("sprites/shield");
 	cgs.media.scoreEliminatedShader = trap_R_RegisterShader("sprites/skull");
@@ -2666,6 +2666,9 @@ void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qbo
 	Com_Memset(&cg, 0, sizeof(cg));
 	Com_Memset(cg_entities, 0, sizeof(cg_entities));
 	Com_Memset(cg_weapons, 0, sizeof(cg_weapons));
+
+	// Clear camera information
+	CG_ClearCamera();
 
 	cgs.initing = qtrue;
 

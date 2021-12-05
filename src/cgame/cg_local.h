@@ -1757,6 +1757,8 @@ typedef struct
 
 	qhandle_t thirdPersonBinocModel;
 
+	qhandle_t videoCameraModel;
+
 	// weapon effect shaders
 	//qhandle_t rocketExplosionShader;
 
@@ -3030,6 +3032,14 @@ qboolean CG_OwnerDrawVisible(int flags);
 void CG_RunMenuScript(char **args);
 void CG_GetTeamColor(vec4_t *color);
 
+void CG_AddLineToScene(const vec3_t start, const vec3_t end, const vec4_t colour);
+
+#define GIZMO_DEFAULT_RADIUS 32.f
+
+void CG_DrawRotateGizmo(const vec3_t origin, float radius, int numSegments, int activeAxis);
+void CG_DrawMoveGizmo(const vec3_t origin, float radius, int activeAxis);
+
+
 /**
  * @struct scrollText_s
  * @typedef scrollText_t
@@ -4026,6 +4036,12 @@ void CG_Spawnpoints_MenuText_Draw(panel_button_t *button);
 void CG_Spawnpoints_MenuTitleText_Draw(panel_button_t *button);
 
 // cg_camera.c
+void CG_CameraEditor_KeyHandling(int key, qboolean down);
+void CG_CameraEditorMouseMove_Handling(int x, int y);
+
+void CG_CameraEditorDraw(void);
+void CG_ActivateCameraEditor(void);
+void CG_DeActivateCameraEditor(void);
 void CG_ClearCamera(void);
 void CG_CameraAddCurrentPoint(void);
 void CG_AddControlPoint(void);
