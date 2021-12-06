@@ -1406,7 +1406,7 @@ void CG_DrawMap(float x, float y, float w, float h, int mEntFilter, mapScissor_t
 
 				trap_R_SetColor(NULL);
 
-				CG_DrawRect_FixedBorder(x - 0.5f, y - 0.5f, w + 1.0f, h + 1.0f, 1, colorWhite);
+				CG_DrawRect_FixedBorder(x - 0.75f, y - 0.75f, w + 1.5f, h + 1.5f, 2, colorLtGrey);
 			}
 		}
 	}
