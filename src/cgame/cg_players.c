@@ -2090,12 +2090,12 @@ static void CG_PlayerSprites(centity_t *cent)
 		{
 			if (cg_shoutcastDrawHealth.integer == 1 && cg_drawSpectatorNames.integer == 0)
 			{
-				CG_PlayerFloatText(cent, va("%s%ihp", ci->team == TEAM_AXIS ? "^1" : "^2", ci->health), height + spacing);
+				CG_PlayerFloatText(cent, va("%s%ihp", ci->team == TEAM_AXIS ? "^1" : "^$", ci->health), height + spacing);
 			}
 			else if (cg_shoutcastDrawHealth.integer == 2)
 			{
 				vec4_t bgcolor     = { 0.0f, 0.0f, 0.0f, 1.0f };
-				vec4_t healthColor = { 0.0f, 1.0f, 0.0f, 1.0f };
+				vec4_t healthColor = { 0.0f, 0.0f, 1.0f, 1.0f };
 
 				float fraction = (float)ci->health / (float)CG_GetPlayerMaxHealth(cent->currentState.clientNum, ci->cls, ci->team);
 
@@ -2115,7 +2115,7 @@ static void CG_PlayerSprites(centity_t *cent)
 
 			if (cg_shoutcastDrawHealth.integer == 1 && cgs.clientinfo[cg.clientNum].shoutcaster)
 			{
-				name = va("%s %s%ihp", name, ci->team == TEAM_AXIS ? "^1" : "^2", ci->health);
+				name = va("%s %s%ihp", name, ci->team == TEAM_AXIS ? "^1" : "^$", ci->health);
 			}
 
 			CG_PlayerFloatText(cent, name, height + spacing);
