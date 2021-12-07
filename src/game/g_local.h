@@ -1590,7 +1590,7 @@ void func_constructible_underconstructionthink(gentity_t *ent);
 void Think_SetupObjectiveInfo(gentity_t *ent);
 
 // g_misc.c
-void TeleportPlayer(gentity_t *player, vec3_t origin, vec3_t angles);
+void TeleportPlayer(gentity_t *player, const vec3_t origin, const vec3_t angles);
 void mg42_fire(gentity_t *other);
 void mg42_stopusing(gentity_t *self);
 void aagun_fire(gentity_t *other);
@@ -1625,7 +1625,7 @@ void Weapon_Medic_Ext(gentity_t *ent, vec3_t viewpos, vec3_t tosspos, vec3_t vel
 // g_client.c
 int TeamCount(int ignoreClientNum, team_t team);
 team_t PickTeam(int ignoreClientNum);
-void SetClientViewAngle(gentity_t *ent, vec3_t angle);
+void SetClientViewAngle(gentity_t *ent, const vec3_t angle);
 gentity_t *SelectSpawnPoint(vec3_t avoidPoint, vec3_t origin, vec3_t angles);
 void respawn(gentity_t *ent);
 void BeginIntermission(void);

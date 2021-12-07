@@ -3649,9 +3649,9 @@ void Cmd_SetViewpos_f(gentity_t *ent)
 	char   buffer[MAX_TOKEN_CHARS];
 	int    i;
 
-	if (!g_cheats.integer && !ent->client->sess.shoutcaster)
+	if (!g_cheats.integer && ent->client->sess.sessionTeam != TEAM_SPECTATOR)
 	{
-		trap_SendServerCommand(ent - g_entities, va("print \"Cheats are not enabled on this server.\n\""));
+		trap_SendServerCommand(ent - g_entities, va("print \"Only spectators can use the setviewpos command.\n\""));
 		return;
 	}
 
@@ -3661,28 +3661,28 @@ void Cmd_SetViewpos_f(gentity_t *ent)
 		for (i = 0; i < 3; i++)
 		{
 			trap_Argv(i + 1, buffer, sizeof(buffer));
-			origin[i] = atof(buffer);
+			origin[i] = Q_atof(buffer);
 		}
 
 		trap_Argv(4, buffer, sizeof(buffer));
-		angles[YAW] = atof(buffer);
+		angles[YAW] = Q_atof(buffer);
 	}
 	else if (trap_Argc() == 8)
 	{
 		for (i = 0; i < 3; i++)
 		{
 			trap_Argv(i + 1, buffer, sizeof(buffer));
-			origin[i] = atof(buffer);
+			origin[i] = Q_atof(buffer);
 		}
 
 		for (i = 0; i < 3; i++)
 		{
 			trap_Argv(i + 4, buffer, sizeof(buffer));
-			angles[i] = atof(buffer);
+			angles[i] = Q_atof(buffer);
 		}
 
 		trap_Argv(7, buffer, sizeof(buffer));
-		qboolean useViewHeight = atof(buffer);
+		qboolean useViewHeight = Q_atof(buffer);
 
 		if (useViewHeight)
 		{

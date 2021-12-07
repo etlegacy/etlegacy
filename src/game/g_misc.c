@@ -129,7 +129,7 @@ TELEPORTERS
  * @param[in] origin
  * @param[in] angles
  */
-void TeleportPlayer(gentity_t *player, vec3_t origin, vec3_t angles)
+void TeleportPlayer(gentity_t *player, const vec3_t origin, const vec3_t angles)
 {
 	VectorCopy(origin, player->client->ps.origin);
 	player->client->ps.origin[2] += 1;

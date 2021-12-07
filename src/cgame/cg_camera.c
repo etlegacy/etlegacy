@@ -67,6 +67,9 @@ typedef struct cameraEditorInfo
 
 	int cameraPointOffset;
 	cameraPoint_t cameraPoints[MAX_CAMERA_POINTS];
+
+	vec3_t backupOrigin;
+	vec3_t backupAngles;
 } cameraEditorInfo;
 
 static cameraEditorInfo cameraInfo;
@@ -82,8 +85,8 @@ static void CG_AddCameraModel(const vec3_t inOrigin, const vec3_t angles)
 	}
 
 	Com_Memset(&re, 0, sizeof(re));
-	re.hModel       = cgs.media.videoCameraModel;
-	re.customShader = cgs.media.genericConstructionShader;
+	re.hModel = cgs.media.videoCameraModel;
+	// re.customShader = cgs.media.genericConstructionShader;
 
 	trap_R_ModelBounds(re.hModel, mins, maxs);
 
@@ -94,6 +97,20 @@ static void CG_AddCameraModel(const vec3_t inOrigin, const vec3_t angles)
 	vec3_copy(origin, re.origin);
 	angles_to_axis(angles, re.axis);
 	trap_R_AddRefEntityToScene(&re);
+}
+
+static inline void CG_TeleportPlayer(const vec3_t origin, const vec3_t angles, qboolean useViewHeight)
+{
+	// only send the viewpos command if we are not playing a demo file and we are only spectating
+	if (cg.demoPlayback || cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR)
+	{
+		return;
+	}
+
+	trap_SendClientCommand(va("setviewpos %f %f %f %f %f %f %i",
+	                          origin[0], origin[1], origin[2],
+	                          angles[PITCH], angles[YAW], angles[ROLL],
+	                          useViewHeight));
 }
 
 /*
@@ -301,6 +318,11 @@ void CG_PlayCurrentCamera(int seconds)
 		last                          = last->next;
 	}
 
+	CG_TeleportPlayer(cameraInfo.currentCamera->origin, cameraInfo.currentCamera->angles, qtrue);
+
+	vec3_copy(cg.snap->ps.origin, cameraInfo.backupOrigin);
+	vec3_copy(cg.snap->ps.viewangles, cameraInfo.backupAngles);
+
 	cameraInfo.cameraUnitsInSecond  = cameraInfo.cameraTotalLength / (float) seconds;
 	cameraInfo.currentPlayCamera    = cameraInfo.currentCamera;
 	cgs.demoCamera.renderingFreeCam = qtrue;
@@ -308,7 +330,7 @@ void CG_PlayCurrentCamera(int seconds)
 
 void CG_RunCamera(void)
 {
-	cameraPoint_t *next;
+	cameraPoint_t *current, *next;
 	vec3_t        bezCt1, bezCt2;
 
 	if (!cameraInfo.currentPlayCamera || !cameraInfo.currentPlayCamera->next)
@@ -317,9 +339,10 @@ void CG_RunCamera(void)
 		return;
 	}
 
-	next = cameraInfo.currentPlayCamera->next;
+	current = cameraInfo.currentPlayCamera;
+	next    = cameraInfo.currentPlayCamera->next;
 
-	if (!vec3_isClear(cameraInfo.currentPlayCamera->ctOut) || !vec3_isClear(next->ctIn))
+	if (!vec3_isClear(current->ctOut) || !vec3_isClear(next->ctIn))
 	{
 #if 0
 		vec3_add(currentPlayCamera->origin, currentPlayCamera->ctOut, bezCt1);
@@ -331,12 +354,12 @@ void CG_RunCamera(void)
 		int   len               = ARRAY_LEN(bezierLengths);
 		float ff                = 1.f / (float)len;
 		float actualPoint       = cameraInfo.cameraPoint;
-		vec_t expected          = cameraInfo.currentPlayCamera->len * cameraInfo.cameraPoint;
-		vec3_add(cameraInfo.currentPlayCamera->origin, cameraInfo.currentPlayCamera->ctOut, bezCt1);
+		vec_t expected          = current->len * cameraInfo.cameraPoint;
+		vec3_add(current->origin, current->ctOut, bezCt1);
 		vec3_add(next->origin, next->ctIn, bezCt2);
 
 		// We need to calculate the lengths since the curve points are not in same distances
-		CG_CalcBezierArcLengths(cameraInfo.currentPlayCamera->origin, bezCt1, bezCt2, next->origin, bezierLengths, len);
+		CG_CalcBezierArcLengths(current->origin, bezCt1, bezCt2, next->origin, bezierLengths, len);
 		for (i = 0; i < len; i++)
 		{
 			if (bezierLengths[i] > expected)
@@ -351,16 +374,18 @@ void CG_RunCamera(void)
 			}
 		}
 
-		CG_CalcBezierPoint(cameraInfo.currentPlayCamera->origin, bezCt1, bezCt2, next->origin, actualPoint, cgs.demoCamera.camOrigin);
+		CG_CalcBezierPoint(current->origin, bezCt1, bezCt2, next->origin, actualPoint, cgs.demoCamera.camOrigin);
 #endif
 	}
 	else
 	{
-		vec3_lerp(cameraInfo.currentPlayCamera->origin, next->origin, cameraInfo.cameraPoint, cgs.demoCamera.camOrigin);
+		vec3_lerp(current->origin, next->origin, cameraInfo.cameraPoint, cgs.demoCamera.camOrigin);
 	}
 
-	angles_lerp(cameraInfo.currentPlayCamera->angles, next->angles, cameraInfo.cameraPoint, cgs.demoCamera.camAngle);
+	angles_lerp(current->angles, next->angles, cameraInfo.cameraPoint, cgs.demoCamera.camAngle);
 	cgs.demoCamera.setCamAngles = qtrue;
+
+	// CG_TeleportPlayer(cgs.demoCamera.camOrigin, cgs.demoCamera.camAngle);
 
 	{
 		float diff = ((float) (cg.time - cg.oldTime)) / 1000;
@@ -380,6 +405,11 @@ void CG_RunCamera(void)
 
 				if (cameraInfo.currentPlayCamera)
 				{
+					// When we reach a camera point, teleport the player to that position so the in pvs entities are loaded correctly
+					if (!cg.demoPlayback)
+					{
+						CG_TeleportPlayer(cameraInfo.currentPlayCamera->origin, cameraInfo.currentPlayCamera->angles, qtrue);
+					}
 					cameraInfo.cameraPoint = requiredMoveAmount / cameraInfo.currentPlayCamera->len;
 				}
 			}
@@ -393,6 +423,7 @@ void CG_RunCamera(void)
 
 	if (!cameraInfo.currentPlayCamera || !cameraInfo.currentPlayCamera->next)
 	{
+		CG_TeleportPlayer(cameraInfo.backupOrigin, cameraInfo.backupAngles, qtrue);
 		cameraInfo.cameraPoint          = 0.f;
 		cgs.demoCamera.setCamAngles     = qfalse;
 		cgs.demoCamera.renderingFreeCam = qfalse;

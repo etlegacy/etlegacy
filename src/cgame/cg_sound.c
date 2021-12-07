@@ -707,7 +707,7 @@ void CG_SetViewanglesForSpeakerEditor(void)
  */
 static void CG_RenderScriptSpeakers(void)
 {
-	int          i, j, closest;
+	int          i, closest;
 	float        dist, minDist;
 	vec3_t       vec;
 	refEntity_t  re;

@@ -674,7 +674,7 @@ void CopyToBodyQue(gentity_t *ent)
  * @param[in,out] ent
  * @param[in] angle
  */
-void SetClientViewAngle(gentity_t *ent, vec3_t angle)
+void SetClientViewAngle(gentity_t *ent, const vec3_t angle)
 {
 	int i;
 	int cmdAngle;
