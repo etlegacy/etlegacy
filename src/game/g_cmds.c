@@ -4416,6 +4416,13 @@ void Cmd_SetSpawnPoint_f(gentity_t *ent)
 			{
 				break;
 			}
+
+			// don't allow checking locked teams spawn's spawn
+			if (ent->client->sess.sessionTeam == TEAM_SPECTATOR && teamInfo[spawnPointState->team].team_lock)
+			{
+				break;
+			}
+
 			VectorCopy(level.limboCams[i].origin, ent->s.origin2);
 			ent->r.svFlags |= SVF_SELF_PORTAL_EXCLUSIVE;
 			trap_SendServerCommand((int)(ent - g_entities), va("portalcampos %i %i %i %i %i %i %i %i", majorSpawn - 1, (int)level.limboCams[i].origin[0], (int)level.limboCams[i].origin[1], (int)level.limboCams[i].origin[2], (int)level.limboCams[i].angles[0], (int)level.limboCams[i].angles[1], (int)level.limboCams[i].angles[2], level.limboCams[i].hasEnt ? level.limboCams[i].targetEnt : -1));
