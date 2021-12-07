@@ -2863,6 +2863,9 @@ static void CG_WeaponAnimation(playerState_t *ps, weaponInfo_t *weapon, int *wea
 	if (ws == WSTATE_FIRE && !(cg_weapAnims.integer & WEAPANIM_FIRING))
 	{
 		*weapOld = *weap = CG_DefaultAnimFrameForWeapon(ps->weapon);
+		// in some cases the weap.anim pointer does not get set and this causes a sigsev,
+		// so this is just a workaround to force the anim to be set to empty.
+		CG_SetWeapLerpFrameAnimation(weapon, &cent->pe.weap, ps->weapAnim);
 		return;
 	}
 	if (ws == WSTATE_RELOAD && !(cg_weapAnims.integer & WEAPANIM_RELOAD))

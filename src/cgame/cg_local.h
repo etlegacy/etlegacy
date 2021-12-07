@@ -158,10 +158,13 @@
 #define SPEED_US_TO_MPH   23.44f
 
 // gun animations
-#define WEAPANIM_IDLE    0x01
-#define WEAPANIM_FIRING  0x02
-#define WEAPANIM_RELOAD  0x04
-#define WEAPANIM_SWITCH  0x08
+typedef enum
+{
+	WEAPANIM_IDLE = BIT(0),
+	WEAPANIM_FIRING = BIT(1),
+	WEAPANIM_RELOAD = BIT(2),
+	WEAPANIM_SWITCH = BIT(3)
+} weapAnim_t;
 
 /**
  * @struct specLabel_s
