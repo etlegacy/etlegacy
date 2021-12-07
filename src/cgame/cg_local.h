@@ -4036,6 +4036,7 @@ void CG_Spawnpoints_MenuText_Draw(panel_button_t *button);
 void CG_Spawnpoints_MenuTitleText_Draw(panel_button_t *button);
 
 // cg_camera.c
+qboolean CG_CameraCheckExecKey(int key, qboolean down, qboolean doAction);
 void CG_CameraEditor_KeyHandling(int key, qboolean down);
 void CG_CameraEditorMouseMove_Handling(int x, int y);
 

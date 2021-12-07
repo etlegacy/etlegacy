@@ -4417,7 +4417,7 @@ void Cmd_SetSpawnPoint_f(gentity_t *ent)
 				break;
 			}
 
-			// don't allow checking locked teams spawn's spawn
+			// don't allow checking locked teams spawn
 			if (ent->client->sess.sessionTeam == TEAM_SPECTATOR && teamInfo[spawnPointState->team].team_lock)
 			{
 				break;

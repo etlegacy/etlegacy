@@ -1378,6 +1378,7 @@ static void CG_MapRestart(void)
 	CG_InitMarkPolys();
 
 	cg.editingSpeakers = qfalse;
+	cg.editingCameras = qfalse;
 
 	BG_BuildSplinePaths();
 

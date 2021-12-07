@@ -2986,6 +2986,11 @@ qboolean CG_CheckExecKey(int key)
 		return CG_ShoutcastCheckExecKey(key, qfalse);
 	}
 
+	if (cg.editingCameras)
+	{
+		return CG_CameraCheckExecKey(key, qtrue, qfalse);
+	}
+
 	return qfalse;
 }
 

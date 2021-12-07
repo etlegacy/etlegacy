@@ -58,6 +58,7 @@ typedef struct cameraEditorInfo
 	// TODO: move to cgs when ready
 	cameraPoint_t *currentCamera;
 	cameraPoint_t *pointingCamera;
+	cameraPoint_t *selectedCamera;
 	cameraPoint_t *currentPlayCamera;
 	cameraPoint_t *editingPoint;
 
@@ -113,6 +114,11 @@ static inline void CG_TeleportPlayer(const vec3_t origin, const vec3_t angles, q
 	                          useViewHeight));
 }
 
+static inline void CG_OverrideMouse(qboolean value)
+{
+	trap_Cvar_Set("cl_bypassmouseinput", value ? "1" : "0");
+}
+
 /*
  * @brief CG_CalcBezierPoint
  * @param[in] start
@@ -161,12 +167,71 @@ float CG_CalcBezierArcLengths(const vec3_t start, const vec3_t ctrl1, const vec3
 	return len;
 }
 
+qboolean CG_CameraCheckExecKey(int key, qboolean down, qboolean doAction)
+{
+	char buf[MAX_STRING_TOKENS];
+
+	// we don't want these duplicate key presses
+	if (key & K_CHAR_FLAG)
+	{
+		return qfalse;
+	}
+
+	// escape does escape stuff..
+	if (key == K_ESCAPE)
+	{
+		if (doAction && !down)
+		{
+			CG_OverrideMouse(qtrue);
+			cameraInfo.selectedCamera = NULL;
+		}
+		return qtrue;
+	}
+
+	trap_Key_GetBindingBuf(key, buf, sizeof(buf));
+
+	if (!buf[0])
+	{
+		return qfalse;
+	}
+
+	if (buf[0] == '+' && !down)
+	{
+		buf[0] = '-';
+	}
+
+	if (!Q_stricmp(buf, "-attack"))
+	{
+		if (doAction)
+		{
+			if (cameraInfo.pointingCamera)
+			{
+				CG_OverrideMouse(qfalse);
+				cameraInfo.selectedCamera = cameraInfo.pointingCamera;
+			}
+		}
+		return qtrue;
+	}
+	else if (!Q_stricmp(buf, "dropobj") && !down)
+	{
+		if (doAction)
+		{
+			CG_CameraAddCurrentPoint();
+		}
+		return qtrue;
+	}
+
+	return qfalse;
+}
+
 void CG_CameraEditor_KeyHandling(int key, qboolean down)
 {
 	if (!cg.editingCameras)
 	{
 		return;
 	}
+
+	CG_CameraCheckExecKey(key, down, qtrue);
 }
 
 void CG_CameraEditorMouseMove_Handling(int x, int y)
@@ -184,9 +249,39 @@ void CG_CameraEditorDraw(void)
 		return;
 	}
 
-	if (qtrue)
+	if (!cameraInfo.selectedCamera)
 	{
-		float x, y, w, h;
+		int    bindingKey[2];
+		char   binding[2][32];
+		vec4_t colour;
+		float  x, y, w, h;
+
+		VectorCopy(colorWhite, colour);
+		colour[3] = .8f;
+		y         = 442;
+
+		CG_Text_Paint_Ext(8, y, .2f, .2f, colorRed, "Camera editor active",
+		                  0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+
+		trap_Key_KeysForBinding("dropobj", &bindingKey[0], &bindingKey[1]);
+		trap_Key_KeynumToStringBuf(bindingKey[0], binding[0], sizeof(binding[0]));
+		trap_Key_KeynumToStringBuf(bindingKey[1], binding[1], sizeof(binding[1]));
+		Q_strupr(binding[0]);
+		Q_strupr(binding[1]);
+		CG_Text_Paint_Ext(8, y + 10, .2f, .2f, colour,
+		                  va("Create new camera point: %s%s", bindingKey[0] != -1 ? binding[0] : "???",
+		                     bindingKey[1] != -1 ? va(" or %s", binding[1]) : ""),
+		                  0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+
+		trap_Key_KeysForBinding("+attack", &bindingKey[0], &bindingKey[1]);
+		trap_Key_KeynumToStringBuf(bindingKey[0], binding[0], sizeof(binding[0]));
+		trap_Key_KeynumToStringBuf(bindingKey[1], binding[1], sizeof(binding[1]));
+		Q_strupr(binding[0]);
+		Q_strupr(binding[1]);
+		CG_Text_Paint_Ext(8, y + 20, .2f, .2f, colour,
+		                  va("Modify target camera point: %s%s", bindingKey[0] != -1 ? binding[0] : "???",
+		                     bindingKey[1] != -1 ? va(" or %s", binding[1]) : ""),
+		                  0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 
 		// render crosshair
 		x = cg_crosshairX.value;
@@ -220,7 +315,8 @@ void CG_CameraEditorDraw(void)
 void CG_ActivateCameraEditor(void)
 {
 	cg.editingCameras = qtrue;
-	// CG_EventHandling(CGAME_EVENT_CAMERAEDITOR, qfalse);
+	CG_EventHandling(CGAME_EVENT_CAMERAEDITOR, qfalse);
+	CG_OverrideMouse(qtrue);
 }
 
 void CG_DeActivateCameraEditor(void)
@@ -228,6 +324,7 @@ void CG_DeActivateCameraEditor(void)
 	if (cgs.eventHandling == CGAME_EVENT_CAMERAEDITOR)
 	{
 		CG_EventHandling(-CGAME_EVENT_CAMERAEDITOR, qtrue);
+		CG_OverrideMouse(qfalse);
 	}
 	cg.editingCameras = qfalse;
 }
