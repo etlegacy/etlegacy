@@ -261,13 +261,21 @@ static hudStucture_t *CG_getHudByNumber(int number)
 }
 
 /**
- * @brief CG_isHudNumberAvailable
+ * @brief CG_isHudNumberAvailable checks if the hud by said number is available for use, 0 to 2 are forbidden.
  * @param[in] number
  * @return
  */
 static qboolean CG_isHudNumberAvailable(int number)
 {
-	hudStucture_t *hud = CG_getHudByNumber(number);
+	hudStucture_t *hud = NULL;
+
+	// values from 0 to 2 are used by the default hud's
+	if (number <= 2)
+	{
+		return qfalse;
+	}
+
+	hud = CG_getHudByNumber(number);
 
 	if (!hud)
 	{
@@ -462,7 +470,7 @@ static qboolean CG_ParseHUD(int handle)
 	}
 
 	// check that the hudnumber value was set
-	if (temphud.hudnumber <= 2)
+	if (!CG_isHudNumberAvailable(temphud.hudnumber))
 	{
 		return CG_HUD_ParseError(handle, "Invalid hudnumber value: %i", temphud.hudnumber);
 	}
@@ -2028,7 +2036,7 @@ void CG_DrawNewCompass(rectDef_t location)
 		snap = cg.snap;
 	}
 
-	if (snap->ps.pm_flags & PMF_LIMBO && !cgs.clientinfo[cg.clientNum].shoutcaster
+	if ((snap->ps.pm_flags & PMF_LIMBO && !cgs.clientinfo[cg.clientNum].shoutcaster)
 #ifdef FEATURE_MULTIVIEW
 	    || cg.mvTotalClients > 0
 #endif
