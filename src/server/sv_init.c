@@ -847,18 +847,46 @@ void SV_SpawnServer(const char *server)
 
 	svs.time += FRAMETIME;
 
+	// the server sends these to the clients so they can figure
+	// out which pk3s should be auto-downloaded
+	// NOTE: we consider the referencedPaks as 'required for operation'
+
+	// we want the server to reference the mod_bin pk3 that the client is expected to load from
+	SV_TouchCGameDLL();
+
 	if (sv_pure->integer)
 	{
 		// the server sends these to the clients so they will only
 		// load pk3s also loaded at the server
+		qboolean crazyServer = qfalse;
+		size_t len = 0;
+
 		p = FS_LoadedPakChecksums();
-		Cvar_Set("sv_paks", p);
-		if (strlen(p) == 0)
+		len = strlen(p);
+
+		// if the maps listing takes more than half of the full buffer, then we just use the reference listings instead
+		// some people just want to have servers with x^10 pk3 files
+		if (len > (BIG_INFO_STRING / 2))
+		{
+			crazyServer = qtrue;
+			p = FS_ReferencedPakChecksums();
+			Com_Printf(S_COLOR_RED "WARNING: sv_pure set and the amount of pk3 files exceeds normally supported count, using reference values only\n");
+		}
+		else if (len == 0)
 		{
 			Com_Printf("WARNING: sv_pure set but no PK3 files loaded\n");
 		}
 
-		p = FS_LoadedPakNames();
+		Cvar_Set("sv_paks", p);
+
+		if (!crazyServer)
+		{
+			p = FS_LoadedPakNames();
+		}
+		else
+		{
+			p = FS_ReferencedPakNames();
+		}
 		Cvar_Set("sv_pakNames", p);
 	}
 	else
@@ -866,12 +894,6 @@ void SV_SpawnServer(const char *server)
 		Cvar_Set("sv_paks", "");
 		Cvar_Set("sv_pakNames", "");
 	}
-	// the server sends these to the clients so they can figure
-	// out which pk3s should be auto-downloaded
-	// NOTE: we consider the referencedPaks as 'required for operation'
-
-	// we want the server to reference the mod_bin pk3 that the client is expected to load from
-	SV_TouchCGameDLL();
 
 	p = FS_ReferencedPakChecksums();
 	Cvar_Set("sv_referencedPaks", p);
