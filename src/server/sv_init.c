@@ -861,7 +861,7 @@ void SV_SpawnServer(const char *server)
 		qboolean crazyServer = qfalse;
 		size_t len = 0;
 
-		p = FS_LoadedPakChecksums();
+		p = FS_LoadedPakNames();
 		len = strlen(p);
 
 		// if the maps listing takes more than half of the full buffer, then we just use the reference listings instead
@@ -869,7 +869,7 @@ void SV_SpawnServer(const char *server)
 		if (len > (BIG_INFO_STRING / 2))
 		{
 			crazyServer = qtrue;
-			p = FS_ReferencedPakChecksums();
+			p = FS_ReferencedPakNames();
 			Com_Printf(S_COLOR_RED "WARNING: sv_pure set and the amount of pk3 files exceeds normally supported count, using reference values only\n");
 		}
 		else if (len == 0)
@@ -877,17 +877,17 @@ void SV_SpawnServer(const char *server)
 			Com_Printf("WARNING: sv_pure set but no PK3 files loaded\n");
 		}
 
-		Cvar_Set("sv_paks", p);
+		Cvar_Set("sv_pakNames", p);
 
 		if (!crazyServer)
 		{
-			p = FS_LoadedPakNames();
+			p = FS_LoadedPakChecksums();
 		}
 		else
 		{
-			p = FS_ReferencedPakNames();
+			p = FS_ReferencedPakChecksums();
 		}
-		Cvar_Set("sv_pakNames", p);
+		Cvar_Set("sv_paks", p);
 	}
 	else
 	{
