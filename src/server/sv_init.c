@@ -898,6 +898,11 @@ void SV_SpawnServer(const char *server)
 	p = FS_ReferencedPakChecksums();
 	Cvar_Set("sv_referencedPaks", p);
 	p = FS_ReferencedPakNames();
+	// If we are referencing huge amount of pk3 files then just error out here.
+	if (strlen(p) > (BIG_INFO_STRING / 4))
+	{
+		Com_Error(ERR_FATAL, "Server is referencing too many packages, remove extra files from the home path");
+	}
 	Cvar_Set("sv_referencedPakNames", p);
 
 	// save systeminfo and serverinfo strings
