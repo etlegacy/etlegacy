@@ -2843,7 +2843,7 @@ void Com_Init(char *commandLine)
 		{
 			char *defaultProfile = NULL;
 
-			(void) FS_ReadFile("profiles/defaultprofile.dat", (void **)&defaultProfile);
+			(void) FS_ReadFile(DEFAULT_PROFILE_DAT, (void **)&defaultProfile);
 
 			if (defaultProfile)
 			{
@@ -3532,6 +3532,25 @@ void Com_Frame(void)
 	com_frameNumber++;
 }
 
+void Com_CheckDefaultProfileDatExists(void)
+{
+	// Write out the default profile information when the shutdown is occurring
+	char *defaultProfile = Cvar_VariableString("cl_defaultProfile");
+	if (defaultProfile && defaultProfile[0] && !FS_FileExists(DEFAULT_PROFILE_DAT))
+	{
+		fileHandle_t f;
+		char tmpProfile[MAX_CVAR_VALUE_STRING] = {'\0'};
+		Q_strncpyz(tmpProfile, defaultProfile, sizeof(tmpProfile));
+		Q_CleanStr(tmpProfile);
+		Q_CleanDirName(tmpProfile);
+		if (FS_FOpenFileByMode(DEFAULT_PROFILE_DAT, &f, FS_WRITE) >= 0)
+		{
+			FS_Write(va("\"%s\"", tmpProfile), strlen(tmpProfile) + 2, f);
+			FS_FCloseFile(f);
+		}
+	}
+}
+
 /**
  * @brief Com_Shutdown
  * @param[in] badProfile
@@ -3566,6 +3585,10 @@ void Com_Shutdown(qboolean badProfile)
 
 #ifdef FEATURE_DBMS
 	(void) DB_DeInit();
+#endif
+
+#ifndef DEDICATED
+	Com_CheckDefaultProfileDatExists();
 #endif
 
 	if (logfile)

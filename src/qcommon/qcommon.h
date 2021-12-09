@@ -1162,6 +1162,7 @@ void Com_TouchMemory(void);
 void Com_Init(char *commandLine);
 char *Com_GetCommandLine(void);
 void Com_Frame(void);
+void Com_CheckDefaultProfileDatExists(void);
 void Com_Shutdown(qboolean badProfile);
 
 /*

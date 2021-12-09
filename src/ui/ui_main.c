@@ -2100,7 +2100,7 @@ static int UI_FormatMultineLinePrint(char *s, int lineWidth)
 		{
 			lastSpace = s;
 		}
-        
+
         // we reach the end of the string and it doesn't fit in on line
 		if (neednewline && lastSpace)
 		{
@@ -5657,7 +5657,7 @@ void UI_RunMenuScript(char **args)
 			Q_CleanDirName(cl_defaultProfile.string);
 			trap_Cvar_Set("cl_defaultProfile", cl_defaultProfile.string);
 
-			if (trap_FS_FOpenFile("profiles/defaultprofile.dat", &f, FS_WRITE) >= 0)
+			if (trap_FS_FOpenFile(DEFAULT_PROFILE_DAT, &f, FS_WRITE) >= 0)
 			{
 				trap_FS_Write(va("\"%s\"", cl_defaultProfile.string), strlen(cl_defaultProfile.string) + 2, f);
 				trap_FS_FCloseFile(f);
@@ -5680,7 +5680,7 @@ void UI_RunMenuScript(char **args)
 					fileHandle_t f;
 
 					trap_Cvar_Set("cl_defaultProfile", cl_profile.string);
-					if (trap_FS_FOpenFile("profiles/defaultprofile.dat", &f, FS_WRITE) >= 0)
+					if (trap_FS_FOpenFile(DEFAULT_PROFILE_DAT, &f, FS_WRITE) >= 0)
 					{
 						trap_FS_Write(va("\"%s\"", cl_profile.string), strlen(cl_profile.string) + 2, f);
 						trap_FS_FCloseFile(f);
@@ -5761,7 +5761,7 @@ void UI_RunMenuScript(char **args)
 				{
 					// if renaming the default profile, set the default to the new profile
 					trap_Cvar_Set("cl_defaultProfile", buff);
-					if (trap_FS_FOpenFile("profiles/defaultprofile.dat", &f, FS_WRITE) >= 0)
+					if (trap_FS_FOpenFile(DEFAULT_PROFILE_DAT, &f, FS_WRITE) >= 0)
 					{
 						trap_FS_Write(va("\"%s\"", buff), strlen(buff) + 2, f);
 						trap_FS_FCloseFile(f);
@@ -7853,14 +7853,20 @@ const char *UI_FeederItemText(int feederID, int index, int column, qhandle_t *ha
 		if (index >= 0 && index < uiInfo.profileCount)
 		{
 			char buff[MAX_CVAR_VALUE_STRING];
+			qboolean defaultProfile = qfalse;
 
 			Q_strncpyz(buff, uiInfo.profileList[index].name, sizeof(buff));
 			Q_CleanStr(buff);
 			Q_CleanDirName(buff);
 
+			if (!Q_stricmp(buff, cl_defaultProfile.string))
+			{
+				defaultProfile = qtrue;
+			}
+
 			if (!Q_stricmp(buff, cl_profile.string))
 			{
-				if (!Q_stricmp(buff, cl_defaultProfile.string))
+				if (defaultProfile)
 				{
 					return(va("^7(Default) %s", uiInfo.profileList[index].name));
 				}
@@ -7869,7 +7875,7 @@ const char *UI_FeederItemText(int feederID, int index, int column, qhandle_t *ha
 					return(va("^7%s", uiInfo.profileList[index].name));
 				}
 			}
-			else if (!Q_stricmp(buff, cl_defaultProfile.string))
+			else if (defaultProfile)
 			{
 				return(va("(Default) %s", uiInfo.profileList[index].name));
 			}

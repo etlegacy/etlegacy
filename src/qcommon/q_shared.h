@@ -130,6 +130,8 @@
 #   endif
 #endif
 
+#define DEFAULT_PROFILE_DAT "profiles/defaultprofile.dat"
+
 /**********************************************************************
   VM Considerations
 

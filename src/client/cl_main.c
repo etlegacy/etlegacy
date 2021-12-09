@@ -1145,6 +1145,8 @@ void CL_Vid_Restart_f(void)
 	// reinitialize the filesystem if the game directory or checksum has changed
 	FS_ConditionalRestart(clc.checksumFeed);
 
+	Com_CheckDefaultProfileDatExists();
+
 	S_BeginRegistration();  // all sound handles are now invalid
 
 	cls.rendererStarted = qfalse;
