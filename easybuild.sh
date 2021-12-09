@@ -237,8 +237,11 @@ parse_commandline() {
 			INSTALL_PREFIX=$(echo $var| cut -d'=' -f 2)
 			einfo "Will use installation dir of: ${INSTALL_PREFIX}"
 		elif [[ $var == --osx=* ]]; then
-			MACOSX_DEPLOYMENT_TARGET=$(echo $var| cut -d'=' -f 2)
-			einfo "Will use OSX target version: ${MACOSX_DEPLOYMENT_TARGET}"
+			MACOS_DEPLOYMENT_TARGET=$(echo $var| cut -d'=' -f 2)
+			einfo "Will use OSX target version: ${MACOS_DEPLOYMENT_TARGET}"
+		elif [[ $var == --osx-arc=* ]]; then
+			MACOS_ARCHITECTURES=$(echo $var| cut -d'=' -f 2)
+			einfo "Will use OSX target version: ${MACOS_ARCHITECTURES}"
 		elif [[ $var == --sysroot=* ]]; then
 			XCODE_SDK_PATH=$(echo $var| cut -d'=' -f 2)
 			einfo "Will use OSX sysroot: ${XCODE_SDK_PATH}"
@@ -442,7 +445,10 @@ generate_configuration() {
 		BUNDLED_OPENSSL=${BUNDLED_OPENSSL:-0}
 		BUNDLED_WOLFSSL=${BUNDLED_WOLFSSL:-0}
 		BUNDLED_OPENAL=${BUNDLED_OPENAL:-0}
-		CMAKE_OSX_DEPLOYMENT_TARGET=${MACOSX_DEPLOYMENT_TARGET:-10.12}
+		CMAKE_OSX_DEPLOYMENT_TARGET=${MACOS_DEPLOYMENT_TARGET:-10.12}
+		if [ -n "$MACOS_ARCHITECTURES" ]; then
+		  CMAKE_OSX_ARCHITECTURES=${MACOS_ARCHITECTURES}
+		fi
 	fi
 
 	FEATURE_RENDERER2=${FEATURE_RENDERER2:-0}
@@ -841,7 +847,7 @@ print_help() {
 	echo
 	einfo "Properties"
 	ehead "-64, -32, -debug, -clang, -nodb -nor2, -nodynamic, -nossl, -systemlibs, -noextra, -noupdate, -mod, -server"
-	ehead "--build=*, --prefix=*, --osx=*"
+	ehead "--build=*, --prefix=*, --osx=* --osx-arc=*"
 	echo
 }
 
