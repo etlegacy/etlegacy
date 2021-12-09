@@ -77,7 +77,7 @@ jobs:
         shell: bash
         run: |
           git fetch --tags --force
-          ./easybuild.sh build -64 -mod --osx=10.10 --osx-arc=x86_64;arm64
+          ./easybuild.sh build -64 -mod --osx=10.10 --osx-arc="x86_64;arm64"
 
       - uses: actions/upload-artifact@v2
         with:
@@ -326,7 +326,7 @@ jobs:
         shell: bash
         run: |
           git fetch --tags --force
-          ./easybuild.sh build -64 --osx=10.10 --osx-arc=x86_64;arm64
+          ./easybuild.sh build -64 --osx=10.10 --osx-arc="x86_64;arm64"
 
       - uses: actions/download-artifact@v2
         with:
@@ -339,7 +339,7 @@ jobs:
 
       - name: Generate packages
         shell: bash
-        run: ./easybuild.sh package -64 --osx=10.10 --osx-arc=x86_64;arm64
+        run: ./easybuild.sh package -64 --osx=10.10 --osx-arc="x86_64;arm64"
 
       - uses: actions/upload-artifact@v2
         with:
