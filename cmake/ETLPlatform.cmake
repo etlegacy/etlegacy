@@ -8,6 +8,9 @@ set(ETLEGACY_SYSTEM_PROCESSOR ${CMAKE_SYSTEM_PROCESSOR})
 # has to be set to "", otherwise CMake will pass -rdynamic resulting in a client crash
 set(CMAKE_SHARED_LIBRARY_LINK_C_FLAGS "")
 
+# How many architectures are we buildin
+set(ETL_ARCH_COUNT 1)
+
 # Color diagnostics for build systems other than make
 if(APPLE OR UNIX)
 	if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
@@ -113,6 +116,10 @@ if(UNIX)
 	elseif(APPLE)
 		set(OS_LIBRARIES dl m)
 		set(CMAKE_EXE_LINKER_FLAGS "-lobjc -framework Cocoa -framework IOKit -framework CoreFoundation")
+
+        if (DEFINED CMAKE_OSX_ARCHITECTURES)
+            list(LENGTH CMAKE_OSX_ARCHITECTURES ETL_ARCH_COUNT)
+        endif()
 
         # new curl builds need the System Configuration framework
         if (BUNDLED_CURL)
