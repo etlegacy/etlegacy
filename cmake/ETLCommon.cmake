@@ -68,12 +68,18 @@ endif()
 
 # Figure out what build is it (cool eh?)
 if(CMAKE_SIZEOF_VOID_P EQUAL 8 AND NOT CROSS_COMPILE32)
-	SET(64BITS 1)
+	SET(ETL_64BITS 1)
 	if(WIN32)
-		SET(WIN64 1)
+		SET(ETL_WIN64 1)
 	endif()
 else()
-	SET(32BITS 1)
+	SET(ETL_32BITS 1)
+endif()
+
+if(CMAKE_SYSTEM_PROCESSOR MATCHES "(x86)|(X86)|(amd64)|(AMD64)")
+    set(ETL_X86 1)
+elseif(${CMAKE_SYSTEM_PROCESSOR} MATCHES "arm")
+    set(ETL_ARM 1)
 endif()
 
 # Installation options

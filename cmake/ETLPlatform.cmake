@@ -151,6 +151,11 @@ if(UNIX)
 
 		if(BUILD_CLIENT)
 			set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -framework AudioToolbox -framework AudioUnit -framework Carbon -framework CoreAudio -framework CoreVideo -framework ForceFeedback -framework OpenGL -liconv")
+
+            # TODO: check if this breaks compatibility with pre macos 13.0 versions?
+            if (BUNDLED_SDL)
+                set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -framework CoreHaptics -framework GameController")
+            endif()
 		endif()
 		set(LIB_SUFFIX "_mac")
 		set(CMAKE_SHARED_MODULE_SUFFIX "")
@@ -169,9 +174,9 @@ if(UNIX)
 elseif(WIN32)
 	add_definitions(-DWINVER=0x601)
 
-	if(WIN64)
+	if(ETL_WIN64)
 		add_definitions(-DC_ONLY)
-	endif(WIN64)
+	endif()
 
 	set(OS_LIBRARIES wsock32 ws2_32 psapi winmm)
 
