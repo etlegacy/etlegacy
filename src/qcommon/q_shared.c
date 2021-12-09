@@ -2036,14 +2036,12 @@ long Q_GenerateHashValue(const char *fname, int size, qboolean fullPath, qboolea
 			if (letter == '.')
 			{
 				break; // don't include extension
-
 			}
 		}
 
 		if (letter == '\\')
 		{
 			letter = '/'; // damn path names
-
 		}
 
 		hash += (long)(letter) * (i + 119);

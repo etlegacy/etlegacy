@@ -752,11 +752,11 @@ void Con_DrawSolidConsole(float frac)
 	}
 	else
 	{
-		if (Q_ParseColorRGBA(con_background->string, color)) 
+		if (Q_ParseColorRGBA(con_background->string, color))
 		{
 			SCR_FillRect(0, 0, SCREEN_WIDTH, y, color);
-		} 
-		else 
+		}
+		else
 		{
 			SCR_DrawPic(0, 0, SCREEN_WIDTH, y, cls.consoleShader);
 		}

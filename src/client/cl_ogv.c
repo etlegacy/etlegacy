@@ -492,8 +492,6 @@ void OGV_UpdateCinematic(cinematic_t *cin, int time)
 	cin->currentData.image  = cin->frameBuffer[0];
 	cin->currentData.height = cin->frameHeight;
 	cin->currentData.width  = cin->frameWidth;
-
-	return;
 }
 
 /**

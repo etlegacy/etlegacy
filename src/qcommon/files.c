@@ -434,7 +434,6 @@ static long FS_HashFileName(const char *fname, int hashSize)
 		if (letter == PATH_SEP)
 		{
 			letter = '/';                       // damn path names
-
 		}
 		hash += (long)(letter) * (i + 119);
 		i++;
