@@ -65,9 +65,9 @@ typedef enum
 static videoDecode_t videoDecoders[] =
 {
 	{ "\0",  "\0",  NULL,     NULL, NULL,          NULL,                NULL,      NULL          },
-	{ "roq", "\0",  ROQ_Init, NULL, ROQ_StartRead,  ROQ_UpdateCinematic,  ROQ_Reset, ROQ_StopVideo },
+	{ "roq", "\0",  ROQ_Init, NULL, ROQ_StartRead, ROQ_UpdateCinematic, ROQ_Reset, ROQ_StopVideo },
 #ifdef FEATURE_THEORA
-	{ "ogv", "ogm", NULL,     NULL, OGV_StartRead,  OGV_UpdateCinematic,  NULL,      OGV_StopVideo },
+	{ "ogv", "ogm", NULL,     NULL, OGV_StartRead, OGV_UpdateCinematic, NULL,      OGV_StopVideo },
 #endif
 	//{ "h264", "\0", NULL,     NULL, H264_StartRead, H264_UpdateCinematic, NULL,      H264_StopVideo },
 };
@@ -279,7 +279,7 @@ static void CIN_ListCinematics_f(void)
 
 	Com_Printf("-----------------------------------------\n");
 	Com_Printf("%i total cinematics\n", count);
-	Com_Printf("%.2f MB of cinematic data\n", (double)(SIZE_MB_FLOAT(bytes)));
+	Com_Printf("%.2f MB of cinematic data\n", (double) (SIZE_MB_FLOAT(bytes)));
 	Com_Printf("\n");
 }
 
@@ -407,7 +407,8 @@ cinHandle_t CIN_PlayCinematic(const char *name, int x, int y, int w, int h, int 
 			{
 				if (flags & CIN_system)
 				{
-					Com_Printf("Warning: Cinematic %s is not a valid %s file\n", name, videoDecoders[i].fileExt);
+					Com_Printf(S_COLOR_YELLOW "Warning: Cinematic %s is not a valid %s file\n", name,
+					           videoDecoders[i].fileExt);
 				}
 
 				goto video_playback_failed;
@@ -467,7 +468,8 @@ void CIN_ResetCinematic(cinHandle_t handle)
 	}
 	else
 	{
-		Com_Printf("Warning: Cinematic decoder %s missing reset functionality\n", videoDecoders[cin->videoType].fileExt);
+		Com_Printf("Warning: Cinematic decoder %s missing reset functionality\n",
+		           videoDecoders[cin->videoType].fileExt);
 	}
 
 	cin->startTime  = 0;
@@ -626,7 +628,7 @@ void CIN_SetExtents(int handle, int x, int y, int w, int h)
 	{
 		cinematic_t *cin;
 
-		cin = CIN_GetCinematicByHandle(handle);
+		cin              = CIN_GetCinematicByHandle(handle);
 		cin->rectangle.x = x;
 		cin->rectangle.y = y;
 		cin->rectangle.w = w;
@@ -695,8 +697,7 @@ void CIN_DrawCinematic(int handle)
 		return;
 	}
 
-	re.DrawStretchRaw(x, y, w, h, cin->currentData.width, cin->currentData.height, cin->currentData.image, handle,
-	                  cin->currentData.dirty);
+	re.DrawStretchRaw(x, y, w, h, cin->currentData.width, cin->currentData.height, cin->currentData.image, handle, cin->currentData.dirty);
 }
 
 /**
@@ -715,7 +716,7 @@ void CIN_UploadCinematic(int handle)
 
 	cin = CIN_GetCinematicByHandle(handle);
 
-	if (!cin->currentData.image || !cin->currentData.image[0])
+	if (!cin->currentData.image)
 	{
 		return;
 	}
