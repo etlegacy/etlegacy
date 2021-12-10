@@ -593,7 +593,7 @@ void Com_StartupVariable(const char *match)
 	for (i = 0 ; i < com_numConsoleLines ; i++)
 	{
 		Cmd_TokenizeString(com_consoleLines[i]);
-		if (strcmp(Cmd_Argv(0), "set"))
+		if (Q_stricmp(Cmd_Argv(0), "set"))
 		{
 			continue;
 		}
