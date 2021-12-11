@@ -160,7 +160,7 @@
 // gun animations
 typedef enum
 {
-	WEAPANIM_IDLE = BIT(0),
+	WEAPANIM_IDLE   = BIT(0),
 	WEAPANIM_FIRING = BIT(1),
 	WEAPANIM_RELOAD = BIT(2),
 	WEAPANIM_SWITCH = BIT(3)
@@ -2818,6 +2818,7 @@ extern vmCvar_t cg_fireteamLatchedClass;
 extern vmCvar_t cg_fireteamLocationAlign;
 extern vmCvar_t cg_fireteamNameMaxChars;
 extern vmCvar_t cg_fireteamNameAlign;
+extern vmCvar_t cg_fireteamSprites;
 extern vmCvar_t cg_simpleItems;
 extern vmCvar_t cg_simpleItemsScale;
 
@@ -3050,13 +3051,13 @@ void CG_DrawMoveGizmo(const vec3_t origin, float radius, int activeAxis);
  */
 typedef struct scrollText_s
 {
-    int length;                     ///< string length
-    qboolean init;                  ///< force scrolling initilation
-    int paintPos;
-    int paintPos2;
-    int offset;
-    int time;                       ///< last scrolling time
-    char text[MAX_STRING_CHARS];    ///< string to display
+	int length;                     ///< string length
+	qboolean init;                  ///< force scrolling initilation
+	int paintPos;
+	int paintPos2;
+	int offset;
+	int time;                       ///< last scrolling time
+	char text[MAX_STRING_CHARS];    ///< string to display
 
 } scrollText_t;
 

@@ -2213,7 +2213,8 @@ static void CG_PlayerSprites(centity_t *cent)
 		}
 	}
 
-	if (CG_IsOnFireteam(cent->currentState.number) && CG_IsOnSameFireteam(cent->currentState.number, cg.clientNum))
+	if (CG_IsOnFireteam(cent->currentState.number) && CG_IsOnSameFireteam(cent->currentState.number, cg.clientNum)
+	    && cg_fireteamSprites.integer)
 	{
 		CG_PlayerFloatSprite(cent, cgs.media.fireteamIcon, height, numIcons++,
 		                     cgs.clientinfo[cent->currentState.number].selected ? colorRed : colorGreen);
