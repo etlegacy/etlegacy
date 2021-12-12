@@ -333,8 +333,8 @@ qboolean G_TryPushingEntity(gentity_t *check, gentity_t *pusher, vec3_t move, ve
 	{
 		// make sure the client's view rotates when on a rotating mover
 		// - this is done client-side now
-		// - only do this if player is prone or using set mortar - No! realism!
-		//if ((check->client->ps.eFlags & EF_PRONE) || GetWeaponTableData(check->s.weapon)->isMortarSet)
+		// - only do this if player is ON a rotating mover
+		if(check->s.groundEntityNum == pusher->s.number)
 		{
 			check->client->ps.delta_angles[YAW] += ANGLE2SHORT(amove[YAW]);
 		}
