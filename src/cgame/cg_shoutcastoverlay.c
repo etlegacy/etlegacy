@@ -198,9 +198,25 @@ static void CG_DrawShoutcastPlayerOverlayAxis(clientInfo_t *player, float x, flo
 	CG_Text_Paint_Ext(x + PLAYER_LIST_STATUS_WIDTH + 1, y + (PLAYER_LIST_HEIGHT / 4) + (textHeight / 2), 0.16f, 0.16f, colorWhite, name, 0, 20, ITEM_TEXTSTYLE_NORMAL, FONT_TEXT);
 
 	// draw follow bind
+	if (player->health < 0)
+	{
+		Vector4Copy(colorMdGrey, hcolor);
+	}
+	else
+	{
+		if (cgs.eventHandling == CGAME_EVENT_SHOUTCAST)
+		{
+			Vector4Copy(colorYellow, hcolor);
+		}
+		else
+		{
+			Vector4Copy(colorWhite, hcolor);
+		}
+	}
+
 	text      = va("(F%i)", index + 1);
 	textWidth = CG_Text_Width_Ext(text, 0.12f, 0, FONT_TEXT);
-	CG_Text_Paint_Ext(x + PLAYER_LIST_WIDTH - textWidth - 2, y + (PLAYER_LIST_HEIGHT / 4) + 2.0f, 0.12f, 0.12f, player->health < 0 ? colorMdGrey : colorWhite, text, 0, 0, ITEM_TEXTSTYLE_NORMAL, FONT_TEXT);
+	CG_Text_Paint_Ext(x + PLAYER_LIST_WIDTH - textWidth - 2, y + (PLAYER_LIST_HEIGHT / 4) + 2.0f, 0.12f, 0.12f, hcolor, text, 0, 0, ITEM_TEXTSTYLE_NORMAL, FONT_TEXT);
 
 	// draw class
 	CG_DrawPic(bottomRowX + PLAYER_LIST_STATUS_WIDTH + 4, y + (PLAYER_LIST_HEIGHT * 0.75f) - 6, 12, 12, cgs.media.skillPics[SkillNumForClass(player->cls)]);
@@ -323,8 +339,24 @@ static void CG_DrawShoutcastPlayerOverlayAllies(clientInfo_t *player, float x, f
 	CG_Text_Paint_Ext(x + PLAYER_LIST_WIDTH - textWidth - 30, y + (PLAYER_LIST_HEIGHT / 4) + (textHeight / 2), 0.16f, 0.16f, colorWhite, name, 0, 20, ITEM_TEXTSTYLE_NORMAL, FONT_TEXT);
 
 	// draw follow bind
+	if (player->health < 0)
+	{
+		Vector4Copy(colorMdGrey, hcolor);
+	}
+	else
+	{
+		if (cgs.eventHandling == CGAME_EVENT_SHOUTCAST)
+		{
+			Vector4Copy(colorYellow, hcolor);
+		}
+		else
+		{
+			Vector4Copy(colorWhite, hcolor);
+		}
+	}
+
 	text = va("(F%i)", index + 7);
-	CG_Text_Paint_Ext(x + 1, y + (PLAYER_LIST_HEIGHT / 4) + 2.0f, 0.12f, 0.12f, player->health < 0 ? colorMdGrey : colorWhite, text, 0, 0, ITEM_TEXTSTYLE_NORMAL, FONT_TEXT);
+	CG_Text_Paint_Ext(x + 1, y + (PLAYER_LIST_HEIGHT / 4) + 2.0f, 0.12f, 0.12f, hcolor, text, 0, 0, ITEM_TEXTSTYLE_NORMAL, FONT_TEXT);
 
 	// draw class
 	CG_DrawPic(bottomRowX - 16, y + (PLAYER_LIST_HEIGHT * 0.75f) - 6, 12, 12, cgs.media.skillPics[SkillNumForClass(player->cls)]);
