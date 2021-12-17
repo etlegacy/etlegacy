@@ -2917,7 +2917,7 @@ void CL_Init(void)
 	cl_activeAction       = Cvar_Get("activeAction", "", CVAR_TEMP);
 	cl_autorecord         = Cvar_Get("cl_autorecord", "0", CVAR_TEMP);
 
-	cl_activatelean = Cvar_Get("cl_activatelean", "1", CVAR_ARCHIVE);
+	cl_activatelean = Cvar_Get("cl_activatelean", "0", CVAR_ARCHIVE);
 
 	cl_timedemo      = Cvar_Get("timedemo", "0", 0);
 	cl_avidemo       = Cvar_Get("cl_avidemo", "0", CVAR_TEMP);
