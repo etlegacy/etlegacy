@@ -277,7 +277,7 @@ static qboolean CG_isHudNumberAvailable(int number)
 
 	hud = CG_getHudByNumber(number);
 
-	if (!hud)
+	if (hud)
 	{
 		return qtrue;
 	}
