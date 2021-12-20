@@ -241,12 +241,6 @@ static hudStucture_t *CG_getHudByNumber(int number)
 	int           i;
 	hudStucture_t *hud;
 
-	if (number < 0 || number >= MAXHUDS)
-	{
-		Com_Printf("getHudByNumber invalid HUD!\n");
-		return NULL;
-	}
-
 	for (i = 0; i < hudCount; i++)
 	{
 		hud = &hudlist[i];
@@ -267,24 +261,14 @@ static hudStucture_t *CG_getHudByNumber(int number)
  */
 static qboolean CG_isHudNumberAvailable(int number)
 {
-	hudStucture_t *hud = NULL;
-
 	// values from 0 to 2 are used by the default hud's
-	if (number <= 2)
+	if (number <= 2 || number >= MAXHUDS)
 	{
+		Com_Printf(S_COLOR_RED "CG_isHudNumberAvailable: invalid HUD number %i, allowed values: 3 - %i\n", number, MAXHUDS);
 		return qfalse;
 	}
 
-	hud = CG_getHudByNumber(number);
-
-	if (hud)
-	{
-		return qtrue;
-	}
-	else
-	{
-		return qfalse;
-	}
+	return qtrue;
 }
 
 /**
