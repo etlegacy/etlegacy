@@ -4094,7 +4094,7 @@ int BG_MaxAmmoForWeapon(weapon_t weaponNum, const int *skill, int cls)
 		// FIXME: this is class dependant, not ammo table
 		maxAmmo = BG_GetPlayerClassInfo(GetWeaponTableData(weaponNum)->team, cls)->classGrenadeWeapon.startingAmmo;
 
-		if (cls == PC_ENGINEER && BG_IsSkillAvailable(skill, SK_EXPLOSIVES_AND_CONSTRUCTION, SK_ENGINEER_EXTRA_GRENADE))
+		if (cls == PC_ENGINEER)
 		{
 			maxAmmo += 4;
 		}

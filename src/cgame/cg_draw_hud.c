@@ -683,8 +683,8 @@ void CG_PlayerAmmoValue(int *ammo, int *clips, int *akimboammo)
 		return;
 	}
 
-	// total ammo in clips
-	if (GetWeaponTableData(weap)->useClip)
+	// total ammo in clips, grenade launcher is not a clip weapon but show the clip anyway
+	if (GetWeaponTableData(weap)->useClip || (weap == WP_M7 || weap == WP_GPG40))
 	{
 		// current reserve
 		*clips = cg.snap->ps.ammo[GetWeaponTableData(weap)->ammoIndex];
@@ -971,6 +971,7 @@ static void CG_DrawAmmoCount(float x, float y)
 
 	// Draw ammo
 	CG_PlayerAmmoValue(&value, &value2, &value3);
+
 	if (value3 >= 0)
 	{
 		Com_sprintf(buffer, sizeof(buffer), "%i|%i/%i", value3, value, value2);
