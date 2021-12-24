@@ -1491,6 +1491,18 @@ gfx/2d/friendlycross
 	}
 }
 
+// disconnect icon
+gfx/2d/net
+{
+	nocompress
+	nopicmip
+	{
+		map gfx/2d/net.jpg
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbGen vertex
+	}
+}
+
 // enemy disguised shader
 sprites/undercover
 {

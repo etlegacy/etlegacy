@@ -2297,8 +2297,6 @@ void ClientEndFrame(gentity_t *ent)
 		{
 			// we need frames to be = 2 here
 			frames = 3;
-			// these are disabled because the phone jack can give
-			// away other players position through walls.
 			ent->client->ps.eFlags |= EF_CONNECTION;
 			ent->s.eFlags          |= EF_CONNECTION;
 		}
