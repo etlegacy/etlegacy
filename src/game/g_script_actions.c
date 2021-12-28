@@ -1652,6 +1652,7 @@ qboolean G_ScriptAction_Wait(gentity_t *ent, char *params)
 {
 	char *pString = params, *token;
 	int  duration;
+	int  frametime = 1000 / sv_fps.integer;
 
 	if (level.suddenDeath)
 	{
@@ -1685,6 +1686,13 @@ qboolean G_ScriptAction_Wait(gentity_t *ent, char *params)
 		}
 		max = Q_atoi(token);
 
+		// match wait time to sv_fps 20
+		if (sv_fps.integer > 20)
+		{
+			min = min + 50 - (min % 50) - frametime;
+			max = max + 50 - (max % 50) - frametime;
+		}
+
 		if (ent->scriptStatus.scriptStackChangeTime + min > level.time)
 		{
 			return qfalse;
@@ -1699,6 +1707,13 @@ qboolean G_ScriptAction_Wait(gentity_t *ent, char *params)
 	}
 
 	duration = Q_atoi(token);
+
+	// match wait time to sv_fps 20
+	if (sv_fps.integer > 20)
+	{
+		duration = duration + 50 - (duration % 50) - frametime;
+	}
+
 	return (ent->scriptStatus.scriptStackChangeTime + duration < level.time);
 }
 
