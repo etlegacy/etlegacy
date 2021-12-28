@@ -366,9 +366,6 @@ void QDECL Com_Error(int code, const char *fmt, ...)
 		code = ERR_FATAL;
 	}
 
-	// make sure we can get at our local stuff
-	FS_PureServerSetLoadedPaks("", "");
-
 	// if we are getting a solid stream of ERR_DROP, do an ERR_FATAL
 	currentTime = Sys_Milliseconds();
 	if (currentTime - lastErrorTime < 100)
@@ -383,6 +380,12 @@ void QDECL Com_Error(int code, const char *fmt, ...)
 		errorCount = 0;
 	}
 	lastErrorTime = currentTime;
+
+	if (code != ERR_FATAL)
+	{
+		// make sure we can get at our local stuff
+		FS_PureServerSetLoadedPaks("", "");
+	}
 
 	if (com_errorEntered)
 	{

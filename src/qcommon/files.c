@@ -4256,7 +4256,8 @@ static void FS_ReorderLocalFoldersToTop(void)
 			// it's a directory so push to the top of the list
 			if (s->dir && !FS_IsExt(s->dir->gamedir, ".pk3dir", strlen(s->dir->gamedir)))
 			{
-				fs_reordered = qtrue;
+				// Disabled the reordering since we are just pushing local folders up not the pk3's
+				// fs_reordered = qtrue;
 				changed      = qtrue;
 				// move this element to the insert list
 				*p_previous     = s->next;
@@ -4951,6 +4952,8 @@ static void FS_CheckRequiredFiles(int checksumFeed)
 {
 	if (!FS_FOpenFileRead("pak0.pk3", NULL, qfalse))
 	{
+		// reordering will cause an infinite loop
+		fs_reordered = qfalse;
 		// this might happen when connecting to a pure server not using BASEGAME/pak0.pk3
 		// i.e. standalone game server
 		if (checksumFeed && lastValidBase[0])
@@ -4962,6 +4965,7 @@ static void FS_CheckRequiredFiles(int checksumFeed)
 			lastValidGame[0] = '\0';
 			FS_Restart(checksumFeed);
 			Com_Error(ERR_DROP, "Invalid game folder");
+			return;
 		}
 
 		Com_Error(ERR_FATAL, "FS_InitFilesystem: Original game data files not found.\n\nPlease copy pak0.pk3 from the 'etmain' path of your Wolfenstein: Enemy Territory installation to:\n\n\"%s%c%s\"\n\n",
