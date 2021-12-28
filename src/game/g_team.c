@@ -1655,6 +1655,7 @@ void G_swapTeams(void)
 			cl->sess.playerWeapon2 = cl->sess.latchPlayerWeapon2 = GetWeaponTableData(cl->sess.playerWeapon2)->weapEquiv;
 		}
 
+		G_MakeUnready(&g_entities[level.sortedClients[i]]);
 		G_UpdateCharacter(cl);
 		ClientUserinfoChanged(level.sortedClients[i]);
 		ClientBegin(level.sortedClients[i]);
