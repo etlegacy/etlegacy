@@ -1,28 +1,14 @@
 ﻿{
   "configurations": [
     {
-      "buildCommandArgs": "-v",
-      "buildRoot": "${workspaceRoot}\\build\\${name}",
-      "cmakeCommandArgs": "",
-      "configurationType": "Debug",
-      "ctestCommandArgs": "",
-      "generator": "Ninja",
-      "inheritEnvironments": [ "msvc_x86" ],
-      "installRoot": "${workspaceRoot}\\build\\${name}\\install",
-      "name": "x86-Debug",
-      "variables": []
-    },
-    {
-      "buildCommandArgs": "-v",
       "buildRoot": "${workspaceRoot}\\build\\${name}",
       "cmakeCommandArgs": "",
       "configurationType": "Release",
       "ctestCommandArgs": "",
-      "generator": "Ninja",
+      "generator": "Visual Studio 16 2019",
       "inheritEnvironments": [ "msvc_x86" ],
       "installRoot": "${workspaceRoot}\\build\\${name}\\install",
-      "name": "x86-Release",
-      "variables": []
+      "name": "x86-Release"
     }
   ]
 }
