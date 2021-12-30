@@ -411,12 +411,26 @@ jobs:
             git fetch --tags --force
             ./easybuild.sh build -RPI
 
+      - uses: actions/download-artifact@v2
+        with:
+          name: All-mods
+          path: build/legacy
+
+      - name: Display structure of downloaded files
+        run: ls -R
+        working-directory: build/legacy
+
+      - name: Generate packages
+        shell: bash
+        working-directory: build/
+        run: cpack
+
       - uses: actions/upload-artifact@v2
         with:
-          name: raspberry_pi-mod
+          name: raspberry_pi-packages
           path: |
-            build/legacy/cgame*.so
-            build/legacy/ui*.so
+            build/etlegacy-*.tar.gz
+            build/etlegacy-*.sh
 
   android:
     runs-on: ubuntu-18.04
