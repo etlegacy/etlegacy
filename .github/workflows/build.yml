@@ -423,9 +423,7 @@ jobs:
       - name: Generate packages
         shell: bash
         working-directory: build/
-        run: |
-          chmod -R 775 $GITHUB_WORKSPACE
-          cpack
+        run: cpack
 
       - uses: actions/upload-artifact@v2
         with:
