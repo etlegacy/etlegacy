@@ -424,7 +424,7 @@ jobs:
         shell: bash
         working-directory: build/
         run: |
-          chmod -R 775 $GITHUB_WORKSPACE
+          sudo chmod -R 775 $GITHUB_WORKSPACE
           cpack
 
       - uses: actions/upload-artifact@v2
