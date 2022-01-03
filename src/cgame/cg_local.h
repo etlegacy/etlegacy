@@ -2609,6 +2609,8 @@ typedef struct cgs_s
 	mlType_t currentMenuLevel;
 #endif
 
+	qboolean hitSoundEvents;    ///< Whether or not the server is sending hit sound events or not. This is to support old demos mostly.
+
 	qboolean sv_cheats;         // server allows cheats
 	int sv_fps;                 // FPS server wants to send
 	sampledStat_t sampledStat;  // fps client sample data
