@@ -1174,16 +1174,17 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 	G_DamageExt(targ, inflictor, attacker, dir, point, damage, dflags, mod, NULL);
 }
 
-void G_DamageExt(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t dir, vec3_t point, int damage, int dflags, meansOfDeath_t mod, int *hitEventType)
+void G_DamageExt(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t dir, vec3_t point, int damage, int dflags, meansOfDeath_t mod, int *hitEventOut)
 {
 	int         take;
 	int         knockback;
 	qboolean    wasAlive, onSameTeam;
 	hitRegion_t hr = HR_NUM_HITREGIONS;
+	int hitEventType = HIT_NONE;
 
-	if (hitEventType)
+	if (hitEventOut)
 	{
-		*hitEventType = HIT_NONE;
+		*hitEventOut = HIT_NONE;
 	}
 
 	if (!targ->takedamage || targ->entstate == STATE_INVISIBLE || targ->entstate == STATE_UNDERCONSTRUCTION) // invisible entities can't be damaged
@@ -1387,16 +1388,13 @@ void G_DamageExt(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec
 	if (attacker && attacker->client && targ->client  && targ != attacker && targ->health >= FORCE_LIMBO_HEALTH &&
 	    mod != MOD_SWITCHTEAM && mod != MOD_SWAP_PLACES && mod != MOD_SUICIDE)
 	{
-		if (hitEventType)
+		if (onSameTeam || (targ->client->ps.powerups[PW_OPS_DISGUISED] && (g_friendlyFire.integer & 1)))
 		{
-			if (onSameTeam || (targ->client->ps.powerups[PW_OPS_DISGUISED] && (g_friendlyFire.integer & 1)))
-			{
-				*hitEventType = HIT_TEAMSHOT;
-			}
-			else if (!targ->client->ps.powerups[PW_OPS_DISGUISED])
-			{
-				*hitEventType = HIT_BODYSHOT;
-			}
+			hitEventType = HIT_TEAMSHOT;
+		}
+		else if (!targ->client->ps.powerups[PW_OPS_DISGUISED])
+		{
+			hitEventType = HIT_BODYSHOT;
 		}
 
 		BG_UpdateConditionValue(targ->client->ps.clientNum, ANIM_COND_ENEMY_WEAPON, attacker->client->ps.weapon, qtrue);
@@ -1487,9 +1485,9 @@ void G_DamageExt(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec
 			G_addStatsHeadShot(attacker, mod);
 
 			// Upgrade the hit event to headshot if we have not yet classified it as a teamshot (covertops etc..)
-			if (hitEventType && *hitEventType != HIT_TEAMSHOT)
+			if (hitEventType != HIT_TEAMSHOT)
 			{
-				*hitEventType = HIT_HEADSHOT;
+				hitEventType = HIT_HEADSHOT;
 			}
 		}
 
@@ -1622,12 +1620,17 @@ void G_DamageExt(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec
 		G_Printf("client:%i health:%i damage:%i mod:%s\n", targ->s.number, targ->health, take, GetMODTableData(mod)->modName);
 	}
 
-#ifdef LEGACY_HITSOUND_EVENTS
-	if (hitEventType && *hitEventType)
+	if (hitEventType)
 	{
-		G_AddEvent(attacker, EV_PLAYER_HIT, *hitEventType);
+		if (!hitEventOut)
+		{
+			G_AddEvent(attacker, EV_PLAYER_HIT, hitEventType);
+		}
+		else
+		{
+			*hitEventOut = hitEventType;
+		}
 	}
-#endif
 
 #ifdef FEATURE_LUA
 	if (G_LuaHook_Damage(targ->s.number, attacker->s.number, take, dflags, mod))

@@ -1858,6 +1858,11 @@ extern void CG_AddBulletParticles(vec3_t origin, vec3_t dir, int speed, int dura
 
 static void CG_PlayHitSound(const int clientNum, const int hitSound)
 {
+	if (!hitSound)
+	{
+		return;
+	}
+
 	// Do we have hitsounds even enabled
 	if (!(cg_hitSounds.integer & HITSOUNDS_ON))
 	{
@@ -2376,21 +2381,14 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 		CG_Bullet(es->weapon, es->pos.trBase, es->otherEntityNum, qfalse, ENTITYNUM_WORLD, es->otherEntityNum2, es->origin2[0], es->effect1Time);
 		break;
 	case EV_MG42BULLET_HIT_FLESH:
-		if (!cgs.hitSoundEvents)
-		{
-			qboolean sameTeam = cgs.clientinfo[es->eventParm].team == cgs.clientinfo[cg.snap->ps.clientNum].team;
-			CG_PlayHitSound(es->otherEntityNum, sameTeam ? HIT_TEAMSHOT : HIT_BODYSHOT);
-		}
+		CG_PlayHitSound(es->otherEntityNum, es->modelindex);
 		CG_Bullet(es->weapon, es->pos.trBase, es->otherEntityNum, qtrue, es->eventParm, es->otherEntityNum2, 0, es->effect1Time);
 		break;
 	case EV_BULLET_HIT_WALL:
 		CG_Bullet(es->weapon, es->pos.trBase, es->otherEntityNum, qfalse, ENTITYNUM_WORLD, es->otherEntityNum2, es->origin2[0], 0);
 		break;
 	case EV_BULLET_HIT_FLESH:
-		if (!cgs.hitSoundEvents)
-		{
-			CG_PlayHitSound(es->otherEntityNum, es->modelindex);
-		}
+		CG_PlayHitSound(es->otherEntityNum, es->modelindex);
 		CG_Bullet(es->weapon, es->pos.trBase, es->otherEntityNum, qtrue, es->eventParm, es->otherEntityNum2, 0, 0);
 		break;
 	case EV_GENERAL_SOUND:
@@ -2865,7 +2863,6 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
         }
         break;
 	case EV_PLAYER_HIT:
-		cgs.hitSoundEvents = qtrue;
 		CG_PlayHitSound(es->clientNum, es->eventParm);
 		break;
 	default:

@@ -986,7 +986,7 @@ void Fire_Lead_Ext(gentity_t *ent, gentity_t *activator, float spread, int damag
 	vec3_t    end;
 	float     r;
 	float     u;
-	gentity_t *tent;
+	gentity_t *tent, *fleshEnt = NULL;
 	gentity_t *traceEnt;
 	int       seed = rand() & 255;
 
@@ -1038,7 +1038,7 @@ void Fire_Lead_Ext(gentity_t *ent, gentity_t *activator, float spread, int damag
 	// send bullet impact
 	if (traceEnt->takedamage && traceEnt->client)
 	{
-		tent                    = G_TempEntity(tr.endpos, EV_MG42BULLET_HIT_FLESH);
+		fleshEnt = tent         = G_TempEntity(tr.endpos, EV_MG42BULLET_HIT_FLESH);
 		tent->s.eventParm       = traceEnt->s.number;
 		tent->s.otherEntityNum  = ent->s.number;
 		tent->s.otherEntityNum2 = activator->s.number;  // store the user id, so the client can position the tracer
@@ -1061,9 +1061,17 @@ void Fire_Lead_Ext(gentity_t *ent, gentity_t *activator, float spread, int damag
 		tent->s.otherEntityNum2 = activator->s.number;  // store the user id, so the client can position the tracer
 		tent->s.effect1Time     = seed;
 	}
+
 	if (traceEnt->takedamage)
 	{
-		G_Damage(traceEnt, ent, activator, forward, tr.endpos, damage, 0, mod);
+		int hitType = HIT_NONE;
+		G_DamageExt(traceEnt, ent, activator, forward, tr.endpos, damage, 0, mod, &hitType);
+
+		// send the hit sound info in the flesh hit event
+		if (hitType && fleshEnt)
+		{
+			fleshEnt->s.modelindex =  hitType;
+		}
 	}
 }
 

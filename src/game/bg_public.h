@@ -1497,7 +1497,7 @@ typedef enum
 	EV_BODY_DP,        ///< 128
 	EV_FLAG_INDICATOR, ///< 129 - objective indicator
 	EV_MISSILE_FALLING,///< 130
-	EV_PLAYER_HIT,     ///< 131 - hitsound event, deprecated as of 2022.1.3
+	EV_PLAYER_HIT,     ///< 131 - hitsound event
 	EV_MAX_EVENTS      ///< 132 - just added as an 'endcap'
 } entity_event_t;
 
