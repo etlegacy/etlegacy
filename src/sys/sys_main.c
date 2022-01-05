@@ -134,7 +134,7 @@ dialogResult_t Sys_SDLDialog(dialogType_t type, const char *message, const char 
 {
 	int buttonId;
 	SDL_MessageBoxButtonData buttons[2];
-	SDL_MessageBoxData data = {};
+	SDL_MessageBoxData data;
 	data.window = NULL;
 	data.colorScheme = NULL;
 	data.buttons = buttons;
