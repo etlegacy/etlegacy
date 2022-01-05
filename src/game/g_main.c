@@ -726,14 +726,14 @@ Q_EXPORT intptr_t vmMain(intptr_t command, intptr_t arg0, intptr_t arg1, intptr_
 	{
 	case GAME_INIT:
 	{
-		float time = trap_Milliseconds();
+		int time = trap_Milliseconds();
 		Com_Printf(S_COLOR_MDGREY "Initializing %s game " S_COLOR_GREEN ETLEGACY_VERSION "\n", MODNAME);
 #ifdef FEATURE_OMNIBOT
 
 		Bot_Interface_InitHandles();
 #endif
 		G_InitGame(arg0, arg1, arg2, arg3, arg4);
-		G_Printf("Game Initialization completed in %.2f seconds\n", ((float)trap_Milliseconds() - time) / 1000.f);
+		G_Printf("Game Initialization completed in %.2f seconds\n", (float)(trap_Milliseconds() - time) / 1000.f);
 #ifdef FEATURE_OMNIBOT
 
 		time = trap_Milliseconds();
@@ -748,7 +748,7 @@ Q_EXPORT intptr_t vmMain(intptr_t command, intptr_t arg0, intptr_t arg1, intptr_
 			// that's the only way to print the used bot version atm
 			trap_SendConsoleCommand(EXEC_APPEND, va("%s", "bot version\n"));
 
-			G_Printf(S_COLOR_GREEN "Omni-Bot Initialization completed in %.2f seconds\n", ((float)trap_Milliseconds() - time) / 1000.f);
+			G_Printf(S_COLOR_GREEN "Omni-Bot Initialization completed in %.2f seconds\n", (float)(trap_Milliseconds() - time) / 1000.f);
 		}
 #endif
 	}
@@ -5412,7 +5412,6 @@ void G_MapVoteInfoWrite()
 	G_Printf("mapvoteinfo: wrote %d of %d map vote stats\n", count, MAX_VOTE_MAPS);
 
 	trap_FS_FCloseFile(f);
-	return;
 }
 
 /**

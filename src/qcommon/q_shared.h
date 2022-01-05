@@ -430,7 +430,7 @@ typedef int clipHandle_t;
 #define ENABLEBIT(x, y) x |= BIT(y)
 #define CLEARBIT(x, y) x  &= ~BIT(y)
 #define TOGGLEBIT(x, y) x ^= BIT(y)
-#define CHECKBIT(x, y) (x & BIT(y))
+#define CHECKBIT(x, y) ((x) & BIT(y))
 
 /**
  * @def Check whether input value is present or not in given bitwise.
@@ -641,8 +641,8 @@ MATHLIB
 
 qboolean Com_PowerOf2(int x);
 
-#define Com_ByteClamp(x) ((x < 0) ? 0 : (x > 255) ? 255 : x)
-#define Com_Clamp(min, max, value) ((value < min) ? min : (value > max) ? max : value)
+#define Com_ByteClamp(x) (((x) < 0) ? 0 : ((x) > 255) ? 255 : (x))
+#define Com_Clamp(min, max, value) (((value) < (min)) ? (min) : ((value) > (max)) ? (max) : (value))
 #define Com_Nelem(a) (int)(sizeof(a) / sizeof(a)[0])
 void *Com_AnyOf(void **ptr, int n);
 
@@ -1856,7 +1856,7 @@ typedef struct userAgent_s
 } userAgent_t;
 
 void Com_ParseUA(userAgent_t *ua, const char *string);
-#define Com_IsCompatible(ua, flag) ((ua)->compatible & flag)
+#define Com_IsCompatible(ua, flag) ((ua)->compatible & (flag))
 
 //c99 issue pre 2013 VS do not have support for this
 #if defined(_MSC_VER) && (_MSC_VER < 1800)
@@ -1893,7 +1893,7 @@ void Com_ParseUA(userAgent_t *ua, const char *string);
  *
  * @brief This should be something like INT_MAX but that would need limits.h everywhere so meh and negative values should be somewhat safe
  */
-#define VM_CALL_END -1337
+#define VM_CALL_END (-1337)
 #define SystemCall(...) syscall(__VA_ARGS__, VM_CALL_END)
 
 #ifdef ETLEGACY_DEBUG
