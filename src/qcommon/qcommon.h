@@ -1447,6 +1447,7 @@ void Sys_SetEnv(const char *name, const char *value);
  */
 typedef enum
 {
+	DR_ERROR  = -1,
 	DR_YES    = 0,
 	DR_NO     = 1,
 	DR_OK     = 0,
@@ -1467,6 +1468,10 @@ typedef enum
 } dialogType_t;
 
 dialogResult_t Sys_Dialog(dialogType_t type, const char *message, const char *title);
+
+#ifdef ETL_CLIENT
+dialogResult_t Sys_SDLDialog(dialogType_t type, const char *message, const char *title);
+#endif
 
 // NOTE: on win32 the cwd is prepended .. non portable behaviour
 void Sys_StartProcess(char *cmdline, qboolean doexit);
