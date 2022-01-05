@@ -1421,7 +1421,7 @@ void CG_DrawDemoMessage(void)
 	{
 		if (cl_demorecording.integer)
 		{
-			Com_sprintf(demostatus, sizeof(demostatus), " demo %s: %ik ", cl_demofilename.string, cl_demooffset.integer / 1024);
+			Com_sprintf(demostatus, sizeof(demostatus), __(" demo %s: %ik "), cl_demofilename.string, cl_demooffset.integer / 1024);
 		}
 		else
 		{
@@ -1430,7 +1430,7 @@ void CG_DrawDemoMessage(void)
 
 		if (cl_waverecording.integer)
 		{
-			Com_sprintf(wavestatus, sizeof(demostatus), " audio %s: %ik ", cl_wavefilename.string, cl_waveoffset.integer / 1024);
+			Com_sprintf(wavestatus, sizeof(demostatus), __(" audio %s: %ik "), cl_wavefilename.string, cl_waveoffset.integer / 1024);
 		}
 		else
 		{
@@ -1443,7 +1443,7 @@ void CG_DrawDemoMessage(void)
 		Q_strncpyz(wavestatus, "", sizeof(wavestatus));
 	}
 
-	Com_sprintf(status, sizeof(status), "%s%s%s", cg.demoPlayback ? "REPLAY" : "RECORD", demostatus, wavestatus);
+	Com_sprintf(status, sizeof(status), "%s%s%s", cg.demoPlayback ? __("REPLAY") : __("RECORD"), demostatus, wavestatus);
 
 	CG_Text_Paint_Ext(x, y, fontScale, fontScale, cg.demoPlayback ? colorYellow : colorRed, status, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 }

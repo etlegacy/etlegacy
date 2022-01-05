@@ -7748,3 +7748,15 @@ msgstr ""
 
 msgid "MAKE SHOUTCASTER"
 msgstr ""
+
+msgid " demo %s: %ik "
+msgstr ""
+
+msgid " audio %s: %ik "
+msgstr ""
+
+msgid "REPLAY"
+msgstr ""
+
+msgid "RECORD"
+msgstr ""
