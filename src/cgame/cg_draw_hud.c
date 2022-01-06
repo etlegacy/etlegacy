@@ -275,10 +275,14 @@ static qboolean CG_isHudNumberAvailable(int number)
  * @brief CG_addHudToList
  * @param[in] hud
  */
-static void CG_addHudToList(hudStucture_t *hud)
+static hudStucture_t * CG_addHudToList(hudStucture_t *hud)
 {
+	hudStucture_t * out = NULL;
+
 	hudlist[hudCount] = *hud;
+	out = &hudlist[hudCount];
 	hudCount++;
+	return out;
 }
 
 //  HUD SCRIPT FUNCTIONS BELLOW
@@ -393,6 +397,11 @@ static qboolean CG_ParseHudComponent(int handle, hudComponent_t *comp)
 	return qtrue;
 }
 
+static int QDECL CG_HudComponentSort(const void *a, const void *b)
+{
+	return ((*(hudComponent_t **) a)->offset - (*(hudComponent_t **) b)->offset);
+}
+
 /**
  * @brief CG_ParseHUD
  * @param[in] handle
@@ -400,21 +409,52 @@ static qboolean CG_ParseHudComponent(int handle, hudComponent_t *comp)
  */
 static qboolean CG_ParseHUD(int handle)
 {
+	int i, componentOffset = 0;
 	pc_token_t    token;
 	hudStucture_t temphud;
 	hudStucture_t *hud;
-
-	CG_setDefaultHudValues(&temphud);
+	qboolean loadDefaults = qtrue;
 
 	if (!trap_PC_ReadToken(handle, &token) || Q_stricmp(token.string, "{"))
 	{
 		return CG_HUD_ParseError(handle, "expected '{'");
 	}
 
-	while (1)
+	if (!trap_PC_ReadToken(handle, &token))
 	{
-		int i;
+		return CG_HUD_ParseError(handle, "Error while parsing hud");
+	}
 
+	// if the first parameter in the hud definition is a "no-defaults" line then no default values are set
+	// and the hud is plain (everything is hidden and no positions are set)
+	if (!Q_stricmp(token.string, "no-defaults"))
+	{
+		loadDefaults = qfalse;
+	}
+	else
+	{
+		trap_PC_UnReadToken(handle);
+	}
+
+	// reset all the components, and set the offset value to 999 for sorting
+	Com_Memset(&temphud, 0, sizeof(hudStucture_t));
+
+	if (loadDefaults)
+	{
+		CG_setDefaultHudValues(&temphud);
+	}
+	else
+	{
+		for (i = 0; hudComponentFields[i].name; i++)
+		{
+			hudComponent_t *component = (hudComponent_t *)((char * )&temphud + hudComponentFields[i].offset);
+			component->offset = 999;
+		}
+	}
+
+	componentOffset = 0;
+	while (qtrue)
+	{
 		if (!trap_PC_ReadToken(handle, &token))
 		{
 			break;
@@ -439,7 +479,9 @@ static qboolean CG_ParseHUD(int handle)
 		{
 			if (!Q_stricmp(token.string, hudComponentFields[i].name))
 			{
-				if (!CG_ParseHudComponent(handle, (hudComponent_t *)((char * )&temphud + hudComponentFields[i].offset)))
+				hudComponent_t *component = (hudComponent_t *)((char * )&temphud + hudComponentFields[i].offset);
+				component->offset = componentOffset++;
+				if (!CG_ParseHudComponent(handle, component))
 				{
 					return CG_HUD_ParseError(handle, "expected %s", hudComponentFields[i].name);
 				}
@@ -463,7 +505,7 @@ static qboolean CG_ParseHUD(int handle)
 
 	if (!hud)
 	{
-		CG_addHudToList(&temphud);
+		hud = CG_addHudToList(&temphud);
 		Com_Printf("...properties for hud %i have been read.\n", temphud.hudnumber);
 	}
 	else
@@ -471,6 +513,18 @@ static qboolean CG_ParseHUD(int handle)
 		Com_Memcpy(hud, &temphud, sizeof(temphud));
 		Com_Printf("...properties for hud %i have been updated.\n", temphud.hudnumber);
 	}
+
+	// setup component pointers to the components list
+	for (i = 0, componentOffset = 0; hudComponentFields[i].name; i++)
+	{
+		if (hudComponentFields[i].isAlias)
+		{
+			continue;
+		}
+		hud->components[componentOffset++] = (hudComponent_t *)((char * )hud + hudComponentFields[i].offset);
+	}
+	// sort the components by their offset
+	qsort(hud->components, sizeof(hud->components) / sizeof(hudComponent_t *), sizeof(hudComponent_t *), CG_HudComponentSort);
 
 	return qtrue;
 }

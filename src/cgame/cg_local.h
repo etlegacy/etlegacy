@@ -4083,6 +4083,7 @@ typedef struct hudComponent_s
 	rectDef_t location;
 	int visible;
 	int style;
+	int offset;
 } hudComponent_t;
 
 typedef struct hudStructure_s
@@ -4118,8 +4119,9 @@ typedef struct hudStructure_s
 	hudComponent_t spectatortext;
 	hudComponent_t limbotext;
 	hudComponent_t followtext;
-	hudComponent_t demotext;
+	hudComponent_t demotext; // 28
 
+	hudComponent_t *components[28];
 } hudStucture_t;
 
 hudStucture_t *CG_GetActiveHUD();
