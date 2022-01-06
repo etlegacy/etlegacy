@@ -1272,8 +1272,7 @@ static void CG_DrawObjectiveStatus(rectDef_t rect)
 	}
 
 	// draw objective status icon
-	if ((cg.flagIndicator & (1 << PW_REDFLAG) || cg.flagIndicator & (1 << PW_BLUEFLAG)) && (!cgs.clientinfo[cg.clientNum].shoutcaster ||
-	                                                                                        (cgs.clientinfo[cg.clientNum].shoutcaster && (cg.snap->ps.pm_flags & PMF_FOLLOW))))
+	if ((cg.flagIndicator & (1 << PW_REDFLAG) || cg.flagIndicator & (1 << PW_BLUEFLAG)) && (!cgs.clientinfo[cg.clientNum].shoutcaster || (cg.snap->ps.pm_flags & PMF_FOLLOW)))
 	{
 		// draw objective info icon (if teammates or enemies are carrying one)
 		vec4_t color = { 1.f, 1.f, 1.f, 1.f };
