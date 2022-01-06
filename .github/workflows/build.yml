@@ -289,7 +289,7 @@ jobs:
         shell: bash
         working-directory: build/legacy
         run: |
-          zip -rvj legacy_mod_${{ steps.vars.outputs.tag }}.zip legacy_*.pk3 win-qagame/*.dll lnx64-qagame/*.so osx-qagame/* raspberry_pi-qagame/*.so qagame*.so
+          zip -rvj etlegacy-mod-${{ steps.vars.outputs.tag }}.zip legacy_*.pk3 win-qagame/*.dll lnx64-qagame/*.so osx-qagame/* raspberry_pi-qagame/*.so qagame*.so
 
       - uses: actions/upload-artifact@v2
         with:
@@ -299,7 +299,7 @@ jobs:
       - uses: actions/upload-artifact@v2
         with:
           name: mod-zip
-          path: build/legacy/legacy_mod_*.zip
+          path: build/legacy/etlegacy-mod-*.zip
 
       - name: Generate packages
         shell: bash
