@@ -240,7 +240,7 @@ void S_ChannelFree(channel_t *v)
  * @brief S_ChannelMalloc
  * @return
  */
-channel_t *S_ChannelMalloc(void)
+channel_t *S_ChannelMalloc(int time)
 {
 	channel_t *v;
 
@@ -250,7 +250,7 @@ channel_t *S_ChannelMalloc(void)
 	}
 	v            = freelist;
 	freelist     = *(channel_t **)freelist;
-	v->allocTime = Sys_Milliseconds();
+	v->allocTime = time;
 	return v;
 }
 
@@ -655,43 +655,59 @@ void S_Base_StartSoundEx(vec3_t origin, int entnum, int entchannel, sfxHandle_t 
 		Com_Printf("S_Base_StartSoundEx: %i : %s\n", s_paintedtime, sfx->soundName);
 	}
 
-	time = Sys_Milliseconds();
-	ch   = s_channels;
+	time = s_soundtime;
+	ch   = NULL;
 
 	// shut off other sounds on this channel if necessary
-	for (i = 0; i < MAX_CHANNELS ; i++, ch++)
+	for (i = 0; i < MAX_CHANNELS ; i++)
 	{
-		if (ch->entnum == entnum && ch->thesfx)
+		// double played in one frame making the same sound play at increased volume
+		if (s_channels[i].entnum == entnum && s_channels[i].thesfx == sfx && s_channels[i].allocTime == time)
 		{
-			if (ch->thesfx == sfx && time - ch->allocTime < 50) // double played in one frame
+			return;
+		}
+
+		if (s_channels[i].entnum == entnum && s_channels[i].thesfx && s_channels[i].entchannel == entchannel)
+		{
+			if ((flags & SND_CUTOFF_ALL)) // cut the sounds that are flagged to be cut
 			{
-				return;
+				S_ChannelFree(&s_channels[i]);
 			}
-			else if (ch->entchannel == entchannel)
+			else if (s_channels[i].flags & SND_NOCUT) // don't cutoff
 			{
-				if ((flags & SND_CUTOFF_ALL)) // cut the sounds that are flagged to be cut
-				{
-					S_ChannelFree(ch);
-				}
-				else if (ch->flags & SND_NOCUT) // don't cutoff
-				{
-					continue;
-				}
-				else if (ch->flags & SND_OKTOCUT) // cutoff sounds that expect to be overwritten
-				{
-					S_ChannelFree(ch);
-				}
-				else if ((ch->flags & SND_REQUESTCUT) && (flags & SND_CUTOFF)) // cutoff 'weak' sounds on channel
-				{
-					S_ChannelFree(ch);
-				}
+				continue;
+			}
+			else if (s_channels[i].flags & SND_OKTOCUT) // cutoff sounds that expect to be overwritten
+			{
+				S_ChannelFree(&s_channels[i]);
+			}
+			else if ((s_channels[i].flags & SND_REQUESTCUT) && (flags & SND_CUTOFF)) // cutoff 'weak' sounds on channel
+			{
+				S_ChannelFree(&s_channels[i]);
+			}
+		}
+	}
+
+	// re-use channel if applicable
+	for (i = 0; i < MAX_CHANNELS; i++)
+	{
+		if (s_channels[i].entnum == entnum && s_channels[i].entchannel == entchannel && entchannel != CHAN_AUTO)
+		{
+			if (!(s_channels[i].flags & SND_NOCUT) && s_channels[i].thesfx == sfx)
+			{
+				ch = &s_channels[i];
+				break;
 			}
 		}
 	}
 
 	sfx->lastTimeUsed = time;
 
-	ch = S_ChannelMalloc();
+	if (!ch)
+	{
+		ch = S_ChannelMalloc(time);
+	}
+
 	if (!ch)
 	{
 		int oldest = sfx->lastTimeUsed;
@@ -1122,7 +1138,7 @@ void S_AddLoopSounds(void)
 
 	numLoopChannels = 0;
 
-	time = Sys_Milliseconds();
+	time = s_soundtime;
 
 	loopFrame++;
 	for (i = 0 ; i < numLoopSounds; i++)
@@ -2244,7 +2260,7 @@ void S_FreeOldestSound(void)
 	sfx_t     *sfx;
 	sndBuffer *buffer, *nbuffer;
 
-	oldest = Sys_Milliseconds();
+	oldest = s_soundtime;
 
 	for (i = 1 ; i < numSfx ; i++)
 	{
