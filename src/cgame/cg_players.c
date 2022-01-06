@@ -1872,7 +1872,7 @@ static void CG_BreathPuffs(centity_t *cent, refEntity_t *head)
 		return;
 	}
 
-	if (!(cent->currentState.eFlags & EF_DEAD))
+	if (cent->currentState.eFlags & EF_DEAD || cent->currentState.eType == ET_CORPSE)
 	{
 		return;
 	}
