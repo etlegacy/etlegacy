@@ -309,7 +309,7 @@ static void DL_InitSSL(CURL *curl)
  */
 int DL_BeginDownload(const char *localName, const char *remoteName)
 {
-	char referer[MAX_STRING_CHARS + 5 /*"ET://"*/];
+	char referer[MAX_STRING_CHARS + 5 /*"et://"*/];
 
 	if (dl_request)
 	{
@@ -339,7 +339,7 @@ int DL_BeginDownload(const char *localName, const char *remoteName)
 	DL_InitDownload();
 
 	/* ET://ip:port */
-	strcpy(referer, "ET://");
+	strcpy(referer, "et://");
 	Q_strncpyz(referer + 5, Cvar_VariableString("cl_currentServerIP"), MAX_STRING_CHARS);
 
 	dl_request = curl_easy_init();

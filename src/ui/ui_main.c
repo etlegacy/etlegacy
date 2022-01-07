@@ -8777,7 +8777,7 @@ void UI_SetActiveMenu(uiMenuCommand_t menu)
 					trap_Cvar_Set("com_errorMessage", __(buf));
 					Menus_ActivateByName("popupPassword", qtrue);
 				}
-				else if (strlen(buf) > 5 && !Q_stricmpn(buf, "ET://", 5) && strlen(buf) < 200)
+				else if (strlen(buf) > 5 && !Q_stricmpn(buf, "et://", 5) && strlen(buf) < 200)
 				{
 					if (ui_serverBrowserSettings.integer & UI_BROWSER_ALLOW_REDIRECT)
 					{

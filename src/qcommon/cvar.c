@@ -670,7 +670,7 @@ cvar_t *Cvar_Set2(const char *var_name, const char *value, qboolean force)
 		char *cleaned;
 
 		cleaned = Cvar_ClearForeignCharacters(value);
-		if (strcmp(value, cleaned))
+		if (strcmp(value, cleaned) != 0)
 		{
 #ifdef DEDICATED
 			Com_Printf(FOREIGN_MSG);

@@ -1684,7 +1684,7 @@ void CL_PrintPacket(msg_t *msg)
 		Q_strncpyz(clc.serverMessage, s + 12, sizeof(clc.serverMessage));
 		Com_Error(ERR_AUTOUPDATE, "%s", clc.serverMessage);
 	}
-	else if (!Q_stricmpn(s, "ET://", 5))
+	else if (!Q_stricmpn(s, "et://", 5))
 	{
 		Q_strncpyz(clc.serverMessage, s, sizeof(clc.serverMessage));
 		Cvar_Set("com_errorMessage", clc.serverMessage);

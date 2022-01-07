@@ -938,13 +938,13 @@ void Sys_BuildCommandLine(int argc, char **argv, char *buffer, size_t bufferSize
 		const qboolean containsSpaces = (qboolean)(strchr(argv[i], ' ') != NULL);
 
 		// Allow URIs to be passed without +connect
-		if (!Q_strncmp(argv[i], "et://", 5) && Q_strncmp(argv[i - 1], "+connect", 8))
+		if (!Q_stricmpn(argv[i], "et://", 5) && Q_stricmpn(argv[i - 1], "+connect", 8))
 		{
 			Q_strcat(buffer, bufferSize, "+connect ");
 		}
 
 		// Allow demo files to be passed without +demo for playback
-		if (FS_IsDemoExt(argv[i], -1) && Q_strncmp(argv[i - 1], "+demo", 5) && Q_strncmp(argv[i - 1], "+record", 7))
+		if (FS_IsDemoExt(argv[i], -1) && Q_stricmpn(argv[i - 1], "+demo", 5) && Q_stricmpn(argv[i - 1], "+record", 7))
 		{
 			Q_strcat(buffer, bufferSize, "+demo dirty ");
 		}
