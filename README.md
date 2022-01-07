@@ -7,7 +7,7 @@ ET: Legacy ![Build status](https://github.com/etlegacy/etlegacy/workflows/ETLBui
 * Downloads: [https://www.etlegacy.com/download](https://www.etlegacy.com/download)
 * Wiki/FAQ: [https://github.com/etlegacy/etlegacy/wiki](https://github.com/etlegacy/etlegacy/wiki)
 * Development: [https://github.com/etlegacy/etlegacy](https://github.com/etlegacy/etlegacy)
-* Assets Repository: [https://drive.google.com](https://drive.google.com/drive/folders/0Bw7Yu-pqzcSaLXEtVEVjZF82UEU)
+* Assets Repository: [https://drive.google.com](https://drive.google.com/drive/folders/0Bw7Yu-pqzcSaLXEtVEVjZF82UEU?resourcekey=0-QYA6QCoHTcUQdnDm8-z0AQ&usp=sharing)
 * Documentation: [https://etlegacy.readthedocs.io/](https://etlegacy.readthedocs.io/)
 * Lua API: [https://etlegacy-lua-docs.readthedocs.io](https://etlegacy-lua-docs.readthedocs.io)
 * Translation: [https://www.transifex.com/etlegacy/etlegacy](https://www.transifex.com/etlegacy/etlegacy)
