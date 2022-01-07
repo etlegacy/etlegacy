@@ -4083,6 +4083,8 @@ typedef struct hudComponent_s
 	rectDef_t location;
 	int visible;
 	int style;
+    float scale;
+    vec4_t color;
 	int offset;
 } hudComponent_t;
 

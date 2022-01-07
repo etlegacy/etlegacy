@@ -163,9 +163,9 @@ hudStucture_t *CG_GetActiveHUD()
  * @param[in] style
  * @return
  */
-hudComponent_t CG_getComponent(float x, float y, float w, float h, qboolean visible, componentStyle style)
+hudComponent_t CG_getComponent(float x, float y, float w, float h, qboolean visible, componentStyle style, float scale, const vec4_t color)
 {
-	hudComponent_t comp = { { x, y, w, h }, visible, style };
+	hudComponent_t comp = { { x, y, w, h }, visible, style, scale, *color };
 
 	return comp;
 }
@@ -178,34 +178,34 @@ void CG_setDefaultHudValues(hudStucture_t *hud)
 {
 	// the Default hud
 	hud->hudnumber       = 0;
-	hud->compass         = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 100 - 20 - 16, 16, 100 + 32, 100 + 32, qtrue, STYLE_NORMAL);
-	hud->staminabar      = CG_getComponent(4, SCREEN_HEIGHT - 92, 12, 72, qtrue, STYLE_NORMAL);
-	hud->breathbar       = CG_getComponent(4, SCREEN_HEIGHT - 92, 12, 72, qtrue, STYLE_NORMAL);
-	hud->healthbar       = CG_getComponent(24, SCREEN_HEIGHT - 92, 12, 72, qtrue, STYLE_NORMAL);
-	hud->weaponchargebar = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 16, SCREEN_HEIGHT - 92, 12, 72, qtrue, STYLE_NORMAL);
-	hud->healthtext      = CG_getComponent(SKILLS_X - 28, SCREEN_HEIGHT - 4, 0, 0, qtrue, STYLE_NORMAL);
-	hud->xptext          = CG_getComponent(SKILLS_X + 28, SCREEN_HEIGHT - 4, 0, 0, qtrue, STYLE_NORMAL);
-	hud->ranktext        = CG_getComponent(0, SCREEN_HEIGHT, 0, 0, qfalse, STYLE_NORMAL);   // disable
-	hud->statsdisplay    = CG_getComponent(SKILL_ICON_X, 0, 0, 0, qtrue, STYLE_NORMAL);
-	hud->weaponicon      = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 82, SCREEN_HEIGHT - 56, 60, 32, qtrue, STYLE_NORMAL);
-	hud->weaponammo      = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 22, SCREEN_HEIGHT - 1 * (16 + 2) + 12 - 4, 0, 0, qtrue, STYLE_NORMAL);
-	hud->fireteam        = CG_getComponent(10, 10, 100, 100, qtrue, STYLE_NORMAL);
-	hud->popupmessages   = CG_getComponent(4, 320, 72, 72, qtrue, STYLE_NORMAL);
-	hud->powerups        = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 40, SCREEN_HEIGHT - 136, 36, 36, qtrue, STYLE_NORMAL);
-	hud->objectives      = CG_getComponent(8, SCREEN_HEIGHT - 136, 36, 36, qtrue, STYLE_NORMAL);
-	hud->hudhead         = CG_getComponent(44, SCREEN_HEIGHT - 92, 62, 80, qtrue, STYLE_NORMAL);
-	hud->cursorhints     = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) * .5f - 24, 260, 48, 48, qtrue, STYLE_NORMAL);
-	hud->weaponstability = CG_getComponent(50, 208, 10, 64, qtrue, STYLE_NORMAL);
-	hud->livesleft       = CG_getComponent(0, 0, 0, 0, qtrue, STYLE_NORMAL);
-	hud->reinforcement   = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 55, SCREEN_HEIGHT - 70, 0, 0, qtrue, STYLE_NORMAL);
-	hud->roundtimer      = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 55, SCREEN_HEIGHT - 70, 0, 0, qtrue, STYLE_NORMAL);
-	hud->spawntimer      = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 55, SCREEN_HEIGHT - 60, 0, 0, qtrue, STYLE_NORMAL);
-	hud->localtime       = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 55, SCREEN_HEIGHT - 60, 0, 0, qtrue, STYLE_NORMAL);
-	hud->votetext        = CG_getComponent(8, 224, 0.22f, 0.22f, qtrue, STYLE_NORMAL);
-	hud->spectatortext   = CG_getComponent(8, 188, 0.22f, 0.22f, qtrue, STYLE_NORMAL);
-	hud->limbotext       = CG_getComponent(8, 164, 0.22f, 0.22f, qtrue, STYLE_NORMAL);
-	hud->followtext      = CG_getComponent(8, 164, 0.22f, 0.22f, qtrue, STYLE_NORMAL);
-	hud->demotext        = CG_getComponent(10, 9, 0.22f, 0.22f, qtrue, STYLE_SIMPLE);
+	hud->compass         = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 100 - 20 - 16, 16, 100 + 32, 100 + 32, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
+	hud->staminabar      = CG_getComponent(4, SCREEN_HEIGHT - 92, 12, 72, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
+	hud->breathbar       = CG_getComponent(4, SCREEN_HEIGHT - 92, 12, 72, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
+	hud->healthbar       = CG_getComponent(24, SCREEN_HEIGHT - 92, 12, 72, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
+	hud->weaponchargebar = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 16, SCREEN_HEIGHT - 92, 12, 72, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
+	hud->healthtext      = CG_getComponent(SKILLS_X - 28, SCREEN_HEIGHT - 4, 0, 0, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
+	hud->xptext          = CG_getComponent(SKILLS_X + 28, SCREEN_HEIGHT - 4, 0, 0, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
+	hud->ranktext        = CG_getComponent(0, SCREEN_HEIGHT, 0, 0, qfalse, STYLE_NORMAL, 0.19f, colorWhite);   // disable
+	hud->statsdisplay    = CG_getComponent(SKILL_ICON_X, 0, 0, 0, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
+	hud->weaponicon      = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 82, SCREEN_HEIGHT - 56, 60, 32, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
+	hud->weaponammo      = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 22, SCREEN_HEIGHT - 1 * (16 + 2) + 12 - 4, 0, 0, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
+	hud->fireteam        = CG_getComponent(10, 10, 100, 100, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
+	hud->popupmessages   = CG_getComponent(4, 320, 72, 72, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
+	hud->powerups        = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 40, SCREEN_HEIGHT - 136, 36, 36, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
+	hud->objectives      = CG_getComponent(8, SCREEN_HEIGHT - 136, 36, 36, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
+	hud->hudhead         = CG_getComponent(44, SCREEN_HEIGHT - 92, 62, 80, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
+	hud->cursorhints     = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) * .5f - 24, 260, 48, 48, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
+	hud->weaponstability = CG_getComponent(50, 208, 10, 64, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
+	hud->livesleft       = CG_getComponent(0, 0, 0, 0, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
+	hud->reinforcement   = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 55, SCREEN_HEIGHT - 70, 0, 0, qtrue, STYLE_NORMAL, 0.19f, colorMdBlue);
+	hud->roundtimer      = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 55, SCREEN_HEIGHT - 70, 0, 0, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
+	hud->spawntimer      = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 55, SCREEN_HEIGHT - 60, 0, 0, qtrue, STYLE_NORMAL, 0.19f, colorRed);
+	hud->localtime       = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 55, SCREEN_HEIGHT - 60, 0, 0, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
+	hud->votetext        = CG_getComponent(8, 224, 0.22f, 0.22f, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
+	hud->spectatortext   = CG_getComponent(8, 188, 0.22f, 0.22f, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
+	hud->limbotext       = CG_getComponent(8, 164, 0.22f, 0.22f, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
+	hud->followtext      = CG_getComponent(8, 164, 0.22f, 0.22f, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
+	hud->demotext        = CG_getComponent(10, 9, 0.22f, 0.22f, qtrue, STYLE_SIMPLE, 0.19f, colorWhite);
 }
 
 /*
@@ -370,6 +370,58 @@ static qboolean CG_RectParse(int handle, rectDef_t *r)
 	return qfalse;
 }
 
+static qboolean CG_Vec4Parse(int handle, vec4_t v)
+{
+    float r,g,b,a = 0;
+    pc_token_t peakedToken;
+
+    if (!PC_PeakToken(handle, &peakedToken))
+    {
+        return qfalse;
+    }
+
+    if (peakedToken.string[0] == '(')
+    {
+        if (!trap_PC_ReadToken(handle, &peakedToken))
+        {
+            return qfalse;
+        }
+    }
+
+    if (PC_Float_Parse(handle, &r))
+    {
+        if (PC_Float_Parse(handle, &g))
+        {
+            if (PC_Float_Parse(handle, &b))
+            {
+                if (PC_Float_Parse(handle, &a))
+                {
+                    v[0] = r;
+                    v[1] = g;
+                    v[2] = b;
+                    v[3] = a;
+                    return qtrue;
+                }
+            }
+        }
+    }
+
+    if (!PC_PeakToken(handle, &peakedToken))
+    {
+        return qfalse;
+    }
+
+    if (peakedToken.string[0] == ')')
+    {
+        if (!trap_PC_ReadToken(handle, &peakedToken))
+        {
+            return qfalse;
+        }
+    }
+
+    return qfalse;
+}
+
 /**
  * @brief CG_ParseHudComponent
  * @param[in] handle
@@ -393,6 +445,16 @@ static qboolean CG_ParseHudComponent(int handle, hudComponent_t *comp)
 	{
 		return qfalse;
 	}
+
+    if (!PC_Float_Parse(handle, &comp->scale))
+    {
+        return qfalse;
+    }
+
+    if (!CG_Vec4Parse(handle, comp->color))
+    {
+        return qfalse;
+    }
 
 	return qtrue;
 }
@@ -2397,7 +2459,7 @@ static char *CG_SpawnTimerText()
 			{
 				seconds     = msec / 1000;
 				secondsThen = ((cgs.timelimit * 60000.f) - cg_spawnTimer_set.integer) / 1000;
-				return va("^1%i", period + (seconds - secondsThen) % period);
+				return va("%i", period + (seconds - secondsThen) % period);
 			}
 		}
 	}
@@ -2447,19 +2509,22 @@ static char *CG_TimerWarmupString()
  * @param[in] localtime
  * @param[in] roundtimer
  */
-static void CG_DrawTimersAlt(rectDef_t *respawn, rectDef_t *spawntimer, rectDef_t *localtime, rectDef_t *roundtimer)
+static void CG_DrawTimersAlt(struct hudComponent_s *respawn, struct hudComponent_s *spawntimer, struct hudComponent_s *localtime, struct hudComponent_s *roundtimer)
 {
-	char    *s, *rt;
+	char    *s, *rt = NULL;
 	int     w;
 	qtime_t time;
-	vec4_t  color = { 0.625f, 0.625f, 0.6f, 1.0f };
+    vec4_t  color;
 	int     tens;
 	int     msec    = (cgs.timelimit * 60000.f) - (cg.time - cgs.levelStartTime); // 60.f * 1000.f
 	int     seconds = msec / 1000;
 	int     mins    = seconds / 60;
+    int     blink   = 0;
+    float   blinkAlpha;
+    int limbotimeOwn, limbotimeEnemy;
 
-	seconds -= mins * 60;
-	tens     = seconds / 10;
+            seconds -= mins * 60;
+    tens     = seconds / 10;
 	seconds -= tens * 10;
 
 	if (cgs.gamestate != GS_PLAYING)
@@ -2471,66 +2536,55 @@ static void CG_DrawTimersAlt(rectDef_t *respawn, rectDef_t *spawntimer, rectDef_
 		tens     = seconds / 10;
 		seconds -= tens * 10;
 
-		s        = va("%s ^7%2i:%i%i", CG_TimerWarmupString(), mins, tens, seconds);
-		color[3] = fabs(sin(cg.time * 0.002));
+        if (cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_AXIS)
+        {
+            limbotimeOwn   = cg_redlimbotime.integer;
+            limbotimeEnemy = cg_bluelimbotime.integer;
+        }
+        else
+        {
+            limbotimeOwn   = cg_bluelimbotime.integer;
+            limbotimeEnemy = cg_redlimbotime.integer;
+        }
+
+        rt = va("%2.0i", limbotimeEnemy / 1000);
+        s = cgs.gametype == GT_WOLF_LMS ? va("%s", CG_TranslateString("WARMUP")) : va("%2.0i", limbotimeOwn / 1000);
+        blink = 1;
+        blinkAlpha = fabs(sin(cg.time * 0.002));
 	}
 	else if (msec < 0 && cgs.timelimit > 0.0f)
 	{
-		s        = "^70:00";
-		color[3] = fabs(sin(cg.time * 0.002));
+		s        = "0:00";// why is this needed?
+        blink = 1;
+        blinkAlpha = fabs(sin(cg.time * 0.002));
 	}
-	else
-	{
-		color[3] = 1.f;
-		if (cgs.timelimit > 0.0f)
-		{
-			s = va("^7%i:%i%i", mins, tens, seconds);
-			w = (mins < 10) ? CG_Text_Width_Ext("0", 0.19f, 0, &cgs.media.limboFont1) : 0;
-			CG_Text_Paint_Ext(roundtimer->x + w, roundtimer->y, 0.19f, 0.19f, color, s, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
-		}
+    else if (cgs.gametype != GT_WOLF_LMS && (cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR || (cg.snap->ps.pm_flags & PMF_FOLLOW)) && cg_drawReinforcementTime.integer > 0)
+    {
+        s = va("%2.0i", CG_CalculateReinfTime(qfalse));
+        rt = CG_SpawnTimerText();
+    }
+    else
+    {
+        s = "";
+    }
 
-		if (cgs.gametype != GT_WOLF_LMS && cgs.clientinfo[cg.clientNum].shoutcaster && cg_drawReinforcementTime.integer > 0)
-		{
-			int reinfTimeAx = CG_CalculateShoutcasterReinfTime(TEAM_AXIS);
-			int reinfTimeAl = CG_CalculateShoutcasterReinfTime(TEAM_ALLIES);
+    w = (mins < 10) ? CG_Text_Width_Ext("0", roundtimer->scale, 0, &cgs.media.limboFont1) : 0; // is this correct? why not just the value
+    CG_Text_Paint_Ext(roundtimer->location.x + w, roundtimer->location.y, roundtimer->scale, roundtimer->scale, roundtimer->color, va("%i:%i%i", mins, tens, seconds), 0, 0, roundtimer->style, &cgs.media.limboFont1);
 
-			rt = va("^1%2.0i ^$%2.0i ", reinfTimeAx, reinfTimeAl);
-		}
-		else if (cgs.gametype != GT_WOLF_LMS && (cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR || (cg.snap->ps.pm_flags & PMF_FOLLOW)) && cg_drawReinforcementTime.integer > 0)
-		{
-			int  reinfTime  = CG_CalculateReinfTime(qfalse);
-			char *teamColor = (cgs.clientinfo[cg.clientNum].shoutcaster ? (cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_AXIS ? "^1" : "^$") : "^F");
-
-			rt = va("%s%d ", (reinfTime <= 2 && cgs.clientinfo[cg.clientNum].health == 0 &&
-			                  !(cg.snap->ps.pm_flags & PMF_FOLLOW)) ? "^1" : teamColor, reinfTime);
-		}
-		else
-		{
-			rt = "";
-		}
-
-		s = va("%s", rt);
-	}
-
-	if (cgs.gamestate != GS_PLAYING)
-	{
-		w = CG_Text_Width_Ext(s, 0.19f, 0, &cgs.media.limboFont1) - CG_Text_Width_Ext("00:00", 0.19f, 0, &cgs.media.limboFont1);
-	}
-	else
-	{
-		w = CG_Text_Width_Ext(s, 0.19f, 0, &cgs.media.limboFont1) - ((msec < 0 && cgs.timelimit > 0.0f) ? CG_Text_Width_Ext("00:00", 0.19f, 0, &cgs.media.limboFont1) : 0);
-	}
-
-	CG_Text_Paint_Ext(respawn->x - w, respawn->y, 0.19f, 0.19f, color, s, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
+    w = CG_Text_Width_Ext(s, respawn->scale, 0, &cgs.media.limboFont1);
+    Com_Memcpy(color, respawn->color, sizeof(vec4_t));
+    color[3] = blink ? blinkAlpha : color[3];
+	CG_Text_Paint_Ext(respawn->location.x - w, respawn->location.y, respawn->scale, respawn->scale, color, s, 0, 0, respawn->style, &cgs.media.limboFont1);
 
 	// spawntimer
-	rt = CG_SpawnTimerText();
-	if (rt)
-	{
-		s = va("%s ", rt);
-		w = CG_Text_Width_Ext(s, 0.19f, 0, &cgs.media.limboFont1) - ((msec < 0 && cgs.timelimit > 0.0f) ? CG_Text_Width_Ext("00:00", 0.19f, 0, &cgs.media.limboFont1) : 0);
-		CG_Text_Paint_Ext(spawntimer->x - w, spawntimer->y, 0.19f, 0.19f, color, s, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
-	}
+    if (rt) {
+        s = va("%s ", rt);
+        w = CG_Text_Width_Ext(s, spawntimer->scale, 0, &cgs.media.limboFont1);
+        Com_Memcpy(color, spawntimer->color, sizeof(vec4_t));
+        color[3] = blink ? blinkAlpha : color[3];
+        CG_Text_Paint_Ext(spawntimer->location.x - w, spawntimer->location.y, spawntimer->scale, spawntimer->scale,
+                          color, s, 0, 0, spawntimer->style, &cgs.media.limboFont1);
+    }
 	// end spawntimer
 
 	if (cg_drawTime.integer & LOCALTIME_ON)
@@ -2570,8 +2624,7 @@ static void CG_DrawTimersAlt(rectDef_t *respawn, rectDef_t *spawntimer, rectDef_
 				s = va("%02i:%02i", time.tm_hour, time.tm_min);
 			}
 		}
-		color[3] = 1.f; // don't blink local time during warmup
-		CG_Text_Paint_Ext(localtime->x, localtime->y, 0.19f, 0.19f, color, s, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
+		CG_Text_Paint_Ext(localtime->location.x, localtime->location.y, localtime->scale, localtime->scale, localtime->color, s, 0, 0, localtime->style, &cgs.media.limboFont1);
 	}
 }
 
@@ -3190,66 +3243,66 @@ void CG_Hud_Setup(void)
 
 	// Hud1
 	hud1.hudnumber       = 1;
-	hud1.compass         = CG_getComponent(44, SCREEN_HEIGHT - 87, 84, 84, qtrue, STYLE_NORMAL);
-	hud1.staminabar      = CG_getComponent(4, 388, 12, 72, qtrue, STYLE_NORMAL);
-	hud1.breathbar       = CG_getComponent(4, 388, 12, 72, qtrue, STYLE_NORMAL);
-	hud1.healthbar       = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 36, 388, 12, 72, qtrue, STYLE_NORMAL);
-	hud1.weaponchargebar = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 16, 388, 12, 72, qtrue, STYLE_NORMAL);
-	hud1.healthtext      = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 60, SCREEN_HEIGHT - 65, 0, 0, qtrue, STYLE_NORMAL);
-	hud1.xptext          = CG_getComponent(48, SCREEN_HEIGHT - 4, 0, 0, qtrue, STYLE_NORMAL);
-	hud1.ranktext        = CG_getComponent(62, SCREEN_HEIGHT - 16, 0, 0, qtrue, STYLE_NORMAL);
-	hud1.statsdisplay    = CG_getComponent(24, SCREEN_HEIGHT - 95, 0, 0, qtrue, STYLE_SIMPLE);
-	hud1.weaponicon      = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 82 - 20, SCREEN_HEIGHT - 56, 60, 32, qtrue, STYLE_NORMAL);
-	hud1.weaponammo      = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 22 - 20, SCREEN_HEIGHT - 1 * (16 + 2) + 12 - 4, 0, 0, qtrue, STYLE_NORMAL);
-	hud1.fireteam        = CG_getComponent(Ccg_WideX(SCREEN_WIDTH), 10, 100, 100, qtrue, STYLE_NORMAL);
-	hud1.popupmessages   = CG_getComponent(4, 100, 72, 72, qtrue, STYLE_NORMAL);
-	hud1.powerups        = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 40, SCREEN_HEIGHT - 136, 36, 36, qtrue, STYLE_NORMAL);
-	hud1.objectives      = CG_getComponent(8, SCREEN_HEIGHT - 136, 36, 36, qtrue, STYLE_NORMAL);
-	hud1.hudhead         = CG_getComponent(44, SCREEN_HEIGHT - 92, 62, 80, qfalse, STYLE_NORMAL);
-	hud1.cursorhints     = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) * .5f - 24, 260, 48, 48, qtrue, STYLE_NORMAL);
-	hud1.weaponstability = CG_getComponent(50, 208, 10, 64, qtrue, STYLE_NORMAL);
-	hud1.livesleft       = CG_getComponent(0, 0, 0, 0, qtrue, STYLE_NORMAL);
-	hud1.reinforcement   = CG_getComponent(100, SCREEN_HEIGHT - 12, 0, 0, qtrue, STYLE_NORMAL);
-	hud1.roundtimer      = CG_getComponent(100, SCREEN_HEIGHT - 12, 0, 0, qtrue, STYLE_NORMAL);
-	hud1.spawntimer      = CG_getComponent(100, SCREEN_HEIGHT - 2, 0, 0, qtrue, STYLE_NORMAL);
-	hud1.localtime       = CG_getComponent(100, SCREEN_HEIGHT - 2, 0, 0, qtrue, STYLE_NORMAL);
-	hud1.votetext        = CG_getComponent(8, 224, 0.22f, 0.22f, qtrue, STYLE_NORMAL);
-	hud1.spectatortext   = CG_getComponent(8, 188, 0.22f, 0.22f, qtrue, STYLE_NORMAL);
-	hud1.limbotext       = CG_getComponent(8, 164, 0.22f, 0.22f, qtrue, STYLE_NORMAL);
-	hud1.followtext      = CG_getComponent(8, 164, 0.22f, 0.22f, qtrue, STYLE_NORMAL);
-	hud1.demotext        = CG_getComponent(10, 9, 0.22f, 0.22f, qtrue, STYLE_SIMPLE);
+	hud1.compass         = CG_getComponent(44, SCREEN_HEIGHT - 87, 84, 84, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
+	hud1.staminabar      = CG_getComponent(4, 388, 12, 72, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
+	hud1.breathbar       = CG_getComponent(4, 388, 12, 72, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
+	hud1.healthbar       = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 36, 388, 12, 72, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
+	hud1.weaponchargebar = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 16, 388, 12, 72, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
+	hud1.healthtext      = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 60, SCREEN_HEIGHT - 65, 0, 0, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
+	hud1.xptext          = CG_getComponent(48, SCREEN_HEIGHT - 4, 0, 0, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
+	hud1.ranktext        = CG_getComponent(62, SCREEN_HEIGHT - 16, 0, 0, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
+	hud1.statsdisplay    = CG_getComponent(24, SCREEN_HEIGHT - 95, 0, 0, qtrue, STYLE_SIMPLE, 0.19f, colorWhite);
+	hud1.weaponicon      = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 82 - 20, SCREEN_HEIGHT - 56, 60, 32, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
+	hud1.weaponammo      = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 22 - 20, SCREEN_HEIGHT - 1 * (16 + 2) + 12 - 4, 0, 0, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
+	hud1.fireteam        = CG_getComponent(Ccg_WideX(SCREEN_WIDTH), 10, 100, 100, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
+	hud1.popupmessages   = CG_getComponent(4, 100, 72, 72, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
+	hud1.powerups        = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 40, SCREEN_HEIGHT - 136, 36, 36, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
+	hud1.objectives      = CG_getComponent(8, SCREEN_HEIGHT - 136, 36, 36, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
+	hud1.hudhead         = CG_getComponent(44, SCREEN_HEIGHT - 92, 62, 80, qfalse, STYLE_NORMAL, 0.19f, colorWhite);
+	hud1.cursorhints     = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) * .5f - 24, 260, 48, 48, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
+	hud1.weaponstability = CG_getComponent(50, 208, 10, 64, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
+	hud1.livesleft       = CG_getComponent(0, 0, 0, 0, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
+	hud1.reinforcement   = CG_getComponent(100, SCREEN_HEIGHT - 12, 0, 0, qtrue, STYLE_NORMAL, 0.19f, colorMdBlue);
+	hud1.roundtimer      = CG_getComponent(100, SCREEN_HEIGHT - 12, 0, 0, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
+	hud1.spawntimer      = CG_getComponent(100, SCREEN_HEIGHT - 2, 0, 0, qtrue, STYLE_NORMAL, 0.19f, colorRed);
+	hud1.localtime       = CG_getComponent(100, SCREEN_HEIGHT - 2, 0, 0, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
+	hud1.votetext        = CG_getComponent(8, 224, 0.22f, 0.22f, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
+	hud1.spectatortext   = CG_getComponent(8, 188, 0.22f, 0.22f, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
+	hud1.limbotext       = CG_getComponent(8, 164, 0.22f, 0.22f, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
+	hud1.followtext      = CG_getComponent(8, 164, 0.22f, 0.22f, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
+	hud1.demotext        = CG_getComponent(10, 9, 0.22f, 0.22f, qtrue, STYLE_SIMPLE, 0.19f, colorWhite);
 	CG_addHudToList(&hud1);
 
 	// Hud2
 	hud2.hudnumber       = 2;
-	hud2.compass         = CG_getComponent(64, SCREEN_HEIGHT - 87, 84, 84, qtrue, STYLE_NORMAL);
-	hud2.staminabar      = CG_getComponent(4, 388, 12, 72, qtrue, STYLE_NORMAL);
-	hud2.breathbar       = CG_getComponent(4, 388, 12, 72, qtrue, STYLE_NORMAL);
-	hud2.healthbar       = CG_getComponent(24, 388, 12, 72, qtrue, STYLE_NORMAL);
-	hud2.weaponchargebar = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 16, 388, 12, 72, qtrue, STYLE_NORMAL);
-	hud2.healthtext      = CG_getComponent(65, SCREEN_HEIGHT - 4, 0, 0, qtrue, STYLE_NORMAL);
-	hud2.xptext          = CG_getComponent(132, SCREEN_HEIGHT - 4, 0, 0, qtrue, STYLE_NORMAL);
-	hud2.ranktext        = CG_getComponent(146, SCREEN_HEIGHT - 16, 0, 0, qtrue, STYLE_NORMAL);
-	hud2.statsdisplay    = CG_getComponent(44, SCREEN_HEIGHT - 95, 0, 0, qtrue, STYLE_SIMPLE);
-	hud2.weaponicon      = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 82, SCREEN_HEIGHT - 56, 60, 32, qtrue, STYLE_NORMAL);
-	hud2.weaponammo      = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 22, SCREEN_HEIGHT - 1 * (16 + 2) + 12 - 4, 0, 0, qtrue, STYLE_NORMAL);
-	hud2.fireteam        = CG_getComponent(Ccg_WideX(SCREEN_WIDTH), 10, 100, 100, qtrue, STYLE_NORMAL);
-	hud2.popupmessages   = CG_getComponent(4, 100, 72, 72, qtrue, STYLE_NORMAL);
-	hud2.powerups        = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 40, SCREEN_HEIGHT - 136, 36, 36, qtrue, STYLE_NORMAL);
-	hud2.objectives      = CG_getComponent(8, SCREEN_HEIGHT - 136, 36, 36, qtrue, STYLE_NORMAL);
-	hud2.hudhead         = CG_getComponent(44, SCREEN_HEIGHT - 92, 62, 80, qfalse, STYLE_NORMAL);
-	hud2.cursorhints     = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) * .5f - 24, 260, 48, 48, qtrue, STYLE_NORMAL);
-	hud2.weaponstability = CG_getComponent(50, 208, 10, 64, qtrue, STYLE_NORMAL);
-	hud2.livesleft       = CG_getComponent(0, 0, 0, 0, qtrue, STYLE_NORMAL);
-	hud2.reinforcement   = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 55, SCREEN_HEIGHT - 70, 0, 0, qtrue, STYLE_NORMAL);
-	hud2.roundtimer      = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 55, SCREEN_HEIGHT - 70, 0, 0, qtrue, STYLE_NORMAL);
-	hud2.spawntimer      = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 55, SCREEN_HEIGHT - 60, 0, 0, qtrue, STYLE_NORMAL);
-	hud2.localtime       = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 55, SCREEN_HEIGHT - 60, 0, 0, qtrue, STYLE_NORMAL);
-	hud2.votetext        = CG_getComponent(8, 224, 0.22f, 0.22f, qtrue, STYLE_NORMAL);
-	hud2.spectatortext   = CG_getComponent(8, 188, 0.22f, 0.22f, qtrue, STYLE_NORMAL);
-	hud2.limbotext       = CG_getComponent(8, 164, 0.22f, 0.22f, qtrue, STYLE_NORMAL);
-	hud2.followtext      = CG_getComponent(8, 164, 0.22f, 0.22f, qtrue, STYLE_NORMAL);
-	hud2.demotext        = CG_getComponent(10, 9, 0.22f, 0.22f, qtrue, STYLE_SIMPLE);
+	hud2.compass         = CG_getComponent(64, SCREEN_HEIGHT - 87, 84, 84, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
+	hud2.staminabar      = CG_getComponent(4, 388, 12, 72, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
+	hud2.breathbar       = CG_getComponent(4, 388, 12, 72, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
+	hud2.healthbar       = CG_getComponent(24, 388, 12, 72, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
+	hud2.weaponchargebar = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 16, 388, 12, 72, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
+	hud2.healthtext      = CG_getComponent(65, SCREEN_HEIGHT - 4, 0, 0, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
+	hud2.xptext          = CG_getComponent(132, SCREEN_HEIGHT - 4, 0, 0, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
+	hud2.ranktext        = CG_getComponent(146, SCREEN_HEIGHT - 16, 0, 0, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
+	hud2.statsdisplay    = CG_getComponent(44, SCREEN_HEIGHT - 95, 0, 0, qtrue, STYLE_SIMPLE, 0.19f, colorWhite);
+	hud2.weaponicon      = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 82, SCREEN_HEIGHT - 56, 60, 32, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
+	hud2.weaponammo      = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 22, SCREEN_HEIGHT - 1 * (16 + 2) + 12 - 4, 0, 0, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
+	hud2.fireteam        = CG_getComponent(Ccg_WideX(SCREEN_WIDTH), 10, 100, 100, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
+	hud2.popupmessages   = CG_getComponent(4, 100, 72, 72, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
+	hud2.powerups        = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 40, SCREEN_HEIGHT - 136, 36, 36, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
+	hud2.objectives      = CG_getComponent(8, SCREEN_HEIGHT - 136, 36, 36, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
+	hud2.hudhead         = CG_getComponent(44, SCREEN_HEIGHT - 92, 62, 80, qfalse, STYLE_NORMAL, 0.19f, colorWhite);
+	hud2.cursorhints     = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) * .5f - 24, 260, 48, 48, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
+	hud2.weaponstability = CG_getComponent(50, 208, 10, 64, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
+	hud2.livesleft       = CG_getComponent(0, 0, 0, 0, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
+	hud2.reinforcement   = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 55, SCREEN_HEIGHT - 70, 0, 0, qtrue, STYLE_NORMAL, 0.19f, colorMdBlue);
+	hud2.roundtimer      = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 55, SCREEN_HEIGHT - 70, 0, 0, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
+	hud2.spawntimer      = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 55, SCREEN_HEIGHT - 60, 0, 0, qtrue, STYLE_NORMAL, 0.19f, colorRed);
+	hud2.localtime       = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 55, SCREEN_HEIGHT - 60, 0, 0, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
+	hud2.votetext        = CG_getComponent(8, 224, 0.22f, 0.22f, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
+	hud2.spectatortext   = CG_getComponent(8, 188, 0.22f, 0.22f, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
+	hud2.limbotext       = CG_getComponent(8, 164, 0.22f, 0.22f, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
+	hud2.followtext      = CG_getComponent(8, 164, 0.22f, 0.22f, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
+	hud2.demotext        = CG_getComponent(10, 9, 0.22f, 0.22f, qtrue, STYLE_SIMPLE, 0.19f, colorWhite);
 	CG_addHudToList(&hud2);
 
 	// Read the hud files
@@ -3431,7 +3484,7 @@ void CG_DrawUpperRight(void)
 	{
 		if (cg_altHudFlags.integer & FLAGS_MOVE_TIMERS)
 		{
-			CG_DrawTimersAlt(&activehud->reinforcement.location, &activehud->spawntimer.location, &activehud->localtime.location, &activehud->roundtimer.location);
+			CG_DrawTimersAlt(&activehud->reinforcement, &activehud->spawntimer, &activehud->localtime, &activehud->roundtimer);
 		}
 		else
 		{
