@@ -13,8 +13,8 @@ msgstr ""
 "Project-Id-Version: ET:Legacy\n"
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
-"PO-Revision-Date: 2021-01-23 13:13+0000\n"
-"Last-Translator: Jakub Strelcow <jakubstrelcow@gmail.com>\n"
+"PO-Revision-Date: 2022-01-05 22:15+0000\n"
+"Last-Translator: Transifex Bot <>\n"
 "Language-Team: Polish (http://www.transifex.com/etlegacy/etlegacy/language/pl/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -7787,3 +7787,15 @@ msgstr "Dodaj lub usuń ten serwer z ulubionych"
 
 msgid "MAKE SHOUTCASTER"
 msgstr "UCZYŃ KOMENTATOREM"
+
+msgid " demo %s: %ik "
+msgstr ""
+
+msgid " audio %s: %ik "
+msgstr ""
+
+msgid "REPLAY"
+msgstr ""
+
+msgid "RECORD"
+msgstr ""
