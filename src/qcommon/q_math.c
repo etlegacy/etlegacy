@@ -57,6 +57,7 @@ vec4_t colorMdCyan   = { 0, 0.5, 0.5, 1 };
 vec4_t colorMdYellow = { 0.5, 0.5, 0, 1 };
 vec4_t colorMdOrange = { 0.5, 0.25, 0, 1 };
 vec4_t colorMdBlue   = { 0, 0, 0.5, 1 };
+vec4_t colorLtBlue   = { 0, 0.5, 1, 1 };
 
 vec4_t clrBrown         = { 0.68f, 0.68f, 0.56f, 1.f };
 vec4_t clrBrownDk       = { 0.58f * 0.75f, 0.58f * 0.75f, 0.46f * 0.75f, 1.f };
