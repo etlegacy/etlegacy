@@ -408,6 +408,7 @@ jobs:
             libasound2-dev libjpeg62-turbo-dev libwebp-dev automake libgl1-mesa-glx libjpeg62-turbo libogg0 libopenal1 libvorbis0a \
             libvorbisfile3 zlib1g libx11-dev libglew-dev libegl1-mesa-dev \
             nasm autoconf git cmake zip gcc g++ libtool libxrandr-dev x11proto-randr-dev
+            cmake --version
             git fetch --tags --force
             ./easybuild.sh build -RPI
 
