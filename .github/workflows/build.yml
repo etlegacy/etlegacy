@@ -479,6 +479,9 @@ jobs:
         working-directory: build/legacy
 
       - name: Generate packages
+        uses: jwlawson/actions-setup-cmake@v1.9
+        with:
+          cmake-version: '3.16.x'
         shell: bash
         working-directory: build/
         run: |
