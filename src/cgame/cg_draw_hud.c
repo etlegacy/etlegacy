@@ -430,14 +430,28 @@ static qboolean CG_ParseHudComponent(int handle, hudComponent_t *comp)
 		return qfalse;
 	}
 
-	if (!PC_Float_Parse(handle, &comp->scale))
+	// Optional scale and color
+	pc_token_t token;
+	if (!trap_PC_ReadToken(handle, &token))
 	{
 		return qfalse;
 	}
-
-	if (!CG_Vec4Parse(handle, comp->color))
+	if (token.type == TT_NUMBER)
 	{
-		return qfalse;
+		trap_PC_UnReadToken(handle);
+		if (!PC_Float_Parse(handle, &comp->scale))
+		{
+			return qfalse;
+		}
+
+		if (!CG_Vec4Parse(handle, comp->color))
+		{
+			return qfalse;
+		}
+	}
+	else
+	{
+		trap_PC_UnReadToken(handle);
 	}
 
 	return qtrue;
