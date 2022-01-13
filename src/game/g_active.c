@@ -2285,10 +2285,11 @@ void ClientEndFrame(gentity_t *ent)
 	frames = level.framenum - ent->client->lastUpdateFrame - 1;
 
 	// etpro antiwarp
-	// frames = level.framenum - ent->client->lastUpdateFrame - 1)
 	if (g_maxWarp.integer && frames > g_maxWarp.integer && G_DoAntiwarp(ent))
 	{
-		ent->client->warping = qtrue;
+		ent->client->warping    = qtrue;
+		ent->client->ps.eFlags |= EF_CONNECTION;
+		ent->s.eFlags          |= EF_CONNECTION;
 	}
 
 	if (g_skipCorrection.integer && !ent->client->warped && frames > 0 && !G_DoAntiwarp(ent))
@@ -2297,8 +2298,6 @@ void ClientEndFrame(gentity_t *ent)
 		{
 			// we need frames to be = 2 here
 			frames = 3;
-			ent->client->ps.eFlags |= EF_CONNECTION;
-			ent->s.eFlags          |= EF_CONNECTION;
 		}
 		G_PredictPmove(ent, (float)frames / (float)sv_fps.integer);
 	}
