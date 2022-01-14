@@ -482,7 +482,7 @@ jobs:
       - name: Generate packages
         shell: bash
         working-directory: build/
-        run: cpack
+        run: cpack --verbose
 
       - uses: actions/upload-artifact@v2
         with:
