@@ -95,6 +95,7 @@ extern vec4_t colorMdCyan;
 extern vec4_t colorMdYellow;
 extern vec4_t colorMdOrange;
 extern vec4_t colorMdBlue;
+extern vec4_t colorLtBlue;
 
 extern vec4_t clrBrown;
 extern vec4_t clrBrownDk;
