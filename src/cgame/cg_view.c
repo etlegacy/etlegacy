@@ -1960,9 +1960,16 @@ void CG_DrawActiveFrame(int serverTime, qboolean demoPlayback)
 	int dbgCnt = 0;
 #endif
 
+	cg.oldTime      = cg.time;
 	cg.time         = serverTime;
 	cgDC.realTime   = cg.time;
 	cg.demoPlayback = demoPlayback;
+	cg.frametime    = cg.time - cg.oldTime;
+
+	if (cg.frametime < 0)
+	{
+		cg.frametime = 0;
+	}
 
 #ifdef FAKELAG
 	cg.time -= snapshotDelayTime;
@@ -2235,13 +2242,7 @@ void CG_DrawActiveFrame(int serverTime, qboolean demoPlayback)
 
 		DEBUGTIME
 
-		//lagometer sample and frame timing
-		cg.frametime = cg.time - cg.oldTime;
-		if (cg.frametime < 0)
-		{
-			cg.frametime = 0;
-		}
-		cg.oldTime = cg.time;
+		//lagometer sample
 		CG_AddLagometerFrameInfo();
 
 		DEBUGTIME

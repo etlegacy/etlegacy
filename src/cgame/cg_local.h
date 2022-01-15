@@ -2430,6 +2430,7 @@ typedef struct cgs_s
 	gamestate_t gamestate;
 	char *currentCampaign;
 	int currentCampaignMap;
+	qboolean matchPaused;
 
 	int complaintClient;
 	int complaintEndTime;
@@ -3369,6 +3370,7 @@ void CG_ParseServerinfo(void);
 void CG_ParseSysteminfo(void);
 void CG_ParseModInfo(void);
 void CG_ParseWolfinfo(void);
+void CG_ParseServerToggles(void);
 void CG_ParseSpawns(void);
 void CG_ParseServerVersionInfo(const char *pszVersionInfo);
 void CG_ParseReinforcementTimes(const char *pszReinfSeedString);

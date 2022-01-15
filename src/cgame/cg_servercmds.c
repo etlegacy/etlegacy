@@ -535,6 +535,20 @@ void CG_ParseWolfinfo(void)
 }
 
 /**
+* @brief CG_ParseServerToggles
+*/
+void CG_ParseServerToggles(void)
+{
+	const char *info;
+	int        value;
+
+	info = CG_ConfigString(CS_SERVERTOGGLES);
+	value = Q_atoi(info);
+
+	cgs.matchPaused = (value & CV_SVS_PAUSE) ? qtrue : qfalse;
+}
+
+/**
  * @brief CG_ParseSpawns
  */
 void CG_ParseSpawns(void)
@@ -1018,6 +1032,9 @@ static void CG_ConfigStringModified(void)
 	case CS_SYSTEMINFO:
 		CG_ParseSysteminfo();
 		break;
+	case CS_SERVERTOGGLES:
+		CG_ParseServerToggles();
+		break;
 
 	default:
 		if (num >= CS_MULTI_SPAWNTARGETS && num < CS_MULTI_SPAWNTARGETS + MAX_MULTI_SPAWNTARGETS)
@@ -1378,7 +1395,7 @@ static void CG_MapRestart(void)
 	CG_InitMarkPolys();
 
 	cg.editingSpeakers = qfalse;
-	cg.editingCameras = qfalse;
+	cg.editingCameras  = qfalse;
 
 	BG_BuildSplinePaths();
 
