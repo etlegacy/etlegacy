@@ -498,11 +498,12 @@ void G_SendScore(gentity_t *ent)
 /**
  * @brief Request current scoreboard information
  * @param[out] ent
+ * @param dwCommand - unused
+ * @param value - unused
  */
-void Cmd_Score_f(gentity_t *ent)
+void Cmd_Score_f(gentity_t *ent, unsigned int dwCommand, int value)
 {
 	ent->client->wantsscore = qtrue;
-	//G_SendScore( ent );
 }
 
 /**
@@ -681,8 +682,10 @@ float GetSkillPointUntilLevelUp(gentity_t *ent, skillType_t skill)
 /**
  * @brief Give items to a client
  * @param[in,out] ent
+ * @param dwCommand - unused
+ * @param value    - unused
  */
-void Cmd_Give_f(gentity_t *ent)
+void Cmd_Give_f(gentity_t *ent, unsigned int dwCommand, int value)
 {
 	char *name, *amt;
 	//gitem_t     *it;
@@ -927,10 +930,12 @@ void Cmd_Give_f(gentity_t *ent)
 /**
  * @brief Sets client to godmode
  * @param[in,out] ent
- *
+ * @param dwCommand - unused
+ * @param value    - unused
+ * 
  * @note argv(0) god
  */
-void Cmd_God_f(gentity_t *ent)
+void Cmd_God_f(gentity_t *ent, unsigned int dwCommand, int value)
 {
 	char     *msg;
 	char     *name;
@@ -1019,10 +1024,12 @@ void Cmd_God_f(gentity_t *ent)
 /**
  * @brief Sets client to nofatigue
  * @param[in,out] ent
- *
+ * @param dwCommand - unused
+ * @param value    - unused
+ * 
  * @note argv(0) nofatigue
  */
-void Cmd_Nofatigue_f(gentity_t *ent)
+void Cmd_Nofatigue_f(gentity_t *ent, unsigned int dwCommand, int value)
 {
 	char *msg;
 	char *name = ConcatArgs(1);
@@ -1060,10 +1067,12 @@ void Cmd_Nofatigue_f(gentity_t *ent)
 /**
  * @brief Sets client to notarget
  * @param[in,out] ent
+ * @param dwCommand - unused
+ * @param value    - unused
  *
  * @note argv(0) notarget
  */
-void Cmd_Notarget_f(gentity_t *ent)
+void Cmd_Notarget_f(gentity_t *ent, unsigned int dwCommand, int value)
 {
 	char *msg;
 
@@ -1088,10 +1097,12 @@ void Cmd_Notarget_f(gentity_t *ent)
 /**
  * @brief Cmd_Noclip_f
  * @param[in,out] ent
+ * @param dwCommand - unused
+ * @param value    - unused
  *
  * @note argv(0) noclip
  */
-void Cmd_Noclip_f(gentity_t *ent)
+void Cmd_Noclip_f(gentity_t *ent, unsigned int dwCommand, int value)
 {
 	char *msg;
 	char *name;
@@ -1131,10 +1142,12 @@ void Cmd_Noclip_f(gentity_t *ent)
 /**
  * @brief Sets client to nostamina
  * @param[in,out] ent
+ * @param dwCommand - unused
+ * @param value    - unused
  *
  * @note argv(0) nostamina
  */
-void Cmd_Nostamina_f(gentity_t *ent)
+void Cmd_Nostamina_f(gentity_t *ent, unsigned int dwCommand, int value)
 {
 	char *msg;
 	char *name = ConcatArgs(1);
@@ -1172,8 +1185,10 @@ void Cmd_Nostamina_f(gentity_t *ent)
 /**
  * @brief Cmd_Kill_f
  * @param[in,out] ent
+ * @param dwCommand - unused
+ * @param value    - unused
  */
-void Cmd_Kill_f(gentity_t *ent)
+void Cmd_Kill_f(gentity_t *ent, unsigned int dwCommand, int value)
 {
 	if (ent->health <= 0)
 	{
@@ -1212,8 +1227,10 @@ void Cmd_Kill_f(gentity_t *ent)
 /**
  * @brief Cmd_DropObjective_f
  * @param[in,out] ent
+ * @param dwCommand - unused
+ * @param value    - unused
  */
-void Cmd_DropObjective_f(gentity_t *ent)
+void Cmd_DropObjective_f(gentity_t *ent, unsigned int dwCommand, int value)
 {
 	if (!ent || !ent->client)
 	{
@@ -2133,9 +2150,9 @@ qboolean G_IsClassFull(gentity_t *ent, int playerType, team_t team)
  * @brief Cmd_Team_f
  * @param[in,out] ent
  * @param dwCommand - unused
- * @param fValue - unused
+ * @param value - unused
  */
-void Cmd_Team_f(gentity_t *ent, unsigned int dwCommand, qboolean fValue)
+void Cmd_Team_f(gentity_t *ent, unsigned int dwCommand, int value)
 {
 	char             s[MAX_TOKEN_CHARS];
 	char             ptype[4];
@@ -2273,10 +2290,48 @@ void Cmd_Team_f(gentity_t *ent, unsigned int dwCommand, qboolean fValue)
 }
 
 /**
+ * @brief "Topshots" accuracy rankings
+ * @param ent
+ * @param dwCommand - unused
+ * @param value    - unused
+ */
+void Cmd_WeaponStatsLeaders_f(gentity_t *ent, unsigned int dwCommand, int value)
+{
+	G_weaponStatsLeaders_cmd(ent, qtrue, qtrue);
+	return;
+}
+
+/**
+ * @brief Cmd_wStats_f
+ * @param ent
+ * @param dwCommand - unused
+ * @param value    - unused
+ */
+void Cmd_wStats_f(gentity_t *ent, unsigned int dwCommand, int value)
+{
+	G_statsPrint(ent, 1);
+	return;
+}
+
+/**
+ * @brief Player game stats
+ * @param ent
+ * @param dwCommand - unused
+ * @param value    - unused
+ */
+void Cmd_sgStats_f(gentity_t *ent, unsigned int dwCommand, int value)
+{
+	G_statsPrint(ent, 2);
+	return;
+}
+
+/**
  * @brief Cmd_ResetSetup_f
  * @param[in,out] ent
+ * @param dwCommand - unused
+ * @param value    - unused
  */
-void Cmd_ResetSetup_f(gentity_t *ent)
+void Cmd_ResetSetup_f(gentity_t *ent, unsigned int dwCommand, int value)
 {
 	qboolean changed = qfalse;
 
@@ -2309,9 +2364,9 @@ void Cmd_ResetSetup_f(gentity_t *ent)
  * @brief Cmd_Follow_f
  * @param[in] ent
  * @param dwCommand - unused
- * @param fValue - unused
+ * @param value - unused
  */
-void Cmd_Follow_f(gentity_t *ent, unsigned int dwCommand, qboolean fValue)
+void Cmd_Follow_f(gentity_t *ent, unsigned int dwCommand, int value)
 {
 	int  i;
 	char arg[MAX_TOKEN_CHARS];
@@ -2514,6 +2569,28 @@ void Cmd_FollowCycle_f(gentity_t *ent, int dir, qboolean skipBots)
 	while (clientnum != ent->client->sess.spectatorClient);
 
 	// leave it where it was
+}
+
+/**
+ * @brief Cmd_FollowNext_f
+ * @param[in] ent
+ * @param dwCommand - unused
+ * @param value    - unused
+ */
+void Cmd_FollowNext_f(gentity_t *ent, unsigned int dwCommand, int value)
+{
+    Cmd_FollowCycle_f(ent, 1, qfalse);    
+}
+
+/**
+ * @brief Cmd_FollowPrevious_f
+ * @param[in] ent
+ * @param dwCommand - unused
+ * @param value    - unused
+ */
+void Cmd_FollowPrevious_f(gentity_t *ent, unsigned int dwCommand, int value)
+{
+    Cmd_FollowCycle_f(ent, -1, qfalse);
 }
 
 /**
@@ -2772,18 +2849,25 @@ void G_Say(gentity_t *ent, gentity_t *target, int mode, const char *chatText)
 }
 
 /**
- * @brief Cmd_Say_f
+ * @brief G_Say_f
  * @param[in] ent
  * @param[in] mode
  * @param[in] arg0
  */
-void Cmd_Say_f(gentity_t *ent, int mode, qboolean arg0)
+void G_Say_f(gentity_t *ent, int mode /*, qboolean arg0*/)
 {
-	if (trap_Argc() < 2 && !arg0)
+	if (ent->client->sess.muted)
+	{
+		trap_SendServerCommand(ent - g_entities, "print \"Can't chat - you are muted\n\"");
+		return;
+	}
+
+	if (trap_Argc() < 2 /*&& !arg0*/)
 	{
 		return;
 	}
-	G_Say(ent, NULL, mode, ConcatArgs(((arg0) ? 0 : 1)));
+
+	G_Say(ent, NULL, mode, ConcatArgs((/*(arg0) ? 0 :*/ 1)));
 }
 
 /**
@@ -3037,15 +3121,21 @@ void G_Voice(gentity_t *ent, gentity_t *target, int mode, const char *id, const 
 }
 
 /**
- * @brief Cmd_Voice_f
+ * @brief G_Voice_f
  * @param[in] ent
  * @param[in] mode
  * @param[in] arg0
  * @param[in] voiceonly
  */
-static void Cmd_Voice_f(gentity_t *ent, int mode, qboolean arg0, qboolean voiceonly)
+void G_Voice_f(gentity_t *ent, int mode, qboolean arg0, qboolean voiceonly)
 {
 	char bufferIndexCustom[32];
+    
+    if (ent->client->sess.muted)
+    {
+        trap_SendServerCommand(ent - g_entities, "print \"Can't chat - you are muted\n\"");
+        return;
+    }
 
 	if (mode != SAY_BUDDY)
 	{
@@ -3084,8 +3174,10 @@ static void Cmd_Voice_f(gentity_t *ent, int mode, qboolean arg0, qboolean voiceo
 /**
  * @brief Cmd_Where_f
  * @param[in] ent
+ * @param dwCommand - unused
+ * @param value    - unused
  */
-void Cmd_Where_f(gentity_t *ent)
+void Cmd_Where_f(gentity_t *ent, unsigned int dwCommand, int value)
 {
 	trap_SendServerCommand(ent - g_entities, va("print \"%s\n\"", vtos(ent->r.currentOrigin)));
 }
@@ -3097,7 +3189,7 @@ void Cmd_Where_f(gentity_t *ent)
  * @param[in] fRefCommand
  * @return
  */
-qboolean Cmd_CallVote_f(gentity_t *ent, unsigned int dwCommand, qboolean fRefCommand)
+qboolean Cmd_CallVote_f(gentity_t *ent, unsigned int dwCommand, int fRefCommand)
 {
 	int  i;
 	char arg1[MAX_STRING_TOKENS];
@@ -3303,8 +3395,10 @@ qboolean G_FindFreeComplainIP(gclient_t *cl, ipFilter_t *ip)
 /**
  * @brief Cmd_Vote_f
  * @param[in,out] ent
+ * @param dwCommand - unused
+ * @param value    - unused
  */
-void Cmd_Vote_f(gentity_t *ent)
+void Cmd_Vote_f(gentity_t *ent, unsigned int dwCommand, int value)
 {
 	char msg[64];
 
@@ -3642,8 +3736,10 @@ void Cmd_Vote_f(gentity_t *ent)
 /**
  * @brief Cmd_SetViewpos_f
  * @param[in] ent
+ * @param dwCommand - unused
+ * @param value    - unused
  */
-void Cmd_SetViewpos_f(gentity_t *ent)
+void Cmd_SetViewpos_f(gentity_t *ent, unsigned int dwCommand, int value)
 {
 	vec3_t origin, angles;
 	char   buffer[MAX_TOKEN_CHARS];
@@ -4375,8 +4471,10 @@ void SetPlayerSpawn(gentity_t *ent, int majorSpawn, int minorSpawn, qboolean upd
 /**
  * @brief Cmd_SetSpawnPoint_f
  * @param[in,out] ent
+ * @param dwCommand - unused
+ * @param value    - unused
  */
-void Cmd_SetSpawnPoint_f(gentity_t *ent)
+void Cmd_SetSpawnPoint_f(gentity_t *ent, unsigned int dwCommand, int value)
 {
 	char              arg[MAX_TOKEN_CHARS];
 	int               i, majorSpawn, minorSpawn = -1;
@@ -4431,13 +4529,13 @@ void Cmd_SetSpawnPoint_f(gentity_t *ent)
 	}
 }
 
-void G_PrintAccuracyLog(gentity_t *ent);
-
 /**
  * @brief Cmd_WeaponStat_f
  * @param[in] ent
+ * @param dwCommand - unused
+ * @param value    - unused
  */
-void Cmd_WeaponStat_f(gentity_t *ent)
+void Cmd_WeaponStat_f(gentity_t *ent, unsigned int dwCommand, int value)
 {
 	char             buffer[16];
 	extWeaponStats_t stat;
@@ -4463,10 +4561,26 @@ void Cmd_WeaponStat_f(gentity_t *ent)
 }
 
 /**
+ * @brief Cmd_ForceTapout_f
+ * @param[in] ent
+ * @param dwCommand - unused
+ * @param value    - unused
+ */
+void Cmd_ForceTapout_f(gentity_t *ent, unsigned int dwCommand, int value)
+{
+	if (ent->client->ps.stats[STAT_HEALTH] <= 0 && (ent->client->sess.sessionTeam == TEAM_AXIS || ent->client->sess.sessionTeam == TEAM_ALLIES))
+	{
+		limbo(ent, qtrue);
+	}
+}
+
+/**
  * @brief Cmd_IntermissionWeaponStats_f
  * @param[in] ent
+ * @param dwCommand - unused
+ * @param value    - unused
  */
-void Cmd_IntermissionWeaponStats_f(gentity_t *ent)
+void Cmd_IntermissionWeaponStats_f(gentity_t * ent, unsigned int dwCommand, int value)
 {
 	char buffer[1024];
 	int  i, clientNum;
@@ -4526,8 +4640,10 @@ void G_MakeUnready(gentity_t *ent)
 /**
  * @brief Cmd_IntermissionReady_f
  * @param[in,out] ent
+ * @param dwCommand - unused
+ * @param value    - unused
  */
-void Cmd_IntermissionReady_f(gentity_t *ent)
+void Cmd_IntermissionReady_f(gentity_t *ent, unsigned int dwCommand, int value)
 {
 	if (!ent || !ent->client)
 	{
@@ -4546,8 +4662,10 @@ void Cmd_IntermissionReady_f(gentity_t *ent)
 /**
  * @brief Cmd_IntermissionPlayerKillsDeaths_f
  * @param[in,out] ent
+ * @param dwCommand - unused
+ * @param value    - unused
  */
-void Cmd_IntermissionPlayerKillsDeaths_f(gentity_t *ent)
+void Cmd_IntermissionPlayerKillsDeaths_f(gentity_t *ent, unsigned int dwCommand, int value)
 {
 	char buffer[1024];
 	int  i;
@@ -4576,8 +4694,10 @@ void Cmd_IntermissionPlayerKillsDeaths_f(gentity_t *ent)
 /**
  * @brief Cmd_IntermissionPlayerTime_f
  * @param[in] ent
+ * @param dwCommand - unused
+ * @param value    - unused
  */
-void Cmd_IntermissionPlayerTime_f(gentity_t *ent)
+void Cmd_IntermissionPlayerTime_f(gentity_t *ent, unsigned int dwCommand, int value)
 {
 	char buffer[1024];
 	int  i;
@@ -4607,8 +4727,10 @@ void Cmd_IntermissionPlayerTime_f(gentity_t *ent)
 /**
  * @brief Cmd_IntermissionSkillRating_f
  * @param[in] ent
+ * @param dwCommand - unused
+ * @param value    - unused
  */
-void Cmd_IntermissionSkillRating_f(gentity_t *ent)
+void Cmd_IntermissionSkillRating_f(gentity_t *ent, unsigned int dwCommand, int value)
 {
 	char      buffer[1024];
 	int       i;
@@ -4648,8 +4770,10 @@ void Cmd_IntermissionSkillRating_f(gentity_t *ent)
 /**
  * @brief Cmd_IntermissionPrestige_f
  * @param[in] ent
+ * @param dwCommand - unused
+ * @param value    - unused
  */
-void Cmd_IntermissionPrestige_f(gentity_t *ent)
+void Cmd_IntermissionPrestige_f(gentity_t *ent, unsigned int dwCommand, int value)
 {
 	char      buffer[1024];
 	int       i;
@@ -4685,8 +4809,10 @@ void Cmd_IntermissionPrestige_f(gentity_t *ent)
 /**
  * @brief Cmd_IntermissionCollectPrestige_f
  * @param[in,out] ent
+ * @param dwCommand - unused
+ * @param value    - unused
  */
-void Cmd_IntermissionCollectPrestige_f(gentity_t *ent)
+void Cmd_IntermissionCollectPrestige_f(gentity_t *ent, unsigned int dwCommand, int value)
 {
 	if (!ent || !ent->client)
 	{
@@ -4758,7 +4884,7 @@ void G_CalcClientAccuracies(void)
  * @brief Cmd_IntermissionWeaponAccuracies_f
  * @param[in] ent
  */
-void Cmd_IntermissionWeaponAccuracies_f(gentity_t *ent)
+void Cmd_IntermissionWeaponAccuracies_f(gentity_t *ent, unsigned int dwCommand, int value)
 {
 	char buffer[1024];
 	int  i;
@@ -4789,8 +4915,10 @@ void Cmd_IntermissionWeaponAccuracies_f(gentity_t *ent)
 /**
  * @brief Cmd_SelectedObjective_f
  * @param[in,out] ent
+ * @param dwCommand - unused
+ * @param value    - unused
  */
-void Cmd_SelectedObjective_f(gentity_t *ent)
+void Cmd_SelectedObjective_f(gentity_t *ent, unsigned int dwCommand, int value)
 {
 	int   i, val;
 	char  buffer[16];
@@ -4845,9 +4973,11 @@ void Cmd_SelectedObjective_f(gentity_t *ent)
 
 /**
  * @brief Cmd_Ignore_f
- * @param[in] ent
+ * @param[in,out] ent
+ * @param dwCommand - unused
+ * @param value    - unused
  */
-void Cmd_Ignore_f(gentity_t *ent)
+void Cmd_Ignore_f(gentity_t *ent, unsigned int dwCommand, int value)
 {
 	char cmd[MAX_TOKEN_CHARS];
 	int  cnum;
@@ -4871,9 +5001,11 @@ void Cmd_Ignore_f(gentity_t *ent)
 
 /**
  * @brief Cmd_UnIgnore_f
- * @param[in] ent
+ * @param[in,out] ent
+ * @param dwCommand - unused
+ * @param value    - unused
  */
-void Cmd_UnIgnore_f(gentity_t *ent)
+void Cmd_UnIgnore_f(gentity_t *ent, unsigned int dwCommand, int value)
 {
 	char cmd[MAX_TOKEN_CHARS];
 	int  cnum;
@@ -4999,303 +5131,9 @@ void ClientCommand(int clientNum)
 	}
 #endif
 
-	if (Q_stricmp(cmd, "say") == 0)
-	{
-		if (!ent->client->sess.muted)
-		{
-			Cmd_Say_f(ent, SAY_ALL, qfalse);
-		}
-		else
-		{
-			trap_SendServerCommand(ent - g_entities, "print \"Can't chat - you are muted\n\"");
-		}
-		return;
-	}
-	else if (Q_stricmp(cmd, "say_team") == 0)
-	{
-		if (!ent->client->sess.muted)
-		{
-			Cmd_Say_f(ent, SAY_TEAM, qfalse);
-		}
-		else
-		{
-			trap_SendServerCommand(ent - g_entities, "print \"Can't team chat - you are muted\n\"");
-		}
-		return;
-	}
-	else if (Q_stricmp(cmd, "vsay") == 0)
-	{
-		if (!ent->client->sess.muted)
-		{
-			Cmd_Voice_f(ent, SAY_ALL, qfalse, qfalse);
-		}
-		else
-		{
-			trap_SendServerCommand(ent - g_entities, "print \"Can't chat - you are muted\n\"");
-		}
-		return;
-	}
-	else if (Q_stricmp(cmd, "vsay_team") == 0)
-	{
-		if (ent->client->sess.sessionTeam == TEAM_SPECTATOR || ent->client->sess.sessionTeam == TEAM_FREE)
-		{
-			trap_SendServerCommand(ent - g_entities, "print \"Can't team chat as spectator\n\"");
-			return;
-		}
-
-		if (!ent->client->sess.muted)
-		{
-			Cmd_Voice_f(ent, SAY_TEAM, qfalse, qfalse);
-		}
-		else
-		{
-			trap_SendServerCommand(ent - g_entities, "print \"Can't team chat - you are muted\n\"");
-		}
-		return;
-	}
-	else if (Q_stricmp(cmd, "say_buddy") == 0)
-	{
-		if (ent->client->sess.sessionTeam == TEAM_SPECTATOR || ent->client->sess.sessionTeam == TEAM_FREE)
-		{
-			trap_SendServerCommand(ent - g_entities, "print \"Can't buddy chat as spectator\n\"");
-			return;
-		}
-
-		if (!ent->client->sess.muted)
-		{
-			Cmd_Say_f(ent, SAY_BUDDY, qfalse);
-		}
-		else
-		{
-			trap_SendServerCommand(ent - g_entities, "print \"Can't buddy chat - you are muted\n\"");
-		}
-		return;
-	}
-	else if (Q_stricmp(cmd, "vsay_buddy") == 0)
-	{
-		if (ent->client->sess.sessionTeam == TEAM_SPECTATOR || ent->client->sess.sessionTeam == TEAM_FREE)
-		{
-			trap_SendServerCommand(ent - g_entities, "print \"Can't buddy chat as spectator\n\"");
-			return;
-		}
-
-		if (!ent->client->sess.muted)
-		{
-			Cmd_Voice_f(ent, SAY_BUDDY, qfalse, qfalse);
-		}
-		else
-		{
-			trap_SendServerCommand(ent - g_entities, "print \"Can't buddy chat - you are muted\n\"");
-		}
-		return;
-	}
-	else if (Q_stricmp(cmd, "score") == 0)
-	{
-		Cmd_Score_f(ent);
-		return;
-	}
-	else if (Q_stricmp(cmd, "vote") == 0)
-	{
-		Cmd_Vote_f(ent);
-		return;
-	}
-	else if (Q_stricmp(cmd, "fireteam") == 0)
-	{
-		Cmd_FireTeam_MP_f(ent);
-		return;
-	}
-	else if (Q_stricmp(cmd, "showstats") == 0)
-	{
-		G_PrintAccuracyLog(ent);
-		return;
-	}
-	else if (Q_stricmp(cmd, "rconAuth") == 0)
-	{
-		Cmd_AuthRcon_f(ent);
-		return;
-	}
-	else if (Q_stricmp(cmd, "ignore") == 0)
-	{
-		Cmd_Ignore_f(ent);
-		return;
-	}
-	else if (Q_stricmp(cmd, "unignore") == 0)
-	{
-		Cmd_UnIgnore_f(ent);
-		return;
-	}
-	else if (Q_stricmp(cmd, "obj") == 0)
-	{
-		Cmd_SelectedObjective_f(ent);
-		return;
-	}
-	else if (!Q_stricmp(cmd, "impkd"))
-	{
-		Cmd_IntermissionPlayerKillsDeaths_f(ent);
-		return;
-	}
-	else if (!Q_stricmp(cmd, "impt"))
-	{
-		Cmd_IntermissionPlayerTime_f(ent);
-		return;
-	}
-#ifdef FEATURE_RATING
-	else if (!Q_stricmp(cmd, "imsr"))
-	{
-		Cmd_IntermissionSkillRating_f(ent);
-		return;
-	}
-#endif
-#ifdef FEATURE_PRESTIGE
-	else if (!Q_stricmp(cmd, "impr"))
-	{
-		Cmd_IntermissionPrestige_f(ent);
-		return;
-	}
-	else if (!Q_stricmp(cmd, "imcollectpr"))
-	{
-		Cmd_IntermissionCollectPrestige_f(ent);
-		return;
-	}
-#endif
-	else if (!Q_stricmp(cmd, "imwa"))
-	{
-		Cmd_IntermissionWeaponAccuracies_f(ent);
-		return;
-	}
-	else if (!Q_stricmp(cmd, "imws"))
-	{
-		Cmd_IntermissionWeaponStats_f(ent);
-		return;
-	}
-	else if (!Q_stricmp(cmd, "imready"))
-	{
-		Cmd_IntermissionReady_f(ent);
-		return;
-	}
-	else if (Q_stricmp(cmd, "ws") == 0)
-	{
-		Cmd_WeaponStat_f(ent);
-		return;
-	}
-	else if (!Q_stricmp(cmd, "forcetapout"))
-	{
-		if (ent->client->ps.stats[STAT_HEALTH] <= 0 && (ent->client->sess.sessionTeam == TEAM_AXIS || ent->client->sess.sessionTeam == TEAM_ALLIES))
-		{
-			limbo(ent, qtrue);
-		}
-
-		return;
-	}
-	else if (!Q_stricmp(cmd, "mapvote")) // MAPVOTE
-	{
-		G_IntermissionMapVote(ent);
-		return;
-	}
-	else if (!Q_stricmp(cmd, "immaplist")) // MAPVOTE
-	{
-		G_IntermissionMapList(ent);
-		return;
-	}
-	else if (!Q_stricmp(cmd, "imvotetally")) // MAPVOTE
-	{
-		G_IntermissionVoteTally(ent);
-		return;
-	}
-
-	// Do these outside as we don't want to advertise it in the help screen
-	if (!Q_stricmp(cmd, "wstats"))
-	{
-		G_statsPrint(ent, 1);
-		return;
-	}
-	if (!Q_stricmp(cmd, "sgstats"))       // Player game stats
-	{
-		G_statsPrint(ent, 2);
-		return;
-	}
-	if (!Q_stricmp(cmd, "stshots"))       // "Topshots" accuracy rankings
-	{
-		G_weaponStatsLeaders_cmd(ent, qtrue, qtrue);
-		return;
-	}
-	if (!Q_stricmp(cmd, "rs"))
-	{
-		Cmd_ResetSetup_f(ent);
-		return;
-	}
-
-	if (G_commandCheck(ent, cmd, qtrue))
+	if (G_commandCheck(ent, cmd))
 	{
 		return;
-	}
-
-	// ignore all other commands when at intermission
-	if (level.intermissiontime)
-	{
-		CPx(clientNum, va("print \"^3%s^7 not allowed during intermission.\n\"", cmd));
-		return;
-	}
-
-	if (Q_stricmp(cmd, "give") == 0)
-	{
-		Cmd_Give_f(ent);
-	}
-	else if (Q_stricmp(cmd, "god") == 0)
-	{
-		Cmd_God_f(ent);
-	}
-	else if (Q_stricmp(cmd, "nofatigue") == 0)
-	{
-		Cmd_Nofatigue_f(ent);
-	}
-	else if (Q_stricmp(cmd, "notarget") == 0)
-	{
-		Cmd_Notarget_f(ent);
-	}
-	else if (Q_stricmp(cmd, "noclip") == 0)
-	{
-		Cmd_Noclip_f(ent);
-	}
-	else if (Q_stricmp(cmd, "nostamina") == 0)
-	{
-		Cmd_Nostamina_f(ent);
-	}
-	else if (Q_stricmp(cmd, "kill") == 0)
-	{
-		Cmd_Kill_f(ent);
-	}
-	else if (Q_stricmp(cmd, "dropobj") == 0)
-	{
-		Cmd_DropObjective_f(ent);
-	}
-	else if (Q_stricmp(cmd, "follownext") == 0)
-	{
-		Cmd_FollowCycle_f(ent, 1, qfalse);
-	}
-	else if (Q_stricmp(cmd, "followprev") == 0)
-	{
-		Cmd_FollowCycle_f(ent, -1, qfalse);
-	}
-	else if (Q_stricmp(cmd, "where") == 0)
-	{
-		Cmd_Where_f(ent);
-	}
-	else if (Q_stricmp(cmd, "setviewpos") == 0)
-	{
-		Cmd_SetViewpos_f(ent);
-	}
-	else if (Q_stricmp(cmd, "setspawnpt") == 0)
-	{
-		Cmd_SetSpawnPoint_f(ent);
-	}
-	else if (G_commandCheck(ent, cmd, qfalse))
-	{
-		return;
-	}
-	else
-	{
-		trap_SendServerCommand(clientNum, va("print \"unknown cmd[lof] %s\n\"", cmd));
 	}
 }
 

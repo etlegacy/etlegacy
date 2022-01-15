@@ -165,9 +165,9 @@ void G_refHelp_cmd(gentity_t *ent)
  * @brief Request for ref status or lists ref commands.
  * @param[in,out] ent
  * @param dwCommand - unused
- * @param fValue - unused
+ * @param value - unused
  */
-void G_ref_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fValue)
+void G_ref_cmd(gentity_t *ent, unsigned int dwCommand, int value)
 {
 	char arg[MAX_TOKEN_CHARS];
 
@@ -590,8 +590,10 @@ void G_refLogout_cmd(gentity_t *ent)
 /**
  * @brief Client authentication
  * @param[in,out] ent
+ * @param dwCommand - unused
+ * @param value    - unused
  */
-void Cmd_AuthRcon_f(gentity_t *ent)
+void Cmd_AuthRcon_f(gentity_t *ent, unsigned int dwCommand, int value)
 {
 	char buf[MAX_TOKEN_CHARS], cmd[MAX_TOKEN_CHARS];
 

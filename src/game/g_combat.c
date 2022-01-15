@@ -589,7 +589,7 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 #endif
 	}
 
-	Cmd_Score_f(self);          // show scores
+	self->client->wantsscore = qtrue;          // show scores
 
 	// send updated scores to any clients that are following this one,
 	// or they would get stale scoreboards
@@ -608,7 +608,7 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 
 		if (client->sess.spectatorClient == self->s.number)
 		{
-			Cmd_Score_f(g_entities + level.sortedClients[i]);
+			(g_entities + level.sortedClients[i])->client->wantsscore = qtrue;
 		}
 	}
 

@@ -1084,15 +1084,17 @@ void G_GiveAdminOfFireTeam(int entityNum, int otherEntityNum)
 /**
  * @brief Cmd_FireTeam_MP_f
  * @param[in] ent
+ * @param dwCommand - unused
+ * @param value    - unused
  */
-void Cmd_FireTeam_MP_f(gentity_t *ent)
+void Cmd_FireTeam_MP_f(gentity_t *ent, unsigned int dwCommand, int value)
 {
 	char command[32];
 	int  i;
 
 	if (trap_Argc() < 2)
 	{
-		G_ClientPrint(ent - g_entities, "usage: fireteam <create|leave|apply|invite>");
+		G_ClientPrint(ent - g_entities, "usage: fireteam <create|disband|leave|apply|invite|warn|kick|propose|privacy|admin>");
 		return;
 	}
 

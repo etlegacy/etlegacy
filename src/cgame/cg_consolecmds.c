@@ -2216,7 +2216,122 @@ static consoleCommand_t commands[] =
 
 	{ "shoutcastmenu",       CG_ShoutcastMenu_f        },
 	{ "loc",                 CG_Location_f             },
-	{ "camera",              CG_Camera_f               }
+	{ "camera",              CG_Camera_f               },
+	{ NULL,                  NULL                      }
+};
+
+/**
+ * @var gameCommand
+ * @brief Game command list
+ *
+ * @todo Shared the command list in both mod
+ * or delete this list and use the help '?' command to provided a list of command
+ * or retrieved the command list by parsing the help '?' command
+ * or delete the help '?' command on game side and write help on cgame side
+ */
+static const char *gameCommand[] =
+{
+	"say",
+	"say_team",
+	"say_buddy",
+	"say_teamnl",
+	"vsay",
+	"vsay_team",
+	"vsay_buddy",
+	"?",
+	// copy of ?
+	"commands",
+	"help",
+	"+stats",
+	"+topshots",
+	"+objectives",
+	"autorecord",
+	"autoscreenshot",
+	"bottomshots",
+	"callvote",
+	"currenttime",
+	"dropobj",
+	"fireteam",
+	"follow",
+	"follownext",
+	"followprev",
+	"forcetapout",
+	"give",
+	"god",
+	"ignore",
+#ifdef FEATURE_PRESTIGE
+	"imcollectpr",
+#endif
+	"immaplist",
+	"impkd",
+#ifdef FEATURE_PRESTIGE
+	"impr",
+#endif
+	"impt",
+	"imready",
+#ifdef FEATURE_RATING
+	"imsr",
+#endif
+	"imvotetally",
+	"imwa",
+	"imws",
+	//   "invite",
+	"kill",
+	"lock",
+	"mapvote",
+#ifdef FEATURE_MULTIVIE
+	"mvadd",
+	"mvallies",
+	"mvaxis",
+	"mvall",
+	"mvnone",
+	"mvdel",
+#endif
+	"noclip",
+	"nofatigue",
+	"nostamina",
+	"notarget",
+	"notready",
+	"obj",
+	"pause",
+	"players",
+	"rconAuth",
+	"ready",
+	"readyteam",
+	"ref",
+	//   "remove",
+	"rs",
+	"sclogin",
+	"sclogout",
+	"score",
+	"scores",
+	"setviewpos",
+	"setspawnpt",
+	"sgstats",
+	"showstats",
+	"specinvite",
+	"specuninvite",
+	"speclock",
+	//   "speconly",
+	"specunlock",
+	"statsall",
+	"statsdump",
+	"stoprecord",
+	"stshots",
+	"team",
+	"timein",
+	"timeout",
+	"topshots",
+	"unignore",
+	"unlock",
+	"unpause",
+	"unready",
+	"vote",
+	"weaponstats",
+	"where",
+	"ws",
+	"wstats",
+	NULL,
 };
 
 /**
@@ -2257,93 +2372,17 @@ void CG_InitConsoleCommands(void)
 {
 	unsigned int i;
 
-	for (i = 0 ; i < sizeof(commands) / sizeof(commands[0]) ; i++)
+	for (i = 0; commands[i].cmd; i++)
 	{
 		trap_AddCommand(commands[i].cmd);
 	}
 
 	// the game server will interpret these commands, which will be automatically
 	// forwarded to the server after they are not recognized locally
-	trap_AddCommand("kill");
-	trap_AddCommand("say");
-	trap_AddCommand("give");
-	trap_AddCommand("god");
-	trap_AddCommand("notarget");
-	trap_AddCommand("noclip");
-	trap_AddCommand("team");
-	trap_AddCommand("follow");
-	trap_AddCommand("setviewpos");
-	trap_AddCommand("callvote");
-	trap_AddCommand("vote");
-
-	trap_AddCommand("nofatigue");
-	trap_AddCommand("nostamina");
-
-	trap_AddCommand("follownext");
-	trap_AddCommand("followprev");
-
-	trap_AddCommand("start_match");
-	trap_AddCommand("reset_match");
-	trap_AddCommand("swap_teams");
-
-	trap_AddCommand("?");
-	trap_AddCommand("bottomshots");
-	trap_AddCommand("commands");
-	trap_AddCommand("lock");
-#ifdef FEATURE_MULTIVIEW
-	trap_AddCommand("mvadd");
-	trap_AddCommand("mvaxis");
-	trap_AddCommand("mvallies");
-	trap_AddCommand("mvall");
-	trap_AddCommand("mvnone");
-#endif
-	trap_AddCommand("notready");
-	trap_AddCommand("pause");
-	trap_AddCommand("players");
-	trap_AddCommand("readyteam");
-	trap_AddCommand("ready");
-	trap_AddCommand("ref");
-	trap_AddCommand("say_teamnl");
-	trap_AddCommand("say_team");
-	trap_AddCommand("scores");
-	trap_AddCommand("specinvite");
-	trap_AddCommand("specuninvite");
-	trap_AddCommand("speclock");
-	trap_AddCommand("specunlock");
-	trap_AddCommand("statsall");
-	trap_AddCommand("statsdump");
-	trap_AddCommand("timein");
-	trap_AddCommand("timeout");
-	trap_AddCommand("topshots");
-	trap_AddCommand("unlock");
-	trap_AddCommand("unpause");
-	trap_AddCommand("unready");
-	trap_AddCommand("weaponstats");
-
-	trap_AddCommand("fireteam");
-	trap_AddCommand("showstats");
-
-	trap_AddCommand("ignore");
-	trap_AddCommand("unignore");
-
-	trap_AddCommand("campaign");
-	trap_AddCommand("listcampaigns");
-
-	trap_AddCommand("imready");
-	trap_AddCommand("say_buddy");
-	trap_AddCommand("setspawnpt");
-	trap_AddCommand("vsay");
-	trap_AddCommand("vsay_buddy");
-	trap_AddCommand("vsay_team");
-	trap_AddCommand("where");
-	trap_AddCommand("dropobj");
-	trap_AddCommand("imcollectpr");
-#ifdef FEATURE_LUA
-	trap_AddCommand("lua_status");
-#endif
-
-	trap_AddCommand("sclogin");
-	trap_AddCommand("sclogout");
+	for (i = 0; gameCommand[i]; i++)
+	{
+		trap_AddCommand(gameCommand[i]);
+	}
 
 	// remove engine commands to avoid abuse
 	trap_RemoveCommand("+lookup");

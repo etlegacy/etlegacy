@@ -100,8 +100,10 @@ void G_LogRegionHit(gentity_t *ent, hitRegion_t hr)
 /**
  * @brief G_PrintAccuracyLog
  * @param[in] ent
+ * @param dwCommand - unused
+ * @param value    - unused
  */
-void G_PrintAccuracyLog(gentity_t *ent)
+void G_PrintAccuracyLog(gentity_t *ent, unsigned int dwCommand, int value)
 {
 	int  i;
 	char buffer[2048];
