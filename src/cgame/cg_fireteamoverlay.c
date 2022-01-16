@@ -547,10 +547,20 @@ void CG_DrawFireTeamOverlay(rectDef_t *rect)
 			break;
 		}
 
-		// hilight selected players
+		// highlight selected players
 		if (ci->selected)
 		{
-			CG_FillRect(x, y, boxWidth - 2, FT_BAR_HEIGHT + FT_BAR_YSPACING, FT_select);
+			// first member requires thicker highlight bar
+			if (i == 0)
+			{
+				CG_FillRect(x, y, boxWidth - 2, FT_BAR_HEIGHT + (2 * FT_BAR_YSPACING), FT_select);
+			}
+			// adjust y to account for the thicker highlight bar of first member
+			else
+			{
+				CG_FillRect(x, y + FT_BAR_YSPACING, boxWidth - 2, FT_BAR_HEIGHT + FT_BAR_YSPACING, FT_select);
+			}
+
 		}
 
 		x += 4;
