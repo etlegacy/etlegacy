@@ -2879,6 +2879,11 @@ static void CG_WeaponAnimation(playerState_t *ps, weaponInfo_t *weapon, int *wea
 		return;
 	}
 
+	if (cgs.matchPaused)
+	{
+		cent->pe.weap.animationTime += cg.frametime;
+	}
+
 	CG_RunWeapLerpFrame(ci, weapon, &cent->pe.weap, ps->weapAnim, 1);
 
 	*weapOld      = cent->pe.weap.oldFrame;
