@@ -3334,7 +3334,8 @@ void EmitterCheck(gentity_t *ent, gentity_t *attacker, trace_t *tr)
  */
 void Bullet_Endpos(gentity_t *ent, float spread, vec3_t *end)
 {
-	if (GetWeaponTableData(ent->s.weapon)->type & WEAPON_TYPE_SCOPED)
+	if (GetWeaponTableData(ent->s.weapon)->type & WEAPON_TYPE_SCOPED &&
+	    ent->s.groundEntityNum != ENTITYNUM_NONE)
 	{
 		// aim dir already accounted for sway of scoped weapons in CalcMuzzlePoints()
 		VectorMA(muzzleTrace, 2 * MAX_TRACE, forward, *end);
@@ -3379,8 +3380,7 @@ gentity_t *Bullet_Fire(gentity_t *ent)
 	{
 		aimSpreadScale = 2.f;
 	}
-
-	if (GetWeaponTableData(ent->s.weapon)->type & WEAPON_TYPE_RIFLE)
+	else if (GetWeaponTableData(ent->s.weapon)->type & WEAPON_TYPE_RIFLE)
 	{
 		aimSpreadScale = 1.f;
 	}
@@ -3524,7 +3524,7 @@ qboolean Bullet_Fire_Extended(gentity_t *source, gentity_t *attacker, vec3_t sta
 	// send bullet impact
 	if (traceEnt->takedamage && traceEnt->client)
 	{
-		fleshEnt = tent   = G_TempEntity(impactPos, EV_BULLET_HIT_FLESH);
+		fleshEnt          = tent = G_TempEntity(impactPos, EV_BULLET_HIT_FLESH);
 		tent->s.eventParm = traceEnt->s.number;
 		tent->s.weapon    = source->s.weapon;
 
@@ -3619,7 +3619,7 @@ qboolean Bullet_Fire_Extended(gentity_t *source, gentity_t *attacker, vec3_t sta
 		// send the hit sound info in the flesh hit event
 		if (hitType && fleshEnt)
 		{
-			fleshEnt->s.modelindex =  hitType;
+			fleshEnt->s.modelindex = hitType;
 		}
 
 		// allow bullets to "pass through" func_explosives if they break by taking another simultanious shot
