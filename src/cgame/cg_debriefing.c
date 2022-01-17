@@ -4612,6 +4612,8 @@ void CG_parseMapVoteListInfo()
 
 	for (i = 0; i < cgs.dbNumMaps; i++)
 	{
+		char *s;
+
 		Q_strncpyz(cgs.dbMaps[i], CG_Argv((i * 4) + 2),
 		           sizeof(cgs.dbMaps[0]));
 		cgs.dbMapVotes[i]      = 0;
@@ -4629,7 +4631,12 @@ void CG_parseMapVoteListInfo()
 			           cgs.arenaData.description,
 			           sizeof(cgs.dbMapDescription[i]));
 
-			CG_FormatMultineLinePrint(cgs.dbMapDescription[i + cgs.dbMapVoteListOffset], 43);
+			while ((s = strchr(cgs.dbMapDescription[i], '*')))
+			{
+				*s = '\n';
+			}
+
+			BG_FitTextToWidth_Ext(cgs.dbMapDescription[i], mapVoteNamesList.font->scalex, 620 - DB_MAPVOTE_X2, sizeof(cgs.dbMapDescription[i]), mapVoteNamesList.font->font);
 		}
 		else
 		{

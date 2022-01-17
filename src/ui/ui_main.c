@@ -2071,62 +2071,6 @@ static void UI_DrawCampaignName(rectDef_t *rect, float scale, vec4_t color, int 
 }
 
 /**
- * @brief Format the message by turning spaces into newlines, if we've run over the linewidth
- * @param[in,out] s The message to format
- * @return The number of line needed to display the messages
- */
-static int UI_FormatMultineLinePrint(char *s, int lineWidth)
-{
-	char     *lastSpace = NULL;
-	int      i, len, lastLR = 0;
-	int      lineNumber  = 1;
-	qboolean neednewline = qfalse;
-
-	len = Q_UTF8_PrintStrlen(s);
-
-	for (i = 0; i < len; i++)
-	{
-		if (Q_IsColorString(s))
-		{
-			s += 2;
-		}
-
-		if ((i - lastLR) >= lineWidth)
-		{
-			neednewline = qtrue;
-		}
-
-		if (*s == ' ')
-		{
-			lastSpace = s;
-		}
-
-        // we reach the end of the string and it doesn't fit in on line
-		if (neednewline && lastSpace)
-		{
-			*lastSpace = '\n';
-			lastSpace  = NULL;
-			lastLR     = i;
-			lineNumber++;
-			neednewline = qfalse;
-		}
-
-		// count the number of lines for centering
-		if (*s == '\n')
-		{
-			lastLR      = i;
-			lastSpace   = NULL;
-			neednewline = qfalse;
-			lineNumber++;
-		}
-
-		s += Q_UTF8_Width(s);
-	}
-
-	return lineNumber;
-}
-
-/**
  * @brief UI_DrawCampaignDescription
  * @param[in] rect
  * @param[in] scale
@@ -2142,6 +2086,7 @@ void UI_DrawCampaignDescription(rectDef_t *rect, float scale, vec4_t color, floa
 	const char          *textPtr;
 	int                 map = (net) ? ui_currentNetMap.integer : ui_currentMap.integer;
 	static scrollText_t scroll;
+	fontHelper_t        *font = &uiInfo.uiDC.Assets.fonts[uiInfo.activeFont];
 
 	if (ui_netGameType.integer == GT_WOLF_CAMPAIGN)
 	{
@@ -2163,14 +2108,22 @@ void UI_DrawCampaignDescription(rectDef_t *rect, float scale, vec4_t color, floa
 
 	if (scroll.length != strlen(textPtr))
 	{
+		char *s;
+
 		scroll.init = 0;
 		Q_strncpyz(scroll.text, textPtr, sizeof(scroll.text));
+
+		while ((s = strchr(scroll.text, '*')))
+		{
+			*s = '\n';
+		}
+
 		scroll.length = strlen(scroll.text);
 
-		UI_FormatMultineLinePrint(scroll.text, 95);
+		BG_FitTextToWidth_Ext(scroll.text, scale, rect->w, sizeof(scroll.text), font);
 	}
 
-	UI_DrawVerticalScrollingString(rect, color, scale, 75, 1, &scroll, &uiInfo.uiDC.Assets.fonts[uiInfo.activeFont]);
+	UI_DrawVerticalScrollingString(rect, color, scale, 75, 1, &scroll, font);
 }
 
 /**
@@ -7852,7 +7805,7 @@ const char *UI_FeederItemText(int feederID, int index, int column, qhandle_t *ha
 	{
 		if (index >= 0 && index < uiInfo.profileCount)
 		{
-			char buff[MAX_CVAR_VALUE_STRING];
+			char     buff[MAX_CVAR_VALUE_STRING];
 			qboolean defaultProfile = qfalse;
 
 			Q_strncpyz(buff, uiInfo.profileList[index].name, sizeof(buff));
