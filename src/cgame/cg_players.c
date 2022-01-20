@@ -2877,164 +2877,6 @@ void CG_Player(centity_t *cent)
 	}
 #endif
 
-	// DEBUG
-	if (cg_debugPlayerHitboxes.integer && cent->currentState.eType != ET_CORPSE &&
-	    cent->currentState.number == cg.snap->ps.clientNum)
-	{
-		// position marker
-		if (cg_debugPlayerHitboxes.integer & 4)
-		{
-			int    x, zd, zu;
-			vec3_t bmins, bmaxs;
-
-			x  = (cent->currentState.solid & 255);
-			zd = ((cent->currentState.solid >> 8) & 255);
-			zu = ((cent->currentState.solid >> 16) & 255) - 32;
-
-			bmins[0] = bmins[1] = -x;
-			bmaxs[0] = bmaxs[1] = x;
-			bmins[2] = -zd;
-			bmaxs[2] = zu;
-
-			VectorAdd(bmins, cent->lerpOrigin, bmins);
-			VectorAdd(bmaxs, cent->lerpOrigin, bmaxs);
-			// red
-			CG_RailTrail(tv(1.0f, 0.0f, 0.0f), bmins, bmaxs, 1, cent->currentState.number | HITBOXBIT_CLIENT);
-		}
-
-		// head axis
-		if (cg_debugPlayerHitboxes.integer & 2)
-		{
-			orientation_t tag;
-			int           idx;
-			vec3_t        start;
-			vec3_t        ends[3];
-			vec3_t        axis[3];
-
-			trap_R_LerpTag(&tag, &body, "tag_head", 0);
-
-			VectorCopy(body.origin, start);
-
-			for (idx = 0; idx < 3; idx++)
-			{
-				VectorMA(start, tag.origin[idx], body.axis[idx], start);
-			}
-
-			MatrixMultiply(tag.axis, body.axis, axis);
-
-			for (idx = 0; idx < 3; idx++)
-			{
-				VectorMA(start, 32.0f, axis[idx], ends[idx]);
-				// red
-				CG_RailTrail2(tv(1.0f, 0.0f, 0.0f), start, ends[idx], -1, -1);
-			}
-		}
-
-		// hitbox
-		if (cg_debugPlayerHitboxes.integer & 1)
-		{
-			vec3_t mins, maxs, org, forward;
-
-			VectorCopy(cg.predictedPlayerState.mins, mins);
-			VectorCopy(cg.predictedPlayerState.maxs, maxs);
-
-			if (cg.predictedPlayerState.eFlags & EF_PRONE)
-			{
-				maxs[2] = maxs[2] - (cg.predictedPlayerState.standViewHeight - PRONE_BODYHEIGHT + 8);
-			}
-			else if (cg.predictedPlayerState.pm_flags & PMF_DUCKED
-			         && cg.predictedPlayerState.velocity[0] == 0.f && cg.predictedPlayerState.velocity[1] == 0.f)
-			{
-				maxs[2] = cg.predictedPlayerState.crouchMaxZ + DEFAULT_BODYHEIGHT_DELTA - CROUCH_IDLE_BODYHEIGHT_DELTA;
-			}
-			else if (cg.predictedPlayerState.pm_flags & PMF_DUCKED)
-			{
-				maxs[2] = cg.predictedPlayerState.crouchMaxZ;
-			}
-			else if (cg.predictedPlayerState.eFlags & EF_DEAD)
-			{
-				maxs[2] = cg.predictedPlayerState.deadViewHeight + DEAD_BODYHEIGHT_DELTA;
-			}
-			else
-			{
-				maxs[2] = cg.predictedPlayerState.standViewHeight + DEFAULT_BODYHEIGHT_DELTA;
-			}
-
-			VectorAdd(cent->lerpOrigin, mins, mins);
-			VectorAdd(cent->lerpOrigin, maxs, maxs);
-			// red
-			CG_RailTrail(tv(1.0f, 0.0f, 0.0f), mins, maxs, 1, cent->currentState.number | HITBOXBIT_CLIENT);
-
-			// head and legs
-			if (cg.predictedPlayerState.eFlags & (EF_PRONE | EF_DEAD))
-			{
-				// legs
-				VectorCopy(playerlegsProneMins, mins);
-				VectorCopy(playerlegsProneMaxs, maxs);
-
-				AngleVectors(cent->lerpAngles, forward, NULL, NULL);
-				forward[2] = 0;
-				VectorNormalizeFast(forward);
-
-				if (cg.predictedPlayerState.eFlags & EF_PRONE)
-				{
-					org[0] = cent->lerpOrigin[0] + forward[0] * -24;
-					org[1] = cent->lerpOrigin[1] + forward[1] * -24;
-					org[2] = cent->lerpOrigin[2] + cg.pmext.proneLegsOffset;
-				}
-				else // EF_DEAD
-				{
-					org[0] = cent->lerpOrigin[0] + forward[0] * 32;
-					org[1] = cent->lerpOrigin[1] + forward[1] * 32;
-					org[2] = cent->lerpOrigin[2] - cg.pmext.proneLegsOffset;
-				}
-
-				VectorAdd(org, mins, mins);
-				VectorAdd(org, maxs, maxs);
-				// red
-				CG_RailTrail(tv(1.0f, 0.0f, 0.0f), mins, maxs, 1, cent->currentState.number | HITBOXBIT_CLIENT | HITBOXBIT_LEGS);
-
-				// head
-				VectorSet(mins, -6, -6, -22);
-				VectorSet(maxs, 6, 6, -10);
-
-				if (cg.predictedPlayerState.eFlags & EF_PRONE)
-				{
-					org[0] = cent->lerpOrigin[0] + forward[0] * 24;
-					org[1] = cent->lerpOrigin[1] + forward[1] * 24;
-					org[2] = cent->lerpOrigin[2] + 8;
-				}
-				else // EF_DEAD
-				{
-					org[0] = cent->lerpOrigin[0] + forward[0] * -32;
-					org[1] = cent->lerpOrigin[1] + forward[1] * -32;
-					org[2] = cent->lerpOrigin[2] - 4;
-				}
-
-				VectorAdd(org, mins, mins);
-				VectorAdd(org, maxs, maxs);
-				// red
-				CG_RailTrail(tv(1.0f, 0.0f, 0.0f), mins, maxs, 1, cent->currentState.number | HITBOXBIT_CLIENT | HITBOXBIT_HEAD);
-			}
-			else
-			{
-				org[0] = cent->lerpOrigin[0];
-				org[1] = cent->lerpOrigin[1];
-				org[2] = maxs[2] + 6;
-
-				// head
-				VectorSet(mins, -6, -6, -6);
-				VectorSet(maxs, 6, 6, 6);
-
-				VectorAdd(org, mins, mins);
-				VectorAdd(org, maxs, maxs);
-
-				// red
-				CG_RailTrail(tv(1.0f, 0.0f, 0.0f), mins, maxs, 1, cent->currentState.number | HITBOXBIT_CLIENT | HITBOXBIT_HEAD);
-			}
-		}
-	} // END DEBUG
-
 	// add the head
 	if (!(head.hModel = character->hudhead))
 	{
@@ -3214,6 +3056,40 @@ void CG_Player(centity_t *cent)
 			}
 
 			CG_AddRefEntityWithPowerups(&acc, cent->currentState.powerups, ci->team, &cent->currentState, cent->fireRiseDir);
+		}
+	}
+
+	// g_realhead like hitboxes
+	if (cg_debugPlayerHitboxes.integer && cent->currentState.eType != ET_CORPSE)
+	{
+		if (((cg_debugPlayerHitboxes.integer & 1) && cent->currentState.number != cg.snap->ps.clientNum) ||
+		    ((cg_debugPlayerHitboxes.integer & 2) && cent->currentState.number == cg.snap->ps.clientNum))
+		{
+			vec3_t headMins, headMaxs, bodyMins, bodyMaxs, origin;
+
+			VectorCopy(head.origin, origin);
+			VectorSet(headMins, -6, -6, -6);
+			VectorSet(headMaxs, 6, 6, 6);
+
+			// calculate center position for standard head (this offset is just a guess)
+			VectorMA(origin, 6.5f, head.axis[2], origin); // up
+			VectorMA(origin, 0.5f, head.axis[0], origin); // forward
+
+			VectorAdd(headMins, origin, headMins);
+			VectorAdd(headMaxs, origin, headMaxs);
+
+			CG_RailTrail(tv(1.0f, 0.0f, 0.0f), headMins, headMaxs, 1, cent->currentState.number | HITBOXBIT_HEAD);
+
+			VectorCopy(body.origin, origin);
+			VectorSet(bodyMins, -18, -18, -24);
+			VectorSet(bodyMaxs, 18, 18, 48);
+
+			bodyMaxs[2] = CG_ClientHitboxMaxZ(&cent->currentState, 0);
+
+			VectorAdd(bodyMins, origin, bodyMins);
+			VectorAdd(bodyMaxs, origin, bodyMaxs);
+
+			CG_RailTrail(tv(1.0f, 0.0f, 0.0f), bodyMins, bodyMaxs, 1, cent->currentState.number | HITBOXBIT_CLIENT);
 		}
 	}
 }
