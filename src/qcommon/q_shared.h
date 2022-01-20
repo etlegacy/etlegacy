@@ -100,6 +100,11 @@
 #pragma warning(disable : 4996) // deprecated POSIX function names
 #endif
 
+// Other platforms define __SSEn__ macros while windows only defines __AVXn__ macros
+#if (defined(__SSE3__) || defined(__AVX2__)) && defined(ETL_ENABLE_SSE)
+#define ETL_SSE 1
+#endif
+
 #ifdef __GNUC__
 #define _attribute(x) __attribute__(x)
 #else

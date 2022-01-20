@@ -782,6 +782,16 @@ void vec3_rotate2(const vec3_t in, vec3_t matrix[3], vec3_t out)
 
 #if !idppc
 
+// on x86 hardware we can actually use the 1/3 faster method from intrinsics
+#ifdef ETL_SSE
+#include <immintrin.h>
+float Q_rsqrt(float f)
+{
+	__m128 tmp = _mm_set_ss(f);
+	tmp = _mm_rsqrt_ss(tmp);
+	return _mm_cvtss_f32(tmp);
+}
+#else
 /**
  * @brief Q_rsqrt
  * @param[in] f
@@ -802,6 +812,7 @@ float Q_rsqrt(float f)
 
 	return y;
 }
+#endif
 
 /**
  * @brief Q_fabs
