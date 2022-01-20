@@ -604,7 +604,7 @@ void G_parseStats(const char *pszStatsInfo)
 
 	cl = &level.clients[dwClientID];
 
-#define GETVAL(x) if ((tmp = strchr(tmp, ' ')) == NULL) { return; } x = Q_atoi(++tmp);
+#define GETVAL(x) if ((tmp = strchr(tmp, ' ')) == NULL) { return; } (x) = Q_atoi(++tmp);
 
 	GETVAL(cl->sess.rounds);
 	GETVAL(dwWeaponMask);
@@ -620,7 +620,7 @@ void G_parseStats(const char *pszStatsInfo)
 		}
 	}
 
-	// These only gets generated when there are some weaponstats.
+	// These only gets generated when there are some weapon stats.
 	// This is what the client expects.
 	if (dwWeaponMask != 0)
 	{

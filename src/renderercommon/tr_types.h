@@ -129,10 +129,10 @@ typedef enum
 	RT_MAX_REF_ENTITY_TYPE
 } refEntityType_t;
 
-#define REFLAG_ONLYHAND     1   ///< only draw hand surfaces
-#define REFLAG_FORCE_LOD    8   ///< force a low lod
-#define REFLAG_ORIENT_LOD   16  ///< on LOD switch, align the model to the player's camera
-#define REFLAG_DEAD_LOD     32  ///< allow the LOD to go lower than recommended
+#define REFLAG_ONLYHAND     BIT(0)   ///< only draw hand surfaces
+#define REFLAG_FORCE_LOD    BIT(3)   ///< force a low lod
+#define REFLAG_ORIENT_LOD   BIT(4)   ///< on LOD switch, align the model to the player's camera
+#define REFLAG_DEAD_LOD     BIT(5)  ///< allow the LOD to go lower than recommended
 
 // renderer2 BEGIN
 

@@ -1070,7 +1070,7 @@ void Fire_Lead_Ext(gentity_t *ent, gentity_t *activator, float spread, int damag
 		// send the hit sound info in the flesh hit event
 		if (hitType && fleshEnt)
 		{
-			fleshEnt->s.modelindex =  hitType;
+			fleshEnt->s.modelindex = hitType;
 		}
 	}
 }

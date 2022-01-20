@@ -739,7 +739,7 @@ int NET_StringToAdr(const char *s, netadr_t *a, netadrtype_t family)
 	{
 		Com_Memset(a, 0, sizeof(*a));
 		a->type = NA_LOOPBACK;
-// as NA_LOOPBACK doesn't require ports report port was given.
+		// as NA_LOOPBACK doesn't require ports report port was given.
 		return 1;
 	}
 

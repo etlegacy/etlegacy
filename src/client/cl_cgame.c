@@ -613,7 +613,7 @@ static int FloatAsInt(float f)
  * @param[in] key to query
  * @return true if value for key is found
  */
-static qboolean CL_GetValue(char *value, int valueSize, const char *key)
+static qboolean CL_CG_GetValue(char *value, int valueSize, const char *key)
 {
 	return qfalse;
 }
@@ -1040,7 +1040,7 @@ intptr_t CL_CgameSystemCalls(intptr_t *args)
 		return 0;
 
 	case CG_TRAP_GETVALUE:
-		return CL_GetValue(VMA(1), args[2], VMA(3));
+		return CL_CG_GetValue(VMA(1), args[2], VMA(3));
 
 	default:
 		Com_Error(ERR_DROP, "Bad cgame system trap: %ld", (long int) args[0]);

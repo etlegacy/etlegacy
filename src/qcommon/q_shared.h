@@ -417,8 +417,8 @@ typedef int clipHandle_t;
 #endif
 
 #ifndef BIT
-#ifdef _WIN64
-#define BIT(x)              (1i64 << (x))
+#if defined(_WIN64) || defined(__LP64__)
+#define BIT(x)              (1ULL << (x))
 #else
 #define BIT(x)              (1U << (x))
 #endif
@@ -433,7 +433,7 @@ typedef int clipHandle_t;
 #define SIZE_GB_FLOAT(bytes) ((bytes) * (1.0f / 1073741824.0f))
 
 #define ENABLEBIT(x, y) x |= BIT(y)
-#define CLEARBIT(x, y) x  &= ~BIT(y)
+#define CLEARBIT(x, y) x &= ~BIT(y)
 #define TOGGLEBIT(x, y) x ^= BIT(y)
 #define CHECKBIT(x, y) ((x) & BIT(y))
 
@@ -1181,9 +1181,9 @@ typedef enum
 	MAX_AISTATES
 } aistateEnum_t;
 
-#define REF_FORCE_DLIGHT    (1 << 31)   ///< passed in through overdraw parameter, force this dlight under all conditions
-#define REF_JUNIOR_DLIGHT   (1 << 30)   ///< this dlight does not light surfaces.  it only affects dynamic light grid
-#define REF_DIRECTED_DLIGHT (1 << 29)   ///< global directional light, origin should be interpreted as a normal vector
+#define REF_FORCE_DLIGHT    BIT(31)   ///< passed in through overdraw parameter, force this dlight under all conditions
+#define REF_JUNIOR_DLIGHT   BIT(30)   ///< this dlight does not light surfaces.  it only affects dynamic light grid
+#define REF_DIRECTED_DLIGHT BIT(29)   ///< global directional light, origin should be interpreted as a normal vector
 
 // bit field limits
 #define MAX_STATS               16

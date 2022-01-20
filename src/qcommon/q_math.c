@@ -858,7 +858,7 @@ float angle_lerp(float from, float to, float frac)
  * @param[in] frac
  * @param[out] out
  */
-void vec3_lerp(vec3_t start, vec3_t end, float frac, vec3_t out)
+void vec3_lerp(const vec3_t start, const vec3_t end, float frac, vec3_t out)
 {
 	vec3_t dist;
 
@@ -1028,7 +1028,7 @@ int BoxOnPlaneSide2 (vec3_t emins, vec3_t emaxs, struct cplane_s *p)
  * @param[in] p
  * @return
  */
-int BoxOnPlaneSide(vec3_t emins, vec3_t emaxs, struct cplane_s *p)
+int BoxOnPlaneSide(const vec3_t emins, const vec3_t emaxs, struct cplane_s *p)
 {
 	float dist1, dist2;
 	int   sides;
