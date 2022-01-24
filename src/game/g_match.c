@@ -291,13 +291,19 @@ void G_addStats(gentity_t *targ, gentity_t *attacker, int damage, meansOfDeath_t
 	{
 		if (attacker && attacker->client)
 		{
-			int x;
+			weapon_t weap = GetMODTableData(mod)->weaponIcon;
 
-			x = attacker->client->sess.aWeaponStats[GetMODTableData(mod)->indexWeaponStat].atts--;
-
-			if (x < 1)
+			// don't count hits/shots for hitscan weapons
+			if (!GetWeaponTableData(weap)->splashDamage)
 			{
-				attacker->client->sess.aWeaponStats[GetMODTableData(mod)->indexWeaponStat].atts = 1;
+				int x;
+
+				x = attacker->client->sess.aWeaponStats[GetMODTableData(mod)->indexWeaponStat].atts--;
+
+				if (x < 1)
+				{
+					attacker->client->sess.aWeaponStats[GetMODTableData(mod)->indexWeaponStat].atts = 1;
+				}
 			}
 
 			if (targ->health <= FORCE_LIMBO_HEALTH)
