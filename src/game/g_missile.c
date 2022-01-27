@@ -122,7 +122,8 @@ void G_BounceMissile(gentity_t *ent, trace_t *trace)
 
 		// check for stop
 		//if ( trace->plane.normal[2] > 0.2 && VectorLengthSquared( ent->s.pos.trDelta ) < Square(40) )
-		if ((trace->plane.normal[2] > 0.2f && VectorLengthSquared(relativeDelta) < 1600) || !trace->fraction) // Square(40)
+		if ((trace->plane.normal[2] > 0.2f && VectorLengthSquared(relativeDelta) < 1600)
+		    || (!trace->fraction && !(GetWeaponTableData(ent->s.weapon)->type & WEAPON_TYPE_RIFLENADE))) // Square(40)
 		{
 			// make the world the owner of the ent, so the player can shoot it after it stops moving
 			if (ent->r.contents == CONTENTS_CORPSE)
