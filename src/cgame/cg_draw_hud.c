@@ -2442,7 +2442,7 @@ static float CG_DrawFPS(float y)
  * @brief CG_SpawnTimerText red colored spawn time text in reinforcement time HUD element.
  * @return red colored text or NULL when its not supposed to be rendered
 */
-static char *CG_SpawnTimerText()
+char *CG_SpawnTimerText()
 {
 	int msec = (cgs.timelimit * 60000.f) - (cg.time - cgs.levelStartTime);
 	int seconds;

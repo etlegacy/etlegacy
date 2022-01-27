@@ -3344,6 +3344,7 @@ void CG_LoadRankIcons(void);
 
 void CG_ParseFireteams(void);
 void CG_ParseOIDInfos(void);
+char *CG_SpawnTimerText(void);
 //oidInfo_t *CG_OIDInfoForEntityNum(int num);
 
 // cg_consolecmds.c
@@ -4085,8 +4086,8 @@ typedef struct hudComponent_s
 	rectDef_t location;
 	int visible;
 	int style;
-    float scale;
-    vec4_t color;
+	float scale;
+	vec4_t color;
 	int offset;
 } hudComponent_t;
 

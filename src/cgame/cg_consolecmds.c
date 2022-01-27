@@ -1626,6 +1626,54 @@ static void CG_ReadHuds_f(void)
 	CG_ReadHudScripts();
 }
 
+static void CG_ShareTimer_f(void)
+{
+	char *stChar = CG_SpawnTimerText();
+	if (stChar == NULL)
+	{
+		return;
+	}
+	char *cmd    = !Q_stricmp(CG_Argv(0), "sharetimer") ? "say_team" : "say_buddy";
+	int  st      = Q_atoi(stChar);
+	int  msec    = (cgs.timelimit * 60000.f) - (cg.time - cgs.levelStartTime);
+	int  seconds = msec / 1000;
+	int  mins    = seconds / 60;
+	seconds -= mins * 60;
+	int tens = seconds / 10;
+	seconds -= tens * 10;
+	seconds  = Q_atoi(va("%i%i", tens, seconds));
+	int limboTime = (cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_AXIS ? cg_bluelimbotime.integer
+	                                                                         : cg_redlimbotime.integer) / 1000;
+	int num = MOD(seconds - st, 60);
+
+	char text[MAX_SAY_TEXT];
+	trap_Args(text, sizeof(text));
+	if (strlen(text))
+	{
+		char buffer[MAX_SAY_TEXT];
+		Com_Memcpy(buffer, text, strlen(text));
+		char *spawntime = Q_TruncateStr(Q_stristr(buffer, "${nextspawn}"), 12);
+
+		if (spawntime)
+		{
+			Q_strncpyz(text, Q_StrReplace(text, spawntime, va("%i", num)), sizeof(text));
+		}
+		Com_Memcpy(buffer, text, strlen(text));
+		char *enemylimbo = Q_TruncateStr(Q_stristr(buffer, "${enemylimbotime}"), 13);
+
+		if (enemylimbo)
+		{
+			Q_strncpyz(text, Q_StrReplace(text, enemylimbo, va("%i", limboTime)), sizeof(text));
+		}
+		trap_SendConsoleCommand(va("%s %s", cmd, text));
+	}
+	else
+	{
+		trap_SendConsoleCommand(va("%s Enemy spawns every %i seconds: next at %i", cmd, limboTime, num));
+	}
+
+}
+
 #ifdef FEATURE_EDV
 /**
  * @brief CG_FreecamTurnLeftDown_f
@@ -2188,6 +2236,8 @@ static consoleCommand_t commands[] =
 	{ "classmenu",           CG_ClassMenu_f            },
 	{ "teammenu",            CG_TeamMenu_f             },
 	{ "readhuds",            CG_ReadHuds_f             },
+	{ "sharetimer",          CG_ShareTimer_f           },
+	{ "sharetimer_buddy",    CG_ShareTimer_f           },
 #ifdef FEATURE_EDV
 	{ "+freecam_turnleft",   CG_FreecamTurnLeftDown_f  },
 	{ "-freecam_turnleft",   CG_FreecamTurnLeftUp_f    },
