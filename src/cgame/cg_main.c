@@ -326,6 +326,8 @@ vmCvar_t cg_fireteamSprites;
 vmCvar_t cg_weapaltReloads;
 vmCvar_t cg_weapaltSwitches;
 
+vmCvar_t cg_sharetimerText;
+
 vmCvar_t cg_simpleItems;
 vmCvar_t cg_simpleItemsScale;
 
@@ -618,6 +620,7 @@ static cvarTable_t cvarTable[] =
 	{ &cg_popupShadow,            "cg_popupShadow",            "0",           CVAR_ARCHIVE,                 0 },
 	{ &cg_weapaltReloads,         "cg_weapaltReloads",         "0",           CVAR_ARCHIVE,                 0 },
 	{ &cg_weapaltSwitches,        "cg_weapaltSwitches",        "1",           CVAR_ARCHIVE,                 0 },
+	{ &cg_sharetimerText,         "cg_sharetimerText",         "",            CVAR_ARCHIVE,                 0 },
 
 	// Fonts
 	{ &cg_fontScaleTP,            "cg_fontScaleTP",            "0.35",        CVAR_ARCHIVE,                 0 },   // TopPrint

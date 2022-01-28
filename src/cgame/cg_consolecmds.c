@@ -1647,7 +1647,11 @@ static void CG_ShareTimer_f(void)
 	int num = MOD(seconds - st, 60);
 
 	char text[MAX_SAY_TEXT];
-	trap_Args(text, sizeof(text));
+	trap_Cvar_VariableStringBuffer("cg_sharetimerText", text, MAX_SAY_TEXT);
+	if (!strlen(text))
+	{
+		trap_Args(text, sizeof(text));
+	}
 	if (strlen(text))
 	{
 		char buffer[MAX_SAY_TEXT];

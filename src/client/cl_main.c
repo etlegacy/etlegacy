@@ -2320,7 +2320,7 @@ static void CL_FrameHandleVideo(int *msec)
 		//clc.aviVideoFrameRemainder = frameDuration + msec;
 	}
 	else if ((!cl_avidemo->integer && CL_VideoRecording())
-			 || (cl_avidemo->integer && (cls.state != CA_ACTIVE || !cl_forceavidemo->integer)))
+	         || (cl_avidemo->integer && (cls.state != CA_ACTIVE || !cl_forceavidemo->integer)))
 	{
 		CL_StopVideo_f();
 	}
@@ -3013,6 +3013,7 @@ void CL_Init(void)
 	Cvar_Get("cg_autoReload", "1", CVAR_ARCHIVE);
 	Cvar_Get("cg_weapaltReloads", "0", CVAR_ARCHIVE);
 	Cvar_Get("cg_weapaltSwitches", "1", CVAR_ARCHIVE);
+	Cvar_Get("cg_sharetimerText", "", CVAR_ARCHIVE);
 
 	cl_missionStats = Cvar_Get("g_missionStats", "0", CVAR_ROM);
 
