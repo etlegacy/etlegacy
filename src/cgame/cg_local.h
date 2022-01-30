@@ -1550,6 +1550,10 @@ typedef struct
 	int scoreToggleTime;
 #endif
 
+	// jaquboss - MORTARCAM
+	centity_t *latestMissile;
+	qboolean subscene;
+
 #ifdef FEATURE_RATING
 	// skill rating
 	float rating[MAX_CLIENTS];
@@ -3055,6 +3059,7 @@ void CG_AddLineToScene(const vec3_t start, const vec3_t end, const vec4_t colour
 void CG_DrawRotateGizmo(const vec3_t origin, float radius, int numSegments, int activeAxis);
 void CG_DrawMoveGizmo(const vec3_t origin, float radius, int activeAxis);
 
+void CG_DrawMissileCamera(rectDef_t *rect);
 
 /**
  * @struct scrollText_s

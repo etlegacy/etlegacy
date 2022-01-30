@@ -2259,6 +2259,16 @@ void CG_DrawActiveFrame(int serverTime, qboolean demoPlayback)
 		trap_S_Respatialize(cg.snap->ps.clientNum, cg.refdef.vieworg, cg.refdef.viewaxis, inwater);
 	}
 
+	// jet Pilot - Mortar Cam?, jaquboss here is it better
+	if (cg.latestMissile && !cg.showGameView) {
+		rectDef_t rect;
+		rect.h = 120;
+		rect.w = 160;
+		rect.x = 6;
+		rect.y = 160;
+		CG_DrawMissileCamera(&rect);
+	}
+
 	if (cg_stats.integer)
 	{
 		CG_Printf("cg.clientFrame:%i\n", cg.clientFrame);

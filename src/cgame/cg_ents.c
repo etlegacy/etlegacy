@@ -1410,6 +1410,12 @@ static void CG_Missile(centity_t *cent)
 		}
 	}
 
+	if (cent->currentState.clientNum == cg.predictedPlayerState.clientNum) {
+		//crapshoot: special case for exploding barrels since they are set up as WP_PANZERFAUST ...
+		if (s1->eType != ET_FLAMEBARREL)
+			cg.latestMissile = cent;
+	}
+
 	// spin as it moves
 	if (s1->pos.trType != TR_STATIONARY)
 	{
@@ -2949,6 +2955,8 @@ qboolean CG_AddCEntity_Filter(centity_t *cent)
 void CG_AddPacketEntities(void)
 {
 	int num;
+
+	cg.latestMissile = NULL;
 
 	// set cg.frameInterpolation
 	if (cg.nextSnap)

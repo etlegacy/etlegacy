@@ -1831,6 +1831,11 @@ gentity_t *fire_missile(gentity_t *self, vec3_t start, vec3_t dir, int weapon)
 		//bolt->r.ownerNum            = ENTITYNUM_WORLD;  // make the world the owner of the dynamite, so the player can shoot it without modifying the bullet code to ignore players id for hits
 	}
 
+	if (self && self->client) // for missile cam
+		bolt->s.clientNum = self->client->ps.clientNum;
+	else
+		bolt->s.clientNum = -1;
+
 	return bolt;
 }
 

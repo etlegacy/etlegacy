@@ -4719,3 +4719,85 @@ void CG_DrawActive()
 		CG_LimboPanel_Draw();
 	}
 }
+
+void CG_DrawMissileCamera(rectDef_t *rect)
+{
+	float            x, y, w, h;
+	refdef_t        refdef;
+	vec3_t            forward;
+	centity_t        *cent;
+
+	if (!cg.latestMissile) {
+		return;
+	}
+
+	// Save out the old render info so we don't kill the LOD system here
+	trap_R_SaveViewParms();
+
+	cent = cg.latestMissile;
+
+	memset(&refdef, 0, sizeof(refdef_t));
+	memcpy(refdef.areamask, cg.snap->areamask, sizeof(refdef.areamask));
+
+	cg.subscene = qtrue;
+
+	x = rect->x;
+	y = rect->y;
+	w = rect->w;
+	h = rect->h;
+
+	CG_AdjustFrom640(&x, &y, &w, &h);
+	memset(&refdef, 0, sizeof(refdef));
+	AxisClear(refdef.viewaxis);
+
+	refdef.fov_x = cg.refdef_current->fov_x;
+	refdef.fov_y = cg.refdef_current->fov_y;
+	refdef.x = x;
+	refdef.y = y;
+	refdef.width = w;
+	refdef.height = h;
+	refdef.time = cg.time;
+
+	VectorCopy(cent->lerpOrigin, refdef.vieworg);
+	cent->lerpAngles[2] = 0;
+	AnglesToAxis(cent->lerpAngles, refdef.viewaxis);
+	AngleVectors(cent->lerpAngles, forward, NULL, NULL);
+
+
+	VectorMA(refdef.vieworg, 32.0f, forward, refdef.vieworg); // push a bit forward
+
+	cg.refdef_current = &refdef;
+
+	trap_R_ClearScene();
+
+	CG_SetupFrustum();
+	CG_DrawSkyBoxPortal(qfalse);
+
+	if (!cg.hyperspace) {
+		CG_AddPacketEntities();
+		CG_AddMarks();
+		CG_AddParticles();
+		CG_AddLocalEntities();
+		CG_AddSmokeSprites();
+		CG_AddAtmosphericEffects();
+		CG_AddFlameChunks();
+		CG_AddTrails();        // this must come last, so the trails dropped this frame get drawn
+		CG_PB_RenderPolyBuffers();
+		CG_DrawMiscGamemodels();
+		CG_Coronas();
+	}
+
+	refdef.time = cg.time;
+	trap_SetClientLerpOrigin(refdef.vieworg[0], refdef.vieworg[1], refdef.vieworg[2]);
+
+	trap_R_RenderScene(&refdef);
+
+	cg.refdef_current = &cg.refdef;
+	cg.subscene = qfalse;
+
+	// grain shader
+	//CG_DrawPic( rect->x, rect->y, rect->w, rect->h, cgs.media.tv_grain);
+
+	// Reset the view parameters
+	trap_R_RestoreViewParms();
+}

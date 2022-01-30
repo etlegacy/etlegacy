@@ -4329,3 +4329,17 @@ void FireWeapon(gentity_t *ent)
 
 	ent->client->sess.aWeaponStats[GetWeaponTableData(ent->s.weapon)->indexWeaponStat].atts++;
 }
+
+void InitCameras(void) {
+	for (int i = 0; i<level.maxclients; i++) {
+		gentity_t *ent = G_Spawn();
+		ent->classname = "missilecam";
+		ent->neverFree = qtrue;
+		ent->s.eType = ET_MISSILECAM;
+		ent->r.ownerNum = i;
+		ent->r.svFlags = SVF_PORTAL | SVF_SINGLECLIENT;
+		ent->r.singleClient = i;
+		level.missileCams[i] = ent;
+		trap_LinkEntity(ent);
+	}
+}
