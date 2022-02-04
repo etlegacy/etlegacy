@@ -1628,25 +1628,23 @@ static void CG_ReadHuds_f(void)
 
 static void CG_ShareTimer_f(void)
 {
-	char *stChar = CG_SpawnTimerText();
+	qtime_t ct;
+	char    *cmd, *stChar;
+	int     st, limboTime, nextSpawn;
+	char    text[MAX_SAY_TEXT];
+	stChar = CG_SpawnTimerText();
+
 	if (stChar == NULL)
 	{
 		return;
 	}
-	char *cmd    = !Q_stricmp(CG_Argv(0), "sharetimer") ? "say_team" : "say_buddy";
-	int  st      = Q_atoi(stChar);
-	int  msec    = (cgs.timelimit * 60000.f) - (cg.time - cgs.levelStartTime);
-	int  seconds = msec / 1000;
-	int  mins    = seconds / 60;
-	seconds -= mins * 60;
-	int tens = seconds / 10;
-	seconds -= tens * 10;
-	seconds  = Q_atoi(va("%i%i", tens, seconds));
-	int limboTime = (cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_AXIS ? cg_bluelimbotime.integer
-	                                                                         : cg_redlimbotime.integer) / 1000;
-	int num = MOD(seconds - st, 60);
 
-	char text[MAX_SAY_TEXT];
+	cmd       = !Q_stricmp(CG_Argv(0), "sharetimer") ? "say_team" : "say_buddy";
+	st        = Q_atoi(stChar);
+	limboTime = (cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_AXIS ? cg_bluelimbotime.integer : cg_redlimbotime.integer) / 1000;
+	CG_RoundTime(&ct);
+	nextSpawn = MOD(ct.tm_sec - st, 60);
+
 	trap_Cvar_VariableStringBuffer("cg_sharetimerText", text, MAX_SAY_TEXT);
 	if (!strlen(text))
 	{
@@ -1655,16 +1653,17 @@ static void CG_ShareTimer_f(void)
 	if (strlen(text))
 	{
 		char buffer[MAX_SAY_TEXT];
-		Com_Memcpy(buffer, text, strlen(text));
-		char *spawntime = Q_TruncateStr(Q_stristr(buffer, "${nextspawn}"), 12);
+		char *spawntime, *enemylimbo;
 
+		Q_strncpyz(buffer, text, strlen(text) + 1);
+		spawntime = Q_TruncateStr(Q_stristr(buffer, "${nextspawn}"), 12);
 		if (spawntime)
 		{
-			Q_strncpyz(text, Q_StrReplace(text, spawntime, va("%i", num)), sizeof(text));
+			Q_strncpyz(text, Q_StrReplace(text, spawntime, va("%i", nextSpawn)), sizeof(text));
 		}
-		Com_Memcpy(buffer, text, strlen(text));
-		char *enemylimbo = Q_TruncateStr(Q_stristr(buffer, "${enemylimbotime}"), 13);
 
+		Q_strncpyz(buffer, text, strlen(text) + 1);
+		enemylimbo = Q_TruncateStr(Q_stristr(buffer, "${enemylimbotime}"), 13);
 		if (enemylimbo)
 		{
 			Q_strncpyz(text, Q_StrReplace(text, enemylimbo, va("%i", limboTime)), sizeof(text));
@@ -1673,7 +1672,7 @@ static void CG_ShareTimer_f(void)
 	}
 	else
 	{
-		trap_SendConsoleCommand(va("%s Enemy spawns every %i seconds: next at %i", cmd, limboTime, num));
+		trap_SendConsoleCommand(va("%s Enemy spawns every %i seconds: next at %i", cmd, limboTime, nextSpawn));
 	}
 
 }

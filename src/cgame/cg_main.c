@@ -3040,3 +3040,25 @@ void QDECL CG_WriteToLog(const char *fmt, ...)
 		trap_FS_Write(string, (int)strlen(string), cg.logFile);
 	}
 }
+
+int CG_RoundTime(qtime_t *qtime)
+{
+	int msec = cgs.timelimit * 60000.f;
+	if (cgs.gamestate == GS_PLAYING)
+	{
+		msec -= cg.time - cgs.levelStartTime;
+	}
+
+	int seconds = msec / 1000;
+	int mins    = seconds / 60;
+	int hours   = mins / 60;
+	seconds -= mins * 60;
+	int tens = seconds / 10;
+	seconds       -= tens * 10;
+	seconds        = Q_atoi(va("%i%i", tens, seconds));
+	qtime->tm_sec  = seconds;
+	qtime->tm_min  = mins;
+	qtime->tm_hour = hours;
+
+	return msec;
+}
