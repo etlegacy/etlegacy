@@ -1629,9 +1629,8 @@ static void CG_ReadHuds_f(void)
 static void CG_ShareTimer_f(void)
 {
 	qtime_t ct;
-	char    *cmd, *stChar;
+	char    *cmd, *stChar, text[MAX_SAY_TEXT];
 	int     st, limboTime, nextSpawn;
-	char    text[MAX_SAY_TEXT];
 	stChar = CG_SpawnTimerText();
 
 	if (stChar == NULL)
@@ -1653,17 +1652,19 @@ static void CG_ShareTimer_f(void)
 	if (strlen(text))
 	{
 		char buffer[MAX_SAY_TEXT];
-		char *spawntime, *enemylimbo;
+		char *spawntime, *enemylimbo, *nextSpawnText, *enemyLimbotimeText;
+		nextSpawnText      = "${nextspawn}";
+		enemyLimbotimeText = "${enemylimbotime}";
 
-		Q_strncpyz(buffer, text, strlen(text) + 1);
-		spawntime = Q_TruncateStr(Q_stristr(buffer, "${nextspawn}"), 12);
+		Q_strncpyz(buffer, text, sizeof(text));
+		spawntime = Q_TruncateStr(Q_stristr(buffer, nextSpawnText), strlen(nextSpawnText));
 		if (spawntime)
 		{
 			Q_strncpyz(text, Q_StrReplace(text, spawntime, va("%i", nextSpawn)), sizeof(text));
 		}
 
-		Q_strncpyz(buffer, text, strlen(text) + 1);
-		enemylimbo = Q_TruncateStr(Q_stristr(buffer, "${enemylimbotime}"), 13);
+		Q_strncpyz(buffer, text, sizeof(text));
+		enemylimbo = Q_TruncateStr(Q_stristr(buffer, enemyLimbotimeText), strlen(enemyLimbotimeText));
 		if (enemylimbo)
 		{
 			Q_strncpyz(text, Q_StrReplace(text, enemylimbo, va("%i", limboTime)), sizeof(text));
