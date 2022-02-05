@@ -381,6 +381,8 @@ vmCvar_t cg_chatShadow;
 vmCvar_t cg_chatFlags;
 vmCvar_t cg_chatLineWidth;
 
+vmCvar_t cg_activateLean;
+
 typedef struct
 {
 	vmCvar_t *vmCvar;
@@ -659,6 +661,8 @@ static cvarTable_t cvarTable[] =
 	{ &cg_chatShadow,             "cg_chatShadow",             "0",           CVAR_ARCHIVE,                 0 },
 	{ &cg_chatFlags,              "cg_chatFlags",              "1",           CVAR_ARCHIVE,                 0 },
 	{ &cg_chatLineWidth,          "cg_chatLineWidth",          "70",          CVAR_ARCHIVE,                 0 },
+
+	{ &cg_activateLean,           "cg_activateLean",           "0",           CVAR_ARCHIVE,                 0 },
 };
 
 static const unsigned int cvarTableSize = sizeof(cvarTable) / sizeof(cvarTable[0]);
@@ -733,7 +737,8 @@ void CG_UpdateCvars(void)
 				// Check if we need to update any client flags to be sent to the server
 				if (cv->vmCvar == &cg_autoAction || cv->vmCvar == &cg_autoReload ||
 				    cv->vmCvar == &int_cl_timenudge || cv->vmCvar == &int_cl_maxpackets ||
-				    cv->vmCvar == &cg_autoactivate || cv->vmCvar == &cg_predictItems)
+				    cv->vmCvar == &cg_autoactivate || cv->vmCvar == &cg_predictItems ||
+				    cv->vmCvar == &cg_activateLean)
 				{
 					fSetFlags = qtrue;
 				}
@@ -846,7 +851,8 @@ void CG_setClientFlags(void)
 									 ((cg_autoReload.integer > 0) ? CGF_AUTORELOAD : 0) |
 									 ((cg_autoAction.integer & AA_STATSDUMP) ? CGF_STATSDUMP : 0) |
 									 ((cg_autoactivate.integer > 0) ? CGF_AUTOACTIVATE : 0) |
-									 ((cg_predictItems.integer > 0) ? CGF_PREDICTITEMS : 0)
+									 ((cg_predictItems.integer > 0) ? CGF_PREDICTITEMS : 0) |
+									 ((cg_activateLean.integer > 0) ? CGF_ACTIVATELEAN : 0)
 									 // Add more in here, as needed
 	                             ),
 

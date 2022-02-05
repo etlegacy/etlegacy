@@ -90,8 +90,6 @@ cvar_t *m_filter;
 
 cvar_t *cl_activeAction;
 
-cvar_t *cl_activatelean;
-
 cvar_t *cl_autorecord;
 
 cvar_t *cl_allowDownload;
@@ -2320,7 +2318,7 @@ static void CL_FrameHandleVideo(int *msec)
 		//clc.aviVideoFrameRemainder = frameDuration + msec;
 	}
 	else if ((!cl_avidemo->integer && CL_VideoRecording())
-			 || (cl_avidemo->integer && (cls.state != CA_ACTIVE || !cl_forceavidemo->integer)))
+	         || (cl_avidemo->integer && (cls.state != CA_ACTIVE || !cl_forceavidemo->integer)))
 	{
 		CL_StopVideo_f();
 	}
@@ -2916,8 +2914,6 @@ void CL_Init(void)
 	rcon_client_password  = Cvar_Get("rconPassword", "", CVAR_TEMP);
 	cl_activeAction       = Cvar_Get("activeAction", "", CVAR_TEMP);
 	cl_autorecord         = Cvar_Get("cl_autorecord", "0", CVAR_TEMP);
-
-	cl_activatelean = Cvar_Get("cl_activatelean", "0", CVAR_ARCHIVE);
 
 	cl_timedemo      = Cvar_Get("timedemo", "0", 0);
 	cl_avidemo       = Cvar_Get("cl_avidemo", "0", CVAR_TEMP);

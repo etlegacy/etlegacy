@@ -605,6 +605,7 @@ void SpectatorThink(gentity_t *ent, usercmd_t *ucmd)
 		pm.tracemask     = MASK_PLAYERSOLID & ~CONTENTS_BODY; // spectators can fly through bodies
 		pm.trace         = trap_TraceCapsuleNoEnts;
 		pm.pointcontents = trap_PointContents;
+		pm.activateLean  = client->pers.activateLean;
 
 		Pmove(&pm);
 
@@ -1428,6 +1429,8 @@ void ClientThink_real(gentity_t *ent)
 		client->pers.lastBattleSenseBonusTime = level.timeCurrent;
 		client->combatState                   = COMBATSTATE_COLD; // cool down again
 	}
+
+	pm.activateLean = client->pers.activateLean;
 
 	Pmove(&pm); // monsterslick
 
