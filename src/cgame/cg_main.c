@@ -322,6 +322,7 @@ vmCvar_t cg_fireteamLocationAlign;
 vmCvar_t cg_fireteamNameMaxChars;
 vmCvar_t cg_fireteamNameAlign;
 vmCvar_t cg_fireteamSprites;
+vmCvar_t cg_fireteamAlpha;
 vmCvar_t cg_fireteamBgAlpha;
 
 vmCvar_t cg_weapaltReloads;
@@ -609,6 +610,7 @@ static cvarTable_t cvarTable[] =
 	{ &cg_fireteamNameMaxChars,   "cg_fireteamNameMaxChars",   "0",           CVAR_ARCHIVE,                 0 },
 	{ &cg_fireteamNameAlign,      "cg_fireteamNameAlign",      "0",           CVAR_ARCHIVE,                 0 },
 	{ &cg_fireteamSprites,        "cg_fireteamSprites",        "1",           CVAR_ARCHIVE,                 0 },
+	{ &cg_fireteamAlpha,          "cg_fireteamAlpha",          "1.0",         CVAR_ARCHIVE,                 0 },
 	{ &cg_fireteamBgAlpha,        "cg_fireteamBgAlpha",        "0.3",         CVAR_ARCHIVE,                 0 },
 
 	{ &cg_simpleItems,            "cg_simpleItems",            "0",           CVAR_ARCHIVE,                 0 },   // Bugged atm
@@ -1835,8 +1837,8 @@ static void CG_RegisterGraphics(void)
 	cgs.media.genericConstructionShader = trap_R_RegisterShader("textures/sfx/construction");
 	cgs.media.shoutcastLandmineShader   = trap_R_RegisterShader("textures/sfx/shoutcast_landmine");
 
-	cgs.media.alliedUniformShader = trap_R_RegisterShader("sprites/uniform_allied");
-	cgs.media.axisUniformShader   = trap_R_RegisterShader("sprites/uniform_axis");
+	cgs.media.alliedUniformShader = trap_R_RegisterShader("sprites/uniform_allied_hud");
+	cgs.media.axisUniformShader   = trap_R_RegisterShader("sprites/uniform_axis_hud");
 
 	// used in: command map
 	cgs.media.ccFilterPics[0] = trap_R_RegisterShaderNoMip("gfx/limbo/filter_axis");

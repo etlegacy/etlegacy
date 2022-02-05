@@ -847,6 +847,28 @@ sprites/cm_voicechat_icon
 	}
 }
 
+sprites/uniform_allied_hud
+{
+	nocompress
+	nopicmip
+	{
+		map sprites/active_uniform_allied.tga
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbGen vertex
+	}
+}
+
+sprites/uniform_axis_hud
+{
+	nocompress
+	nopicmip
+	{
+		map sprites/active_uniform_axis.tga
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbGen vertex
+	}
+}
+
 ui/assets/mp_ammo_blue
 {
 	nopicmip
