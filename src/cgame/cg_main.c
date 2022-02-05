@@ -322,6 +322,7 @@ vmCvar_t cg_fireteamLocationAlign;
 vmCvar_t cg_fireteamNameMaxChars;
 vmCvar_t cg_fireteamNameAlign;
 vmCvar_t cg_fireteamSprites;
+vmCvar_t cg_fireteamBgAlpha;
 
 vmCvar_t cg_weapaltReloads;
 vmCvar_t cg_weapaltSwitches;
@@ -608,6 +609,8 @@ static cvarTable_t cvarTable[] =
 	{ &cg_fireteamNameMaxChars,   "cg_fireteamNameMaxChars",   "0",           CVAR_ARCHIVE,                 0 },
 	{ &cg_fireteamNameAlign,      "cg_fireteamNameAlign",      "0",           CVAR_ARCHIVE,                 0 },
 	{ &cg_fireteamSprites,        "cg_fireteamSprites",        "1",           CVAR_ARCHIVE,                 0 },
+	{ &cg_fireteamBgAlpha,        "cg_fireteamBgAlpha",        "0.3",         CVAR_ARCHIVE,                 0 },
+
 	{ &cg_simpleItems,            "cg_simpleItems",            "0",           CVAR_ARCHIVE,                 0 },   // Bugged atm
 	{ &cg_simpleItemsScale,       "cg_simpleItemsScale",       "1.0",         CVAR_ARCHIVE,                 0 },
 	{ &cg_automapZoom,            "cg_automapZoom",            "5.159",       CVAR_ARCHIVE,                 0 },

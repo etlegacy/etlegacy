@@ -513,6 +513,8 @@ void CG_DrawFireTeamOverlay(rectDef_t *rect)
 		x = MIN_BORDER_DISTANCE;
 	}
 
+	FT_bg2[3] = Com_Clamp(0.0f, 1.0f, cg_fireteamBgAlpha.value);
+
 	CG_FillRect(x, y, boxWidth, h, FT_bg2);
 	CG_DrawRect(x, y, boxWidth, h, 1, FT_border);
 
