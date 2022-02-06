@@ -1656,14 +1656,14 @@ static void CG_ShareTimer_f(void)
 		nextSpawnText      = "${nextspawn}";
 		enemyLimbotimeText = "${enemylimbotime}";
 
-		Q_strncpyz(buffer, text, sizeof(text));
+		Q_strncpyz(buffer, text, sizeof(buffer));
 		spawntime = Q_TruncateStr(Q_stristr(buffer, nextSpawnText), strlen(nextSpawnText));
 		if (spawntime)
 		{
 			Q_strncpyz(text, Q_StrReplace(text, spawntime, va("%i", nextSpawn)), sizeof(text));
 		}
 
-		Q_strncpyz(buffer, text, sizeof(text));
+		Q_strncpyz(buffer, text, sizeof(buffer));
 		enemylimbo = Q_TruncateStr(Q_stristr(buffer, enemyLimbotimeText), strlen(enemyLimbotimeText));
 		if (enemylimbo)
 		{
