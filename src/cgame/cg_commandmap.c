@@ -52,13 +52,22 @@ qboolean ccInitial = qtrue;
 #define FLAG_TOPFRAC                0.7421875f // 95/128
 #define SPAWN_SIZEUPTIME            1000.f
 
-// square minimap values
-#define AUTOMAP_PLAYER_ICON_SIZE_NEW    20
-#define CONST_ICON_NORMAL_SIZE_NEW      17
-#define CONST_ICON_EXPANDED_SIZE_NEW    20
-#define CONST_ICON_LANDMINE_SIZE_NEW    8
-#define FLAGSIZE_EXPANDED_NEW           98
-#define FLAGSIZE_NORMAL_NEW             82
+// shoutcaster minimap values
+#define AUTOMAP_PLAYER_ICON_SIZE_SC     20
+#define CONST_ICON_NORMAL_SIZE_SC       17
+#define CONST_ICON_EXPANDED_SIZE_SC     20
+#define CONST_ICON_LANDMINE_SIZE_SC     8
+#define FLAGSIZE_EXPANDED_SC            98
+#define FLAGSIZE_NORMAL_SC              82
+
+/**
+ * @brief CG_IsShoutcaster
+ * @return
+ */
+static inline qboolean CG_IsShoutcaster(void)
+{
+	return cgs.clientinfo[cg.clientNum].shoutcaster ? qtrue : qfalse;
+}
 
 /**
  * @brief CG_TransformToCommandMapCoord
@@ -211,7 +220,7 @@ void CG_TransformAutomapEntity(void)
 	}
 
 	// FIXME: this is needed or mines position breaks
-	if (cgs.clientinfo[cg.clientNum].shoutcaster)
+	if (CG_IsShoutcaster())
 	{
 		w = 150;
 		h = 150;
@@ -687,7 +696,7 @@ void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, float h,
 		else
 		{
 			// only see revivables for own team, unless shoutcaster
-			if (mEnt->type == ME_PLAYER_REVIVE && !cgs.clientinfo[cg.clientNum].shoutcaster)
+			if (mEnt->type == ME_PLAYER_REVIVE && !CG_IsShoutcaster())
 			{
 				return;
 			}
@@ -747,11 +756,11 @@ void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, float h,
 			float  msec;
 			vec4_t reviveClr = { 1.f, 1.f, 1.f, 1.f };
 
-			if (cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_AXIS || (cgs.clientinfo[cg.clientNum].shoutcaster && mEnt->team == TEAM_AXIS))
+			if (cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_AXIS || (CG_IsShoutcaster() && mEnt->team == TEAM_AXIS))
 			{
 				msec = (cg_redlimbotime.integer - (cg.time % cg_redlimbotime.integer)) / (float)cg_redlimbotime.integer;
 			}
-			else if (cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_ALLIES || (cgs.clientinfo[cg.clientNum].shoutcaster && mEnt->team == TEAM_ALLIES))
+			else if (cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_ALLIES || (CG_IsShoutcaster() && mEnt->team == TEAM_ALLIES))
 			{
 				msec = (cg_bluelimbotime.integer - (cg.time % cg_bluelimbotime.integer)) / (float)cg_bluelimbotime.integer;
 			}
@@ -826,7 +835,7 @@ void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, float h,
 			}
 
 			// hide ghost icon for following shoutcaster, highlight followed player.
-			if (cgs.clientinfo[cg.clientNum].shoutcaster && (cg.snap->ps.pm_flags & PMF_FOLLOW) && cg.snap->ps.clientNum == mEnt->data)
+			if (CG_IsShoutcaster() && (cg.snap->ps.pm_flags & PMF_FOLLOW) && cg.snap->ps.clientNum == mEnt->data)
 			{
 				// otherwise highlighting takes some time to disappear
 				if (cg.snap->ps.stats[STAT_HEALTH] > 0)
@@ -846,7 +855,7 @@ void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, float h,
 			if (cent->currentState.powerups & (1 << PW_OPS_DISGUISED))
 			{
 				CG_DrawPic(icon_pos[0], icon_pos[1], icon_extends[0], icon_extends[1], classInfo->icon);
-				if (ci->team == snap->ps.persistant[PERS_TEAM] || cgs.clientinfo[cg.clientNum].shoutcaster)
+				if (ci->team == snap->ps.persistant[PERS_TEAM] || CG_IsShoutcaster())
 				{
 					CG_DrawPic(icon_pos[0], icon_pos[1], icon_extends[0], icon_extends[1], cgs.media.friendShader);
 				}
@@ -1058,10 +1067,10 @@ void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, float h,
 		{
 			float width;
 
-			if (scissor && !scissor->circular)
+			if (scissor && CG_IsShoutcaster())
 			{
-				icon_extends[0] = CONST_ICON_EXPANDED_SIZE_NEW;
-				icon_extends[1] = CONST_ICON_EXPANDED_SIZE_NEW;
+				icon_extends[0] = CONST_ICON_EXPANDED_SIZE_SC;
+				icon_extends[1] = CONST_ICON_EXPANDED_SIZE_SC;
 			}
 			else
 			{
@@ -1120,10 +1129,10 @@ void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, float h,
 				scalesize = 12 * (1 - ((time - 700) / 700.f));
 			}
 
-			if (scissor && !scissor->circular)
+			if (scissor && CG_IsShoutcaster())
 			{
-				icon_extends[0] = CONST_ICON_NORMAL_SIZE_NEW + scalesize;
-				icon_extends[1] = CONST_ICON_NORMAL_SIZE_NEW + scalesize;
+				icon_extends[0] = CONST_ICON_NORMAL_SIZE_SC + scalesize;
+				icon_extends[1] = CONST_ICON_NORMAL_SIZE_SC + scalesize;
 			}
 			else
 			{
@@ -1158,10 +1167,10 @@ void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, float h,
 		}
 		else
 		{
-			if (scissor && !scissor->circular)
+			if (scissor && CG_IsShoutcaster())
 			{
-				icon_extends[0] = CONST_ICON_NORMAL_SIZE_NEW;
-				icon_extends[1] = CONST_ICON_NORMAL_SIZE_NEW;
+				icon_extends[0] = CONST_ICON_NORMAL_SIZE_SC;
+				icon_extends[1] = CONST_ICON_NORMAL_SIZE_SC;
 			}
 			else
 			{
@@ -1174,18 +1183,15 @@ void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, float h,
 				icon_extends[1] *= 0.5f;
 			}
 
-			if (scissor)
-			{
-				if (scissor->circular)
-				{
-					icon_extends[0] *= (scissor->zoomFactor / AUTOMAP_ZOOM);
-					icon_extends[1] *= (scissor->zoomFactor / AUTOMAP_ZOOM);
-				}
-			}
-			else
+			if (CG_IsShoutcaster())
 			{
 				icon_extends[0] *= cgs.ccZoomFactor;
 				icon_extends[1] *= cgs.ccZoomFactor;
+			}
+			else if (scissor)
+			{
+				icon_extends[0] *= (scissor->zoomFactor / AUTOMAP_ZOOM);
+				icon_extends[1] *= (scissor->zoomFactor / AUTOMAP_ZOOM);
 			}
 
 			// now check to see if the entity is within our clip region
@@ -1229,10 +1235,10 @@ void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, float h,
 			icon_pos[1] = y + mEnt->transformed[1];
 		}
 
-		if (scissor && !scissor->circular)
+		if (scissor && CG_IsShoutcaster())
 		{
-			icon_extends[0] = CONST_ICON_LANDMINE_SIZE_NEW;
-			icon_extends[1] = CONST_ICON_LANDMINE_SIZE_NEW;
+			icon_extends[0] = CONST_ICON_LANDMINE_SIZE_SC;
+			icon_extends[1] = CONST_ICON_LANDMINE_SIZE_SC;
 		}
 		else
 		{
@@ -1240,18 +1246,15 @@ void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, float h,
 			icon_extends[1] = CONST_ICON_LANDMINE_SIZE;
 		}
 
-		if (scissor)
-		{
-			if (scissor->circular)
-			{
-				icon_extends[0] *= (scissor->zoomFactor / AUTOMAP_ZOOM);
-				icon_extends[1] *= (scissor->zoomFactor / AUTOMAP_ZOOM);
-			}
-		}
-		else
+		if (CG_IsShoutcaster())
 		{
 			icon_extends[0] *= cgs.ccZoomFactor;
 			icon_extends[1] *= cgs.ccZoomFactor;
+		}
+		else if (scissor)
+		{
+			icon_extends[0] *= (scissor->zoomFactor / AUTOMAP_ZOOM);
+			icon_extends[1] *= (scissor->zoomFactor / AUTOMAP_ZOOM);
 		}
 
 		// now check to see if the entity is within our clip region
@@ -1365,17 +1368,11 @@ void CG_DrawMap(float x, float y, float w, float h, int mEntFilter, mapScissor_t
 				{
 					trap_R_DrawStretchPic(sc_x, sc_y, sc_w, sc_h, s0, t0, s1, t1, cgs.media.commandCentreAutomapShader[0]);
 				}
-				// FIXME: the code above seems to do weird things to the next trap_R_DrawStretchPic issued.
-				// This hack works around this.
-				// trap_R_DrawStretchPic(0, 0, 0, 0, 0, 0, 0, 0, cgs.media.whiteShader);
 			}
-
-			// Draw the grid
-			CG_DrawGrid(x, y, w, h, scissor);
 		}
 		else
 		{
-			icon_size = AUTOMAP_PLAYER_ICON_SIZE_NEW;
+			icon_size = CG_IsShoutcaster() ? AUTOMAP_PLAYER_ICON_SIZE_SC : AUTOMAP_PLAYER_ICON_SIZE;
 
 			if (scissor->br[0] >= scissor->tl[0])
 			{
@@ -1479,7 +1476,7 @@ void CG_DrawMap(float x, float y, float w, float h, int mEntFilter, mapScissor_t
 	// entnfo players data
 	for (i = 0, mEnt = &mapEntities[0]; i < mapEntityCount; ++i, ++mEnt)
 	{
-		if (mEnt->team != RealTeam && !CG_DisguiseMapCheck(mEnt) && !cgs.clientinfo[cg.clientNum].shoutcaster)
+		if (mEnt->team != RealTeam && !CG_DisguiseMapCheck(mEnt) && !CG_IsShoutcaster())
 		{
 			continue;
 		}
@@ -1551,13 +1548,13 @@ void CG_DrawMap(float x, float y, float w, float h, int mEntFilter, mapScissor_t
 				float  msec;
 				vec4_t reviveClr = { 1.f, 1.f, 1.f, 1.f };
 
-				if (snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR || cgs.clientinfo[cg.clientNum].shoutcaster)
+				if (snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR || CG_IsShoutcaster())
 				{
-					if (cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_AXIS || (cgs.clientinfo[cg.clientNum].shoutcaster && mEnt->team == TEAM_AXIS))
+					if (cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_AXIS || (CG_IsShoutcaster() && mEnt->team == TEAM_AXIS))
 					{
 						msec = (cg_redlimbotime.integer - (cg.time % cg_redlimbotime.integer)) / (float)cg_redlimbotime.integer;
 					}
-					else if (cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_ALLIES || (cgs.clientinfo[cg.clientNum].shoutcaster && mEnt->team == TEAM_ALLIES))
+					else if (cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_ALLIES || (CG_IsShoutcaster() && mEnt->team == TEAM_ALLIES))
 					{
 						msec = (cg_bluelimbotime.integer - (cg.time % cg_bluelimbotime.integer)) / (float)cg_bluelimbotime.integer;
 					}
@@ -1793,7 +1790,7 @@ void CG_DrawAutoMap(float basex, float basey, float basew, float baseh)
 	}
 #endif
 
-	if (!cgs.clientinfo[cg.clientNum].shoutcaster)
+	if (!CG_IsShoutcaster())
 	{
 		diff = basew * 0.25f;
 		x    = x + (diff / 2);
@@ -1802,7 +1799,7 @@ void CG_DrawAutoMap(float basex, float basey, float basew, float baseh)
 		h    = h - diff;
 	}
 
-	if (cg_drawCompass.integer == 2 || cgs.clientinfo[cg.clientNum].shoutcaster)
+	if (cg_drawCompass.integer == 2 || CG_IsShoutcaster())
 	{
 		mapScissor.circular = qfalse;
 	}
@@ -1866,7 +1863,7 @@ void CG_DrawAutoMap(float basex, float basey, float basew, float baseh)
 		CG_DrawRotatedPic(basex + 4, basey + 4, basew - 8, baseh - 8, cgs.media.compass2Shader, lastangle);
 	}
 
-	if (!cgs.clientinfo[cg.clientNum].shoutcaster)
+	if (!CG_IsShoutcaster())
 	{
 		for (i = 0; i < snap->numEntities; ++i)
 		{
@@ -1891,6 +1888,33 @@ void CG_DrawAutoMap(float basex, float basey, float basew, float baseh)
 					CG_DrawCompassIcon(basex, basey, basew, baseh, cg.predictedPlayerState.origin, cent->lerpOrigin, cgs.media.buddyShader, 1.f, 14, &mapScissor);
 				}
 			}
+		}
+
+		// draw compass points for square map
+		if (!mapScissor.circular)
+		{
+			float        centerX   = x + (w * .5f);
+			float        centerY   = y + (h * .5f);
+			float        textScale = (w / 100) * 0.18f;
+			float        textHeight;
+			float        offsetX = (w / 100) * 3.f;
+			float        offsetY = (h / 100) * 3.f;
+			fontHelper_t font    = cgs.media.limboFont2;
+
+			// north
+			CG_Text_Paint_Centred_Ext(centerX, y - offsetY, textScale, textScale, colorLtGrey, "N", 0, 0, ITEM_TEXTSTYLE_SHADOWED, &font);
+
+			// south
+			textHeight = (float)CG_Text_Height_Ext("S", textScale, 0, &font);
+			CG_Text_Paint_Centred_Ext(centerX, y + h + textHeight + offsetY, textScale, textScale, colorLtGrey, "S", 0, 0, ITEM_TEXTSTYLE_SHADOWED, &font);
+
+			// east
+			textHeight = (float)CG_Text_Height_Ext("E", textScale, 0, &font);
+			CG_Text_Paint_Ext(x + w + offsetX, centerY + (textHeight * .5f), textScale, textScale, colorLtGrey, "E", 0, 0, ITEM_TEXTSTYLE_SHADOWED, &font);
+
+			// west
+			textHeight = (float)CG_Text_Height_Ext("W", textScale, 0, &font);
+			CG_Text_Paint_RightAligned_Ext(x - offsetX, centerY + (textHeight * .5f), textScale, textScale, colorLtGrey, "W", 0, 0, ITEM_TEXTSTYLE_SHADOWED, &font);
 		}
 	}
 }
@@ -1959,10 +1983,10 @@ int CG_DrawSpawnPointInfo(float px, float py, float pw, float ph, qboolean draw,
 			point[1] = py + (((cg.spawnCoordsUntransformed[i][1] - cg.mapcoordsMins[1]) * cg.mapcoordsScale[1]) * ph);
 		}
 
-		if (scissor && !scissor->circular)
+		if (scissor && CG_IsShoutcaster())
 		{
-			icon_extends[0] = FLAGSIZE_NORMAL_NEW;
-			icon_extends[1] = FLAGSIZE_NORMAL_NEW;
+			icon_extends[0] = FLAGSIZE_NORMAL_SC;
+			icon_extends[1] = FLAGSIZE_NORMAL_SC;
 		}
 		else
 		{
@@ -1972,7 +1996,7 @@ int CG_DrawSpawnPointInfo(float px, float py, float pw, float ph, qboolean draw,
 
 		if (scissor)
 		{
-			if (scissor->circular)
+			if (!CG_IsShoutcaster())
 			{
 				icon_extends[0] *= (scissor->zoomFactor / AUTOMAP_ZOOM);
 				icon_extends[1] *= (scissor->zoomFactor / AUTOMAP_ZOOM);
@@ -1995,7 +2019,7 @@ int CG_DrawSpawnPointInfo(float px, float py, float pw, float ph, qboolean draw,
 			point[1] += py - scissor->tl[1];
 		}
 
-		if (!scissor || (scissor && scissor->circular))
+		if (!scissor || (scissor && !CG_IsShoutcaster()))
 		{
 			point[0] -= (icon_extends[0] * (39 / 128.f));
 			point[1] += (icon_extends[1] * (31 / 128.f));
@@ -2032,14 +2056,10 @@ int CG_DrawSpawnPointInfo(float px, float py, float pw, float ph, qboolean draw,
 		{
 			if (draw)
 			{
-				float size;
-				if (scissor && !scissor->circular)
+				float size = FLAGSIZE_EXPANDED;
+				if (scissor && CG_IsShoutcaster())
 				{
-					size = FLAGSIZE_EXPANDED_NEW;
-				}
-				else
-				{
-					size = FLAGSIZE_EXPANDED;
+					size = FLAGSIZE_EXPANDED_SC;
 				}
 
 				if (scissor)
@@ -2072,13 +2092,9 @@ int CG_DrawSpawnPointInfo(float px, float py, float pw, float ph, qboolean draw,
 			if (draw)
 			{
 				float size = FLAGSIZE_NORMAL;
-				if (scissor && !scissor->circular)
+				if (scissor && CG_IsShoutcaster())
 				{
-					size = FLAGSIZE_NORMAL_NEW;
-				}
-				else
-				{
-					size = FLAGSIZE_NORMAL;
+					size = FLAGSIZE_NORMAL_SC;
 				}
 
 				if (scissor)
@@ -2094,7 +2110,7 @@ int CG_DrawSpawnPointInfo(float px, float py, float pw, float ph, qboolean draw,
 
 				Com_sprintf(buffer, sizeof(buffer), "(%i)", cg.spawnPlayerCounts[i]);
 
-				if (scissor && !scissor->circular)
+				if (scissor && CG_IsShoutcaster())
 				{
 					// recalculate for player spawn count clipping
 					point[0] = ((cg.spawnCoordsUntransformed[i][0] - cg.mapcoordsMins[0]) * cg.mapcoordsScale[0]) * pw * scissor->zoomFactor;
@@ -2363,9 +2379,7 @@ void CG_DrawCompassIcon(float x, float y, float w, float h, vec3_t origin, vec3_
 		x += w;
 		y += h;
 
-		{
-			w = (float)sqrt((w * w) + (h * h)) / 3.f * 2.f * 0.9f;
-		}
+		w = (float)sqrt((w * w) + (h * h)) / 3.f * 2.f * 0.9f;
 
 		x = x + ((float)cos(angle) * w);
 		y = y + ((float)sin(angle) * w);
@@ -2394,34 +2408,34 @@ void CG_DrawCompassIcon(float x, float y, float w, float h, vec3_t origin, vec3_
 		iconx = iconx - scissor->tl[0] + x - (iconWidth * (scissor->zoomFactor / AUTOMAP_ZOOM));
 		icony = icony - scissor->tl[1] + y - (iconHeight * (scissor->zoomFactor / AUTOMAP_ZOOM));
 
-		// don't draw if inside the map
-		if (iconx > x - iconWidth &&
-		    iconx < x + w - iconWidth &&
-		    icony > y - iconHeight &&
-		    icony < y + h - iconHeight)
+		iconWidth  *= (scissor->zoomFactor / AUTOMAP_ZOOM);
+		iconHeight *= (scissor->zoomFactor / AUTOMAP_ZOOM);
+
+		// special handling for revive icon to draw it horizontally centered
+		if (shader == cgs.media.medicReviveShader)
 		{
-			return;
+			iconx += iconWidth * .5f;
+			// why do we need to do this? why is wounded player drawn off center?
+			iconx      += 2;
+			icony      += 2;
+			iconWidth  -= 2;
+			iconHeight -= 2;
 		}
 
-		if (iconx < x)
+		// is the icon inside map boundaries?
+		if (iconx > x && iconx < x + w - iconWidth
+		    && icony > y && icony < y + h - iconHeight)
 		{
-			iconx = x;
+			// FIXME: we should draw the icon at the edges when playing
+			if (CG_IsShoutcaster())
+			{
+				return;
+			}
 		}
 
-		if (iconx > x + w - iconWidth)
-		{
-			iconx = x + w - iconWidth;
-		}
-
-		if (icony < y)
-		{
-			icony = y;
-		}
-
-		if (icony > y + h - iconHeight)
-		{
-			icony = y + h - iconHeight;
-		}
+		// keep the icon from going outside map boundaries
+		iconx = Com_Clamp(x, x + w - iconWidth, iconx);
+		icony = Com_Clamp(y, y + h - iconHeight, icony);
 
 		CG_DrawPic(iconx, icony, iconWidth, iconHeight, shader);
 	}
