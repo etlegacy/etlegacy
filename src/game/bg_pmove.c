@@ -4953,6 +4953,19 @@ void PmoveSingle(pmove_t *pmove)
 		pm->ps->eFlags &= ~EF_ZOOMING;
 	}
 
+	if (pm->activateLean && pm->cmd.buttons & BUTTON_ACTIVATE)
+	{
+		if (pm->cmd.rightmove < 0)
+		{
+			pm->cmd.wbuttons |= WBUTTON_LEANLEFT;
+		}
+		else if (pm->cmd.rightmove > 0)
+		{
+			pm->cmd.wbuttons |= WBUTTON_LEANRIGHT;
+		}
+		pm->cmd.rightmove = 0;
+	}
+
 	// make sure walking button is clear if they are running, to avoid
 	// proxy no-footsteps cheats
 	if (abs(pm->cmd.forwardmove) > 64 || abs(pm->cmd.rightmove) > 64)

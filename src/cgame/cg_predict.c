@@ -1363,6 +1363,9 @@ void CG_PredictPlayerState(void)
 			cg_pmove.covertopsChargeTime = cg.covertopsChargeTime[cg.snap->ps.persistant[PERS_TEAM] - 1];
 		}
 
+		// activateLean is handled in pmove
+		cg_pmove.activateLean = cg_activateLean.integer ? qtrue : qfalse;
+
 		//Com_Memcpy( &pmext, &cg.pmext, sizeof(pmoveExt_t) );    // grab data, we only want the final result
 		// copy the pmext as it was just before we
 		// previously ran this cmd (or, this will be the

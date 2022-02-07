@@ -2885,6 +2885,8 @@ extern vmCvar_t cg_chatShadow;
 extern vmCvar_t cg_chatFlags;
 extern vmCvar_t cg_chatLineWidth;
 
+extern vmCvar_t cg_activateLean;
+
 // local clock flags
 #define LOCALTIME_ON                0x01
 #define LOCALTIME_SECOND            0x02

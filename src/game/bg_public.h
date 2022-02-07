@@ -343,6 +343,7 @@ extern const int aReinfSeeds[MAX_REINFSEEDS];
 #define CGF_STATSDUMP       0x02
 #define CGF_AUTOACTIVATE    0x04
 #define CGF_PREDICTITEMS    0x08
+#define CGF_ACTIVATELEAN    0x10
 
 #define MAX_MOTDLINES   6
 
@@ -642,6 +643,7 @@ typedef struct
 	/// used to determine if the player move is for prediction if it is, the movement should trigger no events
 	qboolean predict;
 
+	qboolean activateLean;
 } pmove_t;
 
 // if a full pmove isn't done on the client, you can just update the angles

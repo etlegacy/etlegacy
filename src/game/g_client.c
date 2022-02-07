@@ -1919,6 +1919,8 @@ void ClientUserinfoChanged(int clientNum)
 			client->pers.bAutoReloadAux = qfalse;
 			client->pmext.bAutoReload   = qfalse;
 		}
+
+		client->pers.activateLean = (client->pers.clientFlags & CGF_ACTIVATELEAN) != 0 ? qtrue : qfalse;
 	}
 
 	// set name
