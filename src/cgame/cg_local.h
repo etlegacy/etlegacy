@@ -2820,6 +2820,9 @@ extern vmCvar_t cg_fireteamLocationAlign;
 extern vmCvar_t cg_fireteamNameMaxChars;
 extern vmCvar_t cg_fireteamNameAlign;
 extern vmCvar_t cg_fireteamSprites;
+extern vmCvar_t cg_fireteamAlpha;
+extern vmCvar_t cg_fireteamBgAlpha;
+
 extern vmCvar_t cg_simpleItems;
 extern vmCvar_t cg_simpleItemsScale;
 

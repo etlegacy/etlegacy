@@ -36,13 +36,6 @@
 
 static int sortedFireTeamClients[MAX_CLIENTS];
 
-// colors and fonts for overlays
-static vec4_t FT_bg     = { 0.16f, 0.2f, 0.17f, 0.8f };           // header
-static vec4_t FT_bg2    = { 0.0f, 0.0f, 0.0f, 0.3f };             // box itself
-static vec4_t FT_border = { 0.5f, 0.5f, 0.5f, 0.5f };
-static vec4_t FT_select = { 0.5f, 0.5f, 0.2f, 0.3f };             // selected member
-static vec4_t FT_text   = { 0.6f, 0.6f, 0.6f, 1.0f };
-
 #define FONT_HEADER         &cgs.media.limboFont1
 #define FONT_TEXT           &cgs.media.limboFont2
 
@@ -400,6 +393,17 @@ void CG_DrawFireTeamOverlay(rectDef_t *rect)
 	char           name[MAX_FIRETEAM_MEMBERS][MAX_NAME_LENGTH];
 	int            nameMaxLen;
 
+	// colors and fonts for overlays
+	vec4_t FT_bg      = { 0.16f, 0.2f, 0.17f, 0.8f };           // header
+	vec4_t FT_bg2     = { 0.0f, 0.0f, 0.0f, 0.3f };             // box itself
+	vec4_t FT_border  = { 0.5f, 0.5f, 0.5f, 0.5f };             // the border
+	vec4_t FT_select  = { 0.5f, 0.5f, 0.2f, 0.3f };             // selected member
+	vec4_t FT_text    = { 0.6f, 0.6f, 0.6f, 1.0f };             // "uncolored" text
+	vec4_t iconColor  = { 1.0f, 1.0f, 1.0f, 1.0f };             // icon "color", used for alpha adjustments
+	vec4_t textWhite  = { 1.0f, 1.0f, 1.0f, 1.0f };             // regular text
+	vec4_t textYellow = { 1.0f, 1.0f, 0.0f, 1.0f };             // yellow text for health drawing
+	vec4_t textRed    = { 1.0f, 0.0f, 0.0f, 1.0f };             // red text for health drawing
+
 	// assign fireteam data, and early out if not on one
 	if (!(f = CG_IsOnFireteam(cg.clientNum)))
 	{
@@ -513,6 +517,21 @@ void CG_DrawFireTeamOverlay(rectDef_t *rect)
 		x = MIN_BORDER_DISTANCE;
 	}
 
+	// fireteam alpha adjustments
+
+	// set background alpha first
+	FT_bg2[3] = Com_Clamp(0.0f, 1.0f, cg_fireteamBgAlpha.value);
+
+	FT_bg[3]      *= Com_Clamp(0.0f, 1.0f, cg_fireteamAlpha.value);
+	FT_bg2[3]     *= Com_Clamp(0.0f, 1.0f, cg_fireteamAlpha.value);
+	FT_border[3]  *= Com_Clamp(0.0f, 1.0f, cg_fireteamAlpha.value);
+	FT_select[3]  *= Com_Clamp(0.0f, 1.0f, cg_fireteamAlpha.value);
+	FT_text[3]    *= Com_Clamp(0.0f, 1.0f, cg_fireteamAlpha.value);
+	iconColor[3]  *= Com_Clamp(0.0f, 1.0f, cg_fireteamAlpha.value);
+	textWhite[3]  *= Com_Clamp(0.0f, 1.0f, cg_fireteamAlpha.value);
+	textYellow[3] *= Com_Clamp(0.0f, 1.0f, cg_fireteamAlpha.value);
+	textRed[3]    *= Com_Clamp(0.0f, 1.0f, cg_fireteamAlpha.value);
+
 	CG_FillRect(x, y, boxWidth, h, FT_bg2);
 	CG_DrawRect(x, y, boxWidth, h, 1, FT_border);
 
@@ -566,6 +585,7 @@ void CG_DrawFireTeamOverlay(rectDef_t *rect)
 		x += 4;
 
 		// draw class icon in fireteam overlay
+		trap_R_SetColor(iconColor);
 		CG_DrawPic(x, y + 2, 12, 12, cgs.media.skillPics[SkillNumForClass(ci->cls)]);
 		x += 14;
 
@@ -575,6 +595,7 @@ void CG_DrawFireTeamOverlay(rectDef_t *rect)
 			CG_Text_Paint_Ext(x, y + FT_BAR_HEIGHT, .2f, .2f, FT_text, "^3->", 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
 			x += 14;
 			// draw latched class icon in fireteam overlay
+			trap_R_SetColor(iconColor);
 			CG_DrawPic(x, y + 2, 12, 12, cgs.media.skillPics[SkillNumForClass(ci->latchedcls)]);
 			x += 14;
 		}
@@ -591,6 +612,7 @@ void CG_DrawFireTeamOverlay(rectDef_t *rect)
 		// draw objective icon (if they are carrying one) in fireteam overlay
 		if (ci->powerups & ((1 << PW_REDFLAG) | (1 << PW_BLUEFLAG)))
 		{
+			trap_R_SetColor(iconColor);
 			CG_DrawPic(x, y + 2, 12, 12, cgs.media.objectiveShader);
 			x      += 14;
 			puwidth = 14;
@@ -598,6 +620,7 @@ void CG_DrawFireTeamOverlay(rectDef_t *rect)
 		// or else draw the disguised icon in fireteam overlay
 		else if (ci->powerups & (1 << PW_OPS_DISGUISED))
 		{
+			trap_R_SetColor(iconColor);
 			CG_DrawPic(x, y + 2, 12, 12, ci->team == TEAM_AXIS ? cgs.media.alliedUniformShader : cgs.media.axisUniformShader);
 			x      += 14;
 			puwidth = 14;
@@ -614,11 +637,11 @@ void CG_DrawFireTeamOverlay(rectDef_t *rect)
 		// right align?
 		if (cg_fireteamNameAlign.integer > 0)
 		{
-			CG_Text_Paint_RightAligned_Ext(x + bestNameWidth - puwidth, y + FT_BAR_HEIGHT, .2f, .2f, colorWhite, name[i], 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
+			CG_Text_Paint_RightAligned_Ext(x + bestNameWidth - puwidth, y + FT_BAR_HEIGHT, .2f, .2f, textWhite, name[i], 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
 		}
 		else
 		{
-			CG_Text_Paint_Ext(x, y + FT_BAR_HEIGHT, .2f, .2f, colorWhite, name[i], 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
+			CG_Text_Paint_Ext(x, y + FT_BAR_HEIGHT, .2f, .2f, textWhite, name[i], 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
 		}
 
 		// add space
@@ -648,10 +671,12 @@ void CG_DrawFireTeamOverlay(rectDef_t *rect)
 		// note: WP_NONE is excluded
 		if (IS_VALID_WEAPON(curWeap) && cg_weapons[curWeap].weaponIcon[0])     // do not try to draw nothing
 		{
+			trap_R_SetColor(iconColor);
 			CG_DrawPic(x, y + 2, cg_weapons[curWeap].weaponIconScale * 10, 10, cg_weapons[curWeap].weaponIcon[0]);
 		}
 		else if (IS_VALID_WEAPON(curWeap) && cg_weapons[curWeap].weaponIcon[1])
 		{
+			trap_R_SetColor(iconColor);
 			CG_DrawPic(x, y + 2, cg_weapons[curWeap].weaponIconScale * 10, 10, cg_weapons[curWeap].weaponIcon[1]);
 		}
 
@@ -666,25 +691,25 @@ void CG_DrawFireTeamOverlay(rectDef_t *rect)
 		else if (ci->health >= 10)
 		{
 			x += 6;
-			CG_Text_Paint_Ext(x, y + FT_BAR_HEIGHT, .2f, .2f, ci->health > 80 ? FT_text : colorYellow, va("%i", ci->health), 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
+			CG_Text_Paint_Ext(x, y + FT_BAR_HEIGHT, .2f, .2f, ci->health > 80 ? FT_text : textYellow, va("%i", ci->health), 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
 			x += 6;
 		}
 		else if (ci->health > 0)
 		{
 			x += 12;
-			CG_Text_Paint_Ext(x, y + FT_BAR_HEIGHT, .2f, .2f, colorYellow, va("%i", ci->health), 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
+			CG_Text_Paint_Ext(x, y + FT_BAR_HEIGHT, .2f, .2f, textYellow, va("%i", ci->health), 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
 		}
 		else if (ci->health == 0)
 		{
 			x += 6;
-			CG_Text_Paint_Ext(x, y + FT_BAR_HEIGHT, .2f, .2f, ((cg.time % 500) > 250)  ? colorWhite : colorRed, "*", 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
+			CG_Text_Paint_Ext(x, y + FT_BAR_HEIGHT, .2f, .2f, ((cg.time % 500) > 250)  ? textWhite : textRed, "*", 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
 			x += 6;
-			CG_Text_Paint_Ext(x, y + FT_BAR_HEIGHT, .2f, .2f, ((cg.time % 500) > 250)  ? colorRed : colorWhite, "0", 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
+			CG_Text_Paint_Ext(x, y + FT_BAR_HEIGHT, .2f, .2f, ((cg.time % 500) > 250)  ? textRed : textWhite, "0", 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
 		}
 		else
 		{
 			x += 12;
-			CG_Text_Paint_Ext(x, y + FT_BAR_HEIGHT, .2f, .2f, colorRed, "0", 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
+			CG_Text_Paint_Ext(x, y + FT_BAR_HEIGHT, .2f, .2f, textRed, "0", 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
 		}
 
 		// set hard limit on width
@@ -701,6 +726,8 @@ void CG_DrawFireTeamOverlay(rectDef_t *rect)
 			}
 		}
 	}
+
+	trap_R_SetColor(NULL);
 }
 
 /*
