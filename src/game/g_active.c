@@ -2116,6 +2116,13 @@ void ClientEndFrame(gentity_t *ent)
 	// Zero out here and set only for certain specs
 	ent->client->ps.powerups[PW_BLACKOUT] = 0;
 
+	// check for flood protection - if 1 second has passed between commands, reduce the flood limit counter
+	if (level.time >= ent->client->sess.nextCommandDecreaseTime && ent->client->sess.numReliableCommands)
+	{
+		ent->client->sess.numReliableCommands--;
+		ent->client->sess.nextCommandDecreaseTime = level.time + 1000;
+	}
+
 	if ((ent->client->sess.sessionTeam == TEAM_SPECTATOR) || (ent->client->ps.pm_flags & PMF_LIMBO))
 	{
 		SpectatorClientEndFrame(ent);

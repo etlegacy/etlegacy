@@ -693,6 +693,11 @@ typedef struct
 	qboolean botPush;                                   ///< allow for disabling of bot pushing via script
 #endif
 
+	// flood protection
+	int nextReliableTime;                               ///< next time a command can be executed when flood limited
+	int numReliableCommands;                            ///< how many commands have we sent
+	int nextCommandDecreaseTime;                        ///< next time we decrease numReliableCommands
+
 } clientSession_t;
 
 #define PICKUP_ACTIVATE 0   ///< pickup items only when using "+activate"
@@ -1418,6 +1423,7 @@ qboolean SetTeam(gentity_t *ent, const char *s, qboolean force, weapon_t w1, wea
 void G_SetClientWeapons(gentity_t *ent, weapon_t w1, weapon_t w2, qboolean updateclient);
 void Cmd_FollowCycle_f(gentity_t *ent, int dir, qboolean skipBots);
 qboolean G_FollowSame(gentity_t *ent);
+qboolean G_ServerIsFloodProtected(void);
 
 #ifdef ETLEGACY_DEBUG
 #ifdef FEATURE_OMNIBOT
@@ -2170,6 +2176,11 @@ extern vmCvar_t g_debugForSingleClient;
 extern vmCvar_t g_suddenDeath;
 extern vmCvar_t g_dropObjDelay;
 extern vmCvar_t g_altSuicideAnim;
+
+// flood protection
+extern vmCvar_t g_floodProtection;
+extern vmCvar_t g_floodLimit;
+extern vmCvar_t g_floodWait;
 
 /**
  * @struct GeoIPTag

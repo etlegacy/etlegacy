@@ -374,6 +374,11 @@ vmCvar_t g_dropObjDelay;
 
 vmCvar_t g_altSuicideAnim;
 
+// flood protection
+vmCvar_t g_floodProtection;
+vmCvar_t g_floodLimit;
+vmCvar_t g_floodWait;
+
 cvarTable_t gameCvarTable[] =
 {
 	// don't override the cheat state set by the system
@@ -666,6 +671,10 @@ cvarTable_t gameCvarTable[] =
 	{ &g_suddenDeath,                     "g_suddenDeath",                     "0",                          CVAR_ARCHIVE,                                    0, qtrue,  qfalse },
 	{ &g_dropObjDelay,                    "g_dropObjDelay",                    "3000",                       CVAR_ARCHIVE,                                    0, qtrue,  qfalse },
 	{ &g_altSuicideAnim,                  "g_altSuicideAnim",                  "0",                          CVAR_ARCHIVE,                                    0, qtrue,  qfalse },
+
+	{ &g_floodProtection,                 "g_floodProtection",                 "1",                          CVAR_ARCHIVE | CVAR_SERVERINFO,                  0, qtrue,  qfalse },
+	{ &g_floodLimit,                      "g_floodLimit",                      "5",                          CVAR_ARCHIVE,                                    0, qtrue,  qfalse },
+	{ &g_floodWait,                       "g_floodWait",                       "1000",                       CVAR_ARCHIVE,                                    0, qtrue,  qfalse },
 };
 
 /**
@@ -868,6 +877,16 @@ void QDECL G_Error(const char *fmt, ...)
 }
 
 void QDECL G_Error(const char *fmt, ...) _attribute((format(printf, 1, 2)));
+
+
+/**
+ * @brief G_ServerIsFloodProtected
+ * @return
+ */
+qboolean G_ServerIsFloodProtected(void)
+{
+	return (!g_floodProtection.integer || !g_floodWait.integer || !g_floodLimit.integer) ? qfalse : qtrue;
+}
 
 /**
  * @brief G_EmplacedGunIsMountable
@@ -2652,6 +2671,18 @@ void G_InitGame(int levelTime, int randomSeed, int restart, int etLegacyServer, 
 		if (g_campaigns[level.currentCampaign].current == 0 || level.newCampaign)
 		{
 			G_XPSaver_Clear();
+		}
+	}
+
+	// disable server engine flood protection if we have mod-sided flood protection enabled
+	// since they don't block the same commands
+	if (G_ServerIsFloodProtected())
+	{
+		int sv_floodprotect = trap_Cvar_VariableIntegerValue("sv_floodprotect");
+		if (sv_floodprotect)
+		{
+			trap_Cvar_Set("sv_floodprotect", "0");
+			G_Printf("^3INFO: mod-sided flood protection enabled, disabling server-side protection.\n");
 		}
 	}
 
