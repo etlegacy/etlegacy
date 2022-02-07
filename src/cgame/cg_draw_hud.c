@@ -2442,7 +2442,7 @@ static float CG_DrawFPS(float y)
  * @brief CG_SpawnTimerText red colored spawn time text in reinforcement time HUD element.
  * @return red colored text or NULL when its not supposed to be rendered
 */
-static char *CG_SpawnTimerText()
+char *CG_SpawnTimerText()
 {
 	int msec = (cgs.timelimit * 60000.f) - (cg.time - cgs.levelStartTime);
 	int seconds;
@@ -2507,30 +2507,17 @@ static qboolean CG_SpawnTimersText(char **s, char **rt)
 
 static char *CG_RoundTimerText()
 {
-	int tens;
-	int msec = (cgs.timelimit * 60000.f) - (cg.time - cgs.levelStartTime);        // 60.f * 1000.f
+	qtime_t qt;
+	int     msec = CG_RoundTime(&qt);
 	if (msec < 0 && cgs.timelimit > 0.0f)
 	{
 		return "0:00"; // round ended
 	}
 
-	int seconds = msec / 1000;
-	int mins    = seconds / 60;
-	seconds -= mins * 60;
-	tens     = seconds / 10;
-	seconds -= tens * 10;
+	char *seconds = qt.tm_sec > 9 ? va("%i", qt.tm_sec) : va("0%i", qt.tm_sec);
+	char *minutes = qt.tm_min > 9 ? va("%i", qt.tm_min) : va("0%i", qt.tm_min);
 
-	if (cgs.gamestate != GS_PLAYING)
-	{
-		msec     = (cgs.timelimit * 60000.f); // 60.f * 1000.f
-		seconds  = msec / 1000;
-		mins     = seconds / 60;
-		seconds -= mins * 60;
-		tens     = seconds / 10;
-		seconds -= tens * 10;
-	}
-
-	return va("%i:%i%i", mins, tens, seconds);
+	return va("%s:%s", minutes, seconds);
 }
 
 static char *CG_LocalTimeText()

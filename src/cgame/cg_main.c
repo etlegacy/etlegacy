@@ -326,6 +326,8 @@ vmCvar_t cg_fireteamSprites;
 vmCvar_t cg_weapaltReloads;
 vmCvar_t cg_weapaltSwitches;
 
+vmCvar_t cg_sharetimerText;
+
 vmCvar_t cg_simpleItems;
 vmCvar_t cg_simpleItemsScale;
 
@@ -624,6 +626,7 @@ static cvarTable_t cvarTable[] =
 	{ &cg_popupShadow,            "cg_popupShadow",            "0",           CVAR_ARCHIVE,                 0 },
 	{ &cg_weapaltReloads,         "cg_weapaltReloads",         "0",           CVAR_ARCHIVE,                 0 },
 	{ &cg_weapaltSwitches,        "cg_weapaltSwitches",        "1",           CVAR_ARCHIVE,                 0 },
+	{ &cg_sharetimerText,         "cg_sharetimerText",         "",            CVAR_ARCHIVE,                 0 },
 
 	// Fonts
 	{ &cg_fontScaleTP,            "cg_fontScaleTP",            "0.35",        CVAR_ARCHIVE,                 0 },   // TopPrint
@@ -3046,4 +3049,26 @@ void QDECL CG_WriteToLog(const char *fmt, ...)
 
 		trap_FS_Write(string, (int)strlen(string), cg.logFile);
 	}
+}
+
+int CG_RoundTime(qtime_t *qtime)
+{
+	int msec = cgs.timelimit * 60000.f;
+	if (cgs.gamestate == GS_PLAYING)
+	{
+		msec -= cg.time - cgs.levelStartTime;
+	}
+
+	int seconds = msec / 1000;
+	int mins    = seconds / 60;
+	int hours   = mins / 60;
+	seconds -= mins * 60;
+	int tens = seconds / 10;
+	seconds       -= tens * 10;
+	seconds        = Q_atoi(va("%i%i", tens, seconds));
+	qtime->tm_sec  = seconds;
+	qtime->tm_min  = mins;
+	qtime->tm_hour = hours;
+
+	return msec;
 }
