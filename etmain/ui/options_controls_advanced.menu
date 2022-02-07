@@ -60,7 +60,7 @@ menuDef {
 
 #define MISC_Y 32
 	SUBWINDOW( 6+(SUBWINDOW_WIDTH)+6, MISC_Y, (SUBWINDOW_WIDTH), 32, _("MISC") )
-	MULTI( 8+(SUBWINDOW_WIDTH)+6, MISC_Y+16, (SUBWINDOW_WIDTH)-4, 10, _("Activate lean:"), .2, 8, "cg_activatelean", cvarFloatList { "No" 0 "Yes" 1 }, _("Lean while using the activate button") )
+	MULTI( 8+(SUBWINDOW_WIDTH)+6, MISC_Y+16, (SUBWINDOW_WIDTH)-4, 10, _("Activate lean:"), .2, 8, "cg_activateLean", cvarFloatList { "No" 0 "Yes" 1 }, _("Lean while using the activate button") )
   BIND( 8+(SUBWINDOW_WIDTH)+6, MISC_Y+28, (SUBWINDOW_WIDTH)-4, 10, _("Sharetimer:"), .2, 8, "sharetimer", "Share the next time the enemy spawns with your team according to your spawntimer" )
   BIND( 8+(SUBWINDOW_WIDTH)+6, MISC_Y+40, (SUBWINDOW_WIDTH)-4, 10, _("Sharetimer fireteam:"), .2, 8, "sharetimer_buddy", "Share the next time the enemy spawns with your fireteam according to your spawntimer" )
 
