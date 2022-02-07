@@ -2320,7 +2320,7 @@ static void CL_FrameHandleVideo(int *msec)
 		//clc.aviVideoFrameRemainder = frameDuration + msec;
 	}
 	else if ((!cl_avidemo->integer && CL_VideoRecording())
-			 || (cl_avidemo->integer && (cls.state != CA_ACTIVE || !cl_forceavidemo->integer)))
+	         || (cl_avidemo->integer && (cls.state != CA_ACTIVE || !cl_forceavidemo->integer)))
 	{
 		CL_StopVideo_f();
 	}

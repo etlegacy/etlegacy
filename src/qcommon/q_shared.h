@@ -620,6 +620,7 @@ void *Hunk_Alloc(size_t size, ha_pref preference);
 #define Com_Dealloc free
 
 #define CTRL(a) ((a) - 'a' + 1)
+#define MOD(a, b) ((((a) % (b)) + (b)) % (b))
 
 /**
  * @enum CIN_Flags

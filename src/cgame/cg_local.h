@@ -2826,6 +2826,8 @@ extern vmCvar_t cg_simpleItemsScale;
 extern vmCvar_t cg_weapaltReloads;
 extern vmCvar_t cg_weapaltSwitches;
 
+extern vmCvar_t cg_sharetimerText;
+
 extern vmCvar_t cg_automapZoom;
 
 extern vmCvar_t cg_drawTime;
@@ -2936,6 +2938,7 @@ int CG_LastAttacker(void);
 void CG_KeyEvent(int key, qboolean down);
 void CG_MouseEvent(int x, int y);
 void CG_EventHandling(int type, qboolean fForced);
+int CG_RoundTime(qtime_t *qtime);
 
 qboolean CG_GetTag(int clientNum, const char *tagname, orientation_t *orientation);
 qboolean CG_GetWeaponTag(int clientNum, const char *tagname, orientation_t *orientation);
@@ -3346,6 +3349,7 @@ void CG_LoadRankIcons(void);
 
 void CG_ParseFireteams(void);
 void CG_ParseOIDInfos(void);
+char *CG_SpawnTimerText(void);
 //oidInfo_t *CG_OIDInfoForEntityNum(int num);
 
 // cg_consolecmds.c
@@ -4087,8 +4091,8 @@ typedef struct hudComponent_s
 	rectDef_t location;
 	int visible;
 	int style;
-    float scale;
-    vec4_t color;
+	float scale;
+	vec4_t color;
 	int offset;
 } hudComponent_t;
 

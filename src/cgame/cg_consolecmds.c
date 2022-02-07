@@ -1626,6 +1626,58 @@ static void CG_ReadHuds_f(void)
 	CG_ReadHudScripts();
 }
 
+static void CG_ShareTimer_f(void)
+{
+	qtime_t ct;
+	char    *cmd, *stChar, text[MAX_SAY_TEXT];
+	int     st, limboTime, nextSpawn;
+	stChar = CG_SpawnTimerText();
+
+	if (stChar == NULL)
+	{
+		return;
+	}
+
+	cmd       = !Q_stricmp(CG_Argv(0), "sharetimer") ? "say_team" : "say_buddy";
+	st        = Q_atoi(stChar);
+	limboTime = (cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_AXIS ? cg_bluelimbotime.integer : cg_redlimbotime.integer) / 1000;
+	CG_RoundTime(&ct);
+	nextSpawn = MOD(ct.tm_sec - st, 60);
+
+	trap_Cvar_VariableStringBuffer("cg_sharetimerText", text, MAX_SAY_TEXT);
+	if (!strlen(text))
+	{
+		trap_Args(text, sizeof(text));
+	}
+	if (strlen(text))
+	{
+		char buffer[MAX_SAY_TEXT];
+		char *spawntime, *enemylimbo, *nextSpawnText, *enemyLimbotimeText;
+		nextSpawnText      = "${nextspawn}";
+		enemyLimbotimeText = "${enemylimbotime}";
+
+		Q_strncpyz(buffer, text, sizeof(buffer));
+		spawntime = Q_TruncateStr(Q_stristr(buffer, nextSpawnText), strlen(nextSpawnText));
+		if (spawntime)
+		{
+			Q_strncpyz(text, Q_StrReplace(text, spawntime, va("%i", nextSpawn)), sizeof(text));
+		}
+
+		Q_strncpyz(buffer, text, sizeof(buffer));
+		enemylimbo = Q_TruncateStr(Q_stristr(buffer, enemyLimbotimeText), strlen(enemyLimbotimeText));
+		if (enemylimbo)
+		{
+			Q_strncpyz(text, Q_StrReplace(text, enemylimbo, va("%i", limboTime)), sizeof(text));
+		}
+		trap_SendConsoleCommand(va("%s %s", cmd, text));
+	}
+	else
+	{
+		trap_SendConsoleCommand(va("%s Enemy spawns every %i seconds: next at %i", cmd, limboTime, nextSpawn));
+	}
+
+}
+
 #ifdef FEATURE_EDV
 /**
  * @brief CG_FreecamTurnLeftDown_f
@@ -2188,6 +2240,8 @@ static consoleCommand_t commands[] =
 	{ "classmenu",           CG_ClassMenu_f            },
 	{ "teammenu",            CG_TeamMenu_f             },
 	{ "readhuds",            CG_ReadHuds_f             },
+	{ "sharetimer",          CG_ShareTimer_f           },
+	{ "sharetimer_buddy",    CG_ShareTimer_f           },
 #ifdef FEATURE_EDV
 	{ "+freecam_turnleft",   CG_FreecamTurnLeftDown_f  },
 	{ "-freecam_turnleft",   CG_FreecamTurnLeftUp_f    },
