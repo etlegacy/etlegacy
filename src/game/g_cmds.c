@@ -932,7 +932,7 @@ void Cmd_Give_f(gentity_t *ent, unsigned int dwCommand, int value)
  * @param[in,out] ent
  * @param dwCommand - unused
  * @param value    - unused
- * 
+ *
  * @note argv(0) god
  */
 void Cmd_God_f(gentity_t *ent, unsigned int dwCommand, int value)
@@ -1026,7 +1026,7 @@ void Cmd_God_f(gentity_t *ent, unsigned int dwCommand, int value)
  * @param[in,out] ent
  * @param dwCommand - unused
  * @param value    - unused
- * 
+ *
  * @note argv(0) nofatigue
  */
 void Cmd_Nofatigue_f(gentity_t *ent, unsigned int dwCommand, int value)
@@ -1243,6 +1243,11 @@ void Cmd_DropObjective_f(gentity_t *ent, unsigned int dwCommand, int value)
 	}
 
 	if (!ent->client->ps.powerups[PW_REDFLAG] && !ent->client->ps.powerups[PW_BLUEFLAG])
+	{
+		return;
+	}
+
+	if (level.match_pause != PAUSE_NONE)
 	{
 		return;
 	}
@@ -2579,7 +2584,7 @@ void Cmd_FollowCycle_f(gentity_t *ent, int dir, qboolean skipBots)
  */
 void Cmd_FollowNext_f(gentity_t *ent, unsigned int dwCommand, int value)
 {
-    Cmd_FollowCycle_f(ent, 1, qfalse);    
+	Cmd_FollowCycle_f(ent, 1, qfalse);
 }
 
 /**
@@ -2590,7 +2595,7 @@ void Cmd_FollowNext_f(gentity_t *ent, unsigned int dwCommand, int value)
  */
 void Cmd_FollowPrevious_f(gentity_t *ent, unsigned int dwCommand, int value)
 {
-    Cmd_FollowCycle_f(ent, -1, qfalse);
+	Cmd_FollowCycle_f(ent, -1, qfalse);
 }
 
 /**
@@ -3130,12 +3135,12 @@ void G_Voice(gentity_t *ent, gentity_t *target, int mode, const char *id, const 
 void G_Voice_f(gentity_t *ent, int mode, qboolean arg0, qboolean voiceonly)
 {
 	char bufferIndexCustom[32];
-    
-    if (ent->client->sess.muted)
-    {
-        trap_SendServerCommand(ent - g_entities, "print \"Can't chat - you are muted\n\"");
-        return;
-    }
+
+	if (ent->client->sess.muted)
+	{
+		trap_SendServerCommand(ent - g_entities, "print \"Can't chat - you are muted\n\"");
+		return;
+	}
 
 	if (mode != SAY_BUDDY)
 	{
@@ -4580,7 +4585,7 @@ void Cmd_ForceTapout_f(gentity_t *ent, unsigned int dwCommand, int value)
  * @param dwCommand - unused
  * @param value    - unused
  */
-void Cmd_IntermissionWeaponStats_f(gentity_t * ent, unsigned int dwCommand, int value)
+void Cmd_IntermissionWeaponStats_f(gentity_t *ent, unsigned int dwCommand, int value)
 {
 	char buffer[1024];
 	int  i, clientNum;
