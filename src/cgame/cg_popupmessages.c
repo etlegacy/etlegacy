@@ -694,7 +694,7 @@ void CG_DrawPMItems(rectDef_t rect, int style)
 		CG_Text_Paint_Ext(size + w + sizew * cg_pmWaitingList->scaleShader + 16, y + 12, fontScale, fontScale, colorText, cg_pmWaitingList->message2, 0, 0, style, &cgs.media.limboFont2); // 4 + size + 2 + w + 6 + sizew*... + 4
 	}
 
-    int num = cg_numPopups.integer == -1 ? cg_drawSmallPopupIcons.integer ? 8 : 5 : cg_numPopups.integer;
+	int num = cg_numPopups.integer == -1 ? cg_drawSmallPopupIcons.integer ? 8 : 5 : cg_numPopups.integer;
 	for (i = 0; i < num - 1 && listItem; i++, listItem = listItem->next)
 	{
 		size = (cg_drawSmallPopupIcons.integer) ? PM_ICON_SIZE_SMALL : PM_ICON_SIZE_NORMAL;
