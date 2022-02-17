@@ -372,8 +372,6 @@ vmCvar_t g_suddenDeath;
 
 vmCvar_t g_dropObjDelay;
 
-vmCvar_t g_altSuicideAnim;
-
 // flood protection
 vmCvar_t g_floodProtection;
 vmCvar_t g_floodLimit;
@@ -670,7 +668,6 @@ cvarTable_t gameCvarTable[] =
 	{ &g_xpSaver,                         "g_xpSaver",                         "0",                          CVAR_ARCHIVE,                                    0, qfalse, qfalse },
 	{ &g_suddenDeath,                     "g_suddenDeath",                     "0",                          CVAR_ARCHIVE,                                    0, qtrue,  qfalse },
 	{ &g_dropObjDelay,                    "g_dropObjDelay",                    "3000",                       CVAR_ARCHIVE,                                    0, qtrue,  qfalse },
-	{ &g_altSuicideAnim,                  "g_altSuicideAnim",                  "0",                          CVAR_ARCHIVE,                                    0, qtrue,  qfalse },
 
 	{ &g_floodProtection,                 "g_floodProtection",                 "1",                          CVAR_ARCHIVE | CVAR_SERVERINFO,                  0, qtrue,  qfalse },
 	{ &g_floodLimit,                      "g_floodLimit",                      "5",                          CVAR_ARCHIVE,                                    0, qtrue,  qfalse },
