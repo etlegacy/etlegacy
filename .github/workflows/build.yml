@@ -148,7 +148,7 @@ jobs:
             apt-get -y install build-essential libudev-dev libwebp-dev automake zlib1g \
             nasm autoconf cmake git zip gcc g++ libtool
             git fetch --tags --force
-            ./easybuild.sh build -RPI -mod
+            ./easybuild.sh build -RPI -mod -zip
 
       - uses: actions/upload-artifact@v2
         with:
