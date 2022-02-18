@@ -271,6 +271,7 @@ vmCvar_t g_dropHealth;
 vmCvar_t g_dropAmmo;
 
 vmCvar_t g_shove;
+vmCvar_t g_shoveNoZ;
 
 // MAPVOTE
 vmCvar_t g_mapVoteFlags;
@@ -599,6 +600,7 @@ cvarTable_t gameCvarTable[] =
 	{ &g_dropHealth,                      "g_dropHealth",                      "0",                          0,                                               0, qfalse, qfalse },
 	{ &g_dropAmmo,                        "g_dropAmmo",                        "0",                          0,                                               0, qfalse, qfalse },
 	{ &g_shove,                           "g_shove",                           "60",                         0,                                               0, qfalse, qfalse },
+	{ &g_shoveNoZ,                        "g_shoveNoZ",                        "0",                          0,                                               0, qfalse, qfalse },
 
 	// MAPVOTE
 	{ &g_mapVoteFlags,                    "g_mapVoteFlags",                    "0",                          0,                                               0, qfalse, qfalse },
