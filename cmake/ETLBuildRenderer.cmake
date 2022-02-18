@@ -8,6 +8,7 @@ if(NOT APPLE)
 else()
 	set(R1_NAME renderer_opengl1${LIB_SUFFIX})
 	set(R2_NAME renderer_opengl2${LIB_SUFFIX})
+	set(VK_NAME renderer_vulkan${LIB_SUFFIX})
 endif()
 
 if(RENDERER_DYNAMIC)
@@ -167,3 +168,8 @@ if(FEATURE_RENDERER2)
 		list(APPEND CLIENT_LIBRARIES ${R2_NAME})
 	endif()
 endif(FEATURE_RENDERER2)
+
+if(FEATURE_RENDERER_VULKAN)
+	#Include slighly modified FindVulkan.cmake file
+	include(cmake/FindVulkan.cmake)
+endif()
