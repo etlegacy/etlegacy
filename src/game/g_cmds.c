@@ -4324,13 +4324,12 @@ qboolean G_PushPlayer(gentity_t *ent, gentity_t *victim)
 		}
 		else
 		{
-			push[2] = 64;
+			push[2] = g_shoveNoZ.integer ? 0 : 64;
 		}
 	}
 	else
 	{
-		// give them a little hop
-		push[2] = 64;
+		push[2] = g_shoveNoZ.integer ? 0 : 64;
 	}
 
 	VectorAdd(victim->s.pos.trDelta, push, victim->s.pos.trDelta);

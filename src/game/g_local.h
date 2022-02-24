@@ -2084,6 +2084,7 @@ extern vmCvar_t g_dropHealth;
 extern vmCvar_t g_dropAmmo;
 
 extern vmCvar_t g_shove;
+extern vmCvar_t g_shoveNoZ;
 
 // MAPVOTE
 extern vmCvar_t g_mapVoteFlags;
