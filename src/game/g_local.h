@@ -2175,7 +2175,6 @@ extern vmCvar_t g_debugForSingleClient;
 
 extern vmCvar_t g_suddenDeath;
 extern vmCvar_t g_dropObjDelay;
-extern vmCvar_t g_altSuicideAnim;
 
 // flood protection
 extern vmCvar_t g_floodProtection;
@@ -2888,7 +2887,7 @@ void G_RailBox(vec_t *origin, vec_t *mins, vec_t *maxs, vec_t *color, int index)
 typedef struct weapFireTable_t
 {
 	weapon_t weapon;
-	gentity_t *(*fire)(gentity_t * ent);  ///< -
+	gentity_t *(*fire)(gentity_t *ent);   ///< -
 	void (*think)(gentity_t *ent);        ///< -
 	void (*free)(gentity_t *ent);         ///< -
 	int eType;                            ///< -
