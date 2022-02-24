@@ -2597,7 +2597,7 @@ qboolean CG_GetPartFramesFromWeap(centity_t *cent, refEntity_t *part, refEntity_
 	}
 
 	// check draw bit
-	if (anim->moveSpeed & (1 << (partid + 8)))           // hide bits are in high byte
+	if (!anim || anim->moveSpeed & (1 << (partid + 8)))           // hide bits are in high byte
 	{
 		return qfalse;  // not drawn for current sequence
 	}
