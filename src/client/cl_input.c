@@ -930,17 +930,8 @@ void CL_MouseMove(usercmd_t *cmd)
 		Com_Printf("%f : %f\n", (double)rate, (double)accelSensitivity);
 	}
 
-	// mg42
-	if (cl.snap.ps.persistant[PERS_HWEAPON_USE])
-	{
-		mx *= 2.5; //(accelSensitivity * 0.1);
-		my *= 2; //(accelSensitivity * 0.075);
-	}
-	else
-	{
-		mx *= accelSensitivity;
-		my *= accelSensitivity;
-	}
+	mx *= accelSensitivity;
+	my *= accelSensitivity;
 
 	if (mx == 0.f && my == 0.f)
 	{
