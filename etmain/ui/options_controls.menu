@@ -91,16 +91,18 @@ menuDef {
 
 // Input //
 #define INPUT_Y 256
-	SUBWINDOW( 6+(SUBWINDOW_WIDTH)+6, INPUT_Y, (SUBWINDOW_WIDTH), 52, _("INPUT") )
+	SUBWINDOW( 6+(SUBWINDOW_WIDTH)+6, INPUT_Y, (SUBWINDOW_WIDTH), 64, _("INPUT") )
 	CHECKBOXALIGNXACTION(  6+(SUBWINDOW_WIDTH)+6+2, INPUT_Y+16, .5*((SUBWINDOW_WIDTH)-6), 10,_("Invert Mouse:"), .2, 24, 8, "ui_mousePitch", uiScript update ui_mousePitch, _("Invert mouse pitch") )
 	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2+(.5*((SUBWINDOW_WIDTH)-6))+2, INPUT_Y+16, .5*((SUBWINDOW_WIDTH)-6), 10, _("Smooth Mouse:"), .2, 24, 8, "m_filter", _("Smooth out the mouse using interpolation") )
 	CVARFLOATLABEL( 6+(SUBWINDOW_WIDTH)+6+2, INPUT_Y+28, (SUBWINDOW_WIDTH)-4, 10, "sensitivity", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH)-6), 8 )
 	SLIDER( 6+(SUBWINDOW_WIDTH)+6+2, INPUT_Y+28, (SUBWINDOW_WIDTH)-4, 10, _("Mouse Sensitivity:"), .2, 8, "sensitivity" 5 1 30, _("Set mouse sensitivity") )
 	MULTI( 6+(SUBWINDOW_WIDTH)+6+2, INPUT_Y+40, (SUBWINDOW_WIDTH)-4, 10, _("Mouse Pitch:"), .2, 8, "m_pitch", cvarFloatList { "0.015 (lowest allowed)" 0.0151 "0.016" 0.016 "0.017" 0.017 "0.018" 0.018 "0.019" 0.019 "0.020" 0.020 "0.021" 0.021 "0.022 (default)" 0.022 }, _("Set crosshair up-down motion while moving") )
+    CVARFLOATLABEL( 6+(SUBWINDOW_WIDTH)+6+2, INPUT_Y+52, (SUBWINDOW_WIDTH)-4, 10, "cg_scopedSensitivityScaler", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH)-6), 8 )
+    SLIDER( 6+(SUBWINDOW_WIDTH)+6+2, INPUT_Y+52, (SUBWINDOW_WIDTH)-4, 10, _("Scoped Sensitivity:"), .2, 8, "cg_scopedSensitivityScaler" 5 0 30, _("Set scoped mouse sensitivity. The value is a scalar used to calculate the sensitivity depending on field of view when scoped(zoom value)") )
 
 // Miscellaneous //
-#define MISC_Y 314
-	SUBWINDOW( 6+(SUBWINDOW_WIDTH)+6, MISC_Y, (SUBWINDOW_WIDTH), 88, _("MISCELLANEOUS") )
+#define MISC_Y 326
+	SUBWINDOW( 6+(SUBWINDOW_WIDTH)+6, MISC_Y, (SUBWINDOW_WIDTH), 90, _("MISCELLANEOUS") )
 	BIND( 6+(SUBWINDOW_WIDTH)+6+2, MISC_Y+16, (SUBWINDOW_WIDTH)-4, 10, _("Vote Yes:"), .2, 8, "vote yes", "" )
 	BIND( 6+(SUBWINDOW_WIDTH)+6+2, MISC_Y+28, (SUBWINDOW_WIDTH)-4, 10, _("Vote No:"), .2, 8, "vote no", "" )
 	BIND( 6+(SUBWINDOW_WIDTH)+6+2, MISC_Y+40, (SUBWINDOW_WIDTH)-4, 10, _("Ready:"), .2, 8, "ready", "" )

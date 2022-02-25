@@ -9131,6 +9131,7 @@ static cvarTable_t cvarTable[] =
 	{ NULL,                                "cg_weapaltReloads",                   "0",                          CVAR_ARCHIVE,                   0 },
 	{ NULL,                                "cg_weapaltSwitches",                  "1",                          CVAR_ARCHIVE,                   0 },
 	{ NULL,                                "cg_sharetimerText",                   "",                           CVAR_ARCHIVE,                   0 },
+	{ NULL,                                "cg_scopedSensitivityScaler",          "0.6",                        CVAR_ARCHIVE,                   0 },
 	{ NULL,                                "cg_noAmmoAutoSwitch",                 "1",                          CVAR_ARCHIVE,                   0 },
 	{ NULL,                                "cg_useWeapsForZoom",                  "1",                          CVAR_ARCHIVE,                   0 },
 	{ NULL,                                "cg_zoomDefaultSniper",                "20",                         CVAR_ARCHIVE,                   0 },

@@ -3009,6 +3009,7 @@ void CL_Init(void)
 	Cvar_Get("cg_autoReload", "1", CVAR_ARCHIVE);
 	Cvar_Get("cg_weapaltReloads", "0", CVAR_ARCHIVE);
 	Cvar_Get("cg_weapaltSwitches", "1", CVAR_ARCHIVE);
+	Cvar_Get("cg_scopedSensitivityScaler", "0.6", CVAR_ARCHIVE);
 
 	cl_missionStats = Cvar_Get("g_missionStats", "0", CVAR_ROM);
 
