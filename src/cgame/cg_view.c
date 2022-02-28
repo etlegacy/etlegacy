@@ -1126,7 +1126,7 @@ static int CG_CalcFov(void)
 		// fix for zoomed in/out movement bug
 		if (cg.zoomval != 0.f)
 		{
-			cg.zoomSensitivity = 0.6f * (cg.zoomval / 90.f);     // changed to get less sensitive as you zoom in
+			cg.zoomSensitivity = cg_scopedSensitivityScaler.value * (cg.zoomval / 90.f);     // changed to get less sensitive as you zoom in
 		}
 		else
 		{
