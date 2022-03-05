@@ -2260,13 +2260,8 @@ void CG_DrawActiveFrame(int serverTime, qboolean demoPlayback)
 	}
 
 	// jet Pilot - Mortar Cam?, jaquboss here is it better
-	if (cg.latestMissile && !cg.showGameView) {
-		rectDef_t rect;
-		rect.h = 120;
-		rect.w = 160;
-		rect.x = 6;
-		rect.y = 160;
-		CG_DrawMissileCamera(&rect);
+	if (CG_GetActiveHUD()->missilecamera.visible && cg.latestMissile && !cg.showGameView) {
+		CG_DrawMissileCamera(&CG_GetActiveHUD()->missilecamera.location);
 	}
 
 	if (cg_stats.integer)

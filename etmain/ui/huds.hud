@@ -36,5 +36,6 @@ hudDef {
 		limbotext 8 164 0.22 0.22 1 1 0.19 1 1 1 1
 		followtext 8 164 0.22 0.22 1 1 0.19 1 1 1 1
 		demotext 10 9 0.22 0.22 1 1 0.22 1 0 0 1
+		missilecamera 4 160 160 120 1 1
 	}
 }

@@ -125,6 +125,7 @@ static const hudComponentFields_t hudComponentFields[] =
 	{ HUDF(limbotext)       },
 	{ HUDF(followtext)      },
 	{ HUDF(demotext)        },
+	{ HUDF(missilecamera)   },
 	{ NULL, 0               },
 };
 
@@ -213,6 +214,7 @@ void CG_setDefaultHudValues(hudStucture_t *hud)
 	hud->limbotext       = CG_getComponent(8, 164, 0.22f, 0.22f, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
 	hud->followtext      = CG_getComponent(8, 164, 0.22f, 0.22f, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
 	hud->demotext        = CG_getComponent(10, 9, 0.22f, 0.22f, qtrue, STYLE_SIMPLE, 0.22f, colorRed);
+	hud->missilecamera   = CG_getComponent(4, 120, 160, 120, qtrue, STYLE_NORMAL, 1, colorWhite);
 }
 
 /**
@@ -3171,6 +3173,7 @@ void CG_Hud_Setup(void)
 	hud1.limbotext       = CG_getComponent(8, 164, 0.22f, 0.22f, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
 	hud1.followtext      = CG_getComponent(8, 164, 0.22f, 0.22f, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
 	hud1.demotext        = CG_getComponent(10, 9, 0.22f, 0.22f, qtrue, STYLE_SIMPLE, 0.22f, colorRed);
+	hud1.missilecamera   = CG_getComponent(4, 120, 160, 120, qtrue, STYLE_NORMAL, 1, colorWhite);
 	CG_addHudToList(&hud1);
 
 	// Hud2
@@ -3203,6 +3206,7 @@ void CG_Hud_Setup(void)
 	hud2.limbotext       = CG_getComponent(8, 164, 0.22f, 0.22f, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
 	hud2.followtext      = CG_getComponent(8, 164, 0.22f, 0.22f, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
 	hud2.demotext        = CG_getComponent(10, 9, 0.22f, 0.22f, qtrue, STYLE_SIMPLE, 0.22f, colorRed);
+	hud2.missilecamera   = CG_getComponent(4, 120, 160, 120, qtrue, STYLE_NORMAL, 1, colorWhite);
 	CG_addHudToList(&hud2);
 
 	// Read the hud files

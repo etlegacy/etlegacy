@@ -4140,9 +4140,11 @@ typedef struct hudStructure_s
 	hudComponent_t spectatortext;
 	hudComponent_t limbotext;
 	hudComponent_t followtext;
-	hudComponent_t demotext; // 28
+	hudComponent_t demotext;
 
-	hudComponent_t *components[28];
+	hudComponent_t missilecamera; // 29
+
+	hudComponent_t *components[29];
 } hudStucture_t;
 
 hudStucture_t *CG_GetActiveHUD();
