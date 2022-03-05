@@ -1316,7 +1316,6 @@ typedef struct level_locals_s
 
 	config_t config;            ///< etpro style config
 
-	gentity_t *missileCams[MAX_CLIENTS];
 
 	// objective indicator
 	int flagIndicator;

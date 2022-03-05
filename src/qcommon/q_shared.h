@@ -1555,7 +1555,6 @@ typedef enum
 	ET_WOLF_OBJECTIVE,
 
 	ET_AIRSTRIKE_PLANE,
-	ET_MISSILECAM,			    ///< Jaqboss, this thing shows things that aren't in watcher pvs
 
 	ET_EVENTS                   ///< any of the EV_* events can be added freestanding
 	                            ///< by setting eType to ET_EVENTS + eventNum
