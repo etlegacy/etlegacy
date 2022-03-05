@@ -652,7 +652,8 @@ void G_RunMissile(gentity_t *ent)
 		{
 			// goes through sky
 			ent->count = 1;
-			trap_UnlinkEntity(ent);
+			if (ent->s.clientNum == -1) // for missile camera
+				trap_UnlinkEntity(ent);
 			G_RunThink(ent);
 			return; // keep flying
 		}
