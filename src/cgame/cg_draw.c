@@ -4722,12 +4722,13 @@ void CG_DrawActive()
 
 void CG_DrawMissileCamera(rectDef_t *rect)
 {
-	float            x, y, w, h;
-	refdef_t        refdef;
-	vec3_t            forward, delta, angles;
-	centity_t        *cent;
+	float     x, y, w, h;
+	refdef_t  refdef;
+	vec3_t    forward, delta, angles;
+	centity_t *cent;
 
-	if (!cg.latestMissile) {
+	if (!cg.latestMissile)
+	{
 		return;
 	}
 
@@ -4748,13 +4749,13 @@ void CG_DrawMissileCamera(rectDef_t *rect)
 	memset(&refdef, 0, sizeof(refdef));
 	AxisClear(refdef.viewaxis);
 
-	refdef.fov_x = cg.refdef_current->fov_x;
-	refdef.fov_y = cg.refdef_current->fov_y;
-	refdef.x = x;
-	refdef.y = y;
-	refdef.width = w;
+	refdef.fov_x  = cg.refdef_current->fov_x;
+	refdef.fov_y  = cg.refdef_current->fov_y;
+	refdef.x      = x;
+	refdef.y      = y;
+	refdef.width  = w;
 	refdef.height = h;
-	refdef.time = cg.time;
+	refdef.time   = cg.time;
 
 	VectorCopy(cent->lerpOrigin, refdef.vieworg);
 
@@ -4769,7 +4770,8 @@ void CG_DrawMissileCamera(rectDef_t *rect)
 	CG_SetupFrustum();
 	CG_DrawSkyBoxPortal(qfalse);
 
-	if (!cg.hyperspace) {
+	if (!cg.hyperspace)
+	{
 		CG_AddPacketEntities();
 		CG_AddMarks();
 		CG_AddParticles();
