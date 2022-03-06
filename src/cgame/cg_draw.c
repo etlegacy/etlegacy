@@ -4739,8 +4739,6 @@ void CG_DrawMissileCamera(rectDef_t *rect)
 	memset(&refdef, 0, sizeof(refdef_t));
 	memcpy(refdef.areamask, cg.snap->areamask, sizeof(refdef.areamask));
 
-	cg.subscene = qtrue;
-
 	x = rect->x;
 	y = rect->y;
 	w = rect->w;
@@ -4791,7 +4789,6 @@ void CG_DrawMissileCamera(rectDef_t *rect)
 	trap_R_RenderScene(&refdef);
 
 	cg.refdef_current = &cg.refdef;
-	cg.subscene = qfalse;
 
 	// grain shader
 	//CG_DrawPic( rect->x, rect->y, rect->w, rect->h, cgs.media.tv_grain);
