@@ -652,7 +652,8 @@ void G_RunMissile(gentity_t *ent)
 		{
 			// goes through sky
 			ent->count = 1;
-			if (ent->s.clientNum == -1) // for missile camera
+			// omit unlinking entity for missile camera
+			if (!g_cheats.integer && ent->s.weapon != WP_GRENADE_LAUNCHER && ent->s.weapon != WP_GRENADE_PINEAPPLE && ent->s.weapon != WP_GPG40 && ent->s.weapon != WP_M7 && ent->s.weapon != WP_MORTAR2_SET && ent->s.weapon != WP_MORTAR_SET && ent->s.weapon != WP_SMOKE_MARKER && ent->s.weapon != WP_SMOKE_BOMB)
 				trap_UnlinkEntity(ent);
 			G_RunThink(ent);
 			return; // keep flying
@@ -1831,11 +1832,6 @@ gentity_t *fire_missile(gentity_t *self, vec3_t start, vec3_t dir, int weapon)
 		// will try setting it when it settles
 		//bolt->r.ownerNum            = ENTITYNUM_WORLD;  // make the world the owner of the dynamite, so the player can shoot it without modifying the bullet code to ignore players id for hits
 	}
-
-	if (self && self->client) // for missile cam
-		bolt->s.clientNum = self->client->ps.clientNum;
-	else
-		bolt->s.clientNum = -1;
 
 	return bolt;
 }
