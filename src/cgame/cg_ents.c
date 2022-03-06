@@ -1412,7 +1412,7 @@ static void CG_Missile(centity_t *cent)
 
 	if (cent->currentState.clientNum == cg.predictedPlayerState.clientNum) {
 		//crapshoot: special case for exploding barrels since they are set up as WP_PANZERFAUST ...
-		if (s1->eType != ET_FLAMEBARREL)
+		if (s1->eType != ET_FLAMEBARREL && cent->currentState.pos.trType != TR_STATIONARY)
 			cg.latestMissile = cent;
 	}
 
