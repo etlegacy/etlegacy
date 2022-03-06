@@ -1410,7 +1410,7 @@ static void CG_Missile(centity_t *cent)
 		}
 	}
 
-	if (cent->currentState.clientNum == cg.predictedPlayerState.clientNum) {
+	if (cgs.sv_cheats && cent->currentState.clientNum == cg.predictedPlayerState.clientNum) {
 		if (cent->currentState.pos.trType != TR_STATIONARY)
 			cg.latestMissile = cent;
 	}
