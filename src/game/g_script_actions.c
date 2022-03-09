@@ -1823,7 +1823,8 @@ qboolean G_ScriptAction_Trigger(gentity_t *ent, char *params)
 			found = qtrue;
 			if (!(trent->r.svFlags & SVF_BOT))
 			{
-				oldId = trent->scriptStatus.scriptId;
+				oldId            = trent->scriptStatus.scriptId;
+				trent->s.teamNum = ent->s.teamNum;
 				G_Script_ScriptEvent(trent, "trigger", trigger);
 				// if the script changed, return false so we don't muck with it's variables
 				if ((trent == ent) && (oldId != trent->scriptStatus.scriptId))
@@ -4076,7 +4077,8 @@ qboolean G_ScriptAction_SetState(gentity_t *ent, char *params)
 			break;
 		}
 
-		found = qtrue;
+		found             = qtrue;
+		target->s.teamNum = ent->s.teamNum;
 
 		G_SetEntState(target, entState);
 	}

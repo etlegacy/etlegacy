@@ -365,6 +365,29 @@ static void CG_EntityEffects(centity_t *cent)
 }
 
 /**
+* @brief CG_SetConstructionShader
+* @param[in] ent
+* @param[in] team
+*/
+static void CG_SetConstructionShader(refEntity_t *ent, int team)
+{
+	if (team == TEAM_AXIS)
+	{
+		Vector4Set(ent->shaderRGBA, 255, 128, 128, 255);
+	}
+	else if (team == TEAM_ALLIES)
+	{
+		Vector4Set(ent->shaderRGBA, 153, 194, 255, 255);
+	}
+	else
+	{
+		Vector4Set(ent->shaderRGBA, 255, 255, 255, 255);
+	}
+
+	ent->customShader = cgs.media.shoutcastLandmineShader;
+}
+
+/**
  * @brief CG_General
  * @param[in,out] cent
  */
@@ -546,7 +569,7 @@ static void CG_General(centity_t *cent)
 	// special shader if under construction
 	if (cent->currentState.powerups == STATE_UNDERCONSTRUCTION)
 	{
-		ent.customShader = cgs.media.genericConstructionShader;
+		CG_SetConstructionShader(&ent, cent->currentState.teamNum);
 	}
 
 	// add to refresh list
@@ -1669,7 +1692,7 @@ static void CG_Constructible(centity_t *cent)
 	{
 		if (cent->currentState.powerups == STATE_UNDERCONSTRUCTION)
 		{
-			ent.customShader = cgs.media.genericConstructionShader;
+			CG_SetConstructionShader(&ent, cent->currentState.teamNum);
 		}
 
 		ent.hModel = cgs.inlineDrawModel[s1->modelindex2];
@@ -1726,7 +1749,7 @@ static void CG_Mover(centity_t *cent)
 	// special shader if under construction
 	if (cent->currentState.powerups == STATE_UNDERCONSTRUCTION)
 	{
-		ent.customShader = cgs.media.genericConstructionShader;
+		CG_SetConstructionShader(&ent, cent->currentState.teamNum);
 	}
 
 	// add the secondary model
@@ -2187,7 +2210,7 @@ static void CG_Prop(centity_t *cent)
 	// special shader if under construction
 	if (cent->currentState.powerups == STATE_UNDERCONSTRUCTION)
 	{
-		ent.customShader = cgs.media.genericConstructionShader;
+		CG_SetConstructionShader(&ent, cent->currentState.teamNum);
 	}
 
 	// add the secondary model
