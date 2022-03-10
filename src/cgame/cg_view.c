@@ -884,6 +884,10 @@ void CG_Zoom(void)
 	// no zoom in third person view
 	if (cg.renderingThirdPerson)
 	{
+		cg.zoomedBinoc = qfalse;
+		cg.zoomed      = qfalse;
+		cg.zoomTime    = 0;
+		cg.zoomval     = 0;
 		return;
 	}
 
