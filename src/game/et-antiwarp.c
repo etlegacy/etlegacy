@@ -23,7 +23,7 @@ qboolean G_DoAntiwarp(gentity_t *ent)
 
 	if (ent && ent->client)
 	{
-		// don't antiwarp spectators
+		// don't antiwarp spectators and players that are in limbo
 		if (ent->client->sess.sessionTeam == TEAM_SPECTATOR || (ent->client->ps.pm_flags & PMF_LIMBO))
 		{
 			return qfalse;

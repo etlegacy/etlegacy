@@ -262,6 +262,7 @@ vmCvar_t lua_modules;
 vmCvar_t lua_allowedModules;
 #endif
 
+vmCvar_t g_guidCheck;
 vmCvar_t g_protect; // similar to sv_protect game cvar
                     // 0 - no protection - default to have ref for localhost clients on listen servers
                     // 1 - disabled auto ref for localhost clients
@@ -270,6 +271,7 @@ vmCvar_t g_dropHealth;
 vmCvar_t g_dropAmmo;
 
 vmCvar_t g_shove;
+vmCvar_t g_shoveNoZ;
 
 // MAPVOTE
 vmCvar_t g_mapVoteFlags;
@@ -341,6 +343,7 @@ vmCvar_t g_oss; //   0 - vanilla/unknown/ET:L auto setup
                 //   4 - Linux 64
                 //   8 - Mac OS X
                 //  16 - Android
+                //  32 - Raspberry Pi
 
 vmCvar_t g_realHead; // b_realHead functionality from ETPro
 
@@ -364,9 +367,16 @@ vmCvar_t g_multiview; // 0 - off, other - enabled
 vmCvar_t g_stickyCharge;
 vmCvar_t g_xpSaver;
 
-vmCvar_t g_dynamiteChaining;
+vmCvar_t g_debugForSingleClient;
 
-vmCvar_t g_playerHitBoxHeight;
+vmCvar_t g_suddenDeath;
+
+vmCvar_t g_dropObjDelay;
+
+// flood protection
+vmCvar_t g_floodProtection;
+vmCvar_t g_floodLimit;
+vmCvar_t g_floodWait;
 
 cvarTable_t gameCvarTable[] =
 {
@@ -392,7 +402,7 @@ cvarTable_t gameCvarTable[] =
 	{ &g_covertopsChargeTime,             "g_covertopsChargeTime",             "30000",                      CVAR_SERVERINFO | CVAR_LATCH,                    0, qfalse, qtrue  },
 	{ &g_landminetimeout,                 "g_landminetimeout",                 "1",                          CVAR_ARCHIVE,                                    0, qfalse, qtrue  },
 
-	{ &g_oss,                             "g_oss",                             "15",                         CVAR_SERVERINFO | CVAR_LATCH,                    0, qfalse, qfalse },
+	{ &g_oss,                             "g_oss",                             "31",                         CVAR_SERVERINFO | CVAR_LATCH,                    0, qfalse, qfalse },
 
 	{ &g_maxclients,                      "sv_maxclients",                     "20",                         CVAR_SERVERINFO | CVAR_LATCH | CVAR_ARCHIVE,     0, qfalse, qfalse },
 	{ &g_maxGameClients,                  "g_maxGameClients",                  "0",                          CVAR_SERVERINFO | CVAR_LATCH | CVAR_ARCHIVE,     0, qfalse, qfalse },
@@ -447,7 +457,7 @@ cvarTable_t gameCvarTable[] =
 	{ &g_debugMove,                       "g_debugMove",                       "0",                          0,                                               0, qfalse, qfalse },
 	{ &g_debugDamage,                     "g_debugDamage",                     "0",                          CVAR_CHEAT,                                      0, qfalse, qfalse },
 	{ &g_debugAlloc,                      "g_debugAlloc",                      "0",                          0,                                               0, qfalse, qfalse },
-	{ &g_debugBullets,                    "g_debugBullets",                    "0",                          CVAR_CHEAT,                                      0, qfalse, qfalse },
+	{ &g_debugBullets,                    "g_debugBullets",                    "0",                          0,                                               0, qfalse, qfalse },
 	{ &g_motd,                            "g_motd",                            "",                           CVAR_ARCHIVE,                                    0, qfalse, qfalse },
 
 	{ &voteFlags,                         "voteFlags",                         "0",                          CVAR_TEMP | CVAR_ROM | CVAR_SERVERINFO,          0, qfalse, qfalse },
@@ -583,10 +593,12 @@ cvarTable_t gameCvarTable[] =
 	{ &lua_allowedModules,                "lua_allowedModules",                "",                           0,                                               0, qfalse, qfalse },
 #endif
 
+	{ &g_guidCheck,                       "g_guidCheck",                       "1",                          CVAR_ARCHIVE,                                    0, qfalse, qfalse },
 	{ &g_protect,                         "g_protect",                         "0",                          CVAR_ARCHIVE,                                    0, qfalse, qfalse },
 	{ &g_dropHealth,                      "g_dropHealth",                      "0",                          0,                                               0, qfalse, qfalse },
 	{ &g_dropAmmo,                        "g_dropAmmo",                        "0",                          0,                                               0, qfalse, qfalse },
 	{ &g_shove,                           "g_shove",                           "60",                         0,                                               0, qfalse, qfalse },
+	{ &g_shoveNoZ,                        "g_shoveNoZ",                        "0",                          0,                                               0, qfalse, qfalse },
 
 	// MAPVOTE
 	{ &g_mapVoteFlags,                    "g_mapVoteFlags",                    "0",                          0,                                               0, qfalse, qfalse },
@@ -638,6 +650,7 @@ cvarTable_t gameCvarTable[] =
 	// Debug
 	{ &g_debugHitboxes,                   "g_debugHitboxes",                   "0",                          CVAR_CHEAT,                                      0, qfalse, qfalse },
 	{ &g_debugPlayerHitboxes,             "g_debugPlayerHitboxes",             "0",                          0,                                               0, qfalse, qfalse },     // no need to make this CVAR_CHEAT
+	{ &g_debugForSingleClient,            "g_debugForSingleClient",            "-1",                         0,                                               0, qfalse, qfalse },     // no need to make this CVAR_CHEAT
 
 	{ &g_corpses,                         "g_corpses",                         "0",                          CVAR_LATCH | CVAR_ARCHIVE,                       0, qfalse, qfalse },
 	{ &g_realHead,                        "g_realHead",                        "1",                          0,                                               0, qfalse, qfalse },
@@ -655,8 +668,12 @@ cvarTable_t gameCvarTable[] =
 #endif
 	{ &g_stickyCharge,                    "g_stickyCharge",                    "0",                          CVAR_ARCHIVE,                                    0, qfalse, qfalse },
 	{ &g_xpSaver,                         "g_xpSaver",                         "0",                          CVAR_ARCHIVE,                                    0, qfalse, qfalse },
-    { &g_dynamiteChaining,                "g_dynamiteChaining",                "0",                          CVAR_ARCHIVE,                                    0, qfalse, qfalse },
-    { &g_playerHitBoxHeight,              "g_playerHitBoxHeight",              "36",                         CVAR_ARCHIVE | CVAR_SERVERINFO,                  0, qfalse, qfalse },
+	{ &g_suddenDeath,                     "g_suddenDeath",                     "0",                          CVAR_ARCHIVE,                                    0, qtrue,  qfalse },
+	{ &g_dropObjDelay,                    "g_dropObjDelay",                    "3000",                       CVAR_ARCHIVE,                                    0, qtrue,  qfalse },
+
+	{ &g_floodProtection,                 "g_floodProtection",                 "1",                          CVAR_ARCHIVE | CVAR_SERVERINFO,                  0, qtrue,  qfalse },
+	{ &g_floodLimit,                      "g_floodLimit",                      "5",                          CVAR_ARCHIVE,                                    0, qtrue,  qfalse },
+	{ &g_floodWait,                       "g_floodWait",                       "1000",                       CVAR_ARCHIVE,                                    0, qtrue,  qfalse },
 };
 
 /**
@@ -717,14 +734,14 @@ Q_EXPORT intptr_t vmMain(intptr_t command, intptr_t arg0, intptr_t arg1, intptr_
 	{
 	case GAME_INIT:
 	{
-		float time = trap_Milliseconds();
+		int time = trap_Milliseconds();
 		Com_Printf(S_COLOR_MDGREY "Initializing %s game " S_COLOR_GREEN ETLEGACY_VERSION "\n", MODNAME);
 #ifdef FEATURE_OMNIBOT
 
 		Bot_Interface_InitHandles();
 #endif
 		G_InitGame(arg0, arg1, arg2, arg3, arg4);
-		G_Printf("Game Initialization completed in %.2f seconds\n", ((float)trap_Milliseconds() - time) / 1000.f);
+		G_Printf("Game Initialization completed in %.2f seconds\n", (float)(trap_Milliseconds() - time) / 1000.f);
 #ifdef FEATURE_OMNIBOT
 
 		time = trap_Milliseconds();
@@ -739,7 +756,7 @@ Q_EXPORT intptr_t vmMain(intptr_t command, intptr_t arg0, intptr_t arg1, intptr_
 			// that's the only way to print the used bot version atm
 			trap_SendConsoleCommand(EXEC_APPEND, va("%s", "bot version\n"));
 
-			G_Printf(S_COLOR_GREEN "Omni-Bot Initialization completed in %.2f seconds\n", ((float)trap_Milliseconds() - time) / 1000.f);
+			G_Printf(S_COLOR_GREEN "Omni-Bot Initialization completed in %.2f seconds\n", (float)(trap_Milliseconds() - time) / 1000.f);
 		}
 #endif
 	}
@@ -860,17 +877,14 @@ void QDECL G_Error(const char *fmt, ...)
 
 void QDECL G_Error(const char *fmt, ...) _attribute((format(printf, 1, 2)));
 
+
 /**
- * @brief Returns whether the ent should be ignored for cursor hint purpose (because the ent may have the designed content type
- * but nevertheless should not display any cursor hint)
- *
- * @param[in] traceEnt
- * @param clientEnt - unused
+ * @brief G_ServerIsFloodProtected
  * @return
  */
-static qboolean G_CursorHintIgnoreEnt(gentity_t *traceEnt, gentity_t *clientEnt)
+qboolean G_ServerIsFloodProtected(void)
 {
-	return (traceEnt->s.eType == ET_OID_TRIGGER || traceEnt->s.eType == ET_TRIGGER_MULTIPLE) ? qtrue : qfalse;
+	return (!g_floodProtection.integer || !g_floodWait.integer || !g_floodLimit.integer) ? qfalse : qtrue;
 }
 
 /**
@@ -1002,7 +1016,6 @@ void G_CheckForCursorHints(gentity_t *ent)
 	int           hintType, hintDist, hintVal;
 	qboolean      zooming;
 	int           trace_contents;
-	int           numOfIgnoredEnts = 0;
 
 	if (!ent->client)
 	{
@@ -1036,9 +1049,20 @@ void G_CheckForCursorHints(gentity_t *ent)
 	tr = &ps->serverCursorHintTrace;
 
 	G_TempTraceRealHitBox(ent);
+	G_TempTraceIgnoreEntities(ent);
+
 	trace_contents = (CONTENTS_TRIGGER | CONTENTS_SOLID | CONTENTS_MISSILECLIP | CONTENTS_BODY | CONTENTS_CORPSE);
+
 	trap_Trace(tr, offset, NULL, NULL, end, ps->clientNum, trace_contents);
+	if (tr->startsolid && tr->entityNum == ENTITYNUM_WORLD)
+	{
+		vec3_t boxmins = { -10, -10, -10 };
+		vec3_t boxmaxs = { 10, 10, 10 };
+		trap_Trace(tr, offset, boxmins, boxmaxs, offset, ps->clientNum, trace_contents);
+	}
+
 	G_ResetTempTraceRealHitBox();
+	G_ResetTempTraceIgnoreEnts();
 
 	// reset all
 	hintType = ps->serverCursorHint = HINT_NONE;
@@ -1065,49 +1089,10 @@ void G_CheckForCursorHints(gentity_t *ent)
 		}
 	}
 
-	if (tr->fraction == 1.f)
-	{
-		return;
-	}
-
 	traceEnt = &g_entities[tr->entityNum];
-	G_TempTraceRealHitBox(ent);
-	while (G_CursorHintIgnoreEnt(traceEnt, ent) && numOfIgnoredEnts < 10)
+
+	if (tr->fraction == 1.f || tr->entityNum == ENTITYNUM_WORLD || tr->entityNum < MAX_CLIENTS)
 	{
-		// we may hit multiple invalid ents at the same point
-		// count them to prevent too many loops
-		numOfIgnoredEnts++;
-
-		// advance offset (start point) past the entity to ignore
-		VectorMA(tr->endpos, 0.1f, forward, offset);
-
-		trap_Trace(tr, offset, NULL, NULL, end, traceEnt->s.number, trace_contents);
-
-		// (hintDist - dist) is the actual distance in the above
-		// trap_Trace call. update dist accordingly.
-		dist += VectorDistanceSquared(offset, tr->endpos);
-		if (tr->fraction == 1.f)
-		{
-			return;
-		}
-		traceEnt = &g_entities[tr->entityNum];
-	}
-	G_ResetTempTraceRealHitBox();
-
-	if (tr->entityNum == ENTITYNUM_WORLD)
-	{
-		// NOTE: these hint are managed client side !
-		// if ((tr->contents & CONTENTS_WATER))
-		// {
-		//  hintDist = CH_WATER_DIST;
-		//  hintType = HINT_WATER;
-		// }
-		// else if ((tr->surfaceFlags & SURF_LADDER) && !(ps->pm_flags & PMF_LADDER))           // ladder
-		// {
-		//  hintDist = CH_LADDER_DIST;
-		//  hintType = HINT_LADDER;
-		// }
-
 		// building something - add this here because we don't have anything solid to trace to - quite ugly-ish
 		if (ent->client->touchingTOI && ps->stats[STAT_PLAYER_CLASS] == PC_ENGINEER)
 		{
@@ -1120,9 +1105,7 @@ void G_CheckForCursorHints(gentity_t *ent)
 				return;
 			}
 		}
-	}
-	else if (tr->entityNum < MAX_CLIENTS)
-	{
+
 		// show medics a syringe if they can revive someone
 		if (traceEnt->client && traceEnt->client->sess.sessionTeam == ent->client->sess.sessionTeam)
 		{
@@ -1601,7 +1584,7 @@ void G_SetSkillLevels(int skill, const char *string)
 		nextLevel = COM_ParseExt(temp, qfalse);
 		if (nextLevel[0])
 		{
-			levels[count] = atoi(nextLevel);
+			levels[count] = Q_atoi(nextLevel);
 			if (levels[count] < 0)
 			{
 				levels[count] = -1;
@@ -1784,13 +1767,9 @@ void G_FindTeams(void)
  */
 void G_ServerCheck(void)
 {
-	static char versionString[64];
-
-	trap_Cvar_VariableStringBuffer("version", versionString, sizeof(versionString));
-
-	if (!strstr(versionString, PRODUCT_LABEL))
+	if (!level.etLegacyServer)
 	{
-		G_Error("Error: %s does not support server version %s\n", MODNAME, versionString);
+		G_Error("Error: %s does not support server version %s\n", MODNAME, FAKE_VERSION);
 	}
 }
 
@@ -1938,7 +1917,7 @@ void G_UpdateCvars(void)
 					char buffer[32];
 
 					trap_Cvar_LatchedVariableStringBuffer("g_gametype", buffer, sizeof(buffer));
-					gametype = atoi(buffer);
+					gametype = Q_atoi(buffer);
 
 					if (gametype == GT_WOLF_CAMPAIGN && gametype != g_gametype.integer)
 					{
@@ -2318,11 +2297,11 @@ void G_InitGame(int levelTime, int randomSeed, int restart, int etLegacyServer, 
 	time_t aclock;
 	char   timeFt[32];
 
-	// server version check
-	G_ServerCheck();
-
 	// mod version check
 	MOD_CHECK_ETLEGACY(etLegacyServer, serverVersion, level.etLegacyServer);
+
+	// server version check
+	G_ServerCheck();
 
 	G_Printf("------- Game Initialization -------\n");
 	G_Printf("gamename: %s\n", MODNAME);
@@ -2377,12 +2356,6 @@ void G_InitGame(int levelTime, int randomSeed, int restart, int etLegacyServer, 
 	level.time            = levelTime;
 	level.startTime       = levelTime;
 	level.server_settings = i;
-
-	for (i = 0; i < level.numConnectedClients; i++)
-	{
-		level.clients[level.sortedClients[i]].sess.userSpawnPointValue     = 0;
-		level.clients[level.sortedClients[i]].sess.resolvedSpawnPointIndex = 0;
-	}
 
 	// init the anim scripting
 	level.animScriptData.soundIndex = G_SoundIndex;
@@ -2607,7 +2580,10 @@ void G_InitGame(int levelTime, int randomSeed, int restart, int etLegacyServer, 
 	// set client fields on player ents
 	for (i = 0 ; i < level.maxclients ; i++)
 	{
-		g_entities[i].client = level.clients + i;
+		g_entities[i].client                           = level.clients + i;
+		level.clients[i].sess.userSpawnPointValue      = 0;
+		level.clients[i].sess.userMinorSpawnPointValue = -1;
+		level.clients[i].sess.resolvedSpawnPointIndex  = 0;
 	}
 
 	// always leave room for the max number of clients,
@@ -2663,6 +2639,7 @@ void G_InitGame(int levelTime, int randomSeed, int restart, int etLegacyServer, 
 			trap_Cvar_Set("g_prestige", "0");
 		}
 #endif
+
 		if (g_xpSaver.integer)
 		{
 			G_Printf("^3WARNING: g_xpSaver changed to 0\n");
@@ -2693,6 +2670,18 @@ void G_InitGame(int levelTime, int randomSeed, int restart, int etLegacyServer, 
 		if (g_campaigns[level.currentCampaign].current == 0 || level.newCampaign)
 		{
 			G_XPSaver_Clear();
+		}
+	}
+
+	// disable server engine flood protection if we have mod-sided flood protection enabled
+	// since they don't block the same commands
+	if (G_ServerIsFloodProtected())
+	{
+		int sv_floodprotect = trap_Cvar_VariableIntegerValue("sv_floodprotect");
+		if (sv_floodprotect)
+		{
+			trap_Cvar_Set("sv_floodprotect", "0");
+			G_Printf("^3INFO: mod-sided flood protection enabled, disabling server-side protection.\n");
 		}
 	}
 
@@ -3188,8 +3177,9 @@ void SendScoreboardMessageToAllClients(void)
  * @brief When the intermission starts, this will be called for all players.
  * If a new client connects, this will be called after the spawn function.
  * @param[in,out] ent Client
+ * @param[in] hasVoted keep tracking clients vote if they change team during intermission
  */
-void MoveClientToIntermission(gentity_t *ent)
+void MoveClientToIntermission(gentity_t *ent, qboolean hasVoted)
 {
 	// take out of follow mode if needed
 	if (ent->client->sess.spectatorState == SPECTATOR_FOLLOW)
@@ -3214,21 +3204,29 @@ void MoveClientToIntermission(gentity_t *ent)
 	}
 
 	// initialize vars
-	if (g_gametype.integer == GT_WOLF_MAPVOTE)
+	if (!hasVoted && g_gametype.integer == GT_WOLF_MAPVOTE)
 	{
 		ent->client->sess.mapVotedFor[0] = -1;
 		ent->client->sess.mapVotedFor[1] = -1;
 		ent->client->sess.mapVotedFor[2] = -1;
 	}
 
-	ent->client->ps.eFlags = 0;
-	ent->s.eFlags          = 0;
-	ent->s.eType           = ET_GENERAL;
-	ent->s.modelindex      = 0;
-	ent->s.loopSound       = 0;
-	ent->s.event           = 0;
-	ent->s.events[0]       = ent->s.events[1] = ent->s.events[2] = ent->s.events[3] = 0;
-	ent->r.contents        = 0;
+	if (hasVoted)
+	{
+		ent->client->ps.eFlags |= EF_VOTED;
+	}
+	else
+	{
+		ent->client->ps.eFlags &= ~EF_VOTED;
+	}
+
+	ent->s.eFlags     = 0;
+	ent->s.eType      = ET_GENERAL;
+	ent->s.modelindex = 0;
+	ent->s.loopSound  = 0;
+	ent->s.event      = 0;
+	ent->s.events[0]  = ent->s.events[1] = ent->s.events[2] = ent->s.events[3] = 0;
+	ent->r.contents   = 0;
 }
 
 /**
@@ -3259,7 +3257,7 @@ void FindIntermissionPoint(void)
 
 	trap_GetConfigstring(CS_MULTI_MAPWINNER, cs, sizeof(cs));
 	buf    = Info_ValueForKey(cs, "w");
-	winner = atoi(buf);
+	winner = Q_atoi(buf);
 
 	// Change from scripting value for winner (0==AXIS, 1==ALLIES) to spawnflag value
 	if (winner == 0)
@@ -3557,7 +3555,7 @@ void BeginIntermission(void)
 		{
 			continue;
 		}
-		MoveClientToIntermission(client);
+		MoveClientToIntermission(client, qfalse);
 	}
 
 	// send the current scoring to all clients
@@ -3576,6 +3574,16 @@ void ExitLevel(void)
 
 	switch (g_gametype.integer)
 	{
+	case GT_WOLF_STOPWATCH:
+	{
+		if (!g_currentRound.integer)
+		{
+			// reset timer
+			trap_Cvar_Set("g_nextTimeLimit", "0");
+		}
+		trap_SendConsoleCommand(EXEC_APPEND, "vstr nextmap\n");
+		break;
+	}
 	case GT_WOLF_CAMPAIGN:
 	{
 		g_campaignInfo_t *campaign = &g_campaigns[level.currentCampaign];
@@ -3758,9 +3766,16 @@ void G_LogExit(const char *string)
 	gclient_t *cl;
 	char      cs[MAX_STRING_CHARS];
 
-	// do not allow LogExit to be called in non-playing gamestate
+	// do not allow G_LogExit to be called in non-playing gamestate
 	if (g_gamestate.integer != GS_PLAYING)
 	{
+		return;
+	}
+
+	// ensure exit is not triggered twice due to faulty map scripts
+	if (level.intermissionQueued)
+	{
+		G_LogPrintf("Exit: %s (already triggered)\n", string);
 		return;
 	}
 
@@ -3768,7 +3783,7 @@ void G_LogExit(const char *string)
 
 #ifdef FEATURE_RATING
 	// record match ratings
-	if (g_skillRating.integer)
+	if (g_skillRating.integer && g_gametype.integer != GT_WOLF_STOPWATCH && g_gametype.integer != GT_WOLF_LMS)
 	{
 		for (i = 0; i < level.numConnectedClients; i++)
 		{
@@ -3787,7 +3802,7 @@ void G_LogExit(const char *string)
 
 #ifdef FEATURE_PRESTIGE
 	// record prestige
-	if (g_prestige.integer)
+	if (g_prestige.integer && g_gametype.integer != GT_WOLF_CAMPAIGN && g_gametype.integer != GT_WOLF_STOPWATCH && g_gametype.integer != GT_WOLF_LMS)
 	{
 		for (i = 0; i < level.numConnectedClients; i++)
 		{
@@ -3802,7 +3817,6 @@ void G_LogExit(const char *string)
 			G_SetClientPrestige(ent->client, qtrue);
 		}
 	}
-	else
 #endif
 	if (g_xpSaver.integer && g_gametype.integer == GT_WOLF_CAMPAIGN)
 	{
@@ -3865,28 +3879,20 @@ void G_LogExit(const char *string)
 		int winner, defender;
 
 		trap_GetConfigstring(CS_MULTI_INFO, cs, sizeof(cs));
-		defender = atoi(Info_ValueForKey(cs, "d")); // defender
+		defender = Q_atoi(Info_ValueForKey(cs, "d")); // defender
 
 		trap_GetConfigstring(CS_MULTI_MAPWINNER, cs, sizeof(cs));
-		winner = atoi(Info_ValueForKey(cs, "w"));
+		winner = Q_atoi(Info_ValueForKey(cs, "w"));
 
-		if (!g_currentRound.integer)
+		if (winner == defender)
 		{
-			if (winner == defender)
-			{
-				// if the defenders won, use default timelimit
-				trap_Cvar_Set("g_nextTimeLimit", va("%f", g_timelimit.value));
-			}
-			else
-			{
-				// use remaining time as next timer
-				trap_Cvar_Set("g_nextTimeLimit", va("%f", (level.timeCurrent - level.startTime) / 60000.f));
-			}
+			// if the defenders won, use default timelimit
+			trap_Cvar_Set("g_nextTimeLimit", va("%f", g_timelimit.value));
 		}
 		else
 		{
-			// reset timer
-			trap_Cvar_Set("g_nextTimeLimit", "0");
+			// use remaining time as next timer
+			trap_Cvar_Set("g_nextTimeLimit", va("%f", (level.timeCurrent - level.startTime) / 60000.f));
 		}
 
 		trap_Cvar_Set("g_currentRound", va("%i", !g_currentRound.integer));
@@ -3898,7 +3904,7 @@ void G_LogExit(const char *string)
 		int winner;
 
 		trap_GetConfigstring(CS_MULTI_MAPWINNER, cs, sizeof(cs));
-		winner = atoi(Info_ValueForKey(cs, "w"));
+		winner = Q_atoi(Info_ValueForKey(cs, "w"));
 
 		if (winner == 0)
 		{
@@ -3927,7 +3933,7 @@ void G_LogExit(const char *string)
 		roundLimit -= 1;    // -1 as it starts at 0
 
 		trap_GetConfigstring(CS_MULTI_MAPWINNER, cs, sizeof(cs));
-		winner = atoi(Info_ValueForKey(cs, "w"));
+		winner = Q_atoi(Info_ValueForKey(cs, "w"));
 
 		if (winner == -1)
 		{
@@ -4168,9 +4174,30 @@ qboolean ScoreIsTied(void)
 	trap_GetConfigstring(CS_MULTI_MAPWINNER, cs, sizeof(cs));
 
 	buf = Info_ValueForKey(cs, "w");
-	a   = atoi(buf);
+	a   = Q_atoi(buf);
 
 	return a == -1;
+}
+
+/**
+ * @brief DynamiteOnObjective
+ * @return
+ */
+qboolean DynamiteOnObjective(void)
+{
+	int       e;
+	gentity_t *ent;
+
+	for (e = 0; e < MAX_GENTITIES; e++)
+	{
+		ent = &g_entities[e];
+		if (ent->s.weapon == WP_DYNAMITE && ent->onobjective)
+		{
+			return qtrue;
+		}
+	}
+
+	return qfalse;
 }
 
 /**
@@ -4282,6 +4309,23 @@ void CheckExitRules(void)
 					// score is tied, so don't end the game
 					return;
 				}
+
+				if (level.suddenDeath)
+				{
+					if (DynamiteOnObjective())
+					{
+						return;
+					}
+					level.suddenDeath = 0;
+				}
+				else
+				{
+					if (g_suddenDeath.integer && DynamiteOnObjective() && g_gametype.integer != GT_WOLF_STOPWATCH)
+					{
+						level.suddenDeath = 1;
+						return;
+					}
+				}
 			}
 
 			if (level.gameManager)
@@ -4289,8 +4333,8 @@ void CheckExitRules(void)
 				G_Script_ScriptEvent(level.gameManager, "trigger", "timelimit_hit");
 			}
 
-			// do not allow LogExit to be called in non-playing gamestate
-			// - This already happens in LogExit, but we need it for the print command
+			// do not allow G_LogExit to be called in non-playing gamestate
+			// - This already happens in G_LogExit, but we need it for the print command
 			if (g_gamestate.integer != GS_PLAYING)
 			{
 				return;
@@ -4421,6 +4465,30 @@ void CheckVote(void)
 	    level.voteInfo.vote_fn == NULL ||
 	    level.time - level.voteInfo.voteTime < 1000)
 	{
+		return;
+	}
+
+	if (level.voteInfo.voteCanceled)
+	{
+		level.voteInfo.voteTime     = 0;
+		level.voteInfo.voteCanceled = 0;
+
+		trap_SetConfigstring(CS_VOTE_TIME, "");
+
+		AP(va("cpm \"^1Vote CANCELED!\n\""));
+		G_LogPrintf("Vote CANCELED!\n");
+
+		return;
+	}
+
+	if (g_gamestate.integer == GS_WARMUP_COUNTDOWN && level.voteInfo.vote_fn == G_StartMatch_v)
+	{
+		level.voteInfo.voteTime = 0;
+		trap_SetConfigstring(CS_VOTE_TIME, "");
+
+		AP(va("cpm \"Countdown started, vote canceled!\n\""));
+		G_LogPrintf("Countdown started, vote canceled!\n");
+
 		return;
 	}
 
@@ -5116,7 +5184,7 @@ void G_RunEntity(gentity_t *ent, int msec)
 			// During a pause, gotta keep track of stuff in the air
 			ent->s.pos.trTime += level.time - level.previousTime;
 			// Keep pulsing right for dynmamite
-			if (ent->methodOfDeath == MOD_DYNAMITE)
+			if (ent->methodOfDeath == MOD_DYNAMITE && ent->s.effect1Time)
 			{
 				ent->s.effect1Time += level.time - level.previousTime;
 			}
@@ -5184,6 +5252,12 @@ void G_RunEntity(gentity_t *ent, int msec)
 	{
 		ent->target_ent->s.onFireStart = ent->health;
 		ent->target_ent->s.onFireEnd   = ent->count;
+	}
+
+	// keep track of constructions so they don't decay after pause
+	if (ent->s.eType == ET_CONSTRUCTIBLE && level.match_pause != PAUSE_NONE && ent->s.angles2[0])
+	{
+		ent->lastHintCheckTime += level.time - level.previousTime;
 	}
 
 	G_RunThink(ent);
@@ -5368,7 +5442,6 @@ void G_MapVoteInfoWrite()
 	G_Printf("mapvoteinfo: wrote %d of %d map vote stats\n", count, MAX_VOTE_MAPS);
 
 	trap_FS_FCloseFile(f);
-	return;
 }
 
 /**
@@ -5433,7 +5506,7 @@ void G_ReadConfigFileInt(char **cnf, int *v)
 		         t,
 		         COM_GetCurrentParseLine());
 	}
-	*v = atoi(t);
+	*v = Q_atoi(t);
 }
 
 /**

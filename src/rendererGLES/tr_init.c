@@ -101,7 +101,6 @@ cvar_t *r_extMaxAnisotropy;
 cvar_t *r_ignoreGLErrors;
 cvar_t *r_logFile;
 
-cvar_t *r_primitives;
 cvar_t *r_textureBits;
 
 cvar_t *r_drawBuffer;
@@ -192,13 +191,29 @@ static void InitOpenGL(void)
 		GLint temp;
 
 		Com_Memset(&glConfig, 0, sizeof(glConfig));
-		ri.GLimp_Init(&glConfig, NULL);
+
+		windowContext_t context;
+		Com_Memset(&context, 0, sizeof(windowContext_t));
+
+		// These should be the same as the old ifdeffin on sdl_glimp..
+		context.samples = r_ext_multisample->integer;
+		context.versionMajor = 1;
+		context.versionMinor = 1;
+
+		// FIXME: check if both Rpi and Android can use the "EGL" one.
+#ifdef __ANDROID__
+		context.context = GL_CONTEXT_EGL;
+#else
+		context.context = GL_CONTEXT_ES;
+#endif
+
+		ri.GLimp_Init(&glConfig, &context);
 
 		strcpy(renderer_buffer, glConfig.renderer_string);
 		Q_strlwr(renderer_buffer);
 
 		// OpenGL driver constants
-		qglGetIntegerv(GL_MAX_TEXTURE_SIZE, &temp);
+		glGetIntegerv(GL_MAX_TEXTURE_SIZE, &temp);
 		glConfig.maxTextureSize = temp;
 
 		// stubbed or broken drivers may have reported 0...
@@ -223,7 +238,7 @@ void GL_CheckErrors(void)
 	unsigned int err;
 	char         s[64];
 
-	err = qglGetError();
+	err = glGetError();
 	if (err == GL_NO_ERROR)
 	{
 		return;
@@ -302,7 +317,7 @@ byte *RB_ReadPixels(int x, int y, int width, int height, size_t *offset, int *pa
 	int   padwidth, linelen;
 	GLint packAlign;
 
-	qglGetIntegerv(GL_PACK_ALIGNMENT, &packAlign);
+	glGetIntegerv(GL_PACK_ALIGNMENT, &packAlign);
 
 	linelen  = width * 3;
 	padwidth = PAD(linelen, packAlign);
@@ -311,7 +326,7 @@ byte *RB_ReadPixels(int x, int y, int width, int height, size_t *offset, int *pa
 	buffer = ri.Hunk_AllocateTempMemory(padwidth * height + *offset + packAlign - 1);
 
 	bufstart = PADP(( intptr_t ) buffer + *offset, packAlign);
-	qglReadPixels(x, y, width, height, GL_RGB, GL_UNSIGNED_BYTE, bufstart);
+	glReadPixels(x, y, width, height, GL_RGB, GL_UNSIGNED_BYTE, bufstart);
 
 	*offset = bufstart - buffer;
 	*padlen = padwidth - linelen;
@@ -335,7 +350,7 @@ byte *RB_ReadZBuffer(int x, int y, int width, int height, int *padlen)
 	int   padwidth, linelen;
 	GLint packAlign;
 
-	qglGetIntegerv(GL_PACK_ALIGNMENT, &packAlign);
+	glGetIntegerv(GL_PACK_ALIGNMENT, &packAlign);
 
 	linelen  = width;
 	padwidth = PAD(linelen, packAlign);
@@ -344,8 +359,8 @@ byte *RB_ReadZBuffer(int x, int y, int width, int height, int *padlen)
 	buffer = ri.Hunk_AllocateTempMemory(padwidth * height + packAlign - 1);
 
 	bufstart = PADP(( intptr_t ) buffer, packAlign);
-	qglDepthRange(0.0f, 1.0f);
-	qglReadPixels(x, y, width, height, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, bufstart);
+	glDepthRange(0.0f, 1.0f);
+	glReadPixels(x, y, width, height, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, bufstart);
 
 	*padlen = padwidth - linelen;
 
@@ -638,7 +653,7 @@ const void *RB_TakeVideoFrameCmd(const void *data)
 
 	cmd = (const videoFrameCommand_t *)data;
 
-	qglGetIntegerv(GL_PACK_ALIGNMENT, &packAlign);
+	glGetIntegerv(GL_PACK_ALIGNMENT, &packAlign);
 
 	linelen = cmd->width * 3;
 
@@ -651,7 +666,7 @@ const void *RB_TakeVideoFrameCmd(const void *data)
 
 	cBuf = PADP(cmd->captureBuffer, packAlign);
 
-	qglReadPixels(0, 0, cmd->width, cmd->height, GL_RGB,
+	glReadPixels(0, 0, cmd->width, cmd->height, GL_RGB,
 	              GL_UNSIGNED_BYTE, cBuf);
 
 	memcount = padwidth * cmd->height;
@@ -790,6 +805,12 @@ void R_ScreenShot_f(void)
 
 	ssFormat_t format = r_screenshotFormat->integer;
 
+	// Backwards compatibility
+	if (!Q_stricmp(ri.Cmd_Argv(0), "screenshotJPEG"))
+	{
+		format = SSF_JPEG;
+	}
+
 	switch (format)
 	{
 		case SSF_TGA:
@@ -873,44 +894,44 @@ void R_ScreenShot_f(void)
  */
 void GL_SetDefaultState(void)
 {
-	qglClearDepth(1.0);
+	glClearDepthf(1.0);
 
-	qglCullFace(GL_FRONT);
+	glCullFace(GL_FRONT);
 
-	qglColor4f(1, 1, 1, 1);
+	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 
 	// initialize downstream texture unit if we're running
 	// in a multitexture environment
-	if (qglActiveTextureARB)
+	if (glActiveTexture)
 	{
 		GL_SelectTexture(1);
 		GL_TextureMode(r_textureMode->string);
 		GL_TexEnv(GL_MODULATE);
-		qglDisable(GL_TEXTURE_2D);
+		glDisable(GL_TEXTURE_2D);
 		GL_SelectTexture(0);
 	}
 
-	qglEnable(GL_TEXTURE_2D);
+	glEnable(GL_TEXTURE_2D);
 	GL_TextureMode(r_textureMode->string);
 	GL_TexEnv(GL_MODULATE);
 
-	qglShadeModel(GL_SMOOTH);
-	qglDepthFunc(GL_LEQUAL);
+	glShadeModel(GL_SMOOTH);
+	glDepthFunc(GL_LEQUAL);
 
 	// the vertex array is always enabled, but the color and texture
 	// arrays are enabled and disabled around the compiled vertex array call
-	qglEnableClientState(GL_VERTEX_ARRAY);
+	glEnableClientState(GL_VERTEX_ARRAY);
 
 	// make sure our GL state vector is set correctly
 	glState.glStateBits = GLS_DEPTHTEST_DISABLE | GLS_DEPTHMASK_TRUE;
 
-	qglPixelStorei(GL_PACK_ALIGNMENT, 1);
-	qglPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-	qglDepthMask(GL_TRUE);
-	qglDisable(GL_DEPTH_TEST);
-	qglEnable(GL_SCISSOR_TEST);
-	qglDisable(GL_CULL_FACE);
-	qglDisable(GL_BLEND);
+	glPixelStorei(GL_PACK_ALIGNMENT, 1);
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+	glDepthMask(GL_TRUE);
+	glDisable(GL_DEPTH_TEST);
+	glEnable(GL_SCISSOR_TEST);
+	glDisable(GL_CULL_FACE);
+	glDisable(GL_BLEND);
 }
 
 /**
@@ -935,7 +956,7 @@ void GfxInfo_f(void)
 	if (r_gfxInfo->integer > 0)
 	{
 		Ren_Print("GL_EXTENSIONS: ");
-		R_PrintLongString((const char *)qglGetString(GL_EXTENSIONS));
+		R_PrintLongString((const char *)glGetString(GL_EXTENSIONS));
 		Ren_Print("\n");
 	}
 
@@ -965,7 +986,7 @@ void GfxInfo_f(void)
 	Ren_Print("texturemode: %s\n", r_textureMode->string);
 	Ren_Print("picmip: %d\n", r_picMip->integer);
 	Ren_Print("texture bits: %d\n", r_textureBits->integer);
-	Ren_Print("multitexture: %s\n", enablestrings[qglActiveTextureARB != 0]);
+	Ren_Print("multitexture: %s\n", enablestrings[glActiveTexture != 0]);
 	Ren_Print("texenv add: %s\n", enablestrings[glConfig.textureEnvAddAvailable != 0]);
 	Ren_Print("compressed textures: %s\n", enablestrings[glConfig.textureCompression != TC_NONE]);
 
@@ -1041,11 +1062,6 @@ void R_Register(void)
 
 	r_railWidth         = ri.Cvar_Get("r_railWidth", "16", CVAR_ARCHIVE);
 	r_railSegmentLength = ri.Cvar_Get("r_railSegmentLength", "32", CVAR_ARCHIVE);
-
-	r_primitives = ri.Cvar_Get("r_primitives", "0", CVAR_ARCHIVE);
-	// Added this due to invalid values actually causing no drawing
-	// r_primitives == 2 fixes some issues on ATI cards
-	ri.Cvar_CheckRange(r_primitives, 0, 3, qtrue);
 
 	r_ambientScale  = ri.Cvar_Get("r_ambientScale", "0.5", CVAR_CHEAT);
 	r_directedScale = ri.Cvar_Get("r_directedScale", "1", CVAR_CHEAT);
@@ -1128,8 +1144,11 @@ void R_Register(void)
 	ri.Cmd_AddSystemCommand("skinlist", R_SkinList_f, "Print out the list of skins", NULL);
 	ri.Cmd_AddSystemCommand("modellist", R_Modellist_f, "Print out the list of loaded models", NULL);
 	ri.Cmd_AddSystemCommand("screenshot", R_ScreenShot_f, "Take a screenshot of current frame", NULL);
+	ri.Cmd_AddSystemCommand("screenshotJPEG", R_ScreenShot_f, "Take a JPEG screenshot of current frame", NULL);
 	ri.Cmd_AddSystemCommand("gfxinfo", GfxInfo_f, "Print GFX info of current system", NULL);
 	ri.Cmd_AddSystemCommand("taginfo", R_TagInfo_f, "Print the list of loaded tags", NULL);
+
+	R_RegisterCommon();
 }
 
 /**
@@ -1206,7 +1225,7 @@ void R_Init(void)
 
 	R_InitFreeType();
 
-	err = qglGetError();
+	err = glGetError();
 	if (err != GL_NO_ERROR)
 	{
 		Ren_Print("R_Init: glGetError() = 0x%x\n", err);
@@ -1234,10 +1253,9 @@ void RE_Shutdown(qboolean destroyWindow)
 	ri.Cmd_RemoveSystemCommand("shaderlist");
 	ri.Cmd_RemoveSystemCommand("skinlist");
 	ri.Cmd_RemoveSystemCommand("modellist");
-	ri.Cmd_RemoveSystemCommand("modelist");
 	ri.Cmd_RemoveSystemCommand("screenshot");
+	ri.Cmd_RemoveSystemCommand("screenshotJPEG");
 	ri.Cmd_RemoveSystemCommand("gfxinfo");
-	ri.Cmd_RemoveSystemCommand("minimize");
 	ri.Cmd_RemoveSystemCommand("taginfo");
 
 	// keep a backup of the current images if possible

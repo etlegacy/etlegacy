@@ -38,61 +38,12 @@
 #include "g_local.h"
 
 /**
- * @brief G_smvCommands
- * @param[in] ent
- * @param[in] cmd
- * @return
- */
-qboolean G_smvCommands(gentity_t *ent, const char *cmd)
-{
-	if (g_multiview.integer == 0)
-	{
-		// send message to client mv is diasbled?
-		return qfalse;
-	}
-
-	if (!Q_stricmp(cmd, "mvadd"))
-	{
-		G_smvAdd_cmd(ent);
-	}
-	else if (!Q_stricmp(cmd, "mvdel"))
-	{
-		G_smvDel_cmd(ent);
-	}
-	else if (!Q_stricmp(cmd, "mvallies"))
-	{
-		G_smvAddTeam_cmd(ent, TEAM_ALLIES);
-	}
-	else if (!Q_stricmp(cmd, "mvaxis"))
-	{
-		G_smvAddTeam_cmd(ent, TEAM_AXIS);
-	}
-	else if (!Q_stricmp(cmd, "mvall"))
-	{
-		G_smvAddTeam_cmd(ent, TEAM_ALLIES);
-		G_smvAddTeam_cmd(ent, TEAM_AXIS);
-	}
-	else if (!Q_stricmp(cmd, "mvnone"))
-	{
-		if (ent->client->pers.mvCount > 0)
-		{
-			G_smvRemoveInvalidClients(ent, TEAM_AXIS);
-			G_smvRemoveInvalidClients(ent, TEAM_ALLIES);
-		}
-	}
-	else
-	{
-		return qfalse;
-	}
-
-	return qtrue;
-}
-
-/**
  * @brief G_smvAdd_cmd
  * @param[in] ent
+ * @param dwCommand - unused
+ * @param fDump - unused
  */
-void G_smvAdd_cmd(gentity_t *ent)
+void G_smvAdd_cmd(gentity_t *ent, unsigned int dwCommand, int value)
 {
 	int  pID;
 	char str[MAX_TOKEN_CHARS];
@@ -100,7 +51,7 @@ void G_smvAdd_cmd(gentity_t *ent)
 
 	// Clients will always send pIDs
 	trap_Argv(1, str, sizeof(str));
-	pID = atoi(str);
+	pID = Q_atoi(str);
 	if (pID < 0 || pID > level.maxclients || g_entities[pID].client->pers.connected != CON_CONNECTED)
 	{
 		CP(va("print \"[lof]** [lon]Client[lof] %d [lon]is not connected[lof]!\n\"", pID));
@@ -125,9 +76,10 @@ void G_smvAdd_cmd(gentity_t *ent)
 /**
  * @brief G_smvAddTeam_cmd
  * @param[in] ent
+ * @param dwCommand - unused
  * @param[in] nTeam
  */
-void G_smvAddTeam_cmd(gentity_t *ent, int nTeam)
+void G_smvAddTeam_cmd(gentity_t *ent, unsigned int dwCommand, int nTeam)
 {
 	int i, pID;
 
@@ -155,20 +107,49 @@ void G_smvAddTeam_cmd(gentity_t *ent, int nTeam)
 }
 
 /**
+ * @brief G_smvAddAllTeam_cmd
+ * @param[in] ent
+ * @param[in] dwCommand
+ * @param[in] value - unused
+ */
+void G_smvAddAllTeam_cmd(gentity_t *ent, unsigned int dwCommand, int value)
+{
+	G_smvAddTeam_cmd(ent, dwCommand, TEAM_ALLIES);
+	G_smvAddTeam_cmd(ent, dwCommand, TEAM_AXIS);
+}
+
+/**
  * @brief G_smvDel_cmd
  * @param[in] ent
+ * @param dwCommand - unused
+ * @param fDump - unused
  */
-void G_smvDel_cmd(gentity_t *ent)
+void G_smvDel_cmd(gentity_t *ent, unsigned int dwCommand, int value)
 {
 	int  pID;
 	char str[MAX_TOKEN_CHARS];
 
 	// Clients will always send pIDs
 	trap_Argv(1, str, sizeof(str));
-	pID = atoi(str);
+	pID = Q_atoi(str);
 	if (!G_smvLocateEntityInMVList(ent, pID, qtrue))
 	{
 		CP(va("print \"[lof]** [lon]Client[lof] %s^7 [lon]is not currently viewed[lof]!\n\"", level.clients[pID].pers.netname));
+	}
+}
+
+/**
+ * @brief G_smvRemoveAll_cmd
+ * @param[in] ent
+ * @param dwCommand - unused
+ * @param fDump - unused
+ */
+void G_smvDisable_cmd(gentity_t *ent, unsigned int dwCommand, int value)
+{
+	if (ent->client->pers.mvCount > 0)
+	{
+		G_smvRemoveInvalidClients(ent, TEAM_AXIS);
+		G_smvRemoveInvalidClients(ent, TEAM_ALLIES);
 	}
 }
 

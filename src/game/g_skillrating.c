@@ -833,7 +833,7 @@ void G_CalculateSkillRatings(void)
 	// determine winner
 	trap_GetConfigstring(CS_MULTI_MAPWINNER, cs, sizeof(cs));
 	buf    = Info_ValueForKey(cs, "w");
-	winner = atoi(buf);
+	winner = Q_atoi(buf);
 
 	// change from scripting value for winner to spawnflag value
 	switch (winner)

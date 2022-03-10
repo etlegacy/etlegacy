@@ -41,9 +41,9 @@
  */
 static void CG_Viewpos_f(void)
 {
-	CG_Printf("(%i %i %i) : %i %i %i\n", (int)cg.refdef.vieworg[0],
+	CG_Printf("(%i %i %i) : %.0f %.0f %.0f\n", (int)cg.refdef.vieworg[0],
 	          (int)cg.refdef.vieworg[1], (int)cg.refdef.vieworg[2],
-	          (int)cg.refdefViewAngles[PITCH], (int)cg.refdefViewAngles[YAW], (int)cg.refdefViewAngles[ROLL]);
+	          round(cg.refdefViewAngles[PITCH]), round(cg.refdefViewAngles[YAW]), round(cg.refdefViewAngles[ROLL]));
 }
 
 /**
@@ -643,7 +643,7 @@ static void CG_MessageSend_f(void)
 
 	// get values
 	trap_Cvar_VariableStringBuffer("cg_messageType", messageText, MAX_SAY_TEXT);
-	messageType = atoi(messageText);
+	messageType = Q_atoi(messageText);
 	trap_Cvar_VariableStringBuffer("cg_messageText", messageText, MAX_SAY_TEXT);
 
 	// reset values
@@ -680,7 +680,7 @@ static void CG_SetWeaponCrosshair_f(void)
 	char crosshair[64];
 
 	trap_Argv(1, crosshair, 64);
-	cg.newCrosshairIndex = atoi(crosshair) + 1;
+	cg.newCrosshairIndex = Q_atoi(crosshair) + 1;
 }
 
 /**
@@ -688,7 +688,7 @@ static void CG_SetWeaponCrosshair_f(void)
  */
 static void CG_SelectBuddy_f(void)
 {
-	int          pos = atoi(CG_Argv(1));
+	int          pos = Q_atoi(CG_Argv(1));
 	int          i;
 	clientInfo_t *ci;
 
@@ -1084,9 +1084,9 @@ static void CG_DumpSpeaker_f(void)
 	        Q_strncpyz( soundfile, soundfile, buffptr - soundfile + 1 );
 
 	        if( !Q_stricmp( soundfile, "wait" ) )
-	            wait = atoi( valueptr );
+	            wait = Q_atoi( valueptr );
 	        else if( !Q_stricmp( soundfile, "random" ) )
-	            random = atoi( valueptr );
+	            random = Q_atoi( valueptr );
 	    }
 
 	    // parse soundfile
@@ -1206,7 +1206,7 @@ static void CG_CPM_f(void)
 	}
 	else
 	{
-		iconnumber = atoi(iconstring);
+		iconnumber = Q_atoi(iconstring);
 	}
 
 	// only valid icon types
@@ -1247,11 +1247,11 @@ static void CG_TimerSet_f(void)
 		int  spawnPeriod;
 
 		trap_Argv(1, buff, sizeof(buff));
-		spawnPeriod = atoi(buff);
+		spawnPeriod = Q_atoi(buff);
 
 		if (spawnPeriod == 0)
 		{
-			trap_Cvar_Set("cg_spawnTimer_set", "-1");
+			trap_Cvar_Set("cg_spawnTimer_period", 0);
 		}
 		else if (spawnPeriod < 1 || spawnPeriod > 60)
 		{
@@ -1274,16 +1274,13 @@ static void CG_TimerSet_f(void)
  */
 static void CG_TimerReset_f(void)
 {
-	int msec;
-
 	if (cgs.gamestate != GS_PLAYING)
 	{
 		CG_Printf("You may only use this command during the match.\n");
 		return;
 	}
 
-	msec = (int)(cgs.timelimit * 60000.f) - (cg.time - cgs.levelStartTime); // 60.f * 1000.f
-	trap_Cvar_Set("cg_spawnTimer_set", va("%d", msec / 1000));
+	trap_Cvar_Set("cg_spawnTimer_set", va("%d", cg.time - cgs.levelStartTime));
 }
 
 /**
@@ -1308,7 +1305,7 @@ static int CG_GetSecondaryWeapon(int weapon, team_t team, int playerclass)
 		}
 
 		// is player had the minimum level required to use this weapon
-		if (cgs.clientinfo[cg.clientNum].skill[classInfo->classSecondaryWeapons[i].skill] < classInfo->classSecondaryWeapons[i].minSkillLevel)
+		if (!BG_IsSkillAvailable(cgs.clientinfo[cg.clientNum].skill, classInfo->classSecondaryWeapons[i].skill, classInfo->classSecondaryWeapons[i].minSkillLevel))
 		{
 			continue;
 		}
@@ -1538,7 +1535,7 @@ static void CG_Class_f(void)
 	if (trap_Argc() > 2)
 	{
 		trap_Argv(2, cls, 64);
-		weapon1 = atoi(cls);
+		weapon1 = Q_atoi(cls);
 		if (weapon1 <= 0 || weapon1 > MAX_WEAPS_PER_CLASS)
 		{
 			weapon1 = classinfo->classPrimaryWeapons[0].weapon;
@@ -1567,7 +1564,7 @@ static void CG_Class_f(void)
 	if (trap_Argc() > 3)
 	{
 		trap_Argv(3, cls, 64);
-		weapon2 = atoi(cls);
+		weapon2 = Q_atoi(cls);
 		if (weapon2 <= 0 || weapon2 > MAX_WEAPS_PER_CLASS)
 		{
 			weapon2 = classinfo->classSecondaryWeapons[0].weapon;
@@ -1583,7 +1580,7 @@ static void CG_Class_f(void)
 	}
 
 	// Print out the selected class and weapon info
-	if (cgs.clientinfo[cg.clientNum].skill[SK_HEAVY_WEAPONS] >= 4 && playerclass == PC_SOLDIER && !Q_stricmp(GetWeaponTableData(weapon1)->desc, GetWeaponTableData(weapon2)->desc))
+	if (BG_IsSkillAvailable(cgs.clientinfo[cg.clientNum].skill, SK_HEAVY_WEAPONS, SK_SOLDIER_SMG) && playerclass == PC_SOLDIER && !Q_stricmp(GetWeaponTableData(weapon1)->desc, GetWeaponTableData(weapon2)->desc))
 	{
 		CG_PriorityCenterPrint(va(CG_TranslateString("You will spawn as an %s %s with a %s."), teamstring, BG_ClassnameForNumber(playerclass), GetWeaponTableData(weapon1)->desc), 400, cg_fontScaleCP.value, -1);
 	}
@@ -1627,6 +1624,58 @@ static void CG_TeamMenu_f(void)
 static void CG_ReadHuds_f(void)
 {
 	CG_ReadHudScripts();
+}
+
+static void CG_ShareTimer_f(void)
+{
+	qtime_t ct;
+	char    *cmd, *stChar, text[MAX_SAY_TEXT];
+	int     st, limboTime, nextSpawn;
+	stChar = CG_SpawnTimerText();
+
+	if (stChar == NULL)
+	{
+		return;
+	}
+
+	cmd       = !Q_stricmp(CG_Argv(0), "sharetimer") ? "say_team" : "say_buddy";
+	st        = Q_atoi(stChar);
+	limboTime = (cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_AXIS ? cg_bluelimbotime.integer : cg_redlimbotime.integer) / 1000;
+	CG_RoundTime(&ct);
+	nextSpawn = MOD(ct.tm_sec - st, 60);
+
+	trap_Cvar_VariableStringBuffer("cg_sharetimerText", text, MAX_SAY_TEXT);
+	if (!strlen(text))
+	{
+		trap_Args(text, sizeof(text));
+	}
+	if (strlen(text))
+	{
+		char buffer[MAX_SAY_TEXT];
+		char *spawntime, *enemylimbo, *nextSpawnText, *enemyLimbotimeText;
+		nextSpawnText      = "${nextspawn}";
+		enemyLimbotimeText = "${enemylimbotime}";
+
+		Q_strncpyz(buffer, text, sizeof(buffer));
+		spawntime = Q_TruncateStr(Q_stristr(buffer, nextSpawnText), strlen(nextSpawnText));
+		if (spawntime)
+		{
+			Q_strncpyz(text, Q_StrReplace(text, spawntime, va("%i", nextSpawn)), sizeof(text));
+		}
+
+		Q_strncpyz(buffer, text, sizeof(buffer));
+		enemylimbo = Q_TruncateStr(Q_stristr(buffer, enemyLimbotimeText), strlen(enemyLimbotimeText));
+		if (enemylimbo)
+		{
+			Q_strncpyz(text, Q_StrReplace(text, enemylimbo, va("%i", limboTime)), sizeof(text));
+		}
+		trap_SendConsoleCommand(va("%s %s", cmd, text));
+	}
+	else
+	{
+		trap_SendConsoleCommand(va("%s Enemy spawns every %i seconds: next at %i", cmd, limboTime, nextSpawn));
+	}
+
 }
 
 #ifdef FEATURE_EDV
@@ -1801,7 +1850,7 @@ static float etpro_float_Argv(int argnum)
 	char buffer[MAX_TOKEN_CHARS];
 
 	trap_Argv(argnum, buffer, sizeof(buffer));
-	return (float)atof(buffer);
+	return Q_atof(buffer);
 }
 
 /**
@@ -1939,6 +1988,162 @@ static void CG_ListSpawnPoints_f(void)
 	}
 }
 
+static void CG_ShoutcastMenu_f(void)
+{
+	if (cgs.clientinfo[cg.clientNum].shoutcaster)
+	{
+		trap_UI_Popup(UIMENU_NONE);
+
+		if (cg.shoutcastMenu)
+		{
+			CG_EventHandling(CGAME_EVENT_NONE, qfalse);
+		}
+		else
+		{
+			CG_EventHandling(CGAME_EVENT_SHOUTCAST, qfalse);
+		}
+	}
+}
+
+static void CG_Location_f(void)
+{
+	char token[MAX_TOKEN_CHARS];
+	int  args = trap_Argc();
+
+	if (args < 2)
+	{
+		CG_Printf("^1loc needs at least 2 arguments\n");
+		return;
+	}
+
+	if (!cgs.sv_cheats)
+	{
+		CG_Printf("^1loc is cheat protected\n");
+		return;
+	}
+
+	trap_Argv(1, token, sizeof(token));
+
+	if (!Q_stricmp(token, "open"))
+	{
+		CG_LocationsEditor(qtrue);
+	}
+	else if (!Q_stricmp(token, "close"))
+	{
+		CG_LocationsEditor(qfalse);
+	}
+	else if (!Q_stricmp(token, "save"))
+	{
+		if (args >= 3)
+		{
+			trap_Argv(2, token, sizeof(token));
+			CG_LocationsSave(token);
+		}
+		else
+		{
+			CG_LocationsSave(NULL);
+		}
+	}
+	else if (!Q_stricmp(token, "rename"))
+	{
+		if (args < 3)
+		{
+			CG_Printf(S_COLOR_RED "Message text required\n");
+			return;
+		}
+		trap_Argv(2, token, sizeof(token));
+		CG_LocationsRenameCurrent(token);
+	}
+	else if (!Q_stricmp(token, "add"))
+	{
+		if (args < 3)
+		{
+			CG_Printf(S_COLOR_RED "Message text required\n");
+			return;
+		}
+		trap_Argv(2, token, sizeof(token));
+		CG_LocationsAdd(token);
+	}
+	else if (!Q_stricmp(token, "remove"))
+	{
+		CG_LocationsRemoveCurrent();
+	}
+	else if (!Q_stricmp(token, "move"))
+	{
+		CG_LocationsMoveCurrent();
+	}
+	else if (!Q_stricmp(token, "dump"))
+	{
+		CG_LocationsDump();
+	}
+	else if (!Q_stricmp(token, "reload"))
+	{
+		CG_LocationsReload();
+	}
+	else
+	{
+		CG_Printf("^1loc: unknown argument: %s\nSupported arguments: open/close/save/rename/add/remove/move/dump/reload\n", token);
+	}
+}
+
+static void CG_Camera_f(void)
+{
+	char token[MAX_TOKEN_CHARS];
+	int  args = trap_Argc();
+
+	if (args < 2)
+	{
+		CG_Printf("^1camera needs at least 2 arguments\n");
+		return;
+	}
+
+	// FIXME: maybe allow playback for shoutcasters? -- Enabled when actually ready..
+	if (!cgs.sv_cheats)
+	{
+		CG_Printf("^1camera is cheat protected\n");
+		return;
+	}
+
+	trap_Argv(1, token, sizeof(token));
+
+	if (!Q_stricmp(token, "open"))
+	{
+		CG_ActivateCameraEditor();
+	}
+	else if (!Q_stricmp(token, "close"))
+	{
+		CG_DeActivateCameraEditor();
+	}
+	else if (!Q_stricmp(token, "add"))
+	{
+		CG_CameraAddCurrentPoint();
+	}
+	else if (!Q_stricmp(token, "ct"))
+	{
+		CG_AddControlPoint();
+	}
+	else if (!Q_stricmp(token, "play"))
+	{
+		if (trap_Argc() > 2)
+		{
+			trap_Argv(2, token, sizeof(token));
+			CG_PlayCurrentCamera(Q_atoi(token));
+		}
+		else
+		{
+			CG_PlayCurrentCamera(1);
+		}
+	}
+	else if (!Q_stricmp(token, "clear"))
+	{
+		CG_ClearCamera();
+	}
+	else
+	{
+		CG_Printf("^1camera: unknown argument: %s\nSupported arguments: #FIXME\n", token);
+	}
+}
+
 static consoleCommand_t commands[] =
 {
 	{ "testgun",             CG_TestGun_f              },
@@ -2035,6 +2240,8 @@ static consoleCommand_t commands[] =
 	{ "classmenu",           CG_ClassMenu_f            },
 	{ "teammenu",            CG_TeamMenu_f             },
 	{ "readhuds",            CG_ReadHuds_f             },
+	{ "sharetimer",          CG_ShareTimer_f           },
+	{ "sharetimer_buddy",    CG_ShareTimer_f           },
 #ifdef FEATURE_EDV
 	{ "+freecam_turnleft",   CG_FreecamTurnLeftDown_f  },
 	{ "-freecam_turnleft",   CG_FreecamTurnLeftUp_f    },
@@ -2059,7 +2266,126 @@ static consoleCommand_t commands[] =
 	// objective info list for mappers/scripters (and players? - we might extend it)
 	{ "oinfo",               CG_PrintObjectiveInfo_f   },
 	{ "resetmaxspeed",       CG_ResetMaxSpeed_f        },
-	{ "listspawnpt",         CG_ListSpawnPoints_f      }
+	{ "listspawnpt",         CG_ListSpawnPoints_f      },
+
+	{ "shoutcastmenu",       CG_ShoutcastMenu_f        },
+	{ "loc",                 CG_Location_f             },
+	{ "camera",              CG_Camera_f               },
+	{ NULL,                  NULL                      }
+};
+
+/**
+ * @var gameCommand
+ * @brief Game command list
+ *
+ * @todo Shared the command list in both mod
+ * or delete this list and use the help '?' command to provided a list of command
+ * or retrieved the command list by parsing the help '?' command
+ * or delete the help '?' command on game side and write help on cgame side
+ */
+static const char *gameCommand[] =
+{
+	"say",
+	"say_team",
+	"say_buddy",
+	"say_teamnl",
+	"vsay",
+	"vsay_team",
+	"vsay_buddy",
+	"?",
+	// copy of ?
+	"commands",
+	"help",
+	"+stats",
+	"+topshots",
+	"+objectives",
+	"autorecord",
+	"autoscreenshot",
+	"bottomshots",
+	"callvote",
+	"currenttime",
+	"dropobj",
+	"fireteam",
+	"follow",
+	"follownext",
+	"followprev",
+	"forcetapout",
+	"give",
+	"god",
+	"ignore",
+#ifdef FEATURE_PRESTIGE
+	"imcollectpr",
+#endif
+	"immaplist",
+	"impkd",
+#ifdef FEATURE_PRESTIGE
+	"impr",
+#endif
+	"impt",
+	"imready",
+#ifdef FEATURE_RATING
+	"imsr",
+#endif
+	"imvotetally",
+	"imwa",
+	"imws",
+	//   "invite",
+	"kill",
+	"lock",
+	"mapvote",
+#ifdef FEATURE_MULTIVIE
+	"mvadd",
+	"mvallies",
+	"mvaxis",
+	"mvall",
+	"mvnone",
+	"mvdel",
+#endif
+	"noclip",
+	"nofatigue",
+	"nostamina",
+	"notarget",
+	"notready",
+	"obj",
+	"pause",
+	"players",
+	"rconAuth",
+	"ready",
+	"readyteam",
+	"ref",
+	//   "remove",
+	"rs",
+	"sclogin",
+	"sclogout",
+	"score",
+	"scores",
+	"setviewpos",
+	"setspawnpt",
+	"sgstats",
+	"showstats",
+	"specinvite",
+	"specuninvite",
+	"speclock",
+	//   "speconly",
+	"specunlock",
+	"statsall",
+	"statsdump",
+	"stoprecord",
+	"stshots",
+	"team",
+	"timein",
+	"timeout",
+	"topshots",
+	"unignore",
+	"unlock",
+	"unpause",
+	"unready",
+	"vote",
+	"weaponstats",
+	"where",
+	"ws",
+	"wstats",
+	NULL,
 };
 
 /**
@@ -2100,90 +2426,17 @@ void CG_InitConsoleCommands(void)
 {
 	unsigned int i;
 
-	for (i = 0 ; i < sizeof(commands) / sizeof(commands[0]) ; i++)
+	for (i = 0; commands[i].cmd; i++)
 	{
 		trap_AddCommand(commands[i].cmd);
 	}
 
 	// the game server will interpret these commands, which will be automatically
 	// forwarded to the server after they are not recognized locally
-	trap_AddCommand("kill");
-	trap_AddCommand("say");
-	trap_AddCommand("give");
-	trap_AddCommand("god");
-	trap_AddCommand("notarget");
-	trap_AddCommand("noclip");
-	trap_AddCommand("team");
-	trap_AddCommand("follow");
-	trap_AddCommand("setviewpos");
-	trap_AddCommand("callvote");
-	trap_AddCommand("vote");
-
-	trap_AddCommand("nofatigue");
-	trap_AddCommand("nostamina");
-
-	trap_AddCommand("follownext");
-	trap_AddCommand("followprev");
-
-	trap_AddCommand("start_match");
-	trap_AddCommand("reset_match");
-	trap_AddCommand("swap_teams");
-
-	trap_AddCommand("?");
-	trap_AddCommand("bottomshots");
-	trap_AddCommand("commands");
-	trap_AddCommand("lock");
-#ifdef FEATURE_MULTIVIEW
-	trap_AddCommand("mvadd");
-	trap_AddCommand("mvaxis");
-	trap_AddCommand("mvallies");
-	trap_AddCommand("mvall");
-	trap_AddCommand("mvnone");
-#endif
-	trap_AddCommand("notready");
-	trap_AddCommand("pause");
-	trap_AddCommand("players");
-	trap_AddCommand("readyteam");
-	trap_AddCommand("ready");
-	trap_AddCommand("ref");
-	trap_AddCommand("say_teamnl");
-	trap_AddCommand("say_team");
-	trap_AddCommand("scores");
-	trap_AddCommand("specinvite");
-	trap_AddCommand("specuninvite");
-	trap_AddCommand("speclock");
-	trap_AddCommand("specunlock");
-	trap_AddCommand("statsall");
-	trap_AddCommand("statsdump");
-	trap_AddCommand("timein");
-	trap_AddCommand("timeout");
-	trap_AddCommand("topshots");
-	trap_AddCommand("unlock");
-	trap_AddCommand("unpause");
-	trap_AddCommand("unready");
-	trap_AddCommand("weaponstats");
-
-	trap_AddCommand("fireteam");
-	trap_AddCommand("showstats");
-
-	trap_AddCommand("ignore");
-	trap_AddCommand("unignore");
-
-	trap_AddCommand("campaign");
-	trap_AddCommand("listcampaigns");
-
-	trap_AddCommand("imready");
-	trap_AddCommand("say_buddy");
-	trap_AddCommand("setspawnpt");
-	trap_AddCommand("vsay");
-	trap_AddCommand("vsay_buddy");
-	trap_AddCommand("vsay_team");
-	trap_AddCommand("where");
-	trap_AddCommand("dropobj");
-	trap_AddCommand("imcollectpr");
-#ifdef FEATURE_LUA
-	trap_AddCommand("lua_status");
-#endif
+	for (i = 0; gameCommand[i]; i++)
+	{
+		trap_AddCommand(gameCommand[i]);
+	}
 
 	// remove engine commands to avoid abuse
 	trap_RemoveCommand("+lookup");

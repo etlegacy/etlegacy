@@ -203,7 +203,7 @@ static qboolean SV_IsValidUserinfo(netadr_t from, const char *userinfo)
 	int version;
 
 	// NOTE: but we might need to store the protocol around for potential non http/ftp clients
-	version = atoi(Info_ValueForKey(userinfo, "protocol"));
+	version = Q_atoi(Info_ValueForKey(userinfo, "protocol"));
 	if (version != PROTOCOL_VERSION)
 	{
 		NET_OutOfBandPrint(NS_SERVER, from, "print\n[err_update]" PROTOCOL_MISMATCH_ERROR_LONG);
@@ -294,67 +294,6 @@ static qboolean SV_isValidClient(netadr_t from, const char *userinfo)
 }
 
 /**
- * @brief SV_isValidGUID
- * @param[in] from
- * @param[in] userinfo
- * @return
- */
-static qboolean SV_isValidGUID(netadr_t from, const char *userinfo)
-{
-	int  i;
-	char guid[MAX_GUID_LENGTH + 1] = { 0 };
-
-	Q_strncpyz(guid, Info_ValueForKey(userinfo, "cl_guid"), sizeof(guid));
-
-	// don't allow empty, unknown or 'NO_GUID' guid
-	if (strlen(guid) < MAX_GUID_LENGTH)
-	{
-		NET_OutOfBandPrint(NS_SERVER, from, "print\n[err_dialog]Bad GUID: Invalid etkey. Please use the ET: Legacy client or add an etkey.\n");
-		Com_DPrintf("Client rejected for bad sized etkey\n");
-		return qfalse;
-	}
-
-	// check guid format
-	for (i = 0; i < MAX_GUID_LENGTH; i++)
-	{
-		if (guid[i] < 48 || (guid[i] > 57 && guid[i] < 65) || guid[i] > 70)
-		{
-			NET_OutOfBandPrint(NS_SERVER, from, "print\n[err_dialog]Bad GUID: Invalid etkey.\n");
-			Com_DPrintf("Client rejected for bad etkey\n");
-			return qfalse;
-		}
-	}
-
-	// don't check duplicate guid in developer mod
-	if (!sv_cheats->integer)
-	{
-		client_t *cl;
-
-		// check duplicate guid with validated clients
-		for (i = 0, cl = svs.clients; i < sv_maxclients->integer ; i++, cl++)
-		{
-			// don't check for bots GUID (empty) and player which are not fully connected
-			// otherwise it could check for the reserved client slot which already contain
-			// same client information trying to connect and who encounter latency / entering
-			// password at the same time
-			if (cl->state <= CS_PRIMED || cl->netchan.remoteAddress.type == NA_BOT)
-			{
-				continue;
-			}
-
-			if (!Q_strncmp(guid, cl->guid, MAX_GUID_LENGTH))
-			{
-				NET_OutOfBandPrint(NS_SERVER, from, "print\n[err_dialog]Bad GUID: Duplicate etkey.\n");
-				Com_DPrintf("Client rejected for duplicate etkey\n");
-				return qfalse;
-			}
-		}
-	}
-
-	return qtrue;
-}
-
-/**
  * @brief A "connect" OOB command has been received
  *
  * @param[in] from
@@ -393,8 +332,8 @@ void SV_DirectConnect(netadr_t from)
 		return;
 	}
 
-	challenge = atoi(Info_ValueForKey(userinfo, "challenge"));
-	qport     = atoi(Info_ValueForKey(userinfo, "qport"));
+	challenge = Q_atoi(Info_ValueForKey(userinfo, "challenge"));
+	qport     = Q_atoi(Info_ValueForKey(userinfo, "qport"));
 
 	// we don't need these keys after connection, release some space in userinfo
 	Info_RemoveKey(userinfo, "challenge");
@@ -495,7 +434,8 @@ void SV_DirectConnect(netadr_t from)
 		}
 		if (NET_CompareBaseAdr(from, cl->netchan.remoteAddress)
 		    && (cl->netchan.qport == qport
-		        || from.port == cl->netchan.remoteAddress.port))
+		        || from.port == cl->netchan.remoteAddress.port)
+		    && !cl->demoClient)
 		{
 			Com_Printf("%s:reconnect\n", NET_AdrToString(from));
 			newcl = cl;
@@ -508,12 +448,6 @@ void SV_DirectConnect(netadr_t from)
 
 			goto gotnewcl;
 		}
-	}
-
-	// check guid after we ensure client doesn't already use a slot
-	if (!SV_isValidGUID(from, userinfo))
-	{
-		return;
 	}
 
 	// find a client slot
@@ -608,6 +542,13 @@ gotnewcl:
 	// save the userinfo
 	Q_strncpyz(newcl->userinfo, userinfo, sizeof(newcl->userinfo));
 
+	// Save userinfo changes to demo
+	// Note: client configstring is derived from userinfo so we need to save it before it gets generated and saved in GAME_CLIENT_CONNECT
+	if (sv.demoState == DS_RECORDING)
+	{
+		SV_DemoWriteClientUserinfo(newcl, (const char *)newcl->userinfo);
+	}
+
 	// get the game a chance to reject this connection or modify the userinfo
 	denied = (char *)(VM_Call(gvm, GAME_CLIENT_CONNECT, clientNum, qtrue, qfalse)); // firstTime = qtrue
 	if (denied)
@@ -656,7 +597,7 @@ gotnewcl:
 	}
 
 	// newcl->protocol = PROTOCOL_VERSION;
-	newcl->protocol = atoi(Info_ValueForKey(userinfo, "protocol"));
+	newcl->protocol = Q_atoi(Info_ValueForKey(userinfo, "protocol"));
 
 	// check client's engine version
 	Com_ParseUA(&newcl->agent, Info_ValueForKey(userinfo, "etVersion"));
@@ -895,8 +836,15 @@ void SV_ClientEnterWorld(client_t *client, usercmd_t *cmd)
 	}
 
 	// set up the entity for the client
-	ent             = SV_GentityNum(clientNum);
-	ent->s.number   = clientNum;
+	ent           = SV_GentityNum(clientNum);
+	ent->s.number = clientNum;
+
+	// Differentiate between players and bots to properly replay gamestates
+	if (client->demoClient && strlen(client->userinfo) && strlen(Info_ValueForKey(client->userinfo, "cg_etVersion")))
+	{
+		ent->r.svFlags &= ~SVF_BOT;
+	}
+
 	client->gentity = ent;
 
 	client->deltaMessage     = -1;
@@ -999,7 +947,7 @@ static void SV_DoneDownload_f(client_t *cl)
  */
 void SV_NextDownload_f(client_t *cl)
 {
-	int block = atoi(Cmd_Argv(1));
+	int block = Q_atoi(Cmd_Argv(1));
 
 	if (block == cl->downloadClientBlock)
 	{
@@ -1270,7 +1218,7 @@ static qboolean SV_SetupDownloadFile(client_t *cl, msg_t *msg)
 				download_flag = 0;
 				if (sv_wwwDlDisconnected->integer)
 				{
-					download_flag |= (1 << DL_FLAG_DISCON);
+					download_flag |= BIT(DL_FLAG_DISCON);
 				}
 
 				MSG_WriteLong(msg, download_flag);   // flags
@@ -1584,17 +1532,17 @@ static void SV_VerifyPaks_f(client_t *cl)
 			}
 			// verify first to be the cgame checksum
 			pArg = Cmd_Argv(nCurArg++);
-			if (!pArg || *pArg == '@' || atoi(pArg) != nChkSum1)
+			if (!pArg || *pArg == '@' || Q_atoi(pArg) != nChkSum1)
 			{
-				Com_Printf("nChkSum1 %d == %d\n", atoi(pArg), nChkSum1);
+				Com_Printf("nChkSum1 %d == %d\n", Q_atoi(pArg), nChkSum1);
 				bGood = qfalse;
 				break;
 			}
 			// verify the second to be the ui checksum
 			pArg = Cmd_Argv(nCurArg++);
-			if (!pArg || *pArg == '@' || atoi(pArg) != nChkSum2)
+			if (!pArg || *pArg == '@' || Q_atoi(pArg) != nChkSum2)
 			{
-				Com_Printf("nChkSum2 %d == %d\n", atoi(pArg), nChkSum2);
+				Com_Printf("nChkSum2 %d == %d\n", Q_atoi(pArg), nChkSum2);
 				bGood = qfalse;
 				break;
 			}
@@ -1608,7 +1556,7 @@ static void SV_VerifyPaks_f(client_t *cl)
 			// store checksums since tokenization is not re-entrant
 			for (i = 0; nCurArg < nClientPaks; i++)
 			{
-				nClientChkSum[i] = atoi(Cmd_Argv(nCurArg++));
+				nClientChkSum[i] = Q_atoi(Cmd_Argv(nCurArg++));
 			}
 
 			// store number to compare against (minus one cause the last is the number of checksums)
@@ -1651,7 +1599,7 @@ static void SV_VerifyPaks_f(client_t *cl)
 
 			for (i = 0; i < nServerPaks; i++)
 			{
-				nServerChkSum[i] = atoi(Cmd_Argv(i));
+				nServerChkSum[i] = Q_atoi(Cmd_Argv(i));
 			}
 
 			// check if the client has provided any pure checksums of pk3 files not loaded by the server
@@ -1744,7 +1692,7 @@ void SV_UserinfoChanged(client_t *cl)
 		val = Info_ValueForKey(cl->userinfo, "rate");
 		if (strlen(val))
 		{
-			i        = atoi(val);
+			i        = Q_atoi(val);
 			cl->rate = i;
 			if (cl->rate < 1000)
 			{
@@ -1765,7 +1713,7 @@ void SV_UserinfoChanged(client_t *cl)
 	val = Info_ValueForKey(cl->userinfo, "handicap");
 	if (strlen(val))
 	{
-	    i = atoi(val);
+	    i = Q_atoi(val);
 	    if (i <= -100 || i > 100 || strlen(val) > 4)
 	    {
 	        Info_SetValueForKey(cl->userinfo, "handicap", "0");
@@ -1777,7 +1725,7 @@ void SV_UserinfoChanged(client_t *cl)
 	val = Info_ValueForKey(cl->userinfo, "snaps");
 	if (strlen(val))
 	{
-		i = atoi(val);
+		i = Q_atoi(val);
 		if (i < 1)
 		{
 			i = 1;
@@ -1822,7 +1770,7 @@ void SV_UserinfoChanged(client_t *cl)
 	cl->bDlOK = qfalse;
 	if (strlen(val))
 	{
-		i = atoi(val);
+		i = Q_atoi(val);
 		if (i != 0)
 		{
 			cl->bDlOK = qtrue;

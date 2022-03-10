@@ -267,7 +267,7 @@ void G_SetClientPrestige(gclient_t *cl, qboolean streakUp)
 	}
 
 	// prestige button clicked in intermission
-	if (level.intermissionQueued || level.intermissiontime)
+	if (!level.intermissionQueued && level.intermissiontime)
 	{
 		if (cnt < SK_NUM_SKILLS)
 		{

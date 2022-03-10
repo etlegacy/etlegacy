@@ -39,7 +39,7 @@
 #include "tr_public.h"
 #include "iqm.h"
 #ifdef FEATURE_RENDERER_GLES
-#   include "../rendererGLES/qgl.h"
+#include <GLES/gl.h>
 #else
 #   ifdef BUNDLED_GLEW
 #      include "GL/glew.h"
@@ -90,6 +90,8 @@ extern int gl_NormalFontBase;
 
 void RE_InitOpenGl(void);
 int RE_InitOpenGlSubsystems(void);
+
+void R_RegisterCommon(void);
 
 void R_DoGLimpShutdown(void);
 void R_PrintLongString(const char *string);
@@ -211,6 +213,8 @@ extern cvar_t *r_printShaders;
 
 extern cvar_t *r_maxPolys;
 extern cvar_t *r_maxPolyVerts;
+
+extern cvar_t *r_ext_multisample;
 
 /**
  * @enum renderSpeeds_t for r_speeds

@@ -393,6 +393,24 @@ void GL_State(unsigned long stateBits)
 	glState.glStateBits = stateBits;
 }
 
+void GL_FullscreenQuad(void)
+{
+	// Draw a simple quad, We could have done this in the GLSL code directly but that is version 130 upwards,
+	// and we want to be sure that R1 runs even with a toaster.
+	glBegin(GL_QUADS);
+	{
+		glTexCoord2f(0.0f, 0.0f);
+		glVertex3f(-1.0f, -1.0f, 0.0f);
+		glTexCoord2f(1.0f, 0.0f);
+		glVertex3f(1.0f, -1.0f, 0.0f);
+		glTexCoord2f(1.0f, 1.0f);
+		glVertex3f(1.0f, 1.0f, 0.0f);
+		glTexCoord2f(0.0f, 1.0f);
+		glVertex3f(-1.0f, 1.0f, 0.0f);
+	}
+	glEnd();
+}
+
 /**
  * @brief A player has predicted a teleport, but hasn't arrived yet
  */
@@ -444,6 +462,7 @@ void RB_BeginDrawingView(void)
 	// we will need to change the projection matrix before drawing
 	// 2D images again
 	backEnd.projection2D = qfalse;
+	R_BindMainFBO();
 
 	// set the modelview matrix for the viewer
 	SetViewportAndScissor();
@@ -791,6 +810,7 @@ RENDER BACK END FUNCTIONS
 void RB_SetGL2D(void)
 {
 	backEnd.projection2D = qtrue;
+	R_BindHudFBO();
 
 	// set 2D virtual screen size
 	glViewport(0, 0, glConfig.vidWidth, glConfig.vidHeight);
@@ -840,7 +860,7 @@ void RE_StretchRaw(int x, int y, int w, int h, int cols, int rows, const byte *d
 	}
 	R_IssuePendingRenderCommands();
 
-	// we definately want to sync every frame for the cinematics
+	// we definitely want to sync every frame for the cinematics
 	glFinish();
 
 	start = 0;
@@ -1291,12 +1311,18 @@ const void *RB_DrawBuffer(const void *data)
 {
 	const drawBufferCommand_t *cmd = ( const drawBufferCommand_t * ) data;
 
+	// Just skip this for now, not really an issue imho.
+	if (tr.useFBO)
+	{
+		return ( const void * ) (cmd + 1);
+	}
+
 	glDrawBuffer(cmd->buffer);
 
 	// clear screen for debugging
 	if (r_clear->integer)
 	{
-		glClearColor(1, 0, 0.5, 1);
+		glClearColor(1, 0, 0.5f, 1);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	}
 
@@ -1444,7 +1470,20 @@ const void *RB_SwapBuffers(const void *data)
 		RB_ShowImages();
 	}
 
+	GL_CheckErrors();
+
+	// If we are using a multisample fbo then blit it to a normal fbo first.
+	if (msMainFbo)
+	{
+		R_FboBlit(msMainFbo, mainFbo);
+	}
+	R_BindFBO(NULL);
+
+	GL_CheckErrors();
+
 	RB_GammaScreen();
+
+	R_DrawHudOnTop();
 
 	cmd = ( const swapBuffersCommand_t * ) data;
 

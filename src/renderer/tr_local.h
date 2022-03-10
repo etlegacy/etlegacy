@@ -1468,6 +1468,10 @@ typedef struct
 	float inverseSawToothTable[FUNCTABLE_SIZE];
 
 	int allowCompress;                          ///< temp var used while parsing shader only
+
+	qboolean gammaProgramUsed;
+	qboolean useFBO;
+
 } trGlobals_t;
 
 extern backEndState_t backEnd;
@@ -1513,6 +1517,7 @@ void GL_SelectTexture(int unit);
 void GL_TextureMode(const char *string);
 void GL_CheckErrors(void);
 void GL_State(unsigned long stateBits);
+void GL_FullscreenQuad(void);
 void GL_TexEnv(int env);
 void GL_Cull(int cullType);
 
@@ -1581,6 +1586,8 @@ void R_GammaCorrect(byte *buffer, int bufSize);
 
 void R_ImageList_f(void);
 void R_SkinList_f(void);
+
+byte *RB_ReadPixels(int x, int y, int width, int height, size_t *offset, int *padlen);
 
 const void *RB_TakeScreenshotCmd(const void *data);
 void R_ScreenShot_f(void);
@@ -2136,6 +2143,7 @@ qboolean R_FindCachedModel(const char *name, model_t *newmod);
 void R_LoadCacheModels(void);
 
 void *R_CacheImageAlloc(int size);
+void R_CacheImageFreeAll();
 void R_CacheImageFree(void *ptr);
 qboolean R_TouchImage(image_t *inImage);
 image_t *R_FindCachedImage(const char *name, int hash);
@@ -2160,6 +2168,84 @@ void R_LoadCacheShaders(void);
 void R_ScreenGamma(void);
 void R_InitGamma(void);
 void R_ShutdownGamma(void);
+
+// tr_shader_program.c
+typedef struct shaderProgram_s
+{
+	GLhandleARB program;
+	GLhandleARB vertexShader;
+	GLhandleARB fragmentShader;
+} shaderProgram_t;
+
+void R_UseShaderProgram(shaderProgram_t *program);
+GLint R_GetShaderProgramUniform(shaderProgram_t *program, const char *name);
+shaderProgram_t *R_CreateShaderProgram(const char *vert, const char *frag);
+void R_DestroyShaderProgram(shaderProgram_t *program);
+qboolean R_ShaderProgramsAvailable(void);
+void R_InitShaderPrograms(void);
+void R_ShutdownShaderPrograms(void);
+
+// tr_fbo.c
+typedef struct {
+	char name[MAX_QPATH];
+	GLuint fbo;
+
+	GLuint color;
+	GLuint colorBuffer;
+
+	GLuint depth;
+	GLuint depthBuffer;
+
+	qboolean stencil;
+	int samples;
+
+	int width;
+	int height;
+
+	uint8_t flags;
+} frameBuffer_t;
+
+typedef enum {
+	READ,
+	WRITE,
+	BOTH
+} fboBinding;
+
+typedef enum {
+	FBO_DEPTH = BIT(0),
+	FBO_ALPHA = BIT(1)
+}fboFlags;
+
+extern frameBuffer_t *mainFbo;
+extern frameBuffer_t *msMainFbo;
+#ifdef HUD_FBO
+extern frameBuffer_t *hudFbo;
+#endif
+
+void R_FBOSetViewport(frameBuffer_t *from, frameBuffer_t *to);
+void R_BindFBO(frameBuffer_t *fb);
+frameBuffer_t *R_CurrentFBO();
+byte *R_FBOReadPixels(frameBuffer_t *fb, size_t *offset, int *padlen);
+void R_FboCopyToTex(frameBuffer_t *from, image_t *to);
+void R_FboBlit(frameBuffer_t *from, frameBuffer_t *to);
+void R_FboRenderTo(frameBuffer_t *from, frameBuffer_t *to);
+void R_ShutdownFBO(void);
+void R_InitFBO(void);
+
+#define R_BindMainFBO() { if (msMainFbo) R_BindFBO(msMainFbo); else R_BindFBO(mainFbo); }
+
+#ifdef HUD_FBO
+#define R_BindHudFBO() { R_BindFBO(hudFbo); }
+#define R_ClearHudFBO() { R_BindHudFBO(); glClearColor(1.f, 1.f, 1.f, 0.f); glClear(GL_COLOR_BUFFER_BIT); }
+#define R_DrawHudOnTop() { \
+GL_State(GLS_DEPTHTEST_DISABLE | GLS_SRCBLEND_SRC_ALPHA | GLS_DSTBLEND_ONE_MINUS_SRC_ALPHA); \
+R_FboRenderTo(hudFbo, NULL); \
+}
+#else
+#define R_BindHudFBO()
+#define R_ClearHudFBO()
+#define R_DrawHudOnTop()
+#endif
 
 //------------------------------------------------------------------------------
 
@@ -2265,6 +2351,8 @@ extern cvar_t *r_cache;
 extern cvar_t *r_cacheShaders;
 extern cvar_t *r_cacheModels;
 
+extern cvar_t *r_fbo;
+
 extern cvar_t *r_cacheGathering;
 
 extern cvar_t *r_bonesDebug;
@@ -2272,5 +2360,7 @@ extern cvar_t *r_bonesDebug;
 extern cvar_t *r_wolfFog;
 
 extern cvar_t *r_gfxInfo;
+
+extern cvar_t *r_scale;
 
 #endif //TR_LOCAL_H

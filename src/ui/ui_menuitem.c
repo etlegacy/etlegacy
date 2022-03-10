@@ -1352,7 +1352,7 @@ const char *Item_Multi_Setting(itemDef_t *item)
 		}
 		else
 		{
-			return((multiPtr->count == 0) ? trap_TranslateString("None Defined") : trap_TranslateString("Custom"));
+			return((multiPtr->count == 0) ? DC->translateString(_("None Defined")) : DC->translateString(_("Custom")));
 		}
 	}
 	return "";
@@ -1626,7 +1626,7 @@ qboolean Item_TextField_HandleKey(itemDef_t *item, int key)
 	{
 		key &= ~K_CHAR_FLAG;
 
-		if (key == 'h' - 'a' + 1)          // ctrl-h is backspace
+		if (key == CTRL('h'))          // ctrl-h is backspace
 		{
 			if (item->cursorPos > 0)
 			{
@@ -2810,7 +2810,7 @@ void Item_YesNo_Paint(itemDef_t *item)
 	{
 		Item_Text_Paint(item);
 		DC->drawText(item->textRect.x + item->textRect.w + 8, item->textRect.y, item->textscale, newColor,
-		             value != 0.f ? DC->translateString("Yes") : DC->translateString("No"), 0, 0, item->textStyle);
+		             value != 0.f ? DC->translateString(_("Yes")) : DC->translateString(_("No")), 0, 0, item->textStyle);
 	}
 	else
 	{

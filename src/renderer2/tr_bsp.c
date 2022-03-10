@@ -114,22 +114,33 @@ static void HSVtoRGB(float h, float s, float v, float rgb[3])
  */
 static void R_ColorShiftLightingBytes(byte in[4], byte out[4])
 {
+	int r,g,b;
 	// shift the color data based on overbright range
 	int shift = r_mapOverBrightBits->integer - tr.overbrightBits;
+
 	// shift the data based on overbright range
-	int r = in[0] << shift;
-	int g = in[1] << shift;
-	int b = in[2] << shift;
-
-	// normalize by color instead of saturating to white
-	if ((r | g | b) > 255)
+	if (shift >= 0)
 	{
-		int max = r > g ? r : g;
+		r = in[0] << shift;
+		g = in[1] << shift;
+		b = in[2] << shift;
 
-		max = max > b ? max : b;
-		r   = r * 255 / max;
-		g   = g * 255 / max;
-		b   = b * 255 / max;
+		// normalize by color instead of saturating to white
+		if ((r | g | b) > 255)
+		{
+			int max = r > g ? r : g;
+
+			max = max > b ? max : b;
+			r   = r * 255 / max;
+			g   = g * 255 / max;
+			b   = b * 255 / max;
+		}
+	}
+	else
+	{
+		r = in[0] >> -shift;
+		g = in[1] >> -shift;
+		b = in[2] >> -shift;
 	}
 
 	out[0] = (byte)r;
@@ -446,7 +457,7 @@ void LoadRGBEToFloats(const char *name, float **pic, int *width, int *height, qb
 			if (!Q_stricmp(token, "Y"))
 			{
 				token = COM_ParseExt2((char **)&buf_p, qfalse);
-				w     = atoi(token);
+				w     = Q_atoi(token);
 
 				token = COM_ParseExt2((char **)&buf_p, qfalse);
 				if (!Q_stricmp(token, "+"))
@@ -455,7 +466,7 @@ void LoadRGBEToFloats(const char *name, float **pic, int *width, int *height, qb
 					if (!Q_stricmp(token, "X"))
 					{
 						token = COM_ParseExt2((char **)&buf_p, qfalse);
-						h     = atoi(token);
+						h     = Q_atoi(token);
 						break;
 					}
 					else
@@ -947,7 +958,7 @@ static void R_LoadLightmapsExternal(lump_t *l, const char *bspName)
 			}
 		}
 	}*/
-	
+
 	//{
 		/*lightmapFiles = ri.FS_ListFiles(mapName, ".png", &numLightmaps);
 
@@ -994,8 +1005,8 @@ static void R_LoadLightmapsExternal(lump_t *l, const char *bspName)
 				image = R_FindImageFile(va("%s/%s", mapName, lightmapFiles[i]), IF_LIGHTMAP | IF_NOCOMPRESSION | IF_NOPICMIP, FT_LINEAR, WT_EDGE_CLAMP, NULL);
 				Com_AddToGrowList(&tr.lightmaps, image);
 		}
-		
-	
+
+
 }
 
 /**
@@ -4795,9 +4806,9 @@ qboolean setProjTargetOrigin(char *lightDefs, char *targetname, trRefLight_t *li
 		Ren_Warning("setProjTargetOrigin WARNING: no target set!\n");
 		return qfalse;
 	}
-	
+
 	//Ren_Print("searching for targetname %s\n", targetname);
-	
+
 	// count lights
 	while (1)
 	{
@@ -4819,7 +4830,7 @@ qboolean setProjTargetOrigin(char *lightDefs, char *targetname, trRefLight_t *li
 		isInfoNull        = qfalse;
 		isRequestedTarget = qfalse;
 		origin            = NULL;
-		
+
 		// parse epairs
 		while (1)
 		{
@@ -4867,7 +4878,7 @@ qboolean setProjTargetOrigin(char *lightDefs, char *targetname, trRefLight_t *li
 			}
 
 			if (!Q_stricmp(keyname, "origin"))
-			{		
+			{
 				origin =  ri.Z_Malloc(strlen(value) + 1);
 				strcpy(origin, value);
 			}
@@ -4876,7 +4887,7 @@ qboolean setProjTargetOrigin(char *lightDefs, char *targetname, trRefLight_t *li
 		if (*token != '}')
 		{
 			Ren_Warning("setProjTargetOrigin WARNING: expected } found '%s'\n", token);
-			
+
 			if (origin)
 			{
 				ri.Free(origin);
@@ -4896,10 +4907,10 @@ qboolean setProjTargetOrigin(char *lightDefs, char *targetname, trRefLight_t *li
 			{
 				Ren_Warning("setProjTargetOrigin WARNING: requested target '%s' has no origin\n", targetname);
 			}
-			
+
 			return qtrue; // we are done
 		}
-		
+
 		if (origin)
 		{
 			ri.Free(origin);
@@ -4950,7 +4961,7 @@ void resetRefLight(trRefLight_t *light)
 }
 
 /**
- * @brief This is extracting classname light and lightJunior entities from bsp into s_worldData.lights 
+ * @brief This is extracting classname light and lightJunior entities from bsp into s_worldData.lights
  *
  * @param[in] lightDefs
  *
@@ -4958,7 +4969,7 @@ void resetRefLight(trRefLight_t *light)
  * FIXME: Inspect lightJunior (is there a need to assign these to models?)
  * FIXME: spotlights targets
  * FIXME: sun spotlight
- * 
+ *
  * FIXME: this might be optimized by more preparsing (f.e. store info_null ents for spotlights at the first time
  *        of parsing (we do a full parse of ent def string twice in R_LoadLights and for each target in setProjTarget ...)
  *
@@ -5204,18 +5215,18 @@ void R_LoadLights(char *lightDefs)
 			{
 				// FIXME: light: ANGLE, NONLINEAR, Q3MAP_NON-DYNAMIC
 				// FIXME: lightJunior: ANGLE, NEGATIVE_POINT, NEGATIVE_SPOT, NONLINEAR
-				int spawnflags = atoi(value);
+				int spawnflags = Q_atoi(value);
 			}
 			else if (!Q_stricmp(keyname, "angle")) // ETL (angle)
 			{
 				 // FIXME
-				int angle = atoi(value);
+				int angle = Q_atoi(value);
 			}
 			// Falloff/radius adjustment value. Multiply the run of the slope by "fade" (1.0f default only valid for "Linear" lights wolf)
 			else if (!Q_stricmp(keyname, "fade")) // ETL (fade)
 			{
 				 // FIXME
-				float fade = atoi(value);
+				float fade = Q_atoi(value);
 			}
 			// check for center
 			else if (!Q_stricmp(keyname, "light_center"))
@@ -5416,7 +5427,7 @@ void R_LoadLights(char *lightDefs)
 		{
 			ri.Free(target);
 		}
-		
+
 		numEntities++;
 	}
 
@@ -5538,11 +5549,11 @@ void R_LoadEntities(lump_t *l)
 		// check for ambient color
 		else if (!Q_stricmp(keyname, "_color") || !Q_stricmp(keyname, "color"))
 		{
-			
-			
+
+
 				sscanf(value, "%f %f %f", &tr.worldEntity.ambientLight[0], &tr.worldEntity.ambientLight[1],
 				       &tr.worldEntity.ambientLight[2]);
-			
+
 		}
 		// check for ambient scale constant
 		else if (!Q_stricmp(keyname, "ambientColor") || !Q_stricmp(keyname, "ambient") || !Q_stricmp(keyname, "_ambient"))
@@ -7949,7 +7960,7 @@ void R_SaveCubeProbes(const char *filename, byte *pixeldata, int width, int heig
 
 /**
  * @brief This is loading a single cube (6 probes) from our file into cubeTemp.
- * 
+ *
  * @param[in] number of cube probe
  * @param[in] total cube probes
  * @param[in, out] cubeTemp
@@ -8007,17 +8018,17 @@ qboolean R_LoadCubeProbe(int cubeProbeNum, int totalCubeProbes, byte *cubeTemp[6
 			ri.FS_FreeFile(buffer);
 			buffer = NULL;
 		}
-            
+
 		lastFileNum = fileNum + 1;
 		filename = va("cm/%s/cm_%04d.tga", s_worldData.baseName, fileNum + 1);
-                
+
 		if (ri.FS_FOpenFileRead(filename, NULL, qfalse) <= 0)
 		{
 			return qfalse;
 		}
-                
+
 		bytesRead = ri.FS_ReadFile(filename, (void **)&buffer);
-                
+
 		if (bytesRead <= 0)
 		{
 			//Ren_Print("loadCubeProbes: %s not found", filename);
@@ -8295,7 +8306,7 @@ void R_BuildCubeMaps(void)
 #if 1
 		// we are at probe j
 		int currentTics = (int)(j * ticsPerProbe); // explicit typecast from float to int. This will floor() the result (which is what we want)
-		
+
 		if (currentTics != tics)
 		{
 			tics = currentTics;
@@ -8340,12 +8351,12 @@ void R_BuildCubeMaps(void)
 			{
                                 pixeldata = ri.Z_Malloc(REF_CUBEMAP_STORE_SIZE * REF_CUBEMAP_STORE_SIZE * 4);
 			}
-                    
+
 			// render the cubemap
 			VectorCopy(cubeProbe->origin, rf.vieworg);
-		
+
 			AxisClear(rf.viewaxis);
-		
+
 			rf.fov_x  = 90;
 			rf.fov_y  = 90;
 			rf.x      = 0;
@@ -8353,9 +8364,9 @@ void R_BuildCubeMaps(void)
 			rf.width  = REF_CUBEMAP_SIZE;
 			rf.height = REF_CUBEMAP_SIZE;
 			rf.time   = 0;
-		
+
 			rf.rdflags = RDF_NOCUBEMAP | RDF_NOBLOOM;
-		
+
 			for (i = 0; i < 6; i++)
 			{
 				switch (i)
@@ -8382,11 +8393,11 @@ void R_BuildCubeMaps(void)
 					rf.viewaxis[0][0] = 1;
 					rf.viewaxis[0][1] = 0;
 					rf.viewaxis[0][2] = 0;
-		
+
 					rf.viewaxis[1][0] = 0;
 					rf.viewaxis[1][1] = 0;
 					rf.viewaxis[1][2] = -1;
-		
+
 					rf.viewaxis[2][0] = 0;
 					rf.viewaxis[2][1] = 1;
 					rf.viewaxis[2][2] = 0;
@@ -8399,11 +8410,11 @@ void R_BuildCubeMaps(void)
 					rf.viewaxis[0][0] = 0;
 					rf.viewaxis[0][1] = -1;
 					rf.viewaxis[0][2] = 0;
-		
+
 					rf.viewaxis[1][0] = 1;
 					rf.viewaxis[1][1] = 0;
 					rf.viewaxis[1][2] = 0;
-		
+
 					rf.viewaxis[2][0] = 0;
 					rf.viewaxis[2][1] = 0;
 					rf.viewaxis[2][2] = 1;
@@ -8448,28 +8459,28 @@ void R_BuildCubeMaps(void)
 					rf.viewaxis[0][0] = 0;
 					rf.viewaxis[0][1] = 0;
 					rf.viewaxis[0][2] = -1;
-		
+
 					rf.viewaxis[1][0] = -1;
 					rf.viewaxis[1][1] = 0;
 					rf.viewaxis[1][2] = 0;
-		
+
 					rf.viewaxis[2][0] = 0;
 					rf.viewaxis[2][1] = 1;
 					rf.viewaxis[2][2] = 0;
 					break;
 				}
 				}
-		
+
 				tr.refdef.pixelTarget = tr.cubeTemp[i];
 				tr.refdef.pixelTargetWidth  = REF_CUBEMAP_SIZE;
 				tr.refdef.pixelTargetHeight = REF_CUBEMAP_SIZE;
 				Com_Memset(tr.cubeTemp[i], 255, REF_CUBEMAP_SIZE * REF_CUBEMAP_SIZE * 4);
-		
+
 				RE_BeginFrame();
 				RE_RenderScene(&rf);
 				RE_EndFrame(&ii, &jj);
 
-#if 0 // encode the pixel intensity into the alpha channel, saves work in the shader		
+#if 0 // encode the pixel intensity into the alpha channel, saves work in the shader
 				//if (qtrue)
 				{
 					dest = tr.cubeTemp[i];
@@ -8478,11 +8489,11 @@ void R_BuildCubeMaps(void)
 						for (x = 0; x < REF_CUBEMAP_SIZE; x++)
 						{
 							xy = ((y * REF_CUBEMAP_SIZE) + x) * 4;
-		
+
 							r = dest[xy + 0];
 							g = dest[xy + 1];
 							b = dest[xy + 2];
-		
+
 							if ((r > g) && (r > b))
 							{
 								best = r;
@@ -8495,7 +8506,7 @@ void R_BuildCubeMaps(void)
 							{
 								best = b;
 							}
-		
+
 							dest[xy + 3] = best;
 						}
 					}
@@ -8503,7 +8514,7 @@ void R_BuildCubeMaps(void)
 #endif
 
 				// collate cubemaps into one large image and write it out
-		
+
 				// Copy this cube map into buffer
 				R_SubImageCpy(pixeldata,
 								sideX * REF_CUBEMAP_SIZE, sideY * REF_CUBEMAP_SIZE,
@@ -8511,7 +8522,7 @@ void R_BuildCubeMaps(void)
 								tr.cubeTemp[i],
 								REF_CUBEMAP_SIZE, REF_CUBEMAP_SIZE,
 								4, qtrue);
-		
+
 				dirtyBuf = qtrue;
 				// Increment counters, and write file if it's full
 				sideX++;
@@ -8575,10 +8586,10 @@ void R_BuildCubeMaps(void)
 	{
 		Ren_Print("Read %d cubemaps from files.\n", tr.cubeProbes.currentElements -1);
 	}
-        
+
 	if (pixeldata)
 	{
-		ri.Free(pixeldata);   
+		ri.Free(pixeldata);
 	}
 
 	// turn pixel targets off

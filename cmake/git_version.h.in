@@ -30,7 +30,7 @@
 
 /**
  * @def ETLEGACY_VERSION_INT
- * @brief Version in integral format. Contains only the most recent tag.
+ * @brief Version in integral format.
  */
 #define ETLEGACY_VERSION_INT @ETL_CMAKE_VERSION_INT@
 
@@ -39,7 +39,7 @@
 * @brief Version data used for windows RC compiler
 */
 #define PRODUCT_VERSION @ETL_CMAKE_PROD_VERSION@
-#define PRODUCT_VERSIONSTR "@ETL_CMAKE_PROD_VERSIONSTR@"
+#define PRODUCT_VERSION_STR "@ETL_CMAKE_PROD_VERSION_STR@"
 
 /**
 * @def PRODUCT_BUILD_TIME

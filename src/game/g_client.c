@@ -612,6 +612,10 @@ void CopyToBodyQue(gentity_t *ent)
 		offset[1] = origin[1] - body->r.currentOrigin[1];
 		offset[2] = origin[2] = body->r.currentOrigin[2];
 
+		// players are floating 0.125u above the ground, account for this
+		// since we're using snapped values, so trace doesn't start in solid
+		origin[2] += 0.125f;
+
 		G_StepSlideCorpse(body, origin);
 		// this is the max vector we can reach
 		VectorCopy(body->s.pos.trBase, origin);
@@ -643,6 +647,7 @@ void CopyToBodyQue(gentity_t *ent)
 	BODY_CLASS(body)     = ent->client->sess.playerType;
 	BODY_CHARACTER(body) = ent->client->pers.characterIndex;
 	BODY_VALUE(body) = 0;
+	BODY_LAST_ACTIVATE(body) = level.time;
 
 	//if ( ent->client->ps.eFlags & EF_PANTSED ){
 	//	body->s.time2 =	1;
@@ -669,7 +674,7 @@ void CopyToBodyQue(gentity_t *ent)
  * @param[in,out] ent
  * @param[in] angle
  */
-void SetClientViewAngle(gentity_t *ent, vec3_t angle)
+void SetClientViewAngle(gentity_t *ent, const vec3_t angle)
 {
 	int i;
 	int cmdAngle;
@@ -1020,21 +1025,21 @@ static void AddExtraSpawnAmmo(gclient_t *client, weapon_t weaponNum)
 
 	if (GetWeaponTableData(weaponNum)->type & WEAPON_TYPE_PISTOL)
 	{
-		if (client->sess.skill[SK_LIGHT_WEAPONS] >= 1)
+		if (BG_IsSkillAvailable(client->sess.skill, SK_LIGHT_WEAPONS, SK_LIGHT_WEAPONS_EXTRA_AMMO))
 		{
 			client->ps.ammo[GetWeaponTableData(weaponNum)->ammoIndex] += GetWeaponTableData(weaponNum)->maxClip;
 		}
 	}
 	else if (GetWeaponTableData(weaponNum)->type & WEAPON_TYPE_SMG)
 	{
-		if (client->sess.skill[SK_LIGHT_WEAPONS] >= 1)
+		if (BG_IsSkillAvailable(client->sess.skill, SK_LIGHT_WEAPONS, SK_LIGHT_WEAPONS_EXTRA_AMMO))
 		{
 			client->ps.ammo[GetWeaponTableData(weaponNum)->ammoIndex] += GetWeaponTableData(weaponNum)->maxClip;
 		}
 	}
 	else if (GetWeaponTableData(weaponNum)->type & WEAPON_TYPE_RIFLENADE)
 	{
-		if (client->sess.skill[SK_EXPLOSIVES_AND_CONSTRUCTION] >= 1)
+		if (BG_IsSkillAvailable(client->sess.skill, SK_EXPLOSIVES_AND_CONSTRUCTION, SK_ENGINEER_EXTRA_GRENADE))
 		{
 			client->ps.ammo[GetWeaponTableData(weaponNum)->ammoIndex] += 4;
 		}
@@ -1043,14 +1048,14 @@ static void AddExtraSpawnAmmo(gclient_t *client, weapon_t weaponNum)
 	{
 		if (client->sess.playerType == PC_ENGINEER)
 		{
-			if (client->sess.skill[SK_EXPLOSIVES_AND_CONSTRUCTION] >= 1)
+			if (BG_IsSkillAvailable(client->sess.skill, SK_EXPLOSIVES_AND_CONSTRUCTION, SK_ENGINEER_EXTRA_GRENADE))
 			{
 				client->ps.ammo[GetWeaponTableData(weaponNum)->ammoIndex] += 4;
 			}
 		}
 		if (client->sess.playerType == PC_MEDIC)
 		{
-			if (client->sess.skill[SK_FIRST_AID] >= 1)
+			if (BG_IsSkillAvailable(client->sess.skill, SK_FIRST_AID, SK_MEDIC_EXTRA_AMMO))
 			{
 				client->ps.ammo[GetWeaponTableData(weaponNum)->ammoIndex] += 1;
 			}
@@ -1058,14 +1063,14 @@ static void AddExtraSpawnAmmo(gclient_t *client, weapon_t weaponNum)
 	}
 	else if (GetWeaponTableData(weaponNum)->type & WEAPON_TYPE_SYRINGUE)
 	{
-		if (client->sess.skill[SK_FIRST_AID] >= 2)
+		if (BG_IsSkillAvailable(client->sess.skill, SK_FIRST_AID, SK_MEDIC_RESOURCES))
 		{
 			client->ps.ammo[GetWeaponTableData(weaponNum)->ammoIndex] += 2;
 		}
 	}
 	else if (GetWeaponTableData(weaponNum)->type & WEAPON_TYPE_RIFLE)
 	{
-		if (client->sess.skill[SK_LIGHT_WEAPONS] >= 1 || (client->sess.playerType == PC_COVERTOPS && client->sess.skill[SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS] >= 1))
+		if (BG_IsSkillAvailable(client->sess.skill, SK_LIGHT_WEAPONS, SK_LIGHT_WEAPONS_EXTRA_AMMO))
 		{
 			client->ps.ammo[GetWeaponTableData(weaponNum)->ammoIndex] += GetWeaponTableData(weaponNum)->maxClip;
 		}
@@ -1205,7 +1210,8 @@ void SetWolfSpawnWeapons(gclient_t *client)
 	// parse available primary weapons and check is valid for current class
 	for (i = 0; i < MAX_WEAPS_PER_CLASS && classInfo->classPrimaryWeapons[i].weapon; i++)
 	{
-		if (client->sess.skill[classInfo->classPrimaryWeapons[i].skill] >= classInfo->classPrimaryWeapons[i].minSkillLevel)
+		if (BG_IsSkillAvailable(client->sess.skill, classInfo->classPrimaryWeapons[i].skill, classInfo->classPrimaryWeapons[i].minSkillLevel)
+		    && client->sess.skill[classInfo->classPrimaryWeapons[i].skill] >= classInfo->classPrimaryWeapons[i].minSkillLevel)
 		{
 			if (classInfo->classPrimaryWeapons[i].weapon == client->sess.playerWeapon)
 			{
@@ -1232,7 +1238,8 @@ void SetWolfSpawnWeapons(gclient_t *client)
 	// parse available secondary weapons and check is valid for current class
 	for (i = 0; i < MAX_WEAPS_PER_CLASS && classInfo->classSecondaryWeapons[i].weapon; i++)
 	{
-		if (client->sess.skill[classInfo->classSecondaryWeapons[i].skill] >= classInfo->classSecondaryWeapons[i].minSkillLevel)
+		if (BG_IsSkillAvailable(client->sess.skill, classInfo->classSecondaryWeapons[i].skill, classInfo->classSecondaryWeapons[i].minSkillLevel)
+		    && client->sess.skill[classInfo->classSecondaryWeapons[i].skill] >= classInfo->classSecondaryWeapons[i].minSkillLevel)
 		{
 			if (classInfo->classSecondaryWeapons[i].weapon == client->sess.playerWeapon2)
 			{
@@ -1252,7 +1259,8 @@ void SetWolfSpawnWeapons(gclient_t *client)
 	{
 		weaponClassInfo = &classInfo->classMiscWeapons[i];
 
-		if (client->sess.skill[classInfo->classMiscWeapons[i].skill] >= classInfo->classMiscWeapons[i].minSkillLevel)
+		if (BG_IsSkillAvailable(client->sess.skill, classInfo->classMiscWeapons[i].skill, classInfo->classMiscWeapons[i].minSkillLevel)
+		    && client->sess.skill[classInfo->classMiscWeapons[i].skill] >= classInfo->classMiscWeapons[i].minSkillLevel)
 		{
 			// special check for riflenade, we need the launcher to use it
 			if (GetWeaponTableData(weaponClassInfo->weapon)->type & WEAPON_TYPE_RIFLENADE)
@@ -1327,7 +1335,7 @@ void AddMedicTeamBonus(gclient_t *client)
 		client->pers.maxHealth = 125;
 	}
 
-	if (client->sess.skill[SK_BATTLE_SENSE] >= 3)
+	if (BG_IsSkillAvailable(client->sess.skill, SK_BATTLE_SENSE, SK_BATTLE_SENSE_HEALTH))
 	{
 		client->pers.maxHealth += 15;
 	}
@@ -1675,7 +1683,7 @@ void ClientUserinfoChanged(int clientNum)
 	char       *reason;
 	char       *s;
 	char       cs_name[MAX_NETNAME] = "";
-	char       oldname[MAX_STRING_CHARS];
+	char       oldname[MAX_NAME_LENGTH];
 	char       userinfo[MAX_INFO_STRING];
 	char       skillStr[16] = "";
 	char       medalStr[16] = "";
@@ -1690,7 +1698,7 @@ void ClientUserinfoChanged(int clientNum)
 		if (reason)
 		{
 			G_Printf("ClientUserinfoChanged: CheckUserinfo: client %d: %s\n", clientNum, reason);
-			trap_DropClient(clientNum, va("^1%s", "Bad userinfo."), 99999);
+			trap_DropClient(clientNum, va("^1%s", "Bad userinfo."), 0);
 			return;
 		}
 	}
@@ -1743,13 +1751,13 @@ void ClientUserinfoChanged(int clientNum)
 		/*
 		            case TOK_pmove_fixed:
 		                if ( cs_value[0] )
-		                    client->pers.pmoveFixed = atoi(cs_value);
+		                    client->pers.pmoveFixed = Q_atoi(cs_value);
 		                else
 		                    client->pers.pmoveFixed = 0;
 		                break;
 		            case TOK_pmove_msec:
 		                if ( cs_value[0] )
-		                    client->pers.pmoveMsec = atoi(cs_value);
+		                    client->pers.pmoveMsec = Q_atoi(cs_value);
 		                else
 		                    client->pers.pmoveMsec = 8;
 		                // paranoia
@@ -1765,7 +1773,7 @@ void ClientUserinfoChanged(int clientNum)
 			{
 				// They're trying long names
 				G_Printf("ClientUserinfoChanged: client %d kicked for long name in config string old=%s, new=%s\n", clientNum, client->pers.cl_guid, cs_value);
-				trap_DropClient(clientNum, "Name too long. Plase change your name.", 0);
+				trap_DropClient(clientNum, va("Name too long (>%d). Plase change your name.", MAX_NETNAME - 1), 0);
 				return;
 			}
 			if (!g_extendedNames.integer)
@@ -1911,6 +1919,8 @@ void ClientUserinfoChanged(int clientNum)
 			client->pers.bAutoReloadAux = qfalse;
 			client->pmext.bAutoReload   = qfalse;
 		}
+
+		client->pers.activateLean = (client->pers.clientFlags & CGF_ACTIVATELEAN) != 0 ? qtrue : qfalse;
 	}
 
 	// set name
@@ -2018,13 +2028,14 @@ char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 	char       cs_value[MAX_STRING_CHARS]    = "";
 	char       cs_ip[MAX_STRING_CHARS]       = "";
 	char       cs_password[MAX_STRING_CHARS] = "";
-	char       cs_name[MAX_NETNAME]          = "";
+	char       cs_name[MAX_NETNAME + 1]      = "";
 	char       cs_guid[MAX_GUID_LENGTH + 1]  = "";
 	//char       cs_rate[MAX_STRING_CHARS]     = "";
 #ifdef FEATURE_LUA
 	char reason[MAX_STRING_CHARS] = "";
 #endif
 	qboolean allowGeoIP = qtrue;
+	int      i;
 
 	trap_GetUserinfo(clientNum, userinfo, sizeof(userinfo));
 
@@ -2055,7 +2066,7 @@ char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 			Q_strncpyz(cs_ip, cs_value, MAX_STRING_CHARS);
 			break;
 		case TOK_name:
-			Q_strncpyz(cs_name, cs_value, MAX_NETNAME);
+			Q_strncpyz(cs_name, cs_value, MAX_NETNAME + 1);
 			break;
 		case TOK_cl_guid:
 			Q_strncpyz(cs_guid, cs_value, MAX_GUID_LENGTH + 1);
@@ -2071,6 +2082,52 @@ char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 		}
 	}
 
+	// check guid
+	if (g_guidCheck.integer && !isBot)
+	{
+		// don't allow 'unknown' guid (2.60b client with PB not enabled)
+		if (!strcmp(cs_guid, "unknown"))
+		{
+			return "Bad GUID: Invalid etkey. Use the ET: Legacy client or enable PunkBuster with pb_cl_enable 1.";
+		}
+
+		// don't allow 'NO_GUID' guid (2.60b client with PB enabled but no etkey)
+		if (!strcmp(cs_guid, "NO_GUID"))
+		{
+			return "Bad GUID: Invalid etkey. Use the ET: Legacy client or add an etkey.";
+		}
+
+		// don't allow empty guid
+		if (strlen(cs_guid) < MAX_GUID_LENGTH)
+		{
+			return "Bad GUID: Invalid etkey. Use the ET: Legacy client.";
+		}
+
+		// check guid format
+		for (i = 0; i < MAX_GUID_LENGTH; i++)
+		{
+			if (cs_guid[i] < 48 || (cs_guid[i] > 57 && cs_guid[i] < 65) || cs_guid[i] > 70)
+			{
+				return "Bad GUID: Invalid etkey.";
+			}
+		}
+
+		// don't check duplicate guid in developer mod
+		if (!g_cheats.integer)
+		{
+			// check duplicate guid with validated clients
+			for (i = 0; i < level.numConnectedClients; i++)
+			{
+				gclient_t *cl = level.clients + level.sortedClients[i];
+
+				if (!Q_strncmp(cl->pers.cl_guid, cs_guid, MAX_GUID_LENGTH + 1))
+				{
+					return "Bad GUID: Duplicate etkey.";
+				}
+			}
+		}
+	}
+
 	// IP filtering
 	// recommanding PB based IP / GUID banning, the builtin system is pretty limited
 	// check to see if they are on the banned IP list
@@ -2079,10 +2136,16 @@ char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 		return "You are banned from this server.";
 	}
 
+	// don't permit empty name
+	if (!strlen(cs_name))
+	{
+		return va("Bad name: Name is empty. Please change your name.");
+	}
+
 	// don't permit long names ... - see also MAX_NETNAME
 	if (strlen(cs_name) >= MAX_NAME_LENGTH)
 	{
-		return "Bad name: Name too long. Please change your name.";
+		return va("Bad name: Name too long (>%d). Please change your name.", MAX_NAME_LENGTH - 1);
 	}
 
 	if (!g_extendedNames.integer)
@@ -2295,7 +2358,7 @@ char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 #endif
 
 #ifdef FEATURE_PRESTIGE
-	if (g_prestige.integer)
+	if (g_prestige.integer && g_gametype.integer != GT_WOLF_CAMPAIGN && g_gametype.integer != GT_WOLF_STOPWATCH && g_gametype.integer != GT_WOLF_LMS)
 	{
 		int i;
 
@@ -2306,8 +2369,8 @@ char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 			G_SetPlayerSkill(client, i);
 		}
 	}
-	else
 #endif
+
 	if (firstTime && g_xpSaver.integer && g_gametype.integer == GT_WOLF_CAMPAIGN)
 	{
 		int i;
@@ -2480,13 +2543,13 @@ void ClientBegin(int clientNum)
 
 	if (client->sess.sessionTeam == TEAM_AXIS || client->sess.sessionTeam == TEAM_ALLIES)
 	{
-		client->inactivityTime        = level.time + (g_inactivity.integer ? g_inactivity.integer : 60) * 1000;
-		client->inactivitySecondsLeft = (g_inactivity.integer) ? g_inactivity.integer : 60;
+		client->inactivityTime        = level.time + G_InactivityValue * 1000;
+		client->inactivitySecondsLeft = G_InactivityValue;
 	}
 	else
 	{
-		client->inactivityTime        = level.time + (g_spectatorInactivity.integer ? g_spectatorInactivity.integer : 60) * 1000;
-		client->inactivitySecondsLeft = (g_spectatorInactivity.integer) ? g_spectatorInactivity.integer : 60;
+		client->inactivityTime        = level.time + G_SpectatorInactivityValue * 1000;
+		client->inactivitySecondsLeft = G_SpectatorInactivityValue;
 	}
 
 	// Changed below for team independant maxlives
@@ -2783,7 +2846,7 @@ void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean
 		}
 		else
 		{
-			spawnPoint = SelectCTFSpawnPoint(client->sess.sessionTeam, client->pers.teamState.state, spawn_origin, spawn_angles, client->sess.userSpawnPointValue);
+			spawnPoint = SelectCTFSpawnPoint(client->sess.sessionTeam, client->pers.teamState.state, spawn_origin, spawn_angles, client->sess.userSpawnPointValue, client->sess.userMinorSpawnPointValue);
 		}
 	}
 
@@ -2799,6 +2862,11 @@ void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean
 	// unlagged
 
 	flags |= (client->ps.eFlags & EF_VOTED);
+
+	if (!teamChange)
+	{
+		flags |= (client->ps.eFlags & EF_READY);
+	}
 	// clear everything but the persistant data
 
 	ent->s.eFlags &= ~EF_MOUNTEDTANK;
@@ -2948,6 +3016,9 @@ void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean
 
 	client->ps.clientNum = index;
 
+	// start tracing legs and head again if they were in solid
+	client->pmext.deadInSolid = qfalse;
+
 	trap_GetUsercmd(client - level.clients, &ent->client->pers.cmd);
 
 	// Add appropriate weapons
@@ -3033,7 +3104,7 @@ void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean
 	// ***NOTE*** the following line is order-dependent and must *FOLLOW* SetWolfSpawnWeapons() in multiplayer
 	// AddMedicTeamBonus() now adds medic team bonus and stores in ps.stats[STAT_MAX_HEALTH].
 
-	if (client->sess.skill[SK_BATTLE_SENSE] >= 3)
+	if (BG_IsSkillAvailable(client->sess.skill, SK_BATTLE_SENSE, SK_BATTLE_SENSE_HEALTH))
 	{
 		// We get some extra max health, but don't spawn with that much
 		ent->health = client->ps.stats[STAT_HEALTH] = client->ps.stats[STAT_MAX_HEALTH] - 15;
@@ -3076,16 +3147,16 @@ void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean
 	}
 
 	client->respawnTime           = level.timeCurrent;
-	client->inactivityTime        = level.time + g_inactivity.integer * 1000;
+	client->inactivityTime        = level.time + G_InactivityValue * 1000;
 	client->inactivityWarning     = qfalse;
-	client->inactivitySecondsLeft = (g_inactivity.integer) ? g_inactivity.integer : 60;
+	client->inactivitySecondsLeft = G_InactivityValue;
 	client->latched_buttons       = 0;
 	client->latched_wbuttons      = 0;
 	client->deathTime             = 0;
 
 	if (level.intermissiontime)
 	{
-		MoveClientToIntermission(ent);
+		MoveClientToIntermission(ent, (EF_VOTED & client->ps.eFlags));
 
 		// send current mapvote tally
 		if (g_gametype.integer == GT_WOLF_MAPVOTE)
@@ -3117,7 +3188,7 @@ void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean
 	// positively link the client, even if the command times are weird
 	if (ent->client->sess.sessionTeam != TEAM_SPECTATOR)
 	{
-		BG_PlayerStateToEntityState(&client->ps, &ent->s, level.time, qtrue);
+		BG_PlayerStateToEntityState(&client->ps, &ent->s, level.time, qfalse);
 		VectorCopy(ent->client->ps.origin, ent->r.currentOrigin);
 		trap_LinkEntity(ent);
 	}
@@ -3129,7 +3200,7 @@ void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean
 	ent->client->ps.weapAnim = ((ent->client->ps.weapAnim & ANIM_TOGGLEBIT) ^ ANIM_TOGGLEBIT) | WEAP_IDLE1;
 
 	// clear entity state values
-	BG_PlayerStateToEntityState(&client->ps, &ent->s, level.time, qtrue);
+	BG_PlayerStateToEntityState(&client->ps, &ent->s, level.time, qfalse);
 
 	// G_ResetMarkers(ent);
 
@@ -3182,8 +3253,8 @@ void ClientDisconnect(int clientNum)
 	{
 		G_SetClientPrestige(ent->client, qfalse);
 	}
-	else
 #endif
+
 	if (g_xpSaver.integer && g_gametype.integer == GT_WOLF_CAMPAIGN && !level.intermissiontime)
 	{
 		G_XPSaver_Store(ent->client);
@@ -3393,21 +3464,35 @@ float ClientHitboxMaxZ(gentity_t *hitEnt)
 	}
 	else if (hitEnt->client->ps.eFlags & EF_PRONE)
 	{
+		// Prone hitbox height is calculated with head computed from G_BuildHead to stay right under head
+		// (just for hitbox transition into prone so it's not instantaneous)
+		if (hitEnt->client->tempHead)
+		{
+			float maxs = hitEnt->client->tempHead->r.currentOrigin[2] - hitEnt->r.currentOrigin[2] + hitEnt->client->tempHead->r.mins[2];
+			return (maxs < PRONE_BODYHEIGHT) ? PRONE_BODYHEIGHT : maxs;
+		}
+
 		return PRONE_BODYHEIGHT;
-	}
-	else if (hitEnt->client->ps.eFlags & EF_CROUCHING &&
-	         hitEnt->client->ps.velocity[0] == 0.f && hitEnt->client->ps.velocity[1] == 0.f)
-	{
-		// crouched idle animation is lower than the moving one
-		return CROUCH_IDLE_BODYHEIGHT;
 	}
 	else if (hitEnt->client->ps.eFlags & EF_CROUCHING)
 	{
+		// Crouched hitbox height is calculated with head computed from G_BuildHead to stay right under head
+		if (hitEnt->client->tempHead)
+		{
+			float maxs = hitEnt->client->tempHead->r.currentOrigin[2] - hitEnt->r.currentOrigin[2] + hitEnt->client->tempHead->r.mins[2];
+			return (maxs < CROUCH_IDLE_BODYHEIGHT) ? CROUCH_IDLE_BODYHEIGHT : maxs;
+		}
+		else if (hitEnt->client->ps.velocity[0] == 0.f && hitEnt->client->ps.velocity[1] == 0.f)
+		{
+			// crouched idle animation is lower than the moving one
+			return CROUCH_IDLE_BODYHEIGHT;
+		}
+
 		// crouched moving animation is higher than the idle one
 		return CROUCH_BODYHEIGHT;
 	}
 	else
 	{
-		return g_playerHitBoxHeight.integer;
+		return DEFAULT_BODYHEIGHT;
 	}
 }

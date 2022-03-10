@@ -383,16 +383,18 @@ void G_RegisterFireteam(int entityNum)
 	ft->joinOrder[0] = leader - g_entities;
 	ft->ident        = ident;
 
-	if (g_autoFireteams.integer)
+	switch (g_autoFireteams.integer)
 	{
+	case 1:
 		ft->priv = qfalse;
 
 		trap_SendServerCommand(entityNum, "aft -1");
 		leader->client->pers.autofireteamEndTime = level.time + 20500;
-	}
-	else
-	{
+		break;
+	case 2:
+	default:
 		ft->priv = qfalse;
+		break;
 	}
 
 #ifdef FEATURE_OMNIBOT
@@ -961,7 +963,7 @@ int G_FireteamNumberForString(const char *name, team_t team)
 
 	if (fireteam <= 0)
 	{
-		fireteam = atoi(name);
+		fireteam = Q_atoi(name);
 	}
 
 	return fireteam;
@@ -1082,15 +1084,17 @@ void G_GiveAdminOfFireTeam(int entityNum, int otherEntityNum)
 /**
  * @brief Cmd_FireTeam_MP_f
  * @param[in] ent
+ * @param dwCommand - unused
+ * @param value    - unused
  */
-void Cmd_FireTeam_MP_f(gentity_t *ent)
+void Cmd_FireTeam_MP_f(gentity_t *ent, unsigned int dwCommand, int value)
 {
 	char command[32];
 	int  i;
 
 	if (trap_Argc() < 2)
 	{
-		G_ClientPrint(ent - g_entities, "usage: fireteam <create|leave|apply|invite>");
+		G_ClientPrint(ent - g_entities, "usage: fireteam <create|disband|leave|apply|invite|warn|kick|propose|privacy|admin>");
 		return;
 	}
 
@@ -1157,7 +1161,7 @@ void Cmd_FireTeam_MP_f(gentity_t *ent)
 
 		if (clientnum <= 0)
 		{
-			clientnum = atoi(namebuffer);
+			clientnum = Q_atoi(namebuffer);
 
 			if ((clientnum <= 0 || clientnum > MAX_CLIENTS) || !g_entities[clientnum - 1].inuse || !g_entities[clientnum - 1].client)
 			{
@@ -1201,7 +1205,7 @@ void Cmd_FireTeam_MP_f(gentity_t *ent)
 
 		if (clientnum <= 0)
 		{
-			clientnum = atoi(namebuffer);
+			clientnum = Q_atoi(namebuffer);
 
 			if ((clientnum <= 0 || clientnum > MAX_CLIENTS) || !g_entities[clientnum - 1].inuse || !g_entities[clientnum - 1].client)
 			{
@@ -1245,7 +1249,7 @@ void Cmd_FireTeam_MP_f(gentity_t *ent)
 
 		if (clientnum <= 0)
 		{
-			clientnum = atoi(namebuffer);
+			clientnum = Q_atoi(namebuffer);
 
 			if ((clientnum <= 0 || clientnum > MAX_CLIENTS) || !g_entities[clientnum - 1].inuse || !g_entities[clientnum - 1].client)
 			{
@@ -1289,7 +1293,7 @@ void Cmd_FireTeam_MP_f(gentity_t *ent)
 
 		if (clientnum <= 0)
 		{
-			clientnum = atoi(namebuffer);
+			clientnum = Q_atoi(namebuffer);
 
 			if ((clientnum <= 0 || clientnum > MAX_CLIENTS) || !g_entities[clientnum - 1].inuse || !g_entities[clientnum - 1].client)
 			{
@@ -1360,7 +1364,7 @@ void Cmd_FireTeam_MP_f(gentity_t *ent)
 
 		if (clientnum <= 0)
 		{
-			clientnum = atoi(namebuffer);
+			clientnum = Q_atoi(namebuffer);
 
 			if ((clientnum <= 0 || clientnum > MAX_CLIENTS) || !g_entities[clientnum - 1].inuse || !g_entities[clientnum - 1].client)
 			{

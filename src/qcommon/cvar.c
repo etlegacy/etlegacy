@@ -232,7 +232,7 @@ void Cvar_CommandCompletion(void (*callback)(const char *s))
 
 	for (cvar = cvar_vars ; cvar ; cvar = cvar->next)
 	{
-		if (cvar->name)
+		if (cvar->name && (cvar->flags & CVAR_NOTABCOMPLETE) == 0)
 		{
 			callback(cvar->name);
 		}
@@ -568,8 +568,8 @@ cvar_t *Cvar_Get(const char *varName, const char *value, int flags)
 	var->string            = CopyString(value);
 	var->modified          = qtrue;
 	var->modificationCount = 1;
-	var->value             = (float)(atof(var->string));
-	var->integer           = atoi(var->string);
+	var->value             = Q_atof(var->string);
+	var->integer           = Q_atoi(var->string);
 	var->resetString       = CopyString(value);
 	var->validate          = qfalse;
 	var->description       = NULL;
@@ -614,9 +614,9 @@ cvar_t *Cvar_Get(const char *varName, const char *value, int flags)
  */
 cvar_t *Cvar_GetAndDescribe(const char *varName, const char *value, int flags, const char *description)
 {
-    cvar_t *tmp = Cvar_Get(varName, value, flags);
-    Cvar_SetDescription(tmp, description);
-    return tmp;
+	cvar_t *tmp = Cvar_Get(varName, value, flags);
+	Cvar_SetDescription(tmp, description);
+	return tmp;
 }
 
 #define FOREIGN_MSG "Foreign characters are not allowed in userinfo variables.\n"
@@ -670,7 +670,7 @@ cvar_t *Cvar_Set2(const char *var_name, const char *value, qboolean force)
 		char *cleaned;
 
 		cleaned = Cvar_ClearForeignCharacters(value);
-		if (strcmp(value, cleaned))
+		if (strcmp(value, cleaned) != 0)
 		{
 #ifdef DEDICATED
 			Com_Printf(FOREIGN_MSG);
@@ -782,8 +782,8 @@ cvar_t *Cvar_Set2(const char *var_name, const char *value, qboolean force)
 	Z_Free(var->string);     // free the old value string
 
 	var->string  = CopyString(value);
-	var->value   = (float)(atof(var->string));
-	var->integer = atoi(var->string);
+	var->value   = Q_atof(var->string);
+	var->integer = Q_atoi(var->string);
 
 	return var;
 }
@@ -842,7 +842,7 @@ void Cvar_SetValue(const char *var_name, float value)
 {
 	char val[32];
 
-	if (value == (int)value)
+	if (Q_isintegral(value))
 	{
 		Com_sprintf(val, sizeof(val), "%i", (int)value);
 	}
@@ -910,7 +910,7 @@ void Cvar_SetCheatState(void)
 				Z_Free(var->latchedString);
 				var->latchedString = NULL;
 			}
-			if (strcmp(var->resetString, var->string))
+			if (strcmp(var->resetString, var->string) != 0)
 			{
 				Cvar_Set(var->name, var->resetString);
 			}
@@ -1068,12 +1068,12 @@ void Cvar_Cycle_f(void)
 	}
 
 	oldvalue = value = (int)(Cvar_VariableValue(Cmd_Argv(1)));
-	start    = atoi(Cmd_Argv(2));
-	end      = atoi(Cmd_Argv(3));
+	start    = Q_atoi(Cmd_Argv(2));
+	end      = Q_atoi(Cmd_Argv(3));
 
 	if (Cmd_Argc() == 5)
 	{
-		step = abs(atoi(Cmd_Argv(4)));
+		step = abs(Q_atoi(Cmd_Argv(4)));
 	}
 	else
 	{
@@ -1252,7 +1252,7 @@ void Cvar_WriteVariables(fileHandle_t f)
 void Cvar_List_f(void)
 {
 	cvar_t   *var;
-	int      i = 0;
+	int      i           = 0;
 	int      selectedNum = 0;
 	char     *match;
 	qboolean raw = qfalse;
@@ -1377,7 +1377,7 @@ void Cvar_List_f(void)
 
 			Com_Printf(" %-35s \"", var->name);
 
-			for (index = var->string; ; )
+			for (index = var->string; ;)
 			{
 				hat = strchr(index, '^');
 
@@ -1394,7 +1394,7 @@ void Cvar_List_f(void)
 		}
 		else
 		{
-			Com_Printf(" %-35s \"%-s\" %s \"%-s\"\n", var->name, var->string, (strcmp(var->string, var->resetString)? "^3!":"-"),var->resetString);
+			Com_Printf(" %-35s \"%-s\" %s \"%-s\"\n", var->name, var->string, (strcmp(var->string, var->resetString)? "^3!":"-"), var->resetString);
 		}
 	}
 
@@ -1526,12 +1526,87 @@ void Cvar_Restart(qboolean unsetVM)
 }
 
 /**
+ * @brief Unsets all cvars with CVAR_USER_CREATED flag
+ * @param verbose
+ */
+static void Cvar_Trim(qboolean verbose)
+{
+	cvar_t *curvar = cvar_vars;
+	while (curvar)
+	{
+		if (curvar->flags & CVAR_USER_CREATED)
+		{
+			if (verbose)
+			{
+				Com_Printf("unset cvar" S_COLOR_YELLOW " %s\n", curvar->name);
+			}
+
+			curvar = Cvar_Unset(curvar);
+			continue;
+		}
+
+		curvar = curvar->next;
+	}
+}
+
+/**
  * @brief Resets all cvars to their hardcoded values
  */
 void Cvar_Restart_f(void)
 {
 	Cvar_Restart(qfalse);
 	Com_Printf("Cvars have been reset.\n");
+}
+
+/**
+ * @brief Unsets all user created cvars
+ * Only runs if both client and server are running, unless forced
+ */
+static void Cvar_Trim_f(void)
+{
+	qboolean forced  = qfalse;
+	qboolean verbose = qtrue;
+	int      i;
+
+	for (i = 1; i < Cmd_Argc(); i++)
+	{
+		const char *s = Cmd_Argv(i);
+		if (*s == '-')
+		{
+			s++;
+			while (*s != '\0')
+			{
+				if (*s == 'f')
+				{
+					forced = qtrue;
+				}
+				else if (*s == 's') // silent mode
+				{
+					verbose = qfalse;
+				}
+				s++;
+			}
+		}
+	}
+
+#ifdef DEDICATED
+	if ((com_sv_running && com_sv_running->integer) || forced)
+#else
+	if ((com_cl_running && com_cl_running->integer && com_sv_running && com_sv_running->integer) || forced)
+#endif
+	{
+		Cvar_Trim(verbose);
+		return;
+	}
+
+#ifdef DEDICATED
+	Com_Printf(S_COLOR_YELLOW " You're not running a server, so not all subsystems/VMs are loaded.\n");
+#else
+	Com_Printf(S_COLOR_YELLOW " You're not running a listen server, so not all subsystems/VMs are loaded.\n");
+#endif
+	Com_Printf(S_COLOR_YELLOW " This means you'd remove cvars that are probably best kept around.\n");
+	Com_Printf(S_COLOR_YELLOW " If you don't care, you can force the call by running '\\%s -f'.\n", Cmd_Argv(0));
+	Com_Printf(S_COLOR_YELLOW " You've been warned.\n");
 }
 
 /**
@@ -1727,11 +1802,10 @@ void Cvar_Register(vmCvar_t *vmCvar, const char *varName, const char *defaultVal
 	if (cv && (cv->flags & CVAR_PROTECTED))
 	{
 		Com_Printf(S_COLOR_YELLOW "WARNING: VM tried to register protected cvar '%s' with value '%s'%s\n",
-		varName, defaultValue, (flags & ~cv->flags ) != 0 ? " and new flags" : "" );
+		           varName, defaultValue, (flags & ~cv->flags) != 0 ? " and new flags" : "");
 	}
-
 	// FIXME/inspect: this causes an endless loop while loading some maps (f.e. fueldump)
- 	// CVAR_LATCH | CVAR_ARCHIVE and CVAR_LATCH | CVAR_SERVERINFO cvars from mod game are affected:
+	// CVAR_LATCH | CVAR_ARCHIVE and CVAR_LATCH | CVAR_SERVERINFO cvars from mod game are affected:
 	//WARNING: VM tried to register engine latch cvar to latched value: cvar 'g_gametype' with value '4'
 	//WARNING: VM tried to register engine latch cvar to latched value: cvar 'sv_maxclients' with value '20'
 	//WARNING: VM tried to register engine latch cvar to latched value: cvar 'g_maxGameClients' with value '0'
@@ -1845,4 +1919,5 @@ void Cvar_Init(void)
 	Cmd_AddCommand("unset", Cvar_Unset_f, "Unsets a userdefined cvar.", Cvar_CompleteCvarName);
 	Cmd_AddCommand("cvarlist", Cvar_List_f, "Prints a list of all cvars.");
 	Cmd_AddCommand("cvar_restart", Cvar_Restart_f, "Resets all cvars to their hardcoded values.");
+	Cmd_AddCommand("cvar_trim", Cvar_Trim_f, "Removes all user created cvars.");
 }

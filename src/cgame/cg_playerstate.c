@@ -50,8 +50,6 @@ void CG_DamageFeedback(int yawByte, int pitchByte, int damage)
 	float        kick;
 	int          health = cg.snap->ps.stats[STAT_HEALTH];
 	float        scale;
-	vec3_t       dir;
-	vec3_t       angles;
 	int          slot;
 	viewDamage_t *vd;
 
@@ -67,16 +65,8 @@ void CG_DamageFeedback(int yawByte, int pitchByte, int damage)
 	{
 		scale = 40.0f / health;
 	}
-	kick = damage * scale;
 
-	if (kick < 5)
-	{
-		kick = 5;
-	}
-	if (kick > 10)
-	{
-		kick = 10;
-	}
+	kick = Com_Clamp(5, 10, damage * scale);
 
 	// find a free slot
 	for (slot = 0; slot < MAX_VIEWDAMAGE; slot++)
@@ -90,8 +80,8 @@ void CG_DamageFeedback(int yawByte, int pitchByte, int damage)
 	if (slot == MAX_VIEWDAMAGE)
 	{
 		return;     // no free slots, never override or splats will suddenly disappear
-
 	}
+
 	vd = &cg.viewDamage[slot];
 
 	// if yaw and pitch are both 255, make the damage always centered (falling, etc)
@@ -101,16 +91,17 @@ void CG_DamageFeedback(int yawByte, int pitchByte, int damage)
 		vd->damageY    = 0;
 		cg.v_dmg_roll  = 0;
 		cg.v_dmg_pitch = -kick;
+		cg.v_dmg_angle = -1;
 	}
 	else
 	{
-		float left, front, up, dist;
-		// positional
-		float pitch = pitchByte / 255.0f * 360;
-		float yaw   = yawByte / 255.0f * 360;
+		vec3_t dir;
+		vec3_t angles;
+		float  left, front, up;
 
-		angles[PITCH] = pitch;
-		angles[YAW]   = yaw;
+		// positional
+		angles[PITCH] = pitchByte / 255.0f * 360;
+		angles[YAW]   = yawByte / 255.0f * 360;
 		angles[ROLL]  = 0;
 
 		AngleVectors(angles, dir, NULL, NULL);
@@ -121,43 +112,17 @@ void CG_DamageFeedback(int yawByte, int pitchByte, int damage)
 		up    = DotProduct(dir, cg.refdef.viewaxis[2]);
 
 		dir[0] = front;
-		dir[1] = left;
-		dir[2] = 0;
-		dist   = VectorLength(dir);
-		if (dist < 0.1f)
-		{
-			dist = 0.1f;
-		}
+		dir[1] = -left;
+		dir[2] = up;
 
-		cg.v_dmg_roll = kick * left;
+		vectoangles(dir, angles);
 
+		cg.v_dmg_roll  = kick * left;
 		cg.v_dmg_pitch = -kick * front;
+		cg.v_dmg_angle = angles[YAW];
 
-		if (front <= 0.1f)
-		{
-			front = 0.1f;
-		}
-		vd->damageX = crandom() * 0.3f + -left / front;
-		vd->damageY = crandom() * 0.3f + up / dist;
-	}
-
-	// clamp the position
-	if (vd->damageX > 1.0f)
-	{
-		vd->damageX = 1.0f;
-	}
-	if (vd->damageX < -1.0f)
-	{
-		vd->damageX = -1.0f;
-	}
-
-	if (vd->damageY > 1.0f)
-	{
-		vd->damageY = 1.0f;
-	}
-	if (vd->damageY < -1.0f)
-	{
-		vd->damageY = -1.0f;
+		vd->damageX = -left;
+		vd->damageY = front;
 	}
 
 	// don't let the screen flashes vary as much
@@ -165,8 +130,9 @@ void CG_DamageFeedback(int yawByte, int pitchByte, int damage)
 	{
 		kick = 10;
 	}
+
 	vd->damageValue    = kick;
-	cg.v_dmg_time      = cg.time + DAMAGE_TIME;
+	cg.v_dmg_time      = cg.time + cg_bloodFlashTime.value;
 	vd->damageTime     = cg.snap->serverTime;
 	vd->damageDuration = (int)(kick * 50 * (1 + 2 * (!vd->damageX && !vd->damageY)));
 	cg.damageTime      = cg.snap->serverTime;
@@ -571,12 +537,6 @@ void CG_TransitionPlayerState(playerState_t *ps, playerState_t *ops)
 		}
 	}
 
-	// don't let players run with rifles -- speed 80 == crouch, 128 == walk, 256 == run until player start to don't run
-	if ((GetWeaponTableData(ps->weapon)->type & WEAPON_TYPE_SCOPED) && VectorLength(ps->velocity) > 127)
-	{
-		CG_FinishWeaponChange(ps->weapon, GetWeaponTableData(ps->weapon)->weapAlts);
-	}
-
 	// run events
 	CG_CheckPlayerstateEvents(ps, ops);
 
@@ -586,5 +546,6 @@ void CG_TransitionPlayerState(playerState_t *ps, playerState_t *ops)
 		cg.duckChange = ps->viewheight - ops->viewheight;
 		cg.duckTime   = cg.time;
 		cg.wasProne   = ops->eFlags & EF_PRONE;
+		VectorSubtract(ops->origin, ps->origin, cg.deltaProne);
 	}
 }

@@ -733,6 +733,68 @@ void G_HistoricalTraceEnd(gentity_t *ent)
 	G_AdjustClientPositions(ent, 0, qfalse);
 }
 
+static float maxsBackup[MAX_CLIENTS] = { 0 };
+
+/**
+ * @brief G_AdjustClientHeight
+ * @param[in] ent
+ */
+void G_AdjustClientHeight(gentity_t *ent)
+{
+	int i;
+
+	for (i = 0; i < level.numConnectedClients; ++i)
+	{
+		gentity_t *client = &g_entities[level.sortedClients[i]];
+
+		if (client->inuse &&
+		    (client->client->sess.sessionTeam == TEAM_AXIS || client->client->sess.sessionTeam == TEAM_ALLIES) &&
+		    (client != ent) &&
+		    client->r.linked &&
+		    !(client->client->ps.pm_flags & PMF_LIMBO) &&
+		    (client->client->ps.pm_type == PM_NORMAL || client->client->ps.pm_type == PM_DEAD)
+		    )
+		{
+			maxsBackup[level.sortedClients[i]] = client->r.maxs[2];
+
+			// use higher hitbox for syringe only
+			if (ent->s.weapon == WP_MEDIC_SYRINGE && (client->s.eFlags & (EF_DEAD | EF_PRONE)))
+			{
+				client->r.maxs[2] = CROUCH_BODYHEIGHT;
+			}
+			else
+			{
+				client->r.maxs[2] = ClientHitboxMaxZ(client);
+			}
+
+			trap_LinkEntity(client);
+		}
+	}
+}
+
+/**
+ * @brief G_ResetClientHeight
+ */
+void G_ResetClientHeight(void)
+{
+	int i;
+
+	// backup hitbox height
+	for (i = 0; i < level.numConnectedClients; ++i)
+	{
+		if (maxsBackup[level.sortedClients[i]] != 0.f)
+		{
+			gentity_t *client = &g_entities[level.sortedClients[i]];
+            
+			client->r.maxs[2] = maxsBackup[level.sortedClients[i]];
+
+			maxsBackup[level.sortedClients[i]] = 0;
+
+			trap_LinkEntity(client);
+		}
+	}
+}
+
 /**
  * @brief Run a trace without fixups (historical fixups will be done externally)
  * @param[in] ent
@@ -749,35 +811,13 @@ void G_Trace(gentity_t *ent, trace_t *results, const vec3_t start, const vec3_t 
 	vec3_t dir;
 	int    res;
 
-	float maxsBackup[MAX_CLIENTS] ;
-	int   i, clientNum;
-
 	G_AttachBodyParts(ent);
 
-	for (i = 0; i < level.numConnectedClients; ++i)
-	{
-		clientNum             = level.sortedClients[i];
-		maxsBackup[clientNum] = g_entities[clientNum].r.maxs[2];
-
-		// use higher hitbox for syringe only
-		if (ent->s.weapon == WP_MEDIC_SYRINGE && (g_entities[clientNum].s.eFlags & (EF_DEAD | EF_PRONE)))
-		{
-			g_entities[clientNum].r.maxs[2] = CROUCH_BODYHEIGHT;
-		}
-		else
-		{
-			g_entities[clientNum].r.maxs[2] = ClientHitboxMaxZ(&g_entities[clientNum]);
-		}
-	}
+	G_AdjustClientHeight(ent);
 
 	trap_Trace(results, start, mins, maxs, end, passEntityNum, contentmask);
 
-	// backup hitbox height
-	for (i = 0; i < level.numConnectedClients; ++i)
-	{
-		clientNum                       = level.sortedClients[i];
-		g_entities[clientNum].r.maxs[2] = maxsBackup[clientNum];
-	}
+	G_ResetClientHeight();
 
 	res = G_SwitchBodyPartEntity(&g_entities[results->entityNum]);
 	POSITION_READJUST

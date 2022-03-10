@@ -151,11 +151,11 @@
 #endif
 
 
-//============================================================== MAC OS X ===
+//================================================================= MAC OS ===
 
 #if defined(__APPLE__) || defined(__APPLE_CC__)
 
-#define OS_STRING "macosx"
+#define OS_STRING "macos"
 #define ID_INLINE __inline
 #define PATH_SEP '/'
 
@@ -334,6 +334,33 @@
 #define ARCH_STRING "bytecode"
 
 #define DLL_EXT ".qvm"
+
+#endif
+
+//=============================================================== ANDROID ===
+
+#ifdef __ANDROID__
+
+#ifndef OS_STRING
+  #define OS_STRING "android"
+#endif
+#define ID_INLINE inline
+#define PATH_SEP '/'
+
+#if defined __arm__
+      #undef ARCH_STRING
+      #define ARCH_STRING "armeabi-v7a"
+#elif defined __aarch64__
+      #define ARCH_STRING "arm64-v8a"
+#endif
+
+#if __FLOAT_WORD_ORDER == __BIG_ENDIAN
+#define Q3_BIG_ENDIAN
+#else
+#define Q3_LITTLE_ENDIAN
+#endif
+
+#define DLL_EXT ".so"
 
 #endif
 

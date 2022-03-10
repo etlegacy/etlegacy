@@ -7,7 +7,7 @@
 	<key>CFBundleDisplayName</key>
 	<string>ET: Legacy</string>
 	<key>CFBundleExecutable</key>
-	<string>etl</string>
+	<string>${MACOSX_BUNDLE_EXECUTABLE_NAME}</string>
 	<key>CFBundleGetInfoString</key>
 	<string>${MACOSX_BUNDLE_INFO_STRING}</string>
 	<key>CFBundleIconFile</key>
@@ -36,6 +36,29 @@
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>et</string>
+			</array>
+		</dict>
+	</array>
+	<key>CFBundleDocumentTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>CFBundleTypeName</key>
+			<string>Wolfenstein: Enemy Territory 2.60b Client demo</string>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>dm_84</string>
+			</array>
+		</dict>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>CFBundleTypeName</key>
+			<string>Wolfenstein: Enemy Territory Legacy Server demo</string>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>sv_84</string>
 			</array>
 		</dict>
 	</array>

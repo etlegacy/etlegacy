@@ -189,7 +189,7 @@ qboolean Int_Parse(char **p, int *i)
 
 	if (token && token[0] != 0)
 	{
-		*i = atoi(token);
+		*i = Q_atoi(token);
 		return qtrue;
 	}
 	else
@@ -259,7 +259,7 @@ qboolean PC_String_ParseTranslate(int handle, const char **out)
 		return qfalse;
 	}
 
-	*(out) = String_Alloc(__(token.string));
+	*(out) = String_Alloc(DC->translateString(token.string));
 
 	return qtrue;
 }
@@ -925,7 +925,7 @@ qboolean ItemParse_elementheight(itemDef_t *item, int handle)
 qboolean ItemParse_feeder(itemDef_t *item, int handle)
 {
 	if (!PC_Int_Parse(handle, &item->special))
-	{   
+	{
 		return qfalse;
 	}
 
@@ -1757,12 +1757,12 @@ qboolean ItemParse_cvarStrList(itemDef_t *item, int handle)
 
 		if (pass == 0)
 		{
-			multiPtr->cvarList[multiPtr->count] = String_Alloc(trap_TranslateString(token.string));
+			multiPtr->cvarList[multiPtr->count] = String_Alloc(DC->translateString(token.string));
 			pass                                = 1;
 		}
 		else
 		{
-			multiPtr->cvarStr[multiPtr->count] = String_Alloc(trap_TranslateString(token.string));
+			multiPtr->cvarStr[multiPtr->count] = String_Alloc(DC->translateString(token.string));
 			pass                               = 0;
 			multiPtr->count++;
 			if (multiPtr->count >= MAX_MULTI_CVARS)
@@ -1822,7 +1822,7 @@ qboolean ItemParse_cvarFloatList(itemDef_t *item, int handle)
 			continue;
 		}
 
-		multiPtr->cvarList[multiPtr->count] = String_Alloc(trap_TranslateString(token.string));
+		multiPtr->cvarList[multiPtr->count] = String_Alloc(DC->translateString(token.string));
 		if (!PC_Float_Parse(handle, &multiPtr->cvarValue[multiPtr->count]))
 		{
 			return qfalse;

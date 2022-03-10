@@ -18,12 +18,12 @@ endif(NOT OLD_CROSS_COMPILE32 STREQUAL CROSS_COMPILE32)
 #-----------------------------------------------------------------
 if(BUILD_CLIENT)
 
-	if(NOT WIN32 AND NOT APPLE) # Dependency of GLEW and SDL_syswm.h
+	if(NOT WIN32 AND NOT APPLE AND NOT ANDROID) # Dependency of GLEW and SDL_syswm.h
 		find_package(X11 REQUIRED)
 		include_directories(${X11_INCLUDE_DIR})
 	endif()
 
-	if(ARM)
+	if(ARM AND NOT ANDROID)
 		#check if we're running on Raspberry Pi
 		MESSAGE("Looking for bcm_host.h")
 		if(EXISTS "/opt/vc/include/bcm_host.h")
@@ -48,7 +48,7 @@ if(BUILD_CLIENT)
 					pthread
 					)
 		endif()
-	endif(ARM)
+	endif(ARM AND NOT ANDROID)
 
 	if(NOT FEATURE_RENDERER_GLES)
 		if(NOT BUNDLED_GLEW)
@@ -62,9 +62,20 @@ if(BUILD_CLIENT)
 			add_definitions(-DGLEW_STATIC)
 		endif()
 
-		cmake_policy(SET CMP0072 NEW) # use GLVND by default
-		find_package(OpenGL REQUIRED)
-		list(APPEND RENDERER_LIBRARIES ${OPENGL_LIBRARIES})
+		# On 2.77 release the default usage of GLVND just caused issues as
+		# libOpenGL was not installed on systems by default
+		# cmake_policy(SET CMP0072 NEW) # use GLVND by default
+		# Revert to using legacy libraries if available for now
+		# FIXME: recheck before a new release
+		if(CLIENT_GLVND)
+			message(STATUS "Using GLVND instead of legacy GL library")
+			set(OpenGL_GL_PREFERENCE GLVND)
+		else()
+			message(STATUS "Using legacy OpenGL instead of GLVND")
+			set(OpenGL_GL_PREFERENCE LEGACY)
+		endif ()
+		find_package(OpenGL REQUIRED COMPONENTS OpenGL)
+		list(APPEND RENDERER_LIBRARIES OpenGL::GL)
 		include_directories(SYSTEM ${OPENGL_INCLUDE_DIR})
 	else() # FEATURE_RENDERER_GLES
 		find_package(GLES REQUIRED)
@@ -85,10 +96,6 @@ if(BUILD_CLIENT)
 		include_directories(SYSTEM ${SDL32_BUNDLED_INCLUDE_DIR})
 		add_definitions(-DBUNDLED_SDL)
 	endif()
-	if(APPLE)
-		add_library(INTERNAL_SDLMain ${CMAKE_SOURCE_DIR}/src/sys/SDLMain.m )
-		list(APPEND RENDERER_LIBRARIES ${INTERNAL_SDLMain})
-	endif(APPLE)
 	add_definitions(-DHAVE_SDL) # for tinygettext (always force SDL icons -> less dependancies)
 
 	if(NOT BUNDLED_JPEG)
@@ -256,14 +263,21 @@ if(BUILD_CLIENT OR BUILD_SERVER)
 
 	if(FEATURE_SSL)
 		if(NOT BUNDLED_WOLFSSL AND NOT BUNDLED_OPENSSL)
-			find_package(OpenSSL REQUIRED)
-			list(APPEND CLIENT_LIBRARIES ${OPENSSL_LIBRARIES})
-			list(APPEND SERVER_LIBRARIES ${OPENSSL_LIBRARIES})
-			include_directories(SYSTEM ${OPENSSL_INCLUDE_DIR})
+			if(NOT APPLE AND NOT WIN32)
+				find_package(OpenSSL REQUIRED)
+				list(APPEND CLIENT_LIBRARIES ${OPENSSL_LIBRARIES})
+				list(APPEND SERVER_LIBRARIES ${OPENSSL_LIBRARIES})
+				include_directories(SYSTEM ${OPENSSL_INCLUDE_DIR})
+				add_definitions(-DUSING_OPENSSL)
+			else()
+				# System SSL (Schannel on windows or Secure transport on mac)
+				add_definitions(-DUSING_SCHANNEL)
+			endif ()
 		elseif(BUNDLED_OPENSSL)
 			list(APPEND CLIENT_LIBRARIES ${OPENSSL_BUNDLED_LIBRARY})
 			list(APPEND SERVER_LIBRARIES ${OPENSSL_BUNDLED_LIBRARY})
 			include_directories(SYSTEM ${OPENSSL_BUNDLED_INCLUDE_DIR})
+			add_definitions(-DUSING_OPENSSL)
 		else() #BUNDLED_WOLFSSL
 			list(APPEND CLIENT_LIBRARIES ${WOLFSSL_BUNDLED_LIBRARY})
 			list(APPEND SERVER_LIBRARIES ${WOLFSSL_BUNDLED_LIBRARY})

@@ -99,8 +99,16 @@ void Use_target_remove_powerups(gentity_t *ent, gentity_t *other, gentity_t *act
 		return;
 	}
 
-	if (activator->client->ps.powerups[PW_REDFLAG] || activator->client->ps.powerups[PW_BLUEFLAG])
+	if (activator->client->ps.powerups[PW_REDFLAG])
 	{
+		// update objective indicator
+		level.redFlagCounter -= 1;
+		Team_ReturnFlag(&g_entities[activator->client->flagParent]);
+	}
+	if (activator->client->ps.powerups[PW_BLUEFLAG])
+	{
+		// update objective indicator
+		level.blueFlagCounter -= 1;
 		Team_ReturnFlag(&g_entities[activator->client->flagParent]);
 	}
 
@@ -1481,14 +1489,14 @@ void SP_target_rumble(gentity_t *self)
 	}
 
 	G_SpawnString("rampup", "0", &rampup);
-	self->start_size = atoi(rampup) * 1000;
+	self->start_size = Q_atoi(rampup) * 1000;
 	if (!self->start_size)
 	{
 		self->start_size = 1000;
 	}
 
 	G_SpawnString("rampdown", "0", &rampdown);
-	self->end_size = atoi(rampdown) * 1000;
+	self->end_size = Q_atoi(rampdown) * 1000;
 	if (!self->end_size)
 	{
 		self->end_size = 1000;

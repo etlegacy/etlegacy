@@ -207,7 +207,7 @@ static ID_INLINE void END_CHUNK(void)
 /**
  * @brief CL_WriteAVIHeader
  */
-void CL_WriteAVIHeader(void)
+static void CL_WriteAVIHeader(void)
 {
 	bufIndex          = 0;
 	afd.chunkStackTop = 0;
@@ -395,8 +395,8 @@ qboolean CL_OpenAVIForWriting(const char *fileName)
 
 	afd.frameRate   = cl_avidemo->integer;
 	afd.framePeriod = (int)(1000000.0f / afd.frameRate);
-	afd.width       = cls.glconfig.vidWidth;
-	afd.height      = cls.glconfig.vidHeight;
+	afd.width       = cls.glconfig.windowWidth;
+	afd.height      = cls.glconfig.windowHeight;
 
 	if (cl_aviMotionJpeg->integer)
 	{

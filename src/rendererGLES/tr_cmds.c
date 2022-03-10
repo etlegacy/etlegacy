@@ -472,7 +472,7 @@ void RE_BeginFrame(void)
 		unsigned int err;
 
 		R_IssuePendingRenderCommands();
-		if ((err = qglGetError()) != GL_NO_ERROR)
+		if ((err = glGetError()) != GL_NO_ERROR)
 		{
 			Ren_Fatal("RE_BeginFrame() - glGetError() failed (0x%x)!\n", err);
 		}

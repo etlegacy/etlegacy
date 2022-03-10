@@ -32,8 +32,15 @@
  * @file sys_main.c
  */
 
+#ifdef LEGACY_DUMP_MEMLEAKS
+#define _CRTDBG_MAP_ALLOC
+#endif
+
 #include <signal.h>
 #include <stdlib.h>
+#if defined(LEGACY_DUMP_MEMLEAKS)
+#include <crtdbg.h>
+#endif
 #include <limits.h>
 #include <sys/types.h>
 #include <stdarg.h>
@@ -122,6 +129,80 @@ char *Sys_ConsoleInput(void)
 }
 #endif
 
+#ifdef ETL_CLIENT
+dialogResult_t Sys_SDLDialog(dialogType_t type, const char *message, const char *title)
+{
+	int buttonId;
+	SDL_MessageBoxButtonData buttons[2];
+	SDL_MessageBoxData data;
+	data.window = NULL;
+	data.colorScheme = NULL;
+	data.buttons = buttons;
+	data.message = message;
+	data.title = title;
+
+	switch (type)
+	{
+		default:
+		case DT_INFO:
+			buttons[0].flags = SDL_MESSAGEBOX_BUTTON_RETURNKEY_DEFAULT;
+			buttons[0].buttonid = DR_OK;
+			buttons[0].text = _("Ok");
+			data.numbuttons = 1;
+			data.flags = SDL_MESSAGEBOX_INFORMATION;
+			break;
+		case DT_WARNING:
+			buttons[0].flags = SDL_MESSAGEBOX_BUTTON_RETURNKEY_DEFAULT;
+			buttons[0].buttonid = DR_OK;
+			buttons[0].text = _("Ok");
+			data.numbuttons = 1;
+			data.flags = SDL_MESSAGEBOX_WARNING;
+			break;
+		case DT_ERROR:
+			buttons[0].flags = SDL_MESSAGEBOX_BUTTON_RETURNKEY_DEFAULT;
+			buttons[0].buttonid = DR_OK;
+			buttons[0].text = _("Ok");
+			data.numbuttons = 1;
+			data.flags = SDL_MESSAGEBOX_ERROR;
+			break;
+		case DT_YES_NO:
+			buttons[0].flags = 0;
+			buttons[0].buttonid = DR_NO;
+			buttons[0].text = _("No");
+			buttons[1].flags = SDL_MESSAGEBOX_BUTTON_RETURNKEY_DEFAULT;
+			buttons[1].buttonid = DR_YES;
+			buttons[1].text = _("Yes");
+			data.numbuttons = 2;
+			data.flags = SDL_MESSAGEBOX_INFORMATION;
+			break;
+		case DT_OK_CANCEL:
+			buttons[0].flags = SDL_MESSAGEBOX_BUTTON_ESCAPEKEY_DEFAULT;
+			buttons[0].buttonid = DR_CANCEL;
+			buttons[0].text = _("Cancel");
+			buttons[1].flags = SDL_MESSAGEBOX_BUTTON_RETURNKEY_DEFAULT;
+			buttons[1].buttonid = DR_OK;
+			buttons[1].text = _("Ok");
+			data.numbuttons = 2;
+			data.flags = SDL_MESSAGEBOX_WARNING;
+			break;
+	}
+
+	if (SDL_ShowMessageBox(&data, &buttonId) < 0)
+	{
+		Com_Printf(S_COLOR_RED "error displaying message box\n");
+		return DR_ERROR;
+	}
+
+	if (buttonId == -1)
+	{
+		Com_Printf(S_COLOR_RED "no selection\n");
+		return DR_CANCEL;
+	}
+
+	return buttonId;
+}
+#endif
+
 /**
  * @brief Writes pid to profile or to the homepath root if running a server
  * @return qtrue  if pid file successfully created
@@ -196,7 +277,7 @@ static _attribute((noreturn)) void Sys_Exit(int exitCode)
 			if (FS_FileExists(Cvar_VariableString("com_pidfile")))
 			{
 				// FIXME: delete even when outside of homepath
-				if (remove(va("%s%c%s%c%s", Cvar_VariableString("fs_homepath"),
+				if (Sys_Remove(va("%s%c%s%c%s", Cvar_VariableString("fs_homepath"),
 				              PATH_SEP, Cvar_VariableString("fs_game"),
 				              PATH_SEP, Cvar_VariableString("com_pidfile"))) != 0)
 				{
@@ -227,7 +308,7 @@ static _attribute((noreturn)) void Sys_Exit(int exitCode)
 
 	NET_Shutdown();
 
-	exit(exitCode);
+	Sys_PlatformExit(exitCode);
 }
 
 
@@ -236,10 +317,10 @@ static _attribute((noreturn)) void Sys_Exit(int exitCode)
  */
 void Sys_Quit(void)
 {
-	Sys_Exit(0);
 #ifdef USE_WINDOWS_CONSOLE
-	Sys_DestroyConsole();
+    Sys_DestroyConsole();
 #endif
+	Sys_Exit(0);
 }
 
 #ifdef USE_WINDOWS_CONSOLE
@@ -266,7 +347,7 @@ void Sys_Init(void)
  */
 void Sys_AnsiColorPrint(const char *msg)
 {
-	static char buffer[MAXPRINTMSG];
+	static char buffer[MAX_PRINT_MSG];
 	int         i, j, _found, length = 0;
 
 	// colors hash from http://wolfwiki.anime.net/index.php/Color_Codes
@@ -383,7 +464,7 @@ void Sys_AnsiColorPrint(const char *msg)
 		}
 		else
 		{
-			if (length >= MAXPRINTMSG - 1)
+			if (length >= MAX_PRINT_MSG - 1)
 			{
 				break;
 			}
@@ -456,8 +537,6 @@ void Sys_Error(const char *error, ...)
 		TranslateMessage(&msg);
 		DispatchMessage(&msg);
 	}
-
-	Sys_DestroyConsole();
 #endif
 
 	Sys_ErrorDialog(string);
@@ -660,7 +739,11 @@ static void *Sys_TryLibraryLoad(const char *base, const char *gamedir, const cha
 	fn = FS_BuildOSPath(base, gamedir, fname);
 	Com_Printf("Sys_LoadDll(%s)... ", fn);
 
+#ifndef __ANDROID__
 	libHandle = Sys_LoadLibrary(fn);
+#else
+	libHandle = Sys_LoadLibrary(fname);
+#endif
 
 	if (!libHandle)
 	{
@@ -778,7 +861,7 @@ void *Sys_LoadGameDll(const char *name, qboolean extract,
 		}
 
 		// use League ui for download process (mod binary pk3 isn't extracted)
-		if (!strcmp(name, "ui") && !libHandle && strcmp(gamedir, DEFAULT_MODGAME))
+		if (!strcmp(name, "ui") && !libHandle && strcmp(gamedir, DEFAULT_MODGAME) != 0)
 		{
 			Com_Printf("Sys_LoadDll: mod initialisation - ui fallback\n");
 
@@ -855,9 +938,15 @@ void Sys_BuildCommandLine(int argc, char **argv, char *buffer, size_t bufferSize
 		const qboolean containsSpaces = (qboolean)(strchr(argv[i], ' ') != NULL);
 
 		// Allow URIs to be passed without +connect
-		if (!Q_strncmp(argv[i], "et://", 5) && Q_strncmp(argv[i - 1], "+connect", 8))
+		if (!Q_stricmpn(argv[i], "et://", 5) && Q_stricmpn(argv[i - 1], "+connect", 8))
 		{
 			Q_strcat(buffer, bufferSize, "+connect ");
+		}
+
+		// Allow demo files to be passed without +demo for playback
+		if (FS_IsDemoExt(argv[i], -1) && Q_stricmpn(argv[i - 1], "+demo", 5) && Q_stricmpn(argv[i - 1], "+record", 7))
+		{
+			Q_strcat(buffer, bufferSize, "+demo dirty ");
 		}
 
 		if (containsSpaces)
@@ -1001,7 +1090,8 @@ int main(int argc, char **argv)
 	Sys_ParseArgs(argc, argv);
 
 #if defined(__APPLE__) && !defined(DEDICATED)
-	// argv[0] would be /Users/seth/etlegacy/etl.app/Contents/MacOS
+	SDL_EventState(SDL_DROPFILE, SDL_ENABLE);
+	// argv[0] would be /Users/seth/etlegacy/ET Legacy.app/Contents/MacOS
 	// But on OS X we want to pretend the binary path is the .app's parent
 	// So that way the base folder is right next to the .app allowing
 	{
@@ -1009,7 +1099,7 @@ int main(int argc, char **argv)
 		CFURLRef url               = CFBundleCopyBundleURL(CFBundleGetMainBundle());
 		int      quarantine_status = 0;
 
-		quarantine_status = needsOSXQuarantineFix();
+		quarantine_status = OSX_NeedsQuarantineFix();
 		if (quarantine_status == 1)
 		{
 			//app restarts itself under the right path
@@ -1052,11 +1142,15 @@ int main(int argc, char **argv)
 
 	// Concatenate the command line for passing to Com_Init
 	Sys_BuildCommandLine(argc, argv, commandLine, sizeof(commandLine));
+	Sys_SetUpConsoleAndSignals();
 
 	Com_Init(commandLine);
-	NET_Init();
 
-	Sys_SetUpConsoleAndSignals();
+	//FIXME: Lets not enable this yet for normal use
+#if !defined(DEDICATED) && defined(FEATURE_SSL) && defined(ETLEGACY_DEBUG)
+	// Check for certificates
+	Com_CheckCaCertStatus();
+#endif
 
 #ifdef _WIN32
 

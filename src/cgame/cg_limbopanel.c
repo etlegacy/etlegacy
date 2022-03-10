@@ -198,11 +198,11 @@ MEDAL_PIC(6);
 	static panel_button_t skillPic ## number = {         \
 		NULL,                                   \
 		NULL,                                   \
-		{ SKILL_PIC_X + SKILL_PIC_GAP + ((number) * (SKILL_PIC_GAP + SKILL_PIC_WIDTH)), 119, SKILL_PIC_WIDTH, 26 }, \
-		{ number,                  0,             0,               0, 0, 0, 0, 0}, \
-		NULL,                      /* font       */              \
-		NULL,                      /* keyDown    */              \
-		NULL,                      /* keyUp  */                  \
+		{ SKILL_PIC_X + SKILL_PIC_GAP + ((number) * (SKILL_PIC_GAP + SKILL_PIC_WIDTH)),119,                                                                           SKILL_PIC_WIDTH, 26 }, \
+		{ number,                     0,                                                                             0,               0, 0, 0, 0, 0}, \
+		NULL,                         /* font       */              \
+		NULL,                         /* keyDown    */              \
+		NULL,                         /* keyUp  */                  \
 		CG_LimboPanel_RenderPrestige,        \
 		NULL,                                \
 		0,                                   \
@@ -548,11 +548,11 @@ static panel_button_t playerPrestigeText =
 {
 	NULL,
 	NULL,
-	{ 576,                        16,   60, 16 },
-	{ 0,                          0,     0,  0, 0, 0, 0, 0},
-	&spawnLimboFont,              // font
-	NULL,                         // keyDown
-	NULL,                         // keyUp
+	{ 576,                      16,   60, 16 },
+	{ 0,                        0,    0,  0, 0, 0, 0, 0},
+	&spawnLimboFont,            // font
+	NULL,                       // keyDown
+	NULL,                       // keyUp
 	CG_LimboPanel_Prestige_Draw,
 	NULL,
 	0
@@ -562,11 +562,11 @@ static panel_button_t playerPrestigeIcon =
 {
 	NULL,
 	NULL,
-	{ 616,                        4,   16, 16 },
-	{ 2,                          0,    0,  0, 0, 0, 0, 0},
-	NULL,                         // font
-	NULL,                         // keyDown
-	NULL,                         // keyUp
+	{ 616,                           4,   16, 16 },
+	{ 2,                             0,   0,  0, 0, 0, 0, 0},
+	NULL,                            // font
+	NULL,                            // keyDown
+	NULL,                            // keyUp
 	CG_LimboPanel_RenderPrestigeIcon,
 	NULL,
 	0
@@ -1139,9 +1139,9 @@ static panel_button_t *limboPanelButtons[] =
 	&filterButton5,           &filterButton6,             &filterButton7,         &filterButton8,
 	&filterTitleText,
 
-	&medalPic0,               &medalPic1,                 &medalPic2,             &medalPic3,     &medalPic4,    &medalPic5,&medalPic6,
+	&medalPic0,               &medalPic1,                 &medalPic2,             &medalPic3,     &medalPic4,    &medalPic5,  &medalPic6,
 #ifdef FEATURE_PRESTIGE
-	&skillPic0,               &skillPic1,                 &skillPic2,             &skillPic3,     &skillPic4,    &skillPic5, &skillPic6,
+	&skillPic0,               &skillPic1,                 &skillPic2,             &skillPic3,     &skillPic4,    &skillPic5,  &skillPic6,
 #endif
 
 	&teamCounter0,            &teamCounter1,              &teamCounter2,
@@ -1448,7 +1448,7 @@ void CG_LimboPanel_SendSetupMsg(qboolean forceteam)
 		break;
 	}
 
-	if (cgs.clientinfo[cg.clientNum].skill[SK_HEAVY_WEAPONS] >= 4 && cgs.clientinfo[cg.clientNum].cls == PC_SOLDIER && !Q_stricmp(GetWeaponTableData(weap1)->desc, GetWeaponTableData(weap2)->desc))
+	if (BG_IsSkillAvailable(cgs.clientinfo[cg.clientNum].skill, SK_HEAVY_WEAPONS, SK_SOLDIER_SMG) && cgs.clientinfo[cg.clientNum].cls == PC_SOLDIER && !Q_stricmp(GetWeaponTableData(weap1)->desc, GetWeaponTableData(weap2)->desc))
 	{
 		CG_PriorityCenterPrint(va(CG_TranslateString("You will spawn as an %s %s with a %s."), str, BG_ClassnameForNumber(CG_LimboPanel_GetClass()), GetWeaponTableData(weap1)->desc), 400, cg_fontScaleCP.value, -1);
 	}
@@ -1782,14 +1782,14 @@ void CG_LimboPanel_RenderClassButton(panel_button_t *button)
 		}
 	}
 
-	for (i = 0; i < 4; i++)
+	for (i = 1; i < NUM_SKILL_LEVELS; i++)
 	{
-		if (cgs.clientinfo[cg.clientNum].skill[BG_ClassSkillForClass(button->data[1])] <= i)
+		if (!BG_IsSkillAvailable(cgs.clientinfo[cg.clientNum].skill, BG_ClassSkillForClass(button->data[1]), i))
 		{
-			break;
+			continue;
 		}
 
-		if (i == 0 || i == 1)
+		if (i == 1 || i == 2)
 		{
 			s0 = 0.5f;
 			s1 = 1.0f;
@@ -1799,7 +1799,7 @@ void CG_LimboPanel_RenderClassButton(panel_button_t *button)
 			s0 = 0.0f;
 			s1 = 0.5f;
 		}
-		if (i == 1 || i == 2)
+		if (i == 2 || i == 3)
 		{
 			t0 = 0.5f;
 			t1 = 1.0f;
@@ -1872,7 +1872,7 @@ int CG_LimboPanel_GetMaxObjectives(void)
 		return 0;
 	}
 
-	return atoi(Info_ValueForKey(CG_ConfigString(CS_MULTI_INFO), "o")); // numobjectives
+	return Q_atoi(Info_ValueForKey(CG_ConfigString(CS_MULTI_INFO), "o")); // numobjectives
 }
 
 /**
@@ -1946,13 +1946,13 @@ void CG_LimboPanel_RenderObjectiveText(panel_button_t *button)
 				{
 					//info = Info_ValueForKey( cs, "axis_desc" );
 					info   = cg.objDescription_Axis[cgs.ccSelectedObjective];
-					status = atoi(Info_ValueForKey(cs, va("x%i", cgs.ccSelectedObjective + 1)));
+					status = Q_atoi(Info_ValueForKey(cs, va("x%i", cgs.ccSelectedObjective + 1)));
 				}
 				else
 				{
 					//info = Info_ValueForKey( cs, "allied_desc" );
 					info   = cg.objDescription_Allied[cgs.ccSelectedObjective];
-					status = atoi(Info_ValueForKey(cs, va("a%i", cgs.ccSelectedObjective + 1)));
+					status = Q_atoi(Info_ValueForKey(cs, va("a%i", cgs.ccSelectedObjective + 1)));
 				}
 
 				if (!(info && *info))
@@ -2753,7 +2753,7 @@ void CG_LimboPanel_WeaponPanel(panel_button_t *button)
 		if (cgs.ccSelectedWeaponSlot == PRIMARY_SLOT)
 		{
 			// is player had the minimum level required to use this weapon
-			if (cgs.clientinfo[cg.clientNum].skill[classInfo->classPrimaryWeapons[i].skill] < classInfo->classPrimaryWeapons[i].minSkillLevel)
+			if (!BG_IsSkillAvailable(cgs.clientinfo[cg.clientNum].skill, classInfo->classPrimaryWeapons[i].skill, classInfo->classPrimaryWeapons[i].minSkillLevel))
 			{
 				continue;
 			}
@@ -2763,7 +2763,7 @@ void CG_LimboPanel_WeaponPanel(panel_button_t *button)
 		else
 		{
 			// is player had the minimum level required to use this weapon
-			if (cgs.clientinfo[cg.clientNum].skill[classInfo->classSecondaryWeapons[i].skill] < classInfo->classSecondaryWeapons[i].minSkillLevel)
+			if (!BG_IsSkillAvailable(cgs.clientinfo[cg.clientNum].skill, classInfo->classSecondaryWeapons[i].skill, classInfo->classSecondaryWeapons[i].minSkillLevel))
 			{
 				continue;
 			}
@@ -2840,6 +2840,25 @@ void CG_LimboPanel_RenderCounterNumber(float x, float y, float w, float h, float
 }
 
 /**
+ * @brief CG_LimboPanel_ClassSkillForPosition
+ * @param[in] position
+ * @return
+ */
+skillType_t CG_LimboPanel_ClassSkillForPosition(int position)
+{
+	switch (position)
+	{
+	case 0:
+		return SK_BATTLE_SENSE;
+	case 1:
+		return SK_LIGHT_WEAPONS;
+	case 2:
+	default:
+		return BG_ClassSkillForClass(CG_LimboPanel_GetClass());;
+	}
+}
+
+/**
  * @brief CG_LimboPanel_RenderCounter_ValueForButton
  * @param[in] button
  * @return
@@ -2903,21 +2922,7 @@ int CG_LimboPanel_RenderCounter_ValueForButton(panel_button_t *button)
 		}
 		return (int)CG_CalculateReinfTime_Float(qtrue);
 	case 4:     // skills
-		switch (button->data[1])
-		{
-		case 0:
-			count = cgs.clientinfo[cg.clientNum].skill[SK_BATTLE_SENSE];
-			break;
-		case 1:
-			count = cgs.clientinfo[cg.clientNum].skill[SK_LIGHT_WEAPONS];
-			break;
-		case 2:
-			count = cgs.clientinfo[cg.clientNum].skill[BG_ClassSkillForClass(CG_LimboPanel_GetClass())];
-			break;
-		default:
-			break;
-		}
-		return (1 << count) - 1;
+		return (1 << cgs.clientinfo[cg.clientNum].skill[CG_LimboPanel_ClassSkillForPosition(button->data[1])]) - 1;
 	case 5:     // clock
 		if (cgs.gamestate != GS_PLAYING)
 		{
@@ -3170,29 +3175,29 @@ void CG_LimboPanel_RenderPrestige(panel_button_t *button)
 
 	switch (button->data[0])
 	{
-		case 0:
-			shader = cgs.media.limboSkillsBS;
-			break;
-		case 1:
-			shader = cgs.media.limboClassButtons[PC_ENGINEER];
-			break;
-		case 2:
-			shader = cgs.media.limboClassButtons[PC_MEDIC];
-			break;
-		case 3:
-			shader = cgs.media.limboClassButtons[PC_FIELDOPS];
-			break;
-		case 4:
-			shader = cgs.media.limboSkillsLW;
-			break;
-		case 5:
-			shader = cgs.media.limboClassButtons[PC_SOLDIER];
-			break;
-		case 6:
-			shader = cgs.media.limboClassButtons[PC_COVERTOPS];
-			break;
-		default:
-			return;
+	case 0:
+		shader = cgs.media.limboSkillsBS;
+		break;
+	case 1:
+		shader = cgs.media.limboClassButtons[PC_ENGINEER];
+		break;
+	case 2:
+		shader = cgs.media.limboClassButtons[PC_MEDIC];
+		break;
+	case 3:
+		shader = cgs.media.limboClassButtons[PC_FIELDOPS];
+		break;
+	case 4:
+		shader = cgs.media.limboSkillsLW;
+		break;
+	case 5:
+		shader = cgs.media.limboClassButtons[PC_SOLDIER];
+		break;
+	case 6:
+		shader = cgs.media.limboClassButtons[PC_COVERTOPS];
+		break;
+	default:
+		return;
 	}
 
 	CG_DrawPic(button->rect.x, button->rect.y, button->rect.w, button->rect.h, cgs.media.limboObjectiveBack[2]);
@@ -3296,6 +3301,7 @@ void CG_LimboPanelRenderText_SkillsText(panel_button_t *button)
 
 #define MAX_ROLLERS 8
 #define COUNTER_ROLLTOTAL (cg.time - button->data[4])
+static const vec4_t clrSkillCounterDisable = { 1.f, 0.f, 0.f, 1.f };
 /**
  * @brief CG_LimboPanel_RenderCounter
  * @param[in] button
@@ -3418,8 +3424,23 @@ void CG_LimboPanel_RenderCounter(panel_button_t *button)
 
 	if (CG_LimboPanel_RenderCounter_IsReversed(button))
 	{
+		// only skill counter enter here ... until CG_LimboPanel_RenderCounter_IsReversed is modify
+		skillType_t skill;
+
+		skill = CG_LimboPanel_ClassSkillForPosition(button->data[1]);
+
 		for (i = 0; i < num; i++)
 		{
+			if (GetSkillTableData(skill)->skillLevels[i + 1] < 0)
+			{
+				trap_R_SetColor(clrSkillCounterDisable);
+				count[i] = 0; // force to hide the star and don't play the roll
+			}
+			else
+			{
+				trap_R_SetColor(NULL);
+			}
+
 			CG_LimboPanel_RenderCounterNumber(x, button->rect.y, w, button->rect.h, count[i], shaderBack, shaderRoll, numimages);
 
 			x += w + button->data[6];
@@ -3434,6 +3455,8 @@ void CG_LimboPanel_RenderCounter(panel_button_t *button)
 			x += w + button->data[6];
 		}
 	}
+
+	trap_R_SetColor(NULL);
 
 	if (button->data[0] == 0 || button->data[0] == 1)
 	{
@@ -3680,7 +3703,7 @@ int CG_LimboPanel_WeaponCount(int slotNumber)
 		for (i = 0; i < MAX_WEAPS_PER_CLASS; i++)
 		{
 			// is player had the minimum level required to use this weapon
-			if (cgs.clientinfo[cg.clientNum].skill[classInfo->classPrimaryWeapons[i].skill] < classInfo->classPrimaryWeapons[i].minSkillLevel)
+			if (!BG_IsSkillAvailable(cgs.clientinfo[cg.clientNum].skill, classInfo->classPrimaryWeapons[i].skill, classInfo->classPrimaryWeapons[i].minSkillLevel))
 			{
 				continue;
 			}
@@ -3703,7 +3726,7 @@ int CG_LimboPanel_WeaponCount(int slotNumber)
 			}
 
 			// is player had the minimum level required to use this weapon
-			if (cgs.clientinfo[cg.clientNum].skill[classInfo->classSecondaryWeapons[i].skill] < classInfo->classSecondaryWeapons[i].minSkillLevel)
+			if (!BG_IsSkillAvailable(cgs.clientinfo[cg.clientNum].skill, classInfo->classSecondaryWeapons[i].skill, classInfo->classSecondaryWeapons[i].minSkillLevel))
 			{
 				continue;
 			}
@@ -3747,7 +3770,7 @@ qboolean CG_LimboPanel_IsValidSelectedWeapon(int slot)
 			if (classInfo->classPrimaryWeapons[i].weapon == weap)
 			{
 				// is player had the minimum level required to use this weapon
-				if (cgs.clientinfo[cg.clientNum].skill[classInfo->classPrimaryWeapons[i].skill] < classInfo->classPrimaryWeapons[i].minSkillLevel)
+				if (!BG_IsSkillAvailable(cgs.clientinfo[cg.clientNum].skill, classInfo->classPrimaryWeapons[i].skill, classInfo->classPrimaryWeapons[i].minSkillLevel))
 				{
 					break;
 				}
@@ -3767,7 +3790,7 @@ qboolean CG_LimboPanel_IsValidSelectedWeapon(int slot)
 		if (classInfo->classSecondaryWeapons[i].weapon == weap)
 		{
 			// is player had the minimum level required to use this weapon
-			if (cgs.clientinfo[cg.clientNum].skill[classInfo->classSecondaryWeapons[i].skill] < classInfo->classSecondaryWeapons[i].minSkillLevel)
+			if (!BG_IsSkillAvailable(cgs.clientinfo[cg.clientNum].skill, classInfo->classSecondaryWeapons[i].skill, classInfo->classSecondaryWeapons[i].minSkillLevel))
 			{
 				break;
 			}
@@ -3820,7 +3843,7 @@ void CG_LimboPanel_SetDefaultWeapon(int slot)
 			}
 
 			// is player had the minimum level required to use this weapon
-			if (cgs.clientinfo[cg.clientNum].skill[classInfo->classSecondaryWeapons[i].skill] < classInfo->classSecondaryWeapons[i].minSkillLevel)
+			if (!BG_IsSkillAvailable(cgs.clientinfo[cg.clientNum].skill, classInfo->classSecondaryWeapons[i].skill, classInfo->classSecondaryWeapons[i].minSkillLevel))
 			{
 				continue;
 			}
@@ -4004,7 +4027,7 @@ int ExtractInt(const char *src)
 	{
 		int sign = 1;
 
-		result = sign * atoi(tmp);
+		result = sign * Q_atoi(tmp);
 	}
 
 	Com_Dealloc(tmp);

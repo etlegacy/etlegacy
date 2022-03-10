@@ -1654,36 +1654,36 @@ void RB_SurfaceAnim(mdsSurface_t *surface)
 				bonePtr = &bones[*boneRefs];
 
 				GL_Bind(tr.whiteImage);
-				qglLineWidth(1);
+				glLineWidth(1);
 #if 0
 				// TODO: OpenGL ES renderer
-				qglBegin(GL_LINES);
+				glBegin(GL_LINES);
 				for (j = 0; j < 3; j++)
 				{
 					VectorClear(vec);
 					vec[j] = 1;
-					qglColor3fv(vec);
-					qglVertex3fv(bonePtr->translation);
+					glColor3fv(vec);
+					glVertex3fv(bonePtr->translation);
 					VectorMA(bonePtr->translation, 5, bonePtr->matrix[j], vec);
-					qglVertex3fv(vec);
+					glVertex3fv(vec);
 				}
-				qglEnd();
+				glEnd();
 #endif // 0
 				// connect to our parent if it's valid
 				if (validBones[boneInfo[*boneRefs].parent])
 				{
-					qglLineWidth(2);
+					glLineWidth(2);
 #if 0
 					// TODO: OpenGL ES renderer
-					qglBegin(GL_LINES);
-					qglColor3f(.6f, .6f, .6f);
-					qglVertex3fv(bonePtr->translation);
-					qglVertex3fv(bones[boneInfo[*boneRefs].parent].translation);
-					qglEnd();
+					glBegin(GL_LINES);
+					glColor3f(.6f, .6f, .6f);
+					glVertex3fv(bonePtr->translation);
+					glVertex3fv(bones[boneInfo[*boneRefs].parent].translation);
+					glEnd();
 #endif
 				}
 
-				qglLineWidth(1);
+				glLineWidth(1);
 			}
 		}
 
@@ -1696,26 +1696,26 @@ void RB_SurfaceAnim(mdsSurface_t *surface)
 			tempNormal = ( float * )(tess.normal + baseVertex);
 
 			GL_Bind(tr.whiteImage);
-			qglLineWidth(1);
+			glLineWidth(1);
 #if 0
 			// TODO: OpenGL ES renderer
-			qglBegin(GL_LINES);
-			qglColor3f(.0f, .0f, .8f);
+			glBegin(GL_LINES);
+			glColor3f(.0f, .0f, .8f);
 
 			pIndexes = &tess.indexes[oldIndexes];
 			for (j = 0; j < render_indexes / 3; j++, pIndexes += 3)
 			{
-				qglVertex3fv(tempVert + 4 * pIndexes[0]);
-				qglVertex3fv(tempVert + 4 * pIndexes[1]);
+				glVertex3fv(tempVert + 4 * pIndexes[0]);
+				glVertex3fv(tempVert + 4 * pIndexes[1]);
 
-				qglVertex3fv(tempVert + 4 * pIndexes[1]);
-				qglVertex3fv(tempVert + 4 * pIndexes[2]);
+				glVertex3fv(tempVert + 4 * pIndexes[1]);
+				glVertex3fv(tempVert + 4 * pIndexes[2]);
 
-				qglVertex3fv(tempVert + 4 * pIndexes[2]);
-				qglVertex3fv(tempVert + 4 * pIndexes[0]);
+				glVertex3fv(tempVert + 4 * pIndexes[2]);
+				glVertex3fv(tempVert + 4 * pIndexes[0]);
 			}
 
-			qglEnd();
+			glEnd();
 #endif // 0
 
 			// track debug stats
@@ -1831,19 +1831,19 @@ int R_GetBoneTag(orientation_t *outTag, mdsHeader_t *mds, int startTagIndex, con
         int j;
         // DEBUG: show the tag position/axis
         GL_Bind( tr.whiteImage );
-        qglLineWidth( 2 );
-        qglBegin( GL_LINES );
+        glLineWidth( 2 );
+        glBegin( GL_LINES );
         for (j=0; j<3; j++) {
             VectorClear(vec);
             vec[j] = 1;
-            qglColor3fv( vec );
-            qglVertex3fv( outTag->origin );
+            glColor3fv( vec );
+            glVertex3fv( outTag->origin );
             VectorMA( outTag->origin, 8, outTag->axis[j], vec );
-            qglVertex3fv( vec );
+            glVertex3fv( vec );
         }
-        qglEnd();
+        glEnd();
 
-        qglLineWidth( 1 );
+        glLineWidth( 1 );
     }
 */
 

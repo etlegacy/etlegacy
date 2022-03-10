@@ -25,6 +25,7 @@
 	loadMenu { "ui/options.menu" }
 	loadMenu { "ui/options_customise_game.menu" }
 	loadMenu { "ui/options_customise_hud.menu" }
+	loadMenu { "ui/options_customise_hud_advanced.menu" }
 	loadMenu { "ui/options_controls.menu" }
 	loadMenu { "ui/options_controls_advanced.menu" }
 	loadMenu { "ui/options_controls_default.menu" }

@@ -664,7 +664,7 @@ static void CG_Item(centity_t *cent)
 
 	item = BG_GetItem(es->modelindex);
 
-	if (cg_simpleItems.integer == 1 || (cg_simpleItems.integer > 1 && item->giType != IT_TEAM))
+	if (cg_simpleItems.integer > 1 || (cg_simpleItems.integer == 1 && item->giType != IT_TEAM))
 	{
 		polyVert_t   temp[4];
 		polyVert_t   quad[4];
@@ -698,7 +698,7 @@ static void CG_Item(centity_t *cent)
 			else
 			{
 				if (COM_BitCheck(cg.snap->ps.weapons, item->giWeapon) ||
-				    (cgs.clientinfo[cg.snap->ps.clientNum].cls == PC_SOLDIER && cgs.clientinfo[cg.snap->ps.clientNum].skill[SK_HEAVY_WEAPONS] >= 4 &&
+				    (cgs.clientinfo[cg.snap->ps.clientNum].cls == PC_SOLDIER && BG_IsSkillAvailable(cgs.clientinfo[cg.snap->ps.clientNum].skill, SK_HEAVY_WEAPONS, SK_SOLDIER_SMG) &&
 				     (cgs.clientinfo[cg.snap->ps.clientNum].secondaryweapon == item->giWeapon)))
 				{
 					Vector4Set(accentColor, 1.f, 1.f, 0.09f, 1.f);
@@ -756,7 +756,9 @@ static void CG_Item(centity_t *cent)
 
 		if (simpleItemShader)
 		{
-			origin[2] += SIMPLEITEM_ICON_SIZE * simpleItemScaleY / 2.f;
+			simpleItemScaleX *= Com_Clamp(0.25f, 1.5f, cg_simpleItemsScale.value);
+			simpleItemScaleY *= Com_Clamp(0.25f, 1.5f, cg_simpleItemsScale.value);
+			origin[2]        += SIMPLEITEM_ICON_SIZE * simpleItemScaleY / 2.f;
 			// build quad out of verts (inversed)
 			VectorSet(temp[0].xyz, 0, 1 * simpleItemScaleX, 1 * simpleItemScaleY);
 			VectorSet(temp[1].xyz, 0, -1 * simpleItemScaleX, 1 * simpleItemScaleY);
@@ -1126,7 +1128,7 @@ static void CG_EntityFloatText(centity_t *cent, const char *text, int height)
 
 	origin[2] += height;
 
-	CG_AddOnScreenText(text, origin);
+	CG_AddOnScreenText(text, origin, qtrue);
 }
 
 /**
@@ -1305,7 +1307,7 @@ static void CG_Missile(centity_t *cent)
 				else if (!cent->currentState.modelindex2)
 				{
 					// see if we have the skill to see them and are close enough
-					if (cgs.clientinfo[cg.snap->ps.clientNum].skill[SK_BATTLE_SENSE] >= 4)
+					if (BG_IsSkillAvailable(cgs.clientinfo[cg.snap->ps.clientNum].skill, SK_BATTLE_SENSE, SK_BATTLE_SENSE_TRAP_AWARENESS))
 					{
 						vec_t distSquared = DistanceSquared(cent->lerpOrigin, cg.predictedPlayerEntity.lerpOrigin);
 

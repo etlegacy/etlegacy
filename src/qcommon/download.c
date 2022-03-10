@@ -97,6 +97,7 @@ void Com_ClearStaticDownload(void)
 	etl_assert(!dld.bWWWDlDisconnected);    // reset before calling
 	dld.noReconnect             = qfalse;
 	dld.downloadRestart         = qfalse;
+	dld.systemDownload          = qfalse;
 	dld.downloadTempName[0]     = '\0';
 	dld.downloadName[0]         = '\0';
 	dld.originalDownloadName[0] = '\0';
@@ -108,6 +109,9 @@ void Com_ClearStaticDownload(void)
 */
 static void Com_DownloadsComplete(void)
 {
+	// Make sure this is reset to false, what ever has been downloaded
+	dld.systemDownload = qfalse;
+
 	if (Com_CheckUpdateDownloads())
 	{
 		return;
@@ -261,7 +265,7 @@ void Com_NextDownload(void)
 */
 void Com_InitDownloads(void)
 {
-	char missingfiles[1024];
+	char missingFiles[1024] = { '\0' };
 
 	// init some of the www dl data
 	dld.bWWWDl             = qfalse;
@@ -272,9 +276,9 @@ void Com_InitDownloads(void)
 	if (!Com_InitUpdateDownloads())
 	{
 		// whatever auto download configuration, store missing files in a cvar, use later in the ui maybe
-		if (FS_ComparePaks(missingfiles, sizeof(missingfiles), qfalse))
+		if (FS_ComparePaks(missingFiles, sizeof(missingFiles), qfalse))
 		{
-			Cvar_Set("com_missingFiles", missingfiles);
+			Cvar_Set("com_missingFiles", missingFiles);
 		}
 		else
 		{
@@ -291,7 +295,7 @@ void Com_InitDownloads(void)
 		{
 			if (*dld.downloadList)
 			{
-				// if autodownloading is not enabled on the server
+				// if auto downloading is not enabled on the server
 				cls.state = CA_CONNECTED;
 				Com_NextDownload();
 				return;
@@ -343,21 +347,39 @@ void Com_WWWDownload(void)
 		// we work with OS paths
 
 		dld.download = 0;
-#if defined(FEATURE_PAKISOLATION) && !defined(DEDICATED)
-		to_ospath = FS_BuildOSPath(Cvar_VariableString("fs_homepath"), 
-		                           DL_ContainerizePath(dld.downloadTempName, dld.originalDownloadName), NULL);
-#else
-		to_ospath = FS_BuildOSPath(Cvar_VariableString("fs_homepath"), dld.originalDownloadName, NULL);
-#endif
-		if (rename(dld.downloadTempName, to_ospath))
-		{
-			FS_CopyFile(dld.downloadTempName, to_ospath);
 
-			if (remove(dld.downloadTempName) != 0)
+		if (dld.systemDownload)
+		{
+			to_ospath = FS_BuildOSPath(Cvar_VariableString("fs_homepath"), dld.originalDownloadName, NULL);
+		}
+		else
+		{
+#if defined(FEATURE_PAKISOLATION) && !defined(DEDICATED)
+			to_ospath = FS_BuildOSPath(Cvar_VariableString("fs_homepath"),
+									   DL_ContainerizePath(dld.downloadTempName, dld.originalDownloadName), NULL);
+#else
+			to_ospath = FS_BuildOSPath(Cvar_VariableString("fs_homepath"), dld.originalDownloadName, NULL);
+#endif
+		}
+
+		//FIXME: This can get hit more than once for a file..
+		if (FS_FileInPathExists(dld.downloadTempName))
+		{
+			if (Sys_Rename(dld.downloadTempName, to_ospath))
 			{
-				Com_Printf("WARNING: Com_WWWDownload - cannot remove file '%s'\n", dld.downloadTempName);
+				FS_CopyFile(dld.downloadTempName, to_ospath);
+
+				if (Sys_Remove(dld.downloadTempName) != 0)
+				{
+					Com_Printf("WARNING: Com_WWWDownload - cannot remove file '%s'\n", dld.downloadTempName);
+				}
 			}
 		}
+		else
+		{
+			Com_DPrintf("Downloaded file does not exist (anymore?) '%s'\n", dld.downloadTempName);
+		}
+
 		*dld.downloadTempName = *dld.downloadName = 0;
 		Cvar_Set("cl_downloadName", "");
 		if (dld.bWWWDlDisconnected)
@@ -442,6 +464,30 @@ qboolean Com_WWWBadChecksum(const char *pakname)
 }
 
 /**
+ * @brief Com_SetupDownloadRaw
+ * @param[in] remote
+ * @param[in] filename
+ */
+static void Com_SetupDownloadRaw(const char *remote, const char *path, const char *filename, const char *tempName, qboolean systemDownload)
+{
+	dld.bWWWDl             = qtrue;
+	dld.bWWWDlDisconnected = qtrue;
+	dld.systemDownload     = systemDownload;
+
+	// download format: @remotename@localname
+	Q_strncpyz(dld.downloadList, va("@%s@%s", filename, filename), MAX_INFO_STRING);
+	Q_strncpyz(dld.originalDownloadName, path[0] ? va("%s/%s", path, filename) : filename, sizeof(dld.originalDownloadName));
+	Q_strncpyz(dld.downloadName, va("%s/%s", remote, filename), sizeof(dld.downloadName));
+	Q_strncpyz(dld.downloadTempName, tempName, sizeof(dld.downloadTempName));
+
+	if (!DL_BeginDownload(dld.downloadTempName, dld.downloadName))
+	{
+		dld.bWWWDlAborting = qtrue;
+		Com_Error(ERR_DROP, "Could not download file: \"%s\"", dld.downloadName);
+	}
+}
+
+/**
  * @brief Com_SetupDownload
  * @param[in] remote
  * @param[in] filename
@@ -455,7 +501,7 @@ static void Com_SetupDownload(const char *remote, const char *filename)
 	Q_strncpyz(dld.downloadList, va("@%s@%s", filename, filename), MAX_INFO_STRING);
 	Q_strncpyz(dld.originalDownloadName, va("%s/%s", Cvar_VariableString("fs_game"), filename), sizeof(dld.originalDownloadName));
 	Q_strncpyz(dld.downloadName, va("%s/%s", remote, filename), sizeof(dld.downloadName));
-	Q_strncpyz(dld.downloadTempName, FS_BuildOSPath(Cvar_VariableString("fs_homepath"), Cvar_VariableString("fs_game"), va("%s.tmp", filename)), sizeof(dld.downloadTempName));
+	Q_strncpyz(dld.downloadTempName, FS_BuildOSPath(Cvar_VariableString("fs_homepath"), Cvar_VariableString("fs_game"), va("%s" TMP_FILE_EXTENSION, filename)), sizeof(dld.downloadTempName));
 
 	if (!DL_BeginDownload(dld.downloadTempName, dld.downloadName))
 	{
@@ -500,3 +546,40 @@ void Com_Download_f(void)
 		Com_Printf("Usage: download <filename1.pk3> <filename2.pk3> <filename3.pk3> ...");
 	}
 }
+
+#if defined(FEATURE_SSL)
+/**
+ * @brief This method handles the downloading and updating of the ca-certificates file in <homepath>/cacert.pem
+ */
+void Com_CheckCaCertStatus(void)
+{
+	const char *ospath = FS_BuildOSPath(Cvar_VariableString("fs_homepath"), CA_CERT_FILE, NULL);
+	qboolean downloadFile = qfalse;
+
+	if (FS_SV_FileExists(CA_CERT_FILE, qfalse))
+	{
+		long age = FS_FileAge(ospath);
+
+		if(age <= 0)
+		{
+			Com_DPrintf("CA file returned an age of: %li", age);
+			return;
+		}
+
+		// Check if the file is older than 2 weeks
+		if (age > (60 * 60 * 24 * 14))
+		{
+			downloadFile = qtrue;
+		}
+	}
+	else
+	{
+		downloadFile = qtrue;
+	}
+
+	if (downloadFile)
+	{
+		Com_SetupDownloadRaw(MIRROR_SERVER_URL "/certificates", "", CA_CERT_FILE, CA_CERT_FILE TMP_FILE_EXTENSION, qtrue);
+	}
+}
+#endif

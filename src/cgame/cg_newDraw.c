@@ -336,7 +336,6 @@ void CG_DrawCursorhint(rectDef_t *rect)
 	float     *color;
 	qhandle_t icon;
 	float     scale, halfscale;
-	float     middle = rect->x + cgs.wideXoffset;
 
 	if (!cg_cursorHints.integer)
 	{
@@ -473,7 +472,7 @@ void CG_DrawCursorhint(rectDef_t *rect)
 
 	// set color and draw the hint
 	trap_R_SetColor(color);
-	CG_DrawPic(middle - halfscale, rect->y - halfscale, rect->w + scale, rect->h + scale, icon);
+	CG_DrawPic(rect->x - halfscale, rect->y - halfscale, rect->w + scale, rect->h + scale, icon);
 
 	trap_R_SetColor(NULL);
 
@@ -485,7 +484,7 @@ void CG_DrawCursorhint(rectDef_t *rect)
 
 		if (curValue > 0.01f)
 		{
-			CG_FilledBar(middle, rect->y + rect->h + 4, rect->w, 8, colorRed, colorGreen, backG, curValue, BAR_BORDER_SMALL | BAR_LERP_COLOR);
+			CG_FilledBar(rect->x, rect->y + rect->h + 4, rect->w, 8, colorRed, colorGreen, backG, curValue, BAR_BORDER_SMALL | BAR_LERP_COLOR);
 		}
 	}
 }
@@ -533,7 +532,9 @@ void CG_DrawWeapStability(rectDef_t *rect)
 		return;
 	}
 
-	if (cg.predictedPlayerState.weaponstate != WEAPON_READY)
+	// don't draw while switching
+	if ((cg.snap->ps.weapAnim & ~ANIM_TOGGLEBIT) == WEAP_ALTSWITCHFROM ||
+	    (cg.snap->ps.weapAnim & ~ANIM_TOGGLEBIT) == WEAP_ALTSWITCHTO)
 	{
 		return;
 	}
@@ -600,9 +601,11 @@ void CG_MouseEvent(int x, int y)
 			cgs.cursorUpdate = cg.time + 5000;
 		} // fall through
 	case CGAME_EVENT_SPEAKEREDITOR:
+	case CGAME_EVENT_CAMERAEDITOR:
 	case CGAME_EVENT_GAMEVIEW:
 	case CGAME_EVENT_CAMPAIGNBREIFING:
 	case CGAME_EVENT_FIRETEAMMSG:
+	case CGAME_EVENT_SHOUTCAST:
 	case CGAME_EVENT_SPAWNPOINTMSG:
 
 #ifdef FEATURE_EDV
@@ -634,6 +637,11 @@ void CG_MouseEvent(int x, int y)
 		{
 			CG_SpeakerEditorMouseMove_Handling(x, y);
 		}
+
+		if (cgs.eventHandling == CGAME_EVENT_CAMERAEDITOR)
+		{
+			CG_CameraEditorMouseMove_Handling(x, y);
+		}
 #ifdef FEATURE_EDV
 	}
 	else
@@ -655,7 +663,7 @@ void CG_MouseEvent(int x, int y)
 		my += y;
 
 		trap_Cvar_VariableStringBuffer("m_filter", buffer, sizeof(buffer));
-		m_filter = atoi(buffer);
+		m_filter = Q_atoi(buffer);
 
 		trap_Cvar_VariableStringBuffer("sensitivity", buffer, sizeof(buffer));
 		sensitivity = atof(buffer);
@@ -750,6 +758,7 @@ void CG_EventHandling(int type, qboolean fForced)
 	case CGAME_EVENT_NONE:
 	case CGAME_EVENT_CAMPAIGNBREIFING:
 	case CGAME_EVENT_FIRETEAMMSG:
+	case CGAME_EVENT_SHOUTCAST:
 	case CGAME_EVENT_SPAWNPOINTMSG:
 	case CGAME_EVENT_MULTIVIEW:
 	default:
@@ -796,6 +805,18 @@ void CG_EventHandling(int type, qboolean fForced)
 				return;
 			}
 		}
+		else if (cgs.eventHandling == CGAME_EVENT_CAMERAEDITOR)
+		{
+			if (type == -CGAME_EVENT_CAMERAEDITOR)
+			{
+				type = CGAME_EVENT_NONE;
+			}
+			else
+			{
+				trap_Key_SetCatcher(KEYCATCH_CGAME);
+				return;
+			}
+		}
 		else if (cgs.eventHandling == CGAME_EVENT_CAMPAIGNBREIFING)
 		{
 			type = CGAME_EVENT_GAMEVIEW;
@@ -803,6 +824,11 @@ void CG_EventHandling(int type, qboolean fForced)
 		else if (cgs.eventHandling == CGAME_EVENT_FIRETEAMMSG)
 		{
 			cg.showFireteamMenu = qfalse;
+			trap_Cvar_Set("cl_bypassmouseinput", "0");
+		}
+		else if (cgs.eventHandling == CGAME_EVENT_SHOUTCAST)
+		{
+			cg.shoutcastMenu = qfalse;
 			trap_Cvar_Set("cl_bypassmouseinput", "0");
 		}
 		else if (cgs.eventHandling == CGAME_EVENT_SPAWNPOINTMSG)
@@ -847,6 +873,12 @@ void CG_EventHandling(int type, qboolean fForced)
 		trap_Cvar_Set("cl_bypassmouseinput", "1");
 		trap_Key_SetCatcher(KEYCATCH_CGAME);
 	}
+	else if (type == CGAME_EVENT_SHOUTCAST)
+	{
+		cg.shoutcastMenu = qtrue;
+		trap_Cvar_Set("cl_bypassmouseinput", "1");
+		trap_Key_SetCatcher(KEYCATCH_CGAME);
+	}
 	else if (type == CGAME_EVENT_SPAWNPOINTMSG)
 	{
 		cg.showSpawnpointsMenu = qtrue;
@@ -885,6 +917,9 @@ void CG_KeyEvent(int key, qboolean down)
 	case CGAME_EVENT_FIRETEAMMSG:
 		CG_Fireteams_KeyHandling(key, down);
 		break;
+	case CGAME_EVENT_SHOUTCAST:
+		CG_Shoutcast_KeyHandling(key, down);
+		break;
 	case CGAME_EVENT_SPAWNPOINTMSG:
 		CG_Spawnpoints_KeyHandling(key, down);
 		break;
@@ -893,6 +928,9 @@ void CG_KeyEvent(int key, qboolean down)
 		break;
 	case CGAME_EVENT_SPEAKEREDITOR:
 		CG_SpeakerEditor_KeyHandling(key, down);
+		break;
+	case CGAME_EVENT_CAMERAEDITOR:
+		CG_CameraEditor_KeyHandling(key, down);
 		break;
 #ifdef FEATURE_MULTIVIEW
 	case  CGAME_EVENT_MULTIVIEW:

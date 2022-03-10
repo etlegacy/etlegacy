@@ -114,10 +114,10 @@ void R_RemapShader(const char *shaderName, const char *newShaderName, const char
 			}
 		}
 	}
-	
+
 	if (timeOffset)
 	{
-		sh2->timeOffset = atoi(timeOffset);
+		sh2->timeOffset = Q_atoi(timeOffset);
 	}
 }
 
@@ -1059,7 +1059,7 @@ void ParseStencil(char **text, stencil_t *stencil)
 			Ren_Warning("WARNING: missing stencil mask value in shader '%s'\n", shader.name);
 			return;
 		}
-		stencil->mask = atoi(token);
+		stencil->mask = Q_atoi(token);
 
 		token = COM_ParseExt(text, qfalse);
 	}
@@ -1078,7 +1078,7 @@ void ParseStencil(char **text, stencil_t *stencil)
 			Ren_Warning("WARNING: missing stencil writeMask value in shader '%s'\n", shader.name);
 			return;
 		}
-		stencil->writeMask = atoi(token);
+		stencil->writeMask = Q_atoi(token);
 
 		token = COM_ParseExt(text, qfalse);
 	}
@@ -1090,7 +1090,7 @@ void ParseStencil(char **text, stencil_t *stencil)
 		return;
 	}
 
-	stencil->ref = atoi(token);
+	stencil->ref = Q_atoi(token);
 
 	// <op>
 	token = COM_ParseExt(text, qfalse);
@@ -1529,7 +1529,7 @@ qboolean LoadMap(shaderStage_t *stage, char *buffer)
 	{
 		stage->bundle[0].image[0] = tr.whiteImage;
 		return qtrue;
-		
+
 	}
 	else if (!Q_stricmp(token, "$blackimage") || !Q_stricmp(token, "$black") || !Q_stricmp(token, "_black") ||
 	         !Q_stricmp(token, "*black"))
@@ -1600,7 +1600,7 @@ qboolean LoadMap(shaderStage_t *stage, char *buffer)
 
 	// try to load the image
 	stage->bundle[0].image[0] = R_FindImageFile(buffer, imageBits, filterType, wrapType, shader.name);
-	
+
 	if (!stage->bundle[0].image[0])
 	{
 		Ren_Developer("WARNING: LoadMap could not find image '%s' in shader '%s'\n", buffer, shader.name);
@@ -2258,7 +2258,7 @@ qboolean ParseStage(shaderStage_t *stage, char **text)
 				//Ren_Warning( "WARNING: obsolete rgbGen lightingDiffuse keyword not supported in shader '%s'\n", shader.name);
 				stage->type   = ST_DIFFUSEMAP;
 				stage->rgbGen = CGEN_IDENTITY_LIGHTING;
-				
+
 			}
 			else if (!Q_stricmp(token, "oneMinusVertex"))
 			{
@@ -2462,21 +2462,21 @@ qboolean ParseStage(shaderStage_t *stage, char **text)
 			{
 				stage->tcGen_Environment = qtrue;
 				stage->tcGen_Lightmap    = qfalse;
-				
-				
-				
+
+
+
 			}
 			else if (!Q_stricmp(token, "lightmap"))
 			{
 				stage->tcGen_Lightmap    = qtrue;
 				stage->tcGen_Environment = qfalse;
-				
+
 				//stage->type = ST_TCGEN;
 			}
 			else if (!Q_stricmp(token, "texture") || !Q_stricmp(token, "base"))
 
 			{
-				
+
 				//stage->type = ST_TCGEN;
 				//Ren_Warning("WARNING: texGen texture/base keyword not supported in shader '%s'\n", shader.name);
 			}
@@ -3793,8 +3793,8 @@ static qboolean ParseShader(char *_text)
 			SkipRestOfLine(text);
 			continue;
 		}
-		
-		
+
+
 		// skip description
 		else if (!Q_stricmp(token, "description"))
 		{
@@ -4073,7 +4073,7 @@ static qboolean ParseShader(char *_text)
 				return qfalse;
 			}
 
-			
+
 			//set read color based on current light
 			shader.fogParms.colorInt = ColorBytes4(shader.fogParms.color[0] * tr.identityLight,
 			                                      shader.fogParms.color[1] * tr.identityLight,
@@ -4438,7 +4438,7 @@ static qboolean ParseShader(char *_text)
 				continue;
 			}
 			shader.spectrum      = qtrue;
-			shader.spectrumValue = atoi(token);
+			shader.spectrumValue = Q_atoi(token);
 			continue;
 		}
 		// diffuseMap <image>
@@ -4594,7 +4594,7 @@ static void CollapseStages()
 //	int             abits, bbits;
 	int j, i, ji;
 
-	
+
 
 	shaderStage_t tmpDiffuseStage;
 	shaderStage_t tmpNormalStage;
@@ -4603,8 +4603,8 @@ static void CollapseStages()
 	shaderStage_t tmpLiquidStage;
 
 	shaderStage_t tmpTcgenStage;
-	
-	
+
+
 
 	shader_t tmpShader;
 
@@ -4639,8 +4639,8 @@ static void CollapseStages()
 		Com_Memset(&tmpSpecularStage, 0, sizeof(shaderStage_t));
 		Com_Memset(&tmpLiquidStage, 0, sizeof(shaderStage_t));
 		Com_Memset(&tmpTcgenStage, 0, sizeof(shaderStage_t));
-		
-        
+
+
 
 		if (!stages[j].active)
 		{
@@ -4650,7 +4650,7 @@ static void CollapseStages()
 		if (stages[j].type == ST_LIGHTMAP)
 		{
 			tmpShader.has_lightmapStage = qtrue;
-			
+
 		}
 		else if (stages[j].type == ST_REFRACTIONMAP ||
 			stages[j].type == ST_DISPERSIONMAP ||
@@ -4685,7 +4685,7 @@ static void CollapseStages()
 				hasTcgenStage = qtrue;
 				tmpTcgenStage = stages[ji];
 			}
-			
+
 			if (stages[ji].type == ST_DIFFUSEMAP && !hasDiffuseStage)
 			{
 				hasDiffuseStage = qtrue;
@@ -4714,7 +4714,7 @@ static void CollapseStages()
 		}
 
 		// NOTE: merge as many stages as possible
-		
+
 		// try to merge diffuse/normal/specular
 		if (hasDiffuseStage && hasNormalStage && hasSpecularStage)
 		{
@@ -4732,7 +4732,7 @@ static void CollapseStages()
 			j += 2;
 			continue;
 		}
-		
+
 		// try to merge diffuse/normal
 		else if (hasDiffuseStage && hasNormalStage)
 		{
@@ -4749,8 +4749,8 @@ static void CollapseStages()
 			j += 1;
 			continue;
 		}
-		
-	
+
+
 		// try to merge env/normal
 		else if (hasReflectionStage && hasNormalStage)
 		{
@@ -5593,9 +5593,9 @@ shader_t *R_FindShader(const char *name, shaderType_t type, qboolean mipRawImage
 				// there are some shaders (textures/common/clipweap and others ..) which are ignored (see ParseShader())
 				// sothis might report false positives but since FindShader is always returning the default shader
 				// and we've had no real warnings about buggy shaders here nobody did notice that ...
-				
+
 				// ParseShader: ignore shaders that don't have any stages, unless it is a sky or fog
-				//if (s == 0 && !shader.forceOpaque && !shader.isSky && !(shader.contentFlags & CONTENTS_FOG) && implicitMap[0] == '\0')	
+				//if (s == 0 && !shader.forceOpaque && !shader.isSky && !(shader.contentFlags & CONTENTS_FOG) && implicitMap[0] == '\0')
 				Ren_Developer("R_FindShader Warning: Couldn't parse shader %s (%s)- returning default shader - this might be a bug\n", strippedName, name);
 
 				shader.defaultShader = qtrue;
@@ -5790,7 +5790,7 @@ shader_t *R_FindShader(const char *name, shaderType_t type, qboolean mipRawImage
 			}
 			else
 			{
-			
+
 				Ren_Developer("R_FindShader Warning: Specularmap image '%s' type %i not found.\n", va("%s_r.tga", strippedName), shader.type);
 			}
 
@@ -6919,16 +6919,16 @@ void R_InitShaders(void)
 	{
 		Ren_Print("...scanning of legacy shader files disabled by CVAR r_materialScan\n");
 	}
-	
+
 	if(r_materialScan->integer & R_SCAN_SCRIPTS_FOLDER)
-	{	
+	{
 		numShaderFiles   = ScanAndLoadShaderFilesR1();
 	}
 	else
 	{
 		Ren_Print("...scanning of vanilla shader files disabled by CVAR r_materialScan\n");
 	}
-	
+
 	if (numMaterialFiles + numShaderFiles == 0)
 	{
 		Ren_Drop("No shader/material files found!");

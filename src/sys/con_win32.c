@@ -210,7 +210,8 @@ static void CON_Show(void)
 			i     += 2;
 			continue;
 		}
-		else if (qconsole_line[i] == Q_COLOR_ESCAPE)
+
+		if (qconsole_line[i] == Q_COLOR_ESCAPE)
 		{
 			i += 1;
 		}
@@ -438,7 +439,7 @@ char *CON_Input(void)
  */
 void CON_WindowsColorPrint(const char *msg)
 {
-	static char buffer[MAXPRINTMSG];
+	static char buffer[MAX_PRINT_MSG];
 	int         length = 0;
 
 	while (*msg)
@@ -471,7 +472,7 @@ void CON_WindowsColorPrint(const char *msg)
 		}
 		else
 		{
-			if (length >= MAXPRINTMSG - 1)
+			if (length >= MAX_PRINT_MSG - 1)
 			{
 				break;
 			}

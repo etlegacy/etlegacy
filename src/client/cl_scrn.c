@@ -255,12 +255,12 @@ void SCR_DrawStringExt(int x, int y, float w, float h, const char *string, float
  */
 void SCR_DrawDemoRecording(void)
 {
-	if (!clc.demorecording)
+	if (!clc.demo.recording)
 	{
 		return;
 	}
 
-	Cvar_Set("cl_demooffset", va("%d", FS_FTell(clc.demofile)));
+	Cvar_Set("cl_demooffset", va("%d", FS_FTell(clc.demo.file)));
 }
 
 static int   current;

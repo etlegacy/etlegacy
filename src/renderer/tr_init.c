@@ -157,6 +157,8 @@ cvar_t *r_cacheGathering;
 
 cvar_t *r_bonesDebug;
 
+cvar_t *r_fbo;
+
 cvar_t *r_wolfFog;
 
 cvar_t *r_screenshotFormat;
@@ -166,6 +168,8 @@ cvar_t *r_maxPolys;
 cvar_t *r_maxPolyVerts;
 
 cvar_t *r_gfxInfo;
+
+cvar_t *r_scale;
 
 /**
  * @brief This function is responsible for initializing a valid OpenGL subsystem
@@ -191,7 +195,20 @@ static void InitOpenGL(void)
 		GLint temp;
 
 		Com_Memset(&glConfig, 0, sizeof(glConfig));
-		ri.GLimp_Init(&glConfig, NULL);
+
+		windowContext_t context;
+		Com_Memset(&context, 0, sizeof(windowContext_t));
+		// If we are using FBO's then disable multisampling on the main screen buffer
+		if (r_fbo->integer)
+		{
+			context.samples = 0;
+		}
+		else
+		{
+			context.samples = r_ext_multisample->integer;
+		}
+
+		ri.GLimp_Init(&glConfig, &context);
 
 		strcpy(renderer_buffer, glConfig.renderer_string);
 		Q_strlwr(renderer_buffer);
@@ -204,6 +221,13 @@ static void InitOpenGL(void)
 		if (glConfig.maxTextureSize <= 0)
 		{
 			glConfig.maxTextureSize = 0;
+		}
+
+		if (r_scale->value)
+		{
+			float scale = Com_Clamp(0.2f, 4.f, r_scale->value);
+			glConfig.vidWidth *= scale;
+			glConfig.vidHeight *= scale;
 		}
 	}
 
@@ -222,12 +246,13 @@ void GL_CheckErrors(void)
 	unsigned int err;
 	char         s[64];
 
-	err = glGetError();
-	if (err == GL_NO_ERROR)
+	if (r_ignoreGLErrors->integer)
 	{
 		return;
 	}
-	if (r_ignoreGLErrors->integer)
+
+	err = glGetError();
+	if (err == GL_NO_ERROR)
 	{
 		return;
 	}
@@ -252,11 +277,11 @@ void GL_CheckErrors(void)
 		strcpy(s, "GL_OUT_OF_MEMORY");
 		break;
 	default:
-		Com_sprintf(s, sizeof(s), "%i", err);
+		Com_sprintf(s, sizeof(s), "code (%i)", err);
 		break;
 	}
 
-	ri.Error(ERR_VID_FATAL, "GL_CheckErrors: %s", s);
+	Ren_Fatal("GL_CheckErrors: %s", s);
 }
 
 /*
@@ -312,6 +337,7 @@ byte *RB_ReadPixels(int x, int y, int width, int height, size_t *offset, int *pa
 	buffer = ri.Hunk_AllocateTempMemory(padwidth * height + *offset + packAlign - 1);
 
 	bufstart = PADP(( intptr_t ) buffer + *offset, packAlign);
+
 	glReadPixels(x, y, width, height, GL_RGB, GL_UNSIGNED_BYTE, bufstart);
 
 	*offset = bufstart - buffer;
@@ -430,7 +456,7 @@ void RB_TakeScreenshotTGA(int x, int y, int width, int height, const char *fileN
 	int    linelen, padlen;
 	size_t offset = 18, memcount;
 
-	allbuf = RB_ReadPixels(x, y, width, height, &offset, &padlen);
+	allbuf = R_FBOReadPixels(NULL, &offset, &padlen);
 	buffer = allbuf + offset - 18;
 
 	Com_Memset(buffer, 0, 18);
@@ -468,7 +494,7 @@ void RB_TakeScreenshotTGA(int x, int y, int width, int height, const char *fileN
 	memcount = linelen * height;
 
 	// gamma correct
-	if (glConfig.deviceSupportsGamma)
+	if (glConfig.deviceSupportsGamma && !tr.gammaProgramUsed)
 	{
 		R_GammaCorrect(allbuf + offset, memcount);
 	}
@@ -492,11 +518,11 @@ void RB_TakeScreenshotJPEG(int x, int y, int width, int height, char *fileName)
 	size_t offset = 0, memcount;
 	int    padlen;
 
-	buffer   = RB_ReadPixels(x, y, width, height, &offset, &padlen);
+	buffer   = R_FBOReadPixels(NULL, &offset, &padlen);
 	memcount = (width * 3 + padlen) * height;
 
 	// gamma correct
-	if (glConfig.deviceSupportsGamma)
+	if (glConfig.deviceSupportsGamma && !tr.gammaProgramUsed)
 	{
 		R_GammaCorrect(buffer + offset, memcount);
 	}
@@ -520,11 +546,11 @@ void RB_TakeScreenshotPNG(int x, int y, int width, int height, char *fileName)
 	size_t offset = 0, memcount;
 	int    padlen;
 
-	buffer   = RB_ReadPixels(x, y, width, height, &offset, &padlen);
+	buffer   = R_FBOReadPixels(NULL, &offset, &padlen);
 	memcount = (width * 3 + padlen) * height;
 
 	// gamma correct
-	if (glConfig.deviceSupportsGamma)
+	if (glConfig.deviceSupportsGamma && !tr.gammaProgramUsed)
 	{
 		R_GammaCorrect(buffer + offset, memcount);
 	}
@@ -630,6 +656,7 @@ const void *RB_TakeVideoFrameCmd(const void *data)
 	size_t                    memcount, linelen;
 	int                       padwidth, avipadwidth, padlen, avipadlen;
 	GLint                     packAlign;
+	frameBuffer_t             *tmpFbo;
 
 	// finish any 2D drawing if needed
 	if (tess.numIndexes)
@@ -652,13 +679,15 @@ const void *RB_TakeVideoFrameCmd(const void *data)
 
 	cBuf = PADP(cmd->captureBuffer, packAlign);
 
-	glReadPixels(0, 0, cmd->width, cmd->height, GL_RGB,
-	              GL_UNSIGNED_BYTE, cBuf);
+	tmpFbo = R_CurrentFBO();
+	R_BindFBO(NULL);
+	glReadPixels(0, 0, cmd->width, cmd->height, GL_RGB, GL_UNSIGNED_BYTE, cBuf);
+	R_BindFBO(tmpFbo);
 
 	memcount = padwidth * cmd->height;
 
 	// gamma correct
-	if (glConfig.deviceSupportsGamma)
+	if (glConfig.deviceSupportsGamma && !tr.gammaProgramUsed)
 	{
 		R_GammaCorrect(cBuf, memcount);
 	}
@@ -722,7 +751,7 @@ void R_LevelShot(void)
 
 	Com_sprintf(checkname, sizeof(checkname), "levelshots/%s.tga", tr.world->baseName);
 
-	allsource = RB_ReadPixels(0, 0, glConfig.vidWidth, glConfig.vidHeight, &offset, &padlen);
+	allsource = R_FBOReadPixels(NULL, &offset, &padlen);
 	source    = allsource + offset;
 
 	buffer = ri.Hunk_AllocateTempMemory(128 * 128 * 3 + 18);
@@ -733,8 +762,8 @@ void R_LevelShot(void)
 	buffer[16] = 24;        // pixel size
 
 	// resample from source
-	xScale = glConfig.vidWidth / 512.0f;
-	yScale = glConfig.vidHeight / 384.0f;
+	xScale = glConfig.windowWidth / 512.0f;
+	yScale = glConfig.windowHeight / 384.0f;
 	for (y = 0 ; y < 128 ; y++)
 	{
 		for (x = 0 ; x < 128 ; x++)
@@ -744,7 +773,7 @@ void R_LevelShot(void)
 			{
 				for (xx = 0 ; xx < 4 ; xx++)
 				{
-					src = source + (3 * glConfig.vidWidth + padlen) * ( int ) ((y * 3 + yy) * yScale) +
+					src = source + (3 * glConfig.windowWidth + padlen) * ( int ) ((y * 3 + yy) * yScale) +
 					      3 * ( int ) ((x * 4 + xx) * xScale);
 					r += src[0];
 					g += src[1];
@@ -759,7 +788,7 @@ void R_LevelShot(void)
 	}
 
 	// gamma correct
-	if (glConfig.deviceSupportsGamma)
+	if (glConfig.deviceSupportsGamma && !tr.gammaProgramUsed)
 	{
 		R_GammaCorrect(buffer + 18, 128 * 128 * 3);
 	}
@@ -790,6 +819,12 @@ void R_ScreenShot_f(void)
 	char       *ext = "";
 
 	ssFormat_t format = r_screenshotFormat->integer;
+
+	// Backwards compatibility
+	if (!Q_stricmp(ri.Cmd_Argv(0), "screenshotJPEG"))
+	{
+		format = SSF_JPEG;
+	}
 
 	switch (format)
 	{
@@ -826,7 +861,36 @@ void R_ScreenShot_f(void)
 	if (ri.Cmd_Argc() == 2 && !silent)
 	{
 		// explicit filename
-		Com_sprintf(checkname, MAX_OSPATH, "screenshots/%s.%s", ri.Cmd_Argv(1), ext);
+		const char* fileExt = COM_GetExtension(ri.Cmd_Argv(1));
+		if (fileExt[0])
+		{
+			char filename[MAX_QPATH];
+			COM_StripExtension(ri.Cmd_Argv(1), filename, MAX_QPATH);
+
+			if (COM_CompareExtension(fileExt, "tga"))
+			{
+				ext = "tga";
+				format = SSF_TGA;
+			}
+			else if (COM_CompareExtension(fileExt, "jpg") || COM_CompareExtension(fileExt, "jpeg"))
+			{
+				ext = "jpg";
+				format = SSF_JPEG;
+			}
+#ifdef FEATURE_PNG
+			else if (COM_CompareExtension(fileExt, "png"))
+			{
+				ext = "png";
+				format = SSF_PNG;
+			}
+#endif
+
+			Com_sprintf(checkname, MAX_OSPATH, "screenshots/%s.%s", filename, ext);
+		}
+		else
+		{
+			Com_sprintf(checkname, MAX_OSPATH, "screenshots/%s.%s", ri.Cmd_Argv(1), ext);
+		}
 	}
 	else
 	{
@@ -859,7 +923,7 @@ void R_ScreenShot_f(void)
 		lastNumber++;
 	}
 
-	R_TakeScreenshot(0, 0, glConfig.vidWidth, glConfig.vidHeight, checkname, format);
+	R_TakeScreenshot(0, 0, glConfig.windowWidth, glConfig.windowHeight, checkname, format);
 
 	if (!silent)
 	{
@@ -1063,6 +1127,8 @@ void R_Register(void)
 	r_cacheGathering = ri.Cvar_Get("cl_cacheGathering", "0", 0);
 	r_bonesDebug     = ri.Cvar_Get("r_bonesDebug", "0", CVAR_CHEAT);
 
+	r_fbo = ri.Cvar_Get("r_fbo", "1", CVAR_LATCH);
+
 	r_wolfFog = ri.Cvar_Get("r_wolffog", "1", CVAR_ARCHIVE);
 
 	r_noCurves    = ri.Cvar_Get("r_nocurves", "0", CVAR_CHEAT);
@@ -1119,6 +1185,9 @@ void R_Register(void)
 
 	r_gfxInfo = ri.Cvar_Get("r_gfxinfo", "0", 0); // less spammy gfx output at start - enable to print full GL_EXTENSION string
 
+	r_scale = ri.Cvar_Get("r_scale", "1", CVAR_ARCHIVE | CVAR_LATCH);
+
+
 	// make sure all the commands added here are also
 	// removed in R_Shutdown
 	ri.Cmd_AddSystemCommand("imagelist", R_ImageList_f, "Print out the list of images loaded", NULL);
@@ -1126,8 +1195,11 @@ void R_Register(void)
 	ri.Cmd_AddSystemCommand("skinlist", R_SkinList_f, "Print out the list of skins", NULL);
 	ri.Cmd_AddSystemCommand("modellist", R_Modellist_f, "Print out the list of loaded models", NULL);
 	ri.Cmd_AddSystemCommand("screenshot", R_ScreenShot_f, "Take a screenshot of current frame", NULL);
+	ri.Cmd_AddSystemCommand("screenshotJPEG", R_ScreenShot_f, "Take a JPEG screenshot of current frame", NULL);
 	ri.Cmd_AddSystemCommand("gfxinfo", GfxInfo_f, "Print GFX info of current system", NULL);
 	ri.Cmd_AddSystemCommand("taginfo", R_TagInfo_f, "Print the list of loaded tags", NULL);
+
+	R_RegisterCommon();
 }
 
 /**
@@ -1194,6 +1266,12 @@ void R_Init(void)
 
 	InitOpenGL();
 
+	R_InitShaderPrograms();
+
+	R_InitFBO();
+
+	R_InitGamma();
+
 	R_InitImages();
 
 	R_InitShaders();
@@ -1203,8 +1281,6 @@ void R_Init(void)
 	R_ModelInit();
 
 	R_InitFreeType();
-
-	R_InitGamma();
 
 	err = glGetError();
 	if (err != GL_NO_ERROR)
@@ -1234,10 +1310,9 @@ void RE_Shutdown(qboolean destroyWindow)
 	ri.Cmd_RemoveSystemCommand("shaderlist");
 	ri.Cmd_RemoveSystemCommand("skinlist");
 	ri.Cmd_RemoveSystemCommand("modellist");
-	ri.Cmd_RemoveSystemCommand("modelist");
 	ri.Cmd_RemoveSystemCommand("screenshot");
+	ri.Cmd_RemoveSystemCommand("screenshotJPEG");
 	ri.Cmd_RemoveSystemCommand("gfxinfo");
-	ri.Cmd_RemoveSystemCommand("minimize");
 	ri.Cmd_RemoveSystemCommand("taginfo");
 
 	// keep a backup of the current images if possible
@@ -1271,6 +1346,10 @@ void RE_Shutdown(qboolean destroyWindow)
 	R_DoneFreeType();
 
 	R_ShutdownGamma();
+
+	R_ShutdownFBO();
+
+	R_ShutdownShaderPrograms();
 
 	// shut down platform specific OpenGL stuff
 	if (destroyWindow)

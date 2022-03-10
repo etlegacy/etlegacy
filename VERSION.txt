@@ -1,0 +1,4 @@
+# ET: Legacy version information
+VERSION_MAJOR 2
+VERSION_MINOR 79
+VERSION_PATCH 0

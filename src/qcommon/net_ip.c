@@ -132,7 +132,7 @@ static cvar_t *net_mcast6addr;
 static cvar_t *net_mcast6iface;
 #endif
 
-static cvar_t *net_dropsim;
+static cvar_t *net_dropsim; // 0.0 to 1.0, simulated packet drops
 
 static struct sockaddr socksRelayAddr;
 
@@ -339,14 +339,13 @@ static qboolean Sys_StringToSockaddr(const char *s, struct sockaddr *sadr, int s
 
 	retval = getaddrinfo(s, NULL, hintsp, &res);
 
-
-#ifdef _WIN32
-	// FIXME: When there is favorite server stored in db and loaded at start (in case Windows)
-	// It is complaining about WSAStartup not being initialized or issues with calling it.
-	// Error Code 10093
-	if (!winsockInitialized)
+	// Network needs to be init before this, and it should have been.
+	if (!networkingEnabled)
+	{
+		Com_Printf(S_COLOR_YELLOW "WARNING: Sys_StringToSockaddr: Networking is not initialized\n");
+		etl_assert(qfalse);
 		return qfalse;
-#endif
+	}
 
 	if (!retval)
 	{
@@ -1776,7 +1775,9 @@ void NET_OpenIP(void)
 	int port6 = net_port6->integer;
 #endif
 
+#ifndef __ANDROID__
 	NET_GetLocalAddress();
+#endif
 
 	// automatically scan for a valid port, so multiple
 	// dedicated servers can be started without requiring
@@ -1919,7 +1920,7 @@ static qboolean NET_GetCvars(void)
 	modified                   += net_socksPassword->modified;
 	net_socksPassword->modified = qfalse;
 
-	net_dropsim = Cvar_Get("net_dropsim", "", CVAR_TEMP);
+	net_dropsim = Cvar_Get("net_dropsim", "0", CVAR_TEMP | CVAR_CHEAT);
 
 	return modified ? qtrue : qfalse;
 }
@@ -2031,12 +2032,12 @@ static void NET_Config(qboolean enableNetworking)
 void NET_Init(void)
 {
 #ifdef _WIN32
-	int r;
+	int sock_ret;
 
-	r = WSAStartup(MAKEWORD(1, 1), &winsockdata);
-	if (r != 0)
+	sock_ret = WSAStartup(MAKEWORD(1, 1), &winsockdata);
+	if (sock_ret != 0)
 	{
-		Com_Printf(S_COLOR_YELLOW "WARNING: NET_Init: Winsock initialization failed, returned %d\n", r);
+		Com_Printf(S_COLOR_YELLOW "WARNING: NET_Init: Winsock initialization failed, returned %d\n", sock_ret);
 		return;
 	}
 
@@ -2085,7 +2086,7 @@ void NET_Event(fd_set *fdr)
 		{
 			if (net_dropsim->value > 0.0f && net_dropsim->value <= 100.0f)
 			{
-				// com_dropsim->value percent of incoming packets get dropped.
+				// net_dropsim->value percent of incoming packets get dropped.
 				if (rand() < (int)(((double)RAND_MAX) / 100.0 * (double)net_dropsim->value))
 				{
 					continue;          // drop this packet

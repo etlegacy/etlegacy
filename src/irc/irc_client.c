@@ -2512,7 +2512,7 @@ void IRC_Connect(void)
 void IRC_Init(void)
 {
 	irc_mode            = Cvar_Get("irc_mode", "0", CVAR_ARCHIVE);
-	irc_server          = Cvar_Get("irc_server", "irc.freenode.net", CVAR_ARCHIVE);
+	irc_server          = Cvar_Get("irc_server", "irc.libera.chat", CVAR_ARCHIVE);
 	irc_channel         = Cvar_Get("irc_channel", "etlegacy", CVAR_ARCHIVE);
 	irc_port            = Cvar_Get("irc_port", "6667", CVAR_ARCHIVE);
 	irc_nickname        = Cvar_Get("irc_nickname", "ETLClient", CVAR_ARCHIVE);

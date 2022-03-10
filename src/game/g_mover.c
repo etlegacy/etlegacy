@@ -333,8 +333,8 @@ qboolean G_TryPushingEntity(gentity_t *check, gentity_t *pusher, vec3_t move, ve
 	{
 		// make sure the client's view rotates when on a rotating mover
 		// - this is done client-side now
-		// - only do this if player is prone or using set mortar - No! realism!
-		//if ((check->client->ps.eFlags & EF_PRONE) || GetWeaponTableData(check->s.weapon)->isMortarSet)
+		// - only do this if player is ON a rotating mover
+		if(check->s.groundEntityNum == pusher->s.number)
 		{
 			check->client->ps.delta_angles[YAW] += ANGLE2SHORT(amove[YAW]);
 		}
@@ -639,44 +639,13 @@ qboolean G_MoverPush(gentity_t *pusher, vec3_t move, vec3_t amove, gentity_t **o
 	{
 		check = &g_entities[moveList[e]];
 
-		// some situations in front of mover should gib players (by damage)
 		switch (check->s.eType)
 		{
-		case ET_PLAYER:
-			if (!check->client)
-			{
-				break;
-			}
-
-			if (check->s.groundEntityNum != pusher->s.number)
-			{
-				if (check->client->ps.eFlags & (EF_DEAD | EF_PRONE | EF_PRONE_MOVING))
-				{
-					trap_LinkEntity(check);
-					G_Damage(check, pusher, pusher, NULL, NULL, GIB_DAMAGE(check->health), 0, MOD_CRUSH);
-					moveList[e] = ENTITYNUM_NONE;   // prevent re-linking later on
-					continue;
-				}
-			}
-			break;
 		case ET_CORPSE: // always gib corpses ...
 			trap_LinkEntity(check);
 			GibEntity(check, ENTITYNUM_WORLD);
 			moveList[e] = ENTITYNUM_NONE; // prevent re-linking later on
 			continue;
-		case ET_ITEM:
-			// items should be removed (except CTF objectives)
-			if (check->s.groundEntityNum == ENTITYNUM_WORLD)
-			{
-				if (check->item->giType != IT_TEAM)
-				{
-					trap_LinkEntity(check);
-					G_FreeEntity(check);
-					moveList[e] = ENTITYNUM_NONE;
-					continue;
-				}
-			}
-			break;
 		default:
 			break;
 		}
@@ -4457,7 +4426,7 @@ void InitExplosive(gentity_t *ent)
 	// pick it up if the level designer uses "damage" instead of "dmg"
 	if (G_SpawnString("damage", "0", &damage))
 	{
-		ent->damage = atoi(damage);
+		ent->damage = Q_atoi(damage);
 	}
 
 	ent->s.eType = ET_EXPLOSIVE;
@@ -4937,7 +4906,7 @@ void func_constructible_use(gentity_t *self, gentity_t *other, gentity_t *activa
 
 	if (!self->count2)
 	{
-		self->s.modelindex2 = atoi(self->model + 1);
+		self->s.modelindex2 = Q_atoi(self->model + 1);
 	}
 	else
 	{
@@ -5410,14 +5379,14 @@ void func_constructiblespawn(gentity_t *ent)
 
 					bmodel = bmodel_ent->model + 1;
 
-					ent->conbmodels[ent->count2++] = atoi(bmodel);
+					ent->conbmodels[ent->count2++] = Q_atoi(bmodel);
 				}
 
 				target_ptr = ptr + 1;
 			}
 		}
 
-		ent->conbmodels[ent->count2++] = atoi(ent->model + 1);      // the brushmodel of the func_constructible is the final stage
+		ent->conbmodels[ent->count2++] = Q_atoi(ent->model + 1);      // the brushmodel of the func_constructible is the final stage
 
 		// parse the destruction stages
 		if (ent->count2 && ent->desstages)
@@ -5447,7 +5416,7 @@ void func_constructiblespawn(gentity_t *ent)
 
 						bmodel = bmodel_ent->model + 1;
 
-						ent->desbmodels[numDesStages++] = atoi(bmodel);
+						ent->desbmodels[numDesStages++] = Q_atoi(bmodel);
 					}
 
 					target_ptr = ptr + 1;
@@ -5488,7 +5457,7 @@ void func_constructiblespawn(gentity_t *ent)
 			//ent->s.solid = CONTENTS_SOLID;  // FIXME: allow other contents?
 			trap_LinkEntity(ent);
 
-			ent->s.modelindex2 = atoi(ent->model + 1);
+			ent->s.modelindex2 = Q_atoi(ent->model + 1);
 		}
 		else
 		{
@@ -5711,7 +5680,7 @@ void SP_func_brushmodel(gentity_t *ent)
 
 	if (ent->targetname && level.numBrushModels < 128)
 	{
-		level.brushModelInfo[level.numBrushModels].model = atoi(ent->model + 1);
+		level.brushModelInfo[level.numBrushModels].model = Q_atoi(ent->model + 1);
 		Q_strncpyz(level.brushModelInfo[level.numBrushModels].modelname, ent->targetname, 32);
 		level.numBrushModels++;
 	}
@@ -5765,7 +5734,7 @@ void SP_func_debris(gentity_t *ent)
 
 	debris = G_AllocDebrisChunk();
 
-	debris->model = atoi(ent->model + 1);
+	debris->model = Q_atoi(ent->model + 1);
 
 	Q_strncpyz(debris->target, ent->target, sizeof(debris->target));
 	Q_strncpyz(debris->targetname, ent->targetname, sizeof(debris->targetname));

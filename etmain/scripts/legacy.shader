@@ -805,6 +805,70 @@ sprites/ready
 	}
 }
 
+sprites/cm_medic_icon
+{
+	nopicmip
+	nocompress
+	nomipmaps
+	{
+		map sprites/voicemedic.tga
+		depthFunc equal
+		blendfunc blend
+		rgbGen vertex
+		alphaGen vertex
+	}
+}
+
+sprites/cm_ammo_icon
+{
+	nopicmip
+	nocompress
+	nomipmaps
+	{
+		map sprites/voiceammo.tga
+		depthFunc equal
+		blendfunc blend
+		rgbGen vertex
+		alphaGen vertex
+	}
+}
+
+sprites/cm_voicechat_icon
+{
+	nopicmip
+	nocompress
+	nomipmaps
+	{
+		map sprites/voicechat.tga
+		depthFunc equal
+		blendfunc blend
+		rgbGen vertex
+		alphaGen vertex
+	}
+}
+
+sprites/uniform_allied_hud
+{
+	nocompress
+	nopicmip
+	{
+		map sprites/active_uniform_allied.tga
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbGen vertex
+	}
+}
+
+sprites/uniform_axis_hud
+{
+	nocompress
+	nopicmip
+	{
+		map sprites/active_uniform_axis.tga
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbGen vertex
+	}
+}
+
 ui/assets/mp_ammo_blue
 {
 	nopicmip
@@ -1425,6 +1489,18 @@ gfx/hud/ranks/xrank11
 	}
 }
 
+// fixed chat background bar using clampMap instead of map for drawing
+gfx/2d/colorbar
+{
+	nomipmaps
+	nopicmip
+	{
+		clampMap gfx/2d/colorbar.tga
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbGen vertex
+	}
+}
+
 // disguised shader
 gfx/2d/friendlycross
 {
@@ -1432,6 +1508,18 @@ gfx/2d/friendlycross
 	nopicmip
 	{
 		map gfx/2d/friendlycross.tga
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbGen vertex
+	}
+}
+
+// disconnect icon
+gfx/2d/net
+{
+	nocompress
+	nopicmip
+	{
+		map gfx/2d/net.jpg
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
 		rgbGen vertex
 	}

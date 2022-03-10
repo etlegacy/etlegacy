@@ -1395,7 +1395,7 @@ qboolean Q_isanumber(const char *s)
  */
 qboolean Q_isintegral(float f)
 {
-	return (int)f == f;
+	return (int)f == f; // NOLINT(cppcoreguidelines-narrowing-conversions)
 }
 
 /**
@@ -1410,6 +1410,27 @@ int Q_isforfilename(int c)
 		return(1);
 	}
 	return (0);
+}
+
+/**
+ * get rid of 0x80+ and '%' chars, because old clients don't like them
+ * @param string buffer to check
+ * @param len length of the buffer
+ */
+void Q_SafeNetString(char *string, size_t len, qboolean strip)
+{
+	int i = 0;
+	for (; i < len; ++i)
+	{
+		if (!string[i])
+		{
+			break;
+		}
+		if ((strip && (byte)string[i] > 127) || string[i] == '%')
+		{
+			string[i] = '.';
+		}
+	}
 }
 
 #ifdef _MSC_VER
@@ -1704,6 +1725,50 @@ int Q_PrintStrlen(const char *string)
 }
 
 /**
+ * @brief Q_TruncateStr
+ * @param[in] string
+ * @param[in] limit
+ * @return
+ */
+char *Q_TruncateStr(char *string, int limit)
+{
+	char *p;
+	char *s;
+	int  i, len;
+
+	if (!string)
+	{
+		return 0;
+	}
+
+	len = Q_PrintStrlen(string);
+	if (len <= limit)
+	{
+		return string;
+	}
+
+	p = string;
+	s = string;
+	for (i = 0; i < limit; i++)
+	{
+		if (Q_IsColorString(p))
+		{
+			limit += 2;
+			p     += 2;
+			i++;
+			continue;
+		}
+		p++;
+	}
+
+	limit++; // for null byte
+
+	Q_strncpyz(s, string, limit);
+
+	return s;
+}
+
+/**
  * @brief Remove all leading and trailing whitespace and special characters from string.
  * @param[in,out] string
  * @return
@@ -1788,51 +1853,80 @@ char *Q_CleanStr(char *string)
  */
 void Q_ColorizeString(char colorCode, const char *inStr, char *outStr, size_t outBufferLen)
 {
+	size_t inLen     = strlen(inStr);
+	size_t outOffset = 0;
+	size_t inOffset = 0;
+
 	if (outBufferLen < 3 || inStr == outStr)
 	{
-		// Failure... How do we assert in WET?
 		etl_assert(qfalse);
+		Com_Error(ERR_DROP, "Q_ColorizeString: invalid input data");
 	}
-	else
+
+	outStr[outOffset++] = Q_COLOR_ESCAPE;
+	outStr[outOffset++] = colorCode;
+
+	// Ok the buffer is way too small
+	if (outOffset + 1 >= outBufferLen)
 	{
-		size_t inLen     = strlen(inStr);
-		size_t outOffset = 0;
+		outStr[outOffset] = 0;
+		return;
+	}
 
-		outStr[outOffset++] = Q_COLOR_ESCAPE;
-		outStr[outOffset++] = colorCode;
+	// There needs to be one extra char available in the output buffer for the terminating zero
+	while (inOffset < inLen && outOffset + 1 < outBufferLen)
+	{
+		char c = inStr[inOffset];
 
-		if (outOffset + 1 < outBufferLen)
+		if (c == Q_COLOR_ESCAPE)
 		{
-			size_t inOffset = 0;
-
-			while (inOffset < inLen && outOffset < outBufferLen)
+			// chars plus possible terminator char
+			if (outOffset + 4 < outBufferLen)
 			{
-				char c = inStr[inOffset];
-
-				if (c == Q_COLOR_ESCAPE)
-				{
-					if (outOffset + 3 < outBufferLen)
-					{
-						outStr[outOffset++] = c;
-						outStr[outOffset++] = Q_COLOR_ESCAPE;
-						outStr[outOffset++] = colorCode;
-					}
-					else
-					{
-						break;
-					}
-				}
-				else
-				{
-					outStr[outOffset++] = c;
-				}
-
-				inOffset++;
+				outStr[outOffset++] = c;
+				outStr[outOffset++] = Q_COLOR_ESCAPE;
+				outStr[outOffset++] = colorCode;
+			}
+			else
+			{
+				break;
 			}
 		}
+		else
+		{
+			outStr[outOffset++] = c;
+		}
 
-		outStr[outOffset++] = 0;
+		inOffset++;
 	}
+
+	outStr[outOffset] = 0;
+}
+
+/**
+ * @brief Parses normalized RGBA color string
+ * @param[in] inStr input string to parse
+ * @param[out] outColor output vector to set
+ * @return Number of matched color components in the input string
+ */
+int Q_ParseColorRGBA(const char *inStr, vec4_t outColor)
+{
+	float r = 0.0f;
+	float g = 0.0f;
+	float b = 0.0f;
+	float a = 1.0f;
+	int   components;
+
+	if (!inStr || !inStr[0] || !outColor)
+	{
+		return 0;
+	}
+
+	components = sscanf(inStr, "%f %f %f %f", &r, &g, &b, &a);
+	Vector4Set(outColor, r, g, b, a);
+	ClampColor(outColor);
+
+	return components;
 }
 
 /**
@@ -1942,14 +2036,12 @@ long Q_GenerateHashValue(const char *fname, int size, qboolean fullPath, qboolea
 			if (letter == '.')
 			{
 				break; // don't include extension
-
 			}
 		}
 
 		if (letter == '\\')
 		{
 			letter = '/'; // damn path names
-
 		}
 
 		hash += (long)(letter) * (i + 119);
@@ -1978,7 +2070,7 @@ int QDECL Com_sprintf(char *dest, unsigned int size, const char *fmt, ...)
 
 	if (len >= size)
 	{
-		Com_Printf("Com_sprintf: Output length %u too short, require %d bytes.\n", size, len + 1);
+		Com_Printf(S_COLOR_RED "ERROR: " S_COLOR_GREEN "Com_sprintf output length %u too short, require %d bytes.\n", size, len + 1);
 	}
 
 	return len;
@@ -2032,7 +2124,7 @@ char *QDECL va(const char *format, ...)
 	size_t        len;
 
 	va_start(argptr, format);
-	vsprintf(temp_buffer, format, argptr); // Q_vsnprintf ???
+	Q_vsnprintf(temp_buffer, MAX_VA_STRING, format, argptr);
 	va_end(argptr);
 
 	if ((len = strlen(temp_buffer)) >= MAX_VA_STRING)
@@ -2725,4 +2817,26 @@ void *Com_AnyOf(void **ptr, int n)
 		}
 	}
 	return NULL;
+}
+
+/**
+ * @brief Round a float value with n decimal
+ * @param[in] value The value to round
+ * @param[in] decimalCount The number of decimal to keep
+ * @return The rounded values
+ */
+float Com_RoundFloatWithNDecimal(float value, unsigned int decimalCount)
+{
+	float        v;
+	unsigned int n;
+
+	// compute the number of decimal to keep
+	n = pow(10.f, decimalCount);
+
+	// rouding on n digits
+	v = roundf(value * n) / n;
+
+	// in case the value is between (-0.5) / n and 0, the rounding will compute -0
+	// we don't want to display -0, so let replace it by a pure 0
+	return v == -0.f ? 0.f : v;
 }

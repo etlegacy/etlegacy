@@ -95,6 +95,7 @@ extern vec4_t colorMdCyan;
 extern vec4_t colorMdYellow;
 extern vec4_t colorMdOrange;
 extern vec4_t colorMdBlue;
+extern vec4_t colorLtBlue;
 
 extern vec4_t clrBrown;
 extern vec4_t clrBrownDk;
@@ -108,54 +109,6 @@ extern vec4_t clrBrownLineFull;
 
 #define GAME_INIT_FRAMES    6
 #define FRAMETIME           100                 // msec
-
-#define Q_COLOR_ESCAPE  '^'
-#define Q_IsColorString(p) (*p == Q_COLOR_ESCAPE && *(p + 1) && isgraph(*(p + 1)) && *(p + 1) != Q_COLOR_ESCAPE)
-
-#define COLOR_BLACK     '0'
-#define COLOR_RED       '1'
-#define COLOR_GREEN     '2'
-#define COLOR_YELLOW    '3'
-#define COLOR_BLUE      '$' // 4 is unreadable on dark background
-#define COLOR_CYAN      '5'
-#define COLOR_MAGENTA   '6'
-#define COLOR_WHITE     '7'
-#define COLOR_ORANGE    '8'
-#define COLOR_MDGREY    '9'
-#define COLOR_LTGREY    ':'
-//#define COLOR_LTGREY  ';'
-#define COLOR_MDGREEN   '<'
-#define COLOR_MDYELLOW  '='
-#define COLOR_MDBLUE    '>'
-#define COLOR_MDRED     '?'
-#define COLOR_LTORANGE  'A'
-#define COLOR_MDCYAN    'B'
-#define COLOR_MDPURPLE  'C'
-#define COLOR_NULL      '*'
-
-#define COLOR_BITS  31
-#define ColorIndex(c)   (((c) - '0') & COLOR_BITS)
-
-#define S_COLOR_BLACK       "^0"
-#define S_COLOR_RED         "^1"
-#define S_COLOR_GREEN       "^2"
-#define S_COLOR_YELLOW      "^3"
-#define S_COLOR_BLUE        "^$" // 4 is unreadable on dark background
-#define S_COLOR_CYAN        "^5"
-#define S_COLOR_MAGENTA     "^6"
-#define S_COLOR_WHITE       "^7"
-#define S_COLOR_ORANGE      "^8"
-#define S_COLOR_MDGREY      "^9"
-#define S_COLOR_LTGREY      "^:"
-//#define S_COLOR_LTGREY        "^;"
-#define S_COLOR_MDGREEN     "^<"
-#define S_COLOR_MDYELLOW    "^="
-#define S_COLOR_MDBLUE      "^>"
-#define S_COLOR_MDRED       "^?"
-#define S_COLOR_LTORANGE    "^A"
-#define S_COLOR_MDCYAN      "^B"
-#define S_COLOR_MDPURPLE    "^C"
-#define S_COLOR_NULL        "^*"
 
 extern vec4_t g_color_table[32];
 
@@ -304,6 +257,9 @@ void ByteToDir(int b, vec3_t dir);
 #define vec3_clear(a)              ((a)[0] = (a)[1] = (a)[2] = 0)
 #define vec3_negate(a, b)           ((b)[0] = -(a)[0], (b)[1] = -(a)[1], (b)[2] = -(a)[2])
 #define vec3_set(v, x, y, z)       ((v)[0] = (x), (v)[1] = (y), (v)[2] = (z))
+#define vec3_equals(v, v2)       ((v)[0] == (v2)[0] && (v)[1] == (v2)[1] && (v)[2] == (v2)[2])
+#define vec3_valsEqual(v, x, y, z)       ((v)[0] == (x) && (v)[1] == (y) && (v)[2] == (z))
+#define vec3_isClear(x)             vec3_valsEqual(x, 0, 0, 0)
 //dot product
 #define vec3_dot(x, y)         ((x)[0] * (y)[0] + (x)[1] * (y)[1] + (x)[2] * (y)[2])
 #define vec3_sub(a, b, c)   ((c)[0] = (a)[0] - (b)[0], (c)[1] = (a)[1] - (b)[1], (c)[2] = (a)[2] - (b)[2])
@@ -326,6 +282,7 @@ vec_t vec3_norm2(const vec3_t v, vec3_t out);
 // Inverse
 void vec3_inv(vec3_t v);
 void vec3_rotate(const vec3_t in, vec3_t matrix[3], vec3_t out);
+void vec3_rotate2(const vec3_t in, vec3_t matrix[3], vec3_t out);
 qboolean vec3_compare(const vec3_t v1, const vec3_t v2);
 
 //FIXME: duplicate functions :D::D:D:D:D:
@@ -333,7 +290,7 @@ float vec3_dist(vec3_t v1, vec3_t v2);
 float vec3_dist_squared(vec3_t v1, vec3_t v2);
 
 float vec3_to_yawn(const vec3_t vec);
-void vec3_lerp(vec3_t start, vec3_t end, float frac, vec3_t out);
+void vec3_lerp(const vec3_t start, const vec3_t end, float frac, vec3_t out);
 
 // Perpendicular vector of source
 void vec3_per(const vec3_t src, vec3_t dst);
@@ -393,6 +350,12 @@ float angle_mod(float a);
 float angle_lerp(float from, float to, float frac);
 float angle_sub(float a1, float a2);
 void angles_sub(vec3_t v1, vec3_t v2, vec3_t v3);
+inline static void angles_lerp(const vec3_t from, const vec3_t to, float frac, vec3_t out)
+{
+	out[0] = angle_lerp(from[0], to[0], frac);
+	out[1] = angle_lerp(from[1], to[1], frac);
+	out[2] = angle_lerp(from[2], to[2], frac);
+}
 
 //float angle_norm_pi(float angle); // Unused.
 float angle_norm_360(float angle);
@@ -481,7 +444,7 @@ float Q_crandom(int *seed);
 #define crandom()   (2.0f * (random() - 0.5f))
 
 void SetPlaneSignbits(struct cplane_s *out);
-int BoxOnPlaneSide(vec3_t emins, vec3_t emaxs, struct cplane_s *p);
+int BoxOnPlaneSide(const vec3_t emins, const vec3_t emaxs, struct cplane_s *p);
 
 qboolean PlaneFromPoints(vec4_t plane, const vec3_t a, const vec3_t b, const vec3_t c);
 void ProjectPointOnPlane(vec3_t dst, const vec3_t p, const vec3_t normal);
@@ -583,8 +546,10 @@ static ID_INLINE int VectorCompareEpsilon(const vec3_t v1, const vec3_t v2, floa
 	d[1] = fabs(d[1]);
 	d[2] = fabs(d[2]);
 
-	if(d[0] > epsilon || d[1] > epsilon || d[2] > epsilon)
+	if (d[0] > epsilon || d[1] > epsilon || d[2] > epsilon)
+	{
 		return 0;
+	}
 
 	return 1;
 }

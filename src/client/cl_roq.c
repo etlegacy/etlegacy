@@ -1011,8 +1011,6 @@ void ROQ_UpdateCinematic(cinematic_t *cin, int time)
 
 	cin->currentData.width  = cin->frameWidth;
 	cin->currentData.height = cin->frameHeight;
-
-	return;
 }
 
 /**

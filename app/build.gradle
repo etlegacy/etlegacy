@@ -1,0 +1,111 @@
+def buildAsLibrary = project.hasProperty('BUILD_AS_LIBRARY');
+def buildAsApplication = !buildAsLibrary
+if (buildAsApplication) {
+    apply plugin: 'com.android.application'
+}
+else {
+    apply plugin: 'com.android.library'
+}
+
+def getVersion = 'git describe --tags --abbrev=7'.execute([], project.rootDir).text.trim()
+
+def extractInt( String input ) {
+  return input.replaceAll("[^0-9]", "")
+}
+
+def VERSION = []
+new File( 'VERSION.txt' ).eachLine { line ->
+	VERSION << extractInt(line)
+}
+
+println VERSION
+
+android {
+    compileSdkVersion 26
+    defaultConfig {
+        if (buildAsApplication) {
+            applicationId "org.etlegacy.app"
+        }
+        minSdkVersion 21
+        targetSdkVersion 26
+        versionCode 1
+        versionName "${VERSION[1]}.${VERSION[2]}.${VERSION[3]}"
+        setProperty("archivesBaseName", "etlegacy-${getVersion}")
+        externalNativeBuild {
+            cmake {
+                arguments "-DCROSS_COMPILE32=OFF", "-DFEATURE_RENDERER_GLES=ON", "-DBUILD_SERVER=OFF", "-DINSTALL_EXTRA=OFF","-DARM=ON" , "-DCMAKE_BUILD_TYPE=Release", "-DBUNDLED_LIBS=OFF", "-DFEATURE_LUA=OFF", "-DFEATURE_OPENAL=OFF", "-DRENDERER_DYNAMIC=OFF", "-DFEATURE_FREETYPE=OFF", "-DFEATURE_THEORA=OFF", "-DFEATURE_SSL=OFF"
+                //"-DANDROID_ARM_NEON=OFF"
+            }
+        }
+        ndk {
+            // Specifies the ABI configurations of your native
+            // libraries Gradle should build and package with your APK.
+            abiFilters 'armeabi-v7a', 'arm64-v8a'
+        }
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+
+    signingConfigs {
+        debug {
+            storeFile file('../etlkey.jks')
+            keyAlias 'key0'
+            storePassword 'etlegacy'
+            keyPassword 'etlegacy'
+        }
+        release {
+            storeFile = file("../etl.keystore")
+            storePassword System.getenv("SIGNING_STORE_PASSWORD")
+            keyAlias System.getenv("SIGNING_KEY_ALIAS")
+            keyPassword System.getenv("SIGNING_KEY_PASSWORD")
+        }
+    }
+
+    buildTypes {
+        debug {
+            signingConfig signingConfigs.debug
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        release {
+           signingConfig signingConfigs.release
+        }
+    }
+    if (!project.hasProperty('EXCLUDE_NATIVE_LIBS')) {
+        sourceSets.main {
+            jniLibs.srcDir 'libs'
+        }
+        externalNativeBuild {
+            cmake {
+                path '../CMakeLists.txt'
+            }
+        }
+
+    }
+    lintOptions {
+        abortOnError false
+    }
+
+    if (buildAsLibrary) {
+        libraryVariants.all { variant ->
+            variant.outputs.each { output ->
+                def outputFile = output.outputFile
+                if (outputFile != null && outputFile.name.endsWith(".aar")) {
+                    def fileName = "org.etlegacy.app.aar";
+                    output.outputFile = new File(outputFile.parent, fileName);
+                }
+            }
+        }
+    }
+}
+
+dependencies {
+    api 'com.github.erz05:JoyStick:1.1.0'
+    implementation 'com.loopj.android:android-async-http:1.4.10'
+    implementation 'com.google.guava:guava:29.0-android'
+
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'com.jayway.android.robotium:robotium-solo:5.6.0'
+    androidTestImplementation 'com.android.support.test:runner:0.3'
+
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+}

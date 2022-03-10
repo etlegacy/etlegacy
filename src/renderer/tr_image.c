@@ -956,14 +956,33 @@ image_t *R_CreateImage(const char *name, const byte *pic, int width, int height,
 
 	GL_Bind(image);
 
-	Upload32((unsigned *)pic, image->width, image->height,
-			 image->mipmap,
-			 allowPicmip,
-			 isLightmap,
-			 &image->internalFormat,
-			 &image->uploadWidth,
-			 &image->uploadHeight,
-			 noCompress);
+	if (pic)
+	{
+		Upload32((unsigned *)pic, image->width, image->height,
+				 image->mipmap,
+				 allowPicmip,
+				 isLightmap,
+				 &image->internalFormat,
+				 &image->uploadWidth,
+				 &image->uploadHeight,
+				 noCompress);
+	}
+	else
+	{
+		image->internalFormat = GL_RGBA;
+		glTexImage2D(GL_TEXTURE_2D, 0, image->internalFormat, image->width, image->height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+
+		if (mipmap)
+		{
+			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, gl_filter_min);
+			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, gl_filter_max);
+		}
+		else
+		{
+			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		}
+	}
 
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrapClampMode);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrapClampMode);
@@ -1337,8 +1356,8 @@ void R_SetColorMappings(void)
 		tr.overbrightBits = 0;      // need hardware gamma for overbright
 	}
 
-	// never overbright in windowed mode
-	if (!glConfig.isFullscreen)
+	// never overbright in windowed mode if we are not using glsl..
+	if (!glConfig.isFullscreen && !tr.gammaProgramUsed)
 	{
 		tr.overbrightBits = 0;
 	}
@@ -1417,7 +1436,7 @@ void R_SetColorMappings(void)
 		s_intensitytable[i] = j;
 	}
 
-	if (glConfig.deviceSupportsGamma && !GLEW_ARB_fragment_program)
+	if (glConfig.deviceSupportsGamma && !tr.gammaProgramUsed)
 	{
 		ri.GLimp_SetGamma(s_gammatable, s_gammatable, s_gammatable);
 	}
@@ -1466,6 +1485,8 @@ void R_DeleteTextures(void)
 	{
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
+
+	R_CacheImageFreeAll();
 }
 
 /*
@@ -1957,13 +1978,22 @@ void R_CacheImageFreeAll()
 {
 	if (r_cache->integer && r_cacheShaders->integer)
 	{
-		int i = 0;
-
+		int i;
 		for (i = 0; i < FILE_HASH_SIZE; i++)
 		{
 			if (backupHashTable[i])
 			{
 				R_CacheImageFree(backupHashTable[i]);
+				backupHashTable[i] = NULL;
+			}
+		}
+
+		for (i = 0; i < FILE_HASH_SIZE; i++)
+		{
+			if (hashTable[i])
+			{
+				R_CacheImageFree(hashTable[i]);
+				hashTable[i] = NULL;
 			}
 		}
 	}
@@ -2246,7 +2276,7 @@ void R_LoadCacheImages(void)
 		for (i = 0; i < 4; i++)
 		{
 			token    = COM_ParseExt(&pString, qfalse);
-			parms[i] = atoi(token);
+			parms[i] = Q_atoi(token);
 		}
 		R_FindImageFile(name, parms[0], parms[1], parms[2], parms[3]);
 	}

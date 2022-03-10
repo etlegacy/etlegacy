@@ -112,16 +112,16 @@ sharedEntity_t *SV_GEntityForSvEntity(svEntity_t *svEnt)
  * @param[in] clientNum
  * @param[in] text
  */
-void SV_GameSendServerCommand(int clientNum, const char *text)
+void SV_GameSendServerCommand(int clientNum, const char *text, qboolean demoPlayback)
 {
 	// record the game server commands in demos
 	if (sv.demoState == DS_RECORDING)
 	{
 		SV_DemoWriteGameCommand(clientNum, text);
 	}
-	else if (sv.demoState == DS_PLAYBACK)
+	else if (sv.demoState == DS_PLAYBACK && !demoPlayback && !SV_CheckLastCmd(text, qtrue))
 	{
-		SV_CheckLastCmd(text, qtrue);   // store the new game command, so when replaying a demo message, we can check for duplicates: maybe this message was already submitted (because of the events simulation, an event may trigger a message), and so we want to avoid those duplicates: if an event already triggered a message, no need to issue the one stored in the demo
+		return; // block qagame game commands during playback
 	}
 
 	if (clientNum == -1)
@@ -178,7 +178,7 @@ void SV_SetBrushModel(sharedEntity_t *ent, const char *name)
 		Com_Error(ERR_DROP, "SV_SetBrushModel: %s of #%i isn't a brush model", name, ent->s.number);
 	}
 
-	ent->s.modelindex = atoi(name + 1);
+	ent->s.modelindex = Q_atoi(name + 1);
 
 	h = CM_InlineModel(ent->s.modelindex);
 	CM_ModelBounds(h, mins, maxs);
@@ -418,6 +418,18 @@ static int FloatAsInt(float f)
 	return fi.i;
 }
 
+/**
+ * @brief Get engine value
+ * @param[out] value buffer
+ * @param[in] valueSize buffer size
+ * @param[in] key to query
+ * @return true if value for key is found
+ */
+static qboolean SV_G_GetValue(char *value, int valueSize, const char *key)
+{
+	return qfalse;
+}
+
 extern int S_RegisterSound(const char *name, qboolean compressed);
 extern int S_GetSoundLength(sfxHandle_t sfxHandle);
 
@@ -463,7 +475,6 @@ intptr_t SV_GameSystemCalls(intptr_t *args)
 	case G_SEND_CONSOLE_COMMAND:
 		Cbuf_ExecuteText(args[1], VMA(2));
 		return 0;
-
 	case G_FS_FOPEN_FILE:
 		return FS_FOpenFileByMode(VMA(1), VMA(2), args[3]);
 	case G_FS_READ:
@@ -487,7 +498,7 @@ intptr_t SV_GameSystemCalls(intptr_t *args)
 		SV_GameDropClient(args[1], VMA(2), args[3]);
 		return 0;
 	case G_SEND_SERVER_COMMAND:
-		SV_GameSendServerCommand(args[1], VMA(2));
+		SV_GameSendServerCommand(args[1], VMA(2), qfalse);
 		return 0;
 	case G_LINKENTITY:
 		SV_LinkEntity(VMA(1));
@@ -682,6 +693,9 @@ intptr_t SV_GameSystemCalls(intptr_t *args)
 		return SV_SendBinaryMessage(args[1], VMA(2), args[3]);
 	case G_MESSAGESTATUS:
 		return SV_BinaryMessageStatus(args[1]);
+
+	case G_TRAP_GETVALUE:
+		return SV_G_GetValue(VMA(1), args[2], VMA(3));
 
 	default:
 		Com_Error(ERR_DROP, "Bad game system trap: %ld", (long int) args[0]);

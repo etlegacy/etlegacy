@@ -916,17 +916,22 @@ void G_FreeEntity(gentity_t *ent)
 	// - optimization: if events are freed EVENT_VALID_MSEC has already passed (keep in mind these are broadcasted)
 	// - when enabled g_debugHitboxes, g_debugPlayerHitboxes or g_debugbullets 3 we want visible trace effects - don't free immediately
 	// FIXME: remove tmp var l_free if we are sure there are no issues caused by this change (especially on network games)
-	if ((ent->s.eType == ET_TEMPHEAD || ent->s.eType == ET_TEMPLEGS || ent->s.eType == ET_CORPSE || ent->s.eType >= ET_EVENTS) && trap_Cvar_VariableIntegerValue("l_free") == 0 && trap_Cvar_VariableIntegerValue("g_debugHitboxes") == 0 && trap_Cvar_VariableIntegerValue("g_debugPlayerHitboxes") == 0 && trap_Cvar_VariableIntegerValue("g_debugbullets") < 3)
+	if ((ent->s.eType == ET_TEMPHEAD || ent->s.eType == ET_TEMPLEGS || ent->s.eType == ET_CORPSE || ent->s.eType >= ET_EVENTS)
+	    && trap_Cvar_VariableIntegerValue("g_debugHitboxes") == 0 && trap_Cvar_VariableIntegerValue("g_debugPlayerHitboxes") == 0
+	    && trap_Cvar_VariableIntegerValue("g_debugbullets") < 3)
 	{
 		// debug
-		//if (ed->s.eType >= ET_EVENTS)
-		//{
-		//  G_Printf("^3%4i event entity freed - num_entities: %4i - %s [%s]\n", ed-g_entities, level.num_entities, ed->classname, eventnames[ed->s.eType - ET_EVENTS]);
-		//}
-		//else
-		//{
-		//  G_Printf("^2%4i entity freed - num_entities: %4i - %s\n", ed-g_entities, level.num_entities, ed->classname);
-		//}
+		if (g_developer.integer)
+		{
+			if (ent->s.eType >= ET_EVENTS)
+			{
+				G_DPrintf("^3%4i event entity freed - num_entities: %4i - %s [%s]\n", ent - g_entities, level.num_entities, ent->classname, eventnames[ent->s.eType - ET_EVENTS]);
+			}
+			else
+			{
+				G_DPrintf("^2%4i entity freed - num_entities: %4i - %s\n", ent - g_entities, level.num_entities, ent->classname);
+			}
+		}
 
 		// game entity is immediately available and a 'slot' will be reused
 		Com_Memset(ent, 0, sizeof(*ent));
@@ -1329,7 +1334,20 @@ void G_SetEntState(gentity_t *ent, entState_t state)
 			int       entityList[MAX_GENTITIES];
 			gentity_t *check, *block;
 
+			// ignore OID trigger before getting entities in box
+			// otherwise their hitbox will completely hidden other small entities inside it
+			for (e = 0 ; e < level.num_entities ; e++)
+			{
+				if (g_entities[e].s.eFlags == ET_OID_TRIGGER)
+				{
+					G_TempTraceIgnoreEntity(&g_entities[e]);
+				}
+			}
+
 			listedEntities = trap_EntitiesInBox(ent->r.absmin, ent->r.absmax, entityList, MAX_GENTITIES);
+
+			// add back OID trigger in world
+			G_ResetTempTraceIgnoreEnts();
 
 			for (e = 0; e < listedEntities; e++)
 			{
@@ -2122,7 +2140,7 @@ qboolean CG_ParseMapVotePlayersCountConfig(void)
 		{
 			break;
 		}
-		mapVotePlayersCount[i].min = atoi(token);
+		mapVotePlayersCount[i].min = Q_atoi(token);
 
 		// map max players
 		token = COM_Parse(&text_p);
@@ -2130,7 +2148,7 @@ qboolean CG_ParseMapVotePlayersCountConfig(void)
 		{
 			break;
 		}
-		mapVotePlayersCount[i].max = atoi(token);
+		mapVotePlayersCount[i].max = Q_atoi(token);
 	}
 
 	if (i == MAX_MAPVOTEPLAYERCOUNT)

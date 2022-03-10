@@ -293,7 +293,6 @@ HINSTANCE Omnibot_LL(const char *file)
 eomnibot_error Omnibot_LoadLibrary(int version, const char *lib, const char *path)
 {
 	eomnibot_error r = BOT_ERROR_NONE;
-
 #ifdef WIN32
 #ifdef _WIN64
 #define SUFFIX "_x64"
@@ -309,33 +308,39 @@ eomnibot_error Omnibot_LoadLibrary(int version, const char *lib, const char *pat
 	{
 		g_BotLibrary = Omnibot_LL(OB_VA("%s" SUFFIX ".dll", lib));
 	}
-
 #else
+
+#ifdef __APPLE__
+#define POSTFIX ".dylib"
+#define SUFFIX
+#else
+#define POSTFIX ".so"
 #ifdef __x86_64__
 #define SUFFIX ".x86_64"
 #else
 #define SUFFIX
 #endif
-	g_BotLibrary = Omnibot_LL(OB_VA("%s/%s" SUFFIX ".so", path ? path : ".", lib));
+#endif
+	g_BotLibrary = Omnibot_LL(OB_VA("%s/%s" SUFFIX POSTFIX, path ? path : ".", lib));
 	if (!g_BotLibrary)
 	{
-		g_BotLibrary = Omnibot_LL(OB_VA("./%s" SUFFIX ".so", lib));
+		g_BotLibrary = Omnibot_LL(OB_VA("./%s" SUFFIX POSTFIX, lib));
 	}
 	if (!g_BotLibrary)
 	{
 		char *homeDir = getenv("HOME");
 		if (homeDir)
 		{
-			g_BotLibrary = Omnibot_LL(OB_VA("%s/omni-bot/%s" SUFFIX ".so", homeDir, lib));
+			g_BotLibrary = Omnibot_LL(OB_VA("%s/omni-bot/%s" SUFFIX POSTFIX, homeDir, lib));
 		}
 	}
 	if (!g_BotLibrary)
 	{
-		g_BotLibrary = Omnibot_LL(OB_VA("%s" SUFFIX ".so", lib));
+		g_BotLibrary = Omnibot_LL(OB_VA("%s" SUFFIX POSTFIX, lib));
 	}
 #endif
 
-	if (g_BotLibrary == 0)
+	if (!g_BotLibrary)
 	{
 		g_OmnibotLibPath.clear();
 		r = BOT_ERROR_CANTLOADDLL;

@@ -49,7 +49,7 @@
 #define PM_FIXEDPHYSICSFPS      cgs.fixedphysicsfps
 #define PM_PRONEDELAY           cgs.pronedelay
 
-#elif GAMEDLL
+#else
 extern vmCvar_t g_fixedphysics;
 extern vmCvar_t g_fixedphysicsfps;
 extern vmCvar_t g_pronedelay;
@@ -62,6 +62,7 @@ extern vmCvar_t g_pronedelay;
 
 #define AIMSPREAD_MAXSPREAD 255
 #define MAX_AIMSPREAD_TIME 1000
+#define EXTENDEDPRONE_TIME 400
 
 pmove_t *pm;
 pml_t   pml;
@@ -69,7 +70,7 @@ pml_t   pml;
 // movement parameters
 float pm_stopspeed = 100;
 
-float pm_waterSwimScale = 0.5;
+float pm_waterSwimScale = 0.5f;
 //float pm_waterWadeScale = 0.70f;
 float pm_slagSwimScale = 0.30f;
 //float pm_slagWadeScale  = 0.70f;
@@ -142,7 +143,7 @@ int PM_IdleAnimForWeapon(int weapon)
  */
 int PM_ReloadAnimForWeapon(int weapon)
 {
-	if ((pm->skill[SK_LIGHT_WEAPONS] >= 2 && GetWeaponTableData(weapon)->attributes & WEAPON_ATTRIBUT_FAST_RELOAD)      // faster reload
+	if ((BG_IsSkillAvailable(pm->skill, SK_LIGHT_WEAPONS, SK_LIGHT_WEAPONS_FASTER_RELOAD) && GetWeaponTableData(weapon)->attributes & WEAPON_ATTRIBUT_FAST_RELOAD)      // faster reload
 	    || GetWeaponTableData(weapon)->type & (WEAPON_TYPE_SET | WEAPON_TYPE_RIFLENADE))
 	{
 		return WEAP_RELOAD2;
@@ -255,13 +256,13 @@ void PM_ClipVelocity(vec3_t in, vec3_t normal, vec3_t out, float overbounce)
  * @param[in] tracemask
  */
 void PM_TraceLegs(trace_t *trace, float *legsOffset, vec3_t start, vec3_t end, trace_t *bodytrace, vec3_t viewangles,
-                  void (tracefunc) (trace_t *results,
-                                    const vec3_t start,
-                                    const vec3_t mins,
-                                    const vec3_t maxs,
-                                    const vec3_t end,
-                                    int passEntityNum,
-                                    int contentMask),
+                  void(tracefunc) (trace_t *results,
+                                   const vec3_t start,
+                                   const vec3_t mins,
+                                   const vec3_t maxs,
+                                   const vec3_t end,
+                                   int passEntityNum,
+                                   int contentMask),
                   int ignoreent,
                   int tracemask)
 {
@@ -277,11 +278,23 @@ void PM_TraceLegs(trace_t *trace, float *legsOffset, vec3_t start, vec3_t end, t
 
 	// legs position
 	BG_LegsCollisionBoxOffset(viewangles, pm->ps->eFlags, ofs);
-	//VectorAdd(start, ofs, org);
-	VectorCopy(start, org);
+	VectorAdd(start, ofs, org);
+	//VectorCopy(start, org);
 	VectorAdd(end, ofs, point);
 
 	tracefunc(trace, org, playerlegsProneMins, playerlegsProneMaxs, point, ignoreent, tracemask);
+
+	// if our legs start in solid while dead, just ignore them to avoid getting stuck
+	if ((pm->ps->eFlags & EF_DEAD) && (trace->allsolid || trace->startsolid))
+	{
+		pm->pmext->deadInSolid = qtrue;
+		if (pm->debugLevel)
+		{
+			Com_Printf("%i:legs in solid, trace skipped\n", c_pmove);
+		}
+		return;
+	}
+
 	if (!bodytrace || trace->fraction < bodytrace->fraction || trace->allsolid)
 	{
 		trace_t steptrace;
@@ -319,6 +332,8 @@ void PM_TraceLegs(trace_t *trace, float *legsOffset, vec3_t start, vec3_t end, t
 				}
 			}
 		}
+
+
 	}
 }
 
@@ -333,13 +348,13 @@ void PM_TraceLegs(trace_t *trace, float *legsOffset, vec3_t start, vec3_t end, t
  * @param[in] tracemask
  */
 void PM_TraceHead(trace_t *trace, vec3_t start, vec3_t end, trace_t *bodytrace, vec3_t viewangles,
-                  void (tracefunc) (trace_t *results,
-                                    const vec3_t start,
-                                    const vec3_t mins,
-                                    const vec3_t maxs,
-                                    const vec3_t end,
-                                    int passEntityNum,
-                                    int contentMask),
+                  void(tracefunc) (trace_t *results,
+                                   const vec3_t start,
+                                   const vec3_t mins,
+                                   const vec3_t maxs,
+                                   const vec3_t end,
+                                   int passEntityNum,
+                                   int contentMask),
                   int ignoreent,
                   int tracemask)
 {
@@ -350,11 +365,23 @@ void PM_TraceHead(trace_t *trace, vec3_t start, vec3_t end, trace_t *bodytrace, 
 
 	// head position
 	BG_HeadCollisionBoxOffset(viewangles, pm->ps->eFlags, ofs);
-	//VectorAdd(start, ofs, org);
-	VectorCopy(start, org);
+	VectorAdd(start, ofs, org);
+	//VectorCopy(start, org);
 	VectorAdd(end, ofs, point);
 
 	tracefunc(trace, org, playerHeadProneMins, playerHeadProneMaxs, point, ignoreent, tracemask);
+
+	// if our head starts in solid while dead, just ignore it to avoid getting stuck
+	if ((pm->ps->eFlags & EF_DEAD) && (trace->allsolid || trace->startsolid))
+	{
+		pm->pmext->deadInSolid = qtrue;
+		if (pm->debugLevel)
+		{
+			Com_Printf("%i:head in solid, trace skipped\n", c_pmove);
+		}
+		return;
+	}
+
 	if (!bodytrace || trace->fraction < bodytrace->fraction || trace->allsolid)
 	{
 		trace_t steptrace;
@@ -387,12 +414,25 @@ void PM_TraceHead(trace_t *trace, vec3_t start, vec3_t end, trace_t *bodytrace, 
  */
 void PM_TraceAllParts(trace_t *trace, float *legsOffset, vec3_t start, vec3_t end)
 {
-	pm->trace(trace, start, pm->mins, pm->maxs, end, pm->ps->clientNum, pm->tracemask);
+	// if dead, body trace with a square bbox so wounded players don't clip into solids
+	if (pm->ps->eFlags & EF_DEAD)
+	{
+		const vec3_t squareMaxs = { 18.f, 18.f, 16.f }; // mins is -18 -18 -24
+		pm->trace(trace, start, pm->mins, squareMaxs, end, pm->ps->clientNum, pm->tracemask);
+	}
+	else
+	{
+		pm->trace(trace, start, pm->mins, pm->maxs, end, pm->ps->clientNum, pm->tracemask);
+	}
 
 	// legs and head
-	if ((pm->ps->eFlags & EF_PRONE) ||
-	    (pm->ps->eFlags & EF_DEAD))
+	if ((pm->ps->eFlags & EF_PRONE) || (pm->ps->eFlags & EF_DEAD))
 	{
+		// ignore head and legs completely if we're dead and either is stuck in solid
+		if (pm->pmext->deadInSolid)
+		{
+			return;
+		}
 
 		trace_t  legtrace;
 		trace_t  headtrace;
@@ -604,7 +644,8 @@ static float PM_CmdScale(usercmd_t *cmd)
 	             + cmd->rightmove * cmd->rightmove + cmd->upmove * cmd->upmove);
 	scale = (float)pm->ps->speed * max / (127.0f * total);
 
-	if ((pm->cmd.buttons & BUTTON_SPRINT) && pm->pmext->sprintTime > 50)
+	if ((pm->cmd.buttons & BUTTON_SPRINT) && pm->pmext->sprintTime > 50
+	    && !(GetWeaponTableData(pm->ps->weapon)->type & (WEAPON_TYPE_SCOPED)))
 	{
 		scale *= pm->ps->sprintSpeedScale;
 	}
@@ -627,14 +668,14 @@ static float PM_CmdScale(usercmd_t *cmd)
 	{
 		if (pm->ps->weapon == WP_FLAMETHROWER) // trying some different balance for the FT
 		{
-			if (!(pm->skill[SK_HEAVY_WEAPONS] >= 3) || (pm->cmd.buttons & BUTTON_ATTACK))
+			if (!(BG_IsSkillAvailable(pm->skill, SK_HEAVY_WEAPONS, SK_SOLDIER_DEXTERITY)) || (pm->cmd.buttons & BUTTON_ATTACK))
 			{
 				scale *= 0.7f;
 			}
 		}
 		else
 		{
-			if (pm->skill[SK_HEAVY_WEAPONS] >= 3)
+			if (BG_IsSkillAvailable(pm->skill, SK_HEAVY_WEAPONS, SK_SOLDIER_DEXTERITY))
 			{
 				scale *= 0.75f;
 			}
@@ -643,6 +684,11 @@ static float PM_CmdScale(usercmd_t *cmd)
 				scale *= 0.5f;
 			}
 		}
+	}
+	else if (GetWeaponTableData(pm->ps->weapon)->type & WEAPON_TYPE_SCOPED)
+	{
+		// half move speed if weapon is scoped
+		scale *= 0.5f;
 	}
 
 	return scale;
@@ -863,6 +909,8 @@ static qboolean PM_CheckProne(void)
 		     (pm->cmd.wbuttons & WBUTTON_PRONE)) && pm->cmd.serverTime - -pm->pmext->proneTime > pronedelay)
 		{
 			trace_t trace;
+			vec3_t  end;
+			vec3_t  oldOrigin;
 
 			pm->mins[0] = pm->ps->mins[0];
 			pm->mins[1] = pm->ps->mins[1];
@@ -873,9 +921,69 @@ static qboolean PM_CheckProne(void)
 			pm->mins[2] = pm->ps->mins[2];
 			pm->maxs[2] = pm->ps->crouchMaxZ;
 
-			pm->ps->eFlags |= EF_PRONE;
-			PM_TraceAll(&trace, pm->ps->origin, pm->ps->origin);
-			pm->ps->eFlags &= ~EF_PRONE;
+			BG_LegsCollisionBoxOffset(pm->ps->viewangles, EF_PRONE, end);
+			VectorAdd(pm->ps->origin, end, end);
+
+			pm->trace(&trace, pm->ps->origin, playerlegsProneMins, playerlegsProneMaxs, end, pm->ps->clientNum, pm->tracemask);
+
+			if (trace.fraction != 1.f)
+			{
+				VectorSubtract(trace.endpos, end, end);
+				VectorCopy(pm->ps->origin, oldOrigin);
+
+				pm->ps->eFlags |= EF_PRONE;
+				PM_StepSlideMove(qfalse);
+				PM_TraceAll(&trace, pm->ps->origin, pm->ps->origin);
+
+				if (trace.startsolid || trace.allsolid || trace.fraction != 1.f)
+				{
+					// push back the origin and retry
+					VectorAdd(oldOrigin, end, pm->ps->origin);
+					PM_StepSlideMove(qfalse);
+					PM_TraceAll(&trace, pm->ps->origin, pm->ps->origin);
+
+					if (trace.startsolid || trace.allsolid || trace.fraction != 1.f)
+					{
+						pm->ps->eFlags &= ~EF_PRONE;
+						VectorCopy(oldOrigin, pm->ps->origin);
+						return qfalse;
+					}
+				}
+				pm->ps->eFlags &= ~EF_PRONE;
+			}
+			else
+			{
+				BG_HeadCollisionBoxOffset(pm->ps->viewangles, EF_PRONE, end);
+				VectorAdd(pm->ps->origin, end, end);
+
+				pm->trace(&trace, pm->ps->origin, playerHeadProneMins, playerHeadProneMaxs, end, pm->ps->clientNum, pm->tracemask);
+
+				if (trace.fraction != 1.f)
+				{
+					VectorSubtract(trace.endpos, end, end);
+					VectorCopy(pm->ps->origin, oldOrigin);
+
+					pm->ps->eFlags |= EF_PRONE;
+					PM_StepSlideMove(qfalse);
+					PM_TraceAll(&trace, pm->ps->origin, pm->ps->origin);
+
+					if (trace.startsolid || trace.allsolid || trace.fraction != 1.f)
+					{
+						// push back the origin and retry
+						VectorAdd(oldOrigin, end, pm->ps->origin);
+						PM_StepSlideMove(qfalse);
+						PM_TraceAll(&trace, pm->ps->origin, pm->ps->origin);
+
+						if (trace.startsolid || trace.allsolid || trace.fraction != 1.f)
+						{
+							pm->ps->eFlags &= ~EF_PRONE;
+							VectorCopy(oldOrigin, pm->ps->origin);
+							return qfalse;
+						}
+					}
+					pm->ps->eFlags &= ~EF_PRONE;
+				}
+			}
 
 			if (PM_PRONEDELAY)
 			{
@@ -922,17 +1030,10 @@ static qboolean PM_CheckProne(void)
 				pm->ps->pm_flags |= PMF_DUCKED;
 
 				// stop prone
-				pm->ps->eFlags      &= ~EF_PRONE;
-				pm->ps->eFlags      &= ~EF_PRONE_MOVING;
-				pm->pmext->proneTime = -pm->cmd.serverTime; // timestamp 'stop prone'
-
-				// don't let them keep scope out when
-				// standing from prone or they will
-				// look right through a wall
-				if (GetWeaponTableData(pm->ps->weapon)->type & (WEAPON_TYPE_SCOPED | WEAPON_TYPE_SET))
-				{
-					PM_BeginWeaponChange((weapon_t)pm->ps->weapon, GetWeaponTableData(pm->ps->weapon)->weapAlts, qfalse);
-				}
+				pm->ps->eFlags            &= ~EF_PRONE;
+				pm->ps->eFlags            &= ~EF_PRONE_MOVING;
+				pm->pmext->proneTime       = -pm->cmd.serverTime; // timestamp 'stop prone'
+				pm->pmext->extendProneTime = EXTENDEDPRONE_TIME;
 
 				// don't jump for a bit
 				pm->pmext->jumpTime = pm->cmd.serverTime - 650;
@@ -1361,24 +1462,6 @@ static void PM_DeadMove(void)
 {
 	float forward;
 
-	// push back from ladder
-	if (pm->ps->pm_flags & PMF_LADDER)
-	{
-		float  angle;
-		vec3_t flatforward;
-
-		angle          = DEG2RAD(pm->ps->viewangles[YAW]);
-		flatforward[0] = cos(angle);
-		flatforward[1] = sin(angle);
-		flatforward[2] = 0;
-
-		VectorMA(pm->ps->origin, -32, flatforward, pm->ps->origin);
-
-		PM_StepSlideMove(qtrue);
-
-		pm->ps->pm_flags &= ~PMF_LADDER;
-	}
-
 	if (!pml.walking)
 	{
 		return;
@@ -1386,7 +1469,7 @@ static void PM_DeadMove(void)
 
 	// extra friction
 	forward  = VectorLength(pm->ps->velocity);
-	forward -= 20;
+	forward -= 2500 * pml.frametime;
 	if (forward <= 0)
 	{
 		VectorClear(pm->ps->velocity);
@@ -1615,7 +1698,7 @@ static void PM_CrashLand(void)
 	}
 
 	// start footstep cycle over
-	pm->ps->bobCycle = 0;
+	pm->ps->bobCycle = pm->pmext->bobCycle = 0;
 }
 
 /**
@@ -1931,11 +2014,19 @@ static void PM_CheckDuck(void)
 	{
 		pm->maxs[2]        = pm->ps->crouchMaxZ;
 		pm->ps->viewheight = pm->ps->crouchViewHeight;
+
+		// reduce extend time for already crouched player
+		// since animation transition from standing to crouching is already happening or happend
+		if (pm->pmext->extendProneTime > 0)
+		{
+			pm->pmext->extendProneTime -= pml.msec;
+		}
 	}
 	else
 	{
-		pm->maxs[2]        = pm->ps->maxs[2];
-		pm->ps->viewheight = pm->ps->standViewHeight;
+		pm->maxs[2]                = pm->ps->maxs[2];
+		pm->ps->viewheight         = pm->ps->standViewHeight;
+		pm->pmext->extendProneTime = EXTENDEDPRONE_TIME;
 	}
 }
 
@@ -1947,7 +2038,7 @@ static void PM_CheckDuck(void)
 static void PM_Footsteps(void)
 {
 	float    bobmove;
-	int      old;
+	float    old;
 	qboolean footstep;
 	int      animResult = -1;   // FIXME: never used
 
@@ -2030,14 +2121,14 @@ static void PM_Footsteps(void)
 	{
 		if (pm->xyspeed < 5)
 		{
-			pm->ps->bobCycle = 0;   // start at beginning of cycle again
+			pm->ps->bobCycle = pm->pmext->bobCycle = 0;   // start at beginning of cycle again
 		}
 		if (pm->xyspeed > 120)
 		{
 			return; // continue what they were doing last frame, until we stop
 		}
 
-		if (pm->ps->eFlags & EF_PRONE)
+		if ((pm->ps->eFlags & EF_PRONE) && pm->cmd.serverTime - pm->pmext->proneTime > pm->pmext->extendProneTime)
 		{
 			if (pm->ps->eFlags & EF_TALK && !(GetWeaponTableData(pm->ps->weapon)->type & (WEAPON_TYPE_SET | WEAPON_TYPE_SCOPED)))
 			{
@@ -2077,7 +2168,7 @@ static void PM_Footsteps(void)
 
 	footstep = qfalse;
 
-	if (pm->ps->eFlags & EF_PRONE)
+	if ((pm->ps->eFlags & EF_PRONE) && pm->cmd.serverTime - pm->pmext->proneTime > pm->pmext->extendProneTime)
 	{
 		bobmove = 0.2f;  // prone characters bob slower
 		if (pm->ps->pm_flags & PMF_BACKWARDS_RUN)
@@ -2198,10 +2289,16 @@ static void PM_Footsteps(void)
 	}
 
 	// check for footstep / splash sounds
-	old              = pm->ps->bobCycle;
-	pm->ps->bobCycle = (int)(old + bobmove * pml.msec) & 255;
+	old                 = pm->pmext->bobCycle;
+	pm->pmext->bobCycle = old + bobmove * pml.msec;
+	pm->ps->bobCycle    = pm->pmext->bobCycle;
 
-	if (((old + 64) ^ (pm->ps->bobCycle + 64)) & 128)
+	if (pm->ps->bobCycle > 255)
+	{
+		pm->ps->bobCycle = pm->pmext->bobCycle = pm->ps->bobCycle & 255;
+	}
+
+	if ((((int)old + 64) ^ (pm->ps->bobCycle + 64)) & 128)
 	{
 		switch (pm->waterlevel)
 		{
@@ -2347,7 +2444,7 @@ static void PM_BeginWeaponReload(weapon_t weapon)
 	// okay to reload while overheating without tacking the reload time onto the end of the
 	// current weaponTime (the reload time is partially absorbed into the overheat time)
 	reloadTime = GetWeaponTableData(weapon)->reloadTime;
-	if (pm->skill[SK_LIGHT_WEAPONS] >= 2 && (GetWeaponTableData(weapon)->attributes & WEAPON_ATTRIBUT_FAST_RELOAD))
+	if (BG_IsSkillAvailable(pm->skill, SK_LIGHT_WEAPONS, SK_LIGHT_WEAPONS_FASTER_RELOAD) && (GetWeaponTableData(weapon)->attributes & WEAPON_ATTRIBUT_FAST_RELOAD))
 	{
 		reloadTime *= .65f;
 	}
@@ -2851,20 +2948,20 @@ void PM_CoolWeapons(void)
 		if (GetWeaponTableData(wp)->maxHeat && (COM_BitCheck(pm->ps->weapons, wp) || wp == WP_DUMMY_MG42))
 		{
 			// and it's hot
-			if (pm->ps->weapHeat[wp])
+			if (pm->pmext->weapHeat[wp])
 			{
-				if (pm->skill[SK_HEAVY_WEAPONS] >= 2 && pm->ps->stats[STAT_PLAYER_CLASS] == PC_SOLDIER)
+				if (BG_IsSkillAvailable(pm->skill, SK_HEAVY_WEAPONS, SK_SOLDIER_OVERHEATING_COOLDOWN) && pm->ps->stats[STAT_PLAYER_CLASS] == PC_SOLDIER)
 				{
-					pm->ps->weapHeat[wp] -= ((float)GetWeaponTableData(wp)->coolRate * 2.f * pml.frametime);
+					pm->pmext->weapHeat[wp] -= ((float)GetWeaponTableData(wp)->coolRate * 2.f * pml.frametime);
 				}
 				else
 				{
-					pm->ps->weapHeat[wp] -= ((float)GetWeaponTableData(wp)->coolRate * pml.frametime);
+					pm->pmext->weapHeat[wp] -= ((float)GetWeaponTableData(wp)->coolRate * pml.frametime);
 				}
 
-				if (pm->ps->weapHeat[wp] < 0)
+				if (pm->pmext->weapHeat[wp] < 0)
 				{
-					pm->ps->weapHeat[wp] = 0;
+					pm->pmext->weapHeat[wp] = 0;
 				}
 			}
 		}
@@ -2873,11 +2970,11 @@ void PM_CoolWeapons(void)
 	// current weapon can heat, convert current heat value to 0-255 range for client transmission
 	if (BG_PlayerMounted(pm->ps->eFlags))
 	{
-		pm->ps->curWeapHeat = (int)(floor((pm->ps->weapHeat[WP_DUMMY_MG42] / (double)GetWeaponTableData(WP_DUMMY_MG42)->maxHeat) * 255));
+		pm->ps->curWeapHeat = (int)(floor((pm->pmext->weapHeat[WP_DUMMY_MG42] / (double)GetWeaponTableData(WP_DUMMY_MG42)->maxHeat) * 255));
 	}
 	else if (GetWeaponTableData(pm->ps->weapon)->maxHeat)
 	{
-		pm->ps->curWeapHeat = (int)(floor((pm->ps->weapHeat[pm->ps->weapon] / (double)GetWeaponTableData(pm->ps->weapon)->maxHeat) * 255));
+		pm->ps->curWeapHeat = (int)(floor((pm->pmext->weapHeat[pm->ps->weapon] / (double)GetWeaponTableData(pm->ps->weapon)->maxHeat) * 255));
 	}
 	else
 	{
@@ -2925,7 +3022,7 @@ void PM_AdjustAimSpreadScale(void)
 	{
 		float viewchange = 0;
 
-		if ((GetWeaponTableData(pm->ps->weapon)->type & WEAPON_TYPE_SCOPED) && pm->skill[SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS] >= 3)
+		if ((GetWeaponTableData(pm->ps->weapon)->type & WEAPON_TYPE_SCOPED) && BG_IsSkillAvailable(pm->skill, SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS, SK_COVERTOPS_BREATH_CONTROL))
 		{
 			wpnScale *= 0.5;
 		}
@@ -2938,6 +3035,17 @@ void PM_AdjustAimSpreadScale(void)
 
 		decrease = (cmdTime * AIMSPREAD_DECREASE_RATE) / wpnScale;
 
+		// take player view rotation into account
+		for (i = 0; i < 2; i++)
+		{
+			viewchange += Q_fabs(SHORT2ANGLE(pm->cmd.angles[i]) - SHORT2ANGLE(pm->oldcmd.angles[i]));
+
+			if (viewchange > 180)
+			{
+				viewchange = 360 - viewchange;
+			}
+		}
+
 		// take player movement into account (even if only for the scoped weapons)
 		// TODO: also check for jump/crouch and adjust accordingly
 		if (GetWeaponTableData(pm->ps->weapon)->type & WEAPON_TYPE_SCOPED)
@@ -2945,14 +3053,6 @@ void PM_AdjustAimSpreadScale(void)
 			for (i = 0; i < 2; i++)
 			{
 				viewchange += Q_fabs(pm->ps->velocity[i]);
-			}
-		}
-		else
-		{
-			// take player view rotation into account
-			for (i = 0; i < 2; i++)
-			{
-				viewchange += Q_fabs(SHORT2ANGLE(pm->cmd.angles[i]) - SHORT2ANGLE(pm->oldcmd.angles[i]));
 			}
 		}
 
@@ -3055,12 +3155,12 @@ static qboolean PM_MountedFire(void)
 				//pm->ps->viewlocked = VIEWLOCK_JITTER;             // this enable screen jitter when firing
 			}
 
-			pm->ps->weapHeat[WP_DUMMY_MG42] += GetWeaponTableData(WP_DUMMY_MG42)->nextShotTime;
+			pm->pmext->weapHeat[WP_DUMMY_MG42] += GetWeaponTableData(WP_DUMMY_MG42)->nextShotTime;
 
 			// check for overheat
-			if (pm->ps->weapHeat[WP_DUMMY_MG42] >= GetWeaponTableData(WP_DUMMY_MG42)->maxHeat)
+			if (pm->pmext->weapHeat[WP_DUMMY_MG42] >= GetWeaponTableData(WP_DUMMY_MG42)->maxHeat)
 			{
-				pm->ps->weapHeat[WP_DUMMY_MG42] = GetWeaponTableData(WP_DUMMY_MG42)->maxHeat;        // cap heat to max
+				pm->pmext->weapHeat[WP_DUMMY_MG42] = GetWeaponTableData(WP_DUMMY_MG42)->maxHeat;        // cap heat to max
 				PM_AddEvent(EV_WEAP_OVERHEAT);
 				pm->ps->weaponTime = GetWeaponTableData(WP_DUMMY_MG42)->heatRecoveryTime;         // force "heat recovery minimum" right now
 			}
@@ -3093,7 +3193,7 @@ static qboolean PM_CheckGrenade()
 	else if (pm->ps->weapon == WP_DYNAMITE)
 	{
 		// keep dynamite in hand until fire button is released
-		if ((pm->cmd.buttons & BUTTON_ATTACK) && !(pm->ps->eFlags & EF_PRONE_MOVING) && weaponstateFiring && !pm->ps->weaponTime)
+		if ((pm->cmd.buttons & BUTTON_ATTACK) && !(pm->ps->eFlags & EF_PRONE_MOVING) && weaponstateFiring && pm->ps->weaponDelay)
 		{
 			BG_ClearConditionBitFlag(pm->ps->clientNum, ANIM_COND_GEN_BITFLAG, ANIM_BITFLAG_HOLDING);
 			return qtrue;
@@ -3130,25 +3230,27 @@ static void PM_HandleRecoil(void)
 		int    cmdAngle;
 		int    deltaTime = pm->cmd.serverTime - pm->pmext->weapRecoilTime;
 
-		VectorCopy(pm->ps->viewangles, muzzlebounce);
-
 		if (deltaTime > pm->pmext->weapRecoilDuration)
 		{
-			deltaTime = pm->pmext->weapRecoilDuration;
+			pm->pmext->weapRecoilTime      = 0;
+			pm->pmext->lastRecoilDeltaTime = 0;
+			return;
 		}
 
-		for (i = pm->pmext->lastRecoilDeltaTime; i < deltaTime; i += 15)
+		VectorCopy(pm->ps->viewangles, muzzlebounce);
+
+		for (i = pm->pmext->lastRecoilDeltaTime; i < deltaTime; i += pml.msec)
 		{
 			if (pm->pmext->weapRecoilPitch > 0.f)
 			{
-				muzzlebounce[PITCH] -= 2 * pm->pmext->weapRecoilPitch * cos(2.5 * (i) / pm->pmext->weapRecoilDuration);
-				muzzlebounce[PITCH] -= 0.25f * random() * (1.0f - (i) / pm->pmext->weapRecoilDuration);
+				muzzlebounce[PITCH] -= pml.frametime * 100 * 2 * pm->pmext->weapRecoilPitch * cos(2.5 * (i) / pm->pmext->weapRecoilDuration);
+				muzzlebounce[PITCH] -= pml.frametime * 100 * 0.25f * random() * (1.0f - (i) / pm->pmext->weapRecoilDuration);
 			}
 
 			if (pm->pmext->weapRecoilYaw > 0.f)
 			{
-				muzzlebounce[YAW] += 0.5 * pm->pmext->weapRecoilYaw * cos(1.0 - (i) * 3 / pm->pmext->weapRecoilDuration);
-				muzzlebounce[YAW] += 0.5f * crandom() * (1.0f - (i) / pm->pmext->weapRecoilDuration);
+				muzzlebounce[YAW] += pml.frametime * 100 * 0.5f * pm->pmext->weapRecoilYaw * cos(1.0 - (i) * 3 / pm->pmext->weapRecoilDuration);
+				muzzlebounce[YAW] += pml.frametime * 100 * 0.5f * crandom() * (1.0f - (i) / pm->pmext->weapRecoilDuration);
 			}
 		}
 
@@ -3160,15 +3262,7 @@ static void PM_HandleRecoil(void)
 		}
 		VectorCopy(muzzlebounce, pm->ps->viewangles);
 
-		if (deltaTime == pm->pmext->weapRecoilDuration)
-		{
-			pm->pmext->weapRecoilTime      = 0;
-			pm->pmext->lastRecoilDeltaTime = 0;
-		}
-		else
-		{
-			pm->pmext->lastRecoilDeltaTime = deltaTime;
-		}
+		pm->pmext->lastRecoilDeltaTime = deltaTime;
 	}
 }
 
@@ -3445,11 +3539,14 @@ static void PM_Weapon(void)
 	// don't allow some weapons to fire if charge bar isn't full
 	if (GetWeaponTableData(pm->ps->weapon)->attributes & WEAPON_ATTRIBUT_CHARGE_TIME)
 	{
-		skillType_t skill = GetWeaponTableData(pm->ps->weapon)->skillBased;
-		float       coeff = GetWeaponTableData(pm->ps->weapon)->chargeTimeCoeff[pm->skill[skill]];
-		int         chargeTime;
+		int index = BG_IsSkillAvailable(pm->skill,
+		                                GetWeaponTableData(pm->ps->weapon)->skillBased,
+		                                GetWeaponTableData(pm->ps->weapon)->chargeTimeSkill);
 
-		switch (skill)
+		float coeff = GetWeaponTableData(pm->ps->weapon)->chargeTimeCoeff[index];
+		int   chargeTime;
+
+		switch (GetWeaponTableData(pm->ps->weapon)->skillBased)
 		{
 		case SK_EXPLOSIVES_AND_CONSTRUCTION:              chargeTime = pm->engineerChargeTime;  break;
 		case SK_FIRST_AID:                                chargeTime = pm->medicChargeTime;     break;
@@ -3713,14 +3810,14 @@ static void PM_Weapon(void)
 	{
 		if (pm->ps->weapon == WP_FG42_SCOPE)
 		{
-			if (pm->skill[SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS] >= 3)
+			if (BG_IsSkillAvailable(pm->skill, SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS, SK_COVERTOPS_BREATH_CONTROL))
 			{
 				pm->pmext->weapRecoilPitch *= .5f;
 			}
 		}
 		else
 		{
-			if (pm->skill[SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS] >= 3)
+			if (BG_IsSkillAvailable(pm->skill, SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS, SK_COVERTOPS_BREATH_CONTROL))
 			{
 				pm->pmext->weapRecoilPitch = .25f;
 			}
@@ -3740,7 +3837,7 @@ static void PM_Weapon(void)
 	}
 	else if (GetWeaponTableData(pm->ps->weapon)->type & WEAPON_TYPE_PISTOL)
 	{
-		if (pm->skill[SK_LIGHT_WEAPONS] >= 3)
+		if (BG_IsSkillAvailable(pm->skill, SK_LIGHT_WEAPONS, SK_LIGHT_WEAPONS_HANDLING))
 		{
 			pm->pmext->weapRecoilDuration = 70;
 			pm->pmext->weapRecoilPitch    = .25f * random() * .15f;
@@ -3763,7 +3860,7 @@ static void PM_Weapon(void)
 	}
 
 	// covert ops received a reduction of 50% reduction in both recoil jump and weapon sway with Scoped Weapons ONLY
-	if ((GetWeaponTableData(pm->ps->weapon)->type & WEAPON_TYPE_SCOPED) && pm->skill[SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS] >= 3
+	if ((GetWeaponTableData(pm->ps->weapon)->type & WEAPON_TYPE_SCOPED) && BG_IsSkillAvailable(pm->skill, SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS, SK_COVERTOPS_BREATH_CONTROL)
 	    && pm->ps->stats[STAT_PLAYER_CLASS] == PC_COVERTOPS)
 	{
 		pm->ps->aimSpreadScaleFloat *= .5f;
@@ -3804,12 +3901,12 @@ static void PM_Weapon(void)
 	// check for overheat
 	if (GetWeaponTableData(pm->ps->weapon)->maxHeat)
 	{
-		pm->ps->weapHeat[pm->ps->weapon] += GetWeaponTableData(pm->ps->weapon)->nextShotTime;
+		pm->pmext->weapHeat[pm->ps->weapon] += GetWeaponTableData(pm->ps->weapon)->nextShotTime;
 
 		// it is overheating
-		if (pm->ps->weapHeat[pm->ps->weapon] >= GetWeaponTableData(pm->ps->weapon)->maxHeat)
+		if (pm->pmext->weapHeat[pm->ps->weapon] >= GetWeaponTableData(pm->ps->weapon)->maxHeat)
 		{
-			pm->ps->weapHeat[pm->ps->weapon] = GetWeaponTableData(pm->ps->weapon)->maxHeat;         // cap heat to max
+			pm->pmext->weapHeat[pm->ps->weapon] = GetWeaponTableData(pm->ps->weapon)->maxHeat;         // cap heat to max
 			PM_AddEvent(EV_WEAP_OVERHEAT);
 			//PM_StartWeaponAnim(PM_IdleAnimForWeapon(pm->ps->weapon)); // removed.  client handles anim in overheat event
 			addTime = GetWeaponTableData(pm->ps->weapon)->heatRecoveryTime;     // force "heat recovery minimum" right now
@@ -3818,7 +3915,7 @@ static void PM_Weapon(void)
 		// sync heat for overheat check
 		if (GetWeaponTableData(pm->ps->weapon)->weapAlts)
 		{
-			pm->ps->weapHeat[GetWeaponTableData(pm->ps->weapon)->weapAlts] = pm->ps->weapHeat[pm->ps->weapon];
+			pm->pmext->weapHeat[GetWeaponTableData(pm->ps->weapon)->weapAlts] = pm->pmext->weapHeat[pm->ps->weapon];
 		}
 	}
 
@@ -4006,7 +4103,7 @@ void PM_UpdateLean(playerState_t *ps, usercmd_t *cmd, pmove_t *tpm)
  *
  * @note Unused trace parameter
  */
-void PM_UpdateViewAngles(playerState_t *ps, pmoveExt_t *pmext, usercmd_t *cmd, void (trace) (trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask), int tracemask)                     //   modified
+void PM_UpdateViewAngles(playerState_t *ps, pmoveExt_t *pmext, usercmd_t *cmd, void(trace) (trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask), int tracemask)                      //   modified
 {
 	short  temp;
 	int    i;
@@ -4388,8 +4485,8 @@ void PM_UpdateViewAngles(playerState_t *ps, pmoveExt_t *pmext, usercmd_t *cmd, v
 			// we know our main body isn't in a solid, check for our legs then head
 			vec3_t start, end;
 
-			BG_LegsCollisionBoxOffset(pm->ps->viewangles, pm->ps->eFlags, start);
-			BG_LegsCollisionBoxOffset(oldViewAngles, pm->ps->eFlags, end);
+			BG_LegsCollisionBoxOffset(pm->ps->viewangles, pm->ps->eFlags, end);
+			BG_LegsCollisionBoxOffset(oldViewAngles, pm->ps->eFlags, start);
 
 			VectorAdd(pm->ps->origin, start, start);
 			VectorAdd(pm->ps->origin, end, end);
@@ -4397,22 +4494,43 @@ void PM_UpdateViewAngles(playerState_t *ps, pmoveExt_t *pmext, usercmd_t *cmd, v
 			// check the new angles position for legs
 			pm->trace(&traceres, start, playerlegsProneMins, playerlegsProneMaxs, end, pm->ps->clientNum, tracemask);
 
-			if (traceres.startsolid)
+			if (traceres.fraction != 1.f)
 			{
-				VectorSubtract(traceres.endpos, start, traceres.endpos);
-				VectorMA(ps->origin, traceres.fraction, traceres.endpos,
-				         end);
+				// is plane valid, try to find one?
+				if (VectorCompare(traceres.plane.normal, vec3_origin))
+				{
+					pm->trace(&traceres, ps->origin, playerHeadProneMins, playerHeadProneMaxs, end, pm->ps->clientNum, tracemask);
 
-				// check the new position for head
-				PM_TraceHead(&traceres, end, end, NULL,
-				             pm->ps->viewangles, pm->trace, pm->ps->clientNum,
-				             pm->tracemask);
+					// still invalid, can't rotate
+					if (VectorCompare(traceres.plane.normal, vec3_origin))
+					{
+						if (pm->debugLevel)
+						{
+							Com_Printf("%i:rotate in solid\n", c_pmove);
+						}
+
+						// starting in a solid, no space
+						ps->viewangles[YAW]   = oldYaw;
+						ps->delta_angles[YAW] = ANGLE2SHORT(ps->viewangles[YAW]) - cmd->angles[YAW];
+					}
+				}
+
+				// adjust position by bumping
+				VectorSubtract(end, start, end);
+
+				end[0] *= traceres.plane.normal[0];
+				end[1] *= traceres.plane.normal[1];
+				end[2] *= traceres.plane.normal[2];
+				VectorAdd(ps->origin, end, end);
+
+				// check the new position
+				PM_TraceAll(&traceres, end, end);
 
 				if (traceres.fraction != 1.f /* && trace.entityNum >= MAX_CLIENTS */)
 				{
 					if (pm->debugLevel)
 					{
-						Com_Printf("%i:can't rotate\n", c_pmove);
+						Com_Printf("%i:rotate in solid\n", c_pmove);
 					}
 
 					// starting in a solid, no space
@@ -4421,13 +4539,15 @@ void PM_UpdateViewAngles(playerState_t *ps, pmoveExt_t *pmext, usercmd_t *cmd, v
 
 					return;
 				}
-
-				VectorCopy(end, ps->origin);
+				else
+				{
+					VectorCopy(end, ps->origin);
+				}
 			}
 			else
 			{
-				BG_HeadCollisionBoxOffset(pm->ps->viewangles, pm->ps->eFlags, start);
-				BG_HeadCollisionBoxOffset(oldViewAngles, pm->ps->eFlags, end);
+				BG_HeadCollisionBoxOffset(pm->ps->viewangles, pm->ps->eFlags, end);
+				BG_HeadCollisionBoxOffset(oldViewAngles, pm->ps->eFlags, start);
 
 				VectorAdd(pm->ps->origin, start, start);
 				VectorAdd(pm->ps->origin, end, end);
@@ -4435,23 +4555,43 @@ void PM_UpdateViewAngles(playerState_t *ps, pmoveExt_t *pmext, usercmd_t *cmd, v
 				// check the new angles position for head
 				pm->trace(&traceres, start, playerHeadProneMins, playerHeadProneMaxs, end, pm->ps->clientNum, tracemask);
 
-				if (traceres.startsolid)
+				if (traceres.fraction != 1.f)
 				{
-					// adjust position by bumping
-					VectorSubtract(traceres.endpos, start, traceres.endpos);
-					VectorMA(ps->origin, traceres.fraction, traceres.endpos,
-					         end);
+					// is plane valid, try to find one?
+					if (VectorCompare(traceres.plane.normal, vec3_origin))
+					{
+						pm->trace(&traceres, ps->origin, playerHeadProneMins, playerHeadProneMaxs, end, pm->ps->clientNum, tracemask);
 
-					// check the new position for legs
-					PM_TraceLegs(&traceres, &pmext->proneLegsOffset, end, end, NULL,
-					             pm->ps->viewangles, pm->trace, pm->ps->clientNum,
-					             pm->tracemask);
+						// still invalid, can't rotate
+						if (VectorCompare(traceres.plane.normal, vec3_origin))
+						{
+							if (pm->debugLevel)
+							{
+								Com_Printf("%i:rotate in solid\n", c_pmove);
+							}
+
+							// starting in a solid, no space
+							ps->viewangles[YAW]   = oldYaw;
+							ps->delta_angles[YAW] = ANGLE2SHORT(ps->viewangles[YAW]) - cmd->angles[YAW];
+						}
+					}
+
+					// adjust position by bumping
+					VectorSubtract(end, start, end);
+
+					end[0] *= traceres.plane.normal[0];
+					end[1] *= traceres.plane.normal[1];
+					end[2] *= traceres.plane.normal[2];
+					VectorAdd(ps->origin, end, end);
+
+					// check the new position
+					PM_TraceAll(&traceres, end, end);
 
 					if (traceres.fraction != 1.f /* && trace.entityNum >= MAX_CLIENTS */)
 					{
 						if (pm->debugLevel)
 						{
-							Com_Printf("%i:can't rotate\n", c_pmove);
+							Com_Printf("%i:rotate in solid\n", c_pmove);
 						}
 
 						// starting in a solid, no space
@@ -4460,8 +4600,10 @@ void PM_UpdateViewAngles(playerState_t *ps, pmoveExt_t *pmext, usercmd_t *cmd, v
 
 						return;
 					}
-
-					VectorCopy(end, ps->origin);
+					else
+					{
+						VectorCopy(end, ps->origin);
+					}
 				}
 			}
 
@@ -4701,7 +4843,9 @@ void PM_Sprint(void)
 {
 	if (pm->waterlevel <= 1) // no sprint & no stamina recharge under water
 	{
-		if ((pm->cmd.buttons & BUTTON_SPRINT) && (pm->cmd.forwardmove || pm->cmd.rightmove) && !(pm->ps->pm_flags & PMF_DUCKED) && !(pm->ps->eFlags & EF_PRONE))
+		if ((pm->cmd.buttons & BUTTON_SPRINT) && (pm->cmd.forwardmove || pm->cmd.rightmove)
+		    && !(pm->ps->pm_flags & PMF_DUCKED) && !(pm->ps->eFlags & EF_PRONE)
+		    && !(GetWeaponTableData(pm->ps->weapon)->type & (WEAPON_TYPE_SCOPED)))
 		{
 			if (pm->ps->powerups[PW_ADRENALINE])
 			{
@@ -4759,7 +4903,7 @@ void PM_Sprint(void)
 			{
 				int rechargebase = 500;
 
-				if (pm->skill[SK_BATTLE_SENSE] >= 2)
+				if (BG_IsSkillAvailable(pm->skill, SK_BATTLE_SENSE, SK_BATTLE_SENSE_STAMINA_RECHARGE))
 				{
 					rechargebase *= 1.6f;
 				}
@@ -4809,6 +4953,19 @@ void PmoveSingle(pmove_t *pmove)
 		pm->ps->eFlags &= ~EF_ZOOMING;
 	}
 
+	if (pm->activateLean && pm->cmd.buttons & BUTTON_ACTIVATE)
+	{
+		if (pm->cmd.rightmove < 0)
+		{
+			pm->cmd.wbuttons |= WBUTTON_LEANLEFT;
+		}
+		else if (pm->cmd.rightmove > 0)
+		{
+			pm->cmd.wbuttons |= WBUTTON_LEANRIGHT;
+		}
+		pm->cmd.rightmove = 0;
+	}
+
 	// make sure walking button is clear if they are running, to avoid
 	// proxy no-footsteps cheats
 	if (abs(pm->cmd.forwardmove) > 64 || abs(pm->cmd.rightmove) > 64)
@@ -4846,7 +5003,7 @@ void PmoveSingle(pmove_t *pmove)
 	}
 
 	if (!(pm->ps->pm_flags & PMF_RESPAWNED) &&
-	    (pm->ps->pm_type != PM_INTERMISSION))
+	    ((pm->ps->pm_type != PM_INTERMISSION) && (pm->ps->pm_type != PM_NOCLIP)))
 	{
 		// check for ammo
 		if (PM_WeaponAmmoAvailable(pm->ps->weapon))
@@ -4888,6 +5045,8 @@ void PmoveSingle(pmove_t *pmove)
 		{
 			pm->ps->pm_flags &= ~PMF_RESPAWNED;
 		}
+
+		pm->pmext->extendProneTime = EXTENDEDPRONE_TIME;
 	}
 
 	// if talk button is down, dissallow all other input
@@ -5016,11 +5175,7 @@ void PmoveSingle(pmove_t *pmove)
 	{
 		PM_DeadMove();
 
-		if (CHECKBITWISE(GetWeaponTableData(pm->ps->weapon)->type, WEAPON_TYPE_MORTAR | WEAPON_TYPE_SET))
-		{
-			pm->ps->weapon = GetWeaponTableData(pm->ps->weapon)->weapAlts;
-		}
-		else if (CHECKBITWISE(GetWeaponTableData(pm->ps->weapon)->type, WEAPON_TYPE_MG | WEAPON_TYPE_SET))
+		if (GetWeaponTableData(pm->ps->weapon)->type & WEAPON_TYPE_SET)
 		{
 			pm->ps->weapon = GetWeaponTableData(pm->ps->weapon)->weapAlts;
 		}
@@ -5107,10 +5262,9 @@ void PmoveSingle(pmove_t *pmove)
 
 	if (PM_FIXEDPHYSICS)
 	{
-		// Pmove accurate code
-		// the new way: don't care so much about 6 bytes/frame
-		// or so of network bandwidth, and add some mostly framerate-
-		// independent error to make up for the lack of rounding error
+		// If fractional part of computed velocity[2] which is based on gravity and frametime
+		// is <0.5 then velocity[2] would be rounded up
+		// add that fractional part to velocity[2] scaled by client real frametime
 		// halt if not going fast enough (0.5 units/sec)
 		if (VectorLengthSquared(pm->ps->velocity) < 0.25f)
 		{
@@ -5118,43 +5272,32 @@ void PmoveSingle(pmove_t *pmove)
 		}
 		else
 		{
-			int   i;
-			float fac;
-			float fps = PM_FIXEDPHYSICSFPS;
+			int   fps = PM_FIXEDPHYSICSFPS;
+			float fixedFrametime, fractionalPart, scale, result;
 
 			if (fps > 333)
 			{
 				fps = 333;
 			}
-			else if (fps < 60)
+			else if (fps < 30)
 			{
-				fps = 60;
+				fps = 30;
 			}
 
-			fac = pml.msec / (1000.0f / fps);
+			fixedFrametime = (int)(1000.0f / fps) * 0.001f;
+			fractionalPart = pm->ps->gravity * fixedFrametime;
+			fractionalPart = rint(fractionalPart) - fractionalPart;
 
-			// add some error...
-			for (i = 0; i < 3; ++i)
+			if (fractionalPart < 0)
 			{
-				// ...if the velocity in this direction changed enough
-				if (Q_fabs(pm->ps->velocity[i] - pml.previous_velocity[i]) > 0.5f / fac)
+				scale  = fixedFrametime / pml.frametime;
+				result = Q_fabs(fractionalPart) / scale;
+
+				if (Q_fabs(pm->ps->velocity[2] - pml.previous_velocity[2]) > result)
 				{
-					if (pm->ps->velocity[i] < 0)
-					{
-						pm->ps->velocity[i] -= 0.5f * fac;
-					}
-					else
-					{
-						pm->ps->velocity[i] += 0.5f * fac;
-					}
+					pm->ps->velocity[2] += result;
 				}
 			}
-			// we can stand a little bit of rounding error for the sake
-			// of lower bandwidth
-			VectorScale(pm->ps->velocity, 64.0f, pm->ps->velocity);
-			// snap some parts of playerstate to save network bandwidth
-			trap_SnapVector(pm->ps->velocity);
-			VectorScale(pm->ps->velocity, 1.0f / 64.0f, pm->ps->velocity);
 		}
 	}
 	else

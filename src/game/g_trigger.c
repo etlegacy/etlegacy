@@ -848,7 +848,7 @@ void SP_trigger_heal(gentity_t *self)
 
 	// healtotal specifies the maximum amount of health this trigger area restores
 	G_SpawnString("healtotal", "0", &spawnstr);
-	healvalue = atoi(spawnstr);
+	healvalue = Q_atoi(spawnstr);
 	// -9999 means infinite now
 	self->health = healvalue;
 	if (self->health <= 0)
@@ -872,7 +872,7 @@ void SP_trigger_heal(gentity_t *self)
 
 	// healrate specifies the amount of healing per second
 	G_SpawnString("healrate", "20", &spawnstr);
-	healvalue    = atoi(spawnstr);
+	healvalue    = Q_atoi(spawnstr);
 	self->damage = healvalue;   // store the rate of heal in damage
 }
 
@@ -1075,7 +1075,7 @@ void SP_trigger_ammo(gentity_t *self)
 
 	// ammototal specifies the maximum amount of ammo this trigger contains
 	G_SpawnString("ammototal", "0", &spawnstr);
-	ammovalue = atoi(spawnstr);
+	ammovalue = Q_atoi(spawnstr);
 	// -9999 means infinite now
 	self->health = ammovalue;
 	if (self->health <= 0)
@@ -1099,7 +1099,7 @@ void SP_trigger_ammo(gentity_t *self)
 
 	// ammorate specifies the amount of ammo added per second
 	G_SpawnString("ammorate", "1", &spawnstr);
-	ammovalue = atoi(spawnstr);
+	ammovalue = Q_atoi(spawnstr);
 	// store the rate of ammo addition in damage
 	self->damage = ammovalue;
 }

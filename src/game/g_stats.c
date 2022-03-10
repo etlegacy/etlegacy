@@ -100,8 +100,10 @@ void G_LogRegionHit(gentity_t *ent, hitRegion_t hr)
 /**
  * @brief G_PrintAccuracyLog
  * @param[in] ent
+ * @param dwCommand - unused
+ * @param value    - unused
  */
-void G_PrintAccuracyLog(gentity_t *ent)
+void G_PrintAccuracyLog(gentity_t *ent, unsigned int dwCommand, int value)
 {
 	int  i;
 	char buffer[2048];
@@ -160,7 +162,7 @@ void G_SetPlayerScore(gclient_t *client)
  */
 void G_SetPlayerSkill(gclient_t *client, skillType_t skill)
 {
-	int i;
+	int i, lvlSkipped;
 
 #ifdef FEATURE_LUA
 	// *LUA* API callbacks
@@ -170,13 +172,21 @@ void G_SetPlayerSkill(gclient_t *client, skillType_t skill)
 	}
 #endif
 
-	for (i = NUM_SKILL_LEVELS - 1; i >= 0; i--)
+	for (i = NUM_SKILL_LEVELS - 1, lvlSkipped = 0; i >= 0; i--)
 	{
-		if (GetSkillTableData(skill)->skillLevels[i] != -1 && client->sess.skillpoints[skill] >= GetSkillTableData(skill)->skillLevels[i])
+        if (GetSkillTableData(skill)->skillLevels[i] <= -1)
 		{
-			client->sess.skill[skill] = i;
+			lvlSkipped++;
+			continue;
+		}
+
+		if (client->sess.skillpoints[skill] >= GetSkillTableData(skill)->skillLevels[i])
+		{
+			client->sess.skill[skill] = i + lvlSkipped;
 			break;
 		}
+
+		lvlSkipped = 0;
 	}
 
 	G_SetPlayerScore(client);
@@ -269,7 +279,8 @@ void G_UpgradeSkill(gentity_t *ent, skillType_t skill)
 	{
 		bg_weaponclass_t *weaponClassInfo = &classInfo->classMiscWeapons[i];
 
-		if (skill == classInfo->classMiscWeapons[i].skill && ent->client->sess.skill[skill] == classInfo->classMiscWeapons[i].minSkillLevel)
+		if (BG_IsSkillAvailable(ent->client->sess.skill, classInfo->classMiscWeapons[i].skill, classInfo->classMiscWeapons[i].minSkillLevel)
+                    && skill == classInfo->classMiscWeapons[i].skill && ent->client->sess.skill[skill] == classInfo->classMiscWeapons[i].minSkillLevel)
 		{
 			AddWeaponToPlayer(ent->client, weaponClassInfo->weapon, classInfo->classMiscWeapons[i].startingAmmo, classInfo->classMiscWeapons[i].startingClip, qfalse);
 		}
@@ -813,7 +824,7 @@ void G_BuildEndgameStats(void)
 	if (best)
 	{
 		best->hasaward = qtrue;
-		Q_strcat(buffer, 1024, va("%i %.2f %i ", bestClientNum, MIN(best->sess.mu - 3 * best->sess.sigma, 50.f), best->sess.sessionTeam));
+		Q_strcat(buffer, 1024, va("%i %.2f %i ", bestClientNum, MIN(Com_RoundFloatWithNDecimal(best->sess.mu - 3 * best->sess.sigma, 2), 50.f), best->sess.sessionTeam));
 	}
 	else
 	{

@@ -37,6 +37,9 @@
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
+#ifdef __ANDROID__
+#include <jni.h>
+#endif
 
 #include "../client/client.h"
 #include "../sys/sys_local.h"
@@ -65,8 +68,6 @@ SDL_Window *mainScreen    = NULL;
 // It's not simulating "the next 1/60th or 1/125th" of a second. If you give it "now" as input timestamps, your inputs do not occur until the *next* simulated chunk of time.
 // Try it. com_maxfps 1, press "forward", have fun.
 static int lasttime = 0; // if 0, Com_QueueEvent will use the current time. This is for the first frame.
-
-#define CTRL(a) ((a) - 'a' + 1)
 
 /**
  * @brief IN_GetClipboardData
@@ -103,6 +104,11 @@ char *IN_GetClipboardData(void)
 	{
 		return NULL;
 	}
+}
+
+void IN_SetClipboardData(const char *text)
+{
+	SDL_SetClipboardText(text);
 }
 
 /**
@@ -540,6 +546,10 @@ static keyNum_t IN_TranslateSDLToQ3Key(SDL_Keysym *keysym, qboolean down)
 				break;
 			case SDL_SCANCODE_NONUSBACKSLASH: key = K_NONUSBACKSLASH;
 				break;
+#ifdef __ANDROID__
+			case SDL_SCANCODE_AC_BACK: key = K_ESCAPE;
+				break;
+#endif
 
 			default:
 				break;
@@ -583,11 +593,16 @@ static void IN_GobbleMotionEvents(void)
 static void IN_GrabMouse(qboolean grab, qboolean relative)
 {
 	static qboolean mouse_grabbed   = qfalse, mouse_relative = qfalse;
+#if !defined(__ANDROID__) || __ANDROID_API__ > 23
 	int             relative_result = 0;
+#endif
 
 	if (relative == !mouse_relative)
 	{
 		SDL_ShowCursor(!relative);
+#if !defined(__ANDROID__) || __ANDROID_API__ > 23
+		// On Android Phones with API <= 23 this is causing App to close since it could not
+		// set relative mouse location (Mouse location is always at top left side of screen)
 		if ((relative_result = SDL_SetRelativeMouseMode((SDL_bool)relative)) != 0)
 		{
 			// FIXME: this happens on some systems (IR4)
@@ -600,6 +615,7 @@ static void IN_GrabMouse(qboolean grab, qboolean relative)
 				Com_Error(ERR_FATAL, "Setting relative mouse location fails: %s\n", SDL_GetError());
 			}
 		}
+#endif
 		mouse_relative = relative;
 	}
 
@@ -689,7 +705,7 @@ static void IN_DeactivateMouse(void)
 		// Don't warp the mouse unless the cursor is within the window
 		if (SDL_GetWindowFlags(mainScreen) & SDL_WINDOW_MOUSE_FOCUS)
 		{
-			SDL_WarpMouseInWindow(mainScreen, cls.glconfig.vidWidth / 2, cls.glconfig.vidHeight / 2);
+			SDL_WarpMouseInWindow(mainScreen, cls.glconfig.windowWidth / 2, cls.glconfig.windowHeight / 2);
 		}
 
 		mouseActive = qfalse;
@@ -795,7 +811,7 @@ static void IN_InitJoystick(void)
 	total = SDL_NumJoysticks();
 
 	// create list and build cvar to allow ui to select joystick
-	// FIXME: cvar availableJoysticks isn't used in our menus - add it? 
+	// FIXME: cvar availableJoysticks isn't used in our menus - add it?
 	//for (i = 0; i < total; i++)
 	//{
 	//	Q_strcat(buf, sizeof(buf), SDL_JoystickNameForIndex(i));
@@ -1085,7 +1101,7 @@ static void IN_WindowResize(SDL_Event *e)
 	// Only do a vid_restart if the size of the window actually changed. On OS X at least, it's possible
 	// to receive a resize event when the window simply moves, or even when Dock shows/hides. No need to
 	// do a vid_restart then.
-	if (!cls.glconfig.isFullscreen && (cls.glconfig.vidWidth != e->window.data1 || cls.glconfig.vidHeight != e->window.data2))
+	if (!cls.glconfig.isFullscreen && (cls.glconfig.windowWidth != e->window.data1 || cls.glconfig.windowHeight != e->window.data2))
 	{
 		char width[32], height[32];
 
@@ -1113,15 +1129,29 @@ static void IN_WindowMoved(SDL_Event *e)
 
 /*
  * @brief IN_WindowFocusLost
- * @note Unused
+ * @note checks if the renderer is actually running and if we are fullscreen
+ */
 static void IN_WindowFocusLost()
 {
     if (cls.rendererStarted && cls.glconfig.isFullscreen)
     {
-        Cbuf_ExecuteText(EXEC_NOW, "minimize");
+    	Com_DPrintf("Trying to minimize. Checking SDL flags.\n");
+    	// If according to the game flags we should minimize,
+    	// then lets actually make sure and ask the windowing system for its opinion.
+		Uint32 flags = SDL_GetWindowFlags(GLimp_MainWindow());
+		if (flags & SDL_WINDOW_FULLSCREEN && flags & SDL_WINDOW_SHOWN && !(flags & SDL_WINDOW_MINIMIZED) && flags & SDL_WINDOW_INPUT_GRABBED)
+		{
+			Com_DPrintf("SDL says we are good to go and call minimize.\n");
+			Cbuf_ExecuteText(EXEC_NOW, "minimize");
+		}
+		else
+		{
+			Com_DPrintf("SDL did not think we should minimize, trashing event.\n");
+			SDL_RaiseWindow(mainScreen);
+			IN_ActivateMouse();
+		}
     }
 }
-*/
 
 /**
  * @brief IN_ProcessEvents
@@ -1131,6 +1161,7 @@ static void IN_ProcessEvents(void)
 	SDL_Event       e;
 	keyNum_t        key         = 0;
 	static keyNum_t lastKeyDown = 0;
+	qboolean 		skipLost	= qfalse;
 
 	if (!SDL_WasInit(SDL_INIT_VIDEO))
 	{
@@ -1160,6 +1191,13 @@ static void IN_ProcessEvents(void)
 				{
 					Com_QueueEvent(lasttime, SE_CHAR, CTRL(key), 0, 0, NULL);
 				}
+#ifdef __APPLE__
+				// with MacOs we also support the command + c/v
+				else if ((keys[K_COMMAND].down) && (key == 'c' || key == 'v'))
+				{
+					Com_QueueEvent(lasttime, SE_CHAR, CTRL(key), 0, 0, NULL);
+				}
+#endif
 			}
 			lastKeyDown = key;
 			break;
@@ -1269,6 +1307,24 @@ static void IN_ProcessEvents(void)
 			}
 
 			break;
+		case SDL_DROPFILE:
+			Com_Printf(S_COLOR_YELLOW "Drop file: %s received\n", e.drop.file);
+
+			if (!Q_strncmp(e.drop.file, "et://", 5))
+			{
+				Cbuf_AddText(va("connect \"%s\"", e.drop.file));
+			}
+			else if (FS_IsDemoExt(e.drop.file, -1))
+			{
+				char buffer[MAX_OSPATH];
+				Com_Memset(buffer, 0, sizeof(buffer));
+				Q_strcpy(buffer, e.drop.file);
+				COM_FixPath(buffer);
+				// Set the FS to "dirty" mode for the demo playback
+				Cbuf_AddText(va("demo dirty \"%s\"", buffer));
+			}
+			SDL_free(e.drop.file);
+			break;
 		case SDL_QUIT:
 			Cbuf_ExecuteText(EXEC_NOW, "quit Closed window\n");
 			break;
@@ -1285,23 +1341,39 @@ static void IN_ProcessEvents(void)
 			case SDL_WINDOWEVENT_RESTORED:
 			case SDL_WINDOWEVENT_MAXIMIZED:
 				Cvar_SetValue("com_minimized", 0);
+				skipLost = qtrue;
 				break;
 			case SDL_WINDOWEVENT_FOCUS_LOST:
-			// disabled for now (causes issues with vid_restart
-			//IN_WindowFocusLost();
+				// When we are restoring a fullscreen window that is not the desktop resolution
+				// the desktop will resize and SDL will get restores & focus gained & focus lost in order.
+				// So.. to fix minimizing just after user re-selects the game, we will skip focus lost events
+				// for just a SINGLE frame!
+				if (skipLost)
+				{
+					break;
+				}
+				IN_WindowFocusLost();
 			case SDL_WINDOWEVENT_LEAVE:
 				Key_ClearStates();
 				Cvar_SetValue("com_unfocused", 1);
 				break;
 			case SDL_WINDOWEVENT_ENTER:
+			{
+				Uint32 flags = SDL_GetWindowFlags(mainScreen);
+				// We might not have focus, just the user moving his mouse over things
+				if (!(flags & SDL_WINDOW_INPUT_FOCUS))
+				{
+					break;
+				}
+			}
 			case SDL_WINDOWEVENT_FOCUS_GAINED:
 			{
 				Cvar_SetValue("com_unfocused", 0);
-
 				if (com_minimized->integer)
 				{
 					SDL_RestoreWindow(mainScreen);
 				}
+				SDL_RaiseWindow(mainScreen);
 			}
 			break;
 			case SDL_WINDOWEVENT_MOVED:
@@ -1326,6 +1398,42 @@ void IN_Frame(void)
 
 	// Get the timestamp to give the next frame's input events (not the ones we're gathering right now, though)
 	int start = Sys_Milliseconds();
+
+#ifdef __ANDROID__
+
+	JNIEnv *env = (JNIEnv*) SDL_AndroidGetJNIEnv();
+
+	if (env == NULL)
+		return;
+
+	jobject activity = (jobject)SDL_AndroidGetActivity();
+
+	if (activity == NULL)
+		return;
+
+	jclass clazz = (*env)->GetObjectClass(env, activity);
+
+	if (clazz == NULL)
+		return;
+
+	jfieldID f_id = (*env)->GetStaticFieldID(env, clazz, "UiMenu", "Z");
+	qboolean f_boolean = (*env)->GetStaticBooleanField(env, clazz, f_id);
+
+	if (cls.state == CA_ACTIVE)
+	{
+		if (f_boolean != qtrue)
+			(*env)->SetStaticBooleanField(env, clazz, f_id, qtrue);
+	}
+	else
+	{
+		if (f_boolean != qfalse)
+			(*env)->SetStaticBooleanField(env, clazz, f_id, qfalse);
+	}
+
+	(*env)->DeleteLocalRef(env, clazz);
+	(*env)->DeleteLocalRef(env, activity);
+
+#endif // __ANDROID__
 
 	if (!cls.glconfig.isFullscreen && (Key_GetCatcher() & KEYCATCH_CONSOLE))
 	{
@@ -1394,6 +1502,16 @@ void IN_Init(void)
 	mainScreen = (SDL_Window *)GLimp_MainWindow();
 
 	//Com_Printf("\n------- Input Initialization -------\n");
+
+
+#ifdef __ANDROID__
+	// This set mouse input and touch to be handled separately
+	// SDL_SetHint(SDL_HINT_ANDROID_SEPARATE_MOUSE_AND_TOUCH, "1");
+	// This has been removed and replaced with those bellow in SDL 2.0.10
+	SDL_SetHint(SDL_HINT_MOUSE_TOUCH_EVENTS, "0");
+	SDL_SetHint(SDL_HINT_TOUCH_MOUSE_EVENTS, "1");
+	SDL_SetHint(SDL_HINT_ANDROID_TRAP_BACK_BUTTON, "1");
+#endif
 
 	in_keyboardDebug = Cvar_Get("in_keyboardDebug", "0", CVAR_TEMP);
 

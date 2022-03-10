@@ -283,7 +283,7 @@ void CL_ParsePacketEntities(msg_t *msg, clSnapshot_t *oldframe, clSnapshot_t *ne
 		else
 		{
 			oldstate = &cl.parseEntities[
-			    (oldframe->parseEntitiesNum + oldindex) & (MAX_PARSE_ENTITIES - 1)];
+				(oldframe->parseEntitiesNum + oldindex) & (MAX_PARSE_ENTITIES - 1)];
 			oldnum = oldstate->number;
 		}
 	}
@@ -321,7 +321,7 @@ void CL_ParsePacketEntities(msg_t *msg, clSnapshot_t *oldframe, clSnapshot_t *ne
 			else
 			{
 				oldstate = &cl.parseEntities[
-				    (oldframe->parseEntitiesNum + oldindex) & (MAX_PARSE_ENTITIES - 1)];
+					(oldframe->parseEntitiesNum + oldindex) & (MAX_PARSE_ENTITIES - 1)];
 				oldnum = oldstate->number;
 			}
 		}
@@ -344,7 +344,7 @@ void CL_ParsePacketEntities(msg_t *msg, clSnapshot_t *oldframe, clSnapshot_t *ne
 			else
 			{
 				oldstate = &cl.parseEntities[
-				    (oldframe->parseEntitiesNum + oldindex) & (MAX_PARSE_ENTITIES - 1)];
+					(oldframe->parseEntitiesNum + oldindex) & (MAX_PARSE_ENTITIES - 1)];
 				oldnum = oldstate->number;
 			}
 		}
@@ -439,9 +439,9 @@ void CL_ParseSnapshot(msg_t *msg)
 	{
 		newSnap.valid = qtrue;      // uncompressed frame
 		old           = NULL;
-		if (clc.demorecording)
+		if (clc.demo.recording)
 		{
-			clc.demowaiting = qfalse;   // we can start recording now
+			clc.demo.waiting = qfalse;   // we can start recording now
 			//if(cl_autorecord->integer) {
 			//  Cvar_Set( "g_synchronousClients", "0" );
 			//}
@@ -590,14 +590,22 @@ int cl_connectedToCheatServer;
 
 void CL_PurgeCache(void);
 
-static void CL_SetPurePaks(void)
+static void CL_SetPurePaks(qboolean referencedOnly)
 {
 	const char *s, *t;
-	char *systemInfo = cl.gameState.stringData + cl.gameState.stringOffsets[CS_SYSTEMINFO];
-	// check pure server string
-	s = Info_ValueForKey(systemInfo, "sv_paks");
-	t = Info_ValueForKey(systemInfo, "sv_pakNames");
-	FS_PureServerSetLoadedPaks(s, t);
+	char       *systemInfo = cl.gameState.stringData + cl.gameState.stringOffsets[CS_SYSTEMINFO];
+
+	if (!referencedOnly)
+	{
+		// check pure server string
+		s = Info_ValueForKey(systemInfo, "sv_paks");
+		t = Info_ValueForKey(systemInfo, "sv_pakNames");
+		FS_PureServerSetLoadedPaks(s, t);
+	}
+	else
+	{
+		FS_PureServerSetLoadedPaks("", "");
+	}
 
 	s = Info_ValueForKey(systemInfo, "sv_referencedPaks");
 	t = Info_ValueForKey(systemInfo, "sv_referencedPakNames");
@@ -618,29 +626,27 @@ void CL_SystemInfoChanged(void)
 
 	// NOTE: when the serverId changes, any further messages we send to the server will use this new serverId
 	// in some cases, outdated cp commands might get sent with this news serverId
-	cl.serverId = atoi(Info_ValueForKey(systemInfo, "sv_serverid"));
+	cl.serverId = Q_atoi(Info_ValueForKey(systemInfo, "sv_serverid"));
 
 	Com_Memset(&entLastVisible, 0, sizeof(entLastVisible));
 
 	// don't set any vars when playing a demo
-	if (clc.demoplaying)
+	if (clc.demo.playing)
 	{
-		// allow running demo in pure mode to simulate server environment
-		if (Cvar_VariableValue("sv_pure") != 0.f) 
-		{
-			CL_SetPurePaks();
-		}
+		// allow running demo in pure mode to simulate server environment,
+		// but still setup the referenced packages for the container system to work
+		CL_SetPurePaks(!clc.demo.pure);
 		return;
 	}
 
 	s                         = Info_ValueForKey(systemInfo, "sv_cheats");
-	cl_connectedToCheatServer = atoi(s);      //bani
+	cl_connectedToCheatServer = Q_atoi(s);      //bani
 	if (!cl_connectedToCheatServer)
 	{
 		Cvar_SetCheatState();
 	}
 
-	CL_SetPurePaks();
+	CL_SetPurePaks(qfalse);
 
 	gameSet = qfalse;
 	// scan through all the variables in the systeminfo and locally set cvars to match
@@ -674,10 +680,12 @@ void CL_SystemInfoChanged(void)
 		else
 		{
 			// If this cvar may not be modified by a server discard the value.
+			// "shared" is for ETJump compatibility, information shared between server & client
+			// TODO: see why CVAR_SERVER_CREATED flag gets dropped here
 			if (!(cvar_flags & (CVAR_SYSTEMINFO | CVAR_SERVER_CREATED | CVAR_USER_CREATED)))
 			{
 				if (Q_stricmp(key, "g_synchronousClients") && Q_stricmp(key, "pmove_fixed") &&
-				    Q_stricmp(key, "pmove_msec"))
+				    Q_stricmp(key, "pmove_msec") && Q_stricmp(key, "shared"))
 				{
 					Com_DPrintf(S_COLOR_YELLOW "WARNING: server is not allowed to set %s=%s\n", key, value);
 					continue;
@@ -810,7 +818,22 @@ void CL_ParseGamestate(msg_t *msg)
 
 	// This used to call CL_StartHunkUsers, but now we enter the download state before loading the
 	// cgame
-	Com_InitDownloads();
+	if (!clc.demo.playing)
+	{
+		Com_InitDownloads();
+	}
+	else
+	{
+		char missingFiles[MAX_TOKEN_CHARS] = { '\0' };
+		if (clc.demo.pure && FS_ComparePaks(missingFiles, sizeof(missingFiles), qfalse))
+		{
+			Com_Error(ERR_DROP, "Missing required packages: %s", missingFiles);
+		}
+		else
+		{
+			CL_DownloadsComplete();
+		}
+	}
 
 	// make sure the game starts
 	Cvar_Set("cl_paused", "0");
@@ -862,7 +885,7 @@ void CL_ParseDownload(msg_t *msg)
 			Q_strncpyz(cls.download.downloadName, MSG_ReadString(msg), sizeof(cls.download.downloadName));
 			cls.download.downloadSize  = MSG_ReadLong(msg);
 			cls.download.downloadFlags = MSG_ReadLong(msg);
-			if (cls.download.downloadFlags & (1 << DL_FLAG_URL))
+			if (cls.download.downloadFlags & BIT(DL_FLAG_URL))
 			{
 				Sys_OpenURL(cls.download.downloadName, qtrue);
 				Cbuf_ExecuteText(EXEC_APPEND, "quit\n");
@@ -898,7 +921,7 @@ void CL_ParseDownload(msg_t *msg)
 			}
 			// Check for a disconnected download
 			// we'll let the server disconnect us when it gets the bbl8r message
-			if (cls.download.downloadFlags & (1 << DL_FLAG_DISCON))
+			if (cls.download.downloadFlags & BIT(DL_FLAG_DISCON))
 			{
 				CL_AddReliableCommand("wwwdl bbl8r");
 				cls.download.bWWWDlDisconnected = qtrue;

@@ -9,4 +9,5 @@ Terminal=false
 MimeType=x-scheme-handler/et;
 Categories=Game;ActionGame;
 StartupNotify=false
-Keywords=team-based;multiplayer;tactical;WWII;enemy;territory;
+Keywords=team-based;multiplayer;tactical;WWII;enemy;territory;etl;etlegacy;
+PrefersNonDefaultGPU=true

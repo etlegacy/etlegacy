@@ -753,6 +753,12 @@ void R_ScreenShot_f(void)
 
 	ssFormat_t format = r_screenshotFormat->integer;
 
+	// Backwards compatibility
+	if (!Q_stricmp(ri.Cmd_Argv(0), "screenshotJPEG"))
+	{
+		format = SSF_JPEG;
+	}
+
 	switch (format)
 	{
 		case SSF_TGA:
@@ -1346,7 +1352,7 @@ void R_Register(void)
 	r_recompileShaders        = ri.Cvar_Get("r_recompileShaders", "0", CVAR_ARCHIVE);
 
 	r_wolfFog = ri.Cvar_Get("r_wolfFog", "1", CVAR_ARCHIVE);
-	
+
 
 	r_screenSpaceAmbientOcclusion = ri.Cvar_Get("r_screenSpaceAmbientOcclusion", "0", CVAR_ARCHIVE);
 	ri.Cvar_CheckRange(r_screenSpaceAmbientOcclusion, 0, 2, qtrue);
@@ -1355,7 +1361,7 @@ void R_Register(void)
 	r_reflectionMapping        = ri.Cvar_Get("r_reflectionMapping", "0", CVAR_ARCHIVE | CVAR_LATCH);
 	r_highQualityNormalMapping = ri.Cvar_Get("r_highQualityNormalMapping", "0", CVAR_ARCHIVE | CVAR_LATCH);
 
-	
+
 
 	// temporary latched variables that can only change over a restart
 	r_overBrightBits    = ri.Cvar_Get("r_overBrightBits", "0", CVAR_ARCHIVE | CVAR_LATCH);
@@ -1502,7 +1508,7 @@ void R_Register(void)
 	r_clear           = ri.Cvar_Get("r_clear", "0", CVAR_CHEAT);
 	r_offsetFactor    = ri.Cvar_Get("r_offsetFactor", "-1", CVAR_CHEAT);
 	r_offsetUnits     = ri.Cvar_Get("r_offsetUnits", "-2", CVAR_CHEAT);
-	
+
 	//These makes the spec spot bigger or smaller, the higher the number the smaller the dot
 	r_specularExponent  = ri.Cvar_Get("r_specularExponent", "512.0", CVAR_ARCHIVE | CVAR_LATCH); // cheat?
 	r_specularExponent2 = ri.Cvar_Get("r_specularExponent2", "2", CVAR_ARCHIVE | CVAR_LATCH);    // cheat? - a factor used only for entities.. for now
@@ -1517,7 +1523,7 @@ void R_Register(void)
 	//rim light gives your shading a nice volumentric effect which can greatly enhance the contrast with the background
 	r_rimLighting = ri.Cvar_Get("r_rimLighting", "0", CVAR_CHEAT | CVAR_LATCH); // was CVAR_ARCHIVE | CVAR_LATCH
 	                                                                            // FIXME: make rim lighting work with diffuse maps/textures
-	                                                                            // see 
+	                                                                            // see
 	                                                                            // and set old flags again
 	r_rimExponent = ri.Cvar_Get("r_rimExponent", "3", CVAR_CHEAT | CVAR_LATCH);
 	ri.Cvar_CheckRange(r_rimExponent, 0.5, 8.0, qfalse);
@@ -1644,11 +1650,14 @@ void R_Register(void)
 	ri.Cmd_AddSystemCommand("fbolist", R_FBOList_f, "Prints the lists of frame buffer objects.", NULL);
 	ri.Cmd_AddSystemCommand("vbolist", R_VBOList_f, "Prints the lists of current vertex buffer objects", NULL);
 	ri.Cmd_AddSystemCommand("screenshot", R_ScreenShot_f, "Takes a screenshot of current frame.", NULL);
+	ri.Cmd_AddSystemCommand("screenshotJPEG", R_ScreenShot_f, "Take a JPEG screenshot of current frame", NULL);
 	ri.Cmd_AddSystemCommand("gfxinfo", GfxInfo_f, "Prints GFX info of current system.", NULL);
 	//ri.Cmd_AddSystemCommand("generatemtr", R_GenerateMaterialFile_f, "Generate material file", NULL);
 	ri.Cmd_AddSystemCommand("buildcubemaps", R_BuildCubeMaps_f, "Builds cubemaps for the current loaded map.", NULL);
 	//NOTE: this only freeze on my system, Thunder
 	ri.Cmd_AddSystemCommand("glsl_restart", GLSL_restart_f, "Restarts the GLSL subsystem.", NULL);
+
+	R_RegisterCommon();
 }
 
 /**
@@ -1767,12 +1776,12 @@ void RE_Shutdown(qboolean destroyWindow)
 
 	ri.Cmd_RemoveSystemCommand("modellist");
 	ri.Cmd_RemoveSystemCommand("screenshot");
+	ri.Cmd_RemoveSystemCommand("screenshotJPEG");
 	ri.Cmd_RemoveSystemCommand("imagelist");
 	ri.Cmd_RemoveSystemCommand("shaderlist");
 	ri.Cmd_RemoveSystemCommand("shaderexp");
 	ri.Cmd_RemoveSystemCommand("skinlist");
 	ri.Cmd_RemoveSystemCommand("gfxinfo");
-	ri.Cmd_RemoveSystemCommand("modelist");
 	ri.Cmd_RemoveSystemCommand("animationlist");
 	ri.Cmd_RemoveSystemCommand("fbolist");
 	ri.Cmd_RemoveSystemCommand("vbolist");

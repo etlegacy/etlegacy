@@ -161,7 +161,7 @@ void TossWeapons(gentity_t *self)
 		return;
 	}
 
-	if (self->client->sess.playerType == PC_SOLDIER && self->client->sess.skill[SK_HEAVY_WEAPONS] >= 4)
+	if (self->client->sess.playerType == PC_SOLDIER && BG_IsSkillAvailable(self->client->sess.skill, SK_HEAVY_WEAPONS, SK_SOLDIER_SMG))
 	{
 		primaryWeapon = G_GetPrimaryWeaponForClientSoldier(self->client);
 	}
@@ -589,7 +589,7 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 #endif
 	}
 
-	Cmd_Score_f(self);          // show scores
+	self->client->wantsscore = qtrue;          // show scores
 
 	// send updated scores to any clients that are following this one,
 	// or they would get stale scoreboards
@@ -608,7 +608,7 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 
 		if (client->sess.spectatorClient == self->s.number)
 		{
-			Cmd_Score_f(g_entities + level.sortedClients[i]);
+			(g_entities + level.sortedClients[i])->client->wantsscore = qtrue;
 		}
 	}
 
@@ -658,9 +658,6 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 
 		// set enemy location
 		BG_UpdateConditionValue(self->s.number, ANIM_COND_ENEMY_POSITION, 0, qfalse);
-
-		// play specific anim on suicide
-		BG_UpdateConditionValue(self->s.number, ANIM_COND_SUICIDE, meansOfDeath == MOD_SUICIDE, qtrue);
 
 		// FIXME: add POSITION_RIGHT, POSITION_LEFT
 		if (infront(self, inflictor))
@@ -1164,11 +1161,21 @@ static grefEntity_t refent;
  */
 void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t dir, vec3_t point, int damage, int dflags, meansOfDeath_t mod)
 {
+	G_DamageExt(targ, inflictor, attacker, dir, point, damage, dflags, mod, NULL);
+}
+
+void G_DamageExt(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t dir, vec3_t point, int damage, int dflags, meansOfDeath_t mod, int *hitEventOut)
+{
 	int         take;
 	int         knockback;
-	int			hitEventType = HIT_NONE;
 	qboolean    wasAlive, onSameTeam;
-	hitRegion_t hr = HR_NUM_HITREGIONS;
+	hitRegion_t hr           = HR_NUM_HITREGIONS;
+	int         hitEventType = HIT_NONE;
+
+	if (hitEventOut)
+	{
+		*hitEventOut = HIT_NONE;
+	}
 
 	if (!targ->takedamage || targ->entstate == STATE_INVISIBLE || targ->entstate == STATE_UNDERCONSTRUCTION) // invisible entities can't be damaged
 	{
@@ -1349,75 +1356,6 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 		VectorNormalize(dir);
 	}
 
-	if ((targ->flags & FL_NO_KNOCKBACK) || (dflags & DAMAGE_NO_KNOCKBACK) ||
-	    (targ->client && g_friendlyFire.integer && (onSameTeam || (attacker->client && targ->client->sess.sessionTeam == G_GetTeamFromEntity(inflictor)))))
-	{
-		knockback = 0;
-	}
-	else
-	{
-		knockback = (damage > 200) ? 200 : damage;
-
-		if (dflags & DAMAGE_HALF_KNOCKBACK)
-		{
-			knockback *= 0.5;
-		}
-
-		// set weapons means less knockback
-		if (targ->client && (GetWeaponTableData(targ->client->ps.weapon)->type & WEAPON_TYPE_SET))
-		{
-			knockback *= 0.5;
-		}
-	}
-
-	// figure momentum add, even if the damage won't be taken
-	if (knockback && targ->client)
-	{
-		vec3_t kvel;
-		float  mass = 200;
-
-		VectorScale(dir, g_knockback.value * (float)knockback / mass, kvel);
-		VectorAdd(targ->client->ps.velocity, kvel, targ->client->ps.velocity);
-
-		// are we pushed? Do not count when already flying ...
-		if (attacker && attacker->client && (targ->client->ps.groundEntityNum != ENTITYNUM_NONE || GetMODTableData(mod)->isExplosive))
-		{
-			targ->client->pmext.shoved = qtrue;
-			targ->client->pmext.pusher = attacker - g_entities;
-		}
-
-		// MOD_ROCKET removed (now MOD_EXPLOSIVE) which is never targ == attacker
-		if (targ == attacker && !(mod != MOD_GRENADE &&
-		                          mod != MOD_GRENADE_LAUNCHER &&
-		                          mod != MOD_GRENADE_PINEAPPLE &&
-		                          mod != MOD_DYNAMITE
-		                          && mod != MOD_GPG40 // ?!
-		                          && mod != MOD_M7 // ?!
-		                          && mod != MOD_LANDMINE
-		                          ))
-		{
-			targ->client->ps.velocity[2] *= 0.25f;
-		}
-
-		// set the timer so that the other client can't cancel
-		// out the movement immediately
-		if (!targ->client->ps.pm_time)
-		{
-			int t = knockback * 2;
-
-			if (t < 50)
-			{
-				t = 50;
-			}
-			if (t > 200)
-			{
-				t = 200;
-			}
-			targ->client->ps.pm_time   = t;
-			targ->client->ps.pm_flags |= PMF_TIME_KNOCKBACK;
-		}
-	}
-
 	// check for completely getting out of the damage
 	if (!(dflags & DAMAGE_NO_PROTECTION))
 	{
@@ -1437,17 +1375,15 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 	}
 
 	// add to the attacker's hit counter (but only if target is a client)
-	if (attacker && attacker->client && targ->client  && targ != attacker && targ->health > FORCE_LIMBO_HEALTH &&
+	if (attacker && attacker->client && targ->client  && targ != attacker && targ->health >= FORCE_LIMBO_HEALTH &&
 	    mod != MOD_SWITCHTEAM && mod != MOD_SWAP_PLACES && mod != MOD_SUICIDE)
 	{
 		if (onSameTeam || (targ->client->ps.powerups[PW_OPS_DISGUISED] && (g_friendlyFire.integer & 1)))
 		{
-			attacker->client->ps.persistant[PERS_HITS] -= damage;
 			hitEventType = HIT_TEAMSHOT;
 		}
 		else if (!targ->client->ps.powerups[PW_OPS_DISGUISED])
 		{
-			attacker->client->ps.persistant[PERS_HITS] += damage;
 			hitEventType = HIT_BODYSHOT;
 		}
 
@@ -1467,7 +1403,7 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 	}
 
 	// save some from flak jacket
-	if (targ->client && targ->client->sess.skill[SK_EXPLOSIVES_AND_CONSTRUCTION] >= 4 && targ->client->sess.playerType == PC_ENGINEER)
+	if (targ->client && BG_IsSkillAvailable(targ->client->sess.skill, SK_EXPLOSIVES_AND_CONSTRUCTION, SK_ENGINEER_FLAK_JACKET) && targ->client->sess.playerType == PC_ENGINEER)
 	{
 		if (GetMODTableData(mod)->isExplosive)
 		{
@@ -1539,13 +1475,10 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 			G_addStatsHeadShot(attacker, mod);
 
 			// Upgrade the hit event to headshot if we have not yet classified it as a teamshot (covertops etc..)
-			if(hitEventType != HIT_TEAMSHOT)
+			if (hitEventType != HIT_TEAMSHOT)
 			{
 				hitEventType = HIT_HEADSHOT;
 			}
-
-			// FIXME: do we need this for anything?
-			attacker->client->ps.persistant[PERS_HEADSHOTS]++;
 		}
 
 		if (g_debugBullets.integer)
@@ -1601,6 +1534,75 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 		//BG_AnimScriptEvent(&targ->client->ps, targ->client->pers.character->animModelInfo, ANIM_ET_PAIN, qfalse, qtrue);
 	}
 
+	if ((targ->flags & FL_NO_KNOCKBACK) || (dflags & DAMAGE_NO_KNOCKBACK) ||
+	    (targ->client && g_friendlyFire.integer && (onSameTeam || (attacker->client && targ->client->sess.sessionTeam == G_GetTeamFromEntity(inflictor)))))
+	{
+		knockback = 0;
+	}
+	else
+	{
+		knockback = (damage > 200) ? 200 : damage;
+
+		if (dflags & DAMAGE_HALF_KNOCKBACK)
+		{
+			knockback *= 0.5;
+		}
+
+		// set weapons means less knockback
+		if (targ->client && (GetWeaponTableData(targ->client->ps.weapon)->type & WEAPON_TYPE_SET))
+		{
+			knockback *= 0.5;
+		}
+	}
+
+	// figure momentum add, even if the damage won't be taken
+	if (knockback && targ->client)
+	{
+		vec3_t kvel;
+		float  mass = 200;
+
+		VectorScale(dir, g_knockback.value * (float)knockback / mass, kvel);
+		VectorAdd(targ->client->ps.velocity, kvel, targ->client->ps.velocity);
+
+		// are we pushed? Do not count when already flying ...
+		if (attacker && attacker->client && (targ->client->ps.groundEntityNum != ENTITYNUM_NONE || GetMODTableData(mod)->isExplosive))
+		{
+			targ->client->pmext.shoved = qtrue;
+			targ->client->pmext.pusher = attacker - g_entities;
+		}
+
+		// MOD_ROCKET removed (now MOD_EXPLOSIVE) which is never targ == attacker
+		if (targ == attacker && !(mod != MOD_GRENADE &&
+		                          mod != MOD_GRENADE_LAUNCHER &&
+		                          mod != MOD_GRENADE_PINEAPPLE &&
+		                          mod != MOD_DYNAMITE
+		                          && mod != MOD_GPG40 // ?!
+		                          && mod != MOD_M7 // ?!
+		                          && mod != MOD_LANDMINE
+		                          ))
+		{
+			targ->client->ps.velocity[2] *= 0.25f;
+		}
+
+		// set the timer so that the other client can't cancel
+		// out the movement immediately
+		if (!targ->client->ps.pm_time)
+		{
+			int t = knockback * 2;
+
+			if (t < 50)
+			{
+				t = 50;
+			}
+			if (t > 200)
+			{
+				t = 200;
+			}
+			targ->client->ps.pm_time   = t;
+			targ->client->ps.pm_flags |= PMF_TIME_KNOCKBACK;
+		}
+	}
+
 #ifndef DEBUG_STATS
 	if (g_debugDamage.integer)
 #endif
@@ -1608,9 +1610,16 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 		G_Printf("client:%i health:%i damage:%i mod:%s\n", targ->s.number, targ->health, take, GetMODTableData(mod)->modName);
 	}
 
-	if(hitEventType)
+	if (hitEventType)
 	{
-		G_AddEvent(attacker, EV_PLAYER_HIT, hitEventType);
+		if (!hitEventOut)
+		{
+			G_AddEvent(attacker, EV_PLAYER_HIT, hitEventType);
+		}
+		else
+		{
+			*hitEventOut = hitEventType;
+		}
 	}
 
 #ifdef FEATURE_LUA
@@ -1664,6 +1673,7 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 	// do the damage
 	if (take)
 	{
+		damage        = targ->health;
 		targ->health -= take;
 
 		// can't gib with bullet weapons
@@ -1737,7 +1747,7 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 				{
 					// Kill the entity.  Note that this funtion can set ->die to another
 					// function pointer, so that next time die is applied to the dead body.
-					targ->die(targ, inflictor, attacker, take, mod);
+					targ->die(targ, inflictor, attacker, damage, mod);
 					// kill stats in player_die function
 				}
 
@@ -1816,6 +1826,12 @@ void G_RailTrail(vec_t *start, vec_t *end, vec_t *color)
 	temp->s.angles[1] = (int)(color[1] * 255);
 	temp->s.angles[2] = (int)(color[2] * 255);
 	temp->s.density   = -1;
+
+	if (g_debugForSingleClient.integer > -1)
+	{
+		temp->r.svFlags      = SVF_SINGLECLIENT;
+		temp->r.singleClient = g_debugForSingleClient.integer;
+	}
 }
 
 /**
@@ -1848,6 +1864,12 @@ void G_RailBox(vec_t *origin, vec_t *mins, vec_t *maxs, vec_t *color, int index)
 	temp->s.angles[2] = (int)(color[2] * 255);
 
 	temp->s.effect1Time = index + 1;
+
+	if (g_debugForSingleClient.integer > -1)
+	{
+		temp->r.svFlags      = SVF_SINGLECLIENT;
+		temp->r.singleClient = g_debugForSingleClient.integer;
+	}
 }
 
 #define MASK_CAN_DAMAGE     (CONTENTS_SOLID | CONTENTS_BODY)
@@ -2045,7 +2067,8 @@ qboolean G_RadiusDamage(vec3_t origin, gentity_t *inflictor, gentity_t *attacker
 	vec3_t    dest;
 	trace_t   tr;
 	vec3_t    midpoint;
-	int       flags = DAMAGE_RADIUS;
+	int       flags          = DAMAGE_RADIUS;
+	qboolean  chainDynamites = qtrue;
 
 	if (mod == MOD_SATCHEL || mod == MOD_LANDMINE)
 	{
@@ -2072,16 +2095,43 @@ qboolean G_RadiusDamage(vec3_t origin, gentity_t *inflictor, gentity_t *attacker
 		g_entities[e].dmginloop = qfalse;
 	}
 
+	// we need to check for all the entities in the box first before applying damage
+	// to make sure we don't do dynamite chaining on multi-stage objectives if they
+	// are not ready to completely destroyed
+	for (e = 0; e < numListedEntities; e++)
+	{
+		ent = &g_entities[entityList[e]];
+
+		// grenadeFired is used to store the stage, 0 means completely destroyed
+		if ((ent->desstages || ent->constages) && ent->grenadeFired > 1)
+		{
+			chainDynamites = qfalse;
+		}
+	}
+
 	for (e = 0 ; e < numListedEntities ; e++)
 	{
 		ent = &g_entities[entityList[e]];
+
+		// dyno chaining
+		// only if within blast radius and both on the same objective or both or no objectives
+		if (mod == MOD_DYNAMITE && ent->s.weapon == WP_DYNAMITE && chainDynamites)
+		{
+			G_DPrintf("dyno chaining: inflictor: %p, ent: %p\n", inflictor->onobjective, ent->onobjective);
+
+			if (inflictor->onobjective == ent->onobjective && ent->s.effect1Time)
+			{
+				// free the other dynamite now too since they are peers
+				ent->nextthink = level.time;
+				ent->think     = G_ChainFree;
+			}
+		}
 
 		if (ent == ignore)
 		{
 			continue;
 		}
-		if (!ent->takedamage && (!ent->dmgparent || !ent->dmgparent->takedamage)
-		    && !(mod == MOD_DYNAMITE && ent->s.weapon == WP_DYNAMITE))
+		if (!ent->takedamage && (!ent->dmgparent || !ent->dmgparent->takedamage))
 		{
 			continue;
 		}
@@ -2092,29 +2142,6 @@ qboolean G_RadiusDamage(vec3_t origin, gentity_t *inflictor, gentity_t *attacker
 		if (dist >= radius)
 		{
 			continue;
-		}
-
-		// dyno chaining
-		// only if within blast radius and both on the same objective or both or no objectives
-		if (mod == MOD_DYNAMITE && ent->s.weapon == WP_DYNAMITE)
-		{
-			G_DPrintf("dyno chaining: inflictor: %p, ent: %p\n", inflictor->onobjective, ent->onobjective);
-
-			if (inflictor->onobjective == ent->onobjective)
-			{
-				if (g_dynamiteChaining.integer & DYNAMITECHAINING_FREE)
-				{
-					// free the other dynamite now too since they are peers
-					ent->nextthink = level.time;
-					ent->think     = G_ChainFree;
-				}
-				else
-				{
-					// blow up the other dynamite now too since they are peers
-					// set the nextthink just past us by a 1/4 of a second or so
-					ent->nextthink = level.time + 250;
-				}
-			}
 		}
 
 		points = damage * (1.0f - dist / radius);
@@ -2206,7 +2233,8 @@ qboolean etpro_RadiusDamage(vec3_t origin, gentity_t *inflictor, gentity_t *atta
 	vec3_t    dest;
 	trace_t   tr;
 	vec3_t    midpoint;
-	int       flags = DAMAGE_RADIUS;
+	int       flags          = DAMAGE_RADIUS;
+	qboolean  chainDynamites = qtrue;
 
 	if (mod == MOD_SATCHEL || mod == MOD_LANDMINE)
 	{
@@ -2233,30 +2261,35 @@ qboolean etpro_RadiusDamage(vec3_t origin, gentity_t *inflictor, gentity_t *atta
 		g_entities[e].dmginloop = qfalse;
 	}
 
+	// we need to check for all the entities in the box first before applying damage
+	// to make sure we don't do dynamite chaining on multi-stage objectives if they
+	// are not ready to completely destroyed
+	for (e = 0; e < numListedEntities; e++)
+	{
+		ent = &g_entities[entityList[e]];
+
+		// grenadeFired is used to store the stage, 0 means completely destroyed
+		if ((ent->desstages || ent->constages) && ent->grenadeFired > 1)
+		{
+			chainDynamites = qfalse;
+		}
+	}
+
 	for (e = 0 ; e < numListedEntities ; e++)
 	{
 		ent = &g_entities[entityList[e]];
 
 		// dyno chaining
 		// only if within blast radius and both on the same objective or both or no objectives
-		if (mod == MOD_DYNAMITE && ent->s.weapon == WP_DYNAMITE)
+		if (mod == MOD_DYNAMITE && ent->s.weapon == WP_DYNAMITE && chainDynamites)
 		{
 			G_DPrintf("dyno chaining: inflictor: %p, ent: %p\n", inflictor->onobjective, ent->onobjective);
 
-			if (inflictor->onobjective == ent->onobjective)
+			if (inflictor->onobjective == ent->onobjective && ent->s.effect1Time)
 			{
-				if (g_dynamiteChaining.integer & DYNAMITECHAINING_FREE)
-				{
-					// free the other dynamite now too since they are peers
-					ent->nextthink = level.time;
-					ent->think     = G_ChainFree;
-				}
-				else
-				{
-					// blow up the other dynamite now too since they are peers
-					// set the nextthink just past us by a 1/4 of a second or so
-					ent->nextthink = level.time + 250;
-				}
+				// free the other dynamite now too since they are peers
+				ent->nextthink = level.time;
+				ent->think     = G_ChainFree;
 			}
 		}
 

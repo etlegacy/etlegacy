@@ -42,7 +42,7 @@ typedef enum
 	DL_FAILED
 } dlStatus_t;
 
-int DL_BeginDownload(char *localName, const char *remoteName);
+int DL_BeginDownload(const char *localName, const char *remoteName);
 char *DL_GetString(const char *url);
 dlStatus_t DL_DownloadLoop(void);
 

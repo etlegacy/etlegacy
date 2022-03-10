@@ -25,10 +25,15 @@ menuDef {
 		open main
 	}
 
-// Window //
+	// Window //
 	WINDOW( _("REPLAYS"), 150 )
 
-// Demo List //
+#ifdef ETLEGACY
+	// Pure "server" demo viewing. Maybe change this to something more pretty? Checkbox? //
+	YESNO( 160, 14, 40, 10, _("Pure Server:"), .2, 8, "sv_pure", _("Limit game content to that contained in PK3 files on both the client and server with matching CRCs") )
+#endif
+
+	// Demo List //
 	itemDef {
 		name			"demoList"
 		group			GROUP_NAME
@@ -54,7 +59,7 @@ menuDef {
 		}
 	}
 
-// Buttons //
+	// Buttons //
 	BUTTON( 6, WINDOW_HEIGHT-24, .33*(WINDOW_WIDTH-24), 18, _("BACK"), .3, 14, close viewreplay ; open main )
 	BUTTON( 6+.33*(WINDOW_WIDTH-24)+6, WINDOW_HEIGHT-24, .34*(WINDOW_WIDTH-24), 18, _("DELETE"), .3, 14, conditionalScript ValidReplaySelected 2
 		( "clearFocus ; open viewreplay_delete" )

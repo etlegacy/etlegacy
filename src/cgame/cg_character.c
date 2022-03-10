@@ -153,7 +153,7 @@ static qboolean CG_ParseHudHeadConfig(const char *filename, animation_t *hha)
 			break;
 		}
 
-		hha[i].firstFrame = atoi(token);
+		hha[i].firstFrame = Q_atoi(token);
 
 		token = COM_Parse(&text_p);     // length
 
@@ -162,7 +162,7 @@ static qboolean CG_ParseHudHeadConfig(const char *filename, animation_t *hha)
 			break;
 		}
 
-		hha[i].numFrames = atoi(token);
+		hha[i].numFrames = Q_atoi(token);
 
 		token = COM_Parse(&text_p);     // fps
 
@@ -171,7 +171,7 @@ static qboolean CG_ParseHudHeadConfig(const char *filename, animation_t *hha)
 			break;
 		}
 
-		fps = (float)atof(token);
+		fps = Q_atof(token);
 
 		if (fps == 0.f)
 		{
@@ -188,7 +188,7 @@ static qboolean CG_ParseHudHeadConfig(const char *filename, animation_t *hha)
 			break;
 		}
 
-		hha[i].loopFrames = atoi(token);
+		hha[i].loopFrames = Q_atoi(token);
 
 		if (hha[i].loopFrames > hha[i].numFrames)
 		{

@@ -83,6 +83,19 @@ char *Sys_DefaultHomePath(void)
 			Q_strcat(homePath, sizeof(homePath), "/.etlegacy");
 #endif
 		}
+
+#ifdef __ANDROID__
+		if(SDL_AndroidGetExternalStorageState())
+		{
+			Q_strncpyz(homePath, SDL_AndroidGetExternalStoragePath(), sizeof(homePath));
+			Q_strcat(homePath, sizeof(homePath), "/etlegacy");
+		}
+		else
+		{
+			Q_strncpyz(homePath, SDL_AndroidGetInternalStoragePath(), sizeof(homePath));
+			Q_strcat(homePath, sizeof(homePath), "/etlegacy");
+		}
+#endif
 	}
 
 	return homePath;
@@ -285,6 +298,13 @@ FILE *Sys_FOpen(const char *ospath, const char *mode)
 		return NULL;
 	}
 
+	// Handle + flag mode
+	if (strlen(mode) > 1 && strchr(&mode[1], '+'))
+	{
+		oflag &= ~(O_WRONLY | O_RDONLY);
+		oflag |= O_RDWR;
+	}
+
 	// Check the state (if path exists)
 	if (stat(ospath, &stat_infoBefore) == -1)
 	{
@@ -305,7 +325,7 @@ FILE *Sys_FOpen(const char *ospath, const char *mode)
 	}
 
 	// Try to open the file and get the file descriptor
-	if ((fd = open(ospath, oflag, S_IRWXU)) == -1)
+	if ((fd = open(ospath, oflag, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH)) == -1)
 	{
 		Com_Printf("Sys_FOpen: open('%s', %d) failed: errno %d\n", ospath, oflag, errno);
 		return NULL;
@@ -331,7 +351,7 @@ FILE *Sys_FOpen(const char *ospath, const char *mode)
 	// Try to open the file with the file descriptor
 	if (!(fp = fdopen(fd, mode)))
 	{
-		Com_Printf("Sys_FOpen: fdopen('%s', %s) failed: errno %d\n", ospath, mode, errno);
+		Com_Printf("Sys_FOpen: fdopen('%s', %s) failed: errno %d - %s\n", ospath, mode, errno, strerror(errno));
 		close(fd);
 		unlink(ospath);
 		return NULL;
@@ -887,6 +907,17 @@ dialogResult_t Sys_Dialog(dialogType_t type, const char *message, const char *ti
 	qboolean            tried[NUM_DIALOG_PROGRAMS] = { qfalse };
 	dialogCommandType_t preferredCommandType       = NONE;
 
+#ifdef ETL_CLIENT
+	{
+		// Try to use the SDL backend for showing dialogs since ours is not always the best implementation
+		dialogResult_t sdlRet = Sys_SDLDialog(type, message, title);
+		if (sdlRet != DR_ERROR)
+		{
+			return sdlRet;
+		}
+	}
+#endif
+
 	// first check the obsolete DESKTOP_SESSION
 	if (!Q_stricmp(session, "default") || !Q_stricmp(session, ""))
 	{
@@ -1039,7 +1070,6 @@ void Sys_StartProcess(char *cmdline, qboolean doexit)
 void Sys_OpenURL(const char *url, qboolean doexit)
 {
 #ifndef DEDICATED
-	char fn[MAX_OSPATH];
 	char cmdline[MAX_CMD];
 
 	static qboolean doexit_spamguard = qfalse;
@@ -1052,8 +1082,6 @@ void Sys_OpenURL(const char *url, qboolean doexit)
 
 	Com_Printf("Open URL: %s\n", url);
 
-	Com_DPrintf("URL script: %s\n", fn);
-
 #ifdef __APPLE__
 	Com_sprintf(cmdline, MAX_CMD, "open '%s' &", url);
 #else
@@ -1061,8 +1089,6 @@ void Sys_OpenURL(const char *url, qboolean doexit)
 #endif
 
 	Sys_StartProcess(cmdline, doexit);
-
-	Cbuf_ExecuteText(EXEC_NOW, "minimize");
 #endif // not DEDICATED
 }
 

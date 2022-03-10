@@ -51,6 +51,8 @@ static int gammaResetTime = 0;
 #endif
 #endif // __APPLE__
 
+static int GLimp_CompareModes(const void *a, const void *b);
+
 SDL_Window           *main_window   = NULL;
 static SDL_Renderer  *main_renderer = NULL;
 static SDL_GLContext SDL_glContext  = NULL;
@@ -76,7 +78,6 @@ cvar_t *r_stencilbits;  // number of desired stencil bits
 cvar_t *r_depthbits;  // number of desired depth bits
 cvar_t *r_colorbits;  // number of desired color bits, only relevant for fullscreen
 cvar_t *r_ignorehwgamma;
-cvar_t *r_ext_multisample;
 
 typedef enum
 {
@@ -182,13 +183,66 @@ qboolean GLimp_GetModeInfo(int *width, int *height, float *windowAspect, int mod
 	return qtrue;
 }
 
+#define GLimp_ResolutionToFraction(resolution) GLimp_RatioToFraction((double) resolution.w / (double) resolution.h, 150)
+
+/**
+ * @brief Figures out the best possible fraction string for the given resolution ratio
+ * @param ratio resolution ratio (resolution width / resolution height)
+ * @param iterations how many iterations should it be allowed to run
+ * @return fraction value formatted into a string (static stack)
+ */
+static char *GLimp_RatioToFraction(const double ratio, const int iterations)
+{
+	static char buff[64];
+	int i;
+	double bestDelta = DBL_MAX;
+	unsigned int numerator = 1;
+	unsigned int denominator = 1;
+	unsigned int bestNumerator = 0;
+	unsigned int bestDenominator = 0;
+
+	for (i = 0; i < iterations; i++)
+	{
+		double delta = (double) numerator / (double) denominator - ratio;
+
+		// Close enough for most resolutions
+		if(fabs(delta) < 0.002)
+		{
+			break;
+		}
+
+		if (delta < 0)
+		{
+			numerator++;
+		}
+		else
+		{
+			denominator++;
+		}
+
+		double newDelta = fabs((double) numerator / (double) denominator - ratio);
+		if (newDelta < bestDelta)
+		{
+			bestDelta = newDelta;
+			bestNumerator = numerator;
+			bestDenominator = denominator;
+		}
+	}
+
+	sprintf(buff, "%u/%u", bestNumerator, bestDenominator);
+	Com_DPrintf("%f -> %s\n", ratio, buff);
+	return buff;
+}
+
 /**
 * @brief Prints hardcoded screen resolutions
 * @see r_availableModes for supported resolutions
 */
 void GLimp_ModeList_f(void)
 {
-	int i;
+	int i, j, display, numModes = 0;
+	SDL_Rect        modes[128];
+	SDL_DisplayMode windowMode;
 
 	Com_Printf("\n");
 	Com_Printf((r_mode->integer == -2) ? "%s ^2(current)\n" : "%s\n",
@@ -200,6 +254,69 @@ void GLimp_ModeList_f(void)
 		Com_Printf((i == r_mode->integer) ? "%s ^2(current)\n" : "%s\n",
 		           glimp_vidModes[i].description);
 	}
+
+	Com_Printf("\n" S_COLOR_GREEN "SDL detected modes:\n");
+
+	display = SDL_GetWindowDisplayIndex(main_window);
+
+	if (SDL_GetDesktopDisplayMode(display, &windowMode) < 0)
+	{
+		Com_Printf(S_COLOR_YELLOW "Couldn't get desktop display mode, no resolutions detected - %s\n", SDL_GetError());
+		return;
+	}
+
+	for (i = 0; i < SDL_GetNumDisplayModes(display); i++)
+	{
+		SDL_DisplayMode mode;
+
+		if (SDL_GetDisplayMode(display, i, &mode) < 0)
+		{
+			continue;
+		}
+
+		if (!mode.w || !mode.h)
+		{
+			Com_Printf("Display supports any resolution\n");
+			return;
+		}
+
+		if (windowMode.format != mode.format)
+		{
+			continue;
+		}
+
+		// SDL can give the same resolution with different refresh rates.
+		// Only list resolution once.
+		for (j = 0; j < numModes; j++)
+		{
+			if (mode.w == modes[j].w && mode.h == modes[j].h)
+			{
+				break;
+			}
+		}
+
+		if (j != numModes)
+		{
+			continue;
+		}
+
+		modes[numModes].w = mode.w;
+		modes[numModes].h = mode.h;
+		numModes++;
+	}
+
+	if (numModes > 1)
+	{
+		qsort(modes, numModes, sizeof(SDL_Rect), GLimp_CompareModes);
+	}
+
+	for (i = 0; i < numModes; i++)
+	{
+		const char *newModeString = va("%ux%u ", modes[i].w, modes[i].h);
+		Com_Printf("Mode XX: %s (%s)\n", newModeString, GLimp_ResolutionToFraction(modes[i]));
+	}
+
+
 	Com_Printf("\n");
 }
 
@@ -230,8 +347,6 @@ static void GLimp_InitCvars(void)
 	r_depthbits       = Cvar_Get("r_depthbits", "0", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE);
 	r_colorbits       = Cvar_Get("r_colorbits", "0", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE);
 	r_ignorehwgamma   = Cvar_Get("r_ignorehwgamma", "0", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE);
-	r_ext_multisample = Cvar_Get("r_ext_multisample", "0", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE);
-	Cvar_CheckRange(r_ext_multisample, 0, 8, qtrue);
 
 	// Old modes (these are used by the UI code)
 	Cvar_Get("r_oldFullscreen", "", CVAR_ARCHIVE);
@@ -264,6 +379,9 @@ void GLimp_Shutdown(void)
 		SDL_DestroyWindow(main_window);
 		main_window = NULL;
 	}
+
+	Cmd_RemoveCommand("modelist");
+	Cmd_RemoveCommand("minimize");
 
 	SDL_QuitSubSystem(SDL_INIT_VIDEO);
 }
@@ -493,8 +611,8 @@ static void GLimp_WindowLocation(glconfig_t *glConfig, int *x, int *y, const qbo
 	}
 
 	// Make sure we have at least half of the game screen visible on the display its supposed to be in
-	if ((tmpX + (glConfig->vidWidth / 2)) > rect.x && (tmpX + (glConfig->vidWidth / 2)) < (rect.x + rect.w)
-	    && (tmpY + (glConfig->vidHeight / 2)) > rect.y && (tmpY + (glConfig->vidHeight / 2)) < (rect.y + rect.h))
+	if ((tmpX + (glConfig->windowWidth / 2)) > rect.x && (tmpX + (glConfig->windowWidth / 2)) < (rect.x + rect.w)
+		&& (tmpY + (glConfig->windowHeight / 2)) > rect.y && (tmpY + (glConfig->windowHeight / 2)) < (rect.y + rect.h))
 	{
 		*x = tmpX;
 		*y = tmpY;
@@ -591,6 +709,10 @@ static int GLimp_SetMode(glconfig_t *glConfig, int mode, qboolean fullscreen, qb
 		Com_Printf("invalid mode\n");
 		return RSERR_INVALID_MODE;
 	}
+
+	glConfig->windowWidth = glConfig->vidWidth;
+	glConfig->windowHeight = glConfig->vidHeight;
+
 	Com_Printf("%dx%d\n", glConfig->vidWidth, glConfig->vidHeight);
 
 	GLimp_WindowLocation(glConfig, &x, &y, fullscreen);
@@ -648,7 +770,7 @@ static int GLimp_SetMode(glconfig_t *glConfig, int mode, qboolean fullscreen, qb
 		depthBits = r_depthbits->integer;
 	}
 	stencilBits = r_stencilbits->integer;
-	samples     = r_ext_multisample->integer;
+	samples     = (context && context->samples ? context->samples : 0);
 
 	for (i = 0; i < 16; i++)
 	{
@@ -753,12 +875,6 @@ static int GLimp_SetMode(glconfig_t *glConfig, int mode, qboolean fullscreen, qb
 		SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 1);
 #endif
 
-#ifdef FEATURE_RENDERER_GLES
-		SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
-		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 1);
-		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
-#endif
-
 		SDL_GL_SetAttribute(SDL_GL_RED_SIZE, perChannelColorBits);
 		SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, perChannelColorBits);
 		SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, perChannelColorBits);
@@ -767,9 +883,6 @@ static int GLimp_SetMode(glconfig_t *glConfig, int mode, qboolean fullscreen, qb
 
 		SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, samples ? 1 : 0);
 		SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, samples);
-
-		// SDL2 uses opengl by default, if we want opengl es we need to set this attribute
-		//SDL_GL_SetAttribute(SDL_GL_CONTEXT_EGL, 1);
 
 		SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
@@ -812,7 +925,6 @@ static int GLimp_SetMode(glconfig_t *glConfig, int mode, qboolean fullscreen, qb
 
 		SDL_SetWindowIcon(main_window, icon);
 
-#ifndef FEATURE_RENDERER_GLES
 		if (context && context->versionMajor > 0)
 		{
 			SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, context->versionMajor);
@@ -827,15 +939,18 @@ static int GLimp_SetMode(glconfig_t *glConfig, int mode, qboolean fullscreen, qb
 				SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 				SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_FORWARD_COMPATIBLE_FLAG);
 				break;
+			case GL_CONTEXT_ES:
+				SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
+				break;
 			case GL_CONTEXT_EGL:
 				SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
+				SDL_GL_SetAttribute(SDL_GL_CONTEXT_EGL, 1);
 				break;
 			case GL_CONTEXT_DEFAULT:
 			default:
 				break;
 			}
 		}
-#endif
 
 		if ((SDL_glContext = SDL_GL_CreateContext(main_window)) == NULL)
 		{
@@ -968,13 +1083,20 @@ void GLimp_Splash(glconfig_t *glConfig)
 		);
 
 	SDL_Rect dstRect;
-	dstRect.x = glConfig->vidWidth / 2 - splashImage->w / 2;
-	dstRect.y = glConfig->vidHeight / 2 - splashImage->h / 2;
+	dstRect.x = glConfig->windowWidth / 2 - splashImage->w / 2;
+	dstRect.y = glConfig->windowHeight / 2 - splashImage->h / 2;
 	dstRect.w = splashImage->w;
 	dstRect.h = splashImage->h;
 
-	// apply image on surface
-	if (SDL_BlitSurface(splashImage, NULL, SDL_GetWindowSurface(main_window), &dstRect) == 0)
+	SDL_Surface *surface = SDL_GetWindowSurface(main_window);
+	if(!surface)
+	{
+		// This happens on some platforms, most likely just the SDL build lacking renderers. Does not really matter tho.
+		// the user just wont see our awesome splash screen, but the renderer should boot up just fine.
+		// FIXME: maybe checkup on this later on if there's something we should change on the bundled sdl compile settings
+		Com_DPrintf(S_COLOR_YELLOW "Could not get fetch SDL surface: %s\n", SDL_GetError() );
+	}
+	else if (SDL_BlitSurface(splashImage, NULL, surface, &dstRect) == 0) // apply image on surface
 	{
 		SDL_UpdateWindowSurface(main_window);
 	}
@@ -1058,8 +1180,10 @@ success:
 		GLimp_Splash(glConfig);
 	}
 #else
+#ifndef __ANDROID__
 	// Display splash screen
 	GLimp_Splash(glConfig);
+#endif
 #endif
 
 	// This depends on SDL_INIT_VIDEO, hence having it here

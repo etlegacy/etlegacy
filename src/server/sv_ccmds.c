@@ -262,7 +262,7 @@ static void SV_MapRestart_f(void)
 
 	if (Cmd_Argc() > 1)
 	{
-		delay = atoi(Cmd_Argv(1));
+		delay = Q_atoi(Cmd_Argv(1));
 	}
 
 	if (delay)
@@ -273,11 +273,11 @@ static void SV_MapRestart_f(void)
 	}
 
 	// read in gamestate or just default to GS_PLAYING
-	old_gs = atoi(Cvar_VariableString("gamestate"));
+	old_gs = Q_atoi(Cvar_VariableString("gamestate"));
 
 	if (Cmd_Argc() > 2)
 	{
-		new_gs = atoi(Cmd_Argv(2));
+		new_gs = Q_atoi(Cmd_Argv(2));
 	}
 	else
 	{

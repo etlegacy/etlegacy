@@ -448,6 +448,9 @@ void RE_BeginFrame(void)
 	tr.frameCount++;
 	tr.frameSceneNum = 0;
 
+	R_ClearHudFBO();
+	R_BindMainFBO();
+
 	// do overdraw measurement
 	if (r_measureOverdraw->integer)
 	{
@@ -501,16 +504,7 @@ void RE_BeginFrame(void)
 	}
 
 	// check for errors
-	if (!r_ignoreGLErrors->integer)
-	{
-		unsigned int err;
-
-		R_IssuePendingRenderCommands();
-		if ((err = glGetError()) != GL_NO_ERROR)
-		{
-			Ren_Fatal("RE_BeginFrame() - glGetError() failed (0x%x)!\n", err);
-		}
-	}
+	GL_CheckErrors();
 
 	// draw buffer stuff
 	cmd = R_GetCommandBuffer(sizeof(*cmd));

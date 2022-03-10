@@ -562,10 +562,10 @@ static void CG_ZoomSway(void)
 	spreadfrac = cg.snap->ps.aimSpreadScale / 255.0f;
 
 	phase                       = cg.time / 1000.0 * ZOOM_PITCH_FREQUENCY * M_TAU_F;
-	cg.refdefViewAngles[PITCH] += ZOOM_PITCH_AMPLITUDE * sin(phase) * (spreadfrac + ZOOM_PITCH_MIN_AMPLITUDE);
+	cg.refdefViewAngles[PITCH] += MAX(ZOOM_PITCH_AMPLITUDE * spreadfrac, ZOOM_PITCH_MIN_AMPLITUDE) * sin(phase) ;
 
 	phase                     = cg.time / 1000.0 * ZOOM_YAW_FREQUENCY * M_TAU_F;
-	cg.refdefViewAngles[YAW] += ZOOM_YAW_AMPLITUDE * sin(phase) * (spreadfrac + ZOOM_YAW_MIN_AMPLITUDE);
+	cg.refdefViewAngles[YAW] += MAX(ZOOM_YAW_AMPLITUDE * spreadfrac, ZOOM_YAW_MIN_AMPLITUDE) * sin(phase) ;
 }
 
 /**
@@ -573,14 +573,14 @@ static void CG_ZoomSway(void)
  */
 static void CG_OffsetFirstPersonView(void)
 {
-	vec3_t   forward;
-	float    *origin;
-	float    *angles;
-	float    bob;
-	float    delta;
-	float    speed;
-	float    f;
-	int      timeDelta;
+	//vec3_t forward;
+	float *origin;
+	float *angles;
+	float bob;
+	float delta;
+	float speed;
+	float f;
+	int   timeDelta;
 
 	if (cg.snap->ps.pm_type == PM_INTERMISSION)
 	{
@@ -697,9 +697,9 @@ static void CG_OffsetFirstPersonView(void)
 
 //===================================
 
-	AngleVectors(cg.refdefViewAngles, forward, NULL, NULL);
-	forward[2] = 0;
-	VectorNormalizeFast(forward);
+	//AngleVectors(cg.refdefViewAngles, forward, NULL, NULL);
+	//forward[2] = 0;
+	//VectorNormalizeFast(forward);
 
 	// add view height
 	origin[2] += cg.predictedPlayerState.viewheight;
@@ -709,18 +709,20 @@ static void CG_OffsetFirstPersonView(void)
 	if (cg.predictedPlayerState.eFlags & EF_PRONE)
 	{
 		// move the view origin a bit forward (limit between body and head BBox)
-		origin[0] += forward[0] * 18;
-		origin[1] += forward[1] * 18;
+		//origin[0] += forward[0] * 18;
+		//origin[1] += forward[1] * 18;
+
+		int pronetime = PRONE_TIME + cg.pmext.extendProneTime;
 
 		if (timeDelta < 0)
 		{
-			cg.duckTime = cg.time - PRONE_TIME;
+			cg.duckTime = cg.time - pronetime;
 		}
-		if (timeDelta < PRONE_TIME)
+		if (timeDelta < pronetime)
 		{
-			cg.refdef_current->vieworg[0] -= (forward[0] * 18) * (PRONE_TIME - timeDelta) / PRONE_TIME;
-			cg.refdef_current->vieworg[1] -= (forward[1] * 18) * (PRONE_TIME - timeDelta) / PRONE_TIME;
-			cg.refdef_current->vieworg[2] -= cg.duckChange * (PRONE_TIME - timeDelta) / PRONE_TIME;
+			cg.refdef_current->vieworg[0] += cg.deltaProne[0] * (pronetime - timeDelta) / pronetime;
+			cg.refdef_current->vieworg[1] += cg.deltaProne[1] * (pronetime - timeDelta) / pronetime;
+			cg.refdef_current->vieworg[2] -= cg.duckChange * (pronetime - timeDelta) / pronetime;
 		}
 	}
 	else
@@ -733,8 +735,8 @@ static void CG_OffsetFirstPersonView(void)
 		{
 			if (cg.wasProne)
 			{
-				cg.refdef_current->vieworg[0] += (forward[0] * 18) * (DUCK_TIME - timeDelta) / DUCK_TIME;
-				cg.refdef_current->vieworg[1] += (forward[1] * 18) * (DUCK_TIME - timeDelta) / DUCK_TIME;
+				cg.refdef_current->vieworg[0] -= cg.deltaProne[0] * (DUCK_TIME - timeDelta) / DUCK_TIME;
+				cg.refdef_current->vieworg[1] -= cg.deltaProne[1] * (DUCK_TIME - timeDelta) / DUCK_TIME;
 			}
 			cg.refdef_current->vieworg[2] -= cg.duckChange * (DUCK_TIME - timeDelta) / DUCK_TIME;
 		}
@@ -879,6 +881,12 @@ void CG_Zoom(void)
 {
 	int weapon;
 
+	// no zoom in third person view
+	if (cg.renderingThirdPerson)
+	{
+		return;
+	}
+
 	// fix for demo playback
 	if ((cg.snap->ps.pm_flags & PMF_FOLLOW) || cg.demoPlayback)
 	{
@@ -966,9 +974,9 @@ static int CG_CalcFov(void)
 		fov_x = cg_fov.value;
 		if (!developer.integer)
 		{
-			if (fov_x < 90)
+			if (fov_x < 75)
 			{
-				fov_x = 90;
+				fov_x = 75;
 			}
 			else if (fov_x > 160)
 			{
@@ -1036,25 +1044,25 @@ static int CG_CalcFov(void)
 
 	cg.refdef_current->rdflags &= ~RDF_SNOOPERVIEW;
 
+	if (!cg.renderingThirdPerson
 #ifdef FEATURE_EDV
-	if (cgs.demoCamera.renderingFreeCam || cgs.demoCamera.renderingWeaponCam)
-	{
-		//do nothing
-	}
-	else
+	    && !cgs.demoCamera.renderingFreeCam && !cgs.demoCamera.renderingWeaponCam
 #endif
-	// mg42 zoom
-	if (cg.snap->ps.persistant[PERS_HWEAPON_USE])
+	    )
 	{
-		fov_x = 55;
-	}
-	else if (CHECKBITWISE(GetWeaponTableData(cg.snap->ps.weapon)->type, WEAPON_TYPE_MG | WEAPON_TYPE_SET))
-	{
-		fov_x = 55;
-	}
-	else if (cg.snap->ps.eFlags & EF_MOUNTEDTANK)
-	{
-		fov_x = 75;
+		// mg42 zoom
+		if (cg.snap->ps.persistant[PERS_HWEAPON_USE])
+		{
+			fov_x = 55;
+		}
+		else if (CHECKBITWISE(GetWeaponTableData(cg.snap->ps.weapon)->type, WEAPON_TYPE_MG | WEAPON_TYPE_SET))
+		{
+			fov_x = 55;
+		}
+		else if (cg.snap->ps.eFlags & EF_MOUNTEDTANK)
+		{
+			fov_x = 75;
+		}
 	}
 
 	if (cg.predictedPlayerState.pm_type == PM_INTERMISSION)
@@ -1118,7 +1126,7 @@ static int CG_CalcFov(void)
 		// fix for zoomed in/out movement bug
 		if (cg.zoomval != 0.f)
 		{
-			cg.zoomSensitivity = 0.6f * (cg.zoomval / 90.f);     // changed to get less sensitive as you zoom in
+			cg.zoomSensitivity = cg_scopedSensitivityScaler.value * (cg.zoomval / 90.f);     // changed to get less sensitive as you zoom in
 		}
 		else
 		{
@@ -1148,11 +1156,12 @@ static void CG_UnderwaterSounds(void)
  */
 static void CG_DamageBlendBlob(void)
 {
-	int          t, i;
-	int          maxTime;
-	refEntity_t  ent;
-	qboolean     pointDamage;
-	viewDamage_t *vd;
+	int i;
+
+	if (cg_bloodDamageBlend.value <= 0.f)
+	{
+		return;
+	}
 
 	// no damage blend blobs if in limbo or spectator, and in the limbo menu
 	if (((cg.snap->ps.pm_flags & PMF_LIMBO) || cgs.clientinfo[cg.clientNum].team == TEAM_SPECTATOR) && cg.showGameView)
@@ -1162,7 +1171,10 @@ static void CG_DamageBlendBlob(void)
 
 	for (i = 0; i < MAX_VIEWDAMAGE; i++)
 	{
-		vd = &cg.viewDamage[i];
+		int          maxTime;
+		int          t;
+		refEntity_t  ent;
+		viewDamage_t *vd = &cg.viewDamage[i];
 
 		if (vd->damageValue == 0.f)
 		{
@@ -1177,10 +1189,8 @@ static void CG_DamageBlendBlob(void)
 			continue;
 		}
 
-		pointDamage = !(vd->damageX == 0.f && vd->damageY == 0.f);
-
 		// if not point Damage, only do flash blend
-		if (!pointDamage)
+		if (vd->damageX == 0.f && vd->damageY == 0.f)
 		{
 			continue;
 		}
@@ -1190,8 +1200,8 @@ static void CG_DamageBlendBlob(void)
 		ent.renderfx = RF_FIRST_PERSON;
 
 		VectorMA(cg.refdef_current->vieworg, 8, cg.refdef_current->viewaxis[0], ent.origin);
-		VectorMA(ent.origin, vd->damageX * -8, cg.refdef_current->viewaxis[1], ent.origin);
-		VectorMA(ent.origin, vd->damageY * 8, cg.refdef_current->viewaxis[2], ent.origin);
+		VectorMA(ent.origin, vd->damageX * -10, cg.refdef_current->viewaxis[1], ent.origin);
+		VectorMA(ent.origin, vd->damageY * 6, cg.refdef_current->viewaxis[2], ent.origin);
 
 		ent.radius = vd->damageValue * 0.4f * (0.5f + 0.5f * (float)t / maxTime) * (0.75f + 0.5f * Q_fabs((float)sin(vd->damageTime)));
 
@@ -1199,8 +1209,7 @@ static void CG_DamageBlendBlob(void)
 		ent.shaderRGBA[0] = 255;
 		ent.shaderRGBA[1] = 255;
 		ent.shaderRGBA[2] = 255;
-		ent.shaderRGBA[3] = (byte)(255 * ((cg_bloodDamageBlend.value > 1.0f) ? 1.0f :
-		                                  (cg_bloodDamageBlend.value < 0.0f) ? 0.0f : cg_bloodDamageBlend.value));
+		ent.shaderRGBA[3] = (byte)(255 * Com_Clamp(0.f, 1.f, cg_bloodDamageBlend.value));
 
 		trap_R_AddRefEntityToScene(&ent);
 	}
@@ -1479,7 +1488,7 @@ void CG_ParseSkyBox(void)
 	cg.skyboxViewOrg[2] = (float)atof(token);
 
 	token            = CG_MustParse(&cstr, "CG_ParseSkyBox: error parsing skybox configstring. No skyboxViewFov\n");
-	cg.skyboxViewFov = atoi(token);
+	cg.skyboxViewFov = Q_atoi(token);
 
 	if (cg.skyboxViewFov == 0.f)
 	{
@@ -1503,10 +1512,10 @@ void CG_ParseSkyBox(void)
 		fogColor[2] = (float)atof(token);
 
 		token    = COM_ParseExt(&cstr, qfalse);
-		fogStart = atoi(token);
+		fogStart = Q_atoi(token);
 
 		token  = COM_ParseExt(&cstr, qfalse);
-		fogEnd = atoi(token);
+		fogEnd = Q_atoi(token);
 
 		trap_R_SetFog(FOG_PORTALVIEW, fogStart, fogEnd, fogColor[0], fogColor[1], fogColor[2], 1.1f);
 	}
@@ -1547,7 +1556,7 @@ void CG_ParseTagConnect(int tagNum)
 
 	token = CG_MustParse(&pString, "Invalid TAGCONNECT configstring\n");
 
-	entNum = atoi(token);
+	entNum = Q_atoi(token);
 	if (entNum < 0 || entNum >= MAX_GENTITIES)
 	{
 		CG_Error("Invalid TAGCONNECT entitynum\n");
@@ -1555,7 +1564,7 @@ void CG_ParseTagConnect(int tagNum)
 
 	token = CG_MustParse(&pString, "Invalid TAGCONNECT configstring\n");
 
-	cg_entities[entNum].tagParent = atoi(token);
+	cg_entities[entNum].tagParent = Q_atoi(token);
 	if (cg_entities[entNum].tagParent < 0 || cg_entities[entNum].tagParent >= MAX_GENTITIES)
 	{
 		CG_Error("Invalid TAGCONNECT tagparent\n");
@@ -1767,42 +1776,6 @@ qboolean CG_CullPointAndRadius(const vec3_t pt, vec_t radius)
 //=========================================================================
 
 /**
- * @brief CG_RenderLocations
- */
-static void CG_RenderLocations(void)
-{
-	refEntity_t re;
-	location_t *location;
-	int i;
-
-	if (cgs.numLocations < 1)
-	{
-		return;
-	}
-
-	for (i = 0; i < cgs.numLocations; ++i)
-	{
-		location = &cgs.location[i];
-
-		if (VectorDistance(cg.refdef.vieworg, location->origin) > 3000)
-		{
-			continue;
-		}
-
-		if (!trap_R_inPVS(cg.refdef.vieworg, location->origin))
-		{
-			continue;
-		}
-
-		Com_Memset(&re, 0, sizeof(re));
-		re.reType = RT_SPRITE;
-		VectorCopy(location->origin, re.origin);
-		VectorCopy(location->origin, re.oldorigin);
-		re.radius = 8;
-	}
-}
-
-/**
  * @brief CG_ProcessCvars
  */
 void CG_ProcessCvars()
@@ -1816,12 +1789,12 @@ void CG_ProcessCvars()
 	{
 		trap_Cvar_VariableStringBuffer(cg.svCvars[i].cvarName, currentVal, sizeof(currentVal));
 
-		cvalF = (float)atof(currentVal);
-		val1F = (float)atof(cg.svCvars[i].Val1);
-		val2F = (float)atof(cg.svCvars[i].Val2);
-		cvalI   = atoi(currentVal);
-		val1I   = atoi(cg.svCvars[i].Val1);
-		val2I   = atoi(cg.svCvars[i].Val2);
+		cvalF   = Q_atof(currentVal);
+		val1F   = Q_atof(cg.svCvars[i].Val1);
+		val2F   = Q_atof(cg.svCvars[i].Val2);
+		cvalI   = Q_atoi(currentVal);
+		val1I   = Q_atoi(cg.svCvars[i].Val1);
+		val2I   = Q_atoi(cg.svCvars[i].Val2);
 		cvalIsF = (strstr(currentVal, ".")) ? qtrue : qfalse;
 		val1IsF = (strstr(cg.svCvars[i].Val1, ".")) ? qtrue : qfalse;
 		val2IsF = (strstr(cg.svCvars[i].Val2, ".")) ? qtrue : qfalse;
@@ -1987,9 +1960,16 @@ void CG_DrawActiveFrame(int serverTime, qboolean demoPlayback)
 	int dbgCnt = 0;
 #endif
 
+	cg.oldTime      = cg.time;
 	cg.time         = serverTime;
 	cgDC.realTime   = cg.time;
 	cg.demoPlayback = demoPlayback;
+	cg.frametime    = cg.time - cg.oldTime;
+
+	if (cg.frametime < 0)
+	{
+		cg.frametime = 0;
+	}
 
 #ifdef FAKELAG
 	cg.time -= snapshotDelayTime;
@@ -2078,6 +2058,8 @@ void CG_DrawActiveFrame(int serverTime, qboolean demoPlayback)
 		CG_EDV_RunInput();
 	}
 #endif
+
+	CG_RunCamera();
 
 	// this counter will be bumped for every valid scene we generate
 	cg.clientFrame++;
@@ -2175,9 +2157,16 @@ void CG_DrawActiveFrame(int serverTime, qboolean demoPlayback)
 
 			DEBUGTIME
 
-			if (cg_locations.integer & LOC_DEBUG)
+			if (cg.editingLocations)
 			{
 				CG_RenderLocations();
+			}
+
+			DEBUGTIME
+
+			if (cg.editingCameras)
+			{
+				CG_RenderCameraPoints();
 			}
 
 			DEBUGTIME
@@ -2253,13 +2242,7 @@ void CG_DrawActiveFrame(int serverTime, qboolean demoPlayback)
 
 		DEBUGTIME
 
-		//lagometer sample and frame timing
-		cg.frametime = cg.time - cg.oldTime;
-		if (cg.frametime < 0)
-		{
-			cg.frametime = 0;
-		}
-		cg.oldTime = cg.time;
+		//lagometer sample
 		CG_AddLagometerFrameInfo();
 
 		DEBUGTIME

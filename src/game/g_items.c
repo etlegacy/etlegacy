@@ -419,7 +419,8 @@ qboolean G_CanPickupWeapon(weapon_t weapon, gentity_t *ent)
 	}
 
 	// prevent picking up when overheating
-	if (ent->client->ps.weaponTime > 0)
+	// FIXME: heat of dropped weapon isn't reduced overtime
+	if (ent->client->ps.curWeapHeat > 0 && ent->client->ps.weaponTime > 0)
 	{
 		return qfalse;
 	}
@@ -476,8 +477,8 @@ int Pickup_Weapon(gentity_t *ent, gentity_t *other)
 				// extracted code originally here into AddMagicAmmo
 				// add 1 clip of magic ammo for any two-handed weapon
 			}
-			return RESPAWN_NEVER;
 		}
+		return RESPAWN_NEVER;
 	}
 
 	quantity = ent->count;
@@ -520,7 +521,7 @@ int Pickup_Weapon(gentity_t *ent, gentity_t *other)
 			return 0;
 		}
 
-		if (other->client->sess.playerType == PC_SOLDIER && other->client->sess.skill[SK_HEAVY_WEAPONS] >= 4)
+		if (other->client->sess.playerType == PC_SOLDIER && BG_IsSkillAvailable(other->client->sess.skill, SK_HEAVY_WEAPONS, SK_SOLDIER_SMG))
 		{
 			primaryWeapon = G_GetPrimaryWeaponForClientSoldier(other->client);
 		}
@@ -1126,17 +1127,18 @@ void G_BounceItem(gentity_t *ent, trace_t *trace)
 	vec3_t velocity;
 	float  dot;
 	int    hitTime = (int)(level.previousTime + (level.time - level.previousTime) * trace->fraction);
+	int    mask    = ent->clipmask ? ent->clipmask : MASK_SOLID;
 
 	// reflect the velocity on the trace plane
 	BG_EvaluateTrajectoryDelta(&ent->s.pos, hitTime, velocity, qfalse, ent->s.effect2Time);
 	dot = DotProduct(velocity, trace->plane.normal);
 	VectorMA(velocity, -2 * dot, trace->plane.normal, ent->s.pos.trDelta);
 
+	// cut the velocity to keep from bouncing forever
+	VectorScale(ent->s.pos.trDelta, ent->physicsBounce, ent->s.pos.trDelta);
+
 	if (trace->plane.normal[2] >= 0.7f || VectorLength(ent->s.pos.trDelta) < 16)
 	{
-		// cut the velocity to keep from bouncing forever
-		VectorScale(ent->s.pos.trDelta, ent->physicsBounce, ent->s.pos.trDelta);
-
 		if (VectorLength(ent->s.pos.trDelta) < 40 && trace->plane.normal[2] > 0)
 		{
 			if (trace->plane.normal[2] > 0.7f &&
@@ -1168,11 +1170,11 @@ void G_BounceItem(gentity_t *ent, trace_t *trace)
 
 				if (ent->s.eType == ET_CORPSE)
 				{
-					trap_TraceCapsule(&tr, start, NULL, NULL, end, ent->s.number, MASK_SOLID);
+					trap_TraceCapsule(&tr, start, ent->r.mins, ent->r.maxs, end, ent->s.number, mask);
 				}
 				else
 				{
-					trap_Trace(&tr, start, NULL, NULL, end, ent->s.number, MASK_SOLID);
+					trap_Trace(&tr, start, NULL, NULL, end, ent->s.number, mask);
 				}
 
 				if (!tr.startsolid)

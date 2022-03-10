@@ -682,17 +682,11 @@ void SV_ClipMoveToEntities(moveclip_t *clip)
 		{
 			clip->trace.allsolid = qtrue;
 			trace.entityNum      = touch->s.number;
-
-			// FIXME: entity damage, see CG_ClipMoveToEntities
-			//clip->trace.entityNum = touch->s.number;
 		}
 		else if (trace.startsolid)
 		{
 			clip->trace.startsolid = qtrue;
 			trace.entityNum        = touch->s.number;
-
-			// FIXME: entity damage, see CG_ClipMoveToEntities
-			//clip->trace.entityNum  = touch->s.number;
 		}
 
 		if (trace.fraction < clip->trace.fraction)

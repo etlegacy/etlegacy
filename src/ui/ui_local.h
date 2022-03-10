@@ -44,8 +44,6 @@
 #include "../game/bg_public.h"
 #include "ui_shared.h"
 
-#define __(x) trap_TranslateString(x)
-
 extern vmCvar_t ui_brassTime;
 extern vmCvar_t ui_drawCrosshair;
 extern vmCvar_t ui_drawCrosshairNames;
@@ -105,6 +103,14 @@ extern vmCvar_t ui_cg_crosshairSize;
 extern vmCvar_t cl_bypassMouseInput;
 
 extern vmCvar_t ui_serverBrowserSettings;
+
+extern vmCvar_t ui_cg_shoutcastDrawPlayers;
+extern vmCvar_t ui_cg_shoutcastDrawTeamNames;
+extern vmCvar_t ui_cg_shoutcastTeamNameRed;
+extern vmCvar_t ui_cg_shoutcastTeamNameBlue;
+extern vmCvar_t ui_cg_shoutcastDrawHealth;
+extern vmCvar_t ui_cg_shoutcastGrenadeTrail;
+extern vmCvar_t ui_cg_shoutcastDrawMinimap;
 
 // ui_serverBrowserSettings flags
 #define UI_BROWSER_ALLOW_REDIRECT     BIT(0)
@@ -474,6 +480,23 @@ typedef struct serverFilter_s
 } serverFilter_t;
 
 /**
+ * @struct scrollText_s
+ * @typedef scrollText_t
+ * @brief
+ */
+typedef struct scrollText_s
+{
+	int length;                     ///< string length
+	qboolean init;                  ///< force scrolling initilation
+	int paintPos;
+	int paintPos2;
+	int offset;
+	int time;                       ///< last scrolling time
+	char text[MAX_STRING_CHARS];    ///< string to display
+
+} scrollText_t;
+
+/**
  * @struct serverStatus_s
  * @typedef serverStatus_t
  * @brief
@@ -494,13 +517,7 @@ typedef struct serverStatus_s
 	int nextDisplayRefresh;
 	qhandle_t currentServerPreview;
 	int currentServerCinematic;
-	int motdLen;
-	int motdWidth;
-	int motdPaintX;
-	int motdPaintX2;
-	int motdOffset;
-	int motdTime;
-	char motd[MAX_STRING_CHARS];
+	scrollText_t motd;
 } serverStatus_t;
 
 /**
@@ -525,6 +542,20 @@ typedef struct
 	const char *modName;
 	const char *modDescr;
 } modInfo_t;
+
+typedef struct
+{
+	const char *path;
+	qboolean file;
+} demoItem_t;
+
+typedef struct
+{
+	char path[MAX_OSPATH];
+	demoItem_t items[MAX_DEMOS];
+	unsigned int count;
+	unsigned int index;
+} demoList_t;
 
 /**
  * @struct uiInfo_s
@@ -584,9 +615,13 @@ typedef struct
 	int modCount;
 	int modIndex;
 
+	/*
+	const char demoPath[MAX_QPATH]
 	const char *demoList[MAX_DEMOS];
 	int demoCount;
 	int demoIndex;
+	*/
+	demoList_t demos;
 
 	const char *movieList[MAX_MOVIES];
 	int movieCount;
@@ -766,7 +801,9 @@ void trap_GetAutoUpdate(void);
 void trap_openURL(const char *url);
 void trap_GetHunkData(int *hunkused, int *hunkexpected);
 
-const char *trap_TranslateString(const char *fmt); // localization
+// localization functions
+const char *UI_TranslateString(const char *string);
+void trap_TranslateString(const char *fmt, char *buffer);
 
 const char *UI_DescriptionForCampaign(void);
 const char *UI_NameForCampaign(void);

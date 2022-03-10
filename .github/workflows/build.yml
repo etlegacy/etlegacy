@@ -30,9 +30,9 @@ jobs:
 #                              |___/
 
   lnx64-mod:
-    runs-on: ubuntu-16.04
+    runs-on: ubuntu-18.04
     container:
-      image: etlegacy/lnx-build:centos7
+      image: etlegacy/lnx-build:latest
     steps:
       - uses: actions/checkout@v2
         with:
@@ -41,7 +41,9 @@ jobs:
 
       - name: Build
         shell: bash
-        run: ./easybuild.sh build -64 -mod
+        run: |
+          git fetch --tags --force
+          ./easybuild.sh build -64 -mod
 
       - uses: actions/upload-artifact@v2
         with:
@@ -49,6 +51,12 @@ jobs:
           path: |
             build/legacy/cgame*.so
             build/legacy/ui*.so
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: lnx64-qagame
+          path: |
+            build/legacy/qagame*.so
 
   osx-mod:
     runs-on: macos-10.15
@@ -61,11 +69,21 @@ jobs:
       - name: Install dependencies
         run: brew bundle
 
+      - name: List dev tools
+        run: |
+          ls -la /Applications/ | grep Xcode
+          ls -la /Library/Developer/CommandLineTools/SDKs/
+          xcode-select --print-path
+          xcrun -sdk macosx --show-sdk-path
+
       - name: Build
         env:
-          DEVELOPER_DIR: /Applications/Xcode_11.2.app/Contents/Developer
+          SDKROOT: /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk
+          DEVELOPER_DIR: /Library/Developer/CommandLineTools
         shell: bash
-        run: ./easybuild.sh build -64 -mod --osx=10.14
+        run: |
+          git fetch --tags --force
+          ./easybuild.sh build -64 -mod --osx=10.10 --osx-arc="x86_64;arm64"
 
       - uses: actions/upload-artifact@v2
         with:
@@ -73,6 +91,12 @@ jobs:
           path: |
             build/legacy/cgame_mac
             build/legacy/ui_mac
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: osx-qagame
+          path: |
+            build/legacy/qagame_mac
 
   win-mod:
     runs-on: windows-2019
@@ -84,7 +108,9 @@ jobs:
 
       - name: Build
         shell: cmd
-        run: call .\easybuild.bat build -mod
+        run: |
+          git fetch --tags --force
+          call .\easybuild.bat build -mod
 
       - uses: actions/upload-artifact@v2
         with:
@@ -92,6 +118,101 @@ jobs:
           path: |
             build/legacy/cgame*.dll
             build/legacy/ui*.dll
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: win-qagame
+          path: |
+            build/legacy/qagame*.dll
+
+  raspberry_pi-mod:
+    runs-on: ubuntu-18.04
+    strategy:
+      matrix:
+        include:
+          - arch: armv7
+            distro: buster
+    steps:
+      - uses: actions/checkout@v2.1.0
+        with:
+          submodules: true
+          fetch-depth: 0
+
+      - uses: uraimo/run-on-arch-action@v2.0.5
+        name: Build on ${{ matrix.arch }}
+        with:
+          arch: ${{ matrix.arch }}
+          distro: ${{ matrix.distro }}
+          run: |
+            apt-get update -q -y
+            apt-get -y install build-essential libudev-dev libwebp-dev automake zlib1g \
+            nasm autoconf cmake git zip gcc g++ libtool
+            git fetch --tags --force
+            ./easybuild.sh build -RPI -mod
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: raspberry_pi-mod
+          path: |
+            build/legacy/cgame*.so
+            build/legacy/ui*.so
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: raspberry_pi-qagame
+          path: |
+            build/legacy/qagame*.so
+
+  android-mod:
+    runs-on: ubuntu-18.04
+    env:
+          SIGNING_KEY_ALIAS: ${{ secrets.ANDROID_SIGN_APK_ALLIAS }}
+          SIGNING_KEY_PASSWORD: ${{ secrets.ANDROID_SIGN_APK_PASS }}
+          SIGNING_STORE_PASSWORD: ${{ secrets.ANDROID_SIGN_APK_PASS }}
+    container:
+      image: rafal1137/etl_android
+    steps:
+      - name: Setup JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: 1.8
+
+      - name: Android Repo
+        uses: actions/checkout@v2
+        with:
+          submodules: true
+          fetch-depth: 0
+
+      - name: Downloading NDK
+        uses: actions/checkout@v2
+        with:
+          repository: rafal1137/NDK_ETL
+          path: NDK_ETL
+
+      - name: Build
+        run: |
+          chmod -R 775 $GITHUB_WORKSPACE/NDK_ETL/ndk-bundle
+          echo "cmake.dir=/usr/" | tee -a local.properties
+          echo "ndk.dir=$GITHUB_WORKSPACE/NDK_ETL/ndk-bundle" | tee -a local.properties
+          git fetch --tags --force
+          ./gradlew clean build
+          ls -R
+
+      - name: Upload arm64-v8a
+        uses: actions/upload-artifact@v2
+        with:
+          name: android-mod
+          path: |
+            app/build/intermediates/transforms/mergeJniLibs/release/0/lib/arm64-v8a/libcgame*.so
+            app/build/intermediates/transforms/mergeJniLibs/release/0/lib/arm64-v8a/libui*.so
+
+      - name: Upload armeabi-v7a
+        uses: actions/upload-artifact@v2
+        with:
+          name: android-mod
+          path: |
+            app/build/intermediates/transforms/mergeJniLibs/release/0/lib/armeabi-v7a/libcgame*.so
+            app/build/intermediates/transforms/mergeJniLibs/release/0/lib/armeabi-v7a/libui*.so
 
 #   __  __                                                          _
 #  |  \/  |                                                        | |
@@ -104,10 +225,10 @@ jobs:
 # Since lnx32 is installing the most, use it as the step that combines all the other steps mod files.
 # This step also generates the final packages for 32 bit lnx.
   lnx32:
-    runs-on: ubuntu-16.04
+    runs-on: ubuntu-18.04
     container:
-      image: etlegacy/lnx-build:centos7
-    needs: [ lnx64-mod, osx-mod, win-mod ]
+      image: etlegacy/lnx-build:latest
+    needs: [ lnx64-mod, osx-mod, win-mod, raspberry_pi-mod, android-mod ]
     steps:
       - uses: actions/checkout@v2
         with:
@@ -125,7 +246,14 @@ jobs:
 
       - name: Build
         shell: bash
-        run: ./easybuild.sh build -32
+        run: |
+          git fetch --tags --force
+          ./easybuild.sh build -32
+
+      - name: Get the version
+        id: vars
+        run: |
+          echo ::set-output name=tag::$(git describe --abbrev=7 2>/dev/null)
 
       - uses: actions/download-artifact@v2
         with:
@@ -135,12 +263,44 @@ jobs:
         shell: bash
         working-directory: build/legacy
         run: |
-          zip -rvj legacy_*.pk3 win-mod/*.dll lnx64-mod/*.so osx-mod/*
+          zip -rvj legacy_*.pk3 win-mod/*.dll lnx64-mod/*.so osx-mod/* raspberry_pi-mod/*.so android-mod/*.so
+
+      - name: Remove the mod packages
+        uses: geekyeggo/delete-artifact@v1
+        with:
+          failOnError: false
+          name: |
+            lnx64-mod
+            osx-mod
+            win-mod
+            raspberry_pi-mod
+            android-mod
+
+      - name: Remove the qagame packages
+        uses: geekyeggo/delete-artifact@v1
+        with:
+          failOnError: false
+          name: |
+            lnx64-qagame
+            osx-qagame
+            win-qagame
+            raspberry_pi-qagame
+
+      - name: Create mod zip
+        shell: bash
+        working-directory: build/legacy
+        run: |
+          zip -rvj etlegacy-mod-${{ steps.vars.outputs.tag }}.zip legacy_*.pk3 win-qagame/*.dll lnx64-qagame/*.so osx-qagame/* raspberry_pi-qagame/*.so qagame*.so
 
       - uses: actions/upload-artifact@v2
         with:
           name: All-mods
           path: build/legacy/legacy_*.pk3
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: mod-zip
+          path: build/legacy/etlegacy-mod-*.zip
 
       - name: Generate packages
         shell: bash
@@ -162,12 +322,12 @@ jobs:
 #  |_|      |_| |_| |_|  \__,_| |_|   | .__/   \__,_|  \___| |_|\_\  \__,_|  \__, |  \___| |___/
 #                                     | |                                     __/ |
 #                                     |_|                                    |___/
-# Generate the final packages for 64lnx, Osx and Windows
+# Generate the final packages for 64lnx, Osx, Windows and RPI (armv7 only)
   lnx64:
-    runs-on: ubuntu-16.04
+    runs-on: ubuntu-18.04
     needs: [ lnx32 ]
     container:
-      image: etlegacy/lnx-build:centos7
+      image: etlegacy/lnx-build:latest
     steps:
       - uses: actions/checkout@v2
         with:
@@ -182,7 +342,9 @@ jobs:
 
       - name: Build
         shell: bash
-        run: ./easybuild.sh build -64
+        run: |
+          git fetch --tags --force
+          ./easybuild.sh build -64
 
       - uses: actions/download-artifact@v2
         with:
@@ -221,9 +383,12 @@ jobs:
 
       - name: Build
         env:
-          DEVELOPER_DIR: /Applications/Xcode_11.2.app/Contents/Developer
+          SDKROOT: /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk
+          DEVELOPER_DIR: /Library/Developer/CommandLineTools
         shell: bash
-        run: ./easybuild.sh build -64 --osx=10.14
+        run: |
+          git fetch --tags --force
+          ./easybuild.sh build -64 --osx=10.10 --osx-arc="x86_64;arm64"
 
       - uses: actions/download-artifact@v2
         with:
@@ -236,7 +401,7 @@ jobs:
 
       - name: Generate packages
         shell: bash
-        run: ./easybuild.sh package -64 --osx=10.14
+        run: ./easybuild.sh package -64 --osx=10.10 --osx-arc="x86_64;arm64"
 
       - uses: actions/upload-artifact@v2
         with:
@@ -256,7 +421,9 @@ jobs:
 
       - name: Build
         shell: cmd
-        run: call .\easybuild.bat build
+        run: |
+          git fetch --tags --force
+          call .\easybuild.bat build
 
       - uses: actions/download-artifact@v2
         with:
@@ -279,6 +446,62 @@ jobs:
             build/etlegacy-*.exe
             build/etlegacy-*.zip
 
+  android:
+    runs-on: ubuntu-18.04
+    env:
+          SIGNING_KEY_ALIAS: ${{ secrets.ANDROID_SIGN_APK_ALLIAS }}
+          SIGNING_KEY_PASSWORD: ${{ secrets.ANDROID_SIGN_APK_PASS }}
+          SIGNING_STORE_PASSWORD: ${{ secrets.ANDROID_SIGN_APK_PASS }}
+    needs: [ lnx32 ]
+    container:
+      image: rafal1137/etl_android
+    steps:
+      - name: Setup JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: 1.8
+
+      - name: Android Repo
+        uses: actions/checkout@v2
+        with:
+          submodules: true
+          fetch-depth: 0
+
+      - name: Downloading NDK
+        uses: actions/checkout@v2
+        with:
+          repository: rafal1137/NDK_ETL
+          path: NDK_ETL
+
+      - uses: actions/download-artifact@v2
+        with:
+          name: All-mods
+          path: app/src/main/assets
+
+      - name: Display structure of downloaded files
+        run: ls -R
+        working-directory: app/src/main/assets
+
+      - name: Build and Generate Package
+        run: |
+          chmod -R 775 $GITHUB_WORKSPACE/NDK_ETL/ndk-bundle
+          echo "cmake.dir=/usr/" | tee -a local.properties
+          echo "ndk.dir=$GITHUB_WORKSPACE/NDK_ETL/ndk-bundle" | tee -a local.properties
+          git fetch --tags --force
+          ./gradlew clean assembleRelease
+          ls -R
+
+      - name: Rename APK
+        run: |
+          for FILE in ./app/build/outputs/apk/release/*; do mv $FILE ${FILE%-*}.apk; done
+          ls app/build/outputs/apk/release
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: android-packages
+#          path: ${{steps.sign_app.outputs.signedReleaseFile}}
+          path: app/build/outputs/apk/release/etlegacy*.apk
+
 #   _    _           _                       _                         _      _____   _
 #  | |  | |         | |                     | |                       | |    / ____| | |
 #  | |  | |  _ __   | |   ___     __ _    __| |     __ _   _ __     __| |   | |      | |   ___    __ _   _ __    _   _   _ __
@@ -289,35 +512,50 @@ jobs:
 #           |_|                                                                                                         |_|
 
   upload:
-    runs-on: ubuntu-16.04
-    needs: [ lnx32, lnx64, osx, win ]
-    if: github.ref == 'refs/heads/master'
+    runs-on: ubuntu-18.04
+    needs: [ lnx32, lnx64, osx, win, android ]
+    if: github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/v')
     steps:
       - uses: geekyeggo/delete-artifact@v1
         with:
           name: |
             All-mods
-            lnx64-mod
-            osx-mod
-            win-mod
+
+      - name: Get version status
+        id: vars
+        run: |
+          echo ::set-output name=hash_exists::$(curl -s -o /dev/null -w "%{http_code}" ${{ secrets.LEGACY_UPLOAD_CHECK_URL }}${{ github.sha }} 2>/dev/null)
 
       - uses: actions/download-artifact@v2
+        if: ${{ steps.vars.outputs.hash_exists == '404' }}
         with:
           path: packages
 
       - name: Upload packages
+        if: ${{ steps.vars.outputs.hash_exists == '404' }}
         shell: bash
         working-directory: packages
         run: |
-          find lnx64-packages/ -name '*' -type f -exec curl -H "Authorization: Bearer ${{ secrets.LEGACY_AUTH }}" -X POST -H "Content-Type: multipart/form-data" -F "data=@{}" -F "platform=lnx64" -F"sha=${{ github.sha }}" ${{ secrets.LEGACY_UPLOAD_URL }} \;
-          find lnx32-packages/ -name '*' -type f -exec curl -H "Authorization: Bearer ${{ secrets.LEGACY_AUTH }}" -X POST -H "Content-Type: multipart/form-data" -F "data=@{}" -F "platform=lnx32" -F"sha=${{ github.sha }}" ${{ secrets.LEGACY_UPLOAD_URL }} \;
-          find osx-packages/ -name '*' -type f -exec curl -H "Authorization: Bearer ${{ secrets.LEGACY_AUTH }}" -X POST -H "Content-Type: multipart/form-data" -F "data=@{}" -F "platform=osx64" -F"sha=${{ github.sha }}" ${{ secrets.LEGACY_UPLOAD_URL }} \;
-          find win-packages/ -name '*' -type f -exec curl -H "Authorization: Bearer ${{ secrets.LEGACY_AUTH }}" -X POST -H "Content-Type: multipart/form-data" -F "data=@{}" -F "platform=win32" -F"sha=${{ github.sha }}" ${{ secrets.LEGACY_UPLOAD_URL }} \;
+          find lnx64-packages/ -name '*' -type f -exec curl --fail -H "Authorization: Bearer ${{ secrets.LEGACY_AUTH }}" -X POST -H "Content-Type: multipart/form-data" -F "data=@{}" -F "platform=lnx64" -F"sha=${{ github.sha }}" ${{ secrets.LEGACY_UPLOAD_URL }} \;
+          find lnx32-packages/ -name '*' -type f -exec curl --fail -H "Authorization: Bearer ${{ secrets.LEGACY_AUTH }}" -X POST -H "Content-Type: multipart/form-data" -F "data=@{}" -F "platform=lnx32" -F"sha=${{ github.sha }}" ${{ secrets.LEGACY_UPLOAD_URL }} \;
+          find osx-packages/ -name '*' -type f -exec curl --fail -H "Authorization: Bearer ${{ secrets.LEGACY_AUTH }}" -X POST -H "Content-Type: multipart/form-data" -F "data=@{}" -F "platform=osx64" -F"sha=${{ github.sha }}" ${{ secrets.LEGACY_UPLOAD_URL }} \;
+          find win-packages/ -name '*' -type f -exec curl --fail -H "Authorization: Bearer ${{ secrets.LEGACY_AUTH }}" -X POST -H "Content-Type: multipart/form-data" -F "data=@{}" -F "platform=win32" -F"sha=${{ github.sha }}" ${{ secrets.LEGACY_UPLOAD_URL }} \;
+          find android-packages/ -name '*' -type f -exec curl --fail -H "Authorization: Bearer ${{ secrets.LEGACY_AUTH }}" -X POST -H "Content-Type: multipart/form-data" -F "data=@{}" -F "platform=andro64" -F"sha=${{ github.sha }}" ${{ secrets.LEGACY_UPLOAD_URL }} \;
+          find mod-zip/ -name '*' -type f -exec curl --fail -H "Authorization: Bearer ${{ secrets.LEGACY_AUTH }}" -X POST -H "Content-Type: multipart/form-data" -F "data=@{}" -F "platform=mod32" -F"sha=${{ github.sha }}" ${{ secrets.LEGACY_UPLOAD_URL }} \;
+
+      - name: Discord notification
+        if: ${{ steps.vars.outputs.hash_exists == '404' }} && !contains(github.ref, 'refs/tags/v')
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.PUBLISH_DISCORD_WEBHOOK }}
+        uses: Ilshidur/action-discord@0.3.0
+        with:
+          args: "<@&673533235887865879> Build from ETLegacy: ${{ github.sha }} has been published.\nDownload at: https://www.etlegacy.com/workflow-files"
 
   docker:
-    runs-on: ubuntu-16.04
-    needs: [ lnx64 ]
-    if: github.ref == 'refs/heads/master'
+    runs-on: ubuntu-18.04
+    needs: [ upload ] # only upload to docker if the upload to the site was successfully completed
+    # only run on master
+    if: github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/v')
     steps:
       - uses: actions/checkout@v2
         with:
@@ -327,6 +565,9 @@ jobs:
         with:
           name: lnx64-packages
           path: build/package
+
+      - name: Fetch tags
+        run: git fetch --tags --force
 
       - name: Setup folder
         working-directory: build/package
@@ -347,36 +588,48 @@ jobs:
           echo ::set-output name=short_tag::$(git describe --abbrev=0 2>/dev/null)
           echo ::set-output name=tag_exists::$(curl -s -o /dev/null -w "%{http_code}" https://hub.docker.com/v1/repositories/etlegacy/server/tags/${{ steps.vars.outputs.tag }} 2>/dev/null)
 
-      - name: Build and push the tagged Docker image
-        if: ${{ steps.vars.outputs.tag_exists == '404' }}
+      # Create weekly tag when scheduled and update when triggered on docker hub
+      - name: Build and push the weekly Docker image
+        if: ${{ github.event_name == 'schedule' }}
         working-directory: build/package
         run: |
-          docker build . --file Dockerfile --tag etlegacy/server:${{ steps.vars.outputs.tag }}
-          docker push etlegacy/server:${{steps.vars.outputs.tag}}
+          docker build . --file Dockerfile --tag etlegacy/server:weekly
+          docker push etlegacy/server:weekly
 
       # If we are on a release tag, then also create the 'latest' tag on docker hub
       - name: Build and push the latest Docker image
-        if: ${{ steps.vars.outputs.tag == steps.vars.outputs.short_tag && steps.vars.outputs.tag_exists == '404' }}
+        if: steps.vars.outputs.tag == steps.vars.outputs.short_tag && steps.vars.outputs.tag_exists == '404' && github.event_name != 'schedule'
         working-directory: build/package
         run: |
-          docker build . --file Dockerfile --tag etlegacy/server:latest
+          docker build . --file Dockerfile --tag etlegacy/server:latest --tag etlegacy/server:${{ steps.vars.outputs.tag }}
+          docker push etlegacy/server:${{steps.vars.outputs.tag}}
           docker push etlegacy/server:latest
 
+      # If we are on any build, then also create the 'latest-patch' tag on docker hub
+      - name: Build and push the latest patch Docker image
+        if: github.event_name != 'schedule'
+        working-directory: build/package
+        run: |
+          docker build . --file Dockerfile --tag etlegacy/server:latest-patch
+          docker push etlegacy/server:latest-patch
+
   cleanup:
-    runs-on: ubuntu-16.04
+    runs-on: ubuntu-18.04
     if: always()
     needs: [ upload, docker ]
     steps:
       - uses: geekyeggo/delete-artifact@v1
         with:
+          failOnError: false
           name: |
             lnx64-packages
             lnx32-packages
             osx-packages
             win-packages
+            android-packages
+            mod-zip
 
       - uses: geekyeggo/delete-artifact@v1
-        if: github.ref != 'refs/heads/master'
         with:
           failOnError: false
           name: |
@@ -384,3 +637,9 @@ jobs:
             lnx64-mod
             osx-mod
             win-mod
+            raspberry_pi-mod
+            android-mod
+            lnx64-qagame
+            osx-qagame
+            win-qagame
+            raspberry_pi-qagame

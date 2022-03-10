@@ -614,49 +614,49 @@ void Script_ConditionalScript(itemDef_t *item, qboolean *bAbort, char **args)
 			}
 			else if (!Q_stricmp(cvar, "vidrestartIsRequired"))
 			{
-				char ui_cl_lang[MAX_CVAR_VALUE_STRING];
-				int  ui_r_mode                           = (int)(DC->getCVarValue("ui_r_mode"));
-				int  ui_r_colorbits                      = (int)(DC->getCVarValue("ui_r_colorbits"));
-				int  ui_r_fullscreen                     = (int)(DC->getCVarValue("ui_r_fullscreen"));
-				int  ui_r_noborder                       = (int)(DC->getCVarValue("ui_r_noborder"));
-				int  ui_r_centerwindow                   = (int)(DC->getCVarValue("ui_r_centerwindow"));
-				int  ui_r_intensity                      = (int)(DC->getCVarValue("ui_r_intensity"));
-				int  ui_r_mapoverbrightbits              = (int)(DC->getCVarValue("ui_r_mapoverbrightbits"));
-				int  ui_r_overBrightBits                 = (int)(DC->getCVarValue("ui_r_overBrightBits"));
-				int  ui_r_texturebits                    = (int)(DC->getCVarValue("ui_r_texturebits"));
-				int  ui_r_depthbits                      = (int)(DC->getCVarValue("ui_r_depthbits"));
-				int  ui_r_ext_compressed_textures        = (int)(DC->getCVarValue("ui_r_ext_compressed_textures"));
-				int  ui_r_allowextensions                = (int)(DC->getCVarValue("ui_r_allowextensions"));
-				int  ui_r_detailtextures                 = (int)(DC->getCVarValue("ui_r_detailtextures"));
-				int  ui_r_subdivisions                   = (int)(DC->getCVarValue("ui_r_subdivisions"));
-				int  ui_r_ext_texture_filter_anisotropic = (int)(DC->getCVarValue("ui_r_ext_texture_filter_anisotropic"));
-				int  ui_r_ext_multisample                = (int)(DC->getCVarValue("ui_r_ext_multisample"));
-				int  ui_cg_shadows                       = (int)(DC->getCVarValue("ui_cg_shadows"));
-				int  ui_s_initsound                      = (int)(DC->getCVarValue("ui_s_initsound"));
-				int  ui_s_khz                            = (int)(DC->getCVarValue("ui_s_khz"));
-				char ui_r_texturemode[MAX_CVAR_VALUE_STRING];
+				char  ui_cl_lang[MAX_CVAR_VALUE_STRING];
+				int   ui_r_mode                           = (int)(DC->getCVarValue("ui_r_mode"));
+				int   ui_r_colorbits                      = (int)(DC->getCVarValue("ui_r_colorbits"));
+				int   ui_r_fullscreen                     = (int)(DC->getCVarValue("ui_r_fullscreen"));
+				int   ui_r_noborder                       = (int)(DC->getCVarValue("ui_r_noborder"));
+				int   ui_r_centerwindow                   = (int)(DC->getCVarValue("ui_r_centerwindow"));
+				float ui_r_intensity                      = DC->getCVarValue("ui_r_intensity");
+				int   ui_r_mapoverbrightbits              = (int)(DC->getCVarValue("ui_r_mapoverbrightbits"));
+				int   ui_r_overBrightBits                 = (int)(DC->getCVarValue("ui_r_overBrightBits"));
+				int   ui_r_texturebits                    = (int)(DC->getCVarValue("ui_r_texturebits"));
+				int   ui_r_depthbits                      = (int)(DC->getCVarValue("ui_r_depthbits"));
+				int   ui_r_ext_compressed_textures        = (int)(DC->getCVarValue("ui_r_ext_compressed_textures"));
+				int   ui_r_allowextensions                = (int)(DC->getCVarValue("ui_r_allowextensions"));
+				int   ui_r_detailtextures                 = (int)(DC->getCVarValue("ui_r_detailtextures"));
+				int   ui_r_subdivisions                   = (int)(DC->getCVarValue("ui_r_subdivisions"));
+				int   ui_r_ext_texture_filter_anisotropic = (int)(DC->getCVarValue("ui_r_ext_texture_filter_anisotropic"));
+				int   ui_r_ext_multisample                = (int)(DC->getCVarValue("ui_r_ext_multisample"));
+				int   ui_cg_shadows                       = (int)(DC->getCVarValue("ui_cg_shadows"));
+				int   ui_s_initsound                      = (int)(DC->getCVarValue("ui_s_initsound"));
+				int   ui_s_khz                            = (int)(DC->getCVarValue("ui_s_khz"));
+				char  ui_r_texturemode[MAX_CVAR_VALUE_STRING];
 
-				char cl_lang[MAX_CVAR_VALUE_STRING];
-				int  r_mode                           = (int)(DC->getCVarValue("r_mode"));
-				int  r_colorbits                      = (int)(DC->getCVarValue("r_colorbits"));
-				int  r_fullscreen                     = (int)(DC->getCVarValue("r_fullscreen"));
-				int  r_noborder                       = (int)(DC->getCVarValue("r_noborder"));
-				int  r_centerwindow                   = (int)(DC->getCVarValue("r_centerwindow"));
-				int  r_intensity                      = (int)(DC->getCVarValue("r_intensity"));
-				int  r_mapoverbrightbits              = (int)(DC->getCVarValue("r_mapoverbrightbits"));
-				int  r_overBrightBits                 = (int)(DC->getCVarValue("r_overBrightBits"));
-				int  r_texturebits                    = (int)(DC->getCVarValue("r_texturebits"));
-				int  r_depthbits                      = (int)(DC->getCVarValue("r_depthbits"));
-				int  r_ext_compressed_textures        = (int)(DC->getCVarValue("r_ext_compressed_textures"));
-				int  r_allowextensions                = (int)(DC->getCVarValue("r_allowextensions"));
-				int  r_detailtextures                 = (int)(DC->getCVarValue("r_detailtextures"));
-				int  r_subdivisions                   = (int)(DC->getCVarValue("r_subdivisions"));
-				int  r_ext_texture_filter_anisotropic = (int)(DC->getCVarValue("r_ext_texture_filter_anisotropic"));
-				int  r_ext_multisample                = (int)(DC->getCVarValue("r_ext_multisample"));
-				int  cg_shadows                       = (int)(DC->getCVarValue("cg_shadows"));
-				int  s_initsound                      = (int)(DC->getCVarValue("s_initsound"));
-				int  s_khz                            = (int)(DC->getCVarValue("s_khz"));
-				char r_texturemode[MAX_CVAR_VALUE_STRING];
+				char  cl_lang[MAX_CVAR_VALUE_STRING];
+				int   r_mode                           = (int)(DC->getCVarValue("r_mode"));
+				int   r_colorbits                      = (int)(DC->getCVarValue("r_colorbits"));
+				int   r_fullscreen                     = (int)(DC->getCVarValue("r_fullscreen"));
+				int   r_noborder                       = (int)(DC->getCVarValue("r_noborder"));
+				int   r_centerwindow                   = (int)(DC->getCVarValue("r_centerwindow"));
+				float r_intensity                      = DC->getCVarValue("r_intensity");
+				int   r_mapoverbrightbits              = (int)(DC->getCVarValue("r_mapoverbrightbits"));
+				int   r_overBrightBits                 = (int)(DC->getCVarValue("r_overBrightBits"));
+				int   r_texturebits                    = (int)(DC->getCVarValue("r_texturebits"));
+				int   r_depthbits                      = (int)(DC->getCVarValue("r_depthbits"));
+				int   r_ext_compressed_textures        = (int)(DC->getCVarValue("r_ext_compressed_textures"));
+				int   r_allowextensions                = (int)(DC->getCVarValue("r_allowextensions"));
+				int   r_detailtextures                 = (int)(DC->getCVarValue("r_detailtextures"));
+				int   r_subdivisions                   = (int)(DC->getCVarValue("r_subdivisions"));
+				int   r_ext_texture_filter_anisotropic = (int)(DC->getCVarValue("r_ext_texture_filter_anisotropic"));
+				int   r_ext_multisample                = (int)(DC->getCVarValue("r_ext_multisample"));
+				int   cg_shadows                       = (int)(DC->getCVarValue("cg_shadows"));
+				int   s_initsound                      = (int)(DC->getCVarValue("s_initsound"));
+				int   s_khz                            = (int)(DC->getCVarValue("s_khz"));
+				char  r_texturemode[MAX_CVAR_VALUE_STRING];
 
 				trap_Cvar_VariableStringBuffer("ui_cl_lang", ui_cl_lang, sizeof(ui_cl_lang));
 				trap_Cvar_VariableStringBuffer("cl_lang", cl_lang, sizeof(cl_lang));
@@ -693,7 +693,7 @@ void Script_ConditionalScript(itemDef_t *item, qboolean *bAbort, char **args)
 				}
 				/*} else if( !Q_stricmpn( cvar, "voteflags", 9 ) ) {
 				char info[MAX_INFO_STRING];
-				int voteflags = atoi(cvar + 9);
+				int voteflags = Q_atoi(cvar + 9);
 
 				trap_Cvar_VariableStringBuffer( "cg_ui_voteFlags", info, sizeof(info) );
 
@@ -706,7 +706,7 @@ void Script_ConditionalScript(itemDef_t *item, qboolean *bAbort, char **args)
 			}
 			else if (!Q_stricmpn(cvar, "serversort_", 11))
 			{
-				int sorttype = atoi(cvar + 11);
+				int sorttype = Q_atoi(cvar + 11);
 
 				if (sorttype != uiInfo.serverStatus.sortKey)
 				{
@@ -719,7 +719,7 @@ void Script_ConditionalScript(itemDef_t *item, qboolean *bAbort, char **args)
 			}
 			else if (!Q_stricmp(cvar, "ValidReplaySelected"))
 			{
-				if (uiInfo.demoIndex >= 0 && uiInfo.demoIndex < uiInfo.demoCount)
+				if (uiInfo.demos.index >= 0 && uiInfo.demos.index < uiInfo.demos.count)
 				{
 					Item_RunScript(item, bAbort, script1);
 				}
@@ -736,7 +736,7 @@ void Script_ConditionalScript(itemDef_t *item, qboolean *bAbort, char **args)
 				int  r_mode = (int)(DC->getCVarValue("r_mode"));
 
 				DC->getCVarString("r_oldMode", r_oldModeStr, sizeof(r_oldModeStr));
-				r_oldMode = atoi(r_oldModeStr);
+				r_oldMode = Q_atoi(r_oldModeStr);
 
 				if (*r_oldModeStr && r_oldMode != r_mode)
 				{
@@ -1062,7 +1062,7 @@ void Script_AddListItem(itemDef_t *item, qboolean *bAbort, char **args)
 
 		if (t && t->special)
 		{
-			DC->feederAddItem(t->special, name, atoi(val));
+			DC->feederAddItem(t->special, name, Q_atoi(val));
 		}
 	}
 }
@@ -1133,9 +1133,9 @@ qboolean Script_CheckProfile(const char *profile_path)
 	trap_FS_Read(&f_data, sizeof(f_data) - 1, f);
 
 	DC->getCVarString("com_pid", com_pid, sizeof(com_pid));
-	pid = atoi(com_pid);
+	pid = Q_atoi(com_pid);
 
-	f_pid = atoi(f_data);
+	f_pid = Q_atoi(f_data);
 	if (f_pid != pid)
 	{
 		// pid doesn't match
@@ -1354,8 +1354,8 @@ void Script_ToggleCvarBit(itemDef_t *item, qboolean *bAbort, char **args)
 		char buff[256];
 
 		DC->getCVarString(cvar, buff, 256);
-		value    = atoi(buff);
-		bitvalue = atoi(val);
+		value    = Q_atoi(buff);
+		bitvalue = Q_atoi(val);
 		value   ^= bitvalue;
 		DC->setCVar(cvar, va("%i", value));
 	}

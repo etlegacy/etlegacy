@@ -103,7 +103,9 @@ menuDef {
 
 // Buttons //
 	BUTTON( 6, 32, MENU_WIDTH-12, 18, _("PLAY"), .3, 14, close main ; /*close backgroundmusic ; open backgroundmusic_server ;*/ uiScript UpdateFilter ; uiScript ServerSort 2 ; open playonline )
+#ifndef ANDROID
 	BUTTON( 6, 56, MENU_WIDTH-12, 18, _("HOST"), .3, 14, close main ; /*close backgroundmusic ; open backgroundmusic_server ;*/ uiScript loadArenas ; uiScript initHostGameFeatures ; open hostgame )
+#endif
 	BUTTON( 6, 80, MENU_WIDTH-12, 18, _("REPLAYS"), .3, 14, close main ; open viewreplay )
 	BUTTON( 6, 104, MENU_WIDTH-12, 18, _("OPTIONS"), .3, 14, close main ; open options )
 	BUTTON( 6, 128, MENU_WIDTH-12, 18, _("PROFILE"), .3, 14, close main ; open profile )
@@ -111,17 +113,22 @@ menuDef {
 	BUTTON( 6, 176, MENU_WIDTH-12, 18, _("CREDITS"), .3, 14, close main ; open credits_etlegacy )
 	BUTTON( 6, 200, MENU_WIDTH-12, 18, _("EXIT"), .3, 14, clearFocus ; open quit )
 
-// Vanilla client warning //
-#ifndef ETLEGACY
+// Vanilla or old Legacy client warning //
+#ifdef OLD_CLIENT
 #define SECURITY_WIDTH	200
 	LABEL( __WINDOW_WIDTH/2-100-16, 368, SECURITY_WIDTH, 18, _("^1SECURITY INFORMATION"), .3, ITEM_ALIGN_CENTER, .5*SECURITY_WIDTH, 8 )
 	LABELWHITE( __WINDOW_WIDTH/2-100-16, 384, SECURITY_WIDTH, 9, _("You are running old software"), .2, ITEM_ALIGN_CENTER, .5*SECURITY_WIDTH, 8 )
-	LABEL( __WINDOW_WIDTH/2-100-16, 398, SECURITY_WIDTH, 9, _("We do recommend to\nupgrade your ET client"), .2, ITEM_ALIGN_CENTER, .5*SECURITY_WIDTH, 8 )
+	// Yeah we have a Legacy client, but its old.
+	#ifdef ETLEGACY
+		LABEL( __WINDOW_WIDTH/2-100-16, 398, SECURITY_WIDTH, 9, _("We do recommend to\nupgrade your Legacy client"), .2, ITEM_ALIGN_CENTER, .5*SECURITY_WIDTH, 8 )
+	#else
+		LABEL( __WINDOW_WIDTH/2-100-16, 398, SECURITY_WIDTH, 9, _("We do recommend to\nupgrade your ET client"), .2, ITEM_ALIGN_CENTER, .5*SECURITY_WIDTH, 8 )
+	#endif
 	BUTTON( __WINDOW_WIDTH/2-100-16+6, 428, SECURITY_WIDTH-12, 18, _("UPGRADE NOW"), .3, 14, clearFocus ; uiScript validate_openURL )
 #endif
 
 // Version //
-LABEL( 2, 450, 114, 10, "^1"ETLEGACY_VERSION, .2, ITEM_ALIGN_LEFT, 0, 8 )
+LABEL( 2, 450, 132, 10, "^1"ETLEGACY_VERSION, .2, ITEM_ALIGN_LEFT, 0, 8 )
 
 // message of the day?
 //	SUBWINDOW( MENU_WIDTH+6, 0, __WINDOW_WIDTH-MENU_WIDTH-6-32, 28, _("MESSAGE OF THE DAY") )

@@ -166,7 +166,7 @@ void CG_UpdatePMLists(void)
 
 	if ((listItem = cg_pmWaitingList))
 	{
-		int t = listItem->time;
+		int t = listItem->time + cg_popupTime.integer;
 
 		if (cg.time > t)
 		{
@@ -198,7 +198,7 @@ void CG_UpdatePMLists(void)
 	lastItem = NULL;
 	while (listItem)
 	{
-		int t = listItem->time + cg_popupStayTime.integer + cg_popupFadeTime.integer;
+		int t = listItem->time + cg_popupStayTime.integer + cg_popupFadeTime.integer + cg_popupTime.integer;
 
 		if (cg.time > t)
 		{
@@ -613,6 +613,16 @@ void CG_DrawPMItems(rectDef_t rect, int style)
 	float        y         = rect.y; //360;
 	float        fontScale = cg_fontScaleSP.value;
 
+	if (cg_numPopups.integer == 0)
+	{
+		return;
+	}
+
+	if (cgs.clientinfo[cg.clientNum].shoutcaster)
+	{
+		y = 110;
+	}
+
 	if (cg_drawSmallPopupIcons.integer)
 	{
 		size = PM_ICON_SIZE_SMALL;
@@ -633,7 +643,7 @@ void CG_DrawPMItems(rectDef_t rect, int style)
 		return;
 	}
 
-	t = cg_pmWaitingList->time + cg_popupStayTime.integer;
+	t = cg_pmWaitingList->time + cg_popupTime.integer + cg_popupStayTime.integer;
 	if (cg.time > t)
 	{
 		colorText[3] = color[3] = 1 - ((cg.time - t) / (float)cg_popupFadeTime.integer);
@@ -684,13 +694,14 @@ void CG_DrawPMItems(rectDef_t rect, int style)
 		CG_Text_Paint_Ext(size + w + sizew * cg_pmWaitingList->scaleShader + 16, y + 12, fontScale, fontScale, colorText, cg_pmWaitingList->message2, 0, 0, style, &cgs.media.limboFont2); // 4 + size + 2 + w + 6 + sizew*... + 4
 	}
 
-	for (i = 0; i < 6 && listItem; i++, listItem = listItem->next)
+	int num = cg_numPopups.integer == -1 ? cg_drawSmallPopupIcons.integer ? 8 : 5 : cg_numPopups.integer;
+	for (i = 0; i < num - 1 && listItem; i++, listItem = listItem->next)
 	{
 		size = (cg_drawSmallPopupIcons.integer) ? PM_ICON_SIZE_SMALL : PM_ICON_SIZE_NORMAL;
 
 		y -= size + 2;
 
-		t = listItem->time + cg_popupStayTime.integer;
+		t = listItem->time + cg_popupTime.integer + cg_popupStayTime.integer;
 		if (cg.time > t)
 		{
 			colorText[3] = color[3] = 1 - ((cg.time - t) / (float)cg_popupFadeTime.integer);

@@ -210,11 +210,11 @@ void UI_LoadPanel_RenderHeaderText(panel_button_t *button)
 
 	if ((cstate.connState == CA_DISCONNECTED || cstate.connState == CA_CONNECTED) && *downloadName)
 	{
-		button->text = (char*)(trap_TranslateString("DOWNLOADING..."));
+		button->text = (char*)(__("DOWNLOADING..."));
 	}
 	else
 	{
-		button->text = (char*)(trap_TranslateString("CONNECTING..."));
+		button->text = (char*)(__("CONNECTING..."));
 	}
 
 	BG_PanelButtonsRender_Text(button);
@@ -229,9 +229,6 @@ void UI_LoadPanel_RenderHeaderText(panel_button_t *button)
  */
 const char *UI_DownloadInfo(const char *downloadName)
 {
-	static char dlText[]                = "Downloading:";
-	static char etaText[]               = "Estimated time left:";
-	static char xferText[]              = "Transfer rate:";
 	static int  tleEstimates[ESTIMATES] = { 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60,
 		                                    60,  60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60,
 		                                    60,  60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60,
@@ -239,8 +236,12 @@ const char *UI_DownloadInfo(const char *downloadName)
 	static int  tleIndex = 0;
 	char        dlSizeBuf[64], totalSizeBuf[64], xferRateBuf[64], dlTimeBuf[64];
 	int         downloadSize, downloadCount, downloadTime;
+	const char *dlText, *etaText, *xferText;
 	const char  *s, *ds;
 
+	dlText = __("Downloading:");
+	etaText = __("Estimated time left:");
+	xferText = __("Transfer rate:");
 	downloadSize  = trap_Cvar_VariableValue("cl_downloadSize");
 	downloadCount = trap_Cvar_VariableValue("cl_downloadCount");
 	downloadTime  = trap_Cvar_VariableValue("cl_downloadTime");
@@ -259,10 +260,12 @@ const char *UI_DownloadInfo(const char *downloadName)
 
 	if (downloadCount < 4096 || !downloadTime)
 	{
-		s = va("%s\n %s\n%s\n\n%s\n estimating...\n\n%s\n\n%s copied", dlText, ds, totalSizeBuf,
+		s = va("%s\n %s\n%s\n\n%s\n %s...\n\n%s\n\n%s %s", dlText, ds, totalSizeBuf,
 		       etaText,
+		       __("estimating"),
 		       xferText,
-		       dlSizeBuf);
+		       dlSizeBuf,
+		       __("copied"));
 	}
 	else
 	{
@@ -306,26 +309,31 @@ const char *UI_DownloadInfo(const char *downloadName)
 
 		if (xferRate)
 		{
-			s = va("%s\n %s\n%s\n\n%s\n %s\n\n%s\n %s/sec\n\n%s copied", dlText, ds, totalSizeBuf,
+			s = va("%s\n %s\n%s\n\n%s\n %s\n\n%s\n %s/%s\n\n%s %s", dlText, ds, totalSizeBuf,
 			       etaText, dlTimeBuf,
 			       xferText, xferRateBuf,
-			       dlSizeBuf);
+			       __("sec"), dlSizeBuf,
+			       __("copied"));
 		}
 		else
 		{
 			if (downloadSize)
 			{
-				s = va("%s\n %s\n%s\n\n%s\n estimating...\n\n%s\n\n%s copied", dlText, ds, totalSizeBuf,
+				s = va("%s\n %s\n%s\n\n%s\n %s...\n\n%s\n\n%s %s", dlText, ds, totalSizeBuf,
 				       etaText,
+					   __("estimating"),
 				       xferText,
-				       dlSizeBuf);
+				       dlSizeBuf,
+					   __("copied"));
 			}
 			else
 			{
-				s = va("%s\n %s\n\n%s\n estimating...\n\n%s\n\n%s copied", dlText, ds,
+				s = va("%s\n %s\n\n%s\n %s...\n\n%s\n\n%s %s", dlText, ds,
 				       etaText,
+					   __("estimating"),
 				       xferText,
-				       dlSizeBuf);
+				       dlSizeBuf,
+					   __("copied"));
 			}
 		}
 	}
@@ -348,11 +356,12 @@ void UI_LoadPanel_RenderLoadingText(panel_button_t *button)
 
 	trap_GetClientState(&cstate);
 
-	Com_sprintf(buff, sizeof(buff), trap_TranslateString("Connecting to:\n %s^*\n\n%s"), cstate.servername, Info_ValueForKey(cstate.updateInfoString, "motd"));
+	Com_sprintf(buff, sizeof(buff), __("Connecting to:\n %s^*\n\n%s"), cstate.servername, Info_ValueForKey(cstate.updateInfoString, "motd"));
 
 	if (trap_Cvar_VariableValue("com_updateavailable") != 0.f)
 	{
-		Q_strcat(buff, sizeof(buff), "\n\nYour ET: Legacy client is outdated. New update is available for download at www.etlegacy.com");
+		Q_strcat(buff, sizeof(buff), "\n\n");
+		Q_strcat(buff, sizeof(buff), __("Your ET: Legacy client is outdated. New update is available for download at www.etlegacy.com"));
 	}
 
 	trap_Cvar_VariableStringBuffer("cl_downloadName", downloadName, sizeof(downloadName));
@@ -364,10 +373,10 @@ void UI_LoadPanel_RenderLoadingText(panel_button_t *button)
 			switch (cstate.connState)
 			{
 			case CA_CONNECTING:
-				s = va(trap_TranslateString("Awaiting connection...%i"), cstate.connectPacketCount);
+				s = va(__("Awaiting connection...%i"), cstate.connectPacketCount);
 				break;
 			case CA_CHALLENGING:
-				s = va(trap_TranslateString("Awaiting challenge...%i"), cstate.connectPacketCount);
+				s = va(__("Awaiting challenge...%i"), cstate.connectPacketCount);
 				break;
 			case CA_DISCONNECTED:
 			case CA_CONNECTED:
@@ -377,7 +386,7 @@ void UI_LoadPanel_RenderLoadingText(panel_button_t *button)
 				}
 				else
 				{
-					s = trap_TranslateString("Awaiting gamestate...");
+					s = __("Awaiting gamestate...");
 				}
 				break;
 			case CA_LOADING:

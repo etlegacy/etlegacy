@@ -79,9 +79,9 @@ WM_DrawObjectives
  * @param[in] clientNum
  * @return
  */
-static qboolean CG_DrawFlag(float x, float y, float fade, int clientNum)
+qboolean CG_DrawFlag(float x, float y, float fade, int clientNum)
 {
-	int client_flag = atoi(Info_ValueForKey(CG_ConfigString(clientNum + CS_PLAYERS), "u"));  // uci
+	int client_flag = Q_atoi(Info_ValueForKey(CG_ConfigString(clientNum + CS_PLAYERS), "u"));  // uci
 
 	if (client_flag < MAX_COUNTRY_NUM)
 	{
@@ -167,11 +167,11 @@ int WM_DrawObjectives(int x, int y, int width, float fade)
 		}
 #endif
 
-		if (atoi(buf) == -1)
+		if (Q_atoi(buf) == -1)
 		{
 			// "ITS A TIE!";
 		}
-		else if (atoi(buf))
+		else if (Q_atoi(buf))
 		{
 			// "ALLIES";
 
@@ -278,7 +278,15 @@ int WM_DrawObjectives(int x, int y, int width, float fade)
 
 		if (cgs.gamestate != GS_PLAYING)
 		{
-			s = va("%s ^7%s", CG_TranslateString("MISSION TIME:"), CG_TranslateString("WARMUP"));
+			msec = (int)(cgs.timelimit * 60000.f); // 60.f * 1000.f
+
+			seconds  = msec / 1000;
+			mins     = seconds / 60;
+			seconds -= mins * 60;
+			tens     = seconds / 10;
+			seconds -= tens * 10;
+
+			s = va("%s   ^7%2.f:%i%i", CG_TranslateString("MISSION TIME:"), (float)mins, tens, seconds);
 		}
 		else if (msec < 0 && cgs.timelimit > 0.0f)
 		{
@@ -569,7 +577,7 @@ static void WM_DrawClientScore_Score(int x, int y, float scaleX, float scaleY, c
 #ifdef FEATURE_RATING
 	if (cgs.skillRating && cg_scoreboard.integer == SCOREBOARD_SR)
 	{
-		CG_Text_Paint_RightAligned_Ext(x, y, scaleX, scaleY, colorWhite, va("^7%5.2f", (double) score->rating), 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
+		CG_Text_Paint_RightAligned_Ext(x, y, scaleX, scaleY, colorWhite, va("^7%5.2f", (double) Com_RoundFloatWithNDecimal(score->rating, 2)), 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
 	}
 	else
 #endif
@@ -852,15 +860,15 @@ static int WM_DrawInfoLine(int x, int y, float fade)
 	w = 360;
 
 	s        = CG_ConfigString(CS_MULTI_INFO);
-	defender = atoi(Info_ValueForKey(s, "d")); // defender
+	defender = Q_atoi(Info_ValueForKey(s, "d")); // defender
 
 	s      = CG_ConfigString(CS_MULTI_MAPWINNER);
-	winner = atoi(Info_ValueForKey(s, "w"));
+	winner = Q_atoi(Info_ValueForKey(s, "w"));
 
 	if (cgs.currentRound)
 	{
 		// first round
-		s = va(CG_TranslateString("CLOCK IS NOW SET TO %s!"), WM_TimeToString(cgs.nextTimeLimit * 60000.f)); // 60.f * 1000.f
+		s = va(CG_TranslateString("CLOCK IS NOW SET TO ^7%s^9!"), WM_TimeToString(cgs.nextTimeLimit * 60000.f)); // 60.f * 1000.f
 	}
 	else
 	{
@@ -869,7 +877,7 @@ static int WM_DrawInfoLine(int x, int y, float fade)
 		{
 			if (winner != defender)
 			{
-				s = "ALLIES SUCCESSFULLY BEAT THE CLOCK!";
+				s = va("ALLIES SUCCESSFULLY BEAT THE CLOCK BY ^3%s^9!", WM_TimeToString(cgs.timelimit * 60000.f - cgs.nextTimeLimit * 60000.f));
 			}
 			else
 			{
@@ -880,7 +888,7 @@ static int WM_DrawInfoLine(int x, int y, float fade)
 		{
 			if (winner != defender)
 			{
-				s = "AXIS SUCCESSFULLY BEAT THE CLOCK!";
+				s = va("AXIS SUCCESSFULLY BEAT THE CLOCK BY ^3%s^9!", WM_TimeToString(cgs.timelimit * 60000.f - cgs.nextTimeLimit * 60000.f));
 			}
 			else
 			{
@@ -922,7 +930,7 @@ static int WM_TeamScoreboard(int x, int y, team_t team, float fade, int maxrows,
 	const char *buffer   = CG_ConfigString(CS_SERVERINFO);
 	const char *str      = Info_ValueForKey(buffer, "g_maxlives");
 
-	if (str && *str && atoi(str))
+	if (str && *str && Q_atoi(str))
 	{
 		livesleft = qtrue;
 	}
@@ -930,7 +938,7 @@ static int WM_TeamScoreboard(int x, int y, team_t team, float fade, int maxrows,
 	if (!livesleft)
 	{
 		str = Info_ValueForKey(buffer, "g_alliedmaxlives");
-		if (str && *str && atoi(str))
+		if (str && *str && Q_atoi(str))
 		{
 			livesleft = qtrue;
 		}
@@ -939,7 +947,7 @@ static int WM_TeamScoreboard(int x, int y, team_t team, float fade, int maxrows,
 	if (!livesleft)
 	{
 		str = Info_ValueForKey(buffer, "g_axismaxlives");
-		if (str && *str && atoi(str))
+		if (str && *str && Q_atoi(str))
 		{
 			livesleft = qtrue;
 		}

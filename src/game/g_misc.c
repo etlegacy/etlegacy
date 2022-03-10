@@ -129,7 +129,7 @@ TELEPORTERS
  * @param[in] origin
  * @param[in] angles
  */
-void TeleportPlayer(gentity_t *player, vec3_t origin, vec3_t angles)
+void TeleportPlayer(gentity_t *player, const vec3_t origin, const vec3_t angles)
 {
 	VectorCopy(origin, player->client->ps.origin);
 	player->client->ps.origin[2] += 1;
@@ -150,7 +150,7 @@ void TeleportPlayer(gentity_t *player, vec3_t origin, vec3_t angles)
 	SetClientViewAngle(player, angles);
 
 	// save results of pmove
-	BG_PlayerStateToEntityState(&player->client->ps, &player->s, level.time, qtrue);
+	BG_PlayerStateToEntityState(&player->client->ps, &player->s, level.time, qfalse);
 
 	// use the precise origin for linking
 	VectorCopy(player->client->ps.origin, player->r.currentOrigin);
@@ -986,7 +986,7 @@ void Fire_Lead_Ext(gentity_t *ent, gentity_t *activator, float spread, int damag
 	vec3_t    end;
 	float     r;
 	float     u;
-	gentity_t *tent;
+	gentity_t *tent, *fleshEnt = NULL;
 	gentity_t *traceEnt;
 	int       seed = rand() & 255;
 
@@ -1001,6 +1001,12 @@ void Fire_Lead_Ext(gentity_t *ent, gentity_t *activator, float spread, int damag
 	// the weapon itself (e.g. for mg42s)
 	// G_HistoricalTrace(activator, &tr, muzzle, NULL, NULL, end, ent->s.number, MASK_SHOT);
 
+	// ignore the tripod hitbox box if there is one, otherwise MG take damage while being used
+	// due to the muzzle starting point on top of it
+	if (ent->mg42BaseEnt)
+	{
+		G_TempTraceIgnoreEntity(&g_entities[ent->mg42BaseEnt]);
+	}
 	// skip corpses for bullet tracing (=non gibbing weapons)
 	G_TempTraceIgnoreBodies();
 	G_Trace(activator, &tr, muzzle, NULL, NULL, end, ent->s.number, MASK_SHOT);
@@ -1032,7 +1038,7 @@ void Fire_Lead_Ext(gentity_t *ent, gentity_t *activator, float spread, int damag
 	// send bullet impact
 	if (traceEnt->takedamage && traceEnt->client)
 	{
-		tent                    = G_TempEntity(tr.endpos, EV_MG42BULLET_HIT_FLESH);
+		fleshEnt = tent         = G_TempEntity(tr.endpos, EV_MG42BULLET_HIT_FLESH);
 		tent->s.eventParm       = traceEnt->s.number;
 		tent->s.otherEntityNum  = ent->s.number;
 		tent->s.otherEntityNum2 = activator->s.number;  // store the user id, so the client can position the tracer
@@ -1055,9 +1061,17 @@ void Fire_Lead_Ext(gentity_t *ent, gentity_t *activator, float spread, int damag
 		tent->s.otherEntityNum2 = activator->s.number;  // store the user id, so the client can position the tracer
 		tent->s.effect1Time     = seed;
 	}
+
 	if (traceEnt->takedamage)
 	{
-		G_Damage(traceEnt, ent, activator, forward, tr.endpos, damage, 0, mod);
+		int hitType = HIT_NONE;
+		G_DamageExt(traceEnt, ent, activator, forward, tr.endpos, damage, 0, mod, &hitType);
+
+		// send the hit sound info in the flesh hit event
+		if (hitType && fleshEnt)
+		{
+			fleshEnt->s.modelindex = hitType;
+		}
 	}
 }
 
@@ -1165,9 +1179,9 @@ void aagun_use(gentity_t *ent, gentity_t *other, gentity_t *activator)
 		owner->client->ps.viewlocked                   = VIEWLOCK_NONE;
 		owner->active                                  = qfalse;
 
-		other->client->ps.weapHeat[WP_DUMMY_MG42] = ent->mg42weapHeat;
-		ent->backupWeaponTime                     = owner->client->ps.weaponTime;
-		owner->backupWeaponTime                   = owner->client->ps.weaponTime;
+		other->client->pmext.weapHeat[WP_DUMMY_MG42] = ent->mg42weapHeat;
+		ent->backupWeaponTime                        = owner->client->ps.weaponTime;
+		owner->backupWeaponTime                      = owner->client->ps.weaponTime;
 	}
 
 	trap_LinkEntity(ent);
@@ -1564,7 +1578,7 @@ void mg42_think(gentity_t *self)
 	// heat handling
 	if (owner->client)
 	{
-		self->mg42weapHeat = owner->client->ps.weapHeat[WP_DUMMY_MG42];
+		self->mg42weapHeat = owner->client->pmext.weapHeat[WP_DUMMY_MG42];
 	}
 
 	// overheated mg42 smokes
@@ -1685,7 +1699,7 @@ void mg42_stopusing(gentity_t *self)
 		owner->active                                  = qfalse;
 
 		//owner->client->ps.weapHeat[WP_DUMMY_MG42] = 0;
-		self->mg42weapHeat           = owner->client->ps.weapHeat[WP_DUMMY_MG42];
+		self->mg42weapHeat           = owner->client->pmext.weapHeat[WP_DUMMY_MG42];
 		self->backupWeaponTime       = owner->client->ps.weaponTime;
 		owner->client->ps.weaponTime = owner->backupWeaponTime;
 
@@ -1787,9 +1801,9 @@ void mg42_use(gentity_t *ent, gentity_t *other, gentity_t *activator)
 		owner->client->ps.viewlocked                   = VIEWLOCK_NONE; // let them look around
 		owner->active                                  = qfalse;
 
-		other->client->ps.weapHeat[WP_DUMMY_MG42] = ent->mg42weapHeat;
-		ent->backupWeaponTime                     = owner->client->ps.weaponTime;
-		owner->backupWeaponTime                   = owner->client->ps.weaponTime;
+		other->client->pmext.weapHeat[WP_DUMMY_MG42] = ent->mg42weapHeat;
+		ent->backupWeaponTime                        = owner->client->ps.weaponTime;
+		owner->backupWeaponTime                      = owner->client->ps.weaponTime;
 	}
 
 	// G_Printf ("mg42 called use function\n");
@@ -1975,7 +1989,7 @@ void SP_mg42(gentity_t *self)
 
 	if (G_SpawnString("damage", "0", &damage))
 	{
-		self->damage = atoi(damage);
+		self->damage = Q_atoi(damage);
 	}
 
 	G_SpawnString("accuracy", "1.0", &accuracy);
@@ -2550,6 +2564,18 @@ void G_TempTraceIgnorePlayersAndBodies(void)
 	G_TempTraceIgnoreBodies();
 }
 
+/**
+ * @brief G_TempTraceIgnorePlayers
+ */
+void G_TempTraceIgnorePlayers(void)
+{
+	int i;
+
+	for (i = 0; i < MAX_CLIENTS; i++)
+	{
+		G_TempTraceIgnoreEntity(&g_entities[i]);
+	}
+}
 
 /**
  * @brief G_TempTraceIgnorePlayersAndBodiesFromTeam
@@ -2608,6 +2634,7 @@ void G_TempTraceRealHitBox(gentity_t *ent)
 
 			entRealHitBoxList[counter] = hit;
 			counter++;
+			trap_LinkEntity(hit);
 		}
 	}
 }
@@ -2624,10 +2651,57 @@ void G_ResetTempTraceRealHitBox()
 	{
 		VectorCopy(BBoxMinsBackup[i], (*hit)->r.mins);
 		VectorCopy(BBoxMaxsBackup[i], (*hit)->r.maxs);
+		trap_LinkEntity(*hit);
 
 		*hit = NULL;
 		VectorClear(BBoxMinsBackup[i]);
 		VectorClear(BBoxMaxsBackup[i]);
+	}
+}
+
+/**
+* @brief G_TempTraceIgnoreEntities
+* @param[in] ent
+*/
+void G_TempTraceIgnoreEntities(gentity_t *ent)
+{
+	int           i;
+	int           listLength;
+	int           list[MAX_GENTITIES];
+	gentity_t     *hit;
+	vec3_t        BBmins, BBmaxs;
+	static vec3_t range = { CH_BREAKABLE_DIST, CH_BREAKABLE_DIST, CH_BREAKABLE_DIST };
+
+	if (!ent->client)
+	{
+		return;
+	}
+
+	VectorSubtract(ent->client->ps.origin, range, BBmins);
+	VectorAdd(ent->client->ps.origin, range, BBmaxs);
+
+	listLength = trap_EntitiesInBox(BBmins, BBmaxs, list, MAX_GENTITIES);
+
+	for (i = 0; i < listLength; i++)
+	{
+		hit = &g_entities[list[i]];
+
+		if (hit->s.eType == ET_OID_TRIGGER || hit->s.eType == ET_TRIGGER_MULTIPLE
+		    || hit->s.eType == ET_TRIGGER_FLAGONLY || hit->s.eType == ET_TRIGGER_FLAGONLY_MULTIPLE)
+		{
+			G_TempTraceIgnoreEntity(hit);
+		}
+
+		if (hit->s.eType == ET_CORPSE && !(ent->client->ps.stats[STAT_PLAYER_CLASS] == PC_COVERTOPS))
+		{
+			G_TempTraceIgnoreEntity(hit);
+		}
+
+		if (hit->client && (!(ent->client->ps.stats[STAT_PLAYER_CLASS] == PC_MEDIC) || (ent->client->ps.stats[STAT_PLAYER_CLASS] == PC_MEDIC && ent->client->sess.sessionTeam != hit->client->sess.sessionTeam))
+		    && hit->client->ps.pm_type == PM_DEAD && !(hit->client->ps.pm_flags & PMF_LIMBO))
+		{
+			G_TempTraceIgnoreEntity(hit);
+		}
 	}
 }
 
@@ -2934,12 +3008,12 @@ void G_PreFilledMissileEntity(gentity_t *ent, int weaponNum, int realWeapon, int
 	ent->clipmask  = GetWeaponFireTableData(weaponNum)->clipMask;
 	ent->accuracy  = GetWeaponFireTableData(weaponNum)->accuracy;
 	ent->health    = GetWeaponFireTableData(weaponNum)->health;
-	ent->timestamp = GetWeaponFireTableData(weaponNum)->timeStamp ? level.time + GetWeaponFireTableData(weaponNum)->timeStamp : 0;
+	ent->timestamp = level.time + GetWeaponFireTableData(weaponNum)->timeStamp;
 
 	// state
 	ent->s.eFlags     = GetWeaponFireTableData(weaponNum)->eFlags;
 	ent->s.pos.trType = GetWeaponFireTableData(weaponNum)->trType;
-	ent->s.pos.trTime = GetWeaponFireTableData(weaponNum)->trTime ? level.time + GetWeaponFireTableData(weaponNum)->trTime : 0;           // move a bit on the very first frame
+	ent->s.pos.trTime = level.time + GetWeaponFireTableData(weaponNum)->trTime;
 	ent->s.eType      = GetWeaponFireTableData(weaponNum)->eType;
 
 	// shared

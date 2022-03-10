@@ -42,6 +42,8 @@
 #   include "../renderer/tr_local.h"
 #endif
 
+cvar_t *r_ext_multisample;
+
  /**
   * @var imageLoaders
   * @brief Note that the ordering indicates the order of preference used
@@ -547,13 +549,8 @@ static void GLimp_InitExtensions(void)
  */
 void Glimp_ClearScreen(void)
 {
-#ifdef FEATURE_RENDERER_GLES
-	qglClearColor(0, 0, 0, 1);
-	qglClear(GL_COLOR_BUFFER_BIT);
-#else
 	glClearColor(0, 0, 0, 1);
 	glClear(GL_COLOR_BUFFER_BIT);
-#endif
 	ri.GLimp_SwapFrame();
 }
 
@@ -609,7 +606,7 @@ void RE_InitOpenGl(void)
 #else
 	{
 		int i = 0, exts = 0;
-		
+
 		glGetIntegerv(GL_NUM_EXTENSIONS, &exts);
 		glConfig.extensions_string[0] = 0;
 		for (i = 0; i < exts; i++)
@@ -663,6 +660,12 @@ void R_PrintLongString(const char *string)
 		p    += 1023;
 		size -= 1023;
 	}
+}
+
+void R_RegisterCommon(void)
+{
+	r_ext_multisample = ri.Cvar_Get("r_ext_multisample", "0", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE);
+	ri.Cvar_CheckRange(r_ext_multisample, 0, 8, qtrue);
 }
 
 #ifdef USE_RENDERER_DLOPEN

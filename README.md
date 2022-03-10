@@ -1,4 +1,4 @@
-ET: Legacy [![Travis Status](https://travis-ci.org/etlegacy/etlegacy.svg?branch=master)](https://travis-ci.org/etlegacy/etlegacy) [![AppVeyor status](https://ci.appveyor.com/api/projects/status/468s0285u3w4vfom/branch/master?svg=true)](https://ci.appveyor.com/project/rmarquis/etlegacy/branch/master) [![Analysis Status](https://scan.coverity.com/projects/1160/badge.svg)](https://scan.coverity.com/projects/1160) ![CodeQL](https://github.com/etlegacy/etlegacy/workflows/CodeQL/badge.svg) [![chat](https://img.shields.io/discord/260750790203932672.svg?logo=discord)](https://discord.gg/UBAZFys)
+ET: Legacy ![Build status](https://github.com/etlegacy/etlegacy/workflows/ETLBuild/badge.svg) [![AppVeyor status](https://ci.appveyor.com/api/projects/status/468s0285u3w4vfom/branch/master?svg=true)](https://ci.appveyor.com/project/rmarquis/etlegacy/branch/master) [![Analysis status](https://scan.coverity.com/projects/1160/badge.svg)](https://scan.coverity.com/projects/1160) ![CodeQL status](https://github.com/etlegacy/etlegacy/workflows/CodeQL/badge.svg) [![chat](https://img.shields.io/discord/260750790203932672.svg?logo=discord)](https://discord.gg/UBAZFys)
 ==========
 
 *A second breath of life for Wolfenstein: Enemy Territory*
@@ -7,11 +7,11 @@ ET: Legacy [![Travis Status](https://travis-ci.org/etlegacy/etlegacy.svg?branch=
 * Downloads: [https://www.etlegacy.com/download](https://www.etlegacy.com/download)
 * Wiki/FAQ: [https://github.com/etlegacy/etlegacy/wiki](https://github.com/etlegacy/etlegacy/wiki)
 * Development: [https://github.com/etlegacy/etlegacy](https://github.com/etlegacy/etlegacy)
-* Assets Repository: [https://drive.google.com](https://drive.google.com/drive/folders/0Bw7Yu-pqzcSaLXEtVEVjZF82UEU)
+* Assets Repository: [https://drive.google.com](https://drive.google.com/drive/folders/0Bw7Yu-pqzcSaLXEtVEVjZF82UEU?resourcekey=0-QYA6QCoHTcUQdnDm8-z0AQ&usp=sharing)
 * Documentation: [https://etlegacy.readthedocs.io/](https://etlegacy.readthedocs.io/)
-* Lua API: [http://etlegacy-lua-docs.readthedocs.io](http://etlegacy-lua-docs.readthedocs.io)
+* Lua API: [https://etlegacy-lua-docs.readthedocs.io](https://etlegacy-lua-docs.readthedocs.io)
 * Translation: [https://www.transifex.com/etlegacy/etlegacy](https://www.transifex.com/etlegacy/etlegacy)
-* Contact: [\#etlegacy](http://webchat.freenode.net/?channels=#etlegacy) on irc.freenode.net and [etlegacy/#etlegacy](https://discordapp.com/channels/260750790203932672/346956915814957067) on Discord.
+* Contact: [#etlegacy](https://web.libera.chat/?channels=#etlegacy) on irc.libera.chat and [etlegacy/#etlegacy](https://discordapp.com/channels/260750790203932672/346956915814957067) on Discord.
 
 ## INTRODUCTION
 
@@ -41,8 +41,9 @@ Wolfenstein: Enemy Territory is a free release, and can be downloaded from [Spla
 This source release contains only the engine and mod code but not any game data,
 which is still covered by the original EULA and must be obeyed as usual.
 
-In order to run ET: Legacy you will need to copy the original assets (*pak0.pk3*)
-to the etmain folder.
+In order to run ET: Legacy you will need to copy the original *pak0.pk3* assets file
+to the etmain folder. In addition, third party mods might also require the *pak1.pk3*
+and *pak2.pk3* assets files.
 
 
 ### Compatibility with Enemy Territory 2.60b
@@ -60,8 +61,8 @@ mods providing a 64 bit version. You will be able to play 32 bit-only mods only 
 you compile ET: Legacy on a 32 bit system or cross-compile it for 32 bit architecture
 on a 64 bit system.
 
-At the moment, only the Legacy mod is available in 64 bit version, while all other
-existing mods are available in 32 bit only version.
+At the moment, only the ETrun, ETJump, N!tmod and Legacy mods are available in 64 bit version, while all other
+existing mods are available in 32 bit only version. Read more on the [Compatible mods](https://github.com/etlegacy/etlegacy/wiki/Compatible-Mods) wiki page.
 
 In case you are a running a 64 bit system, you probably might want to use the
 **bundled libraries** which are located in a separate *etlegacy-libs* repository and
@@ -71,6 +72,7 @@ section for more details.
 
 ## DEPENDENCIES
 
+Required:
 * **CMake** (compile-time only)
 * **OpenGL**
 * **GLEW**
@@ -78,18 +80,21 @@ section for more details.
 * **ZLib**
 * **MiniZip**
 * **libjpeg-turbo** or **libjpeg**
-* **libcurl** (optional, enabled by default)
-* **Lua** (optional, enabled by default)
-* **Ogg Vorbis** (optional, enabled by default)
-* **Theora** (optional, enabled by default)
-* **Freetype** (optional, enabled by default)
-* **libpng** (optional, enabled by default)
-* **SQLite** (optional, enabled by default)
-* **OpenAL** (optional, enabled by default)
+
+Optional, enabled by default:
+* **libcurl**
+* **WolfSSL** or **OpenSSL**
+* **Lua**
+* **Ogg Vorbis**
+* **Theora**
+* **Freetype**
+* **libpng**
+* **SQLite**
+* **OpenAL**
 
 Grab info about current lib versions from our [Libs Changelog](https://github.com/etlegacy/etlegacy/wiki/Libs-Changelog) wiki page.
 
-To get the latest source code install [git](http://git-scm.com/) and
+To get the latest source code install [git](https://git-scm.com/) and
 clone our repository hosted at [Github.com](https://github.com/etlegacy/etlegacy):
 
     $ git clone git://github.com/etlegacy/etlegacy.git
@@ -120,8 +125,11 @@ The following variables can be adjusted in CMake:
   * (optional) **`INSTALL_DEFAULT_BINDIR`**: Location for executables. Appended to `CMAKE_INSTALL_PREFIX`.
     Defaults to `bin`.
 
-  * (optional) **`INSTALL_DEFAULT_MODDIR`**: Location for libraries and paks. Appended to
-    `CMAKE_INSTALL_PREFIX`. Defaults to `share/etlegacy` and then `legacy` is appended to it.
+  * (optional) **`INSTALL_DEFAULT_SHAREDIR`**: Location for shared data. Appended to `CMAKE_INSTALL_PREFIX`.
+    Defaults to `share`.
+
+  * (optional) **`INSTALL_DEFAULT_MODDIR`**: Location for libraries and paks. Appended to `CMAKE_INSTALL_PREFIX`.
+    Defaults to `lib/etlegacy` and then `legacy` is appended to it.
 
 
 ### Linux
@@ -179,8 +187,8 @@ By default, MinGW name is set to **`i686-w64-mingw32`**. You may have to change 
 
 Install:
 
-  1. [Visual Studio Community](http://www.visualstudio.com/) with the _Desktop Development with C++_ workload
-  2. [CMake](http://www.cmake.org/) and make sure it is added to your system PATH
+  1. [Visual Studio Community](https://visualstudio.microsoft.com/) with the _Desktop Development with C++_ workload
+  2. [CMake](https://cmake.org/) and make sure it is added to your system PATH
 
 * option A: **easybuild**
 
@@ -200,7 +208,7 @@ In the command prompt, run:
 
 or
 
-    cmake -G "Visual Studio 16" -DBUNDLED_LIBS=YES ..
+    cmake -G "Visual Studio 16" -A Win32 -DBUNDLED_LIBS=YES ..
 
 and open the resulting project in Visual Studio.
 
@@ -217,34 +225,34 @@ and open the resulting project in Visual Studio.
   automatically if you select that option during Git installation.
 
 
-### Mac OS X
+### macOS
 
 Install:
 
 1. Xcode:
  * At least a recent Version of Xcode Command Line Tools (Terminal -> `xcode-select --install`)
  * or a complete Xcode IDE (through App Store or https://developer.apple.com/xcode/downloads/)
-2. Homebrew (http://brew.sh/)
+2. Homebrew (https://brew.sh/)
 
 Then brew the following packages in the terminal app:
 
-    $ brew cask install xquartz
+    $ brew install --cask xquartz
     $ brew install gnu-sed cmake glew sdl2 minizip jpeg-turbo curl lua libogg libvorbis theora freetype libpng sqlite openal-soft autoconf nasm automake libtool
 
 Depending on what brew version you're using (mostly older ones), you have to specify `brew install --universal` to get both 32bit and 64bit libs. If it throws an error, just use the command listed above. Although your system curl library supports both architectures, you also need to install its headers.
 
 * option A: **easybuild**
 
-There are many flags and options provided by easybuild.sh. The ET: Legacy version you can compile depends on the used Mac OS version.
+There are many flags and options provided by easybuild.sh. The ET: Legacy version you can compile depends on the used macOS version.
 
-If you're running **up to Mojave (10.14)**, use one the following flags in Terminal.app:
+If you're running **up to macOS 10.14 (Mojave)**, use one the following flags in Terminal.app:
 
     $ ./easybuild.sh        # for compiling a 32 bit version or
     $ ./easybuild.sh -64    # for compiling a 64 bit version
 
 This will put an 'etlegacy' folder with the selected arch into your user folder.
 
-With Mac OS **Catalina (10.15) and above**, your only option is to compile and run a 64 bit client. Therefore you need to use the following flags:
+With **macOS 10.15 (Catalina) and above**, your only option is to compile and run a 64 bit client. Therefore you need to use the following flags:
 
     $ ./easybuild.sh -64 --osx=10.15    #watch out for the double dash at --osx !
 
@@ -272,7 +280,7 @@ Be sure to set the CMake variables (see above) beforehand.
 **NOTES**:
 
   * In the legacy mod folder, the cgame_mac and ui_mac files are redundant since they are in the 
-  mod .pk3 and will be extracted at runtime, so you can delete those. The client is named etl.app
+  mod .pk3 and will be extracted at runtime, so you can delete those. The client is named "ET Legacy.app"
   (and can safely be renamed), while the dedicated server is just a command-line binary named "etlded".
 
 
@@ -344,7 +352,7 @@ XreaL GPL Source Code (renderer2)
 Copyright (C) 2010-2011 Robert Beckebans
 
 ET: Legacy
-Copyright (C) 2012-2020 ET:Legacy Team <mail@etlegacy.com>
+Copyright (C) 2012-2021 ET:Legacy Team <mail@etlegacy.com>
 
   ET: Legacy is free software: you can redistribute it and/or modify it under
   the terms of the GNU General Public License as published by the Free Software
@@ -356,7 +364,7 @@ Copyright (C) 2012-2020 ET:Legacy Team <mail@etlegacy.com>
   A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 
   You should have received a copy of the GNU General Public License along with
-  ET: Legacy (see COPYING.txt). If not, see <http://www.gnu.org/licenses/>.
+  ET: Legacy (see COPYING.txt). If not, see <https://www.gnu.org/licenses/>.
 
   ADDITIONAL TERMS:  The Wolfenstein: Enemy Territory GPL Source Code is also
   subject to certain additional terms. You should have received a copy of these

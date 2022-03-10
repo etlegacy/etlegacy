@@ -687,29 +687,6 @@ qboolean CG_SaveSpeakersToScript(void)
 }
 
 /**
- * @brief CG_AddLineToScene
- * @param[in] start
- * @param[in] end
- * @param[in] colour
- */
-void CG_AddLineToScene(vec3_t start, vec3_t end, vec4_t colour)
-{
-	refEntity_t re;
-
-	Com_Memset(&re, 0, sizeof(re));
-	re.reType       = RT_RAIL_CORE;
-	re.customShader = cgs.media.railCoreShader;
-	VectorCopy(start, re.origin);
-	VectorCopy(end, re.oldorigin);
-	re.shaderRGBA[0] = (byte)(colour[0] * 0xff);
-	re.shaderRGBA[1] = (byte)(colour[1] * 0xff);
-	re.shaderRGBA[2] = (byte)(colour[2] * 0xff);
-	re.shaderRGBA[3] = (byte)(colour[3] * 0xff);
-
-	trap_R_AddRefEntityToScene(&re);
-}
-
-/**
  * @brief CG_SetViewanglesForSpeakerEditor
  */
 void CG_SetViewanglesForSpeakerEditor(void)
@@ -730,7 +707,7 @@ void CG_SetViewanglesForSpeakerEditor(void)
  */
 static void CG_RenderScriptSpeakers(void)
 {
-	int          i, j, closest;
+	int          i, closest;
 	float        dist, minDist;
 	vec3_t       vec;
 	refEntity_t  re;
@@ -772,44 +749,7 @@ static void CG_RenderScriptSpeakers(void)
 
 		if (editSpeakerActive && editSpeaker == speaker)
 		{
-			vec4_t colour;
-
-			for (j = 0; j < 3; j++)
-			{
-				VectorClear(colour);
-				colour[3] = 1.f;
-				if (editSpeakerHandle.activeAxis >= 0)
-				{
-					if (editSpeakerHandle.activeAxis == j)
-					{
-						colour[j] = 1.f;
-					}
-					else
-					{
-						colour[j] = .3f;
-					}
-				}
-				else
-				{
-					colour[j] = 1.f;
-				}
-				VectorClear(vec);
-				vec[j] = 1.f;
-				VectorMA(editSpeakerHandle.origin, 32, vec, vec);
-				CG_AddLineToScene(editSpeakerHandle.origin, vec, colour);
-
-				Com_Memset(&re, 0, sizeof(re));
-				re.reType = RT_SPRITE;
-				VectorCopy(vec, re.origin);
-				VectorCopy(vec, re.oldorigin);
-				re.radius        = 3;
-				re.customShader  = cgs.media.waterBubbleShader;
-				re.shaderRGBA[0] = (byte)(colour[0] * 0xff);
-				re.shaderRGBA[1] = (byte)(colour[1] * 0xff);
-				re.shaderRGBA[2] = (byte)(colour[2] * 0xff);
-				re.shaderRGBA[3] = (byte)(colour[3] * 0xff);
-				trap_R_AddRefEntityToScene(&re);
-			}
+			CG_DrawMoveGizmo(editSpeakerHandle.origin, GIZMO_DEFAULT_RADIUS, editSpeakerHandle.activeAxis);
 
 			if (trap_R_inPVS(cg.refdef_current->vieworg, speaker->origin))
 			{
@@ -1325,7 +1265,7 @@ qboolean CG_SpeakerEditor_NoiseEdit_KeyDown(panel_button_t *button, int key)
 		{
 			char dirname[MAX_QPATH];
 			char filename[MAX_QPATH];
-			char match[MAX_QPATH];
+			char match[MAX_QPATH] = { 0 };
 			int  i, numfiles, filelen;
 			char *fileptr;
 
@@ -1422,7 +1362,7 @@ qboolean CG_SpeakerEditor_NoiseEdit_KeyDown(panel_button_t *button, int key)
 				int localkey = key;
 
 				localkey &= ~K_CHAR_FLAG;
-				if (localkey == 'h' - 'a' + 1 || localkey >= 32)
+				if (localkey == CTRL('h') || localkey >= 32)
 				{
 					noiseMatchString[0] = '\0';
 				}
@@ -1578,7 +1518,7 @@ void CG_SpeakerEditor_WaitEditFinish(panel_button_t *button)
 {
 	if (*button->text)
 	{
-		editSpeaker->wait = atoi(button->text);
+		editSpeaker->wait = Q_atoi(button->text);
 		if (editSpeaker->wait < 0)
 		{
 			editSpeaker->wait = 0;
@@ -1600,7 +1540,7 @@ void CG_SpeakerEditor_RandomEditFinish(panel_button_t *button)
 {
 	if (*button->text)
 	{
-		editSpeaker->random = atoi(button->text);
+		editSpeaker->random = Q_atoi(button->text);
 		if (editSpeaker->random < 0)
 		{
 			editSpeaker->random = 0;
@@ -1622,7 +1562,7 @@ void CG_SpeakerEditor_VolumeEditFinish(panel_button_t *button)
 {
 	if (*button->text)
 	{
-		editSpeaker->volume = atoi(button->text);
+		editSpeaker->volume = Q_atoi(button->text);
 		if (editSpeaker->volume < 0)
 		{
 			editSpeaker->volume = 0;
@@ -1649,7 +1589,7 @@ void CG_SpeakerEditor_RangeEditFinish(panel_button_t *button)
 {
 	if (*button->text)
 	{
-		editSpeaker->range = atoi(button->text);
+		editSpeaker->range = Q_atoi(button->text);
 		if (editSpeaker->range < 0)
 		{
 			editSpeaker->range = 0;
@@ -2002,7 +1942,7 @@ panel_button_t speakerEditorRandomEdit =
 	NULL,                             // keyUp
 	CG_SpeakerEditor_RenderEdit,
 	CG_SpeakerEditor_RandomEditFinish,
-    0,
+	0,
 };
 
 panel_button_t speakerEditorVolumeLabel =
@@ -2090,7 +2030,7 @@ panel_button_t speakerEditorCancelButton =
 	CG_SpeakerEditor_Cancel_KeyUp,// keyUp
 	CG_SpeakerEditor_RenderButton,
 	NULL,
-    0,
+	0,
 };
 
 panel_button_t speakerEditorDeleteButton =
@@ -2266,13 +2206,18 @@ void CG_SpeakerEditor_KeyHandling(int key, qboolean down)
 			}
 			else if (editSpeakerHandle.activeAxis == -1)
 			{
-				int    i, closest = -1;
+				int    i, closest = -1, halfWidth = 320;
 				float  dist, minDist, r, u;
 				vec3_t vec, axisOrg, dir;
 
 				minDist = Square(16.f);
 
-				r = -(cg.refdef_current->fov_x / 90.f) * (float)(cgs.cursorX - 320) / 320;
+				if (!Ccg_Is43Screen())
+				{
+					halfWidth *= cgs.adr43;
+				}
+
+				r = -(cg.refdef_current->fov_x / 90.f) * (float)(cgs.cursorX - halfWidth) / halfWidth;
 				u = -(cg.refdef_current->fov_y / 90.f) * (float)(cgs.cursorY - 240) / 240;
 
 				for (i = 0; i < 3; i++)

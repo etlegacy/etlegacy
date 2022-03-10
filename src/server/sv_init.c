@@ -101,6 +101,8 @@ void SV_SetConfigstring(int index, const char *val)
 	}
 }
 
+#define NEXT_WARNING_TIME 5000
+
 /**
  * @brief Updates the configstring
  * @note It's nice to know this function sends several server commands when a configstring is greater than 1000 usually BIG_INFO_STRINGs
@@ -112,6 +114,8 @@ void SV_UpdateConfigStrings(void)
 	int        maxChunkSize = MAX_STRING_CHARS - 24;
 	const char *cmd;
 	char       buf[MAX_STRING_CHARS];
+	static int nextWarningSysInfoTime   = 0;
+	static int nextWarningGameStateTime = 0;
 
 	for (index = 0; index < MAX_CONFIGSTRINGS; index++)
 	{
@@ -122,12 +126,17 @@ void SV_UpdateConfigStrings(void)
 
 			if (index == CS_SYSTEMINFO)
 			{
-				// about 10% of BIG_INFO_VALUE - this grants the server will start properly
-				// but total CS limit might be reached soon when CS_SYSTEMINFO uses nearly half of total CS
-				// warn admins
-				if (strlen(sv.configstrings[index]) > BIG_INFO_VALUE - 800)
+				if (nextWarningSysInfoTime <= svs.time)
 				{
-					Com_Printf(S_COLOR_YELLOW "WARNING: Your server nearly reached a configstring limit [%i chars left] - reduce the ammount of maps/pk3s in path\n", (int) (BIG_INFO_VALUE - strlen(sv.configstrings[index])));
+					nextWarningSysInfoTime = svs.time + NEXT_WARNING_TIME;
+
+					// about 10% of BIG_INFO_VALUE - this grants the server will start properly
+					// but total CS limit might be reached soon when CS_SYSTEMINFO uses nearly half of total CS
+					// warn admins
+					if (strlen(sv.configstrings[index]) > BIG_INFO_VALUE - 800)
+					{
+						Com_Printf(S_COLOR_YELLOW "WARNING: Your server nearly reached a configstring limit [%i chars left] - reduce the ammount of maps/pk3s in path\n", (int) (BIG_INFO_VALUE - strlen(sv.configstrings[index])));
+					}
 				}
 			}
 		}
@@ -192,10 +201,15 @@ void SV_UpdateConfigStrings(void)
 			}
 		}
 
-		// warn admins
-		if (cstotal > MAX_GAMESTATE_CHARS - 800) // 5% of MAX_GAMESTATE_CHARS
+		if (nextWarningGameStateTime <= svs.time)
 		{
-			Com_Printf(S_COLOR_YELLOW "WARNING: Your clients might be disconnected by configstring limit [%i chars left] - reduce the ammount of maps/pk3s in path\n", MAX_GAMESTATE_CHARS - cstotal);
+			nextWarningGameStateTime = svs.time + NEXT_WARNING_TIME;
+
+			// warn admins
+			if (cstotal > MAX_GAMESTATE_CHARS - 800) // 5% of MAX_GAMESTATE_CHARS
+			{
+				Com_Printf(S_COLOR_YELLOW "WARNING: Your clients might be disconnected by configstring limit [%i chars left] - reduce the ammount of maps/pk3s in path\n", MAX_GAMESTATE_CHARS - cstotal);
+			}
 		}
 	}
 }
@@ -470,7 +484,7 @@ void SV_SetExpectedHunkUsage(const char *mapname)
 				if (token && token[0])
 				{
 					// this is the usage
-					com_expectedhunkusage = atoi(token);
+					com_expectedhunkusage = Q_atoi(token);
 					Z_Free(buf);
 					return;
 				}
@@ -833,25 +847,6 @@ void SV_SpawnServer(const char *server)
 
 	svs.time += FRAMETIME;
 
-	if (sv_pure->integer)
-	{
-		// the server sends these to the clients so they will only
-		// load pk3s also loaded at the server
-		p = FS_LoadedPakChecksums();
-		Cvar_Set("sv_paks", p);
-		if (strlen(p) == 0)
-		{
-			Com_Printf("WARNING: sv_pure set but no PK3 files loaded\n");
-		}
-
-		p = FS_LoadedPakNames();
-		Cvar_Set("sv_pakNames", p);
-	}
-	else
-	{
-		Cvar_Set("sv_paks", "");
-		Cvar_Set("sv_pakNames", "");
-	}
 	// the server sends these to the clients so they can figure
 	// out which pk3s should be auto-downloaded
 	// NOTE: we consider the referencedPaks as 'required for operation'
@@ -859,9 +854,55 @@ void SV_SpawnServer(const char *server)
 	// we want the server to reference the mod_bin pk3 that the client is expected to load from
 	SV_TouchCGameDLL();
 
+	if (sv_pure->integer)
+	{
+		// the server sends these to the clients so they will only
+		// load pk3s also loaded at the server
+		qboolean crazyServer = qfalse;
+		size_t len = 0;
+
+		p = FS_LoadedPakNames();
+		len = strlen(p);
+
+		// if the maps listing takes more than half of the full buffer, then we just use the reference listings instead
+		// some people just want to have servers with x^10 pk3 files
+		if (len > (BIG_INFO_STRING / 2))
+		{
+			crazyServer = qtrue;
+			p = FS_ReferencedPakNames();
+			Com_Printf(S_COLOR_RED "WARNING: sv_pure set and the amount of pk3 files exceeds normally supported count, using reference values only\n");
+		}
+		else if (len == 0)
+		{
+			Com_Printf("WARNING: sv_pure set but no PK3 files loaded\n");
+		}
+
+		Cvar_Set("sv_pakNames", p);
+
+		if (!crazyServer)
+		{
+			p = FS_LoadedPakChecksums();
+		}
+		else
+		{
+			p = FS_ReferencedPakChecksums();
+		}
+		Cvar_Set("sv_paks", p);
+	}
+	else
+	{
+		Cvar_Set("sv_paks", "");
+		Cvar_Set("sv_pakNames", "");
+	}
+
 	p = FS_ReferencedPakChecksums();
 	Cvar_Set("sv_referencedPaks", p);
 	p = FS_ReferencedPakNames();
+	// If we are referencing huge amount of pk3 files then just error out here.
+	if (strlen(p) > (BIG_INFO_STRING / 4))
+	{
+		Com_Error(ERR_FATAL, "Server is referencing too many packages, remove extra files from the home path");
+	}
 	Cvar_Set("sv_referencedPakNames", p);
 
 	// save systeminfo and serverinfo strings
@@ -1225,7 +1266,6 @@ void SV_Shutdown(const char *finalmsg)
 	SV_ShutdownGameProgs();
 
 	// SV_ShutdownGameProgs calls SV_DemoStopAll();
-	SV_DemoShutdown();
 
 	// free current level
 	SV_ClearServer();

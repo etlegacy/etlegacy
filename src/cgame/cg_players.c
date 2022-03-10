@@ -155,11 +155,11 @@ void CG_ParseTeamXPs(int n)
 
 			if (n == 0)
 			{
-				cgs.tdbAxisMapsXP[j][i] = atoi(token);
+				cgs.tdbAxisMapsXP[j][i] = Q_atoi(token);
 			}
 			else
 			{
-				cgs.tdbAlliedMapsXP[j][i] = atoi(token);
+				cgs.tdbAlliedMapsXP[j][i] = Q_atoi(token);
 			}
 		}
 	}
@@ -205,33 +205,33 @@ void CG_NewClientInfo(int clientNum)
 
 	// bot skill
 	v                = Info_ValueForKey(configstring, "skill");
-	newInfo.botSkill = atoi(v);
+	newInfo.botSkill = Q_atoi(v);
 
 	// team
 	v            = Info_ValueForKey(configstring, "t");
-	newInfo.team = (team_t)(atoi(v));
+	newInfo.team = (team_t)(Q_atoi(v));
 
 	// class
 	v           = Info_ValueForKey(configstring, "c");
-	newInfo.cls = atoi(v);
+	newInfo.cls = Q_atoi(v);
 
 	// latched class
 	v                  = Info_ValueForKey(configstring, "lc");
-	newInfo.latchedcls = atoi(v);
+	newInfo.latchedcls = Q_atoi(v);
 
 	// rank
 	v            = Info_ValueForKey(configstring, "r");
-	newInfo.rank = atoi(v);
+	newInfo.rank = Q_atoi(v);
 
 #ifdef FEATURE_PRESTIGE
 	// prestige
 	v                = Info_ValueForKey(configstring, "p");
-	newInfo.prestige = atoi(v);
+	newInfo.prestige = Q_atoi(v);
 #endif
 
 	// fireteam
 	v                = Info_ValueForKey(configstring, "f");
-	newInfo.fireteam = atoi(v);
+	newInfo.fireteam = Q_atoi(v);
 
 	v = Info_ValueForKey(configstring, "m");
 	if (*v)
@@ -243,7 +243,7 @@ void CG_NewClientInfo(int clientNum)
 		for (i = 0; i < SK_NUM_SKILLS; i++)
 		{
 			buf[0]            = *v;
-			newInfo.medals[i] = atoi(buf);
+			newInfo.medals[i] = Q_atoi(buf);
 			v++;
 		}
 	}
@@ -266,32 +266,32 @@ void CG_NewClientInfo(int clientNum)
 			skill[0] = v[i];
 			skill[1] = '\0';
 
-			newInfo.skill[i] = atoi(skill);
+			newInfo.skill[i] = Q_atoi(skill);
 		}
 	}
 
 	// disguise clientNum
 	v                         = Info_ValueForKey(configstring, "dn");
-	newInfo.disguiseClientNum = atoi(v);
+	newInfo.disguiseClientNum = Q_atoi(v);
 
 	// weapon and latchedweapon ( FIXME: make these more secure )
 	v              = Info_ValueForKey(configstring, "w");
-	newInfo.weapon = atoi(v);
+	newInfo.weapon = Q_atoi(v);
 
 	v                     = Info_ValueForKey(configstring, "lw");
-	newInfo.latchedweapon = atoi(v);
+	newInfo.latchedweapon = Q_atoi(v);
 
 	v                       = Info_ValueForKey(configstring, "sw");
-	newInfo.secondaryweapon = atoi(v);
+	newInfo.secondaryweapon = Q_atoi(v);
 
 	v                              = Info_ValueForKey(configstring, "lsw");
-	newInfo.latchedsecondaryweapon = atoi(v);
+	newInfo.latchedsecondaryweapon = Q_atoi(v);
 
 	v                 = Info_ValueForKey(configstring, "ref");
-	newInfo.refStatus = atoi(v);
+	newInfo.refStatus = Q_atoi(v);
 
 	v                   = Info_ValueForKey(configstring, "sc");
-	newInfo.shoutcaster = atoi(v);
+	newInfo.shoutcaster = Q_atoi(v);
 
 	// Detect rank/skill changes client side.
 	// Make sure we have some valid clientinfo, otherwise people are thrown
@@ -337,29 +337,34 @@ void CG_NewClientInfo(int clientNum)
 				// NOTE: slick hack so that funcs we call use the new value now
 				cgs.clientinfo[cg.clientNum].skill[i] = newInfo.skill[i];
 
-				if (newInfo.skill[i] == (NUM_SKILL_LEVELS - 1) && (i == SK_HEAVY_WEAPONS || i == SK_LIGHT_WEAPONS))
+				// reward the skill only if available
+				if (GetSkillTableData(i)->skillLevels[newInfo.skill[i]] >= 0)
 				{
-					bg_playerclass_t *classinfo;
-					classinfo = BG_GetPlayerClassInfo(cgs.clientinfo[cg.clientNum].team, cgs.clientinfo[cg.clientNum].cls);
-
-					// Only select new weapon if using the first weapon (pistol 0)
-					if (cgs.ccSelectedSecondaryWeapon == classinfo->classSecondaryWeapons[0].weapon)
+					if ((newInfo.skill[i] == SK_LIGHT_WEAPONS_HANDLING && i == SK_HEAVY_WEAPONS)
+					    || (newInfo.skill[i] == SK_LIGHT_WEAPONS_AKIMBO &&  i == SK_LIGHT_WEAPONS))
 					{
-						CG_LimboPanel_SetDefaultWeapon(SECONDARY_SLOT);
-						CG_LimboPanel_SendSetupMsg(qfalse);
+						bg_playerclass_t *classinfo;
+						classinfo = BG_GetPlayerClassInfo(cgs.clientinfo[cg.clientNum].team, cgs.clientinfo[cg.clientNum].cls);
+
+						// Only select new weapon if using the first weapon (pistol 0)
+						if (cgs.ccSelectedSecondaryWeapon == classinfo->classSecondaryWeapons[0].weapon)
+						{
+							CG_LimboPanel_SetDefaultWeapon(SECONDARY_SLOT);
+							CG_LimboPanel_SendSetupMsg(qfalse);
+						}
 					}
-				}
 
 #ifdef FEATURE_EDV
-				if (!cgs.demoCamera.renderingFreeCam && !cgs.demoCamera.renderingWeaponCam)
+					if (!cgs.demoCamera.renderingFreeCam && !cgs.demoCamera.renderingWeaponCam)
 #endif
-				{
-					if (!(cg_popupBigFilter.integer & POPUP_BIG_FILTER_SKILL))
 					{
-						CG_AddPMItemBig(PM_SKILL, va(CG_TranslateString("Increased %s skill to level %i!"), CG_TranslateString(GetSkillTableData(i)->skillNames), newInfo.skill[i]), cgs.media.skillPics[i]);
-					}
+						if (!(cg_popupBigFilter.integer & POPUP_BIG_FILTER_SKILL))
+						{
+							CG_AddPMItemBig(PM_SKILL, va(CG_TranslateString("Increased %s skill to level %i!"), CG_TranslateString(GetSkillTableData(i)->skillNames), newInfo.skill[i]), cgs.media.skillPics[i]);
+						}
 
-					CG_PriorityCenterPrint(va(CG_TranslateString("You have been rewarded with %s"), CG_TranslateString(cg_skillRewards[i][newInfo.skill[i] - 1])), 400, cg_fontScaleCP.value, 99999);
+						CG_PriorityCenterPrint(va(CG_TranslateString("You have been rewarded with %s"), CG_TranslateString(cg_skillRewards[i][newInfo.skill[i] - 1])), 400, cg_fontScaleCP.value, 99999);
+					}
 				}
 
 #ifdef FEATURE_PRESTIGE
@@ -1867,7 +1872,7 @@ static void CG_BreathPuffs(centity_t *cent, refEntity_t *head)
 		return;
 	}
 
-	if (!(cent->currentState.eFlags & EF_DEAD))
+	if (cent->currentState.eFlags & EF_DEAD || cent->currentState.eType == ET_CORPSE)
 	{
 		return;
 	}
@@ -2006,7 +2011,34 @@ static void CG_PlayerFloatText(centity_t *cent, const char *text, int height)
 		origin[2] -= 18;
 	}
 
-	CG_AddOnScreenText(text, origin);
+	CG_AddOnScreenText(text, origin, qtrue);
+}
+
+/**
+* @brief CG_PlayerBar
+* @param[in] cent
+* @param[in] fraction
+* @param[in] colorStart
+* @param[in] colorEnd
+* @param[in] colorBack
+* @param[in] height
+*/
+static void CG_PlayerFloatBar(centity_t *cent, float fraction, vec4_t colorStart, vec4_t colorEnd, vec4_t colorBack, int height)
+{
+	vec3_t origin;
+
+	VectorCopy(cent->lerpOrigin, origin);
+
+	origin[2] += height;
+
+	// adjust bar height
+	if (cent->currentState.eFlags & EF_CROUCHING ||
+	    cent->currentState.eFlags & EF_PRONE || cent->currentState.eFlags & EF_PRONE_MOVING)
+	{
+		origin[2] -= 18;
+	}
+
+	CG_AddOnScreenBar(fraction, colorStart, colorEnd, colorBack, origin);
 }
 
 /**
@@ -2019,6 +2051,8 @@ static void CG_PlayerSprites(centity_t *cent)
 	int          height   = 56;
 	clientInfo_t *ci      = &cgs.clientinfo[cent->currentState.clientNum];
 	qboolean     sameTeam = (cg.snap->ps.persistant[PERS_TEAM] == ci->team);
+	int          spacing  = 8;
+	char         *name;
 
 	if ((cent->currentState.powerups & (1 << PW_REDFLAG)) || (cent->currentState.powerups & (1 << PW_BLUEFLAG)))
 	{
@@ -2031,7 +2065,7 @@ static void CG_PlayerSprites(centity_t *cent)
 
 			VectorMA(cent->pe.headRefEnt.origin, 6.0f, cent->pe.headRefEnt.axis[2], end);
 
-			CG_Trace(&trace, cg.refdef.vieworg, NULL, NULL, end, cg.snap->ps.clientNum, CONTENTS_SOLID | CONTENTS_BODY | CONTENTS_ITEM);
+			CG_Trace(&trace, cg.refdef.vieworg, NULL, NULL, end, cg.snap->ps.clientNum, CONTENTS_SOLID);
 
 			// don't draw player icons if we can't see their head
 			if (trace.fraction == 1.f || trace.entityNum == cent->currentState.number)
@@ -2050,11 +2084,41 @@ static void CG_PlayerSprites(centity_t *cent)
 		height = 8;
 	}
 
-	if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR || (cg.snap->ps.pm_flags & PMF_FOLLOW && cgs.clientinfo[cg.clientNum].shoutcaster))
+	if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR || ((cg.snap->ps.pm_flags & PMF_FOLLOW) && cgs.clientinfo[cg.clientNum].shoutcaster))
 	{
-		if (cg_drawSpectatorNames.integer > 0 || cgs.clientinfo[cg.clientNum].shoutcaster)
+		if (cg_shoutcastDrawHealth.integer > 0 && cgs.clientinfo[cg.clientNum].shoutcaster)
 		{
-			CG_PlayerFloatText(cent, cg_drawSpectatorNames.integer == 1 ? ci->cleanname : ci->name, height + 8);
+			if (cg_shoutcastDrawHealth.integer == 1 && cg_drawSpectatorNames.integer == 0)
+			{
+				CG_PlayerFloatText(cent, va("%s%ihp", ci->team == TEAM_AXIS ? "^1" : "^$", ci->health), height + spacing);
+			}
+			else if (cg_shoutcastDrawHealth.integer == 2)
+			{
+				vec4_t bgcolor     = { 0.0f, 0.0f, 0.0f, 1.0f };
+				vec4_t healthColor = { 0.0f, 0.0f, 1.0f, 1.0f };
+
+				float fraction = (float)ci->health / (float)CG_GetPlayerMaxHealth(cent->currentState.clientNum, ci->cls, ci->team);
+
+				if (ci->team == TEAM_AXIS)
+				{
+					Vector4Set(healthColor, 1.0f, 0.0f, 0.0f, 1.0f);
+				}
+
+				CG_PlayerFloatBar(cent, fraction, healthColor, healthColor, bgcolor, height + spacing + 8);
+				spacing += 14;
+			}
+		}
+
+		if (cg_drawSpectatorNames.integer > 0)
+		{
+			name = cg_drawSpectatorNames.integer == 1 ? ci->cleanname : ci->name;
+
+			if (cg_shoutcastDrawHealth.integer == 1 && cgs.clientinfo[cg.clientNum].shoutcaster)
+			{
+				name = va("%s %s%ihp", name, ci->team == TEAM_AXIS ? "^1" : "^$", ci->health);
+			}
+
+			CG_PlayerFloatText(cent, name, height + spacing);
 		}
 
 		// show some useful icons to spectators
@@ -2065,7 +2129,8 @@ static void CG_PlayerSprites(centity_t *cent)
 		}
 		if (cent->currentState.eFlags & EF_DEAD &&
 		    ((cg.snap->ps.stats[STAT_PLAYER_CLASS] == PC_MEDIC && cg.snap->ps.stats[STAT_HEALTH] > 0 && sameTeam) ||
-		     (!(cg.snap->ps.pm_flags & PMF_FOLLOW) && cgs.clientinfo[cg.clientNum].shoutcaster)))
+		     (!(cg.snap->ps.pm_flags & PMF_FOLLOW) && cgs.clientinfo[cg.clientNum].shoutcaster) ||
+		     ((cg.snap->ps.pm_flags & PMF_FOLLOW) && cgs.clientinfo[cg.snap->ps.clientNum].shoutcaster)))
 		{
 			CG_PlayerFloatSprite(cent, cgs.media.medicReviveShader, height, numIcons++, NULL);
 			return;
@@ -2148,7 +2213,8 @@ static void CG_PlayerSprites(centity_t *cent)
 		}
 	}
 
-	if (CG_IsOnFireteam(cent->currentState.number) && CG_IsOnSameFireteam(cent->currentState.number, cg.clientNum))
+	if (CG_IsOnFireteam(cent->currentState.number) && CG_IsOnSameFireteam(cent->currentState.number, cg.clientNum)
+	    && cg_fireteamSprites.integer)
 	{
 		CG_PlayerFloatSprite(cent, cgs.media.fireteamIcon, height, numIcons++,
 		                     cgs.clientinfo[cent->currentState.number].selected ? colorRed : colorGreen);
@@ -3037,7 +3103,9 @@ void CG_Player(centity_t *cent)
 	if (!(cent->currentState.eFlags & EF_DEAD) /*&& !usingBinocs*/)
 	{
 		if ((cent->currentState.eFlags & EF_TALK)
+#ifdef FEATURE_MULTIVIEW
 		    && (cgs.clientinfo[cent->currentState.clientNum].weaponState == WSTATE_IDLE)
+#endif
 		    && !(cent->currentState.eFlags & (EF_FIRING | EF_MOUNTEDTANK | EF_ZOOMING))
 		    && !(cent->pe.torso.animation->flags & (ANIMFL_LADDERANIM | ANIMFL_FIRINGANIM | ANIMFL_RELOADINGANIM))
 		    && !(GetWeaponTableData(cent->currentState.weapon)->type & (WEAPON_TYPE_SET | WEAPON_TYPE_SCOPED)))
@@ -3501,4 +3569,52 @@ void CG_HudHeadAnimation(bg_character_t *ch, lerpFrame_t *lf, int *oldframe, int
 	*oldframe = lf->oldFrame;
 	*frame    = lf->frame;
 	*backlerp = lf->backlerp;
+}
+
+/**
+* @brief Get player max health
+* @param[in] clientNum
+* @param[in] class
+*/
+int CG_GetPlayerMaxHealth(int clientNum, int class, int team)
+{
+	int i;
+	int maxHealth = 100;
+	for (i = 0; i < MAX_CLIENTS; i++)
+	{
+		if (!cgs.clientinfo[i].infoValid)
+		{
+			continue;
+		}
+
+		if (cgs.clientinfo[i].team != team)
+		{
+			continue;
+		}
+
+		if (cgs.clientinfo[i].cls != PC_MEDIC)
+		{
+			continue;
+		}
+
+		maxHealth += 10;
+
+		if (maxHealth >= 125)
+		{
+			maxHealth = 125;
+			break;
+		}
+	}
+
+	if (BG_IsSkillAvailable(cgs.clientinfo[cg.clientNum].skill, SK_BATTLE_SENSE, SK_BATTLE_SENSE_HEALTH))
+	{
+		maxHealth += 15;
+	}
+
+	if (class == PC_MEDIC)
+	{
+		maxHealth *= 1.12f;
+	}
+
+	return maxHealth;
 }

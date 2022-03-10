@@ -773,7 +773,7 @@ static int _et_G_XP_Set(lua_State *L)
 	ent->client->ps.stats[STAT_XP] = (int)ent->client->sess.startxptotal;
 
 	G_CalcRank(ent->client);
-	BG_PlayerStateToEntityState(&ent->client->ps, &ent->s, level.time, qtrue);
+	BG_PlayerStateToEntityState(&ent->client->ps, &ent->s, level.time, qfalse);
 
 	return 1;
 }
@@ -2405,7 +2405,7 @@ static void registerConfigstringConstants(lua_vm_t *vm)
 	lua_regconstinteger(vm->L, CS_FIRSTBLOOD);            // Team that has first blood
 	lua_regconstinteger(vm->L, CS_ROUNDSCORES1);          // Axis round wins
 	lua_regconstinteger(vm->L, CS_ROUNDSCORES2);          // Allied round wins
-	lua_regconstinteger(vm->L, CS_MAIN_AXIS_OBJECTIVE);
+	lua_regconstinteger(vm->L, CS_MAIN_AXIS_OBJECTIVE);   // Most important current objective
 	lua_regconstinteger(vm->L, CS_MAIN_ALLIES_OBJECTIVE); // Most important current objective
 	lua_regconstinteger(vm->L, CS_MUSIC_QUEUE);
 	lua_regconstinteger(vm->L, CS_SCRIPT_MOVER_NAMES);

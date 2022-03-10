@@ -338,18 +338,24 @@ void VM_LoadSymbols(vm_t *vm)
  */
 intptr_t QDECL VM_DllSyscall(intptr_t arg, ...)
 {
-#if defined(__x86_64__) || defined (__llvm__) || ((defined __linux__) && (defined __powerpc__))
+#if defined(__x86_64__) || defined (__llvm__) || defined(__ANDROID__) || ((defined __linux__) && (defined __powerpc__))
 	// rcg010206 - see commentary above
-	intptr_t args[VM_SYSCALL_ARGS];
+	intptr_t args[VM_SYSCALL_ARGS] = { 0 };
 	int      i;
 	va_list  ap;
+	size_t len = ARRAY_LEN(args);
 
 	args[0] = arg;
 
 	va_start(ap, arg);
-	for (i = 1; i < ARRAY_LEN(args); i++)
+	for (i = 1; i < len; i++)
 	{
 		args[i] = va_arg(ap, intptr_t);
+		if (VM_CALL_END == (int) args[i])
+		{
+			args[i] = 0;
+			break;
+		}
 	}
 	va_end(ap);
 
@@ -747,7 +753,7 @@ intptr_t QDECL VM_CallFunc(vm_t *vm, int callNum, ...)
 			// We add the end of args point since windows at least just returns random values if there are no args
 			// this way we know that only valid values are sent to the vm
 			args[i] = va_arg(ap, intptr_t);
-			if (args[i] == VM_CALL_END)
+			if (VM_CALL_END == (int) args[i])
 			{
 				args[i] = 0;
 				break;
@@ -903,7 +909,7 @@ void VM_LogSyscalls(int *args)
 
 	if (!f)
 	{
-		f = fopen("syscalls.log", "w");
+		f = Sys_FOpen(FS_BuildOSPath(Cvar_VariableString("fs_homepath"), Cvar_VariableString("fs_game"), "syscalls.log"), "w");
 
 		if (!f)
 		{

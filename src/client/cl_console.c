@@ -47,6 +47,7 @@ console_t con;
 cvar_t *con_notifytime;
 cvar_t *con_openspeed;
 cvar_t *con_autoclear;
+cvar_t *con_background;
 
 vec4_t console_highlightcolor = { 0.5f, 0.5f, 0.2f, 0.45f };
 
@@ -321,6 +322,7 @@ void Con_Init(void)
 	con_notifytime = Cvar_Get("con_notifytime", "7", 0); // increased per id req for obits
 	con_openspeed  = Cvar_Get("con_openspeed", "3", 0);
 	con_autoclear  = Cvar_Get("con_autoclear", "1", CVAR_ARCHIVE);
+	con_background = Cvar_GetAndDescribe("con_background", "", CVAR_ARCHIVE, "Console background color in normalized RGBA format, eg. \"0.2 0.2 0.2 0.8\".");
 
 	Field_Clear(&g_consoleField);
 	g_consoleField.widthInChars = g_console_field_width;
@@ -403,6 +405,11 @@ void CL_ConsolePrint(char *txt)
 	int      color;
 	qboolean skipnotify = qfalse;
 	int      prev;
+
+	if (cls.clipboard.buffer)
+	{
+		Q_strcat(cls.clipboard.buffer, cls.clipboard.bufferSize, txt);
+	}
 
 	// for some demos we don't want to ever show anything on the console
 	if (cl_noprint && cl_noprint->integer)
@@ -553,7 +560,7 @@ void Con_DrawClock(void)
 	time(&longTime);
 	localTime = localtime(&longTime);
 
-	Com_sprintf(clock, sizeof(clock), _("%02d%c%02d"), localTime->tm_hour, localTime->tm_sec & 1 ? ':' : ' ', localTime->tm_min);
+	Com_sprintf(clock, sizeof(clock), "%02d%c%02d", localTime->tm_hour, localTime->tm_sec & 1 ? ':' : ' ', localTime->tm_min);
 
 	i = strlen(clock);
 
@@ -745,8 +752,14 @@ void Con_DrawSolidConsole(float frac)
 	}
 	else
 	{
-		SCR_DrawPic(0, 0, SCREEN_WIDTH, y, cls.consoleShader);
-
+		if (Q_ParseColorRGBA(con_background->string, color))
+		{
+			SCR_FillRect(0, 0, SCREEN_WIDTH, y, color);
+		}
+		else
+		{
+			SCR_DrawPic(0, 0, SCREEN_WIDTH, y, cls.consoleShader);
+		}
 		/*
 		// draw the logo
 		if (frac >= 0.5f)

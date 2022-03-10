@@ -122,7 +122,8 @@ void G_BounceMissile(gentity_t *ent, trace_t *trace)
 
 		// check for stop
 		//if ( trace->plane.normal[2] > 0.2 && VectorLengthSquared( ent->s.pos.trDelta ) < Square(40) )
-		if (trace->plane.normal[2] > 0.2f && VectorLengthSquared(relativeDelta) < 1600) // Square(40)
+		if ((trace->plane.normal[2] > 0.2f && VectorLengthSquared(relativeDelta) < 1600)
+		    || (!trace->fraction && !(GetWeaponTableData(ent->s.weapon)->type & WEAPON_TYPE_RIFLENADE))) // Square(40)
 		{
 			// make the world the owner of the ent, so the player can shoot it after it stops moving
 			if (ent->r.contents == CONTENTS_CORPSE)
@@ -447,10 +448,10 @@ void G_ExplodeMissile(gentity_t *ent)
 }
 
 /**
- * @brief Landmine_Check_Ground
+ * @brief MissileGroundCheck
  * @param[in,out] self
  */
-void Landmine_Check_Ground(gentity_t *self)
+void MissileGroundCheck(gentity_t *self)
 {
 	vec3_t  mins, maxs;
 	vec3_t  start, end;
@@ -481,10 +482,12 @@ void G_RunMissile(gentity_t *ent)
 	vec3_t  origin, angle;
 	trace_t tr;
 
-	// shootable ent (i.e landmine, dynamite, satchel)
-	if (ent->r.contents == CONTENTS_CORPSE)
+	// throwable ent (landmine, dynamite, satchel, grenade)
+	// if ent already landed but the ground "disappeared" later on (i.e player got gibbed)
+	// check for such change so the ent can still fall down and not be floating in the air
+	if (GetWeaponTableData(ent->s.weapon)->firingMode & WEAPON_FIRING_MODE_THROWABLE)
 	{
-		Landmine_Check_Ground(ent);
+		MissileGroundCheck(ent);
 
 		if (ent->s.groundEntityNum == -1)
 		{
@@ -509,7 +512,7 @@ void G_RunMissile(gentity_t *ent)
 		}
 	}
 
-	if (level.tracemapLoaded && ent->s.pos.trType == TR_GRAVITY && ent->r.contents != CONTENTS_CORPSE)
+	if (ent->r.contents != CONTENTS_CORPSE)
 	{
 		if (ent->count)
 		{
@@ -528,18 +531,31 @@ void G_RunMissile(gentity_t *ent)
 
 				//G_ExplodeMissile(ent);  // play explode sound
 				G_FreeEntity(ent);      // and delete it
-				return;
 			}
 			else
 			{
-				float skyFloor, skyHeight, groundFloor;
+				vec3_t tmp;
 
-				skyFloor    = BG_GetTracemapSkyGroundFloor();   // lowest sky height point
-				skyHeight   = BG_GetSkyHeightAtPoint(origin);
-				groundFloor = BG_GetTracemapGroundFloor();
+				VectorCopy(origin, tmp);
+				tmp[2] = MAX_MAP_SIZE;
+				trap_Trace(&tr, origin, NULL, NULL, tmp, ent->s.number, ent->clipmask);
 
-				// is ent under the ground limit, and ground valid
-				if (origin[2] < groundFloor && groundFloor != MAX_MAP_SIZE)
+				// are we in worldspace again
+				if (tr.fraction == 1.f)
+				{
+					G_RunThink(ent);
+
+					VectorCopy(origin, ent->r.currentOrigin);   // keep the previous origin to don't go too far
+					VectorCopy(angle, ent->r.currentAngles);
+
+					return;     // keep flying
+				}
+
+				tmp[2] = -MAX_MAP_SIZE;
+				trap_Trace(&tr, origin, NULL, NULL, tmp, ent->s.number, ent->clipmask);
+
+				// is ent go under the ground limit
+				if (tr.fraction == 1.f)
 				{
 					gentity_t *tent;
 
@@ -553,19 +569,8 @@ void G_RunMissile(gentity_t *ent)
 					return;
 				}
 
-				// are we in worldspace again - or did we hit a ceiling from the outside of the world
-				if (skyHeight == MAX_MAP_SIZE && origin[2] >= skyFloor)
-				{
-					G_RunThink(ent);
-
-					VectorCopy(origin, ent->r.currentOrigin);   // keep the previous origin to don't go too far
-					VectorCopy(angle, ent->r.currentAngles);
-
-					return;     // keep flying
-				}
-
 				// is ent above the sky limit
-				if (skyHeight <= origin[2])
+				if (tr.surfaceFlags & SURF_SKY)
 				{
 					G_RunThink(ent);
 					return; // keep flying
@@ -577,6 +582,7 @@ void G_RunMissile(gentity_t *ent)
 				ent->count  = 0;
 				ent->count2 = 1;
 			}
+			return;
 		}
 		else if (!ent->count2 && BG_GetSkyHeightAtPoint(origin) - BG_GetGroundHeightAtPoint(origin) > 1024)
 		{
@@ -589,16 +595,25 @@ void G_RunMissile(gentity_t *ent)
 
 			if (ent->count2 == 1)
 			{
-				VectorSubtract(origin, ent->r.currentOrigin, impactpos);
-				VectorMA(origin, 16, impactpos, impactpos);
-
-				trap_Trace(&mortar_tr, origin, ent->r.mins, ent->r.maxs, impactpos, ent->r.ownerNum, ent->clipmask);
-
-				if (mortar_tr.fraction != 1.f && !(mortar_tr.surfaceFlags & SURF_NOIMPACT))
+				if (ent->s.pos.trType == TR_LINEAR)
 				{
 					// missile go down, play the falling sound
 					G_AddEvent(ent, EV_MISSILE_FALLING, 0);
 					ent->count2 = 2;
+				}
+				else
+				{
+					VectorSubtract(origin, ent->r.currentOrigin, impactpos);
+					VectorMA(origin, 16, impactpos, impactpos);
+
+					trap_Trace(&mortar_tr, origin, ent->r.mins, ent->r.maxs, impactpos, ent->r.ownerNum, ent->clipmask);
+
+					if (mortar_tr.fraction != 1.f && !(mortar_tr.surfaceFlags & SURF_NOIMPACT))
+					{
+						// missile go down, play the falling sound
+						G_AddEvent(ent, EV_MISSILE_FALLING, 0);
+						ent->count2 = 2;
+					}
 				}
 			}
 
@@ -633,10 +648,7 @@ void G_RunMissile(gentity_t *ent)
 
 	if (tr.fraction != 1.f)
 	{
-		/*qboolean exploded = qfalse;*/
-
-		if (level.tracemapLoaded && ent->s.pos.trType == TR_GRAVITY && ent->r.contents != CONTENTS_CORPSE
-		    && (tr.surfaceFlags & SURF_SKY))
+		if (ent->r.contents != CONTENTS_CORPSE && (tr.surfaceFlags & SURF_SKY))
 		{
 			// goes through sky
 			ent->count = 1;
@@ -655,12 +667,12 @@ void G_RunMissile(gentity_t *ent)
 		{
 			if (ent->s.pos.trType != TR_STATIONARY)
 			{
-				/*exploded = */ G_MissileImpact(ent, &tr, GetWeaponFireTableData(ent->s.weapon)->impactDamage);
+				G_MissileImpact(ent, &tr, GetWeaponFireTableData(ent->s.weapon)->impactDamage);
 			}
 		}
 		else
 		{
-			/*exploded =*/ G_MissileImpact(ent, &tr, GetWeaponFireTableData(ent->s.weapon)->impactDamage);
+			G_MissileImpact(ent, &tr, GetWeaponFireTableData(ent->s.weapon)->impactDamage);
 		}
 
 		if (ent->s.eType != ET_MISSILE)
@@ -975,10 +987,11 @@ void G_FlameDamage(gentity_t *self, gentity_t *ignoreent)
  */
 void G_RunFlamechunk(gentity_t *ent)
 {
-	vec3_t    vel, add;
+	vec3_t    vel;
 	vec3_t    neworg;
 	trace_t   tr;
 	float     speed;
+	float     deltaTime  = (level.time - ent->s.pos.trTime) / 1000.f;
 	gentity_t *ignoreent = NULL;
 
 	// vel was only being set if (level.time - ent->timestamp > 50
@@ -987,9 +1000,13 @@ void G_RunFlamechunk(gentity_t *ent)
 	speed = VectorNormalize(vel);
 
 	// Adust the current speed of the chunk
-	if (level.time - ent->timestamp > 50)
+	if (level.time - ent->timestamp <= 50)
 	{
-		speed -= (50.f / 1000.f) * FLAME_FRICTION_PER_SEC;
+		speed = FLAME_START_SPEED;
+	}
+	else if (level.time - ent->timestamp <= ent->s.pos.trDuration)
+	{
+		speed -= deltaTime * FLAME_FRICTION_PER_SEC;
 
 		if (speed < FLAME_MIN_SPEED)
 		{
@@ -998,14 +1015,11 @@ void G_RunFlamechunk(gentity_t *ent)
 
 		VectorScale(vel, speed, ent->s.pos.trDelta);
 	}
-	else
-	{
-		speed = FLAME_START_SPEED;
-	}
+
+	ent->s.pos.trTime = level.time;
 
 	// Move the chunk
-	VectorScale(ent->s.pos.trDelta, 50.f / 1000.f, add);
-	VectorAdd(ent->r.currentOrigin, add, neworg);
+	VectorMA(ent->r.currentOrigin, deltaTime, ent->s.pos.trDelta, neworg);
 
 	trap_Trace(&tr, ent->r.currentOrigin, ent->r.mins, ent->r.maxs, neworg, ent->r.ownerNum, MASK_SHOT | MASK_WATER);
 
@@ -1024,6 +1038,12 @@ void G_RunFlamechunk(gentity_t *ent)
 		VectorMA(vel, -2.f * dot, tr.plane.normal, vel);
 		VectorNormalize(vel);
 		speed *= 0.5f * (0.25f + 0.75f * ((dot + 1.0f) * 0.5f));
+
+		if (speed < FLAME_MIN_SPEED)
+		{
+			speed = FLAME_MIN_SPEED;
+		}
+
 		VectorScale(vel, speed, ent->s.pos.trDelta);
 
 		if (tr.entityNum != ENTITYNUM_WORLD && tr.entityNum != ENTITYNUM_NONE)
@@ -1112,7 +1132,7 @@ gentity_t *fire_flamechunk(gentity_t *self, vec3_t start, vec3_t dir)
 	bolt->flameQuotaTime   = level.time + 50;
 	bolt->count2           = 0; // how often it bounced off of something
 	bolt->count            = 1; // this chunk can add hit
-	bolt->s.pos.trDuration = 800;
+	bolt->s.pos.trDuration = 550;
 	bolt->speed            = FLAME_START_SIZE; // 'speed' will be the current size radius of the chunk
 
 	return bolt;
@@ -1198,7 +1218,7 @@ void DynaFree(gentity_t *self)
  */
 void G_ChainFree(gentity_t *self)
 {
-    float     dist;
+	float     dist;
 	gentity_t *ent;
 	int       entityList[MAX_GENTITIES];
 	int       numListedEntities;
@@ -1216,8 +1236,8 @@ void G_ChainFree(gentity_t *self)
 	}
 
 	numListedEntities = trap_EntitiesInBox(mins, maxs, entityList, MAX_GENTITIES);
-    
-    for (e = 0 ; e < numListedEntities ; e++)
+
+	for (e = 0 ; e < numListedEntities ; e++)
 	{
 		ent = &g_entities[entityList[e]];
 
@@ -1245,17 +1265,17 @@ void G_ChainFree(gentity_t *self)
 		{
 			G_DPrintf("dyno chaining: inflictor: %p, ent: %p\n", self->onobjective, ent->onobjective);
 
-			if (self->onobjective == ent->onobjective)
+			if (self->onobjective == ent->onobjective && ent->s.effect1Time)
 			{
 				// free the other dynamite now too since they are peers
 				ent->nextthink = level.time;
-                
-                ent->think = G_ChainFree;
+
+				ent->think = G_ChainFree;
 			}
 		}
-    }
-        
-    G_FreeEntity(self);
+	}
+
+	G_FreeEntity(self);
 }
 
 /**
@@ -1725,7 +1745,7 @@ qboolean G_LandmineSnapshotCallback(int entityNum, int clientNum)
 		return qfalse;
 	}
 
-	if (clEnt->client->sess.skill[SK_BATTLE_SENSE] >= 4)
+	if (BG_IsSkillAvailable(clEnt->client->sess.skill, SK_BATTLE_SENSE, SK_BATTLE_SENSE_TRAP_AWARENESS))
 	{
 		return qtrue;
 	}
@@ -1853,7 +1873,7 @@ gentity_t *fire_flamebarrel(gentity_t *self, vec3_t start, vec3_t dir)
 	bolt->clipmask = MASK_MISSILESHOT;
 
 	bolt->s.pos.trType = TR_GRAVITY;
-	bolt->s.pos.trTime = level.time - MISSILE_PRESTEP_TIME;     // move a bit on the very first frame
+	bolt->s.pos.trTime = level.time + MISSILE_PRESTEP_TIME;     // move a bit on the very first frame
 	VectorCopy(start, bolt->s.pos.trBase);
 	VectorScale(dir, 900 + (crandom() * 100), bolt->s.pos.trDelta);
 	SnapVector(bolt->s.pos.trDelta);            // save net bandwidth

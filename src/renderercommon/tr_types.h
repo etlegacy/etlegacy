@@ -129,10 +129,10 @@ typedef enum
 	RT_MAX_REF_ENTITY_TYPE
 } refEntityType_t;
 
-#define REFLAG_ONLYHAND     1   ///< only draw hand surfaces
-#define REFLAG_FORCE_LOD    8   ///< force a low lod
-#define REFLAG_ORIENT_LOD   16  ///< on LOD switch, align the model to the player's camera
-#define REFLAG_DEAD_LOD     32  ///< allow the LOD to go lower than recommended
+#define REFLAG_ONLYHAND     BIT(0)   ///< only draw hand surfaces
+#define REFLAG_FORCE_LOD    BIT(3)   ///< force a low lod
+#define REFLAG_ORIENT_LOD   BIT(4)   ///< on LOD switch, align the model to the player's camera
+#define REFLAG_DEAD_LOD     BIT(5)  ///< allow the LOD to go lower than recommended
 
 // renderer2 BEGIN
 
@@ -141,7 +141,6 @@ typedef enum
 /// having bone names for each refEntity_t takes several MiBs
 /// in backEndData_t so only use it for debugging and development
 /// enabling this will show the bone names with r_showSkeleton 1
-#define USE_REFENTITY_ANIMATIONSYSTEM 1 // renderer2
 //#define REFBONE_NAMES 1
 
 #if defined(USE_REFENTITY_ANIMATIONSYSTEM)
@@ -474,12 +473,18 @@ typedef struct
 	qboolean isFullscreen;
 	qboolean smpActive;                     ///< obsolete, kept for compatibility
 
-	// extra general info - keep at end for backward compatibility
+	// ------------------ Cutoff line for Vanilla glConfig, do not add anything above for compatibility. ------------
+
+	// OpenGL shading lang version
 	char shadingLanguageVersion[MAX_STRING_CHARS];
 	int glslMajorVersion;
 	int glslMinorVersion;
 
+	// OpenGL context version
 	int contextCombined;
+
+	// The real window width and height (without render scaling)
+	int windowWidth, windowHeight;
 } glconfig_t;
 
 /**
@@ -491,6 +496,7 @@ typedef enum
 	GL_CONTEXT_DEFAULT,
 	GL_CONTEXT_COMP,
 	GL_CONTEXT_CORE,
+	GL_CONTEXT_ES, // Only sets the ES context not the EGL flag
 	GL_CONTEXT_EGL,
 } windowContextType_t;
 
@@ -504,6 +510,11 @@ typedef struct windowContext_s
 	int versionMajor;
 	int versionMinor;
 	int context;
+
+	// Should the main screen buffer use sampling
+	int samples;
+	// ;)
+	qboolean vulkan;
 } windowContext_t;
 
 // =========================================

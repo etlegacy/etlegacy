@@ -43,7 +43,10 @@
 #include "dl_public.h"
 
 #ifdef FEATURE_SSL
-#define SSL_VERIFY 1
+
+#if defined(USING_WOLFSSL) || defined(USING_OPENSSL)
+	#define SSL_VERIFY 1
+#endif
 
 #if SSL_VERIFY
 
@@ -53,22 +56,28 @@
 #	include <wolfssl/ssl.h>
 #endif
 
+#ifdef USING_OPENSSL
 #include <openssl/err.h>
 #include <openssl/ssl.h>
+#endif
+
 #endif
 #endif
 
 #define APP_NAME        "ID_DOWNLOAD"
 #define APP_VERSION     "2.0"
-#define CA_CERT_FILE    "cacert.pem"
 
 #define GET_BUFFER_SIZE 1024 * 256
+
+#ifdef __linux__
+#define CA_CERT_DEFAULT "/etc/ssl/certs/ca-certificates.crt"
+#endif
 
 /**
  * @var dl_initialized
  * @brief Initialize once
  */
-static int dl_initialized = 0;
+static qboolean dl_initialized = qfalse;
 
 static CURLM *dl_multi   = NULL;
 static CURL  *dl_request = NULL;
@@ -95,6 +104,7 @@ static CURLcode DL_cb_Context(CURL *curl, void *ssl_ctx, void *parm)
 	if(len <= 0)
 	{
 		FS_FCloseFile(certHandle);
+		goto callback_failed;
 	}
 
 	char *buffer = Com_Allocate(len + 1);
@@ -217,7 +227,7 @@ void DL_InitDownload(void)
 	dl_multi = curl_multi_init();
 
 	Com_Printf("Client download subsystem initialized\n");
-	dl_initialized = 1;
+	dl_initialized = qtrue;
 }
 
 /**
@@ -235,7 +245,7 @@ void DL_Shutdown(void)
 
 	curl_global_cleanup();
 
-	dl_initialized = 0;
+	dl_initialized = qfalse;
 }
 
 /**
@@ -244,20 +254,43 @@ void DL_Shutdown(void)
  */
 static void DL_InitSSL(CURL *curl)
 {
-#ifdef FEATURE_SSL
-#if SSL_VERIFY
+#if defined(FEATURE_SSL)
+
+#if defined(USING_SCHANNEL)
+	curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 1);
+	curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 1);
+#elif SSL_VERIFY
 	curl_easy_setopt(curl, CURLOPT_CAINFO, NULL);
 	curl_easy_setopt(curl, CURLOPT_CAPATH, NULL);
 
 	if (FS_SV_FileExists(CA_CERT_FILE, qtrue))
 	{
-		// curl_easy_setopt(curl, CURLOPT_CAINFO, "./cert.crt");
 		curl_easy_setopt(curl, CURLOPT_SSL_CTX_FUNCTION, DL_cb_Context);
 	}
+	else if(FS_FileInPathExists(Cvar_VariableString("dl_capath")))
+	{
+		curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 1);
+		curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 1);
+		curl_easy_setopt(curl, CURLOPT_CAINFO, Cvar_VariableString("dl_capath"));
+	}
+#ifdef __linux__
+	else if(FS_FileInPathExists(CA_CERT_DEFAULT))
+	{
+		curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 1);
+		curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 1);
+		curl_easy_setopt(curl, CURLOPT_CAINFO, CA_CERT_DEFAULT);
+	}
+#endif
 	else
 	{
+#if defined(_WIN32) && defined(USING_OPENSSL)
+		curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 1);
+		curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 1);
+		curl_easy_setopt(curl, CURLOPT_SSL_OPTIONS, CURLSSLOPT_NATIVE_CA);
+#else
 		curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0);
 		curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0);
+#endif
 	}
 #else
 	curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0);
@@ -274,9 +307,9 @@ static void DL_InitSSL(CURL *curl)
  * @param remoteName
  * @return
  */
-int DL_BeginDownload(char *localName, const char *remoteName)
+int DL_BeginDownload(const char *localName, const char *remoteName)
 {
-	char referer[MAX_STRING_CHARS + 5 /*"ET://"*/];
+	char referer[MAX_STRING_CHARS + 5 /*"et://"*/];
 
 	if (dl_request)
 	{
@@ -296,7 +329,7 @@ int DL_BeginDownload(char *localName, const char *remoteName)
 		return 0;
 	}
 
-	dl_file = fopen(localName, "wb+");
+	dl_file = Sys_FOpen(localName, "wb");
 	if (!dl_file)
 	{
 		Com_Printf(S_COLOR_RED  "DL_BeginDownload: Error - unable to open '%s' for writing\n", localName);
@@ -306,7 +339,7 @@ int DL_BeginDownload(char *localName, const char *remoteName)
 	DL_InitDownload();
 
 	/* ET://ip:port */
-	strcpy(referer, "ET://");
+	strcpy(referer, "et://");
 	Q_strncpyz(referer + 5, Cvar_VariableString("cl_currentServerIP"), MAX_STRING_CHARS);
 
 	dl_request = curl_easy_init();
@@ -436,6 +469,24 @@ dlStatus_t DL_DownloadLoop(void)
 		return DL_CONTINUE;
 	}
 
+	if(status > CURLM_OK)
+	{
+		err = curl_multi_strerror(status);
+		goto curl_done;
+	}
+
+	if (Cvar_VariableIntegerValue("cl_downloadSize") <= 0)
+	{
+		curl_off_t cl;
+		if (curl_easy_getinfo(dl_request, CURLINFO_CONTENT_LENGTH_DOWNLOAD_T, &cl) == CURLE_OK)
+		{
+			if (cl != -1)
+			{
+				Cvar_SetValue("cl_downloadSize", (float) cl);
+			}
+		}
+	}
+
 	while ((msg = curl_multi_info_read(dl_multi, &dls)) && msg->easy_handle != dl_request)
 		;
 
@@ -453,6 +504,7 @@ dlStatus_t DL_DownloadLoop(void)
 		err = NULL;
 	}
 
+curl_done:
 	curl_multi_remove_handle(dl_multi, dl_request);
 	curl_easy_cleanup(dl_request);
 

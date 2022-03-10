@@ -122,7 +122,7 @@ void R_RenderShadowEdges(void)
 			// triangle, it is a sil edge
 			if (hit[1] == 0)
 			{
-				// OpenGLES implementation 
+				// OpenGLES implementation
 				// A single drawing call is better than many. So I prefer a singe TRIANGLES call than many TRAINGLE_STRIP call
 				// even if it seems less efficiant, it's faster on the PANDORA
 				indexes[idx++] = i;
@@ -141,7 +141,7 @@ void R_RenderShadowEdges(void)
 			*/
 		}
 	}
-	qglDrawElements(GL_TRIANGLES, idx, GL_UNSIGNED_SHORT, indexes);
+	glDrawElements(GL_TRIANGLES, idx, GL_UNSIGNED_SHORT, indexes);
 }
 
 /**
@@ -224,44 +224,44 @@ void RB_ShadowTessEnd(void)
 	// draw the silhouette edges
 
 	GL_Bind(tr.whiteImage);
-	qglEnable(GL_CULL_FACE);
+	glEnable(GL_CULL_FACE);
 	GL_State(GLS_SRCBLEND_ONE | GLS_DSTBLEND_ZERO);
-	qglColor3f(0.2f, 0.2f, 0.2f);
+	glColor4f(0.2f, 0.2f, 0.2f, 1.0f);
 
 	// don't write to the color buffer
-	qglColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+	glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
 
-	qglEnable(GL_STENCIL_TEST);
-	qglStencilFunc(GL_ALWAYS, 1, 255);
+	glEnable(GL_STENCIL_TEST);
+	glStencilFunc(GL_ALWAYS, 1, 255);
 
 	// mirrors have the culling order reversed
 	if (backEnd.viewParms.isMirror)
 	{
-		qglCullFace(GL_FRONT);
-		qglStencilOp(GL_KEEP, GL_KEEP, GL_INCR);
+		glCullFace(GL_FRONT);
+		glStencilOp(GL_KEEP, GL_KEEP, GL_INCR);
 
 		R_RenderShadowEdges();
 
-		qglCullFace(GL_BACK);
-		qglStencilOp(GL_KEEP, GL_KEEP, GL_DECR);
+		glCullFace(GL_BACK);
+		glStencilOp(GL_KEEP, GL_KEEP, GL_DECR);
 
 		R_RenderShadowEdges();
 	}
 	else
 	{
-		qglCullFace(GL_BACK);
-		qglStencilOp(GL_KEEP, GL_KEEP, GL_INCR);
+		glCullFace(GL_BACK);
+		glStencilOp(GL_KEEP, GL_KEEP, GL_INCR);
 
 		R_RenderShadowEdges();
 
-		qglCullFace(GL_FRONT);
-		qglStencilOp(GL_KEEP, GL_KEEP, GL_DECR);
+		glCullFace(GL_FRONT);
+		glStencilOp(GL_KEEP, GL_KEEP, GL_DECR);
 
 		R_RenderShadowEdges();
 	}
 
 	// reenable writing to the color buffer
-	qglColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 }
 
 /**
@@ -281,29 +281,29 @@ void RB_ShadowFinish(void)
 	{
 		return;
 	}
-	qglEnable(GL_STENCIL_TEST);
-	qglStencilFunc(GL_NOTEQUAL, 0, 255);
+	glEnable(GL_STENCIL_TEST);
+	glStencilFunc(GL_NOTEQUAL, 0, 255);
 
-	qglDisable(GL_CLIP_PLANE0);
-	qglDisable(GL_CULL_FACE);
+	glDisable(GL_CLIP_PLANE0);
+	glDisable(GL_CULL_FACE);
 
 	GL_Bind(tr.whiteImage);
 
-	qglLoadIdentity();
+	glLoadIdentity();
 
-	qglColor3f(0.6f, 0.6f, 0.6f);
+	glColor4f(0.6f, 0.6f, 0.6f, 1.0f);
 	GL_State(GLS_DEPTHMASK_TRUE | GLS_SRCBLEND_DST_COLOR | GLS_DSTBLEND_ZERO);
 
-	// OpenGLES implementation 
-	GLboolean text  = qglIsEnabled(GL_TEXTURE_COORD_ARRAY);
-	GLboolean glcol = qglIsEnabled(GL_COLOR_ARRAY);
+	// OpenGLES implementation
+	GLboolean text  = glIsEnabled(GL_TEXTURE_COORD_ARRAY);
+	GLboolean glcol = glIsEnabled(GL_COLOR_ARRAY);
 	if (text)
 	{
-		qglDisableClientState(GL_TEXTURE_COORD_ARRAY);
+		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 	}
 	if (glcol)
 	{
-		qglDisableClientState(GL_COLOR_ARRAY);
+		glDisableClientState(GL_COLOR_ARRAY);
 	}
 	GLfloat vtx[] =
 	{
@@ -312,19 +312,19 @@ void RB_ShadowFinish(void)
 		100,  -100, -10,
 		-100, -100, -10
 	};
-	qglVertexPointer(3, GL_FLOAT, 0, vtx);
-	qglDrawArrays(GL_TRIANGLE_FAN, 0, 4);
+	glVertexPointer(3, GL_FLOAT, 0, vtx);
+	glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
 	if (text)
 	{
-		qglEnableClientState(GL_TEXTURE_COORD_ARRAY);
+		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 	}
 	if (glcol)
 	{
-		qglEnableClientState(GL_COLOR_ARRAY);
+		glEnableClientState(GL_COLOR_ARRAY);
 	}
 
-	qglColor4f(1, 1, 1, 1);
-	qglDisable(GL_STENCIL_TEST);
+	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+	glDisable(GL_STENCIL_TEST);
 }
 
 /**

@@ -45,10 +45,10 @@
 
 #include <theora/theora.h>
 
-#define OGG_BUFFER_SIZE 8 * 1024  //4096
+#define OGG_BUFFER_SIZE (8 * 1024)  //4096
 #define OGG_SAMPLEWIDTH 2
 
-#define SIZEOF_RAWBUFF 4 * 1024
+#define SIZEOF_RAWBUFF (4 * 1024)
 #define MIN_AUDIO_PRELOAD 400   // in ms
 #define MAX_AUDIO_PRELOAD 500   // in ms
 
@@ -492,8 +492,6 @@ void OGV_UpdateCinematic(cinematic_t *cin, int time)
 	cin->currentData.image  = cin->frameBuffer[0];
 	cin->currentData.height = cin->frameHeight;
 	cin->currentData.width  = cin->frameWidth;
-
-	return;
 }
 
 /**

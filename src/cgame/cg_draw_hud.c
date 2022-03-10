@@ -38,10 +38,9 @@
 
 typedef enum
 {
-	FLAGS_MOVE_TIMERS   = BIT(0),
-	FLAGS_REMOVE_RANKS  = BIT(1),
-	FLAGS_MOVE_POPUPS   = BIT(2),
-	FLAGS_POPUPS_SHADOW = BIT(3)
+	FLAGS_MOVE_TIMERS  = BIT(0),
+	FLAGS_REMOVE_RANKS = BIT(1),
+	FLAGS_MOVE_POPUPS  = BIT(2)
 } althud_flags;
 
 typedef enum
@@ -78,6 +77,57 @@ hudStucture_t hud0;
 
 lagometer_t lagometer;
 
+/**
+ * @brief Using the stringizing operator to save typing...
+ */
+#define HUDF(x) # x, offsetof(hudStucture_t, x), qfalse
+
+typedef struct
+{
+	const char *name;
+	size_t offset;
+	qboolean isAlias;
+} hudComponentFields_t;
+
+/**
+* @var hudComponentFields
+* @brief for accessing hudStucture_t's fields in a loop
+*/
+static const hudComponentFields_t hudComponentFields[] =
+{
+	{ HUDF(compass)         },
+	{ "compas", offsetof(hudStucture_t, compass), qtrue}, // v2.78 backward compatibility
+	{ HUDF(staminabar)      },
+	{ HUDF(breathbar)       },
+	{ HUDF(healthbar)       },
+	{ HUDF(weaponchargebar) },
+	{ "weaponchangebar", offsetof(hudStucture_t, weaponchargebar), qtrue}, // v2.78 backward compatibility
+	{ HUDF(healthtext)      },
+	{ HUDF(xptext)          },
+	{ HUDF(ranktext)        },
+	{ HUDF(statsdisplay)    },
+	{ HUDF(weaponicon)      },
+	{ HUDF(weaponammo)      },
+	{ HUDF(fireteam)        },
+	{ HUDF(popupmessages)   },
+	{ HUDF(powerups)        },
+	{ HUDF(objectives)      },
+	{ HUDF(hudhead)         },
+	{ HUDF(cursorhints)     },
+	{ HUDF(weaponstability) },
+	{ HUDF(livesleft)       },
+	{ HUDF(roundtimer)      },
+	{ HUDF(reinforcement)   },
+	{ HUDF(spawntimer)      },
+	{ HUDF(localtime)       },
+	{ HUDF(votetext)        },
+	{ HUDF(spectatortext)   },
+	{ HUDF(limbotext)       },
+	{ HUDF(followtext)      },
+	{ HUDF(demotext)        },
+	{ NULL, 0               },
+};
+
 /*
  * @brief CG_getRect
  * @param x
@@ -113,12 +163,19 @@ hudStucture_t *CG_GetActiveHUD()
  * @param[in] style
  * @return
  */
-hudComponent_t CG_getComponent(float x, float y, float w, float h, qboolean visible, componentStyle style)
+hudComponent_t CG_getComponent(float x, float y, float w, float h, qboolean visible, componentStyle style, float scale, const vec4_t color)
 {
-	hudComponent_t comp = { { x, y, w, h }, visible, style };
-
+	hudComponent_t comp = { { x, y, w, h }, visible, style, scale };
+	comp.color[0] = color[0];
+	comp.color[1] = color[1];
+	comp.color[2] = color[2];
+	comp.color[3] = color[3];
 	return comp;
 }
+
+vec4_t HUD_Background = { 0.16f, 0.2f, 0.17f, 0.5f };
+vec4_t HUD_Border     = { 0.5f, 0.5f, 0.5f, 0.5f };
+vec4_t HUD_Text       = { 0.6f, 0.6f, 0.6f, 1.0f };
 
 /**
  * @brief CG_setDefaultHudValues
@@ -128,55 +185,35 @@ void CG_setDefaultHudValues(hudStucture_t *hud)
 {
 	// the Default hud
 	hud->hudnumber       = 0;
-	hud->compas          = CG_getComponent((Ccg_WideX(SCREEN_WIDTH) - 100 - 20 - 16), 16, 100 + 32, 100 + 32, qtrue, STYLE_NORMAL);
-	hud->staminabar      = CG_getComponent(4, SCREEN_HEIGHT - 92, 12, 72, qtrue, STYLE_NORMAL);
-	hud->breathbar       = CG_getComponent(4, SCREEN_HEIGHT - 92, 12, 72, qtrue, STYLE_NORMAL);
-	hud->healthbar       = CG_getComponent(24, SCREEN_HEIGHT - 92, 12, 72, qtrue, STYLE_NORMAL);
-	hud->weaponchargebar = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 16, SCREEN_HEIGHT - 92, 12, 72, qtrue, STYLE_NORMAL);
-	hud->healthtext      = CG_getComponent(SKILLS_X - 28, SCREEN_HEIGHT - 4, 0, 0, qtrue, STYLE_NORMAL);
-	hud->xptext          = CG_getComponent(SKILLS_X + 28, SCREEN_HEIGHT - 4, 0, 0, qtrue, STYLE_NORMAL);
-	hud->statsdisplay    = CG_getComponent(SKILL_ICON_X, 0, 0, 0, qtrue, STYLE_NORMAL);
-	hud->weaponicon      = CG_getComponent((Ccg_WideX(SCREEN_WIDTH) - 82), (SCREEN_HEIGHT - 56), 60, 32, qtrue, STYLE_NORMAL);
-	hud->weaponammo      = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 22, SCREEN_HEIGHT - 1 * (16 + 2) + 12 - 4, 0, 0, qtrue, STYLE_NORMAL);
-	hud->fireteam        = CG_getComponent(10, 10, 100, 100, qtrue, STYLE_NORMAL);
-	hud->popupmessages   = CG_getComponent(4, 360, 72, 72, qtrue, STYLE_NORMAL);
-	hud->powerups        = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 40, SCREEN_HEIGHT - 140, 36, 36, qtrue, STYLE_NORMAL);
-	hud->hudhead         = CG_getComponent(44, SCREEN_HEIGHT - 92, 62, 80, qtrue, STYLE_NORMAL);
-	hud->cursorhint      = CG_getComponent(.5f * SCREEN_WIDTH - .5f * 48, 260, 48, 48, qtrue, STYLE_NORMAL); // FIXME: widescreen ?
-	hud->weaponstability = CG_getComponent(50, 208, 10, 64, qtrue, STYLE_NORMAL);
-	hud->livesleft       = CG_getComponent(0, 0, 0, 0, qtrue, STYLE_NORMAL);
-	hud->reinforcement   = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 55, SCREEN_HEIGHT - 70, 0, 0, qtrue, STYLE_NORMAL);
-	hud->roundtimer      = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 55, SCREEN_HEIGHT - 70, 0, 0, qtrue, STYLE_NORMAL);
-	hud->spawntimer      = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 55, SCREEN_HEIGHT - 60, 0, 0, qtrue, STYLE_NORMAL);
-	hud->localtime       = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 55, SCREEN_HEIGHT - 60, 0, 0, qtrue, STYLE_NORMAL);
-	hud->votetext        = CG_getComponent(8, 224, 0.22f, 0.22f, qtrue, STYLE_NORMAL);
-	hud->spectatortext   = CG_getComponent(8, 188, 0.22f, 0.22f, qtrue, STYLE_NORMAL);
-	hud->limbotext       = CG_getComponent(8, 164, 0.22f, 0.22f, qtrue, STYLE_NORMAL);
-	hud->followtext      = CG_getComponent(8, 164, 0.22f, 0.22f, qtrue, STYLE_NORMAL);
+	hud->compass         = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 100 - 20 - 16, 16, 100 + 32, 100 + 32, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
+	hud->staminabar      = CG_getComponent(4, SCREEN_HEIGHT - 92, 12, 72, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
+	hud->breathbar       = CG_getComponent(4, SCREEN_HEIGHT - 92, 12, 72, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
+	hud->healthbar       = CG_getComponent(24, SCREEN_HEIGHT - 92, 12, 72, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
+	hud->weaponchargebar = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 16, SCREEN_HEIGHT - 92, 12, 72, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
+	hud->healthtext      = CG_getComponent(SKILLS_X - 28, SCREEN_HEIGHT - 4, 0, 0, qtrue, STYLE_NORMAL, 0.25f, colorWhite);
+	hud->xptext          = CG_getComponent(SKILLS_X + 28, SCREEN_HEIGHT - 4, 0, 0, qtrue, STYLE_NORMAL, 0.25f, colorWhite);
+	hud->ranktext        = CG_getComponent(0, SCREEN_HEIGHT, 0, 0, qfalse, STYLE_NORMAL, 0.2f, colorWhite);   // disable
+	hud->statsdisplay    = CG_getComponent(SKILL_ICON_X, 0, 0, 0, qtrue, STYLE_NORMAL, 0.25f, colorWhite);
+	hud->weaponicon      = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 82, SCREEN_HEIGHT - 56, 60, 32, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
+	hud->weaponammo      = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 22, SCREEN_HEIGHT - 1 * (16 + 2) + 12 - 4, 0, 0, qtrue, STYLE_NORMAL, 0.25f, colorWhite);
+	hud->fireteam        = CG_getComponent(10, 10, 100, 100, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
+	hud->popupmessages   = CG_getComponent(4, 320, 72, 72, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
+	hud->powerups        = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 40, SCREEN_HEIGHT - 136, 36, 36, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
+	hud->objectives      = CG_getComponent(8, SCREEN_HEIGHT - 136, 36, 36, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
+	hud->hudhead         = CG_getComponent(44, SCREEN_HEIGHT - 92, 62, 80, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
+	hud->cursorhints     = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) * .5f - 24, 260, 48, 48, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
+	hud->weaponstability = CG_getComponent(50, 208, 10, 64, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
+	hud->livesleft       = CG_getComponent(0, 0, 0, 0, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
+	hud->reinforcement   = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 60, SCREEN_HEIGHT - 70, 0, 0, qtrue, STYLE_NORMAL, 0.19f, colorLtBlue);
+	hud->roundtimer      = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 55, SCREEN_HEIGHT - 70, 0, 0, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
+	hud->spawntimer      = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 60, SCREEN_HEIGHT - 60, 0, 0, qtrue, STYLE_NORMAL, 0.19f, colorRed);
+	hud->localtime       = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 55, SCREEN_HEIGHT - 60, 0, 0, qtrue, STYLE_NORMAL, 0.19f, HUD_Text);
+	hud->votetext        = CG_getComponent(8, 224, 0.22f, 0.22f, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
+	hud->spectatortext   = CG_getComponent(8, 188, 0.22f, 0.22f, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
+	hud->limbotext       = CG_getComponent(8, 164, 0.22f, 0.22f, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
+	hud->followtext      = CG_getComponent(8, 164, 0.22f, 0.22f, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
+	hud->demotext        = CG_getComponent(10, 9, 0.22f, 0.22f, qtrue, STYLE_SIMPLE, 0.22f, colorRed);
 }
-
-/*
- * @brief CG_getNextFreeHud
- * @return
- * @note Unused
-static hudStucture_t *CG_getNextFreeHud()
-{
-    hudStucture_t *temp;
-
-    if (hudCount < MAXHUDS)
-    {
-        temp = &hudlist[hudCount];
-        hudCount++;
-        Com_Memset(temp, 0, sizeof(hudStucture_t));
-        CG_setDefaultHudValues(temp);
-        return temp;
-    }
-    else
-    {
-        return NULL;
-    }
-}
-*/
 
 /**
  * @brief CG_getHudByNumber
@@ -187,12 +224,6 @@ static hudStucture_t *CG_getHudByNumber(int number)
 {
 	int           i;
 	hudStucture_t *hud;
-
-	if (number < 0 || number >= MAXHUDS)
-	{
-		Com_Printf("getHudByNumber invalid HUD!\n");
-		return NULL;
-	}
 
 	for (i = 0; i < hudCount; i++)
 	{
@@ -208,32 +239,34 @@ static hudStucture_t *CG_getHudByNumber(int number)
 }
 
 /**
- * @brief CG_isHudNumberAvailable
+ * @brief CG_isHudNumberAvailable checks if the hud by said number is available for use, 0 to 2 are forbidden.
  * @param[in] number
  * @return
  */
 static qboolean CG_isHudNumberAvailable(int number)
 {
-	hudStucture_t *hud = CG_getHudByNumber(number);
-
-	if (!hud)
+	// values from 0 to 2 are used by the default hud's
+	if (number <= 2 || number >= MAXHUDS)
 	{
-		return qtrue;
-	}
-	else
-	{
+		Com_Printf(S_COLOR_RED "CG_isHudNumberAvailable: invalid HUD number %i, allowed values: 3 - %i\n", number, MAXHUDS);
 		return qfalse;
 	}
+
+	return qtrue;
 }
 
 /**
  * @brief CG_addHudToList
  * @param[in] hud
  */
-static void CG_addHudToList(hudStucture_t *hud)
+static hudStucture_t *CG_addHudToList(hudStucture_t *hud)
 {
+	hudStucture_t *out = NULL;
+
 	hudlist[hudCount] = *hud;
+	out               = &hudlist[hudCount];
 	hudCount++;
+	return out;
 }
 
 //  HUD SCRIPT FUNCTIONS BELLOW
@@ -274,7 +307,21 @@ static qboolean CG_HUD_ParseError(int handle, const char *format, ...)
  */
 static qboolean CG_RectParse(int handle, rectDef_t *r)
 {
-	float x = 0;
+	float      x = 0;
+	pc_token_t peakedToken;
+
+	if (!PC_PeakToken(handle, &peakedToken))
+	{
+		return qfalse;
+	}
+
+	if (peakedToken.string[0] == '(')
+	{
+		if (!trap_PC_ReadToken(handle, &peakedToken))
+		{
+			return qfalse;
+		}
+	}
 
 	if (PC_Float_Parse(handle, &x))
 	{
@@ -290,6 +337,72 @@ static qboolean CG_RectParse(int handle, rectDef_t *r)
 			}
 		}
 	}
+
+	if (!PC_PeakToken(handle, &peakedToken))
+	{
+		return qfalse;
+	}
+
+	if (peakedToken.string[0] == ')')
+	{
+		if (!trap_PC_ReadToken(handle, &peakedToken))
+		{
+			return qfalse;
+		}
+	}
+
+	return qfalse;
+}
+
+static qboolean CG_Vec4Parse(int handle, vec4_t v)
+{
+	float      r, g, b, a = 0;
+	pc_token_t peakedToken;
+
+	if (!PC_PeakToken(handle, &peakedToken))
+	{
+		return qfalse;
+	}
+
+	if (peakedToken.string[0] == '(')
+	{
+		if (!trap_PC_ReadToken(handle, &peakedToken))
+		{
+			return qfalse;
+		}
+	}
+
+	if (PC_Float_Parse(handle, &r))
+	{
+		if (PC_Float_Parse(handle, &g))
+		{
+			if (PC_Float_Parse(handle, &b))
+			{
+				if (PC_Float_Parse(handle, &a))
+				{
+					v[0] = r;
+					v[1] = g;
+					v[2] = b;
+					v[3] = a;
+					return qtrue;
+				}
+			}
+		}
+	}
+
+	if (!PC_PeakToken(handle, &peakedToken))
+	{
+		return qfalse;
+	}
+
+	if (peakedToken.string[0] == ')')
+	{
+		if (!trap_PC_ReadToken(handle, &peakedToken))
+		{
+			return qfalse;
+		}
+	}
+
 	return qfalse;
 }
 
@@ -301,7 +414,11 @@ static qboolean CG_RectParse(int handle, rectDef_t *r)
  */
 static qboolean CG_ParseHudComponent(int handle, hudComponent_t *comp)
 {
-	CG_RectParse(handle, &comp->location); //PC_Rect_Parse
+	//PC_Rect_Parse
+	if (!CG_RectParse(handle, &comp->location))
+	{
+		return qfalse;
+	}
 
 	if (!PC_Int_Parse(handle, &comp->style))
 	{
@@ -313,7 +430,36 @@ static qboolean CG_ParseHudComponent(int handle, hudComponent_t *comp)
 		return qfalse;
 	}
 
+	// Optional scale and color
+	pc_token_t token;
+	if (!trap_PC_ReadToken(handle, &token))
+	{
+		return qfalse;
+	}
+	if (token.type == TT_NUMBER)
+	{
+		trap_PC_UnReadToken(handle);
+		if (!PC_Float_Parse(handle, &comp->scale))
+		{
+			return qfalse;
+		}
+
+		if (!CG_Vec4Parse(handle, comp->color))
+		{
+			return qfalse;
+		}
+	}
+	else
+	{
+		trap_PC_UnReadToken(handle);
+	}
+
 	return qtrue;
+}
+
+static int QDECL CG_HudComponentSort(const void *a, const void *b)
+{
+	return ((*(hudComponent_t **) a)->offset - (*(hudComponent_t **) b)->offset);
 }
 
 /**
@@ -323,17 +469,51 @@ static qboolean CG_ParseHudComponent(int handle, hudComponent_t *comp)
  */
 static qboolean CG_ParseHUD(int handle)
 {
+	int           i, componentOffset = 0;
 	pc_token_t    token;
 	hudStucture_t temphud;
-
-	CG_setDefaultHudValues(&temphud);
+	hudStucture_t *hud;
+	qboolean      loadDefaults = qtrue;
 
 	if (!trap_PC_ReadToken(handle, &token) || Q_stricmp(token.string, "{"))
 	{
 		return CG_HUD_ParseError(handle, "expected '{'");
 	}
 
-	while (1)
+	if (!trap_PC_ReadToken(handle, &token))
+	{
+		return CG_HUD_ParseError(handle, "Error while parsing hud");
+	}
+
+	// if the first parameter in the hud definition is a "no-defaults" line then no default values are set
+	// and the hud is plain (everything is hidden and no positions are set)
+	if (!Q_stricmp(token.string, "no-defaults"))
+	{
+		loadDefaults = qfalse;
+	}
+	else
+	{
+		trap_PC_UnReadToken(handle);
+	}
+
+	// reset all the components, and set the offset value to 999 for sorting
+	Com_Memset(&temphud, 0, sizeof(hudStucture_t));
+
+	if (loadDefaults)
+	{
+		CG_setDefaultHudValues(&temphud);
+	}
+	else
+	{
+		for (i = 0; hudComponentFields[i].name; i++)
+		{
+			hudComponent_t *component = (hudComponent_t *)((char * )&temphud + hudComponentFields[i].offset);
+			component->offset = 999;
+		}
+	}
+
+	componentOffset = 0;
+	while (qtrue)
 	{
 		if (!trap_PC_ReadToken(handle, &token))
 		{
@@ -349,260 +529,62 @@ static qboolean CG_ParseHUD(int handle)
 		{
 			if (!PC_Int_Parse(handle, &temphud.hudnumber))
 			{
-				return CG_HUD_ParseError(handle, "expected hudnumber");
+				return CG_HUD_ParseError(handle, "expected integer value for hudnumber");
 			}
+
 			continue;
 		}
 
-		if (!Q_stricmp(token.string, "compas"))
+		for (i = 0; hudComponentFields[i].name; i++)
 		{
-			if (!CG_ParseHudComponent(handle, &temphud.compas))
+			if (!Q_stricmp(token.string, hudComponentFields[i].name))
 			{
-				return CG_HUD_ParseError(handle, "expected compas");
+				hudComponent_t *component = (hudComponent_t *)((char * )&temphud + hudComponentFields[i].offset);
+				component->offset = componentOffset++;
+				if (!CG_ParseHudComponent(handle, component))
+				{
+					return CG_HUD_ParseError(handle, "expected %s", hudComponentFields[i].name);
+				}
+				break;
 			}
-			continue;
 		}
 
-		if (!Q_stricmp(token.string, "staminabar"))
+		if (!hudComponentFields[i].name)
 		{
-			if (!CG_ParseHudComponent(handle, &temphud.staminabar))
-			{
-				return CG_HUD_ParseError(handle, "expected staminabar");
-			}
-			continue;
+			return CG_HUD_ParseError(handle, "unexpected token: %s", token.string);
 		}
-
-		if (!Q_stricmp(token.string, "breathbar"))
-		{
-			if (!CG_ParseHudComponent(handle, &temphud.breathbar))
-			{
-				return CG_HUD_ParseError(handle, "expected breathbar");
-			}
-			continue;
-		}
-
-		if (!Q_stricmp(token.string, "healthbar"))
-		{
-			if (!CG_ParseHudComponent(handle, &temphud.healthbar))
-			{
-				return CG_HUD_ParseError(handle, "expected healthbar");
-			}
-			continue;
-		}
-
-		if (!Q_stricmp(token.string, "weaponchangebar"))
-		{
-			if (!CG_ParseHudComponent(handle, &temphud.weaponchargebar))
-			{
-				return CG_HUD_ParseError(handle, "expected weaponchangebar");
-			}
-			continue;
-		}
-
-		if (!Q_stricmp(token.string, "healthtext"))
-		{
-			if (!CG_ParseHudComponent(handle, &temphud.healthtext))
-			{
-				return CG_HUD_ParseError(handle, "expected healthtext");
-			}
-			continue;
-		}
-
-		if (!Q_stricmp(token.string, "xptext"))
-		{
-			if (!CG_ParseHudComponent(handle, &temphud.xptext))
-			{
-				return CG_HUD_ParseError(handle, "expected xptext");
-			}
-			continue;
-		}
-
-		if (!Q_stricmp(token.string, "ranktext"))
-		{
-			if (!CG_ParseHudComponent(handle, &temphud.ranktext))
-			{
-				return CG_HUD_ParseError(handle, "expected ranktext");
-			}
-			continue;
-		}
-
-		if (!Q_stricmp(token.string, "statsdisplay"))
-		{
-			if (!CG_ParseHudComponent(handle, &temphud.statsdisplay))
-			{
-				return CG_HUD_ParseError(handle, "expected statsdisplay");
-			}
-			continue;
-		}
-
-		if (!Q_stricmp(token.string, "weaponicon"))
-		{
-			if (!CG_ParseHudComponent(handle, &temphud.weaponicon))
-			{
-				return CG_HUD_ParseError(handle, "expected weaponicon");
-			}
-			continue;
-		}
-
-		if (!Q_stricmp(token.string, "weaponammo"))
-		{
-			if (!CG_ParseHudComponent(handle, &temphud.weaponammo))
-			{
-				return CG_HUD_ParseError(handle, "expected weaponammo");
-			}
-			continue;
-		}
-
-		if (!Q_stricmp(token.string, "fireteam"))
-		{
-			if (!CG_ParseHudComponent(handle, &temphud.fireteam))
-			{
-				return CG_HUD_ParseError(handle, "expected fireteam");
-			}
-			continue;
-		}
-
-		if (!Q_stricmp(token.string, "popupmessages"))
-		{
-			if (!CG_ParseHudComponent(handle, &temphud.popupmessages))
-			{
-				return CG_HUD_ParseError(handle, "expected popupmessages");
-			}
-			continue;
-		}
-
-		if (!Q_stricmp(token.string, "powerups"))
-		{
-			if (!CG_ParseHudComponent(handle, &temphud.powerups))
-			{
-				return CG_HUD_ParseError(handle, "expected powerups");
-			}
-			continue;
-		}
-
-		if (!Q_stricmp(token.string, "hudhead"))
-		{
-			if (!CG_ParseHudComponent(handle, &temphud.hudhead))
-			{
-				return CG_HUD_ParseError(handle, "expected hudhead");
-			}
-			continue;
-		}
-
-		if (!Q_stricmp(token.string, "cursorhints"))
-		{
-			if (!CG_ParseHudComponent(handle, &temphud.cursorhint))
-			{
-				return CG_HUD_ParseError(handle, "expected cursorhints");
-			}
-			continue;
-		}
-
-		if (!Q_stricmp(token.string, "weaponstability"))
-		{
-			if (!CG_ParseHudComponent(handle, &temphud.weaponstability))
-			{
-				return CG_HUD_ParseError(handle, "expected weaponstability");
-			}
-			continue;
-		}
-
-		if (!Q_stricmp(token.string, "livesleft"))
-		{
-			if (!CG_ParseHudComponent(handle, &temphud.livesleft))
-			{
-				return CG_HUD_ParseError(handle, "expected livesleft");
-			}
-			continue;
-		}
-
-		if (!Q_stricmp(token.string, "roundtimer"))
-		{
-			if (!CG_ParseHudComponent(handle, &temphud.roundtimer))
-			{
-				return CG_HUD_ParseError(handle, "expected roundtimer");
-			}
-			continue;
-		}
-
-		if (!Q_stricmp(token.string, "reinforcement"))
-		{
-			if (!CG_ParseHudComponent(handle, &temphud.reinforcement))
-			{
-				return CG_HUD_ParseError(handle, "expected reinforcement");
-			}
-			continue;
-		}
-
-		if (!Q_stricmp(token.string, "spawntimer"))
-		{
-			if (!CG_ParseHudComponent(handle, &temphud.spawntimer))
-			{
-				return CG_HUD_ParseError(handle, "expected spawntimer");
-			}
-			continue;
-		}
-
-		if (!Q_stricmp(token.string, "localtime"))
-		{
-			if (!CG_ParseHudComponent(handle, &temphud.localtime))
-			{
-				return CG_HUD_ParseError(handle, "expected localtime");
-			}
-			continue;
-		}
-
-		if (!Q_stricmp(token.string, "votetext"))
-		{
-			if (!CG_ParseHudComponent(handle, &temphud.votetext))
-			{
-				return CG_HUD_ParseError(handle, "expected votetext");
-			}
-			continue;
-		}
-
-		if (!Q_stricmp(token.string, "spectatortext"))
-		{
-			if (!CG_ParseHudComponent(handle, &temphud.spectatortext))
-			{
-				return CG_HUD_ParseError(handle, "expected spectatortext");
-			}
-			continue;
-		}
-
-		if (!Q_stricmp(token.string, "limbotext"))
-		{
-			if (!CG_ParseHudComponent(handle, &temphud.limbotext))
-			{
-				return CG_HUD_ParseError(handle, "expected limbotext");
-			}
-			continue;
-		}
-
-		if (!Q_stricmp(token.string, "followtext"))
-		{
-			if (!CG_ParseHudComponent(handle, &temphud.followtext))
-			{
-				return CG_HUD_ParseError(handle, "expected followtext");
-			}
-			continue;
-		}
-
-		return CG_HUD_ParseError(handle, "unexpected token: %s", token.string);
 	}
 
-	hudStucture_t *hud = CG_getHudByNumber(temphud.hudnumber);
+	// check that the hudnumber value was set
+	if (!CG_isHudNumberAvailable(temphud.hudnumber))
+	{
+		return CG_HUD_ParseError(handle, "Invalid hudnumber value: %i", temphud.hudnumber);
+	}
+
+	hud = CG_getHudByNumber(temphud.hudnumber);
 
 	if (!hud)
 	{
-		CG_addHudToList(&temphud);
+		hud = CG_addHudToList(&temphud);
 		Com_Printf("...properties for hud %i have been read.\n", temphud.hudnumber);
 	}
 	else
 	{
-		memcpy(hud, &temphud, sizeof(temphud));
+		Com_Memcpy(hud, &temphud, sizeof(temphud));
 		Com_Printf("...properties for hud %i have been updated.\n", temphud.hudnumber);
 	}
+
+	// setup component pointers to the components list
+	for (i = 0, componentOffset = 0; hudComponentFields[i].name; i++)
+	{
+		if (hudComponentFields[i].isAlias)
+		{
+			continue;
+		}
+		hud->components[componentOffset++] = (hudComponent_t *)((char * )hud + hudComponentFields[i].offset);
+	}
+	// sort the components by their offset
+	qsort(hud->components, sizeof(hud->components) / sizeof(hudComponent_t *), sizeof(hudComponent_t *), CG_HudComponentSort);
 
 	return qtrue;
 }
@@ -676,10 +658,6 @@ void CG_ReadHudScripts(void)
 }
 
 // HUD DRAWING FUNCTIONS BELLOW
-
-vec4_t HUD_Background = { 0.16f, 0.2f, 0.17f, 0.8f };
-vec4_t HUD_Border     = { 0.5f, 0.5f, 0.5f, 0.5f };
-vec4_t HUD_Text       = { 0.6f, 0.6f, 0.6f, 1.0f };
 
 /**
  * @brief CG_DrawPicShadowed
@@ -779,7 +757,7 @@ static void CG_DrawPlayerStatusHead(hudComponent_t comp)
  * @param[out] clips - the total ammount of ammo in all clips (if using clip)
  * @param[out] akimboammo - the number of ammo left in the second pistol of akimbo (if using akimbo)
  */
-static void CG_PlayerAmmoValue(int *ammo, int *clips, int *akimboammo)
+void CG_PlayerAmmoValue(int *ammo, int *clips, int *akimboammo)
 {
 	centity_t     *cent;
 	playerState_t *ps;
@@ -815,8 +793,8 @@ static void CG_PlayerAmmoValue(int *ammo, int *clips, int *akimboammo)
 		return;
 	}
 
-	// total ammo in clips
-	if (GetWeaponTableData(weap)->useClip)
+	// total ammo in clips, grenade launcher is not a clip weapon but show the clip anyway
+	if (GetWeaponTableData(weap)->useClip || (weap == WP_M7 || weap == WP_GPG40))
 	{
 		// current reserve
 		*clips = cg.snap->ps.ammo[GetWeaponTableData(weap)->ammoIndex];
@@ -979,8 +957,11 @@ static void CG_DrawWeapRecharge(rectDef_t *rect)
 	// display colored charge bar if charge bar isn't full enough
 	if (GetWeaponTableData(cg.predictedPlayerState.weapon)->attributes & WEAPON_ATTRIBUT_CHARGE_TIME)
 	{
-		skillType_t skill = GetWeaponTableData(cg.predictedPlayerState.weapon)->skillBased;
-		float       coeff = GetWeaponTableData(cg.predictedPlayerState.weapon)->chargeTimeCoeff[cgs.clientinfo[cg.clientNum].skill[skill]];
+		int index = BG_IsSkillAvailable(cgs.clientinfo[cg.clientNum].skill,
+		                                GetWeaponTableData(cg.predictedPlayerState.weapon)->skillBased,
+		                                GetWeaponTableData(cg.predictedPlayerState.weapon)->chargeTimeSkill);
+
+		float coeff = GetWeaponTableData(cg.predictedPlayerState.weapon)->chargeTimeCoeff[index];
 
 		if (cg.time - cg.snap->ps.classWeaponTime < chargeTime * coeff)
 		{
@@ -990,8 +971,11 @@ static void CG_DrawWeapRecharge(rectDef_t *rect)
 	else if ((cg.predictedPlayerState.eFlags & EF_ZOOMING || cg.predictedPlayerState.weapon == WP_BINOCULARS)
 	         && cgs.clientinfo[cg.snap->ps.clientNum].cls == PC_FIELDOPS)
 	{
-		skillType_t skill = GetWeaponTableData(WP_ARTY)->skillBased;
-		float       coeff = GetWeaponTableData(WP_ARTY)->chargeTimeCoeff[cgs.clientinfo[cg.clientNum].skill[skill]];
+		int index = BG_IsSkillAvailable(cgs.clientinfo[cg.clientNum].skill,
+		                                GetWeaponTableData(WP_ARTY)->skillBased,
+		                                GetWeaponTableData(WP_ARTY)->chargeTimeSkill);
+
+		float coeff = GetWeaponTableData(WP_ARTY)->chargeTimeCoeff[index];
 
 		if (cg.time - cg.snap->ps.classWeaponTime < chargeTime * coeff)
 		{
@@ -1061,7 +1045,7 @@ static void CG_DrawGunIcon(rectDef_t location)
 	// drawn the common white icon, usage of mounted weapons don't change cg.snap->ps.weapon for real
 	if (BG_PlayerMounted(cg.snap->ps.eFlags))
 	{
-		CG_DrawPlayerWeaponIcon(&rect, qtrue, ITEM_ALIGN_RIGHT, &colorWhite);
+		CG_DrawPlayerWeaponIcon(&rect, qtrue, ITEM_ALIGN_RIGHT, &activehud->weaponicon.color);
 		return;
 	}
 
@@ -1071,7 +1055,7 @@ static void CG_DrawGunIcon(rectDef_t location)
 #endif
 		cg_drawWeaponIconFlash.integer == 0)
 	{
-		CG_DrawPlayerWeaponIcon(&rect, qtrue, ITEM_ALIGN_RIGHT, &colorWhite);
+		CG_DrawPlayerWeaponIcon(&rect, qtrue, ITEM_ALIGN_RIGHT, &activehud->weaponicon.color);
 	}
 	else
 	{
@@ -1081,7 +1065,7 @@ static void CG_DrawGunIcon(rectDef_t location)
 #endif
 			BG_simpleWeaponState(cg.snap->ps.weaponstate);
 
-		CG_DrawPlayerWeaponIcon(&rect, (qboolean)(ws != WSTATE_IDLE), ITEM_ALIGN_RIGHT, ((ws == WSTATE_SWITCH || ws == WSTATE_RELOAD) ? &colorYellow : (ws == WSTATE_FIRE) ? &colorRed : &colorWhite));
+		CG_DrawPlayerWeaponIcon(&rect, (qboolean)(ws != WSTATE_IDLE), ITEM_ALIGN_RIGHT, ((ws == WSTATE_SWITCH || ws == WSTATE_RELOAD) ? &colorYellow : (ws == WSTATE_FIRE) ? &colorRed : &activehud->weaponicon.color));
 	}
 }
 
@@ -1092,25 +1076,28 @@ static void CG_DrawGunIcon(rectDef_t location)
  */
 static void CG_DrawAmmoCount(float x, float y)
 {
-	int  value, value2, value3;
-	char buffer[16];
+	int   value, value2, value3;
+	float scale = activehud->weaponammo.scale;
+	char  buffer[16];
 
 	// Draw ammo
 	CG_PlayerAmmoValue(&value, &value2, &value3);
+
+	// .25f
 	if (value3 >= 0)
 	{
 		Com_sprintf(buffer, sizeof(buffer), "%i|%i/%i", value3, value, value2);
-		CG_Text_Paint_Ext(x - CG_Text_Width_Ext(buffer, .25f, 0, &cgs.media.limboFont1), y, .25f, .25f, colorWhite, buffer, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
+		CG_Text_Paint_Ext(x - CG_Text_Width_Ext(buffer, scale, 0, &cgs.media.limboFont1), y, scale, scale, activehud->weaponammo.color, buffer, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
 	}
 	else if (value2 >= 0)
 	{
 		Com_sprintf(buffer, sizeof(buffer), "%i/%i", value, value2);
-		CG_Text_Paint_Ext(x - CG_Text_Width_Ext(buffer, .25f, 0, &cgs.media.limboFont1), y, .25f, .25f, colorWhite, buffer, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
+		CG_Text_Paint_Ext(x - CG_Text_Width_Ext(buffer, scale, 0, &cgs.media.limboFont1), y, scale, scale, activehud->weaponammo.color, buffer, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
 	}
 	else if (value >= 0)
 	{
 		Com_sprintf(buffer, sizeof(buffer), "%i", value);
-		CG_Text_Paint_Ext(x - CG_Text_Width_Ext(buffer, .25f, 0, &cgs.media.limboFont1), y, .25f, .25f, colorWhite, buffer, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
+		CG_Text_Paint_Ext(x - CG_Text_Width_Ext(buffer, scale, 0, &cgs.media.limboFont1), y, scale, scale, activehud->weaponammo.color, buffer, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
 	}
 }
 
@@ -1120,9 +1107,9 @@ static void CG_DrawAmmoCount(float x, float y)
  * @param[in] y
  * @param[in] w
  * @param[in] h
- * @param[in] skill
+ * @param[in] skillLvl
  */
-static void CG_DrawSkillBar(float x, float y, float w, float h, int skill)
+static void CG_DrawSkillBar(float x, float y, float w, float h, int skillLvl, skillType_t skill)
 {
 	int    i;
 	float  blockheight = (h - 4) / (float)(NUM_SKILL_LEVELS - 1);
@@ -1130,20 +1117,26 @@ static void CG_DrawSkillBar(float x, float y, float w, float h, int skill)
 	vec4_t colour;
 	float  x1, y1, w1, h1;
 
-	for (i = 0; i < NUM_SKILL_LEVELS - 1; i++)
+	for (i = 1; i < NUM_SKILL_LEVELS; i++)
 	{
-		if (i >= skill)
+
+		if (GetSkillTableData(skill)->skillLevels[i] < 0)
 		{
-			Vector4Set(colour, 1.f, 1.f, 1.f, .15f);
+			Vector4Set(colour, 1.f, 0.f, 0.f, .15f);
+		}
+		else if (skillLvl >= i)
+		{
+			Vector4Set(colour, 0.f, 0.f, 0.f, .4f);
 		}
 		else
 		{
-			Vector4Set(colour, 0.f, 0.f, 0.f, .4f);
+			Vector4Set(colour, 1.f, 1.f, 1.f, .15f);
 		}
 
 		CG_FillRect(x, draw_y, w, blockheight, colour);
 
-		if (i < skill)
+		// draw the star only if the skill is reach and available
+		if (skillLvl >= i && GetSkillTableData(skill)->skillLevels[i] >= 0)
 		{
 			x1 = x;
 			y1 = draw_y;
@@ -1194,11 +1187,12 @@ skillType_t CG_ClassSkillForPosition(clientInfo_t *ci, int pos)
  */
 static void CG_DrawPlayerHealth(float x, float y)
 {
-	const char *str = va("%i", cg.snap->ps.stats[STAT_HEALTH]);
-	float      w    = CG_Text_Width_Ext(str, 0.25f, 0, &cgs.media.limboFont1);
+	const char *str  = va("%i", cg.snap->ps.stats[STAT_HEALTH]);
+	float      scale = activehud->healthtext.scale;
+	float      w     = CG_Text_Width_Ext(str, scale, 0, &cgs.media.limboFont1);
 
-	CG_Text_Paint_Ext(x - w, y, 0.25f, 0.25f, colorWhite, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
-	CG_Text_Paint_Ext(x + 2, y, 0.2f, 0.2f, colorWhite, "HP", 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
+	CG_Text_Paint_Ext(x - w, y, scale, scale, activehud->healthtext.color, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
+	CG_Text_Paint_Ext(x + 2, y, scale - 0.05f, scale - 0.05f, activehud->healthtext.color, "HP", 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
 }
 
 /**
@@ -1218,15 +1212,26 @@ static void CG_DrawSkills(hudComponent_t comp)
 		skill = CG_ClassSkillForPosition(ci, i);
 		if (comp.style == STYLE_NORMAL)
 		{
-			CG_DrawSkillBar(i * SKILL_BAR_X_SCALE + SKILL_BAR_X, SCREEN_HEIGHT - (5 * SKILL_BAR_Y_SCALE) + SKILL_BAR_Y, SKILL_BAR_WIDTH, 4 * SKILL_ICON_SIZE, ci->skill[skill]);
+			CG_DrawSkillBar(i * SKILL_BAR_X_SCALE + SKILL_BAR_X, SCREEN_HEIGHT - (5 * SKILL_BAR_Y_SCALE) + SKILL_BAR_Y, SKILL_BAR_WIDTH, 4 * SKILL_ICON_SIZE, ci->skill[skill], skill);
 			CG_DrawPic(i * SKILL_ICON_X_SCALE + SKILL_ICON_X, SCREEN_HEIGHT + SKILL_ICON_Y, SKILL_ICON_SIZE, SKILL_ICON_SIZE, cgs.media.skillPics[skill]);
 		}
 		else
 		{
+			int j        = 1;
+			int skillLvl = 0;
+
+			for (; j < NUM_SKILL_LEVELS; ++j)
+			{
+				if (BG_IsSkillAvailable(ci->skill, skill, j))
+				{
+					skillLvl++;
+				}
+			}
+
 			temp = comp.location.y + (i * SKILL_ICON_SIZE * 1.7f);
 			//CG_DrawPic
 			CG_DrawPicShadowed(comp.location.x, temp, SKILL_ICON_SIZE, SKILL_ICON_SIZE, cgs.media.skillPics[skill]);
-			CG_Text_Paint_Ext(comp.location.x + 3, temp + 24, 0.25f, 0.25f, colorWhite, va("%i", ci->skill[skill]), 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
+			CG_Text_Paint_Ext(comp.location.x + 3, temp + 24, comp.scale, comp.scale, comp.color, va("%i", skillLvl), 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
 		}
 	}
 }
@@ -1239,7 +1244,7 @@ static void CG_DrawSkills(hudComponent_t comp)
 static void CG_DrawXP(float x, float y)
 {
 	const char *str;
-	float      w;
+	float      w, scale;
 	vec_t      *clr;
 
 	if (cg.time - cg.xpChangeTime < 1000)
@@ -1248,13 +1253,14 @@ static void CG_DrawXP(float x, float y)
 	}
 	else
 	{
-		clr = colorWhite;
+		clr = activehud->xptext.color;
 	}
 
-	str = va("%i", cg.snap->ps.stats[STAT_XP]);
-	w   = CG_Text_Width_Ext(str, 0.25f, 0, &cgs.media.limboFont1);
-	CG_Text_Paint_Ext(x - w, y, 0.25f, 0.25f, clr, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
-	CG_Text_Paint_Ext(x + 2, y, 0.2f, 0.2f, clr, "XP", 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
+	str   = va("%i", cg.snap->ps.stats[STAT_XP]);
+	scale = activehud->xptext.scale;
+	w     = CG_Text_Width_Ext(str, scale, 0, &cgs.media.limboFont1);
+	CG_Text_Paint_Ext(x - w, y, scale, scale, clr, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
+	CG_Text_Paint_Ext(x + 2, y, scale - 0.05f, scale - 0.05f, clr, "XP", 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
 }
 
 /**
@@ -1265,12 +1271,13 @@ static void CG_DrawXP(float x, float y)
 static void CG_DrawRank(float x, float y)
 {
 	const char    *str;
-	float         w;
+	float         w, scale;
 	playerState_t *ps = &cg.snap->ps;
 
-	str = va("%s", GetRankTableData(cgs.clientinfo[ps->clientNum].team, cgs.clientinfo[ps->clientNum].rank)->miniNames);
-	w   = CG_Text_Width_Ext(str, 0.2f, 0, &cgs.media.limboFont1);
-	CG_Text_Paint_Ext(x - w, y, 0.2f, 0.2f, colorWhite, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
+	str   = va("%s", GetRankTableData(cgs.clientinfo[ps->clientNum].team, cgs.clientinfo[ps->clientNum].rank)->miniNames);
+	scale = activehud->ranktext.scale;
+	w     = CG_Text_Width_Ext(str, scale, 0, &cgs.media.limboFont1);
+	CG_Text_Paint_Ext(x - w, y, scale, scale, activehud->ranktext.color, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
 }
 
 /**
@@ -1298,8 +1305,35 @@ static void CG_DrawPowerUps(rectDef_t rect)
 		// show the class to the client
 		CG_DrawPic(rect.x + 9, rect.y + 9, 18, 18, cgs.media.skillPics[BG_ClassSkillForClass((cg_entities[ps->clientNum].currentState.powerups >> PW_OPS_CLASS_1) & 7)]);
 	}
-	else if ((cg.flagIndicator & (1 << PW_REDFLAG) || cg.flagIndicator & (1 << PW_BLUEFLAG)) && (!cgs.clientinfo[cg.clientNum].shoutcaster ||
-	                                                                                             (cgs.clientinfo[cg.clientNum].shoutcaster && (cg.snap->ps.pm_flags & PMF_FOLLOW))))
+	else if (ps->powerups[PW_ADRENALINE] > 0)       // adrenaline
+	{
+		vec4_t color = { 1.0, 0.0, 0.0, 1.0 };
+		color[3] *= 0.5 + 0.5 * sin(cg.time / 150.0);
+		trap_R_SetColor(color);
+		CG_DrawPic(rect.x, rect.y, rect.w, rect.h, cgs.media.hudAdrenaline);
+		trap_R_SetColor(NULL);
+	}
+	else if (ps->powerups[PW_INVULNERABLE] && !(ps->pm_flags & PMF_LIMBO))       // spawn shield
+	{
+		CG_DrawPic(rect.x, rect.y, rect.w, rect.h, cgs.media.spawnInvincibleShader);
+	}
+}
+
+/**
+ * @brief CG_DrawObjectiveStatus
+ * @param[in] rect
+ */
+static void CG_DrawObjectiveStatus(rectDef_t rect)
+{
+	playerState_t *ps = &cg.snap->ps;
+
+	if (ps->persistant[PERS_TEAM] == TEAM_SPECTATOR && !cgs.clientinfo[cg.clientNum].shoutcaster)
+	{
+		return;
+	}
+
+	// draw objective status icon
+	if ((cg.flagIndicator & (1 << PW_REDFLAG) || cg.flagIndicator & (1 << PW_BLUEFLAG)) && (!cgs.clientinfo[cg.clientNum].shoutcaster || (cg.snap->ps.pm_flags & PMF_FOLLOW)))
 	{
 		// draw objective info icon (if teammates or enemies are carrying one)
 		vec4_t color = { 1.f, 1.f, 1.f, 1.f };
@@ -1383,18 +1417,6 @@ static void CG_DrawPowerUps(rectDef_t rect)
 
 		trap_R_SetColor(NULL);
 	}
-	else if (ps->powerups[PW_ADRENALINE] > 0)       // adrenaline
-	{
-		vec4_t color = { 1.0, 0.0, 0.0, 1.0 };
-		color[3] *= 0.5 + 0.5 * sin(cg.time / 150.0);
-		trap_R_SetColor(color);
-		CG_DrawPic(rect.x, rect.y, rect.w, rect.h, cgs.media.hudAdrenaline);
-		trap_R_SetColor(NULL);
-	}
-	else if (ps->powerups[PW_INVULNERABLE] && !(ps->pm_flags & PMF_LIMBO))       // spawn shield
-	{
-		CG_DrawPic(rect.x, rect.y, rect.w, rect.h, cgs.media.spawnInvincibleShader);
-	}
 	else if (cgs.clientinfo[cg.clientNum].shoutcaster && !(cg.snap->ps.pm_flags & PMF_FOLLOW))
 	{
 		// simplified version for shoutcaster when not following players
@@ -1470,6 +1492,74 @@ static void CG_DrawPowerUps(rectDef_t rect)
 
 		trap_R_SetColor(NULL);
 	}
+}
+
+static int lastDemoScoreTime = 0;
+
+/**
+ * @brief CG_DrawDemoMessage
+ */
+void CG_DrawDemoMessage(void)
+{
+	char status[1024];
+	char demostatus[128];
+	char wavestatus[128];
+
+	float         x, y, fontScale;
+	hudStucture_t *hud;
+
+	hud = CG_GetActiveHUD();
+
+	fontScale = hud->demotext.scale;
+	y         = hud->demotext.location.y;
+	x         = hud->demotext.location.x;
+
+	if (!hud->demotext.visible)
+	{
+		return;
+	}
+
+	if (!cl_demorecording.integer && !cl_waverecording.integer && !cg.demoPlayback)
+	{
+		return;
+	}
+
+	// poll for score
+	if ((!lastDemoScoreTime || cg.time > lastDemoScoreTime) && !cg.demoPlayback)
+	{
+		trap_SendClientCommand("score");
+		lastDemoScoreTime = cg.time + 5000; // 5 secs
+	}
+
+	if (hud->demotext.style == STYLE_NORMAL)
+	{
+		if (cl_demorecording.integer)
+		{
+			Com_sprintf(demostatus, sizeof(demostatus), __(" demo %s: %ik "), cl_demofilename.string, cl_demooffset.integer / 1024);
+		}
+		else
+		{
+			Q_strncpyz(demostatus, "", sizeof(demostatus));
+		}
+
+		if (cl_waverecording.integer)
+		{
+			Com_sprintf(wavestatus, sizeof(demostatus), __(" audio %s: %ik "), cl_wavefilename.string, cl_waveoffset.integer / 1024);
+		}
+		else
+		{
+			Q_strncpyz(wavestatus, "", sizeof(wavestatus));
+		}
+	}
+	else
+	{
+		Q_strncpyz(demostatus, "", sizeof(demostatus));
+		Q_strncpyz(wavestatus, "", sizeof(wavestatus));
+	}
+
+	Com_sprintf(status, sizeof(status), "%s%s%s", cg.demoPlayback ? __("REPLAY") : __("RECORD"), demostatus, wavestatus);
+
+	CG_Text_Paint_Ext(x, y, fontScale, fontScale, cg.demoPlayback ? colorYellow : hud->demotext.color, status, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 }
 
 /**
@@ -1620,52 +1710,305 @@ void CG_StatsDebugAddText(const char *text)
 }
 
 /**
- * @brief CG_DrawCompassIcon
- * @param[in] x
- * @param[in] y
- * @param[in] w
- * @param[in] h
- * @param[in] origin
- * @param[in] dest
- * @param[in] shader
+ * @brief CG_GetCompassIcon
+ * @param[in] ent
+ * @param[in] drawAllVoicesChat get all icons voices chat, otherwise only request relevant icons voices chat (need medic/ammo ...)
+ * @param[in] drawFireTeam draw fireteam members position
+ * @param[in] drawPrimaryObj draw primary objective position
+ * @param[in] drawSecondaryObj draw secondary objective position
+ * @param[in] drawDynamic draw dynamic elements position (player revive, command map marker)
+ * @return A valid compass icon handle otherwise 0
  */
-void CG_DrawCompassIcon(float x, float y, float w, float h, vec3_t origin, vec3_t dest, qhandle_t shader)
+qhandle_t CG_GetCompassIcon(entityState_t *ent, qboolean drawAllVoicesChat, qboolean drawFireTeam, qboolean drawPrimaryObj, qboolean drawSecondaryObj, qboolean drawDynamic, char *name)
 {
-	float  angle;
-	vec3_t v1, angles;
-	float  len;
+	centity_t *cent = &cg_entities[ent->number];
 
-	VectorCopy(dest, v1);
-	VectorSubtract(origin, v1, v1);
-	len = VectorLength(v1);
-	VectorNormalize(v1);
-	vectoangles(v1, angles);
-
-	if (v1[0] == 0.f && v1[1] == 0.f && v1[2] == 0.f)
+	if (!cent->currentValid)
 	{
-		return;
+		return 0;
 	}
 
-	angles[YAW] = AngleSubtract(cg.predictedPlayerState.viewangles[YAW], angles[YAW]);
-
-	angle = ((angles[YAW] + 180.f) / 360.f - (0.50f / 2.f)) * M_TAU_F;
-
-	w /= 2;
-	h /= 2;
-
-	x += w;
-	y += h;
-
+	switch (ent->eType)
 	{
-		w = (float)sqrt((w * w) + (h * h)) / 3.f * 2.f * 0.9f;
+	case ET_PLAYER:
+	{
+		qboolean sameTeam = cg.predictedPlayerState.persistant[PERS_TEAM] == cgs.clientinfo[ent->clientNum].team;
+
+		if (!cgs.clientinfo[ent->clientNum].infoValid)
+		{
+			return 0;
+		}
+
+		if (sameTeam && cgs.clientinfo[ent->clientNum].powerups & ((1 << PW_REDFLAG) | (1 << PW_BLUEFLAG)))
+		{
+			return cgs.media.objectiveShader;
+		}
+
+		if (ent->eFlags & EF_DEAD)
+		{
+			if (drawDynamic &&
+			    ((cg.predictedPlayerState.stats[STAT_PLAYER_CLASS] == PC_MEDIC &&
+			      cg.predictedPlayerState.stats[STAT_HEALTH] > 0 && ent->number == ent->clientNum && sameTeam) ||
+			     (!(cg.snap->ps.pm_flags & PMF_FOLLOW) && cgs.clientinfo[cg.clientNum].shoutcaster)))
+			{
+				return cgs.media.medicReviveShader;
+			}
+
+			return 0;
+		}
+
+		if (sameTeam && cent->voiceChatSpriteTime > cg.time &&
+		    (drawAllVoicesChat ||
+		     (cg.predictedPlayerState.stats[STAT_PLAYER_CLASS] == PC_MEDIC && cent->voiceChatSprite == cgs.media.medicIcon) ||
+		     (cg.predictedPlayerState.stats[STAT_PLAYER_CLASS] == PC_FIELDOPS && cent->voiceChatSprite == cgs.media.ammoIcon)))
+		{
+			// FIXME: not the best place to reset it
+			if (cgs.clientinfo[ent->clientNum].health <= 0)
+			{
+				// reset
+				cent->voiceChatSpriteTime = cg.time;
+				return 0;
+			}
+
+			return cent->voiceChatSprite;
+		}
+
+		if (drawFireTeam && (CG_IsOnSameFireteam(cg.clientNum, ent->clientNum) || cgs.clientinfo[cg.clientNum].shoutcaster))
+		{
+			// draw overlapping no-shoot icon if disguised and in same team
+			if (ent->powerups & (1 << PW_OPS_DISGUISED) && cg.predictedPlayerState.persistant[PERS_TEAM] == cgs.clientinfo[ent->clientNum].team)
+			{
+				return cgs.clientinfo[ent->clientNum].selected ? cgs.media.friendShader : 0;
+			}
+			return cgs.clientinfo[ent->clientNum].selected ? cgs.media.buddyShader : 0;
+		}
+		break;
+	}
+	case ET_ITEM:
+	{
+		gitem_t *item;
+
+		item = BG_GetItem(ent->modelindex);
+
+		if (item && item->giType == IT_TEAM)
+		{
+			if ((item->giPowerUp == PW_BLUEFLAG && cg.predictedPlayerState.persistant[PERS_TEAM] == TEAM_AXIS)
+			    || (item->giPowerUp == PW_REDFLAG && cg.predictedPlayerState.persistant[PERS_TEAM] == TEAM_ALLIES))
+			{
+				return cgs.media.objectiveBlueShader;
+			}
+
+			return cgs.media.objectiveRedShader;
+		}
+		break;
+	}
+	case ET_EXPLOSIVE_INDICATOR:
+	{
+		if (drawPrimaryObj)
+		{
+			oidInfo_t *oidInfo = &cgs.oidInfo[cent->currentState.modelindex2];
+			int       entNum   = Q_atoi(
+				CG_ConfigString(ent->teamNum == TEAM_AXIS ? CS_MAIN_AXIS_OBJECTIVE : CS_MAIN_ALLIES_OBJECTIVE));
+
+			if (name)
+			{
+				Q_strncpyz(name, oidInfo->name, MAX_QPATH);
+			}
+
+			if (entNum == oidInfo->entityNum || oidInfo->spawnflags & (1 << 4))
+			{
+				if (cg.predictedPlayerState.persistant[PERS_TEAM] == TEAM_AXIS)
+				{
+					return ent->teamNum == TEAM_AXIS ? cgs.media.defendShader : cgs.media.attackShader;
+				}
+				else
+				{
+					return ent->teamNum == TEAM_AXIS ? cgs.media.attackShader : cgs.media.defendShader;
+				}
+			}
+		}
+
+		if (drawSecondaryObj)
+		{
+			// draw explosives if an engineer
+			if (cg.predictedPlayerState.stats[STAT_PLAYER_CLASS] == PC_ENGINEER ||
+			    (cg.predictedPlayerState.stats[STAT_PLAYER_CLASS] == PC_COVERTOPS && ent->effect1Time == 1))
+			{
+				if (ent->teamNum == 1 && cg.predictedPlayerState.persistant[PERS_TEAM] == TEAM_AXIS)
+				{
+					return 0;
+				}
+
+				if (ent->teamNum == 2 && cg.predictedPlayerState.persistant[PERS_TEAM] == TEAM_ALLIES)
+				{
+					return 0;
+				}
+
+				return cgs.media.destroyShader;
+			}
+		}
+		break;
+	}
+	case ET_CONSTRUCTIBLE_INDICATOR:
+	{
+		if (drawPrimaryObj)
+		{
+			oidInfo_t *oidInfo = &cgs.oidInfo[cent->currentState.modelindex2];
+			int       entNum   = Q_atoi(CG_ConfigString(ent->teamNum == TEAM_AXIS ? CS_MAIN_AXIS_OBJECTIVE : CS_MAIN_ALLIES_OBJECTIVE));
+
+			if (name)
+			{
+				Q_strncpyz(name, oidInfo->name, MAX_QPATH);
+			}
+
+			if (entNum == oidInfo->entityNum || oidInfo->spawnflags & (1 << 4))
+			{
+				if (cg.predictedPlayerState.persistant[PERS_TEAM] == TEAM_AXIS)
+				{
+					return ent->teamNum == TEAM_AXIS ? cgs.media.defendShader : cgs.media.attackShader;
+				}
+				else
+				{
+					return ent->teamNum == TEAM_AXIS ? cgs.media.attackShader : cgs.media.defendShader;
+				}
+			}
+		}
+
+		if (drawSecondaryObj)
+		{
+			// draw construction if an engineer
+			if (cg.predictedPlayerState.stats[STAT_PLAYER_CLASS] == PC_ENGINEER)
+			{
+				if (ent->teamNum == 1 && cg.predictedPlayerState.persistant[PERS_TEAM] != TEAM_AXIS)
+				{
+					return 0;
+				}
+
+				if (ent->teamNum == 2 && cg.predictedPlayerState.persistant[PERS_TEAM] != TEAM_ALLIES)
+				{
+					return 0;
+				}
+
+				return cgs.media.constructShader;
+			}
+		}
+		break;
+	}
+	case ET_TANK_INDICATOR:
+	{
+		if (drawPrimaryObj)
+		{
+			oidInfo_t *oidInfo = &cgs.oidInfo[cent->currentState.modelindex2];
+			int       entNum   = Q_atoi(CG_ConfigString(ent->teamNum == TEAM_AXIS ? CS_MAIN_AXIS_OBJECTIVE : CS_MAIN_ALLIES_OBJECTIVE));
+
+			if (name)
+			{
+				Q_strncpyz(name, oidInfo->name, MAX_QPATH);
+			}
+
+			if (entNum == oidInfo->entityNum || oidInfo->spawnflags & (1 << 4))
+			{
+				if (cg.predictedPlayerState.persistant[PERS_TEAM] == TEAM_AXIS)
+				{
+					return ent->teamNum == TEAM_AXIS ? cgs.media.defendShader : cgs.media.attackShader;
+				}
+				else
+				{
+					return ent->teamNum == TEAM_AXIS ? cgs.media.attackShader : cgs.media.defendShader;
+				}
+			}
+		}
+
+		if (drawSecondaryObj)
+		{
+			// FIXME: show only when relevant
+			if ((ent->teamNum == 1 && cg.predictedPlayerState.persistant[PERS_TEAM] == TEAM_AXIS)
+			    || (ent->teamNum == 2 && cg.predictedPlayerState.persistant[PERS_TEAM] == TEAM_ALLIES))
+			{
+				return cgs.media.escortShader;
+			}
+
+			return cgs.media.destroyShader;
+		}
+		break;
+	}
+	case ET_TANK_INDICATOR_DEAD:
+	{
+		if (drawPrimaryObj)
+		{
+			oidInfo_t *oidInfo = &cgs.oidInfo[cent->currentState.modelindex2];
+			int       entNum   = Q_atoi(CG_ConfigString(ent->teamNum == TEAM_AXIS ? CS_MAIN_AXIS_OBJECTIVE : CS_MAIN_ALLIES_OBJECTIVE));
+
+			if (name)
+			{
+				Q_strncpyz(name, oidInfo->name, MAX_QPATH);
+			}
+
+			if (entNum == oidInfo->entityNum || oidInfo->spawnflags & (1 << 4))
+			{
+				if (cg.predictedPlayerState.persistant[PERS_TEAM] == TEAM_AXIS)
+				{
+					return ent->teamNum == TEAM_AXIS ? cgs.media.defendShader : cgs.media.attackShader;
+				}
+				else
+				{
+					return ent->teamNum == TEAM_AXIS ? cgs.media.attackShader : cgs.media.defendShader;
+				}
+			}
+		}
+
+		if (drawSecondaryObj)
+		{
+			// FIXME: show only when relevant
+			// draw repair if an engineer
+			if (cg.predictedPlayerState.stats[STAT_PLAYER_CLASS] == PC_ENGINEER && (
+					(ent->teamNum == 1 && cg.predictedPlayerState.persistant[PERS_TEAM] == TEAM_AXIS)
+					|| (ent->teamNum == 2 && cg.predictedPlayerState.persistant[PERS_TEAM] == TEAM_ALLIES)))
+			{
+				return cgs.media.constructShader;
+			}
+		}
+		break;
+	}
+	case ET_TRAP:
+	{
+		if (drawSecondaryObj)
+		{
+			if (ent->frame == 0)
+			{
+				return cgs.media.regroupShader;
+			}
+
+			if (ent->frame == 4)
+			{
+				return cg.predictedPlayerState.persistant[PERS_TEAM] == TEAM_AXIS ? cgs.media.regroupShader : cgs.media.defendShader;
+			}
+
+			if (ent->frame == 3)
+			{
+				return cg.predictedPlayerState.persistant[PERS_TEAM] == TEAM_ALLIES ? cgs.media.regroupShader : cgs.media.defendShader;
+			}
+		}
+		break;
+	}
+	// FIXME: ET_COMMANDMAP_MARKER, ET_HEALER, ET_SUPPLIER
+	//case ET_MG42_BARREL:
+	//{
+	//    return cgs.media.mg42HintShader;
+	//}
+	//case ET_CABINET_H:
+	//{
+	//	return cgs.media.healthHintShader;
+	//}
+	//caseET_CABINET_A:
+	//{
+	//	return cgs.media.ammoHintShader;
+	//}
+	default:
+		break;
 	}
 
-	x = x + ((float)cos(angle) * w);
-	y = y + ((float)sin(angle) * w);
-
-	len = 1 - MIN(1.f, len / 2000.f);
-
-	CG_DrawPic(x - (14 * len + 4) / 2, y - (14 * len + 4) / 2, 14 * len + 8, 14 * len + 8, shader);
+	return 0;
 }
 
 /**
@@ -1710,7 +2053,7 @@ static void CG_CompasMoveLocation(float *basex, float *basey, qboolean animation
 {
 	float x    = *basex;
 	float y    = *basey;
-	float cent = activehud->compas.location.w / 2;
+	float cent = activehud->compass.location.w / 2;
 	x += cent;
 	y += cent;
 
@@ -1778,15 +2121,10 @@ static void CG_CompasMoveLocation(float *basex, float *basey, qboolean animation
  * @brief CG_DrawNewCompass
  * @param location
  */
-static void CG_DrawNewCompass(rectDef_t location)
+void CG_DrawNewCompass(rectDef_t location)
 {
-	float        basex = location.x, basey = location.y - 16, basew = location.w, baseh = location.h;
-	snapshot_t   *snap;
-	float        angle;
-	int          i;
-	static float lastangle  = 0;
-	static float anglespeed = 0;
-	float        diff;
+	float      basex = location.x, basey = location.y - 16, basew = location.w, baseh = location.h;
+	snapshot_t *snap;
 
 	if (cg.nextSnap && !cg.nextFrameTeleport && !cg.thisFrameTeleport)
 	{
@@ -1797,7 +2135,7 @@ static void CG_DrawNewCompass(rectDef_t location)
 		snap = cg.snap;
 	}
 
-	if (snap->ps.pm_flags & PMF_LIMBO /*|| snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR*/
+	if ((snap->ps.pm_flags & PMF_LIMBO && !cgs.clientinfo[cg.clientNum].shoutcaster)
 #ifdef FEATURE_MULTIVIEW
 	    || cg.mvTotalClients > 0
 #endif
@@ -1806,8 +2144,6 @@ static void CG_DrawNewCompass(rectDef_t location)
 		CG_DrawExpandedAutoMap();
 		return;
 	}
-
-	diff = basew * 0.25f;
 
 	if (!cg_altHud.integer)
 	{
@@ -1842,141 +2178,8 @@ static void CG_DrawNewCompass(rectDef_t location)
 		return;
 	}
 
-	CG_DrawAutoMap(basex + (diff / 2), basey + (diff / 2), basew - diff, baseh - diff);
-	CG_DrawPic(basex + 4, basey + 4, basew - 8, baseh - 8, cgs.media.compassShader);
-
-	angle       = (cg.predictedPlayerState.viewangles[YAW] + 180.f) / 360.f - (0.125f);
-	diff        = AngleSubtract(angle * 360, lastangle * 360) / 360.f;
-	anglespeed /= 1.08f;
-	anglespeed += diff * 0.01f;
-	if (Q_fabs(anglespeed) < 0.00001f)
-	{
-		anglespeed = 0;
-	}
-	lastangle += anglespeed;
-	CG_DrawRotatedPic(basex + 4, basey + 4, basew - 8, baseh - 8, cgs.media.compass2Shader, lastangle);
-
-	//if( !(cgs.ccFilter & CC_FILTER_REQUESTS) ) {
-	// draw voice chats
-	{
-		centity_t *cent;
-
-		for (i = 0; i < MAX_CLIENTS; i++)
-		{
-			cent = &cg_entities[i];
-
-			if (cg.predictedPlayerState.clientNum == i || !cgs.clientinfo[i].infoValid ||
-			    (cg.predictedPlayerState.persistant[PERS_TEAM] != cgs.clientinfo[i].team && !cgs.clientinfo[cg.clientNum].shoutcaster))
-			{
-				continue;
-			}
-
-			// also draw revive icons if cent is dead and player is a medic
-			if (cent->voiceChatSpriteTime < cg.time)
-			{
-				continue;
-			}
-
-			// also draw disguise icon or objective icon (if they are carrying one)
-			if (cgs.clientinfo[i].powerups & ((1 << PW_REDFLAG) | (1 << PW_BLUEFLAG) | (1 << PW_OPS_DISGUISED)))
-			{
-				continue;
-			}
-
-			if (cgs.clientinfo[i].health <= 0)
-			{
-				// reset
-				cent->voiceChatSpriteTime = cg.time;
-				continue;
-			}
-
-			CG_DrawCompassIcon(basex, basey, basew, baseh, cg.predictedPlayerState.origin, cent->lerpOrigin, cent->voiceChatSprite);
-		}
-	}
-	//}
-
-	/*if( !(cgs.ccFilter & CC_FILTER_DESTRUCTIONS) ) {
-	    // draw explosives if an engineer
-	    if ( cg.predictedPlayerState.stats[ STAT_PLAYER_CLASS ] == PC_ENGINEER ) {
-	        for ( i = 0; i < snap->numEntities; i++ ) {
-	            centity_t *cent = &cg_entities[ snap->entities[ i ].number ];
-
-	            if ( cent->currentState.eType != ET_EXPLOSIVE_INDICATOR ) {
-	                continue;
-	            }
-
-	            if ( cent->currentState.teamNum == 1 && cg.predictedPlayerState.persistant[PERS_TEAM] == TEAM_AXIS )
-	                continue;
-	            else if ( cent->currentState.teamNum == 2 && cg.predictedPlayerState.persistant[PERS_TEAM] == TEAM_ALLIES )
-	                continue;
-
-	            CG_DrawCompassIcon( basex, basey, basew, baseh, cg.predictedPlayerState.origin, cent->lerpOrigin, cgs.media.compassDestroyShader );
-	        }
-	    }
-	}*/
-
-	{
-		entityState_t *ent;
-
-		for (i = 0; i < snap->numEntities; i++)
-		{
-			ent = &snap->entities[i];
-
-			if (ent->eType != ET_PLAYER)
-			{
-				continue;
-			}
-
-			if (ent->eFlags & EF_DEAD)
-			{
-				qboolean sameTeam = ((cg.predictedPlayerState.persistant[PERS_TEAM] == cgs.clientinfo[ent->clientNum].team) ? qtrue : qfalse);
-
-				if ((cg.predictedPlayerState.stats[STAT_PLAYER_CLASS] == PC_MEDIC && cg.predictedPlayerState.stats[STAT_HEALTH] > 0 && ent->number == ent->clientNum && sameTeam) ||
-				    (!(cg.snap->ps.pm_flags & PMF_FOLLOW) && cgs.clientinfo[cg.clientNum].shoutcaster)) // && !(cgs.ccFilter & CC_FILTER_REQUESTS)
-				{
-					if (!cgs.clientinfo[ent->clientNum].infoValid)
-					{
-						continue;
-					}
-
-					CG_DrawCompassIcon(basex, basey, basew, baseh, cg.predictedPlayerState.origin, ent->pos.trBase, cgs.media.medicReviveShader);
-				}
-
-				continue;
-			}
-
-			if (!cgs.clientinfo[ent->clientNum].infoValid || (cg.predictedPlayerState.persistant[PERS_TEAM] != cgs.clientinfo[ent->clientNum].team &&
-			                                                  !(cgs.clientinfo[ent->clientNum].powerups & (1 << PW_OPS_DISGUISED)) &&   // allow disguise enemy to be draw
-			                                                  !cgs.clientinfo[cg.clientNum].shoutcaster))
-			{
-				continue;
-			}
-
-			// draw objective icon (if they are carrying one)
-			if (cgs.clientinfo[ent->clientNum].powerups & ((1 << PW_REDFLAG) | (1 << PW_BLUEFLAG)))
-			{
-				CG_DrawCompassIcon(basex, basey, basew, baseh, cg.predictedPlayerState.origin, ent->pos.trBase, cgs.media.objectiveShader);
-			}
-
-			if (!CG_IsOnSameFireteam(cg.clientNum, ent->clientNum) && !cgs.clientinfo[cg.clientNum].shoutcaster)
-			{
-				continue;
-			}
-
-			// draw disguise or default buddy icon
-			if (!cgs.clientinfo[cg.clientNum].shoutcaster)
-			{
-				// draw overlapping no-shoot icon if disguised and in same team but draw disguise ennemy on compass as buddy
-				if (cgs.clientinfo[ent->clientNum].powerups & (1 << PW_OPS_DISGUISED) && cg.predictedPlayerState.persistant[PERS_TEAM] == cgs.clientinfo[ent->clientNum].team)
-				{
-					CG_DrawCompassIcon(basex, basey, basew, baseh, cg.predictedPlayerState.origin, ent->pos.trBase, cgs.media.friendShader);
-				}
-				CG_DrawCompassIcon(basex, basey, basew, baseh, cg.predictedPlayerState.origin, ent->pos.trBase, cgs.media.buddyShader); //if( !(cgs.ccFilter & CC_FILTER_BUDDIES) ) {
-			}
-		}
-	}
+	CG_DrawAutoMap(basex, basey, basew, baseh);
 }
-
 /**
  * @brief CG_DrawStatsDebug
  */
@@ -2081,14 +2284,6 @@ static float CG_DrawSnapshot(float y)
 	return y + 36 + 4;
 }
 
-// speed constants
-#define SPEED_US_TO_KPH   15.58f
-#define SPEED_US_TO_MPH   23.44f
-
-static vec_t highestSpeed, speed;
-static int   lasttime;
-vec4_t       tclr = { 0.625f, 0.625f, 0.6f, 1.0f };
-
 /**
  * @brief CG_DrawSpeed
  * @param y
@@ -2096,10 +2291,13 @@ vec4_t       tclr = { 0.625f, 0.625f, 0.6f, 1.0f };
  */
 static float CG_DrawSpeed(float y)
 {
-	char *s, *s2 = NULL;
-	int  w, w2, w3, w4;
-	int  thistime;
-	int  x, h;
+	static vec_t  highestSpeed, speed;
+	static int    lasttime;
+	static vec4_t tclr = { 0.625f, 0.625f, 0.6f, 1.0f };
+	char          *s, *s2 = NULL;
+	int           w, w2, w3, w4;
+	int           thistime;
+	int           x, h;
 
 	if (resetmaxspeed)
 	{
@@ -2121,32 +2319,20 @@ static float CG_DrawSpeed(float y)
 		lasttime = thistime;
 	}
 
-	switch (cg_drawspeed.integer)
+	switch (cg_drawUnit.integer)
 	{
-	case 1:
+	case 0:
 		// Units per second
-		s = va("%.1f UPS", speed);
-		break;
-	case 2:
-		// Kilometers per hour
-		s = va("%.1f KPH", (speed / SPEED_US_TO_KPH));
-		break;
-	case 3:
-		// Miles per hour
-		s = va("%.1f MPH", (speed / SPEED_US_TO_MPH));
-		break;
-	case 4:
-		// Units per second + highestSpeed
 		s  = va("%.1f UPS", speed);
 		s2 = va("%.1f MAX", highestSpeed);
 		break;
-	case 5:
-		// Kilometers per hour  + highestSpeed
+	case 1:
+		// Kilometers per hour
 		s  = va("%.1f KPH", (speed / SPEED_US_TO_KPH));
 		s2 = va("%.1f MAX", (highestSpeed / SPEED_US_TO_KPH));
 		break;
-	case 6:
-		// Miles per hour  + highestSpeed
+	case 2:
+		// Miles per hour
 		s  = va("%.1f MPH", (speed / SPEED_US_TO_MPH));
 		s2 = va("%.1f MAX", (highestSpeed / SPEED_US_TO_MPH));
 		break;
@@ -2156,7 +2342,7 @@ static float CG_DrawSpeed(float y)
 		break;
 	}
 
-	h = (cg_drawspeed.integer > 3) ? 24 : 12;
+	h = (cg_drawspeed.integer == 2) ? 24 : 12;
 
 	w  = CG_Text_Width_Ext(s, 0.19f, 0, &cgs.media.limboFont1);
 	w2 = (UPPERRIGHT_W > w) ? UPPERRIGHT_W : w;
@@ -2167,7 +2353,7 @@ static float CG_DrawSpeed(float y)
 	CG_Text_Paint_Ext(x + ((w2 - w) / 2) + 2, y + 11, 0.19f, 0.19f, tclr, s, 0, 0, 0, &cgs.media.limboFont1);
 
 	// draw max speed on second line
-	if (cg_drawspeed.integer > 3)
+	if (cg_drawspeed.integer == 2)
 	{
 		y  = y + 12;
 		w3 = CG_Text_Width_Ext(s2, 0.19f, 0, &cgs.media.limboFont1);
@@ -2253,243 +2439,90 @@ static float CG_DrawFPS(float y)
 }
 
 /**
- * @brief CG_DrawTimersAlt
- * @param[in] respawn
- * @param[in] spawntimer
- * @param[in] localtime
- * @param[in] roundtimer
- */
-static void CG_DrawTimersAlt(rectDef_t *respawn, rectDef_t *spawntimer, rectDef_t *localtime, rectDef_t *roundtimer)
+ * @brief CG_SpawnTimerText red colored spawn time text in reinforcement time HUD element.
+ * @return red colored text or NULL when its not supposed to be rendered
+*/
+char *CG_SpawnTimerText()
 {
-	char    *s, *rt;
-	int     w;
-	qtime_t time;
-	vec4_t  color = { 0.625f, 0.625f, 0.6f, 1.0f };
-	int     tens;
-	int     msec = (cgs.timelimit * 60000.f) - (cg.time - cgs.levelStartTime);    // 60.f * 1000.f
-	int     secondsThen;
-	int     seconds = msec / 1000;
-	int     mins    = seconds / 60;
+	int msec = (cgs.timelimit * 60000.f) - (cg.time - cgs.levelStartTime);
+	int seconds;
+	int secondsThen;
 
-	seconds -= mins * 60;
-	tens     = seconds / 10;
-	seconds -= tens * 10;
-
-	if (cgs.gamestate != GS_PLAYING)
-	{
-		s        = va("^7%s", CG_TranslateString("WARMUP")); // don't draw reinforcement time in warmup mode // ^*
-		color[3] = fabs(sin(cg.time * 0.002));
-	}
-	else if (msec < 0 && cgs.timelimit > 0.0f)
-	{
-		s        = "^70:00";
-		color[3] = fabs(sin(cg.time * 0.002));
-	}
-	else
-	{
-		color[3] = 1.f;
-		if (cgs.timelimit > 0.0f)
-		{
-			s = va("^7%i:%i%i", mins, tens, seconds);
-			w = (mins < 10) ? CG_Text_Width_Ext("0", 0.19f, 0, &cgs.media.limboFont1) : 0;
-			CG_Text_Paint_Ext(roundtimer->x + w, roundtimer->y, 0.19f, 0.19f, color, s, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
-		}
-
-		if (cgs.gametype != GT_WOLF_LMS && cgs.clientinfo[cg.clientNum].shoutcaster && cg_drawReinforcementTime.integer > 0)
-		{
-			int reinfTimeAx = CG_CalculateShoutcasterReinfTime(TEAM_AXIS);
-			int reinfTimeAl = CG_CalculateShoutcasterReinfTime(TEAM_ALLIES);
-
-			rt = va("^1%2.0i ^$%2.0i ", reinfTimeAx, reinfTimeAl);
-		}
-		else if (cgs.gametype != GT_WOLF_LMS && (cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR || (cg.snap->ps.pm_flags & PMF_FOLLOW)) && cg_drawReinforcementTime.integer > 0)
-		{
-			int  reinfTime  = CG_CalculateReinfTime(qfalse);
-			char *teamColor = (cgs.clientinfo[cg.clientNum].shoutcaster ? (cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_AXIS ? "^1" : "^$") : "^F");
-
-			rt = va("%s%d%s", (reinfTime <= 2 && cgs.clientinfo[cg.clientNum].health == 0 &&
-			                   !(cg.snap->ps.pm_flags & PMF_FOLLOW)) ? "^1" : teamColor, reinfTime, ((cgs.timelimit <= 0.0f) ? "" : " "));
-		}
-		else
-		{
-			rt = "";
-		}
-
-		s = va("%s", rt);
-	}
-
-	if (cgs.gamestate != GS_PLAYING)
-	{
-		w = CG_Text_Width_Ext(s, 0.19f, 0, &cgs.media.limboFont1) - CG_Text_Width_Ext("00:00", 0.19f, 0, &cgs.media.limboFont1);
-	}
-	else
-	{
-		w = CG_Text_Width_Ext(s, 0.19f, 0, &cgs.media.limboFont1) - ((msec < 0 && cgs.timelimit > 0.0f) ? CG_Text_Width_Ext("00:00", 0.19f, 0, &cgs.media.limboFont1) : 0);
-	}
-
-	CG_Text_Paint_Ext(respawn->x - w, respawn->y, 0.19f, 0.19f, color, s, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
-
-	// spawntimer
-	if (cg_spawnTimer_set.integer != -1 && cg_spawnTimer_period.integer > 0 && cgs.gamestate == GS_PLAYING && !cgs.clientinfo[cg.clientNum].shoutcaster)
+	if (cg_spawnTimer_set.integer != -1 && cgs.gamestate == GS_PLAYING && !cgs.clientinfo[cg.clientNum].shoutcaster)
 	{
 		if (cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR || (cg.snap->ps.pm_flags & PMF_FOLLOW))
 		{
-			seconds     = msec / 1000;
-			secondsThen = ((cgs.timelimit * 60000.f) - cg_spawnTimer_set.integer) / 1000;
-			s           = va("^1%i ", cg_spawnTimer_period.integer + (seconds - secondsThen) % cg_spawnTimer_period.integer);
-			w           = CG_Text_Width_Ext(s, 0.19f, 0, &cgs.media.limboFont1) - ((msec < 0 && cgs.timelimit > 0.0f) ? CG_Text_Width_Ext("00:00", 0.19f, 0, &cgs.media.limboFont1) : 0);
-			CG_Text_Paint_Ext(spawntimer->x - w, spawntimer->y, 0.19f, 0.19f, color, s, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
+			int period = cg_spawnTimer_period.integer > 0 ? cg_spawnTimer_period.integer : (cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_AXIS ? cg_bluelimbotime.integer / 1000 : cg_redlimbotime.integer / 1000);
+			if (period > 0) // prevent division by 0 for weird cases like limbtotime < 1000
+			{
+				seconds     = msec / 1000;
+				secondsThen = ((cgs.timelimit * 60000.f) - cg_spawnTimer_set.integer) / 1000;
+				return va("%i", period + (seconds - secondsThen) % period);
+			}
 		}
 	}
 	else if (cg_spawnTimer_set.integer != -1 && cg_spawnTimer_period.integer > 0 && cgs.gamestate != GS_PLAYING)
 	{
-		//We are not playing and the timer is set so reset/disable it
+		// We are not playing and the timer is set so reset/disable it
+		// this happens for example when custom period is set by timerSet and map is restarted or changed
 		trap_Cvar_Set("cg_spawnTimer_set", "-1");
 	}
-	// end spawntimer
-
-	if (cg_drawTime.integer & LOCALTIME_ON)
-	{
-		qboolean pmtime = qfalse;
-
-		// Fetch the local time
-		trap_RealTime(&time);
-
-		if (cg_drawTime.integer & LOCALTIME_SECOND)
-		{
-			if (cg_drawTime.integer & LOCALTIME_12HOUR)
-			{
-				if (time.tm_hour > 12)
-				{
-					pmtime = qtrue;
-				}
-				s = va("%i:%02i:%02i %s", (pmtime ? time.tm_hour - 12 : time.tm_hour), time.tm_min, time.tm_sec, (pmtime ? "PM" : "AM"));
-			}
-			else
-			{
-				s = va("%02i:%02i:%02i", time.tm_hour, time.tm_min, time.tm_sec);
-			}
-		}
-		else
-		{
-			if (cg_drawTime.integer & LOCALTIME_12HOUR)
-			{
-				if (time.tm_hour > 12)
-				{
-					pmtime = qtrue;
-				}
-				s = va("%i:%02i %s", (pmtime ? time.tm_hour - 12 : time.tm_hour), time.tm_min, (pmtime ? "PM" : "AM"));
-			}
-			else
-			{
-				s = va("%02i:%02i", time.tm_hour, time.tm_min);
-			}
-		}
-		CG_Text_Paint_Ext(localtime->x, localtime->y, 0.19f, 0.19f, color, s, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
-	}
+	return NULL;
 }
 
 /**
- * @brief CG_DrawTimerNormal
- * @param[in] y
+ * @brief CG_SpawnTimersText
+ * @param[out] respawn
+ * @param[out] spawntimer
  * @return
  */
-static float CG_DrawTimerNormal(float y)
+static qboolean CG_SpawnTimersText(char **s, char **rt)
 {
-	vec4_t color = { .6f, .6f, .6f, 1.f };
-	char   *s, *rt;
-	int    w, w2;
-	int    tens;
-	int    x;
-	int    secondsThen;
-	int    msec    = (cgs.timelimit * 60000.f) - (cg.time - cgs.levelStartTime); // 60.f * 1000.f
-	int    seconds = msec / 1000;
-	int    mins    = seconds / 60;
-
-	seconds -= mins * 60;
-	tens     = seconds / 10;
-	seconds -= tens * 10;
-
 	if (cgs.gamestate != GS_PLAYING)
 	{
-		s        = va("^7%s", CG_TranslateString("WARMUP")); // don't draw reinforcement time in warmup mode // ^*
-		color[3] = fabs(sin(cg.time * 0.002));
-	}
-	else if (msec < 0 && cgs.timelimit > 0.0f)
-	{
-		s        = "^70:00";
-		color[3] = fabs(sin(cg.time * 0.002));
-	}
-	else
-	{
-		if (cgs.gametype != GT_WOLF_LMS && cgs.clientinfo[cg.clientNum].shoutcaster && cg_drawReinforcementTime.integer > 0)
+		int limbotimeOwn, limbotimeEnemy;
+		if (cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_AXIS)
 		{
-			int reinfTimeAx = CG_CalculateShoutcasterReinfTime(TEAM_AXIS);
-			int reinfTimeAl = CG_CalculateShoutcasterReinfTime(TEAM_ALLIES);
-
-			rt = va("^1%2.0i ^$%2.0i", reinfTimeAx, reinfTimeAl);
-		}
-		else if (cgs.gametype != GT_WOLF_LMS && (cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR || (cg.snap->ps.pm_flags & PMF_FOLLOW)) && cg_drawReinforcementTime.integer > 0)
-		{
-			int  reinfTime = CG_CalculateReinfTime(qfalse);
-			char *c        = (cgs.clientinfo[cg.clientNum].shoutcaster ? (cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_AXIS ? "^1" : "^$") : "^F");
-
-			rt = va("%s%s%d", (reinfTime <= 2 && cgs.clientinfo[cg.clientNum].health == 0 &&
-			                   !(cg.snap->ps.pm_flags & PMF_FOLLOW)) ? "^1" : c, ((cgs.timelimit <= 0.0f) ? "" : " "), reinfTime);
+			limbotimeOwn   = cg_redlimbotime.integer;
+			limbotimeEnemy = cg_bluelimbotime.integer;
 		}
 		else
 		{
-			rt = "";
+			limbotimeOwn   = cg_bluelimbotime.integer;
+			limbotimeEnemy = cg_redlimbotime.integer;
 		}
 
-		if (cgs.timelimit <= 0.0f)
-		{
-			s = va("%s", rt);
-		}
-		else
-		{
-			s = va("%s ^7%2i:%i%i", rt, mins, tens, seconds);
-		}
-
-		color[3] = 1.f;
+		*rt = va("%2.0i", limbotimeEnemy / 1000);
+		*s  = cgs.gametype == GT_WOLF_LMS ? va("%s", CG_TranslateString("WARMUP")) : va("%2.0i", limbotimeOwn / 1000);
+		return qtrue;
 	}
-
-	// spawntimer
-	if (cg_spawnTimer_set.integer != -1 && cg_spawnTimer_period.integer > 0 && cgs.gamestate == GS_PLAYING && !cgs.clientinfo[cg.clientNum].shoutcaster)
+	else if (cgs.gametype != GT_WOLF_LMS && (cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR || (cg.snap->ps.pm_flags & PMF_FOLLOW)) && cg_drawReinforcementTime.integer > 0)
 	{
-		if (cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR || (cg.snap->ps.pm_flags & PMF_FOLLOW))
-		{
-			seconds     = msec / 1000;
-			secondsThen = ((cgs.timelimit * 60000.f) - cg_spawnTimer_set.integer) / 1000;
-			s           = va("^1%i %s", cg_spawnTimer_period.integer + (seconds - secondsThen) % cg_spawnTimer_period.integer, s);
-		}
+		*s  = va("%2.0i", CG_CalculateReinfTime(qfalse));
+		*rt = CG_SpawnTimerText();
 	}
-	else if (cg_spawnTimer_set.integer != -1 && cg_spawnTimer_period.integer > 0 && cgs.gamestate != GS_PLAYING)
-	{
-		// we are not playing and the timer is set so reset/disable it
-		trap_Cvar_Set("cg_spawnTimer_set", "-1");
-	}
-
-	w  = CG_Text_Width_Ext(s, 0.19f, 0, &cgs.media.limboFont1);
-	w2 = (UPPERRIGHT_W > w) ? UPPERRIGHT_W : w;
-
-	x = Ccg_WideX(UPPERRIGHT_X) - w2 - 2;
-	CG_FillRect(x, y, w2 + 5, 12 + 2, HUD_Background);
-	CG_DrawRect_FixedBorder(x, y, w2 + 5, 12 + 2, 1, HUD_Border);
-	CG_Text_Paint_Ext(x + ((w2 - w) / 2) + 2, y + 11, 0.19f, 0.19f, color, s, 0, 0, 0, &cgs.media.limboFont1);
-
-	return y + 12 + 4;
+	return qfalse;
 }
 
-/**
- * @brief CG_DrawLocalTime
- * @param[in] y
- * @return
- */
-static float CG_DrawLocalTime(float y)
+
+static char *CG_RoundTimerText()
+{
+	qtime_t qt;
+	int     msec = CG_RoundTime(&qt);
+	if (msec < 0 && cgs.timelimit > 0.0f)
+	{
+		return "0:00"; // round ended
+	}
+
+	char *seconds = qt.tm_sec > 9 ? va("%i", qt.tm_sec) : va("0%i", qt.tm_sec);
+	char *minutes = qt.tm_min > 9 ? va("%i", qt.tm_min) : va("0%i", qt.tm_min);
+
+	return va("%s:%s", minutes, seconds);
+}
+
+static char *CG_LocalTimeText()
 {
 	qtime_t  time;
-	int      w, w2, x;
 	char     *s;
 	qboolean pmtime = qfalse;
 
@@ -2526,6 +2559,88 @@ static float CG_DrawLocalTime(float y)
 			s = va("%02i:%02i", time.tm_hour, time.tm_min);
 		}
 	}
+	return s;
+}
+
+/**
+ * @brief CG_DrawTimersAlt
+ * @param[in] respawn
+ * @param[in] spawntimer
+ * @param[in] localtime
+ * @param[in] roundtimer
+ */
+static void CG_DrawTimersAlt(struct hudComponent_s *respawn, struct hudComponent_s *spawntimer, struct hudComponent_s *localtime, struct hudComponent_s *roundtimer)
+{
+	char     *s = NULL, *rt = NULL;
+	int      w;
+	vec4_t   color;
+	qboolean blink = CG_SpawnTimersText(&s, &rt);
+	float    blinkAlpha;
+
+	if (blink)
+	{
+		blinkAlpha = fabs(sin(cg.time * 0.002));
+	}
+
+	Com_Memcpy(color, roundtimer->color, sizeof(vec4_t));
+	color[3] = blink ? blinkAlpha : color[3];
+	CG_Text_Paint_Ext(roundtimer->location.x, roundtimer->location.y, roundtimer->scale, roundtimer->scale, color, CG_RoundTimerText(), 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
+
+	if (s)
+	{
+		w = CG_Text_Width_Ext(s, respawn->scale, 0, &cgs.media.limboFont1);
+		Com_Memcpy(color, respawn->color, sizeof(vec4_t));
+		color[3] = blink ? blinkAlpha : color[3];
+		CG_Text_Paint_Ext(respawn->location.x - w, respawn->location.y, respawn->scale, respawn->scale, color, s, 0, 0,
+		                  ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
+	}
+
+	if (rt)
+	{
+		w = CG_Text_Width_Ext(s, spawntimer->scale, 0, &cgs.media.limboFont1);
+		Com_Memcpy(color, spawntimer->color, sizeof(vec4_t));
+		color[3] = blink ? blinkAlpha : color[3];
+		CG_Text_Paint_Ext(spawntimer->location.x - w, spawntimer->location.y, spawntimer->scale, spawntimer->scale,
+		                  color, rt, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
+	}
+
+	if (cg_drawTime.integer & LOCALTIME_ON)
+	{
+		CG_Text_Paint_Ext(localtime->location.x, localtime->location.y, localtime->scale, localtime->scale, localtime->color, CG_LocalTimeText(), 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
+	}
+}
+
+/**
+ * @brief CG_DrawTimerNormal
+ * @param[in] y
+ * @return
+ */
+static float CG_DrawTimerNormal(float y)
+{
+	char     *s = NULL, *rt = NULL, *mt = va("%s%s", "^7", CG_RoundTimerText());
+	int      w, w2;
+	int      x;
+	float    blinkAlpha;
+	qboolean blink = CG_SpawnTimersText(&s, &rt);
+
+	if (blink)
+	{
+		blinkAlpha = fabs(sin(cg.time * 0.002));
+	}
+
+	if (s)
+	{
+		s = va("^$%s%s%s", s, " ", mt);
+	}
+	else
+	{
+		s = mt;
+	}
+
+	if (rt)
+	{
+		s = va("^1%s%s%s", rt, " ", s);
+	}
 
 	w  = CG_Text_Width_Ext(s, 0.19f, 0, &cgs.media.limboFont1);
 	w2 = (UPPERRIGHT_W > w) ? UPPERRIGHT_W : w;
@@ -2534,6 +2649,27 @@ static float CG_DrawLocalTime(float y)
 	CG_FillRect(x, y, w2 + 5, 12 + 2, HUD_Background);
 	CG_DrawRect_FixedBorder(x, y, w2 + 5, 12 + 2, 1, HUD_Border);
 	CG_Text_Paint_Ext(x + ((w2 - w) / 2) + 2, y + 11, 0.19f, 0.19f, HUD_Text, s, 0, 0, 0, &cgs.media.limboFont1);
+
+	return y + 12 + 4;
+}
+
+/**
+ * @brief CG_DrawLocalTime
+ * @param[in] y
+ * @return
+ */
+static float CG_DrawLocalTime(float y)
+{
+	int  w, w2, x;
+	char *s = CG_LocalTimeText();
+
+	w  = CG_Text_Width_Ext(s, 0.19f, 0, &cgs.media.limboFont1);
+	w2 = (UPPERRIGHT_W > w) ? UPPERRIGHT_W : w;
+
+	x = Ccg_WideX(UPPERRIGHT_X) - w2 - 2;
+	CG_FillRect(x, y, w2 + 5, 12 + 2, HUD_Background);
+	CG_DrawRect_FixedBorder(x, y, w2 + 5, 12 + 2, 1, HUD_Border);
+	CG_Text_Paint_Ext(x + ((w2 - w) / 2) + 2, y + 11, 0.19f, 0.19f, activehud->localtime.color, s, 0, 0, 0, &cgs.media.limboFont1);
 
 	return y + 12 + 4;
 }
@@ -2570,7 +2706,7 @@ void CG_AddLagometerSnapshotInfo(snapshot_t *snap)
 	{
 		static int lasttime = 0;
 
-		snap->ping = (snap->serverTime - snap->ps.commandTime) - 50;
+		snap->ping = (snap->serverTime - snap->ps.commandTime) - (1000 / cgs.sv_fps);
 
 		// display snapshot time delta instead of ping
 		lagometer.snapshotSamples[index] = snap->serverTime - lasttime;
@@ -2797,7 +2933,7 @@ static float CG_DrawLagometer(float y)
 			// antiwarp indicator
 			if (lagometer.snapshotAntiwarp[i] > 0)
 			{
-				float w = lagometer.snapshotAntiwarp[i] * vscale;
+				w = lagometer.snapshotAntiwarp[i] * vscale;
 
 				if (color != 6)
 				{
@@ -2866,19 +3002,19 @@ static float CG_DrawLagometer(float y)
 	// add snapshots/s in top-right corner of meter
 	{
 		char   *result;
-		vec4_t *color;
+		vec4_t *clr;
 
 		if (cgs.sampledStat.avg < cgs.sv_fps * 0.5f)
 		{
-			color = &colorRed;
+			clr = &colorRed;
 		}
 		else if (cgs.sampledStat.avg < cgs.sv_fps * 0.75f)
 		{
-			color = &colorYellow;
+			clr = &colorYellow;
 		}
 		else
 		{
-			color = &HUD_Text;
+			clr = &HUD_Text;
 		}
 
 		// FIXME: see warmup blinky blinky
@@ -2895,7 +3031,7 @@ static float CG_DrawLagometer(float y)
 		w2 = (UPPERRIGHT_W > w) ? UPPERRIGHT_W : w;
 		x  = Ccg_WideX(UPPERRIGHT_X) - w2 - 2;
 
-		CG_Text_Paint_Ext(x + ((w2 - w) / 2) + 2, y + 11, 0.19f, 0.19f, *color, result, 0, 0, 0, &cgs.media.limboFont1);
+		CG_Text_Paint_Ext(x + ((w2 - w) / 2) + 2, y + 11, 0.19f, 0.19f, *clr, result, 0, 0, 0, &cgs.media.limboFont1);
 	}
 
 	return y + w + 13;
@@ -3007,62 +3143,66 @@ void CG_Hud_Setup(void)
 
 	// Hud1
 	hud1.hudnumber       = 1;
-	hud1.compas          = CG_getComponent(44, SCREEN_HEIGHT - 87, 84, 84, qtrue, STYLE_NORMAL);
-	hud1.staminabar      = CG_getComponent(4, 388, 12, 72, qtrue, STYLE_NORMAL);
-	hud1.breathbar       = CG_getComponent(4, 388, 12, 72, qtrue, STYLE_NORMAL);
-	hud1.healthbar       = CG_getComponent((Ccg_WideX(SCREEN_WIDTH) - 36), 388, 12, 72, qtrue, STYLE_NORMAL);
-	hud1.weaponchargebar = CG_getComponent((Ccg_WideX(SCREEN_WIDTH) - 16), 388, 12, 72, qtrue, STYLE_NORMAL);
-	hud1.healthtext      = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 60, SCREEN_HEIGHT - 65, 0, 0, qtrue, STYLE_NORMAL);
-	hud1.xptext          = CG_getComponent(48, SCREEN_HEIGHT - 4, 0, 0, qtrue, STYLE_NORMAL);
-	hud1.ranktext        = CG_getComponent(62, SCREEN_HEIGHT - 16, 0, 0, qtrue, STYLE_NORMAL);
-	hud1.statsdisplay    = CG_getComponent(24, SCREEN_HEIGHT - 95, 0, 0, qtrue, STYLE_SIMPLE);
-	hud1.weaponicon      = CG_getComponent((Ccg_WideX(SCREEN_WIDTH) - 82 - 20), (SCREEN_HEIGHT - 56), 60, 32, qtrue, STYLE_NORMAL);
-	hud1.weaponammo      = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 22 - 20, SCREEN_HEIGHT - 1 * (16 + 2) + 12 - 4, 0, 0, qtrue, STYLE_NORMAL);
-	hud1.fireteam        = CG_getComponent(Ccg_WideX(SCREEN_WIDTH), 10, 100, 100, qtrue, STYLE_NORMAL);
-	hud1.popupmessages   = CG_getComponent(4, 100, 72, 72, qtrue, STYLE_NORMAL);
-	hud1.powerups        = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 40, SCREEN_HEIGHT - 140, 36, 36, qtrue, STYLE_NORMAL);
-	hud1.hudhead         = CG_getComponent(44, SCREEN_HEIGHT - 92, 62, 80, qfalse, STYLE_NORMAL);
-	hud1.cursorhint      = CG_getComponent(.5f * SCREEN_WIDTH - .5f * 48, 260, 48, 48, qtrue, STYLE_NORMAL);
-	hud1.weaponstability = CG_getComponent(50, 208, 10, 64, qtrue, STYLE_NORMAL);
-	hud1.livesleft       = CG_getComponent(0, 0, 0, 0, qtrue, STYLE_NORMAL);
-	hud1.reinforcement   = CG_getComponent(100, SCREEN_HEIGHT - 12, 0, 0, qtrue, STYLE_NORMAL);
-	hud1.roundtimer      = CG_getComponent(100, SCREEN_HEIGHT - 12, 0, 0, qtrue, STYLE_NORMAL);
-	hud1.spawntimer      = CG_getComponent(100, SCREEN_HEIGHT - 2, 0, 0, qtrue, STYLE_NORMAL);
-	hud1.localtime       = CG_getComponent(100, SCREEN_HEIGHT - 2, 0, 0, qtrue, STYLE_NORMAL);
-	hud1.votetext        = CG_getComponent(8, 224, 0.22f, 0.22f, qtrue, STYLE_NORMAL);
-	hud1.spectatortext   = CG_getComponent(8, 188, 0.22f, 0.22f, qtrue, STYLE_NORMAL);
-	hud1.limbotext       = CG_getComponent(8, 164, 0.22f, 0.22f, qtrue, STYLE_NORMAL);
-	hud1.followtext      = CG_getComponent(8, 164, 0.22f, 0.22f, qtrue, STYLE_NORMAL);
+	hud1.compass         = CG_getComponent(44, SCREEN_HEIGHT - 87, 84, 84, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
+	hud1.staminabar      = CG_getComponent(4, 388, 12, 72, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
+	hud1.breathbar       = CG_getComponent(4, 388, 12, 72, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
+	hud1.healthbar       = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 36, 388, 12, 72, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
+	hud1.weaponchargebar = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 16, 388, 12, 72, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
+	hud1.healthtext      = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 60, SCREEN_HEIGHT - 65, 0, 0, qtrue, STYLE_NORMAL, 0.25f, colorWhite);
+	hud1.xptext          = CG_getComponent(48, SCREEN_HEIGHT - 4, 0, 0, qtrue, STYLE_NORMAL, 0.25f, colorWhite);
+	hud1.ranktext        = CG_getComponent(62, SCREEN_HEIGHT - 16, 0, 0, qtrue, STYLE_NORMAL, 0.2f, colorWhite);
+	hud1.statsdisplay    = CG_getComponent(24, SCREEN_HEIGHT - 95, 0, 0, qtrue, STYLE_SIMPLE, 0.25f, colorWhite);
+	hud1.weaponicon      = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 82 - 20, SCREEN_HEIGHT - 56, 60, 32, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
+	hud1.weaponammo      = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 22 - 20, SCREEN_HEIGHT - 1 * (16 + 2) + 12 - 4, 0, 0, qtrue, STYLE_NORMAL, 0.25f, colorWhite);
+	hud1.fireteam        = CG_getComponent(Ccg_WideX(SCREEN_WIDTH), 10, 100, 100, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
+	hud1.popupmessages   = CG_getComponent(4, 100, 72, 72, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
+	hud1.powerups        = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 40, SCREEN_HEIGHT - 136, 36, 36, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
+	hud1.objectives      = CG_getComponent(8, SCREEN_HEIGHT - 136, 36, 36, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
+	hud1.hudhead         = CG_getComponent(44, SCREEN_HEIGHT - 92, 62, 80, qfalse, STYLE_NORMAL, 0.19f, colorWhite);
+	hud1.cursorhints     = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) * .5f - 24, 260, 48, 48, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
+	hud1.weaponstability = CG_getComponent(50, 208, 10, 64, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
+	hud1.livesleft       = CG_getComponent(0, 0, 0, 0, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
+	hud1.reinforcement   = CG_getComponent(95, SCREEN_HEIGHT - 12, 0, 0, qtrue, STYLE_NORMAL, 0.19f, colorLtBlue);
+	hud1.roundtimer      = CG_getComponent(100, SCREEN_HEIGHT - 12, 0, 0, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
+	hud1.spawntimer      = CG_getComponent(95, SCREEN_HEIGHT - 2, 0, 0, qtrue, STYLE_NORMAL, 0.19f, colorRed);
+	hud1.localtime       = CG_getComponent(100, SCREEN_HEIGHT - 2, 0, 0, qtrue, STYLE_NORMAL, 0.19f, HUD_Text);
+	hud1.votetext        = CG_getComponent(8, 224, 0.22f, 0.22f, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
+	hud1.spectatortext   = CG_getComponent(8, 188, 0.22f, 0.22f, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
+	hud1.limbotext       = CG_getComponent(8, 164, 0.22f, 0.22f, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
+	hud1.followtext      = CG_getComponent(8, 164, 0.22f, 0.22f, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
+	hud1.demotext        = CG_getComponent(10, 9, 0.22f, 0.22f, qtrue, STYLE_SIMPLE, 0.22f, colorRed);
 	CG_addHudToList(&hud1);
 
 	// Hud2
 	hud2.hudnumber       = 2;
-	hud2.compas          = CG_getComponent(64, SCREEN_HEIGHT - 87, 84, 84, qtrue, STYLE_NORMAL);
-	hud2.staminabar      = CG_getComponent(4, 388, 12, 72, qtrue, STYLE_NORMAL);
-	hud2.breathbar       = CG_getComponent(4, 388, 12, 72, qtrue, STYLE_NORMAL);
-	hud2.healthbar       = CG_getComponent(24, 388, 12, 72, qtrue, STYLE_NORMAL);
-	hud2.weaponchargebar = CG_getComponent((Ccg_WideX(SCREEN_WIDTH) - 16), 388, 12, 72, qtrue, STYLE_NORMAL);
-	hud2.healthtext      = CG_getComponent(65, SCREEN_HEIGHT - 4, 0, 0, qtrue, STYLE_NORMAL);
-	hud2.xptext          = CG_getComponent(132, SCREEN_HEIGHT - 4, 0, 0, qtrue, STYLE_NORMAL);
-	hud2.ranktext        = CG_getComponent(146, SCREEN_HEIGHT - 16, 0, 0, qtrue, STYLE_NORMAL);
-	hud2.statsdisplay    = CG_getComponent(44, SCREEN_HEIGHT - 95, 0, 0, qtrue, STYLE_SIMPLE);
-	hud2.weaponicon      = CG_getComponent((Ccg_WideX(SCREEN_WIDTH) - 82), (SCREEN_HEIGHT - 56), 60, 32, qtrue, STYLE_NORMAL);
-	hud2.weaponammo      = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 22, SCREEN_HEIGHT - 1 * (16 + 2) + 12 - 4, 0, 0, qtrue, STYLE_NORMAL);
-	hud2.fireteam        = CG_getComponent(Ccg_WideX(SCREEN_WIDTH), 10, 100, 100, qtrue, STYLE_NORMAL);
-	hud2.popupmessages   = CG_getComponent(4, 100, 72, 72, qtrue, STYLE_NORMAL);
-	hud2.powerups        = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 40, SCREEN_HEIGHT - 140, 36, 36, qtrue, STYLE_NORMAL);
-	hud2.hudhead         = CG_getComponent(44, SCREEN_HEIGHT - 92, 62, 80, qfalse, STYLE_NORMAL);
-	hud2.cursorhint      = CG_getComponent(.5f * SCREEN_WIDTH - .5f * 48, 260, 48, 48, qtrue, STYLE_NORMAL);
-	hud2.weaponstability = CG_getComponent(50, 208, 10, 64, qtrue, STYLE_NORMAL);
-	hud2.livesleft       = CG_getComponent(0, 0, 0, 0, qtrue, STYLE_NORMAL);
-	hud2.reinforcement   = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 55, SCREEN_HEIGHT - 70, 0, 0, qtrue, STYLE_NORMAL);
-	hud2.roundtimer      = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 55, SCREEN_HEIGHT - 70, 0, 0, qtrue, STYLE_NORMAL);
-	hud2.spawntimer      = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 55, SCREEN_HEIGHT - 60, 0, 0, qtrue, STYLE_NORMAL);
-	hud2.localtime       = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 55, SCREEN_HEIGHT - 60, 0, 0, qtrue, STYLE_NORMAL);
-	hud2.votetext        = CG_getComponent(8, 224, 0.22f, 0.22f, qtrue, STYLE_NORMAL);
-	hud2.spectatortext   = CG_getComponent(8, 188, 0.22f, 0.22f, qtrue, STYLE_NORMAL);
-	hud2.limbotext       = CG_getComponent(8, 164, 0.22f, 0.22f, qtrue, STYLE_NORMAL);
-	hud2.followtext      = CG_getComponent(8, 164, 0.22f, 0.22f, qtrue, STYLE_NORMAL);
+	hud2.compass         = CG_getComponent(64, SCREEN_HEIGHT - 87, 84, 84, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
+	hud2.staminabar      = CG_getComponent(4, 388, 12, 72, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
+	hud2.breathbar       = CG_getComponent(4, 388, 12, 72, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
+	hud2.healthbar       = CG_getComponent(24, 388, 12, 72, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
+	hud2.weaponchargebar = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 16, 388, 12, 72, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
+	hud2.healthtext      = CG_getComponent(65, SCREEN_HEIGHT - 4, 0, 0, qtrue, STYLE_NORMAL, 0.25f, colorWhite);
+	hud2.xptext          = CG_getComponent(132, SCREEN_HEIGHT - 4, 0, 0, qtrue, STYLE_NORMAL, 0.25f, colorWhite);
+	hud2.ranktext        = CG_getComponent(146, SCREEN_HEIGHT - 16, 0, 0, qtrue, STYLE_NORMAL, 0.2f, colorWhite);
+	hud2.statsdisplay    = CG_getComponent(44, SCREEN_HEIGHT - 95, 0, 0, qtrue, STYLE_SIMPLE, 0.25f, colorWhite);
+	hud2.weaponicon      = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 82, SCREEN_HEIGHT - 56, 60, 32, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
+	hud2.weaponammo      = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 22, SCREEN_HEIGHT - 1 * (16 + 2) + 12 - 4, 0, 0, qtrue, STYLE_NORMAL, 0.25f, colorWhite);
+	hud2.fireteam        = CG_getComponent(Ccg_WideX(SCREEN_WIDTH), 10, 100, 100, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
+	hud2.popupmessages   = CG_getComponent(4, 100, 72, 72, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
+	hud2.powerups        = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 40, SCREEN_HEIGHT - 136, 36, 36, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
+	hud2.objectives      = CG_getComponent(8, SCREEN_HEIGHT - 136, 36, 36, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
+	hud2.hudhead         = CG_getComponent(44, SCREEN_HEIGHT - 92, 62, 80, qfalse, STYLE_NORMAL, 0.19f, colorWhite);
+	hud2.cursorhints     = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) * .5f - 24, 260, 48, 48, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
+	hud2.weaponstability = CG_getComponent(50, 208, 10, 64, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
+	hud2.livesleft       = CG_getComponent(0, 0, 0, 0, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
+	hud2.reinforcement   = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 60, SCREEN_HEIGHT - 70, 0, 0, qtrue, STYLE_NORMAL, 0.19f, colorLtBlue);
+	hud2.roundtimer      = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 55, SCREEN_HEIGHT - 70, 0, 0, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
+	hud2.spawntimer      = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 60, SCREEN_HEIGHT - 60, 0, 0, qtrue, STYLE_NORMAL, 0.19f, colorRed);
+	hud2.localtime       = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 55, SCREEN_HEIGHT - 60, 0, 0, qtrue, STYLE_NORMAL, 0.19f, HUD_Text);
+	hud2.votetext        = CG_getComponent(8, 224, 0.22f, 0.22f, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
+	hud2.spectatortext   = CG_getComponent(8, 188, 0.22f, 0.22f, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
+	hud2.limbotext       = CG_getComponent(8, 164, 0.22f, 0.22f, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
+	hud2.followtext      = CG_getComponent(8, 164, 0.22f, 0.22f, qtrue, STYLE_NORMAL, 0.19f, colorWhite);
+	hud2.demotext        = CG_getComponent(10, 9, 0.22f, 0.22f, qtrue, STYLE_SIMPLE, 0.22f, colorRed);
 	CG_addHudToList(&hud2);
 
 	// Read the hud files
@@ -3076,9 +3216,9 @@ void CG_Hud_Setup(void)
  * @param[in] name
  * @param[in] comp
  */
-static void CG_PrintHudComponent(const char *name, hudComponent_t comp)
+static void CG_PrintHudComponent(const char *name, hudComponent_t *comp)
 {
-	Com_Printf("%s location: X %.f Y %.f W %.f H %.f visible: %i\n", name, comp.location.x, comp.location.y, comp.location.w, comp.location.h, comp.visible);
+	Com_Printf("%s location: X %.f Y %.f W %.f H %.f visible: %i\n", name, comp->location.x, comp->location.y, comp->location.w, comp->location.h, comp->visible);
 }
 
 /**
@@ -3087,30 +3227,15 @@ static void CG_PrintHudComponent(const char *name, hudComponent_t comp)
  */
 static void CG_PrintHud(hudStucture_t *hud)
 {
-	CG_PrintHudComponent("compas", hud->compas);
-	CG_PrintHudComponent("staminabar", hud->staminabar);
-	CG_PrintHudComponent("breathbar", hud->breathbar);
-	CG_PrintHudComponent("healthbar", hud->healthbar);
-	CG_PrintHudComponent("weaponchargebar", hud->weaponchargebar);
-	CG_PrintHudComponent("healthtext", hud->healthtext);
-	CG_PrintHudComponent("xptext", hud->xptext);
-	CG_PrintHudComponent("statsdisplay", hud->statsdisplay);
-	CG_PrintHudComponent("weaponicon", hud->weaponicon);
-	CG_PrintHudComponent("weaponammo", hud->weaponammo);
-	CG_PrintHudComponent("fireteam", hud->fireteam);
-	CG_PrintHudComponent("popupmessages", hud->popupmessages);
-	CG_PrintHudComponent("powerups", hud->powerups);
-	CG_PrintHudComponent("hudhead", hud->hudhead);
-	CG_PrintHudComponent("cursorhint", hud->cursorhint);
-	CG_PrintHudComponent("weaponstability", hud->weaponstability);
-	CG_PrintHudComponent("reinforcement", hud->reinforcement);
-	CG_PrintHudComponent("roundtimer", hud->roundtimer);
-	CG_PrintHudComponent("spawntimer", hud->spawntimer);
-	CG_PrintHudComponent("localtime", hud->localtime);
-	CG_PrintHudComponent("votetext", hud->votetext);
-	CG_PrintHudComponent("spectatortext", hud->spectatortext);
-	CG_PrintHudComponent("limbotext", hud->limbotext);
-	CG_PrintHudComponent("followtext", hud->followtext);
+	int i;
+
+	for (i = 0; hudComponentFields[i].name; i++)
+	{
+		if (!hudComponentFields[i].isAlias)
+		{
+			CG_PrintHudComponent(hudComponentFields[i].name, (hudComponent_t *)((char * )hud + hudComponentFields[i].offset));
+		}
+	}
 }
 #endif
 
@@ -3160,9 +3285,9 @@ void CG_DrawActiveHud(void)
 	CG_DrawLivesLeft(activehud->livesleft);
 
 	// Cursor hint
-	if (activehud->cursorhint.visible)
+	if (activehud->cursorhints.visible)
 	{
-		CG_DrawCursorhint(&activehud->cursorhint.location);
+		CG_DrawCursorhint(&activehud->cursorhints.location);
 	}
 
 	// Stability bar
@@ -3180,16 +3305,18 @@ void CG_DrawActiveHud(void)
  */
 void CG_DrawGlobalHud(void)
 {
+	int style = cg_popupShadow.integer ? ITEM_TEXTSTYLE_SHADOWED : ITEM_TEXTSTYLE_NORMAL;
+
 	if (cg_altHudFlags.integer & FLAGS_MOVE_POPUPS)
 	{
-		CG_DrawPMItems(activehud->popupmessages.location, (cg_altHudFlags.integer & FLAGS_POPUPS_SHADOW) ? ITEM_TEXTSTYLE_SHADOWED : 0);
+		CG_DrawPMItems(activehud->popupmessages.location, style);
 	}
 	else
 	{
-		CG_DrawPMItems(hud0.popupmessages.location, (cg_altHudFlags.integer & FLAGS_POPUPS_SHADOW) ? ITEM_TEXTSTYLE_SHADOWED : 0);
+		CG_DrawPMItems(hud0.popupmessages.location, style);
 	}
 
-	CG_DrawPMItemsBig((cg_altHudFlags.integer & FLAGS_POPUPS_SHADOW) ? ITEM_TEXTSTYLE_SHADOWED : 0);
+	CG_DrawPMItemsBig(style);
 
 #ifdef FEATURE_EDV
 	if (cgs.demoCamera.renderingFreeCam || cgs.demoCamera.renderingWeaponCam)
@@ -3197,11 +3324,26 @@ void CG_DrawGlobalHud(void)
 		return;
 	}
 #endif
-	CG_DrawNewCompass(activehud->compas.location);
+
+	if (cgs.clientinfo[cg.clientNum].shoutcaster)
+	{
+		CG_DrawMinimap();
+		CG_DrawShoutcastPowerups();
+		return;
+	}
+	else
+	{
+		CG_DrawNewCompass(activehud->compass.location);
+	}
 
 	if (activehud->powerups.visible)
 	{
 		CG_DrawPowerUps(activehud->powerups.location);
+	}
+
+	if (activehud->objectives.visible)
+	{
+		CG_DrawObjectiveStatus(activehud->objectives.location);
 	}
 }
 
@@ -3211,6 +3353,12 @@ void CG_DrawGlobalHud(void)
 void CG_DrawUpperRight(void)
 {
 	float y = 152; // 20 + 100 + 32;
+
+	if (cgs.clientinfo[cg.clientNum].shoutcaster)
+	{
+		CG_DrawShoutcastTimer();
+		return;
+	}
 
 	if (cg.snap->ps.persistant[PERS_TEAM] != TEAM_SPECTATOR)
 	{
@@ -3236,7 +3384,7 @@ void CG_DrawUpperRight(void)
 	{
 		if (cg_altHudFlags.integer & FLAGS_MOVE_TIMERS)
 		{
-			CG_DrawTimersAlt(&activehud->reinforcement.location, &activehud->spawntimer.location, &activehud->localtime.location, &activehud->roundtimer.location);
+			CG_DrawTimersAlt(&activehud->reinforcement, &activehud->spawntimer, &activehud->localtime, &activehud->roundtimer);
 		}
 		else
 		{

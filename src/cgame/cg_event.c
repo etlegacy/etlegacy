@@ -1856,8 +1856,13 @@ void CG_PlayGlobalSound(centity_t *cent, int index)
 
 extern void CG_AddBulletParticles(vec3_t origin, vec3_t dir, int speed, int duration, int count, float randScale);
 
-void CG_PlayHitSound(const int clientNum, const int hitSound)
+static void CG_PlayHitSound(const int clientNum, const int hitSound)
 {
+	if (!hitSound)
+	{
+		return;
+	}
+
 	// Do we have hitsounds even enabled
 	if (!(cg_hitSounds.integer & HITSOUNDS_ON))
 	{
@@ -1865,7 +1870,7 @@ void CG_PlayHitSound(const int clientNum, const int hitSound)
 	}
 
 	// Are we spectating someone?
-	if (cg.snap->ps.clientNum != cg.clientNum && cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR)
+	if (cg.snap->ps.clientNum != cg.clientNum && cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR && !(cg.snap->ps.pm_flags & PMF_LIMBO))
 	{
 		return;
 	}
@@ -1878,6 +1883,8 @@ void CG_PlayHitSound(const int clientNum, const int hitSound)
 
 	switch (hitSound)
 	{
+		case HIT_NONE:
+			break;
 		case HIT_TEAMSHOT:
 			if (!(cg_hitSounds.integer & HITSOUNDS_NOTEAMSHOT))
 			{
@@ -1901,7 +1908,7 @@ void CG_PlayHitSound(const int clientNum, const int hitSound)
 			}
 			break;
 		default:
-			CG_DPrintf("Unkown hitsound: %i\n", hitSound);
+			CG_DPrintf("Unknown hitsound: %i\n", hitSound);
 			break;
 	}
 }
@@ -2180,7 +2187,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 		break;
 	case EV_FILL_CLIP:
 		// IS_VALID_WEAPON(es->weapon) ?
-		if (cgs.clientinfo[es->clientNum].skill[SK_LIGHT_WEAPONS] >= 2 && (GetWeaponTableData(es->weapon)->attributes & WEAPON_ATTRIBUT_FAST_RELOAD) && cg_weapons[es->weapon].reloadFastSound)
+		if (BG_IsSkillAvailable(cgs.clientinfo[clientNum].skill, SK_LIGHT_WEAPONS, SK_LIGHT_WEAPONS_FASTER_RELOAD) && (GetWeaponTableData(es->weapon)->attributes & WEAPON_ATTRIBUT_FAST_RELOAD) && cg_weapons[es->weapon].reloadFastSound)
 		{
 			trap_S_StartSound(NULL, es->number, CHAN_WEAPON, cg_weapons[es->weapon].reloadFastSound);
 		}
@@ -2374,12 +2381,14 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 		CG_Bullet(es->weapon, es->pos.trBase, es->otherEntityNum, qfalse, ENTITYNUM_WORLD, es->otherEntityNum2, es->origin2[0], es->effect1Time);
 		break;
 	case EV_MG42BULLET_HIT_FLESH:
+		CG_PlayHitSound(es->otherEntityNum2, es->modelindex);
 		CG_Bullet(es->weapon, es->pos.trBase, es->otherEntityNum, qtrue, es->eventParm, es->otherEntityNum2, 0, es->effect1Time);
 		break;
 	case EV_BULLET_HIT_WALL:
 		CG_Bullet(es->weapon, es->pos.trBase, es->otherEntityNum, qfalse, ENTITYNUM_WORLD, es->otherEntityNum2, es->origin2[0], 0);
 		break;
 	case EV_BULLET_HIT_FLESH:
+		CG_PlayHitSound(es->otherEntityNum, es->modelindex);
 		CG_Bullet(es->weapon, es->pos.trBase, es->otherEntityNum, qtrue, es->eventParm, es->otherEntityNum2, 0, 0);
 		break;
 	case EV_GENERAL_SOUND:

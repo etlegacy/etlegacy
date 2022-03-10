@@ -233,6 +233,10 @@ void QDECL SV_SendServerCommand(client_t *cl, const char *fmt, ...)
 		//{
 		//	SV_DemoWriteServerCommand((char *)message);
 		//}
+		if (cl->demoClient)
+		{
+			return;
+		}
 		SV_AddServerCommand(cl, (char *)message);
 		return;
 	}
@@ -244,7 +248,7 @@ void QDECL SV_SendServerCommand(client_t *cl, const char *fmt, ...)
 	}
 
 	// save broadcasts to demo
-	// note: in the case a command is only issued to a specific client, it is NOT recorded (see above when cl != NULL). 
+	// note: in the case a command is only issued to a specific client, it is NOT recorded (see above when cl != NULL).
 	// If you want to record them, just place this code above, but be warned that it may be dangerous (such as "disconnect" command)
 	// because server commands will be replayed to every connected clients!
 	//
@@ -261,8 +265,8 @@ void QDECL SV_SendServerCommand(client_t *cl, const char *fmt, ...)
 		{
 			continue;
 		}
-		// don't need to send messages to AI
-		if (client->gentity && (client->gentity->r.svFlags & SVF_BOT))
+		// don't need to send messages to AI and democlients
+		if (client->gentity && ((client->gentity->r.svFlags & SVF_BOT) || client->demoClient))
 		{
 			continue;
 		}
@@ -308,9 +312,9 @@ void SV_MasterHeartbeat(const char *msg)
 	// "dedicated 1" is for lan play, "dedicated 2" is for inet public play
 	if (!com_dedicated || com_dedicated->integer != 2 || !(netenabled & (
 #ifdef FEATURE_IPV6
-	                                                           NET_ENABLEV6 |
+															   NET_ENABLEV6 |
 #endif
-	                                                           NET_ENABLEV4)))
+															   NET_ENABLEV4)))
 	{
 		return;     // only dedicated servers send heartbeats
 
@@ -433,9 +437,9 @@ void SV_MasterGameCompleteStatus()
 	// "dedicated 1" is for lan play, "dedicated 2" is for inet public play
 	if (!com_dedicated || com_dedicated->integer != 2 || !(netenabled & (
 #ifdef FEATURE_IPV6
-	                                                           NET_ENABLEV6 |
+															   NET_ENABLEV6 |
 #endif
-	                                                           NET_ENABLEV4)))
+															   NET_ENABLEV4)))
 	{
 		return;     // only dedicated servers send heartbeats
 
@@ -1090,7 +1094,7 @@ static void SVC_RemoteCommand(netadr_t from, msg_t *msg)
 	// if we send an OOB print message this size, 1.31 clients die in a Com_Printf buffer overflow
 	// the buffer overflow will be fixed in > 1.31 clients
 	// but we want a server side fix
-	// we must NEVER send an OOB message that will be > 1.31 MAXPRINTMSG (4096)
+	// we must NEVER send an OOB message that will be > 1.31 MAX_PRINT_MSG (4096)
 #define SV_OUTPUTBUF_LENGTH (256 - 16)
 	char sv_outputbuf[SV_OUTPUTBUF_LENGTH];
 	char *cmd_aux;
@@ -1200,10 +1204,10 @@ static void SV_ConnectionlessPacket(netadr_t from, msg_t *msg)
 
 	if (!Q_stricmp(c, "getstatus"))
 	{
-	    if(sv_hidden->integer)
-        {
-	        return;
-        }
+		if (sv_hidden->integer)
+		{
+			return;
+		}
 
 		if ((sv_protect->integer & SVP_OWOLF) && SV_CheckDRDoS(from))
 		{
@@ -1214,10 +1218,10 @@ static void SV_ConnectionlessPacket(netadr_t from, msg_t *msg)
 	}
 	else if (!Q_stricmp(c, "getinfo"))
 	{
-        if(sv_hidden->integer)
-        {
-            return;
-        }
+		if (sv_hidden->integer)
+		{
+			return;
+		}
 
 		if ((sv_protect->integer & SVP_OWOLF) && SV_CheckDRDoS(from))
 		{
@@ -1415,6 +1419,12 @@ static void SV_CheckTimeouts(void)
 
 	for (i = 0, cl = svs.clients ; i < sv_maxclients->integer ; i++, cl++)
 	{
+		// don't timeout democlients
+		if (cl->demoClient)
+		{
+			continue;
+		}
+
 		// message times may be wrong across a changelevel
 		if (cl->lastPacketTime > svs.time)
 		{
@@ -1651,6 +1661,12 @@ void SV_Frame(int msec)
 		sv.restartTime = 0;
 		Cbuf_AddText("map_restart 0\n");
 		return;
+	}
+
+	// start recording a demo
+	if (sv_autoDemo->integer)
+	{
+		SV_DemoAutoDemoRecord();
 	}
 
 	// update infostrings if anything has been changed

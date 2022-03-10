@@ -73,6 +73,9 @@ static int QDECL UI_ServersQsortCompare(const void *arg1, const void *arg2);
 static int UI_MapCountByGameType(qboolean singlePlayer);
 static const char *UI_SelectedMap(qboolean singlePlayer, int index, int *actual);
 
+static void UI_DrawHorizontalScrollingString(rectDef_t *rect, vec4_t color, float scale, int scrollingRefresh, int step, scrollText_t *scroll, fontHelper_t *font);
+static void UI_DrawVerticalScrollingString(rectDef_t *rect, vec4_t color, float scale, int scrollingRefresh, int step, scrollText_t *scroll, fontHelper_t *font);
+
 static const char *UI_SelectedCampaign(int index, int *actual);
 static int UI_CampaignCount(qboolean singlePlayer);
 
@@ -166,6 +169,7 @@ void AssetCache(void)
 
 	//Com_Printf("Menu Size: %i bytes\n", sizeof(Menus));
 	uiInfo.uiDC.Assets.gradientBar         = trap_R_RegisterShaderNoMip(ASSET_GRADIENTBAR);
+	uiInfo.uiDC.Assets.gradientRound       = trap_R_RegisterShaderNoMip(ASSET_GRADIENTROUND);
 	uiInfo.uiDC.Assets.fxBasePic           = trap_R_RegisterShaderNoMip(ART_FX_BASE);
 	uiInfo.uiDC.Assets.fxPic[0]            = trap_R_RegisterShaderNoMip(ART_FX_RED);
 	uiInfo.uiDC.Assets.fxPic[1]            = trap_R_RegisterShaderNoMip(ART_FX_YELLOW);
@@ -793,8 +797,8 @@ void Text_PaintWithCursor(float x, float y, float scale, vec4_t color, const cha
 }
 
 /**
- * @brief Text_Paint_Limit
- * @param[in] maxX
+ * @brief Text_Paint_LimitX
+ * @param[in,out] maxX
  * @param[in] x
  * @param[in] y
  * @param[in] scale
@@ -803,18 +807,16 @@ void Text_PaintWithCursor(float x, float y, float scale, vec4_t color, const cha
  * @param[in] adjust
  * @param[in] limit
  */
-static void Text_Paint_Limit(float *maxX, float x, float y, float scale, vec4_t color, const char *text, float adjust, int limit)
+static void Text_Paint_LimitX(float *maxX, float x, float y, float scale, vec4_t color, const char *text, float adjust, int limit, fontHelper_t *font)
 {
-	vec4_t      newColor = { 0, 0, 0, 0 };
-	glyphInfo_t *glyph;
 	if (text)
 	{
-		const char   *s       = text;
-		float        max      = *maxX;
-		fontHelper_t *font    = &uiInfo.uiDC.Assets.fonts[uiInfo.activeFont];
-		float        useScale = scale * Q_UTF8_GlyphScale(font);
-		int          len      = Q_UTF8_Strlen(text);
-		int          count    = 0;
+		vec4_t     newColor = { 0, 0, 0, 0 };
+		const char *s       = text;
+		float      max      = *maxX;
+		float      useScale = scale * Q_UTF8_GlyphScale(font);
+		int        len      = Q_UTF8_Strlen(text);
+		int        count    = 0;
 
 		trap_R_SetColor(color);
 
@@ -825,7 +827,7 @@ static void Text_Paint_Limit(float *maxX, float x, float y, float scale, vec4_t 
 
 		while (s && *s && count < len)
 		{
-			glyph = Q_UTF8_GetGlyph(font, s);
+			glyphInfo_t *glyph = Q_UTF8_GetGlyph(font, s);
 			if (Q_IsColorString(s))
 			{
 				if (*(s + 1) == COLOR_NULL)
@@ -845,7 +847,7 @@ static void Text_Paint_Limit(float *maxX, float x, float y, float scale, vec4_t 
 			{
 				float yadj = useScale * glyph->top;
 
-				if (Text_Width(s, useScale, 1) + x > max)
+				if (Text_Width_Ext(s, useScale, 1, font) + x > max)
 				{
 					*maxX = 0;
 					break;
@@ -863,6 +865,92 @@ static void Text_Paint_Limit(float *maxX, float x, float y, float scale, vec4_t 
 				*maxX = x;
 				count++;
 				s += Q_UTF8_Width(s);
+			}
+		}
+		trap_R_SetColor(NULL);
+	}
+}
+
+/**
+ * @brief Text_Paint_LimitY
+ * @param[in,out] maxX
+ * @param[in] x
+ * @param[in] y
+ * @param[in] scale
+ * @param[in] color
+ * @param[in] text
+ * @param[in] adjust
+ * @param[in] limit
+ */
+static void Text_Paint_LimitY(float *maxY, float x, float y, float scale, vec4_t color, const char *text, float adjust, int limit, fontHelper_t *font)
+{
+	if (text)
+	{
+		vec4_t     newColor = { 0, 0, 0, 0 };
+		const char *s       = text;
+		float      max      = *maxY;
+		float      useScale = scale * Q_UTF8_GlyphScale(font);
+		int        len      = Q_UTF8_Strlen(text);
+		int        count    = 0;
+		float      newX     = x;
+		int        height   = Text_Height_Ext(text, useScale, 0, font);
+
+		trap_R_SetColor(color);
+
+		if (limit > 0 && len > limit)
+		{
+			len = limit;
+		}
+
+		while (s && *s && count < len)
+		{
+			glyphInfo_t *glyph = Q_UTF8_GetGlyph(font, s);
+			if (Q_IsColorString(s))
+			{
+				if (*(s + 1) == COLOR_NULL)
+				{
+					Com_Memcpy(&newColor[0], &color[0], sizeof(vec4_t));
+				}
+				else
+				{
+					Com_Memcpy(newColor, g_color_table[ColorIndex(*(s + 1))], sizeof(newColor));
+					newColor[3] = color[3];
+				}
+				trap_R_SetColor(newColor);
+				s += 2;
+				continue;
+			}
+			else
+			{
+				float yadj = useScale * glyph->top;
+
+				if (Text_Height_Ext(s, useScale, 1, font) + y > max)
+				{
+					*maxY = 0;
+					break;
+				}
+
+				Text_PaintChar(newX + (glyph->pitch * useScale), y - yadj,
+				               glyph->imageWidth,
+				               glyph->imageHeight,
+				               useScale,
+				               glyph->s,
+				               glyph->t,
+				               glyph->s2,
+				               glyph->t2,
+				               glyph->glyph);
+
+				newX += (glyph->xSkip * useScale) + adjust;
+
+				count++;
+				s += Q_UTF8_Width(s);
+
+				if (*s == '\n')
+				{
+					y    += height + 2;
+					*maxY = y;
+					newX  = x;
+				}
 			}
 		}
 		trap_R_SetColor(NULL);
@@ -1276,6 +1364,9 @@ qboolean Load_Menu(int handle)
 	}
 }
 
+// clamp the version information to the nearest patch level
+#define  LEGACY_PATCH_CLAMP(x) ((int)(x) / 1000)
+
 /**
  * @brief UI_LoadMenus
  * @param[in] menuFile
@@ -1300,7 +1391,22 @@ void UI_LoadMenus(const char *menuFile, qboolean reset)
 	if (uiInfo.etLegacyClient)
 	{
 		trap_PC_AddGlobalDefine("ETLEGACY");
+
+		// if the client is older than the mod, then it makes sense that there has been a new release which the user has not installed
+		if (LEGACY_PATCH_CLAMP(uiInfo.etLegacyClient) < LEGACY_PATCH_CLAMP(ETLEGACY_VERSION_INT))
+		{
+			trap_PC_AddGlobalDefine("OLD_CLIENT");
+		}
 	}
+	else
+	{
+		trap_PC_AddGlobalDefine("OLD_CLIENT");
+	}
+
+#ifdef __ANDROID__
+	// Show the UI a bit differently on mobile devices
+	trap_PC_AddGlobalDefine("ANDROID");
+#endif
 
 	trap_PC_AddGlobalDefine(va("__WINDOW_WIDTH %f", (uiInfo.uiDC.glconfig.windowAspect / RATIO43) * 640));
 	trap_PC_AddGlobalDefine("__WINDOW_HEIGHT 480");
@@ -1977,29 +2083,21 @@ static void UI_DrawCampaignName(rectDef_t *rect, float scale, vec4_t color, int 
  */
 void UI_DrawCampaignDescription(rectDef_t *rect, float scale, vec4_t color, float text_x, float text_y, int textStyle, int align, qboolean net)
 {
-	const char *p, *textPtr, *newLinePtr = NULL;
-	char       buff[1024];
-	int        height, len, textWidth, newLine, newLineWidth;
-	float      y;
-	rectDef_t  textRect;
-	int        game = ui_netGameType.integer;
+	const char          *textPtr;
+	int                 map = (net) ? ui_currentNetMap.integer : ui_currentMap.integer;
+	static scrollText_t scroll;
+	fontHelper_t        *font = &uiInfo.uiDC.Assets.fonts[uiInfo.activeFont];
 
-	if (game == GT_WOLF_CAMPAIGN)
+	if (ui_netGameType.integer == GT_WOLF_CAMPAIGN)
 	{
-		int campaign = (net) ? ui_currentNetMap.integer : ui_currentMap.integer;
-
-		textPtr = uiInfo.campaignList[campaign].campaignDescription;
+		textPtr = uiInfo.campaignList[map].campaignDescription;
 	}
-	else if (game == GT_WOLF_LMS)
+	else if (ui_netGameType.integer == GT_WOLF_LMS)
 	{
-		int map = (net) ? ui_currentNetMap.integer : ui_currentMap.integer;
-
 		textPtr = uiInfo.mapList[map].lmsbriefing;
 	}
 	else
 	{
-		int map = (net) ? ui_currentNetMap.integer : ui_currentMap.integer;
-
 		textPtr = uiInfo.mapList[map].briefing;
 	}
 
@@ -2008,76 +2106,24 @@ void UI_DrawCampaignDescription(rectDef_t *rect, float scale, vec4_t color, floa
 		textPtr = "^1No text supplied";
 	}
 
-	height = Text_Height(textPtr, scale, 0);
-
-	textRect.x = 0;
-	textRect.y = 0;
-	textRect.w = rect->w;
-	textRect.h = rect->h;
-
-	//y = text_y;
-	y            = 0;
-	len          = 0;
-	buff[0]      = '\0';
-	newLine      = 0;
-	newLineWidth = 0;
-	p            = textPtr;
-
-	while (p)
+	if (scroll.length != strlen(textPtr))
 	{
-		textWidth = DC->textWidth(buff, scale, 0);
-		if (*p == ' ' || *p == '\t' || *p == '\n' || *p == '\0' || *p == '*')
+		char *s;
+
+		scroll.init = 0;
+		Q_strncpyz(scroll.text, textPtr, sizeof(scroll.text));
+
+		while ((s = strchr(scroll.text, '*')))
 		{
-			newLine      = len;
-			newLinePtr   = p + 1;
-			newLineWidth = textWidth;
+			*s = '\n';
 		}
 
-		if ((newLine && textWidth > rect->w) || *p == '\n' || *p == '\0' || *p == '*' /*( *p == '*' && *(p+1) == '*' )*/)
-		{
-			if (len)
-			{
-				if (align == ITEM_ALIGN_LEFT)
-				{
-					textRect.x = text_x;
-				}
-				else if (align == ITEM_ALIGN_RIGHT)
-				{
-					textRect.x = text_x - newLineWidth;
-				}
-				else if (align == ITEM_ALIGN_CENTER)
-				{
-					textRect.x = text_x - newLineWidth / 2;
-				}
-				textRect.y = y;
+		scroll.length = strlen(scroll.text);
 
-				textRect.x += rect->x;
-				textRect.y += rect->y;
-				//
-				buff[newLine] = '\0';
-				DC->drawText(textRect.x, textRect.y, scale, color, buff, 0, 0, textStyle);
-			}
-			if (*p == '\0')
-			{
-				break;
-			}
-
-			y           += height + 5;
-			p            = newLinePtr;
-			len          = 0;
-			newLine      = 0;
-			newLineWidth = 0;
-			continue;
-		}
-		buff[len++] = *p++;
-
-		if (buff[len - 1] == 13)
-		{
-			buff[len - 1] = ' ';
-		}
-
-		buff[len] = '\0';
+		BG_FitTextToWidth_Ext(scroll.text, scale, rect->w, sizeof(scroll.text), font);
 	}
+
+	UI_DrawVerticalScrollingString(rect, color, scale, 75, 1, &scroll, font);
 }
 
 /**
@@ -2823,11 +2869,11 @@ static int UI_OwnerDrawWidth(int ownerDraw, float scale)
 	case UI_KEYBINDSTATUS:
 		if (Display_KeyBindPending())
 		{
-			s = trap_TranslateString("Waiting for new key... Press ESCAPE to cancel");
+			s = __("Waiting for new key... Press ESCAPE to cancel");
 		}
 		else
 		{
-			s = trap_TranslateString("Press ENTER or CLICK to change, Press BACKSPACE to clear");
+			s = __("Press ENTER or CLICK to change, Press BACKSPACE to clear");
 		}
 		break;
 	case UI_SERVERREFRESHDATE:
@@ -2895,9 +2941,9 @@ static void UI_BuildPlayerList(void)
 	trap_GetConfigString(CS_PLAYERS + cs.clientNum, info, MAX_INFO_STRING);
 	uiInfo.playerNumber = cs.clientNum;
 	uiInfo.teamLeader   = (qboolean)(atoi(Info_ValueForKey(info, "tl")));
-	team                = atoi(Info_ValueForKey(info, "t"));
+	team                = Q_atoi(Info_ValueForKey(info, "t"));
 	trap_GetConfigString(CS_SERVERINFO, info, sizeof(info));
-	count              = atoi(Info_ValueForKey(info, "sv_maxclients"));
+	count              = Q_atoi(Info_ValueForKey(info, "sv_maxclients"));
 	uiInfo.playerCount = 0;
 	uiInfo.myTeamCount = 0;
 	playerTeamNumber   = 0;
@@ -2911,7 +2957,7 @@ static void UI_BuildPlayerList(void)
 			// dont expand colors twice, so: foo^^xbar -> foo^bar -> fooar
 			//Q_CleanStr( namebuf );
 			Q_strncpyz(uiInfo.playerNames[uiInfo.playerCount], namebuf, sizeof(uiInfo.playerNames[0]));
-			muted = atoi(Info_ValueForKey(info, "mu"));
+			muted = Q_atoi(Info_ValueForKey(info, "mu"));
 			if (muted)
 			{
 				uiInfo.playerMuted[uiInfo.playerCount] = qtrue;
@@ -2920,10 +2966,10 @@ static void UI_BuildPlayerList(void)
 			{
 				uiInfo.playerMuted[uiInfo.playerCount] = qfalse;
 			}
-			uiInfo.playerRefereeStatus[uiInfo.playerCount]     = atoi(Info_ValueForKey(info, "ref"));
-			uiInfo.playerShoutcasterStatus[uiInfo.playerCount] = atoi(Info_ValueForKey(info, "sc"));
+			uiInfo.playerRefereeStatus[uiInfo.playerCount]     = Q_atoi(Info_ValueForKey(info, "ref"));
+			uiInfo.playerShoutcasterStatus[uiInfo.playerCount] = Q_atoi(Info_ValueForKey(info, "sc"));
 			uiInfo.playerCount++;
-			team2 = atoi(Info_ValueForKey(info, "t"));
+			team2 = Q_atoi(Info_ValueForKey(info, "t"));
 			if (team2 == team)
 			{
 				Q_strncpyz(namebuf, Info_ValueForKey(info, "n"), sizeof(namebuf));
@@ -2992,11 +3038,11 @@ static void UI_DrawServerRefreshDate(rectDef_t *rect, float scale, vec4_t color,
 		serverCount = trap_LAN_GetServerCount(ui_netSource.integer);
 		if (serverCount >= 0)
 		{
-			Text_Paint(rect->x, rect->y, scale, newColor, va(trap_TranslateString("Getting info for %d servers (ESC to cancel)"), serverCount), 0, 0, textStyle);
+			Text_Paint(rect->x, rect->y, scale, newColor, va(__("Getting info for %d servers (ESC to cancel)"), serverCount), 0, 0, textStyle);
 		}
 		else
 		{
-			Text_Paint(rect->x, rect->y, scale, newColor, trap_TranslateString("Waiting for response from Master Server"), 0, 0, textStyle);
+			Text_Paint(rect->x, rect->y, scale, newColor, __("Waiting for response from Master Server"), 0, 0, textStyle);
 		}
 	}
 	else
@@ -3004,7 +3050,190 @@ static void UI_DrawServerRefreshDate(rectDef_t *rect, float scale, vec4_t color,
 		char buff[64];
 
 		Q_strncpyz(buff, UI_Cvar_VariableString(va("ui_lastServerRefresh_%i", ui_netSource.integer)), 64);
-		Text_Paint(rect->x, rect->y, scale, color, va(trap_TranslateString("Refresh Time: %s"), buff), 0, 0, textStyle);
+		Text_Paint(rect->x, rect->y, scale, color, va(__("Refresh Time: %s"), buff), 0, 0, textStyle);
+	}
+}
+
+/**
+ * @brief UI_DrawHorizontalScrollingString
+ * @param[in] rect
+ * @param[in] color
+ * @param[in] scale
+ * @param[in] scrollingSpeed
+ * @param[in,out] scroll
+ */
+static void UI_DrawHorizontalScrollingString(rectDef_t *rect, vec4_t color, float scale, int scrollingRefresh, int step, scrollText_t *scroll, fontHelper_t *font)
+{
+	if (scroll->length)
+	{
+		float pos       = rect->x;
+		float thickness = rect->w;
+		float maxPos    = 1;
+
+		if (!scroll->init || scroll->offset > scroll->length)
+		{
+			scroll->init      = qtrue;
+			scroll->offset    = 0;
+			scroll->paintPos  = pos + 1;
+			scroll->paintPos2 = -1;
+			scroll->time      = 0;
+		}
+
+		if (DC->realTime > scroll->time)
+		{
+			scroll->time = DC->realTime + scrollingRefresh;
+			if (scroll->paintPos <= pos + step)
+			{
+				if (scroll->offset < scroll->length)
+				{
+					scroll->paintPos += Text_Width(&scroll->text[scroll->offset], scale, 1) - 1;
+
+					scroll->offset = scroll->offset + 1;
+				}
+				else
+				{
+					scroll->offset = 0;
+					if (scroll->paintPos2 >= 0)
+					{
+						scroll->paintPos = scroll->paintPos2;
+					}
+					else
+					{
+						scroll->paintPos = pos + thickness - step;
+					}
+					scroll->paintPos2 = -1;
+				}
+			}
+			else
+			{
+				//serverStatus.motdPaintX--;
+				scroll->paintPos -= step;
+				if (scroll->paintPos2 >= 0)
+				{
+					//serverStatus.motdPaintX2--;
+					scroll->paintPos2 -= step;
+				}
+			}
+		}
+
+		maxPos = pos + thickness - step;
+
+		Text_Paint_LimitX(&maxPos, scroll->paintPos, rect->y, scale, color, &scroll->text[scroll->offset], 0, 0, font);
+
+		if (scroll->paintPos2 >= 0)
+		{
+			float max2 = pos + thickness - step;
+
+			Text_Paint_LimitX(&max2, scroll->paintPos2, rect->y, scale, color, scroll->text, 0, scroll->offset, font);
+		}
+
+		if (scroll->offset && maxPos > 0)
+		{
+			// if we have an offset ( we are skipping the first part of the string ) and we fit the string
+			if (scroll->paintPos2 == -1)
+			{
+				scroll->paintPos2 = pos + thickness - step;
+			}
+		}
+		else
+		{
+			scroll->paintPos2 = -1;
+		}
+	}
+}
+
+/**
+ * @brief UI_DrawHorizontalScrollingString
+ * @param[in] rect
+ * @param[in] color
+ * @param[in] scale
+ * @param[in] scrollingSpeed
+ * @param[in,out] scroll
+ */
+static void UI_DrawVerticalScrollingString(rectDef_t *rect, vec4_t color, float scale, int scrollingRefresh, int step, scrollText_t *scroll, fontHelper_t *font)
+{
+	if (scroll->length)
+	{
+		float pos       = rect->y;
+		float thickness = rect->h;
+		float maxPos    = 1;
+
+		if (!scroll->init || scroll->offset > scroll->length)
+		{
+			scroll->init      = qtrue;
+			scroll->offset    = 0;
+			scroll->paintPos  = pos + rect->h;
+			scroll->paintPos2 = -1;
+			scroll->time      = 0;
+		}
+
+		if (DC->realTime > scroll->time)
+		{
+			scroll->time = DC->realTime + scrollingRefresh;
+			if (scroll->paintPos <= pos + step)
+			{
+				if (scroll->offset + 1 < scroll->length)
+				{
+					char *tmp;
+
+					tmp = strchr(&scroll->text[scroll->offset + 1], '\n');
+
+					if (!tmp)
+					{
+						tmp = strchr(&scroll->text[scroll->offset + 1], '\0');
+					}
+
+					scroll->offset = tmp - scroll->text;
+
+					scroll->paintPos += Text_Height_Ext(scroll->text, scale, 1, font) + step;
+				}
+				else
+				{
+					scroll->offset = 0;
+					if (scroll->paintPos2 >= 0)
+					{
+						scroll->paintPos = scroll->paintPos2;
+					}
+					else
+					{
+						scroll->paintPos = pos + rect->h;
+					}
+					scroll->paintPos2 = -1;
+				}
+			}
+			else
+			{
+				scroll->paintPos -= step;
+				if (scroll->paintPos2 >= 0)
+				{
+					scroll->paintPos2 -= step;
+				}
+			}
+		}
+
+		maxPos = pos + thickness - step;
+
+		Text_Paint_LimitY(&maxPos, rect->x, scroll->paintPos, scale, color, &scroll->text[scroll->offset], 0, 0, font);
+
+		if (scroll->paintPos2 >= 0)
+		{
+			float max2 = pos + thickness - step;
+
+			Text_Paint_LimitY(&max2, rect->x, scroll->paintPos2, scale, color, scroll->text, 0, scroll->offset, font);
+		}
+
+		if (scroll->offset && maxPos > 0)
+		{
+			// if we have an offset ( we are skipping the first part of the string ) and we fit the string
+			if (scroll->paintPos2 == -1)
+			{
+				scroll->paintPos2 = pos + rect->h;
+			}
+		}
+		else
+		{
+			scroll->paintPos2 = -1;
+		}
 	}
 }
 
@@ -3016,81 +3245,7 @@ static void UI_DrawServerRefreshDate(rectDef_t *rect, float scale, vec4_t color,
  */
 static void UI_DrawServerMOTD(rectDef_t *rect, float scale, vec4_t color)
 {
-	if (uiInfo.serverStatus.motdLen)
-	{
-		float maxX;
-
-		if (uiInfo.serverStatus.motdWidth == -1)
-		{
-			uiInfo.serverStatus.motdWidth   = 0;
-			uiInfo.serverStatus.motdPaintX  = rect->x + 1;
-			uiInfo.serverStatus.motdPaintX2 = -1;
-		}
-
-		if (uiInfo.serverStatus.motdOffset > uiInfo.serverStatus.motdLen)
-		{
-			uiInfo.serverStatus.motdOffset  = 0;
-			uiInfo.serverStatus.motdPaintX  = rect->x + 1;
-			uiInfo.serverStatus.motdPaintX2 = -1;
-		}
-
-		if (uiInfo.uiDC.realTime > uiInfo.serverStatus.motdTime)
-		{
-			uiInfo.serverStatus.motdTime = uiInfo.uiDC.realTime + 10;
-			if (uiInfo.serverStatus.motdPaintX <= rect->x + 2)
-			{
-				if (uiInfo.serverStatus.motdOffset < uiInfo.serverStatus.motdLen)
-				{
-					uiInfo.serverStatus.motdPaintX += Text_Width(&uiInfo.serverStatus.motd[uiInfo.serverStatus.motdOffset], scale, 1) - 1;
-					uiInfo.serverStatus.motdOffset++;
-				}
-				else
-				{
-					uiInfo.serverStatus.motdOffset = 0;
-					if (uiInfo.serverStatus.motdPaintX2 >= 0)
-					{
-						uiInfo.serverStatus.motdPaintX = uiInfo.serverStatus.motdPaintX2;
-					}
-					else
-					{
-						uiInfo.serverStatus.motdPaintX = rect->x + rect->w - 2;
-					}
-					uiInfo.serverStatus.motdPaintX2 = -1;
-				}
-			}
-			else
-			{
-				//serverStatus.motdPaintX--;
-				uiInfo.serverStatus.motdPaintX -= 2;
-				if (uiInfo.serverStatus.motdPaintX2 >= 0)
-				{
-					//serverStatus.motdPaintX2--;
-					uiInfo.serverStatus.motdPaintX2 -= 2;
-				}
-			}
-		}
-
-		maxX = rect->x + rect->w - 2;
-		Text_Paint_Limit(&maxX, uiInfo.serverStatus.motdPaintX, rect->y, scale, color, &uiInfo.serverStatus.motd[uiInfo.serverStatus.motdOffset], 0, 0);
-		if (uiInfo.serverStatus.motdPaintX2 >= 0)
-		{
-			float maxX2 = rect->x + rect->w - 2;
-
-			Text_Paint_Limit(&maxX2, uiInfo.serverStatus.motdPaintX2, rect->y, scale, color, uiInfo.serverStatus.motd, 0, uiInfo.serverStatus.motdOffset);
-		}
-		if (uiInfo.serverStatus.motdOffset && maxX > 0)
-		{
-			// if we have an offset ( we are skipping the first part of the string ) and we fit the string
-			if (uiInfo.serverStatus.motdPaintX2 == -1)
-			{
-				uiInfo.serverStatus.motdPaintX2 = rect->x + rect->w - 2;
-			}
-		}
-		else
-		{
-			uiInfo.serverStatus.motdPaintX2 = -1;
-		}
-	}
+	UI_DrawHorizontalScrollingString(rect, color, scale, 20, 2, &uiInfo.serverStatus.motd, &uiInfo.uiDC.Assets.fonts[uiInfo.activeFont]);
 }
 
 /**
@@ -3106,11 +3261,11 @@ static void UI_DrawKeyBindStatus(rectDef_t *rect, float scale, vec4_t color, int
 {
 	if (Display_KeyBindPending())
 	{
-		Text_Paint(rect->x + text_x, rect->y + text_y, scale, color, trap_TranslateString("Waiting for new key... Press ESCAPE to cancel"), 0, 0, textStyle);
+		Text_Paint(rect->x + text_x, rect->y + text_y, scale, color, __("Waiting for new key... Press ESCAPE to cancel"), 0, 0, textStyle);
 	}
 	else
 	{
-		Text_Paint(rect->x + text_x, rect->y + text_y, scale, color, trap_TranslateString("Press ENTER or CLICK to change, Press BACKSPACE to clear"), 0, 0, textStyle);
+		Text_Paint(rect->x + text_x, rect->y + text_y, scale, color, __("Press ENTER or CLICK to change, Press BACKSPACE to clear"), 0, 0, textStyle);
 	}
 }
 
@@ -4178,40 +4333,115 @@ static void UI_LoadMovies(void)
 	}
 }
 
+static int UI_DemoSort(const void *a, const void *b)
+{
+	const demoItem_t *fileA = a;
+	const demoItem_t *fileB = b;
+
+	if (fileA->file != fileB->file)
+	{
+		return (int)fileA->file - (int)fileB->file;
+	}
+
+	return Q_stricmp(fileA->path, fileB->path);
+}
+
 /**
  * @brief UI_LoadDemos
  */
 static void UI_LoadDemos(void)
 {
-	char demolist[30000];
+	char fileList[30000];
 	char demoExt[32];
-	char *demoname;
+	char path[MAX_OSPATH];
+	char *fileName;
+	int  count = 0;
 
-	Com_sprintf(demoExt, sizeof(demoExt), "dm_%d", (int)(trap_Cvar_VariableValue("protocol")));
+	uiInfo.demos.count = 0;
+	// uiInfo.demos.index = 0;
 
-	uiInfo.demoCount = trap_FS_GetFileList("demos", demoExt, demolist, sizeof(demolist));
+	Com_sprintf(path, sizeof(path), "demos");
+	if (uiInfo.demos.path[0])
+	{
+		Q_strcat(path, sizeof(path), va("/%s", uiInfo.demos.path));
 
-	Com_sprintf(demoExt, sizeof(demoExt), ".dm_%d", (int)(trap_Cvar_VariableValue("protocol")));
+		// If we are already checking a subdirectory then show a parent path selector
+		uiInfo.demos.items[0].path = String_Alloc("^2..");
+		uiInfo.demos.items[0].file = qfalse;
+		uiInfo.demos.count++;
+	}
 
-	if (uiInfo.demoCount)
+	Com_DPrintf("Loading demos from path: %s\n", path);
+
+	// Load folder list
+	count = trap_FS_GetFileList(path, "/", fileList, sizeof(fileList));
+	if (count)
 	{
 		int    i;
 		size_t len;
 
-		if (uiInfo.demoCount > MAX_DEMOS)
+		if ((uiInfo.demos.count + count) > MAX_DEMOS)
 		{
-			uiInfo.demoCount = MAX_DEMOS;
+			count = MAX_DEMOS - uiInfo.demos.count;
 		}
-		demoname = demolist;
-		for (i = 0; i < uiInfo.demoCount; i++)
+
+		fileName = fileList;
+		for (i = 0; i < count; i++)
 		{
-			len = strlen(demoname);
-			if (!Q_stricmp(demoname +  len - strlen(demoExt), demoExt))
+			len = strlen(fileName);
+
+			// Skip . and .. and hidden folders in unix
+			if (len && fileName[0] != '.')
 			{
-				demoname[len - strlen(demoExt)] = '\0';
+				uiInfo.demos.items[uiInfo.demos.count].path = String_Alloc(va("^2%s", fileName));
+				uiInfo.demos.items[uiInfo.demos.count].file = qfalse;
+				uiInfo.demos.count++;
 			}
-			uiInfo.demoList[i] = String_Alloc(demoname);
-			demoname          += len + 1;
+
+			fileName += len + 1;
+		}
+	}
+
+	// Load file list
+	Com_sprintf(demoExt, sizeof(demoExt), "dm_%d", (int)(trap_Cvar_VariableValue("protocol")));
+	count = trap_FS_GetFileList(path, demoExt, fileList, sizeof(fileList));
+	Com_sprintf(demoExt, sizeof(demoExt), ".dm_%d", (int)(trap_Cvar_VariableValue("protocol")));
+
+	if (count)
+	{
+		int    i;
+		size_t len;
+
+		if ((uiInfo.demos.count + count) > MAX_DEMOS)
+		{
+			count = MAX_DEMOS - uiInfo.demos.count;
+		}
+		fileName = fileList;
+		for (i = 0; i < count; i++)
+		{
+			len = strlen(fileName);
+			if (!Q_stricmp(fileName + len - strlen(demoExt), demoExt))
+			{
+				fileName[len - strlen(demoExt)] = '\0';
+			}
+			uiInfo.demos.items[uiInfo.demos.count + i].path = String_Alloc(fileName);
+			uiInfo.demos.items[uiInfo.demos.count + i].file = qtrue;
+			fileName                                       += len + 1;
+		}
+
+		uiInfo.demos.count += count;
+	}
+
+	if (uiInfo.demos.count)
+	{
+		// don't include the parent folder marker in the sort..
+		if (uiInfo.demos.path[0])
+		{
+			qsort(&uiInfo.demos.items[1], uiInfo.demos.count - 1, sizeof(demoItem_t), UI_DemoSort);
+		}
+		else
+		{
+			qsort(uiInfo.demos.items, uiInfo.demos.count, sizeof(demoItem_t), UI_DemoSort);
 		}
 	}
 }
@@ -4362,6 +4592,25 @@ void UI_GLCustom()
 	trap_Cvar_Set("ui_glCustom", "1");
 }
 
+static const char *UI_GetDemoPath(qboolean prefix)
+{
+	static char path[MAX_OSPATH];
+	path[0] = '\0';
+
+	if (prefix)
+	{
+		Com_sprintf(path, sizeof(path), "demos/");
+	}
+
+	if (uiInfo.demos.path[0])
+	{
+		Q_strcat(path, sizeof(path), va("%s/", uiInfo.demos.path));
+	}
+
+	Q_strcat(path, sizeof(path), uiInfo.demos.items[uiInfo.demos.index].path);
+
+	return path;
+}
 
 /**
  * @brief UI_RunMenuScript
@@ -4509,6 +4758,8 @@ void UI_RunMenuScript(char **args)
 		}
 		else if (Q_stricmp(name, "LoadDemos") == 0)
 		{
+			// Reset the path
+			uiInfo.demos.path[0] = '\0';
 			UI_LoadDemos();
 		}
 		else if (Q_stricmp(name, "LoadMovies") == 0)
@@ -4534,16 +4785,54 @@ void UI_RunMenuScript(char **args)
 		}
 		else if (Q_stricmp(name, "RunDemo") == 0)
 		{
-			if (uiInfo.demoIndex >= 0 && uiInfo.demoIndex < uiInfo.demoCount)
+			if (uiInfo.demos.index >= 0 && uiInfo.demos.index < uiInfo.demos.count)
 			{
-				trap_Cmd_ExecuteText(EXEC_APPEND, va("demo \"%s\"\n", uiInfo.demoList[uiInfo.demoIndex]));
+				// Is a folder selector
+				if (!uiInfo.demos.items[uiInfo.demos.index].file)
+				{
+					// is a parent path?
+					if (!strcmp(&uiInfo.demos.items[uiInfo.demos.index].path[2], ".."))
+					{
+						char *last = strrchr(uiInfo.demos.path, '/');
+						if (last)
+						{
+							last[0] = '\0';
+						}
+						else
+						{
+							uiInfo.demos.path[0] = '\0';
+						}
+					}
+					else if (uiInfo.demos.path[0])
+					{
+						Q_strcat(uiInfo.demos.path, sizeof(uiInfo.demos.path),
+						         va("/%s", &uiInfo.demos.items[uiInfo.demos.index].path[2]));
+					}
+					else
+					{
+						Com_sprintf(uiInfo.demos.path, sizeof(uiInfo.demos.path),
+						            "%s", &uiInfo.demos.items[uiInfo.demos.index].path[2]);
+					}
+					UI_LoadDemos();
+				}
+				else
+				{
+					trap_Cmd_ExecuteText(EXEC_APPEND, va("demo \"%s\"\n", UI_GetDemoPath(qfalse)));
+				}
 			}
 		}
 		else if (Q_stricmp(name, "deleteDemo") == 0)
 		{
-			if (uiInfo.demoIndex >= 0 && uiInfo.demoIndex < uiInfo.demoCount)
+			if (uiInfo.demos.index >= 0 && uiInfo.demos.index < uiInfo.demos.count)
 			{
-				trap_FS_Delete(va("demos/%s.dm_%d", uiInfo.demoList[uiInfo.demoIndex], (int)(trap_Cvar_VariableValue("protocol"))));
+				if (uiInfo.demos.items[uiInfo.demos.index].file)
+				{
+					trap_FS_Delete(va("%s.dm_%d", UI_GetDemoPath(qtrue), (int)(trap_Cvar_VariableValue("protocol"))));
+				}
+				else
+				{
+					trap_FS_Delete(Q_CleanStr(va("%s", UI_GetDemoPath(qtrue))));
+				}
 			}
 		}
 		else if (Q_stricmp(name, "closeJoin") == 0)
@@ -4619,7 +4908,7 @@ void UI_RunMenuScript(char **args)
 				else
 				{
 					// we can't close the menu from here, it's not open yet .. (that's the onOpen script)
-					Com_Printf("%s", trap_TranslateString("Can't show Server Info (not found, or local server)\n"));
+					Com_Printf("%s", __("Can't show Server Info (not found, or local server)\n"));
 				}
 			}
 		}
@@ -4829,7 +5118,7 @@ void UI_RunMenuScript(char **args)
 			trap_Cvar_Set("ui_voteWarmupDamage", va("%d", ((atoi(info) & CV_SVS_WARMUPDMG) >> 2)));
 
 			trap_GetConfigString(CS_SERVERINFO, info, sizeof(info));
-			trap_Cvar_Set("ui_voteTimelimit", va("%i", atoi(Info_ValueForKey(info, "timelimit"))));
+			trap_Cvar_Set("ui_voteTimelimit", va("%i", Q_atoi(Info_ValueForKey(info, "timelimit"))));
 
 		}
 		else if (Q_stricmp(name, "voteLeader") == 0)
@@ -4858,17 +5147,17 @@ void UI_RunMenuScript(char **args)
 					if (res == 0)
 					{
 						// server already in the list
-						Com_Printf("%s", trap_TranslateString("Favorite already in list\n"));
+						Com_Printf("%s", __("Favorite already in list\n"));
 					}
 					else if (res == -1)
 					{
 						// list full
-						Com_Printf("%s", trap_TranslateString("Favorite list full\n"));
+						Com_Printf("%s", __("Favorite list full\n"));
 					}
 					else
 					{
 						// successfully added
-						Com_Printf(trap_TranslateString("Added favorite server %s\n"), addr);
+						Com_Printf(__("Added favorite server %s\n"), addr);
 					}
 				}
 			}
@@ -4912,17 +5201,17 @@ void UI_RunMenuScript(char **args)
 					if (res == 0)
 					{
 						// server already in the list
-						Com_Printf("%s", trap_TranslateString("Favorite already in list\n"));
+						Com_Printf("%s", __("Favorite already in list\n"));
 					}
 					else if (res == -1)
 					{
 						// list full
-						Com_Printf("%s", trap_TranslateString("Favorite list full\n"));
+						Com_Printf("%s", __("Favorite list full\n"));
 					}
 					else
 					{
 						// successfully added
-						Com_Printf(trap_TranslateString("Added favorite server %s\n"), addr);
+						Com_Printf(__("Added favorite server %s\n"), addr);
 					}
 				}
 			}
@@ -4947,23 +5236,23 @@ void UI_RunMenuScript(char **args)
 				if (res == 0)
 				{
 					// server already in the list
-					Com_Printf("%s", trap_TranslateString("Favorite already in list\n"));
+					Com_Printf("%s", __("Favorite already in list\n"));
 				}
 				else if (res == -1)
 				{
 					// list full
-					Com_Printf("%s", trap_TranslateString("Favorite list full\n"));
+					Com_Printf("%s", __("Favorite list full\n"));
 				}
 				else
 				{
 					trap_Cvar_SetValue("cg_ui_favorite", 1);
 					// successfully added
-					Com_Printf(trap_TranslateString("Added favorite server %s\n"), addr);
+					Com_Printf(__("Added favorite server %s\n"), addr);
 				}
 			}
 			else
 			{
-				Com_Printf("%s", trap_TranslateString("Can't add localhost to favorites\n"));
+				Com_Printf("%s", __("Can't add localhost to favorites\n"));
 			}
 		}
 		else if (Q_stricmp(name, "removeFavoriteIngame") == 0)
@@ -4980,11 +5269,11 @@ void UI_RunMenuScript(char **args)
 				trap_LAN_RemoveServer(AS_FAVORITES, addr);
 				trap_Cvar_SetValue("cg_ui_favorite", 0);
 				// successfully removed
-				Com_Printf(trap_TranslateString("Removed favorite server %s\n"), addr);
+				Com_Printf(__("Removed favorite server %s\n"), addr);
 			}
 			else
 			{
-				Com_Printf("%s", trap_TranslateString("Can't remove localhost from favorites\n"));
+				Com_Printf("%s", __("Can't remove localhost from favorites\n"));
 			}
 		}
 		else if (Q_stricmp(name, "orders") == 0)
@@ -5321,7 +5610,7 @@ void UI_RunMenuScript(char **args)
 			Q_CleanDirName(cl_defaultProfile.string);
 			trap_Cvar_Set("cl_defaultProfile", cl_defaultProfile.string);
 
-			if (trap_FS_FOpenFile("profiles/defaultprofile.dat", &f, FS_WRITE) >= 0)
+			if (trap_FS_FOpenFile(DEFAULT_PROFILE_DAT, &f, FS_WRITE) >= 0)
 			{
 				trap_FS_Write(va("\"%s\"", cl_defaultProfile.string), strlen(cl_defaultProfile.string) + 2, f);
 				trap_FS_FCloseFile(f);
@@ -5344,7 +5633,7 @@ void UI_RunMenuScript(char **args)
 					fileHandle_t f;
 
 					trap_Cvar_Set("cl_defaultProfile", cl_profile.string);
-					if (trap_FS_FOpenFile("profiles/defaultprofile.dat", &f, FS_WRITE) >= 0)
+					if (trap_FS_FOpenFile(DEFAULT_PROFILE_DAT, &f, FS_WRITE) >= 0)
 					{
 						trap_FS_Write(va("\"%s\"", cl_profile.string), strlen(cl_profile.string) + 2, f);
 						trap_FS_FCloseFile(f);
@@ -5425,7 +5714,7 @@ void UI_RunMenuScript(char **args)
 				{
 					// if renaming the default profile, set the default to the new profile
 					trap_Cvar_Set("cl_defaultProfile", buff);
-					if (trap_FS_FOpenFile("profiles/defaultprofile.dat", &f, FS_WRITE) >= 0)
+					if (trap_FS_FOpenFile(DEFAULT_PROFILE_DAT, &f, FS_WRITE) >= 0)
 					{
 						trap_FS_Write(va("\"%s\"", buff), strlen(buff) + 2, f);
 						trap_FS_FCloseFile(f);
@@ -6180,17 +6469,17 @@ static void UI_BuildServerDisplayList(qboolean force)
 	}
 
 	// do motd updates here too
-	trap_Cvar_VariableStringBuffer("com_motdString", uiInfo.serverStatus.motd, sizeof(uiInfo.serverStatus.motd));
-	len = Q_UTF8_Strlen(uiInfo.serverStatus.motd);
+	trap_Cvar_VariableStringBuffer("com_motdString", uiInfo.serverStatus.motd.text, sizeof(uiInfo.serverStatus.motd.text));
+	len = Q_UTF8_Strlen(uiInfo.serverStatus.motd.text);
 	if (len == 0)
 	{
-		Q_strncpyz(uiInfo.serverStatus.motd, va("ET: Legacy - Version: %s", ETLEGACY_VERSION), sizeof(uiInfo.serverStatus.motd));
-		len = Q_UTF8_Strlen(uiInfo.serverStatus.motd);
+		Q_strncpyz(uiInfo.serverStatus.motd.text, va("ET: Legacy - Version: %s", ETLEGACY_VERSION), sizeof(uiInfo.serverStatus.motd.text));
+		len = Q_UTF8_Strlen(uiInfo.serverStatus.motd.text);
 	}
-	if (len != uiInfo.serverStatus.motdLen)
+	if (len != uiInfo.serverStatus.motd.length)
 	{
-		uiInfo.serverStatus.motdLen   = len;
-		uiInfo.serverStatus.motdWidth = -1;
+		uiInfo.serverStatus.motd.length = len;
+		uiInfo.serverStatus.motd.init   = qfalse;
 	}
 
 	uiInfo.serverStatus.numInvalidServers = 0;
@@ -6244,7 +6533,7 @@ static void UI_BuildServerDisplayList(qboolean force)
 			trap_LAN_GetServerInfo(ui_netSource.integer, i, info, MAX_STRING_CHARS);
 
 			// drop obvious phony servers
-			maxClients = atoi(Info_ValueForKey(info, "sv_maxclients"));
+			maxClients = Q_atoi(Info_ValueForKey(info, "sv_maxclients"));
 			if (maxClients > MAX_CLIENTS && !(ui_serverBrowserSettings.integer & UI_BROWSER_ALLOW_MAX_CLIENTS))
 			{
 				uiInfo.serverStatus.numIncompatibleServers++;
@@ -6253,7 +6542,7 @@ static void UI_BuildServerDisplayList(qboolean force)
 			}
 
 			// don't show PunkBuster servers for ET: Legacy
-			punkbuster = atoi(Info_ValueForKey(info, "punkbuster"));
+			punkbuster = Q_atoi(Info_ValueForKey(info, "punkbuster"));
 			if (punkbuster)
 			{
 				uiInfo.serverStatus.numIncompatibleServers++;
@@ -6276,7 +6565,7 @@ static void UI_BuildServerDisplayList(qboolean force)
 			trap_Cvar_Update(&ui_browserShowEmptyOrFull);
 			if (ui_browserShowEmptyOrFull.integer)
 			{
-				clients = atoi(Info_ValueForKey(info, "clients"));
+				clients = Q_atoi(Info_ValueForKey(info, "clients"));
 
 				if (clients < maxClients && (
 						(!clients && ui_browserShowEmptyOrFull.integer == 2) ||
@@ -6298,7 +6587,7 @@ static void UI_BuildServerDisplayList(qboolean force)
 			trap_Cvar_Update(&ui_browserShowPasswordProtected);
 			if (ui_browserShowPasswordProtected.integer)
 			{
-				password = atoi(Info_ValueForKey(info, "needpass"));
+				password = Q_atoi(Info_ValueForKey(info, "needpass"));
 				if ((password && ui_browserShowPasswordProtected.integer == 2) ||
 				    (!password && ui_browserShowPasswordProtected.integer == 1))
 				{
@@ -6310,7 +6599,7 @@ static void UI_BuildServerDisplayList(qboolean force)
 			trap_Cvar_Update(&ui_browserShowFriendlyFire);
 			if (ui_browserShowFriendlyFire.integer)
 			{
-				friendlyFire = atoi(Info_ValueForKey(info, "friendlyFire"));
+				friendlyFire = Q_atoi(Info_ValueForKey(info, "friendlyFire"));
 
 				if ((friendlyFire && ui_browserShowFriendlyFire.integer == 2) ||
 				    (!friendlyFire && ui_browserShowFriendlyFire.integer == 1))
@@ -6323,7 +6612,7 @@ static void UI_BuildServerDisplayList(qboolean force)
 			trap_Cvar_Update(&ui_browserShowMaxlives);
 			if (ui_browserShowMaxlives.integer)
 			{
-				maxlives = atoi(Info_ValueForKey(info, "maxlives"));
+				maxlives = Q_atoi(Info_ValueForKey(info, "maxlives"));
 				if ((maxlives && ui_browserShowMaxlives.integer == 2) ||
 				    (!maxlives && ui_browserShowMaxlives.integer == 1))
 				{
@@ -6335,7 +6624,7 @@ static void UI_BuildServerDisplayList(qboolean force)
 			trap_Cvar_Update(&ui_browserShowAntilag);
 			if (ui_browserShowAntilag.integer)
 			{
-				antilag = atoi(Info_ValueForKey(info, "g_antilag"));
+				antilag = Q_atoi(Info_ValueForKey(info, "g_antilag"));
 
 				if ((antilag && ui_browserShowAntilag.integer == 2) ||
 				    (!antilag && ui_browserShowAntilag.integer == 1))
@@ -6348,7 +6637,7 @@ static void UI_BuildServerDisplayList(qboolean force)
 			trap_Cvar_Update(&ui_browserShowWeaponsRestricted);
 			if (ui_browserShowWeaponsRestricted.integer)
 			{
-				weaponrestricted = atoi(Info_ValueForKey(info, "weaprestrict"));
+				weaponrestricted = Q_atoi(Info_ValueForKey(info, "weaprestrict"));
 
 				if ((weaponrestricted != 100 && ui_browserShowWeaponsRestricted.integer == 2) ||
 				    (weaponrestricted == 100 && ui_browserShowWeaponsRestricted.integer == 1))
@@ -6361,7 +6650,7 @@ static void UI_BuildServerDisplayList(qboolean force)
 			trap_Cvar_Update(&ui_browserShowTeamBalanced);
 			if (ui_browserShowTeamBalanced.integer)
 			{
-				balancedteams = atoi(Info_ValueForKey(info, "balancedteams"));
+				balancedteams = Q_atoi(Info_ValueForKey(info, "balancedteams"));
 
 				if ((balancedteams && ui_browserShowTeamBalanced.integer == 2) ||
 				    (!balancedteams && ui_browserShowTeamBalanced.integer == 1))
@@ -6386,7 +6675,7 @@ static void UI_BuildServerDisplayList(qboolean force)
 					continue;
 				}
 
-				humans = atoi(Info_ValueForKey(info, "humans"));
+				humans = Q_atoi(Info_ValueForKey(info, "humans"));
 
 				if ((humans == 0 && ui_browserShowHumans.integer == 1) ||
 				    (humans > 0 && ui_browserShowHumans.integer == 2))
@@ -6399,7 +6688,7 @@ static void UI_BuildServerDisplayList(qboolean force)
 			trap_Cvar_Update(&ui_joinGameType);
 			if (ui_joinGameType.integer != -1)
 			{
-				game = atoi(Info_ValueForKey(info, "gametype"));
+				game = Q_atoi(Info_ValueForKey(info, "gametype"));
 				if (game != ui_joinGameType.integer)
 				{
 					trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
@@ -6546,7 +6835,7 @@ static void UI_BuildServerDisplayList(qboolean force)
 			trap_Cvar_Update(&ui_browserOssFilter);
 			if (ui_browserOssFilter.integer)
 			{
-				int g_oss = atoi(Info_ValueForKey(info, "g_oss"));
+				int g_oss = Q_atoi(Info_ValueForKey(info, "g_oss"));
 
 				if ((ui_browserOssFilter.integer & 4) && !(g_oss & 4))
 				{
@@ -6556,8 +6845,8 @@ static void UI_BuildServerDisplayList(qboolean force)
 			}
 
 			// player count after removing incompatible/filtered out servers
-			clients = atoi(Info_ValueForKey(info, "clients"));
-			humans  = atoi(Info_ValueForKey(info, "humans"));
+			clients = Q_atoi(Info_ValueForKey(info, "clients"));
+			humans  = Q_atoi(Info_ValueForKey(info, "humans"));
 
 			if ((ui_serverBrowserSettings.integer & UI_BROWSER_ALLOW_HUMANS_COUNT) &&
 			    strstr(Info_ValueForKey(info, "version"), PRODUCT_LABEL) != NULL)
@@ -6622,16 +6911,16 @@ static void UI_BuildServerDisplayList(qboolean force)
 	{
 		if (numinvisible > 0)
 		{
-			DC->setCVar("ui_tmp_ServersFiltered", va(trap_TranslateString("Filtered/Total: %03i/%03i"), numinvisible, total));
+			DC->setCVar("ui_tmp_ServersFiltered", va(__("Filtered/Total: %03i/%03i"), numinvisible, total));
 		}
 		else
 		{
-			DC->setCVar("ui_tmp_ServersFiltered", va(trap_TranslateString("^3Check your filters - no servers found!              ^9Filtered/Total: ^3%03i^9/%03i"), numinvisible, total));
+			DC->setCVar("ui_tmp_ServersFiltered", va(__("^3Check your filters - no servers found!              ^9Filtered/Total: ^3%03i^9/%03i"), numinvisible, total));
 		}
 	}
 	else
 	{
-		DC->setCVar("ui_tmp_ServersFiltered", trap_TranslateString("^1No Connection or master down - no servers found!    ^9Filtered/Total: ^1000^9/000"));
+		DC->setCVar("ui_tmp_ServersFiltered", __("^1No Connection or master down - no servers found!    ^9Filtered/Total: ^1000^9/000"));
 	}
 }
 
@@ -6970,7 +7259,7 @@ static int UI_FeederCount(int feederID)
 	case FEEDER_MODS:
 		return uiInfo.modCount;
 	case FEEDER_DEMOS:
-		return uiInfo.demoCount;
+		return uiInfo.demos.count;
 	default:
 		return 0;
 	}
@@ -7177,7 +7466,7 @@ const char *UI_FeederItemText(int feederID, int index, int column, qhandle_t *ha
 				lastColumn = column;
 				lastTime   = uiInfo.uiDC.realTime;
 			}
-			ping = atoi(Info_ValueForKey(info, "ping"));
+			ping = Q_atoi(Info_ValueForKey(info, "ping"));
 
 			switch (column)
 			{
@@ -7229,10 +7518,10 @@ const char *UI_FeederItemText(int feederID, int index, int column, qhandle_t *ha
 			case SORT_MAP:
 				return Info_ValueForKey(info, "mapname");
 			case SORT_CLIENTS:
-				clients        = atoi(Info_ValueForKey(info, "clients"));
-				humans         = atoi(Info_ValueForKey(info, "humans"));
-				maxclients     = atoi(Info_ValueForKey(info, "sv_maxclients"));
-				privateclients = atoi(Info_ValueForKey(info, "sv_privateclients"));
+				clients        = Q_atoi(Info_ValueForKey(info, "clients"));
+				humans         = Q_atoi(Info_ValueForKey(info, "humans"));
+				maxclients     = Q_atoi(Info_ValueForKey(info, "sv_maxclients"));
+				privateclients = Q_atoi(Info_ValueForKey(info, "sv_privateclients"));
 
 				if ((ui_serverBrowserSettings.integer & UI_BROWSER_ALLOW_HUMANS_COUNT) &&
 				    strstr(Info_ValueForKey(info, "version"), PRODUCT_LABEL) != NULL)
@@ -7271,7 +7560,7 @@ const char *UI_FeederItemText(int feederID, int index, int column, qhandle_t *ha
 				}
 				return clientBuff;
 			case SORT_GAME:
-				game = atoi(Info_ValueForKey(info, "gametype"));
+				game = Q_atoi(Info_ValueForKey(info, "gametype"));
 
 				// TODO: need some cleanup
 				if (ping > /*=*/ 0 && game >= 0 && game < uiInfo.numGameTypes)
@@ -7300,7 +7589,7 @@ const char *UI_FeederItemText(int feederID, int index, int column, qhandle_t *ha
 				}
 				else
 				{
-					serverload = atoi(Info_ValueForKey(info, "serverload"));
+					serverload = Q_atoi(Info_ValueForKey(info, "serverload"));
 					if (serverload == -1)
 					{
 						Com_sprintf(pingstr, sizeof(pingstr), " %3i", ping);
@@ -7328,12 +7617,12 @@ const char *UI_FeederItemText(int feederID, int index, int column, qhandle_t *ha
 				else
 				{
 					*numhandles        = 7;
-					needpass           = atoi(Info_ValueForKey(info, "needpass"));
-					friendlyfire       = atoi(Info_ValueForKey(info, "friendlyFire"));
-					maxlives           = atoi(Info_ValueForKey(info, "maxlives"));
-					weaponrestrictions = atoi(Info_ValueForKey(info, "weaprestrict"));
-					antilag            = atoi(Info_ValueForKey(info, "g_antilag"));
-					balancedteams      = atoi(Info_ValueForKey(info, "balancedteams"));
+					needpass           = Q_atoi(Info_ValueForKey(info, "needpass"));
+					friendlyfire       = Q_atoi(Info_ValueForKey(info, "friendlyFire"));
+					maxlives           = Q_atoi(Info_ValueForKey(info, "maxlives"));
+					weaponrestrictions = Q_atoi(Info_ValueForKey(info, "weaprestrict"));
+					antilag            = Q_atoi(Info_ValueForKey(info, "g_antilag"));
+					balancedteams      = Q_atoi(Info_ValueForKey(info, "balancedteams"));
 					gamename           = Info_ValueForKey(info, "game");
 
 					if (needpass)
@@ -7507,24 +7796,30 @@ const char *UI_FeederItemText(int feederID, int index, int column, qhandle_t *ha
 		}
 		break;
 	case FEEDER_DEMOS:
-		if (index >= 0 && index < uiInfo.demoCount)
+		if (index >= 0 && index < uiInfo.demos.count)
 		{
-			return uiInfo.demoList[index];
+			return uiInfo.demos.items[index].path;
 		}
 		break;
 	case FEEDER_PROFILES:
 	{
 		if (index >= 0 && index < uiInfo.profileCount)
 		{
-			char buff[MAX_CVAR_VALUE_STRING];
+			char     buff[MAX_CVAR_VALUE_STRING];
+			qboolean defaultProfile = qfalse;
 
 			Q_strncpyz(buff, uiInfo.profileList[index].name, sizeof(buff));
 			Q_CleanStr(buff);
 			Q_CleanDirName(buff);
 
+			if (!Q_stricmp(buff, cl_defaultProfile.string))
+			{
+				defaultProfile = qtrue;
+			}
+
 			if (!Q_stricmp(buff, cl_profile.string))
 			{
-				if (!Q_stricmp(buff, cl_defaultProfile.string))
+				if (defaultProfile)
 				{
 					return(va("^7(Default) %s", uiInfo.profileList[index].name));
 				}
@@ -7533,7 +7828,7 @@ const char *UI_FeederItemText(int feederID, int index, int column, qhandle_t *ha
 					return(va("^7%s", uiInfo.profileList[index].name));
 				}
 			}
-			else if (!Q_stricmp(buff, cl_defaultProfile.string))
+			else if (defaultProfile)
 			{
 				return(va("(Default) %s", uiInfo.profileList[index].name));
 			}
@@ -7787,7 +8082,7 @@ static void UI_FeederSelection(int feederID, int index)
 		uiInfo.previewMovie = -1;
 		break;
 	case FEEDER_DEMOS:
-		uiInfo.demoIndex = index;
+		uiInfo.demos.index = index;
 		break;
 	case FEEDER_PROFILES:
 		uiInfo.profileIndex = index;
@@ -8157,6 +8452,8 @@ void UI_Init(int etLegacyClient, int clientVersion)
 		uiInfo.uiDC.glconfig.windowAspect = (float)uiInfo.uiDC.glconfig.vidWidth / (float)uiInfo.uiDC.glconfig.vidHeight;
 	}
 
+	Com_Memset(&uiInfo.demos, 0, sizeof(uiInfo.demos));
+
 	//UI_Load();
 	uiInfo.uiDC.registerShaderNoMip   = &trap_R_RegisterShaderNoMip;
 	uiInfo.uiDC.setColor              = &trap_R_SetColor;
@@ -8220,7 +8517,7 @@ void UI_Init(int etLegacyClient, int clientVersion)
 	uiInfo.uiDC.stopCinematic         = &UI_StopCinematic;
 	uiInfo.uiDC.drawCinematic         = &UI_DrawCinematic;
 	uiInfo.uiDC.runCinematicFrame     = &UI_RunCinematicFrame;
-	uiInfo.uiDC.translateString       = &trap_TranslateString;
+	uiInfo.uiDC.translateString       = &UI_TranslateString;
 	uiInfo.uiDC.checkAutoUpdate       = &trap_CheckAutoUpdate;
 	uiInfo.uiDC.getAutoUpdate         = &trap_GetAutoUpdate;
 
@@ -8391,8 +8688,6 @@ uiMenuCommand_t UI_GetActiveMenu(void)
 	return menutype;
 }
 
-#define MISSING_FILES_MSG "The following packs are missing:"
-
 /**
  * @brief _UI_SetActiveMenu
  * @param[in] menu
@@ -8432,15 +8727,15 @@ void UI_SetActiveMenu(uiMenuCommand_t menu)
 				trap_Cvar_Set("ui_connecting", "0");
 				if (!Q_stricmpn(buf, "Invalid password", 16))
 				{
-					trap_Cvar_Set("com_errorMessage", trap_TranslateString(buf));
+					trap_Cvar_Set("com_errorMessage", __(buf));
 					Menus_ActivateByName("popupPassword", qtrue);
 				}
-				else if (strlen(buf) > 5 && !Q_stricmpn(buf, "ET://", 5) && strlen(buf) < 200)
+				else if (strlen(buf) > 5 && !Q_stricmpn(buf, "et://", 5) && strlen(buf) < 200)
 				{
 					if (ui_serverBrowserSettings.integer & UI_BROWSER_ALLOW_REDIRECT)
 					{
 						Q_strncpyz(buf, buf + 5, sizeof(buf));
-						Com_Printf(trap_TranslateString("Server is full, redirect to: %s\n"), buf);
+						Com_Printf(__("Server is full, redirect to: %s\n"), buf);
 						// always prompt
 						trap_Cvar_Set("com_errorMessage", buf);
 						Menus_ActivateByName("popupServerRedirect", qtrue);
@@ -8460,7 +8755,7 @@ void UI_SetActiveMenu(uiMenuCommand_t menu)
 						pb_enable = qtrue;
 					}
 
-					trap_Cvar_Set("com_errorMessage", trap_TranslateString(buf));
+					trap_Cvar_Set("com_errorMessage", __(buf));
 					// hacky, wanted to have the printout of missing files
 					// text printing limitations force us to keep it all in a single message
 					// NOTE: this works thanks to flip flop in UI_Cvar_VariableString
@@ -8472,7 +8767,7 @@ void UI_SetActiveMenu(uiMenuCommand_t menu)
 							trap_Cvar_Set("com_errorMessage",
 							              va("%s\n\n%s\n%s",
 							                 UI_Cvar_VariableString("com_errorMessage"),
-							                 trap_TranslateString(MISSING_FILES_MSG),
+							                 __("The following packs are missing:"),
 							                 missing_files));
 						}
 					}
@@ -8769,6 +9064,14 @@ vmCvar_t cl_bypassMouseInput;
 
 vmCvar_t ui_serverBrowserSettings;
 
+vmCvar_t ui_cg_shoutcastDrawPlayers;
+vmCvar_t ui_cg_shoutcastDrawTeamNames;
+vmCvar_t ui_cg_shoutcastTeamNameRed;
+vmCvar_t ui_cg_shoutcastTeamNameBlue;
+vmCvar_t ui_cg_shoutcastDrawHealth;
+vmCvar_t ui_cg_shoutcastGrenadeTrail;
+vmCvar_t ui_cg_shoutcastDrawMinimap;
+
 static cvarTable_t cvarTable[] =
 {
 	{ NULL,                                "ui_textfield_temp",                   "",                           CVAR_TEMP,                      0 },
@@ -8825,6 +9128,10 @@ static cvarTable_t cvarTable[] =
 	{ NULL,                                "cg_showblood",                        "1",                          CVAR_ARCHIVE,                   0 },
 	{ NULL,                                "cg_bloodFlash",                       "1.0",                        CVAR_ARCHIVE,                   0 },
 	{ NULL,                                "cg_autoReload",                       "1",                          CVAR_ARCHIVE,                   0 },
+	{ NULL,                                "cg_weapaltReloads",                   "0",                          CVAR_ARCHIVE,                   0 },
+	{ NULL,                                "cg_weapaltSwitches",                  "1",                          CVAR_ARCHIVE,                   0 },
+	{ NULL,                                "cg_sharetimerText",                   "",                           CVAR_ARCHIVE,                   0 },
+	{ NULL,                                "cg_scopedSensitivityScaler",          "0.6",                        CVAR_ARCHIVE,                   0 },
 	{ NULL,                                "cg_noAmmoAutoSwitch",                 "1",                          CVAR_ARCHIVE,                   0 },
 	{ NULL,                                "cg_useWeapsForZoom",                  "1",                          CVAR_ARCHIVE,                   0 },
 	{ NULL,                                "cg_zoomDefaultSniper",                "20",                         CVAR_ARCHIVE,                   0 },
@@ -8866,6 +9173,14 @@ static cvarTable_t cvarTable[] =
 	{ &ui_cg_crosshairColor,               "cg_crosshairColor",                   "White",                      CVAR_ARCHIVE,                   0 },
 	{ &ui_cg_crosshairColorAlt,            "cg_crosshairColorAlt",                "White",                      CVAR_ARCHIVE,                   0 },
 	{ &ui_cg_crosshairSize,                "cg_crosshairSize",                    "48",                         CVAR_ARCHIVE,                   0 },
+
+	{ &ui_cg_shoutcastDrawPlayers,         "cg_shoutcastDrawPlayers",             "1",                          CVAR_ARCHIVE,                   0 },
+	{ &ui_cg_shoutcastDrawTeamNames,       "cg_shoutcastDrawTeamNames",           "1",                          CVAR_ARCHIVE,                   0 },
+	{ &ui_cg_shoutcastTeamNameRed,         "cg_shoutcastTeamNameRed",             "",                           CVAR_ARCHIVE,                   0 },
+	{ &ui_cg_shoutcastTeamNameBlue,        "cg_shoutcastTeamNameBlue",            "",                           CVAR_ARCHIVE,                   0 },
+	{ &ui_cg_shoutcastDrawHealth,          "cg_shoutcastDrawHealth",              "0",                          CVAR_ARCHIVE,                   0 },
+	{ &ui_cg_shoutcastGrenadeTrail,        "cg_shoutcastGrenadeTrail",            "0",                          CVAR_ARCHIVE,                   0 },
+	{ &ui_cg_shoutcastDrawMinimap,         "cg_shoutcastDrawMinimap",             "1",                          CVAR_ARCHIVE,                   0 },
 
 	// game mappings (for create server option)
 	{ NULL,                                "g_altStopwatchMode",                  "0",                          CVAR_ARCHIVE,                   0 },
@@ -9017,13 +9332,13 @@ static void UI_StopServerRefresh(void)
 	// invalid data
 	//if (uiInfo.serverStatus.numInvalidServers > 0)
 	//{
-	//	Com_Printf(trap_TranslateString("^9%d^7 servers not listed (invalid data)\n"),
+	//	Com_Printf(__("^9%d^7 servers not listed (invalid data)\n"),
 	//	           uiInfo.serverStatus.numInvalidServers);
 	//}
 
 	if (uiInfo.serverStatus.numIncompatibleServers > 0)
 	{
-		Com_Printf(trap_TranslateString("^1%d^7 servers not listed (incompatible or fake)\n"),
+		Com_Printf(__("^1%d^7 servers not listed (incompatible or fake)\n"),
 		           uiInfo.serverStatus.numIncompatibleServers);
 	}
 
@@ -9034,20 +9349,20 @@ static void UI_StopServerRefresh(void)
 
 	if (total > 0)
 	{
-		Com_Printf(trap_TranslateString("^3%d^7 servers not listed (filtered out by browser settings)\n"), total);
+		Com_Printf(__("^3%d^7 servers not listed (filtered out by browser settings)\n"), total);
 	}
 
 	// FIXME: number of humans is wrong for favorites, why?
 	if (uiInfo.serverStatus.numHumansOnServers > 0 && ui_netSource.integer != AS_FAVORITES)
 	{
-		Com_Printf(trap_TranslateString("^2%d^7 servers listed with ^3%d^7 players (including ^3%d^7 humans at least)\n"),
+		Com_Printf(__("^2%d^7 servers listed with ^3%d^7 players (including ^3%d^7 humans at least)\n"),
 		           uiInfo.serverStatus.numDisplayServers,
 		           uiInfo.serverStatus.numPlayersOnServers,
 		           uiInfo.serverStatus.numHumansOnServers);
 	}
 	else
 	{
-		Com_Printf(trap_TranslateString("^2%d^7 servers listed with ^3%d^7 players\n"),
+		Com_Printf(__("^2%d^7 servers listed with ^3%d^7 players\n"),
 		           uiInfo.serverStatus.numDisplayServers,
 		           uiInfo.serverStatus.numPlayersOnServers);
 	}
@@ -9188,13 +9503,13 @@ void UI_Campaign_f(void)
 
 	if (i == uiInfo.campaignCount || !campaign || !(campaign->typeBits & (1 << GT_WOLF)))
 	{
-		Com_Printf(trap_TranslateString("Can't find campaign '%s'\n"), str);
+		Com_Printf(__("Can't find campaign '%s'\n"), str);
 		return;
 	}
 
 	if (!campaign->mapInfos[0])
 	{
-		Com_Printf(trap_TranslateString("Corrupted campaign '%s'\n"), str);
+		Com_Printf(__("Corrupted campaign '%s'\n"), str);
 		return;
 	}
 
@@ -9228,11 +9543,11 @@ void UI_ListCampaigns_f(void)
 
 	if (mpCampaigns)
 	{
-		Com_Printf(trap_TranslateString("%i campaigns found:\n"), mpCampaigns);
+		Com_Printf(__("%i campaigns found:\n"), mpCampaigns);
 	}
 	else
 	{
-		Com_Printf("%s", trap_TranslateString("No campaigns found.\n"));
+		Com_Printf("%s", __("No campaigns found.\n"));
 		return;
 	}
 
@@ -9273,14 +9588,14 @@ void UI_ListFavourites_f(void)
 			trap_LAN_GetServerInfo(AS_FAVORITES, i, info, MAX_STRING_CHARS);
 
 			hostinfo = va("%s^7 %s", Info_ValueForKey(info, "hostname"), Info_ValueForKey(info, "game"));
-			gameinfo = va("%s %i players", Info_ValueForKey(info, "mapname"), atoi(Info_ValueForKey(info, "clients")));
+			gameinfo = va("%s %i players", Info_ValueForKey(info, "mapname"), Q_atoi(Info_ValueForKey(info, "clients")));
 
 			Com_Printf("^7#%i: %s - %s\n", i, hostinfo, gameinfo);
 		}
 	}
 	else
 	{
-		Com_Printf("%s\n", trap_TranslateString("No favourite servers found."));
+		Com_Printf("%s\n", __("No favourite servers found."));
 	}
 }
 
@@ -9291,5 +9606,19 @@ void UI_RemoveAllFavourites_f(void)
 {
 	trap_LAN_RemoveServer(AS_FAVORITES_ALL, "");
 
-	Com_Printf("%s\n", trap_TranslateString("All favourite servers removed."));
+	Com_Printf("%s\n", __("All favourite servers removed."));
+}
+
+const char *UI_TranslateString(const char *string)
+{
+	// Allows the fnc to be used twice in same context
+	static char buffer[TRANSLATION_BUFFERS][MAX_PRINT_MSG];
+	static int  buffOffset = 0;
+	char        *buf;
+
+	buf = buffer[buffOffset++ % TRANSLATION_BUFFERS];
+
+	trap_TranslateString(string, buf);
+
+	return buf;
 }

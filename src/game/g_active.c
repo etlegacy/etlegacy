@@ -280,7 +280,7 @@ void PushBot(gentity_t *ent, gentity_t *other)
  */
 qboolean ReadyToCallArtillery(gentity_t *ent)
 {
-	if (ent->client->sess.skill[SK_SIGNALS] >= 2)
+	if (BG_IsSkillAvailable(ent->client->sess.skill, SK_BATTLE_SENSE, SK_BATTLE_SENSE_STAMINA_RECHARGE))
 	{
 		if (level.time - ent->client->ps.classWeaponTime <= (level.fieldopsChargeTime[ent->client->sess.sessionTeam - 1] * 0.66f))
 		{
@@ -319,7 +319,7 @@ qboolean ReadyToConstruct(gentity_t *ent, gentity_t *constructible, qboolean upd
 	}
 	else
 	{
-		if (ent->client->sess.skill[SK_EXPLOSIVES_AND_CONSTRUCTION] >= 3)
+		if (BG_IsSkillAvailable(ent->client->sess.skill, SK_EXPLOSIVES_AND_CONSTRUCTION, SK_ENGINEER_STAMINA))
 		{
 			weaponTime += 0.66f * constructible->constructibleStats.chargebarreq * ((float)level.engineerChargeTime[ent->client->sess.sessionTeam - 1] / (constructible->constructibleStats.duration / (float)FRAMETIME));
 		}
@@ -605,6 +605,7 @@ void SpectatorThink(gentity_t *ent, usercmd_t *ucmd)
 		pm.tracemask     = MASK_PLAYERSOLID & ~CONTENTS_BODY; // spectators can fly through bodies
 		pm.trace         = trap_TraceCapsuleNoEnts;
 		pm.pointcontents = trap_PointContents;
+		pm.activateLean  = client->pers.activateLean;
 
 		Pmove(&pm);
 
@@ -714,8 +715,8 @@ void SpectatorThink(gentity_t *ent, usercmd_t *ucmd)
  */
 qboolean ClientInactivityTimer(gclient_t *client)
 {
-	int      inactivity     = (g_inactivity.integer) ? g_inactivity.integer : 60;
-	int      inactivityspec = (g_spectatorInactivity.integer) ? g_spectatorInactivity.integer : 60;
+	int      inactivity     = G_InactivityValue;
+	int      inactivityspec = G_SpectatorInactivityValue;
 	qboolean inTeam         = (client->sess.sessionTeam == TEAM_ALLIES || client->sess.sessionTeam == TEAM_AXIS) ? qtrue : qfalse;
 
 #ifdef FEATURE_OMNIBOT
@@ -1429,6 +1430,8 @@ void ClientThink_real(gentity_t *ent)
 		client->combatState                   = COMBATSTATE_COLD; // cool down again
 	}
 
+	pm.activateLean = client->pers.activateLean;
+
 	Pmove(&pm); // monsterslick
 
 	// server cursor hints
@@ -1460,10 +1463,10 @@ void ClientThink_real(gentity_t *ent)
 	BG_PlayerStateToEntityState(&ent->client->ps, &ent->s, level.time, qtrue);
 
 	// use the precise origin for linking
-	//VectorCopy( ent->client->ps.origin, ent->r.currentOrigin );
+	VectorCopy(ent->client->ps.origin, ent->r.currentOrigin);
 
 	// use the snapped origin for linking so it matches client predicted versions
-	VectorCopy(ent->s.pos.trBase, ent->r.currentOrigin);
+	//VectorCopy(ent->s.pos.trBase, ent->r.currentOrigin);
 
 	VectorCopy(pm.mins, ent->r.mins);
 	VectorCopy(pm.maxs, ent->r.maxs);
@@ -1492,7 +1495,7 @@ void ClientThink_real(gentity_t *ent)
 	}
 
 	// NOTE: now copy the exact origin over otherwise clients can be snapped into solid
-	VectorCopy(ent->client->ps.origin, ent->r.currentOrigin);
+	//VectorCopy(ent->client->ps.origin, ent->r.currentOrigin);
 
 	// touch other objects
 	ClientImpacts(ent, &pm);
@@ -1600,28 +1603,30 @@ void ClientThink_real(gentity_t *ent)
 	// debug hitboxes
 	if (g_debugPlayerHitboxes.integer & 2)
 	{
-		gentity_t    *head;
 		vec3_t       maxs;
 		grefEntity_t refent;
 
+		// head hitbox in blue
+		ent->client->tempHead = G_BuildHead(ent, &refent, qtrue);
+		G_RailBox(ent->client->tempHead->r.currentOrigin, ent->client->tempHead->r.mins, ent->client->tempHead->r.maxs,
+		          tv(0.f, 0.f, 1.f), ent->client->tempHead->s.number | HITBOXBIT_HEAD);
+
+		// body hitbox in blue
 		VectorCopy(ent->r.maxs, maxs);
 		maxs[2] = ClientHitboxMaxZ(ent);
-		// blue
 		G_RailBox(ent->r.currentOrigin, ent->r.mins, maxs, tv(0.f, 0.f, 1.f), ent->s.number);
 
-		head = G_BuildHead(ent, &refent, qtrue);
-		// blue
-		G_RailBox(head->r.currentOrigin, head->r.mins, head->r.maxs, tv(0.f, 0.f, 1.f), head->s.number | HITBOXBIT_HEAD);
-		G_FreeEntity(head);
+		// free temp head after body box to ensure we are using the head mins height
+		G_FreeEntity(ent->client->tempHead);
 
 		if (client->ps.eFlags & EF_PRONE)
 		{
-			gentity_t *legs;
 
-			legs = G_BuildLeg(ent, &refent, qtrue);
-			// blue
-			G_RailBox(legs->r.currentOrigin, legs->r.mins, legs->r.maxs, tv(0.f, 0.f, 1.f), legs->s.number | HITBOXBIT_LEGS);
-			G_FreeEntity(legs);
+			// legs hitbox in blue
+			ent->client->tempLeg = G_BuildLeg(ent, &refent, qtrue);
+			G_RailBox(ent->client->tempLeg->r.currentOrigin, ent->client->tempLeg->r.mins, ent->client->tempLeg->r.maxs,
+			          tv(0.f, 0.f, 1.f), ent->client->tempLeg->s.number | HITBOXBIT_LEGS);
+			G_FreeEntity(ent->client->tempLeg);
 		}
 	}
 
@@ -1680,7 +1685,8 @@ void ClientThink(int clientNum)
 void G_RunClient(gentity_t *ent)
 {
 	// special case for uniform grabbing
-	if (ent->client->pers.cmd.buttons & BUTTON_ACTIVATE)
+	// don't let spectator activate
+	if (ent->client->sess.sessionTeam != TEAM_SPECTATOR && ent->client->pers.cmd.buttons & BUTTON_ACTIVATE)
 	{
 		Cmd_Activate2_f(ent);
 	}
@@ -1828,9 +1834,10 @@ void SpectatorClientEndFrame(gentity_t *ent)
 		if (ent->client->sess.spectatorClient >= 0)
 		{
 			cl = &level.clients[ent->client->sess.spectatorClient];
-			if (cl->pers.connected == CON_CONNECTED && cl->sess.sessionTeam != TEAM_SPECTATOR)
+			if ((cl->pers.connected == CON_CONNECTED && cl->sess.sessionTeam != TEAM_SPECTATOR) ||
+			    (cl->pers.connected == CON_CONNECTED && cl->sess.shoutcaster && ent->client->sess.shoutcaster))
 			{
-				int flags = (cl->ps.eFlags & ~(EF_VOTED)) | (ent->client->ps.eFlags & (EF_VOTED));
+				int flags = (cl->ps.eFlags & ~(EF_VOTED | EF_READY)) | (ent->client->ps.eFlags & (EF_VOTED | EF_READY));
 				int ping  = ent->client->ps.ping;
 
 				if (ent->client->sess.sessionTeam != TEAM_SPECTATOR && (ent->client->ps.pm_flags & PMF_LIMBO))
@@ -2109,6 +2116,13 @@ void ClientEndFrame(gentity_t *ent)
 	// Zero out here and set only for certain specs
 	ent->client->ps.powerups[PW_BLACKOUT] = 0;
 
+	// check for flood protection - if 1 second has passed between commands, reduce the flood limit counter
+	if (level.time >= ent->client->sess.nextCommandDecreaseTime && ent->client->sess.numReliableCommands)
+	{
+		ent->client->sess.numReliableCommands--;
+		ent->client->sess.nextCommandDecreaseTime = level.time + 1000;
+	}
+
 	if ((ent->client->sess.sessionTeam == TEAM_SPECTATOR) || (ent->client->ps.pm_flags & PMF_LIMBO))
 	{
 		SpectatorClientEndFrame(ent);
@@ -2222,7 +2236,7 @@ void ClientEndFrame(gentity_t *ent)
 	// all players are init in game, we can set properly starting health
 	if (level.startTime == level.time - (GAME_INIT_FRAMES * FRAMETIME))
 	{
-		if (ent->client->sess.skill[SK_BATTLE_SENSE] >= 3)
+		if (BG_IsSkillAvailable(ent->client->sess.skill, SK_BATTLE_SENSE, SK_BATTLE_SENSE_HEALTH))
 		{
 			// We get some extra max health, but don't spawn with that much
 			ent->health = ent->client->ps.stats[STAT_HEALTH] = ent->client->ps.stats[STAT_MAX_HEALTH] - 15;
@@ -2246,7 +2260,7 @@ void ClientEndFrame(gentity_t *ent)
 
 	// set the latest infor
 
-	BG_PlayerStateToEntityState(&ent->client->ps, &ent->s, level.time, qtrue);
+	BG_PlayerStateToEntityState(&ent->client->ps, &ent->s, level.time, qfalse);
 
 	if (ent->health > 0 && StuckInClient(ent))
 	{
@@ -2281,10 +2295,11 @@ void ClientEndFrame(gentity_t *ent)
 	frames = level.framenum - ent->client->lastUpdateFrame - 1;
 
 	// etpro antiwarp
-	// frames = level.framenum - ent->client->lastUpdateFrame - 1)
 	if (g_maxWarp.integer && frames > g_maxWarp.integer && G_DoAntiwarp(ent))
 	{
-		ent->client->warping = qtrue;
+		ent->client->warping    = qtrue;
+		ent->client->ps.eFlags |= EF_CONNECTION;
+		ent->s.eFlags          |= EF_CONNECTION;
 	}
 
 	if (g_skipCorrection.integer && !ent->client->warped && frames > 0 && !G_DoAntiwarp(ent))
@@ -2293,10 +2308,6 @@ void ClientEndFrame(gentity_t *ent)
 		{
 			// we need frames to be = 2 here
 			frames = 3;
-			// these are disabled because the phone jack can give
-			// away other players position through walls.
-			ent->client->ps.eFlags |= EF_CONNECTION;
-			ent->s.eFlags          |= EF_CONNECTION;
 		}
 		G_PredictPmove(ent, (float)frames / (float)sv_fps.integer);
 	}
@@ -2309,32 +2320,36 @@ void ClientEndFrame(gentity_t *ent)
 	// debug hitboxes
 	if (g_debugPlayerHitboxes.integer & 1)
 	{
-		gentity_t    *head;
 		vec3_t       maxs;
 		grefEntity_t refent;
-
-		VectorCopy(ent->r.maxs, maxs);
-		maxs[2] = ClientHitboxMaxZ(ent);
-		// green
-		G_RailBox(ent->r.currentOrigin, ent->r.mins, maxs, tv(0.f, 1.f, 0.f), ent->s.number);
 
 		// wounded player don't have head and legs hitbox, (see G_BuildHead and G_BuildLeg)
 		if (!(ent->client->ps.eFlags & EF_DEAD))
 		{
-			head = G_BuildHead(ent, &refent, qtrue);
-			// green
-			G_RailBox(head->r.currentOrigin, head->r.mins, head->r.maxs, tv(0.f, 1.f, 0.f), head->s.number | HITBOXBIT_HEAD);
-			G_FreeEntity(head);
+			// head hitbox in green
+			ent->client->tempHead = G_BuildHead(ent, &refent, qtrue);
+			G_RailBox(ent->client->tempHead->r.currentOrigin, ent->client->tempHead->r.mins, ent->client->tempHead->r.maxs,
+			          tv(0.f, 1.f, 0.f), ent->client->tempHead->s.number | HITBOXBIT_HEAD);
 
 			if (ent->client->ps.eFlags & EF_PRONE)
 			{
-				gentity_t *legs;
-
-				legs = G_BuildLeg(ent, &refent, qtrue);
-				// green
-				G_RailBox(legs->r.currentOrigin, legs->r.mins, legs->r.maxs, tv(0.f, 1.f, 0.f), legs->s.number | HITBOXBIT_LEGS);
-				G_FreeEntity(legs);
+				// legs hitbox in green
+				ent->client->tempLeg = G_BuildLeg(ent, &refent, qtrue);
+				G_RailBox(ent->client->tempLeg->r.currentOrigin, ent->client->tempLeg->r.mins, ent->client->tempLeg->r.maxs,
+				          tv(0.f, 1.f, 0.f), ent->client->tempLeg->s.number | HITBOXBIT_LEGS);
+				G_FreeEntity(ent->client->tempLeg);
 			}
+		}
+
+		// body hitbox in green
+		VectorCopy(ent->r.maxs, maxs);
+		maxs[2] = ClientHitboxMaxZ(ent);
+		G_RailBox(ent->r.currentOrigin, ent->r.mins, maxs, tv(0.f, 1.f, 0.f), ent->s.number);
+
+		// free temp head after body box to ensure we are using the head mins height
+		if (ent->client->tempHead)
+		{
+			G_FreeEntity(ent->client->tempHead);
 		}
 	}
 
@@ -2372,8 +2387,6 @@ void ClientEndFrame(gentity_t *ent)
 
 			if (trace.fraction != 1.f)
 			{
-				Com_Printf("Legs Hurt something %f\n", trace.fraction);
-
 				BG_LegsCollisionBoxOffset(ent->client->ps.viewangles, EF_DEAD, end);
 				VectorAdd(trace.endpos, end, end);
 
@@ -2389,14 +2402,11 @@ void ClientEndFrame(gentity_t *ent)
 
 				if (trace.fraction != 1.f)
 				{
-					Com_Printf("Head Hurt something %f\n", trace.fraction);
-
 					BG_HeadCollisionBoxOffset(ent->client->ps.viewangles, EF_DEAD, end);
 					VectorAdd(trace.endpos, end, end);
 
 					// cyan
 					G_RailBox(end, playerHeadProneMins, playerHeadProneMaxs, tv(0.f, 1.f, 1.f), ent->s.number | HITBOXBIT_HEAD);
-
 				}
 			}
 		}

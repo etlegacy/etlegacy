@@ -594,25 +594,60 @@ static void CG_GrenadeTrail(centity_t *ent, const weaponInfo_t *wi)
 
 	ent->trailTime = cg.time;
 
-	if (contents & (CONTENTS_WATER | CONTENTS_SLIME | CONTENTS_LAVA))
+	if ((cgs.clientinfo[cg.clientNum].shoutcaster || cgs.sv_cheats) && cg_shoutcastGrenadeTrail.integer)
 	{
-		if (contents & lastContents & CONTENTS_WATER)
-		{
-			CG_BubbleTrail(lastPos, origin, 2, 8);
-		}
-		return;
-	}
+		vec3_t colorStart = { 1.0f, 0.0f, 0.0f };
+		vec3_t colorEnd   = { 1.0f, 0.0f, 0.0f };
 
-	// spawn smoke junctions
-	for ( ; t <= ent->trailTime ; t += step)
+		if (ent->currentState.weapon == WP_SMOKE_BOMB)
+		{
+			VectorSet(colorStart, 0.0f, 0.0f, 1.0f);
+			VectorSet(colorEnd, 0.0f, 0.0f, 1.0f);
+		}
+
+		for (; t <= ent->trailTime; t += step)
+		{
+			BG_EvaluateTrajectory(&es->pos, t, origin, qfalse, es->effect2Time);
+			ent->headJuncIndex = CG_AddTrailJunc(ent->headJuncIndex,
+			                                     ent,
+			                                     cgs.media.railCoreShader,
+			                                     startTime,
+			                                     0,
+			                                     origin,
+			                                     750,
+			                                     0.3f,
+			                                     0.0f,
+			                                     2,
+			                                     20,
+			                                     0,
+			                                     colorStart,
+			                                     colorEnd,
+			                                     0,
+			                                     0);
+			ent->lastTrailTime = cg.time;
+		}
+	}
+	else
 	{
-		BG_EvaluateTrajectory(&es->pos, t, origin, qfalse, es->effect2Time);
-		ent->headJuncIndex = CG_AddSmokeJunc(ent->headJuncIndex,
-		                                     ent,    // trail fix
-		                                     cgs.media.smokeTrailShader,
-		                                     origin,
-		                                     1000, 0.3f, 2, 20);
-		ent->lastTrailTime = cg.time;
+		if (contents & (CONTENTS_WATER | CONTENTS_SLIME | CONTENTS_LAVA))
+		{
+			if (contents & lastContents & CONTENTS_WATER)
+			{
+				CG_BubbleTrail(lastPos, origin, 2, 8);
+			}
+			return;
+		}
+		// spawn smoke junctions
+		for (; t <= ent->trailTime; t += step)
+		{
+			BG_EvaluateTrajectory(&es->pos, t, origin, qfalse, es->effect2Time);
+			ent->headJuncIndex = CG_AddSmokeJunc(ent->headJuncIndex,
+			                                     ent, // trail fix
+			                                     cgs.media.smokeTrailShader,
+			                                     origin,
+			                                     1000, 0.3f, 2, 20);
+			ent->lastTrailTime = cg.time;
+		}
 	}
 }
 
@@ -809,7 +844,7 @@ static qboolean CG_ParseWeaponConfig(const char *filename, weaponInfo_t *wi)
 			break;
 		}
 
-		wi->weapAnimations[i].firstFrame = atoi(token);
+		wi->weapAnimations[i].firstFrame = Q_atoi(token);
 
 		token = COM_Parse(&text_p);     // length
 
@@ -818,7 +853,7 @@ static qboolean CG_ParseWeaponConfig(const char *filename, weaponInfo_t *wi)
 			break;
 		}
 
-		wi->weapAnimations[i].numFrames = atoi(token);
+		wi->weapAnimations[i].numFrames = Q_atoi(token);
 
 		token = COM_Parse(&text_p);     // fps
 
@@ -844,7 +879,7 @@ static qboolean CG_ParseWeaponConfig(const char *filename, weaponInfo_t *wi)
 			break;
 		}
 
-		wi->weapAnimations[i].loopFrames = atoi(token);
+		wi->weapAnimations[i].loopFrames = Q_atoi(token);
 
 		if (wi->weapAnimations[i].loopFrames > wi->weapAnimations[i].numFrames)
 		{
@@ -868,7 +903,7 @@ static qboolean CG_ParseWeaponConfig(const char *filename, weaponInfo_t *wi)
 				break;
 			}
 
-			wi->weapAnimations[i].moveSpeed = atoi(token);
+			wi->weapAnimations[i].moveSpeed = Q_atoi(token);
 
 			token = COM_Parse(&text_p);     // animated weapon
 
@@ -2562,7 +2597,7 @@ qboolean CG_GetPartFramesFromWeap(centity_t *cent, refEntity_t *part, refEntity_
 	}
 
 	// check draw bit
-	if (anim->moveSpeed & (1 << (partid + 8)))           // hide bits are in high byte
+	if (!anim || anim->moveSpeed & (1 << (partid + 8)))           // hide bits are in high byte
 	{
 		return qfalse;  // not drawn for current sequence
 	}
@@ -2751,6 +2786,59 @@ static void CG_RunWeapLerpFrame(clientInfo_t *ci, weaponInfo_t *wi, lerpFrame_t 
 }
 
 /**
+ * @brief Returns the frame to freeze animations to for a specific weapon, when animations are disabled
+ * @param[in] weapon
+ * @return frame
+ */
+static int CG_DefaultAnimFrameForWeapon(int weapon)
+{
+	int frame;
+
+	switch (weapon)
+	{
+	case WP_AKIMBO_COLT:
+	case WP_AKIMBO_LUGER:
+	case WP_AKIMBO_SILENCEDCOLT:
+	case WP_AKIMBO_SILENCEDLUGER:
+		frame = 6;
+		break;
+	case WP_PANZERFAUST:
+		frame = 61;
+		break;
+	case WP_MOBILE_BROWNING_SET:
+	case WP_MOBILE_MG42_SET:
+		frame = 134;
+		break;
+	case WP_MORTAR:
+	case WP_MORTAR2:
+		frame = 13;
+		break;
+	case WP_MORTAR_SET:
+	case WP_MORTAR2_SET:
+		frame = 45;
+		break;
+	case WP_SATCHEL:
+	case WP_LANDMINE:
+		frame = 8;
+		break;
+	case WP_SATCHEL_DET:
+		frame = 24;
+		break;
+	case WP_MEDIC_ADRENALINE:
+		frame = 36;
+		break;
+	case WP_BINOCULARS:
+		frame = 5;
+		break;
+	default:
+		frame = 0;
+		break;
+	}
+
+	return frame;
+}
+
+/**
  * @brief Modified.  this is now client-side only (server does not dictate weapon animation info)
  * @param[in] ps
  * @param[in] weapon
@@ -2769,11 +2857,45 @@ static void CG_WeaponAnimation(playerState_t *ps, weaponInfo_t *weapon, int *wea
 		return;
 	}
 
+	int ws = BG_simpleWeaponState(ps->weaponstate);
+
+	// okay to early out here since we can never reload, fire and switch at the same time
+	if (ws == WSTATE_FIRE && !(cg_weapAnims.integer & WEAPANIM_FIRING))
+	{
+		*weapOld = *weap = CG_DefaultAnimFrameForWeapon(ps->weapon);
+		// in some cases the weap.anim pointer does not get set and this causes a sigsev,
+		// so this is just a workaround to force the anim to be set to empty.
+		CG_SetWeapLerpFrameAnimation(weapon, &cent->pe.weap, ps->weapAnim);
+		return;
+	}
+	if (ws == WSTATE_RELOAD && !(cg_weapAnims.integer & WEAPANIM_RELOAD))
+	{
+		*weapOld = *weap = CG_DefaultAnimFrameForWeapon(ps->weapon);
+		return;
+	}
+	if (ws == WSTATE_SWITCH && !(cg_weapAnims.integer & WEAPANIM_SWITCH))
+	{
+		*weapOld = *weap = CG_DefaultAnimFrameForWeapon(ps->weapon);
+		return;
+	}
+
+	if (cgs.matchPaused)
+	{
+		cent->pe.weap.animationTime += cg.frametime;
+	}
+
 	CG_RunWeapLerpFrame(ci, weapon, &cent->pe.weap, ps->weapAnim, 1);
 
 	*weapOld      = cent->pe.weap.oldFrame;
 	*weap         = cent->pe.weap.frame;
 	*weapBackLerp = cent->pe.weap.backlerp;
+
+	// this forces a refresh to animation frame when force switching from a weapon to another
+	// eg. firing panzer -> autoswitching to pistol, otherwise we carry the anim frame from the old weapon
+	if (ws == WSTATE_IDLE && !(cg_weapAnims.integer & WEAPANIM_SWITCH))
+	{
+		*weapOld = *weap = CG_DefaultAnimFrameForWeapon(ps->weapon);
+	}
 
 	if (cg_debugAnim.integer == 3)
 	{
@@ -2862,35 +2984,37 @@ static void CG_CalculateWeaponPosition(vec3_t origin, vec3_t angles)
 	}
 
 	// gun angles from bobbing
-
-	angles[ROLL]  += scale        * cg.bobfracsin * 0.005f;
-	angles[YAW]   += scale        * cg.bobfracsin * 0.01f;
-	angles[PITCH] += cg.xyspeed   * cg.bobfracsin * 0.005f;
-
-	// drop the weapon when landing
-	delta = cg.time - cg.landTime;
-	if (delta < LAND_DEFLECT_TIME)
+	if (cg_weapAnims.integer & WEAPANIM_IDLE)
 	{
-		origin[2] += cg.landChange * 0.25f * delta / LAND_DEFLECT_TIME;
-	}
-	else if (delta < LAND_DEFLECT_TIME + LAND_RETURN_TIME)
-	{
-		origin[2] += cg.landChange * 0.25f *
-		             (LAND_DEFLECT_TIME + LAND_RETURN_TIME - delta) / LAND_RETURN_TIME;
-	}
+		angles[ROLL]  += scale * cg.bobfracsin * 0.005f;
+		angles[YAW]   += scale * cg.bobfracsin * 0.01f;
+		angles[PITCH] += cg.xyspeed * cg.bobfracsin * 0.005f;
 
-	// idle drift
-	if ((!(cg.predictedPlayerState.eFlags & EF_MOUNTEDTANK) && !(GetWeaponTableData(cg.predictedPlayerState.weapon)->type & WEAPON_TYPE_SET)))
-	{
-		float fracsin = (float)sin(cg.time * 0.001);
+		// drop the weapon when landing
+		delta = cg.time - cg.landTime;
+		if (delta < LAND_DEFLECT_TIME)
+		{
+			origin[2] += cg.landChange * 0.25f * delta / LAND_DEFLECT_TIME;
+		}
+		else if (delta < LAND_DEFLECT_TIME + LAND_RETURN_TIME)
+		{
+			origin[2] += cg.landChange * 0.25f *
+			             (LAND_DEFLECT_TIME + LAND_RETURN_TIME - delta) / LAND_RETURN_TIME;
+		}
 
-		// adjustment for MAX KAUFMAN
-		//scale = cg.xyspeed + 40;
-		scale = 80;
+		// idle drift
+		if ((!(cg.predictedPlayerState.eFlags & EF_MOUNTEDTANK) && !(GetWeaponTableData(cg.predictedPlayerState.weapon)->type & WEAPON_TYPE_SET)))
+		{
+			float fracsin = (float)sin(cg.time * 0.001);
 
-		angles[ROLL]  += scale * fracsin * 0.01f;
-		angles[YAW]   += scale * fracsin * 0.01f;
-		angles[PITCH] += scale * fracsin * 0.01f;
+			// adjustment for MAX KAUFMAN
+			//scale = cg.xyspeed + 40;
+			scale = 80;
+
+			angles[ROLL]  += scale * fracsin * 0.01f;
+			angles[YAW]   += scale * fracsin * 0.01f;
+			angles[PITCH] += scale * fracsin * 0.01f;
+		}
 	}
 
 	// subtract the kickAngles
@@ -3131,7 +3255,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 	{
 		if (weaponNum == WP_AMMO)
 		{
-			if (cgs.clientinfo[clientNum].skill[SK_SIGNALS] >= 1)
+			if (BG_IsSkillAvailable(cgs.clientinfo[clientNum].skill, SK_SIGNALS, SK_FIELDOPS_RESOURCES))
 			{
 				gun.customShader = weapon->modModels[0];
 			}
@@ -3141,7 +3265,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 		{
 			if (weaponNum == WP_MEDIC_SYRINGE)
 			{
-				if (cgs.clientinfo[clientNum].skill[SK_FIRST_AID] >= 3)
+				if (BG_IsSkillAvailable(cgs.clientinfo[clientNum].skill, SK_FIRST_AID, SK_MEDIC_FULL_REVIVE))
 				{
 					gun.customShader = weapon->modModels[0];
 				}
@@ -3254,7 +3378,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 
 					if (weaponNum == WP_MEDIC_SYRINGE && i == W_PART_1)
 					{
-						if (cgs.clientinfo[ps->clientNum].skill[SK_FIRST_AID] >= 3)
+						if (BG_IsSkillAvailable(cgs.clientinfo[clientNum].skill, SK_FIRST_AID, SK_MEDIC_FULL_REVIVE))
 						{
 							barrel.customShader = weapon->modModels[0];
 						}
@@ -3706,9 +3830,9 @@ void CG_AddViewWeapon(playerState_t *ps)
 	}
 
 	// drop gun lower at higher fov
-	if (cg_fov.value > 90)
+	if (cg_fov.value > 75)
 	{
-		fovOffset = -0.2f * (cg_fov.value - 90);
+		fovOffset = -0.2f * (cg_fov.value - 75);
 	}
 	else
 	{
@@ -5070,7 +5194,7 @@ void CG_WeaponBank_f(void)
 		return;
 	}
 
-	bank = atoi(CG_Argv(1));
+	bank = Q_atoi(CG_Argv(1));
 
 	if (bank <= 0 || bank >= MAX_WEAP_BANKS_MP)
 	{
@@ -5078,6 +5202,11 @@ void CG_WeaponBank_f(void)
 	}
 
 	CG_WeaponIndex(cg.weaponSelect, &curbank, &curcycle);         // get bank/cycle of current weapon
+
+	if (!cg_weapaltSwitches.integer && bank == curbank)
+	{
+		return;
+	}
 
 	if (!cg.lastWeapSelInBank[bank])
 	{
@@ -5129,7 +5258,7 @@ void CG_Weapon_f(void)
 {
 	int num;
 
-	num = atoi(CG_Argv(1));
+	num = Q_atoi(CG_Argv(1));
 
 	// weapon bind should execute weaponbank instead -- for splitting out class weapons, per Id request
 	if (num < MAX_WEAP_BANKS_MP)
@@ -5209,6 +5338,11 @@ void CG_OutOfAmmoChange(qboolean allowForceSwitch)
 	{
 		for (j = 0; j < MAX_WEAPS_IN_BANK_MP && weapBanksMultiPlayer[weapBankSwitchOrder[i]][j]; j++)
 		{
+			// do not switch to riflegrenade when a rifle runs out of ammo, swap to pistol instead
+			if (GetWeaponTableData(weapBanksMultiPlayer[weapBankSwitchOrder[i]][j])->type & WEAPON_TYPE_RIFLENADE)
+			{
+				continue;
+			}
 			if (CG_WeaponSelectable(weapBanksMultiPlayer[weapBankSwitchOrder[i]][j]))
 			{
 				CG_FinishWeaponChange(cg.predictedPlayerState.weapon, weapBanksMultiPlayer[weapBankSwitchOrder[i]][j]);

@@ -140,7 +140,7 @@ float CG_ClientHitboxMaxZ(entityState_t *hitEnt, float def)
 		return PRONE_BODYHEIGHT;
 	}
 	else if (hitEnt->eFlags & EF_CROUCHING &&
-			cg.predictedPlayerState.velocity[0] == 0.f && cg.predictedPlayerState.velocity[1] == 0.f)
+	         cg.predictedPlayerState.velocity[0] == 0.f && cg.predictedPlayerState.velocity[1] == 0.f)
 	{
 		return CROUCH_IDLE_BODYHEIGHT;
 	}
@@ -150,7 +150,7 @@ float CG_ClientHitboxMaxZ(entityState_t *hitEnt, float def)
 	}
 	else
 	{
-		return cgs.playerHitBoxHeight;
+		return DEFAULT_BODYHEIGHT;
 	}
 }
 
@@ -243,8 +243,6 @@ static void CG_ClipMoveToEntities(const vec3_t start, const vec3_t mins, const v
 		else if (trace.startsolid)
 		{
 			tr->startsolid = qtrue;
-
-			// FIXME: entity damage, see SV_ClipMoveToEntities
 			//tr->entityNum  = ent->number;
 		}
 		if (tr->allsolid)
@@ -1364,6 +1362,9 @@ void CG_PredictPlayerState(void)
 			cg_pmove.medicChargeTime     = cg.medicChargeTime[cg.snap->ps.persistant[PERS_TEAM] - 1];
 			cg_pmove.covertopsChargeTime = cg.covertopsChargeTime[cg.snap->ps.persistant[PERS_TEAM] - 1];
 		}
+
+		// activateLean is handled in pmove
+		cg_pmove.activateLean = cg_activateLean.integer ? qtrue : qfalse;
 
 		//Com_Memcpy( &pmext, &cg.pmext, sizeof(pmoveExt_t) );    // grab data, we only want the final result
 		// copy the pmext as it was just before we

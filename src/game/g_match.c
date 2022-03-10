@@ -279,9 +279,9 @@ void G_addStats(gentity_t *targ, gentity_t *attacker, int damage, meansOfDeath_t
 	// Keep track of only active player-to-player interactions in a real game
 	if (
 #ifndef DEBUG_STATS
-	    g_gamestate.integer != GS_PLAYING ||
+		g_gamestate.integer != GS_PLAYING ||
 #endif
-	    mod == MOD_SWITCHTEAM || (targ->client->ps.pm_flags & PMF_LIMBO))
+		mod == MOD_SWITCHTEAM || (targ->client->ps.pm_flags & PMF_LIMBO))
 	{
 		return;
 	}
@@ -291,13 +291,19 @@ void G_addStats(gentity_t *targ, gentity_t *attacker, int damage, meansOfDeath_t
 	{
 		if (attacker && attacker->client)
 		{
-			int x;
+			weapon_t weap = GetMODTableData(mod)->weaponIcon;
 
-			x = attacker->client->sess.aWeaponStats[GetMODTableData(mod)->indexWeaponStat].atts--;
-
-			if (x < 1)
+			// don't count hits/shots for hitscan weapons
+			if (!GetWeaponTableData(weap)->splashDamage)
 			{
-				attacker->client->sess.aWeaponStats[GetMODTableData(mod)->indexWeaponStat].atts = 1;
+				int x;
+
+				x = attacker->client->sess.aWeaponStats[GetMODTableData(mod)->indexWeaponStat].atts--;
+
+				if (x < 1)
+				{
+					attacker->client->sess.aWeaponStats[GetMODTableData(mod)->indexWeaponStat].atts = 1;
+				}
 			}
 
 			if (targ->health <= FORCE_LIMBO_HEALTH)
@@ -306,7 +312,7 @@ void G_addStats(gentity_t *targ, gentity_t *attacker, int damage, meansOfDeath_t
 				{
 					attacker->client->sess.gibs++;
 				}
-				else
+				else if (targ != attacker)
 				{
 					attacker->client->sess.team_gibs++;
 				}
@@ -314,6 +320,19 @@ void G_addStats(gentity_t *targ, gentity_t *attacker, int damage, meansOfDeath_t
 		}
 
 		return;
+	}
+
+	// gibs from explosions when player was still alive
+	if (targ->health <= GIB_HEALTH && attacker && attacker->client)
+	{
+		if (targ->client->sess.sessionTeam != attacker->client->sess.sessionTeam)
+		{
+			attacker->client->sess.gibs++;
+		}
+		else if (targ != attacker)
+		{
+			attacker->client->sess.team_gibs++;
+		}
 	}
 
 	//  G_Printf("mod: %d, Index: %d, dmg: %d\n", mod, G_weapStatIndex_MOD(mod), dmg_ref);
@@ -450,7 +469,7 @@ char *G_createStats(gentity_t *ent)
 
 	// Add skillpoints as necessary
 	if ((g_gametype.integer == GT_WOLF_CAMPAIGN && g_xpSaver.integer) ||
-		(g_gametype.integer == GT_WOLF_CAMPAIGN && (g_campaigns[level.currentCampaign].current != 0 && !level.newCampaign)) ||
+	    (g_gametype.integer == GT_WOLF_CAMPAIGN && (g_campaigns[level.currentCampaign].current != 0 && !level.newCampaign)) ||
 	    (g_gametype.integer == GT_WOLF_LMS && g_currentRound.integer != 0))
 	{
 		for (i = SK_BATTLE_SENSE; i < SK_NUM_SKILLS; i++)
@@ -582,7 +601,7 @@ void G_parseStats(const char *pszStatsInfo)
 {
 	gclient_t  *cl;
 	const char *tmp = pszStatsInfo;
-	int        i, dwWeaponMask, dwClientID = atoi(pszStatsInfo);
+	int        i, dwWeaponMask, dwClientID = Q_atoi(pszStatsInfo);
 
 	if (dwClientID > MAX_CLIENTS)
 	{
@@ -591,7 +610,7 @@ void G_parseStats(const char *pszStatsInfo)
 
 	cl = &level.clients[dwClientID];
 
-#define GETVAL(x) if ((tmp = strchr(tmp, ' ')) == NULL) { return; } x = atoi(++tmp);
+#define GETVAL(x) if ((tmp = strchr(tmp, ' ')) == NULL) { return; } (x) = Q_atoi(++tmp);
 
 	GETVAL(cl->sess.rounds);
 	GETVAL(dwWeaponMask);
@@ -607,7 +626,7 @@ void G_parseStats(const char *pszStatsInfo)
 		}
 	}
 
-	// These only gets generated when there are some weaponstats.
+	// These only gets generated when there are some weapon stats.
 	// This is what the client expects.
 	if (dwWeaponMask != 0)
 	{
@@ -714,9 +733,9 @@ void G_printMatchInfo(gentity_t *ent)
 			time_eff = (cl->sess.time_axis + cl->sess.time_allies == 0) ? 0 : 100 * cl->sess.time_played / (cl->sess.time_axis + cl->sess.time_allies);
 
 			if (ent->client == cl ||
-				(ent->client->sess.sessionTeam == TEAM_SPECTATOR &&
-				 ent->client->sess.spectatorState == SPECTATOR_FOLLOW &&
-				 ent->client->sess.spectatorClient == level.sortedClients[j]))
+			    (ent->client->sess.sessionTeam == TEAM_SPECTATOR &&
+			     ent->client->sess.spectatorState == SPECTATOR_FOLLOW &&
+			     ent->client->sess.spectatorClient == level.sortedClients[j]))
 			{
 				ref = "^3";
 			}
@@ -750,45 +769,45 @@ void G_printMatchInfo(gentity_t *ent)
 			                                            (g_gametype.integer == GT_WOLF_LMS) ? cl->ps.persistant[PERS_SCORE] : cl->ps.stats[STAT_XP]
 #ifdef FEATURE_RATING
 			                                            ,
-			                                            cl->sess.mu - 3 * cl->sess.sigma,
+			                                            Com_RoundFloatWithNDecimal(cl->sess.mu - 3 * cl->sess.sigma, 2),
 			                                            (cl->sess.mu - 3 * cl->sess.sigma) - (cl->sess.oldmu - 3 * cl->sess.oldsigma)
 #endif
 			                                            ));
 		}
 
 		eff = (tot_kills + tot_deaths == 0) ? 0 : 100 * tot_kills / (tot_kills + tot_deaths);
-		if (eff < 0)
+		                                                             if (eff < 0)
 		{
 			eff = 0;
 		}
 
-		time_eff = (tot_timex + tot_timel == 0) ? 0 : 100 * tot_timep / (tot_timex + tot_timel);
+		                                                             time_eff = (tot_timex + tot_timel == 0) ? 0 : 100 * tot_timep / (tot_timex + tot_timel);
 
 #ifdef FEATURE_RATING
-		CP("sc \"^7------------------------------------------------------------------------------------------------------------------------\n\"");
+		                                                             CP("sc \"^7------------------------------------------------------------------------------------------------------------------------\n\"");
 #else
-		CP("sc \"^7---------------------------------------------------------------------------------------------------------\n\"");
+		                                                             CP("sc \"^7---------------------------------------------------------------------------------------------------------\n\"");
 #endif
-		trap_SendServerCommand(ent - g_entities, va("sc \"%-9s %-14s ^5%-15s^1%4d^$%4d^5%4d%4d%4d%4d%4d%4d%4d^5%4d^2%6d^1%6d^6%5d^$%5d^3%7d\n\"",
-		                                            "",
-		                                            aTeams[i],
-		                                            "Totals",
-		                                            tot_timex / 60000,
-		                                            tot_timel / 60000,
-		                                            time_eff,
-		                                            tot_kills,
-		                                            tot_deaths,
-		                                            tot_gibs,
-		                                            tot_sk,
-		                                            tot_tk,
-		                                            tot_tg,
-		                                            eff,
-		                                            tot_dg,
-		                                            tot_dr,
-		                                            tot_tdg,
-		                                            tot_tdr,
-		                                            tot_xp
-		                                            ));
+		                                                             trap_SendServerCommand(ent - g_entities, va("sc \"%-9s %-14s ^5%-15s^1%4d^$%4d^5%4d%4d%4d%4d%4d%4d%4d^5%4d^2%6d^1%6d^6%5d^$%5d^3%7d\n\"",
+		                                                                                                         "",
+		                                                                                                         aTeams[i],
+		                                                                                                         "Totals",
+		                                                                                                         tot_timex / 60000,
+		                                                                                                         tot_timel / 60000,
+		                                                                                                         time_eff,
+		                                                                                                         tot_kills,
+		                                                                                                         tot_deaths,
+		                                                                                                         tot_gibs,
+		                                                                                                         tot_sk,
+		                                                                                                         tot_tk,
+		                                                                                                         tot_tg,
+		                                                                                                         eff,
+		                                                                                                         tot_dg,
+		                                                                                                         tot_dr,
+		                                                                                                         tot_tdg,
+		                                                                                                         tot_tdr,
+		                                                                                                         tot_xp
+		                                                                                                         ));
 	}
 
 #ifdef FEATURE_RATING
@@ -824,7 +843,7 @@ void G_matchInfoDump(unsigned int dwDumpType)
 	{
 		ref = level.sortedClients[i];
 		ent = &g_entities[ref];
-		cl  = ent->client;
+		cl = ent->client;
 
 		if (cl->pers.connected != CON_CONNECTED)
 		{
@@ -838,9 +857,9 @@ void G_matchInfoDump(unsigned int dwDumpType)
 			{
 				if ((cl->pers.autoaction & AA_STATSALL)
 #ifdef FEATURE_MULTIVIEW
-					|| cl->pers.mvCount > 0
+				    || cl->pers.mvCount > 0
 #endif
-					)
+				    )
 				{
 					G_statsall_cmd(ent, 0, qfalse);
 				}
@@ -887,9 +906,9 @@ void G_matchInfoDump(unsigned int dwDumpType)
 			{
 				if (g_currentRound.integer == 1)       // We've already missed the switch
 				{
-					CP(va("print \">>> ^3Clock set to: %d:%02d\n\n\n\"",
-						  g_nextTimeLimit.integer,
-						  (int)(60.0f * (g_nextTimeLimit.value - g_nextTimeLimit.integer))));
+					CP(va("print \"^3>>> Clock set to: ^7%d:%02d\n\n\n\"",
+					      g_nextTimeLimit.integer,
+					      (int)(60.0f * (g_nextTimeLimit.value - g_nextTimeLimit.integer))));
 				}
 				else
 				{
@@ -897,17 +916,17 @@ void G_matchInfoDump(unsigned int dwDumpType)
 
 					if (val < g_timelimit.value)
 					{
-						CP(va("print \">>> ^3Objective reached at %d:%02d (original: %d:%02d)\n\n\n\"",
-							  (int)val,
-							  (int)(60.0f * (val - (int)val)),
-							  g_timelimit.integer,
-							  (int)(60.0f * (g_timelimit.value - g_timelimit.integer))));
+						CP(va("print \"^3>>> Objective reached at ^7%d:%02d^3 (original: ^7%d:%02d^3)\n\n\n\"",
+						      (int)val,
+						      (int)(60.0f * (val - (int)val)),
+						      g_timelimit.integer,
+						      (int)(60.0f * (g_timelimit.value - g_timelimit.integer))));
 					}
 					else
 					{
-						CP(va("print \">>> ^3Objective NOT reached in time (%d:%02d)\n\n\n\"",
-							  g_timelimit.integer,
-							  (int)(60.0f * (g_timelimit.value - g_timelimit.integer))));
+						CP(va("print \"^3>>> Objective NOT reached in time (^7%d:%02d^3)\n\n\n\"",
+						      g_timelimit.integer,
+						      (int)(60.0f * (g_timelimit.value - g_timelimit.integer))));
 					}
 				}
 			}
@@ -946,8 +965,8 @@ int G_checkServerToggle(vmCvar_t *cv)
 		if (cv->integer > 0)
 		{
 			level.server_settings &= ~CV_SVS_WARMUPDMG;
-			nFlag                  = (cv->integer > 2) ? 2 : cv->integer;
-			nFlag                  = nFlag << 2;
+			nFlag = (cv->integer > 2) ? 2 : cv->integer;
+			nFlag = nFlag << 2;
 		}
 		else
 		{
@@ -1033,7 +1052,7 @@ void G_statsPrint(gentity_t *ent, int nType)
 	else
 	{
 		int  pid;
-                char arg[MAX_TOKEN_CHARS];
+		char arg[MAX_TOKEN_CHARS];
 
 		// Find the player to poll stats.
 		trap_Argv(1, arg, sizeof(arg));

@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<component type="desktop-application">
+
+    <id>com.etlegacy.ETLegacy</id>
+
+    <metadata_license>CC-BY-SA-3.0</metadata_license>
+    <project_license>GPL-3.0-or-later</project_license>
+
+    <name>ET: Legacy</name>
+    <summary>ET: Legacy is an open source project based on the code of Wolfenstein: Enemy Territory which was released in 2010 under the terms of the GPLv3.</summary>
+
+    <description>
+        <p>ET: Legacy is a downloadable, free-to-play multiplayer game in which players wage war as Axis or Allies in team-based combat. It's a team game; you will win or fall along with your comrades. The only way to complete the objectives that lead to victory is by cooperation, with each player covering their teammates and using their class special abilities in concert with the others.</p>
+        <p>Featuring multiplayer support for up to 64 players, ET: Legacy is the ultimate test of communication and teamwork on the battlefield. Players join the fray as one of five distinct character classes each with unique combat abilities. Each Axis or Allies team can divide itself into smaller fire teams for quick and easy communication using an intuitive messaging system and dynamic command map of the entire battlefield.</p>
+    </description>
+
+    <developer_name>ET: Legacy Team</developer_name>
+
+    <url type="homepage">https://www.etlegacy.com/</url>
+    <url type="bugtracker">https://github.com/etlegacy/etlegacy/issues</url>
+    <url type="faq">https://github.com/etlegacy/etlegacy/wiki/FAQ</url>
+    <url type="help">https://github.com/etlegacy/etlegacy/wiki</url>
+    <url type="donation">https://github.com/etlegacy/etlegacy</url>
+    <url type="translate">https://www.transifex.com/projects/p/etlegacy/</url>
+    <url type="contact">https://www.etlegacy.com/contact</url>
+
+    <launchable type="desktop-id">com.etlegacy.ETLegacy.desktop</launchable>
+
+    <categories>
+        <category>Game</category>
+        <category>ActionGame</category>
+    </categories>
+
+    <mimetypes>
+        <mimetype>x-scheme-handler/et</mimetype>
+    </mimetypes>
+
+    <screenshots>
+        <screenshot type="default">
+            <image>https://mirror.etlegacy.com/metainfo/screen-ETL-001.jpg</image>
+            <caption>Allies soldiers attacking a bunker complex</caption>
+        </screenshot>
+        <screenshot>
+            <image>https://mirror.etlegacy.com/metainfo/screen-ETL-002.jpg</image>
+            <caption>Allies soldiers trying to blow up a power generator</caption>
+        </screenshot>
+        <screenshot>
+            <image>https://mirror.etlegacy.com/metainfo/screen-ETL-003.jpg</image>
+            <caption>Axis soldiers forcing their way riding a train tug</caption>
+        </screenshot>
+        <screenshot>
+            <image>https://mirror.etlegacy.com/metainfo/screen-ETL-004.jpg</image>
+            <caption>Axis soldiers guarding a city entrace</caption>
+        </screenshot>
+        <screenshot>
+            <image>https://mirror.etlegacy.com/metainfo/screen-ETL-005.jpg</image>
+            <caption>Allies soldier in a beach landing, taking mortar fire</caption>
+        </screenshot>
+        <screenshot>
+            <image>https://mirror.etlegacy.com/metainfo/screen-ETL-006.jpg</image>
+            <caption>Axis outpost being attacked at night</caption>
+        </screenshot>
+        <screenshot>
+            <image>https://mirror.etlegacy.com/metainfo/screen-ETL-007.jpg</image>
+            <caption>Allied soldier coordinating fire support</caption>
+        </screenshot>
+        <screenshot>
+            <image>https://mirror.etlegacy.com/metainfo/screen-ETL-008.jpg</image>
+            <caption>Allies soldiers attacking in sandy environment</caption>
+        </screenshot>
+    </screenshots>
+
+    <content_rating type="oars-1.1">
+        <content_attribute id="violence-realistic">moderate</content_attribute>
+        <content_attribute id="violence-bloodshed">moderate</content_attribute>
+        <content_attribute id="social-chat">intense</content_attribute>
+        <content_attribute id="social-audio">intense</content_attribute>
+    </content_rating>
+
+    <update_contact>mail@etlegacy.com</update_contact>
+
+    <releases>
+        <release version="@ETL_CMAKE_PROD_VERSION_STR@" date="@ETL_CMAKE_BUILD_DATE@" />
+    </releases>
+
+</component>

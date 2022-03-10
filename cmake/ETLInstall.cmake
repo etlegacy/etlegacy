@@ -23,61 +23,85 @@ if(INSTALL_OMNIBOT AND UNIX)
 		DESTINATION "${INSTALL_DEFAULT_MODDIR}"
 		PERMISSIONS OWNER_WRITE OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
 	)
-endif(INSTALL_OMNIBOT AND UNIX)
+endif()
 
 # other adds
-if(UNIX)
+if(UNIX AND NOT APPLE)
 	install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/misc/etl.svg"
-		DESTINATION "${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/scalable/apps"
+		DESTINATION "${INSTALL_DEFAULT_SHAREDIR}/icons/hicolor/scalable/apps"
 	)
 	install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/misc/com.etlegacy.ETLegacy.desktop"
-		DESTINATION "${CMAKE_INSTALL_PREFIX}/share/applications"
+		DESTINATION "${INSTALL_DEFAULT_SHAREDIR}/applications"
 	)
 	install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/misc/etlegacy.xml"
-		DESTINATION "${CMAKE_INSTALL_PREFIX}/share/mime/packages"
+		DESTINATION "${INSTALL_DEFAULT_SHAREDIR}/mime/packages"
 	)
-	install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/misc/com.etlegacy.ETLegacy.metainfo.xml"
-		DESTINATION "${CMAKE_INSTALL_PREFIX}/share/metainfo"
+	configure_file("${CMAKE_CURRENT_SOURCE_DIR}/misc/com.etlegacy.ETLegacy.metainfo.xml.in"
+			"${CMAKE_CURRENT_BINARY_DIR}/misc/com.etlegacy.ETLegacy.metainfo.xml" @ONLY)
+	install(FILES "${CMAKE_CURRENT_BINARY_DIR}/misc/com.etlegacy.ETLegacy.metainfo.xml"
+		DESTINATION "${INSTALL_DEFAULT_SHAREDIR}/metainfo"
 	)
 	install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/docs/linux/man/man6/"
-		DESTINATION "${CMAKE_INSTALL_PREFIX}/share/man/man6"
+		DESTINATION "${INSTALL_DEFAULT_SHAREDIR}/man/man6"
 	)
-endif(UNIX)
+	install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/docs/INSTALL.txt"
+		DESTINATION "${INSTALL_DEFAULT_SHAREDIR}/doc/etlegacy"
+	)
+	install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/COPYING.txt"
+		DESTINATION "${INSTALL_DEFAULT_SHAREDIR}/licenses/etlegacy"
+	)
+else()
+	install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/docs/INSTALL.txt"
+		DESTINATION "${INSTALL_DEFAULT_MODDIR}"
+	)
+	install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/COPYING.txt"
+		DESTINATION "${INSTALL_DEFAULT_MODDIR}"
+	)
+endif()
 
-# project adds
-install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/docs/INSTALL.txt"
-	DESTINATION "${INSTALL_DEFAULT_MODDIR}"
-)
-install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/COPYING.txt"
-	DESTINATION "${INSTALL_DEFAULT_MODDIR}"
-)
+if(APPLE)
+	install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/misc/macOS-packs.command"
+		DESTINATION "${INSTALL_DEFAULT_BASEDIR}/"
+		PERMISSIONS OWNER_WRITE OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
+	)
+endif()
 
 # copy required genuine files
 if(ET_FS_BASEPATH AND INSTALL_DEFAULT_BASEDIR)
 	message(STATUS "Installing genuine W:ET files")
 
 	install(FILES "${ET_FS_BASEPATH}/etmain/pak0.pk3"
-		DESTINATION "${INSTALL_DEFAULT_BASEDIR}/etmain"
+		DESTINATION "${INSTALL_DEFAULT_MODDIR}/etmain"
+		PERMISSIONS OWNER_WRITE OWNER_READ GROUP_READ WORLD_READ
+	)
+
+	install(FILES "${ET_FS_BASEPATH}/etmain/pak1.pk3"
+		DESTINATION "${INSTALL_DEFAULT_MODDIR}/etmain"
+		PERMISSIONS OWNER_WRITE OWNER_READ GROUP_READ WORLD_READ
+	)
+
+	install(FILES "${ET_FS_BASEPATH}/etmain/pak2.pk3"
+		DESTINATION "${INSTALL_DEFAULT_MODDIR}/etmain"
 		PERMISSIONS OWNER_WRITE OWNER_READ GROUP_READ WORLD_READ
 	)
 
 	# personal data (owner only)
 	install(FILES "${ET_FS_BASEPATH}/etmain/video/etintro.roq"
-		DESTINATION "${INSTALL_DEFAULT_BASEDIR}/etmain/video"
+		DESTINATION "${INSTALL_DEFAULT_MODDIR}/etmain/video"
 		PERMISSIONS OWNER_WRITE OWNER_READ
 	)
 
 	if(ET_KEY)
 		install(FILES "${ET_FS_BASEPATH}/etmain/etkey"
-			DESTINATION "${INSTALL_DEFAULT_BASEDIR}/etmain"
+			DESTINATION "${INSTALL_DEFAULT_MODDIR}/etmain"
 			PERMISSIONS OWNER_WRITE OWNER_READ
 		)
 	endif(ET_KEY)
 elseif(NOT ET_FS_BASEPATH AND INSTALL_DEFAULT_BASEDIR)
 	message(STATUS "***********************************************************")
 	message(STATUS "Genuine W:ET files are not copied - ET: Legacy won't start!")
-	message(STATUS "In order to start the game, copy the pak0.pk3 assets file")
-	message(STATUS "to ${INSTALL_DEFAULT_BASEDIR}/etmain")
+	message(STATUS "In order to start the game, copy the pak0-2.pk3 asset files")
+	message(STATUS "to ${INSTALL_DEFAULT_MODDIR}/etmain")
 	message(STATUS "***********************************************************")
 endif()
 

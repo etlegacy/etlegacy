@@ -22,7 +22,22 @@ SET mod_only=0
 SET use_autoupdate=1
 SET use_extra=1
 SET build_r2=0
-SET build_ssl=0
+SET build_ssl=1
+SET wolf_ssl=0
+SET open_ssl=0
+
+If Defined FEATURE_SSL (
+    SET build_ssl=!FEATURE_SSL!
+)
+
+If Defined BUNDLED_WOLFSSL (
+    SET wolf_ssl=!BUNDLED_WOLFSSL!
+)
+
+If Defined BUNDLED_OPENSSL (
+    SET open_ssl=!BUNDLED_OPENSSL!
+)
+
 SET generator=
 REM SET generator=Visual Studio 16 2019
 REM SET platform_toolset=-T v142
@@ -47,22 +62,30 @@ IF NOT "%1"=="" (
 		ECHO help - print this help
 		ECHO.
 		ECHO Properties
-		ECHO -64, -debug, -mod, -noupdate, -noextra, -nor2, -generator [generator], -toolset [version] -build_dir [dir]
+		ECHO -64, -debug, -mod, -noextra, -noupdate, -nor2, -nossl, -generator [generator], -toolset [version] -build_dir [dir]
 		ECHO.
 		GOTO:EOF
 	) ELSE IF /I "%1"=="-64" (
 		SET build_64=1
-	) ELSE IF /I "%1"=="-ssl" (
-		SET build_ssl=1
+	) ELSE IF /I "%1"=="-nossl" (
+		SET build_ssl=0
+	) ELSE IF /I "%1"=="-no-ssl" (
+		SET build_ssl=0
 	) ELSE IF /I "%1"=="-mod" (
 		SET mod_only=1
 	) ELSE IF /I "%1"=="-noupdate" (
 		SET use_autoupdate=0
+	) ELSE IF /I "%1"=="-no-update" (
+		SET use_autoupdate=0
 	) ELSE IF /I "%1"=="-noextra" (
+		SET use_extra=0
+	) ELSE IF /I "%1"=="-no-extra" (
 		SET use_extra=0
 	) ELSE IF /I "%1"=="-debug" (
 		SET build_type=Debug
 	) ELSE IF /I "%1"=="-nor2" (
+		SET build_r2=0
+	) ELSE IF /I "%1"=="-no-r2" (
 		SET build_r2=0
 	) ELSE IF /I "%1"=="-generator" (
 		SET generator=%~2
@@ -297,6 +320,12 @@ GOTO:EOF
 	IF NOT EXIST "!game_homepath!\etmain\pak0.pk3" (
 		bitsadmin /transfer "pak0" %~1pak0.pk3 "!game_homepath!\etmain\pak0.pk3"
 	)
+	IF NOT EXIST "!game_homepath!\etmain\pak1.pk3" (
+		bitsadmin /transfer "pak1" %~1pak1.pk3 "!game_homepath!\etmain\pak1.pk3"
+	)
+	IF NOT EXIST "!game_homepath!\etmain\pak2.pk3" (
+		bitsadmin /transfer "pak2" %~1pak2.pk3 "!game_homepath!\etmain\pak2.pk3"
+	)
 GOTO:EOF
 
 :Substring
@@ -324,20 +353,22 @@ GOTO :EOF
 		SET CROSSCOMP=YES
 	)
 
-	SET loca_build_string=-DBUNDLED_LIBS=YES ^
+	SET local_build_string=-DBUNDLED_LIBS=YES ^
 	-DCMAKE_BUILD_TYPE=!build_type! ^
 	-DFEATURE_AUTOUPDATE=!use_autoupdate! ^
 	-DINSTALL_EXTRA=!use_extra! ^
 	-DCROSS_COMPILE32=!CROSSCOMP! ^
 	-DRENDERER_DYNAMIC=!build_r2! ^
 	-DFEATURE_RENDERER2=!build_r2! ^
-	-DFEATURE_SSL=!build_ssl!
+	-DBUNDLED_WOLFSSL=!wolf_ssl! ^
+	-DBUNDLED_OPENSSL=!build_r2! ^
+	-DFEATURE_SSL=!open_ssl!
 
 	IF !mod_only!==1 (
-		SET loca_build_string=!loca_build_string! ^
+		SET local_build_string=!local_build_string! ^
 		-DBUILD_CLIENT=0 ^
 		-DBUILD_SERVER=0
 	)
 
-	ENDLOCAL&SET "%~1=%loca_build_string%"
+	ENDLOCAL&SET "%~1=%local_build_string%"
 GOTO:EOF

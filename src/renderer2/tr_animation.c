@@ -106,7 +106,7 @@ static qboolean R_LoadMD5Anim(skelAnimation_t *skelAnim, byte *buffer, int buffe
 
 	// check version
 	token   = COM_ParseExt2(&buf_p, qfalse);
-	version = atoi(token);
+	version = Q_atoi(token);
 	if (version != MD5_VERSION)
 	{
 		Ren_Warning("RE_RegisterAnimation: '%s' has wrong version (%i should be %i)\n", name, version, MD5_VERSION);
@@ -125,7 +125,7 @@ static qboolean R_LoadMD5Anim(skelAnimation_t *skelAnim, byte *buffer, int buffe
 		return qfalse;
 	}
 	token           = COM_ParseExt2(&buf_p, qfalse);
-	anim->numFrames = atoi(token);
+	anim->numFrames = Q_atoi(token);
 
 	// parse numJoints <number>
 	token = COM_ParseExt2(&buf_p, qtrue);
@@ -135,7 +135,7 @@ static qboolean R_LoadMD5Anim(skelAnimation_t *skelAnim, byte *buffer, int buffe
 		return qfalse;
 	}
 	token             = COM_ParseExt2(&buf_p, qfalse);
-	anim->numChannels = atoi(token);
+	anim->numChannels = Q_atoi(token);
 
 	// parse frameRate <number>
 	token = COM_ParseExt2(&buf_p, qtrue);
@@ -145,7 +145,7 @@ static qboolean R_LoadMD5Anim(skelAnimation_t *skelAnim, byte *buffer, int buffe
 		return qfalse;
 	}
 	token           = COM_ParseExt2(&buf_p, qfalse);
-	anim->frameRate = atoi(token);
+	anim->frameRate = Q_atoi(token);
 
 	// parse numAnimatedComponents <number>
 	token = COM_ParseExt2(&buf_p, qtrue);
@@ -156,7 +156,7 @@ static qboolean R_LoadMD5Anim(skelAnimation_t *skelAnim, byte *buffer, int buffe
 		return qfalse;
 	}
 	token                       = COM_ParseExt2(&buf_p, qfalse);
-	anim->numAnimatedComponents = atoi(token);
+	anim->numAnimatedComponents = Q_atoi(token);
 
 	// parse hierarchy {
 	token = COM_ParseExt2(&buf_p, qtrue);
@@ -183,7 +183,7 @@ static qboolean R_LoadMD5Anim(skelAnimation_t *skelAnim, byte *buffer, int buffe
 		//Ren_Print("RE_RegisterAnimation: '%s' has channel '%s'\n", name, channel->name);
 
 		token                = COM_ParseExt2(&buf_p, qfalse);
-		channel->parentIndex = atoi(token);
+		channel->parentIndex = Q_atoi(token);
 
 		if (channel->parentIndex >= anim->numChannels)
 		{
@@ -192,10 +192,10 @@ static qboolean R_LoadMD5Anim(skelAnimation_t *skelAnim, byte *buffer, int buffe
 		}
 
 		token                   = COM_ParseExt2(&buf_p, qfalse);
-		channel->componentsBits = atoi(token);
+		channel->componentsBits = Q_atoi(token);
 
 		token                     = COM_ParseExt2(&buf_p, qfalse);
-		channel->componentsOffset = atoi(token);
+		channel->componentsOffset = Q_atoi(token);
 	}
 
 	// parse }
@@ -949,7 +949,7 @@ void R_AddMD5Surfaces(trRefEntity_t *ent)
 	// cull the entire model if merged bounding box of both frames
 	// is outside the view frustum
 	R_CullMD5(ent);
-	
+
 	if (ent->cull == CULL_OUT)
 	{
 		return;

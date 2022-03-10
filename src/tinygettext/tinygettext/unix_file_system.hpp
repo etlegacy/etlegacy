@@ -29,9 +29,9 @@ class UnixFileSystem : public FileSystem
 public:
 	UnixFileSystem();
 
-	std::vector<std::string>    open_directory(const std::string& pathname);
+	std::vector<std::string> open_directory(const std::string& pathname) override;
 #if __cplusplus >= 201103L // C++11
-	std::unique_ptr<std::istream> open_file(const std::string& filename);
+	std::unique_ptr<std::istream> open_file(const std::string& filename) override;
 #else
 	std::auto_ptr<std::istream> open_file(const std::string& filename);
 #endif

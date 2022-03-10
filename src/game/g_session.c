@@ -62,29 +62,29 @@ void G_WriteClientSessionData(gclient_t *client, qboolean restart)
 #ifdef FEATURE_MULTIVIEW
 #ifdef FEATURE_RATING
 #ifdef FEATURE_PRESTIGE
-	s = va("%i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %f %f %f %f %i %i %i %i %i %i %i %i %i",
+	s = va("%i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %f %f %f %f %i %i %i %i %i %i %i %i %i %i",
 #else
-	s = va("%i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %f %f %f %f %i %i %i %i %i %i %i %i",
+	s = va("%i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %f %f %f %f %i %i %i %i %i %i %i %i %i",
 #endif
 #else
 #ifdef FEATURE_PRESTIGE
-	s = va("%i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i",
+	s = va("%i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i",
 #else
-	s = va("%i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i",
+	s = va("%i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i",
 #endif
 #endif
 #else
 #ifdef FEATURE_RATING
 #ifdef FEATURE_PRESTIGE
-	s = va("%i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %f %f %f %f %i %i %i %i %i %i %i",
+	s = va("%i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %f %f %f %f %i %i %i %i %i %i %i %i",
 #else
-	s = va("%i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %f %f %f %f %i %i %i %i %i %i",
+	s = va("%i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %f %f %f %f %i %i %i %i %i %i %i",
 #endif
 #else
 #ifdef FEATURE_PRESTIGE
-	s = va("%i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i",
+	s = va("%i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i",
 #else
-	s = va("%i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i",
+	s = va("%i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i",
 #endif
 #endif
 #endif
@@ -133,6 +133,7 @@ void G_WriteClientSessionData(gclient_t *client, qboolean restart)
 	       client->sess.ignoreClients[1],
 	       client->pers.enterTime,
 	       restart ? client->sess.userSpawnPointValue : 0,
+	       restart ? client->sess.userMinorSpawnPointValue : -1,
 	       client->sess.uci
 	       );
 
@@ -242,7 +243,7 @@ void G_ClientSwap(gclient_t *client)
  */
 void G_CalcRank(gclient_t *client)
 {
-	int i, highestskill = 0;
+	int i, j, highestskill = 0;
 
 #ifdef FEATURE_RATING
 	// rating values for rank levels
@@ -284,10 +285,18 @@ void G_CalcRank(gclient_t *client)
 	for (i = 0; i < SK_NUM_SKILLS; i++)
 	{
 		G_SetPlayerSkill(client, i);
-		if (client->sess.skill[i] > highestskill)
-		{
-			highestskill = client->sess.skill[i];
-		}
+        
+        for (j = NUM_SKILL_LEVELS - 1; j >= 0; j--)
+        {
+            if (GetSkillTableData(i)->skillLevels[j] >= 0 && client->sess.skillpoints[i] >= GetSkillTableData(i)->skillLevels[j])
+            {
+                if (j > highestskill)
+                {
+                    highestskill = j;
+                }
+                break;
+            }
+        }
 	}
 
 	// set rank
@@ -300,7 +309,7 @@ void G_CalcRank(gclient_t *client)
 		// count the number of maxed out skills
 		for (i = 0; i < SK_NUM_SKILLS; i++)
 		{
-			if (client->sess.skill[i] >= 4)
+			if (GetSkillTableData(i)->skillLevels[4] >= 0 && client->sess.skillpoints[i] >= GetSkillTableData(i)->skillLevels[4])
 			{
 				cnt++;
 			}
@@ -332,29 +341,29 @@ void G_ReadSessionData(gclient_t *client)
 #ifdef FEATURE_MULTIVIEW
 #ifdef FEATURE_RATING
 #ifdef FEATURE_PRESTIGE
-	sscanf(s, "%i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %f %f %f %f %i %i %i %i %i %i %i %i %i",
+	sscanf(s, "%i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %f %f %f %f %i %i %i %i %i %i %i %i %i %i",
 #else
-	sscanf(s, "%i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %f %f %f %f %i %i %i %i %i %i %i %i",
+	sscanf(s, "%i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %f %f %f %f %i %i %i %i %i %i %i %i %i",
 #endif
 #else
 #ifdef FEATURE_PRESTIGE
-	sscanf(s, "%i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i",
+	sscanf(s, "%i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i",
 #else
-	sscanf(s, "%i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i",
+	sscanf(s, "%i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i",
 #endif
 #endif
 #else
 #ifdef FEATURE_RATING
 #ifdef FEATURE_PRESTIGE
-	sscanf(s, "%i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %f %f %f %f %i %i %i %i %i %i %i",
+	sscanf(s, "%i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %f %f %f %f %i %i %i %i %i %i %i %i",
 #else
-	sscanf(s, "%i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %f %f %f %f %i %i %i %i %i %i",
+	sscanf(s, "%i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %f %f %f %f %i %i %i %i %i %i %i",
 #endif
 #else
 #ifdef FEATURE_PRESTIGE
-	sscanf(s, "%i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i",
+	sscanf(s, "%i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i",
 #else
-	sscanf(s, "%i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i",
+	sscanf(s, "%i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i",
 #endif
 #endif
 #endif
@@ -403,6 +412,7 @@ void G_ReadSessionData(gclient_t *client)
 	       &client->sess.ignoreClients[1],
 	       &client->pers.enterTime,
 	       &client->sess.userSpawnPointValue,
+	       &client->sess.userMinorSpawnPointValue,
 	       &client->sess.uci
 	       );
 
@@ -495,7 +505,8 @@ void G_InitSessionData(gclient_t *client, const char *userinfo)
 	sess->latchPlayerWeapon = sess->playerWeapon = WP_NONE;
 	sess->latchPlayerWeapon2 = sess->playerWeapon2 = WP_NONE;
 
-	sess->userSpawnPointValue = 0;
+	sess->userSpawnPointValue      = 0;
+	sess->userMinorSpawnPointValue = -1;
 
 	Com_Memset(sess->ignoreClients, 0, sizeof(sess->ignoreClients));
 
@@ -514,8 +525,6 @@ void G_InitSessionData(gclient_t *client, const char *userinfo)
 
 	sess->uci = 0; // GeoIP
 
-	G_deleteStats(client - level.clients);
-
 	G_WriteClientSessionData(client, qfalse);
 }
 
@@ -529,7 +538,7 @@ void G_InitWorldSession(void)
 	int  i, j;
 
 	trap_Cvar_VariableStringBuffer("session", s, sizeof(s));
-	gt = atoi(s);
+	gt = Q_atoi(s);
 
 	// if the gametype changed since the last session, don't use any
 	// client sessions
@@ -543,7 +552,7 @@ void G_InitWorldSession(void)
 		char     *tmp = s;
 		qboolean test = (g_altStopwatchMode.integer != 0 || g_currentRound.integer == 1);
 
-#define GETVAL(x) if ((tmp = strchr(tmp, ' ')) == NULL) { return; } x = atoi(++tmp);
+#define GETVAL(x) if ((tmp = strchr(tmp, ' ')) == NULL) { return; } x = Q_atoi(++tmp);
 
 		// Get team lock stuff
 		GETVAL(gt);
@@ -585,7 +594,7 @@ void G_InitWorldSession(void)
 		trap_Cvar_VariableStringBuffer(va("fireteam%i", i), s, sizeof(s));
 
 		p = Info_ValueForKey(s, "id");
-		j = atoi(p);
+		j = Q_atoi(p);
 		if (!*p || j == -1)
 		{
 			level.fireTeams[i].inuse = qfalse;
@@ -597,7 +606,7 @@ void G_InitWorldSession(void)
 		level.fireTeams[i].ident = j + 1;
 
 		p = Info_ValueForKey(s, "p");
-		level.fireTeams[i].priv = !atoi(p) ? qfalse : qtrue;
+		level.fireTeams[i].priv = !Q_atoi(p) ? qfalse : qtrue;
 
 		p = Info_ValueForKey(s, "i");
 
@@ -616,7 +625,7 @@ void G_InitWorldSession(void)
 				}
 				Q_strncpyz(str, c, l - c + 1);
 				str[l - c] = '\0';
-				level.fireTeams[i].joinOrder[j++] = atoi(str);
+				level.fireTeams[i].joinOrder[j++] = Q_atoi(str);
 				c = l + 1;
 			}
 		}

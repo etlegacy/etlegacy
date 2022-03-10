@@ -48,18 +48,18 @@ bg_playerclass_t bg_playerClasses[2][NUM_PLAYER_CLASSES] =
 			{
 				{ WP_MP40,                 SK_LIGHT_WEAPONS,                            0, 60,  30  }, // soldier start with x2 ammo
 				{ WP_MOBILE_MG42,          SK_HEAVY_WEAPONS,                            0, 0,   150 },
-				{ WP_FLAMETHROWER,         SK_HEAVY_WEAPONS,                            0, 200, 1   },
+				{ WP_FLAMETHROWER,         SK_HEAVY_WEAPONS,                            0, 200, 0   },
 				{ WP_PANZERFAUST,          SK_HEAVY_WEAPONS,                            0, 4,   0   },
 				{ WP_MORTAR2,              SK_HEAVY_WEAPONS,                            0, 15,  0   },
 			},
 			{
 				{ WP_LUGER,                SK_LIGHT_WEAPONS,                            0, 24,  8   },
-				{ WP_AKIMBO_LUGER,         SK_LIGHT_WEAPONS,                            4, 48,  8   },
-				{ WP_MP40,                 SK_HEAVY_WEAPONS,                            4, 60,  30  }, // soldier start with x2 ammo
+				{ WP_AKIMBO_LUGER,         SK_LIGHT_WEAPONS,                            SK_LIGHT_WEAPONS_AKIMBO, 48,  8   },
+				{ WP_MP40,                 SK_HEAVY_WEAPONS,                            SK_SOLDIER_SMG, 60,  30  }, // soldier start with x2 ammo
 			},
 			{ WP_GRENADE_LAUNCHER,     SK_LIGHT_WEAPONS,                            0, 4,   0   },
 			{
-				{ WP_BINOCULARS,           SK_BATTLE_SENSE,                             1, 1,   0   },
+				{ WP_BINOCULARS,           SK_BATTLE_SENSE,                             SK_BATTLE_SENSE_BINOCULAR, 1,   0   },
 			},
 			0,
 			0,
@@ -76,14 +76,14 @@ bg_playerclass_t bg_playerClasses[2][NUM_PLAYER_CLASSES] =
 			},
 			{
 				{ WP_LUGER,                SK_LIGHT_WEAPONS,                            0, 24,  8   },
-				{ WP_AKIMBO_LUGER,         SK_LIGHT_WEAPONS,                            4, 48,  8   },
+				{ WP_AKIMBO_LUGER,         SK_LIGHT_WEAPONS,                            SK_LIGHT_WEAPONS_AKIMBO, 48,  8   },
 			},
 			{ WP_GRENADE_LAUNCHER,     SK_LIGHT_WEAPONS,                            0, 1,   0   },
 			{
 				{ WP_MEDIC_SYRINGE,        SK_FIRST_AID,                                0, 10,  1   },
-				{ WP_MEDIC_ADRENALINE,     SK_FIRST_AID,                                4, 0,   1   }, // share ammo with medic syringe
+				{ WP_MEDIC_ADRENALINE,     SK_FIRST_AID,                                SK_MEDIC_ADRENALINE, 0,   1   }, // share ammo with medic syringe
 				{ WP_MEDKIT,               SK_FIRST_AID,                                0, 0,   1   },
-				{ WP_BINOCULARS,           SK_BATTLE_SENSE,                             1, 1,   0   },
+				{ WP_BINOCULARS,           SK_BATTLE_SENSE,                             SK_BATTLE_SENSE_BINOCULAR, 1,   0   },
 			},
 			0,
 			0,
@@ -101,15 +101,15 @@ bg_playerclass_t bg_playerClasses[2][NUM_PLAYER_CLASSES] =
 			},
 			{
 				{ WP_LUGER,                SK_LIGHT_WEAPONS,                            0, 24,  8   },
-				{ WP_AKIMBO_LUGER,         SK_LIGHT_WEAPONS,                            4, 48,  8   },
+				{ WP_AKIMBO_LUGER,         SK_LIGHT_WEAPONS,                            SK_LIGHT_WEAPONS_AKIMBO, 48,  8   },
 			},
 			{ WP_GRENADE_LAUNCHER,     SK_LIGHT_WEAPONS,                            0, 4,   0   },
 			{
-				{ WP_GPG40,                SK_EXPLOSIVES_AND_CONSTRUCTION,              0, 4,   0   }, // riflenade as special weapon
+				{ WP_GPG40,                SK_EXPLOSIVES_AND_CONSTRUCTION,              0, 5,   0   }, // riflenade as special weapon
 				{ WP_DYNAMITE,             SK_EXPLOSIVES_AND_CONSTRUCTION,              0, 0,   1   },
 				{ WP_PLIERS,               SK_EXPLOSIVES_AND_CONSTRUCTION,              0, 0,   1   },
 				{ WP_LANDMINE,             SK_EXPLOSIVES_AND_CONSTRUCTION,              0, 0,   1   },
-				{ WP_BINOCULARS,           SK_BATTLE_SENSE,                             1, 1,   0   },
+				{ WP_BINOCULARS,           SK_BATTLE_SENSE,                             SK_BATTLE_SENSE_BINOCULAR, 1,   0   },
 			},
 			0,
 			0,
@@ -126,7 +126,7 @@ bg_playerclass_t bg_playerClasses[2][NUM_PLAYER_CLASSES] =
 			},
 			{
 				{ WP_LUGER,                SK_LIGHT_WEAPONS,                            0, 24,  8   },
-				{ WP_AKIMBO_LUGER,         SK_LIGHT_WEAPONS,                            4, 48,  8   },
+				{ WP_AKIMBO_LUGER,         SK_LIGHT_WEAPONS,                            SK_LIGHT_WEAPONS_AKIMBO, 48,  8   },
 			},
 			{ WP_GRENADE_LAUNCHER,     SK_LIGHT_WEAPONS,                            0, 1,   0   },
 			{
@@ -151,7 +151,7 @@ bg_playerclass_t bg_playerClasses[2][NUM_PLAYER_CLASSES] =
 			},
 			{
 				{ WP_SILENCER,             SK_LIGHT_WEAPONS,                            0, 24,  8   },
-				{ WP_AKIMBO_SILENCEDLUGER, SK_LIGHT_WEAPONS,                            4, 48,  8   },
+				{ WP_AKIMBO_SILENCEDLUGER, SK_LIGHT_WEAPONS,                            SK_LIGHT_WEAPONS_AKIMBO, 48,  8   },
 			},
 			{ WP_GRENADE_LAUNCHER,     SK_LIGHT_WEAPONS,                            0, 2,   0   },
 			{
@@ -182,12 +182,12 @@ bg_playerclass_t bg_playerClasses[2][NUM_PLAYER_CLASSES] =
 			},
 			{
 				{ WP_COLT,                 SK_LIGHT_WEAPONS,                            0, 24,  8   },
-				{ WP_AKIMBO_COLT,          SK_LIGHT_WEAPONS,                            4, 48,  8   },
-				{ WP_THOMPSON,             SK_HEAVY_WEAPONS,                            4, 60,  30  }, // soldier start with x2 ammo
+				{ WP_AKIMBO_COLT,          SK_LIGHT_WEAPONS,                            SK_LIGHT_WEAPONS_AKIMBO, 48,  8   },
+				{ WP_THOMPSON,             SK_HEAVY_WEAPONS,                            SK_SOLDIER_SMG, 60,  30  }, // soldier start with x2 ammo
 			},
 			{ WP_GRENADE_PINEAPPLE,    SK_LIGHT_WEAPONS,                            0, 4,   0   },
 			{
-				{ WP_BINOCULARS,           SK_BATTLE_SENSE,                             1, 1,   0   },
+				{ WP_BINOCULARS,           SK_BATTLE_SENSE,                             SK_BATTLE_SENSE_BINOCULAR, 1,   0   },
 			},
 			0,
 			0,
@@ -204,14 +204,14 @@ bg_playerclass_t bg_playerClasses[2][NUM_PLAYER_CLASSES] =
 			},
 			{
 				{ WP_COLT,                 SK_LIGHT_WEAPONS,                            0, 24,  8   },
-				{ WP_AKIMBO_COLT,          SK_LIGHT_WEAPONS,                            4, 48,  8   },
+				{ WP_AKIMBO_COLT,          SK_LIGHT_WEAPONS,                            SK_LIGHT_WEAPONS_AKIMBO, 48,  8   },
 			},
 			{ WP_GRENADE_PINEAPPLE,    SK_LIGHT_WEAPONS,                            0, 1,   0   },
 			{
 				{ WP_MEDIC_SYRINGE,        SK_FIRST_AID,                                0, 10,  1   },
-				{ WP_MEDIC_ADRENALINE,     SK_FIRST_AID,                                4, 0,   1   }, // share ammo with medic syringe
+				{ WP_MEDIC_ADRENALINE,     SK_FIRST_AID,                                SK_MEDIC_ADRENALINE, 0,   1   }, // share ammo with medic syringe
 				{ WP_MEDKIT,               SK_FIRST_AID,                                0, 0,   1   },
-				{ WP_BINOCULARS,           SK_BATTLE_SENSE,                             1, 1,   0   },
+				{ WP_BINOCULARS,           SK_BATTLE_SENSE,                             SK_BATTLE_SENSE_BINOCULAR, 1,   0   },
 			},
 			0,
 			0,
@@ -229,15 +229,15 @@ bg_playerclass_t bg_playerClasses[2][NUM_PLAYER_CLASSES] =
 			},
 			{
 				{ WP_COLT,                 SK_LIGHT_WEAPONS,                            0, 24,  8   },
-				{ WP_AKIMBO_COLT,          SK_LIGHT_WEAPONS,                            4, 48,  8   },
+				{ WP_AKIMBO_COLT,          SK_LIGHT_WEAPONS,                            SK_LIGHT_WEAPONS_AKIMBO, 48,  8   },
 			},
 			{ WP_GRENADE_PINEAPPLE,    SK_LIGHT_WEAPONS,                            0, 4,   0   },
 			{
-				{ WP_M7,                   SK_EXPLOSIVES_AND_CONSTRUCTION,              0, 4,   0   }, // riflenade as special weapon
+				{ WP_M7,                   SK_EXPLOSIVES_AND_CONSTRUCTION,              0, 5,   0   }, // riflenade as special weapon
 				{ WP_DYNAMITE,             SK_EXPLOSIVES_AND_CONSTRUCTION,              0, 0,   1   },
 				{ WP_PLIERS,               SK_EXPLOSIVES_AND_CONSTRUCTION,              0, 0,   1   },
 				{ WP_LANDMINE,             SK_EXPLOSIVES_AND_CONSTRUCTION,              0, 0,   1   },
-				{ WP_BINOCULARS,           SK_BATTLE_SENSE,                             1, 1,   0   },
+				{ WP_BINOCULARS,           SK_BATTLE_SENSE,                             SK_BATTLE_SENSE_BINOCULAR, 1,   0   },
 			},
 			0,
 			0,
@@ -254,7 +254,7 @@ bg_playerclass_t bg_playerClasses[2][NUM_PLAYER_CLASSES] =
 			},
 			{
 				{ WP_COLT,                 SK_LIGHT_WEAPONS,                            0, 24,  8   },
-				{ WP_AKIMBO_COLT,          SK_LIGHT_WEAPONS,                            4, 48,  8   },
+				{ WP_AKIMBO_COLT,          SK_LIGHT_WEAPONS,                            SK_LIGHT_WEAPONS_AKIMBO, 48,  8   },
 			},
 			{ WP_GRENADE_PINEAPPLE,    SK_LIGHT_WEAPONS,                            0, 1,   0   },
 			{
@@ -279,7 +279,7 @@ bg_playerclass_t bg_playerClasses[2][NUM_PLAYER_CLASSES] =
 			},
 			{
 				{ WP_SILENCED_COLT,        SK_LIGHT_WEAPONS,                            0, 24,  8   },
-				{ WP_AKIMBO_SILENCEDCOLT,  SK_LIGHT_WEAPONS,                            4, 48,  8   },
+				{ WP_AKIMBO_SILENCEDCOLT,  SK_LIGHT_WEAPONS,                            SK_LIGHT_WEAPONS_AKIMBO, 48,  8   },
 			},
 			{ WP_GRENADE_PINEAPPLE,    SK_LIGHT_WEAPONS,                            0, 2,   0   },
 			{

@@ -90,8 +90,6 @@ cvar_t *m_filter;
 
 cvar_t *cl_activeAction;
 
-cvar_t *cl_activatelean;
-
 cvar_t *cl_autorecord;
 
 cvar_t *cl_allowDownload;
@@ -420,7 +418,7 @@ void CL_ShutdownAll(void)
 	cls.soundRegistered = qfalse;
 
 	// stop recording on map change etc, demos aren't valid over map changes anyway
-	if (clc.demorecording)
+	if (clc.demo.recording)
 	{
 		CL_StopRecord_f();
 	}
@@ -481,7 +479,6 @@ void CL_MapLoading(void)
 		return;
 	}
 
-	Con_ScrollBottom();
 	Con_Close();
 	cls.keyCatchers = 0;
 
@@ -519,7 +516,7 @@ void CL_MapLoading(void)
 static void CL_UpdateGUID(void)
 {
 	fileHandle_t f;
-	int          len;
+	long         len;
 
 	len = FS_SV_FOpenFileRead(BASEGAME "/" ETKEY_FILE, &f);
 	FS_FCloseFile(f);
@@ -546,11 +543,8 @@ static void CL_UpdateGUID(void)
  */
 static void CL_GenerateETKey(void)
 {
-	int          len = 0;
-	char         buff[ETKEY_SIZE];
+	long         len = 0;
 	fileHandle_t f;
-
-	buff[0] = '\0';
 
 	len = FS_SV_FOpenFileRead(BASEGAME "/" ETKEY_FILE, &f);
 	FS_FCloseFile(f);
@@ -564,13 +558,15 @@ static void CL_GenerateETKey(void)
 		time_t    tt;
 		struct tm *t;
 		int       last;
+		char      buff[ETKEY_SIZE];
 
-		tt = time(NULL);
-		t  = localtime(&tt);
+		buff[0] = '\0';
+		tt      = time(NULL);
+		t       = localtime(&tt);
 		srand(Sys_Milliseconds());
 		last = rand() % 9999;
 
-		Com_sprintf(buff, sizeof(buff), "0000001002%04i%02i%02i%02i%02i%02i%04i", t->tm_year, t->tm_mon, t->tm_mday, t->tm_hour, t->tm_min, t->tm_sec, last);
+		Com_sprintf(buff, sizeof(buff), "0000001002%04i%02i%02i%02i%02i%02i%03i", t->tm_year, t->tm_mon, t->tm_mday, t->tm_hour, t->tm_min, t->tm_sec, last);
 
 		f = FS_SV_FOpenFileWrite(BASEGAME "/" ETKEY_FILE);
 		if (!f)
@@ -620,7 +616,7 @@ void CL_Disconnect(qboolean showMainMenu)
 
 	Cvar_Set("cl_freezeDemo", "0");
 
-	if (clc.demorecording)
+	if (clc.demo.recording)
 	{
 		CL_StopRecord_f();
 	}
@@ -693,6 +689,12 @@ void CL_Disconnect(qboolean showMainMenu)
 	{
 		cls.state = CA_DISCONNECTED;
 	}
+
+	// reset patch collision to default incase it was modified by server
+	if (cls.state < CA_CONNECTING)
+	{
+		Cvar_Set("cm_optimizePatchPlanes", "0");
+	}
 }
 
 /**
@@ -714,7 +716,7 @@ void CL_ForwardCommandToServer(const char *string)
 		return;
 	}
 
-	if (clc.demoplaying || cls.state < CA_CONNECTED || cmd[0] == '+')
+	if (clc.demo.playing || cls.state < CA_CONNECTED || cmd[0] == '+')
 	{
 		Com_Printf("Unknown command \"%s\"\n", rc(cmd));
 		return;
@@ -819,7 +821,7 @@ CONSOLE COMMANDS
  */
 static void CL_ForwardToServer_f(void)
 {
-	if (cls.state != CA_ACTIVE || clc.demoplaying)
+	if (cls.state != CA_ACTIVE || clc.demo.playing)
 	{
 		Com_Printf("Not connected to a server\n");
 		return;
@@ -997,6 +999,12 @@ static void CL_Connect_f(void)
 	Cvar_Set("cl_currentServerAddress", server);
 	Cvar_Set("cl_currentServerIP", ip_port);
 
+	// if we are not compatible, likely 2.60b server - use vanilla patch collision
+	if (!Com_IsCompatible(&clc.agent, 0x1))
+	{
+		Cvar_Set("cm_optimizePatchPlanes", "1");
+	}
+
 #ifdef FEATURE_IRC_CLIENT
 	if (irc_mode->integer & IRCM_AUTO_CONNECT)
 	{
@@ -1135,6 +1143,8 @@ void CL_Vid_Restart_f(void)
 	// reinitialize the filesystem if the game directory or checksum has changed
 	FS_ConditionalRestart(clc.checksumFeed);
 
+	Com_CheckDefaultProfileDatExists();
+
 	S_BeginRegistration();  // all sound handles are now invalid
 
 	cls.rendererStarted = qfalse;
@@ -1170,7 +1180,7 @@ void CL_Vid_Restart_f(void)
 	CL_StartHunkUsers();
 
 #ifdef _WIN32
-	Sys_In_Restart_f();
+	IN_Restart();
 #endif
 	// start the cgame if connected
 	if (cls.state > CA_CONNECTED && cls.state != CA_CINEMATIC)
@@ -1323,10 +1333,101 @@ void CL_SaveFavServersToFile_f(void)
 	LAN_SaveServersToFile();
 }
 
+/**
+ * @brief CL_OpenHomePath_f open the game homepath with the system file explorer
+ */
 void CL_OpenHomePath_f(void)
 {
 	CL_OpenURL(Cvar_VariableString("fs_homepath"));
 }
+
+/**
+ * @brief CL_Clip_f copy the output of the commands to the system clipboard
+ */
+void CL_Clip_f(void)
+{
+	int    noPrint, i;
+	size_t argCount, len;
+	char   **cmdBuffer;
+
+	if (Cmd_Argc() < 2)
+	{
+		Com_Printf("Nothing to be put to the clipboard.");
+		return;
+	}
+
+	noPrint = Cvar_VariableIntegerValue("cl_noprint");
+
+	// Disable console output while we are copying text to the clipboard buffer.
+	Cvar_Set("cl_noprint", "1");
+
+	// Allocate a buffer for the clipboard data
+	cls.clipboard.bufferSize = MAX_PRINT_MSG * 10;
+	cls.clipboard.buffer     = Com_Allocate(cls.clipboard.bufferSize);
+	if (!cls.clipboard.buffer)
+	{
+		Com_Error(ERR_FATAL, "Clipboard allocation failed\n");
+		return;
+	}
+
+	Com_Memset(cls.clipboard.buffer, 0, cls.clipboard.bufferSize);
+
+	// Copy all the arguments into a new array since when we start executing them one by one, the Cmd buffer gets reset.
+	argCount  = Cmd_Argc() - 1;
+	cmdBuffer = Com_Allocate(argCount * sizeof(char *));
+	if (!cmdBuffer)
+	{
+		Com_Error(ERR_FATAL, "Clipboard allocation failed\n");
+		return;
+	}
+
+	for (i = 0; i < argCount; i++)
+	{
+		cmdBuffer[i] = Com_Allocate(MAX_QPATH * sizeof(char));
+		if (!cmdBuffer[i])
+		{
+			Com_Error(ERR_FATAL, "Clipboard allocation failed\n");
+			return;
+		}
+
+		Com_Memset(cmdBuffer[i], 0, MAX_QPATH * sizeof(char));
+		Q_strcpy(cmdBuffer[i], Cmd_Argv(i + 1));
+	}
+
+	// Execute the command parts
+	for (i = 0; i < argCount; i++)
+	{
+		if (cmdBuffer[i][0])
+		{
+			Cbuf_ExecuteText(EXEC_NOW, cmdBuffer[i]);
+		}
+		Com_Dealloc(cmdBuffer[i]);
+	}
+	// Free our temp array
+	Com_Dealloc(cmdBuffer);
+
+	// Remove the last newline character if there is one
+	len = strlen(cls.clipboard.buffer);
+	if (len > 1 && cls.clipboard.buffer[len - 1] == '\n')
+	{
+		cls.clipboard.buffer[len - 1] = '\0';
+	}
+	IN_SetClipboardData(cls.clipboard.buffer);
+
+	// Cleanup
+	Com_Dealloc(cls.clipboard.buffer);
+	cls.clipboard.buffer = NULL;
+
+	// Return to console printing
+	Cvar_Set("cl_noprint", va("%i", noPrint));
+}
+
+#ifdef ETLEGACY_DEBUG
+void CL_ExtendedCharsTest_f(void)
+{
+	Com_Printf("Output should be the same: t\xe4m\xe4? == t\xc3\xa4m\xc3\xa4?");
+}
+#endif
 
 /**
  * @brief CL_AddFavServer_f
@@ -1339,7 +1440,7 @@ void CL_AddFavServer_f(void)
         return;
     }
 
-    if (clc.demoplaying)
+    if (clc.playing)
     {
         return;
     }
@@ -1394,10 +1495,9 @@ void CL_DownloadsComplete(void)
  */
 void CL_CheckForResend(void)
 {
-	int  i;
 	char buffer[64];
 	// don't send anything if playing back a demo
-	if (clc.demoplaying)
+	if (clc.demo.playing)
 	{
 		return;
 	}
@@ -1447,17 +1547,7 @@ void CL_CheckForResend(void)
 			// make sure nothing restricted can slip through
 			if (!Com_IsCompatible(&clc.agent, 0x1))
 			{
-				for (i = 0; i < MAX_INFO_STRING; ++i)
-				{
-					if (!info[i])
-					{
-						break;
-					}
-					if ((byte)info[i] > 127 || info[i] == '%')
-					{
-						info[i] = '.';
-					}
-				}
+				Q_SafeNetString(info, MAX_INFO_STRING, qtrue);
 			}
 
 			Info_SetValueForKey(info, "protocol", va("%i", PROTOCOL_VERSION));
@@ -1592,7 +1682,7 @@ void CL_PrintPacket(msg_t *msg)
 		Q_strncpyz(clc.serverMessage, s + 12, sizeof(clc.serverMessage));
 		Com_Error(ERR_AUTOUPDATE, "%s", clc.serverMessage);
 	}
-	else if (!Q_stricmpn(s, "ET://", 5))
+	else if (!Q_stricmpn(s, "et://", 5))
 	{
 		Q_strncpyz(clc.serverMessage, s, sizeof(clc.serverMessage));
 		Cvar_Set("com_errorMessage", clc.serverMessage);
@@ -1818,10 +1908,10 @@ void CL_ConnectionlessPacket(netadr_t from, msg_t *msg)
 		else
 		{
 			// start sending challenge response instead of challenge request packets
-			clc.challenge = atoi(Cmd_Argv(1));
+			clc.challenge = Q_atoi(Cmd_Argv(1));
 			if (Cmd_Argc() > 2)
 			{
-				clc.onlyVisibleClients = atoi(Cmd_Argv(2));
+				clc.onlyVisibleClients = Q_atoi(Cmd_Argv(2));
 			}
 			else
 			{
@@ -1876,6 +1966,7 @@ void CL_ConnectionlessPacket(netadr_t from, msg_t *msg)
 		{
 			CL_ServerInfoPacketCheck(from, msg);
 			cls.challengeState = CA_CHALLENGING_REQUEST;
+			clc.connectTime    = -99999;    // CL_CheckForResend() will fire immediately
 			return;
 		}
 		CL_ServerInfoPacket(from, msg);
@@ -2020,7 +2111,7 @@ void CL_PacketEvent(netadr_t from, msg_t *msg)
 
 	// we don't know if it is ok to save a demo message until
 	// after we have parsed the frame
-	if (clc.demorecording && !clc.demowaiting)
+	if (clc.demo.recording && !clc.demo.waiting)
 	{
 		CL_WriteDemoMessage(msg, headerBytes);
 	}
@@ -2035,7 +2126,7 @@ void CL_CheckTimeout(void)
 	if ((!cl_paused->integer || !sv_paused->integer)
 	    && cls.state >= CA_CONNECTED && cls.state != CA_CINEMATIC
 	    && cls.realtime - clc.lastPacketTime > cl_timeout->value * 1000
-	    && !(clc.demoplaying && cl_freezeDemo->integer))
+	    && !(clc.demo.playing && cl_freezeDemo->integer))
 	{
 		if (++cl.timeoutcount > 5)        // timeoutcount saves debugger
 		{
@@ -2099,8 +2190,8 @@ void CL_StartVideoRecording(const char *aviname)
 			c     = last / 10;
 			last -= c * 10;
 			d     = last;
-			Com_Printf("videos/%s%d%d%d%d.avi\n", clc.demoName, a, b, c, d);
-			Com_sprintf(filename, MAX_OSPATH, "videos/%s%d%d%d%d.avi", clc.demoName, a, b, c, d);
+			Com_Printf("videos/%s%d%d%d%d.avi\n", clc.demo.demoName, a, b, c, d);
+			Com_sprintf(filename, MAX_OSPATH, "videos/%s%d%d%d%d.avi", clc.demo.demoName, a, b, c, d);
 
 			if (!FS_FileExists(filename))
 			{
@@ -2128,7 +2219,7 @@ void CL_Video_f(void)
 {
 	char filename[MAX_OSPATH];
 
-	if (!clc.demoplaying)
+	if (!clc.demo.playing)
 	{
 		Com_Printf("The video command can only be used when playing back demos\n");
 		return;
@@ -2203,6 +2294,36 @@ void CL_CaptureFrameVideo(void)
 	}
 }
 
+static void CL_FrameHandleVideo(int *msec)
+{
+	// if recording an avi, lock to a fixed fps
+	if (cl_avidemo->integer && *msec && ((cls.state == CA_ACTIVE && clc.demo.playing) || cl_forceavidemo->integer))
+	{
+		float fps;
+		float frameDuration;
+
+		if (com_timescale->value > 0.0f)
+		{
+			fps = MIN(cl_avidemo->integer * com_timescale->value, 1000.0f);
+		}
+		else
+		{
+			fps = MIN(cl_avidemo->integer, 1000.0f);
+		}
+		frameDuration = MAX(1000.0f / fps, 1.0f); // + clc.aviVideoFrameRemainder;
+
+		CL_CaptureFrameVideo();
+
+		*msec = (int)frameDuration;
+		//clc.aviVideoFrameRemainder = frameDuration + msec;
+	}
+	else if ((!cl_avidemo->integer && CL_VideoRecording())
+	         || (cl_avidemo->integer && (cls.state != CA_ACTIVE || !cl_forceavidemo->integer)))
+	{
+		CL_StopVideo_f();
+	}
+}
+
 /**
  * @brief CL_Frame
  * @param[in] msec
@@ -2222,32 +2343,7 @@ void CL_Frame(int msec)
 		VM_Call(uivm, UI_SET_ACTIVE_MENU, UIMENU_MAIN);
 	}
 
-	// if recording an avi, lock to a fixed fps
-	if (cl_avidemo->integer && msec && ((cls.state == CA_ACTIVE && clc.demoplaying) || cl_forceavidemo->integer))
-	{
-		float fps;
-		float frameDuration;
-
-		if (com_timescale->value > 0.0f)
-		{
-			fps = MIN(cl_avidemo->integer * com_timescale->value, 1000.0f);
-		}
-		else
-		{
-			fps = MIN(cl_avidemo->integer, 1000.0f);
-		}
-		frameDuration = MAX(1000.0f / fps, 1.0f); // + clc.aviVideoFrameRemainder;
-
-		CL_CaptureFrameVideo();
-
-		msec = (int)frameDuration;
-		//clc.aviVideoFrameRemainder = frameDuration + msec;
-	}
-	else if ((!cl_avidemo->integer && CL_VideoRecording())
-	         || (cl_avidemo->integer && (cls.state != CA_ACTIVE || !cl_forceavidemo->integer)))
-	{
-		CL_StopVideo_f();
-	}
+	CL_FrameHandleVideo(&msec);
 
 	// save the msec before checking pause
 	cls.realFrametime = msec;
@@ -2421,7 +2517,7 @@ static void CL_Cache_SetIndex_f(void)
 		Com_Error(ERR_DROP, "setindex needs an index");
 	}
 
-	cacheIndex = atoi(Cmd_Argv(1));
+	cacheIndex = Q_atoi(Cmd_Argv(1));
 }
 
 /**
@@ -2487,7 +2583,7 @@ void CL_SetRecommended_f(void)
 static _attribute((format(printf, 2, 3))) void QDECL CL_RefPrintf(int print_level, const char *fmt, ...)
 {
 	va_list argptr;
-	char    msg[MAXPRINTMSG];
+	char    msg[MAX_PRINT_MSG];
 
 	va_start(argptr, fmt);
 	Q_vsnprintf(msg, sizeof(msg), fmt, argptr);
@@ -2657,7 +2753,7 @@ void CL_InitRef(void)
 #else // *nix
 	Com_sprintf(dllName, sizeof(dllName), "librenderer_%s_" ARCH_STRING DLL_EXT, cl_renderer->string);
 #endif
-	if (!(rendererLib = Sys_LoadDll(dllName, qfalse)) && strcmp(cl_renderer->string, cl_renderer->resetString))
+	if (!(rendererLib = Sys_LoadDll(dllName, qfalse)) && strcmp(cl_renderer->string, cl_renderer->resetString) != 0)
 	{
 		Cvar_ForceReset("cl_renderer");
 #if defined(_WIN32)
@@ -2791,6 +2887,8 @@ void CL_Init(void)
 
 	cls.state = CA_DISCONNECTED;    // no longer CA_UNINITIALIZED
 
+	Com_Memset(&cls.download, 0, sizeof(download_t));
+
 	cls.realtime = 0;
 
 	CL_InitInput();
@@ -2816,8 +2914,6 @@ void CL_Init(void)
 	rcon_client_password  = Cvar_Get("rconPassword", "", CVAR_TEMP);
 	cl_activeAction       = Cvar_Get("activeAction", "", CVAR_TEMP);
 	cl_autorecord         = Cvar_Get("cl_autorecord", "0", CVAR_TEMP);
-
-	cl_activatelean = Cvar_Get("cl_activatelean", "1", CVAR_ARCHIVE);
 
 	cl_timedemo      = Cvar_Get("timedemo", "0", 0);
 	cl_avidemo       = Cvar_Get("cl_avidemo", "0", CVAR_TEMP);
@@ -2860,7 +2956,7 @@ void CL_Init(void)
 
 	cl_bypassMouseInput = Cvar_Get("cl_bypassMouseInput", "0", 0);    //CVAR_ROM );
 
-	cl_doubletapdelay = Cvar_Get("cl_doubletapdelay", "350", CVAR_ARCHIVE);    // double tap
+	cl_doubletapdelay = Cvar_Get("cl_doubletapdelay", "0", CVAR_ARCHIVE);    // double tap
 
 	m_pitch   = Cvar_Get("m_pitch", "0.022", CVAR_ARCHIVE);
 	m_yaw     = Cvar_Get("m_yaw", "0.022", CVAR_ARCHIVE);
@@ -2899,7 +2995,7 @@ void CL_Init(void)
 	Cvar_Get("cg_zoomStepSniper", "2", CVAR_ARCHIVE);
 
 	// userinfo
-	Cvar_Get("name", "ETLegacyPlayer", CVAR_USERINFO | CVAR_ARCHIVE);
+	Cvar_Get("name", DEFAULT_NAME, CVAR_USERINFO | CVAR_ARCHIVE);
 	Cvar_Get("rate", "25000", CVAR_USERINFO | CVAR_ARCHIVE);
 	Cvar_Get("snaps", "20", CVAR_USERINFO | CVAR_ARCHIVE);
 	Cvar_Get("etVersion", ET_VERSION, CVAR_USERINFO | CVAR_ROM);
@@ -2911,6 +3007,9 @@ void CL_Init(void)
 
 	// cgame might not be initialized before menu is used
 	Cvar_Get("cg_autoReload", "1", CVAR_ARCHIVE);
+	Cvar_Get("cg_weapaltReloads", "0", CVAR_ARCHIVE);
+	Cvar_Get("cg_weapaltSwitches", "1", CVAR_ARCHIVE);
+	Cvar_Get("cg_scopedSensitivityScaler", "0.6", CVAR_ARCHIVE);
 
 	cl_missionStats = Cvar_Get("g_missionStats", "0", CVAR_ROM);
 
@@ -2935,7 +3034,7 @@ void CL_Init(void)
 	Cmd_AddCommand("serverstatus", CL_ServerStatus_f, "Prints the server status.");
 	Cmd_AddCommand("showip", CL_ShowIP_f, "Prints local network IP addresses.");
 	Cmd_AddCommand("fs_openedList", CL_OpenedPK3List_f, "Prints a list of opened PK3 names.");
-	Cmd_AddCommand("fs_referencedList", CL_ReferencedPK3List_f, "Prints a list of referrenced PK3 names.");
+	Cmd_AddCommand("fs_referencedList", CL_ReferencedPK3List_f, "Prints a list of referenced PK3 names.");
 
 #ifdef FEATURE_IRC_CLIENT
 	Cmd_AddCommand("irc_connect", IRC_Connect, "Connects to IRC server.");
@@ -2952,7 +3051,7 @@ void CL_Init(void)
 	Cmd_AddCommand("cache_endgather", CL_Cache_EndGather_f, "Obsolete - will be removed.");
 
 	Cmd_AddCommand("updatehunkusage", CL_UpdateLevelHunkUsage, "Updates the hunk usage file.");
-	Cmd_AddCommand("updatescreen", SCR_UpdateScreen, "Updades the screen.");
+	Cmd_AddCommand("updatescreen", SCR_UpdateScreen, "Updates the screen.");
 
 	Cmd_AddCommand("setRecommended", CL_SetRecommended_f, "Sets recommended cvar values.");
 
@@ -2970,10 +3069,19 @@ void CL_Init(void)
 	//Cmd_AddCommand("add_fav", CL_AddFavServer_f, "Adds the current connected server to favorites.");
 
 	Cmd_AddCommand("open_homepath", CL_OpenHomePath_f, "Open the home path in a system file explorer.");
+	Cmd_AddCommand("clip", CL_Clip_f, "Put command output to clipboard.");
+
+#ifdef ETLEGACY_DEBUG
+	Cmd_AddCommand("extendedCharsTest", CL_ExtendedCharsTest_f);
+#endif
 
 	CIN_Init();
 
 	CL_DemoInit();
+
+#ifdef LEGACY_AUTH
+	CL_AuthInit();
+#endif
 
 	CL_InitRef();
 
@@ -2984,7 +3092,7 @@ void CL_Init(void)
 	Cvar_Set("cl_running", "1");
 
 	CL_GenerateETKey();
-	Cvar_Get("cl_guid", "", CVAR_USERINFO | CVAR_ROM);
+	Cvar_Get("cl_guid", "", CVAR_USERINFO | CVAR_ROM | CVAR_NOTABCOMPLETE);
 	CL_UpdateGUID();
 
 #ifdef FEATURE_GETTEXT
@@ -3038,10 +3146,7 @@ void CL_Shutdown(void)
 	Cmd_RemoveCommand("snd_restart");
 	Cmd_RemoveCommand("vid_restart");
 	Cmd_RemoveCommand("disconnect");
-	Cmd_RemoveCommand("record");
-	Cmd_RemoveCommand("demo");
 	Cmd_RemoveCommand("cinematic");
-	Cmd_RemoveCommand("stoprecord");
 	Cmd_RemoveCommand("connect");
 	Cmd_RemoveCommand("reconnect");
 	Cmd_RemoveCommand("localservers");
@@ -3059,16 +3164,17 @@ void CL_Shutdown(void)
 	Cmd_RemoveCommand("save_favs");
 	//Cmd_RemoveCommand("add_fav");
 
-	Cmd_RemoveCommand("pausedemo");
+	Cmd_RemoveCommand("open_homepath");
+	Cmd_RemoveCommand("clip");
 
-#if NEW_DEMOFUNC
-	Cmd_RemoveCommand("rewind");
-	Cmd_RemoveCommand("fastforward");
-	Cmd_RemoveCommand("seekservertime");
-	Cmd_RemoveCommand("seek");
-	Cmd_RemoveCommand("seekend");
-	Cmd_RemoveCommand("seeknext");
-	Cmd_RemoveCommand("seekprev");
+#ifdef ETLEGACY_DEBUG
+	Cmd_RemoveCommand("extendedCharsTest");
+#endif
+
+	CL_DemoShutdown();
+
+#ifdef LEGACY_AUTH
+	CL_AuthShutdown();
 #endif
 
 	Con_Shutdown();
@@ -3115,26 +3221,26 @@ static void CL_SetServerInfo(serverInfo_t *server, const char *info, int ping)
 		if (info)
 		{
 			Q_strncpyz(server->version, Info_ValueForKey(info, "version"), MAX_NAME_LENGTH);
-			server->clients = atoi(Info_ValueForKey(info, "clients"));
-			server->humans  = atoi(Info_ValueForKey(info, "humans"));
+			server->clients = Q_atoi(Info_ValueForKey(info, "clients"));
+			server->humans  = Q_atoi(Info_ValueForKey(info, "humans"));
 			Q_strncpyz(server->hostName, Info_ValueForKey(info, "hostname"), IS_DEFAULT_MOD ? MAX_SERVER_NAME_LENGTH : MAX_NAME_LENGTH);
-			server->load = atoi(Info_ValueForKey(info, "serverload"));
+			server->load = Q_atoi(Info_ValueForKey(info, "serverload"));
 			Q_strncpyz(server->mapName, Info_ValueForKey(info, "mapname"), MAX_NAME_LENGTH);
-			server->maxClients     = atoi(Info_ValueForKey(info, "sv_maxclients"));
-			server->privateClients = atoi(Info_ValueForKey(info, "sv_privateclients"));
+			server->maxClients     = Q_atoi(Info_ValueForKey(info, "sv_maxclients"));
+			server->privateClients = Q_atoi(Info_ValueForKey(info, "sv_privateclients"));
 			Q_strncpyz(server->game, Info_ValueForKey(info, "game"), MAX_NAME_LENGTH);
-			server->gameType     = atoi(Info_ValueForKey(info, "gametype"));
-			server->netType      = atoi(Info_ValueForKey(info, "nettype"));
-			server->minPing      = atoi(Info_ValueForKey(info, "minping"));
-			server->maxPing      = atoi(Info_ValueForKey(info, "maxping"));
-			server->friendlyFire = atoi(Info_ValueForKey(info, "friendlyFire"));
-			server->maxlives     = atoi(Info_ValueForKey(info, "maxlives"));
-			server->needpass     = atoi(Info_ValueForKey(info, "needpass"));
-			server->punkbuster   = atoi(Info_ValueForKey(info, "punkbuster"));
+			server->gameType     = Q_atoi(Info_ValueForKey(info, "gametype"));
+			server->netType      = Q_atoi(Info_ValueForKey(info, "nettype"));
+			server->minPing      = Q_atoi(Info_ValueForKey(info, "minping"));
+			server->maxPing      = Q_atoi(Info_ValueForKey(info, "maxping"));
+			server->friendlyFire = Q_atoi(Info_ValueForKey(info, "friendlyFire"));
+			server->maxlives     = Q_atoi(Info_ValueForKey(info, "maxlives"));
+			server->needpass     = Q_atoi(Info_ValueForKey(info, "needpass"));
+			server->punkbuster   = Q_atoi(Info_ValueForKey(info, "punkbuster"));
 			Q_strncpyz(server->gameName, Info_ValueForKey(info, "gamename"), MAX_NAME_LENGTH);
-			server->antilag       = atoi(Info_ValueForKey(info, "g_antilag"));
-			server->weaprestrict  = atoi(Info_ValueForKey(info, "weaprestrict"));
-			server->balancedteams = atoi(Info_ValueForKey(info, "balancedteams"));
+			server->antilag       = Q_atoi(Info_ValueForKey(info, "g_antilag"));
+			server->weaprestrict  = Q_atoi(Info_ValueForKey(info, "weaprestrict"));
+			server->balancedteams = Q_atoi(Info_ValueForKey(info, "balancedteams"));
 		}
 		server->ping = ping;
 	}
@@ -3191,7 +3297,7 @@ void CL_ServerInfoPacket(netadr_t from, msg_t *msg)
 	infoString = MSG_ReadString(msg);
 
 	// if this isn't the correct protocol version, ignore it
-	prot = atoi(Info_ValueForKey(infoString, "protocol"));
+	prot = Q_atoi(Info_ValueForKey(infoString, "protocol"));
 	if (prot != PROTOCOL_VERSION)
 	{
 		Com_DPrintf("Different protocol info packet: %s\n", infoString);
@@ -3300,7 +3406,7 @@ void CL_ServerInfoPacketCheck(netadr_t from, msg_t *msg)
 	infoString = MSG_ReadString(msg);
 
 	// if this isn't the correct protocol version, ignore it
-	prot = atoi(Info_ValueForKey(infoString, "protocol"));
+	prot = Q_atoi(Info_ValueForKey(infoString, "protocol"));
 	if (prot != PROTOCOL_VERSION)
 	{
 		Com_DPrintf("Different protocol info packet: %s\n", infoString);
@@ -3446,7 +3552,7 @@ int CL_ServerStatus(const char *serverAddress, char *serverStatusString, size_t 
 void CL_ServerStatusResponse(netadr_t from, msg_t *msg)
 {
 	char           *s;
-	char           info[MAX_INFO_STRING], name[32];
+	char           info[MAX_INFO_STRING], name[MAX_NAME_LENGTH];
 	int            i, l, score, ping;
 	unsigned int   len;
 	serverStatus_t *serverStatus;
@@ -3620,7 +3726,7 @@ void CL_GlobalServers_f(void)
 	int      count, i, masterNum;
 	char     command[1024], *masteraddress;
 
-	if ((count = Cmd_Argc()) < 3 || (masterNum = atoi(Cmd_Argv(1))) < 0 || masterNum > MAX_MASTER_SERVERS)
+	if ((count = Cmd_Argc()) < 3 || (masterNum = Q_atoi(Cmd_Argv(1))) < 0 || masterNum > MAX_MASTER_SERVERS)
 	{
 		Com_Printf("usage: globalservers <master# 0-%d> <protocol> [keywords]\n", MAX_MASTER_SERVERS);
 		return;
@@ -4072,7 +4178,7 @@ void CL_ServerStatus_f(void)
 
 	if (argc != 2 && argc != 3)
 	{
-		if (cls.state != CA_ACTIVE || clc.demoplaying)
+		if (cls.state != CA_ACTIVE || clc.demo.playing)
 		{
 			Com_Printf("Not connected to a server.\nusage: serverstatus [-4|-6] server\n");
 			return;
@@ -4253,7 +4359,15 @@ void CL_OpenURL(const char *url)
 		Com_Printf("%s", CL_TranslateStringBuf("invalid/empty URL\n"));
 		return;
 	}
+
+#ifndef __ANDROID__
 	Sys_OpenURL(url, qfalse);
+#else
+	SDL_OpenURL(url);
+#endif
+	// Minimize should happen automatically since SDL detects the lost window focus
+	// Also this should only happen if we are actually fullscreen
+	// Cbuf_ExecuteText(EXEC_NOW, "minimize");
 }
 
 /**

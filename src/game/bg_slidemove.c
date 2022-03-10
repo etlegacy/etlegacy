@@ -433,7 +433,17 @@ void PM_StepSlideMove(qboolean gravity)
 		}
 	}
 
-	pm->trace(&trace, pm->ps->origin, pm->mins, pm->maxs, down, pm->ps->clientNum, pm->tracemask);
+	// if dead, body trace with a square bbox so wounded players don't clip into solids
+	if (pm->ps->eFlags & EF_DEAD)
+	{
+		const vec3_t squareMaxs = { 18.f, 18.f, 16.f }; // mins is -18 -18 -24
+		pm->trace(&trace, pm->ps->origin, pm->mins, squareMaxs, down, pm->ps->clientNum, pm->tracemask);
+	}
+	else
+	{
+		pm->trace(&trace, pm->ps->origin, pm->mins, pm->maxs, down, pm->ps->clientNum, pm->tracemask);
+	}
+
 	if (!trace.allsolid)
 	{
 		VectorCopy(trace.endpos, pm->ps->origin);

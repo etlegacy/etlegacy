@@ -42,8 +42,8 @@ LEG_BUNDLE(MINIZIP Minizip)
 LEG_BUNDLE(JPEG JPEG)
 LEG_BUNDLE(PNG libpng)
 LEG_BUNDLE(CURL Curl "NOT APPLE")
-LEG_BUNDLE(OPENSSL OpenSSL "OFF")
-LEG_BUNDLE(WOLFSSL WolfSSL)
+LEG_BUNDLE(OPENSSL OpenSSL "NOT WIN32 AND NOT APPLE")
+LEG_BUNDLE(WOLFSSL WolfSSL "NOT BUNDLED_OPENSSL AND NOT WIN32 AND NOT APPLE")
 LEG_BUNDLE(LUA Lua)
 LEG_BUNDLE(OGG_VORBIS OGG)
 LEG_BUNDLE(THEORA Theora)
@@ -58,7 +58,7 @@ cmake_dependent_option(CROSS_COMPILE32 "Compile 32-bit version of ET:L (64bit is
 
 # Optional features
 option(FEATURE_CURL				"Enable auto-download support using cURL (client)"		ON)
-option(FEATURE_SSL			    "Build SSL (WolfSSL) for curl and authentication"		OFF)
+option(FEATURE_SSL			    "Build SSL for curl and authentication"		            ON)
 option(FEATURE_OGG_VORBIS		"Enable OGG Vorbis support (client)"					ON)
 option(FEATURE_THEORA			"Enable Theora video support (client)"					ON)
 option(FEATURE_OPENAL			"Enable OpenAL sound backend (client)"					ON)
@@ -81,19 +81,25 @@ option(FEATURE_SERVERMDX		"Enable MDX support on server side (mod)"				ON)
 option(FEATURE_DBMS				"Enable dbms support (sqlite3)"							ON)
 option(FEATURE_PAKISOLATION		"Enable custom pak isolation"							ON)
 option(FORCE_DEBUG				"Force enable legacy debug macros"						OFF)
+option(ENABLE_ASAN				"Enable AddressSanitizer on clang"						OFF)
+# TODO: implement this field on the libs as well
+option(FORCE_STATIC_VCRT		"Force static MSVC runtime linking"						ON)
+option(ENABLE_SSE				"Enable Streaming SIMD Extensions"						OFF)
 
 cmake_dependent_option(FEATURE_LUASQL	"Enable LuaSQL sqlite3 backend (mod)"			ON "FEATURE_LUA" OFF)
 cmake_dependent_option(FEATURE_RATING	"Enable skill rating support (mod)"				ON "FEATURE_DBMS" OFF)
 cmake_dependent_option(FEATURE_PRESTIGE	"Enable prestige support (mod)"					ON "FEATURE_DBMS" OFF)
-cmake_dependent_option(FEATURE_OMNIBOT	"Enable Omni-bot support (mod)"					ON "WIN32 OR APPLE OR CMAKE_SYSTEM_NAME MATCHES Linux" OFF)
+cmake_dependent_option(FEATURE_OMNIBOT	"Enable Omni-bot support (mod)"					ON "( NOT MINGW AND WIN32 ) OR APPLE OR CMAKE_SYSTEM_NAME MATCHES Linux" OFF)
 
 option(INSTALL_EXTRA			"Install extra add-ons (omni-bot, geoip, wolfadmin)."	ON)
 
-cmake_dependent_option(INSTALL_OMNIBOT		"Install Omni-bot"							ON "INSTALL_EXTRA" OFF)
+cmake_dependent_option(INSTALL_OMNIBOT		"Install Omni-bot"							ON "FEATURE_OMNIBOT AND INSTALL_EXTRA" OFF)
 cmake_dependent_option(INSTALL_GEOIP		"Install GeoLite geolocation database"		ON "INSTALL_EXTRA" OFF)
 cmake_dependent_option(INSTALL_WOLFADMIN	"Install WolfAdmin enhancement suite"		ON "INSTALL_EXTRA" OFF)
 
 option(ARM						"Build ARM version"										OFF)
+
+option(CLIENT_GLVND				"Link against GLVND OpenGL libraries"					OFF)
 
 set(ET_FS_BASEPATH "" CACHE STRING "Copy required genuine ET files from ET_FS_BASEPATH")
 cmake_dependent_option(ET_KEY	"Copy existing etkey file from ET_FS_BASEPATH)"			ON "ET_FS_BASEPATH" OFF)
@@ -102,11 +108,19 @@ cmake_dependent_option(ET_KEY	"Copy existing etkey file from ET_FS_BASEPATH)"			
 # Setup
 #-----------------------------------------------------------------
 
+if (BUNDLED_OPENSSL AND BUNDLED_WOLFSSL)
+    message(FATAL_ERROR "Cannot enable both OpenSSL and WolfSSL at the same time.")
+endif()
+
 # Group the VisualStudio projects
 set(CMAKE_TARGETS_FOLDER CMake)
 set(BUNDLED_TARGETS_FOLDER Bundled)
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 set_property(GLOBAL PROPERTY PREDEFINED_TARGETS_FOLDER ${CMAKE_TARGETS_FOLDER})
+
+# Set language levels
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_C_STANDARD 99)
 
 # Find and setup programs the build needs
 include(cmake/ETLPrograms.cmake)
@@ -174,9 +188,11 @@ if(BUILD_MOD AND INSTALL_EXTRA)
 endif(BUILD_MOD AND INSTALL_EXTRA)
 
 # Generate install and uninstall packs
-include(cmake/ETLInstall.cmake)
+if(NOT ANDROID)
+	include(cmake/ETLInstall.cmake)
 
-# Packaging support
-include(cmake/ETLCPack.cmake)
+	# Packaging support
+	include(cmake/ETLCPack.cmake)
 
-set_target_properties(uninstall PROPERTIES FOLDER ${CMAKE_TARGETS_FOLDER})
+	set_target_properties(uninstall PROPERTIES FOLDER ${CMAKE_TARGETS_FOLDER})
+endif()

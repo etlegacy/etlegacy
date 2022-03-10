@@ -58,6 +58,10 @@
 #include <psapi.h>
 #include <setjmp.h>
 
+#if defined(LEGACY_DUMP_MEMLEAKS)
+#include <crtdbg.h>
+#endif
+
 // Used to determine where to store user-specific files
 static char homePath[MAX_OSPATH] = { 0 };
 //static jmp_buf sys_exitframe;
@@ -201,16 +205,17 @@ qboolean Sys_RandomBytes(byte *string, int len)
  */
 char *Sys_GetCurrentUser(void)
 {
-	static wchar_t   w_userName[1024];
-	static char   s_userName[1024];
-	DWORD size = 1024;
+	static wchar_t   w_userName[MAX_PATH];
+	static char   s_userName[MAX_PATH];
+	DWORD size = MAX_PATH;
 
-	if (!GetUserNameW(w_userName, &size))
+	if (GetUserNameW(w_userName, &size))
+	{
+		Sys_WideCharArrayToString(w_userName, s_userName, MAX_PATH);
+	}
+	else
 	{
 		strcpy(s_userName, "player");
-	}
-	{
-		Sys_WideCharArrayToString(w_userName, s_userName, 1024);
 	}
 
 	if (!s_userName[0])
@@ -286,6 +291,36 @@ const char *Sys_Dirname(char *path)
 }
 
 /**
+ * @brief Creates an absolute path name for the specified relative path name
+ * @param path relative path
+ * @return absolute path (allocated string) or NULL if path does not exist
+ */
+char *Sys_RealPath(const char *path)
+{
+	wchar_t w_fullOsPath[_MAX_PATH], w_partialPath[_MAX_PATH];
+	Sys_StringToWideCharArray(path, w_partialPath, _MAX_PATH);
+
+	if (_wfullpath(w_fullOsPath, w_partialPath, _MAX_PATH) != NULL)
+	{
+		char *output = Com_Allocate(sizeof(char) * _MAX_PATH);
+		if (!output)
+		{
+			Com_DPrintf("Failed to allocate buffer for realpath\n");
+			return NULL;
+		}
+		output[0] = '\0';
+
+		Sys_WideCharArrayToString(w_fullOsPath, output, _MAX_PATH);
+		return output;
+	}
+	else
+	{
+		Com_DPrintf("Failed to fullpath a relative path: %s\n", path);
+		return NULL;
+	}
+}
+
+/**
  * @brief Sys_FOpen
  * @param[in] ospath
  * @param[in] mode
@@ -352,6 +387,14 @@ int Sys_Stat(const char *path, void *stat)
 	return _wstat(w_path, stat);
 }
 
+int Sys_Rename(const char *from, const char *to)
+{
+	wchar_t w_from[MAX_OSPATH], w_to[MAX_OSPATH];
+	Sys_StringToWideCharArray(from, w_from, MAX_OSPATH);
+	Sys_StringToWideCharArray(to, w_to, MAX_OSPATH);
+	return _wrename(w_from, w_to);
+}
+
 /**
  * @brief Sys_Cwd
  * @return
@@ -361,7 +404,11 @@ char *Sys_Cwd(void)
 	static wchar_t w_cwd[MAX_OSPATH];
 	static char cwd[MAX_OSPATH];
 
-	_wgetcwd(w_cwd, sizeof(w_cwd) - 1);
+	if (_wgetcwd(w_cwd, MAX_OSPATH - 1) == NULL)
+	{
+		Com_Error(ERR_FATAL, "Could not get the working directory");
+		return NULL;
+	}
 	w_cwd[MAX_OSPATH - 1] = 0;
 
 	Sys_WideCharArrayToString(w_cwd, cwd, MAX_OSPATH);
@@ -930,8 +977,6 @@ void Sys_OpenURL(const char *url, qboolean doexit)
 		doexit_spamguard = qtrue;
 		Cbuf_ExecuteText(EXEC_APPEND, "quit\n");
 	}
-
-	Cbuf_ExecuteText(EXEC_NOW, "minimize");
 #endif
 }
 
@@ -1066,6 +1111,18 @@ void Sys_PlatformInit(void)
 	WinSetExceptionVersion(Q3_VERSION);
 #endif
 
+#if defined(LEGACY_DUMP_MEMLEAKS)
+	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+	_CrtSetReportMode(_CRT_WARN, _CRTDBG_MODE_DEBUG);
+
+	_CrtSetReportMode(_CRT_WARN, _CRTDBG_MODE_FILE);
+	_CrtSetReportFile(_CRT_WARN, _CRTDBG_FILE_STDOUT);
+	_CrtSetReportMode(_CRT_ERROR, _CRTDBG_MODE_FILE);
+	_CrtSetReportFile(_CRT_ERROR, _CRTDBG_FILE_STDOUT);
+	_CrtSetReportMode(_CRT_ASSERT, _CRTDBG_MODE_FILE);
+	_CrtSetReportFile(_CRT_ASSERT, _CRTDBG_FILE_STDOUT);
+#endif
+
 #ifndef DEDICATED
 	Sys_SetProcessProperties();
 #endif
@@ -1081,6 +1138,14 @@ void Sys_PlatformInit(void)
 
 	// no abort/retry/fail errors
 	SetErrorMode(SEM_FAILCRITICALERRORS);
+}
+
+void _attribute((noreturn)) Sys_PlatformExit(int code)
+{
+#if defined(LEGACY_DUMP_MEMLEAKS)
+	_CrtDumpMemoryLeaks();
+#endif
+	exit(code);
 }
 
 /**

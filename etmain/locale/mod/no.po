@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ET:Legacy\n"
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
-"PO-Revision-Date: 2020-07-14 16:33+0000\n"
+"PO-Revision-Date: 2022-01-05 22:15+0000\n"
 "Last-Translator: Transifex Bot <>\n"
 "Language-Team: Norwegian (http://www.transifex.com/etlegacy/etlegacy/language/no/)\n"
 "MIME-Version: 1.0\n"
@@ -7781,4 +7781,16 @@ msgid "Set or unset this server as favorite"
 msgstr ""
 
 msgid "MAKE SHOUTCASTER"
+msgstr ""
+
+msgid " demo %s: %ik "
+msgstr ""
+
+msgid " audio %s: %ik "
+msgstr ""
+
+msgid "REPLAY"
+msgstr ""
+
+msgid "RECORD"
 msgstr ""

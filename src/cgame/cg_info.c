@@ -176,7 +176,7 @@ void CG_ShowHelp_Off(int *status)
  * @brief CG_DemoControlButtonRender
  * @param[in] button
  */
-void CG_DemoControlButtonRender(panel_button_t *button)
+static void CG_DemoControlButtonRender(panel_button_t *button)
 {
 	if (button->data[0])
 	{
@@ -205,7 +205,7 @@ void CG_DemoControlButtonRender(panel_button_t *button)
  * @param[in] key
  * @return
  */
-qboolean CG_DemoControlButtonDown(panel_button_t *button, int key)
+static qboolean CG_DemoControlButtonDown(panel_button_t *button, int key)
 {
 	if (key != K_MOUSE1 && key != K_MOUSE2)
 	{
@@ -246,7 +246,7 @@ qboolean CG_DemoControlButtonDown(panel_button_t *button, int key)
  * @note This function is empty and return always qfalse
  * @return Always qfalse
  */
-qboolean CG_DemoControlButtonUp(panel_button_t *button, int key)
+static qboolean CG_DemoControlButtonUp(panel_button_t *button, int key)
 {
 	return qfalse;
 }
@@ -345,7 +345,13 @@ void CG_DemoClick(int key, qboolean down)
 	if (cg.demohelpWindow == SHOW_ON)
 	{
 		// pull up extended helpmenu
-		if (cgs.currentMenuLevel == ML_MAIN && (key == K_LALT || key == K_RALT))
+#ifdef __APPLE__
+#define EXTENDED_HELP_KEY (key == K_COMMAND)
+#else
+#define EXTENDED_HELP_KEY (key == K_LALT || key == K_RALT)
+#endif
+
+		if (cgs.currentMenuLevel == ML_MAIN && EXTENDED_HELP_KEY)
 		{
 			cgs.currentMenuLevel = ML_EDV;
 			return;
@@ -487,6 +493,23 @@ void CG_DemoClick(int key, qboolean down)
 		if (!down)
 		{
 			trap_Cvar_Set("demo_pvshint", ((demo_pvshint.integer == 0) ? "1" : "0"));
+		}
+		return;
+	case K_F6:
+		if (!down)
+		{
+			if (cg_drawSpectatorNames.integer == DEMO_NAMEOFF)
+			{
+				trap_Cvar_Set("cg_drawSpectatorNames", va("%i", DEMO_CLEANNAME));
+			}
+			else if (cg_drawSpectatorNames.integer == DEMO_CLEANNAME)
+			{
+				trap_Cvar_Set("cg_drawSpectatorNames", va("%i", DEMO_COLOREDNAME));
+			}
+			else
+			{
+				trap_Cvar_Set("cg_drawSpectatorNames", va("%i", DEMO_NAMEOFF));
+			}
 		}
 		return;
 #endif // ifdef FEATURE_EDV
@@ -1041,9 +1064,48 @@ void CG_GameStatsDraw(void)
 		{
 			for (i = 0; i < gs->cSkills; i++)
 			{
+				int  j, index;
+				char skill;
+
+				// get skill levels from game stats string
+				// this have to be the first number occurrence in the string to work
+				index = strcspn(gs->strSkillz[i], "0123456789");
+				skill = gs->strSkillz[i][index];
+
+				x += 90;
+
+				for (j = 1; j < NUM_SKILL_LEVELS; ++j)
+				{
+					vec4_t clr;
+
+					if (GetSkillTableData(i)->skillLevels[j] < 0)
+					{
+						Vector4Set(clr, 1.f, 0.f, 0.f, 0.2f);
+					}
+					else if (skill - '0' >= j)
+					{
+						Vector4Set(clr, 1.f, 1.f, 1.f, 1.0f);
+					}
+					else
+					{
+						Vector4Set(clr, 1.f, 1.f, 1.f, 0.2f);
+					}
+
+					trap_R_SetColor(clr);
+					CG_DrawPicST(x, y, 12, 12, 0, 0, 1.f, 0.5f, cgs.media.limboStar_roll);
+
+					x += 12;
+				}
+
+				x  = (Ccg_WideX(SCREEN_WIDTH) / 2) - (GS_W / 2);
 				y += tSpacing;
+
+				gs->strSkillz[i][index] = ' ';  // trick to not display the skill level char
 				CG_Text_Paint_Ext(x + 4, y, tScale, tScale, tColor, gs->strSkillz[i], 0.0f, 0, tStyle, tFont);
+				gs->strSkillz[i][index] = skill;    // add the char back to ensure we could parse it next time
 			}
+
+			trap_R_SetColor(NULL);
 		}
 	}
 }
@@ -1535,7 +1597,7 @@ void CG_ObjectivesDraw()
 				CG_FitTextToWidth_Ext(temp, tScale, OBJ_W - 26, sizeof(temp), FONT_TEXT);
 
 				color[0] = '\0';
-				status   = atoi(Info_ValueForKey(cs, va("a%i", i + 1)));
+				status   = Q_atoi(Info_ValueForKey(cs, va("a%i", i + 1)));
 				if (status == 1)
 				{
 					CG_DrawPic(x + 4, y + 3, 18, 12, cgs.media.alliedFlag);
@@ -1585,7 +1647,7 @@ void CG_ObjectivesDraw()
 				CG_FitTextToWidth_Ext(temp, tScale, OBJ_W - 26, sizeof(temp), FONT_TEXT);
 
 				color[0] = '\0';
-				status   = atoi(Info_ValueForKey(cs, va("x%i", i + 1)));
+				status   = Q_atoi(Info_ValueForKey(cs, va("x%i", i + 1)));
 				if (status == 1)
 				{
 					CG_DrawPic(x + 4, y + 3, 18, 12, cgs.media.axisFlag);
@@ -1701,6 +1763,21 @@ void CG_DemoHelpDraw(void)
 	const char *dynamitecam = ONOFF(demo_weaponcam.integer & DWC_DYNAMITE);
 	const char *teamonly    = ONOFF(demo_teamonlymissilecam.integer);
 	const char *pvshint     = ONOFF(demo_pvshint.integer);
+	const char *playerNames;
+
+	if (cg_drawSpectatorNames.integer == DEMO_CLEANNAME)
+	{
+		playerNames = "   Clean";
+	}
+	else if (cg_drawSpectatorNames.integer == DEMO_COLOREDNAME)
+	{
+		playerNames = "Coloured";
+	}
+	else
+	{
+		playerNames = "     OFF";
+	}
+
 #endif
 
 	if (cg.demohelpWindow == SHOW_OFF)
@@ -1728,7 +1805,11 @@ void CG_DemoHelpDraw(void)
 			"^nUP/DOWN   ^mMove in/out",
 			NULL,
 			//"^nKP_ENTER  ^mToggle freecam"
+#ifdef __APPLE__
+			"^nCMD       ^mmore options"
+#else
 			"^nALT       ^mmore options"
+#endif
 #else
 			"^nUP/DOWN   ^mMove in/out"
 #endif
@@ -1747,6 +1828,7 @@ void CG_DemoHelpDraw(void)
 			va("^nINS       ^mMortarcam  ^m%s", mortarcam),
 			va("^nPGDOWN    ^mTeamonly   ^m%s", teamonly),
 			NULL,
+			va("^nF6        ^mNames ^m%s",      playerNames),
 		};
 #endif
 
@@ -1917,7 +1999,7 @@ void CG_DemoHelpDraw(void)
 		for (i = 0; i < ARRAY_LEN(edvhelp); i++)
 		{
 			y += tSpacing;
-			if (help[i] != NULL)
+			if (edvhelp[i] != NULL)
 			{
 				CG_Text_Paint_Ext(x, y, tScale, tScale, tColor, edvhelp[i], 0.0f, 0, tStyle, tFont);
 			}

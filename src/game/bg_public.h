@@ -70,9 +70,9 @@
 #define DEAD_VIEWHEIGHT     -16
 #define PRONE_VIEWHEIGHT    -8
 
-#define DEFAULT_BODYHEIGHT     36  ///< delta height -4
+#define DEFAULT_BODYHEIGHT     48  ///< delta height 8
 #define CROUCH_BODYHEIGHT      24  ///< delta height 8
-#define CROUCH_IDLE_BODYHEIGHT 18  ///< delta height 2
+#define CROUCH_IDLE_BODYHEIGHT 21  ///< delta height 5
 #define DEAD_BODYHEIGHT        4   ///< delta height 20
 #define PRONE_BODYHEIGHT       -8  ///< delta height 0
 
@@ -82,8 +82,8 @@
 #define DEAD_BODYHEIGHT_DELTA            20 ///< dead    body height 4
 #define PRONE_BODYHEIGHT_DELTA           0  ///< prone   body height -8
 
-#define PRONE_BODYHEIGHT_BBOX 12    ///< it appears that 12 is the magic number for the minimum maxs[2] that prevents player from getting stuck into the world.
-#define DEAD_BODYHEIGHT_BBOX 24     ///< was the result of DEFAULT_VIEWHEIGHT - CROUCH_VIEWHEIGHT (40 - 16) stored in crouchMaxZ
+#define PRONE_BODYHEIGHT_BBOX 16    ///< back to vanilla behaviour, previous value was the magic number for the minimum maxs[2] that prevents player from getting stuck into the world.
+#define DEAD_BODYHEIGHT_BBOX 0      ///< was the result of DEFAULT_VIEWHEIGHT - CROUCH_VIEWHEIGHT (40 - 16) stored in crouchMaxZ
 
 extern vec3_t playerlegsProneMins;
 extern vec3_t playerlegsProneMaxs;
@@ -343,6 +343,7 @@ extern const int aReinfSeeds[MAX_REINFSEEDS];
 #define CGF_STATSDUMP       0x02
 #define CGF_AUTOACTIVATE    0x04
 #define CGF_PREDICTITEMS    0x08
+#define CGF_ACTIVATELEAN    0x10
 
 #define MAX_MOTDLINES   6
 
@@ -390,8 +391,8 @@ extern const int aReinfSeeds[MAX_REINFSEEDS];
 #define CS_FIRSTBLOOD                   22     ///< Team that has first blood
 #define CS_ROUNDSCORES1                 23     ///< Axis round wins
 #define CS_ROUNDSCORES2                 24     ///< Allied round wins
-#define CS_MAIN_AXIS_OBJECTIVE          25     ///< unused - Most important current objective
-#define CS_MAIN_ALLIES_OBJECTIVE        26     ///< unused - Most important current objective
+#define CS_MAIN_AXIS_OBJECTIVE          25     ///< Most important current objective
+#define CS_MAIN_ALLIES_OBJECTIVE        26     ///< Most important current objective
 #define CS_MUSIC_QUEUE                  27
 #define CS_SCRIPT_MOVER_NAMES           28
 #define CS_CONSTRUCTION_NAMES           29
@@ -550,7 +551,7 @@ typedef struct pmoveExt_s
 	int jumpTime;                  ///< used in MP to prevent jump accel
 
 	int silencedSideArm;           ///< Keep track of whether the luger/colt is silenced "in holster", prolly want to do this for the kar98 etc too
-	int sprintTime;
+	float sprintTime;
 
 	int airleft;
 
@@ -559,6 +560,7 @@ typedef struct pmoveExt_s
 	vec3_t centerangles;
 
 	int proneTime;                 ///< time a go-prone or stop-prone move starts, to sync the animation to
+	int extendProneTime;           ///< extend prone time to make the prone animation transition through crouching
 
 	float proneLegsOffset;         ///< offset legs bounding box
 
@@ -578,6 +580,12 @@ typedef struct pmoveExt_s
 #endif
 
 	qboolean releasedFire;
+
+	float weapHeat[MAX_WEAPONS];   ///< tracks how hot each weapon currently is.
+
+	float bobCycle;                ///< used to fix framerate dependency
+
+	qboolean deadInSolid;          ///< true if legs or head start in solid when we die
 
 } pmoveExt_t;  ///< data used both in client and server - store it here
 ///< instead of playerstate to prevent different engine versions of playerstate between XP and MP
@@ -629,16 +637,17 @@ typedef struct
 
 	// callbacks to test the world
 	// these will be different functions during game and cgame
-	void (*trace)(trace_t * results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask);
+	void (*trace)(trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask);
 	int (*pointcontents)(const vec3_t point, int passEntityNum);
 
 	/// used to determine if the player move is for prediction if it is, the movement should trigger no events
 	qboolean predict;
 
+	qboolean activateLean;
 } pmove_t;
 
 // if a full pmove isn't done on the client, you can just update the angles
-void PM_UpdateViewAngles(playerState_t *ps, pmoveExt_t *pmext, usercmd_t *cmd, void (trace) (trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask), int tracemask);
+void PM_UpdateViewAngles(playerState_t * ps, pmoveExt_t * pmext, usercmd_t * cmd, void(trace) (trace_t * results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask), int tracemask);
 int Pmove(pmove_t *pmove);
 void PmovePredict(pmove_t *pmove, float frametime);
 
@@ -683,7 +692,7 @@ typedef enum
 typedef enum
 {
 	PERS_SCORE = 0,                ///< !!! MUST NOT CHANGE, SERVER AND GAME BOTH REFERENCE !!!
-	PERS_HITS,                     ///< total points damage inflicted so damage beeps can sound on change
+	PERS_HITS,                     ///< Deprecated. Remove?
 	PERS_RANK,
 	PERS_TEAM,
 	PERS_SPAWN_COUNT,              ///< incremented every respawn
@@ -694,7 +703,7 @@ typedef enum
 	PERS_RESPAWNS_PENALTY,         ///< how many respawns you have to sit through before respawning again
 
 	PERS_REVIVE_COUNT,
-	PERS_HEADSHOTS,
+	PERS_HEADSHOTS,                ///< Deprecated. Remove?
 	PERS_BLEH_3,
 
 	// mg42                        ///< TODO: I don't understand these here. Can someone explain?
@@ -750,6 +759,7 @@ typedef enum
 #define EF_MOVER_BLOCKED    0x20000000                         ///< mover was blocked dont lerp on the client///< moved down to make space for client flag
 
 #define BG_PlayerMounted(eFlags) ((eFlags & EF_MG42_ACTIVE) || (eFlags & EF_MOUNTEDTANK) || (eFlags & EF_AAGUN_ACTIVE))
+#define BG_IsSkillAvailable(skill, skillType, requiredlvl) (GetSkillTableData(skillType)->skillLevels[requiredlvl] > -1 && skill[skillType] >= requiredlvl)
 
 /**
  * @enum powerup_t
@@ -944,6 +954,90 @@ typedef enum
 	SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS,
 	SK_NUM_SKILLS
 } skillType_t;
+
+/**
+ * @enum skillType_t
+ * @brief
+ */
+typedef enum
+{
+	SK_BATTLE_SENSE_BINOCULAR = 1,
+	SK_BATTLE_SENSE_STAMINA_RECHARGE,
+	SK_BATTLE_SENSE_HEALTH,
+	SK_BATTLE_SENSE_TRAP_AWARENESS
+} skill_battlesense_t;
+
+/**
+ * @enum skillType_t
+ * @brief
+ */
+typedef enum
+{
+	SK_SOLDIER_PROJECTILE_STAMINA = 1,
+	SK_SOLDIER_OVERHEATING_COOLDOWN,
+	SK_SOLDIER_DEXTERITY,
+	SK_SOLDIER_SMG
+} skill_soldier_t;
+
+/**
+ * @enum skillType_t
+ * @brief
+ */
+typedef enum
+{
+	SK_MEDIC_EXTRA_AMMO = 1,
+	SK_MEDIC_RESOURCES,
+	SK_MEDIC_FULL_REVIVE,
+	SK_MEDIC_ADRENALINE
+} skill_medic_t;
+
+/**
+ * @enum skillType_t
+ * @brief
+ */
+typedef enum
+{
+	SK_ENGINEER_EXTRA_GRENADE = 1,
+	SK_ENGINEER_PLIERS_DEXTERITY,
+	SK_ENGINEER_STAMINA,
+	SK_ENGINEER_FLAK_JACKET
+} skill_engineer_t;
+
+/**
+ * @enum skillType_t
+ * @brief
+ */
+typedef enum
+{
+	SK_FIELDOPS_RESOURCES = 1,
+	SK_FIELDOPS_FIRE_SUPPORT_STAMINA,
+	SK_FIELDOPS_EXTRA_FIRE_SUPPORT,
+	SK_FIELDOPS_ENEMY_RECOGNITION
+} skill_fieldops_t;
+
+/**
+ * @enum skillType_t
+ * @brief
+ */
+typedef enum
+{
+	SK_COVERTOPS_EXTRA_MAX_AMMO = 1,
+	SK_COVERTOPS_STAMINA,
+	SK_COVERTOPS_BREATH_CONTROL,
+	SK_COVERTOPS_ASSASSIN
+} skill_covertops_t;
+
+/**
+ * @enum skillType_t
+ * @brief
+ */
+typedef enum
+{
+	SK_LIGHT_WEAPONS_EXTRA_AMMO = 1,
+	SK_LIGHT_WEAPONS_FASTER_RELOAD,
+	SK_LIGHT_WEAPONS_HANDLING,
+	SK_LIGHT_WEAPONS_AKIMBO
+} skill_lightweapons_t;
 
 /**
  * @enum meansOfDeath_t
@@ -1203,7 +1297,8 @@ typedef struct weapontable_s
 	const char *className;          ///< g -
 	const char *weapFile;           ///< cg -
 
-	float chargeTimeCoeff[NUM_SKILL_LEVELS];      ///< bg cg -
+	int chargeTimeSkill;            ///< bg cg -
+	float chargeTimeCoeff[2];       ///< bg cg -
 
 	meansOfDeath_t mod;                           ///< g - means of death
 	meansOfDeath_t splashMod;                     ///< g - splash means of death
@@ -1404,7 +1499,7 @@ typedef enum
 	EV_BODY_DP,        ///< 128
 	EV_FLAG_INDICATOR, ///< 129 - objective indicator
 	EV_MISSILE_FALLING,///< 130
-	EV_PLAYER_HIT,     ///< 131
+	EV_PLAYER_HIT,     ///< 131 - hitsound event
 	EV_MAX_EVENTS      ///< 132 - just added as an 'endcap'
 } entity_event_t;
 
@@ -2692,6 +2787,7 @@ const char *String_Alloc(const char *p);
 qboolean PC_String_Parse(int handle, const char **out);
 #endif
 qboolean PC_String_ParseNoAlloc(int handle, char *out, size_t size);
+qboolean PC_PeakToken(int handle, pc_token_t *token);
 qboolean PC_Int_Parse(int handle, int *i);
 qboolean PC_Color_Parse(int handle, vec4_t *c);
 qboolean PC_Vec_Parse(int handle, vec3_t *c);
@@ -2941,8 +3037,8 @@ typedef enum popupMessageBigType_e
 #define HITBOXBIT_LEGS   2048
 #define HITBOXBIT_CLIENT 4096
 
-void PM_TraceLegs(trace_t *trace, float *legsOffset, vec3_t start, vec3_t end, trace_t *bodytrace, vec3_t viewangles, void (tracefunc)(trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask), int ignoreent, int tracemask);
-void PM_TraceHead(trace_t *trace, vec3_t start, vec3_t end, trace_t *bodytrace, vec3_t viewangles, void (tracefunc)(trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask), int ignoreent, int tracemask);
+void PM_TraceLegs(trace_t * trace, float *legsOffset, vec3_t start, vec3_t end, trace_t * bodytrace, vec3_t viewangles, void(tracefunc)(trace_t * results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask), int ignoreent, int tracemask);
+void PM_TraceHead(trace_t * trace, vec3_t start, vec3_t end, trace_t * bodytrace, vec3_t viewangles, void(tracefunc)(trace_t * results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask), int ignoreent, int tracemask);
 void PM_TraceAllParts(trace_t *trace, float *legsOffset, vec3_t start, vec3_t end);
 void PM_TraceAll(trace_t *trace, vec3_t start, vec3_t end);
 
