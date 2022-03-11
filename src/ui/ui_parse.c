@@ -2133,7 +2133,12 @@ qboolean ItemParse_tooltip(itemDef_t *item, int handle)
 		return qfalse;
 	}
 
+
+#ifdef MODLIB
+	const char *translatedParsedText = UI_TranslateString(token.string);
+#else
 	const char *translatedParsedText = __(token.string);
+#endif
 	if (item->cvar && translatedParsedText && ItemParse_shouldDisplayCvarInToolTip(item))
 	{
 		char *newText = va("%s ^9%s: %s", translatedParsedText, item->type == ITEM_TYPE_BIND ? "cmd": "cvar", item->cvar);
