@@ -2089,6 +2089,32 @@ qboolean ItemParse_settingEnabled(itemDef_t *item, int handle)
 }
 
 /**
+ * to ignore drawing internal cvars that aren't meant to be modified in config
+ * @param[in] item
+ * @return
+ */
+qboolean ItemParse_shouldDisplayCvarInToolTip(itemDef_t *item) {
+	#define _STR_N_CMP(X, Y) Q_strncmp(X, Y, STRARRAY_LEN(Y))
+	// ignoring first three chars that are grp
+	if (
+			!_STR_N_CMP(item->window.group+3, "Profile") || // ProfileCreate and ProfileCreateInitial and ProfileRename
+			!_STR_N_CMP(item->window.group+3, "PlayOnline") || // also PlayOnlineConnectToIP
+			!_STR_N_CMP(item->window.group+3, "HostGame") || // also HostGameAdvanced
+			!_STR_N_CMP(item->window.group+3, "IngameVote") || // also IngameVoteMiscRefRcon and IngameVotePlayersWarn
+			!_STR_N_CMP(item->cvar, "ui_handedness") ||
+			!_STR_N_CMP(item->cvar, "ui_glcustom")
+			)
+	{
+				return qfalse;
+	}
+	else
+	{
+		return qtrue;
+	}
+	#undef _STR_N_CMP
+}
+
+/**
  * @brief ItemParse_tooltip
  * @param[in] item
  * @param[in] handle
@@ -2108,10 +2134,8 @@ qboolean ItemParse_tooltip(itemDef_t *item, int handle)
 	}
 
 	const char *translatedParsedText = __(token.string);
-	if (item->cvar && translatedParsedText)
+	if (item->cvar && translatedParsedText && ItemParse_shouldDisplayCvarInToolTip(item))
 	{
-		//cvar_t *var;
-		//var = Cvar_FindVar(item->cvar);
 		char *newText = va("%s ^9%s: %s", translatedParsedText, item->type == ITEM_TYPE_BIND ? "cmd": "cvar", item->cvar);
 		item->toolTipData->text = String_Alloc(newText);
 	}
