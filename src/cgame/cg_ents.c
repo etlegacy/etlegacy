@@ -1410,6 +1410,14 @@ static void CG_Missile(centity_t *cent)
 		}
 	}
 
+	if (cgs.sv_cheats && cent->currentState.clientNum == cg.predictedPlayerState.clientNum)
+	{
+		if (cent->currentState.pos.trType != TR_STATIONARY)
+		{
+			cg.latestMissile = cent;
+		}
+	}
+
 	// spin as it moves
 	if (s1->pos.trType != TR_STATIONARY)
 	{
@@ -2949,6 +2957,8 @@ qboolean CG_AddCEntity_Filter(centity_t *cent)
 void CG_AddPacketEntities(void)
 {
 	int num;
+
+	cg.latestMissile = NULL;
 
 	// set cg.frameInterpolation
 	if (cg.nextSnap)

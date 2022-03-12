@@ -652,7 +652,11 @@ void G_RunMissile(gentity_t *ent)
 		{
 			// goes through sky
 			ent->count = 1;
-			trap_UnlinkEntity(ent);
+			// omit unlinking entity for missile camera
+			if (!g_cheats.integer && ent->s.weapon != WP_GRENADE_LAUNCHER && ent->s.weapon != WP_GRENADE_PINEAPPLE && ent->s.weapon != WP_GPG40 && ent->s.weapon != WP_M7 && ent->s.weapon != WP_MORTAR2_SET && ent->s.weapon != WP_MORTAR_SET && ent->s.weapon != WP_SMOKE_MARKER && ent->s.weapon != WP_SMOKE_BOMB)
+			{
+				trap_UnlinkEntity(ent);
+			}
 			G_RunThink(ent);
 			return; // keep flying
 		}
