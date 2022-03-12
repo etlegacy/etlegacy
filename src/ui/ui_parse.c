@@ -2099,12 +2099,12 @@ qboolean ItemParse_shouldDisplayCvarInToolTip(itemDef_t *item)
 {
 	// ignoring first three chars that are grp
 	return _STR_N_CMP(item->window.group + 3, "Profile") &&      // ProfileCreate and ProfileCreateInitial and ProfileRename
-           _STR_N_CMP(item->window.group + 3, "PlayOnline") &&   // also PlayOnlineConnectToIP
-           _STR_N_CMP(item->window.group + 3, "HostGame") &&     // also HostGameAdvanced
-           _STR_N_CMP(item->window.group + 3, "IngameVote") &&   // also IngameVoteMiscRefRcon and IngameVotePlayersWarn
-           _STR_N_CMP(item->cvar, "ui_handedness") &&
-           _STR_N_CMP(item->cvar, "ui_mousepitch") &&
-           _STR_N_CMP(item->cvar, "ui_glcustom"));
+	       _STR_N_CMP(item->window.group + 3, "PlayOnline") &&   // also PlayOnlineConnectToIP
+	       _STR_N_CMP(item->window.group + 3, "HostGame") &&     // also HostGameAdvanced
+	       _STR_N_CMP(item->window.group + 3, "IngameVote") &&   // also IngameVoteMiscRefRcon and IngameVotePlayersWarn
+	       _STR_N_CMP(item->cvar, "ui_handedness") &&
+	       _STR_N_CMP(item->cvar, "ui_mousepitch") &&
+	       _STR_N_CMP(item->cvar, "ui_glcustom");
 }
 
 const char *ItemParse_removeUiCvarPrefix(const char *cvar)
