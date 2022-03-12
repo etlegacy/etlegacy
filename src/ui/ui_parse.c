@@ -2148,11 +2148,8 @@ qboolean ItemParse_tooltip(itemDef_t *item, int handle)
 	}
 
 
-#ifdef MODLIB
-	const char *translatedParsedText = UI_TranslateString(token.string);
-#else
-	const char *translatedParsedText = __(token.string);
-#endif
+
+	const char *translatedParsedText = DC->translateString(token.string);
 	if (item->cvar && translatedParsedText && ItemParse_shouldDisplayCvarInToolTip(item))
 	{
 		const char* cvarOrCmdName = item->type == ITEM_TYPE_BIND ? item->cvar : ItemParse_removeUiCvarPrefix(item->cvar);
