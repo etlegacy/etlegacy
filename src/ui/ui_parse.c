@@ -2088,6 +2088,7 @@ qboolean ItemParse_settingEnabled(itemDef_t *item, int handle)
 	return(fResult);
 }
 
+
 /**
  * to ignore drawing internal cvars that aren't meant to be modified in config
  * @param[in] item
@@ -2102,6 +2103,7 @@ qboolean ItemParse_shouldDisplayCvarInToolTip(itemDef_t *item) {
 			!_STR_N_CMP(item->window.group+3, "HostGame") || // also HostGameAdvanced
 			!_STR_N_CMP(item->window.group+3, "IngameVote") || // also IngameVoteMiscRefRcon and IngameVotePlayersWarn
 			!_STR_N_CMP(item->cvar, "ui_handedness") ||
+			!_STR_N_CMP(item->cvar, "ui_mousepitch") ||
 			!_STR_N_CMP(item->cvar, "ui_glcustom")
 			)
 	{
