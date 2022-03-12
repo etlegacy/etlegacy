@@ -2156,7 +2156,7 @@ qboolean ItemParse_tooltip(itemDef_t *item, int handle)
 	if (item->cvar && translatedParsedText && ItemParse_shouldDisplayCvarInToolTip(item))
 	{
 		const char* cvarOrCmdName = item->type == ITEM_TYPE_BIND ? item->cvar : ItemParse_removeUiCvarPrefix(item->cvar);
-		char *newText = va("%s ^9%s: %s", translatedParsedText,item->type == ITEM_TYPE_BIND ? "cmd": "cvar", cvarOrCmdName);
+		char *newText = va("%s%s^9%s: %s", translatedParsedText, translatedParsedText[0] ? " " : "" ,item->type == ITEM_TYPE_BIND ? "cmd": "cvar", cvarOrCmdName);
 		item->toolTipData->text = String_Alloc(newText);
 	}
 	else
