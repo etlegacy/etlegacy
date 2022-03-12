@@ -2116,6 +2116,18 @@ qboolean ItemParse_shouldDisplayCvarInToolTip(itemDef_t *item) {
 	#undef _STR_N_CMP
 }
 
+const char* ItemParse_removeUiCvarPrefix(const char* cvar)
+{
+	if (!Q_strncmp(cvar, "ui_", 3))
+	{
+		return cvar + 3;
+	}
+	else
+	{
+		return cvar;
+	}
+}
+
 /**
  * @brief ItemParse_tooltip
  * @param[in] item
@@ -2143,7 +2155,8 @@ qboolean ItemParse_tooltip(itemDef_t *item, int handle)
 #endif
 	if (item->cvar && translatedParsedText && ItemParse_shouldDisplayCvarInToolTip(item))
 	{
-		char *newText = va("%s ^9%s: %s", translatedParsedText, item->type == ITEM_TYPE_BIND ? "cmd": "cvar", item->cvar);
+		const char* cvarOrCmdName = item->type == ITEM_TYPE_BIND ? item->cvar : ItemParse_removeUiCvarPrefix(item->cvar);
+		char *newText = va("%s ^9%s: %s", translatedParsedText,item->type == ITEM_TYPE_BIND ? "cmd": "cvar", cvarOrCmdName);
 		item->toolTipData->text = String_Alloc(newText);
 	}
 	else
