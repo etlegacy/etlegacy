@@ -2094,20 +2094,21 @@ qboolean ItemParse_settingEnabled(itemDef_t *item, int handle)
  * @param[in] item
  * @return
  */
-qboolean ItemParse_shouldDisplayCvarInToolTip(itemDef_t *item) {
+qboolean ItemParse_shouldDisplayCvarInToolTip(itemDef_t *item)
+{
 	#define _STR_N_CMP(X, Y) Q_strncmp(X, Y, STRARRAY_LEN(Y))
 	// ignoring first three chars that are grp
 	if (
-			!_STR_N_CMP(item->window.group+3, "Profile") || // ProfileCreate and ProfileCreateInitial and ProfileRename
-			!_STR_N_CMP(item->window.group+3, "PlayOnline") || // also PlayOnlineConnectToIP
-			!_STR_N_CMP(item->window.group+3, "HostGame") || // also HostGameAdvanced
-			!_STR_N_CMP(item->window.group+3, "IngameVote") || // also IngameVoteMiscRefRcon and IngameVotePlayersWarn
-			!_STR_N_CMP(item->cvar, "ui_handedness") ||
-			!_STR_N_CMP(item->cvar, "ui_mousepitch") ||
-			!_STR_N_CMP(item->cvar, "ui_glcustom")
-			)
+		!_STR_N_CMP(item->window.group + 3, "Profile") ||   // ProfileCreate and ProfileCreateInitial and ProfileRename
+		!_STR_N_CMP(item->window.group + 3, "PlayOnline") ||   // also PlayOnlineConnectToIP
+		!_STR_N_CMP(item->window.group + 3, "HostGame") ||   // also HostGameAdvanced
+		!_STR_N_CMP(item->window.group + 3, "IngameVote") ||   // also IngameVoteMiscRefRcon and IngameVotePlayersWarn
+		!_STR_N_CMP(item->cvar, "ui_handedness") ||
+		!_STR_N_CMP(item->cvar, "ui_mousepitch") ||
+		!_STR_N_CMP(item->cvar, "ui_glcustom")
+		)
 	{
-				return qfalse;
+		return qfalse;
 	}
 	else
 	{
@@ -2116,7 +2117,7 @@ qboolean ItemParse_shouldDisplayCvarInToolTip(itemDef_t *item) {
 	#undef _STR_N_CMP
 }
 
-const char* ItemParse_removeUiCvarPrefix(const char* cvar)
+const char *ItemParse_removeUiCvarPrefix(const char *cvar)
 {
 	if (!Q_strncmp(cvar, "ui_", 3))
 	{
@@ -2152,8 +2153,8 @@ qboolean ItemParse_tooltip(itemDef_t *item, int handle)
 	const char *translatedParsedText = DC->translateString(token.string);
 	if (item->cvar && translatedParsedText && ItemParse_shouldDisplayCvarInToolTip(item))
 	{
-		const char* cvarOrCmdName = item->type == ITEM_TYPE_BIND ? item->cvar : ItemParse_removeUiCvarPrefix(item->cvar);
-		char *newText = va("%s%s^9%s: %s", translatedParsedText, translatedParsedText[0] ? " " : "" ,item->type == ITEM_TYPE_BIND ? "cmd": "cvar", cvarOrCmdName);
+		const char *cvarOrCmdName = item->type == ITEM_TYPE_BIND ? item->cvar : ItemParse_removeUiCvarPrefix(item->cvar);
+		char       *newText       = va("%s%s^9%s: %s", translatedParsedText, translatedParsedText[0] ? " " : "", item->type == ITEM_TYPE_BIND ? "cmd": "cvar", cvarOrCmdName);
 		item->toolTipData->text = String_Alloc(newText);
 	}
 	else
