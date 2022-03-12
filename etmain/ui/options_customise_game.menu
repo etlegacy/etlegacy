@@ -49,8 +49,8 @@ menuDef {
 	SUBWINDOW( 6, WEAPONS_Y, (SUBWINDOW_WIDTH_L), 64, _("WEAPONS") )
 	YESNO( 8, WEAPONS_Y+16, (SUBWINDOW_WIDTH_L)-4, 10, _("Automatic Reload:"), .2, 8, "cg_autoReload", _("Automatically reload when ammunition clip runs out") )
 	YESNO( 8, WEAPONS_Y+28, (SUBWINDOW_WIDTH_L)-4, 10, _("Autoswitch:"), .2, 8, "cg_noAmmoAutoSwitch", _("Automatically switch to a new weapon when out of ammunition") )
-	YESNO( 8, WEAPONS_Y+40, (SUBWINDOW_WIDTH_L)-4, 10, _("Alt Weapon Reloads:"), .2, 8, "cg_weapaltReloads", _("Provide an alternative way to reload a weapon that doesn't have weapon an alternative fire") )
-	YESNO( 8, WEAPONS_Y+52, (SUBWINDOW_WIDTH_L)-4, 10, _("Alt Weapon Switches:"), .2, 8, "cg_weapaltSwitches", _("Provide an alternative way to use an alt weapon by pressing the respective weaponbank bind") )
+	YESNO( 8, WEAPONS_Y+40, (SUBWINDOW_WIDTH_L)-4, 10, _("Alt Weapon Reloads:"), .2, 8, "cg_weapaltReloads", _("Provide an alternative way to reload a weapon\nthat doesn't have weapon an alternative fire") )
+	YESNO( 8, WEAPONS_Y+52, (SUBWINDOW_WIDTH_L)-4, 10, _("Alt Weapon Switches:"), .2, 8, "cg_weapaltSwitches", _("Provide an alternative way to use an alt weapon\nby pressing the respective weaponbank bind") )
 
 // Scope //
 #define SCOPE_Y 216
@@ -83,7 +83,7 @@ menuDef {
 	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, MISC_Y+40, (SUBWINDOW_WIDTH_R)-4, 10, _("Auto-Action:"), .2, 8, "cg_autoAction", cvarFloatList { "None" 0 "Demo" 1 "Screenshot" 2 "Stats Dump" 4 "Demo + SS" 3 "Demo + Stats" 5 "SS + Stats" 6 "Demo + SS + Stats" 7 }, _("Perform automatic actions at the start or end of a round") )
 	YESNO( 6+(SUBWINDOW_WIDTH_L)+6+2, MISC_Y+52, (SUBWINDOW_WIDTH_R)-4, 10, _("Show Tool Tips:"), .2, 8, "ui_showtooltips", _("Display Tool Tips in the UI") )
 	EDITFIELD( 6+(SUBWINDOW_WIDTH_L)+6+2, MISC_Y+64, (SUBWINDOW_WIDTH_R)-4, 10, _("Log File:"), .2, 8, "cg_logFile", 15, 13, _("Set the name of the log file (if empty logging is disabled)") )
-    EDITFIELD( 6+(SUBWINDOW_WIDTH_L)+6+2, MISC_Y+76, (SUBWINDOW_WIDTH_R)-4, 10, _("Sharetimer Custom Text:"), .2, 8, "cg_sharetimerText", 64, 18, _("Specify a custom text to announce the next enemy spawn. Use ${nextspawn} and ${enemylimbotime} as variables.") )
+    EDITFIELD( 6+(SUBWINDOW_WIDTH_L)+6+2, MISC_Y+76, (SUBWINDOW_WIDTH_R)-4, 10, _("Sharetimer Custom Text:"), .2, 8, "cg_sharetimerText", 64, 18, _("Specify a custom text to announce the next enemy spawn.\nUse ${nextspawn} and ${enemylimbotime} as variables.") )
 
 // Buttons //
 	BUTTON( 6, WINDOW_HEIGHT-24, WINDOW_WIDTH-12, 18, _("BACK"), .3, 14, close options_customise_game ; open options )

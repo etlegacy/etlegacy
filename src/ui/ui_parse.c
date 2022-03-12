@@ -2088,6 +2088,35 @@ qboolean ItemParse_settingEnabled(itemDef_t *item, int handle)
 	return(fResult);
 }
 
+#define _STR_N_CMP(X, Y) Q_strncmp(X, Y, STRARRAY_LEN(Y))
+
+/**
+ * @brief ignore drawing internal cvars that aren't meant to be modified in config
+ * @param[in] item
+ * @return
+ */
+qboolean ItemParse_shouldDisplayCvarInToolTip(itemDef_t *item)
+{
+	// ignoring first three chars that are grp
+	return _STR_N_CMP(item->window.group + 3, "Profile") &&      // ProfileCreate and ProfileCreateInitial and ProfileRename
+           _STR_N_CMP(item->window.group + 3, "PlayOnline") &&   // also PlayOnlineConnectToIP
+           _STR_N_CMP(item->window.group + 3, "HostGame") &&     // also HostGameAdvanced
+           _STR_N_CMP(item->window.group + 3, "IngameVote") &&   // also IngameVoteMiscRefRcon and IngameVotePlayersWarn
+           _STR_N_CMP(item->cvar, "ui_handedness") &&
+           _STR_N_CMP(item->cvar, "ui_mousepitch") &&
+           _STR_N_CMP(item->cvar, "ui_glcustom"));
+}
+
+const char *ItemParse_removeUiCvarPrefix(const char *cvar)
+{
+	if (!Q_strncmp(cvar, "ui_", 3))
+	{
+		return cvar + 3;
+	}
+
+	return cvar;
+}
+
 /**
  * @brief ItemParse_tooltip
  * @param[in] item
@@ -2096,7 +2125,33 @@ qboolean ItemParse_settingEnabled(itemDef_t *item, int handle)
  */
 qboolean ItemParse_tooltip(itemDef_t *item, int handle)
 {
-	return(Item_ValidateTooltipData(item) && PC_String_ParseTranslate(handle, &item->toolTipData->text));
+	pc_token_t token;
+	const char *translatedParsedText;
+
+	if (!Item_ValidateTooltipData(item))
+	{
+		return qfalse;
+	}
+
+	if (!trap_PC_ReadToken(handle, &token))
+	{
+		return qfalse;
+	}
+
+	translatedParsedText = DC->translateString(token.string);
+
+	if (item->cvar && translatedParsedText && ItemParse_shouldDisplayCvarInToolTip(item))
+	{
+		const char *cvarOrCmdName = item->type == ITEM_TYPE_BIND ? item->cvar : ItemParse_removeUiCvarPrefix(item->cvar);
+		char       *newText       = va("%s%s^9%s: %s", translatedParsedText, translatedParsedText[0] ? " " : "", item->type == ITEM_TYPE_BIND ? "cmd": "cvar", cvarOrCmdName);
+		item->toolTipData->text = String_Alloc(newText);
+	}
+	else
+	{
+		item->toolTipData->text = String_Alloc(translatedParsedText);
+	}
+
+	return qtrue;
 }
 
 /**
