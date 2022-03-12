@@ -2088,33 +2088,23 @@ qboolean ItemParse_settingEnabled(itemDef_t *item, int handle)
 	return(fResult);
 }
 
+#define _STR_N_CMP(X, Y) Q_strncmp(X, Y, STRARRAY_LEN(Y))
 
 /**
- * to ignore drawing internal cvars that aren't meant to be modified in config
+ * @brief ignore drawing internal cvars that aren't meant to be modified in config
  * @param[in] item
  * @return
  */
 qboolean ItemParse_shouldDisplayCvarInToolTip(itemDef_t *item)
 {
-	#define _STR_N_CMP(X, Y) Q_strncmp(X, Y, STRARRAY_LEN(Y))
 	// ignoring first three chars that are grp
-	if (
-		!_STR_N_CMP(item->window.group + 3, "Profile") ||   // ProfileCreate and ProfileCreateInitial and ProfileRename
-		!_STR_N_CMP(item->window.group + 3, "PlayOnline") ||   // also PlayOnlineConnectToIP
-		!_STR_N_CMP(item->window.group + 3, "HostGame") ||   // also HostGameAdvanced
-		!_STR_N_CMP(item->window.group + 3, "IngameVote") ||   // also IngameVoteMiscRefRcon and IngameVotePlayersWarn
-		!_STR_N_CMP(item->cvar, "ui_handedness") ||
-		!_STR_N_CMP(item->cvar, "ui_mousepitch") ||
-		!_STR_N_CMP(item->cvar, "ui_glcustom")
-		)
-	{
-		return qfalse;
-	}
-	else
-	{
-		return qtrue;
-	}
-	#undef _STR_N_CMP
+	return _STR_N_CMP(item->window.group + 3, "Profile") &&      // ProfileCreate and ProfileCreateInitial and ProfileRename
+           _STR_N_CMP(item->window.group + 3, "PlayOnline") &&   // also PlayOnlineConnectToIP
+           _STR_N_CMP(item->window.group + 3, "HostGame") &&     // also HostGameAdvanced
+           _STR_N_CMP(item->window.group + 3, "IngameVote") &&   // also IngameVoteMiscRefRcon and IngameVotePlayersWarn
+           _STR_N_CMP(item->cvar, "ui_handedness") &&
+           _STR_N_CMP(item->cvar, "ui_mousepitch") &&
+           _STR_N_CMP(item->cvar, "ui_glcustom"));
 }
 
 const char *ItemParse_removeUiCvarPrefix(const char *cvar)
@@ -2123,10 +2113,8 @@ const char *ItemParse_removeUiCvarPrefix(const char *cvar)
 	{
 		return cvar + 3;
 	}
-	else
-	{
-		return cvar;
-	}
+
+	return cvar;
 }
 
 /**
@@ -2137,20 +2125,21 @@ const char *ItemParse_removeUiCvarPrefix(const char *cvar)
  */
 qboolean ItemParse_tooltip(itemDef_t *item, int handle)
 {
+	pc_token_t token;
+	const char *translatedParsedText;
+
 	if (!Item_ValidateTooltipData(item))
 	{
 		return qfalse;
 	}
 
-	pc_token_t token;
 	if (!trap_PC_ReadToken(handle, &token))
 	{
 		return qfalse;
 	}
 
+	translatedParsedText = DC->translateString(token.string);
 
-
-	const char *translatedParsedText = DC->translateString(token.string);
 	if (item->cvar && translatedParsedText && ItemParse_shouldDisplayCvarInToolTip(item))
 	{
 		const char *cvarOrCmdName = item->type == ITEM_TYPE_BIND ? item->cvar : ItemParse_removeUiCvarPrefix(item->cvar);
@@ -2161,6 +2150,7 @@ qboolean ItemParse_tooltip(itemDef_t *item, int handle)
 	{
 		item->toolTipData->text = String_Alloc(translatedParsedText);
 	}
+
 	return qtrue;
 }
 
