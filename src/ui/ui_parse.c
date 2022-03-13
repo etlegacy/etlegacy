@@ -2088,7 +2088,7 @@ qboolean ItemParse_settingEnabled(itemDef_t *item, int handle)
 	return(fResult);
 }
 
-#define _STR_N_CMP(X, Y) Q_strncmp(X, Y, STRARRAY_LEN(Y))
+#define STR_N_CMP(X, Y) Q_strncmp(X, Y, STRARRAY_LEN(Y))
 
 /**
  * @brief ignore drawing internal cvars that aren't meant to be modified in config
@@ -2098,13 +2098,13 @@ qboolean ItemParse_settingEnabled(itemDef_t *item, int handle)
 qboolean ItemParse_shouldDisplayCvarInToolTip(itemDef_t *item)
 {
 	// ignoring first three chars that are grp
-	return _STR_N_CMP(item->window.group + 3, "Profile") &&      // ProfileCreate and ProfileCreateInitial and ProfileRename
-	       _STR_N_CMP(item->window.group + 3, "PlayOnline") &&   // also PlayOnlineConnectToIP
-	       _STR_N_CMP(item->window.group + 3, "HostGame") &&     // also HostGameAdvanced
-	       _STR_N_CMP(item->window.group + 3, "IngameVote") &&   // also IngameVoteMiscRefRcon and IngameVotePlayersWarn
-	       _STR_N_CMP(item->cvar, "ui_handedness") &&
-	       _STR_N_CMP(item->cvar, "ui_mousepitch") &&
-	       _STR_N_CMP(item->cvar, "ui_glcustom");
+	return STR_N_CMP(item->window.group + 3, "Profile") &&      // ProfileCreate and ProfileCreateInitial and ProfileRename
+	       STR_N_CMP(item->window.group + 3, "PlayOnline") &&   // also PlayOnlineConnectToIP
+	       STR_N_CMP(item->window.group + 3, "HostGame") &&     // also HostGameAdvanced
+	       STR_N_CMP(item->window.group + 3, "IngameVote") &&   // also IngameVoteMiscRefRcon and IngameVotePlayersWarn
+	       STR_N_CMP(item->cvar, "ui_handedness") &&
+	       STR_N_CMP(item->cvar, "ui_mousepitch") &&
+	       STR_N_CMP(item->cvar, "ui_glcustom");
 }
 
 const char *ItemParse_removeUiCvarPrefix(const char *cvar)
