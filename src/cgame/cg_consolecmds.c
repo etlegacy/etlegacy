@@ -1651,23 +1651,17 @@ static void CG_ShareTimer_f(void)
 	}
 	if (strlen(text))
 	{
-		char buffer[MAX_SAY_TEXT];
-		char *spawntime, *enemylimbo, *nextSpawnText, *enemyLimbotimeText;
-		nextSpawnText      = "${nextspawn}";
-		enemyLimbotimeText = "${enemylimbotime}";
+		const char *nextSpawnText      = "${nextspawn}";
+		const char *enemyLimbotimeText = "${enemylimbotime}";
 
-		Q_strncpyz(buffer, text, sizeof(buffer));
-		spawntime = Q_TruncateStr(Q_stristr(buffer, nextSpawnText), strlen(nextSpawnText));
-		if (spawntime)
+		if (Q_stristr(text, nextSpawnText))
 		{
-			Q_strncpyz(text, Q_StrReplace(text, spawntime, va("%i", nextSpawn)), sizeof(text));
+			Q_strncpyz(text, Q_StrReplace(text, nextSpawnText, va("%i", nextSpawn)), sizeof(text));
 		}
 
-		Q_strncpyz(buffer, text, sizeof(buffer));
-		enemylimbo = Q_TruncateStr(Q_stristr(buffer, enemyLimbotimeText), strlen(enemyLimbotimeText));
-		if (enemylimbo)
+		if (Q_stristr(text, enemyLimbotimeText))
 		{
-			Q_strncpyz(text, Q_StrReplace(text, enemylimbo, va("%i", limboTime)), sizeof(text));
+			Q_strncpyz(text, Q_StrReplace(text, enemyLimbotimeText, va("%i", limboTime)), sizeof(text));
 		}
 		trap_SendConsoleCommand(va("%s %s", cmd, text));
 	}
