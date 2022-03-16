@@ -5,10 +5,10 @@
 if(NOT APPLE)
 	set(R1_NAME renderer_opengl1_${ARCH})
 	set(R2_NAME renderer_opengl2_${ARCH})
+	set(VK_NAME renderer_vulkan${ARCH})
 else()
 	set(R1_NAME renderer_opengl1${LIB_SUFFIX})
 	set(R2_NAME renderer_opengl2${LIB_SUFFIX})
-	set(VK_NAME renderer_vulkan${LIB_SUFFIX})
 endif()
 
 if(RENDERER_DYNAMIC)
@@ -99,7 +99,7 @@ if(FEATURE_RENDERER2)
 	endif()
 
 	FILE(GLOB SHDR2H_SRC
-		"src/tools/shdr/*.*"
+		"src/tools/shdr/*.*"	
 	)
 	add_executable(shdr2h ${SHDR2H_SRC})
 
@@ -172,4 +172,62 @@ endif(FEATURE_RENDERER2)
 if(FEATURE_RENDERER_VULKAN)
 	#Include slighly modified FindVulkan.cmake file
 	include(cmake/FindVulkan.cmake)
-endif()
+
+	foreach(SHADERS IN LISTS ${RENDERER_VULKAN_SHADERS})
+		GET_FILENAME_COMPONENT(SHAD_NAME ${SHADERS} NAME)
+		add_custom_command(
+			COMMAND
+				${VULKAN_GLSLC_EXECUTABLE} ${SHAD_NAME} -o "${CMAKE_CURRENT_BINARY_DIR}/glsl/${SHAD_NAME}.spv"
+				OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/glsl/${SHAD_NAME}.spv"
+				DEPENDS ${VULKAN_GLSLC_EXECUTABLE}
+				COMMENT "Compiling ${SHAD_NAME}"
+				)
+		list(APPEND SPV_SHADERS "${CMAKE_CURRENT_BINARY_DIR}/glsl/${SHAD_NAME}.spv")
+	endforeach()
+
+	add_custom_target(vulkan_shaders ALL DEPENDS ${SPV_SHADERS})
+
+	add_library(${VK_NAME} ${REND_LIBTYPE} ${RENDERER_VULKAN_FILES} ${RENDERER_COMMON} ${RENDERER_VULKAN_SPIRV_SHADERS})
+	add_dependencies(${VK_NAME} vulkan_shaders)
+
+	if(BUNDLED_JPEG)
+		add_dependencies(${VK_NAME} bundled_jpeg)
+	endif()
+
+	if(BUNDLED_FREETYPE)
+		add_dependencies(${VK_NAME} bundled_freetype)
+	endif()
+
+	if(MSVC)
+		target_link_libraries(${VK_NAME} ${RENDERER_LIBRARIES})
+	else()
+		target_link_libraries(${VK_NAME} ${RENDERER_LIBRARIES} 'm')
+	endif(MSVC)
+
+	set_target_properties(${VK_NAME}
+		PROPERTIES COMPILE_DEFINITIONS "FEATURE_RENDERER_VULKAN"
+		LIBRARY_OUTPUT_DIRECTORY ""
+		LIBRARY_OUTPUT_DIRECTORY_DEBUG ""
+		LIBRARY_OUTPUT_DIRECTORY_RELEASE ""
+	)
+
+	if(WIN32)
+		set_target_properties(${VK_NAME} PROPERTIES PREFIX "")
+	endif(WIN32)
+
+	if(WIN32)
+		install(TARGETS ${VK_NAME}
+			LIBRARY DESTINATION "${INSTALL_DEFAULT_BINDIR}"
+			ARCHIVE DESTINATION "${INSTALL_DEFAULT_BINDIR}"
+		)
+	else()
+		install(TARGETS ${VK_NAME}
+			LIBRARY DESTINATION "${INSTALL_DEFAULT_MODDIR}"
+			ARCHIVE DESTINATION "${INSTALL_DEFAULT_MODDIR}"
+		)
+	endif()
+
+	if(NOT RENDERER_DYNAMIC)
+		list(APPEND CLIENT_LIBRARIES ${VK_NAME})
+	endif()
+endif(FEATURE_RENDERER_VULKAN)

@@ -159,7 +159,16 @@ FILE(GLOB RENDERER2_FILES
 	"src/renderer2/*.h"
 )
 
-SET(GLSL_PATH "src/renderer2/glsl")
+FILE(GLOB RENDERER_VULKAN_FILES
+	"src/rendererVK/*.c"
+	"src/rendererVK/*.h"
+)
+
+if(NOT FEATURE_RENDERER_VULKAN)
+	SET(GLSL_PATH "src/renderer2/glsl")
+else()
+	SET(GLSL_PATH "src/rendererVK/glsl")
+endif()
 
 FILE(GLOB RENDERER2_SHADERS
 	"${GLSL_PATH}/*.glsl"
@@ -168,6 +177,15 @@ FILE(GLOB RENDERER2_SHADERS
 
 FILE(GLOB RENDERER2_SHADERDEFS
 	"src/renderer2/gldef/*.gldef"
+)
+
+FILE(GLOB RENDERER_VULKAN_SHADERS
+	"${GLSL_PATH}/*.frag"
+    "${GLSL_PATH}/*.vert"
+)
+
+FILE(GLOB RENDERER_VULKAN_SPIRV_SHADERS
+	"${GLSL_PATH}/*.spv"
 )
 
 FILE(GLOB IRC_CLIENT_FILES
