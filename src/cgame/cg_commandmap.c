@@ -214,8 +214,13 @@ static float CG_PlayerDistanceScaling(mapEntityData_t *player)
 	mapEntityData_t *mEnt, *mEntScale;
 	centity_t       *cent, *centScale;
 	int             i;
-	float           distance, scale, smallest = cg_dynamicIconsMaxScale.value;
+	float           distance, scale, minScale = cg_dynamicIconsMaxScale.value;
 	vec3_t          vec1, vec2;
+
+	if (cg_dynamicIconsMinScale.value == cg_dynamicIconsMaxScale.value || cg_dynamicIconsDistance.integer <= 0)
+	{
+		return minScale;
+	}
 
 	mEnt = player;
 	cent = &cg_entities[mEnt->data];
@@ -273,22 +278,21 @@ static float CG_PlayerDistanceScaling(mapEntityData_t *player)
 
 		// calculate distance and scale
 		distance = VectorDistance(vec1, vec2);
-		distance = distance - (2 * cg_dynamicIconsSize.integer * (cg_automapZoom.value / AUTOMAP_ZOOM));
-		scale    = distance / cg_dynamicIconsDistance.integer; // FIXME: divide by zero check missing
+		scale    = distance / cg_dynamicIconsDistance.integer;
 
-		if (smallest > scale)
+		if (minScale > scale)
 		{
 			if (scale < cg_dynamicIconsMinScale.value)
 			{
 				// found the min scale value
-				smallest = cg_dynamicIconsMinScale.value;
+				minScale = cg_dynamicIconsMinScale.value;
 				break;
 			}
-			smallest = scale;
+			minScale = scale;
 		}
 	}
 
-	return smallest;
+	return minScale;
 }
 
 /**
