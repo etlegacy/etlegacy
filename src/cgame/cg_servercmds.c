@@ -1606,15 +1606,15 @@ int CG_ParseVoiceChats(const char *filename, voiceChatList_t *voiceChatList, int
 			token = COM_ParseExt(p, qfalse);
 			if (!Q_stricmp(token, "}") || !token[0])
 			{
-				voiceChats[voiceChatList->numVoiceChats].sprite[current] = trap_R_RegisterShader("sprites/voiceChat");
+				voiceChats[voiceChatList->numVoiceChats].sprite[current] = trap_R_RegisterShaderNoMip("sprites/voiceChat");
 				COM_RestoreParseSession(p);
 			}
 			else
 			{
-				voiceChats[voiceChatList->numVoiceChats].sprite[current] = trap_R_RegisterShader(token);
+				voiceChats[voiceChatList->numVoiceChats].sprite[current] = trap_R_RegisterShaderNoMip(token);
 				if (voiceChats[voiceChatList->numVoiceChats].sprite[current] == 0)
 				{
-					voiceChats[voiceChatList->numVoiceChats].sprite[current] = trap_R_RegisterShader("sprites/voiceChat");
+					voiceChats[voiceChatList->numVoiceChats].sprite[current] = trap_R_RegisterShaderNoMip("sprites/voiceChat");
 				}
 			}
 
