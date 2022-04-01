@@ -252,10 +252,8 @@ qboolean G_commandCheck(gentity_t *ent, const char *cmd)
 				return qfalse;
 			}
 
-			if (!G_commandHelp(ent, cmd, i))
-			{
-				aCommandInfo[i].pCommand(ent, i, aCommandInfo[i].value);
-			}
+			aCommandInfo[i].pCommand(ent, i, aCommandInfo[i].value);
+
 			return qtrue;
 		}
 	}
@@ -274,14 +272,12 @@ qboolean G_commandCheck(gentity_t *ent, const char *cmd)
  */
 qboolean G_commandHelp(gentity_t *ent, const char *pszCommand, unsigned int dwCommand)
 {
-	char arg[MAX_TOKEN_CHARS];
-
 	if (!ent)
 	{
 		return qfalse;
 	}
-	trap_Argv(1, arg, sizeof(arg));
-	if (!Q_stricmp(arg, "?"))
+
+	if (pszCommand && dwCommand >= 0 && dwCommand < ARRAY_LEN(aCommandInfo))
 	{
 		CP(va("print \"\n^3%s%s\n\n\"", pszCommand, aCommandInfo[dwCommand].pszHelpInfo));
 		return qtrue;
@@ -326,13 +322,30 @@ void G_noTeamControls(gentity_t *ent)
 
 /**
  * @brief Lists server commands.
- * @param ent - unused
- * @param dwCommand - unused
+ * @param ent
+ * @param dwCommand
  * @param value - unused
  */
 void G_commands_cmd(gentity_t *ent, unsigned int dwCommand, int value)
 {
-	int i, rows, num_cmds = sizeof(aCommandInfo) / sizeof(aCommandInfo[0]) - 1;
+	int i, rows, num_cmds;
+
+	if (trap_Argc() > 1)
+	{
+		char arg[MAX_TOKEN_CHARS];
+		trap_Argv(1, arg, sizeof(arg));
+
+		for (i = 0; aCommandInfo[i].pszCommandName; i++)
+		{
+			if (aCommandInfo[i].pCommand && !Q_stricmp(arg, aCommandInfo[i].pszCommandName))
+			{
+				G_commandHelp(ent, arg, i);
+				return;
+			}
+		}
+	}
+
+	num_cmds = ARRAY_LEN(aCommandInfo) - 1;
 
 	rows = num_cmds / HELP_COLUMNS;
 	if (num_cmds % HELP_COLUMNS)
@@ -370,7 +383,7 @@ void G_commands_cmd(gentity_t *ent, unsigned int dwCommand, int value)
 		}
 	}
 
-	CP("print \"\nType: ^3\\command_name ?^7 for more information\n\"");
+	CP(va("print \"\nType: ^3\\%s command_name^7 for more information\n\"", aCommandInfo[dwCommand].pszCommandName));
 }
 
 /**
@@ -1591,8 +1604,6 @@ void G_weaponRankings_cmd(gentity_t *ent, unsigned int dwCommand, int state)
 
 	if (iWeap < WS_KNIFE)
 	{
-		G_commandHelp(ent, (state) ? "topshots" : "bottomshots", dwCommand);
-
 		Q_strncpyz(z, "^3Available weapon codes:^7\n", sizeof(z));
 		for (i = WS_KNIFE; i < WS_MAX; i++)
 		{
