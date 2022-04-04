@@ -1663,11 +1663,11 @@ static void CG_ShareTimer_f(void)
 		{
 			Q_strncpyz(text, Q_StrReplace(text, enemyLimbotimeText, va("%i", limboTime)), sizeof(text));
 		}
-		trap_SendConsoleCommand(va("%s %s", cmd, text));
+		trap_SendConsoleCommand(va("%s %s\n", cmd, text));
 	}
 	else
 	{
-		trap_SendConsoleCommand(va("%s Enemy spawns every %i seconds: next at %i", cmd, limboTime, nextSpawn));
+		trap_SendConsoleCommand(va("%s Enemy spawns every %i seconds: next at %i\n", cmd, limboTime, nextSpawn));
 	}
 
 }
