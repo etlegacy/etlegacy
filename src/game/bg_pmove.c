@@ -64,8 +64,8 @@ extern vmCvar_t g_pronedelay;
 #define MAX_AIMSPREAD_TIME 1000
 #define EXTENDEDPRONE_TIME 400
 
-pmove_t *pm;
-pml_t   pml;
+pmove_t * pm;
+pml_t pml;
 
 // movement parameters
 float pm_stopspeed = 100;
@@ -4953,17 +4953,18 @@ void PmoveSingle(pmove_t *pmove)
 		pm->ps->eFlags &= ~EF_ZOOMING;
 	}
 
-	if (pm->activateLean && pm->cmd.buttons & BUTTON_ACTIVATE)
+	if (!pm->activateLean)
 	{
-		if (pm->cmd.rightmove < 0)
+		if (pm->cmd.wbuttons & WBUTTON_LEANLEFT && pm->cmd.buttons & BUTTON_ACTIVATE)
 		{
-			pm->cmd.wbuttons |= WBUTTON_LEANLEFT;
+			pm->cmd.rightmove = -127;
+			pm->cmd.wbuttons ^= WBUTTON_LEANLEFT;
 		}
-		else if (pm->cmd.rightmove > 0)
+		else if (pm->cmd.wbuttons & WBUTTON_LEANRIGHT && pm->cmd.buttons & BUTTON_ACTIVATE)
 		{
-			pm->cmd.wbuttons |= WBUTTON_LEANRIGHT;
+			pm->cmd.rightmove = 127;
+			pm->cmd.wbuttons ^= WBUTTON_LEANRIGHT;
 		}
-		pm->cmd.rightmove = 0;
 	}
 
 	// make sure walking button is clear if they are running, to avoid
