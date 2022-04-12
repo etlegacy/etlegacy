@@ -1695,3 +1695,82 @@ gfx/2d/crosshairp_alt
 		rgbGen vertex
 	}
 }
+
+// voice chat sprites
+
+sprites/greentick
+{
+	nocompress
+	nopicmip
+	{
+		map sprites/greentick.tga
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbGen vertex
+	}
+}
+
+sprites/redcross
+{
+	nocompress
+	nopicmip
+	{
+		map sprites/redcross.tga
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbGen vertex
+	}
+}
+
+gfx/limbo/ic_soldier
+{
+	nocompress
+	nopicmip
+	{
+		map gfx/limbo/ic_soldier.tga
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbGen vertex
+	}
+}
+
+gfx/limbo/ic_medic
+{
+	nocompress
+	nopicmip
+	{
+		map gfx/limbo/ic_medic.tga
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbGen vertex
+	}
+}
+
+gfx/limbo/ic_engineer
+{
+	nocompress
+	nopicmip
+	{
+		map gfx/limbo/ic_engineer.tga
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbGen vertex
+	}
+}
+
+gfx/limbo/ic_fieldops
+{
+	nocompress
+	nopicmip
+	{
+		map gfx/limbo/ic_fieldops.tga
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbGen vertex
+	}
+}
+
+gfx/limbo/ic_covertops
+{
+	nocompress
+	nopicmip
+	{
+		map gfx/limbo/ic_covertops.tga
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbGen vertex
+	}
+}
