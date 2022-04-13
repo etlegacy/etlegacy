@@ -870,7 +870,7 @@ void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, float h,
 			reviveClr[3] = .5f + .5f * (float)((sin(sqrt((double)msec) * 25 * M_TAU_F) + 1) * 0.5);
 
 			trap_R_SetColor(reviveClr);
-			CG_DrawPic(icon_pos[0] + 2, icon_pos[1] + 2, icon_extends[0] - 2, icon_extends[1] - 2, cgs.media.ccMedicIcon);
+			CG_DrawPic(icon_pos[0], icon_pos[1], icon_extends[0], icon_extends[1], cgs.media.ccMedicIcon);
 		}
 		else
 		{
@@ -2527,11 +2527,6 @@ void CG_DrawCompassIcon(float x, float y, float w, float h, vec3_t origin, vec3_
 		if (shader == cgs.media.medicReviveShader)
 		{
 			iconx += iconWidth * .5f;
-			// why do we need to do this? why is wounded player drawn off center?
-			iconx      += 2;
-			icony      += 2;
-			iconWidth  -= 2;
-			iconHeight -= 2;
 		}
 
 		// is the icon inside map boundaries?
