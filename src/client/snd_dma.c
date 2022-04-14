@@ -88,7 +88,7 @@ static sfx_t *sfxHash[LOOP_HASH];
 cvar_t *s_testsound;
 cvar_t *s_show;
 cvar_t *s_mixahead;
-cvar_t *s_mixPreStep;
+cvar_t *s_mixOffset;
 cvar_t *s_debugStreams;
 
 static loopSound_t loopSounds[MAX_LOOP_SOUNDS];
@@ -1594,7 +1594,7 @@ void S_GetSoundtime(void)
 
 	if (dma.submission_chunk < 256)
 	{
-		s_paintedtime = s_soundtime + s_mixPreStep->value * dma.speed;
+		s_paintedtime = s_soundtime + s_mixOffset->value * dma.speed;
 	}
 	else
 	{
@@ -1641,7 +1641,7 @@ void S_Update_(void)
 	}
 
 	ma = s_mixahead->value * dma.speed;
-	op = s_mixPreStep->value + sane * dma.speed * 0.01f;
+	op = s_mixOffset->value + sane * dma.speed * 0.01f;
 
 	if (op < ma)
 	{
@@ -2326,7 +2326,7 @@ qboolean S_Base_Init(soundInterface_t *si)
 	}
 
 	s_mixahead     = Cvar_Get("s_mixahead", "0.2", CVAR_ARCHIVE);
-	s_mixPreStep   = Cvar_Get("s_mixPreStep", "0.05", CVAR_ARCHIVE);
+	s_mixOffset    = Cvar_Get("s_mixOffset", "0.0", CVAR_ARCHIVE);
 	s_show         = Cvar_Get("s_show", "0", CVAR_CHEAT);
 	s_testsound    = Cvar_Get("s_testsound", "0", CVAR_CHEAT);
 	s_debugStreams = Cvar_Get("s_debugStreams", "0", CVAR_TEMP);
