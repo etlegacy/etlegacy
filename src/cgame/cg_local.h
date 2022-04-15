@@ -2680,6 +2680,11 @@ extern vmCvar_t cg_fov;
 extern vmCvar_t cg_muzzleFlash;
 extern vmCvar_t cg_drawEnvAwareness;
 extern vmCvar_t cg_drawCompassIcons;
+extern vmCvar_t cg_dynamicIcons;
+extern vmCvar_t cg_dynamicIconsDistance;
+extern vmCvar_t cg_dynamicIconsSize;
+extern vmCvar_t cg_dynamicIconsMaxScale;
+extern vmCvar_t cg_dynamicIconsMinScale;
 
 extern vmCvar_t cg_zoomDefaultSniper;
 

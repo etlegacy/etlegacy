@@ -203,6 +203,99 @@ static int CG_GetVoiceChatForCommandMap(int voiceChat)
 }
 
 /**
+* @brief CG_PlayerDistanceScaling
+* @details Calculates smallest player icon scale based on distance between players
+*
+* @param[in] player
+* @return
+*/
+static float CG_PlayerDistanceScaling(mapEntityData_t *player)
+{
+	mapEntityData_t *mEnt, *mEntScale;
+	centity_t       *cent, *centScale;
+	int             i;
+	float           distance, scale, minScale = cg_dynamicIconsMaxScale.value;
+	vec3_t          vec1, vec2;
+
+	if (cg_dynamicIconsMinScale.value == cg_dynamicIconsMaxScale.value || cg_dynamicIconsDistance.integer <= 0)
+	{
+		return minScale;
+	}
+
+	mEnt = player;
+	cent = &cg_entities[mEnt->data];
+
+	// get up-to-date position if possible so scaling is smooth
+	if (mEnt->data == cg.clientNum)
+	{
+		VectorCopy(cg.predictedPlayerEntity.lerpOrigin, vec1);
+	}
+	else if (cent->currentValid)
+	{
+		VectorCopy(cent->lerpOrigin, vec1);
+	}
+	else
+	{
+		VectorSet(vec1, mEnt->x, mEnt->y, mEnt->z);
+	}
+
+	vec1[2] = 0;
+
+	for (i = 0; i < mapEntityCount; i++)
+	{
+		mEntScale = &mapEntities[i];
+
+		if (mEntScale->type != ME_PLAYER &&
+		    mEntScale->type != ME_PLAYER_DISGUISED &&
+		    mEntScale->type != ME_PLAYER_OBJECTIVE &&
+		    mEntScale->type != ME_PLAYER_REVIVE)
+		{
+			continue;
+		}
+
+		if (mEnt->data == mEntScale->data)
+		{
+			continue;
+		}
+
+		centScale = &cg_entities[mEntScale->data];
+
+		// get up-to-date position if possible so scaling is smooth
+		if (mEntScale->data == cg.clientNum)
+		{
+			VectorCopy(cg.predictedPlayerEntity.lerpOrigin, vec2);
+		}
+		else if (centScale->currentValid)
+		{
+			VectorCopy(centScale->lerpOrigin, vec2);
+		}
+		else
+		{
+			VectorSet(vec2, mEntScale->x, mEntScale->y, mEntScale->z);
+		}
+
+		vec2[2] = 0;
+
+		// calculate distance and scale
+		distance = VectorDistance(vec1, vec2);
+		scale    = distance / cg_dynamicIconsDistance.integer;
+
+		if (minScale > scale)
+		{
+			if (scale < cg_dynamicIconsMinScale.value)
+			{
+				// found the min scale value
+				minScale = cg_dynamicIconsMinScale.value;
+				break;
+			}
+			minScale = scale;
+		}
+	}
+
+	return minScale;
+}
+
+/**
  * @brief Calculate the scaled (zoomed) yet unshifted coordinate for
  * each map entity within the automap
  */
@@ -724,6 +817,11 @@ void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, float h,
 
 		if (scissor)
 		{
+			if (cg_dynamicIcons.integer)
+			{
+				icon_size = icon_size * CG_PlayerDistanceScaling(mEnt);
+			}
+
 			icon_pos[0] = mEnt->automapTransformed[0] - scissor->tl[0] + x - (icon_size * (scissor->zoomFactor / AUTOMAP_ZOOM));
 			icon_pos[1] = mEnt->automapTransformed[1] - scissor->tl[1] + y - (icon_size * (scissor->zoomFactor / AUTOMAP_ZOOM));
 		}
@@ -772,7 +870,7 @@ void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, float h,
 			reviveClr[3] = .5f + .5f * (float)((sin(sqrt((double)msec) * 25 * M_TAU_F) + 1) * 0.5);
 
 			trap_R_SetColor(reviveClr);
-			CG_DrawPic(icon_pos[0] + 2, icon_pos[1] + 2, icon_extends[0] - 2, icon_extends[1] - 2, cgs.media.ccMedicIcon);
+			CG_DrawPic(icon_pos[0], icon_pos[1], icon_extends[0], icon_extends[1], cgs.media.ccMedicIcon);
 		}
 		else
 		{
@@ -1344,7 +1442,14 @@ void CG_DrawMap(float x, float y, float w, float h, int mEntFilter, mapScissor_t
 	{
 		if (scissor->circular)
 		{
-			icon_size = AUTOMAP_PLAYER_ICON_SIZE;
+			if (cg_dynamicIcons.integer)
+			{
+				icon_size = cg_dynamicIconsSize.integer;
+			}
+			else
+			{
+				icon_size = AUTOMAP_PLAYER_ICON_SIZE;
+			}
 
 			if (scissor->br[0] >= scissor->tl[0])
 			{
@@ -1372,7 +1477,14 @@ void CG_DrawMap(float x, float y, float w, float h, int mEntFilter, mapScissor_t
 		}
 		else
 		{
-			icon_size = CG_IsShoutcaster() ? AUTOMAP_PLAYER_ICON_SIZE_SC : AUTOMAP_PLAYER_ICON_SIZE;
+			if (cg_dynamicIcons.integer)
+			{
+				icon_size = cg_dynamicIconsSize.integer;
+			}
+			else
+			{
+				icon_size = CG_IsShoutcaster() ? AUTOMAP_PLAYER_ICON_SIZE_SC : AUTOMAP_PLAYER_ICON_SIZE;
+			}
 
 			if (scissor->br[0] >= scissor->tl[0])
 			{
@@ -2415,11 +2527,6 @@ void CG_DrawCompassIcon(float x, float y, float w, float h, vec3_t origin, vec3_
 		if (shader == cgs.media.medicReviveShader)
 		{
 			iconx += iconWidth * .5f;
-			// why do we need to do this? why is wounded player drawn off center?
-			iconx      += 2;
-			icony      += 2;
-			iconWidth  -= 2;
-			iconHeight -= 2;
 		}
 
 		// is the icon inside map boundaries?
