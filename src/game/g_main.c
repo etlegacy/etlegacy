@@ -5273,7 +5273,8 @@ void G_RunEntity(gentity_t *ent, int msec)
  */
 void G_RunFrame(int levelTime)
 {
-	int i, msec;
+	int  i, msec;
+	char cs[MAX_STRING_CHARS];
 
 	// if we are waiting for the level to restart, do nothing
 	if (level.restarted)
@@ -5298,7 +5299,10 @@ void G_RunFrame(int levelTime)
 	else
 	{
 		level.timeDelta = levelTime - level.timeCurrent;
-		if ((level.time % 500) == 0)
+
+		trap_GetConfigstring(CS_LEVEL_START_TIME, cs, sizeof(cs));
+
+		if (Q_atoi(cs) + 500 <= level.startTime + level.timeDelta)
 		{
 			// FIXME: set a PAUSE cs and let the client adjust their local starttimes
 			//        instead of this spam
