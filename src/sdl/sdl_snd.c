@@ -206,48 +206,25 @@ int SND_SamplesForFreq(int freq, int level)
 	{
 	case 11025:
 		samples = 256;
-		if (level == 1)
-		{
-			samples /= 2;
-		}
-		else if (level == 2)
-		{
-			samples /= 4;
-		}
 		break;
 	case 22050:
 		samples = 512;
-		if (level == 1)
-		{
-			samples /= 2;
-		}
-		else if (level == 2)
-		{
-			samples /= 4;
-		}
 		break;
 	case 44100:
 		samples = 1024;
-		if (level == 1)
-		{
-			samples /= 2;
-		}
-		else if (level == 2)
-		{
-			samples /= 4;
-		}
 		break;
 	default:     // 48KHz
 		samples = 2048;
-		if (level == 1)
-		{
-			samples /= 2;
-		}
-		else if (level == 2)
-		{
-			samples /= 4;
-		}
 		break;
+	}
+
+	if (level == 1)
+	{
+		samples /= 2;
+	}
+	else if (level == 2)
+	{
+		samples /= 4;
 	}
 
 	return samples;

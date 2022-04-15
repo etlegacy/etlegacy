@@ -6103,7 +6103,7 @@ void UI_RunMenuScript(char **args)
 			trap_Cvar_Set("m_filter", va("%i", ui_m_filter));
 			trap_Cvar_Set("s_initsound", va("%i", ui_s_initsound));
 			trap_Cvar_Set("s_khz", va("%i", ui_s_khz));
-			trap_Cvar_Set("ui_s_sdlLevelSamps", va("%i", ui_s_sdlLevelSamps));
+			trap_Cvar_Set("s_sdlLevelSamps", va("%i", ui_s_sdlLevelSamps));
 			trap_Cvar_Set("r_detailtextures", va("%i", ui_r_detailtextures));
 			trap_Cvar_Set("r_ext_texture_filter_anisotropic", va("%i", ui_r_ext_texture_filter_anisotropic));
 			trap_Cvar_Set("r_ext_multisample", va("%i", ui_r_ext_multisample));
