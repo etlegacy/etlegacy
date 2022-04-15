@@ -355,6 +355,7 @@ vmCvar_t cg_fontScaleCN; // crosshair name
 // unlagged optimized prediction
 vmCvar_t cg_optimizePrediction;
 vmCvar_t cg_debugPlayerHitboxes;
+vmCvar_t cg_debugBullets;
 
 #if defined(FEATURE_RATING) || defined(FEATURE_PRESTIGE)
 // ratings scoreboard
@@ -459,6 +460,7 @@ static cvarTable_t cvarTable[] =
 	{ &cg_debugPosition,           "cg_debugposition",           "0",           CVAR_CHEAT,                   0 },
 	{ &cg_debugEvents,             "cg_debugevents",             "0",           CVAR_CHEAT,                   0 },
 	{ &cg_debugPlayerHitboxes,     "cg_debugPlayerHitboxes",     "0",           CVAR_CHEAT,                   0 },
+	{ &cg_debugBullets,            "cg_debugBullets",            "0",           CVAR_CHEAT,                   0 },
 	{ &cg_errorDecay,              "cg_errordecay",              "100",         CVAR_CHEAT,                   0 },
 	{ &cg_nopredict,               "cg_nopredict",               "0",           CVAR_CHEAT,                   0 },
 	{ &cg_noPlayerAnims,           "cg_noplayeranims",           "0",           CVAR_CHEAT,                   0 },

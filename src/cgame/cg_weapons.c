@@ -6681,6 +6681,10 @@ qboolean CG_CalcMuzzlePoint(int entityNum, vec3_t muzzle)
 				VectorMA(muzzle, 14, forward, muzzle);
 			}
 		}
+		else if (cent->currentState.eFlags & EF_CROUCHING)
+		{
+			muzzle[2] += CROUCH_VIEWHEIGHT;
+		}
 		else
 		{
 			muzzle[2] += DEFAULT_VIEWHEIGHT;
@@ -6823,7 +6827,7 @@ void CG_Bullet(int weapon, vec3_t end, int sourceEntityNum, qboolean flesh, int 
 
 	// if the shooter is currently valid, calc a source point and possibly
 	// do trail effects
-	if (cg_tracerChance.value > 0)
+	if (cg_tracerChance.value > 0 || cg_debugBullets.integer)
 	{
 		if (CG_CalcMuzzlePoint(sourceEntityNum, start))
 		{
@@ -6850,6 +6854,11 @@ void CG_Bullet(int weapon, vec3_t end, int sourceEntityNum, qboolean flesh, int 
 					trap_CM_BoxTrace(&trace, start, end, NULL, NULL, 0, CONTENTS_WATER);
 					CG_BubbleTrail(end, trace.endpos, .5, 8);
 				}
+			}
+
+			if (cg_debugBullets.integer)
+			{
+				CG_RailTrail(tv(0.0f, 1.0f, 0.0f), start, end, 0, 0);
 			}
 
 			if (cg_tracers.integer)

@@ -2856,6 +2856,7 @@ extern vmCvar_t cg_fontScaleCN;
 // unlagged optimized prediction
 extern vmCvar_t cg_optimizePrediction;
 extern vmCvar_t cg_debugPlayerHitboxes;
+extern vmCvar_t cg_debugBullets;
 
 // scoreboard
 extern vmCvar_t cg_scoreboard;
@@ -3132,6 +3133,7 @@ void CG_BuildSolidList(void);
 int CG_PointContents(const vec3_t point, int passEntityNum);
 void CG_Trace(trace_t *result, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int skipNumber, int mask);
 void CG_PredictPlayerState(void);
+float CG_ClientHitboxMaxZ(entityState_t *hitEnt, float def);
 
 // cg_edv.c
 void CG_RunBindingBuf(int key, qboolean down, char *buf);
