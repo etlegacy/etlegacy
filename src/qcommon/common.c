@@ -2955,8 +2955,8 @@ void Com_Init(char *commandLine)
 	com_timedemo  = Cvar_Get("timedemo", "0", CVAR_CHEAT);
 
 #ifdef DEDICATED
-	com_watchdog     = Cvar_Get("com_watchdog", "60", CVAR_ARCHIVE);
-	com_watchdog_cmd = Cvar_Get("com_watchdog_cmd", "", CVAR_ARCHIVE);
+	com_watchdog     = Cvar_Get("com_watchdog", "60", CVAR_ARCHIVE_ND);
+	com_watchdog_cmd = Cvar_Get("com_watchdog_cmd", "", CVAR_ARCHIVE_ND);
 #endif
 
 	cl_paused       = Cvar_Get("cl_paused", "0", CVAR_ROM);

@@ -1191,8 +1191,9 @@ void Cvar_Reset_f(void)
  */
 void Cvar_WriteVariables(fileHandle_t f)
 {
-	cvar_t *var;
-	char   buffer[1024];
+	cvar_t     *var;
+	char       buffer[1024];
+	const char *value;
 
 	for (var = cvar_vars ; var ; var = var->next)
 	{
@@ -1203,45 +1204,34 @@ void Cvar_WriteVariables(fileHandle_t f)
 
 		if (var->flags & CVAR_ARCHIVE)
 		{
-			// write the latched value, even if it hasn't taken effect yet
-			if (var->latchedString)
-			{
-				if (strlen(var->name) + strlen(var->latchedString) + 10 > sizeof(buffer))
-				{
-					Com_Printf(S_COLOR_YELLOW "WARNING: value of variable "
-					                          "\"%s\" too long to write to file\n", var->name);
-					continue;
-				}
+			int len;
 
-				if (var->flags & CVAR_UNSAFE)
-				{
-					Com_sprintf(buffer, sizeof(buffer), "seta %s \"%s\" unsafe\n", var->name, var->latchedString);
-				}
-				else
-				{
-					Com_sprintf(buffer, sizeof(buffer), "seta %s \"%s\"\n", var->name, var->latchedString);
-				}
+			// write the latched value, even if it hasn't taken effect yet
+			value = var->latchedString ? var->latchedString : var->string;
+
+			if (strlen(var->name) + strlen(value) + 10 > sizeof(buffer))
+			{
+				Com_Printf(S_COLOR_YELLOW "WARNING: value of variable "
+				                          "\"%s\" too long to write to file\n", var->name);
+				continue;
+			}
+
+			if ((var->flags & CVAR_NODEFAULT) && !Q_stricmp(value, var->resetString))
+			{
+				continue;
+			}
+
+			if (var->flags & CVAR_UNSAFE)
+			{
+				len = Com_sprintf(buffer, sizeof(buffer), "seta %s \"%s\" unsafe\n", var->name, value);
 			}
 			else
 			{
-				if (strlen(var->name) + strlen(var->string) + 10 > sizeof(buffer))
-				{
-					Com_Printf(S_COLOR_YELLOW "WARNING: value of variable "
-					                          "\"%s\" too long to write to file\n", var->name);
-					continue;
-				}
-
-				if (var->flags & CVAR_UNSAFE)
-				{
-					Com_sprintf(buffer, sizeof(buffer), "seta %s \"%s\" unsafe\n", var->name, var->string);
-				}
-				else
-				{
-					Com_sprintf(buffer, sizeof(buffer), "seta %s \"%s\"\n", var->name, var->string);
-				}
+				len = Com_sprintf(buffer, sizeof(buffer), "seta %s \"%s\"\n", var->name, value);
 			}
 
-			FS_Write(buffer, strlen(buffer), f);
+
+			FS_Write(buffer, len, f);
 		}
 	}
 }

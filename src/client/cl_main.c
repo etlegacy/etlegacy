@@ -2923,22 +2923,22 @@ void CL_Init(void)
 
 	rconAddress = Cvar_Get("rconAddress", "", 0);
 
-	cl_yawspeed      = Cvar_Get("cl_yawspeed", "140", CVAR_ARCHIVE);
-	cl_pitchspeed    = Cvar_Get("cl_pitchspeed", "140", CVAR_ARCHIVE);
+	cl_yawspeed      = Cvar_Get("cl_yawspeed", "140", CVAR_ARCHIVE_ND);
+	cl_pitchspeed    = Cvar_Get("cl_pitchspeed", "140", CVAR_ARCHIVE_ND);
 	cl_anglespeedkey = Cvar_Get("cl_anglespeedkey", "1.5", 0);
 
 	cl_maxpackets = Cvar_Get("cl_maxpackets", "125", CVAR_ARCHIVE);
-	cl_packetdup  = Cvar_Get("cl_packetdup", "1", CVAR_ARCHIVE);
+	cl_packetdup  = Cvar_Get("cl_packetdup", "1", CVAR_ARCHIVE_ND);
 
-	cl_run         = Cvar_Get("cl_run", "1", CVAR_ARCHIVE);
+	cl_run         = Cvar_Get("cl_run", "1", CVAR_ARCHIVE_ND);
 	cl_sensitivity = Cvar_Get("sensitivity", "5", CVAR_ARCHIVE);
-	cl_mouseAccel  = Cvar_Get("cl_mouseAccel", "0", CVAR_ARCHIVE);
-	cl_freelook    = Cvar_Get("cl_freelook", "1", CVAR_ARCHIVE);
+	cl_mouseAccel  = Cvar_Get("cl_mouseAccel", "0", CVAR_ARCHIVE_ND);
+	cl_freelook    = Cvar_Get("cl_freelook", "1", CVAR_ARCHIVE_ND);
 
 	cl_showMouseRate = Cvar_Get("cl_showmouserate", "0", 0);
 
-	cl_allowDownload = Cvar_Get("cl_allowDownload", "1", CVAR_ARCHIVE);
-	cl_wwwDownload   = Cvar_Get("cl_wwwDownload", "1", CVAR_USERINFO | CVAR_ARCHIVE);
+	cl_allowDownload = Cvar_Get("cl_allowDownload", "1", CVAR_ARCHIVE_ND);
+	cl_wwwDownload   = Cvar_Get("cl_wwwDownload", "1", CVAR_USERINFO | CVAR_ARCHIVE_ND);
 
 	cl_profile        = Cvar_Get("cl_profile", "", CVAR_ROM);
 	cl_defaultProfile = Cvar_Get("cl_defaultProfile", "", CVAR_ROM);
@@ -2956,13 +2956,13 @@ void CL_Init(void)
 
 	cl_bypassMouseInput = Cvar_Get("cl_bypassMouseInput", "0", 0);    //CVAR_ROM );
 
-	cl_doubletapdelay = Cvar_Get("cl_doubletapdelay", "0", CVAR_ARCHIVE);    // double tap
+	cl_doubletapdelay = Cvar_Get("cl_doubletapdelay", "0", CVAR_ARCHIVE_ND);    // double tap
 
-	m_pitch   = Cvar_Get("m_pitch", "0.022", CVAR_ARCHIVE);
-	m_yaw     = Cvar_Get("m_yaw", "0.022", CVAR_ARCHIVE);
-	m_forward = Cvar_Get("m_forward", "0.25", CVAR_ARCHIVE);
-	m_side    = Cvar_Get("m_side", "0.25", CVAR_ARCHIVE);
-	m_filter  = Cvar_Get("m_filter", "0", CVAR_ARCHIVE);
+	m_pitch   = Cvar_Get("m_pitch", "0.022", CVAR_ARCHIVE_ND);
+	m_yaw     = Cvar_Get("m_yaw", "0.022", CVAR_ARCHIVE_ND);
+	m_forward = Cvar_Get("m_forward", "0.25", CVAR_ARCHIVE_ND);
+	m_side    = Cvar_Get("m_side", "0.25", CVAR_ARCHIVE_ND);
+	m_filter  = Cvar_Get("m_filter", "0", CVAR_ARCHIVE_ND);
 
 	// make these cvars visible to cgame
 	cl_demorecording = Cvar_Get("cl_demorecording", "0", CVAR_ROM);
@@ -2975,7 +2975,7 @@ void CL_Init(void)
 	cl_packetloss  = Cvar_Get("cl_packetloss", "0", CVAR_CHEAT);
 	cl_packetdelay = Cvar_Get("cl_packetdelay", "0", CVAR_CHEAT);
 
-	Cvar_Get("cl_maxPing", "800", CVAR_ARCHIVE);
+	Cvar_Get("cl_maxPing", "800", CVAR_ARCHIVE_ND);
 
 	// ~ and `, as keys and characters
 	cl_consoleKeys = Cvar_Get("cl_consoleKeys", "~ ` 0x7e 0x60", CVAR_ARCHIVE);
@@ -2995,7 +2995,7 @@ void CL_Init(void)
 	Cvar_Get("cg_zoomStepSniper", "2", CVAR_ARCHIVE);
 
 	// userinfo
-	Cvar_Get("name", DEFAULT_NAME, CVAR_USERINFO | CVAR_ARCHIVE);
+	Cvar_Get("name", DEFAULT_NAME, CVAR_USERINFO | CVAR_ARCHIVE_ND);
 	Cvar_Get("rate", "25000", CVAR_USERINFO | CVAR_ARCHIVE);
 	Cvar_Get("snaps", "20", CVAR_USERINFO | CVAR_ARCHIVE);
 	Cvar_Get("etVersion", ET_VERSION, CVAR_USERINFO | CVAR_ROM);
