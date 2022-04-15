@@ -97,12 +97,16 @@ Grab info about current lib versions from our [Libs Changelog](https://github.co
 To get the latest source code install [git](https://git-scm.com/) and
 clone our repository hosted at [Github.com](https://github.com/etlegacy/etlegacy):
 
-    $ git clone git://github.com/etlegacy/etlegacy.git
+```sh
+$ git clone git@github.com:etlegacy/etlegacy.git
+```
 
 If the required dependencies are not installed on your system run:
 
-    $ git submodule init
-    $ git submodule update
+```sh
+$ git submodule init
+$ git submodule update
+```
 
 This downloads the essential dependencies into the `libs/`directory. You can choose
 whether to use bundled libraries instead of the system ones by changing the
@@ -141,8 +145,10 @@ Install required dependencies.
 
 In terminal, run one of the following:
 
-    $ ./easybuild.sh        # for compiling a 32 bit version or
-    $ ./easybuild.sh -64    # for compiling a 64 bit version
+```sh
+$ ./easybuild.sh        # for compiling a 32 bit version or
+$ ./easybuild.sh -64    # for compiling a 64 bit version
+```
 
 ET: Legacy will be installed in `~/etlegacy`.
 
@@ -150,15 +156,21 @@ ET: Legacy will be installed in `~/etlegacy`.
 
 In terminal, run:
 
-    $ mkdir build && cd build && cmake ..
+```sh
+$ mkdir build && cd build && cmake ..
+```
 
 To compile, run:
 
-    $ make
+```sh
+$ make
+```
 
 If you wish to install ET: Legacy system-wide, run:
 
-    # make install
+```sh
+$ make install
+```
 
 Be sure to set the CMake variables (see above) beforehand.
 
@@ -176,9 +188,11 @@ Be sure to set the CMake variables (see above) beforehand.
 
 In terminal, run:
 
-    $ mkdir build && cd build
-    $ cmake -DCMAKE_TOOLCHAIN_FILE=../cmake/Toolchain-cross-mingw-linux.cmake ..
-    $ make
+```sh
+$ mkdir build && cd build
+$ cmake -DCMAKE_TOOLCHAIN_FILE=../cmake/Toolchain-cross-mingw-linux.cmake ..
+$ make
+```
 
 By default, MinGW name is set to **`i686-w64-mingw32`**. You may have to change it in
 `cmake/Toolchain-cross-mingw-linux.cmake` depending on how it is called on your system.
@@ -205,11 +219,16 @@ ET: Legacy will be installed in `My Documents\ETLegacy-Build`.
 
 In the command prompt, run:
 
-    cmake -G "NMake Makefiles" -DBUNDLED_LIBS=YES .. && nmake
+```sh
+$ cmake -G "NMake Makefiles" -DBUNDLED_LIBS=YES .. && nmake
+```
 
 or
 
-    cmake -G "Visual Studio 16" -A Win32 -DBUNDLED_LIBS=YES ..
+```sh
+$ cmake -G "Visual Studio 16" -A Win32 -DBUNDLED_LIBS=YES .. # Visual Studio 2019
+# or "Visual Studio 17" for Visual Studio 2022
+```
 
 and open the resulting project in Visual Studio.
 
@@ -237,8 +256,10 @@ Install:
 
 Then brew the following packages in the terminal app:
 
-    $ brew install --cask xquartz
-    $ brew install gnu-sed cmake glew sdl2 minizip jpeg-turbo curl lua libogg libvorbis theora freetype libpng sqlite openal-soft autoconf nasm automake libtool
+```sh
+$ brew install --cask xquartz
+$ brew install gnu-sed cmake glew sdl2 minizip jpeg-turbo curl lua libogg libvorbis theora freetype libpng sqlite openal-soft autoconf nasm automake libtool
+```
 
 Depending on what brew version you're using (mostly older ones), you have to specify `brew install --universal` to get both 32bit and 64bit libs. If it throws an error, just use the command listed above. Although your system curl library supports both architectures, you also need to install its headers.
 
@@ -248,14 +269,18 @@ There are many flags and options provided by easybuild.sh. The ET: Legacy versio
 
 If you're running **up to macOS 10.14 (Mojave)**, use one the following flags in Terminal.app:
 
-    $ ./easybuild.sh        # for compiling a 32 bit version or
-    $ ./easybuild.sh -64    # for compiling a 64 bit version
+```sh
+$ ./easybuild.sh        # for compiling a 32 bit version or
+$ ./easybuild.sh -64    # for compiling a 64 bit version
+```
 
 This will put an 'etlegacy' folder with the selected arch into your user folder.
 
 With **macOS 10.15 (Catalina) and above**, your only option is to compile and run a 64 bit client. Therefore you need to use the following flags:
 
-    $ ./easybuild.sh -64 --osx=10.15    #watch out for the double dash at --osx !
+```sh
+$ ./easybuild.sh -64 --osx=10.15    #watch out for the double dash at --osx !
+```
 
 Take a look into easybuild.sh for more information and further options/flags.
 
@@ -263,17 +288,23 @@ Take a look into easybuild.sh for more information and further options/flags.
 
 In terminal, run:
 
-    $ mkdir build && cd build && cmake ..
+```sh
+$ mkdir build && cd build && cmake ..
+```
 
 Look into easybuild.sh for all available CMake options.
 
 To compile, run:
 
-    $ make
+```sh
+$ make
+```
 
 If you wish to install ET: Legacy system-wide, run:
 
-    # make install
+```sh
+$ make install
+```
 
 Be sure to set the CMake variables (see above) beforehand.
 
@@ -294,8 +325,8 @@ ET: Legacy supports both OpenGL and OpenGL ES on the Raspberry Pi.
 
 **Required dependencies**
 
-```
-sudo apt-get install build-essential libfreeimage-dev libopenal-dev libpango1.0-dev libsndfile-dev libudev-dev \
+```sh
+$ sudo apt-get install build-essential libfreeimage-dev libopenal-dev libpango1.0-dev libsndfile-dev libudev-dev \
 libasound2-dev libjpeg8-dev libwebp-dev automake libgl1-mesa-glx libjpeg62-turbo libogg0 libopenal1 libvorbis0a \
 libvorbisfile3 zlib1g libraspberrypi0 libraspberrypi-bin libraspberrypi-dev libx11-dev libglew-dev libegl1-mesa-dev \
 nasm autoconf git cmake zip gcc g++ libtool libxrandr-dev x11proto-randr-dev
@@ -305,7 +336,7 @@ nasm autoconf git cmake zip gcc g++ libtool libxrandr-dev x11proto-randr-dev
 On the Pi 3B+, it is advised to add a slight overclock to the GPU to provide a better experience. Run `sudo nano /boot/config.txt` and
 add the following to the config file:
 
-```
+```sh
 core_freq=500
 v3d_freq=500
 ```
