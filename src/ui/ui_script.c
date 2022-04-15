@@ -634,6 +634,7 @@ void Script_ConditionalScript(itemDef_t *item, qboolean *bAbort, char **args)
 				int   ui_cg_shadows                       = (int)(DC->getCVarValue("ui_cg_shadows"));
 				int   ui_s_initsound                      = (int)(DC->getCVarValue("ui_s_initsound"));
 				int   ui_s_khz                            = (int)(DC->getCVarValue("ui_s_khz"));
+				int   ui_s_sdlLevelSamps                  = (int)(DC->getCVarValue("ui_s_sdlLevelSamps"));
 				char  ui_r_texturemode[MAX_CVAR_VALUE_STRING];
 
 				char  cl_lang[MAX_CVAR_VALUE_STRING];
@@ -656,6 +657,7 @@ void Script_ConditionalScript(itemDef_t *item, qboolean *bAbort, char **args)
 				int   cg_shadows                       = (int)(DC->getCVarValue("cg_shadows"));
 				int   s_initsound                      = (int)(DC->getCVarValue("s_initsound"));
 				int   s_khz                            = (int)(DC->getCVarValue("s_khz"));
+				int   s_sdlLevelSamps                  = (int)(DC->getCVarValue("s_sdlLevelSamps"));
 				char  r_texturemode[MAX_CVAR_VALUE_STRING];
 
 				trap_Cvar_VariableStringBuffer("ui_cl_lang", ui_cl_lang, sizeof(ui_cl_lang));
@@ -683,6 +685,7 @@ void Script_ConditionalScript(itemDef_t *item, qboolean *bAbort, char **args)
 				    ui_cg_shadows != cg_shadows ||
 				    ui_s_khz != s_khz ||
 				    ui_s_initsound != s_initsound ||
+				    ui_s_sdlLevelSamps != s_sdlLevelSamps ||
 				    Q_stricmp(r_texturemode, ui_r_texturemode))
 				{
 					Item_RunScript(item, bAbort, script1);

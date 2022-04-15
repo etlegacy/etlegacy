@@ -49,6 +49,7 @@ cvar_t *s_device;
 cvar_t *s_sdlChannels; // external s_channels (GPL: cvar_t s_numchannels )
 cvar_t *s_sdlDevSamps;
 cvar_t *s_sdlMixSamps;
+cvar_t *s_sdlLevelSamps;
 
 /* The audio callback. All the magic happens here. */
 static int               dmapos    = 0;
@@ -198,6 +199,37 @@ static void SND_DeviceList(void)
 	}
 }
 
+int SND_SamplesForFreq(int freq, int level)
+{
+	int samples;
+	switch (freq)
+	{
+	case 11025:
+		samples = 256;
+		break;
+	case 22050:
+		samples = 512;
+		break;
+	case 44100:
+		samples = 1024;
+		break;
+	default:     // 48KHz
+		samples = 2048;
+		break;
+	}
+
+	if (level == 1)
+	{
+		samples /= 2;
+	}
+	else if (level == 2)
+	{
+		samples /= 4;
+	}
+
+	return samples;
+}
+
 /**
  * @brief SNDDMA_Init
  * @return
@@ -221,9 +253,10 @@ qboolean SNDDMA_Init(void)
 	s_khz         = Cvar_Get("s_khz", "44", CVAR_LATCH | CVAR_ARCHIVE);
 	s_sdlChannels = Cvar_Get("s_channels", "2", CVAR_LATCH | CVAR_ARCHIVE);
 
-	s_sdlDevSamps = Cvar_Get("s_sdlDevSamps", "0", CVAR_LATCH | CVAR_ARCHIVE);
-	s_sdlMixSamps = Cvar_Get("s_sdlMixSamps", "0", CVAR_LATCH | CVAR_ARCHIVE);
-	s_device      = Cvar_Get("s_device", "-1", CVAR_LATCH | CVAR_ARCHIVE);
+	s_sdlDevSamps   = Cvar_Get("s_sdlDevSamps", "0", CVAR_LATCH | CVAR_ARCHIVE);
+	s_sdlMixSamps   = Cvar_Get("s_sdlMixSamps", "0", CVAR_LATCH | CVAR_ARCHIVE);
+	s_sdlLevelSamps = Cvar_Get("s_sdlLevelSamps", "0", CVAR_LATCH | CVAR_ARCHIVE);
+	s_device        = Cvar_Get("s_device", "-1", CVAR_LATCH | CVAR_ARCHIVE);
 
 	Com_Printf("SDL_Init( SDL_INIT_AUDIO )... ");
 
@@ -269,22 +302,21 @@ qboolean SNDDMA_Init(void)
 	}
 	else
 	{
-		// just pick a sane default.
 		if (desired.freq <= 11025)
 		{
-			desired.samples = 256;
+			desired.samples = SND_SamplesForFreq(desired.freq, s_sdlLevelSamps->integer);
 		}
 		else if (desired.freq <= 22050)
 		{
-			desired.samples = 512;
+			desired.samples = SND_SamplesForFreq(desired.freq, s_sdlLevelSamps->integer);
 		}
 		else if (desired.freq <= 44100)
 		{
-			desired.samples = 1024;
+			desired.samples = SND_SamplesForFreq(desired.freq, s_sdlLevelSamps->integer);
 		}
 		else
 		{
-			desired.samples = 2048;  // (*shrug*)
+			desired.samples = SND_SamplesForFreq(desired.freq, s_sdlLevelSamps->integer); // 48KHz
 		}
 	}
 
