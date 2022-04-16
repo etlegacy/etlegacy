@@ -1359,6 +1359,14 @@ void Cvar_List_f(void)
 		{
 			Com_Printf(" ");
 		}
+		if (var->flags & CVAR_NODEFAULT)
+		{
+			Com_Printf("N");
+		}
+		else
+		{
+			Com_Printf(" ");
+		}
 
 		if (raw)
 		{

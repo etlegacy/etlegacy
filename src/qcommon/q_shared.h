@@ -433,7 +433,7 @@ typedef int clipHandle_t;
 #define SIZE_GB_FLOAT(bytes) ((bytes) * (1.0f / 1073741824.0f))
 
 #define ENABLEBIT(x, y) x |= BIT(y)
-#define CLEARBIT(x, y) x &= ~BIT(y)
+#define CLEARBIT(x, y) x  &= ~BIT(y)
 #define TOGGLEBIT(x, y) x ^= BIT(y)
 #define CHECKBIT(x, y) ((x) & BIT(y))
 
@@ -942,11 +942,11 @@ default values.
 #define CVAR_PROTECTED              BIT(16)      ///< prevent modifying this var from VMs or the server
 #define CVAR_SHADER                 BIT(17)      ///< we need to recompile the glsl shaders
 #define CVAR_NOTABCOMPLETE          BIT(18)      ///< Don't autocomplete this on the console
-#define CVAR_NODEFAULT		        BIT(19)	     ///< do not write to config if matching with default value
+#define CVAR_NODEFAULT              BIT(19)      ///< do not write to config if matching with default value
 #define CVAR_MODIFIED               BIT(30)      ///< Cvar was modified
 #define CVAR_NONEXISTENT            BIT(31)      ///< Cvar doesn't exist.
 
-#define CVAR_ARCHIVE_ND		(CVAR_ARCHIVE | CVAR_NODEFAULT)
+#define CVAR_ARCHIVE_ND     (CVAR_ARCHIVE | CVAR_NODEFAULT)
 
 /**
  * @struct cvar_s
