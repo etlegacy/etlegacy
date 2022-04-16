@@ -4148,9 +4148,13 @@ typedef struct hudStructure_s
 	hudComponent_t followtext;
 	hudComponent_t demotext;
 
-	hudComponent_t missilecamera; // 29
+	hudComponent_t missilecamera;
 
-	hudComponent_t *components[29];
+	hudComponent_t sprinttext;
+	hudComponent_t breathtext;
+	hudComponent_t weaponchargetext; // 32
+
+	hudComponent_t *components[32];
 } hudStucture_t;
 
 hudStucture_t *CG_GetActiveHUD();

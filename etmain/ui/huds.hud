@@ -37,5 +37,8 @@ hudDef {
 		followtext 8 164 0.22 0.22 1 1 0.19 1 1 1 1
 		demotext 10 9 0.22 0.22 1 1 0.22 1 0 0 1
 		missilecamera 4 160 160 120 1 1
+		sprinttext 20 384 0 0 0 1 0.25 1 1 1 1
+		breathtext 20 384 0 0 0 1 0.25 1 1 1 1
+		weaponchargetext 624 384 0 0 0 1 0.25 1 1 1 1
 	}
 }
