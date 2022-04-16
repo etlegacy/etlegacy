@@ -1824,7 +1824,7 @@ void CL_DemoInit(void)
 	Cmd_AddCommand("seeknext", CL_SeekNext_f);
 	Cmd_AddCommand("seekprev", CL_SeekPrev_f);
 
-	cl_maxRewindBackups = Cvar_Get("cl_maxRewindBackups", va("%i", MAX_REWIND_BACKUPS), CVAR_ARCHIVE | CVAR_LATCH);
+	cl_maxRewindBackups = Cvar_Get("cl_maxRewindBackups", va("%i", MAX_REWIND_BACKUPS), CVAR_ARCHIVE_ND | CVAR_LATCH);
 #endif
 }
 

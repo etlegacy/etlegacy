@@ -249,14 +249,14 @@ qboolean SNDDMA_Init(void)
 
 	Cmd_AddCommand("sndlist", SND_DeviceList, "Prints a list of available sound devices.");
 
-	s_bits        = Cvar_Get("s_bits", "16", CVAR_LATCH | CVAR_ARCHIVE);
-	s_khz         = Cvar_Get("s_khz", "44", CVAR_LATCH | CVAR_ARCHIVE);
-	s_sdlChannels = Cvar_Get("s_channels", "2", CVAR_LATCH | CVAR_ARCHIVE);
+	s_bits        = Cvar_Get("s_bits", "16", CVAR_LATCH | CVAR_ARCHIVE_ND);
+	s_khz         = Cvar_Get("s_khz", "44", CVAR_LATCH | CVAR_ARCHIVE_ND);
+	s_sdlChannels = Cvar_Get("s_channels", "2", CVAR_LATCH | CVAR_ARCHIVE_ND);
 
-	s_sdlDevSamps   = Cvar_Get("s_sdlDevSamps", "0", CVAR_LATCH | CVAR_ARCHIVE);
-	s_sdlMixSamps   = Cvar_Get("s_sdlMixSamps", "0", CVAR_LATCH | CVAR_ARCHIVE);
-	s_sdlLevelSamps = Cvar_Get("s_sdlLevelSamps", "0", CVAR_LATCH | CVAR_ARCHIVE);
-	s_device        = Cvar_Get("s_device", "-1", CVAR_LATCH | CVAR_ARCHIVE);
+	s_sdlDevSamps   = Cvar_Get("s_sdlDevSamps", "0", CVAR_LATCH | CVAR_ARCHIVE_ND);
+	s_sdlMixSamps   = Cvar_Get("s_sdlMixSamps", "0", CVAR_LATCH | CVAR_ARCHIVE_ND);
+	s_sdlLevelSamps = Cvar_Get("s_sdlLevelSamps", "0", CVAR_LATCH | CVAR_ARCHIVE_ND);
+	s_device        = Cvar_Get("s_device", "-1", CVAR_LATCH | CVAR_ARCHIVE_ND);
 
 	Com_Printf("SDL_Init( SDL_INIT_AUDIO )... ");
 
