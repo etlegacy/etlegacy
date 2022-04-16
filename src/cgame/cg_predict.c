@@ -1494,16 +1494,26 @@ void CG_PredictPlayerState(void)
 	}
 	else
 	{
-		double x = (cg.cameraShakeTime - cg.time) / cg.cameraShakeLength; // starts at 1, approaches 0 over time
+		double x         = (cg.cameraShakeTime - cg.time) / cg.cameraShakeLength; // starts at 1, approaches 0 over time
+		float  valz      = sin(M_PI * 8 * 13.0 + cg.cameraShakePhase) * x * 6 * cg.cameraShakeScale;
+		float  valy      = sin(M_PI * 17 * x + cg.cameraShakePhase) * x * 6 * cg.cameraShakeScale;
+		float  valx      = cos(M_PI * 7 * x + cg.cameraShakePhase) * x * 6 * cg.cameraShakeScale;
+		float  frametime = 8.0f; // 125fps behaviour
+		float  scale     = cg.frametime / frametime;
 
-		// move
-		cg.predictedPlayerState.origin[2] +=
-			sin(M_PI * 8 * 13.0 + cg.cameraShakePhase) * x * 6.0f * cg.cameraShakeScale;
+		vec3_t shake = { valx * scale, valy * scale, valz * scale };
 
-		cg.predictedPlayerState.origin[1] +=
-			sin(M_PI * 17 * x + cg.cameraShakePhase) * x * 6.0f * cg.cameraShakeScale;
+		int   t = cg.time - cg.predictedErrorTime;
+		float f = (cg_errorDecay.value - t) / cg_errorDecay.value;
 
-		cg.predictedPlayerState.origin[0] +=
-			cos(M_PI * 7 * x + cg.cameraShakePhase) * x * 6.0f * cg.cameraShakeScale;
+		if (f < 0)
+		{
+			f = 0;
+		}
+
+		VectorScale(cg.predictedError, f, cg.predictedError);
+
+		VectorAdd(shake, cg.predictedError, cg.predictedError);
+		cg.predictedErrorTime = cg.oldTime;
 	}
 }
