@@ -458,11 +458,14 @@ int Text_Height(const char *text, float scale, int limit)
  */
 int Multiline_Text_Height(const char *text, float scale, int limit)
 {
-	float        max         = 0;
+	float        lineHeight  = 0;
 	float        totalheight = 0;
 	glyphInfo_t  *glyph;
 	const char   *s    = text;
 	fontHelper_t *font = &uiInfo.uiDC.Assets.fonts[uiInfo.activeFont];
+
+	glyph      = Q_UTF8_GetGlyph(font, "$");
+	lineHeight = glyph->height;
 
 	if (text)
 	{
@@ -485,21 +488,9 @@ int Multiline_Text_Height(const char *text, float scale, int limit)
 			{
 				if (*s == '\n')
 				{
-					if (totalheight == 0.f)
-					{
-						totalheight += 5;   // 5 is the vertical spacing that autowrap painting uses
-					}
-					totalheight += max;
-					max          = 0;
+					totalheight += lineHeight;
 				}
-				else
-				{
-					glyph = Q_UTF8_GetGlyph(font, s);
-					if (max < glyph->height)
-					{
-						max = glyph->height;
-					}
-				}
+
 				s += Q_UTF8_Width(s);
 				count++;
 			}
@@ -508,16 +499,12 @@ int Multiline_Text_Height(const char *text, float scale, int limit)
 
 	if (totalheight > 0)
 	{
-		if (totalheight == 0.f)
-		{
-			totalheight += 5;   // 5 is the vertical spacing that autowrap painting uses
-		}
-		totalheight += max;
+		totalheight += lineHeight * 2;
 		return totalheight * scale * Q_UTF8_GlyphScale(font);
 	}
 	else
 	{
-		return max * scale * Q_UTF8_GlyphScale(font);
+		return lineHeight * scale * Q_UTF8_GlyphScale(font);
 	}
 }
 
