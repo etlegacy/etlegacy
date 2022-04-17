@@ -2111,6 +2111,12 @@ const char *ItemParse_removeUiCvarPrefix(const char *cvar)
 {
 	if (!Q_strncmp(cvar, "ui_", 3))
 	{
+		// if there isn't a second underscore, it's likely a real
+		// cvar that starts with ui_ prefix (e.g. ui_showtooltips)
+		if (!Q_stristr(cvar + 3, "_"))
+		{
+			return cvar;
+		}
 		return cvar + 3;
 	}
 
