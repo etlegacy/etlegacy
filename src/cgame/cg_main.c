@@ -394,6 +394,8 @@ vmCvar_t cg_chatLineWidth;
 
 vmCvar_t cg_activateLean;
 
+vmCvar_t cg_healthDynamicColor;
+
 typedef struct
 {
 	vmCvar_t *vmCvar;
@@ -685,6 +687,8 @@ static cvarTable_t cvarTable[] =
 	{ &cg_chatLineWidth,           "cg_chatLineWidth",           "70",          CVAR_ARCHIVE,                 0 },
 
 	{ &cg_activateLean,            "cg_activateLean",            "0",           CVAR_ARCHIVE,                 0 },
+
+	{ &cg_healthDynamicColor,      "cg_healthDynamicColor",      "0",           CVAR_ARCHIVE,                 0 },
 };
 
 static const unsigned int cvarTableSize = sizeof(cvarTable) / sizeof(cvarTable[0]);

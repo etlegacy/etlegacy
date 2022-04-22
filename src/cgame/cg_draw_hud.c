@@ -1198,8 +1198,23 @@ static void CG_DrawPlayerHealth(float x, float y)
 	const char *str  = va("%i", cg.snap->ps.stats[STAT_HEALTH]);
 	float      scale = activehud->healthtext.scale;
 	float      w     = CG_Text_Width_Ext(str, scale, 0, &cgs.media.limboFont1);
+	vec4_t     color;
 
-	CG_Text_Paint_Ext(x - w, y, scale, scale, activehud->healthtext.color, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
+	if (cg_healthDynamicColor.integer)
+	{
+		int    clientNum = cg.snap->ps.clientNum;
+		int    cls       = cg.snap->ps.stats[STAT_PLAYER_CLASS];
+		team_t team      = cg.snap->ps.persistant[PERS_TEAM];
+		int    maxHealth = CG_GetPlayerMaxHealth(clientNum, cls, team);
+		CG_GetColorForHealth(cg.snap->ps.stats[STAT_HEALTH], color);
+		color[3] = activehud->healthtext.color[3];
+	}
+	else
+	{
+		Vector4Copy(activehud->healthtext.color, color);
+	}
+
+	CG_Text_Paint_Ext(x - w, y, scale, scale, color, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
 	CG_Text_Paint_Ext(x + 2, y, scale - 0.05f, scale - 0.05f, activehud->healthtext.color, "HP", 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
 }
 
@@ -1217,7 +1232,7 @@ static void CG_DrawPlayerSprint(float x, float y)
 
 	if (cg.snap->ps.powerups[PW_ADRENALINE])
 	{
-        str  = va("%d", (cg.snap->ps.powerups[PW_ADRENALINE] - cg.time) / 1000);
+		str  = va("%d", (cg.snap->ps.powerups[PW_ADRENALINE] - cg.time) / 1000);
 		unit = "s";
 	}
 	else
