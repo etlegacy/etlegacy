@@ -2882,7 +2882,7 @@ void weapon_callAirStrike(gentity_t *ent)
 		plane->s.teamNum    = ent->s.teamNum;
 		plane->s.clientNum  = ent->s.clientNum;
 		plane->r.ownerNum   = ent->r.ownerNum;
-		plane->nextthink    = level.time + 1000 + (i * 2000);   // 1000 for aircraft flyby, other term for tumble stagger
+		plane->nextthink    = level.time + 250 + (i * 2000);   // 1000 (250 + 750 from first missile) for aircraft flyby, other term for tumble stagger
 		plane->r.svFlags    = SVF_BROADCAST;
 		plane->count        = NUMBOMBS;
 		plane->s.eType      = ET_AIRSTRIKE_PLANE;
