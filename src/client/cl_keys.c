@@ -345,8 +345,8 @@ void Field_Draw(field_t *edit, int x, int y, int width, qboolean showCursor, qbo
  */
 void Field_Paste(field_t *edit)
 {
-	char         *cbd;
-	size_t       pasteLen, i;
+	char   *cbd;
+	size_t pasteLen, i;
 
 	cbd = IN_GetClipboardData();
 
@@ -370,6 +370,52 @@ void Field_Paste(field_t *edit)
 	Z_Free(cbd);
 }
 
+/*
+=================
+Field_NextWord
+=================
+*/
+
+/**
+ * @brief Seeks words in console with CTRL + left/right arrow keys
+ *
+ * @param[in,out] edit
+ * @param[in] direction
+ */
+static void Field_SeekWord(field_t *edit, int direction)
+{
+	if (direction > 0)
+	{
+		while (edit->buffer[edit->cursor] == ' ')
+		{
+			edit->cursor++;
+		}
+		while (edit->buffer[edit->cursor] != '\0' && edit->buffer[edit->cursor] != ' ')
+		{
+			edit->cursor++;
+		}
+		while (edit->buffer[edit->cursor] == ' ')
+		{
+			edit->cursor++;
+		}
+	}
+	else
+	{
+		while (edit->cursor > 0 && edit->buffer[edit->cursor - 1] == ' ')
+		{
+			edit->cursor--;
+		}
+		while (edit->cursor > 0 && edit->buffer[edit->cursor - 1] != ' ')
+		{
+			edit->cursor--;
+		}
+		if (edit->cursor == 0 && (edit->buffer[0] == '/' || edit->buffer[0] == '\\'))
+		{
+			edit->cursor++;
+		}
+	}
+}
+
 /**
  * @brief Performs the basic line editing functions for the console,
  * in-game talk, and menu fields
@@ -390,8 +436,8 @@ void Field_KeyDownEvent(field_t *edit, int key)
 		return;
 	}
 
-	key = tolower(key);
-	len = strlen(edit->buffer);
+	key       = tolower(key);
+	len       = strlen(edit->buffer);
 	stringLen = Q_UTF8_Strlen(edit->buffer);
 
 	switch (key)
@@ -400,9 +446,9 @@ void Field_KeyDownEvent(field_t *edit, int key)
 	case K_KP_DEL:
 		if (edit->cursor < stringLen)
 		{
-			int offset = Q_UTF8_ByteOffset(edit->buffer, edit->cursor);
-			char *current = Q_UTF8_CharAt(edit->buffer, edit->cursor);
-			int charWidth = Q_UTF8_Width(current);
+			int  offset    = Q_UTF8_ByteOffset(edit->buffer, edit->cursor);
+			char *current  = Q_UTF8_CharAt(edit->buffer, edit->cursor);
+			int  charWidth = Q_UTF8_Width(current);
 
 			memmove(edit->buffer + offset,
 			        edit->buffer + offset + charWidth, len - offset);
@@ -412,14 +458,28 @@ void Field_KeyDownEvent(field_t *edit, int key)
 	case K_KP_RIGHTARROW:
 		if (edit->cursor < stringLen)
 		{
-			edit->cursor++;
+			if (keys[K_LCTRL].down || keys[K_RCTRL].down)
+			{
+				Field_SeekWord(edit, 1);
+			}
+			else
+			{
+				edit->cursor++;
+			}
 		}
 		break;
 	case K_LEFTARROW:
 	case K_KP_LEFTARROW:
 		if (edit->cursor > 0)
 		{
-			edit->cursor--;
+			if (keys[K_LCTRL].down || keys[K_RCTRL].down)
+			{
+				Field_SeekWord(edit, -1);
+			}
+			else
+			{
+				edit->cursor--;
+			}
 		}
 		break;
 	case K_HOME:
@@ -494,9 +554,9 @@ void Field_CharEvent(field_t *edit, int ch)
 	{
 		if (edit->cursor > 0)
 		{
-			int offset = Q_UTF8_ByteOffset(edit->buffer, edit->cursor);
-			char *prev = Q_UTF8_CharAt(edit->buffer, edit->cursor - 1);
-			int charWidth = Q_UTF8_Width(prev);
+			int  offset    = Q_UTF8_ByteOffset(edit->buffer, edit->cursor);
+			char *prev     = Q_UTF8_CharAt(edit->buffer, edit->cursor - 1);
+			int  charWidth = Q_UTF8_Width(prev);
 			memmove(edit->buffer + offset - charWidth, edit->buffer + offset, len + 1 - offset);
 			edit->cursor--;
 			if (edit->cursor < edit->scroll)
@@ -1355,7 +1415,7 @@ void CL_KeyEvent(int key, qboolean down, unsigned time)
 	// most keys during demo playback will bring up the menu, but non-ascii
 	// keys can still be used for bound actions
 	if (down && (key < 128 || key == K_MOUSE1)
-		&& (clc.demo.playing || cls.state == CA_CINEMATIC) && !cls.keyCatchers)
+	    && (clc.demo.playing || cls.state == CA_CINEMATIC) && !cls.keyCatchers)
 	{
 
 		Cvar_Set("nextdemo", "");
