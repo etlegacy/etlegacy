@@ -1033,6 +1033,8 @@ struct gclient_s
 	qboolean freezed;                       ///< client is frozen see PM_FREEZE
 
 	int constructSoundTime;                 ///< construction sound time
+
+	qboolean activateHeld;                  ///< client is holding down +activate
 };
 
 /**

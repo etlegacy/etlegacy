@@ -1684,11 +1684,19 @@ void ClientThink(int clientNum)
  */
 void G_RunClient(gentity_t *ent)
 {
-	// special case for uniform grabbing
+	// special case for uniform grabbing and shoving
 	// don't let spectator activate
-	if (ent->client->sess.sessionTeam != TEAM_SPECTATOR && ent->client->pers.cmd.buttons & BUTTON_ACTIVATE)
+	if (ent->client->sess.sessionTeam != TEAM_SPECTATOR)
 	{
-		Cmd_Activate2_f(ent);
+		if (ent->client->pers.cmd.buttons & BUTTON_ACTIVATE)
+		{
+			Cmd_Activate2_f(ent);
+			ent->client->activateHeld = qtrue;
+		}
+		else
+		{
+			ent->client->activateHeld = qfalse;
+		}
 	}
 
 	if (ent->health <= 0 && (ent->client->ps.pm_flags & PMF_LIMBO))
