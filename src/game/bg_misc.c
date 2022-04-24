@@ -3621,6 +3621,19 @@ void BG_AddPredictableEventToPlayerstate(int newEvent, int eventParm, playerStat
 	ps->eventSequence++;
 }
 
+/**
+* @brief Handles the sequence numbers
+* @param[in] newEvent
+* @param[in] eventParm
+* @param[out] pmext
+*/
+void BG_AddPredictableEventToPmoveExt(int newEvent, int eventParm, pmoveExt_t *pmext)
+{
+	pmext->events[pmext->eventSequence & (MAX_EVENTS - 1)]     = newEvent;
+	pmext->eventParms[pmext->eventSequence & (MAX_EVENTS - 1)] = eventParm;
+	pmext->eventSequence++;
+}
+
 // NOTE: would like to just inline this but would likely break qvm support
 #define SETUP_MOUNTEDGUN_STATUS(ps)                           \
 	switch (ps->persistant[PERS_HWEAPON_USE]) {                \
