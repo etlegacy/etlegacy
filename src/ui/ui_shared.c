@@ -810,7 +810,7 @@ static bind_t g_bindings[] =
 	{ "ready",                                     K_F3,            -1,  K_F3,            -1,  -1, -1, -1 },
 	{ "notready",                                  K_F4,            -1,  K_F4,            -1,  -1, -1, -1 },
 	{ "autoscreenshot",                            K_F11,           -1,  K_F11,           -1,  -1, -1, -1 },
-	{ "autoRecord",                                K_F12,           -1,  K_F12,           -1,  -1, -1, -1 },
+	{ "toggleRecord",                              K_F12,           -1,  K_F12,           -1,  -1, -1, -1 },
 	{ "mp_fireteamadmin",                          K_KP_ENTER,      -1,  K_KP_ENTER,      -1,  -1, -1, -1 },
 	{ "selectbuddy -1",                            K_KP_PLUS,       -1,  K_KP_PLUS,       -1,  -1, -1, -1 },
 	{ "selectbuddy 0",                             K_KP_END,        -1,  K_KP_END,        -1,  -1, -1, -1 },

@@ -36,6 +36,8 @@
 
 #include "cg_local.h"
 
+char *Binding_FromName(const char *cvar);
+
 /**
  * @brief Debugging command to print the current position
  */
@@ -873,6 +875,25 @@ static void CG_currentTime_f(void)
 void CG_autoRecord_f(void)
 {
 	trap_SendConsoleCommand(va("record %s\n", CG_generateFilename()));
+}
+
+/**
+ * @brief Starts or stops demo recording
+ */
+void CG_toggleRecord_f(void)
+{
+	char bindstr[32];
+	Q_strncpyz(bindstr, Binding_FromName("togglerecord"), sizeof(bindstr));
+
+	if (!cl_demorecording.integer)
+	{
+		trap_SendConsoleCommand(va("record %s\n", CG_generateFilename()));
+		CG_Printf("Press ^3%s ^7again to stop recording.\n", bindstr);
+	}
+	else
+	{
+		trap_SendConsoleCommand("stoprecord\n");
+	}
 }
 
 /**
@@ -2192,6 +2213,7 @@ static consoleCommand_t commands[] =
 	{ "-objectives",         CG_objectivesUp_f         },
 
 	{ "autoRecord",          CG_autoRecord_f           },
+	{ "toggleRecord",        CG_toggleRecord_f         },
 	{ "autoScreenshot",      CG_autoScreenShot_f       },
 	{ "currentTime",         CG_currentTime_f          },
 	{ "keyoff",              CG_keyOff_f               },
