@@ -187,7 +187,7 @@ qboolean CL_GetSnapshot(int snapshotNumber, snapshot_t *snapshot)
 	for (i = 0 ; i < count ; i++)
 	{
 		snapshot->entities[i] =
-		    cl.parseEntities[(clSnap->parseEntitiesNum + i) & (MAX_PARSE_ENTITIES - 1)];
+			cl.parseEntities[(clSnap->parseEntitiesNum + i) & (MAX_PARSE_ENTITIES - 1)];
 	}
 
 	// FIXME: configstring changes and server commands!!!
@@ -1182,7 +1182,7 @@ void CL_InitCGame(void)
 	cgvm = VM_Create("cgame", qtrue, CL_CgameSystemCalls, VMI_NATIVE);
 	if (!cgvm)
 	{
-		Com_Error(ERR_DROP, "VM_Create on cgame failed");
+		VM_Error(ERR_DROP, "cgame", Sys_GetDLLName("cgame"));
 	}
 	cls.state = CA_LOADING;
 

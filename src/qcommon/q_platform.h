@@ -348,10 +348,10 @@
 #define PATH_SEP '/'
 
 #if defined __arm__
-      #undef ARCH_STRING
-      #define ARCH_STRING "armeabi-v7a"
+	  #undef ARCH_STRING
+	  #define ARCH_STRING "armeabi-v7a"
 #elif defined __aarch64__
-      #define ARCH_STRING "arm64-v8a"
+	  #define ARCH_STRING "arm64-v8a"
 #endif
 
 #if __FLOAT_WORD_ORDER == __BIG_ENDIAN
@@ -385,6 +385,14 @@
 
 #ifndef DLL_EXT
 #error "DLL_EXT not defined"
+#endif
+
+
+// x86 platform?
+#if defined(_M_IX86) || defined(__i386__)
+#define ARCH_X86 1
+#else
+#define ARCH_X86 0
 #endif
 
 

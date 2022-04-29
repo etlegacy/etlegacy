@@ -157,7 +157,7 @@ void LAN_SaveServersToFile(void)
  */
 static void LAN_ResetPings(int source)
 {
-	int          count    = 0, i;
+	int          count = 0, i;
 	serverInfo_t *servers = NULL;
 
 	switch (source)
@@ -766,7 +766,7 @@ static void LAN_MarkServerVisible(int source, int n, qboolean visible)
 		switch (source)
 		{
 		case AS_LOCAL:
-			count   = MAX_OTHER_SERVERS;
+			count  = MAX_OTHER_SERVERS;
 			server = &cls.localServers[0];
 			break;
 		case AS_GLOBAL:
@@ -774,7 +774,7 @@ static void LAN_MarkServerVisible(int source, int n, qboolean visible)
 			server = &cls.globalServers[0];
 			break;
 		case AS_FAVORITES:
-			count   = MAX_FAVOURITE_SERVERS;
+			count  = MAX_FAVOURITE_SERVERS;
 			server = &cls.favoriteServers[0];
 			break;
 		default:
@@ -1410,7 +1410,7 @@ void CL_InitUI(void)
 	uivm = VM_Create("ui", qtrue, CL_UISystemCalls, VMI_NATIVE);
 	if (!uivm)
 	{
-		Com_Error(ERR_FATAL, "VM_Create on UI failed");
+		VM_Error(ERR_FATAL, "ui", Sys_GetDLLName("ui"));
 	}
 
 	// sanity check
