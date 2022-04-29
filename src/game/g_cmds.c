@@ -4381,25 +4381,29 @@ void Cmd_Activate2_f(gentity_t *ent)
 		pass2 = qtrue;
 	}
 
-	// look for a guy to push
+	// don't allow constant shoving by holding down +activate
+	if (!ent->client->activateHeld)
+	{
+		// look for a guy to push
 #ifdef FEATURE_OMNIBOT
-	if ((g_OmniBotFlags.integer & OBF_SHOVING) || !(ent->r.svFlags & SVF_BOT))
-	{
-#endif
-	trap_Trace(&tr, offset, NULL, NULL, end, ent->s.number, (CONTENTS_SOLID | CONTENTS_BODY | CONTENTS_CORPSE));
-	if (tr.entityNum >= 0)
-	{
-		gentity_t *traceEnt = &g_entities[tr.entityNum];
-
-		if (traceEnt->client)
+		if ((g_OmniBotFlags.integer & OBF_SHOVING) || !(ent->r.svFlags & SVF_BOT))
 		{
-			G_PushPlayer(ent, traceEnt);
-			return;
-		}
-	}
-#ifdef FEATURE_OMNIBOT
-}
 #endif
+		trap_Trace(&tr, offset, NULL, NULL, end, ent->s.number, (CONTENTS_SOLID | CONTENTS_BODY | CONTENTS_CORPSE));
+		if (tr.entityNum >= 0)
+		{
+			gentity_t *traceEnt = &g_entities[tr.entityNum];
+
+			if (traceEnt->client)
+			{
+				G_PushPlayer(ent, traceEnt);
+				return;
+			}
+		}
+#ifdef FEATURE_OMNIBOT
+	}
+#endif
+	}
 
 	// trace the world for corpse
 	G_TempTraceIgnorePlayers();
@@ -4432,8 +4436,8 @@ void Cmd_Activate2_f(gentity_t *ent)
  */
 void SetPlayerSpawn(gentity_t *ent, int majorSpawn, int minorSpawn, qboolean update)
 {
-	int               resolvedSpawnPoint;
-	int               targetSpawnPoint;
+	int resolvedSpawnPoint;
+	int targetSpawnPoint;
 	spawnPointState_t *spawnPointState;
 	spawnPointState_t *targetSpawnPointState;
 
@@ -4480,8 +4484,8 @@ void SetPlayerSpawn(gentity_t *ent, int majorSpawn, int minorSpawn, qboolean upd
  */
 void Cmd_SetSpawnPoint_f(gentity_t *ent, unsigned int dwCommand, int value)
 {
-	char              arg[MAX_TOKEN_CHARS];
-	int               i, majorSpawn, minorSpawn = -1;
+	char arg[MAX_TOKEN_CHARS];
+	int i, majorSpawn, minorSpawn = -1;
 	spawnPointState_t *spawnPointState;
 
 	if (trap_Argc() != 2 && trap_Argc() != 3)
@@ -4541,7 +4545,7 @@ void Cmd_SetSpawnPoint_f(gentity_t *ent, unsigned int dwCommand, int value)
  */
 void Cmd_WeaponStat_f(gentity_t *ent, unsigned int dwCommand, int value)
 {
-	char             buffer[16];
+	char buffer[16];
 	extWeaponStats_t stat;
 
 	if (!ent || !ent->client)
@@ -4587,7 +4591,7 @@ void Cmd_ForceTapout_f(gentity_t *ent, unsigned int dwCommand, int value)
 void Cmd_IntermissionWeaponStats_f(gentity_t *ent, unsigned int dwCommand, int value)
 {
 	char buffer[1024];
-	int  i, clientNum;
+	int i, clientNum;
 
 	if (!ent || !ent->client)
 	{
@@ -4672,7 +4676,7 @@ void Cmd_IntermissionReady_f(gentity_t *ent, unsigned int dwCommand, int value)
 void Cmd_IntermissionPlayerKillsDeaths_f(gentity_t *ent, unsigned int dwCommand, int value)
 {
 	char buffer[1024];
-	int  i;
+	int i;
 
 	if (!ent || !ent->client)
 	{
@@ -4704,7 +4708,7 @@ void Cmd_IntermissionPlayerKillsDeaths_f(gentity_t *ent, unsigned int dwCommand,
 void Cmd_IntermissionPlayerTime_f(gentity_t *ent, unsigned int dwCommand, int value)
 {
 	char buffer[1024];
-	int  i;
+	int i;
 
 	if (!ent || !ent->client)
 	{
@@ -4736,8 +4740,8 @@ void Cmd_IntermissionPlayerTime_f(gentity_t *ent, unsigned int dwCommand, int va
  */
 void Cmd_IntermissionSkillRating_f(gentity_t *ent, unsigned int dwCommand, int value)
 {
-	char      buffer[1024];
-	int       i;
+	char buffer[1024];
+	int i;
 	gclient_t *cl;
 
 	if (!ent || !ent->client)
@@ -4779,8 +4783,8 @@ void Cmd_IntermissionSkillRating_f(gentity_t *ent, unsigned int dwCommand, int v
  */
 void Cmd_IntermissionPrestige_f(gentity_t *ent, unsigned int dwCommand, int value)
 {
-	char      buffer[1024];
-	int       i;
+	char buffer[1024];
+	int i;
 	gclient_t *cl;
 
 	if (!ent || !ent->client)
@@ -4891,7 +4895,7 @@ void G_CalcClientAccuracies(void)
 void Cmd_IntermissionWeaponAccuracies_f(gentity_t *ent, unsigned int dwCommand, int value)
 {
 	char buffer[1024];
-	int  i;
+	int i;
 
 	if (!ent || !ent->client)
 	{
@@ -4924,10 +4928,10 @@ void Cmd_IntermissionWeaponAccuracies_f(gentity_t *ent, unsigned int dwCommand, 
  */
 void Cmd_SelectedObjective_f(gentity_t *ent, unsigned int dwCommand, int value)
 {
-	int   i, val;
-	char  buffer[16];
+	int i, val;
+	char buffer[16];
 	vec_t dist, neardist = 0;
-	int   nearest = -1;
+	int nearest = -1;
 
 	if (!ent || !ent->client)
 	{
@@ -4984,7 +4988,7 @@ void Cmd_SelectedObjective_f(gentity_t *ent, unsigned int dwCommand, int value)
 void Cmd_Ignore_f(gentity_t *ent, unsigned int dwCommand, int value)
 {
 	char cmd[MAX_TOKEN_CHARS];
-	int  cnum;
+	int cnum;
 
 	trap_Argv(1, cmd, sizeof(cmd));
 
@@ -5012,7 +5016,7 @@ void Cmd_Ignore_f(gentity_t *ent, unsigned int dwCommand, int value)
 void Cmd_UnIgnore_f(gentity_t *ent, unsigned int dwCommand, int value)
 {
 	char cmd[MAX_TOKEN_CHARS];
-	int  cnum;
+	int cnum;
 
 	trap_Argv(1, cmd, sizeof(cmd));
 
@@ -5041,11 +5045,11 @@ void Cmd_UnIgnore_f(gentity_t *ent, unsigned int dwCommand, int value)
  */
 void Cmd_SwapPlacesWithBot_f(gentity_t *ent, int botNum)
 {
-	gentity_t          *botent = &g_entities[botNum];
-	gclient_t          cl, *client = ent->client;
+	gentity_t *botent = &g_entities[botNum];
+	gclient_t cl, *client = ent->client;
 	clientPersistant_t saved;
-	clientSession_t    sess;
-	int                persistant[MAX_PERSISTANT];
+	clientSession_t sess;
+	int persistant[MAX_PERSISTANT];
 
 	if (!botent->client)
 	{
@@ -5112,7 +5116,7 @@ void Cmd_SwapPlacesWithBot_f(gentity_t *ent, int botNum)
 void ClientCommand(int clientNum)
 {
 	gentity_t *ent = g_entities + clientNum;
-	char      cmd[MAX_TOKEN_CHARS];
+	char cmd[MAX_TOKEN_CHARS];
 
 	if (!ent->client)
 	{
