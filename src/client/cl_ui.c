@@ -1410,7 +1410,15 @@ void CL_InitUI(void)
 	uivm = VM_Create("ui", qtrue, CL_UISystemCalls, VMI_NATIVE);
 	if (!uivm)
 	{
-		Com_Error(ERR_FATAL, "VM_Create on UI failed");
+        char *filename = Sys_GetDLLName("ui");
+        if (!Q_stricmp(CPUSTRING, "win-x86") || !Q_stricmp(CPUSTRING, "linux-i386"))
+        {
+            Com_Error(ERR_FATAL, "%s", va("VM_Create on ui failed\n\nMake sure ^2%s ^*is present in the mods folder you're trying to run.", filename));
+        }
+        else
+        {
+            Com_Error(ERR_FATAL, "%s", va("VM_Create on ui failed\n\nMake sure ^2%s ^*is present in the mods folder you're trying to run and that the mod is compatible with your platform.", filename));
+        }
 	}
 
 	// sanity check
