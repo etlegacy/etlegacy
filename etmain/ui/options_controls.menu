@@ -108,7 +108,7 @@ menuDef {
 	BIND( 6+(SUBWINDOW_WIDTH)+6+2, MISC_Y+40, (SUBWINDOW_WIDTH)-4, 10, _("Ready:"), .2, 8, "ready", "" )
 	BIND( 6+(SUBWINDOW_WIDTH)+6+2, MISC_Y+52, (SUBWINDOW_WIDTH)-4, 10, _("Not Ready:"), .2, 8, "notready", "" )
 	BIND( 6+(SUBWINDOW_WIDTH)+6+2, MISC_Y+64, (SUBWINDOW_WIDTH)-4, 10, _("Take Screenshot:"), .2, 8, "autoScreenshot", "" )
-	BIND( 6+(SUBWINDOW_WIDTH)+6+2, MISC_Y+76, (SUBWINDOW_WIDTH)-4, 10, _("Record Replay:"), .2, 8, "autoRecord", "" )
+	BIND( 6+(SUBWINDOW_WIDTH)+6+2, MISC_Y+76, (SUBWINDOW_WIDTH)-4, 10, _("Record Replay:"), .2, 8, "toggleRecord", "" )
 
 
 // Buttons //
