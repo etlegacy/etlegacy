@@ -1182,15 +1182,7 @@ void CL_InitCGame(void)
 	cgvm = VM_Create("cgame", qtrue, CL_CgameSystemCalls, VMI_NATIVE);
 	if (!cgvm)
 	{
-		char *filename = Sys_GetDLLName("cgame");
-		if (!Q_stricmp(CPUSTRING, "win-x86") || !Q_stricmp(CPUSTRING, "linux-i386"))
-		{
-			Com_Error(ERR_DROP, "%s", va("VM_Create on cgame failed\n\nMake sure ^2%s ^*is present in the mods folder you're trying to run.", filename));
-		}
-		else
-		{
-			Com_Error(ERR_DROP, "%s", va("VM_Create on cgame failed\n\nMake sure ^2%s ^*is present in the mods folder you're trying to run and that the mod is compatible with your platform.", filename));
-		}
+		VM_Error(ERR_DROP, "cgame", Sys_GetDLLName("cgame"));
 	}
 	cls.state = CA_LOADING;
 

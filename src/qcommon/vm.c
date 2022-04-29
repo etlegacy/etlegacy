@@ -445,6 +445,21 @@ vm_t *VM_Restart(vm_t *vm)
 	return vm;
 }
 
+/**
+ * @brief Throws VM_Create error if VM could not be loaded
+ * @param[in] errorParm, module, filename
+ * @return
+ */
+
+void VM_Error(errorParm_t errorParm, const char *module, const char *filename)
+{
+#if ARCH_X86
+    Com_Error(errorParm, "%s", va("VM_Create on %s failed\n\nMake sure ^2%s ^*is present in the mods folder you're trying to run.", module, filename));
+#else
+    Com_Error(errorParm, "%s", va("VM_Create on %s failed\n\nMake sure ^2%s ^*is present in the mods folder you're trying to run and that the mod is compatible with your platform.", module, filename));
+#endif
+}
+
 #define STACK_SIZE  0x20000
 
 /**
