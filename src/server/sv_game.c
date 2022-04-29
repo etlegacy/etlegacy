@@ -623,25 +623,25 @@ intptr_t SV_GameSystemCalls(intptr_t *args)
 	case BOTLIB_GET_CONSOLE_MESSAGE:
 		return SV_BotGetConsoleMessage(args[1], VMA(2), args[3]);
 	case BOTLIB_USER_COMMAND:
-		{
-			unsigned clientNum = args[1];
+	{
+		unsigned clientNum = args[1];
 
-			if ( clientNum < sv_maxclients->integer )
-			{
-				SV_ClientThink(&svs.clients[clientNum], VMA(2));
-			}
+		if (clientNum < sv_maxclients->integer)
+		{
+			SV_ClientThink(&svs.clients[clientNum], VMA(2));
 		}
+	}
 		return 0;
 
 	case BOTLIB_EA_COMMAND:
-		{
-			unsigned clientNum = args[1];
+	{
+		unsigned clientNum = args[1];
 
-			if ( clientNum < sv_maxclients->integer )
-			{
-				SV_ExecuteClientCommand(&svs.clients[clientNum], VMA(2), qtrue, qfalse);
-			}
+		if (clientNum < sv_maxclients->integer)
+		{
+			SV_ExecuteClientCommand(&svs.clients[clientNum], VMA(2), qtrue, qfalse);
 		}
+	}
 
 		return 0;
 
@@ -788,15 +788,15 @@ void SV_InitGameProgs(void)
 	gvm = VM_Create("qagame", qfalse, SV_GameSystemCalls, VMI_NATIVE);
 	if (!gvm)
 	{
-        char *filename = Sys_GetDLLName("qagame");
-        if (!Q_stricmp(CPUSTRING, "win-x86") || !Q_stricmp(CPUSTRING, "linux-i386"))
-        {
-            Com_Error(ERR_FATAL, "%s", va("VM_Create on game failed\n\nMake sure ^2%s ^*is present in the mods folder you're trying to run.", filename));
-        }
-        else
-        {
-            Com_Error(ERR_FATAL, "%s", va("VM_Create on game failed\n\nMake sure ^2%s ^*is present in the mods folder you're trying to run and that the mod is compatible with your platform.", filename));
-        }
+		char *filename = Sys_GetDLLName("qagame");
+		if (!Q_stricmp(CPUSTRING, "win-x86") || !Q_stricmp(CPUSTRING, "linux-i386"))
+		{
+			Com_Error(ERR_FATAL, "%s", va("VM_Create on game failed\n\nMake sure ^2%s ^*is present in the mods folder you're trying to run.", filename));
+		}
+		else
+		{
+			Com_Error(ERR_FATAL, "%s", va("VM_Create on game failed\n\nMake sure ^2%s ^*is present in the mods folder you're trying to run and that the mod is compatible with your platform.", filename));
+		}
 	}
 
 	SV_InitGameVM(qfalse);
