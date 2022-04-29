@@ -108,7 +108,11 @@ static void PM_BeginWeaponChange(weapon_t oldWeapon, weapon_t newWeapon, qboolea
  */
 void PM_AddEvent(int newEvent)
 {
+#ifdef GAMEDLL
 	BG_AddPredictableEventToPlayerstate(newEvent, 0, pm->ps);
+#else
+	BG_AddPredictableEventToPmoveExt(newEvent, 0, pm->pmext);
+#endif
 }
 
 /**
@@ -118,7 +122,11 @@ void PM_AddEvent(int newEvent)
  */
 void PM_AddEventExt(int newEvent, int eventParm)
 {
+#ifdef GAMEDLL
 	BG_AddPredictableEventToPlayerstate(newEvent, eventParm, pm->ps);
+#else
+	BG_AddPredictableEventToPmoveExt(newEvent, eventParm, pm->pmext);
+#endif
 }
 
 /**
