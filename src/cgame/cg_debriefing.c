@@ -2197,7 +2197,7 @@ void CG_DebriefingPlayerList_Draw(panel_button_t *button)
 
 		CG_Text_Paint_Ext(DB_RANK_X + cgs.wideXoffset, y, button->font->scalex, button->font->scaley, button->font->colour, CG_Debriefing_RankNameForClientInfo(ci), 0, 0, 0, button->font->font);
 
-		CG_Text_Paint_Ext(DB_NAME_X + cgs.wideXoffset, y, button->font->scalex, button->font->scaley, colorWhite, ci->name, 0, 28, 0, button->font->font);
+		CG_Text_Paint_Ext(DB_NAME_X + cgs.wideXoffset, y, button->font->scalex, button->font->scaley, colorWhite, ci->name, 0, 23, 0, button->font->font);
 
 		CG_Text_Paint_Ext(DB_TIME_X + cgs.wideXoffset, y, button->font->scalex, button->font->scaley, button->font->colour, va("%i", score ? score->time : 0), 0, 0, 0, button->font->font);
 
@@ -2401,8 +2401,8 @@ void CG_Debriefing_ParseAwards(void)
 	int        i   = 0;
 	char       *cs = (char *)CG_ConfigString(CS_ENDGAME_STATS);
 	const char *token;
-	char       *s;
-	size_t     size, len;
+	char       *s, *val;
+	size_t     size, len, lenVal;
 	int        clientNum;
 	float      value;
 	char       buffer[sizeof(cgs.dbAwardNamesBuffer)];
@@ -2428,13 +2428,25 @@ void CG_Debriefing_ParseAwards(void)
 			Q_strncpyz(s, "", size);
 		}
 
+		len = strlen(s);
+
 		// value
 		token = COM_Parse(&cs);
 		value = atof(token);
 
 		if (value > 0)
 		{
-			Q_strcat(s, size, (value == (int)(value)) ? va("^7 (%i)", (int)(value)) : va("^7 (%.2f)", value));
+			val = (value == (int)(value)) ? va("^7 (%i)", (int)(value)) : va("^7 (%.2f)", value);
+
+			lenVal = strlen(val);
+
+			// 32 is the max chars that can fit before name overlaps with scroll bar
+			if (len + lenVal > 32)
+			{
+				Q_TruncateStr(s, 32 - lenVal);
+			}
+
+			Q_strcat(s, size, val);
 		}
 
 		// award
