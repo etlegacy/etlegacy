@@ -3259,7 +3259,7 @@ void CG_Debriefing_PlayerName_Draw(panel_button_t *button)
 	{
 		CG_DrawPic(button->rect.x, button->rect.y - 9, 18, 12, ci->team == TEAM_AXIS ? cgs.media.axisFlag : cgs.media.alliedFlag);
 	}
-	CG_Text_Paint_Ext(button->rect.x + 22, button->rect.y, button->font->scalex, button->font->scaley, colorWhite, ci->name, 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
+	CG_Text_Paint_Ext(button->rect.x + 22, button->rect.y, button->font->scalex, button->font->scaley, colorWhite, ci->name, 0, 27, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
 }
 
 /**
