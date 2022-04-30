@@ -2894,6 +2894,8 @@ extern vmCvar_t cg_activateLean;
 
 extern vmCvar_t cg_healthDynamicColor;
 
+extern vmCvar_t cg_drawBreathPuffs;
+
 // local clock flags
 #define LOCALTIME_ON                0x01
 #define LOCALTIME_SECOND            0x02
