@@ -799,7 +799,6 @@ static bind_t g_bindings[] =
 	{ "classmenu",                                 'p',             -1,  'p',             -1,  -1, -1, -1 },
 	{ "teammenu",                                  'j',             -1,  'j',             -1,  -1, -1, -1 },
 	{ "spawnmenu",                                 'i',             -1,  'i',             -1,  -1, -1, -1 },
-	{ "shoutcastmenu",                             'n',             -1,  'n',             -1,  -1, -1, -1 },
 	{ "messagemode",                               't',             -1,  't',             -1,  -1, -1, -1 },
 	{ "messagemode2",                              'y',             -1,  'y',             -1,  -1, -1, -1 },
 	{ "messagemode3",                              'u',             -1,  'u',             -1,  -1, -1, -1 },
