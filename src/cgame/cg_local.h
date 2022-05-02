@@ -1396,8 +1396,6 @@ typedef struct
 	qboolean showFireteamMenu;
 	qboolean showSpawnpointsMenu;
 
-	qboolean shoutcastMenu;
-
 	char spawnPoints[MAX_SPAWNPOINTS][MAX_SPAWNDESC];
 	vec3_t spawnCoordsUntransformed[MAX_SPAWNPOINTS];
 	vec3_t spawnCoords[MAX_SPAWNPOINTS];
@@ -1562,6 +1560,8 @@ typedef struct
 	// banner printing
 	int bannerPrintTime;
 	char bannerPrint[1024];
+
+	int lastKeyCatcher;
 } cg_t;
 
 #define MAX_LOCKER_DEBRIS 5
@@ -3118,6 +3118,8 @@ void CG_DrawShoutcastTimer(void);
 void CG_DrawShoutcastPowerups(void);
 void CG_DrawMinimap(void);
 
+void CG_ToggleShoutcasterMode(int shoutcaster);
+void CG_ShoutcastCheckKeyCatcher(int keycatcher);
 void CG_Shoutcast_KeyHandling(int key, qboolean down);
 qboolean CG_ShoutcastCheckExecKey(int key, qboolean doaction);
 

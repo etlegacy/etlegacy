@@ -1936,6 +1936,18 @@ void CG_ProcessCvars()
 	}
 }
 
+/**
+* @brief CG_SetLastKeyCatcher
+*/
+static void CG_SetLastKeyCatcher(void)
+{
+	int keyCatcher = trap_Key_GetCatcher();
+
+	CG_ShoutcastCheckKeyCatcher(keyCatcher);
+
+	cg.lastKeyCatcher = keyCatcher;
+}
+
 //#define DEBUGTIME_ENABLED
 #ifdef DEBUGTIME_ENABLED
 #define DEBUGTIME elapsed = (trap_Milliseconds() - dbgTime); if (dbgCnt++ == 1) { CG_Printf("t%i:%i ", dbgCnt, elapsed = (trap_Milliseconds() - dbgTime)); } dbgTime += elapsed;
@@ -2268,6 +2280,8 @@ void CG_DrawActiveFrame(int serverTime, qboolean demoPlayback)
 	{
 		CG_DrawMissileCamera(&CG_GetActiveHUD()->missilecamera.location);
 	}
+
+	CG_SetLastKeyCatcher();
 
 	if (cg_stats.integer)
 	{

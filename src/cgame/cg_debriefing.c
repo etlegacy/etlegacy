@@ -1794,6 +1794,11 @@ void CG_Debriefing_Startup(void)
 	{
 		trap_S_StartLocalSound(trap_S_RegisterSound("sound/music/axis_win.wav", qfalse), CHAN_LOCAL_SOUND);
 	}
+
+	if (cgs.clientinfo[cg.clientNum].shoutcaster)
+	{
+		CG_ToggleShoutcasterMode(0);
+	}
 }
 
 /**
@@ -1805,7 +1810,14 @@ void CG_Debriefing_Shutdown(void)
 
 	if (!cg.demoPlayback)
 	{
-		trap_Key_SetCatcher(trap_Key_GetCatcher() & ~KEYCATCH_CGAME);
+		if (cgs.clientinfo[cg.clientNum].shoutcaster)
+		{
+			CG_ToggleShoutcasterMode(1);
+		}
+		else
+		{
+			trap_Key_SetCatcher(trap_Key_GetCatcher() & ~KEYCATCH_CGAME);
+		}
 	}
 }
 

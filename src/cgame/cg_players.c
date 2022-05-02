@@ -449,18 +449,20 @@ void CG_NewClientInfo(int clientNum)
 				CG_Printf("Type: ^3ref^7 (by itself) for a list of referee commands.\n");
 			}
 		}
+	}
 
-		if (newInfo.shoutcaster != ci->shoutcaster)
+	if (clientNum == cg.clientNum && newInfo.shoutcaster != ci->shoutcaster)
+	{
+		if (newInfo.shoutcaster <= 0)
 		{
-			if (newInfo.shoutcaster <= 0)
-			{
-				CG_Printf("[cgnotify]^3*** You have been stripped of your shoutcaster status! ***\n");
-			}
-			else
-			{
-				CG_Printf("[cgnotify]^2*** You have been authorized \"shoutcaster\" status ***\n");
-			}
+			CG_Printf("[cgnotify]^3*** You have been stripped of your shoutcaster status! ***\n");
 		}
+		else
+		{
+			CG_Printf("[cgnotify]^2*** You have been authorized \"shoutcaster\" status ***\n");
+		}
+
+		CG_ToggleShoutcasterMode(newInfo.shoutcaster);
 	}
 
 	// passing the clientNum since that's all we need, and we

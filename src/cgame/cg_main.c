@@ -3024,7 +3024,7 @@ qboolean CG_CheckExecKey(int key)
 		return CG_SpawnpointsCheckExecKey(key, qfalse);
 	}
 
-	if (cg.shoutcastMenu)
+	if (cgs.clientinfo[cg.clientNum].shoutcaster)
 	{
 		return CG_ShoutcastCheckExecKey(key, qfalse);
 	}

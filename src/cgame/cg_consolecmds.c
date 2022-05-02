@@ -2003,23 +2003,6 @@ static void CG_ListSpawnPoints_f(void)
 	}
 }
 
-static void CG_ShoutcastMenu_f(void)
-{
-	if (cgs.clientinfo[cg.clientNum].shoutcaster)
-	{
-		trap_UI_Popup(UIMENU_NONE);
-
-		if (cg.shoutcastMenu)
-		{
-			CG_EventHandling(CGAME_EVENT_NONE, qfalse);
-		}
-		else
-		{
-			CG_EventHandling(CGAME_EVENT_SHOUTCAST, qfalse);
-		}
-	}
-}
-
 static void CG_Location_f(void)
 {
 	char token[MAX_TOKEN_CHARS];
@@ -2284,7 +2267,6 @@ static consoleCommand_t commands[] =
 	{ "resetmaxspeed",       CG_ResetMaxSpeed_f        },
 	{ "listspawnpt",         CG_ListSpawnPoints_f      },
 
-	{ "shoutcastmenu",       CG_ShoutcastMenu_f        },
 	{ "loc",                 CG_Location_f             },
 	{ "camera",              CG_Camera_f               },
 	{ NULL,                  NULL                      }
