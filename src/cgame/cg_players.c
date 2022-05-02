@@ -1867,6 +1867,11 @@ static void CG_BreathPuffs(centity_t *cent, refEntity_t *head)
 	int          contents;
 	vec3_t       mang, morg, maxis[3];
 
+	if (!cg_drawBreathPuffs.integer)
+	{
+		return;
+	}
+
 	if (cent->currentState.number == cg.snap->ps.clientNum && !cg.renderingThirdPerson)
 	{
 		return;
