@@ -4520,7 +4520,7 @@ void UI_Update(const char *name)
 			break;
 		}
 	}
-	else if (Q_stricmp(name, "ui_glCustom") == 0)
+	else if (Q_stricmp(name, "ui_glPreset") == 0)
 	{
 		switch (val)
 		{
@@ -5341,6 +5341,10 @@ void UI_RunMenuScript(char **args)
 		{
 			UI_GLCustom();
 		}
+		else if (Q_stricmp(name, "glPreset") == 0)
+		{
+			trap_Cvar_Set("ui_glPreset", "4"); // Custom
+		}
 		else if (Q_stricmp(name, "update") == 0)
 		{
 			if (String_Parse(args, &name2))
@@ -5930,7 +5934,7 @@ void UI_RunMenuScript(char **args)
 			int   ui_r_detailtextures                 = (int)(trap_Cvar_VariableValue("r_detailtextures"));
 			int   ui_r_ext_texture_filter_anisotropic = (int)(trap_Cvar_VariableValue("r_ext_texture_filter_anisotropic"));
 			int   ui_r_ext_multisample                = (int)(trap_Cvar_VariableValue("r_ext_multisample"));
-			int   ui_cg_shadows                       = (char)(trap_Cvar_VariableValue("cg_shadows"));
+			int   ui_r_ignorehwgamma                  = (int)(trap_Cvar_VariableValue("r_ignorehwgamma"));
 			char  ui_r_texturemode[MAX_CVAR_VALUE_STRING];
 
 			trap_Cvar_VariableStringBuffer("cl_lang", ui_cl_lang, sizeof(ui_cl_lang));
@@ -5975,8 +5979,9 @@ void UI_RunMenuScript(char **args)
 			trap_Cvar_Set("ui_r_detailtextures", va("%i", ui_r_detailtextures));
 			trap_Cvar_Set("ui_r_ext_texture_filter_anisotropic", va("%i", ui_r_ext_texture_filter_anisotropic));
 			trap_Cvar_Set("ui_r_ext_multisample", va("%i", ui_r_ext_multisample));
-			trap_Cvar_Set("ui_cg_shadows", va("%i", ui_cg_shadows));
 			trap_Cvar_Set("ui_r_texturemode", ui_r_texturemode);
+			trap_Cvar_Set("ui_r_ignorehwgamma", va("%i", ui_r_ignorehwgamma));
+			trap_Cvar_Set("ui_r_dynamiclight", va("%i", ui_r_dynamiclight));
 		}
 		else if (Q_stricmp(name, "systemCvarsReset") == 0)
 		{
@@ -6009,6 +6014,8 @@ void UI_RunMenuScript(char **args)
 			trap_Cvar_Set("ui_r_ext_multisample", "");
 			trap_Cvar_Set("ui_cg_shadows", "");
 			trap_Cvar_Set("ui_r_texturemode", "");
+			trap_Cvar_Set("ui_r_ignorehwgamma", "");
+			trap_Cvar_Set("ui_r_dynamiclight", "");
 		}
 		else if (Q_stricmp(name, "systemCvarsApply") == 0)
 		{
@@ -6042,7 +6049,7 @@ void UI_RunMenuScript(char **args)
 			int   ui_r_detailtextures                 = (int)(trap_Cvar_VariableValue("ui_r_detailtextures"));
 			int   ui_r_ext_texture_filter_anisotropic = (int)(trap_Cvar_VariableValue("ui_r_ext_texture_filter_anisotropic"));
 			int   ui_r_ext_multisample                = (int)(trap_Cvar_VariableValue("ui_r_ext_multisample"));
-			int   ui_cg_shadows                       = (int)(trap_Cvar_VariableValue("ui_cg_shadows"));
+			int   ui_r_ignorehwgamma                  = (int)(trap_Cvar_VariableValue("ui_r_ignorehwgamma"));
 			char  ui_r_texturemode[MAX_CVAR_VALUE_STRING];
 
 			trap_Cvar_VariableStringBuffer("ui_cl_lang", ui_cl_lang, sizeof(ui_cl_lang));
@@ -6094,8 +6101,8 @@ void UI_RunMenuScript(char **args)
 			trap_Cvar_Set("r_detailtextures", va("%i", ui_r_detailtextures));
 			trap_Cvar_Set("r_ext_texture_filter_anisotropic", va("%i", ui_r_ext_texture_filter_anisotropic));
 			trap_Cvar_Set("r_ext_multisample", va("%i", ui_r_ext_multisample));
-			trap_Cvar_Set("cg_shadows", va("%i", ui_cg_shadows));
 			trap_Cvar_Set("r_texturemode", ui_r_texturemode);
+			trap_Cvar_Set("r_ignorehwgamma", va("%i", ui_r_ignorehwgamma));
 
 			trap_Cvar_Set("ui_cl_lang", "");
 			trap_Cvar_Set("ui_r_mode", "");
@@ -6128,6 +6135,7 @@ void UI_RunMenuScript(char **args)
 			trap_Cvar_Set("ui_r_ext_multisample", "");
 			trap_Cvar_Set("ui_cg_shadows", "");
 			trap_Cvar_Set("ui_r_texturemode", "");
+			trap_Cvar_Set("ui_r_ignorehwgamma", "");
 		}
 		else if (Q_stricmp(name, "profileCvarsGet") == 0)
 		{
@@ -9034,6 +9042,7 @@ vmCvar_t ui_friendlyFire;
 vmCvar_t ui_userAlliedRespawnTime;
 vmCvar_t ui_userAxisRespawnTime;
 vmCvar_t ui_glCustom;
+vmCvar_t ui_glPreset;
 
 vmCvar_t g_gameType;
 
@@ -9068,7 +9077,8 @@ vmCvar_t ui_cg_shoutcastDrawMinimap;
 static cvarTable_t cvarTable[] =
 {
 	{ NULL,                                "ui_textfield_temp",                   "",                           CVAR_TEMP,                      0 },
-	{ &ui_glCustom,                        "ui_glCustom",                         "1",                          CVAR_ARCHIVE,                   0 },
+	{ &ui_glCustom,                        "ui_glCustom",                         "1",                          CVAR_ROM | CVAR_NOTABCOMPLETE,  0 },
+	{ &ui_glPreset,                        "ui_glPreset",                         "0",                          CVAR_ROM | CVAR_NOTABCOMPLETE,  0 },
 
 	{ &ui_friendlyFire,                    "g_friendlyFire",                      "1",                          CVAR_ARCHIVE,                   0 },
 

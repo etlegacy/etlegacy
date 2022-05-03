@@ -2104,7 +2104,9 @@ qboolean ItemParse_shouldDisplayCvarInToolTip(itemDef_t *item)
 	       STR_N_CMP(item->window.group + 3, "IngameVote") &&   // also IngameVoteMiscRefRcon and IngameVotePlayersWarn
 	       STR_N_CMP(item->cvar, "ui_handedness") &&
 	       STR_N_CMP(item->cvar, "ui_mousepitch") &&
-	       STR_N_CMP(item->cvar, "ui_glcustom");
+	       STR_N_CMP(item->cvar, "ui_glcustom") &&              // display mode
+	       STR_N_CMP(item->cvar, "ui_glpreset") &&              // graphics presets
+	       STR_N_CMP(item->cvar, "ui_r_windowmode");            // proxy cvar for combination of cvars determining display mode
 }
 
 const char *ItemParse_removeUiCvarPrefix(const char *cvar)
