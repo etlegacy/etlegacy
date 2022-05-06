@@ -517,7 +517,7 @@ void trap_S_StartLocalSound(sfxHandle_t sfx, int channelNum)
  */
 sfxHandle_t trap_S_RegisterSound(const char *sample, qboolean compressed)
 {
-	int i = SystemCall(UI_S_REGISTERSOUND, sample, compressed);
+	int i = SystemCall(UI_S_REGISTERSOUND, sample, uiInfo.etLegacyClient ? compressed : qfalse);
 
 #ifdef ETLEGACY_DEBUG
 	if (i == 0)

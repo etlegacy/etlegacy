@@ -1586,7 +1586,16 @@ sfxHandle_t trap_S_RegisterSound(const char *sample, qboolean compressed)
 	sfxHandle_t snd;
 	DEBUG_REGISTERPROFILE_INIT
 	CG_DrawInformation(qtrue);
-	snd = SystemCall(CG_S_REGISTERSOUND, sample, compressed);
+
+	// only allow compression for ETL clients, GPL source (aka Steam versiion) doesn't play nice with it
+	if (cg.etLegacyClient)
+	{
+		snd = SystemCall(CG_S_REGISTERSOUND, sample, compressed);
+	}
+	else
+	{
+		snd = SystemCall(CG_S_REGISTERSOUND, sample, qfalse);
+	}
 	if (!sample || !sample[0])
 	{
 		Com_Printf("^1trap_S_RegisterSound: Null sample filename\n");
@@ -1763,7 +1772,7 @@ void trap_R_LoadWorldMap(const char *mapname)
 sfxHandle_t trap_S_RegisterSound(const char *sample, qboolean compressed)
 {
 	CG_DrawInformation(qtrue);
-	return SystemCall(CG_S_REGISTERSOUND, sample, compressed);
+	return SystemCall(CG_S_REGISTERSOUND, sample, cg.etLegacyClient ? compressed : qfalse);
 }
 
 /**
