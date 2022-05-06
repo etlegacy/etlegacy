@@ -39,7 +39,7 @@ static intptr_t(QDECL * syscall)(intptr_t arg, ...) = (intptr_t(QDECL *)(intptr_
 /**
  * @brief dllEntry
  */
-Q_EXPORT void dllEntry(intptr_t(QDECL * syscallptr)(intptr_t arg, ...))
+Q_EXPORT void dllEntry(intptr_t(QDECL *syscallptr)(intptr_t arg, ...))
 {
 	syscall = syscallptr;
 }
@@ -815,7 +815,7 @@ void trap_R_AddPolysToScene(qhandle_t hShader, int numVerts, const polyVert_t *v
 void trap_R_AddLightToScene(const vec3_t org, float radius, float intensity, float r, float g, float b, qhandle_t hShader, int flags)
 {
 	SystemCall(CG_R_ADDLIGHTTOSCENE, org, PASSFLOAT(radius), PASSFLOAT(intensity),
-	        PASSFLOAT(r), PASSFLOAT(g), PASSFLOAT(b), hShader, flags);
+	           PASSFLOAT(r), PASSFLOAT(g), PASSFLOAT(b), hShader, flags);
 }
 
 /**
@@ -1588,14 +1588,8 @@ sfxHandle_t trap_S_RegisterSound(const char *sample, qboolean compressed)
 	CG_DrawInformation(qtrue);
 
 	// only allow compression for ETL clients, GPL source (aka Steam version) doesn't play nice with it
-	if (cg.etLegacyClient)
-	{
-		snd = SystemCall(CG_S_REGISTERSOUND, sample, compressed);
-	}
-	else
-	{
-		snd = SystemCall(CG_S_REGISTERSOUND, sample, qfalse);
-	}
+	snd = SystemCall(CG_S_REGISTERSOUND, sample, cg.etLegacyClient ? compressed : qfalse);
+
 	if (!sample || !sample[0])
 	{
 		Com_Printf("^1trap_S_RegisterSound: Null sample filename\n");
@@ -1772,6 +1766,7 @@ void trap_R_LoadWorldMap(const char *mapname)
 sfxHandle_t trap_S_RegisterSound(const char *sample, qboolean compressed)
 {
 	CG_DrawInformation(qtrue);
+	// only allow compression for ETL clients, GPL source (aka Steam version) doesn't play nice with it
 	return SystemCall(CG_S_REGISTERSOUND, sample, cg.etLegacyClient ? compressed : qfalse);
 }
 
