@@ -859,9 +859,9 @@ void SV_SpawnServer(const char *server)
 		// the server sends these to the clients so they will only
 		// load pk3s also loaded at the server
 		qboolean crazyServer = qfalse;
-		size_t len = 0;
+		size_t   len         = 0;
 
-		p = FS_LoadedPakNames();
+		p   = FS_LoadedPakNames();
 		len = strlen(p);
 
 		// if the maps listing takes more than half of the full buffer, then we just use the reference listings instead
@@ -869,7 +869,7 @@ void SV_SpawnServer(const char *server)
 		if (len > (BIG_INFO_STRING / 2))
 		{
 			crazyServer = qtrue;
-			p = FS_ReferencedPakNames();
+			p           = FS_ReferencedPakNames();
 			Com_Printf(S_COLOR_RED "WARNING: sv_pure set and the amount of pk3 files exceeds normally supported count, using reference values only\n");
 		}
 		else if (len == 0)
@@ -1109,10 +1109,6 @@ void SV_Init(void)
 	sv_allowDownload = Cvar_Get("sv_allowDownload", "1", CVAR_ARCHIVE);
 
 	sv_hidden = Cvar_GetAndDescribe("sv_hidden", "0", CVAR_ARCHIVE, "Hide the server from queries and from master servers.");
-
-	// master servers
-	Cvar_Get("sv_master1", "etmaster.idsoftware.com", CVAR_PROTECTED);
-	Cvar_Get("sv_master2", com_masterServer->string, CVAR_INIT);
 
 	sv_reconnectlimit = Cvar_Get("sv_reconnectlimit", "3", 0);
 	sv_tempbanmessage = Cvar_Get("sv_tempbanmessage", "You have been kicked and are temporarily banned from joining this server.", 0);

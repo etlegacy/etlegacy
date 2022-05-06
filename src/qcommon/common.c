@@ -2837,6 +2837,16 @@ void Com_Init(char *commandLine)
 
 	Cbuf_AddText(va("exec %s\n", CONFIG_NAME_DEFAULT));
 
+	com_masterServer = Cvar_Get("com_masterServer", MASTER_SERVER_NAME, CVAR_INIT | CVAR_NOTABCOMPLETE);
+	com_motdServer   = Cvar_Get("com_motdServer", MOTD_SERVER_NAME, CVAR_INIT | CVAR_NOTABCOMPLETE);
+	com_updateServer = Cvar_Get("com_updateServer", UPDATE_SERVER_NAME, CVAR_INIT | CVAR_NOTABCOMPLETE);
+	com_downloadURL  = Cvar_Get("com_downloadURL", DOWNLOAD_SERVER_URL, CVAR_INIT | CVAR_NOTABCOMPLETE);
+
+	// master servers
+	// moved here from SV_Init so they con't be overridden by config
+	Cvar_Get("sv_master1", "etmaster.idsoftware.com", CVAR_PROTECTED);
+	Cvar_Get("sv_master2", com_masterServer->string, CVAR_INIT);
+
 	// skip the etconfig.cfg if "safe" is on the command line
 	if (!Com_SafeMode())
 	{
@@ -3011,11 +3021,6 @@ void Com_Init(char *commandLine)
 	Cmd_AddCommand("writeconfig", Com_WriteConfig_f, "Write the config file to a specific name.");
 	Cmd_AddCommand("update", Com_Update_f, "Updates the game to latest version.");
 	Cmd_AddCommand("download", Com_Download_f, "Downloads a pk3 from the URL set in cvar com_downloadURL.");
-
-	com_masterServer = Cvar_Get("com_masterServer", MASTER_SERVER_NAME, CVAR_INIT | CVAR_NOTABCOMPLETE);
-	com_motdServer   = Cvar_Get("com_motdServer", MOTD_SERVER_NAME, CVAR_INIT | CVAR_NOTABCOMPLETE);
-	com_updateServer = Cvar_Get("com_updateServer", UPDATE_SERVER_NAME, CVAR_INIT | CVAR_NOTABCOMPLETE);
-	com_downloadURL  = Cvar_Get("com_downloadURL", DOWNLOAD_SERVER_URL, CVAR_INIT | CVAR_NOTABCOMPLETE);
 
 #ifdef FEATURE_DBMS
 	Cmd_AddCommand("saveDB", DB_SaveMemDB_f, "Saves the internal memory database to disk.");
