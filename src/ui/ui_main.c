@@ -4579,6 +4579,98 @@ void UI_GLCustom()
 	trap_Cvar_Set("ui_glCustom", "1");
 }
 
+// TODO: this is extremely stupid and we should not do this
+// instead we should have ui_ cvars for all menu options,
+// and not apply things at all when we press back in menus
+// I died a little inside while writing this
+/**
+ * @brief UI_ParseglPreset
+ */
+void UI_ParseglPreset()
+{
+	// high preset
+	if ((int)trap_Cvar_VariableValue("ui_r_subdivisions") == 4 &&
+	    (int)trap_Cvar_VariableValue("ui_r_lodbias") == 0 &&
+	    (int)trap_Cvar_VariableValue("ui_r_colorbits") == 32 &&
+	    (int)trap_Cvar_VariableValue("ui_r_depthbits") == 24 &&
+	    (int)trap_Cvar_VariableValue("ui_r_picmip") == 0 &&
+	    (int)trap_Cvar_VariableValue("ui_r_texturebits") == 32 &&
+	    (int)trap_Cvar_VariableValue("ui_r_ext_compressed_textures") == 0 &&
+	    (int)trap_Cvar_VariableValue("ui_r_ext_texture_filter_anisotropic") == 16 &&
+	    (int)trap_Cvar_VariableValue("ui_r_ext_multisample") == 4 &&
+	    (int)trap_Cvar_VariableValue("ui_r_dynamiclight") == 2 &&
+	    (int)trap_Cvar_VariableValue("r_fastSky") == 0 &&
+	    (int)trap_Cvar_VariableValue("cg_shadows") == 1 &&
+	    (int)trap_Cvar_VariableValue("cg_brasstime") == 2500 &&
+	    (int)trap_Cvar_VariableValue("ui_r_detailtextures") == 1 &&
+	    (Q_stricmp(UI_Cvar_VariableString("ui_r_texturemode"), "GL_LINEAR_MIPMAP_LINEAR") == 0))
+	{
+		trap_Cvar_Set("ui_glPreset", "0");
+	}
+	// normal preset
+	else if ((int)trap_Cvar_VariableValue("ui_r_subdivisions") == 4 &&
+	         (int)trap_Cvar_VariableValue("ui_r_lodbias") == 0 &&
+	         (int)trap_Cvar_VariableValue("ui_r_colorbits") == 0 &&
+	         (int)trap_Cvar_VariableValue("ui_r_depthbits") == 24 &&
+	         (int)trap_Cvar_VariableValue("ui_r_picmip") == 1 &&
+	         (int)trap_Cvar_VariableValue("ui_r_texturebits") == 32 &&
+	         (int)trap_Cvar_VariableValue("ui_r_ext_compressed_textures") == 0 &&
+	         (int)trap_Cvar_VariableValue("ui_r_ext_texture_filter_anisotropic") == 4 &&
+	         (int)trap_Cvar_VariableValue("ui_r_ext_multisample") == 0 &&
+	         (int)trap_Cvar_VariableValue("ui_r_dynamiclight") == 1 &&
+	         (int)trap_Cvar_VariableValue("r_fastSky") == 0 &&
+	         (int)trap_Cvar_VariableValue("cg_shadows") == 1 &&
+	         (int)trap_Cvar_VariableValue("cg_brasstime") == 2500 &&
+	         (int)trap_Cvar_VariableValue("ui_r_detailtextures") == 0 &&
+	         (Q_stricmp(UI_Cvar_VariableString("ui_r_texturemode"), "GL_LINEAR_MIPMAP_NEAREST") == 0))
+	{
+		trap_Cvar_Set("ui_glPreset", "1");
+	}
+	// fast preset
+	else if ((int)trap_Cvar_VariableValue("ui_r_subdivisions") == 12 &&
+	         (int)trap_Cvar_VariableValue("ui_r_lodbias") == 1 &&
+	         (int)trap_Cvar_VariableValue("ui_r_colorbits") == 0 &&
+	         (int)trap_Cvar_VariableValue("ui_r_depthbits") == 24 &&
+	         (int)trap_Cvar_VariableValue("ui_r_picmip") == 2 &&
+	         (int)trap_Cvar_VariableValue("ui_r_texturebits") == 0 &&
+	         (int)trap_Cvar_VariableValue("ui_r_ext_compressed_textures") == 1 &&
+	         (int)trap_Cvar_VariableValue("ui_r_ext_texture_filter_anisotropic") == 0 &&
+	         (int)trap_Cvar_VariableValue("ui_r_ext_multisample") == 0 &&
+	         (int)trap_Cvar_VariableValue("ui_r_dynamiclight") == 1 &&
+	         (int)trap_Cvar_VariableValue("r_fastSky") == 0 &&
+	         (int)trap_Cvar_VariableValue("cg_shadows") == 0 &&
+	         (int)trap_Cvar_VariableValue("cg_brasstime") == 0 &&
+	         (int)trap_Cvar_VariableValue("ui_r_detailtextures") == 0 &&
+	         (Q_stricmp(UI_Cvar_VariableString("ui_r_texturemode"), "GL_LINEAR_MIPMAP_NEAREST") == 0))
+	{
+		trap_Cvar_Set("ui_glPreset", "2");
+	}
+	// fastest preset
+	else if ((int)trap_Cvar_VariableValue("ui_r_subdivisions") == 20 &&
+	         (int)trap_Cvar_VariableValue("ui_r_lodbias") == 2 &&
+	         (int)trap_Cvar_VariableValue("ui_r_colorbits") == 16 &&
+	         (int)trap_Cvar_VariableValue("ui_r_depthbits") == 24 &&
+	         (int)trap_Cvar_VariableValue("ui_r_picmip") == 3 &&
+	         (int)trap_Cvar_VariableValue("ui_r_texturebits") == 16 &&
+	         (int)trap_Cvar_VariableValue("ui_r_ext_compressed_textures") == 1 &&
+	         (int)trap_Cvar_VariableValue("ui_r_ext_texture_filter_anisotropic") == 0 &&
+	         (int)trap_Cvar_VariableValue("ui_r_ext_multisample") == 0 &&
+	         (int)trap_Cvar_VariableValue("ui_r_dynamiclight") == 0 &&
+	         (int)trap_Cvar_VariableValue("r_fastSky") == 1 &&
+	         (int)trap_Cvar_VariableValue("cg_shadows") == 0 &&
+	         (int)trap_Cvar_VariableValue("cg_brasstime") == 0 &&
+	         (int)trap_Cvar_VariableValue("ui_r_detailtextures") == 0 &&
+	         (Q_stricmp(UI_Cvar_VariableString("ui_r_texturemode"), "GL_LINEAR_MIPMAP_NEAREST") == 0))
+	{
+		trap_Cvar_Set("ui_glPreset", "3");
+	}
+	// Custom
+	else
+	{
+		trap_Cvar_Set("ui_glPreset", "4");
+	}
+}
+
 static const char *UI_GetDemoPath(qboolean prefix)
 {
 	static char path[MAX_OSPATH];
@@ -5344,6 +5436,10 @@ void UI_RunMenuScript(char **args)
 		else if (Q_stricmp(name, "glPreset") == 0)
 		{
 			trap_Cvar_Set("ui_glPreset", "4"); // Custom
+		}
+		else if (Q_stricmp(name, "parseglPreset") == 0)
+		{
+			UI_ParseglPreset();
 		}
 		else if (Q_stricmp(name, "update") == 0)
 		{
