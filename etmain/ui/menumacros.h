@@ -36,11 +36,11 @@
 #ifndef INCLUDE_MENUMACROS_H
 #define INCLUDE_MENUMACROS_H
 
-#define VANILLA_RESOLUTIONS cvarFloatList { "custom resolution" - 1 "640*480" 3 "800*600" 4 "960*720" 5 "1024*768" 6 "1152*864" 7 "1280*1024" 8 "1600*1200" 9 "2048*1536" 10 "856*480 (16:9)" 11 } // see /modelist in 2.60b client
-#define LEGACY_RESOLUTIONS cvarFloatList { "desktop resolution" - 2 "custom resolution" - 1 "640*480" 3 "800*600" 4 "960*720" 5 "1024*768" 6 "1152*864" 7 "1280*1024" 8 "1600*1200" 9 "2048*1536" 10 "856*480 (16:9)" 11 "1366*768 (16:9)" 12 "1440*900 (16:10)" 13 "1680*1050 (16:10)" 14 "1600*1200" 15 "1920*1080 (16:9)" 16 "1920*1200 (16:10)" 17 "2560*1440 (16:9)" 18 "2560*1600 (16:10)" 19 "3840*2160 (16:9)" 20 } // see glimp_vidModes in sdl_glimp.c
-#define LEGACY_WINDOWMODES cvarFloatList { "Windowed" 0 "Fullscreen" 1 "Windowed Fullscreen" 2 }
+#define VANILLA_RESOLUTIONS cvarFloatList { "Custom resolution" - 1 "640*480" 3 "800*600" 4 "960*720" 5 "1024*768" 6 "1152*864" 7 "1280*1024" 8 "1600*1200" 9 "2048*1536" 10 "856*480 (16:9)" 11 } // see /modelist in 2.60b client
+#define LEGACY_RESOLUTIONS cvarFloatList { "Desktop resolution" - 2 "Custom resolution" - 1 "640*480" 3 "800*600" 4 "960*720" 5 "1024*768" 6 "1152*864" 7 "1280*1024" 8 "1600*1200" 9 "2048*1536" 10 "856*480 (16:9)" 11 "1366*768 (16:9)" 12 "1440*900 (16:10)" 13 "1680*1050 (16:10)" 14 "1600*1200" 15 "1920*1080 (16:9)" 16 "1920*1200 (16:10)" 17 "2560*1440 (16:9)" 18 "2560*1600 (16:10)" 19 "3840*2160 (16:9)" 20 } // see glimp_vidModes in sdl_glimp.c
+#define LEGACY_WINDOWMODES cvarFloatList { "Windowed" 0 "Fullscreen" 1 "Borderless Fullscreen" 2 }
+#define VANILLA_WINDOWMODES cvarFloatList { "Windowed" 0 "Fullscreen" 1 }
 #define LEGACY_LANGUAGES   cvarStrList { "English (default)  "; "en"; "Български"; "bg"; "Čeština"; "cs"; "Deutsch"; "de"; "Español"; "es"; "Suomi"; "fi"; "Français"; "fr"; "Magyar"; "hu"; "Italiano"; "it"; "Nederlands"; "nl"; "Norsk"; "no"; "Polski"; "pl"; "Português"; "pt"; "Русский"; "ru"; "Српски"; "sr"; "Svenska"; "sv"; "Türkçe"; "tr"; }
-#define LEGACY_RENDERERS   cvarStrList { "Vanilla (default)  "; "opengl1"; /*"ET: Legacy"; "opengl2"*/ }
 
 // Marks text as translatable
 #define _(x) x
@@ -831,38 +831,38 @@
 		}                                                               \
 	}
 
-#define CHECKBOXACTIONBITFLAG( CHECKBOXACTION_X, CHECKBOXACTION_Y, CHECKBOXACTION_W, CHECKBOXACTION_H, CHECKBOXACTION_TEXT, CHECKBOXACTION_TEXT_SCALE, CHECKBOXACTION_TEXT_ALIGN_X, CHECKBOXACTION_TEXT_ALIGN_Y, CHECKBOXACTION_CVAR, BITFLAG, CHECKBOXACTION_ACTION, CHECKBOXACTION_TOOLTIP )	\
-    itemDef {															\
-		name			"checkaction"##CHECKBOXACTION_TEXT				\
-      	group			GROUP_NAME										\
-      	rect			$evalfloat(CHECKBOXACTION_X - 0.5*CHECKBOXACTION_W) $evalfloat(CHECKBOXACTION_Y) $evalfloat(CHECKBOXACTION_W) $evalfloat(CHECKBOXACTION_H)	\
-		type			ITEM_TYPE_CHECKBOX								\
-		text			CHECKBOXACTION_TEXT								\
-		textfont		UI_FONT_COURBD_21								\
-		textstyle		ITEM_TEXTSTYLE_SHADOWED							\
-		textscale		CHECKBOXACTION_TEXT_SCALE						\
-		textalign		ITEM_ALIGN_RIGHT								\
-		textalignx		$evalfloat(0.5*(CHECKBOXACTION_W)+(CHECKBOXACTION_TEXT_ALIGN_X))			\
-		textaligny		CHECKBOXACTION_TEXT_ALIGN_Y						\
-		forecolor		.6 .6 .6 1										\
-		cvar			CHECKBOXACTION_CVAR								\
-		visible			1												\
-		tooltip			CHECKBOXACTION_TOOLTIP							\
-		bitflag			BITFLAG											\
-																		\
-		mouseEnter {													\
-			setitemcolor "checkaction"##CHECKBOXACTION_TEXT forecolor .9 .9 .9 1 ;	\
-		}																\
-																		\
-		mouseExit {														\
-			setitemcolor "checkaction"##CHECKBOXACTION_TEXT forecolor .6 .6 .6 1 ;	\
-		}																\
-																		\
-		action {														\
-			play "sound/menu/filter.wav" ;								\
-			CHECKBOXACTION_ACTION										\
-		}																\
-    }
+#define CHECKBOXACTIONBITFLAG(CHECKBOXACTION_X, CHECKBOXACTION_Y, CHECKBOXACTION_W, CHECKBOXACTION_H, CHECKBOXACTION_TEXT, CHECKBOXACTION_TEXT_SCALE, CHECKBOXACTION_TEXT_ALIGN_X, CHECKBOXACTION_TEXT_ALIGN_Y, CHECKBOXACTION_CVAR, BITFLAG, CHECKBOXACTION_ACTION, CHECKBOXACTION_TOOLTIP)  \
+	itemDef {                                                           \
+		name            "checkaction" ## CHECKBOXACTION_TEXT              \
+		group GROUP_NAME                                      \
+		rect $evalfloat(CHECKBOXACTION_X - 0.5 * CHECKBOXACTION_W) $evalfloat(CHECKBOXACTION_Y) $evalfloat(CHECKBOXACTION_W) $evalfloat(CHECKBOXACTION_H)  \
+		type ITEM_TYPE_CHECKBOX                              \
+		text CHECKBOXACTION_TEXT                             \
+		textfont UI_FONT_COURBD_21                               \
+		textstyle ITEM_TEXTSTYLE_SHADOWED                         \
+		textscale CHECKBOXACTION_TEXT_SCALE                       \
+		textalign ITEM_ALIGN_RIGHT                                \
+		textalignx $evalfloat(0.5 * (CHECKBOXACTION_W) + (CHECKBOXACTION_TEXT_ALIGN_X))            \
+		textaligny CHECKBOXACTION_TEXT_ALIGN_Y                     \
+		forecolor       .6 .6 .6 1                                      \
+		cvar CHECKBOXACTION_CVAR                             \
+		visible         1                                               \
+		tooltip CHECKBOXACTION_TOOLTIP                          \
+		bitflag BITFLAG                                         \
+                                                                        \
+		mouseEnter {                                                    \
+			setitemcolor "checkaction" ## CHECKBOXACTION_TEXT forecolor .9 .9 .9 1 ;  \
+		}                                                               \
+                                                                        \
+		mouseExit {                                                     \
+			setitemcolor "checkaction" ## CHECKBOXACTION_TEXT forecolor .6 .6 .6 1 ;  \
+		}                                                               \
+                                                                        \
+		action {                                                        \
+			play "sound/menu/filter.wav" ;                              \
+			CHECKBOXACTION_ACTION                                       \
+		}                                                               \
+	}
 
 
 #define TRICHECKBOXACTION(TRICHECKBOXACTION_X, TRICHECKBOXACTION_Y, TRICHECKBOXACTION_W, TRICHECKBOXACTION_H, TRICHECKBOXACTION_TEXT, TRICHECKBOXACTION_TEXT_SCALE, TRICHECKBOXACTION_TEXT_ALIGN_Y, TRICHECKBOXACTION_CVAR, TRICHECKBOXACTION_ACTION, TRICHECKBOXACTION_TOOLTIP)  \

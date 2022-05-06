@@ -228,7 +228,7 @@ void QDECL Com_Printf(const char *fmt, ...)
 	char            buffer[MAX_PRINT_MSG];
 	char            *msg, *bufferEnd, *tmpMsg;
 	static qboolean opening_qconsole = qfalse;
-	static qboolean lineWasEnded = qtrue;
+	static qboolean lineWasEnded     = qtrue;
 	int             timestamp;
 
 #ifdef DEDICATED
@@ -1012,7 +1012,7 @@ static void Z_ClearZone(memzone_t *zone, int size)
 	// set the entire zone to one free block
 
 	zone->blocklist.next = zone->blocklist.prev = block =
-													  ( memblock_t * )((byte *)zone + sizeof(memzone_t));
+		( memblock_t * )((byte *)zone + sizeof(memzone_t));
 	zone->blocklist.tag  = 1;   // in use block
 	zone->blocklist.id   = 0;
 	zone->blocklist.size = 0;
@@ -2664,6 +2664,7 @@ static void Com_Crash_f(void)
 void Com_SetRecommended()
 {
 	Cbuf_AddText("exec preset_high.cfg\n");
+	Cvar_Set("ui_glPreset", "0");
 	Cvar_Set("com_recommended", "0");
 }
 
@@ -2971,7 +2972,7 @@ void Com_Init(char *commandLine)
 	com_introPlayed = Cvar_Get("com_introplayed", "0", CVAR_ARCHIVE);
 
 	// this cvar is the single entry point of the entire extension system
-	Cvar_Get( "//trap_GetValue", va( "%i", COM_TRAP_GETVALUE ), CVAR_PROTECTED | CVAR_ROM | CVAR_NOTABCOMPLETE );
+	Cvar_Get("//trap_GetValue", va("%i", COM_TRAP_GETVALUE), CVAR_PROTECTED | CVAR_ROM | CVAR_NOTABCOMPLETE);
 
 #if idppc
 	com_altivec = Cvar_Get("com_altivec", "1", CVAR_ARCHIVE);
@@ -3542,7 +3543,7 @@ void Com_CheckDefaultProfileDatExists(void)
 	if (defaultProfile && defaultProfile[0] && !FS_FileExists(DEFAULT_PROFILE_DAT))
 	{
 		fileHandle_t f;
-		char tmpProfile[MAX_CVAR_VALUE_STRING] = {'\0'};
+		char         tmpProfile[MAX_CVAR_VALUE_STRING] = { '\0' };
 		Q_strncpyz(tmpProfile, defaultProfile, sizeof(tmpProfile));
 		Q_CleanStr(tmpProfile);
 		Q_CleanDirName(tmpProfile);
