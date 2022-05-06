@@ -1587,7 +1587,7 @@ sfxHandle_t trap_S_RegisterSound(const char *sample, qboolean compressed)
 	DEBUG_REGISTERPROFILE_INIT
 	CG_DrawInformation(qtrue);
 
-	// only allow compression for ETL clients, GPL source (aka Steam versiion) doesn't play nice with it
+	// only allow compression for ETL clients, GPL source (aka Steam version) doesn't play nice with it
 	if (cg.etLegacyClient)
 	{
 		snd = SystemCall(CG_S_REGISTERSOUND, sample, compressed);
