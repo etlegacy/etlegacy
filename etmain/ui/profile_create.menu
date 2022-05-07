@@ -100,10 +100,10 @@
 
 #ifdef ETLEGACY
 	COMBO(SUBWINDOW_X + 4, SUBWINDOW_Y + 150, (SUBWINDOW_WIDTH)-8, 10, _("Resolution:"), .2, 8, "ui_r_mode", LEGACY_RESOLUTIONS, uiScript glCustom, _("Choose your preferred video resolution, if unsure leave it as the default"))
-	COMBO(SUBWINDOW_X + 4, SUBWINDOW_Y + 164, (SUBWINDOW_WIDTH)-8, 10, _("Window mode:"), .2, 8, "ui_r_windowmode", LEGACY_WINDOWMODES, uiScript glCustom, _("Set your preferred display mode"))
+	COMBO(SUBWINDOW_X + 4, SUBWINDOW_Y + 164, (SUBWINDOW_WIDTH)-8, 10, _("Display mode:"), .2, 8, "ui_r_windowmode", LEGACY_WINDOWMODES, uiScript glCustom, _("Set your preferred display mode"))
 #else
-	MULTIACTION(SUBWINDOW_X + 4, SUBWINDOW_Y + 150, (SUBWINDOW_WIDTH)-8, 10, _("Resolution:"), .2, 8, "ui_r_mode", VANILLA_RESOLUTIONS, uiScript update "r_mode", _("Choose your preferred video resolution"))
-	MULTIACTION(SUBWINDOW_X + 4, SUBWINDOW_Y + 164, (SUBWINDOW_WIDTH)-8, 10, _("Display Mode:"), .2, 8, "ui_r_fullscreen", VANILLA_WINDOWMODES, uiScript update "f_fullscreen", _("Set your preferred display mode"))
+	MULTI(SUBWINDOW_X + 4, SUBWINDOW_Y + 150, (SUBWINDOW_WIDTH)-8, 10, _("Resolution:"), .2, 8, "ui_r_mode", VANILLA_RESOLUTIONS, _("Choose your preferred video resolution"))
+	MULTI(SUBWINDOW_X + 4, SUBWINDOW_Y + 164, (SUBWINDOW_WIDTH)-8, 10, _("Display Mode:"), .2, 8, "ui_r_fullscreen", VANILLA_WINDOWMODES, _("Set your preferred display mode"))
 #endif
 
 	CVARFLOATLABEL(SUBWINDOW_X + 4, SUBWINDOW_Y + 188, (SUBWINDOW_WIDTH)-8, 10, "ui_sensitivity", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH)-8), 8)
