@@ -104,7 +104,7 @@ menuDef {
 	EDITFIELDLEFT(SUBWINDOW_X + 4 + 32, SUBWINDOW_Y + 146, (SUBWINDOW_WIDTH)-8 - 64, 10, _("Player Alias:"), .2, 8, "ui_profile", 36, 23, _("Enter the alias here that you would like displayed to others on servers"))
 
 	MULTIACTION(SUBWINDOW_X + 4, SUBWINDOW_Y + 170, (SUBWINDOW_WIDTH)-8, 10, _("Quality Preset:"), .2, 8, "ui_glPreset", cvarFloatList { "Very Low" 3 "Low" 2 "Normal" 1 "High" 0 }, uiScript glPreset, _("Select your initial video quality settings, these can be changed later via the options menu"))
-#ifndef ETLEGACY
+#ifdef ETLEGACY
 	COMBO(SUBWINDOW_X + 4, SUBWINDOW_Y + 184, (SUBWINDOW_WIDTH)-8, 10, _("Resolution:"), .2, 8, "ui_r_mode", LEGACY_RESOLUTIONS, uiScript glCustom, _("Choose your preferred video resolution, if unsure leave it as the default"))
 	COMBO(SUBWINDOW_X + 4, SUBWINDOW_Y + 198, (SUBWINDOW_WIDTH)-8, 10, _("Display Mode:"), .2, 8, "ui_r_windowmode", LEGACY_WINDOWMODES, uiScript glCustom, _("Set your preferred display mode"))
 #else

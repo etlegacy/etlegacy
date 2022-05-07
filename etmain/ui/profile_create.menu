@@ -95,14 +95,15 @@
 	// TODO: use FEEDER_LANGUAGES to automatically show available localizations
 #ifdef ETLEGACY
 	COMBO(SUBWINDOW_X + 4, SUBWINDOW_Y + 88, (SUBWINDOW_WIDTH)-8, 10, _("Language:"), .2, 8, "ui_cl_lang", LEGACY_LANGUAGES, none, _("Set your desired language"))
-#else
-	MULTI(SUBWINDOW_X + 4, SUBWINDOW_Y + 88, (SUBWINDOW_WIDTH)-8, 10, _("Language:"), .2, 8, "ui_cl_lang", LEGACY_LANGUAGES, _("Set your desired language"))
 #endif
 	MULTIACTION(SUBWINDOW_X + 4, SUBWINDOW_Y + 136, (SUBWINDOW_WIDTH)-8, 10, _("Quality Preset:"), .2, 8, "ui_glPreset", cvarFloatList { "Very Low" 3 "Low" 2 "Normal" 1 "High" 0 }, uiScript glPreset, _("Select your initial video quality settings, these can be changed later via the options menu"))
 
 #ifdef ETLEGACY
 	COMBO(SUBWINDOW_X + 4, SUBWINDOW_Y + 150, (SUBWINDOW_WIDTH)-8, 10, _("Resolution:"), .2, 8, "ui_r_mode", LEGACY_RESOLUTIONS, uiScript glCustom, _("Choose your preferred video resolution, if unsure leave it as the default"))
 	COMBO(SUBWINDOW_X + 4, SUBWINDOW_Y + 164, (SUBWINDOW_WIDTH)-8, 10, _("Window mode:"), .2, 8, "ui_r_windowmode", LEGACY_WINDOWMODES, uiScript glCustom, _("Set your preferred display mode"))
+#else
+	MULTIACTION(SUBWINDOW_X + 4, SUBWINDOW_Y + 150, (SUBWINDOW_WIDTH)-8, 10, _("Resolution:"), .2, 8, "ui_r_mode", VANILLA_RESOLUTIONS, uiScript update "r_mode", _("Choose your preferred video resolution"))
+	MULTIACTION(SUBWINDOW_X + 4, SUBWINDOW_Y + 164, (SUBWINDOW_WIDTH)-8, 10, _("Display Mode:"), .2, 8, "ui_r_fullscreen", VANILLA_WINDOWMODES, uiScript update "f_fullscreen", _("Set your preferred display mode"))
 #endif
 
 	CVARFLOATLABEL(SUBWINDOW_X + 4, SUBWINDOW_Y + 188, (SUBWINDOW_WIDTH)-8, 10, "ui_sensitivity", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH)-8), 8)
