@@ -2500,7 +2500,7 @@ void CG_DrawCompassIcon(float x, float y, float w, float h, vec3_t origin, vec3_
 		icony = icony + ((float)sin(angle) * radius);
 
 		iconx = iconx - (iconWidth - 4) / 2;
-		icony = icony - (iconWidth - 4) / 2;
+		icony = icony - (iconHeight - 4) / 2;
 	}
 	else
 	{
