@@ -52,8 +52,8 @@ menuDef
 	SUBWINDOWBLACK( SUBWINDOW_X, SUBWINDOW_Y, SUBWINDOW_WIDTH, SUBWINDOW_HEIGHT, _("START DEDICATED SERVER") )
 	LABEL( SUBWINDOW_X+4, SUBWINDOW_Y+16, (SUBWINDOW_WIDTH)-8, 10, _("Starting a Dedicated Server will"), .2, ITEM_ALIGN_LEFT, 0, 8 )
 	LABEL( SUBWINDOW_X+4, SUBWINDOW_Y+28, (SUBWINDOW_WIDTH)-8, 10, _("close the game window and open the"), .2, ITEM_ALIGN_LEFT, 0, 8 )
-	LABEL( SUBWINDOW_X+4, SUBWINDOW_Y+40, (SUBWINDOW_WIDTH)-8, 10, _("server console. It will not be possible"), .2, ITEM_ALIGN_LEFT, 0, 8 )
-	LABEL( SUBWINDOW_X+4, SUBWINDOW_Y+52, (SUBWINDOW_WIDTH)-8, 10, _("to play the game on the host machine."), .2, ITEM_ALIGN_LEFT, 0, 8 )
+	LABEL( SUBWINDOW_X+4, SUBWINDOW_Y+40, (SUBWINDOW_WIDTH)-8, 10, _("server console. You can then re-open"), .2, ITEM_ALIGN_LEFT, 0, 8 )
+	LABEL( SUBWINDOW_X+4, SUBWINDOW_Y+52, (SUBWINDOW_WIDTH)-8, 10, _("the game and connect to the server."), .2, ITEM_ALIGN_LEFT, 0, 8 )
 	LABEL( SUBWINDOW_X+4, SUBWINDOW_Y+76, (SUBWINDOW_WIDTH)-8, 10, _("Are you sure you want to start"), .2, ITEM_ALIGN_LEFT, 0, 8 )
 	LABEL( SUBWINDOW_X+4, SUBWINDOW_Y+88, (SUBWINDOW_WIDTH)-8, 10, _("a Dedicated Server?"), .2, ITEM_ALIGN_LEFT, 0, 8 )
 
