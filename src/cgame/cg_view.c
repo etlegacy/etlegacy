@@ -846,7 +846,7 @@ void CG_ZoomIn_f(void)
 		                 , GetWeaponTableData(cg_entities[cg.snap->ps.clientNum].currentState.weapon)->zoomOut
 		                 , GetWeaponTableData(cg_entities[cg.snap->ps.clientNum].currentState.weapon)->zoomIn);
 	}
-	else if (cg.zoomedBinoc)    // case where the binocular is used but not holded (equipped)
+	else if (cg.zoomedBinoc)    // case where the binocular is used but not held (equipped)
 	{
 		CG_AdjustZoomVal(-(cg_zoomStepSniper.value)
 		                 , GetWeaponTableData(WP_BINOCULARS)->zoomOut
@@ -867,7 +867,7 @@ void CG_ZoomOut_f(void)
 		                 , GetWeaponTableData(cg_entities[cg.snap->ps.clientNum].currentState.weapon)->zoomOut
 		                 , GetWeaponTableData(cg_entities[cg.snap->ps.clientNum].currentState.weapon)->zoomIn);
 	}
-	else if (cg.zoomedBinoc)    // case where the binocular is used but not holded (equipped)
+	else if (cg.zoomedBinoc)    // case where the binocular is used but not held (equipped)
 	{
 		CG_AdjustZoomVal(cg_zoomStepSniper.value
 		                 , GetWeaponTableData(WP_BINOCULARS)->zoomOut
@@ -881,7 +881,8 @@ void CG_ZoomOut_f(void)
  */
 void CG_Zoom(void)
 {
-	int weapon;
+	int   weapon;
+	float zoomSniper = Com_Clamp(4, 32, cg_zoomDefaultSniper.value);
 
 	// no zoom in third person view
 	if (cg.renderingThirdPerson)
@@ -924,7 +925,7 @@ void CG_Zoom(void)
 
 		cg.zoomedBinoc = qtrue;
 		cg.zoomTime    = cg.time;
-		cg.zoomval     = cg_zoomDefaultSniper.value; // was DefaultBinoc, changed per atvi req
+		cg.zoomval     = zoomSniper; // was DefaultBinoc, changed per atvi req
 	}
 	else if (GetWeaponTableData(weapon)->type & WEAPON_TYPE_SCOPED) // check for scope weapon in use, and change to if necessary
 	{
@@ -935,7 +936,7 @@ void CG_Zoom(void)
 
 		cg.zoomed   = qtrue;
 		cg.zoomTime = cg.time;
-		cg.zoomval  = cg_zoomDefaultSniper.value;    // was DefaultFG, changed per atvi req
+		cg.zoomval  = zoomSniper;    // was DefaultFG, changed per atvi req
 	}
 	else
 	{
