@@ -2464,7 +2464,7 @@ void CG_CommandMap_DrawHighlightText(void)
 */
 void CG_DrawCompassIcon(float x, float y, float w, float h, vec3_t origin, vec3_t dest, qhandle_t shader, float dstScale, float baseSize, mapScissor_t *scissor)
 {
-	float  iconx, icony, iconWidth, iconHeight;
+	float  iconx, icony, iconWidth, iconHeight, radius;
 	float  angle, len, diff;
 	vec3_t v1, angles;
 
@@ -2474,31 +2474,33 @@ void CG_DrawCompassIcon(float x, float y, float w, float h, vec3_t origin, vec3_
 	VectorNormalize(v1);
 	vectoangles(v1, angles);
 
+	if (v1[0] == 0.f && v1[1] == 0.f && v1[2] == 0.f)
+	{
+		return;
+	}
+
+	angles[YAW] = AngleSubtract(cg.predictedPlayerState.viewangles[YAW], angles[YAW]);
+	angle       = ((angles[YAW] + 180.f) / 360.f - (0.50f / 2.f)) * M_TAU_F;
+
+	len        = 1 - MIN(1.f, len / 2000.f * dstScale);
+	iconWidth  = baseSize * len + 8;
+	iconHeight = baseSize * len + 8;
+
 	if (scissor->circular)
 	{
-		if (v1[0] == 0.f && v1[1] == 0.f && v1[2] == 0.f)
-		{
-			return;
-		}
-
-		angles[YAW] = AngleSubtract(cg.predictedPlayerState.viewangles[YAW], angles[YAW]);
-
-		angle = ((angles[YAW] + 180.f) / 360.f - (0.50f / 2.f)) * M_TAU_F;
-
 		w /= 2;
 		h /= 2;
 
-		x += w;
-		y += h;
+		iconx = x + w;
+		icony = y + h;
 
-		w = (float)sqrt((w * w) + (h * h)) / 3.f * 2.f * 0.9f;
+		radius = (float)sqrt((w * w) + (h * h)) / 3.f * 2.f * 0.9f;
 
-		x = x + ((float)cos(angle) * w);
-		y = y + ((float)sin(angle) * w);
+		iconx = iconx + ((float)cos(angle) * radius);
+		icony = icony + ((float)sin(angle) * radius);
 
-		len = 1 - MIN(1.f, len / 2000.f * dstScale);
-
-		CG_DrawPic(x - (baseSize * len + 4) / 2, y - (baseSize * len + 4) / 2, baseSize * len + 8, baseSize * len + 8, shader);
+		iconx = iconx - (iconWidth - 4) / 2;
+		icony = icony - (iconHeight - 4) / 2;
 	}
 	else
 	{
@@ -2508,42 +2510,24 @@ void CG_DrawCompassIcon(float x, float y, float w, float h, vec3_t origin, vec3_
 		w    = w - diff;
 		h    = h - diff;
 
-		len = 1 - MIN(1.f, len / 2000.f * dstScale);
+		iconx = x + (w / 2);
+		icony = y + (h / 2);
 
-		iconWidth  = baseSize * len + 8;
-		iconHeight = baseSize * len + 8;
+		radius = (float)sqrt((w * w) + (h * h)) / 2.0f;
 
-		// calculate the screen coordinate of this entity for the compass, consider the zoom value
-		iconx = (dest[0] - cg.mapcoordsMins[0]) * cg.mapcoordsScale[0] * w * scissor->zoomFactor;
-		icony = (dest[1] - cg.mapcoordsMins[1]) * cg.mapcoordsScale[1] * h * scissor->zoomFactor;
+		iconx = iconx + ((float)cos(angle) * radius);
+		icony = icony + ((float)sin(angle) * radius);
 
-		iconx = iconx - scissor->tl[0] + x - (iconWidth * (scissor->zoomFactor / AUTOMAP_ZOOM));
-		icony = icony - scissor->tl[1] + y - (iconHeight * (scissor->zoomFactor / AUTOMAP_ZOOM));
+		iconWidth  *= ((scissor->zoomFactor + 2.5f) / AUTOMAP_ZOOM);
+		iconHeight *= ((scissor->zoomFactor + 2.5f) / AUTOMAP_ZOOM);
 
-		iconWidth  *= (scissor->zoomFactor / AUTOMAP_ZOOM);
-		iconHeight *= (scissor->zoomFactor / AUTOMAP_ZOOM);
-
-		// special handling for revive icon to draw it horizontally centered
-		if (shader == cgs.media.medicReviveShader)
-		{
-			iconx += iconWidth * .5f;
-		}
-
-		// is the icon inside map boundaries?
-		if (iconx > x && iconx < x + w - iconWidth
-		    && icony > y && icony < y + h - iconHeight)
-		{
-			// FIXME: we should draw the icon at the edges when playing
-			if (CG_IsShoutcaster())
-			{
-				return;
-			}
-		}
+		iconx -= iconWidth / 2;
+		icony -= iconHeight / 2;
 
 		// keep the icon from going outside map boundaries
 		iconx = Com_Clamp(x, x + w - iconWidth, iconx);
 		icony = Com_Clamp(y, y + h - iconHeight, icony);
-
-		CG_DrawPic(iconx, icony, iconWidth, iconHeight, shader);
 	}
+
+	CG_DrawPic(iconx, icony, iconWidth, iconHeight, shader);
 }
