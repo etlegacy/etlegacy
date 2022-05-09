@@ -839,7 +839,8 @@ void CG_ZoomIn_f(void)
 	// fixed being able to "latch" your zoom by weaponcheck + quick zoomin
 	// - change for zoom view in demos
 	// zoom if weapon is scoped or if binoc is scoped
-	if (GetWeaponTableData(cg_entities[cg.snap->ps.clientNum].currentState.weapon)->type & WEAPON_TYPE_SCOPED)
+	// FG42 type is WEAPON_TYPE_SMG, and it should have no zoom
+	if (CHECKBITWISE(GetWeaponTableData(cg_entities[cg.snap->ps.clientNum].currentState.weapon)->type, (WEAPON_TYPE_SCOPED | WEAPON_TYPE_RIFLE)))
 	{
 		CG_AdjustZoomVal(-(cg_zoomStepSniper.value)
 		                 , GetWeaponTableData(cg_entities[cg.snap->ps.clientNum].currentState.weapon)->zoomOut
@@ -859,7 +860,8 @@ void CG_ZoomIn_f(void)
 void CG_ZoomOut_f(void)
 {
 	// zoom if weapon is scoped or if binoc is scoped
-	if (GetWeaponTableData(cg_entities[cg.snap->ps.clientNum].currentState.weapon)->type & WEAPON_TYPE_SCOPED)
+	// FG42 type is WEAPON_TYPE_SMG, and it should have no zoom
+	if (CHECKBITWISE(GetWeaponTableData(cg_entities[cg.snap->ps.clientNum].currentState.weapon)->type, (WEAPON_TYPE_SCOPED | WEAPON_TYPE_RIFLE)))
 	{
 		CG_AdjustZoomVal(cg_zoomStepSniper.value
 		                 , GetWeaponTableData(cg_entities[cg.snap->ps.clientNum].currentState.weapon)->zoomOut
