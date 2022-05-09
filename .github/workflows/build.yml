@@ -206,13 +206,6 @@ jobs:
             app/build/intermediates/transforms/mergeJniLibs/release/0/lib/arm64-v8a/libcgame*.so
             app/build/intermediates/transforms/mergeJniLibs/release/0/lib/arm64-v8a/libui*.so
 
-      - name: Upload armeabi-v7a
-        uses: actions/upload-artifact@v2
-        with:
-          name: android-mod
-          path: |
-            app/build/intermediates/transforms/mergeJniLibs/release/0/lib/armeabi-v7a/libcgame*.so
-            app/build/intermediates/transforms/mergeJniLibs/release/0/lib/armeabi-v7a/libui*.so
 
 #   __  __                                                          _
 #  |  \/  |                                                        | |
