@@ -29,6 +29,12 @@ qboolean G_DoAntiwarp(gentity_t *ent)
 			return qfalse;
 		}
 
+		// don't antiwarp bots
+		if (ent->r.svFlags & SVF_BOT)
+		{
+			return qfalse;
+		}
+
 		// don't antiwarp if they haven't been connected for 5 seconds
 		// note: this check is generally only triggered during mid-map
 		// connects, because clients connect before loading the map.
@@ -218,6 +224,12 @@ void DoClientThinks(gentity_t *ent)
 
 		speed = G_CmdScale(ent, cmd);
 
+		// if the warping player stopped but still has some speed keep antiwarping
+		if (speed == 0 && VectorLength(ent->client->ps.velocity) > 80.0f)
+		{
+			speed = 1.0f;
+		}
+
 		if (timeDelta > 50)
 		{
 			timeDelta = 50;
@@ -303,9 +315,9 @@ drop_packet:
 	if (g_antiwarp.integer & 32)
 	{
 		trap_SendServerCommand(
-		    ent - g_entities,
-		    va("cp \"%d %d\n\"", latestTime - lastTime, startPackets - ent->client->cmdcount)
-		    );
+			ent - g_entities,
+			va("cp \"%d %d\n\"", latestTime - lastTime, startPackets - ent->client->cmdcount)
+			);
 	}
 
 #ifdef ETLEGACY_DEBUG
