@@ -24,7 +24,6 @@ menuDef {
 		uiScript systemCvarsGet ;
 		uiScript vidSave ;
 		uiScript glCustom ;
-		uiScript update "ui_glPreset" ;
 		uiScript parseglPreset
 	}
 
