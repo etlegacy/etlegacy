@@ -1392,6 +1392,8 @@ void ClientThink_real(gentity_t *ent)
 	pm.noWeapClips = qfalse;
 
 	VectorCopy(client->ps.origin, client->oldOrigin);
+	VectorCopy(ent->r.mins, pm.mins);
+	VectorCopy(ent->r.maxs, pm.maxs);
 
 	pm.gametype           = g_gametype.integer;
 	pm.ltChargeTime       = level.fieldopsChargeTime[client->sess.sessionTeam - 1];
