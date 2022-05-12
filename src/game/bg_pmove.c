@@ -44,6 +44,12 @@
 
 #include "bg_local.h"
 
+typedef enum
+{
+	PRONEDELAY_TOGGLE = BIT(0),
+	PRONEDELAY_JUMP   = BIT(1)
+} pronedelayFlags;
+
 #ifdef CGAMEDLL
 #define PM_FIXEDPHYSICS         cgs.fixedphysics
 #define PM_FIXEDPHYSICSFPS      cgs.fixedphysicsfps
@@ -63,6 +69,7 @@ extern vmCvar_t g_pronedelay;
 #define AIMSPREAD_MAXSPREAD 255
 #define MAX_AIMSPREAD_TIME 1000
 #define EXTENDEDPRONE_TIME 400
+#define PM_JUMP_DELAY 850
 
 pmove_t * pm;
 pml_t pml;
@@ -768,7 +775,7 @@ static qboolean PM_CheckJump(void)
 	// don't allow jump accel
 
 	// revert to using pmext for this since pmext is fixed now.
-	if (pm->cmd.serverTime - pm->pmext->jumpTime < 850)
+	if (pm->cmd.serverTime - pm->pmext->jumpTime < PM_JUMP_DELAY)
 	{
 		return qfalse;
 	}
@@ -878,7 +885,7 @@ static qboolean PM_CheckProne(void)
 	//Com_Printf( "%i: PM_CheckProne\n", pm->cmd.serverTime);
 	int pronedelay = 750;
 
-	if (PM_PRONEDELAY)
+	if (PM_PRONEDELAY & PRONEDELAY_TOGGLE)
 	{
 		pronedelay = 1750;
 	}
@@ -909,6 +916,11 @@ static qboolean PM_CheckProne(void)
 
 		// can't go prone while swimming
 		if (pm->waterlevel > 1)
+		{
+			return qfalse;
+		}
+
+		if (pm->cmd.serverTime - pm->pmext->jumpTime < PM_JUMP_DELAY && PM_PRONEDELAY & PRONEDELAY_JUMP)
 		{
 			return qfalse;
 		}
@@ -993,7 +1005,7 @@ static qboolean PM_CheckProne(void)
 				}
 			}
 
-			if (PM_PRONEDELAY)
+			if (PM_PRONEDELAY & PRONEDELAY_TOGGLE)
 			{
 				pm->ps->aimSpreadScale      = AIMSPREAD_MAXSPREAD;
 				pm->ps->aimSpreadScaleFloat = AIMSPREAD_MAXSPREAD;
@@ -3086,8 +3098,8 @@ void PM_AdjustAimSpreadScale(void)
 		decrease = AIMSPREAD_DECREASE_RATE;
 	}
 
-
-	if (PM_PRONEDELAY && pm->ps->aimSpreadScaleFloat == AIMSPREAD_MAXSPREAD && pm->cmd.serverTime - pm->pmext->proneTime < MAX_AIMSPREAD_TIME)
+	if (PM_PRONEDELAY & PRONEDELAY_TOGGLE && pm->ps->aimSpreadScaleFloat == AIMSPREAD_MAXSPREAD
+	    && pm->cmd.serverTime - pm->pmext->proneTime < MAX_AIMSPREAD_TIME)
 	{
 		return;
 	}
