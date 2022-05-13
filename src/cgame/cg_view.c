@@ -2281,12 +2281,6 @@ void CG_DrawActiveFrame(int serverTime, qboolean demoPlayback)
 		trap_S_Respatialize(cg.snap->ps.clientNum, cg.refdef.vieworg, cg.refdef.viewaxis, inwater);
 	}
 
-	// mortar cam
-	if (CG_GetActiveHUD()->missilecamera.visible && cg.latestMissile && !cg.showGameView)
-	{
-		CG_DrawMissileCamera(&CG_GetActiveHUD()->missilecamera.location);
-	}
-
 	CG_SetLastKeyCatcher();
 
 	if (cg_stats.integer)

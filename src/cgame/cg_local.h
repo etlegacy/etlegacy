@@ -2630,9 +2630,6 @@ extern vmCvar_t cg_shadows;
 extern vmCvar_t cg_gibs;
 extern vmCvar_t cg_draw2D;
 extern vmCvar_t cg_drawFPS;
-extern vmCvar_t cg_drawPing;
-extern vmCvar_t cg_lagometer;
-extern vmCvar_t cg_drawSnapshot;
 extern vmCvar_t cg_drawCrosshair;
 extern vmCvar_t cg_drawCrosshairInfo;
 extern vmCvar_t cg_drawCrosshairNames;
@@ -2789,8 +2786,6 @@ extern vmCvar_t cg_rconPassword;
 extern vmCvar_t cg_refereePassword;
 extern vmCvar_t cg_atmosphericEffects;
 
-extern vmCvar_t cg_drawRoundTimer;
-
 extern vmCvar_t cg_debugSkills;
 extern vmCvar_t cg_drawFireteamOverlay;
 extern vmCvar_t cg_drawSmallPopupIcons;
@@ -2817,7 +2812,6 @@ extern vmCvar_t cg_spawnTimer_set;
 extern vmCvar_t cg_countryflags; ///< GeoIP
 
 extern vmCvar_t cg_altHud;
-extern vmCvar_t cg_altHudFlags;
 extern vmCvar_t cg_tracers;
 extern vmCvar_t cg_fireteamLatchedClass;
 extern vmCvar_t cg_fireteamLocationAlign;
@@ -3063,8 +3057,6 @@ void CG_AddLineToScene(const vec3_t start, const vec3_t end, const vec4_t colour
 void CG_DrawRotateGizmo(const vec3_t origin, float radius, int numSegments, int activeAxis);
 void CG_DrawMoveGizmo(const vec3_t origin, float radius, int activeAxis);
 
-void CG_DrawMissileCamera(rectDef_t *rect);
-
 /**
  * @struct scrollText_s
  * @typedef scrollText_t
@@ -3093,8 +3085,6 @@ void CG_Hud_Setup(void);
 void CG_DrawUpperRight(void);
 void CG_SetHud(void);
 void CG_DrawActiveHud(void);
-void CG_DrawGlobalHud(void);
-void CG_DrawDemoMessage(void);
 
 void CG_Text_PaintChar_Ext(float x, float y, float w, float h, float scalex, float scaley, float s, float t, float s2, float t2, qhandle_t hShader);
 void CG_Text_PaintChar(float x, float y, float width, float height, float scale, float s, float t, float s2, float t2, qhandle_t hShader);
@@ -3745,7 +3735,6 @@ fireteamData_t *CG_IsFireTeamLeader(int clientNum);
 
 void CG_SortClientFireteam(void);
 
-void CG_DrawFireTeamOverlay(rectDef_t *rect);
 clientInfo_t *CG_SortedFireTeamPlayerForPosition(int pos);
 qboolean CG_FireteamHasClass(int classnum, qboolean selectedonly);
 const char *CG_BuildSelectedFirteamString(void);
@@ -3911,7 +3900,6 @@ void CG_CommandMap_SetHighlightText(const char *text, float x, float y);
 void CG_CommandMap_DrawHighlightText(void);
 qboolean CG_CommandCentreSpawnPointClick(void);
 
-void CG_DrawNewCompass(rectDef_t location);
 qhandle_t CG_GetCompassIcon(entityState_t *ent, qboolean drawAllVoicesChat, qboolean drawFireTeam, qboolean drawPrimaryObj, qboolean drawSecondaryObj, qboolean drawDynamic, char *name);
 void CG_DrawCompassIcon(float x, float y, float w, float h, vec3_t origin, vec3_t dest, qhandle_t shader, float dstScale, float baseSize, mapScissor_t *scissor);
 
@@ -3938,7 +3926,6 @@ void CG_InitPMGraphics(void);
 void CG_UpdatePMLists(void);
 void CG_AddPMItem(popupMessageType_t type, const char *message, const char *message2, qhandle_t shader, qhandle_t weaponShader, int scaleShader, vec3_t color);
 void CG_AddPMItemBig(popupMessageBigType_t type, const char *message, qhandle_t shader);
-void CG_DrawPMItems(rectDef_t rect, int style);
 void CG_DrawPMItemsBig(int style);
 const char *CG_GetPMItemText(centity_t *cent);
 void CG_PlayPMItemSound(centity_t *cent);
@@ -4105,6 +4092,8 @@ extern qboolean resetmaxspeed; // CG_DrawSpeed
 
 /* HUD exports */
 
+#define HUD_COMPONENTS_NUM 38
+
 typedef struct hudComponent_s
 {
 	rectDef_t location;
@@ -4113,6 +4102,7 @@ typedef struct hudComponent_s
 	float scale;
 	vec4_t color;
 	int offset;
+    void (*draw)(struct hudComponent_s *comp);
 } hudComponent_t;
 
 typedef struct hudStructure_s
@@ -4154,11 +4144,26 @@ typedef struct hudStructure_s
 
 	hudComponent_t sprinttext;
 	hudComponent_t breathtext;
-	hudComponent_t weaponchargetext; // 32
-
-	hudComponent_t *components[32];
+	hudComponent_t weaponchargetext;
+    hudComponent_t fps;
+    hudComponent_t snapshot;
+    hudComponent_t ping;
+    hudComponent_t speed;
+    hudComponent_t lagometer;
+    hudComponent_t disconnect; // 38
+    
+	hudComponent_t *components[HUD_COMPONENTS_NUM];
 } hudStucture_t;
 
 hudStucture_t *CG_GetActiveHUD();
+
+void CG_DrawNewCompass(hudComponent_t *comp);
+void CG_DrawFireTeamOverlay(hudComponent_t *comp);
+void CG_DrawPMItems(hudComponent_t *comp);
+void CG_DrawVote(hudComponent_t *comp);
+void CG_DrawSpectatorMessage(hudComponent_t *comp);
+void CG_DrawLimboMessage(hudComponent_t *comp);
+void CG_DrawFollow(hudComponent_t *comp);
+void CG_DrawMissileCamera(hudComponent_t *comp);
 
 #endif // #ifndef INCLUDE_CG_LOCAL_H

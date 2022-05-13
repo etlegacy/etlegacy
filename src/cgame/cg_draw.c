@@ -541,66 +541,66 @@ void CG_DrawTeamBackground(int x, int y, int w, int h, float alpha, int team)
  */
 static void Text_Paint_LimitX(float *maxX, float x, float y, float scale, vec4_t color, const char *text, float adjust, int limit, fontHelper_t *font)
 {
-    if (text)
-    {
-        vec4_t       newColor = { 0, 0, 0, 0 };
-        const char   *s       = text;
-        float        max      = *maxX;
-        float        useScale = scale * Q_UTF8_GlyphScale(font);
-        int          len      = Q_UTF8_Strlen(text);
-        int          count    = 0;
+	if (text)
+	{
+		vec4_t     newColor = { 0, 0, 0, 0 };
+		const char *s       = text;
+		float      max      = *maxX;
+		float      useScale = scale * Q_UTF8_GlyphScale(font);
+		int        len      = Q_UTF8_Strlen(text);
+		int        count    = 0;
 
-        trap_R_SetColor(color);
+		trap_R_SetColor(color);
 
-        if (limit > 0 && len > limit)
-        {
-            len = limit;
-        }
+		if (limit > 0 && len > limit)
+		{
+			len = limit;
+		}
 
-        while (s && *s && count < len)
-        {
-            glyphInfo_t  *glyph = Q_UTF8_GetGlyph(font, s);
-            if (Q_IsColorString(s))
-            {
-                if (*(s + 1) == COLOR_NULL)
-                {
-                    Com_Memcpy(&newColor[0], &color[0], sizeof(vec4_t));
-                }
-                else
-                {
-                    Com_Memcpy(newColor, g_color_table[ColorIndex(*(s + 1))], sizeof(newColor));
-                    newColor[3] = color[3];
-                }
-                trap_R_SetColor(newColor);
-                s += 2;
-                continue;
-            }
-            else
-            {
-                float yadj = useScale * glyph->top;
+		while (s && *s && count < len)
+		{
+			glyphInfo_t *glyph = Q_UTF8_GetGlyph(font, s);
+			if (Q_IsColorString(s))
+			{
+				if (*(s + 1) == COLOR_NULL)
+				{
+					Com_Memcpy(&newColor[0], &color[0], sizeof(vec4_t));
+				}
+				else
+				{
+					Com_Memcpy(newColor, g_color_table[ColorIndex(*(s + 1))], sizeof(newColor));
+					newColor[3] = color[3];
+				}
+				trap_R_SetColor(newColor);
+				s += 2;
+				continue;
+			}
+			else
+			{
+				float yadj = useScale * glyph->top;
 
-                if (CG_Text_Width_Ext(s, useScale, 1, font) + x > max)
-                {
-                    *maxX = 0;
-                    break;
-                }
-                CG_Text_PaintChar(x + (glyph->pitch * useScale), y - yadj,
-                               glyph->imageWidth,
-                               glyph->imageHeight,
-                               useScale,
-                               glyph->s,
-                               glyph->t,
-                               glyph->s2,
-                               glyph->t2,
-                               glyph->glyph);
-                x    += (glyph->xSkip * useScale) + adjust;
-                *maxX = x;
-                count++;
-                s += Q_UTF8_Width(s);
-            }
-        }
-        trap_R_SetColor(NULL);
-    }
+				if (CG_Text_Width_Ext(s, useScale, 1, font) + x > max)
+				{
+					*maxX = 0;
+					break;
+				}
+				CG_Text_PaintChar(x + (glyph->pitch * useScale), y - yadj,
+				                  glyph->imageWidth,
+				                  glyph->imageHeight,
+				                  useScale,
+				                  glyph->s,
+				                  glyph->t,
+				                  glyph->s2,
+				                  glyph->t2,
+				                  glyph->glyph);
+				x    += (glyph->xSkip * useScale) + adjust;
+				*maxX = x;
+				count++;
+				s += Q_UTF8_Width(s);
+			}
+		}
+		trap_R_SetColor(NULL);
+	}
 }
 
 /**
@@ -616,77 +616,77 @@ static void Text_Paint_LimitX(float *maxX, float x, float y, float scale, vec4_t
  */
 static void Text_Paint_LimitY(float *maxY, float x, float y, float scale, vec4_t color, const char *text, float adjust, int limit, fontHelper_t *font)
 {
-    if (text)
-    {
-        vec4_t       newColor = { 0, 0, 0, 0 };
-        const char   *s       = text;
-        float        max      = *maxY;
-        float        useScale = scale * Q_UTF8_GlyphScale(font);
-        int          len      = Q_UTF8_Strlen(text);
-        int          count    = 0;
-        float        newX     = x;
-        int          height   = CG_Text_Height_Ext(text, useScale, 0, font);
+	if (text)
+	{
+		vec4_t     newColor = { 0, 0, 0, 0 };
+		const char *s       = text;
+		float      max      = *maxY;
+		float      useScale = scale * Q_UTF8_GlyphScale(font);
+		int        len      = Q_UTF8_Strlen(text);
+		int        count    = 0;
+		float      newX     = x;
+		int        height   = CG_Text_Height_Ext(text, useScale, 0, font);
 
-        trap_R_SetColor(color);
+		trap_R_SetColor(color);
 
-        if (limit > 0 && len > limit)
-        {
-            len = limit;
-        }
+		if (limit > 0 && len > limit)
+		{
+			len = limit;
+		}
 
-        while (s && *s && count < len)
-        {
-            glyphInfo_t *glyph = Q_UTF8_GetGlyph(font, s);
-            if (Q_IsColorString(s))
-            {
-                if (*(s + 1) == COLOR_NULL)
-                {
-                    Com_Memcpy(&newColor[0], &color[0], sizeof(vec4_t));
-                }
-                else
-                {
-                    Com_Memcpy(newColor, g_color_table[ColorIndex(*(s + 1))], sizeof(newColor));
-                    newColor[3] = color[3];
-                }
-                trap_R_SetColor(newColor);
-                s += 2;
-                continue;
-            }
-            else
-            {
-                float yadj = useScale * glyph->top;
+		while (s && *s && count < len)
+		{
+			glyphInfo_t *glyph = Q_UTF8_GetGlyph(font, s);
+			if (Q_IsColorString(s))
+			{
+				if (*(s + 1) == COLOR_NULL)
+				{
+					Com_Memcpy(&newColor[0], &color[0], sizeof(vec4_t));
+				}
+				else
+				{
+					Com_Memcpy(newColor, g_color_table[ColorIndex(*(s + 1))], sizeof(newColor));
+					newColor[3] = color[3];
+				}
+				trap_R_SetColor(newColor);
+				s += 2;
+				continue;
+			}
+			else
+			{
+				float yadj = useScale * glyph->top;
 
-                if (CG_Text_Height_Ext(s, useScale, 1, font) + y > max)
-                {
-                    *maxY = 0;
-                    break;
-                }
+				if (CG_Text_Height_Ext(s, useScale, 1, font) + y > max)
+				{
+					*maxY = 0;
+					break;
+				}
 
-                CG_Text_PaintChar(newX + (glyph->pitch * useScale), y - yadj,
-                               glyph->imageWidth,
-                               glyph->imageHeight,
-                               useScale,
-                               glyph->s,
-                               glyph->t,
-                               glyph->s2,
-                               glyph->t2,
-                               glyph->glyph);
+				CG_Text_PaintChar(newX + (glyph->pitch * useScale), y - yadj,
+				                  glyph->imageWidth,
+				                  glyph->imageHeight,
+				                  useScale,
+				                  glyph->s,
+				                  glyph->t,
+				                  glyph->s2,
+				                  glyph->t2,
+				                  glyph->glyph);
 
-                newX += (glyph->xSkip * useScale) + adjust;
+				newX += (glyph->xSkip * useScale) + adjust;
 
-                count++;
-                s += Q_UTF8_Width(s);
+				count++;
+				s += Q_UTF8_Width(s);
 
-                if (*s == '\n')
-                {
-                    y    += height + 5;
-                    *maxY = y;
-                    newX  = x;
-                }
-            }
-        }
-        trap_R_SetColor(NULL);
-    }
+				if (*s == '\n')
+				{
+					y    += height + 5;
+					*maxY = y;
+					newX  = x;
+				}
+			}
+		}
+		trap_R_SetColor(NULL);
+	}
 }
 
 /**
@@ -699,82 +699,82 @@ static void Text_Paint_LimitY(float *maxY, float x, float y, float scale, vec4_t
  */
 void CG_DrawHorizontalScrollingString(rectDef_t *rect, vec4_t color, float scale, int scrollingRefresh, int step, scrollText_t *scroll, fontHelper_t *font)
 {
-    if (scroll->length)
-    {
-        float pos       = rect->x;
-        float thickness = rect->w;
-        float maxPos    = 1;
+	if (scroll->length)
+	{
+		float pos       = rect->x;
+		float thickness = rect->w;
+		float maxPos    = 1;
 
-        if (!scroll->init || scroll->offset > scroll->length)
-        {
-            scroll->init      = qtrue;
-            scroll->offset    = 0;
-            scroll->paintPos  = pos + 1;
-            scroll->paintPos2 = -1;
-            scroll->time      = 0;
-        }
+		if (!scroll->init || scroll->offset > scroll->length)
+		{
+			scroll->init      = qtrue;
+			scroll->offset    = 0;
+			scroll->paintPos  = pos + 1;
+			scroll->paintPos2 = -1;
+			scroll->time      = 0;
+		}
 
-        if (cgDC.realTime > scroll->time)
-        {
-            scroll->time = cgDC.realTime + scrollingRefresh;
-            if (scroll->paintPos <= pos + step)
-            {
-                if (scroll->offset < scroll->length)
-                {
-                    scroll->paintPos += CG_Text_Width(&scroll->text[scroll->offset], scale, 1) - 1;
+		if (cgDC.realTime > scroll->time)
+		{
+			scroll->time = cgDC.realTime + scrollingRefresh;
+			if (scroll->paintPos <= pos + step)
+			{
+				if (scroll->offset < scroll->length)
+				{
+					scroll->paintPos += CG_Text_Width(&scroll->text[scroll->offset], scale, 1) - 1;
 
-                    scroll->offset = scroll->offset + 1;
-                }
-                else
-                {
-                    scroll->offset = 0;
-                    if (scroll->paintPos2 >= 0)
-                    {
-                        scroll->paintPos = scroll->paintPos2;
-                    }
-                    else
-                    {
-                        scroll->paintPos = pos + thickness - step;
-                    }
-                    scroll->paintPos2 = -1;
-                }
-            }
-            else
-            {
-                //serverStatus.motdPaintX--;
-                scroll->paintPos -= step;
-                if (scroll->paintPos2 >= 0)
-                {
-                    //serverStatus.motdPaintX2--;
-                    scroll->paintPos2 -= step;
-                }
-            }
-        }
+					scroll->offset = scroll->offset + 1;
+				}
+				else
+				{
+					scroll->offset = 0;
+					if (scroll->paintPos2 >= 0)
+					{
+						scroll->paintPos = scroll->paintPos2;
+					}
+					else
+					{
+						scroll->paintPos = pos + thickness - step;
+					}
+					scroll->paintPos2 = -1;
+				}
+			}
+			else
+			{
+				//serverStatus.motdPaintX--;
+				scroll->paintPos -= step;
+				if (scroll->paintPos2 >= 0)
+				{
+					//serverStatus.motdPaintX2--;
+					scroll->paintPos2 -= step;
+				}
+			}
+		}
 
-        maxPos = pos + thickness - step;
+		maxPos = pos + thickness - step;
 
-        Text_Paint_LimitX(&maxPos, scroll->paintPos, rect->y, scale, color, &scroll->text[scroll->offset], 0, 0, font);
+		Text_Paint_LimitX(&maxPos, scroll->paintPos, rect->y, scale, color, &scroll->text[scroll->offset], 0, 0, font);
 
-        if (scroll->paintPos2 >= 0)
-        {
-            float max2 = pos + thickness - step;
+		if (scroll->paintPos2 >= 0)
+		{
+			float max2 = pos + thickness - step;
 
-            Text_Paint_LimitX(&max2, scroll->paintPos2, rect->y, scale, color, scroll->text, 0, scroll->offset, font);
-        }
+			Text_Paint_LimitX(&max2, scroll->paintPos2, rect->y, scale, color, scroll->text, 0, scroll->offset, font);
+		}
 
-        if (scroll->offset && maxPos > 0)
-        {
-            // if we have an offset ( we are skipping the first part of the string ) and we fit the string
-            if (scroll->paintPos2 == -1)
-            {
-                scroll->paintPos2 = pos + thickness - step;
-            }
-        }
-        else
-        {
-            scroll->paintPos2 = -1;
-        }
-    }
+		if (scroll->offset && maxPos > 0)
+		{
+			// if we have an offset ( we are skipping the first part of the string ) and we fit the string
+			if (scroll->paintPos2 == -1)
+			{
+				scroll->paintPos2 = pos + thickness - step;
+			}
+		}
+		else
+		{
+			scroll->paintPos2 = -1;
+		}
+	}
 }
 
 /**
@@ -787,89 +787,89 @@ void CG_DrawHorizontalScrollingString(rectDef_t *rect, vec4_t color, float scale
  */
 void CG_DrawVerticalScrollingString(rectDef_t *rect, vec4_t color, float scale, int scrollingRefresh, int step, scrollText_t *scroll, fontHelper_t *font)
 {
-    if (scroll->length)
-    {
-        float pos       = rect->y;
-        float thickness = rect->h;
-        float maxPos    = 1;
+	if (scroll->length)
+	{
+		float pos       = rect->y;
+		float thickness = rect->h;
+		float maxPos    = 1;
 
-        if (!scroll->init || scroll->offset > scroll->length)
-        {
-            scroll->init      = qtrue;
-            scroll->offset    = 0;
-            scroll->paintPos  = pos + rect->h;
-            scroll->paintPos2 = -1;
-            scroll->time      = 0;
-        }
+		if (!scroll->init || scroll->offset > scroll->length)
+		{
+			scroll->init      = qtrue;
+			scroll->offset    = 0;
+			scroll->paintPos  = pos + rect->h;
+			scroll->paintPos2 = -1;
+			scroll->time      = 0;
+		}
 
-        if (cgDC.realTime > scroll->time)
-        {
-            scroll->time = cgDC.realTime + scrollingRefresh;
-            if (scroll->paintPos <= pos + step)
-            {
-                if (scroll->offset + 1 < scroll->length)
-                {
-                    char *tmp;
+		if (cgDC.realTime > scroll->time)
+		{
+			scroll->time = cgDC.realTime + scrollingRefresh;
+			if (scroll->paintPos <= pos + step)
+			{
+				if (scroll->offset + 1 < scroll->length)
+				{
+					char *tmp;
 
-                    tmp = strchr(&scroll->text[scroll->offset + 1], '\n');
+					tmp = strchr(&scroll->text[scroll->offset + 1], '\n');
 
-                    if (!tmp)
-                    {
-                        tmp = strchr(&scroll->text[scroll->offset + 1], '\0');
-                    }
+					if (!tmp)
+					{
+						tmp = strchr(&scroll->text[scroll->offset + 1], '\0');
+					}
 
-                    scroll->offset = tmp - scroll->text;
+					scroll->offset = tmp - scroll->text;
 
-                    scroll->paintPos += CG_Text_Height_Ext(scroll->text, scale, 1, font) + step;
-                }
-                else
-                {
-                    scroll->offset = 0;
-                    if (scroll->paintPos2 >= 0)
-                    {
-                        scroll->paintPos = scroll->paintPos2;
-                    }
-                    else
-                    {
-                        scroll->paintPos = pos + rect->h;
-                    }
-                    scroll->paintPos2 = -1;
-                }
-            }
-            else
-            {
-                scroll->paintPos -= step;
-                if (scroll->paintPos2 >= 0)
-                {
-                    scroll->paintPos2 -= step;
-                }
-            }
-        }
+					scroll->paintPos += CG_Text_Height_Ext(scroll->text, scale, 1, font) + step;
+				}
+				else
+				{
+					scroll->offset = 0;
+					if (scroll->paintPos2 >= 0)
+					{
+						scroll->paintPos = scroll->paintPos2;
+					}
+					else
+					{
+						scroll->paintPos = pos + rect->h;
+					}
+					scroll->paintPos2 = -1;
+				}
+			}
+			else
+			{
+				scroll->paintPos -= step;
+				if (scroll->paintPos2 >= 0)
+				{
+					scroll->paintPos2 -= step;
+				}
+			}
+		}
 
-        maxPos = pos + thickness - step;
+		maxPos = pos + thickness - step;
 
-        Text_Paint_LimitY(&maxPos, rect->x, scroll->paintPos, scale, color, &scroll->text[scroll->offset], 0, 0, font);
+		Text_Paint_LimitY(&maxPos, rect->x, scroll->paintPos, scale, color, &scroll->text[scroll->offset], 0, 0, font);
 
-        if (scroll->paintPos2 >= 0)
-        {
-            float max2 = pos + thickness - step;
+		if (scroll->paintPos2 >= 0)
+		{
+			float max2 = pos + thickness - step;
 
-            Text_Paint_LimitY(&max2, rect->x, scroll->paintPos2, scale, color, scroll->text, 0, scroll->offset, font);
-        }
+			Text_Paint_LimitY(&max2, rect->x, scroll->paintPos2, scale, color, scroll->text, 0, scroll->offset, font);
+		}
 
-        if (scroll->offset && maxPos > 0)
-        {
-            // if we have an offset ( we are skipping the first part of the string ) and we fit the string
-            if (scroll->paintPos2 == -1)
-            {
-                scroll->paintPos2 = pos + rect->h;
-            }
-        }
-        else
-        {
-            scroll->paintPos2 = -1;
-        }
-    }
+		if (scroll->offset && maxPos > 0)
+		{
+			// if we have an offset ( we are skipping the first part of the string ) and we fit the string
+			if (scroll->paintPos2 == -1)
+			{
+				scroll->paintPos2 = pos + rect->h;
+			}
+		}
+		else
+		{
+			scroll->paintPos2 = -1;
+		}
+	}
 }
 
 /**
@@ -2366,19 +2366,13 @@ static void CG_DrawSpectator(void)
 /**
  * @brief CG_DrawVote
  */
-static void CG_DrawVote(void)
+void CG_DrawVote(hudComponent_t *comp)
 {
-	const char    *str;
-	char          str1[32], str2[32];
-	float         x, y, charHeight, fontScale;
-	hudStucture_t *activehud;
+	const char *str;
+	char       str1[32], str2[32];
+	float      x = comp->location.x, y = comp->location.y, charHeight, fontScale = comp->scale;
 
-	activehud = CG_GetActiveHUD();
-
-	fontScale  = activehud->votetext.location.h;
 	charHeight = CG_Text_Height_Ext("A", fontScale, 0, &cgs.media.limboFont2);
-	y          = activehud->votetext.location.y;
-	x          = activehud->votetext.location.x;
 
 	if (cgs.clientinfo[cg.clientNum].shoutcaster)
 	{
@@ -2767,19 +2761,16 @@ static void CG_DrawIntermission(void)
 /**
  * @brief CG_DrawSpectatorMessage
  */
-static void CG_DrawSpectatorMessage(void)
+void CG_DrawSpectatorMessage(hudComponent_t *comp)
 {
-	const char    *str, *str2;
-	static int    lastconfigGet = 0;
-	float         x, y, charHeight, fontScale;
-	hudStucture_t *activehud;
+	const char *str, *str2;
+	static int lastconfigGet = 0;
+	float      x = comp->location.x, y = comp->location.y, charHeight, fontScale = comp->scale;
 
-	activehud = CG_GetActiveHUD();
-
-	fontScale  = activehud->spectatortext.location.h;
-	charHeight = CG_Text_Height_Ext("A", fontScale, 0, &cgs.media.limboFont2);
-	y          = activehud->spectatortext.location.y;
-	x          = activehud->spectatortext.location.x;
+	if (cgs.clientinfo[cg.clientNum].shoutcaster)
+	{
+		return;
+	}
 
 #ifdef FEATURE_EDV
 	if (cgs.demoCamera.renderingFreeCam || cgs.demoCamera.renderingWeaponCam)
@@ -2797,6 +2788,8 @@ static void CG_DrawSpectatorMessage(void)
 	{
 		return;
 	}
+
+	charHeight = CG_Text_Height_Ext("A", fontScale, 0, &cgs.media.limboFont2);
 
 	if (cg.time - lastconfigGet > 1000)
 	{
@@ -2903,12 +2896,11 @@ int CG_CalculateShoutcasterReinfTime(team_t team)
 /**
  * @brief CG_DrawLimboMessage
  */
-static void CG_DrawLimboMessage(void)
+void CG_DrawLimboMessage(hudComponent_t *comp)
 {
 	const char    *str;
 	playerState_t *ps = &cg.snap->ps;
-	float         x, y, charHeight, fontScale;
-	hudStucture_t *activehud;
+	float         x = comp->location.x, y = comp->location.y, charHeight, fontScale = comp->scale;
 
 #ifdef FEATURE_EDV
 	if (cgs.demoCamera.renderingFreeCam || cgs.demoCamera.renderingWeaponCam)
@@ -2916,13 +2908,6 @@ static void CG_DrawLimboMessage(void)
 		return;
 	}
 #endif
-
-	activehud = CG_GetActiveHUD();
-
-	fontScale  = activehud->limbotext.location.h;
-	charHeight = CG_Text_Height_Ext("A", fontScale, 0, &cgs.media.limboFont2);
-	y          = activehud->limbotext.location.y;
-	x          = activehud->limbotext.location.x;
 
 	if (ps->stats[STAT_HEALTH] > 0)
 	{
@@ -2933,6 +2918,8 @@ static void CG_DrawLimboMessage(void)
 	{
 		return;
 	}
+
+	charHeight = CG_Text_Height_Ext("A", fontScale, 0, &cgs.media.limboFont2);
 
 	if (cg_descriptiveText.integer)
 	{
@@ -2986,30 +2973,36 @@ static void CG_DrawLimboMessage(void)
  * @brief CG_DrawFollow
  * @return
  */
-static qboolean CG_DrawFollow(void)
+void CG_DrawFollow(hudComponent_t *comp)
 {
-	float         x, y, charHeight, fontScale;
-	hudStucture_t *activehud;
-
-	activehud = CG_GetActiveHUD();
-
-	fontScale  = activehud->followtext.location.h;
-	charHeight = CG_Text_Height_Ext("A", fontScale, 0, &cgs.media.limboFont2);
-	y          = activehud->followtext.location.y;
-	x          = activehud->followtext.location.x;
+	float x = comp->location.x, y = comp->location.y, charHeight, fontScale = comp->scale;
 
 #ifdef FEATURE_MULTIVIEW
 	// MV following info for mainview
 	if (CG_ViewingDraw())
 	{
-		return qtrue;
+		return;
 	}
 #endif
 
+#ifdef FEATURE_EDV
+	if (cgs.demoCamera.renderingFreeCam || !cgs.demoCamera.renderingWeaponCam)
+	{
+		return;
+	}
+#endif
+
+	if (cgs.clientinfo[cg.clientNum].shoutcaster)
+	{
+		return;
+	}
+
 	if (!(cg.snap->ps.pm_flags & PMF_FOLLOW))
 	{
-		return qfalse;
+		return;
 	}
+
+	charHeight = CG_Text_Height_Ext("A", fontScale, 0, &cgs.media.limboFont2);
 
 	// Spectators view teamflags
 	if (cg.snap->ps.clientNum != cg.clientNum && cgs.clientinfo[cg.clientNum].team == TEAM_SPECTATOR)
@@ -3120,8 +3113,6 @@ static qboolean CG_DrawFollow(void)
 		CG_Text_Paint_Ext(x, y, fontScale, fontScale, colorWhite, follow, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 		CG_Text_Paint_Ext(x + startClass + 14 + charWidth, y, fontScale, fontScale, colorWhite, w, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 	}
-
-	return qtrue;
 }
 
 /**
@@ -3678,6 +3669,11 @@ static void CG_DrawObjectiveInfo(void)
 	int    x1, y1, x2, y2;
 	float  *color;
 	vec4_t backColor = { 0.2f, 0.2f, 0.2f, 1.f };
+
+	if (cgs.clientinfo[cg.clientNum].shoutcaster)
+	{
+		return;
+	}
 
 	if (!cg.oidPrintTime)
 	{
@@ -4320,14 +4316,19 @@ static void CG_Draw2D(void)
 		}
 
 #ifdef FEATURE_EDV
-		if (cg.snap->ps.persistant[PERS_TEAM] != TEAM_SPECTATOR && !cgs.demoCamera.renderingFreeCam && !cgs.demoCamera.renderingWeaponCam)
-#else
-		if (cg.snap->ps.persistant[PERS_TEAM] != TEAM_SPECTATOR)
+		if (!cgs.demoCamera.renderingFreeCam && !cgs.demoCamera.renderingWeaponCam)
 #endif
 		{
-			if (cgs.clientinfo[cg.clientNum].shoutcaster && cg.snap->ps.pm_flags & PMF_FOLLOW)
+			if (cgs.clientinfo[cg.clientNum].shoutcaster)
 			{
-				CG_DrawShoutcastPlayerStatus();
+				if (cg.snap->ps.pm_flags & PMF_FOLLOW)
+				{
+					CG_DrawShoutcastPlayerStatus();
+				}
+
+				CG_DrawShoutcastTimer();
+				CG_DrawMinimap();
+				CG_DrawShoutcastPowerups();
 			}
 			else
 			{
@@ -4335,39 +4336,11 @@ static void CG_Draw2D(void)
 			}
 		}
 
-		if (!cg_paused.integer)
-		{
-			CG_DrawUpperRight();
-		}
-
 		CG_DrawCenterString();
-#ifdef FEATURE_EDV
-		if (!cgs.demoCamera.renderingFreeCam && !cgs.demoCamera.renderingWeaponCam)
-		{
-			if (!cgs.clientinfo[cg.clientNum].shoutcaster)
-			{
-				CG_DrawFollow();
-			}
-		}
-#else
-		if (!cgs.clientinfo[cg.clientNum].shoutcaster)
-		{
-			CG_DrawFollow();
-		}
-#endif
 
 		CG_DrawWarmup();
-		CG_DrawGlobalHud();
-
-		if (!cgs.clientinfo[cg.clientNum].shoutcaster)
-		{
-			CG_DrawObjectiveInfo();
-			CG_DrawSpectatorMessage();
-		}
-
-		CG_DrawLimboMessage();
-
-		CG_DrawVote();
+		CG_DrawPMItemsBig(cg_popupShadow.integer ? ITEM_TEXTSTYLE_SHADOWED : ITEM_TEXTSTYLE_NORMAL);
+		CG_DrawObjectiveInfo();
 	}
 	else
 	{
@@ -4399,8 +4372,6 @@ static void CG_Draw2D(void)
 		// window updates
 		CG_windowDraw();
 	}
-
-	CG_DrawDemoMessage();
 }
 
 /**
@@ -4518,7 +4489,7 @@ void CG_AddLineToScene(const vec3_t start, const vec3_t end, const vec4_t colour
 
 void CG_DrawRotateGizmo(const vec3_t origin, float radius, int numSegments, int activeAxis)
 {
-	int i, j;
+	int    i, j;
 	vec3_t vec;
 	vec3_t prevOrigin;
 	vec4_t colour;
@@ -4547,21 +4518,21 @@ void CG_DrawRotateGizmo(const vec3_t origin, float radius, int numSegments, int 
 		for (i = 0; i <= numSegments; i++)
 		{
 			float theta = 2.0f * M_PI * i / numSegments;
-			float x = radius * cosf(theta);
-			float y = radius * sinf(theta);
+			float x     = radius * cosf(theta);
+			float y     = radius * sinf(theta);
 
 			switch (j)
 			{
-				default:
-				case 0:
-					vec3_set(vec, 0, x, y);
-					break;
-				case 1:
-					vec3_set(vec, y, 0, x);
-					break;
-				case 2:
-					vec3_set(vec, x, y, 0);
-					break;
+			default:
+			case 0:
+				vec3_set(vec, 0, x, y);
+				break;
+			case 1:
+				vec3_set(vec, y, 0, x);
+				break;
+			case 2:
+				vec3_set(vec, x, y, 0);
+				break;
 			}
 
 			vec3_add(origin, vec, vec);
@@ -4578,10 +4549,10 @@ void CG_DrawRotateGizmo(const vec3_t origin, float radius, int numSegments, int 
 
 void CG_DrawMoveGizmo(const vec3_t origin, float radius, int activeAxis)
 {
-	int j;
-	vec3_t vec;
-	vec4_t colour;
-	refEntity_t  re;
+	int         j;
+	vec3_t      vec;
+	vec4_t      colour;
+	refEntity_t re;
 
 	for (j = 0; j < 3; j++)
 	{
@@ -4720,14 +4691,14 @@ void CG_DrawActive()
 	}
 }
 
-void CG_DrawMissileCamera(rectDef_t *rect)
+void CG_DrawMissileCamera(hudComponent_t *comp)
 {
 	float     x, y, w, h;
 	refdef_t  refdef;
 	vec3_t    forward, delta, angles;
 	centity_t *cent;
 
-	if (!cg.latestMissile)
+	if (!cg.latestMissile || cg.showGameView)
 	{
 		return;
 	}
@@ -4740,10 +4711,10 @@ void CG_DrawMissileCamera(rectDef_t *rect)
 	memset(&refdef, 0, sizeof(refdef_t));
 	memcpy(refdef.areamask, cg.snap->areamask, sizeof(refdef.areamask));
 
-	x = rect->x;
-	y = rect->y;
-	w = rect->w;
-	h = rect->h;
+	x = comp->location.x;
+	y = comp->location.y;
+	w = comp->location.w;
+	h = comp->location.h;
 
 	CG_AdjustFrom640(&x, &y, &w, &h);
 	memset(&refdef, 0, sizeof(refdef));

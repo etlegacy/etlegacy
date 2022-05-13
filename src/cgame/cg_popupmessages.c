@@ -603,15 +603,16 @@ void CG_AddPMItemBig(popupMessageBigType_t type, const char *message, qhandle_t 
  * @param[in] rect
  * @param[in] style
  */
-void CG_DrawPMItems(rectDef_t rect, int style)
+void CG_DrawPMItems(hudComponent_t *comp)
 {
 	vec4_t       color     = { 0.f, 0.f, 0.f, 1.f };
 	vec4_t       colorText = { 1.f, 1.f, 1.f, 1.f };
 	float        t;
 	int          i, size, w, sizew;
 	pmListItem_t *listItem = cg_pmOldList;
-	float        y         = rect.y; //360;
+	float        y         = comp->location.y; //360;
 	float        fontScale = cg_fontScaleSP.value;
+    int style = cg_popupShadow.integer ? ITEM_TEXTSTYLE_SHADOWED : ITEM_TEXTSTYLE_NORMAL;
 
 	if (cg_numPopups.integer == 0)
 	{
@@ -728,7 +729,7 @@ void CG_DrawPMItems(rectDef_t rect, int style)
 			size = -2;
 		}
 
-		CG_Text_Paint_Ext(rect.x + size + 2, y + 12, fontScale, fontScale, colorText, listItem->message, 0, 0, style, &cgs.media.limboFont2);
+		CG_Text_Paint_Ext(comp->location.x + size + 2, y + 12, fontScale, fontScale, colorText, listItem->message, 0, 0, style, &cgs.media.limboFont2);
 
 		w     = CG_Text_Width_Ext(listItem->message, fontScale, 0, &cgs.media.limboFont2);
 		sizew = (cg_drawSmallPopupIcons.integer) ? PM_ICON_SIZE_SMALL : PM_ICON_SIZE_NORMAL;

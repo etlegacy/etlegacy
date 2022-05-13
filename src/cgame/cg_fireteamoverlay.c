@@ -375,10 +375,10 @@ clientInfo_t *CG_SortedFireTeamPlayerForPosition(int pos)
  * @brief Draw FireTeam overlay
  * @param[in] rect
  */
-void CG_DrawFireTeamOverlay(rectDef_t *rect)
+void CG_DrawFireTeamOverlay(hudComponent_t *comp)
 {
-	float          x = rect->x;
-	float          y = rect->y + 1;             // +1, jitter it into place
+	float          x = comp->location.x;
+	float          y = comp->location.y + 1;             // +1, jitter it into place
 	float          locwidth, namewidth;
 	int            i, puwidth, lineX;
 	int            boxWidth      = 90;
@@ -403,6 +403,11 @@ void CG_DrawFireTeamOverlay(rectDef_t *rect)
 	vec4_t textWhite  = { 1.0f, 1.0f, 1.0f, 1.0f };             // regular text
 	vec4_t textYellow = { 1.0f, 1.0f, 0.0f, 1.0f };             // yellow text for health drawing
 	vec4_t textRed    = { 1.0f, 0.0f, 0.0f, 1.0f };             // red text for health drawing
+    
+    if (!cg_drawFireteamOverlay.integer || !CG_IsOnFireteam(cg.clientNum))
+    {
+        return;
+    }
 
 	// assign fireteam data, and early out if not on one
 	if (!(f = CG_IsOnFireteam(cg.clientNum)))

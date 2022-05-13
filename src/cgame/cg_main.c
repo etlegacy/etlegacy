@@ -128,9 +128,6 @@ vmCvar_t cg_shadows;
 vmCvar_t cg_gibs;
 vmCvar_t cg_draw2D;
 vmCvar_t cg_drawFPS;
-vmCvar_t cg_drawPing;
-vmCvar_t cg_lagometer;
-vmCvar_t cg_drawSnapshot;
 vmCvar_t cg_drawCrosshair;
 vmCvar_t cg_drawCrosshairInfo;
 vmCvar_t cg_drawCrosshairNames;
@@ -291,8 +288,6 @@ vmCvar_t cg_rconPassword;
 vmCvar_t cg_refereePassword;
 vmCvar_t cg_atmosphericEffects;
 
-vmCvar_t cg_drawRoundTimer;
-
 vmCvar_t cg_instanttapout;
 
 vmCvar_t cg_debugSkills;
@@ -321,7 +316,6 @@ vmCvar_t cg_logFile;
 vmCvar_t cg_countryflags; // GeoIP
 
 vmCvar_t cg_altHud;
-vmCvar_t cg_altHudFlags;
 vmCvar_t cg_tracers;
 vmCvar_t cg_fireteamLatchedClass;
 vmCvar_t cg_fireteamLocationAlign;
@@ -428,9 +422,6 @@ static cvarTable_t cvarTable[] =
 	{ &cg_railTrailTime,           "cg_railTrailTime",           "50",          CVAR_ARCHIVE,                 0 },
 	{ &cg_drawStatus,              "cg_drawStatus",              "1",           CVAR_ARCHIVE,                 0 },
 	{ &cg_drawFPS,                 "cg_drawFPS",                 "0",           CVAR_ARCHIVE,                 0 },
-	{ &cg_drawPing,                "cg_drawPing",                "0",           CVAR_ARCHIVE,                 0 },
-	{ &cg_lagometer,               "cg_lagometer",               "0",           CVAR_ARCHIVE,                 0 },
-	{ &cg_drawSnapshot,            "cg_drawSnapshot",            "0",           CVAR_ARCHIVE,                 0 },
 	{ &cg_drawCrosshair,           "cg_drawCrosshair",           "1",           CVAR_ARCHIVE,                 0 },
 	{ &cg_drawCrosshairInfo,       "cg_drawCrosshairInfo",       "7",           CVAR_ARCHIVE,                 0 },
 	{ &cg_drawCrosshairNames,      "cg_drawCrosshairNames",      "1",           CVAR_ARCHIVE,                 0 },
@@ -592,8 +583,6 @@ static cvarTable_t cvarTable[] =
 	{ &cg_rconPassword,            "auth_rconPassword",          "",            CVAR_TEMP,                    0 },
 	{ &cg_refereePassword,         "auth_refereePassword",       "",            CVAR_TEMP,                    0 },
 
-	{ &cg_drawRoundTimer,          "cg_drawRoundTimer",          "1",           CVAR_ARCHIVE,                 0 },
-
 	{ &cg_instanttapout,           "cg_instanttapout",           "0",           CVAR_ARCHIVE,                 0 },
 	{ &cg_debugSkills,             "cg_debugSkills",             "0",           0,                            0 },
 	{ NULL,                        "cg_etVersion",               "",            CVAR_USERINFO | CVAR_ROM,     0 },
@@ -625,7 +614,6 @@ static cvarTable_t cvarTable[] =
 
 	{ &cg_countryflags,            "cg_countryflags",            "1",           CVAR_ARCHIVE,                 0 }, // GeoIP
 	{ &cg_altHud,                  "cg_altHud",                  "0",           CVAR_ARCHIVE,                 0 }, // Hudstyles
-	{ &cg_altHudFlags,             "cg_altHudFlags",             "0",           CVAR_ARCHIVE,                 0 }, // Hudstyles
 	{ &cg_tracers,                 "cg_tracers",                 "1",           CVAR_ARCHIVE,                 0 }, // Draw tracers
 	{ &cg_fireteamLatchedClass,    "cg_fireteamLatchedClass",    "1",           CVAR_ARCHIVE,                 0 }, // Draw fireteam members latched class
 	{ &cg_fireteamLocationAlign,   "cg_fireteamLocationAlign",   "0",           CVAR_ARCHIVE,                 0 },

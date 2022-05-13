@@ -99,7 +99,7 @@ void CG_DrawMinimap(void)
 	location.y = MINIMAP_Y;
 	location.w = MINIMAP_WIDTH;
 	location.h = MINIMAP_HEIGHT;
-	CG_DrawNewCompass(location);
+	CG_DrawNewCompass(&CG_GetActiveHUD()->compass);
 }
 
 /**
