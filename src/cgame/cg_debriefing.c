@@ -1024,8 +1024,13 @@ qboolean CG_MapVoteList_KeyDown(panel_button_t *button, int key)
 			if (trap_FS_FOpenFile(va("maps/%s.bsp", cgs.dbMaps[pos]), &f, FS_READ) > 0)
 			{
 				cgs.dbSelectedMapLevelShots = trap_R_RegisterShaderNoMip(va("levelshots/%s.tga", cgs.dbMaps[pos]));
-				trap_FS_FCloseFile(f);
 			}
+			else // client doesn't have the map, use default levelshot
+			{
+				cgs.dbSelectedMapLevelShots = trap_R_RegisterShaderNoMip("levelshots/unknownmap");
+			}
+
+			trap_FS_FCloseFile(f);
 
 			descriptionScroll.init = 0;
 			Q_strncpyz(descriptionScroll.text, cgs.dbMapDescription[pos], sizeof(descriptionScroll.text));
