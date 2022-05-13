@@ -675,12 +675,14 @@ void CG_mvDraw(cg_window_t *sw)
 	refdef.y      = rd_y;
 	refdef.width  = rd_w;
 	refdef.height = rd_h;
-	float zoomSniper = Com_Clamp(4, 32, cg_zoomDefaultSniper.value);
+	float zoomBinoc = Com_Clamp(GetWeaponTableData(WP_BINOCULARS)->zoomIn,
+	                            GetWeaponTableData(WP_BINOCULARS)->zoomOut,
+	                            cg_zoomDefaultSniper.value);
 
 	refdef.fov_x = (cgs.clientinfo[pID].health > 0 &&
 					(/*cent->currentState.weapon == WP_SNIPERRIFLE ||*/   // WARNING: WARNOUT: this needs updating?
 						(cent->currentState.eFlags & EF_ZOOMING))) ?
-	               zoomSniper :
+	               zoomBinoc :
 	               (cgs.clientinfo[pID].fCrewgun) ?
 	               55 : cg_fov.value;
 
