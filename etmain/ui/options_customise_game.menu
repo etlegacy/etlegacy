@@ -2,89 +2,89 @@
 #include "ui/menumacros.h"
 
 // Defines //
-#define WINDOW_X		16
-#define WINDOW_Y		16
-#define WINDOW_WIDTH	608
-#define WINDOW_HEIGHT	448
-#define GROUP_NAME		"grpOptionsCustomiseGame"
+#define WINDOW_X        16
+#define WINDOW_Y        16
+#define WINDOW_WIDTH    608
+#define WINDOW_HEIGHT   448
+#define GROUP_NAME      "grpOptionsCustomiseGame"
 
 // Subwindows //
-#define SUBWINDOW_WIDTH_L		.50*(WINDOW_WIDTH-18)
-#define SUBWINDOW_WIDTH_R		.50*(WINDOW_WIDTH-18)
+#define SUBWINDOW_WIDTH_L       .50 * (WINDOW_WIDTH - 18)
+#define SUBWINDOW_WIDTH_R       .50 * (WINDOW_WIDTH - 18)
 
 // Customise Game Menu //
 menuDef {
-	name		"options_customise_game"
-	visible		0
-	fullscreen	0
-	rect		WINDOW_X WINDOW_Y WINDOW_WIDTH WINDOW_HEIGHT
-	style		WINDOW_STYLE_FILLED
+	name        "options_customise_game"
+	visible     0
+	fullscreen  0
+	rect WINDOW_X WINDOW_Y WINDOW_WIDTH WINDOW_HEIGHT
+	style WINDOW_STYLE_FILLED
 
 	onESC {
 		close options_customise_game ;
-		open options
+		open  options
 	}
 
 // Window //
-	WINDOW( _("GAME"), 94 )
+	WINDOW(_("GAME"), 94)
 
 // Player //
 #define PLAYER_Y 32
-	SUBWINDOW( 6, PLAYER_Y, (SUBWINDOW_WIDTH_L), 28, _("PLAYER") )
-	EDITFIELD( 8, PLAYER_Y+16, (SUBWINDOW_WIDTH_L)-4, 10, _("Player Alias:"), .2, 8, "name", 36, 18, _("Enter the name that you wish to be known by to others on servers") )
+	SUBWINDOW(6, PLAYER_Y, (SUBWINDOW_WIDTH_L), 28, _("PLAYER"))
+	EDITFIELD(8, PLAYER_Y + 16, (SUBWINDOW_WIDTH_L)-4, 10, _("Player Alias:"), .2, 8, "name", 36, 18, _("Enter the name that you wish to be known by to others on servers"))
 
 // Physics //
 #define PHYSICS_Y 66
-	SUBWINDOW( 6, PHYSICS_Y, (SUBWINDOW_WIDTH_L), 40, _("PHYSICS") )
-	YESNO( 8, PHYSICS_Y+16, (SUBWINDOW_WIDTH_L)-4, 10, _("Always Run:"), .2, 8, "cl_run", _("Toggle walk/run") )
-	MULTI( 8, PHYSICS_Y+28, (SUBWINDOW_WIDTH_L)-4, 10, _("Double-Tap Prone:"), .2, 8, "cl_doubletapdelay", cvarFloatList { "Yes" 350 "No" 0 }, _("Set the delay time between keypresses required to be a double-tap") )
+	SUBWINDOW(6, PHYSICS_Y, (SUBWINDOW_WIDTH_L), 40, _("PHYSICS"))
+	YESNO(8, PHYSICS_Y + 16, (SUBWINDOW_WIDTH_L)-4, 10, _("Always Run:"), .2, 8, "cl_run", _("Toggle walk/run"))
+	MULTI(8, PHYSICS_Y + 28, (SUBWINDOW_WIDTH_L)-4, 10, _("Double-Tap Prone:"), .2, 8, "cl_doubletapdelay", cvarFloatList { "Yes" 350 "No" 0 }, _("Set the delay time between keypresses required to be a double-tap"))
 
 // Movement //
 #define MOVEMENT_Y 112
-	SUBWINDOW( 6, MOVEMENT_Y, (SUBWINDOW_WIDTH_L), 28, _("MOVEMENT") )
-	YESNO( 8, MOVEMENT_Y+16, (SUBWINDOW_WIDTH_L)-4, 10, _("Bobbing effect:"), .2, 8, "cg_bobbing", _("Toggle bobbing") )
+	SUBWINDOW(6, MOVEMENT_Y, (SUBWINDOW_WIDTH_L), 28, _("MOVEMENT"))
+	YESNO(8, MOVEMENT_Y + 16, (SUBWINDOW_WIDTH_L)-4, 10, _("Bobbing effect:"), .2, 8, "cg_bobbing", _("Toggle bobbing"))
 
 // Weapons //
 #define WEAPONS_Y 146
-	SUBWINDOW( 6, WEAPONS_Y, (SUBWINDOW_WIDTH_L), 64, _("WEAPONS") )
-	YESNO( 8, WEAPONS_Y+16, (SUBWINDOW_WIDTH_L)-4, 10, _("Automatic Reload:"), .2, 8, "cg_autoReload", _("Automatically reload when ammunition clip runs out") )
-	YESNO( 8, WEAPONS_Y+28, (SUBWINDOW_WIDTH_L)-4, 10, _("Autoswitch:"), .2, 8, "cg_noAmmoAutoSwitch", _("Automatically switch to a new weapon when out of ammunition") )
-	YESNO( 8, WEAPONS_Y+40, (SUBWINDOW_WIDTH_L)-4, 10, _("Alt Weapon Reloads:"), .2, 8, "cg_weapaltReloads", _("Provide an alternative way to reload a weapon\nthat doesn't have weapon an alternative fire") )
-	YESNO( 8, WEAPONS_Y+52, (SUBWINDOW_WIDTH_L)-4, 10, _("Alt Weapon Switches:"), .2, 8, "cg_weapaltSwitches", _("Provide an alternative way to use an alt weapon\nby pressing the respective weaponbank bind") )
+	SUBWINDOW(6, WEAPONS_Y, (SUBWINDOW_WIDTH_L), 64, _("WEAPONS"))
+	YESNO(8, WEAPONS_Y + 16, (SUBWINDOW_WIDTH_L)-4, 10, _("Automatic Reload:"), .2, 8, "cg_autoReload", _("Automatically reload when ammunition clip runs out"))
+	YESNO(8, WEAPONS_Y + 28, (SUBWINDOW_WIDTH_L)-4, 10, _("Autoswitch:"), .2, 8, "cg_noAmmoAutoSwitch", _("Automatically switch to a new weapon when out of ammunition"))
+	YESNO(8, WEAPONS_Y + 40, (SUBWINDOW_WIDTH_L)-4, 10, _("Alt Weapon Reloads:"), .2, 8, "cg_weapaltReloads", _("Provide an alternative way to reload a weapon\nthat doesn't have weapon an alternative fire"))
+	YESNO(8, WEAPONS_Y + 52, (SUBWINDOW_WIDTH_L)-4, 10, _("Alt Weapon Switches:"), .2, 8, "cg_weapaltSwitches", _("Provide an alternative way to use an alt weapon\nby pressing the respective weaponbank bind"))
 
 // Scope //
 #define SCOPE_Y 216
-	SUBWINDOW( 6, SCOPE_Y, (SUBWINDOW_WIDTH_R), 52,_( "SCOPE") )
-	MULTI( 8, SCOPE_Y+16, (SUBWINDOW_WIDTH_R)-4, 10, _("Weapon Cycle for Zoom:"), .2, 8, "cg_useWeapsForZoom", cvarFloatList { "Off" 0 "On (normal)" 1 "On (reverse)" 2 }, _("Weapon switch will zoom in and out while scoped, rather than switch weapons") )
-	MULTI( 8, SCOPE_Y+28, (SUBWINDOW_WIDTH_R)-4, 10, _("Default Zoom Level:"), .2, 8, "cg_zoomdefaultsniper", cvarFloatList { "All the way Out" 20 "Near" 16 "Far" 8 "All the Way In" 4 }, _("Set the default zoom level for scopes") )
-	MULTI( 8, SCOPE_Y+40, (SUBWINDOW_WIDTH_R)-4, 10, _("Zoom Levels:"), .2, 8, "cg_zoomstepsniper", cvarFloatList { "4 Levels of Zoom" 4 "8 Levels of Zoom" 2 }, _("Specify the increments you zoom by") )
+	SUBWINDOW(6, SCOPE_Y, (SUBWINDOW_WIDTH_R), 52, _("SCOPE"))
+	MULTI(8, SCOPE_Y + 16, (SUBWINDOW_WIDTH_R)-4, 10, _("Weapon Cycle for Zoom:"), .2, 8, "cg_useWeapsForZoom", cvarFloatList { "Off" 0 "On (normal)" 1 "On (reverse)" 2 }, _("Weapon switch will zoom in and out while scoped, rather than switch weapons"))
+	MULTI(8, SCOPE_Y + 28, (SUBWINDOW_WIDTH_R)-4, 10, _("Default Zoom Level:"), .2, 8, "cg_zoomdefaultsniper", cvarFloatList { "All the way Out" 32 "Far" 24 "Near" 10 "All the Way In" 4 }, _("Set the default zoom level for scopes"))
+	MULTI(8, SCOPE_Y + 40, (SUBWINDOW_WIDTH_R)-4, 10, _("Zoom Levels:"), .2, 8, "cg_zoomstepsniper", cvarFloatList { "7 Levels of Zoom" 4 "14 Levels of Zoom" 2 }, _("Specify the number of zoom levels"))
 
 // Chat //
 #define CHAT_Y 32
-	SUBWINDOW( 6+(SUBWINDOW_WIDTH_L)+6, CHAT_Y, (SUBWINDOW_WIDTH_R), 76, _("CHAT") )
-	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, CHAT_Y+16, (SUBWINDOW_WIDTH_L)-4, 10, _("Quick Chat:"), .2, 8, "cg_quickChat", cvarFloatList { "Disabled" 0 "Team" 1 "Fireteam" 2 }, _("Specify receiver of quick radio messages") )
-	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, CHAT_Y+28, (SUBWINDOW_WIDTH_L)-4, 10, _("Quick Chat Mode:"), .2, 8, "cg_quickMessageAlt", cvarFloatList { "Alpha" 0 "Numeric" 1 }, _("Use alpha or numeric keys to send radio messages") )
-	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, CHAT_Y+40, (SUBWINDOW_WIDTH_L)-4, 10, _("Chat Icon Time:"), .2, 8, "cg_voiceSpriteTime", cvarFloatList { "Short" 3000 "Normal" 6000 "Long" 12000 "Really Long" 24000 }, _("Specify how long the chat icon appears above other players' heads") )
-	YESNO( 6+(SUBWINDOW_WIDTH_L)+6+2, CHAT_Y+52, (SUBWINDOW_WIDTH_L)-4, 10, _("Team chat only:"), .2, 8, "cg_teamChatsOnly", _("Play only team chat in-game") )
-	YESNO( 6+(SUBWINDOW_WIDTH_L)+6+2, CHAT_Y+64, (SUBWINDOW_WIDTH_L)-4, 10, _("Voice text:"), .2, 8, "cg_voiceText", _("Show voice text in-game") )
+	SUBWINDOW(6 + (SUBWINDOW_WIDTH_L)+6, CHAT_Y, (SUBWINDOW_WIDTH_R), 76, _("CHAT"))
+	MULTI(6 + (SUBWINDOW_WIDTH_L)+6 + 2, CHAT_Y + 16, (SUBWINDOW_WIDTH_L)-4, 10, _("Quick Chat:"), .2, 8, "cg_quickChat", cvarFloatList { "Disabled" 0 "Team" 1 "Fireteam" 2 }, _("Specify receiver of quick radio messages"))
+	MULTI(6 + (SUBWINDOW_WIDTH_L)+6 + 2, CHAT_Y + 28, (SUBWINDOW_WIDTH_L)-4, 10, _("Quick Chat Mode:"), .2, 8, "cg_quickMessageAlt", cvarFloatList { "Alpha" 0 "Numeric" 1 }, _("Use alpha or numeric keys to send radio messages"))
+	MULTI(6 + (SUBWINDOW_WIDTH_L)+6 + 2, CHAT_Y + 40, (SUBWINDOW_WIDTH_L)-4, 10, _("Chat Icon Time:"), .2, 8, "cg_voiceSpriteTime", cvarFloatList { "Short" 3000 "Normal" 6000 "Long" 12000 "Really Long" 24000 }, _("Specify how long the chat icon appears above other players' heads"))
+	YESNO(6 + (SUBWINDOW_WIDTH_L)+6 + 2, CHAT_Y + 52, (SUBWINDOW_WIDTH_L)-4, 10, _("Team chat only:"), .2, 8, "cg_teamChatsOnly", _("Play only team chat in-game"))
+	YESNO(6 + (SUBWINDOW_WIDTH_L)+6 + 2, CHAT_Y + 64, (SUBWINDOW_WIDTH_L)-4, 10, _("Voice text:"), .2, 8, "cg_voiceText", _("Show voice text in-game"))
 
 // Sounds //
 #define SOUND_Y 114
-	SUBWINDOW( 6+(SUBWINDOW_WIDTH_L)+6, SOUND_Y, (SUBWINDOW_WIDTH_R), 52, _("SOUND") )
-	YESNO( 6+(SUBWINDOW_WIDTH_L)+6+2, SOUND_Y+16, (SUBWINDOW_WIDTH_R)-4, 10, _("Announcer:"), .2, 8, "cg_announcer", _("Play startup announcer voice") )
-	YESNO( 6+(SUBWINDOW_WIDTH_L)+6+2, SOUND_Y+28, (SUBWINDOW_WIDTH_R)-4, 10, _("Voice chat:"), .2, 8, "cg_voiceChats", _("Play voice chat in-game") )
-	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, SOUND_Y+40, (SUBWINDOW_WIDTH_R)-4, 10, _("Hitsounds:"), .2, 8, "cg_hitsounds", cvarFloatList { "None" 0 "All" 1 "No Body Hit Sound" 3 "No Head Hit Sound" 5 "No Team Hit Sound" 9 }, _("Set hit sounds") )
+	SUBWINDOW(6 + (SUBWINDOW_WIDTH_L)+6, SOUND_Y, (SUBWINDOW_WIDTH_R), 52, _("SOUND"))
+	YESNO(6 + (SUBWINDOW_WIDTH_L)+6 + 2, SOUND_Y + 16, (SUBWINDOW_WIDTH_R)-4, 10, _("Announcer:"), .2, 8, "cg_announcer", _("Play startup announcer voice"))
+	YESNO(6 + (SUBWINDOW_WIDTH_L)+6 + 2, SOUND_Y + 28, (SUBWINDOW_WIDTH_R)-4, 10, _("Voice chat:"), .2, 8, "cg_voiceChats", _("Play voice chat in-game"))
+	MULTI(6 + (SUBWINDOW_WIDTH_L)+6 + 2, SOUND_Y + 40, (SUBWINDOW_WIDTH_R)-4, 10, _("Hitsounds:"), .2, 8, "cg_hitsounds", cvarFloatList { "None" 0 "All" 1 "No Body Hit Sound" 3 "No Head Hit Sound" 5 "No Team Hit Sound" 9 }, _("Set hit sounds"))
 
 // Miscellaneous //
 #define MISC_Y 172
-	SUBWINDOW( 6+(SUBWINDOW_WIDTH_L)+6, MISC_Y, (SUBWINDOW_WIDTH_R), 88, _("MISCELLANEOUS") )
-	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, MISC_Y+16, (SUBWINDOW_WIDTH_R)-4, 10, _("Complaint PopUp:"), .2, 8, "cg_complaintPopUp", cvarFloatList { "Off" 0 "On" 1 }, _("Display the option to file complaints about teammates who kill you") )
-	YESNO( 6+(SUBWINDOW_WIDTH_L)+6+2, MISC_Y+28, (SUBWINDOW_WIDTH_R)-4, 10, _("Log Important Messages:"), .2, 8, "cg_printObjectiveInfo",_("Print important game messages to the console") )
-	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, MISC_Y+40, (SUBWINDOW_WIDTH_R)-4, 10, _("Auto-Action:"), .2, 8, "cg_autoAction", cvarFloatList { "None" 0 "Demo" 1 "Screenshot" 2 "Stats Dump" 4 "Demo + SS" 3 "Demo + Stats" 5 "SS + Stats" 6 "Demo + SS + Stats" 7 }, _("Perform automatic actions at the start or end of a round") )
-	YESNO( 6+(SUBWINDOW_WIDTH_L)+6+2, MISC_Y+52, (SUBWINDOW_WIDTH_R)-4, 10, _("Show Tool Tips:"), .2, 8, "ui_showtooltips", _("Display Tool Tips in the UI") )
-	EDITFIELD( 6+(SUBWINDOW_WIDTH_L)+6+2, MISC_Y+64, (SUBWINDOW_WIDTH_R)-4, 10, _("Log File:"), .2, 8, "cg_logFile", 15, 13, _("Set the name of the log file (if empty logging is disabled)") )
-    EDITFIELD( 6+(SUBWINDOW_WIDTH_L)+6+2, MISC_Y+76, (SUBWINDOW_WIDTH_R)-4, 10, _("Sharetimer Custom Text:"), .2, 8, "cg_sharetimerText", 64, 18, _("Specify a custom text to announce the next enemy spawn.\nUse ${nextspawn} and ${enemylimbotime} as variables.") )
+	SUBWINDOW(6 + (SUBWINDOW_WIDTH_L)+6, MISC_Y, (SUBWINDOW_WIDTH_R), 88, _("MISCELLANEOUS"))
+	MULTI(6 + (SUBWINDOW_WIDTH_L)+6 + 2, MISC_Y + 16, (SUBWINDOW_WIDTH_R)-4, 10, _("Complaint PopUp:"), .2, 8, "cg_complaintPopUp", cvarFloatList { "Off" 0 "On" 1 }, _("Display the option to file complaints about teammates who kill you"))
+	YESNO(6 + (SUBWINDOW_WIDTH_L)+6 + 2, MISC_Y + 28, (SUBWINDOW_WIDTH_R)-4, 10, _("Log Important Messages:"), .2, 8, "cg_printObjectiveInfo", _("Print important game messages to the console"))
+	MULTI(6 + (SUBWINDOW_WIDTH_L)+6 + 2, MISC_Y + 40, (SUBWINDOW_WIDTH_R)-4, 10, _("Auto-Action:"), .2, 8, "cg_autoAction", cvarFloatList { "None" 0 "Demo" 1 "Screenshot" 2 "Stats Dump" 4 "Demo + SS" 3 "Demo + Stats" 5 "SS + Stats" 6 "Demo + SS + Stats" 7 }, _("Perform automatic actions at the start or end of a round"))
+	YESNO(6 + (SUBWINDOW_WIDTH_L)+6 + 2, MISC_Y + 52, (SUBWINDOW_WIDTH_R)-4, 10, _("Show Tool Tips:"), .2, 8, "ui_showtooltips", _("Display Tool Tips in the UI"))
+	EDITFIELD(6 + (SUBWINDOW_WIDTH_L)+6 + 2, MISC_Y + 64, (SUBWINDOW_WIDTH_R)-4, 10, _("Log File:"), .2, 8, "cg_logFile", 15, 13, _("Set the name of the log file (if empty logging is disabled)"))
+	EDITFIELD(6 + (SUBWINDOW_WIDTH_L)+6 + 2, MISC_Y + 76, (SUBWINDOW_WIDTH_R)-4, 10, _("Sharetimer Custom Text:"), .2, 8, "cg_sharetimerText", 64, 18, _("Specify a custom text to announce the next enemy spawn.\nUse ${nextspawn} and ${enemylimbotime} as variables."))
 
 // Buttons //
-	BUTTON( 6, WINDOW_HEIGHT-24, WINDOW_WIDTH-12, 18, _("BACK"), .3, 14, close options_customise_game ; open options )
+	BUTTON(6, WINDOW_HEIGHT - 24, WINDOW_WIDTH - 12, 18, _("BACK"), .3, 14, close options_customise_game ; open options)
 }
