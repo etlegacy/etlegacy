@@ -138,20 +138,16 @@ void SV_GetChallenge(netadr_t from)
  */
 static qboolean SV_isClientIPValidToConnect(netadr_t from)
 {
-	client_t   *clientTmp;
-	int        count = 1;     // we count as the first one
-	int        max   = sv_ipMaxClients->integer;
-	int        i;
-	const char *theirIP;
-	const char *clientIP;
+	client_t *clientTmp;
+	int      count = 1;       // we count as the first one
+	int      max   = sv_ipMaxClients->integer;
+	int      i;
 
 	// disabled
 	if (max <= 0)
 	{
 		return qtrue;
 	}
-
-	clientIP = NET_AdrToString(from);
 
 	// let localhost connect
 	// FIXME: see above note: We might use a free flag of sv_protect cvar to include local addresses
@@ -171,17 +167,14 @@ static qboolean SV_isClientIPValidToConnect(netadr_t from)
 			continue;
 		}
 
-		theirIP = NET_AdrToString(clientTmp->netchan.remoteAddress);
-
 		// Don't compare the port - just the IP
-		if (CompareIPNoPort(clientIP, theirIP))
+		if (NET_CompareBaseAdr(from, clientTmp->netchan.remoteAddress))
 		{
 			++count;
 			if (count > max)
 			{
 				// no dev print - let admins see this
-				Com_Printf("SV_isClientIPValidToConnect: too many connections from %s\n", clientIP);
-
+				Com_Printf("SV_isClientIPValidToConnect: too many connections from %s\n", NET_AdrToString(from));
 				return qfalse;
 			}
 		}
