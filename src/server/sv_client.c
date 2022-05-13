@@ -1041,7 +1041,7 @@ void SV_WWWDownload_f(client_t *cl)
 	}
 	else if (!Q_stricmp(subcmd, "fail"))
 	{
-		Com_Printf("Warning: Client dowbnload failed.\n");
+		Com_Printf("Warning: Client download failed.\n");
 		SV_CloseDownload(cl);
 		cl->bWWWing   = qfalse;
 		cl->bFallback = qtrue;
