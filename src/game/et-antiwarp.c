@@ -225,7 +225,7 @@ void DoClientThinks(gentity_t *ent)
 		speed = G_CmdScale(ent, cmd);
 
 		// if the warping player stopped but still has some speed keep antiwarping
-		if (speed == 0 && VectorLength(ent->client->ps.velocity) > 80.0f)
+		if (speed == 0 && VectorLength(ent->client->ps.velocity) > LAG_SPEED_THRESHOLD)
 		{
 			speed = 1.0f;
 		}
