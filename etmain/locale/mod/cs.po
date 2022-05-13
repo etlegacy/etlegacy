@@ -1031,12 +1031,12 @@ msgid "close the game window and open the"
 msgstr "zavře okno hry a otevře"
 
 #: etmain/ui/hostgame_dedicated_warning.menu:55
-msgid "server console. It will not be possible"
-msgstr "konzoli serveru. Pro připojení"
+msgid "server console. You can then re-open"
+msgstr ""
 
 #: etmain/ui/hostgame_dedicated_warning.menu:56
-msgid "to play the game on the host machine."
-msgstr " k serveru musíš hru spustit znovu."
+msgid "the game and connect to the server."
+msgstr ""
 
 #: etmain/ui/hostgame_dedicated_warning.menu:57
 msgid "Are you sure you want to start"

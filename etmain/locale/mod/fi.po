@@ -1032,12 +1032,12 @@ msgid "close the game window and open the"
 msgstr "sulkee peli-ikkunan ja aukaisee"
 
 #: etmain/ui/hostgame_dedicated_warning.menu:55
-msgid "server console. It will not be possible"
-msgstr "palvelimen konsolin. Ei tule olemaan mahdollista"
+msgid "server console. You can then re-open"
+msgstr ""
 
 #: etmain/ui/hostgame_dedicated_warning.menu:56
-msgid "to play the game on the host machine."
-msgstr "pelata peliä isäntäkoneelta."
+msgid "the game and connect to the server."
+msgstr ""
 
 #: etmain/ui/hostgame_dedicated_warning.menu:57
 msgid "Are you sure you want to start"

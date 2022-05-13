@@ -1027,12 +1027,12 @@ msgid "close the game window and open the"
 msgstr "и отвори работната конзола на сървъра"
 
 #: etmain/ui/hostgame_dedicated_warning.menu:55
-msgid "server console. It will not be possible"
-msgstr "Не можете да играете и хоствате"
+msgid "server console. You can then re-open"
+msgstr ""
 
 #: etmain/ui/hostgame_dedicated_warning.menu:56
-msgid "to play the game on the host machine."
-msgstr "сървър на същата машина."
+msgid "the game and connect to the server."
+msgstr ""
 
 #: etmain/ui/hostgame_dedicated_warning.menu:57
 msgid "Are you sure you want to start"

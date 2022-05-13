@@ -1029,11 +1029,11 @@ msgid "close the game window and open the"
 msgstr ""
 
 #: etmain/ui/hostgame_dedicated_warning.menu:55
-msgid "server console. It will not be possible"
+msgid "server console. You can then re-open"
 msgstr ""
 
 #: etmain/ui/hostgame_dedicated_warning.menu:56
-msgid "to play the game on the host machine."
+msgid "the game and connect to the server."
 msgstr ""
 
 #: etmain/ui/hostgame_dedicated_warning.menu:57

@@ -1026,12 +1026,12 @@ msgid "close the game window and open the"
 msgstr "게임 창을 닫고 서버 콘솔이"
 
 #: etmain/ui/hostgame_dedicated_warning.menu:55
-msgid "server console. It will not be possible"
-msgstr "열립니다. 이는 호스트 머신에서"
+msgid "server console. You can then re-open"
+msgstr ""
 
 #: etmain/ui/hostgame_dedicated_warning.menu:56
-msgid "to play the game on the host machine."
-msgstr "게임 플레이가 불가능해집니다."
+msgid "the game and connect to the server."
+msgstr ""
 
 #: etmain/ui/hostgame_dedicated_warning.menu:57
 msgid "Are you sure you want to start"
