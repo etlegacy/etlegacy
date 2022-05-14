@@ -607,6 +607,7 @@ void CG_MouseEvent(int x, int y)
 	case CGAME_EVENT_FIRETEAMMSG:
 	case CGAME_EVENT_SHOUTCAST:
 	case CGAME_EVENT_SPAWNPOINTMSG:
+	case CGAME_EVENT_HUDEDITOR:
 
 #ifdef FEATURE_EDV
 		if (!cgs.demoCamera.renderingFreeCam)
@@ -641,6 +642,11 @@ void CG_MouseEvent(int x, int y)
 		if (cgs.eventHandling == CGAME_EVENT_CAMERAEDITOR)
 		{
 			CG_CameraEditorMouseMove_Handling(x, y);
+		}
+
+		if (cgs.eventHandling == CGAME_EVENT_HUDEDITOR)
+		{
+			CG_HudEditorMouseMove_Handling(cgs.cursorX, cgs.cursorY);
 		}
 #ifdef FEATURE_EDV
 	}
@@ -761,6 +767,7 @@ void CG_EventHandling(int type, qboolean fForced)
 	case CGAME_EVENT_SHOUTCAST:
 	case CGAME_EVENT_SPAWNPOINTMSG:
 	case CGAME_EVENT_MULTIVIEW:
+	case CGAME_EVENT_HUDEDITOR:
 	default:
 		// default handling (cleanup mostly)
 		if (cgs.eventHandling == CGAME_EVENT_GAMEVIEW)
@@ -816,6 +823,10 @@ void CG_EventHandling(int type, qboolean fForced)
 				trap_Key_SetCatcher(KEYCATCH_CGAME);
 				return;
 			}
+		}
+		else if (cgs.eventHandling == CGAME_EVENT_HUDEDITOR)
+		{
+			cg.editingHud = qfalse;
 		}
 		else if (cgs.eventHandling == CGAME_EVENT_CAMPAIGNBREIFING)
 		{
@@ -888,6 +899,12 @@ void CG_EventHandling(int type, qboolean fForced)
 		trap_Cvar_Set("cl_bypassmouseinput", "1");
 		trap_Key_SetCatcher(KEYCATCH_CGAME);
 	}
+	else if (type == CGAME_EVENT_HUDEDITOR)
+	{
+		CG_HudEditorSetup();
+		cg.editingHud = qtrue;
+		trap_Key_SetCatcher(KEYCATCH_CGAME);
+	}
 	else
 	{
 		trap_Key_SetCatcher(KEYCATCH_CGAME);
@@ -934,6 +951,9 @@ void CG_KeyEvent(int key, qboolean down)
 		break;
 	case CGAME_EVENT_CAMERAEDITOR:
 		CG_CameraEditor_KeyHandling(key, down);
+		break;
+	case CGAME_EVENT_HUDEDITOR:
+		CG_HudEditor_KeyHandling(key, down);
 		break;
 #ifdef FEATURE_MULTIVIEW
 	case  CGAME_EVENT_MULTIVIEW:

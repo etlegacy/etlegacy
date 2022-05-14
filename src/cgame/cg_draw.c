@@ -4689,6 +4689,11 @@ void CG_DrawActive()
 	{
 		CG_LimboPanel_Draw();
 	}
+    
+    if (cg.editingHud)
+    {
+    	CG_DrawHudEditor();
+    }
 }
 
 void CG_DrawMissileCamera(hudComponent_t *comp)

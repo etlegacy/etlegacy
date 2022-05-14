@@ -2142,6 +2142,18 @@ static void CG_Camera_f(void)
 	}
 }
 
+static void CG_EditHud_f(void)
+{
+	if (cg.editingHud)
+	{
+		CG_EventHandling(CGAME_EVENT_NONE, qfalse);
+	}
+	else
+	{
+		CG_EventHandling(CGAME_EVENT_HUDEDITOR, qfalse);
+	}
+}
+
 static consoleCommand_t commands[] =
 {
 	{ "testgun",             CG_TestGun_f              },
@@ -2269,6 +2281,7 @@ static consoleCommand_t commands[] =
 
 	{ "loc",                 CG_Location_f             },
 	{ "camera",              CG_Camera_f               },
+	{ "edithud",             CG_EditHud_f              },
 	{ NULL,                  NULL                      }
 };
 

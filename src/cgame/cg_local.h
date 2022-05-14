@@ -1487,6 +1487,7 @@ typedef struct
 	qboolean editingSpeakers;
 	qboolean editingLocations;
 	qboolean editingCameras;
+	qboolean editingHud;
 
 	qboolean serverRespawning;
 
@@ -4102,7 +4103,7 @@ typedef struct hudComponent_s
 	float scale;
 	vec4_t color;
 	int offset;
-    void (*draw)(struct hudComponent_s *comp);
+	void (*draw)(struct hudComponent_s *comp);
 } hudComponent_t;
 
 typedef struct hudStructure_s
@@ -4145,13 +4146,13 @@ typedef struct hudStructure_s
 	hudComponent_t sprinttext;
 	hudComponent_t breathtext;
 	hudComponent_t weaponchargetext;
-    hudComponent_t fps;
-    hudComponent_t snapshot;
-    hudComponent_t ping;
-    hudComponent_t speed;
-    hudComponent_t lagometer;
-    hudComponent_t disconnect; // 38
-    
+	hudComponent_t fps;
+	hudComponent_t snapshot;
+	hudComponent_t ping;
+	hudComponent_t speed;
+	hudComponent_t lagometer;
+	hudComponent_t disconnect; // 38
+
 	hudComponent_t *components[HUD_COMPONENTS_NUM];
 } hudStucture_t;
 
@@ -4165,5 +4166,10 @@ void CG_DrawSpectatorMessage(hudComponent_t *comp);
 void CG_DrawLimboMessage(hudComponent_t *comp);
 void CG_DrawFollow(hudComponent_t *comp);
 void CG_DrawMissileCamera(hudComponent_t *comp);
+
+void CG_HudEditorSetup(void);
+void CG_DrawHudEditor(void);
+void CG_HudEditor_KeyHandling(int key, qboolean down);
+void CG_HudEditorMouseMove_Handling(int x, int y);
 
 #endif // #ifndef INCLUDE_CG_LOCAL_H
