@@ -772,7 +772,7 @@ static void *Sys_TryLibraryLoad(const char *base, const char *gamedir, const cha
  * @return libHandle or NULL
  */
 void *Sys_LoadGameDll(const char *name, qboolean extract,
-                      intptr_t(**entryPoint) (int, ...),
+                      VM_EntryPoint_t *entryPoint,
                       intptr_t (*systemcalls)(intptr_t, ...))
 {
 	void *libHandle;
@@ -882,7 +882,7 @@ void *Sys_LoadGameDll(const char *name, qboolean extract,
 	}
 
 	dllEntry    = (void(QDECL *)(intptr_t(QDECL *)(intptr_t, ...)))Sys_LoadFunction(libHandle, "dllEntry");
-	*entryPoint = (intptr_t(QDECL *)(int, ...))Sys_LoadFunction(libHandle, "vmMain");
+	*entryPoint = (VM_EntryPoint_t)Sys_LoadFunction(libHandle, "vmMain");
 
 	if (!*entryPoint || !dllEntry)
 	{
