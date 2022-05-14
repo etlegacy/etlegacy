@@ -3416,6 +3416,7 @@ void CG_parseWeaponStats_cmd(void(txt_dump) (const char *));
 //void CG_scores_cmd(void);
 
 void CG_UpdateSvCvars(void);
+void CG_ResetVoiceSprites(qboolean revived);
 
 /**
  * @struct consoleCommand_t
