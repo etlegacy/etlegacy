@@ -229,6 +229,9 @@ void CG_Respawn(qboolean revived)
 			oldTeam = cgs.clientinfo[cg.clientNum].team;
 		}
 	}
+
+	// clear medic/ammo request voice chat sprites
+	CG_ResetVoiceSprites(revived);
 }
 
 /**

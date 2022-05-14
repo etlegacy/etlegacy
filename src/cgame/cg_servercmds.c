@@ -542,7 +542,7 @@ void CG_ParseServerToggles(void)
 	const char *info;
 	int        value;
 
-	info = CG_ConfigString(CS_SERVERTOGGLES);
+	info  = CG_ConfigString(CS_SERVERTOGGLES);
 	value = Q_atoi(info);
 
 	cgs.matchPaused = (value & CV_SVS_PAUSE) ? qtrue : qfalse;
@@ -1898,6 +1898,26 @@ void CG_VoiceChat(int mode)
 	cmd = CG_Argv(4);
 
 	CG_VoiceChatLocal(mode, voiceOnly, clientNum, color, cmd, origin);
+}
+
+/**
+ * @brief CG_ResetVoiceSprites
+ * @param[in] revived
+ */
+void CG_ResetVoiceSprites(qboolean revived)
+{
+	if (!revived)
+	{
+		if (cg.predictedPlayerEntity.voiceChatSprite == cgs.media.ammoIcon)
+		{
+			cg.predictedPlayerEntity.voiceChatSpriteTime = 0;
+		}
+	}
+
+	if (cg.predictedPlayerEntity.voiceChatSprite == cgs.media.medicIcon)
+	{
+		cg.predictedPlayerEntity.voiceChatSpriteTime = 0;
+	}
 }
 
 /**
