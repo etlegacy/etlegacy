@@ -1038,7 +1038,7 @@ void Fire_Lead_Ext(gentity_t *ent, gentity_t *activator, float spread, int damag
 	// send bullet impact
 	if (traceEnt->takedamage && traceEnt->client)
 	{
-		fleshEnt = tent         = G_TempEntity(tr.endpos, EV_MG42BULLET_HIT_FLESH);
+		fleshEnt                = tent = G_TempEntity(tr.endpos, EV_MG42BULLET_HIT_FLESH);
 		tent->s.eventParm       = traceEnt->s.number;
 		tent->s.otherEntityNum  = ent->s.number;
 		tent->s.otherEntityNum2 = activator->s.number;  // store the user id, so the client can position the tracer
@@ -3053,10 +3053,15 @@ void G_PreFilledMissileEntity(gentity_t *ent, int weaponNum, int realWeapon, int
 int G_GetEnemyPosition(gentity_t *ent, gentity_t *targ)
 {
 	float  angle = 0;
-	vec3_t pforward, eforward;
+	vec3_t pforward, eforward, attacker, target;
 
-	AngleVectors(ent->client->ps.viewangles, pforward, NULL, NULL);
-	AngleVectors(targ->client->ps.viewangles, eforward, NULL, NULL);
+	VectorCopy(ent->client->ps.viewangles, attacker);
+	VectorCopy(targ->client->ps.viewangles, target);
+
+	attacker[PITCH] = target[PITCH] = 0;
+
+	AngleVectors(attacker, pforward, NULL, NULL);
+	AngleVectors(target, eforward, NULL, NULL);
 
 	angle = DotProduct(eforward, pforward);
 
