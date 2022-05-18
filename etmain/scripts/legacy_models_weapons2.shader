@@ -63,7 +63,7 @@ models/weapons2/browning/barrel
 	cull none
 	{
 		map models/multiplayer/browning/barrel.tga
-		rgbGen const (0 0 0)
+		rgbGen const ( 0 0 0 )
 		alphaFunc GE128
 		depthWrite
 	}
