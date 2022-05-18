@@ -1954,6 +1954,52 @@ static void CG_SetLastKeyCatcher(void)
 	cg.lastKeyCatcher = keyCatcher;
 }
 
+/**
+* @brief CG_DemoRewindFixEffects fix time based event effects on demo rewind
+*/
+static void CG_DemoRewindFixEffects(void)
+{
+	int i;
+
+	// fix player entities animations, lazy fix?
+	Com_Memset(cg_entities, 0, sizeof(cg_entities));
+
+	// clear message buffer
+	for (i = 0; i < TEAMCHAT_HEIGHT; i++)
+	{
+		if (cgs.teamChatMsgTimes[i] > cg.time)
+		{
+			cgs.teamChatPos--;
+			cgs.teamLastChatPos--;
+			cgs.teamChatMsgTimes[i] = 0;
+			Com_Memset(cgs.teamChatMsgs[i], 0, sizeof(cgs.teamChatMsgs[i]));
+		}
+	}
+
+	CG_DemoRewindFixLocalEntities();
+
+	// lazy fix, ideally every time based event should be adjusted individually not simply deleted
+	CG_InitMarkPolys();
+	CG_InitPM();
+	CG_ClearTrails();
+	CG_ClearParticles();
+	InitSmokeSprites();
+	CG_ClearFlameChunks();
+	trap_R_ClearDecals(); // bullet and explosion marks (cg_markTime) are on renderer side
+
+	// reset camera view effects
+	cg.damageTime        = 0;
+	cg.v_dmg_time        = 0;
+	cg.v_noFireTime      = 0;
+	cg.v_fireTime        = 0;
+	cg.cameraShakeScale  = 0;
+	cg.cameraShakeLength = 0;
+	cg.cameraShakeTime   = 0;
+	cg.cameraShakePhase  = 0;
+
+	cgs.serverCommandSequence = cg.snap->serverCommandSequence;
+}
+
 //#define DEBUGTIME_ENABLED
 #ifdef DEBUGTIME_ENABLED
 #define DEBUGTIME elapsed = (trap_Milliseconds() - dbgTime); if (dbgCnt++ == 1) { CG_Printf("t%i:%i ", dbgCnt, elapsed = (trap_Milliseconds() - dbgTime)); } dbgTime += elapsed;
@@ -2031,6 +2077,14 @@ void CG_DrawActiveFrame(int serverTime, qboolean demoPlayback)
 
 	// set up cg.snap and possibly cg.nextSnap
 	CG_ProcessSnapshots();
+
+	DEBUGTIME
+
+	// demo rewind happend, fix time based effects
+	if (demoPlayback && cg.time - cg.oldTime < 0)
+	{
+		CG_DemoRewindFixEffects();
+	}
 
 	DEBUGTIME
 

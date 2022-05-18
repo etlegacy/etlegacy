@@ -1401,3 +1401,24 @@ void CG_AddLocalEntities(void)
 		}
 	}
 }
+
+/**
+* @brief CG_DemoRewindFixLocalEntities fix local ents on demo rewind
+*/
+void CG_DemoRewindFixLocalEntities(void)
+{
+	localEntity_t *le, *next;
+
+	le = cg_activeLocalEntities.prev;
+
+	for (; le != &cg_activeLocalEntities; le = next)
+	{
+		next = le->prev;
+
+		if (le->startTime > cg.time || le->endTime <= cg.time)
+		{
+			CG_FreeLocalEntity(le);
+			continue;
+		}
+	}
+}
