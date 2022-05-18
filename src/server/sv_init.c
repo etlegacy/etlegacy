@@ -777,6 +777,11 @@ void SV_SpawnServer(const char *server)
 	// to load during actual gameplay
 	sv.state = SS_LOADING;
 
+	if (sv_serverTimeReset->integer)
+	{
+		svs.time = 0;
+	}
+
 	// load and spawn all other entities
 	SV_InitGameProgs();
 
@@ -1177,6 +1182,8 @@ void SV_Init(void)
 	svs.serverLoad = -1;
 
 	sv_ipMaxClients = Cvar_Get("sv_ipMaxClients", "0", CVAR_ARCHIVE);
+
+	sv_serverTimeReset = Cvar_GetAndDescribe("sv_serverTimeReset", "0", CVAR_ARCHIVE_ND, "Reset server time on map change.");
 
 #if defined(FEATURE_IRC_SERVER) && defined(DEDICATED)
 	IRC_Init();

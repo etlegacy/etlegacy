@@ -487,6 +487,8 @@ extern cvar_t *sv_demoTolerant;
 
 extern cvar_t *sv_ipMaxClients; ///< limit client connection
 
+extern cvar_t *sv_serverTimeReset;
+
 //===========================================================
 
 // sv_demo.c
