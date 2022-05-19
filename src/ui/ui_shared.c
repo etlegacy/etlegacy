@@ -61,10 +61,18 @@ int       modalMenuCount = 0;
 qboolean debugMode            = qfalse;
 int      lastListBoxClickTime = 0;
 
-#ifdef CGAME
-#define MEM_POOL_SIZE  128 * 1024
+#ifdef CGAMEDLL
+#if ARCH_X86
+#define MEM_POOL_SIZE (128 * 1024)
 #else
-#define MEM_POOL_SIZE  2048 * 1024  // was 1536, 1024
+#define MEM_POOL_SIZE (256 * 1024)
+#endif
+#else
+#if ARCH_X86
+#define MEM_POOL_SIZE (2048 * 1024) // Arnout: was 1024
+#else
+#define MEM_POOL_SIZE (4096 * 1024)
+#endif
 #endif
 
 static char     memoryPool[MEM_POOL_SIZE];
