@@ -3014,6 +3014,7 @@ void PM_CoolWeapons(void)
 
 #define AIMSPREAD_DECREASE_RATE     200.0f      // when I made the increase/decrease floats (so slower weapon recover could happen for scoped weaps) the average rate increased significantly
 #define AIMSPREAD_INCREASE_RATE     800.0f
+#define AIMSPREAD_REDUCED_RATE      300.0f      // adjusts how quickly spread grows beyond the old cap 
 #define AIMSPREAD_VIEWRATE_MIN      30.0f       // degrees per second
 #define AIMSPREAD_VIEWRATE_RANGE    120.0f      // degrees per second
 
@@ -3082,8 +3083,11 @@ void PM_AdjustAimSpreadScale(void)
 		{
 			viewchange = 0;
 		}
+		else if (viewchange > (AIMSPREAD_VIEWRATE_RANGE / wpnScale))
+		{
+			viewchange *= AIMSPREAD_REDUCED_RATE / AIMSPREAD_INCREASE_RATE;
+		}
 
-		// now give us a scale from 0.0 to 1.0 to apply the spread increase
 		viewchange = viewchange / (AIMSPREAD_VIEWRATE_RANGE / wpnScale);
 
 		increase = (int)(cmdTime * viewchange * AIMSPREAD_INCREASE_RATE);
