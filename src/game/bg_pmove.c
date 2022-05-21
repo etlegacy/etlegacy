@@ -3082,6 +3082,10 @@ void PM_AdjustAimSpreadScale(void)
 		{
 			viewchange = 0;
 		}
+		else if (viewchange > (AIMSPREAD_VIEWRATE_RANGE / wpnScale))
+		{
+			viewchange = AIMSPREAD_VIEWRATE_RANGE / wpnScale;
+		}
 
 		// now give us a scale from 0.0 to 1.0 to apply the spread increase
 		viewchange = viewchange / (AIMSPREAD_VIEWRATE_RANGE / wpnScale);
