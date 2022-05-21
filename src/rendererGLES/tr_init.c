@@ -1120,7 +1120,7 @@ void R_Register(void)
 	r_drawBuffer   = ri.Cvar_Get("r_drawBuffer", "GL_BACK", CVAR_CHEAT);
 	r_lockPvs      = ri.Cvar_Get("r_lockpvs", "0", CVAR_CHEAT);
 	r_noportals    = ri.Cvar_Get("r_noportals", "0", CVAR_CHEAT);
-	r_shadows      = ri.Cvar_Get("cg_shadows", "1", 0);
+	r_shadows      = ri.Cvar_Get("cg_shadows", "0", 0);
 
 	r_screenshotFormat      = ri.Cvar_Get("r_screenshotFormat", "2", CVAR_ARCHIVE_ND);
 	r_screenshotJpegQuality = ri.Cvar_Get("r_screenshotJpegQuality", "90", CVAR_ARCHIVE_ND);
