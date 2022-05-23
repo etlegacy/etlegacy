@@ -510,7 +510,7 @@ char *G_createStats(gentity_t *ent)
 	// workaround to always hide previous map stats in warmup
 	// Stats will be cleared correctly when the match actually starts
 	if ((g_gamestate.integer == GS_WARMUP || g_gamestate.integer == GS_WARMUP_COUNTDOWN) &&
-	    !(g_gametype.integer == GT_WOLF_STOPWATCH && g_currentRound.integer == 1))
+	    !(g_gametype.integer == GT_WOLF_STOPWATCH))
 	{
 		dwWeaponMask     = 0;
 		strWeapInfo[0]   = '\0';
