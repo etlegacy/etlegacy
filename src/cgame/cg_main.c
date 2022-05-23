@@ -461,7 +461,7 @@ static cvarTable_t cvarTable[] =
 	{ &cg_autoactivate,            "cg_autoactivate",            "1",           CVAR_ARCHIVE,                 0 },
 
 	// more fluid rotations
-	{ &cg_swingSpeed,              "cg_swingSpeed",              "0.1",         CVAR_CHEAT,                   0 }, // was 0.3 for Q3
+	{ &cg_swingSpeed,              "cg_swingSpeed",              "0.1",         CVAR_ARCHIVE,                 0 }, // was 0.3 for Q3
 	{ &cg_bloodTime,               "cg_bloodTime",               "120",         CVAR_ARCHIVE,                 0 },
 
 	{ &cg_skybox,                  "cg_skybox",                  "1",           CVAR_ARCHIVE,                 0 },
