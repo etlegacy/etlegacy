@@ -1703,24 +1703,24 @@ static void CG_RegisterGraphics(void)
 	cgs.media.tracerShader           = trap_R_RegisterShader("gfx/misc/tracer");
 
 	// hint icon, some of these were never used in default wolf
-	cgs.media.usableHintShader        = trap_R_RegisterShader("gfx/2d/usableHint");
-	cgs.media.notUsableHintShader     = trap_R_RegisterShader("gfx/2d/notUsableHint");
+	cgs.media.usableHintShader        = trap_R_RegisterShader("gfx/2d/legacy_usableHint");
+	cgs.media.notUsableHintShader     = trap_R_RegisterShader("gfx/2d/legacy_notUsableHint");
 	cgs.media.doorHintShader          = trap_R_RegisterShader("gfx/2d/doorHint");
-	cgs.media.doorRotateHintShader    = trap_R_RegisterShader("gfx/2d/doorRotateHint");         // TODO: no icon, add it ?
+	cgs.media.doorRotateHintShader    = trap_R_RegisterShader("gfx/2d/doorRotateHint");             // TODO: no icon, add it ?
 	cgs.media.doorLockHintShader      = trap_R_RegisterShader("gfx/2d/lockedhint");
-	cgs.media.mg42HintShader          = trap_R_RegisterShader("gfx/2d/mg42Hint");               // TODO: no icon, add it ?
-	cgs.media.breakableHintShader     = trap_R_RegisterShader("gfx/2d/breakableHint");
-	cgs.media.healthHintShader        = trap_R_RegisterShader("gfx/2d/healthHint");             // TODO: no icon, add it ?
+	cgs.media.mg42HintShader          = trap_R_RegisterShader("gfx/2d/mg42Hint");                   // TODO: no icon, add it ?
+	cgs.media.breakableHintShader     = trap_R_RegisterShader("gfx/2d/legacy_breakableHint");
+	cgs.media.healthHintShader        = trap_R_RegisterShader("gfx/2d/legacy_healthHint");          // TODO: no icon, add it ?
 	cgs.media.knifeHintShader         = trap_R_RegisterShader("gfx/2d/knifeHint");
 	cgs.media.ladderHintShader        = trap_R_RegisterShader("gfx/2d/ladderHint");
-	cgs.media.buttonHintShader        = trap_R_RegisterShader("gfx/2d/buttonHint");             // TODO: no icon, add it ?
+	cgs.media.buttonHintShader        = trap_R_RegisterShader("gfx/2d/legacy_buttonHint");          // TODO: no icon, add it ?
 	cgs.media.waterHintShader         = trap_R_RegisterShader("gfx/2d/waterHint");
-	cgs.media.weaponHintShader        = trap_R_RegisterShader("gfx/2d/weaponHint");             // TODO: no icon, add it ?
-	cgs.media.ammoHintShader          = trap_R_RegisterShader("gfx/2d/ammoHint");               // TODO: no icon, add it ?
-	cgs.media.powerupHintShader       = trap_R_RegisterShader("gfx/2d/powerupHint");            // TODO: no icon, add it ?
+	cgs.media.weaponHintShader        = trap_R_RegisterShader("gfx/2d/legacy_weaponHint");          // TODO: no icon, add it ?
+	cgs.media.ammoHintShader          = trap_R_RegisterShader("gfx/2d/legacy_ammoHint");            // TODO: no icon, add it ?
+	cgs.media.powerupHintShader       = trap_R_RegisterShader("gfx/2d/legacy_powerupHint");         // TODO: no icon, add it ?
 	cgs.media.friendShader            = trap_R_RegisterShaderNoMip("gfx/2d/friendlycross.tga");
 	cgs.media.buildHintShader         = trap_R_RegisterShader("gfx/2d/buildHint");
-	cgs.media.disarmHintShader        = trap_R_RegisterShader("gfx/2d/disarmHint");             // TODO: no icon, add it ?
+	cgs.media.disarmHintShader        = trap_R_RegisterShader("gfx/2d/legacy_disarmHint");          // TODO: no icon, add it ?
 	cgs.media.reviveHintShader        = trap_R_RegisterShader("gfx/2d/reviveHint");
 	cgs.media.dynamiteHintShader      = trap_R_RegisterShader("gfx/2d/dynamiteHint");
 	cgs.media.tankHintShader          = trap_R_RegisterShaderNoMip("gfx/2d/tankHint");

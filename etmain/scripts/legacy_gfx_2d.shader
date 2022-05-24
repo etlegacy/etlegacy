@@ -45,6 +45,112 @@ gfx/2d/net
 
 
 //========================================//
+// Cursorhints
+// Fixed drawing with clampMap
+//========================================//
+
+gfx/2d/legacy_usablehint
+{
+	nomipmaps
+	nopicmip
+	{
+		clampMap gfx/2d/usableHint.tga
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbGen vertex
+	}
+}
+
+gfx/2d/legacy_breakablehint
+{
+	nomipmaps
+	nopicmip
+	{
+		clampMap gfx/2d/breakablehint.tga
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbGen vertex
+	}
+}
+
+gfx/2d/legacy_notusablehint
+{
+	nomipmaps
+	nopicmip
+	{
+		clampMap gfx/2d/notusablehint.tga
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbGen vertex
+	}
+}
+
+gfx/2d/legacy_healthhint
+{
+ 	nomipmaps
+	nopicmip
+	{
+		clampMap gfx/2d/usableHint.tga
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbGen vertex
+	}
+}
+
+gfx/2d/legacy_buttonhint
+{
+	nomipmaps
+	nopicmip
+	{
+		clampMap gfx/2d/usableHint.tga
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbGen vertex
+	}
+}
+
+gfx/2d/legacy_weaponhint
+{
+	nomipmaps
+	nopicmip
+	{
+		clampMap gfx/2d/usableHint.tga
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbGen vertex
+	}
+}
+
+gfx/2d/legacy_ammohint
+{
+	nomipmaps
+	nopicmip
+	{
+		clampMap gfx/2d/usableHint.tga
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbGen vertex
+	}
+}
+
+gfx/2d/legacy_poweruphint
+{
+	nomipmaps
+	nopicmip
+	{
+		clampMap gfx/2d/usableHint.tga
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbGen vertex
+	}
+}
+
+gfx/2d/legacy_disarmhint
+{
+	nomipmaps
+	nopicmip
+	{
+		clampMap gfx/2d/disarmhint.tga
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbGen vertex
+	}
+}
+//========================================//
+
+
+//========================================//
 // Crosshairs
 //========================================//
 // sharp crosshairs
