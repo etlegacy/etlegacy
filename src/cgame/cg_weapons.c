@@ -3703,12 +3703,29 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 		// no flamethrower flame on prone moving or dead players
 		if ((cent->currentState.eFlags & EF_FIRING) && !(cent->currentState.eFlags & (EF_PRONE_MOVING | EF_DEAD)))
 		{
+			trace_t trace;
+			vec3_t  muzzlePoint, angles, forward;
+
+			VectorCopy(flash.origin, muzzlePoint);
+
+			CG_Trace(&trace, muzzlePoint, NULL, NULL, muzzlePoint, cent->currentState.number, MASK_SHOT | MASK_WATER);
+
+			if (trace.startsolid)
+			{
+				AxisToAngles(flash.axis, angles);
+				AngleVectors(angles, forward, NULL, NULL);
+				VectorMA(muzzlePoint, -32, forward, muzzlePoint);
+
+				CG_Trace(&trace, muzzlePoint, NULL, NULL, flash.origin, cent->currentState.number, MASK_SHOT | MASK_WATER);
+				VectorCopy(trace.endpos, muzzlePoint);
+			}
+
 			// Flamethrower effect
-			CG_FlamethrowerFlame(cent, flash.origin);
+			CG_FlamethrowerFlame(cent, muzzlePoint);
 
 			if (weapon->flashDlightColor[0] != 0.f || weapon->flashDlightColor[1] != 0.f || weapon->flashDlightColor[2] != 0.f)
 			{
-				trap_R_AddLightToScene(flash.origin, 320, 1.25 + (rand() & 31) / 128.0f, weapon->flashDlightColor[0],
+				trap_R_AddLightToScene(muzzlePoint, 320, 1.25 + (rand() & 31) / 128.0f, weapon->flashDlightColor[0],
 				                       weapon->flashDlightColor[1], weapon->flashDlightColor[2], 0, 0);
 			}
 		}

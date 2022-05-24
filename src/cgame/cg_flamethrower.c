@@ -180,7 +180,7 @@ void CG_FireFlameChunks(centity_t *cent, vec3_t origin, vec3_t angles, float spe
 	// for any other character or in 3rd person view, use entity angles for friction
 	if (cent->currentState.number != cg.snap->ps.clientNum || cg_thirdPerson.integer)
 	{
-		AngleVectors(cent->currentState.angles, parentFwd, NULL, NULL);
+		AngleVectors(cent->currentState.apos.trBase, parentFwd, NULL, NULL);
 	}
 	else
 	{
