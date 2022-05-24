@@ -3714,7 +3714,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 			{
 				AxisToAngles(flash.axis, angles);
 				AngleVectors(angles, forward, NULL, NULL);
-				VectorMA(muzzlePoint, -32, forward, muzzlePoint);
+				VectorMA(muzzlePoint, -42, forward, muzzlePoint);
 
 				CG_Trace(&trace, muzzlePoint, NULL, NULL, flash.origin, cent->currentState.number, MASK_SHOT | MASK_WATER);
 				VectorCopy(trace.endpos, muzzlePoint);
