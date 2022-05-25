@@ -130,7 +130,7 @@ jobs:
     strategy:
       matrix:
         include:
-          - arch: armv7
+          - arch: aarch64
             distro: buster
     steps:
       - uses: actions/checkout@v2.1.0
@@ -444,7 +444,7 @@ jobs:
     strategy:
       matrix:
         include:
-          - arch: armv7
+          - arch: aarch64
             distro: buster
     steps:
       - uses: actions/checkout@v2.1.0
