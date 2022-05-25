@@ -601,7 +601,7 @@ static void WM_DrawClientScore_Ping(int x, int y, float scaleX, float scaleY, co
 	}
 	else if (score->scoreflags & 2)
 	{
-		CG_Text_Paint_RightAligned_Ext(x, y, scaleX, scaleY, colorWhite, " BOT", 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
+		CG_Text_Paint_RightAligned_Ext(x, y, scaleX, scaleY, colorYellow, " BOT", 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
 	}
 	else
 	{

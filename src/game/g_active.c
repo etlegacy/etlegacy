@@ -605,6 +605,7 @@ void SpectatorThink(gentity_t *ent, usercmd_t *ucmd)
 		pm.tracemask     = MASK_PLAYERSOLID & ~CONTENTS_BODY; // spectators can fly through bodies
 		pm.trace         = trap_TraceCapsuleNoEnts;
 		pm.pointcontents = trap_PointContents;
+		pm.activateLean  = client->pers.activateLean;
 
 		Pmove(&pm);
 
@@ -1391,6 +1392,8 @@ void ClientThink_real(gentity_t *ent)
 	pm.noWeapClips = qfalse;
 
 	VectorCopy(client->ps.origin, client->oldOrigin);
+	VectorCopy(ent->r.mins, pm.mins);
+	VectorCopy(ent->r.maxs, pm.maxs);
 
 	pm.gametype           = g_gametype.integer;
 	pm.ltChargeTime       = level.fieldopsChargeTime[client->sess.sessionTeam - 1];
@@ -1428,6 +1431,8 @@ void ClientThink_real(gentity_t *ent)
 		client->pers.lastBattleSenseBonusTime = level.timeCurrent;
 		client->combatState                   = COMBATSTATE_COLD; // cool down again
 	}
+
+	pm.activateLean = client->pers.activateLean;
 
 	Pmove(&pm); // monsterslick
 
@@ -1681,11 +1686,19 @@ void ClientThink(int clientNum)
  */
 void G_RunClient(gentity_t *ent)
 {
-	// special case for uniform grabbing
+	// special case for uniform grabbing and shoving
 	// don't let spectator activate
-	if (ent->client->sess.sessionTeam != TEAM_SPECTATOR && ent->client->pers.cmd.buttons & BUTTON_ACTIVATE)
+	if (ent->client->sess.sessionTeam != TEAM_SPECTATOR)
 	{
-		Cmd_Activate2_f(ent);
+		if (ent->client->pers.cmd.buttons & BUTTON_ACTIVATE)
+		{
+			Cmd_Activate2_f(ent);
+			ent->client->activateHeld = qtrue;
+		}
+		else
+		{
+			ent->client->activateHeld = qfalse;
+		}
 	}
 
 	if (ent->health <= 0 && (ent->client->ps.pm_flags & PMF_LIMBO))
@@ -2113,6 +2126,13 @@ void ClientEndFrame(gentity_t *ent)
 	// Zero out here and set only for certain specs
 	ent->client->ps.powerups[PW_BLACKOUT] = 0;
 
+	// check for flood protection - if 1 second has passed between commands, reduce the flood limit counter
+	if (level.time >= ent->client->sess.nextCommandDecreaseTime && ent->client->sess.numReliableCommands)
+	{
+		ent->client->sess.numReliableCommands--;
+		ent->client->sess.nextCommandDecreaseTime = level.time + 1000;
+	}
+
 	if ((ent->client->sess.sessionTeam == TEAM_SPECTATOR) || (ent->client->ps.pm_flags & PMF_LIMBO))
 	{
 		SpectatorClientEndFrame(ent);
@@ -2285,10 +2305,11 @@ void ClientEndFrame(gentity_t *ent)
 	frames = level.framenum - ent->client->lastUpdateFrame - 1;
 
 	// etpro antiwarp
-	// frames = level.framenum - ent->client->lastUpdateFrame - 1)
 	if (g_maxWarp.integer && frames > g_maxWarp.integer && G_DoAntiwarp(ent))
 	{
-		ent->client->warping = qtrue;
+		ent->client->warping    = qtrue;
+		ent->client->ps.eFlags |= EF_CONNECTION;
+		ent->s.eFlags          |= EF_CONNECTION;
 	}
 
 	if (g_skipCorrection.integer && !ent->client->warped && frames > 0 && !G_DoAntiwarp(ent))
@@ -2297,8 +2318,6 @@ void ClientEndFrame(gentity_t *ent)
 		{
 			// we need frames to be = 2 here
 			frames = 3;
-			ent->client->ps.eFlags |= EF_CONNECTION;
-			ent->s.eFlags          |= EF_CONNECTION;
 		}
 		G_PredictPmove(ent, (float)frames / (float)sv_fps.integer);
 	}

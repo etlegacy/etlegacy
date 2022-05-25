@@ -204,14 +204,7 @@ static void CG_DrawShoutcastPlayerOverlayAxis(clientInfo_t *player, float x, flo
 	}
 	else
 	{
-		if (cgs.eventHandling == CGAME_EVENT_SHOUTCAST)
-		{
-			Vector4Copy(colorYellow, hcolor);
-		}
-		else
-		{
-			Vector4Copy(colorWhite, hcolor);
-		}
+		Vector4Copy(colorWhite, hcolor);
 	}
 
 	text      = va("(F%i)", index + 1);
@@ -345,14 +338,7 @@ static void CG_DrawShoutcastPlayerOverlayAllies(clientInfo_t *player, float x, f
 	}
 	else
 	{
-		if (cgs.eventHandling == CGAME_EVENT_SHOUTCAST)
-		{
-			Vector4Copy(colorYellow, hcolor);
-		}
-		else
-		{
-			Vector4Copy(colorWhite, hcolor);
-		}
+		Vector4Copy(colorWhite, hcolor);
 	}
 
 	text = va("(F%i)", index + 7);
@@ -1062,6 +1048,41 @@ void CG_DrawShoutcastPowerups(void)
 }
 
 /**
+* @brief CG_ToggleShoutcasterMode
+*        set event handling to CGAME_EVENT_SHOUTCAST so we can listen to keypresses
+* @param[in] shoutcaster
+*/
+void CG_ToggleShoutcasterMode(int shoutcaster)
+{
+	if (shoutcaster)
+	{
+		CG_EventHandling(CGAME_EVENT_SHOUTCAST, qfalse);
+	}
+	else
+	{
+		CG_EventHandling(CGAME_EVENT_NONE, qfalse);
+	}
+}
+
+/**
+* @brief CG_ShoutcastCheckKeyCatcher
+*
+* @details track the moment when key catcher is changed away from KEYCATCH_UI
+*          so we can set back event handling to CGAME_EVENT_SHOUTCAST
+*          and key catcher to KEYCATCH_CGAME for shoutcaster follow keybinds
+*
+* @param[in] keycatcher
+*/
+void CG_ShoutcastCheckKeyCatcher(int keycatcher)
+{
+	if (cgs.clientinfo[cg.clientNum].shoutcaster && cgs.eventHandling == CGAME_EVENT_NONE &&
+	    cg.snap->ps.pm_type != PM_INTERMISSION && !(keycatcher & KEYCATCH_UI) && (cg.lastKeyCatcher & KEYCATCH_UI))
+	{
+		CG_ToggleShoutcasterMode(1);
+	}
+}
+
+/**
 * @brief CG_Shoutcast_KeyHandling
 * @param[in] _key
 * @param[in] down
@@ -1100,84 +1121,72 @@ qboolean CG_ShoutcastCheckExecKey(int key, qboolean doaction)
 		if (doaction)
 		{
 			trap_SendClientCommand(va("follow %d", players[0]));
-			CG_EventHandling(CGAME_EVENT_NONE, qfalse);
 		}
 		return qtrue;
 	case K_F2:
 		if (doaction)
 		{
 			trap_SendClientCommand(va("follow %d", players[1]));
-			CG_EventHandling(CGAME_EVENT_NONE, qfalse);
 		}
 		return qtrue;
 	case K_F3:
 		if (doaction)
 		{
 			trap_SendClientCommand(va("follow %d", players[2]));
-			CG_EventHandling(CGAME_EVENT_NONE, qfalse);
 		}
 		return qtrue;
 	case K_F4:
 		if (doaction)
 		{
 			trap_SendClientCommand(va("follow %d", players[3]));
-			CG_EventHandling(CGAME_EVENT_NONE, qfalse);
 		}
 		return qtrue;
 	case K_F5:
 		if (doaction)
 		{
 			trap_SendClientCommand(va("follow %d", players[4]));
-			CG_EventHandling(CGAME_EVENT_NONE, qfalse);
 		}
 		return qtrue;
 	case K_F6:
 		if (doaction)
 		{
 			trap_SendClientCommand(va("follow %d", players[5]));
-			CG_EventHandling(CGAME_EVENT_NONE, qfalse);
 		}
 		return qtrue;
 	case K_F7:
 		if (doaction)
 		{
 			trap_SendClientCommand(va("follow %d", players[6]));
-			CG_EventHandling(CGAME_EVENT_NONE, qfalse);
 		}
 		return qtrue;
 	case K_F8:
 		if (doaction)
 		{
 			trap_SendClientCommand(va("follow %d", players[7]));
-			CG_EventHandling(CGAME_EVENT_NONE, qfalse);
 		}
 		return qtrue;
 	case K_F9:
 		if (doaction)
 		{
 			trap_SendClientCommand(va("follow %d", players[8]));
-			CG_EventHandling(CGAME_EVENT_NONE, qfalse);
 		}
 		return qtrue;
 	case K_F10:
 		if (doaction)
 		{
 			trap_SendClientCommand(va("follow %d", players[9]));
-			CG_EventHandling(CGAME_EVENT_NONE, qfalse);
 		}
 		return qtrue;
 	case K_F11:
 		if (doaction)
 		{
 			trap_SendClientCommand(va("follow %d", players[10]));
-			CG_EventHandling(CGAME_EVENT_NONE, qfalse);
 		}
 		return qtrue;
 	case K_F12:
 		if (doaction)
 		{
 			trap_SendClientCommand(va("follow %d", players[11]));
-			CG_EventHandling(CGAME_EVENT_NONE, qfalse);
 		}
 		return qtrue;
 	}

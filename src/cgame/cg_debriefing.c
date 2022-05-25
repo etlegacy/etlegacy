@@ -1024,8 +1024,13 @@ qboolean CG_MapVoteList_KeyDown(panel_button_t *button, int key)
 			if (trap_FS_FOpenFile(va("maps/%s.bsp", cgs.dbMaps[pos]), &f, FS_READ) > 0)
 			{
 				cgs.dbSelectedMapLevelShots = trap_R_RegisterShaderNoMip(va("levelshots/%s.tga", cgs.dbMaps[pos]));
-				trap_FS_FCloseFile(f);
 			}
+			else // client doesn't have the map, use default levelshot
+			{
+				cgs.dbSelectedMapLevelShots = trap_R_RegisterShaderNoMip("levelshots/unknownmap");
+			}
+
+			trap_FS_FCloseFile(f);
 
 			descriptionScroll.init = 0;
 			Q_strncpyz(descriptionScroll.text, cgs.dbMapDescription[pos], sizeof(descriptionScroll.text));
@@ -1794,6 +1799,11 @@ void CG_Debriefing_Startup(void)
 	{
 		trap_S_StartLocalSound(trap_S_RegisterSound("sound/music/axis_win.wav", qfalse), CHAN_LOCAL_SOUND);
 	}
+
+	if (cgs.clientinfo[cg.clientNum].shoutcaster)
+	{
+		CG_ToggleShoutcasterMode(0);
+	}
 }
 
 /**
@@ -1805,7 +1815,14 @@ void CG_Debriefing_Shutdown(void)
 
 	if (!cg.demoPlayback)
 	{
-		trap_Key_SetCatcher(trap_Key_GetCatcher() & ~KEYCATCH_CGAME);
+		if (cgs.clientinfo[cg.clientNum].shoutcaster)
+		{
+			CG_ToggleShoutcasterMode(1);
+		}
+		else
+		{
+			trap_Key_SetCatcher(trap_Key_GetCatcher() & ~KEYCATCH_CGAME);
+		}
 	}
 }
 
@@ -2197,7 +2214,7 @@ void CG_DebriefingPlayerList_Draw(panel_button_t *button)
 
 		CG_Text_Paint_Ext(DB_RANK_X + cgs.wideXoffset, y, button->font->scalex, button->font->scaley, button->font->colour, CG_Debriefing_RankNameForClientInfo(ci), 0, 0, 0, button->font->font);
 
-		CG_Text_Paint_Ext(DB_NAME_X + cgs.wideXoffset, y, button->font->scalex, button->font->scaley, colorWhite, ci->name, 0, 28, 0, button->font->font);
+		CG_Text_Paint_Ext(DB_NAME_X + cgs.wideXoffset, y, button->font->scalex, button->font->scaley, colorWhite, ci->name, 0, 23, 0, button->font->font);
 
 		CG_Text_Paint_Ext(DB_TIME_X + cgs.wideXoffset, y, button->font->scalex, button->font->scaley, button->font->colour, va("%i", score ? score->time : 0), 0, 0, 0, button->font->font);
 
@@ -2401,8 +2418,8 @@ void CG_Debriefing_ParseAwards(void)
 	int        i   = 0;
 	char       *cs = (char *)CG_ConfigString(CS_ENDGAME_STATS);
 	const char *token;
-	char       *s;
-	size_t     size, len;
+	char       *s, *val;
+	size_t     size, len, lenVal;
 	int        clientNum;
 	float      value;
 	char       buffer[sizeof(cgs.dbAwardNamesBuffer)];
@@ -2428,13 +2445,25 @@ void CG_Debriefing_ParseAwards(void)
 			Q_strncpyz(s, "", size);
 		}
 
+		len = strlen(s);
+
 		// value
 		token = COM_Parse(&cs);
 		value = atof(token);
 
 		if (value > 0)
 		{
-			Q_strcat(s, size, (value == (int)(value)) ? va("^7 (%i)", (int)(value)) : va("^7 (%.2f)", value));
+			val = (value == (int)(value)) ? va("^7 (%i)", (int)(value)) : va("^7 (%.2f)", value);
+
+			lenVal = strlen(val);
+
+			// 32 is the max chars that can fit before name overlaps with scroll bar
+			if (len + lenVal > 32)
+			{
+				Q_TruncateStr(s, 32 - lenVal);
+			}
+
+			Q_strcat(s, size, val);
 		}
 
 		// award
@@ -3247,7 +3276,7 @@ void CG_Debriefing_PlayerName_Draw(panel_button_t *button)
 	{
 		CG_DrawPic(button->rect.x, button->rect.y - 9, 18, 12, ci->team == TEAM_AXIS ? cgs.media.axisFlag : cgs.media.alliedFlag);
 	}
-	CG_Text_Paint_Ext(button->rect.x + 22, button->rect.y, button->font->scalex, button->font->scaley, colorWhite, ci->name, 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
+	CG_Text_Paint_Ext(button->rect.x + 22, button->rect.y, button->font->scalex, button->font->scaley, colorWhite, ci->name, 0, 27, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
 }
 
 /**
@@ -4612,6 +4641,8 @@ void CG_parseMapVoteListInfo()
 
 	for (i = 0; i < cgs.dbNumMaps; i++)
 	{
+		char *s;
+
 		Q_strncpyz(cgs.dbMaps[i], CG_Argv((i * 4) + 2),
 		           sizeof(cgs.dbMaps[0]));
 		cgs.dbMapVotes[i]      = 0;
@@ -4629,7 +4660,12 @@ void CG_parseMapVoteListInfo()
 			           cgs.arenaData.description,
 			           sizeof(cgs.dbMapDescription[i]));
 
-			CG_FormatMultineLinePrint(cgs.dbMapDescription[i + cgs.dbMapVoteListOffset], 43);
+			while ((s = strchr(cgs.dbMapDescription[i], '*')))
+			{
+				*s = '\n';
+			}
+
+			BG_FitTextToWidth_Ext(cgs.dbMapDescription[i], mapVoteNamesList.font->scalex, 620 - DB_MAPVOTE_X2, sizeof(cgs.dbMapDescription[i]), mapVoteNamesList.font->font);
 		}
 		else
 		{

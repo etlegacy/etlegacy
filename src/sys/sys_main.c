@@ -129,6 +129,80 @@ char *Sys_ConsoleInput(void)
 }
 #endif
 
+#ifdef ETL_CLIENT
+dialogResult_t Sys_SDLDialog(dialogType_t type, const char *message, const char *title)
+{
+	int buttonId;
+	SDL_MessageBoxButtonData buttons[2];
+	SDL_MessageBoxData data;
+	data.window = NULL;
+	data.colorScheme = NULL;
+	data.buttons = buttons;
+	data.message = message;
+	data.title = title;
+
+	switch (type)
+	{
+		default:
+		case DT_INFO:
+			buttons[0].flags = SDL_MESSAGEBOX_BUTTON_RETURNKEY_DEFAULT;
+			buttons[0].buttonid = DR_OK;
+			buttons[0].text = _("Ok");
+			data.numbuttons = 1;
+			data.flags = SDL_MESSAGEBOX_INFORMATION;
+			break;
+		case DT_WARNING:
+			buttons[0].flags = SDL_MESSAGEBOX_BUTTON_RETURNKEY_DEFAULT;
+			buttons[0].buttonid = DR_OK;
+			buttons[0].text = _("Ok");
+			data.numbuttons = 1;
+			data.flags = SDL_MESSAGEBOX_WARNING;
+			break;
+		case DT_ERROR:
+			buttons[0].flags = SDL_MESSAGEBOX_BUTTON_RETURNKEY_DEFAULT;
+			buttons[0].buttonid = DR_OK;
+			buttons[0].text = _("Ok");
+			data.numbuttons = 1;
+			data.flags = SDL_MESSAGEBOX_ERROR;
+			break;
+		case DT_YES_NO:
+			buttons[0].flags = 0;
+			buttons[0].buttonid = DR_NO;
+			buttons[0].text = _("No");
+			buttons[1].flags = SDL_MESSAGEBOX_BUTTON_RETURNKEY_DEFAULT;
+			buttons[1].buttonid = DR_YES;
+			buttons[1].text = _("Yes");
+			data.numbuttons = 2;
+			data.flags = SDL_MESSAGEBOX_INFORMATION;
+			break;
+		case DT_OK_CANCEL:
+			buttons[0].flags = SDL_MESSAGEBOX_BUTTON_ESCAPEKEY_DEFAULT;
+			buttons[0].buttonid = DR_CANCEL;
+			buttons[0].text = _("Cancel");
+			buttons[1].flags = SDL_MESSAGEBOX_BUTTON_RETURNKEY_DEFAULT;
+			buttons[1].buttonid = DR_OK;
+			buttons[1].text = _("Ok");
+			data.numbuttons = 2;
+			data.flags = SDL_MESSAGEBOX_WARNING;
+			break;
+	}
+
+	if (SDL_ShowMessageBox(&data, &buttonId) < 0)
+	{
+		Com_Printf(S_COLOR_RED "error displaying message box\n");
+		return DR_ERROR;
+	}
+
+	if (buttonId == -1)
+	{
+		Com_Printf(S_COLOR_RED "no selection\n");
+		return DR_CANCEL;
+	}
+
+	return buttonId;
+}
+#endif
+
 /**
  * @brief Writes pid to profile or to the homepath root if running a server
  * @return qtrue  if pid file successfully created
@@ -864,13 +938,13 @@ void Sys_BuildCommandLine(int argc, char **argv, char *buffer, size_t bufferSize
 		const qboolean containsSpaces = (qboolean)(strchr(argv[i], ' ') != NULL);
 
 		// Allow URIs to be passed without +connect
-		if (!Q_strncmp(argv[i], "et://", 5) && Q_strncmp(argv[i - 1], "+connect", 8))
+		if (!Q_stricmpn(argv[i], "et://", 5) && Q_stricmpn(argv[i - 1], "+connect", 8))
 		{
 			Q_strcat(buffer, bufferSize, "+connect ");
 		}
 
 		// Allow demo files to be passed without +demo for playback
-		if (FS_IsDemoExt(argv[i], -1) && Q_strncmp(argv[i - 1], "+demo", 5) && Q_strncmp(argv[i - 1], "+record", 7))
+		if (FS_IsDemoExt(argv[i], -1) && Q_stricmpn(argv[i - 1], "+demo", 5) && Q_stricmpn(argv[i - 1], "+record", 7))
 		{
 			Q_strcat(buffer, bufferSize, "+demo dirty ");
 		}

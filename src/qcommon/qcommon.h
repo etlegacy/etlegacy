@@ -511,6 +511,7 @@ vm_t *VM_Create(const char *module, qboolean extract, intptr_t (*systemCalls)(in
 void VM_Free(vm_t *vm);
 void VM_Clear(void);
 vm_t *VM_Restart(vm_t *vm);
+void VM_Error(errorParm_t errorParm, const char *module, const char *filename);
 
 intptr_t QDECL VM_CallFunc(vm_t *vm, int callNum, ...);
 #define VM_Call(...) VM_CallFunc(__VA_ARGS__, VM_CALL_END)
@@ -949,7 +950,7 @@ qboolean FS_MatchFileInPak(const char *filepath, const char *match);
 #define IsPathSep(X) ((X) == '\\' || (X) == '/' || (X) == PATH_SEP)
 
 #if defined(FEATURE_PAKISOLATION) && !defined(DEDICATED)
-const char* DL_ContainerizePath(const char *temp, const char *dest);
+const char *DL_ContainerizePath(const char *temp, const char *dest);
 void FS_InitWhitelist(void);
 qboolean FS_IsWhitelisted(const char *pakName, const char *hash);
 #define FS_CONTAINER "dlcache"
@@ -1004,10 +1005,10 @@ void Info_Print(const char *s);
 
 void Com_BeginRedirect(char *buffer, size_t buffersize, void (*flush)(char *));
 void Com_EndRedirect(void);
-void QDECL Com_Printf(const char *fmt, ...) _attribute ((format(printf, 1, 2)));
-void QDECL Com_DPrintf(const char *fmt, ...) _attribute ((format(printf, 1, 2)));
-void QDECL Com_Error(int code, const char *fmt, ...) _attribute ((noreturn, format(printf, 2, 3)));
-void Com_Quit_f(void) _attribute ((noreturn));
+void QDECL Com_Printf(const char *fmt, ...) _attribute((format(printf, 1, 2)));
+void QDECL Com_DPrintf(const char *fmt, ...) _attribute((format(printf, 1, 2)));
+void QDECL Com_Error(int code, const char *fmt, ...) _attribute((noreturn, format(printf, 2, 3)));
+void Com_Quit_f(void) _attribute((noreturn));
 
 int Com_Milliseconds(void);     // will be journaled properly
 unsigned int Com_BlockChecksum(const void *buffer, size_t length);
@@ -1366,8 +1367,8 @@ qboolean Sys_DllExtension(const char *name);
 
 char *Sys_GetCurrentUser(void);
 
-void QDECL Sys_Error(const char *error, ...) _attribute ((noreturn, format(printf, 1, 2)));
-void Sys_Quit(void) _attribute ((noreturn));
+void QDECL Sys_Error(const char *error, ...) _attribute((noreturn, format(printf, 1, 2)));
+void Sys_Quit(void) _attribute((noreturn));
 char *IN_GetClipboardData(void);       // note that this isn't journaled...
 void IN_SetClipboardData(const char *text);
 
@@ -1447,6 +1448,7 @@ void Sys_SetEnv(const char *name, const char *value);
  */
 typedef enum
 {
+	DR_ERROR  = -1,
 	DR_YES    = 0,
 	DR_NO     = 1,
 	DR_OK     = 0,
@@ -1467,6 +1469,10 @@ typedef enum
 } dialogType_t;
 
 dialogResult_t Sys_Dialog(dialogType_t type, const char *message, const char *title);
+
+#ifdef ETL_CLIENT
+dialogResult_t Sys_SDLDialog(dialogType_t type, const char *message, const char *title);
+#endif
 
 // NOTE: on win32 the cwd is prepended .. non portable behaviour
 void Sys_StartProcess(char *cmdline, qboolean doexit);

@@ -193,12 +193,12 @@ qboolean GLimp_GetModeInfo(int *width, int *height, float *windowAspect, int mod
  */
 static char *GLimp_RatioToFraction(const double ratio, const int iterations)
 {
-	static char buff[64];
-	int i;
-	double bestDelta = DBL_MAX;
-	unsigned int numerator = 1;
-	unsigned int denominator = 1;
-	unsigned int bestNumerator = 0;
+	static char  buff[64];
+	int          i;
+	double       bestDelta       = DBL_MAX;
+	unsigned int numerator       = 1;
+	unsigned int denominator     = 1;
+	unsigned int bestNumerator   = 0;
 	unsigned int bestDenominator = 0;
 
 	for (i = 0; i < iterations; i++)
@@ -206,7 +206,7 @@ static char *GLimp_RatioToFraction(const double ratio, const int iterations)
 		double delta = (double) numerator / (double) denominator - ratio;
 
 		// Close enough for most resolutions
-		if(fabs(delta) < 0.002)
+		if (fabs(delta) < 0.002)
 		{
 			break;
 		}
@@ -223,8 +223,8 @@ static char *GLimp_RatioToFraction(const double ratio, const int iterations)
 		double newDelta = fabs((double) numerator / (double) denominator - ratio);
 		if (newDelta < bestDelta)
 		{
-			bestDelta = newDelta;
-			bestNumerator = numerator;
+			bestDelta       = newDelta;
+			bestNumerator   = numerator;
 			bestDenominator = denominator;
 		}
 	}
@@ -240,7 +240,7 @@ static char *GLimp_RatioToFraction(const double ratio, const int iterations)
 */
 void GLimp_ModeList_f(void)
 {
-	int i, j, display, numModes = 0;
+	int             i, j, display, numModes = 0;
 	SDL_Rect        modes[128];
 	SDL_DisplayMode windowMode;
 
@@ -331,22 +331,22 @@ static void GLimp_InitCvars(void)
 
 	// Window cvars
 	r_fullscreen     = Cvar_Get("r_fullscreen", "1", CVAR_ARCHIVE | CVAR_LATCH);
-	r_noBorder       = Cvar_Get("r_noborder", "0", CVAR_ARCHIVE | CVAR_LATCH);
+	r_noBorder       = Cvar_Get("r_noborder", "0", CVAR_ARCHIVE_ND | CVAR_LATCH);
 	r_centerWindow   = Cvar_Get("r_centerWindow", "0", CVAR_ARCHIVE | CVAR_LATCH);
 	r_customwidth    = Cvar_Get("r_customwidth", "1280", CVAR_ARCHIVE | CVAR_LATCH);
 	r_customheight   = Cvar_Get("r_customheight", "720", CVAR_ARCHIVE | CVAR_LATCH);
-	r_swapInterval   = Cvar_Get("r_swapInterval", "0", CVAR_ARCHIVE);
+	r_swapInterval   = Cvar_Get("r_swapInterval", "0", CVAR_ARCHIVE_ND | CVAR_LATCH);
 	r_mode           = Cvar_Get("r_mode", "-2", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE);
-	r_customaspect   = Cvar_Get("r_customaspect", "1", CVAR_ARCHIVE | CVAR_LATCH);
+	r_customaspect   = Cvar_Get("r_customaspect", "1", CVAR_ARCHIVE_ND | CVAR_LATCH);
 	r_displayRefresh = Cvar_Get("r_displayRefresh", "0", CVAR_LATCH);
-	Cvar_CheckRange(r_displayRefresh, 0, 240, qtrue);
+	Cvar_CheckRange(r_displayRefresh, 0, 480, qtrue);
 	r_windowLocation = Cvar_Get("r_windowLocation", "0,-1,-1", CVAR_ARCHIVE | CVAR_PROTECTED);
 
 	// Window render surface cvars
-	r_stencilbits     = Cvar_Get("r_stencilbits", "0", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE);
-	r_depthbits       = Cvar_Get("r_depthbits", "0", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE);
-	r_colorbits       = Cvar_Get("r_colorbits", "0", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE);
-	r_ignorehwgamma   = Cvar_Get("r_ignorehwgamma", "0", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE);
+	r_stencilbits   = Cvar_Get("r_stencilbits", "0", CVAR_ARCHIVE_ND | CVAR_LATCH | CVAR_UNSAFE);
+	r_depthbits     = Cvar_Get("r_depthbits", "0", CVAR_ARCHIVE_ND | CVAR_LATCH | CVAR_UNSAFE);
+	r_colorbits     = Cvar_Get("r_colorbits", "0", CVAR_ARCHIVE_ND | CVAR_LATCH | CVAR_UNSAFE);
+	r_ignorehwgamma = Cvar_Get("r_ignorehwgamma", "0", CVAR_ARCHIVE_ND | CVAR_LATCH | CVAR_UNSAFE);
 
 	// Old modes (these are used by the UI code)
 	Cvar_Get("r_oldFullscreen", "", CVAR_ARCHIVE);
@@ -612,7 +612,7 @@ static void GLimp_WindowLocation(glconfig_t *glConfig, int *x, int *y, const qbo
 
 	// Make sure we have at least half of the game screen visible on the display its supposed to be in
 	if ((tmpX + (glConfig->windowWidth / 2)) > rect.x && (tmpX + (glConfig->windowWidth / 2)) < (rect.x + rect.w)
-		&& (tmpY + (glConfig->windowHeight / 2)) > rect.y && (tmpY + (glConfig->windowHeight / 2)) < (rect.y + rect.h))
+	    && (tmpY + (glConfig->windowHeight / 2)) > rect.y && (tmpY + (glConfig->windowHeight / 2)) < (rect.y + rect.h))
 	{
 		*x = tmpX;
 		*y = tmpY;
@@ -710,7 +710,7 @@ static int GLimp_SetMode(glconfig_t *glConfig, int mode, qboolean fullscreen, qb
 		return RSERR_INVALID_MODE;
 	}
 
-	glConfig->windowWidth = glConfig->vidWidth;
+	glConfig->windowWidth  = glConfig->vidWidth;
 	glConfig->windowHeight = glConfig->vidHeight;
 
 	Com_Printf("%dx%d\n", glConfig->vidWidth, glConfig->vidHeight);
@@ -1089,12 +1089,12 @@ void GLimp_Splash(glconfig_t *glConfig)
 	dstRect.h = splashImage->h;
 
 	SDL_Surface *surface = SDL_GetWindowSurface(main_window);
-	if(!surface)
+	if (!surface)
 	{
 		// This happens on some platforms, most likely just the SDL build lacking renderers. Does not really matter tho.
 		// the user just wont see our awesome splash screen, but the renderer should boot up just fine.
 		// FIXME: maybe checkup on this later on if there's something we should change on the bundled sdl compile settings
-		Com_DPrintf(S_COLOR_YELLOW "Could not get fetch SDL surface: %s\n", SDL_GetError() );
+		Com_DPrintf(S_COLOR_YELLOW "Could not get fetch SDL surface: %s\n", SDL_GetError());
 	}
 	else if (SDL_BlitSurface(splashImage, NULL, surface, &dstRect) == 0) // apply image on surface
 	{
@@ -1175,7 +1175,7 @@ success:
 	// the splash screen to stay on top of the rendering (at least when running from CLion)
 	// FIXME: clear the splash? Does not seem to happen with bundled SDL2.
 	const char *driver = SDL_GetCurrentVideoDriver();
-	if(Q_stricmpn("cocoa", driver, 5))
+	if (Q_stricmpn("cocoa", driver, 5))
 	{
 		GLimp_Splash(glConfig);
 	}

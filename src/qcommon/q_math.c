@@ -57,6 +57,7 @@ vec4_t colorMdCyan   = { 0, 0.5, 0.5, 1 };
 vec4_t colorMdYellow = { 0.5, 0.5, 0, 1 };
 vec4_t colorMdOrange = { 0.5, 0.25, 0, 1 };
 vec4_t colorMdBlue   = { 0, 0, 0.5, 1 };
+vec4_t colorLtBlue   = { 0, 0.5, 1, 1 };
 
 vec4_t clrBrown         = { 0.68f, 0.68f, 0.56f, 1.f };
 vec4_t clrBrownDk       = { 0.58f * 0.75f, 0.58f * 0.75f, 0.46f * 0.75f, 1.f };
@@ -781,6 +782,16 @@ void vec3_rotate2(const vec3_t in, vec3_t matrix[3], vec3_t out)
 
 #if !idppc
 
+// on x86 hardware we can actually use the 1/3 faster method from intrinsics
+#ifdef ETL_SSE
+#include <immintrin.h>
+float Q_rsqrt(float f)
+{
+	__m128 tmp = _mm_set_ss(f);
+	tmp = _mm_rsqrt_ss(tmp);
+	return _mm_cvtss_f32(tmp);
+}
+#else
 /**
  * @brief Q_rsqrt
  * @param[in] f
@@ -801,6 +812,7 @@ float Q_rsqrt(float f)
 
 	return y;
 }
+#endif
 
 /**
  * @brief Q_fabs
@@ -846,7 +858,7 @@ float angle_lerp(float from, float to, float frac)
  * @param[in] frac
  * @param[out] out
  */
-void vec3_lerp(vec3_t start, vec3_t end, float frac, vec3_t out)
+void vec3_lerp(const vec3_t start, const vec3_t end, float frac, vec3_t out)
 {
 	vec3_t dist;
 
@@ -1016,7 +1028,7 @@ int BoxOnPlaneSide2 (vec3_t emins, vec3_t emaxs, struct cplane_s *p)
  * @param[in] p
  * @return
  */
-int BoxOnPlaneSide(vec3_t emins, vec3_t emaxs, struct cplane_s *p)
+int BoxOnPlaneSide(const vec3_t emins, const vec3_t emaxs, struct cplane_s *p)
 {
 	float dist1, dist2;
 	int   sides;

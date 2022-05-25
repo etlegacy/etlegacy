@@ -44,7 +44,7 @@
 
 cvar_t *r_ext_multisample;
 
- /**
+/**
   * @var imageLoaders
   * @brief Note that the ordering indicates the order of preference used
   * when there are multiple images of different formats available
@@ -570,7 +570,9 @@ int RE_InitOpenGlSubsystems(void)
 
 	glewResult = glewInit();
 
-	if (GLEW_OK != glewResult)
+	// ignore GLEW_ERROR_NO_GLX_DISPLAY for now due to GLEW upstream issue
+	// see https://github.com/nigels-com/glew/issues/172
+	if (GLEW_OK != glewResult && glewResult != GLEW_ERROR_NO_GLX_DISPLAY)
 	{
 		// glewInit failed, something is seriously wrong
 		Ren_Fatal("GLW_StartOpenGL() - could not load OpenGL subsystem: %s", glewGetErrorString(glewResult));
@@ -664,7 +666,7 @@ void R_PrintLongString(const char *string)
 
 void R_RegisterCommon(void)
 {
-	r_ext_multisample = ri.Cvar_Get("r_ext_multisample", "0", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE);
+	r_ext_multisample = ri.Cvar_Get("r_ext_multisample", "0", CVAR_ARCHIVE_ND | CVAR_LATCH | CVAR_UNSAFE);
 	ri.Cvar_CheckRange(r_ext_multisample, 0, 8, qtrue);
 }
 

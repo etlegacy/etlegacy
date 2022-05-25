@@ -23,8 +23,14 @@ qboolean G_DoAntiwarp(gentity_t *ent)
 
 	if (ent && ent->client)
 	{
-		// don't antiwarp spectators, also players that just spawned or are in limbo
-		if (ent->client->sess.sessionTeam == TEAM_SPECTATOR || (ent->client->ps.pm_flags & (PMF_LIMBO | PMF_RESPAWNED)))
+		// don't antiwarp spectators and players that are in limbo
+		if (ent->client->sess.sessionTeam == TEAM_SPECTATOR || (ent->client->ps.pm_flags & PMF_LIMBO))
+		{
+			return qfalse;
+		}
+
+		// don't antiwarp bots
+		if (ent->r.svFlags & SVF_BOT)
 		{
 			return qfalse;
 		}
@@ -218,6 +224,12 @@ void DoClientThinks(gentity_t *ent)
 
 		speed = G_CmdScale(ent, cmd);
 
+		// if the warping player stopped but still has some speed keep antiwarping
+		if (speed == 0 && VectorLength(ent->client->ps.velocity) > LAG_SPEED_THRESHOLD)
+		{
+			speed = 1.0f;
+		}
+
 		if (timeDelta > 50)
 		{
 			timeDelta = 50;
@@ -303,9 +315,9 @@ drop_packet:
 	if (g_antiwarp.integer & 32)
 	{
 		trap_SendServerCommand(
-		    ent - g_entities,
-		    va("cp \"%d %d\n\"", latestTime - lastTime, startPackets - ent->client->cmdcount)
-		    );
+			ent - g_entities,
+			va("cp \"%d %d\n\"", latestTime - lastTime, startPackets - ent->client->cmdcount)
+			);
 	}
 
 #ifdef ETLEGACY_DEBUG

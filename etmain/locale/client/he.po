@@ -27,5 +27,17 @@ msgstr ""
 msgid "MOUSE2"
 msgstr ""
 
+msgid "Yes"
+msgstr ""
+
+msgid "No"
+msgstr ""
+
+msgid "Ok"
+msgstr ""
+
+msgid "Cancel"
+msgstr ""
+
 msgid "SPACE"
 msgstr ""

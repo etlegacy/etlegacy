@@ -592,9 +592,9 @@ static void IN_GobbleMotionEvents(void)
  */
 static void IN_GrabMouse(qboolean grab, qboolean relative)
 {
-	static qboolean mouse_grabbed   = qfalse, mouse_relative = qfalse;
+	static qboolean mouse_grabbed = qfalse, mouse_relative = qfalse;
 #if !defined(__ANDROID__) || __ANDROID_API__ > 23
-	int             relative_result = 0;
+	int relative_result = 0;
 #endif
 
 	if (relative == !mouse_relative)
@@ -781,7 +781,7 @@ void IN_PrintJoystickInfo_f(void)
 static void IN_InitJoystick(void)
 {
 	//int  i     = 0;
-	int  total = 0;
+	int total = 0;
 	//char buf[MAX_CVAR_VALUE_STRING] = "";
 
 	Cmd_AddCommand("joystickInfo", IN_PrintJoystickInfo_f, "Prints joystick info."); // command is valid when in_joystick 0 is set
@@ -1119,12 +1119,12 @@ static void IN_WindowResize(SDL_Event *e)
 
 static void IN_WindowMoved(SDL_Event *e)
 {
-    int displayIndex = 0;
-    displayIndex = SDL_GetWindowDisplayIndex(GLimp_MainWindow());
-    if (displayIndex >= 0)
-    {
-        Cvar_Set("r_windowLocation", va("%d,%d,%d", displayIndex, e->window.data1, e->window.data2));
-    }
+	int displayIndex = 0;
+	displayIndex = SDL_GetWindowDisplayIndex(GLimp_MainWindow());
+	if (displayIndex >= 0)
+	{
+		Cvar_Set("r_windowLocation", va("%d,%d,%d", displayIndex, e->window.data1, e->window.data2));
+	}
 }
 
 /*
@@ -1133,11 +1133,11 @@ static void IN_WindowMoved(SDL_Event *e)
  */
 static void IN_WindowFocusLost()
 {
-    if (cls.rendererStarted && cls.glconfig.isFullscreen)
-    {
-    	Com_DPrintf("Trying to minimize. Checking SDL flags.\n");
-    	// If according to the game flags we should minimize,
-    	// then lets actually make sure and ask the windowing system for its opinion.
+	if (cls.rendererStarted && cls.glconfig.isFullscreen)
+	{
+		Com_DPrintf("Trying to minimize. Checking SDL flags.\n");
+		// If according to the game flags we should minimize,
+		// then lets actually make sure and ask the windowing system for its opinion.
 		Uint32 flags = SDL_GetWindowFlags(GLimp_MainWindow());
 		if (flags & SDL_WINDOW_FULLSCREEN && flags & SDL_WINDOW_SHOWN && !(flags & SDL_WINDOW_MINIMIZED) && flags & SDL_WINDOW_INPUT_GRABBED)
 		{
@@ -1150,7 +1150,7 @@ static void IN_WindowFocusLost()
 			SDL_RaiseWindow(mainScreen);
 			IN_ActivateMouse();
 		}
-    }
+	}
 }
 
 /**
@@ -1161,7 +1161,7 @@ static void IN_ProcessEvents(void)
 	SDL_Event       e;
 	keyNum_t        key         = 0;
 	static keyNum_t lastKeyDown = 0;
-	qboolean 		skipLost	= qfalse;
+	qboolean        skipLost    = qfalse;
 
 	if (!SDL_WasInit(SDL_INIT_VIDEO))
 	{
@@ -1377,8 +1377,8 @@ static void IN_ProcessEvents(void)
 			}
 			break;
 			case SDL_WINDOWEVENT_MOVED:
-			    IN_WindowMoved(&e);
-			    break;
+				IN_WindowMoved(&e);
+				break;
 			}
 			break;
 		default:
@@ -1401,33 +1401,43 @@ void IN_Frame(void)
 
 #ifdef __ANDROID__
 
-	JNIEnv *env = (JNIEnv*) SDL_AndroidGetJNIEnv();
+	JNIEnv *env = (JNIEnv *) SDL_AndroidGetJNIEnv();
 
 	if (env == NULL)
+	{
 		return;
+	}
 
 	jobject activity = (jobject)SDL_AndroidGetActivity();
 
 	if (activity == NULL)
+	{
 		return;
+	}
 
 	jclass clazz = (*env)->GetObjectClass(env, activity);
 
 	if (clazz == NULL)
+	{
 		return;
+	}
 
-	jfieldID f_id = (*env)->GetStaticFieldID(env, clazz, "UiMenu", "Z");
+	jfieldID f_id      = (*env)->GetStaticFieldID(env, clazz, "UiMenu", "Z");
 	qboolean f_boolean = (*env)->GetStaticBooleanField(env, clazz, f_id);
 
 	if (cls.state == CA_ACTIVE)
 	{
 		if (f_boolean != qtrue)
+		{
 			(*env)->SetStaticBooleanField(env, clazz, f_id, qtrue);
+		}
 	}
 	else
 	{
 		if (f_boolean != qfalse)
+		{
 			(*env)->SetStaticBooleanField(env, clazz, f_id, qfalse);
+		}
 	}
 
 	(*env)->DeleteLocalRef(env, clazz);
@@ -1516,7 +1526,7 @@ void IN_Init(void)
 	in_keyboardDebug = Cvar_Get("in_keyboardDebug", "0", CVAR_TEMP);
 
 	// mouse variables
-	in_mouse = Cvar_Get("in_mouse", "1", CVAR_ARCHIVE);
+	in_mouse = Cvar_Get("in_mouse", "1", CVAR_ARCHIVE | CVAR_LATCH);
 
 	if (in_mouse->integer == 2)
 	{
@@ -1535,8 +1545,8 @@ void IN_Init(void)
 
 	in_nograb = Cvar_Get("in_nograb", "0", CVAR_ARCHIVE);
 
-	in_joystick          = Cvar_Get("in_joystick", "0", CVAR_ARCHIVE | CVAR_LATCH);
-	in_joystickThreshold = Cvar_Get("in_joystickThreshold", "0.15", CVAR_ARCHIVE);
+	in_joystick          = Cvar_Get("in_joystick", "0", CVAR_ARCHIVE_ND | CVAR_LATCH);
+	in_joystickThreshold = Cvar_Get("in_joystickThreshold", "0.15", CVAR_ARCHIVE_ND);
 
 	SDL_StartTextInput();
 

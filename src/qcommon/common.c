@@ -228,7 +228,7 @@ void QDECL Com_Printf(const char *fmt, ...)
 	char            buffer[MAX_PRINT_MSG];
 	char            *msg, *bufferEnd, *tmpMsg;
 	static qboolean opening_qconsole = qfalse;
-	static qboolean lineWasEnded = qtrue;
+	static qboolean lineWasEnded     = qtrue;
 	int             timestamp;
 
 #ifdef DEDICATED
@@ -1012,7 +1012,7 @@ static void Z_ClearZone(memzone_t *zone, int size)
 	// set the entire zone to one free block
 
 	zone->blocklist.next = zone->blocklist.prev = block =
-													  ( memblock_t * )((byte *)zone + sizeof(memzone_t));
+		( memblock_t * )((byte *)zone + sizeof(memzone_t));
 	zone->blocklist.tag  = 1;   // in use block
 	zone->blocklist.id   = 0;
 	zone->blocklist.size = 0;
@@ -2664,6 +2664,7 @@ static void Com_Crash_f(void)
 void Com_SetRecommended()
 {
 	Cbuf_AddText("exec preset_high.cfg\n");
+	Cvar_Set("ui_glPreset", "0");
 	Cvar_Set("com_recommended", "0");
 }
 
@@ -2836,6 +2837,16 @@ void Com_Init(char *commandLine)
 
 	Cbuf_AddText(va("exec %s\n", CONFIG_NAME_DEFAULT));
 
+	com_masterServer = Cvar_Get("com_masterServer", MASTER_SERVER_NAME, CVAR_INIT | CVAR_NOTABCOMPLETE);
+	com_motdServer   = Cvar_Get("com_motdServer", MOTD_SERVER_NAME, CVAR_INIT | CVAR_NOTABCOMPLETE);
+	com_updateServer = Cvar_Get("com_updateServer", UPDATE_SERVER_NAME, CVAR_INIT | CVAR_NOTABCOMPLETE);
+	com_downloadURL  = Cvar_Get("com_downloadURL", DOWNLOAD_SERVER_URL, CVAR_INIT | CVAR_NOTABCOMPLETE);
+
+	// master servers
+	// moved here from SV_Init so they con't be overridden by config
+	Cvar_Get("sv_master1", "etmaster.idsoftware.com", CVAR_PROTECTED);
+	Cvar_Get("sv_master2", com_masterServer->string, CVAR_INIT);
+
 	// skip the etconfig.cfg if "safe" is on the command line
 	if (!Com_SafeMode())
 	{
@@ -2955,8 +2966,8 @@ void Com_Init(char *commandLine)
 	com_timedemo  = Cvar_Get("timedemo", "0", CVAR_CHEAT);
 
 #ifdef DEDICATED
-	com_watchdog     = Cvar_Get("com_watchdog", "60", CVAR_ARCHIVE);
-	com_watchdog_cmd = Cvar_Get("com_watchdog_cmd", "", CVAR_ARCHIVE);
+	com_watchdog     = Cvar_Get("com_watchdog", "60", CVAR_ARCHIVE_ND);
+	com_watchdog_cmd = Cvar_Get("com_watchdog_cmd", "", CVAR_ARCHIVE_ND);
 #endif
 
 	cl_paused       = Cvar_Get("cl_paused", "0", CVAR_ROM);
@@ -2971,7 +2982,7 @@ void Com_Init(char *commandLine)
 	com_introPlayed = Cvar_Get("com_introplayed", "0", CVAR_ARCHIVE);
 
 	// this cvar is the single entry point of the entire extension system
-	Cvar_Get( "//trap_GetValue", va( "%i", COM_TRAP_GETVALUE ), CVAR_PROTECTED | CVAR_ROM | CVAR_NOTABCOMPLETE );
+	Cvar_Get("//trap_GetValue", va("%i", COM_TRAP_GETVALUE), CVAR_PROTECTED | CVAR_ROM | CVAR_NOTABCOMPLETE);
 
 #if idppc
 	com_altivec = Cvar_Get("com_altivec", "1", CVAR_ARCHIVE);
@@ -3010,11 +3021,6 @@ void Com_Init(char *commandLine)
 	Cmd_AddCommand("writeconfig", Com_WriteConfig_f, "Write the config file to a specific name.");
 	Cmd_AddCommand("update", Com_Update_f, "Updates the game to latest version.");
 	Cmd_AddCommand("download", Com_Download_f, "Downloads a pk3 from the URL set in cvar com_downloadURL.");
-
-	com_masterServer = Cvar_Get("com_masterServer", MASTER_SERVER_NAME, CVAR_INIT | CVAR_NOTABCOMPLETE);
-	com_motdServer   = Cvar_Get("com_motdServer", MOTD_SERVER_NAME, CVAR_INIT | CVAR_NOTABCOMPLETE);
-	com_updateServer = Cvar_Get("com_updateServer", UPDATE_SERVER_NAME, CVAR_INIT | CVAR_NOTABCOMPLETE);
-	com_downloadURL  = Cvar_Get("com_downloadURL", DOWNLOAD_SERVER_URL, CVAR_INIT | CVAR_NOTABCOMPLETE);
 
 #ifdef FEATURE_DBMS
 	Cmd_AddCommand("saveDB", DB_SaveMemDB_f, "Saves the internal memory database to disk.");
@@ -3542,7 +3548,7 @@ void Com_CheckDefaultProfileDatExists(void)
 	if (defaultProfile && defaultProfile[0] && !FS_FileExists(DEFAULT_PROFILE_DAT))
 	{
 		fileHandle_t f;
-		char tmpProfile[MAX_CVAR_VALUE_STRING] = {'\0'};
+		char         tmpProfile[MAX_CVAR_VALUE_STRING] = { '\0' };
 		Q_strncpyz(tmpProfile, defaultProfile, sizeof(tmpProfile));
 		Q_CleanStr(tmpProfile);
 		Q_CleanDirName(tmpProfile);

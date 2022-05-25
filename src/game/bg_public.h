@@ -343,6 +343,7 @@ extern const int aReinfSeeds[MAX_REINFSEEDS];
 #define CGF_STATSDUMP       0x02
 #define CGF_AUTOACTIVATE    0x04
 #define CGF_PREDICTITEMS    0x08
+#define CGF_ACTIVATELEAN    0x10
 
 #define MAX_MOTDLINES   6
 
@@ -586,6 +587,11 @@ typedef struct pmoveExt_s
 
 	qboolean deadInSolid;          ///< true if legs or head start in solid when we die
 
+	int eventSequence;             ///< pmove generated events on client
+	int events[MAX_EVENTS];
+	int eventParms[MAX_EVENTS];
+	int oldEventSequence;          ///< so we can see which events have been added since last pmove
+
 } pmoveExt_t;  ///< data used both in client and server - store it here
 ///< instead of playerstate to prevent different engine versions of playerstate between XP and MP
 
@@ -642,6 +648,7 @@ typedef struct
 	/// used to determine if the player move is for prediction if it is, the movement should trigger no events
 	qboolean predict;
 
+	qboolean activateLean;
 } pmove_t;
 
 // if a full pmove isn't done on the client, you can just update the angles
@@ -1497,7 +1504,7 @@ typedef enum
 	EV_BODY_DP,        ///< 128
 	EV_FLAG_INDICATOR, ///< 129 - objective indicator
 	EV_MISSILE_FALLING,///< 130
-	EV_PLAYER_HIT,     ///< 131
+	EV_PLAYER_HIT,     ///< 131 - hitsound event
 	EV_MAX_EVENTS      ///< 132 - just added as an 'endcap'
 } entity_event_t;
 
@@ -2114,6 +2121,7 @@ void BG_EvaluateTrajectoryDelta(const trajectory_t *tr, int atTime, vec3_t resul
 void BG_GetMarkDir(const vec3_t dir, const vec3_t normal, vec3_t out);
 
 void BG_AddPredictableEventToPlayerstate(int newEvent, int eventParm, playerState_t *ps);
+void BG_AddPredictableEventToPmoveExt(int newEvent, int eventParm, pmoveExt_t *pmext);
 
 void BG_PlayerStateToEntityState(playerState_t *ps, entityState_t *s, int time, qboolean snap);
 

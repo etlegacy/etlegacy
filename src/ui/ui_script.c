@@ -631,9 +631,12 @@ void Script_ConditionalScript(itemDef_t *item, qboolean *bAbort, char **args)
 				int   ui_r_subdivisions                   = (int)(DC->getCVarValue("ui_r_subdivisions"));
 				int   ui_r_ext_texture_filter_anisotropic = (int)(DC->getCVarValue("ui_r_ext_texture_filter_anisotropic"));
 				int   ui_r_ext_multisample                = (int)(DC->getCVarValue("ui_r_ext_multisample"));
-				int   ui_cg_shadows                       = (int)(DC->getCVarValue("ui_cg_shadows"));
+				int   ui_r_ignorehwgamma                  = (int)(DC->getCVarValue("ui_r_ignorehwgamma"));
+				int   ui_r_picmip                         = (int)(DC->getCVarValue("ui_r_picmip"));
+				int   ui_r_lodbias                        = (int)(DC->getCVarValue("ui_r_lodbias"));
 				int   ui_s_initsound                      = (int)(DC->getCVarValue("ui_s_initsound"));
 				int   ui_s_khz                            = (int)(DC->getCVarValue("ui_s_khz"));
+				int   ui_s_sdlLevelSamps                  = (int)(DC->getCVarValue("ui_s_sdlLevelSamps"));
 				char  ui_r_texturemode[MAX_CVAR_VALUE_STRING];
 
 				char  cl_lang[MAX_CVAR_VALUE_STRING];
@@ -653,9 +656,12 @@ void Script_ConditionalScript(itemDef_t *item, qboolean *bAbort, char **args)
 				int   r_subdivisions                   = (int)(DC->getCVarValue("r_subdivisions"));
 				int   r_ext_texture_filter_anisotropic = (int)(DC->getCVarValue("r_ext_texture_filter_anisotropic"));
 				int   r_ext_multisample                = (int)(DC->getCVarValue("r_ext_multisample"));
-				int   cg_shadows                       = (int)(DC->getCVarValue("cg_shadows"));
+				int   r_picmip                         = (int)(DC->getCVarValue("r_picmip"));
+				int   r_ignorehwgamma                  = (int)(DC->getCVarValue("r_ignorehwgamma"));
+				int   r_lodbias                        = (int)(DC->getCVarValue("r_lodbias"));
 				int   s_initsound                      = (int)(DC->getCVarValue("s_initsound"));
 				int   s_khz                            = (int)(DC->getCVarValue("s_khz"));
+				int   s_sdlLevelSamps                  = (int)(DC->getCVarValue("s_sdlLevelSamps"));
 				char  r_texturemode[MAX_CVAR_VALUE_STRING];
 
 				trap_Cvar_VariableStringBuffer("ui_cl_lang", ui_cl_lang, sizeof(ui_cl_lang));
@@ -680,9 +686,12 @@ void Script_ConditionalScript(itemDef_t *item, qboolean *bAbort, char **args)
 				    ui_r_subdivisions != r_subdivisions ||
 				    ui_r_ext_texture_filter_anisotropic != r_ext_texture_filter_anisotropic ||
 				    ui_r_ext_multisample != r_ext_multisample ||
-				    ui_cg_shadows != cg_shadows ||
+				    ui_r_picmip != r_picmip ||
+				    ui_r_ignorehwgamma != r_ignorehwgamma ||
+				    ui_r_lodbias != r_lodbias ||
 				    ui_s_khz != s_khz ||
 				    ui_s_initsound != s_initsound ||
+				    ui_s_sdlLevelSamps != s_sdlLevelSamps ||
 				    Q_stricmp(r_texturemode, ui_r_texturemode))
 				{
 					Item_RunScript(item, bAbort, script1);

@@ -4,22 +4,22 @@
 # Translators:
 # Hereward <emanuele.scherillo@outlook.com>, 2021
 # Hereward <emanuele.scherillo@outlook.com>, 2021
-# Faded <rkseby@gmail.com>, 2019-2020
+# Kyon <rkseby@gmail.com>, 2019-2020,2022
 # IR4T4 <gutzu@gmx.ch>, 2018
 # IR4T4 <gutzu@gmx.ch>, 2018
 # redtide <redtid3@gmail.com>, 2015
 # redtide <transifex.redtide@gmail.com>, 2015
 # Seb47 <seb47tv@gmail.com>, 2016
 # Seb47 <seb47tv@gmail.com>, 2016
-# Faded <rkseby@gmail.com>, 2019
+# Kyon <rkseby@gmail.com>, 2019
 # redtide <redtid3@gmail.com>, 2015
 msgid ""
 msgstr ""
 "Project-Id-Version: ET:Legacy\n"
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
-"PO-Revision-Date: 2021-03-12 14:54+0000\n"
-"Last-Translator: Hereward <emanuele.scherillo@outlook.com>\n"
+"PO-Revision-Date: 2015-01-10 11:47+0000\n"
+"Last-Translator: Kyon <rkseby@gmail.com>, 2019-2020,2022\n"
 "Language-Team: Italian (http://www.transifex.com/etlegacy/etlegacy/language/it/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1036,12 +1036,12 @@ msgid "close the game window and open the"
 msgstr "chiuderà la finestra di gioco e aprirà la"
 
 #: etmain/ui/hostgame_dedicated_warning.menu:55
-msgid "server console. It will not be possible"
-msgstr "console del server. Non sarà possibile"
+msgid "server console. You can then re-open"
+msgstr ""
 
 #: etmain/ui/hostgame_dedicated_warning.menu:56
-msgid "to play the game on the host machine."
-msgstr "giocare nella macchina ospite."
+msgid "the game and connect to the server."
+msgstr ""
 
 #: etmain/ui/hostgame_dedicated_warning.menu:57
 msgid "Are you sure you want to start"
@@ -7791,4 +7791,16 @@ msgid "Set or unset this server as favorite"
 msgstr ""
 
 msgid "MAKE SHOUTCASTER"
+msgstr ""
+
+msgid " demo %s: %ik "
+msgstr ""
+
+msgid " audio %s: %ik "
+msgstr ""
+
+msgid "REPLAY"
+msgstr ""
+
+msgid "RECORD"
 msgstr ""

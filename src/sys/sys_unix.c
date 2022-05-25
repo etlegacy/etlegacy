@@ -907,6 +907,17 @@ dialogResult_t Sys_Dialog(dialogType_t type, const char *message, const char *ti
 	qboolean            tried[NUM_DIALOG_PROGRAMS] = { qfalse };
 	dialogCommandType_t preferredCommandType       = NONE;
 
+#ifdef ETL_CLIENT
+	{
+		// Try to use the SDL backend for showing dialogs since ours is not always the best implementation
+		dialogResult_t sdlRet = Sys_SDLDialog(type, message, title);
+		if (sdlRet != DR_ERROR)
+		{
+			return sdlRet;
+		}
+	}
+#endif
+
 	// first check the obsolete DESKTOP_SESSION
 	if (!Q_stricmp(session, "default") || !Q_stricmp(session, ""))
 	{

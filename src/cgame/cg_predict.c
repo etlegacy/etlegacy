@@ -126,9 +126,21 @@ void CG_BuildSolidList(void)
  */
 float CG_ClientHitboxMaxZ(entityState_t *hitEnt, float def)
 {
+	centity_t *cent;
+	vec3_t    origin;
+
 	if (!hitEnt)
 	{
 		return 0;
+	}
+
+	if (hitEnt->number == cg.snap->ps.clientNum)
+	{
+		cent = &cg.predictedPlayerEntity;
+	}
+	else
+	{
+		cent = &cg_entities[hitEnt->number];
 	}
 
 	if (hitEnt->eFlags & EF_DEAD)
@@ -137,16 +149,21 @@ float CG_ClientHitboxMaxZ(entityState_t *hitEnt, float def)
 	}
 	else if (hitEnt->eFlags & EF_PRONE)
 	{
-		return PRONE_BODYHEIGHT;
-	}
-	else if (hitEnt->eFlags & EF_CROUCHING &&
-	         cg.predictedPlayerState.velocity[0] == 0.f && cg.predictedPlayerState.velocity[1] == 0.f)
-	{
-		return CROUCH_IDLE_BODYHEIGHT;
+		VectorCopy(cent->pe.headRefEnt.origin, origin);
+		VectorMA(origin, 6.5f, cent->pe.headRefEnt.axis[2], origin); // up
+		VectorMA(origin, 0.5f, cent->pe.headRefEnt.axis[0], origin); // forward
+
+		float maxs = origin[2] - cent->lerpOrigin[2] - 6;
+		return (maxs < PRONE_BODYHEIGHT) ? PRONE_BODYHEIGHT : maxs;
 	}
 	else if (hitEnt->eFlags & EF_CROUCHING)
 	{
-		return CROUCH_BODYHEIGHT;
+		VectorCopy(cent->pe.headRefEnt.origin, origin);
+		VectorMA(origin, 6.5f, cent->pe.headRefEnt.axis[2], origin); // up
+		VectorMA(origin, 0.5f, cent->pe.headRefEnt.axis[0], origin); // forward
+
+		float maxs = origin[2] - cent->lerpOrigin[2] - 6;
+		return (maxs < CROUCH_IDLE_BODYHEIGHT) ? CROUCH_IDLE_BODYHEIGHT : maxs;
 	}
 	else
 	{
@@ -706,6 +723,51 @@ static void CG_TouchTriggerPrediction(void)
 #define MAX_PREDICT_VIEWANGLES_DELTA    1.0f
 
 /**
+* @brief CG_CheckPredictableEvent
+* @param[in] event
+* @return
+*/
+qboolean CG_CheckPredictableEvent(int event)
+{
+	switch (event)
+	{
+	case EV_STEP_4:
+	case EV_STEP_8:
+	case EV_STEP_12:
+	case EV_STEP_16:
+	case EV_FALL_NDIE:
+	case EV_FALL_DMG_50:
+	case EV_FALL_DMG_25:
+	case EV_FALL_DMG_15:
+	case EV_FALL_DMG_10:
+	case EV_FALL_SHORT:
+	case EV_FOOTSTEP:
+	case EV_FOOTSPLASH:
+	case EV_SWIM:
+	case EV_WATER_TOUCH:
+	case EV_WATER_LEAVE:
+	case EV_WATER_UNDER:
+	case EV_WATER_CLEAR:
+	case EV_FILL_CLIP:
+	case EV_CHANGE_WEAPON_2:
+	case EV_CHANGE_WEAPON:
+	case EV_NOAMMO:
+	case EV_FIRE_WEAPON_AAGUN:
+	case EV_FIRE_WEAPON_MG42:
+	case EV_FIRE_WEAPON_MOUNTEDMG42:
+	case EV_WEAP_OVERHEAT:
+	case EV_FIRE_WEAPON:
+	case EV_NOFIRE_UNDERWATER:
+	case EV_SPINUP:
+	case EV_FIRE_WEAPONB:
+	case EV_FIRE_WEAPON_LASTSHOT:
+		return qtrue;
+	default:
+		return qfalse;
+	}
+}
+
+/**
  * @brief CG_PredictionOk
  * @param[in] ps1
  * @param[in] ps2
@@ -772,19 +834,32 @@ int CG_PredictionOk(playerState_t *ps1, playerState_t *ps2)
 		return 9;
 	}
 
-	// common with item pickups
-	if (ps2->eventSequence != ps1->eventSequence)
-	{
-		return 11;
-	}
+	// we don't add predictable events to playerstate but to pmext on client
+	// to avoid unnecessary event effect duplication, thus we always miss predict causing constant full predictions to run,
+	// instead we will check if there are new events from server we can't predict,
+	// so we can play them like before without constant full predictions
 
-	for (i = 0; i < MAX_EVENTS; i++)
+	for (i = ps1->eventSequence - MAX_EVENTS; i < ps1->eventSequence; i++)
 	{
-		if (ps2->events[i] != ps1->events[i] || ps2->eventParms[i] != ps1->eventParms[i])
+		if (i >= ps2->eventSequence && !CG_CheckPredictableEvent(ps1->events[i & (MAX_EVENTS - 1)]))
 		{
-			return 12;
+			return 10;
 		}
 	}
+
+	// common with item pickups
+	//if (ps2->eventSequence != ps1->eventSequence)
+	//{
+	//	return 11;
+	//}
+
+	//for (i = 0; i < MAX_EVENTS; i++)
+	//{
+	//	if (ps2->events[i] != ps1->events[i] || ps2->eventParms[i] != ps1->eventParms[i])
+	//	{
+	//		return 12;
+	//	}
+	//}
 
 	if (ps2->externalEvent != ps1->externalEvent ||
 	    ps2->externalEventParm != ps1->externalEventParm ||
@@ -917,7 +992,7 @@ const char *predictionStrings[] =
 	"--",                   // 7
 	"speed || delta_angles",
 	"anim || timer",
-	"--",                   // 10
+	"new server event",     // 10
 	"eventSequence",
 	"events || eventParms",
 	"externalEvent",
@@ -1363,6 +1438,9 @@ void CG_PredictPlayerState(void)
 			cg_pmove.covertopsChargeTime = cg.covertopsChargeTime[cg.snap->ps.persistant[PERS_TEAM] - 1];
 		}
 
+		// activateLean is handled in pmove
+		cg_pmove.activateLean = cg_activateLean.integer ? qtrue : qfalse;
+
 		//Com_Memcpy( &pmext, &cg.pmext, sizeof(pmoveExt_t) );    // grab data, we only want the final result
 		// copy the pmext as it was just before we
 		// previously ran this cmd (or, this will be the
@@ -1474,16 +1552,26 @@ void CG_PredictPlayerState(void)
 	}
 	else
 	{
-		double x = (cg.cameraShakeTime - cg.time) / cg.cameraShakeLength; // starts at 1, approaches 0 over time
+		double x         = (cg.cameraShakeTime - cg.time) / cg.cameraShakeLength; // starts at 1, approaches 0 over time
+		float  valz      = sin(M_PI * 8 * 13.0 + cg.cameraShakePhase) * x * 6 * cg.cameraShakeScale;
+		float  valy      = sin(M_PI * 17 * x + cg.cameraShakePhase) * x * 6 * cg.cameraShakeScale;
+		float  valx      = cos(M_PI * 7 * x + cg.cameraShakePhase) * x * 6 * cg.cameraShakeScale;
+		float  frametime = 8.0f; // 125fps behaviour
+		float  scale     = cg.frametime / frametime;
 
-		// move
-		cg.predictedPlayerState.origin[2] +=
-			sin(M_PI * 8 * 13.0 + cg.cameraShakePhase) * x * 6.0f * cg.cameraShakeScale;
+		vec3_t shake = { valx * scale, valy * scale, valz * scale };
 
-		cg.predictedPlayerState.origin[1] +=
-			sin(M_PI * 17 * x + cg.cameraShakePhase) * x * 6.0f * cg.cameraShakeScale;
+		int   t = cg.time - cg.predictedErrorTime;
+		float f = (cg_errorDecay.value - t) / cg_errorDecay.value;
 
-		cg.predictedPlayerState.origin[0] +=
-			cos(M_PI * 7 * x + cg.cameraShakePhase) * x * 6.0f * cg.cameraShakeScale;
+		if (f < 0)
+		{
+			f = 0;
+		}
+
+		VectorScale(cg.predictedError, f, cg.predictedError);
+
+		VectorAdd(shake, cg.predictedError, cg.predictedError);
+		cg.predictedErrorTime = cg.oldTime;
 	}
 }

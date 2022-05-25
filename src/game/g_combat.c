@@ -589,7 +589,7 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 #endif
 	}
 
-	Cmd_Score_f(self);          // show scores
+	self->client->wantsscore = qtrue;          // show scores
 
 	// send updated scores to any clients that are following this one,
 	// or they would get stale scoreboards
@@ -608,7 +608,7 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 
 		if (client->sess.spectatorClient == self->s.number)
 		{
-			Cmd_Score_f(g_entities + level.sortedClients[i]);
+			(g_entities + level.sortedClients[i])->client->wantsscore = qtrue;
 		}
 	}
 
@@ -658,16 +658,6 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 
 		// set enemy location
 		BG_UpdateConditionValue(self->s.number, ANIM_COND_ENEMY_POSITION, 0, qfalse);
-
-		// play specific anim on suicide
-		if (g_altSuicideAnim.integer)
-		{
-			BG_UpdateConditionValue(self->s.number, ANIM_COND_ENEMY_WEAPON, meansOfDeath == MOD_SUICIDE, qtrue);
-		}
-		else
-		{
-			BG_UpdateConditionValue(self->s.number, ANIM_COND_SUICIDE, meansOfDeath == MOD_SUICIDE, qtrue);
-		}
 
 		// FIXME: add POSITION_RIGHT, POSITION_LEFT
 		if (infront(self, inflictor))
@@ -1171,11 +1161,21 @@ static grefEntity_t refent;
  */
 void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t dir, vec3_t point, int damage, int dflags, meansOfDeath_t mod)
 {
+	G_DamageExt(targ, inflictor, attacker, dir, point, damage, dflags, mod, NULL);
+}
+
+void G_DamageExt(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t dir, vec3_t point, int damage, int dflags, meansOfDeath_t mod, int *hitEventOut)
+{
 	int         take;
 	int         knockback;
-	int         hitEventType = HIT_NONE;
 	qboolean    wasAlive, onSameTeam;
-	hitRegion_t hr = HR_NUM_HITREGIONS;
+	hitRegion_t hr           = HR_NUM_HITREGIONS;
+	int         hitEventType = HIT_NONE;
+
+	if (hitEventOut)
+	{
+		*hitEventOut = HIT_NONE;
+	}
 
 	if (!targ->takedamage || targ->entstate == STATE_INVISIBLE || targ->entstate == STATE_UNDERCONSTRUCTION) // invisible entities can't be damaged
 	{
@@ -1612,7 +1612,14 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 
 	if (hitEventType)
 	{
-		G_AddEvent(attacker, EV_PLAYER_HIT, hitEventType);
+		if (!hitEventOut)
+		{
+			G_AddEvent(attacker, EV_PLAYER_HIT, hitEventType);
+		}
+		else
+		{
+			*hitEventOut = hitEventType;
+		}
 	}
 
 #ifdef FEATURE_LUA

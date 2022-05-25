@@ -44,6 +44,12 @@
 
 #include "bg_local.h"
 
+typedef enum
+{
+	PRONEDELAY_TOGGLE = BIT(0),
+	PRONEDELAY_JUMP   = BIT(1)
+} pronedelayFlags;
+
 #ifdef CGAMEDLL
 #define PM_FIXEDPHYSICS         cgs.fixedphysics
 #define PM_FIXEDPHYSICSFPS      cgs.fixedphysicsfps
@@ -63,9 +69,10 @@ extern vmCvar_t g_pronedelay;
 #define AIMSPREAD_MAXSPREAD 255
 #define MAX_AIMSPREAD_TIME 1000
 #define EXTENDEDPRONE_TIME 400
+#define PM_JUMP_DELAY 850
 
-pmove_t *pm;
-pml_t   pml;
+pmove_t * pm;
+pml_t pml;
 
 // movement parameters
 float pm_stopspeed = 100;
@@ -108,7 +115,11 @@ static void PM_BeginWeaponChange(weapon_t oldWeapon, weapon_t newWeapon, qboolea
  */
 void PM_AddEvent(int newEvent)
 {
+#ifdef GAMEDLL
 	BG_AddPredictableEventToPlayerstate(newEvent, 0, pm->ps);
+#else
+	BG_AddPredictableEventToPmoveExt(newEvent, 0, pm->pmext);
+#endif
 }
 
 /**
@@ -118,7 +129,11 @@ void PM_AddEvent(int newEvent)
  */
 void PM_AddEventExt(int newEvent, int eventParm)
 {
+#ifdef GAMEDLL
 	BG_AddPredictableEventToPlayerstate(newEvent, eventParm, pm->ps);
+#else
+	BG_AddPredictableEventToPmoveExt(newEvent, eventParm, pm->pmext);
+#endif
 }
 
 /**
@@ -760,7 +775,7 @@ static qboolean PM_CheckJump(void)
 	// don't allow jump accel
 
 	// revert to using pmext for this since pmext is fixed now.
-	if (pm->cmd.serverTime - pm->pmext->jumpTime < 850)
+	if (pm->cmd.serverTime - pm->pmext->jumpTime < PM_JUMP_DELAY)
 	{
 		return qfalse;
 	}
@@ -870,7 +885,7 @@ static qboolean PM_CheckProne(void)
 	//Com_Printf( "%i: PM_CheckProne\n", pm->cmd.serverTime);
 	int pronedelay = 750;
 
-	if (PM_PRONEDELAY)
+	if (PM_PRONEDELAY & PRONEDELAY_TOGGLE)
 	{
 		pronedelay = 1750;
 	}
@@ -901,6 +916,11 @@ static qboolean PM_CheckProne(void)
 
 		// can't go prone while swimming
 		if (pm->waterlevel > 1)
+		{
+			return qfalse;
+		}
+
+		if (pm->cmd.serverTime - pm->pmext->jumpTime < PM_JUMP_DELAY && PM_PRONEDELAY & PRONEDELAY_JUMP)
 		{
 			return qfalse;
 		}
@@ -985,7 +1005,7 @@ static qboolean PM_CheckProne(void)
 				}
 			}
 
-			if (PM_PRONEDELAY)
+			if (PM_PRONEDELAY & PRONEDELAY_TOGGLE)
 			{
 				pm->ps->aimSpreadScale      = AIMSPREAD_MAXSPREAD;
 				pm->ps->aimSpreadScaleFloat = AIMSPREAD_MAXSPREAD;
@@ -3078,8 +3098,8 @@ void PM_AdjustAimSpreadScale(void)
 		decrease = AIMSPREAD_DECREASE_RATE;
 	}
 
-
-	if (PM_PRONEDELAY && pm->ps->aimSpreadScaleFloat == AIMSPREAD_MAXSPREAD && pm->cmd.serverTime - pm->pmext->proneTime < MAX_AIMSPREAD_TIME)
+	if (PM_PRONEDELAY & PRONEDELAY_TOGGLE && pm->ps->aimSpreadScaleFloat == AIMSPREAD_MAXSPREAD
+	    && pm->cmd.serverTime - pm->pmext->proneTime < MAX_AIMSPREAD_TIME)
 	{
 		return;
 	}
@@ -4951,6 +4971,20 @@ void PmoveSingle(pmove_t *pmove)
 	{
 		pm->tracemask  &= ~CONTENTS_BODY;   // corpses can fly through bodies
 		pm->ps->eFlags &= ~EF_ZOOMING;
+	}
+
+	if (!pm->activateLean)
+	{
+		if (pm->cmd.wbuttons & WBUTTON_LEANLEFT && pm->cmd.buttons & BUTTON_ACTIVATE)
+		{
+			pm->cmd.rightmove = -127;
+			pm->cmd.wbuttons ^= WBUTTON_LEANLEFT;
+		}
+		else if (pm->cmd.wbuttons & WBUTTON_LEANRIGHT && pm->cmd.buttons & BUTTON_ACTIVATE)
+		{
+			pm->cmd.rightmove = 127;
+			pm->cmd.wbuttons ^= WBUTTON_LEANRIGHT;
+		}
 	}
 
 	// make sure walking button is clear if they are running, to avoid

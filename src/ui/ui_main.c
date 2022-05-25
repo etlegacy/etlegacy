@@ -458,11 +458,14 @@ int Text_Height(const char *text, float scale, int limit)
  */
 int Multiline_Text_Height(const char *text, float scale, int limit)
 {
-	float        max         = 0;
+	float        lineHeight  = 0;
 	float        totalheight = 0;
 	glyphInfo_t  *glyph;
 	const char   *s    = text;
 	fontHelper_t *font = &uiInfo.uiDC.Assets.fonts[uiInfo.activeFont];
+
+	glyph      = Q_UTF8_GetGlyph(font, "$");
+	lineHeight = glyph->height;
 
 	if (text)
 	{
@@ -485,21 +488,9 @@ int Multiline_Text_Height(const char *text, float scale, int limit)
 			{
 				if (*s == '\n')
 				{
-					if (totalheight == 0.f)
-					{
-						totalheight += 5;   // 5 is the vertical spacing that autowrap painting uses
-					}
-					totalheight += max;
-					max          = 0;
+					totalheight += lineHeight;
 				}
-				else
-				{
-					glyph = Q_UTF8_GetGlyph(font, s);
-					if (max < glyph->height)
-					{
-						max = glyph->height;
-					}
-				}
+
 				s += Q_UTF8_Width(s);
 				count++;
 			}
@@ -508,16 +499,12 @@ int Multiline_Text_Height(const char *text, float scale, int limit)
 
 	if (totalheight > 0)
 	{
-		if (totalheight == 0.f)
-		{
-			totalheight += 5;   // 5 is the vertical spacing that autowrap painting uses
-		}
-		totalheight += max;
+		totalheight += lineHeight * 2;
 		return totalheight * scale * Q_UTF8_GlyphScale(font);
 	}
 	else
 	{
-		return max * scale * Q_UTF8_GlyphScale(font);
+		return lineHeight * scale * Q_UTF8_GlyphScale(font);
 	}
 }
 
@@ -2071,62 +2058,6 @@ static void UI_DrawCampaignName(rectDef_t *rect, float scale, vec4_t color, int 
 }
 
 /**
- * @brief Format the message by turning spaces into newlines, if we've run over the linewidth
- * @param[in,out] s The message to format
- * @return The number of line needed to display the messages
- */
-static int UI_FormatMultineLinePrint(char *s, int lineWidth)
-{
-	char     *lastSpace = NULL;
-	int      i, len, lastLR = 0;
-	int      lineNumber  = 1;
-	qboolean neednewline = qfalse;
-
-	len = Q_UTF8_PrintStrlen(s);
-
-	for (i = 0; i < len; i++)
-	{
-		if (Q_IsColorString(s))
-		{
-			s += 2;
-		}
-
-		if ((i - lastLR) >= lineWidth)
-		{
-			neednewline = qtrue;
-		}
-
-		if (*s == ' ')
-		{
-			lastSpace = s;
-		}
-
-        // we reach the end of the string and it doesn't fit in on line
-		if (neednewline && lastSpace)
-		{
-			*lastSpace = '\n';
-			lastSpace  = NULL;
-			lastLR     = i;
-			lineNumber++;
-			neednewline = qfalse;
-		}
-
-		// count the number of lines for centering
-		if (*s == '\n')
-		{
-			lastLR      = i;
-			lastSpace   = NULL;
-			neednewline = qfalse;
-			lineNumber++;
-		}
-
-		s += Q_UTF8_Width(s);
-	}
-
-	return lineNumber;
-}
-
-/**
  * @brief UI_DrawCampaignDescription
  * @param[in] rect
  * @param[in] scale
@@ -2142,6 +2073,7 @@ void UI_DrawCampaignDescription(rectDef_t *rect, float scale, vec4_t color, floa
 	const char          *textPtr;
 	int                 map = (net) ? ui_currentNetMap.integer : ui_currentMap.integer;
 	static scrollText_t scroll;
+	fontHelper_t        *font = &uiInfo.uiDC.Assets.fonts[uiInfo.activeFont];
 
 	if (ui_netGameType.integer == GT_WOLF_CAMPAIGN)
 	{
@@ -2163,14 +2095,22 @@ void UI_DrawCampaignDescription(rectDef_t *rect, float scale, vec4_t color, floa
 
 	if (scroll.length != strlen(textPtr))
 	{
+		char *s;
+
 		scroll.init = 0;
 		Q_strncpyz(scroll.text, textPtr, sizeof(scroll.text));
+
+		while ((s = strchr(scroll.text, '*')))
+		{
+			*s = '\n';
+		}
+
 		scroll.length = strlen(scroll.text);
 
-		UI_FormatMultineLinePrint(scroll.text, 95);
+		BG_FitTextToWidth_Ext(scroll.text, scale, rect->w, sizeof(scroll.text), font);
 	}
 
-	UI_DrawVerticalScrollingString(rect, color, scale, 75, 1, &scroll, &uiInfo.uiDC.Assets.fonts[uiInfo.activeFont]);
+	UI_DrawVerticalScrollingString(rect, color, scale, 75, 1, &scroll, font);
 }
 
 /**
@@ -4580,7 +4520,7 @@ void UI_Update(const char *name)
 			break;
 		}
 	}
-	else if (Q_stricmp(name, "ui_glCustom") == 0)
+	else if (Q_stricmp(name, "ui_glPreset") == 0)
 	{
 		switch (val)
 		{
@@ -4637,6 +4577,98 @@ void UI_GLCustom()
 	}
 
 	trap_Cvar_Set("ui_glCustom", "1");
+}
+
+// TODO: this is extremely stupid and we should not do this
+// instead we should have ui_ cvars for all menu options,
+// and not apply things at all when we press back in menus
+// I died a little inside while writing this
+/**
+ * @brief UI_ParseglPreset
+ */
+void UI_ParseglPreset()
+{
+	// high preset
+	if ((int)trap_Cvar_VariableValue("ui_r_subdivisions") == 4 &&
+	    (int)trap_Cvar_VariableValue("ui_r_lodbias") == 0 &&
+	    (int)trap_Cvar_VariableValue("ui_r_colorbits") == 32 &&
+	    (int)trap_Cvar_VariableValue("ui_r_depthbits") == 24 &&
+	    (int)trap_Cvar_VariableValue("ui_r_picmip") == 0 &&
+	    (int)trap_Cvar_VariableValue("ui_r_texturebits") == 32 &&
+	    (int)trap_Cvar_VariableValue("ui_r_ext_compressed_textures") == 0 &&
+	    (int)trap_Cvar_VariableValue("ui_r_ext_texture_filter_anisotropic") == 16 &&
+	    (int)trap_Cvar_VariableValue("ui_r_ext_multisample") == 4 &&
+	    (int)trap_Cvar_VariableValue("ui_r_dynamiclight") == 2 &&
+	    (int)trap_Cvar_VariableValue("r_fastSky") == 0 &&
+	    (int)trap_Cvar_VariableValue("cg_shadows") == 1 &&
+	    (int)trap_Cvar_VariableValue("cg_brasstime") == 2500 &&
+	    (int)trap_Cvar_VariableValue("ui_r_detailtextures") == 1 &&
+	    (Q_stricmp(UI_Cvar_VariableString("ui_r_texturemode"), "GL_LINEAR_MIPMAP_LINEAR") == 0))
+	{
+		trap_Cvar_Set("ui_glPreset", "0");
+	}
+	// normal preset
+	else if ((int)trap_Cvar_VariableValue("ui_r_subdivisions") == 4 &&
+	         (int)trap_Cvar_VariableValue("ui_r_lodbias") == 0 &&
+	         (int)trap_Cvar_VariableValue("ui_r_colorbits") == 0 &&
+	         (int)trap_Cvar_VariableValue("ui_r_depthbits") == 24 &&
+	         (int)trap_Cvar_VariableValue("ui_r_picmip") == 1 &&
+	         (int)trap_Cvar_VariableValue("ui_r_texturebits") == 32 &&
+	         (int)trap_Cvar_VariableValue("ui_r_ext_compressed_textures") == 0 &&
+	         (int)trap_Cvar_VariableValue("ui_r_ext_texture_filter_anisotropic") == 4 &&
+	         (int)trap_Cvar_VariableValue("ui_r_ext_multisample") == 0 &&
+	         (int)trap_Cvar_VariableValue("ui_r_dynamiclight") == 1 &&
+	         (int)trap_Cvar_VariableValue("r_fastSky") == 0 &&
+	         (int)trap_Cvar_VariableValue("cg_shadows") == 0 &&
+	         (int)trap_Cvar_VariableValue("cg_brasstime") == 2500 &&
+	         (int)trap_Cvar_VariableValue("ui_r_detailtextures") == 0 &&
+	         (Q_stricmp(UI_Cvar_VariableString("ui_r_texturemode"), "GL_LINEAR_MIPMAP_NEAREST") == 0))
+	{
+		trap_Cvar_Set("ui_glPreset", "1");
+	}
+	// fast preset
+	else if ((int)trap_Cvar_VariableValue("ui_r_subdivisions") == 12 &&
+	         (int)trap_Cvar_VariableValue("ui_r_lodbias") == 1 &&
+	         (int)trap_Cvar_VariableValue("ui_r_colorbits") == 0 &&
+	         (int)trap_Cvar_VariableValue("ui_r_depthbits") == 24 &&
+	         (int)trap_Cvar_VariableValue("ui_r_picmip") == 2 &&
+	         (int)trap_Cvar_VariableValue("ui_r_texturebits") == 0 &&
+	         (int)trap_Cvar_VariableValue("ui_r_ext_compressed_textures") == 1 &&
+	         (int)trap_Cvar_VariableValue("ui_r_ext_texture_filter_anisotropic") == 0 &&
+	         (int)trap_Cvar_VariableValue("ui_r_ext_multisample") == 0 &&
+	         (int)trap_Cvar_VariableValue("ui_r_dynamiclight") == 1 &&
+	         (int)trap_Cvar_VariableValue("r_fastSky") == 0 &&
+	         (int)trap_Cvar_VariableValue("cg_shadows") == 0 &&
+	         (int)trap_Cvar_VariableValue("cg_brasstime") == 0 &&
+	         (int)trap_Cvar_VariableValue("ui_r_detailtextures") == 0 &&
+	         (Q_stricmp(UI_Cvar_VariableString("ui_r_texturemode"), "GL_LINEAR_MIPMAP_NEAREST") == 0))
+	{
+		trap_Cvar_Set("ui_glPreset", "2");
+	}
+	// fastest preset
+	else if ((int)trap_Cvar_VariableValue("ui_r_subdivisions") == 20 &&
+	         (int)trap_Cvar_VariableValue("ui_r_lodbias") == 2 &&
+	         (int)trap_Cvar_VariableValue("ui_r_colorbits") == 16 &&
+	         (int)trap_Cvar_VariableValue("ui_r_depthbits") == 24 &&
+	         (int)trap_Cvar_VariableValue("ui_r_picmip") == 3 &&
+	         (int)trap_Cvar_VariableValue("ui_r_texturebits") == 16 &&
+	         (int)trap_Cvar_VariableValue("ui_r_ext_compressed_textures") == 1 &&
+	         (int)trap_Cvar_VariableValue("ui_r_ext_texture_filter_anisotropic") == 0 &&
+	         (int)trap_Cvar_VariableValue("ui_r_ext_multisample") == 0 &&
+	         (int)trap_Cvar_VariableValue("ui_r_dynamiclight") == 0 &&
+	         (int)trap_Cvar_VariableValue("r_fastSky") == 1 &&
+	         (int)trap_Cvar_VariableValue("cg_shadows") == 0 &&
+	         (int)trap_Cvar_VariableValue("cg_brasstime") == 0 &&
+	         (int)trap_Cvar_VariableValue("ui_r_detailtextures") == 0 &&
+	         (Q_stricmp(UI_Cvar_VariableString("ui_r_texturemode"), "GL_LINEAR_MIPMAP_NEAREST") == 0))
+	{
+		trap_Cvar_Set("ui_glPreset", "3");
+	}
+	// Custom
+	else
+	{
+		trap_Cvar_Set("ui_glPreset", "4");
+	}
 }
 
 static const char *UI_GetDemoPath(qboolean prefix)
@@ -5401,6 +5433,14 @@ void UI_RunMenuScript(char **args)
 		{
 			UI_GLCustom();
 		}
+		else if (Q_stricmp(name, "glPreset") == 0)
+		{
+			trap_Cvar_Set("ui_glPreset", "4"); // Custom
+		}
+		else if (Q_stricmp(name, "parseglPreset") == 0)
+		{
+			UI_ParseglPreset();
+		}
 		else if (Q_stricmp(name, "update") == 0)
 		{
 			if (String_Parse(args, &name2))
@@ -5986,10 +6026,11 @@ void UI_RunMenuScript(char **args)
 			int   ui_m_filter                         = (int)(trap_Cvar_VariableValue("m_filter"));
 			int   ui_s_initsound                      = (int)(trap_Cvar_VariableValue("s_initsound"));
 			int   ui_s_khz                            = (int)(trap_Cvar_VariableValue("s_khz"));
+			int   ui_s_sdlLevelSamps                  = (int)(trap_Cvar_VariableValue("s_sdlLevelSamps"));
 			int   ui_r_detailtextures                 = (int)(trap_Cvar_VariableValue("r_detailtextures"));
 			int   ui_r_ext_texture_filter_anisotropic = (int)(trap_Cvar_VariableValue("r_ext_texture_filter_anisotropic"));
 			int   ui_r_ext_multisample                = (int)(trap_Cvar_VariableValue("r_ext_multisample"));
-			int   ui_cg_shadows                       = (char)(trap_Cvar_VariableValue("cg_shadows"));
+			int   ui_r_ignorehwgamma                  = (int)(trap_Cvar_VariableValue("r_ignorehwgamma"));
 			char  ui_r_texturemode[MAX_CVAR_VALUE_STRING];
 
 			trap_Cvar_VariableStringBuffer("cl_lang", ui_cl_lang, sizeof(ui_cl_lang));
@@ -6030,11 +6071,13 @@ void UI_RunMenuScript(char **args)
 			trap_Cvar_Set("ui_m_filter", va("%i", ui_m_filter));
 			trap_Cvar_Set("ui_s_initsound", va("%i", ui_s_initsound));
 			trap_Cvar_Set("ui_s_khz", va("%i", ui_s_khz));
+			trap_Cvar_Set("ui_s_sdlLevelSamps", va("%i", ui_s_sdlLevelSamps));
 			trap_Cvar_Set("ui_r_detailtextures", va("%i", ui_r_detailtextures));
 			trap_Cvar_Set("ui_r_ext_texture_filter_anisotropic", va("%i", ui_r_ext_texture_filter_anisotropic));
 			trap_Cvar_Set("ui_r_ext_multisample", va("%i", ui_r_ext_multisample));
-			trap_Cvar_Set("ui_cg_shadows", va("%i", ui_cg_shadows));
 			trap_Cvar_Set("ui_r_texturemode", ui_r_texturemode);
+			trap_Cvar_Set("ui_r_ignorehwgamma", va("%i", ui_r_ignorehwgamma));
+			trap_Cvar_Set("ui_r_dynamiclight", va("%i", ui_r_dynamiclight));
 		}
 		else if (Q_stricmp(name, "systemCvarsReset") == 0)
 		{
@@ -6061,11 +6104,14 @@ void UI_RunMenuScript(char **args)
 			trap_Cvar_Set("ui_m_filter", "");
 			trap_Cvar_Set("ui_s_initsound", "");
 			trap_Cvar_Set("ui_s_khz", "");
+			trap_Cvar_Set("ui_s_sdlLevelSamps", "");
 			trap_Cvar_Set("ui_r_detailtextures", "");
 			trap_Cvar_Set("ui_r_ext_texture_filter_anisotropic", "");
 			trap_Cvar_Set("ui_r_ext_multisample", "");
 			trap_Cvar_Set("ui_cg_shadows", "");
 			trap_Cvar_Set("ui_r_texturemode", "");
+			trap_Cvar_Set("ui_r_ignorehwgamma", "");
+			trap_Cvar_Set("ui_r_dynamiclight", "");
 		}
 		else if (Q_stricmp(name, "systemCvarsApply") == 0)
 		{
@@ -6094,11 +6140,12 @@ void UI_RunMenuScript(char **args)
 			int   ui_r_allowextensions                = (int)(trap_Cvar_VariableValue("ui_r_allowextensions"));
 			int   ui_m_filter                         = (int)(trap_Cvar_VariableValue("ui_m_filter"));
 			int   ui_s_initsound                      = (int)(trap_Cvar_VariableValue("ui_s_initsound"));
+			int   ui_s_sdlLevelSamps                  = (int)(trap_Cvar_VariableValue("ui_s_sdlLevelSamps"));
 			int   ui_s_khz                            = (int)(trap_Cvar_VariableValue("ui_s_khz"));
 			int   ui_r_detailtextures                 = (int)(trap_Cvar_VariableValue("ui_r_detailtextures"));
 			int   ui_r_ext_texture_filter_anisotropic = (int)(trap_Cvar_VariableValue("ui_r_ext_texture_filter_anisotropic"));
 			int   ui_r_ext_multisample                = (int)(trap_Cvar_VariableValue("ui_r_ext_multisample"));
-			int   ui_cg_shadows                       = (int)(trap_Cvar_VariableValue("ui_cg_shadows"));
+			int   ui_r_ignorehwgamma                  = (int)(trap_Cvar_VariableValue("ui_r_ignorehwgamma"));
 			char  ui_r_texturemode[MAX_CVAR_VALUE_STRING];
 
 			trap_Cvar_VariableStringBuffer("ui_cl_lang", ui_cl_lang, sizeof(ui_cl_lang));
@@ -6146,11 +6193,12 @@ void UI_RunMenuScript(char **args)
 			trap_Cvar_Set("m_filter", va("%i", ui_m_filter));
 			trap_Cvar_Set("s_initsound", va("%i", ui_s_initsound));
 			trap_Cvar_Set("s_khz", va("%i", ui_s_khz));
+			trap_Cvar_Set("s_sdlLevelSamps", va("%i", ui_s_sdlLevelSamps));
 			trap_Cvar_Set("r_detailtextures", va("%i", ui_r_detailtextures));
 			trap_Cvar_Set("r_ext_texture_filter_anisotropic", va("%i", ui_r_ext_texture_filter_anisotropic));
 			trap_Cvar_Set("r_ext_multisample", va("%i", ui_r_ext_multisample));
-			trap_Cvar_Set("cg_shadows", va("%i", ui_cg_shadows));
 			trap_Cvar_Set("r_texturemode", ui_r_texturemode);
+			trap_Cvar_Set("r_ignorehwgamma", va("%i", ui_r_ignorehwgamma));
 
 			trap_Cvar_Set("ui_cl_lang", "");
 			trap_Cvar_Set("ui_r_mode", "");
@@ -6177,11 +6225,13 @@ void UI_RunMenuScript(char **args)
 			trap_Cvar_Set("ui_m_filter", "");
 			trap_Cvar_Set("ui_s_initsound", "");
 			trap_Cvar_Set("ui_s_khz", "");
+			trap_Cvar_Set("ui_s_sdlLevelSamps", "");
 			trap_Cvar_Set("ui_r_detailtextures", "");
 			trap_Cvar_Set("ui_r_ext_texture_filter_anisotropic", "");
 			trap_Cvar_Set("ui_r_ext_multisample", "");
 			trap_Cvar_Set("ui_cg_shadows", "");
 			trap_Cvar_Set("ui_r_texturemode", "");
+			trap_Cvar_Set("ui_r_ignorehwgamma", "");
 		}
 		else if (Q_stricmp(name, "profileCvarsGet") == 0)
 		{
@@ -7852,7 +7902,7 @@ const char *UI_FeederItemText(int feederID, int index, int column, qhandle_t *ha
 	{
 		if (index >= 0 && index < uiInfo.profileCount)
 		{
-			char buff[MAX_CVAR_VALUE_STRING];
+			char     buff[MAX_CVAR_VALUE_STRING];
 			qboolean defaultProfile = qfalse;
 
 			Q_strncpyz(buff, uiInfo.profileList[index].name, sizeof(buff));
@@ -8777,7 +8827,7 @@ void UI_SetActiveMenu(uiMenuCommand_t menu)
 					trap_Cvar_Set("com_errorMessage", __(buf));
 					Menus_ActivateByName("popupPassword", qtrue);
 				}
-				else if (strlen(buf) > 5 && !Q_stricmpn(buf, "ET://", 5) && strlen(buf) < 200)
+				else if (strlen(buf) > 5 && !Q_stricmpn(buf, "et://", 5) && strlen(buf) < 200)
 				{
 					if (ui_serverBrowserSettings.integer & UI_BROWSER_ALLOW_REDIRECT)
 					{
@@ -9088,6 +9138,7 @@ vmCvar_t ui_friendlyFire;
 vmCvar_t ui_userAlliedRespawnTime;
 vmCvar_t ui_userAxisRespawnTime;
 vmCvar_t ui_glCustom;
+vmCvar_t ui_glPreset;
 
 vmCvar_t g_gameType;
 
@@ -9122,7 +9173,8 @@ vmCvar_t ui_cg_shoutcastDrawMinimap;
 static cvarTable_t cvarTable[] =
 {
 	{ NULL,                                "ui_textfield_temp",                   "",                           CVAR_TEMP,                      0 },
-	{ &ui_glCustom,                        "ui_glCustom",                         "1",                          CVAR_ARCHIVE,                   0 },
+	{ &ui_glCustom,                        "ui_glCustom",                         "1",                          CVAR_ROM | CVAR_NOTABCOMPLETE,  0 },
+	{ &ui_glPreset,                        "ui_glPreset",                         "0",                          CVAR_ROM | CVAR_NOTABCOMPLETE,  0 },
 
 	{ &ui_friendlyFire,                    "g_friendlyFire",                      "1",                          CVAR_ARCHIVE,                   0 },
 
@@ -9177,6 +9229,8 @@ static cvarTable_t cvarTable[] =
 	{ NULL,                                "cg_autoReload",                       "1",                          CVAR_ARCHIVE,                   0 },
 	{ NULL,                                "cg_weapaltReloads",                   "0",                          CVAR_ARCHIVE,                   0 },
 	{ NULL,                                "cg_weapaltSwitches",                  "1",                          CVAR_ARCHIVE,                   0 },
+	{ NULL,                                "cg_sharetimerText",                   "",                           CVAR_ARCHIVE,                   0 },
+	{ NULL,                                "cg_scopedSensitivityScaler",          "0.6",                        CVAR_ARCHIVE,                   0 },
 	{ NULL,                                "cg_noAmmoAutoSwitch",                 "1",                          CVAR_ARCHIVE,                   0 },
 	{ NULL,                                "cg_useWeapsForZoom",                  "1",                          CVAR_ARCHIVE,                   0 },
 	{ NULL,                                "cg_zoomDefaultSniper",                "20",                         CVAR_ARCHIVE,                   0 },

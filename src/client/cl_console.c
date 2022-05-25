@@ -48,6 +48,7 @@ cvar_t *con_notifytime;
 cvar_t *con_openspeed;
 cvar_t *con_autoclear;
 cvar_t *con_background;
+cvar_t *con_defaultHeight;
 
 vec4_t console_highlightcolor = { 0.5f, 0.5f, 0.2f, 0.45f };
 
@@ -91,7 +92,7 @@ void Con_ToggleConsole_f(void)
 		// normal half-screen console
 		else
 		{
-			con.desiredFrac = 0.5f;
+			con.desiredFrac = Com_Clamp((4.0f * SMALLCHAR_HEIGHT) / cls.glconfig.vidHeight, 1.0f, con_defaultHeight->value);
 		}
 	}
 }
@@ -319,10 +320,11 @@ void Con_Init(void)
 {
 	int i;
 
-	con_notifytime = Cvar_Get("con_notifytime", "7", 0); // increased per id req for obits
-	con_openspeed  = Cvar_Get("con_openspeed", "3", 0);
-	con_autoclear  = Cvar_Get("con_autoclear", "1", CVAR_ARCHIVE);
-	con_background = Cvar_GetAndDescribe("con_background", "", CVAR_ARCHIVE, "Console background color in normalized RGBA format, eg. \"0.2 0.2 0.2 0.8\".");
+	con_notifytime    = Cvar_Get("con_notifytime", "7", 0); // increased per id req for obits
+	con_openspeed     = Cvar_Get("con_openspeed", "3", 0);
+	con_autoclear     = Cvar_Get("con_autoclear", "1", CVAR_ARCHIVE_ND);
+	con_background    = Cvar_GetAndDescribe("con_background", "", CVAR_ARCHIVE, "Console background color in normalized RGBA format, eg. \"0.2 0.2 0.2 0.8\".");
+	con_defaultHeight = Cvar_GetAndDescribe("con_defaultHeight", "0.5", CVAR_ARCHIVE_ND, "Default console height without key modifiers.");
 
 	Field_Clear(&g_consoleField);
 	g_consoleField.widthInChars = g_console_field_width;
@@ -560,7 +562,7 @@ void Con_DrawClock(void)
 	time(&longTime);
 	localTime = localtime(&longTime);
 
-	Com_sprintf(clock, sizeof(clock), _("%02d%c%02d"), localTime->tm_hour, localTime->tm_sec & 1 ? ':' : ' ', localTime->tm_min);
+	Com_sprintf(clock, sizeof(clock), "%02d%c%02d", localTime->tm_hour, localTime->tm_sec & 1 ? ':' : ' ', localTime->tm_min);
 
 	i = strlen(clock);
 
@@ -694,7 +696,7 @@ void Con_DrawScrollbar(int length, float x, float y)
 {
 	vec4_t      color          = { 0.2f, 0.2f, 0.2f, 0.75f };
 	const float width          = 1.0f;
-	const float handleLength   = con.totalLines ? length *MIN(1.0f, (float) con.visibleLines / con.totalLines) : 0;
+	const float handleLength   = con.totalLines ? length * MIN(1.0f, (float) con.visibleLines / con.totalLines) : 0;
 	const float lengthPerLine  = (length - handleLength) / (con.totalLines - con.visibleLines);
 	const float relativeScroll = con.current - con.totalLines + MIN(con.visibleLines, con.totalLines);
 	const float handlePosition = lengthPerLine * (con.bottomDisplayedLine - relativeScroll);

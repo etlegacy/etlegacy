@@ -1533,8 +1533,10 @@ int G_Unreferee_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg
 /**
  * @brief G_IntermissionMapVote
  * @param[in,out] ent
+ * @param dwCommand - unused
+ * @param value    - unused
  */
-void G_IntermissionMapVote(gentity_t *ent)
+void G_IntermissionMapVote(gentity_t *ent, unsigned int dwCommand, int value)
 {
 	char arg[MAX_TOKEN_CHARS];
 	int  mapID;
@@ -1620,8 +1622,10 @@ void G_IntermissionMapVote(gentity_t *ent)
 /**
  * @brief G_IntermissionMapList
  * @param[in] ent
+ * @param dwCommand - unused
+ * @param value    - unused
  */
-void G_IntermissionMapList(gentity_t *ent)
+void G_IntermissionMapList(gentity_t *ent, unsigned int dwCommand, int value)
 {
 	int  i;
 	char mapList[MAX_STRING_CHARS];

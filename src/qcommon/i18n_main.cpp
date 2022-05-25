@@ -60,8 +60,8 @@ extern "C"
 tinygettext::DictionaryManager dictionary;
 tinygettext::DictionaryManager dictionary_mod;
 
-cvar_t      *cl_lang;
-cvar_t      *cl_langDebug;
+cvar_t      *cl_lang = NULL;
+cvar_t      *cl_langDebug = NULL;
 static char cl_lang_last[3];
 
 qboolean doTranslate    = qfalse; // we don't translate english in general
@@ -300,6 +300,12 @@ void I18N_SetLanguage(const char *language)
  */
 static const char *_I18N_Translate(const char *msgid, tinygettext::DictionaryManager &dict)
 {
+	if (!cl_lang)
+	{
+		Com_DPrintf("Calling translation before I18N is initialized\n");
+		return msgid;
+	}
+
 	if (Q_stricmp(cl_lang->string, cl_lang_last))
 	{
 		I18N_SetLanguage(cl_lang->string);

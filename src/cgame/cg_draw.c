@@ -334,7 +334,7 @@ void CG_Text_Paint_Ext(float x, float y, float scalex, float scaley, vec4_t colo
 					colorBlack[3] = newColor[3];
 					trap_R_SetColor(colorBlack);
 					CG_Text_PaintChar_Ext(x + (glyph->pitch * scalex) + ofs, y - yadj + ofs, glyph->imageWidth, glyph->imageHeight, scalex, scaley, glyph->s, glyph->t, glyph->s2, glyph->t2, glyph->glyph);
-					colorBlack[3] = 1.0;
+					colorBlack[3] = 1.0f;
 					trap_R_SetColor(newColor);
 				}
 				CG_Text_PaintChar_Ext(x + (glyph->pitch * scalex), y - yadj, glyph->imageWidth, glyph->imageHeight, scalex, scaley, glyph->s, glyph->t, glyph->s2, glyph->t2, glyph->glyph);
@@ -541,66 +541,66 @@ void CG_DrawTeamBackground(int x, int y, int w, int h, float alpha, int team)
  */
 static void Text_Paint_LimitX(float *maxX, float x, float y, float scale, vec4_t color, const char *text, float adjust, int limit, fontHelper_t *font)
 {
-    if (text)
-    {
-        vec4_t       newColor = { 0, 0, 0, 0 };
-        const char   *s       = text;
-        float        max      = *maxX;
-        float        useScale = scale * Q_UTF8_GlyphScale(font);
-        int          len      = Q_UTF8_Strlen(text);
-        int          count    = 0;
+	if (text)
+	{
+		vec4_t     newColor = { 0, 0, 0, 0 };
+		const char *s       = text;
+		float      max      = *maxX;
+		float      useScale = scale * Q_UTF8_GlyphScale(font);
+		int        len      = Q_UTF8_Strlen(text);
+		int        count    = 0;
 
-        trap_R_SetColor(color);
+		trap_R_SetColor(color);
 
-        if (limit > 0 && len > limit)
-        {
-            len = limit;
-        }
+		if (limit > 0 && len > limit)
+		{
+			len = limit;
+		}
 
-        while (s && *s && count < len)
-        {
-            glyphInfo_t  *glyph = Q_UTF8_GetGlyph(font, s);
-            if (Q_IsColorString(s))
-            {
-                if (*(s + 1) == COLOR_NULL)
-                {
-                    Com_Memcpy(&newColor[0], &color[0], sizeof(vec4_t));
-                }
-                else
-                {
-                    Com_Memcpy(newColor, g_color_table[ColorIndex(*(s + 1))], sizeof(newColor));
-                    newColor[3] = color[3];
-                }
-                trap_R_SetColor(newColor);
-                s += 2;
-                continue;
-            }
-            else
-            {
-                float yadj = useScale * glyph->top;
+		while (s && *s && count < len)
+		{
+			glyphInfo_t *glyph = Q_UTF8_GetGlyph(font, s);
+			if (Q_IsColorString(s))
+			{
+				if (*(s + 1) == COLOR_NULL)
+				{
+					Com_Memcpy(&newColor[0], &color[0], sizeof(vec4_t));
+				}
+				else
+				{
+					Com_Memcpy(newColor, g_color_table[ColorIndex(*(s + 1))], sizeof(newColor));
+					newColor[3] = color[3];
+				}
+				trap_R_SetColor(newColor);
+				s += 2;
+				continue;
+			}
+			else
+			{
+				float yadj = useScale * glyph->top;
 
-                if (CG_Text_Width_Ext(s, useScale, 1, font) + x > max)
-                {
-                    *maxX = 0;
-                    break;
-                }
-                CG_Text_PaintChar(x + (glyph->pitch * useScale), y - yadj,
-                               glyph->imageWidth,
-                               glyph->imageHeight,
-                               useScale,
-                               glyph->s,
-                               glyph->t,
-                               glyph->s2,
-                               glyph->t2,
-                               glyph->glyph);
-                x    += (glyph->xSkip * useScale) + adjust;
-                *maxX = x;
-                count++;
-                s += Q_UTF8_Width(s);
-            }
-        }
-        trap_R_SetColor(NULL);
-    }
+				if (CG_Text_Width_Ext(s, useScale, 1, font) + x > max)
+				{
+					*maxX = 0;
+					break;
+				}
+				CG_Text_PaintChar(x + (glyph->pitch * useScale), y - yadj,
+				                  glyph->imageWidth,
+				                  glyph->imageHeight,
+				                  useScale,
+				                  glyph->s,
+				                  glyph->t,
+				                  glyph->s2,
+				                  glyph->t2,
+				                  glyph->glyph);
+				x    += (glyph->xSkip * useScale) + adjust;
+				*maxX = x;
+				count++;
+				s += Q_UTF8_Width(s);
+			}
+		}
+		trap_R_SetColor(NULL);
+	}
 }
 
 /**
@@ -616,77 +616,77 @@ static void Text_Paint_LimitX(float *maxX, float x, float y, float scale, vec4_t
  */
 static void Text_Paint_LimitY(float *maxY, float x, float y, float scale, vec4_t color, const char *text, float adjust, int limit, fontHelper_t *font)
 {
-    if (text)
-    {
-        vec4_t       newColor = { 0, 0, 0, 0 };
-        const char   *s       = text;
-        float        max      = *maxY;
-        float        useScale = scale * Q_UTF8_GlyphScale(font);
-        int          len      = Q_UTF8_Strlen(text);
-        int          count    = 0;
-        float        newX     = x;
-        int          height   = CG_Text_Height_Ext(text, useScale, 0, font);
+	if (text)
+	{
+		vec4_t     newColor = { 0, 0, 0, 0 };
+		const char *s       = text;
+		float      max      = *maxY;
+		float      useScale = scale * Q_UTF8_GlyphScale(font);
+		int        len      = Q_UTF8_Strlen(text);
+		int        count    = 0;
+		float      newX     = x;
+		int        height   = CG_Text_Height_Ext(text, useScale, 0, font);
 
-        trap_R_SetColor(color);
+		trap_R_SetColor(color);
 
-        if (limit > 0 && len > limit)
-        {
-            len = limit;
-        }
+		if (limit > 0 && len > limit)
+		{
+			len = limit;
+		}
 
-        while (s && *s && count < len)
-        {
-            glyphInfo_t *glyph = Q_UTF8_GetGlyph(font, s);
-            if (Q_IsColorString(s))
-            {
-                if (*(s + 1) == COLOR_NULL)
-                {
-                    Com_Memcpy(&newColor[0], &color[0], sizeof(vec4_t));
-                }
-                else
-                {
-                    Com_Memcpy(newColor, g_color_table[ColorIndex(*(s + 1))], sizeof(newColor));
-                    newColor[3] = color[3];
-                }
-                trap_R_SetColor(newColor);
-                s += 2;
-                continue;
-            }
-            else
-            {
-                float yadj = useScale * glyph->top;
+		while (s && *s && count < len)
+		{
+			glyphInfo_t *glyph = Q_UTF8_GetGlyph(font, s);
+			if (Q_IsColorString(s))
+			{
+				if (*(s + 1) == COLOR_NULL)
+				{
+					Com_Memcpy(&newColor[0], &color[0], sizeof(vec4_t));
+				}
+				else
+				{
+					Com_Memcpy(newColor, g_color_table[ColorIndex(*(s + 1))], sizeof(newColor));
+					newColor[3] = color[3];
+				}
+				trap_R_SetColor(newColor);
+				s += 2;
+				continue;
+			}
+			else
+			{
+				float yadj = useScale * glyph->top;
 
-                if (CG_Text_Height_Ext(s, useScale, 1, font) + y > max)
-                {
-                    *maxY = 0;
-                    break;
-                }
+				if (CG_Text_Height_Ext(s, useScale, 1, font) + y > max)
+				{
+					*maxY = 0;
+					break;
+				}
 
-                CG_Text_PaintChar(newX + (glyph->pitch * useScale), y - yadj,
-                               glyph->imageWidth,
-                               glyph->imageHeight,
-                               useScale,
-                               glyph->s,
-                               glyph->t,
-                               glyph->s2,
-                               glyph->t2,
-                               glyph->glyph);
+				CG_Text_PaintChar(newX + (glyph->pitch * useScale), y - yadj,
+				                  glyph->imageWidth,
+				                  glyph->imageHeight,
+				                  useScale,
+				                  glyph->s,
+				                  glyph->t,
+				                  glyph->s2,
+				                  glyph->t2,
+				                  glyph->glyph);
 
-                newX += (glyph->xSkip * useScale) + adjust;
+				newX += (glyph->xSkip * useScale) + adjust;
 
-                count++;
-                s += Q_UTF8_Width(s);
+				count++;
+				s += Q_UTF8_Width(s);
 
-                if (*s == '\n')
-                {
-                    y    += height + 5;
-                    *maxY = y;
-                    newX  = x;
-                }
-            }
-        }
-        trap_R_SetColor(NULL);
-    }
+				if (*s == '\n')
+				{
+					y    += height + 5;
+					*maxY = y;
+					newX  = x;
+				}
+			}
+		}
+		trap_R_SetColor(NULL);
+	}
 }
 
 /**
@@ -699,82 +699,82 @@ static void Text_Paint_LimitY(float *maxY, float x, float y, float scale, vec4_t
  */
 void CG_DrawHorizontalScrollingString(rectDef_t *rect, vec4_t color, float scale, int scrollingRefresh, int step, scrollText_t *scroll, fontHelper_t *font)
 {
-    if (scroll->length)
-    {
-        float pos       = rect->x;
-        float thickness = rect->w;
-        float maxPos    = 1;
+	if (scroll->length)
+	{
+		float pos       = rect->x;
+		float thickness = rect->w;
+		float maxPos    = 1;
 
-        if (!scroll->init || scroll->offset > scroll->length)
-        {
-            scroll->init      = qtrue;
-            scroll->offset    = 0;
-            scroll->paintPos  = pos + 1;
-            scroll->paintPos2 = -1;
-            scroll->time      = 0;
-        }
+		if (!scroll->init || scroll->offset > scroll->length)
+		{
+			scroll->init      = qtrue;
+			scroll->offset    = 0;
+			scroll->paintPos  = pos + 1;
+			scroll->paintPos2 = -1;
+			scroll->time      = 0;
+		}
 
-        if (cgDC.realTime > scroll->time)
-        {
-            scroll->time = cgDC.realTime + scrollingRefresh;
-            if (scroll->paintPos <= pos + step)
-            {
-                if (scroll->offset < scroll->length)
-                {
-                    scroll->paintPos += CG_Text_Width(&scroll->text[scroll->offset], scale, 1) - 1;
+		if (cgDC.realTime > scroll->time)
+		{
+			scroll->time = cgDC.realTime + scrollingRefresh;
+			if (scroll->paintPos <= pos + step)
+			{
+				if (scroll->offset < scroll->length)
+				{
+					scroll->paintPos += CG_Text_Width(&scroll->text[scroll->offset], scale, 1) - 1;
 
-                    scroll->offset = scroll->offset + 1;
-                }
-                else
-                {
-                    scroll->offset = 0;
-                    if (scroll->paintPos2 >= 0)
-                    {
-                        scroll->paintPos = scroll->paintPos2;
-                    }
-                    else
-                    {
-                        scroll->paintPos = pos + thickness - step;
-                    }
-                    scroll->paintPos2 = -1;
-                }
-            }
-            else
-            {
-                //serverStatus.motdPaintX--;
-                scroll->paintPos -= step;
-                if (scroll->paintPos2 >= 0)
-                {
-                    //serverStatus.motdPaintX2--;
-                    scroll->paintPos2 -= step;
-                }
-            }
-        }
+					scroll->offset = scroll->offset + 1;
+				}
+				else
+				{
+					scroll->offset = 0;
+					if (scroll->paintPos2 >= 0)
+					{
+						scroll->paintPos = scroll->paintPos2;
+					}
+					else
+					{
+						scroll->paintPos = pos + thickness - step;
+					}
+					scroll->paintPos2 = -1;
+				}
+			}
+			else
+			{
+				//serverStatus.motdPaintX--;
+				scroll->paintPos -= step;
+				if (scroll->paintPos2 >= 0)
+				{
+					//serverStatus.motdPaintX2--;
+					scroll->paintPos2 -= step;
+				}
+			}
+		}
 
-        maxPos = pos + thickness - step;
+		maxPos = pos + thickness - step;
 
-        Text_Paint_LimitX(&maxPos, scroll->paintPos, rect->y, scale, color, &scroll->text[scroll->offset], 0, 0, font);
+		Text_Paint_LimitX(&maxPos, scroll->paintPos, rect->y, scale, color, &scroll->text[scroll->offset], 0, 0, font);
 
-        if (scroll->paintPos2 >= 0)
-        {
-            float max2 = pos + thickness - step;
+		if (scroll->paintPos2 >= 0)
+		{
+			float max2 = pos + thickness - step;
 
-            Text_Paint_LimitX(&max2, scroll->paintPos2, rect->y, scale, color, scroll->text, 0, scroll->offset, font);
-        }
+			Text_Paint_LimitX(&max2, scroll->paintPos2, rect->y, scale, color, scroll->text, 0, scroll->offset, font);
+		}
 
-        if (scroll->offset && maxPos > 0)
-        {
-            // if we have an offset ( we are skipping the first part of the string ) and we fit the string
-            if (scroll->paintPos2 == -1)
-            {
-                scroll->paintPos2 = pos + thickness - step;
-            }
-        }
-        else
-        {
-            scroll->paintPos2 = -1;
-        }
-    }
+		if (scroll->offset && maxPos > 0)
+		{
+			// if we have an offset ( we are skipping the first part of the string ) and we fit the string
+			if (scroll->paintPos2 == -1)
+			{
+				scroll->paintPos2 = pos + thickness - step;
+			}
+		}
+		else
+		{
+			scroll->paintPos2 = -1;
+		}
+	}
 }
 
 /**
@@ -787,89 +787,89 @@ void CG_DrawHorizontalScrollingString(rectDef_t *rect, vec4_t color, float scale
  */
 void CG_DrawVerticalScrollingString(rectDef_t *rect, vec4_t color, float scale, int scrollingRefresh, int step, scrollText_t *scroll, fontHelper_t *font)
 {
-    if (scroll->length)
-    {
-        float pos       = rect->y;
-        float thickness = rect->h;
-        float maxPos    = 1;
+	if (scroll->length)
+	{
+		float pos       = rect->y;
+		float thickness = rect->h;
+		float maxPos    = 1;
 
-        if (!scroll->init || scroll->offset > scroll->length)
-        {
-            scroll->init      = qtrue;
-            scroll->offset    = 0;
-            scroll->paintPos  = pos + rect->h;
-            scroll->paintPos2 = -1;
-            scroll->time      = 0;
-        }
+		if (!scroll->init || scroll->offset > scroll->length)
+		{
+			scroll->init      = qtrue;
+			scroll->offset    = 0;
+			scroll->paintPos  = pos + rect->h;
+			scroll->paintPos2 = -1;
+			scroll->time      = 0;
+		}
 
-        if (cgDC.realTime > scroll->time)
-        {
-            scroll->time = cgDC.realTime + scrollingRefresh;
-            if (scroll->paintPos <= pos + step)
-            {
-                if (scroll->offset + 1 < scroll->length)
-                {
-                    char *tmp;
+		if (cgDC.realTime > scroll->time)
+		{
+			scroll->time = cgDC.realTime + scrollingRefresh;
+			if (scroll->paintPos <= pos + step)
+			{
+				if (scroll->offset + 1 < scroll->length)
+				{
+					char *tmp;
 
-                    tmp = strchr(&scroll->text[scroll->offset + 1], '\n');
+					tmp = strchr(&scroll->text[scroll->offset + 1], '\n');
 
-                    if (!tmp)
-                    {
-                        tmp = strchr(&scroll->text[scroll->offset + 1], '\0');
-                    }
+					if (!tmp)
+					{
+						tmp = strchr(&scroll->text[scroll->offset + 1], '\0');
+					}
 
-                    scroll->offset = tmp - scroll->text;
+					scroll->offset = tmp - scroll->text;
 
-                    scroll->paintPos += CG_Text_Height_Ext(scroll->text, scale, 1, font) + step;
-                }
-                else
-                {
-                    scroll->offset = 0;
-                    if (scroll->paintPos2 >= 0)
-                    {
-                        scroll->paintPos = scroll->paintPos2;
-                    }
-                    else
-                    {
-                        scroll->paintPos = pos + rect->h;
-                    }
-                    scroll->paintPos2 = -1;
-                }
-            }
-            else
-            {
-                scroll->paintPos -= step;
-                if (scroll->paintPos2 >= 0)
-                {
-                    scroll->paintPos2 -= step;
-                }
-            }
-        }
+					scroll->paintPos += CG_Text_Height_Ext(scroll->text, scale, 1, font) + step;
+				}
+				else
+				{
+					scroll->offset = 0;
+					if (scroll->paintPos2 >= 0)
+					{
+						scroll->paintPos = scroll->paintPos2;
+					}
+					else
+					{
+						scroll->paintPos = pos + rect->h;
+					}
+					scroll->paintPos2 = -1;
+				}
+			}
+			else
+			{
+				scroll->paintPos -= step;
+				if (scroll->paintPos2 >= 0)
+				{
+					scroll->paintPos2 -= step;
+				}
+			}
+		}
 
-        maxPos = pos + thickness - step;
+		maxPos = pos + thickness - step;
 
-        Text_Paint_LimitY(&maxPos, rect->x, scroll->paintPos, scale, color, &scroll->text[scroll->offset], 0, 0, font);
+		Text_Paint_LimitY(&maxPos, rect->x, scroll->paintPos, scale, color, &scroll->text[scroll->offset], 0, 0, font);
 
-        if (scroll->paintPos2 >= 0)
-        {
-            float max2 = pos + thickness - step;
+		if (scroll->paintPos2 >= 0)
+		{
+			float max2 = pos + thickness - step;
 
-            Text_Paint_LimitY(&max2, rect->x, scroll->paintPos2, scale, color, scroll->text, 0, scroll->offset, font);
-        }
+			Text_Paint_LimitY(&max2, rect->x, scroll->paintPos2, scale, color, scroll->text, 0, scroll->offset, font);
+		}
 
-        if (scroll->offset && maxPos > 0)
-        {
-            // if we have an offset ( we are skipping the first part of the string ) and we fit the string
-            if (scroll->paintPos2 == -1)
-            {
-                scroll->paintPos2 = pos + rect->h;
-            }
-        }
-        else
-        {
-            scroll->paintPos2 = -1;
-        }
-    }
+		if (scroll->offset && maxPos > 0)
+		{
+			// if we have an offset ( we are skipping the first part of the string ) and we fit the string
+			if (scroll->paintPos2 == -1)
+			{
+				scroll->paintPos2 = pos + rect->h;
+			}
+		}
+		else
+		{
+			scroll->paintPos2 = -1;
+		}
+	}
 }
 
 /**
@@ -1725,9 +1725,10 @@ static void CG_DrawCrosshair(void)
 	w *= (1 + f * 2.0f);
 	h *= (1 + f * 2.0f);
 
-	x = cg_crosshairX.integer;
-	y = cg_crosshairY.integer;
+	x = y = 0;
 	CG_AdjustFrom640(&x, &y, &w, &h);
+	x = cg_crosshairX.value;
+	y = cg_crosshairY.value;
 
 	hShader = cgs.media.crosshairShader[cg_drawCrosshair.integer % NUM_CROSSHAIRS];
 
@@ -1736,9 +1737,10 @@ static void CG_DrawCrosshair(void)
 	if (cg.crosshairShaderAlt[cg_drawCrosshair.integer % NUM_CROSSHAIRS])
 	{
 		w = h = cg_crosshairSize.value;
-		x = cg_crosshairX.integer;
-		y = cg_crosshairY.integer;
+		x = y = 0;
 		CG_AdjustFrom640(&x, &y, &w, &h);
+		x = cg_crosshairX.value;
+		y = cg_crosshairY.value;
 
 		if (cg_crosshairHealth.integer == 0)
 		{
@@ -2017,10 +2019,15 @@ void CG_CheckForCursorHints(void)
 		{
 			if (dist <= CH_KNIFE_DIST)
 			{
-				vec3_t pforward, eforward;
+				vec3_t pforward, eforward, attacker, target;
 
-				AngleVectors(cg.snap->ps.viewangles, pforward, NULL, NULL);
-				AngleVectors(tracent->lerpAngles, eforward, NULL, NULL);
+				VectorCopy(cg.snap->ps.viewangles, attacker);
+				VectorCopy(tracent->lerpAngles, target);
+
+				attacker[PITCH] = target[PITCH] = 0;
+
+				AngleVectors(attacker, pforward, NULL, NULL);
+				AngleVectors(target, eforward, NULL, NULL);
 
 				if (DotProduct(eforward, pforward) > 0.6f)           // from behind(-ish)
 				{
@@ -4518,7 +4525,7 @@ void CG_AddLineToScene(const vec3_t start, const vec3_t end, const vec4_t colour
 
 void CG_DrawRotateGizmo(const vec3_t origin, float radius, int numSegments, int activeAxis)
 {
-	int i, j;
+	int    i, j;
 	vec3_t vec;
 	vec3_t prevOrigin;
 	vec4_t colour;
@@ -4547,21 +4554,21 @@ void CG_DrawRotateGizmo(const vec3_t origin, float radius, int numSegments, int 
 		for (i = 0; i <= numSegments; i++)
 		{
 			float theta = 2.0f * M_PI * i / numSegments;
-			float x = radius * cosf(theta);
-			float y = radius * sinf(theta);
+			float x     = radius * cosf(theta);
+			float y     = radius * sinf(theta);
 
 			switch (j)
 			{
-				default:
-				case 0:
-					vec3_set(vec, 0, x, y);
-					break;
-				case 1:
-					vec3_set(vec, y, 0, x);
-					break;
-				case 2:
-					vec3_set(vec, x, y, 0);
-					break;
+			default:
+			case 0:
+				vec3_set(vec, 0, x, y);
+				break;
+			case 1:
+				vec3_set(vec, y, 0, x);
+				break;
+			case 2:
+				vec3_set(vec, x, y, 0);
+				break;
 			}
 
 			vec3_add(origin, vec, vec);
@@ -4578,10 +4585,10 @@ void CG_DrawRotateGizmo(const vec3_t origin, float radius, int numSegments, int 
 
 void CG_DrawMoveGizmo(const vec3_t origin, float radius, int activeAxis)
 {
-	int j;
-	vec3_t vec;
-	vec4_t colour;
-	refEntity_t  re;
+	int         j;
+	vec3_t      vec;
+	vec4_t      colour;
+	refEntity_t re;
 
 	for (j = 0; j < 3; j++)
 	{
@@ -4718,4 +4725,83 @@ void CG_DrawActive()
 	{
 		CG_LimboPanel_Draw();
 	}
+}
+
+void CG_DrawMissileCamera(rectDef_t *rect)
+{
+	float     x, y, w, h;
+	refdef_t  refdef;
+	vec3_t    forward, delta, angles;
+	centity_t *cent;
+
+	if (!cg.latestMissile)
+	{
+		return;
+	}
+
+	// Save out the old render info so we don't kill the LOD system here
+	trap_R_SaveViewParms();
+
+	cent = cg.latestMissile;
+
+	memset(&refdef, 0, sizeof(refdef_t));
+	memcpy(refdef.areamask, cg.snap->areamask, sizeof(refdef.areamask));
+
+	x = rect->x;
+	y = rect->y;
+	w = rect->w;
+	h = rect->h;
+
+	CG_AdjustFrom640(&x, &y, &w, &h);
+	memset(&refdef, 0, sizeof(refdef));
+	AxisClear(refdef.viewaxis);
+
+	refdef.fov_x  = cg.refdef_current->fov_x;
+	refdef.fov_y  = cg.refdef_current->fov_y;
+	refdef.x      = x;
+	refdef.y      = y;
+	refdef.width  = w;
+	refdef.height = h;
+	refdef.time   = cg.time;
+
+	VectorCopy(cent->lerpOrigin, refdef.vieworg);
+
+	BG_EvaluateTrajectoryDelta(&cent->currentState.pos, cg.time, delta, qtrue, 0);
+	vectoangles(delta, angles);
+	AnglesToAxis(angles, refdef.viewaxis);
+
+	cg.refdef_current = &refdef;
+
+	trap_R_ClearScene();
+
+	CG_SetupFrustum();
+	CG_DrawSkyBoxPortal(qfalse);
+
+	if (!cg.hyperspace)
+	{
+		CG_AddPacketEntities();
+		CG_AddMarks();
+		CG_AddParticles();
+		CG_AddLocalEntities();
+		CG_AddSmokeSprites();
+		CG_AddAtmosphericEffects();
+		CG_AddFlameChunks();
+		CG_AddTrails();        // this must come last, so the trails dropped this frame get drawn
+		CG_PB_RenderPolyBuffers();
+		CG_DrawMiscGamemodels();
+		CG_Coronas();
+	}
+
+	refdef.time = cg.time;
+	trap_SetClientLerpOrigin(refdef.vieworg[0], refdef.vieworg[1], refdef.vieworg[2]);
+
+	trap_R_RenderScene(&refdef);
+
+	cg.refdef_current = &cg.refdef;
+
+	// grain shader
+	//CG_DrawPic( rect->x, rect->y, rect->w, rect->h, cgs.media.tv_grain);
+
+	// Reset the view parameters
+	trap_R_RestoreViewParms();
 }

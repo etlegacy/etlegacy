@@ -828,7 +828,11 @@ void CG_EventHandling(int type, qboolean fForced)
 		}
 		else if (cgs.eventHandling == CGAME_EVENT_SHOUTCAST)
 		{
-			cg.shoutcastMenu = qfalse;
+			if (fForced)
+			{
+				trap_UI_Popup(UIMENU_INGAME);
+			}
+
 			trap_Cvar_Set("cl_bypassmouseinput", "0");
 		}
 		else if (cgs.eventHandling == CGAME_EVENT_SPAWNPOINTMSG)
@@ -875,7 +879,6 @@ void CG_EventHandling(int type, qboolean fForced)
 	}
 	else if (type == CGAME_EVENT_SHOUTCAST)
 	{
-		cg.shoutcastMenu = qtrue;
 		trap_Cvar_Set("cl_bypassmouseinput", "1");
 		trap_Key_SetCatcher(KEYCATCH_CGAME);
 	}

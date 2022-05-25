@@ -229,6 +229,9 @@ void CG_Respawn(qboolean revived)
 			oldTeam = cgs.clientinfo[cg.clientNum].team;
 		}
 	}
+
+	// clear medic/ammo request voice chat sprites
+	CG_ResetVoiceSprites(revived);
 }
 
 /**
@@ -250,26 +253,39 @@ void CG_CheckPlayerstateEvents(playerState_t *ps, playerState_t *ops)
 		CG_EntityEvent(cent, cent->lerpOrigin);
 	}
 
-	cent = &cg.predictedPlayerEntity; // cg_entities[ ps->clientNum ];
+	cent = &cg.predictedPlayerEntity;
 	// go through the predictable events buffer
-	for (i = ps->eventSequence - MAX_EVENTS ; i < ps->eventSequence ; i++)
+	for (i = ps->eventSequence - MAX_EVENTS; i < ps->eventSequence; i++)
 	{
 		// if we have a new predictable event
-		if (i >= ops->eventSequence
-		    // or the server told us to play another event instead of a predicted event we already issued
-		    // or something the server told us changed our prediction causing a different event
-		    || (i > ops->eventSequence - MAX_EVENTS && ps->events[i & (MAX_EVENTS - 1)] != ops->events[i & (MAX_EVENTS - 1)]))
+		if (i >= ops->eventSequence)
 		{
-			event                        = ps->events[i & (MAX_EVENTS - 1)];
+			event = ps->events[i & (MAX_EVENTS - 1)];
+
+			// skip predictable pmove events added by server to avoid unnecessary event effect duplication
+			// after client miss predicted and different order of events came from server
+			// causing correctly predicted events by client to play again
+			if (!cg.demoPlayback && ps->clientNum == cg.clientNum && CG_CheckPredictableEvent(event))
+			{
+				continue;
+			}
+
 			cent->currentState.event     = event;
 			cent->currentState.eventParm = ps->eventParms[i & (MAX_EVENTS - 1)];
 			CG_EntityEvent(cent, cent->lerpOrigin);
-
-			cg.predictableEvents[i & (MAX_PREDICTED_EVENTS - 1)] = event;
-
-			cg.eventSequence++;
 		}
 	}
+
+	// play predictable pmove events added by client
+	for (i = cg.pmext.oldEventSequence; i < cg.pmext.eventSequence; i++)
+	{
+		event                        = cg.pmext.events[i & (MAX_EVENTS - 1)];
+		cent->currentState.event     = event;
+		cent->currentState.eventParm = cg.pmext.eventParms[i & (MAX_EVENTS - 1)];
+		CG_EntityEvent(cent, cent->lerpOrigin);
+	}
+
+	cg.pmext.oldEventSequence = cg.pmext.eventSequence;
 }
 
 /*

@@ -839,13 +839,14 @@ void CG_ZoomIn_f(void)
 	// fixed being able to "latch" your zoom by weaponcheck + quick zoomin
 	// - change for zoom view in demos
 	// zoom if weapon is scoped or if binoc is scoped
-	if (GetWeaponTableData(cg_entities[cg.snap->ps.clientNum].currentState.weapon)->type & WEAPON_TYPE_SCOPED)
+	// FG42 type is WEAPON_TYPE_SMG, and it should have no zoom
+	if (CHECKBITWISE(GetWeaponTableData(cg_entities[cg.snap->ps.clientNum].currentState.weapon)->type, (WEAPON_TYPE_SCOPED | WEAPON_TYPE_RIFLE)))
 	{
 		CG_AdjustZoomVal(-(cg_zoomStepSniper.value)
 		                 , GetWeaponTableData(cg_entities[cg.snap->ps.clientNum].currentState.weapon)->zoomOut
 		                 , GetWeaponTableData(cg_entities[cg.snap->ps.clientNum].currentState.weapon)->zoomIn);
 	}
-	else if (cg.zoomedBinoc)    // case where the binocular is used but not holded (equipped)
+	else if (cg.zoomedBinoc)    // case where the binocular is used but not held (equipped)
 	{
 		CG_AdjustZoomVal(-(cg_zoomStepSniper.value)
 		                 , GetWeaponTableData(WP_BINOCULARS)->zoomOut
@@ -859,13 +860,14 @@ void CG_ZoomIn_f(void)
 void CG_ZoomOut_f(void)
 {
 	// zoom if weapon is scoped or if binoc is scoped
-	if (GetWeaponTableData(cg_entities[cg.snap->ps.clientNum].currentState.weapon)->type & WEAPON_TYPE_SCOPED)
+	// FG42 type is WEAPON_TYPE_SMG, and it should have no zoom
+	if (CHECKBITWISE(GetWeaponTableData(cg_entities[cg.snap->ps.clientNum].currentState.weapon)->type, (WEAPON_TYPE_SCOPED | WEAPON_TYPE_RIFLE)))
 	{
 		CG_AdjustZoomVal(cg_zoomStepSniper.value
 		                 , GetWeaponTableData(cg_entities[cg.snap->ps.clientNum].currentState.weapon)->zoomOut
 		                 , GetWeaponTableData(cg_entities[cg.snap->ps.clientNum].currentState.weapon)->zoomIn);
 	}
-	else if (cg.zoomedBinoc)    // case where the binocular is used but not holded (equipped)
+	else if (cg.zoomedBinoc)    // case where the binocular is used but not held (equipped)
 	{
 		CG_AdjustZoomVal(cg_zoomStepSniper.value
 		                 , GetWeaponTableData(WP_BINOCULARS)->zoomOut
@@ -884,6 +886,10 @@ void CG_Zoom(void)
 	// no zoom in third person view
 	if (cg.renderingThirdPerson)
 	{
+		cg.zoomedBinoc = qfalse;
+		cg.zoomed      = qfalse;
+		cg.zoomTime    = 0;
+		cg.zoomval     = 0;
 		return;
 	}
 
@@ -918,7 +924,9 @@ void CG_Zoom(void)
 
 		cg.zoomedBinoc = qtrue;
 		cg.zoomTime    = cg.time;
-		cg.zoomval     = cg_zoomDefaultSniper.value; // was DefaultBinoc, changed per atvi req
+		cg.zoomval     = Com_Clamp(GetWeaponTableData(WP_BINOCULARS)->zoomIn,
+		                           GetWeaponTableData(WP_BINOCULARS)->zoomOut,
+		                           cg_zoomDefaultSniper.value); // was DefaultBinoc, changed per atvi req
 	}
 	else if (GetWeaponTableData(weapon)->type & WEAPON_TYPE_SCOPED) // check for scope weapon in use, and change to if necessary
 	{
@@ -929,7 +937,9 @@ void CG_Zoom(void)
 
 		cg.zoomed   = qtrue;
 		cg.zoomTime = cg.time;
-		cg.zoomval  = cg_zoomDefaultSniper.value;    // was DefaultFG, changed per atvi req
+		cg.zoomval  = Com_Clamp(GetWeaponTableData(weapon)->zoomIn,
+		                        GetWeaponTableData(weapon)->zoomOut,
+		                        cg_zoomDefaultSniper.value);    // was DefaultFG, changed per atvi req
 	}
 	else
 	{
@@ -1126,7 +1136,7 @@ static int CG_CalcFov(void)
 		// fix for zoomed in/out movement bug
 		if (cg.zoomval != 0.f)
 		{
-			cg.zoomSensitivity = 0.6f * (cg.zoomval / 90.f);     // changed to get less sensitive as you zoom in
+			cg.zoomSensitivity = cg_scopedSensitivityScaler.value * (cg.zoomval / 90.f);     // changed to get less sensitive as you zoom in
 		}
 		else
 		{
@@ -1932,6 +1942,64 @@ void CG_ProcessCvars()
 	}
 }
 
+/**
+* @brief CG_SetLastKeyCatcher
+*/
+static void CG_SetLastKeyCatcher(void)
+{
+	int keyCatcher = trap_Key_GetCatcher();
+
+	CG_ShoutcastCheckKeyCatcher(keyCatcher);
+
+	cg.lastKeyCatcher = keyCatcher;
+}
+
+/**
+* @brief CG_DemoRewindFixEffects fix time based event effects on demo rewind
+*/
+static void CG_DemoRewindFixEffects(void)
+{
+	int i;
+
+	// fix player entities animations, lazy fix?
+	Com_Memset(cg_entities, 0, sizeof(cg_entities));
+
+	// clear message buffer
+	for (i = 0; i < TEAMCHAT_HEIGHT; i++)
+	{
+		if (cgs.teamChatMsgTimes[i] > cg.time)
+		{
+			cgs.teamChatPos--;
+			cgs.teamLastChatPos--;
+			cgs.teamChatMsgTimes[i] = 0;
+			Com_Memset(cgs.teamChatMsgs[i], 0, sizeof(cgs.teamChatMsgs[i]));
+		}
+	}
+
+	CG_DemoRewindFixLocalEntities();
+
+	// lazy fix, ideally every time based event should be adjusted individually not simply deleted
+	CG_InitMarkPolys();
+	CG_InitPM();
+	CG_ClearTrails();
+	CG_ClearParticles();
+	InitSmokeSprites();
+	CG_ClearFlameChunks();
+	trap_R_ClearDecals(); // bullet and explosion marks (cg_markTime) are on renderer side
+
+	// reset camera view effects
+	cg.damageTime        = 0;
+	cg.v_dmg_time        = 0;
+	cg.v_noFireTime      = 0;
+	cg.v_fireTime        = 0;
+	cg.cameraShakeScale  = 0;
+	cg.cameraShakeLength = 0;
+	cg.cameraShakeTime   = 0;
+	cg.cameraShakePhase  = 0;
+
+	cgs.serverCommandSequence = cg.snap->serverCommandSequence;
+}
+
 //#define DEBUGTIME_ENABLED
 #ifdef DEBUGTIME_ENABLED
 #define DEBUGTIME elapsed = (trap_Milliseconds() - dbgTime); if (dbgCnt++ == 1) { CG_Printf("t%i:%i ", dbgCnt, elapsed = (trap_Milliseconds() - dbgTime)); } dbgTime += elapsed;
@@ -1960,9 +2028,16 @@ void CG_DrawActiveFrame(int serverTime, qboolean demoPlayback)
 	int dbgCnt = 0;
 #endif
 
+	cg.oldTime      = cg.time;
 	cg.time         = serverTime;
 	cgDC.realTime   = cg.time;
 	cg.demoPlayback = demoPlayback;
+	cg.frametime    = cg.time - cg.oldTime;
+
+	if (cg.frametime < 0)
+	{
+		cg.frametime = 0;
+	}
 
 #ifdef FAKELAG
 	cg.time -= snapshotDelayTime;
@@ -2002,6 +2077,14 @@ void CG_DrawActiveFrame(int serverTime, qboolean demoPlayback)
 
 	// set up cg.snap and possibly cg.nextSnap
 	CG_ProcessSnapshots();
+
+	DEBUGTIME
+
+	// demo rewind happend, fix time based effects
+	if (demoPlayback && cg.time - cg.oldTime < 0)
+	{
+		CG_DemoRewindFixEffects();
+	}
 
 	DEBUGTIME
 
@@ -2235,13 +2318,7 @@ void CG_DrawActiveFrame(int serverTime, qboolean demoPlayback)
 
 		DEBUGTIME
 
-		//lagometer sample and frame timing
-		cg.frametime = cg.time - cg.oldTime;
-		if (cg.frametime < 0)
-		{
-			cg.frametime = 0;
-		}
-		cg.oldTime = cg.time;
+		//lagometer sample
 		CG_AddLagometerFrameInfo();
 
 		DEBUGTIME
@@ -2257,6 +2334,14 @@ void CG_DrawActiveFrame(int serverTime, qboolean demoPlayback)
 		// update audio positions
 		trap_S_Respatialize(cg.snap->ps.clientNum, cg.refdef.vieworg, cg.refdef.viewaxis, inwater);
 	}
+
+	// mortar cam
+	if (CG_GetActiveHUD()->missilecamera.visible && cg.latestMissile && !cg.showGameView)
+	{
+		CG_DrawMissileCamera(&CG_GetActiveHUD()->missilecamera.location);
+	}
+
+	CG_SetLastKeyCatcher();
 
 	if (cg_stats.integer)
 	{

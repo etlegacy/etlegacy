@@ -693,6 +693,11 @@ typedef struct
 	qboolean botPush;                                   ///< allow for disabling of bot pushing via script
 #endif
 
+	// flood protection
+	int nextReliableTime;                               ///< next time a command can be executed when flood limited
+	int numReliableCommands;                            ///< how many commands have we sent
+	int nextCommandDecreaseTime;                        ///< next time we decrease numReliableCommands
+
 } clientSession_t;
 
 #define PICKUP_ACTIVATE 0   ///< pickup items only when using "+activate"
@@ -705,6 +710,7 @@ typedef struct
 #define LAG_MAX_DROP_THRESHOLD 800
 #define LAG_MIN_DROP_THRESHOLD (LAG_MAX_DROP_THRESHOLD - 200)
 #define LAG_DECAY 1.02f
+#define LAG_SPEED_THRESHOLD 80
 
 #ifdef FEATURE_MULTIVIEW
 
@@ -750,6 +756,7 @@ typedef struct
 	qboolean predictItemPickup;         ///< based on cg_predictItems userinfo
 	qboolean pmoveFixed;                ///<
 	int pmoveMsec;                      ///< antiwarp
+	qboolean activateLean;
 
 	char netname[MAX_NETNAME];
 	char client_ip[MAX_IP4_LENGTH];     ///< ip 'caching' - it won't change
@@ -1027,6 +1034,8 @@ struct gclient_s
 	qboolean freezed;                       ///< client is frozen see PM_FREEZE
 
 	int constructSoundTime;                 ///< construction sound time
+
+	qboolean activateHeld;                  ///< client is holding down +activate
 };
 
 /**
@@ -1377,14 +1386,47 @@ char *G_AddSpawnVarToken(const char *string);
 void G_ParseField(const char *key, const char *value, gentity_t *ent);
 
 // g_cmds.c
-void Cmd_Score_f(gentity_t *ent);
+void Cmd_Score_f(gentity_t *ent, unsigned int dwCommand, int value);
+void Cmd_Vote_f(gentity_t *ent, unsigned int dwCommand, int value);
+void Cmd_Ignore_f(gentity_t *ent, unsigned int dwCommand, int value);
+void Cmd_UnIgnore_f(gentity_t *ent, unsigned int dwCommand, int value);
+void Cmd_SelectedObjective_f(gentity_t *ent, unsigned int dwCommand, int value);
+void Cmd_IntermissionPlayerKillsDeaths_f(gentity_t *ent, unsigned int dwCommand, int value);
+void Cmd_IntermissionPlayerTime_f(gentity_t *ent, unsigned int dwCommand, int value);
+void Cmd_IntermissionSkillRating_f(gentity_t *ent, unsigned int dwCommand, int value);
+void Cmd_IntermissionPrestige_f(gentity_t *ent, unsigned int dwCommand, int value);
+void Cmd_IntermissionCollectPrestige_f(gentity_t *ent, unsigned int dwCommand, int value);
+void Cmd_IntermissionWeaponAccuracies_f(gentity_t *ent, unsigned int dwCommand, int value);
+void Cmd_IntermissionWeaponStats_f(gentity_t *ent, unsigned int dwCommand, int value);
+void Cmd_UnIgnore_f(gentity_t *ent, unsigned int dwCommand, int value);
+void Cmd_IntermissionReady_f(gentity_t *ent, unsigned int dwCommand, int value);
+void Cmd_WeaponStat_f(gentity_t *ent, unsigned int dwCommand, int value);
+void Cmd_ForceTapout_f(gentity_t *ent, unsigned int dwCommand, int value);
+void G_IntermissionVoteTally_cmd(gentity_t *ent, unsigned int dwCommand, int value);
+void Cmd_wStats_f(gentity_t *ent, unsigned int dwCommand, int value);
+void Cmd_sgStats_f(gentity_t *ent, unsigned int dwCommand, int value);
+void Cmd_WeaponStatsLeaders_f(gentity_t *ent, unsigned int dwCommand, int value);
+void Cmd_ResetSetup_f(gentity_t *ent, unsigned int dwCommand, int value);
+void Cmd_Give_f(gentity_t *ent, unsigned int dwCommand, int value);
+void Cmd_God_f(gentity_t *ent, unsigned int dwCommand, int value);
+void Cmd_Nofatigue_f(gentity_t *ent, unsigned int dwCommand, int value);
+void Cmd_Notarget_f(gentity_t *ent, unsigned int dwCommand, int value);
+void Cmd_Noclip_f(gentity_t *ent, unsigned int dwCommand, int value);
+void Cmd_Nostamina_f(gentity_t *ent, unsigned int dwCommand, int value);
+void Cmd_Kill_f(gentity_t *ent, unsigned int dwCommand, int value);
+void Cmd_DropObjective_f(gentity_t *ent, unsigned int dwCommand, int value);
+void Cmd_FollowNext_f(gentity_t *ent, unsigned int dwCommand, int value);
+void Cmd_FollowPrevious_f(gentity_t *ent, unsigned int dwCommand, int value);
+void Cmd_Where_f(gentity_t *ent, unsigned int dwCommand, int value);
+void Cmd_SetViewpos_f(gentity_t *ent, unsigned int dwCommand, int value);
+void Cmd_SetSpawnPoint_f(gentity_t *ent, unsigned int dwCommand, int value);
 void StopFollowing(gentity_t *ent);
 void G_TeamDataForString(const char *teamstr, int clientNum, team_t *team, spectatorState_t *sState);
 qboolean SetTeam(gentity_t *ent, const char *s, qboolean force, weapon_t w1, weapon_t w2, qboolean setweapons);
 void G_SetClientWeapons(gentity_t *ent, weapon_t w1, weapon_t w2, qboolean updateclient);
 void Cmd_FollowCycle_f(gentity_t *ent, int dir, qboolean skipBots);
 qboolean G_FollowSame(gentity_t *ent);
-void Cmd_Kill_f(gentity_t *ent);
+qboolean G_ServerIsFloodProtected(void);
 
 #ifdef ETLEGACY_DEBUG
 #ifdef FEATURE_OMNIBOT
@@ -1393,8 +1435,8 @@ void Cmd_SwapPlacesWithBot_f(gentity_t *ent, int botNum);
 #endif
 
 // MAPVOTE
-void G_IntermissionMapVote(gentity_t *ent);
-void G_IntermissionMapList(gentity_t *ent);
+void G_IntermissionMapVote(gentity_t *ent, unsigned int dwCommand, int value);
+void G_IntermissionMapList(gentity_t *ent, unsigned int dwCommand, int value);
 void G_IntermissionVoteTally(gentity_t *ent);
 
 void G_EntitySound(gentity_t *ent, const char *soundId, int volume); // Unused.
@@ -1542,6 +1584,7 @@ typedef struct
 void G_AdjustedDamageVec(gentity_t *ent, vec3_t origin, vec3_t vec);
 qboolean CanDamage(gentity_t *targ, vec3_t origin);
 void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t dir, vec3_t point, int damage, int dflags, meansOfDeath_t mod);
+void G_DamageExt(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t dir, vec3_t point, int damage, int dflags, meansOfDeath_t mod, int *hitEventType);
 qboolean G_RadiusDamage(vec3_t origin, gentity_t *inflictor, gentity_t *attacker, float damage, float radius, gentity_t *ignore, meansOfDeath_t mod);
 qboolean etpro_RadiusDamage(vec3_t origin, gentity_t *inflictor, gentity_t *attacker, float damage, float radius, gentity_t *ignore, meansOfDeath_t mod, qboolean clientsonly);
 void body_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int damage, meansOfDeath_t meansOfDeath);
@@ -1677,10 +1720,11 @@ void G_SendScore(gentity_t *ent);
 void G_Say(gentity_t *ent, gentity_t *target, int mode, const char *chatText);
 void G_SayTo(gentity_t *ent, gentity_t *other, int mode, int color, const char *name, const char *message, qboolean localize);   // removed static declaration so it would link
 void G_HQSay(gentity_t *other, int color, const char *name, const char *message);
-qboolean Cmd_CallVote_f(gentity_t *ent, unsigned int dwCommand, qboolean fRefCommand);
-void Cmd_Follow_f(gentity_t *ent, unsigned int dwCommand, qboolean fValue);
-void Cmd_Say_f(gentity_t *ent, int mode, qboolean arg0);
-void Cmd_Team_f(gentity_t *ent, unsigned int dwCommand, qboolean fValue);
+qboolean Cmd_CallVote_f(gentity_t *ent, unsigned int dwCommand, int fRefCommand);
+void Cmd_Follow_f(gentity_t *ent, unsigned int dwCommand, int value);
+void G_Say_f(gentity_t *ent, int mode /*, qboolean arg0*/);
+void G_Voice_f(gentity_t *ent, int mode, qboolean arg0, qboolean voiceonly);
+void Cmd_Team_f(gentity_t *ent, unsigned int dwCommand, int value);
 void G_PlaySound_Cmd(void);
 int ClientNumbersFromString(char *s, int *plist);
 char *ConcatArgs(int start);
@@ -2043,6 +2087,7 @@ extern vmCvar_t g_dropHealth;
 extern vmCvar_t g_dropAmmo;
 
 extern vmCvar_t g_shove;
+extern vmCvar_t g_shoveNoZ;
 
 // MAPVOTE
 extern vmCvar_t g_mapVoteFlags;
@@ -2134,7 +2179,11 @@ extern vmCvar_t g_debugForSingleClient;
 
 extern vmCvar_t g_suddenDeath;
 extern vmCvar_t g_dropObjDelay;
-extern vmCvar_t g_altSuicideAnim;
+
+// flood protection
+extern vmCvar_t g_floodProtection;
+extern vmCvar_t g_floodLimit;
+extern vmCvar_t g_floodWait;
 
 /**
  * @struct GeoIPTag
@@ -2243,7 +2292,7 @@ void G_PredictPmove(gentity_t *ent, float frametime);
 #define BODY_CHARACTER(ENT) ENT->s.onFireStart
 #define BODY_LAST_ACTIVATE(ENT) ENT->s.time
 
-void Cmd_FireTeam_MP_f(gentity_t *ent);
+void Cmd_FireTeam_MP_f(gentity_t *ent, unsigned int dwCommand, int value);
 
 void G_RemoveFromAllIgnoreLists(int clientNum);
 
@@ -2384,27 +2433,33 @@ void G_UpdateCvars(void);
 void G_wipeCvars(void);
 
 // g_cmds_ext.c
-qboolean G_commandCheck(gentity_t *ent, const char *cmd, qboolean fDoAnytime);
+qboolean G_commandCheck(gentity_t *ent, const char *cmd);
 qboolean G_commandHelp(gentity_t *ent, const char *pszCommand, unsigned int dwCommand);
 qboolean G_cmdDebounce(gentity_t *ent, const char *pszCommand);
-void G_commands_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fValue);
-void G_lock_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fLock);
-void G_pause_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fPause);
-void G_players_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fDump);
-void G_ready_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fDump);
-void G_say_teamnl_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fValue);
-void G_sclogin_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fValue);
-void G_sclogout_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fValue);
+void G_commands_cmd(gentity_t *ent, unsigned int dwCommand, int value);
+void G_lock_cmd(gentity_t *ent, unsigned int dwCommand, int fLock);
+void G_pause_cmd(gentity_t *ent, unsigned int dwCommand, int fPause);
+void G_players_cmd(gentity_t *ent, unsigned int dwCommand, int fDump);
+void G_ready_cmd(gentity_t *ent, unsigned int dwCommand, int fDump);
+void G_say_cmd(gentity_t *ent, unsigned int dwCommand, int value);
+void G_say_team_cmd(gentity_t *ent, unsigned int dwCommand, int value);
+void G_say_buddy_cmd(gentity_t *ent, unsigned int dwCommand, int value);
+void G_say_teamnl_cmd(gentity_t *ent, unsigned int dwCommand, int value);
+void G_vsay_cmd(gentity_t *ent, unsigned int dwCommand, int value);
+void G_vsay_team_cmd(gentity_t *ent, unsigned int dwCommand, int value);
+void G_vsay_buddy_cmd(gentity_t *ent, unsigned int dwCommand, int value);
+void G_sclogin_cmd(gentity_t *ent, unsigned int dwCommand, int value);
+void G_sclogout_cmd(gentity_t *ent, unsigned int dwCommand, int value);
 void G_makesc_cmd(void);
 void G_removesc_cmd(void);
-void G_scores_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fValue);
-void G_specinvite_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fLock);
-void G_specuninvite_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fLock);
-void G_speclock_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fLock);
-void G_statsall_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fDump);
-void G_teamready_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fDump);
-void G_weaponRankings_cmd(gentity_t *ent, unsigned int dwCommand, qboolean state);
-void G_weaponStats_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fDump);
+void G_scores_cmd(gentity_t *ent, unsigned int dwCommand, int value);
+void G_specinvite_cmd(gentity_t *ent, unsigned int dwCommand, int fLock);
+void G_specuninvite_cmd(gentity_t *ent, unsigned int dwCommand, int fLock);
+void G_speclock_cmd(gentity_t *ent, unsigned int dwCommand, int fLock);
+void G_statsall_cmd(gentity_t *ent, unsigned int dwCommand, int fDump);
+void G_teamready_cmd(gentity_t *ent, unsigned int dwCommand, int fDump);
+void G_weaponRankings_cmd(gentity_t *ent, unsigned int dwCommand, int state);
+void G_weaponStats_cmd(gentity_t *ent, unsigned int dwCommand, int fDump);
 void G_weaponStatsLeaders_cmd(gentity_t *ent, qboolean doTop, qboolean doWindow);
 void G_VoiceTo(gentity_t *ent, gentity_t *other, int mode, const char *id, qboolean voiceonly, float randomNum);
 
@@ -2497,13 +2552,16 @@ int G_XPSaver_Clear();
 
 // g_stats.c
 void G_UpgradeSkill(gentity_t *ent, skillType_t skill);
+void G_PrintAccuracyLog(gentity_t *ent, unsigned int dwCommand, int value);
 
 #ifdef FEATURE_MULTIVIEW
 // g_multiview.c
-qboolean G_smvCommands(gentity_t *ent, const char *cmd);
-void G_smvAdd_cmd(gentity_t *ent);
-void G_smvAddTeam_cmd(gentity_t *ent, int nTeam);
-void G_smvDel_cmd(gentity_t *ent);
+
+void G_smvAdd_cmd(gentity_t *ent, unsigned int dwCommand, int value);
+void G_smvAddTeam_cmd(gentity_t *ent, unsigned int dwCommand, int nTeam);
+void G_smvAddAllTeam_cmd(gentity_t *ent, unsigned int dwCommand, int value);
+void G_smvDel_cmd(gentity_t *ent, unsigned int dwCommand, int value);
+void G_smvDisable_cmd(gentity_t *ent, unsigned int dwCommand, int value);
 
 void G_smvAddView(gentity_t *ent, int pID);
 void G_smvAllRemoveSingleClient(int pID);
@@ -2517,9 +2575,9 @@ void G_smvUpdateClientCSList(gentity_t *ent);
 #endif
 
 // g_referee.c
-void Cmd_AuthRcon_f(gentity_t *ent);
+void Cmd_AuthRcon_f(gentity_t *ent, unsigned int dwCommand, int value);
 void G_refAllReady_cmd(gentity_t *ent);
-void G_ref_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fValue);
+void G_ref_cmd(gentity_t *ent, unsigned int dwCommand, int value);
 qboolean G_refCommandCheck(gentity_t *ent, const char *cmd);
 void G_refHelp_cmd(gentity_t *ent);
 void G_refLockTeams_cmd(gentity_t *ent, qboolean fLock);
@@ -2833,7 +2891,7 @@ void G_RailBox(vec_t *origin, vec_t *mins, vec_t *maxs, vec_t *color, int index)
 typedef struct weapFireTable_t
 {
 	weapon_t weapon;
-	gentity_t *(*fire)(gentity_t * ent);  ///< -
+	gentity_t *(*fire)(gentity_t *ent);   ///< -
 	void (*think)(gentity_t *ent);        ///< -
 	void (*free)(gentity_t *ent);         ///< -
 	int eType;                            ///< -

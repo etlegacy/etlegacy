@@ -425,7 +425,7 @@ static int FloatAsInt(float f)
  * @param[in] key to query
  * @return true if value for key is found
  */
-static qboolean SV_GetValue(char *value, int valueSize, const char *key)
+static qboolean SV_G_GetValue(char *value, int valueSize, const char *key)
 {
 	return qfalse;
 }
@@ -623,25 +623,25 @@ intptr_t SV_GameSystemCalls(intptr_t *args)
 	case BOTLIB_GET_CONSOLE_MESSAGE:
 		return SV_BotGetConsoleMessage(args[1], VMA(2), args[3]);
 	case BOTLIB_USER_COMMAND:
-		{
-			unsigned clientNum = args[1];
+	{
+		unsigned clientNum = args[1];
 
-			if ( clientNum < sv_maxclients->integer )
-			{
-				SV_ClientThink(&svs.clients[clientNum], VMA(2));
-			}
+		if (clientNum < sv_maxclients->integer)
+		{
+			SV_ClientThink(&svs.clients[clientNum], VMA(2));
 		}
+	}
 		return 0;
 
 	case BOTLIB_EA_COMMAND:
-		{
-			unsigned clientNum = args[1];
+	{
+		unsigned clientNum = args[1];
 
-			if ( clientNum < sv_maxclients->integer )
-			{
-				SV_ExecuteClientCommand(&svs.clients[clientNum], VMA(2), qtrue, qfalse);
-			}
+		if (clientNum < sv_maxclients->integer)
+		{
+			SV_ExecuteClientCommand(&svs.clients[clientNum], VMA(2), qtrue, qfalse);
 		}
+	}
 
 		return 0;
 
@@ -695,7 +695,7 @@ intptr_t SV_GameSystemCalls(intptr_t *args)
 		return SV_BinaryMessageStatus(args[1]);
 
 	case G_TRAP_GETVALUE:
-		return SV_GetValue(VMA(1), args[2], VMA(3));
+		return SV_G_GetValue(VMA(1), args[2], VMA(3));
 
 	default:
 		Com_Error(ERR_DROP, "Bad game system trap: %ld", (long int) args[0]);
@@ -788,7 +788,7 @@ void SV_InitGameProgs(void)
 	gvm = VM_Create("qagame", qfalse, SV_GameSystemCalls, VMI_NATIVE);
 	if (!gvm)
 	{
-		Com_Error(ERR_FATAL, "VM_Create on game failed");
+		VM_Error(ERR_FATAL, "game", Sys_GetDLLName("qagame"));
 	}
 
 	SV_InitGameVM(qfalse);

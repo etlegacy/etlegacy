@@ -535,6 +535,20 @@ void CG_ParseWolfinfo(void)
 }
 
 /**
+* @brief CG_ParseServerToggles
+*/
+void CG_ParseServerToggles(void)
+{
+	const char *info;
+	int        value;
+
+	info  = CG_ConfigString(CS_SERVERTOGGLES);
+	value = Q_atoi(info);
+
+	cgs.matchPaused = (value & CV_SVS_PAUSE) ? qtrue : qfalse;
+}
+
+/**
  * @brief CG_ParseSpawns
  */
 void CG_ParseSpawns(void)
@@ -1018,6 +1032,9 @@ static void CG_ConfigStringModified(void)
 	case CS_SYSTEMINFO:
 		CG_ParseSysteminfo();
 		break;
+	case CS_SERVERTOGGLES:
+		CG_ParseServerToggles();
+		break;
 
 	default:
 		if (num >= CS_MULTI_SPAWNTARGETS && num < CS_MULTI_SPAWNTARGETS + MAX_MULTI_SPAWNTARGETS)
@@ -1378,7 +1395,7 @@ static void CG_MapRestart(void)
 	CG_InitMarkPolys();
 
 	cg.editingSpeakers = qfalse;
-	cg.editingCameras = qfalse;
+	cg.editingCameras  = qfalse;
 
 	BG_BuildSplinePaths();
 
@@ -1589,15 +1606,15 @@ int CG_ParseVoiceChats(const char *filename, voiceChatList_t *voiceChatList, int
 			token = COM_ParseExt(p, qfalse);
 			if (!Q_stricmp(token, "}") || !token[0])
 			{
-				voiceChats[voiceChatList->numVoiceChats].sprite[current] = trap_R_RegisterShader("sprites/voiceChat");
+				voiceChats[voiceChatList->numVoiceChats].sprite[current] = trap_R_RegisterShaderNoMip("sprites/voiceChat");
 				COM_RestoreParseSession(p);
 			}
 			else
 			{
-				voiceChats[voiceChatList->numVoiceChats].sprite[current] = trap_R_RegisterShader(token);
+				voiceChats[voiceChatList->numVoiceChats].sprite[current] = trap_R_RegisterShaderNoMip(token);
 				if (voiceChats[voiceChatList->numVoiceChats].sprite[current] == 0)
 				{
-					voiceChats[voiceChatList->numVoiceChats].sprite[current] = trap_R_RegisterShader("sprites/voiceChat");
+					voiceChats[voiceChatList->numVoiceChats].sprite[current] = trap_R_RegisterShaderNoMip("sprites/voiceChat");
 				}
 			}
 
@@ -1706,26 +1723,26 @@ void CG_PlayVoiceChat(bufferedVoiceChat_t *vchat)
 			if (vchat->clientNum == cg.snap->ps.clientNum)
 			{
 				cg.predictedPlayerEntity.voiceChatSprite = vchat->sprite;
-				if (vchat->sprite == cgs.media.voiceChatShader)
+				if (vchat->sprite == cgs.media.medicIcon || vchat->sprite == cgs.media.ammoIcon)
 				{
-					cg.predictedPlayerEntity.voiceChatSpriteTime = cg.time + cg_voiceSpriteTime.integer;
+					cg.predictedPlayerEntity.voiceChatSpriteTime = cg.time + cg_voiceSpriteTime.integer * 2;
 				}
 				else
 				{
-					cg.predictedPlayerEntity.voiceChatSpriteTime = cg.time + cg_voiceSpriteTime.integer * 2;
+					cg.predictedPlayerEntity.voiceChatSpriteTime = cg.time + cg_voiceSpriteTime.integer;
 				}
 			}
 			else
 			{
 				cg_entities[vchat->clientNum].voiceChatSprite = vchat->sprite;
 				VectorCopy(vchat->origin, cg_entities[vchat->clientNum].lerpOrigin);
-				if (vchat->sprite == cgs.media.voiceChatShader)
+				if (vchat->sprite == cgs.media.medicIcon || vchat->sprite == cgs.media.ammoIcon)
 				{
-					cg_entities[vchat->clientNum].voiceChatSpriteTime = cg.time + cg_voiceSpriteTime.integer;
+					cg_entities[vchat->clientNum].voiceChatSpriteTime = cg.time + cg_voiceSpriteTime.integer * 2;
 				}
 				else
 				{
-					cg_entities[vchat->clientNum].voiceChatSpriteTime = cg.time + cg_voiceSpriteTime.integer * 2;
+					cg_entities[vchat->clientNum].voiceChatSpriteTime = cg.time + cg_voiceSpriteTime.integer;
 				}
 			}
 		}
@@ -1881,6 +1898,26 @@ void CG_VoiceChat(int mode)
 	cmd = CG_Argv(4);
 
 	CG_VoiceChatLocal(mode, voiceOnly, clientNum, color, cmd, origin);
+}
+
+/**
+ * @brief CG_ResetVoiceSprites
+ * @param[in] revived
+ */
+void CG_ResetVoiceSprites(qboolean revived)
+{
+	if (!revived)
+	{
+		if (cg.predictedPlayerEntity.voiceChatSprite == cgs.media.ammoIcon)
+		{
+			cg.predictedPlayerEntity.voiceChatSpriteTime = 0;
+		}
+	}
+
+	if (cg.predictedPlayerEntity.voiceChatSprite == cgs.media.medicIcon)
+	{
+		cg.predictedPlayerEntity.voiceChatSpriteTime = 0;
+	}
 }
 
 /**

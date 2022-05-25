@@ -1018,8 +1018,6 @@ typedef struct
 // all cg.stepTime, cg.duckTime, cg.landTime, etc are set to cg.time when the action
 // occurs, and they will have visible effects for #define STEP_TIME or whatever msec after
 
-#define MAX_PREDICTED_EVENTS    16
-
 #define MAX_SPAWN_VARS          64
 #define MAX_SPAWN_VARS_CHARS    2048
 
@@ -1167,9 +1165,6 @@ typedef struct
 	qboolean validPPS;                      ///< clear until the first call to CG_PredictPlayerState
 	int predictedErrorTime;
 	vec3_t predictedError;
-
-	int eventSequence;
-	int predictableEvents[MAX_PREDICTED_EVENTS];
 
 	float stepChange;                       ///< for stair up smoothing
 	int stepTime;
@@ -1401,8 +1396,6 @@ typedef struct
 	qboolean showFireteamMenu;
 	qboolean showSpawnpointsMenu;
 
-	qboolean shoutcastMenu;
-
 	char spawnPoints[MAX_SPAWNPOINTS][MAX_SPAWNDESC];
 	vec3_t spawnCoordsUntransformed[MAX_SPAWNPOINTS];
 	vec3_t spawnCoords[MAX_SPAWNPOINTS];
@@ -1550,6 +1543,9 @@ typedef struct
 	int scoreToggleTime;
 #endif
 
+	// jaquboss - MORTARCAM
+	centity_t *latestMissile;
+
 #ifdef FEATURE_RATING
 	// skill rating
 	float rating[MAX_CLIENTS];
@@ -1564,6 +1560,8 @@ typedef struct
 	// banner printing
 	int bannerPrintTime;
 	char bannerPrint[1024];
+
+	int lastKeyCatcher;
 } cg_t;
 
 #define MAX_LOCKER_DEBRIS 5
@@ -2430,6 +2428,7 @@ typedef struct cgs_s
 	gamestate_t gamestate;
 	char *currentCampaign;
 	int currentCampaignMap;
+	qboolean matchPaused;
 
 	int complaintClient;
 	int complaintEndTime;
@@ -2676,6 +2675,11 @@ extern vmCvar_t cg_fov;
 extern vmCvar_t cg_muzzleFlash;
 extern vmCvar_t cg_drawEnvAwareness;
 extern vmCvar_t cg_drawCompassIcons;
+extern vmCvar_t cg_dynamicIcons;
+extern vmCvar_t cg_dynamicIconsDistance;
+extern vmCvar_t cg_dynamicIconsSize;
+extern vmCvar_t cg_dynamicIconsMaxScale;
+extern vmCvar_t cg_dynamicIconsMinScale;
 
 extern vmCvar_t cg_zoomDefaultSniper;
 
@@ -2683,6 +2687,7 @@ extern vmCvar_t cg_zoomStepSniper;
 extern vmCvar_t cg_thirdPersonRange;
 extern vmCvar_t cg_thirdPersonAngle;
 extern vmCvar_t cg_thirdPerson;
+extern vmCvar_t cg_scopedSensitivityScaler;
 #ifdef ALLOW_GSYNC
 extern vmCvar_t cg_synchronousClients;
 #endif // ALLOW_GSYNC
@@ -2819,11 +2824,16 @@ extern vmCvar_t cg_fireteamLocationAlign;
 extern vmCvar_t cg_fireteamNameMaxChars;
 extern vmCvar_t cg_fireteamNameAlign;
 extern vmCvar_t cg_fireteamSprites;
+extern vmCvar_t cg_fireteamAlpha;
+extern vmCvar_t cg_fireteamBgAlpha;
+
 extern vmCvar_t cg_simpleItems;
 extern vmCvar_t cg_simpleItemsScale;
 
 extern vmCvar_t cg_weapaltReloads;
 extern vmCvar_t cg_weapaltSwitches;
+
+extern vmCvar_t cg_sharetimerText;
 
 extern vmCvar_t cg_automapZoom;
 
@@ -2831,6 +2841,8 @@ extern vmCvar_t cg_drawTime;
 
 extern vmCvar_t cg_popupFadeTime;
 extern vmCvar_t cg_popupStayTime;
+extern vmCvar_t cg_popupTime;
+extern vmCvar_t cg_numPopups;
 extern vmCvar_t cg_popupFilter;
 extern vmCvar_t cg_popupBigFilter;
 extern vmCvar_t cg_graphicObituaries;
@@ -2844,6 +2856,7 @@ extern vmCvar_t cg_fontScaleCN;
 // unlagged optimized prediction
 extern vmCvar_t cg_optimizePrediction;
 extern vmCvar_t cg_debugPlayerHitboxes;
+extern vmCvar_t cg_debugBullets;
 
 // scoreboard
 extern vmCvar_t cg_scoreboard;
@@ -2876,6 +2889,12 @@ extern vmCvar_t cg_chatBackgroundAlpha;
 extern vmCvar_t cg_chatShadow;
 extern vmCvar_t cg_chatFlags;
 extern vmCvar_t cg_chatLineWidth;
+
+extern vmCvar_t cg_activateLean;
+
+extern vmCvar_t cg_healthDynamicColor;
+
+extern vmCvar_t cg_drawBreathPuffs;
 
 // local clock flags
 #define LOCALTIME_ON                0x01
@@ -2933,6 +2952,7 @@ int CG_LastAttacker(void);
 void CG_KeyEvent(int key, qboolean down);
 void CG_MouseEvent(int x, int y);
 void CG_EventHandling(int type, qboolean fForced);
+int CG_RoundTime(qtime_t *qtime);
 
 qboolean CG_GetTag(int clientNum, const char *tagname, orientation_t *orientation);
 qboolean CG_GetWeaponTag(int clientNum, const char *tagname, orientation_t *orientation);
@@ -3043,6 +3063,7 @@ void CG_AddLineToScene(const vec3_t start, const vec3_t end, const vec4_t colour
 void CG_DrawRotateGizmo(const vec3_t origin, float radius, int numSegments, int activeAxis);
 void CG_DrawMoveGizmo(const vec3_t origin, float radius, int activeAxis);
 
+void CG_DrawMissileCamera(rectDef_t *rect);
 
 /**
  * @struct scrollText_s
@@ -3097,6 +3118,8 @@ void CG_DrawShoutcastTimer(void);
 void CG_DrawShoutcastPowerups(void);
 void CG_DrawMinimap(void);
 
+void CG_ToggleShoutcasterMode(int shoutcaster);
+void CG_ShoutcastCheckKeyCatcher(int keycatcher);
 void CG_Shoutcast_KeyHandling(int key, qboolean down);
 qboolean CG_ShoutcastCheckExecKey(int key, qboolean doaction);
 
@@ -3116,6 +3139,8 @@ void CG_BuildSolidList(void);
 int CG_PointContents(const vec3_t point, int passEntityNum);
 void CG_Trace(trace_t *result, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int skipNumber, int mask);
 void CG_PredictPlayerState(void);
+float CG_ClientHitboxMaxZ(entityState_t *hitEnt, float def);
+qboolean CG_CheckPredictableEvent(int event);
 
 // cg_edv.c
 void CG_RunBindingBuf(int key, qboolean down, char *buf);
@@ -3260,6 +3285,7 @@ void CG_InitLocalEntities(void);
 localEntity_t *CG_AllocLocalEntity(void);
 localEntity_t *CG_FindLocalEntity(int index, int sideNum);
 void CG_AddLocalEntities(void);
+void CG_DemoRewindFixLocalEntities(void);
 
 // cg_locations.c
 // these are called from the console command
@@ -3343,6 +3369,7 @@ void CG_LoadRankIcons(void);
 
 void CG_ParseFireteams(void);
 void CG_ParseOIDInfos(void);
+char *CG_SpawnTimerText(void);
 //oidInfo_t *CG_OIDInfoForEntityNum(int num);
 
 // cg_consolecmds.c
@@ -3369,6 +3396,7 @@ void CG_ParseServerinfo(void);
 void CG_ParseSysteminfo(void);
 void CG_ParseModInfo(void);
 void CG_ParseWolfinfo(void);
+void CG_ParseServerToggles(void);
 void CG_ParseSpawns(void);
 void CG_ParseServerVersionInfo(const char *pszVersionInfo);
 void CG_ParseReinforcementTimes(const char *pszReinfSeedString);
@@ -3389,6 +3417,7 @@ void CG_parseWeaponStats_cmd(void(txt_dump) (const char *));
 //void CG_scores_cmd(void);
 
 void CG_UpdateSvCvars(void);
+void CG_ResetVoiceSprites(qboolean revived);
 
 /**
  * @struct consoleCommand_t
@@ -4083,6 +4112,9 @@ typedef struct hudComponent_s
 	rectDef_t location;
 	int visible;
 	int style;
+	float scale;
+	vec4_t color;
+	int offset;
 } hudComponent_t;
 
 typedef struct hudStructure_s
@@ -4120,6 +4152,13 @@ typedef struct hudStructure_s
 	hudComponent_t followtext;
 	hudComponent_t demotext;
 
+	hudComponent_t missilecamera;
+
+	hudComponent_t sprinttext;
+	hudComponent_t breathtext;
+	hudComponent_t weaponchargetext; // 32
+
+	hudComponent_t *components[32];
 } hudStucture_t;
 
 hudStucture_t *CG_GetActiveHUD();

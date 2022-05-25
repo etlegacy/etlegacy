@@ -2270,7 +2270,8 @@ static void mdx_RunLerpFrame(gentity_t *ent, glerpFrame_t *lf, int newAnimation,
 	anim = lf->animation;
 
 	// check for forcing last frame
-	if (ent->s.eType == ET_CORPSE)    // jaquboss leave the last frame so we can do corpse animation just once
+    // leave the last frame so we can do corpse animation just once
+	if (ent->s.eType == ET_CORPSE)
 	{
 		lf->oldFrame      = lf->frame = anim->firstFrame + anim->numFrames - 1;
 		lf->oldFrameModel = lf->frameModel = anim->mdxFile;

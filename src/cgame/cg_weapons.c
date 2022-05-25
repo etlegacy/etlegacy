@@ -2597,7 +2597,7 @@ qboolean CG_GetPartFramesFromWeap(centity_t *cent, refEntity_t *part, refEntity_
 	}
 
 	// check draw bit
-	if (anim->moveSpeed & (1 << (partid + 8)))           // hide bits are in high byte
+	if (!anim || anim->moveSpeed & (1 << (partid + 8)))           // hide bits are in high byte
 	{
 		return qfalse;  // not drawn for current sequence
 	}
@@ -2877,6 +2877,11 @@ static void CG_WeaponAnimation(playerState_t *ps, weaponInfo_t *weapon, int *wea
 	{
 		*weapOld = *weap = CG_DefaultAnimFrameForWeapon(ps->weapon);
 		return;
+	}
+
+	if (cgs.matchPaused)
+	{
+		cent->pe.weap.animationTime += cg.frametime;
 	}
 
 	CG_RunWeapLerpFrame(ci, weapon, &cent->pe.weap, ps->weapAnim, 1);
@@ -3698,12 +3703,29 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 		// no flamethrower flame on prone moving or dead players
 		if ((cent->currentState.eFlags & EF_FIRING) && !(cent->currentState.eFlags & (EF_PRONE_MOVING | EF_DEAD)))
 		{
+			trace_t trace;
+			vec3_t  muzzlePoint, angles, forward;
+
+			VectorCopy(flash.origin, muzzlePoint);
+
+			CG_Trace(&trace, muzzlePoint, NULL, NULL, muzzlePoint, cent->currentState.number, MASK_SHOT | MASK_WATER);
+
+			if (trace.startsolid)
+			{
+				AxisToAngles(flash.axis, angles);
+				AngleVectors(angles, forward, NULL, NULL);
+				VectorMA(muzzlePoint, -42, forward, muzzlePoint);
+
+				CG_Trace(&trace, muzzlePoint, NULL, NULL, flash.origin, cent->currentState.number, MASK_SHOT | MASK_WATER);
+				VectorCopy(trace.endpos, muzzlePoint);
+			}
+
 			// Flamethrower effect
-			CG_FlamethrowerFlame(cent, flash.origin);
+			CG_FlamethrowerFlame(cent, muzzlePoint);
 
 			if (weapon->flashDlightColor[0] != 0.f || weapon->flashDlightColor[1] != 0.f || weapon->flashDlightColor[2] != 0.f)
 			{
-				trap_R_AddLightToScene(flash.origin, 320, 1.25 + (rand() & 31) / 128.0f, weapon->flashDlightColor[0],
+				trap_R_AddLightToScene(muzzlePoint, 320, 1.25 + (rand() & 31) / 128.0f, weapon->flashDlightColor[0],
 				                       weapon->flashDlightColor[1], weapon->flashDlightColor[2], 0, 0);
 			}
 		}
@@ -3825,9 +3847,9 @@ void CG_AddViewWeapon(playerState_t *ps)
 	}
 
 	// drop gun lower at higher fov
-	if (cg_fov.value > 90)
+	if (cg_fov.value > 75)
 	{
-		fovOffset = -0.2f * (cg_fov.value - 90);
+		fovOffset = -0.2f * (cg_fov.value - 75);
 	}
 	else
 	{
@@ -6676,6 +6698,10 @@ qboolean CG_CalcMuzzlePoint(int entityNum, vec3_t muzzle)
 				VectorMA(muzzle, 14, forward, muzzle);
 			}
 		}
+		else if (cent->currentState.eFlags & EF_CROUCHING)
+		{
+			muzzle[2] += CROUCH_VIEWHEIGHT;
+		}
 		else
 		{
 			muzzle[2] += DEFAULT_VIEWHEIGHT;
@@ -6818,7 +6844,7 @@ void CG_Bullet(int weapon, vec3_t end, int sourceEntityNum, qboolean flesh, int 
 
 	// if the shooter is currently valid, calc a source point and possibly
 	// do trail effects
-	if (cg_tracerChance.value > 0)
+	if (cg_tracerChance.value > 0 || cg_debugBullets.integer)
 	{
 		if (CG_CalcMuzzlePoint(sourceEntityNum, start))
 		{
@@ -6845,6 +6871,11 @@ void CG_Bullet(int weapon, vec3_t end, int sourceEntityNum, qboolean flesh, int 
 					trap_CM_BoxTrace(&trace, start, end, NULL, NULL, 0, CONTENTS_WATER);
 					CG_BubbleTrail(end, trace.endpos, .5, 8);
 				}
+			}
+
+			if (cg_debugBullets.integer)
+			{
+				CG_RailTrail(tv(0.0f, 1.0f, 0.0f), start, end, 0, 0);
 			}
 
 			if (cg_tracers.integer)

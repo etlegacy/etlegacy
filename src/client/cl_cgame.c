@@ -187,7 +187,7 @@ qboolean CL_GetSnapshot(int snapshotNumber, snapshot_t *snapshot)
 	for (i = 0 ; i < count ; i++)
 	{
 		snapshot->entities[i] =
-		    cl.parseEntities[(clSnap->parseEntitiesNum + i) & (MAX_PARSE_ENTITIES - 1)];
+			cl.parseEntities[(clSnap->parseEntitiesNum + i) & (MAX_PARSE_ENTITIES - 1)];
 	}
 
 	// FIXME: configstring changes and server commands!!!
@@ -613,7 +613,7 @@ static int FloatAsInt(float f)
  * @param[in] key to query
  * @return true if value for key is found
  */
-static qboolean CL_GetValue(char *value, int valueSize, const char *key)
+static qboolean CL_CG_GetValue(char *value, int valueSize, const char *key)
 {
 	return qfalse;
 }
@@ -1040,7 +1040,7 @@ intptr_t CL_CgameSystemCalls(intptr_t *args)
 		return 0;
 
 	case CG_TRAP_GETVALUE:
-		return CL_GetValue(VMA(1), args[2], VMA(3));
+		return CL_CG_GetValue(VMA(1), args[2], VMA(3));
 
 	default:
 		Com_Error(ERR_DROP, "Bad cgame system trap: %ld", (long int) args[0]);
@@ -1182,7 +1182,7 @@ void CL_InitCGame(void)
 	cgvm = VM_Create("cgame", qtrue, CL_CgameSystemCalls, VMI_NATIVE);
 	if (!cgvm)
 	{
-		Com_Error(ERR_DROP, "VM_Create on cgame failed");
+		VM_Error(ERR_DROP, "cgame", Sys_GetDLLName("cgame"));
 	}
 	cls.state = CA_LOADING;
 

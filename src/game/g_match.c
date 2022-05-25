@@ -291,13 +291,19 @@ void G_addStats(gentity_t *targ, gentity_t *attacker, int damage, meansOfDeath_t
 	{
 		if (attacker && attacker->client)
 		{
-			int x;
+			weapon_t weap = GetMODTableData(mod)->weaponIcon;
 
-			x = attacker->client->sess.aWeaponStats[GetMODTableData(mod)->indexWeaponStat].atts--;
-
-			if (x < 1)
+			// don't count hits/shots for hitscan weapons
+			if (!GetWeaponTableData(weap)->splashDamage)
 			{
-				attacker->client->sess.aWeaponStats[GetMODTableData(mod)->indexWeaponStat].atts = 1;
+				int x;
+
+				x = attacker->client->sess.aWeaponStats[GetMODTableData(mod)->indexWeaponStat].atts--;
+
+				if (x < 1)
+				{
+					attacker->client->sess.aWeaponStats[GetMODTableData(mod)->indexWeaponStat].atts = 1;
+				}
 			}
 
 			if (targ->health <= FORCE_LIMBO_HEALTH)
@@ -504,7 +510,7 @@ char *G_createStats(gentity_t *ent)
 	// workaround to always hide previous map stats in warmup
 	// Stats will be cleared correctly when the match actually starts
 	if ((g_gamestate.integer == GS_WARMUP || g_gamestate.integer == GS_WARMUP_COUNTDOWN) &&
-	    !(g_gametype.integer == GT_WOLF_STOPWATCH && g_currentRound.integer == 1))
+	    !(g_gametype.integer == GT_WOLF_STOPWATCH))
 	{
 		dwWeaponMask     = 0;
 		strWeapInfo[0]   = '\0';
@@ -604,7 +610,7 @@ void G_parseStats(const char *pszStatsInfo)
 
 	cl = &level.clients[dwClientID];
 
-#define GETVAL(x) if ((tmp = strchr(tmp, ' ')) == NULL) { return; } x = Q_atoi(++tmp);
+#define GETVAL(x) if ((tmp = strchr(tmp, ' ')) == NULL) { return; } (x) = Q_atoi(++tmp);
 
 	GETVAL(cl->sess.rounds);
 	GETVAL(dwWeaponMask);
@@ -620,7 +626,7 @@ void G_parseStats(const char *pszStatsInfo)
 		}
 	}
 
-	// These only gets generated when there are some weaponstats.
+	// These only gets generated when there are some weapon stats.
 	// This is what the client expects.
 	if (dwWeaponMask != 0)
 	{

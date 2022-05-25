@@ -122,7 +122,8 @@ void G_BounceMissile(gentity_t *ent, trace_t *trace)
 
 		// check for stop
 		//if ( trace->plane.normal[2] > 0.2 && VectorLengthSquared( ent->s.pos.trDelta ) < Square(40) )
-		if (trace->plane.normal[2] > 0.2f && VectorLengthSquared(relativeDelta) < 1600) // Square(40)
+		if ((trace->plane.normal[2] > 0.2f && VectorLengthSquared(relativeDelta) < 1600)
+		    || (!trace->fraction && !(GetWeaponTableData(ent->s.weapon)->type & WEAPON_TYPE_RIFLENADE))) // Square(40)
 		{
 			// make the world the owner of the ent, so the player can shoot it after it stops moving
 			if (ent->r.contents == CONTENTS_CORPSE)
@@ -447,10 +448,10 @@ void G_ExplodeMissile(gentity_t *ent)
 }
 
 /**
- * @brief Landmine_Check_Ground
+ * @brief MissileGroundCheck
  * @param[in,out] self
  */
-void Landmine_Check_Ground(gentity_t *self)
+void MissileGroundCheck(gentity_t *self)
 {
 	vec3_t  mins, maxs;
 	vec3_t  start, end;
@@ -481,10 +482,12 @@ void G_RunMissile(gentity_t *ent)
 	vec3_t  origin, angle;
 	trace_t tr;
 
-	// shootable ent (i.e landmine, dynamite, satchel)
-	if (ent->r.contents == CONTENTS_CORPSE)
+	// throwable ent (landmine, dynamite, satchel, grenade)
+	// if ent already landed but the ground "disappeared" later on (i.e player got gibbed)
+	// check for such change so the ent can still fall down and not be floating in the air
+	if (GetWeaponTableData(ent->s.weapon)->firingMode & WEAPON_FIRING_MODE_THROWABLE)
 	{
-		Landmine_Check_Ground(ent);
+		MissileGroundCheck(ent);
 
 		if (ent->s.groundEntityNum == -1)
 		{
@@ -649,7 +652,11 @@ void G_RunMissile(gentity_t *ent)
 		{
 			// goes through sky
 			ent->count = 1;
-			trap_UnlinkEntity(ent);
+			// omit unlinking entity for missile camera
+			if (!g_cheats.integer && ent->s.weapon != WP_GRENADE_LAUNCHER && ent->s.weapon != WP_GRENADE_PINEAPPLE && ent->s.weapon != WP_GPG40 && ent->s.weapon != WP_M7 && ent->s.weapon != WP_MORTAR2_SET && ent->s.weapon != WP_MORTAR_SET && ent->s.weapon != WP_SMOKE_MARKER && ent->s.weapon != WP_SMOKE_BOMB)
+			{
+				trap_UnlinkEntity(ent);
+			}
 			G_RunThink(ent);
 			return; // keep flying
 		}

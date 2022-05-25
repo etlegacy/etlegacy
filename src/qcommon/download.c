@@ -109,9 +109,6 @@ void Com_ClearStaticDownload(void)
 */
 static void Com_DownloadsComplete(void)
 {
-	// Make sure this is reset to false, what ever has been downloaded
-	dld.systemDownload = qfalse;
-
 	if (Com_CheckUpdateDownloads())
 	{
 		return;
@@ -148,6 +145,13 @@ static void Com_DownloadsComplete(void)
 		Com_Printf("Client download complete\n");
 	}
 #endif
+
+	// reset state for system issued downloads
+	if (dld.systemDownload) {
+		dld.bWWWDlDisconnected = qfalse;
+		Com_ClearStaticDownload();
+		return;
+	}
 
 	// I wonder if that happens - it should not but I suspect it could happen if a download fails in the middle or is aborted
 	etl_assert(!dld.bWWWDlDisconnected);
@@ -468,11 +472,12 @@ qboolean Com_WWWBadChecksum(const char *pakname)
  * @param[in] remote
  * @param[in] filename
  */
-static void Com_SetupDownloadRaw(const char *remote, const char *path, const char *filename, const char *tempName, qboolean systemDownload)
+static void Com_SetupDownloadRaw(const char *remote, const char *path, const char *filename, const char *tempName, qboolean systemDownload, qboolean noReconnect)
 {
 	dld.bWWWDl             = qtrue;
 	dld.bWWWDlDisconnected = qtrue;
 	dld.systemDownload     = systemDownload;
+	dld.noReconnect        = noReconnect;
 
 	// download format: @remotename@localname
 	Q_strncpyz(dld.downloadList, va("@%s@%s", filename, filename), MAX_INFO_STRING);
@@ -579,7 +584,7 @@ void Com_CheckCaCertStatus(void)
 
 	if (downloadFile)
 	{
-		Com_SetupDownloadRaw(MIRROR_SERVER_URL "/certificates", "", CA_CERT_FILE, CA_CERT_FILE TMP_FILE_EXTENSION, qtrue);
+		Com_SetupDownloadRaw(MIRROR_SERVER_URL "/certificates", "", CA_CERT_FILE, CA_CERT_FILE TMP_FILE_EXTENSION, qtrue, qtrue);
 	}
 }
 #endif

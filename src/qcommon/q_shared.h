@@ -100,6 +100,11 @@
 #pragma warning(disable : 4996) // deprecated POSIX function names
 #endif
 
+// Other platforms define __SSEn__ macros while windows only defines __AVXn__ macros
+#if (defined(__SSE3__) || defined(__AVX2__)) && defined(ETL_ENABLE_SSE)
+#define ETL_SSE 1
+#endif
+
 #ifdef __GNUC__
 #define _attribute(x) __attribute__(x)
 #else
@@ -412,8 +417,8 @@ typedef int clipHandle_t;
 #endif
 
 #ifndef BIT
-#ifdef _WIN64
-#define BIT(x)              (1i64 << (x))
+#if defined(_WIN64) || defined(__LP64__)
+#define BIT(x)              (1ULL << (x))
 #else
 #define BIT(x)              (1U << (x))
 #endif
@@ -430,7 +435,7 @@ typedef int clipHandle_t;
 #define ENABLEBIT(x, y) x |= BIT(y)
 #define CLEARBIT(x, y) x  &= ~BIT(y)
 #define TOGGLEBIT(x, y) x ^= BIT(y)
-#define CHECKBIT(x, y) (x & BIT(y))
+#define CHECKBIT(x, y) ((x) & BIT(y))
 
 /**
  * @def Check whether input value is present or not in given bitwise.
@@ -615,6 +620,7 @@ void *Hunk_Alloc(size_t size, ha_pref preference);
 #define Com_Dealloc free
 
 #define CTRL(a) ((a) - 'a' + 1)
+#define MOD(a, b) ((((a) % (b)) + (b)) % (b))
 
 /**
  * @enum CIN_Flags
@@ -641,8 +647,8 @@ MATHLIB
 
 qboolean Com_PowerOf2(int x);
 
-#define Com_ByteClamp(x) ((x < 0) ? 0 : (x > 255) ? 255 : x)
-#define Com_Clamp(min, max, value) ((value < min) ? min : (value > max) ? max : value)
+#define Com_ByteClamp(x) (((x) < 0) ? 0 : ((x) > 255) ? 255 : (x))
+#define Com_Clamp(min, max, value) (((value) < (min)) ? (min) : ((value) > (max)) ? (max) : (value))
 #define Com_Nelem(a) (int)(sizeof(a) / sizeof(a)[0])
 void *Com_AnyOf(void **ptr, int n);
 
@@ -912,32 +918,35 @@ default values.
 ==========================================================
 */
 
-#define CVAR_ARCHIVE        1                    ///< set to cause it to be saved to vars.rc
+#define CVAR_ARCHIVE        BIT(0)               ///< set to cause it to be saved to vars.rc
                                                  ///< used for system variables, not for player
                                                  ///< specific configurations
-#define CVAR_USERINFO       2                    ///< sent to server on connect or change
-#define CVAR_SERVERINFO     4                    ///< sent in response to front end requests
-#define CVAR_SYSTEMINFO     8                    ///< these cvars will be duplicated on all clients
-#define CVAR_INIT           16                   ///< don't allow change from console at all,
+#define CVAR_USERINFO       BIT(1)               ///< sent to server on connect or change
+#define CVAR_SERVERINFO     BIT(2)               ///< sent in response to front end requests
+#define CVAR_SYSTEMINFO     BIT(3)               ///< these cvars will be duplicated on all clients
+#define CVAR_INIT           BIT(4)               ///< don't allow change from console at all,
                                                  ///< but can be set from the command line
-#define CVAR_LATCH          32                   ///< will only change when C code next does
+#define CVAR_LATCH          BIT(5)               ///< will only change when C code next does
                                                  ///< a Cvar_Get(), so it can't be changed without proper initialization.
                                                  ///< will be set, even though the value hasn't changed yet
-#define CVAR_ROM                    64           ///< display only, cannot be set by user at all
-#define CVAR_USER_CREATED           128          ///< created by a set command
-#define CVAR_TEMP                   256          ///< can be set even when cheats are disabled, but is not archived
-#define CVAR_CHEAT                  512          ///< can not be changed if cheats are disabled
-#define CVAR_NORESTART              1024         ///< do not clear when a cvar_restart is issued
-#define CVAR_WOLFINFO               2048         ///< like userinfo, but for wolf multiplayer info
-#define CVAR_UNSAFE                 4096         ///< unsafe system cvars (renderer, sound settings, anything that might cause a crash)
-#define CVAR_SERVERINFO_NOUPDATE    8192         ///< WONT automatically send this to clients, but server browsers will see it
-#define CVAR_SERVER_CREATED         16384        ///< cvar was created by a server the client connected to.
-#define CVAR_VM_CREATED             32768        ///< cvar was created exclusively in one of the VMs.
-#define CVAR_PROTECTED              65536        ///< prevent modifying this var from VMs or the server
-#define CVAR_SHADER                 131072       ///< we need to recompile the glsl shaders
-#define CVAR_NOTABCOMPLETE          262144       ///< Don't autocomplete this on the console
-#define CVAR_MODIFIED               1073741824   ///< Cvar was modified
-#define CVAR_NONEXISTENT            2147483648U  ///< Cvar doesn't exist.
+#define CVAR_ROM                    BIT(6)       ///< display only, cannot be set by user at all
+#define CVAR_USER_CREATED           BIT(7)       ///< created by a set command
+#define CVAR_TEMP                   BIT(8)       ///< can be set even when cheats are disabled, but is not archived
+#define CVAR_CHEAT                  BIT(9)       ///< can not be changed if cheats are disabled
+#define CVAR_NORESTART              BIT(10)      ///< do not clear when a cvar_restart is issued
+#define CVAR_WOLFINFO               BIT(11)      ///< like userinfo, but for wolf multiplayer info
+#define CVAR_UNSAFE                 BIT(12)      ///< unsafe system cvars (renderer, sound settings, anything that might cause a crash)
+#define CVAR_SERVERINFO_NOUPDATE    BIT(13)      ///< WONT automatically send this to clients, but server browsers will see it
+#define CVAR_SERVER_CREATED         BIT(14)      ///< cvar was created by a server the client connected to.
+#define CVAR_VM_CREATED             BIT(15)      ///< cvar was created exclusively in one of the VMs.
+#define CVAR_PROTECTED              BIT(16)      ///< prevent modifying this var from VMs or the server
+#define CVAR_SHADER                 BIT(17)      ///< we need to recompile the glsl shaders
+#define CVAR_NOTABCOMPLETE          BIT(18)      ///< Don't autocomplete this on the console
+#define CVAR_NODEFAULT              BIT(19)      ///< do not write to config if matching with default value
+#define CVAR_MODIFIED               BIT(30)      ///< Cvar was modified
+#define CVAR_NONEXISTENT            BIT(31)      ///< Cvar doesn't exist.
+
+#define CVAR_ARCHIVE_ND     (CVAR_ARCHIVE | CVAR_NODEFAULT)
 
 /**
  * @struct cvar_s
@@ -1176,9 +1185,9 @@ typedef enum
 	MAX_AISTATES
 } aistateEnum_t;
 
-#define REF_FORCE_DLIGHT    (1 << 31)   ///< passed in through overdraw parameter, force this dlight under all conditions
-#define REF_JUNIOR_DLIGHT   (1 << 30)   ///< this dlight does not light surfaces.  it only affects dynamic light grid
-#define REF_DIRECTED_DLIGHT (1 << 29)   ///< global directional light, origin should be interpreted as a normal vector
+#define REF_FORCE_DLIGHT    BIT(31)   ///< passed in through overdraw parameter, force this dlight under all conditions
+#define REF_JUNIOR_DLIGHT   BIT(30)   ///< this dlight does not light surfaces.  it only affects dynamic light grid
+#define REF_DIRECTED_DLIGHT BIT(29)   ///< global directional light, origin should be interpreted as a normal vector
 
 // bit field limits
 #define MAX_STATS               16
@@ -1856,7 +1865,7 @@ typedef struct userAgent_s
 } userAgent_t;
 
 void Com_ParseUA(userAgent_t *ua, const char *string);
-#define Com_IsCompatible(ua, flag) ((ua)->compatible & flag)
+#define Com_IsCompatible(ua, flag) ((ua)->compatible & (flag))
 
 //c99 issue pre 2013 VS do not have support for this
 #if defined(_MSC_VER) && (_MSC_VER < 1800)
@@ -1893,7 +1902,7 @@ void Com_ParseUA(userAgent_t *ua, const char *string);
  *
  * @brief This should be something like INT_MAX but that would need limits.h everywhere so meh and negative values should be somewhat safe
  */
-#define VM_CALL_END -1337
+#define VM_CALL_END (-1337)
 #define SystemCall(...) syscall(__VA_ARGS__, VM_CALL_END)
 
 #ifdef ETLEGACY_DEBUG

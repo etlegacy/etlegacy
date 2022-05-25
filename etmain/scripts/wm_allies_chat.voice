@@ -1,0 +1,572 @@
+////////////////////////////////////////
+// quickchat script for allied player //
+////////////////////////////////////////
+
+male
+
+
+////////////////////////
+// wm_quickstatements //
+////////////////////////
+
+PathCleared
+{
+	sound/chat/allies/11a.wav	"Path cleared."
+	sound/chat/allies/11b.wav	"Path cleared."
+}
+
+EnemyWeak
+{
+	sound/chat/allies/12a.wav	"The enemy is weakened."
+	sound/chat/allies/12b.wav	"The enemy is weakened."
+}
+
+AllClear
+{
+	sound/chat/allies/13a.wav	"All clear."
+	sound/chat/allies/13b.wav	"All clear."
+}
+
+Incoming
+{
+	sound/chat/allies/14a.wav	"Incoming!"
+	sound/chat/allies/14b.wav	"Incoming!"
+}
+
+FireInTheHole
+{
+	sound/chat/allies/15a.wav	"Fire in the hole!"
+	sound/chat/allies/15b.wav	"Fire in the hole!"
+}
+
+OnDefense
+{
+	sound/chat/allies/16a.wav	"I'm on defense."
+	sound/chat/allies/16b.wav	"I'm on defense."
+}
+
+OnOffense
+{
+	sound/chat/allies/17a.wav	"I'm on offense."
+	sound/chat/allies/17b.wav	"I'm on offense."
+}
+
+TakingFire
+{
+	sound/chat/allies/18a.wav	"Taking fire!"
+	sound/chat/allies/18b.wav	"Taking fire!"
+}
+
+MinesCleared
+{
+	sound/chat/allies/19a.wav	"Mines cleared."
+	sound/chat/allies/19b.wav	"Mines cleared."
+}
+
+EnemyDisguised
+{
+	sound/chat/allies/10a.wav	"Enemy in disguise."
+	sound/chat/allies/10b.wav	"Enemy in disguise."
+}
+
+
+//////////////////////
+// wm_quickrequests //
+//////////////////////
+
+Medic
+{
+	sound/chat/allies/21a.wav	"Need a Medic!"		sprites/voiceMedic
+	sound/chat/allies/21b.wav	"I need a Medic!"	sprites/voiceMedic
+}
+
+NeedAmmo
+{
+	sound/chat/allies/22a.wav	"I need ammo!"		sprites/voiceAmmo
+}
+
+NeedBackup
+{
+	sound/chat/allies/23a.wav	"I need backup!"
+	sound/chat/allies/23b.wav	"I need backup!"
+}
+
+NeedEngineer
+{
+	sound/chat/allies/24a.wav	"We need an engineer!"
+	sound/chat/allies/24b.wav	"We need an engineer!"
+}
+
+CoverMe
+{
+	sound/chat/allies/25a.wav	"Covering fire!"
+	sound/chat/allies/25b.wav	"Covering fire!"
+	sound/chat/allies/25c.wav	"Cover me!"
+	sound/chat/allies/25d.wav	"Cover me!"
+}
+
+HoldFire
+{
+	sound/chat/allies/26a.wav	"Hold your fire!"	gfx/2d/friendlycross
+	sound/chat/allies/26b.wav	"Hold your fire!"	gfx/2d/friendlycross
+}
+
+WhereTo
+{
+	sound/chat/allies/27a.wav	"Where to?"
+	sound/chat/allies/27b.wav	"Where to?"
+}
+
+NeedOps
+{
+	sound/chat/allies/28a.wav	"We need Covert Ops!"
+	sound/chat/allies/28b.wav	"We need Covert Ops!"
+}
+
+
+//////////////////////
+// wm_quickcommands //
+//////////////////////
+
+FollowMe
+{
+	sound/chat/allies/31a.wav	"Follow me!"
+	sound/chat/allies/31b.wav	"Follow me!"
+}
+
+LetsGo
+{
+	sound/chat/allies/32a.wav	"Let's go!"
+	sound/chat/allies/32b.wav	"Let's go!"
+}
+
+Move
+{
+	sound/chat/allies/33a.wav	"Move!"
+	sound/chat/allies/33b.wav	"Move!"
+}
+
+ClearPath
+{
+	sound/chat/allies/34a.wav	"Clear the path!"
+	sound/chat/allies/34b.wav	"Clear the path!"
+}
+
+DefendObjective
+{
+	sound/chat/allies/35a.wav	"Defend our objective!"
+	sound/chat/allies/35b.wav	"Defend our objective!"
+}
+
+DisarmDynamite
+{
+	sound/chat/allies/36a.wav	"Disarm the dynamite!"
+	sound/chat/allies/36b.wav	"Disarm the dynamite!"
+}
+
+ClearMines
+{
+	sound/chat/allies/37a.wav	"Clear the mines!"
+	sound/chat/allies/37b.wav	"Clear the mines!"
+}
+
+ReinforceDefense
+{
+	sound/chat/allies/38a.wav	"Reinforce the defense!"
+	sound/chat/allies/38b.wav	"Reinforce the defense!"
+}
+
+ReinforceOffense
+{
+	sound/chat/allies/39a.wav	"Reinforce the offense!"
+	sound/chat/allies/39b.wav	"Reinforce the offense!"
+}
+
+
+//////////////////
+// wm_quickmisc //
+//////////////////
+
+Affirmative
+{
+	sound/chat/allies/41a.wav	"Affirmative!"	sprites/greentick
+	sound/chat/allies/41b.wav	"Yes!"			sprites/greentick	
+	sound/chat/allies/41c.wav	"Yes!"			sprites/greentick
+}
+
+Negative
+{
+	sound/chat/allies/42a.wav	"No!"		sprites/redcross
+	sound/chat/allies/42b.wav	"No!"		sprites/redcross
+	sound/chat/allies/42c.wav	"Negative!"	sprites/redcross
+	sound/chat/allies/42d.wav	"Negative!"	sprites/redcross
+}
+
+Thanks
+{
+	sound/chat/allies/43a.wav	"Thanks!"
+	sound/chat/allies/43b.wav	"Thanks!"
+	sound/chat/allies/43c.wav	"Thank you!"
+	sound/chat/allies/43d.wav	"Thank you!"
+}
+
+Welcome
+{
+	sound/chat/allies/44a.wav	"You're welcome."
+	sound/chat/allies/44b.wav	"You're welcome."
+	sound/chat/allies/44c.wav	"No problem."
+	sound/chat/allies/44d.wav	"No problem."
+}
+
+Sorry
+{
+	sound/chat/allies/45a.wav	"Sorry!"
+	sound/chat/allies/45b.wav	"Sorry!"
+	sound/chat/allies/45c.wav	"Sorry!"
+}
+
+Oops
+{
+	sound/chat/allies/46a.wav	"Oops!"
+	sound/chat/allies/46b.wav	"Oops!"
+	sound/chat/allies/46c.wav	"Oops!"
+}
+
+
+////////////////////
+// wm_quickglobal //
+////////////////////
+
+Hi
+{
+	sound/chat/allies/54a.wav	"Hi!"
+	sound/chat/allies/54b.wav	"Hi!"
+	sound/chat/allies/54c.wav	"Hi!"
+	sound/chat/allies/54d.wav	"Hello!"
+	sound/chat/allies/54e.wav	"Hello!"
+}
+
+Bye
+{
+	sound/chat/allies/55a.wav	"Bye."
+	sound/chat/allies/55b.wav	"Bye."
+	sound/chat/allies/55c.wav	"Bye."
+	sound/chat/allies/55d.wav	"Good bye."
+	sound/chat/allies/55e.wav	"Good bye."
+}
+
+GreatShot
+{
+	sound/chat/allies/56a.wav	"Great shot!"
+	sound/chat/allies/56b.wav	"Great shot!"
+}
+
+Cheer
+{
+	sound/chat/allies/57a.wav	"Hahaa!"
+	sound/chat/allies/57b.wav	"Alright!"
+	sound/chat/allies/57c.wav	"Yes!"
+	sound/chat/allies/57d.wav	"Yes!"
+	sound/chat/allies/57e.wav	"'Atta way, baby!"
+	sound/chat/allies/57f.wav	"You got it, man!"
+	sound/chat/allies/57g.wav	"Yeehaa!"
+	sound/chat/allies/57h.wav	"Yoohoo!"
+	sound/chat/allies/57i.wav	"Yeah!"
+	sound/chat/allies/57j.wav	"Yeah!"
+	sound/chat/allies/57k.wav	"Yeah!"
+	sound/chat/allies/57l.wav	"Woo!"
+}
+
+/////////////////////
+// wm_quickglobal2 //
+/////////////////////
+
+GoodGame
+{
+	sound/chat/allies/586a.wav	"Good game!"
+	sound/chat/allies/586b.wav	"Good game!"
+	sound/chat/allies/586c.wav	"Good game!"
+}
+
+
+///////////////////////
+// wm_sayplayerclass //
+///////////////////////
+
+IamSoldier
+{
+	sound/chat/allies/61a.wav	"I'm a soldier."	gfx/limbo/ic_soldier
+	sound/chat/allies/61b.wav	"I'm a soldier."	gfx/limbo/ic_soldier
+}
+
+IamMedic
+{
+	sound/chat/allies/62a.wav	"I'm a medic."	gfx/limbo/ic_medic
+	sound/chat/allies/62b.wav	"I'm a medic."	gfx/limbo/ic_medic
+}
+
+IamEngineer
+{
+	sound/chat/allies/63a.wav	"I'm an engineer."	gfx/limbo/ic_engineer
+	sound/chat/allies/63b.wav	"I'm an engineer."	gfx/limbo/ic_engineer
+}
+
+IamFieldOps
+{
+	sound/chat/allies/64a.wav	"I'm a field ops."	gfx/limbo/ic_fieldops
+}
+
+IamCovertOps
+{
+	sound/chat/allies/65a.wav	"I'm a covert ops."	gfx/limbo/ic_covertops
+}
+
+
+////////////////////
+// wm_quickattack //
+////////////////////
+
+DestroyPrimary
+{
+	sound/chat/allies/71a.wav	"Destroy primary objective!"
+	sound/chat/allies/71b.wav	"Destroy primary objective!"
+}
+
+DestroySecondary
+{
+	sound/chat/allies/72a.wav	"Destroy secondary objective!"
+	sound/chat/allies/72b.wav	"Destroy secondary objective!"
+}
+
+DestroyConstruction
+{
+	sound/chat/allies/73a.wav	"Destroy construction!"
+	sound/chat/allies/73b.wav	"Destroy construction!"
+}
+
+RepairVehicle
+{
+	sound/chat/allies/75a.wav	"Repair the vehicle!"
+	sound/chat/allies/75b.wav	"Repair the vehicle!"
+}
+
+DestroyVehicle
+{
+	sound/chat/allies/76a.wav	"Disable the vehicle!"
+	sound/chat/allies/76b.wav	"Disable the vehicle!"
+}
+
+EscortVehicle
+{
+	sound/chat/allies/77a.wav	"Escort the vehicle!"
+	sound/chat/allies/77b.wav	"Escort the vehicle!"
+}
+
+
+////////////////////////
+// wm_quickobjectives //
+////////////////////////
+
+CommandAcknowledged
+{
+	sound/chat/allies/81a.wav	"Command acknowledged!"
+	sound/chat/allies/81b.wav	"Command acknowledged!"
+	sound/chat/allies/81c.wav	"Right away!"
+	sound/chat/allies/81d.wav	"Right away!"
+}
+
+CommandDeclined
+{
+	sound/chat/allies/82a.wav	"Command declined!"
+	sound/chat/allies/82b.wav	"Command declined!"
+	sound/chat/allies/82c.wav	"No can do!"
+	sound/chat/allies/82d.wav	"No can do!"
+}
+
+CommandCompleted
+{
+	sound/chat/allies/83a.wav	"Command completed!"
+	sound/chat/allies/83b.wav	"Command completed!"
+}
+
+ConstructionCommencing
+{
+	sound/chat/allies/84a.wav	"I'm constructing!"
+	sound/chat/allies/84b.wav	"I'm constructing!"
+}
+
+
+///////////////////////
+// wm_quickfireteams //
+///////////////////////
+
+FTAttack
+{
+	sound/chat/allies/98a.wav	"Attack!"
+	sound/chat/allies/98b.wav	"Attack!"
+}
+
+FTFallBack
+{
+	sound/chat/allies/99a.wav	"Fall back!"
+	sound/chat/allies/99b.wav	"Fall back!"
+}
+
+
+//////////////////////////////
+// wm_quickfireteamssoldier //
+//////////////////////////////
+
+FTCoverMe
+{
+	sound/chat/allies/25c.wav	"Cover me!"
+	sound/chat/allies/25d.wav	"Cover me!"
+}
+
+FTCoveringFire
+{
+	sound/chat/allies/25a.wav	"Covering fire!"
+	sound/chat/allies/25b.wav	"Covering fire!"
+}
+
+FTMortar
+{
+	sound/chat/allies/911a.wav	"Deploy mortar!"
+	sound/chat/allies/911b.wav	"Deploy mortar!"
+}
+
+
+////////////////////////////
+// wm_quickfireteamsmedic //
+////////////////////////////
+
+FTHealSquad
+{
+	sound/chat/allies/921a.wav	"Heal the squad!"
+	sound/chat/allies/921b.wav	"Heal the squad!"
+}
+
+FTHealMe
+{
+	sound/chat/allies/922a.wav	"Heal me!"			sprites/voiceMedic
+}
+
+FTReviveTeamMate
+{
+	sound/chat/allies/923a.wav	"Revive team mate!"
+	sound/chat/allies/923b.wav	"Revive team mate!"
+}
+
+FTReviveMe
+{
+	sound/chat/allies/924a.wav	"Revive me!"			sprites/voiceMedic
+	sound/chat/allies/924b.wav	"Revive me!"			sprites/voiceMedic
+}
+
+
+///////////////////////////////
+// wm_quickfireteamsengineer //
+///////////////////////////////
+
+FTDestroyObjective
+{
+	sound/chat/allies/931a.wav	"Destroy the objective!"
+	sound/chat/allies/931b.wav	"Destroy the objective!"
+}
+
+FTRepairObjective
+{
+	sound/chat/allies/932a.wav	"Repair objective!"
+	sound/chat/allies/932b.wav	"Repair objective!"
+}
+
+FTConstructObjective
+{
+	sound/chat/allies/933a.wav	"Construct objective!"
+	sound/chat/allies/933b.wav	"Construct objective!"
+}
+
+FTDisarmDynamite
+{
+	sound/chat/allies/36a.wav	"Disarm the dynamite!"
+	sound/chat/allies/36b.wav	"Disarm the dynamite!"
+}
+
+FTDeployLandmines
+{
+	sound/chat/allies/934a.wav	"Deploy landmines!"
+	sound/chat/allies/934b.wav	"Deploy landmines!"
+}
+
+FTDisarmLandmines
+{
+	sound/chat/allies/935a.wav	"Disarm landmines!"
+	sound/chat/allies/935b.wav	"Disarm landmines!"
+}
+
+
+///////////////////////////////
+// wm_quickfireteamsfieldops //
+///////////////////////////////
+
+FTCallAirStrike
+{
+	sound/chat/allies/941a.wav	"Call an airstrike!"
+	sound/chat/allies/941a.wav	"Call an airstrike!"
+}
+
+FTCallArtillery
+{
+	sound/chat/allies/942a.wav	"Call in artillery!"
+	sound/chat/allies/942b.wav	"Call in artillery!"
+}
+ 
+FTResupplySquad
+{
+	sound/chat/allies/944a.wav	"Resupply the squad!"
+	sound/chat/allies/944b.wav	"Resupply the squad!"
+}
+
+FTResupplyMe
+{
+	sound/chat/allies/945a.wav	"Resupply me!"			sprites/voiceAmmo
+	sound/chat/allies/945b.wav	"Resupply me!"			sprites/voiceAmmo
+}
+
+
+////////////////////////////////
+// wm_quickfireteamscovertops //
+////////////////////////////////
+
+FTExploreArea
+{
+	sound/chat/allies/951a.wav	"Explore the area!"
+	sound/chat/allies/951b.wav	"Explore the area!"
+}
+
+FTCheckLandmines
+{
+	sound/chat/allies/952a.wav	"Check for landmines!"
+}
+
+FTSatchelObjective
+{
+	sound/chat/allies/931a.wav	"Destroy the objective!"
+	sound/chat/allies/931b.wav	"Destroy the objective!"
+}
+
+FTInfiltrate
+{
+	sound/chat/allies/953a.wav	"Infiltrate!"
+	sound/chat/allies/953b.wav	"Infiltrate!"
+}
+
+FTGoUndercover
+{
+	sound/chat/allies/954a.wav	"Go undercover!"
+}
+
+FTProvideSniperCover
+{
+	sound/chat/allies/955a.wav	"Provide sniper cover!"
+}

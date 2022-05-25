@@ -52,6 +52,12 @@ jobs:
             build/legacy/cgame*.so
             build/legacy/ui*.so
 
+      - uses: actions/upload-artifact@v2
+        with:
+          name: lnx64-qagame
+          path: |
+            build/legacy/qagame*.so
+
   osx-mod:
     runs-on: macos-10.15
     steps:
@@ -86,6 +92,12 @@ jobs:
             build/legacy/cgame_mac
             build/legacy/ui_mac
 
+      - uses: actions/upload-artifact@v2
+        with:
+          name: osx-qagame
+          path: |
+            build/legacy/qagame_mac
+
   win-mod:
     runs-on: windows-2019
     steps:
@@ -106,6 +118,12 @@ jobs:
           path: |
             build/legacy/cgame*.dll
             build/legacy/ui*.dll
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: win-qagame
+          path: |
+            build/legacy/qagame*.dll
 
   raspberry_pi-mod:
     runs-on: ubuntu-18.04
@@ -139,6 +157,12 @@ jobs:
             build/legacy/cgame*.so
             build/legacy/ui*.so
 
+      - uses: actions/upload-artifact@v2
+        with:
+          name: raspberry_pi-qagame
+          path: |
+            build/legacy/qagame*.so
+
   android-mod:
     runs-on: ubuntu-18.04
     env:
@@ -170,6 +194,7 @@ jobs:
           chmod -R 775 $GITHUB_WORKSPACE/NDK_ETL/ndk-bundle
           echo "cmake.dir=/usr/" | tee -a local.properties
           echo "ndk.dir=$GITHUB_WORKSPACE/NDK_ETL/ndk-bundle" | tee -a local.properties
+          git fetch --tags --force
           ./gradlew clean build
           ls -R
 
@@ -181,13 +206,6 @@ jobs:
             app/build/intermediates/transforms/mergeJniLibs/release/0/lib/arm64-v8a/libcgame*.so
             app/build/intermediates/transforms/mergeJniLibs/release/0/lib/arm64-v8a/libui*.so
 
-      - name: Upload armeabi-v7a
-        uses: actions/upload-artifact@v2
-        with:
-          name: android-mod
-          path: |
-            app/build/intermediates/transforms/mergeJniLibs/release/0/lib/armeabi-v7a/libcgame*.so
-            app/build/intermediates/transforms/mergeJniLibs/release/0/lib/armeabi-v7a/libui*.so
 
 #   __  __                                                          _
 #  |  \/  |                                                        | |
@@ -225,6 +243,11 @@ jobs:
           git fetch --tags --force
           ./easybuild.sh build -32
 
+      - name: Get the version
+        id: vars
+        run: |
+          echo ::set-output name=tag::$(git describe --abbrev=7 2>/dev/null)
+
       - uses: actions/download-artifact@v2
         with:
           path: build/legacy
@@ -235,10 +258,42 @@ jobs:
         run: |
           zip -rvj legacy_*.pk3 win-mod/*.dll lnx64-mod/*.so osx-mod/* raspberry_pi-mod/*.so android-mod/*.so
 
+      - name: Remove the mod packages
+        uses: geekyeggo/delete-artifact@v1
+        with:
+          failOnError: false
+          name: |
+            lnx64-mod
+            osx-mod
+            win-mod
+            raspberry_pi-mod
+            android-mod
+
+      - name: Remove the qagame packages
+        uses: geekyeggo/delete-artifact@v1
+        with:
+          failOnError: false
+          name: |
+            lnx64-qagame
+            osx-qagame
+            win-qagame
+            raspberry_pi-qagame
+
+      - name: Create mod zip
+        shell: bash
+        working-directory: build/legacy
+        run: |
+          zip -rvj etlegacy-mod-${{ steps.vars.outputs.tag }}.zip legacy_*.pk3 win-qagame/*.dll lnx64-qagame/*.so osx-qagame/* raspberry_pi-qagame/*.so qagame*.so
+
       - uses: actions/upload-artifact@v2
         with:
           name: All-mods
           path: build/legacy/legacy_*.pk3
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: mod-zip
+          path: build/legacy/etlegacy-mod-*.zip
 
       - name: Generate packages
         shell: bash
@@ -473,6 +528,7 @@ jobs:
           chmod -R 775 $GITHUB_WORKSPACE/NDK_ETL/ndk-bundle
           echo "cmake.dir=/usr/" | tee -a local.properties
           echo "ndk.dir=$GITHUB_WORKSPACE/NDK_ETL/ndk-bundle" | tee -a local.properties
+          git fetch --tags --force
           ./gradlew clean assembleRelease
           ls -R
 
@@ -505,11 +561,6 @@ jobs:
         with:
           name: |
             All-mods
-            lnx64-mod
-            osx-mod
-            win-mod
-            raspberry_pi-mod
-            android-mod
 
       - name: Get version status
         id: vars
@@ -531,6 +582,7 @@ jobs:
           find osx-packages/ -name '*' -type f -exec curl --fail -H "Authorization: Bearer ${{ secrets.LEGACY_AUTH }}" -X POST -H "Content-Type: multipart/form-data" -F "data=@{}" -F "platform=osx64" -F"sha=${{ github.sha }}" ${{ secrets.LEGACY_UPLOAD_URL }} \;
           find win-packages/ -name '*' -type f -exec curl --fail -H "Authorization: Bearer ${{ secrets.LEGACY_AUTH }}" -X POST -H "Content-Type: multipart/form-data" -F "data=@{}" -F "platform=win32" -F"sha=${{ github.sha }}" ${{ secrets.LEGACY_UPLOAD_URL }} \;
           find android-packages/ -name '*' -type f -exec curl --fail -H "Authorization: Bearer ${{ secrets.LEGACY_AUTH }}" -X POST -H "Content-Type: multipart/form-data" -F "data=@{}" -F "platform=andro64" -F"sha=${{ github.sha }}" ${{ secrets.LEGACY_UPLOAD_URL }} \;
+          find mod-zip/ -name '*' -type f -exec curl --fail -H "Authorization: Bearer ${{ secrets.LEGACY_AUTH }}" -X POST -H "Content-Type: multipart/form-data" -F "data=@{}" -F "platform=mod32" -F"sha=${{ github.sha }}" ${{ secrets.LEGACY_UPLOAD_URL }} \;
 
       - name: Discord notification
         if: ${{ steps.vars.outputs.hash_exists == '404' }} && !contains(github.ref, 'refs/tags/v')
@@ -609,15 +661,16 @@ jobs:
     steps:
       - uses: geekyeggo/delete-artifact@v1
         with:
+          failOnError: false
           name: |
             lnx64-packages
             lnx32-packages
             osx-packages
             win-packages
             android-packages
+            mod-zip
 
       - uses: geekyeggo/delete-artifact@v1
-        if: github.ref != 'refs/heads/master' && !startsWith(github.ref, 'refs/tags/v')
         with:
           failOnError: false
           name: |
@@ -627,3 +680,7 @@ jobs:
             win-mod
             raspberry_pi-mod
             android-mod
+            lnx64-qagame
+            osx-qagame
+            win-qagame
+            raspberry_pi-qagame

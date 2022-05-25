@@ -1856,8 +1856,13 @@ void CG_PlayGlobalSound(centity_t *cent, int index)
 
 extern void CG_AddBulletParticles(vec3_t origin, vec3_t dir, int speed, int duration, int count, float randScale);
 
-void CG_PlayHitSound(const int clientNum, const int hitSound)
+static void CG_PlayHitSound(const int clientNum, const int hitSound)
 {
+	if (!hitSound)
+	{
+		return;
+	}
+
 	// Do we have hitsounds even enabled
 	if (!(cg_hitSounds.integer & HITSOUNDS_ON))
 	{
@@ -1878,6 +1883,8 @@ void CG_PlayHitSound(const int clientNum, const int hitSound)
 
 	switch (hitSound)
 	{
+		case HIT_NONE:
+			break;
 		case HIT_TEAMSHOT:
 			if (!(cg_hitSounds.integer & HITSOUNDS_NOTEAMSHOT))
 			{
@@ -2374,12 +2381,14 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 		CG_Bullet(es->weapon, es->pos.trBase, es->otherEntityNum, qfalse, ENTITYNUM_WORLD, es->otherEntityNum2, es->origin2[0], es->effect1Time);
 		break;
 	case EV_MG42BULLET_HIT_FLESH:
+		CG_PlayHitSound(es->otherEntityNum2, es->modelindex);
 		CG_Bullet(es->weapon, es->pos.trBase, es->otherEntityNum, qtrue, es->eventParm, es->otherEntityNum2, 0, es->effect1Time);
 		break;
 	case EV_BULLET_HIT_WALL:
 		CG_Bullet(es->weapon, es->pos.trBase, es->otherEntityNum, qfalse, ENTITYNUM_WORLD, es->otherEntityNum2, es->origin2[0], 0);
 		break;
 	case EV_BULLET_HIT_FLESH:
+		CG_PlayHitSound(es->otherEntityNum, es->modelindex);
 		CG_Bullet(es->weapon, es->pos.trBase, es->otherEntityNum, qtrue, es->eventParm, es->otherEntityNum2, 0, 0);
 		break;
 	case EV_GENERAL_SOUND:

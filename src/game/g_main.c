@@ -271,6 +271,7 @@ vmCvar_t g_dropHealth;
 vmCvar_t g_dropAmmo;
 
 vmCvar_t g_shove;
+vmCvar_t g_shoveNoZ;
 
 // MAPVOTE
 vmCvar_t g_mapVoteFlags;
@@ -372,7 +373,10 @@ vmCvar_t g_suddenDeath;
 
 vmCvar_t g_dropObjDelay;
 
-vmCvar_t g_altSuicideAnim;
+// flood protection
+vmCvar_t g_floodProtection;
+vmCvar_t g_floodLimit;
+vmCvar_t g_floodWait;
 
 cvarTable_t gameCvarTable[] =
 {
@@ -594,6 +598,7 @@ cvarTable_t gameCvarTable[] =
 	{ &g_dropHealth,                      "g_dropHealth",                      "0",                          0,                                               0, qfalse, qfalse },
 	{ &g_dropAmmo,                        "g_dropAmmo",                        "0",                          0,                                               0, qfalse, qfalse },
 	{ &g_shove,                           "g_shove",                           "60",                         0,                                               0, qfalse, qfalse },
+	{ &g_shoveNoZ,                        "g_shoveNoZ",                        "0",                          0,                                               0, qfalse, qfalse },
 
 	// MAPVOTE
 	{ &g_mapVoteFlags,                    "g_mapVoteFlags",                    "0",                          0,                                               0, qfalse, qfalse },
@@ -665,7 +670,10 @@ cvarTable_t gameCvarTable[] =
 	{ &g_xpSaver,                         "g_xpSaver",                         "0",                          CVAR_ARCHIVE,                                    0, qfalse, qfalse },
 	{ &g_suddenDeath,                     "g_suddenDeath",                     "0",                          CVAR_ARCHIVE,                                    0, qtrue,  qfalse },
 	{ &g_dropObjDelay,                    "g_dropObjDelay",                    "3000",                       CVAR_ARCHIVE,                                    0, qtrue,  qfalse },
-	{ &g_altSuicideAnim,                  "g_altSuicideAnim",                  "0",                          CVAR_ARCHIVE,                                    0, qtrue,  qfalse },
+
+	{ &g_floodProtection,                 "g_floodProtection",                 "1",                          CVAR_ARCHIVE | CVAR_SERVERINFO,                  0, qtrue,  qfalse },
+	{ &g_floodLimit,                      "g_floodLimit",                      "5",                          CVAR_ARCHIVE,                                    0, qtrue,  qfalse },
+	{ &g_floodWait,                       "g_floodWait",                       "1000",                       CVAR_ARCHIVE,                                    0, qtrue,  qfalse },
 };
 
 /**
@@ -726,14 +734,14 @@ Q_EXPORT intptr_t vmMain(intptr_t command, intptr_t arg0, intptr_t arg1, intptr_
 	{
 	case GAME_INIT:
 	{
-		float time = trap_Milliseconds();
+		int time = trap_Milliseconds();
 		Com_Printf(S_COLOR_MDGREY "Initializing %s game " S_COLOR_GREEN ETLEGACY_VERSION "\n", MODNAME);
 #ifdef FEATURE_OMNIBOT
 
 		Bot_Interface_InitHandles();
 #endif
 		G_InitGame(arg0, arg1, arg2, arg3, arg4);
-		G_Printf("Game Initialization completed in %.2f seconds\n", ((float)trap_Milliseconds() - time) / 1000.f);
+		G_Printf("Game Initialization completed in %.2f seconds\n", (float)(trap_Milliseconds() - time) / 1000.f);
 #ifdef FEATURE_OMNIBOT
 
 		time = trap_Milliseconds();
@@ -748,7 +756,7 @@ Q_EXPORT intptr_t vmMain(intptr_t command, intptr_t arg0, intptr_t arg1, intptr_
 			// that's the only way to print the used bot version atm
 			trap_SendConsoleCommand(EXEC_APPEND, va("%s", "bot version\n"));
 
-			G_Printf(S_COLOR_GREEN "Omni-Bot Initialization completed in %.2f seconds\n", ((float)trap_Milliseconds() - time) / 1000.f);
+			G_Printf(S_COLOR_GREEN "Omni-Bot Initialization completed in %.2f seconds\n", (float)(trap_Milliseconds() - time) / 1000.f);
 		}
 #endif
 	}
@@ -868,6 +876,16 @@ void QDECL G_Error(const char *fmt, ...)
 }
 
 void QDECL G_Error(const char *fmt, ...) _attribute((format(printf, 1, 2)));
+
+
+/**
+ * @brief G_ServerIsFloodProtected
+ * @return
+ */
+qboolean G_ServerIsFloodProtected(void)
+{
+	return (!g_floodProtection.integer || !g_floodWait.integer || !g_floodLimit.integer) ? qfalse : qtrue;
+}
 
 /**
  * @brief G_EmplacedGunIsMountable
@@ -2652,6 +2670,18 @@ void G_InitGame(int levelTime, int randomSeed, int restart, int etLegacyServer, 
 		if (g_campaigns[level.currentCampaign].current == 0 || level.newCampaign)
 		{
 			G_XPSaver_Clear();
+		}
+	}
+
+	// disable server engine flood protection if we have mod-sided flood protection enabled
+	// since they don't block the same commands
+	if (G_ServerIsFloodProtected())
+	{
+		int sv_floodprotect = trap_Cvar_VariableIntegerValue("sv_floodprotect");
+		if (sv_floodprotect)
+		{
+			trap_Cvar_Set("sv_floodprotect", "0");
+			G_Printf("^3INFO: mod-sided flood protection enabled, disabling server-side protection.\n");
 		}
 	}
 
@@ -5243,7 +5273,8 @@ void G_RunEntity(gentity_t *ent, int msec)
  */
 void G_RunFrame(int levelTime)
 {
-	int i, msec;
+	int  i, msec;
+	char cs[MAX_STRING_CHARS];
 
 	// if we are waiting for the level to restart, do nothing
 	if (level.restarted)
@@ -5268,7 +5299,10 @@ void G_RunFrame(int levelTime)
 	else
 	{
 		level.timeDelta = levelTime - level.timeCurrent;
-		if ((level.time % 500) == 0)
+
+		trap_GetConfigstring(CS_LEVEL_START_TIME, cs, sizeof(cs));
+
+		if (Q_atoi(cs) + 500 <= level.startTime + level.timeDelta)
 		{
 			// FIXME: set a PAUSE cs and let the client adjust their local starttimes
 			//        instead of this spam
@@ -5412,7 +5446,6 @@ void G_MapVoteInfoWrite()
 	G_Printf("mapvoteinfo: wrote %d of %d map vote stats\n", count, MAX_VOTE_MAPS);
 
 	trap_FS_FCloseFile(f);
-	return;
 }
 
 /**

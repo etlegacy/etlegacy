@@ -629,7 +629,7 @@ void CM_LoadMap(const char *name, qboolean clientload, unsigned int *checksum)
 
 	cm_noAreas         = Cvar_Get("cm_noAreas", "0", CVAR_CHEAT);
 	cm_noCurves        = Cvar_Get("cm_noCurves", "0", CVAR_CHEAT);
-	cm_playerCurveClip = Cvar_Get("cm_playerCurveClip", "1", CVAR_ARCHIVE | CVAR_CHEAT);
+	cm_playerCurveClip = Cvar_Get("cm_playerCurveClip", "1", CVAR_ARCHIVE_ND | CVAR_CHEAT);
 	cm_optimize        = Cvar_Get("cm_optimize", "1", CVAR_CHEAT);
 
 	// pure client and not self hosted (to avoid mixing flags on local play)

@@ -29,14 +29,13 @@ menuDef {
 
 // Selection //
 #define SELECTION_Y 32
-	SUBWINDOW( 6, SELECTION_Y, (SUBWINDOW_WIDTH), 64, _("SELECTION MENUS" ))
+	SUBWINDOW( 6, SELECTION_Y, (SUBWINDOW_WIDTH), 52, _("SELECTION MENUS" ))
 	BIND( 8, SELECTION_Y+16, (SUBWINDOW_WIDTH)-4, 10, _("Team selection:"), .2, 8, "teammenu", "Open team selection menu" )
 	BIND( 8, SELECTION_Y+28, (SUBWINDOW_WIDTH)-4, 10, _("Class selection:"), .2, 8, "classmenu", "Open class selection menu" )
 	BIND( 8, SELECTION_Y+40, (SUBWINDOW_WIDTH)-4, 10, _("Spawn selection:"), .2, 8, "spawnmenu", "Open spawn selection menu" )
-	BIND( 8, SELECTION_Y+52, (SUBWINDOW_WIDTH)-4, 10, _("Shoutcast menu:"), .2, 8, "shoutcastmenu", "Open shoutcast menu" )
 
 // Fire-Teams //
-#define FIRETEAM_Y 102
+#define FIRETEAM_Y 90
 	SUBWINDOW( 6, FIRETEAM_Y, (SUBWINDOW_WIDTH), 148, _("FIRE-TEAMS" ))
 	BIND( 8, FIRETEAM_Y+16, (SUBWINDOW_WIDTH)-4, 10, _("Fire-Team Admin:"), .2, 8, "mp_fireteamadmin", "" )
 	BIND( 8, FIRETEAM_Y+28, (SUBWINDOW_WIDTH)-4, 10, _("Select All Members:"), .2, 8, "selectbuddy -2", "" )
@@ -51,7 +50,7 @@ menuDef {
 	BIND( 8, FIRETEAM_Y+136, (SUBWINDOW_WIDTH)-4, 10, _("Select Member #8:"), .2, 8, "selectbuddy 7", "" )
 
 // Joystick //
-#define JOYSTICK_Y 256
+#define JOYSTICK_Y 244
 	SUBWINDOW( 6, JOYSTICK_Y, (SUBWINDOW_WIDTH), 64, _("JOYSTICK") )
 	MULTI( 8, JOYSTICK_Y+16, (SUBWINDOW_WIDTH)-4, 10, _("Enable Joysticks:"), .2, 8, "in_joystick", cvarFloatList { "No" 0 "Yes" 1 }, _("Toggle joystick initialization (requires vid_restart)") )
 	EDITFIELD( 8, JOYSTICK_Y+28, (SUBWINDOW_WIDTH)-4, 10, _("Use Joystick #:"), .2, 8, "in_joystickNo", 64, 18, _("Specify active joystick") )
@@ -59,8 +58,13 @@ menuDef {
 	EDITFIELD( 8, JOYSTICK_Y+52, (SUBWINDOW_WIDTH)-4, 10, _("Joystick Threshold:"), .2, 8, "in_joystickThreshold", 64, 18, _("Set joystick threshold sensitivity") )
 
 #define MISC_Y 32
-	SUBWINDOW( 6+(SUBWINDOW_WIDTH)+6, MISC_Y, (SUBWINDOW_WIDTH), 32, _("MISC") )
-	MULTI( 8+(SUBWINDOW_WIDTH)+6, MISC_Y+16, (SUBWINDOW_WIDTH)-4, 10, _("Activate lean:"), .2, 8, "cl_activatelean", cvarFloatList { "No" 0 "Yes" 1 }, _("Lean while using the activate button") )
+	SUBWINDOW( 6+(SUBWINDOW_WIDTH)+6, MISC_Y, (SUBWINDOW_WIDTH), 88, _("MISC") )
+	MULTI( 8+(SUBWINDOW_WIDTH)+6, MISC_Y+16, (SUBWINDOW_WIDTH)-4, 10, _("Activate lean:"), .2, 8, "cg_activateLean", cvarFloatList { "No" 0 "Yes" 1 }, _("Lean while using the activate button") )
+    BIND( 8+(SUBWINDOW_WIDTH)+6, MISC_Y+28, (SUBWINDOW_WIDTH)-4, 10, _("Sharetimer:"), .2, 8, "sharetimer", "Share the next time the enemy spawns with your team according to your spawntimer" )
+    BIND( 8+(SUBWINDOW_WIDTH)+6, MISC_Y+40, (SUBWINDOW_WIDTH)-4, 10, _("Sharetimer fireteam:"), .2, 8, "sharetimer_buddy", "Share the next time the enemy spawns with your fireteam according to your spawntimer" )
+    BIND( 8+(SUBWINDOW_WIDTH)+6, MISC_Y+52, (SUBWINDOW_WIDTH)-4, 10, _("Shift timer backward:"), .2, 8, "cycle cg_spawntimer_set 0 2147483647 1000", "Shifts enemy spawn timer 1 second backward" )
+    BIND( 8+(SUBWINDOW_WIDTH)+6, MISC_Y+64, (SUBWINDOW_WIDTH)-4, 10, _("Shift timer forward:"), .2, 8, "cycle cg_spawntimer_set 2147483647 0 1000", "Shifts enemy spawn timer 1 second forward" )
+    BIND( 8+(SUBWINDOW_WIDTH)+6, MISC_Y+76, (SUBWINDOW_WIDTH)-4, 10, _("Request artillery:"), .2, 8, "+zoom;+attack;-attack;-zoom", "Request artillery with single button press." )
 
 // Buttons //
 	BUTTON( 6, WINDOW_HEIGHT-24, WINDOW_WIDTH-12, 18, _("BACK"), .3, 14, close options_controls_advanced ; open options_controls )

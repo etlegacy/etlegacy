@@ -377,7 +377,7 @@ alldone:
  */
 static void CL_DemoFastForward(double wantedTime)
 {
-	int loopCount;
+	int loopCount, cmd;
 
 	if (cls.state < CA_CONNECTED)
 	{
@@ -415,6 +415,7 @@ static void CL_DemoFastForward(double wantedTime)
 	DEMODEBUG("fastfowarding from %f to %f\n", (double)cl.serverTime + di.Overf, wantedTime);
 
 	loopCount = 0;
+	cmd       = clc.lastExecutedServerCommand;
 	while ((double)cl.snap.serverTime <= wantedTime)
 	{
 		DEMODEBUG("Servertime: %d wanted time %lf\n", cl.snap.serverTime, wantedTime);
@@ -437,6 +438,13 @@ static void CL_DemoFastForward(double wantedTime)
 			CL_GetServerCommand(clc.lastExecutedServerCommand + 1);
 		}
 		loopCount++;
+
+		// if we are about to go over command buffer let cgame execute them and then continue
+		if (cmd + MAX_RELIABLE_COMMANDS - 10 <= clc.lastExecutedServerCommand)
+		{
+			VM_Call(cgvm, CG_DRAW_ACTIVE_FRAME, cl.snap.serverTime, 0, clc.demo.playing);
+			cmd = clc.lastExecutedServerCommand;
+		}
 	}
 
 	DEMODEBUG("read %d demo messages, cl.snap.serverTime %d, wantedTime %f\n", loopCount, cl.snap.serverTime, wantedTime);
@@ -864,11 +872,11 @@ static void CL_ParseDemo(void)
 	Com_FuncPrinf("parse time %f seconds\n", (double)(Sys_Milliseconds() - tstart) / 1000.0);
 	(void) FS_Seek(clc.demo.file, 0, FS_SEEK_SET);
 	clc.demo.playing = qfalse;
-	demofile        = clc.demo.file;
+	demofile         = clc.demo.file;
 	CL_ClearState();
 	Com_Memset(&clc, 0, sizeof(clc));
 	Com_ClearDownload();
-	clc.demo.file        = demofile;
+	clc.demo.file            = demofile;
 	cls.state                = CA_DISCONNECTED;
 	cl_connectedToPureServer = qfalse;
 
@@ -1824,7 +1832,7 @@ void CL_DemoInit(void)
 	Cmd_AddCommand("seeknext", CL_SeekNext_f);
 	Cmd_AddCommand("seekprev", CL_SeekPrev_f);
 
-	cl_maxRewindBackups = Cvar_Get("cl_maxRewindBackups", va("%i", MAX_REWIND_BACKUPS), CVAR_ARCHIVE | CVAR_LATCH);
+	cl_maxRewindBackups = Cvar_Get("cl_maxRewindBackups", va("%i", MAX_REWIND_BACKUPS), CVAR_ARCHIVE_ND | CVAR_LATCH);
 #endif
 }
 

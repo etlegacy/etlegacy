@@ -104,3 +104,34 @@ if(INSTALL_DEFAULT_BASEDIR)
 		add_definitions(-DDEFAULT_BASEDIR=\"${INSTALL_DEFAULT_BASEDIR}\")
 	endif()
 endif()
+
+if (ENABLE_SSE)
+    if (APPLE AND CMAKE_OSX_ARCHITECTURES)
+        list(LENGTH CMAKE_OSX_ARCHITECTURES OSX_ARCH_COUNT)
+    endif()
+
+    if (CMAKE_CROSSCOMPILING OR OSX_ARCH_COUNT GREATER "1")
+        message(VERBOSE "We are crosscompiling, so we skip the SSE test")
+        add_definitions(-DETL_ENABLE_SSE=1)
+    else()
+        include(CheckCSourceCompiles)
+        check_c_source_compiles("
+        #include <immintrin.h>
+        int main()
+        {
+            __m128 tmp;
+            float result = 0.f;
+            tmp = _mm_set_ss(12.f);
+            tmp = _mm_rsqrt_ss(tmp);
+            result = _mm_cvtss_f32(tmp);
+            return 0;
+        }" ETL_ENABLE_SSE)
+
+        if (ETL_ENABLE_SSE)
+            message(STATUS "x86 intrinsics available")
+            add_definitions(-DETL_ENABLE_SSE=1)
+        else()
+            message(WARNING "No x86 intrinsics available while trying to enable it")
+        endif()
+    endif()
+endif()

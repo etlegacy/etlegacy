@@ -36,6 +36,8 @@
 
 #include "cg_local.h"
 
+char *Binding_FromName(const char *cvar);
+
 /**
  * @brief Debugging command to print the current position
  */
@@ -876,6 +878,25 @@ void CG_autoRecord_f(void)
 }
 
 /**
+ * @brief Starts or stops demo recording
+ */
+void CG_toggleRecord_f(void)
+{
+	char bindstr[32];
+	Q_strncpyz(bindstr, Binding_FromName("togglerecord"), sizeof(bindstr));
+
+	if (!cl_demorecording.integer)
+	{
+		trap_SendConsoleCommand(va("record %s\n", CG_generateFilename()));
+		CG_Printf("Press ^3%s ^7again to stop recording.\n", bindstr);
+	}
+	else
+	{
+		trap_SendConsoleCommand("stoprecord\n");
+	}
+}
+
+/**
  * @brief Dynamically names a screenshot
  */
 void CG_autoScreenShot_f(void)
@@ -1626,6 +1647,52 @@ static void CG_ReadHuds_f(void)
 	CG_ReadHudScripts();
 }
 
+static void CG_ShareTimer_f(void)
+{
+	qtime_t ct;
+	char    *cmd, *stChar, text[MAX_SAY_TEXT];
+	int     st, limboTime, nextSpawn;
+	stChar = CG_SpawnTimerText();
+
+	if (stChar == NULL)
+	{
+		return;
+	}
+
+	cmd       = !Q_stricmp(CG_Argv(0), "sharetimer") ? "say_team" : "say_buddy";
+	st        = Q_atoi(stChar);
+	limboTime = (cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_AXIS ? cg_bluelimbotime.integer : cg_redlimbotime.integer) / 1000;
+	CG_RoundTime(&ct);
+	nextSpawn = MOD(ct.tm_sec - st, 60);
+
+	trap_Cvar_VariableStringBuffer("cg_sharetimerText", text, MAX_SAY_TEXT);
+	if (!strlen(text))
+	{
+		trap_Args(text, sizeof(text));
+	}
+	if (strlen(text))
+	{
+		const char *nextSpawnText      = "${nextspawn}";
+		const char *enemyLimbotimeText = "${enemylimbotime}";
+
+		if (Q_stristr(text, nextSpawnText))
+		{
+			Q_strncpyz(text, Q_StrReplace(text, nextSpawnText, va("%i", nextSpawn)), sizeof(text));
+		}
+
+		if (Q_stristr(text, enemyLimbotimeText))
+		{
+			Q_strncpyz(text, Q_StrReplace(text, enemyLimbotimeText, va("%i", limboTime)), sizeof(text));
+		}
+		trap_SendConsoleCommand(va("%s %s\n", cmd, text));
+	}
+	else
+	{
+		trap_SendConsoleCommand(va("%s Enemy spawns every %i seconds: next at %i\n", cmd, limboTime, nextSpawn));
+	}
+
+}
+
 #ifdef FEATURE_EDV
 /**
  * @brief CG_FreecamTurnLeftDown_f
@@ -1936,23 +2003,6 @@ static void CG_ListSpawnPoints_f(void)
 	}
 }
 
-static void CG_ShoutcastMenu_f(void)
-{
-	if (cgs.clientinfo[cg.clientNum].shoutcaster)
-	{
-		trap_UI_Popup(UIMENU_NONE);
-
-		if (cg.shoutcastMenu)
-		{
-			CG_EventHandling(CGAME_EVENT_NONE, qfalse);
-		}
-		else
-		{
-			CG_EventHandling(CGAME_EVENT_SHOUTCAST, qfalse);
-		}
-	}
-}
-
 static void CG_Location_f(void)
 {
 	char token[MAX_TOKEN_CHARS];
@@ -2146,6 +2196,7 @@ static consoleCommand_t commands[] =
 	{ "-objectives",         CG_objectivesUp_f         },
 
 	{ "autoRecord",          CG_autoRecord_f           },
+	{ "toggleRecord",        CG_toggleRecord_f         },
 	{ "autoScreenshot",      CG_autoScreenShot_f       },
 	{ "currentTime",         CG_currentTime_f          },
 	{ "keyoff",              CG_keyOff_f               },
@@ -2188,6 +2239,8 @@ static consoleCommand_t commands[] =
 	{ "classmenu",           CG_ClassMenu_f            },
 	{ "teammenu",            CG_TeamMenu_f             },
 	{ "readhuds",            CG_ReadHuds_f             },
+	{ "sharetimer",          CG_ShareTimer_f           },
+	{ "sharetimer_buddy",    CG_ShareTimer_f           },
 #ifdef FEATURE_EDV
 	{ "+freecam_turnleft",   CG_FreecamTurnLeftDown_f  },
 	{ "-freecam_turnleft",   CG_FreecamTurnLeftUp_f    },
@@ -2214,9 +2267,123 @@ static consoleCommand_t commands[] =
 	{ "resetmaxspeed",       CG_ResetMaxSpeed_f        },
 	{ "listspawnpt",         CG_ListSpawnPoints_f      },
 
-	{ "shoutcastmenu",       CG_ShoutcastMenu_f        },
 	{ "loc",                 CG_Location_f             },
-	{ "camera",              CG_Camera_f               }
+	{ "camera",              CG_Camera_f               },
+	{ NULL,                  NULL                      }
+};
+
+/**
+ * @var gameCommand
+ * @brief Game command list
+ *
+ * @todo Shared the command list in both mod
+ * or delete this list and use the help '?' command to provided a list of command
+ * or retrieved the command list by parsing the help '?' command
+ * or delete the help '?' command on game side and write help on cgame side
+ */
+static const char *gameCommand[] =
+{
+	"say",
+	"say_team",
+	"say_buddy",
+	"say_teamnl",
+	"vsay",
+	"vsay_team",
+	"vsay_buddy",
+	"?",
+	// copy of ?
+	"commands",
+	"help",
+	"+stats",
+	"+topshots",
+	"+objectives",
+	"autorecord",
+	"autoscreenshot",
+	"bottomshots",
+	"callvote",
+	"currenttime",
+	"dropobj",
+	"fireteam",
+	"follow",
+	"follownext",
+	"followprev",
+	"forcetapout",
+	"give",
+	"god",
+	"ignore",
+#ifdef FEATURE_PRESTIGE
+	"imcollectpr",
+#endif
+	"immaplist",
+	"impkd",
+#ifdef FEATURE_PRESTIGE
+	"impr",
+#endif
+	"impt",
+	"imready",
+#ifdef FEATURE_RATING
+	"imsr",
+#endif
+	"imvotetally",
+	"imwa",
+	"imws",
+	//   "invite",
+	"kill",
+	"lock",
+	"mapvote",
+#ifdef FEATURE_MULTIVIE
+	"mvadd",
+	"mvallies",
+	"mvaxis",
+	"mvall",
+	"mvnone",
+	"mvdel",
+#endif
+	"noclip",
+	"nofatigue",
+	"nostamina",
+	"notarget",
+	"notready",
+	"obj",
+	"pause",
+	"players",
+	"rconAuth",
+	"ready",
+	"readyteam",
+	"ref",
+	//   "remove",
+	"rs",
+	"sclogin",
+	"sclogout",
+	"score",
+	"scores",
+	"setviewpos",
+	"setspawnpt",
+	"sgstats",
+	"showstats",
+	"specinvite",
+	"specuninvite",
+	"speclock",
+	//   "speconly",
+	"specunlock",
+	"statsall",
+	"statsdump",
+	"stoprecord",
+	"stshots",
+	"team",
+	"timein",
+	"timeout",
+	"topshots",
+	"unignore",
+	"unlock",
+	"unpause",
+	"unready",
+	"vote",
+	"weaponstats",
+	"where",
+	"ws",
+	"wstats",
+	NULL,
 };
 
 /**
@@ -2257,93 +2424,17 @@ void CG_InitConsoleCommands(void)
 {
 	unsigned int i;
 
-	for (i = 0 ; i < sizeof(commands) / sizeof(commands[0]) ; i++)
+	for (i = 0; commands[i].cmd; i++)
 	{
 		trap_AddCommand(commands[i].cmd);
 	}
 
 	// the game server will interpret these commands, which will be automatically
 	// forwarded to the server after they are not recognized locally
-	trap_AddCommand("kill");
-	trap_AddCommand("say");
-	trap_AddCommand("give");
-	trap_AddCommand("god");
-	trap_AddCommand("notarget");
-	trap_AddCommand("noclip");
-	trap_AddCommand("team");
-	trap_AddCommand("follow");
-	trap_AddCommand("setviewpos");
-	trap_AddCommand("callvote");
-	trap_AddCommand("vote");
-
-	trap_AddCommand("nofatigue");
-	trap_AddCommand("nostamina");
-
-	trap_AddCommand("follownext");
-	trap_AddCommand("followprev");
-
-	trap_AddCommand("start_match");
-	trap_AddCommand("reset_match");
-	trap_AddCommand("swap_teams");
-
-	trap_AddCommand("?");
-	trap_AddCommand("bottomshots");
-	trap_AddCommand("commands");
-	trap_AddCommand("lock");
-#ifdef FEATURE_MULTIVIEW
-	trap_AddCommand("mvadd");
-	trap_AddCommand("mvaxis");
-	trap_AddCommand("mvallies");
-	trap_AddCommand("mvall");
-	trap_AddCommand("mvnone");
-#endif
-	trap_AddCommand("notready");
-	trap_AddCommand("pause");
-	trap_AddCommand("players");
-	trap_AddCommand("readyteam");
-	trap_AddCommand("ready");
-	trap_AddCommand("ref");
-	trap_AddCommand("say_teamnl");
-	trap_AddCommand("say_team");
-	trap_AddCommand("scores");
-	trap_AddCommand("specinvite");
-	trap_AddCommand("specuninvite");
-	trap_AddCommand("speclock");
-	trap_AddCommand("specunlock");
-	trap_AddCommand("statsall");
-	trap_AddCommand("statsdump");
-	trap_AddCommand("timein");
-	trap_AddCommand("timeout");
-	trap_AddCommand("topshots");
-	trap_AddCommand("unlock");
-	trap_AddCommand("unpause");
-	trap_AddCommand("unready");
-	trap_AddCommand("weaponstats");
-
-	trap_AddCommand("fireteam");
-	trap_AddCommand("showstats");
-
-	trap_AddCommand("ignore");
-	trap_AddCommand("unignore");
-
-	trap_AddCommand("campaign");
-	trap_AddCommand("listcampaigns");
-
-	trap_AddCommand("imready");
-	trap_AddCommand("say_buddy");
-	trap_AddCommand("setspawnpt");
-	trap_AddCommand("vsay");
-	trap_AddCommand("vsay_buddy");
-	trap_AddCommand("vsay_team");
-	trap_AddCommand("where");
-	trap_AddCommand("dropobj");
-	trap_AddCommand("imcollectpr");
-#ifdef FEATURE_LUA
-	trap_AddCommand("lua_status");
-#endif
-
-	trap_AddCommand("sclogin");
-	trap_AddCommand("sclogout");
+	for (i = 0; gameCommand[i]; i++)
+	{
+		trap_AddCommand(gameCommand[i]);
+	}
 
 	// remove engine commands to avoid abuse
 	trap_RemoveCommand("+lookup");

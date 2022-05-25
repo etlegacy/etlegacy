@@ -39,7 +39,7 @@ static intptr_t(QDECL * syscall)(intptr_t arg, ...) = (intptr_t(QDECL *)(intptr_
 /**
  * @brief dllEntry
  */
-Q_EXPORT void dllEntry(intptr_t(QDECL * syscallptr)(intptr_t arg, ...))
+Q_EXPORT void dllEntry(intptr_t(QDECL *syscallptr)(intptr_t arg, ...))
 {
 	syscall = syscallptr;
 }
@@ -385,7 +385,7 @@ void trap_R_AddPolyToScene(qhandle_t hShader, int numVerts, const polyVert_t *ve
 void trap_R_AddLightToScene(const vec3_t org, float radius, float intensity, float r, float g, float b, qhandle_t hShader, int flags)
 {
 	SystemCall(UI_R_ADDLIGHTTOSCENE, org, PASSFLOAT(radius), PASSFLOAT(intensity),
-	        PASSFLOAT(r), PASSFLOAT(g), PASSFLOAT(b), hShader, flags);
+	           PASSFLOAT(r), PASSFLOAT(g), PASSFLOAT(b), hShader, flags);
 }
 
 /**
@@ -517,7 +517,8 @@ void trap_S_StartLocalSound(sfxHandle_t sfx, int channelNum)
  */
 sfxHandle_t trap_S_RegisterSound(const char *sample, qboolean compressed)
 {
-	int i = SystemCall(UI_S_REGISTERSOUND, sample, compressed);
+	// only allow compression for ETL clients, GPL source (aka Steam version) doesn't play nice with it
+	int i = SystemCall(UI_S_REGISTERSOUND, sample, uiInfo.etLegacyClient ? compressed : qfalse);
 
 #ifdef ETLEGACY_DEBUG
 	if (i == 0)

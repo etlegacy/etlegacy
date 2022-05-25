@@ -88,7 +88,7 @@ static sfx_t *sfxHash[LOOP_HASH];
 cvar_t *s_testsound;
 cvar_t *s_show;
 cvar_t *s_mixahead;
-cvar_t *s_mixPreStep;
+cvar_t *s_mixOffset;
 cvar_t *s_debugStreams;
 
 static loopSound_t loopSounds[MAX_LOOP_SOUNDS];
@@ -240,7 +240,7 @@ void S_ChannelFree(channel_t *v)
  * @brief S_ChannelMalloc
  * @return
  */
-channel_t *S_ChannelMalloc(void)
+channel_t *S_ChannelMalloc(int time)
 {
 	channel_t *v;
 
@@ -250,7 +250,7 @@ channel_t *S_ChannelMalloc(void)
 	}
 	v            = freelist;
 	freelist     = *(channel_t **)freelist;
-	v->allocTime = Sys_Milliseconds();
+	v->allocTime = time;
 	return v;
 }
 
@@ -655,43 +655,59 @@ void S_Base_StartSoundEx(vec3_t origin, int entnum, int entchannel, sfxHandle_t 
 		Com_Printf("S_Base_StartSoundEx: %i : %s\n", s_paintedtime, sfx->soundName);
 	}
 
-	time = Sys_Milliseconds();
-	ch   = s_channels;
+	time = s_soundtime;
+	ch   = NULL;
 
 	// shut off other sounds on this channel if necessary
-	for (i = 0; i < MAX_CHANNELS ; i++, ch++)
+	for (i = 0; i < MAX_CHANNELS ; i++)
 	{
-		if (ch->entnum == entnum && ch->thesfx)
+		// double played in one frame making the same sound play at increased volume
+		if (s_channels[i].entnum == entnum && s_channels[i].thesfx == sfx && s_channels[i].allocTime == time)
 		{
-			if (ch->thesfx == sfx && time - ch->allocTime < 50) // double played in one frame
+			return;
+		}
+
+		if (s_channels[i].entnum == entnum && s_channels[i].thesfx && s_channels[i].entchannel == entchannel)
+		{
+			if ((flags & SND_CUTOFF_ALL)) // cut the sounds that are flagged to be cut
 			{
-				return;
+				S_ChannelFree(&s_channels[i]);
 			}
-			else if (ch->entchannel == entchannel)
+			else if (s_channels[i].flags & SND_NOCUT) // don't cutoff
 			{
-				if ((flags & SND_CUTOFF_ALL)) // cut the sounds that are flagged to be cut
-				{
-					S_ChannelFree(ch);
-				}
-				else if (ch->flags & SND_NOCUT) // don't cutoff
-				{
-					continue;
-				}
-				else if (ch->flags & SND_OKTOCUT) // cutoff sounds that expect to be overwritten
-				{
-					S_ChannelFree(ch);
-				}
-				else if ((ch->flags & SND_REQUESTCUT) && (flags & SND_CUTOFF)) // cutoff 'weak' sounds on channel
-				{
-					S_ChannelFree(ch);
-				}
+				continue;
+			}
+			else if (s_channels[i].flags & SND_OKTOCUT) // cutoff sounds that expect to be overwritten
+			{
+				S_ChannelFree(&s_channels[i]);
+			}
+			else if ((s_channels[i].flags & SND_REQUESTCUT) && (flags & SND_CUTOFF)) // cutoff 'weak' sounds on channel
+			{
+				S_ChannelFree(&s_channels[i]);
+			}
+		}
+	}
+
+	// re-use channel if applicable
+	for (i = 0; i < MAX_CHANNELS; i++)
+	{
+		if (s_channels[i].entnum == entnum && s_channels[i].entchannel == entchannel && entchannel != CHAN_AUTO)
+		{
+			if (!(s_channels[i].flags & SND_NOCUT) && s_channels[i].thesfx == sfx)
+			{
+				ch = &s_channels[i];
+				break;
 			}
 		}
 	}
 
 	sfx->lastTimeUsed = time;
 
-	ch = S_ChannelMalloc();
+	if (!ch)
+	{
+		ch = S_ChannelMalloc(time);
+	}
+
 	if (!ch)
 	{
 		int oldest = sfx->lastTimeUsed;
@@ -1122,7 +1138,7 @@ void S_AddLoopSounds(void)
 
 	numLoopChannels = 0;
 
-	time = Sys_Milliseconds();
+	time = s_soundtime;
 
 	loopFrame++;
 	for (i = 0 ; i < numLoopSounds; i++)
@@ -1578,7 +1594,7 @@ void S_GetSoundtime(void)
 
 	if (dma.submission_chunk < 256)
 	{
-		s_paintedtime = s_soundtime + s_mixPreStep->value * dma.speed;
+		s_paintedtime = s_soundtime + s_mixOffset->value * dma.speed;
 	}
 	else
 	{
@@ -1625,7 +1641,7 @@ void S_Update_(void)
 	}
 
 	ma = s_mixahead->value * dma.speed;
-	op = s_mixPreStep->value + sane * dma.speed * 0.01f;
+	op = s_mixOffset->value + sane * dma.speed * 0.01f;
 
 	if (op < ma)
 	{
@@ -2244,7 +2260,7 @@ void S_FreeOldestSound(void)
 	sfx_t     *sfx;
 	sndBuffer *buffer, *nbuffer;
 
-	oldest = Sys_Milliseconds();
+	oldest = s_soundtime;
 
 	for (i = 1 ; i < numSfx ; i++)
 	{
@@ -2309,8 +2325,8 @@ qboolean S_Base_Init(soundInterface_t *si)
 		return qfalse;
 	}
 
-	s_mixahead     = Cvar_Get("s_mixahead", "0.2", CVAR_ARCHIVE);
-	s_mixPreStep   = Cvar_Get("s_mixPreStep", "0.05", CVAR_ARCHIVE);
+	s_mixahead     = Cvar_Get("s_mixahead", "0.2", CVAR_ARCHIVE_ND);
+	s_mixOffset    = Cvar_Get("s_mixOffset", "0.0", CVAR_ARCHIVE_ND);
 	s_show         = Cvar_Get("s_show", "0", CVAR_CHEAT);
 	s_testsound    = Cvar_Get("s_testsound", "0", CVAR_CHEAT);
 	s_debugStreams = Cvar_Get("s_debugStreams", "0", CVAR_TEMP);

@@ -777,6 +777,11 @@ void SV_SpawnServer(const char *server)
 	// to load during actual gameplay
 	sv.state = SS_LOADING;
 
+	if (sv_serverTimeReset->integer)
+	{
+		svs.time = 0;
+	}
+
 	// load and spawn all other entities
 	SV_InitGameProgs();
 
@@ -859,9 +864,9 @@ void SV_SpawnServer(const char *server)
 		// the server sends these to the clients so they will only
 		// load pk3s also loaded at the server
 		qboolean crazyServer = qfalse;
-		size_t len = 0;
+		size_t   len         = 0;
 
-		p = FS_LoadedPakNames();
+		p   = FS_LoadedPakNames();
 		len = strlen(p);
 
 		// if the maps listing takes more than half of the full buffer, then we just use the reference listings instead
@@ -869,7 +874,7 @@ void SV_SpawnServer(const char *server)
 		if (len > (BIG_INFO_STRING / 2))
 		{
 			crazyServer = qtrue;
-			p = FS_ReferencedPakNames();
+			p           = FS_ReferencedPakNames();
 			Com_Printf(S_COLOR_RED "WARNING: sv_pure set and the amount of pk3 files exceeds normally supported count, using reference values only\n");
 		}
 		else if (len == 0)
@@ -1033,12 +1038,12 @@ void SV_Init(void)
 	sv_mapname        = Cvar_Get("mapname", "nomap", CVAR_SERVERINFO | CVAR_ROM);
 	sv_privateClients = Cvar_Get("sv_privateClients", "0", CVAR_SERVERINFO);
 	sv_hostname       = Cvar_Get("sv_hostname", "ETLHost", CVAR_SERVERINFO | CVAR_ARCHIVE);
-	sv_minRate        = Cvar_Get("sv_minRate", "0", CVAR_ARCHIVE | CVAR_SERVERINFO);
+	sv_minRate        = Cvar_Get("sv_minRate", "0", CVAR_ARCHIVE_ND | CVAR_SERVERINFO);
 	sv_maxclients     = Cvar_Get("sv_maxclients", "20", CVAR_SERVERINFO | CVAR_LATCH);
-	sv_maxRate        = Cvar_Get("sv_maxRate", "0", CVAR_ARCHIVE | CVAR_SERVERINFO);
-	sv_dlRate         = Cvar_Get("sv_dlRate", "100", CVAR_ARCHIVE | CVAR_SERVERINFO);
-	sv_minPing        = Cvar_Get("sv_minPing", "0", CVAR_ARCHIVE | CVAR_SERVERINFO);
-	sv_maxPing        = Cvar_Get("sv_maxPing", "0", CVAR_ARCHIVE | CVAR_SERVERINFO);
+	sv_maxRate        = Cvar_Get("sv_maxRate", "0", CVAR_ARCHIVE_ND | CVAR_SERVERINFO);
+	sv_dlRate         = Cvar_Get("sv_dlRate", "100", CVAR_ARCHIVE_ND | CVAR_SERVERINFO);
+	sv_minPing        = Cvar_Get("sv_minPing", "0", CVAR_ARCHIVE_ND | CVAR_SERVERINFO);
+	sv_maxPing        = Cvar_Get("sv_maxPing", "0", CVAR_ARCHIVE_ND | CVAR_SERVERINFO);
 	sv_floodProtect   = Cvar_Get("sv_floodProtect", "1", CVAR_ARCHIVE | CVAR_SERVERINFO);
 	sv_friendlyFire   = Cvar_Get("g_friendlyFire", "1", CVAR_SERVERINFO | CVAR_ARCHIVE);
 	sv_maxlives       = Cvar_Get("g_maxlives", "0", CVAR_ARCHIVE | CVAR_LATCH | CVAR_SERVERINFO);
@@ -1110,10 +1115,6 @@ void SV_Init(void)
 
 	sv_hidden = Cvar_GetAndDescribe("sv_hidden", "0", CVAR_ARCHIVE, "Hide the server from queries and from master servers.");
 
-	// master servers
-	Cvar_Get("sv_master1", "etmaster.idsoftware.com", CVAR_PROTECTED);
-	Cvar_Get("sv_master2", com_masterServer->string, CVAR_INIT);
-
 	sv_reconnectlimit = Cvar_Get("sv_reconnectlimit", "3", 0);
 	sv_tempbanmessage = Cvar_Get("sv_tempbanmessage", "You have been kicked and are temporarily banned from joining this server.", 0);
 
@@ -1121,7 +1122,7 @@ void SV_Init(void)
 	sv_killserver  = Cvar_Get("sv_killserver", "0", 0);
 	sv_mapChecksum = Cvar_Get("sv_mapChecksum", "", CVAR_ROM);
 
-	sv_lanForceRate = Cvar_Get("sv_lanForceRate", "1", CVAR_ARCHIVE);
+	sv_lanForceRate = Cvar_Get("sv_lanForceRate", "1", CVAR_ARCHIVE_ND);
 
 	sv_onlyVisibleClients = Cvar_Get("sv_onlyVisibleClients", "0", 0);
 
@@ -1181,6 +1182,8 @@ void SV_Init(void)
 	svs.serverLoad = -1;
 
 	sv_ipMaxClients = Cvar_Get("sv_ipMaxClients", "0", CVAR_ARCHIVE);
+
+	sv_serverTimeReset = Cvar_GetAndDescribe("sv_serverTimeReset", "0", CVAR_ARCHIVE_ND, "Reset server time on map change.");
 
 #if defined(FEATURE_IRC_SERVER) && defined(DEDICATED)
 	IRC_Init();
