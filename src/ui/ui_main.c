@@ -4619,7 +4619,7 @@ void UI_ParseglPreset()
 	         (int)trap_Cvar_VariableValue("ui_r_ext_multisample") == 0 &&
 	         (int)trap_Cvar_VariableValue("ui_r_dynamiclight") == 1 &&
 	         (int)trap_Cvar_VariableValue("r_fastSky") == 0 &&
-	         (int)trap_Cvar_VariableValue("cg_shadows") == 1 &&
+	         (int)trap_Cvar_VariableValue("cg_shadows") == 0 &&
 	         (int)trap_Cvar_VariableValue("cg_brasstime") == 2500 &&
 	         (int)trap_Cvar_VariableValue("ui_r_detailtextures") == 0 &&
 	         (Q_stricmp(UI_Cvar_VariableString("ui_r_texturemode"), "GL_LINEAR_MIPMAP_NEAREST") == 0))
