@@ -112,6 +112,9 @@ extern vmCvar_t ui_cg_shoutcastDrawHealth;
 extern vmCvar_t ui_cg_shoutcastGrenadeTrail;
 extern vmCvar_t ui_cg_shoutcastDrawMinimap;
 
+extern vmCvar_t com_customFont1;
+extern vmCvar_t com_customFont2;
+
 // ui_serverBrowserSettings flags
 #define UI_BROWSER_ALLOW_REDIRECT     BIT(0)
 #define UI_BROWSER_ALLOW_HUMANS_COUNT BIT(1)

@@ -398,6 +398,9 @@ vmCvar_t cg_healthDynamicColor;
 
 vmCvar_t cg_drawBreathPuffs;
 
+vmCvar_t com_customFont1;
+vmCvar_t com_customFont2;
+
 typedef struct
 {
 	vmCvar_t *vmCvar;
@@ -693,6 +696,9 @@ static cvarTable_t cvarTable[] =
 	{ &cg_healthDynamicColor,      "cg_healthDynamicColor",      "0",           CVAR_ARCHIVE,                 0 },
 
 	{ &cg_drawBreathPuffs,         "cg_drawBreathPuffs",         "1",           CVAR_ARCHIVE,                 0 },
+
+	{ &com_customFont1,            "com_customFont1",            "",            0,                            0 },
+	{ &com_customFont2,            "com_customFont2",            "",            0,                            0 },
 };
 
 static const unsigned int cvarTableSize = sizeof(cvarTable) / sizeof(cvarTable[0]);
@@ -1606,6 +1612,7 @@ static void CG_RegisterGraphics(void)
 		"gfx/2d/numbers/nine_32b",
 		"gfx/2d/numbers/minus_32b",
 	};
+	char *font1, *font2;
 
 	CG_LoadingString(va(" - %s -", cgs.mapname));
 
@@ -2135,10 +2142,13 @@ static void CG_RegisterGraphics(void)
 	cgs.media.medicIcon = trap_R_RegisterShaderNoMip("sprites/voiceMedic");
 	cgs.media.ammoIcon  = trap_R_RegisterShaderNoMip("sprites/voiceAmmo");
 
-	RegisterFont("ariblk", 27, &cgs.media.limboFont1);
-	RegisterFont("ariblk", 16, &cgs.media.limboFont1_lo);
-	RegisterFont("courbd", 30, &cgs.media.limboFont2);
-	RegisterFont("courbd", 21, &cgs.media.limboFont2_lo);
+	font1 = com_customFont1.string[0] != '\0' ? com_customFont1.string : "ariblk";
+	font2 = com_customFont2.string[0] != '\0' ? com_customFont2.string : "courbd";
+
+	RegisterFont(font1, 27, &cgs.media.limboFont1);
+	RegisterFont(font1, 16, &cgs.media.limboFont1_lo);
+	RegisterFont(font2, 30, &cgs.media.limboFont2);
+	RegisterFont(font2, 21, &cgs.media.limboFont2_lo);
 
 	cgs.media.medal_back = trap_R_RegisterShaderNoMip("gfx/limbo/medal_back");
 

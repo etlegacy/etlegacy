@@ -9170,6 +9170,9 @@ vmCvar_t ui_cg_shoutcastDrawHealth;
 vmCvar_t ui_cg_shoutcastGrenadeTrail;
 vmCvar_t ui_cg_shoutcastDrawMinimap;
 
+vmCvar_t com_customFont1;
+vmCvar_t com_customFont2;
+
 static cvarTable_t cvarTable[] =
 {
 	{ NULL,                                "ui_textfield_temp",                   "",                           CVAR_TEMP,                      0 },
@@ -9354,6 +9357,9 @@ static cvarTable_t cvarTable[] =
 
 	{ &ui_serverBrowserSettings,           "ui_serverBrowserSettings",            "0",                          CVAR_INIT,                      0 },
 	{ NULL,                                "cg_allowGeoIP",                       "1",                          CVAR_ARCHIVE | CVAR_USERINFO,   0 },
+
+	{ &com_customFont1,                    "com_customFont1",                     "",                           0,                              0 },
+	{ &com_customFont2,                    "com_customFont2",                     "",                           0,                              0 },
 };
 
 static const unsigned int cvarTableSize = sizeof(cvarTable) / sizeof(cvarTable[0]);

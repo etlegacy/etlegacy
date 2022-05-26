@@ -176,8 +176,13 @@ void UI_DrawLoadPanel(qboolean ownerdraw, qboolean uihack)
 
 	if (!bg_loadscreeninited)
 	{
-		RegisterFont("ariblk", 27, &uiInfo.uiDC.Assets.bg_loadscreenfont1);
-		RegisterFont("courbd", 30, &uiInfo.uiDC.Assets.bg_loadscreenfont2);
+		char *font1, *font2;
+
+		font1 = com_customFont1.string[0] != '\0' ? com_customFont1.string : "ariblk";
+		font2 = com_customFont2.string[0] != '\0' ? com_customFont2.string : "courbd";
+
+		RegisterFont(font1, 27, &uiInfo.uiDC.Assets.bg_loadscreenfont1);
+		RegisterFont(font2, 30, &uiInfo.uiDC.Assets.bg_loadscreenfont2);
 
 		BG_PanelButtonsSetup(loadpanelButtons);
 		C_PanelButtonsSetup(loadpanelButtons, Cui_WideXoffset());   // convert to possible widescreen coordinates..
@@ -210,11 +215,11 @@ void UI_LoadPanel_RenderHeaderText(panel_button_t *button)
 
 	if ((cstate.connState == CA_DISCONNECTED || cstate.connState == CA_CONNECTED) && *downloadName)
 	{
-		button->text = (char*)(__("DOWNLOADING..."));
+		button->text = (char *)(__("DOWNLOADING..."));
 	}
 	else
 	{
-		button->text = (char*)(__("CONNECTING..."));
+		button->text = (char *)(__("CONNECTING..."));
 	}
 
 	BG_PanelButtonsRender_Text(button);
@@ -229,19 +234,19 @@ void UI_LoadPanel_RenderHeaderText(panel_button_t *button)
  */
 const char *UI_DownloadInfo(const char *downloadName)
 {
-	static int  tleEstimates[ESTIMATES] = { 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60,
-		                                    60,  60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60,
-		                                    60,  60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60,
-		                                    60,  60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60 };
-	static int  tleIndex = 0;
-	char        dlSizeBuf[64], totalSizeBuf[64], xferRateBuf[64], dlTimeBuf[64];
-	int         downloadSize, downloadCount, downloadTime;
+	static int tleEstimates[ESTIMATES] = { 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60,
+		                                   60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60,
+		                                   60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60,
+		                                   60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60 };
+	static int tleIndex = 0;
+	char       dlSizeBuf[64], totalSizeBuf[64], xferRateBuf[64], dlTimeBuf[64];
+	int        downloadSize, downloadCount, downloadTime;
 	const char *dlText, *etaText, *xferText;
-	const char  *s, *ds;
+	const char *s, *ds;
 
-	dlText = __("Downloading:");
-	etaText = __("Estimated time left:");
-	xferText = __("Transfer rate:");
+	dlText        = __("Downloading:");
+	etaText       = __("Estimated time left:");
+	xferText      = __("Transfer rate:");
 	downloadSize  = trap_Cvar_VariableValue("cl_downloadSize");
 	downloadCount = trap_Cvar_VariableValue("cl_downloadCount");
 	downloadTime  = trap_Cvar_VariableValue("cl_downloadTime");
@@ -321,19 +326,19 @@ const char *UI_DownloadInfo(const char *downloadName)
 			{
 				s = va("%s\n %s\n%s\n\n%s\n %s...\n\n%s\n\n%s %s", dlText, ds, totalSizeBuf,
 				       etaText,
-					   __("estimating"),
+				       __("estimating"),
 				       xferText,
 				       dlSizeBuf,
-					   __("copied"));
+				       __("copied"));
 			}
 			else
 			{
 				s = va("%s\n %s\n\n%s\n %s...\n\n%s\n\n%s %s", dlText, ds,
 				       etaText,
-					   __("estimating"),
+				       __("estimating"),
 				       xferText,
 				       dlSizeBuf,
-					   __("copied"));
+				       __("copied"));
 			}
 		}
 	}
