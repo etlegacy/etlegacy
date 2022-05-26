@@ -2967,8 +2967,8 @@ void Com_Init(char *commandLine)
 	com_speeds    = Cvar_Get("com_speeds", "0", 0);
 	com_timedemo  = Cvar_Get("timedemo", "0", CVAR_CHEAT);
 
-	com_customFont1 = Cvar_Get("com_customFont1", "", CVAR_ARCHIVE_ND | CVAR_LATCH);
-	com_customFont2 = Cvar_Get("com_customFont2", "", CVAR_ARCHIVE_ND | CVAR_LATCH);
+	com_customFont1 = Cvar_GetAndDescribe("com_customFont1", "", CVAR_ARCHIVE_ND | CVAR_LATCH, "Specify custom font for certain HUD elements (case sensitive, no extension)");
+	com_customFont2 = Cvar_GetAndDescribe("com_customFont2", "", CVAR_ARCHIVE_ND | CVAR_LATCH, "Specify custom font for certain HUD elements (case sensitive, no extension)");
 
 #ifdef DEDICATED
 	com_watchdog     = Cvar_Get("com_watchdog", "60", CVAR_ARCHIVE_ND);
