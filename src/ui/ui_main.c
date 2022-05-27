@@ -1124,6 +1124,17 @@ qboolean Asset_Parse(int handle)
 			{
 				return qfalse;
 			}
+
+			// custom font handling
+			if (!Q_stricmp(tempStr, "ariblk") && ui_customFont1.string[0] != '\0')
+			{
+				tempStr = ui_customFont1.string;
+			}
+			else if (!Q_stricmp(tempStr, "courbd") && ui_customFont2.string[0] != '\0')
+			{
+				tempStr = ui_customFont2.string;
+			}
+
 			RegisterFont(tempStr, pointSize, &uiInfo.uiDC.Assets.fonts[fontIndex]);
 			uiInfo.uiDC.Assets.fontRegistered = qtrue;
 			continue;
@@ -8549,6 +8560,15 @@ void UI_Init(int etLegacyClient, int clientVersion)
 		uiInfo.uiDC.glconfig.windowAspect = (float)uiInfo.uiDC.glconfig.vidWidth / (float)uiInfo.uiDC.glconfig.vidHeight;
 	}
 
+	// custom fonts, register here since these are ETL-specific features
+	// and doing this in UI_RegisterCvars is too early
+	// note: registered as ui_
+	if (uiInfo.etLegacyClient)
+	{
+		trap_Cvar_Register(&ui_customFont1, "cg_customFont1", "", CVAR_ARCHIVE);
+		trap_Cvar_Register(&ui_customFont2, "cg_customFont2", "", CVAR_ARCHIVE);
+	}
+
 	Com_Memset(&uiInfo.demos, 0, sizeof(uiInfo.demos));
 
 	//UI_Load();
@@ -9170,8 +9190,8 @@ vmCvar_t ui_cg_shoutcastDrawHealth;
 vmCvar_t ui_cg_shoutcastGrenadeTrail;
 vmCvar_t ui_cg_shoutcastDrawMinimap;
 
-vmCvar_t com_customFont1;
-vmCvar_t com_customFont2;
+vmCvar_t ui_customFont1;
+vmCvar_t ui_customFont2;
 
 static cvarTable_t cvarTable[] =
 {
@@ -9357,9 +9377,6 @@ static cvarTable_t cvarTable[] =
 
 	{ &ui_serverBrowserSettings,           "ui_serverBrowserSettings",            "0",                          CVAR_INIT,                      0 },
 	{ NULL,                                "cg_allowGeoIP",                       "1",                          CVAR_ARCHIVE | CVAR_USERINFO,   0 },
-
-	{ &com_customFont1,                    "com_customFont1",                     "",                           0,                              0 },
-	{ &com_customFont2,                    "com_customFont2",                     "",                           0,                              0 },
 };
 
 static const unsigned int cvarTableSize = sizeof(cvarTable) / sizeof(cvarTable[0]);
@@ -9416,6 +9433,32 @@ void UI_UpdateCvars(void)
 					BG_setCrosshair(ui_cg_crosshairColorAlt.string, uiInfo.xhairColorAlt, ui_cg_crosshairAlphaAlt.value, "cg_crosshairColorAlt");
 				}
 			}
+		}
+	}
+
+	if (uiInfo.etLegacyClient)
+	{
+		static int ui_customFont1_lastMod = 1;
+		static int ui_customFont2_lastMod = 1;
+
+		trap_Cvar_Update(&ui_customFont1);
+		trap_Cvar_Update(&ui_customFont2);
+
+		if (ui_customFont1.modificationCount != ui_customFont1_lastMod)
+		{
+			char *font = ui_customFont1.string[0] != '\0' ? ui_customFont1.string : "ariblk";
+			ui_customFont1_lastMod = ui_customFont1.modificationCount;
+
+			RegisterFont(font, 27, &uiInfo.uiDC.Assets.bg_loadscreenfont1);
+			UI_Load();
+		}
+		else if (ui_customFont2.modificationCount != ui_customFont2_lastMod)
+		{
+			char *font = ui_customFont2.string[0] != '\0' ? ui_customFont2.string : "courbd";
+			ui_customFont2_lastMod = ui_customFont2.modificationCount;
+
+			RegisterFont(font, 30, &uiInfo.uiDC.Assets.bg_loadscreenfont2);
+			UI_Load();
 		}
 	}
 }

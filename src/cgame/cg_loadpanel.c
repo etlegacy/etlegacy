@@ -302,8 +302,8 @@ void CG_DrawConnectScreen(qboolean interactive, qboolean forcerefresh)
 		char *font1, *font2;
 		trap_Cvar_Set("ui_connecting", "0");
 
-		font1 = com_customFont1.string[0] != '\0' ? com_customFont1.string : "ariblk";
-		font2 = com_customFont2.string[0] != '\0' ? com_customFont2.string : "courbd";
+		font1 = cg_customFont1.string[0] != '\0' ? cg_customFont1.string : "ariblk";
+		font2 = cg_customFont2.string[0] != '\0' ? cg_customFont2.string : "courbd";
 
 		RegisterFont(font1, 27, &cgs.media.bg_loadscreenfont1);
 		RegisterFont(font2, 30, &cgs.media.bg_loadscreenfont2);

@@ -112,8 +112,6 @@ cvar_t *com_fixedtime;
 cvar_t *com_journal;
 cvar_t *com_maxfps;
 cvar_t *com_timedemo;
-cvar_t *com_customFont1;
-cvar_t *com_customFont2;
 cvar_t *com_sv_running;
 cvar_t *com_cl_running;
 cvar_t *com_logfile;        // 1 = buffer log, 2 = flush after each print
@@ -2966,9 +2964,6 @@ void Com_Init(char *commandLine)
 	com_viewlog   = Cvar_Get("viewlog", "0", CVAR_CHEAT);
 	com_speeds    = Cvar_Get("com_speeds", "0", 0);
 	com_timedemo  = Cvar_Get("timedemo", "0", CVAR_CHEAT);
-
-	com_customFont1 = Cvar_GetAndDescribe("com_customFont1", "", CVAR_ARCHIVE_ND | CVAR_LATCH, "Specify custom font for certain HUD elements (case sensitive, no extension)");
-	com_customFont2 = Cvar_GetAndDescribe("com_customFont2", "", CVAR_ARCHIVE_ND | CVAR_LATCH, "Specify custom font for certain HUD elements (case sensitive, no extension)");
 
 #ifdef DEDICATED
 	com_watchdog     = Cvar_Get("com_watchdog", "60", CVAR_ARCHIVE_ND);

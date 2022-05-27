@@ -398,8 +398,8 @@ vmCvar_t cg_healthDynamicColor;
 
 vmCvar_t cg_drawBreathPuffs;
 
-vmCvar_t com_customFont1;
-vmCvar_t com_customFont2;
+vmCvar_t cg_customFont1;
+vmCvar_t cg_customFont2;
 
 typedef struct
 {
@@ -696,9 +696,6 @@ static cvarTable_t cvarTable[] =
 	{ &cg_healthDynamicColor,      "cg_healthDynamicColor",      "0",           CVAR_ARCHIVE,                 0 },
 
 	{ &cg_drawBreathPuffs,         "cg_drawBreathPuffs",         "1",           CVAR_ARCHIVE,                 0 },
-
-	{ &com_customFont1,            "com_customFont1",            "",            0,                            0 },
-	{ &com_customFont2,            "com_customFont2",            "",            0,                            0 },
 };
 
 static const unsigned int cvarTableSize = sizeof(cvarTable) / sizeof(cvarTable[0]);
@@ -717,6 +714,13 @@ void CG_RegisterCvars(void)
 	CG_Printf("%d client cvars in use\n", cvarTableSize);
 
 	trap_Cvar_Set("cg_letterbox", "0");   // force this for people who might have it in their cfg
+
+	// custom fonts, register here since these are ETL-specific features
+	if (cg.etLegacyClient)
+	{
+		trap_Cvar_Register(&cg_customFont1, "cg_customFont1", "", CVAR_ARCHIVE);
+		trap_Cvar_Register(&cg_customFont2, "cg_customFont2", "", CVAR_ARCHIVE);
+	}
 
 	for (i = 0, cv = cvarTable ; i < cvarTableSize ; i++, cv++)
 	{
@@ -820,6 +824,32 @@ void CG_UpdateCvars(void)
 					}
 				}
 			}
+		}
+	}
+
+	if (cg.etLegacyClient)
+	{
+		static int cg_customFont1_lastMod = 1;
+		static int cg_customFont2_lastMod = 1;
+
+		trap_Cvar_Update(&cg_customFont1);
+		trap_Cvar_Update(&cg_customFont2);
+
+		if (cg_customFont1.modificationCount != cg_customFont1_lastMod)
+		{
+			char *font = cg_customFont1.string[0] != '\0' ? cg_customFont1.string : "ariblk";
+			cg_customFont1_lastMod = cg_customFont1.modificationCount;
+
+			RegisterFont(font, 27, &cgs.media.limboFont1);
+			RegisterFont(font, 16, &cgs.media.limboFont1_lo);
+		}
+		else if (cg_customFont2.modificationCount != cg_customFont2_lastMod)
+		{
+			char *font = cg_customFont2.string[0] != '\0' ? cg_customFont2.string : "courbd";
+			cg_customFont2_lastMod = cg_customFont2.modificationCount;
+
+			RegisterFont(font, 30, &cgs.media.limboFont2);
+			RegisterFont(font, 21, &cgs.media.limboFont2_lo);
 		}
 	}
 
@@ -2142,8 +2172,8 @@ static void CG_RegisterGraphics(void)
 	cgs.media.medicIcon = trap_R_RegisterShaderNoMip("sprites/voiceMedic");
 	cgs.media.ammoIcon  = trap_R_RegisterShaderNoMip("sprites/voiceAmmo");
 
-	font1 = com_customFont1.string[0] != '\0' ? com_customFont1.string : "ariblk";
-	font2 = com_customFont2.string[0] != '\0' ? com_customFont2.string : "courbd";
+	font1 = cg_customFont1.string[0] != '\0' ? cg_customFont1.string : "ariblk";
+	font2 = cg_customFont2.string[0] != '\0' ? cg_customFont2.string : "courbd";
 
 	RegisterFont(font1, 27, &cgs.media.limboFont1);
 	RegisterFont(font1, 16, &cgs.media.limboFont1_lo);
