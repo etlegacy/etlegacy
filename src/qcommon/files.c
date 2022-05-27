@@ -1688,7 +1688,8 @@ long FS_FOpenFileReadDir(const char *fileName, searchpath_t *search, fileHandle_
 			    !FS_IsExt(fileName, ".glsl", len) &&
 #endif
 			    !FS_IsDemoExt(fileName, len) &&         // demos
-			    !FS_IsExt(fileName, ".ttf", len))       // TrueType ttf fonts
+			    !FS_IsExt(fileName, ".ttf", len) &&		// TrueType ttf fonts
+			    !FS_IsExt(fileName, ".otf", len))       // TrueType otf fonts
 			{
 				*file = 0;
 				return -1;
