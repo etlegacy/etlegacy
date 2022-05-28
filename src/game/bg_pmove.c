@@ -3864,13 +3864,6 @@ static void PM_Weapon(void)
 		}
 	}
 
-	// Aim Spread Scale handle
-	// add randomness
-	if (GetWeaponTableData(pm->ps->weapon)->type & WEAPON_TYPE_SMG)
-	{
-		aimSpreadScaleAdd += rand() % 10;
-	}
-
 	// add the recoil amount to the aimSpreadScale
 	pm->ps->aimSpreadScaleFloat += 3.0 * aimSpreadScaleAdd;
 
