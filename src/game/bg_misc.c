@@ -84,7 +84,7 @@ sysMessage_t HQMessages[SM_NUM_SYS_MSGS] =
 vec3_t playerlegsProneMins = { -13.5f, -13.5f, -24.f };
 vec3_t playerlegsProneMaxs = { 13.5f, 13.5f, -14.4f };
 
-vec3_t playerHeadProneMins = { -6.f, -6.f, -24.f };
+vec3_t playerHeadProneMins = { -6.f, -6.f, -12.f };
 vec3_t playerHeadProneMaxs = { 6.f, 6.f, 0.f };
 
 int          numSplinePaths;
