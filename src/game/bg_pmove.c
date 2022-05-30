@@ -4050,7 +4050,11 @@ void PM_UpdateLean(playerState_t *ps, usercmd_t *cmd, pmove_t *tpm)
 
 		ps->stats[STAT_PS_FLAGS] &= ~(STAT_LEAN_LEFT | STAT_LEAN_RIGHT);
 
-		return; // also early return if already in center position
+		// also early return if already in center position
+		if (!leanofs)
+		{
+			return;
+		}
 	}
 	else if (leaning > 0)       // right
 	{
