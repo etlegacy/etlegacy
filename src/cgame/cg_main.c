@@ -837,19 +837,13 @@ void CG_UpdateCvars(void)
 
 		if (cg_customFont1.modificationCount != cg_customFont1_lastMod)
 		{
-			char *font = cg_customFont1.string[0] != '\0' ? cg_customFont1.string : "ariblk";
 			cg_customFont1_lastMod = cg_customFont1.modificationCount;
-
-			RegisterFont(font, 27, &cgs.media.limboFont1);
-			RegisterFont(font, 16, &cgs.media.limboFont1_lo);
+			RegisterSharedFonts();
 		}
 		else if (cg_customFont2.modificationCount != cg_customFont2_lastMod)
 		{
-			char *font = cg_customFont2.string[0] != '\0' ? cg_customFont2.string : "courbd";
 			cg_customFont2_lastMod = cg_customFont2.modificationCount;
-
-			RegisterFont(font, 30, &cgs.media.limboFont2);
-			RegisterFont(font, 21, &cgs.media.limboFont2_lo);
+			RegisterSharedFonts();
 		}
 	}
 
@@ -1642,7 +1636,6 @@ static void CG_RegisterGraphics(void)
 		"gfx/2d/numbers/nine_32b",
 		"gfx/2d/numbers/minus_32b",
 	};
-	char *font1, *font2;
 
 	CG_LoadingString(va(" - %s -", cgs.mapname));
 
@@ -2172,13 +2165,11 @@ static void CG_RegisterGraphics(void)
 	cgs.media.medicIcon = trap_R_RegisterShaderNoMip("sprites/voiceMedic");
 	cgs.media.ammoIcon  = trap_R_RegisterShaderNoMip("sprites/voiceAmmo");
 
-	font1 = cg_customFont1.string[0] != '\0' ? cg_customFont1.string : "ariblk";
-	font2 = cg_customFont2.string[0] != '\0' ? cg_customFont2.string : "courbd";
-
-	RegisterFont(font1, 27, &cgs.media.limboFont1);
-	RegisterFont(font1, 16, &cgs.media.limboFont1_lo);
-	RegisterFont(font2, 30, &cgs.media.limboFont2);
-	RegisterFont(font2, 21, &cgs.media.limboFont2_lo);
+	RegisterSharedFonts();
+	cgs.media.limboFont1    = cgDC.Assets.limboFont1;
+	cgs.media.limboFont1_lo = cgDC.Assets.limboFont1_lo;
+	cgs.media.limboFont2    = cgDC.Assets.limboFont2;
+	cgs.media.limboFont2_lo = cgDC.Assets.limboFont2_lo;
 
 	cgs.media.medal_back = trap_R_RegisterShaderNoMip("gfx/limbo/medal_back");
 
@@ -2780,6 +2771,7 @@ void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qbo
 	cgs.screenXScale = cgs.glconfig.vidWidth / 640.0f;
 	cgs.screenYScale = cgs.glconfig.vidHeight / 480.0f;
 
+	cgDC.etLegactClient = cg.etLegacyClient;
 
 	if (cg.etLegacyClient <= 0)
 	{

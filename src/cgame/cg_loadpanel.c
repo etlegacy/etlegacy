@@ -299,14 +299,11 @@ void CG_DrawConnectScreen(qboolean interactive, qboolean forcerefresh)
 
 	if (!bg_loadscreeninited)
 	{
-		char *font1, *font2;
 		trap_Cvar_Set("ui_connecting", "0");
 
-		font1 = cg_customFont1.string[0] != '\0' ? cg_customFont1.string : "ariblk";
-		font2 = cg_customFont2.string[0] != '\0' ? cg_customFont2.string : "courbd";
-
-		RegisterFont(font1, 27, &cgs.media.bg_loadscreenfont1);
-		RegisterFont(font2, 30, &cgs.media.bg_loadscreenfont2);
+		RegisterSharedFonts();
+		cgs.media.bg_loadscreenfont1 = cgDC.Assets.bg_loadscreenfont1;
+		cgs.media.bg_loadscreenfont2 = cgDC.Assets.bg_loadscreenfont2;
 
 		bg_axispin    = DC->registerShaderNoMip("gfx/loading/pin_axis");
 		bg_alliedpin  = DC->registerShaderNoMip("gfx/loading/pin_allied");

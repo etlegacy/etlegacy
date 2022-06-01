@@ -1126,16 +1126,27 @@ qboolean Asset_Parse(int handle)
 			}
 
 			// custom font handling
-			if (!Q_stricmp(tempStr, "ariblk") && ui_customFont1.string[0] != '\0')
+			if (!Q_stricmp(tempStr, "ariblk") && ui_customFont1.string[0] != 0)
 			{
 				tempStr = ui_customFont1.string;
+				if (!RegisterFont(tempStr, pointSize, &uiInfo.uiDC.Assets.fonts[fontIndex]))
+				{
+					RegisterFont("ariblk", pointSize, &uiInfo.uiDC.Assets.fonts[fontIndex]);
+				}
 			}
-			else if (!Q_stricmp(tempStr, "courbd") && ui_customFont2.string[0] != '\0')
+			else if (!Q_stricmp(tempStr, "courbd") && ui_customFont2.string[0] != 0)
 			{
 				tempStr = ui_customFont2.string;
+				if (!RegisterFont(tempStr, pointSize, &uiInfo.uiDC.Assets.fonts[fontIndex]))
+				{
+					RegisterFont("courbd", pointSize, &uiInfo.uiDC.Assets.fonts[fontIndex]);
+				}
+			}
+			else // sanity check, we really shouldn't ever get here
+			{
+				RegisterFont(tempStr, pointSize, &uiInfo.uiDC.Assets.fonts[fontIndex]);
 			}
 
-			RegisterFont(tempStr, pointSize, &uiInfo.uiDC.Assets.fonts[fontIndex]);
 			uiInfo.uiDC.Assets.fontRegistered = qtrue;
 			continue;
 		}
@@ -8555,6 +8566,8 @@ void UI_Init(int etLegacyClient, int clientVersion)
 
 	MOD_CHECK_ETLEGACY(etLegacyClient, clientVersion, uiInfo.etLegacyClient);
 
+	uiInfo.uiDC.etLegactClient = uiInfo.etLegacyClient;
+
 	if (uiInfo.etLegacyClient <= 0)
 	{
 		uiInfo.uiDC.glconfig.windowAspect = (float)uiInfo.uiDC.glconfig.vidWidth / (float)uiInfo.uiDC.glconfig.vidHeight;
@@ -8679,6 +8692,8 @@ void UI_Init(int etLegacyClient, int clientVersion)
 	uiInfo.teamCount      = 0;
 	uiInfo.characterCount = 0;
 	uiInfo.aliasCount     = 0;
+
+	RegisterSharedFonts();
 
 	UI_ParseGameInfo("gameinfo.txt");
 
@@ -9446,18 +9461,14 @@ void UI_UpdateCvars(void)
 
 		if (ui_customFont1.modificationCount != ui_customFont1_lastMod)
 		{
-			char *font = ui_customFont1.string[0] != '\0' ? ui_customFont1.string : "ariblk";
 			ui_customFont1_lastMod = ui_customFont1.modificationCount;
-
-			RegisterFont(font, 27, &uiInfo.uiDC.Assets.bg_loadscreenfont1);
+			RegisterSharedFonts();
 			UI_Load();
 		}
 		else if (ui_customFont2.modificationCount != ui_customFont2_lastMod)
 		{
-			char *font = ui_customFont2.string[0] != '\0' ? ui_customFont2.string : "courbd";
 			ui_customFont2_lastMod = ui_customFont2.modificationCount;
-
-			RegisterFont(font, 30, &uiInfo.uiDC.Assets.bg_loadscreenfont2);
+			RegisterSharedFonts();
 			UI_Load();
 		}
 	}
