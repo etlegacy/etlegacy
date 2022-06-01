@@ -8726,6 +8726,8 @@ void UI_Init(int etLegacyClient, int clientVersion)
 
 	trap_AddCommand("listfavs");
 	trap_AddCommand("removefavs");
+
+	trap_AddCommand("listfonts");
 }
 
 /**
@@ -9766,6 +9768,38 @@ void UI_RemoveAllFavourites_f(void)
 	trap_LAN_RemoveServer(AS_FAVORITES_ALL, "");
 
 	Com_Printf("%s\n", __("All favourite servers removed."));
+}
+
+/**
+ * @brief Lists installed fonts
+ */
+void UI_ListFonts_f(void)
+{
+	int        numFonts, numFontsTotal = 0;
+	char       dirlist[8192];
+	char       *dirptr, fontname[MAX_QPATH];
+	int        i, j;
+	size_t     dirlen;
+	const char *fontTypes[] = { "ttf", "otf" };
+
+	Com_Printf("^2List of available fonts\n\n^*Use these as values for ^3cg_customFont1 ^*and ^3cg_customFont2\n"
+	           "^*to customise fonts used in various HUD elements\n-------------------------------------------------------\n");
+
+	for (i = 0; i < ARRAY_LEN(fontTypes); i++)
+	{
+		numFonts       = trap_FS_GetFileList("fonts", va(".%s", fontTypes[i]), dirlist, sizeof(dirlist));
+		numFontsTotal += numFonts;
+		dirptr         = dirlist;
+		for (j = 0; j < numFonts; j++, dirptr += dirlen + 1)
+		{
+			dirlen = strlen(dirptr);
+			Q_strncpyz(fontname, dirptr, sizeof(fontname));
+			COM_StripExtension(fontname, fontname, sizeof(fontname));
+			Com_Printf("%s\n", fontname);
+		}
+	}
+
+	Com_Printf("\n%d fonts installed.\n", numFontsTotal);
 }
 
 const char *UI_TranslateString(const char *string)

@@ -182,6 +182,11 @@ qboolean UI_ConsoleCommand(int realTime)
 			Menus_OpenByName(menu_name);
 		}
 	}
+	else if (Q_stricmp(cmd, "listfonts") == 0)
+	{
+		UI_ListFonts_f();
+		return qtrue;
+	}
 
 	trap_GetClientState(&cstate);
 	if (cstate.connState == CA_DISCONNECTED)

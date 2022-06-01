@@ -350,6 +350,8 @@ void UI_ListCampaigns_f(void);
 void UI_ListFavourites_f(void);
 void UI_RemoveAllFavourites_f(void);
 
+void UI_ListFonts_f(void);
+
 #define GLINFO_LINES        256
 
 // ui_atoms.c
