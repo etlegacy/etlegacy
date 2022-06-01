@@ -2771,7 +2771,7 @@ void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qbo
 	cgs.screenXScale = cgs.glconfig.vidWidth / 640.0f;
 	cgs.screenYScale = cgs.glconfig.vidHeight / 480.0f;
 
-	cgDC.etLegactClient = cg.etLegacyClient;
+	cgDC.etLegacyClient = cg.etLegacyClient;
 
 	if (cg.etLegacyClient <= 0)
 	{

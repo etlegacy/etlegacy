@@ -569,7 +569,7 @@ typedef struct
 	qhandle_t cursor;
 	float FPS;
 
-	int etLegactClient;
+	int etLegacyClient;
 } displayContextDef_t;
 
 void PC_SourceError(int handle, const char *format, ...);

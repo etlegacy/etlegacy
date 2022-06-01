@@ -1944,10 +1944,10 @@ void RegisterSharedFonts(void)
 		fontTableEntry_t *entry = &fontTable[i];
 		trap_Cvar_VariableStringBuffer(entry->cvarName, buf, sizeof(buf));
 		if (buf[0] == 0 || !Q_UTF8_RegisterFont(buf, entry->pointSize, entry->font,
-		                                        DC->etLegactClient >= UNICODE_SUPPORT_VERSION, &trap_R_RegisterFont))
+		                                        DC->etLegacyClient >= UNICODE_SUPPORT_VERSION, &trap_R_RegisterFont))
 		{
 			Q_UTF8_RegisterFont(entry->defaultFont, entry->pointSize, entry->font,
-			                    DC->etLegactClient >= UNICODE_SUPPORT_VERSION, &trap_R_RegisterFont);
+			                    DC->etLegacyClient >= UNICODE_SUPPORT_VERSION, &trap_R_RegisterFont);
 		}
 	}
 }
