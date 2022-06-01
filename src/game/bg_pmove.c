@@ -4050,7 +4050,11 @@ void PM_UpdateLean(playerState_t *ps, usercmd_t *cmd, pmove_t *tpm)
 
 		ps->stats[STAT_PS_FLAGS] &= ~(STAT_LEAN_LEFT | STAT_LEAN_RIGHT);
 
-		return; // also early return if already in center position
+		// also early return if already in center position
+		if (!leanofs)
+		{
+			return;
+		}
 	}
 	else if (leaning > 0)       // right
 	{
@@ -4516,25 +4520,6 @@ void PM_UpdateViewAngles(playerState_t *ps, pmoveExt_t *pmext, usercmd_t *cmd, v
 
 			if (traceres.fraction != 1.f)
 			{
-				// is plane valid, try to find one?
-				if (VectorCompare(traceres.plane.normal, vec3_origin))
-				{
-					pm->trace(&traceres, ps->origin, playerHeadProneMins, playerHeadProneMaxs, end, pm->ps->clientNum, tracemask);
-
-					// still invalid, can't rotate
-					if (VectorCompare(traceres.plane.normal, vec3_origin))
-					{
-						if (pm->debugLevel)
-						{
-							Com_Printf("%i:rotate in solid\n", c_pmove);
-						}
-
-						// starting in a solid, no space
-						ps->viewangles[YAW]   = oldYaw;
-						ps->delta_angles[YAW] = ANGLE2SHORT(ps->viewangles[YAW]) - cmd->angles[YAW];
-					}
-				}
-
 				// adjust position by bumping
 				VectorSubtract(end, start, end);
 
@@ -4577,25 +4562,6 @@ void PM_UpdateViewAngles(playerState_t *ps, pmoveExt_t *pmext, usercmd_t *cmd, v
 
 				if (traceres.fraction != 1.f)
 				{
-					// is plane valid, try to find one?
-					if (VectorCompare(traceres.plane.normal, vec3_origin))
-					{
-						pm->trace(&traceres, ps->origin, playerHeadProneMins, playerHeadProneMaxs, end, pm->ps->clientNum, tracemask);
-
-						// still invalid, can't rotate
-						if (VectorCompare(traceres.plane.normal, vec3_origin))
-						{
-							if (pm->debugLevel)
-							{
-								Com_Printf("%i:rotate in solid\n", c_pmove);
-							}
-
-							// starting in a solid, no space
-							ps->viewangles[YAW]   = oldYaw;
-							ps->delta_angles[YAW] = ANGLE2SHORT(ps->viewangles[YAW]) - cmd->angles[YAW];
-						}
-					}
-
 					// adjust position by bumping
 					VectorSubtract(end, start, end);
 
