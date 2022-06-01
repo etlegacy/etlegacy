@@ -8580,6 +8580,7 @@ void UI_Init(int etLegacyClient, int clientVersion)
 	{
 		trap_Cvar_Register(&ui_customFont1, "cg_customFont1", "", CVAR_ARCHIVE);
 		trap_Cvar_Register(&ui_customFont2, "cg_customFont2", "", CVAR_ARCHIVE);
+		trap_AddCommand("listfonts");
 	}
 
 	Com_Memset(&uiInfo.demos, 0, sizeof(uiInfo.demos));
@@ -8726,8 +8727,6 @@ void UI_Init(int etLegacyClient, int clientVersion)
 
 	trap_AddCommand("listfavs");
 	trap_AddCommand("removefavs");
-
-	trap_AddCommand("listfonts");
 }
 
 /**

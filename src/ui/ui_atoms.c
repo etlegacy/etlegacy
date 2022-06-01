@@ -182,7 +182,7 @@ qboolean UI_ConsoleCommand(int realTime)
 			Menus_OpenByName(menu_name);
 		}
 	}
-	else if (Q_stricmp(cmd, "listfonts") == 0)
+	else if (Q_stricmp(cmd, "listfonts") == 0 && uiInfo.etLegacyClient)
 	{
 		UI_ListFonts_f();
 		return qtrue;
