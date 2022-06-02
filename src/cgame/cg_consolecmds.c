@@ -1495,7 +1495,7 @@ static void CG_Class_f(void)
 
 	if (trap_Argc() < 2)
 	{
-		CG_Printf("Usage: class [class] <weapon1> <weapon2>\n");
+		CG_Printf("Usage: class <s|m|e|f|c> <weapon1> <weapon2>\n");
 		return;
 	}
 
@@ -1614,7 +1614,7 @@ static void CG_Class_f(void)
 		CG_PriorityCenterPrint(va(CG_TranslateString("You will spawn as an %s %s with a %s and a %s."), teamstring, BG_ClassnameForNumber(playerclass), GetWeaponTableData(weapon1)->desc, GetWeaponTableData(weapon2)->desc), 400, cg_fontScaleCP.value, -1);
 	}
 	// Send the switch command to the server
-	trap_SendClientCommand(va("team %s %i %i %i", classtype, playerclass, weapon1, weapon2));
+	trap_SendClientCommand(va("class %s %i %i %i", classtype, playerclass, weapon1, weapon2));
 }
 
 /**
