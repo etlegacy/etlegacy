@@ -953,7 +953,7 @@ static qboolean PM_CheckProne(void)
 
 				pm->ps->eFlags |= EF_PRONE;
 				PM_StepSlideMove(qfalse);
-				PM_TraceAll(&trace, pm->ps->origin, pm->ps->origin);
+				PM_TraceAll(&trace, pm->ps->origin, trace.endpos);
 
 				if (trace.startsolid || trace.allsolid || trace.fraction != 1.f)
 				{
