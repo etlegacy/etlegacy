@@ -199,13 +199,14 @@ qboolean CL_GetSnapshot(int snapshotNumber, snapshot_t *snapshot)
  * @brief CL_SetUserCmdValue
  * @param[in] userCmdValue
  * @param[in] flags
+ * @param[in] mask
  * @param[in] sensitivityScale
  * @param[in] mpIdentClient
  */
-void CL_SetUserCmdValue(int userCmdValue, int flags, float sensitivityScale, int mpIdentClient)
+void CL_SetUserCmdValue(int userCmdValue, int flags, int mask, float sensitivityScale, int mpIdentClient)
 {
 	cl.cgameUserCmdValue  = userCmdValue;
-	cl.cgameFlags         = flags;
+	cl.cgameFlags         = (cl.cgameFlags & ~mask) | (flags & mask);
 	cl.cgameSensitivity   = sensitivityScale;
 	cl.cgameMpIdentClient = mpIdentClient;
 }
@@ -872,7 +873,7 @@ intptr_t CL_CgameSystemCalls(intptr_t *args)
 	case CG_GETUSERCMD:
 		return CL_GetUserCmd(args[1], VMA(2));
 	case CG_SETUSERCMDVALUE:
-		CL_SetUserCmdValue(args[1], args[2], VMF(3), args[4]);
+		CL_SetUserCmdValue(args[1], args[2], MASK_CGAMEFLAGS_SHOWGAMEVIEW, VMF(3), args[4]);
 		return 0;
 	case CG_SETCLIENTLERPORIGIN:
 		CL_SetClientLerpOrigin(VMF(1), VMF(2), VMF(3));
@@ -1308,12 +1309,16 @@ void CL_AdjustTimeDelta(void)
 			{
 				cl.extrapolatedSnapshot = qfalse;
 				cl.serverTimeDelta     -= 2;
+				cl.cgameFlags |= MASK_CGAMEFLAGS_SERVERTIMEDELTA_BACKWARD;
+
 				if (cl_showTimeDelta->integer & 1) Com_Printf("serverTimeDelta ADJUSTMENT -2: ");
 			}
 			else
 			{
 				// otherwise, move our sense of time forward to minimize total latency
 				cl.serverTimeDelta++;
+				cl.cgameFlags |= MASK_CGAMEFLAGS_SERVERTIMEDELTA_FORWARD;
+				
 				if (cl_showTimeDelta->integer & 1) Com_Printf("serverTimeDelta ADJUSTMENT +1: ");
 			}
 		}

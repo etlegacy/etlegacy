@@ -576,6 +576,17 @@ typedef enum
 	NUM_BUTTONS
 } kbuttons_t;
 
+/**
+ * @enum cgameFlagsMaskEnum
+ * @brief
+ */
+enum cgameFlagsMaskEnum
+{
+    MASK_CGAMEFLAGS_SHOWGAMEVIEW             = 0b00000001,
+    MASK_CGAMEFLAGS_SERVERTIMEDELTA_FORWARD  = 0b00000010,
+    MASK_CGAMEFLAGS_SERVERTIMEDELTA_BACKWARD = 0b00000100,
+};
+
 void CL_ClearKeys(void);
 
 void CL_InitInput(void);
