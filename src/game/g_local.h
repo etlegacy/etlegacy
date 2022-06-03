@@ -1725,6 +1725,7 @@ void Cmd_Follow_f(gentity_t *ent, unsigned int dwCommand, int value);
 void G_Say_f(gentity_t *ent, int mode /*, qboolean arg0*/);
 void G_Voice_f(gentity_t *ent, int mode, qboolean arg0, qboolean voiceonly);
 void Cmd_Team_f(gentity_t *ent, unsigned int dwCommand, int value);
+void Cmd_Class_f(gentity_t *ent, unsigned int dwCommand, int value);
 void G_PlaySound_Cmd(void);
 int ClientNumbersFromString(char *s, int *plist);
 char *ConcatArgs(int start);
@@ -2891,7 +2892,7 @@ void G_RailBox(vec_t *origin, vec_t *mins, vec_t *maxs, vec_t *color, int index)
 typedef struct weapFireTable_t
 {
 	weapon_t weapon;
-	gentity_t *(*fire)(gentity_t *ent);   ///< -
+	gentity_t *(*fire)(gentity_t * ent);  ///< -
 	void (*think)(gentity_t *ent);        ///< -
 	void (*free)(gentity_t *ent);         ///< -
 	int eType;                            ///< -
