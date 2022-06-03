@@ -3696,7 +3696,7 @@ void CG_HUDSave_WriteComponent(fileHandle_t fh, int hudNumber, hudStucture_t *hu
 			       "%-4.2f\t"
 			       "%-4.2f\t%-4.2f\t%-4.2f\t%-4.2f\n",
 			       hudComponentFields[j].name,
-			       comp->location.x, comp->location.y, comp->location.w, comp->location.h,
+			       Ccg_Is43Screen() ? comp->location.x : comp->location.x / cgs.adr43, comp->location.y, comp->location.w, comp->location.h,
 			       comp->style, comp->visible,
 			       comp->scale,
 			       comp->color[0], comp->color[1], comp->color[2], comp->color[3]);
@@ -4531,10 +4531,18 @@ static void CG_HudEditorUpdateFields(panel_button_t *button)
 static void CG_HudEditor_Render(panel_button_t *button)
 {
 	hudComponent_t *comp = (hudComponent_t *)((char *)activehud + hudComponentFields[button->data[0]].offset);
+    vec4_t color;
+    
+    Vector4Copy(button == BG_PanelButtons_GetFocusButton() ? colorGreen : colorRed, color);
+    
+    if (!comp->visible)
+    {
+        color[3] = 0.25f;
+    }
 
 	button->rect = comp->location;
-
-	CG_DrawRect_FixedBorder(button->rect.x - 1, button->rect.y - 1, button->rect.w + 2, button->rect.h + 2, 2, colorRed);
+    
+    CG_DrawRect_FixedBorder(button->rect.x - 1, button->rect.y - 1, button->rect.w + 2, button->rect.h + 2, 2, color);
 }
 
 /**
@@ -4549,6 +4557,7 @@ static qboolean CG_HudEditor_KeyDown(panel_button_t *button, int key)
 	{
 		CG_HudEditorUpdateFields(button);
 		BG_PanelButtons_SetFocusButton(button);
+        button->data[4] = 0;
 		return qtrue;
 	}
 
@@ -4565,7 +4574,8 @@ static qboolean CG_HudEditor_KeyUp(panel_button_t *button, int key)
 {
 	if (key == K_MOUSE1)
 	{
-		BG_PanelButtons_SetFocusButton(NULL);
+		//BG_PanelButtons_SetFocusButton(NULL);
+        button->data[4] = 1;
 		return qtrue;
 	}
 
@@ -4653,6 +4663,8 @@ void CG_DrawHudEditor(void)
 */
 void CG_HudEditor_KeyHandling(int key, qboolean down)
 {
+	panel_button_t *button;
+
 	if (BG_PanelButtonsKeyEvent(key, down, hudEditor))
 	{
 		return;
@@ -4660,6 +4672,31 @@ void CG_HudEditor_KeyHandling(int key, qboolean down)
 
 	if (BG_PanelButtonsKeyEvent(key, down, hudComponentsPanel))
 	{
+		return;
+	}
+
+	if (key == K_MOUSE2)
+	{
+		BG_PanelButtons_SetFocusButton(NULL);
+	}
+
+	button = BG_PanelButtons_GetFocusButton();
+
+	if (button)
+	{
+		hudComponent_t *comp = (hudComponent_t *)((char *)activehud + hudComponentFields[button->data[0]].offset);
+
+		switch (key)
+		{
+		case K_LEFTARROW: comp->location.x  -= 1 ; break;
+		case K_RIGHTARROW: comp->location.x += 1 ; break;
+		case K_UPARROW: comp->location.y    -= 1 ; break;
+		case K_DOWNARROW: comp->location.y  += 1 ; break;
+		default: return;
+		}
+
+		CG_HudEditorUpdateFields(button);
+
 		return;
 	}
 }
@@ -4675,12 +4712,12 @@ void CG_HudEditorMouseMove_Handling(int x, int y)
 	{
 		return;
 	}
-
+ 
 	panel_button_t *button = BG_PanelButtons_GetFocusButton();
 	static float   offsetX = 0;
 	static float   offsetY = 0;
 
-	if (button && !button->data[4])
+	if (button && !button->data[4] && BG_CursorInRect(&button->rect))
 	{
 		hudComponent_t *comp = (hudComponent_t *)((char *)activehud + hudComponentFields[button->data[0]].offset);
 
