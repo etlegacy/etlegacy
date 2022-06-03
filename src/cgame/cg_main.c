@@ -398,6 +398,9 @@ vmCvar_t cg_healthDynamicColor;
 
 vmCvar_t cg_drawBreathPuffs;
 
+vmCvar_t cg_customFont1;
+vmCvar_t cg_customFont2;
+
 typedef struct
 {
 	vmCvar_t *vmCvar;
@@ -712,6 +715,13 @@ void CG_RegisterCvars(void)
 
 	trap_Cvar_Set("cg_letterbox", "0");   // force this for people who might have it in their cfg
 
+	// custom fonts, register here since these are ETL-specific features
+	if (cg.etLegacyClient)
+	{
+		trap_Cvar_Register(&cg_customFont1, "cg_customFont1", "", CVAR_ARCHIVE);
+		trap_Cvar_Register(&cg_customFont2, "cg_customFont2", "", CVAR_ARCHIVE);
+	}
+
 	for (i = 0, cv = cvarTable ; i < cvarTableSize ; i++, cv++)
 	{
 		trap_Cvar_Register(cv->vmCvar, cv->cvarName, cv->defaultString, cv->cvarFlags);
@@ -814,6 +824,26 @@ void CG_UpdateCvars(void)
 					}
 				}
 			}
+		}
+	}
+
+	if (cg.etLegacyClient)
+	{
+		static int cg_customFont1_lastMod = 1;
+		static int cg_customFont2_lastMod = 1;
+
+		trap_Cvar_Update(&cg_customFont1);
+		trap_Cvar_Update(&cg_customFont2);
+
+		if (cg_customFont1.modificationCount != cg_customFont1_lastMod)
+		{
+			cg_customFont1_lastMod = cg_customFont1.modificationCount;
+			RegisterSharedFonts();
+		}
+		else if (cg_customFont2.modificationCount != cg_customFont2_lastMod)
+		{
+			cg_customFont2_lastMod = cg_customFont2.modificationCount;
+			RegisterSharedFonts();
 		}
 	}
 
@@ -2135,10 +2165,11 @@ static void CG_RegisterGraphics(void)
 	cgs.media.medicIcon = trap_R_RegisterShaderNoMip("sprites/voiceMedic");
 	cgs.media.ammoIcon  = trap_R_RegisterShaderNoMip("sprites/voiceAmmo");
 
-	RegisterFont("ariblk", 27, &cgs.media.limboFont1);
-	RegisterFont("ariblk", 16, &cgs.media.limboFont1_lo);
-	RegisterFont("courbd", 30, &cgs.media.limboFont2);
-	RegisterFont("courbd", 21, &cgs.media.limboFont2_lo);
+	RegisterSharedFonts();
+	cgs.media.limboFont1    = cgDC.Assets.limboFont1;
+	cgs.media.limboFont1_lo = cgDC.Assets.limboFont1_lo;
+	cgs.media.limboFont2    = cgDC.Assets.limboFont2;
+	cgs.media.limboFont2_lo = cgDC.Assets.limboFont2_lo;
 
 	cgs.media.medal_back = trap_R_RegisterShaderNoMip("gfx/limbo/medal_back");
 
@@ -2740,6 +2771,7 @@ void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qbo
 	cgs.screenXScale = cgs.glconfig.vidWidth / 640.0f;
 	cgs.screenYScale = cgs.glconfig.vidHeight / 480.0f;
 
+	cgDC.etLegacyClient = cg.etLegacyClient;
 
 	if (cg.etLegacyClient <= 0)
 	{

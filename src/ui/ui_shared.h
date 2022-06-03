@@ -406,6 +406,10 @@ typedef struct
 	fontHelper_t fonts[UI_FONT_COUNT];
 	fontHelper_t bg_loadscreenfont1;
 	fontHelper_t bg_loadscreenfont2;
+	fontHelper_t limboFont1;
+	fontHelper_t limboFont1_lo;
+	fontHelper_t limboFont2;
+	fontHelper_t limboFont2_lo;
 	qhandle_t cursor;
 	qhandle_t gradientBar;
 	qhandle_t gradientRound;
@@ -443,6 +447,16 @@ typedef struct
 	qhandle_t crosshairAltShader[NUM_CROSSHAIRS];
 
 } cachedAssets_t;
+
+#define FONT_TABLE_NUMFONTS 6
+
+typedef struct
+{
+	fontHelper_t *font;
+	int pointSize;
+	const char *cvarName;
+	const char *defaultFont;
+} fontTableEntry_t;
 
 /**
  * @struct commandDef_s
@@ -554,6 +568,8 @@ typedef struct
 	qhandle_t gradientImage;
 	qhandle_t cursor;
 	float FPS;
+
+	int etLegacyClient;
 } displayContextDef_t;
 
 void PC_SourceError(int handle, const char *format, ...);
@@ -771,6 +787,8 @@ void Cui_WideRect(rectDef_t *rect);
 float Cui_WideX(float x);
 float Cui_WideXoffset(void);
 void C_PanelButtonsSetup(panel_button_t **buttons, float xoffset);      // called from UI & CGAME
+
+void RegisterSharedFonts(void);
 
 //A simple macro to check if a certain functionality is available in the engine version
 #ifdef CGAMEDLL

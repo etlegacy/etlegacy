@@ -2896,6 +2896,9 @@ extern vmCvar_t cg_healthDynamicColor;
 
 extern vmCvar_t cg_drawBreathPuffs;
 
+extern vmCvar_t cg_customFont1;
+extern vmCvar_t cg_customFont2;
+
 // local clock flags
 #define LOCALTIME_ON                0x01
 #define LOCALTIME_SECOND            0x02

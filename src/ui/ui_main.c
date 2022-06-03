@@ -1124,7 +1124,29 @@ qboolean Asset_Parse(int handle)
 			{
 				return qfalse;
 			}
-			RegisterFont(tempStr, pointSize, &uiInfo.uiDC.Assets.fonts[fontIndex]);
+
+			// custom font handling
+			if (!Q_stricmp(tempStr, "ariblk") && ui_customFont1.string[0] != 0)
+			{
+				tempStr = ui_customFont1.string;
+				if (!RegisterFont(tempStr, pointSize, &uiInfo.uiDC.Assets.fonts[fontIndex]))
+				{
+					RegisterFont("ariblk", pointSize, &uiInfo.uiDC.Assets.fonts[fontIndex]);
+				}
+			}
+			else if (!Q_stricmp(tempStr, "courbd") && ui_customFont2.string[0] != 0)
+			{
+				tempStr = ui_customFont2.string;
+				if (!RegisterFont(tempStr, pointSize, &uiInfo.uiDC.Assets.fonts[fontIndex]))
+				{
+					RegisterFont("courbd", pointSize, &uiInfo.uiDC.Assets.fonts[fontIndex]);
+				}
+			}
+			else // sanity check, we really shouldn't ever get here
+			{
+				RegisterFont(tempStr, pointSize, &uiInfo.uiDC.Assets.fonts[fontIndex]);
+			}
+
 			uiInfo.uiDC.Assets.fontRegistered = qtrue;
 			continue;
 		}
@@ -8544,9 +8566,21 @@ void UI_Init(int etLegacyClient, int clientVersion)
 
 	MOD_CHECK_ETLEGACY(etLegacyClient, clientVersion, uiInfo.etLegacyClient);
 
+	uiInfo.uiDC.etLegacyClient = uiInfo.etLegacyClient;
+
 	if (uiInfo.etLegacyClient <= 0)
 	{
 		uiInfo.uiDC.glconfig.windowAspect = (float)uiInfo.uiDC.glconfig.vidWidth / (float)uiInfo.uiDC.glconfig.vidHeight;
+	}
+
+	// custom fonts, register here since these are ETL-specific features
+	// and doing this in UI_RegisterCvars is too early
+	// note: registered as ui_
+	if (uiInfo.etLegacyClient)
+	{
+		trap_Cvar_Register(&ui_customFont1, "cg_customFont1", "", CVAR_ARCHIVE);
+		trap_Cvar_Register(&ui_customFont2, "cg_customFont2", "", CVAR_ARCHIVE);
+		trap_AddCommand("listfonts");
 	}
 
 	Com_Memset(&uiInfo.demos, 0, sizeof(uiInfo.demos));
@@ -8659,6 +8693,8 @@ void UI_Init(int etLegacyClient, int clientVersion)
 	uiInfo.teamCount      = 0;
 	uiInfo.characterCount = 0;
 	uiInfo.aliasCount     = 0;
+
+	RegisterSharedFonts();
 
 	UI_ParseGameInfo("gameinfo.txt");
 
@@ -9170,6 +9206,9 @@ vmCvar_t ui_cg_shoutcastDrawHealth;
 vmCvar_t ui_cg_shoutcastGrenadeTrail;
 vmCvar_t ui_cg_shoutcastDrawMinimap;
 
+vmCvar_t ui_customFont1;
+vmCvar_t ui_customFont2;
+
 static cvarTable_t cvarTable[] =
 {
 	{ NULL,                                "ui_textfield_temp",                   "",                           CVAR_TEMP,                      0 },
@@ -9410,6 +9449,28 @@ void UI_UpdateCvars(void)
 					BG_setCrosshair(ui_cg_crosshairColorAlt.string, uiInfo.xhairColorAlt, ui_cg_crosshairAlphaAlt.value, "cg_crosshairColorAlt");
 				}
 			}
+		}
+	}
+
+	if (uiInfo.etLegacyClient)
+	{
+		static int ui_customFont1_lastMod = 1;
+		static int ui_customFont2_lastMod = 1;
+
+		trap_Cvar_Update(&ui_customFont1);
+		trap_Cvar_Update(&ui_customFont2);
+
+		if (ui_customFont1.modificationCount != ui_customFont1_lastMod)
+		{
+			ui_customFont1_lastMod = ui_customFont1.modificationCount;
+			RegisterSharedFonts();
+			UI_Load();
+		}
+		else if (ui_customFont2.modificationCount != ui_customFont2_lastMod)
+		{
+			ui_customFont2_lastMod = ui_customFont2.modificationCount;
+			RegisterSharedFonts();
+			UI_Load();
 		}
 	}
 }
@@ -9706,6 +9767,38 @@ void UI_RemoveAllFavourites_f(void)
 	trap_LAN_RemoveServer(AS_FAVORITES_ALL, "");
 
 	Com_Printf("%s\n", __("All favourite servers removed."));
+}
+
+/**
+ * @brief Lists installed fonts
+ */
+void UI_ListFonts_f(void)
+{
+	int        numFonts, numFontsTotal = 0;
+	char       dirlist[8192];
+	char       *dirptr, fontname[MAX_QPATH];
+	int        i, j;
+	size_t     dirlen;
+	const char *fontTypes[] = { "ttf", "otf" };
+
+	Com_Printf("^2List of available fonts\n\n^*Use these as values for ^3cg_customFont1 ^*and ^3cg_customFont2\n"
+	           "^*to customise fonts used in various HUD elements\n-------------------------------------------------------\n");
+
+	for (i = 0; i < ARRAY_LEN(fontTypes); i++)
+	{
+		numFonts       = trap_FS_GetFileList("fonts", va(".%s", fontTypes[i]), dirlist, sizeof(dirlist));
+		numFontsTotal += numFonts;
+		dirptr         = dirlist;
+		for (j = 0; j < numFonts; j++, dirptr += dirlen + 1)
+		{
+			dirlen = strlen(dirptr);
+			Q_strncpyz(fontname, dirptr, sizeof(fontname));
+			COM_StripExtension(fontname, fontname, sizeof(fontname));
+			Com_Printf("%s\n", fontname);
+		}
+	}
+
+	Com_Printf("\n%d fonts installed.\n", numFontsTotal);
 }
 
 const char *UI_TranslateString(const char *string)
