@@ -1282,22 +1282,18 @@ void CL_AdjustTimeDelta(void)
 
 	if (deltaDelta > RESET_TIME)
 	{
-		cl.serverTimeDelta = newDelta;
+		cl.baselineDelta = cl.serverTimeDelta = newDelta;
 		cl.oldServerTime   = cl.snap.serverTime; // FIXME: is this a problem for cgame?
 		cl.serverTime      = cl.snap.serverTime;
-		if (cl_showTimeDelta->integer)
-		{
-			Com_Printf("<RESET> ");
-		}
+
+		if (cl_showTimeDelta->integer & 1) Com_Printf("serverTimeDelta RESET: ");
 	}
 	else if (deltaDelta > 100)
 	{
 		// fast adjust, cut the difference in half
-		if (cl_showTimeDelta->integer)
-		{
-			Com_Printf("<FAST> ");
-		}
 		cl.serverTimeDelta = (cl.serverTimeDelta + newDelta) >> 1;
+
+		if (cl_showTimeDelta->integer & 1) Com_Printf("serverTimeDelta FAST ADJUST: ");
 	}
 	else
 	{
@@ -1312,19 +1308,31 @@ void CL_AdjustTimeDelta(void)
 			{
 				cl.extrapolatedSnapshot = qfalse;
 				cl.serverTimeDelta     -= 2;
+				if (cl_showTimeDelta->integer & 1) Com_Printf("serverTimeDelta ADJUSTMENT -2: ");
 			}
 			else
 			{
 				// otherwise, move our sense of time forward to minimize total latency
 				cl.serverTimeDelta++;
+				if (cl_showTimeDelta->integer & 1) Com_Printf("serverTimeDelta ADJUSTMENT +1: ");
 			}
+		}
+		else
+		{
+			if (cl_showTimeDelta->integer & 1) Com_Printf("serverTimeDelta NO ADJUSTMENT (TIMESCALE NOT 1 OR 0): ");
 		}
 	}
 
-	if (cl_showTimeDelta->integer)
+	if (cl_showTimeDelta->integer & 1) Com_Printf("%i\n", cl.serverTimeDelta);
+
+	if (cl_showTimeDelta->integer & 2)
 	{
-		Com_Printf("%i ", cl.serverTimeDelta);
+		int serverTime = cls.realtime + cl.serverTimeDelta - cl_timeNudge->integer;
+		int drift = cl.serverTimeDelta - cl.baselineDelta;
+		Com_Printf("serverTimeDelta DRIFT: %i DELTADELTA: %i\n", drift, deltaDelta);
 	}
+
+	if (cl_showTimeDelta->integer & 4) Com_Printf("%i ", cl.serverTimeDelta);
 }
 
 /**
@@ -1340,7 +1348,10 @@ void CL_FirstSnapshot(void)
 	cls.state = CA_ACTIVE;
 
 	// set the timedelta so we are exactly on this first frame
-	cl.serverTimeDelta = cl.snap.serverTime - cls.realtime;
+	cl.baselineDelta = cl.serverTimeDelta = cl.snap.serverTime - cls.realtime;
+	if (cl_showTimeDelta->integer & 1) Com_Printf("serverTimeDelta FIRST SNAPSHOT: %i\n", cl.serverTimeDelta);
+	if (cl_showTimeDelta->integer & 4) Com_Printf("%i ", cl.serverTimeDelta);
+
 	cl.oldServerTime   = cl.snap.serverTime;
 
 	clc.demo.timeBaseTime = cl.snap.serverTime;

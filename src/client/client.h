@@ -129,6 +129,7 @@ typedef struct
 	int oldFrameServerTime;                 ///< to check tournament restarts
 	int serverTimeDelta;                    ///< cl.serverTime = cls.realtime + cl.serverTimeDelta
 	                                        ///< this value changes as net lag varies
+	int baselineDelta;                      ///< initial or reset value of serverTimeDelta w/o adjustments
 	qboolean extrapolatedSnapshot;          ///< set if any cgame frame has been forced to extrapolate
 	                                        ///< cleared when CL_AdjustTimeDelta looks at it
 	qboolean newSnapshots;                  ///< set on parse of any valid packet
