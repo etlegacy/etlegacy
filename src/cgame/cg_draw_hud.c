@@ -291,7 +291,7 @@ static void CG_HudComponentsFill(hudStucture_t *hud)
  */
 static qboolean CG_isHudNumberAvailable(int number)
 {
-	// values from 0 to 2 are used by the default hud's
+	// values 0 is used by the default hud's
 	if (number <= 0 || number >= MAXHUDS)
 	{
 		Com_Printf(S_COLOR_RED "CG_isHudNumberAvailable: invalid HUD number %i, allowed values: 1 - %i\n", number, MAXHUDS);
@@ -3586,7 +3586,14 @@ void CG_Hud_Setup(void)
  */
 static void CG_PrintHudComponent(const char *name, hudComponent_t *comp)
 {
-	Com_Printf("%s location: X %.f Y %.f W %.f H %.f visible: %i\n", name, comp->location.x, comp->location.y, comp->location.w, comp->location.h, comp->visible);
+	Com_Printf("%s location: X %.f Y %.f W %.f H %.f "
+	           "style %i visible: "
+	           "%i scale : %f "
+	           "color %.f %.f %.f %.f\n",
+	           name, comp->location.x, comp->location.y, comp->location.w, comp->location.h,
+	           comp->style, comp->visible,
+	           comp->scale,
+	           comp->color[0], comp->color[1], comp->color[2], comp->color[3]);
 }
 
 /**
@@ -3664,6 +3671,135 @@ void CG_DrawActiveHud(void)
 //
 //
 ///////////////////////////////////////////
+
+#define SOUNDEVENT(sound) trap_S_StartLocalSound(sound, CHAN_LOCAL_SOUND)
+
+#define SOUND_SELECT    SOUNDEVENT(cgs.media.sndLimboSelect)
+#define SOUND_FILTER    SOUNDEVENT(cgs.media.sndLimboFilter)
+
+void CG_HUDSave_WriteComponent(fileHandle_t fh, int hudNumber, hudStucture_t *hud)
+{
+	int  j;
+	char *s;
+
+	s = va("\thud {\n\t\thudnumber %d\n", hudNumber);
+	trap_FS_Write(s, strlen(s), fh);
+
+	for (j = 0; hudComponentFields[j].name; j++)
+	{
+		if (!hudComponentFields[j].isAlias)
+		{
+			hudComponent_t *comp = (hudComponent_t *)((char *)hud + hudComponentFields[j].offset);
+			s = va("\t\t%-16s\t"
+			       "%-6.2f\t%-6.2f\t%-6.2f\t%-6.2f\t"
+			       "%i\t%i\t"
+			       "%-4.2f\t"
+			       "%-4.2f\t%-4.2f\t%-4.2f\t%-4.2f\n",
+			       hudComponentFields[j].name,
+			       comp->location.x, comp->location.y, comp->location.w, comp->location.h,
+			       comp->style, comp->visible,
+			       comp->scale,
+			       comp->color[0], comp->color[1], comp->color[2], comp->color[3]);
+			trap_FS_Write(s, strlen(s), fh);
+		}
+	}
+
+	s = "\t}\n";
+	trap_FS_Write(s, strlen(s), fh);
+}
+
+/**
+ * @brief CG_HudSave
+ * @param[in] HUDToDuplicate
+ * @param[in] HUDToDelete
+ */
+qboolean CG_HudSave(int HUDToDuplicate, int HUDToDelete)
+{
+	int           i;
+	fileHandle_t  fh;
+	char          *s;
+	hudStucture_t *hud;
+
+	if (trap_FS_FOpenFile("hud.dat", &fh, FS_WRITE) < 0)
+	{
+		CG_Printf(S_COLOR_RED "ERROR CG_HudSave: failed to save hud to 'hud.dat\n");
+		return qfalse;
+	}
+
+	if (HUDToDelete == 0)
+	{
+		CG_Printf(S_COLOR_RED "ERROR CG_HudSave: can't delete default HUD\n");
+		return qfalse;
+	}
+
+	if (HUDToDuplicate && hudCount == MAXHUDS)
+	{
+		CG_Printf(S_COLOR_RED "ERROR CG_HudSave: no more free HUD slots for clone\n");
+		return qfalse;
+	}
+
+	if (HUDToDuplicate >= 0)
+	{
+		int num = 1;
+
+		// find a free number
+		for (i = 1; i < MAXHUDS; i++)
+		{
+			hud = &hudlist[i];
+
+			if (hud->hudnumber == num)
+			{
+				num++;
+				i = 1;
+			}
+		}
+
+		activehud         = CG_addHudToList(CG_getHudByNumber(HUDToDuplicate));
+		cg_altHud.integer = activehud->hudnumber = num;
+
+		CG_Printf("Clone hud %d on number %d\n", HUDToDuplicate, num);
+	}
+
+	s = "hudDef {\n";
+	trap_FS_Write(s, strlen(s), fh);
+
+	for (i = 1; i < hudCount; i++)
+	{
+		hud = &hudlist[i];
+
+		if (hud->hudnumber == HUDToDelete)
+		{
+			int j;
+
+			memmove(&hudlist[i], &hudlist[i + 1], sizeof(hudStucture_t) * (hudCount - i));
+			i--;
+			hudCount--;
+
+			// FIXME: found a more elegant way for keeping sorting
+			for (j = i; j < hudCount; j++)
+			{
+				CG_HudComponentsFill(&hudlist[j]);
+			}
+
+			// Back to default HUD
+			cg_altHud.integer = 0;
+			activehud         = CG_getHudByNumber(0);
+
+			continue;
+		}
+
+		CG_HUDSave_WriteComponent(fh, hud->hudnumber, hud);
+	}
+
+	s = "}\n";
+	trap_FS_Write(s, strlen(s), fh);
+
+	trap_FS_FCloseFile(fh);
+
+	CG_Printf("Saved huds to 'hud.dat'\n");
+
+	return qtrue;
+}
 
 /**
 * @brief CG_HudEditor_RenderEdit
@@ -3785,16 +3921,35 @@ static void CG_HudEditorColor_Finish(panel_button_t *button)
 }
 
 /**
-* @brief CG_HudEditor_CheckboxKeyDown
+* @brief CG_HudEditorStyle_CheckboxKeyDown
 * @param button
 */
-qboolean CG_HudEditor_CheckboxKeyDown(panel_button_t *button, int key)
+qboolean CG_HudEditorVisible_CheckboxKeyDown(panel_button_t *button, int key)
 {
 	hudComponent_t *comp = (hudComponent_t *)((char *)activehud + hudComponentFields[button->data[1]].offset);
 
-	comp->visible = !comp->visible;
+	comp->visible = button->data[2] = !button->data[2];
 
 	BG_PanelButtons_SetFocusButton(NULL);
+
+	SOUND_FILTER;
+
+	return qtrue;
+}
+
+/**
+* @brief CG_HudEditorStyle_CheckboxKeyDown
+* @param button
+*/
+qboolean CG_HudEditorStyle_CheckboxKeyDown(panel_button_t *button, int key)
+{
+	hudComponent_t *comp = (hudComponent_t *)((char *)activehud + hudComponentFields[button->data[1]].offset);
+
+	comp->style = button->data[2] = !button->data[2];
+
+	BG_PanelButtons_SetFocusButton(NULL);
+
+	SOUND_FILTER;
 
 	return qtrue;
 }
@@ -3805,11 +3960,9 @@ qboolean CG_HudEditor_CheckboxKeyDown(panel_button_t *button, int key)
 */
 static void CG_HudEditor_RenderCheckbox(panel_button_t *button)
 {
-	hudComponent_t *comp = (hudComponent_t *)((char *)activehud + hudComponentFields[button->data[1]].offset);
-
 	CG_DrawRect_FixedBorder(button->rect.x, button->rect.y, button->rect.w, button->rect.h, 2, colorBlack);
 
-	if (comp->visible)
+	if (button->data[2])
 	{
 		CG_DrawPic(button->rect.x + 2, button->rect.y + 2, 12, 12, cgs.media.readyShader);
 	}
@@ -3932,6 +4085,8 @@ static qboolean CG_HudEditor_Dropdown_KeyDown(panel_button_t *button, int key)
 {
 	if (key == K_MOUSE1)
 	{
+		SOUND_SELECT;
+
 		BG_PanelButtons_SetFocusButton(button);
 		return qtrue;
 	}
@@ -3983,6 +4138,98 @@ static qboolean CG_HudEditor_Dropdown_KeyUp(panel_button_t *button, int key)
 	return qfalse;
 }
 
+/**
+ * @brief CG_HudEditorSave_KeyDown
+ * @param button
+ */
+static qboolean CG_HudEditorSave_KeyDown(panel_button_t *button, int key)
+{
+	if (key == K_MOUSE1)
+	{
+		SOUND_SELECT;
+
+		CG_HudSave(-1, -1);
+
+		return qtrue;
+	}
+
+	return qfalse;
+}
+
+/**
+ * @brief CG_HudEditorClone_KeyDown
+ * @param button
+ */
+static qboolean CG_HudEditorClone_KeyDown(panel_button_t *button, int key)
+{
+	if (key == K_MOUSE1)
+	{
+		SOUND_SELECT;
+
+		CG_HudSave(activehud->hudnumber, -1);
+
+		return qtrue;
+	}
+
+	return qfalse;
+}
+
+/**
+ * @brief CG_HudEditorDelete_KeyDown
+ * @param button
+ */
+static qboolean  CG_HudEditorDelete_KeyDown(panel_button_t *button, int key)
+{
+	if (key == K_MOUSE1)
+	{
+		SOUND_SELECT;
+
+		CG_HudSave(-1, activehud->hudnumber);
+
+		return qtrue;
+	}
+
+	return qfalse;
+}
+
+/**
+ * @brief CG_HudEditorRender_Button_Ext
+ * @param[in] r
+ * @param[in] text
+ * @param[in] font
+ */
+void CG_HudEditorRender_Button_Ext(rectDef_t *r, const char *text, panel_button_text_t *font)
+{
+	vec4_t clrBdr = { 0.1f, 0.1f, 0.1f, 0.5f };
+	vec4_t clrBck = { 0.3f, 0.3f, 0.3f, 0.4f };
+
+	vec4_t clrBck_hi = { 0.5f, 0.5f, 0.5f, 0.4f };
+	vec4_t clrTxt_hi = { 0.9f, 0.9f, 0.9f, 1.f };
+
+	qboolean hilight = BG_CursorInRect(r);
+
+	CG_FillRect(r->x, r->y, r->w, r->h, hilight ? clrBck_hi : clrBck);
+	CG_DrawRect_FixedBorder(r->x, r->y, r->w, r->h, 1, clrBdr);
+
+	if (text)
+	{
+		float w;
+
+		w = CG_Text_Width_Ext(text, font->scalex, 0, font->font);
+
+		CG_Text_Paint_Ext(r->x + ((r->w + 2) - w) * 0.5f, r->y + 11, font->scalex, font->scaley, hilight ? clrTxt_hi : font->colour, text, font->align, 0, font->style, font->font);
+	}
+}
+
+/**
+ * @brief CG_PanelButtonsRender_Button
+ * @param[in] CG_HudEditorRender_Button
+ */
+void CG_HudEditorRender_Button(panel_button_t *button)
+{
+	CG_HudEditorRender_Button_Ext(&button->rect, button->text, button->font);
+}
+
 static panel_button_text_t hudEditorFont =
 {
 	0.20f,                   0.22f,
@@ -3997,6 +4244,9 @@ static panel_button_text_t hudEditorFont =
 #define INPUT_WIDTH 40
 #define INPUT_HEIGHT 20
 #define INPUT_OFFSET_WIDTH (INPUT_WIDTH + 20)
+#define CHECKBOX_SIZE 15
+#define BUTTON_WIDTH (82 - 4)
+#define BUTTON_HEIGHT (18 - 4)
 
 static panel_button_t hudEditorHudDropdown =
 {
@@ -4139,16 +4389,72 @@ static panel_button_t hudEditorColorA =
 	0
 };
 
-static panel_button_t hudEditorVisibile =
+static panel_button_t hudEditorVisible =
 {
 	NULL,
 	"hudeditor_visible",
-	{ 60 + SCREEN_OFFSETX,      SCREEN_OFFSETY + 3 * (INPUT_HEIGHT + 6),    15, 15 },
-	{ 0,                        0,                                          0,  0, 1, 0, 0, 0},
+	{ 60 + SCREEN_OFFSETX,      SCREEN_OFFSETY + 3 * (INPUT_HEIGHT + 6),    CHECKBOX_SIZE, CHECKBOX_SIZE },
+	{ 0,                        0,                                          0,             0, 1, 0, 0, 0 },
 	NULL,                       // font
-	CG_HudEditor_CheckboxKeyDown,// keyDown
+	CG_HudEditorVisible_CheckboxKeyDown,// keyDown
 	NULL,                       // keyUp
 	CG_HudEditor_RenderCheckbox,
+	NULL,
+	0
+};
+
+static panel_button_t hudEditorStyle =
+{
+	NULL,
+	"hudeditor_style",
+	{ 60 + INPUT_OFFSET_WIDTH + SCREEN_OFFSETX,SCREEN_OFFSETY + 3 * (INPUT_HEIGHT + 6),                           CHECKBOX_SIZE, CHECKBOX_SIZE },
+	{ 0,                        0,                                                                 0,             0, 1, 0, 0, 0 },
+	NULL,                       // font
+	CG_HudEditorStyle_CheckboxKeyDown,// keyDown
+	NULL,                       // keyUp
+	CG_HudEditor_RenderCheckbox,
+	NULL,
+	0
+};
+
+static panel_button_t hudEditorSave =
+{
+	NULL,
+	"Save",
+	{ 60 + SCREEN_OFFSETX,    SCREEN_OFFSETY + 4 * (INPUT_HEIGHT + 6),                 BUTTON_WIDTH, BUTTON_HEIGHT },
+	{ 0,                      0,                                                       0,            0, 0, 0, 0, 0 },
+	&hudEditorFont,           // font
+	CG_HudEditorSave_KeyDown, // keyDown
+	NULL,                     // keyUp
+	CG_HudEditorRender_Button,
+	NULL,
+	0
+};
+
+static panel_button_t hudEditorClone =
+{
+	NULL,
+	"Clone",
+	{ 60 + BUTTON_WIDTH + 4 + SCREEN_OFFSETX,SCREEN_OFFSETY + 4 * (INPUT_HEIGHT + 6),                                   BUTTON_WIDTH, BUTTON_HEIGHT },
+	{ 0,                      0,                                                                         0,            0, 0, 0, 0, 0 },
+	&hudEditorFont,           // font
+	CG_HudEditorClone_KeyDown,// keyDown
+	NULL,                     // keyUp
+	CG_HudEditorRender_Button,
+	NULL,
+	0
+};
+
+static panel_button_t hudEditorDelete =
+{
+	NULL,
+	"Delete",
+	{ 60 + (2 * (BUTTON_WIDTH + 4)) + SCREEN_OFFSETX,SCREEN_OFFSETY + 4 * (INPUT_HEIGHT + 6),                                          BUTTON_WIDTH, BUTTON_HEIGHT },
+	{ 0,                      0,                                                                                0,            0, 0, 0, 0, 0 },
+	&hudEditorFont,           // font
+	CG_HudEditorDelete_KeyDown,// keyDown
+	NULL,                     // keyUp
+	CG_HudEditorRender_Button,
 	NULL,
 	0
 };
@@ -4158,8 +4464,9 @@ static panel_button_t *hudEditor[] =
 	&hudEditorX,           &hudEditorY,
 	&hudEditorW,           &hudEditorH,     &hudEditorScale,
 	&hudEditorColorR,      &hudEditorColorG,&hudEditorColorB, &hudEditorColorA,
-	&hudEditorVisibile,
+	&hudEditorVisible,     &hudEditorStyle,
 	&hudEditorHudDropdown,
+	&hudEditorSave,        &hudEditorClone, &hudEditorDelete,
 	NULL,
 };
 
@@ -4210,7 +4517,11 @@ static void CG_HudEditorUpdateFields(panel_button_t *button)
 	trap_Cvar_Set("hudeditor_colorA", buffer);
 	hudEditorColorA.data[1] = button->data[0];
 
-	hudEditorVisibile.data[1] = button->data[0];
+	hudEditorVisible.data[1] = button->data[0];
+	hudEditorVisible.data[2] = comp->visible;
+
+	hudEditorStyle.data[1] = button->data[0];
+	hudEditorStyle.data[2] = comp->style;
 }
 
 /**
