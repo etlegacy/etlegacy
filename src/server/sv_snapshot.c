@@ -881,10 +881,10 @@ void SV_SendClientIdle(client_t *client)
 	// Add any download data if the client is downloading
 	//SV_WriteDownloadToClient(client, &msg);
 
-    if (SV_CheckForMsgOverflow(client, &msg))
-    {
-        return;
-    }
+	if (SV_CheckForMsgOverflow(client, &msg))
+	{
+		return;
+	}
 
 	SV_SendMessageToClient(&msg, client);
 
@@ -944,10 +944,10 @@ void SV_SendClientSnapshot(client_t *client)
 	// and the playerState_t
 	SV_WriteSnapshotToClient(client, &msg);
 
-    if (SV_CheckForMsgOverflow(client, &msg))
-    {
-        return;
-    }
+	if (SV_CheckForMsgOverflow(client, &msg))
+	{
+		return;
+	}
 
 	SV_SendMessageToClient(&msg, client);
 
@@ -1102,7 +1102,7 @@ void SV_CheckClientUserinfoTimer(void)
 		{
 			continue; // not connected
 		}
-		if ((sv_floodProtect->integer) && (svs.time >= cl->nextReliableUserTime) && (cl->state >= CS_ACTIVE) && (cl->userinfobuffer[0] != 0))
+		if ((sv_userInfoFloodProtect->integer) && (svs.time >= cl->nextReliableUserTime) && (cl->state >= CS_ACTIVE) && (cl->userinfobuffer[0] != 0))
 		{
 			// We have something in the buffer and it's time to process it
 			Com_sprintf(bigbuffer, sizeof(bigbuffer), "userinfo \"%s\"", cl->userinfobuffer);
