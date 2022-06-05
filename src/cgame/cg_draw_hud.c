@@ -1484,6 +1484,8 @@ static void CG_DrawWeaponCharge(hudComponent_t *comp)
 		break;
 	}
 
+	str = va("%.0f %%", MIN(((cg.time - cg.snap->ps.classWeaponTime) / chargeTime) * 100, 100));
+
 	CG_DrawCompText(comp, str, comp->color, ITEM_TEXTSTYLE_SHADOWED);
 }
 
@@ -1833,10 +1835,9 @@ static int lastDemoScoreTime = 0;
  */
 static void CG_DrawDemoMessage(hudComponent_t *comp)
 {
-	char  status[1024];
-	char  demostatus[128];
-	char  wavestatus[128];
-	float w, w2, h, h2;
+	char status[1024];
+	char demostatus[128];
+	char wavestatus[128];
 
 	if (!comp->visible)
 	{
@@ -2661,7 +2662,7 @@ static void CG_DrawSpeed(hudComponent_t *comp)
 	static vec_t highestSpeed, speed;
 	static int   lasttime;
 	char         *s, *s2 = NULL;
-	int          w, w2, w3, w4;
+	float        w, w2, w3, w4;
 	int          thistime;
 	int          h;
 
@@ -3158,13 +3159,10 @@ void CG_AddLagometerSnapshotInfo(snapshot_t *snap)
  */
 static void CG_DrawDisconnect(hudComponent_t *comp)
 {
-	int        cmdNum, w, w2;
+	int        cmdNum;
+	float      w, w2;
 	usercmd_t  cmd;
 	const char *s;
-
-	// use same dimension as timer
-	w  = CG_Text_Width_Ext("xx:xx:xx", 0.19f, 0, &cgs.media.limboFont1);
-	w2 = (comp->location.w > w) ? comp->location.w : w;
 
 	// dont draw if a demo and we're running at a different timescale
 	if (cg.demoPlayback && cg_timescale.value != 1.0f)
@@ -3204,6 +3202,10 @@ static void CG_DrawDisconnect(hudComponent_t *comp)
 		return;
 	}
 
+	// use same dimension as timer
+	w  = CG_Text_Width_Ext("xx:xx:xx", 0.19f, 0, &cgs.media.limboFont1);
+	w2 = (comp->location.w > w) ? comp->location.w : w;
+
 	CG_DrawPic(comp->location.x, comp->location.y, w2 + 3, w2 + 3, cgs.media.disconnectIcon);
 }
 
@@ -3230,8 +3232,8 @@ vec4_t colorAW = { 0, 0.5, 0, 0.5f };
  */
 static void CG_DrawLagometer(hudComponent_t *comp)
 {
-	int   a, w, w2, i;
-	float v;
+	int   a, i;
+	float v, w, w2;
 	float ax, ay, aw, ah, mid, range;
 	int   color;
 	float vscale;
@@ -3654,8 +3656,8 @@ qboolean CG_HudSave(int HUDToDuplicate, int HUDToDelete)
 */
 static void CG_HudEditor_RenderEdit(panel_button_t *button)
 {
-	char label[32];
-	int  offsetX, offsetY;
+	char  label[32];
+	float offsetX, offsetY;
 
 	// FIXME: get proper names and adjust alignment after
 	Com_sprintf(label, sizeof(label), "%c:", button->text[strlen(button->text) - 1]);
@@ -4472,8 +4474,9 @@ void CG_HudEditorSetup(void)
 */
 void CG_DrawHudEditor(void)
 {
-	int  i, offsetX;
-	char name[HUD_COMPONENTS_NUM];
+	unsigned int i;
+	int          offsetX;
+	char         name[HUD_COMPONENTS_NUM];
 
 	BG_PanelButtonsRender(hudComponentsPanel);
 	BG_PanelButtonsRender(hudEditor);
