@@ -293,6 +293,7 @@ void CG_Text_Paint_Ext(float x, float y, float scalex, float scaley, vec4_t colo
 		const char  *s = text;
 		float       yadj;
 		int         len, count = 0, ofs;
+		float       newAlpha;
 
 		scalex *= Q_UTF8_GlyphScale(font);
 		scaley *= Q_UTF8_GlyphScale(font);
@@ -303,6 +304,11 @@ void CG_Text_Paint_Ext(float x, float y, float scalex, float scaley, vec4_t colo
 		if (limit > 0 && len > limit)
 		{
 			len = limit;
+		}
+
+		if (style == ITEM_TEXTSTYLE_BLINK)
+		{
+			newAlpha = Q_fabs(sin(cg.time * 0.002));
 		}
 
 		while (s && *s && count < len)
@@ -320,6 +326,12 @@ void CG_Text_Paint_Ext(float x, float y, float scalex, float scaley, vec4_t colo
 					Com_Memcpy(newColor, g_color_table[ColorIndex(*(s + 1))], sizeof(newColor));
 					newColor[3] = color[3];
 				}
+
+				if (style == ITEM_TEXTSTYLE_BLINK)
+				{
+					newColor[3] = newAlpha;
+				}
+
 				trap_R_SetColor(newColor);
 				s += 2;
 				continue;
@@ -337,6 +349,7 @@ void CG_Text_Paint_Ext(float x, float y, float scalex, float scaley, vec4_t colo
 					colorBlack[3] = 1.0f;
 					trap_R_SetColor(newColor);
 				}
+
 				CG_Text_PaintChar_Ext(x + (glyph->pitch * scalex), y - yadj, glyph->imageWidth, glyph->imageHeight, scalex, scaley, glyph->s, glyph->t, glyph->s2, glyph->t2, glyph->glyph);
 				x += (glyph->xSkip * scalex) + adjust;
 				s += Q_UTF8_Width(s);
@@ -4689,11 +4702,11 @@ void CG_DrawActive()
 	{
 		CG_LimboPanel_Draw();
 	}
-    
-    if (cg.editingHud)
-    {
-    	CG_DrawHudEditor();
-    }
+
+	if (cg.editingHud)
+	{
+		CG_DrawHudEditor();
+	}
 }
 
 void CG_DrawMissileCamera(hudComponent_t *comp)

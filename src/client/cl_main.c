@@ -2980,7 +2980,6 @@ void CL_Init(void)
 	// ~ and `, as keys and characters
 	cl_consoleKeys = Cvar_Get("cl_consoleKeys", "~ ` 0x7e 0x60", CVAR_ARCHIVE);
 
-	Cvar_Get("cg_drawCompass", "1", CVAR_ARCHIVE);
 	Cvar_Get("cg_drawNotifyText", "1", CVAR_ARCHIVE);
 	Cvar_Get("cg_quickMessageAlt", "1", CVAR_ARCHIVE);
 	Cvar_Get("cg_popupLimboMenu", "1", CVAR_ARCHIVE);  // not used, kept for compatibility

@@ -214,7 +214,6 @@ vmCvar_t cg_timescale;
 
 vmCvar_t cg_voiceSpriteTime;
 
-vmCvar_t cg_drawCompass;
 vmCvar_t cg_drawNotifyText;
 vmCvar_t cg_quickMessageAlt;
 vmCvar_t cg_descriptiveText;
@@ -511,7 +510,6 @@ static cvarTable_t cvarTable[] =
 	{ &cg_gameType,                "g_gametype",                 "0",           0,                            0 }, // communicated by systeminfo
 	{ &cg_bluelimbotime,           "",                           "30000",       0,                            0 }, // communicated by systeminfo
 	{ &cg_redlimbotime,            "",                           "30000",       0,                            0 }, // communicated by systeminfo
-	{ &cg_drawCompass,             "cg_drawCompass",             "1",           CVAR_ARCHIVE,                 0 },
 	{ &cg_drawNotifyText,          "cg_drawNotifyText",          "1",           CVAR_ARCHIVE,                 0 },
 	{ &cg_quickMessageAlt,         "cg_quickMessageAlt",         "0",           CVAR_ARCHIVE,                 0 },
 	{ &cg_descriptiveText,         "cg_descriptiveText",         "1",           CVAR_ARCHIVE,                 0 },

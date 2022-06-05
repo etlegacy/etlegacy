@@ -199,7 +199,7 @@ void CG_setDefaultHudValues(hudStucture_t *hud)
 {
 	// the Default hud
 	hud->hudnumber        = 0;
-	hud->compass          = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 100 - 20 - 16, 16, 100 + 32, 100 + 32, qtrue, STYLE_NORMAL, 0.19f, colorWhite, 0, CG_DrawNewCompass);
+	hud->compass          = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 100 - 20 - 16, 0, 100 + 32, 100 + 32, qtrue, STYLE_NORMAL, 0.19f, colorWhite, 0, CG_DrawNewCompass);
 	hud->staminabar       = CG_getComponent(4, SCREEN_HEIGHT - 92, 12, 72, qtrue, STYLE_NORMAL, 0.19f, colorWhite, 1, CG_DrawStaminaBar);
 	hud->breathbar        = CG_getComponent(4, SCREEN_HEIGHT - 92, 12, 72, qtrue, STYLE_NORMAL, 0.19f, colorWhite, 2, CG_DrawBreathBar);
 	hud->healthbar        = CG_getComponent(24, SCREEN_HEIGHT - 92, 12, 72, qtrue, STYLE_SIMPLE, 0.19f, colorWhite, 3, CG_DrawPlayerHealthBar);
@@ -207,9 +207,9 @@ void CG_setDefaultHudValues(hudStucture_t *hud)
 	hud->healthtext       = CG_getComponent(47, 465, 57, 14, qtrue, STYLE_SIMPLE, 0.25f, colorWhite, 5, CG_DrawPlayerHealth);
 	hud->xptext           = CG_getComponent(108, 465, 57, 14, qtrue, STYLE_SIMPLE, 0.25f, colorWhite, 6, CG_DrawXP);
 	hud->ranktext         = CG_getComponent(0, SCREEN_HEIGHT, 57, 14, qfalse, STYLE_SIMPLE, 0.2f, colorWhite, 7, CG_DrawRank);   // disable
-	hud->statsdisplay     = CG_getComponent(128, 386, 14, 70, qtrue, STYLE_NORMAL, 0.25f, colorWhite, 8, CG_DrawSkills);
+	hud->statsdisplay     = CG_getComponent(116, 394, 14, 70, qtrue, STYLE_NORMAL, 0.25f, colorWhite, 8, CG_DrawSkills);
 	hud->weaponicon       = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 82, SCREEN_HEIGHT - 56, 60, 32, qtrue, STYLE_NORMAL, 0.19f, colorWhite, 9, CG_DrawGunIcon);
-	hud->weaponammo       = CG_getComponent(686, 458, 57, 14, qtrue, STYLE_SIMPLE, 0.25f, colorWhite, 10, CG_DrawAmmoCount);
+	hud->weaponammo       = CG_getComponent(694, 458, 57, 14, qtrue, STYLE_SIMPLE, 0.25f, colorWhite, 10, CG_DrawAmmoCount);
 	hud->fireteam         = CG_getComponent(10, 10, 260, 14, qtrue, STYLE_NORMAL, 0.19f, colorWhite, 11, CG_DrawFireTeamOverlay);
 	hud->popupmessages    = CG_getComponent(4, 320, 72, 72, qtrue, STYLE_NORMAL, 0.19f, colorWhite, 12, CG_DrawPMItems);
 	hud->powerups         = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 40, SCREEN_HEIGHT - 136, 36, 36, qtrue, STYLE_NORMAL, 0.19f, colorWhite, 13, CG_DrawPowerUps);
@@ -715,7 +715,7 @@ static void CG_DrawPicShadowed(float x, float y, float w, float h, qhandle_t ico
  * @param[in] str
  * @param[in] color
  */
-static void CG_DrawCompText(hudComponent_t *comp, const char *str, vec4_t color)
+static void CG_DrawCompText(hudComponent_t *comp, const char *str, vec4_t color, int fontStyle)
 {
 	float w, w2, h, h2;
 
@@ -730,7 +730,7 @@ static void CG_DrawCompText(hudComponent_t *comp, const char *str, vec4_t color)
 		CG_DrawRect_FixedBorder(comp->location.x, comp->location.y, w2, comp->location.h, 1, HUD_Border);
 	}
 
-	CG_Text_Paint_Ext(comp->location.x + ((w2 - w) / 2), comp->location.y + ((h2 + h) / 2), comp->scale, comp->scale, color, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
+	CG_Text_Paint_Ext(comp->location.x + ((w2 - w) / 2), comp->location.y + ((h2 + h) / 2), comp->scale, comp->scale, color, str, 0, 0, fontStyle, &cgs.media.limboFont1);
 }
 
 /**
@@ -1379,7 +1379,7 @@ static void CG_DrawPlayerHealth(hudComponent_t *comp)
 		Vector4Copy(comp->color, color);
 	}
 
-	CG_DrawCompText(comp, str, color);
+	CG_DrawCompText(comp, str, color, ITEM_TEXTSTYLE_SHADOWED);
 }
 
 /**
@@ -1415,7 +1415,7 @@ static void CG_DrawPlayerSprint(hudComponent_t *comp)
 		str = va("%.0f %%", (cg.snap->ps.stats[STAT_SPRINTTIME] / (float)SPRINTTIME) * 100);
 	}
 
-	CG_DrawCompText(comp, str, comp->color);
+	CG_DrawCompText(comp, str, comp->color, ITEM_TEXTSTYLE_SHADOWED);
 }
 
 /**
@@ -1442,7 +1442,7 @@ static void CG_DrawPlayerBreath(hudComponent_t *comp)
 		return;
 	}
 
-	CG_DrawCompText(comp, str, comp->color);
+	CG_DrawCompText(comp, str, comp->color, ITEM_TEXTSTYLE_SHADOWED);
 }
 
 /**
@@ -1484,7 +1484,7 @@ static void CG_DrawWeaponCharge(hudComponent_t *comp)
 		break;
 	}
 
-	CG_DrawCompText(comp, str, comp->color);
+	CG_DrawCompText(comp, str, comp->color, ITEM_TEXTSTYLE_SHADOWED);
 }
 
 /**
@@ -1579,7 +1579,7 @@ static void CG_DrawXP(hudComponent_t *comp)
 
 	str = va("%i XP", cg.snap->ps.stats[STAT_XP]);
 
-	CG_DrawCompText(comp, str, clr);
+	CG_DrawCompText(comp, str, clr, ITEM_TEXTSTYLE_SHADOWED);
 }
 
 /**
@@ -1609,7 +1609,7 @@ static void CG_DrawRank(hudComponent_t *comp)
 
 	str = va("%s", GetRankTableData(cgs.clientinfo[ps->clientNum].team, cgs.clientinfo[ps->clientNum].rank)->miniNames);
 
-	CG_DrawCompText(comp, str, comp->color);
+	CG_DrawCompText(comp, str, comp->color, ITEM_TEXTSTYLE_SHADOWED);
 }
 
 /**
@@ -2483,7 +2483,7 @@ static void CG_CompasMoveLocation(float *basex, float *basey, float basew, qbool
  */
 void CG_DrawNewCompass(hudComponent_t *comp)
 {
-	float      basex = comp->location.x, basey = comp->location.y - 16, basew = comp->location.w, baseh = comp->location.h;
+	float      basex = comp->location.x, basey = comp->location.y, basew = comp->location.w, baseh = comp->location.h;
 	snapshot_t *snap;
 
 	if (cg.nextSnap && !cg.nextFrameTeleport && !cg.thisFrameTeleport)
@@ -2505,40 +2505,37 @@ void CG_DrawNewCompass(hudComponent_t *comp)
 		return;
 	}
 
-	if (!cg_altHud.integer)
+	if (cgs.autoMapExpanded)
 	{
-		if (cgs.autoMapExpanded)
+		if (cg.time - cgs.autoMapExpandTime < 100.f)
 		{
-			if (cg.time - cgs.autoMapExpandTime < 100.f)
-			{
-				CG_CompasMoveLocation(&basex, &basey, basew, qtrue);
-			}
-			else
-			{
-				CG_DrawExpandedAutoMap();
-				return;
-			}
+			CG_CompasMoveLocation(&basex, &basey, basew, qtrue);
 		}
 		else
 		{
-			if (cg.time - cgs.autoMapExpandTime <= 150.f)
-			{
-				CG_DrawExpandedAutoMap();
-				return;
-			}
-			else if ((cg.time - cgs.autoMapExpandTime > 150.f) && (cg.time - cgs.autoMapExpandTime < 250.f))
-			{
-				CG_CompasMoveLocation(&basex, &basey, basew, qfalse);
-			}
+			CG_DrawExpandedAutoMap();
+			return;
+		}
+	}
+	else
+	{
+		if (cg.time - cgs.autoMapExpandTime <= 150.f)
+		{
+			CG_DrawExpandedAutoMap();
+			return;
+		}
+		else if ((cg.time - cgs.autoMapExpandTime > 150.f) && (cg.time - cgs.autoMapExpandTime < 250.f))
+		{
+			CG_CompasMoveLocation(&basex, &basey, basew, qfalse);
 		}
 	}
 
-	if ((snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR && !cgs.clientinfo[cg.clientNum].shoutcaster) || !cg_drawCompass.integer)
+	if ((snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR && !cgs.clientinfo[cg.clientNum].shoutcaster))
 	{
 		return;
 	}
 
-	CG_DrawAutoMap(basex, basey, basew, baseh);
+	CG_DrawAutoMap(basex, basey, basew, baseh, comp->style == STYLE_SIMPLE);
 }
 /**
  * @brief CG_DrawStatsDebug
@@ -2794,7 +2791,7 @@ static void CG_DrawFPS(hudComponent_t *comp)
 		s = "estimating";
 	}
 
-	CG_DrawCompText(comp, s, comp->color);
+	CG_DrawCompText(comp, s, comp->color, ITEM_TEXTSTYLE_NORMAL);
 }
 
 /**
@@ -2935,7 +2932,6 @@ static char *CG_LocalTimeText()
 static void CG_DrawRespawnTimer(hudComponent_t *comp)
 {
 	char     *s = NULL, *rt = NULL;
-	vec4_t   color;
 	qboolean blink;
 
 	if (cg_paused.integer)
@@ -2947,10 +2943,7 @@ static void CG_DrawRespawnTimer(hudComponent_t *comp)
 
 	if (s)
 	{
-		Vector4Copy(comp->color, color);
-		color[3] = blink ? Q_fabs(sin(cg.time * 0.002)) : color[3];
-
-		CG_DrawCompText(comp, s, color);
+		CG_DrawCompText(comp, s, comp->color, blink ? ITEM_TEXTSTYLE_BLINK : ITEM_TEXTSTYLE_NORMAL);
 	}
 }
 
@@ -2961,7 +2954,6 @@ static void CG_DrawRespawnTimer(hudComponent_t *comp)
 static void CG_DrawSpawnTimer(hudComponent_t *comp)
 {
 	char     *s = NULL, *rt = NULL;
-	vec4_t   color;
 	qboolean blink;
 
 	if (cg_paused.integer)
@@ -2973,10 +2965,7 @@ static void CG_DrawSpawnTimer(hudComponent_t *comp)
 
 	if (rt)
 	{
-		Vector4Copy(comp->color, color);
-		color[3] = blink ? Q_fabs(sin(cg.time * 0.002)) : color[3];
-
-		CG_DrawCompText(comp, s, color);
+		CG_DrawCompText(comp, s, comp->color, blink ? ITEM_TEXTSTYLE_BLINK : ITEM_TEXTSTYLE_NORMAL);
 	}
 }
 
@@ -2987,7 +2976,6 @@ static void CG_DrawSpawnTimer(hudComponent_t *comp)
 static void CG_DrawRoundTimerSimple(hudComponent_t *comp)
 {
 	char     *s = NULL, *rt = NULL;
-	vec4_t   color;
 	qboolean blink;
 
 	if (cg_paused.integer)
@@ -2997,9 +2985,7 @@ static void CG_DrawRoundTimerSimple(hudComponent_t *comp)
 
 	blink = CG_SpawnTimersText(&s, &rt);
 
-	Vector4Copy(comp->color, color);
-	color[3] = blink ? Q_fabs(sin(cg.time * 0.002)) : color[3];
-	CG_DrawCompText(comp, s, color);
+	CG_DrawCompText(comp, s, comp->color, blink ? ITEM_TEXTSTYLE_BLINK : ITEM_TEXTSTYLE_NORMAL);
 }
 
 /**
@@ -3010,7 +2996,6 @@ static void CG_DrawRoundTimerSimple(hudComponent_t *comp)
 static void CG_DrawRoundTimerNormal(hudComponent_t *comp)
 {
 	char     *s = NULL, *rt = NULL, *mt;
-	vec4_t   color;
 	qboolean blink;
 
 	if (cg_paused.integer)
@@ -3036,10 +3021,7 @@ static void CG_DrawRoundTimerNormal(hudComponent_t *comp)
 		s = va("^1%s%s%s", rt, " ", s);
 	}
 
-	Vector4Copy(comp->color, color);
-	color[3] = blink ? Q_fabs(sin(cg.time * 0.002)) : color[3];
-
-	CG_DrawCompText(comp, s, color);
+	CG_DrawCompText(comp, s, comp->color, blink ? ITEM_TEXTSTYLE_BLINK : ITEM_TEXTSTYLE_NORMAL);
 }
 
 /**
@@ -3074,7 +3056,7 @@ static void CG_DrawLocalTime(hudComponent_t *comp)
 
 	s = CG_LocalTimeText();
 
-	CG_DrawCompText(comp, s, comp->color);
+	CG_DrawCompText(comp, s, comp->color, ITEM_TEXTSTYLE_NORMAL);
 }
 
 /**
@@ -3236,7 +3218,7 @@ static void CG_DrawPing(hudComponent_t *comp)
 
 	s = va("Ping %d", cg.snap->ping < 999 ? cg.snap->ping : 999);
 
-	CG_DrawCompText(comp, s, comp->color);
+	CG_DrawCompText(comp, s, comp->color, ITEM_TEXTSTYLE_NORMAL);
 }
 
 vec4_t colorAW = { 0, 0.5, 0, 0.5f };
@@ -3556,7 +3538,7 @@ void CG_HUDSave_WriteComponent(fileHandle_t fh, int hudNumber, hudStucture_t *hu
 		{
 			hudComponent_t *comp = (hudComponent_t *)((char *)hud + hudComponentFields[j].offset);
 			s = va("\t\t%-16s\t"
-			       "%-6.2f\t%-6.2f\t%-6.2f\t%-6.2f\t"
+			       "%-6.1f\t%-6.1f\t%-6.1f\t%-6.1f\t"
 			       "%i\t%i\t"
 			       "%-4.2f\t"
 			       "%-4.2f\t%-4.2f\t%-4.2f\t%-4.2f\n",
@@ -4366,19 +4348,19 @@ static void CG_HudEditorUpdateFields(panel_button_t *button)
 	trap_Cvar_Set("hudeditor_s", buffer);
 	hudEditorScale.data[1] = button->data[0];
 
-	Com_sprintf(buffer, sizeof(buffer), "%0.1f", comp->color[0] * 255.0f);
+	Com_sprintf(buffer, sizeof(buffer), "%0.2f", comp->color[0] * 255.0f);
 	trap_Cvar_Set("hudeditor_colorR", buffer);
 	hudEditorColorR.data[1] = button->data[0];
 
-	Com_sprintf(buffer, sizeof(buffer), "%0.1f", comp->color[1] * 255.0f);
+	Com_sprintf(buffer, sizeof(buffer), "%0.2f", comp->color[1] * 255.0f);
 	trap_Cvar_Set("hudeditor_colorG", buffer);
 	hudEditorColorG.data[1] = button->data[0];
 
-	Com_sprintf(buffer, sizeof(buffer), "%0.1f", comp->color[2] * 255.0f);
+	Com_sprintf(buffer, sizeof(buffer), "%0.2f", comp->color[2] * 255.0f);
 	trap_Cvar_Set("hudeditor_colorB", buffer);
 	hudEditorColorB.data[1] = button->data[0];
 
-	Com_sprintf(buffer, sizeof(buffer), "%0.1f", comp->color[3] * 255.0f);
+	Com_sprintf(buffer, sizeof(buffer), "%0.2f", comp->color[3] * 255.0f);
 	trap_Cvar_Set("hudeditor_colorA", buffer);
 	hudEditorColorA.data[1] = button->data[0];
 

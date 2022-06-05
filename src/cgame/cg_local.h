@@ -2719,7 +2719,6 @@ extern vmCvar_t cg_bluelimbotime;
 
 extern vmCvar_t cg_movespeed;
 
-extern vmCvar_t cg_drawCompass;
 extern vmCvar_t cg_drawNotifyText;
 extern vmCvar_t cg_quickMessageAlt;
 
@@ -3907,7 +3906,7 @@ void CG_DrawCompassIcon(float x, float y, float w, float h, vec3_t origin, vec3_
 void CG_TransformToCommandMapCoord(float *coord_x, float *coord_y);
 
 void CG_DrawExpandedAutoMap(void);
-void CG_DrawAutoMap(float basex, float basey, float basew, float baseh);
+void CG_DrawAutoMap(float basex, float basey, float basew, float baseh, qboolean squareCompass);
 
 #define LIMBO_3D_X  287 //% 280
 #define LIMBO_3D_Y  382
