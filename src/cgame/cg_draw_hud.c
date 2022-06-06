@@ -3820,74 +3820,20 @@ static void CG_HudEditor_RenderCheckbox(panel_button_t *button)
 }
 
 /**
-* @brief CG_HudEditor_RenderDropdown
+* @brief CG_HudEditor_HudRenderDropdown
 * @param[in] button
 */
-static void CG_HudEditor_RenderDropdown(panel_button_t *button)
+static void CG_HudEditor_HudRenderDropdown(panel_button_t *button)
 {
-	rectDef_t rect;
-	vec4_t    colour;
-	char      label[32];
-	float     textboxW;
-	int       offsetX;
-
-	Com_Memcpy(&rect, &button->rect, sizeof(rect));
-
-	textboxW = button->rect.w - button->rect.h;
-	rect.x  += textboxW;
-	rect.w   = rect.h;
+	CG_DropdownMainBox(button->rect.x, button->rect.y, button->rect.w, button->rect.h,
+	                   button->font->scalex, button->font->scaley, colorBlack, va("%i", activehud->hudnumber), button == BG_PanelButtons_GetFocusButton(),
+	                   button->font->colour, button->font->style, button->font->font);
 
 	if (button == BG_PanelButtons_GetFocusButton())
 	{
-		VectorCopy(colorYellow, colour);
-		colour[3] = 0.3f;
-	}
-	else
-	{
-		VectorCopy(colorWhite, colour);
-		colour[3] = 0.3f;
-	}
-
-	CG_FillRect(button->rect.x, button->rect.y, textboxW, button->rect.h, colour);
-	VectorCopy(colorBlack, colour);
-	CG_DrawRect_FixedBorder(button->rect.x, button->rect.y, textboxW, button->rect.h, 1.0f, colour);
-
-	if (button == BG_PanelButtons_GetFocusButton())
-	{
-		VectorCopy(colorYellow, colour);
-		colour[3] = 0.3f;
-	}
-	else if (BG_PanelButtons_GetFocusButton() == NULL && BG_CursorInRect(&button->rect))
-	{
-		VectorCopy(colorWhite, colour);
-		colour[3] = 0.5f;
-	}
-	else
-	{
-		VectorCopy(colorWhite, colour);
-		colour[3] = 0.3f;
-	}
-
-	CG_FillRect(rect.x, rect.y, rect.w, rect.h, colour);
-	VectorCopy(colorBlack, colour);
-	CG_DrawRect_FixedBorder(rect.x, rect.y, rect.w, rect.h, 1.0f, colour);
-
-	offsetX = CG_Text_Width_Ext("V", button->font->scalex, 0, button->font->font);
-
-	//VectorCopy(button->font->colour, colour);
-	CG_Text_Paint_Ext(rect.x + (rect.w - offsetX) / 2.0f, button->rect.y + 9.0f, button->font->scalex, button->font->scaley, colour, "V", 0, 0, 0, button->font->font);
-
-	Com_sprintf(label, sizeof(label), "%i", activehud->hudnumber);
-
-	offsetX = CG_Text_Width_Ext(label, button->font->scalex, 0, button->font->font);
-
-	CG_Text_Paint_Ext(button->rect.x + (textboxW - offsetX) / 2.0f, button->rect.y + 9.0f, button->font->scalex, button->font->scaley, button->font->colour, label, 0, 0, button->font->style, button->font->font);
-
-	if (button == BG_PanelButtons_GetFocusButton())
-	{
-		int i;
-
-		Com_Memcpy(&rect, &button->rect, sizeof(rect));
+		float  y = button->rect.y;
+		vec4_t colour;
+		int    i;
 
 		for (i = 0; i < hudCount; i++)
 		{
@@ -3898,31 +3844,14 @@ static void CG_HudEditor_RenderDropdown(panel_button_t *button)
 				continue;
 			}
 
-			Com_sprintf(label, sizeof(label), "%i", hud->hudnumber);
-
-			rect.y += button->rect.h;
-
-			if (BG_CursorInRect(&rect))
-			{
-				VectorScale(colorYellow, 0.3f, colour);
-				colour[3] = 1.0f;
-			}
-			else
-			{
-				VectorScale(colorWhite, 0.3f, colour);
-				colour[3] = 1.0f;
-			}
-
-			CG_FillRect(rect.x, rect.y, rect.w, rect.h, colour);
-
-			offsetX = CG_Text_Width_Ext(label, button->font->scalex, 0, button->font->font);
-
-			CG_Text_Paint_Ext(rect.x + (textboxW - offsetX) / 2.0f, rect.y + 9.0f, button->font->scalex, button->font->scaley, button->font->colour, label, 0, 0, button->font->style, button->font->font);
+			y = CG_DropdownBox(button->rect.x, y, button->rect.w, button->rect.h,
+			                   button->font->scalex, button->font->scaley, colorBlack, va("%i", hud->hudnumber), button == BG_PanelButtons_GetFocusButton(),
+			                   button->font->colour, button->font->style, button->font->font);
 		}
 
 		VectorCopy(colorBlack, colour);
 		colour[3] = 0.3f;
-		CG_DrawRect(button->rect.x, button->rect.y + button->rect.h, button->rect.w, rect.y - button->rect.y, 1.0f, colour);
+		CG_DrawRect(button->rect.x, button->rect.y + button->rect.h, button->rect.w, y - button->rect.y, 1.0f, colour);
 	}
 }
 
@@ -3946,12 +3875,12 @@ static qboolean CG_HudEditor_Dropdown_KeyDown(panel_button_t *button, int key)
 }
 
 /**
-* @brief CG_HudEditor_Dropdown_KeyUp
+* @brief CG_HudEditor_HudDropdown_KeyUp
 * @param[in] button
 * @param[in] key
 * @return
 */
-static qboolean CG_HudEditor_Dropdown_KeyUp(panel_button_t *button, int key)
+static qboolean CG_HudEditor_HudDropdown_KeyUp(panel_button_t *button, int key)
 {
 	if (key == K_MOUSE1)
 	{
@@ -4089,6 +4018,14 @@ static panel_button_text_t hudEditorFont =
 	&cgs.media.limboFont2,
 };
 
+static panel_button_text_t hudEditorFont_Dropdown =
+{
+    0.16f,                   0.18f,
+    { 1.f,                   1.f,  1.f,0.8f },
+    ITEM_TEXTSTYLE_SHADOWED, 0,
+    &cgs.media.limboFont2,
+};
+
 // grouping hud editing fields
 #define SCREEN_OFFSETX 240
 #define SCREEN_OFFSETY 150
@@ -4103,12 +4040,30 @@ static panel_button_t hudEditorHudDropdown =
 {
 	NULL,
 	"hudeditor_huds",
-	{ 0 + SCREEN_OFFSETX,       SCREEN_OFFSETY + 10,      40, 12 },
-	{ 0,                        0,                        0,  0, 1, 0, 0, 0},
-	&hudEditorFont,             // font
-	CG_HudEditor_Dropdown_KeyDown,// keyDown
-	CG_HudEditor_Dropdown_KeyUp,// keyUp
-	CG_HudEditor_RenderDropdown,
+	{ 0 + SCREEN_OFFSETX,          SCREEN_OFFSETY + 10,      40, 12 },
+	{ 0,                           0,                        0,  0, 1, 0, 0, 0},
+	&hudEditorFont_Dropdown,                // font
+	CG_HudEditor_Dropdown_KeyDown, // keyDown
+	CG_HudEditor_HudDropdown_KeyUp,// keyUp
+	CG_HudEditor_HudRenderDropdown,
+	NULL,
+	0,
+};
+
+
+static void CG_HudEditor_CompRenderDropdown(panel_button_t *button);
+static qboolean CG_HudEditor_CompDropdown_KeyUp(panel_button_t *button, int key);
+
+static panel_button_t hudEditorCompDropdown =
+{
+	NULL,
+	"hudeditor_comps",
+	{ 0 + 100,           0,     120, 10 },
+	{ 0,                            0,          0,   0, 1, 0, 0, 0},
+	&hudEditorFont_Dropdown,    // font
+	CG_HudEditor_Dropdown_KeyDown,  // keyDown
+	CG_HudEditor_CompDropdown_KeyUp,// keyUp
+	CG_HudEditor_CompRenderDropdown,
 	NULL,
 	0,
 };
@@ -4313,11 +4268,11 @@ static panel_button_t hudEditorDelete =
 static panel_button_t *hudEditor[] =
 {
 	&hudEditorX,           &hudEditorY,
-	&hudEditorW,           &hudEditorH,     &hudEditorScale,
-	&hudEditorColorR,      &hudEditorColorG,&hudEditorColorB, &hudEditorColorA,
+	&hudEditorW,           &hudEditorH,           &hudEditorScale,
+	&hudEditorColorR,      &hudEditorColorG,      &hudEditorColorB, &hudEditorColorA,
 	&hudEditorVisible,     &hudEditorStyle,
-	&hudEditorHudDropdown,
-	&hudEditorSave,        &hudEditorClone, &hudEditorDelete,
+	&hudEditorHudDropdown, &hudEditorCompDropdown,
+	&hudEditorSave,        &hudEditorClone,       &hudEditorDelete,
 	NULL,
 };
 
@@ -4436,42 +4391,123 @@ static qboolean CG_HudEditor_KeyUp(panel_button_t *button, int key)
 	return qfalse;
 }
 
-#define hudComponentFieldsNum (sizeof(hudComponentFields) / sizeof(hudComponentFields_t))
+panel_button_t *hudComponentsPanel[HUD_COMPONENTS_NUM + 1];
+panel_button_t hudComponents[HUD_COMPONENTS_NUM];
 
-panel_button_t *hudComponentsPanel[hudComponentFieldsNum];
-panel_button_t hudComponents[hudComponentFieldsNum];
+/**
+* @brief CG_HudEditor_CompRenderDropdown
+* @param[in] button
+*/
+static void CG_HudEditor_CompRenderDropdown(panel_button_t *button)
+{
+	CG_DropdownMainBox(button->rect.x, button->rect.y, button->rect.w, button->rect.h,
+	                   button->font->scalex, button->font->scaley, colorBlack, lastFocusButton ? lastFocusButton->text : "Select Comp", button == BG_PanelButtons_GetFocusButton(),
+	                   button->font->colour, button->font->style, button->font->font);
+
+	if (button == BG_PanelButtons_GetFocusButton())
+	{
+		float          y = button->rect.y;
+		vec4_t         colour;
+		panel_button_t **buttons = hudComponentsPanel;
+		panel_button_t *parsedButton;
+
+		for ( ; *buttons; buttons++)
+		{
+			parsedButton = (*buttons);
+
+			if (parsedButton == lastFocusButton)
+			{
+				continue;
+			}
+
+			y = CG_DropdownBox(button->rect.x, y, button->rect.w, button->rect.h,
+			                   button->font->scalex, button->font->scaley, colorBlack, parsedButton->text, button == BG_PanelButtons_GetFocusButton(),
+			                   button->font->colour, button->font->style, button->font->font);
+		}
+
+		VectorCopy(colorBlack, colour);
+		colour[3] = 0.3f;
+		CG_DrawRect(button->rect.x, button->rect.y + button->rect.h, button->rect.w, y - button->rect.y, 1.0f, colour);
+	}
+}
+
+/**
+* @brief CG_HudEditor_CompDropdown_KeyUp
+* @param[in] button
+* @param[in] key
+* @return
+*/
+static qboolean CG_HudEditor_CompDropdown_KeyUp(panel_button_t *button, int key)
+{
+	if (key == K_MOUSE1)
+	{
+		if (button == BG_PanelButtons_GetFocusButton())
+		{
+			rectDef_t      rect;
+			int            i;
+			panel_button_t **buttons = hudComponentsPanel;
+			panel_button_t *parsedButton;
+
+			Com_Memcpy(&rect, &button->rect, sizeof(rect));
+
+			for ( ; *buttons; buttons++)
+			{
+				parsedButton = (*buttons);
+
+				if (parsedButton == lastFocusButton)
+				{
+					continue;
+				}
+
+				rect.y += button->rect.h;
+
+				if (BG_CursorInRect(&rect))
+				{
+					lastFocusButton = parsedButton;
+					break;
+				}
+			}
+
+			BG_PanelButtons_SetFocusButton(NULL);
+
+			return qtrue;
+		}
+	}
+
+	return qfalse;
+}
 
 /**
 * @brief CG_HudEditorSetup
 */
 void CG_HudEditorSetup(void)
 {
-	panel_button_t hud;
-	hudComponent_t *comp;
-	int            i;
+	int i, j;
 
-	for (i = 0; hudComponentFields[i].name; i++)
+	for (i = 0, j = 0; hudComponentFields[i].name; i++, j++)
 	{
-		Com_Memset(&hud, 0, sizeof(hud));
+		hudComponent_t *comp;
 
-		if (!hudComponentFields[i].isAlias)
+		if (hudComponentFields[i].isAlias)
 		{
-			comp = (hudComponent_t *)((char *)activehud + hudComponentFields[i].offset);
-
-			hud.text      = hudComponentFields[i].name;
-			hud.rect      = comp->location;
-			hud.onKeyDown = CG_HudEditor_KeyDown;
-			hud.onKeyUp   = CG_HudEditor_KeyUp;
-			hud.onDraw    = CG_HudEditor_Render;
-			hud.data[0]   = i; // link button to hud component
+			j--;
+			continue;
 		}
 
-		hudComponents[i]      = hud;
-		hudComponentsPanel[i] = &hudComponents[i];
+		comp = (hudComponent_t *)((char *)activehud + hudComponentFields[i].offset);
+
+		hudComponents[j].text      = hudComponentFields[i].name;
+		hudComponents[j].rect      = comp->location;
+		hudComponents[j].onKeyDown = CG_HudEditor_KeyDown;
+		hudComponents[j].onKeyUp   = CG_HudEditor_KeyUp;
+		hudComponents[j].onDraw    = CG_HudEditor_Render;
+		hudComponents[j].data[0]   = i; // link button to hud component
+
+		hudComponentsPanel[j] = &hudComponents[j];
 	}
 
 	// last element needs to be NULL
-	hudComponentsPanel[hudComponentFieldsNum - 1] = NULL;
+	hudComponentsPanel[HUD_COMPONENTS_NUM] = NULL;
 
 	// clear last selected button
 	lastFocusButton = NULL;

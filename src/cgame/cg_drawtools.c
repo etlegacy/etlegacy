@@ -824,11 +824,11 @@ void CG_AddOnScreenText(const char *text, vec3_t origin, qboolean fade)
 		y -= h / 2;
 
 		// save it
-		cg.specOnScreenLabels[cg.specStringCount].x     = x;
-		cg.specOnScreenLabels[cg.specStringCount].y     = y;
-		cg.specOnScreenLabels[cg.specStringCount].scale = scale;
-		cg.specOnScreenLabels[cg.specStringCount].text  = text;
-		cg.specOnScreenLabels[cg.specStringCount].noFade  = !fade;
+		cg.specOnScreenLabels[cg.specStringCount].x      = x;
+		cg.specOnScreenLabels[cg.specStringCount].y      = y;
+		cg.specOnScreenLabels[cg.specStringCount].scale  = scale;
+		cg.specOnScreenLabels[cg.specStringCount].text   = text;
+		cg.specOnScreenLabels[cg.specStringCount].noFade = !fade;
 		VectorCopy(origin, cg.specOnScreenLabels[cg.specStringCount].origin);
 		cg.specOnScreenLabels[cg.specStringCount].visible = qtrue;
 
@@ -1197,8 +1197,8 @@ int CG_FormatMultineLinePrint(char *s, int lineWidth)
 		{
 			lastSpace = s;
 		}
-        
-        // we reach the end of the string and it doesn't fit in on line
+
+		// we reach the end of the string and it doesn't fit in on line
 		if (neednewline && lastSpace)
 		{
 			*lastSpace = '\n';
@@ -1221,4 +1221,120 @@ int CG_FormatMultineLinePrint(char *s, int lineWidth)
 	}
 
 	return lineNumber;
+}
+
+/**
+ * @brief CG_DropdownMainBox
+ * @param[in] x
+ * @param[in] y
+ * @param[in] w
+ * @param[in] h
+ * @param[in] scalex
+ * @param[in] scaley
+ * @param[in] borderColour
+ * @param[in] text
+ * @param[in] focus
+ * @param[in] font
+ */
+void CG_DropdownMainBox(float x, float y, float w, float h, float scalex, float scaley, vec4_t borderColour,
+                        const char *text, qboolean focus, vec4_t fontColour, int style, fontHelper_t *font)
+{
+	rectDef_t rect = { x, y, w, h };
+	vec4_t    colour;
+	float     textboxW;
+	int       offsetX;
+
+	textboxW = rect.w - rect.h;
+	rect.x  += textboxW;
+	rect.w   = rect.h;
+
+	if (focus)
+	{
+		VectorCopy(colorYellow, colour);
+		colour[3] = 0.3f;
+	}
+	else
+	{
+		VectorCopy(colorWhite, colour);
+		colour[3] = 0.3f;
+	}
+
+	CG_FillRect(x, y, textboxW, h, colour);
+	CG_DrawRect_FixedBorder(x, y, textboxW, h, 1.0f, borderColour);
+
+	if (focus)
+	{
+		VectorCopy(colorYellow, colour);
+		colour[3] = 0.3f;
+	}
+	else if (BG_PanelButtons_GetFocusButton() == NULL && BG_CursorInRect(&((rectDef_t) { x, y, w, h })))
+	{
+		VectorCopy(colorWhite, colour);
+		colour[3] = 0.5f;
+	}
+	else
+	{
+		VectorCopy(colorWhite, colour);
+		colour[3] = 0.3f;
+	}
+
+	CG_FillRect(rect.x, rect.y, rect.w, rect.h, colour);
+	CG_DrawRect_FixedBorder(rect.x, rect.y, rect.w, rect.h, 1.0f, borderColour);
+
+	offsetX = CG_Text_Width_Ext("V", scalex, 0, font);
+
+	//VectorCopy(font->colour, colour);
+	CG_Text_Paint_Ext(rect.x + (rect.w - offsetX) / 2.0f, y + 7.0f, scalex, scaley, colour, "V", 0, 0, 0, font);
+
+	offsetX = CG_Text_Width_Ext(text, scalex, 0, font);
+
+	CG_Text_Paint_Ext(x + (textboxW - offsetX) / 2.0f, y + 7.0f, scalex, scaley, fontColour, text, 0, 0, style, font);
+}
+
+/**
+ * @brief CG_DropdownBox
+ * @param[in] x
+ * @param[in] y
+ * @param[in] w
+ * @param[in] h
+ * @param[in] scalex
+ * @param[in] scaley
+ * @param[in] borderColour
+ * @param[in] text
+ * @param[in] focus
+ * @param[in] fontColour
+ * @param[in] style
+ * @param[in] font
+ * @return Next y coordinate for positionning next box
+ */
+float CG_DropdownBox(float x, float y, float w, float h, float scalex, float scaley, vec4_t borderColour,
+                     const char *text, qboolean focus, vec4_t fontColour, int style, fontHelper_t *font)
+{
+	rectDef_t rect = { x, y, w, h };
+	vec4_t    colour;
+	float     textboxW;
+	int       offsetX;
+
+	textboxW = rect.w - rect.h;
+
+	rect.y += h;
+
+	if (BG_CursorInRect(&rect))
+	{
+		VectorScale(colorYellow, 0.3f, colour);
+		colour[3] = 1.0f;
+	}
+	else
+	{
+		VectorScale(colorWhite, 0.3f, colour);
+		colour[3] = 1.0f;
+	}
+
+	CG_FillRect(rect.x, rect.y, rect.w, rect.h, colour);
+
+	offsetX = CG_Text_Width_Ext(text, scalex, 0, font);
+
+	CG_Text_Paint_Ext(rect.x + (textboxW - offsetX) / 2.0f, rect.y + 7.0f, scalex, scaley, fontColour, text, 0, 0, style, font);
+
+	return rect.y;
 }
