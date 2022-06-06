@@ -78,6 +78,7 @@ cvar_t *cl_aviMotionJpeg;
 
 cvar_t *cl_freelook;
 cvar_t *cl_sensitivity;
+cvar_t *cl_menuSensitivity;
 
 cvar_t *cl_mouseAccel;
 cvar_t *cl_showMouseRate;
@@ -2930,10 +2931,11 @@ void CL_Init(void)
 	cl_maxpackets = Cvar_Get("cl_maxpackets", "125", CVAR_ARCHIVE);
 	cl_packetdup  = Cvar_Get("cl_packetdup", "1", CVAR_ARCHIVE_ND);
 
-	cl_run         = Cvar_Get("cl_run", "1", CVAR_ARCHIVE_ND);
-	cl_sensitivity = Cvar_Get("sensitivity", "5", CVAR_ARCHIVE);
-	cl_mouseAccel  = Cvar_Get("cl_mouseAccel", "0", CVAR_ARCHIVE_ND);
-	cl_freelook    = Cvar_Get("cl_freelook", "1", CVAR_ARCHIVE_ND);
+	cl_run             = Cvar_Get("cl_run", "1", CVAR_ARCHIVE_ND);
+	cl_sensitivity     = Cvar_Get("sensitivity", "5", CVAR_ARCHIVE);
+	cl_menuSensitivity = Cvar_Get("menuSensitivity", "1", CVAR_ARCHIVE_ND);
+	cl_mouseAccel      = Cvar_Get("cl_mouseAccel", "0", CVAR_ARCHIVE_ND);
+	cl_freelook        = Cvar_Get("cl_freelook", "1", CVAR_ARCHIVE_ND);
 
 	cl_showMouseRate = Cvar_Get("cl_showmouserate", "0", 0);
 
