@@ -1142,7 +1142,7 @@ void Menu_HandleKey(menuDef_t *menu, int key, qboolean down)
 		trap_Key_GetBindingBuf(key, buf, sizeof(buf));
 		if (buf[0] != 0)
 		{
-			trap_Cmd_ExecuteText(EXEC_APPEND, buf);
+			DC->executeText(EXEC_APPEND, buf);
 		}
 	}
 
@@ -1476,7 +1476,7 @@ void Menu_PaintAll(void)
 
 		Vector4Copy(colorMdGrey, color);
 		// we aren't actually using this font, but this matches UI_FONT_COURBD_21
-		w = (float)DC->textWidthExt(str, .2f, 0, &uiInfo.uiDC.Assets.limboFont2_lo);
+		w = (float)DC->textWidthExt(str, .2f, 0, &DC->Assets.limboFont2_lo);
 		x = Cui_WideX(SCREEN_WIDTH * .5f) - (w * .5f);
 
 		DC->textFont(UI_FONT_COURBD_21);
