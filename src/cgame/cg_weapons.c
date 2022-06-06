@@ -5152,6 +5152,11 @@ void CG_NextWeapon_f(void)
 	}
 #endif
 
+	if (cg.snap->ps.pm_flags & PMF_FOLLOW)
+	{
+		return;
+	}
+
 	if (CG_ZoomRequired(qtrue))
 	{
 		return;
@@ -5183,6 +5188,11 @@ void CG_PrevWeapon_f(void)
 		return;
 	}
 #endif
+
+	if (cg.snap->ps.pm_flags & PMF_FOLLOW)
+	{
+		return;
+	}
 
 	if (CG_ZoomRequired(qfalse))
 	{
