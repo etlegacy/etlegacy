@@ -965,7 +965,7 @@ void CG_DrawLine(const vec3_t start, const vec3_t end, float width, const vec4_t
 /**
  * @brief CG_DrawTeamInfo
  */
-static void CG_DrawTeamInfo(void)
+void CG_DrawTeamInfo(hudComponent_t *comp)
 {
 	int chatHeight = TEAMCHAT_HEIGHT;
 
@@ -987,17 +987,17 @@ static void CG_DrawTeamInfo(void)
 		float     alphapercent;
 		float     chatBgAlpha    = Com_Clamp(0.0f, 1.0f, cg_chatBackgroundAlpha.value);
 		float     textAlpha      = Com_Clamp(0.0f, 1.0f, cg_chatAlpha.value);
-		float     chatScale      = Com_Clamp(0.5, 2, cg_chatScale.value);
+		float     chatScale      = Com_Clamp(0.5, 2, comp->scale);
 		float     fontSize       = 0.2f;
 		float     fontSizeScaled = chatScale * fontSize;
-		float     lineHeight     = 9.f * chatScale;
+		float     lineHeight     = comp->location.h;
 		float     icon_width     = 12.f * chatScale;
 		float     icon_height    = 8.f * chatScale;
 		float     flagOffsetX    = 0;
 		qhandle_t flag           = 0;
 		int       maxLineLength  = Com_Clamp(10, TEAMCHAT_WIDTH, cg_chatLineWidth.integer);
-		int       chatPosX       = (int)Ccg_WideX(cg_chatX.integer);
-		int       chatPosY       = cg_chatY.integer;
+		int       chatPosX       = comp->location.x;
+		int       chatPosY       = comp->location.y + lineHeight;
 		int       textStyle      = cg_chatShadow.integer ? ITEM_TEXTSTYLE_SHADOWED : ITEM_TEXTSTYLE_NORMAL;
 
 		if (cg.time - cgs.teamChatMsgTimes[cgs.teamLastChatPos % chatHeight] > cg_teamChatTime.integer)
@@ -4292,9 +4292,6 @@ static void CG_Draw2D(void)
 
 		CG_DrawCrosshair();
 		CG_DrawCrosshairNames();
-
-		// we need to do this for spectators as well
-		CG_DrawTeamInfo();
 	}
 	else
 	{
@@ -4306,8 +4303,6 @@ static void CG_Draw2D(void)
 			CG_DrawCrosshairNames();
 			CG_DrawNoShootIcon();
 		}
-
-		CG_DrawTeamInfo();
 
 		if (cg_drawStatus.integer)
 		{

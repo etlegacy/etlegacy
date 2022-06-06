@@ -2875,9 +2875,6 @@ extern vmCvar_t cg_shoutcastDrawHealth;
 extern vmCvar_t cg_shoutcastGrenadeTrail;
 extern vmCvar_t cg_shoutcastDrawMinimap;
 
-extern vmCvar_t cg_chatX;
-extern vmCvar_t cg_chatY;
-extern vmCvar_t cg_chatScale;
 extern vmCvar_t cg_chatAlpha;
 extern vmCvar_t cg_chatBackgroundAlpha;
 extern vmCvar_t cg_chatShadow;
@@ -4092,7 +4089,7 @@ extern qboolean resetmaxspeed; // CG_DrawSpeed
 
 /* HUD exports */
 
-#define HUD_COMPONENTS_NUM 38
+#define HUD_COMPONENTS_NUM 39
 
 typedef struct hudComponent_s
 {
@@ -4150,7 +4147,8 @@ typedef struct hudStructure_s
 	hudComponent_t ping;
 	hudComponent_t speed;
 	hudComponent_t lagometer;
-	hudComponent_t disconnect; // 38
+	hudComponent_t disconnect;
+    hudComponent_t chat;    // 39
 
 	hudComponent_t *components[HUD_COMPONENTS_NUM];
 } hudStucture_t;
@@ -4165,7 +4163,8 @@ void CG_DrawSpectatorMessage(hudComponent_t *comp);
 void CG_DrawLimboMessage(hudComponent_t *comp);
 void CG_DrawFollow(hudComponent_t *comp);
 void CG_DrawMissileCamera(hudComponent_t *comp);
-
+void CG_DrawTeamInfo(hudComponent_t *comp);
+    
 void CG_HudEditorSetup(void);
 void CG_DrawHudEditor(void);
 void CG_HudEditor_KeyHandling(int key, qboolean down);

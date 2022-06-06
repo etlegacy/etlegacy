@@ -160,6 +160,7 @@ static const hudComponentFields_t hudComponentFields[] =
 	{ HUDF(speed),            CG_DrawSpeed            },
 	{ HUDF(lagometer),        CG_DrawLagometer        },
 	{ HUDF(disconnect),       CG_DrawDisconnect       },
+	{ HUDF(chat),             CG_DrawTeamInfo         },    // FIXME: outside cg_draw_hud
 	{ NULL,                   0, qfalse, NULL         },
 };
 
@@ -237,6 +238,7 @@ void CG_setDefaultHudValues(hudStucture_t *hud)
 	hud->speed            = CG_getComponent(706, 275, 57, 14, qtrue, STYLE_NORMAL, 0.19f, HUD_Text, 35, CG_DrawSpeed);
 	hud->lagometer        = CG_getComponent(706, 216, 57, 57, qtrue, STYLE_NORMAL, 0.19f, HUD_Text, 36, CG_DrawLagometer);
 	hud->disconnect       = CG_getComponent(706, 216, 57, 57, qtrue, STYLE_NORMAL, 0.19f, colorWhite, 37, CG_DrawDisconnect);
+	hud->chat             = CG_getComponent(Ccg_WideX(160), 469, 434, 9, qtrue, STYLE_NORMAL, 1.0f, colorWhite, 38, CG_DrawTeamInfo);
 }
 
 /**
@@ -4319,6 +4321,8 @@ static panel_button_t *hudEditor[] =
 	NULL,
 };
 
+static panel_button_t *lastFocusButton;
+
 /**
 * @brief CG_HudEditorUpdateFields
 * @param[in] button
@@ -4382,7 +4386,7 @@ static void CG_HudEditor_Render(panel_button_t *button)
 	hudComponent_t *comp = (hudComponent_t *)((char *)activehud + hudComponentFields[button->data[0]].offset);
 	vec4_t         color;
 
-	Vector4Copy(button == BG_PanelButtons_GetFocusButton() ? colorGreen : colorRed, color);
+	Vector4Copy(button == lastFocusButton ? colorGreen : colorRed, color);
 
 	if (!comp->visible)
 	{
@@ -4423,7 +4427,8 @@ static qboolean CG_HudEditor_KeyUp(panel_button_t *button, int key)
 {
 	if (key == K_MOUSE1)
 	{
-		//BG_PanelButtons_SetFocusButton(NULL);
+		lastFocusButton = button;
+		BG_PanelButtons_SetFocusButton(NULL);
 		button->data[4] = 1;
 		return qtrue;
 	}
@@ -4467,6 +4472,27 @@ void CG_HudEditorSetup(void)
 
 	// last element needs to be NULL
 	hudComponentsPanel[hudComponentFieldsNum - 1] = NULL;
+
+	// clear last selected button
+	lastFocusButton = NULL;
+}
+
+/**
+ * @brief CG_DrawHudEditor_ToolTip
+ * @param[in] name
+ */
+static void CG_DrawHudEditor_ToolTip(panel_button_t *button)
+{
+	int offsetX = CG_Text_Width_Ext(button->text, 0.20f, 0, &cgs.media.limboFont1);
+
+	if (cgDC.cursorx + 10 + offsetX >= 640)
+	{
+		CG_Text_Paint_Ext(cgDC.cursorx - 10 - offsetX, cgDC.cursory, 0.20f, 0.22f, colorGreen, button->text, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
+	}
+	else
+	{
+		CG_Text_Paint_Ext(cgDC.cursorx + 10, cgDC.cursory, 0.20f, 0.22f, colorGreen, button->text, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
+	}
 }
 
 /**
@@ -4474,9 +4500,8 @@ void CG_HudEditorSetup(void)
 */
 void CG_DrawHudEditor(void)
 {
-	unsigned int i;
-	int          offsetX;
-	char         name[HUD_COMPONENTS_NUM];
+	panel_button_t **buttons = hudComponentsPanel;
+	panel_button_t *button;
 
 	BG_PanelButtonsRender(hudComponentsPanel);
 	BG_PanelButtonsRender(hudEditor);
@@ -4484,22 +4509,49 @@ void CG_DrawHudEditor(void)
 	trap_R_SetColor(NULL);
 	CG_DrawPic(cgDC.cursorx, cgDC.cursory, 32, 32, cgs.media.cursorIcon);
 
-	for (i = 0; i < hudComponentFieldsNum; i++)
+	// start parsing hud components from the last focused button
+	if (lastFocusButton)
 	{
-		panel_button_t *button = &hudComponents[i];
+		qboolean skip = qtrue;
+
+		for ( ; *buttons; buttons++)
+		{
+			button = (*buttons);
+
+			if (skip)
+			{
+				if (button != lastFocusButton)
+				{
+					continue;
+				}
+
+				skip = qfalse;
+			}
+
+			if (BG_CursorInRect(&button->rect))
+			{
+				CG_DrawHudEditor_ToolTip(button);
+				return;
+			}
+		}
+
+		// start for beginning
+		buttons = hudComponentsPanel;
+	}
+
+	for ( ; *buttons; buttons++)
+	{
+		button = (*buttons);
+
+		// early return
+		if (lastFocusButton && lastFocusButton == button)
+		{
+			break;
+		}
+
 		if (BG_CursorInRect(&button->rect))
 		{
-			Com_sprintf(name, sizeof(name), "%s", button->text);
-			offsetX = CG_Text_Width_Ext(name, 0.20f, 0, &cgs.media.limboFont1);
-
-			if (cgDC.cursorx + 10 + offsetX >= 640)
-			{
-				CG_Text_Paint_Ext(cgDC.cursorx - 10 - offsetX, cgDC.cursory, 0.20f, 0.22f, colorGreen, name, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
-			}
-			else
-			{
-				CG_Text_Paint_Ext(cgDC.cursorx + 10, cgDC.cursory, 0.20f, 0.22f, colorGreen, name, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
-			}
+			CG_DrawHudEditor_ToolTip(button);
 			break;
 		}
 	}
@@ -4513,11 +4565,36 @@ void CG_DrawHudEditor(void)
 */
 void CG_HudEditor_KeyHandling(int key, qboolean down)
 {
-	panel_button_t *button;
-
 	if (BG_PanelButtonsKeyEvent(key, down, hudEditor))
 	{
 		return;
+	}
+
+	if (key == K_MOUSE2)
+	{
+		lastFocusButton = NULL;
+		return;
+	}
+
+	// start parsing hud components from the last focused button
+	if (lastFocusButton)
+	{
+		panel_button_t **buttons = hudComponentsPanel;
+		panel_button_t *button;
+
+		for ( ; *buttons; buttons++)
+		{
+			button = (*buttons);
+
+			if (button == lastFocusButton)
+			{
+				if (BG_PanelButtonsKeyEvent(key, down, ++buttons))
+				{
+					return;
+				}
+				break;
+			}
+		}
 	}
 
 	if (BG_PanelButtonsKeyEvent(key, down, hudComponentsPanel))
@@ -4525,16 +4602,9 @@ void CG_HudEditor_KeyHandling(int key, qboolean down)
 		return;
 	}
 
-	if (key == K_MOUSE2)
+	if (lastFocusButton && down)
 	{
-		BG_PanelButtons_SetFocusButton(NULL);
-	}
-
-	button = BG_PanelButtons_GetFocusButton();
-
-	if (button)
-	{
-		hudComponent_t *comp = (hudComponent_t *)((char *)activehud + hudComponentFields[button->data[0]].offset);
+		hudComponent_t *comp = (hudComponent_t *)((char *)activehud + hudComponentFields[lastFocusButton->data[0]].offset);
 		qboolean       changeSize;
 		float          offset;
 		float          *pValue;
@@ -4563,7 +4633,7 @@ void CG_HudEditor_KeyHandling(int key, qboolean down)
 		default: return;
 		}
 
-		CG_HudEditorUpdateFields(button);
+		CG_HudEditorUpdateFields(lastFocusButton);
 
 		return;
 	}

@@ -376,9 +376,6 @@ vmCvar_t cg_shoutcastDrawHealth;
 vmCvar_t cg_shoutcastGrenadeTrail;
 vmCvar_t cg_shoutcastDrawMinimap;
 
-vmCvar_t cg_chatX;
-vmCvar_t cg_chatY;
-vmCvar_t cg_chatScale;
 vmCvar_t cg_chatAlpha;
 vmCvar_t cg_chatBackgroundAlpha;
 vmCvar_t cg_chatShadow;
@@ -665,9 +662,6 @@ static cvarTable_t cvarTable[] =
 	{ &cg_shoutcastGrenadeTrail,   "cg_shoutcastGrenadeTrail",   "0",           CVAR_ARCHIVE,                 0 },
 	{ &cg_shoutcastDrawMinimap,    "cg_shoutcastDrawMinimap",    "1",           CVAR_ARCHIVE,                 0 },
 
-	{ &cg_chatX,                   "cg_chatX",                   "160",         CVAR_ARCHIVE,                 0 },
-	{ &cg_chatY,                   "cg_chatY",                   "478",         CVAR_ARCHIVE,                 0 },
-	{ &cg_chatScale,               "cg_chatScale",               "1.0",         CVAR_ARCHIVE,                 0 },
 	{ &cg_chatAlpha,               "cg_chatAlpha",               "1.0",         CVAR_ARCHIVE,                 0 },
 	{ &cg_chatBackgroundAlpha,     "cg_chatBackgroundAlpha",     "0.66",        CVAR_ARCHIVE,                 0 },
 	{ &cg_chatShadow,              "cg_chatShadow",              "0",           CVAR_ARCHIVE,                 0 },
