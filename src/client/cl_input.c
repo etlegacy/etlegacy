@@ -821,6 +821,11 @@ void CL_MouseEvent(int dx, int dy, int time)
 	static float mouseMenuBuffer[2] = { 0, 0 };
 	float        mdx, mdy;
 
+	mouseMenuBuffer[0] += cl_menuSensitivity->value * dx;
+	mouseMenuBuffer[1] += cl_menuSensitivity->value * dy;
+	mouseMenuBuffer[0]  = modff(mouseMenuBuffer[0], &mdx);
+	mouseMenuBuffer[1]  = modff(mouseMenuBuffer[1], &mdy);
+
 	if (cls.keyCatchers & KEYCATCH_UI)
 	{
 		// if we just want to pass it along to game
@@ -831,10 +836,6 @@ void CL_MouseEvent(int dx, int dy, int time)
 		}
 		else
 		{
-			mouseMenuBuffer[0] += cl_menuSensitivity->value * dx;
-			mouseMenuBuffer[1] += cl_menuSensitivity->value * dy;
-			mouseMenuBuffer[0]  = modff(mouseMenuBuffer[0], &mdx);
-			mouseMenuBuffer[1]  = modff(mouseMenuBuffer[1], &mdy);
 			VM_Call(uivm, UI_MOUSE_EVENT, (int)mdx, (int)mdy);
 		}
 	}
@@ -847,7 +848,7 @@ void CL_MouseEvent(int dx, int dy, int time)
 		}
 		else
 		{
-			VM_Call(cgvm, CG_MOUSE_EVENT, dx, dy);
+			VM_Call(cgvm, CG_MOUSE_EVENT, (int)mdx, (int)mdy);
 		}
 	}
 	else
