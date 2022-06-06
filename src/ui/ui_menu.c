@@ -987,6 +987,12 @@ void Menus_HandleOOBClick(menuDef_t *menu, int key, qboolean down)
  */
 qboolean Menu_BindExecMode(void)
 {
+	// only in main menu (fullscreen UI)
+	if (!Menus_AnyFullScreenVisible())
+	{
+		return qfalse;
+	}
+
 	if ((trap_Key_IsDown(K_LSHIFT) || trap_Key_IsDown(K_RSHIFT))
 	    && !(g_editingField || g_waitingForKey)
 	    && !(trap_Key_GetCatcher() & KEYCATCH_CONSOLE))
