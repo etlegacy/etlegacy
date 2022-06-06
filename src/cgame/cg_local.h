@@ -4093,7 +4093,7 @@ extern qboolean resetmaxspeed; // CG_DrawSpeed
 
 /* HUD exports */
 
-#define HUD_COMPONENTS_NUM 39
+#define HUD_COMPONENTS_NUM 40
 
 typedef struct hudComponent_s
 {
@@ -4118,7 +4118,7 @@ typedef struct hudStructure_s
 	hudComponent_t xptext;
 	hudComponent_t ranktext;
 	hudComponent_t statsdisplay;
-	hudComponent_t weaponicon;
+	hudComponent_t weaponicon;      // 10
 	hudComponent_t weaponammo;
 	hudComponent_t fireteam;
 	hudComponent_t popupmessages;
@@ -4130,7 +4130,7 @@ typedef struct hudStructure_s
 	hudComponent_t weaponstability;
 	hudComponent_t livesleft;
 
-	hudComponent_t roundtimer;
+	hudComponent_t roundtimer;      // 20
 	hudComponent_t reinforcement;
 	hudComponent_t spawntimer;
 	hudComponent_t localtime;
@@ -4143,7 +4143,7 @@ typedef struct hudStructure_s
 
 	hudComponent_t missilecamera;
 
-	hudComponent_t sprinttext;
+	hudComponent_t sprinttext;      // 30
 	hudComponent_t breathtext;
 	hudComponent_t weaponchargetext;
 	hudComponent_t fps;
@@ -4152,7 +4152,8 @@ typedef struct hudStructure_s
 	hudComponent_t speed;
 	hudComponent_t lagometer;
 	hudComponent_t disconnect;
-    hudComponent_t chat;    // 39
+    hudComponent_t chat;    
+    hudComponent_t spectatorstatus;       // 40
 
 	hudComponent_t *components[HUD_COMPONENTS_NUM];
 } hudStucture_t;
@@ -4168,7 +4169,10 @@ void CG_DrawLimboMessage(hudComponent_t *comp);
 void CG_DrawFollow(hudComponent_t *comp);
 void CG_DrawMissileCamera(hudComponent_t *comp);
 void CG_DrawTeamInfo(hudComponent_t *comp);
-    
+void CG_DrawSpectator(hudComponent_t *comp);
+
+void CG_DrawCompText(hudComponent_t *comp, const char *str, vec4_t color, int fontStyle, fontHelper_t *font);
+
 void CG_HudEditorSetup(void);
 void CG_DrawHudEditor(void);
 void CG_HudEditor_KeyHandling(int key, qboolean down);

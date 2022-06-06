@@ -2352,9 +2352,10 @@ static void CG_DrawCrosshairNames(void)
 /**
  * @brief CG_DrawSpectator
  */
-static void CG_DrawSpectator(void)
+void CG_DrawSpectator(hudComponent_t *comp)
 {
 	const char *s;
+
 #ifdef FEATURE_EDV
 	if (cgs.demoCamera.renderingWeaponCam)
 	{
@@ -2365,15 +2366,17 @@ static void CG_DrawSpectator(void)
 		s = CG_TranslateString("FREECAM");
 	}
 	else
+#endif
+	if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR)
 	{
-#endif
-	s = CG_TranslateString(va("%s", "SPECTATOR"));
-#ifdef FEATURE_EDV
-}
-#endif
-	int w = CG_Text_Width_Ext(va("%s", s), cg_fontScaleTP.value, 0, &cgs.media.limboFont2);
-
-	CG_Text_Paint_Ext(Ccg_WideX(320) - w / 2, 440, cg_fontScaleTP.value, cg_fontScaleTP.value, colorWhite, s, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+		s = CG_TranslateString(va("%s", "SPECTATOR"));
+	}
+	else
+	{
+		return;
+	}
+    
+    CG_DrawCompText(comp, s, comp->color, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 }
 
 /**
@@ -4285,11 +4288,6 @@ static void CG_Draw2D(void)
 	if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR)
 #endif
 	{
-		if (!CG_DrawScoreboard() && !cgs.clientinfo[cg.clientNum].shoutcaster)
-		{
-			CG_DrawSpectator();
-		}
-
 		CG_DrawCrosshair();
 		CG_DrawCrosshairNames();
 	}

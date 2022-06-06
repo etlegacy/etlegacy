@@ -161,6 +161,7 @@ static const hudComponentFields_t hudComponentFields[] =
 	{ HUDF(lagometer),        CG_DrawLagometer        },
 	{ HUDF(disconnect),       CG_DrawDisconnect       },
 	{ HUDF(chat),             CG_DrawTeamInfo         },    // FIXME: outside cg_draw_hud
+    { HUDF(spectatorstatus),  CG_DrawSpectator        },    // FIXME: outside cg_draw_hud
 	{ NULL,                   0, qfalse, NULL         },
 };
 
@@ -239,6 +240,7 @@ void CG_setDefaultHudValues(hudStucture_t *hud)
 	hud->lagometer        = CG_getComponent(706, 216, 57, 57, qtrue, STYLE_NORMAL, 0.19f, HUD_Text, 36, CG_DrawLagometer);
 	hud->disconnect       = CG_getComponent(706, 216, 57, 57, qtrue, STYLE_NORMAL, 0.19f, colorWhite, 37, CG_DrawDisconnect);
 	hud->chat             = CG_getComponent(Ccg_WideX(160), 469, 434, 9, qtrue, STYLE_NORMAL, 1.0f, colorWhite, 38, CG_DrawTeamInfo);
+    hud->spectatorstatus  = CG_getComponent(334, 421, 100, 28, qtrue, STYLE_SIMPLE, 0.35f, colorWhite, 39, CG_DrawSpectator);
 }
 
 /**
@@ -717,12 +719,12 @@ static void CG_DrawPicShadowed(float x, float y, float w, float h, qhandle_t ico
  * @param[in] str
  * @param[in] color
  */
-static void CG_DrawCompText(hudComponent_t *comp, const char *str, vec4_t color, int fontStyle)
+void CG_DrawCompText(hudComponent_t *comp, const char *str, vec4_t color, int fontStyle, fontHelper_t *font)
 {
 	float w, w2, h, h2;
 
-	w  = CG_Text_Width_Ext(str, comp->scale, 0, &cgs.media.limboFont1);
-	h  = CG_Text_Height_Ext(str, comp->scale, 0, &cgs.media.limboFont1);
+	w  = CG_Text_Width_Ext(str, comp->scale, 0, font);
+	h  = CG_Text_Height_Ext(str, comp->scale, 0, font);
 	w2 = MAX(comp->location.w, w);
 	h2 = MAX(comp->location.h, h);
 
@@ -732,7 +734,7 @@ static void CG_DrawCompText(hudComponent_t *comp, const char *str, vec4_t color,
 		CG_DrawRect_FixedBorder(comp->location.x, comp->location.y, w2, comp->location.h, 1, HUD_Border);
 	}
 
-	CG_Text_Paint_Ext(comp->location.x + ((w2 - w) / 2), comp->location.y + ((h2 + h) / 2), comp->scale, comp->scale, color, str, 0, 0, fontStyle, &cgs.media.limboFont1);
+	CG_Text_Paint_Ext(comp->location.x + ((w2 - w) / 2), comp->location.y + ((h2 + h) / 2), comp->scale, comp->scale, color, str, 0, 0, fontStyle, font);
 }
 
 /**
@@ -1381,7 +1383,7 @@ static void CG_DrawPlayerHealth(hudComponent_t *comp)
 		Vector4Copy(comp->color, color);
 	}
 
-	CG_DrawCompText(comp, str, color, ITEM_TEXTSTYLE_SHADOWED);
+	CG_DrawCompText(comp, str, color, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
 }
 
 /**
@@ -1417,7 +1419,7 @@ static void CG_DrawPlayerSprint(hudComponent_t *comp)
 		str = va("%.0f %%", (cg.snap->ps.stats[STAT_SPRINTTIME] / (float)SPRINTTIME) * 100);
 	}
 
-	CG_DrawCompText(comp, str, comp->color, ITEM_TEXTSTYLE_SHADOWED);
+	CG_DrawCompText(comp, str, comp->color, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
 }
 
 /**
@@ -1444,7 +1446,7 @@ static void CG_DrawPlayerBreath(hudComponent_t *comp)
 		return;
 	}
 
-	CG_DrawCompText(comp, str, comp->color, ITEM_TEXTSTYLE_SHADOWED);
+	CG_DrawCompText(comp, str, comp->color, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
 }
 
 /**
@@ -1488,7 +1490,7 @@ static void CG_DrawWeaponCharge(hudComponent_t *comp)
 
 	str = va("%.0f %%", MIN(((cg.time - cg.snap->ps.classWeaponTime) / chargeTime) * 100, 100));
 
-	CG_DrawCompText(comp, str, comp->color, ITEM_TEXTSTYLE_SHADOWED);
+	CG_DrawCompText(comp, str, comp->color, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
 }
 
 /**
@@ -1583,7 +1585,7 @@ static void CG_DrawXP(hudComponent_t *comp)
 
 	str = va("%i XP", cg.snap->ps.stats[STAT_XP]);
 
-	CG_DrawCompText(comp, str, clr, ITEM_TEXTSTYLE_SHADOWED);
+	CG_DrawCompText(comp, str, clr, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
 }
 
 /**
@@ -1613,7 +1615,7 @@ static void CG_DrawRank(hudComponent_t *comp)
 
 	str = va("%s", GetRankTableData(cgs.clientinfo[ps->clientNum].team, cgs.clientinfo[ps->clientNum].rank)->miniNames);
 
-	CG_DrawCompText(comp, str, comp->color, ITEM_TEXTSTYLE_SHADOWED);
+	CG_DrawCompText(comp, str, comp->color, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
 }
 
 /**
@@ -2794,7 +2796,7 @@ static void CG_DrawFPS(hudComponent_t *comp)
 		s = "estimating";
 	}
 
-	CG_DrawCompText(comp, s, comp->color, ITEM_TEXTSTYLE_NORMAL);
+	CG_DrawCompText(comp, s, comp->color, ITEM_TEXTSTYLE_NORMAL, &cgs.media.limboFont1);
 }
 
 /**
@@ -2946,7 +2948,7 @@ static void CG_DrawRespawnTimer(hudComponent_t *comp)
 
 	if (s)
 	{
-		CG_DrawCompText(comp, s, comp->color, blink ? ITEM_TEXTSTYLE_BLINK : ITEM_TEXTSTYLE_NORMAL);
+		CG_DrawCompText(comp, s, comp->color, blink ? ITEM_TEXTSTYLE_BLINK : ITEM_TEXTSTYLE_NORMAL, &cgs.media.limboFont1);
 	}
 }
 
@@ -2968,7 +2970,7 @@ static void CG_DrawSpawnTimer(hudComponent_t *comp)
 
 	if (rt)
 	{
-		CG_DrawCompText(comp, s, comp->color, blink ? ITEM_TEXTSTYLE_BLINK : ITEM_TEXTSTYLE_NORMAL);
+		CG_DrawCompText(comp, s, comp->color, blink ? ITEM_TEXTSTYLE_BLINK : ITEM_TEXTSTYLE_NORMAL, &cgs.media.limboFont1);
 	}
 }
 
@@ -2988,7 +2990,7 @@ static void CG_DrawRoundTimerSimple(hudComponent_t *comp)
 
 	blink = CG_SpawnTimersText(&s, &rt);
 
-	CG_DrawCompText(comp, s, comp->color, blink ? ITEM_TEXTSTYLE_BLINK : ITEM_TEXTSTYLE_NORMAL);
+	CG_DrawCompText(comp, s, comp->color, blink ? ITEM_TEXTSTYLE_BLINK : ITEM_TEXTSTYLE_NORMAL, &cgs.media.limboFont1);
 }
 
 /**
@@ -3024,7 +3026,7 @@ static void CG_DrawRoundTimerNormal(hudComponent_t *comp)
 		s = va("^1%s%s%s", rt, " ", s);
 	}
 
-	CG_DrawCompText(comp, s, comp->color, blink ? ITEM_TEXTSTYLE_BLINK : ITEM_TEXTSTYLE_NORMAL);
+	CG_DrawCompText(comp, s, comp->color, blink ? ITEM_TEXTSTYLE_BLINK : ITEM_TEXTSTYLE_NORMAL, &cgs.media.limboFont1);
 }
 
 /**
@@ -3059,7 +3061,7 @@ static void CG_DrawLocalTime(hudComponent_t *comp)
 
 	s = CG_LocalTimeText();
 
-	CG_DrawCompText(comp, s, comp->color, ITEM_TEXTSTYLE_NORMAL);
+	CG_DrawCompText(comp, s, comp->color, ITEM_TEXTSTYLE_NORMAL, &cgs.media.limboFont1);
 }
 
 /**
@@ -3222,7 +3224,7 @@ static void CG_DrawPing(hudComponent_t *comp)
 
 	s = va("Ping %d", cg.snap->ping < 999 ? cg.snap->ping : 999);
 
-	CG_DrawCompText(comp, s, comp->color, ITEM_TEXTSTYLE_NORMAL);
+	CG_DrawCompText(comp, s, comp->color, ITEM_TEXTSTYLE_NORMAL, &cgs.media.limboFont1);
 }
 
 vec4_t colorAW = { 0, 0.5, 0, 0.5f };
