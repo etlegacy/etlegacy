@@ -982,6 +982,22 @@ void Menus_HandleOOBClick(menuDef_t *menu, int key, qboolean down)
 }
 
 /**
+ * @brief Menu_BindExecMode
+ * @return
+ */
+qboolean Menu_BindExecMode(void)
+{
+	if ((trap_Key_IsDown(K_LSHIFT) || trap_Key_IsDown(K_RSHIFT))
+	    && !(g_editingField || g_waitingForKey)
+	    && !(trap_Key_GetCatcher() & KEYCATCH_CONSOLE))
+	{
+		return qtrue;
+	}
+
+	return qfalse;
+}
+
+/**
  * @brief Menu_HandleKey
  * @param[in] menu
  * @param[in] key
@@ -1116,6 +1132,17 @@ void Menu_HandleKey(menuDef_t *menu, int key, qboolean down)
 				Item_RunScript(it, NULL, it->onKey);
 				return;
 			}
+		}
+	}
+
+	// execute binds if shift is held
+	if (Menu_BindExecMode())
+	{
+		char buf[MAX_STRING_CHARS];
+		trap_Key_GetBindingBuf(key, buf, sizeof(buf));
+		if (buf[0] != 0)
+		{
+			trap_Cmd_ExecuteText(EXEC_APPEND, buf);
 		}
 	}
 
@@ -1439,6 +1466,21 @@ void Menu_PaintAll(void)
 		DC->textFont(UI_FONT_COURBD_21);
 		DC->drawText(5, 10, .2f, v, va("fps: %.2f", (double)DC->FPS), 0, 0, 0);
 		DC->drawText(5, 20, .2f, v, va("mouse: %i %i", DC->cursorx, DC->cursory), 0, 0, 0);
+	}
+
+	if (Menu_BindExecMode())
+	{
+		vec4_t     color;
+		float      x, w;
+		const char *str = "Waiting for keybinding to execute...";
+
+		Vector4Copy(colorMdGrey, color);
+		// we aren't actually using this font, but this matches UI_FONT_COURBD_21
+		w = (float)DC->textWidthExt(str, .2f, 0, &uiInfo.uiDC.Assets.limboFont2_lo);
+		x = Cui_WideX(SCREEN_WIDTH * .5f) - (w * .5f);
+
+		DC->textFont(UI_FONT_COURBD_21);
+		DC->drawText(x, 474, .2f, color, str, 0, 0, 0); // 474 puts it on same height as the version string
 	}
 }
 
