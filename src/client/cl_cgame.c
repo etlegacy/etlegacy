@@ -1282,16 +1282,7 @@ void CL_AdjustTimeDelta(void)
 	newDelta   = cl.snap.serverTime - cls.realtime;
 	deltaDelta = abs(newDelta - cl.serverTimeDelta);
 
-	if (cl.serverTimeDelta == 0)
-	{
-		cl.baselineDelta = cl.serverTimeDelta = newDelta;
-		cl.oldServerTime   = cl.snap.serverTime; // FIXME: is this a problem for cgame?
-		cl.serverTime      = cl.snap.serverTime;
-
-		if (cl_showTimeDelta->integer & 1) adjustmentMessage = "^4RESET^7 (resetdelta)";
-		if (cl_showTimeDelta->integer & 2) Com_Printf("<RESET> ");
-	}
-	else if (deltaDelta > RESET_TIME)
+	if (deltaDelta > RESET_TIME)
 	{
 		cl.baselineDelta = cl.serverTimeDelta = newDelta;
 		cl.oldServerTime   = cl.snap.serverTime; // FIXME: is this a problem for cgame?
