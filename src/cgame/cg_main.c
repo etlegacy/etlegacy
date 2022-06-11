@@ -281,6 +281,7 @@ vmCvar_t demo_teamonlymissilecam;
 vmCvar_t cg_predefineddemokeys;
 #endif
 
+vmCvar_t int_cl_extrapolationMargin;
 vmCvar_t int_cl_maxpackets;
 vmCvar_t int_cl_timenudge;
 vmCvar_t int_m_pitch;
@@ -583,6 +584,8 @@ static cvarTable_t cvarTable[] =
 #endif
 
 	// Engine mappings
+	
+	{ &int_cl_extrapolationMargin, "cl_extrapolationMargin",     "0",           CVAR_ARCHIVE,                 0 },
 	{ &int_cl_maxpackets,          "cl_maxpackets",              "125",         CVAR_ARCHIVE,                 0 },
 	{ &int_cl_timenudge,           "cl_timenudge",               "0",           CVAR_ARCHIVE,                 0 },
 	{ &int_m_pitch,                "m_pitch",                    "0.022",       CVAR_ARCHIVE,                 0 },
@@ -821,6 +824,17 @@ void CG_UpdateCvars(void)
 					else if (cg_errorDecay.value > 500.0f)
 					{
 						trap_Cvar_Set("cg_errorDecay", "500");
+					}
+				}
+				else if (cv->vmCvar == &int_cl_extrapolationMargin)
+				{
+					if (int_cl_extrapolationMargin.integer < -2)
+					{
+						trap_Cvar_Set("cl_extrapolationMargin", "-2");
+					}
+					else if (int_cl_extrapolationMargin.integer > 5)
+					{
+						trap_Cvar_Set("cl_extrapolationMargin", "5");
 					}
 				}
 			}

@@ -2779,6 +2779,7 @@ extern vmCvar_t demo_pvshint;
 extern vmCvar_t cg_predefineddemokeys;
 #endif
 // engine mappings
+extern vmCvar_t int_cl_extrapolationMargin;
 extern vmCvar_t int_cl_maxpackets;
 extern vmCvar_t int_cl_timenudge;
 extern vmCvar_t int_m_pitch;

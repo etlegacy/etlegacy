@@ -3017,6 +3017,13 @@ void PM_CoolWeapons(void)
 #define AIMSPREAD_VIEWRATE_MIN      30.0f       // degrees per second
 #define AIMSPREAD_VIEWRATE_RANGE    120.0f      // degrees per second
 
+#define FORWARD_BIT  1
+#define BACKWARD_BIT 2
+
+#ifdef GAMEDLL
+extern vmCvar_t g_developer;
+#endif
+
 /**
  * @brief PM_AdjustAimSpreadScale
  */
@@ -3033,6 +3040,22 @@ void PM_AdjustAimSpreadScale(void)
 		pm->ps->aimSpreadScaleFloat = AIMSPREAD_MAXSPREAD;
 		return;
 	}
+
+#ifdef GAMEDLL
+	if(g_developer.integer & 2) {
+		if ( pm->cmd.flags & (1 << FORWARD_BIT) ) {
+			Com_Printf("%i +1\n", pm->cmd.serverTime);
+		}
+		else if ( pm->cmd.flags & (1 << BACKWARD_BIT) )
+		{
+			Com_Printf("%i -2\n", pm->cmd.serverTime);
+		}
+		else
+		{
+			Com_Printf("%i  0\n", pm->cmd.serverTime);
+		}
+	}
+#endif
 
 	cmdTime = (pm->cmd.serverTime - pm->oldcmd.serverTime) / 1000.0f;
 

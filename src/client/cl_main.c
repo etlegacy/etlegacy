@@ -63,6 +63,7 @@ cvar_t *cl_timeout;
 cvar_t *cl_maxpackets;
 cvar_t *cl_packetdup;
 cvar_t *cl_timeNudge;
+cvar_t *cl_extrapolationMargin;
 cvar_t *cl_showTimeDelta;
 cvar_t *cl_freezeDemo;
 
@@ -1421,6 +1422,21 @@ void CL_Clip_f(void)
 	// Return to console printing
 	Cvar_Set("cl_noprint", va("%i", noPrint));
 }
+
+/**
+ * @brief CL_RebaseDrift_f 
+ * Resets the baselineDelta used for calculating drift in cl_showTimeDelta debugging output.
+ */
+void CL_RebaseDrift_f(void)
+{
+	cl.baselineDelta = cl.serverTimeDelta;
+	
+	if (cl_showTimeDelta->integer & 1)
+	{
+		Com_Printf("^2REBASE DRIFT^7 (baselineDelta = serverTimeDelta = % i)\n", cl.serverTimeDelta);
+	}
+}
+
 
 #ifdef ETLEGACY_DEBUG
 void CL_ExtendedCharsTest_f(void)
@@ -2904,6 +2920,8 @@ void CL_Init(void)
 
 	cl_wavefilerecord = Cvar_Get("cl_wavefilerecord", "0", CVAR_TEMP);
 
+	cl_extrapolationMargin = Cvar_Get("cl_extrapolationMargin", "0", CVAR_ARCHIVE);
+
 	cl_timeNudge          = Cvar_Get("cl_timeNudge", "0", CVAR_TEMP);
 	cl_shownet            = Cvar_Get("cl_shownet", "0", CVAR_TEMP);
 	cl_shownuments        = Cvar_Get("cl_shownuments", "0", CVAR_TEMP);
@@ -2927,8 +2945,8 @@ void CL_Init(void)
 	cl_pitchspeed    = Cvar_Get("cl_pitchspeed", "140", CVAR_ARCHIVE_ND);
 	cl_anglespeedkey = Cvar_Get("cl_anglespeedkey", "1.5", 0);
 
-	cl_maxpackets = Cvar_Get("cl_maxpackets", "125", CVAR_ARCHIVE);
-	cl_packetdup  = Cvar_Get("cl_packetdup", "1", CVAR_ARCHIVE_ND);
+	cl_maxpackets  = Cvar_Get("cl_maxpackets", "125", CVAR_ARCHIVE);
+	cl_packetdup   = Cvar_Get("cl_packetdup", "1", CVAR_ARCHIVE_ND);
 
 	cl_run         = Cvar_Get("cl_run", "1", CVAR_ARCHIVE_ND);
 	cl_sensitivity = Cvar_Get("sensitivity", "5", CVAR_ARCHIVE);
@@ -3071,6 +3089,8 @@ void CL_Init(void)
 	Cmd_AddCommand("open_homepath", CL_OpenHomePath_f, "Open the home path in a system file explorer.");
 	Cmd_AddCommand("clip", CL_Clip_f, "Put command output to clipboard.");
 
+	Cmd_AddCommand("rebaseDrift", CL_RebaseDrift_f, "Resets the baselineDelta used for calculating drift.");
+
 #ifdef ETLEGACY_DEBUG
 	Cmd_AddCommand("extendedCharsTest", CL_ExtendedCharsTest_f);
 #endif
@@ -3166,6 +3186,8 @@ void CL_Shutdown(void)
 
 	Cmd_RemoveCommand("open_homepath");
 	Cmd_RemoveCommand("clip");
+
+	Cmd_RemoveCommand("rebaseDrift");
 
 #ifdef ETLEGACY_DEBUG
 	Cmd_RemoveCommand("extendedCharsTest");
