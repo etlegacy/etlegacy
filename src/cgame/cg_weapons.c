@@ -4610,6 +4610,12 @@ void CG_AltWeapon_f(void)
 		return;
 	}
 
+	// don't allow alt weapon switch till we have switched to selected weapon
+	if (cg.snap->ps.weapon != cg.weaponSelect || (cg.snap->ps.nextWeapon && cg.snap->ps.weapon != cg.snap->ps.nextWeapon))
+	{
+		return;
+	}
+
 	// need ground for this
 	if (GetWeaponTableData(cg.weaponSelect)->type & WEAPON_TYPE_SETTABLE)
 	{
@@ -5230,9 +5236,19 @@ void CG_WeaponBank_f(void)
 
 	CG_WeaponIndex(cg.weaponSelect, &curbank, &curcycle);         // get bank/cycle of current weapon
 
-	if (!cg_weapaltSwitches.integer && bank == curbank)
+	if (bank == curbank)
 	{
-		return;
+		// don't allow another weapon switch when we're still swapping alt weap, to prevent animation breaking
+		// there we check the value of the animation to prevent any switch during raising and dropping alt weapon
+		// until the animation is ended
+		// don't allow alt weapon switch till we have switched to selected weapon
+		if (!cg_weapaltSwitches.integer || cg.snap->ps.weapon != cg.weaponSelect ||
+		    (cg.snap->ps.nextWeapon && cg.snap->ps.weapon != cg.snap->ps.nextWeapon) ||
+		    (cg.snap->ps.weapAnim & ~ANIM_TOGGLEBIT) == WEAP_ALTSWITCHFROM ||
+		    (cg.snap->ps.weapAnim & ~ANIM_TOGGLEBIT) == WEAP_ALTSWITCHTO)
+		{
+			return;
+		}
 	}
 
 	if (!cg.lastWeapSelInBank[bank])
