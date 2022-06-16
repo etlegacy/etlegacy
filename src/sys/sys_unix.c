@@ -158,37 +158,52 @@ void Sys_Chmod(const char *file, int mode)
 	Com_DPrintf("chmod +%d '%s'\n", mode, file);
 }
 
-/**
- * @brief Base time in seconds
- *
- * That's our origin timeval:tv_sec is an int:\n
- * assuming this wraps every 0x7fffffff - ~68 years since the Epoch (1970) - we're safe till 2038\n
- * using unsigned long data type to work right with Sys_XTimeToSysTime
- */
-unsigned long sys_timeBase = 0;
+// Base time in ms
+static unsigned long long sys_timeBase = 0;
+
+// Current time in ms, using sys_timeBase as origin
+static unsigned long long curtime;
+
+// All systems with clock_gettime will have CLOCK_REALTIME
+static clockid_t clockid = CLOCK_REALTIME;
 
 /**
- * @brief Current time in ms, using sys_timeBase as origin
- * @note sys_timeBase * 1000 + curtime -> ms since the Epoch, 0x7fffffff ms - ~24 days
- *
- * although timeval:tv_usec is an int, I'm not sure wether it is actually used as an unsigned int
- *   (which would affect the wrap period)
+ * @brief Sys_Milliseconds
+ * @param[in]
+ * @return current system time in ms since server/client was started
  */
-int curtime;
-
 int Sys_Milliseconds(void)
 {
-	struct timeval tp;
-
-	gettimeofday(&tp, NULL);
+	struct timespec time;
 
 	if (!sys_timeBase)
 	{
-		sys_timeBase = tp.tv_sec;
-		return tp.tv_usec / 1000;
+		// Most systems with clock_gettime will have CLOCK_MONOTONIC
+		#ifdef CLOCK_MONOTONIC
+        if (clock_gettime(CLOCK_MONOTONIC, &time) == 0)
+        {
+        	clockid = CLOCK_MONOTONIC;
+        }
+        else
+        {
+        	Com_Printf("Sys_Milliseconds: CLOCK_MONOTONIC failed. Using CLOCK_REALTIME instead.\n");
+        }
+        #else
+        Com_Printf("Sys_Milliseconds: CLOCK_MONOTONIC not found. Using CLOCK_REALTIME instead.\n");
+		#endif
+		
+		if(clock_gettime(clockid, &time) == -1)
+		{
+			Sys_Error("Sys_Milliseconds: clock_gettime failed: errno %d\n", errno);
+		}
+
+		sys_timeBase = (time.tv_sec * 1000) + (time.tv_nsec / 1000000);
+		return sys_timeBase;
 	}
 
-	curtime = (tp.tv_sec - sys_timeBase) * 1000 + tp.tv_usec / 1000;
+	clock_gettime(clockid, &time);
+	
+	curtime = ( (time.tv_sec * 1000) + (time.tv_nsec / 1000000) ) - sys_timeBase;
 
 	return curtime;
 }
