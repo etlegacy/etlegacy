@@ -198,7 +198,7 @@ int Sys_Milliseconds(void)
 		}
 
 		sys_timeBase = (time.tv_sec * 1000) + (time.tv_nsec / 1000000);
-		return sys_timeBase;
+		return 0;
 	}
 
 	clock_gettime(clockid, &time);
