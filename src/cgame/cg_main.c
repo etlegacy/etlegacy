@@ -379,8 +379,6 @@ vmCvar_t cg_shoutcastDrawMinimap;
 vmCvar_t cg_chatAlpha;
 vmCvar_t cg_chatBackgroundAlpha;
 vmCvar_t cg_chatShadow;
-vmCvar_t cg_chatFlags;
-vmCvar_t cg_chatLineWidth;
 
 vmCvar_t cg_activateLean;
 
@@ -665,8 +663,6 @@ static cvarTable_t cvarTable[] =
 	{ &cg_chatAlpha,               "cg_chatAlpha",               "1.0",         CVAR_ARCHIVE,                 0 },
 	{ &cg_chatBackgroundAlpha,     "cg_chatBackgroundAlpha",     "0.66",        CVAR_ARCHIVE,                 0 },
 	{ &cg_chatShadow,              "cg_chatShadow",              "0",           CVAR_ARCHIVE,                 0 },
-	{ &cg_chatFlags,               "cg_chatFlags",               "1",           CVAR_ARCHIVE,                 0 },
-	{ &cg_chatLineWidth,           "cg_chatLineWidth",           "70",          CVAR_ARCHIVE,                 0 },
 
 	{ &cg_activateLean,            "cg_activateLean",            "0",           CVAR_ARCHIVE,                 0 },
 

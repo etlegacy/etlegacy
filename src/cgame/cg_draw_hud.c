@@ -161,7 +161,7 @@ static const hudComponentFields_t hudComponentFields[] =
 	{ HUDF(lagometer),        CG_DrawLagometer        },
 	{ HUDF(disconnect),       CG_DrawDisconnect       },
 	{ HUDF(chat),             CG_DrawTeamInfo         },    // FIXME: outside cg_draw_hud
-    { HUDF(spectatorstatus),  CG_DrawSpectator        },    // FIXME: outside cg_draw_hud
+	{ HUDF(spectatorstatus),  CG_DrawSpectator        },    // FIXME: outside cg_draw_hud
 	{ NULL,                   0, qfalse, NULL         },
 };
 
@@ -220,10 +220,10 @@ void CG_setDefaultHudValues(hudStucture_t *hud)
 	hud->cursorhints      = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) * .5f - 24, 260, 48, 48, qtrue, STYLE_NORMAL, 0.19f, colorWhite, 16, CG_DrawCursorhint_f);
 	hud->weaponstability  = CG_getComponent(50, 208, 10, 64, qtrue, STYLE_NORMAL, 0.19f, colorWhite, 17, CG_DrawWeapStability_f);
 	hud->livesleft        = CG_getComponent(4, 360, 48, 24, qtrue, STYLE_NORMAL, 0.19f, colorWhite, 18, CG_DrawLivesLeft);
-	hud->roundtimer       = CG_getComponent(706, 152, 57, 14, qtrue, STYLE_NORMAL, 0.19f, colorWhite, 19, CG_DrawRoundTimer);
+	hud->roundtimer       = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 60, 152, 57, 14, qtrue, STYLE_NORMAL, 0.19f, colorWhite, 19, CG_DrawRoundTimer);
 	hud->reinforcement    = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 60, SCREEN_HEIGHT - 70, 57, 14, qfalse, STYLE_SIMPLE, 0.19f, colorLtBlue, 20, CG_DrawRespawnTimer);
 	hud->spawntimer       = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 60, SCREEN_HEIGHT - 60, 57, 14, qfalse, STYLE_SIMPLE, 0.19f, colorRed, 21, CG_DrawSpawnTimer);
-	hud->localtime        = CG_getComponent(706, 168, 57, 14, qtrue, STYLE_NORMAL, 0.19f, HUD_Text, 22, CG_DrawLocalTime);
+	hud->localtime        = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 60, 168, 57, 14, qtrue, STYLE_NORMAL, 0.19f, HUD_Text, 22, CG_DrawLocalTime);
 	hud->votetext         = CG_getComponent(8, 224, 57, 14, qtrue, STYLE_NORMAL, 0.22f, colorWhite, 23, CG_DrawVote);
 	hud->spectatortext    = CG_getComponent(8, 188, 57, 14, qtrue, STYLE_NORMAL, 0.22f, colorWhite, 24, CG_DrawSpectatorMessage);
 	hud->limbotext        = CG_getComponent(8, 164, 57, 14, qtrue, STYLE_NORMAL, 0.22f, colorWhite, 25, CG_DrawLimboMessage);
@@ -233,14 +233,14 @@ void CG_setDefaultHudValues(hudStucture_t *hud)
 	hud->sprinttext       = CG_getComponent(20, SCREEN_HEIGHT - 96, 57, 14, qfalse, STYLE_SIMPLE, 0.25f, colorWhite, 29, CG_DrawPlayerSprint);
 	hud->breathtext       = CG_getComponent(20, SCREEN_HEIGHT - 96, 57, 14, qfalse, STYLE_SIMPLE, 0.25, colorWhite, 30, CG_DrawPlayerBreath);
 	hud->weaponchargetext = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 16, SCREEN_HEIGHT - 96, 57, 14, qfalse, STYLE_NORMAL, 0.25f, colorWhite, 31, CG_DrawWeaponCharge);
-	hud->fps              = CG_getComponent(706, 184, 57, 14, qtrue, STYLE_NORMAL, 0.19f, HUD_Text, 32, CG_DrawFPS);
-	hud->snapshot         = CG_getComponent(706, 305, 57, 38, qfalse, STYLE_NORMAL, 0.19f, HUD_Text, 33, CG_DrawSnapshot);
-	hud->ping             = CG_getComponent(706, 200, 57, 14, qtrue, STYLE_NORMAL, 0.19f, HUD_Text, 34, CG_DrawPing);
-	hud->speed            = CG_getComponent(706, 275, 57, 14, qtrue, STYLE_NORMAL, 0.19f, HUD_Text, 35, CG_DrawSpeed);
-	hud->lagometer        = CG_getComponent(706, 216, 57, 57, qtrue, STYLE_NORMAL, 0.19f, HUD_Text, 36, CG_DrawLagometer);
-	hud->disconnect       = CG_getComponent(706, 216, 57, 57, qtrue, STYLE_NORMAL, 0.19f, colorWhite, 37, CG_DrawDisconnect);
-	hud->chat             = CG_getComponent(Ccg_WideX(160), 469, 434, 9, qtrue, STYLE_NORMAL, 1.0f, colorWhite, 38, CG_DrawTeamInfo);
-    hud->spectatorstatus  = CG_getComponent(334, 421, 100, 28, qtrue, STYLE_SIMPLE, 0.35f, colorWhite, 39, CG_DrawSpectator);
+	hud->fps              = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 60, 184, 57, 14, qtrue, STYLE_NORMAL, 0.19f, HUD_Text, 32, CG_DrawFPS);
+	hud->snapshot         = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 60, 305, 57, 38, qfalse, STYLE_NORMAL, 0.19f, HUD_Text, 33, CG_DrawSnapshot);
+	hud->ping             = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 60, 200, 57, 14, qtrue, STYLE_NORMAL, 0.19f, HUD_Text, 34, CG_DrawPing);
+	hud->speed            = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 60, 275, 57, 14, qtrue, STYLE_NORMAL, 0.19f, HUD_Text, 35, CG_DrawSpeed);
+	hud->lagometer        = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 60, 216, 57, 57, qtrue, STYLE_NORMAL, 0.19f, HUD_Text, 36, CG_DrawLagometer);
+	hud->disconnect       = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 60, 216, 57, 57, qtrue, STYLE_NORMAL, 0.19f, colorWhite, 37, CG_DrawDisconnect);
+	hud->chat             = CG_getComponent(Ccg_WideX(160), 406, 431, 72, qtrue, STYLE_NORMAL, 0.2f, colorWhite, 38, CG_DrawTeamInfo);
+	hud->spectatorstatus  = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) * .5f - 50, 421, 100, 28, qtrue, STYLE_SIMPLE, 0.35f, colorWhite, 39, CG_DrawSpectator);
 }
 
 /**
@@ -4022,10 +4022,10 @@ static panel_button_text_t hudEditorFont =
 
 static panel_button_text_t hudEditorFont_Dropdown =
 {
-    0.16f,                   0.18f,
-    { 1.f,                   1.f,  1.f,0.8f },
-    ITEM_TEXTSTYLE_SHADOWED, 0,
-    &cgs.media.limboFont2,
+	0.16f,                   0.18f,
+	{ 1.f,                   1.f,  1.f,0.8f },
+	ITEM_TEXTSTYLE_SHADOWED, 0,
+	&cgs.media.limboFont2,
 };
 
 // grouping hud editing fields
@@ -4044,7 +4044,7 @@ static panel_button_t hudEditorHudDropdown =
 	"hudeditor_huds",
 	{ 0 + SCREEN_OFFSETX,          SCREEN_OFFSETY + 10,      40, 12 },
 	{ 0,                           0,                        0,  0, 1, 0, 0, 0},
-	&hudEditorFont_Dropdown,                // font
+	&hudEditorFont_Dropdown,       // font
 	CG_HudEditor_Dropdown_KeyDown, // keyDown
 	CG_HudEditor_HudDropdown_KeyUp,// keyUp
 	CG_HudEditor_HudRenderDropdown,
@@ -4060,9 +4060,9 @@ static panel_button_t hudEditorCompDropdown =
 {
 	NULL,
 	"hudeditor_comps",
-	{ 0 + 100,           0,     120, 10 },
-	{ 0,                            0,          0,   0, 1, 0, 0, 0},
-	&hudEditorFont_Dropdown,    // font
+	{ 0 + 100,                      0,  120, 10 },
+	{ 0,                            0,  0,   0, 1, 0, 0, 0},
+	&hudEditorFont_Dropdown,        // font
 	CG_HudEditor_Dropdown_KeyDown,  // keyDown
 	CG_HudEditor_CompDropdown_KeyUp,// keyUp
 	CG_HudEditor_CompRenderDropdown,

@@ -2878,8 +2878,6 @@ extern vmCvar_t cg_shoutcastDrawMinimap;
 extern vmCvar_t cg_chatAlpha;
 extern vmCvar_t cg_chatBackgroundAlpha;
 extern vmCvar_t cg_chatShadow;
-extern vmCvar_t cg_chatFlags;
-extern vmCvar_t cg_chatLineWidth;
 
 extern vmCvar_t cg_activateLean;
 

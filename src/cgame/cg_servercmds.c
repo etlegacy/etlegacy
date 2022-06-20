@@ -542,7 +542,7 @@ void CG_ParseServerToggles(void)
 	const char *info;
 	int        value;
 
-	info = CG_ConfigString(CS_SERVERTOGGLES);
+	info  = CG_ConfigString(CS_SERVERTOGGLES);
 	value = Q_atoi(info);
 
 	cgs.matchPaused = (value & CV_SVS_PAUSE) ? qtrue : qfalse;
@@ -1124,11 +1124,12 @@ static void CG_ConfigStringModified(void)
  */
 static void CG_AddToTeamChat(const char *str, int clientnum) // FIXME: add disguise?
 {
-	int  len;
-	char *p, *ls;
-	char lastcolor;
-	int  chatHeight;
-	int  chatWidth;
+	int          len;
+	char         *p, *ls;
+	char         lastcolor;
+	int          chatHeight;
+	int          chatWidth;
+	fontHelper_t *font = &cgs.media.limboFont2;
 
 	// -1 is sent when console is chatting
 	if (clientnum < -1 || clientnum >= MAX_CLIENTS) // FIXME: never return for console chat?
@@ -1153,7 +1154,8 @@ static void CG_AddToTeamChat(const char *str, int clientnum) // FIXME: add disgu
 	}
 
 	len       = 0;
-	chatWidth = (cgs.gamestate == GS_INTERMISSION) ? TEAMCHAT_WIDTH + 30 : Com_Clamp(10, TEAMCHAT_WIDTH, cg_chatLineWidth.integer);
+	chatWidth = (cgs.gamestate == GS_INTERMISSION) ? TEAMCHAT_WIDTH + 30
+	                                               : (CG_GetActiveHUD()->chat.location.w - (!CG_GetActiveHUD()->chat.style ? (16.f * CG_GetActiveHUD()->chat.scale * 5.f) : 0)) / ((float)Q_UTF8_GetGlyph(font, "A")->xSkip * CG_GetActiveHUD()->chat.scale * Q_UTF8_GlyphScale(font));
 
 	p  = cgs.teamChatMsgs[cgs.teamChatPos % chatHeight];
 	*p = 0;
