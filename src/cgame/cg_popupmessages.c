@@ -594,10 +594,6 @@ void CG_AddPMItemBig(popupMessageBigType_t type, const char *message, qhandle_t 
 	}
 }
 
-#define PM_ICON_SIZE_NORMAL 20
-#define PM_ICON_SIZE_SMALL 12
-#define ICON_Y_OFFSET(y)  y + 3
-
 /**
  * @brief CG_DrawPMItems
  * @param[in] rect
@@ -605,38 +601,21 @@ void CG_AddPMItemBig(popupMessageBigType_t type, const char *message, qhandle_t 
  */
 void CG_DrawPMItems(hudComponent_t *comp)
 {
-	vec4_t       color     = { 0.f, 0.f, 0.f, 1.f };
-	vec4_t       colorText = { 1.f, 1.f, 1.f, 1.f };
 	float        t;
-	int          i, size, w, sizew;
-	pmListItem_t *listItem = cg_pmOldList;
-	float        y         = comp->location.y; //360;
-	float        fontScale = cg_fontScaleSP.value;
-    int style = cg_popupShadow.integer ? ITEM_TEXTSTYLE_SHADOWED : ITEM_TEXTSTYLE_NORMAL;
+	int          i, w;
+	pmListItem_t *listItem  = cg_pmOldList;
+	float        lineHeight = comp->location.h / cg_numPopups.integer;
+	float        size       = lineHeight - 2;
+	float        y          = (cgs.clientinfo[cg.clientNum].shoutcaster ? 110 : comp->location.y) + comp->location.h;
+	float        x          = comp->location.x;
+	int          style      = cg_popupShadow.integer ? ITEM_TEXTSTYLE_SHADOWED : ITEM_TEXTSTYLE_NORMAL;
+	vec4_t       colorText;
 
-	if (cg_numPopups.integer == 0)
+	Vector4Copy(comp->color, colorText);
+
+	if (cg_numPopups.integer <= 0)
 	{
 		return;
-	}
-
-	if (cgs.clientinfo[cg.clientNum].shoutcaster)
-	{
-		y = 110;
-	}
-
-	if (cg_drawSmallPopupIcons.integer)
-	{
-		size = PM_ICON_SIZE_SMALL;
-		y   += 4;
-	}
-	else
-	{
-		size = PM_ICON_SIZE_NORMAL;
-	}
-
-	if (cg.snap->ps.persistant[PERS_RESPAWNS_LEFT] >= 0)
-	{
-		y -= 20;
 	}
 
 	if (!cg_pmWaitingList)
@@ -647,7 +626,7 @@ void CG_DrawPMItems(hudComponent_t *comp)
 	t = cg_pmWaitingList->time + cg_popupTime.integer + cg_popupStayTime.integer;
 	if (cg.time > t)
 	{
-		colorText[3] = color[3] = 1 - ((cg.time - t) / (float)cg_popupFadeTime.integer);
+		colorText[3] = 1 - ((cg.time - t) / (float)cg_popupFadeTime.integer);
 	}
 
 	if (cg_pmWaitingList->shader > 0)
@@ -656,21 +635,18 @@ void CG_DrawPMItems(hudComponent_t *comp)
 		VectorCopy(cg_pmWaitingList->color, colorText);
 		trap_R_SetColor(colorText);
 
-		CG_DrawPic(4, ICON_Y_OFFSET(y), size, size, cg_pmWaitingList->shader);
+		CG_DrawPic(x, y - lineHeight, size, size, cg_pmWaitingList->shader);
 
 		// decolorize
 		VectorCopy(colorWhite, colorText);
 		trap_R_SetColor(NULL);
-	}
-	else
-	{
-		size = -2;
+
+		x += lineHeight;
 	}
 
-	CG_Text_Paint_Ext(size + 6, y + 12, fontScale, fontScale, colorText, cg_pmWaitingList->message, 0, 0, style, &cgs.media.limboFont2); // 4 + size + 2
+	CG_Text_Paint_Ext(x, y - (lineHeight / 2) + 1, comp->scale, comp->scale, colorText, cg_pmWaitingList->message, 0, 0, style, &cgs.media.limboFont2); // 4 + size + 2
 
-	w     = CG_Text_Width_Ext(cg_pmWaitingList->message, fontScale, 0, &cgs.media.limboFont2);
-	sizew = (cg_drawSmallPopupIcons.integer) ? PM_ICON_SIZE_SMALL : PM_ICON_SIZE_NORMAL;
+	w = CG_Text_Width_Ext(cg_pmWaitingList->message, comp->scale, 0, &cgs.media.limboFont2);
 
 	if (cg_pmWaitingList->weaponShader > 0)
 	{
@@ -678,38 +654,31 @@ void CG_DrawPMItems(hudComponent_t *comp)
 		VectorCopy(cg_pmWaitingList->color, colorText);
 		trap_R_SetColor(colorText);
 
-		CG_DrawPic(size + w + 12, ICON_Y_OFFSET(y), sizew * cg_pmWaitingList->scaleShader, sizew, cg_pmWaitingList->weaponShader); // 4 + size + 2 + w + 6
+		CG_DrawPic(x + w + 4, y - lineHeight, size * cg_pmWaitingList->scaleShader, size, cg_pmWaitingList->weaponShader); // 4 + size + 2 + w + 6
 
 		// decolorize
 		VectorCopy(colorWhite, colorText);
 		trap_R_SetColor(NULL);
 	}
-	else
-	{
-		size  = (cg_drawSmallPopupIcons.integer) ? 2 : 8;
-		sizew = 0;
-	}
 
 	if (cg_pmWaitingList->message2[0])
 	{
-		CG_Text_Paint_Ext(size + w + sizew * cg_pmWaitingList->scaleShader + 16, y + 12, fontScale, fontScale, colorText, cg_pmWaitingList->message2, 0, 0, style, &cgs.media.limboFont2); // 4 + size + 2 + w + 6 + sizew*... + 4
+		CG_Text_Paint_Ext(x + w + lineHeight * cg_pmWaitingList->scaleShader + 4, y - (lineHeight / 2) + 1, comp->scale, comp->scale, colorText, cg_pmWaitingList->message2, 0, 0, style, &cgs.media.limboFont2); // 4 + size + 2 + w + 6 + sizew*... + 4
 	}
 
-	int num = cg_numPopups.integer == -1 ? cg_drawSmallPopupIcons.integer ? 8 : 5 : cg_numPopups.integer;
-	for (i = 0; i < num - 1 && listItem; i++, listItem = listItem->next)
+	for (i = 0; i < cg_numPopups.integer - 1 && listItem; i++, listItem = listItem->next)
 	{
-		size = (cg_drawSmallPopupIcons.integer) ? PM_ICON_SIZE_SMALL : PM_ICON_SIZE_NORMAL;
-
-		y -= size + 2;
+		x  = comp->location.x;
+		y -= lineHeight;
 
 		t = listItem->time + cg_popupTime.integer + cg_popupStayTime.integer;
 		if (cg.time > t)
 		{
-			colorText[3] = color[3] = 1 - ((cg.time - t) / (float)cg_popupFadeTime.integer);
+			colorText[3] = 1 - ((cg.time - t) / (float)cg_popupFadeTime.integer);
 		}
 		else
 		{
-			colorText[3] = color[3] = 1.f;
+			colorText[3] = 1.f;
 		}
 
 		if (listItem->shader > 0)
@@ -718,43 +687,35 @@ void CG_DrawPMItems(hudComponent_t *comp)
 			VectorCopy(listItem->color, colorText);
 			trap_R_SetColor(colorText);
 
-			CG_DrawPic(4, ICON_Y_OFFSET(y), size, size, listItem->shader);
+			CG_DrawPic(x, y - lineHeight, size, size, listItem->shader);
 
 			// decolorize
 			VectorCopy(colorWhite, colorText);
 			trap_R_SetColor(NULL);
-		}
-		else
-		{
-			size = -2;
+
+			x += lineHeight;
 		}
 
-		CG_Text_Paint_Ext(comp->location.x + size + 2, y + 12, fontScale, fontScale, colorText, listItem->message, 0, 0, style, &cgs.media.limboFont2);
+		CG_Text_Paint_Ext(x, y - (lineHeight / 2) + 1, comp->scale, comp->scale, colorText, listItem->message, 0, 0, style, &cgs.media.limboFont2);
 
-		w     = CG_Text_Width_Ext(listItem->message, fontScale, 0, &cgs.media.limboFont2);
-		sizew = (cg_drawSmallPopupIcons.integer) ? PM_ICON_SIZE_SMALL : PM_ICON_SIZE_NORMAL;
+		w = CG_Text_Width_Ext(listItem->message, comp->scale, 0, &cgs.media.limboFont2);
 
 		if (listItem->weaponShader > 0)
 		{
 			// colorize
 			VectorCopy(listItem->color, colorText);
 			trap_R_SetColor(colorText);
-
-			CG_DrawPic(size + w + 12, ICON_Y_OFFSET(y), sizew * listItem->scaleShader, sizew, listItem->weaponShader);
+            
+            CG_DrawPic(x + w + 4, y - lineHeight, size * listItem->scaleShader, size, listItem->weaponShader);
 
 			// decolorize
 			VectorCopy(colorWhite, colorText);
 			trap_R_SetColor(NULL);
 		}
-		else
-		{
-			size  = (cg_drawSmallPopupIcons.integer) ? 2 : 8;
-			sizew = 0;
-		}
 
 		if (listItem->message2[0])
 		{
-			CG_Text_Paint_Ext(size + w + sizew * listItem->scaleShader + 16, y + 12, fontScale, fontScale, colorText, listItem->message2, 0, 0, style, &cgs.media.limboFont2);
+			CG_Text_Paint_Ext(x + w + lineHeight * listItem->scaleShader + 4, y - (lineHeight / 2) + 1, comp->scale, comp->scale, colorText, listItem->message2, 0, 0, style, &cgs.media.limboFont2);
 		}
 	}
 }

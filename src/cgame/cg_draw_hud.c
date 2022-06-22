@@ -213,7 +213,7 @@ void CG_setDefaultHudValues(hudStucture_t *hud)
 	hud->weaponicon       = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 82, SCREEN_HEIGHT - 56, 60, 32, qtrue, STYLE_NORMAL, 0.19f, colorWhite, 9, CG_DrawGunIcon);
 	hud->weaponammo       = CG_getComponent(694, 458, 57, 14, qtrue, STYLE_SIMPLE, 0.25f, colorWhite, 10, CG_DrawAmmoCount);
 	hud->fireteam         = CG_getComponent(10, 10, 260, 14, qtrue, STYLE_NORMAL, 0.19f, colorWhite, 11, CG_DrawFireTeamOverlay);
-	hud->popupmessages    = CG_getComponent(4, 320, 72, 72, qtrue, STYLE_NORMAL, 0.19f, colorWhite, 12, CG_DrawPMItems);
+	hud->popupmessages    = CG_getComponent(4, 245, 260, 96, qtrue, STYLE_SIMPLE, 0.22f, colorWhite, 12, CG_DrawPMItems);
 	hud->powerups         = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 40, SCREEN_HEIGHT - 136, 36, 36, qtrue, STYLE_NORMAL, 0.19f, colorWhite, 13, CG_DrawPowerUps);
 	hud->objectives       = CG_getComponent(8, SCREEN_HEIGHT - 136, 36, 36, qtrue, STYLE_NORMAL, 0.19f, colorWhite, 14, CG_DrawObjectiveStatus);
 	hud->hudhead          = CG_getComponent(44, SCREEN_HEIGHT - 92, 62, 80, qtrue, STYLE_NORMAL, 0.19f, colorWhite, 15, CG_DrawPlayerStatusHead);
@@ -4393,7 +4393,7 @@ static qboolean CG_HudEditor_KeyUp(panel_button_t *button, int key)
 {
 	if (key == K_MOUSE1)
 	{
-		if (lastFocusButtonMoved)
+		if (lastFocusButton && lastFocusButtonMoved)
 		{
 			lastFocusButtonMoved     = qfalse;
 			lastFocusButton->data[4] = 1;

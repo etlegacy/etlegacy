@@ -55,7 +55,7 @@ void CG_GetObituaryIcon(meansOfDeath_t mod, weapon_t weapon, qhandle_t *weaponSh
 	// if weapon is still valid
 	if (IS_VALID_WEAPON(weap))
 	{
-		if (cg_drawSmallPopupIcons.integer && cg_weapons[weap].weaponIcon[0])
+		if (CG_GetActiveHUD()->popupmessages.style && cg_weapons[weap].weaponIcon[0])
 		{
 			*weaponShader = cg_weapons[weap].weaponIcon[0];
 			*scaleShader  = cg_weapons[weap].weaponIconScale;

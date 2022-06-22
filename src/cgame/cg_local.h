@@ -2788,7 +2788,6 @@ extern vmCvar_t cg_atmosphericEffects;
 
 extern vmCvar_t cg_debugSkills;
 extern vmCvar_t cg_drawFireteamOverlay;
-extern vmCvar_t cg_drawSmallPopupIcons;
 
 // some optimization cvars
 extern vmCvar_t cg_instanttapout;

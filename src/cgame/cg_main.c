@@ -291,7 +291,6 @@ vmCvar_t cg_instanttapout;
 
 vmCvar_t cg_debugSkills;
 vmCvar_t cg_drawFireteamOverlay;
-vmCvar_t cg_drawSmallPopupIcons;
 
 // demo recording cvars
 vmCvar_t cl_demorecording;
@@ -583,7 +582,6 @@ static cvarTable_t cvarTable[] =
 	{ NULL,                        "cg_legacyVersion",           "",            CVAR_USERINFO | CVAR_ROM,     0 },
 #endif
 	{ &cg_drawFireteamOverlay,     "cg_drawFireteamOverlay",     "1",           CVAR_ARCHIVE,                 0 },
-	{ &cg_drawSmallPopupIcons,     "cg_drawSmallPopupIcons",     "1",           CVAR_ARCHIVE,                 0 },
 
 	// demo recording cvars
 	{ &cl_demorecording,           "cl_demorecording",           "0",           CVAR_ROM,                     0 },
