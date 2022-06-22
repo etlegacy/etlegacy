@@ -107,7 +107,7 @@ static void CG_DrawDisconnect(hudComponent_t *comp);
 
 typedef struct
 {
-	const char *name;
+	char *name;
 	size_t offset;
 	qboolean isAlias;
 	void (*draw)(hudComponent_t *comp);
@@ -4279,6 +4279,7 @@ static panel_button_t *hudEditor[] =
 };
 
 static panel_button_t *lastFocusButton;
+static qboolean       lastFocusButtonMoved;
 
 /**
 * @brief CG_HudEditorUpdateFields
@@ -4365,9 +4366,17 @@ static qboolean CG_HudEditor_KeyDown(panel_button_t *button, int key)
 {
 	if (key == K_MOUSE1)
 	{
-		CG_HudEditorUpdateFields(button);
-		BG_PanelButtons_SetFocusButton(button);
-		button->data[4] = 0;
+		if (lastFocusButton && BG_CursorInRect(&lastFocusButton->rect))
+		{
+			CG_HudEditorUpdateFields(lastFocusButton);
+			lastFocusButton->data[4] = 0;
+		}
+		else
+		{
+			CG_HudEditorUpdateFields(button);
+			BG_PanelButtons_SetFocusButton(button);
+			button->data[4] = 0;
+		}
 		return qtrue;
 	}
 
@@ -4384,9 +4393,18 @@ static qboolean CG_HudEditor_KeyUp(panel_button_t *button, int key)
 {
 	if (key == K_MOUSE1)
 	{
-		lastFocusButton = button;
-		BG_PanelButtons_SetFocusButton(NULL);
-		button->data[4] = 1;
+		if (lastFocusButtonMoved)
+		{
+			lastFocusButtonMoved     = qfalse;
+			lastFocusButton->data[4] = 1;
+		}
+		else
+		{
+			lastFocusButton = button;
+			BG_PanelButtons_SetFocusButton(NULL);
+			button->data[4] = 1;
+		}
+
 		return qtrue;
 	}
 
@@ -4689,13 +4707,15 @@ void CG_HudEditorMouseMove_Handling(int x, int y)
 		return;
 	}
 
-	panel_button_t *button = BG_PanelButtons_GetFocusButton();
+	panel_button_t *button = lastFocusButton;
 	static float   offsetX = 0;
 	static float   offsetY = 0;
 
 	if (button && !button->data[4] && BG_CursorInRect(&button->rect))
 	{
 		hudComponent_t *comp = (hudComponent_t *)((char *)activehud + hudComponentFields[button->data[0]].offset);
+
+		lastFocusButtonMoved = qtrue;
 
 		if (!offsetX && !offsetY)
 		{
