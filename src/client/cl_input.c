@@ -1046,7 +1046,7 @@ void CL_FinishMove(usercmd_t *cmd)
 	}
 }
 
-#define MASK_CGAMEFLAGS_SERVERTIMEDELTA 0b00000110
+#define MASK_CGAMEFLAGS_SERVERTIMEDELTA 0x6 // 0b00000110
 
 /**
  * @brief CL_CreateCmd
@@ -1098,7 +1098,7 @@ usercmd_t CL_CreateCmd(void)
 	// store out the final values
 	CL_FinishMove(&cmd);
 
-	// the flags for serverTimeDelta have been used, so reset them
+	// the flags for serverTimeDelta have been used, so clear them
 	cl.cgameFlags &= ~MASK_CGAMEFLAGS_SERVERTIMEDELTA_FORWARD;
 	cl.cgameFlags &= ~MASK_CGAMEFLAGS_SERVERTIMEDELTA_BACKWARD;
 

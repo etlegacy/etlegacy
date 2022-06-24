@@ -128,7 +128,7 @@ typedef struct
 	int oldServerTime;                      ///< to prevent time from flowing bakcwards
 	int oldFrameServerTime;                 ///< to check tournament restarts
 	int serverTimeDelta;                    ///< cl.serverTime = cls.realtime + cl.serverTimeDelta
-	                                        ///< this value changes as net lag varies
+	                                        ///  this value changes as net lag varies
 	int baselineDelta;                      ///< initial or reset value of serverTimeDelta w/o adjustments
 	qboolean extrapolatedSnapshot;          ///< set if any cgame frame has been forced to extrapolate
 	                                        ///< cleared when CL_AdjustTimeDelta looks at it
@@ -583,9 +583,9 @@ typedef enum
  */
 enum cgameFlagsMaskEnum
 {
-    MASK_CGAMEFLAGS_SHOWGAMEVIEW             = 0b00000001,
-    MASK_CGAMEFLAGS_SERVERTIMEDELTA_FORWARD  = 0b00000010,
-    MASK_CGAMEFLAGS_SERVERTIMEDELTA_BACKWARD = 0b00000100,
+    MASK_CGAMEFLAGS_SHOWGAMEVIEW             = 0x1, // 0b00000001
+    MASK_CGAMEFLAGS_SERVERTIMEDELTA_FORWARD  = 0x2, // 0b00000010
+    MASK_CGAMEFLAGS_SERVERTIMEDELTA_BACKWARD = 0x4, // 0b00000100
 };
 
 void CL_ClearKeys(void);
@@ -802,6 +802,7 @@ void CL_UpdateLevelHunkUsage(void);
 void CL_CGameBinaryMessageReceived(const byte *buf, int buflen, int serverTime);
 qboolean CL_GetSnapshot(int snapshotNumber, snapshot_t *snapshot);
 qboolean CL_GetServerCommand(int serverCommandNumber);
+int CL_FindIncrementThreshold(void);
 void CL_AdjustTimeDelta(void);
 
 // cl_ui.c

@@ -3044,11 +3044,11 @@ void PM_AdjustAimSpreadScale(void)
 #ifdef GAMEDLL
 	if(g_developer.integer & 2) {
 		if ( pm->cmd.flags & (1 << FORWARD_BIT) ) {
-			Com_Printf("%i +1\n", pm->cmd.serverTime);
+			Com_Printf("^5%i +1\n", pm->cmd.serverTime);
 		}
 		else if ( pm->cmd.flags & (1 << BACKWARD_BIT) )
 		{
-			Com_Printf("%i -2\n", pm->cmd.serverTime);
+			Com_Printf("^6%i -2\n", pm->cmd.serverTime);
 		}
 		else
 		{

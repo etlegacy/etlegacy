@@ -2920,7 +2920,8 @@ void CL_Init(void)
 
 	cl_wavefilerecord = Cvar_Get("cl_wavefilerecord", "0", CVAR_TEMP);
 
-	cl_extrapolationMargin = Cvar_Get("cl_extrapolationMargin", "0", CVAR_ARCHIVE);
+	cl_extrapolationMargin = Cvar_Get("cl_extrapolationMargin", "1", CVAR_ARCHIVE);
+	Cvar_CheckRange(cl_extrapolationMargin, 0, 10, qtrue);
 
 	cl_timeNudge          = Cvar_Get("cl_timeNudge", "0", CVAR_TEMP);
 	cl_shownet            = Cvar_Get("cl_shownet", "0", CVAR_TEMP);

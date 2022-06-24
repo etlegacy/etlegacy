@@ -1241,13 +1241,58 @@ qboolean CL_GameCommand(void)
 /**
  * @brief CL_CGameRendering
  */
-void CL_CGameRendering()
+void CL_CGameRendering(void)
 {
 	VM_Call(cgvm, CG_DRAW_ACTIVE_FRAME, cl.serverTime, 0, clc.demo.playing);
 	VM_Debug(0);
 }
 
+int threshold = -1;
+int svFrameTime;
+int clFrameTime;
+
+/**
+ * @brief CL_FindIncrementThreshold
+ * @details Calculates the threshold used when deciding whether to roll time forward.
+ * 			The threshold ensures the client won't encroach on the margin specified by
+ * 			cl_extrapolationMargin because of non-synchronous client/server frame rates.
+ * @return
+ */
+int CL_FindIncrementThreshold(void)
+{
+	clFrameTime = cls.frametime;
+
+	// calculates the least common multiple of clFrameTime and svFrameTime
+	// the LCM represents how long until the time over-run pattern repeats
+	int LCM = svFrameTime > clFrameTime ? svFrameTime : clFrameTime;
+	while (1)
+	{
+		if (LCM % clFrameTime == 0 && LCM % svFrameTime == 0) 
+			{
+			break;
+		}
+		++LCM;
+	}
+
+	int min = 0;
+	int clTime = 0;
+	// finds the worst amount of client over-run assuming no initial spare time
+	while(clTime <= LCM)
+	{
+		int svTime  = (clTime / svFrameTime) * svFrameTime;
+		int spareTime = svTime - clTime;
+		if (spareTime < min) min = spareTime;
+
+		clTime += clFrameTime;
+	}
+
+	return abs(min);
+}
+
 #define RESET_TIME  500
+#define HALVE_TIME  100
+
+extern cvar_t *sv_fps;
 
 /**
  * @brief Adjust the clients view of server time.
@@ -1269,7 +1314,7 @@ void CL_AdjustTimeDelta(void)
 {
 	int newDelta;
 	int deltaDelta;
-	char *adjustmentMessage;
+	char *deltaMessage;
 
 	cl.newSnapshots = qfalse;
 
@@ -1288,16 +1333,14 @@ void CL_AdjustTimeDelta(void)
 		cl.oldServerTime   = cl.snap.serverTime; // FIXME: is this a problem for cgame?
 		cl.serverTime      = cl.snap.serverTime;
 
-		if (cl_showTimeDelta->integer & 1) adjustmentMessage = "^1RESET^7 (deltaDelta > RESET_TIME)";
-		if (cl_showTimeDelta->integer & 2) Com_Printf("<RESET> ");
+		if (cl_showTimeDelta->integer) deltaMessage = "^1(reset";
 	}
-	else if (deltaDelta > 100)
+	else if (deltaDelta > HALVE_TIME)
 	{
 		// fast adjust, cut the difference in half
 		cl.serverTimeDelta = (cl.serverTimeDelta + newDelta) >> 1;
 
-		if (cl_showTimeDelta->integer & 1) adjustmentMessage = "^3FAST ADJUST^7 (deltaDelta > 100)";
-		if (cl_showTimeDelta->integer & 2) Com_Printf("<FAST> ");
+		if (cl_showTimeDelta->integer) deltaMessage = "^1(halve";
 	}
 	else
 	{
@@ -1311,35 +1354,65 @@ void CL_AdjustTimeDelta(void)
 			if (cl.extrapolatedSnapshot)
 			{
 				cl.extrapolatedSnapshot = qfalse;
-				cl.serverTimeDelta     -= 2;
+				cl.serverTimeDelta -= 2;
+				// set a cmd packet flag so server is aware of delta decrease
 				cl.cgameFlags |= MASK_CGAMEFLAGS_SERVERTIMEDELTA_BACKWARD;
 
-				if (cl_showTimeDelta->integer & 1) adjustmentMessage = "-2 ms";
+				if (cl_showTimeDelta->integer) deltaMessage = "^6(-2 ms";
 			}
 			else
 			{
-				// otherwise, move our sense of time forward to minimize total latency
-				cl.serverTimeDelta++;
-				cl.cgameFlags |= MASK_CGAMEFLAGS_SERVERTIMEDELTA_FORWARD;
+				int svOldFrameTime = svFrameTime;
+
+				if (com_sv_running->integer)
+				{
+					svFrameTime = 1000 / sv_fps->integer;
+				}
+				else
+				{
+					// must be done this way to avoid incorrect svFrameTime when on a slow client
+					svFrameTime = (cl.snapshots[(cl.snap.messageNum - 0) & PACKET_MASK].serverTime)
+								- (cl.snapshots[(cl.snap.messageNum - 1) & PACKET_MASK].serverTime);
+				}
 				
-				if (cl_showTimeDelta->integer & 1) adjustmentMessage = "+1 ms";
+				// find the new threshold if not set or client/server frametime has changed
+				if (threshold == -1 || svFrameTime != svOldFrameTime || clFrameTime != cls.frametime) {
+					threshold = CL_FindIncrementThreshold();
+				}
+
+				int spareTime =
+					cl.snap.serverTime                    // server time
+					- (cls.realtime + cl.serverTimeDelta) // client time
+					- cl_extrapolationMargin->integer;    // margin time
+
+				if( spareTime > threshold)
+				{
+					// move our sense of time forward to minimize total latency
+					cl.serverTimeDelta++;
+					// set a cmd packet flag so server is aware of delta increment
+					cl.cgameFlags |= MASK_CGAMEFLAGS_SERVERTIMEDELTA_FORWARD;
+					
+					if (cl_showTimeDelta->integer) deltaMessage = "^5(+1 ms";
+				}
+				else
+				{
+					if (cl_showTimeDelta->integer) deltaMessage = "^o(none";
+				}
 			}
 		}
 		else
 		{
-			if (cl_showTimeDelta->integer & 1) adjustmentMessage = "DISABLED (TIMESCALE)";
+			if (cl_showTimeDelta->integer) deltaMessage = "^9(disabled";
 		}
 	}
 
-	if (cl_showTimeDelta->integer & 1)
+	if (cl_showTimeDelta->integer)
 	{
-		//int serverTime = cls.realtime + cl.serverTimeDelta - cl_timeNudge->integer;
-		int drift = cl.serverTimeDelta - cl.baselineDelta; // negative drift is expected
-		Com_Printf("^9drift:^7%4i   ^9deltaDelta:^7%4i   ^9serverTimeDelta:^7 %i   ^9adjustment:^7 %s\n", 
-			          drift,          deltaDelta,       cl.serverTimeDelta,          adjustmentMessage);
-	}
+		int drift = cl.serverTimeDelta - cl.baselineDelta; // some negative drift is expected
+		char terminator = (cl_showTimeDelta->integer & 4) ? '\n' : ' ';
 
-	if (cl_showTimeDelta->integer & 2) Com_Printf("%i ", cl.serverTimeDelta);
+		Com_Printf("%s | %i %i %i)%c", deltaMessage, cl.serverTimeDelta, deltaDelta, drift, terminator);
+	}
 }
 
 /**
@@ -1355,12 +1428,8 @@ void CL_FirstSnapshot(void)
 	cls.state = CA_ACTIVE;
 
 	// set the timedelta so we are exactly on this first frame
-	cl.baselineDelta = cl.serverTimeDelta = cl.snap.serverTime - cls.realtime;
-	if (cl_showTimeDelta->integer & 1) Com_Printf("^2FIRST SNAPSHOT^7 (serverTimeDelta = % i)\n", cl.serverTimeDelta);
-	if (cl_showTimeDelta->integer & 2) Com_Printf("<SETUP> ");
-
+	cl.baselineDelta = cl.serverTimeDelta = cl.snap.serverTime - cls.realtime;	
 	cl.oldServerTime   = cl.snap.serverTime;
-
 	clc.demo.timeBaseTime = cl.snap.serverTime;
 
 	// if this is the first frame of active play,
@@ -1380,6 +1449,11 @@ void CL_FirstSnapshot(void)
 		DB_UpdateFavorite(cl_profile->string, cls.servername);
 	}
 #endif
+
+	if (cl_showTimeDelta->integer)
+	{
+		Com_Printf("^2(first snapshot | serverTimeDelta = %i)\n", cl.serverTimeDelta);
+	}
 }
 
 /**
@@ -1479,10 +1553,41 @@ void CL_SetCGameTime(void)
 
 		// note if we are almost past the latest frame (without timeNudge),
 		// so we will try and adjust back a bit when the next snapshot arrives
-		if (cls.realtime + cl.serverTimeDelta >= cl.snap.serverTime - cl_extrapolationMargin->integer)
+
+		int spareTime =
+			cl.snap.serverTime                     //server
+			- (cls.realtime + cl.serverTimeDelta); //client
+
+		if (spareTime <= cl_extrapolationMargin->integer)
 		{
 			cl.extrapolatedSnapshot = qtrue;
 		}
+
+		if(cl_showTimeDelta->integer) {
+			char colorCode;
+
+			if (spareTime > cl_extrapolationMargin->integer)
+			{
+				colorCode = '7'; // excess time to spare (white)
+			} 
+			else if (spareTime == cl_extrapolationMargin->integer)
+			{
+				colorCode = '2'; // exactly on target (green)
+			}
+			else if (spareTime >= 0)
+			{
+				colorCode = '3'; // margin in use (yellow)
+			}
+			else
+			{
+				colorCode = '1'; // margin exhausted (red)
+			}	
+
+			if(cl_showTimeDelta->integer & 2 || cl.newSnapshots) 
+			{
+				Com_Printf("^%c%+03i ", colorCode, spareTime);
+			}
+		}	
 	}
 
 	// if we have gotten new snapshots, drift serverTimeDelta
