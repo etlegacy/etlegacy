@@ -213,7 +213,7 @@ void CG_setDefaultHudValues(hudStucture_t *hud)
 	hud->weaponicon       = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 82, SCREEN_HEIGHT - 56, 60, 32, qtrue, STYLE_NORMAL, 0.19f, colorWhite, 9, CG_DrawGunIcon);
 	hud->weaponammo       = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 82, 458, 57, 14, qtrue, STYLE_SIMPLE, 0.25f, colorWhite, 10, CG_DrawAmmoCount);
 	hud->fireteam         = CG_getComponent(10, 10, 260, 14, qtrue, STYLE_NORMAL, 0.19f, colorWhite, 11, CG_DrawFireTeamOverlay);
-	hud->popupmessages    = CG_getComponent(4, 245, 260, 96, qtrue, STYLE_SIMPLE, 0.22f, colorWhite, 12, CG_DrawPMItems);
+	hud->popupmessages    = CG_getComponent(4, 245, 422, 96, qtrue, STYLE_SIMPLE, 0.22f, colorWhite, 12, CG_DrawPMItems);
 	hud->powerups         = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 40, SCREEN_HEIGHT - 136, 36, 36, qtrue, STYLE_NORMAL, 0.19f, colorWhite, 13, CG_DrawPowerUps);
 	hud->objectives       = CG_getComponent(8, SCREEN_HEIGHT - 136, 36, 36, qtrue, STYLE_NORMAL, 0.19f, colorWhite, 14, CG_DrawObjectiveStatus);
 	hud->hudhead          = CG_getComponent(44, SCREEN_HEIGHT - 92, 62, 80, qtrue, STYLE_NORMAL, 0.19f, colorWhite, 15, CG_DrawPlayerStatusHead);
@@ -224,10 +224,10 @@ void CG_setDefaultHudValues(hudStucture_t *hud)
 	hud->reinforcement    = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 60, SCREEN_HEIGHT - 70, 57, 14, qfalse, STYLE_SIMPLE, 0.19f, colorLtBlue, 20, CG_DrawRespawnTimer);
 	hud->spawntimer       = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 60, SCREEN_HEIGHT - 60, 57, 14, qfalse, STYLE_SIMPLE, 0.19f, colorRed, 21, CG_DrawSpawnTimer);
 	hud->localtime        = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 60, 168, 57, 14, qtrue, STYLE_NORMAL, 0.19f, HUD_Text, 22, CG_DrawLocalTime);
-	hud->votetext         = CG_getComponent(8, 224, 57, 14, qtrue, STYLE_NORMAL, 0.22f, colorWhite, 23, CG_DrawVote);
-	hud->spectatortext    = CG_getComponent(8, 188, 57, 14, qtrue, STYLE_NORMAL, 0.22f, colorWhite, 24, CG_DrawSpectatorMessage);
-	hud->limbotext        = CG_getComponent(8, 164, 57, 14, qtrue, STYLE_NORMAL, 0.22f, colorWhite, 25, CG_DrawLimboMessage);
-	hud->followtext       = CG_getComponent(8, 164, 57, 14, qtrue, STYLE_NORMAL, 0.22f, colorWhite, 26, CG_DrawFollow);
+	hud->votetext         = CG_getComponent(8, 224, 278, 38, qtrue, STYLE_SIMPLE, 0.22f, colorYellow, 23, CG_DrawVote);
+	hud->spectatortext    = CG_getComponent(8, 188, 278, 38, qtrue, STYLE_SIMPLE, 0.22f, colorWhite, 24, CG_DrawSpectatorMessage);
+	hud->limbotext        = CG_getComponent(8, 164, 278, 38, qtrue, STYLE_SIMPLE, 0.22f, colorWhite, 25, CG_DrawLimboMessage);
+	hud->followtext       = CG_getComponent(8, 164, 278, 38, qtrue, STYLE_SIMPLE, 0.22f, colorWhite, 26, CG_DrawFollow);
 	hud->demotext         = CG_getComponent(10, 9, 57, 14, qtrue, STYLE_SIMPLE, 0.22f, colorRed, 27, CG_DrawDemoMessage);
 	hud->missilecamera    = CG_getComponent(4, 120, 160, 120, qtrue, STYLE_NORMAL, 1, colorWhite, 28, CG_DrawMissileCamera);
 	hud->sprinttext       = CG_getComponent(20, SCREEN_HEIGHT - 96, 57, 14, qfalse, STYLE_SIMPLE, 0.25f, colorWhite, 29, CG_DrawPlayerSprint);
@@ -718,10 +718,17 @@ static void CG_DrawPicShadowed(float x, float y, float w, float h, qhandle_t ico
  * @param[in] comp
  * @param[in] str
  * @param[in] color
+ * @param[in] fontStyle
+ * @param[in] font
  */
 void CG_DrawCompText(hudComponent_t *comp, const char *str, vec4_t color, int fontStyle, fontHelper_t *font)
 {
 	float w, w2, h, h2;
+
+	if (!str)
+	{
+		return;
+	}
 
 	w  = CG_Text_Width_Ext(str, comp->scale, 0, font);
 	h  = CG_Text_Height_Ext(str, comp->scale, 0, font);
@@ -735,6 +742,56 @@ void CG_DrawCompText(hudComponent_t *comp, const char *str, vec4_t color, int fo
 	}
 
 	CG_Text_Paint_Ext(comp->location.x + ((w2 - w) / 2), comp->location.y + ((h2 + h) / 2), comp->scale, comp->scale, color, str, 0, 0, fontStyle, font);
+}
+
+/**
+ * @brief CG_DrawCompMultilineText
+ * @param[in] comp
+ * @param[in] str
+ * @param[in] lineLength
+ * @param[in] lineNumber
+ * @param[in] color
+ * @param[in] fontStyle
+ * @param[in] font
+ */
+void CG_DrawCompMultilineText(hudComponent_t *comp, const char *str, vec4_t color, int align, int fontStyle, fontHelper_t *font)
+{
+	unsigned int lineNumber = 0, maxLineChar = 0;
+	float        x = comp->location.x, w = 0, w2, h = 0, h2;
+	const char *ptr;
+	char       temp[1024] = { 0 };
+
+	Q_strncpyz(temp, str, 1024);
+
+	ptr = strtok(temp, "\n");
+	while (ptr != NULL)
+	{
+		lineNumber++;
+		w  = MAX(CG_Text_Width_Ext(ptr, comp->scale, 0, font), w);
+		h += CG_Text_Height_Ext(ptr, comp->scale, 0, font);
+
+		ptr = strtok(NULL, "\n");
+	}
+
+	//w  = maxLineChar * ((float)Q_UTF8_GetGlyph(font, "A")->xSkip * comp->scale * Q_UTF8_GlyphScale(font));
+	w  = MAX(CG_Text_Width_Ext(ptr, comp->scale, 0, font), w);
+	h += CG_Text_Height_Ext(ptr, comp->scale, 0, font);
+	w2 = MAX(comp->location.w, w);
+	h2 = MAX(comp->location.h, h);
+
+	if (comp->style == STYLE_NORMAL)
+	{
+		CG_FillRect(comp->location.x, comp->location.y, w2, comp->location.h, HUD_Background);
+		CG_DrawRect_FixedBorder(comp->location.x, comp->location.y, w2, comp->location.h, 1, HUD_Border);
+	}
+    
+    if (align == ITEM_ALIGN_CENTER2)
+    {
+        x += ((w2 - w) / 2);
+    }
+
+	CG_DrawMultilineText(x, comp->location.y + ((h2 + h) / 2) / lineNumber, comp->scale, comp->scale, color, str,
+	                     h2 / lineNumber + 1, 0, 0, fontStyle, ITEM_ALIGN_LEFT, font);
 }
 
 /**
@@ -2630,29 +2687,8 @@ static void CG_DrawStatsDebug(void)
  */
 static void CG_DrawSnapshot(hudComponent_t *comp)
 {
-	char  *s = va("t:%i\nsn:%i\ncmd:%i", cg.snap->serverTime, cg.latestSnapshotNum, cgs.serverCommandSequence);
-	float w, w2, h, h2;
-
-	w  = CG_Text_Width_Ext("XXXXXXX", comp->scale, 0, &cgs.media.limboFont1);
-	h  = CG_Text_Height_Ext(s, comp->scale, 0, &cgs.media.limboFont1);
-	w2 = MAX(comp->location.w, w);
-	h2 = MAX(comp->location.h, h);
-
-	if (comp->style == STYLE_NORMAL)
-	{
-		CG_FillRect(comp->location.x, comp->location.y, w2, comp->location.h, HUD_Background);
-		CG_DrawRect_FixedBorder(comp->location.x, comp->location.y, w2, comp->location.h, 1, HUD_Border);
-	}
-
-	CG_DrawMultilineText(comp->location.x + ((w2 - w) / 2), comp->location.y + ((h2 / 3 + h) / 2), comp->scale, comp->scale, comp->color, s, h * 2, 0, 0, 0, 0, &cgs.media.limboFont1);
-
-	//CG_Text_Paint_Ext(comp->location.x + ((w2 - w) / 2), comp->location.y + ((h2 + h) / 2), comp->scale, comp->scale, comp->color, s, 0, 0, 0, &cgs.media.limboFont1);
-
-	//CG_Text_Paint_Ext(comp->location.x + ((w2 - w) / 2), comp->location.y + ((h2 / 3 + h) / 2), comp->scale, comp->scale, comp->color, s, 0, 0, 0, &cgs.media.limboFont1);
-	//s = va("sn:%i", cg.latestSnapshotNum);
-	//CG_Text_Paint_Ext(comp->location.x + ((w2 - w) / 2), comp->location.y + ((h2 / 3 + h) / 2), comp->scale, comp->scale, comp->color, s, 0, 0, 0, &cgs.media.limboFont1);
-	//s = va("cmd:%i", cgs.serverCommandSequence);
-	//CG_Text_Paint_Ext(comp->location.x + ((w2 - w) / 2), comp->location.y + ((h2 / 3 + h) / 2), comp->scale, comp->scale, comp->color, s, 0, 0, 0, &cgs.media.limboFont1);
+	CG_DrawCompMultilineText(comp, va("t:%i\nsn:%i\ncmd:%i", cg.snap->serverTime, cg.latestSnapshotNum, cgs.serverCommandSequence),
+	                         comp->color, ITEM_ALIGN_CENTER2, ITEM_TEXTSTYLE_NORMAL, &cgs.media.limboFont1);
 }
 
 /**

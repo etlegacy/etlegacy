@@ -1051,16 +1051,13 @@ static int CG_ComputeLinePosX(float x, float scalex, const char *text, int align
 
 	lineW = CG_Text_Width_Ext(text, scalex, lineL, font);
 
-	if (align == ITEM_ALIGN_CENTER)
+	switch (align)
 	{
-		return x - lineW / 2;
+	case ITEM_ALIGN_CENTER: return x - lineW / 2;
+	case ITEM_ALIGN_RIGHT: return x - lineW;
+	case ITEM_ALIGN_CENTER2: return x + lineW / 2;
+	default: return x;
 	}
-	else if (align == ITEM_ALIGN_RIGHT)
-	{
-		return x - lineW;
-	}
-
-	return x;
 }
 
 /**

@@ -2378,116 +2378,107 @@ void CG_DrawSpectator(hudComponent_t *comp)
 }
 
 /**
+ * @brief CG_GetBindingKeyForVote
+ * @param[in] str1
+ * @param[in] str2
+ */
+static void CG_GetBindingKeyForVote(char *str1, char *str2)
+{
+	Q_strncpyz(str1, Binding_FromName("vote yes"), 32);
+	Q_strncpyz(str2, Binding_FromName("vote no"), 32);
+}
+
+/**
  * @brief CG_DrawVote
  */
 void CG_DrawVote(hudComponent_t *comp)
 {
-	const char *str;
+	const char *str = NULL;
 	char       str1[32], str2[32];
-	float      x = comp->location.x, y = comp->location.y, charHeight, fontScale = comp->scale;
-
-	charHeight = CG_Text_Height_Ext("A", fontScale, 0, &cgs.media.limboFont2);
-
-	if (cgs.clientinfo[cg.clientNum].shoutcaster)
-	{
-		y = 180;
-	}
 
 	if (cgs.complaintEndTime > cg.time && !cg.demoPlayback && cg_complaintPopUp.integer > 0 && cgs.complaintClient >= 0)
 	{
-		Q_strncpyz(str1, Binding_FromName("vote yes"), 32);
-		Q_strncpyz(str2, Binding_FromName("vote no"), 32);
+		CG_GetBindingKeyForVote(str1, str2);
 
-		str = va(CG_TranslateString("File complaint against ^7%s^3 for team-killing?"), cgs.clientinfo[cgs.complaintClient].name);
-		CG_Text_Paint_Ext(x, y, fontScale, fontScale, colorYellow, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
-		y += charHeight * 2;
+		str = va("%s\n%s",
+		         va(CG_TranslateString("File complaint against ^7%s^3 for team-killing?"), cgs.clientinfo[cgs.complaintClient].name),
+		         va(CG_TranslateString("Press '%s' for YES, or '%s' for NO"), str1, str2));
 
-		str = va(CG_TranslateString("Press '%s' for YES, or '%s' for NO"), str1, str2);
-		CG_Text_Paint_Ext(x, y, fontScale, fontScale, colorYellow, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+		CG_DrawCompMultilineText(comp, str, comp->color, ITEM_ALIGN_LEFT, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 		return;
 	}
 
 	if (cgs.applicationEndTime > cg.time && cgs.applicationClient >= 0)
 	{
-		Q_strncpyz(str1, Binding_FromName("vote yes"), 32);
-		Q_strncpyz(str2, Binding_FromName("vote no"), 32);
+		CG_GetBindingKeyForVote(str1, str2);
 
-		str = va(CG_TranslateString("Accept %s^3's application to join your fireteam?"), cgs.clientinfo[cgs.applicationClient].name);
-		CG_Text_Paint_Ext(x, y, fontScale, fontScale, colorYellow, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
-		y += charHeight * 2;
+		str = va("%s\n%s",
+		         va(CG_TranslateString("Accept %s^3's application to join your fireteam?"), cgs.clientinfo[cgs.applicationClient].name),
+		         va(CG_TranslateString("Press '%s' for YES, or '%s' for NO"), str1, str2));
 
-		str = va(CG_TranslateString("Press '%s' for YES, or '%s' for NO"), str1, str2);
-		CG_Text_Paint_Ext(x, y, fontScale, fontScale, colorYellow, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+		CG_DrawCompMultilineText(comp, str, comp->color, ITEM_ALIGN_LEFT, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 		return;
 	}
 
 	if (cgs.propositionEndTime > cg.time && cgs.propositionClient >= 0)
 	{
-		Q_strncpyz(str1, Binding_FromName("vote yes"), 32);
-		Q_strncpyz(str2, Binding_FromName("vote no"), 32);
+		CG_GetBindingKeyForVote(str1, str2);
 
-		str = va(CG_TranslateString("Accept %s^3's proposition to invite %s^3 to join your fireteam?"), cgs.clientinfo[cgs.propositionClient2].name, cgs.clientinfo[cgs.propositionClient].name);
-		CG_Text_Paint_Ext(x, y, fontScale, fontScale, colorYellow, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
-		y += charHeight * 2;
+		str = va("%s\n%s",
+		         va(CG_TranslateString("Accept %s^3's proposition to invite %s^3 to join your fireteam?"), cgs.clientinfo[cgs.propositionClient2].name, cgs.clientinfo[cgs.propositionClient].name),
+		         va(CG_TranslateString("Press '%s' for YES, or '%s' for NO"), str1, str2));
 
-		str = va(CG_TranslateString("Press '%s' for YES, or '%s' for NO"), str1, str2);
-		CG_Text_Paint_Ext(x, y, fontScale, fontScale, colorYellow, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+		CG_DrawCompMultilineText(comp, str, comp->color, ITEM_ALIGN_LEFT, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 		return;
 	}
 
 	if (cgs.invitationEndTime > cg.time && cgs.invitationClient >= 0)
 	{
-		Q_strncpyz(str1, Binding_FromName("vote yes"), 32);
-		Q_strncpyz(str2, Binding_FromName("vote no"), 32);
+		CG_GetBindingKeyForVote(str1, str2);
 
-		str = va(CG_TranslateString("Accept %s^3's invitation to join their fireteam?"), cgs.clientinfo[cgs.invitationClient].name);
-		CG_Text_Paint_Ext(x, y, fontScale, fontScale, colorYellow, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
-		y += charHeight * 2;
+		str = va("%s\n%s",
+		         va(CG_TranslateString("Accept %s^3's invitation to join their fireteam?"), cgs.clientinfo[cgs.invitationClient].name),
+		         va(CG_TranslateString("Press '%s' for YES, or '%s' for NO"), str1, str2));
 
-		str = va(CG_TranslateString("Press '%s' for YES, or '%s' for NO"), str1, str2);
-		CG_Text_Paint_Ext(x, y, fontScale, fontScale, colorYellow, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+		CG_DrawCompMultilineText(comp, str, comp->color, ITEM_ALIGN_LEFT, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+
 		return;
 	}
 
 	if (cgs.autoFireteamEndTime > cg.time && cgs.autoFireteamNum == -1)
 	{
-		Q_strncpyz(str1, Binding_FromName("vote yes"), 32);
-		Q_strncpyz(str2, Binding_FromName("vote no"), 32);
+		CG_GetBindingKeyForVote(str1, str2);
 
-		str = CG_TranslateString("Make Fireteam private?");
-		CG_Text_Paint_Ext(x, y, fontScale, fontScale, colorYellow, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
-		y += charHeight * 2;
+		str = va("%s\n%s",
+		         CG_TranslateString("Make Fireteam private?"),
+		         va(CG_TranslateString("Press '%s' for YES, or '%s' for NO"), str1, str2));
 
-		str = va(CG_TranslateString("Press '%s' for YES, or '%s' for NO"), str1, str2);
-		CG_Text_Paint_Ext(x, y, fontScale, fontScale, colorYellow, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+		CG_DrawCompMultilineText(comp, str, comp->color, ITEM_ALIGN_LEFT, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+
 		return;
 	}
 
 	if (cgs.autoFireteamCreateEndTime > cg.time && cgs.autoFireteamCreateNum == -1)
 	{
-		Q_strncpyz(str1, Binding_FromName("vote yes"), 32);
-		Q_strncpyz(str2, Binding_FromName("vote no"), 32);
+		CG_GetBindingKeyForVote(str1, str2);
 
-		str = CG_TranslateString("Create a Fireteam?");
-		CG_Text_Paint_Ext(x, y, fontScale, fontScale, colorYellow, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
-		y += charHeight * 2;
+		str = va("%s\n%s",
+		         va(CG_TranslateString("Create a Fireteam?"), cgs.voteString),
+		         va(CG_TranslateString("Press '%s' for YES, or '%s' for NO"), cgs.voteYes, cgs.voteNo));
 
-		str = va(CG_TranslateString("Press '%s' for YES, or '%s' for NO"), str1, str2);
-		CG_Text_Paint_Ext(x, y, fontScale, fontScale, colorYellow, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+		CG_DrawCompMultilineText(comp, str, comp->color, ITEM_ALIGN_LEFT, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 		return;
 	}
 
 	if (cgs.autoFireteamJoinEndTime > cg.time && cgs.autoFireteamJoinNum == -1)
 	{
-		Q_strncpyz(str1, Binding_FromName("vote yes"), 32);
-		Q_strncpyz(str2, Binding_FromName("vote no"), 32);
+		CG_GetBindingKeyForVote(str1, str2);
 
-		str = CG_TranslateString("Join a Fireteam?");
-		CG_Text_Paint_Ext(x, y, fontScale, fontScale, colorYellow, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
-		y += charHeight * 2.0f;
+		str = va("%s\n%s",
+		         va(CG_TranslateString("Join a Fireteam?"), cgs.voteString),
+		         va(CG_TranslateString("Press '%s' for YES, or '%s' for NO"), cgs.voteYes, cgs.voteNo));
 
-		str = va(CG_TranslateString("Press '%s' for YES, or '%s' for NO"), str1, str2);
-		CG_Text_Paint_Ext(x, y, fontScale, fontScale, colorYellow, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+		CG_DrawCompMultilineText(comp, str, comp->color, ITEM_ALIGN_LEFT, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 		return;
 	}
 
@@ -2495,8 +2486,7 @@ void CG_DrawVote(hudComponent_t *comp)
 	{
 		int sec;
 
-		Q_strncpyz(str1, Binding_FromName("vote yes"), 32);
-		Q_strncpyz(str2, Binding_FromName("vote no"), 32);
+		CG_GetBindingKeyForVote(str1, str2);
 
 		// play a talk beep whenever it is modified
 		if (cgs.voteModified)
@@ -2550,162 +2540,107 @@ void CG_DrawVote(hudComponent_t *comp)
 
 		if (!(cg.snap->ps.eFlags & EF_VOTED))
 		{
-			str = va(CG_TranslateString("VOTE(%i): %s"), sec, cgs.voteString);
-			CG_Text_Paint_Ext(x, y, fontScale, fontScale, colorYellow, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
-			y += charHeight * 2;
-
 			if (cgs.clientinfo[cg.clientNum].team != TEAM_AXIS && cgs.clientinfo[cg.clientNum].team != TEAM_ALLIES)
 			{
+				str = va("%s\n%s\n%s", va(CG_TranslateString("VOTE(%i): %s"), sec, cgs.voteString),
+				         va(CG_TranslateString("YES:%i, NO:%i"), cgs.voteYes, cgs.voteNo),
+				         va(CG_TranslateString("Can't vote as %s"), cgs.clientinfo[cg.clientNum].shoutcaster ? "Shoutcaster" : "Spectator"));
 
-				str = va(CG_TranslateString("YES:%i, NO:%i"), cgs.voteYes, cgs.voteNo);
-				CG_Text_Paint_Ext(x, y, fontScale, fontScale, colorYellow, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
-				y += charHeight * 2;
-
-				str = CG_TranslateString(va("Can't vote as %s", cgs.clientinfo[cg.clientNum].shoutcaster ? "Shoutcaster" : "Spectator"));
+				CG_DrawCompMultilineText(comp, str, comp->color, ITEM_ALIGN_LEFT, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 			}
 			else
 			{
-				str = va(CG_TranslateString("YES(%s):%i, NO(%s):%i"), str1, cgs.voteYes, str2, cgs.voteNo);
+				str = va("%s\n%s",
+				         va(CG_TranslateString("VOTE(%i): %s"), sec, cgs.voteString),
+				         va(CG_TranslateString("YES(%s):%i, NO(%s):%i"), str1, cgs.voteYes, str2, cgs.voteNo));
+
+				CG_DrawCompMultilineText(comp, str,
+				                         comp->color, ITEM_ALIGN_LEFT, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 			}
-			CG_Text_Paint_Ext(x, y, fontScale, fontScale, colorYellow, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
-			return;
 		}
 		else
 		{
-			str = va(CG_TranslateString("YOU VOTED ON: %s"), cgs.voteString);
-			CG_Text_Paint_Ext(x, y, fontScale, fontScale, colorYellow, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
-			y += charHeight * 2;
+			str = va("%s\n%s",
+			         va(CG_TranslateString("YOU VOTED ON: %s"), cgs.voteString),
+			         va(CG_TranslateString("Y:%i, N:%i"), cgs.voteYes, cgs.voteNo));
 
-
-			str = va(CG_TranslateString("Y:%i, N:%i"), cgs.voteYes, cgs.voteNo);
-			CG_Text_Paint_Ext(x, y, fontScale, fontScale, colorYellow, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
-			return;
+			CG_DrawCompMultilineText(comp, str,
+			                         comp->color, ITEM_ALIGN_LEFT, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 		}
+
+		return;
 	}
 
 	if (cgs.complaintEndTime > cg.time && !cg.demoPlayback && cg_complaintPopUp.integer > 0 && cgs.complaintClient < 0)
 	{
-		if (cgs.complaintClient == -1)
+		switch (cgs.complaintClient)
 		{
-			str = CG_TranslateString("Your complaint has been filed");
-			CG_Text_Paint_Ext(x, y, fontScale, fontScale, colorYellow, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
-			return;
+		case -1: str = CG_TranslateString("Your complaint has been filed"); break;
+		case -2: str = CG_TranslateString("Complaint dismissed"); break;
+		case -3: str = CG_TranslateString("Server Host cannot be complained against"); break;
+		case -4: str = CG_TranslateString("You were team-killed by the Server Host"); break;
+		case -5: str = CG_TranslateString("You were team-killed by a bot."); break;
+		default: break;
+
 		}
-		if (cgs.complaintClient == -2)
+
+		if (str)
 		{
-			str = CG_TranslateString("Complaint dismissed");
-			CG_Text_Paint_Ext(x, y, fontScale, fontScale, colorYellow, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
-			return;
-		}
-		if (cgs.complaintClient == -3)
-		{
-			str = CG_TranslateString("Server Host cannot be complained against");
-			CG_Text_Paint_Ext(x, y, fontScale, fontScale, colorYellow, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
-			return;
-		}
-		if (cgs.complaintClient == -4)
-		{
-			str = CG_TranslateString("You were team-killed by the Server Host");
-			CG_Text_Paint_Ext(x, y, fontScale, fontScale, colorYellow, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
-			return;
-		}
-		if (cgs.complaintClient == -5)
-		{
-			str = CG_TranslateString("You were team-killed by a bot.");
-			CG_Text_Paint_Ext(x, y, fontScale, fontScale, colorYellow, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+			CG_DrawCompMultilineText(comp, str, comp->color, ITEM_ALIGN_LEFT, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 			return;
 		}
 	}
 
 	if (cgs.applicationEndTime > cg.time && cgs.applicationClient < 0)
 	{
-		if (cgs.applicationClient == -1)
+		switch (cgs.applicationClient)
 		{
-			str = CG_TranslateString("Your application has been submitted");
-			CG_Text_Paint_Ext(x, y, fontScale, fontScale, colorYellow, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
-			return;
+		case -1: str = CG_TranslateString("Your application has been submitted"); break;
+		case -2: str = CG_TranslateString("Your application failed"); break;
+		case -3: str = CG_TranslateString("Your application has been approved"); break;
+		case -4: str = CG_TranslateString("Your application reply has been sent"); break;
+		default: break;
 		}
 
-		if (cgs.applicationClient == -2)
+		if (str)
 		{
-			str = CG_TranslateString("Your application failed");
-			CG_Text_Paint_Ext(x, y, fontScale, fontScale, colorYellow, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
-			return;
-		}
-
-		if (cgs.applicationClient == -3)
-		{
-			str = CG_TranslateString("Your application has been approved");
-			CG_Text_Paint_Ext(x, y, fontScale, fontScale, colorYellow, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
-			return;
-		}
-
-		if (cgs.applicationClient == -4)
-		{
-			str = CG_TranslateString("Your application reply has been sent");
-			CG_Text_Paint_Ext(x, y, fontScale, fontScale, colorYellow, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+			CG_DrawCompMultilineText(comp, str, comp->color, ITEM_ALIGN_LEFT, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 			return;
 		}
 	}
 
 	if (cgs.propositionEndTime > cg.time && cgs.propositionClient < 0)
 	{
-		if (cgs.propositionClient == -1)
+		switch (cgs.applicationClient)
 		{
-			str = CG_TranslateString("Your proposition has been submitted");
-			CG_Text_Paint_Ext(x, y, fontScale, fontScale, colorYellow, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
-			return;
+		case -1: str = CG_TranslateString("Your proposition has been submitted"); break;
+		case -2: str = CG_TranslateString("Your proposition was rejected"); break;
+		case -3: str = CG_TranslateString("Your proposition was accepted"); break;
+		case -4: str = CG_TranslateString("Your proposition reply has been sent"); break;
+		default: break;
 		}
 
-		if (cgs.propositionClient == -2)
+		if (str)
 		{
-			str = CG_TranslateString("Your proposition was rejected");
-			CG_Text_Paint_Ext(x, y, fontScale, fontScale, colorYellow, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
-			return;
-		}
-
-		if (cgs.propositionClient == -3)
-		{
-			str = CG_TranslateString("Your proposition was accepted");
-			CG_Text_Paint_Ext(x, y, fontScale, fontScale, colorYellow, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
-			return;
-		}
-
-		if (cgs.propositionClient == -4)
-		{
-			str = CG_TranslateString("Your proposition reply has been sent");
-			CG_Text_Paint_Ext(x, y, fontScale, fontScale, colorYellow, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+			CG_DrawCompMultilineText(comp, str, comp->color, ITEM_ALIGN_LEFT, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 			return;
 		}
 	}
 
 	if (cgs.invitationEndTime > cg.time && cgs.invitationClient < 0)
 	{
-		if (cgs.invitationClient == -1)
+		switch (cgs.applicationClient)
 		{
-			str = CG_TranslateString("Your invitation has been submitted");
-			CG_Text_Paint_Ext(x, y, fontScale, fontScale, colorYellow, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
-			return;
+		case -1: str = CG_TranslateString("Your invitation has been submitted"); break;
+		case -2: str = CG_TranslateString("Your invitation was rejected"); break;
+		case -3: str = CG_TranslateString("Your invitation was accepted"); break;
+		case -4: str = CG_TranslateString("Your invitation reply has been sent"); break;
+		default: break;
 		}
 
-		if (cgs.invitationClient == -2)
+		if (str)
 		{
-			str = CG_TranslateString("Your invitation was rejected");
-			CG_Text_Paint_Ext(x, y, fontScale, fontScale, colorYellow, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
-			return;
-		}
-
-		if (cgs.invitationClient == -3)
-		{
-			str = CG_TranslateString("Your invitation was accepted");
-			CG_Text_Paint_Ext(x, y, fontScale, fontScale, colorYellow, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
-			return;
-		}
-
-		if (cgs.invitationClient == -4)
-		{
-			str = CG_TranslateString("Your invitation reply has been sent");
-			CG_Text_Paint_Ext(x, y, fontScale, fontScale, colorYellow, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+			CG_DrawCompMultilineText(comp, str, comp->color, ITEM_ALIGN_LEFT, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 			return;
 		}
 
@@ -2717,8 +2652,7 @@ void CG_DrawVote(hudComponent_t *comp)
 
 	if ((cgs.autoFireteamEndTime > cg.time && cgs.autoFireteamNum == -2) || (cgs.autoFireteamCreateEndTime > cg.time && cgs.autoFireteamCreateNum == -2) || (cgs.autoFireteamJoinEndTime > cg.time && cgs.autoFireteamJoinNum == -2))
 	{
-		str = CG_TranslateString("Response Sent");
-		CG_Text_Paint_Ext(x, y, fontScale, fontScale, colorYellow, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+		CG_DrawCompMultilineText(comp, CG_TranslateString("Response Sent"), comp->color, ITEM_ALIGN_LEFT, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 		return;
 	}
 }
@@ -2777,9 +2711,9 @@ static void CG_DrawIntermission(void)
  */
 void CG_DrawSpectatorMessage(hudComponent_t *comp)
 {
-	const char *str, *str2;
+	const char *str, *strMV = NULL;
+	char       strKey[32];
 	static int lastconfigGet = 0;
-	float      x = comp->location.x, y = comp->location.y, charHeight, fontScale = comp->scale;
 
 	if (cgs.clientinfo[cg.clientNum].shoutcaster)
 	{
@@ -2803,8 +2737,6 @@ void CG_DrawSpectatorMessage(hudComponent_t *comp)
 		return;
 	}
 
-	charHeight = CG_Text_Height_Ext("A", fontScale, 0, &cgs.media.limboFont2);
-
 	if (cg.time - lastconfigGet > 1000)
 	{
 		Controls_GetConfig();
@@ -2812,46 +2744,50 @@ void CG_DrawSpectatorMessage(hudComponent_t *comp)
 		lastconfigGet = cg.time;
 	}
 
-	str2 = Binding_FromName("openlimbomenu");
-	if (!Q_stricmp(str2, "(openlimbomenu)"))
-	{
-		str2 = "ESCAPE";
-	}
-	str = va(CG_TranslateString("Press %s to open Limbo Menu"), str2);
-	CG_Text_Paint_Ext(x, y, fontScale, fontScale, colorWhite, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
-	y += charHeight * 2;
-
-	str2 = Binding_FromName("+attack");
-
-	// we are looking at a client
-	if (!cg.crosshairNotLookingAtClient && cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR)
-	{
-		// draw name with full colors
-		str = va(CG_TranslateString("Press %s to follow %s"), str2, cgs.clientinfo[cg.crosshairClientNum].name);
-	}
-	else
-	{
-		str = va(CG_TranslateString("Press %s to follow next player"), str2);
-	}
-
-	CG_Text_Paint_Ext(x, y, fontScale, fontScale, colorWhite, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
-	y += charHeight * 2;
-
-	str2 = Binding_FromName("weapalt");
-	str  = va(CG_TranslateString("Press %s to follow previous player"), str2);
-	CG_Text_Paint_Ext(x, y, fontScale, fontScale, colorWhite, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+	Q_strncpyz(strKey, Binding_FromName("openlimbomenu"), 32);
 
 #ifdef FEATURE_MULTIVIEW
 	if (cgs.clientinfo[cg.clientNum].team == TEAM_SPECTATOR && cgs.mvAllowed)
 	{
-		y += charHeight * 2;
-
-		str2 = Binding_FromName("mvactivate");
-		str  = va(CG_TranslateString("Press %s to %s multiview mode"), str2, ((cg.mvTotalClients > 0) ? CG_TranslateString("disable") : CG_TranslateString("activate")));
-		CG_Text_Paint_Ext(x, y, fontScale, fontScale, colorWhite, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
-		//y += charHeight * 2;
+		strMV = va("\n%s",
+		           va(CG_TranslateString("Press %s to %s multiview mode"),
+		              Binding_FromName("mvactivate"), ((cg.mvTotalClients > 0) ? CG_TranslateString("disable") : CG_TranslateString("activate"))));
 	}
 #endif
+
+	// we are looking at a client
+	if (!cg.crosshairNotLookingAtClient && cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR)
+	{
+		str = va("%s\n%s\n%s"
+#ifdef FEATURE_MULTIVIEW
+		         "%s"
+#endif
+		         ,
+		         va(CG_TranslateString("Press %s to open Limbo Menu"), !Q_stricmp(strKey, "(openlimbomenu)") ? "ESCAPE" : strKey),
+		         va(CG_TranslateString("Press %s to follow %s"), Binding_FromName("+attack"), cgs.clientinfo[cg.crosshairClientNum].name),
+		         va(CG_TranslateString("Press %s to follow previous player"), Binding_FromName("weapalt"))
+#ifdef FEATURE_MULTIVIEW
+		         , strMV ? strMV : ""
+#endif
+		         );
+	}
+	else
+	{
+		str = va("%s\n%s\n%s"
+#ifdef FEATURE_MULTIVIEW
+		         "%s"
+#endif
+		         ,
+		         va(CG_TranslateString("Press %s to open Limbo Menu"), !Q_stricmp(strKey, "(openlimbomenu)") ? "ESCAPE" : strKey),
+		         va(CG_TranslateString("Press %s to follow next player"), Binding_FromName("+attack")),
+		         va(CG_TranslateString("Press %s to follow previous player"), Binding_FromName("weapalt"))
+#ifdef FEATURE_MULTIVIEW
+		         , strMV ? strMV : ""
+#endif
+		         );
+	}
+
+	CG_DrawCompMultilineText(comp, str, comp->color, ITEM_ALIGN_LEFT, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 }
 
 /**
@@ -2912,9 +2848,7 @@ int CG_CalculateShoutcasterReinfTime(team_t team)
  */
 void CG_DrawLimboMessage(hudComponent_t *comp)
 {
-	const char    *str;
-	playerState_t *ps = &cg.snap->ps;
-	float         x = comp->location.x, y = comp->location.y, charHeight, fontScale = comp->scale;
+	const char *str1, *str2 = NULL;
 
 #ifdef FEATURE_EDV
 	if (cgs.demoCamera.renderingFreeCam || cgs.demoCamera.renderingWeaponCam)
@@ -2923,7 +2857,7 @@ void CG_DrawLimboMessage(hudComponent_t *comp)
 	}
 #endif
 
-	if (ps->stats[STAT_HEALTH] > 0)
+	if (cg.snap->ps.stats[STAT_HEALTH] > 0)
 	{
 		return;
 	}
@@ -2933,31 +2867,26 @@ void CG_DrawLimboMessage(hudComponent_t *comp)
 		return;
 	}
 
-	charHeight = CG_Text_Height_Ext("A", fontScale, 0, &cgs.media.limboFont2);
-
 	if (cg_descriptiveText.integer)
 	{
-		str = CG_TranslateString("You are wounded and waiting for a medic.");
-		CG_Text_Paint_Ext(x, y + charHeight * 2.0f, fontScale, fontScale, colorWhite, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
-
 		if (cgs.gametype == GT_WOLF_LMS)
 		{
-			trap_R_SetColor(NULL);
+			CG_DrawCompMultilineText(comp, CG_TranslateString("You are wounded and waiting for a medic."), comp->color, ITEM_ALIGN_LEFT, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 			return;
 		}
 
-		str = va(CG_TranslateString("Press %s to go into reinforcement queue."), Binding_FromName("+moveup"));
-		CG_Text_Paint_Ext(x, y + 2 * charHeight * 2.0f, fontScale, fontScale, colorWhite, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+		str2 = va("\n%s\n%s",
+		          CG_TranslateString("You are wounded and waiting for a medic."),
+		          va(CG_TranslateString("Press %s to go into reinforcement queue."), Binding_FromName("+moveup")));
 	}
 	else if (cgs.gametype == GT_WOLF_LMS)
 	{
-		trap_R_SetColor(NULL);
 		return;
 	}
 
-	if (ps->persistant[PERS_RESPAWNS_LEFT] == 0)
+	if (cg.snap->ps.persistant[PERS_RESPAWNS_LEFT] == 0)
 	{
-		str = CG_TranslateString("No more reinforcements this round.");
+		str1 = CG_TranslateString("No more reinforcements this round.");
 	}
 	else
 	{
@@ -2966,21 +2895,19 @@ void CG_DrawLimboMessage(hudComponent_t *comp)
 		// coloured respawn counter when deployment is close to bring attention to next respawn
 		if (reinfTime > 2)
 		{
-			str = va(CG_TranslateString("Deploying in ^3%d ^7seconds"), reinfTime);
+			str1 = va(CG_TranslateString("Deploying in ^3%d ^7seconds"), reinfTime);
 		}
 		else if (reinfTime > 1)
 		{
-			str = va(CG_TranslateString("Deploying in %s%d ^7seconds"), cgs.clientinfo[cg.clientNum].health == 0 ? "^1" : "^3", reinfTime);
+			str1 = va(CG_TranslateString("Deploying in %s%d ^7seconds"), cgs.clientinfo[cg.clientNum].health == 0 ? "^1" : "^3", reinfTime);
 		}
 		else
 		{
-			str = va(CG_TranslateString("Deploying in %s%d ^7second"), cgs.clientinfo[cg.clientNum].health == 0 ? "^1" : "^3", reinfTime);
+			str1 = va(CG_TranslateString("Deploying in %s%d ^7second"), cgs.clientinfo[cg.clientNum].health == 0 ? "^1" : "^3", reinfTime);
 		}
 	}
 
-	CG_Text_Paint_Ext(x, y, fontScale, fontScale, colorWhite, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
-
-	trap_R_SetColor(NULL);
+	CG_DrawCompMultilineText(comp, va("%s%s", str1, str2 ? str2 : ""), comp->color, ITEM_ALIGN_LEFT, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 }
 
 /**
