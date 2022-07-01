@@ -3567,7 +3567,7 @@ void CG_DrawActiveHud(void)
 
 // grouping hud editing fields
 #define SCREEN_OFFSETX /*240*/ 324
-#define SCREEN_OFFSETY (0 + 3)
+#define SCREEN_OFFSETY (0 + 4)
 #define INPUT_WIDTH 40
 #define INPUT_HEIGHT 12
 #define INPUT_OFFSET_WIDTH (INPUT_WIDTH + 20)
@@ -3721,10 +3721,10 @@ static void CG_HudEditor_RenderEdit(panel_button_t *button)
 	CG_Text_Paint_Ext(button->rect.x - offsetX - 1, button->rect.y + (button->rect.h / 2) + (offsetY / 2) + 6, button->font->scalex, button->font->scaley, colorWhite, label, 0, 0, button->font->style, button->font->font);
 
 	CG_DrawRect_FixedBorder(button->rect.x, button->rect.y + 6, button->rect.w, button->rect.h, 1, colorBlack);
-    
-    button->rect.y += 2;
+
+	button->rect.y += 2;
 	BG_PanelButton_RenderEdit(button);
-    button->rect.y -= 2;
+	button->rect.y -= 2;
 }
 
 /**
@@ -4070,11 +4070,11 @@ void CG_HudEditor_BackGround(panel_button_t *button)
 {
 	vec4_t colour;
 
-    VectorCopy(colorLtGrey, colour);
-    colour[3] = .5f;
-    CG_FillRect(button->rect.x - 2, button->rect.y - 2, button->rect.w + 4, button->rect.h + 4, colour);
-    VectorCopy(colorBlack, colour);
-    CG_DrawRect(button->rect.x - 2, button->rect.y - 2, button->rect.w + 4, button->rect.h + 4, 1.f, colour);
+	VectorCopy(colorLtGrey, colour);
+	colour[3] = .5f;
+	CG_FillRect(button->rect.x - 2, button->rect.y - 2, button->rect.w + 4, button->rect.h + 4, colour);
+	VectorCopy(colorBlack, colour);
+	CG_DrawRect(button->rect.x - 2, button->rect.y - 2, button->rect.w + 4, button->rect.h + 4, 1.f, colour);
 }
 
 static panel_button_text_t hudEditorFont =
@@ -4097,8 +4097,8 @@ static panel_button_t hudEditorHudDropdown =
 {
 	NULL,
 	"hudeditor_huds",
-	{ SCREEN_OFFSETX,          SCREEN_OFFSETY,      40, 10 },
-	{ 0,                           0,                        0,  0, 1, 0, 0, 0},
+	{ SCREEN_OFFSETX,              SCREEN_OFFSETY,  40, 10 },
+	{ 0,                           0,               0,  0, 1, 0, 0, 0},
 	&hudEditorFont_Dropdown,       // font
 	CG_HudEditor_Dropdown_KeyDown, // keyDown
 	CG_HudEditor_HudDropdown_KeyUp,// keyUp
@@ -4115,8 +4115,8 @@ static panel_button_t hudEditorCompDropdown =
 {
 	NULL,
 	"hudeditor_comps",
-	{ SCREEN_OFFSETX + INPUT_OFFSET_WIDTH, SCREEN_OFFSETY,                      120, 10 },
-	{ 0,                            0,                      0,   0, 1, 0, 0, 0},
+	{ SCREEN_OFFSETX + INPUT_OFFSET_WIDTH,SCREEN_OFFSETY,                      120, 10 },
+	{ 0,                            0,                                   0,   0, 1, 0, 0, 0},
 	&hudEditorFont_Dropdown,        // font
 	CG_HudEditor_Dropdown_KeyDown,  // keyDown
 	CG_HudEditor_CompDropdown_KeyUp,// keyUp
@@ -4130,7 +4130,7 @@ static panel_button_t hudEditorBackGround =
 	NULL,
 	"hudeditor_background",
 	{ SCREEN_OFFSETX - 16,  0 + SCREEN_OFFSETY - 2, 240, 95 },
-	{ 0,                    0,                      0,                    0, 1, 0, 0, 0},
+	{ 0,                    0,                      0,   0, 1, 0, 0, 0},
 	&hudEditorFont,         // font
 	NULL,                   // keyDown
 	NULL,                   // keyUp
@@ -4270,8 +4270,8 @@ static panel_button_t hudEditorVisible =
 {
 	NULL,
 	"hudeditor_visible",
-	{ SCREEN_OFFSETX,           SCREEN_OFFSETY + 4 * (INPUT_HEIGHT + 2) + 6, CHECKBOX_SIZE, CHECKBOX_SIZE },
-	{ 0,                        0,                                     0,             0, 1, 0, 0, 0 },
+	{ SCREEN_OFFSETX,           SCREEN_OFFSETY + 4 * (INPUT_HEIGHT + 2) + 6,CHECKBOX_SIZE, CHECKBOX_SIZE },
+	{ 0,                        0,                                         0,             0, 1, 0, 0, 0 },
 	NULL,                       // font
 	CG_HudEditorVisible_CheckboxKeyDown,// keyDown
 	NULL,                       // keyUp
@@ -4285,7 +4285,7 @@ static panel_button_t hudEditorStyle =
 	NULL,
 	"hudeditor_style",
 	{ INPUT_OFFSET_WIDTH + SCREEN_OFFSETX,SCREEN_OFFSETY + 4 * (INPUT_HEIGHT + 2) + 6,                      CHECKBOX_SIZE, CHECKBOX_SIZE },
-	{ 0,                        0,                                                            0,             0, 1, 0, 0, 0 },
+	{ 0,                        0,                                                                0,             0, 1, 0, 0, 0 },
 	NULL,                       // font
 	CG_HudEditorStyle_CheckboxKeyDown,// keyDown
 	NULL,                       // keyUp
@@ -4299,7 +4299,7 @@ static panel_button_t hudEditorSave =
 	NULL,
 	"Save",
 	{ SCREEN_OFFSETX,         SCREEN_OFFSETY + 5 * (INPUT_HEIGHT + 2) + 6,            BUTTON_WIDTH, BUTTON_HEIGHT },
-	{ 0,                      0,                                                  0,            0, 0, 0, 0, 0 },
+	{ 0,                      0,                                                      0,            0, 0, 0, 0, 0 },
 	&hudEditorFont,           // font
 	CG_HudEditorSave_KeyDown, // keyDown
 	NULL,                     // keyUp
@@ -4313,7 +4313,7 @@ static panel_button_t hudEditorClone =
 	NULL,
 	"Clone",
 	{ BUTTON_WIDTH + 4 + SCREEN_OFFSETX,SCREEN_OFFSETY + 5 * (INPUT_HEIGHT + 2) + 6,                              BUTTON_WIDTH, BUTTON_HEIGHT },
-	{ 0,                      0,                                                                    0,            0, 0, 0, 0, 0 },
+	{ 0,                      0,                                                                        0,            0, 0, 0, 0, 0 },
 	&hudEditorFont,           // font
 	CG_HudEditorClone_KeyDown,// keyDown
 	NULL,                     // keyUp
@@ -4327,7 +4327,7 @@ static panel_button_t hudEditorDelete =
 	NULL,
 	"Delete",
 	{ (2 * (BUTTON_WIDTH + 4)) + SCREEN_OFFSETX,SCREEN_OFFSETY + 5 * (INPUT_HEIGHT + 2) + 6,                                     BUTTON_WIDTH, BUTTON_HEIGHT },
-	{ 0,                      0,                                                                           0,            0, 0, 0, 0, 0 },
+	{ 0,                      0,                                                                               0,            0, 0, 0, 0, 0 },
 	&hudEditorFont,           // font
 	CG_HudEditorDelete_KeyDown,// keyDown
 	NULL,                     // keyUp
@@ -4344,9 +4344,9 @@ static panel_button_t *hudEditor[] =
 	&hudEditorColorR,     &hudEditorColorG,       &hudEditorColorB, &hudEditorColorA,
 	&hudEditorVisible,    &hudEditorStyle,
 	&hudEditorSave,       &hudEditorClone,        &hudEditorDelete,
-        
-    // Below here all components that should draw on top
-    &hudEditorHudDropdown,&hudEditorCompDropdown,
+
+	// Below here all components that should draw on top
+	&hudEditorHudDropdown,&hudEditorCompDropdown,
 	NULL,
 };
 
@@ -4629,11 +4629,11 @@ void CG_DrawHudEditor(void)
 	panel_button_t *button;
 
 	BG_PanelButtonsRender(hudComponentsPanel);
-    
-    if (lastFocusButton)
-    {
-        BG_PanelButtonsRender(hudEditor);
-    }
+
+	if (lastFocusButton)
+	{
+		BG_PanelButtonsRender(hudEditor);
+	}
 
 	trap_R_SetColor(NULL);
 	CG_DrawPic(cgDC.cursorx, cgDC.cursory, 32, 32, cgs.media.cursorIcon);
@@ -4755,10 +4755,18 @@ void CG_HudEditor_KeyHandling(int key, qboolean down)
 
 		switch (key)
 		{
-		case K_LEFTARROW:  pValue = (changeSize ? &comp->location.w : &comp->location.x); *pValue -= offset ; break;
-		case K_RIGHTARROW: pValue = (changeSize ? &comp->location.w : &comp->location.x); *pValue += offset ; break;
-		case K_UPARROW:    pValue = (changeSize ? &comp->location.h : &comp->location.y); *pValue -= offset ; break;
-		case K_DOWNARROW:  pValue = (changeSize ? &comp->location.h : &comp->location.y); *pValue += offset ; break;
+		case K_LEFTARROW:  pValue           = (changeSize ? &comp->location.w : &comp->location.x); *pValue -= offset ; break;
+		case K_RIGHTARROW: pValue           = (changeSize ? &comp->location.w : &comp->location.x); *pValue += offset ; break;
+		case K_UPARROW:    pValue           = (changeSize ? &comp->location.h : &comp->location.y); *pValue -= offset ; break;
+		case K_DOWNARROW:  pValue           = (changeSize ? &comp->location.h : &comp->location.y); *pValue += offset ; break;
+		case K_PGUP:       comp->location.y = ((comp->location.y <= (SCREEN_HEIGHT - comp->location.h) / 2.f) ?
+			                                   0 : (SCREEN_HEIGHT - comp->location.h) / 2.f); break;
+		case K_PGDN:       comp->location.y = ((comp->location.y < (SCREEN_HEIGHT - comp->location.h) / 2.f) ?
+			                                   (SCREEN_HEIGHT - comp->location.h) / 2.f : SCREEN_HEIGHT - comp->location.h); break;
+        case K_HOME:       comp->location.x = (((int)comp->location.x <= (int)((Ccg_WideX(SCREEN_WIDTH) - comp->location.w) / 2.f)) ?
+			                                   0 : (Ccg_WideX(SCREEN_WIDTH) - comp->location.w) / 2.f); break;
+		case K_END:        comp->location.x = ((comp->location.x < (Ccg_WideX(SCREEN_WIDTH) - comp->location.w) / 2.f) ?
+			                                   (Ccg_WideX(SCREEN_WIDTH) - comp->location.w) / 2.f: Ccg_WideX(SCREEN_WIDTH) - comp->location.w); break;
 		default: return;
 		}
 
