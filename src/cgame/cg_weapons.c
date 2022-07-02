@@ -614,7 +614,7 @@ static void CG_GrenadeTrail(centity_t *ent, const weaponInfo_t *wi)
 			                                     startTime,
 			                                     0,
 			                                     origin,
-			                                     750,
+			                                     cg_railTrailTime.integer,
 			                                     0.3f,
 			                                     0.0f,
 			                                     2,
@@ -3700,8 +3700,8 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 			return;
 		}
 
-		// no flamethrower flame on prone moving or dead players
-		if ((cent->currentState.eFlags & EF_FIRING) && !(cent->currentState.eFlags & (EF_PRONE_MOVING | EF_DEAD)))
+		// no flamethrower flame on prone moving or dead players, or during pause
+		if ((cent->currentState.eFlags & EF_FIRING) && !(cent->currentState.eFlags & (EF_PRONE_MOVING | EF_DEAD)) && !cgs.matchPaused)
 		{
 			trace_t trace;
 			vec3_t  muzzlePoint, angles, forward;

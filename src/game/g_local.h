@@ -1166,7 +1166,7 @@ typedef struct level_locals_s
 	int time;                                   ///< in msec
 	int overTime;                               ///< workaround for dual objective timelimit bug
 	int previousTime;                           ///< so movers can back up when blocked
-	int frameTime;                              ///< time the frame started, for antilag stuff
+	int frameTime;                              ///< time delta
 
 	int startTime;                              ///< level.time the map was started
 

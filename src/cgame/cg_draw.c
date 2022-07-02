@@ -4734,7 +4734,7 @@ void CG_DrawMissileCamera(rectDef_t *rect)
 	vec3_t    forward, delta, angles;
 	centity_t *cent;
 
-	if (!cg.latestMissile)
+	if (!cg.latestMissile || cgs.matchPaused)
 	{
 		return;
 	}

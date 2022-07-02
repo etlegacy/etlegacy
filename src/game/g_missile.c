@@ -63,7 +63,7 @@ void G_BounceMissile(gentity_t *ent, trace_t *trace)
 	}
 
 	// reflect the velocity on the trace plane
-	hitTime = (int)(level.previousTime + (level.time - level.previousTime) * trace->fraction);
+	hitTime = (int)(level.previousTime + (level.frameTime * trace->fraction));
 	BG_EvaluateTrajectoryDelta(&ent->s.pos, hitTime, velocity, qfalse, ent->s.effect2Time);
 	dot = DotProduct(velocity, trace->plane.normal);
 	VectorMA(velocity, -2 * dot, trace->plane.normal, ent->s.pos.trDelta);

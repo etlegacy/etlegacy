@@ -1227,7 +1227,7 @@ void CG_AddSmokeSprites(void)
 		}
 
 		// Do physics
-		if (!CG_SmokeSpritePhysics(smokesprite, dist))
+		if (!cgs.matchPaused && !CG_SmokeSpritePhysics(smokesprite, dist))
 		{
 			if (smokesprite->smokebomb)
 			{

@@ -334,7 +334,7 @@ qboolean G_TryPushingEntity(gentity_t *check, gentity_t *pusher, vec3_t move, ve
 		// make sure the client's view rotates when on a rotating mover
 		// - this is done client-side now
 		// - only do this if player is ON a rotating mover
-		if(check->s.groundEntityNum == pusher->s.number)
+		if (check->s.groundEntityNum == pusher->s.number)
 		{
 			check->client->ps.delta_angles[YAW] += ANGLE2SHORT(amove[YAW]);
 		}
@@ -751,8 +751,8 @@ void G_MoverTeam(gentity_t *ent)
 		// go back to the previous position
 		for (part = ent ; part ; part = part->teamchain)
 		{
-			part->s.pos.trTime  += level.time - level.previousTime;
-			part->s.apos.trTime += level.time - level.previousTime;
+			part->s.pos.trTime  += level.frameTime;
+			part->s.apos.trTime += level.frameTime;
 			BG_EvaluateTrajectory(&part->s.pos, level.time, part->r.currentOrigin, qfalse, ent->s.effect2Time);
 			BG_EvaluateTrajectory(&part->s.apos, level.time, part->r.currentAngles, qtrue, ent->s.effect2Time);
 			trap_LinkEntity(part);
@@ -824,7 +824,8 @@ void G_RunMover(gentity_t *ent)
 		}
 		else
 		{
-			ent->s.pos.trTime += level.time - level.previousTime;
+			ent->s.pos.trTime  += level.frameTime;
+			ent->s.apos.trTime += level.frameTime;
 		}
 	}
 

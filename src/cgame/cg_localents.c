@@ -166,9 +166,7 @@ or generates more localentities along a trail.
  */
 void CG_BloodTrail(localEntity_t *le)
 {
-	int    t;
-	int    t2;
-	int    step;
+	int    t, t2, step;
 	vec3_t newOrigin;
 	float  vl;  //bani
 
@@ -176,7 +174,7 @@ void CG_BloodTrail(localEntity_t *le)
 	static vec3_t col = { 1, 1, 1 };
 #endif
 
-	if (!cg_blood.integer)
+	if (!cg_blood.integer || cgs.matchPaused)
 	{
 		return;
 	}
@@ -392,7 +390,7 @@ void CG_AddEmitter(localEntity_t *le)
 {
 	vec3_t dir;
 
-	if (le->breakCount > cg.time)      // using 'breakCount' for 'wait'
+	if (le->breakCount > cg.time || cgs.matchPaused)      // using 'breakCount' for 'wait'
 	{
 		return;
 	}
@@ -763,6 +761,11 @@ void CG_AddSparkElements(localEntity_t *le)
 	float   lifeFrac;
 	float   time = (float)(cg.time - cg.frametime);
 
+	if (cgs.matchPaused)
+	{
+		return;
+	}
+
 	while (1)
 	{
 		// calculate new position
@@ -878,6 +881,11 @@ void CG_AddBloodElements(localEntity_t *le)
 	float   lifeFrac;
 	float   time = (float)(cg.time - cg.frametime);
 	int     numbounces;
+
+	if (cgs.matchPaused)
+	{
+		return;
+	}
 
 	for (numbounces = 0; numbounces < 5; numbounces++)
 	{
@@ -1343,6 +1351,24 @@ void CG_AddLocalEntities(void)
 		// grab next now, so if the local entity is freed we
 		// still have it
 		next = le->prev;
+
+		if (cgs.matchPaused)
+		{
+			le->pos.trTime    += cg.frametime;
+			le->angles.trTime += cg.frametime;
+
+			le->startTime     += cg.frametime;
+			le->endTime       += cg.frametime;
+			le->fadeInTime    += cg.frametime;
+			le->lastTrailTime += cg.frametime;
+			le->onFireStart   += cg.frametime;
+			le->onFireEnd     += cg.frametime;
+
+			if (le->leType == LE_EMITTER)
+			{
+				le->breakCount += cg.frametime;
+			}
+		}
 
 		if (cg.time >= le->endTime)
 		{
