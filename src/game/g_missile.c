@@ -924,7 +924,10 @@ void G_BurnTarget(gentity_t *self, gentity_t *body, qboolean directhit)
 	}
 
 	// do a trace to see if there's a wall btwn. body & flame centroid -- prevents damage through walls
+	G_TempTraceIgnoreBodies();
 	trap_Trace(&tr, self->r.currentOrigin, NULL, NULL, point, body->s.number, MASK_SHOT);
+	G_ResetTempTraceIgnoreEnts();
+
 	if (tr.fraction < 1.0f)
 	{
 		return;
