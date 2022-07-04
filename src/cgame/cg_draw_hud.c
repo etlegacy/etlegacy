@@ -226,8 +226,8 @@ void CG_setDefaultHudValues(hudStucture_t *hud)
 	hud->localtime        = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 60, 168, 57, 14, qtrue, STYLE_NORMAL, 0.19f, HUD_Text, 22, CG_DrawLocalTime);
 	hud->votetext         = CG_getComponent(8, 202, 278, 38, qtrue, STYLE_SIMPLE, 0.22f, colorYellow, 23, CG_DrawVote);
 	hud->spectatortext    = CG_getComponent(8, 160, 278, 38, qtrue, STYLE_SIMPLE, 0.22f, colorWhite, 24, CG_DrawSpectatorMessage);
-	hud->limbotext        = CG_getComponent(8, 164, 278, 38, qtrue, STYLE_SIMPLE, 0.22f, colorWhite, 25, CG_DrawLimboMessage);
-	hud->followtext       = CG_getComponent(8, 164, 278, 38, qtrue, STYLE_SIMPLE, 0.22f, colorWhite, 26, CG_DrawFollow);
+	hud->limbotext        = CG_getComponent(8, 124, 278, 38, qtrue, STYLE_SIMPLE, 0.22f, colorWhite, 25, CG_DrawLimboMessage);
+	hud->followtext       = CG_getComponent(8, 124, 278, 24, qtrue, STYLE_SIMPLE, 0.22f, colorWhite, 26, CG_DrawFollow);
 	hud->demotext         = CG_getComponent(10, 9, 57, 14, qtrue, STYLE_SIMPLE, 0.22f, colorRed, 27, CG_DrawDemoMessage);
 	hud->missilecamera    = CG_getComponent(4, 120, 160, 120, qtrue, STYLE_NORMAL, 1, colorWhite, 28, CG_DrawMissileCamera);
 	hud->sprinttext       = CG_getComponent(20, SCREEN_HEIGHT - 96, 57, 14, qfalse, STYLE_SIMPLE, 0.25f, colorWhite, 29, CG_DrawPlayerSprint);

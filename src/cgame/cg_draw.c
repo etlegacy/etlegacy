@@ -2916,7 +2916,11 @@ void CG_DrawLimboMessage(hudComponent_t *comp)
  */
 void CG_DrawFollow(hudComponent_t *comp)
 {
-	float x = comp->location.x, y = comp->location.y, charHeight, fontScale = comp->scale;
+	float y = comp->location.y;
+	float lineHeight;
+	float charHeight;
+	float heightTextOffset;
+	float heightIconsOffset;
 
 #ifdef FEATURE_MULTIVIEW
 	// MV following info for mainview
@@ -2927,7 +2931,7 @@ void CG_DrawFollow(hudComponent_t *comp)
 #endif
 
 #ifdef FEATURE_EDV
-	if (cgs.demoCamera.renderingFreeCam || !cgs.demoCamera.renderingWeaponCam)
+	if (cgs.demoCamera.renderingFreeCam || cgs.demoCamera.renderingWeaponCam)
 	{
 		return;
 	}
@@ -2943,27 +2947,32 @@ void CG_DrawFollow(hudComponent_t *comp)
 		return;
 	}
 
-	charHeight = CG_Text_Height_Ext("A", fontScale, 0, &cgs.media.limboFont2);
+	charHeight        = CG_Text_Height_Ext("A", comp->scale, 0, &cgs.media.limboFont2);
+	lineHeight        = comp->location.h * 0.5;
+	heightTextOffset  = (lineHeight + charHeight) * 0.5;
+	heightIconsOffset = (lineHeight - charHeight * 2) * 0.5;
 
 	// Spectators view teamflags
 	if (cg.snap->ps.clientNum != cg.clientNum && cgs.clientinfo[cg.clientNum].team == TEAM_SPECTATOR)
 	{
 		if (cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_ALLIES)
 		{
-			CG_DrawPic(x + 1, y - charHeight * 2.0f - 12, 18, 12, cgs.media.alliedFlag);
+			CG_DrawPic(comp->location.x + 1, y, lineHeight * 1.5, lineHeight, cgs.media.alliedFlag);
 		}
 		else
 		{
-			CG_DrawPic(x + 1, y - charHeight * 2.0f - 12, 18, 12, cgs.media.axisFlag);
+			CG_DrawPic(comp->location.x + 1, y, lineHeight * 1.5, lineHeight, cgs.media.axisFlag);
 		}
 
-		CG_DrawRect_FixedBorder(x, y - charHeight * 2.0f - 13, 20, 14, 1, HUD_Border);
+		CG_DrawRect_FixedBorder(comp->location.x, y - 1, lineHeight * 1.5 + 2, lineHeight + 2, 1, HUD_Border);
+
+		y += lineHeight;
 	}
 
 	// if in limbo, show different follow message
 	if (cg.snap->ps.pm_flags & PMF_LIMBO)
 	{
-		char deploytime[128];
+		char deploytime[128] = { 0 };
 
 		if (cgs.gametype != GT_WOLF_LMS)
 		{
@@ -3003,8 +3012,8 @@ void CG_DrawFollow(hudComponent_t *comp)
 				}
 			}
 
-			CG_Text_Paint_Ext(x, y, fontScale, fontScale, colorWhite, deploytime, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
-			y += charHeight * 2.0f;
+			CG_Text_Paint_Ext(comp->location.x, y + heightTextOffset, comp->scale, comp->scale, colorWhite, deploytime, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+			y += lineHeight;
 		}
 
 		// Don't display if you're following yourself
@@ -3012,47 +3021,47 @@ void CG_DrawFollow(hudComponent_t *comp)
 		{
 			const char *follow    = CG_TranslateString("Following");
 			char       *w         = cgs.clientinfo[cg.snap->ps.clientNum].name;
-			int        charWidth  = CG_Text_Width_Ext("A", fontScale, 0, &cgs.media.limboFont2);
-			int        startClass = CG_Text_Width_Ext(va("(%s", follow), fontScale, 0, &cgs.media.limboFont2) + charWidth;
-			int        startRank  = CG_Text_Width_Ext(w, fontScale, 0, &cgs.media.limboFont2) + 14 + 2 * charWidth;
+			int        charWidth  = CG_Text_Width_Ext("A", comp->scale, 0, &cgs.media.limboFont2);
+			int        startClass = CG_Text_Width_Ext(va("(%s", follow), comp->scale, 0, &cgs.media.limboFont2) + charWidth;
+			int        startRank  = CG_Text_Width_Ext(w, comp->scale, 0, &cgs.media.limboFont2) + lineHeight + 2 + 2 * charWidth;
 			int        endRank;
 
-			CG_DrawPic(x + startClass, y - 10, 14, 14, cgs.media.skillPics[SkillNumForClass(cgs.clientinfo[cg.snap->ps.clientNum].cls)]);
+			CG_DrawPic(comp->location.x + startClass, y + heightIconsOffset, lineHeight + 2, lineHeight + 2, cgs.media.skillPics[SkillNumForClass(cgs.clientinfo[cg.snap->ps.clientNum].cls)]);
 
 			if (cgs.clientinfo[cg.snap->ps.clientNum].rank > 0)
 			{
-				CG_DrawPic(x + startClass + startRank, y - 10, 14, 14, rankicons[cgs.clientinfo[cg.snap->ps.clientNum].rank][cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_AXIS ? 1 : 0][0].shader);
-				endRank = 14;
+				CG_DrawPic(comp->location.x + startClass + startRank, y + heightIconsOffset, lineHeight + 2, lineHeight + 2, rankicons[cgs.clientinfo[cg.snap->ps.clientNum].rank][cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_AXIS ? 1 : 0][0].shader);
+				endRank = lineHeight + 2;
 			}
 			else
 			{
 				endRank = -charWidth;
 			}
 
-			CG_Text_Paint_Ext(x, y, fontScale, fontScale, colorWhite, va("(%s", follow), 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
-			CG_Text_Paint_Ext(x + startClass + 14 + charWidth, y, fontScale, fontScale, colorWhite, w, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
-			CG_Text_Paint_Ext(x + startClass + startRank + endRank, y, fontScale, fontScale, colorWhite, ")", 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+			CG_Text_Paint_Ext(comp->location.x, y + heightTextOffset, comp->scale, comp->scale, colorWhite, va("(%s", follow), 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+			CG_Text_Paint_Ext(comp->location.x + startClass + lineHeight + 2 + charWidth, y + heightTextOffset, comp->scale, comp->scale, colorWhite, w, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+			CG_Text_Paint_Ext(comp->location.x + startClass + startRank + endRank, y + heightTextOffset, comp->scale, comp->scale, colorWhite, ")", 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 		}
 	}
 	else
 	{
 		const char *follow    = CG_TranslateString("Following");
 		char       *w         = cgs.clientinfo[cg.snap->ps.clientNum].name;
-		int        charWidth  = CG_Text_Width_Ext("A", fontScale, 0, &cgs.media.limboFont2);
-		int        startClass = CG_Text_Width_Ext(follow, fontScale, 0, &cgs.media.limboFont2) + charWidth;
+		int        charWidth  = CG_Text_Width_Ext("A", comp->scale, 0, &cgs.media.limboFont2);
+		int        startClass = CG_Text_Width_Ext(follow, comp->scale, 0, &cgs.media.limboFont2) + charWidth;
 
-		CG_DrawPic(x + startClass, y - 10, 14, 14, cgs.media.skillPics[SkillNumForClass(cgs.clientinfo[cg.snap->ps.clientNum].cls)]);
+		CG_DrawPic(comp->location.x + startClass, y + heightIconsOffset, lineHeight + 2, lineHeight + 2, cgs.media.skillPics[SkillNumForClass(cgs.clientinfo[cg.snap->ps.clientNum].cls)]);
 
 		if (cgs.clientinfo[cg.snap->ps.clientNum].rank > 0)
 		{
 			int startRank;
 
-			startRank = CG_Text_Width_Ext(w, fontScale, 0, &cgs.media.limboFont2) + 14 + 2 * charWidth;
-			CG_DrawPic(x + startClass + startRank, y - 10, 14, 14, rankicons[cgs.clientinfo[cg.snap->ps.clientNum].rank][cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_AXIS ? 1 : 0][0].shader);
+			startRank = CG_Text_Width_Ext(w, comp->scale, 0, &cgs.media.limboFont2) + lineHeight + 2 + 2 * charWidth;
+			CG_DrawPic(comp->location.x + startClass + startRank, y + heightIconsOffset, lineHeight + 2, lineHeight + 2, rankicons[cgs.clientinfo[cg.snap->ps.clientNum].rank][cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_AXIS ? 1 : 0][0].shader);
 		}
 
-		CG_Text_Paint_Ext(x, y, fontScale, fontScale, colorWhite, follow, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
-		CG_Text_Paint_Ext(x + startClass + 14 + charWidth, y, fontScale, fontScale, colorWhite, w, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+		CG_Text_Paint_Ext(comp->location.x, y + heightTextOffset, comp->scale, comp->scale, colorWhite, follow, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+		CG_Text_Paint_Ext(comp->location.x + startClass + lineHeight + 2 + charWidth, y + heightTextOffset, comp->scale, comp->scale, colorWhite, w, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 	}
 }
 
