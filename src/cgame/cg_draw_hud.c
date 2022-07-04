@@ -212,7 +212,7 @@ void CG_setDefaultHudValues(hudStucture_t *hud)
 	hud->statsdisplay     = CG_getComponent(116, 394, 14, 70, qtrue, STYLE_NORMAL, 0.25f, colorWhite, 8, CG_DrawSkills);
 	hud->weaponicon       = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 82, SCREEN_HEIGHT - 56, 60, 32, qtrue, STYLE_NORMAL, 0.19f, colorWhite, 9, CG_DrawGunIcon);
 	hud->weaponammo       = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 82, 458, 57, 14, qtrue, STYLE_SIMPLE, 0.25f, colorWhite, 10, CG_DrawAmmoCount);
-	hud->fireteam         = CG_getComponent(10, 10, 260, 14, qtrue, STYLE_NORMAL, 0.19f, colorWhite, 11, CG_DrawFireTeamOverlay);
+	hud->fireteam         = CG_getComponent(10, 10, 400, 86, qtrue, STYLE_NORMAL, 0.2f, colorWhite, 11, CG_DrawFireTeamOverlay);
 	hud->popupmessages    = CG_getComponent(4, 245, 422, 96, qtrue, STYLE_SIMPLE, 0.22f, colorWhite, 12, CG_DrawPMItems);
 	hud->powerups         = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 40, SCREEN_HEIGHT - 136, 36, 36, qtrue, STYLE_NORMAL, 0.19f, colorWhite, 13, CG_DrawPowerUps);
 	hud->objectives       = CG_getComponent(8, SCREEN_HEIGHT - 136, 36, 36, qtrue, STYLE_NORMAL, 0.19f, colorWhite, 14, CG_DrawObjectiveStatus);
@@ -224,8 +224,8 @@ void CG_setDefaultHudValues(hudStucture_t *hud)
 	hud->reinforcement    = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 60, SCREEN_HEIGHT - 70, 57, 14, qfalse, STYLE_SIMPLE, 0.19f, colorLtBlue, 20, CG_DrawRespawnTimer);
 	hud->spawntimer       = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 60, SCREEN_HEIGHT - 60, 57, 14, qfalse, STYLE_SIMPLE, 0.19f, colorRed, 21, CG_DrawSpawnTimer);
 	hud->localtime        = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 60, 168, 57, 14, qtrue, STYLE_NORMAL, 0.19f, HUD_Text, 22, CG_DrawLocalTime);
-	hud->votetext         = CG_getComponent(8, 224, 278, 38, qtrue, STYLE_SIMPLE, 0.22f, colorYellow, 23, CG_DrawVote);
-	hud->spectatortext    = CG_getComponent(8, 188, 278, 38, qtrue, STYLE_SIMPLE, 0.22f, colorWhite, 24, CG_DrawSpectatorMessage);
+	hud->votetext         = CG_getComponent(8, 202, 278, 38, qtrue, STYLE_SIMPLE, 0.22f, colorYellow, 23, CG_DrawVote);
+	hud->spectatortext    = CG_getComponent(8, 160, 278, 38, qtrue, STYLE_SIMPLE, 0.22f, colorWhite, 24, CG_DrawSpectatorMessage);
 	hud->limbotext        = CG_getComponent(8, 164, 278, 38, qtrue, STYLE_SIMPLE, 0.22f, colorWhite, 25, CG_DrawLimboMessage);
 	hud->followtext       = CG_getComponent(8, 164, 278, 38, qtrue, STYLE_SIMPLE, 0.22f, colorWhite, 26, CG_DrawFollow);
 	hud->demotext         = CG_getComponent(10, 9, 57, 14, qtrue, STYLE_SIMPLE, 0.22f, colorRed, 27, CG_DrawDemoMessage);
