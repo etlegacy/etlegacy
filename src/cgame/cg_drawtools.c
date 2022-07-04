@@ -1335,3 +1335,207 @@ float CG_DropdownBox(float x, float y, float w, float h, float scalex, float sca
 
 	return rect.y;
 }
+
+/**
+ * @brief CG_ShowHelp_On
+ * @param[in,out] status
+ */
+void CG_ShowHelp_On(int *status)
+{
+	int milli = trap_Milliseconds();
+
+	if (*status == SHOW_SHUTDOWN && milli < cg.fadeTime)
+	{
+		cg.fadeTime = 2 * milli + STATS_FADE_TIME - cg.fadeTime;
+	}
+	else if (*status != SHOW_ON)
+	{
+		cg.fadeTime = milli + STATS_FADE_TIME;
+	}
+
+	*status = SHOW_ON;
+}
+
+/**
+ * @brief CG_ShowHelp_Off
+ * @param[in,out] status
+ */
+void CG_ShowHelp_Off(int *status)
+{
+	if (*status != SHOW_OFF)
+	{
+		int milli = trap_Milliseconds();
+
+		if (milli < cg.fadeTime)
+		{
+			cg.fadeTime = 2 * milli + STATS_FADE_TIME - cg.fadeTime;
+		}
+		else
+		{
+			cg.fadeTime = milli + STATS_FADE_TIME;
+		}
+
+		*status = SHOW_SHUTDOWN;
+	}
+}
+
+/**
+ * @brief CG_getBindKeyName
+ * @param[in] cmd
+ * @param[out] buf
+ * @param[in] len
+ * @return
+ */
+static char *CG_getBindKeyName(const char *cmd, char *buf, size_t len)
+{
+	int j;
+
+	for (j = 0; j < 256; j++)
+	{
+		trap_Key_GetBindingBuf(j, buf, len);
+		if (*buf == 0)
+		{
+			continue;
+		}
+
+		if (!Q_stricmp(buf, cmd))
+		{
+			trap_Key_KeynumToStringBuf(j, buf, MAX_STRING_TOKENS);
+			Q_strupr(buf);
+			return(buf);
+		}
+	}
+
+	Q_strncpyz(buf, va("(%s)", cmd), len);
+	return(buf);
+}
+
+/**
+ * @brief CG_DrawHelpWindow
+ * @param[in] x
+ * @param[in] y
+ * @param[in] title
+ * @param[in] help
+ * @param[in] cmdNumber
+ * @param[in] bgColor
+ * @param[in] borderColor
+ * @param[in] bgColorTitle
+ * @param[in] borderColorTitle
+ * @param[in] fontHeader
+ * @param[in] fontText
+ */
+void CG_DrawHelpWindow(float x, float y, int *status, const char *title, const helpType_t *help, unsigned int cmdNumber,
+                       const vec4_t backgroundColor, const vec4_t borderColor, const vec4_t backgroundColorTitle, const vec4_t borderColorTitle,
+                       panel_button_text_t *fontHeader, panel_button_text_t *fontText)
+{
+	unsigned int i;
+	int          len, maxlen = 0;
+	int          w, h;
+	char         format[MAX_STRING_TOKENS], buf[MAX_STRING_TOKENS];
+	char         *lines[16];
+	int          tSpacing = 9;      // Should derive from CG_Text_Height_Ext
+	vec4_t       bgColor         ;
+	vec4_t       bgColorTitle    ;
+	vec4_t       bdColor     ;
+	vec4_t       bdColorTitle;
+	vec4_t       hdrColor;
+	vec4_t       tColor;
+
+	Vector4Copy(backgroundColor, bgColor);
+	Vector4Copy(borderColor, bgColorTitle);
+	Vector4Copy(backgroundColorTitle, bdColor);
+	Vector4Copy(borderColorTitle, bdColorTitle);
+	Vector4Copy(fontHeader->colour, hdrColor);
+	Vector4Copy(fontText->colour, tColor);
+
+	float diff = cg.fadeTime - trap_Milliseconds();
+
+	// FIXME: Should compute all this stuff beforehand
+	// Compute required width
+	for (i = 0; i < cmdNumber; i++)
+	{
+		if (help[i].cmd != NULL)
+		{
+			len = (int)strlen(CG_getBindKeyName(help[i].cmd, buf, sizeof(buf)));
+			if (len > maxlen)
+			{
+				maxlen = len;
+			}
+		}
+	}
+
+	Q_strncpyz(format, va("^7%%%ds ^3%%s", maxlen), sizeof(format));
+	for (i = 0, maxlen = 0; i < cmdNumber; i++)
+	{
+		if (help[i].cmd != NULL)
+		{
+			lines[i] = va(format, CG_getBindKeyName(help[i].cmd, buf, sizeof(buf)), help[i].info);
+			len      = CG_Text_Width_Ext(lines[i], fontText->scalex, 0, fontText->font);
+			if (len > maxlen)
+			{
+				maxlen = len;
+			}
+		}
+		else
+		{
+			lines[i] = NULL;
+		}
+	}
+
+	w = maxlen + 8;
+	h = 2 + tSpacing + 2 +                                  // Header
+	    2 + 1 +
+	    tSpacing * (cmdNumber) +
+	    2;
+
+	// Fade-in effects
+	if (diff > 0.0f)
+	{
+		float scale = (diff / STATS_FADE_TIME);
+
+		if (*status == SHOW_ON)
+		{
+			scale = 1.0f - scale;
+		}
+
+		bgColor[3]      *= scale;
+		bgColorTitle[3] *= scale;
+		bdColor[3]      *= scale;
+		bdColorTitle[3] *= scale;
+		hdrColor[3]     *= scale;
+		tColor[3]       *= scale;
+
+		x -= w * (1.0f - scale);
+	}
+	else if (*status == SHOW_SHUTDOWN)
+	{
+		*status = SHOW_OFF;
+		return;
+	}
+
+	CG_FillRect(x, y, w, h, bgColor);
+	CG_DrawRect(x, y, w, h, 1, bdColor);
+
+	y += 1;
+
+	// Header
+	CG_FillRect(x + 1, y, w - 2, tSpacing + 4, bgColorTitle);
+	CG_DrawRect(x + 1, y, w - 2, tSpacing + 4, 1, bdColorTitle);
+
+	x += 4;
+	y += tSpacing;
+
+	CG_Text_Paint_Ext(x, y, fontHeader->scalex, fontHeader->scaley, hdrColor, title, 0.0f, 0, fontHeader->style, fontHeader->font);
+
+	y += 3;
+
+	// Control info
+	for (i = 0; i < cmdNumber; i++)
+	{
+		y += tSpacing;
+		if (lines[i] != NULL)
+		{
+			CG_Text_Paint_Ext(x, y, fontText->scalex, fontText->scaley, tColor, lines[i], 0.0f, 0, fontText->style, fontText->font);
+		}
+	}
+}

@@ -4173,4 +4173,14 @@ void CG_DrawHudEditor(void);
 void CG_HudEditor_KeyHandling(int key, qboolean down);
 void CG_HudEditorMouseMove_Handling(int x, int y);
 
+typedef struct
+{
+    const char *cmd;
+    const char *info;
+} helpType_t;
+
+void CG_DrawHelpWindow(float x, float y, int *status, const char *title, const helpType_t *help, unsigned int cmdNumber,
+                       const vec4_t bgColor, const vec4_t borderColor, const vec4_t bgColorTitle, const vec4_t borderColorTitle,
+                       panel_button_text_t *fontHeader, panel_button_text_t *fontText);
+
 #endif // #ifndef INCLUDE_CG_LOCAL_H

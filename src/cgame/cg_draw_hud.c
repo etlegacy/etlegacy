@@ -4240,7 +4240,16 @@ void CG_HudEditor_BackGround(panel_button_t *button)
 	CG_DrawRect(button->rect.x - 2, button->rect.y - 2, button->rect.w + 4, button->rect.h + 4, 1.f, colour);
 }
 
-static panel_button_text_t hudEditorFont =
+static panel_button_text_t hudEditorHeaderFont =
+{
+	0.2f,                  0.2f,
+	{ 1.f,                 1.f, 1.f,  0.5f },
+	ITEM_TEXTSTYLE_NORMAL, 0,
+	&cgs.media.limboFont1,
+};
+
+
+static panel_button_text_t hudEditorTextFont =
 {
 	0.2f,                    0.2f,
 	{ 1.f,                   1.f, 1.f,  0.5f },
@@ -4294,7 +4303,7 @@ static panel_button_t hudEditorBackGround =
 	"hudeditor_background",
 	{ SCREEN_OFFSETX - 16,  0 + SCREEN_OFFSETY - 2, 240, 120 },
 	{ 0,                    0,                      0,   0, 0, 0, 0, 1},
-	&hudEditorFont,         // font
+	&hudEditorTextFont,     // font
 	NULL,                   // keyDown
 	NULL,                   // keyUp
 	CG_HudEditor_BackGround,
@@ -4309,7 +4318,7 @@ static panel_button_t hudEditorX =
 	{ SCREEN_OFFSETX,       0 + SCREEN_OFFSETY + INPUT_HEIGHT + 2,     INPUT_WIDTH, INPUT_HEIGHT },
 	// [0] used by ui_shared EditClick, [1] link to hud, [2] used by ui_shared EditClick [3] additional data like colorRGB, [4] differentiate between hud editor element and hud element
 	{ 0,                    0,                                         0,           0, 0, 0, 0, 1},
-	&hudEditorFont,         // font
+	&hudEditorTextFont,     // font
 	BG_PanelButton_EditClick,// keyDown
 	NULL,                   // keyUp
 	CG_HudEditor_RenderEdit,
@@ -4323,7 +4332,7 @@ static panel_button_t hudEditorY =
 	"hudeditor_y",
 	{ INPUT_OFFSET_WIDTH + SCREEN_OFFSETX,0 + SCREEN_OFFSETY + INPUT_HEIGHT + 2,                          INPUT_WIDTH, INPUT_HEIGHT },
 	{ 0,                    0,                                                              0,           0, 0, 0, 0, 1},
-	&hudEditorFont,         // font
+	&hudEditorTextFont,     // font
 	BG_PanelButton_EditClick,// keyDown
 	NULL,                   // keyUp
 	CG_HudEditor_RenderEdit,
@@ -4337,7 +4346,7 @@ static panel_button_t hudEditorW =
 	"hudeditor_w",
 	{ SCREEN_OFFSETX,        SCREEN_OFFSETY + 2 * (INPUT_HEIGHT + 2),     INPUT_WIDTH, INPUT_HEIGHT },
 	{ 0,                     0,                                           0,           0, 0, 0, 0, 1},
-	&hudEditorFont,          // font
+	&hudEditorTextFont,      // font
 	BG_PanelButton_EditClick,// keyDown
 	NULL,                    // keyUp
 	CG_HudEditor_RenderEdit,
@@ -4351,7 +4360,7 @@ static panel_button_t hudEditorH =
 	"hudeditor_h",
 	{ INPUT_OFFSET_WIDTH + SCREEN_OFFSETX,SCREEN_OFFSETY + 2 * (INPUT_HEIGHT + 2),                          INPUT_WIDTH, INPUT_HEIGHT },
 	{ 0,                      0,                                                                0,           0, 0, 0, 0, 1},
-	&hudEditorFont,           // font
+	&hudEditorTextFont,       // font
 	BG_PanelButton_EditClick, // keyDown
 	NULL,                     // keyUp
 	CG_HudEditor_RenderEdit,
@@ -4365,7 +4374,7 @@ static panel_button_t hudEditorScale =
 	"hudeditor_s",
 	{ (2 * INPUT_OFFSET_WIDTH) + SCREEN_OFFSETX,SCREEN_OFFSETY + 2 * (INPUT_HEIGHT + 2),                                INPUT_WIDTH, INPUT_HEIGHT },
 	{ 0,                     0,                                                                      0,           0, 0, 0, 0, 1},
-	&hudEditorFont,          // font
+	&hudEditorTextFont,      // font
 	BG_PanelButton_EditClick,// keyDown
 	NULL,                    // keyUp
 	CG_HudEditor_RenderEdit,
@@ -4379,7 +4388,7 @@ static panel_button_t hudEditorColorTextR =
 	"hudeditor_colorR",
 	{ SCREEN_OFFSETX,        SCREEN_OFFSETY + 3 * (INPUT_HEIGHT + 2),INPUT_WIDTH, INPUT_HEIGHT },
 	{ 0,                     0,                                      0,           0, 0, 0, 0, 1},
-	&hudEditorFont,          // font
+	&hudEditorTextFont,      // font
 	BG_PanelButton_EditClick,// keyDown
 	NULL,                    // keyUp
 	CG_HudEditor_RenderEdit,
@@ -4393,7 +4402,7 @@ static panel_button_t hudEditorColorTextG =
 	"hudeditor_colorG",
 	{ INPUT_OFFSET_WIDTH + SCREEN_OFFSETX,SCREEN_OFFSETY + 3 * (INPUT_HEIGHT + 2),                     INPUT_WIDTH, INPUT_HEIGHT },
 	{ 0,                     0,                                                           0,           1, 0, 0, 0, 1},
-	&hudEditorFont,          // font
+	&hudEditorTextFont,      // font
 	BG_PanelButton_EditClick,// keyDown
 	NULL,                    // keyUp
 	CG_HudEditor_RenderEdit,
@@ -4407,7 +4416,7 @@ static panel_button_t hudEditorColorTextB =
 	"hudeditor_colorB",
 	{ (2 * INPUT_OFFSET_WIDTH) + SCREEN_OFFSETX,SCREEN_OFFSETY + 3 * (INPUT_HEIGHT + 2),                           INPUT_WIDTH, INPUT_HEIGHT },
 	{ 0,                     0,                                                                 0,           2, 0, 0, 0, 1},
-	&hudEditorFont,          // font
+	&hudEditorTextFont,      // font
 	BG_PanelButton_EditClick,// keyDown
 	NULL,                    // keyUp
 	CG_HudEditor_RenderEdit,
@@ -4421,7 +4430,7 @@ static panel_button_t hudEditorColorTextA =
 	"hudeditor_colorA",
 	{ (3 * INPUT_OFFSET_WIDTH) + SCREEN_OFFSETX,SCREEN_OFFSETY + 3 * (INPUT_HEIGHT + 2),                           INPUT_WIDTH, INPUT_HEIGHT },
 	{ 0,                     0,                                                                 0,           3, 0, 0, 0, 1},
-	&hudEditorFont,          // font
+	&hudEditorTextFont,      // font
 	BG_PanelButton_EditClick,// keyDown
 	NULL,                    // keyUp
 	CG_HudEditor_RenderEdit,
@@ -4435,7 +4444,7 @@ static panel_button_t hudEditorColorBackgroundR =
 	"hudeditor_colorbackgroundR",
 	{ SCREEN_OFFSETX,            SCREEN_OFFSETY + 4 * (INPUT_HEIGHT + 2),INPUT_WIDTH, INPUT_HEIGHT },
 	{ 0,                         0,                            0,           0, 1, 0, 0, 1},
-	&hudEditorFont,              // font
+	&hudEditorTextFont,          // font
 	BG_PanelButton_EditClick,    // keyDown
 	NULL,                        // keyUp
 	CG_HudEditor_RenderEdit,
@@ -4449,7 +4458,7 @@ static panel_button_t hudEditorColorBackgroundG =
 	"hudeditor_colorbackgroundG",
 	{ INPUT_OFFSET_WIDTH + SCREEN_OFFSETX,SCREEN_OFFSETY + 4 * (INPUT_HEIGHT + 2),           INPUT_WIDTH, INPUT_HEIGHT },
 	{ 0,                         0,                                                 0,           1, 1, 0, 0, 1},
-	&hudEditorFont,              // font
+	&hudEditorTextFont,          // font
 	BG_PanelButton_EditClick,    // keyDown
 	NULL,                        // keyUp
 	CG_HudEditor_RenderEdit,
@@ -4463,7 +4472,7 @@ static panel_button_t hudEditorColorBackgroundB =
 	"hudeditor_colorbackgroundB",
 	{ (2 * INPUT_OFFSET_WIDTH) + SCREEN_OFFSETX,SCREEN_OFFSETY + 4 * (INPUT_HEIGHT + 2),                 INPUT_WIDTH, INPUT_HEIGHT },
 	{ 0,                         0,                                                       0,           2, 1, 0, 0, 1},
-	&hudEditorFont,              // font
+	&hudEditorTextFont,          // font
 	BG_PanelButton_EditClick,    // keyDown
 	NULL,                        // keyUp
 	CG_HudEditor_RenderEdit,
@@ -4477,7 +4486,7 @@ static panel_button_t hudEditorColorBackgroundA =
 	"hudeditor_colorbackgroundA",
 	{ (3 * INPUT_OFFSET_WIDTH) + SCREEN_OFFSETX,SCREEN_OFFSETY + 4 * (INPUT_HEIGHT + 2),                 INPUT_WIDTH, INPUT_HEIGHT },
 	{ 0,                         0,                                                       0,           3, 1, 0, 0, 1},
-	&hudEditorFont,              // font
+	&hudEditorTextFont,          // font
 	BG_PanelButton_EditClick,    // keyDown
 	NULL,                        // keyUp
 	CG_HudEditor_RenderEdit,
@@ -4491,7 +4500,7 @@ static panel_button_t hudEditorColorBorderR =
 	"hudeditor_colorborderR",
 	{ SCREEN_OFFSETX,        SCREEN_OFFSETY + 5 * (INPUT_HEIGHT + 2),INPUT_WIDTH, INPUT_HEIGHT },
 	{ 0,                     0,                                0,           0, 2, 0, 0, 1},
-	&hudEditorFont,          // font
+	&hudEditorTextFont,      // font
 	BG_PanelButton_EditClick,// keyDown
 	NULL,                    // keyUp
 	CG_HudEditor_RenderEdit,
@@ -4505,7 +4514,7 @@ static panel_button_t hudEditorColorBorderG =
 	"hudeditor_colorborderG",
 	{ INPUT_OFFSET_WIDTH + SCREEN_OFFSETX,SCREEN_OFFSETY + 5 * (INPUT_HEIGHT + 2),               INPUT_WIDTH, INPUT_HEIGHT },
 	{ 0,                     0,                                                     0,           1, 2, 0, 0, 1},
-	&hudEditorFont,          // font
+	&hudEditorTextFont,      // font
 	BG_PanelButton_EditClick,// keyDown
 	NULL,                    // keyUp
 	CG_HudEditor_RenderEdit,
@@ -4519,7 +4528,7 @@ static panel_button_t hudEditorColorBorderB =
 	"hudeditor_colorborderB",
 	{ (2 * INPUT_OFFSET_WIDTH) + SCREEN_OFFSETX,SCREEN_OFFSETY + 5 * (INPUT_HEIGHT + 2),                     INPUT_WIDTH, INPUT_HEIGHT },
 	{ 0,                     0,                                                           0,           2, 2, 0, 0, 1},
-	&hudEditorFont,          // font
+	&hudEditorTextFont,      // font
 	BG_PanelButton_EditClick,// keyDown
 	NULL,                    // keyUp
 	CG_HudEditor_RenderEdit,
@@ -4533,7 +4542,7 @@ static panel_button_t hudEditorColorBorderA =
 	"hudeditor_colorborderA",
 	{ (3 * INPUT_OFFSET_WIDTH) + SCREEN_OFFSETX,SCREEN_OFFSETY + 5 * (INPUT_HEIGHT + 2),                     INPUT_WIDTH, INPUT_HEIGHT },
 	{ 0,                     0,                                                           0,           3, 2, 0, 0, 1},
-	&hudEditorFont,          // font
+	&hudEditorTextFont,      // font
 	BG_PanelButton_EditClick,// keyDown
 	NULL,                    // keyUp
 	CG_HudEditor_RenderEdit,
@@ -4603,7 +4612,7 @@ static panel_button_t hudEditorSave =
 	"Save",
 	{ SCREEN_OFFSETX,         SCREEN_OFFSETY + 7 * (INPUT_HEIGHT + 2) + 6,            BUTTON_WIDTH, BUTTON_HEIGHT },
 	{ 0,                      0,                                                      0,            0, 0, 0, 0, 0 },
-	&hudEditorFont,           // font
+	&hudEditorTextFont,       // font
 	CG_HudEditorSave_KeyDown, // keyDown
 	NULL,                     // keyUp
 	CG_HudEditorRender_Button,
@@ -4617,7 +4626,7 @@ static panel_button_t hudEditorClone =
 	"Clone",
 	{ BUTTON_WIDTH + 4 + SCREEN_OFFSETX,SCREEN_OFFSETY + 7 * (INPUT_HEIGHT + 2) + 6,                              BUTTON_WIDTH, BUTTON_HEIGHT },
 	{ 0,                      0,                                                                        0,            0, 0, 0, 0, 0 },
-	&hudEditorFont,           // font
+	&hudEditorTextFont,       // font
 	CG_HudEditorClone_KeyDown,// keyDown
 	NULL,                     // keyUp
 	CG_HudEditorRender_Button,
@@ -4631,7 +4640,7 @@ static panel_button_t hudEditorDelete =
 	"Delete",
 	{ (2 * (BUTTON_WIDTH + 4)) + SCREEN_OFFSETX,SCREEN_OFFSETY + 7 * (INPUT_HEIGHT + 2) + 6,                                     BUTTON_WIDTH, BUTTON_HEIGHT },
 	{ 0,                      0,                                                                               0,            0, 0, 0, 0, 0 },
-	&hudEditorFont,           // font
+	&hudEditorTextFont,       // font
 	CG_HudEditorDelete_KeyDown,// keyDown
 	NULL,                     // keyUp
 	CG_HudEditorRender_Button,
@@ -4963,6 +4972,53 @@ static void CG_DrawHudEditor_ToolTip(panel_button_t *button)
 	}
 }
 
+static int helpStatus = SHOW_ON;
+
+static void CG_HudEditor_ToogleHelp(void)
+{
+	if (helpStatus != SHOW_ON)
+	{
+		CG_ShowHelp_On(&helpStatus);
+	}
+	else if (helpStatus == SHOW_ON)
+	{
+		CG_ShowHelp_Off(&helpStatus);
+	}
+}
+
+/**
+ * @brief CG_HudEditor_HelpDraw
+ */
+static void CG_HudEditor_HelpDraw(void)
+{
+	if (helpStatus != SHOW_OFF)
+	{
+		static const helpType_t help[] =
+		{
+			{ "K_DOWN",              "move down by 1px"                  },
+			{ "K_LEFT",              "move left by 1px"                  },
+			{ "K_UP",                "move down by 1px"                  },
+			{ "K_RIGHT",             "move right by 1px"                 },
+			{ NULL,                  NULL                                },
+			{ "K_RCTRL / K_LCTRL",   "hold to move by 0.1px"             },
+			{ "K_RSHIFT / K_LSHIFT", "hold to move by 5px"               },
+			{ NULL,                  NULL                                },
+			{ "K_RALT / K_LALT",     "hold to resize"                    },
+			{ NULL,                  NULL                                },
+			{ "K_PGUP",              "move from bottom -> middle -> top" },
+			{ "K_PGDN",              "move from top -> middle -> bottom" },
+			{ "K_HOME",              "move from left -> middle -> right" },
+			{ "K_END",               "move from right -> middle -> left" },
+			{ NULL,                  NULL                                },
+			{ "h",                   "help on/off"                       },
+		};
+
+		CG_DrawHelpWindow(Ccg_WideX(SCREEN_WIDTH) * 0.1, SCREEN_HEIGHT * 0.6, &helpStatus, "HUD EDITOR CONTROLS", help, sizeof(help) / sizeof(helpType_t),
+		                  colorMdGrey, colorBlack, colorLtGrey, colorBlack,
+		                  &hudEditorHeaderFont, &hudEditorTextFont);
+	}
+}
+
 /**
 * @brief CG_DrawHudEditor
 */
@@ -4976,6 +5032,7 @@ void CG_DrawHudEditor(void)
 	if (lastFocusButton)
 	{
 		BG_PanelButtonsRender(hudEditor);
+		CG_HudEditor_HelpDraw();
 	}
 
 	trap_R_SetColor(NULL);
@@ -5029,7 +5086,6 @@ void CG_DrawHudEditor(void)
 	}
 }
 
-
 /**
 * @brief CG_HudEditor_KeyHandling
 * @param[in] key
@@ -5045,6 +5101,12 @@ void CG_HudEditor_KeyHandling(int key, qboolean down)
 	if (key == K_MOUSE2)
 	{
 		lastFocusButton = NULL;
+		return;
+	}
+
+	if (key == 'h' && down)
+	{
+		CG_HudEditor_ToogleHelp();
 		return;
 	}
 

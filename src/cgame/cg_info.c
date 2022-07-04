@@ -53,6 +53,22 @@ const vec4_t color_border1  = COLOR_BORDER;
 const vec4_t color_bg       = COLOR_BG_VIEW;
 const vec4_t color_border   = COLOR_BORDER_VIEW;
 
+static panel_button_text_t specHelpDrawHeader =
+{
+	0.19f,                 0.19f,
+	COLOR_TEXT,
+	ITEM_TEXTSTYLE_NORMAL, 0,
+	FONT_HEADER,
+};
+
+static panel_button_text_t specHelpDrawText =
+{
+	0.19f,                   0.19f,
+	COLOR_TEXT,
+	ITEM_TEXTSTYLE_SHADOWED, 0,
+	FONT_TEXT,
+};
+
 // NOTE: Unused
 //#define VD_X    4
 //#define VD_Y    78
@@ -127,49 +143,6 @@ void CG_DrawInformation(qboolean forcerefresh)
 	        CG_windowDraw();
 	    }
 	*/
-}
-
-/**
- * @brief CG_ShowHelp_On
- * @param[in,out] status
- */
-void CG_ShowHelp_On(int *status)
-{
-	int milli = trap_Milliseconds();
-
-	if (*status == SHOW_SHUTDOWN && milli < cg.fadeTime)
-	{
-		cg.fadeTime = 2 * milli + STATS_FADE_TIME - cg.fadeTime;
-	}
-	else if (*status != SHOW_ON)
-	{
-		cg.fadeTime = milli + STATS_FADE_TIME;
-	}
-
-	*status = SHOW_ON;
-}
-
-/**
- * @brief CG_ShowHelp_Off
- * @param[in,out] status
- */
-void CG_ShowHelp_Off(int *status)
-{
-	if (*status != SHOW_OFF)
-	{
-		int milli = trap_Milliseconds();
-
-		if (milli < cg.fadeTime)
-		{
-			cg.fadeTime = 2 * milli + STATS_FADE_TIME - cg.fadeTime;
-		}
-		else
-		{
-			cg.fadeTime = milli + STATS_FADE_TIME;
-		}
-
-		*status = SHOW_SHUTDOWN;
-	}
 }
 
 /**
@@ -2038,43 +2011,7 @@ void CG_DemoHelpDraw(void)
 	}
 }
 
-/**
- * @brief CG_getBindKeyName
- * @param[in] cmd
- * @param[out] buf
- * @param[in] len
- * @return
- */
-char *CG_getBindKeyName(const char *cmd, char *buf, size_t len)
-{
-	int j;
-
-	for (j = 0; j < 256; j++)
-	{
-		trap_Key_GetBindingBuf(j, buf, len);
-		if (*buf == 0)
-		{
-			continue;
-		}
-
-		if (!Q_stricmp(buf, cmd))
-		{
-			trap_Key_KeynumToStringBuf(j, buf, MAX_STRING_TOKENS);
-			Q_strupr(buf);
-			return(buf);
-		}
-	}
-
-	Q_strncpyz(buf, va("(%s)", cmd), len);
-	return(buf);
-}
-
 #ifdef FEATURE_MULTIVIEW
-typedef struct
-{
-	const char *cmd;
-	const char *info;
-} helpType_t;
 
 #define SH_X    8       ///< spacing from left
 #define SH_Y    155     ///< spacing from top
@@ -2084,11 +2021,7 @@ typedef struct
  */
 void CG_SpecHelpDraw(void)
 {
-	if (cg.spechelpWindow == SHOW_OFF)
-	{
-		return;
-	}
-	else
+	if (cg.spechelpWindow != SHOW_OFF)
 	{
 		const helpType_t help[] =
 		{
@@ -2099,127 +2032,13 @@ void CG_SpecHelpDraw(void)
 			{ "weapprev", "swap w/main view"   },
 			{ NULL,       NULL                 },
 			{ "weapalt",  "swingcam toggle"    },
-			{ "spechelp", "help on/off"        }
-		};
-
-		unsigned int i;
-		int x, y = SCREEN_HEIGHT, w, h;
-		int len, maxlen = 0;
-		char format[MAX_STRING_TOKENS], buf[MAX_STRING_TOKENS];
-		char *lines[16];
-
-		vec4_t bgColor     = COLOR_BG;              // window
-		vec4_t borderColor = COLOR_BORDER;          // window
-
-		vec4_t bgColorTitle     = COLOR_BG_TITLE;       // titlebar
-		vec4_t borderColorTitle = COLOR_BORDER_TITLE;   // titlebar
-
-		// Main header
-		int hStyle          = 0;
-		float hScale        = 0.19f;
-		float hScaleY       = 0.19f;
-		fontHelper_t *hFont = FONT_HEADER;
-		vec4_t hdrColor     = COLOR_TEXT;    // text
-
-		// Text settings
-		int tStyle          = ITEM_TEXTSTYLE_SHADOWED;
-		int tSpacing        = 9;        // Should derive from CG_Text_Height_Ext
-		float tScale        = 0.19f;
-		fontHelper_t *tFont = FONT_TEXT;
-		vec4_t tColor       = COLOR_TEXT;   // text
-
-		float diff = cg.fadeTime - trap_Milliseconds();
-
-		// FIXME: Should compute all this stuff beforehand
-		// Compute required width
-		for (i = 0; i < sizeof(help) / sizeof(helpType_t); i++)
-		{
-			if (help[i].cmd != NULL)
-			{
-				len = (int)strlen(CG_getBindKeyName(help[i].cmd, buf, sizeof(buf)));
-				if (len > maxlen)
-				{
-					maxlen = len;
-				}
-			}
+			{ "spechelp", "help on/off"        },
 		}
+		;
 
-		Q_strncpyz(format, va("^7%%%ds ^3%%s", maxlen), sizeof(format));
-		for (i = 0, maxlen = 0; i < sizeof(help) / sizeof(helpType_t); i++)
-		{
-			if (help[i].cmd != NULL)
-			{
-				lines[i] = va(format, CG_getBindKeyName(help[i].cmd, buf, sizeof(buf)), help[i].info);
-				len      = CG_Text_Width_Ext(lines[i], tScale, 0, FONT_TEXT);
-				if (len > maxlen)
-				{
-					maxlen = len;
-				}
-			}
-			else
-			{
-				lines[i] = NULL;
-			}
-		}
-
-		w = maxlen + 8;
-		x = SH_X;
-		y = SH_Y;
-		h = 2 + tSpacing + 2 +                                  // Header
-		    2 + 1 +
-		    tSpacing * (sizeof(help) / sizeof(helpType_t)) +
-		    2;
-
-		// Fade-in effects
-		if (diff > 0.0f)
-		{
-			float scale = (diff / STATS_FADE_TIME);
-
-			if (cg.spechelpWindow == SHOW_ON)
-			{
-				scale = 1.0f - scale;
-			}
-
-			bgColor[3]          *= scale;
-			bgColorTitle[3]     *= scale;
-			borderColor[3]      *= scale;
-			borderColorTitle[3] *= scale;
-			hdrColor[3]         *= scale;
-			tColor[3]           *= scale;
-
-			x -= w * (1.0f - scale);
-		}
-		else if (cg.spechelpWindow == SHOW_SHUTDOWN)
-		{
-			cg.spechelpWindow = SHOW_OFF;
-			return;
-		}
-
-		CG_FillRect(x, y, w, h, bgColor);
-		CG_DrawRect(x, y, w, h, 1, borderColor);
-
-		y += 1;
-
-		// Header
-		CG_FillRect(x + 1, y, w - 2, tSpacing + 4, bgColorTitle);
-		CG_DrawRect(x + 1, y, w - 2, tSpacing + 4, 1, borderColorTitle);
-
-		x += 4;
-		y += tSpacing;
-
-		CG_Text_Paint_Ext(x, y, hScale, hScaleY, hdrColor, CG_TranslateString("SPECTATOR CONTROLS"), 0.0f, 0, hStyle, hFont);
-
-		y += 3;
-
-		// Control info
-		for (i = 0; i < sizeof(help) / sizeof(helpType_t); i++)
-		{
-			y += tSpacing;
-			if (lines[i] != NULL)
-			{
-				CG_Text_Paint_Ext(x, y, tScale, tScale, tColor, lines[i], 0.0f, 0, tStyle, tFont);
-			}
-		}
+		CG_DrawHelpWindow(SH_X, SH_Y, &cg.spechelpWindow, CG_TranslateString("SPECTATOR CONTROLS"), help, sizeof(help) / sizeof(helpType_t),
+		                  color_bg_title, color_border1, color_bg, color_border,
+		                  &specHelpDrawHeader, &specHelpDrawText);
 	}
 }
 #endif
