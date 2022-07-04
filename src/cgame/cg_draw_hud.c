@@ -184,9 +184,17 @@ hudStucture_t *CG_GetActiveHUD()
  * @param[in] style
  * @return
  */
-static ID_INLINE hudComponent_t CG_getComponent(float x, float y, float w, float h, qboolean visible, componentStyle style, float scale, const vec4_t color, int offset, void (*draw)(hudComponent_t *comp))
+static ID_INLINE hudComponent_t CG_getComponent(float x, float y, float w, float h, qboolean visible, componentStyle style,
+                                                float scale, const vec4_t colorText,
+                                                int showBackground, const vec4_t colorBackground,
+                                                int showBorder, const vec4_t colorBorder,
+                                                int offset, void (*draw)(hudComponent_t *comp))
 {
-	return (hudComponent_t) { { x, y, w, h }, visible, style, scale, { color[0], color[1], color[2], color[3] }, offset, draw };
+	return (hudComponent_t) { { x, y, w, h }, visible, style,
+			                  scale, { colorText[0], colorText[1], colorText[2], colorText[3] },
+			                  showBackground, { colorBackground[0], colorBackground[1], colorBackground[2], colorBackground[3] },
+			                  showBorder, { colorBorder[0], colorBorder[1], colorBorder[2], colorBorder[3] },
+			                  offset, draw };
 }
 
 vec4_t HUD_Background = { 0.16f, 0.2f, 0.17f, 0.5f };
@@ -201,46 +209,46 @@ void CG_setDefaultHudValues(hudStucture_t *hud)
 {
 	// the Default hud
 	hud->hudnumber        = 0;
-	hud->compass          = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 100 - 20 - 16, 0, 100 + 32, 100 + 32, qtrue, STYLE_NORMAL, 0.19f, colorWhite, 0, CG_DrawNewCompass);
-	hud->staminabar       = CG_getComponent(4, SCREEN_HEIGHT - 92, 12, 72, qtrue, STYLE_NORMAL, 0.19f, colorWhite, 1, CG_DrawStaminaBar);
-	hud->breathbar        = CG_getComponent(4, SCREEN_HEIGHT - 92, 12, 72, qtrue, STYLE_NORMAL, 0.19f, colorWhite, 2, CG_DrawBreathBar);
-	hud->healthbar        = CG_getComponent(24, SCREEN_HEIGHT - 92, 12, 72, qtrue, STYLE_SIMPLE, 0.19f, colorWhite, 3, CG_DrawPlayerHealthBar);
-	hud->weaponchargebar  = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 16, SCREEN_HEIGHT - 92, 12, 72, qtrue, STYLE_NORMAL, 0.19f, colorWhite, 4, CG_DrawWeapRecharge);
-	hud->healthtext       = CG_getComponent(47, 465, 57, 14, qtrue, STYLE_SIMPLE, 0.25f, colorWhite, 5, CG_DrawPlayerHealth);
-	hud->xptext           = CG_getComponent(108, 465, 57, 14, qtrue, STYLE_SIMPLE, 0.25f, colorWhite, 6, CG_DrawXP);
-	hud->ranktext         = CG_getComponent(0, SCREEN_HEIGHT, 57, 14, qfalse, STYLE_SIMPLE, 0.2f, colorWhite, 7, CG_DrawRank);   // disable
-	hud->statsdisplay     = CG_getComponent(116, 394, 14, 70, qtrue, STYLE_NORMAL, 0.25f, colorWhite, 8, CG_DrawSkills);
-	hud->weaponicon       = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 82, SCREEN_HEIGHT - 56, 60, 32, qtrue, STYLE_NORMAL, 0.19f, colorWhite, 9, CG_DrawGunIcon);
-	hud->weaponammo       = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 82, 458, 57, 14, qtrue, STYLE_SIMPLE, 0.25f, colorWhite, 10, CG_DrawAmmoCount);
-	hud->fireteam         = CG_getComponent(10, 10, 400, 86, qtrue, STYLE_NORMAL, 0.2f, colorWhite, 11, CG_DrawFireTeamOverlay);
-	hud->popupmessages    = CG_getComponent(4, 245, 422, 96, qtrue, STYLE_SIMPLE, 0.22f, colorWhite, 12, CG_DrawPMItems);
-	hud->powerups         = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 40, SCREEN_HEIGHT - 136, 36, 36, qtrue, STYLE_NORMAL, 0.19f, colorWhite, 13, CG_DrawPowerUps);
-	hud->objectives       = CG_getComponent(8, SCREEN_HEIGHT - 136, 36, 36, qtrue, STYLE_NORMAL, 0.19f, colorWhite, 14, CG_DrawObjectiveStatus);
-	hud->hudhead          = CG_getComponent(44, SCREEN_HEIGHT - 92, 62, 80, qtrue, STYLE_NORMAL, 0.19f, colorWhite, 15, CG_DrawPlayerStatusHead);
-	hud->cursorhints      = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) * .5f - 24, 260, 48, 48, qtrue, STYLE_NORMAL, 0.19f, colorWhite, 16, CG_DrawCursorhint_f);
-	hud->weaponstability  = CG_getComponent(50, 208, 10, 64, qtrue, STYLE_NORMAL, 0.19f, colorWhite, 17, CG_DrawWeapStability_f);
-	hud->livesleft        = CG_getComponent(4, 360, 48, 24, qtrue, STYLE_NORMAL, 0.19f, colorWhite, 18, CG_DrawLivesLeft);
-	hud->roundtimer       = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 60, 152, 57, 14, qtrue, STYLE_NORMAL, 0.19f, colorWhite, 19, CG_DrawRoundTimer);
-	hud->reinforcement    = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 60, SCREEN_HEIGHT - 70, 57, 14, qfalse, STYLE_SIMPLE, 0.19f, colorLtBlue, 20, CG_DrawRespawnTimer);
-	hud->spawntimer       = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 60, SCREEN_HEIGHT - 60, 57, 14, qfalse, STYLE_SIMPLE, 0.19f, colorRed, 21, CG_DrawSpawnTimer);
-	hud->localtime        = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 60, 168, 57, 14, qtrue, STYLE_NORMAL, 0.19f, HUD_Text, 22, CG_DrawLocalTime);
-	hud->votetext         = CG_getComponent(8, 202, 278, 38, qtrue, STYLE_SIMPLE, 0.22f, colorYellow, 23, CG_DrawVote);
-	hud->spectatortext    = CG_getComponent(8, 160, 278, 38, qtrue, STYLE_SIMPLE, 0.22f, colorWhite, 24, CG_DrawSpectatorMessage);
-	hud->limbotext        = CG_getComponent(8, 124, 278, 38, qtrue, STYLE_SIMPLE, 0.22f, colorWhite, 25, CG_DrawLimboMessage);
-	hud->followtext       = CG_getComponent(8, 124, 278, 24, qtrue, STYLE_SIMPLE, 0.22f, colorWhite, 26, CG_DrawFollow);
-	hud->demotext         = CG_getComponent(10, 9, 57, 14, qtrue, STYLE_SIMPLE, 0.22f, colorRed, 27, CG_DrawDemoMessage);
-	hud->missilecamera    = CG_getComponent(4, 120, 160, 120, qtrue, STYLE_NORMAL, 1, colorWhite, 28, CG_DrawMissileCamera);
-	hud->sprinttext       = CG_getComponent(20, SCREEN_HEIGHT - 96, 57, 14, qfalse, STYLE_SIMPLE, 0.25f, colorWhite, 29, CG_DrawPlayerSprint);
-	hud->breathtext       = CG_getComponent(20, SCREEN_HEIGHT - 96, 57, 14, qfalse, STYLE_SIMPLE, 0.25, colorWhite, 30, CG_DrawPlayerBreath);
-	hud->weaponchargetext = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 16, SCREEN_HEIGHT - 96, 57, 14, qfalse, STYLE_NORMAL, 0.25f, colorWhite, 31, CG_DrawWeaponCharge);
-	hud->fps              = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 60, 184, 57, 14, qtrue, STYLE_NORMAL, 0.19f, HUD_Text, 32, CG_DrawFPS);
-	hud->snapshot         = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 60, 305, 57, 38, qfalse, STYLE_NORMAL, 0.19f, HUD_Text, 33, CG_DrawSnapshot);
-	hud->ping             = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 60, 200, 57, 14, qtrue, STYLE_NORMAL, 0.19f, HUD_Text, 34, CG_DrawPing);
-	hud->speed            = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 60, 275, 57, 14, qtrue, STYLE_NORMAL, 0.19f, HUD_Text, 35, CG_DrawSpeed);
-	hud->lagometer        = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 60, 216, 57, 57, qtrue, STYLE_NORMAL, 0.19f, HUD_Text, 36, CG_DrawLagometer);
-	hud->disconnect       = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 60, 216, 57, 57, qtrue, STYLE_NORMAL, 0.19f, colorWhite, 37, CG_DrawDisconnect);
-	hud->chat             = CG_getComponent(Ccg_WideX(160), 406, 431, 72, qtrue, STYLE_NORMAL, 0.2f, colorWhite, 38, CG_DrawTeamInfo);
-	hud->spectatorstatus  = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) * .5f - 50, 421, 100, 28, qtrue, STYLE_SIMPLE, 0.35f, colorWhite, 39, CG_DrawSpectator);
+	hud->compass          = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 100 - 20 - 16, 0, 100 + 32, 100 + 32, qtrue, STYLE_NORMAL, 0.19f, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, 0, CG_DrawNewCompass);
+	hud->staminabar       = CG_getComponent(4, SCREEN_HEIGHT - 92, 12, 72, qtrue, STYLE_NORMAL, 0.19f, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, 1, CG_DrawStaminaBar);
+	hud->breathbar        = CG_getComponent(4, SCREEN_HEIGHT - 92, 12, 72, qtrue, STYLE_NORMAL, 0.19f, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, 2, CG_DrawBreathBar);
+	hud->healthbar        = CG_getComponent(24, SCREEN_HEIGHT - 92, 12, 72, qtrue, STYLE_NORMAL, 0.19f, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, 3, CG_DrawPlayerHealthBar);
+	hud->weaponchargebar  = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 16, SCREEN_HEIGHT - 92, 12, 72, qtrue, STYLE_NORMAL, 0.19f, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, 4, CG_DrawWeapRecharge);
+	hud->healthtext       = CG_getComponent(47, 465, 57, 14, qtrue, STYLE_NORMAL, 0.25f, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, 5, CG_DrawPlayerHealth);
+	hud->xptext           = CG_getComponent(108, 465, 57, 14, qtrue, STYLE_NORMAL, 0.25f, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, 6, CG_DrawXP);
+	hud->ranktext         = CG_getComponent(0, SCREEN_HEIGHT, 57, 14, qfalse, STYLE_NORMAL, 0.2f, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, 7, CG_DrawRank);   // disable
+	hud->statsdisplay     = CG_getComponent(116, 394, 14, 70, qtrue, STYLE_NORMAL, 0.25f, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, 8, CG_DrawSkills);
+	hud->weaponicon       = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 82, SCREEN_HEIGHT - 56, 60, 32, qtrue, STYLE_NORMAL, 0.19f, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, 9, CG_DrawGunIcon);
+	hud->weaponammo       = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 82, 458, 57, 14, qtrue, STYLE_NORMAL, 0.25f, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, 10, CG_DrawAmmoCount);
+	hud->fireteam         = CG_getComponent(10, 10, 300, 86, qtrue, STYLE_NORMAL, 0.2f, colorWhite, qtrue, HUD_Background, qtrue, HUD_Border, 11, CG_DrawFireTeamOverlay);
+	hud->popupmessages    = CG_getComponent(4, 245, 422, 96, qtrue, STYLE_NORMAL, 0.22f, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, 12, CG_DrawPMItems);
+	hud->powerups         = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 40, SCREEN_HEIGHT - 136, 36, 36, qtrue, STYLE_NORMAL, 0.19f, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, 13, CG_DrawPowerUps);
+	hud->objectives       = CG_getComponent(8, SCREEN_HEIGHT - 136, 36, 36, qtrue, STYLE_NORMAL, 0.19f, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, 14, CG_DrawObjectiveStatus);
+	hud->hudhead          = CG_getComponent(44, SCREEN_HEIGHT - 92, 62, 80, qtrue, STYLE_NORMAL, 0.19f, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, 15, CG_DrawPlayerStatusHead);
+	hud->cursorhints      = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) * .5f - 24, 260, 48, 48, qtrue, STYLE_NORMAL, 0.19f, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, 16, CG_DrawCursorhint_f);
+	hud->weaponstability  = CG_getComponent(50, 208, 10, 64, qtrue, STYLE_NORMAL, 0.19f, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, 17, CG_DrawWeapStability_f);
+	hud->livesleft        = CG_getComponent(4, 360, 48, 24, qtrue, STYLE_NORMAL, 0.19f, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, 18, CG_DrawLivesLeft);
+	hud->roundtimer       = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 60, 152, 57, 14, qtrue, STYLE_NORMAL, 0.19f, colorWhite, qtrue, HUD_Background, qtrue, HUD_Border, 19, CG_DrawRoundTimer);
+	hud->reinforcement    = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 60, SCREEN_HEIGHT - 70, 57, 14, qfalse, STYLE_NORMAL, 0.19f, colorLtBlue, qtrue, HUD_Background, qtrue, HUD_Border, 20, CG_DrawRespawnTimer);
+	hud->spawntimer       = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 60, SCREEN_HEIGHT - 60, 57, 14, qfalse, STYLE_NORMAL, 0.19f, colorRed, qtrue, HUD_Background, qtrue, HUD_Border, 21, CG_DrawSpawnTimer);
+	hud->localtime        = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 60, 168, 57, 14, qtrue, STYLE_NORMAL, 0.19f, HUD_Text, qtrue, HUD_Background, qtrue, HUD_Border, 22, CG_DrawLocalTime);
+	hud->votetext         = CG_getComponent(8, 202, 278, 38, qtrue, STYLE_NORMAL, 0.22f, colorYellow, qfalse, HUD_Background, qfalse, HUD_Border, 23, CG_DrawVote);
+	hud->spectatortext    = CG_getComponent(8, 160, 278, 38, qtrue, STYLE_NORMAL, 0.22f, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, 24, CG_DrawSpectatorMessage);
+	hud->limbotext        = CG_getComponent(8, 124, 278, 38, qtrue, STYLE_NORMAL, 0.22f, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, 25, CG_DrawLimboMessage);
+	hud->followtext       = CG_getComponent(8, 124, 278, 24, qtrue, STYLE_NORMAL, 0.22f, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, 26, CG_DrawFollow);
+	hud->demotext         = CG_getComponent(10, 9, 57, 14, qtrue, STYLE_NORMAL, 0.22f, colorRed, qfalse, HUD_Background, qfalse, HUD_Border, 27, CG_DrawDemoMessage);
+	hud->missilecamera    = CG_getComponent(4, 120, 160, 120, qtrue, STYLE_NORMAL, 1, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, 28, CG_DrawMissileCamera);
+	hud->sprinttext       = CG_getComponent(20, SCREEN_HEIGHT - 96, 57, 14, qfalse, STYLE_NORMAL, 0.25f, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, 29, CG_DrawPlayerSprint);
+	hud->breathtext       = CG_getComponent(20, SCREEN_HEIGHT - 96, 57, 14, qfalse, STYLE_NORMAL, 0.25, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, 30, CG_DrawPlayerBreath);
+	hud->weaponchargetext = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 16, SCREEN_HEIGHT - 96, 57, 14, qfalse, STYLE_NORMAL, 0.25f, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, 31, CG_DrawWeaponCharge);
+	hud->fps              = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 60, 184, 57, 14, qtrue, STYLE_NORMAL, 0.19f, HUD_Text, qtrue, HUD_Background, qtrue, HUD_Border, 32, CG_DrawFPS);
+	hud->snapshot         = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 60, 305, 57, 38, qfalse, STYLE_NORMAL, 0.19f, HUD_Text, qtrue, HUD_Background, qtrue, HUD_Border, 33, CG_DrawSnapshot);
+	hud->ping             = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 60, 200, 57, 14, qtrue, STYLE_NORMAL, 0.19f, HUD_Text, qtrue, HUD_Background, qtrue, HUD_Border, 34, CG_DrawPing);
+	hud->speed            = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 60, 275, 57, 14, qtrue, STYLE_NORMAL, 0.19f, HUD_Text, qtrue, HUD_Background, qtrue, HUD_Border, 35, CG_DrawSpeed);
+	hud->lagometer        = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 60, 216, 57, 57, qtrue, STYLE_NORMAL, 0.19f, HUD_Text, qtrue, HUD_Background, qtrue, HUD_Border, 36, CG_DrawLagometer);
+	hud->disconnect       = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 60, 216, 57, 57, qtrue, STYLE_NORMAL, 0.19f, colorWhite, qtrue, HUD_Background, qtrue, HUD_Border, 37, CG_DrawDisconnect);
+	hud->chat             = CG_getComponent(Ccg_WideX(160), 406, 431, 72, qtrue, STYLE_NORMAL, 0.2f, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, 38, CG_DrawTeamInfo);
+	hud->spectatorstatus  = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) * .5f - 50, 421, 100, 28, qtrue, STYLE_NORMAL, 0.35f, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, 39, CG_DrawSpectator);
 }
 
 /**
@@ -483,28 +491,34 @@ static qboolean CG_ParseHudComponent(int handle, hudComponent_t *comp)
 		return qfalse;
 	}
 
-	// Optional scale and color
-	pc_token_t token;
-	if (!trap_PC_ReadToken(handle, &token))
+	if (!PC_Float_Parse(handle, &comp->scale))
 	{
 		return qfalse;
 	}
-	if (token.type == TT_NUMBER)
-	{
-		trap_PC_UnReadToken(handle);
-		if (!PC_Float_Parse(handle, &comp->scale))
-		{
-			return qfalse;
-		}
 
-		if (!CG_Vec4Parse(handle, comp->color))
-		{
-			return qfalse;
-		}
-	}
-	else
+	if (!CG_Vec4Parse(handle, comp->colorText))
 	{
-		trap_PC_UnReadToken(handle);
+		return qfalse;
+	}
+
+	if (!PC_Int_Parse(handle, &comp->showBackGround))
+	{
+		return qfalse;
+	}
+
+	if (!CG_Vec4Parse(handle, comp->colorBackground))
+	{
+		return qfalse;
+	}
+
+	if (!PC_Int_Parse(handle, &comp->showBorder))
+	{
+		return qfalse;
+	}
+
+	if (!CG_Vec4Parse(handle, comp->colorBorder))
+	{
+		return qfalse;
 	}
 
 	return qtrue;
@@ -735,10 +749,14 @@ void CG_DrawCompText(hudComponent_t *comp, const char *str, vec4_t color, int fo
 	w2 = MAX(comp->location.w, w);
 	h2 = MAX(comp->location.h, h);
 
-	if (comp->style == STYLE_NORMAL)
+	if (comp->showBackGround)
 	{
-		CG_FillRect(comp->location.x, comp->location.y, w2, comp->location.h, HUD_Background);
-		CG_DrawRect_FixedBorder(comp->location.x, comp->location.y, w2, comp->location.h, 1, HUD_Border);
+		CG_FillRect(comp->location.x, comp->location.y, w2, comp->location.h, comp->colorBackground);
+	}
+
+	if (comp->showBorder)
+	{
+		CG_DrawRect_FixedBorder(comp->location.x, comp->location.y, w2, comp->location.h, 1, comp->colorBorder);
 	}
 
 	CG_Text_Paint_Ext(comp->location.x + ((w2 - w) / 2), comp->location.y + ((h2 + h) / 2), comp->scale, comp->scale, color, str, 0, 0, fontStyle, font);
@@ -756,7 +774,7 @@ void CG_DrawCompText(hudComponent_t *comp, const char *str, vec4_t color, int fo
  */
 void CG_DrawCompMultilineText(hudComponent_t *comp, const char *str, vec4_t color, int align, int fontStyle, fontHelper_t *font)
 {
-	unsigned int lineNumber = 0, maxLineChar = 0;
+	unsigned int lineNumber = 0;
 	float        x = comp->location.x, w = 0, w2, h = 0, h2;
 	const char   *ptr;
 	char         temp[1024] = { 0 };
@@ -779,10 +797,14 @@ void CG_DrawCompMultilineText(hudComponent_t *comp, const char *str, vec4_t colo
 	w2 = MAX(comp->location.w, w);
 	h2 = MAX(comp->location.h, h);
 
-	if (comp->style == STYLE_NORMAL)
+	if (comp->showBackGround)
 	{
-		CG_FillRect(comp->location.x, comp->location.y, w2, comp->location.h, HUD_Background);
-		CG_DrawRect_FixedBorder(comp->location.x, comp->location.y, w2, comp->location.h, 1, HUD_Border);
+		CG_FillRect(comp->location.x, comp->location.y, w2, comp->location.h, comp->colorBackground);
+	}
+
+	if (comp->showBorder)
+	{
+		CG_DrawRect_FixedBorder(comp->location.x, comp->location.y, w2, comp->location.h, 1, comp->colorBorder);
 	}
 
 	if (align == ITEM_ALIGN_CENTER2)
@@ -805,6 +827,11 @@ static void CG_DrawPlayerStatusHead(hudComponent_t *comp)
 	bg_character_t      *headcharacter = BG_GetCharacter(cgs.clientinfo[cg.snap->ps.clientNum].team, cgs.clientinfo[cg.snap->ps.clientNum].cls);
 	qhandle_t           painshader     = 0;
 	rectDef_t           *headRect      = &comp->location;
+
+	if (cgs.clientinfo[cg.clientNum].shoutcaster)
+	{
+		return;
+	}
 
 	if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR)
 	{
@@ -870,6 +897,16 @@ static void CG_DrawPlayerStatusHead(hudComponent_t *comp)
 		{
 			cg.idleAnim = HD_IDLE1;
 		}
+	}
+
+	if (comp->showBackGround)
+	{
+		CG_FillRect(comp->location.x, comp->location.y, comp->location.w, comp->location.h, comp->colorBackground);
+	}
+
+	if (comp->showBorder)
+	{
+		CG_DrawRect_FixedBorder(comp->location.x, comp->location.y, comp->location.w, comp->location.h, 1, comp->colorBorder);
 	}
 
 	CG_DrawPlayerHead(headRect, character, headcharacter, 180, 0, (cg.snap->ps.eFlags & EF_HEADSHOT) ? qfalse : qtrue, anim, painshader, cgs.clientinfo[cg.snap->ps.clientNum].rank, qfalse, cgs.clientinfo[cg.snap->ps.clientNum].team);
@@ -998,6 +1035,11 @@ static void CG_DrawPlayerHealthBar(hudComponent_t *comp)
 	int    flags = 1 | 4 | 16 | 64;
 	float  frac;
 
+	if (cgs.clientinfo[cg.clientNum].shoutcaster)
+	{
+		return;
+	}
+
 	if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR)
 	{
 		return;
@@ -1030,6 +1072,11 @@ static void CG_DrawStaminaBar(hudComponent_t *comp)
 	vec_t  *color = colour;
 	int    flags  = 1 | 4 | 16 | 64;
 	float  frac   = cg.snap->ps.stats[STAT_SPRINTTIME] / (float)SPRINTTIME;
+
+	if (cgs.clientinfo[cg.clientNum].shoutcaster)
+	{
+		return;
+	}
 
 	if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR)
 	{
@@ -1086,6 +1133,11 @@ static void CG_DrawBreathBar(hudComponent_t *comp)
 	int           flags  = 1 | 4 | 16 | 64;
 	float         frac   = cg.snap->ps.stats[STAT_AIRLEFT] / (float)HOLDBREATHTIME;
 
+	if (cgs.clientinfo[cg.clientNum].shoutcaster)
+	{
+		return;
+	}
+
 	if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR)
 	{
 		return;
@@ -1121,6 +1173,11 @@ static void CG_DrawWeapRecharge(hudComponent_t *comp)
 	int      flags  = 1 | 4 | 16;
 	qboolean charge = qtrue;
 	vec4_t   color;
+
+	if (cgs.clientinfo[cg.clientNum].shoutcaster)
+	{
+		return;
+	}
 
 	if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR)
 	{
@@ -1235,6 +1292,11 @@ static void CG_DrawWeapRecharge(hudComponent_t *comp)
  */
 static void CG_DrawGunIcon(hudComponent_t *comp)
 {
+	if (cgs.clientinfo[cg.clientNum].shoutcaster)
+	{
+		return;
+	}
+
 	if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR)
 	{
 		return;
@@ -1245,13 +1307,23 @@ static void CG_DrawGunIcon(hudComponent_t *comp)
 		return;
 	}
 
+	if (comp->showBackGround)
+	{
+		CG_FillRect(comp->location.x, comp->location.y, comp->location.w, comp->location.h, comp->colorBackground);
+	}
+
+	if (comp->showBorder)
+	{
+		CG_DrawRect_FixedBorder(comp->location.x, comp->location.y, comp->location.w, comp->location.h, 1, comp->colorBorder);
+	}
+
 	// Draw weapon icon and overheat bar
 	CG_DrawWeapHeat(&comp->location, HUD_HORIZONTAL);
 
 	// drawn the common white icon, usage of mounted weapons don't change cg.snap->ps.weapon for real
 	if (BG_PlayerMounted(cg.snap->ps.eFlags))
 	{
-		CG_DrawPlayerWeaponIcon(&comp->location, qtrue, ITEM_ALIGN_RIGHT, &comp->color);
+		CG_DrawPlayerWeaponIcon(&comp->location, qtrue, ITEM_ALIGN_RIGHT, &comp->colorText);
 		return;
 	}
 
@@ -1261,7 +1333,7 @@ static void CG_DrawGunIcon(hudComponent_t *comp)
 #endif
 		cg_drawWeaponIconFlash.integer == 0)
 	{
-		CG_DrawPlayerWeaponIcon(&comp->location, qtrue, ITEM_ALIGN_RIGHT, &comp->color);
+		CG_DrawPlayerWeaponIcon(&comp->location, qtrue, ITEM_ALIGN_RIGHT, &comp->colorText);
 	}
 	else
 	{
@@ -1271,7 +1343,7 @@ static void CG_DrawGunIcon(hudComponent_t *comp)
 #endif
 			BG_simpleWeaponState(cg.snap->ps.weaponstate);
 
-		CG_DrawPlayerWeaponIcon(&comp->location, (qboolean)(ws != WSTATE_IDLE), ITEM_ALIGN_RIGHT, ((ws == WSTATE_SWITCH || ws == WSTATE_RELOAD) ? &colorYellow : (ws == WSTATE_FIRE) ? &colorRed : &comp->color));
+		CG_DrawPlayerWeaponIcon(&comp->location, (qboolean)(ws != WSTATE_IDLE), ITEM_ALIGN_RIGHT, ((ws == WSTATE_SWITCH || ws == WSTATE_RELOAD) ? &colorYellow : (ws == WSTATE_FIRE) ? &colorRed : &comp->colorText));
 	}
 }
 
@@ -1284,6 +1356,11 @@ static void CG_DrawAmmoCount(hudComponent_t *comp)
 {
 	int  value, value2, value3;
 	char buffer[16] = { 0 };
+
+	if (cgs.clientinfo[cg.clientNum].shoutcaster)
+	{
+		return;
+	}
 
 	if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR)
 	{
@@ -1312,23 +1389,7 @@ static void CG_DrawAmmoCount(hudComponent_t *comp)
 		Com_sprintf(buffer, sizeof(buffer), "%i", value);
 	}
 
-	if (buffer[0] != '\0')
-	{
-		float w, w2, h, h2;
-
-		w  = CG_Text_Width_Ext(buffer, comp->scale, 0, &cgs.media.limboFont1);
-		h  = CG_Text_Height_Ext(buffer, comp->scale, 0, &cgs.media.limboFont1);
-		w2 = MAX(comp->location.w, w);
-		h2 = MAX(comp->location.h, h);
-
-		if (comp->style == STYLE_NORMAL)
-		{
-			CG_FillRect(comp->location.x, comp->location.y, w2, comp->location.h, HUD_Background);
-			CG_DrawRect_FixedBorder(comp->location.x, comp->location.y, w2, comp->location.h, 1, HUD_Border);
-		}
-
-		CG_Text_Paint_Ext(comp->location.x + ((w2 - w) / 2), comp->location.y + ((h2 + h) / 2), comp->scale, comp->scale, comp->color, buffer, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
-	}
+	CG_DrawCompText(comp, buffer, comp->colorText, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
 }
 
 /**
@@ -1420,6 +1481,11 @@ static void CG_DrawPlayerHealth(hudComponent_t *comp)
 	const char *str = va("%i HP", cg.snap->ps.stats[STAT_HEALTH]);
 	vec4_t     color;
 
+	if (cgs.clientinfo[cg.clientNum].shoutcaster)
+	{
+		return;
+	}
+
 	if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR)
 	{
 		return;
@@ -1433,11 +1499,11 @@ static void CG_DrawPlayerHealth(hudComponent_t *comp)
 	if (cg_healthDynamicColor.integer)
 	{
 		CG_GetColorForHealth(cg.snap->ps.stats[STAT_HEALTH], color);
-		color[3] = comp->color[3];
+		color[3] = comp->colorText[3];
 	}
 	else
 	{
-		Vector4Copy(comp->color, color);
+		Vector4Copy(comp->colorText, color);
 	}
 
 	CG_DrawCompText(comp, str, color, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
@@ -1451,6 +1517,11 @@ static void CG_DrawPlayerHealth(hudComponent_t *comp)
 static void CG_DrawPlayerSprint(hudComponent_t *comp)
 {
 	const char *str;
+
+	if (cgs.clientinfo[cg.clientNum].shoutcaster)
+	{
+		return;
+	}
 
 	if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR)
 	{
@@ -1476,7 +1547,7 @@ static void CG_DrawPlayerSprint(hudComponent_t *comp)
 		str = va("%.0f %%", (cg.snap->ps.stats[STAT_SPRINTTIME] / (float)SPRINTTIME) * 100);
 	}
 
-	CG_DrawCompText(comp, str, comp->color, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
+	CG_DrawCompText(comp, str, comp->colorText, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
 }
 
 /**
@@ -1487,6 +1558,11 @@ static void CG_DrawPlayerSprint(hudComponent_t *comp)
 static void CG_DrawPlayerBreath(hudComponent_t *comp)
 {
 	const char *str = va("%.0f %%", (cg.snap->ps.stats[STAT_AIRLEFT] / (float)HOLDBREATHTIME) * 100);
+
+	if (cgs.clientinfo[cg.clientNum].shoutcaster)
+	{
+		return;
+	}
 
 	if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR)
 	{
@@ -1503,7 +1579,7 @@ static void CG_DrawPlayerBreath(hudComponent_t *comp)
 		return;
 	}
 
-	CG_DrawCompText(comp, str, comp->color, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
+	CG_DrawCompText(comp, str, comp->colorText, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
 }
 
 /**
@@ -1515,6 +1591,11 @@ static void CG_DrawWeaponCharge(hudComponent_t *comp)
 {
 	const char *str;
 	float      chargeTime;
+
+	if (cgs.clientinfo[cg.clientNum].shoutcaster)
+	{
+		return;
+	}
 
 	if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR)
 	{
@@ -1547,7 +1628,7 @@ static void CG_DrawWeaponCharge(hudComponent_t *comp)
 
 	str = va("%.0f %%", MIN(((cg.time - cg.snap->ps.classWeaponTime) / chargeTime) * 100, 100));
 
-	CG_DrawCompText(comp, str, comp->color, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
+	CG_DrawCompText(comp, str, comp->colorText, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
 }
 
 /**
@@ -1559,6 +1640,11 @@ static void CG_DrawSkills(hudComponent_t *comp)
 	playerState_t *ps = &cg.snap->ps;
 	clientInfo_t  *ci = &cgs.clientinfo[ps->clientNum];
 	int           i;
+
+	if (cgs.clientinfo[cg.clientNum].shoutcaster)
+	{
+		return;
+	}
 
 	if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR)
 	{
@@ -1600,7 +1686,7 @@ static void CG_DrawSkills(hudComponent_t *comp)
 			temp = comp->location.y + (i * comp->location.w * 1.7f);
 			//CG_DrawPic
 			CG_DrawPicShadowed(comp->location.x, temp, comp->location.w, comp->location.w, cgs.media.skillPics[skill]);
-			CG_Text_Paint_Ext(comp->location.x + 3, temp + 24, comp->scale, comp->scale, comp->color, va("%i", skillLvl), 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
+			CG_Text_Paint_Ext(comp->location.x + 3, temp + 24, comp->scale, comp->scale, comp->colorText, va("%i", skillLvl), 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
 		}
 	}
 }
@@ -1614,6 +1700,11 @@ static void CG_DrawXP(hudComponent_t *comp)
 {
 	const char *str;
 	vec_t      *clr;
+
+	if (cgs.clientinfo[cg.clientNum].shoutcaster)
+	{
+		return;
+	}
 
 	if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR)
 	{
@@ -1636,7 +1727,7 @@ static void CG_DrawXP(hudComponent_t *comp)
 	}
 	else
 	{
-		clr = comp->color;
+		clr = comp->colorText;
 	}
 
 	str = va("%i XP", cg.snap->ps.stats[STAT_XP]);
@@ -1653,6 +1744,11 @@ static void CG_DrawRank(hudComponent_t *comp)
 {
 	const char    *str;
 	playerState_t *ps = &cg.snap->ps;
+
+	if (cgs.clientinfo[cg.clientNum].shoutcaster)
+	{
+		return;
+	}
 
 	if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR)
 	{
@@ -1671,7 +1767,7 @@ static void CG_DrawRank(hudComponent_t *comp)
 
 	str = va("%s", GetRankTableData(cgs.clientinfo[ps->clientNum].team, cgs.clientinfo[ps->clientNum].rank)->miniNames);
 
-	CG_DrawCompText(comp, str, comp->color, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
+	CG_DrawCompText(comp, str, comp->colorText, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
 }
 
 /**
@@ -1682,7 +1778,13 @@ static void CG_DrawPowerUps(hudComponent_t *comp)
 {
 	playerState_t *ps = &cg.snap->ps;
 
-	if (ps->persistant[PERS_TEAM] == TEAM_SPECTATOR && !cgs.clientinfo[cg.clientNum].shoutcaster)
+	if (cgs.clientinfo[cg.clientNum].shoutcaster)
+	{
+		CG_DrawShoutcastPowerups();
+		return;
+	}
+
+	if (ps->persistant[PERS_TEAM] == TEAM_SPECTATOR)
 	{
 		return;
 	}
@@ -1943,8 +2045,6 @@ static void CG_DrawDemoMessage(hudComponent_t *comp)
 	}
 
 	Com_sprintf(status, sizeof(status), "%s%s%s", cg.demoPlayback ? __("REPLAY") : __("RECORD"), demostatus, wavestatus);
-
-
 }
 
 /**
@@ -2596,6 +2696,16 @@ void CG_DrawNewCompass(hudComponent_t *comp)
 		return;
 	}
 
+	if (comp->showBackGround)
+	{
+		CG_FillRect(basex, basey, basew, baseh, comp->colorBackground);
+	}
+
+	if (comp->showBorder)
+	{
+		CG_DrawRect_FixedBorder(basex, basey, basew, baseh, 1, comp->colorBorder);
+	}
+
 	CG_DrawAutoMap(basex, basey, basew, baseh, comp->style == STYLE_SIMPLE);
 }
 /**
@@ -2688,7 +2798,7 @@ static void CG_DrawStatsDebug(void)
 static void CG_DrawSnapshot(hudComponent_t *comp)
 {
 	CG_DrawCompMultilineText(comp, va("t:%i\nsn:%i\ncmd:%i", cg.snap->serverTime, cg.latestSnapshotNum, cgs.serverCommandSequence),
-	                         comp->color, ITEM_ALIGN_CENTER2, ITEM_TEXTSTYLE_NORMAL, &cgs.media.limboFont1);
+	                         comp->colorText, ITEM_ALIGN_CENTER2, ITEM_TEXTSTYLE_NORMAL, &cgs.media.limboFont1);
 }
 
 /**
@@ -2701,9 +2811,7 @@ static void CG_DrawSpeed(hudComponent_t *comp)
 	static vec_t highestSpeed, speed;
 	static int   lasttime;
 	char         *s, *s2 = NULL;
-	float        w, w2, w3, w4;
 	int          thistime;
-	int          h;
 
 	if (resetmaxspeed)
 	{
@@ -2748,24 +2856,13 @@ static void CG_DrawSpeed(hudComponent_t *comp)
 		break;
 	}
 
-	h = comp->location.h * ((cg_drawspeed.integer == 2) ? 2 : 1);
-
-	w  = CG_Text_Width_Ext(s, comp->scale, 0, &cgs.media.limboFont1);
-	w2 = (comp->location.w > w) ? comp->location.w : w;
-
-	if (comp->style == STYLE_NORMAL)
+	if (!comp->style)
 	{
-		CG_FillRect(comp->location.x, comp->location.y, w2, h, HUD_Background);
-		CG_DrawRect_FixedBorder(comp->location.x, comp->location.y, w2, h, 1, HUD_Border);
+		CG_DrawCompText(comp, s, comp->colorText, ITEM_TEXTSTYLE_NORMAL, &cgs.media.limboFont1);
 	}
-	CG_Text_Paint_Ext(comp->location.x + ((w2 - w) / 2), comp->location.y + 11, comp->scale, comp->scale, comp->color, s, 0, 0, 0, &cgs.media.limboFont1);
-
-	// draw max speed on second line
-	if (cg_drawspeed.integer == 2)
+	else
 	{
-		w3 = CG_Text_Width_Ext(s2, 0.19f, 0, &cgs.media.limboFont1);
-		w4 = (UPPERRIGHT_W > w3) ? UPPERRIGHT_W : w3;
-		CG_Text_Paint_Ext(comp->location.x + ((w4 - w3) / 2) + 2, comp->location.y + comp->location.h + 11, comp->scale, comp->scale, comp->color, s2, 0, 0, 0, &cgs.media.limboFont1);
+		CG_DrawCompMultilineText(comp, va("%s\n%s", s, s2), comp->colorText, ITEM_ALIGN_CENTER2, ITEM_TEXTSTYLE_NORMAL, &cgs.media.limboFont1);
 	}
 }
 
@@ -2831,7 +2928,7 @@ static void CG_DrawFPS(hudComponent_t *comp)
 		s = "estimating";
 	}
 
-	CG_DrawCompText(comp, s, comp->color, ITEM_TEXTSTYLE_NORMAL, &cgs.media.limboFont1);
+	CG_DrawCompText(comp, s, comp->colorText, ITEM_TEXTSTYLE_NORMAL, &cgs.media.limboFont1);
 }
 
 /**
@@ -2983,7 +3080,7 @@ static void CG_DrawRespawnTimer(hudComponent_t *comp)
 
 	if (s)
 	{
-		CG_DrawCompText(comp, s, comp->color, blink ? ITEM_TEXTSTYLE_BLINK : ITEM_TEXTSTYLE_NORMAL, &cgs.media.limboFont1);
+		CG_DrawCompText(comp, s, comp->colorText, blink ? ITEM_TEXTSTYLE_BLINK : ITEM_TEXTSTYLE_NORMAL, &cgs.media.limboFont1);
 	}
 }
 
@@ -3005,7 +3102,7 @@ static void CG_DrawSpawnTimer(hudComponent_t *comp)
 
 	if (rt)
 	{
-		CG_DrawCompText(comp, s, comp->color, blink ? ITEM_TEXTSTYLE_BLINK : ITEM_TEXTSTYLE_NORMAL, &cgs.media.limboFont1);
+		CG_DrawCompText(comp, s, comp->colorText, blink ? ITEM_TEXTSTYLE_BLINK : ITEM_TEXTSTYLE_NORMAL, &cgs.media.limboFont1);
 	}
 }
 
@@ -3025,7 +3122,7 @@ static void CG_DrawRoundTimerSimple(hudComponent_t *comp)
 
 	blink = CG_SpawnTimersText(&s, &rt);
 
-	CG_DrawCompText(comp, s, comp->color, blink ? ITEM_TEXTSTYLE_BLINK : ITEM_TEXTSTYLE_NORMAL, &cgs.media.limboFont1);
+	CG_DrawCompText(comp, s, comp->colorText, blink ? ITEM_TEXTSTYLE_BLINK : ITEM_TEXTSTYLE_NORMAL, &cgs.media.limboFont1);
 }
 
 /**
@@ -3061,7 +3158,7 @@ static void CG_DrawRoundTimerNormal(hudComponent_t *comp)
 		s = va("^1%s%s%s", rt, " ", s);
 	}
 
-	CG_DrawCompText(comp, s, comp->color, blink ? ITEM_TEXTSTYLE_BLINK : ITEM_TEXTSTYLE_NORMAL, &cgs.media.limboFont1);
+	CG_DrawCompText(comp, s, comp->colorText, blink ? ITEM_TEXTSTYLE_BLINK : ITEM_TEXTSTYLE_NORMAL, &cgs.media.limboFont1);
 }
 
 /**
@@ -3070,7 +3167,11 @@ static void CG_DrawRoundTimerNormal(hudComponent_t *comp)
  */
 static void CG_DrawRoundTimer(hudComponent_t *comp)
 {
-	if (comp->style == STYLE_NORMAL)
+	if (cgs.clientinfo[cg.clientNum].shoutcaster)
+	{
+		CG_DrawShoutcastTimer();
+	}
+	else if (comp->style == STYLE_NORMAL)
 	{
 		CG_DrawRoundTimerNormal(comp);
 	}
@@ -3096,7 +3197,7 @@ static void CG_DrawLocalTime(hudComponent_t *comp)
 
 	s = CG_LocalTimeText();
 
-	CG_DrawCompText(comp, s, comp->color, ITEM_TEXTSTYLE_NORMAL, &cgs.media.limboFont1);
+	CG_DrawCompText(comp, s, comp->colorText, ITEM_TEXTSTYLE_NORMAL, &cgs.media.limboFont1);
 }
 
 /**
@@ -3230,10 +3331,20 @@ static void CG_DrawDisconnect(hudComponent_t *comp)
 		return;
 	}
 
+	if (comp->showBackGround)
+	{
+		CG_FillRect(comp->location.x, comp->location.y, comp->location.w, comp->location.h, comp->colorBackground);
+	}
+
+	if (comp->showBorder)
+	{
+		CG_DrawRect_FixedBorder(comp->location.x, comp->location.y, comp->location.w, comp->location.h, 1, comp->colorBorder);
+	}
+
 	// also add text in center of screen
 	s = CG_TranslateString("Connection Interrupted");
 	w = CG_Text_Width_Ext(s, comp->scale, 0, &cgs.media.limboFont2);
-	CG_Text_Paint_Ext(Ccg_WideX(320) - w / 2, 100, comp->scale, comp->scale, comp->color, s, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+	CG_Text_Paint_Ext(Ccg_WideX(320) - w / 2, 100, comp->scale, comp->scale, comp->colorText, s, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 
 	// blink the icon
 	if ((cg.time >> 9) & 1)
@@ -3259,7 +3370,7 @@ static void CG_DrawPing(hudComponent_t *comp)
 
 	s = va("Ping %d", cg.snap->ping < 999 ? cg.snap->ping : 999);
 
-	CG_DrawCompText(comp, s, comp->color, ITEM_TEXTSTYLE_NORMAL, &cgs.media.limboFont1);
+	CG_DrawCompText(comp, s, comp->colorText, ITEM_TEXTSTYLE_NORMAL, &cgs.media.limboFont1);
 }
 
 vec4_t colorAW = { 0, 0.5, 0, 0.5f };
@@ -3283,10 +3394,14 @@ static void CG_DrawLagometer(hudComponent_t *comp)
 
 	// draw the graph
 	trap_R_SetColor(NULL);
-	if (comp->style == STYLE_NORMAL)
+	if (comp->showBackGround)
 	{
-		CG_FillRect(comp->location.x, comp->location.y, w2, comp->location.h, HUD_Background);
-		CG_DrawRect_FixedBorder(comp->location.x, comp->location.y, w2, comp->location.h, 1, HUD_Border);
+		CG_FillRect(comp->location.x, comp->location.y, w2, comp->location.h, comp->colorBackground);
+	}
+
+	if (comp->showBorder)
+	{
+		CG_DrawRect_FixedBorder(comp->location.x, comp->location.y, w2, comp->location.h, 1, comp->colorBorder);
 	}
 
 	ax = comp->location.x;
@@ -3430,7 +3545,7 @@ static void CG_DrawLagometer(hudComponent_t *comp)
 		}
 		else
 		{
-			clr = &comp->color;
+			clr = &comp->colorText;
 		}
 
 		// FIXME: see warmup blinky blinky
@@ -3481,7 +3596,7 @@ static void CG_PrintHudComponent(const char *name, hudComponent_t *comp)
 	           name, comp->location.x, comp->location.y, comp->location.w, comp->location.h,
 	           comp->style, comp->visible,
 	           comp->scale,
-	           comp->color[0], comp->color[1], comp->color[2], comp->color[3]);
+	           comp->colorText[0], comp->colorText[1], comp->colorText[2], comp->colorText[3]);
 }
 
 /**
@@ -3595,12 +3710,20 @@ void CG_HUDSave_WriteComponent(fileHandle_t fh, int hudNumber, hudStucture_t *hu
 			       "%-6.1f\t%-6.1f\t%-6.1f\t%-6.1f\t"
 			       "%i\t%i\t"
 			       "%-4.2f\t"
+			       "%-4.2f\t%-4.2f\t%-4.2f\t%-4.2f\t"
+			       "%i\t"
+			       "%-4.2f\t%-4.2f\t%-4.2f\t%-4.2f\t"
+			       "%i\t"
 			       "%-4.2f\t%-4.2f\t%-4.2f\t%-4.2f\n",
 			       hudComponentFields[j].name,
 			       Ccg_Is43Screen() ? comp->location.x : comp->location.x / cgs.adr43, comp->location.y, comp->location.w, comp->location.h,
 			       comp->style, comp->visible,
 			       comp->scale,
-			       comp->color[0], comp->color[1], comp->color[2], comp->color[3]);
+			       comp->colorText[0], comp->colorText[1], comp->colorText[2], comp->colorText[3],
+			       comp->showBackGround,
+			       comp->colorBackground[0], comp->colorBackground[1], comp->colorBackground[2], comp->colorBackground[3],
+			       comp->showBorder,
+			       comp->colorBorder[0], comp->colorBorder[1], comp->colorBorder[2], comp->colorBorder[3]);
 			trap_FS_Write(s, strlen(s), fh);
 		}
 	}
@@ -3818,7 +3941,13 @@ static void CG_HudEditorColor_Finish(panel_button_t *button)
 
 	trap_Cvar_VariableStringBuffer(button->text, buffer, MAX_EDITFIELD);
 
-	comp->color[button->data[3]] = Com_Clamp(0, 1.0f, Q_atof(buffer) / 255.0f);
+	switch (button->data[4])
+	{
+	case 0: comp->colorText[button->data[3]]       = Com_Clamp(0, 1.0f, Q_atof(buffer) / 255.0f); break;
+	case 1: comp->colorBackground[button->data[3]] = Com_Clamp(0, 1.0f, Q_atof(buffer) / 255.0f); break;
+	case 2: comp->colorBorder[button->data[3]]     = Com_Clamp(0, 1.0f, Q_atof(buffer) / 255.0f); break;
+	default: break;
+	}
 
 	BG_PanelButtons_SetFocusButton(NULL);
 }
@@ -3849,6 +3978,40 @@ qboolean CG_HudEditorStyle_CheckboxKeyDown(panel_button_t *button, int key)
 	hudComponent_t *comp = (hudComponent_t *)((char *)activehud + hudComponentFields[button->data[1]].offset);
 
 	comp->style = button->data[2] = !button->data[2];
+
+	BG_PanelButtons_SetFocusButton(NULL);
+
+	SOUND_FILTER;
+
+	return qtrue;
+}
+
+/**
+* @brief CG_HudEditorShowBackground_CheckboxKeyDown
+* @param button
+*/
+qboolean CG_HudEditorShowBackground_CheckboxKeyDown(panel_button_t *button, int key)
+{
+	hudComponent_t *comp = (hudComponent_t *)((char *)activehud + hudComponentFields[button->data[1]].offset);
+
+	comp->showBackGround = button->data[2] = !button->data[2];
+
+	BG_PanelButtons_SetFocusButton(NULL);
+
+	SOUND_FILTER;
+
+	return qtrue;
+}
+
+/**
+* @brief CG_HudEditorShowBorder_CheckboxKeyDown
+* @param button
+*/
+qboolean CG_HudEditorShowBorder_CheckboxKeyDown(panel_button_t *button, int key)
+{
+	hudComponent_t *comp = (hudComponent_t *)((char *)activehud + hudComponentFields[button->data[1]].offset);
+
+	comp->showBorder = button->data[2] = !button->data[2];
 
 	BG_PanelButtons_SetFocusButton(NULL);
 
@@ -4098,7 +4261,7 @@ static panel_button_t hudEditorHudDropdown =
 	NULL,
 	"hudeditor_huds",
 	{ SCREEN_OFFSETX,              SCREEN_OFFSETY,  40, 10 },
-	{ 0,                           0,               0,  0, 1, 0, 0, 0},
+	{ 0,                           0,               0,  0, 0, 0, 0, 1},
 	&hudEditorFont_Dropdown,       // font
 	CG_HudEditor_Dropdown_KeyDown, // keyDown
 	CG_HudEditor_HudDropdown_KeyUp,// keyUp
@@ -4116,7 +4279,7 @@ static panel_button_t hudEditorCompDropdown =
 	NULL,
 	"hudeditor_comps",
 	{ SCREEN_OFFSETX + INPUT_OFFSET_WIDTH,SCREEN_OFFSETY,                      120, 10 },
-	{ 0,                            0,                                   0,   0, 1, 0, 0, 0},
+	{ 0,                            0,                                   0,   0, 0, 0, 0, 1},
 	&hudEditorFont_Dropdown,        // font
 	CG_HudEditor_Dropdown_KeyDown,  // keyDown
 	CG_HudEditor_CompDropdown_KeyUp,// keyUp
@@ -4129,8 +4292,8 @@ static panel_button_t hudEditorBackGround =
 {
 	NULL,
 	"hudeditor_background",
-	{ SCREEN_OFFSETX - 16,  0 + SCREEN_OFFSETY - 2, 240, 95 },
-	{ 0,                    0,                      0,   0, 1, 0, 0, 0},
+	{ SCREEN_OFFSETX - 16,  0 + SCREEN_OFFSETY - 2, 240, 120 },
+	{ 0,                    0,                      0,   0, 0, 0, 0, 1},
 	&hudEditorFont,         // font
 	NULL,                   // keyDown
 	NULL,                   // keyUp
@@ -4145,7 +4308,7 @@ static panel_button_t hudEditorX =
 	"hudeditor_x",
 	{ SCREEN_OFFSETX,       0 + SCREEN_OFFSETY + INPUT_HEIGHT + 2,     INPUT_WIDTH, INPUT_HEIGHT },
 	// [0] used by ui_shared EditClick, [1] link to hud, [2] used by ui_shared EditClick [3] additional data like colorRGB, [4] differentiate between hud editor element and hud element
-	{ 0,                    0,                                         0,           0, 1, 0, 0, 0},
+	{ 0,                    0,                                         0,           0, 0, 0, 0, 1},
 	&hudEditorFont,         // font
 	BG_PanelButton_EditClick,// keyDown
 	NULL,                   // keyUp
@@ -4159,7 +4322,7 @@ static panel_button_t hudEditorY =
 	NULL,
 	"hudeditor_y",
 	{ INPUT_OFFSET_WIDTH + SCREEN_OFFSETX,0 + SCREEN_OFFSETY + INPUT_HEIGHT + 2,                          INPUT_WIDTH, INPUT_HEIGHT },
-	{ 0,                    0,                                                              0,           0, 1, 0, 0, 0},
+	{ 0,                    0,                                                              0,           0, 0, 0, 0, 1},
 	&hudEditorFont,         // font
 	BG_PanelButton_EditClick,// keyDown
 	NULL,                   // keyUp
@@ -4173,7 +4336,7 @@ static panel_button_t hudEditorW =
 	NULL,
 	"hudeditor_w",
 	{ SCREEN_OFFSETX,        SCREEN_OFFSETY + 2 * (INPUT_HEIGHT + 2),     INPUT_WIDTH, INPUT_HEIGHT },
-	{ 0,                     0,                                           0,           0, 1, 0, 0, 0},
+	{ 0,                     0,                                           0,           0, 0, 0, 0, 1},
 	&hudEditorFont,          // font
 	BG_PanelButton_EditClick,// keyDown
 	NULL,                    // keyUp
@@ -4187,7 +4350,7 @@ static panel_button_t hudEditorH =
 	NULL,
 	"hudeditor_h",
 	{ INPUT_OFFSET_WIDTH + SCREEN_OFFSETX,SCREEN_OFFSETY + 2 * (INPUT_HEIGHT + 2),                          INPUT_WIDTH, INPUT_HEIGHT },
-	{ 0,                      0,                                                                0,           0, 1, 0, 0, 0},
+	{ 0,                      0,                                                                0,           0, 0, 0, 0, 1},
 	&hudEditorFont,           // font
 	BG_PanelButton_EditClick, // keyDown
 	NULL,                     // keyUp
@@ -4201,7 +4364,7 @@ static panel_button_t hudEditorScale =
 	NULL,
 	"hudeditor_s",
 	{ (2 * INPUT_OFFSET_WIDTH) + SCREEN_OFFSETX,SCREEN_OFFSETY + 2 * (INPUT_HEIGHT + 2),                                INPUT_WIDTH, INPUT_HEIGHT },
-	{ 0,                     0,                                                                      0,           0, 1, 0, 0, 0},
+	{ 0,                     0,                                                                      0,           0, 0, 0, 0, 1},
 	&hudEditorFont,          // font
 	BG_PanelButton_EditClick,// keyDown
 	NULL,                    // keyUp
@@ -4210,12 +4373,12 @@ static panel_button_t hudEditorScale =
 	0
 };
 
-static panel_button_t hudEditorColorR =
+static panel_button_t hudEditorColorTextR =
 {
 	NULL,
 	"hudeditor_colorR",
 	{ SCREEN_OFFSETX,        SCREEN_OFFSETY + 3 * (INPUT_HEIGHT + 2),INPUT_WIDTH, INPUT_HEIGHT },
-	{ 0,                     0,                                      0,           0, 1, 0, 0, 0},
+	{ 0,                     0,                                      0,           0, 0, 0, 0, 1},
 	&hudEditorFont,          // font
 	BG_PanelButton_EditClick,// keyDown
 	NULL,                    // keyUp
@@ -4224,12 +4387,12 @@ static panel_button_t hudEditorColorR =
 	0
 };
 
-static panel_button_t hudEditorColorG =
+static panel_button_t hudEditorColorTextG =
 {
 	NULL,
 	"hudeditor_colorG",
 	{ INPUT_OFFSET_WIDTH + SCREEN_OFFSETX,SCREEN_OFFSETY + 3 * (INPUT_HEIGHT + 2),                     INPUT_WIDTH, INPUT_HEIGHT },
-	{ 0,                     0,                                                           0,           1, 1, 0, 0, 0},
+	{ 0,                     0,                                                           0,           1, 0, 0, 0, 1},
 	&hudEditorFont,          // font
 	BG_PanelButton_EditClick,// keyDown
 	NULL,                    // keyUp
@@ -4238,12 +4401,12 @@ static panel_button_t hudEditorColorG =
 	0
 };
 
-static panel_button_t hudEditorColorB =
+static panel_button_t hudEditorColorTextB =
 {
 	NULL,
 	"hudeditor_colorB",
 	{ (2 * INPUT_OFFSET_WIDTH) + SCREEN_OFFSETX,SCREEN_OFFSETY + 3 * (INPUT_HEIGHT + 2),                           INPUT_WIDTH, INPUT_HEIGHT },
-	{ 0,                     0,                                                                 0,           2, 1, 0, 0, 0},
+	{ 0,                     0,                                                                 0,           2, 0, 0, 0, 1},
 	&hudEditorFont,          // font
 	BG_PanelButton_EditClick,// keyDown
 	NULL,                    // keyUp
@@ -4252,12 +4415,124 @@ static panel_button_t hudEditorColorB =
 	0
 };
 
-static panel_button_t hudEditorColorA =
+static panel_button_t hudEditorColorTextA =
 {
 	NULL,
 	"hudeditor_colorA",
 	{ (3 * INPUT_OFFSET_WIDTH) + SCREEN_OFFSETX,SCREEN_OFFSETY + 3 * (INPUT_HEIGHT + 2),                           INPUT_WIDTH, INPUT_HEIGHT },
-	{ 0,                     0,                                                                 0,           3, 1, 0, 0, 0},
+	{ 0,                     0,                                                                 0,           3, 0, 0, 0, 1},
+	&hudEditorFont,          // font
+	BG_PanelButton_EditClick,// keyDown
+	NULL,                    // keyUp
+	CG_HudEditor_RenderEdit,
+	CG_HudEditorColor_Finish,
+	0
+};
+
+static panel_button_t hudEditorColorBackgroundR =
+{
+	NULL,
+	"hudeditor_colorbackgroundR",
+	{ SCREEN_OFFSETX,            SCREEN_OFFSETY + 4 * (INPUT_HEIGHT + 2),INPUT_WIDTH, INPUT_HEIGHT },
+	{ 0,                         0,                            0,           0, 1, 0, 0, 1},
+	&hudEditorFont,              // font
+	BG_PanelButton_EditClick,    // keyDown
+	NULL,                        // keyUp
+	CG_HudEditor_RenderEdit,
+	CG_HudEditorColor_Finish,
+	0
+};
+
+static panel_button_t hudEditorColorBackgroundG =
+{
+	NULL,
+	"hudeditor_colorbackgroundG",
+	{ INPUT_OFFSET_WIDTH + SCREEN_OFFSETX,SCREEN_OFFSETY + 4 * (INPUT_HEIGHT + 2),           INPUT_WIDTH, INPUT_HEIGHT },
+	{ 0,                         0,                                                 0,           1, 1, 0, 0, 1},
+	&hudEditorFont,              // font
+	BG_PanelButton_EditClick,    // keyDown
+	NULL,                        // keyUp
+	CG_HudEditor_RenderEdit,
+	CG_HudEditorColor_Finish,
+	0
+};
+
+static panel_button_t hudEditorColorBackgroundB =
+{
+	NULL,
+	"hudeditor_colorbackgroundB",
+	{ (2 * INPUT_OFFSET_WIDTH) + SCREEN_OFFSETX,SCREEN_OFFSETY + 4 * (INPUT_HEIGHT + 2),                 INPUT_WIDTH, INPUT_HEIGHT },
+	{ 0,                         0,                                                       0,           2, 1, 0, 0, 1},
+	&hudEditorFont,              // font
+	BG_PanelButton_EditClick,    // keyDown
+	NULL,                        // keyUp
+	CG_HudEditor_RenderEdit,
+	CG_HudEditorColor_Finish,
+	0
+};
+
+static panel_button_t hudEditorColorBackgroundA =
+{
+	NULL,
+	"hudeditor_colorbackgroundA",
+	{ (3 * INPUT_OFFSET_WIDTH) + SCREEN_OFFSETX,SCREEN_OFFSETY + 4 * (INPUT_HEIGHT + 2),                 INPUT_WIDTH, INPUT_HEIGHT },
+	{ 0,                         0,                                                       0,           3, 1, 0, 0, 1},
+	&hudEditorFont,              // font
+	BG_PanelButton_EditClick,    // keyDown
+	NULL,                        // keyUp
+	CG_HudEditor_RenderEdit,
+	CG_HudEditorColor_Finish,
+	0
+};
+
+static panel_button_t hudEditorColorBorderR =
+{
+	NULL,
+	"hudeditor_colorborderR",
+	{ SCREEN_OFFSETX,        SCREEN_OFFSETY + 5 * (INPUT_HEIGHT + 2),INPUT_WIDTH, INPUT_HEIGHT },
+	{ 0,                     0,                                0,           0, 2, 0, 0, 1},
+	&hudEditorFont,          // font
+	BG_PanelButton_EditClick,// keyDown
+	NULL,                    // keyUp
+	CG_HudEditor_RenderEdit,
+	CG_HudEditorColor_Finish,
+	0
+};
+
+static panel_button_t hudEditorColorBorderG =
+{
+	NULL,
+	"hudeditor_colorborderG",
+	{ INPUT_OFFSET_WIDTH + SCREEN_OFFSETX,SCREEN_OFFSETY + 5 * (INPUT_HEIGHT + 2),               INPUT_WIDTH, INPUT_HEIGHT },
+	{ 0,                     0,                                                     0,           1, 2, 0, 0, 1},
+	&hudEditorFont,          // font
+	BG_PanelButton_EditClick,// keyDown
+	NULL,                    // keyUp
+	CG_HudEditor_RenderEdit,
+	CG_HudEditorColor_Finish,
+	0
+};
+
+static panel_button_t hudEditorColorBorderB =
+{
+	NULL,
+	"hudeditor_colorborderB",
+	{ (2 * INPUT_OFFSET_WIDTH) + SCREEN_OFFSETX,SCREEN_OFFSETY + 5 * (INPUT_HEIGHT + 2),                     INPUT_WIDTH, INPUT_HEIGHT },
+	{ 0,                     0,                                                           0,           2, 2, 0, 0, 1},
+	&hudEditorFont,          // font
+	BG_PanelButton_EditClick,// keyDown
+	NULL,                    // keyUp
+	CG_HudEditor_RenderEdit,
+	CG_HudEditorColor_Finish,
+	0
+};
+
+static panel_button_t hudEditorColorBorderA =
+{
+	NULL,
+	"hudeditor_colorborderA",
+	{ (3 * INPUT_OFFSET_WIDTH) + SCREEN_OFFSETX,SCREEN_OFFSETY + 5 * (INPUT_HEIGHT + 2),                     INPUT_WIDTH, INPUT_HEIGHT },
+	{ 0,                     0,                                                           0,           3, 2, 0, 0, 1},
 	&hudEditorFont,          // font
 	BG_PanelButton_EditClick,// keyDown
 	NULL,                    // keyUp
@@ -4270,8 +4545,8 @@ static panel_button_t hudEditorVisible =
 {
 	NULL,
 	"hudeditor_visible",
-	{ SCREEN_OFFSETX,           SCREEN_OFFSETY + 4 * (INPUT_HEIGHT + 2) + 6,CHECKBOX_SIZE, CHECKBOX_SIZE },
-	{ 0,                        0,                                         0,             0, 1, 0, 0, 0 },
+	{ SCREEN_OFFSETX,           SCREEN_OFFSETY + 6 * (INPUT_HEIGHT + 2) + 6,CHECKBOX_SIZE, CHECKBOX_SIZE },
+	{ 0,                        0,                                         0,             0, 0, 0, 0, 1 },
 	NULL,                       // font
 	CG_HudEditorVisible_CheckboxKeyDown,// keyDown
 	NULL,                       // keyUp
@@ -4284,10 +4559,38 @@ static panel_button_t hudEditorStyle =
 {
 	NULL,
 	"hudeditor_style",
-	{ INPUT_OFFSET_WIDTH + SCREEN_OFFSETX,SCREEN_OFFSETY + 4 * (INPUT_HEIGHT + 2) + 6,                      CHECKBOX_SIZE, CHECKBOX_SIZE },
-	{ 0,                        0,                                                                0,             0, 1, 0, 0, 0 },
+	{ INPUT_OFFSET_WIDTH + SCREEN_OFFSETX,SCREEN_OFFSETY + 6 * (INPUT_HEIGHT + 2) + 6,                      CHECKBOX_SIZE, CHECKBOX_SIZE },
+	{ 0,                        0,                                                                0,             0, 0, 0, 0, 1 },
 	NULL,                       // font
 	CG_HudEditorStyle_CheckboxKeyDown,// keyDown
+	NULL,                       // keyUp
+	CG_HudEditor_RenderCheckbox,
+	NULL,
+	0
+};
+
+static panel_button_t hudEditorShowBackground =
+{
+	NULL,
+	"hudeditor_showBackground",
+	{ INPUT_OFFSET_WIDTH * 2 + SCREEN_OFFSETX,SCREEN_OFFSETY + 6 *(INPUT_HEIGHT + 2) + 6,                 CHECKBOX_SIZE, CHECKBOX_SIZE },
+	{ 0,                        0,                                                          0,             0, 0, 0, 0, 1 },
+	NULL,                       // font
+	CG_HudEditorShowBackground_CheckboxKeyDown,// keyDown
+	NULL,                       // keyUp
+	CG_HudEditor_RenderCheckbox,
+	NULL,
+	0
+};
+
+static panel_button_t hudEditorShowBorder =
+{
+	NULL,
+	"hudeditor_showBorder",
+	{ INPUT_OFFSET_WIDTH * 3 + SCREEN_OFFSETX,SCREEN_OFFSETY + 6 *(INPUT_HEIGHT + 2) + 6,                     CHECKBOX_SIZE, CHECKBOX_SIZE },
+	{ 0,                        0,                                                              0,             0, 0, 0, 0, 1 },
+	NULL,                       // font
+	CG_HudEditorShowBorder_CheckboxKeyDown,// keyDown
 	NULL,                       // keyUp
 	CG_HudEditor_RenderCheckbox,
 	NULL,
@@ -4298,7 +4601,7 @@ static panel_button_t hudEditorSave =
 {
 	NULL,
 	"Save",
-	{ SCREEN_OFFSETX,         SCREEN_OFFSETY + 5 * (INPUT_HEIGHT + 2) + 6,            BUTTON_WIDTH, BUTTON_HEIGHT },
+	{ SCREEN_OFFSETX,         SCREEN_OFFSETY + 7 * (INPUT_HEIGHT + 2) + 6,            BUTTON_WIDTH, BUTTON_HEIGHT },
 	{ 0,                      0,                                                      0,            0, 0, 0, 0, 0 },
 	&hudEditorFont,           // font
 	CG_HudEditorSave_KeyDown, // keyDown
@@ -4312,7 +4615,7 @@ static panel_button_t hudEditorClone =
 {
 	NULL,
 	"Clone",
-	{ BUTTON_WIDTH + 4 + SCREEN_OFFSETX,SCREEN_OFFSETY + 5 * (INPUT_HEIGHT + 2) + 6,                              BUTTON_WIDTH, BUTTON_HEIGHT },
+	{ BUTTON_WIDTH + 4 + SCREEN_OFFSETX,SCREEN_OFFSETY + 7 * (INPUT_HEIGHT + 2) + 6,                              BUTTON_WIDTH, BUTTON_HEIGHT },
 	{ 0,                      0,                                                                        0,            0, 0, 0, 0, 0 },
 	&hudEditorFont,           // font
 	CG_HudEditorClone_KeyDown,// keyDown
@@ -4326,7 +4629,7 @@ static panel_button_t hudEditorDelete =
 {
 	NULL,
 	"Delete",
-	{ (2 * (BUTTON_WIDTH + 4)) + SCREEN_OFFSETX,SCREEN_OFFSETY + 5 * (INPUT_HEIGHT + 2) + 6,                                     BUTTON_WIDTH, BUTTON_HEIGHT },
+	{ (2 * (BUTTON_WIDTH + 4)) + SCREEN_OFFSETX,SCREEN_OFFSETY + 7 * (INPUT_HEIGHT + 2) + 6,                                     BUTTON_WIDTH, BUTTON_HEIGHT },
 	{ 0,                      0,                                                                               0,            0, 0, 0, 0, 0 },
 	&hudEditorFont,           // font
 	CG_HudEditorDelete_KeyDown,// keyDown
@@ -4339,14 +4642,16 @@ static panel_button_t hudEditorDelete =
 static panel_button_t *hudEditor[] =
 {
 	&hudEditorBackGround,
-	&hudEditorX,          &hudEditorY,
-	&hudEditorW,          &hudEditorH,            &hudEditorScale,
-	&hudEditorColorR,     &hudEditorColorG,       &hudEditorColorB, &hudEditorColorA,
-	&hudEditorVisible,    &hudEditorStyle,
-	&hudEditorSave,       &hudEditorClone,        &hudEditorDelete,
+	&hudEditorX,               &hudEditorY,
+	&hudEditorW,               &hudEditorH,                &hudEditorScale,
+	&hudEditorColorTextR,      &hudEditorColorTextG,       &hudEditorColorTextB,       &hudEditorColorTextA,
+	&hudEditorColorBackgroundR,&hudEditorColorBackgroundG, &hudEditorColorBackgroundB, &hudEditorColorBackgroundA,
+	&hudEditorColorBorderR,    &hudEditorColorBorderG,     &hudEditorColorBorderB,     &hudEditorColorBorderA,
+	&hudEditorVisible,         &hudEditorStyle,            &hudEditorShowBackground,   &hudEditorShowBorder,
+	&hudEditorSave,            &hudEditorClone,            &hudEditorDelete,
 
 	// Below here all components that should draw on top
-	&hudEditorHudDropdown,&hudEditorCompDropdown,
+	&hudEditorHudDropdown,     &hudEditorCompDropdown,
 	NULL,
 };
 
@@ -4381,27 +4686,65 @@ static void CG_HudEditorUpdateFields(panel_button_t *button)
 	trap_Cvar_Set("hudeditor_s", buffer);
 	hudEditorScale.data[1] = button->data[0];
 
-	Com_sprintf(buffer, sizeof(buffer), "%0.2f", comp->color[0] * 255.0f);
+	Com_sprintf(buffer, sizeof(buffer), "%0.2f", comp->colorText[0] * 255.0f);
 	trap_Cvar_Set("hudeditor_colorR", buffer);
-	hudEditorColorR.data[1] = button->data[0];
+	hudEditorColorTextR.data[1] = button->data[0];
 
-	Com_sprintf(buffer, sizeof(buffer), "%0.2f", comp->color[1] * 255.0f);
+	Com_sprintf(buffer, sizeof(buffer), "%0.2f", comp->colorText[1] * 255.0f);
 	trap_Cvar_Set("hudeditor_colorG", buffer);
-	hudEditorColorG.data[1] = button->data[0];
+	hudEditorColorTextG.data[1] = button->data[0];
 
-	Com_sprintf(buffer, sizeof(buffer), "%0.2f", comp->color[2] * 255.0f);
+	Com_sprintf(buffer, sizeof(buffer), "%0.2f", comp->colorText[2] * 255.0f);
 	trap_Cvar_Set("hudeditor_colorB", buffer);
-	hudEditorColorB.data[1] = button->data[0];
+	hudEditorColorTextB.data[1] = button->data[0];
 
-	Com_sprintf(buffer, sizeof(buffer), "%0.2f", comp->color[3] * 255.0f);
+	Com_sprintf(buffer, sizeof(buffer), "%0.2f", comp->colorText[3] * 255.0f);
 	trap_Cvar_Set("hudeditor_colorA", buffer);
-	hudEditorColorA.data[1] = button->data[0];
+	hudEditorColorTextA.data[1] = button->data[0];
+
+	Com_sprintf(buffer, sizeof(buffer), "%0.2f", comp->colorBackground[0] * 255.0f);
+	trap_Cvar_Set("hudeditor_colorbackgroundR", buffer);
+	hudEditorColorBackgroundR.data[1] = button->data[0];
+
+	Com_sprintf(buffer, sizeof(buffer), "%0.2f", comp->colorBackground[1] * 255.0f);
+	trap_Cvar_Set("hudeditor_colorbackgroundG", buffer);
+	hudEditorColorBackgroundG.data[1] = button->data[0];
+
+	Com_sprintf(buffer, sizeof(buffer), "%0.2f", comp->colorBackground[2] * 255.0f);
+	trap_Cvar_Set("hudeditor_colorbackgroundB", buffer);
+	hudEditorColorBackgroundB.data[1] = button->data[0];
+
+	Com_sprintf(buffer, sizeof(buffer), "%0.2f", comp->colorBackground[3] * 255.0f);
+	trap_Cvar_Set("hudeditor_colorbackgroundA", buffer);
+	hudEditorColorBackgroundA.data[1] = button->data[0];
+
+	Com_sprintf(buffer, sizeof(buffer), "%0.2f", comp->colorBorder[0] * 255.0f);
+	trap_Cvar_Set("hudeditor_colorborderR", buffer);
+	hudEditorColorBorderR.data[1] = button->data[0];
+
+	Com_sprintf(buffer, sizeof(buffer), "%0.2f", comp->colorBorder[1] * 255.0f);
+	trap_Cvar_Set("hudeditor_colorborderG", buffer);
+	hudEditorColorBorderG.data[1] = button->data[0];
+
+	Com_sprintf(buffer, sizeof(buffer), "%0.2f", comp->colorBorder[2] * 255.0f);
+	trap_Cvar_Set("hudeditor_colorborderB", buffer);
+	hudEditorColorBorderB.data[1] = button->data[0];
+
+	Com_sprintf(buffer, sizeof(buffer), "%0.2f", comp->colorBorder[3] * 255.0f);
+	trap_Cvar_Set("hudeditor_colorborderA", buffer);
+	hudEditorColorBorderA.data[1] = button->data[0];
 
 	hudEditorVisible.data[1] = button->data[0];
 	hudEditorVisible.data[2] = comp->visible;
 
 	hudEditorStyle.data[1] = button->data[0];
 	hudEditorStyle.data[2] = comp->style;
+
+	hudEditorShowBackground.data[1] = button->data[0];
+	hudEditorShowBackground.data[2] = comp->showBackGround;
+
+	hudEditorShowBorder.data[1] = button->data[0];
+	hudEditorShowBorder.data[2] = comp->showBorder;
 }
 
 /**
@@ -4438,13 +4781,13 @@ static qboolean CG_HudEditor_KeyDown(panel_button_t *button, int key)
 		if (lastFocusButton && BG_CursorInRect(&lastFocusButton->rect))
 		{
 			CG_HudEditorUpdateFields(lastFocusButton);
-			lastFocusButton->data[4] = 0;
+			lastFocusButton->data[7] = 0;
 		}
 		else
 		{
 			CG_HudEditorUpdateFields(button);
 			BG_PanelButtons_SetFocusButton(button);
-			button->data[4] = 0;
+			button->data[7] = 0;
 		}
 		return qtrue;
 	}
@@ -4465,13 +4808,13 @@ static qboolean CG_HudEditor_KeyUp(panel_button_t *button, int key)
 		if (lastFocusButton && lastFocusButtonMoved)
 		{
 			lastFocusButtonMoved     = qfalse;
-			lastFocusButton->data[4] = 1;
+			lastFocusButton->data[7] = 1;
 		}
 		else
 		{
 			lastFocusButton = button;
 			BG_PanelButtons_SetFocusButton(NULL);
-			button->data[4] = 1;
+			button->data[7] = 1;
 		}
 
 		return qtrue;
@@ -4763,7 +5106,7 @@ void CG_HudEditor_KeyHandling(int key, qboolean down)
 			                                   0 : (SCREEN_HEIGHT - comp->location.h) / 2.f); break;
 		case K_PGDN:       comp->location.y = ((comp->location.y < (SCREEN_HEIGHT - comp->location.h) / 2.f) ?
 			                                   (SCREEN_HEIGHT - comp->location.h) / 2.f : SCREEN_HEIGHT - comp->location.h); break;
-        case K_HOME:       comp->location.x = (((int)comp->location.x <= (int)((Ccg_WideX(SCREEN_WIDTH) - comp->location.w) / 2.f)) ?
+		case K_HOME:       comp->location.x = (((int)comp->location.x <= (int)((Ccg_WideX(SCREEN_WIDTH) - comp->location.w) / 2.f)) ?
 			                                   0 : (Ccg_WideX(SCREEN_WIDTH) - comp->location.w) / 2.f); break;
 		case K_END:        comp->location.x = ((comp->location.x < (Ccg_WideX(SCREEN_WIDTH) - comp->location.w) / 2.f) ?
 			                                   (Ccg_WideX(SCREEN_WIDTH) - comp->location.w) / 2.f: Ccg_WideX(SCREEN_WIDTH) - comp->location.w); break;
@@ -4792,7 +5135,7 @@ void CG_HudEditorMouseMove_Handling(int x, int y)
 	static float   offsetX = 0;
 	static float   offsetY = 0;
 
-	if (button && !button->data[4] && BG_CursorInRect(&button->rect))
+	if (button && !button->data[7] && BG_CursorInRect(&button->rect))
 	{
 		hudComponent_t *comp = (hudComponent_t *)((char *)activehud + hudComponentFields[button->data[0]].offset);
 

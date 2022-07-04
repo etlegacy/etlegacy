@@ -2787,7 +2787,6 @@ extern vmCvar_t cg_refereePassword;
 extern vmCvar_t cg_atmosphericEffects;
 
 extern vmCvar_t cg_debugSkills;
-extern vmCvar_t cg_drawFireteamOverlay;
 
 // some optimization cvars
 extern vmCvar_t cg_instanttapout;
@@ -2817,8 +2816,6 @@ extern vmCvar_t cg_fireteamLocationAlign;
 extern vmCvar_t cg_fireteamNameMaxChars;
 extern vmCvar_t cg_fireteamNameAlign;
 extern vmCvar_t cg_fireteamSprites;
-extern vmCvar_t cg_fireteamAlpha;
-extern vmCvar_t cg_fireteamBgAlpha;
 
 extern vmCvar_t cg_simpleItems;
 extern vmCvar_t cg_simpleItemsScale;
@@ -2860,7 +2857,6 @@ extern vmCvar_t cg_scoreboard;
 
 extern vmCvar_t cg_quickchat;
 
-extern vmCvar_t cg_drawspeed;
 extern vmCvar_t cg_drawUnit;
 
 extern vmCvar_t cg_visualEffects;  ///< turn invisible (0) / visible (1) visual effect (i.e airstrike plane, debris ...)
@@ -2874,8 +2870,6 @@ extern vmCvar_t cg_shoutcastDrawHealth;
 extern vmCvar_t cg_shoutcastGrenadeTrail;
 extern vmCvar_t cg_shoutcastDrawMinimap;
 
-extern vmCvar_t cg_chatAlpha;
-extern vmCvar_t cg_chatBackgroundAlpha;
 extern vmCvar_t cg_chatShadow;
 
 extern vmCvar_t cg_activateLean;
@@ -3104,7 +3098,6 @@ void CG_DrawShoutcastPlayerList(void);
 void CG_DrawShoutcastPlayerStatus(void);
 void CG_DrawShoutcastTimer(void);
 void CG_DrawShoutcastPowerups(void);
-void CG_DrawMinimap(void);
 
 void CG_ToggleShoutcasterMode(int shoutcaster);
 void CG_ShoutcastCheckKeyCatcher(int keycatcher);
@@ -4098,7 +4091,11 @@ typedef struct hudComponent_s
 	int visible;
 	int style;
 	float scale;
-	vec4_t color;
+	vec4_t colorText;
+	int showBackGround;
+	vec4_t colorBackground;
+	int showBorder;
+	vec4_t colorBorder;
 	int offset;
 	void (*draw)(struct hudComponent_s *comp);
 } hudComponent_t;
@@ -4149,8 +4146,8 @@ typedef struct hudStructure_s
 	hudComponent_t speed;
 	hudComponent_t lagometer;
 	hudComponent_t disconnect;
-    hudComponent_t chat;    
-    hudComponent_t spectatorstatus;       // 40
+	hudComponent_t chat;
+	hudComponent_t spectatorstatus;       // 40
 
 	hudComponent_t *components[HUD_COMPONENTS_NUM];
 } hudStucture_t;

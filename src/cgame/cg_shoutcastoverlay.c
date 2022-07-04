@@ -84,25 +84,6 @@ static vec4_t colorAxis   = { 0.749f, 0.129f, 0.129f, 0.45f };
 int players[12];
 
 /**
-* @brief CG_DrawMinimap
-*/
-void CG_DrawMinimap(void)
-{
-	// FIXME: this cvar seems redundant as of now, can use cg_drawCompass instead
-	if (!cg_shoutcastDrawMinimap.integer)
-	{
-		return;
-	}
-
-	rectDef_t location;
-	location.x = MINIMAP_X;
-	location.y = MINIMAP_Y;
-	location.w = MINIMAP_WIDTH;
-	location.h = MINIMAP_HEIGHT;
-	CG_DrawNewCompass(&CG_GetActiveHUD()->compass);
-}
-
-/**
 * @brief CG_GetPlayerCurrentWeapon
 * @param[in] player
 */

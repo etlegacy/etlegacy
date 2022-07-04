@@ -381,7 +381,6 @@ void CG_DrawFireTeamOverlay(hudComponent_t *comp)
 	float          y = comp->location.y;
 	float          locwidth, namewidth, weapIconWidthScale;
 	int            i, puwidth, lineX;
-	int            boxWidth               = 90;
 	int            bestNameWidth          = -1;
 	int            bestLocWidth           = -1;
 	int            bestWeapIconWidthScale = -1;
@@ -395,17 +394,18 @@ void CG_DrawFireTeamOverlay(hudComponent_t *comp)
 	int            nameMaxLen;
 
 	// colors and fonts for overlays
-	vec4_t FT_bg      = { 0.16f, 0.2f, 0.17f, 0.8f };           // header
-	vec4_t FT_bg2     = { 0.0f, 0.0f, 0.0f, 0.3f };             // box itself
-	vec4_t FT_border  = { 0.5f, 0.5f, 0.5f, 0.5f };             // the border
 	vec4_t FT_select  = { 0.5f, 0.5f, 0.2f, 0.3f };             // selected member
-	vec4_t FT_text    = { 0.6f, 0.6f, 0.6f, 1.0f };             // "uncolored" text
 	vec4_t iconColor  = { 1.0f, 1.0f, 1.0f, 1.0f };             // icon "color", used for alpha adjustments
 	vec4_t textWhite  = { 1.0f, 1.0f, 1.0f, 1.0f };             // regular text
 	vec4_t textYellow = { 1.0f, 1.0f, 0.0f, 1.0f };             // yellow text for health drawing
 	vec4_t textRed    = { 1.0f, 0.0f, 0.0f, 1.0f };             // red text for health drawing
 
-	if (!cg_drawFireteamOverlay.integer || !CG_IsOnFireteam(cg.clientNum))
+	if (cgs.clientinfo[cg.clientNum].shoutcaster)
+	{
+		return;
+	}
+
+	if (!CG_IsOnFireteam(cg.clientNum))
 	{
 		return;
 	}
@@ -533,32 +533,26 @@ void CG_DrawFireTeamOverlay(hudComponent_t *comp)
 	heightIconsOffset = (h - heightText * 2) * 0.5;
 	spacingWidth      = CG_Text_Width_Ext_Float(" ", comp->scale, 0, FONT_TEXT);
 
-	boxWidth += bestLocWidth + bestNameWidth;
-
-	if (cg_fireteamLatchedClass.integer)
-	{
-		boxWidth += 28;
-	}
-
 	// fireteam alpha adjustments
 
 	// set background alpha first
-	FT_bg2[3] = Com_Clamp(0.0f, 1.0f, cg_fireteamBgAlpha.value);
+	FT_select[3]  *= comp->colorText[3];
+	iconColor[3]  *= comp->colorText[3];
+	textWhite[3]  *= comp->colorText[3];
+	textYellow[3] *= comp->colorText[3];
+	textRed[3]    *= comp->colorText[3];
 
-	FT_bg[3]      *= Com_Clamp(0.0f, 1.0f, cg_fireteamAlpha.value);
-	FT_bg2[3]     *= Com_Clamp(0.0f, 1.0f, cg_fireteamAlpha.value);
-	FT_border[3]  *= Com_Clamp(0.0f, 1.0f, cg_fireteamAlpha.value);
-	FT_select[3]  *= Com_Clamp(0.0f, 1.0f, cg_fireteamAlpha.value);
-	FT_text[3]    *= Com_Clamp(0.0f, 1.0f, cg_fireteamAlpha.value);
-	iconColor[3]  *= Com_Clamp(0.0f, 1.0f, cg_fireteamAlpha.value);
-	textWhite[3]  *= Com_Clamp(0.0f, 1.0f, cg_fireteamAlpha.value);
-	textYellow[3] *= Com_Clamp(0.0f, 1.0f, cg_fireteamAlpha.value);
-	textRed[3]    *= Com_Clamp(0.0f, 1.0f, cg_fireteamAlpha.value);
+	if (comp->showBackGround)
+	{
+		CG_FillRect(x, y, comp->location.w, comp->location.h, comp->colorBackground);
+	}
 
-	CG_FillRect(x, y, comp->location.w, comp->location.h, FT_bg2);
-	CG_DrawRect(x, y, comp->location.w, comp->location.h, 1, FT_border);
+	if (comp->showBorder)
+	{
+		CG_DrawRect_FixedBorder(x, y, comp->location.w, comp->location.h, 1, comp->colorBorder);
+	}
 
-	CG_FillRect(x, y, comp->location.w, h, FT_bg);
+	CG_FillRect(x, y, comp->location.w, h, comp->colorBackground);
 
 	if (f->priv)
 	{
@@ -571,7 +565,7 @@ void CG_DrawFireTeamOverlay(hudComponent_t *comp)
 
 	Q_strupr(buffer);
 	heighTitle = CG_Text_Height_Ext(buffer, comp->scale, 0, FONT_HEADER);
-	CG_Text_Paint_Ext(x + 4, comp->location.y + ((heighTitle + h) / 2), comp->scale, comp->scale, FT_text, buffer, 0, 0, 0, FONT_HEADER);
+	CG_Text_Paint_Ext(x + 4, comp->location.y + ((heighTitle + h) / 2), comp->scale, comp->scale, comp->colorText, buffer, 0, 0, 0, FONT_HEADER);
 
 	lineX = (int)x;
 
@@ -592,14 +586,14 @@ void CG_DrawFireTeamOverlay(hudComponent_t *comp)
 		if (ci->selected)
 		{
 			// first member requires thicker highlight bar
-			if (i == 0)
+			//if (i == 0)
+			//{
+			//	CG_FillRect(x, y, comp->location.w, h, FT_select);
+			//}
+			//// adjust y to account for the thicker highlight bar of first member
+			//else
 			{
-				CG_FillRect(x, y, boxWidth - 2, h, FT_select);
-			}
-			// adjust y to account for the thicker highlight bar of first member
-			else
-			{
-				CG_FillRect(x, y, boxWidth - 2, FT_BAR_YSPACING, FT_select);
+				CG_FillRect(x, y, comp->location.w, h, FT_select);
 			}
 		}
 
@@ -615,7 +609,7 @@ void CG_DrawFireTeamOverlay(hudComponent_t *comp)
 			if (ci->cls != ci->latchedcls)
 			{
 				// draw the yellow arrow
-				CG_Text_Paint_Ext(x, y + heightTextOffset, comp->scale, comp->scale, FT_text, "^3->", 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
+				CG_Text_Paint_Ext(x, y + heightTextOffset, comp->scale, comp->scale, comp->colorText, "^3->", 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
 				x += spacingWidth * 3;
 				// draw latched class icon in fireteam overlay
 				trap_R_SetColor(iconColor);
@@ -706,13 +700,13 @@ void CG_DrawFireTeamOverlay(hudComponent_t *comp)
 		// draw the player's health
 		if (ci->health >= 100)
 		{
-			CG_Text_Paint_Ext(x, y + heightTextOffset, comp->scale, comp->scale, FT_text, va("%i", ci->health), 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
+			CG_Text_Paint_Ext(x, y + heightTextOffset, comp->scale, comp->scale, comp->colorText, va("%i", ci->health), 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
 			x += spacingWidth * 3;
 		}
 		else if (ci->health >= 10)
 		{
 			x += spacingWidth;
-			CG_Text_Paint_Ext(x, y + heightTextOffset, comp->scale, comp->scale, ci->health > 80 ? FT_text : textYellow, va("%i", ci->health), 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
+			CG_Text_Paint_Ext(x, y + heightTextOffset, comp->scale, comp->scale, ci->health > 80 ? comp->colorText : textYellow, va("%i", ci->health), 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
 			x += spacingWidth * 2;
 		}
 		else if (ci->health > 0)
@@ -746,11 +740,11 @@ void CG_DrawFireTeamOverlay(hudComponent_t *comp)
 			{
 				if (cg_fireteamLocationAlign.integer > 0) // right align
 				{
-					CG_Text_Paint_RightAligned_Ext(x + bestLocWidth, y + heightTextOffset, comp->scale, comp->scale, FT_text, locStr[i], 0, lim, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
+					CG_Text_Paint_RightAligned_Ext(x + bestLocWidth, y + heightTextOffset, comp->scale, comp->scale, comp->colorText, locStr[i], 0, lim, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
 				}
 				else
 				{
-					CG_Text_Paint_Ext(x, y + heightTextOffset, comp->scale, comp->scale, FT_text, locStr[i], 0, lim, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
+					CG_Text_Paint_Ext(x, y + heightTextOffset, comp->scale, comp->scale, comp->colorText, locStr[i], 0, lim, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
 				}
 			}
 		}

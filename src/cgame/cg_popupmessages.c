@@ -611,7 +611,7 @@ void CG_DrawPMItems(hudComponent_t *comp)
 	int          style      = cg_popupShadow.integer ? ITEM_TEXTSTYLE_SHADOWED : ITEM_TEXTSTYLE_NORMAL;
 	vec4_t       colorText;
 
-	Vector4Copy(comp->color, colorText);
+	Vector4Copy(comp->colorText, colorText);
 
 	if (cg_numPopups.integer <= 0)
 	{
@@ -622,6 +622,16 @@ void CG_DrawPMItems(hudComponent_t *comp)
 	{
 		return;
 	}
+    
+    if (comp->showBackGround)
+    {
+        CG_FillRect(comp->location.x, comp->location.y, comp->location.w, comp->location.h, comp->colorBackground);
+    }
+    
+    if (comp->showBorder)
+    {
+        CG_DrawRect_FixedBorder(comp->location.x, comp->location.y, comp->location.w, comp->location.h, 1, comp->colorBorder);
+    }
 
 	t = cg_pmWaitingList->time + cg_popupTime.integer + cg_popupStayTime.integer;
 	if (cg.time > t)

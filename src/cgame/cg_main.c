@@ -290,7 +290,6 @@ vmCvar_t cg_atmosphericEffects;
 vmCvar_t cg_instanttapout;
 
 vmCvar_t cg_debugSkills;
-vmCvar_t cg_drawFireteamOverlay;
 
 // demo recording cvars
 vmCvar_t cl_demorecording;
@@ -320,8 +319,6 @@ vmCvar_t cg_fireteamLocationAlign;
 vmCvar_t cg_fireteamNameMaxChars;
 vmCvar_t cg_fireteamNameAlign;
 vmCvar_t cg_fireteamSprites;
-vmCvar_t cg_fireteamAlpha;
-vmCvar_t cg_fireteamBgAlpha;
 
 vmCvar_t cg_weapaltReloads;
 vmCvar_t cg_weapaltSwitches;
@@ -361,7 +358,6 @@ vmCvar_t cg_scoreboard;
 
 vmCvar_t cg_quickchat;
 
-vmCvar_t cg_drawspeed;
 vmCvar_t cg_drawUnit;
 
 vmCvar_t cg_visualEffects;
@@ -375,8 +371,6 @@ vmCvar_t cg_shoutcastDrawHealth;
 vmCvar_t cg_shoutcastGrenadeTrail;
 vmCvar_t cg_shoutcastDrawMinimap;
 
-vmCvar_t cg_chatAlpha;
-vmCvar_t cg_chatBackgroundAlpha;
 vmCvar_t cg_chatShadow;
 
 vmCvar_t cg_activateLean;
@@ -581,8 +575,6 @@ static cvarTable_t cvarTable[] =
 #if 0
 	{ NULL,                        "cg_legacyVersion",           "",            CVAR_USERINFO | CVAR_ROM,     0 },
 #endif
-	{ &cg_drawFireteamOverlay,     "cg_drawFireteamOverlay",     "1",           CVAR_ARCHIVE,                 0 },
-
 	// demo recording cvars
 	{ &cl_demorecording,           "cl_demorecording",           "0",           CVAR_ROM,                     0 },
 	{ &cl_demofilename,            "cl_demofilename",            "",            CVAR_ROM,                     0 },
@@ -611,8 +603,6 @@ static cvarTable_t cvarTable[] =
 	{ &cg_fireteamNameMaxChars,    "cg_fireteamNameMaxChars",    "0",           CVAR_ARCHIVE,                 0 },
 	{ &cg_fireteamNameAlign,       "cg_fireteamNameAlign",       "0",           CVAR_ARCHIVE,                 0 },
 	{ &cg_fireteamSprites,         "cg_fireteamSprites",         "1",           CVAR_ARCHIVE,                 0 },
-	{ &cg_fireteamAlpha,           "cg_fireteamAlpha",           "1.0",         CVAR_ARCHIVE,                 0 },
-	{ &cg_fireteamBgAlpha,         "cg_fireteamBgAlpha",         "0.3",         CVAR_ARCHIVE,                 0 },
 
 	{ &cg_simpleItems,             "cg_simpleItems",             "0",           CVAR_ARCHIVE,                 0 }, // Bugged atm
 	{ &cg_simpleItemsScale,        "cg_simpleItemsScale",        "1.0",         CVAR_ARCHIVE,                 0 },
@@ -644,7 +634,6 @@ static cvarTable_t cvarTable[] =
 
 	{ &cg_quickchat,               "cg_quickchat",               "0",           CVAR_ARCHIVE,                 0 },
 
-	{ &cg_drawspeed,               "cg_drawspeed",               "0",           CVAR_ARCHIVE,                 0 },
 	{ &cg_drawUnit,                "cg_drawUnit",                "0",           CVAR_ARCHIVE,                 0 },
 
 	{ &cg_visualEffects,           "cg_visualEffects",           "1",           CVAR_ARCHIVE,                 0 },  // Draw visual effects (i.e : airstrike plane, debris ...)
@@ -658,8 +647,6 @@ static cvarTable_t cvarTable[] =
 	{ &cg_shoutcastGrenadeTrail,   "cg_shoutcastGrenadeTrail",   "0",           CVAR_ARCHIVE,                 0 },
 	{ &cg_shoutcastDrawMinimap,    "cg_shoutcastDrawMinimap",    "1",           CVAR_ARCHIVE,                 0 },
 
-	{ &cg_chatAlpha,               "cg_chatAlpha",               "1.0",         CVAR_ARCHIVE,                 0 },
-	{ &cg_chatBackgroundAlpha,     "cg_chatBackgroundAlpha",     "0.66",        CVAR_ARCHIVE,                 0 },
 	{ &cg_chatShadow,              "cg_chatShadow",              "0",           CVAR_ARCHIVE,                 0 },
 
 	{ &cg_activateLean,            "cg_activateLean",            "0",           CVAR_ARCHIVE,                 0 },
