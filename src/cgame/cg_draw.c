@@ -4286,7 +4286,6 @@ static void CG_Draw2D(void)
 		CG_DrawCenterString();
 
 		CG_DrawWarmup();
-		CG_DrawPMItemsBig(cg_popupShadow.integer ? ITEM_TEXTSTYLE_SHADOWED : ITEM_TEXTSTYLE_NORMAL);
 		CG_DrawObjectiveInfo();
 	}
 	else

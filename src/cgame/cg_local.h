@@ -3917,7 +3917,6 @@ void CG_InitPMGraphics(void);
 void CG_UpdatePMLists(void);
 void CG_AddPMItem(popupMessageType_t type, const char *message, const char *message2, qhandle_t shader, qhandle_t weaponShader, int scaleShader, vec3_t color);
 void CG_AddPMItemBig(popupMessageBigType_t type, const char *message, qhandle_t shader);
-void CG_DrawPMItemsBig(int style);
 const char *CG_GetPMItemText(centity_t *cent);
 void CG_PlayPMItemSound(centity_t *cent);
 qhandle_t CG_GetPMItemIcon(centity_t *cent);
@@ -4083,7 +4082,7 @@ extern qboolean resetmaxspeed; // CG_DrawSpeed
 
 /* HUD exports */
 
-#define HUD_COMPONENTS_NUM 40
+#define HUD_COMPONENTS_NUM 41
 
 typedef struct hudComponent_s
 {
@@ -4148,6 +4147,7 @@ typedef struct hudStructure_s
 	hudComponent_t disconnect;
 	hudComponent_t chat;
 	hudComponent_t spectatorstatus;       // 40
+    hudComponent_t pmitemsbig;
 
 	hudComponent_t *components[HUD_COMPONENTS_NUM];
 } hudStucture_t;
@@ -4164,6 +4164,7 @@ void CG_DrawFollow(hudComponent_t *comp);
 void CG_DrawMissileCamera(hudComponent_t *comp);
 void CG_DrawTeamInfo(hudComponent_t *comp);
 void CG_DrawSpectator(hudComponent_t *comp);
+void CG_DrawPMItemsBig(hudComponent_t *comp);
 
 void CG_DrawCompText(hudComponent_t *comp, const char *str, vec4_t color, int fontStyle, fontHelper_t *font);
 void CG_DrawCompMultilineText(hudComponent_t *comp, const char *str, vec4_t color, int align, int fontStyle, fontHelper_t *font);

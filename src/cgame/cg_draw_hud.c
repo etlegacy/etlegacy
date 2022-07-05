@@ -162,6 +162,7 @@ static const hudComponentFields_t hudComponentFields[] =
 	{ HUDF(disconnect),       CG_DrawDisconnect       },
 	{ HUDF(chat),             CG_DrawTeamInfo         },    // FIXME: outside cg_draw_hud
 	{ HUDF(spectatorstatus),  CG_DrawSpectator        },    // FIXME: outside cg_draw_hud
+    { HUDF(pmitemsbig),       CG_DrawPMItemsBig       },    // FIXME: outside cg_draw_hud    
 	{ NULL,                   0, qfalse, NULL         },
 };
 
@@ -249,6 +250,7 @@ void CG_setDefaultHudValues(hudStucture_t *hud)
 	hud->disconnect       = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 60, 216, 57, 57, qtrue, STYLE_NORMAL, 0.19f, colorWhite, qtrue, HUD_Background, qtrue, HUD_Border, 37, CG_DrawDisconnect);
 	hud->chat             = CG_getComponent(Ccg_WideX(160), 406, 431, 72, qtrue, STYLE_NORMAL, 0.2f, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, 38, CG_DrawTeamInfo);
 	hud->spectatorstatus  = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) * .5f - 50, 421, 100, 28, qtrue, STYLE_NORMAL, 0.35f, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, 39, CG_DrawSpectator);
+    hud->pmitemsbig       = CG_getComponent(Ccg_WideX(365), 275, 300, 56, qtrue, STYLE_NORMAL, 0.22f, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, 40, CG_DrawPMItemsBig);
 }
 
 /**

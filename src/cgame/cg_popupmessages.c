@@ -622,16 +622,16 @@ void CG_DrawPMItems(hudComponent_t *comp)
 	{
 		return;
 	}
-    
-    if (comp->showBackGround)
-    {
-        CG_FillRect(comp->location.x, comp->location.y, comp->location.w, comp->location.h, comp->colorBackground);
-    }
-    
-    if (comp->showBorder)
-    {
-        CG_DrawRect_FixedBorder(comp->location.x, comp->location.y, comp->location.w, comp->location.h, 1, comp->colorBorder);
-    }
+
+	if (comp->showBackGround)
+	{
+		CG_FillRect(comp->location.x, comp->location.y, comp->location.w, comp->location.h, comp->colorBackground);
+	}
+
+	if (comp->showBorder)
+	{
+		CG_DrawRect_FixedBorder(comp->location.x, comp->location.y, comp->location.w, comp->location.h, 1, comp->colorBorder);
+	}
 
 	t = cg_pmWaitingList->time + cg_popupTime.integer + cg_popupStayTime.integer;
 	if (cg.time > t)
@@ -715,8 +715,8 @@ void CG_DrawPMItems(hudComponent_t *comp)
 			// colorize
 			VectorCopy(listItem->color, colorText);
 			trap_R_SetColor(colorText);
-            
-            CG_DrawPic(x + w + 4, y - lineHeight, size * listItem->scaleShader, size, listItem->weaponShader);
+
+			CG_DrawPic(x + w + 4, y - lineHeight, size * listItem->scaleShader, size, listItem->weaponShader);
 
 			// decolorize
 			VectorCopy(colorWhite, colorText);
@@ -735,29 +735,51 @@ void CG_DrawPMItems(hudComponent_t *comp)
  * @param[in] style
  * @return
  */
-void CG_DrawPMItemsBig(int style)
+void CG_DrawPMItemsBig(hudComponent_t *comp)
 {
-	vec4_t colorText = { 1.f, 1.f, 1.f, 1.f };
-	float  t, w;
-	float  fontScale = cg_fontScaleSP.value;
+	vec4_t colorText, colorBackground, colorBorder;
+	float  t, w, h, iconsSize;
 
 	if (!cg_pmWaitingListBig)
 	{
 		return;
 	}
 
+	Vector4Copy(comp->colorText, colorText);
+	Vector4Copy(comp->colorBackground, colorBackground);
+	Vector4Copy(comp->colorBorder, colorBorder);
 	t = cg_pmWaitingListBig->time + PM_BIGPOPUP_TIME + cg_popupStayTime.value;
+
 	if (cg.time > t)
 	{
-		colorText[3] = cg_popupFadeTime.integer ? 1 - ((cg.time - t) / cg_popupFadeTime.value) : 0;
+		float fade = cg_popupFadeTime.integer ? 1 - ((cg.time - t) / cg_popupFadeTime.value) : 0;
+
+		colorText[3]       *= fade;
+		colorBackground[3] *= fade;
+		colorBorder[3]     *= fade;
 	}
 
+	if (comp->showBackGround)
+	{
+		CG_FillRect(comp->location.x, comp->location.y, comp->location.w, comp->location.h, colorBackground);
+	}
+
+	if (comp->showBorder)
+	{
+		CG_DrawRect_FixedBorder(comp->location.x, comp->location.y, comp->location.w, comp->location.h, 1, colorBorder);
+	}
+
+	h         = CG_Text_Height_Ext(cg_pmWaitingListBig->message, comp->scale, 0, &cgs.media.limboFont2);
+	iconsSize = comp->location.h - h;
+
 	trap_R_SetColor(colorText);
-	CG_DrawPic(Ccg_WideX(SCREEN_WIDTH) - 116, 270, 48, 48, cg_pmWaitingListBig->shader);
+	CG_DrawPic(comp->location.x + comp->location.w - iconsSize, comp->location.y, iconsSize, iconsSize, cg_pmWaitingListBig->shader);
 	trap_R_SetColor(NULL);
 
-	w = CG_Text_Width_Ext(cg_pmWaitingListBig->message, fontScale, 0, &cgs.media.limboFont2);
-	CG_Text_Paint_Ext(Ccg_WideX(SCREEN_WIDTH) - 64 - w, 326, fontScale, fontScale, colorText, cg_pmWaitingListBig->message, 0, 0, style, &cgs.media.limboFont2);
+	//int lim = (comp->location.w - (x - comp->location.x)) / spacingWidth;
+	w = CG_Text_Width_Ext(cg_pmWaitingListBig->message, comp->scale, 0, &cgs.media.limboFont2);
+
+	CG_Text_Paint_Ext(comp->location.x + (comp->location.w - w) - iconsSize, comp->location.y + iconsSize + h * 0.5, comp->scale, comp->scale, colorText, cg_pmWaitingListBig->message, 0, 0, cg_popupShadow.integer ? ITEM_TEXTSTYLE_SHADOWED : ITEM_TEXTSTYLE_NORMAL, &cgs.media.limboFont2);
 }
 
 /**
