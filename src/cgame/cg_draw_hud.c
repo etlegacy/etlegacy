@@ -165,6 +165,7 @@ static const hudComponentFields_t hudComponentFields[] =
 	{ HUDF(pmitemsbig),       CG_DrawPMItemsBig       },    // FIXME: outside cg_draw_hud
 	{ HUDF(warmuptitle),      CG_DrawWarmupTitle      },    // FIXME: outside cg_draw_hud
 	{ HUDF(warmuptext),       CG_DrawWarmupText       },    // FIXME: outside cg_draw_hud
+	{ HUDF(objectivetext),    CG_DrawObjectiveInfo    },          // FIXME: outside cg_draw_hud
 	{ NULL,                   0, qfalse, NULL         },
 };
 
@@ -255,6 +256,8 @@ void CG_setDefaultHudValues(hudStucture_t *hud)
 	hud->pmitemsbig       = CG_getComponent(Ccg_WideX(365), 275, 300, 56, qtrue, STYLE_NORMAL, 0.22f, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, 40, CG_DrawPMItemsBig);
 	hud->warmuptitle      = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) * .5f - 150, 120, 300, 96, qtrue, STYLE_NORMAL, 0.35f, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, 41, CG_DrawWarmupTitle);
 	hud->warmuptext       = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) * .5f - 150, 320, 300, 39, qtrue, STYLE_NORMAL, 0.22f, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, 42, CG_DrawWarmupText);
+	hud->objectivetext    = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) * .5f - 150, 360, 300, 26, qtrue, STYLE_NORMAL, 0.22f, colorWhite, qtrue, (vec4_t) { 0, 0.5, 0.5, 0.25 }, qtrue, HUD_Border, 43, CG_DrawObjectiveInfo);
+
 }
 
 /**

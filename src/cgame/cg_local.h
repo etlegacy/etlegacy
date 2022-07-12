@@ -1351,14 +1351,8 @@ typedef struct
 	// Objective info display
 	qboolean limboMenu;
 
-	int oidTeam;
 	int oidPrintTime;
-	int oidPrintCharHeight;
-	int oidPrintCharWidth;
-	float oidPrintFontScale;
-	int oidPrintY;
 	char oidPrint[1024];
-	int oidPrintLines;
 
 	// for voice chat buffer
 	int voiceChatTime;
@@ -3021,7 +3015,7 @@ void CG_AddLagometerFrameInfo(void);
 void CG_AddLagometerSnapshotInfo(snapshot_t *snap);
 void CG_CenterPrint(const char *str, int y, float fontScale);
 void CG_PriorityCenterPrint(const char *str, int y, float fontScale, int priority);
-void CG_ObjectivePrint(const char *str, float fontScale);
+void CG_ObjectivePrint(const char *str);
 void CG_DrawActive(void);
 void CG_CheckForCursorHints(void);
 void CG_DrawTeamBackground(int x, int y, int w, int h, float alpha, int team);
@@ -4082,7 +4076,7 @@ extern qboolean resetmaxspeed; // CG_DrawSpeed
 
 /* HUD exports */
 
-#define HUD_COMPONENTS_NUM 43
+#define HUD_COMPONENTS_NUM 44
 
 typedef struct hudComponent_s
 {
@@ -4150,6 +4144,7 @@ typedef struct hudStructure_s
     hudComponent_t pmitemsbig;
     hudComponent_t warmuptitle;
     hudComponent_t warmuptext;
+    hudComponent_t objectivetext;
 
 	hudComponent_t *components[HUD_COMPONENTS_NUM];
 } hudStucture_t;
@@ -4169,6 +4164,7 @@ void CG_DrawSpectator(hudComponent_t *comp);
 void CG_DrawPMItemsBig(hudComponent_t *comp);
 void CG_DrawWarmupTitle(hudComponent_t *comp);
 void CG_DrawWarmupText(hudComponent_t *comp);
+void CG_DrawObjectiveInfo(hudComponent_t *comp);
 
 void CG_DrawCompText(hudComponent_t *comp, const char *str, vec4_t color, int fontStyle, fontHelper_t *font);
 void CG_DrawCompMultilineText(hudComponent_t *comp, const char *str, vec4_t color, int align, int fontStyle, fontHelper_t *font);

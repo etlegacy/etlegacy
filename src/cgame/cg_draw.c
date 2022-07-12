@@ -3568,47 +3568,29 @@ static void CG_DrawFlashBlendBehindHUD(void)
 	CG_DrawFlashDamage();
 }
 
-//#define OID_LEFT    10
-#define OID_TOP     360
-
 /**
  * @brief CG_ObjectivePrint
  * @param[in] str
  * @param[in] fontScale
  */
-void CG_ObjectivePrint(const char *str, float fontScale)
+void CG_ObjectivePrint(const char *str)
 {
-	const char *s;
+	int maxLineChars;
 
-	if (cg.centerPrintTime)
-	{
-		return;
-	}
+	maxLineChars = CG_GetActiveHUD()->objectivetext.location.w / CG_Text_Width_Ext("A", CG_GetActiveHUD()->objectivetext.scale, 0, &cgs.media.limboFont2);
 
-	s = CG_TranslateString(str);
-
-	Q_strncpyz(cg.oidPrint, s, sizeof(cg.oidPrint));
-	cg.oidPrintLines      = CG_FormatMultineLinePrint(cg.oidPrint, CP_LINEWIDTH);
-	cg.oidPrintTime       = cg.time;
-	cg.oidPrintY          = OID_TOP;
-	cg.oidPrintCharHeight = CG_Text_Height_Ext("A", fontScale, 0, &cgs.media.limboFont2);
-	cg.oidPrintCharWidth  = CG_Text_Width_Ext("A", fontScale, 0, &cgs.media.limboFont2);
-	cg.oidPrintFontScale  = fontScale;
+	Q_strncpyz(cg.oidPrint, CG_TranslateString(str), sizeof(cg.oidPrint));
+	CG_FormatMultineLinePrint(cg.oidPrint, maxLineChars);
+	cg.oidPrintTime = cg.time;
 }
 
 /**
  * @brief CG_DrawObjectiveInfo
  */
-static void CG_DrawObjectiveInfo(void)
+void CG_DrawObjectiveInfo(hudComponent_t *comp)
 {
-	char   *start, *end;
-	int    len;
-	char   currentColor[3] = S_COLOR_WHITE;
-	char   nextColor[3] = { 0, 0, 0 };
-	int    x, y, w;
-	int    x1, y1, x2, y2;
 	float  *color;
-	vec4_t backColor = { 0.2f, 0.2f, 0.2f, 1.f };
+	vec4_t textColor;
 
 	if (cgs.clientinfo[cg.clientNum].shoutcaster)
 	{
@@ -3621,118 +3603,18 @@ static void CG_DrawObjectiveInfo(void)
 	}
 
 	color = CG_FadeColor(cg.oidPrintTime, 250);
+
 	if (!color)
 	{
 		cg.oidPrintTime = 0;
 		return;
 	}
 
-	trap_R_SetColor(color);
+	VectorCopy(comp->colorText, textColor);
+	textColor[3] = color[3];
 
-	y = 400 - cg.oidPrintLines * cg.oidPrintCharHeight / 2;
+	CG_DrawCompMultilineText(comp, cg.oidPrint, textColor, ITEM_ALIGN_CENTER, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 
-	x1 = 319;
-	y1 = y - cg.oidPrintCharHeight * 2;
-	x2 = 321;
-
-	// first just find the bounding rect
-	for (start = end = cg.oidPrint; *start; end += len)
-	{
-		len = Q_UTF8_Width(end);
-
-		if (!*end || *end == '\n')
-		{
-			char linebuffer[1024] = { 0 };
-
-			Q_strncpyz(linebuffer, start, (end - start) + 1);
-
-			w = CG_Text_Width_Ext(va("%s  ", linebuffer), cg.oidPrintFontScale, 0, &cgs.media.limboFont2);
-
-			if (320 - w / 2 < x1)
-			{
-				x1 = 320 - w / 2;
-				x2 = 320 + w / 2;
-			}
-
-			//x  = 320 - w / 2; // no need to calculate x - it's not used and overwritten in next loop
-			y += cg.oidPrintCharHeight * 1.5;
-
-			start = end + len;
-		}
-	}
-
-	y2 = y - 2;
-
-	VectorCopy(color, backColor);
-	backColor[3] = 0.5f * color[3];
-	trap_R_SetColor(backColor);
-
-	CG_DrawPic(x1 + cgs.wideXoffset, y1, x2 - x1, y2 - y1, cgs.media.teamStatusBar);
-
-	VectorSet(backColor, 0, 0, 0);
-	CG_DrawRect(x1 + cgs.wideXoffset, y1, x2 - x1, y2 - y1, 1, backColor);
-
-	trap_R_SetColor(color);
-
-	// do the actual drawing
-	y = 400 - cg.oidPrintLines * cg.oidPrintCharHeight / 2;
-
-	for (start = end = cg.oidPrint; *start; end += len)
-	{
-		if (Q_IsColorString(end))
-		{
-			// don't store color if the line start with a color
-			if (start == end)
-			{
-				Com_Memset(currentColor, 0, 3);
-			}
-
-			// store the used color to reused it in case the line is splitted on multi line
-			Q_strncpyz(nextColor, end, 3);
-			len = 2;
-		}
-		else
-		{
-			len = Q_UTF8_Width(end);
-		}
-
-		if (!*end || *end == '\n')
-		{
-			char linebuffer[1024] = { 0 };
-
-			if (*currentColor)
-			{
-				Q_strncpyz(linebuffer, currentColor, 3);
-				Q_strcat(linebuffer, (end - start) + 3, start);
-			}
-			else
-			{
-				Q_strncpyz(linebuffer, start, (end - start) + 1);
-			}
-
-			w = CG_Text_Width_Ext(linebuffer, cg.oidPrintFontScale, 0, &cgs.media.limboFont2);
-
-			if (x1 + w > x2)
-			{
-				x2 = x1 + w;
-			}
-
-			x = 320 - w / 2;
-
-			CG_Text_Paint_Ext(x + cgs.wideXoffset, y, cg.oidPrintFontScale, cg.oidPrintFontScale, color, linebuffer, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
-
-			y += cg.oidPrintCharHeight * 1.5;
-
-			if (nextColor[0])
-			{
-				Q_strncpyz(currentColor, nextColor, 3);
-			}
-
-			start = end + len;
-		}
-	}
-
-	trap_R_SetColor(NULL);
 }
 
 //==================================================================================
@@ -4256,7 +4138,6 @@ static void CG_Draw2D(void)
 		}
 
 		CG_DrawCenterString();
-		CG_DrawObjectiveInfo();
 	}
 	else
 	{
