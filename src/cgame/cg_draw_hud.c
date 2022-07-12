@@ -162,7 +162,9 @@ static const hudComponentFields_t hudComponentFields[] =
 	{ HUDF(disconnect),       CG_DrawDisconnect       },
 	{ HUDF(chat),             CG_DrawTeamInfo         },    // FIXME: outside cg_draw_hud
 	{ HUDF(spectatorstatus),  CG_DrawSpectator        },    // FIXME: outside cg_draw_hud
-    { HUDF(pmitemsbig),       CG_DrawPMItemsBig       },    // FIXME: outside cg_draw_hud    
+	{ HUDF(pmitemsbig),       CG_DrawPMItemsBig       },    // FIXME: outside cg_draw_hud
+	{ HUDF(warmuptitle),      CG_DrawWarmupTitle      },    // FIXME: outside cg_draw_hud
+	{ HUDF(warmuptext),       CG_DrawWarmupText       },    // FIXME: outside cg_draw_hud
 	{ NULL,                   0, qfalse, NULL         },
 };
 
@@ -250,7 +252,9 @@ void CG_setDefaultHudValues(hudStucture_t *hud)
 	hud->disconnect       = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 60, 216, 57, 57, qtrue, STYLE_NORMAL, 0.19f, colorWhite, qtrue, HUD_Background, qtrue, HUD_Border, 37, CG_DrawDisconnect);
 	hud->chat             = CG_getComponent(Ccg_WideX(160), 406, 431, 72, qtrue, STYLE_NORMAL, 0.2f, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, 38, CG_DrawTeamInfo);
 	hud->spectatorstatus  = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) * .5f - 50, 421, 100, 28, qtrue, STYLE_NORMAL, 0.35f, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, 39, CG_DrawSpectator);
-    hud->pmitemsbig       = CG_getComponent(Ccg_WideX(365), 275, 300, 56, qtrue, STYLE_NORMAL, 0.22f, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, 40, CG_DrawPMItemsBig);
+	hud->pmitemsbig       = CG_getComponent(Ccg_WideX(365), 275, 300, 56, qtrue, STYLE_NORMAL, 0.22f, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, 40, CG_DrawPMItemsBig);
+	hud->warmuptitle      = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) * .5f - 150, 120, 300, 96, qtrue, STYLE_NORMAL, 0.35f, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, 41, CG_DrawWarmupTitle);
+	hud->warmuptext       = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) * .5f - 150, 320, 300, 39, qtrue, STYLE_NORMAL, 0.22f, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, 42, CG_DrawWarmupText);
 }
 
 /**
@@ -809,13 +813,18 @@ void CG_DrawCompMultilineText(hudComponent_t *comp, const char *str, vec4_t colo
 		CG_DrawRect_FixedBorder(comp->location.x, comp->location.y, w2, comp->location.h, 1, comp->colorBorder);
 	}
 
-	if (align == ITEM_ALIGN_CENTER2)
+	if (align == ITEM_ALIGN_CENTER)
 	{
-		x += ((w2 - w) / 2);
+		x += w2 / 2;
+	}
+	else if (align == ITEM_ALIGN_CENTER2)
+	{
+		x    += ((w2 - w) / 2);
+		align = ITEM_ALIGN_LEFT;
 	}
 
 	CG_DrawMultilineText(x, comp->location.y + ((h2 + h) / 2) / lineNumber, comp->scale, comp->scale, color, str,
-	                     h2 / lineNumber + 1, 0, 0, fontStyle, ITEM_ALIGN_LEFT, font);
+	                     h2 / lineNumber + 1, 0, 0, fontStyle, align, font);
 }
 
 /**
@@ -2864,7 +2873,7 @@ static void CG_DrawSpeed(hudComponent_t *comp)
 	}
 	else
 	{
-		CG_DrawCompMultilineText(comp, va("%s\n%s", s, s2), comp->colorText, ITEM_ALIGN_CENTER2, ITEM_TEXTSTYLE_NORMAL, &cgs.media.limboFont1);
+		CG_DrawCompMultilineText(comp, va("%s\n%s", s, s2), comp->colorText, ITEM_ALIGN_CENTER, ITEM_TEXTSTYLE_NORMAL, &cgs.media.limboFont1);
 	}
 }
 

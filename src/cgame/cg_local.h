@@ -4082,7 +4082,7 @@ extern qboolean resetmaxspeed; // CG_DrawSpeed
 
 /* HUD exports */
 
-#define HUD_COMPONENTS_NUM 41
+#define HUD_COMPONENTS_NUM 43
 
 typedef struct hudComponent_s
 {
@@ -4148,6 +4148,8 @@ typedef struct hudStructure_s
 	hudComponent_t chat;
 	hudComponent_t spectatorstatus;       // 40
     hudComponent_t pmitemsbig;
+    hudComponent_t warmuptitle;
+    hudComponent_t warmuptext;
 
 	hudComponent_t *components[HUD_COMPONENTS_NUM];
 } hudStucture_t;
@@ -4165,6 +4167,8 @@ void CG_DrawMissileCamera(hudComponent_t *comp);
 void CG_DrawTeamInfo(hudComponent_t *comp);
 void CG_DrawSpectator(hudComponent_t *comp);
 void CG_DrawPMItemsBig(hudComponent_t *comp);
+void CG_DrawWarmupTitle(hudComponent_t *comp);
+void CG_DrawWarmupText(hudComponent_t *comp);
 
 void CG_DrawCompText(hudComponent_t *comp, const char *str, vec4_t color, int fontStyle, fontHelper_t *font);
 void CG_DrawCompMultilineText(hudComponent_t *comp, const char *str, vec4_t color, int align, int fontStyle, fontHelper_t *font);

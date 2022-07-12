@@ -995,16 +995,16 @@ void CG_DrawTeamInfo(hudComponent_t *comp)
 		int          chatPosX      = comp->location.x;
 		int          chatPosY      = comp->location.y + comp->location.h;
 		int          textStyle     = cg_chatShadow.integer ? ITEM_TEXTSTYLE_SHADOWED : ITEM_TEXTSTYLE_NORMAL;
-        
-        if (comp->showBackGround)
-        {
-            CG_FillRect(comp->location.x, comp->location.y, comp->location.w, comp->location.h, comp->colorBackground);
-        }
-        
-        if (comp->showBorder)
-        {
-            CG_DrawRect_FixedBorder(comp->location.x, comp->location.y, comp->location.w, comp->location.h, 1, comp->colorBorder);
-        }
+
+		if (comp->showBackGround)
+		{
+			CG_FillRect(comp->location.x, comp->location.y, comp->location.w, comp->location.h, comp->colorBackground);
+		}
+
+		if (comp->showBorder)
+		{
+			CG_DrawRect_FixedBorder(comp->location.x, comp->location.y, comp->location.w, comp->location.h, 1, comp->colorBorder);
+		}
 
 		if (cg.time - cgs.teamChatMsgTimes[cgs.teamLastChatPos % chatHeight] > cg_teamChatTime.integer)
 		{
@@ -1013,9 +1013,9 @@ void CG_DrawTeamInfo(hudComponent_t *comp)
 
 		for (i = cgs.teamChatPos - 1; i >= cgs.teamLastChatPos; i--)
 		{
-            int chatWidthCur = 0;
-            int chatWidthMax = 0;
-            
+			int chatWidthCur = 0;
+			int chatWidthMax = 0;
+
 			alphapercent = 1.0f - (cg.time - cgs.teamChatMsgTimes[i % chatHeight]) / (float)(cg_teamChatTime.integer);
 			Com_Clamp(0.0f, 1.0f, alphapercent);
 
@@ -2981,16 +2981,16 @@ void CG_DrawFollow(hudComponent_t *comp)
 	if (cg.snap->ps.pm_flags & PMF_LIMBO)
 	{
 		char deploytime[128] = { 0 };
-        
-        if (comp->showBackGround)
-        {
-            CG_FillRect(comp->location.x, comp->location.y, comp->location.w, comp->location.h, comp->colorBackground);
-        }
-        
-        if (comp->showBorder)
-        {
-            CG_DrawRect_FixedBorder(comp->location.x, comp->location.y, comp->location.w, comp->location.h, 1, comp->colorBorder);
-        }
+
+		if (comp->showBackGround)
+		{
+			CG_FillRect(comp->location.x, comp->location.y, comp->location.w, comp->location.h, comp->colorBackground);
+		}
+
+		if (comp->showBorder)
+		{
+			CG_DrawRect_FixedBorder(comp->location.x, comp->location.y, comp->location.w, comp->location.h, 1, comp->colorBorder);
+		}
 
 		if (cgs.gametype != GT_WOLF_LMS)
 		{
@@ -3084,137 +3084,128 @@ void CG_DrawFollow(hudComponent_t *comp)
 }
 
 /**
- * @brief CG_DrawWarmup
+ * @brief CG_DrawWarmupTitle
+ * @param[in] comp
  */
-static void CG_DrawWarmup(void)
+void CG_DrawWarmupTitle(hudComponent_t *comp)
 {
-	int             w, x;
-	int             sec = cg.warmup;
-	const char      *s, *s1, *s2;
 	static qboolean announced = qfalse;
-	float           fontScale = cg_fontScaleTP.value;
+	const char      *s;
 
-	if (!sec)
+	if (!cg.warmup)
 	{
-		if ((cgs.gamestate == GS_WARMUP && !cg.warmup) || cgs.gamestate == GS_WAITING_FOR_PLAYERS)
+		if (!(cgs.gamestate == GS_WARMUP && !cg.warmup) && cgs.gamestate != GS_WAITING_FOR_PLAYERS)
 		{
-			if (CG_ConfigString(CS_CONFIGNAME)[0])
-			{
-				s1 = va(CG_TranslateString("^3Config: ^7%s^7"), CG_ConfigString(CS_CONFIGNAME));
-				w  = CG_Text_Width_Ext(s1, cg_fontScaleCP.value, 0, &cgs.media.limboFont2);
-				x  = Ccg_WideX(320) - w / 2;
-				CG_Text_Paint_Ext(x, 340, cg_fontScaleCP.value, cg_fontScaleCP.value, colorWhite, s1, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
-			}
-
-			if (cgs.minclients > 0)
-			{
-				s1 = va(CG_TranslateString("^3WARMUP:^7 Waiting on ^2%i^7 %s"), cgs.minclients, cgs.minclients == 1 ? CG_TranslateString("player") : CG_TranslateString("players"));
-			}
-			else
-			{
-				s1 = va("%s", CG_TranslateString("^3WARMUP:^7 All players ready!"));
-			}
-
-			w = CG_Text_Width_Ext(s1, fontScale, 0, &cgs.media.limboFont2);
-			x = Ccg_WideX(320) - w / 2;
-			CG_Text_Paint_Ext(x, 120, fontScale, fontScale, colorWhite, s1, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
-
-			if (!cg.demoPlayback && cg.snap->ps.persistant[PERS_TEAM] != TEAM_SPECTATOR &&
-			    (!(cg.snap->ps.pm_flags & PMF_FOLLOW) || (cg.snap->ps.pm_flags & PMF_LIMBO)))
-			{
-				char str1[32];
-				int  y = 360;
-
-				if (cg.snap->ps.eFlags & EF_READY)
-				{
-					s2 = CG_TranslateString("^2Ready");
-
-					w = CG_Text_Width_Ext(s2, cg_fontScaleCP.value, 0, &cgs.media.limboFont2);
-					x = Ccg_WideX(320) - w / 2;
-					CG_Text_Paint_Ext(x, y, cg_fontScaleCP.value, cg_fontScaleCP.value, colorWhite, s2, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
-
-					y += 20;
-
-					Q_strncpyz(str1, Binding_FromName("notready"), 32);
-					if (!Q_stricmp(str1, "(?" "?" "?)"))
-					{
-						s2 = CG_TranslateString("Type ^3\\notready^7 in the console to unready");
-					}
-					else
-					{
-						s2 = va(CG_TranslateString("^7Press ^3%s^7 to unready"), str1);
-						s2 = CG_TranslateString(s2);
-					}
-				}
-				else
-				{
-					Q_strncpyz(str1, Binding_FromName("ready"), 32);
-					if (!Q_stricmp(str1, "(?" "?" "?)"))
-					{
-						s2 = CG_TranslateString("Type ^3\\ready^7 in the console to start");
-					}
-					else
-					{
-						s2 = va(CG_TranslateString("Press ^3%s^7 to start"), str1);
-						s2 = CG_TranslateString(s2);
-					}
-				}
-
-				w = CG_Text_Width_Ext(s2, cg_fontScaleCP.value, 0, &cgs.media.limboFont2);
-				x = Ccg_WideX(320) - w / 2;
-				CG_Text_Paint_Ext(x, y, cg_fontScaleCP.value, cg_fontScaleCP.value, colorWhite, s2, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
-			}
 			return;
 		}
-		return;
-	}
 
-	sec = (sec - cg.time) / 1000;
-	if (sec < 0)
-	{
-		sec = 0;
-	}
-
-	if (sec > 0)
-	{
-		s = va("%s %s%i", CG_TranslateString("^3WARMUP:^7 Match begins in"), sec  < 4 ? "^1" : "^2", sec);
+		if (cgs.minclients > 0)
+		{
+			s = va(CG_TranslateString("^3WARMUP:^7 Waiting on ^2%i^7 %s"), cgs.minclients, cgs.minclients == 1 ? CG_TranslateString("player") : CG_TranslateString("players"));
+		}
+		else
+		{
+			s = va("%s", CG_TranslateString("^3WARMUP:^7 All players ready!"));
+		}
 	}
 	else
 	{
-		s = CG_TranslateString("^3WARMUP:^7 Match begins now!"); // " Timelimit at start: ^3%i min", cgs.timelimit
-	}
+		int sec = (cg.warmup - cg.time) / 1000;
 
-	w = CG_Text_Width_Ext(s, fontScale, 0, &cgs.media.limboFont2);
-	x = Ccg_WideX(320) - w / 2;
-	CG_Text_Paint_Ext(x, 208, fontScale, fontScale, colorWhite, s, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
-
-	// pre start actions
-	if (sec == 10 && !announced)
-	{
-		if (cg_announcer.integer)
+		if (sec <= 0)
 		{
-			trap_S_StartLocalSound(cgs.media.countPrepare, CHAN_ANNOUNCER);
+			s = CG_TranslateString("^3WARMUP:^7 Match begins now!"); // " Timelimit at start: ^3%i min", cgs.timelimit
+		}
+		else
+		{
+			s = va("%s %s%i", CG_TranslateString("^3WARMUP:^7 Match begins in"), sec  < 4 ? "^1" : "^2", sec);
 		}
 
-		CPri(CG_TranslateString("^3PREPARE TO FIGHT!\n"));
-
-		if (!cg.demoPlayback && (cg_autoAction.integer & AA_DEMORECORD))
+		// pre start actions
+		if (sec == 10 && !announced)
 		{
-			CG_autoRecord_f();
+			if (cg_announcer.integer)
+			{
+				trap_S_StartLocalSound(cgs.media.countPrepare, CHAN_ANNOUNCER);
+			}
+
+			CPri(CG_TranslateString("^3PREPARE TO FIGHT!\n"));
+
+			if (!cg.demoPlayback && (cg_autoAction.integer & AA_DEMORECORD))
+			{
+				CG_autoRecord_f();
+			}
+
+			announced = qtrue;
+		}
+		else if (sec != 10)
+		{
+			announced = qfalse;
+		}
+	}
+
+	CG_DrawCompText(comp, s, comp->colorText, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+}
+
+/**
+ * @brief CG_DrawWarmupText
+ * @param[in] comp
+ */
+void CG_DrawWarmupText(hudComponent_t *comp)
+{
+	const char *s = NULL, *s1 = NULL, *s2 = NULL;
+
+	if (!cg.warmup)
+	{
+		if (!(cgs.gamestate == GS_WARMUP && !cg.warmup) && cgs.gamestate != GS_WAITING_FOR_PLAYERS)
+		{
+			return;
 		}
 
-		announced = qtrue;
-	}
-	else if (sec != 10)
-	{
-		announced = qfalse;
-	}
+		if (CG_ConfigString(CS_CONFIGNAME)[0])
+		{
+			s = va(CG_TranslateString("^3Config: ^7%s^7"), CG_ConfigString(CS_CONFIGNAME));
+		}
 
-	// stopwatch stuff
-	s1 = "";
-	s2 = "";
+		if (!cg.demoPlayback && cg.snap->ps.persistant[PERS_TEAM] != TEAM_SPECTATOR &&
+		    (!(cg.snap->ps.pm_flags & PMF_FOLLOW) || (cg.snap->ps.pm_flags & PMF_LIMBO)))
+		{
+			char str1[32];
 
-	if (cgs.gametype == GT_WOLF_STOPWATCH)
+			if (cg.snap->ps.eFlags & EF_READY)
+			{
+				s1 = CG_TranslateString("^2Ready");
+
+				Q_strncpyz(str1, Binding_FromName("notready"), 32);
+				if (!Q_stricmp(str1, "(?" "?" "?)"))
+				{
+					s2 = CG_TranslateString("Type ^3\\notready^7 in the console to unready");
+				}
+				else
+				{
+					s2 = va(CG_TranslateString("^7Press ^3%s^7 to unready"), str1);
+					s2 = CG_TranslateString(s2);
+				}
+			}
+			else
+			{
+				Q_strncpyz(str1, Binding_FromName("ready"), 32);
+				if (!Q_stricmp(str1, "(?" "?" "?)"))
+				{
+					s2 = CG_TranslateString("Type ^3\\ready^7 in the console to start");
+				}
+				else
+				{
+					s2 = va(CG_TranslateString("Press ^3%s^7 to start"), str1);
+					s2 = CG_TranslateString(s2);
+				}
+			}
+		}
+
+		CG_DrawCompMultilineText(comp, va("%s\n%s\n%s\n", s ? s : " ", s1 ? s1 : " ", s2 ? s2 : " "),
+		                         comp->colorText, ITEM_ALIGN_CENTER, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+	}
+	else if (cgs.gametype == GT_WOLF_STOPWATCH)
 	{
 		const char *cs;
 		int        defender;
@@ -3279,27 +3270,8 @@ static void CG_DrawWarmup(void)
 			}
 		}
 
-		if (strlen(s1))
-		{
-			s1 = CG_TranslateString(s1);
-		}
-
-		if (strlen(s2))
-		{
-			s2 = CG_TranslateString(s2);
-		}
-
-		w = CG_Text_Width_Ext(s, cg_fontScaleCP.value, 0, &cgs.media.limboFont2);
-		x = Ccg_WideX(320) - w / 2;
-		CG_Text_Paint_Ext(x, 144, cg_fontScaleCP.value, cg_fontScaleCP.value, colorWhite, s, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
-
-		w = CG_Text_Width_Ext(s1, cg_fontScaleCP.value, 0, &cgs.media.limboFont2);
-		x = Ccg_WideX(320) - w / 2;
-		CG_Text_Paint_Ext(x, 164, cg_fontScaleCP.value, cg_fontScaleCP.value, colorWhite, s1, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
-
-		w = CG_Text_Width_Ext(s2, cg_fontScaleCP.value, 0, &cgs.media.limboFont2);
-		x = Ccg_WideX(320) - w / 2;
-		CG_Text_Paint_Ext(x, 184, cg_fontScaleCP.value, cg_fontScaleCP.value, colorWhite, s2, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+		CG_DrawCompMultilineText(comp, va("%s\n%s\n%s\n", s ? s : " ", s1 ? CG_TranslateString(s1) : " ", s2 ? CG_TranslateString(s2) : " "),
+		                         comp->colorText, ITEM_ALIGN_CENTER, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 	}
 }
 
@@ -4190,10 +4162,10 @@ static void CG_Draw2D(void)
 		return;
 	}
 
-    if (cgs.dbShowing)
-    {
-        CG_Debriefing_Shutdown();
-    }
+	if (cgs.dbShowing)
+	{
+		CG_Debriefing_Shutdown();
+	}
 
 	if (cg.editingSpeakers)
 	{
@@ -4277,15 +4249,13 @@ static void CG_Draw2D(void)
 		{
 			if (cgs.clientinfo[cg.clientNum].shoutcaster && cg.snap->ps.pm_flags & PMF_FOLLOW)
 			{
-                CG_DrawShoutcastPlayerStatus();
+				CG_DrawShoutcastPlayerStatus();
 			}
 
 			CG_DrawActiveHud();
 		}
 
 		CG_DrawCenterString();
-
-		CG_DrawWarmup();
 		CG_DrawObjectiveInfo();
 	}
 	else
