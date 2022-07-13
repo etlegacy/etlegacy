@@ -1369,7 +1369,7 @@ qboolean CG_IsClassFull(int playerType, team_t team)
 
 	if (classCount >= CG_LimboPanel_MaxCount(playerCount, cg.maxPlayerClasses[playerType]))
 	{
-		CG_PriorityCenterPrint(CG_TranslateString(va("^1%s^7 is not available! Choose another class!", BG_ClassnameForNumber(playerType))), 400, cg_fontScaleCP.value, -1);
+		CG_PriorityCenterPrint(CG_TranslateString(va("^1%s^7 is not available! Choose another class!", BG_ClassnameForNumber(playerType))), -1);
 		return qtrue;
 	}
 
@@ -1443,7 +1443,7 @@ qboolean CG_IsWeaponDisabled(weapon_t weapon)
 
 	if (wcount >= CG_LimboPanel_MaxCount(count, maxCount))
 	{
-		CG_PriorityCenterPrint(va(CG_TranslateString("^1%s^7 is not available! Choose another weapon!"), GetWeaponTableData(weapon)->desc), 400, cg_fontScaleCP.value, -1);
+		CG_PriorityCenterPrint(va(CG_TranslateString("^1%s^7 is not available! Choose another weapon!"), GetWeaponTableData(weapon)->desc), -1);
 		return qtrue;
 	}
 
@@ -1603,15 +1603,15 @@ static void CG_Class_f(void)
 	// Print out the selected class and weapon info
 	if (BG_IsSkillAvailable(cgs.clientinfo[cg.clientNum].skill, SK_HEAVY_WEAPONS, SK_SOLDIER_SMG) && playerclass == PC_SOLDIER && !Q_stricmp(GetWeaponTableData(weapon1)->desc, GetWeaponTableData(weapon2)->desc))
 	{
-		CG_PriorityCenterPrint(va(CG_TranslateString("You will spawn as an %s %s with a %s."), teamstring, BG_ClassnameForNumber(playerclass), GetWeaponTableData(weapon1)->desc), 400, cg_fontScaleCP.value, -1);
+		CG_PriorityCenterPrint(va(CG_TranslateString("You will spawn as an %s %s with a %s."), teamstring, BG_ClassnameForNumber(playerclass), GetWeaponTableData(weapon1)->desc), -1);
 	}
 	else if (GetWeaponTableData(weapon2)->attributes & WEAPON_ATTRIBUT_AKIMBO)
 	{
-		CG_PriorityCenterPrint(va(CG_TranslateString("You will spawn as an %s %s with a %s and %s."), teamstring, BG_ClassnameForNumber(playerclass), GetWeaponTableData(weapon1)->desc, GetWeaponTableData(weapon2)->desc), 400, cg_fontScaleCP.value, -1);
+		CG_PriorityCenterPrint(va(CG_TranslateString("You will spawn as an %s %s with a %s and %s."), teamstring, BG_ClassnameForNumber(playerclass), GetWeaponTableData(weapon1)->desc, GetWeaponTableData(weapon2)->desc), -1);
 	}
 	else
 	{
-		CG_PriorityCenterPrint(va(CG_TranslateString("You will spawn as an %s %s with a %s and a %s."), teamstring, BG_ClassnameForNumber(playerclass), GetWeaponTableData(weapon1)->desc, GetWeaponTableData(weapon2)->desc), 400, cg_fontScaleCP.value, -1);
+		CG_PriorityCenterPrint(va(CG_TranslateString("You will spawn as an %s %s with a %s and a %s."), teamstring, BG_ClassnameForNumber(playerclass), GetWeaponTableData(weapon1)->desc, GetWeaponTableData(weapon2)->desc), -1);
 	}
 	// Send the switch command to the server
 	trap_SendClientCommand(va("team %s %i %i %i", classtype, playerclass, weapon1, weapon2));

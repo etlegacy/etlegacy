@@ -221,7 +221,7 @@ static void CG_Obituary(entityState_t *ent)
 			s = va("%s %s", CG_TranslateString("You killed"), targetName);
 		}
 
-		CG_PriorityCenterPrint(s, 400, cg_fontScaleCP.value, 1);
+		CG_PriorityCenterPrint(s, 1);
 	}
 	else if (attacker == cg.snap->ps.clientNum)
 	{
@@ -243,7 +243,7 @@ static void CG_Obituary(entityState_t *ent)
 			s = va("%s %s %s", attackerName, CG_TranslateString("^7killed"), targetName);
 		}
 
-		CG_PriorityCenterPrint(s, 400, cg_fontScaleCP.value, 1);
+		CG_PriorityCenterPrint(s, 1);
 	}
 
 	// check for double client messages

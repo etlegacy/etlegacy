@@ -1129,9 +1129,9 @@ CENTER PRINTING
  * @param[in] y
  * @param[in] fontScale
  */
-void CG_CenterPrint(const char *str, int y, float fontScale)
+void CG_CenterPrint(const char *str)
 {
-	CG_PriorityCenterPrint(str, y, fontScale, 0);
+	CG_PriorityCenterPrint(str, 0);
 	cg.centerPrintTime = cg.time;  // overwrite
 }
 
@@ -1143,36 +1143,31 @@ void CG_CenterPrint(const char *str, int y, float fontScale)
  * @param[in] fontScale
  * @param[in] priority
  */
-void CG_PriorityCenterPrint(const char *str, int y, float fontScale, int priority)
+void CG_PriorityCenterPrint(const char *str, int priority)
 {
+	int maxLineChars;
+
 	// don't draw if this print message is less important
 	if (cg.centerPrintTime && priority < cg.centerPrintPriority)
 	{
 		return;
 	}
 
-	Q_strncpyz(cg.centerPrint, str, sizeof(cg.centerPrint));
-	cg.centerPrintLines      = CG_FormatMultineLinePrint(cg.centerPrint, CP_LINEWIDTH);
-	cg.centerPrintPriority   = priority;
-	cg.centerPrintLines      = 1;
-	cg.centerPrintTime       = cg.time + 2000;
-	cg.centerPrintY          = y;
-	cg.centerPrintCharHeight = CG_Text_Height_Ext("A", fontScale, 0, &cgs.media.limboFont2);
-	cg.centerPrintCharWidth  = CG_Text_Width_Ext("A", fontScale, 0, &cgs.media.limboFont2);
-	cg.centerPrintFontScale  = fontScale;
+	maxLineChars = CG_GetActiveHUD()->centerprint.location.w / CG_Text_Width_Ext("A", CG_GetActiveHUD()->centerprint.scale, 0, &cgs.media.limboFont2);
+
+	Q_strncpyz(cg.centerPrint, CG_TranslateString(str), sizeof(cg.centerPrint));
+	CG_FormatMultineLinePrint(cg.centerPrint, maxLineChars);
+	cg.centerPrintPriority = priority;
+	cg.centerPrintTime     = cg.time + 2000;
 }
 
 /**
  * @brief CG_DrawCenterString
  */
-static void CG_DrawCenterString(void)
+void CG_DrawCenterString(hudComponent_t *comp)
 {
-	char  *start, *end;
-	int   len;
-	char  currentColor[3] = S_COLOR_WHITE;
-	char  nextColor[3] = { 0, 0, 0 };
-	int   x, y, w;
-	float *color;
+	float  *color;
+	vec4_t textColor;
 
 	if (!cg.centerPrintTime)
 	{
@@ -1187,60 +1182,10 @@ static void CG_DrawCenterString(void)
 		return;
 	}
 
-	trap_R_SetColor(color);
+	VectorCopy(comp->colorText, textColor);
+	textColor[3] = color[3];
 
-	y = cg.centerPrintY - cg.centerPrintLines * cg.centerPrintCharHeight / 2;
-
-	for (start = end = cg.centerPrint; *start; end += len)
-	{
-		if (Q_IsColorString(end))
-		{
-			// don't store color if the line start with a color
-			if (start == end)
-			{
-				Com_Memset(currentColor, 0, 3);
-			}
-
-			// store the used color to reused it in case the line is splitted on multi line
-			Q_strncpyz(nextColor, end, 3);
-			len = 2;
-		}
-		else
-		{
-			len = Q_UTF8_Width(end);
-		}
-
-		if (!*end || *end == '\n')
-		{
-			char linebuffer[1024] = { 0 };
-
-			if (*currentColor)
-			{
-				Q_strncpyz(linebuffer, currentColor, 3);
-				Q_strcat(linebuffer, (end - start) + 3, start);
-			}
-			else
-			{
-				Q_strncpyz(linebuffer, start, (end - start) + 1);
-			}
-
-			w = CG_Text_Width_Ext(linebuffer, cg.centerPrintFontScale, 0, &cgs.media.limboFont2);
-			x = Ccg_WideX(320) - w / 2;
-
-			CG_Text_Paint_Ext(x, y, cg.centerPrintFontScale, cg.centerPrintFontScale, colorWhite, linebuffer, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
-
-			y += cg.centerPrintCharHeight * 1.5f;
-
-			if (nextColor[0])
-			{
-				Q_strncpyz(currentColor, nextColor, 3);
-			}
-
-			start = end + len;
-		}
-	}
-
-	trap_R_SetColor(NULL);
+	CG_DrawCompMultilineText(comp, cg.centerPrint, textColor, ITEM_ALIGN_CENTER, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 }
 
 /*
@@ -3092,7 +3037,12 @@ void CG_DrawWarmupTitle(hudComponent_t *comp)
 	static qboolean announced = qfalse;
 	const char      *s;
 
-	if (!cg.warmup)
+	if (cg.serverRespawning)
+	{
+		// print message informing player the server is restarting with a new map
+		s = va("%s", CG_TranslateString("^3Server Restarting"));
+	}
+	else if (!cg.warmup)
 	{
 		if (!(cgs.gamestate == GS_WARMUP && !cg.warmup) && cgs.gamestate != GS_WAITING_FOR_PLAYERS)
 		{
@@ -4136,8 +4086,6 @@ static void CG_Draw2D(void)
 
 			CG_DrawActiveHud();
 		}
-
-		CG_DrawCenterString();
 	}
 	else
 	{

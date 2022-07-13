@@ -3103,7 +3103,7 @@ static void CG_ServerCommand(void)
 			{
 				CG_Printf("[cgnotify]*** ^3INFO: ^5%s\n", CG_LocalizeServerCommand(CG_Argv(1)));
 			}
-			CG_PriorityCenterPrint(s, 400, cg_fontScaleCP.value, Q_atoi(CG_Argv(2)));
+			CG_PriorityCenterPrint(s, Q_atoi(CG_Argv(2)));
 		}
 		else
 		{
@@ -3313,9 +3313,6 @@ static void CG_ServerCommand(void)
 	}
 	// server sends this command when it's about to kill the current server, before the client can reconnect
 	case SPAWNSERVER_HASH:                     // "spawnserver"
-		// print message informing player the server is restarting with a new map
-		CG_PriorityCenterPrint(va("%s", CG_TranslateString("^3Server Restarting")), 100, cg_fontScaleTP.value, 999999);
-
 		// hack here
 		cg.serverRespawning = qtrue;
 

@@ -3013,8 +3013,8 @@ void CG_StatsDebugAddText(const char *text);
 
 void CG_AddLagometerFrameInfo(void);
 void CG_AddLagometerSnapshotInfo(snapshot_t *snap);
-void CG_CenterPrint(const char *str, int y, float fontScale);
-void CG_PriorityCenterPrint(const char *str, int y, float fontScale, int priority);
+void CG_CenterPrint(const char *str);
+void CG_PriorityCenterPrint(const char *str, int priority);
 void CG_ObjectivePrint(const char *str);
 void CG_DrawActive(void);
 void CG_CheckForCursorHints(void);
@@ -3725,7 +3725,7 @@ qboolean CG_FireteamHasClass(int classnum, qboolean selectedonly);
 const char *CG_BuildSelectedFirteamString(void);
 
 #define Pri(x) CG_Printf("[cgnotify]%s", CG_LocalizeServerCommand(x))
-#define CPri(x) CG_CenterPrint(CG_LocalizeServerCommand(x), 400, cg_fontScaleCP.value)
+#define CPri(x) CG_CenterPrint(CG_LocalizeServerCommand(x))
 
 #ifdef FEATURE_MULTIVIEW
 // cg_multiview.c
@@ -4076,7 +4076,7 @@ extern qboolean resetmaxspeed; // CG_DrawSpeed
 
 /* HUD exports */
 
-#define HUD_COMPONENTS_NUM 44
+#define HUD_COMPONENTS_NUM 45
 
 typedef struct hudComponent_s
 {
@@ -4145,6 +4145,7 @@ typedef struct hudStructure_s
     hudComponent_t warmuptitle;
     hudComponent_t warmuptext;
     hudComponent_t objectivetext;
+    hudComponent_t centerprint;
 
 	hudComponent_t *components[HUD_COMPONENTS_NUM];
 } hudStucture_t;
@@ -4165,6 +4166,7 @@ void CG_DrawPMItemsBig(hudComponent_t *comp);
 void CG_DrawWarmupTitle(hudComponent_t *comp);
 void CG_DrawWarmupText(hudComponent_t *comp);
 void CG_DrawObjectiveInfo(hudComponent_t *comp);
+void CG_DrawCenterString(hudComponent_t *comp);
 
 void CG_DrawCompText(hudComponent_t *comp, const char *str, vec4_t color, int fontStyle, fontHelper_t *font);
 void CG_DrawCompMultilineText(hudComponent_t *comp, const char *str, vec4_t color, int align, int fontStyle, fontHelper_t *font);
