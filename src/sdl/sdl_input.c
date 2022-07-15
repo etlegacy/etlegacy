@@ -1187,6 +1187,10 @@ static void IN_ProcessEvents(void)
 					// 8 == CTRL('h') == BS aka Backspace from ascii table
 					Com_QueueEvent(lasttime, SE_CHAR, CTRL('h'), 0, 0, NULL);
 				}
+				else if (key == K_ESCAPE)
+				{
+					Com_QueueEvent(lasttime, SE_CHAR, key, 0, 0, NULL);
+				}
 				else if ((keys[K_LCTRL].down || keys[K_RCTRL].down) && key >= 'a' && key <= 'z')
 				{
 					Com_QueueEvent(lasttime, SE_CHAR, CTRL(key), 0, 0, NULL);
