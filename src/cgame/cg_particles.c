@@ -1031,6 +1031,18 @@ void CG_AddParticles(void)
 	{
 		next = p->next;
 
+		if (cgs.matchPaused)
+		{
+			p->time      += cg.frametime;
+			p->endtime   += cg.frametime;
+			p->startfade += cg.frametime;
+
+			if (p->rotate)
+			{
+				p->accumroll -= p->roll;
+			}
+		}
+
 		time = (cg.time - p->time) * 0.001f;
 
 		alpha = p->alpha + time * p->alphavel;

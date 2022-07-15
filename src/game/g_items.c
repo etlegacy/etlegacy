@@ -1126,7 +1126,7 @@ void G_BounceItem(gentity_t *ent, trace_t *trace)
 {
 	vec3_t velocity;
 	float  dot;
-	int    hitTime = (int)(level.previousTime + (level.time - level.previousTime) * trace->fraction);
+	int    hitTime = (int)(level.previousTime + (level.frameTime * trace->fraction));
 	int    mask    = ent->clipmask ? ent->clipmask : MASK_SOLID;
 
 	// reflect the velocity on the trace plane
@@ -1282,6 +1282,11 @@ void G_RunItem(gentity_t *ent)
 			ent->s.pos.trType = TR_GRAVITY;
 			ent->s.pos.trTime = level.time;
 		}
+	}
+
+	if (level.match_pause != PAUSE_NONE && ent->s.pos.trType != TR_STATIONARY)
+	{
+		ent->s.pos.trTime += level.frameTime;
 	}
 
 	if (ent->s.pos.trType == TR_STATIONARY) // check think function

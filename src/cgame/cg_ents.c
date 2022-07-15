@@ -2520,6 +2520,24 @@ void CG_CalcEntityLerpPositions(centity_t *cent)
  */
 static void CG_ProcessEntity(centity_t *cent)
 {
+	if (cgs.matchPaused)
+	{
+		if (cent->trailTime)
+		{
+			cent->trailTime += cg.frametime;
+		}
+
+		if (cent->highlightTime)
+		{
+			cent->highlightTime += cg.frametime;
+		}
+
+		if (cent->lastFuseSparkTime)
+		{
+			cent->lastFuseSparkTime += cg.frametime;
+		}
+	}
+
 	switch (cent->currentState.eType)
 	{
 	default:
