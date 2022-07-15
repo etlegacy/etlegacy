@@ -95,6 +95,14 @@ set_target_properties(etl PROPERTIES
 	MACOSX_BUNDLE_INFO_PLIST ${CMAKE_SOURCE_DIR}/misc/Info.plist
 )
 
+if(UNIX AND NOT ARM AND NOT APPLE AND NOT ANDROID)
+	if (CROSS_COMPILE32)
+		set_target_properties(etl PROPERTIES SUFFIX ".x86")
+	else()
+		set_target_properties(etl PROPERTIES SUFFIX ".${ARCH}")
+	endif()
+endif()
+
 target_compile_definitions(etl PRIVATE ETL_CLIENT=1)
 
 if(MSVC AND NOT EXISTS ${CMAKE_CURRENT_BINARY_DIR}/etl.vcxproj.user)
