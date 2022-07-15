@@ -1155,8 +1155,7 @@ void CG_PriorityCenterPrint(const char *str, int priority)
 
 	maxLineChars = CG_GetActiveHUD()->centerprint.location.w / CG_Text_Width_Ext("A", CG_GetActiveHUD()->centerprint.scale, 0, &cgs.media.limboFont2);
 
-	Q_strncpyz(cg.centerPrint, CG_TranslateString(str), sizeof(cg.centerPrint));
-	CG_FormatMultineLinePrint(cg.centerPrint, maxLineChars);
+	CG_WordWrapString(CG_TranslateString(str), maxLineChars, cg.centerPrint, sizeof(cg.centerPrint));
 	cg.centerPrintPriority = priority;
 	cg.centerPrintTime     = cg.time + 2000;
 }
@@ -3529,8 +3528,7 @@ void CG_ObjectivePrint(const char *str)
 
 	maxLineChars = CG_GetActiveHUD()->objectivetext.location.w / CG_Text_Width_Ext("A", CG_GetActiveHUD()->objectivetext.scale, 0, &cgs.media.limboFont2);
 
-	Q_strncpyz(cg.oidPrint, CG_TranslateString(str), sizeof(cg.oidPrint));
-	CG_FormatMultineLinePrint(cg.oidPrint, maxLineChars);
+	CG_WordWrapString(CG_TranslateString(str), maxLineChars, cg.oidPrint, sizeof(cg.oidPrint));
 	cg.oidPrintTime = cg.time;
 }
 
@@ -3832,10 +3830,10 @@ void CG_DrawOnScreenBars(void)
 /**
  * @brief CG_DrawBannerPrint
  */
-static void CG_DrawBannerPrint(void)
+void CG_DrawBannerPrint(hudComponent_t *comp)
 {
-	float *color;
-	int   lineHeight;
+	float  *color;
+	vec4_t textColor;
 
 	if ((cg_bannerTime.integer <= 0) || !cg.bannerPrintTime)
 	{
@@ -3850,11 +3848,10 @@ static void CG_DrawBannerPrint(void)
 		return;
 	}
 
-	color[3] *= 0.75;
+	VectorCopy(comp->colorText, textColor);
+	textColor[3] = color[3];
 
-	lineHeight = ((float)CG_Text_Height_Ext("M", 0.23, 0, &cgs.media.limboFont2) * 1.5f);
-
-	CG_DrawMultilineText(Ccg_WideX(320), 20, 0.23, 0.23, color, cg.bannerPrint, lineHeight, 0, 0, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, &cgs.media.limboFont2);
+	CG_DrawCompMultilineText(comp, cg.bannerPrint, textColor, ITEM_ALIGN_CENTER, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 }
 
 #define MAX_DISTANCE 2000.f
@@ -4030,13 +4027,6 @@ static void CG_Draw2D(void)
 	}
 
 #ifdef FEATURE_EDV
-	if (!cgs.demoCamera.renderingFreeCam && !cgs.demoCamera.renderingWeaponCam)
-#endif
-	{
-		CG_DrawFlashBlendBehindHUD();
-	}
-
-#ifdef FEATURE_EDV
 	if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR || cgs.demoCamera.renderingFreeCam || cgs.demoCamera.renderingWeaponCam)
 #else
 	if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR)
@@ -4047,6 +4037,8 @@ static void CG_Draw2D(void)
 	}
 	else
 	{
+		CG_DrawFlashBlendBehindHUD();
+
 		// don't draw any status if dead
 		if (cg.snap->ps.stats[STAT_HEALTH] > 0 || (cg.snap->ps.pm_flags & PMF_FOLLOW))
 		{
@@ -4066,22 +4058,23 @@ static void CG_Draw2D(void)
 	// don't draw center string if scoreboard is up
 	if (!CG_DrawScoreboard())
 	{
-		CG_DrawBannerPrint();
-
 		CG_SetHud();
-
-		if (cgs.clientinfo[cg.clientNum].shoutcaster && cg_shoutcastDrawPlayers.integer)
-		{
-			CG_DrawShoutcastPlayerList();
-		}
 
 #ifdef FEATURE_EDV
 		if (!cgs.demoCamera.renderingFreeCam && !cgs.demoCamera.renderingWeaponCam)
 #endif
 		{
-			if (cgs.clientinfo[cg.clientNum].shoutcaster && cg.snap->ps.pm_flags & PMF_FOLLOW)
+			if (cgs.clientinfo[cg.clientNum].shoutcaster)
 			{
-				CG_DrawShoutcastPlayerStatus();
+				if (cg_shoutcastDrawPlayers.integer)
+				{
+					CG_DrawShoutcastPlayerList();
+				}
+
+				if (cg.snap->ps.pm_flags & PMF_FOLLOW)
+				{
+					CG_DrawShoutcastPlayerStatus();
+				}
 			}
 
 			CG_DrawActiveHud();

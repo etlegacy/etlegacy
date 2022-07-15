@@ -1165,62 +1165,6 @@ void CG_DrawMultilineText(float x, float y, float scalex, float scaley, vec4_t c
 }
 
 /**
- * @brief Format the message by turning spaces into newlines, if we've run over the linewidth
- * @param[in,out] s The message to format
- * @return The number of line needed to display the messages
- */
-int CG_FormatMultineLinePrint(char *s, int lineWidth)
-{
-	char     *lastSpace = NULL;
-	int      i, len, lastLR = 0;
-	int      lineNumber  = 1;
-	qboolean neednewline = qfalse;
-
-	len = Q_UTF8_PrintStrlen(s);
-
-	for (i = 0; i < len; i++)
-	{
-		if (Q_IsColorString(s))
-		{
-			s += 2;
-		}
-
-		if ((i - lastLR) >= lineWidth)
-		{
-			neednewline = qtrue;
-		}
-
-		if (*s == ' ')
-		{
-			lastSpace = s;
-		}
-
-		// we reach the end of the string and it doesn't fit in on line
-		if (neednewline && lastSpace)
-		{
-			*lastSpace = '\n';
-			lastSpace  = NULL;
-			lastLR     = i;
-			lineNumber++;
-			neednewline = qfalse;
-		}
-
-		// count the number of lines for centering
-		if (*s == '\n')
-		{
-			lastLR      = i;
-			lastSpace   = NULL;
-			neednewline = qfalse;
-			lineNumber++;
-		}
-
-		s += Q_UTF8_Width(s);
-	}
-
-	return lineNumber;
-}
-
-/**
  * @brief CG_DropdownMainBox
  * @param[in] x
  * @param[in] y

@@ -1230,12 +1230,7 @@ typedef struct
 
 	// centerprinting
 	int centerPrintTime;
-	int centerPrintCharHeight;
-	int centerPrintCharWidth;
-	float centerPrintFontScale;
-	int centerPrintY;
 	char centerPrint[1024];
-	int centerPrintLines;
 	int centerPrintPriority;
 
 	// fade in/out
@@ -2992,8 +2987,6 @@ void CG_AddOnScreenBar(float fraction, vec4_t colorStart, vec4_t colorEnd, vec4_
 
 // string word wrapper
 char *CG_WordWrapString(const char *input, int maxLineChars, char *output, int maxOutputSize);
-// format string to be draw on multiline
-int CG_FormatMultineLinePrint(char *s, int lineWidth);
 // draws multiline strings
 void CG_DrawMultilineText(float x, float y, float scalex, float scaley, vec4_t color, const char *text, int lineHeight, float adjust, int limit, int style, int align, fontHelper_t *font);
 
@@ -4076,7 +4069,7 @@ extern qboolean resetmaxspeed; // CG_DrawSpeed
 
 /* HUD exports */
 
-#define HUD_COMPONENTS_NUM 45
+#define HUD_COMPONENTS_NUM 46
 
 typedef struct hudComponent_s
 {
@@ -4146,6 +4139,7 @@ typedef struct hudStructure_s
     hudComponent_t warmuptext;
     hudComponent_t objectivetext;
     hudComponent_t centerprint;
+    hudComponent_t banner;
 
 	hudComponent_t *components[HUD_COMPONENTS_NUM];
 } hudStucture_t;
@@ -4167,6 +4161,7 @@ void CG_DrawWarmupTitle(hudComponent_t *comp);
 void CG_DrawWarmupText(hudComponent_t *comp);
 void CG_DrawObjectiveInfo(hudComponent_t *comp);
 void CG_DrawCenterString(hudComponent_t *comp);
+void CG_DrawBannerPrint(hudComponent_t *comp);
 
 void CG_DrawCompText(hudComponent_t *comp, const char *str, vec4_t color, int fontStyle, fontHelper_t *font);
 void CG_DrawCompMultilineText(hudComponent_t *comp, const char *str, vec4_t color, int align, int fontStyle, fontHelper_t *font);

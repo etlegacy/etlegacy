@@ -3523,9 +3523,15 @@ static void CG_ServerCommand(void)
 		trap_S_FadeAllSound(1.0f, 1000, qfalse);      // fade sound up
 		return;
 	case BP_HASH: // "bp"
-		CG_WordWrapString(CG_Argv(1), Com_Clamp(50, 80, (int)(cgs.screenXScale * 40.f)), cg.bannerPrint, sizeof(cg.bannerPrint));
+	{
+		int maxLineChars;
+
+		maxLineChars = CG_GetActiveHUD()->banner.location.w / CG_Text_Width_Ext("A", CG_GetActiveHUD()->banner.scale, 0, &cgs.media.limboFont2);
+
+		CG_WordWrapString(CG_Argv(1), maxLineChars, cg.bannerPrint, sizeof(cg.bannerPrint));
 		cg.bannerPrintTime = cg.time;
 		break;
+	}
 	default:
 		CG_Printf("Unknown client game command: %s [%lu]\n", cmd, BG_StringHashValue(cmd));
 		break;
