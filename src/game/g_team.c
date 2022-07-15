@@ -1223,6 +1223,11 @@ void checkpoint_think(gentity_t *self)
  */
 void checkpoint_touch(gentity_t *self, gentity_t *other, trace_t *trace)
 {
+	if (other->client->ps.eFlags & EF_DEAD)
+	{
+		return;
+	}
+
 	if (self->count == other->client->sess.sessionTeam)
 	{
 		return;
