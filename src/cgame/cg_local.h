@@ -2863,8 +2863,6 @@ extern vmCvar_t cg_chatShadow;
 
 extern vmCvar_t cg_activateLean;
 
-extern vmCvar_t cg_healthDynamicColor;
-
 extern vmCvar_t cg_drawBreathPuffs;
 
 // local clock flags

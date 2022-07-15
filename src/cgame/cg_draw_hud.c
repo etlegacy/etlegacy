@@ -1513,7 +1513,7 @@ static void CG_DrawPlayerHealth(hudComponent_t *comp)
 		return;
 	}
 
-	if (cg_healthDynamicColor.integer)
+	if (comp->style)
 	{
 		CG_GetColorForHealth(cg.snap->ps.stats[STAT_HEALTH], color);
 		color[3] = comp->colorText[3];

@@ -375,8 +375,6 @@ vmCvar_t cg_chatShadow;
 
 vmCvar_t cg_activateLean;
 
-vmCvar_t cg_healthDynamicColor;
-
 vmCvar_t cg_drawBreathPuffs;
 
 typedef struct
@@ -650,8 +648,6 @@ static cvarTable_t cvarTable[] =
 	{ &cg_chatShadow,              "cg_chatShadow",              "0",           CVAR_ARCHIVE,                 0 },
 
 	{ &cg_activateLean,            "cg_activateLean",            "0",           CVAR_ARCHIVE,                 0 },
-
-	{ &cg_healthDynamicColor,      "cg_healthDynamicColor",      "0",           CVAR_ARCHIVE,                 0 },
 
 	{ &cg_drawBreathPuffs,         "cg_drawBreathPuffs",         "1",           CVAR_ARCHIVE,                 0 },
 };
