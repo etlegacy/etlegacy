@@ -366,7 +366,6 @@ vmCvar_t cg_shoutcastTeamNameRed;
 vmCvar_t cg_shoutcastTeamNameBlue;
 vmCvar_t cg_shoutcastDrawHealth;
 vmCvar_t cg_shoutcastGrenadeTrail;
-vmCvar_t cg_shoutcastDrawMinimap;
 
 vmCvar_t cg_chatShadow;
 
@@ -636,7 +635,6 @@ static cvarTable_t cvarTable[] =
 	{ &cg_shoutcastTeamNameBlue,   "cg_shoutcastTeamNameBlue",   "Allies",      CVAR_ARCHIVE,                 0 },
 	{ &cg_shoutcastDrawHealth,     "cg_shoutcastDrawHealth",     "0",           CVAR_ARCHIVE,                 0 },
 	{ &cg_shoutcastGrenadeTrail,   "cg_shoutcastGrenadeTrail",   "0",           CVAR_ARCHIVE,                 0 },
-	{ &cg_shoutcastDrawMinimap,    "cg_shoutcastDrawMinimap",    "1",           CVAR_ARCHIVE,                 0 },
 
 	{ &cg_chatShadow,              "cg_chatShadow",              "0",           CVAR_ARCHIVE,                 0 },
 

@@ -2855,7 +2855,6 @@ extern vmCvar_t cg_shoutcastTeamNameRed;
 extern vmCvar_t cg_shoutcastTeamNameBlue;
 extern vmCvar_t cg_shoutcastDrawHealth;
 extern vmCvar_t cg_shoutcastGrenadeTrail;
-extern vmCvar_t cg_shoutcastDrawMinimap;
 
 extern vmCvar_t cg_chatShadow;
 

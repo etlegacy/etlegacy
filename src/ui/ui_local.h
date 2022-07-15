@@ -110,7 +110,6 @@ extern vmCvar_t ui_cg_shoutcastTeamNameRed;
 extern vmCvar_t ui_cg_shoutcastTeamNameBlue;
 extern vmCvar_t ui_cg_shoutcastDrawHealth;
 extern vmCvar_t ui_cg_shoutcastGrenadeTrail;
-extern vmCvar_t ui_cg_shoutcastDrawMinimap;
 
 // ui_serverBrowserSettings flags
 #define UI_BROWSER_ALLOW_REDIRECT     BIT(0)

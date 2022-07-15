@@ -937,7 +937,7 @@ void CG_DrawShoutcastTimer(void)
 	}
 	else
 	{
-		if (cgs.gametype != GT_WOLF_LMS && cgs.clientinfo[cg.clientNum].shoutcaster && cg_drawReinforcementTime.integer > 0)
+		if (cgs.gametype != GT_WOLF_LMS && cgs.clientinfo[cg.clientNum].shoutcaster)
 		{
 			int reinfTimeAx = CG_CalculateShoutcasterReinfTime(TEAM_AXIS);
 			int reinfTimeAl = CG_CalculateShoutcasterReinfTime(TEAM_ALLIES);
@@ -945,7 +945,7 @@ void CG_DrawShoutcastTimer(void)
 			rtAllies = va("^$%i", reinfTimeAl);
 			rtAxis   = va("^1%i", reinfTimeAx);
 		}
-		else if (cgs.gametype != GT_WOLF_LMS && (cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR || (cg.snap->ps.pm_flags & PMF_FOLLOW)) && cg_drawReinforcementTime.integer > 0)
+		else if (cgs.gametype != GT_WOLF_LMS && (cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR || (cg.snap->ps.pm_flags & PMF_FOLLOW)))
 		{
 			int  reinfTime = CG_CalculateReinfTime(qfalse);
 			char *c        = (cgs.clientinfo[cg.clientNum].shoutcaster ? (cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_AXIS ? "^1" : "^$") : "^F");
