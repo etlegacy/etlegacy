@@ -839,12 +839,12 @@ void CG_UpdateCvars(void)
 		if (cg_customFont1.modificationCount != cg_customFont1_lastMod)
 		{
 			cg_customFont1_lastMod = cg_customFont1.modificationCount;
-			RegisterSharedFonts();
+			CG_RegisterFonts();
 		}
 		else if (cg_customFont2.modificationCount != cg_customFont2_lastMod)
 		{
 			cg_customFont2_lastMod = cg_customFont2.modificationCount;
-			RegisterSharedFonts();
+			CG_RegisterFonts();
 		}
 	}
 
@@ -1599,6 +1599,22 @@ static void CG_RegisterSounds(void)
 }
 
 /**
+* @brief CG_RegisterFonts
+*/
+void CG_RegisterFonts(void)
+{
+	RegisterSharedFonts();
+
+	cgs.media.limboFont1    = cgDC.Assets.limboFont1;
+	cgs.media.limboFont1_lo = cgDC.Assets.limboFont1_lo;
+	cgs.media.limboFont2    = cgDC.Assets.limboFont2;
+	cgs.media.limboFont2_lo = cgDC.Assets.limboFont2_lo;
+
+	cgs.media.bg_loadscreenfont1 = cgDC.Assets.bg_loadscreenfont1;
+	cgs.media.bg_loadscreenfont2 = cgDC.Assets.bg_loadscreenfont2;
+}
+
+/**
  * @brief CG_GetGameSound
  * @param[in] index
  * @return
@@ -2166,11 +2182,7 @@ static void CG_RegisterGraphics(void)
 	cgs.media.medicIcon = trap_R_RegisterShaderNoMip("sprites/voiceMedic");
 	cgs.media.ammoIcon  = trap_R_RegisterShaderNoMip("sprites/voiceAmmo");
 
-	RegisterSharedFonts();
-	cgs.media.limboFont1    = cgDC.Assets.limboFont1;
-	cgs.media.limboFont1_lo = cgDC.Assets.limboFont1_lo;
-	cgs.media.limboFont2    = cgDC.Assets.limboFont2;
-	cgs.media.limboFont2_lo = cgDC.Assets.limboFont2_lo;
+	CG_RegisterFonts();
 
 	cgs.media.medal_back = trap_R_RegisterShaderNoMip("gfx/limbo/medal_back");
 

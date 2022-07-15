@@ -301,9 +301,7 @@ void CG_DrawConnectScreen(qboolean interactive, qboolean forcerefresh)
 	{
 		trap_Cvar_Set("ui_connecting", "0");
 
-		RegisterSharedFonts();
-		cgs.media.bg_loadscreenfont1 = cgDC.Assets.bg_loadscreenfont1;
-		cgs.media.bg_loadscreenfont2 = cgDC.Assets.bg_loadscreenfont2;
+		CG_RegisterFonts();
 
 		bg_axispin    = DC->registerShaderNoMip("gfx/loading/pin_axis");
 		bg_alliedpin  = DC->registerShaderNoMip("gfx/loading/pin_allied");

@@ -1039,6 +1039,11 @@ void UI_Shutdown(void)
 		Q_UTF8_FreeFont(&uiInfo.uiDC.Assets.fonts[i]);
 	}
 
+	Q_UTF8_FreeFont(&uiInfo.uiDC.Assets.limboFont1);
+	Q_UTF8_FreeFont(&uiInfo.uiDC.Assets.limboFont1_lo);
+	Q_UTF8_FreeFont(&uiInfo.uiDC.Assets.limboFont2);
+	Q_UTF8_FreeFont(&uiInfo.uiDC.Assets.limboFont2_lo);
+
 	Q_UTF8_FreeFont(&uiInfo.uiDC.Assets.bg_loadscreenfont1);
 	Q_UTF8_FreeFont(&uiInfo.uiDC.Assets.bg_loadscreenfont2);
 
