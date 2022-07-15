@@ -2041,6 +2041,45 @@ void G_AdjustedDamageVec(gentity_t *ent, vec3_t origin, vec3_t vec)
 	}
 }
 
+vec3_t explosionOrigin;
+
+/**
+* @brief G_SortPlayersByDistance from explosion
+* @param[in] a
+* @param[in] b
+* @return
+*/
+static int QDECL G_SortPlayersByDistance(const void *a, const void *b)
+{
+	gentity_t *entA = &g_entities[*((const int *)a)];
+	gentity_t *entB = &g_entities[*((const int *)b)];
+	vec3_t    vecA, vecB;
+	float     distA, distB;
+
+	if (entA->client && !entB->client)
+	{
+		return -1;
+	}
+
+	if (!entA->client && entB->client)
+	{
+		return 1;
+	}
+
+	if (!entA->client && !entB->client)
+	{
+		return 0;
+	}
+
+	G_AdjustedDamageVec(entA, explosionOrigin, vecA);
+	G_AdjustedDamageVec(entB, explosionOrigin, vecB);
+
+	distA = VectorLength(vecA);
+	distB = VectorLength(vecB);
+
+	return distA - distB;
+}
+
 /**
  * @brief G_RadiusDamage
  * @param[in] origin
@@ -2089,6 +2128,9 @@ qboolean G_RadiusDamage(vec3_t origin, gentity_t *inflictor, gentity_t *attacker
 	}
 
 	numListedEntities = trap_EntitiesInBox(mins, maxs, entityList, MAX_GENTITIES);
+
+	VectorCopy(origin, explosionOrigin);
+	qsort(entityList, numListedEntities, sizeof(int), G_SortPlayersByDistance);
 
 	for (e = 0 ; e < level.num_entities ; e++)
 	{
@@ -2255,6 +2297,12 @@ qboolean etpro_RadiusDamage(vec3_t origin, gentity_t *inflictor, gentity_t *atta
 	}
 
 	numListedEntities = trap_EntitiesInBox(mins, maxs, entityList, MAX_GENTITIES);
+
+	if (clientsonly)
+	{
+		VectorCopy(origin, explosionOrigin);
+		qsort(entityList, numListedEntities, sizeof(int), G_SortPlayersByDistance);
+	}
 
 	for (e = 0 ; e < level.num_entities ; e++)
 	{
