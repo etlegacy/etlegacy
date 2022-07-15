@@ -3547,7 +3547,7 @@ static void CG_DrawLagometer(hudComponent_t *comp)
 #endif // ALLOW_GSYNC
 	    )
 	{
-		CG_Text_Paint_Ext(ax, ay, cg_fontScaleTP.value, cg_fontScaleTP.value, colorWhite, "snc", 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+		CG_Text_Paint_Ext(ax, ay, comp->scale * 1.75, comp->scale * 1.75, colorWhite, "snc", 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 	}
 
 	// don't draw if a demo and we're running at a different timescale

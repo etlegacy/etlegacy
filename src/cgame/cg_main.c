@@ -341,10 +341,7 @@ vmCvar_t cg_popupBigFilter;
 vmCvar_t cg_graphicObituaries;
 vmCvar_t cg_popupShadow;
 
-vmCvar_t cg_fontScaleTP; // top print
 vmCvar_t cg_fontScaleSP; // side print
-vmCvar_t cg_fontScaleCP; // center print
-vmCvar_t cg_fontScaleCN; // crosshair name
 
 // unlagged optimized prediction
 vmCvar_t cg_optimizePrediction;
@@ -498,7 +495,6 @@ static cvarTable_t cvarTable[] =
 	{ &cg_redlimbotime,            "",                           "30000",       0,                            0 }, // communicated by systeminfo
 	{ &cg_drawNotifyText,          "cg_drawNotifyText",          "1",           CVAR_ARCHIVE,                 0 },
 	{ &cg_quickMessageAlt,         "cg_quickMessageAlt",         "0",           CVAR_ARCHIVE,                 0 },
-	{ &cg_descriptiveText,         "cg_descriptiveText",         "1",           CVAR_ARCHIVE,                 0 },
 	{ &cg_antilag,                 "g_antilag",                  "1",           0,                            0 },
 	{ &developer,                  "developer",                  "0",           CVAR_CHEAT,                   0 },
 	{ &cf_wstats,                  "cf_wstats",                  "1.2",         CVAR_ARCHIVE,                 0 },
@@ -619,10 +615,7 @@ static cvarTable_t cvarTable[] =
 	{ &cg_sharetimerText,          "cg_sharetimerText",          "",            CVAR_ARCHIVE,                 0 },
 
 	// Fonts
-	{ &cg_fontScaleTP,             "cg_fontScaleTP",             "0.35",        CVAR_ARCHIVE,                 0 }, // TopPrint
 	{ &cg_fontScaleSP,             "cg_fontScaleSP",             "0.22",        CVAR_ARCHIVE,                 0 }, // SidePrint
-	{ &cg_fontScaleCP,             "cg_fontScaleCP",             "0.22",        CVAR_ARCHIVE,                 0 }, // CenterPrint
-	{ &cg_fontScaleCN,             "cg_fontScaleCN",             "0.25",        CVAR_ARCHIVE,                 0 }, // CrossName
 
 	{ &cg_optimizePrediction,      "cg_optimizePrediction",      "1",           CVAR_ARCHIVE,                 0 }, // unlagged optimized prediction
 

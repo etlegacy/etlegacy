@@ -2037,6 +2037,8 @@ static void CG_DrawCrosshairHealthBar(float position, int health, int maxHealth)
 	CG_FilledBar(position - 55, 190, 110, 10, c, NULL, bgcolor, barFrac, 16);
 }
 
+static const float fontScaleCN = 0.25;
+
 /**
  * @brief CG_DrawCrosshairPlayerInfo
  * @param[in] clientNum
@@ -2051,7 +2053,6 @@ static void CG_DrawCrosshairPlayerInfo(int clientNum, int class)
 	int        maxHealth    = 1;
 	qboolean   hasRank      = qfalse;
 	float      middle       = 320 + cgs.wideXoffset;
-	float      fontScale    = cg_fontScaleCN.value;
 
 	// draw the name of the player being looked at
 	color = CG_FadeColor(cg.crosshairClientTime, 1000);
@@ -2078,9 +2079,9 @@ static void CG_DrawCrosshairPlayerInfo(int clientNum, int class)
 			Q_ColorizeString('7', cgs.clientinfo[clientNum].cleanname, colorized, MAX_NAME_LENGTH + 2);
 			s = colorized;
 		}
-		w = CG_Text_Width_Ext(s, fontScale, 0, &cgs.media.limboFont2);
+		w = CG_Text_Width_Ext(s, fontScaleCN, 0, &cgs.media.limboFont2);
 
-		CG_Text_Paint_Ext(middle - w / 2, 182, fontScale, fontScale, color, s, 0, 0, 0, &cgs.media.limboFont2);
+		CG_Text_Paint_Ext(middle - w / 2, 182, fontScaleCN, fontScaleCN, color, s, 0, 0, 0, &cgs.media.limboFont2);
 	}
 	if (cg_drawCrosshairInfo.integer & CROSSHAIR_CLASS)
 	{
@@ -2098,7 +2099,7 @@ static void CG_DrawCrosshairPlayerInfo(int clientNum, int class)
 		hasRank = (cg_drawCrosshairInfo.integer & CROSSHAIR_RANK) && cgs.clientinfo[clientNum].rank > 0;
 		// + 110/2
 		CG_DrawPic(middle + 55 + (hasRank ? 18 : 0), 187, 16, 16, cgs.media.prestigePics[0]);
-		CG_Text_Paint_Ext(middle + 71 + (hasRank ? 18 : 0), 198, fontScale, fontScale, color, va("%d", cgs.clientinfo[clientNum].prestige), 0, 0, 0, &cgs.media.limboFont2);
+		CG_Text_Paint_Ext(middle + 71 + (hasRank ? 18 : 0), 198, fontScaleCN, fontScaleCN, color, va("%d", cgs.clientinfo[clientNum].prestige), 0, 0, 0, &cgs.media.limboFont2);
 	}
 #endif
 
@@ -2141,7 +2142,6 @@ static void CG_DrawCrosshairNames(void)
 	float      zChange;
 	qboolean   hitClient = qfalse;
 	float      middle    = 320 + cgs.wideXoffset;
-	float      fontScale = cg_fontScaleCN.value;
 
 	if (cg_drawCrosshair.integer < 0)
 	{
@@ -2160,8 +2160,8 @@ static void CG_DrawCrosshairNames(void)
 		}
 
 		s = va(CG_TranslateString("%s^7\'s dynamite"), cgs.clientinfo[cg.crosshairDyna].name);
-		w = CG_Text_Width_Ext(s, fontScale, 0, &cgs.media.limboFont2);
-		CG_Text_Paint_Ext(middle - w / 2, 182, fontScale, fontScale, color, s, 0, 0, 0, &cgs.media.limboFont2);
+		w = CG_Text_Width_Ext(s, fontScaleCN, 0, &cgs.media.limboFont2);
+		CG_Text_Paint_Ext(middle - w / 2, 182, fontScaleCN, fontScaleCN, color, s, 0, 0, 0, &cgs.media.limboFont2);
 
 		cg.crosshairDyna = -1;
 		return;
@@ -2179,8 +2179,8 @@ static void CG_DrawCrosshairNames(void)
 		}
 
 		s = va(CG_TranslateString("%s^7\'s mine"), cgs.clientinfo[cg.crosshairMine].name);
-		w = CG_Text_Width_Ext(s, fontScale, 0, &cgs.media.limboFont2);
-		CG_Text_Paint_Ext(middle - w / 2, 182, fontScale, fontScale, color, s, 0, 0, 0, &cgs.media.limboFont2);
+		w = CG_Text_Width_Ext(s, fontScaleCN, 0, &cgs.media.limboFont2);
+		CG_Text_Paint_Ext(middle - w / 2, 182, fontScaleCN, fontScaleCN, color, s, 0, 0, 0, &cgs.media.limboFont2);
 
 		cg.crosshairMine = -1;
 		return;
@@ -2245,8 +2245,8 @@ static void CG_DrawCrosshairNames(void)
 
 			if (s && *s)
 			{
-				w = CG_Text_Width_Ext(s, fontScale, 0, &cgs.media.limboFont2);
-				CG_Text_Paint_Ext(middle - w / 2, 182, fontScale, fontScale, color, s, 0, 0, 0, &cgs.media.limboFont2);
+				w = CG_Text_Width_Ext(s, fontScaleCN, 0, &cgs.media.limboFont2);
+				CG_Text_Paint_Ext(middle - w / 2, 182, fontScaleCN, fontScaleCN, color, s, 0, 0, 0, &cgs.media.limboFont2);
 			}
 		}
 		return;
@@ -2273,8 +2273,8 @@ static void CG_DrawCrosshairNames(void)
 			}
 
 			s = CG_TranslateString("Disguised Enemy!");
-			w = CG_Text_Width_Ext(s, fontScale, 0, &cgs.media.limboFont2);
-			CG_Text_Paint_Ext(middle - w / 2, 182, fontScale, fontScale, color, s, 0, 0, 0, &cgs.media.limboFont2);
+			w = CG_Text_Width_Ext(s, fontScaleCN, 0, &cgs.media.limboFont2);
+			CG_Text_Paint_Ext(middle - w / 2, 182, fontScaleCN, fontScaleCN, color, s, 0, 0, 0, &cgs.media.limboFont2);
 			return;
 		}
 

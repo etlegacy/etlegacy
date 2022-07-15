@@ -6359,29 +6359,7 @@ void UI_RunMenuScript(char **args)
 		}
 		else if (Q_stricmp(name, "SetFontScale") == 0)
 		{
-			int fontScale = (int)(trap_Cvar_VariableValue("cg_fontScale"));
-
-			if (fontScale == 1)
-			{
-				trap_Cvar_SetValue("cg_fontScaleTP", 0.30f);
-				trap_Cvar_SetValue("cg_fontScaleSP", 0.20f);
-				trap_Cvar_SetValue("cg_fontScaleCP", 0.20f);
-				trap_Cvar_SetValue("cg_fontScaleCN", 0.22f);
-			}
-			else if (fontScale == 2)
-			{
-				trap_Cvar_SetValue("cg_fontScaleTP", 0.25f);
-				trap_Cvar_SetValue("cg_fontScaleSP", 0.18f);
-				trap_Cvar_SetValue("cg_fontScaleCP", 0.18f);
-				trap_Cvar_SetValue("cg_fontScaleCN", 0.20f);
-			}
-			else
-			{
-				trap_Cvar_SetValue("cg_fontScaleTP", 0.35f);
-				trap_Cvar_SetValue("cg_fontScaleSP", 0.22f);
-				trap_Cvar_SetValue("cg_fontScaleCP", 0.22f);
-				trap_Cvar_SetValue("cg_fontScaleCN", 0.25f);
-			}
+			Com_Printf("^3WARNING: deprecated/unused %s\n", name);
 		}
 		else
 		{
