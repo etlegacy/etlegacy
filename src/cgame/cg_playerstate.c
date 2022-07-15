@@ -506,6 +506,11 @@ void CG_TransitionPlayerState(playerState_t *ps, playerState_t *ops)
 		CG_Respawn(ps->persistant[PERS_REVIVE_COUNT] != ops->persistant[PERS_REVIVE_COUNT] ? qtrue : qfalse);
 	}
 
+	if ((ps->pm_flags & PMF_RESPAWNED) && cg.weaponSelect != ps->weapon)
+	{
+		cg.weaponSelect = ps->weapon;
+	}
+
 	if (cg.mapRestart)
 	{
 		CG_Respawn(qfalse);
