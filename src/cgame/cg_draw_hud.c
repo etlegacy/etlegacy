@@ -223,10 +223,10 @@ void CG_setDefaultHudValues(hudStucture_t *hud)
 	hud->healthtext       = CG_getComponent(47, 465, 57, 14, qtrue, STYLE_NORMAL, 0.25f, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, 5, CG_DrawPlayerHealth);
 	hud->xptext           = CG_getComponent(108, 465, 57, 14, qtrue, STYLE_NORMAL, 0.25f, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, 6, CG_DrawXP);
 	hud->ranktext         = CG_getComponent(0, SCREEN_HEIGHT, 57, 14, qfalse, STYLE_NORMAL, 0.2f, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, 7, CG_DrawRank);   // disable
-	hud->statsdisplay     = CG_getComponent(116, 394, 14, 70, qtrue, STYLE_NORMAL, 0.25f, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, 8, CG_DrawSkills);
+	hud->statsdisplay     = CG_getComponent(116, 394, 42, 70, qtrue, STYLE_NORMAL, 0.25f, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, 8, CG_DrawSkills);
 	hud->weaponicon       = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 82, SCREEN_HEIGHT - 56, 60, 32, qtrue, STYLE_NORMAL, 0.19f, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, 9, CG_DrawGunIcon);
 	hud->weaponammo       = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 82, 458, 57, 14, qtrue, STYLE_NORMAL, 0.25f, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, 10, CG_DrawAmmoCount);
-	hud->fireteam         = CG_getComponent(10, 10, 300, 86, qtrue, STYLE_NORMAL, 0.2f, colorWhite, qtrue, HUD_Background, qtrue, HUD_Border, 11, CG_DrawFireTeamOverlay);
+	hud->fireteam         = CG_getComponent(10, 15, 350, 100, qtrue, STYLE_NORMAL, 0.2f, colorWhite, qtrue, HUD_Background, qtrue, HUD_Border, 11, CG_DrawFireTeamOverlay);
 	hud->popupmessages    = CG_getComponent(4, 245, 422, 96, qtrue, STYLE_NORMAL, 0.22f, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, 12, CG_DrawPMItems);
 	hud->powerups         = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 40, SCREEN_HEIGHT - 136, 36, 36, qtrue, STYLE_NORMAL, 0.19f, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, 13, CG_DrawPowerUps);
 	hud->objectives       = CG_getComponent(8, SCREEN_HEIGHT - 136, 36, 36, qtrue, STYLE_NORMAL, 0.19f, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, 14, CG_DrawObjectiveStatus);
@@ -242,7 +242,7 @@ void CG_setDefaultHudValues(hudStucture_t *hud)
 	hud->spectatortext    = CG_getComponent(8, 160, 278, 38, qtrue, STYLE_NORMAL, 0.22f, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, 24, CG_DrawSpectatorMessage);
 	hud->limbotext        = CG_getComponent(8, 124, 278, 38, qtrue, STYLE_NORMAL, 0.22f, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, 25, CG_DrawLimboMessage);
 	hud->followtext       = CG_getComponent(8, 124, 278, 24, qtrue, STYLE_NORMAL, 0.22f, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, 26, CG_DrawFollow);
-	hud->demotext         = CG_getComponent(10, 9, 57, 14, qtrue, STYLE_NORMAL, 0.22f, colorRed, qfalse, HUD_Background, qfalse, HUD_Border, 27, CG_DrawDemoMessage);
+	hud->demotext         = CG_getComponent(10, 0, 320, 14, qtrue, STYLE_NORMAL, 0.22f, colorRed, qfalse, HUD_Background, qfalse, HUD_Border, 27, CG_DrawDemoMessage);
 	hud->missilecamera    = CG_getComponent(4, 120, 160, 120, qtrue, STYLE_NORMAL, 1, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, 28, CG_DrawMissileCamera);
 	hud->sprinttext       = CG_getComponent(20, SCREEN_HEIGHT - 96, 57, 14, qfalse, STYLE_NORMAL, 0.25f, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, 29, CG_DrawPlayerSprint);
 	hud->breathtext       = CG_getComponent(20, SCREEN_HEIGHT - 96, 57, 14, qfalse, STYLE_NORMAL, 0.25, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, 30, CG_DrawPlayerBreath);
@@ -1677,14 +1677,26 @@ static void CG_DrawSkills(hudComponent_t *comp)
 	{
 		return;
 	}
+    
+    if (comp->showBackGround)
+    {
+        CG_FillRect(comp->location.x, comp->location.y, comp->location.w, comp->location.h, comp->colorBackground);
+    }
+    
+    if (comp->showBorder)
+    {
+        CG_DrawRect_FixedBorder(comp->location.x, comp->location.y, comp->location.w, comp->location.h, 1, comp->colorBorder);
+    }
 
 	for (i = 0; i < 3; i++)
 	{
 		skillType_t skill = CG_ClassSkillForPosition(ci, i);
 		if (comp->style == STYLE_NORMAL)
 		{
-			CG_DrawSkillBar(comp->location.x + i + i * comp->location.w, comp->location.y, comp->location.w, comp->location.h - comp->location.w, ci->skill[skill], skill);
-			CG_DrawPic(comp->location.x + i + i * comp->location.w, comp->location.y + comp->location.h - comp->location.w, comp->location.w, comp->location.w, cgs.media.skillPics[skill]);
+            int w = (comp->location.w - 3) / 3;
+            
+			CG_DrawSkillBar(comp->location.x + i + i * w, comp->location.y, w, comp->location.h - w, ci->skill[skill], skill);
+			CG_DrawPic(comp->location.x + i + i * w, comp->location.y + comp->location.h - w, w, w, cgs.media.skillPics[skill]);
 		}
 		else
 		{
@@ -2018,11 +2030,6 @@ static void CG_DrawDemoMessage(hudComponent_t *comp)
 	char demostatus[128];
 	char wavestatus[128];
 
-	if (!comp->visible)
-	{
-		return;
-	}
-
 	if (!cl_demorecording.integer && !cl_waverecording.integer && !cg.demoPlayback)
 	{
 		return;
@@ -2062,6 +2069,8 @@ static void CG_DrawDemoMessage(hudComponent_t *comp)
 	}
 
 	Com_sprintf(status, sizeof(status), "%s%s%s", cg.demoPlayback ? __("REPLAY") : __("RECORD"), demostatus, wavestatus);
+
+	CG_DrawCompText(comp, status, comp->colorText, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 }
 
 /**

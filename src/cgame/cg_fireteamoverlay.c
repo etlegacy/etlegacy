@@ -526,7 +526,7 @@ void CG_DrawFireTeamOverlay(hudComponent_t *comp)
 		}
 	}
 
-	h = comp->location.h / (i + 1);
+	h = comp->location.h / (MAX_FIRETEAM_MEMBERS + 1);
 
 	heightText        = CG_Text_Height_Ext("A", comp->scale, 0, FONT_TEXT);
 	heightTextOffset  = (h + heightText) * 0.5;
@@ -544,15 +544,15 @@ void CG_DrawFireTeamOverlay(hudComponent_t *comp)
 
 	if (comp->showBackGround)
 	{
-		CG_FillRect(x, y, comp->location.w, comp->location.h, comp->colorBackground);
+		CG_FillRect(x, y, comp->location.w, h * (i + 1), comp->colorBackground);
 	}
 
 	if (comp->showBorder)
 	{
-		CG_DrawRect_FixedBorder(x, y, comp->location.w, comp->location.h, 1, comp->colorBorder);
+		CG_DrawRect_FixedBorder(x, y, comp->location.w, h * (i + 1), 1, comp->colorBorder);
 	}
 
-	CG_FillRect(x, y, comp->location.w, h, comp->colorBackground);
+	CG_FillRect(x + 1, y + 1, comp->location.w - 2, h - 1, comp->colorBackground);
 
 	if (f->priv)
 	{
