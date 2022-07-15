@@ -2679,11 +2679,6 @@ void CG_DrawSpectatorMessage(hudComponent_t *comp)
 	}
 #endif
 
-	if (!cg_descriptiveText.integer)
-	{
-		return;
-	}
-
 	if (!((cg.snap->ps.pm_flags & PMF_LIMBO) || cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR))
 	{
 		return;
@@ -2819,7 +2814,7 @@ void CG_DrawLimboMessage(hudComponent_t *comp)
 		return;
 	}
 
-	if (cg_descriptiveText.integer)
+	if (!comp->style)
 	{
 		if (cgs.gametype == GT_WOLF_LMS)
 		{

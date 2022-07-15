@@ -2711,8 +2711,6 @@ extern vmCvar_t cg_movespeed;
 extern vmCvar_t cg_drawNotifyText;
 extern vmCvar_t cg_quickMessageAlt;
 
-extern vmCvar_t cg_descriptiveText;
-
 extern vmCvar_t cg_antilag;
 
 extern vmCvar_t developer;

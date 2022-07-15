@@ -1677,24 +1677,24 @@ static void CG_DrawSkills(hudComponent_t *comp)
 	{
 		return;
 	}
-    
-    if (comp->showBackGround)
-    {
-        CG_FillRect(comp->location.x, comp->location.y, comp->location.w, comp->location.h, comp->colorBackground);
-    }
-    
-    if (comp->showBorder)
-    {
-        CG_DrawRect_FixedBorder(comp->location.x, comp->location.y, comp->location.w, comp->location.h, 1, comp->colorBorder);
-    }
+
+	if (comp->showBackGround)
+	{
+		CG_FillRect(comp->location.x, comp->location.y, comp->location.w, comp->location.h, comp->colorBackground);
+	}
+
+	if (comp->showBorder)
+	{
+		CG_DrawRect_FixedBorder(comp->location.x, comp->location.y, comp->location.w, comp->location.h, 1, comp->colorBorder);
+	}
 
 	for (i = 0; i < 3; i++)
 	{
 		skillType_t skill = CG_ClassSkillForPosition(ci, i);
 		if (comp->style == STYLE_NORMAL)
 		{
-            int w = (comp->location.w - 3) / 3;
-            
+			int w = (comp->location.w - 3) / 3;
+
 			CG_DrawSkillBar(comp->location.x + i + i * w, comp->location.y, w, comp->location.h - w, ci->skill[skill], skill);
 			CG_DrawPic(comp->location.x + i + i * w, comp->location.y + comp->location.h - w, w, w, cgs.media.skillPics[skill]);
 		}
