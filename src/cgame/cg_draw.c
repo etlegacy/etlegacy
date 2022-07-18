@@ -1907,6 +1907,13 @@ static float CG_ScanForCrosshairEntity(float *zChange, qboolean *hitClient)
 		return dist;
 	}
 
+	cent = &cg_entities[trace.entityNum];
+
+	if (!cent->currentValid)
+	{
+		return dist;
+	}
+
 	// Reset the draw time for the SP crosshair
 	cg.crosshairSPClientTime = cg.time;
 
@@ -1923,8 +1930,6 @@ static float CG_ScanForCrosshairEntity(float *zChange, qboolean *hitClient)
 	{
 		cg.identifyClientRequest = cg.crosshairClientNum;
 	}
-
-	cent = &cg_entities[cg.crosshairClientNum];
 
 	if (cent && (cent->currentState.powerups & (1 << PW_OPS_DISGUISED)))
 	{
