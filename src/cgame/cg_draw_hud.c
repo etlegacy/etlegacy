@@ -1822,10 +1822,11 @@ void CG_StatsDebugAddText(const char *text)
  * @param[in] drawFireTeam draw fireteam members position
  * @param[in] drawPrimaryObj draw primary objective position
  * @param[in] drawSecondaryObj draw secondary objective position
+ * @param[in] drawItemObj draw item objective position
  * @param[in] drawDynamic draw dynamic elements position (player revive, command map marker)
  * @return A valid compass icon handle otherwise 0
  */
-qhandle_t CG_GetCompassIcon(entityState_t *ent, qboolean drawAllVoicesChat, qboolean drawFireTeam, qboolean drawPrimaryObj, qboolean drawSecondaryObj, qboolean drawDynamic, char *name)
+qhandle_t CG_GetCompassIcon(entityState_t *ent, qboolean drawAllVoicesChat, qboolean drawFireTeam, qboolean drawPrimaryObj, qboolean drawSecondaryObj, qboolean drawItemObj, qboolean drawDynamic, char *name)
 {
 	centity_t *cent = &cg_entities[ent->number];
 
@@ -1896,7 +1897,7 @@ qhandle_t CG_GetCompassIcon(entityState_t *ent, qboolean drawAllVoicesChat, qboo
 
 		item = BG_GetItem(ent->modelindex);
 
-		if (item && item->giType == IT_TEAM)
+		if (drawItemObj && !cg.flagIndicator && item && item->giType == IT_TEAM)
 		{
 			if ((item->giPowerUp == PW_BLUEFLAG && cg.predictedPlayerState.persistant[PERS_TEAM] == TEAM_AXIS)
 			    || (item->giPowerUp == PW_REDFLAG && cg.predictedPlayerState.persistant[PERS_TEAM] == TEAM_ALLIES))
