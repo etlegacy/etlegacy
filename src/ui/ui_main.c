@@ -6357,6 +6357,10 @@ void UI_RunMenuScript(char **args)
 			trap_Cvar_Set("ui_browserModFilter", "0");
 			trap_Cvar_Set("ui_browserOssFilter", "0");
 		}
+        else if (Q_stricmp(name, "edithud") == 0)
+        {
+            trap_Cmd_ExecuteText(EXEC_APPEND, "edithud\n");
+        }
 		else if (Q_stricmp(name, "SetFontScale") == 0)
 		{
 			Com_Printf("^3WARNING: deprecated/unused %s\n", name);

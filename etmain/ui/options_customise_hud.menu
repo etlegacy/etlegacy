@@ -30,7 +30,7 @@ menuDef {
 
 // Hud Display //
 #define HUD_Y 32
-	SUBWINDOW(6, HUD_Y, (SUBWINDOW_WIDTH_L), 172, _("HUD DISPLAY"))
+	SUBWINDOW(6, HUD_Y, (SUBWINDOW_WIDTH_L), 178, _("HUD DISPLAY"))
 	MULTI(8, HUD_Y + 16, (SUBWINDOW_WIDTH_L)-4, 10, _("Compass Icons:"), .2, 8, "cg_drawCompassIcons", cvarFloatList { "All" 1 "No secondary objectives" 2 "No primary objectives" 4 "No objectives" 6 }, _("Select icons on compass"))
 	CVARFLOATLABEL(8, HUD_Y + 28, (SUBWINDOW_WIDTH_L)-4, 10, "cg_automapZoom", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-6), 8)
 	SLIDER(8, HUD_Y + 28, (SUBWINDOW_WIDTH_L)-4, 10, _("Auto Map Zoom:"), .2, 8, "cg_automapZoom" 5.159 1 7.43, _("Set Zoom Level Automatically When Map Loads"))
@@ -45,9 +45,11 @@ menuDef {
 	MULTI(8, HUD_Y + 136, (SUBWINDOW_WIDTH_L)-4, 10, _("Environment Awareness:"), .2, 8, "cg_drawEnvAwareness", cvarFloatList { "Off" 0 "All" 1 "No secondary objectives" 2 "No primary objectives" 4 "No objectives" 6 }, _("Display objective icons on HUD"))
     CVARFLOATLABEL( 8, HUD_Y + 148, (SUBWINDOW_WIDTH_L)-4, 10, "cg_fontScaleSP", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-4), 8 )
     SLIDER(8, HUD_Y + 148, (SUBWINDOW_WIDTH_L)-4, 10, _("Side Print:"), .2, 8, "cg_fontScaleSP" 0.15 0 0.5, _("Set font size for multiview/scorboard texts") )
+    
+    BUTTON(8 + .5 * ((SUBWINDOW_WIDTH_L)-184), HUD_Y + 160, 184, 14, _("HUD EDITOR"), .24, 11, uiScript edithud ; close options_customise_hud)
 
 // Popup //
-#define POPUP_Y 208
+#define POPUP_Y 214
     SUBWINDOW( 6, POPUP_Y, (SUBWINDOW_WIDTH_L), 66, _("POPUPS AND BANNER") )
     CVARFLOATLABEL( 8, POPUP_Y+16, (SUBWINDOW_WIDTH_L)-6, 10, "cg_popupStayTime", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-4), 8 )
     SLIDER( 8, POPUP_Y+16, (SUBWINDOW_WIDTH_L)-4, 10, _("Popup Stay Time:"), .2, 8, "cg_popupStayTime" 2500 0 6000, _("Set the time a pop-up stays visible") )
@@ -58,20 +60,20 @@ menuDef {
     SLIDER( 8, POPUP_Y+52, (SUBWINDOW_WIDTH_L)-4, 10, _("Banner Time:"), .2, 8, "cg_bannerTime" 2500 0 10000, _("Set the time a banner stays visible") )
 
 // Gun Display //
-#define WEAPON_Y 278
+#define WEAPON_Y 284
 	SUBWINDOW(6, WEAPON_Y, (SUBWINDOW_WIDTH_L), 40, _("WEAPONS DISPLAY"))
 	MULTI(8, WEAPON_Y + 16, (SUBWINDOW_WIDTH_L)-4, 10, _("Draw Gun:"), .2, 8, "cg_drawGun", cvarFloatList { "Off" 0 "On" 1 "Hide Weapons Only" 2 }, _("Show gun model on-screen"))
 	MULTI(8, WEAPON_Y + 28, (SUBWINDOW_WIDTH_L)-4, 10, _("Weapon Animations:"), .2, 8, "cg_weapAnims", cvarFloatList { "None" 0 "Move" 1 "Firing" 2 "Reload" 4 "Switch" 8 "Move + Firing" 3 "Move + Reload" 5 "Move + Switch" 9 "Move + Firing + Reload" 7 "Move + Firing + Switch" 11 "Move + Reload + Switch" 13 "Firing + Reload" 6 "Firing + Switch" 10 "Firing + Reload + Switch" 14 "Reload + Switch" 12 "All" 15 }, _("Set which weapon animations to play"))
 
 // Items //
-#define ITEMS_Y 322
+#define ITEMS_Y 328
 	SUBWINDOW(6, ITEMS_Y, (SUBWINDOW_WIDTH_L), 40, _("ITEMS"))
 	MULTI(8, ITEMS_Y + 16, (SUBWINDOW_WIDTH_R)-4, 10, _("Simple Items:"), .2, 8, "cg_simpleItems", cvarFloatList { "No" 0 "Yes except objectives" 1 "Yes" 2 }, _("Draw simple items"))
 	CVARFLOATLABEL(8, ITEMS_Y + 28, (SUBWINDOW_WIDTH_L)-4, 10, "cg_simpleItemsScale", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-6), 8)
 	SLIDER(8, ITEMS_Y + 28, (SUBWINDOW_WIDTH_L)-4, 10, _("Simple Items Scale:"), .2, 8, "cg_simpleItemsScale" 1.0 0.25 1.5, _("Set scale of simple items"))
 
 // Geolocation //
-#define GEOLOCATION_Y 366
+#define GEOLOCATION_Y 372
 	SUBWINDOW(6, GEOLOCATION_Y, (SUBWINDOW_WIDTH_L), 42, _("GEOLOCATION"))
 	YESNO(8, GEOLOCATION_Y + 16, (SUBWINDOW_WIDTH_L)-4, 10, _("Country Flags:"), .2, 8, "cg_countryflags", _("Display players country flags in score board"))
 	YESNO(8, GEOLOCATION_Y + 28, (SUBWINDOW_WIDTH_L)-4, 10, _("Share Location:"), .2, 8, "cg_allowGeoIP", _("Display your own location in score board"))
