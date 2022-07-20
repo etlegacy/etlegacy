@@ -1262,6 +1262,12 @@ int CL_FindIncrementThreshold(void)
 {
 	clFrameTime = cls.frametime;
 
+	// handles zero duration between frames (often happens on map change)
+	if(clFrameTime == 0 || svFrameTime == 0)
+	{
+		return 0;
+	}
+
 	// calculates the least common multiple of clFrameTime and svFrameTime
 	// the LCM represents how long until the time over-run pattern repeats
 	int LCM = svFrameTime > clFrameTime ? svFrameTime : clFrameTime;
