@@ -395,7 +395,7 @@ static qboolean CG_CheckPMItemFilter(popupMessageType_t type)
  * @param[in] scaleShader
  * @param[in] color
  */
-void CG_AddPMItem(popupMessageType_t type, const char *message, const char *message2, qhandle_t shader, qhandle_t weaponShader, int scaleShader, vec4_t color)
+void CG_AddPMItem(popupMessageType_t type, const char *message, const char *message2, qhandle_t shader, qhandle_t weaponShader, int scaleShader, vec3_t color)
 {
 	pmListItem_t *listItem;
 	char         *end;
