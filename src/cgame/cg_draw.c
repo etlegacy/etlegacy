@@ -995,7 +995,7 @@ static void CG_DrawTeamInfo(void)
 		for (i = cgs.teamChatPos - 1; i >= cgs.teamLastChatPos; i--)
 		{
 			alphapercent = 1.0f - (cg.time - cgs.teamChatMsgTimes[i % chatHeight]) / (float)(cg_teamChatTime.integer);
-			Com_Clamp(0.0f, 1.0f, alphapercent);
+			alphapercent = Com_Clamp(0.0f, 1.0f, alphapercent);
 
 			// chatter team instead
 			if (cgs.teamChatMsgTeams[i % chatHeight] == TEAM_AXIS)
