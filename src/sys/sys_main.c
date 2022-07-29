@@ -1030,8 +1030,10 @@ void Sys_GameLoop(void)
 	totalMsec = countMsec = 0;
 #endif
 
+#ifdef __clang__
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wmissing-noreturn"
+#endif /* __clang__ */
 	while (qtrue)
 	{
 #if defined(_MSC_VER) && defined(ETLEGACY_DEBUG) && !defined(_WIN64)
@@ -1061,7 +1063,9 @@ void Sys_GameLoop(void)
 		}
 #endif
 	}
+#ifdef __clang__
 #pragma clang diagnostic pop
+#endif /* __clang__ */
 }
 
 /**
