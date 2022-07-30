@@ -925,11 +925,11 @@ void G_FreeEntity(gentity_t *ent)
 		{
 			if (ent->s.eType >= ET_EVENTS)
 			{
-				G_DPrintf("^3%4i event entity freed - num_entities: %4i - %s [%s]\n", ent - g_entities, level.num_entities, ent->classname, eventnames[ent->s.eType - ET_EVENTS]);
+				G_DPrintf("^3%4i event entity freed - num_entities: %4i - %s [%s]\n", (int)(ent - g_entities), level.num_entities, ent->classname, eventnames[ent->s.eType - ET_EVENTS]);
 			}
 			else
 			{
-				G_DPrintf("^2%4i entity freed - num_entities: %4i - %s\n", ent - g_entities, level.num_entities, ent->classname);
+				G_DPrintf("^2%4i entity freed - num_entities: %4i - %s\n", (int)(ent - g_entities), level.num_entities, ent->classname);
 			}
 		}
 
