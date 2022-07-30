@@ -2543,7 +2543,7 @@ void Svcmd_Ref_f(void)
 {
 	char cmd[MAX_TOKEN_CHARS];
 
-	if (!level.fLocalHost)
+	if (level.fLocalHost)
 	{
 		return;
 	}
