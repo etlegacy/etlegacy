@@ -819,14 +819,6 @@ void CG_DrawShoutcastPlayerStatus(void)
 	rect.h = 48;
 
 	CG_DrawCursorhint(&rect);
-
-	// draw stability bar
-	rect.x = 50;
-	rect.y = 208;
-	rect.w = 10;
-	rect.h = 64;
-
-	CG_DrawWeapStability(&rect);
 }
 
 /**

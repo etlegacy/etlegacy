@@ -517,18 +517,18 @@ qboolean CG_OwnerDrawVisible(int flags)
  * probably only drawn for scoped weapons
  * @param[in] rect
  */
-void CG_DrawWeapStability(rectDef_t *rect)
+void CG_DrawWeapStability(hudComponent_t *comp)
 {
 	static vec4_t goodColor = { 0, 1, 0, 0.5f }, badColor = { 1, 0, 0, 0.5f };
 
-	if (!cg_drawSpreadScale.integer)
+	if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR)
 	{
 		return;
 	}
 
-	if (cg_drawSpreadScale.integer == 1 && !cg.zoomed)
+	if (!comp->style && !cg.zoomed)
 	{
-		// cg_drawSpreadScale of '1' means only draw for scoped weapons, '2' means draw all the time (for debugging)
+		// style '0' means only draw for scoped weapons, '1' means draw all the time (for debugging)
 		return;
 	}
 
@@ -549,7 +549,17 @@ void CG_DrawWeapStability(rectDef_t *rect)
 		return;
 	}
 
-	CG_FilledBar(rect->x, rect->y, rect->w, rect->h, goodColor, badColor, NULL, (float)cg.snap->ps.aimSpreadScale / 255.0f, BAR_CENTER | BAR_VERT | BAR_LERP_COLOR);
+	if (comp->showBackGround)
+	{
+		CG_FillRect(comp->location.x, comp->location.y, comp->location.w, comp->location.h, comp->colorBackground);
+	}
+
+	if (comp->showBorder)
+	{
+		CG_DrawRect_FixedBorder(comp->location.x, comp->location.y, comp->location.w, comp->location.h, 1, comp->colorBorder);
+	}
+
+	CG_FilledBar(comp->location.x, comp->location.y, comp->location.w, comp->location.h, goodColor, badColor, NULL, (float)cg.snap->ps.aimSpreadScale / 255.0f, BAR_CENTER | BAR_VERT | BAR_LERP_COLOR);
 }
 
 /**

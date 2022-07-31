@@ -145,7 +145,6 @@ vmCvar_t cg_voiceChats;
 vmCvar_t cg_voiceText;
 vmCvar_t cg_drawStatus;
 vmCvar_t cg_animSpeed;
-vmCvar_t cg_drawSpreadScale;
 vmCvar_t cg_railTrailTime;
 vmCvar_t cg_debugAnim;
 vmCvar_t cg_debugPosition;
@@ -216,7 +215,6 @@ vmCvar_t cg_voiceSpriteTime;
 
 vmCvar_t cg_drawNotifyText;
 vmCvar_t cg_quickMessageAlt;
-vmCvar_t cg_descriptiveText;
 
 vmCvar_t cg_redlimbotime;
 vmCvar_t cg_bluelimbotime;
@@ -399,7 +397,6 @@ static cvarTable_t cvarTable[] =
 	// we now draw reticles always in non demoplayback
 	//  { &cg_draw2D, "cg_draw2D", "1", CVAR_CHEAT }, // JPW NERVE changed per atvi req to prevent sniper rifle zoom cheats
 	{ &cg_draw2D,                  "cg_draw2D",                  "1",           CVAR_ARCHIVE,                 0 },
-	{ &cg_drawSpreadScale,         "cg_drawSpreadScale",         "1",           CVAR_ARCHIVE,                 0 },
 	{ &cg_railTrailTime,           "cg_railTrailTime",           "750",         CVAR_ARCHIVE,                 0 },
 	{ &cg_drawStatus,              "cg_drawStatus",              "1",           CVAR_ARCHIVE,                 0 },
 	{ &cg_drawFPS,                 "cg_drawFPS",                 "0",           CVAR_ARCHIVE,                 0 },
