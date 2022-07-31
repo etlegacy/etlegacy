@@ -86,7 +86,6 @@ static void CG_DrawSkills(hudComponent_t *comp);
 static void CG_DrawXP(hudComponent_t *comp);
 static void CG_DrawRank(hudComponent_t *comp);
 static void CG_DrawLivesLeft(hudComponent_t *comp);
-static void CG_DrawCursorhint_f(hudComponent_t *comp);
 static void CG_DrawRespawnTimer(hudComponent_t *comp);
 static void CG_DrawSpawnTimer(hudComponent_t *comp);
 static void CG_DrawLocalTime(hudComponent_t *comp);
@@ -137,7 +136,7 @@ static const hudComponentFields_t hudComponentFields[] =
 	{ HUDF(powerups),         CG_DrawPowerUps         },
 	{ HUDF(objectives),       CG_DrawObjectiveStatus  },
 	{ HUDF(hudhead),          CG_DrawPlayerStatusHead },
-	{ HUDF(cursorhints),      CG_DrawCursorhint_f     },
+	{ HUDF(cursorhints),      CG_DrawCursorhint       },    // FIXME: outside cg_draw_hud
 	{ HUDF(weaponstability),  CG_DrawWeapStability    },    // FIXME: outside cg_draw_hud
 	{ HUDF(livesleft),        CG_DrawLivesLeft        },
 	{ HUDF(roundtimer),       CG_DrawRoundTimer       },
@@ -232,7 +231,7 @@ void CG_setDefaultHudValues(hudStucture_t *hud)
 	hud->powerups         = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 40, SCREEN_HEIGHT - 136, 36, 36, qtrue, STYLE_NORMAL, 0.19f, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, 13, CG_DrawPowerUps);
 	hud->objectives       = CG_getComponent(8, SCREEN_HEIGHT - 136, 36, 36, qtrue, STYLE_NORMAL, 0.19f, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, 14, CG_DrawObjectiveStatus);
 	hud->hudhead          = CG_getComponent(44, SCREEN_HEIGHT - 92, 62, 80, qtrue, STYLE_NORMAL, 0.19f, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, 15, CG_DrawPlayerStatusHead);
-	hud->cursorhints      = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) * .5f - 24, 260, 48, 48, qtrue, STYLE_NORMAL, 0.19f, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, 16, CG_DrawCursorhint_f);
+	hud->cursorhints      = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) * .5f - 24, 260, 48, 48, qtrue, STYLE_NORMAL, 0.19f, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, 16, CG_DrawCursorhint);
 	hud->weaponstability  = CG_getComponent(50, 208, 10, 64, qtrue, STYLE_NORMAL, 0.19f, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, 17, CG_DrawWeapStability);
 	hud->livesleft        = CG_getComponent(4, 360, 48, 24, qtrue, STYLE_NORMAL, 0.19f, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, 18, CG_DrawLivesLeft);
 	hud->roundtimer       = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 60, 152, 57, 14, qtrue, STYLE_NORMAL, 0.19f, colorWhite, qtrue, HUD_Background, qtrue, HUD_Border, ITEM_TEXTSTYLE_NORMAL, ITEM_ALIGN_CENTER, 19, CG_DrawRoundTimer);
@@ -2205,21 +2204,6 @@ void CG_DrawLivesLeft(hudComponent_t *comp)
 	CG_DrawPic(comp->location.x, comp->location.y, comp->location.w, comp->location.h, cg.snap->ps.persistant[PERS_TEAM] == TEAM_ALLIES ? cgs.media.hudAlliedHelmet : cgs.media.hudAxisHelmet);
 
 	CG_DrawField(comp->location.w - 4, comp->location.y, 3, cg.snap->ps.persistant[PERS_RESPAWNS_LEFT], 14, 20, qtrue, qtrue);
-}
-
-/**
- * @brief CG_DrawCursorhint_f
- * @param comp
- * @todo FIXME Find a better way to do it
- */
-static void CG_DrawCursorhint_f(hudComponent_t *comp)
-{
-	if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR)
-	{
-		return;
-	}
-
-	CG_DrawCursorhint(&comp->location);
 }
 
 static char statsDebugStrings[6][512];

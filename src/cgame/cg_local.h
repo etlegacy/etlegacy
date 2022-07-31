@@ -3060,7 +3060,6 @@ void CG_DrawActiveHud(void);
 void CG_Text_PaintChar_Ext(float x, float y, float w, float h, float scalex, float scaley, float s, float t, float s2, float t2, qhandle_t hShader);
 void CG_Text_PaintChar(float x, float y, float width, float height, float scale, float s, float t, float s2, float t2, qhandle_t hShader);
 
-void CG_DrawCursorhint(rectDef_t *rect);
 void CG_DrawWeapHeat(rectDef_t *rect, int align);
 void CG_DrawPlayerWeaponIcon(rectDef_t *rect, qboolean drawHighlighted, int align, vec4_t *refcolor);
 int CG_CalculateReinfTime(qboolean menu);
@@ -4158,6 +4157,7 @@ void CG_DrawObjectiveInfo(hudComponent_t *comp);
 void CG_DrawCenterString(hudComponent_t *comp);
 void CG_DrawBannerPrint(hudComponent_t *comp);
 void CG_DrawWeapStability(hudComponent_t *comp);
+void CG_DrawCursorhint(hudComponent_t *comp);
 
 void CG_DrawCompText(hudComponent_t *comp, const char *str, vec4_t color, int fontStyle, fontHelper_t *font);
 void CG_DrawCompMultilineText(hudComponent_t *comp, const char *str, vec4_t color, int align, int fontStyle, fontHelper_t *font);

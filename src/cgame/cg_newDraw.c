@@ -331,13 +331,18 @@ void CG_DrawPlayerWeaponIcon(rectDef_t *rect, qboolean drawHighlighted, int alig
  *   3:  alpha pulse
  *   4+: static image
  */
-void CG_DrawCursorhint(rectDef_t *rect)
+void CG_DrawCursorhint(hudComponent_t *comp)
 {
 	float     *color;
 	qhandle_t icon;
 	float     scale, halfscale;
 
 	if (!cg_cursorHints.integer)
+	{
+		return;
+	}
+
+	if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR)
 	{
 		return;
 	}
@@ -470,9 +475,19 @@ void CG_DrawCursorhint(rectDef_t *rect)
 		halfscale = scale * 0.5f;
 	}
 
+	if (comp->showBackGround)
+	{
+		CG_FillRect(comp->location.x, comp->location.y, comp->location.w, comp->location.h, comp->colorBackground);
+	}
+
+	if (comp->showBorder)
+	{
+		CG_DrawRect_FixedBorder(comp->location.x, comp->location.y, comp->location.w, comp->location.h, 1, comp->colorBorder);
+	}
+
 	// set color and draw the hint
 	trap_R_SetColor(color);
-	CG_DrawPic(rect->x - halfscale, rect->y - halfscale, rect->w + scale, rect->h + scale, icon);
+	CG_DrawPic(comp->location.x - halfscale, comp->location.y - halfscale, comp->location.w + scale, comp->location.h + scale, icon);
 
 	trap_R_SetColor(NULL);
 
@@ -484,7 +499,7 @@ void CG_DrawCursorhint(rectDef_t *rect)
 
 		if (curValue > 0.01f)
 		{
-			CG_FilledBar(rect->x, rect->y + rect->h + 4, rect->w, 8, colorRed, colorGreen, backG, curValue, BAR_BORDER_SMALL | BAR_LERP_COLOR);
+			CG_FilledBar(comp->location.x, comp->location.y + comp->location.h + 4, comp->location.w, 8, colorRed, colorGreen, backG, curValue, BAR_BORDER_SMALL | BAR_LERP_COLOR);
 		}
 	}
 }

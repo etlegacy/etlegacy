@@ -811,14 +811,6 @@ void CG_DrawShoutcastPlayerStatus(void)
 		CG_Text_Paint_Ext(statsBoxX + 7 + (textWidth / 2) - (textWidth2 / 2), statsBoxY + (statsBoxHeight / 2) + (textHeight / 2) + 4, 0.19f, 0.19f, colorRed, dmgRcvd, 0, 0, ITEM_TEXTSTYLE_NORMAL, FONT_TEXT);
 		statsBoxX += 5 + textWidth2;
 	}
-
-	// draw cursor hint
-	rect.x = (SCREEN_WIDTH / 2) - 24;
-	rect.y = 260;
-	rect.w = 48;
-	rect.h = 48;
-
-	CG_DrawCursorhint(&rect);
 }
 
 /**
