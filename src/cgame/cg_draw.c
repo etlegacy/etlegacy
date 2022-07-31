@@ -292,24 +292,27 @@ void CG_Text_Paint_Ext(float x, float y, float scalex, float scaley, vec4_t colo
 		glyphInfo_t *glyph;
 		const char  *s = text;
 		float       yadj;
-		int         len, count = 0, ofs;
+		int         len, count = 0;
 		float       newAlpha;
 
 		scalex *= Q_UTF8_GlyphScale(font);
 		scaley *= Q_UTF8_GlyphScale(font);
 
-		trap_R_SetColor(color);
-		Com_Memcpy(&newColor[0], &color[0], sizeof(vec4_t));
 		len = Q_UTF8_Strlen(text);
 		if (limit > 0 && len > limit)
 		{
 			len = limit;
 		}
 
-		if (style == ITEM_TEXTSTYLE_BLINK)
+		Vector4Copy(color, newColor);
+
+		if (style == ITEM_TEXTSTYLE_BLINK || style == ITEM_TEXTSTYLE_PULSE)
 		{
-			newAlpha = Q_fabs(sin(cg.time * 0.002));
+			newAlpha    = Q_fabs(sin(cg.time / (style == ITEM_TEXTSTYLE_BLINK ? BLINK_DIVISOR : PULSE_DIVISOR)));
+			newColor[3] = newAlpha;
 		}
+
+		trap_R_SetColor(newColor);
 
 		while (s && *s && count < len)
 		{
@@ -327,7 +330,7 @@ void CG_Text_Paint_Ext(float x, float y, float scalex, float scaley, vec4_t colo
 					newColor[3] = color[3];
 				}
 
-				if (style == ITEM_TEXTSTYLE_BLINK)
+				if (style == ITEM_TEXTSTYLE_BLINK || style == ITEM_TEXTSTYLE_PULSE)
 				{
 					newColor[3] = newAlpha;
 				}
@@ -340,9 +343,9 @@ void CG_Text_Paint_Ext(float x, float y, float scalex, float scaley, vec4_t colo
 			{
 				yadj = scaley * glyph->top;
 
-				if (style == ITEM_TEXTSTYLE_SHADOWED || style == ITEM_TEXTSTYLE_SHADOWEDMORE)
+				if (style == ITEM_TEXTSTYLE_SHADOWED || style == ITEM_TEXTSTYLE_SHADOWEDMORE | style == ITEM_TEXTSTYLE_OUTLINESHADOWED)
 				{
-					ofs           = style == ITEM_TEXTSTYLE_SHADOWED ? 1 : 2;
+					float ofs = style == ITEM_TEXTSTYLE_SHADOWEDMORE ? 2 : 1;
 					colorBlack[3] = newColor[3];
 					trap_R_SetColor(colorBlack);
 					CG_Text_PaintChar_Ext(x + (glyph->pitch * scalex) + ofs, y - yadj + ofs, glyph->imageWidth, glyph->imageHeight, scalex, scaley, glyph->s, glyph->t, glyph->s2, glyph->t2, glyph->glyph);
@@ -351,6 +354,12 @@ void CG_Text_Paint_Ext(float x, float y, float scalex, float scaley, vec4_t colo
 				}
 
 				CG_Text_PaintChar_Ext(x + (glyph->pitch * scalex), y - yadj, glyph->imageWidth, glyph->imageHeight, scalex, scaley, glyph->s, glyph->t, glyph->s2, glyph->t2, glyph->glyph);
+
+				if (style == ITEM_TEXTSTYLE_OUTLINED || style == ITEM_TEXTSTYLE_OUTLINESHADOWED)
+				{
+					CG_Text_PaintChar_Ext(x + (glyph->pitch * scalex) - 1, y - yadj - 1, glyph->imageWidth, glyph->imageHeight, scalex, scaley, glyph->s, glyph->t, glyph->s2, glyph->t2, glyph->glyph);
+				}
+
 				x += (glyph->xSkip * scalex) + adjust;
 				s += Q_UTF8_Width(s);
 				count++;
@@ -994,7 +1003,6 @@ void CG_DrawTeamInfo(hudComponent_t *comp)
 		int          maxLineLength = (comp->location.w - (!comp->style ? (16.f * comp->scale * 5.f) : 0)) / ((float)Q_UTF8_GetGlyph(font, "A")->xSkip * comp->scale * Q_UTF8_GlyphScale(font));
 		int          chatPosX      = comp->location.x;
 		int          chatPosY      = comp->location.y + comp->location.h;
-		int          textStyle     = cg_chatShadow.integer ? ITEM_TEXTSTYLE_SHADOWED : ITEM_TEXTSTYLE_NORMAL;
 
 		if (comp->showBackGround)
 		{
@@ -1078,7 +1086,7 @@ void CG_DrawTeamInfo(hudComponent_t *comp)
 			{
 				CG_DrawPic(chatPosX, chatPosY - (cgs.teamChatPos - i - 0.9f) * lineHeight - icon_height, icon_width, icon_height, flag);
 			}
-			CG_Text_Paint_Ext(chatPosX + flagOffsetX, chatPosY - (cgs.teamChatPos - i - 1) * lineHeight - 1, comp->scale, comp->scale, hcolor, cgs.teamChatMsgs[i % chatHeight], 0, 0, textStyle, &cgs.media.limboFont2);
+			CG_Text_Paint_Ext(chatPosX + flagOffsetX, chatPosY - (cgs.teamChatPos - i - 1) * lineHeight - 1, comp->scale, comp->scale, hcolor, cgs.teamChatMsgs[i % chatHeight], 0, 0, comp->styleText, &cgs.media.limboFont2);
 		}
 		trap_R_SetColor(NULL);
 	}
@@ -1184,7 +1192,7 @@ void CG_DrawCenterString(hudComponent_t *comp)
 	VectorCopy(comp->colorText, textColor);
 	textColor[3] = color[3];
 
-	CG_DrawCompMultilineText(comp, cg.centerPrint, textColor, ITEM_ALIGN_CENTER, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+	CG_DrawCompMultilineText(comp, cg.centerPrint, textColor, comp->alignText, comp->styleText, &cgs.media.limboFont2);
 }
 
 /*
@@ -2326,7 +2334,7 @@ void CG_DrawSpectator(hudComponent_t *comp)
 		return;
 	}
 
-	CG_DrawCompText(comp, s, comp->colorText, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+	CG_DrawCompText(comp, s, comp->colorText, comp->styleText, &cgs.media.limboFont2);
 }
 
 /**
@@ -2356,7 +2364,7 @@ void CG_DrawVote(hudComponent_t *comp)
 		         va(CG_TranslateString("File complaint against ^7%s^3 for team-killing?"), cgs.clientinfo[cgs.complaintClient].name),
 		         va(CG_TranslateString("Press '%s' for YES, or '%s' for NO"), str1, str2));
 
-		CG_DrawCompMultilineText(comp, str, comp->colorText, ITEM_ALIGN_LEFT, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+		CG_DrawCompMultilineText(comp, str, comp->colorText, comp->alignText, comp->styleText, &cgs.media.limboFont2);
 		return;
 	}
 
@@ -2368,7 +2376,7 @@ void CG_DrawVote(hudComponent_t *comp)
 		         va(CG_TranslateString("Accept %s^3's application to join your fireteam?"), cgs.clientinfo[cgs.applicationClient].name),
 		         va(CG_TranslateString("Press '%s' for YES, or '%s' for NO"), str1, str2));
 
-		CG_DrawCompMultilineText(comp, str, comp->colorText, ITEM_ALIGN_LEFT, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+		CG_DrawCompMultilineText(comp, str, comp->colorText, comp->alignText, comp->styleText, &cgs.media.limboFont2);
 		return;
 	}
 
@@ -2380,7 +2388,7 @@ void CG_DrawVote(hudComponent_t *comp)
 		         va(CG_TranslateString("Accept %s^3's proposition to invite %s^3 to join your fireteam?"), cgs.clientinfo[cgs.propositionClient2].name, cgs.clientinfo[cgs.propositionClient].name),
 		         va(CG_TranslateString("Press '%s' for YES, or '%s' for NO"), str1, str2));
 
-		CG_DrawCompMultilineText(comp, str, comp->colorText, ITEM_ALIGN_LEFT, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+		CG_DrawCompMultilineText(comp, str, comp->colorText, comp->alignText, comp->styleText, &cgs.media.limboFont2);
 		return;
 	}
 
@@ -2392,7 +2400,7 @@ void CG_DrawVote(hudComponent_t *comp)
 		         va(CG_TranslateString("Accept %s^3's invitation to join their fireteam?"), cgs.clientinfo[cgs.invitationClient].name),
 		         va(CG_TranslateString("Press '%s' for YES, or '%s' for NO"), str1, str2));
 
-		CG_DrawCompMultilineText(comp, str, comp->colorText, ITEM_ALIGN_LEFT, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+		CG_DrawCompMultilineText(comp, str, comp->colorText, comp->alignText, comp->styleText, &cgs.media.limboFont2);
 
 		return;
 	}
@@ -2405,7 +2413,7 @@ void CG_DrawVote(hudComponent_t *comp)
 		         CG_TranslateString("Make Fireteam private?"),
 		         va(CG_TranslateString("Press '%s' for YES, or '%s' for NO"), str1, str2));
 
-		CG_DrawCompMultilineText(comp, str, comp->colorText, ITEM_ALIGN_LEFT, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+		CG_DrawCompMultilineText(comp, str, comp->colorText, comp->alignText, comp->styleText, &cgs.media.limboFont2);
 
 		return;
 	}
@@ -2418,7 +2426,7 @@ void CG_DrawVote(hudComponent_t *comp)
 		         va(CG_TranslateString("Create a Fireteam?"), cgs.voteString),
 		         va(CG_TranslateString("Press '%s' for YES, or '%s' for NO"), cgs.voteYes, cgs.voteNo));
 
-		CG_DrawCompMultilineText(comp, str, comp->colorText, ITEM_ALIGN_LEFT, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+		CG_DrawCompMultilineText(comp, str, comp->colorText, comp->alignText, comp->styleText, &cgs.media.limboFont2);
 		return;
 	}
 
@@ -2430,7 +2438,7 @@ void CG_DrawVote(hudComponent_t *comp)
 		         va(CG_TranslateString("Join a Fireteam?"), cgs.voteString),
 		         va(CG_TranslateString("Press '%s' for YES, or '%s' for NO"), cgs.voteYes, cgs.voteNo));
 
-		CG_DrawCompMultilineText(comp, str, comp->colorText, ITEM_ALIGN_LEFT, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+		CG_DrawCompMultilineText(comp, str, comp->colorText, comp->alignText, comp->styleText, &cgs.media.limboFont2);
 		return;
 	}
 
@@ -2498,7 +2506,7 @@ void CG_DrawVote(hudComponent_t *comp)
 				         va(CG_TranslateString("YES:%i, NO:%i"), cgs.voteYes, cgs.voteNo),
 				         va(CG_TranslateString("Can't vote as %s"), cgs.clientinfo[cg.clientNum].shoutcaster ? "Shoutcaster" : "Spectator"));
 
-				CG_DrawCompMultilineText(comp, str, comp->colorText, ITEM_ALIGN_LEFT, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+				CG_DrawCompMultilineText(comp, str, comp->colorText, comp->alignText, comp->styleText, &cgs.media.limboFont2);
 			}
 			else
 			{
@@ -2507,7 +2515,7 @@ void CG_DrawVote(hudComponent_t *comp)
 				         va(CG_TranslateString("YES(%s):%i, NO(%s):%i"), str1, cgs.voteYes, str2, cgs.voteNo));
 
 				CG_DrawCompMultilineText(comp, str,
-				                         comp->colorText, ITEM_ALIGN_LEFT, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+				                         comp->colorText, comp->alignText, comp->styleText, &cgs.media.limboFont2);
 			}
 		}
 		else
@@ -2517,7 +2525,7 @@ void CG_DrawVote(hudComponent_t *comp)
 			         va(CG_TranslateString("Y:%i, N:%i"), cgs.voteYes, cgs.voteNo));
 
 			CG_DrawCompMultilineText(comp, str,
-			                         comp->colorText, ITEM_ALIGN_LEFT, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+			                         comp->colorText, comp->alignText, comp->styleText, &cgs.media.limboFont2);
 		}
 
 		return;
@@ -2538,7 +2546,7 @@ void CG_DrawVote(hudComponent_t *comp)
 
 		if (str)
 		{
-			CG_DrawCompMultilineText(comp, str, comp->colorText, ITEM_ALIGN_LEFT, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+			CG_DrawCompMultilineText(comp, str, comp->colorText, comp->alignText, comp->styleText, &cgs.media.limboFont2);
 			return;
 		}
 	}
@@ -2556,7 +2564,7 @@ void CG_DrawVote(hudComponent_t *comp)
 
 		if (str)
 		{
-			CG_DrawCompMultilineText(comp, str, comp->colorText, ITEM_ALIGN_LEFT, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+			CG_DrawCompMultilineText(comp, str, comp->colorText, comp->alignText, comp->styleText, &cgs.media.limboFont2);
 			return;
 		}
 	}
@@ -2574,7 +2582,7 @@ void CG_DrawVote(hudComponent_t *comp)
 
 		if (str)
 		{
-			CG_DrawCompMultilineText(comp, str, comp->colorText, ITEM_ALIGN_LEFT, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+			CG_DrawCompMultilineText(comp, str, comp->colorText, comp->alignText, comp->styleText, &cgs.media.limboFont2);
 			return;
 		}
 	}
@@ -2592,7 +2600,7 @@ void CG_DrawVote(hudComponent_t *comp)
 
 		if (str)
 		{
-			CG_DrawCompMultilineText(comp, str, comp->colorText, ITEM_ALIGN_LEFT, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+			CG_DrawCompMultilineText(comp, str, comp->colorText, comp->alignText, comp->styleText, &cgs.media.limboFont2);
 			return;
 		}
 
@@ -2604,7 +2612,7 @@ void CG_DrawVote(hudComponent_t *comp)
 
 	if ((cgs.autoFireteamEndTime > cg.time && cgs.autoFireteamNum == -2) || (cgs.autoFireteamCreateEndTime > cg.time && cgs.autoFireteamCreateNum == -2) || (cgs.autoFireteamJoinEndTime > cg.time && cgs.autoFireteamJoinNum == -2))
 	{
-		CG_DrawCompMultilineText(comp, CG_TranslateString("Response Sent"), comp->colorText, ITEM_ALIGN_LEFT, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+		CG_DrawCompMultilineText(comp, CG_TranslateString("Response Sent"), comp->colorText, comp->alignText, comp->styleText, &cgs.media.limboFont2);
 		return;
 	}
 }
@@ -2734,7 +2742,7 @@ void CG_DrawSpectatorMessage(hudComponent_t *comp)
 		         );
 	}
 
-	CG_DrawCompMultilineText(comp, str, comp->colorText, ITEM_ALIGN_LEFT, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+	CG_DrawCompMultilineText(comp, str, comp->colorText, comp->alignText, comp->styleText, &cgs.media.limboFont2);
 }
 
 /**
@@ -2818,7 +2826,7 @@ void CG_DrawLimboMessage(hudComponent_t *comp)
 	{
 		if (cgs.gametype == GT_WOLF_LMS)
 		{
-			CG_DrawCompMultilineText(comp, CG_TranslateString("You are wounded and waiting for a medic."), comp->colorText, ITEM_ALIGN_LEFT, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+			CG_DrawCompMultilineText(comp, CG_TranslateString("You are wounded and waiting for a medic."), comp->colorText, comp->alignText, comp->styleText, &cgs.media.limboFont2);
 			return;
 		}
 
@@ -2854,7 +2862,7 @@ void CG_DrawLimboMessage(hudComponent_t *comp)
 		}
 	}
 
-	CG_DrawCompMultilineText(comp, va("%s%s", str1, str2 ? str2 : ""), comp->colorText, ITEM_ALIGN_LEFT, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+	CG_DrawCompMultilineText(comp, va("%s%s", str1, str2 ? str2 : ""), comp->colorText, comp->alignText, comp->styleText, &cgs.media.limboFont2);
 }
 
 /**
@@ -2969,7 +2977,7 @@ void CG_DrawFollow(hudComponent_t *comp)
 				}
 			}
 
-			CG_Text_Paint_Ext(comp->location.x, y + heightTextOffset, comp->scale, comp->scale, colorWhite, deploytime, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+			CG_Text_Paint_Ext(comp->location.x, y + heightTextOffset, comp->scale, comp->scale, colorWhite, deploytime, 0, 0, comp->styleText, &cgs.media.limboFont2);
 			y += lineHeight;
 		}
 
@@ -2995,9 +3003,9 @@ void CG_DrawFollow(hudComponent_t *comp)
 				endRank = -charWidth;
 			}
 
-			CG_Text_Paint_Ext(comp->location.x, y + heightTextOffset, comp->scale, comp->scale, colorWhite, va("(%s", follow), 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
-			CG_Text_Paint_Ext(comp->location.x + startClass + lineHeight + 2 + charWidth, y + heightTextOffset, comp->scale, comp->scale, colorWhite, w, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
-			CG_Text_Paint_Ext(comp->location.x + startClass + startRank + endRank, y + heightTextOffset, comp->scale, comp->scale, colorWhite, ")", 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+			CG_Text_Paint_Ext(comp->location.x, y + heightTextOffset, comp->scale, comp->scale, colorWhite, va("(%s", follow), 0, 0, comp->styleText, &cgs.media.limboFont2);
+			CG_Text_Paint_Ext(comp->location.x + startClass + lineHeight + 2 + charWidth, y + heightTextOffset, comp->scale, comp->scale, colorWhite, w, 0, 0, comp->styleText, &cgs.media.limboFont2);
+			CG_Text_Paint_Ext(comp->location.x + startClass + startRank + endRank, y + heightTextOffset, comp->scale, comp->scale, colorWhite, ")", 0, 0, comp->styleText, &cgs.media.limboFont2);
 		}
 	}
 	else
@@ -3017,8 +3025,8 @@ void CG_DrawFollow(hudComponent_t *comp)
 			CG_DrawPic(comp->location.x + startClass + startRank, y + heightIconsOffset, lineHeight + 2, lineHeight + 2, rankicons[cgs.clientinfo[cg.snap->ps.clientNum].rank][cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_AXIS ? 1 : 0][0].shader);
 		}
 
-		CG_Text_Paint_Ext(comp->location.x, y + heightTextOffset, comp->scale, comp->scale, colorWhite, follow, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
-		CG_Text_Paint_Ext(comp->location.x + startClass + lineHeight + 2 + charWidth, y + heightTextOffset, comp->scale, comp->scale, colorWhite, w, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+		CG_Text_Paint_Ext(comp->location.x, y + heightTextOffset, comp->scale, comp->scale, colorWhite, follow, 0, 0, comp->styleText, &cgs.media.limboFont2);
+		CG_Text_Paint_Ext(comp->location.x + startClass + lineHeight + 2 + charWidth, y + heightTextOffset, comp->scale, comp->scale, colorWhite, w, 0, 0, comp->styleText, &cgs.media.limboFont2);
 	}
 }
 
@@ -3088,7 +3096,7 @@ void CG_DrawWarmupTitle(hudComponent_t *comp)
 		}
 	}
 
-	CG_DrawCompText(comp, s, comp->colorText, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+	CG_DrawCompText(comp, s, comp->colorText, comp->styleText, &cgs.media.limboFont2);
 }
 
 /**
@@ -3147,7 +3155,7 @@ void CG_DrawWarmupText(hudComponent_t *comp)
 		}
 
 		CG_DrawCompMultilineText(comp, va("%s\n%s\n%s\n", s ? s : " ", s1 ? s1 : " ", s2 ? s2 : " "),
-		                         comp->colorText, ITEM_ALIGN_CENTER, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+		                         comp->colorText, comp->alignText, comp->styleText, &cgs.media.limboFont2);
 	}
 	else if (cgs.gametype == GT_WOLF_STOPWATCH)
 	{
@@ -3215,7 +3223,7 @@ void CG_DrawWarmupText(hudComponent_t *comp)
 		}
 
 		CG_DrawCompMultilineText(comp, va("%s\n%s\n%s\n", s ? s : " ", s1 ? CG_TranslateString(s1) : " ", s2 ? CG_TranslateString(s2) : " "),
-		                         comp->colorText, ITEM_ALIGN_CENTER, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+		                         comp->colorText, comp->alignText, comp->styleText, &cgs.media.limboFont2);
 	}
 }
 
@@ -3556,7 +3564,7 @@ void CG_DrawObjectiveInfo(hudComponent_t *comp)
 	VectorCopy(comp->colorText, textColor);
 	textColor[3] = color[3];
 
-	CG_DrawCompMultilineText(comp, cg.oidPrint, textColor, ITEM_ALIGN_CENTER, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+	CG_DrawCompMultilineText(comp, cg.oidPrint, textColor, comp->alignText, comp->styleText, &cgs.media.limboFont2);
 
 }
 
@@ -3846,7 +3854,7 @@ void CG_DrawBannerPrint(hudComponent_t *comp)
 	VectorCopy(comp->colorText, textColor);
 	textColor[3] = color[3];
 
-	CG_DrawCompMultilineText(comp, cg.bannerPrint, textColor, ITEM_ALIGN_CENTER, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+	CG_DrawCompMultilineText(comp, cg.bannerPrint, textColor, comp->alignText, comp->styleText, &cgs.media.limboFont2);
 }
 
 #define MAX_DISTANCE 2000.f

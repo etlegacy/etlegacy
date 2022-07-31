@@ -339,7 +339,6 @@ vmCvar_t cg_numPopups;
 vmCvar_t cg_popupFilter;
 vmCvar_t cg_popupBigFilter;
 vmCvar_t cg_graphicObituaries;
-vmCvar_t cg_popupShadow;
 
 vmCvar_t cg_fontScaleSP; // side print
 
@@ -366,8 +365,6 @@ vmCvar_t cg_shoutcastTeamNameRed;
 vmCvar_t cg_shoutcastTeamNameBlue;
 vmCvar_t cg_shoutcastDrawHealth;
 vmCvar_t cg_shoutcastGrenadeTrail;
-
-vmCvar_t cg_chatShadow;
 
 vmCvar_t cg_activateLean;
 
@@ -608,7 +605,6 @@ static cvarTable_t cvarTable[] =
 	{ &cg_popupFilter,             "cg_popupFilter",             "0",           CVAR_ARCHIVE,                 0 },
 	{ &cg_popupBigFilter,          "cg_popupBigFilter",          "0",           CVAR_ARCHIVE,                 0 },
 	{ &cg_graphicObituaries,       "cg_graphicObituaries",       "0",           CVAR_ARCHIVE,                 0 },
-	{ &cg_popupShadow,             "cg_popupShadow",             "0",           CVAR_ARCHIVE,                 0 },
 	{ &cg_weapaltReloads,          "cg_weapaltReloads",          "0",           CVAR_ARCHIVE,                 0 },
 	{ &cg_weapaltSwitches,         "cg_weapaltSwitches",         "1",           CVAR_ARCHIVE,                 0 },
 	{ &cg_sharetimerText,          "cg_sharetimerText",          "",            CVAR_ARCHIVE,                 0 },
@@ -635,8 +631,6 @@ static cvarTable_t cvarTable[] =
 	{ &cg_shoutcastTeamNameBlue,   "cg_shoutcastTeamNameBlue",   "Allies",      CVAR_ARCHIVE,                 0 },
 	{ &cg_shoutcastDrawHealth,     "cg_shoutcastDrawHealth",     "0",           CVAR_ARCHIVE,                 0 },
 	{ &cg_shoutcastGrenadeTrail,   "cg_shoutcastGrenadeTrail",   "0",           CVAR_ARCHIVE,                 0 },
-
-	{ &cg_chatShadow,              "cg_chatShadow",              "0",           CVAR_ARCHIVE,                 0 },
 
 	{ &cg_activateLean,            "cg_activateLean",            "0",           CVAR_ARCHIVE,                 0 },
 

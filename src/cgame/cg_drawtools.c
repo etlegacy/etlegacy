@@ -1053,9 +1053,9 @@ static int CG_ComputeLinePosX(float x, float scalex, const char *text, int align
 
 	switch (align)
 	{
-	case ITEM_ALIGN_CENTER: return x - lineW / 2;
+	case ITEM_ALIGN_CENTER: return x - lineW * .5;
 	case ITEM_ALIGN_RIGHT: return x - lineW;
-	case ITEM_ALIGN_CENTER2: return x + lineW / 2;
+	case ITEM_ALIGN_CENTER2: return x + lineW * .5;
 	default: return x;
 	}
 }
@@ -1081,10 +1081,11 @@ void CG_DrawMultilineText(float x, float y, float scalex, float scaley, vec4_t c
 	glyphInfo_t *glyph;
 	const char  *s = text;
 	float       yadj;
-	int         count = 0, ofs;
+	int         count = 0;
 	int         lineX = x, lineY = y;
 	float       fontSizeX = scalex;
 	float       fontSizeY = scaley;
+	float       newAlpha;
 
 	if (!text)
 	{
@@ -1093,9 +1094,6 @@ void CG_DrawMultilineText(float x, float y, float scalex, float scaley, vec4_t c
 
 	fontSizeX *= Q_UTF8_GlyphScale(font);
 	fontSizeY *= Q_UTF8_GlyphScale(font);
-
-	trap_R_SetColor(color);
-	Vector4Copy(color, newColor);
 
 	if (limit <= 0)
 	{
@@ -1106,6 +1104,16 @@ void CG_DrawMultilineText(float x, float y, float scalex, float scaley, vec4_t c
 	{
 		lineX = CG_ComputeLinePosX(x, scalex, text, align, font);
 	}
+
+	Vector4Copy(color, newColor);
+
+	if (style == ITEM_TEXTSTYLE_BLINK || style == ITEM_TEXTSTYLE_PULSE)
+	{
+		newAlpha    = Q_fabs(sin(cg.time / (style == ITEM_TEXTSTYLE_BLINK ? BLINK_DIVISOR : PULSE_DIVISOR)));
+		newColor[3] = newAlpha;
+	}
+
+	trap_R_SetColor(newColor);
 
 	while (s && *s && count < limit)
 	{
@@ -1138,6 +1146,12 @@ void CG_DrawMultilineText(float x, float y, float scalex, float scaley, vec4_t c
 				Com_Memcpy(newColor, g_color_table[ColorIndex(*(s + 1))], sizeof(newColor));
 				newColor[3] = color[3];
 			}
+
+			if (style == ITEM_TEXTSTYLE_BLINK || style == ITEM_TEXTSTYLE_PULSE)
+			{
+				newColor[3] = newAlpha;
+			}
+
 			trap_R_SetColor(newColor);
 			s += 2;
 			continue;
@@ -1145,9 +1159,9 @@ void CG_DrawMultilineText(float x, float y, float scalex, float scaley, vec4_t c
 
 		yadj = fontSizeY * glyph->top;
 
-		if (style == ITEM_TEXTSTYLE_SHADOWED || style == ITEM_TEXTSTYLE_SHADOWEDMORE)
+		if (style == ITEM_TEXTSTYLE_SHADOWED || style == ITEM_TEXTSTYLE_SHADOWEDMORE | style == ITEM_TEXTSTYLE_OUTLINESHADOWED)
 		{
-			ofs           = style == ITEM_TEXTSTYLE_SHADOWED ? 1 : 2;
+			float ofs = style == ITEM_TEXTSTYLE_SHADOWEDMORE ? 2 : 1;
 			colorBlack[3] = newColor[3];
 			trap_R_SetColor(colorBlack);
 			CG_Text_PaintChar_Ext(lineX + (glyph->pitch * fontSizeX) + ofs, lineY - yadj + ofs, glyph->imageWidth, glyph->imageHeight, fontSizeX, fontSizeY, glyph->s, glyph->t, glyph->s2, glyph->t2, glyph->glyph);
@@ -1156,6 +1170,12 @@ void CG_DrawMultilineText(float x, float y, float scalex, float scaley, vec4_t c
 		}
 
 		CG_Text_PaintChar_Ext(lineX + (glyph->pitch * fontSizeX), lineY - yadj, glyph->imageWidth, glyph->imageHeight, fontSizeX, fontSizeY, glyph->s, glyph->t, glyph->s2, glyph->t2, glyph->glyph);
+
+		if (style == ITEM_TEXTSTYLE_OUTLINED || style == ITEM_TEXTSTYLE_OUTLINESHADOWED)
+		{
+			CG_Text_PaintChar_Ext(lineX + (glyph->pitch * fontSizeX) - 1, lineY - yadj - 1, glyph->imageWidth, glyph->imageHeight, fontSizeX, fontSizeY, glyph->s, glyph->t, glyph->s2, glyph->t2, glyph->glyph);
+		}
+
 		lineX += (glyph->xSkip * fontSizeX) + adjust;
 		s     += Q_UTF8_Width(s);
 		count++;

@@ -608,7 +608,6 @@ void CG_DrawPMItems(hudComponent_t *comp)
 	float        size       = lineHeight - 2;
 	float        y          = (cgs.clientinfo[cg.clientNum].shoutcaster ? 110 : comp->location.y) + comp->location.h;
 	float        x          = comp->location.x;
-	int          style      = cg_popupShadow.integer ? ITEM_TEXTSTYLE_SHADOWED : ITEM_TEXTSTYLE_NORMAL;
 	vec4_t       colorText;
 
 	Vector4Copy(comp->colorText, colorText);
@@ -654,7 +653,7 @@ void CG_DrawPMItems(hudComponent_t *comp)
 		x += lineHeight;
 	}
 
-	CG_Text_Paint_Ext(x, y - (lineHeight / 2) + 1, comp->scale, comp->scale, colorText, cg_pmWaitingList->message, 0, 0, style, &cgs.media.limboFont2); // 4 + size + 2
+	CG_Text_Paint_Ext(x, y - (lineHeight / 2) + 1, comp->scale, comp->scale, colorText, cg_pmWaitingList->message, 0, 0, comp->styleText, &cgs.media.limboFont2); // 4 + size + 2
 
 	w = CG_Text_Width_Ext(cg_pmWaitingList->message, comp->scale, 0, &cgs.media.limboFont2);
 
@@ -673,7 +672,7 @@ void CG_DrawPMItems(hudComponent_t *comp)
 
 	if (cg_pmWaitingList->message2[0])
 	{
-		CG_Text_Paint_Ext(x + w + lineHeight * cg_pmWaitingList->scaleShader + 4, y - (lineHeight / 2) + 1, comp->scale, comp->scale, colorText, cg_pmWaitingList->message2, 0, 0, style, &cgs.media.limboFont2); // 4 + size + 2 + w + 6 + sizew*... + 4
+		CG_Text_Paint_Ext(x + w + lineHeight * cg_pmWaitingList->scaleShader + 4, y - (lineHeight / 2) + 1, comp->scale, comp->scale, colorText, cg_pmWaitingList->message2, 0, 0, comp->styleText, &cgs.media.limboFont2); // 4 + size + 2 + w + 6 + sizew*... + 4
 	}
 
 	for (i = 0; i < cg_numPopups.integer - 1 && listItem; i++, listItem = listItem->next)
@@ -706,7 +705,7 @@ void CG_DrawPMItems(hudComponent_t *comp)
 			x += lineHeight;
 		}
 
-		CG_Text_Paint_Ext(x, y - (lineHeight / 2) + 1, comp->scale, comp->scale, colorText, listItem->message, 0, 0, style, &cgs.media.limboFont2);
+		CG_Text_Paint_Ext(x, y - (lineHeight / 2) + 1, comp->scale, comp->scale, colorText, listItem->message, 0, 0, comp->styleText, &cgs.media.limboFont2);
 
 		w = CG_Text_Width_Ext(listItem->message, comp->scale, 0, &cgs.media.limboFont2);
 
@@ -725,7 +724,7 @@ void CG_DrawPMItems(hudComponent_t *comp)
 
 		if (listItem->message2[0])
 		{
-			CG_Text_Paint_Ext(x + w + lineHeight * listItem->scaleShader + 4, y - (lineHeight / 2) + 1, comp->scale, comp->scale, colorText, listItem->message2, 0, 0, style, &cgs.media.limboFont2);
+			CG_Text_Paint_Ext(x + w + lineHeight * listItem->scaleShader + 4, y - (lineHeight / 2) + 1, comp->scale, comp->scale, colorText, listItem->message2, 0, 0, comp->styleText, &cgs.media.limboFont2);
 		}
 	}
 }
@@ -779,7 +778,7 @@ void CG_DrawPMItemsBig(hudComponent_t *comp)
 	//int lim = (comp->location.w - (x - comp->location.x)) / spacingWidth;
 	w = CG_Text_Width_Ext(cg_pmWaitingListBig->message, comp->scale, 0, &cgs.media.limboFont2);
 
-	CG_Text_Paint_Ext(comp->location.x + (comp->location.w - w) - iconsSize, comp->location.y + iconsSize + h * 0.5, comp->scale, comp->scale, colorText, cg_pmWaitingListBig->message, 0, 0, cg_popupShadow.integer ? ITEM_TEXTSTYLE_SHADOWED : ITEM_TEXTSTYLE_NORMAL, &cgs.media.limboFont2);
+	CG_Text_Paint_Ext(comp->location.x + (comp->location.w - w) - iconsSize, comp->location.y + iconsSize + h * 0.5, comp->scale, comp->scale, colorText, cg_pmWaitingListBig->message, 0, 0, comp->styleText, &cgs.media.limboFont2);
 }
 
 /**

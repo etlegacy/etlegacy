@@ -2823,12 +2823,8 @@ extern vmCvar_t cg_numPopups;
 extern vmCvar_t cg_popupFilter;
 extern vmCvar_t cg_popupBigFilter;
 extern vmCvar_t cg_graphicObituaries;
-extern vmCvar_t cg_popupShadow;
 
-extern vmCvar_t cg_fontScaleTP;
 extern vmCvar_t cg_fontScaleSP;
-extern vmCvar_t cg_fontScaleCP;
-extern vmCvar_t cg_fontScaleCN;
 
 // unlagged optimized prediction
 extern vmCvar_t cg_optimizePrediction;
@@ -2855,8 +2851,6 @@ extern vmCvar_t cg_shoutcastTeamNameRed;
 extern vmCvar_t cg_shoutcastTeamNameBlue;
 extern vmCvar_t cg_shoutcastDrawHealth;
 extern vmCvar_t cg_shoutcastGrenadeTrail;
-
-extern vmCvar_t cg_chatShadow;
 
 extern vmCvar_t cg_activateLean;
 
@@ -4077,6 +4071,8 @@ typedef struct hudComponent_s
 	vec4_t colorBackground;
 	int showBorder;
 	vec4_t colorBorder;
+	int styleText;
+	int alignText;
 	int offset;
 	void (*draw)(struct hudComponent_s *comp);
 } hudComponent_t;
@@ -4129,12 +4125,12 @@ typedef struct hudStructure_s
 	hudComponent_t disconnect;
 	hudComponent_t chat;
 	hudComponent_t spectatorstatus;       // 40
-    hudComponent_t pmitemsbig;
-    hudComponent_t warmuptitle;
-    hudComponent_t warmuptext;
-    hudComponent_t objectivetext;
-    hudComponent_t centerprint;
-    hudComponent_t banner;
+	hudComponent_t pmitemsbig;
+	hudComponent_t warmuptitle;
+	hudComponent_t warmuptext;
+	hudComponent_t objectivetext;
+	hudComponent_t centerprint;
+	hudComponent_t banner;
 
 	hudComponent_t *components[HUD_COMPONENTS_NUM];
 } hudStucture_t;
@@ -4168,8 +4164,8 @@ void CG_HudEditorMouseMove_Handling(int x, int y);
 
 typedef struct
 {
-    const char *cmd;
-    const char *info;
+	const char *cmd;
+	const char *info;
 } helpType_t;
 
 void CG_DrawHelpWindow(float x, float y, int *status, const char *title, const helpType_t *help, unsigned int cmdNumber,
