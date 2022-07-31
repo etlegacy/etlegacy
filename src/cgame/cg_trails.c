@@ -910,6 +910,12 @@ void CG_AddTrails(void)
 	j = activeTrails;
 	while (j)
 	{
+		if (cgs.matchPaused)
+		{
+			j->spawnTime += cg.frametime;
+			j->endTime   += cg.frametime;
+		}
+
 		lifeFrac = (float)(cg.time - j->spawnTime) / (float)(j->endTime - j->spawnTime);
 		if (lifeFrac >= 1.0f)
 		{

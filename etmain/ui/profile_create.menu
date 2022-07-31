@@ -96,7 +96,7 @@
 #ifdef ETLEGACY
 	COMBO(SUBWINDOW_X + 4, SUBWINDOW_Y + 88, (SUBWINDOW_WIDTH)-8, 10, _("Language:"), .2, 8, "ui_cl_lang", LEGACY_LANGUAGES, none, _("Set your desired language"))
 #endif
-	MULTIACTION(SUBWINDOW_X + 4, SUBWINDOW_Y + 136, (SUBWINDOW_WIDTH)-8, 10, _("Quality Preset:"), .2, 8, "ui_glPreset", cvarFloatList { "Very Low" 3 "Low" 2 "Normal" 1 "High" 0 }, uiScript glPreset, _("Select your initial video quality settings, these can be changed later via the options menu"))
+	MULTIACTION(SUBWINDOW_X + 4, SUBWINDOW_Y + 136, (SUBWINDOW_WIDTH)-8, 10, _("Quality Preset:"), .2, 8, "ui_glPreset", cvarFloatList { "Very Low" 3 "Low" 2 "Normal" 1 "High" 0 }, uiScript update "ui_glPreset", _("Select your initial video quality settings, these can be changed later via the options menu"))
 
 #ifdef ETLEGACY
 	COMBO(SUBWINDOW_X + 4, SUBWINDOW_Y + 150, (SUBWINDOW_WIDTH)-8, 10, _("Resolution:"), .2, 8, "ui_r_mode", LEGACY_RESOLUTIONS, uiScript glCustom, _("Choose your preferred video resolution, if unsure leave it as the default"))

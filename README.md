@@ -183,6 +183,17 @@ Be sure to set the CMake variables (see above) beforehand.
 
   * In order to compile the jpeg-turbo library properly you will need the **nasm** assembler.
 
+  * On some systems, CMake might have trouble locating 32-bit libraries and tries to use 64-bit ones when building 32-bit. This can be fixed by setting the following enviromental variables before running CMake (note: running easybuild takes care of this for you)
+
+```sh
+$ export CC="gcc -m32"
+$ export CXX="g++ -m32"
+
+# or simply run cmake with
+$ CC="gcc -m32" CXX="g++ -m32" cmake ..
+```
+
+
 
 ### Crosscompiling on Linux with MinGW-w64
 

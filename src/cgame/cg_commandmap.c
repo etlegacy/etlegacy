@@ -1980,7 +1980,7 @@ void CG_DrawAutoMap(float basex, float basey, float basew, float baseh, qboolean
 				continue;
 			}
 
-			icon = CG_GetCompassIcon(&snap->entities[i], qfalse, qtrue, !(cg_drawCompassIcons.integer & 4), !(cg_drawCompassIcons.integer & 2), qtrue, NULL);
+			icon = CG_GetCompassIcon(&snap->entities[i], qfalse, qtrue, cg_drawCompassIcons.integer & 4, cg_drawCompassIcons.integer & 2, cg_drawCompassIcons.integer & 1, qtrue, NULL);
 
 			if (icon)
 			{

@@ -953,7 +953,7 @@ static qboolean PM_CheckProne(void)
 
 				pm->ps->eFlags |= EF_PRONE;
 				PM_StepSlideMove(qfalse);
-				PM_TraceAll(&trace, pm->ps->origin, pm->ps->origin);
+				PM_TraceAll(&trace, pm->ps->origin, trace.endpos);
 
 				if (trace.startsolid || trace.allsolid || trace.fraction != 1.f)
 				{
@@ -3017,6 +3017,13 @@ void PM_CoolWeapons(void)
 #define AIMSPREAD_VIEWRATE_MIN      30.0f       // degrees per second
 #define AIMSPREAD_VIEWRATE_RANGE    120.0f      // degrees per second
 
+#define FORWARD_BIT  1
+#define BACKWARD_BIT 2
+
+#ifdef GAMEDLL
+extern vmCvar_t g_developer;
+#endif
+
 /**
  * @brief PM_AdjustAimSpreadScale
  */
@@ -3033,6 +3040,22 @@ void PM_AdjustAimSpreadScale(void)
 		pm->ps->aimSpreadScaleFloat = AIMSPREAD_MAXSPREAD;
 		return;
 	}
+
+#ifdef GAMEDLL
+	if(g_developer.integer & 2) {
+		if ( pm->cmd.flags & (1 << FORWARD_BIT) ) {
+			Com_Printf("^5%i +1\n", pm->cmd.serverTime);
+		}
+		else if ( pm->cmd.flags & (1 << BACKWARD_BIT) )
+		{
+			Com_Printf("^6%i -2\n", pm->cmd.serverTime);
+		}
+		else
+		{
+			Com_Printf("%i  0\n", pm->cmd.serverTime);
+		}
+	}
+#endif
 
 	cmdTime = (pm->cmd.serverTime - pm->oldcmd.serverTime) / 1000.0f;
 
@@ -4050,7 +4073,11 @@ void PM_UpdateLean(playerState_t *ps, usercmd_t *cmd, pmove_t *tpm)
 
 		ps->stats[STAT_PS_FLAGS] &= ~(STAT_LEAN_LEFT | STAT_LEAN_RIGHT);
 
-		return; // also early return if already in center position
+		// also early return if already in center position
+		if (!leanofs)
+		{
+			return;
+		}
 	}
 	else if (leaning > 0)       // right
 	{
@@ -4516,31 +4543,12 @@ void PM_UpdateViewAngles(playerState_t *ps, pmoveExt_t *pmext, usercmd_t *cmd, v
 
 			if (traceres.fraction != 1.f)
 			{
-				// is plane valid, try to find one?
-				if (VectorCompare(traceres.plane.normal, vec3_origin))
-				{
-					pm->trace(&traceres, ps->origin, playerHeadProneMins, playerHeadProneMaxs, end, pm->ps->clientNum, tracemask);
-
-					// still invalid, can't rotate
-					if (VectorCompare(traceres.plane.normal, vec3_origin))
-					{
-						if (pm->debugLevel)
-						{
-							Com_Printf("%i:rotate in solid\n", c_pmove);
-						}
-
-						// starting in a solid, no space
-						ps->viewangles[YAW]   = oldYaw;
-						ps->delta_angles[YAW] = ANGLE2SHORT(ps->viewangles[YAW]) - cmd->angles[YAW];
-					}
-				}
-
 				// adjust position by bumping
 				VectorSubtract(end, start, end);
 
-				end[0] *= traceres.plane.normal[0];
-				end[1] *= traceres.plane.normal[1];
-				end[2] *= traceres.plane.normal[2];
+				end[0] = Q_fabs(end[0]) * traceres.plane.normal[0];
+				end[1] = Q_fabs(end[1]) * traceres.plane.normal[1];
+				end[2] = Q_fabs(end[2]) * traceres.plane.normal[2];
 				VectorAdd(ps->origin, end, end);
 
 				// check the new position
@@ -4577,31 +4585,12 @@ void PM_UpdateViewAngles(playerState_t *ps, pmoveExt_t *pmext, usercmd_t *cmd, v
 
 				if (traceres.fraction != 1.f)
 				{
-					// is plane valid, try to find one?
-					if (VectorCompare(traceres.plane.normal, vec3_origin))
-					{
-						pm->trace(&traceres, ps->origin, playerHeadProneMins, playerHeadProneMaxs, end, pm->ps->clientNum, tracemask);
-
-						// still invalid, can't rotate
-						if (VectorCompare(traceres.plane.normal, vec3_origin))
-						{
-							if (pm->debugLevel)
-							{
-								Com_Printf("%i:rotate in solid\n", c_pmove);
-							}
-
-							// starting in a solid, no space
-							ps->viewangles[YAW]   = oldYaw;
-							ps->delta_angles[YAW] = ANGLE2SHORT(ps->viewangles[YAW]) - cmd->angles[YAW];
-						}
-					}
-
 					// adjust position by bumping
 					VectorSubtract(end, start, end);
 
-					end[0] *= traceres.plane.normal[0];
-					end[1] *= traceres.plane.normal[1];
-					end[2] *= traceres.plane.normal[2];
+					end[0] = Q_fabs(end[0]) * traceres.plane.normal[0];
+					end[1] = Q_fabs(end[1]) * traceres.plane.normal[1];
+					end[2] = Q_fabs(end[2]) * traceres.plane.normal[2];
 					VectorAdd(ps->origin, end, end);
 
 					// check the new position

@@ -370,6 +370,9 @@ vmCvar_t cg_activateLean;
 
 vmCvar_t cg_drawBreathPuffs;
 
+vmCvar_t cg_customFont1;
+vmCvar_t cg_customFont2;
+
 typedef struct
 {
 	vmCvar_t *vmCvar;
@@ -391,13 +394,13 @@ static cvarTable_t cvarTable[] =
 	{ &cg_fov,                     "cg_fov",                     "90",          CVAR_ARCHIVE,                 0 },
 	{ &cg_muzzleFlash,             "cg_muzzleFlash",             "1",           CVAR_ARCHIVE,                 0 },
 	{ &cg_letterbox,               "cg_letterbox",               "0",           CVAR_TEMP,                    0 },
-	{ &cg_shadows,                 "cg_shadows",                 "1",           CVAR_ARCHIVE,                 0 },
+	{ &cg_shadows,                 "cg_shadows",                 "0",           CVAR_ARCHIVE,                 0 },
 	{ &cg_gibs,                    "cg_gibs",                    "1",           CVAR_ARCHIVE,                 0 },
 	// we now draw reticles always in non demoplayback
 	//  { &cg_draw2D, "cg_draw2D", "1", CVAR_CHEAT }, // JPW NERVE changed per atvi req to prevent sniper rifle zoom cheats
 	{ &cg_draw2D,                  "cg_draw2D",                  "1",           CVAR_ARCHIVE,                 0 },
 	{ &cg_drawSpreadScale,         "cg_drawSpreadScale",         "1",           CVAR_ARCHIVE,                 0 },
-	{ &cg_railTrailTime,           "cg_railTrailTime",           "50",          CVAR_ARCHIVE,                 0 },
+	{ &cg_railTrailTime,           "cg_railTrailTime",           "750",         CVAR_ARCHIVE,                 0 },
 	{ &cg_drawStatus,              "cg_drawStatus",              "1",           CVAR_ARCHIVE,                 0 },
 	{ &cg_drawFPS,                 "cg_drawFPS",                 "0",           CVAR_ARCHIVE,                 0 },
 	{ &cg_drawCrosshair,           "cg_drawCrosshair",           "1",           CVAR_ARCHIVE,                 0 },
@@ -419,8 +422,8 @@ static cvarTable_t cvarTable[] =
 	{ &cg_gun_z,                   "cg_gunZ",                    "0",           CVAR_TEMP,                    0 },
 	{ &cg_centertime,              "cg_centertime",              "5",           CVAR_ARCHIVE,                 0 }, // changed from 3 to 5
 	{ &cg_bobbing,                 "cg_bobbing",                 "1",           CVAR_ARCHIVE,                 0 },
-	{ &cg_drawEnvAwareness,        "cg_drawEnvAwareness",        "1",           CVAR_ARCHIVE,                 0 },
-	{ &cg_drawCompassIcons,        "cg_drawCompassIcons",        "1",           CVAR_ARCHIVE,                 0 },
+	{ &cg_drawEnvAwareness,        "cg_drawEnvAwareness",        "7",           CVAR_ARCHIVE,                 0 },
+	{ &cg_drawCompassIcons,        "cg_drawCompassIcons",        "7",           CVAR_ARCHIVE,                 0 },
 	{ &cg_dynamicIcons,            "cg_dynamicIcons",            "0",           CVAR_ARCHIVE,                 0 },
 	{ &cg_dynamicIconsDistance,    "cg_dynamicIconsDistance",    "400",         CVAR_ARCHIVE,                 0 },
 	{ &cg_dynamicIconsSize,        "cg_dynamicIconsSize",        "20",          CVAR_ARCHIVE,                 0 },
@@ -547,6 +550,7 @@ static cvarTable_t cvarTable[] =
 #endif
 
 	// Engine mappings
+
 	{ &int_cl_maxpackets,          "cl_maxpackets",              "125",         CVAR_ARCHIVE,                 0 },
 	{ &int_cl_timenudge,           "cl_timenudge",               "0",           CVAR_ARCHIVE,                 0 },
 	{ &int_m_pitch,                "m_pitch",                    "0.022",       CVAR_ARCHIVE,                 0 },
@@ -654,6 +658,13 @@ void CG_RegisterCvars(void)
 
 	trap_Cvar_Set("cg_letterbox", "0");   // force this for people who might have it in their cfg
 
+	// custom fonts, register here since these are ETL-specific features
+	if (cg.etLegacyClient)
+	{
+		trap_Cvar_Register(&cg_customFont1, "cg_customFont1", "", CVAR_ARCHIVE);
+		trap_Cvar_Register(&cg_customFont2, "cg_customFont2", "", CVAR_ARCHIVE);
+	}
+
 	for (i = 0, cv = cvarTable ; i < cvarTableSize ; i++, cv++)
 	{
 		trap_Cvar_Register(cv->vmCvar, cv->cvarName, cv->defaultString, cv->cvarFlags);
@@ -756,6 +767,26 @@ void CG_UpdateCvars(void)
 					}
 				}
 			}
+		}
+	}
+
+	if (cg.etLegacyClient)
+	{
+		static int cg_customFont1_lastMod = 1;
+		static int cg_customFont2_lastMod = 1;
+
+		trap_Cvar_Update(&cg_customFont1);
+		trap_Cvar_Update(&cg_customFont2);
+
+		if (cg_customFont1.modificationCount != cg_customFont1_lastMod)
+		{
+			cg_customFont1_lastMod = cg_customFont1.modificationCount;
+			CG_RegisterFonts();
+		}
+		else if (cg_customFont2.modificationCount != cg_customFont2_lastMod)
+		{
+			cg_customFont2_lastMod = cg_customFont2.modificationCount;
+			CG_RegisterFonts();
 		}
 	}
 
@@ -1510,6 +1541,22 @@ static void CG_RegisterSounds(void)
 }
 
 /**
+* @brief CG_RegisterFonts
+*/
+void CG_RegisterFonts(void)
+{
+	RegisterSharedFonts();
+
+	cgs.media.limboFont1    = cgDC.Assets.limboFont1;
+	cgs.media.limboFont1_lo = cgDC.Assets.limboFont1_lo;
+	cgs.media.limboFont2    = cgDC.Assets.limboFont2;
+	cgs.media.limboFont2_lo = cgDC.Assets.limboFont2_lo;
+
+	cgs.media.bg_loadscreenfont1 = cgDC.Assets.bg_loadscreenfont1;
+	cgs.media.bg_loadscreenfont2 = cgDC.Assets.bg_loadscreenfont2;
+}
+
+/**
  * @brief CG_GetGameSound
  * @param[in] index
  * @return
@@ -1645,24 +1692,24 @@ static void CG_RegisterGraphics(void)
 	cgs.media.tracerShader           = trap_R_RegisterShader("gfx/misc/tracer");
 
 	// hint icon, some of these were never used in default wolf
-	cgs.media.usableHintShader        = trap_R_RegisterShader("gfx/2d/usableHint");
-	cgs.media.notUsableHintShader     = trap_R_RegisterShader("gfx/2d/notUsableHint");
+	cgs.media.usableHintShader        = trap_R_RegisterShader("gfx/2d/legacy_usableHint");
+	cgs.media.notUsableHintShader     = trap_R_RegisterShader("gfx/2d/legacy_notUsableHint");
 	cgs.media.doorHintShader          = trap_R_RegisterShader("gfx/2d/doorHint");
-	cgs.media.doorRotateHintShader    = trap_R_RegisterShader("gfx/2d/doorRotateHint");         // TODO: no icon, add it ?
+	cgs.media.doorRotateHintShader    = trap_R_RegisterShader("gfx/2d/doorRotateHint");             // TODO: no icon, add it ?
 	cgs.media.doorLockHintShader      = trap_R_RegisterShader("gfx/2d/lockedhint");
-	cgs.media.mg42HintShader          = trap_R_RegisterShader("gfx/2d/mg42Hint");               // TODO: no icon, add it ?
-	cgs.media.breakableHintShader     = trap_R_RegisterShader("gfx/2d/breakableHint");
-	cgs.media.healthHintShader        = trap_R_RegisterShader("gfx/2d/healthHint");             // TODO: no icon, add it ?
+	cgs.media.mg42HintShader          = trap_R_RegisterShader("gfx/2d/mg42Hint");                   // TODO: no icon, add it ?
+	cgs.media.breakableHintShader     = trap_R_RegisterShader("gfx/2d/legacy_breakableHint");
+	cgs.media.healthHintShader        = trap_R_RegisterShader("gfx/2d/legacy_healthHint");          // TODO: no icon, add it ?
 	cgs.media.knifeHintShader         = trap_R_RegisterShader("gfx/2d/knifeHint");
 	cgs.media.ladderHintShader        = trap_R_RegisterShader("gfx/2d/ladderHint");
-	cgs.media.buttonHintShader        = trap_R_RegisterShader("gfx/2d/buttonHint");             // TODO: no icon, add it ?
+	cgs.media.buttonHintShader        = trap_R_RegisterShader("gfx/2d/legacy_buttonHint");          // TODO: no icon, add it ?
 	cgs.media.waterHintShader         = trap_R_RegisterShader("gfx/2d/waterHint");
-	cgs.media.weaponHintShader        = trap_R_RegisterShader("gfx/2d/weaponHint");             // TODO: no icon, add it ?
-	cgs.media.ammoHintShader          = trap_R_RegisterShader("gfx/2d/ammoHint");               // TODO: no icon, add it ?
-	cgs.media.powerupHintShader       = trap_R_RegisterShader("gfx/2d/powerupHint");            // TODO: no icon, add it ?
+	cgs.media.weaponHintShader        = trap_R_RegisterShader("gfx/2d/legacy_weaponHint");          // TODO: no icon, add it ?
+	cgs.media.ammoHintShader          = trap_R_RegisterShader("gfx/2d/legacy_ammoHint");            // TODO: no icon, add it ?
+	cgs.media.powerupHintShader       = trap_R_RegisterShader("gfx/2d/legacy_powerupHint");         // TODO: no icon, add it ?
 	cgs.media.friendShader            = trap_R_RegisterShaderNoMip("gfx/2d/friendlycross.tga");
 	cgs.media.buildHintShader         = trap_R_RegisterShader("gfx/2d/buildHint");
-	cgs.media.disarmHintShader        = trap_R_RegisterShader("gfx/2d/disarmHint");             // TODO: no icon, add it ?
+	cgs.media.disarmHintShader        = trap_R_RegisterShader("gfx/2d/legacy_disarmHint");          // TODO: no icon, add it ?
 	cgs.media.reviveHintShader        = trap_R_RegisterShader("gfx/2d/reviveHint");
 	cgs.media.dynamiteHintShader      = trap_R_RegisterShader("gfx/2d/dynamiteHint");
 	cgs.media.tankHintShader          = trap_R_RegisterShaderNoMip("gfx/2d/tankHint");
@@ -2077,10 +2124,7 @@ static void CG_RegisterGraphics(void)
 	cgs.media.medicIcon = trap_R_RegisterShaderNoMip("sprites/voiceMedic");
 	cgs.media.ammoIcon  = trap_R_RegisterShaderNoMip("sprites/voiceAmmo");
 
-	RegisterFont("ariblk", 27, &cgs.media.limboFont1);
-	RegisterFont("ariblk", 16, &cgs.media.limboFont1_lo);
-	RegisterFont("courbd", 30, &cgs.media.limboFont2);
-	RegisterFont("courbd", 21, &cgs.media.limboFont2_lo);
+	CG_RegisterFonts();
 
 	cgs.media.medal_back = trap_R_RegisterShaderNoMip("gfx/limbo/medal_back");
 
@@ -2682,6 +2726,7 @@ void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qbo
 	cgs.screenXScale = cgs.glconfig.vidWidth / 640.0f;
 	cgs.screenYScale = cgs.glconfig.vidHeight / 480.0f;
 
+	cgDC.etLegacyClient = cg.etLegacyClient;
 
 	if (cg.etLegacyClient <= 0)
 	{

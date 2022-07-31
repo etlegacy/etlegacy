@@ -1202,9 +1202,8 @@ void ClientThink_real(gentity_t *ent)
 		// if the difference between commandTime and the last command
 		// time is small, you won't move as far since it's doing
 		// velocity*time for updating your position
-		client->ps.commandTime = level.previousTime -
-		                         (frames  * (level.time - level.previousTime));
-		client->warped = qtrue;
+		client->ps.commandTime = level.previousTime - (frames  * level.frameTime);
+		client->warped         = qtrue;
 	}
 
 	client->warping         = qfalse;
@@ -2094,11 +2093,11 @@ void ClientEndFrame(gentity_t *ent)
 	{
 		if (ent->client->sess.sessionTeam == TEAM_AXIS)
 		{
-			ent->client->sess.time_axis += level.time - level.previousTime;
+			ent->client->sess.time_axis += level.frameTime;
 		}
 		else if (ent->client->sess.sessionTeam == TEAM_ALLIES)
 		{
-			ent->client->sess.time_allies += level.time - level.previousTime;
+			ent->client->sess.time_allies += level.frameTime;
 		}
 	}
 
@@ -2111,7 +2110,7 @@ void ClientEndFrame(gentity_t *ent)
 		{
 			ent->client->sess.time_played = 0;
 		}
-		ent->client->sess.time_played += level.time - level.previousTime;
+		ent->client->sess.time_played += level.frameTime;
 	}
 
 #ifdef FEATURE_RATING
@@ -2171,7 +2170,7 @@ void ClientEndFrame(gentity_t *ent)
 		// Make sure we dont let stuff like CTF flags expire.
 		if (level.match_pause != PAUSE_NONE && ent->client->ps.powerups[i] != INT_MAX)
 		{
-			ent->client->ps.powerups[i] += level.time - level.previousTime;
+			ent->client->ps.powerups[i] += level.frameTime;
 		}
 
 		if (ent->client->ps.powerups[i] < level.time)
@@ -2203,18 +2202,16 @@ void ClientEndFrame(gentity_t *ent)
 	//		--> Any new things in ET we should worry about?
 	if (level.match_pause != PAUSE_NONE)
 	{
-		int time_delta = level.time - level.previousTime;
-
-		ent->client->airOutTime         += time_delta;
-		ent->client->inactivityTime     += time_delta;
-		ent->client->lastBurnTime       += time_delta;
-		ent->client->pers.connectTime   += time_delta;
-		ent->client->pers.enterTime     += time_delta;
-		ent->client->ps.classWeaponTime += time_delta;
-		//ent->client->respawnTime += time_delta;
-		ent->lastHintCheckTime  += time_delta;
-		ent->pain_debounce_time += time_delta;
-		ent->s.onFireEnd        += time_delta;
+		ent->client->airOutTime         += level.frameTime;
+		ent->client->inactivityTime     += level.frameTime;
+		ent->client->lastBurnTime       += level.frameTime;
+		ent->client->pers.connectTime   += level.frameTime;
+		ent->client->pers.enterTime     += level.frameTime;
+		ent->client->ps.classWeaponTime += level.frameTime;
+		//ent->client->respawnTime      += level.frameTime;
+		ent->lastHintCheckTime  += level.frameTime;
+		ent->pain_debounce_time += level.frameTime;
+		ent->s.onFireEnd        += level.frameTime;
 	}
 
 	// save network bandwidth

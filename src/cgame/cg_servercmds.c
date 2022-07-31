@@ -1725,26 +1725,26 @@ void CG_PlayVoiceChat(bufferedVoiceChat_t *vchat)
 			if (vchat->clientNum == cg.snap->ps.clientNum)
 			{
 				cg.predictedPlayerEntity.voiceChatSprite = vchat->sprite;
-				if (vchat->sprite == cgs.media.voiceChatShader)
+				if (vchat->sprite == cgs.media.medicIcon || vchat->sprite == cgs.media.ammoIcon)
 				{
-					cg.predictedPlayerEntity.voiceChatSpriteTime = cg.time + cg_voiceSpriteTime.integer;
+					cg.predictedPlayerEntity.voiceChatSpriteTime = cg.time + cg_voiceSpriteTime.integer * 2;
 				}
 				else
 				{
-					cg.predictedPlayerEntity.voiceChatSpriteTime = cg.time + cg_voiceSpriteTime.integer * 2;
+					cg.predictedPlayerEntity.voiceChatSpriteTime = cg.time + cg_voiceSpriteTime.integer;
 				}
 			}
 			else
 			{
 				cg_entities[vchat->clientNum].voiceChatSprite = vchat->sprite;
 				VectorCopy(vchat->origin, cg_entities[vchat->clientNum].lerpOrigin);
-				if (vchat->sprite == cgs.media.voiceChatShader)
+				if (vchat->sprite == cgs.media.medicIcon || vchat->sprite == cgs.media.ammoIcon)
 				{
-					cg_entities[vchat->clientNum].voiceChatSpriteTime = cg.time + cg_voiceSpriteTime.integer;
+					cg_entities[vchat->clientNum].voiceChatSpriteTime = cg.time + cg_voiceSpriteTime.integer * 2;
 				}
 				else
 				{
-					cg_entities[vchat->clientNum].voiceChatSpriteTime = cg.time + cg_voiceSpriteTime.integer * 2;
+					cg_entities[vchat->clientNum].voiceChatSpriteTime = cg.time + cg_voiceSpriteTime.integer;
 				}
 			}
 		}
@@ -1900,6 +1900,26 @@ void CG_VoiceChat(int mode)
 	cmd = CG_Argv(4);
 
 	CG_VoiceChatLocal(mode, voiceOnly, clientNum, color, cmd, origin);
+}
+
+/**
+ * @brief CG_ResetVoiceSprites
+ * @param[in] revived
+ */
+void CG_ResetVoiceSprites(qboolean revived)
+{
+	if (!revived)
+	{
+		if (cg.predictedPlayerEntity.voiceChatSprite == cgs.media.ammoIcon)
+		{
+			cg.predictedPlayerEntity.voiceChatSpriteTime = 0;
+		}
+	}
+
+	if (cg.predictedPlayerEntity.voiceChatSprite == cgs.media.medicIcon)
+	{
+		cg.predictedPlayerEntity.voiceChatSpriteTime = 0;
+	}
 }
 
 /**

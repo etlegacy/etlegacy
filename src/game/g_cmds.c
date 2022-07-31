@@ -2295,6 +2295,17 @@ void Cmd_Team_f(gentity_t *ent, unsigned int dwCommand, int value)
 }
 
 /**
+ * @brief This simply calls Cmd_Team_f directly to get around flood protection
+ * @param[in,out] ent
+ * @param dwCommand - unused
+ * @param value - unused
+ */
+void Cmd_Class_f(gentity_t *ent, unsigned int dwCommand, int value)
+{
+	Cmd_Team_f(ent, dwCommand, value);
+}
+
+/**
  * @brief "Topshots" accuracy rankings
  * @param ent
  * @param dwCommand - unused

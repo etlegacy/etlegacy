@@ -1046,6 +1046,8 @@ void CL_FinishMove(usercmd_t *cmd)
 	}
 }
 
+#define MASK_CGAMEFLAGS_SERVERTIMEDELTA 0x6 // 0b00000110
+
 /**
  * @brief CL_CreateCmd
  * @return
@@ -1095,6 +1097,10 @@ usercmd_t CL_CreateCmd(void)
 
 	// store out the final values
 	CL_FinishMove(&cmd);
+
+	// the flags for serverTimeDelta have been used, so clear them
+	cl.cgameFlags &= ~MASK_CGAMEFLAGS_SERVERTIMEDELTA_FORWARD;
+	cl.cgameFlags &= ~MASK_CGAMEFLAGS_SERVERTIMEDELTA_BACKWARD;
 
 	// draw debug graphs of turning for mouse testing
 	if (cl_debugMove->integer)

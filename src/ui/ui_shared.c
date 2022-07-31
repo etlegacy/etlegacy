@@ -61,10 +61,18 @@ int       modalMenuCount = 0;
 qboolean debugMode            = qfalse;
 int      lastListBoxClickTime = 0;
 
-#ifdef CGAME
-#define MEM_POOL_SIZE  128 * 1024
+#ifdef CGAMEDLL
+#if ARCH_X86
+#define MEM_POOL_SIZE (128 * 1024)
 #else
-#define MEM_POOL_SIZE  2048 * 1024  // was 1536, 1024
+#define MEM_POOL_SIZE (256 * 1024)
+#endif
+#else
+#if ARCH_X86
+#define MEM_POOL_SIZE (2048 * 1024) // Arnout: was 1024
+#else
+#define MEM_POOL_SIZE (4096 * 1024)
+#endif
 #endif
 
 static char     memoryPool[MEM_POOL_SIZE];
@@ -1911,5 +1919,35 @@ void C_PanelButtonsSetup(panel_button_t **buttons, float xoffset)
 	{
 		button          = (*buttons);
 		button->rect.x += xoffset;
+	}
+}
+
+/**
+ * @brief Registers fonts shared between cgame and ui to either defaults or user-defined custom fonts
+ */
+void RegisterSharedFonts(void)
+{
+	fontTableEntry_t fontTable[FONT_TABLE_NUMFONTS] =
+	{
+		{ &DC->Assets.bg_loadscreenfont1, 27, "cg_customFont1", "ariblk" },
+		{ &DC->Assets.bg_loadscreenfont2, 30, "cg_customFont2", "courbd" },
+		{ &DC->Assets.limboFont1,         27, "cg_customFont1", "ariblk" },
+		{ &DC->Assets.limboFont1_lo,      16, "cg_customFont1", "ariblk" },
+		{ &DC->Assets.limboFont2,         30, "cg_customFont2", "courbd" },
+		{ &DC->Assets.limboFont2_lo,      21, "cg_customFont2", "courbd" },
+	};
+
+	char buf[MAX_QPATH];
+	int  i;
+	for (i = 0; i < FONT_TABLE_NUMFONTS; i++)
+	{
+		fontTableEntry_t *entry = &fontTable[i];
+		trap_Cvar_VariableStringBuffer(entry->cvarName, buf, sizeof(buf));
+		if (buf[0] == 0 || !Q_UTF8_RegisterFont(buf, entry->pointSize, entry->font,
+		                                        DC->etLegacyClient >= UNICODE_SUPPORT_VERSION, &trap_R_RegisterFont))
+		{
+			Q_UTF8_RegisterFont(entry->defaultFont, entry->pointSize, entry->font,
+			                    DC->etLegacyClient >= UNICODE_SUPPORT_VERSION, &trap_R_RegisterFont);
+		}
 	}
 }

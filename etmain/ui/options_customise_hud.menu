@@ -31,7 +31,7 @@ menuDef {
 // Hud Display //
 #define HUD_Y 32
 	SUBWINDOW(6, HUD_Y, (SUBWINDOW_WIDTH_L), 178, _("HUD DISPLAY"))
-	MULTI(8, HUD_Y + 16, (SUBWINDOW_WIDTH_L)-4, 10, _("Compass Icons:"), .2, 8, "cg_drawCompassIcons", cvarFloatList { "All" 1 "No secondary objectives" 2 "No primary objectives" 4 "No objectives" 6 }, _("Select icons on compass"))
+	MULTI(8, HUD_Y + 16, (SUBWINDOW_WIDTH_L)-4, 10, _("Compass Icons:"), .2, 8, "cg_drawCompassIcons", cvarFloatList { "Off" 0 "Item objectives" 1 "Secondary objectives" 2 "Primary objectives" 4 "Item + Secondary obj" 3 "Item + Primary obj" 5 "Primary + Secondary obj" 6 "All" 7 }, _("Select icons on compass"))
 	CVARFLOATLABEL(8, HUD_Y + 28, (SUBWINDOW_WIDTH_L)-4, 10, "cg_automapZoom", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-6), 8)
 	SLIDER(8, HUD_Y + 28, (SUBWINDOW_WIDTH_L)-4, 10, _("Auto Map Zoom:"), .2, 8, "cg_automapZoom" 5.159 1 7.43, _("Set Zoom Level Automatically When Map Loads"))
 	MULTI(8, HUD_Y + 40, (SUBWINDOW_WIDTH_L)-4, 10, _("Cursor Hints:"), .2, 8, "cg_cursorHints", cvarFloatList { "Off" 0 "Size Pulse" 1 "Strobe Pulse" 2 "Alpha Pulse" 3 "Solid" 4 }, _("Icon display format when near an action item"))
@@ -42,7 +42,7 @@ menuDef {
 	MULTI(8, HUD_Y + 100, (SUBWINDOW_WIDTH_L)-4, 10, _("Show Clock:"), .2, 8, "cg_drawTime", cvarFloatList { "Off" 0 "24 hours" 1 "24 hours + seconds" 3 "12 hours" 5 "12 hours + seconds" 7 }, _("Display local time"))
 	MULTI(8, HUD_Y + 112, (SUBWINDOW_WIDTH_L)-4, 10, _("Unit System:"), .2, 8, "cg_drawUnit", cvarFloatList { "Unit" 0 "Metric" 1 "Imperial" 2 }, _("Set unit system"))
 	MULTI(8, HUD_Y + 124, (SUBWINDOW_WIDTH_L)-4, 10, _("Switch HUD:"), .2, 8, "cg_altHud", cvarFloatList { "Standard Hud" 0 "Alternate Hud 1" 1 "Alternate Hud 2" 2 }, _("Switch between different HUD"))
-	MULTI(8, HUD_Y + 136, (SUBWINDOW_WIDTH_L)-4, 10, _("Environment Awareness:"), .2, 8, "cg_drawEnvAwareness", cvarFloatList { "Off" 0 "All" 1 "No secondary objectives" 2 "No primary objectives" 4 "No objectives" 6 }, _("Display objective icons on HUD"))
+	MULTI(8, HUD_Y + 136, (SUBWINDOW_WIDTH_L)-4, 10, _("Environment Awareness:"), .2, 8, "cg_drawEnvAwareness", cvarFloatList { "Off" 0 "Item objectives" 1 "Secondary objectives" 2 "Primary objectives" 4 "Item + Secondary obj" 3 "Item + Primary obj" 5 "Primary + Secondary obj" 6 "All" 7  }, _("Display objective icons on HUD"))
     CVARFLOATLABEL( 8, HUD_Y + 148, (SUBWINDOW_WIDTH_L)-4, 10, "cg_fontScaleSP", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-4), 8 )
     SLIDER(8, HUD_Y + 148, (SUBWINDOW_WIDTH_L)-4, 10, _("Side Print:"), .2, 8, "cg_fontScaleSP" 0.15 0 0.5, _("Set font size for multiview/scorboard texts") )
     

@@ -63,7 +63,7 @@ void *imageBufferPtr[BUFFER_MAX_TYPES] = { NULL, NULL, NULL };
  */
 void *R_GetImageBuffer(int size, bufferMemType_t bufferType, const char *filename)
 {
-	if (imageBufferSize[bufferType] < R_IMAGE_BUFFER_SIZE && size <= imageBufferSize[bufferType])
+	if (imageBufferSize[bufferType] < R_IMAGE_BUFFER_SIZE)
 	{
 		imageBufferSize[bufferType] = R_IMAGE_BUFFER_SIZE;
 		imageBufferPtr[bufferType]  = Com_Allocate(imageBufferSize[bufferType]);

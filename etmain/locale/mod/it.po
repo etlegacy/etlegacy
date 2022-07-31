@@ -4,14 +4,14 @@
 # Translators:
 # Hereward <emanuele.scherillo@outlook.com>, 2021
 # Hereward <emanuele.scherillo@outlook.com>, 2021
-# Kyon <rkseby@gmail.com>, 2019-2020,2022
+# Fade <rkseby@gmail.com>, 2019-2020,2022
 # IR4T4 <gutzu@gmx.ch>, 2018
 # IR4T4 <gutzu@gmx.ch>, 2018
 # redtide <redtid3@gmail.com>, 2015
 # redtide <transifex.redtide@gmail.com>, 2015
 # Seb47 <seb47tv@gmail.com>, 2016
 # Seb47 <seb47tv@gmail.com>, 2016
-# Kyon <rkseby@gmail.com>, 2019
+# Fade <rkseby@gmail.com>, 2019
 # redtide <redtid3@gmail.com>, 2015
 msgid ""
 msgstr ""
@@ -19,13 +19,13 @@ msgstr ""
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
 "PO-Revision-Date: 2015-01-10 11:47+0000\n"
-"Last-Translator: Kyon <rkseby@gmail.com>, 2019-2020,2022\n"
+"Last-Translator: Fade <rkseby@gmail.com>, 2019-2020,2022\n"
 "Language-Team: Italian (http://www.transifex.com/etlegacy/etlegacy/language/it/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Language: it\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Plural-Forms: nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;\n"
 
 #: etmain/ui/credits_activision.menu:66
 msgid "PRODUCED BY ACTIVISION"

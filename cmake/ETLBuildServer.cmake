@@ -15,6 +15,15 @@ set_target_properties(etlded
 	RUNTIME_OUTPUT_DIRECTORY_RELEASE ""
 )
 
+if(UNIX AND NOT ARM AND NOT APPLE AND NOT ANDROID)
+	if (CROSS_COMPILE32)
+		set_target_properties(etlded PROPERTIES SUFFIX ".x86")
+	else()
+		set_target_properties(etlded PROPERTIES SUFFIX ".${ARCH}")
+	endif()
+endif()
+
+
 if(BUNDLED_ZLIB)
 	add_dependencies(etlded bundled_zlib)
 endif()

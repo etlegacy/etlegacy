@@ -1679,15 +1679,17 @@ long FS_FOpenFileReadDir(const char *fileName, searchpath_t *search, fileHandle_
 		// turned out I used FS_FileExists instead
 		if (!unpure && fs_numServerPaks)
 		{
-			if (!FS_IsExt(fileName, ".cfg", len) &&      // for config files
+			if (!FS_IsExt(fileName, ".cfg", len) &&     // for config files
 			    !FS_IsExt(fileName, ".menu", len) &&    // menu files
 			    !FS_IsExt(fileName, ".game", len) &&    // menu files
-			    !FS_IsExt(fileName, ".dat", len) &&     // for journal files
+			    !FS_IsExt(fileName, ".dat", len) &&     // journal/hud files
 			    !FS_IsExt(fileName, ".bin", len) &&     // glsl shader binary
 #ifdef ETLEGACY_DEBUG
 			    !FS_IsExt(fileName, ".glsl", len) &&
 #endif
-			    !FS_IsDemoExt(fileName, len))           // demos
+			    !FS_IsDemoExt(fileName, len) &&         // demos
+			    !FS_IsExt(fileName, ".ttf", len) &&     // TrueType ttf fonts
+			    !FS_IsExt(fileName, ".otf", len))       // TrueType otf fonts
 			{
 				*file = 0;
 				return -1;
@@ -3788,8 +3790,11 @@ void FS_AddGameDirectory(const char *path, const char *dir, qboolean addBase)
 
 	// Get .pk3 files
 	pakfiles = Sys_ListFiles(curpath, ".pk3", NULL, &numfiles, qfalse);
-
-	qsort(pakfiles, numfiles, sizeof(char *), paksort);
+	
+	if (pakfiles)
+	{
+		qsort(pakfiles, numfiles, sizeof(char *), paksort);
+	}
 
 	if (fs_numServerPaks)
 	{
@@ -4258,7 +4263,7 @@ static void FS_ReorderLocalFoldersToTop(void)
 			{
 				// Disabled the reordering since we are just pushing local folders up not the pk3's
 				// fs_reordered = qtrue;
-				changed      = qtrue;
+				changed = qtrue;
 				// move this element to the insert list
 				*p_previous     = s->next;
 				s->next         = *p_insert_index;

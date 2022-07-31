@@ -2856,6 +2856,9 @@ extern vmCvar_t cg_activateLean;
 
 extern vmCvar_t cg_drawBreathPuffs;
 
+extern vmCvar_t cg_customFont1;
+extern vmCvar_t cg_customFont2;
+
 // local clock flags
 #define LOCALTIME_ON                0x01
 #define LOCALTIME_SECOND            0x02
@@ -2888,6 +2891,7 @@ void CG_RegisterPlayerClasses(void);
 const char *CG_ConfigString(int index);
 int CG_ConfigStringCopy(int index, char *buff, size_t buffsize);
 const char *CG_Argv(int arg);
+void CG_RegisterFonts(void);
 
 float CG_Cvar_Get(const char *cvar);
 
@@ -3242,6 +3246,7 @@ void CG_InitLocalEntities(void);
 localEntity_t *CG_AllocLocalEntity(void);
 localEntity_t *CG_FindLocalEntity(int index, int sideNum);
 void CG_AddLocalEntities(void);
+void CG_DemoRewindFixLocalEntities(void);
 
 // cg_locations.c
 // these are called from the console command
@@ -3373,6 +3378,7 @@ void CG_parseWeaponStats_cmd(void(txt_dump) (const char *));
 //void CG_scores_cmd(void);
 
 void CG_UpdateSvCvars(void);
+void CG_ResetVoiceSprites(qboolean revived);
 
 /**
  * @struct consoleCommand_t
@@ -3867,7 +3873,7 @@ void CG_CommandMap_SetHighlightText(const char *text, float x, float y);
 void CG_CommandMap_DrawHighlightText(void);
 qboolean CG_CommandCentreSpawnPointClick(void);
 
-qhandle_t CG_GetCompassIcon(entityState_t *ent, qboolean drawAllVoicesChat, qboolean drawFireTeam, qboolean drawPrimaryObj, qboolean drawSecondaryObj, qboolean drawDynamic, char *name);
+qhandle_t CG_GetCompassIcon(entityState_t *ent, qboolean drawAllVoicesChat, qboolean drawFireTeam, qboolean drawPrimaryObj, qboolean drawSecondaryObj, qboolean drawItemObj, qboolean drawDynamic, char *name);
 void CG_DrawCompassIcon(float x, float y, float w, float h, vec3_t origin, vec3_t dest, qhandle_t shader, float dstScale, float baseSize, mapScissor_t *scissor);
 
 void CG_TransformToCommandMapCoord(float *coord_x, float *coord_y);

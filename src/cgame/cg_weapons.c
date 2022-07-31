@@ -614,7 +614,7 @@ static void CG_GrenadeTrail(centity_t *ent, const weaponInfo_t *wi)
 			                                     startTime,
 			                                     0,
 			                                     origin,
-			                                     750,
+			                                     cg_railTrailTime.integer,
 			                                     0.3f,
 			                                     0.0f,
 			                                     2,
@@ -3700,15 +3700,32 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 			return;
 		}
 
-		// no flamethrower flame on prone moving or dead players
-		if ((cent->currentState.eFlags & EF_FIRING) && !(cent->currentState.eFlags & (EF_PRONE_MOVING | EF_DEAD)))
+		// no flamethrower flame on prone moving or dead players, or during pause
+		if ((cent->currentState.eFlags & EF_FIRING) && !(cent->currentState.eFlags & (EF_PRONE_MOVING | EF_DEAD)) && !cgs.matchPaused)
 		{
+			trace_t trace;
+			vec3_t  muzzlePoint, angles, forward;
+
+			VectorCopy(flash.origin, muzzlePoint);
+
+			CG_Trace(&trace, muzzlePoint, NULL, NULL, muzzlePoint, cent->currentState.number, MASK_SHOT | MASK_WATER);
+
+			if (trace.startsolid)
+			{
+				AxisToAngles(flash.axis, angles);
+				AngleVectors(angles, forward, NULL, NULL);
+				VectorMA(muzzlePoint, -42, forward, muzzlePoint);
+
+				CG_Trace(&trace, muzzlePoint, NULL, NULL, flash.origin, cent->currentState.number, MASK_SHOT | MASK_WATER);
+				VectorCopy(trace.endpos, muzzlePoint);
+			}
+
 			// Flamethrower effect
-			CG_FlamethrowerFlame(cent, flash.origin);
+			CG_FlamethrowerFlame(cent, muzzlePoint);
 
 			if (weapon->flashDlightColor[0] != 0.f || weapon->flashDlightColor[1] != 0.f || weapon->flashDlightColor[2] != 0.f)
 			{
-				trap_R_AddLightToScene(flash.origin, 320, 1.25 + (rand() & 31) / 128.0f, weapon->flashDlightColor[0],
+				trap_R_AddLightToScene(muzzlePoint, 320, 1.25 + (rand() & 31) / 128.0f, weapon->flashDlightColor[0],
 				                       weapon->flashDlightColor[1], weapon->flashDlightColor[2], 0, 0);
 			}
 		}
@@ -4593,6 +4610,12 @@ void CG_AltWeapon_f(void)
 		return;
 	}
 
+	// don't allow alt weapon switch till we have switched to selected weapon
+	if (cg.snap->ps.weapon != cg.weaponSelect || (cg.snap->ps.nextWeapon && cg.snap->ps.weapon != cg.snap->ps.nextWeapon))
+	{
+		return;
+	}
+
 	// need ground for this
 	if (GetWeaponTableData(cg.weaponSelect)->type & WEAPON_TYPE_SETTABLE)
 	{
@@ -5135,6 +5158,11 @@ void CG_NextWeapon_f(void)
 	}
 #endif
 
+	if (cg.snap->ps.pm_flags & PMF_FOLLOW)
+	{
+		return;
+	}
+
 	if (CG_ZoomRequired(qtrue))
 	{
 		return;
@@ -5166,6 +5194,11 @@ void CG_PrevWeapon_f(void)
 		return;
 	}
 #endif
+
+	if (cg.snap->ps.pm_flags & PMF_FOLLOW)
+	{
+		return;
+	}
 
 	if (CG_ZoomRequired(qfalse))
 	{
@@ -5203,9 +5236,19 @@ void CG_WeaponBank_f(void)
 
 	CG_WeaponIndex(cg.weaponSelect, &curbank, &curcycle);         // get bank/cycle of current weapon
 
-	if (!cg_weapaltSwitches.integer && bank == curbank)
+	if (bank == curbank)
 	{
-		return;
+		// don't allow another weapon switch when we're still swapping alt weap, to prevent animation breaking
+		// there we check the value of the animation to prevent any switch during raising and dropping alt weapon
+		// until the animation is ended
+		// don't allow alt weapon switch till we have switched to selected weapon
+		if (!cg_weapaltSwitches.integer || cg.snap->ps.weapon != cg.weaponSelect ||
+		    (cg.snap->ps.nextWeapon && cg.snap->ps.weapon != cg.snap->ps.nextWeapon) ||
+		    (cg.snap->ps.weapAnim & ~ANIM_TOGGLEBIT) == WEAP_ALTSWITCHFROM ||
+		    (cg.snap->ps.weapAnim & ~ANIM_TOGGLEBIT) == WEAP_ALTSWITCHTO)
+		{
+			return;
+		}
 	}
 
 	if (!cg.lastWeapSelInBank[bank])

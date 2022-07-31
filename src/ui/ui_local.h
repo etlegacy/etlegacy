@@ -111,6 +111,9 @@ extern vmCvar_t ui_cg_shoutcastTeamNameBlue;
 extern vmCvar_t ui_cg_shoutcastDrawHealth;
 extern vmCvar_t ui_cg_shoutcastGrenadeTrail;
 
+extern vmCvar_t ui_customFont1;
+extern vmCvar_t ui_customFont2;
+
 // ui_serverBrowserSettings flags
 #define UI_BROWSER_ALLOW_REDIRECT     BIT(0)
 #define UI_BROWSER_ALLOW_HUMANS_COUNT BIT(1)
@@ -345,6 +348,8 @@ void UI_ListCampaigns_f(void);
 
 void UI_ListFavourites_f(void);
 void UI_RemoveAllFavourites_f(void);
+
+void UI_ListFonts_f(void);
 
 #define GLINFO_LINES        256
 

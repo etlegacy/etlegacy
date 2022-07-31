@@ -110,7 +110,7 @@ int Q_UTF8_WidthCP(int ch)
 qboolean Q_UTF8_ValidateSingle(const char *str)
 {
 	int    i = 0, utfBytes = 0;
-	size_t len = strlen(str);
+	size_t len     = strlen(str);
 	byte   current = str[0];
 
 	if (0x00 <= current && current <= 0x7F)
@@ -138,7 +138,7 @@ qboolean Q_UTF8_ValidateSingle(const char *str)
 		return qfalse;
 	}
 
-	if(utfBytes > len)
+	if (utfBytes > len)
 	{
 		return qfalse;
 	}
@@ -188,7 +188,7 @@ qboolean Q_UTF8_Validate(const char *str)
 			return qfalse;
 		}
 
-		if(utfBytes > (len - i))
+		if (utfBytes > (len - i))
 		{
 			return qfalse;
 		}
@@ -212,8 +212,8 @@ char *Q_Extended_To_UTF8(char *txt)
 	if (!Q_UTF8_Validate(txt))
 	{
 		size_t i;
-		char *tmpPointer = tmpPrintBuffer;
-		size_t len = strlen(txt);
+		char   *tmpPointer = tmpPrintBuffer;
+		size_t len         = strlen(txt);
 		for (i = 0; i < len;)
 		{
 			if (127 < (unsigned char) txt[i] && !Q_UTF8_ValidateSingle(&txt[i]))
@@ -232,7 +232,7 @@ char *Q_Extended_To_UTF8(char *txt)
 				int width = Q_UTF8_Width(&txt[i]);
 
 				// Well width returned something that should not be possible, guard our ass against infinite loop.
-				if(width <= 0)
+				if (width <= 0)
 				{
 					i++;
 					continue;
@@ -551,7 +551,7 @@ uint32_t Q_UTF8_CodePoint(const char *str)
 	}
 
 	// Its an extended char
-	if(!Q_UTF8_ValidateSingle(str))
+	if (!Q_UTF8_ValidateSingle(str))
 	{
 		return (unsigned char)str[0];
 	}
@@ -756,11 +756,11 @@ glyphInfo_t *Q_UTF8_GetGlyphVanilla(void *fontdata, unsigned long codepoint)
  * @param[in] extended
  * @param font_register
  */
-void Q_UTF8_RegisterFont(const char *fontName, int pointSize, fontHelper_t *font, qboolean extended, void (*font_register)(const char *, int, void *))
+qboolean Q_UTF8_RegisterFont(const char *fontName, int pointSize, fontHelper_t *font, qboolean extended, void (*font_register)(const char *, int, void *))
 {
 	if (!font)
 	{
-		return;
+		return qfalse;
 	}
 
 	Q_UTF8_FreeFont(font);
@@ -776,7 +776,15 @@ void Q_UTF8_RegisterFont(const char *fontName, int pointSize, fontHelper_t *font
 		font->GetGlyph = &Q_UTF8_GetGlyphVanilla;
 	}
 
+	Com_Memset(font->fontData, 0, sizeof(&font->fontData));
 	font_register(fontName, pointSize, font->fontData);
+
+	if (((fontInfo_t *)font->fontData)->glyphs[0].glyph == 0)
+	{
+		return qfalse;
+	}
+
+	return qtrue;
 }
 
 /**

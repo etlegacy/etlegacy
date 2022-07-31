@@ -3,14 +3,14 @@
 # This file is distributed under the same license as the ET:Legacy package.
 # Translators:
 # Nerwitz Panzerfizt, 2018
-# Nerwitz Panzerfizt, 2018-2021
+# Nerwitz Panzerfizt, 2018-2022
 msgid ""
 msgstr ""
 "Project-Id-Version: ET:Legacy\n"
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
 "PO-Revision-Date: 2015-01-10 11:47+0000\n"
-"Last-Translator: Nerwitz Panzerfizt, 2018-2021\n"
+"Last-Translator: Nerwitz Panzerfizt, 2018-2022\n"
 "Language-Team: Bulgarian (http://www.transifex.com/etlegacy/etlegacy/language/bg/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -20,7 +20,7 @@ msgstr ""
 
 #: etmain/ui/credits_activision.menu:66
 msgid "PRODUCED BY ACTIVISION"
-msgstr "ПРОДУКЦИЯ НА ACTIVISION"
+msgstr "ИЗРАБОТКА НА ACTIVISION"
 
 #: etmain/ui/credits_activision.menu:82
 msgid "Producer"
@@ -36,11 +36,11 @@ msgstr "Инсталационен пакет"
 
 #: etmain/ui/credits_activision.menu:88
 msgid "Production Coordinator"
-msgstr "Координатор продукция"
+msgstr "Координатор производство"
 
 #: etmain/ui/credits_activision.menu:90
 msgid "Production Tester"
-msgstr "Тестър продукция"
+msgstr "Тестер производство"
 
 #: etmain/ui/credits_activision.menu:92
 msgid "Sr. Executive Producer"
@@ -48,19 +48,19 @@ msgstr "Старши изпълнителен продуцент"
 
 #: etmain/ui/credits_activision.menu:94
 msgid "VP North American Studios"
-msgstr "Посредник северноамерикански студия"
+msgstr "Вицепрезидент северноамерикански студия"
 
 #: etmain/ui/credits_activision.menu:97 etmain/ui/credits_activision.menu:99
 msgid "QA Project Lead"
-msgstr "Ръководител проект, Отдел QA"
+msgstr "Ръководител тестерски екип"
 
 #: etmain/ui/credits_activision.menu:101
 msgid "QA Senior Project Lead"
-msgstr "Старши ръководител проект, Отдел QA"
+msgstr "Старши ръководител тестерски екип"
 
 #: etmain/ui/credits_activision.menu:103
 msgid "QA Floor Lead"
-msgstr "Мениджър, Отдел QA"
+msgstr "Главен ръководител тестерски екип"
 
 #: etmain/ui/credits_activision.menu:104
 msgid "Testers:"
@@ -76,7 +76,7 @@ msgstr "Съвместимост"
 
 #: etmain/ui/credits_activision.menu:114
 msgid "QA Manager"
-msgstr "Мениджър тестерска група, Отдел QA"
+msgstr "Мениджър тестерски екип"
 
 #: etmain/ui/credits_activision.menu:116
 msgid "Manager, Code Release Group"
@@ -92,7 +92,7 @@ msgstr "Ръководител, екип Издаване на код"
 
 #: etmain/ui/credits_activision.menu:122
 msgid "Manager, Customer Support"
-msgstr "Мениджър, Потребителска поддръжка"
+msgstr "Мениджър, потребителска поддръжка"
 
 #: etmain/ui/credits_activision.menu:126 etmain/ui/credits_activision.menu:128
 #: etmain/ui/credits_additional.menu:233 etmain/ui/credits_additional.menu:235
@@ -133,7 +133,7 @@ msgstr "НАЗАД"
 
 #: etmain/ui/credits_activision.menu:131 etmain/ui/credits_et260.menu:136
 msgid "ADDITIONAL"
-msgstr "ДОПЪЛНИТЕЛНО"
+msgstr "ДОПЪЛНИТЕЛНИ"
 
 #: etmain/ui/credits_additional.menu:128
 msgid "ADDITIONAL DEVELOPMENT"
@@ -141,7 +141,7 @@ msgstr "ДОПЪЛНИТЕЛНА РАЗРАБОТКА"
 
 #: etmain/ui/credits_additional.menu:148
 msgid "OSP BY ORANGE SMOOTHIE PRODUCTIONS"
-msgstr "АВТОРИ OSP, ORANGE SMOOTHIE PRODUCTIONS"
+msgstr "OSP ОТ ORANGE SMOOTHIE PRODUCTIONS"
 
 #: etmain/ui/credits_additional.menu:161
 msgid "Programming"
@@ -149,11 +149,11 @@ msgstr "Програмиране"
 
 #: etmain/ui/credits_additional.menu:168
 msgid "PUNKBUSTER BY EVEN BALANCE, INC."
-msgstr "АВТОРИ PUNKBUSTER, EVEN BALANCE, INC."
+msgstr "PUNKBUSTER ОТ EVEN BALANCE, INC."
 
 #: etmain/ui/credits_additional.menu:181
 msgid "President"
-msgstr "Директор"
+msgstr "Президент"
 
 #: etmain/ui/credits_additional.menu:183
 msgid "Senior Project Leader"
@@ -177,7 +177,7 @@ msgstr "Командир Съюзници"
 
 #: etmain/ui/credits_additional.menu:214
 msgid "SPECIAL THANKS TO"
-msgstr "СПЕЦИАЛНИ БЛАГОДАРНОСТИ"
+msgstr "ОГРОМНИ БЛАГОДАРНОСТИ НА"
 
 #: etmain/ui/credits_additional.menu:226
 msgid ""
@@ -187,7 +187,7 @@ msgstr "Return to Castle Wolfenstein е разработена от Gray Matter 
 
 #: etmain/ui/credits_additional.menu:227
 msgid "We would like to thank both developers for their help and support"
-msgstr "Искаме да изкажем своите благодарности към разработчиците за помощта и поддръжката"
+msgstr "Благодарим им за помощта и подкрепата"
 
 #: etmain/ui/credits_additional.menu:228
 msgid "during the development of Wolfenstein: Enemy Territory."
@@ -195,11 +195,11 @@ msgstr "по време на създаването на Wolfenstein: Enemy Terr
 
 #: etmain/ui/credits_additional.menu:229
 msgid "Original Soundtrack by Bill Brown."
-msgstr "Авторска музика, композирана от Бил Браун."
+msgstr "Музикален съпровод от Бил Браун."
 
 #: etmain/ui/credits_etlegacy.menu:66 etmain/ui/credits_quit.menu:62
 msgid "DEVELOPED BY ET: LEGACY TEAM"
-msgstr "ПРОЕКТ НА ЕT: LEGACY TEAM"
+msgstr "ПРОЕКТЪТ Е ДЕЛО НА ЕT: LEGACY TEAM"
 
 #: etmain/ui/credits_etlegacy.menu:85
 msgid "^1PROGRAMMING"

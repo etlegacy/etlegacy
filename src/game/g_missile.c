@@ -63,7 +63,7 @@ void G_BounceMissile(gentity_t *ent, trace_t *trace)
 	}
 
 	// reflect the velocity on the trace plane
-	hitTime = (int)(level.previousTime + (level.time - level.previousTime) * trace->fraction);
+	hitTime = (int)(level.previousTime + (level.frameTime * trace->fraction));
 	BG_EvaluateTrajectoryDelta(&ent->s.pos, hitTime, velocity, qfalse, ent->s.effect2Time);
 	dot = DotProduct(velocity, trace->plane.normal);
 	VectorMA(velocity, -2 * dot, trace->plane.normal, ent->s.pos.trDelta);
@@ -924,7 +924,10 @@ void G_BurnTarget(gentity_t *self, gentity_t *body, qboolean directhit)
 	}
 
 	// do a trace to see if there's a wall btwn. body & flame centroid -- prevents damage through walls
+	G_TempTraceIgnoreBodies();
 	trap_Trace(&tr, self->r.currentOrigin, NULL, NULL, point, body->s.number, MASK_SHOT);
+	G_ResetTempTraceIgnoreEnts();
+
 	if (tr.fraction < 1.0f)
 	{
 		return;

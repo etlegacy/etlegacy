@@ -4657,7 +4657,7 @@ void G_RunThink(gentity_t *ent)
 	if (level.match_pause != PAUSE_NONE && (ent - g_entities) >= g_maxclients.integer &&
 	    ent->nextthink > level.time && strstr(ent->classname, "DPRINTF_") == NULL)
 	{
-		ent->nextthink += level.time - level.previousTime;
+		ent->nextthink += level.frameTime;
 	}
 
 	// run scripting
@@ -5182,26 +5182,49 @@ void G_RunEntity(gentity_t *ent, int msec)
 		else
 		{
 			// During a pause, gotta keep track of stuff in the air
-			ent->s.pos.trTime += level.time - level.previousTime;
+			ent->s.pos.trTime += level.frameTime;
 			// Keep pulsing right for dynmamite
 			if (ent->methodOfDeath == MOD_DYNAMITE && ent->s.effect1Time)
 			{
-				ent->s.effect1Time += level.time - level.previousTime;
+				ent->s.effect1Time += level.frameTime;
 			}
+			else if (ent->s.weapon == WP_SMOKE_BOMB && ent->grenadeExplodeTime)
+			{
+				ent->grenadeExplodeTime += level.frameTime;
+			}
+
 			G_RunThink(ent);
 		}
 		return;
 	case  ET_FLAMETHROWER_CHUNK: // Server-side collision for flamethrower
-		G_RunFlamechunk(ent);
+		if (level.match_pause == PAUSE_NONE)
+		{
+			G_RunFlamechunk(ent);
+		}
+		else
+		{
+			ent->s.pos.trTime   += level.frameTime;
+			ent->timestamp      += level.frameTime;
+			ent->flameQuotaTime += level.frameTime;
+			G_RunThink(ent);
+		}
 
 		// hack for instantaneous velocity
 		VectorSubtract(ent->r.currentOrigin, ent->oldOrigin, ent->instantVelocity);
 		VectorScale(ent->instantVelocity, 1000.0f / msec, ent->instantVelocity);
 		return;
 	case ET_AIRSTRIKE_PLANE:
-		// get current position
-		BG_EvaluateTrajectory(&ent->s.pos, level.time, ent->r.currentOrigin, qfalse, ent->s.effect2Time);
-		trap_LinkEntity(ent);
+		if (level.match_pause == PAUSE_NONE)
+		{
+			// get current position
+			BG_EvaluateTrajectory(&ent->s.pos, level.time, ent->r.currentOrigin, qfalse, ent->s.effect2Time);
+			trap_LinkEntity(ent);
+		}
+		else
+		{
+			ent->s.pos.trTime += level.frameTime;
+		}
+
 		G_RunThink(ent);
 		return;
 	default:
@@ -5255,9 +5278,15 @@ void G_RunEntity(gentity_t *ent, int msec)
 	}
 
 	// keep track of constructions so they don't decay after pause
-	if (ent->s.eType == ET_CONSTRUCTIBLE && level.match_pause != PAUSE_NONE && ent->s.angles2[0])
+	if (level.match_pause != PAUSE_NONE && ent->s.eType == ET_CONSTRUCTIBLE && ent->s.angles2[0])
 	{
-		ent->lastHintCheckTime += level.time - level.previousTime;
+		ent->lastHintCheckTime += level.frameTime;
+	}
+
+	// pause sinking bodies
+	if (level.match_pause != PAUSE_NONE && ent->s.eType == ET_CORPSE && !ent->physicsObject)
+	{
+		ent->s.pos.trTime += level.frameTime;
 	}
 
 	G_RunThink(ent);
@@ -5273,7 +5302,7 @@ void G_RunEntity(gentity_t *ent, int msec)
  */
 void G_RunFrame(int levelTime)
 {
-	int  i, msec;
+	int  i;
 	char cs[MAX_STRING_CHARS];
 
 	// if we are waiting for the level to restart, do nothing
@@ -5310,18 +5339,15 @@ void G_RunFrame(int levelTime)
 		}
 	}
 
-	level.frameTime = trap_Milliseconds();
-
 	level.framenum++;
 	level.previousTime = level.time;
 	level.time         = levelTime;
+	level.frameTime    = level.time - level.previousTime;
 
-	msec = level.time - level.previousTime;
-
-	level.axisAirstrikeCounter   -= msec;
-	level.alliedAirstrikeCounter -= msec;
-	level.axisArtilleryCounter   -= msec;
-	level.alliedArtilleryCounter -= msec;
+	level.axisAirstrikeCounter   -= level.frameTime;
+	level.alliedAirstrikeCounter -= level.frameTime;
+	level.axisArtilleryCounter   -= level.frameTime;
+	level.alliedArtilleryCounter -= level.frameTime;
 
 	if (level.axisAirstrikeCounter < 0)
 	{
@@ -5354,7 +5380,7 @@ void G_RunFrame(int levelTime)
 	// go through all allocated objects
 	for (i = 0; i < level.num_entities; i++)
 	{
-		G_RunEntity(&g_entities[i], msec);
+		G_RunEntity(&g_entities[i], level.frameTime);
 	}
 
 	for (i = 0; i < level.numConnectedClients; i++)

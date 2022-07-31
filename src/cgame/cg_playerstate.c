@@ -229,6 +229,9 @@ void CG_Respawn(qboolean revived)
 			oldTeam = cgs.clientinfo[cg.clientNum].team;
 		}
 	}
+
+	// clear medic/ammo request voice chat sprites
+	CG_ResetVoiceSprites(revived);
 }
 
 /**
@@ -501,6 +504,11 @@ void CG_TransitionPlayerState(playerState_t *ps, playerState_t *ops)
 	if (ps->persistant[PERS_SPAWN_COUNT] != ops->persistant[PERS_SPAWN_COUNT])
 	{
 		CG_Respawn(ps->persistant[PERS_REVIVE_COUNT] != ops->persistant[PERS_REVIVE_COUNT] ? qtrue : qfalse);
+	}
+
+	if ((ps->pm_flags & PMF_RESPAWNED) && cg.weaponSelect != ps->weapon)
+	{
+		cg.weaponSelect = ps->weapon;
 	}
 
 	if (cg.mapRestart)

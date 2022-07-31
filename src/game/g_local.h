@@ -706,7 +706,7 @@ typedef struct
 
 // zinx etpro antiwarp
 #define LAG_MAX_COMMANDS 512
-#define LAG_MAX_DELTA 75
+#define LAG_MAX_DELTA 25
 #define LAG_MAX_DROP_THRESHOLD 800
 #define LAG_MIN_DROP_THRESHOLD (LAG_MAX_DROP_THRESHOLD - 200)
 #define LAG_DECAY 1.02f
@@ -1166,7 +1166,7 @@ typedef struct level_locals_s
 	int time;                                   ///< in msec
 	int overTime;                               ///< workaround for dual objective timelimit bug
 	int previousTime;                           ///< so movers can back up when blocked
-	int frameTime;                              ///< time the frame started, for antilag stuff
+	int frameTime;                              ///< time delta
 
 	int startTime;                              ///< level.time the map was started
 
@@ -1725,6 +1725,7 @@ void Cmd_Follow_f(gentity_t *ent, unsigned int dwCommand, int value);
 void G_Say_f(gentity_t *ent, int mode /*, qboolean arg0*/);
 void G_Voice_f(gentity_t *ent, int mode, qboolean arg0, qboolean voiceonly);
 void Cmd_Team_f(gentity_t *ent, unsigned int dwCommand, int value);
+void Cmd_Class_f(gentity_t *ent, unsigned int dwCommand, int value);
 void G_PlaySound_Cmd(void);
 int ClientNumbersFromString(char *s, int *plist);
 char *ConcatArgs(int start);
@@ -2891,7 +2892,7 @@ void G_RailBox(vec_t *origin, vec_t *mins, vec_t *maxs, vec_t *color, int index)
 typedef struct weapFireTable_t
 {
 	weapon_t weapon;
-	gentity_t *(*fire)(gentity_t *ent);   ///< -
+	gentity_t *(*fire)(gentity_t * ent);  ///< -
 	void (*think)(gentity_t *ent);        ///< -
 	void (*free)(gentity_t *ent);         ///< -
 	int eType;                            ///< -

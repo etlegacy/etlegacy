@@ -1025,7 +1025,7 @@ void CG_DrawTeamInfo(hudComponent_t *comp)
 			int chatWidthMax = 0;
 
 			alphapercent = 1.0f - (cg.time - cgs.teamChatMsgTimes[i % chatHeight]) / (float)(cg_teamChatTime.integer);
-			Com_Clamp(0.0f, 1.0f, alphapercent);
+			alphapercent = Com_Clamp(0.0f, 1.0f, alphapercent);
 
 			// chatter team instead
 			if (cgs.teamChatMsgTeams[i % chatHeight] == TEAM_AXIS)
@@ -1696,9 +1696,10 @@ static void CG_DrawCrosshair(void)
 	w *= (1 + f * 2.0f);
 	h *= (1 + f * 2.0f);
 
-	x = cg_crosshairX.integer;
-	y = cg_crosshairY.integer;
+	x = y = 0;
 	CG_AdjustFrom640(&x, &y, &w, &h);
+	x = cg_crosshairX.value;
+	y = cg_crosshairY.value;
 
 	hShader = cgs.media.crosshairShader[cg_drawCrosshair.integer % NUM_CROSSHAIRS];
 
@@ -1707,9 +1708,10 @@ static void CG_DrawCrosshair(void)
 	if (cg.crosshairShaderAlt[cg_drawCrosshair.integer % NUM_CROSSHAIRS])
 	{
 		w = h = cg_crosshairSize.value;
-		x = cg_crosshairX.integer;
-		y = cg_crosshairY.integer;
+		x = y = 0;
 		CG_AdjustFrom640(&x, &y, &w, &h);
+		x = cg_crosshairX.value;
+		y = cg_crosshairY.value;
 
 		if (cg_crosshairHealth.integer == 0)
 		{
@@ -1876,6 +1878,13 @@ static float CG_ScanForCrosshairEntity(float *zChange, qboolean *hitClient)
 		return dist;
 	}
 
+	cent = &cg_entities[trace.entityNum];
+
+	if (!cent->currentValid)
+	{
+		return dist;
+	}
+
 	// Reset the draw time for the SP crosshair
 	cg.crosshairSPClientTime = cg.time;
 
@@ -1892,8 +1901,6 @@ static float CG_ScanForCrosshairEntity(float *zChange, qboolean *hitClient)
 	{
 		cg.identifyClientRequest = cg.crosshairClientNum;
 	}
-
-	cent = &cg_entities[cg.crosshairClientNum];
 
 	if (cent && (cent->currentState.powerups & (1 << PW_OPS_DISGUISED)))
 	{
@@ -1988,10 +1995,15 @@ void CG_CheckForCursorHints(void)
 		{
 			if (dist <= CH_KNIFE_DIST)
 			{
-				vec3_t pforward, eforward;
+				vec3_t pforward, eforward, attacker, target;
 
-				AngleVectors(cg.snap->ps.viewangles, pforward, NULL, NULL);
-				AngleVectors(tracent->lerpAngles, eforward, NULL, NULL);
+				VectorCopy(cg.snap->ps.viewangles, attacker);
+				VectorCopy(tracent->lerpAngles, target);
+
+				attacker[PITCH] = target[PITCH] = 0;
+
+				AngleVectors(attacker, pforward, NULL, NULL);
+				AngleVectors(target, eforward, NULL, NULL);
 
 				if (DotProduct(eforward, pforward) > 0.6f)           // from behind(-ish)
 				{
@@ -3925,7 +3937,7 @@ static void CG_DrawEnvironmentalAwareness()
 			continue;
 		}
 
-		icon = CG_GetCompassIcon(&snap->entities[i], qfalse, qfalse, !(cg_drawEnvAwareness.integer & 4), !(cg_drawEnvAwareness.integer & 2), qfalse, NULL);
+		icon = CG_GetCompassIcon(&snap->entities[i], qfalse, qfalse, cg_drawEnvAwareness.integer & 4, cg_drawEnvAwareness.integer & 2, cg_drawEnvAwareness.integer & 1, qfalse, NULL);
 
 		if (icon)
 		{
@@ -4444,7 +4456,7 @@ void CG_DrawMissileCamera(hudComponent_t *comp)
 	vec3_t    forward, delta, angles;
 	centity_t *cent;
 
-	if (!cg.latestMissile || cg.showGameView)
+	if (!cg.latestMissile || cgs.matchPaused)
 	{
 		return;
 	}

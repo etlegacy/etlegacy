@@ -180,7 +180,7 @@ void CG_FireFlameChunks(centity_t *cent, vec3_t origin, vec3_t angles, float spe
 	// for any other character or in 3rd person view, use entity angles for friction
 	if (cent->currentState.number != cg.snap->ps.clientNum || cg_thirdPerson.integer)
 	{
-		AngleVectors(cent->currentState.angles, parentFwd, NULL, NULL);
+		AngleVectors(cent->currentState.apos.trBase, parentFwd, NULL, NULL);
 	}
 	else
 	{
@@ -264,7 +264,7 @@ void CG_FireFlameChunks(centity_t *cent, vec3_t origin, vec3_t angles, float spe
 			f->velSpeed     = FLAME_START_SPEED * (0.5f + 0.5f * speedScale) * (firing ? 1.0f : 4.5f);
 			f->ownerCent    = cent->currentState.number;
 			f->rollAngle    = crandom() * 179;
-			f->ignitionOnly = (qboolean)!firing;
+			f->ignitionOnly = (qboolean) !firing;
 
 			if (!firing)
 			{
@@ -337,7 +337,7 @@ void CG_FireFlameChunks(centity_t *cent, vec3_t origin, vec3_t angles, float spe
 		f->velSpeed     = FLAME_START_SPEED * (0.5f + 0.5f * speedScale);
 		f->ownerCent    = cent->currentState.number;
 		f->rollAngle    = crandom() * 179;
-		f->ignitionOnly = (qboolean)!firing;
+		f->ignitionOnly = (qboolean) !firing;
 		f->speedScale   = speedScale;
 		if (!firing)
 		{
@@ -395,7 +395,7 @@ void CG_ClearFlameChunks(void)
 	activeFlameChunks = NULL;
 	headFlameChunks   = NULL;
 
-    flameChunks[0].nextGlobal = &flameChunks[1];
+	flameChunks[0].nextGlobal = &flameChunks[1];
 
 	for (i = 1 ; i < MAX_FLAME_CHUNKS - 1 ; i++)
 	{
@@ -836,7 +836,7 @@ void CG_AddFlameToScene(flameChunk_t *fHead)
 {
 	flameChunk_t  *f, *fNext;
 	int           blueTrailHead = 0, fuelTrailHead = 0;
-	static vec3_t whiteColor    = { 1, 1, 1 };
+	static vec3_t whiteColor = { 1, 1, 1 };
 	vec3_t        c;
 	float         alpha;
 	float         lived;
@@ -846,7 +846,7 @@ void CG_AddFlameToScene(flameChunk_t *fHead)
 	qboolean      isClientFlame;
 	int           shader;
 	flameChunk_t  *lastBlueChunk = NULL;
-	qboolean      skip           = qfalse, droppedTrail;
+	qboolean      skip = qfalse, droppedTrail;
 	vec3_t        v;
 	vec3_t        lightOrg;         // origin to place light at
 	float         lightSize;
@@ -915,7 +915,7 @@ void CG_AddFlameToScene(flameChunk_t *fHead)
 
 			// is it in the blue ignition section of the flame?
 		}
-		else if (isClientFlame && f->blueLife > (lived / 2.0f))
+		else if (isClientFlame && f->blueLife > (lived / 2.0f) && !cgs.matchPaused)
 		{
 
 			skip = qfalse;
@@ -1283,6 +1283,15 @@ void CG_AddFlameChunks(void)
 	{
 		if (!f->dead)
 		{
+			if (cgs.matchPaused)
+			{
+				f->timeStart        += cg.frametime;
+				f->timeEnd          += cg.frametime;
+				f->baseOrgTime      += cg.frametime;
+				f->lastFriction     += cg.frametime;
+				f->lastFrictionTake += cg.frametime;
+			}
+
 			if (cg.time > f->timeEnd)
 			{
 				f->dead = qtrue;

@@ -1895,6 +1895,12 @@ static void CG_BreathPuffs(centity_t *cent, refEntity_t *head)
 	{
 		return;
 	}
+
+	if (cgs.matchPaused)
+	{
+		ci->breathPuffTime += cg.frametime;
+	}
+
 	if (ci->breathPuffTime > cg.time)
 	{
 		return;
