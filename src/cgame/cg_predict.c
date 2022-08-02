@@ -840,7 +840,7 @@ int CG_PredictionOk(playerState_t *ps1, playerState_t *ps2)
 
 	for (i = 0; i < MAX_STATS; i++)
 	{
-		if (ps2->stats[i] != ps1->stats[i])
+		if (ps2->stats[i] != ps1->stats[i] && i != STAT_ANTIWARP_DELAY)
 		{
 			if (cg_showmiss.integer & 8)
 			{
