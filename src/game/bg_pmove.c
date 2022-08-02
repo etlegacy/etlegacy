@@ -2301,7 +2301,7 @@ static void PM_Footsteps(void)
 	}
 
 	// check for footstep / splash sounds
-	old                 = pm->pmext->bobCycle;
+	old                 = (float)pm->ps->bobCycle + fmodf(pm->pmext->bobCycle, 1);
 	pm->pmext->bobCycle = old + bobmove * pml.msec;
 	pm->ps->bobCycle    = pm->pmext->bobCycle;
 
