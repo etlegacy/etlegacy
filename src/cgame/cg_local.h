@@ -1018,6 +1018,8 @@ typedef struct
 // all cg.stepTime, cg.duckTime, cg.landTime, etc are set to cg.time when the action
 // occurs, and they will have visible effects for #define STEP_TIME or whatever msec after
 
+#define MAX_PREDICTED_EVENTS    16
+
 #define MAX_SPAWN_VARS          64
 #define MAX_SPAWN_VARS_CHARS    2048
 
@@ -1165,6 +1167,9 @@ typedef struct
 	qboolean validPPS;                      ///< clear until the first call to CG_PredictPlayerState
 	int predictedErrorTime;
 	vec3_t predictedError;
+
+	int eventSequence;
+	int predictableEvents[MAX_PREDICTED_EVENTS];
 
 	float stepChange;                       ///< for stair up smoothing
 	int stepTime;
@@ -3144,7 +3149,6 @@ int CG_PointContents(const vec3_t point, int passEntityNum);
 void CG_Trace(trace_t *result, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int skipNumber, int mask);
 void CG_PredictPlayerState(void);
 float CG_ClientHitboxMaxZ(entityState_t *hitEnt, float def);
-qboolean CG_CheckPredictableEvent(int event);
 
 // cg_edv.c
 void CG_RunBindingBuf(int key, qboolean down, char *buf);
