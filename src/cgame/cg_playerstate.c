@@ -188,8 +188,6 @@ void CG_Respawn(qboolean revived)
 
 	cg.pmext.bAutoReload = (qboolean)(cg_autoReload.integer > 0);
 
-	cg.pmext.sprintTime = SPRINTTIME;
-
 	if (!revived)
 	{
 		cgs.limboLoadoutSelected = qfalse;

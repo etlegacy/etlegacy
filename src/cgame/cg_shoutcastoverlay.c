@@ -543,7 +543,7 @@ static void CG_DrawShoutcastPlayerStaminaBar(float x, float y, int width, int he
 {
 	vec4_t colour = { 0.1f, 1.0f, 0.1f, 0.5f };
 	vec_t  *color = colour;
-	float  frac   = cg.snap->ps.stats[STAT_SPRINTTIME] / (float)SPRINTTIME;
+	float  frac   = cg.pmext.sprintTime / (float)SPRINTTIME;
 
 	if (cg.snap->ps.powerups[PW_ADRENALINE])
 	{

@@ -4948,6 +4948,9 @@ void PmoveSingle(pmove_t *pmove)
 	pm->watertype  = 0;
 	pm->waterlevel = 0;
 
+	// make server authoritative over stamina
+	pm->pmext->sprintTime = pm->ps->stats[STAT_SPRINTTIME];
+
 	if (pm->ps->stats[STAT_HEALTH] <= 0)
 	{
 		pm->tracemask  &= ~CONTENTS_BODY;   // corpses can fly through bodies
@@ -5308,7 +5311,6 @@ void PmoveSingle(pmove_t *pmove)
 		trap_SnapVector(pm->ps->velocity);
 	}
 
-	// save sprinttime for CG_DrawStaminaBar()
 	pm->ps->stats[STAT_SPRINTTIME] = pm->pmext->sprintTime;
 }
 
