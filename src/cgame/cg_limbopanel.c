@@ -2978,28 +2978,26 @@ int CG_LimboPanel_RenderCounter_ValueForButton(panel_button_t *button)
  * @param[in] button
  * @return
  */
-int CG_LimboPanel_RenderCounter_RollTimeForButton(panel_button_t *button)
+static float CG_LimboPanel_RenderCounter_RollTimeForButton(panel_button_t *button)
 {
 	switch (button->data[0])
 	{
 	case 0:     // class counts
 	case 1:     // team counts
-		return 100;
+		return 100.f;
 
 	case 4:     // skills
-		return 1000;
+		return 1000.f;
 
 	case 6:     // stats
 	{
-		float diff;
-
-		diff = Q_fabs(button->data[3] - CG_LimboPanel_RenderCounter_ValueForButton(button));
+		const int diff = abs(button->data[3] - CG_LimboPanel_RenderCounter_ValueForButton(button));
 		if (diff < 5)
 		{
-			return (int)(200.f / diff);
+			return (diff == 0 ? 1000.f : 200.f / diff);
 		}
 
-		return 50;
+		return 50.f;
 	}
 	case 5:     // clock
 	case 3:     // respawn time
@@ -3009,7 +3007,7 @@ int CG_LimboPanel_RenderCounter_RollTimeForButton(panel_button_t *button)
 		break;
 	}
 
-	return 1000;
+	return 1000.f;
 }
 
 /**
