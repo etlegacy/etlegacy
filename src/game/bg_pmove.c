@@ -115,11 +115,7 @@ static void PM_BeginWeaponChange(weapon_t oldWeapon, weapon_t newWeapon, qboolea
  */
 void PM_AddEvent(int newEvent)
 {
-#ifdef GAMEDLL
 	BG_AddPredictableEventToPlayerstate(newEvent, 0, pm->ps);
-#else
-	BG_AddPredictableEventToPmoveExt(newEvent, 0, pm->pmext);
-#endif
 }
 
 /**
@@ -129,11 +125,7 @@ void PM_AddEvent(int newEvent)
  */
 void PM_AddEventExt(int newEvent, int eventParm)
 {
-#ifdef GAMEDLL
 	BG_AddPredictableEventToPlayerstate(newEvent, eventParm, pm->ps);
-#else
-	BG_AddPredictableEventToPmoveExt(newEvent, eventParm, pm->pmext);
-#endif
 }
 
 /**
@@ -2309,7 +2301,7 @@ static void PM_Footsteps(void)
 	}
 
 	// check for footstep / splash sounds
-	old                 = pm->pmext->bobCycle;
+	old                 = (float)pm->ps->bobCycle + fmodf(pm->pmext->bobCycle, 1);
 	pm->pmext->bobCycle = old + bobmove * pml.msec;
 	pm->ps->bobCycle    = pm->pmext->bobCycle;
 
@@ -4956,6 +4948,9 @@ void PmoveSingle(pmove_t *pmove)
 	pm->watertype  = 0;
 	pm->waterlevel = 0;
 
+	// make server authoritative over stamina
+	pm->pmext->sprintTime = pm->ps->stats[STAT_SPRINTTIME];
+
 	if (pm->ps->stats[STAT_HEALTH] <= 0)
 	{
 		pm->tracemask  &= ~CONTENTS_BODY;   // corpses can fly through bodies
@@ -5316,7 +5311,6 @@ void PmoveSingle(pmove_t *pmove)
 		trap_SnapVector(pm->ps->velocity);
 	}
 
-	// save sprinttime for CG_DrawStaminaBar()
 	pm->ps->stats[STAT_SPRINTTIME] = pm->pmext->sprintTime;
 }
 

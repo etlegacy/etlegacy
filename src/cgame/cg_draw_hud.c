@@ -879,7 +879,7 @@ static void CG_DrawStaminaBar(rectDef_t *rect)
 	vec4_t colour = { 0.1f, 1.0f, 0.1f, 0.5f };
 	vec_t  *color = colour;
 	int    flags  = 1 | 4 | 16 | 64;
-	float  frac   = cg.snap->ps.stats[STAT_SPRINTTIME] / (float)SPRINTTIME;
+	float  frac   = cg.pmext.sprintTime / (float)SPRINTTIME;
 
 	if (cg.snap->ps.powerups[PW_ADRENALINE])
 	{
@@ -1237,7 +1237,7 @@ static void CG_DrawPlayerSprint(float x, float y)
 	}
 	else
 	{
-		str  = va("%.0f", (cg.snap->ps.stats[STAT_SPRINTTIME] / (float)SPRINTTIME) * 100);
+		str  = va("%.0f", (cg.pmext.sprintTime / (float)SPRINTTIME) * 100);
 		unit = "%";
 	}
 

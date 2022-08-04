@@ -587,11 +587,6 @@ typedef struct pmoveExt_s
 
 	qboolean deadInSolid;          ///< true if legs or head start in solid when we die
 
-	int eventSequence;             ///< pmove generated events on client
-	int events[MAX_EVENTS];
-	int eventParms[MAX_EVENTS];
-	int oldEventSequence;          ///< so we can see which events have been added since last pmove
-
 } pmoveExt_t;  ///< data used both in client and server - store it here
 ///< instead of playerstate to prevent different engine versions of playerstate between XP and MP
 
@@ -2121,7 +2116,6 @@ void BG_EvaluateTrajectoryDelta(const trajectory_t *tr, int atTime, vec3_t resul
 void BG_GetMarkDir(const vec3_t dir, const vec3_t normal, vec3_t out);
 
 void BG_AddPredictableEventToPlayerstate(int newEvent, int eventParm, playerState_t *ps);
-void BG_AddPredictableEventToPmoveExt(int newEvent, int eventParm, pmoveExt_t *pmext);
 
 void BG_PlayerStateToEntityState(playerState_t *ps, entityState_t *s, int time, qboolean snap);
 

@@ -3006,8 +3006,8 @@ void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean
 	client->ps.crouchSpeedScale = 0.25f;
 	client->ps.weaponstate      = WEAPON_READY;
 
-	client->pmext.sprintTime   = SPRINTTIME;
-	client->ps.sprintExertTime = 0;
+	client->ps.stats[STAT_SPRINTTIME] = SPRINTTIME;
+	client->ps.sprintExertTime        = 0;
 
 	client->ps.friction = 1.0f;
 
