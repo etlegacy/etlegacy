@@ -957,10 +957,15 @@ size_t Q_UnescapeUnicode(char *fromStr, char *toStr, const size_t maxSize)
 			size_t numberOffset  = 0;
 			str += 3;
 
-			while (str && str[0] != '}')
+			while (str && str[0] != '}' && str - fromStr < maxSize)
 			{
 				tmpNumber[numberOffset++] = str[0];
 				str++;
+			}
+
+			if (str - fromStr == maxSize) // rather ignore potentially corrupt character
+			{
+				break;
 			}
 
 			if (!numberOffset)
