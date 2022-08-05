@@ -1929,3 +1929,10 @@ void trap_R_Finish(void)
 {
 	SystemCall(CG_R_FINISH);
 }
+
+// extension interface
+
+qboolean trap_GetValue(char *value, int valueSize, const char *key)
+{
+	return syscall(dll_com_trapGetValue, value, valueSize, key);
+}

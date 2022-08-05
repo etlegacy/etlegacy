@@ -141,6 +141,11 @@ void GLimp_Minimize(void)
 	SDL_MinimizeWindow(main_window);
 }
 
+void GLimp_Flash(void)
+{
+	SDL_FlashWindow(main_window, SDL_FLASH_UNTIL_FOCUSED);
+}
+
 /**
  * @brief GLimp_GetModeInfo
  * @param[in,out] width
@@ -354,6 +359,7 @@ static void GLimp_InitCvars(void)
 
 	Cmd_AddCommand("modelist", GLimp_ModeList_f, "Prints a list of available resolutions/modes.");
 	Cmd_AddCommand("minimize", GLimp_Minimize, "Minimizes the game window.");
+	Cmd_AddCommand("flash", GLimp_Flash, "Flashes window.");
 }
 
 /**
@@ -382,6 +388,7 @@ void GLimp_Shutdown(void)
 
 	Cmd_RemoveCommand("modelist");
 	Cmd_RemoveCommand("minimize");
+	Cmd_RemoveCommand("flash");
 
 	SDL_QuitSubSystem(SDL_INIT_VIDEO);
 }

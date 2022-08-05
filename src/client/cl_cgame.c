@@ -616,6 +616,11 @@ static int FloatAsInt(float f)
  */
 static qboolean CL_CG_GetValue(char *value, int valueSize, const char *key)
 {
+	if (!Q_stricmp(key, "flash"))
+	{
+		Cbuf_ExecuteText(EXEC_NOW, "flash");
+		return qtrue;
+	}
 	return qfalse;
 }
 

@@ -4171,4 +4171,7 @@ typedef struct hudStructure_s
 
 hudStucture_t *CG_GetActiveHUD();
 
+qboolean trap_GetValue(char *value, int valueSize, const char *key);
+extern int dll_com_trapGetValue;
+
 #endif // #ifndef INCLUDE_CG_LOCAL_H

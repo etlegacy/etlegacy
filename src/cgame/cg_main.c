@@ -42,6 +42,7 @@ void CG_Shutdown(void);
 qboolean CG_CheckExecKey(int key);
 extern itemDef_t *g_bindItem;
 extern qboolean  g_waitingForKey;
+int              dll_com_trapGetValue;
 
 /**
  * @brief This is the only way control passes into the module.
@@ -2738,6 +2739,7 @@ void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qbo
 	const char *s;
 	int        i;
 	char       versionString[128];
+	char       value[MAX_CVAR_VALUE_STRING];
 	DEBUG_INITPROFILE_INIT
 
 	//int startat = trap_Milliseconds();
@@ -2813,6 +2815,12 @@ void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qbo
 
 	// Background images on the loading screen were not visible on the first call
 	trap_R_SetColor(NULL);
+
+	trap_Cvar_VariableStringBuffer("//trap_GetValue", value, sizeof(value));
+	if (value[0])
+	{
+		dll_com_trapGetValue = Q_atoi(value);
+	}
 
 	// load a few needed things before we do any screen updates
 	cgs.media.charsetShader     = trap_R_RegisterShader("gfx/2d/hudchars");   //trap_R_RegisterShader( "gfx/2d/bigchars" );

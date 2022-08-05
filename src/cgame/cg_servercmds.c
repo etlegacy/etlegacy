@@ -361,6 +361,7 @@ static void CG_ParseWarmup(void)
 {
 	const char *info;
 	int        warmup;
+	char       value[MAX_CVAR_VALUE_STRING];
 
 	info   = CG_ConfigString(CS_WARMUP);
 	warmup = Q_atoi(info);
@@ -373,6 +374,8 @@ static void CG_ParseWarmup(void)
 	{
 		if (cg.warmupCount >= 0)
 		{
+			trap_Cvar_VariableStringBuffer("//trap_GetValue", value, sizeof(value));
+			trap_GetValue(value, sizeof(value), "flash");
 			Pri("^3All players ready!^7\nMatch starting...\n");
 			CPri("^3All players ready!^7\nMatch starting...");
 		}
