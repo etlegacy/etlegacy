@@ -375,7 +375,10 @@ static void CG_ParseWarmup(void)
 		if (cg.warmupCount >= 0)
 		{
 			trap_Cvar_VariableStringBuffer("//trap_GetValue", value, sizeof(value));
-			trap_GetValue(value, sizeof(value), "flash");
+			if (value[0])
+			{
+				trap_GetValue(value, sizeof(value), "flash");
+			}
 			Pri("^3All players ready!^7\nMatch starting...\n");
 			CPri("^3All players ready!^7\nMatch starting...");
 		}
