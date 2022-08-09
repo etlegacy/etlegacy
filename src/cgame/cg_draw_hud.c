@@ -4377,17 +4377,14 @@ static qboolean CG_HudEditor_AlignTextDropdown_KeyUp(panel_button_t *button, int
 	return qfalse;
 }
 
-/**
- * @brief CG_HudEditorSave_KeyDown
- * @param button
- */
-static qboolean CG_HudEditorSave_KeyDown(panel_button_t *button, int key)
+
+static qboolean CG_HudEditorButton_KeyDown(panel_button_t *button, int key)
 {
 	if (key == K_MOUSE1)
 	{
 		SOUND_SELECT;
 
-		CG_HudSave(-1, -1);
+		button->data[4] = cg.time;
 
 		return qtrue;
 	}
@@ -4395,68 +4392,36 @@ static qboolean CG_HudEditorSave_KeyDown(panel_button_t *button, int key)
 	return qfalse;
 }
 
-/**
- * @brief CG_HudEditorClone_KeyDown
- * @param button
- */
-static qboolean CG_HudEditorClone_KeyDown(panel_button_t *button, int key)
+static qboolean CG_HudEditorButton_KeyUp(panel_button_t *button, int key)
 {
 	if (key == K_MOUSE1)
 	{
 		SOUND_SELECT;
 
-		CG_HudSave(activehud->hudnumber, -1);
+		button->data[4] = 0;
 
 		return qtrue;
 	}
 
 	return qfalse;
 }
-
-/**
- * @brief CG_HudEditorDelete_KeyDown
- * @param button
- */
-static qboolean CG_HudEditorDelete_KeyDown(panel_button_t *button, int key)
-{
-	if (key == K_MOUSE1)
-	{
-		SOUND_SELECT;
-
-		CG_HudSave(-1, activehud->hudnumber);
-
-		return qtrue;
-	}
-
-	return qfalse;
-}
-
 
 static void CG_HudEditorUpdateFields(panel_button_t *button);
 
-static qboolean CG_HudEditorReset_KeyDown(panel_button_t *button, int key)
+static void CG_ResetComponent()
 {
-	if (key == K_MOUSE1)
+	if (lastFocusButton)
 	{
 		hudComponent_t *comp;
 		hudComponent_t *defaultComp;
 
-		SOUND_SELECT;
+		comp        = (hudComponent_t *)((char *)activehud + hudComponentFields[lastFocusButton->data[0]].offset);
+		defaultComp = (hudComponent_t *)((char *)CG_getHudByNumber(0) + hudComponentFields[lastFocusButton->data[0]].offset);
 
-		if (lastFocusButton)
-		{
-			comp        = (hudComponent_t *)((char *)activehud + hudComponentFields[lastFocusButton->data[0]].offset);
-			defaultComp = (hudComponent_t *)((char *)CG_getHudByNumber(0) + hudComponentFields[lastFocusButton->data[0]].offset);
+		Com_Memcpy(comp, defaultComp, sizeof(hudComponent_t));
 
-			Com_Memcpy(comp, defaultComp, sizeof(hudComponent_t));
-
-			CG_HudEditorUpdateFields(lastFocusButton);
-		}
-
-		return qtrue;
+		CG_HudEditorUpdateFields(lastFocusButton);
 	}
-
-	return qfalse;
 }
 
 /**
@@ -4488,13 +4453,37 @@ void CG_HudEditorRender_Button_Ext(rectDef_t *r, const char *text, panel_button_
 	}
 }
 
+#define TIMER_KEYDOWN 750.f
+
 /**
  * @brief CG_PanelButtonsRender_Button
  * @param[in] CG_HudEditorRender_Button
  */
 void CG_HudEditorRender_Button(panel_button_t *button)
 {
-	CG_HudEditorRender_Button_Ext(&button->rect, button->text, button->font);
+	if (button->data[4])
+	{
+		vec4_t backG    = { 1, 1, 1, 0.3f };
+		float  curValue = (cg.time - button->data[4]) / TIMER_KEYDOWN;
+
+		CG_FilledBar(button->rect.x, button->rect.y, button->rect.w, button->rect.h, colorRed, colorGreen, backG, curValue, BAR_LERP_COLOR);
+
+		if (curValue > 1.f)
+		{
+			switch (button->data[3])
+			{
+			case 0: CG_HudSave(-1, -1); break;
+			case 1: CG_HudSave(activehud->hudnumber, -1); break;
+			case 2: CG_HudSave(-1, activehud->hudnumber); break;
+			case 3: CG_ResetComponent(); break;
+			default: break;
+			}
+
+			button->data[4] = 0;
+		}
+	}
+    
+    CG_HudEditorRender_Button_Ext(&button->rect, button->text, button->font);    
 }
 
 /**
@@ -5002,8 +4991,8 @@ static panel_button_t hudEditorSave =
 	{ SCREEN_OFFSETX,         SCREEN_OFFSETY + 7 * (INPUT_HEIGHT + 2) + 6,            BUTTON_WIDTH, BUTTON_HEIGHT },
 	{ 0,                      0,                                                      0,            0, 0, 0, 0, 0 },
 	&hudEditorTextFont,       // font
-	CG_HudEditorSave_KeyDown, // keyDown
-	NULL,                     // keyUp
+	CG_HudEditorButton_KeyDown,// keyDown
+	CG_HudEditorButton_KeyUp, // keyUp
 	CG_HudEditorRender_Button,
 	NULL,
 	0
@@ -5014,10 +5003,10 @@ static panel_button_t hudEditorClone =
 	NULL,
 	"Clone",
 	{ BUTTON_WIDTH + 4 + SCREEN_OFFSETX,SCREEN_OFFSETY + 7 * (INPUT_HEIGHT + 2) + 6,                              BUTTON_WIDTH, BUTTON_HEIGHT },
-	{ 0,                      0,                                                                        0,            0, 0, 0, 0, 0 },
+	{ 0,                      0,                                                                        0,            1, 0, 0, 0, 0 },
 	&hudEditorTextFont,       // font
-	CG_HudEditorClone_KeyDown,// keyDown
-	NULL,                     // keyUp
+	CG_HudEditorButton_KeyDown,// keyDown
+	CG_HudEditorButton_KeyUp, // keyUp
 	CG_HudEditorRender_Button,
 	NULL,
 	0
@@ -5028,10 +5017,10 @@ static panel_button_t hudEditorDelete =
 	NULL,
 	"Delete",
 	{ (2 * (BUTTON_WIDTH + 4)) + SCREEN_OFFSETX,SCREEN_OFFSETY + 7 * (INPUT_HEIGHT + 2) + 6,                                     BUTTON_WIDTH, BUTTON_HEIGHT },
-	{ 0,                      0,                                                                               0,            0, 0, 0, 0, 0 },
+	{ 0,                      0,                                                                               0,            2, 0, 0, 0, 0 },
 	&hudEditorTextFont,       // font
-	CG_HudEditorDelete_KeyDown,// keyDown
-	NULL,                     // keyUp
+	CG_HudEditorButton_KeyDown,// keyDown
+	CG_HudEditorButton_KeyUp, // keyUp
 	CG_HudEditorRender_Button,
 	NULL,
 	0
@@ -5042,10 +5031,10 @@ static panel_button_t hudEditorResetComp =
 	NULL,
 	"Reset Comp",
 	{ (3 * (BUTTON_WIDTH + 4)) + SCREEN_OFFSETX,SCREEN_OFFSETY + 7 * (INPUT_HEIGHT + 2) + 6,                                 BUTTON_WIDTH, BUTTON_HEIGHT },
-	{ 0,                      0,                                                                           0,            0, 0, 0, 0, 0 },
+	{ 0,                      0,                                                                           0,            3, 0, 0, 0, 0 },
 	&hudEditorTextFont,       // font
-	CG_HudEditorReset_KeyDown,// keyDown
-	NULL,                     // keyUp
+	CG_HudEditorButton_KeyDown,// keyDown
+	CG_HudEditorButton_KeyUp, // keyUp
 	CG_HudEditorRender_Button,
 	NULL,
 	0
@@ -5426,9 +5415,14 @@ static void CG_HudEditor_HelpDraw(void)
 			{ NULL,                  NULL                                },
 			{ "h",                   "help on/off"                       },
 		};
+        
+        vec4_t bgColor;
+        
+        VectorCopy(colorLtGrey, bgColor);
+        bgColor[3] = .5f;
 
 		CG_DrawHelpWindow(Ccg_WideX(SCREEN_WIDTH) * 0.1, SCREEN_HEIGHT * 0.6, &helpStatus, "HUD EDITOR CONTROLS", help, sizeof(help) / sizeof(helpType_t),
-		                  colorMdGrey, colorBlack, colorLtGrey, colorBlack,
+		                  bgColor, colorBlack, colorMdGrey, colorBlack,
 		                  &hudEditorHeaderFont, &hudEditorTextFont);
 	}
 }
