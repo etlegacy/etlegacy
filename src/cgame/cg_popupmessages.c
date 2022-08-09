@@ -606,7 +606,7 @@ void CG_DrawPMItems(hudComponent_t *comp)
 	pmListItem_t *listItem  = cg_pmOldList;
 	float        lineHeight = comp->location.h / cg_numPopups.integer;
 	float        size       = lineHeight - 2;
-	float        y          = (cgs.clientinfo[cg.clientNum].shoutcaster ? 110 : comp->location.y) + comp->location.h;
+	float        y          = comp->location.y + comp->location.h;
 	float        x          = comp->location.x;
 	vec4_t       colorText;
 
