@@ -1835,7 +1835,7 @@ void CG_DrawExpandedAutoMap(void)
  * @param[in] w
  * @param[in] h
  */
-void CG_DrawAutoMap(float basex, float basey, float basew, float baseh)
+void CG_DrawAutoMap(float basex, float basey, float basew, float baseh, qboolean squareCompass)
 {
 	int          i;
 	float        x = basex, y = basey, w = basew, h = baseh;
@@ -1871,11 +1871,7 @@ void CG_DrawAutoMap(float basex, float basey, float basew, float baseh)
 		else
 		{
 			CG_DrawExpandedAutoMap();
-
-			if (!cg_altHud.integer || cg_drawCompass.integer == 2)
-			{
-				return;
-			}
+			return;
 		}
 	}
 	else
@@ -1883,11 +1879,7 @@ void CG_DrawAutoMap(float basex, float basey, float basew, float baseh)
 		if (cg.time - cgs.autoMapExpandTime <= 150.f)
 		{
 			CG_DrawExpandedAutoMap();
-
-			if (!cg_altHud.integer)
-			{
-				return;
-			}
+			return;
 		}
 		else if ((cg.time - cgs.autoMapExpandTime > 150.f) && (cg.time - cgs.autoMapExpandTime < 250.f))
 		{
@@ -1896,7 +1888,7 @@ void CG_DrawAutoMap(float basex, float basey, float basew, float baseh)
 	}
 
 #ifdef FEATURE_EDV
-	if (cgs.demoCamera.renderingFreeCam == qtrue || cgs.demoCamera.renderingWeaponCam == qtrue || !cg_drawCompass.integer)
+	if (cgs.demoCamera.renderingFreeCam == qtrue || cgs.demoCamera.renderingWeaponCam == qtrue)
 	{
 		return;
 	}
@@ -1911,7 +1903,7 @@ void CG_DrawAutoMap(float basex, float basey, float basew, float baseh)
 		h    = h - diff;
 	}
 
-	if (cg_drawCompass.integer == 2 || CG_IsShoutcaster())
+	if (squareCompass || CG_IsShoutcaster())
 	{
 		mapScissor.circular = qfalse;
 	}

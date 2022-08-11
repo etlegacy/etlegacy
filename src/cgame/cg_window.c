@@ -296,7 +296,7 @@ void CG_demoAviFPSDraw(void)
 
 	if (cg.demoPlayback && fKeyDown && cgs.aviDemoRate >= 0)
 	{
-		CG_Text_Paint_Ext(42, 425, cg_fontScaleCP.value, cg_fontScaleCP.value, colorWhite, ((cgs.aviDemoRate > 0) ? va("^3Record AVI @ ^7%d^2fps", cgs.aviDemoRate) : "^1Stop AVI Recording"), 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+		CG_Text_Paint_Ext(42, 425, 0.22, 0.22, colorWhite, ((cgs.aviDemoRate > 0) ? va("^3Record AVI @ ^7%d^2fps", cgs.aviDemoRate) : "^1Stop AVI Recording"), 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 	}
 }
 

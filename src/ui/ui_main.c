@@ -6384,31 +6384,13 @@ void UI_RunMenuScript(char **args)
 			trap_Cvar_Set("ui_browserModFilter", "0");
 			trap_Cvar_Set("ui_browserOssFilter", "0");
 		}
+        else if (Q_stricmp(name, "edithud") == 0)
+        {
+            trap_Cmd_ExecuteText(EXEC_APPEND, "edithud\n");
+        }
 		else if (Q_stricmp(name, "SetFontScale") == 0)
 		{
-			int fontScale = (int)(trap_Cvar_VariableValue("cg_fontScale"));
-
-			if (fontScale == 1)
-			{
-				trap_Cvar_SetValue("cg_fontScaleTP", 0.30f);
-				trap_Cvar_SetValue("cg_fontScaleSP", 0.20f);
-				trap_Cvar_SetValue("cg_fontScaleCP", 0.20f);
-				trap_Cvar_SetValue("cg_fontScaleCN", 0.22f);
-			}
-			else if (fontScale == 2)
-			{
-				trap_Cvar_SetValue("cg_fontScaleTP", 0.25f);
-				trap_Cvar_SetValue("cg_fontScaleSP", 0.18f);
-				trap_Cvar_SetValue("cg_fontScaleCP", 0.18f);
-				trap_Cvar_SetValue("cg_fontScaleCN", 0.20f);
-			}
-			else
-			{
-				trap_Cvar_SetValue("cg_fontScaleTP", 0.35f);
-				trap_Cvar_SetValue("cg_fontScaleSP", 0.22f);
-				trap_Cvar_SetValue("cg_fontScaleCP", 0.22f);
-				trap_Cvar_SetValue("cg_fontScaleCN", 0.25f);
-			}
+			Com_Printf("^3WARNING: deprecated/unused %s\n", name);
 		}
 		else
 		{
@@ -9209,7 +9191,6 @@ vmCvar_t ui_cg_shoutcastTeamNameRed;
 vmCvar_t ui_cg_shoutcastTeamNameBlue;
 vmCvar_t ui_cg_shoutcastDrawHealth;
 vmCvar_t ui_cg_shoutcastGrenadeTrail;
-vmCvar_t ui_cg_shoutcastDrawMinimap;
 
 vmCvar_t ui_customFont1;
 vmCvar_t ui_customFont2;
@@ -9266,8 +9247,6 @@ static cvarTable_t cvarTable[] =
 	{ &ui_serverStatusTimeOut,             "ui_serverStatusTimeOut",              "7000",                       CVAR_ARCHIVE,                   0 },
 
 	{ &g_gameType,                         "g_gameType",                          "4",                          CVAR_SERVERINFO | CVAR_LATCH,   0 },
-	{ NULL,                                "cg_drawBuddies",                      "1",                          CVAR_ARCHIVE,                   0 },
-	{ NULL,                                "cg_drawRoundTimer",                   "1",                          CVAR_ARCHIVE,                   0 },
 	{ NULL,                                "cg_showblood",                        "1",                          CVAR_ARCHIVE,                   0 },
 	{ NULL,                                "cg_bloodFlash",                       "1.0",                        CVAR_ARCHIVE,                   0 },
 	{ NULL,                                "cg_autoReload",                       "1",                          CVAR_ARCHIVE,                   0 },
@@ -9283,9 +9262,6 @@ static cvarTable_t cvarTable[] =
 	{ NULL,                                "cg_complaintPopUp",                   "1",                          CVAR_ARCHIVE,                   0 },
 	{ NULL,                                "cg_printObjectiveInfo",               "1",                          CVAR_ARCHIVE,                   0 },
 	{ NULL,                                "cg_drawGun",                          "1",                          CVAR_ARCHIVE,                   0 },
-	{ NULL,                                "cg_drawCompass",                      "1",                          CVAR_ARCHIVE,                   0 },
-	{ NULL,                                "cg_drawRoundTimer",                   "1",                          CVAR_ARCHIVE,                   0 },
-	{ NULL,                                "cg_drawReinforcementTime",            "1",                          CVAR_ARCHIVE,                   0 },
 	{ NULL,                                "cg_cursorHints",                      "1",                          CVAR_ARCHIVE,                   0 },
 	{ NULL,                                "cg_crosshairPulse",                   "1",                          CVAR_ARCHIVE,                   0 },
 	{ NULL,                                "cg_drawCrosshairInfo",                "3",                          CVAR_ARCHIVE,                   0 },
@@ -9323,7 +9299,6 @@ static cvarTable_t cvarTable[] =
 	{ &ui_cg_shoutcastTeamNameBlue,        "cg_shoutcastTeamNameBlue",            "",                           CVAR_ARCHIVE,                   0 },
 	{ &ui_cg_shoutcastDrawHealth,          "cg_shoutcastDrawHealth",              "0",                          CVAR_ARCHIVE,                   0 },
 	{ &ui_cg_shoutcastGrenadeTrail,        "cg_shoutcastGrenadeTrail",            "0",                          CVAR_ARCHIVE,                   0 },
-	{ &ui_cg_shoutcastDrawMinimap,         "cg_shoutcastDrawMinimap",             "1",                          CVAR_ARCHIVE,                   0 },
 
 	// game mappings (for create server option)
 	{ NULL,                                "g_altStopwatchMode",                  "0",                          CVAR_ARCHIVE,                   0 },

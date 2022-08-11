@@ -84,25 +84,6 @@ static vec4_t colorAxis   = { 0.749f, 0.129f, 0.129f, 0.45f };
 int players[12];
 
 /**
-* @brief CG_DrawMinimap
-*/
-void CG_DrawMinimap(void)
-{
-	// FIXME: this cvar seems redundant as of now, can use cg_drawCompass instead
-	if (!cg_shoutcastDrawMinimap.integer)
-	{
-		return;
-	}
-
-	rectDef_t location;
-	location.x = MINIMAP_X;
-	location.y = MINIMAP_Y;
-	location.w = MINIMAP_WIDTH;
-	location.h = MINIMAP_HEIGHT;
-	CG_DrawNewCompass(location);
-}
-
-/**
 * @brief CG_GetPlayerCurrentWeapon
 * @param[in] player
 */
@@ -830,22 +811,6 @@ void CG_DrawShoutcastPlayerStatus(void)
 		CG_Text_Paint_Ext(statsBoxX + 7 + (textWidth / 2) - (textWidth2 / 2), statsBoxY + (statsBoxHeight / 2) + (textHeight / 2) + 4, 0.19f, 0.19f, colorRed, dmgRcvd, 0, 0, ITEM_TEXTSTYLE_NORMAL, FONT_TEXT);
 		statsBoxX += 5 + textWidth2;
 	}
-
-	// draw cursor hint
-	rect.x = (SCREEN_WIDTH / 2) - 24;
-	rect.y = 260;
-	rect.w = 48;
-	rect.h = 48;
-
-	CG_DrawCursorhint(&rect);
-
-	// draw stability bar
-	rect.x = 50;
-	rect.y = 208;
-	rect.w = 10;
-	rect.h = 64;
-
-	CG_DrawWeapStability(&rect);
 }
 
 /**
@@ -956,7 +921,7 @@ void CG_DrawShoutcastTimer(void)
 	}
 	else
 	{
-		if (cgs.gametype != GT_WOLF_LMS && cgs.clientinfo[cg.clientNum].shoutcaster && cg_drawReinforcementTime.integer > 0)
+		if (cgs.gametype != GT_WOLF_LMS && cgs.clientinfo[cg.clientNum].shoutcaster)
 		{
 			int reinfTimeAx = CG_CalculateShoutcasterReinfTime(TEAM_AXIS);
 			int reinfTimeAl = CG_CalculateShoutcasterReinfTime(TEAM_ALLIES);
@@ -964,7 +929,7 @@ void CG_DrawShoutcastTimer(void)
 			rtAllies = va("^$%i", reinfTimeAl);
 			rtAxis   = va("^1%i", reinfTimeAx);
 		}
-		else if (cgs.gametype != GT_WOLF_LMS && (cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR || (cg.snap->ps.pm_flags & PMF_FOLLOW)) && cg_drawReinforcementTime.integer > 0)
+		else if (cgs.gametype != GT_WOLF_LMS && (cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR || (cg.snap->ps.pm_flags & PMF_FOLLOW)))
 		{
 			int  reinfTime = CG_CalculateReinfTime(qfalse);
 			char *c        = (cgs.clientinfo[cg.clientNum].shoutcaster ? (cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_AXIS ? "^1" : "^$") : "^F");

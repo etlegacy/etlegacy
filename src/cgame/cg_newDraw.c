@@ -331,13 +331,18 @@ void CG_DrawPlayerWeaponIcon(rectDef_t *rect, qboolean drawHighlighted, int alig
  *   3:  alpha pulse
  *   4+: static image
  */
-void CG_DrawCursorhint(rectDef_t *rect)
+void CG_DrawCursorhint(hudComponent_t *comp)
 {
 	float     *color;
 	qhandle_t icon;
 	float     scale, halfscale;
 
 	if (!cg_cursorHints.integer)
+	{
+		return;
+	}
+
+	if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR)
 	{
 		return;
 	}
@@ -470,9 +475,19 @@ void CG_DrawCursorhint(rectDef_t *rect)
 		halfscale = scale * 0.5f;
 	}
 
+	if (comp->showBackGround)
+	{
+		CG_FillRect(comp->location.x, comp->location.y, comp->location.w, comp->location.h, comp->colorBackground);
+	}
+
+	if (comp->showBorder)
+	{
+		CG_DrawRect_FixedBorder(comp->location.x, comp->location.y, comp->location.w, comp->location.h, 1, comp->colorBorder);
+	}
+
 	// set color and draw the hint
 	trap_R_SetColor(color);
-	CG_DrawPic(rect->x - halfscale, rect->y - halfscale, rect->w + scale, rect->h + scale, icon);
+	CG_DrawPic(comp->location.x - halfscale, comp->location.y - halfscale, comp->location.w + scale, comp->location.h + scale, icon);
 
 	trap_R_SetColor(NULL);
 
@@ -484,7 +499,7 @@ void CG_DrawCursorhint(rectDef_t *rect)
 
 		if (curValue > 0.01f)
 		{
-			CG_FilledBar(rect->x, rect->y + rect->h + 4, rect->w, 8, colorRed, colorGreen, backG, curValue, BAR_BORDER_SMALL | BAR_LERP_COLOR);
+			CG_FilledBar(comp->location.x, comp->location.y + comp->location.h + 4, comp->location.w, 8, colorRed, colorGreen, backG, curValue, BAR_BORDER_SMALL | BAR_LERP_COLOR);
 		}
 	}
 }
@@ -517,18 +532,18 @@ qboolean CG_OwnerDrawVisible(int flags)
  * probably only drawn for scoped weapons
  * @param[in] rect
  */
-void CG_DrawWeapStability(rectDef_t *rect)
+void CG_DrawWeapStability(hudComponent_t *comp)
 {
 	static vec4_t goodColor = { 0, 1, 0, 0.5f }, badColor = { 1, 0, 0, 0.5f };
 
-	if (!cg_drawSpreadScale.integer)
+	if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR)
 	{
 		return;
 	}
 
-	if (cg_drawSpreadScale.integer == 1 && !cg.zoomed)
+	if (!comp->style && !cg.zoomed)
 	{
-		// cg_drawSpreadScale of '1' means only draw for scoped weapons, '2' means draw all the time (for debugging)
+		// style '0' means only draw for scoped weapons, '1' means draw all the time (for debugging)
 		return;
 	}
 
@@ -549,7 +564,17 @@ void CG_DrawWeapStability(rectDef_t *rect)
 		return;
 	}
 
-	CG_FilledBar(rect->x, rect->y, rect->w, rect->h, goodColor, badColor, NULL, (float)cg.snap->ps.aimSpreadScale / 255.0f, BAR_CENTER | BAR_VERT | BAR_LERP_COLOR);
+	if (comp->showBackGround)
+	{
+		CG_FillRect(comp->location.x, comp->location.y, comp->location.w, comp->location.h, comp->colorBackground);
+	}
+
+	if (comp->showBorder)
+	{
+		CG_DrawRect_FixedBorder(comp->location.x, comp->location.y, comp->location.w, comp->location.h, 1, comp->colorBorder);
+	}
+
+	CG_FilledBar(comp->location.x, comp->location.y, comp->location.w, comp->location.h, goodColor, badColor, NULL, (float)cg.snap->ps.aimSpreadScale / 255.0f, BAR_CENTER | BAR_VERT | BAR_LERP_COLOR);
 }
 
 /**
@@ -607,6 +632,7 @@ void CG_MouseEvent(int x, int y)
 	case CGAME_EVENT_FIRETEAMMSG:
 	case CGAME_EVENT_SHOUTCAST:
 	case CGAME_EVENT_SPAWNPOINTMSG:
+	case CGAME_EVENT_HUDEDITOR:
 
 #ifdef FEATURE_EDV
 		if (!cgs.demoCamera.renderingFreeCam)
@@ -641,6 +667,11 @@ void CG_MouseEvent(int x, int y)
 		if (cgs.eventHandling == CGAME_EVENT_CAMERAEDITOR)
 		{
 			CG_CameraEditorMouseMove_Handling(x, y);
+		}
+
+		if (cgs.eventHandling == CGAME_EVENT_HUDEDITOR)
+		{
+			CG_HudEditorMouseMove_Handling(cgs.cursorX, cgs.cursorY);
 		}
 #ifdef FEATURE_EDV
 	}
@@ -761,6 +792,7 @@ void CG_EventHandling(int type, qboolean fForced)
 	case CGAME_EVENT_SHOUTCAST:
 	case CGAME_EVENT_SPAWNPOINTMSG:
 	case CGAME_EVENT_MULTIVIEW:
+	case CGAME_EVENT_HUDEDITOR:
 	default:
 		// default handling (cleanup mostly)
 		if (cgs.eventHandling == CGAME_EVENT_GAMEVIEW)
@@ -816,6 +848,10 @@ void CG_EventHandling(int type, qboolean fForced)
 				trap_Key_SetCatcher(KEYCATCH_CGAME);
 				return;
 			}
+		}
+		else if (cgs.eventHandling == CGAME_EVENT_HUDEDITOR)
+		{
+			cg.editingHud = qfalse;
 		}
 		else if (cgs.eventHandling == CGAME_EVENT_CAMPAIGNBREIFING)
 		{
@@ -888,6 +924,12 @@ void CG_EventHandling(int type, qboolean fForced)
 		trap_Cvar_Set("cl_bypassmouseinput", "1");
 		trap_Key_SetCatcher(KEYCATCH_CGAME);
 	}
+	else if (type == CGAME_EVENT_HUDEDITOR)
+	{
+		CG_HudEditorSetup();
+		cg.editingHud = qtrue;
+		trap_Key_SetCatcher(KEYCATCH_CGAME);
+	}
 	else
 	{
 		trap_Key_SetCatcher(KEYCATCH_CGAME);
@@ -934,6 +976,9 @@ void CG_KeyEvent(int key, qboolean down)
 		break;
 	case CGAME_EVENT_CAMERAEDITOR:
 		CG_CameraEditor_KeyHandling(key, down);
+		break;
+	case CGAME_EVENT_HUDEDITOR:
+		CG_HudEditor_KeyHandling(key, down);
 		break;
 #ifdef FEATURE_MULTIVIEW
 	case  CGAME_EVENT_MULTIVIEW:

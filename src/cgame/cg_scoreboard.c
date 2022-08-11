@@ -1359,7 +1359,7 @@ qboolean CG_DrawScoreboard(void)
 	WM_TeamScoreboard(x, y, TEAM_ALLIES, fade, maxrows, use_mini_chars);
 
 #if defined(FEATURE_RATING) || defined(FEATURE_PRESTIGE)
-	if (cg_descriptiveText.integer && cgs.gamestate != GS_INTERMISSION)
+	if (cgs.gamestate != GS_INTERMISSION)
 	{
 		s2 = Binding_FromName("+scores");
 		if (!Q_stricmp(s2, "(+scores)"))

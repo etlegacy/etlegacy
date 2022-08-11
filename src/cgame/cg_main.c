@@ -128,9 +128,6 @@ vmCvar_t cg_shadows;
 vmCvar_t cg_gibs;
 vmCvar_t cg_draw2D;
 vmCvar_t cg_drawFPS;
-vmCvar_t cg_drawPing;
-vmCvar_t cg_lagometer;
-vmCvar_t cg_drawSnapshot;
 vmCvar_t cg_drawCrosshair;
 vmCvar_t cg_drawCrosshairInfo;
 vmCvar_t cg_drawCrosshairNames;
@@ -148,7 +145,6 @@ vmCvar_t cg_voiceChats;
 vmCvar_t cg_voiceText;
 vmCvar_t cg_drawStatus;
 vmCvar_t cg_animSpeed;
-vmCvar_t cg_drawSpreadScale;
 vmCvar_t cg_railTrailTime;
 vmCvar_t cg_debugAnim;
 vmCvar_t cg_debugPosition;
@@ -217,10 +213,8 @@ vmCvar_t cg_timescale;
 
 vmCvar_t cg_voiceSpriteTime;
 
-vmCvar_t cg_drawCompass;
 vmCvar_t cg_drawNotifyText;
 vmCvar_t cg_quickMessageAlt;
-vmCvar_t cg_descriptiveText;
 
 vmCvar_t cg_redlimbotime;
 vmCvar_t cg_bluelimbotime;
@@ -291,13 +285,9 @@ vmCvar_t cg_rconPassword;
 vmCvar_t cg_refereePassword;
 vmCvar_t cg_atmosphericEffects;
 
-vmCvar_t cg_drawRoundTimer;
-
 vmCvar_t cg_instanttapout;
 
 vmCvar_t cg_debugSkills;
-vmCvar_t cg_drawFireteamOverlay;
-vmCvar_t cg_drawSmallPopupIcons;
 
 // demo recording cvars
 vmCvar_t cl_demorecording;
@@ -321,15 +311,12 @@ vmCvar_t cg_logFile;
 vmCvar_t cg_countryflags; // GeoIP
 
 vmCvar_t cg_altHud;
-vmCvar_t cg_altHudFlags;
 vmCvar_t cg_tracers;
 vmCvar_t cg_fireteamLatchedClass;
 vmCvar_t cg_fireteamLocationAlign;
 vmCvar_t cg_fireteamNameMaxChars;
 vmCvar_t cg_fireteamNameAlign;
 vmCvar_t cg_fireteamSprites;
-vmCvar_t cg_fireteamAlpha;
-vmCvar_t cg_fireteamBgAlpha;
 
 vmCvar_t cg_weapaltReloads;
 vmCvar_t cg_weapaltSwitches;
@@ -350,12 +337,8 @@ vmCvar_t cg_numPopups;
 vmCvar_t cg_popupFilter;
 vmCvar_t cg_popupBigFilter;
 vmCvar_t cg_graphicObituaries;
-vmCvar_t cg_popupShadow;
 
-vmCvar_t cg_fontScaleTP; // top print
 vmCvar_t cg_fontScaleSP; // side print
-vmCvar_t cg_fontScaleCP; // center print
-vmCvar_t cg_fontScaleCN; // crosshair name
 
 // unlagged optimized prediction
 vmCvar_t cg_optimizePrediction;
@@ -369,7 +352,6 @@ vmCvar_t cg_scoreboard;
 
 vmCvar_t cg_quickchat;
 
-vmCvar_t cg_drawspeed;
 vmCvar_t cg_drawUnit;
 
 vmCvar_t cg_visualEffects;
@@ -381,20 +363,8 @@ vmCvar_t cg_shoutcastTeamNameRed;
 vmCvar_t cg_shoutcastTeamNameBlue;
 vmCvar_t cg_shoutcastDrawHealth;
 vmCvar_t cg_shoutcastGrenadeTrail;
-vmCvar_t cg_shoutcastDrawMinimap;
-
-vmCvar_t cg_chatX;
-vmCvar_t cg_chatY;
-vmCvar_t cg_chatScale;
-vmCvar_t cg_chatAlpha;
-vmCvar_t cg_chatBackgroundAlpha;
-vmCvar_t cg_chatShadow;
-vmCvar_t cg_chatFlags;
-vmCvar_t cg_chatLineWidth;
 
 vmCvar_t cg_activateLean;
-
-vmCvar_t cg_healthDynamicColor;
 
 vmCvar_t cg_drawBreathPuffs;
 
@@ -427,13 +397,9 @@ static cvarTable_t cvarTable[] =
 	// we now draw reticles always in non demoplayback
 	//  { &cg_draw2D, "cg_draw2D", "1", CVAR_CHEAT }, // JPW NERVE changed per atvi req to prevent sniper rifle zoom cheats
 	{ &cg_draw2D,                  "cg_draw2D",                  "1",           CVAR_ARCHIVE,                 0 },
-	{ &cg_drawSpreadScale,         "cg_drawSpreadScale",         "1",           CVAR_ARCHIVE,                 0 },
 	{ &cg_railTrailTime,           "cg_railTrailTime",           "750",         CVAR_ARCHIVE,                 0 },
 	{ &cg_drawStatus,              "cg_drawStatus",              "1",           CVAR_ARCHIVE,                 0 },
 	{ &cg_drawFPS,                 "cg_drawFPS",                 "0",           CVAR_ARCHIVE,                 0 },
-	{ &cg_drawPing,                "cg_drawPing",                "0",           CVAR_ARCHIVE,                 0 },
-	{ &cg_lagometer,               "cg_lagometer",               "0",           CVAR_ARCHIVE,                 0 },
-	{ &cg_drawSnapshot,            "cg_drawSnapshot",            "0",           CVAR_ARCHIVE,                 0 },
 	{ &cg_drawCrosshair,           "cg_drawCrosshair",           "1",           CVAR_ARCHIVE,                 0 },
 	{ &cg_drawCrosshairInfo,       "cg_drawCrosshairInfo",       "7",           CVAR_ARCHIVE,                 0 },
 	{ &cg_drawCrosshairNames,      "cg_drawCrosshairNames",      "1",           CVAR_ARCHIVE,                 0 },
@@ -523,10 +489,8 @@ static cvarTable_t cvarTable[] =
 	{ &cg_gameType,                "g_gametype",                 "0",           0,                            0 }, // communicated by systeminfo
 	{ &cg_bluelimbotime,           "",                           "30000",       0,                            0 }, // communicated by systeminfo
 	{ &cg_redlimbotime,            "",                           "30000",       0,                            0 }, // communicated by systeminfo
-	{ &cg_drawCompass,             "cg_drawCompass",             "1",           CVAR_ARCHIVE,                 0 },
 	{ &cg_drawNotifyText,          "cg_drawNotifyText",          "1",           CVAR_ARCHIVE,                 0 },
 	{ &cg_quickMessageAlt,         "cg_quickMessageAlt",         "0",           CVAR_ARCHIVE,                 0 },
-	{ &cg_descriptiveText,         "cg_descriptiveText",         "1",           CVAR_ARCHIVE,                 0 },
 	{ &cg_antilag,                 "g_antilag",                  "1",           0,                            0 },
 	{ &developer,                  "developer",                  "0",           CVAR_CHEAT,                   0 },
 	{ &cf_wstats,                  "cf_wstats",                  "1.2",         CVAR_ARCHIVE,                 0 },
@@ -596,17 +560,12 @@ static cvarTable_t cvarTable[] =
 	{ &cg_rconPassword,            "auth_rconPassword",          "",            CVAR_TEMP,                    0 },
 	{ &cg_refereePassword,         "auth_refereePassword",       "",            CVAR_TEMP,                    0 },
 
-	{ &cg_drawRoundTimer,          "cg_drawRoundTimer",          "1",           CVAR_ARCHIVE,                 0 },
-
 	{ &cg_instanttapout,           "cg_instanttapout",           "0",           CVAR_ARCHIVE,                 0 },
 	{ &cg_debugSkills,             "cg_debugSkills",             "0",           0,                            0 },
 	{ NULL,                        "cg_etVersion",               "",            CVAR_USERINFO | CVAR_ROM,     0 },
 #if 0
 	{ NULL,                        "cg_legacyVersion",           "",            CVAR_USERINFO | CVAR_ROM,     0 },
 #endif
-	{ &cg_drawFireteamOverlay,     "cg_drawFireteamOverlay",     "1",           CVAR_ARCHIVE,                 0 },
-	{ &cg_drawSmallPopupIcons,     "cg_drawSmallPopupIcons",     "1",           CVAR_ARCHIVE,                 0 },
-
 	// demo recording cvars
 	{ &cl_demorecording,           "cl_demorecording",           "0",           CVAR_ROM,                     0 },
 	{ &cl_demofilename,            "cl_demofilename",            "",            CVAR_ROM,                     0 },
@@ -629,15 +588,12 @@ static cvarTable_t cvarTable[] =
 
 	{ &cg_countryflags,            "cg_countryflags",            "1",           CVAR_ARCHIVE,                 0 }, // GeoIP
 	{ &cg_altHud,                  "cg_altHud",                  "0",           CVAR_ARCHIVE,                 0 }, // Hudstyles
-	{ &cg_altHudFlags,             "cg_altHudFlags",             "0",           CVAR_ARCHIVE,                 0 }, // Hudstyles
 	{ &cg_tracers,                 "cg_tracers",                 "1",           CVAR_ARCHIVE,                 0 }, // Draw tracers
 	{ &cg_fireteamLatchedClass,    "cg_fireteamLatchedClass",    "1",           CVAR_ARCHIVE,                 0 }, // Draw fireteam members latched class
 	{ &cg_fireteamLocationAlign,   "cg_fireteamLocationAlign",   "0",           CVAR_ARCHIVE,                 0 },
 	{ &cg_fireteamNameMaxChars,    "cg_fireteamNameMaxChars",    "0",           CVAR_ARCHIVE,                 0 },
 	{ &cg_fireteamNameAlign,       "cg_fireteamNameAlign",       "0",           CVAR_ARCHIVE,                 0 },
 	{ &cg_fireteamSprites,         "cg_fireteamSprites",         "1",           CVAR_ARCHIVE,                 0 },
-	{ &cg_fireteamAlpha,           "cg_fireteamAlpha",           "1.0",         CVAR_ARCHIVE,                 0 },
-	{ &cg_fireteamBgAlpha,         "cg_fireteamBgAlpha",         "0.3",         CVAR_ARCHIVE,                 0 },
 
 	{ &cg_simpleItems,             "cg_simpleItems",             "0",           CVAR_ARCHIVE,                 0 }, // Bugged atm
 	{ &cg_simpleItemsScale,        "cg_simpleItemsScale",        "1.0",         CVAR_ARCHIVE,                 0 },
@@ -650,16 +606,12 @@ static cvarTable_t cvarTable[] =
 	{ &cg_popupFilter,             "cg_popupFilter",             "0",           CVAR_ARCHIVE,                 0 },
 	{ &cg_popupBigFilter,          "cg_popupBigFilter",          "0",           CVAR_ARCHIVE,                 0 },
 	{ &cg_graphicObituaries,       "cg_graphicObituaries",       "0",           CVAR_ARCHIVE,                 0 },
-	{ &cg_popupShadow,             "cg_popupShadow",             "0",           CVAR_ARCHIVE,                 0 },
 	{ &cg_weapaltReloads,          "cg_weapaltReloads",          "0",           CVAR_ARCHIVE,                 0 },
 	{ &cg_weapaltSwitches,         "cg_weapaltSwitches",         "1",           CVAR_ARCHIVE,                 0 },
 	{ &cg_sharetimerText,          "cg_sharetimerText",          "",            CVAR_ARCHIVE,                 0 },
 
 	// Fonts
-	{ &cg_fontScaleTP,             "cg_fontScaleTP",             "0.35",        CVAR_ARCHIVE,                 0 }, // TopPrint
 	{ &cg_fontScaleSP,             "cg_fontScaleSP",             "0.22",        CVAR_ARCHIVE,                 0 }, // SidePrint
-	{ &cg_fontScaleCP,             "cg_fontScaleCP",             "0.22",        CVAR_ARCHIVE,                 0 }, // CenterPrint
-	{ &cg_fontScaleCN,             "cg_fontScaleCN",             "0.25",        CVAR_ARCHIVE,                 0 }, // CrossName
 
 	{ &cg_optimizePrediction,      "cg_optimizePrediction",      "1",           CVAR_ARCHIVE,                 0 }, // unlagged optimized prediction
 
@@ -669,7 +621,6 @@ static cvarTable_t cvarTable[] =
 
 	{ &cg_quickchat,               "cg_quickchat",               "0",           CVAR_ARCHIVE,                 0 },
 
-	{ &cg_drawspeed,               "cg_drawspeed",               "0",           CVAR_ARCHIVE,                 0 },
 	{ &cg_drawUnit,                "cg_drawUnit",                "0",           CVAR_ARCHIVE,                 0 },
 
 	{ &cg_visualEffects,           "cg_visualEffects",           "1",           CVAR_ARCHIVE,                 0 },  // Draw visual effects (i.e : airstrike plane, debris ...)
@@ -681,20 +632,8 @@ static cvarTable_t cvarTable[] =
 	{ &cg_shoutcastTeamNameBlue,   "cg_shoutcastTeamNameBlue",   "Allies",      CVAR_ARCHIVE,                 0 },
 	{ &cg_shoutcastDrawHealth,     "cg_shoutcastDrawHealth",     "0",           CVAR_ARCHIVE,                 0 },
 	{ &cg_shoutcastGrenadeTrail,   "cg_shoutcastGrenadeTrail",   "0",           CVAR_ARCHIVE,                 0 },
-	{ &cg_shoutcastDrawMinimap,    "cg_shoutcastDrawMinimap",    "1",           CVAR_ARCHIVE,                 0 },
-
-	{ &cg_chatX,                   "cg_chatX",                   "160",         CVAR_ARCHIVE,                 0 },
-	{ &cg_chatY,                   "cg_chatY",                   "478",         CVAR_ARCHIVE,                 0 },
-	{ &cg_chatScale,               "cg_chatScale",               "1.0",         CVAR_ARCHIVE,                 0 },
-	{ &cg_chatAlpha,               "cg_chatAlpha",               "1.0",         CVAR_ARCHIVE,                 0 },
-	{ &cg_chatBackgroundAlpha,     "cg_chatBackgroundAlpha",     "0.66",        CVAR_ARCHIVE,                 0 },
-	{ &cg_chatShadow,              "cg_chatShadow",              "0",           CVAR_ARCHIVE,                 0 },
-	{ &cg_chatFlags,               "cg_chatFlags",               "1",           CVAR_ARCHIVE,                 0 },
-	{ &cg_chatLineWidth,           "cg_chatLineWidth",           "70",          CVAR_ARCHIVE,                 0 },
 
 	{ &cg_activateLean,            "cg_activateLean",            "0",           CVAR_ARCHIVE,                 0 },
-
-	{ &cg_healthDynamicColor,      "cg_healthDynamicColor",      "0",           CVAR_ARCHIVE,                 0 },
 
 	{ &cg_drawBreathPuffs,         "cg_drawBreathPuffs",         "1",           CVAR_ARCHIVE,                 0 },
 };
