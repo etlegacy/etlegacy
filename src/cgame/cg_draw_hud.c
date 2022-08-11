@@ -1107,7 +1107,7 @@ static void CG_DrawStaminaBar(hudComponent_t *comp)
 	vec4_t colour = { 0.1f, 1.0f, 0.1f, 0.5f };
 	vec_t  *color = colour;
 	int    flags  = 1 | 4 | 16 | 64;
-	float  frac   = cg.snap->ps.stats[STAT_SPRINTTIME] / (float)SPRINTTIME;
+	float  frac   = cg.pmext.sprintTime / (float)SPRINTTIME;
 
 	if (cgs.clientinfo[cg.clientNum].shoutcaster)
 	{
@@ -1580,7 +1580,7 @@ static void CG_DrawPlayerSprint(hudComponent_t *comp)
 	}
 	else
 	{
-		str = va("%.0f %%", (cg.snap->ps.stats[STAT_SPRINTTIME] / (float)SPRINTTIME) * 100);
+		str  = va("%.0f %%", (cg.pmext.sprintTime / (float)SPRINTTIME) * 100);
 	}
 
 	CG_DrawCompText(comp, str, comp->colorText, comp->styleText, &cgs.media.limboFont1);

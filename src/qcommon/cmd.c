@@ -424,7 +424,7 @@ int Cmd_Argc(void)
  */
 char *Cmd_Argv(int arg)
 {
-	if (arg >= cmd_argc)
+	if ((unsigned)arg >= cmd_argc)
 	{
 		return "";
 	}

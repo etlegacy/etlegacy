@@ -624,7 +624,7 @@ void SpectatorThink(gentity_t *ent, usercmd_t *ucmd)
 
 	if (ent->flags & FL_NOFATIGUE)
 	{
-		ent->client->pmext.sprintTime = SPRINTTIME;
+		ent->client->ps.stats[STAT_SPRINTTIME] = SPRINTTIME;
 	}
 
 	if (ent->flags & FL_NOSTAMINA)
@@ -1527,7 +1527,7 @@ void ClientThink_real(gentity_t *ent)
 
 	if (ent->flags & FL_NOFATIGUE)
 	{
-		ent->client->pmext.sprintTime = SPRINTTIME;
+		ent->client->ps.stats[STAT_SPRINTTIME] = SPRINTTIME;
 	}
 
 	if (ent->flags & FL_NOSTAMINA)
