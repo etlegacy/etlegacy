@@ -1580,7 +1580,7 @@ static void CG_DrawPlayerSprint(hudComponent_t *comp)
 	}
 	else
 	{
-		str  = va("%.0f %%", (cg.pmext.sprintTime / (float)SPRINTTIME) * 100);
+		str = va("%.0f %%", (cg.pmext.sprintTime / (float)SPRINTTIME) * 100);
 	}
 
 	CG_DrawCompText(comp, str, comp->colorText, comp->styleText, &cgs.media.limboFont1);
@@ -3786,15 +3786,15 @@ qboolean CG_HudSave(int HUDToDuplicate, int HUDToDelete)
 		return qfalse;
 	}
 
-	if (HUDToDuplicate && hudCount == MAXHUDS)
-	{
-		CG_Printf(S_COLOR_RED "ERROR CG_HudSave: no more free HUD slots for clone\n");
-		return qfalse;
-	}
-
 	if (HUDToDuplicate >= 0)
 	{
 		int num = 1;
+
+		if (hudCount == MAXHUDS)
+		{
+			CG_Printf(S_COLOR_RED "ERROR CG_HudSave: no more free HUD slots for clone\n");
+			return qfalse;
+		}
 
 		// find a free number
 		for (i = 1; i < MAXHUDS; i++)
@@ -3825,7 +3825,16 @@ qboolean CG_HudSave(int HUDToDuplicate, int HUDToDelete)
 		{
 			int j;
 
-			memmove(&hudlist[i], &hudlist[i + 1], sizeof(hudStucture_t) * (hudCount - i));
+			// remove last element instead of erasing by moving memory
+			if (i == hudCount - 1)
+			{
+				Com_Memset(hud, 0, sizeof(hudStucture_t));
+			}
+			else
+			{
+				memmove(hud, &hudlist[i + 1], sizeof(hudStucture_t) * (hudCount - i));
+			}
+
 			i--;
 			hudCount--;
 
