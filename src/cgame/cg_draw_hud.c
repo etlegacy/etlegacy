@@ -3828,11 +3828,11 @@ qboolean CG_HudSave(int HUDToDuplicate, int HUDToDelete)
 			// remove last element instead of erasing by moving memory
 			if (i == hudCount - 1)
 			{
-				Com_Memset(hud, 0, sizeof(hudStucture_t));
+				Com_Memset(&hudlist[i], 0, sizeof(hudStucture_t));
 			}
 			else
 			{
-				memmove(hud, &hudlist[i + 1], sizeof(hudStucture_t) * (hudCount - i));
+				memmove(&hudlist[i], &hudlist[i + 1], sizeof(hudStucture_t) * (hudCount - i - 1));
 			}
 
 			i--;
