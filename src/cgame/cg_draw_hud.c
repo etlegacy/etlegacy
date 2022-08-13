@@ -3797,14 +3797,14 @@ qboolean CG_HudSave(int HUDToDuplicate, int HUDToDelete)
 		}
 
 		// find a free number
-		for (i = 1; i < MAXHUDS; i++)
+		for (i = 1; i < hudCount; i++)
 		{
 			hud = &hudlist[i];
 
 			if (hud->hudnumber == num)
 			{
 				num++;
-				i = 1;
+				i = 0;
 			}
 		}
 
