@@ -1837,7 +1837,7 @@ static void SV_DemoStartRecord(void)
 	// Note: system configstrings will be filtered and excluded (there's a check function for that), and clients configstrings  will be automatically redirected to the specialized function (see the check function)
 	for (i = 0; i < MAX_CONFIGSTRINGS; i++)
 	{
-		if (&sv.configstrings[i])     // if the configstring pointer exists in memory (because we will check all the possible indexes, but we don't know if they really exist in memory and are used or not, so here we check for that)
+		if (sv.configstrings[i])     // if the configstring pointer exists in memory (because we will check all the possible indexes, but we don't know if they really exist in memory and are used or not, so here we check for that)
 		{
 			SV_DemoWriteConfigString(i, sv.configstrings[i]);
 		}

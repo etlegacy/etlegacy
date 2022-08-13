@@ -2000,10 +2000,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 		}
 		break;
 	case EV_BODY_DP:
-		if (&cg_entities[es->otherEntityNum2])
-		{
-			Com_Memset(&cg_entities[es->otherEntityNum2].pe, 0, sizeof(playerEntity_t));
-		}
+		Com_Memset(&cg_entities[es->otherEntityNum2].pe, 0, sizeof(playerEntity_t));
 		break;
 	case EV_FALL_NDIE:
 	case EV_FALL_DMG_10:
