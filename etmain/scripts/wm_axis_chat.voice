@@ -35,8 +35,8 @@ Incoming
 
 FireInTheHole
 {
-	sound/chat/axis/15a.wav	"Fire in the hole!"
-	sound/chat/axis/15b.wav	"Fire in the hole!"
+	sound/chat/axis/15a.wav	"Fire in the hole!"	sprites/voicechat_orange
+	sound/chat/axis/15b.wav	"Fire in the hole!"	sprites/voicechat_orange
 }
 
 OnDefense
