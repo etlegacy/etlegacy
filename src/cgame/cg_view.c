@@ -1961,8 +1961,13 @@ static void CG_DemoRewindFixEffects(void)
 {
 	int i;
 
-	// fix player entities animations, lazy fix?
-	Com_Memset(cg_entities, 0, sizeof(cg_entities));
+	// fix player entities animations
+	Com_Memset(&cg.predictedPlayerEntity.pe, 0, sizeof(playerEntity_t));
+
+	for (i = 0; i < MAX_CLIENTS; i++)
+	{
+		Com_Memset(&cg_entities[i].pe, 0, sizeof(playerEntity_t));
+	}
 
 	// clear message buffer
 	for (i = 0; i < TEAMCHAT_HEIGHT; i++)
