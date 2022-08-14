@@ -788,8 +788,8 @@ void SV_SpawnServer(const char *server)
 	// run a few frames to allow everything to settle
 	for (i = 0 ; i < GAME_INIT_FRAMES ; i++)
 	{
-		VM_Call(gvm, GAME_RUN_FRAME, svs.time);
 		svs.time += FRAMETIME;
+		VM_Call(gvm, GAME_RUN_FRAME, svs.time);
 	}
 
 	// create a baseline for more efficient communications
@@ -848,9 +848,8 @@ void SV_SpawnServer(const char *server)
 	}
 
 	// run another frame to allow things to look at all the players
-	VM_Call(gvm, GAME_RUN_FRAME, svs.time);
-
 	svs.time += FRAMETIME;
+	VM_Call(gvm, GAME_RUN_FRAME, svs.time);
 
 	// the server sends these to the clients so they can figure
 	// out which pk3s should be auto-downloaded
