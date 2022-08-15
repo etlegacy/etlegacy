@@ -1,0 +1,13 @@
+[Desktop Entry]
+Type=Application
+Name=ET: Legacy (32-bit)
+GenericName=World War II first-person shooter
+Comment=World War II first-person shooter
+Icon=etl
+Exec=etl.x86 +connect %u
+Terminal=false
+MimeType=x-scheme-handler/et;
+Categories=Game;ActionGame;
+StartupNotify=false
+Keywords=team-based;multiplayer;tactical;WWII;enemy;territory;etl;etlegacy;
+PrefersNonDefaultGPU=true
