@@ -322,7 +322,8 @@ static void CG_EntityEffects(centity_t *cent)
 	{
 		if (cent->lastTrailTime < cg.time)
 		{
-			float rnd = random();
+			float color = random() + 0.3f;
+			color = min(color, 1.0f);
 
 			cent->lastTrailTime = cg.time + 100;
 
@@ -337,7 +338,7 @@ static void CG_EntityEffects(centity_t *cent)
 			//          dir[1] = crandom() * 10;
 			//          dir[2] = 10 + rnd * 30;
 			CG_SmokePuff(cent->lerpOrigin, dir, 15 + (random() * 10),
-			             0.3f + rnd, 0.3f + rnd, 0.3f + rnd, 0.4f, 1500 + (rand() % 500),
+			             color, color, color, 0.4f, 1500 + (rand() % 500),
 			             cg.time, cg.time + 500, 0, cgs.media.smokePuffShader);
 		}
 	}
