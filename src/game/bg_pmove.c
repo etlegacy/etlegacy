@@ -3960,6 +3960,13 @@ static void PM_Weapon(void)
 
 	pm->ps->weaponTime += addTime;
 
+#ifdef CGAMEDLL
+	if (pm->ps->grenadeTimeLeft)
+	{
+		pm->ps->grenadeTimeLeft = 0;
+	}
+#endif // CGAMEDLL
+
 	PM_SwitchIfEmpty();
 }
 
