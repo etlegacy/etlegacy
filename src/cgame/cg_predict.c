@@ -1018,8 +1018,6 @@ void CG_PredictPlayerState(void)
 		cg_pmove.ps    = &cg.predictedPlayerState;
 		cg_pmove.pmext = &cg.pmext;
 
-		cg.pmext.airleft = (cg.waterundertime - cg.time);
-
 		// are we using an mg42?
 		if ((cg_pmove.ps->eFlags & EF_MG42_ACTIVE) || (cg_pmove.ps->eFlags & EF_AAGUN_ACTIVE))
 		{
@@ -1049,7 +1047,6 @@ void CG_PredictPlayerState(void)
 	cg_pmove.ps        = &cg.predictedPlayerState;
 	cg_pmove.pmext     = &pmext; //&cg.pmext;
 	cg_pmove.character = CG_CharacterForClientinfo(&cgs.clientinfo[cg.snap->ps.clientNum], &cg_entities[cg.snap->ps.clientNum]);
-	cg.pmext.airleft   = (cg.waterundertime - cg.time);
 
 	// are we using an mg42?
 	if ((cg_pmove.ps->eFlags & EF_MG42_ACTIVE) || (cg_pmove.ps->eFlags & EF_AAGUN_ACTIVE))

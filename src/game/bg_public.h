@@ -553,8 +553,6 @@ typedef struct pmoveExt_s
 	int silencedSideArm;           ///< Keep track of whether the luger/colt is silenced "in holster", prolly want to do this for the kar98 etc too
 	float sprintTime;
 
-	int airleft;
-
 	// MG42 aiming
 	float varc, harc;
 	vec3_t centerangles;
