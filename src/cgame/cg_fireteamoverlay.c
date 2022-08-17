@@ -487,7 +487,7 @@ void CG_DrawFireTeamOverlay(hudComponent_t *comp)
 			namewidth += 14;
 		}
 
-		// find widthest weapons icons
+		// find the widest weapons icons
 		if (cg_entities[ci->clientNum].currentState.eFlags & EF_MOUNTEDTANK)
 		{
 			curWeap = IS_MOUNTED_TANK_BROWNING(ci->clientNum) ? WP_MOBILE_BROWNING : WP_MOBILE_MG42;
@@ -695,7 +695,7 @@ void CG_DrawFireTeamOverlay(hudComponent_t *comp)
 			CG_DrawPic(x, y + heightIconsOffset, cg_weapons[curWeap].weaponIconScale * heightText * 2, heightText * 2, cg_weapons[curWeap].weaponIcon[1]);
 		}
 
-		x += weapIconWidthScale * heightText * 2 + spacingWidth;
+		x += bestWeapIconWidthScale * heightText * 2 + spacingWidth;
 
 		// draw the player's health
 		if (ci->health >= 100)
