@@ -142,6 +142,27 @@ void GLimp_Minimize(void)
 }
 
 /**
+ * @brief Flash the game window in the taskbar to alert user of an event
+ */
+void GLimp_FlashWindow(int state)
+{
+#if SDL_VERSION_ATLEAST(2, 0, 16)
+	if (state == 1)
+	{
+		SDL_FlashWindow(main_window, SDL_FLASH_BRIEFLY);
+	}
+	else if (state == 2)
+	{
+		SDL_FlashWindow(main_window, SDL_FLASH_UNTIL_FOCUSED);
+	}
+	else
+	{
+		SDL_FlashWindow(main_window, SDL_FLASH_CANCEL);
+	}
+#endif
+}
+
+/**
  * @brief GLimp_GetModeInfo
  * @param[in,out] width
  * @param[in,out] height

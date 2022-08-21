@@ -43,6 +43,10 @@ qboolean CG_CheckExecKey(int key);
 extern itemDef_t *g_bindItem;
 extern qboolean  g_waitingForKey;
 
+qboolean flashWindowSupported = qfalse;
+int dll_com_trapGetValue;
+int dll_trap_SysFlashWindow;
+
 /**
  * @brief This is the only way control passes into the module.
  * @details This must be the very first function compiled into the .q3vm file
@@ -2677,6 +2681,7 @@ void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qbo
 	const char *s;
 	int        i;
 	char       versionString[128];
+	char       value[MAX_CVAR_VALUE_STRING];
 	DEBUG_INITPROFILE_INIT
 
 	//int startat = trap_Milliseconds();
@@ -2749,6 +2754,17 @@ void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qbo
 
 	cgs.ccRequestedObjective  = -1;
 	cgs.ccCurrentCamObjective = -2;
+
+	trap_Cvar_VariableStringBuffer("//trap_GetValue", value, sizeof(value));
+	if (value[0])
+	{
+		dll_com_trapGetValue = atoi(value);
+		if (trap_GetValue(value, sizeof(value), "trap_SysFlashWindow_Legacy"))
+		{
+			dll_trap_SysFlashWindow = atoi(value);
+			flashWindowSupported = qtrue;
+		}
+	}
 
 	// Background images on the loading screen were not visible on the first call
 	trap_R_SetColor(NULL);
