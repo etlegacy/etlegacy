@@ -47,6 +47,7 @@ void IN_Restart(void);
 //SDL Window system
 void *GLimp_MainWindow(void);
 void GLimp_Minimize(void);
+void GLimp_FlashWindow(int);
 
 //Export to renderer
 void GLimp_Init(glconfig_t *glConfig, windowContext_t *context);

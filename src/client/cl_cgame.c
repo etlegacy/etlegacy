@@ -34,6 +34,7 @@
  */
 
 #include "client.h"
+#include "../sys/sys_local.h"
 #include "../botlib/botlib.h"
 
 extern botlib_export_t *botlib_export;
@@ -616,6 +617,11 @@ static int FloatAsInt(float f)
  */
 static qboolean CL_CG_GetValue(char *value, int valueSize, const char *key)
 {
+	if ( !Q_stricmp( key, "trap_SysFlashWindow_Legacy" ) ) {
+		Com_sprintf( value, valueSize, "%i", CG_SYS_FLASHWINDOW );
+		return qtrue;
+	}
+
 	return qfalse;
 }
 
@@ -1038,6 +1044,10 @@ intptr_t CL_CgameSystemCalls(intptr_t *args)
 	case CG_PUMPEVENTLOOP:
 	case CG_INGAME_CLOSEPOPUP:
 	case CG_R_LIGHTFORPOINT: // re-added to avoid a crash when called - still in enum of cgameImport_t
+		return 0;
+
+	case CG_SYS_FLASHWINDOW:
+		GLimp_FlashWindow(args[1]);
 		return 0;
 
 	case CG_TRAP_GETVALUE:
