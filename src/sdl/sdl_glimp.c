@@ -143,6 +143,7 @@ void GLimp_Minimize(void)
 
 /**
  * @brief Flash the game window in the taskbar to alert user of an event
+ * @param[in] state - SDL_FlashOperation
  */
 void GLimp_FlashWindow(int state)
 {
