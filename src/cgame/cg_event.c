@@ -55,7 +55,7 @@ void CG_GetObituaryIcon(meansOfDeath_t mod, weapon_t weapon, qhandle_t *weaponSh
 	// if weapon is still valid
 	if (IS_VALID_WEAPON(weap))
 	{
-		if (cg_drawSmallPopupIcons.integer && cg_weapons[weap].weaponIcon[0])
+		if (CG_GetActiveHUD()->popupmessages.style && cg_weapons[weap].weaponIcon[0])
 		{
 			*weaponShader = cg_weapons[weap].weaponIcon[0];
 			*scaleShader  = cg_weapons[weap].weaponIconScale;
@@ -221,7 +221,7 @@ static void CG_Obituary(entityState_t *ent)
 			s = va("%s %s", CG_TranslateString("You killed"), targetName);
 		}
 
-		CG_PriorityCenterPrint(s, 400, cg_fontScaleCP.value, 1);
+		CG_PriorityCenterPrint(s, 1);
 	}
 	else if (attacker == cg.snap->ps.clientNum)
 	{
@@ -243,7 +243,7 @@ static void CG_Obituary(entityState_t *ent)
 			s = va("%s %s %s", attackerName, CG_TranslateString("^7killed"), targetName);
 		}
 
-		CG_PriorityCenterPrint(s, 400, cg_fontScaleCP.value, 1);
+		CG_PriorityCenterPrint(s, 1);
 	}
 
 	// check for double client messages
@@ -2000,10 +2000,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 		}
 		break;
 	case EV_BODY_DP:
-		if (&cg_entities[es->otherEntityNum2])
-		{
-			Com_Memset(&cg_entities[es->otherEntityNum2].pe, 0, sizeof(playerEntity_t));
-		}
+		Com_Memset(&cg_entities[es->otherEntityNum2].pe, 0, sizeof(playerEntity_t));
 		break;
 	case EV_FALL_NDIE:
 	case EV_FALL_DMG_10:

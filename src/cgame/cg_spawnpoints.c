@@ -240,11 +240,11 @@ qboolean CG_SpawnpointsCheckExecKey(int key, qboolean doaction)
 
 			if (i == 0)
 			{
-				CG_PriorityCenterPrint(CG_TranslateString("Your spawn point will be auto-picked."), 400, cg_fontScaleCP.value, -1);
+				CG_PriorityCenterPrint(CG_TranslateString("Your spawn point will be auto-picked."), -1);
 			}
 			else
 			{
-				CG_PriorityCenterPrint(va(CG_TranslateString("You will spawn at %s."), cg.spawnPoints[i]), 400, cg_fontScaleCP.value, -1);
+				CG_PriorityCenterPrint(va(CG_TranslateString("You will spawn at %s."), cg.spawnPoints[i]), -1);
 			}
 		}
 

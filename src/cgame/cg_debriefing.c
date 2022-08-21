@@ -1013,6 +1013,7 @@ qboolean CG_MapVoteList_KeyDown(panel_button_t *button, int key)
 		{
 			return qfalse;
 		}
+
 		if (pos != cgs.dbSelectedMap)
 		{
 			fileHandle_t f;
@@ -1036,84 +1037,51 @@ qboolean CG_MapVoteList_KeyDown(panel_button_t *button, int key)
 			Q_strncpyz(descriptionScroll.text, cgs.dbMapDescription[pos], sizeof(descriptionScroll.text));
 			descriptionScroll.length = strlen(descriptionScroll.text);
 		}
+		else if (!(cg.snap->ps.eFlags & EF_VOTED))
+		{
+			if (!cgs.dbMapMultiVote)
+			{
+				if (cgs.dbMapVotedFor[0] == cgs.dbSelectedMap)
+				{
+					cgs.dbMapVotedFor[0] = -1;
+				}
+				else if (cgs.dbMapVotedFor[0] == -1)
+				{
+					cgs.dbMapVotedFor[0] = cgs.dbSelectedMap;
+				}
+			}
+			else
+			{
+				int i;
+				int emptyIndex = -1;
+
+				for (i = 0; i < 3; i++)
+				{
+					if (cgs.dbMapVotedFor[i] == -1 && emptyIndex == -1)
+					{
+						emptyIndex = i;
+						continue;
+					}
+
+					if (cgs.dbMapVotedFor[i] == cgs.dbSelectedMap)
+					{
+						cgs.dbMapVotedFor[i] = -1;
+						return qtrue;
+					}
+				}
+
+				if (emptyIndex != -1)
+				{
+					cgs.dbMapVotedFor[emptyIndex] = cgs.dbSelectedMap;
+				}
+			}
+		}
 		return qtrue;
 	}
 	return qfalse;
 }
 
-/**
- * @brief CG_MapVote_VoteButton_KeyDown
- * @param button - unused
- * @param[in] key
- * @return
- */
-qboolean CG_MapVote_VoteButton_KeyDown(panel_button_t *button, int key)
-{
-	if (key == K_MOUSE1)
-	{
-		if (!cg.snap)
-		{
-			return qfalse;
-		}
-
-		if (cgs.dbMapMultiVote)
-		{
-			return qfalse;
-		}
-
-		if (cgs.dbSelectedMap != -1)
-		{
-			cgs.dbMapVotedFor[0] = cgs.dbSelectedMap;
-			return qtrue;
-		}
-	}
-
-	return qfalse;
-}
-
 vec4_t clrTxtBck = { 0.6f, 0.6f, 0.6f, 1.0f };
-
-/**
- * @brief CG_MapVote_MultiVoteButton_Draw
- * @param[in] button
- */
-void CG_MapVote_MultiVoteButton_Draw(panel_button_t *button)
-{
-	if (!cg.snap)
-	{
-		return;
-	}
-
-	if (!cgs.dbMapMultiVote)
-	{
-		return;
-	}
-
-	if (cgs.dbMapVotedFor[button->data[7] - 1] != -1)
-	{
-		CG_Text_Paint_Ext(button->rect.x + button->rect.w + 10,
-		                  button->rect.y + (3 * (button->rect.h / 4)),
-		                  .20f, .20f, clrTxtBck,
-		                  cgs.dbMapDispName[cgs.dbMapVotedFor[button->data[7] - 1]],
-		                  0, 0, 0, &cgs.media.limboFont2);
-	}
-
-	if (!(cg.snap->ps.eFlags & EF_VOTED))
-	{
-		const char *str;
-
-		if (cgs.dbMapVotedFor[button->data[7] - 1] != -1)
-		{
-			str = va("^3%d: ^7RE-VOTE", 4 - button->data[7]);
-		}
-		else
-		{
-			str = va("^3%d: ^7VOTE", 4 - button->data[7]);
-		}
-
-		CG_PanelButtonsRender_Button_Ext(&button->rect, str);
-	}
-}
 
 /**
  * @brief CG_MapVoteList_Draw
@@ -1143,9 +1111,22 @@ void CG_MapVoteList_Draw(panel_button_t *button)
 
 	for (i = 0; i + cgs.dbMapVoteListOffset < cgs.dbNumMaps && i < 16; i++)
 	{
+		int    j       = 0;
+		vec4_t *colour = &button->font->colour;
+
 		if (strlen(cgs.dbMaps[i + cgs.dbMapVoteListOffset]) < 1)
 		{
 			break;
+		}
+
+		// add background color to identify voted map by self
+		for (j = 0; j < 3; j++)
+		{
+			if (cgs.dbMapVotedFor[j] == i + cgs.dbMapVoteListOffset)
+			{
+				static const vec4_t clr = { 1.f, 1.f, 0.f, 0.1f };
+				CG_FillRect(button->rect.x, y - 10, 245, 12, clr);
+			}
 		}
 
 		if (cgs.dbSelectedMap == i + cgs.dbMapVoteListOffset)
@@ -1194,8 +1175,6 @@ void CG_MapVoteList_Draw(panel_button_t *button)
 
 		if (cg.snap->ps.eFlags & EF_VOTED)
 		{
-			int j = 0;
-
 			vec4_t *colour = &button->font->colour;
 
 			// add gradient color to identify three most voted maps
@@ -1294,6 +1273,9 @@ qboolean CG_MapVote_VoteSend_KeyDown(panel_button_t *button, int key)
  */
 void CG_MapVote_VoteSend_Draw(panel_button_t *button)
 {
+	char *text;
+	int  textWidth;
+
 	if (!cg.snap)
 	{
 		return;
@@ -1301,118 +1283,53 @@ void CG_MapVote_VoteSend_Draw(panel_button_t *button)
 
 	if (!(cg.snap->ps.eFlags & EF_VOTED))
 	{
+		int usedVotes = 0;
+		int maxVotes;
+
 		if (!cgs.dbMapMultiVote)
 		{
-			if (cgs.dbMapVotedFor[0] == -1)
+			maxVotes = 1;
+
+			if (cgs.dbMapVotedFor[0] != -1)
 			{
-				return;
+				CG_PanelButtonsRender_Button_Ext(&button->rect, button->text);
+				usedVotes = 1;
 			}
 		}
 		else
 		{
 			int i;
 
+			maxVotes = 3;
+
 			for (i = 0; i < 3; i++)
 			{
 				if (cgs.dbMapVotedFor[i] != -1)
 				{
-					break;
+					usedVotes++;
 				}
+			}
 
-				if (i == 2)
-				{
-					return;
-				}
+			if (usedVotes)
+			{
+				CG_PanelButtonsRender_Button_Ext(&button->rect, button->text);
 			}
 		}
 
-		CG_PanelButtonsRender_Button_Ext(&button->rect, button->text);
+		text = va("^3%i/%i maps selected", usedVotes, maxVotes);
 	}
 	else
 	{
-		CG_Text_Paint_Ext(button->rect.x + ((button->rect.w / 2) - (5 * 8)),
-		                  button->rect.y + (3 * (button->rect.h / 4)),
-		                  .20f, .20f, clrTxtBck,
-		                  "^2VOTE DONE!",
-		                  0, 0, 0, &cgs.media.limboFont2);
-	}
-}
-
-/**
- * @brief CG_MapVote_VoteButton_Draw
- * @param[in] button
- */
-void CG_MapVote_VoteButton_Draw(panel_button_t *button)
-{
-	if (!cg.snap)
-	{
-		return;
+		text = "^2VOTE DONE!";
 	}
 
-	if (cgs.dbMapMultiVote)
-	{
-		return;
-	}
+	textWidth = CG_Text_Width_Ext(text, .20f, 0, &cgs.media.limboFont2);
 
-	if (cgs.dbMapVotedFor[0] != -1)
-	{
-		CG_Text_Paint_Ext(button->rect.x + button->rect.w + 10,
-		                  button->rect.y + (3 * (button->rect.h / 4)),
-		                  .20f, .20f, clrTxtBck,
-		                  cgs.dbMapDispName[cgs.dbMapVotedFor[0]],
-		                  0, 0, 0, &cgs.media.limboFont2);
-	}
-
-	if (!(cg.snap->ps.eFlags & EF_VOTED))
-	{
-		CG_PanelButtonsRender_Button_Ext(&button->rect, (cgs.dbMapVotedFor[0] != -1) ? "^7RE-VOTE" : "^7VOTE");
-	}
-}
-
-/**
- * @brief CG_MapVote_MultiVoteButton_KeyDown
- * @param[in] button
- * @param[in] key
- * @return
- */
-qboolean CG_MapVote_MultiVoteButton_KeyDown(panel_button_t *button, int key)
-{
-	if (key == K_MOUSE1)
-	{
-		if (!cg.snap)
-		{
-			return qfalse;
-		}
-
-		if (!cgs.dbMapMultiVote)
-		{
-			return qfalse;
-		}
-
-		if (cgs.dbSelectedMap != -1)
-		{
-			int i;
-			int arrIdx = button->data[7] - 1;
-
-			for (i = 0; i < 3; i++)
-			{
-				if (arrIdx == i)
-				{
-					continue;
-				}
-				if (cgs.dbMapVotedFor[i] == cgs.dbSelectedMap)
-				{
-					CG_Printf("^3Can't vote for the same map twice\n");
-					return qfalse;
-				}
-			}
-
-			cgs.dbMapVotedFor[arrIdx] = cgs.dbSelectedMap;
-			return qtrue;
-		}
-	}
-
-	return qfalse;
+	CG_Text_Paint_Ext(button->rect.x + (button->rect.w - textWidth) * 0.5,
+	                  button->rect.y + button->rect.h + 12,
+	                  .20f, .20f, clrTxtBck,
+	                  text,
+	                  0, 0, 0, &cgs.media.limboFont2);
 }
 
 static panel_button_t mapVoteWindow =
@@ -1469,7 +1386,7 @@ static panel_button_t mapVoteNamesList =
 {
 	NULL,
 	NULL,
-	{ DB_MAPNAME_X + 10,DB_MAPVOTE_Y,                 250, 16 * 12 },
+	{ DB_MAPNAME_X + 10,DB_MAPVOTE_Y,                 250, 16 * 15 },
 	{ 0,                0,                            0,   0, 0, 0, 0, 0},
 	&mapVoteFont,       // font
 	CG_MapVoteList_KeyDown,// keyDown
@@ -1483,7 +1400,7 @@ static panel_button_t mapVoteNamesListScroll =
 {
 	NULL,
 	NULL,
-	{ DB_MAPVOTE_X + 10 + 48,    DB_MAPVOTE_Y + 2,                      16, 16 * 12 },
+	{ DB_MAPVOTE_X + 10 + 48,    DB_MAPVOTE_Y + 2,                      16, 16 * 15 },
 	{ 3,                         0,                                     0,  0, 0, 0, 0, 0},
 	NULL,                        // font
 	CG_Debriefing_Scrollbar_KeyDown,// keyDown
@@ -1493,68 +1410,12 @@ static panel_button_t mapVoteNamesListScroll =
 	0
 };
 
-static panel_button_t mapVoteButton =
-{
-	NULL,
-	"^3VOTE",
-	{ DB_MAPNAME_X + 10,       296 - 10 + 2,             64, 16 },
-	{ 0,                       0,                        0,  0, 0, 0, 0, 0},
-	NULL,                      // font
-	CG_MapVote_VoteButton_KeyDown,// keyDown
-	NULL,                      // keyUp
-	CG_MapVote_VoteButton_Draw,
-	NULL,
-	0
-};
-
-static panel_button_t mapVoteButton1 =
-{
-	NULL,
-	"^3VOTE #1",
-	{ DB_MAPNAME_X + 10,            296 - 10 + 2,          64, 16 },
-	{ 0,                            0,                     0,  0, 0, 0, 0, 3},
-	NULL,                           // font
-	CG_MapVote_MultiVoteButton_KeyDown,// keyDown
-	NULL,                           // keyUp
-	CG_MapVote_MultiVoteButton_Draw,
-	NULL,
-	0
-};
-
-static panel_button_t mapVoteButton2 =
-{
-	NULL,
-	"^3VOTE #2",
-	{ DB_MAPNAME_X + 10,            296 + 10 + 2,          64, 16 },
-	{ 0,                            0,                     0,  0, 0, 0, 0, 2},
-	NULL,                           // font
-	CG_MapVote_MultiVoteButton_KeyDown,// keyDown
-	NULL,                           // keyUp
-	CG_MapVote_MultiVoteButton_Draw,
-	NULL,
-	0
-};
-
-static panel_button_t mapVoteButton3 =
-{
-	NULL,
-	"^3VOTE #3",
-	{ DB_MAPNAME_X + 10,            296 + 30 + 2,          64, 16 },
-	{ 0,                            0,                     0,  0, 0, 0, 0, 1},
-	NULL,                           // font
-	CG_MapVote_MultiVoteButton_KeyDown,// keyDown
-	NULL,                           // keyUp
-	CG_MapVote_MultiVoteButton_Draw,
-	NULL,
-	0
-};
-
 static panel_button_t mapVoteSend =
 {
 	NULL,
 	"^3SEND VOTE",
-	{ DB_MAPNAME_X + 10,     296 - 30 + 2,        266, 16 },
-	{ 0,                     0,                   0,   0, 0, 0, 0, 0},
+	{ DB_MAPNAME_X + 10,     DB_MAPVOTE_Y + 8 + 16 * 15,        266, 16 },
+	{ 0,                     0,                                 0,   0, 0, 0, 0, 0},
 	NULL,                    // font
 	CG_MapVote_VoteSend_KeyDown,// keyDown
 	NULL,                    // keyUp
@@ -1720,8 +1581,7 @@ static panel_button_t *mapVoteButtons[] =
 {
 	&debriefTitleWindow,     &mapVoteWindow,    &mapVoteHeadingName, &mapVoteHeadingVotes,
 	&mapVoteBorder1,         &mapVoteBorder2,   &mapVoteBorder3,
-	&mapVoteNamesListScroll, &mapVoteNamesList, &mapVoteButton,
-	&mapVoteButton1,         &mapVoteButton2,   &mapVoteButton3,     &mapVoteSend,
+	&mapVoteNamesListScroll, &mapVoteNamesList, &mapVoteSend,
 	NULL
 };
 

@@ -3034,11 +3034,13 @@ void PM_AdjustAimSpreadScale(void)
 	}
 
 #ifdef GAMEDLL
-	if(g_developer.integer & 2) {
-		if ( pm->cmd.flags & (1 << FORWARD_BIT) ) {
+	if (g_developer.integer & 2)
+	{
+		if (pm->cmd.flags & (1 << FORWARD_BIT))
+		{
 			Com_Printf("^5%i +1\n", pm->cmd.serverTime);
 		}
-		else if ( pm->cmd.flags & (1 << BACKWARD_BIT) )
+		else if (pm->cmd.flags & (1 << BACKWARD_BIT))
 		{
 			Com_Printf("^6%i -2\n", pm->cmd.serverTime);
 		}
@@ -3571,6 +3573,30 @@ static void PM_Weapon(void)
 		return;
 	}
 
+	// player is zooming or using binocular - no fire
+	// PC_FIELDOPS needs to zoom to call artillery
+	if ((pm->ps->eFlags & EF_ZOOMING) || pm->ps->weapon == WP_BINOCULARS)
+	{
+#ifdef GAMEDLL
+		if (pm->ps->stats[STAT_PLAYER_CLASS] == PC_FIELDOPS)
+		{
+			pm->ps->weaponTime += 500;
+			PM_AddEvent(EV_FIRE_WEAPON);
+		}
+#endif
+		return;
+	}
+
+	// player is underwater and weapon can't fire under water
+	if (pm->waterlevel == 3 && !(GetWeaponTableData(pm->ps->weapon)->attributes & WEAPON_ATTRIBUT_FIRE_UNDERWATER))
+	{
+		PM_AddEvent(EV_NOFIRE_UNDERWATER);      // event for underwater 'click' for nofire
+		PM_ContinueWeaponAnim(PM_IdleAnimForWeapon(pm->ps->weapon));
+		pm->ps->weaponTime  = 500;
+		pm->ps->weaponDelay = 0;                // avoid insta-fire after water exit on delayed weapon attacks
+		return;
+	}
+
 	// don't allow some weapons to fire if charge bar isn't full
 	if (GetWeaponTableData(pm->ps->weapon)->attributes & WEAPON_ATTRIBUT_CHARGE_TIME)
 	{
@@ -3625,30 +3651,6 @@ static void PM_Weapon(void)
 				}
 			}
 		}
-	}
-
-	// player is zooming or using binocular - no fire
-	// PC_FIELDOPS needs to zoom to call artillery
-	if ((pm->ps->eFlags & EF_ZOOMING) || pm->ps->weapon == WP_BINOCULARS)
-	{
-#ifdef GAMEDLL
-		if (pm->ps->stats[STAT_PLAYER_CLASS] == PC_FIELDOPS)
-		{
-			pm->ps->weaponTime += 500;
-			PM_AddEvent(EV_FIRE_WEAPON);
-		}
-#endif
-		return;
-	}
-
-	// player is underwater and weapon can't fire under water
-	if (pm->waterlevel == 3 && !(GetWeaponTableData(pm->ps->weapon)->attributes & WEAPON_ATTRIBUT_FIRE_UNDERWATER))
-	{
-		PM_AddEvent(EV_NOFIRE_UNDERWATER);      // event for underwater 'click' for nofire
-		PM_ContinueWeaponAnim(PM_IdleAnimForWeapon(pm->ps->weapon));
-		pm->ps->weaponTime  = 500;
-		pm->ps->weaponDelay = 0;                // avoid insta-fire after water exit on delayed weapon attacks
-		return;
 	}
 
 	// start the animation even if out of ammo

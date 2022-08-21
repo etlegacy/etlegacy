@@ -1597,8 +1597,8 @@ void G_IntermissionMapVote(gentity_t *ent, unsigned int dwCommand, int value)
 			}
 
 			ent->client->ps.eFlags                     |= EF_VOTED;
-			level.mapvoteinfo[mapID].numVotes          += voteRank;
-			level.mapvoteinfo[mapID].totalVotes        += voteRank;
+			level.mapvoteinfo[mapID].numVotes          += 1;
+			level.mapvoteinfo[mapID].totalVotes        += 1;
 			ent->client->sess.mapVotedFor[voteRank - 1] = mapID;
 		}
 

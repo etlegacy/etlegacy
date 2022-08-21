@@ -1235,12 +1235,7 @@ typedef struct
 
 	// centerprinting
 	int centerPrintTime;
-	int centerPrintCharHeight;
-	int centerPrintCharWidth;
-	float centerPrintFontScale;
-	int centerPrintY;
 	char centerPrint[1024];
-	int centerPrintLines;
 	int centerPrintPriority;
 
 	// fade in/out
@@ -1356,14 +1351,8 @@ typedef struct
 	// Objective info display
 	qboolean limboMenu;
 
-	int oidTeam;
 	int oidPrintTime;
-	int oidPrintCharHeight;
-	int oidPrintCharWidth;
-	float oidPrintFontScale;
-	int oidPrintY;
 	char oidPrint[1024];
-	int oidPrintLines;
 
 	// for voice chat buffer
 	int voiceChatTime;
@@ -1492,6 +1481,7 @@ typedef struct
 	qboolean editingSpeakers;
 	qboolean editingLocations;
 	qboolean editingCameras;
+	qboolean editingHud;
 
 	qboolean serverRespawning;
 
@@ -2635,9 +2625,6 @@ extern vmCvar_t cg_shadows;
 extern vmCvar_t cg_gibs;
 extern vmCvar_t cg_draw2D;
 extern vmCvar_t cg_drawFPS;
-extern vmCvar_t cg_drawPing;
-extern vmCvar_t cg_lagometer;
-extern vmCvar_t cg_drawSnapshot;
 extern vmCvar_t cg_drawCrosshair;
 extern vmCvar_t cg_drawCrosshairInfo;
 extern vmCvar_t cg_drawCrosshairNames;
@@ -2655,7 +2642,6 @@ extern vmCvar_t cg_animSpeed;
 extern vmCvar_t cg_debugAnim;
 extern vmCvar_t cg_debugPosition;
 extern vmCvar_t cg_debugEvents;
-extern vmCvar_t cg_drawSpreadScale;
 extern vmCvar_t cg_railTrailTime;
 extern vmCvar_t cg_errorDecay;
 extern vmCvar_t cg_nopredict;
@@ -2726,11 +2712,8 @@ extern vmCvar_t cg_bluelimbotime;
 
 extern vmCvar_t cg_movespeed;
 
-extern vmCvar_t cg_drawCompass;
 extern vmCvar_t cg_drawNotifyText;
 extern vmCvar_t cg_quickMessageAlt;
-
-extern vmCvar_t cg_descriptiveText;
 
 extern vmCvar_t cg_antilag;
 
@@ -2794,11 +2777,7 @@ extern vmCvar_t cg_rconPassword;
 extern vmCvar_t cg_refereePassword;
 extern vmCvar_t cg_atmosphericEffects;
 
-extern vmCvar_t cg_drawRoundTimer;
-
 extern vmCvar_t cg_debugSkills;
-extern vmCvar_t cg_drawFireteamOverlay;
-extern vmCvar_t cg_drawSmallPopupIcons;
 
 // some optimization cvars
 extern vmCvar_t cg_instanttapout;
@@ -2822,15 +2801,12 @@ extern vmCvar_t cg_spawnTimer_set;
 extern vmCvar_t cg_countryflags; ///< GeoIP
 
 extern vmCvar_t cg_altHud;
-extern vmCvar_t cg_altHudFlags;
 extern vmCvar_t cg_tracers;
 extern vmCvar_t cg_fireteamLatchedClass;
 extern vmCvar_t cg_fireteamLocationAlign;
 extern vmCvar_t cg_fireteamNameMaxChars;
 extern vmCvar_t cg_fireteamNameAlign;
 extern vmCvar_t cg_fireteamSprites;
-extern vmCvar_t cg_fireteamAlpha;
-extern vmCvar_t cg_fireteamBgAlpha;
 
 extern vmCvar_t cg_simpleItems;
 extern vmCvar_t cg_simpleItemsScale;
@@ -2851,12 +2827,8 @@ extern vmCvar_t cg_numPopups;
 extern vmCvar_t cg_popupFilter;
 extern vmCvar_t cg_popupBigFilter;
 extern vmCvar_t cg_graphicObituaries;
-extern vmCvar_t cg_popupShadow;
 
-extern vmCvar_t cg_fontScaleTP;
 extern vmCvar_t cg_fontScaleSP;
-extern vmCvar_t cg_fontScaleCP;
-extern vmCvar_t cg_fontScaleCN;
 
 // unlagged optimized prediction
 extern vmCvar_t cg_optimizePrediction;
@@ -2872,7 +2844,6 @@ extern vmCvar_t cg_scoreboard;
 
 extern vmCvar_t cg_quickchat;
 
-extern vmCvar_t cg_drawspeed;
 extern vmCvar_t cg_drawUnit;
 
 extern vmCvar_t cg_visualEffects;  ///< turn invisible (0) / visible (1) visual effect (i.e airstrike plane, debris ...)
@@ -2884,20 +2855,8 @@ extern vmCvar_t cg_shoutcastTeamNameRed;
 extern vmCvar_t cg_shoutcastTeamNameBlue;
 extern vmCvar_t cg_shoutcastDrawHealth;
 extern vmCvar_t cg_shoutcastGrenadeTrail;
-extern vmCvar_t cg_shoutcastDrawMinimap;
-
-extern vmCvar_t cg_chatX;
-extern vmCvar_t cg_chatY;
-extern vmCvar_t cg_chatScale;
-extern vmCvar_t cg_chatAlpha;
-extern vmCvar_t cg_chatBackgroundAlpha;
-extern vmCvar_t cg_chatShadow;
-extern vmCvar_t cg_chatFlags;
-extern vmCvar_t cg_chatLineWidth;
 
 extern vmCvar_t cg_activateLean;
-
-extern vmCvar_t cg_healthDynamicColor;
 
 extern vmCvar_t cg_drawBreathPuffs;
 
@@ -3005,6 +2964,10 @@ void CG_DrawPic(float x, float y, float width, float height, qhandle_t hShader);
 void CG_DrawPicST(float x, float y, float width, float height, float s0, float t0, float s1, float t1, qhandle_t hShader);
 void CG_DrawRotatedPic(float x, float y, float width, float height, qhandle_t hShader, float angle);        // NERVE - SMF
 void CG_FilledBar(float x, float y, float w, float h, float *startColor, float *endColor, const float *bgColor, float frac, int flags);
+void CG_DropdownMainBox(float x, float y, float w, float h, float scalex, float scaley, vec4_t borderColour,
+                        const char *text, qboolean focus, vec4_t fontColour, int style, fontHelper_t *font);
+float CG_DropdownBox(float x, float y, float w, float h, float scalex, float scaley, vec4_t borderColour,
+                     const char *text, qboolean focus, vec4_t fontColour, int style, fontHelper_t *font);
 
 void CG_DrawStretchPic(float x, float y, float width, float height, qhandle_t hShader);
 
@@ -3021,8 +2984,6 @@ void CG_AddOnScreenBar(float fraction, vec4_t colorStart, vec4_t colorEnd, vec4_
 
 // string word wrapper
 char *CG_WordWrapString(const char *input, int maxLineChars, char *output, int maxOutputSize);
-// format string to be draw on multiline
-int CG_FormatMultineLinePrint(char *s, int lineWidth);
 // draws multiline strings
 void CG_DrawMultilineText(float x, float y, float scalex, float scaley, vec4_t color, const char *text, int lineHeight, float adjust, int limit, int style, int align, fontHelper_t *font);
 
@@ -3042,9 +3003,9 @@ void CG_StatsDebugAddText(const char *text);
 
 void CG_AddLagometerFrameInfo(void);
 void CG_AddLagometerSnapshotInfo(snapshot_t *snap);
-void CG_CenterPrint(const char *str, int y, float fontScale);
-void CG_PriorityCenterPrint(const char *str, int y, float fontScale, int priority);
-void CG_ObjectivePrint(const char *str, float fontScale);
+void CG_CenterPrint(const char *str);
+void CG_PriorityCenterPrint(const char *str, int priority);
+void CG_ObjectivePrint(const char *str);
 void CG_DrawActive(void);
 void CG_CheckForCursorHints(void);
 void CG_DrawTeamBackground(int x, int y, int w, int h, float alpha, int team);
@@ -3071,8 +3032,6 @@ void CG_AddLineToScene(const vec3_t start, const vec3_t end, const vec4_t colour
 
 void CG_DrawRotateGizmo(const vec3_t origin, float radius, int numSegments, int activeAxis);
 void CG_DrawMoveGizmo(const vec3_t origin, float radius, int activeAxis);
-
-void CG_DrawMissileCamera(rectDef_t *rect);
 
 /**
  * @struct scrollText_s
@@ -3102,14 +3061,10 @@ void CG_Hud_Setup(void);
 void CG_DrawUpperRight(void);
 void CG_SetHud(void);
 void CG_DrawActiveHud(void);
-void CG_DrawGlobalHud(void);
-void CG_DrawDemoMessage(void);
 
 void CG_Text_PaintChar_Ext(float x, float y, float w, float h, float scalex, float scaley, float s, float t, float s2, float t2, qhandle_t hShader);
 void CG_Text_PaintChar(float x, float y, float width, float height, float scale, float s, float t, float s2, float t2, qhandle_t hShader);
 
-void CG_DrawCursorhint(rectDef_t *rect);
-void CG_DrawWeapStability(rectDef_t *rect);
 void CG_DrawWeapHeat(rectDef_t *rect, int align);
 void CG_DrawPlayerWeaponIcon(rectDef_t *rect, qboolean drawHighlighted, int align, vec4_t *refcolor);
 int CG_CalculateReinfTime(qboolean menu);
@@ -3125,7 +3080,6 @@ void CG_DrawShoutcastPlayerList(void);
 void CG_DrawShoutcastPlayerStatus(void);
 void CG_DrawShoutcastTimer(void);
 void CG_DrawShoutcastPowerups(void);
-void CG_DrawMinimap(void);
 
 void CG_ToggleShoutcasterMode(int shoutcaster);
 void CG_ShoutcastCheckKeyCatcher(int keycatcher);
@@ -3691,6 +3645,14 @@ int trap_R_GetTextureId(const char *name);
 // flush rendering buffer
 void trap_R_Finish(void);
 
+// extension interface
+extern qboolean flashWindowSupported;
+
+qboolean trap_GetValue( char *value, int valueSize, const char *key );
+void trap_SysFlashWindow( int state );
+extern int dll_com_trapGetValue;
+extern int dll_trap_SysFlashWindow;
+
 bg_playerclass_t *CG_PlayerClassForClientinfo(clientInfo_t *ci, centity_t *cent);
 
 void CG_FitTextToWidth2(char *instr, float scale, float w, int size);
@@ -3755,13 +3717,12 @@ fireteamData_t *CG_IsFireTeamLeader(int clientNum);
 
 void CG_SortClientFireteam(void);
 
-void CG_DrawFireTeamOverlay(rectDef_t *rect);
 clientInfo_t *CG_SortedFireTeamPlayerForPosition(int pos);
 qboolean CG_FireteamHasClass(int classnum, qboolean selectedonly);
 const char *CG_BuildSelectedFirteamString(void);
 
 #define Pri(x) CG_Printf("[cgnotify]%s", CG_LocalizeServerCommand(x))
-#define CPri(x) CG_CenterPrint(CG_LocalizeServerCommand(x), 400, cg_fontScaleCP.value)
+#define CPri(x) CG_CenterPrint(CG_LocalizeServerCommand(x))
 
 #ifdef FEATURE_MULTIVIEW
 // cg_multiview.c
@@ -3921,14 +3882,13 @@ void CG_CommandMap_SetHighlightText(const char *text, float x, float y);
 void CG_CommandMap_DrawHighlightText(void);
 qboolean CG_CommandCentreSpawnPointClick(void);
 
-void CG_DrawNewCompass(rectDef_t location);
 qhandle_t CG_GetCompassIcon(entityState_t *ent, qboolean drawAllVoicesChat, qboolean drawFireTeam, qboolean drawPrimaryObj, qboolean drawSecondaryObj, qboolean drawItemObj, qboolean drawDynamic, char *name);
 void CG_DrawCompassIcon(float x, float y, float w, float h, vec3_t origin, vec3_t dest, qhandle_t shader, float dstScale, float baseSize, mapScissor_t *scissor);
 
 void CG_TransformToCommandMapCoord(float *coord_x, float *coord_y);
 
 void CG_DrawExpandedAutoMap(void);
-void CG_DrawAutoMap(float basex, float basey, float basew, float baseh);
+void CG_DrawAutoMap(float basex, float basey, float basew, float baseh, qboolean squareCompass);
 
 #define LIMBO_3D_X  287 //% 280
 #define LIMBO_3D_Y  382
@@ -3948,8 +3908,6 @@ void CG_InitPMGraphics(void);
 void CG_UpdatePMLists(void);
 void CG_AddPMItem(popupMessageType_t type, const char *message, const char *message2, qhandle_t shader, qhandle_t weaponShader, int scaleShader, vec3_t color);
 void CG_AddPMItemBig(popupMessageBigType_t type, const char *message, qhandle_t shader);
-void CG_DrawPMItems(rectDef_t rect, int style);
-void CG_DrawPMItemsBig(int style);
 const char *CG_GetPMItemText(centity_t *cent);
 void CG_PlayPMItemSound(centity_t *cent);
 qhandle_t CG_GetPMItemIcon(centity_t *cent);
@@ -4115,14 +4073,23 @@ extern qboolean resetmaxspeed; // CG_DrawSpeed
 
 /* HUD exports */
 
+#define HUD_COMPONENTS_NUM 46
+
 typedef struct hudComponent_s
 {
 	rectDef_t location;
 	int visible;
 	int style;
 	float scale;
-	vec4_t color;
+	vec4_t colorText;
+	int showBackGround;
+	vec4_t colorBackground;
+	int showBorder;
+	vec4_t colorBorder;
+	int styleText;
+	int alignText;
 	int offset;
+	void (*draw)(struct hudComponent_s *comp);
 } hudComponent_t;
 
 typedef struct hudStructure_s
@@ -4137,7 +4104,7 @@ typedef struct hudStructure_s
 	hudComponent_t xptext;
 	hudComponent_t ranktext;
 	hudComponent_t statsdisplay;
-	hudComponent_t weaponicon;
+	hudComponent_t weaponicon;      // 10
 	hudComponent_t weaponammo;
 	hudComponent_t fireteam;
 	hudComponent_t popupmessages;
@@ -4149,7 +4116,7 @@ typedef struct hudStructure_s
 	hudComponent_t weaponstability;
 	hudComponent_t livesleft;
 
-	hudComponent_t roundtimer;
+	hudComponent_t roundtimer;      // 20
 	hudComponent_t reinforcement;
 	hudComponent_t spawntimer;
 	hudComponent_t localtime;
@@ -4162,16 +4129,64 @@ typedef struct hudStructure_s
 
 	hudComponent_t missilecamera;
 
-	hudComponent_t sprinttext;
+	hudComponent_t sprinttext;      // 30
 	hudComponent_t breathtext;
-	hudComponent_t weaponchargetext; // 32
+	hudComponent_t weaponchargetext;
+	hudComponent_t fps;
+	hudComponent_t snapshot;
+	hudComponent_t ping;
+	hudComponent_t speed;
+	hudComponent_t lagometer;
+	hudComponent_t disconnect;
+	hudComponent_t chat;
+	hudComponent_t spectatorstatus;       // 40
+	hudComponent_t pmitemsbig;
+	hudComponent_t warmuptitle;
+	hudComponent_t warmuptext;
+	hudComponent_t objectivetext;
+	hudComponent_t centerprint;
+	hudComponent_t banner;
 
-	hudComponent_t *components[32];
+	hudComponent_t *components[HUD_COMPONENTS_NUM];
 } hudStucture_t;
 
 hudStucture_t *CG_GetActiveHUD();
 
-qboolean trap_GetValue(char *value, int valueSize, const char *key);
-extern int dll_com_trapGetValue;
+void CG_DrawNewCompass(hudComponent_t *comp);
+void CG_DrawFireTeamOverlay(hudComponent_t *comp);
+void CG_DrawPMItems(hudComponent_t *comp);
+void CG_DrawVote(hudComponent_t *comp);
+void CG_DrawSpectatorMessage(hudComponent_t *comp);
+void CG_DrawLimboMessage(hudComponent_t *comp);
+void CG_DrawFollow(hudComponent_t *comp);
+void CG_DrawMissileCamera(hudComponent_t *comp);
+void CG_DrawTeamInfo(hudComponent_t *comp);
+void CG_DrawSpectator(hudComponent_t *comp);
+void CG_DrawPMItemsBig(hudComponent_t *comp);
+void CG_DrawWarmupTitle(hudComponent_t *comp);
+void CG_DrawWarmupText(hudComponent_t *comp);
+void CG_DrawObjectiveInfo(hudComponent_t *comp);
+void CG_DrawCenterString(hudComponent_t *comp);
+void CG_DrawBannerPrint(hudComponent_t *comp);
+void CG_DrawWeapStability(hudComponent_t *comp);
+void CG_DrawCursorhint(hudComponent_t *comp);
+
+void CG_DrawCompText(hudComponent_t *comp, const char *str, vec4_t color, int fontStyle, fontHelper_t *font);
+void CG_DrawCompMultilineText(hudComponent_t *comp, const char *str, vec4_t color, int align, int fontStyle, fontHelper_t *font);
+
+void CG_HudEditorSetup(void);
+void CG_DrawHudEditor(void);
+void CG_HudEditor_KeyHandling(int key, qboolean down);
+void CG_HudEditorMouseMove_Handling(int x, int y);
+
+typedef struct
+{
+	const char *cmd;
+	const char *info;
+} helpType_t;
+
+void CG_DrawHelpWindow(float x, float y, int *status, const char *title, const helpType_t *help, unsigned int cmdNumber,
+                       const vec4_t bgColor, const vec4_t borderColor, const vec4_t bgColorTitle, const vec4_t borderColorTitle,
+                       panel_button_text_t *fontHeader, panel_button_text_t *fontText);
 
 #endif // #ifndef INCLUDE_CG_LOCAL_H

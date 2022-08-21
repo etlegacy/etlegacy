@@ -28,57 +28,15 @@ menuDef {
 // Window //
 	WINDOW( _("VIEW: ADVANCED"), 94 )
 
-// Popup //
-#define POPUP_Y 32
-	SUBWINDOW( 6, POPUP_Y, (SUBWINDOW_WIDTH_L), 66, _("POPUPS AND BANNER") )
-	CVARFLOATLABEL( 8, POPUP_Y+16, (SUBWINDOW_WIDTH_L)-6, 10, "cg_popupStayTime", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-4), 8 )
-	SLIDER( 8, POPUP_Y+16, (SUBWINDOW_WIDTH_L)-4, 10, _("Popup Stay Time:"), .2, 8, "cg_popupStayTime" 2500 0 6000, _("Set the time a pop-up stays visible") )
-	CVARFLOATLABEL( 8, POPUP_Y+28, (SUBWINDOW_WIDTH_L)-6, 10, "cg_popupFadeTime", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-4), 8 )
-	SLIDER( 8, POPUP_Y+28, (SUBWINDOW_WIDTH_L)-4, 10, _("Popup Fade Time:"), .2, 8, "cg_popupFadeTime" 2500 0 6000, _("Set the time a pop-up fades away") )
-	YESNO( 8, POPUP_Y+40, (SUBWINDOW_WIDTH_L)-4, 10, _("Popup Shadow:"), .2, 8, "cg_popupShadow", _("Draw shadow on popups") )
-	CVARFLOATLABEL( 8, POPUP_Y+52, (SUBWINDOW_WIDTH_L)-6, 10, "cg_bannerTime", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-4), 8 )
-	SLIDER( 8, POPUP_Y+52, (SUBWINDOW_WIDTH_L)-4, 10, _("Banner Time:"), .2, 8, "cg_bannerTime" 2500 0 10000, _("Set the time a banner stays visible") )
-
 // Shoutcast //
-#define SHOUTCAST_Y 104
-	SUBWINDOW( 6, SHOUTCAST_Y, (SUBWINDOW_WIDTH_L), 100, _("SHOUTCAST") )
-	MULTI( 8, SHOUTCAST_Y+16, (SUBWINDOW_WIDTH_L)-4, 10, _("Show minimap:"), .2, 8, "cg_shoutcastDrawMinimap", cvarFloatList { "Off" 0 "On" 1 }, _("Display minimap") )
-	MULTI( 8, SHOUTCAST_Y+28, (SUBWINDOW_WIDTH_L)-4, 10, _("Show player lists:"), .2, 8, "cg_shoutcastDrawPlayers", cvarFloatList { "Off" 0 "On" 1 }, _("Display player lists") )
-	MULTI( 8, SHOUTCAST_Y+40, (SUBWINDOW_WIDTH_L)-4, 10, _("Show grenade trail:"), .2, 8, "cg_shoutcastGrenadeTrail", cvarFloatList { "Off" 0 "On" 1 }, _("Display red trail for grenades") )
-	MULTI( 8, SHOUTCAST_Y+52, (SUBWINDOW_WIDTH_L)-4, 10, _("Show player health:"), .2, 8, "cg_shoutcastDrawHealth", cvarFloatList { "Off" 0 "As text" 1 "As health bar" 2 }, _("Display player health above them") )
-	MULTI( 8, SHOUTCAST_Y+64, (SUBWINDOW_WIDTH_L)-4, 10, _("Show team names:"), .2, 8, "cg_shoutcastDrawTeamNames", cvarFloatList { "Off" 0 "On" 1 }, _("Display team names") )
-	EDITFIELD( 8, SHOUTCAST_Y+76, (SUBWINDOW_WIDTH_L)-4, 10, _("Axis team name:"), .2, 8, "cg_shoutcastTeamNameRed", 64, 18, _("Set axis team name (Axis if empty)") )
-	EDITFIELD( 8, SHOUTCAST_Y+88, (SUBWINDOW_WIDTH_L)-4, 10, _("Allies team name:"), .2, 8, "cg_shoutcastTeamNameBlue", 64, 18, _("Set allies team name (Allies if empty)") )
-
-// Fonts //
-#define FONTS_Y 210
-	SUBWINDOW( 6, FONTS_Y, (SUBWINDOW_WIDTH_L), 78, _("FONTS") )
-	MULTIACTION( 8, FONTS_Y+16, (SUBWINDOW_WIDTH_L)-4, 10, _("Fonts Size:"), .2, 8, "cg_fontScale", cvarFloatList { "Tiny" 2 "Small" 1 "Normal" 0 }, uiScript SetFontScale, _("Set the size of the in-game fonts") )
-	CVARFLOATLABEL( 8, FONTS_Y+28, (SUBWINDOW_WIDTH_L)-6, 10, "cg_fontScaleTP", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-4), 8 )
-	SLIDER( 8, FONTS_Y+28, (SUBWINDOW_WIDTH_L)-4, 10, _("Top Print:"), .2, 8, "cg_fontScaleTP" 0.15 0 0.5, _("Set font size for Warmup message and Spectator label") )
-	CVARFLOATLABEL( 8, FONTS_Y+40, (SUBWINDOW_WIDTH_L)-6, 10, "cg_fontScaleSP", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-4), 8 )
-	SLIDER( 8, FONTS_Y+40, (SUBWINDOW_WIDTH_L)-4, 10, _("Side Print:"), .2, 8, "cg_fontScaleSP" 0.15 0 0.5, _("Set font size for Limbo/Fireteam/Vote/Obituaries/Skill upgrade messages") )
-	CVARFLOATLABEL( 8, FONTS_Y+52, (SUBWINDOW_WIDTH_L)-6, 10, "cg_fontScaleCP", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-4), 8 )
-	SLIDER( 8, FONTS_Y+52, (SUBWINDOW_WIDTH_L)-4, 10, _("Center Print:"), .2, 8, "cg_fontScaleCP" 0.15 0 0.5, _("Set font size for CenterPrint/Objective Info/Skill reward messages") )
-	CVARFLOATLABEL( 8, FONTS_Y+64, (SUBWINDOW_WIDTH_L)-6, 10, "cg_fontScaleCN", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-4), 8 )
-	SLIDER( 8, FONTS_Y+64, (SUBWINDOW_WIDTH_L)-4, 10, _("Crosshair Name:"), .2, 8, "cg_fontScaleCN" 0.15 0 0.5, _("Set font size for Crosshair Name label") )
-
-// Chat //
-#define CHAT_Y 294
-	SUBWINDOW( 6, CHAT_Y, (SUBWINDOW_WIDTH_L), 112, _("CHAT") )
-	CVARFLOATLABEL( 8, CHAT_Y+16, (SUBWINDOW_WIDTH_L)-4, 10, "cg_chatX", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-6), 8 )
-	SLIDER( 8, CHAT_Y+16, (SUBWINDOW_WIDTH_L)-4, 10, _("Chat X:"), .2, 8, "cg_chatX" 160 0 640, _("Set chat X position") )
-	CVARFLOATLABEL( 8, CHAT_Y+28, (SUBWINDOW_WIDTH_L)-4, 10, "cg_chatY", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-6), 8 )
-	SLIDER( 8, CHAT_Y+28, (SUBWINDOW_WIDTH_L)-4, 10, _("Chat Y:"), .2, 8, "cg_chatY" 478 0 480, _("Set chat Y position") )
-	CVARFLOATLABEL( 8, CHAT_Y+40, (SUBWINDOW_WIDTH_L)-4, 10, "cg_chatScale", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-6), 8 )
-	SLIDER( 8, CHAT_Y+40, (SUBWINDOW_WIDTH_L)-4, 10, _("Chat Scale:"), .2, 8, "cg_chatScale" 1.0 0.5 2.0, _("Set chat scale") )
-	CVARFLOATLABEL( 8, CHAT_Y+52, (SUBWINDOW_WIDTH_L)-4, 10, "cg_chatAlpha", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-6), 8 )
-	SLIDER( 8, CHAT_Y+52, (SUBWINDOW_WIDTH_L)-4, 10, _("Chat Alpha:"), .2, 8, "cg_chatAlpha" 1.0 0.0 1.0, _("Set chat opacity") )
-	CVARFLOATLABEL( 8, CHAT_Y+64, (SUBWINDOW_WIDTH_L)-4, 10, "cg_chatBackgroundAlpha", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-6), 8 )
-	SLIDER( 8, CHAT_Y+64, (SUBWINDOW_WIDTH_L)-4, 10, _("Chat Background Alpha:"), .2, 8, "cg_chatBackgroundAlpha" 0.66 0.0 1.0, _("Set chat background opacity") )
-	YESNO( 8, CHAT_Y+76, (SUBWINDOW_WIDTH_L)-4, 10, _("Chat Shadow:"), .2, 8, "cg_chatShadow", _("Draw shadow on chat") )
-	YESNO( 8, CHAT_Y+88, (SUBWINDOW_WIDTH_L)-4, 10, _("Chat Flags:"), .2, 8, "cg_chatFlags", _("Draw team flags on chat") )
-	MULTI( 8, CHAT_Y+100, (SUBWINDOW_WIDTH_L)-4, 10, _("Chat Line Width:"), .2, 8, "cg_chatLineWidth", cvarFloatList { "10 characters" 10 "25 characters" 25 "40 characters" 40 "55 characters" 55 "70 characters" 70 }, _("Set chat width before a line break (includes player name)") )
+#define SHOUTCAST_Y 32
+	SUBWINDOW( 6, SHOUTCAST_Y, (SUBWINDOW_WIDTH_L), 88, _("SHOUTCAST") )
+	MULTI( 8, SHOUTCAST_Y+16, (SUBWINDOW_WIDTH_L)-4, 10, _("Show player lists:"), .2, 8, "cg_shoutcastDrawPlayers", cvarFloatList { "Off" 0 "On" 1 }, _("Display player lists") )
+	MULTI( 8, SHOUTCAST_Y+28, (SUBWINDOW_WIDTH_L)-4, 10, _("Show grenade trail:"), .2, 8, "cg_shoutcastGrenadeTrail", cvarFloatList { "Off" 0 "On" 1 }, _("Display red trail for grenades") )
+	MULTI( 8, SHOUTCAST_Y+40, (SUBWINDOW_WIDTH_L)-4, 10, _("Show player health:"), .2, 8, "cg_shoutcastDrawHealth", cvarFloatList { "Off" 0 "As text" 1 "As health bar" 2 }, _("Display player health above them") )
+	MULTI( 8, SHOUTCAST_Y+52, (SUBWINDOW_WIDTH_L)-4, 10, _("Show team names:"), .2, 8, "cg_shoutcastDrawTeamNames", cvarFloatList { "Off" 0 "On" 1 }, _("Display team names") )
+	EDITFIELD( 8, SHOUTCAST_Y+64, (SUBWINDOW_WIDTH_L)-4, 10, _("Axis team name:"), .2, 8, "cg_shoutcastTeamNameRed", 64, 18, _("Set axis team name (Axis if empty)") )
+	EDITFIELD( 8, SHOUTCAST_Y+76, (SUBWINDOW_WIDTH_L)-4, 10, _("Allies team name:"), .2, 8, "cg_shoutcastTeamNameBlue", 64, 18, _("Set allies team name (Allies if empty)") )
 
 // Buttons //
 	BUTTON( 6, WINDOW_HEIGHT-24, WINDOW_WIDTH-12, 18, _("BACK"), .3, 14, close options_customise_hud_advanced ; open options_customise_hud )

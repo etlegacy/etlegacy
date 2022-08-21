@@ -361,7 +361,6 @@ static void CG_ParseWarmup(void)
 {
 	const char *info;
 	int        warmup;
-	char       value[MAX_CVAR_VALUE_STRING];
 
 	info   = CG_ConfigString(CS_WARMUP);
 	warmup = Q_atoi(info);
@@ -374,10 +373,9 @@ static void CG_ParseWarmup(void)
 	{
 		if (cg.warmupCount >= 0)
 		{
-			trap_Cvar_VariableStringBuffer("//trap_GetValue", value, sizeof(value));
-			if (value[0])
+			if (flashWindowSupported)
 			{
-				trap_GetValue(value, sizeof(value), "flash");
+				trap_SysFlashWindow(2);
 			}
 			Pri("^3All players ready!^7\nMatch starting...\n");
 			CPri("^3All players ready!^7\nMatch starting...");
@@ -1130,11 +1128,12 @@ static void CG_ConfigStringModified(void)
  */
 static void CG_AddToTeamChat(const char *str, int clientnum) // FIXME: add disguise?
 {
-	int  len;
-	char *p, *ls;
-	char lastcolor;
-	int  chatHeight;
-	int  chatWidth;
+	int          len;
+	char         *p, *ls;
+	char         lastcolor;
+	int          chatHeight;
+	int          chatWidth;
+	fontHelper_t *font = &cgs.media.limboFont2;
 
 	// -1 is sent when console is chatting
 	if (clientnum < -1 || clientnum >= MAX_CLIENTS) // FIXME: never return for console chat?
@@ -1159,7 +1158,8 @@ static void CG_AddToTeamChat(const char *str, int clientnum) // FIXME: add disgu
 	}
 
 	len       = 0;
-	chatWidth = (cgs.gamestate == GS_INTERMISSION) ? TEAMCHAT_WIDTH + 30 : Com_Clamp(10, TEAMCHAT_WIDTH, cg_chatLineWidth.integer);
+	chatWidth = (cgs.gamestate == GS_INTERMISSION) ? TEAMCHAT_WIDTH + 30
+	                                               : (CG_GetActiveHUD()->chat.location.w - (!CG_GetActiveHUD()->chat.style ? (16.f * CG_GetActiveHUD()->chat.scale * 5.f) : 0)) / ((float)Q_UTF8_GetGlyph(font, "A")->xSkip * CG_GetActiveHUD()->chat.scale * Q_UTF8_GlyphScale(font));
 
 	p  = cgs.teamChatMsgs[cgs.teamChatPos % chatHeight];
 	*p = 0;
@@ -3127,7 +3127,7 @@ static void CG_ServerCommand(void)
 			{
 				CG_Printf("[cgnotify]*** ^3INFO: ^5%s\n", CG_LocalizeServerCommand(CG_Argv(1)));
 			}
-			CG_PriorityCenterPrint(s, 400, cg_fontScaleCP.value, Q_atoi(CG_Argv(2)));
+			CG_PriorityCenterPrint(s, Q_atoi(CG_Argv(2)));
 		}
 		else
 		{
@@ -3337,9 +3337,6 @@ static void CG_ServerCommand(void)
 	}
 	// server sends this command when it's about to kill the current server, before the client can reconnect
 	case SPAWNSERVER_HASH:                     // "spawnserver"
-		// print message informing player the server is restarting with a new map
-		CG_PriorityCenterPrint(va("%s", CG_TranslateString("^3Server Restarting")), 100, cg_fontScaleTP.value, 999999);
-
 		// hack here
 		cg.serverRespawning = qtrue;
 
@@ -3550,9 +3547,15 @@ static void CG_ServerCommand(void)
 		trap_S_FadeAllSound(1.0f, 1000, qfalse);      // fade sound up
 		return;
 	case BP_HASH: // "bp"
-		CG_WordWrapString(CG_Argv(1), Com_Clamp(50, 80, (int)(cgs.screenXScale * 40.f)), cg.bannerPrint, sizeof(cg.bannerPrint));
+	{
+		int maxLineChars;
+
+		maxLineChars = CG_GetActiveHUD()->banner.location.w / CG_Text_Width_Ext("A", CG_GetActiveHUD()->banner.scale, 0, &cgs.media.limboFont2);
+
+		CG_WordWrapString(CG_Argv(1), maxLineChars, cg.bannerPrint, sizeof(cg.bannerPrint));
 		cg.bannerPrintTime = cg.time;
 		break;
+	}
 	default:
 		CG_Printf("Unknown client game command: %s [%lu]\n", cmd, BG_StringHashValue(cmd));
 		break;

@@ -1961,8 +1961,13 @@ static void CG_DemoRewindFixEffects(void)
 {
 	int i;
 
-	// fix player entities animations, lazy fix?
-	Com_Memset(cg_entities, 0, sizeof(cg_entities));
+	// fix player entities animations
+	Com_Memset(&cg.predictedPlayerEntity.pe, 0, sizeof(playerEntity_t));
+
+	for (i = 0; i < MAX_CLIENTS; i++)
+	{
+		Com_Memset(&cg_entities[i].pe, 0, sizeof(playerEntity_t));
+	}
 
 	// clear message buffer
 	for (i = 0; i < TEAMCHAT_HEIGHT; i++)
@@ -2333,12 +2338,6 @@ void CG_DrawActiveFrame(int serverTime, qboolean demoPlayback)
 
 		// update audio positions
 		trap_S_Respatialize(cg.snap->ps.clientNum, cg.refdef.vieworg, cg.refdef.viewaxis, inwater);
-	}
-
-	// mortar cam
-	if (CG_GetActiveHUD()->missilecamera.visible && cg.latestMissile && !cg.showGameView)
-	{
-		CG_DrawMissileCamera(&CG_GetActiveHUD()->missilecamera.location);
 	}
 
 	CG_SetLastKeyCatcher();

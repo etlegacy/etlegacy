@@ -824,11 +824,11 @@ void CG_AddOnScreenText(const char *text, vec3_t origin, qboolean fade)
 		y -= h / 2;
 
 		// save it
-		cg.specOnScreenLabels[cg.specStringCount].x     = x;
-		cg.specOnScreenLabels[cg.specStringCount].y     = y;
-		cg.specOnScreenLabels[cg.specStringCount].scale = scale;
-		cg.specOnScreenLabels[cg.specStringCount].text  = text;
-		cg.specOnScreenLabels[cg.specStringCount].noFade  = !fade;
+		cg.specOnScreenLabels[cg.specStringCount].x      = x;
+		cg.specOnScreenLabels[cg.specStringCount].y      = y;
+		cg.specOnScreenLabels[cg.specStringCount].scale  = scale;
+		cg.specOnScreenLabels[cg.specStringCount].text   = text;
+		cg.specOnScreenLabels[cg.specStringCount].noFade = !fade;
 		VectorCopy(origin, cg.specOnScreenLabels[cg.specStringCount].origin);
 		cg.specOnScreenLabels[cg.specStringCount].visible = qtrue;
 
@@ -1051,16 +1051,13 @@ static int CG_ComputeLinePosX(float x, float scalex, const char *text, int align
 
 	lineW = CG_Text_Width_Ext(text, scalex, lineL, font);
 
-	if (align == ITEM_ALIGN_CENTER)
+	switch (align)
 	{
-		return x - lineW / 2;
+	case ITEM_ALIGN_CENTER: return x - lineW * .5;
+	case ITEM_ALIGN_RIGHT: return x - lineW;
+	case ITEM_ALIGN_CENTER2: return x + lineW * .5;
+	default: return x;
 	}
-	else if (align == ITEM_ALIGN_RIGHT)
-	{
-		return x - lineW;
-	}
-
-	return x;
 }
 
 /**
@@ -1084,10 +1081,11 @@ void CG_DrawMultilineText(float x, float y, float scalex, float scaley, vec4_t c
 	glyphInfo_t *glyph;
 	const char  *s = text;
 	float       yadj;
-	int         count = 0, ofs;
+	int         count = 0;
 	int         lineX = x, lineY = y;
 	float       fontSizeX = scalex;
 	float       fontSizeY = scaley;
+	float       newAlpha;
 
 	if (!text)
 	{
@@ -1096,9 +1094,6 @@ void CG_DrawMultilineText(float x, float y, float scalex, float scaley, vec4_t c
 
 	fontSizeX *= Q_UTF8_GlyphScale(font);
 	fontSizeY *= Q_UTF8_GlyphScale(font);
-
-	trap_R_SetColor(color);
-	Vector4Copy(color, newColor);
 
 	if (limit <= 0)
 	{
@@ -1109,6 +1104,16 @@ void CG_DrawMultilineText(float x, float y, float scalex, float scaley, vec4_t c
 	{
 		lineX = CG_ComputeLinePosX(x, scalex, text, align, font);
 	}
+
+	Vector4Copy(color, newColor);
+
+	if (style == ITEM_TEXTSTYLE_BLINK || style == ITEM_TEXTSTYLE_PULSE)
+	{
+		newAlpha    = Q_fabs(sin(cg.time / (style == ITEM_TEXTSTYLE_BLINK ? BLINK_DIVISOR : PULSE_DIVISOR)));
+		newColor[3] = newAlpha;
+	}
+
+	trap_R_SetColor(newColor);
 
 	while (s && *s && count < limit)
 	{
@@ -1141,6 +1146,12 @@ void CG_DrawMultilineText(float x, float y, float scalex, float scaley, vec4_t c
 				Com_Memcpy(newColor, g_color_table[ColorIndex(*(s + 1))], sizeof(newColor));
 				newColor[3] = color[3];
 			}
+
+			if (style == ITEM_TEXTSTYLE_BLINK || style == ITEM_TEXTSTYLE_PULSE)
+			{
+				newColor[3] = newAlpha;
+			}
+
 			trap_R_SetColor(newColor);
 			s += 2;
 			continue;
@@ -1148,9 +1159,9 @@ void CG_DrawMultilineText(float x, float y, float scalex, float scaley, vec4_t c
 
 		yadj = fontSizeY * glyph->top;
 
-		if (style == ITEM_TEXTSTYLE_SHADOWED || style == ITEM_TEXTSTYLE_SHADOWEDMORE)
+		if (style == ITEM_TEXTSTYLE_SHADOWED || style == ITEM_TEXTSTYLE_SHADOWEDMORE | style == ITEM_TEXTSTYLE_OUTLINESHADOWED)
 		{
-			ofs           = style == ITEM_TEXTSTYLE_SHADOWED ? 1 : 2;
+			float ofs = style == ITEM_TEXTSTYLE_SHADOWEDMORE ? 2 : 1;
 			colorBlack[3] = newColor[3];
 			trap_R_SetColor(colorBlack);
 			CG_Text_PaintChar_Ext(lineX + (glyph->pitch * fontSizeX) + ofs, lineY - yadj + ofs, glyph->imageWidth, glyph->imageHeight, fontSizeX, fontSizeY, glyph->s, glyph->t, glyph->s2, glyph->t2, glyph->glyph);
@@ -1159,6 +1170,12 @@ void CG_DrawMultilineText(float x, float y, float scalex, float scaley, vec4_t c
 		}
 
 		CG_Text_PaintChar_Ext(lineX + (glyph->pitch * fontSizeX), lineY - yadj, glyph->imageWidth, glyph->imageHeight, fontSizeX, fontSizeY, glyph->s, glyph->t, glyph->s2, glyph->t2, glyph->glyph);
+
+		if (style == ITEM_TEXTSTYLE_OUTLINED || style == ITEM_TEXTSTYLE_OUTLINESHADOWED)
+		{
+			CG_Text_PaintChar_Ext(lineX + (glyph->pitch * fontSizeX) - 1, lineY - yadj - 1, glyph->imageWidth, glyph->imageHeight, fontSizeX, fontSizeY, glyph->s, glyph->t, glyph->s2, glyph->t2, glyph->glyph);
+		}
+
 		lineX += (glyph->xSkip * fontSizeX) + adjust;
 		s     += Q_UTF8_Width(s);
 		count++;
@@ -1168,57 +1185,321 @@ void CG_DrawMultilineText(float x, float y, float scalex, float scaley, vec4_t c
 }
 
 /**
- * @brief Format the message by turning spaces into newlines, if we've run over the linewidth
- * @param[in,out] s The message to format
- * @return The number of line needed to display the messages
+ * @brief CG_DropdownMainBox
+ * @param[in] x
+ * @param[in] y
+ * @param[in] w
+ * @param[in] h
+ * @param[in] scalex
+ * @param[in] scaley
+ * @param[in] borderColour
+ * @param[in] text
+ * @param[in] focus
+ * @param[in] font
  */
-int CG_FormatMultineLinePrint(char *s, int lineWidth)
+void CG_DropdownMainBox(float x, float y, float w, float h, float scalex, float scaley, vec4_t borderColour,
+                        const char *text, qboolean focus, vec4_t fontColour, int style, fontHelper_t *font)
 {
-	char     *lastSpace = NULL;
-	int      i, len, lastLR = 0;
-	int      lineNumber  = 1;
-	qboolean neednewline = qfalse;
+	rectDef_t rect = { x, y, w, h };
+	vec4_t    colour;
+	float     textboxW;
+	int       offsetX;
 
-	len = Q_UTF8_PrintStrlen(s);
+	textboxW = rect.w - rect.h;
+	rect.x  += textboxW;
+	rect.w   = rect.h;
 
-	for (i = 0; i < len; i++)
+	if (focus)
 	{
-		if (Q_IsColorString(s))
-		{
-			s += 2;
-		}
-
-		if ((i - lastLR) >= lineWidth)
-		{
-			neednewline = qtrue;
-		}
-
-		if (*s == ' ')
-		{
-			lastSpace = s;
-		}
-        
-        // we reach the end of the string and it doesn't fit in on line
-		if (neednewline && lastSpace)
-		{
-			*lastSpace = '\n';
-			lastSpace  = NULL;
-			lastLR     = i;
-			lineNumber++;
-			neednewline = qfalse;
-		}
-
-		// count the number of lines for centering
-		if (*s == '\n')
-		{
-			lastLR      = i;
-			lastSpace   = NULL;
-			neednewline = qfalse;
-			lineNumber++;
-		}
-
-		s += Q_UTF8_Width(s);
+		VectorCopy(colorYellow, colour);
+		colour[3] = 0.3f;
+	}
+	else
+	{
+		VectorCopy(colorWhite, colour);
+		colour[3] = 0.3f;
 	}
 
-	return lineNumber;
+	CG_FillRect(x, y, textboxW, h, colour);
+	CG_DrawRect_FixedBorder(x, y, textboxW, h, 1.0f, borderColour);
+
+	if (focus)
+	{
+		VectorCopy(colorYellow, colour);
+		colour[3] = 0.3f;
+	}
+	else if (BG_PanelButtons_GetFocusButton() == NULL && BG_CursorInRect(&((rectDef_t) { x, y, w, h })))
+	{
+		VectorCopy(colorWhite, colour);
+		colour[3] = 0.5f;
+	}
+	else
+	{
+		VectorCopy(colorWhite, colour);
+		colour[3] = 0.3f;
+	}
+
+	CG_FillRect(rect.x, rect.y, rect.w, rect.h, colour);
+	CG_DrawRect_FixedBorder(rect.x, rect.y, rect.w, rect.h, 1.0f, borderColour);
+
+	offsetX = CG_Text_Width_Ext("V", scalex, 0, font);
+
+	//VectorCopy(font->colour, colour);
+	CG_Text_Paint_Ext(rect.x + (rect.w - offsetX) / 2.0f, y + 7.0f, scalex, scaley, colour, "V", 0, 0, 0, font);
+
+	offsetX = CG_Text_Width_Ext(text, scalex, 0, font);
+
+	CG_Text_Paint_Ext(x + (textboxW - offsetX) / 2.0f, y + 7.0f, scalex, scaley, fontColour, text, 0, 0, style, font);
+}
+
+/**
+ * @brief CG_DropdownBox
+ * @param[in] x
+ * @param[in] y
+ * @param[in] w
+ * @param[in] h
+ * @param[in] scalex
+ * @param[in] scaley
+ * @param[in] borderColour
+ * @param[in] text
+ * @param[in] focus
+ * @param[in] fontColour
+ * @param[in] style
+ * @param[in] font
+ * @return Next y coordinate for positionning next box
+ */
+float CG_DropdownBox(float x, float y, float w, float h, float scalex, float scaley, vec4_t borderColour,
+                     const char *text, qboolean focus, vec4_t fontColour, int style, fontHelper_t *font)
+{
+	rectDef_t rect = { x, y, w, h };
+	vec4_t    colour;
+	float     textboxW;
+	int       offsetX;
+
+	textboxW = rect.w - rect.h;
+
+	rect.y += h;
+
+	if (BG_CursorInRect(&rect))
+	{
+		VectorScale(colorYellow, 0.3f, colour);
+		colour[3] = 1.0f;
+	}
+	else
+	{
+		VectorScale(colorWhite, 0.3f, colour);
+		colour[3] = 1.0f;
+	}
+
+	CG_FillRect(rect.x, rect.y, rect.w, rect.h, colour);
+
+	offsetX = CG_Text_Width_Ext(text, scalex, 0, font);
+
+	CG_Text_Paint_Ext(rect.x + (textboxW - offsetX) / 2.0f, rect.y + 7.0f, scalex, scaley, fontColour, text, 0, 0, style, font);
+
+	return rect.y;
+}
+
+/**
+ * @brief CG_ShowHelp_On
+ * @param[in,out] status
+ */
+void CG_ShowHelp_On(int *status)
+{
+	int milli = trap_Milliseconds();
+
+	if (*status == SHOW_SHUTDOWN && milli < cg.fadeTime)
+	{
+		cg.fadeTime = 2 * milli + STATS_FADE_TIME - cg.fadeTime;
+	}
+	else if (*status != SHOW_ON)
+	{
+		cg.fadeTime = milli + STATS_FADE_TIME;
+	}
+
+	*status = SHOW_ON;
+}
+
+/**
+ * @brief CG_ShowHelp_Off
+ * @param[in,out] status
+ */
+void CG_ShowHelp_Off(int *status)
+{
+	if (*status != SHOW_OFF)
+	{
+		int milli = trap_Milliseconds();
+
+		if (milli < cg.fadeTime)
+		{
+			cg.fadeTime = 2 * milli + STATS_FADE_TIME - cg.fadeTime;
+		}
+		else
+		{
+			cg.fadeTime = milli + STATS_FADE_TIME;
+		}
+
+		*status = SHOW_SHUTDOWN;
+	}
+}
+
+/**
+ * @brief CG_getBindKeyName
+ * @param[in] cmd
+ * @param[out] buf
+ * @param[in] len
+ * @return
+ */
+static char *CG_getBindKeyName(const char *cmd, char *buf, size_t len)
+{
+	int j;
+
+	for (j = 0; j < 256; j++)
+	{
+		trap_Key_GetBindingBuf(j, buf, len);
+		if (*buf == 0)
+		{
+			continue;
+		}
+
+		if (!Q_stricmp(buf, cmd))
+		{
+			trap_Key_KeynumToStringBuf(j, buf, MAX_STRING_TOKENS);
+			Q_strupr(buf);
+			return(buf);
+		}
+	}
+
+	Q_strncpyz(buf, va("(%s)", cmd), len);
+	return(buf);
+}
+
+/**
+ * @brief CG_DrawHelpWindow
+ * @param[in] x
+ * @param[in] y
+ * @param[in] title
+ * @param[in] help
+ * @param[in] cmdNumber
+ * @param[in] bgColor
+ * @param[in] borderColor
+ * @param[in] bgColorTitle
+ * @param[in] borderColorTitle
+ * @param[in] fontHeader
+ * @param[in] fontText
+ */
+void CG_DrawHelpWindow(float x, float y, int *status, const char *title, const helpType_t *help, unsigned int cmdNumber,
+                       const vec4_t backgroundColor, const vec4_t borderColor, const vec4_t backgroundColorTitle, const vec4_t borderColorTitle,
+                       panel_button_text_t *fontHeader, panel_button_text_t *fontText)
+{
+	unsigned int i;
+	int          len, maxlen = 0;
+	int          w, h;
+	char         format[MAX_STRING_TOKENS], buf[MAX_STRING_TOKENS];
+	char         *lines[16];
+	int          tSpacing = 9;      // Should derive from CG_Text_Height_Ext
+	vec4_t       bgColor         ;
+	vec4_t       bgColorTitle    ;
+	vec4_t       bdColor     ;
+	vec4_t       bdColorTitle;
+	vec4_t       hdrColor;
+	vec4_t       tColor;
+
+	Vector4Copy(backgroundColor, bgColor);
+	Vector4Copy(borderColor, bgColorTitle);
+	Vector4Copy(backgroundColorTitle, bdColor);
+	Vector4Copy(borderColorTitle, bdColorTitle);
+	Vector4Copy(fontHeader->colour, hdrColor);
+	Vector4Copy(fontText->colour, tColor);
+
+	float diff = cg.fadeTime - trap_Milliseconds();
+
+	// FIXME: Should compute all this stuff beforehand
+	// Compute required width
+	for (i = 0; i < cmdNumber; i++)
+	{
+		if (help[i].cmd != NULL)
+		{
+			len = (int)strlen(CG_getBindKeyName(help[i].cmd, buf, sizeof(buf)));
+			if (len > maxlen)
+			{
+				maxlen = len;
+			}
+		}
+	}
+
+	Q_strncpyz(format, va("^7%%%ds ^3%%s", maxlen), sizeof(format));
+	for (i = 0, maxlen = 0; i < cmdNumber; i++)
+	{
+		if (help[i].cmd != NULL)
+		{
+			lines[i] = va(format, CG_getBindKeyName(help[i].cmd, buf, sizeof(buf)), help[i].info);
+			len      = CG_Text_Width_Ext(lines[i], fontText->scalex, 0, fontText->font);
+			if (len > maxlen)
+			{
+				maxlen = len;
+			}
+		}
+		else
+		{
+			lines[i] = NULL;
+		}
+	}
+
+	w = maxlen + 8;
+	h = 2 + tSpacing + 2 +                                  // Header
+	    2 + 1 +
+	    tSpacing * (cmdNumber) +
+	    2;
+
+	// Fade-in effects
+	if (diff > 0.0f)
+	{
+		float scale = (diff / STATS_FADE_TIME);
+
+		if (*status == SHOW_ON)
+		{
+			scale = 1.0f - scale;
+		}
+
+		bgColor[3]      *= scale;
+		bgColorTitle[3] *= scale;
+		bdColor[3]      *= scale;
+		bdColorTitle[3] *= scale;
+		hdrColor[3]     *= scale;
+		tColor[3]       *= scale;
+
+		x -= w * (1.0f - scale);
+	}
+	else if (*status == SHOW_SHUTDOWN)
+	{
+		*status = SHOW_OFF;
+		return;
+	}
+
+	CG_FillRect(x, y, w, h, bgColor);
+	CG_DrawRect(x, y, w, h, 1, bdColor);
+
+	y += 1;
+
+	// Header
+	CG_FillRect(x + 1, y, w - 2, tSpacing + 4, bgColorTitle);
+	CG_DrawRect(x + 1, y, w - 2, tSpacing + 4, 1, bdColorTitle);
+
+	x += 4;
+	y += tSpacing;
+
+	CG_Text_Paint_Ext(x, y, fontHeader->scalex, fontHeader->scaley, hdrColor, title, 0.0f, 0, fontHeader->style, fontHeader->font);
+
+	y += 3;
+
+	// Control info
+	for (i = 0; i < cmdNumber; i++)
+	{
+		y += tSpacing;
+		if (lines[i] != NULL)
+		{
+			CG_Text_Paint_Ext(x, y, fontText->scalex, fontText->scaley, tColor, lines[i], 0.0f, 0, fontText->style, fontText->font);
+		}
+	}
 }
