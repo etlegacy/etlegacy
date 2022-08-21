@@ -2435,8 +2435,8 @@ void CG_DrawVote(hudComponent_t *comp)
 		CG_GetBindingKeyForVote(str1, str2);
 
 		str = va("%s\n%s",
-		         va(CG_TranslateString("Create a Fireteam?"), cgs.voteString),
-		         va(CG_TranslateString("Press '%s' for YES, or '%s' for NO"), cgs.voteYes, cgs.voteNo));
+		         CG_TranslateString("Create a Fireteam?"),
+		         va(CG_TranslateString("Press '%s' for YES, or '%s' for NO"), str1, str2));
 
 		CG_DrawCompMultilineText(comp, str, comp->colorText, comp->alignText, comp->styleText, &cgs.media.limboFont2);
 		return;
@@ -2447,8 +2447,8 @@ void CG_DrawVote(hudComponent_t *comp)
 		CG_GetBindingKeyForVote(str1, str2);
 
 		str = va("%s\n%s",
-		         va(CG_TranslateString("Join a Fireteam?"), cgs.voteString),
-		         va(CG_TranslateString("Press '%s' for YES, or '%s' for NO"), cgs.voteYes, cgs.voteNo));
+		         CG_TranslateString("Join a Fireteam?"),
+		         va(CG_TranslateString("Press '%s' for YES, or '%s' for NO"), str1, str2));
 
 		CG_DrawCompMultilineText(comp, str, comp->colorText, comp->alignText, comp->styleText, &cgs.media.limboFont2);
 		return;
