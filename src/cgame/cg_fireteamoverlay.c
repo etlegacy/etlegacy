@@ -385,7 +385,7 @@ void CG_DrawFireTeamOverlay(hudComponent_t *comp)
 	int            bestLocWidth           = -1;
 	int            bestWeapIconWidthScale = -1;
 	char           buffer[64];
-	float          h, heighTitle, heightText, heightTextOffset, heightIconsOffset, spacingWidth;
+	float          w, computedWidth, h, heighTitle, heightText, heightTextOffset, heightIconsOffset, spacingWidth;
 	clientInfo_t   *ci = NULL;
 	fireteamData_t *f  = NULL;
 	char           *locStr[MAX_FIRETEAM_MEMBERS];
@@ -443,8 +443,7 @@ void CG_DrawFireTeamOverlay(hudComponent_t *comp)
 			}
 
 			// cap max location length?
-			// if alignment is requested, keep a static width
-			if (cg_locationMaxChars.integer && cg_fireteamLocationAlign.integer)
+			if (cg_locationMaxChars.integer)
 			{
 				locwidth  = CG_Text_Width_Ext_Float("_", comp->scale, 0, FONT_TEXT);
 				locwidth *= Com_Clamp(0, 128, cg_locationMaxChars.integer);     // 128 is max location length
@@ -531,7 +530,21 @@ void CG_DrawFireTeamOverlay(hudComponent_t *comp)
 	heightText        = CG_Text_Height_Ext("A", comp->scale, 0, FONT_TEXT);
 	heightTextOffset  = (h + heightText) * 0.5;
 	heightIconsOffset = (h - heightText * 2) * 0.5;
-	spacingWidth      = CG_Text_Width_Ext_Float(" ", comp->scale, 0, FONT_TEXT);
+
+	spacingWidth = CG_Text_Width_Ext_Float(" ", comp->scale, 0, FONT_TEXT);
+
+	// NOTE: terrible way to do it ... but work
+	computedWidth = spacingWidth
+	                + heightText * 2 + spacingWidth                             // class icons
+	                + spacingWidth * 3 + heightText * 2 + spacingWidth          // latched class
+	                + heightText * 2 + spacingWidth                             // objective icon
+	                + spacingWidth * 2 + bestNameWidth                          // player name
+	                + bestWeapIconWidthScale * heightText * 2 + spacingWidth    // weapon icons
+	                + spacingWidth * 3 + spacingWidth                           // health points
+	                + bestLocWidth;                                             // location name
+
+	// keep the best fit for the location text
+	w = MIN(computedWidth, comp->location.w);
 
 	// fireteam alpha adjustments
 
@@ -544,15 +557,15 @@ void CG_DrawFireTeamOverlay(hudComponent_t *comp)
 
 	if (comp->showBackGround)
 	{
-		CG_FillRect(x, y, comp->location.w, h * (i + 1), comp->colorBackground);
+		CG_FillRect(x, y, w, h * (i + 1), comp->colorBackground);
 	}
 
 	if (comp->showBorder)
 	{
-		CG_DrawRect_FixedBorder(x, y, comp->location.w, h * (i + 1), 1, comp->colorBorder);
+		CG_DrawRect_FixedBorder(x, y, w, h * (i + 1), 1, comp->colorBorder);
 	}
 
-	CG_FillRect(x + 1, y + 1, comp->location.w - 2, h - 1, comp->colorBackground);
+	CG_FillRect(x + 1, y + 1, w - 2, h - 1, comp->colorBackground);
 
 	if (f->priv)
 	{
@@ -565,7 +578,7 @@ void CG_DrawFireTeamOverlay(hudComponent_t *comp)
 
 	Q_strupr(buffer);
 	heighTitle = CG_Text_Height_Ext(buffer, comp->scale, 0, FONT_HEADER);
-	CG_Text_Paint_Ext(x + 4, comp->location.y + ((heighTitle + h) / 2), comp->scale, comp->scale, comp->colorText, buffer, 0, 0, 0, FONT_HEADER);
+	CG_Text_Paint_Ext(x + 4, comp->location.y + ((heighTitle + h) * 0.5), comp->scale, comp->scale, comp->colorText, buffer, 0, 0, 0, FONT_HEADER);
 
 	lineX = (int)x;
 
@@ -588,12 +601,12 @@ void CG_DrawFireTeamOverlay(hudComponent_t *comp)
 			// first member requires thicker highlight bar
 			//if (i == 0)
 			//{
-			//	CG_FillRect(x, y, comp->location.w, h, FT_select);
+			//	CG_FillRect(x, y, w, h, FT_select);
 			//}
 			//// adjust y to account for the thicker highlight bar of first member
 			//else
 			{
-				CG_FillRect(x, y, comp->location.w, h, FT_select);
+				CG_FillRect(x, y, w, h, FT_select);
 			}
 		}
 
@@ -734,17 +747,22 @@ void CG_DrawFireTeamOverlay(hudComponent_t *comp)
 		x += spacingWidth;
 		if (cg_locations.integer & LOC_FTEAM)
 		{
-			int lim = (comp->location.w - (x - comp->location.x)) / spacingWidth;
+			float widthLocationLeft = w - (x - comp->location.x);
+			int   lim               = widthLocationLeft / spacingWidth;
 
 			if (lim > 0)
 			{
-				if (cg_fireteamLocationAlign.integer > 0) // right align
+				if (comp->alignText == ITEM_ALIGN_RIGHT) // right align
 				{
-					CG_Text_Paint_RightAligned_Ext(x + bestLocWidth, y + heightTextOffset, comp->scale, comp->scale, comp->colorText, locStr[i], 0, lim, comp->styleText, FONT_TEXT);
+					CG_Text_Paint_RightAligned_Ext(comp->location.x + w - spacingWidth, y + heightTextOffset, comp->scale, comp->scale, comp->colorText, locStr[i], 0, lim, comp->styleText, FONT_TEXT);
 				}
-				else
+				else if (comp->alignText == ITEM_ALIGN_LEFT)
 				{
 					CG_Text_Paint_Ext(x, y + heightTextOffset, comp->scale, comp->scale, comp->colorText, locStr[i], 0, lim, comp->styleText, FONT_TEXT);
+				}
+				else    // center
+				{
+					CG_Text_Paint_Centred_Ext(x + widthLocationLeft * 0.5, y + heightTextOffset, comp->scale, comp->scale, comp->colorText, locStr[i], 0, lim, comp->styleText, FONT_TEXT);
 				}
 			}
 		}

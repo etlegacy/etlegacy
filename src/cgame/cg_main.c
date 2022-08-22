@@ -317,7 +317,6 @@ vmCvar_t cg_countryflags; // GeoIP
 vmCvar_t cg_altHud;
 vmCvar_t cg_tracers;
 vmCvar_t cg_fireteamLatchedClass;
-vmCvar_t cg_fireteamLocationAlign;
 vmCvar_t cg_fireteamNameMaxChars;
 vmCvar_t cg_fireteamNameAlign;
 vmCvar_t cg_fireteamSprites;
@@ -594,7 +593,6 @@ static cvarTable_t cvarTable[] =
 	{ &cg_altHud,                  "cg_altHud",                  "0",           CVAR_ARCHIVE,                 0 }, // Hudstyles
 	{ &cg_tracers,                 "cg_tracers",                 "1",           CVAR_ARCHIVE,                 0 }, // Draw tracers
 	{ &cg_fireteamLatchedClass,    "cg_fireteamLatchedClass",    "1",           CVAR_ARCHIVE,                 0 }, // Draw fireteam members latched class
-	{ &cg_fireteamLocationAlign,   "cg_fireteamLocationAlign",   "0",           CVAR_ARCHIVE,                 0 },
 	{ &cg_fireteamNameMaxChars,    "cg_fireteamNameMaxChars",    "0",           CVAR_ARCHIVE,                 0 },
 	{ &cg_fireteamNameAlign,       "cg_fireteamNameAlign",       "0",           CVAR_ARCHIVE,                 0 },
 	{ &cg_fireteamSprites,         "cg_fireteamSprites",         "1",           CVAR_ARCHIVE,                 0 },
