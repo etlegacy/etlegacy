@@ -366,10 +366,7 @@ clientInfo_t *CG_SortedFireTeamPlayerForPosition(int pos)
 
 // Main Functions
 
-#define FT_BAR_YSPACING 2.f
-#define FT_BAR_HEIGHT   10.f
-
-#define MIN_BORDER_DISTANCE 10 // currently used for X axis only
+#define FT_SPACING 4.f
 
 /**
  * @brief Draw FireTeam overlay
@@ -385,7 +382,7 @@ void CG_DrawFireTeamOverlay(hudComponent_t *comp)
 	int            bestLocWidth           = -1;
 	int            bestWeapIconWidthScale = -1;
 	char           buffer[64];
-	float          w, computedWidth, h, heighTitle, heightText, heightTextOffset, heightIconsOffset, spacingWidth;
+	float          w, computedWidth, h, heighTitle, heightText, heightTextOffset, heightIconsOffset;
 	clientInfo_t   *ci = NULL;
 	fireteamData_t *f  = NULL;
 	char           *locStr[MAX_FIRETEAM_MEMBERS];
@@ -531,17 +528,15 @@ void CG_DrawFireTeamOverlay(hudComponent_t *comp)
 	heightTextOffset  = (h + heightText) * 0.5;
 	heightIconsOffset = (h - heightText * 2) * 0.5;
 
-	spacingWidth = CG_Text_Width_Ext_Float(" ", comp->scale, 0, FONT_TEXT);
-
 	// NOTE: terrible way to do it ... but work
-	computedWidth = spacingWidth
-	                + heightText * 2 + spacingWidth                             // class icons
-	                + spacingWidth * 3 + heightText * 2 + spacingWidth          // latched class
-	                + heightText * 2 + spacingWidth                             // objective icon
-	                + spacingWidth * 2 + bestNameWidth                          // player name
-	                + bestWeapIconWidthScale * heightText * 2 + spacingWidth    // weapon icons
-	                + spacingWidth * 3 + spacingWidth                           // health points
-	                + bestLocWidth;                                             // location name
+	computedWidth = FT_SPACING
+	                + heightText * 2 + FT_SPACING                           // class icons
+	                + FT_SPACING * 3 + heightText * 2 + FT_SPACING          // latched class
+	                + heightText * 2 + FT_SPACING                           // objective icon
+	                + FT_SPACING * 2 + bestNameWidth                        // player name
+	                + bestWeapIconWidthScale * heightText * 2 + FT_SPACING  // weapon icons
+	                + FT_SPACING * 3 + FT_SPACING                           // health points
+	                + bestLocWidth;                                         // location name
 
 	// keep the best fit for the location text
 	w = MIN(computedWidth, comp->location.w);
@@ -610,12 +605,12 @@ void CG_DrawFireTeamOverlay(hudComponent_t *comp)
 			}
 		}
 
-		x += spacingWidth;
+		x += FT_SPACING;
 
 		// draw class icon in fireteam overlay
 		trap_R_SetColor(iconColor);
 		CG_DrawPic(x, y + heightIconsOffset, heightText * 2, heightText * 2, cgs.media.skillPics[SkillNumForClass(ci->cls)]);
-		x += heightText * 2 + spacingWidth;
+		x += heightText * 2 + FT_SPACING;
 
 		if (!comp->style)
 		{
@@ -623,18 +618,18 @@ void CG_DrawFireTeamOverlay(hudComponent_t *comp)
 			{
 				// draw the yellow arrow
 				CG_Text_Paint_Ext(x, y + heightTextOffset, comp->scale, comp->scale, comp->colorText, "^3->", 0, 0, comp->styleText, FONT_TEXT);
-				x += spacingWidth * 3;
+				x += FT_SPACING * 3;
 				// draw latched class icon in fireteam overlay
 				trap_R_SetColor(iconColor);
 				CG_DrawPic(x, y + heightIconsOffset, heightText * 2, heightText * 2, cgs.media.skillPics[SkillNumForClass(ci->latchedcls)]);
 			}
 			else
 			{
-				x += spacingWidth * 3;
+				x += FT_SPACING * 3;
 			}
 		}
 
-		x += heightText * 2 + spacingWidth;
+		x += heightText * 2 + FT_SPACING;
 
 		// draw the mute-icon in the fireteam overlay..
 		//if ( ci->muted ) {
@@ -666,7 +661,7 @@ void CG_DrawFireTeamOverlay(hudComponent_t *comp)
 			puwidth = 0;
 		}
 
-		x += spacingWidth;
+		x += FT_SPACING;
 
 		// draw the player's name
 		// right align?
@@ -680,7 +675,7 @@ void CG_DrawFireTeamOverlay(hudComponent_t *comp)
 		}
 
 		// add space
-		x += spacingWidth * 2 + bestNameWidth - puwidth;
+		x += FT_SPACING * 2 + bestNameWidth - puwidth;
 
 		// draw the player's weapon icon
 		if (cg_entities[ci->clientNum].currentState.eFlags & EF_MOUNTEDTANK)
@@ -708,53 +703,53 @@ void CG_DrawFireTeamOverlay(hudComponent_t *comp)
 			CG_DrawPic(x, y + heightIconsOffset, cg_weapons[curWeap].weaponIconScale * heightText * 2, heightText * 2, cg_weapons[curWeap].weaponIcon[1]);
 		}
 
-		x += bestWeapIconWidthScale * heightText * 2 + spacingWidth;
+		x += bestWeapIconWidthScale * heightText * 2 + FT_SPACING;
 
 		// draw the player's health
 		if (ci->health >= 100)
 		{
 			CG_Text_Paint_Ext(x, y + heightTextOffset, comp->scale, comp->scale, comp->colorText, va("%i", ci->health), 0, 0, comp->styleText, FONT_TEXT);
-			x += spacingWidth * 3;
+			x += FT_SPACING * 3;
 		}
 		else if (ci->health >= 10)
 		{
-			x += spacingWidth;
+			x += FT_SPACING;
 			CG_Text_Paint_Ext(x, y + heightTextOffset, comp->scale, comp->scale, ci->health > 80 ? comp->colorText : textYellow, va("%i", ci->health), 0, 0, comp->styleText, FONT_TEXT);
-			x += spacingWidth * 2;
+			x += FT_SPACING * 2;
 		}
 		else if (ci->health > 0)
 		{
-			x += spacingWidth * 2;
+			x += FT_SPACING * 2;
 			CG_Text_Paint_Ext(x, y + heightTextOffset, comp->scale, comp->scale, textYellow, va("%i", ci->health), 0, 0, comp->styleText, FONT_TEXT);
-			x += spacingWidth;
+			x += FT_SPACING;
 		}
 		else if (ci->health == 0)
 		{
-			x += spacingWidth;
+			x += FT_SPACING;
 			CG_Text_Paint_Ext(x, y + heightTextOffset, comp->scale, comp->scale, ((cg.time % 500) > 250)  ? textWhite : textRed, "*", 0, 0, comp->styleText, FONT_TEXT);
-			x += spacingWidth;
+			x += FT_SPACING;
 			CG_Text_Paint_Ext(x, y + heightTextOffset, comp->scale, comp->scale, ((cg.time % 500) > 250)  ? textRed : textWhite, "0", 0, 0, comp->styleText, FONT_TEXT);
-			x += spacingWidth;
+			x += FT_SPACING;
 		}
 		else
 		{
-			x += spacingWidth * 2;
+			x += FT_SPACING * 2;
 			CG_Text_Paint_Ext(x, y + heightTextOffset, comp->scale, comp->scale, textRed, "0", 0, 0, comp->styleText, FONT_TEXT);
-			x += spacingWidth;
+			x += FT_SPACING;
 		}
 
 		// set hard limit on width
-		x += spacingWidth;
+		x += FT_SPACING;
 		if (cg_locations.integer & LOC_FTEAM)
 		{
 			float widthLocationLeft = w - (x - comp->location.x);
-			int   lim               = widthLocationLeft / spacingWidth;
+			int   lim               = widthLocationLeft / FT_SPACING;
 
 			if (lim > 0)
 			{
 				if (comp->alignText == ITEM_ALIGN_RIGHT) // right align
 				{
-					CG_Text_Paint_RightAligned_Ext(comp->location.x + w - spacingWidth, y + heightTextOffset, comp->scale, comp->scale, comp->colorText, locStr[i], 0, lim, comp->styleText, FONT_TEXT);
+					CG_Text_Paint_RightAligned_Ext(comp->location.x + w - FT_SPACING, y + heightTextOffset, comp->scale, comp->scale, comp->colorText, locStr[i], 0, lim, comp->styleText, FONT_TEXT);
 				}
 				else if (comp->alignText == ITEM_ALIGN_LEFT)
 				{
