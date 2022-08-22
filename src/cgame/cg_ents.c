@@ -323,7 +323,7 @@ static void CG_EntityEffects(centity_t *cent)
 		if (cent->lastTrailTime < cg.time)
 		{
 			float color = random() + 0.3f;
-			color = min(color, 1.0f);
+			color = MIN(color, 1.0f);
 
 			cent->lastTrailTime = cg.time + 100;
 
