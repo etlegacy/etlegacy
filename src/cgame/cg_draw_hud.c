@@ -258,7 +258,7 @@ void CG_setDefaultHudValues(hudStucture_t *hud)
 	hud->pmitemsbig       = CG_getComponent(Ccg_WideX(365), 275, 300, 56, qtrue, STYLE_NORMAL, 0.22f, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_LEFT, 40, CG_DrawPMItemsBig);
 	hud->warmuptitle      = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) * .5f - 150, 120, 300, 96, qtrue, STYLE_NORMAL, 0.35f, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, 41, CG_DrawWarmupTitle);
 	hud->warmuptext       = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) * .5f - 150, 310, 300, 39, qtrue, STYLE_NORMAL, 0.22f, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, 42, CG_DrawWarmupText);
-	hud->objectivetext    = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) * .5f - 150, 352, 300, 26, qtrue, STYLE_NORMAL, 0.22f, colorWhite, qtrue, (vec4_t) { 0, 0.5, 0.5, 0.25 }, qtrue, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, 43, CG_DrawObjectiveInfo);
+	hud->objectivetext    = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) * .5f - 150, 358, 300, 16, qtrue, STYLE_NORMAL, 0.22f, colorWhite, qtrue, (vec4_t) { 0, 0.5, 0.5, 0.25 }, qtrue, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, 43, CG_DrawObjectiveInfo);
 	hud->centerprint      = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) * .5f - 150, 381, 300, 23, qtrue, STYLE_NORMAL, 0.22f, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, 44, CG_DrawCenterString);
 	hud->banner           = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) * .5f - 150, 20, 300, 39, qtrue, STYLE_NORMAL, 0.23f, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, 45, CG_DrawBannerPrint);
 }

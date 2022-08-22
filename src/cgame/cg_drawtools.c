@@ -1039,17 +1039,11 @@ char *CG_WordWrapString(const char *input, int maxLineChars, char *output, int m
  * @param[in] align
  * @param[in] font
  */
-static int CG_ComputeLinePosX(float x, float scalex, const char *text, int align, fontHelper_t *font)
+static float CG_ComputeLinePosX(float x, float scalex, const char *text, int align, fontHelper_t *font)
 {
-	int        lineW, lineL = 0;
-	const char *ln = strchr(text, '\n');
+	int lineW;
 
-	if (ln)
-	{
-		lineL = Q_UTF8_PrintStrlenExt(text, ln - text);
-	}
-
-	lineW = CG_Text_Width_Ext(text, scalex, lineL, font);
+	lineW = CG_Text_Width_Ext(text, scalex, 0, font);
 
 	switch (align)
 	{
@@ -1082,7 +1076,7 @@ void CG_DrawMultilineText(float x, float y, float scalex, float scaley, vec4_t c
 	const char  *s = text;
 	float       yadj;
 	int         count = 0;
-	int         lineX = x, lineY = y;
+	float       lineX = x, lineY = y;
 	float       fontSizeX = scalex;
 	float       fontSizeY = scaley;
 	float       newAlpha;
