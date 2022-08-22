@@ -2241,7 +2241,7 @@ void ClientEndFrame(gentity_t *ent)
 	AddMedicTeamBonus(ent->client);
 
 	// all players are init in game, we can set properly starting health
-	if (level.startTime == level.time - (GAME_INIT_FRAMES * FRAMETIME))
+	if (level.startTime == level.time - ((GAME_INIT_FRAMES + 1) * FRAMETIME))
 	{
 		if (BG_IsSkillAvailable(ent->client->sess.skill, SK_BATTLE_SENSE, SK_BATTLE_SENSE_HEALTH))
 		{
