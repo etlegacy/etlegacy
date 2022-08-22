@@ -4618,6 +4618,17 @@ static qboolean CG_HudEditor_EditClick(panel_button_t *button, int key)
 	return BG_PanelButton_EditClick(button, key);
 }
 
+/**
+ * @brief CG_HudEditorPanel_EditUp
+ * @param button
+ * @param key
+ * @return
+ */
+static qboolean CG_HudEditorPanel_EditUp(panel_button_t *button, int key)
+{
+    return qtrue;
+}
+
 static panel_button_t hudEditorCompDropdown =
 {
 	NULL,
@@ -4669,7 +4680,7 @@ static panel_button_t hudEditorX =
 	{ 0,                    0,                                                         0,           0, 0, 0, 0, 1},
 	&hudEditorTextFont,     // font
 	CG_HudEditor_EditClick, // keyDown
-	CG_HudEditorPanel_KeyUp,// keyUp
+	CG_HudEditorPanel_EditUp,// keyUp
 	CG_HudEditor_RenderEdit,
 	CG_HudEditorX_Finish,
 	0
@@ -4683,7 +4694,7 @@ static panel_button_t hudEditorY =
 	{ 0,                    0,                                                                              0,           0, 0, 0, 0, 1},
 	&hudEditorTextFont,     // font
 	CG_HudEditor_EditClick, // keyDown
-	CG_HudEditorPanel_KeyUp,// keyUp
+	CG_HudEditorPanel_EditUp,// keyUp
 	CG_HudEditor_RenderEdit,
 	CG_HudEditorY_Finish,
 	0
@@ -4711,7 +4722,7 @@ static panel_button_t hudEditorW =
 	{ 0,                     0,                                                           0,           0, 0, 0, 0, 1},
 	&hudEditorTextFont,      // font
 	CG_HudEditor_EditClick,  // keyDown
-	CG_HudEditorPanel_KeyUp, // keyUp
+	CG_HudEditorPanel_EditUp, // keyUp
 	CG_HudEditor_RenderEdit,
 	CG_HudEditorWidth_Finish,
 	0
@@ -4725,7 +4736,7 @@ static panel_button_t hudEditorH =
 	{ 0,                      0,                                                                                0,           0, 0, 0, 0, 1},
 	&hudEditorTextFont,       // font
 	CG_HudEditor_EditClick,   // keyDown
-	CG_HudEditorPanel_KeyUp,  // keyUp
+	CG_HudEditorPanel_EditUp,  // keyUp
 	CG_HudEditor_RenderEdit,
 	CG_HudEditorHeight_Finish,
 	0
@@ -4739,7 +4750,7 @@ static panel_button_t hudEditorScale =
 	{ 0,                     0,                                                                                      0,           0, 0, 0, 0, 1},
 	&hudEditorTextFont,      // font
 	CG_HudEditor_EditClick,  // keyDown
-	CG_HudEditorPanel_KeyUp, // keyUp
+	CG_HudEditorPanel_EditUp, // keyUp
 	CG_HudEditor_RenderEdit,
 	CG_HudEditorScale_Finish,
 	0
@@ -4783,7 +4794,7 @@ static panel_button_t hudEditorColorG =
 	{ 0,                     0,                                                      0,           1, 0, 0, 0, 1},
 	&hudEditorTextFont,      // font
 	CG_HudEditor_EditClick,  // keyDown
-	CG_HudEditorPanel_KeyUp, // keyUp
+	CG_HudEditorPanel_EditUp, // keyUp
 	CG_HudEditor_RenderEdit,
 	CG_HudEditorColor_Finish,
 	0
@@ -4796,7 +4807,7 @@ static panel_button_t hudEditorColorB =
 	{ 0,                     0,                                                      0,           2, 0, 0, 0, 1},
 	&hudEditorTextFont,      // font
 	CG_HudEditor_EditClick,  // keyDown
-	CG_HudEditorPanel_KeyUp, // keyUp
+	CG_HudEditorPanel_EditUp, // keyUp
 	CG_HudEditor_RenderEdit,
 	CG_HudEditorColor_Finish,
 	0
@@ -4809,7 +4820,7 @@ static panel_button_t hudEditorColorA =
 	{ 0,                     0,                                                      0,           3, 0, 0, 0, 1},
 	&hudEditorTextFont,      // font
 	CG_HudEditor_EditClick,  // keyDown
-	CG_HudEditorPanel_KeyUp, // keyUp
+	CG_HudEditorPanel_EditUp, // keyUp
 	CG_HudEditor_RenderEdit,
 	CG_HudEditorColor_Finish,
 	0
