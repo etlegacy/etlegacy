@@ -1505,8 +1505,6 @@ typedef struct
 	char objDescription_Axis[MAX_OBJECTIVES][256];
 	char objDescription_Allied[MAX_OBJECTIVES][256];
 
-	int waterundertime;
-
 	svCvar_t svCvars[MAX_SVCVARS];
 	int svCvarCount;
 

@@ -2369,7 +2369,7 @@ static void PM_WaterEvents(void)
 	// check for head just coming out of water
 	if (pml.previous_waterlevel == 3 && pm->waterlevel != 3)
 	{
-		if (pm->pmext->airleft < 6000)
+		if (pm->ps->stats[STAT_AIRLEFT] < 6000)
 		{
 			PM_AddEventExt(EV_WATER_CLEAR, 1);
 		}
@@ -2377,16 +2377,18 @@ static void PM_WaterEvents(void)
 		{
 			PM_AddEventExt(EV_WATER_CLEAR, 0);
 		}
-	}
 
-	// fix prediction, ensure full HOLDBREATHTIME when airleft isn't in use
-	if (pm->pmext->airleft < 0 || pm->pmext->airleft > HOLDBREATHTIME)
-	{
 		pm->ps->stats[STAT_AIRLEFT] = HOLDBREATHTIME;
 	}
-	else
+
+	if (pml.previous_waterlevel == 3 && pm->waterlevel == 3)
 	{
-		pm->ps->stats[STAT_AIRLEFT] = pm->pmext->airleft;
+		pm->ps->stats[STAT_AIRLEFT] -= pml.msec;
+
+		if (pm->ps->stats[STAT_AIRLEFT] < 0)
+		{
+			pm->ps->stats[STAT_AIRLEFT] = 0;
+		}
 	}
 }
 
@@ -3962,6 +3964,13 @@ static void PM_Weapon(void)
 	}
 
 	pm->ps->weaponTime += addTime;
+
+#ifdef CGAMEDLL
+	if (pm->ps->grenadeTimeLeft)
+	{
+		pm->ps->grenadeTimeLeft = 0;
+	}
+#endif // CGAMEDLL
 
 	PM_SwitchIfEmpty();
 }

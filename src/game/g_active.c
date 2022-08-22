@@ -121,11 +121,9 @@ void P_WorldEffects(gentity_t *ent)
 {
 	if (ent->client->noclip)
 	{
-		ent->client->airOutTime = level.time + HOLDBREATHTIME;
-		// air left while underwater..
-		ent->client->pmext.airleft          = ent->client->airOutTime - level.time;
+		// air left while underwater
 		ent->client->ps.stats[STAT_AIRLEFT] = HOLDBREATHTIME;
-
+		ent->client->airOutTime             = level.time + HOLDBREATHTIME;
 		return;
 	}
 
@@ -180,11 +178,9 @@ void P_WorldEffects(gentity_t *ent)
 	}
 	else
 	{
-		ent->client->airOutTime = level.time + HOLDBREATHTIME;
-		// air left while underwater..
-		ent->client->pmext.airleft          = ent->client->airOutTime - level.time;
-		ent->client->ps.stats[STAT_AIRLEFT] = HOLDBREATHTIME;
-		ent->damage                         = UNDERWATER_DAMAGE;
+		// air left while underwater
+		ent->client->airOutTime = level.time + ent->client->ps.stats[STAT_AIRLEFT];
+		ent->damage             = UNDERWATER_DAMAGE;
 	}
 
 	// check for sizzle damage (move to pmove?)
@@ -1401,8 +1397,6 @@ void ClientThink_real(gentity_t *ent)
 	pm.medicChargeTime    = level.medicChargeTime[client->sess.sessionTeam - 1];
 
 	pm.skill = client->sess.skill;
-
-	client->pmext.airleft = ent->client->airOutTime - level.time;
 
 	pm.covertopsChargeTime = level.covertopsChargeTime[client->sess.sessionTeam - 1];
 

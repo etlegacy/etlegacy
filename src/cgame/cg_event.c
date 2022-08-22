@@ -1883,33 +1883,33 @@ static void CG_PlayHitSound(const int clientNum, const int hitSound)
 
 	switch (hitSound)
 	{
-		case HIT_NONE:
-			break;
-		case HIT_TEAMSHOT:
-			if (!(cg_hitSounds.integer & HITSOUNDS_NOTEAMSHOT))
-			{
-				trap_S_StartLocalSound(cgs.media.teamShot, CHAN_LOCAL_SOUND);
-			}
-			break;
-		case HIT_HEADSHOT:
-			if (!(cg_hitSounds.integer & HITSOUNDS_NOHEADSHOT))
-			{
-				trap_S_StartLocalSound(cgs.media.headShot, CHAN_LOCAL_SOUND);
-			}
-			else if (!(cg_hitSounds.integer & HITSOUNDS_NOBODYSHOT))
-			{
-				trap_S_StartLocalSound(cgs.media.bodyShot, CHAN_LOCAL_SOUND);
-			}
-			break;
-		case HIT_BODYSHOT:
-			if (!(cg_hitSounds.integer & HITSOUNDS_NOBODYSHOT))
-			{
-				trap_S_StartLocalSound(cgs.media.bodyShot, CHAN_LOCAL_SOUND);
-			}
-			break;
-		default:
-			CG_DPrintf("Unknown hitsound: %i\n", hitSound);
-			break;
+	case HIT_NONE:
+		break;
+	case HIT_TEAMSHOT:
+		if (!(cg_hitSounds.integer & HITSOUNDS_NOTEAMSHOT))
+		{
+			trap_S_StartLocalSound(cgs.media.teamShot, CHAN_LOCAL_SOUND);
+		}
+		break;
+	case HIT_HEADSHOT:
+		if (!(cg_hitSounds.integer & HITSOUNDS_NOHEADSHOT))
+		{
+			trap_S_StartLocalSound(cgs.media.headShot, CHAN_LOCAL_SOUND);
+		}
+		else if (!(cg_hitSounds.integer & HITSOUNDS_NOBODYSHOT))
+		{
+			trap_S_StartLocalSound(cgs.media.bodyShot, CHAN_LOCAL_SOUND);
+		}
+		break;
+	case HIT_BODYSHOT:
+		if (!(cg_hitSounds.integer & HITSOUNDS_NOBODYSHOT))
+		{
+			trap_S_StartLocalSound(cgs.media.bodyShot, CHAN_LOCAL_SOUND);
+		}
+		break;
+	default:
+		CG_DPrintf("Unknown hitsound: %i\n", hitSound);
+		break;
 	}
 }
 
@@ -2089,10 +2089,6 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 		break;
 	case EV_WATER_UNDER:
 		trap_S_StartSound(NULL, es->number, CHAN_AUTO, cgs.media.watrUnSound);
-		if (cg.clientNum == es->number)
-		{
-			cg.waterundertime = cg.time + HOLDBREATHTIME;
-		}
 
 		// this fog stuff for underwater is really just a test for feasibility of creating the under-water effect that way.
 		// the related issues of death underwater, etc. are not handled at all.
@@ -2848,17 +2844,17 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 		cg.redFlagCounter  = es->otherEntityNum;
 		cg.blueFlagCounter = es->otherEntityNum2;
 		break;
-    case EV_MISSILE_FALLING:
-        // Sound effect for spotter round, had to do this as half-second bomb warning
-        if (cg_weapons[es->weapon].missileFallSound.count)
-        {
-            int i = cg_weapons[es->weapon].missileFallSound.count;
+	case EV_MISSILE_FALLING:
+		// Sound effect for spotter round, had to do this as half-second bomb warning
+		if (cg_weapons[es->weapon].missileFallSound.count)
+		{
+			int i = cg_weapons[es->weapon].missileFallSound.count;
 
-            i = rand() % i;
+			i = rand() % i;
 
-            trap_S_StartSoundExVControl(NULL, es->number, CHAN_AUTO, cg_weapons[es->weapon].missileFallSound.sounds[i], SND_OKTOCUT, 255);
-        }
-        break;
+			trap_S_StartSoundExVControl(NULL, es->number, CHAN_AUTO, cg_weapons[es->weapon].missileFallSound.sounds[i], SND_OKTOCUT, 255);
+		}
+		break;
 	case EV_PLAYER_HIT:
 		CG_PlayHitSound(es->clientNum, es->eventParm);
 		break;
