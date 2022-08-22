@@ -1,10 +1,10 @@
 [Desktop Entry]
 Type=Application
-Name=ET: Legacy
+Name=ET: Legacy (64-bit)
 GenericName=World War II first-person shooter
 Comment=World War II first-person shooter
 Icon=etl
-Exec=etl +connect %u
+Exec=etl.x86_64 +connect %u
 Terminal=false
 MimeType=x-scheme-handler/et;
 Categories=Game;ActionGame;
