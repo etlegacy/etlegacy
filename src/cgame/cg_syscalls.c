@@ -1929,3 +1929,26 @@ void trap_R_Finish(void)
 {
 	SystemCall(CG_R_FINISH);
 }
+
+// extension interface
+
+/**
+ * @brief Entry point for additional system calls without breaking compatbility with other engines
+ * @param[out] value
+ * @param[in] valueSize
+ * @param[in] key
+ * @return
+ */
+qboolean trap_GetValue(char *value, int valueSize, const char *key)
+{
+	return (qboolean)(SystemCall(dll_com_trapGetValue, value, valueSize, key));
+}
+
+/**
+ * @brief Extension for flashing the game window in taskbar
+ * @param[in] state
+ */
+void trap_SysFlashWindow(int state)
+{
+	SystemCall(dll_trap_SysFlashWindow, state);
+}

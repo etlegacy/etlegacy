@@ -275,6 +275,8 @@ typedef enum
 
 	CG_R_FINISH,                ///< 179
 
+	CG_SYS_FLASHWINDOW,
+
 #ifndef CGAMEDLL
 	CG_TRAP_GETVALUE = COM_TRAP_GETVALUE,
 #endif

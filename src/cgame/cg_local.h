@@ -3643,6 +3643,14 @@ int trap_R_GetTextureId(const char *name);
 // flush rendering buffer
 void trap_R_Finish(void);
 
+// extension interface
+extern qboolean flashWindowSupported;
+
+qboolean trap_GetValue( char *value, int valueSize, const char *key );
+void trap_SysFlashWindow( int state );
+extern int dll_com_trapGetValue;
+extern int dll_trap_SysFlashWindow;
+
 bg_playerclass_t *CG_PlayerClassForClientinfo(clientInfo_t *ci, centity_t *cent);
 
 void CG_FitTextToWidth2(char *instr, float scale, float w, int size);
