@@ -617,7 +617,7 @@ void CG_DrawFireTeamOverlay(hudComponent_t *comp)
 		CG_DrawPic(x, y + heightIconsOffset, heightText * 2, heightText * 2, cgs.media.skillPics[SkillNumForClass(ci->cls)]);
 		x += heightText * 2 + spacingWidth;
 
-		if (cg_fireteamLatchedClass.integer)
+		if (!comp->style)
 		{
 			if (ci->cls != ci->latchedcls)
 			{

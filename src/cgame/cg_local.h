@@ -2800,7 +2800,6 @@ extern vmCvar_t cg_countryflags; ///< GeoIP
 
 extern vmCvar_t cg_altHud;
 extern vmCvar_t cg_tracers;
-extern vmCvar_t cg_fireteamLatchedClass;
 extern vmCvar_t cg_fireteamNameMaxChars;
 extern vmCvar_t cg_fireteamNameAlign;
 extern vmCvar_t cg_fireteamSprites;
