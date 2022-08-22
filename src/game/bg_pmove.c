@@ -517,6 +517,11 @@ static void PM_Friction(void)
 		return;
 	}
 
+	if (speed == 0.0f)
+	{
+		return;
+	}
+
 	drop = 0;
 
 	// apply ground friction
