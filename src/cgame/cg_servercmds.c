@@ -1721,39 +1721,39 @@ void CG_PlayVoiceChat(bufferedVoiceChat_t *vchat)
 	if (cg_voiceChats.integer)
 	{
 		trap_S_StartLocalSound(vchat->snd, CHAN_VOICE);
+	}
 
-		// don't show icons for the HQ (clientnum -1)
-		if (vchat->clientNum != -1)
+	// don't show icons for the HQ (clientnum -1)
+	if (vchat->clientNum != -1)
+	{
+		// Show icon above head
+		if (vchat->clientNum == cg.snap->ps.clientNum)
 		{
-			// Show icon above head
-			if (vchat->clientNum == cg.snap->ps.clientNum)
+			cg.predictedPlayerEntity.voiceChatSprite = vchat->sprite;
+			if (vchat->sprite == cgs.media.medicIcon || vchat->sprite == cgs.media.ammoIcon)
 			{
-				cg.predictedPlayerEntity.voiceChatSprite = vchat->sprite;
-				if (vchat->sprite == cgs.media.medicIcon || vchat->sprite == cgs.media.ammoIcon)
-				{
-					cg.predictedPlayerEntity.voiceChatSpriteTime = cg.time + cg_voiceSpriteTime.integer * 2;
-				}
-				else
-				{
-					cg.predictedPlayerEntity.voiceChatSpriteTime = cg.time + cg_voiceSpriteTime.integer;
-				}
+				cg.predictedPlayerEntity.voiceChatSpriteTime = cg.time + cg_voiceSpriteTime.integer * 2;
 			}
 			else
 			{
-				cg_entities[vchat->clientNum].voiceChatSprite = vchat->sprite;
-				VectorCopy(vchat->origin, cg_entities[vchat->clientNum].lerpOrigin);
-				if (vchat->sprite == cgs.media.medicIcon || vchat->sprite == cgs.media.ammoIcon)
-				{
-					cg_entities[vchat->clientNum].voiceChatSpriteTime = cg.time + cg_voiceSpriteTime.integer * 2;
-				}
-				else
-				{
-					cg_entities[vchat->clientNum].voiceChatSpriteTime = cg.time + cg_voiceSpriteTime.integer;
-				}
+				cg.predictedPlayerEntity.voiceChatSpriteTime = cg.time + cg_voiceSpriteTime.integer;
 			}
 		}
-
+		else
+		{
+			cg_entities[vchat->clientNum].voiceChatSprite = vchat->sprite;
+			VectorCopy(vchat->origin, cg_entities[vchat->clientNum].lerpOrigin);
+			if (vchat->sprite == cgs.media.medicIcon || vchat->sprite == cgs.media.ammoIcon)
+			{
+				cg_entities[vchat->clientNum].voiceChatSpriteTime = cg.time + cg_voiceSpriteTime.integer * 2;
+			}
+			else
+			{
+				cg_entities[vchat->clientNum].voiceChatSpriteTime = cg.time + cg_voiceSpriteTime.integer;
+			}
+		}
 	}
+
 	if (!vchat->voiceOnly && cg_voiceText.integer)
 	{
 		CG_AddToTeamChat(vchat->message, vchat->clientNum);
