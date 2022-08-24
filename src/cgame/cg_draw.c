@@ -1597,15 +1597,58 @@ static void CG_DrawBinocReticle(void)
 }
 
 /**
+ * @brief CG_DrawNoShootIcon
+ */
+static void CG_DrawNoShootIcon(hudComponent_t *comp)
+{
+	float x, y, w, h;
+
+	if ((cg.predictedPlayerState.eFlags & EF_PRONE) && (GetWeaponTableData(cg.snap->ps.weapon)->type & WEAPON_TYPE_PANZER))
+	{
+		trap_R_SetColor(colorRed);
+	}
+	else if (cg.crosshairClientNoShoot)
+	{
+		float *color = CG_FadeColor(cg.crosshairClientTime, 1000);
+
+		if (!color)
+		{
+			trap_R_SetColor(NULL);
+			return;
+		}
+
+		trap_R_SetColor(color);
+	}
+	else
+	{
+		return;
+	}
+
+	x = comp->location.x;
+	y = comp->location.y;
+	w = comp->location.w;
+	h = comp->location.h;
+	CG_AdjustFrom640(&x, &y, &w, &h);
+
+	trap_R_DrawStretchPic(x, y, w, h, 0, 0, 1, 1, cgs.media.friendShader);
+	trap_R_SetColor(NULL);
+}
+
+/**
  * @brief CG_DrawCrosshair
  */
-static void CG_DrawCrosshair(void)
+void CG_DrawCrosshair(hudComponent_t *comp)
 {
 	float     w, h;
 	qhandle_t hShader;
 	float     f;
 	float     x, y;
 	int       weapnum;
+
+	if (cg.snap->ps.stats[STAT_HEALTH] <= 0 && !(cg.snap->ps.pm_flags & PMF_FOLLOW) && cg.snap->ps.persistant[PERS_TEAM] != TEAM_SPECTATOR)
+	{
+		return;
+	}
 
 	if (cg.renderingThirdPerson)
 	{
@@ -1689,76 +1732,48 @@ static void CG_DrawCrosshair(void)
 		trap_R_SetColor(cg.xhairColor);
 	}
 
-	w = h = cg_crosshairSize.value;
+	if (comp->showBackGround)
+	{
+		CG_FillRect(comp->location.x, comp->location.y, comp->location.w, comp->location.h, comp->colorBackground);
+	}
+
+	if (comp->showBorder)
+	{
+		CG_DrawRect_FixedBorder(comp->location.x, comp->location.y, comp->location.w, comp->location.h, 1, comp->colorBorder);
+	}
 
 	// crosshair size represents aim spread
-	f  = (float)((cg_crosshairPulse.integer == 0) ? 0 : cg.snap->ps.aimSpreadScale / 255.0);
-	w *= (1 + f * 2.0f);
-	h *= (1 + f * 2.0f);
+	f = (float)((cg_crosshairPulse.integer == 0) ? 0 : cg.snap->ps.aimSpreadScale / 255.0);
+	w = comp->location.w * (1 + f * 2.0f);
+	h = comp->location.h * (1 + f * 2.0f);
+	x = comp->location.x + (comp->location.w - w) * .5f;
+	y = comp->location.y + (comp->location.h - h) * .5f;
 
-	x = y = 0;
 	CG_AdjustFrom640(&x, &y, &w, &h);
-	x = cg_crosshairX.value;
-	y = cg_crosshairY.value;
 
 	hShader = cgs.media.crosshairShader[cg_drawCrosshair.integer % NUM_CROSSHAIRS];
 
-	trap_R_DrawStretchPic(x + 0.5f * (cg.refdef_current->width - w), y + 0.5f * (cg.refdef_current->height - h), w, h, 0, 0, 1, 1, hShader);
+	trap_R_DrawStretchPic(x, y, w, h, 0, 0, 1, 1, hShader);
 
 	if (cg.crosshairShaderAlt[cg_drawCrosshair.integer % NUM_CROSSHAIRS])
 	{
-		w = h = cg_crosshairSize.value;
-		x = y = 0;
+		x = comp->location.x;
+		y = comp->location.y;
+		w = comp->location.w;
+		h = comp->location.h;
+
 		CG_AdjustFrom640(&x, &y, &w, &h);
-		x = cg_crosshairX.value;
-		y = cg_crosshairY.value;
 
 		if (cg_crosshairHealth.integer == 0)
 		{
 			trap_R_SetColor(cg.xhairColorAlt);
 		}
 
-		trap_R_DrawStretchPic(x + 0.5f * (cg.refdef_current->width - w), y + 0.5f * (cg.refdef_current->height - h), w, h, 0, 0, 1, 1, cg.crosshairShaderAlt[cg_drawCrosshair.integer % NUM_CROSSHAIRS]);
+		trap_R_DrawStretchPic(x, y, w, h, 0, 0, 1, 1, cg.crosshairShaderAlt[cg_drawCrosshair.integer % NUM_CROSSHAIRS]);
 	}
 	trap_R_SetColor(NULL);
-}
 
-/**
- * @brief CG_DrawNoShootIcon
- */
-static void CG_DrawNoShootIcon(void)
-{
-	float x, y, w, h;
-
-	if ((cg.predictedPlayerState.eFlags & EF_PRONE) && (GetWeaponTableData(cg.snap->ps.weapon)->type & WEAPON_TYPE_PANZER))
-	{
-		trap_R_SetColor(colorRed);
-	}
-	else if (cg.crosshairClientNoShoot)
-	{
-		float *color = CG_FadeColor(cg.crosshairClientTime, 1000);
-
-		if (!color)
-		{
-			trap_R_SetColor(NULL);
-			return;
-		}
-
-		trap_R_SetColor(color);
-	}
-	else
-	{
-		return;
-	}
-
-	w = h = 48.f;
-
-	x = cg_crosshairX.integer + 1;
-	y = cg_crosshairY.integer + 1;
-	CG_AdjustFrom640(&x, &y, &w, &h);
-
-	trap_R_DrawStretchPic(x + 0.5f * (cg.refdef_current->width - w), y + 0.5f * (cg.refdef_current->height - h), w, h, 0, 0, 1, 1, cgs.media.friendShader);
-	trap_R_SetColor(NULL);
+	CG_DrawNoShootIcon(comp);
 }
 
 /**
@@ -4036,7 +4051,7 @@ static void CG_Draw2D(void)
 		{
 			return;
 		}
-		CG_DrawCrosshair();
+		CG_DrawCrosshair(&CG_GetActiveHUD()->crosshair);
 		CG_DrawFlashFade();
 		return;
 	}
@@ -4047,7 +4062,6 @@ static void CG_Draw2D(void)
 	if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR)
 #endif
 	{
-		CG_DrawCrosshair();
 		CG_DrawCrosshairNames();
 	}
 	else
@@ -4058,9 +4072,7 @@ static void CG_Draw2D(void)
 		if (cg.snap->ps.stats[STAT_HEALTH] > 0 || (cg.snap->ps.pm_flags & PMF_FOLLOW))
 		{
 			CG_DrawEnvironmentalAwareness();
-			CG_DrawCrosshair();
 			CG_DrawCrosshairNames();
-			CG_DrawNoShootIcon();
 		}
 
 		if (cg_drawStatus.integer)

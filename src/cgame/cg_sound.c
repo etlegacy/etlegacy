@@ -2146,24 +2146,8 @@ void CG_SpeakerEditorDraw(void)
 		}
 
 		// render crosshair
-
-		x = cg_crosshairX.integer;
-		y = cg_crosshairY.integer;
-		w = h = cg_crosshairSize.value;
-
-		CG_AdjustFrom640(&x, &y, &w, &h);
-
-		trap_R_DrawStretchPic(x + 0.5f * (cg.refdef_current->width - w),
-		                      y + 0.5f * (cg.refdef_current->height - h),
-		                      w, h, 0, 0, 1, 1, cgs.media.crosshairShader[cg_drawCrosshair.integer % NUM_CROSSHAIRS]);
-
-		if (cg.crosshairShaderAlt[cg_drawCrosshair.integer % NUM_CROSSHAIRS])
-		{
-			trap_R_DrawStretchPic(x + 0.5f * (cg.refdef_current->width - w),
-			                      y + 0.5f * (cg.refdef_current->height - h),
-			                      w, h, 0, 0, 1, 1, cg.crosshairShaderAlt[cg_drawCrosshair.integer % NUM_CROSSHAIRS]);
-		}
-
+        CG_DrawCrosshair(&CG_GetActiveHUD()->crosshair);
+        
 		if (editSpeaker)
 		{
 			// render interface

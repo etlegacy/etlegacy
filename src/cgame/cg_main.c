@@ -140,9 +140,6 @@ vmCvar_t cg_drawSpectatorNames;
 vmCvar_t cg_weaponCycleDelay;
 vmCvar_t cg_cycleAllWeaps;
 vmCvar_t cg_useWeapsForZoom;
-vmCvar_t cg_crosshairSize;
-vmCvar_t cg_crosshairX;
-vmCvar_t cg_crosshairY;
 vmCvar_t cg_crosshairHealth;
 vmCvar_t cg_teamChatsOnly;
 vmCvar_t cg_voiceChats;
@@ -410,10 +407,7 @@ static cvarTable_t cvarTable[] =
 	{ &cg_useWeapsForZoom,         "cg_useWeapsForZoom",         "1",           CVAR_ARCHIVE,                 0 },
 	{ &cg_weaponCycleDelay,        "cg_weaponCycleDelay",        "150",         CVAR_ARCHIVE,                 0 },
 	{ &cg_cycleAllWeaps,           "cg_cycleAllWeaps",           "1",           CVAR_ARCHIVE,                 0 },
-	{ &cg_crosshairSize,           "cg_crosshairSize",           "48",          CVAR_ARCHIVE,                 0 },
 	{ &cg_crosshairHealth,         "cg_crosshairHealth",         "0",           CVAR_ARCHIVE,                 0 },
-	{ &cg_crosshairX,              "cg_crosshairX",              "0",           CVAR_ARCHIVE,                 0 },
-	{ &cg_crosshairY,              "cg_crosshairY",              "0",           CVAR_ARCHIVE,                 0 },
 	{ &cg_brassTime,               "cg_brassTime",               "2500",        CVAR_ARCHIVE,                 0 },
 	{ &cg_markTime,                "cg_markTime",                "20000",       CVAR_ARCHIVE,                 0 },
 	{ &cg_gun_x,                   "cg_gunX",                    "0",           CVAR_TEMP,                    0 },

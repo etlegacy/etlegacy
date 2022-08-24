@@ -2631,9 +2631,6 @@ extern vmCvar_t cg_drawSpectatorNames;
 extern vmCvar_t cg_useWeapsForZoom;
 extern vmCvar_t cg_weaponCycleDelay;
 extern vmCvar_t cg_cycleAllWeaps;
-extern vmCvar_t cg_crosshairX;
-extern vmCvar_t cg_crosshairY;
-extern vmCvar_t cg_crosshairSize;
 extern vmCvar_t cg_crosshairHealth;
 extern vmCvar_t cg_drawStatus;
 extern vmCvar_t cg_animSpeed;
@@ -4069,7 +4066,7 @@ extern qboolean resetmaxspeed; // CG_DrawSpeed
 
 /* HUD exports */
 
-#define HUD_COMPONENTS_NUM 46
+#define HUD_COMPONENTS_NUM 47
 
 typedef struct hudComponent_s
 {
@@ -4142,6 +4139,7 @@ typedef struct hudStructure_s
 	hudComponent_t objectivetext;
 	hudComponent_t centerprint;
 	hudComponent_t banner;
+    hudComponent_t crosshair;
 
 	hudComponent_t *components[HUD_COMPONENTS_NUM];
 } hudStucture_t;
@@ -4166,6 +4164,7 @@ void CG_DrawCenterString(hudComponent_t *comp);
 void CG_DrawBannerPrint(hudComponent_t *comp);
 void CG_DrawWeapStability(hudComponent_t *comp);
 void CG_DrawCursorhint(hudComponent_t *comp);
+void CG_DrawCrosshair(hudComponent_t *comp);
 
 void CG_DrawCompText(hudComponent_t *comp, const char *str, vec4_t color, int fontStyle, fontHelper_t *font);
 void CG_DrawCompMultilineText(hudComponent_t *comp, const char *str, vec4_t color, int align, int fontStyle, fontHelper_t *font);

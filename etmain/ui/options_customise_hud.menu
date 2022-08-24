@@ -93,15 +93,14 @@ menuDef {
 
 // Crosshair //
 #define CROSSHAIR_Y 184
-	SUBWINDOW(6 + (SUBWINDOW_WIDTH_L)+6, CROSSHAIR_Y, (SUBWINDOW_WIDTH_R), 130, _("CROSSHAIR"))
-	MULTI(6 + (SUBWINDOW_WIDTH_L)+6 + 2, CROSSHAIR_Y + 16, (SUBWINDOW_WIDTH_R)-4, 10, _("Crosshair Size:"), .2, 8, "cg_crosshairsize", cvarFloatList { "Tiny" 24 "Small" 32 "Medium" 48 "Large" 64 "Huge" 96 }, _("Set the size of the displayed crosshair"))
-	YESNO(6 + (SUBWINDOW_WIDTH_L)+6 + 2, CROSSHAIR_Y + 28, (SUBWINDOW_WIDTH_R)-4, 10, _("Crosshair Pulsing:"), .2, 8, "cg_crosshairPulse", _("Toggle crosshair spread sizing while moving/firing"))
-	YESNO(6 + (SUBWINDOW_WIDTH_L)+6 + 2, CROSSHAIR_Y + 40, (SUBWINDOW_WIDTH_R)-4, 10, _("Crosshair Health Info:"), .2, 8, "cg_crosshairHealth", _("Color the crosshair based on current health (override crosshair color settings)"))
+	SUBWINDOW(6 + (SUBWINDOW_WIDTH_L)+6, CROSSHAIR_Y, (SUBWINDOW_WIDTH_R), 116, _("CROSSHAIR"))
+	YESNO(6 + (SUBWINDOW_WIDTH_L)+6 + 2, CROSSHAIR_Y + 16, (SUBWINDOW_WIDTH_R)-4, 10, _("Crosshair Pulsing:"), .2, 8, "cg_crosshairPulse", _("Toggle crosshair spread sizing while moving/firing"))
+	YESNO(6 + (SUBWINDOW_WIDTH_L)+6 + 2, CROSSHAIR_Y + 28, (SUBWINDOW_WIDTH_R)-4, 10, _("Crosshair Health Info:"), .2, 8, "cg_crosshairHealth", _("Color the crosshair based on current health (override crosshair color settings)"))
 
 	itemDef {
 		name        "crosshair_select"
 		group GROUP_NAME
-		rect        $evalfloat(6 + (SUBWINDOW_WIDTH_L)+6 + 12) 237 44 44
+		rect        $evalfloat(6 + (SUBWINDOW_WIDTH_L)+6 + 12) $evalfloat(CROSSHAIR_Y + 40) 44 44
 		style WINDOW_STYLE_FILLED
 		ownerdraw UI_CROSSHAIR
 		backcolor   .4 .4 .4 .9
@@ -120,22 +119,22 @@ menuDef {
 		}
 	}
 
-	MULTI(6 + (SUBWINDOW_WIDTH_L)+6 + 66 + 2, CROSSHAIR_Y + 64, (SUBWINDOW_WIDTH_R)-4 - 66, 10, _("Primary Color:"), .2, 8, "cg_crosshairColor", cvarStrList { "White"; "white"; "Yellow"; "yellow"; "Red"; "red"; "Green"; "green"; "Blue"; "blue"; "Magenta"; "magenta"; "Cyan"; "cyan"; "Orange"; "orange"; "Light Blue"; "0xa0c0ff"; "Medium Blue"; "mdblue"; "Light Red"; "0xffc0a0"; "Medium Red"; "mdred"; "Light Green"; "0xa0ffc0"; "Medium Green"; "mdgreen"; "Dark Green"; "dkgreen"; "Medium Cyan"; "mdcyan"; "Medium Yellow"; "mdyellow"; "Medium Orange"; "mdorange"; "Light Grey"; "ltgrey"; "Medium Grey"; "mdgrey"; "Dark Grey"; "dkgrey"; "Black"; "black" }, _("Set the color for the primary crosshair"))
-	MULTI(6 + (SUBWINDOW_WIDTH_L)+6 + 66 + 2, CROSSHAIR_Y + 76, (SUBWINDOW_WIDTH_R)-4 - 66, 10, _("Secondary Color:"), .2, 8, "cg_crosshairColorAlt", cvarStrList { "White"; "white"; "Yellow"; "yellow"; "Red"; "red"; "Green"; "green"; "Blue"; "blue"; "Magenta"; "magenta"; "Cyan"; "cyan"; "Orange"; "orange"; "Light Blue"; "0xa0c0ff"; "Medium Blue"; "mdblue"; "Light Red"; "0xffc0a0"; "Medium Red"; "mdred"; "Light Green"; "0xa0ffc0"; "Medium Green"; "mdgreen"; "Dark Green"; "dkgreen"; "Medium Cyan"; "mdcyan"; "Medium Yellow"; "mdyellow"; "Medium Orange"; "mdorange"; "Light Grey"; "ltgrey"; "Medium Grey"; "mdgrey"; "Dark Grey"; "dkgrey"; "Black"; "black" }, _("Set the color for the secondary crosshair"))
-	CVARFLOATLABEL(6 + (SUBWINDOW_WIDTH_L)+6 + 2, CROSSHAIR_Y + 100, (SUBWINDOW_WIDTH_L)-6, 10, "cg_crosshairAlpha", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-4), 8)
-	SLIDER(6 + (SUBWINDOW_WIDTH_L)+6 + 2, CROSSHAIR_Y + 100, (SUBWINDOW_WIDTH_R)-4, 10, _("Primary Alpha:"), .2, 8, "cg_crosshairAlpha" 1 0 1, _("Set the transparency level for the primary crosshair"))
-	CVARFLOATLABEL(6 + (SUBWINDOW_WIDTH_L)+6 + 2, CROSSHAIR_Y + 112, (SUBWINDOW_WIDTH_L)-6, 10, "cg_crosshairAlphaAlt", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-4), 8)
-	SLIDER(6 + (SUBWINDOW_WIDTH_L)+6 + 2, CROSSHAIR_Y + 112, (SUBWINDOW_WIDTH_R)-4, 10, _("Secondary Alpha:"), .2, 8, "cg_crosshairAlphaAlt" 1 0 1, _("Set the transparency level for the secondary crosshair"))
+	MULTI(6 + (SUBWINDOW_WIDTH_L)+6 + 66 + 2, CROSSHAIR_Y + 52, (SUBWINDOW_WIDTH_R)-4 - 66, 10, _("Primary Color:"), .2, 8, "cg_crosshairColor", cvarStrList { "White"; "white"; "Yellow"; "yellow"; "Red"; "red"; "Green"; "green"; "Blue"; "blue"; "Magenta"; "magenta"; "Cyan"; "cyan"; "Orange"; "orange"; "Light Blue"; "0xa0c0ff"; "Medium Blue"; "mdblue"; "Light Red"; "0xffc0a0"; "Medium Red"; "mdred"; "Light Green"; "0xa0ffc0"; "Medium Green"; "mdgreen"; "Dark Green"; "dkgreen"; "Medium Cyan"; "mdcyan"; "Medium Yellow"; "mdyellow"; "Medium Orange"; "mdorange"; "Light Grey"; "ltgrey"; "Medium Grey"; "mdgrey"; "Dark Grey"; "dkgrey"; "Black"; "black" }, _("Set the color for the primary crosshair"))
+	MULTI(6 + (SUBWINDOW_WIDTH_L)+6 + 66 + 2, CROSSHAIR_Y + 64, (SUBWINDOW_WIDTH_R)-4 - 66, 10, _("Secondary Color:"), .2, 8, "cg_crosshairColorAlt", cvarStrList { "White"; "white"; "Yellow"; "yellow"; "Red"; "red"; "Green"; "green"; "Blue"; "blue"; "Magenta"; "magenta"; "Cyan"; "cyan"; "Orange"; "orange"; "Light Blue"; "0xa0c0ff"; "Medium Blue"; "mdblue"; "Light Red"; "0xffc0a0"; "Medium Red"; "mdred"; "Light Green"; "0xa0ffc0"; "Medium Green"; "mdgreen"; "Dark Green"; "dkgreen"; "Medium Cyan"; "mdcyan"; "Medium Yellow"; "mdyellow"; "Medium Orange"; "mdorange"; "Light Grey"; "ltgrey"; "Medium Grey"; "mdgrey"; "Dark Grey"; "dkgrey"; "Black"; "black" }, _("Set the color for the secondary crosshair"))
+	CVARFLOATLABEL(6 + (SUBWINDOW_WIDTH_L)+6 + 2, CROSSHAIR_Y + 88, (SUBWINDOW_WIDTH_L)-6, 10, "cg_crosshairAlpha", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-4), 8)
+	SLIDER(6 + (SUBWINDOW_WIDTH_L)+6 + 2, CROSSHAIR_Y + 88, (SUBWINDOW_WIDTH_R)-4, 10, _("Primary Alpha:"), .2, 8, "cg_crosshairAlpha" 1 0 1, _("Set the transparency level for the primary crosshair"))
+	CVARFLOATLABEL(6 + (SUBWINDOW_WIDTH_L)+6 + 2, CROSSHAIR_Y + 100, (SUBWINDOW_WIDTH_L)-6, 10, "cg_crosshairAlphaAlt", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-4), 8)
+	SLIDER(6 + (SUBWINDOW_WIDTH_L)+6 + 2, CROSSHAIR_Y + 100, (SUBWINDOW_WIDTH_R)-4, 10, _("Secondary Alpha:"), .2, 8, "cg_crosshairAlphaAlt" 1 0 1, _("Set the transparency level for the secondary crosshair"))
 
 // Names //
-#define NAMES_Y 318
+#define NAMES_Y 304
 	SUBWINDOW(6 + (SUBWINDOW_WIDTH_L)+6, NAMES_Y, (SUBWINDOW_WIDTH_R), 52, _("NAMES DISPLAY"))
 	MULTI(6 + (SUBWINDOW_WIDTH_L)+6 + 2, NAMES_Y + 16, (SUBWINDOW_WIDTH_R)-4, 10, _("Crosshair Name:"), .2, 8, "cg_drawCrosshairNames", cvarFloatList { "Off" 0 "Name" 1 "Coloured Name" 2 }, _("Display player name when the crosshair is over a teammate"))
 	MULTI(6 + (SUBWINDOW_WIDTH_L)+6 + 2, NAMES_Y + 28, (SUBWINDOW_WIDTH_R)-4, 10, _("Crosshair Info:"), .2, 8, "cg_drawCrosshairInfo", cvarFloatList { "Off" 0 "Class" 1 "Rank" 2 "Prestige" 4 "Class + Rank" 3 "Class + Prestige" 5 "Rank + Prestige" 6 "Class + Rank + Prestige" 7 }, _("Display player info when the crosshair is over a teammate"))
 	MULTI(6 + (SUBWINDOW_WIDTH_L)+6 + 2, NAMES_Y + 40, (SUBWINDOW_WIDTH_R)-4, 10, _("Spectator Names:"), .2, 8, "cg_drawSpectatorNames", cvarFloatList { "Off" 0 "Name" 1 "Coloured Name" 2 }, _("Display player names when spectating"))
 
 // Popup //
-#define FILTER_Y 376
+#define FILTER_Y 362
 	SUBWINDOW(6 + (SUBWINDOW_WIDTH_L)+6, FILTER_Y, (SUBWINDOW_WIDTH_R), 40, _("POPUPS FILTERS"))
 	MULTI(6 + (SUBWINDOW_WIDTH_L)+6 + 2, FILTER_Y + 16, (SUBWINDOW_WIDTH_R)-4, 10, _("Filter Messages:"), .2, 8, "cg_popupFilter", cvarFloatList { "None" 0 "Connection" 1 "Pickup" 8 "Death" 16 "Connection, Pickup" 9 "Connection, Death" 17 "Connect, Pickup, Death" 25 }, _("Set filter on popup messages"))
 	MULTI(6 + (SUBWINDOW_WIDTH_L)+6 + 2, FILTER_Y + 28, (SUBWINDOW_WIDTH_R)-4, 10, _("Filter Promotions:"), .2, 8, "cg_popupBigFilter", cvarFloatList { "None" 0 "Skill upgrades" 1 "Rank upgrades" 2 "Prestige upgrades" 4 "Skill + Rank" 3 "Skill + Prestige" 5 "Rank + Prestige" 6 "Skill + Rank + Prestige" 7 }, _("Set filter on popup promotion messages"))

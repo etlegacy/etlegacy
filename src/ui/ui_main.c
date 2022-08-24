@@ -2924,7 +2924,7 @@ static void UI_DrawRedBlue(rectDef_t *rect, float scale, vec4_t color, int textS
  */
 static void UI_DrawCrosshair(rectDef_t *rect, float scale, vec4_t color)
 {
-	float size = ui_cg_crosshairSize.integer;
+	float size = 96.0f;
 
 	if (uiInfo.currentCrosshair < 0 || uiInfo.currentCrosshair >= NUM_CROSSHAIRS)
 	{
@@ -9179,7 +9179,6 @@ vmCvar_t ui_cg_crosshairColor;
 vmCvar_t ui_cg_crosshairColorAlt;
 vmCvar_t ui_cg_crosshairAlpha;
 vmCvar_t ui_cg_crosshairAlphaAlt;
-vmCvar_t ui_cg_crosshairSize;
 
 vmCvar_t cl_bypassMouseInput;
 
@@ -9291,7 +9290,6 @@ static cvarTable_t cvarTable[] =
 	{ &ui_cg_crosshairAlphaAlt,            "cg_crosshairAlphaAlt",                "1.0",                        CVAR_ARCHIVE,                   0 },
 	{ &ui_cg_crosshairColor,               "cg_crosshairColor",                   "White",                      CVAR_ARCHIVE,                   0 },
 	{ &ui_cg_crosshairColorAlt,            "cg_crosshairColorAlt",                "White",                      CVAR_ARCHIVE,                   0 },
-	{ &ui_cg_crosshairSize,                "cg_crosshairSize",                    "48",                         CVAR_ARCHIVE,                   0 },
 
 	{ &ui_cg_shoutcastDrawPlayers,         "cg_shoutcastDrawPlayers",             "1",                          CVAR_ARCHIVE,                   0 },
 	{ &ui_cg_shoutcastDrawTeamNames,       "cg_shoutcastDrawTeamNames",           "1",                          CVAR_ARCHIVE,                   0 },

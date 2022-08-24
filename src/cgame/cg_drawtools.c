@@ -1041,9 +1041,9 @@ char *CG_WordWrapString(const char *input, int maxLineChars, char *output, int m
  */
 static float CG_ComputeLinePosX(float x, float scalex, const char *text, int align, fontHelper_t *font)
 {
-	int lineW;
+	float lineW;
 
-	lineW = CG_Text_Width_Ext(text, scalex, 0, font);
+	lineW = CG_Text_Width_Ext_Float(text, scalex, 0, font);
 
 	switch (align)
 	{

@@ -166,6 +166,7 @@ static const hudComponentFields_t hudComponentFields[] =
 	{ HUDF(objectivetext),    CG_DrawObjectiveInfo    },    // FIXME: outside cg_draw_hud
 	{ HUDF(centerprint),      CG_DrawCenterString     },    // FIXME: outside cg_draw_hud
 	{ HUDF(banner),           CG_DrawBannerPrint      },    // FIXME: outside cg_draw_hud
+    { HUDF(crosshair),        CG_DrawCrosshair        },    // FIXME: outside cg_draw_hud
 	{ NULL,                   0, qfalse, NULL         },
 };
 
@@ -261,6 +262,7 @@ void CG_setDefaultHudValues(hudStucture_t *hud)
 	hud->objectivetext    = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) * .5f - 150, 358, 300, 16, qtrue, STYLE_NORMAL, 0.22f, colorWhite, qtrue, (vec4_t) { 0, 0.5, 0.5, 0.25 }, qtrue, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, 43, CG_DrawObjectiveInfo);
 	hud->centerprint      = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) * .5f - 150, 381, 300, 23, qtrue, STYLE_NORMAL, 0.22f, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, 44, CG_DrawCenterString);
 	hud->banner           = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) * .5f - 150, 20, 300, 39, qtrue, STYLE_NORMAL, 0.23f, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, 45, CG_DrawBannerPrint);
+    hud->crosshair        = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) * .5f - 24, SCREEN_HEIGHT * .5 - 24, 48, 48, qtrue, STYLE_NORMAL, 0.19f, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, 46, CG_DrawCrosshair);
 }
 
 /**
