@@ -1153,7 +1153,7 @@ void CG_DrawMultilineText(float x, float y, float scalex, float scaley, vec4_t c
 
 		yadj = fontSizeY * glyph->top;
 
-		if (style == ITEM_TEXTSTYLE_SHADOWED || style == ITEM_TEXTSTYLE_SHADOWEDMORE | style == ITEM_TEXTSTYLE_OUTLINESHADOWED)
+		if (style == ITEM_TEXTSTYLE_SHADOWED || style == ITEM_TEXTSTYLE_SHADOWEDMORE || style == ITEM_TEXTSTYLE_OUTLINESHADOWED)
 		{
 			float ofs = style == ITEM_TEXTSTYLE_SHADOWEDMORE ? 2 : 1;
 			colorBlack[3] = newColor[3];
