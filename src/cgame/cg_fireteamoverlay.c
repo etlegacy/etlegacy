@@ -535,7 +535,7 @@ void CG_DrawFireTeamOverlay(hudComponent_t *comp)
 	                + heightText * 2 + FT_SPACING                           // objective icon
 	                + FT_SPACING * 2 + bestNameWidth                        // player name
 	                + bestWeapIconWidthScale * heightText * 2 + FT_SPACING  // weapon icons
-	                + FT_SPACING * 3 + FT_SPACING                           // health points
+	                + FT_SPACING * 3 + FT_SPACING * 2                       // health points
 	                + bestLocWidth;                                         // location name
 
 	// keep the best fit for the location text
@@ -739,17 +739,17 @@ void CG_DrawFireTeamOverlay(hudComponent_t *comp)
 		}
 
 		// set hard limit on width
-		x += FT_SPACING;
+		x += FT_SPACING * 2;
 		if (cg_locations.integer & LOC_FTEAM)
 		{
-			float widthLocationLeft = w - (x - comp->location.x);
-			int   lim               = widthLocationLeft / FT_SPACING;
+			float widthLocationLeft = w - (x - comp->location.x) - FT_SPACING;
+			int   lim               = widthLocationLeft / CG_Text_Width_Ext_Float("A", comp->scale, 0, FONT_TEXT);
 
 			if (lim > 0)
 			{
 				if (comp->alignText == ITEM_ALIGN_RIGHT) // right align
 				{
-					CG_Text_Paint_RightAligned_Ext(comp->location.x + w - FT_SPACING, y + heightTextOffset, comp->scale, comp->scale, comp->colorText, locStr[i], 0, lim, comp->styleText, FONT_TEXT);
+					CG_Text_Paint_RightAligned_Ext(x + widthLocationLeft, y + heightTextOffset, comp->scale, comp->scale, comp->colorText, locStr[i], 0, lim, comp->styleText, FONT_TEXT);
 				}
 				else if (comp->alignText == ITEM_ALIGN_LEFT)
 				{
