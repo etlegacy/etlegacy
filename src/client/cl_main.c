@@ -945,7 +945,7 @@ static void CL_Connect_f(void)
 	if (com_sv_running->integer && !strcmp(server, "localhost"))
 	{
 		// if running a local server, kill it
-		SV_Shutdown("Server quit\n");
+		SV_Shutdown("Server quit");
 	}
 
 	// make sure a local server is killed
@@ -1424,13 +1424,13 @@ void CL_Clip_f(void)
 }
 
 /**
- * @brief CL_RebaseDrift_f 
+ * @brief CL_RebaseDrift_f
  * Resets the baselineDelta used for calculating drift in cl_showTimeDelta debugging output.
  */
 void CL_RebaseDrift_f(void)
 {
 	cl.baselineDelta = cl.serverTimeDelta;
-	
+
 	if (cl_showTimeDelta->integer & 1)
 	{
 		Com_Printf("^2REBASE DRIFT^7 (baselineDelta = serverTimeDelta = % i)\n", cl.serverTimeDelta);
@@ -2946,8 +2946,8 @@ void CL_Init(void)
 	cl_pitchspeed    = Cvar_Get("cl_pitchspeed", "140", CVAR_ARCHIVE_ND);
 	cl_anglespeedkey = Cvar_Get("cl_anglespeedkey", "1.5", 0);
 
-	cl_maxpackets  = Cvar_Get("cl_maxpackets", "125", CVAR_ARCHIVE);
-	cl_packetdup   = Cvar_Get("cl_packetdup", "1", CVAR_ARCHIVE_ND);
+	cl_maxpackets = Cvar_Get("cl_maxpackets", "125", CVAR_ARCHIVE);
+	cl_packetdup  = Cvar_Get("cl_packetdup", "1", CVAR_ARCHIVE_ND);
 
 	cl_run         = Cvar_Get("cl_run", "1", CVAR_ARCHIVE_ND);
 	cl_sensitivity = Cvar_Get("sensitivity", "5", CVAR_ARCHIVE);

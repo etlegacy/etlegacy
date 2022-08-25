@@ -102,11 +102,11 @@ void Com_CheckAutoUpdate(void)
 
 	NET_OutOfBandPrint(
 #ifdef DEDICATED
-	    NS_SERVER
+		NS_SERVER
 #else
-	    NS_CLIENT
+		NS_CLIENT
 #endif  // DEDICATED
-	    , autoupdate.autoupdateServer, "getUpdateInfo \"%s\"", info);
+		, autoupdate.autoupdateServer, "getUpdateInfo \"%s\"", info);
 
 	autoupdate.updateChecked = qtrue;
 
@@ -159,7 +159,7 @@ void Com_GetAutoUpdate(void)
 	if (com_sv_running->integer)
 	{
 		// if running a local server, kill it
-		SV_Shutdown("Server quit\n");
+		SV_Shutdown("Server quit");
 	}
 
 	// make sure a local server is killed
