@@ -418,7 +418,7 @@ void QDECL Com_Error(int code, const char *fmt, ...)
 	else if (code == ERR_DROP || code == ERR_DISCONNECT)
 	{
 		Com_Printf("********************\nERROR: %s\n********************\n", com_errorMessage);
-		SV_Shutdown(va("Server crashed: %s\n", com_errorMessage));
+		SV_Shutdown(va("Server crashed: %s", com_errorMessage));
 		CL_Disconnect(qtrue);
 		CL_FlushMemory();
 		com_errorEntered = qfalse;
@@ -446,7 +446,7 @@ void QDECL Com_Error(int code, const char *fmt, ...)
 	else
 	{
 		CL_Shutdown();
-		SV_Shutdown(va("Server fatal crashed: %s\n", com_errorMessage));
+		SV_Shutdown(va("Server fatal crashed: %s", com_errorMessage));
 	}
 
 	Com_Shutdown(code == ERR_VID_FATAL ? qtrue : qfalse);
@@ -462,7 +462,7 @@ void Com_Quit_f(void)
 	// don't try to shutdown if we are in a recursive error
 	if (!com_errorEntered)
 	{
-		SV_Shutdown("Server quit\n");
+		SV_Shutdown("Server quit");
 
 #ifndef DEDICATED
 		CL_ShutdownCGame();
