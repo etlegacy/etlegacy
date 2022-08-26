@@ -2261,7 +2261,8 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 		break;
 	case EV_FIRE_WEAPON:
 	case EV_FIRE_WEAPONB:
-		if (cent->currentState.clientNum == cg.snap->ps.clientNum && (cg.snap->ps.eFlags & EF_ZOOMING))     // to stop airstrike sfx
+		// to stop artillery sfx
+		if (es->eventParm)
 		{
 			break;
 		}
