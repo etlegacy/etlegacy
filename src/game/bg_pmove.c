@@ -1661,6 +1661,8 @@ static void PM_CrashLand(void)
 			// this is a pain grunt, so don't play it if dead
 			if (pm->ps->stats[STAT_HEALTH] > 0)
 			{
+				pm->ps->pm_time   = 1000;
+				pm->ps->pm_flags |= PMF_TIME_KNOCKBACK;
 				PM_AddEventExt(EV_FALL_DMG_50, PM_FootstepForSurface());
 				//BG_UpdateConditionValue(pm->ps->clientNum, ANIM_COND_IMPACT_POINT, (rand() + 1) ? IMPACTPOINT_KNEE_RIGHT : IMPACTPOINT_KNEE_LEFT, qtrue);
 				//BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_PAIN, qfalse, qtrue);
@@ -1671,6 +1673,8 @@ static void PM_CrashLand(void)
 			// this is a pain grunt, so don't play it if dead
 			if (pm->ps->stats[STAT_HEALTH] > 0)
 			{
+				pm->ps->pm_time   = 250;
+				pm->ps->pm_flags |= PMF_TIME_KNOCKBACK;
 				PM_AddEventExt(EV_FALL_DMG_25, PM_FootstepForSurface());
 				//BG_UpdateConditionValue(pm->ps->clientNum, ANIM_COND_IMPACT_POINT, (rand() + 1) ? IMPACTPOINT_KNEE_RIGHT : IMPACTPOINT_KNEE_LEFT, qtrue);
 				//BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_PAIN, qfalse, qtrue);
@@ -1681,6 +1685,8 @@ static void PM_CrashLand(void)
 			// this is a pain grunt, so don't play it if dead
 			if (pm->ps->stats[STAT_HEALTH] > 0)
 			{
+				pm->ps->pm_time   = 1000;
+				pm->ps->pm_flags |= PMF_TIME_KNOCKBACK;
 				PM_AddEventExt(EV_FALL_DMG_15, PM_FootstepForSurface());
 				//BG_UpdateConditionValue(pm->ps->clientNum, ANIM_COND_IMPACT_POINT, (rand() + 1) ? IMPACTPOINT_KNEE_RIGHT : IMPACTPOINT_KNEE_LEFT, qtrue);
 				//BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_PAIN, qfalse, qtrue);
@@ -1691,6 +1697,8 @@ static void PM_CrashLand(void)
 			// this is a pain grunt, so don't play it if dead
 			if (pm->ps->stats[STAT_HEALTH] > 0)
 			{
+				pm->ps->pm_time   = 1000;
+				pm->ps->pm_flags |= PMF_TIME_KNOCKBACK;
 				PM_AddEventExt(EV_FALL_DMG_10, PM_FootstepForSurface());
 				//BG_UpdateConditionValue(pm->ps->clientNum, ANIM_COND_IMPACT_POINT, (rand() + 1) ? IMPACTPOINT_KNEE_RIGHT : IMPACTPOINT_KNEE_LEFT, qtrue);
 				//BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_PAIN, qfalse, qtrue);
@@ -1928,7 +1936,10 @@ static void PM_GroundTrace(void)
 		{
 			// don't allow another jump for a little while
 			pm->ps->pm_flags |= PMF_TIME_LAND;
-			pm->ps->pm_time   = 250;
+			if (pm->ps->pm_time < 250)
+			{
+				pm->ps->pm_time = 250;
+			}
 		}
 	}
 

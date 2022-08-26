@@ -935,27 +935,19 @@ void G_FallDamage(gentity_t *ent, int event)
 	}
 	else if (event == EV_FALL_DMG_50)
 	{
-		damage                    = 50;
-		ent->client->ps.pm_time   = 1000;
-		ent->client->ps.pm_flags |= PMF_TIME_KNOCKBACK;
+		damage = 50;
 	}
 	else if (event == EV_FALL_DMG_25)
 	{
-		damage                    = 25;
-		ent->client->ps.pm_time   = 250;
-		ent->client->ps.pm_flags |= PMF_TIME_KNOCKBACK;
+		damage = 25;
 	}
 	else if (event == EV_FALL_DMG_15)
 	{
-		damage                    = 15;
-		ent->client->ps.pm_time   = 1000;
-		ent->client->ps.pm_flags |= PMF_TIME_KNOCKBACK;
+		damage = 15;
 	}
 	else if (event == EV_FALL_DMG_10)
 	{
-		damage                    = 10;
-		ent->client->ps.pm_time   = 1000;
-		ent->client->ps.pm_flags |= PMF_TIME_KNOCKBACK;
+		damage = 10;
 	}
 	else
 	{
