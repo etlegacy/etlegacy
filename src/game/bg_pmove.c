@@ -3595,13 +3595,12 @@ static void PM_Weapon(void)
 	// PC_FIELDOPS needs to zoom to call artillery
 	if ((pm->ps->eFlags & EF_ZOOMING) || pm->ps->weapon == WP_BINOCULARS)
 	{
-#ifdef GAMEDLL
 		if (pm->ps->stats[STAT_PLAYER_CLASS] == PC_FIELDOPS)
 		{
 			pm->ps->weaponTime += 500;
-			PM_AddEvent(EV_FIRE_WEAPON);
+			PM_AddEventExt(EV_FIRE_WEAPON, 1);
 		}
-#endif
+
 		return;
 	}
 
