@@ -2396,6 +2396,9 @@ static const char *gameCommand[] =
 	"where",
 	"ws",
 	"wstats",
+	"start_match",
+	"reset_match",
+	"swap_teams",
 	NULL,
 };
 
