@@ -151,6 +151,10 @@ void SCR_DrawChar(int x, int y, float w, float h, int ch, qboolean nativeResolut
 		return;
 	}
 
+	// use scaled values to account for r_scale
+	w = smallCharWidth;
+	h = smallCharHeight;
+
 	if (y < -h)
 	{
 		return;
@@ -193,6 +197,10 @@ void SCR_DrawStringExt(int x, int y, float w, float h, const char *string, float
 	vec4_t     color;
 	const char *s;
 	int        xx;
+
+	// use scaled values to account for r_scale
+	w = smallCharWidth;
+	h = smallCharHeight;
 
 	if (dropShadow)
 	{

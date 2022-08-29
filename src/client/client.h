@@ -583,9 +583,9 @@ typedef enum
  */
 enum cgameFlagsMaskEnum
 {
-    MASK_CGAMEFLAGS_SHOWGAMEVIEW             = 0x1, // 0b00000001
-    MASK_CGAMEFLAGS_SERVERTIMEDELTA_FORWARD  = 0x2, // 0b00000010
-    MASK_CGAMEFLAGS_SERVERTIMEDELTA_BACKWARD = 0x4, // 0b00000100
+	MASK_CGAMEFLAGS_SHOWGAMEVIEW             = 0x1, // 0b00000001
+	MASK_CGAMEFLAGS_SERVERTIMEDELTA_FORWARD  = 0x2, // 0b00000010
+	MASK_CGAMEFLAGS_SERVERTIMEDELTA_BACKWARD = 0x4, // 0b00000100
 };
 
 void CL_ClearKeys(void);
@@ -625,6 +625,9 @@ qboolean CL_UpdateVisiblePings_f(int source);
 #define NUM_CON_TIMES   10
 
 #define CON_TEXTSIZE    131072
+
+extern int smallCharWidth;      ///< SMALLCHAR_WIDTH with renderer scale accounted for
+extern int smallCharHeight;     ///< SMALLCHAR_HEIGHT with renderer scale accounted for
 
 /**
  * @struct console_t

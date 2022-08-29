@@ -336,7 +336,7 @@ void Field_VariableSizeDraw(field_t *edit, int x, int y, int width, int size, qb
  */
 void Field_Draw(field_t *edit, int x, int y, int width, qboolean showCursor, qboolean noColorEscape)
 {
-	Field_VariableSizeDraw(edit, x, y, width, SMALLCHAR_WIDTH, showCursor, noColorEscape);
+	Field_VariableSizeDraw(edit, x, y, width, smallCharWidth, showCursor, noColorEscape);
 }
 
 /**
