@@ -3338,6 +3338,8 @@ void CG_autoScreenShot_f(void);
 void CG_keyOn_f(void);
 void CG_keyOff_f(void);
 void CG_dumpStats_f(void);
+void CG_AddGameConsoleCommand(void);
+void CG_RemoveGameConsoleCommand(void);
 
 void CG_ForceTapOut_f(void);
 
@@ -3641,8 +3643,8 @@ void trap_R_Finish(void);
 // extension interface
 extern qboolean flashWindowSupported;
 
-qboolean trap_GetValue( char *value, int valueSize, const char *key );
-void trap_SysFlashWindow( int state );
+qboolean trap_GetValue(char *value, int valueSize, const char *key);
+void trap_SysFlashWindow(int state);
 extern int dll_com_trapGetValue;
 extern int dll_trap_SysFlashWindow;
 
@@ -4139,7 +4141,7 @@ typedef struct hudStructure_s
 	hudComponent_t objectivetext;
 	hudComponent_t centerprint;
 	hudComponent_t banner;
-    hudComponent_t crosshair;
+	hudComponent_t crosshair;
 
 	hudComponent_t *components[HUD_COMPONENTS_NUM];
 } hudStucture_t;

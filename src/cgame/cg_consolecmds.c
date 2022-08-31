@@ -2396,11 +2396,98 @@ static const char *gameCommand[] =
 	"where",
 	"ws",
 	"wstats",
+	NULL,
+};
+
+/**
+ * @var gameConsoleCommand
+ * @brief Game console command list
+ *
+ * @todo List the server command
+ * find a more elegant / dynamic way to sharesonsole command list
+ */
+static const char *gameConsoleCommand[] =
+{
+	"entitylist",
+	"csinfo",
+	"forceteam",
+	"game_memory",
+	"addip",
+	"removeip",
+	"listip",
+	"listmaxlivesip",
 	"start_match",
 	"reset_match",
 	"swap_teams",
-	NULL,
+	"shuffle_teams",
+	"shuffle_teams_norestart",
+#ifdef FEATURE_RATING
+	"shuffle_teams_sr",
+	"shuffle_teams_sr_norestart",
+#endif
+	"makeReferee",
+	"removeReferee",
+	"makeShoutcaster",
+	"removeShoutcaster",
+	"mute",
+	"unmute",
+	"ban",
+	"campaign",
+	"listcampaigns",
+	"revive",
+	"kick",                                // moved from engine
+	"clientkick",
+#ifdef FEATURE_OMNIBOT
+	"bot",
+#endif
+	"cp",
+	"reloadConfig",
+	"loadConfig",
+	"sv_cvarempty",
+	"sv_cvar",
+	"playsound",
+	"playsound_env",
+	"gib",
+	"die",
+	"freeze",
+	"unfreeze",
+	"burn",
+	"pip",
+	"throw",
+#ifdef ETLEGACY_DEBUG
+	"ae",                                  //ae <playername> <animEvent>
+#endif
+	"ref",                                 // console also gets ref commands
 };
+
+/**
+ * @brief CG_AddGameConsoleCommand
+ */
+void CG_AddGameConsoleCommand()
+{
+	if (cgs.localServer || cgs.clientinfo[cg.clientNum].refStatus == RL_RCON)
+	{
+		int i;
+
+		for (i = 0; gameConsoleCommand[i]; i++)
+		{
+			trap_AddCommand(gameConsoleCommand[i]);
+		}
+	}
+}
+
+/**
+ * @brief CG_RemoveGameConsoleCommand
+ */
+void CG_RemoveGameConsoleCommand()
+{
+	int i;
+
+	for (i = 0; gameConsoleCommand[i]; i++)
+	{
+		trap_RemoveCommand(gameConsoleCommand[i]);
+	}
+}
 
 /**
  * @brief The string has been tokenized and can be retrieved with
@@ -2447,10 +2534,15 @@ void CG_InitConsoleCommands(void)
 
 	// the game server will interpret these commands, which will be automatically
 	// forwarded to the server after they are not recognized locally
+
+	// game commands
 	for (i = 0; gameCommand[i]; i++)
 	{
 		trap_AddCommand(gameCommand[i]);
 	}
+
+	// game console commands
+	CG_AddGameConsoleCommand();
 
 	// remove engine commands to avoid abuse
 	trap_RemoveCommand("+lookup");
