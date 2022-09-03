@@ -55,6 +55,17 @@ void CG_AdjustFrom640(float *x, float *y, float *w, float *h)
 		*x *= cgs.r43da;    // * ((4/3) / aspectratio);
 		*w *= cgs.r43da;    // * ((4/3) / aspectratio);
 	}
+
+	// when HUD editor is enabled, adjust virtual grid to not fill the entire screen,
+	// so HUD elements scale correctly to decreased viewport
+	// mouse movement is handled separately in CG_MouseEvent
+	if (cg.editingHud)
+	{
+		*x *= 0.8f;
+		*y *= 0.8f;
+		*w *= 0.8f;
+		*h *= 0.8f;
+	}
 }
 
 /**
@@ -1197,8 +1208,9 @@ void CG_DropdownMainBox(float x, float y, float w, float h, float scalex, float 
 	rectDef_t rect = { x, y, w, h };
 	vec4_t    colour;
 	float     textboxW;
-	int       offsetX;
+	int       offsetX, offsetY;
 
+	// dropdown arrow box is square so we can get the width reduction from that
 	textboxW = rect.w - rect.h;
 	rect.x  += textboxW;
 	rect.w   = rect.h;
@@ -1237,13 +1249,15 @@ void CG_DropdownMainBox(float x, float y, float w, float h, float scalex, float 
 	CG_DrawRect_FixedBorder(rect.x, rect.y, rect.w, rect.h, 1.0f, borderColour);
 
 	offsetX = CG_Text_Width_Ext("V", scalex, 0, font);
+	offsetY = (CG_Text_Height_Ext("V", scaley, 0, font) + rect.h) * 0.5f;
 
 	//VectorCopy(font->colour, colour);
-	CG_Text_Paint_Ext(rect.x + (rect.w - offsetX) / 2.0f, y + 7.0f, scalex, scaley, colour, "V", 0, 0, 0, font);
+	CG_Text_Paint_Ext(rect.x + (rect.w - offsetX) / 2.0f, y + offsetY, scalex, scaley, colour, "V", 0, 0, 0, font);
 
 	offsetX = CG_Text_Width_Ext(text, scalex, 0, font);
+	offsetY = (CG_Text_Height_Ext(text, scalex, 0, font) + rect.h) * 0.5f;
 
-	CG_Text_Paint_Ext(x + (textboxW - offsetX) / 2.0f, y + 7.0f, scalex, scaley, fontColour, text, 0, 0, style, font);
+	CG_Text_Paint_Ext(x + (textboxW - offsetX) / 2.0f, y + offsetY, scalex, scaley, fontColour, text, 0, 0, style, font);
 }
 
 /**
@@ -1268,8 +1282,9 @@ float CG_DropdownBox(float x, float y, float w, float h, float scalex, float sca
 	rectDef_t rect = { x, y, w, h };
 	vec4_t    colour;
 	float     textboxW;
-	int       offsetX;
+	int       offsetX, offsetY;
 
+	// dropdown arrow box is square so we can get the width reduction from that
 	textboxW = rect.w - rect.h;
 
 	rect.y += h;
@@ -1288,8 +1303,9 @@ float CG_DropdownBox(float x, float y, float w, float h, float scalex, float sca
 	CG_FillRect(rect.x, rect.y, rect.w, rect.h, colour);
 
 	offsetX = CG_Text_Width_Ext(text, scalex, 0, font);
+	offsetY = (CG_Text_Height_Ext(text, scaley, 0, font) + rect.h) * 0.5f;
 
-	CG_Text_Paint_Ext(rect.x + (textboxW - offsetX) / 2.0f, rect.y + 7.0f, scalex, scaley, fontColour, text, 0, 0, style, font);
+	CG_Text_Paint_Ext(rect.x + (textboxW - offsetX) / 2.0f, rect.y + offsetY, scalex, scaley, fontColour, text, 0, 0, style, font);
 
 	return rect.y;
 }

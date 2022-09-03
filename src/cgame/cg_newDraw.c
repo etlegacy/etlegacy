@@ -638,25 +638,27 @@ void CG_MouseEvent(int x, int y)
 		if (!cgs.demoCamera.renderingFreeCam)
 		{
 #endif
+		int hudEditorSafeX = SCREEN_WIDTH_SAFE * 1.25f;
+		int hudEditorSafeY = SCREEN_HEIGHT_SAFE * 1.25f;
 
 		cgs.cursorX += x;
-		if (cgs.cursorX < 0)
+		if (cg.editingHud)
 		{
-			cgs.cursorX = 0;
+			cgs.cursorX = Com_Clamp(0, hudEditorSafeX, cgs.cursorX);
 		}
-		else if (cgs.cursorX > SCREEN_WIDTH_SAFE)
+		else
 		{
-			cgs.cursorX = SCREEN_WIDTH_SAFE;
+			cgs.cursorX = Com_Clamp(0, SCREEN_WIDTH_SAFE, cgs.cursorX);
 		}
 
 		cgs.cursorY += y;
-		if (cgs.cursorY < 0)
+		if (cg.editingHud)
 		{
-			cgs.cursorY = 0;
+			cgs.cursorY = Com_Clamp(0, hudEditorSafeY, cgs.cursorY);
 		}
-		else if (cgs.cursorY > SCREEN_HEIGHT_SAFE)
+		else
 		{
-			cgs.cursorY = SCREEN_HEIGHT_SAFE;
+			cgs.cursorY = Com_Clamp(0, SCREEN_HEIGHT_SAFE, cgs.cursorY);
 		}
 
 		if (cgs.eventHandling == CGAME_EVENT_SPEAKEREDITOR)

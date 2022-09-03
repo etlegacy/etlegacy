@@ -3641,8 +3641,8 @@ void trap_R_Finish(void);
 // extension interface
 extern qboolean flashWindowSupported;
 
-qboolean trap_GetValue( char *value, int valueSize, const char *key );
-void trap_SysFlashWindow( int state );
+qboolean trap_GetValue(char *value, int valueSize, const char *key);
+void trap_SysFlashWindow(int state);
 extern int dll_com_trapGetValue;
 extern int dll_trap_SysFlashWindow;
 
@@ -4088,6 +4088,7 @@ typedef struct hudComponent_s
 typedef struct hudStructure_s
 {
 	int hudnumber;
+
 	hudComponent_t compass;
 	hudComponent_t staminabar;
 	hudComponent_t breathbar;
@@ -4139,12 +4140,30 @@ typedef struct hudStructure_s
 	hudComponent_t objectivetext;
 	hudComponent_t centerprint;
 	hudComponent_t banner;
-    hudComponent_t crosshair;
+	hudComponent_t crosshair;
 
 	hudComponent_t *components[HUD_COMPONENTS_NUM];
 } hudStucture_t;
 
+#define MAXHUDS 32
+
+extern hudStucture_t hudlist[MAXHUDS];
+extern hudStucture_t *activehud;
+extern int hudCount;
+
+typedef struct
+{
+	char *name;
+	size_t offset;
+	qboolean isAlias;
+	void (*draw)(hudComponent_t *comp);
+
+} hudComponentFields_t;
+
 hudStucture_t *CG_GetActiveHUD();
+hudStucture_t *CG_addHudToList(hudStucture_t *hud);
+hudStucture_t *CG_getHudByNumber(int number);
+void CG_HudComponentsFill(hudStucture_t *hud);
 
 void CG_DrawNewCompass(hudComponent_t *comp);
 void CG_DrawFireTeamOverlay(hudComponent_t *comp);
@@ -4165,6 +4184,42 @@ void CG_DrawBannerPrint(hudComponent_t *comp);
 void CG_DrawWeapStability(hudComponent_t *comp);
 void CG_DrawCursorhint(hudComponent_t *comp);
 void CG_DrawCrosshair(hudComponent_t *comp);
+
+void CG_DrawPlayerStatusHead(hudComponent_t *comp);
+void CG_DrawGunIcon(hudComponent_t *comp);
+void CG_DrawAmmoCount(hudComponent_t *comp);
+void CG_DrawPowerUps(hudComponent_t *comp);
+void CG_DrawObjectiveStatus(hudComponent_t *comp);
+void CG_DrawPlayerHealthBar(hudComponent_t *comp);
+void CG_DrawStaminaBar(hudComponent_t *comp);
+void CG_DrawBreathBar(hudComponent_t *comp);
+void CG_DrawWeapRecharge(hudComponent_t *comp);
+void CG_DrawPlayerHealth(hudComponent_t *comp);
+void CG_DrawPlayerSprint(hudComponent_t *comp);
+void CG_DrawPlayerBreath(hudComponent_t *comp);
+void CG_DrawWeaponCharge(hudComponent_t *comp);
+void CG_DrawSkills(hudComponent_t *comp);
+void CG_DrawXP(hudComponent_t *comp);
+void CG_DrawRank(hudComponent_t *comp);
+void CG_DrawLivesLeft(hudComponent_t *comp);
+void CG_DrawRespawnTimer(hudComponent_t *comp);
+void CG_DrawSpawnTimer(hudComponent_t *comp);
+void CG_DrawLocalTime(hudComponent_t *comp);
+void CG_DrawRoundTimer(hudComponent_t *comp);
+void CG_DrawDemoMessage(hudComponent_t *comp);
+void CG_DrawFPS(hudComponent_t *comp);
+void CG_DrawSnapshot(hudComponent_t *comp);
+void CG_DrawPing(hudComponent_t *comp);
+void CG_DrawSpeed(hudComponent_t *comp);
+void CG_DrawLagometer(hudComponent_t *comp);
+void CG_DrawDisconnect(hudComponent_t *comp);
+
+/**
+ * @brief Using the stringizing operator to save typing...
+ */
+#define HUDF(x) # x, offsetof(hudStucture_t, x), qfalse
+extern const hudComponentFields_t hudComponentFields[];
+
 
 void CG_DrawCompText(hudComponent_t *comp, const char *str, vec4_t color, int fontStyle, fontHelper_t *font);
 void CG_DrawCompMultilineText(hudComponent_t *comp, const char *str, vec4_t color, int align, int fontStyle, fontHelper_t *font);
