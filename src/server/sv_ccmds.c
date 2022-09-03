@@ -436,12 +436,9 @@ qboolean SV_TempBanIsBanned(netadr_t address)
 {
 	int i;
 
-	for (i = 0; i < MAX_TEMPBAN_ADDRESSES; i++)
-	{
-		if (svs.tempBanAddresses[i].endtime && svs.tempBanAddresses[i].endtime > svs.time)
-		{
-			if (NET_CompareAdr(address, svs.tempBanAddresses[i].adr))
-			{
+	for ( i = 0; i < MAX_TEMPBAN_ADDRESSES; i++ ) {
+		if ( svs.tempBanAddresses[ i ].endtime && svs.tempBanAddresses[ i ].endtime > svs.time ) {
+			if ( NET_CompareBaseAdr( address, &svs.tempBanAddresses[ i ].adr ) ) {
 				return qtrue;
 			}
 		}
