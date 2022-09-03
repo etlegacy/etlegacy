@@ -77,6 +77,7 @@ qboolean wsAdjusted = qfalse;
 
 static panel_button_t *lastFocusComponent;
 static qboolean       lastFocusComponentMoved;
+static int            elementColorSelection;
 
 static void CG_HudEditorUpdateFields(panel_button_t *button);
 static qboolean CG_HudEditor_Dropdown_KeyDown(panel_button_t *button, int key);
@@ -382,7 +383,7 @@ static panel_button_t hudEditorColorR =
 	NULL,
 	"hudeditor_colorR",
 	{ 0,                     HUDEDITOR_COLORSSTYLE_Y + HUDEDITOR_TITLE_SPACER_Y + HUDEDITOR_CONTROLS_SPACER_XY,INPUT_COLOR_WIDTH, INPUT_HEIGHT },
-	{ 0,                     0,                                                                   0,             0, 0, 0, 0, 1  },
+	{ 0,                     0,                                                                   0,                 0, 0, 0, 0, 1},
 	&hudEditorTextFont,      // font
 	CG_HudEditor_EditClick,  // keyDown
 	CG_HudEditorPanel_KeyUp, // keyUp
@@ -396,7 +397,7 @@ static panel_button_t hudEditorColorG =
 	NULL,
 	"hudeditor_colorG",
 	{ 0,                     HUDEDITOR_COLORSSTYLE_Y + HUDEDITOR_TITLE_SPACER_Y + SLIDERS_HEIGHT + (HUDEDITOR_CONTROLS_SPACER_XY * 2),INPUT_COLOR_WIDTH, INPUT_HEIGHT },
-	{ 0,                     0,                                                                                          0,             1, 0, 0, 0, 1  },
+	{ 0,                     0,                                                                                          0,                 1, 0, 0, 0, 1},
 	&hudEditorTextFont,      // font
 	CG_HudEditor_EditClick,  // keyDown
 	CG_HudEditorPanel_EditUp,// keyUp
@@ -409,7 +410,7 @@ static panel_button_t hudEditorColorB =
 	NULL,
 	"hudeditor_colorB",
 	{ 0,                     HUDEDITOR_COLORSSTYLE_Y + HUDEDITOR_TITLE_SPACER_Y + (SLIDERS_HEIGHT * 2) + (HUDEDITOR_CONTROLS_SPACER_XY * 3),INPUT_COLOR_WIDTH, INPUT_HEIGHT },
-	{ 0,                     0,                                                                                                0,             2, 0, 0, 0, 1  },
+	{ 0,                     0,                                                                                                0,                 2, 0, 0, 0, 1},
 	&hudEditorTextFont,      // font
 	CG_HudEditor_EditClick,  // keyDown
 	CG_HudEditorPanel_EditUp,// keyUp
@@ -422,7 +423,7 @@ static panel_button_t hudEditorColorA =
 	NULL,
 	"hudeditor_colorA",
 	{ 0,                     HUDEDITOR_COLORSSTYLE_Y + HUDEDITOR_TITLE_SPACER_Y + (SLIDERS_HEIGHT * 3) + (HUDEDITOR_CONTROLS_SPACER_XY * 4),INPUT_COLOR_WIDTH, INPUT_HEIGHT },
-	{ 0,                     0,                                                                                                0,             3, 0, 0, 0, 1  },
+	{ 0,                     0,                                                                                                0,                 3, 0, 0, 0, 1},
 	&hudEditorTextFont,      // font
 	CG_HudEditor_EditClick,  // keyDown
 	CG_HudEditorPanel_EditUp,// keyUp
@@ -837,7 +838,7 @@ static void CG_HudEditor_RenderEdit(panel_button_t *button)
 
 	// editfields for these are smaller, but we need the regular editfield width for alignment
 	if (button == &hudEditorColorR || button == &hudEditorColorG
-		|| button == &hudEditorColorB || button == &hudEditorColorA)
+	    || button == &hudEditorColorB || button == &hudEditorColorA)
 	{
 		totalWidth = textWidth + Ccg_WideX(INPUT_WIDTH);
 	}
@@ -1367,15 +1368,18 @@ static qboolean CG_HudEditoColorSelection_KeyDown(panel_button_t *button, int ke
 
 		if (button == &hudEditorColorSelectionText)
 		{
-			button->data[3] = 0;
+			//button->data[3] = 0;
+			elementColorSelection = 0;
 		}
 		else if (button == &hudEditorColorSelectionBorder)
 		{
-			button->data[3] = 1;
+			//button->data[3] = 1;
+			elementColorSelection = 1;
 		}
 		else if (button == &hudEditorColorSelectionBackground)
 		{
-			button->data[3] = 2;
+			//button->data[3] = 2;
+			elementColorSelection = 2;
 		}
 //		button->data[3] = (button->data[3] >= ARRAY_LEN(colorSelectionElement) - 1) ? 0 : ++(button->data[3]);
 //
@@ -1561,8 +1565,6 @@ static qboolean CG_HudEditorPanel_KeyUp(panel_button_t *button, int key)
 	return qtrue;
 }
 
-
-
 /**
 * @brief CG_HudEditorUpdateFields
 * @param[in] button
@@ -1595,13 +1597,13 @@ static void CG_HudEditorUpdateFields(panel_button_t *button)
 	trap_Cvar_Set("hudeditor_s", buffer);
 	hudEditorScale.data[1] = button->data[0];
 
-//	switch (hudEditorColorSelection.data[3])
-//	{
-//	case 0: compColor = &comp->colorText; break;
-//	case 1: compColor = &comp->colorBackground; break;
-//	case 2: compColor = &comp->colorBorder; break;
-//	default: break;
-//	}
+	switch (elementColorSelection /*hudEditorColorSelection.data[3]*/)
+	{
+	case 0: compColor = &comp->colorText; break;
+	case 1: compColor = &comp->colorBackground; break;
+	case 2: compColor = &comp->colorBorder; break;
+	default: break;
+	}
 
 	if (compColor)
 	{
@@ -1985,6 +1987,8 @@ void CG_HudEditorSetup(void)
 
 	// clear last selected button
 	lastFocusComponent = NULL;
+    
+    elementColorSelection = 0;
 }
 
 /**
