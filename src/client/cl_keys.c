@@ -1573,8 +1573,8 @@ void CL_KeyEvent(int key, qboolean down, unsigned time)
 		{
 			if (key >= 200)
 			{
-				Com_Printf("%s (key %i) is unbound, use controls menu to set.\n"
-				           , Key_KeynumToString(key), key);
+				Com_DPrintf("%s (key %i) is unbound, use controls menu to set.\n"
+				            , Key_KeynumToString(key), key);
 			}
 		}
 		else if (kb[0] == '+')
