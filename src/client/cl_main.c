@@ -2746,6 +2746,17 @@ int CL_ScaledMilliseconds(void)
 extern refexport_t *GetRefAPI(int apiVersion, refimport_t *rimp);
 #endif
 
+
+/**
+ * @brief CL_SetScaling
+ * @return
+ */
+static void CL_SetScaling(float scale)
+{
+	smallCharWidth  = SMALLCHAR_WIDTH * scale;
+	smallCharHeight = SMALLCHAR_HEIGHT * scale;
+}
+
 /**
  * @brief CL_InitRef
  */
@@ -2849,6 +2860,7 @@ void CL_InitRef(void)
 
 	ri.CL_VideoRecording     = CL_VideoRecording;
 	ri.CL_WriteAVIVideoFrame = CL_WriteAVIVideoFrame;
+	ri.CL_SetScaling         = CL_SetScaling;
 
 #ifdef FEATURE_PNG
 	ri.zlib_crc32    = crc32;
