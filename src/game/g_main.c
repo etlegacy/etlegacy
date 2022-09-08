@@ -1051,7 +1051,12 @@ void G_CheckForCursorHints(gentity_t *ent)
 	G_TempTraceRealHitBox(ent);
 	G_TempTraceIgnoreEntities(ent);
 
-	trace_contents = (CONTENTS_TRIGGER | CONTENTS_SOLID | CONTENTS_MISSILECLIP | CONTENTS_BODY | CONTENTS_CORPSE);
+	trace_contents = (CONTENTS_TRIGGER | CONTENTS_SOLID | CONTENTS_MISSILECLIP | CONTENTS_CORPSE);
+
+	if (ps->stats[STAT_PLAYER_CLASS] == PC_MEDIC)
+	{
+		trace_contents |= CONTENTS_BODY;
+	}
 
 	trap_Trace(tr, offset, NULL, NULL, end, ps->clientNum, trace_contents);
 	if (tr->startsolid && tr->entityNum == ENTITYNUM_WORLD)
@@ -1093,19 +1098,6 @@ void G_CheckForCursorHints(gentity_t *ent)
 
 	if (tr->fraction == 1.f || tr->entityNum == ENTITYNUM_WORLD || tr->entityNum < MAX_CLIENTS)
 	{
-		// building something - add this here because we don't have anything solid to trace to - quite ugly-ish
-		if (ent->client->touchingTOI && ps->stats[STAT_PLAYER_CLASS] == PC_ENGINEER)
-		{
-			gentity_t *constructible;
-
-			if ((constructible = G_IsConstructible(ent->client->sess.sessionTeam, ent->client->touchingTOI)))
-			{
-				ps->serverCursorHint    = HINT_CONSTRUCTIBLE;
-				ps->serverCursorHintVal = (int)constructible->s.angles2[0];
-				return;
-			}
-		}
-
 		// show medics a syringe if they can revive someone
 		if (traceEnt->client && traceEnt->client->sess.sessionTeam == ent->client->sess.sessionTeam)
 		{
@@ -1541,11 +1533,22 @@ void G_CheckForCursorHints(gentity_t *ent)
 		}
 	}
 
-	// set hint distance
-	if (dist <= Square(hintDist))
+	// set hint if we found ent that is in range
+	if (dist <= Square(hintDist) && hintType != HINT_NONE && hintType != HINT_FORCENONE)
 	{
 		ps->serverCursorHint    = hintType;
 		ps->serverCursorHintVal = hintVal;
+	}
+	// if hint is out of range or there is no hint then check for touchingTOI constructible hint
+	else if (ent->client->touchingTOI && ps->stats[STAT_PLAYER_CLASS] == PC_ENGINEER && hintType != HINT_CONSTRUCTIBLE)
+	{
+		gentity_t *constructible;
+
+		if ((constructible = G_IsConstructible(ent->client->sess.sessionTeam, ent->client->touchingTOI)))
+		{
+			ps->serverCursorHint    = HINT_CONSTRUCTIBLE;
+			ps->serverCursorHintVal = (int)constructible->s.angles2[0];
+		}
 	}
 }
 

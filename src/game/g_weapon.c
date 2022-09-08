@@ -1569,7 +1569,16 @@ gentity_t *Weapon_Engineer(gentity_t *ent)
 	muzzleTrace[2] += ent->client->ps.viewheight;
 
 	VectorMA(muzzleTrace, CH_MAX_DIST, forward, end);
+
+	if (ent->client->touchingTOI)
+	{
+		ent->client->touchingTOI->r.linked = qfalse;
+	}
 	trap_EngineerTrace(ent, &tr, muzzleTrace, NULL, NULL, end, ent->s.number, MASK_SHOT | CONTENTS_TRIGGER);
+	if (ent->client->touchingTOI)
+	{
+		ent->client->touchingTOI->r.linked = qtrue;
+	}
 
 	traceEnt = &g_entities[tr.entityNum];
 
@@ -1595,6 +1604,13 @@ weapengineergoto1:
 
 	if (VectorDistance(muzzleTrace, tr.endpos) > CH_BREAKABLE_DIST)
 	{
+		if (ent->client->touchingTOI)
+		{
+			if (TryConstructing(ent, ent->client->touchingTOI))
+			{
+				return NULL;
+			}
+		}
 		return NULL;
 	}
 
@@ -3524,7 +3540,7 @@ qboolean Bullet_Fire_Extended(gentity_t *source, gentity_t *attacker, vec3_t sta
 	// send bullet impact
 	if (traceEnt->takedamage && traceEnt->client)
 	{
-		fleshEnt = tent   = G_TempEntity(impactPos, EV_BULLET_HIT_FLESH);
+		fleshEnt          = tent = G_TempEntity(impactPos, EV_BULLET_HIT_FLESH);
 		tent->s.eventParm = traceEnt->s.number;
 		tent->s.weapon    = source->s.weapon;
 
@@ -3619,7 +3635,7 @@ qboolean Bullet_Fire_Extended(gentity_t *source, gentity_t *attacker, vec3_t sta
 		// send the hit sound info in the flesh hit event
 		if (hitType && fleshEnt)
 		{
-			fleshEnt->s.modelindex =  hitType;
+			fleshEnt->s.modelindex = hitType;
 		}
 
 		// allow bullets to "pass through" func_explosives if they break by taking another simultanious shot
