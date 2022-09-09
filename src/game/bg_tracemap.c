@@ -616,22 +616,22 @@ qboolean BG_LoadTraceMap(char *rawmapname, vec2_t world_mins, vec2_t world_maxs)
 					switch (j)
 					{
 					case 0:
-						ground_min = datablock[j][0] | (datablock[j][1] << 8) | (datablock[j][2] << 16) | (datablock[j][3] << 24);
+						ground_min = ((unsigned int)datablock[j][0]) | ((unsigned int)datablock[j][1] << 8) | ((unsigned int)datablock[j][2] << 16) | ((unsigned int)datablock[j][3] << 24);
 						break;
 					case 1:
-						ground_max = datablock[j][0] | (datablock[j][1] << 8) | (datablock[j][2] << 16) | (datablock[j][3] << 24);
+						ground_max = ((unsigned int)datablock[j][0]) | ((unsigned int)datablock[j][1] << 8) | ((unsigned int)datablock[j][2] << 16) | ((unsigned int)datablock[j][3] << 24);
 						break;
 					case 2:
-						skyground_min = datablock[j][0] | (datablock[j][1] << 8) | (datablock[j][2] << 16) | (datablock[j][3] << 24);
+						skyground_min = ((unsigned int)datablock[j][0]) | ((unsigned int)datablock[j][1] << 8) | ((unsigned int)datablock[j][2] << 16) | ((unsigned int)datablock[j][3] << 24);
 						break;
 					case 3:
-						skyground_max = datablock[j][0] | (datablock[j][1] << 8) | (datablock[j][2] << 16) | (datablock[j][3] << 24);
+						skyground_max = ((unsigned int)datablock[j][0]) | ((unsigned int)datablock[j][1] << 8) | ((unsigned int)datablock[j][2] << 16) | ((unsigned int)datablock[j][3] << 24);
 						break;
 					case 4:
-						sky_min = datablock[j][0] | (datablock[j][1] << 8) | (datablock[j][2] << 16) | (datablock[j][3] << 24);
+						sky_min = ((unsigned int)datablock[j][0]) | ((unsigned int)datablock[j][1] << 8) | ((unsigned int)datablock[j][2] << 16) | ((unsigned int)datablock[j][3] << 24);
 						break;
 					case 5:
-						sky_max = datablock[j][0] | (datablock[j][1] << 8) | (datablock[j][2] << 16) | (datablock[j][3] << 24);
+						sky_max = ((unsigned int)datablock[j][0]) | ((unsigned int)datablock[j][1] << 8) | ((unsigned int)datablock[j][2] << 16) | ((unsigned int)datablock[j][3] << 24);
 						break;
 					}
 					tracemap.sky[TRACEMAP_SIZE - 1 - i][j]       = MAX_WORLD_HEIGHT;
