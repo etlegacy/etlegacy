@@ -1062,6 +1062,10 @@ void CG_DrawTeamInfo(hudComponent_t *comp)
 				{
 					flag = cgs.media.alliedFlag;
 				}
+				else
+				{
+					flag = 0;
+				}
 			}
 
 			// get the longest chat message on screen, use that for the width of chat background
