@@ -2360,7 +2360,7 @@ void G_UpdateSpawnPointStatePlayerCounts()
 void G_UpdateSpawnPointState(gentity_t *ent)
 {
 	static char cs[MAX_STRING_CHARS];
-	if (ent == NULL)
+	if (ent == NULL || !ent->count)
 	{
 		return;
 	}
