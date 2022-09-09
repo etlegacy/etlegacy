@@ -40,31 +40,13 @@ typedef enum
 {
 	STYLE_NORMAL,
 	STYLE_SIMPLE
-} componentStyle;
-
-#define SKILL_ICON_SIZE     14
-
-#define SKILLS_X 112
-#define SKILLS_Y 20
-
-#define SKILL_BAR_OFFSET    (2 * SKILL_BAR_X_INDENT)
-#define SKILL_BAR_X_INDENT  0
-#define SKILL_BAR_Y_INDENT  6
-
-#define SKILL_BAR_WIDTH     (SKILL_ICON_SIZE - SKILL_BAR_OFFSET)
-#define SKILL_BAR_X         (SKILL_BAR_OFFSET + SKILL_BAR_X_INDENT + SKILLS_X)
-#define SKILL_BAR_X_SCALE   (SKILL_ICON_SIZE + 2)
-#define SKILL_ICON_X        (SKILL_BAR_OFFSET + SKILLS_X)
-#define SKILL_ICON_X_SCALE  (SKILL_ICON_SIZE + 2)
-#define SKILL_BAR_Y         (SKILL_BAR_Y_INDENT - SKILL_BAR_OFFSET - SKILLS_Y)
-#define SKILL_BAR_Y_SCALE   (SKILL_ICON_SIZE + 2)
-#define SKILL_ICON_Y        (-(SKILL_ICON_SIZE + 2) - SKILL_BAR_OFFSET - SKILLS_Y)
+} componentStyle_t;
 
 hudStucture_t *activehud;
 hudStucture_t hudlist[MAXHUDS];
 int           hudCount = 0;
-lagometer_t lagometer;
 
+static lagometer_t lagometer;
 
 /**
 * @var hudComponentFields
@@ -143,7 +125,7 @@ hudStucture_t *CG_GetActiveHUD()
  * @param[in] style
  * @return
  */
-static ID_INLINE hudComponent_t CG_getComponent(float x, float y, float w, float h, qboolean visible, componentStyle style,
+static ID_INLINE hudComponent_t CG_getComponent(float x, float y, float w, float h, qboolean visible, componentStyle_t style,
                                                 float scale, const vec4_t colorText,
                                                 int showBackground, const vec4_t colorBackground,
                                                 int showBorder, const vec4_t colorBorder,
