@@ -62,7 +62,7 @@
 	                             (INPUT_HEIGHT * 2) + HUDEDITOR_CONTROLS_SPACER_XY)
 
 #define HUDEDITOR_TEXT_Y HUDEDITOR_COLORSSTYLE_Y + HUDEDITOR_TITLE_SPACER_Y + HUDEDITOR_CATEGORY_SPACER_Y + \
-(SLIDERS_HEIGHT * 5) + (HUDEDITOR_CONTROLS_SPACER_XY * 6) + (BUTTON_HEIGHT * 2)
+    (SLIDERS_HEIGHT * 5) + (HUDEDITOR_CONTROLS_SPACER_XY * 6) + (BUTTON_HEIGHT * 2)
 
 float HUDEditorX;
 float    HUDEditorWidth;
@@ -83,6 +83,8 @@ static void CG_HudEditor_StyleTextRenderDropdown(panel_button_t *button);
 static qboolean CG_HudEditor_AlignTextDropdown_KeyUp(panel_button_t *button, int key);
 static void CG_HudEditor_AlignTextRenderDropdown(panel_button_t *button);
 static void CG_HudEditor_SetupTitleText(panel_button_t *button);
+static qboolean CG_HudEditor_EditKeyDown(panel_button_t *button, int key);
+static qboolean CG_HudEditorPanel_KeyUp(panel_button_t *button, int key);
 static void CG_HudEditor_RenderEdit(panel_button_t *button);
 static void CG_HudEditorX_Finish(panel_button_t *button);
 static void CG_HudEditorY_Finish(panel_button_t *button);
@@ -90,7 +92,6 @@ static void CG_HudEditorWidth_Finish(panel_button_t *button);
 static void CG_HudEditorHeight_Finish(panel_button_t *button);
 static void CG_HudEditorScale_Finish(panel_button_t *button);
 static qboolean CG_HudEditoColorSelection_KeyDown(panel_button_t *button, int key);
-static qboolean CG_HudEditorPanel_KeyUp(panel_button_t *button, int key);
 static void CG_HudEditorRender_Button(panel_button_t *button);
 static qboolean CG_HudEditorVisible_CheckboxKeyDown(panel_button_t *button, int key);
 static void CG_HudEditor_RenderCheckbox(panel_button_t *button);
@@ -102,6 +103,10 @@ static qboolean CG_HudEditorButton_KeyUp(panel_button_t *button, int key);
 static void CG_DrawHudEditor_ComponentLists(panel_button_t *button);
 static qboolean CG_HudEditor_ComponentLists_KeyDown(panel_button_t *button, int key);
 static qboolean CG_HudEditor_ComponentLists_KeyUp(panel_button_t *button, int key);
+static qboolean CG_HudEditorColor_KeyDown(panel_button_t *button, int key);
+static void CG_HudEditorColor_Render(panel_button_t *button);
+
+// Font declaration
 
 static panel_button_text_t hudEditorHeaderFont =
 {
@@ -136,6 +141,8 @@ static panel_button_text_t hudEditorFont_Dropdown =
 	&cgs.media.limboFont2,
 };
 
+// HUD Editor panel button
+
 static panel_button_t hudEditorHudDropdown =
 {
 	NULL,
@@ -149,28 +156,6 @@ static panel_button_t hudEditorHudDropdown =
 	NULL,
 	0,
 };
-
-static qboolean CG_HudEditor_EditClick(panel_button_t *button, int key)
-{
-	// don't modify default HUD
-	if (!activehud->hudnumber)
-	{
-		return qfalse;
-	}
-
-	return BG_PanelButton_EditClick(button, key);
-}
-
-/**
- * @brief CG_HudEditorPanel_EditUp
- * @param button
- * @param key
- * @return
- */
-static qboolean CG_HudEditorPanel_EditUp(panel_button_t *button, int key)
-{
-	return qtrue;
-}
 
 static panel_button_t hudEditorPositionSizeTitle =
 {
@@ -194,8 +179,8 @@ static panel_button_t hudEditorX =
 	// [0] used by ui_shared EditClick, [1] link to hud, [2] used by ui_shared EditClick [3] additional data like colorRGB, [4] differentiate between hud editor element and hud element
 	{ 0,                    0,                                                    0,           0, 0, 0, 0, 1},
 	&hudEditorTextFont,     // font
-	CG_HudEditor_EditClick, // keyDown
-	CG_HudEditorPanel_EditUp,// keyUp
+    CG_HudEditor_EditKeyDown,// keyDown
+    CG_HudEditorPanel_KeyUp,// keyUp
 	CG_HudEditor_RenderEdit,
 	CG_HudEditorX_Finish,
 	0
@@ -208,8 +193,8 @@ static panel_button_t hudEditorY =
 	{ 0,                    HUDEDITOR_SIZEPOS_Y + HUDEDITOR_TITLE_SPACER_Y - INPUT_HEIGHT,INPUT_WIDTH, INPUT_HEIGHT },
 	{ 0,                    0,                                                    0,           0, 0, 0, 0, 1},
 	&hudEditorTextFont,     // font
-	CG_HudEditor_EditClick, // keyDown
-	CG_HudEditorPanel_EditUp,// keyUp
+    CG_HudEditor_EditKeyDown,// keyDown
+    CG_HudEditorPanel_KeyUp,// keyUp
 	CG_HudEditor_RenderEdit,
 	CG_HudEditorY_Finish,
 	0
@@ -236,8 +221,8 @@ static panel_button_t hudEditorW =
 	{ 0,                     HUDEDITOR_SIZEPOS_Y + HUDEDITOR_TITLE_SPACER_Y + HUDEDITOR_CONTROLS_SPACER_XY,INPUT_WIDTH, INPUT_HEIGHT },
 	{ 0,                     0,                                                                    0,           0, 0, 0, 0, 1},
 	&hudEditorTextFont,      // font
-	CG_HudEditor_EditClick,  // keyDown
-	CG_HudEditorPanel_EditUp,// keyUp
+    CG_HudEditor_EditKeyDown,// keyDown
+    CG_HudEditorPanel_KeyUp, // keyUp
 	CG_HudEditor_RenderEdit,
 	CG_HudEditorWidth_Finish,
 	0
@@ -250,8 +235,8 @@ static panel_button_t hudEditorH =
 	{ 0,                      HUDEDITOR_SIZEPOS_Y + HUDEDITOR_TITLE_SPACER_Y + HUDEDITOR_CONTROLS_SPACER_XY,INPUT_WIDTH, INPUT_HEIGHT },
 	{ 0,                      0,                                                                    0,           0, 0, 0, 0, 1},
 	&hudEditorTextFont,       // font
-	CG_HudEditor_EditClick,   // keyDown
-	CG_HudEditorPanel_EditUp, // keyUp
+    CG_HudEditor_EditKeyDown, // keyDown
+    CG_HudEditorPanel_KeyUp,  // keyUp
 	CG_HudEditor_RenderEdit,
 	CG_HudEditorHeight_Finish,
 	0
@@ -265,7 +250,7 @@ static panel_button_t hudEditorColorSelectionText =
 	{ 0,                      0,                                                                0,            5, 0, 0, 0, 1 },
 	&hudEditorTextFont,       // font
 	CG_HudEditoColorSelection_KeyDown,// keyDown
-	CG_HudEditorPanel_KeyUp,  // keyUp
+    CG_HudEditorPanel_KeyUp,  // keyUp
 	CG_HudEditorRender_Button,
 	NULL,
 	0
@@ -279,7 +264,7 @@ static panel_button_t hudEditorColorSelectionBorder =
 	{ 0,                      0,                                                              0,            5, 0, 0, 0, 1 },
 	&hudEditorTextFont,       // font
 	CG_HudEditoColorSelection_KeyDown,// keyDown
-	CG_HudEditorPanel_KeyUp,  // keyUp
+    CG_HudEditorPanel_KeyUp,  // keyUp
 	CG_HudEditorRender_Button,
 	NULL,
 	0
@@ -293,7 +278,7 @@ static panel_button_t hudEditorColorSelectionBackground =
 	{ 0,                      0,                                                               0,            5, 0, 0, 0, 1 },
 	&hudEditorTextFont,       // font
 	CG_HudEditoColorSelection_KeyDown,// keyDown
-	CG_HudEditorPanel_KeyUp,  // keyUp
+    CG_HudEditorPanel_KeyUp,  // keyUp
 	CG_HudEditorRender_Button,
 	NULL,
 	0
@@ -308,8 +293,8 @@ static panel_button_t hudEditorColorR =
 	{ 0,                     HUDEDITOR_COLORSSTYLE_Y + HUDEDITOR_TITLE_SPACER_Y + HUDEDITOR_CONTROLS_SPACER_XY,INPUT_COLOR_WIDTH, INPUT_HEIGHT },
 	{ 0,                     0,                                                                   0,                 0, 0, 0, 0, 1},
 	&hudEditorTextFont,      // font
-	CG_HudEditor_EditClick,  // keyDown
-	CG_HudEditorPanel_KeyUp, // keyUp
+    CG_HudEditor_EditKeyDown,// keyDown
+    CG_HudEditorPanel_KeyUp, // keyUp
 	CG_HudEditor_RenderEdit,
 	CG_HudEditorColor_Finish,
 	0
@@ -322,8 +307,8 @@ static panel_button_t hudEditorColorG =
 	{ 0,                     HUDEDITOR_COLORSSTYLE_Y + HUDEDITOR_TITLE_SPACER_Y + SLIDERS_HEIGHT + (HUDEDITOR_CONTROLS_SPACER_XY * 2),INPUT_COLOR_WIDTH, INPUT_HEIGHT },
 	{ 0,                     0,                                                                                          0,                 1, 0, 0, 0, 1},
 	&hudEditorTextFont,      // font
-	CG_HudEditor_EditClick,  // keyDown
-	CG_HudEditorPanel_EditUp,// keyUp
+    CG_HudEditor_EditKeyDown,// keyDown
+    CG_HudEditorPanel_KeyUp, // keyUp
 	CG_HudEditor_RenderEdit,
 	CG_HudEditorColor_Finish,
 	0
@@ -335,8 +320,8 @@ static panel_button_t hudEditorColorB =
 	{ 0,                     HUDEDITOR_COLORSSTYLE_Y + HUDEDITOR_TITLE_SPACER_Y + (SLIDERS_HEIGHT * 2) + (HUDEDITOR_CONTROLS_SPACER_XY * 3),INPUT_COLOR_WIDTH, INPUT_HEIGHT },
 	{ 0,                     0,                                                                                                0,                 2, 0, 0, 0, 1},
 	&hudEditorTextFont,      // font
-	CG_HudEditor_EditClick,  // keyDown
-	CG_HudEditorPanel_EditUp,// keyUp
+    CG_HudEditor_EditKeyDown,// keyDown
+    CG_HudEditorPanel_KeyUp, // keyUp
 	CG_HudEditor_RenderEdit,
 	CG_HudEditorColor_Finish,
 	0
@@ -348,15 +333,12 @@ static panel_button_t hudEditorColorA =
 	{ 0,                     HUDEDITOR_COLORSSTYLE_Y + HUDEDITOR_TITLE_SPACER_Y + (SLIDERS_HEIGHT * 3) + (HUDEDITOR_CONTROLS_SPACER_XY * 4),INPUT_COLOR_WIDTH, INPUT_HEIGHT },
 	{ 0,                     0,                                                                                                0,                 3, 0, 0, 0, 1},
 	&hudEditorTextFont,      // font
-	CG_HudEditor_EditClick,  // keyDown
-	CG_HudEditorPanel_EditUp,// keyUp
+    CG_HudEditor_EditKeyDown,// keyDown
+    CG_HudEditorPanel_KeyUp, // keyUp
 	CG_HudEditor_RenderEdit,
 	CG_HudEditorColor_Finish,
 	0
 };
-
-static qboolean CG_HudEditorColor_KeyDown(panel_button_t *button, int key);
-static void CG_HudEditorColor_Render(panel_button_t *button);
 
 static panel_button_t hudEditorColorSliderR =
 {
@@ -366,7 +348,7 @@ static panel_button_t hudEditorColorSliderR =
 	{ 0,                     0,                                                             0,             0, 0, 0, 0, 1  },
 	&hudEditorTextFont,      // font
 	CG_HudEditorColor_KeyDown,// keyDown
-	CG_HudEditorPanel_KeyUp, // keyUp
+    CG_HudEditorPanel_KeyUp, // keyUp
 	CG_HudEditorColor_Render,
 	NULL,
 	0
@@ -380,7 +362,7 @@ static panel_button_t hudEditorColorSliderG =
 	{ 0,                     0,                                                                                    0,             1, 0, 0, 0, 1  },
 	&hudEditorTextFont,      // font
 	CG_HudEditorColor_KeyDown,// keyDown
-	CG_HudEditorPanel_KeyUp, // keyUp
+    CG_HudEditorPanel_KeyUp, // keyUp
 	CG_HudEditorColor_Render,
 	NULL,
 	0
@@ -394,7 +376,7 @@ static panel_button_t hudEditorColorSliderB =
 	{ 0,                     0,                                                                                          0,             2, 0, 0, 0, 1  },
 	&hudEditorTextFont,      // font
 	CG_HudEditorColor_KeyDown,// keyDown
-	CG_HudEditorPanel_KeyUp, // keyUp
+    CG_HudEditorPanel_KeyUp, // keyUp
 	CG_HudEditorColor_Render,
 	NULL,
 	0
@@ -408,7 +390,7 @@ static panel_button_t hudEditorColorSliderA =
 	{ 0,                     0,                                                                                          0,             3, 0, 0, 0, 1  },
 	&hudEditorTextFont,      // font
 	CG_HudEditorColor_KeyDown,// keyDown
-	CG_HudEditorPanel_KeyUp, // keyUp
+    CG_HudEditorPanel_KeyUp, // keyUp
 	CG_HudEditorColor_Render,
 	NULL,
 	0
@@ -422,7 +404,7 @@ static panel_button_t hudEditorVisible =
 	{ 0,                        0,                                                                                                         0,             0, 0, 0, 0, 1 },
 	&hudEditorTextFont,         // font
 	CG_HudEditorVisible_CheckboxKeyDown,// keyDown
-	CG_HudEditorPanel_KeyUp,    // keyUp
+    CG_HudEditorPanel_KeyUp,    // keyUp
 	CG_HudEditor_RenderCheckbox,
 	NULL,
 	0
@@ -436,7 +418,7 @@ static panel_button_t hudEditorStyle =
 	{ 0,                        0,                                                                                                           0,             0, 0, 0, 0, 1 },
 	&hudEditorTextFont,         // font
 	CG_HudEditorStyle_CheckboxKeyDown,// keyDown
-	CG_HudEditorPanel_KeyUp,    // keyUp
+    CG_HudEditorPanel_KeyUp,    // keyUp
 	CG_HudEditor_RenderCheckbox,
 	NULL,
 	0
@@ -450,7 +432,7 @@ static panel_button_t hudEditorShowBackground =
 	{ 0,                        0,                                                                                                         0,             0, 0, 0, 0, 1 },
 	&hudEditorTextFont,         // font
 	CG_HudEditorShowBackground_CheckboxKeyDown,// keyDown
-	CG_HudEditorPanel_KeyUp,    // keyUp
+    CG_HudEditorPanel_KeyUp,    // keyUp
 	CG_HudEditor_RenderCheckbox,
 	NULL,
 	0
@@ -464,7 +446,7 @@ static panel_button_t hudEditorShowBorder =
 	{ 0,                        0,                                                                                                          0,             0, 0, 0, 0, 1 },
 	&hudEditorTextFont,         // font
 	CG_HudEditorShowBorder_CheckboxKeyDown,// keyDown
-	CG_HudEditorPanel_KeyUp,    // keyUp
+    CG_HudEditorPanel_KeyUp,    // keyUp
 	CG_HudEditor_RenderCheckbox,
 	NULL,
 	0
@@ -489,10 +471,10 @@ static panel_button_t hudEditorScale =
     NULL,
     "hudeditor_S",
     { 0,                     HUDEDITOR_TEXT_Y + (HUDEDITOR_CONTROLS_SPACER_XY * 1),INPUT_WIDTH, INPUT_HEIGHT },
-    { 0,                     0,                                                                       0,           0, 0, 0, 0, 1},
+    { 0,                     0,                                            0,           0, 0, 0, 0, 1},
     &hudEditorTextFont,      // font
-    CG_HudEditor_EditClick,  // keyDown
-    CG_HudEditorPanel_EditUp,// keyUp
+    CG_HudEditor_EditKeyDown,// keyDown
+    CG_HudEditorPanel_KeyUp, // keyUp
     CG_HudEditor_RenderEdit,
     CG_HudEditorScale_Finish,
     0
@@ -503,7 +485,7 @@ static panel_button_t hudEditorStyleText =
 	NULL,
 	"hudeditor_StyleText",
     { 0,                                 HUDEDITOR_TEXT_Y + (BUTTON_HEIGHT * 1) + (HUDEDITOR_CONTROLS_SPACER_XY * 2),100, BUTTON_HEIGHT },
-    { 0,                                 0,                                                                                     0,   0, 0, 0, 0, 1 },
+    { 0,                                 0,                                                          0,   0, 0, 0, 0, 1 },
 	&hudEditorFont_Dropdown,             // font
 	CG_HudEditor_Dropdown_KeyDown,       // keyDown
 	CG_HudEditor_StyleTextDropdown_KeyUp,// keyUp
@@ -517,7 +499,7 @@ static panel_button_t hudEditorAlignText =
 	NULL,
 	"hudeditor_Align",
     { 0,                                 HUDEDITOR_TEXT_Y + (BUTTON_HEIGHT * 2) + (HUDEDITOR_CONTROLS_SPACER_XY * 3),60, BUTTON_HEIGHT },
-    { 0,                                 0,                                                                                         0,  0, 0, 0, 0, 1 },
+    { 0,                                 0,                                                              0,  0, 0, 0, 0, 1 },
 	&hudEditorFont_Dropdown,             // font
 	CG_HudEditor_Dropdown_KeyDown,       // keyDown
 	CG_HudEditor_AlignTextDropdown_KeyUp,// keyUp
@@ -766,6 +748,28 @@ static void CG_HudEditor_SetupTitleText(panel_button_t *button)
 	float textWidth = CG_Text_Width_Ext(button->text, button->font->scalex, 0, button->font->font);
 	button->rect.x = HUDEditorCenterX - (textWidth * 0.5f);
 	BG_PanelButtonsRender_Text(button);
+}
+
+static qboolean CG_HudEditor_EditKeyDown(panel_button_t *button, int key)
+{
+    // don't modify default HUD
+    if (!activehud->hudnumber)
+    {
+        return qfalse;
+    }
+
+    return BG_PanelButton_EditClick(button, key);
+}
+
+/**
+ * @brief CG_HudEditorPanel_EditUp
+ * @param button
+ * @param key
+ * @return
+ */
+static qboolean CG_HudEditorPanel_EditKeyUp(panel_button_t *button, int key)
+{
+    return qtrue;
 }
 
 /**
@@ -1815,45 +1819,8 @@ static qboolean CG_HudEditor_KeyUp(panel_button_t *button, int key)
 	return qfalse;
 }
 
-panel_button_t *hudComponentsPanel[HUD_COMPONENTS_NUM + 1];
-panel_button_t hudComponents[HUD_COMPONENTS_NUM];
-
-/**
-* @brief CG_HudEditor_CompRenderDropdown
-* @param[in] button
-*/
-static void CG_HudEditor_CompRenderDropdown(panel_button_t *button)
-{
-	CG_DropdownMainBox(button->rect.x, button->rect.y, button->rect.w, button->rect.h,
-	                   button->font->scalex, button->font->scaley, colorBlack, lastFocusComponent ? lastFocusComponent->text : "Select Comp", button == BG_PanelButtons_GetFocusButton(),
-	                   button->font->colour, button->font->style, button->font->font);
-
-	if (button == BG_PanelButtons_GetFocusButton())
-	{
-		float          y = button->rect.y;
-		vec4_t         colour;
-		panel_button_t **buttons = hudComponentsPanel;
-		panel_button_t *parsedButton;
-
-		for ( ; *buttons; buttons++)
-		{
-			parsedButton = (*buttons);
-
-			if (parsedButton == lastFocusComponent)
-			{
-				continue;
-			}
-
-			y = CG_DropdownBox(button->rect.x, y, button->rect.w, button->rect.h,
-			                   button->font->scalex, button->font->scaley, colorBlack, parsedButton->text, button == BG_PanelButtons_GetFocusButton(),
-			                   button->font->colour, button->font->style, button->font->font);
-		}
-
-		VectorCopy(colorBlack, colour);
-		colour[3] = 0.3f;
-		CG_DrawRect(button->rect.x, button->rect.y + button->rect.h, button->rect.w, y - button->rect.y, 1.0f, colour);
-	}
-}
+static panel_button_t *hudComponentsPanel[HUD_COMPONENTS_NUM + 1];
+static panel_button_t hudComponents[HUD_COMPONENTS_NUM];
 
 /**
 * @brief CG_HudEditorColor_Finish colors
@@ -1942,6 +1909,21 @@ static void CG_HudEditorColor_Render(panel_button_t *button)
     CG_FilledBar(button->rect.x, button->rect.y, button->rect.w, button->rect.h, colorBlack, *color, backG, offset, BAR_BORDER | BAR_LERP_COLOR);
 }
 
+static int QDECL CG_SortComponentByName(const void *a, const void *b)
+{
+    const panel_button_t *ca = *(const panel_button_t **)a;
+    const panel_button_t *cb = *(const panel_button_t **)b;
+    char                 cleanNameA[32];
+    char                 cleanNameB[32];
+
+    Q_strncpyz(cleanNameA, hudComponentFields[ca->data[0]].name, sizeof(cleanNameA));
+    Q_strncpyz(cleanNameB, hudComponentFields[cb->data[0]].name, sizeof(cleanNameB));
+    Q_CleanStr(cleanNameA);
+    Q_CleanStr(cleanNameB);
+
+    return Q_stricmpn(cleanNameA, cleanNameB, 32);
+}
+
 /**
 * @brief CG_HudEditorSetup
 */
@@ -1990,10 +1972,12 @@ void CG_HudEditorSetup(void)
 		}
 
 		wsAdjusted = qtrue;
-	}
+    }
 
-	// last element needs to be NULL
-	hudComponentsPanel[HUD_COMPONENTS_NUM] = NULL;
+    qsort(hudComponentsPanel, HUD_COMPONENTS_NUM, sizeof(panel_button_t *), CG_SortComponentByName);
+
+    // last element needs to be NULL
+    hudComponentsPanel[HUD_COMPONENTS_NUM] = NULL;
 
 	// clear last selected button
 	lastFocusComponent = NULL;
