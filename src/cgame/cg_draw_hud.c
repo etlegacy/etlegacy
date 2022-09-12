@@ -54,56 +54,58 @@ static lagometer_t lagometer;
 */
 const hudComponentFields_t hudComponentFields[] =
 {
-	{ HUDF(compass),          CG_DrawNewCompass       },
+	{ HUDF(compass),          CG_DrawNewCompass         },
 	{ "compas",               offsetof(hudStucture_t, compass), qtrue, CG_DrawNewCompass},                         // v2.78 backward compatibility
-	{ HUDF(staminabar),       CG_DrawStaminaBar       },
-	{ HUDF(breathbar),        CG_DrawBreathBar        },
-	{ HUDF(healthbar),        CG_DrawPlayerHealthBar  },
-	{ HUDF(weaponchargebar),  CG_DrawWeapRecharge     },
+	{ HUDF(staminabar),       CG_DrawStaminaBar         },
+	{ HUDF(breathbar),        CG_DrawBreathBar          },
+	{ HUDF(healthbar),        CG_DrawPlayerHealthBar    },
+	{ HUDF(weaponchargebar),  CG_DrawWeapRecharge       },
 	{ "weaponchangebar",      offsetof(hudStucture_t, weaponchargebar), qtrue, CG_DrawWeapRecharge},                         // v2.78 backward compatibility
-	{ HUDF(healthtext),       CG_DrawPlayerHealth     },
-	{ HUDF(xptext),           CG_DrawXP               },
-	{ HUDF(ranktext),         CG_DrawRank             },
-	{ HUDF(statsdisplay),     CG_DrawSkills           },
-	{ HUDF(weaponicon),       CG_DrawGunIcon          },
-	{ HUDF(weaponammo),       CG_DrawAmmoCount        },
-	{ HUDF(fireteam),         CG_DrawFireTeamOverlay  },                            // FIXME: outside cg_draw_hud
-	{ HUDF(popupmessages),    CG_DrawPMItems          },                            // FIXME: outside cg_draw_hud
-	{ HUDF(powerups),         CG_DrawPowerUps         },
-	{ HUDF(objectives),       CG_DrawObjectiveStatus  },
-	{ HUDF(hudhead),          CG_DrawPlayerStatusHead },
-	{ HUDF(cursorhints),      CG_DrawCursorhint       },                            // FIXME: outside cg_draw_hud
-	{ HUDF(weaponstability),  CG_DrawWeapStability    },                            // FIXME: outside cg_draw_hud
-	{ HUDF(livesleft),        CG_DrawLivesLeft        },
-	{ HUDF(roundtimer),       CG_DrawRoundTimer       },
-	{ HUDF(reinforcement),    CG_DrawRespawnTimer     },
-	{ HUDF(spawntimer),       CG_DrawSpawnTimer       },
-	{ HUDF(localtime),        CG_DrawLocalTime        },
-	{ HUDF(votetext),         CG_DrawVote             },                            // FIXME: outside cg_draw_hud
-	{ HUDF(spectatortext),    CG_DrawSpectatorMessage },                            // FIXME: outside cg_draw_hud
-	{ HUDF(limbotext),        CG_DrawLimboMessage     },                            // FIXME: outside cg_draw_hud
-	{ HUDF(followtext),       CG_DrawFollow           },                            // FIXME: outside cg_draw_hud
-	{ HUDF(demotext),         CG_DrawDemoMessage      },
-	{ HUDF(missilecamera),    CG_DrawMissileCamera    },                            // FIXME: outside cg_draw_hud
-	{ HUDF(sprinttext),       CG_DrawPlayerSprint     },
-	{ HUDF(breathtext),       CG_DrawPlayerBreath     },
-	{ HUDF(weaponchargetext), CG_DrawWeaponCharge     },
-	{ HUDF(fps),              CG_DrawFPS              },
-	{ HUDF(snapshot),         CG_DrawSnapshot         },
-	{ HUDF(ping),             CG_DrawPing             },
-	{ HUDF(speed),            CG_DrawSpeed            },
-	{ HUDF(lagometer),        CG_DrawLagometer        },
-	{ HUDF(disconnect),       CG_DrawDisconnect       },
-	{ HUDF(chat),             CG_DrawTeamInfo         },                            // FIXME: outside cg_draw_hud
-	{ HUDF(spectatorstatus),  CG_DrawSpectator        },                            // FIXME: outside cg_draw_hud
-	{ HUDF(pmitemsbig),       CG_DrawPMItemsBig       },                            // FIXME: outside cg_draw_hud
-	{ HUDF(warmuptitle),      CG_DrawWarmupTitle      },                            // FIXME: outside cg_draw_hud
-	{ HUDF(warmuptext),       CG_DrawWarmupText       },                            // FIXME: outside cg_draw_hud
-	{ HUDF(objectivetext),    CG_DrawObjectiveInfo    },                            // FIXME: outside cg_draw_hud
-	{ HUDF(centerprint),      CG_DrawCenterString     },                            // FIXME: outside cg_draw_hud
-	{ HUDF(banner),           CG_DrawBannerPrint      },                            // FIXME: outside cg_draw_hud
-	{ HUDF(crosshair),        CG_DrawCrosshair        },                            // FIXME: outside cg_draw_hud
-	{ NULL,                   0, qfalse, NULL         },
+	{ HUDF(healthtext),       CG_DrawPlayerHealth       },
+	{ HUDF(xptext),           CG_DrawXP                 },
+	{ HUDF(ranktext),         CG_DrawRank               },
+	{ HUDF(statsdisplay),     CG_DrawSkills             },
+	{ HUDF(weaponicon),       CG_DrawGunIcon            },
+	{ HUDF(weaponammo),       CG_DrawAmmoCount          },
+	{ HUDF(fireteam),         CG_DrawFireTeamOverlay    },                            // FIXME: outside cg_draw_hud
+	{ HUDF(popupmessages),    CG_DrawPMItems            },                            // FIXME: outside cg_draw_hud
+	{ HUDF(powerups),         CG_DrawPowerUps           },
+	{ HUDF(objectives),       CG_DrawObjectiveStatus    },
+	{ HUDF(hudhead),          CG_DrawPlayerStatusHead   },
+	{ HUDF(cursorhints),      CG_DrawCursorhint         },                            // FIXME: outside cg_draw_hud
+	{ HUDF(weaponstability),  CG_DrawWeapStability      },                            // FIXME: outside cg_draw_hud
+	{ HUDF(livesleft),        CG_DrawLivesLeft          },
+	{ HUDF(roundtimer),       CG_DrawRoundTimer         },
+	{ HUDF(reinforcement),    CG_DrawRespawnTimer       },
+	{ HUDF(spawntimer),       CG_DrawSpawnTimer         },
+	{ HUDF(localtime),        CG_DrawLocalTime          },
+	{ HUDF(votetext),         CG_DrawVote               },                            // FIXME: outside cg_draw_hud
+	{ HUDF(spectatortext),    CG_DrawSpectatorMessage   },                            // FIXME: outside cg_draw_hud
+	{ HUDF(limbotext),        CG_DrawLimboMessage       },                            // FIXME: outside cg_draw_hud
+	{ HUDF(followtext),       CG_DrawFollow             },                            // FIXME: outside cg_draw_hud
+	{ HUDF(demotext),         CG_DrawDemoMessage        },
+	{ HUDF(missilecamera),    CG_DrawMissileCamera      },                            // FIXME: outside cg_draw_hud
+	{ HUDF(sprinttext),       CG_DrawPlayerSprint       },
+	{ HUDF(breathtext),       CG_DrawPlayerBreath       },
+	{ HUDF(weaponchargetext), CG_DrawWeaponCharge       },
+	{ HUDF(fps),              CG_DrawFPS                },
+	{ HUDF(snapshot),         CG_DrawSnapshot           },
+	{ HUDF(ping),             CG_DrawPing               },
+	{ HUDF(speed),            CG_DrawSpeed              },
+	{ HUDF(lagometer),        CG_DrawLagometer          },
+	{ HUDF(disconnect),       CG_DrawDisconnect         },
+	{ HUDF(chat),             CG_DrawTeamInfo           },                            // FIXME: outside cg_draw_hud
+	{ HUDF(spectatorstatus),  CG_DrawSpectator          },                            // FIXME: outside cg_draw_hud
+	{ HUDF(pmitemsbig),       CG_DrawPMItemsBig         },                            // FIXME: outside cg_draw_hud
+	{ HUDF(warmuptitle),      CG_DrawWarmupTitle        },                            // FIXME: outside cg_draw_hud
+	{ HUDF(warmuptext),       CG_DrawWarmupText         },                            // FIXME: outside cg_draw_hud
+	{ HUDF(objectivetext),    CG_DrawObjectiveInfo      },                            // FIXME: outside cg_draw_hud
+	{ HUDF(centerprint),      CG_DrawCenterString       },                            // FIXME: outside cg_draw_hud
+	{ HUDF(banner),           CG_DrawBannerPrint        },                            // FIXME: outside cg_draw_hud
+	{ HUDF(crosshair),        CG_DrawCrosshair          },                            // FIXME: outside cg_draw_hud
+	{ HUDF(crosshairtext),    CG_DrawCrosshairNames     },                            // FIXME: outside cg_draw_hud
+	{ HUDF(crosshairbar),     CG_DrawCrosshairHealthBar },                            // FIXME: outside cg_draw_hud
+	{ NULL,                   0, qfalse, NULL           },
 };
 
 /**
@@ -199,6 +201,8 @@ void CG_setDefaultHudValues(hudStucture_t *hud)
 	hud->centerprint      = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) * .5f - 150, 381, 300, 23, qtrue, STYLE_NORMAL, 0.22f, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, 44, CG_DrawCenterString);
 	hud->banner           = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) * .5f - 150, 20, 300, 39, qtrue, STYLE_NORMAL, 0.23f, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, 45, CG_DrawBannerPrint);
 	hud->crosshair        = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) * .5f - 24, SCREEN_HEIGHT * .5 - 24, 48, 48, qtrue, STYLE_NORMAL, 0.19f, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, 46, CG_DrawCrosshair);
+	hud->crosshairtext    = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) * .5f - 150, 182, 300, 16, qtrue, STYLE_NORMAL, 0.25f, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, 47, CG_DrawCrosshairNames);
+	hud->crosshairbar     = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) * .5f - 65, 199, 130, 10, qtrue, STYLE_NORMAL, 0.25f, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, 48, CG_DrawCrosshairHealthBar);
 }
 
 /**

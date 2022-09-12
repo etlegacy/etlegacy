@@ -2625,7 +2625,6 @@ extern vmCvar_t cg_draw2D;
 extern vmCvar_t cg_drawFPS;
 extern vmCvar_t cg_drawCrosshair;
 extern vmCvar_t cg_drawCrosshairInfo;
-extern vmCvar_t cg_drawCrosshairNames;
 extern vmCvar_t cg_drawCrosshairPickups;
 extern vmCvar_t cg_drawSpectatorNames;
 extern vmCvar_t cg_useWeapsForZoom;
@@ -4066,7 +4065,7 @@ extern qboolean resetmaxspeed; // CG_DrawSpeed
 
 /* HUD exports */
 
-#define HUD_COMPONENTS_NUM 47
+#define HUD_COMPONENTS_NUM 49
 
 typedef struct hudComponent_s
 {
@@ -4141,6 +4140,8 @@ typedef struct hudStructure_s
 	hudComponent_t centerprint;
 	hudComponent_t banner;
 	hudComponent_t crosshair;
+	hudComponent_t crosshairtext;
+	hudComponent_t crosshairbar;
 
 	hudComponent_t *components[HUD_COMPONENTS_NUM];
 } hudStucture_t;
@@ -4149,7 +4150,7 @@ typedef struct hudStructure_s
 
 extern hudStucture_t hudlist[MAXHUDS];
 extern hudStucture_t *activehud;
-extern int hudCount;
+extern int           hudCount;
 
 typedef struct
 {
@@ -4213,6 +4214,8 @@ void CG_DrawPing(hudComponent_t *comp);
 void CG_DrawSpeed(hudComponent_t *comp);
 void CG_DrawLagometer(hudComponent_t *comp);
 void CG_DrawDisconnect(hudComponent_t *comp);
+void CG_DrawCrosshairNames(hudComponent_t *comp);
+void CG_DrawCrosshairHealthBar(hudComponent_t *comp);
 
 /**
  * @brief Using the stringizing operator to save typing...

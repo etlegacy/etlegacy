@@ -2038,11 +2038,50 @@ void CG_CheckForCursorHints(void)
  * @param[in] health
  * @param[in] maxHealth
  */
-static void CG_DrawCrosshairHealthBar(float position, int health, int maxHealth)
+void CG_DrawCrosshairHealthBar(hudComponent_t *comp)
 {
-	float  *color;
-	vec4_t bgcolor, c;
-	float  barFrac = (float)health / maxHealth;
+	float    *color;
+	vec4_t   bgcolor, c;
+	int      health, maxHealth;
+	float    barFrac;
+	float    dist;   // Distance to the entity under the crosshair
+	float    zChange;
+	qboolean hitClient = qfalse;
+	int      clientNum, class;
+	float    x = comp->location.x, w = comp->location.w;
+
+	// don't draw crosshair names in shoutcast mode
+	// shoutcasters can see tank and truck health
+	if (cgs.clientinfo[cg.clientNum].team == TEAM_SPECTATOR && cgs.clientinfo[cg.clientNum].shoutcaster &&
+	    cg_entities[cg.crosshairClientNum].currentState.eType != ET_MOVER)
+	{
+		return;
+	}
+
+	if (cg_drawCrosshair.integer < 0)
+	{
+		return;
+	}
+
+	if (cg.crosshairDyna > -1 || cg.crosshairMine > -1)
+	{
+		return;
+	}
+
+	// scan the known entities to see if the crosshair is sighted on one
+	CG_ScanForCrosshairEntity(&zChange, &hitClient);
+
+	// world-entity or no-entity
+	if (cg.crosshairClientNum < 0)
+	{
+		return;
+	}
+
+	// world-entity or no-entity
+	if (cg.crosshairClientNum < 0)
+	{
+		return;
+	}
 
 	// draw the name of the player being looked at
 	color = CG_FadeColor(cg.crosshairClientTime, 1000);
@@ -2053,14 +2092,105 @@ static void CG_DrawCrosshairHealthBar(float position, int health, int maxHealth)
 		return;
 	}
 
-	if (barFrac > 1.0f)
+	if (cg.crosshairClientNum >= MAX_CLIENTS)
 	{
-		barFrac = 1.0;
+		if (cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_SPECTATOR && !cgs.clientinfo[cg.clientNum].shoutcaster)
+		{
+			return;
+		}
+
+		if (cg_entities[cg.crosshairClientNum].currentState.eType != ET_MOVER || !cg_entities[cg.crosshairClientNum].currentState.effect1Time)
+		{
+			return;
+		}
+
+		health    = cg_entities[cg.crosshairClientNum].currentState.dl_intensity;
+		maxHealth = 255;
 	}
-	else if (barFrac < 0)
+	else
 	{
-		barFrac = 0;
+		// crosshair for disguised enemy
+		if (cgs.clientinfo[cg.crosshairClientNum].team != cgs.clientinfo[cg.snap->ps.clientNum].team)
+		{
+			if (!(cg_entities[cg.crosshairClientNum].currentState.powerups & (1 << PW_OPS_DISGUISED)) ||
+			    cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_SPECTATOR)
+			{
+				return;
+			}
+
+			if (BG_IsSkillAvailable(cgs.clientinfo[cg.snap->ps.clientNum].skill, SK_SIGNALS, SK_FIELDOPS_ENEMY_RECOGNITION) && cgs.clientinfo[cg.snap->ps.clientNum].cls == PC_FIELDOPS)
+			{
+				return;
+			}
+
+			clientNum = cgs.clientinfo[cg.crosshairClientNum].disguiseClientNum;
+			class     = (cg_entities[cg.crosshairClientNum].currentState.powerups >> PW_OPS_CLASS_1) & 7;
+		}
+		// we only want to see players on our team
+		else if (!(cgs.clientinfo[cg.snap->ps.clientNum].team != TEAM_SPECTATOR && cgs.clientinfo[cg.crosshairClientNum].team != cgs.clientinfo[cg.snap->ps.clientNum].team))
+		{
+			clientNum = cg.crosshairClientNum;
+			class     = cgs.clientinfo[cg.crosshairClientNum].cls;
+		}
+		else
+		{
+			return;
+		}
+
+		if (cg_drawCrosshairInfo.integer & CROSSHAIR_CLASS)
+		{
+			CG_DrawPic(x, comp->location.y, comp->location.h, comp->location.h, cgs.media.skillPics[SkillNumForClass(class)]);
+			x += comp->location.h;
+			w -= comp->location.h;
+		}
+
+#ifdef FEATURE_PRESTIGE
+		if (cgs.prestige && cgs.clientinfo[clientNum].prestige > 0 && (cg_drawCrosshairInfo.integer & CROSSHAIR_PRESTIGE))
+		{
+			char  *s = va("%d", cgs.clientinfo[clientNum].prestige);
+			float h;
+
+			w -= CG_Text_Width_Ext_Float(s, comp->scale, 0, &cgs.media.limboFont2);
+			h  = CG_Text_Height_Ext(s, comp->scale, 0, &cgs.media.limboFont2);
+
+			CG_Text_Paint_Ext(comp->location.x + w, comp->location.y + (comp->location.h - h) * 0.5f, comp->scale, comp->scale, color, s, 0, 0, 0, &cgs.media.limboFont2);
+
+			w -= comp->location.h;
+
+			CG_DrawPic(x + w, comp->location.y, comp->location.h, comp->location.h, cgs.media.prestigePics[0]);
+		}
+#endif
+
+		if (cgs.clientinfo[clientNum].rank > 0 && (cg_drawCrosshairInfo.integer & CROSSHAIR_RANK))
+		{
+			w -= comp->location.h;
+			CG_DrawPic(x + w, comp->location.y, comp->location.h, comp->location.h, rankicons[cgs.clientinfo[clientNum].rank][cgs.clientinfo[clientNum].team == TEAM_AXIS ? 1 : 0][0].shader);
+		}
+
+		// set the health
+		if (cg.crosshairClientNum == cg.snap->ps.identifyClient)
+		{
+			health = cg.snap->ps.identifyClientHealth;
+
+			// identifyClientHealth is sent as unsigned char and negative numbers are not transmitted - see SpectatorThink()
+			// this results in player health values behind max health
+			// adjust dead player health bogus values for the health bar
+			if (health > 156)
+			{
+				health = 0;
+			}
+		}
+		else
+		{
+			// only team mate health is transmit in clientinfo, this cause a slight refresh delay for disguised ennemy
+			// until they are identified through crosshair check on game side, which is connection depend
+			health = cgs.clientinfo[cg.crosshairClientNum].health;
+		}
+
+		maxHealth = CG_GetPlayerMaxHealth(cg.crosshairClientNum, cgs.clientinfo[cg.crosshairClientNum].cls, cgs.clientinfo[cg.crosshairClientNum].team);
 	}
+
+	barFrac = Com_Clamp(0, 1.f, health / (float)maxHealth);
 
 	c[0] = 1.0f;
 	c[1] = c[2] = barFrac;
@@ -2068,99 +2198,7 @@ static void CG_DrawCrosshairHealthBar(float position, int health, int maxHealth)
 
 	Vector4Set(bgcolor, 1.f, 1.f, 1.f, .25f * color[3]);
 
-	// - 110/2
-	CG_FilledBar(position - 55, 190, 110, 10, c, NULL, bgcolor, barFrac, 16);
-}
-
-static const float fontScaleCN = 0.25;
-
-/**
- * @brief CG_DrawCrosshairPlayerInfo
- * @param[in] clientNum
- * @param[in] class
- */
-static void CG_DrawCrosshairPlayerInfo(int clientNum, int class)
-{
-	float      *color;
-	float      w;
-	const char *s;
-	int        playerHealth = 0;
-	int        maxHealth    = 1;
-	qboolean   hasRank      = qfalse;
-	float      middle       = 320 + cgs.wideXoffset;
-
-	// draw the name of the player being looked at
-	color = CG_FadeColor(cg.crosshairClientTime, 1000);
-
-	if (!color)
-	{
-		trap_R_SetColor(NULL);
-		return;
-	}
-
-	// draw the name and class
-	if (cg_drawCrosshairNames.integer > 0)
-	{
-		char colorized[MAX_NAME_LENGTH + 2] = { 0 };
-
-		if (cg_drawCrosshairNames.integer == 2)
-		{
-			// Draw them with full colors
-			s = va("%s", cgs.clientinfo[clientNum].name);
-		}
-		else
-		{
-			// Draw them with a single color (white)
-			Q_ColorizeString('7', cgs.clientinfo[clientNum].cleanname, colorized, MAX_NAME_LENGTH + 2);
-			s = colorized;
-		}
-		w = CG_Text_Width_Ext(s, fontScaleCN, 0, &cgs.media.limboFont2);
-
-		CG_Text_Paint_Ext(middle - w / 2, 182, fontScaleCN, fontScaleCN, color, s, 0, 0, 0, &cgs.media.limboFont2);
-	}
-	if (cg_drawCrosshairInfo.integer & CROSSHAIR_CLASS)
-	{
-		// - 16 - 110/2
-		CG_DrawPic(middle - 71, 187, 16, 16, cgs.media.skillPics[SkillNumForClass(class)]);
-	}
-	if (cgs.clientinfo[clientNum].rank > 0 && (cg_drawCrosshairInfo.integer & CROSSHAIR_RANK))
-	{
-		//  + 110/2
-		CG_DrawPic(middle + 55, 187, 16, 16, rankicons[cgs.clientinfo[clientNum].rank][cgs.clientinfo[clientNum].team == TEAM_AXIS ? 1 : 0][0].shader);
-	}
-#ifdef FEATURE_PRESTIGE
-	if (cgs.prestige && cgs.clientinfo[clientNum].prestige > 0 && (cg_drawCrosshairInfo.integer & CROSSHAIR_PRESTIGE))
-	{
-		hasRank = (cg_drawCrosshairInfo.integer & CROSSHAIR_RANK) && cgs.clientinfo[clientNum].rank > 0;
-		// + 110/2
-		CG_DrawPic(middle + 55 + (hasRank ? 18 : 0), 187, 16, 16, cgs.media.prestigePics[0]);
-		CG_Text_Paint_Ext(middle + 71 + (hasRank ? 18 : 0), 198, fontScaleCN, fontScaleCN, color, va("%d", cgs.clientinfo[clientNum].prestige), 0, 0, 0, &cgs.media.limboFont2);
-	}
-#endif
-
-	// set the health
-	if (cg.crosshairClientNum == cg.snap->ps.identifyClient)
-	{
-		playerHealth = cg.snap->ps.identifyClientHealth;
-
-		// identifyClientHealth is sent as unsigned char and negative numbers are not transmitted - see SpectatorThink()
-		// this results in player health values behind max health
-		// adjust dead player health bogus values for the health bar
-		if (playerHealth > 156)
-		{
-			playerHealth = 0;
-		}
-	}
-	else
-	{
-		// only team mate health is transmit in clientinfo, this cause a slight refresh delay for disguised ennemy
-		// until they are identified through crosshair check on game side, which is connection depend
-		playerHealth = cgs.clientinfo[cg.crosshairClientNum].health;
-	}
-
-	maxHealth = CG_GetPlayerMaxHealth(clientNum, class, cgs.clientinfo[clientNum].team);
-
-	CG_DrawCrosshairHealthBar(middle, playerHealth, maxHealth);
+	CG_FilledBar(x, comp->location.y, w, comp->location.h, c, NULL, bgcolor, barFrac, 16);
 
 	trap_R_SetColor(NULL);
 }
@@ -2168,17 +2206,21 @@ static void CG_DrawCrosshairPlayerInfo(int clientNum, int class)
 /**
  * @brief CG_DrawCrosshairNames
  */
-static void CG_DrawCrosshairNames(void)
+void CG_DrawCrosshairNames(hudComponent_t *comp)
 {
 	float      *color;
-	float      w;
 	const char *s = NULL;
 	float      dist; // Distance to the entity under the crosshair
 	float      zChange;
 	qboolean   hitClient = qfalse;
-	float      middle    = 320 + cgs.wideXoffset;
+	int        clientNum = -1;
 
 	if (cg_drawCrosshair.integer < 0)
+	{
+		return;
+	}
+
+	if (cg.renderingThirdPerson)
 	{
 		return;
 	}
@@ -2195,8 +2237,8 @@ static void CG_DrawCrosshairNames(void)
 		}
 
 		s = va(CG_TranslateString("%s^7\'s dynamite"), cgs.clientinfo[cg.crosshairDyna].name);
-		w = CG_Text_Width_Ext(s, fontScaleCN, 0, &cgs.media.limboFont2);
-		CG_Text_Paint_Ext(middle - w / 2, 182, fontScaleCN, fontScaleCN, color, s, 0, 0, 0, &cgs.media.limboFont2);
+
+		CG_DrawCompText(comp, s, color, comp->styleText, &cgs.media.limboFont2);
 
 		cg.crosshairDyna = -1;
 		return;
@@ -2214,8 +2256,7 @@ static void CG_DrawCrosshairNames(void)
 		}
 
 		s = va(CG_TranslateString("%s^7\'s mine"), cgs.clientinfo[cg.crosshairMine].name);
-		w = CG_Text_Width_Ext(s, fontScaleCN, 0, &cgs.media.limboFont2);
-		CG_Text_Paint_Ext(middle - w / 2, 182, fontScaleCN, fontScaleCN, color, s, 0, 0, 0, &cgs.media.limboFont2);
+		CG_DrawCompText(comp, s, color, comp->styleText, &cgs.media.limboFont2);
 
 		cg.crosshairMine = -1;
 		return;
@@ -2238,18 +2279,8 @@ static void CG_DrawCrosshairNames(void)
 		return;
 	}
 
-	if (cg.renderingThirdPerson)
-	{
-		return;
-	}
-
 	if (cg.crosshairClientNum >= MAX_CLIENTS)
 	{
-		if (!cg_drawCrosshairNames.integer && !cg_drawCrosshairInfo.integer)
-		{
-			return;
-		}
-
 		// draw the name of the player being looked at
 		color = CG_FadeColor(cg.crosshairClientTime, 1000);
 
@@ -2263,25 +2294,16 @@ static void CG_DrawCrosshairNames(void)
 		{
 			if (cg_entities[cg.crosshairClientNum].currentState.eType == ET_MOVER && cg_entities[cg.crosshairClientNum].currentState.effect1Time)
 			{
-				if (cg_drawCrosshairNames.integer > 0)
-				{
-					s = Info_ValueForKey(CG_ConfigString(CS_SCRIPT_MOVER_NAMES), va("%i", cg.crosshairClientNum));
-				}
-
-				CG_DrawCrosshairHealthBar(middle, cg_entities[cg.crosshairClientNum].currentState.dl_intensity, 255);
+				s = Info_ValueForKey(CG_ConfigString(CS_SCRIPT_MOVER_NAMES), va("%i", cg.crosshairClientNum));
 			}
 			else if (cg_entities[cg.crosshairClientNum].currentState.eType == ET_CONSTRUCTIBLE_MARKER)
 			{
-				if (cg_drawCrosshairNames.integer > 0)
-				{
-					s = Info_ValueForKey(CG_ConfigString(CS_CONSTRUCTION_NAMES), va("%i", cg.crosshairClientNum));
-				}
+				s = Info_ValueForKey(CG_ConfigString(CS_CONSTRUCTION_NAMES), va("%i", cg.crosshairClientNum));
 			}
 
 			if (s && *s)
 			{
-				w = CG_Text_Width_Ext(s, fontScaleCN, 0, &cgs.media.limboFont2);
-				CG_Text_Paint_Ext(middle - w / 2, 182, fontScaleCN, fontScaleCN, color, s, 0, 0, 0, &cgs.media.limboFont2);
+				CG_DrawCompText(comp, s, color, comp->styleText, &cgs.media.limboFont2);
 			}
 		}
 		return;
@@ -2308,28 +2330,47 @@ static void CG_DrawCrosshairNames(void)
 			}
 
 			s = CG_TranslateString("Disguised Enemy!");
-			w = CG_Text_Width_Ext(s, fontScaleCN, 0, &cgs.media.limboFont2);
-			CG_Text_Paint_Ext(middle - w / 2, 182, fontScaleCN, fontScaleCN, color, s, 0, 0, 0, &cgs.media.limboFont2);
+			CG_DrawCompText(comp, s, color, comp->styleText, &cgs.media.limboFont2);
 			return;
 		}
 
-		if (!cg_drawCrosshairNames.integer && !cg_drawCrosshairInfo.integer)
-		{
-			return;
-		}
-
-		CG_DrawCrosshairPlayerInfo(cgs.clientinfo[cg.crosshairClientNum].disguiseClientNum, (cg_entities[cg.crosshairClientNum].currentState.powerups >> PW_OPS_CLASS_1) & 7);
+		clientNum = cgs.clientinfo[cg.crosshairClientNum].disguiseClientNum;
 	}
 	// we only want to see players on our team
 	else if (!(cgs.clientinfo[cg.snap->ps.clientNum].team != TEAM_SPECTATOR && cgs.clientinfo[cg.crosshairClientNum].team != cgs.clientinfo[cg.snap->ps.clientNum].team))
 	{
-		if (!cg_drawCrosshairNames.integer && !cg_drawCrosshairInfo.integer)
+		clientNum = cg.crosshairClientNum;
+	}
+
+	// draw the name of the player being looked at
+	if (clientNum != -1)
+	{
+		char colorized[MAX_NAME_LENGTH + 2] = { 0 };
+
+		color = CG_FadeColor(cg.crosshairClientTime, 1000);
+
+		if (!color)
 		{
+			trap_R_SetColor(NULL);
 			return;
 		}
 
-		CG_DrawCrosshairPlayerInfo(cg.crosshairClientNum, cgs.clientinfo[cg.crosshairClientNum].cls);
+		if (!comp->style)
+		{
+			// Draw them with full colors
+			s = va("%s", cgs.clientinfo[cg.crosshairClientNum].name);
+		}
+		else
+		{
+			// Draw them with a single color (white)
+			Q_ColorizeString('7', cgs.clientinfo[cg.crosshairClientNum].cleanname, colorized, MAX_NAME_LENGTH + 2);
+			s = colorized;
+		}
+
+		CG_DrawCompText(comp, s, color, comp->styleText, &cgs.media.limboFont2);
 	}
+
+	trap_R_SetColor(NULL);
 }
 
 //==============================================================================
@@ -4056,15 +4097,11 @@ static void CG_Draw2D(void)
 		return;
 	}
 
+	if (cg.snap->ps.persistant[PERS_TEAM] != TEAM_SPECTATOR
 #ifdef FEATURE_EDV
-	if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR || cgs.demoCamera.renderingFreeCam || cgs.demoCamera.renderingWeaponCam)
-#else
-	if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR)
+	    && !cgs.demoCamera.renderingFreeCam && !cgs.demoCamera.renderingWeaponCam
 #endif
-	{
-		CG_DrawCrosshairNames();
-	}
-	else
+	    )
 	{
 		CG_DrawFlashBlendBehindHUD();
 
@@ -4072,7 +4109,6 @@ static void CG_Draw2D(void)
 		if (cg.snap->ps.stats[STAT_HEALTH] > 0 || (cg.snap->ps.pm_flags & PMF_FOLLOW))
 		{
 			CG_DrawEnvironmentalAwareness();
-			CG_DrawCrosshairNames();
 		}
 
 		if (cg_drawStatus.integer)
