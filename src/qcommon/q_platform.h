@@ -353,6 +353,7 @@
 	  #undef ARCH_STRING
 	  #define ARCH_STRING "armeabi-v7a"
 #elif defined __aarch64__
+	  #undef ARCH_STRING
 	  #define ARCH_STRING "arm64-v8a"
 #endif
 
