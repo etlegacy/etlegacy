@@ -166,13 +166,13 @@ static qboolean CM_PlaneFromPoints(vec4_t plane, vec3_t a, vec3_t b, vec3_t c)
 
 	VectorSubtract(b, a, d1);
 	VectorSubtract(c, a, d2);
-	vec3_cross(d2, d1, plane);
-	if (vec3_norm(plane) == 0.f)
+	CrossProductDP(d2, d1, plane);
+	if (VectorNormalizeDP(plane) == 0.0)
 	{
 		return qfalse;
 	}
 
-	plane[3] = DotProduct(a, plane);
+	plane[3] = DotProductDPf(a, plane);
 	return qtrue;
 }
 
@@ -488,8 +488,8 @@ static patchPlane_t planes[MAX_PATCH_PLANES];
 static unsigned int numFacets;
 static facet_t      facets[MAX_FACETS];
 
-#define NORMAL_EPSILON  0.00015f
-#define DIST_EPSILON    0.0235f
+#define NORMAL_EPSILON  0.0001
+#define DIST_EPSILON    0.02
 
 /**
  * @brief CM_PlaneEqual
@@ -667,7 +667,7 @@ static int CM_PointOnPlaneSide(float *p, int planeNum)
 	}
 	plane = planes[planeNum].plane;
 
-	d = DotProduct(p, plane) - plane[3];
+	d = DotProductDPf(p, plane) - plane[3];
 
 	if (d > PLANE_TRI_EPSILON)
 	{
@@ -963,9 +963,10 @@ void CM_AddFacetBevels(facet_t *facet)
 {
 	int       i, j, k, l;
 	int       axis, dir, flipped;
-	float     plane[4], d, minBack, newplane[4];
+	float     plane[4], minBack, newplane[4];
 	winding_t *w, *w2;
 	vec3_t    mins, maxs, vec, vec2;
+	double    d, d1[3], d2[3];
 
 #ifndef ADDBEVELS
 	return;
@@ -1066,16 +1067,18 @@ void CM_AddFacetBevels(facet_t *facet)
 	for (j = 0; j < w->numpoints; j++)
 	{
 		k = (j + 1) % w->numpoints;
-		VectorSubtract(w->p[j], w->p[k], vec);
+		VectorCopy(w->p[j], d1);
+		VectorCopy(w->p[k], d2);
+		VectorSubtractDP(d1, d2, vec);
 		// if it's a degenerate edge
-		if (vec3_norm(vec) < 0.5f)
+		if (VectorNormalizeDP(vec) < 0.5)
 		{
 			continue;
 		}
 		CM_SnapVector(vec);
 		for (k = 0; k < 3; k++)
 		{
-			if (vec[k] == -1.0f || vec[k] == 1.0f || (vec[k] == 0.0f && vec[(k + 1) % 3] == 0.0f))
+			if (vec[k] == -1.0 || vec[k] == 1.0)
 			{
 				break;  // axial
 			}
@@ -1093,19 +1096,19 @@ void CM_AddFacetBevels(facet_t *facet)
 				// construct a plane
 				VectorClear(vec2);
 				vec2[axis] = dir;
-				vec3_cross(vec, vec2, plane);
-				if (vec3_norm(plane) < 0.5f)
+				CrossProductDP(vec, vec2, plane);
+				if (VectorNormalizeDP(plane) < 0.5)
 				{
 					continue;
 				}
-				plane[3] = DotProduct(w->p[j], plane);
+				plane[3] = DotProductDPf(w->p[j], plane);
 
 				// if all the points of the facet winding are
 				// behind this plane, it is a proper edge bevel
 				minBack = 0.0f;
 				for (l = 0; l < w->numpoints; l++)
 				{
-					d = DotProduct(w->p[l], plane) - plane[3];
+					d = DotProductDPf(w->p[l], plane) - plane[3];
 					if (d > 0.1f)
 					{
 						break;  // point in front

@@ -270,13 +270,13 @@ winding_t *BaseWindingForPlane(vec3_t normal, vec_t dist)
 		break;
 	}
 
-	v = DotProduct(vup, normal);
+	v = DotProductDP(vup, normal);
 	VectorMA(vup, -v, normal, vup);
-	vec3_norm2(vup, vup);
+	VectorNormalizeDP(vup, vup);
 
 	VectorScale(normal, dist, org);
 
-	vec3_cross(vup, normal, vright);
+	CrossProductDP(vup, normal, vright);
 
 	VectorScale(vup, MAX_MAP_BOUNDS, vup);
 	VectorScale(vright, MAX_MAP_BOUNDS, vright);
@@ -356,18 +356,17 @@ void ClipWindingEpsilon(winding_t *in, vec3_t normal, vec_t dist,
 	vec_t        dists[MAX_POINTS_ON_WINDING + 4] = { 0 };
 	int          sides[MAX_POINTS_ON_WINDING + 4] = { 0 };
 	int          counts[3]                        = { 0, 0, 0 };
-	static vec_t dot;           // VC 4.2 optimizer bug if not static
 	int          i, j;
 	vec_t        *p1, *p2;
 	vec3_t       mid;
 	winding_t    *f, *b;
 	int          maxpts;
+	double       dot, d1, d2;
 
 	// determine sides for each point
 	for (i = 0 ; i < in->numpoints ; i++)
 	{
-		dot      = DotProduct(in->p[i], normal);
-		dot     -= dist;
+		dot      = DotProductDPf(in->p[i], normal) - dist;
 		dists[i] = dot;
 		if (dot > epsilon)
 		{
@@ -438,7 +437,9 @@ void ClipWindingEpsilon(winding_t *in, vec3_t normal, vec_t dist,
 		// generate a split point
 		p2 = in->p[(i + 1) % in->numpoints];
 
-		dot = dists[i] / (dists[i] - dists[i + 1]);
+		d1  = dists[i];
+		d2  = dists[i + 1];
+		dot = d1 / (d1 - d2);
 		for (j = 0 ; j < 3 ; j++) // avoid round off error when possible
 		{
 			if (normal[j] == 1.f)
@@ -451,7 +452,9 @@ void ClipWindingEpsilon(winding_t *in, vec3_t normal, vec_t dist,
 			}
 			else
 			{
-				mid[j] = p1[j] + dot * (p2[j] - p1[j]);
+				d1     = p1[j];
+				d2     = p2[j];
+				mid[j] = d1 + dot * (d2 - d1);
 			}
 		}
 
@@ -484,12 +487,12 @@ void ChopWindingInPlace(winding_t **w, vec3_t normal, vec_t dist, vec_t epsilon)
 	vec_t        dists[MAX_POINTS_ON_WINDING + 4];
 	int          sides[MAX_POINTS_ON_WINDING + 4];
 	int          counts[3] = { 0, 0, 0 };
-	static vec_t dot;           // VC 4.2 optimizer bug if not static
 	int          i, j;
 	vec_t        *p1, *p2;
 	vec3_t       mid;
 	winding_t    *f;
 	int          maxpts;
+	double       dot, d1, d2;
 
 	Com_Memset(dists, 0, sizeof(dists));
 	Com_Memset(sides, 0, sizeof(sides));
@@ -497,8 +500,7 @@ void ChopWindingInPlace(winding_t **w, vec3_t normal, vec_t dist, vec_t epsilon)
 	// determine sides for each point
 	for (i = 0 ; i < in->numpoints ; i++)
 	{
-		dot      = DotProduct(in->p[i], normal);
-		dot     -= dist;
+		dot      = DotProductDPf(in->p[i], normal) - dist;
 		dists[i] = dot;
 		if (dot > epsilon)
 		{
@@ -559,7 +561,9 @@ void ChopWindingInPlace(winding_t **w, vec3_t normal, vec_t dist, vec_t epsilon)
 		// generate a split point
 		p2 = in->p[(i + 1) % in->numpoints];
 
-		dot = dists[i] / (dists[i] - dists[i + 1]);
+		d1  = dists[i];
+		d2  = dists[i + 1];
+		dot = d1 / (d1 - d2);
 		for (j = 0 ; j < 3 ; j++) // avoid round off error when possible
 		{
 			if (normal[j] == 1.f)
@@ -572,7 +576,9 @@ void ChopWindingInPlace(winding_t **w, vec3_t normal, vec_t dist, vec_t epsilon)
 			}
 			else
 			{
-				mid[j] = p1[j] + dot * (p2[j] - p1[j]);
+				d1     = p1[j];
+				d2     = p2[j];
+				mid[j] = d1 + dot * (d2 - d1);
 			}
 		}
 
