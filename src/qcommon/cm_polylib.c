@@ -272,7 +272,7 @@ winding_t *BaseWindingForPlane(vec3_t normal, vec_t dist)
 
 	v = DotProductDP(vup, normal);
 	VectorMA(vup, -v, normal, vup);
-	VectorNormalizeDP(vup, vup);
+	VectorNormalizeDP(vup);
 
 	VectorScale(normal, dist, org);
 
