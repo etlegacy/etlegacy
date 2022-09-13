@@ -21,4 +21,4 @@ EXPOSE 27960/UDP
 
 USER legacy
 
-ENTRYPOINT ["./etlded", "+set","fs_homepath", "/legacy/homepath", "+set", "g_protect", "1", "+exec", "etl_server.cfg"]
+ENTRYPOINT ["./etlded.$(arch)", "+set","fs_homepath", "/legacy/homepath", "+set", "g_protect", "1", "+exec", "etl_server.cfg"]
