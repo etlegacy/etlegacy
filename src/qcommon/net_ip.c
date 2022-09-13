@@ -73,7 +73,7 @@ typedef unsigned short sa_family_t;
 
 #define socketError      WSAGetLastError()
 
-static WSADATA  winsockdata;
+static WSADATA winsockdata;
 static qboolean winsockInitialized = qfalse;
 
 #else // *NIX & APPLE
@@ -111,7 +111,7 @@ typedef int SOCKET;
 
 #endif
 
-static qboolean usingSocks        = qfalse;
+static qboolean usingSocks = qfalse;
 static qboolean networkingEnabled = qfalse;
 
 static cvar_t *net_enabled;
@@ -1306,7 +1306,7 @@ void NET_SetMulticast6(void)
 	if (!*net_mcast6addr->string || !Sys_StringToSockaddr(net_mcast6addr->string, (struct sockaddr *) &addr, sizeof(addr), AF_INET6))
 	{
 		Com_Printf(S_COLOR_YELLOW "WARNING: NET_JoinMulticast6: Incorrect multicast address given, "
-		           "please set cvar %s to a sane value.\n", net_mcast6addr->name);
+		                          "please set cvar %s to a sane value.\n", net_mcast6addr->name);
 
 		Cvar_SetValue(net_enabled->name, net_enabled->integer | NET_DISABLEMCAST);
 
@@ -1877,12 +1877,14 @@ static qboolean NET_GetCvars(void)
 	net_ip6->modified = qfalse;
 #endif
 
-	net_port           = Cvar_Get("net_port", va("%i", PORT_SERVER), CVAR_LATCH);
+	net_port = Cvar_Get("net_port", va("%i", PORT_SERVER), CVAR_LATCH);
+	Cvar_CheckRange(net_port, 0, 65535, qtrue);
 	modified          += net_port->modified;
 	net_port->modified = qfalse;
 
 #ifdef FEATURE_IPV6
-	net_port6           = Cvar_Get("net_port6", va("%i", PORT_SERVER), CVAR_LATCH);
+	net_port6 = Cvar_Get("net_port6", va("%i", PORT_SERVER), CVAR_LATCH);
+	Cvar_CheckRange(net_port6, 0, 65535, qtrue);
 	modified           += net_port6->modified;
 	net_port6->modified = qfalse;
 
