@@ -4,7 +4,7 @@ COPY etlegacy*.tar.gz /legacy/server/
 RUN mkdir /legacy/homepath
 RUN cd /legacy/server && cat *.tar.gz | tar zxvf - -i --strip-components=1 && rm *.tar.gz
 RUN export arch=$(arch)
-RUN rm /legacy/server/etl.$(arch) && rm /legacy/server/etl_bot$(arch).sh && rm /legacy/server/*.so
+RUN rm /legacy/server/etl.$(arch) && rm /legacy/server/etl_bot_$(arch).sh && rm /legacy/server/*.so
 
 FROM debian:stable-slim
 RUN useradd -Ms /bin/bash legacy
