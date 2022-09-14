@@ -84,6 +84,7 @@ static qboolean CG_HudEditor_AlignTextDropdown_KeyUp(panel_button_t *button, int
 static void CG_HudEditor_AlignTextRenderDropdown(panel_button_t *button);
 static void CG_HudEditor_SetupTitleText(panel_button_t *button);
 static qboolean CG_HudEditor_EditKeyDown(panel_button_t *button, int key);
+static qboolean CG_HudEditorPanel_EditKeyUp(panel_button_t *button, int key);
 static qboolean CG_HudEditorPanel_KeyUp(panel_button_t *button, int key);
 static void CG_HudEditor_RenderEdit(panel_button_t *button);
 static void CG_HudEditorX_Finish(panel_button_t *button);
@@ -180,7 +181,7 @@ static panel_button_t hudEditorX =
 	{ 0,                    0,                                                    0,           0, 0, 0, 0, 1},
 	&hudEditorTextFont,     // font
     CG_HudEditor_EditKeyDown,// keyDown
-    CG_HudEditorPanel_KeyUp,// keyUp
+    CG_HudEditorPanel_EditKeyUp,// keyUp
 	CG_HudEditor_RenderEdit,
 	CG_HudEditorX_Finish,
 	0
@@ -194,7 +195,7 @@ static panel_button_t hudEditorY =
 	{ 0,                    0,                                                    0,           0, 0, 0, 0, 1},
 	&hudEditorTextFont,     // font
     CG_HudEditor_EditKeyDown,// keyDown
-    CG_HudEditorPanel_KeyUp,// keyUp
+    CG_HudEditorPanel_EditKeyUp,// keyUp
 	CG_HudEditor_RenderEdit,
 	CG_HudEditorY_Finish,
 	0
@@ -222,7 +223,7 @@ static panel_button_t hudEditorW =
 	{ 0,                     0,                                                                    0,           0, 0, 0, 0, 1},
 	&hudEditorTextFont,      // font
     CG_HudEditor_EditKeyDown,// keyDown
-    CG_HudEditorPanel_KeyUp, // keyUp
+    CG_HudEditorPanel_EditKeyUp, // keyUp
 	CG_HudEditor_RenderEdit,
 	CG_HudEditorWidth_Finish,
 	0
@@ -236,7 +237,7 @@ static panel_button_t hudEditorH =
 	{ 0,                      0,                                                                    0,           0, 0, 0, 0, 1},
 	&hudEditorTextFont,       // font
     CG_HudEditor_EditKeyDown, // keyDown
-    CG_HudEditorPanel_KeyUp,  // keyUp
+    CG_HudEditorPanel_EditKeyUp,  // keyUp
 	CG_HudEditor_RenderEdit,
 	CG_HudEditorHeight_Finish,
 	0
@@ -294,7 +295,7 @@ static panel_button_t hudEditorColorR =
 	{ 0,                     0,                                                                   0,                 0, 0, 0, 0, 1},
 	&hudEditorTextFont,      // font
     CG_HudEditor_EditKeyDown,// keyDown
-    CG_HudEditorPanel_KeyUp, // keyUp
+    CG_HudEditorPanel_EditKeyUp, // keyUp
 	CG_HudEditor_RenderEdit,
 	CG_HudEditorColor_Finish,
 	0
@@ -308,7 +309,7 @@ static panel_button_t hudEditorColorG =
 	{ 0,                     0,                                                                                          0,                 1, 0, 0, 0, 1},
 	&hudEditorTextFont,      // font
     CG_HudEditor_EditKeyDown,// keyDown
-    CG_HudEditorPanel_KeyUp, // keyUp
+    CG_HudEditorPanel_EditKeyUp, // keyUp
 	CG_HudEditor_RenderEdit,
 	CG_HudEditorColor_Finish,
 	0
@@ -321,7 +322,7 @@ static panel_button_t hudEditorColorB =
 	{ 0,                     0,                                                                                                0,                 2, 0, 0, 0, 1},
 	&hudEditorTextFont,      // font
     CG_HudEditor_EditKeyDown,// keyDown
-    CG_HudEditorPanel_KeyUp, // keyUp
+    CG_HudEditorPanel_EditKeyUp, // keyUp
 	CG_HudEditor_RenderEdit,
 	CG_HudEditorColor_Finish,
 	0
@@ -334,7 +335,7 @@ static panel_button_t hudEditorColorA =
 	{ 0,                     0,                                                                                                0,                 3, 0, 0, 0, 1},
 	&hudEditorTextFont,      // font
     CG_HudEditor_EditKeyDown,// keyDown
-    CG_HudEditorPanel_KeyUp, // keyUp
+    CG_HudEditorPanel_EditKeyUp, // keyUp
 	CG_HudEditor_RenderEdit,
 	CG_HudEditorColor_Finish,
 	0
@@ -474,7 +475,7 @@ static panel_button_t hudEditorScale =
     { 0,                     0,                                            0,           0, 0, 0, 0, 1},
     &hudEditorTextFont,      // font
     CG_HudEditor_EditKeyDown,// keyDown
-    CG_HudEditorPanel_KeyUp, // keyUp
+    CG_HudEditorPanel_EditKeyUp, // keyUp
     CG_HudEditor_RenderEdit,
     CG_HudEditorScale_Finish,
     0
@@ -1626,23 +1627,23 @@ static void CG_HudEditorUpdateFields(panel_button_t *button)
 	comp = (hudComponent_t *)((char *)activehud + hudComponentFields[button->data[0]].offset);
 
 	Com_sprintf(buffer, sizeof(buffer), "%0.1f", comp->location.x);
-	trap_Cvar_Set("hudeditor_x", buffer);
+	trap_Cvar_Set("hudeditor_X", buffer);
 	hudEditorX.data[1] = button->data[0];
 
 	Com_sprintf(buffer, sizeof(buffer), "%0.1f", comp->location.y);
-	trap_Cvar_Set("hudeditor_y", buffer);
+	trap_Cvar_Set("hudeditor_Y", buffer);
 	hudEditorY.data[1] = button->data[0];
 
 	Com_sprintf(buffer, sizeof(buffer), "%0.1f", comp->location.w);
-	trap_Cvar_Set("hudeditor_w", buffer);
+	trap_Cvar_Set("hudeditor_W", buffer);
 	hudEditorW.data[1] = button->data[0];
 
 	Com_sprintf(buffer, sizeof(buffer), "%0.1f", comp->location.h);
-	trap_Cvar_Set("hudeditor_h", buffer);
+	trap_Cvar_Set("hudeditor_H", buffer);
 	hudEditorH.data[1] = button->data[0];
 
 	Com_sprintf(buffer, sizeof(buffer), "%0.1f", comp->scale);
-	trap_Cvar_Set("hudeditor_s", buffer);
+	trap_Cvar_Set("hudeditor_S", buffer);
 	hudEditorScale.data[1] = button->data[0];
 
 	switch (elementColorSelection /*hudEditorColorSelection.data[3]*/)

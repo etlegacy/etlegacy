@@ -389,6 +389,7 @@ void CG_DrawFireTeamOverlay(hudComponent_t *comp)
 	int            curWeap;
 	char           name[MAX_FIRETEAM_MEMBERS][MAX_NAME_LENGTH];
 	int            nameMaxLen;
+    float scale;
 
 	// colors and fonts for overlays
 	vec4_t FT_select  = { 0.5f, 0.5f, 0.2f, 0.3f };             // selected member
@@ -418,6 +419,10 @@ void CG_DrawFireTeamOverlay(hudComponent_t *comp)
 	{
 		Com_Memset(name[i], 0, sizeof(char) * (MAX_NAME_LENGTH));
 	}
+    
+    h = comp->location.h / (MAX_FIRETEAM_MEMBERS + 1);
+    
+    scale = CG_ComputeScale(h, comp->scale, FONT_TEXT);
 
 	// First get name and location width, also store location names
 	for (i = 0; i < MAX_FIRETEAM_MEMBERS; i++)
@@ -442,12 +447,12 @@ void CG_DrawFireTeamOverlay(hudComponent_t *comp)
 			// cap max location length?
 			if (cg_locationMaxChars.integer)
 			{
-				locwidth  = CG_Text_Width_Ext_Float("_", comp->scale, 0, FONT_TEXT);
+				locwidth  = CG_Text_Width_Ext_Float("_", scale, 0, FONT_TEXT);
 				locwidth *= Com_Clamp(0, 128, cg_locationMaxChars.integer);     // 128 is max location length
 			}
 			else
 			{
-				locwidth = CG_Text_Width_Ext(locStr[i], comp->scale, 0, FONT_TEXT);
+				locwidth = CG_Text_Width_Ext(locStr[i], scale, 0, FONT_TEXT);
 			}
 		}
 		else
@@ -465,17 +470,17 @@ void CG_DrawFireTeamOverlay(hudComponent_t *comp)
 			// if alignment is requested, keep a static width
 			if (cg_fireteamNameAlign.integer)
 			{
-				namewidth  = CG_Text_Width_Ext_Float("_", comp->scale, 0, FONT_TEXT);
+				namewidth  = CG_Text_Width_Ext_Float("_", scale, 0, FONT_TEXT);
 				namewidth *= Com_Clamp(0, MAX_NAME_LENGTH, cg_fireteamNameMaxChars.integer);
 			}
 			else
 			{
-				namewidth = CG_Text_Width_Ext(name[i], comp->scale, 0, FONT_TEXT);
+				namewidth = CG_Text_Width_Ext(name[i], scale, 0, FONT_TEXT);
 			}
 		}
 		else
 		{
-			namewidth = CG_Text_Width_Ext(name[i], comp->scale, 0, FONT_TEXT);
+			namewidth = CG_Text_Width_Ext(name[i], scale, 0, FONT_TEXT);
 		}
 
 		if (ci->powerups & ((1 << PW_REDFLAG) | (1 << PW_BLUEFLAG) | (1 << PW_OPS_DISGUISED)))
@@ -522,9 +527,7 @@ void CG_DrawFireTeamOverlay(hudComponent_t *comp)
 		}
 	}
 
-	h = comp->location.h / (MAX_FIRETEAM_MEMBERS + 1);
-
-	heightText        = CG_Text_Height_Ext("A", comp->scale, 0, FONT_TEXT);
+	heightText        = CG_Text_Height_Ext("A", scale, 0, FONT_TEXT);
 	heightTextOffset  = (h + heightText) * 0.5;
 	heightIconsOffset = (h - heightText * 2) * 0.5;
 
@@ -572,8 +575,8 @@ void CG_DrawFireTeamOverlay(hudComponent_t *comp)
 	}
 
 	Q_strupr(buffer);
-	heighTitle = CG_Text_Height_Ext(buffer, comp->scale, 0, FONT_HEADER);
-	CG_Text_Paint_Ext(x + 4, comp->location.y + ((heighTitle + h) * 0.5), comp->scale, comp->scale, comp->colorText, buffer, 0, 0, 0, FONT_HEADER);
+	heighTitle = CG_Text_Height_Ext(buffer, scale, 0, FONT_HEADER);
+	CG_Text_Paint_Ext(x + 4, comp->location.y + ((heighTitle + h) * 0.5), scale, scale, comp->colorText, buffer, 0, 0, 0, FONT_HEADER);
 
 	lineX = (int)x;
 
@@ -617,7 +620,7 @@ void CG_DrawFireTeamOverlay(hudComponent_t *comp)
 			if (ci->cls != ci->latchedcls)
 			{
 				// draw the yellow arrow
-				CG_Text_Paint_Ext(x, y + heightTextOffset, comp->scale, comp->scale, comp->colorText, "^3->", 0, 0, comp->styleText, FONT_TEXT);
+				CG_Text_Paint_Ext(x, y + heightTextOffset, scale, scale, comp->colorText, "^3->", 0, 0, comp->styleText, FONT_TEXT);
 				x += FT_SPACING * 3;
 				// draw latched class icon in fireteam overlay
 				trap_R_SetColor(iconColor);
@@ -667,11 +670,11 @@ void CG_DrawFireTeamOverlay(hudComponent_t *comp)
 		// right align?
 		if (cg_fireteamNameAlign.integer > 0)
 		{
-			CG_Text_Paint_RightAligned_Ext(x + bestNameWidth - puwidth, y + heightTextOffset, comp->scale, comp->scale, textWhite, name[i], 0, 0, comp->styleText, FONT_TEXT);
+			CG_Text_Paint_RightAligned_Ext(x + bestNameWidth - puwidth, y + heightTextOffset, scale, scale, textWhite, name[i], 0, 0, comp->styleText, FONT_TEXT);
 		}
 		else
 		{
-			CG_Text_Paint_Ext(x, y + heightTextOffset, comp->scale, comp->scale, textWhite, name[i], 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
+			CG_Text_Paint_Ext(x, y + heightTextOffset, scale, scale, textWhite, name[i], 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
 		}
 
 		// add space
@@ -708,33 +711,33 @@ void CG_DrawFireTeamOverlay(hudComponent_t *comp)
 		// draw the player's health
 		if (ci->health >= 100)
 		{
-			CG_Text_Paint_Ext(x, y + heightTextOffset, comp->scale, comp->scale, comp->colorText, va("%i", ci->health), 0, 0, comp->styleText, FONT_TEXT);
+			CG_Text_Paint_Ext(x, y + heightTextOffset, scale, scale, comp->colorText, va("%i", ci->health), 0, 0, comp->styleText, FONT_TEXT);
 			x += FT_SPACING * 3;
 		}
 		else if (ci->health >= 10)
 		{
 			x += FT_SPACING;
-			CG_Text_Paint_Ext(x, y + heightTextOffset, comp->scale, comp->scale, ci->health > 80 ? comp->colorText : textYellow, va("%i", ci->health), 0, 0, comp->styleText, FONT_TEXT);
+			CG_Text_Paint_Ext(x, y + heightTextOffset, scale, scale, ci->health > 80 ? comp->colorText : textYellow, va("%i", ci->health), 0, 0, comp->styleText, FONT_TEXT);
 			x += FT_SPACING * 2;
 		}
 		else if (ci->health > 0)
 		{
 			x += FT_SPACING * 2;
-			CG_Text_Paint_Ext(x, y + heightTextOffset, comp->scale, comp->scale, textYellow, va("%i", ci->health), 0, 0, comp->styleText, FONT_TEXT);
+			CG_Text_Paint_Ext(x, y + heightTextOffset, scale, scale, textYellow, va("%i", ci->health), 0, 0, comp->styleText, FONT_TEXT);
 			x += FT_SPACING;
 		}
 		else if (ci->health == 0)
 		{
 			x += FT_SPACING;
-			CG_Text_Paint_Ext(x, y + heightTextOffset, comp->scale, comp->scale, ((cg.time % 500) > 250)  ? textWhite : textRed, "*", 0, 0, comp->styleText, FONT_TEXT);
+			CG_Text_Paint_Ext(x, y + heightTextOffset, scale, scale, ((cg.time % 500) > 250)  ? textWhite : textRed, "*", 0, 0, comp->styleText, FONT_TEXT);
 			x += FT_SPACING;
-			CG_Text_Paint_Ext(x, y + heightTextOffset, comp->scale, comp->scale, ((cg.time % 500) > 250)  ? textRed : textWhite, "0", 0, 0, comp->styleText, FONT_TEXT);
+			CG_Text_Paint_Ext(x, y + heightTextOffset, scale, scale, ((cg.time % 500) > 250)  ? textRed : textWhite, "0", 0, 0, comp->styleText, FONT_TEXT);
 			x += FT_SPACING;
 		}
 		else
 		{
 			x += FT_SPACING * 2;
-			CG_Text_Paint_Ext(x, y + heightTextOffset, comp->scale, comp->scale, textRed, "0", 0, 0, comp->styleText, FONT_TEXT);
+			CG_Text_Paint_Ext(x, y + heightTextOffset, scale, scale, textRed, "0", 0, 0, comp->styleText, FONT_TEXT);
 			x += FT_SPACING;
 		}
 
@@ -743,21 +746,21 @@ void CG_DrawFireTeamOverlay(hudComponent_t *comp)
 		if (cg_locations.integer & LOC_FTEAM)
 		{
 			float widthLocationLeft = w - (x - comp->location.x) - FT_SPACING;
-			int   lim               = widthLocationLeft / CG_Text_Width_Ext_Float("A", comp->scale, 0, FONT_TEXT);
+			int   lim               = widthLocationLeft / CG_Text_Width_Ext_Float("A", scale, 0, FONT_TEXT);
 
 			if (lim > 0)
 			{
 				if (comp->alignText == ITEM_ALIGN_RIGHT) // right align
 				{
-					CG_Text_Paint_RightAligned_Ext(x + widthLocationLeft, y + heightTextOffset, comp->scale, comp->scale, comp->colorText, locStr[i], 0, lim, comp->styleText, FONT_TEXT);
+					CG_Text_Paint_RightAligned_Ext(x + widthLocationLeft, y + heightTextOffset, scale, scale, comp->colorText, locStr[i], 0, lim, comp->styleText, FONT_TEXT);
 				}
 				else if (comp->alignText == ITEM_ALIGN_LEFT)
 				{
-					CG_Text_Paint_Ext(x, y + heightTextOffset, comp->scale, comp->scale, comp->colorText, locStr[i], 0, lim, comp->styleText, FONT_TEXT);
+					CG_Text_Paint_Ext(x, y + heightTextOffset, scale, scale, comp->colorText, locStr[i], 0, lim, comp->styleText, FONT_TEXT);
 				}
 				else    // center
 				{
-					CG_Text_Paint_Centred_Ext(x + widthLocationLeft * 0.5, y + heightTextOffset, comp->scale, comp->scale, comp->colorText, locStr[i], 0, lim, comp->styleText, FONT_TEXT);
+					CG_Text_Paint_Centred_Ext(x + widthLocationLeft * 0.5, y + heightTextOffset, scale, scale, comp->colorText, locStr[i], 0, lim, comp->styleText, FONT_TEXT);
 				}
 			}
 		}

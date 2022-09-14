@@ -1513,3 +1513,15 @@ void CG_DrawHelpWindow(float x, float y, int *status, const char *title, const h
 		}
 	}
 }
+
+/**
+ * @brief CG_ComputeScale
+ * @param[in] height
+ * @param[in] scale
+ * @param[in] font
+ * @return 
+ */
+float ID_INLINE CG_ComputeScale(float height, float scale, fontHelper_t *font)
+{
+    return (height / (Q_UTF8_GlyphScale(font) * Q_UTF8_GetGlyph(font, "A")->height)) * (scale / 100.f);
+}

@@ -4242,4 +4242,6 @@ void CG_DrawHelpWindow(float x, float y, int *status, const char *title, const h
                        const vec4_t bgColor, const vec4_t borderColor, const vec4_t bgColorTitle, const vec4_t borderColorTitle,
                        panel_button_text_t *fontHeader, panel_button_text_t *fontText);
 
+float CG_ComputeScale(float height, float scale, fontHelper_t *font);
+
 #endif // #ifndef INCLUDE_CG_LOCAL_H

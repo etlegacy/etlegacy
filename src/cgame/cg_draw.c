@@ -994,15 +994,22 @@ void CG_DrawTeamInfo(hudComponent_t *comp)
 		vec4_t       hcolor;
 		int          i, j;
 		float        alphapercent;
-		float        lineHeight    = comp->location.h / chatHeight;
-		float        icon_width    = 12.f * comp->scale * 5;
-		float        icon_height   = 8.f * comp->scale * 5;
-		float        flagOffsetX   = 0;
-		qhandle_t    flag          = 0;
-		fontHelper_t *font         = &cgs.media.limboFont2;
-		int          maxLineLength = (comp->location.w - (!comp->style ? (16.f * comp->scale * 5.f) : 0)) / ((float)Q_UTF8_GetGlyph(font, "A")->xSkip * comp->scale * Q_UTF8_GlyphScale(font));
-		int          chatPosX      = comp->location.x;
-		int          chatPosY      = comp->location.y + comp->location.h;
+		float        lineHeight = comp->location.h / chatHeight;
+		float        icon_width;
+		float        icon_height;
+		float        flagOffsetX = 0;
+		qhandle_t    flag        = 0;
+		fontHelper_t *font       = &cgs.media.limboFont2;
+		int          maxLineLength;
+		int          chatPosX = comp->location.x;
+		int          chatPosY = comp->location.y + comp->location.h;
+		float        scale;
+
+		scale = CG_ComputeScale(lineHeight, comp->scale, font);
+
+		icon_width    = 12.f * scale * 5;
+		icon_height   = 8.f * scale * 5;
+		maxLineLength = (comp->location.w - (!comp->style ? (16.f * scale * 5.f) : 0)) / ((float)Q_UTF8_GetGlyph(font, "A")->xSkip * scale * Q_UTF8_GlyphScale(font));
 
 		if (comp->showBackGround)
 		{
@@ -1053,7 +1060,7 @@ void CG_DrawTeamInfo(hudComponent_t *comp)
 
 			if (!comp->style /*== STYLE_NORMAL*/)
 			{
-				flagOffsetX = 16.f * comp->scale * 5;
+				flagOffsetX = 16.f * scale * 5;
 				if (cgs.teamChatMsgTeams[i % chatHeight] == TEAM_AXIS)
 				{
 					flag = cgs.media.axisFlag;
@@ -1067,7 +1074,7 @@ void CG_DrawTeamInfo(hudComponent_t *comp)
 			// get the longest chat message on screen, use that for the width of chat background
 			for (j = 0; j < TEAMCHAT_HEIGHT; j++)
 			{
-				chatWidthCur = CG_Text_Width_Ext(cgs.teamChatMsgs[j % chatHeight], comp->scale, maxLineLength, &cgs.media.limboFont2);
+				chatWidthCur = CG_Text_Width_Ext(cgs.teamChatMsgs[j % chatHeight], scale, maxLineLength, &cgs.media.limboFont2);
 
 				if (chatWidthCur > chatWidthMax)
 				{
@@ -1086,7 +1093,7 @@ void CG_DrawTeamInfo(hudComponent_t *comp)
 			{
 				CG_DrawPic(chatPosX, chatPosY - (cgs.teamChatPos - i - 0.9f) * lineHeight - icon_height, icon_width, icon_height, flag);
 			}
-			CG_Text_Paint_Ext(chatPosX + flagOffsetX, chatPosY - (cgs.teamChatPos - i - 1) * lineHeight - 1, comp->scale, comp->scale, hcolor, cgs.teamChatMsgs[i % chatHeight], 0, 0, comp->styleText, &cgs.media.limboFont2);
+			CG_Text_Paint_Ext(chatPosX + flagOffsetX, chatPosY - (cgs.teamChatPos - i - 1) * lineHeight - 1, scale, scale, hcolor, cgs.teamChatMsgs[i % chatHeight], 0, 0, comp->styleText, &cgs.media.limboFont2);
 		}
 		trap_R_SetColor(NULL);
 	}
@@ -1153,7 +1160,9 @@ void CG_CenterPrint(const char *str)
  */
 void CG_PriorityCenterPrint(const char *str, int priority)
 {
-	int maxLineChars;
+	int          maxLineChars;
+	float        scale;
+	fontHelper_t *font = &cgs.media.limboFont2;
 
 	// don't draw if this print message is less important
 	if (cg.centerPrintTime && priority < cg.centerPrintPriority)
@@ -1161,7 +1170,8 @@ void CG_PriorityCenterPrint(const char *str, int priority)
 		return;
 	}
 
-	maxLineChars = CG_GetActiveHUD()->centerprint.location.w / CG_Text_Width_Ext("A", CG_GetActiveHUD()->centerprint.scale, 0, &cgs.media.limboFont2);
+	scale        = CG_ComputeScale(CG_GetActiveHUD()->centerprint.location.h, CG_GetActiveHUD()->centerprint.scale, &cgs.media.limboFont2);
+	maxLineChars = CG_GetActiveHUD()->centerprint.location.w / CG_Text_Width_Ext("A", scale, 0, &cgs.media.limboFont2);
 
 	CG_WordWrapString(CG_TranslateString(str), maxLineChars, cg.centerPrint, sizeof(cg.centerPrint));
 	cg.centerPrintPriority = priority;
@@ -3595,9 +3605,11 @@ static void CG_DrawFlashBlendBehindHUD(void)
  */
 void CG_ObjectivePrint(const char *str)
 {
-	int maxLineChars;
+	int   maxLineChars;
+	float scale;
 
-	maxLineChars = CG_GetActiveHUD()->objectivetext.location.w / CG_Text_Width_Ext("A", CG_GetActiveHUD()->objectivetext.scale, 0, &cgs.media.limboFont2);
+	scale        = CG_ComputeScale(CG_GetActiveHUD()->objectivetext.location.h, CG_GetActiveHUD()->objectivetext.scale, &cgs.media.limboFont2);
+	maxLineChars = CG_GetActiveHUD()->objectivetext.location.w / CG_Text_Width_Ext("A", scale, 0, &cgs.media.limboFont2);
 
 	CG_WordWrapString(CG_TranslateString(str), maxLineChars, cg.oidPrint, sizeof(cg.oidPrint));
 	cg.oidPrintTime = cg.time;
