@@ -44,8 +44,8 @@ extern itemDef_t *g_bindItem;
 extern qboolean  g_waitingForKey;
 
 qboolean flashWindowSupported = qfalse;
-int dll_com_trapGetValue;
-int dll_trap_SysFlashWindow;
+int      dll_com_trapGetValue;
+int      dll_trap_SysFlashWindow;
 
 /**
  * @brief This is the only way control passes into the module.
@@ -2750,7 +2750,7 @@ void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qbo
 		if (trap_GetValue(value, sizeof(value), "trap_SysFlashWindow_Legacy"))
 		{
 			dll_trap_SysFlashWindow = atoi(value);
-			flashWindowSupported = qtrue;
+            flashWindowSupported    = qtrue;
 		}
 	}
 

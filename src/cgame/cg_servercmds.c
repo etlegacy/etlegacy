@@ -1157,8 +1157,8 @@ static void CG_AddToTeamChat(const char *str, int clientnum) // FIXME: add disgu
 		cgs.teamChatPos = cgs.teamLastChatPos = 0;
 		return;
 	}
-    
-    scale = CG_ComputeScale(CG_GetActiveHUD()->chat.location.h / ((cg_teamChatHeight.integer < TEAMCHAT_HEIGHT) ? cg_teamChatHeight.integer : TEAMCHAT_HEIGHT), CG_GetActiveHUD()->chat.scale, &cgs.media.limboFont2);
+
+    scale = CG_ComputeScale(&CG_GetActiveHUD()->chat /*CG_GetActiveHUD()->chat.location.h / ((cg_teamChatHeight.integer < TEAMCHAT_HEIGHT) ? cg_teamChatHeight.integer : TEAMCHAT_HEIGHT), CG_GetActiveHUD()->chat.scale, &cgs.media.limboFont2*/);
 
 	len       = 0;
 	chatWidth = (cgs.gamestate == GS_INTERMISSION) ? TEAMCHAT_WIDTH + 30
@@ -3554,7 +3554,7 @@ static void CG_ServerCommand(void)
 		int   maxLineChars;
 		float scale;
 
-		scale        = CG_ComputeScale(CG_GetActiveHUD()->banner.location.h, CG_GetActiveHUD()->banner.scale, &cgs.media.limboFont2);
+        scale        = CG_ComputeScale(&CG_GetActiveHUD()->banner /*CG_GetActiveHUD()->banner.location.h, CG_GetActiveHUD()->banner.scale, &cgs.media.limboFont2*/);
 		maxLineChars = CG_GetActiveHUD()->banner.location.w / CG_Text_Width_Ext("A", scale, 0, &cgs.media.limboFont2);
 
 		CG_WordWrapString(CG_Argv(1), maxLineChars, cg.bannerPrint, sizeof(cg.bannerPrint));

@@ -389,7 +389,7 @@ void CG_DrawFireTeamOverlay(hudComponent_t *comp)
 	int            curWeap;
 	char           name[MAX_FIRETEAM_MEMBERS][MAX_NAME_LENGTH];
 	int            nameMaxLen;
-    float scale;
+    float          scale;
 
 	// colors and fonts for overlays
 	vec4_t FT_select  = { 0.5f, 0.5f, 0.2f, 0.3f };             // selected member
@@ -419,10 +419,10 @@ void CG_DrawFireTeamOverlay(hudComponent_t *comp)
 	{
 		Com_Memset(name[i], 0, sizeof(char) * (MAX_NAME_LENGTH));
 	}
-    
+
     h = comp->location.h / (MAX_FIRETEAM_MEMBERS + 1);
-    
-    scale = CG_ComputeScale(h, comp->scale, FONT_TEXT);
+
+    scale = CG_ComputeScale(comp /* h, comp->scale, FONT_TEXT*/);
 
 	// First get name and location width, also store location names
 	for (i = 0; i < MAX_FIRETEAM_MEMBERS; i++)

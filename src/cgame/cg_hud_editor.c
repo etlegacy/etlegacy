@@ -223,7 +223,7 @@ static panel_button_t hudEditorW =
 	{ 0,                     0,                                                                    0,           0, 0, 0, 0, 1},
 	&hudEditorTextFont,      // font
     CG_HudEditor_EditKeyDown,// keyDown
-    CG_HudEditorPanel_EditKeyUp, // keyUp
+    CG_HudEditorPanel_EditKeyUp,// keyUp
 	CG_HudEditor_RenderEdit,
 	CG_HudEditorWidth_Finish,
 	0
@@ -237,7 +237,7 @@ static panel_button_t hudEditorH =
 	{ 0,                      0,                                                                    0,           0, 0, 0, 0, 1},
 	&hudEditorTextFont,       // font
     CG_HudEditor_EditKeyDown, // keyDown
-    CG_HudEditorPanel_EditKeyUp,  // keyUp
+    CG_HudEditorPanel_EditKeyUp,// keyUp
 	CG_HudEditor_RenderEdit,
 	CG_HudEditorHeight_Finish,
 	0
@@ -295,7 +295,7 @@ static panel_button_t hudEditorColorR =
 	{ 0,                     0,                                                                   0,                 0, 0, 0, 0, 1},
 	&hudEditorTextFont,      // font
     CG_HudEditor_EditKeyDown,// keyDown
-    CG_HudEditorPanel_EditKeyUp, // keyUp
+    CG_HudEditorPanel_EditKeyUp,// keyUp
 	CG_HudEditor_RenderEdit,
 	CG_HudEditorColor_Finish,
 	0
@@ -309,7 +309,7 @@ static panel_button_t hudEditorColorG =
 	{ 0,                     0,                                                                                          0,                 1, 0, 0, 0, 1},
 	&hudEditorTextFont,      // font
     CG_HudEditor_EditKeyDown,// keyDown
-    CG_HudEditorPanel_EditKeyUp, // keyUp
+    CG_HudEditorPanel_EditKeyUp,// keyUp
 	CG_HudEditor_RenderEdit,
 	CG_HudEditorColor_Finish,
 	0
@@ -322,7 +322,7 @@ static panel_button_t hudEditorColorB =
 	{ 0,                     0,                                                                                                0,                 2, 0, 0, 0, 1},
 	&hudEditorTextFont,      // font
     CG_HudEditor_EditKeyDown,// keyDown
-    CG_HudEditorPanel_EditKeyUp, // keyUp
+    CG_HudEditorPanel_EditKeyUp,// keyUp
 	CG_HudEditor_RenderEdit,
 	CG_HudEditorColor_Finish,
 	0
@@ -335,7 +335,7 @@ static panel_button_t hudEditorColorA =
 	{ 0,                     0,                                                                                                0,                 3, 0, 0, 0, 1},
 	&hudEditorTextFont,      // font
     CG_HudEditor_EditKeyDown,// keyDown
-    CG_HudEditorPanel_EditKeyUp, // keyUp
+    CG_HudEditorPanel_EditKeyUp,// keyUp
 	CG_HudEditor_RenderEdit,
 	CG_HudEditorColor_Finish,
 	0
@@ -475,7 +475,7 @@ static panel_button_t hudEditorScale =
     { 0,                     0,                                            0,           0, 0, 0, 0, 1},
     &hudEditorTextFont,      // font
     CG_HudEditor_EditKeyDown,// keyDown
-    CG_HudEditorPanel_EditKeyUp, // keyUp
+    CG_HudEditorPanel_EditKeyUp,// keyUp
     CG_HudEditor_RenderEdit,
     CG_HudEditorScale_Finish,
     0
