@@ -1779,7 +1779,7 @@ static qboolean CG_HudEditor_KeyDown(panel_button_t *button, int key)
 		{
 			CG_HudEditorUpdateFields(button);
 			BG_PanelButtons_SetFocusButton(button);
-			button->data[7] = 0;
+            button->data[7] = 0;
 
 			return qtrue;
 		}
@@ -2082,7 +2082,9 @@ static qboolean CG_HudEditor_ComponentLists_KeyUp(panel_button_t *button, int ke
 				if (BG_CursorInRect(&rect))
 				{
 					SOUND_SELECT;
-					lastFocusComponent = parsedButton;
+                    lastFocusComponent          = parsedButton;
+                    lastFocusComponentMoved     = qfalse;
+                    lastFocusComponent->data[7] = 1;
 					CG_HudEditorUpdateFields(parsedButton);
 					break;
 				}
@@ -2257,6 +2259,19 @@ void CG_HudEditor_KeyHandling(int key, qboolean down)
 		return;
 	}
 
+    // left mouse up
+    if (key == K_MOUSE1 && !down)
+    {
+        // was moving a comp and up click outside a comp
+        if (lastFocusComponent && lastFocusComponentMoved)
+        {
+            lastFocusComponentMoved     = qfalse;
+            lastFocusComponent->data[7] = 1;
+
+            return;
+        }
+    }
+
 	if (key == K_MOUSE2)
 	{
 		lastFocusComponent = NULL;
@@ -2363,26 +2378,30 @@ void CG_HudEditorMouseMove_Handling(int x, int y)
 	static float   offsetX = 0;
 	static float   offsetY = 0;
 
-	// don't modify default HUD
-	if (activehud->hudnumber && button && !button->data[7] && BG_CursorInRect(&button->rect))
+    if (button && !button->data[7])
 	{
-		hudComponent_t *comp = (hudComponent_t *)((char *)activehud + hudComponentFields[button->data[0]].offset);
+        // we try to move a comp
+        lastFocusComponentMoved = qtrue;
 
-		lastFocusComponentMoved = qtrue;
+        // don't modify default HUD
+        if (activehud->hudnumber)
+        {
+            hudComponent_t *comp = (hudComponent_t *)((char *)activehud + hudComponentFields[button->data[0]].offset);
 
-		if (!offsetX && !offsetY)
-		{
-			offsetX = (x - comp->location.x);
-			offsetY = (y - comp->location.y);
-		}
+            if (!offsetX && !offsetY)
+            {
+                offsetX = (x - comp->location.x);
+                offsetY = (y - comp->location.y);
+            }
 
-		comp->location.x = x - offsetX;
-		comp->location.y = y - offsetY;
-		CG_HudEditorUpdateFields(button);
+            comp->location.x = x - offsetX;
+            comp->location.y = y - offsetY;
+            CG_HudEditorUpdateFields(button);
+            return;
+        }
 	}
-	else
-	{
-		offsetX = 0;
-		offsetY = 0;
-	}
+
+    // reset offset
+    offsetX = 0;
+    offsetY = 0;
 }
