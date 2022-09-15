@@ -933,6 +933,13 @@ void R_AddDecalSurface(decal_t *decal)
 		return;
 	}
 
+	// free temporary decal
+	if (decal->fadeEndTime < tr.refdef.time)
+	{
+		decal->shader = NULL;
+		return;
+	}
+
 	// get decal surface
 	srf = &tr.refdef.decals[tr.refdef.numDecals];
 	tr.refdef.numDecals++;
@@ -972,12 +979,6 @@ void R_AddDecalSurface(decal_t *decal)
 	// add surface to scene
 	R_AddDrawSurf((void *) srf, decal->shader, decal->fogIndex, 0, dlightMap);
 	tr.pc.c_decalSurfaces++;
-
-	// free temporary decal
-	if (decal->fadeEndTime <= tr.refdef.time)
-	{
-		decal->shader = NULL;
-	}
 }
 
 /**
