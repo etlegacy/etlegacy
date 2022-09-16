@@ -1024,8 +1024,8 @@ void R_CullDecalProjectors(void)
 			*dp                                           = temp;
 		}
 
-		decalBits |= (1 << numDecalProjectors);
-		numDecalProjectors++;
+		numDecalProjectors = i + 1;
+		decalBits         |= (1 << i);
 
 		// bitmask limit
 		if (numDecalProjectors == MAX_USED_DECAL_PROJECTORS)
