@@ -1081,51 +1081,34 @@ static qboolean GLimp_StartDriverAndSetMode(glconfig_t *glConfig, int mode, qboo
  */
 void GLimp_Splash(glconfig_t *glConfig)
 {
-	unsigned char splashData[SPLASH_DATA_SIZE]; // width * height * bytes_per_pixel
-	SDL_Surface   *splashImage = NULL;
+    const char *image_path = "regular.bmp";
+    SDL_Surface   *splashImage = NULL;
+    SDL_Texture *texture = NULL;
 
-	// decode splash image
-	SPLASH_IMAGE_RUN_LENGTH_DECODE(splashData,
-	                               CLIENT_WINDOW_SPLASH.rle_pixel_data,
-	                               CLIENT_WINDOW_SPLASH.width * CLIENT_WINDOW_SPLASH.height,
-	                               CLIENT_WINDOW_SPLASH.bytes_per_pixel);
+    splashImage = SDL_LoadBMP(image_path);
 
-	// get splash image
-	splashImage = SDL_CreateRGBSurfaceFrom(
-		(void *)splashData,
-		CLIENT_WINDOW_SPLASH.width,
-		CLIENT_WINDOW_SPLASH.height,
-		CLIENT_WINDOW_SPLASH.bytes_per_pixel * 8,
-		CLIENT_WINDOW_SPLASH.bytes_per_pixel * CLIENT_WINDOW_SPLASH.width,
-#ifdef Q3_LITTLE_ENDIAN
-		0x000000FF, 0x0000FF00, 0x00FF0000, 0xFF000000
-#else
-		0xFF000000, 0x00FF0000, 0x0000FF00, 0x000000FF
-#endif
-		);
+    if(splashImage == NULL)
+    {
+        Com_DPrintf(S_COLOR_YELLOW "Could not get image: %s\n", SDL_GetError());
+    }
 
-	SDL_Rect dstRect;
-	dstRect.x = glConfig->windowWidth / 2 - splashImage->w / 2;
-	dstRect.y = glConfig->windowHeight / 2 - splashImage->h / 2;
-	dstRect.w = splashImage->w;
-	dstRect.h = splashImage->h;
+    SDL_Surface *surface = SDL_GetWindowSurface(main_window);
+    if (!surface)
+    {
+        // This happens on some platforms, most likely just the SDL build lacking renderers. Does not really matter tho.
+        // the user just wont see our awesome splash screen, but the renderer should boot up just fine.
+        // FIXME: maybe checkup on this later on if there's something we should change on the bundled sdl compile settings
+        Com_DPrintf(S_COLOR_YELLOW "Could not get fetch SDL surface: %s\n", SDL_GetError());
+    }
 
-	SDL_Surface *surface = SDL_GetWindowSurface(main_window);
-	if (!surface)
-	{
-		// This happens on some platforms, most likely just the SDL build lacking renderers. Does not really matter tho.
-		// the user just wont see our awesome splash screen, but the renderer should boot up just fine.
-		// FIXME: maybe checkup on this later on if there's something we should change on the bundled sdl compile settings
-		Com_DPrintf(S_COLOR_YELLOW "Could not get fetch SDL surface: %s\n", SDL_GetError());
-	}
-	else if (SDL_BlitSurface(splashImage, NULL, surface, &dstRect) == 0) // apply image on surface
-	{
-		SDL_UpdateWindowSurface(main_window);
-	}
-	else
-	{
-		Com_Printf(S_COLOR_YELLOW "SDL_BlitSurface failed - %s\n", SDL_GetError());
-	}
+    texture = SDL_CreateTextureFromSurface(main_renderer, surface);
+
+    if (!texture)
+    {
+        Com_DPrintf(S_COLOR_YELLOW "SDL_CreateTextureFromSurface failed - %s\n", SDL_GetError());
+    }
+    SDL_QueryTexture(texture, NULL, NULL, &glConfig->windowWidth, &glConfig->windowHeight);
+    //SDL_UpdateWindowSurface(main_window);
 
 	SDL_FreeSurface(splashImage);
 }
