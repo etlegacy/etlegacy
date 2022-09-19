@@ -1092,23 +1092,15 @@ void GLimp_Splash(glconfig_t *glConfig)
         Com_DPrintf(S_COLOR_YELLOW "Could not get image: %s\n", SDL_GetError());
     }
 
-    SDL_Surface *surface = SDL_GetWindowSurface(main_window);
-    if (!surface)
-    {
-        // This happens on some platforms, most likely just the SDL build lacking renderers. Does not really matter tho.
-        // the user just wont see our awesome splash screen, but the renderer should boot up just fine.
-        // FIXME: maybe checkup on this later on if there's something we should change on the bundled sdl compile settings
-        Com_DPrintf(S_COLOR_YELLOW "Could not get fetch SDL surface: %s\n", SDL_GetError());
-    }
-
-    texture = SDL_CreateTextureFromSurface(main_renderer, surface);
+    texture = SDL_CreateTextureFromSurface(main_renderer, splashImage);
 
     if (!texture)
     {
         Com_DPrintf(S_COLOR_YELLOW "SDL_CreateTextureFromSurface failed - %s\n", SDL_GetError());
     }
     SDL_QueryTexture(texture, NULL, NULL, &glConfig->windowWidth, &glConfig->windowHeight);
-    //SDL_UpdateWindowSurface(main_window);
+    SDL_RenderCopy(main_renderer, texture, NULL, NULL);
+    SDL_RenderPresent(main_window);
 
 	SDL_FreeSurface(splashImage);
 }
