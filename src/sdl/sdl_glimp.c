@@ -1081,11 +1081,11 @@ static qboolean GLimp_StartDriverAndSetMode(glconfig_t *glConfig, int mode, qboo
  */
 void GLimp_Splash(glconfig_t *glConfig)
 {
-    const char *image_path = "regular.bmp";
     SDL_Surface   *splashImage = NULL;
-    SDL_Texture *texture = NULL;
+    SDL_Texture   *texture = NULL;
 
-    splashImage = SDL_LoadBMP(image_path);
+    SDL_RWops *rw = SDL_RWFromConstMem(src_sdl_splash_bmp, sizeof(src_sdl_splash_bmp));
+    splashImage = SDL_LoadBMP_RW(rw, 1);
 
     if(splashImage == NULL)
     {
