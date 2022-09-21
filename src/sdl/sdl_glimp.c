@@ -1083,6 +1083,7 @@ void GLimp_Splash(glconfig_t *glConfig)
 {
     SDL_Surface   *splashImage = NULL;
     SDL_Texture   *texture = NULL;
+    SDL_Renderer  *renderer = NULL;
 
     SDL_RWops *rw = SDL_RWFromConstMem(src_sdl_splash_bmp, sizeof(src_sdl_splash_bmp));
     splashImage = SDL_LoadBMP_RW(rw, 1);
@@ -1092,17 +1093,24 @@ void GLimp_Splash(glconfig_t *glConfig)
         Com_DPrintf(S_COLOR_YELLOW "Could not get image: %s\n", SDL_GetError());
     }
 
-    texture = SDL_CreateTextureFromSurface(main_renderer, splashImage);
+    renderer = SDL_CreateSoftwareRenderer(SDL_GetWindowSurface(main_window));
+
+    texture = SDL_CreateTextureFromSurface(renderer, splashImage);
+
+    SDL_FreeSurface(splashImage);
 
     if (!texture)
     {
         Com_DPrintf(S_COLOR_YELLOW "SDL_CreateTextureFromSurface failed - %s\n", SDL_GetError());
     }
-    SDL_QueryTexture(texture, NULL, NULL, &glConfig->windowWidth, &glConfig->windowHeight);
-    SDL_RenderCopy(main_renderer, texture, NULL, NULL);
-    SDL_RenderPresent(main_window);
 
-	SDL_FreeSurface(splashImage);
+    //SDL_QueryTexture(texture, NULL, NULL, &glConfig->windowWidth, &glConfig->windowHeight);
+    SDL_RenderClear(renderer);
+    SDL_RenderCopy(renderer, &texture, NULL, NULL);
+    SDL_RenderPresent(renderer);
+
+    SDL_DestroyTexture(texture);
+    SDL_DestroyRenderer(renderer);
 }
 
 /**
