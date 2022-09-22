@@ -1053,8 +1053,10 @@ char *CG_WordWrapString(const char *input, int maxLineChars, char *output, int m
 static float CG_ComputeLinePosX(float x, float scalex, const char *text, int align, fontHelper_t *font)
 {
 	float lineW;
+	char  *endLine;
 
-	lineW = CG_Text_Width_Ext_Float(text, scalex, 0, font);
+	endLine = strchr(text, '\n');
+	lineW   = CG_Text_Width_Ext_Float(text, scalex, endLine ? endLine - text : 0, font);
 
 	switch (align)
 	{
@@ -1080,7 +1082,7 @@ static float CG_ComputeLinePosX(float x, float scalex, const char *text, int ali
  * @param[in] align
  * @param[in] font
  */
-void CG_DrawMultilineText(float x, float y, float scalex, float scaley, vec4_t color, const char *text, int lineHeight, float adjust, int limit, int style, int align, fontHelper_t *font)
+void CG_DrawMultilineText(float x, float y, float scalex, float scaley, vec4_t color, const char *text, float lineHeight, float adjust, int limit, int style, int align, fontHelper_t *font)
 {
 	vec4_t      newColor;
 	glyphInfo_t *glyph;
@@ -1521,6 +1523,6 @@ void CG_DrawHelpWindow(float x, float y, int *status, const char *title, const h
  */
 float ID_INLINE CG_ComputeScale(hudComponent_t *comp /*, float height, float scale, fontHelper_t *font*/)
 {
-    return comp->hardScale * (comp->scale / 100.f);
-    //return (height / (Q_UTF8_GlyphScale(font) * Q_UTF8_GetGlyph(font, "A")->height)) * (scale / 100.f);
+	return comp->hardScale * (comp->scale / 100.f);
+	//return (height / (Q_UTF8_GlyphScale(font) * Q_UTF8_GetGlyph(font, "A")->height)) * (scale / 100.f);
 }
