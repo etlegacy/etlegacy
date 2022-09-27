@@ -959,7 +959,7 @@ void SV_WriteAttackLog(const char *log)
 		qtime_t time;
 
 		Com_RealTime(&time);
-		Com_sprintf(string, sizeof(string), "%i/%i/%i %i:%i:%i %s", 1900 + time.tm_year, time.tm_mday, time.tm_mon + 1, time.tm_hour, time.tm_min, time.tm_sec, log);
+		Com_sprintf(string, sizeof(string), "%i/%02i/%02i %02i:%02i:%02i %s", 1900 + time.tm_year, time.tm_mday, time.tm_mon + 1, time.tm_hour, time.tm_min, time.tm_sec, log);
 		(void) FS_Write(string, strlen(string), attHandle);
 	}
 
