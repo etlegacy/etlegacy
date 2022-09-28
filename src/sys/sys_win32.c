@@ -380,6 +380,23 @@ int Sys_RemoveDir(const char *path)
 	return _wrmdir(w_path);
 }
 
+int Sys_GetWindowsVer(void)
+{
+	double ver = 0.0;
+	NTSTATUS(WINAPI * RtlGetVersion)(LPOSVERSIONINFOEXW);
+	OSVERSIONINFOEXW osInfo;
+
+	*(FARPROC*)&RtlGetVersion = GetProcAddress(GetModuleHandleA("ntdll"), "RtlGetVersion");
+
+	if (NULL != RtlGetVersion)
+	{
+		osInfo.dwOSVersionInfoSize = sizeof(osInfo);
+		RtlGetVersion(&osInfo);
+		ver = (double)osInfo.dwMajorVersion;
+	}
+	return ver;
+}
+
 int Sys_Stat(const char *path, void *stat)
 {
 	wchar_t w_path[MAX_OSPATH];
