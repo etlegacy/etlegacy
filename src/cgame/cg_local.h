@@ -1578,6 +1578,7 @@ typedef struct
 	qhandle_t whiteShader;
 
 	qhandle_t hudSprintBar;
+	qhandle_t hudSprintBarHorizontal;
 	qhandle_t hudAxisHelmet;
 	qhandle_t hudAlliedHelmet;
 	qhandle_t hudAdrenaline;
@@ -2160,6 +2161,17 @@ enum
 	BAR_LERP_COLOR     = BIT(7),
 	BAR_BORDER         = BIT(8),
 	BAR_BORDER_SMALL   = BIT(9),
+	BAR_DECOR          = BIT(10),
+	BAR_ICON           = BIT(11),
+};
+
+enum
+{
+	GAMESTATS_KILL           = BIT(0),
+	GAMESTATS_DEATH          = BIT(1),
+	GAMESTATS_SELFKILL       = BIT(2),
+	GAMESTATS_DAMAGEGIVEN    = BIT(3),
+	GAMESTATS_DAMAGERECEIVED = BIT(4),
 };
 
 /**
@@ -2625,7 +2637,6 @@ extern vmCvar_t cg_draw2D;
 extern vmCvar_t cg_drawFPS;
 extern vmCvar_t cg_drawCrosshair;
 extern vmCvar_t cg_drawCrosshairInfo;
-extern vmCvar_t cg_drawCrosshairNames;
 extern vmCvar_t cg_drawCrosshairPickups;
 extern vmCvar_t cg_drawSpectatorNames;
 extern vmCvar_t cg_useWeapsForZoom;
@@ -2956,7 +2967,7 @@ void CG_HorizontalPercentBar(float x, float y, float width, float height, float 
 void CG_DrawPic(float x, float y, float width, float height, qhandle_t hShader);
 void CG_DrawPicST(float x, float y, float width, float height, float s0, float t0, float s1, float t1, qhandle_t hShader);
 void CG_DrawRotatedPic(float x, float y, float width, float height, qhandle_t hShader, float angle);        // NERVE - SMF
-void CG_FilledBar(float x, float y, float w, float h, float *startColor, float *endColor, const float *bgColor, float frac, int flags);
+void CG_FilledBar(float x, float y, float w, float h, float *startColor, float *endColor, const float *bgColor, float frac, int flags, qhandle_t icon);
 void CG_DropdownMainBox(float x, float y, float w, float h, float scalex, float scaley, vec4_t borderColour,
                         const char *text, qboolean focus, vec4_t fontColour, int style, fontHelper_t *font);
 float CG_DropdownBox(float x, float y, float w, float h, float scalex, float scaley, vec4_t borderColour,
@@ -2978,7 +2989,7 @@ void CG_AddOnScreenBar(float fraction, vec4_t colorStart, vec4_t colorEnd, vec4_
 // string word wrapper
 char *CG_WordWrapString(const char *input, int maxLineChars, char *output, int maxOutputSize);
 // draws multiline strings
-void CG_DrawMultilineText(float x, float y, float scalex, float scaley, vec4_t color, const char *text, int lineHeight, float adjust, int limit, int style, int align, fontHelper_t *font);
+void CG_DrawMultilineText(float x, float y, float scalex, float scaley, vec4_t color, const char *text, float lineHeight, float adjust, int limit, int style, int align, fontHelper_t *font);
 
 // new hud stuff
 void CG_DrawRect(float x, float y, float width, float height, float size, const float *color);
@@ -3073,6 +3084,8 @@ void CG_DrawShoutcastPlayerList(void);
 void CG_DrawShoutcastPlayerStatus(void);
 void CG_DrawShoutcastTimer(void);
 void CG_DrawShoutcastPowerups(void);
+void CG_RequestPlayerStats(int clientNum);
+char *CG_ParseStats(char *data, int i);
 
 void CG_ToggleShoutcasterMode(int shoutcaster);
 void CG_ShoutcastCheckKeyCatcher(int keycatcher);
@@ -3641,8 +3654,8 @@ void trap_R_Finish(void);
 // extension interface
 extern qboolean flashWindowSupported;
 
-qboolean trap_GetValue( char *value, int valueSize, const char *key );
-void trap_SysFlashWindow( int state );
+qboolean trap_GetValue(char *value, int valueSize, const char *key);
+void trap_SysFlashWindow(int state);
 extern int dll_com_trapGetValue;
 extern int dll_trap_SysFlashWindow;
 
@@ -4066,7 +4079,7 @@ extern qboolean resetmaxspeed; // CG_DrawSpeed
 
 /* HUD exports */
 
-#define HUD_COMPONENTS_NUM 47
+#define HUD_COMPONENTS_NUM 50
 
 typedef struct hudComponent_s
 {
@@ -4081,13 +4094,16 @@ typedef struct hudComponent_s
 	vec4_t colorBorder;
 	int styleText;
 	int alignText;
+	int autoAdjust;
 	int offset;
+	float hardScale;
 	void (*draw)(struct hudComponent_s *comp);
 } hudComponent_t;
 
 typedef struct hudStructure_s
 {
 	int hudnumber;
+
 	hudComponent_t compass;
 	hudComponent_t staminabar;
 	hudComponent_t breathbar;
@@ -4139,12 +4155,36 @@ typedef struct hudStructure_s
 	hudComponent_t objectivetext;
 	hudComponent_t centerprint;
 	hudComponent_t banner;
-    hudComponent_t crosshair;
+	hudComponent_t crosshair;
+	hudComponent_t crosshairtext;
+	hudComponent_t crosshairbar;
+	hudComponent_t stats;
 
 	hudComponent_t *components[HUD_COMPONENTS_NUM];
 } hudStucture_t;
 
+#define MAXHUDS 32
+#define MAXSTYLES 16
+
+extern hudStucture_t hudlist[MAXHUDS];
+extern hudStucture_t *activehud;
+extern int           hudCount;
+
+typedef struct
+{
+	char *name;
+	size_t offset;
+	qboolean isAlias;
+	void (*draw)(hudComponent_t *comp);
+	float scale;
+	char *styles[MAXSTYLES];
+
+} hudComponentFields_t;
+
 hudStucture_t *CG_GetActiveHUD();
+hudStucture_t *CG_addHudToList(hudStucture_t *hud);
+hudStucture_t *CG_getHudByNumber(int number);
+void CG_HudComponentsFill(hudStucture_t *hud);
 
 void CG_DrawNewCompass(hudComponent_t *comp);
 void CG_DrawFireTeamOverlay(hudComponent_t *comp);
@@ -4166,6 +4206,45 @@ void CG_DrawWeapStability(hudComponent_t *comp);
 void CG_DrawCursorhint(hudComponent_t *comp);
 void CG_DrawCrosshair(hudComponent_t *comp);
 
+void CG_DrawPlayerStatusHead(hudComponent_t *comp);
+void CG_DrawGunIcon(hudComponent_t *comp);
+void CG_DrawAmmoCount(hudComponent_t *comp);
+void CG_DrawPowerUps(hudComponent_t *comp);
+void CG_DrawObjectiveStatus(hudComponent_t *comp);
+void CG_DrawPlayerHealthBar(hudComponent_t *comp);
+void CG_DrawStaminaBar(hudComponent_t *comp);
+void CG_DrawBreathBar(hudComponent_t *comp);
+void CG_DrawWeapRecharge(hudComponent_t *comp);
+void CG_DrawPlayerHealth(hudComponent_t *comp);
+void CG_DrawPlayerSprint(hudComponent_t *comp);
+void CG_DrawPlayerBreath(hudComponent_t *comp);
+void CG_DrawWeaponCharge(hudComponent_t *comp);
+void CG_DrawSkills(hudComponent_t *comp);
+void CG_DrawXP(hudComponent_t *comp);
+void CG_DrawRank(hudComponent_t *comp);
+void CG_DrawLivesLeft(hudComponent_t *comp);
+void CG_DrawRespawnTimer(hudComponent_t *comp);
+void CG_DrawSpawnTimer(hudComponent_t *comp);
+void CG_DrawLocalTime(hudComponent_t *comp);
+void CG_DrawRoundTimer(hudComponent_t *comp);
+void CG_DrawDemoMessage(hudComponent_t *comp);
+void CG_DrawFPS(hudComponent_t *comp);
+void CG_DrawSnapshot(hudComponent_t *comp);
+void CG_DrawPing(hudComponent_t *comp);
+void CG_DrawSpeed(hudComponent_t *comp);
+void CG_DrawLagometer(hudComponent_t *comp);
+void CG_DrawDisconnect(hudComponent_t *comp);
+void CG_DrawPlayerStats(hudComponent_t *comp);
+void CG_DrawCrosshairNames(hudComponent_t *comp);
+void CG_DrawCrosshairHealthBar(hudComponent_t *comp);
+
+/**
+ * @brief Using the stringizing operator to save typing...
+ */
+#define HUDF(x) # x, offsetof(hudStucture_t, x), qfalse
+extern const hudComponentFields_t hudComponentFields[];
+
+
 void CG_DrawCompText(hudComponent_t *comp, const char *str, vec4_t color, int fontStyle, fontHelper_t *font);
 void CG_DrawCompMultilineText(hudComponent_t *comp, const char *str, vec4_t color, int align, int fontStyle, fontHelper_t *font);
 
@@ -4183,5 +4262,7 @@ typedef struct
 void CG_DrawHelpWindow(float x, float y, int *status, const char *title, const helpType_t *help, unsigned int cmdNumber,
                        const vec4_t bgColor, const vec4_t borderColor, const vec4_t bgColorTitle, const vec4_t borderColorTitle,
                        panel_button_text_t *fontHeader, panel_button_text_t *fontText);
+
+float CG_ComputeScale(hudComponent_t *comp /*, float height, float scale, fontHelper_t *font*/);
 
 #endif // #ifndef INCLUDE_CG_LOCAL_H

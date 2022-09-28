@@ -1493,18 +1493,31 @@ qboolean BG_PanelButton_EditClick(panel_button_t *button, int key)
 				return qtrue;
 			}
 
+            // numeric value only
 			if (button->data[1])
 			{
+                // ensure the key is in range of numeric value (digit)
 				if (key < '0' || key > '9')
 				{
-					if (button->data[1] == 2)
-					{
-						return qtrue;
-					}
-					else if (!(len == 0 && key == '-'))
-					{
-						return qtrue;
-					}
+                    // try to put a decimal separator
+                    if (key == '.')
+                    {
+                        // decimal separator already exist, don't add twice
+                        if (strchr(s, '.'))
+                        {
+                            return qtrue;
+                        }
+                    }
+                    // don't allow negative value
+                    else if (button->data[1] == 2)
+                    {
+                        return qtrue;
+                    }
+                    // are we trying to put a negative value
+                    else if (!(len == 0 && key == '-'))
+                    {
+                        return qtrue;
+                    }
 				}
 			}
 

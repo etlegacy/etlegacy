@@ -257,3 +257,14 @@ gfx/hud/pm_constaxis
 	}
 }
 //========================================//
+
+sprintbarhorizontal
+{
+	nocompress
+	nomipmap
+	nopicmip
+	{
+		clampmap ui/assets/hudsprinthorizontal.tga
+		blendfunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+	}
+}
