@@ -99,6 +99,7 @@ const hudComponentFields_t hudComponentFields[] =
 	{ HUDF(crosshair),        CG_DrawCrosshair,          0.19f,            { 0                } },     // FIXME: outside cg_draw_hud
 	{ HUDF(crosshairtext),    CG_DrawCrosshairNames,     0.25f,            { "Full Color"     } },     // FIXME: outside cg_draw_hud
 	{ HUDF(crosshairbar),     CG_DrawCrosshairHealthBar, 0.25f,            { "Left", "Center", "Vertical", "No Alpha", "Background", "X0 Y5", "X0 Y0", "Lerp Color", "Border", "Border Tiny", "Decor", "Icon"} }, // FIXME: outside cg_draw_hud
+	{ HUDF(stats),            CG_DrawPlayerStats,        0.19f,            { "Kill", "Death", "Self Kill", "DmgGiven", "DmgRcvd"} },
 	{ NULL,                   0,                         qfalse,           NULL, 0.00,{ 0                } },
 };
 
@@ -197,6 +198,7 @@ void CG_setDefaultHudValues(hudStucture_t *hud)
 	hud->crosshair        = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) * .5f - 24, SCREEN_HEIGHT * .5 - 24, 48, 48, qtrue, 0, 100.f, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 46, 0.19f, CG_DrawCrosshair);
 	hud->crosshairtext    = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) * .5f - 150, 182, 300, 16, qtrue, 0, 100.f, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 47, 0.25f, CG_DrawCrosshairNames);
 	hud->crosshairbar     = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) * .5f - 65, 199, 130, 10, qtrue, BAR_BG, 100.f, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 48, 0.25f, CG_DrawCrosshairHealthBar);
+	hud->stats            = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 60, 291, 57, 62, qtrue, GAMESTATS_KILL | GAMESTATS_DEATH | GAMESTATS_SELFKILL, 100.f, HUD_Text, qtrue, HUD_Background, qtrue, HUD_Border, ITEM_TEXTSTYLE_NORMAL, ITEM_ALIGN_CENTER2, qfalse, 33, 0.19f, CG_DrawPlayerStats);
 }
 
 /**
@@ -3629,6 +3631,42 @@ void CG_DrawLagometer(hudComponent_t *comp)
 
 		CG_Text_Paint_Ext(comp->location.x + ((w2 - w) / 2), comp->location.y + comp->location.h / 5.f, scale, scale, *clr, result, 0, 0, comp->styleText, &cgs.media.limboFont1);
 	}
+}
+
+void CG_DrawPlayerStats(hudComponent_t *comp)
+{
+	char        *str = "";
+	gameStats_t *gs  = &cgs.gamestats;
+
+	if (!cg.demoPlayback)
+	{
+		return;
+	}
+
+	CG_RequestPlayerStats(cg.snap->ps.clientNum);
+
+	if (comp->style & GAMESTATS_KILL)
+	{
+		str = va("%sK: %s\n", str, CG_ParseStats(gs->strExtra[3], 1));
+	}
+	if (comp->style & GAMESTATS_DEATH)
+	{
+		str = va("%sD: %s\n", str, CG_ParseStats(gs->strExtra[4], 1));
+	}
+	if (comp->style & GAMESTATS_SELFKILL)
+	{
+		str = va("%sSK: %s\n", str, CG_ParseStats(gs->strExtra[4], 2));
+	}
+	if (comp->style & GAMESTATS_DAMAGEGIVEN)
+	{
+		str = va("%sDG: %s\n", str, CG_ParseStats(gs->strExtra[0], 1));
+	}
+	if (comp->style & GAMESTATS_DAMAGERECEIVED)
+	{
+		str = va("%sDR: %s", str, CG_ParseStats(gs->strExtra[1], 1));
+	}
+
+	CG_DrawCompMultilineText(comp, str, comp->colorText, comp->alignText, comp->styleText, &cgs.media.limboFont1);
 }
 
 /**

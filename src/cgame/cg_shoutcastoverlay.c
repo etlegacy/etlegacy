@@ -555,7 +555,7 @@ static void CG_DrawShoutcastPlayerStaminaBar(float x, float y, int width, int he
 * @brief CG_RequestPlayerStats (CG_StatsDown_f)
 * @param[in] clientNum
 */
-static void CG_RequestPlayerStats(int clientNum)
+void CG_RequestPlayerStats(int clientNum)
 {
 	if (cgs.gamestats.requestTime < cg.time)
 	{
@@ -569,7 +569,7 @@ static void CG_RequestPlayerStats(int clientNum)
 * @param[in] data
 * @param[in] i
 */
-static char *CG_ParseStats(char *data, int i)
+char *CG_ParseStats(char *data, int i)
 {
 	int  c;
 	int  stop = 0;

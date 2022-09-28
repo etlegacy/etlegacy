@@ -1578,7 +1578,7 @@ typedef struct
 	qhandle_t whiteShader;
 
 	qhandle_t hudSprintBar;
-    qhandle_t hudSprintBarHorizontal;
+	qhandle_t hudSprintBarHorizontal;
 	qhandle_t hudAxisHelmet;
 	qhandle_t hudAlliedHelmet;
 	qhandle_t hudAdrenaline;
@@ -2161,8 +2161,17 @@ enum
 	BAR_LERP_COLOR     = BIT(7),
 	BAR_BORDER         = BIT(8),
 	BAR_BORDER_SMALL   = BIT(9),
-    BAR_DECOR          = BIT(10),
-    BAR_ICON           = BIT(11),
+	BAR_DECOR          = BIT(10),
+	BAR_ICON           = BIT(11),
+};
+
+enum
+{
+	GAMESTATS_KILL           = BIT(0),
+	GAMESTATS_DEATH          = BIT(1),
+	GAMESTATS_SELFKILL       = BIT(2),
+	GAMESTATS_DAMAGEGIVEN    = BIT(3),
+	GAMESTATS_DAMAGERECEIVED = BIT(4),
 };
 
 /**
@@ -3075,6 +3084,8 @@ void CG_DrawShoutcastPlayerList(void);
 void CG_DrawShoutcastPlayerStatus(void);
 void CG_DrawShoutcastTimer(void);
 void CG_DrawShoutcastPowerups(void);
+void CG_RequestPlayerStats(int clientNum);
+char *CG_ParseStats(char *data, int i);
 
 void CG_ToggleShoutcasterMode(int shoutcaster);
 void CG_ShoutcastCheckKeyCatcher(int keycatcher);
@@ -4068,7 +4079,7 @@ extern qboolean resetmaxspeed; // CG_DrawSpeed
 
 /* HUD exports */
 
-#define HUD_COMPONENTS_NUM 49
+#define HUD_COMPONENTS_NUM 50
 
 typedef struct hudComponent_s
 {
@@ -4083,9 +4094,9 @@ typedef struct hudComponent_s
 	vec4_t colorBorder;
 	int styleText;
 	int alignText;
-    int autoAdjust;
+	int autoAdjust;
 	int offset;
-    float hardScale;
+	float hardScale;
 	void (*draw)(struct hudComponent_s *comp);
 } hudComponent_t;
 
@@ -4147,6 +4158,7 @@ typedef struct hudStructure_s
 	hudComponent_t crosshair;
 	hudComponent_t crosshairtext;
 	hudComponent_t crosshairbar;
+	hudComponent_t stats;
 
 	hudComponent_t *components[HUD_COMPONENTS_NUM];
 } hudStucture_t;
@@ -4164,8 +4176,8 @@ typedef struct
 	size_t offset;
 	qboolean isAlias;
 	void (*draw)(hudComponent_t *comp);
-    float scale;
-    char *styles[MAXSTYLES];
+	float scale;
+	char *styles[MAXSTYLES];
 
 } hudComponentFields_t;
 
@@ -4222,6 +4234,7 @@ void CG_DrawPing(hudComponent_t *comp);
 void CG_DrawSpeed(hudComponent_t *comp);
 void CG_DrawLagometer(hudComponent_t *comp);
 void CG_DrawDisconnect(hudComponent_t *comp);
+void CG_DrawPlayerStats(hudComponent_t *comp);
 void CG_DrawCrosshairNames(hudComponent_t *comp);
 void CG_DrawCrosshairHealthBar(hudComponent_t *comp);
 
@@ -4250,6 +4263,6 @@ void CG_DrawHelpWindow(float x, float y, int *status, const char *title, const h
                        const vec4_t bgColor, const vec4_t borderColor, const vec4_t bgColorTitle, const vec4_t borderColorTitle,
                        panel_button_text_t *fontHeader, panel_button_text_t *fontText);
 
-float ID_INLINE CG_ComputeScale(hudComponent_t *comp /*, float height, float scale, fontHelper_t *font*/);
+float CG_ComputeScale(hudComponent_t *comp /*, float height, float scale, fontHelper_t *font*/);
 
 #endif // #ifndef INCLUDE_CG_LOCAL_H

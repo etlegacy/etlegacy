@@ -1577,7 +1577,7 @@ void CG_DrawHelpWindow(float x, float y, int *status, const char *title, const h
  * @param[in] comp
  * @return
  */
-float ID_INLINE CG_ComputeScale(hudComponent_t *comp /*, float height, float scale, fontHelper_t *font*/)
+float CG_ComputeScale(hudComponent_t *comp /*, float height, float scale, fontHelper_t *font*/)
 {
 	return comp->hardScale * (comp->scale / 100.f);
 	//return (height / (Q_UTF8_GlyphScale(font) * Q_UTF8_GetGlyph(font, "A")->height)) * (scale / 100.f);
