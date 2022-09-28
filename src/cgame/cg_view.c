@@ -226,13 +226,20 @@ void CG_Letterbox(float xsize, float ysize, qboolean center)
 		ysize = lbheight;
 	}
 
+	// FIXME: this currently breaks cg_letterbox
+	if (cg.editingHud)
+	{
+		xsize *= 0.8f;
+		ysize *= 0.8f;
+	}
+
 	cg.refdef.width  = cgs.glconfig.vidWidth * xsize / 100;
 	cg.refdef.width &= ~1;
 
 	cg.refdef.height  = cgs.glconfig.vidHeight * ysize / 100;
 	cg.refdef.height &= ~1;
 
-	if (center)
+	if (center && !cg.editingHud)
 	{
 		cg.refdef.x = (cgs.glconfig.vidWidth - cg.refdef.width) / 2;
 		cg.refdef.y = (cgs.glconfig.vidHeight - cg.refdef.height) / 2;

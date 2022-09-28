@@ -44,8 +44,8 @@ extern itemDef_t *g_bindItem;
 extern qboolean  g_waitingForKey;
 
 qboolean flashWindowSupported = qfalse;
-int dll_com_trapGetValue;
-int dll_trap_SysFlashWindow;
+int      dll_com_trapGetValue;
+int      dll_trap_SysFlashWindow;
 
 /**
  * @brief This is the only way control passes into the module.
@@ -134,7 +134,6 @@ vmCvar_t cg_draw2D;
 vmCvar_t cg_drawFPS;
 vmCvar_t cg_drawCrosshair;
 vmCvar_t cg_drawCrosshairInfo;
-vmCvar_t cg_drawCrosshairNames;
 vmCvar_t cg_drawCrosshairPickups;
 vmCvar_t cg_drawSpectatorNames;
 vmCvar_t cg_weaponCycleDelay;
@@ -401,7 +400,6 @@ static cvarTable_t cvarTable[] =
 	{ &cg_drawFPS,                 "cg_drawFPS",                 "0",           CVAR_ARCHIVE,                 0 },
 	{ &cg_drawCrosshair,           "cg_drawCrosshair",           "1",           CVAR_ARCHIVE,                 0 },
 	{ &cg_drawCrosshairInfo,       "cg_drawCrosshairInfo",       "7",           CVAR_ARCHIVE,                 0 },
-	{ &cg_drawCrosshairNames,      "cg_drawCrosshairNames",      "1",           CVAR_ARCHIVE,                 0 },
 	{ &cg_drawCrosshairPickups,    "cg_drawCrosshairPickups",    "1",           CVAR_ARCHIVE,                 0 },
 	{ &cg_drawSpectatorNames,      "cg_drawSpectatorNames",      "2",           CVAR_ARCHIVE,                 0 },
 	{ &cg_useWeapsForZoom,         "cg_useWeapsForZoom",         "1",           CVAR_ARCHIVE,                 0 },
@@ -1758,6 +1756,7 @@ static void CG_RegisterGraphics(void)
 	cgs.media.teamStatusBar = trap_R_RegisterShader("gfx/2d/colorbar.tga");
 
 	cgs.media.hudSprintBar = trap_R_RegisterShader("sprintbar");
+    cgs.media.hudSprintBarHorizontal = trap_R_RegisterShader("sprintbarhorizontal");
 
 	cgs.media.hudAlliedHelmet = trap_R_RegisterShader("AlliedHelmet");
 	cgs.media.hudAxisHelmet   = trap_R_RegisterShader("AxisHelmet");
@@ -2752,7 +2751,7 @@ void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qbo
 		if (trap_GetValue(value, sizeof(value), "trap_SysFlashWindow_Legacy"))
 		{
 			dll_trap_SysFlashWindow = atoi(value);
-			flashWindowSupported = qtrue;
+            flashWindowSupported    = qtrue;
 		}
 	}
 

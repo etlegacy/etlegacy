@@ -1133,6 +1133,7 @@ static void CG_AddToTeamChat(const char *str, int clientnum) // FIXME: add disgu
 	char         lastcolor;
 	int          chatHeight;
 	int          chatWidth;
+	float        scale;
 	fontHelper_t *font = &cgs.media.limboFont2;
 
 	// -1 is sent when console is chatting
@@ -1157,9 +1158,11 @@ static void CG_AddToTeamChat(const char *str, int clientnum) // FIXME: add disgu
 		return;
 	}
 
+    scale = CG_ComputeScale(&CG_GetActiveHUD()->chat /*CG_GetActiveHUD()->chat.location.h / ((cg_teamChatHeight.integer < TEAMCHAT_HEIGHT) ? cg_teamChatHeight.integer : TEAMCHAT_HEIGHT), CG_GetActiveHUD()->chat.scale, &cgs.media.limboFont2*/);
+
 	len       = 0;
 	chatWidth = (cgs.gamestate == GS_INTERMISSION) ? TEAMCHAT_WIDTH + 30
-	                                               : (CG_GetActiveHUD()->chat.location.w - (!CG_GetActiveHUD()->chat.style ? (16.f * CG_GetActiveHUD()->chat.scale * 5.f) : 0)) / ((float)Q_UTF8_GetGlyph(font, "A")->xSkip * CG_GetActiveHUD()->chat.scale * Q_UTF8_GlyphScale(font));
+	                                               : (CG_GetActiveHUD()->chat.location.w - (!CG_GetActiveHUD()->chat.style ? (16.f * scale * 5.f) : 0)) / ((float)Q_UTF8_GetGlyph(font, "A")->xSkip * scale * Q_UTF8_GlyphScale(font));
 
 	p  = cgs.teamChatMsgs[cgs.teamChatPos % chatHeight];
 	*p = 0;
@@ -3548,9 +3551,11 @@ static void CG_ServerCommand(void)
 		return;
 	case BP_HASH: // "bp"
 	{
-		int maxLineChars;
+		int   maxLineChars;
+		float scale;
 
-		maxLineChars = CG_GetActiveHUD()->banner.location.w / CG_Text_Width_Ext("A", CG_GetActiveHUD()->banner.scale, 0, &cgs.media.limboFont2);
+        scale        = CG_ComputeScale(&CG_GetActiveHUD()->banner /*CG_GetActiveHUD()->banner.location.h, CG_GetActiveHUD()->banner.scale, &cgs.media.limboFont2*/);
+		maxLineChars = CG_GetActiveHUD()->banner.location.w / CG_Text_Width_Ext("A", scale, 0, &cgs.media.limboFont2);
 
 		CG_WordWrapString(CG_Argv(1), maxLineChars, cg.bannerPrint, sizeof(cg.bannerPrint));
 		cg.bannerPrintTime = cg.time;

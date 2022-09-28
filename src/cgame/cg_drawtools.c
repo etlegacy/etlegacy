@@ -55,6 +55,17 @@ void CG_AdjustFrom640(float *x, float *y, float *w, float *h)
 		*x *= cgs.r43da;    // * ((4/3) / aspectratio);
 		*w *= cgs.r43da;    // * ((4/3) / aspectratio);
 	}
+
+	// when HUD editor is enabled, adjust virtual grid to not fill the entire screen,
+	// so HUD elements scale correctly to decreased viewport
+	// mouse movement is handled separately in CG_MouseEvent
+	if (cg.editingHud)
+	{
+		*x *= 0.8f;
+		*y *= 0.8f;
+		*w *= 0.8f;
+		*h *= 0.8f;
+	}
 }
 
 /**
@@ -143,9 +154,10 @@ void CG_FillRectGradient(float x, float y, float width, float height, const floa
  * @param[in] frac
  * @param[in] flags
  */
-void CG_FilledBar(float x, float y, float w, float h, float *startColor, float *endColor, const float *bgColor, float frac, int flags)
+void CG_FilledBar(float x, float y, float w, float h, float *startColor, float *endColor, const float *bgColor, float frac, int flags, qhandle_t icon)
 {
 	vec4_t backgroundcolor = { 1, 1, 1, 0.25f }, colorAtPos;  // colorAtPos is the lerped color if necessary
+	float  x2 = x, y2 = y, w2 = w, h2 = h;
 
 	if (frac > 1)
 	{
@@ -163,7 +175,28 @@ void CG_FilledBar(float x, float y, float w, float h, float *startColor, float *
 
 	if (flags & BAR_LERP_COLOR)
 	{
-		Vector4Average(startColor, endColor, frac, colorAtPos);
+		if (endColor)
+		{
+			Vector4Average(startColor, endColor, frac, colorAtPos);
+		}
+		else
+		{
+			Vector4Scale(startColor, frac, colorAtPos);
+		}
+	}
+
+	if (flags & BAR_DECOR)
+	{
+		if (flags & BAR_VERT)
+		{
+			y += (h * 0.1f);
+			h *= 0.84f;
+		}
+		else
+		{
+			x += (w * 0.1f);
+			w *= 0.84f;
+		}
 	}
 
 	// background
@@ -227,6 +260,23 @@ void CG_FilledBar(float x, float y, float w, float h, float *startColor, float *
 		{
 			CG_FillRect(x, y, w, h * frac, startColor);
 		}
+
+		if (flags & BAR_DECOR)
+		{
+			CG_DrawPic(x2, y2, w2, h2, cgs.media.hudSprintBar);
+		}
+        
+        if (flags & BAR_ICON && icon > -1)
+		{
+			if (flags & BAR_LEFT)
+			{
+				CG_DrawPic(x2, y2 + h2 + 4, w2, w2, icon);
+			}
+			else
+			{
+				CG_DrawPic(x2, y2 - w2 - 4, w2, w2, icon);
+			}
+		}
 	}
 	else
 	{
@@ -247,6 +297,23 @@ void CG_FilledBar(float x, float y, float w, float h, float *startColor, float *
 		{
 			CG_FillRect(x, y, w * frac, h, startColor);
 		}
+
+		if (flags & BAR_DECOR)
+		{
+			CG_DrawPic(x2, y2, w2, h2, cgs.media.hudSprintBarHorizontal);
+		}
+
+		if (flags & BAR_ICON && icon > -1)
+		{
+			if (flags & BAR_LEFT)
+			{
+				CG_DrawPic(x2 + w2 + 4, y2, h2, h2, icon);
+			}
+			else
+			{
+                CG_DrawPic(x2 - h2 - 4, y2, h2, h2, icon);
+			}
+		}
 	}
 }
 
@@ -265,7 +332,7 @@ void CG_HorizontalPercentBar(float x, float y, float width, float height, float 
 {
 	vec4_t bgcolor = { 0.5f, 0.5f, 0.5f, 0.3f },
 	       color   = { 1.0f, 1.0f, 1.0f, 0.3f };
-	CG_FilledBar(x, y, width, height, color, NULL, bgcolor, percent, BAR_BG | BAR_NOHUDALPHA);
+	CG_FilledBar(x, y, width, height, color, NULL, bgcolor, percent, BAR_BG | BAR_NOHUDALPHA, -1);
 }
 
 /**
@@ -1042,8 +1109,10 @@ char *CG_WordWrapString(const char *input, int maxLineChars, char *output, int m
 static float CG_ComputeLinePosX(float x, float scalex, const char *text, int align, fontHelper_t *font)
 {
 	float lineW;
+	char  *endLine;
 
-	lineW = CG_Text_Width_Ext_Float(text, scalex, 0, font);
+	endLine = strchr(text, '\n');
+	lineW   = CG_Text_Width_Ext_Float(text, scalex, endLine ? endLine - text : 0, font);
 
 	switch (align)
 	{
@@ -1069,7 +1138,7 @@ static float CG_ComputeLinePosX(float x, float scalex, const char *text, int ali
  * @param[in] align
  * @param[in] font
  */
-void CG_DrawMultilineText(float x, float y, float scalex, float scaley, vec4_t color, const char *text, int lineHeight, float adjust, int limit, int style, int align, fontHelper_t *font)
+void CG_DrawMultilineText(float x, float y, float scalex, float scaley, vec4_t color, const char *text, float lineHeight, float adjust, int limit, int style, int align, fontHelper_t *font)
 {
 	vec4_t      newColor;
 	glyphInfo_t *glyph;
@@ -1197,8 +1266,9 @@ void CG_DropdownMainBox(float x, float y, float w, float h, float scalex, float 
 	rectDef_t rect = { x, y, w, h };
 	vec4_t    colour;
 	float     textboxW;
-	int       offsetX;
+	int       offsetX, offsetY;
 
+	// dropdown arrow box is square so we can get the width reduction from that
 	textboxW = rect.w - rect.h;
 	rect.x  += textboxW;
 	rect.w   = rect.h;
@@ -1237,13 +1307,15 @@ void CG_DropdownMainBox(float x, float y, float w, float h, float scalex, float 
 	CG_DrawRect_FixedBorder(rect.x, rect.y, rect.w, rect.h, 1.0f, borderColour);
 
 	offsetX = CG_Text_Width_Ext("V", scalex, 0, font);
+	offsetY = (CG_Text_Height_Ext("V", scaley, 0, font) + rect.h) * 0.5f;
 
 	//VectorCopy(font->colour, colour);
-	CG_Text_Paint_Ext(rect.x + (rect.w - offsetX) / 2.0f, y + 7.0f, scalex, scaley, colour, "V", 0, 0, 0, font);
+	CG_Text_Paint_Ext(rect.x + (rect.w - offsetX) / 2.0f, y + offsetY, scalex, scaley, colour, "V", 0, 0, 0, font);
 
 	offsetX = CG_Text_Width_Ext(text, scalex, 0, font);
+	offsetY = (CG_Text_Height_Ext(text, scalex, 0, font) + rect.h) * 0.5f;
 
-	CG_Text_Paint_Ext(x + (textboxW - offsetX) / 2.0f, y + 7.0f, scalex, scaley, fontColour, text, 0, 0, style, font);
+	CG_Text_Paint_Ext(x + (textboxW - offsetX) / 2.0f, y + offsetY, scalex, scaley, fontColour, text, 0, 0, style, font);
 }
 
 /**
@@ -1268,8 +1340,9 @@ float CG_DropdownBox(float x, float y, float w, float h, float scalex, float sca
 	rectDef_t rect = { x, y, w, h };
 	vec4_t    colour;
 	float     textboxW;
-	int       offsetX;
+	int       offsetX, offsetY;
 
+	// dropdown arrow box is square so we can get the width reduction from that
 	textboxW = rect.w - rect.h;
 
 	rect.y += h;
@@ -1288,8 +1361,9 @@ float CG_DropdownBox(float x, float y, float w, float h, float scalex, float sca
 	CG_FillRect(rect.x, rect.y, rect.w, rect.h, colour);
 
 	offsetX = CG_Text_Width_Ext(text, scalex, 0, font);
+	offsetY = (CG_Text_Height_Ext(text, scaley, 0, font) + rect.h) * 0.5f;
 
-	CG_Text_Paint_Ext(rect.x + (textboxW - offsetX) / 2.0f, rect.y + 7.0f, scalex, scaley, fontColour, text, 0, 0, style, font);
+	CG_Text_Paint_Ext(rect.x + (textboxW - offsetX) / 2.0f, rect.y + offsetY, scalex, scaley, fontColour, text, 0, 0, style, font);
 
 	return rect.y;
 }
@@ -1390,7 +1464,7 @@ void CG_DrawHelpWindow(float x, float y, int *status, const char *title, const h
 	int          len, maxlen = 0;
 	int          w, h;
 	char         format[MAX_STRING_TOKENS], buf[MAX_STRING_TOKENS];
-	char         *lines[16];
+	char         *lines[32];
 	int          tSpacing = 9;      // Should derive from CG_Text_Height_Ext
 	vec4_t       bgColor         ;
 	vec4_t       bgColorTitle    ;
@@ -1496,4 +1570,15 @@ void CG_DrawHelpWindow(float x, float y, int *status, const char *title, const h
 			CG_Text_Paint_Ext(x, y, fontText->scalex, fontText->scaley, tColor, lines[i], 0.0f, 0, fontText->style, fontText->font);
 		}
 	}
+}
+
+/**
+ * @brief CG_ComputeScale
+ * @param[in] comp
+ * @return
+ */
+float CG_ComputeScale(hudComponent_t *comp /*, float height, float scale, fontHelper_t *font*/)
+{
+	return comp->hardScale * (comp->scale / 100.f);
+	//return (height / (Q_UTF8_GlyphScale(font) * Q_UTF8_GetGlyph(font, "A")->height)) * (scale / 100.f);
 }
