@@ -659,8 +659,22 @@ qboolean FS_CreatePath(const char *OSPath)
 			*ofs = 0;
 			if (!Sys_Mkdir(path))
 			{
+#ifdef _WIN32
+				// Get Windows Version if its 10 and up let know user about know solutions
+				if (Sys_GetWindowsVer() >= 10.0)
+				{
+					// Thats propably due too ET: Legacy not being signed with Microsoft.
+					Com_Error(ERR_FATAL, "FS_CreatePath: failed to create path \"%s\"\nRun a game with different fs_homepath or (recommended way) allow\nET: Legacy to access controlled folders in Windows Security",
+						path);
+				}
+				else
+				{
+					Com_Error(ERR_FATAL, "FS_CreatePath: failed to create path \"%s\"",
+						path);
+				}
+#endif
 				Com_Error(ERR_FATAL, "FS_CreatePath: failed to create path \"%s\"",
-				          path);
+					path);
 			}
 			*ofs = PATH_SEP;
 		}
@@ -3790,7 +3804,7 @@ void FS_AddGameDirectory(const char *path, const char *dir, qboolean addBase)
 
 	// Get .pk3 files
 	pakfiles = Sys_ListFiles(curpath, ".pk3", NULL, &numfiles, qfalse);
-	
+
 	if (pakfiles)
 	{
 		qsort(pakfiles, numfiles, sizeof(char *), paksort);
