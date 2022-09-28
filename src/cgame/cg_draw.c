@@ -2208,7 +2208,7 @@ void CG_DrawCrosshairHealthBar(hudComponent_t *comp)
 
 	Vector4Set(bgcolor, 1.f, 1.f, 1.f, .25f * color[3]);
 
-	CG_FilledBar(x, comp->location.y, w, comp->location.h, c, NULL, bgcolor, barFrac, 16);
+	CG_FilledBar(x, comp->location.y, w, comp->location.h, c, NULL, bgcolor, barFrac, comp->style, -1);
 
 	trap_R_SetColor(NULL);
 }
@@ -3904,7 +3904,7 @@ void CG_DrawOnScreenBars(void)
 			continue;                           // no alpha = nothing to draw..
 		}
 
-		CG_FilledBar(specBar->x, specBar->y, specBar->w, specBar->h, specBar->colorStart, specBar->colorEnd, specBar->colorBack, specBar->fraction, BAR_BG);
+		CG_FilledBar(specBar->x, specBar->y, specBar->w, specBar->h, specBar->colorStart, specBar->colorEnd, specBar->colorBack, specBar->fraction, BAR_BG, -1);
 
 		// expect update next frame again
 		specBar->visible = qfalse;

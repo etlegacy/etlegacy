@@ -148,7 +148,7 @@ static void CG_DrawShoutcastPlayerOverlayAxis(clientInfo_t *player, float x, flo
 
 	// draw HP bar
 	fraction = (float)player->health / (float)CG_GetPlayerMaxHealth(player->clientNum, player->cls, player->team);
-	CG_FilledBar(topRowX + PLAYER_LIST_STATUS_WIDTH, y + 1, PLAYER_LIST_WIDTH - PLAYER_LIST_STATUS_WIDTH - 1, PLAYER_LIST_HEIGHT / 2 - 1.75f, colorAxis, colorAxis, bg, fraction, BAR_BGSPACING_X0Y0);
+	CG_FilledBar(topRowX + PLAYER_LIST_STATUS_WIDTH, y + 1, PLAYER_LIST_WIDTH - PLAYER_LIST_STATUS_WIDTH - 1, PLAYER_LIST_HEIGHT / 2 - 1.75f, colorAxis, colorAxis, bg, fraction, BAR_BGSPACING_X0Y0, -1);
 
 	// draw health
 	if (player->health > 0)
@@ -280,7 +280,7 @@ static void CG_DrawShoutcastPlayerOverlayAllies(clientInfo_t *player, float x, f
 
 	// draw HP bar
 	fraction = (float)player->health / (float)CG_GetPlayerMaxHealth(player->clientNum, player->cls, player->team);
-	CG_FilledBar(topRowX + 1, y + 1, PLAYER_LIST_WIDTH - PLAYER_LIST_STATUS_WIDTH - 1, PLAYER_LIST_HEIGHT / 2 - 1.5f, colorAllies, colorAllies, bg, fraction, BAR_BGSPACING_X0Y0 | BAR_LEFT);
+	CG_FilledBar(topRowX + 1, y + 1, PLAYER_LIST_WIDTH - PLAYER_LIST_STATUS_WIDTH - 1, PLAYER_LIST_HEIGHT / 2 - 1.5f, colorAllies, colorAllies, bg, fraction, BAR_BGSPACING_X0Y0 | BAR_LEFT, -1);
 
 	topRowX += PLAYER_LIST_WIDTH;
 
@@ -509,7 +509,7 @@ static void CG_DrawShoutcastPlayerChargebar(float x, float y, int width, int hei
 		color[3] = 0.25f + barFrac * 0.5f;
 	}
 
-	CG_FilledBar(x, y, width, height, color, NULL, bg, barFrac, flags);
+	CG_FilledBar(x, y, width, height, color, NULL, bg, barFrac, flags, -1);
 }
 
 /**
@@ -548,7 +548,7 @@ static void CG_DrawShoutcastPlayerStaminaBar(float x, float y, int width, int he
 		color[1] = frac;
 	}
 
-	CG_FilledBar(x, y, width, height, color, NULL, bg, frac, flags);
+	CG_FilledBar(x, y, width, height, color, NULL, bg, frac, flags, -1);
 }
 
 /**

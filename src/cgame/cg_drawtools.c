@@ -154,9 +154,10 @@ void CG_FillRectGradient(float x, float y, float width, float height, const floa
  * @param[in] frac
  * @param[in] flags
  */
-void CG_FilledBar(float x, float y, float w, float h, float *startColor, float *endColor, const float *bgColor, float frac, int flags)
+void CG_FilledBar(float x, float y, float w, float h, float *startColor, float *endColor, const float *bgColor, float frac, int flags, qhandle_t icon)
 {
 	vec4_t backgroundcolor = { 1, 1, 1, 0.25f }, colorAtPos;  // colorAtPos is the lerped color if necessary
+	float  x2 = x, y2 = y, w2 = w, h2 = h;
 
 	if (frac > 1)
 	{
@@ -174,7 +175,28 @@ void CG_FilledBar(float x, float y, float w, float h, float *startColor, float *
 
 	if (flags & BAR_LERP_COLOR)
 	{
-		Vector4Average(startColor, endColor, frac, colorAtPos);
+		if (endColor)
+		{
+			Vector4Average(startColor, endColor, frac, colorAtPos);
+		}
+		else
+		{
+			Vector4Scale(startColor, frac, colorAtPos);
+		}
+	}
+
+	if (flags & BAR_DECOR)
+	{
+		if (flags & BAR_VERT)
+		{
+			y += (h * 0.1f);
+			h *= 0.84f;
+		}
+		else
+		{
+			x += (w * 0.1f);
+			w *= 0.84f;
+		}
 	}
 
 	// background
@@ -238,6 +260,23 @@ void CG_FilledBar(float x, float y, float w, float h, float *startColor, float *
 		{
 			CG_FillRect(x, y, w, h * frac, startColor);
 		}
+
+		if (flags & BAR_DECOR)
+		{
+			CG_DrawPic(x2, y2, w2, h2, cgs.media.hudSprintBar);
+		}
+        
+        if (flags & BAR_ICON && icon > -1)
+		{
+			if (flags & BAR_LEFT)
+			{
+				CG_DrawPic(x2, y2 + h2 + 4, w2, w2, icon);
+			}
+			else
+			{
+				CG_DrawPic(x2, y2 - w2 - 4, w2, w2, icon);
+			}
+		}
 	}
 	else
 	{
@@ -258,6 +297,23 @@ void CG_FilledBar(float x, float y, float w, float h, float *startColor, float *
 		{
 			CG_FillRect(x, y, w * frac, h, startColor);
 		}
+
+		if (flags & BAR_DECOR)
+		{
+			CG_DrawPic(x2, y2, w2, h2, cgs.media.hudSprintBarHorizontal);
+		}
+
+		if (flags & BAR_ICON && icon > -1)
+		{
+			if (flags & BAR_LEFT)
+			{
+				CG_DrawPic(x2 + w2 + 4, y2, h2, h2, icon);
+			}
+			else
+			{
+                CG_DrawPic(x2 - h2 - 4, y2, h2, h2, icon);
+			}
+		}
 	}
 }
 
@@ -276,7 +332,7 @@ void CG_HorizontalPercentBar(float x, float y, float width, float height, float 
 {
 	vec4_t bgcolor = { 0.5f, 0.5f, 0.5f, 0.3f },
 	       color   = { 1.0f, 1.0f, 1.0f, 0.3f };
-	CG_FilledBar(x, y, width, height, color, NULL, bgcolor, percent, BAR_BG | BAR_NOHUDALPHA);
+	CG_FilledBar(x, y, width, height, color, NULL, bgcolor, percent, BAR_BG | BAR_NOHUDALPHA, -1);
 }
 
 /**

@@ -1756,6 +1756,7 @@ static void CG_RegisterGraphics(void)
 	cgs.media.teamStatusBar = trap_R_RegisterShader("gfx/2d/colorbar.tga");
 
 	cgs.media.hudSprintBar = trap_R_RegisterShader("sprintbar");
+    cgs.media.hudSprintBarHorizontal = trap_R_RegisterShader("sprintbarhorizontal");
 
 	cgs.media.hudAlliedHelmet = trap_R_RegisterShader("AlliedHelmet");
 	cgs.media.hudAxisHelmet   = trap_R_RegisterShader("AxisHelmet");

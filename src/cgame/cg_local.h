@@ -1578,6 +1578,7 @@ typedef struct
 	qhandle_t whiteShader;
 
 	qhandle_t hudSprintBar;
+    qhandle_t hudSprintBarHorizontal;
 	qhandle_t hudAxisHelmet;
 	qhandle_t hudAlliedHelmet;
 	qhandle_t hudAdrenaline;
@@ -2160,6 +2161,8 @@ enum
 	BAR_LERP_COLOR     = BIT(7),
 	BAR_BORDER         = BIT(8),
 	BAR_BORDER_SMALL   = BIT(9),
+    BAR_DECOR          = BIT(10),
+    BAR_ICON           = BIT(11),
 };
 
 /**
@@ -2955,7 +2958,7 @@ void CG_HorizontalPercentBar(float x, float y, float width, float height, float 
 void CG_DrawPic(float x, float y, float width, float height, qhandle_t hShader);
 void CG_DrawPicST(float x, float y, float width, float height, float s0, float t0, float s1, float t1, qhandle_t hShader);
 void CG_DrawRotatedPic(float x, float y, float width, float height, qhandle_t hShader, float angle);        // NERVE - SMF
-void CG_FilledBar(float x, float y, float w, float h, float *startColor, float *endColor, const float *bgColor, float frac, int flags);
+void CG_FilledBar(float x, float y, float w, float h, float *startColor, float *endColor, const float *bgColor, float frac, int flags, qhandle_t icon);
 void CG_DropdownMainBox(float x, float y, float w, float h, float scalex, float scaley, vec4_t borderColour,
                         const char *text, qboolean focus, vec4_t fontColour, int style, fontHelper_t *font);
 float CG_DropdownBox(float x, float y, float w, float h, float scalex, float scaley, vec4_t borderColour,
@@ -4149,6 +4152,7 @@ typedef struct hudStructure_s
 } hudStucture_t;
 
 #define MAXHUDS 32
+#define MAXSTYLES 16
 
 extern hudStucture_t hudlist[MAXHUDS];
 extern hudStucture_t *activehud;
@@ -4161,6 +4165,7 @@ typedef struct
 	qboolean isAlias;
 	void (*draw)(hudComponent_t *comp);
     float scale;
+    char *styles[MAXSTYLES];
 
 } hudComponentFields_t;
 
