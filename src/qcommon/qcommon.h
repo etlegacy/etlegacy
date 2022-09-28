@@ -1403,7 +1403,7 @@ qboolean Sys_Mkdir(const char *path);
 #ifdef _WIN32
 int Sys_Remove(const char *path);
 int Sys_RemoveDir(const char *path);
-int Sys_GetWindowsVer();
+double Sys_GetWindowsVer(void);
 
 #define sys_stat_t struct _stat
 int Sys_Stat(const char *path, void *stat);

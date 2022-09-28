@@ -380,7 +380,7 @@ int Sys_RemoveDir(const char *path)
 	return _wrmdir(w_path);
 }
 
-int Sys_GetWindowsVer(void)
+double Sys_GetWindowsVer(void)
 {
 	double ver = 0.0;
 	NTSTATUS(WINAPI * RtlGetVersion)(LPOSVERSIONINFOEXW);
