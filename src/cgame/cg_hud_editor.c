@@ -1143,18 +1143,26 @@ static void CG_HudEditor_RenderCheckbox(panel_button_t *button)
 	float textHeight;
 	float totalWidth;
 	float textOffsetY;
+	float scalex = button->font->scalex;
 
 	// FIXME: get proper names and adjust alignment after
 	Com_sprintf(labelText, sizeof(labelText), "%s ", button->text);
 
-	textWidth   = CG_Text_Width_Ext(labelText, button->font->scalex, 0, button->font->font);
+	textWidth = CG_Text_Width_Ext(labelText, scalex, 0, button->font->font);
+
+	if (textWidth >= (HUDEditorWidth * 0.5f) - CHECKBOX_SIZE * 1.5f)
+	{
+        scalex    = ((HUDEditorWidth * 0.5f) - CHECKBOX_SIZE * 1.5f) / CG_Text_Width_Ext(labelText, 1, 0, button->font->font) - 0.02f;
+		textWidth = CG_Text_Width_Ext(labelText, scalex, 0, button->font->font);
+	}
+
 	textHeight  = CG_Text_Height_Ext(labelText, button->font->scaley, 0, button->font->font);
 	totalWidth  = textWidth;
 	textOffsetY = (CHECKBOX_SIZE - textHeight) * 0.5f;
 
 	CG_HudEditor_SetupCheckBoxPosition(button, totalWidth);
 
-	CG_Text_Paint_Ext(button->rect.x - totalWidth, button->rect.y + textHeight + textOffsetY, button->font->scalex, button->font->scaley,
+	CG_Text_Paint_Ext(button->rect.x - totalWidth, button->rect.y + textHeight + textOffsetY, scalex, button->font->scaley,
 	                  colorWhite, labelText, 0, 0, button->font->style, button->font->font);
 
 	CG_DrawRect_FixedBorder(button->rect.x, button->rect.y, CHECKBOX_SIZE, CHECKBOX_SIZE, 2, colorBlack);
@@ -1559,12 +1567,12 @@ static qboolean CG_HudEditoColorSelection_KeyDown(panel_button_t *button, int ke
 			//button->data[3] = 0;
 			elementColorSelection = 0;
 		}
-		else if (button == &hudEditorColorSelectionBorder)
+		else if (button == &hudEditorColorSelectionBackground)
 		{
 			//button->data[3] = 1;
 			elementColorSelection = 1;
 		}
-		else if (button == &hudEditorColorSelectionBackground)
+		else if (button == &hudEditorColorSelectionBorder)
 		{
 			//button->data[3] = 2;
 			elementColorSelection = 2;
@@ -1669,12 +1677,12 @@ static float CG_HudEditor_SetupButtonPosition(panel_button_t *button, float butt
 		button->rect.x = HUDEditorCenterX - (buttonW * 0.5f) - buttonW - HUDEDITOR_CONTROLS_SPACER_XY;
 	}
 	// centered
-	else if (button == &hudEditorClone || button == &hudEditorColorSelectionBorder)
+	else if (button == &hudEditorClone || button == &hudEditorColorSelectionBackground)
 	{
 		button->rect.x = HUDEditorCenterX - (buttonW * 0.5f);
 	}
 	// right aligned
-	else if (button == &hudEditorDelete || button == &hudEditorColorSelectionBackground)
+	else if (button == &hudEditorDelete || button == &hudEditorColorSelectionBorder)
 	{
 		button->rect.x = HUDEditorCenterX + (buttonW * 0.5f) + HUDEDITOR_CONTROLS_SPACER_XY;
 	}
@@ -2083,18 +2091,20 @@ void CG_HudEditorSetup(void)
 	elementColorSelection = 0;
 }
 
-#define COMPONENT_BUTTON_WIDTH 120
 #define COMPONENT_BUTTON_HEIGHT 12
 #define COMPONENT_BUTTON_SPACE_X 2
 #define COMPONENT_BUTTON_SPACE_Y 2
+#define COMPONENT_BUTTON_COLUMN_NUM 7
 
 /**
  * @brief CG_DrawHudEditor_ComponentLists
  */
 static void CG_DrawHudEditor_ComponentLists(panel_button_t *button)
 {
-	float          x = button->rect.x;
-	float          y = button->rect.y;
+	float x = button->rect.x;
+	float y = button->rect.y;
+	float w = (SCREEN_WIDTH_SAFE - COMPONENT_BUTTON_SPACE_X * COMPONENT_BUTTON_COLUMN_NUM)
+	          / COMPONENT_BUTTON_COLUMN_NUM;
 	int            offsetX, offsetY;
 	panel_button_t **buttons = hudComponentsPanel;
 	panel_button_t *parsedButton;
@@ -2102,15 +2112,16 @@ static void CG_DrawHudEditor_ComponentLists(panel_button_t *button)
 
 	for ( ; *buttons; buttons++)
 	{
+		float scalex = Ccg_WideX(button->font->scalex);
 		parsedButton = (*buttons);
 
 		comp = (hudComponent_t *)((char *)activehud + hudComponentFields[parsedButton->data[0]].offset);
 
-		CG_FillRect(x, y, COMPONENT_BUTTON_WIDTH, COMPONENT_BUTTON_HEIGHT, lastFocusComponent == parsedButton ? (vec4_t) { 1, 1, 0, 0.4f } : (vec4_t) { 0.3f, 0.3f, 0.3f, 0.4f });
+		CG_FillRect(x, y, w, COMPONENT_BUTTON_HEIGHT, lastFocusComponent == parsedButton ? (vec4_t) { 1, 1, 0, 0.4f } : (vec4_t) { 0.3f, 0.3f, 0.3f, 0.4f });
 
-		if (BG_CursorInRect(&(rectDef_t) { x, y, COMPONENT_BUTTON_WIDTH, COMPONENT_BUTTON_HEIGHT }))
+		if (BG_CursorInRect(&(rectDef_t) { x, y, w, COMPONENT_BUTTON_HEIGHT }))
 		{
-			CG_FillRect(x, y, COMPONENT_BUTTON_WIDTH, COMPONENT_BUTTON_HEIGHT, (vec4_t) { 1, 1, 1, 0.4f });
+			CG_FillRect(x, y, w, COMPONENT_BUTTON_HEIGHT, (vec4_t) { 1, 1, 1, 0.4f });
 
 			if (parsedButton != lastFocusComponent)
 			{
@@ -2118,10 +2129,16 @@ static void CG_DrawHudEditor_ComponentLists(panel_button_t *button)
 			}
 		}
 
-		offsetX = CG_Text_Width_Ext(parsedButton->text, button->font->scalex, 0, button->font->font);
+		offsetX = CG_Text_Width_Ext(parsedButton->text, scalex, 0, button->font->font);
 		offsetY = CG_Text_Height_Ext(parsedButton->text, button->font->scaley, 0, button->font->font);
 
-		CG_Text_Paint_Ext(x + (COMPONENT_BUTTON_WIDTH - offsetX) * 0.5f, y + ((COMPONENT_BUTTON_HEIGHT + offsetY) * 0.5f), button->font->scalex, button->font->scaley,
+		if (offsetX >= w)
+		{
+			scalex  = w / CG_Text_Width_Ext(parsedButton->text, 1, 0, button->font->font) - 0.02f;
+			offsetX = CG_Text_Width_Ext(parsedButton->text, scalex, 0, button->font->font);
+		}
+
+		CG_Text_Paint_Ext(x + (w - offsetX) * 0.5f, y + ((COMPONENT_BUTTON_HEIGHT + offsetY) * 0.5f), scalex, button->font->scaley,
 		                  comp->visible ? colorMdGreen : colorMdRed, parsedButton->text, 0, 0, button->font->style, button->font->font);
 
 		y += COMPONENT_BUTTON_HEIGHT + COMPONENT_BUTTON_SPACE_Y;
@@ -2129,7 +2146,7 @@ static void CG_DrawHudEditor_ComponentLists(panel_button_t *button)
 		if (y + COMPONENT_BUTTON_HEIGHT >= SCREEN_HEIGHT_SAFE + (SCREEN_HEIGHT_SAFE * 0.25f))
 		{
 			y  = button->rect.y;
-			x += COMPONENT_BUTTON_WIDTH + COMPONENT_BUTTON_SPACE_X;
+			x += w + COMPONENT_BUTTON_SPACE_X;
 		}
 	}
 }
@@ -2169,7 +2186,8 @@ static qboolean CG_HudEditor_ComponentLists_KeyUp(panel_button_t *button, int ke
 
 			Com_Memcpy(&rect, &button->rect, sizeof(rect));
 
-			rect.w = COMPONENT_BUTTON_WIDTH;
+			rect.w = (SCREEN_WIDTH_SAFE - COMPONENT_BUTTON_SPACE_X * COMPONENT_BUTTON_COLUMN_NUM)
+			         / COMPONENT_BUTTON_COLUMN_NUM;
 			rect.h = COMPONENT_BUTTON_HEIGHT;
 
 			for ( ; *buttons; buttons++)
@@ -2191,7 +2209,7 @@ static qboolean CG_HudEditor_ComponentLists_KeyUp(panel_button_t *button, int ke
 				if (rect.y + COMPONENT_BUTTON_HEIGHT >= SCREEN_HEIGHT_SAFE + (SCREEN_HEIGHT_SAFE * 0.25f))
 				{
 					rect.y  = button->rect.y;
-					rect.x += COMPONENT_BUTTON_WIDTH + COMPONENT_BUTTON_SPACE_X;
+					rect.x += rect.w + COMPONENT_BUTTON_SPACE_X;
 				}
 			}
 
