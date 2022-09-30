@@ -6,14 +6,15 @@
 # BystryPL, 2021
 # Julio Gonzalez Mejías <juliolokooo@gmail.com>, 2015-2016,2019
 # LaNyeR Blaskovich <lanyeracs@gmail.com>, 2019
-# vito ball, 2022
+# v1rkes, 2022
+# v1rkes, 2022
 msgid ""
 msgstr ""
 "Project-Id-Version: ET:Legacy\n"
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
 "PO-Revision-Date: 2015-01-10 11:47+0000\n"
-"Last-Translator: vito ball, 2022\n"
+"Last-Translator: v1rkes, 2022\n"
 "Language-Team: Spanish (http://www.transifex.com/etlegacy/etlegacy/language/es/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1031,11 +1032,11 @@ msgstr "cerrará la ventana del juego y abrirá la"
 
 #: etmain/ui/hostgame_dedicated_warning.menu:55
 msgid "server console. You can then re-open"
-msgstr ""
+msgstr "consola del servidor. Luego puedes volver abrir"
 
 #: etmain/ui/hostgame_dedicated_warning.menu:56
 msgid "the game and connect to the server."
-msgstr ""
+msgstr "el juego y conectar con el servidor"
 
 #: etmain/ui/hostgame_dedicated_warning.menu:57
 msgid "Are you sure you want to start"
@@ -2703,7 +2704,7 @@ msgstr "Media"
 
 #: etmain/ui/options_customise_hud.menu:56
 msgid "Sets the duration ejected bullet shells last for"
-msgstr ""
+msgstr "Establece la duración de los proyectiles de bala expulsados"
 
 #: etmain/ui/options_customise_hud.menu:58
 msgid "Field Of View:"
@@ -2731,7 +2732,7 @@ msgstr "Efectos de las Partículas:"
 
 #: etmain/ui/options_customise_hud.menu:60
 msgid "Toggles display of particle effects (explosions, some smoke effects)"
-msgstr ""
+msgstr "Alterna la visualización de efectos de partículas (explosiones, algunos efectos de humo)"
 
 #: etmain/ui/options_customise_hud.menu:69
 msgid "Visual Effects:"
@@ -2739,7 +2740,7 @@ msgstr "Efectos Visuales"
 
 #: etmain/ui/options_customise_hud.menu:69
 msgid "Draws additional visual effects (airstrike planes, debris)"
-msgstr ""
+msgstr "Dibuja efectos visuales adicionales (aviones de ataque, escombros)"
 
 #: etmain/ui/options_customise_hud.menu:61
 msgid "Wall Mark Lifetime:"
@@ -2794,7 +2795,7 @@ msgstr "Mostrar Sangre:"
 
 #: etmain/ui/options_customise_hud.menu:64
 msgid "Toggles showing blood spurt effect when players are shot"
-msgstr ""
+msgstr "Alterna el efecto chorro de sangre cuando le disparan al jugador"
 
 #: etmain/ui/options_customise_hud.menu:65
 msgid "Atmospheric Effects:"
@@ -3118,7 +3119,7 @@ msgstr "Ajusta el tamaño de fuente para la etiqueta del Nombre en el Punto de M
 
 #: etmain/ui/options_customise_hud.menu:128
 msgid "Popup Stay Time:"
-msgstr ""
+msgstr "Tiempo permanencia Emergente:"
 
 #: etmain/ui/options_customise_hud.menu:128
 msgid "Set the time a pop-up stays visible"
@@ -3126,7 +3127,7 @@ msgstr "Ajusta el tiempo que un mensaje emergente permanece visible"
 
 #: etmain/ui/options_customise_hud.menu:130
 msgid "Popup Fade Time:"
-msgstr ""
+msgstr "Tiempo de fundido Emergente"
 
 #: etmain/ui/options_customise_hud.menu:130
 msgid "Set the time a pop-up fades away"
@@ -3775,7 +3776,7 @@ msgid ""
 "and access more advanced options by visiting the Options Menu. Should more "
 "than one person wish to play ET: Legacy, you can create additional profiles "
 "by visiting the Profiles Menu."
-msgstr ""
+msgstr "Favor de elegir su configuración inicial a continuación. Puedes cambiar en cualquier momento y acceder a opciones más avanzadas visitando el Menú de Opciones. Si más de una persona desea jugar ET: Legacy, puede crear perfiles adicionales visitando el menú Perfiles."
 
 #: etmain/ui/profile_create_initial.menu:98 etmain/ui/profile_create.menu:91
 msgid ""
@@ -5247,7 +5248,7 @@ msgstr "Matados: %3d Mat. Equipo: %3d Puntería: %5.1f%%"
 #: src/cgame/cg_servercmds.c:1941
 #, c-format
 msgid "Gibs:   %3d    Team Gibs:  %3d    Playtime:  %5.1f%%"
-msgstr ""
+msgstr "Gibs:   %3d   Gibs de Equipo:   %3d   Partida:  %5.1f%%"
 
 #: src/cgame/cg_servercmds.c:1879
 #, c-format
@@ -6127,7 +6128,7 @@ msgid ""
 msgstr "Uso: ^3\\ref <cmd> [params]\n\n"
 
 msgid "^5pause speclock warmup ^7[value]\n"
-msgstr ""
+msgstr "^5pausa espelock calentamiento ^7[value]\n"
 
 msgid "Sorry, referee status disabled on this server.\n"
 msgstr "Lo siento, el estado de árbitro está desactivado en éste servidor.\n"
@@ -6218,7 +6219,7 @@ msgstr "^5Ya no estás silenciado\n\n \n"
 
 msgid ""
 "^7 ID : Player                    Nudge  Rate  MaxPkts  Snaps  Specials\n"
-msgstr ""
+msgstr "^7 ID : Jugador                Nudge  Rate  MaxPkts  Snaps  Especiales\n"
 
 msgid ""
 "^7----------------------------------------------------------------------\n"
@@ -6227,7 +6228,7 @@ msgstr "^7----------------------------------------------------------------------
 msgid ""
 "^7Status   : ID : Player                    Nudge  Rate  MaxPkts  Snaps  "
 "Specials\n"
-msgstr ""
+msgstr "^7Estado   : ID : Jugador                 Nudge Rate MaxPkts Snaps Especiales\n"
 
 msgid ""
 "^7-------------------------------------------------------------------------------\n"
@@ -6904,7 +6905,7 @@ msgid "Gib command not allowed during intermission.\n"
 msgstr "El comando \"gib\" no está permitido en el descanso.\n"
 
 msgid "^3%d^7 players gibbed."
-msgstr ""
+msgstr "^3%d^7 jugadores destruidos."
 
 msgid "There is no player to gib."
 msgstr "No hay jugadores para despedazar."
@@ -6985,25 +6986,25 @@ msgid "Player must be on a team to be burned.\n"
 msgstr "El jugador tiene que estar en algún equipo para poderlo quemar.\n"
 
 msgid "^7%s^7 is burned."
-msgstr ""
+msgstr "^7%s^7está quemado."
 
 msgid "Pip command not allowed during intermission.\n"
 msgstr "El comando \"pip\" no está permitido en el descanso.\n"
 
 msgid "^3%d^7 players pipped."
-msgstr ""
+msgstr "^3%d^7 jugadores superados."
 
 msgid "No players in team or they are already pipped.\n"
-msgstr ""
+msgstr "No hay jugadores en equipo o ya están superadas.\n"
 
 msgid "Error - can't pip - %s.\n"
-msgstr ""
+msgstr "Error - no se puede picar - %s.\n"
 
 msgid "Player must be on a team to be pipped.\n"
-msgstr ""
+msgstr "El jugador debe estar en un equipo para ser superado.\n"
 
 msgid "^7%s^7 is pipped."
-msgstr ""
+msgstr "^7%s^7es superado."
 
 msgid "%s command not allowed during intermission.\n"
 msgstr "El comando %s no está permitido en el descanso.\n"
@@ -7090,7 +7091,7 @@ msgid "SURRENDER"
 msgstr "RENDIRSE"
 
 msgid "NO RESTART SHUFFLE"
-msgstr ""
+msgstr "SIN RESETEAR LA MEZCLA"
 
 msgid "Multiview:"
 msgstr "Multivista:"
@@ -7108,10 +7109,10 @@ msgid "Sets the name of the log file or if empty logging is disabled"
 msgstr "Ajusta el nombre del archivo de logs, o lo deshabilita si está vacío"
 
 msgid "^7BACKSPACE ^3help on/off"
-msgstr ""
+msgstr "^7BACKSPACE ^3ayuda si/no"
 
 msgid "^7BACKSPACE ^mgo  back"
-msgstr ""
+msgstr "^7BACKSPACE ^mir atras"
 
 msgid "CURRENT PROFILE"
 msgstr "PERFIL ACTUAL"
@@ -7139,7 +7140,7 @@ msgstr "Ancho Personalizado:"
 msgid ""
 "Specifies custom resolution width (requires custom resolution set - *Use at "
 "your own risk*)"
-msgstr ""
+msgstr "Especifica ancho resolución personalizada (requiere de una resolución personalizada - *Usar bajo su propio riesgo*)"
 
 msgid "Custom Height:"
 msgstr "Altura Personalizada:"
@@ -7147,13 +7148,13 @@ msgstr "Altura Personalizada:"
 msgid ""
 "Specifies custom resolution height (requires custom resolution set - *Use at"
 " your own risk*)"
-msgstr ""
+msgstr "Especifica altura resolución personalizada (requiere de una resolución personalizada - *Usar bajo su propio riesgo*)"
 
 msgid "Max. Frames Per Second:"
-msgstr ""
+msgstr "Máx. Cuadros Por Segundo"
 
 msgid "Sets the limit of frames per second"
-msgstr ""
+msgstr "Establece el limite de FPS"
 
 msgid "JOYSTICK"
 msgstr "JOYSTICK"
@@ -7168,7 +7169,7 @@ msgid "Use Joystick#:"
 msgstr "Usar Joystick#:"
 
 msgid "Specifies active joystick"
-msgstr ""
+msgstr "Especifica joystick activo"
 
 msgid "Analog Joystick:"
 msgstr "Joystick Analógico:"
@@ -7205,10 +7206,10 @@ msgid "Allow players to vote for teams to be shuffled by SR without a restart"
 msgstr "Permitir a los jugadores votar para barajar los equipos por SR sin reiniciar"
 
 msgid "Voice text:"
-msgstr ""
+msgstr "Voz de texto: "
 
 msgid "Show voice text in-game"
-msgstr ""
+msgstr "Mostrar voces de texto en el juego"
 
 msgid "Voice chat:"
 msgstr "Chat de voz:"
@@ -7265,7 +7266,7 @@ msgid "Reconnect time in ms"
 msgstr "Tiempo de reconexión en ms"
 
 msgid "SHUFFLE"
-msgstr ""
+msgstr "MEZCLAR"
 
 msgid "JOIN A TEAM"
 msgstr "UNIRSE A UN EQUIPO"
@@ -7307,10 +7308,10 @@ msgstr "^1ÚNETE"
 msgid ""
 "ET: Legacy is a collaborative effort done in an open, transparent and "
 "friendly manner. Anyone is welcome to join our efforts!"
-msgstr ""
+msgstr "ET: Legacy es un esfuerzo de colaboración realizado de manera abierta, transparente y amigable. ¡Cualquiera es bienvenido a unirse a nuestros esfuerzos!"
 
 msgid "CHOOSE CLASS AND WEAPONS"
-msgstr ""
+msgstr "ELEGIR CLASE Y ARMAS"
 
 msgid "S. Soldier"
 msgstr "S. Soldado"
@@ -7445,16 +7446,16 @@ msgid "Mute channel"
 msgstr "Silenciar canal"
 
 msgid "Direct + Override"
-msgstr ""
+msgstr "Directo + Anular"
 
 msgid "Direct + Mute"
-msgstr ""
+msgstr "Directo + Silenciar"
 
 msgid "Override + Mute"
-msgstr ""
+msgstr "Anular + Silenciar"
 
 msgid "Direct + Over. + Mute"
-msgstr ""
+msgstr "Directo + Anular + Silenciar"
 
 msgid "Custom"
 msgstr "Personalizado"
@@ -7475,7 +7476,7 @@ msgid "High (125 FPS)"
 msgstr "Alta (125 FPS)"
 
 msgid "Add this server to your favorites?"
-msgstr ""
+msgstr "¿Agregar este servidor a tus favoritos?"
 
 msgid "Select your team, class, weapon and spawnpoint"
 msgstr "Elige tu equipo, clase, arma y punto de inicio"
@@ -7502,7 +7503,7 @@ msgid "Skill Rating view"
 msgstr "Ver Clasificación de Habilidad"
 
 msgid "%s - Press double-%s quickly to switch scoreboard"
-msgstr ""
+msgstr "%s - Pulsa dos veces- %s para cambiar de marcador"
 
 msgid "XP view"
 msgstr "Vista XP"
@@ -7529,10 +7530,10 @@ msgid "Class selection:"
 msgstr "Selección de clase:"
 
 msgid "Team selection:"
-msgstr ""
+msgstr "Seleccionar equipo: "
 
 msgid "Spawn selection:"
-msgstr ""
+msgstr "Seleccionar despliegue: "
 
 msgid "Sets the frames per second limit for a stable render rate"
 msgstr "Ajusta el límite de imágenes por segundo para tener un render más estable"
@@ -7562,239 +7563,239 @@ msgid "RANDOM"
 msgstr "ALEATORIO"
 
 msgid "WELCOME"
-msgstr ""
+msgstr "BIENVENIDO"
 
 msgid "English (default)  "
-msgstr ""
+msgstr "Ingles (defecto)"
 
 msgid "Shows all Internet servers"
-msgstr ""
+msgstr "Mostrar servidores de Internet"
 
 msgid "Shows all local servers"
-msgstr ""
+msgstr "Mostrar servidores locales"
 
 msgid "LOCAL"
-msgstr ""
+msgstr "LOCAL"
 
 msgid "^5Local"
-msgstr ""
+msgstr "^5Local"
 
 msgid "^3Favorites"
-msgstr ""
+msgstr "^3Favoritos"
 
 msgid ""
 "Includes or excludes ET: Legacy servers with humans from the server list"
-msgstr ""
+msgstr "Incluye o excluye: Servidores ETL con humanos de la lista"
 
 msgid "Shoutcast Password:"
-msgstr ""
+msgstr "Contraseña Locutor:"
 
 msgid "Password to access the shoutcaster status for live match commentaries"
-msgstr ""
+msgstr "Contraseña para acceder a locutor para partidos en vivo"
 
 msgid "Bobbing effect:"
-msgstr ""
+msgstr "Efecto de Balanceo:"
 
 msgid "Toggle bobbing"
-msgstr ""
+msgstr "Alternar balancearse"
 
 msgid "ITEMS"
-msgstr ""
+msgstr "ELEMENTOS"
 
 msgid "Simple Items:"
-msgstr ""
+msgstr "Elementos Simples:"
 
 msgid "Yes except objectives"
-msgstr ""
+msgstr "Si excepto los objetivos"
 
 msgid "Draw simple items"
-msgstr ""
+msgstr "Mostrar elementos simples"
 
 msgid "Play startup announcer voice"
-msgstr ""
+msgstr "Reproducir voz de inicio del locutor"
 
 msgid "Hide Weapons Only"
-msgstr ""
+msgstr "Esconder Solo Armas"
 
 msgid "Coordinates Only"
-msgstr ""
+msgstr "Solo Coordenadas"
 
 msgid "Screenshot"
 msgstr "Captura de Pantalla"
 
 msgid "Coordinates Only"
-msgstr ""
+msgstr "Solo Coordenadas"
 
 msgid "Fireteam Overlay"
-msgstr ""
+msgstr "Capa del Escuadrón "
 
 msgid "Team and Fireteam Chat"
-msgstr ""
+msgstr "Chat de Equipo y Escuadra"
 
 msgid "Chat + FT Overlay"
-msgstr ""
+msgstr "Chat + FT capa sobrepuesta"
 
 msgid "UPS + MAX speed"
-msgstr ""
+msgstr "UPS + MAX velocidad"
 
 msgid "KPH + MAX speed"
-msgstr ""
+msgstr "KPH + MAX velocidad"
 
 msgid "MPH + MAX speed"
-msgstr ""
+msgstr "MPH + MAX velocidad"
 
 msgid "Toggles display of weapon fire (muzzle flash)"
-msgstr ""
+msgstr "Alterna la visualización del fuego del arma (boca del arma)"
 
 msgid "POPUPS AND BANNER"
-msgstr ""
+msgstr "VENTANAS EMERGENTES Y ANUNCIOS"
 
 msgid "Filter Messages:"
-msgstr ""
+msgstr "Filtrar Mensajes: "
 
 msgid "Connection"
-msgstr ""
+msgstr "Conexión"
 
 msgid "Pickup"
-msgstr ""
+msgstr "Levantar"
 
 msgid "Death"
-msgstr ""
+msgstr "Muerte"
 
 msgid "Connection, Pickup"
-msgstr ""
+msgstr "Conexión, Levantar"
 
 msgid "Connection, Death"
-msgstr ""
+msgstr "Conexión, Muerte"
 
 msgid "Connect, Pickup, Death"
-msgstr ""
+msgstr "Conectar, Levantar, Muerte"
 
 msgid "Set filter on popup messages"
-msgstr ""
+msgstr "Establecer filtro de mensajes emergentes"
 
 msgid "Filter Promotions:"
-msgstr ""
+msgstr "Filtrar Ascensos"
 
 msgid "Skill upgrades"
-msgstr ""
+msgstr "Mejoras de Nivel"
 
 msgid "Skill + Rank upgrades"
-msgstr ""
+msgstr "Nivel + Mejoras de Rango"
 
 msgid "Set filter on popup promotion messages"
-msgstr ""
+msgstr "Establecer filtro en mensajes emergentes de promoción"
 
 msgid "Banner Time:"
-msgstr ""
+msgstr "Tiempo del Anuncio: "
 
 msgid "Set the time a banner stays visible"
-msgstr ""
+msgstr "Establece el tiempo visible del anuncio"
 
 msgid "Drop Objective"
-msgstr ""
+msgstr "Soltar Objetivo"
 
 msgid "SELECTION MENUS"
-msgstr ""
+msgstr "SELECCION DE MENUS"
 
 msgid "Center Window:"
-msgstr ""
+msgstr "Centrar Ventana: "
 
 msgid "Center window in windowed mode"
-msgstr ""
+msgstr "Centrar pantalla en modo ventana"
 
 msgid "Very Low (43 FPS)"
-msgstr ""
+msgstr "Muy Bajo (43 FPS)"
 
 msgid "Low (76 FPS)"
-msgstr ""
+msgstr "Bajo (76 FPS)"
 
 msgid "Medium (85 FPS)"
-msgstr ""
+msgstr "Medio (85 FPS)"
 
 msgid "SCREENSHOTS"
-msgstr ""
+msgstr "CARPTURA DE PANTALLA"
 
 msgid "TGA (lossless)"
-msgstr ""
+msgstr "TGA (sin perdida)"
 
 msgid "JPEG (lossy)"
-msgstr ""
+msgstr "JPEG (con perdida)"
 
 msgid "PNG (lossless)"
-msgstr ""
+msgstr "PNG (sin perdida)"
 
 msgid "Set your preferred screenshot format"
-msgstr ""
+msgstr "Establecer tu formato de captura de pantalla preferido"
 
 msgid "JPEG Quality:"
-msgstr ""
+msgstr "Calidad JPEG:"
 
 msgid "Set the JPEG quality"
-msgstr ""
+msgstr "Establecer calidad JPEG"
 
 msgid "REMOVE FAVORITE"
-msgstr ""
+msgstr "QUITAR FAVORITO"
 
 msgid "Remove this server from your favorites?"
-msgstr ""
+msgstr "¿Quitar este servidor de tus favoritos?"
 
 msgid "P. Pistol"
-msgstr ""
+msgstr "P. Pistola"
 
 msgid "A. Akimbo"
-msgstr ""
+msgstr "A. Akimbo"
 
 msgid "P. Silenced Pistol"
-msgstr ""
+msgstr "P. Pistola Silenciada"
 
 msgid "A. Silenced Akimbo"
-msgstr ""
+msgstr "A. Akimbo Silenciada"
 
 msgid "1. Pistol"
 msgstr "1. Pistola"
 
 msgid "2. Akimbo"
-msgstr ""
+msgstr "2. Akimbo"
 
 msgid "3. SMG"
-msgstr ""
+msgstr "3. Ametralladora"
 
 msgid "CHOOSE TEAM"
-msgstr ""
+msgstr "ELEGIR EQUIPO"
 
 msgid "R. Axis"
-msgstr ""
+msgstr "R. Eje"
 
 msgid "B. Allies"
-msgstr ""
+msgstr "B. Aliados"
 
 msgid "S. Spectators"
-msgstr ""
+msgstr "S. Espectadores"
 
 msgid "1. Axis"
-msgstr ""
+msgstr "1. Eje"
 
 msgid "2. Allies"
-msgstr ""
+msgstr "2. Aliados"
 
 msgid "3. Spectators"
-msgstr ""
+msgstr "3. Espectadores"
 
 msgid "Set or unset this server as favorite"
-msgstr ""
+msgstr "Hacer o deshacer este servidor como favorito"
 
 msgid "MAKE SHOUTCASTER"
-msgstr ""
+msgstr "HACER LOCUTOR"
 
 msgid " demo %s: %ik "
-msgstr ""
+msgstr "demo %s:%ik"
 
 msgid " audio %s: %ik "
-msgstr ""
+msgstr "sonido %s:%ik"
 
 msgid "REPLAY"
-msgstr ""
+msgstr "REPETIR"
 
 msgid "RECORD"
-msgstr ""
+msgstr "GRABAR"
