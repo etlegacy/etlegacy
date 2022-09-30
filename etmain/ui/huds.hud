@@ -11,7 +11,6 @@ hudDef {
 	// as expected a single file can contain multiple hud configurations
 	// hudnumber value must be unique if not then the hud will be discarded
 	// PS. 'x' should be between 0 and 640 and 'y' between 0 and 480
-hud {
 	hud {
 		hudnumber 1
 		// name         	x     	y     	w     	h     	s   	v	ss  	sr  	sg  	sb  	sa  	bg	bgr 	bgg 	bgb 	bga 	b	br  	bg  	bb  	ba  	ts	ta	aa
