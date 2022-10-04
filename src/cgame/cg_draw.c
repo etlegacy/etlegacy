@@ -1005,7 +1005,7 @@ void CG_DrawTeamInfo(hudComponent_t *comp)
 		int          chatPosY = comp->location.y + comp->location.h;
 		float        scale;
 
-        scale = CG_ComputeScale(comp /*lineHeight, comp->scale, font*/);
+		scale = CG_ComputeScale(comp /*lineHeight, comp->scale, font*/);
 
 		icon_width    = 12.f * scale * 5;
 		icon_height   = 8.f * scale * 5;
@@ -1164,9 +1164,8 @@ void CG_CenterPrint(const char *str)
  */
 void CG_PriorityCenterPrint(const char *str, int priority)
 {
-	int          maxLineChars;
-	float        scale;
-	fontHelper_t *font = &cgs.media.limboFont2;
+	int   maxLineChars;
+	float scale;
 
 	// don't draw if this print message is less important
 	if (cg.centerPrintTime && priority < cg.centerPrintPriority)
@@ -1174,7 +1173,7 @@ void CG_PriorityCenterPrint(const char *str, int priority)
 		return;
 	}
 
-    scale        = CG_ComputeScale(&CG_GetActiveHUD()->centerprint /*CG_GetActiveHUD()->centerprint.location.h, CG_GetActiveHUD()->centerprint.scale, &cgs.media.limboFont2*/);
+	scale        = CG_ComputeScale(&CG_GetActiveHUD()->centerprint /*CG_GetActiveHUD()->centerprint.location.h, CG_GetActiveHUD()->centerprint.scale, &cgs.media.limboFont2*/);
 	maxLineChars = CG_GetActiveHUD()->centerprint.location.w / CG_Text_Width_Ext("A", scale, 0, &cgs.media.limboFont2);
 
 	CG_WordWrapString(CG_TranslateString(str), maxLineChars, cg.centerPrint, sizeof(cg.centerPrint));
@@ -2082,20 +2081,24 @@ void CG_DrawCrosshairHealthBar(hudComponent_t *comp)
 		return;
 	}
 
-	// scan the known entities to see if the crosshair is sighted on one
-	CG_ScanForCrosshairEntity(&zChange, &hitClient);
+    if (cg.editingHud)
+    {
+        // aim on self
+        cg.crosshairClientNum    = cg.snap->ps.clientNum;
+        cg.crosshairClientTime   = cg.time;
+        cg.identifyClientRequest = cg.crosshairClientNum;
+    }
+    else
+    {
+        // scan the known entities to see if the crosshair is sighted on one
+        dist = CG_ScanForCrosshairEntity(&zChange, &hitClient);
+    }
 
-	// world-entity or no-entity
-	if (cg.crosshairClientNum < 0)
-	{
-		return;
-	}
-
-	// world-entity or no-entity
-	if (cg.crosshairClientNum < 0)
-	{
-		return;
-	}
+    // world-entity or no-entity
+    if (cg.crosshairClientNum < 0)
+    {
+        return;
+    }
 
 	// draw the name of the player being looked at
 	color = CG_FadeColor(cg.crosshairClientTime, 1000);
@@ -2276,8 +2279,18 @@ void CG_DrawCrosshairNames(hudComponent_t *comp)
 		return;
 	}
 
-	// scan the known entities to see if the crosshair is sighted on one
-	dist = CG_ScanForCrosshairEntity(&zChange, &hitClient);
+	if (cg.editingHud)
+	{
+		// aim on self
+		cg.crosshairClientNum    = cg.snap->ps.clientNum;
+		cg.crosshairClientTime   = cg.time;
+		cg.identifyClientRequest = cg.crosshairClientNum;
+	}
+	else
+	{
+		// scan the known entities to see if the crosshair is sighted on one
+		dist = CG_ScanForCrosshairEntity(&zChange, &hitClient);
+	}
 
 	// world-entity or no-entity
 	if (cg.crosshairClientNum < 0)
@@ -2407,7 +2420,7 @@ void CG_DrawSpectator(hudComponent_t *comp)
 	}
 	else
 #endif
-	if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR)
+	if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR || cg.editingHud)
 	{
 		s = CG_TranslateString(va("%s", "SPECTATOR"));
 	}
@@ -2769,7 +2782,7 @@ void CG_DrawSpectatorMessage(hudComponent_t *comp)
 	}
 #endif
 
-	if (!((cg.snap->ps.pm_flags & PMF_LIMBO) || cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR))
+	if (!((cg.snap->ps.pm_flags & PMF_LIMBO) || cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR) && !cg.editingHud)
 	{
 		return;
 	}
@@ -2894,12 +2907,12 @@ void CG_DrawLimboMessage(hudComponent_t *comp)
 	}
 #endif
 
-	if (cg.snap->ps.stats[STAT_HEALTH] > 0)
+	if (cg.snap->ps.stats[STAT_HEALTH] > 0 && !cg.editingHud)
 	{
 		return;
 	}
 
-	if ((cg.snap->ps.pm_flags & PMF_LIMBO) || cgs.clientinfo[cg.clientNum].team == TEAM_SPECTATOR)
+	if (((cg.snap->ps.pm_flags & PMF_LIMBO) || cgs.clientinfo[cg.clientNum].team == TEAM_SPECTATOR) && !cg.editingHud)
 	{
 		return;
 	}
@@ -2958,7 +2971,7 @@ void CG_DrawFollow(hudComponent_t *comp)
 	float charHeight;
 	float heightTextOffset;
 	float heightIconsOffset;
-    float scale;
+	float scale;
 
 #ifdef FEATURE_MULTIVIEW
 	// MV following info for mainview
@@ -2980,14 +2993,14 @@ void CG_DrawFollow(hudComponent_t *comp)
 		return;
 	}
 
-	if (!(cg.snap->ps.pm_flags & PMF_FOLLOW))
+	if (!(cg.snap->ps.pm_flags & PMF_FOLLOW) && !cg.editingHud)
 	{
 		return;
 	}
 
-    scale = CG_ComputeScale(comp);
+	scale = CG_ComputeScale(comp);
 
-    charHeight        = CG_Text_Height_Ext("A", scale, 0, &cgs.media.limboFont2);
+	charHeight        = CG_Text_Height_Ext("A", scale, 0, &cgs.media.limboFont2);
 	lineHeight        = comp->location.h * 0.5;
 	heightTextOffset  = (lineHeight + charHeight) * 0.5;
 	heightIconsOffset = (lineHeight - charHeight * 2) * 0.5;
@@ -3062,7 +3075,7 @@ void CG_DrawFollow(hudComponent_t *comp)
 				}
 			}
 
-            CG_Text_Paint_Ext(comp->location.x, y + heightTextOffset, scale, scale, colorWhite, deploytime, 0, 0, comp->styleText, &cgs.media.limboFont2);
+			CG_Text_Paint_Ext(comp->location.x, y + heightTextOffset, scale, scale, colorWhite, deploytime, 0, 0, comp->styleText, &cgs.media.limboFont2);
 			y += lineHeight;
 		}
 
@@ -3071,9 +3084,9 @@ void CG_DrawFollow(hudComponent_t *comp)
 		{
 			const char *follow    = CG_TranslateString("Following");
 			char       *w         = cgs.clientinfo[cg.snap->ps.clientNum].name;
-            int        charWidth  = CG_Text_Width_Ext("A", scale, 0, &cgs.media.limboFont2);
-            int        startClass = CG_Text_Width_Ext(va("(%s", follow), scale, 0, &cgs.media.limboFont2) + charWidth;
-            int        startRank  = CG_Text_Width_Ext(w, scale, 0, &cgs.media.limboFont2) + lineHeight + 2 + 2 * charWidth;
+			int        charWidth  = CG_Text_Width_Ext("A", scale, 0, &cgs.media.limboFont2);
+			int        startClass = CG_Text_Width_Ext(va("(%s", follow), scale, 0, &cgs.media.limboFont2) + charWidth;
+			int        startRank  = CG_Text_Width_Ext(w, scale, 0, &cgs.media.limboFont2) + lineHeight + 2 + 2 * charWidth;
 			int        endRank;
 
 			CG_DrawPic(comp->location.x + startClass, y + heightIconsOffset, lineHeight + 2, lineHeight + 2, cgs.media.skillPics[SkillNumForClass(cgs.clientinfo[cg.snap->ps.clientNum].cls)]);
@@ -3088,17 +3101,17 @@ void CG_DrawFollow(hudComponent_t *comp)
 				endRank = -charWidth;
 			}
 
-            CG_Text_Paint_Ext(comp->location.x, y + heightTextOffset, scale, scale, colorWhite, va("(%s", follow), 0, 0, comp->styleText, &cgs.media.limboFont2);
-            CG_Text_Paint_Ext(comp->location.x + startClass + lineHeight + 2 + charWidth, y + heightTextOffset, scale, scale, colorWhite, w, 0, 0, comp->styleText, &cgs.media.limboFont2);
-            CG_Text_Paint_Ext(comp->location.x + startClass + startRank + endRank, y + heightTextOffset, scale, scale, colorWhite, ")", 0, 0, comp->styleText, &cgs.media.limboFont2);
+			CG_Text_Paint_Ext(comp->location.x, y + heightTextOffset, scale, scale, colorWhite, va("(%s", follow), 0, 0, comp->styleText, &cgs.media.limboFont2);
+			CG_Text_Paint_Ext(comp->location.x + startClass + lineHeight + 2 + charWidth, y + heightTextOffset, scale, scale, colorWhite, w, 0, 0, comp->styleText, &cgs.media.limboFont2);
+			CG_Text_Paint_Ext(comp->location.x + startClass + startRank + endRank, y + heightTextOffset, scale, scale, colorWhite, ")", 0, 0, comp->styleText, &cgs.media.limboFont2);
 		}
 	}
 	else
 	{
 		const char *follow    = CG_TranslateString("Following");
 		char       *w         = cgs.clientinfo[cg.snap->ps.clientNum].name;
-        int        charWidth  = CG_Text_Width_Ext("A", scale, 0, &cgs.media.limboFont2);
-        int        startClass = CG_Text_Width_Ext(follow, scale, 0, &cgs.media.limboFont2) + charWidth;
+		int        charWidth  = CG_Text_Width_Ext("A", scale, 0, &cgs.media.limboFont2);
+		int        startClass = CG_Text_Width_Ext(follow, scale, 0, &cgs.media.limboFont2) + charWidth;
 
 		CG_DrawPic(comp->location.x + startClass, y + heightIconsOffset, lineHeight + 2, lineHeight + 2, cgs.media.skillPics[SkillNumForClass(cgs.clientinfo[cg.snap->ps.clientNum].cls)]);
 
@@ -3106,12 +3119,12 @@ void CG_DrawFollow(hudComponent_t *comp)
 		{
 			int startRank;
 
-            startRank = CG_Text_Width_Ext(w, scale, 0, &cgs.media.limboFont2) + lineHeight + 2 + 2 * charWidth;
+			startRank = CG_Text_Width_Ext(w, scale, 0, &cgs.media.limboFont2) + lineHeight + 2 + 2 * charWidth;
 			CG_DrawPic(comp->location.x + startClass + startRank, y + heightIconsOffset, lineHeight + 2, lineHeight + 2, rankicons[cgs.clientinfo[cg.snap->ps.clientNum].rank][cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_AXIS ? 1 : 0][0].shader);
 		}
 
-        CG_Text_Paint_Ext(comp->location.x, y + heightTextOffset, scale, scale, colorWhite, follow, 0, 0, comp->styleText, &cgs.media.limboFont2);
-        CG_Text_Paint_Ext(comp->location.x + startClass + lineHeight + 2 + charWidth, y + heightTextOffset, scale, scale, colorWhite, w, 0, 0, comp->styleText, &cgs.media.limboFont2);
+		CG_Text_Paint_Ext(comp->location.x, y + heightTextOffset, scale, scale, colorWhite, follow, 0, 0, comp->styleText, &cgs.media.limboFont2);
+		CG_Text_Paint_Ext(comp->location.x + startClass + lineHeight + 2 + charWidth, y + heightTextOffset, scale, scale, colorWhite, w, 0, 0, comp->styleText, &cgs.media.limboFont2);
 	}
 }
 
@@ -3129,9 +3142,9 @@ void CG_DrawWarmupTitle(hudComponent_t *comp)
 		// print message informing player the server is restarting with a new map
 		s = va("%s", CG_TranslateString("^3Server Restarting"));
 	}
-	else if (!cg.warmup)
+	else if (!cg.warmup || cg.editingHud)
 	{
-		if (!(cgs.gamestate == GS_WARMUP && !cg.warmup) && cgs.gamestate != GS_WAITING_FOR_PLAYERS)
+		if (!(cgs.gamestate == GS_WARMUP && !cg.warmup) && cgs.gamestate != GS_WAITING_FOR_PLAYERS && !cg.editingHud)
 		{
 			return;
 		}
@@ -3192,9 +3205,9 @@ void CG_DrawWarmupText(hudComponent_t *comp)
 {
 	const char *s = NULL, *s1 = NULL, *s2 = NULL;
 
-	if (!cg.warmup)
+	if (!cg.warmup || cg.editingHud)
 	{
-		if (!(cgs.gamestate == GS_WARMUP && !cg.warmup) && cgs.gamestate != GS_WAITING_FOR_PLAYERS)
+		if ((!(cgs.gamestate == GS_WARMUP && !cg.warmup) && cgs.gamestate != GS_WAITING_FOR_PLAYERS) && !cg.editingHud)
 		{
 			return;
 		}
@@ -3615,7 +3628,7 @@ void CG_ObjectivePrint(const char *str)
 	int   maxLineChars;
 	float scale;
 
-    scale        = CG_ComputeScale(&CG_GetActiveHUD()->objectivetext /*CG_GetActiveHUD()->objectivetext.location.h, CG_GetActiveHUD()->objectivetext.scale, &cgs.media.limboFont2*/);
+	scale        = CG_ComputeScale(&CG_GetActiveHUD()->objectivetext /*CG_GetActiveHUD()->objectivetext.location.h, CG_GetActiveHUD()->objectivetext.scale, &cgs.media.limboFont2*/);
 	maxLineChars = CG_GetActiveHUD()->objectivetext.location.w / CG_Text_Width_Ext("A", scale, 0, &cgs.media.limboFont2);
 
 	CG_WordWrapString(CG_TranslateString(str), maxLineChars, cg.oidPrint, sizeof(cg.oidPrint));
@@ -4164,6 +4177,9 @@ static void CG_Draw2D(void)
 	}
 	else
 	{
+		// keep drawing crossair
+		CG_DrawCrosshair(&CG_GetActiveHUD()->crosshair);
+
 		if (cgs.eventHandling != CGAME_EVENT_NONE)
 		{
 			// draw cursor
@@ -4474,6 +4490,61 @@ void CG_Coronas(void)
 }
 
 /**
+ * @brief Generate pseudo-random data to feed HUD elements
+ */
+static void CG_NoiseGenerator()
+{
+	// banner
+	CG_AddToBannerPrint("Iaculatores coniunctis: incesserit servitium castrensi post velut et deinde virgae.");
+
+	// center print
+	CG_CenterPrint("Insulari sufficiente postulatus aut nullo delatus hostiles iniecto aut suos.");
+
+	// objevive print
+	CG_ObjectivePrint("You are near an amazing place and everyone envy you.");
+
+	// chat
+	CG_AddToTeamChat("Lorem ipsum dolor sit amet, consectetuer adipiscing elit.", cg.snap->ps.clientNum);
+	CG_AddToTeamChat("Maecenas porttitor congue massa.", cg.snap->ps.clientNum);
+	CG_AddToTeamChat("Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna.", cg.snap->ps.clientNum);
+	CG_AddToTeamChat("Nunc viverra imperdiet enim", cg.snap->ps.clientNum);
+
+	// big popup messages kill
+	CG_AddPMItemBig(PM_RANK, va(CG_TranslateString("Promoted to rank %s!"), GetRankTableData(cgs.clientinfo[cg.clientNum].team, cgs.clientinfo[cg.clientNum].rank)->names), rankicons[cgs.clientinfo[cg.clientNum].rank][cgs.clientinfo[cg.clientNum].team == TEAM_AXIS ? 1 : 0][0].shader);
+
+	// small popup message
+	if (!(cg.time % 47))
+	{
+		CG_AddPMItem(PM_MESSAGE, "Neque atque quid praeter sed.", " ", cgs.media.pmImages[PM_MESSAGE], 0, 0, colorWhite);
+	}
+	if (!(cg.time % 53))
+	{
+		CG_AddPMItem(PM_CONSTRUCTION, "Sed ut tum ad senem senex de senectute", " ", cgs.media.pmImages[PM_CONSTRUCTION], 0, 0, colorWhite);
+	}
+	if (!(cg.time % 59))
+	{
+		CG_AddPMItem(PM_MINES, "Nunc vero inanes flatus quorundam vile esse", " ", cgs.media.pmImages[PM_MINES], 0, 0, colorWhite);
+	}
+
+	// powerups
+	cg.snap->ps.powerups[PW_REDFLAG]  = 1;
+	cg.snap->ps.powerups[PW_BLUEFLAG] = 1;
+
+	// objective indicator
+	cg.flagIndicator  |= (1 << PW_REDFLAG);
+	cg.flagIndicator  |= (1 << PW_BLUEFLAG);
+	cg.blueFlagCounter = 1;
+	cg.redFlagCounter  = 1;
+
+	// vote
+	cgs.voteTime = cg.time;
+	Q_strncpyz(cgs.voteString, "Do you want cast a vote ?", sizeof(cgs.voteString));
+
+	// missile camera
+	cg.latestMissile = &cg_entities[cg.snap->ps.clientNum];
+}
+
+/**
  * @brief Perform all drawing needed to completely fill the screen
  */
 void CG_DrawActive()
@@ -4498,6 +4569,11 @@ void CG_DrawActive()
 	if (!(cg.limboEndCinematicTime > cg.time && cg.showGameView))
 	{
 		trap_R_RenderScene(cg.refdef_current);
+	}
+
+	if (cg.editingHud)
+	{
+		CG_NoiseGenerator();
 	}
 
 	if (!cg.showGameView)

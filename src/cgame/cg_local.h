@@ -3375,7 +3375,9 @@ void CG_TeamRestrictionsChanged(void);
 void CG_SkillLevelsChanged(void);
 void CG_LoadVoiceChats(void);
 void CG_PlayBufferedVoiceChats(void);
+void CG_AddToTeamChat(const char *str, int clientnum);
 void CG_AddToNotify(const char *str);
+void CG_AddToBannerPrint(const char* str);
 const char *CG_LocalizeServerCommand(const char *buf);
 void CG_wstatsParse_cmd(void);
 

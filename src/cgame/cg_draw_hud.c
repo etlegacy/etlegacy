@@ -48,6 +48,7 @@ static lagometer_t lagometer;
 */
 const hudComponentFields_t hudComponentFields[] =
 {
+	{ HUDF(crosshair),        CG_DrawCrosshair,          0.19f,            { 0                } },     // FIXME: outside cg_draw_hud
 	{ HUDF(compass),          CG_DrawNewCompass,         0.19f,            { "Square"         } },
 	{ "compas",               offsetof(hudStucture_t,    compass),         qtrue, CG_DrawNewCompass, 0.19,{ "Square"         } },      // v2.78 backward compatibility
 	{ HUDF(staminabar),       CG_DrawStaminaBar,         0.19f,            { "Left", "Center", "Vertical", "No Alpha", "Background", "X0 Y5", "X0 Y0", "Lerp Color", "Border", "Border Tiny", "Decor", "Icon"} },
@@ -96,7 +97,6 @@ const hudComponentFields_t hudComponentFields[] =
 	{ HUDF(objectivetext),    CG_DrawObjectiveInfo,      0.22f,            { 0                } },     // FIXME: outside cg_draw_hud
 	{ HUDF(centerprint),      CG_DrawCenterString,       0.22f,            { 0                } },     // FIXME: outside cg_draw_hud
 	{ HUDF(banner),           CG_DrawBannerPrint,        0.23f,            { 0                } },     // FIXME: outside cg_draw_hud
-	{ HUDF(crosshair),        CG_DrawCrosshair,          0.19f,            { 0                } },     // FIXME: outside cg_draw_hud
 	{ HUDF(crosshairtext),    CG_DrawCrosshairNames,     0.25f,            { "Full Color"     } },     // FIXME: outside cg_draw_hud
 	{ HUDF(crosshairbar),     CG_DrawCrosshairHealthBar, 0.25f,            { "Left", "Center", "Vertical", "No Alpha", "Background", "X0 Y5", "X0 Y0", "Lerp Color", "Border", "Border Tiny", "Decor", "Icon"} }, // FIXME: outside cg_draw_hud
 	{ HUDF(stats),            CG_DrawPlayerStats,        0.19f,            { "Kill", "Death", "Self Kill", "DmgGiven", "DmgRcvd"} },
@@ -189,7 +189,7 @@ void CG_setDefaultHudValues(hudStucture_t *hud)
 	hud->disconnect       = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 60, 216, 57, 57, qtrue, 0, 100.f, colorWhite, qtrue, HUD_Background, qtrue, HUD_Border, ITEM_TEXTSTYLE_NORMAL, ITEM_ALIGN_CENTER, qfalse, 37, 0.35f, CG_DrawDisconnect);
 	hud->chat             = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) * .5f - 211, 406, 422, 72, qtrue, 0, 100.f, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_LEFT, qfalse, 38, 0.20f, CG_DrawTeamInfo);
 	hud->spectatorstatus  = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) * .5f - 70, 421, 140, 24, qtrue, 0, 100.f, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 39, 0.35f, CG_DrawSpectator);
-	hud->pmitemsbig       = CG_getComponent(Ccg_WideX(365), 275, 300, 57, qtrue, 0, 56.f, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_LEFT, qfalse, 40, 0.22f, CG_DrawPMItemsBig);
+	hud->pmitemsbig       = CG_getComponent(Ccg_WideX(365), 275, 300, 57, qtrue, 0, 100.f, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_LEFT, qfalse, 40, 0.22f, CG_DrawPMItemsBig);
 	hud->warmuptitle      = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) * .5f - 211, 120, 422, 24, qtrue, 0, 100.f, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 41, 0.35f, CG_DrawWarmupTitle);
 	hud->warmuptext       = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) * .5f - 211, 310, 422, 39, qtrue, 0, 100.f, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 42, 0.22f, CG_DrawWarmupText);
 	hud->objectivetext    = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) * .5f - 211, 351, 422, 24, qtrue, 0, 100.f, colorWhite, qtrue, (vec4_t) { 0, 0.5, 0.5, 0.25 }, qtrue, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qtrue, 43, 0.22f, CG_DrawObjectiveInfo);
@@ -2095,7 +2095,7 @@ void CG_DrawDemoMessage(hudComponent_t *comp)
 	char demostatus[128];
 	char wavestatus[128];
 
-	if (!cl_demorecording.integer && !cl_waverecording.integer && !cg.demoPlayback)
+	if (!cl_demorecording.integer && !cl_waverecording.integer && !cg.demoPlayback && !cg.editingHud)
 	{
 		return;
 	}

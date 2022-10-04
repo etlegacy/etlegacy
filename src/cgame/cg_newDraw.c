@@ -347,7 +347,18 @@ void CG_DrawCursorhint(hudComponent_t *comp)
 		return;
 	}
 
-	CG_CheckForCursorHints();
+	if (cg.editingHud)
+	{
+		// simulate cursor hint
+		cg.cursorHintTime  = cg.time;
+		cg.cursorHintFade  = 500;
+		cg.cursorHintIcon  = HINT_BREAKABLE;
+		cg.cursorHintValue = 128.f;
+	}
+	else
+	{
+		CG_CheckForCursorHints();
+	}
 
 	switch (cg.cursorHintIcon)
 	{
@@ -541,9 +552,9 @@ void CG_DrawWeapStability(hudComponent_t *comp)
 		return;
 	}
 
-	if (!comp->style && !cg.zoomed)
+	if (!comp->style && !cg.zoomed && !cg.editingHud)
 	{
-		// style '0' means only draw for scoped weapons, '1' means draw all the time (for debugging)
+		// style '0' means only draw for scoped weapons, '1' means draw all the time
 		return;
 	}
 

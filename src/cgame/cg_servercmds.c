@@ -1126,7 +1126,7 @@ static void CG_ConfigStringModified(void)
  * @param[in] str
  * @param[in] clientnum
  */
-static void CG_AddToTeamChat(const char *str, int clientnum) // FIXME: add disguise?
+void CG_AddToTeamChat(const char *str, int clientnum) // FIXME: add disguise?
 {
 	int          len;
 	char         *p, *ls;
@@ -2931,6 +2931,18 @@ void CG_dumpStats(void)
 	}
 }
 
+void CG_AddToBannerPrint(const char *str)
+{
+    int   maxLineChars;
+    float scale;
+    
+    scale        = CG_ComputeScale(&CG_GetActiveHUD()->banner /*CG_GetActiveHUD()->banner.location.h, CG_GetActiveHUD()->banner.scale, &cgs.media.limboFont2*/);
+    maxLineChars = CG_GetActiveHUD()->banner.location.w / CG_Text_Width_Ext("A", scale, 0, &cgs.media.limboFont2);
+    
+    CG_WordWrapString(str, maxLineChars, cg.bannerPrint, sizeof(cg.bannerPrint));
+    cg.bannerPrintTime = cg.time;
+}
+
 #define ENTNFO_HASH         78985
 #define CS_HASH             25581
 #define TINFO_HASH          65811
@@ -3551,14 +3563,7 @@ static void CG_ServerCommand(void)
 		return;
 	case BP_HASH: // "bp"
 	{
-		int   maxLineChars;
-		float scale;
-
-        scale        = CG_ComputeScale(&CG_GetActiveHUD()->banner /*CG_GetActiveHUD()->banner.location.h, CG_GetActiveHUD()->banner.scale, &cgs.media.limboFont2*/);
-		maxLineChars = CG_GetActiveHUD()->banner.location.w / CG_Text_Width_Ext("A", scale, 0, &cgs.media.limboFont2);
-
-		CG_WordWrapString(CG_Argv(1), maxLineChars, cg.bannerPrint, sizeof(cg.bannerPrint));
-		cg.bannerPrintTime = cg.time;
+        CG_AddToBannerPrint(CG_Argv(1));
 		break;
 	}
 	default:
