@@ -100,6 +100,9 @@ void CG_GetObituaryIcon(meansOfDeath_t mod, weapon_t weapon, qhandle_t *weaponSh
 		case MOD_CRUSH:
 			*weaponShader = cgs.media.pmImageCrush;
 			break;
+		case MOD_FALLING:
+			*weaponShader = cgs.media.pmImageFall;
+			break;
 		case MOD_SHOVE:
 			*weaponShader = cgs.media.pmImageShove;
 			break;

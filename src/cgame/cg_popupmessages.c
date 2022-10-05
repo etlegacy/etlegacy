@@ -119,6 +119,7 @@ void CG_InitPMGraphics(void)
 	cgs.media.pmImageLava  = trap_R_RegisterShaderNoMip("gfx/hud/pm_lava");
 	cgs.media.pmImageCrush = trap_R_RegisterShaderNoMip("gfx/hud/pm_crush");
 	cgs.media.pmImageShove = trap_R_RegisterShaderNoMip("gfx/hud/pm_shove");
+	cgs.media.pmImageFall  = trap_R_RegisterShaderNoMip("gfx/hud/pm_falldown");
 }
 
 /**
@@ -609,7 +610,7 @@ void CG_DrawPMItems(hudComponent_t *comp)
 	float        y          = comp->location.y + comp->location.h;
 	float        x          = comp->location.x;
 	vec4_t       colorText;
-    float        scale;
+	float        scale;
 
 
 	Vector4Copy(comp->colorText, colorText);
@@ -655,7 +656,7 @@ void CG_DrawPMItems(hudComponent_t *comp)
 		x += lineHeight;
 	}
 
-    scale = CG_ComputeScale(comp /*lineHeight, comp->scale, &cgs.media.limboFont2*/);
+	scale = CG_ComputeScale(comp /*lineHeight, comp->scale, &cgs.media.limboFont2*/);
 
 	CG_Text_Paint_Ext(x, y - (lineHeight / 2) + 1, scale, scale, colorText, cg_pmWaitingList->message, 0, 0, comp->styleText, &cgs.media.limboFont2); // 4 + size + 2
 
@@ -775,7 +776,7 @@ void CG_DrawPMItemsBig(hudComponent_t *comp)
 	h         = comp->location.h / 5.f;
 	iconsSize = comp->location.h - h;
 
-    scale = CG_ComputeScale(comp /*h, comp->scale, &cgs.media.limboFont2*/);
+	scale = CG_ComputeScale(comp /*h, comp->scale, &cgs.media.limboFont2*/);
 
 	trap_R_SetColor(colorText);
 	CG_DrawPic(comp->location.x + comp->location.w - iconsSize, comp->location.y, iconsSize, iconsSize, cg_pmWaitingListBig->shader);

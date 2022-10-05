@@ -1964,6 +1964,7 @@ typedef struct
 	qhandle_t pmImageLava;
 	qhandle_t pmImageCrush;
 	qhandle_t pmImageShove;
+	qhandle_t pmImageFall;
 
 	qhandle_t hudDamagedStates[4];
 
@@ -3377,7 +3378,7 @@ void CG_LoadVoiceChats(void);
 void CG_PlayBufferedVoiceChats(void);
 void CG_AddToTeamChat(const char *str, int clientnum);
 void CG_AddToNotify(const char *str);
-void CG_AddToBannerPrint(const char* str);
+void CG_AddToBannerPrint(const char *str);
 const char *CG_LocalizeServerCommand(const char *buf);
 void CG_wstatsParse_cmd(void);
 
