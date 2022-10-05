@@ -522,7 +522,7 @@ void CG_AddPMItem(popupMessageType_t type, const char *message, const char *mess
  */
 void CG_PMItemBigSound(pmListItemBig_t *item)
 {
-	if (!cg.snap)
+	if (!cg.snap || cg.editingHud)
 	{
 		return;
 	}

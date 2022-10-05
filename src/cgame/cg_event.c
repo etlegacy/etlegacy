@@ -77,7 +77,6 @@ void CG_GetObituaryIcon(meansOfDeath_t mod, weapon_t weapon, qhandle_t *weaponSh
 
 		// FIXME:
 		//case MOD_UNKNOWN:
-		//case MOD_FALLING:
 		//case MOD_TRIGGER_HURT:
 		//case MOD_TELEFRAG:
 		//case MOD_TARGET_LASER:
