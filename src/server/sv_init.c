@@ -955,7 +955,6 @@ void SV_WriteAttackLog(const char *log)
 {
 	int now = Sys_Milliseconds();
 
-	printf("SV_WriteAttackLog: %d\n", now);
 	if (now > sv.lastAttackLogTime + sv_protectLogInterval->integer)
 	{
 		if (attHandle > 0)
