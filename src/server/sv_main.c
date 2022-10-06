@@ -102,6 +102,7 @@ cvar_t *sv_protect;     // 0 - unprotected
                         // 2 - OpenWolf method
                         // 4 - prints attack info to console (when ioquake3 or OPenWolf method is set)
 cvar_t *sv_protectLog;  // name of log file
+cvar_t *sv_protectLogInterval; // how often to write attack log entries
 
 #ifdef FEATURE_ANTICHEAT
 cvar_t *sv_wh_active;
