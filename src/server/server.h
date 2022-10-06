@@ -161,6 +161,7 @@ typedef struct
 	playerState_t demoPlayerStates[MAX_CLIENTS];
 	svdemoPlayerStats_t demoPlayerStats[100];
 
+	int lastAttackLogTime;                  ///< timestamp of latest attack log entry
 } server_t;
 
 /**
@@ -471,6 +472,7 @@ extern cvar_t *sv_advert;
 
 extern cvar_t *sv_protect;
 extern cvar_t *sv_protectLog;
+extern cvar_t *sv_protectLogInterval;
 
 #ifdef FEATURE_ANTICHEAT
 extern cvar_t *sv_wh_active;
